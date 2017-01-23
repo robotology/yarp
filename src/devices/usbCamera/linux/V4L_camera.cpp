@@ -2057,9 +2057,9 @@ bool V4L_camera::setMode(int feature, FeatureMode mode)
         case YARP_FEATURE_WHITE_BALANCE:
         {
             if(mode == MODE_AUTO)
-                set_V4L2_control(V4L2_CID_AUTO_WHITE_BALANCE, true);
+                ret = set_V4L2_control(V4L2_CID_AUTO_WHITE_BALANCE, true);
             else
-                set_V4L2_control(V4L2_CID_AUTO_WHITE_BALANCE, false);
+                ret = set_V4L2_control(V4L2_CID_AUTO_WHITE_BALANCE, false);
         } break;
 
         case YARP_FEATURE_EXPOSURE:
@@ -2088,29 +2088,42 @@ bool V4L_camera::setMode(int feature, FeatureMode mode)
             if(mode == MODE_AUTO)
             {
                 yInfo() << "GAIN: set mode auto";
-                set_V4L2_control(V4L2_CID_AUTOGAIN, true);
+                ret = set_V4L2_control(V4L2_CID_AUTOGAIN, true);
             }
             else
             {
                 yInfo() << "GAIN: set mode manual";
-                set_V4L2_control(V4L2_CID_AUTOGAIN, false);
+                ret = set_V4L2_control(V4L2_CID_AUTOGAIN, false);
             }
         } break;
 
         case YARP_FEATURE_BRIGHTNESS:
         {
-            if(mode == MODE_AUTO)
-                set_V4L2_control(V4L2_CID_AUTOBRIGHTNESS, true);
+            bool _tmpAuto;
+            hasAuto(YARP_FEATURE_BRIGHTNESS, &_tmpAuto);
+
+            if(_tmpAuto)
+            {
+                if(mode == MODE_AUTO)
+                    ret = set_V4L2_control(V4L2_CID_AUTOBRIGHTNESS, true);
+                else
+                    ret = set_V4L2_control(V4L2_CID_AUTOBRIGHTNESS, false);
+            }
             else
-                set_V4L2_control(V4L2_CID_AUTOBRIGHTNESS, false);
+            {
+                if(mode == MODE_AUTO)
+                    ret = false;
+                else
+                    ret = true;
+            }
         } break;
 
         case YARP_FEATURE_HUE:
         {
             if(mode == MODE_AUTO)
-                set_V4L2_control(V4L2_CID_HUE_AUTO, true);
+                ret = set_V4L2_control(V4L2_CID_HUE_AUTO, true);
             else
-                set_V4L2_control(V4L2_CID_HUE_AUTO, false);
+                ret = set_V4L2_control(V4L2_CID_HUE_AUTO, false);
         } break;
 
         default:
@@ -2118,7 +2131,7 @@ bool V4L_camera::setMode(int feature, FeatureMode mode)
             yError() << "Feature " << feature << " does not support auto mode";
         } break;
     }
-    return true;
+    return ret;
 }
 
 bool V4L_camera::getMode(int feature, FeatureMode *mode)
