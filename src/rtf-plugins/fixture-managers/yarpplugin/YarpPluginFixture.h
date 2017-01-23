@@ -33,6 +33,7 @@ public:
 private:
     yarp::os::Bottle devices;
     yarp::os::Bottle plugins;
+    yarp::os::Bottle carriers;
 };
 
 #endif // YARP_RTF_PLUGINS_YARPPLUGIN_YARPPLUGINFIXTURE_H
