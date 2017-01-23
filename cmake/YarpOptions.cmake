@@ -230,7 +230,7 @@ endif()
 # Enable/disable wanted, experimental, and unwanted warnings
 
 # FIXME We should fix those warnings and move them to wanted
-option(YARP_EXPERIMENTAL_WARNINGS "Enable some more checks that at the moment produce a lot of warnings" FALSE)
+option(YARP_EXPERIMENTAL_WARNINGS "Enable some more checks that at the moment produce a lot of warnings" OFF)
 mark_as_advanced(YARP_EXPERIMENTAL_WARNINGS)
 if(YARP_EXPERIMENTAL_WARNINGS)
   set(WANTED_WARNING_FLAGS "${WANTED_WARNING_FLAGS} ${EXPERIMENTAL_WARNING_FLAGS}")
@@ -243,13 +243,13 @@ set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} ${WANTED_WARNING_FLAGS} ${UNWANTED_WARNI
 
 set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} ${VISIBILITY_HIDDEN_FLAGS}")
 
-option(YARP_EXPERIMENTAL_FILTER_API "Filter out implemementation symbols from the ABI" FALSE)
+option(YARP_EXPERIMENTAL_FILTER_API "Filter out implemementation symbols from the ABI" OFF)
 mark_as_advanced(YARP_EXPERIMENTAL_FILTER_API)
 if(YARP_EXPERIMENTAL_FILTER_API)
-  set(YARP_FILTER_impl TRUE)
+  set(YARP_FILTER_impl ON)
 endif()
-yarp_deprecated_option(YARP_FILTER_API)
-yarp_deprecated_option(YARP_CLEAN_API)
+yarp_deprecated_option(YARP_FILTER_API) # Since YARP 2.3.68.1
+yarp_deprecated_option(YARP_CLEAN_API) # Since YARP 2.3.68.1
 
 #########################################################################
 # Show warnings for deprecated declarations
@@ -261,15 +261,15 @@ set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} ${DEPRECATED_DECLARATIONS_FLAGS}")
 # Control whether deprecated methods are built and whether they should
 # print warnings
 
-option(YARP_NO_DEPRECATED "Filter out deprecated declarations from YARP API" FALSE)
+option(YARP_NO_DEPRECATED "Filter out deprecated declarations from YARP API" OFF)
 mark_as_advanced(YARP_NO_DEPRECATED)
 if(YARP_NO_DEPRECATED)
   add_definitions("-DYARP_NO_DEPRECATED")
 endif()
 
 cmake_dependent_option(YARP_NO_DEPRECATED_WARNINGS
-                       "Do not warn when using YARP deprecated declarations" FALSE
-                       "NOT YARP_NO_DEPRECATED" FALSE)
+                       "Do not warn when using YARP deprecated declarations" OFF
+                       "NOT YARP_NO_DEPRECATED" OFF)
 mark_as_advanced(YARP_NO_DEPRECATED_WARNINGS)
 if(YARP_NO_DEPRECATED_WARNINGS)
   add_definitions("-DYARP_NO_DEPRECATED_WARNINGS")
@@ -279,7 +279,7 @@ endif()
 #########################################################################
 # Control whether to build YARP using hardening options
 
-option(YARP_EXPERIMENTAL_HARDENING "Build YARP using hardening flags" FALSE)
+option(YARP_EXPERIMENTAL_HARDENING "Build YARP using hardening flags" OFF)
 mark_as_advanced(YARP_EXPERIMENTAL_HARDENING)
 if(YARP_EXPERIMENTAL_HARDENING)
   add_definitions("-D_FORTIFY_SOURCE=2")
@@ -290,11 +290,11 @@ endif()
 #########################################################################
 # Control whether to build YARP using C++11 options
 
-option(YARP_EXPERIMENTAL_CXX11 "Build YARP using C++11 standard" FALSE)
+option(YARP_EXPERIMENTAL_CXX11 "Build YARP using C++11 standard" OFF)
 mark_as_advanced(YARP_EXPERIMENTAL_CXX11)
 if(YARP_EXPERIMENTAL_CXX11)
   set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} ${CXX11_FLAGS}")
-  set(YARP_HAS_CXX11 TRUE)
+  set(YARP_HAS_CXX11 ON)
 elseif(CMAKE_CXX_COMPILER_ID STREQUAL "GNU" AND
        NOT CMAKE_CXX_COMPILER_VERSION VERSION_LESS 6.1)
   # GCC 6.1 uses -std=cxx14 by default. This causes issues in some
@@ -310,11 +310,11 @@ endif()
 # ever decides to accept STL as a dependency.
 
 
-option(YARP_WRAP_STL_STRING "Do you want the yarp string classes to wrap std::string? (as opposed to being exactly std::string)" TRUE)
+option(YARP_WRAP_STL_STRING "Do you want the yarp string classes to wrap std::string? (as opposed to being exactly std::string)" ON)
 mark_as_advanced(YARP_WRAP_STL_STRING)
-set(YARP_WRAP_STL_STRING_INLINE_DEFAULT TRUE)
+set(YARP_WRAP_STL_STRING_INLINE_DEFAULT ON)
 if(MSVC)
-  set(YARP_WRAP_STL_STRING_INLINE_DEFAULT FALSE)
+  set(YARP_WRAP_STL_STRING_INLINE_DEFAULT OFF)
 endif()
 cmake_dependent_option(YARP_WRAP_STL_STRING_INLINE "If wrapping std::string, should we use an inline implementation? (as opposed to opaque)" ${YARP_WRAP_STL_STRING_INLINE_DEFAULT}
                        YARP_WRAP_STL_STRING OFF)
@@ -324,7 +324,7 @@ mark_as_advanced(YARP_WRAP_STL_STRING_INLINE)
 #########################################################################
 # Control compilation of device tests.
 # Not really for end-user, but instead for the library developers
-cmake_dependent_option(CREATE_BUILTIN_DEVICE_TESTS "Do you want to create tests for builtin devices" FALSE
+cmake_dependent_option(CREATE_BUILTIN_DEVICE_TESTS "Do you want to create tests for builtin devices" OFF
                        YARP_COMPILE_TESTS OFF)
 mark_as_advanced(CREATE_BUILTIN_DEVICE_TESTS)
 
@@ -361,7 +361,7 @@ set(MACOSX_BUNDLE_SHORT_VERSION_STRING "${YARP_VERSION_SHORT}")
 # executable and library targets should be created.
 # For older versions the position independent code is handled in
 # YarpDescribe.cmake,
-set(CMAKE_POSITION_INDEPENDENT_CODE "TRUE")
+set(CMAKE_POSITION_INDEPENDENT_CODE ON)
 
 
 #########################################################################
@@ -379,7 +379,7 @@ endif()
 
 ### -Wfatal-errors
 if(CXX_HAS_WFATAL_ERROR)
-  option(YARP_FATAL_ERRORS "Abort compilation on the first error rather than trying to keep going and printing further error messages (-Wfatal-errors)" FALSE)
+  option(YARP_FATAL_ERRORS "Abort compilation on the first error rather than trying to keep going and printing further error messages (-Wfatal-errors)" OFF)
   mark_as_advanced(YARP_FATAL_ERRORS)
   if(YARP_FATAL_ERRORS)
     set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wfatal-errors")
