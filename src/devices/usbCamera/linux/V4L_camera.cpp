@@ -93,8 +93,11 @@ V4L_camera::V4L_camera() : RateThread(1000/DEFAULT_FRAMERATE), doCropping(false)
     param.raw_image = NULL;
     myCounter = 0;
     timeTot = 0;
+
+    use_exposure_absolute = false;
     camMap["default"]           = STANDARD_UVC;
     camMap["leopard_python"]    = LEOPARD_PYTHON;
+
     configFx = false;
     configFy = false;
     configPPx = false;
@@ -165,6 +168,10 @@ bool V4L_camera::open(yarp::os::Searchable& config)
     deviceInit();
     yInfo() << "START enumerating controls";
     enumerate_controls();
+    if(!check_V4L2_control(V4L2_CID_EXPOSURE) )
+    {
+        use_exposure_absolute = check_V4L2_control(V4L2_CID_EXPOSURE_ABSOLUTE);
+    }
     yInfo() << "DONE enumerating controls\n\n";
     captureStart();
     yarp::os::Time::delay(0.5);
@@ -1624,7 +1631,14 @@ double V4L_camera::getBrightness()
 
 double V4L_camera::getExposure()
 {
-    return get_V4L2_control(V4L2_CID_EXPOSURE);
+    double ret;
+
+    if(!use_exposure_absolute)
+        ret = get_V4L2_control(V4L2_CID_EXPOSURE);
+    else
+        ret = get_V4L2_control(V4L2_CID_EXPOSURE_ABSOLUTE);
+
+    return ret;
 }
 
 double V4L_camera::getGain()
@@ -1682,7 +1696,12 @@ bool V4L_camera::setBrightness(double v)
 
 bool V4L_camera::setExposure(double v)
 {
-    return set_V4L2_control(V4L2_CID_EXPOSURE, v);
+    bool ret;
+    if(use_exposure_absolute)
+        ret = set_V4L2_control(V4L2_CID_EXPOSURE_ABSOLUTE, v);
+    else
+        ret = set_V4L2_control(V4L2_CID_EXPOSURE, v);
+    return ret;
 }
 
 bool V4L_camera::setGain(double v)
@@ -1755,7 +1774,7 @@ bool V4L_camera::hasFeature(int feature, bool *_hasFeature)
 
         case YARP_FEATURE_EXPOSURE:
         {
-            tmpMan = check_V4L2_control(V4L2_CID_EXPOSURE);
+            tmpMan = check_V4L2_control(V4L2_CID_EXPOSURE) || check_V4L2_control(V4L2_CID_EXPOSURE_ABSOLUTE);
             tmpAuto = check_V4L2_control(V4L2_CID_EXPOSURE_AUTO);
         } break;
 
@@ -1771,12 +1790,44 @@ bool V4L_camera::hasFeature(int feature, bool *_hasFeature)
 
 bool V4L_camera::setFeature(int feature, double value)
 {
-    return set_V4L2_control(convertYARP_to_V4L(feature), value);
+    bool ret = false;
+    switch(feature)
+    {
+        case YARP_FEATURE_EXPOSURE:
+        {
+            if(use_exposure_absolute)
+                ret = set_V4L2_control(V4L2_CID_EXPOSURE_ABSOLUTE, value);
+            else
+                ret = set_V4L2_control(V4L2_CID_EXPOSURE, value);
+        }
+        break;
+
+        default:
+            ret = set_V4L2_control(convertYARP_to_V4L(feature), value);
+        break;
+    }
+    return ret;
 }
 
 bool V4L_camera::getFeature(int feature, double* value)
 {
-    double tmp =  get_V4L2_control(convertYARP_to_V4L(feature));
+    double tmp = false;
+    switch(feature)
+    {
+        case YARP_FEATURE_EXPOSURE:
+        {
+            if(use_exposure_absolute)
+                tmp = get_V4L2_control(V4L2_CID_EXPOSURE_ABSOLUTE);
+            else
+                tmp = get_V4L2_control(V4L2_CID_EXPOSURE);
+        }
+        break;
+
+        default:
+            tmp = get_V4L2_control(convertYARP_to_V4L(feature));
+            break;
+    }
+
     if( tmp == -1)
         return false;
 
@@ -1910,11 +1961,11 @@ bool V4L_camera::getActive(int feature, bool *_isActive)
 
         case YARP_FEATURE_EXPOSURE:
         {
-            bool _hasMan;
-            hasFeature(V4L2_CID_EXPOSURE, &_hasMan);                // check manual version
+            bool _hasMan, _hasMan2;
+            hasFeature(V4L2_CID_EXPOSURE, &_hasMan) ||  hasFeature(V4L2_CID_EXPOSURE_ABSOLUTE, &_hasMan2);   // check manual version (normal and asbolute)
             double _hasAuto =  get_V4L2_control(V4L2_CID_EXPOSURE_AUTO, true); // check auto version
 
-            *_isActive = (_hasAuto == V4L2_EXPOSURE_AUTO)|| _hasMan;
+            *_isActive = (_hasAuto == V4L2_EXPOSURE_AUTO) || _hasMan || _hasMan2;
         } break;
 
         default:
@@ -1973,7 +2024,7 @@ bool V4L_camera::hasManual(int feature, bool* _hasManual)
 
     if(feature == YARP_FEATURE_EXPOSURE)
     {
-        *_hasManual = check_V4L2_control(V4L2_CID_EXPOSURE);
+        *_hasManual = check_V4L2_control(V4L2_CID_EXPOSURE) || check_V4L2_control(V4L2_CID_EXPOSURE_ABSOLUTE);
         return true;
     }
     return hasFeature(feature, _hasManual);
@@ -2000,6 +2051,7 @@ bool V4L_camera::hasOnePush(int feature, bool *_hasOnePush)
 
 bool V4L_camera::setMode(int feature, FeatureMode mode)
 {
+    bool ret = false;
     switch(feature)
     {
         case YARP_FEATURE_WHITE_BALANCE:
@@ -2012,10 +2064,23 @@ bool V4L_camera::setMode(int feature, FeatureMode mode)
 
         case YARP_FEATURE_EXPOSURE:
         {
-            if(mode == MODE_AUTO)
-                set_V4L2_control(V4L2_CID_EXPOSURE_AUTO, true);
+            bool _tmpAuto;
+            hasAuto(V4L2_CID_EXPOSURE_AUTO, &_tmpAuto);
+
+            if(_tmpAuto)
+            {
+                if(mode == MODE_AUTO)
+                    ret = set_V4L2_control(V4L2_CID_EXPOSURE_AUTO, true);
+                else
+                    ret = set_V4L2_control(V4L2_CID_EXPOSURE_AUTO, false);
+            }
             else
-                set_V4L2_control(V4L2_CID_EXPOSURE_AUTO, false);
+            {
+                if(mode == MODE_AUTO)
+                    ret = false;
+                else
+                    ret = true;
+            }
         } break;
 
         case YARP_FEATURE_GAIN:
@@ -2070,6 +2135,12 @@ bool V4L_camera::getMode(int feature, FeatureMode *mode)
         case YARP_FEATURE_EXPOSURE:
         {
             double ret  = get_V4L2_control(V4L2_CID_EXPOSURE_AUTO);
+            if(ret == -1.0)
+            {
+                *mode = MODE_MANUAL;
+                break;
+            }
+
             if( ret == V4L2_EXPOSURE_MANUAL)
                 *mode = MODE_MANUAL;
             else

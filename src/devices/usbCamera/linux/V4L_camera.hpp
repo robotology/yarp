@@ -210,6 +210,8 @@ public:
 
 private:
 
+    bool use_exposure_absolute;
+
     yarp::os::Stamp timeStamp;
     Video_params param;
     yarp::os::Semaphore mutex;
