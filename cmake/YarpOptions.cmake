@@ -106,13 +106,14 @@ endif()
 #########################################################################
 # Control whether libraries are shared or static.
 
-option(CREATE_SHARED_LIBRARY "Compile shared libraries rather than linking statically" TRUE)
+option(BUILD_SHARED_LIBS "Compile shared libraries rather than linking statically" ON)
+mark_as_advanced(BUILD_SHARED_LIBS)
+yarp_renamed_option(CREATE_SHARED_LIBRARY BUILD_SHARED_LIBS) # Since YARP 2.3.68.1
 if(WIN32)
-  set(YARP_FILTER_API TRUE)
+  set(YARP_FILTER_API ON)
 endif()
 
-if(CREATE_SHARED_LIBRARY)
-  set(BUILD_SHARED_LIBS ON)
+if(BUILD_SHARED_LIBS)
   set(YARP_DLL ON)
 endif()
 
@@ -243,21 +244,15 @@ set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} ${WANTED_WARNING_FLAGS} ${UNWANTED_WARNI
 #########################################################################
 # Control whether non-public symbols are filtered out
 
-option(YARP_CLEAN_API "Filter out non-public symbols" FALSE)
-mark_as_advanced(YARP_CLEAN_API)
-if(YARP_CLEAN_API)
-  if(YARP_COMPILE_TESTS)
-    if(WIN32)
-      message(FATAL_ERROR "On Windows, we cannot compile tests when building dlls. Turn one of YARP_COMPILE_TESTS or CREATE_SHARED_LIBRARY off.")
-    else()
-      message(STATUS "Since tests access non-public classes, we'll need to leave all symbols in the shared libraries. If this is undesired, turn one of YARP_COMPILE_TESTS or CREATE_SHARED_LIBRARY off.")
-    endif()
-  else()
-    set(YARP_FILTER_API TRUE)
-    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} ${VISIBILITY_HIDDEN_FLAGS}")
-  endif()
-endif()
+set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} ${VISIBILITY_HIDDEN_FLAGS}")
 
+option(YARP_EXPERIMENTAL_FILTER_API "Filter out implemementation symbols from the ABI" FALSE)
+mark_as_advanced(YARP_EXPERIMENTAL_FILTER_API)
+if(YARP_EXPERIMENTAL_FILTER_API)
+  set(YARP_FILTER_impl TRUE)
+endif()
+yarp_deprecated_option(YARP_FILTER_API)
+yarp_deprecated_option(YARP_CLEAN_API)
 
 #########################################################################
 # Show warnings for deprecated declarations
@@ -324,7 +319,8 @@ set(YARP_WRAP_STL_STRING_INLINE_DEFAULT TRUE)
 if(MSVC)
   set(YARP_WRAP_STL_STRING_INLINE_DEFAULT FALSE)
 endif()
-option(YARP_WRAP_STL_STRING_INLINE "If wrapping std::string, should we use an inline implementation? (as opposed to opaque)" ${YARP_WRAP_STL_STRING_INLINE_DEFAULT})
+cmake_dependent_option(YARP_WRAP_STL_STRING_INLINE "If wrapping std::string, should we use an inline implementation? (as opposed to opaque)" ${YARP_WRAP_STL_STRING_INLINE_DEFAULT}
+                       YARP_WRAP_STL_STRING OFF)
 mark_as_advanced(YARP_WRAP_STL_STRING_INLINE)
 
 
@@ -339,6 +335,7 @@ mark_as_advanced(CREATE_BUILTIN_DEVICE_TESTS)
 #########################################################################
 # Control submission of reports
 option(ENABLE_DASHBOARD_SUBMIT "Allow submission of builds to http://dashboard.icub.org/index.php?project=YARP" OFF)
+mark_as_advanced(ENABLE_DASHBOARD_SUBMIT)
 if(ENABLE_DASHBOARD_SUBMIT)
   include(CTest)
 endif()
@@ -375,7 +372,7 @@ set(CMAKE_POSITION_INDEPENDENT_CODE "TRUE")
 
 ### -Werror
 if(CXX_HAS_WERROR)
-  option(YARP_ABORT_ON_WARNING "Consider compiler warnings as errors and abort compilation (-Werror)." TRUE)
+  option(YARP_ABORT_ON_WARNING "Consider compiler warnings as errors and abort compilation (-Werror)." OFF)
   mark_as_advanced(YARP_ABORT_ON_WARNING)
   if(YARP_ABORT_ON_WARNING)
     set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Werror")

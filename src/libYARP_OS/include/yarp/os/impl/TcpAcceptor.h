@@ -53,7 +53,7 @@ namespace yarp {
  * Interface of TcpAcceptor
  * **************************************************************************************/
 
-class yarp::os::impl::TcpAcceptor
+class YARP_OS_impl_API yarp::os::impl::TcpAcceptor
 {
 public:
 
