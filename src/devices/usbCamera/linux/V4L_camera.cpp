@@ -166,13 +166,11 @@ bool V4L_camera::open(yarp::os::Searchable& config)
 
     // Initting video device
     deviceInit();
-    yInfo() << "START enumerating controls";
     enumerate_controls();
     if(!check_V4L2_control(V4L2_CID_EXPOSURE) )
     {
         use_exposure_absolute = check_V4L2_control(V4L2_CID_EXPOSURE_ABSOLUTE);
     }
-    yInfo() << "DONE enumerating controls\n\n";
     captureStart();
     yarp::os::Time::delay(0.5);
     start();
@@ -1519,7 +1517,7 @@ bool V4L_camera::set_V4L2_control(uint32_t id, double value, bool verbatim)
         }
         else
         {
-            yError("Cannot set control <%s> (id %d) is not supported \n", queryctrl.name, queryctrl.id);
+            yError("Cannot set control <%s> (id 0x%0X) is not supported \n", queryctrl.name, queryctrl.id);
         }
         return false;
     }
@@ -1570,10 +1568,6 @@ bool V4L_camera::check_V4L2_control(uint32_t id)
         {
             perror ("VIDIOC_QUERYCTRL");
         }
-//         else
-//         {
-//             printf ("Control %s (id %d) is not supported\n", queryctrl.name, id);
-//         }
         return false;
     }
     return true;
@@ -1596,10 +1590,7 @@ double V4L_camera::get_V4L2_control(uint32_t id, bool verbatim)
         {
             perror ("VIDIOC_QUERYCTRL");
         }
-//         else
-//         {
-//             printf ("Control %s is not supported\n", queryctrl.name);
-//         }
+
         return -1.0;
     }
 
@@ -1614,7 +1605,6 @@ double V4L_camera::get_V4L2_control(uint32_t id, bool verbatim)
             perror ("VIDIOC_G_CTRL");
             return -1.0;
         }
-//         printf("Control %s got value %d!\n", queryctrl.name, control.value);
     }
     if(verbatim)
         return control.value;
