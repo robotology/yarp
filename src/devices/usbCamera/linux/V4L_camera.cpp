@@ -768,7 +768,7 @@ bool V4L_camera::getRawBuffer(unsigned char *buffer)
     mutex.wait();
     if(configured){
         imageProcess(param.raw_image);
-        memcpy(buffer, param.dst_image, param.dst_image_size);
+        memcpy(buffer, param.tmp_image, param.dst_image_size);
         res=true;
     }
     else{
