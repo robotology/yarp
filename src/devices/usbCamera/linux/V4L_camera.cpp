@@ -87,12 +87,14 @@ V4L_camera::V4L_camera() : RateThread(1000/DEFAULT_FRAMERATE), doCropping(false)
     param.n_buffers = 0;
     param.dst_image = NULL;
     param.buffers = NULL;
+    param.camModel = STANDARD_UVC;
     param.tmp_image= NULL;
     param.tmp_image2 = NULL;
     param.raw_image = NULL;
-    param.camModel = SEE3CAMCU50;
     myCounter = 0;
     timeTot = 0;
+    camMap["default"]           = STANDARD_UVC;
+    camMap["leopard_python"]    = LEOPARD_PYTHON;
     configFx = false;
     configFy = false;
     configPPx = false;
@@ -262,10 +264,28 @@ bool V4L_camera::fromConfig(yarp::os::Searchable& config)
 
     if(!config.check("camModel") )
     {
-        yWarning() << "No 'camModel' was specified, working with default SEE3CAMCU50 (camModel 1)";
+        yInfo() << "No 'camModel' was specified, working with 'standard' uvc";
+        param.camModel = STANDARD_UVC;
     }
     else
-        param.camModel = (supported_cams) config.find("camModel").asInt();
+    {
+        std::map <std::string, supported_cams>::iterator it= camMap.find(config.find("camModel").asString().c_str());
+        if( it != camMap.end() )
+        {
+            param.camModel = it->second;
+            yDebug() << "cam model name : " <<  config.find("camModel").asString() << "  -- number : " << it->second;
+        }
+        else
+        {
+            yError() << "Unknown camera model <" << config.find("camModel").asString() << ">";
+            yInfo() << "Supported models are: ";
+            for(it=camMap.begin(); it!=camMap.end(); it++)
+            {
+                yInfo(" <%s>", it->first.c_str());
+            }
+            return false;
+        }
+    }
 
     if(config.check("crop") )
     {
@@ -1089,7 +1109,7 @@ void* V4L_camera::frameRead()
 /**
  *   process image read
  */
-void V4L_camera::imageProcess(void* p)
+void V4L_camera::imageProcess(void* p, bool useRawData)
 {
     static bool initted = false;
     static int err=0;
@@ -1098,12 +1118,57 @@ void V4L_camera::imageProcess(void* p)
 
     switch(param.camModel)
     {
-        case RAW_DATA:
+        case LEOPARD_PYTHON:
         {
-            break;
-        }
+            uint16_t *raw_p = (uint16_t*) p;
+            for(int i=0; i<param.dst_fmt.fmt.pix.height; i++)
+            {
+                for(int j=0; j<param.dst_fmt.fmt.pix.width; j++)
+                {
+                    param.tmp_image[i*param.width + j] =  (unsigned char) ( raw_p[i*param.width + j] >> 4);
+                }
+            }
 
-        case SEE3CAMCU50:
+            if(useRawData)
+                break;
+
+            param.src_fmt.fmt.pix.width             = param.width;
+            param.src_fmt.fmt.pix.height            = param.height;
+            // real bayer image size is 1 byte per pixel, this camera is 2bytes per pixel because it uses int16 instead of int8.
+            // The shift in the for loop is to reduce pixel size to 1 byte in order to use standard convertion algorithms.
+            // The 4 LSB are ignored.
+            param.src_fmt.fmt.pix.bytesperline      = param.width;
+            param.src_fmt.fmt.pix.sizeimage         = param.width * param.height;
+
+            param.dst_fmt.fmt.pix.width             = param.width;
+            param.dst_fmt.fmt.pix.height            = param.height;
+            param.dst_fmt.fmt.pix.bytesperline      = param.width * 3;  // 3 for rgb
+            param.dst_fmt.fmt.pix.sizeimage         = param.width * param.height * 3;  // 3 for rgb
+
+            // workaround for buggy camera info
+            param.src_fmt.fmt.pix.pixelformat = V4L2_PIX_FMT_SGRBG8;
+            param.dst_fmt.fmt.pix.pixelformat = V4L2_PIX_FMT_RGB24;
+
+            if( v4lconvert_convert((v4lconvert_data*) _v4lconvert_data,  &param.src_fmt,   &param.dst_fmt,
+                (unsigned char *)param.tmp_image,  param.width * param.height, param.tmp_image2, param.width * param.height * 3)  <0 )
+            {
+                if((err %20) == 0)
+                {
+                    printf("error converting \n"); fflush(stdout);
+                    printf("Message is: %s", v4lconvert_get_error_message(_v4lconvert_data));
+                    err=0;
+                }
+                err++;
+                return;
+            }
+
+            cv::Mat img(cv::Size(param.src_fmt.fmt.pix.width, param.src_fmt.fmt.pix.height), CV_8UC3, param.tmp_image2);
+            param.img=img;
+            cv::resize(img, param.outMat, cvSize(param.width, param.height), 0, 0, cv::INTER_CUBIC);
+        }
+        break;
+
+        case STANDARD_UVC:
         {
 //             std::cout << "dst w " << param.dst_fmt.fmt.pix.width << "; src w " << param.src_fmt.fmt.pix.width << std::endl;
 //             std::cout << "dst h " << param.dst_fmt.fmt.pix.height << "; src h " << param.src_fmt.fmt.pix.height << std::endl;
@@ -1171,15 +1236,6 @@ void V4L_camera::imageProcess(void* p)
                 cv::resize(img, param.outMat, cvSize(param.width, param.height), 0, 0, cv::INTER_CUBIC);
 //                 memcpy((unsigned char *)param.dst_image, (unsigned char *)param.tmp_image, param.image_size);
             }
-
-            break;
-        }
-
-        case LEOPARD_MT9M021C:
-        {
-//             raw_to_bmp( (uint8_t*) p, (uint8_t*) param.dst_image, param.width, param.height, 12, 0,
-//                         true, 1.6,
-//                         600, -92, -70, -97, 389, -36, -130, -304, 690, 0, 0, 0);
             break;
         }
 

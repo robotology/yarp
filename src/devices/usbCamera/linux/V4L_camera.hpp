@@ -42,6 +42,7 @@
 #include <linux/videodev2.h>
 #include <jpeglib.h>
 #include <libv4l2.h>
+#include <map>
 
 #include <cv.h>
 
@@ -72,10 +73,10 @@ typedef enum {
 } io_method;
 
 typedef enum {
-    RAW_DATA = 0,
-    SEE3CAMCU50,
-    LEOPARD_MT9M021C
+    STANDARD_UVC = 0,
+    LEOPARD_PYTHON,
 } supported_cams;
+
 
 struct buffer {
     void *          start;
@@ -224,6 +225,8 @@ private:
     int myCounter;
     int frameCounter;
 
+    std::map <std::string, supported_cams> camMap;
+
     bool fromConfig(yarp::os::Searchable& config);
 
     // initialize device
@@ -262,7 +265,7 @@ private:
 
     void* full_FrameRead(void);
 
-    void imageProcess(void* p);
+    void imageProcess(void* p, bool raw=false);
 
     int getfd();
 
