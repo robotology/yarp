@@ -772,14 +772,14 @@ bool V4L_camera::getRawBuffer(unsigned char *buffer)
     if(configured){
         imageProcess(param.raw_image);
         memcpy(buffer, param.dst_image, param.dst_image_size);
-        mutex.post();
         res=true;
     }
     else{
         yError()<<"usbCamera: unable to get the buffer, device unitialized";
-        mutex.post();
+
         res=false;
     }
+    mutex.post();
     return res;
 }
 
