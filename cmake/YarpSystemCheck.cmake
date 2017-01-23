@@ -221,6 +221,7 @@ else()
     yarp_check_and_append_cxx_compiler_flag(WANTED_WARNING_FLAGS "-Wgcc-compat")
     yarp_check_and_append_cxx_compiler_flag(WANTED_WARNING_FLAGS "-Wmicrosoft-exists")
     yarp_check_and_append_cxx_compiler_flag(WANTED_WARNING_FLAGS "-Wstatic-inline-explicit-instantiation")
+    yarp_check_and_append_cxx_compiler_flag(WANTED_WARNING_FLAGS "-Wmisleading-indentation")
 
     ## Unwanted warning flags ##
     unset(UNWANTED_WARNING_FLAGS)
@@ -302,6 +303,10 @@ else()
       set(CXX17_FLAGS "-std=c++1z")
     endif()
 
+
+    ## Error and warning flags ##
+    check_cxx_compiler_flag("-Werror" CXX_HAS_WERROR)
+    check_cxx_compiler_flag("-Wfatal-errors" CXX_HAS_WFATAL_ERROR)
 endif()
 
 

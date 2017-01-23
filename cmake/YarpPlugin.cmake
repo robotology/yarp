@@ -245,7 +245,11 @@ macro(YARP_PREPARE_PLUGIN _plugin_name)
   set(_plugin_fullname "${X_YARP_PLUGIN_PREFIX}${_plugin_name}")
 
   if(NOT DEFINED _YPP_DOC)
-    set(_YPP_DOC "Enable/disable compilation of ${_plugin_fullname}")
+    set(_feature_doc "${_plugin_name} ${_YPP_CATEGORY}")
+    set(_option_doc "Enable/disable ${_plugin_name} ${_YPP_CATEGORY}")
+  else()
+    set(_feature_doc "${_YPP_DOC}")
+    set(_option_doc "Enable/disable ${_YPP_DOC}")
   endif()
 
   if(NOT DEFINED _YPP_OPTION)
@@ -253,14 +257,14 @@ macro(YARP_PREPARE_PLUGIN _plugin_name)
   endif()
 
   if(_YPP_INTERNAL)
-    option(${_YPP_OPTION} "${_YPP_DOC}" ${_YPP_DEFAULT})
+    option(${_YPP_OPTION} "${_option_doc}" ${_YPP_DEFAULT})
     set_property(CACHE ${_YPP_OPTION} PROPERTY TYPE INTERNAL)
   else()
     if(DEFINED _YPP_DEPENDS)
-      cmake_dependent_option(${_YPP_OPTION} "${_YPP_DOC}" ${_YPP_DEFAULT}
+      cmake_dependent_option(${_YPP_OPTION} "${_option_doc}" ${_YPP_DEFAULT}
                              "${_YPP_DEPENDS}" OFF)
     else()
-      option(${_YPP_OPTION} "${_YPP_DOC}" ${_YPP_DEFAULT})
+      option(${_YPP_OPTION} "${_option_doc}" ${_YPP_DEFAULT})
       set_property(CACHE ${_YPP_OPTION} PROPERTY TYPE BOOL)
     endif()
     if(_YPP_ADVANCED)
@@ -420,6 +424,11 @@ YARP_DEFINE_SHARED_SUBCLASS(\@YARPPLUG_NAME\@, \@YARPPLUG_TYPE\@, \@YARPPLUG_PAR
       endif()
     endif()
   endif()
+
+  if(NOT _YPP_INTERNAL AND COMMAND add_feature_info)
+    add_feature_info(${_plugin_fullname} ${_YPP_OPTION} "${_feature_doc}.")
+  endif()
+
 endmacro()
 
 
