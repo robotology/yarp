@@ -557,7 +557,6 @@ bool V4L_camera::deviceInit()
         printf("DONE: v4lconvert_try_format\n\t");
         printf("Message is: %s", v4lconvert_get_error_message(_v4lconvert_data));
     }
-
     printf("param.width = %d; src.width = %d\n", param.width, param.src_fmt.fmt.pix.width);
 
     // dst is tmp, just to convert camera pixel type (YUYV) into user pixel type (RGB)
@@ -1311,7 +1310,6 @@ void V4L_camera::captureStart()
             for (i = 0; i < param.n_buffers; ++i)
             {
                 struct v4l2_buffer buf;
-
                 CLEAR(buf);
 
                 buf.type = V4L2_BUF_TYPE_VIDEO_CAPTURE;
@@ -1354,7 +1352,6 @@ void V4L_camera::captureStart()
             break;
     }
 }
-
 
 
 bool V4L_camera::readInit(unsigned int buffer_size)
@@ -1426,7 +1423,6 @@ bool V4L_camera::mmapInit()
 
     for (param.n_buffers = 0; param.n_buffers < param.req.count; param.n_buffers++)
     {
-
         CLEAR(buf);
 
         buf.type = V4L2_BUF_TYPE_VIDEO_CAPTURE;
