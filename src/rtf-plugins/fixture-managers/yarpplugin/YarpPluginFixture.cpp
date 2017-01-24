@@ -24,14 +24,14 @@ using namespace yarp::dev;
 
 PREPARE_FIXTURE_PLUGIN(YarpPluginFixture)
 
-bool YarpPluginFixture::scanPlugins(ConstString name){
+bool YarpPluginFixture::scanPortmonitor(ConstString name){
     YarpPluginSelector selector;
     selector.scan();
     Bottle lst=selector.getSelectedPlugins();
     bool res=false;
     for (int i=0; i<lst.size(); i++) {
         Value& options = lst.get(i);
-        if(name == options.check("name",Value("untitled")).asString())
+        if(name == options.check("name",Value("untitled")).asString() && "portmonitor"== options.check("type",Value("untitled")).asString())
             res=true;
     }
     return res;
@@ -42,7 +42,7 @@ bool YarpPluginFixture::setup(int argc, char** argv) {
     if(argc<=1)
     {
         //RTF::RTF_FIXTURE_REPORT();
-        RTF_ASSERT_ERROR("YarpPluginFixture: Please specify --devices and/or --plugins and/or --carriers parameters");
+        RTF_ASSERT_ERROR("YarpPluginFixture: Please specify --devices and/or --portmonitor and/or --carriers parameters");
         return false;
     }
     RTF_FIXTURE_REPORT("YarpPluginFixture: setupping fixture...");
@@ -67,27 +67,27 @@ bool YarpPluginFixture::setup(int argc, char** argv) {
     }
     else
     {
-        RTF_FIXTURE_REPORT("YarpPluginFixture: missing 'devices' param. Probably not required skipping this check. Trying with 'plugins' param...");
+        RTF_FIXTURE_REPORT("YarpPluginFixture: missing 'devices' param. Probably not required skipping this check. Trying with 'portmonitor' param...");
     }
 
-    if(prop.check("plugins"))
+    if(prop.check("portmonitor"))
     {
-        plugins = prop.findGroup("plugins");
-        if(plugins.isNull())
+        portmonitor = prop.findGroup("portmonitor");
+        if(portmonitor.isNull())
         {
-            RTF_ASSERT_ERROR("YarpPluginFixture: not found plugins parameter");
+            RTF_ASSERT_ERROR("YarpPluginFixture: not found portmonitor parameter");
         }
         resPlug=true;
-        for(int i=1;i<plugins.size();i++)
+        for(int i=1;i<portmonitor.size();i++)
         {
-            if(!scanPlugins(plugins.get(i).asString())){
-                RTF_ASSERT_ERROR("YarpPluginFixture: Unable to find "+plugins.get(i).asString()+" among the available plugins");
+            if(!scanPortmonitor(portmonitor.get(i).asString())){
+                RTF_ASSERT_ERROR("YarpPluginFixture: Unable to find "+portmonitor.get(i).asString()+" among the available portmonitor");
             }
         }
     }
     else
     {
-        RTF_FIXTURE_REPORT("YarpPluginFixture: missing 'plugins' param. Probably not required skipping this check. Trying with 'carriers' param...");
+        RTF_FIXTURE_REPORT("YarpPluginFixture: missing 'portmonitor' param. Probably not required skipping this check. Trying with 'carriers' param...");
     }
 
     if(prop.check("carriers"))
