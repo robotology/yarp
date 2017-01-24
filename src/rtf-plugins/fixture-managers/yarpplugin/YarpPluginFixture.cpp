@@ -24,15 +24,25 @@ using namespace yarp::dev;
 
 PREPARE_FIXTURE_PLUGIN(YarpPluginFixture)
 
-bool YarpPluginFixture::scanPortmonitor(ConstString name){
+bool YarpPluginFixture::scanPlugin(yarp::os::ConstString name, yarp::os::ConstString type)
+{
     YarpPluginSelector selector;
     selector.scan();
     Bottle lst=selector.getSelectedPlugins();
     bool res=false;
-    for (int i=0; i<lst.size(); i++) {
+    for (int i=0; i<lst.size(); i++)
+    {
         Value& options = lst.get(i);
-        if(name == options.check("name",Value("untitled")).asString() && "portmonitor"== options.check("type",Value("untitled")).asString())
-            res=true;
+        if(!type.empty())
+        {
+            if(name == options.check("name",Value("untitled")).asString() && type== options.check("type",Value("untitled")).asString())
+                res=true;
+        }
+        else
+        {
+            if(name == options.check("name",Value("untitled")).asString())
+                    res=true;
+        }
     }
     return res;
 }
@@ -46,7 +56,7 @@ bool YarpPluginFixture::setup(int argc, char** argv) {
         return false;
     }
     RTF_FIXTURE_REPORT("YarpPluginFixture: setupping fixture...");
-    bool resDev=false, resPlug=false, resCarr=false;
+    bool resDev=false, resPlug=false, resCarr=false, resPortMonitor=false;
     Property prop;
     prop.fromCommand(argc, argv, false);
     if(prop.check("devices"))
@@ -67,7 +77,27 @@ bool YarpPluginFixture::setup(int argc, char** argv) {
     }
     else
     {
-        RTF_FIXTURE_REPORT("YarpPluginFixture: missing 'devices' param. Probably not required skipping this check. Trying with 'portmonitor' param...");
+        RTF_FIXTURE_REPORT("YarpPluginFixture: missing 'devices' param. Probably not required skipping this check. Trying with 'plugins' param...");
+    }
+
+    if(prop.check("plugins"))
+    {
+        plugins = prop.findGroup("plugins");
+        if(plugins.isNull())
+        {
+            RTF_ASSERT_ERROR("YarpPluginFixture: not found plugins parameter");
+        }
+        resPlug=true;
+        for(int i=1;i<plugins.size();i++)
+        {
+            if(!scanPlugin(plugins.get(i).asString())){
+                RTF_ASSERT_ERROR("YarpPluginFixture: Unable to find "+plugins.get(i).asString()+" among the available plugins");
+            }
+        }
+    }
+    else
+    {
+        RTF_FIXTURE_REPORT("YarpPluginFixture: missing 'plugins' param. Probably not required skipping this check. Trying with 'portmonitor' param...");
     }
 
     if(prop.check("portmonitor"))
@@ -77,10 +107,10 @@ bool YarpPluginFixture::setup(int argc, char** argv) {
         {
             RTF_ASSERT_ERROR("YarpPluginFixture: not found portmonitor parameter");
         }
-        resPlug=true;
+        resPortMonitor=true;
         for(int i=1;i<portmonitor.size();i++)
         {
-            if(!scanPortmonitor(portmonitor.get(i).asString())){
+            if(!scanPlugin(portmonitor.get(i).asString(),"portmonitor")){
                 RTF_ASSERT_ERROR("YarpPluginFixture: Unable to find "+portmonitor.get(i).asString()+" among the available portmonitor");
             }
         }
@@ -111,7 +141,7 @@ bool YarpPluginFixture::setup(int argc, char** argv) {
         RTF_FIXTURE_REPORT("YarpPluginFixture: missing 'carriers' param. Probably not required skipping this check...");
     }
 
-    return resDev || resPlug || resCarr;
+    return resDev || resPlug || resPortMonitor || resCarr;
 }
 
 bool YarpPluginFixture::check() {

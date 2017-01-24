@@ -29,9 +29,10 @@ public:
     virtual bool setup(int argc, char** argv);
     virtual bool check();
     virtual void tearDown();
-    bool scanPortmonitor(yarp::os::ConstString name);
+    bool scanPlugin(yarp::os::ConstString name, yarp::os::ConstString type="");
 private:
     yarp::os::Bottle devices;
+    yarp::os::Bottle plugins;
     yarp::os::Bottle portmonitor;
     yarp::os::Bottle carriers;
 };
