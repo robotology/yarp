@@ -42,6 +42,8 @@ MapGrid2D::MapGrid2D()
     m_resolution = 1.0; //each pixel corresponds to 1 m
     m_width = 2;
     m_height = 2;
+    m_map_occupancy.setQuantum(1); //we do not want extra padding in map images
+    m_map_flags.setQuantum(1);
     m_map_occupancy.resize(m_width, m_height);
     m_map_flags.resize(m_width, m_height);
     m_occupied_thresh = 0.80;
@@ -118,6 +120,7 @@ size_t MapGrid2D::width() const
 
 bool MapGrid2D::getMapImage(yarp::sig::ImageOf<PixelRgb>& image) const
 {
+    image.setQuantum(1);
     image.resize(m_width, m_height);
     image.zero();
     for (size_t y = 0; y < m_height; y++)
