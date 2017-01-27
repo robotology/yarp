@@ -92,7 +92,9 @@ set(YARP_dev_HDRS include/yarp/dev/all.h
                   include/yarp/dev/Wrapper.h
                   include/yarp/dev/ControlBoardInterfacesImpl.inl
                   include/yarp/dev/IRobotDescription.h
-                  include/yarp/dev/MapGrid2D.h)
+                  include/yarp/dev/MapGrid2D.h
+                  include/yarp/dev/ILocalization2D.h
+                  include/yarp/dev/Map2DLocation.h)
 
 set(YARP_dev_IMPL_HDRS )
 
@@ -140,6 +142,7 @@ set(YARP_devices_SRCS   src/devices/AnalogWrapper/AnalogWrapper.cpp
                         src/devices/BatteryClient/BatteryClient.cpp
                         src/devices/Rangefinder2DWrapper/Rangefinder2DWrapper.cpp
                         src/devices/Navigation2DClient/Navigation2DClient.cpp
+                        src/devices/Localization2DClient/Localization2DClient.cpp
                         src/devices/VirtualAnalogWrapper/VirtualAnalogWrapper.cpp
                         src/devices/ControlBoardRemapper/ControlBoardRemapper.cpp
                         src/devices/ControlBoardRemapper/ControlBoardRemapperHelpers.cpp
@@ -164,6 +167,7 @@ set(YARP_devices_HDRS   src/devices/AnalogWrapper/AnalogWrapper.h
                         src/devices/BatteryClient/BatteryClient.h
                         src/devices/Rangefinder2DWrapper/Rangefinder2DWrapper.h
                         src/devices/Navigation2DClient/Navigation2DClient.h
+                        src/devices/Localization2DClient/Localization2DClient.h
                         src/devices/VirtualAnalogWrapper/VirtualAnalogWrapper.h
                         src/devices/ControlBoardRemapper/ControlBoardRemapper.h
                         src/devices/ControlBoardRemapper/ControlBoardRemapperHelpers.h

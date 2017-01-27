@@ -40,6 +40,7 @@ extern DriverCreator *createRGBDSensorClient();
 extern DriverCreator *createControlBoardRemapper();
 extern DriverCreator *createRemoteControlBoardRemapper();
 extern DriverCreator *createNavigation2DClient();
+extern DriverCreator *createLocalization2DClient();
 extern DriverCreator *createRobotDescriptionServer();
 extern DriverCreator *createRobotDescriptionClient();
 extern DriverCreator *createServerGrabber();
@@ -97,6 +98,7 @@ void Drivers::init() {
     add(createControlBoardRemapper());
     add(createRemoteControlBoardRemapper());
     add(createNavigation2DClient());
+    add(createLocalization2DClient());
     add(createRobotDescriptionServer());
     add(createRobotDescriptionClient());
     add(createServerGrabber());

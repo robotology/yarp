@@ -9,6 +9,7 @@
 
 #include <yarp/os/Vocab.h>
 #include <yarp/os/Log.h>
+#include <yarp/dev/Map2DLocation.h>
 #include <vector>
 
 namespace yarp {
@@ -26,59 +27,6 @@ namespace yarp {
             navigation_status_paused                = VOCAB4('p', 'a', 'u', 's'),
             navigation_status_thinking              = VOCAB4('t', 'h', 'n', 'k')
         };
-
-        struct Map2DLocation
-        {
-            Map2DLocation(const yarp::os::ConstString& frame, const double& inX, const double& inY, const double& inT )
-            {
-                map_id = frame;
-                x      = inX;
-                y      = inY;
-                theta  = inT;
-            }
-
-            Map2DLocation()
-            {
-                map_id = "";
-                x      = 0;
-                y      = 0;
-                theta  = 0;
-            }
-
-            inline bool operator!=(const Map2DLocation& r) const
-            {
-                if(
-                  map_id != r.map_id ||
-                  x      != r.x      ||
-                  y      != r.y      ||
-                  theta  != r.theta
-                  )
-                {
-                    return true;
-                }
-                return false;
-            }
-
-            inline bool operator==(const Map2DLocation& r) const
-            {
-                if(
-                  map_id == r.map_id &&
-                  x      == r.x      &&
-                  y      == r.y      &&
-                  theta  == r.theta
-                  )
-                {
-                    return true;
-                }
-                return false;
-            }
-
-            yarp::os::ConstString map_id;
-            double x;
-            double y;
-            double theta;
-        };
-
       }
 }
 
@@ -124,6 +72,13 @@ public:
     * @return true/false
     */
     virtual bool   getCurrentPosition(yarp::dev::Map2DLocation& loc) = 0;
+
+    /**
+    * Sets the initial pose for the localization algorithm which estimates the current position of the robot w.r.t world reference frame.
+    * @param loc the location of the robot
+    * @return true/false
+    */
+    virtual bool   setInitialPose(yarp::dev::Map2DLocation& loc) = 0;
 
     /**
     * Gets the last navigation target in the world reference frame
@@ -221,6 +176,7 @@ public:
 #define VOCAB_NAV_GET_REL_TARGET    VOCAB4('g','r','e','l')
 #define VOCAB_NAV_GET_NAME_TARGET   VOCAB4('g','n','a','m')
 #define VOCAB_NAV_GET_CURRENT_POS   VOCAB4('g','p','o','s')
+#define VOCAB_NAV_SET_INITIAL_POS   VOCAB4('i','p','o','s')
 #define VOCAB_NAV_GET_STATUS        VOCAB4('g','s','t','s')
 #define VOCAB_NAV_CLEAR             VOCAB4('c','l','r','l')
 #define VOCAB_NAV_DELETE            VOCAB4('d','e','l','l')
