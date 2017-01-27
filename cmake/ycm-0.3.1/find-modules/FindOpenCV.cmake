@@ -484,7 +484,7 @@ if(NOT OpenCV_FOUND)
 
     # get the link directory for rpath to be used with LINK_DIRECTORIES:
     if(OPENCV_LIBRARY)
-        get_filename_component(OPENCV_LINK_DIRECTORIES ${OPENCV_LIBRARY} PATH)
+        get_filename_component(OPENCV_LINK_DIRECTORIES ${OPENCV_LIBRARY} DIRECTORY)
     endif(OPENCV_LIBRARY)
 
     # display help message

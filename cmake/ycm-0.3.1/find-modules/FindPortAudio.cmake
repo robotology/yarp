@@ -31,7 +31,7 @@ standard_find_module(PortAudio portaudio-2.0)
 if(NOT PortAudio_FOUND)
   if(WIN32)
     find_library(PortAudio_LIBRARY NAMES portaudio_x86 PATHS C:/portaudio/build/msvc/Debug_x86)
-    get_filename_component(PORTAUDIO_LINK_DIRECTORIES ${PortAudio_LIBRARY} PATH)
+    get_filename_component(PORTAUDIO_LINK_DIRECTORIES ${PortAudio_LIBRARY} DIRECTORY)
     find_path(PortAudio_INCLUDE_DIR portaudio.h C:/portaudio/include)
     set(PortAudio_LIBRARIES ${PortAudio_LIBRARY})
 

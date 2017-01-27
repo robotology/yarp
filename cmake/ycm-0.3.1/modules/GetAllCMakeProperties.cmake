@@ -1,6 +1,28 @@
-# Copyright (C) 2015  iCub Facility, Istituto Italiano di Tecnologia
-# Authors: Daniele E. Domenichelli <daniele.domenichelli@iit.it>
-# CopyPolicy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
+#.rst:
+# GetAllCMakeProperties
+# ---------------------
+#
+# Return a list containing the names of all known CMake Properties.
+#
+# Only properties returned by ``cmake --help-property-list`` are returned,
+# custom properties will not be on the returned list.
+#
+# Properties containing ``<CONFIG>`` or ``<LANG>`` are expanded to the correct
+# property name.
+
+#=============================================================================
+# Copyright 2015 iCub Facility, Istituto Italiano di Tecnologia
+#   Author: Daniele E. Domenichelli <daniele.domenichelli@iit.it>
+#
+# Distributed under the OSI-approved BSD License (the "License");
+# see accompanying file Copyright.txt for details.
+#
+# This software is distributed WITHOUT ANY WARRANTY; without even the
+# implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+# See the License for more information.
+#=============================================================================
+# (To distribute this file outside of YCM, substitute the full
+#  License text for the above reference.)
 
 function(GET_ALL_CMAKE_PROPERTIES _var)
 

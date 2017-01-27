@@ -3,15 +3,6 @@
 # CopyPolicy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
 
 
-find_path(OpenNI2_INCLUDE_LOCAL NAMES OpenNI.h HINTS $ENV{OpenNI2_DIR}/Include  $ENV{OpenNI2_DIR}/include $ENV{OPENNI2_INCLUDE} /usr/include/openni2)
-find_library(OpenNI2_LIBRARY NAMES OpenNI2 libOpenNI2 HINTS $ENV{OpenNI2_DIR}/Lib $ENV{OpenNI2_DIR}/lib $ENV{OpenNI2_DIR}/Redist $ENV{OpenNI2_DIR}/redist $ENV{OPENNI2_REDIST})
-if(OpenNI2_INCLUDE_LOCAL AND OpenNI2_LIBRARY)
-  set(OpenNI2_FOUND TRUE)
-else()
-  set(OpenNI2_FOUND FALSE)
-endif()
-
-
 find_path(NITE2_INCLUDE_LOCAL NAMES NiTE.h HINTS $ENV{NITE2_INCLUDE})
 find_library(NITE2_LIBRARY NAMES NiTE2 HINTS $ENV{NITE2_REDIST64})
 if(NITE2_INCLUDE_LOCAL)

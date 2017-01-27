@@ -8,14 +8,15 @@ cmake_minimum_required(VERSION 3.0)
 set(YARP_MODULE_DIR "${CMAKE_SOURCE_DIR}/cmake")
 set(YARP_MODULE_PATH "${YARP_MODULE_DIR}")
 
-find_package(YCM 0.2.2 QUIET)
+set(YCM_REQUIRED_VERSION 0.3.1) # Used also by YarpFindDependencies
+find_package(YCM ${YCM_REQUIRED_VERSION} QUIET)
 if(NOT YCM_FOUND)
-  list(APPEND YARP_MODULE_PATH "${YARP_MODULE_DIR}/ycm-0.2/find-modules"
-                               "${YARP_MODULE_DIR}/ycm-0.2/modules"
-                               "${YARP_MODULE_DIR}/ycm-0.2/3rdparty"
-                               "${YARP_MODULE_DIR}/ycm-0.2/cmake-next")
+  list(APPEND YARP_MODULE_PATH "${YARP_MODULE_DIR}/ycm-0.3.1/find-modules"
+                               "${YARP_MODULE_DIR}/ycm-0.3.1/modules"
+                               "${YARP_MODULE_DIR}/ycm-0.3.1/3rdparty"
+                               "${YARP_MODULE_DIR}/ycm-0.3.1/cmake-next")
   if(${CMAKE_VERSION} VERSION_LESS 3.1)
-    list(APPEND YARP_MODULE_PATH "${YARP_MODULE_DIR}/ycm-0.2/cmake-3.1/Modules")
+    list(APPEND YARP_MODULE_PATH "${YARP_MODULE_DIR}/ycm-0.3.1/cmake-3.1/Modules")
   endif()
 endif()
 
