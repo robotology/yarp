@@ -207,6 +207,8 @@ public:
     // IRGBDSensor
     virtual int    getRgbHeight();
     virtual int    getRgbWidth();
+    virtual bool   getRgbSupportedConfigurations(yarp::sig::VectorOf<CameraConfig> &configurations);
+    virtual bool   getRgbResolution(int &width, int &height);
     virtual bool   setRgbResolution(int width, int height);
     virtual bool   getRgbFOV(double& horizontalFov, double& verticalFov);
     virtual bool   setRgbFOV(double horizontalFov, double verticalFov);
