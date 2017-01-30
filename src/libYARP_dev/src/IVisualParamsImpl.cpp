@@ -653,24 +653,6 @@ bool Implement_DepthVisualParams_Parser::respond(const yarp::os::Bottle& cmd, ya
                 }
                 break;
 
-                case VOCAB_INTRINSIC_PARAM:
-                {
-                    yarp::os::Property params;
-                    ret = iDepthVisual->getDepthIntrinsicParam(params);
-                    if(ret)
-                    {
-                        yarp::os::Bottle params_b;
-                        response.addVocab(VOCAB_DEPTH_VISUAL_PARAMS);
-                        response.addVocab(VOCAB_INTRINSIC_PARAM);
-                        response.addVocab(VOCAB_IS);
-                        Property::copyPortable(params, params_b);  // will it really work??
-                        response.append(params_b);
-                    }
-                    else
-                        response.addVocab(VOCAB_FAILED);
-                }
-                break;
-
                 case VOCAB_MIRROR:
                 {
                     ret = iDepthVisual->setDepthMirroring(cmd.get(3).asBool());
