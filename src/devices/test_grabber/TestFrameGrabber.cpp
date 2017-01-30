@@ -306,8 +306,8 @@ void TestFrameGrabber::createTestImage(yarp::sig::ImageOf<yarp::sig::PixelRgb>&
     if (background.width()>0) {
         image.copy(background);
     } else {
-        image.zero();
         image.resize(w,h);
+        image.zero();
     }
     switch (mode) {
     case VOCAB_BALL:
