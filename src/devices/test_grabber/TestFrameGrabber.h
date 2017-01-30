@@ -58,6 +58,7 @@ private:
     bool use_mono;
     bool mirror;
     yarp::os::Property intrinsic;
+    yarp::sig::VectorOf<CameraConfig> configurations;
 
 public:
     /**
@@ -90,10 +91,14 @@ public:
     virtual int height() const;
 
     virtual int width() const;
-    //INIZIO
+    //IRgbVisualParams
     virtual int getRgbHeight();
 
     virtual int getRgbWidth();
+
+    virtual bool getRgbSupportedConfigurations(yarp::sig::VectorOf<CameraConfig> &configurations);
+
+    virtual bool getRgbResolution(int &width, int &height);
 
     virtual bool setRgbResolution(int width, int height);
 
@@ -106,7 +111,7 @@ public:
     virtual bool getRgbMirroring(bool &mirror);
 
     virtual bool setRgbMirroring(bool mirror);
-//FINE
+    //
     virtual bool getImage(yarp::sig::ImageOf<yarp::sig::PixelRgb>& image);
 
     virtual bool getImage(yarp::sig::ImageOf<yarp::sig::PixelMono>& image);
