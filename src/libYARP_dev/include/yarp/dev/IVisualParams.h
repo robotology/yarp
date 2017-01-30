@@ -10,6 +10,8 @@
 
 #include <yarp/os/Vocab.h>
 #include <yarp/os/Property.h>
+#include <yarp/sig/Image.h>
+#include <yarp/sig/Vector.h>
 
 
 namespace yarp {
@@ -18,6 +20,21 @@ namespace yarp {
         class IDepthVisualParams;
     }
 }
+/**
+ * Struct describing a possible camera configuration
+ * @param width image width
+ * @param height image height
+ * @param framerate camera framerate
+ * @param pixelCodind camera pixel coding
+ */
+typedef struct {
+    int width;
+    int height;
+    double framerate;
+    YarpVocabPixelTypesEnum pixelCoding;
+
+}CameraConfig;
+
 
 // Interface name
 #define VOCAB_RGB_VISUAL_PARAMS       VOCAB4('v','i','s','r')
@@ -41,10 +58,12 @@ namespace yarp {
 #define VOCAB_RESOLUTION        VOCAB3('r','e','s')
 #define VOCAB_FOV               VOCAB3('f','o','v')
 #define VOCAB_INTRINSIC_PARAM   VOCAB4('i','n','t','p')
+#define VOCAB_SUPPORTED_CONF    VOCAB4('c','o','n','f')
 
 // Depth only
 #define VOCAB_ACCURACY          VOCAB4('a','c','r','c')
 #define VOCAB_CLIP_PLANES       VOCAB4('c','l','i','p')
+
 
 
 /**
@@ -70,6 +89,22 @@ public:
      */
     virtual int getRgbWidth() = 0;
 
+    /**
+     * Get the possible configurations of the camera
+     * @param configurations  list of camera supported configurations as CameraConfig type
+     * @return true on success
+     */
+    //TODO put =0
+    virtual bool getRgbSupportedConfigurations(yarp::sig::VectorOf<CameraConfig> &configurations){return false;}
+    /**
+     * Get the resolution of the rgb image from the camera
+     * @param width  image width
+     * @param height image height
+     * @return true on success
+     */
+
+    //TODO put =0
+    virtual bool getRgbResolution(int &width, int &height) {return false;}
     /**
      * Set the resolution of the rgb image from the camera
      * @param width  image width
