@@ -95,7 +95,8 @@ bool Implement_RgbVisualParams_Sender::getRgbIntrinsicParam(yarp::os::Property &
         intrinsic.clear();
         return false;
     }
-    return Property::copyPortable(response.get(3), intrinsic);  // will it really work??
+
+    return Property::copyPortable(response.get(3), intrinsic);
 }
 
 bool Implement_RgbVisualParams_Sender::getRgbMirroring(bool& mirror)
@@ -105,7 +106,12 @@ bool Implement_RgbVisualParams_Sender::getRgbMirroring(bool& mirror)
     cmd.addVocab(VOCAB_GET);
     cmd.addVocab(VOCAB_MIRROR);
     _port.write(cmd, response);
-    return response.get(3).asBool();
+    if((response.get(0).asVocab()) == VOCAB_FAILED)
+    {
+        return false;
+    }
+    mirror = response.get(3).asBool();
+    return true;
 }
 
 bool Implement_RgbVisualParams_Sender::setRgbMirroring(bool mirror)
@@ -202,12 +208,11 @@ bool Implement_RgbVisualParams_Parser::respond(const yarp::os::Bottle& cmd, yarp
                     ret = iRgbVisual->getRgbIntrinsicParam(params);
                     if(ret)
                     {
-                        yarp::os::Bottle params_b;
                         response.addVocab(VOCAB_RGB_VISUAL_PARAMS);
                         response.addVocab(VOCAB_INTRINSIC_PARAM);
                         response.addVocab(VOCAB_IS);
-                        ret &= Property::copyPortable(params, params_b);  // will it really work??
-                        response.append(params_b);
+                        yarp::os::Bottle& tmp=response.addList();
+                        ret &= Property::copyPortable(params, tmp);
                     }
                     else
                         response.addVocab(VOCAB_FAILED);
@@ -443,7 +448,12 @@ bool Implement_DepthVisualParams_Sender::getDepthMirroring(bool& mirror)
     cmd.addVocab(VOCAB_GET);
     cmd.addVocab(VOCAB_MIRROR);
     _port.write(cmd, response);
-    return response.get(3).asBool();
+    if((response.get(0).asVocab()) == VOCAB_FAILED)
+    {
+        return false;
+    }
+    mirror = response.get(3).asBool();
+    return true;
 }
 
 bool Implement_DepthVisualParams_Sender::setDepthMirroring(bool mirror)
@@ -542,12 +552,11 @@ bool Implement_DepthVisualParams_Parser::respond(const yarp::os::Bottle& cmd, ya
                     ret = iDepthVisual->getDepthIntrinsicParam(params);
                     if(ret)
                     {
-                        yarp::os::Bottle params_b;
                         response.addVocab(VOCAB_DEPTH_VISUAL_PARAMS);
                         response.addVocab(VOCAB_INTRINSIC_PARAM);
                         response.addVocab(VOCAB_IS);
-                        Property::copyPortable(params, params_b);  // will it really work??
-                        response.append(params_b);
+                        yarp::os::Bottle& tmp=response.addList();
+                        ret &= Property::copyPortable(params, tmp);
                     }
                     else
                     {
