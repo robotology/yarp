@@ -432,7 +432,7 @@ bool MainWindow::init(QStringList enabledParts,
         {
             robot_type r;
             r.robot_name_without_slash = cur_robot_name;
-            if (r.robot_name_without_slash[0]='/') r.robot_name_without_slash.erase(0, 1);
+            if (r.robot_name_without_slash[0] == '/') r.robot_name_without_slash.erase(0, 1);
             r.tree_pointer = 0;
             robots[cur_robot_name]=r;
         }
@@ -440,7 +440,7 @@ bool MainWindow::init(QStringList enabledParts,
         p.partindex = i;
         p.complete_name = enabledParts.at(i).toStdString();
         p.part_name_without_slash = ss.substr(b2);
-        if (p.part_name_without_slash[0] = '/') p.part_name_without_slash.erase(0, 1);
+        if (p.part_name_without_slash[0] == '/') p.part_name_without_slash.erase(0, 1);
         p.robot_name = cur_robot_name;
         parts[ss.substr(b2)] = p;
     }
