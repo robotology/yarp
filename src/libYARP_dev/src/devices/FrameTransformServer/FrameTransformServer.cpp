@@ -42,7 +42,7 @@ bool Transforms_server_storage::delete_transform(int id)
     return false;
 }
 
-int Transforms_server_storage::set_transform(FrameTransform t)
+bool Transforms_server_storage::set_transform(FrameTransform t)
 {
     LockGuard lock(m_mutex);
     for (size_t i = 0; i < m_transforms.size(); i++)
@@ -52,13 +52,13 @@ int Transforms_server_storage::set_transform(FrameTransform t)
        {
           //transform already exists, update it
           m_transforms[i]=t;
-          return i;
+          return true;
        }
     }
 
     //add a new transform
     m_transforms.push_back(t);
-    return m_transforms.size();
+    return true;
 }
 
 bool Transforms_server_storage::delete_transform(string t1, string t2)
@@ -230,24 +230,16 @@ bool FrameTransformServer::read(yarp::os::ConnectionReader& connection)
                 t.rotation.y() = in.get(10).asDouble();
                 t.rotation.z() = in.get(11).asDouble();
                 t.timestamp = yarp::os::Time::now();
-                bool static_transform;
-                if (duration > 0)
-                {
-                    static_transform = false;
-                }
-                else
-                {
-                    static_transform = true;
-                }
 
-                if (static_transform)
-                {
-                    ret = m_yarp_static_transform_storage->set_transform(t);
-                }
-                else
+                if (duration > 0)
                 {
                     ret = m_yarp_timed_transform_storage->set_transform(t);
                 }
+                else
+                {
+                    ret = m_yarp_static_transform_storage->set_transform(t);
+                }
+
                 if (ret == true)
                 {
                     out.clear();

@@ -180,9 +180,17 @@ public:
         checkTrue(b_can1 && !b_can2, "canTransform ok");
 
         //test4bis
-        bool b_canb1;
-        b_canb1 = itf->canTransform("frame3b", "frame1");
-        checkTrue(b_canb1, "canTransform Bis ok");
+        {
+            bool b_canb1;
+            b_canb1 = itf->canTransform("frame3b", "frame1");
+            checkTrue(b_canb1, "canTransform Bis ok");
+        }
+        //test4 tris (isBrother.. TODO)
+        /*{
+            bool b_canb1;
+            b_canb1 = itf->canTransform("frame3b", "frame3");
+            checkTrue(b_canb1, "canTransform between brother ok");
+        }*/
 
         //test 5
         yarp::sig::Matrix mti(4, 4);
@@ -272,7 +280,6 @@ public:
 
         //test 10
         {
-            itf->clear();
             itf->setTransform("frame2", "frame10", m1);
             yarp::os::Time::delay(0.050);
             bool b_can;
@@ -294,7 +301,10 @@ public:
             yarp::os::Time::delay(0.050);
             yarp::sig::Matrix mt2;
             itf->getTransform("frame2", "frame10", mt2);
-            checkTrue(set_b1 && set_b2 && m1 == mt1 && m2 == mt2, "itf->setTransform successfully updated");
+            bool a, b;
+            a = isEqual(m1, mt1, precision);
+            b = isEqual(m2, mt2, precision);
+            checkTrue(set_b1 && set_b2 && a && b, "itf->setTransform successfully updated");
         }
 
         //test 11b
@@ -308,7 +318,7 @@ public:
             yarp::os::Time::delay(0.050);
             yarp::sig::Matrix mt2;
             itf->getTransform("frame2", "frame10", mt2);
-            checkTrue(set_b1 && set_b2 && m1 == mt1 && m2 == mt2, "itf->setTransformStatic successfully updated");
+            checkTrue(set_b1 && !set_b2 && isEqual(m1, mt1, precision) && !isEqual(m2, mt2, precision), "itf->setTransformStatic successfully not-updated");
         }
 
         //test 12
@@ -316,18 +326,21 @@ public:
             itf->clear();
             bool set_b1 = itf->setTransform("frame2", "frame1", m1);
             yarp::os::Time::delay(0.050);
-            bool set_b2 = itf->setTransform("frame3", "frame2", m1);
+            bool set_b2 = itf->setTransform("frame3", "frame2", m2);
             yarp::os::Time::delay(0.050);
             bool set_b3 = itf->setTransform("frame3", "frame1", m1);
             yarp::sig::Matrix mt1;
             yarp::sig::Matrix mt2;
             yarp::sig::Matrix mt3;
-            yarp::sig::Matrix mt4;
             itf->getTransform("frame2", "frame1", mt1);
             itf->getTransform("frame3", "frame2", mt2);
             itf->getTransform("frame3", "frame1", mt3);
             checkTrue(set_b1 && set_b2 && set_b3==false,    "itf->setTransform duplicate transform successfully skipped");
-            checkTrue(mt1==m1 && mt2==m2 && mt3 == (m2*m1), "itf->setTransform still working after duplicate transform");
+            bool a, b, c;
+            a = isEqual(mt1, m1, precision);
+            b = isEqual(mt2, m2, precision);
+            c = isEqual(mt3, (m1*m2), precision);
+            checkTrue(a && b && c, "itf->setTransform still working after duplicate transform");
         }
 
         //test 12b
@@ -335,18 +348,21 @@ public:
             itf->clear();
             bool set_b1 = itf->setTransformStatic("frame2", "frame1", m1);
             yarp::os::Time::delay(0.050);
-            bool set_b2 = itf->setTransformStatic("frame3", "frame2", m1);
+            bool set_b2 = itf->setTransformStatic("frame3", "frame2", m2);
             yarp::os::Time::delay(0.050);
             bool set_b3 = itf->setTransformStatic("frame3", "frame1", m1);
             yarp::sig::Matrix mt1;
             yarp::sig::Matrix mt2;
             yarp::sig::Matrix mt3;
-            yarp::sig::Matrix mt4;
             itf->getTransform("frame2", "frame1", mt1);
             itf->getTransform("frame3", "frame2", mt2);
             itf->getTransform("frame3", "frame1", mt3);
             checkTrue(set_b1 && set_b2 && set_b3 == false, "itf->setTransformStatic duplicate transform successfully skipped");
-            checkTrue(mt1 == m1 && mt2 == m2 && mt3 == (m2*m1), "itf->setTransformStatic still working after duplicate transform");
+            bool a, b, c;
+            a = isEqual(mt1, m1, precision);
+            b = isEqual(mt2, m2, precision);
+            c = isEqual(mt3, (m1*m2), precision);
+            checkTrue(a && b && c, "itf->setTransformStatic still working after duplicate transform");
         }
 
         // Close devices

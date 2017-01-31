@@ -65,7 +65,7 @@ private:
 public:
      Transforms_server_storage()      {}
      ~Transforms_server_storage()     {}
-     int      set_transform           (yarp::math::FrameTransform t);
+     bool     set_transform           (yarp::math::FrameTransform t);
      bool     delete_transform        (int id);
      bool     delete_transform        (std::string t1, std::string t2);
      inline size_t   size()                                             { return m_transforms.size(); }
