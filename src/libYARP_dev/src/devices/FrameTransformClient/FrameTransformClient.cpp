@@ -259,7 +259,7 @@ bool yarp::dev::FrameTransformClient::allFramesAsString(std::string &all_frames)
     return true;
 }
 
-bool yarp::dev::FrameTransformClient::canDirectTransform(const std::string &target_frame, const std::string &source_frame, std::string *error_msg) const
+bool yarp::dev::FrameTransformClient::canChainedTransform(const std::string &target_frame, const std::string &source_frame, std::string *error_msg) const
 {
     Transforms_client_storage& tfVec = *m_transform_storage;
     size_t i;
@@ -274,7 +274,7 @@ bool yarp::dev::FrameTransformClient::canDirectTransform(const std::string &targ
             }
             else
             {
-                return canDirectTransform(tfVec[i].src_frame_id, source_frame, error_msg);
+                return canChainedTransform(tfVec[i].src_frame_id, source_frame, error_msg);
             }
         }
     }
@@ -283,8 +283,7 @@ bool yarp::dev::FrameTransformClient::canDirectTransform(const std::string &targ
 
 bool yarp::dev::FrameTransformClient::canTransform(const std::string &target_frame, const std::string &source_frame)
 {
-
-    if (canDirectTransform(target_frame, source_frame) || canDirectTransform(source_frame, target_frame))
+    if (canChainedTransform(target_frame, source_frame) || canChainedTransform(source_frame, target_frame))
     {
         return true;
     }
@@ -367,12 +366,30 @@ bool yarp::dev::FrameTransformClient::getParent(const std::string &frame_id, std
     return false;
 }
 
-bool yarp::dev::FrameTransformClient::getDirectTransform(const std::string &target_frame_id, const std::string &source_frame_id, yarp::sig::Matrix &transform)
+bool yarp::dev::FrameTransformClient::canExplicitTransform(const std::string& target_frame_id, const std::string& source_frame_id) const
 {
     Transforms_client_storage& tfVec = *m_transform_storage;
-    size_t i;
-    RecursiveLockGuard l(tfVec.m_mutex);
-    size_t tfVec_size = tfVec.size();
+    size_t                     i, tfVec_size;
+    RecursiveLockGuard         l(tfVec.m_mutex);
+
+    tfVec_size = tfVec.size();
+    for (i = 0; i < tfVec_size; i++)
+    {
+        if (tfVec[i].dst_frame_id == target_frame_id && tfVec[i].src_frame_id == source_frame_id)
+        {
+            return true;
+        }
+    }
+    return false;
+}
+
+bool yarp::dev::FrameTransformClient::getChainedTransform(const std::string& target_frame_id, const std::string& source_frame_id, yarp::sig::Matrix& transform) const
+{
+    Transforms_client_storage& tfVec = *m_transform_storage;
+    size_t                     i, tfVec_size;
+    RecursiveLockGuard         l(tfVec.m_mutex);
+
+    tfVec_size = tfVec.size();
     for (i = 0; i < tfVec_size; i++)
     {
         if (tfVec[i].dst_frame_id == target_frame_id)
@@ -385,7 +402,7 @@ bool yarp::dev::FrameTransformClient::getDirectTransform(const std::string &targ
             else
             {
                 yarp::sig::Matrix m;
-                if (getDirectTransform(tfVec[i].src_frame_id, source_frame_id, m))
+                if (getChainedTransform(tfVec[i].src_frame_id, source_frame_id, m))
                 {
                     transform = m * tfVec[i].toMatrix();
                     return true;
@@ -396,16 +413,16 @@ bool yarp::dev::FrameTransformClient::getDirectTransform(const std::string &targ
     return false;
 }
 
-bool yarp::dev::FrameTransformClient::getTransform(const std::string &target_frame_id, const std::string &source_frame_id, yarp::sig::Matrix &transform)
+bool yarp::dev::FrameTransformClient::getTransform(const std::string& target_frame_id, const std::string& source_frame_id, yarp::sig::Matrix& transform)
 {
-    if (canDirectTransform(target_frame_id, source_frame_id))
+    if (canChainedTransform(target_frame_id, source_frame_id))
     {
-        return getDirectTransform(target_frame_id, source_frame_id, transform);
+        return getChainedTransform(target_frame_id, source_frame_id, transform);
     }
-    else if (canDirectTransform(source_frame_id, target_frame_id))
+    else if (canChainedTransform(source_frame_id, target_frame_id))
     {
         yarp::sig::Matrix m(4, 4);
-        getDirectTransform(source_frame_id, target_frame_id, m);
+        getChainedTransform(source_frame_id, target_frame_id, m);
         transform = yarp::math::SE3inv(m);
         return true;
     }
@@ -414,11 +431,12 @@ bool yarp::dev::FrameTransformClient::getTransform(const std::string &target_fra
     return false;
 }
 
-bool yarp::dev::FrameTransformClient::setTransform(const std::string &target_frame_id, const std::string &source_frame_id, const yarp::sig::Matrix &transform)
+bool yarp::dev::FrameTransformClient::setTransform(const std::string& target_frame_id, const std::string& source_frame_id, const yarp::sig::Matrix& transform)
 {
-    if (canTransform(target_frame_id, source_frame_id))
+
+    if (!canExplicitTransform(target_frame_id, source_frame_id) && canTransform(target_frame_id, source_frame_id))
     {
-        yError() << "FrameTransformClient::setTransform() such transform already exist, directly or by chaining transforms";
+        yError() << "FrameTransformClient::setTransform() such transform already exist by chaining transforms";
         return false;
     }
 
@@ -436,7 +454,7 @@ bool yarp::dev::FrameTransformClient::setTransform(const std::string &target_fra
     b.addVocab(VOCAB_TRANSFORM_SET);
     b.addString(source_frame_id);
     b.addString(target_frame_id);
-    b.addDouble(100.0); //transform lifetime
+    b.addDouble(1000.0); //transform lifetime
     b.addDouble(tf.translation.tX);
     b.addDouble(tf.translation.tY);
     b.addDouble(tf.translation.tZ);
@@ -465,13 +483,13 @@ bool yarp::dev::FrameTransformClient::setTransformStatic(const std::string &targ
 {
     if (canTransform(target_frame_id, source_frame_id))
     {
-        yError() << "FrameTransformClient::setTransform() such transform already exist, directly or by chaining transforms";
+        yError() << "FrameTransformClient::setTransform() such static transform already exist, directly or by chaining transforms";
         return false;
     }
 
     yarp::os::Bottle b;
     yarp::os::Bottle resp;
-    FrameTransform      tf;
+    FrameTransform   tf;
 
     if (!tf.fromMatrix(transform))
     {

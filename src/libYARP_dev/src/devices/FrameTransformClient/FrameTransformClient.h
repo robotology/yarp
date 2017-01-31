@@ -81,6 +81,12 @@ class yarp::dev::FrameTransformClient: public DeviceDriver,
                                   public IFrameTransform
 {
 #ifndef DOXYGEN_SHOULD_SKIP_THIS
+private:
+
+    bool canChainedTransform(const std::string &target_frame, const std::string &source_frame, std::string *error_msg=NULL) const;
+    bool canExplicitTransform(const std::string& target_frame_id, const std::string& source_frame_id) const;
+    bool getChainedTransform(const std::string &target_frame_id, const std::string &source_frame_id, yarp::sig::Matrix &transform) const;
+
 protected:
 
     yarp::os::Port                m_rpcPort;
@@ -92,9 +98,6 @@ protected:
 #endif /*DOXYGEN_SHOULD_SKIP_THIS*/
 
 public:
-
-    bool canDirectTransform(const std::string &target_frame, const std::string &source_frame, std::string *error_msg=NULL) const;
-    bool getDirectTransform(const std::string &target_frame_id, const std::string &source_frame_id, yarp::sig::Matrix &transform);
 
     /* DeviceDriver methods */
     bool open(yarp::os::Searchable& config);
