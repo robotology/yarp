@@ -34,7 +34,6 @@ public:
     void testRobotDescription()
     {
         report(0,"\ntest the RobotDescription client/server");
-        bool precision_verbose = false;
 
         PolyDriver ddserver;
         Property pserver_cfg;
