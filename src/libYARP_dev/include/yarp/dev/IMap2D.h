@@ -71,6 +71,8 @@ public:
 #define VOCAB_IMAP_GET_NAMES          VOCAB4('n','a','m','s')
 #define VOCAB_IMAP_CLEAR              VOCAB3('c','l','r')
 #define VOCAB_IMAP_REMOVE             VOCAB4('r','e','m','v')
+#define VOCAB_IMAP_LOAD_COLLECTION    VOCAB4('l','d','c','l')
+#define VOCAB_IMAP_SAVE_COLLECTION    VOCAB4('s','v','c','l')
 #define VOCAB_IMAP_OK                 VOCAB3('o','k','k')
 #define VOCAB_IMAP_ERROR              VOCAB3('e','r','r')
 

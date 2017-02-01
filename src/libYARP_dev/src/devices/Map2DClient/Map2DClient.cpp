@@ -171,7 +171,7 @@ bool yarp::dev::Map2DClient::get_map_names(std::vector<std::string>& map_names)
         }
         else
         {
-            for (size_t i = 1; i < resp.size(); i++)
+            for (int i = 1; i < resp.size(); i++)
             {
                 map_names.push_back(resp.get(i).asString());
             }

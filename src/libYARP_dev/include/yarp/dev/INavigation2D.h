@@ -25,7 +25,8 @@ namespace yarp {
             navigation_status_goal_reached          = VOCAB4('r', 'e', 'c', 'h'),
             navigation_status_aborted               = VOCAB4('a', 'b', 'r', 't'),
             navigation_status_paused                = VOCAB4('p', 'a', 'u', 's'),
-            navigation_status_thinking              = VOCAB4('t', 'h', 'n', 'k')
+            navigation_status_thinking              = VOCAB4('t', 'h', 'n', 'k'),
+            navigation_status_error                 = VOCAB3('e', 'r', 'r'),
         };
       }
 }

@@ -149,7 +149,7 @@ set(YARP_devices_SRCS   src/devices/AnalogWrapper/AnalogWrapper.cpp
                         src/devices/ControlBoardRemapper/RemoteControlBoardRemapper.cpp
                         src/devices/RobotDescriptionClient/RobotDescriptionClient.cpp
                         src/devices/RobotDescriptionServer/RobotDescriptionServer.cpp
-                        src/devices/JoypadControlServer/JoypadControlClient.cpp
+                        src/devices/JoypadControlClient/JoypadControlClient.cpp
                         src/devices/JoypadControlServer/JoypadControlServer.cpp
                         src/devices/Map2DClient/Map2DClient.cpp
                         src/devices/Map2DServer/Map2DServer.cpp)
