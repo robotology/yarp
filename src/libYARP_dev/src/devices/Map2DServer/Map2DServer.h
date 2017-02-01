@@ -23,6 +23,7 @@
 #include <yarp/os/RpcServer.h>
 #include <yarp/sig/Vector.h>
 #include <yarp/dev/MapGrid2D.h>
+#include <yarp/os/ResourceFinder.h>
 
 #include <yarp/dev/PolyDriver.h>
 #include <yarp/dev/DeviceDriver.h>
@@ -71,6 +72,7 @@ public:
 
 private:
 #ifndef DOXYGEN_SHOULD_SKIP_THIS
+    yarp::os::ResourceFinder     m_rf_mapCollection;
     yarp::os::Mutex              m_mutex;
     yarp::os::ConstString        m_rpcPortName;
     yarp::os::Node*              m_rosNode;

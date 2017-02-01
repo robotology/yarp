@@ -37,15 +37,15 @@ namespace yarp {
 *
 */
 
-class yarp::dev::Localization2DClient : public DeviceDriver/*,
-                                       public ILocalization2D*/
+class yarp::dev::Localization2DClient : public DeviceDriver,
+                                       public ILocalization2D
 {
 #ifndef DOXYGEN_SHOULD_SKIP_THIS
 protected:
     yarp::os::Mutex               m_mutex;
     yarp::os::Port                m_rpc_port_localization_server;
     yarp::os::ConstString         m_local_name;
-    yarp::os::ConstString         m_localization_server_name;
+    yarp::os::ConstString         m_remote_name;
     int                           m_period;
 
 #endif /*DOXYGEN_SHOULD_SKIP_THIS*/

@@ -22,10 +22,10 @@ using namespace yarp::sig;
 bool yarp::dev::Localization2DClient::open(yarp::os::Searchable &config)
 {
     m_local_name.clear();
-    m_localization_server_name.clear();
+    m_remote_name.clear();
 
     m_local_name           = config.find("local").asString().c_str();
-    m_localization_server_name = config.find("localization_server").asString().c_str();
+    m_remote_name = config.find("remote").asString().c_str();
 
     if (m_local_name == "")
     {
@@ -33,9 +33,9 @@ bool yarp::dev::Localization2DClient::open(yarp::os::Searchable &config)
         return false;
     }
 
-    if (m_localization_server_name == "")
+    if (m_remote_name == "")
     {
-        yError("Navigation2DClient::open() error you have to provide valid 'localization_server' param");
+        yError("Navigation2DClient::open() error you have to provide valid 'remote' param");
         return false;
     }
 
@@ -50,19 +50,19 @@ bool yarp::dev::Localization2DClient::open(yarp::os::Searchable &config)
     }
 
     ConstString
-            local_rpc_3,
-            remote_rpc_3,
+            local_rpc,
+            remote_rpc,
             remote_streaming_name,
             local_streaming_name;
 
-    local_rpc_3           = m_local_name           + "/localization/rpc";
-    remote_rpc_3          = m_localization_server_name + "/rpc";
-    remote_streaming_name = m_localization_server_name + "/stream:o";
-    local_streaming_name  = m_local_name           + "/stream:i";
+    local_rpc             = m_local_name  + "/localization/rpc";
+    remote_rpc            = m_remote_name + "/rpc";
+    remote_streaming_name = m_remote_name + "/stream:o";
+    local_streaming_name  = m_local_name  + "/stream:i";
 
-    if (!m_rpc_port_localization_server.open(local_rpc_3.c_str()))
+    if (!m_rpc_port_localization_server.open(local_rpc.c_str()))
     {
-        yError("Navigation2DClient::open() error could not open rpc port %s, check network", local_rpc_3.c_str());
+        yError("Navigation2DClient::open() error could not open rpc port %s, check network", local_rpc.c_str());
         return false;
     }
 
@@ -77,10 +77,10 @@ bool yarp::dev::Localization2DClient::open(yarp::os::Searchable &config)
 
     bool ok = true;
 
-    ok = Network::connect(local_rpc_3.c_str(), remote_rpc_3.c_str());
+    ok = Network::connect(local_rpc.c_str(), remote_rpc.c_str());
     if (!ok)
     {
-        yError("Navigation2DClient::open() error could not connect to %s", remote_rpc_3.c_str());
+        yError("Navigation2DClient::open() error could not connect to %s", remote_rpc.c_str());
         return false;
     }
 

@@ -107,7 +107,7 @@ bool Map2DServer::read(yarp::os::ConnectionReader& connection)
             {
                 out.clear();
                 out.addVocab(VOCAB_IMAP_ERROR);
-                yError() << "Map not found";
+                yError() << "Map" << name << "not found";
             }
         }
         else if (cmd == VOCAB_IMAP_GET_NAMES)
@@ -141,6 +141,36 @@ bool Map2DServer::read(yarp::os::ConnectionReader& connection)
             m_maps_storage.clear();
             out.clear();
             out.addVocab(VOCAB_IMAP_OK);
+        }
+        else if (cmd == VOCAB_IMAP_SAVE_COLLECTION)
+        {
+            string mapfile = in.get(2).asString();
+            if (saveMaps(mapfile))
+            {
+                out.clear();
+                out.addVocab(VOCAB_IMAP_OK);
+            }
+            else
+            {
+                yError("Map2DServer: Unable to save collection");
+                out.clear();
+                out.addVocab(VOCAB_IMAP_ERROR);
+            }
+        }
+        else if (cmd == VOCAB_IMAP_LOAD_COLLECTION)
+        {
+            string mapfile = in.get(2).asString();
+            if (loadMaps(mapfile))
+            {
+                out.clear();
+                out.addVocab(VOCAB_IMAP_OK);
+            }
+            else
+            {
+                yError("Map2DServer: Unable to load collection");
+                out.clear();
+                out.addVocab(VOCAB_IMAP_ERROR);
+            }
         }
         else
         {
@@ -195,11 +225,12 @@ bool Map2DServer::saveMaps(std::string mapsfile)
 
 bool Map2DServer::loadMaps(std::string mapsfile)
 {
+    bool ret = true;
     std::ifstream file;
     file.open(mapsfile.c_str());
     if (!file.is_open())
     {
-        yError() << "sorry unable to open" << mapsfile;
+        yError() << "Map2DServer::loadMaps() Unable to open:" << mapsfile;
         return false;
     }
     while (!file.eof())
@@ -213,8 +244,9 @@ bool Map2DServer::loadMaps(std::string mapsfile)
         {
             string mapfilename;
             iss >> mapfilename;
+            string mapfilenameWithPath = m_rf_mapCollection.findFile(mapfilename.c_str());
             yarp::dev::MapGrid2D map;
-            bool r = map.loadFromFile(mapfilename);
+            bool r = map.loadFromFile(mapfilenameWithPath);
             if (r)
             { 
                 string map_name= map.getMapName();
@@ -226,16 +258,19 @@ bool Map2DServer::loadMaps(std::string mapsfile)
                 else
                 {
                     yError() << "A map with the same name '" << map_name << "'was found, skipping...";
+                    ret = false;
                 }
             }
             else
             {
-                yError() << "Problems opening map file" << mapfilename;
+                yError() << "Problems opening map file" << mapfilenameWithPath;
+                ret = false;
             }
         }
         else
         {
             yError() << "Invalid syntax, missing mapfile tag";
+            ret = false;
         }
     }
     file.close();
@@ -244,21 +279,24 @@ bool Map2DServer::loadMaps(std::string mapsfile)
 
 bool Map2DServer::open(yarp::os::Searchable &config)
 {
-    yarp::os::Value d;
-    d.fromString("1.1");
-    if (d.asDouble() == 1.1)
-    {
-        bool s = true;
-    }
-
     Property params;
     params.fromString(config.toString().c_str());
 
     if (config.check("mapCollection"))
     {
-        loadMaps(config.find("mapCollection").asString());
+        string collection_name= config.find("mapCollection").asString();
+        m_rf_mapCollection.setDefaultContext(collection_name.c_str());
+        string collection_file = m_rf_mapCollection.findFile("maps_collection.ini");
+        if (loadMaps(collection_file))
+        {
+            yInfo() << "Map collection:" << collection_file << "succesfully loaded";
+        }
+        else
+        {
+            yError() << "Unable to load map collection file:" << collection_file;
+            return false;
+        }
     }
-
 
     std::string name;
     if (!config.check("name"))
