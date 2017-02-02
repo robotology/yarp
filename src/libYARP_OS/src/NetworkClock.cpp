@@ -96,8 +96,6 @@ bool NetworkClock::open(const ConstString &clockSource_portName)
 
 double NetworkClock::now()
 {
-    yTrace(" - initted is  %d\n", initted);
-
     timeMutex.lock();
     double result = t;
     timeMutex.unlock();
@@ -147,7 +145,6 @@ bool NetworkClock::read(ConnectionReader &reader)
     Bottle bot;
     bool ok = bot.read(reader);
 
-    yInfo("read %s\n", bot.toString().c_str());
     if (!ok)
     {
         yError() << "Error reading clock port";

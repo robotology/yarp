@@ -225,7 +225,7 @@ void Time::useSystemClock()
 void Time::useNetworkClock(const ConstString &clock)
 {
     // re-create the clock also in case we already use a network clock, because
-    // the clock port may be different or the clock producer may be changed
+    // the input clock port may be different or the clock producer may be changed
     // so we need to reconnect. (Using persistant connection this may not be required).
     network_clock_name = new ConstString(clock);
     removeClock();
