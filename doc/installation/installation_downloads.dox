@@ -7,13 +7,63 @@
 /**
 * @page installation_downloads Downloads
 
-Latest source release:
+\tableofcontents
+
+Latest YARP release is:
+
  + 2016/11/28: YARP 2.3.68
 
-Latest binary release:
- + 2016/06/01: YARP 2.3.66
+\section download_source_code Source Code
 
-Previous releases:
+Latest release can be downloaded from here:
+
+ + https://github.com/robotology/yarp/archive/v2.3.68.tar.gz
+ + https://github.com/robotology/yarp/archive/v2.3.68.zip
+
+\section download_binary Binary releases
+
+\subsection download_windows Windows
+
+\remark Important: to develop code using precompiled binaries packages have to
+        match the compiler you use, make sure you download and install the
+        correct version (i.e. MSVC12 for Visual Studio 2013, etc..).
+        If in doubt about the version number of your copy of Visual Studio, find
+        the internal version number shown for it in this
+        [version history table](http://en.wikipedia.org/wiki/Microsoft_Visual_Studio#History).
+
+__Installers__:
+
+ + [MSVC10 x86] (https://github.com/robotology/yarp/releases/download/v2.3.68/yarp_2.3.68_v10_x86_1.exe)
+ + [MSVC11 x86] (https://github.com/robotology/yarp/releases/download/v2.3.68/yarp_2.3.68_v11_x86_1.exe), [MSVC11 amd64] (https://github.com/robotology/yarp/releases/download/v2.3.68/yarp_2.3.68_v11_x86_amd64_1.exe)
+ + [MSVC12 x86] (https://github.com/robotology/yarp/releases/download/v2.3.68/yarp_2.3.68_v12_x86_1.exe), [MSVC12 amd64] (https://github.com/robotology/yarp/releases/download/v2.3.68/yarp_2.3.68_v12_x86_amd64_1.exe)
+
+
+\subsection download_linux Linux (Debian/Ubuntu)
+
+The easiest way to install YARP from binaries is through aptitude as explained in \ref install_on_linux.
+
+Individual .deb packages can also be downloaded from [GitHub](https://github.com/robotology/yarp/releases)
+
+
+\subsection download_macOS macOS
+
+The easiest way to install YARP from binaries is through brew as explained in \ref install_yarp_mac.
+
+Brew bottles can also be downloaded from [GitHub](https://github.com/robotology/yarp/releases)
+
+
+\section download_previous_releases Previous releases
+
+Previous versions are hosted on
+
+ + [GitHub](https://github.com/robotology/yarp/releases)
+ + [SourceForge](https://sourceforge.net/projects/yarp0/files/yarp2/) (2.3.63 and older)
+
+__Previous releases version and dates__:
+
+ + 2016-11-28: YARP 2.3.66.2
+ + 2016-10-20: YARP 2.3.66.1
+ + 2016/06/01: YARP 2.3.66
  + 2016/05/13: YARP 2.3.65
  + 2015/06/15: YARP 2.3.64
  + 2014/07/14: YARP 2.3.63
@@ -26,34 +76,5 @@ Previous releases:
  + 2012/11/23: YARP 2.3.20
  + 2012/07/05: YARP 2.3.19
 
-\section download_source_code Source Code
-
-__Sources for all versions__: https://github.com/robotology/yarp/archive/v2.3.68.zip
-
-\section download_windows Windows
-
-\remark Important: to develop code using precompiled binaries packages have to
-        match the compiler you use, make sure you download and install the
-        correct version (i.e. MSVC12 for Visual Studio 2013, etc..).
-        If in doubt about the version number of your copy of Visual Studio, find
-        the internal version number shown for it in this
-        [version history table](http://en.wikipedia.org/wiki/Microsoft_Visual_Studio#History).
-
-__Installers__:
-
- \li [MSVC10 x86] (https://github.com/robotology/yarp/releases/download/v2.3.68/yarp_2.3.68_v10_x86_1.exe)
- \li [MSVC11 x86] (https://github.com/robotology/yarp/releases/download/v2.3.68/yarp_2.3.68_v11_x86_1.exe), [MSVC11 amd64] (https://github.com/robotology/yarp/releases/download/v2.3.68/yarp_2.3.68_v11_x86_amd64_1.exe)
- \li [MSVC12 x86] (https://github.com/robotology/yarp/releases/download/v2.3.68/yarp_2.3.68_v12_x86_1.exe), [MSVC12 amd64] (https://github.com/robotology/yarp/releases/download/v2.3.68/yarp_2.3.68_v12_x86_amd64_1.exe)
-
-
-__Previous versions__: previous versions are hosted on sourceforge https://sourceforge.net/projects/yarp0/files/yarp2/ and Github https://github.com/robotology/yarp/releases
-
-\section download_linux Linux
-
-The easiest way to install YARP from binaries is through aptitude as explained in \ref install_on_linux.
-
-In this page we provide individual packages for download, source packages and .deb files. You can download individual .deb packages from sourceforge:
-
-YARP: https://github.com/robotology/yarp/releases
 
 */
