@@ -26,7 +26,7 @@ Previous releases:
  + 2012/11/23: YARP 2.3.20
  + 2012/07/05: YARP 2.3.19
 
-\section download_windows Source Code
+\section download_source_code Source Code
 
 __Sources for all versions__: https://github.com/robotology/yarp/archive/v2.3.68.zip
 
@@ -41,9 +41,9 @@ __Sources for all versions__: https://github.com/robotology/yarp/archive/v2.3.68
 
 __Installers__:
 
- \li [MSVC10 x86] (https://github.com/robotology/yarp/releases/download/v2.3.66/yarp_2.3.66_v10_x86_1.exe), [MSVC10 amd64] (https://github.com/robotology/yarp/releases/download/v2.3.66/yarp_2.3.66_v10_x86_amd64_1.exe)
- \li [MSVC11 x86] (https://github.com/robotology/yarp/releases/download/v2.3.66/yarp_2.3.66_v11_x86_1.exe), [MSVC11 amd64] (https://github.com/robotology/yarp/releases/download/v2.3.66/yarp_2.3.66_v11_x86_amd64_1.exe)
- \li [MSVC12 x86] (https://github.com/robotology/yarp/releases/download/v2.3.66/yarp_2.3.66_v12_x86_1.exe), [MSVC12 amd64] (https://github.com/robotology/yarp/releases/download/v2.3.66/yarp_2.3.66_v12_x86_amd64_1.exe)
+ \li [MSVC10 x86] (https://github.com/robotology/yarp/releases/download/v2.3.68/yarp_2.3.68_v10_x86_1.exe)
+ \li [MSVC11 x86] (https://github.com/robotology/yarp/releases/download/v2.3.68/yarp_2.3.68_v11_x86_1.exe), [MSVC11 amd64] (https://github.com/robotology/yarp/releases/download/v2.3.68/yarp_2.3.68_v11_x86_amd64_1.exe)
+ \li [MSVC12 x86] (https://github.com/robotology/yarp/releases/download/v2.3.68/yarp_2.3.68_v12_x86_1.exe), [MSVC12 amd64] (https://github.com/robotology/yarp/releases/download/v2.3.68/yarp_2.3.68_v12_x86_amd64_1.exe)
 
 
 __Previous versions__: previous versions are hosted on sourceforge https://sourceforge.net/projects/yarp0/files/yarp2/ and Github https://github.com/robotology/yarp/releases
