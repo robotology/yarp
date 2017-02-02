@@ -799,12 +799,12 @@ bool RGBDSensorWrapper::writeData()
     static Stamp oldColorStamp = Stamp(0, 0);
     static Stamp oldDepthStamp = Stamp(0, 0);
 
-    if (colorStamp.getTime() - oldColorStamp.getTime() > 0 == false)
+    if (((colorStamp.getTime() - oldColorStamp.getTime()) > 0) == false)
     {
         return true;
     }
 
-    if (depthStamp.getTime() - oldDepthStamp.getTime() > 0 == false)
+    if (((depthStamp.getTime() - oldDepthStamp.getTime()) > 0) == false)
     {
         return true;
     }

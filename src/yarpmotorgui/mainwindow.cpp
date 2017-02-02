@@ -426,7 +426,6 @@ bool MainWindow::init(QStringList enabledParts,
         size_t b1 = ss.find('/');
         size_t b2 = ss.find('/', b1 + 1);
         std::string cur_robot_name = ss.substr(b1, b2 - b1);
-        bool found = false;
         auto it = robots.find(cur_robot_name);
         if (it == robots.end())
         {
@@ -515,7 +514,7 @@ bool MainWindow::init(QStringList enabledParts,
         }
     }
 
-    if(errorCount == parts.size())
+    if((unsigned int)errorCount == parts.size())
     {
         return false;
     }
