@@ -7,7 +7,7 @@
 # Once done this will define the following variables::
 #
 #   ZFP_INCLUDE_DIRS    - ZFP include directory
-#   ZFP_LIBRARIES       - ZFP libraries 
+#   ZFP_LIBRARIES       - ZFP libraries
 #   ZFP_FOUND           - if false, you cannot build anything that requires ZFP
 
 #=============================================================================
@@ -38,7 +38,7 @@ find_library(ZFP_LIBRARY_RELEASE
 find_library(ZFP_LIBRARY_DEBUG
              NAMES ZFPd zfpd
              PATHS $ENV{ZFP_ROOT}/lib
-             DOC "ZFP library file (debug version)") 
+             DOC "ZFP library file (debug version)")
 
 mark_as_advanced(ZFP_INCLUDE_DIR
                  ZFP_LIBRARY_RELEASE
@@ -47,7 +47,7 @@ mark_as_advanced(ZFP_INCLUDE_DIR
 select_library_configurations(ZFP)
 
 set(ZFP_LIBRARIES ${ZFP_LIBRARY})
-set(ZFP_INCLUDE_DIRS ${ZFP_INCLUDE_DIR}) 
+set(ZFP_INCLUDE_DIRS ${ZFP_INCLUDE_DIR})
 
 find_package_handle_standard_args(ZFP
                                   FOUND_VAR ZFP_FOUND

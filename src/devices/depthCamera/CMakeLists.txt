@@ -3,14 +3,6 @@
 # email:   andrea.ruzzenenti@iit.it
 # CopyPolicy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
 
-find_path(OpenNI2_INCLUDE_LOCAL NAMES OpenNI.h HINTS $ENV{OpenNI2_DIR}/Include  $ENV{OpenNI2_DIR}/include $ENV{OPENNI2_INCLUDE} /usr/include/openni2)
-find_library(OpenNI2_LIBRARY NAMES OpenNI2 libOpenNI2 HINTS $ENV{OpenNI2_DIR}/Lib $ENV{OpenNI2_DIR}/lib $ENV{OpenNI2_DIR}/Redist $ENV{OpenNI2_DIR}/redist $ENV{OPENNI2_REDIST})
-if(OpenNI2_INCLUDE_LOCAL AND OpenNI2_LIBRARY)
-  set(OpenNI2_FOUND TRUE)
-else()
-  set(OpenNI2_FOUND FALSE)
-endif()
-
 
 yarp_prepare_plugin(depthCamera
                     CATEGORY             device
@@ -32,9 +24,14 @@ if(ENABLE_depthCamera)
                       ${YARP_sig_INCLUDE_DIRS}
                       ${YARP_dev_INCLUDE_DIRS})
 
-  yarp_add_plugin(yarp_depthCamera depthCameraDriver.cpp depthCameraDriver.h depthCameraImpl.hpp)
-  
-  target_link_libraries(yarp_depthCamera YARP_OS YARP_sig YARP_dev ${OpenNI2_LIBRARY})
+  yarp_add_plugin(yarp_depthCamera depthCameraDriver.cpp
+                                   depthCameraDriver.h
+                                   depthCameraImpl.hpp)
+
+  target_link_libraries(yarp_depthCamera YARP_OS
+                                         YARP_sig
+                                         YARP_dev
+                                         ${OpenNI2_LIBRARY})
 
   yarp_install(TARGETS     yarp_depthCamera
                EXPORT      YARP

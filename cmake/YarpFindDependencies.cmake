@@ -418,6 +418,10 @@ checkandset_dependency(Stage)
 find_package(ZFP QUIET)
 checkandset_dependency(ZFP)
 
+find_package(OpenNI2 QUIET)
+checkandset_dependency(OpenNI2)
+
+
 # PRINT DEPENDENCIES STATUS:
 
 message(STATUS "I have found the following libraries:")
@@ -449,6 +453,7 @@ print_dependency(NVIDIACg)
 print_dependency(Libusb1)
 print_dependency(Stage)
 print_dependency(ZFP)
+print_dependency(OpenNI2)
 
 
 # CHECK DEPENDENCIES:
