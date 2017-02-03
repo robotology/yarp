@@ -24,25 +24,27 @@
 LogTab::LogTab(yarp::yarpLogger::LoggerEngine*  _theLogger, MessageWidget* _system_message, std::string _portName, QWidget *parent, int refreshRate) :
     QFrame(parent),
     ui(new Ui::LogTab),
-    toggleLineExpansion(false)
+    portName(_portName),
+    theLogger(_theLogger),
+    system_message(_system_message),
+    displayYarprunTimestamp_enabled(true),
+    displayLocalTimestamp_enabled(true),
+    displayErrorLevel_enabled(true),
+    displayColors_enabled(true),
+    displayGrid_enabled(true),
+    toggleLineExpansion(false),
+    logTimer(new QTimer(this)),
+    model_logs(new QStandardItemModel()),
+    proxyModelButtons(new LogSortFilterProxyModel(this)),
+    proxyModelSearch(new LogSortFilterProxyModel(this)),
+    clipboard(QApplication::clipboard())
 {
-    system_message = _system_message;
-    theLogger= _theLogger;
-    portName =_portName;
-    displayYarprunTimestamp_enabled=true;
-    displayLocalTimestamp_enabled=true;
-    displayColors_enabled=true;
-    displayGrid_enabled=true;
-    displayErrorLevel_enabled=true;
     ui->setupUi(this);
-    model_logs = new QStandardItemModel();
-    proxyModelButtons = new LogSortFilterProxyModel(this);
-    proxyModelSearch = new LogSortFilterProxyModel(this);
 #define USE_FILTERS 1
 #if USE_FILTERS
     proxyModelButtons->setSourceModel(model_logs);
     proxyModelSearch->setSourceModel(proxyModelButtons);
-    proxyModelSearch->setFilterKeyColumn(-1); 
+    proxyModelSearch->setFilterKeyColumn(-1);
     ui->listView->setModel(proxyModelSearch);
 #else
     ui->listView->setModel(model_logs);
@@ -51,7 +53,6 @@ LogTab::LogTab(yarp::yarpLogger::LoggerEngine*  _theLogger, MessageWidget* _syst
     ui->listView->setSelectionBehavior(QAbstractItemView::SelectRows);
     ui->listView->setAutoScroll(true);
 
-    logTimer = new QTimer(this);
     connect(logTimer, SIGNAL(timeout()), this, SLOT(updateLog()));
     logTimer->start(refreshRate);
 
@@ -69,8 +70,7 @@ LogTab::LogTab(yarp::yarpLogger::LoggerEngine*  _theLogger, MessageWidget* _syst
 
     const QFont fixedFont = QFontDatabase::systemFont(QFontDatabase::FixedFont);
     ui->listView->setFont(fixedFont);
-    
-    clipboard=QApplication::clipboard();
+
     connect(ui->listView, SIGNAL(customContextMenuRequested(const QPoint &)), this, SLOT(ctxMenu(const QPoint &)));
     connect(ui->listView, SIGNAL(doubleClicked(const QModelIndex &)), this, SLOT(expandLines()));
 
