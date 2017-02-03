@@ -29,11 +29,12 @@ public:
     virtual bool setup(int argc, char** argv);
     virtual bool check();
     virtual void tearDown();
-    bool scanPlugins(yarp::os::ConstString name);
 private:
     yarp::os::Bottle devices;
     yarp::os::Bottle plugins;
+    yarp::os::Bottle portmonitors;
     yarp::os::Bottle carriers;
+    bool scanPlugins(yarp::os::ConstString name, yarp::os::ConstString type="");
 };
 
 #endif // YARP_RTF_PLUGINS_YARPPLUGIN_YARPPLUGINFIXTURE_H
