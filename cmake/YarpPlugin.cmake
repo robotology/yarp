@@ -494,11 +494,11 @@ macro(YARP_END_PLUGIN_LIBRARY bundle_name)
   if(NOT "${bundle_name}" STREQUAL "${X_YARP_PLUGIN_MASTER}")
     # If we are nested inside a larger plugin block, we don't
     # have to do anything.
-    if (NOT _YEPL_QUIET)
+    if (NOT _YEPL_QUIET AND NOT YarpPlugin_QUIET)
       message(STATUS "ending nested plugin library ${bundle_name}")
     endif()
   else()
-    if (NOT _YEPL_QUIET)
+    if (NOT _YEPL_QUIET AND NOT YarpPlugin_QUIET)
       message(STATUS "ending plugin library: ${bundle_name}")
     endif()
     # generate code to call all plugin initializers
