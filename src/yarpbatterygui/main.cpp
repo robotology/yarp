@@ -90,6 +90,7 @@ int main(int argc, char *argv[])
     if (!drv || !(drv->isValid()))
     {
         yError("Problems instantiating the device driver");
+        delete drv;
         return false;
     }
 
@@ -97,6 +98,8 @@ int main(int argc, char *argv[])
     if (ibat == 0)
     {
         yError("Problems viewing the battery interface");
+        drv->close();
+        delete drv;
         return false;
     }
 
