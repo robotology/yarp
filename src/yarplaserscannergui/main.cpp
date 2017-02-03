@@ -148,12 +148,12 @@ void drawNav(const yarp::os::Bottle *display, IplImage *img, double scale)
         return;
     }
     double c0 = display->get(0).asDouble();
-    double c1 = display->get(1).asDouble();
-    double c2 = display->get(2).asDouble();
+//     double c1 = display->get(1).asDouble();
+//     double c2 = display->get(2).asDouble();
     double angle_f = display->get(3).asDouble();
-    double angle_t = display->get(4).asDouble();
-    double w_f = display->get(5).asDouble();
-    double w_t = display->get(6).asDouble();
+//     double angle_t = display->get(4).asDouble();
+//     double w_f = display->get(5).asDouble();
+//     double w_t = display->get(6).asDouble();
     double max_obs_dist = display->get(7).asDouble();
     double angle_g = display->get(8).asDouble();
 
@@ -197,7 +197,6 @@ void drawLaser(const Vector *comp, vector<yarp::dev::LaserMeasurementData> *las,
     center.x = (int)(img->width / 2 + (sens_position*scale)*sin(center_angle / 180 * M_PI));
     center.y = (int)(img->height / 2 - (sens_position*scale)*cos(center_angle / 180 * M_PI));
 
-    double length = 0;
     static double old_time = 0;
 
     if (las==NULL || comp==NULL)
@@ -259,23 +258,22 @@ int main(int argc, char *argv[])
 {
     Network yarp;
 
-    ResourceFinder *finder=0;
-    finder = new ResourceFinder;
+    ResourceFinder rf;
 
     //retrieve information for the list of parts
-    finder->setVerbose();
-    finder->setDefaultConfigFile("yarplaserscannergui.ini");
-    finder->configure(argc, argv);
+    rf.setVerbose();
+    rf.setDefaultConfigFile("yarplaserscannergui.ini");
+    rf.configure(argc, argv);
 
-    double scale = finder->check("scale", Value(100), "global scale factor").asDouble();
-    double robot_radius = finder->check("robot_radius", Value(0.001), "robot radius [m]").asDouble();
-    double sens_position = finder->check("sens_position", Value(0), "sens_position [m]").asDouble();
-    bool verbose = finder->check("verbose", Value(false), "verbose [0/1]").asBool();
-    bool absolute = finder->check("absolute", Value(false), "absolute [0/1]").asBool();
-    bool compass = finder->check("compass", Value(true), "compass [0/1]").asBool();
-    int period = finder->check("rate",Value(50),"period [ms]").asInt(); //ms
-    int aspect = finder->check("aspect", Value(0), "0 draw lines, 1 draw points").asInt(); //ms
-    string laserport = finder->check("sens_port", Value("/laser:o"), "laser port name").asString();
+    double scale = rf.check("scale", Value(100), "global scale factor").asDouble();
+    double robot_radius = rf.check("robot_radius", Value(0.001), "robot radius [m]").asDouble();
+    double sens_position = rf.check("sens_position", Value(0), "sens_position [m]").asDouble();
+    bool verbose = rf.check("verbose", Value(false), "verbose [0/1]").asBool();
+    bool absolute = rf.check("absolute", Value(false), "absolute [0/1]").asBool();
+    bool compass = rf.check("compass", Value(true), "compass [0/1]").asBool();
+    int period = rf.check("rate",Value(50),"period [ms]").asInt(); //ms
+    int aspect = rf.check("aspect", Value(0), "0 draw lines, 1 draw points").asInt(); //ms
+    string laserport = rf.check("sens_port", Value("/laser:o"), "laser port name").asString();
 
     string laser_map_port_name;
     laser_map_port_name = "/laserScannerGui/laser_map:i";
@@ -297,13 +295,15 @@ int main(int argc, char *argv[])
     if (!b)
     {
         yError() << "Unable to open polydriver";
+        delete drv;
         return 0;
     }
     yarp::dev::IRangefinder2D* iLas = 0;
     drv->view(iLas);
     if (iLas == 0)
     {
-        yError() << "Unable to IRangefinder2D interface";
+        yError() << "Unable to get IRangefinder2D interface";
+        delete drv;
         return 0;
     }
 
@@ -470,5 +470,4 @@ int main(int argc, char *argv[])
     cvDestroyAllWindows();
     cvReleaseImage(&img);
     if (drv) delete drv;
-    if (finder) delete finder;
 }
