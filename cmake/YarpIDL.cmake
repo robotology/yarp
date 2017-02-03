@@ -153,8 +153,6 @@ function(YARP_IDL_TO_DIR yarpidl_file_base output_dir)
   else()
     if(files_missing)
       message(FATAL_ERROR "Generated IDL files for ${yarpidl_file} not found and cannot make them because ALLOW_IDL_GENERATION=${ALLOW_IDL_GENERATION} (maybe this should be turned on?)")
-    else()
-      message(STATUS "Not processing ${family} file ${yarpidl_file}, ALLOW_IDL_GENERATION=${ALLOW_IDL_GENERATION}")
     endif()
   endif(ALLOW_IDL_GENERATION)
 
