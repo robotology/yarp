@@ -108,6 +108,7 @@ int main(int argc, char *argv[])
     {
         yInfo("Closing Battery Interface");
         drv->close();
+        delete drv;
     }
 
     return ret;

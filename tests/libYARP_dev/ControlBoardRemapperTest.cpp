@@ -237,6 +237,46 @@ public:
             checkTrue(result, "controlboardwrapper2 attached successfully to the device");
         }
 
+        // Create a list containing all the fake controlboards
+        yarp::dev::PolyDriverList fmcList;
+
+        for(int i=0; i < 3; i++)
+        {
+            fmcList.push(fmcbs[i],fmcbsNames[i].c_str());
+        }
+
+        // Open a controlboardremapper with the wrong axisName,
+        // and make sure that if fails during attachAll
+        PolyDriver ddRemapperWN;
+        Property pRemapperWN;
+        pRemapperWN.put("device","controlboardremapper");
+        pRemapperWN.addGroup("axesNames");
+        Bottle & axesListWN = pRemapperWN.findGroup("axesNames").addList();
+        axesListWN.addString("axisA1");
+        axesListWN.addString("axisB1");
+        axesListWN.addString("axisC1");
+        axesListWN.addString("axisB3");
+        axesListWN.addString("axisC3");
+        axesListWN.addString("axisA2");
+        axesListWN.addString("thisIsAnAxisNameThatDoNotExist");
+
+
+        bool ok = ddRemapperWN.open(pRemapperWN);
+        checkTrue(ok,"controlboardremapper with wrong names open reported successful");
+
+        yarp::dev::IMultipleWrapper *imultwrapWN = 0;
+        ok = ddRemapperWN.view(imultwrapWN);
+        checkTrue(ok, "interface for multiple wrapper with wrong names correctly opened");
+
+
+        ok = imultwrapWN->attachAll(fmcList);
+        checkFalse(ok, "attachAll for controlboardremapper with wrong names successful");
+
+        // Make sure that a controlboard in which attachAll is not successfull
+        // closes correctly
+        ok = ddRemapperWN.close();
+        checkTrue(ok,"controlboardremapper with wrong names close was successful");
+
         // Open the controlboardremapper
         PolyDriver ddRemapper;
         Property pRemapper;
@@ -251,24 +291,16 @@ public:
         axesList.addString("axisA2");
         size_t nrOfRemappedAxes = 6;
 
-        bool ok = ddRemapper.open(pRemapper);
+        ok = ddRemapper.open(pRemapper);
         checkTrue(ok,"controlboardremapper open reported successful");
-
-        // Attach the fake motion boards to the remapper
-        yarp::dev::PolyDriverList fmcList;
-
-        for(int i=0; i < 3; i++)
-        {
-            fmcList.push(fmcbs[i],fmcbsNames[i].c_str());
-        }
 
         yarp::dev::IMultipleWrapper *imultwrap = 0;
         ok = ddRemapper.view(imultwrap);
         checkTrue(ok, "interface for multiple wrapper correctly opened");
 
         ok = imultwrap->attachAll(fmcList);
-
         checkTrue(ok, "attachAll for controlboardremapper successful");
+
 
         // Test the controlboardremapper
         checkRemapper(ddRemapper,200,nrOfRemappedAxes);
@@ -314,7 +346,6 @@ public:
             wrappers[i]->close();
             delete wrappers[i];
             wrappers[i] = 0;
-
             fmcbs[i]->close();
             delete fmcbs[i];
             fmcbs[i] = 0;
