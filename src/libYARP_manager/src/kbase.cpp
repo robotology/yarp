@@ -1112,6 +1112,7 @@ bool KnowledgeBase::updateModule(Module* module, ModuleInterface* imod )
     if(strlen(imod->getEnvironment()))
         module->setEnvironment(imod->getEnvironment());
     module->setPostExecWait(imod->getPostExecWait());
+    module->setPostStopWait(imod->getPostStopWait());
     module->setModelBase(imod->getModelBase());
 
 

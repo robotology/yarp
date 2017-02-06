@@ -172,8 +172,11 @@ public:
     bool addResource(GenericResource& res);
     bool removeResource(GenericResource& res);
 
-    void setPostExecWait(double t) { wait = t; }
-    double getPostExecWait() { return wait; }
+    void setPostExecWait(double t) { waitStart = t; }
+    double getPostExecWait() { return waitStart; }
+    void setPostStopWait(double t) { waitStop = t; }
+    double getPostStopWait() { return waitStop; }
+
 
     void clearInputs(void) { inputs.clear(); }
     void clearOutputs(void) { outputs.clear(); }
@@ -217,7 +220,8 @@ private:
     string strPrefix;
     string strEnvironment;
     string strBasePrefix;
-    double wait;
+    double waitStart;
+    double waitStop;
     string strDisplay;
     GraphicModel modelBase;
 

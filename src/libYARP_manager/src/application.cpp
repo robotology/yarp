@@ -30,7 +30,8 @@ ModuleInterface::ModuleInterface(Module* module)
     iRank = module->iRank;
     strTag = module->getLabel();
     strDisplay = module->getDisplay();
-    wait = module->getPostExecWait();
+    waitStart = module->getPostExecWait();
+    waitStop = module->getPostStopWait();
     if(module->getModel())
         modelBase = *module->getModel();
     else

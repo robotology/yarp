@@ -382,8 +382,23 @@ Application* XmlAppLoader::parsXml(const char* szFile)
                     {
                         if(compareString(res->Value(), "wait"))
                         {
-                            if(res->GetText())
-                                module.setPostExecWait(atof(res->GetText()));
+                            if (res->Attribute("when") && compareString(res->Attribute("when"), "start")) {
+                                if (res->GetText())
+                                    module.setPostExecWait(atof(res->GetText()));
+                            }
+                            else if (res->Attribute("when") && compareString(res->Attribute("when"), "stop")) {
+                                if (res->GetText())
+                                    module.setPostStopWait(atof(res->GetText()));
+                            }
+                            else if (res->Attribute("when") && strlen(res->Attribute("when"))) {
+                                OSTRINGSTREAM war;
+                                war << "Unrecognized value for 'when' property from " << szFile << " at line "<< res->Row() << ".";
+                                logger->addWarning(war);
+                            }
+                            else {  // if "when" has not been specified, use setPostExecWait!
+                                if (res->GetText())
+                                    module.setPostExecWait(atof(res->GetText()));
+                            }
                         }
                         else
                         {
