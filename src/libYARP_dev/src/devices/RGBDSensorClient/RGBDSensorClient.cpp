@@ -4,10 +4,10 @@
  * CopyPolicy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
  */
 
-#include <yarp/os/Portable.h>
-#include <yarp/os/LogStream.h>
 #include "RGBDSensorClient.h"
 #include "RGBDSensorClient_StreamingMsgParser.h"
+#include <yarp/os/Portable.h>
+#include <yarp/os/LogStream.h>
 
 using namespace yarp::os;
 using namespace yarp::sig;

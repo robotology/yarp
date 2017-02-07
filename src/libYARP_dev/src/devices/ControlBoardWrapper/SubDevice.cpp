@@ -4,10 +4,10 @@
  * CopyPolicy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
  */
 
+#include "SubDevice.h"
 #include "ControlBoardWrapper.h"
 #include "StreamingMessagesParser.h"
 #include "RPCMessagesParser.h"
-#include "SubDevice.h"
 #include <iostream>
 #include <yarp/os/Log.h>
 #include <yarp/os/LogStream.h>

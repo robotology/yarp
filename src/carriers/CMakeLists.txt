@@ -19,7 +19,9 @@ yarp_begin_plugin_library(yarpcar)
   add_subdirectory(portmonitor_carrier)
   add_subdirectory(depth_image_portmonitor)
   add_subdirectory(zfp_portmonitor)
-  yarp_end_plugin_library(yarpcar)
+yarp_end_plugin_library(yarpcar)
+add_library(YARP::yarpcar ALIAS yarpcar)
+
 install(TARGETS yarpcar
         EXPORT YARP
         COMPONENT runtime

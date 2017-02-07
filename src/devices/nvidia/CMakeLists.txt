@@ -26,9 +26,9 @@ if(NOT SKIP_nvidia)
                               NVIDIADeviceDriver.h
                               FBO_Filter.h)
 
-  target_link_libraries(yarp_nvidia YARP_OS
-                                    YARP_sig
-                                    YARP_dev
+  target_link_libraries(yarp_nvidia YARP::YARP_OS
+                                    YARP::YARP_sig
+                                    YARP::YARP_dev
                                     ${NVIDIACg_LIBRARIES})
   yarp_install(TARGETS yarp_nvidia
                EXPORT YARP

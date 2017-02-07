@@ -9,6 +9,7 @@ include_directories(${YARP_OS_INCLUDE_DIRS})
 include_directories(SYSTEM ${ACE_INCLUDE_DIRS})
 
 add_executable(yarprun yarprun.cpp)
-target_link_libraries(yarprun YARP_OS YARP_init)
+target_link_libraries(yarprun YARP::YARP_OS
+                              YARP::YARP_init)
 
 install(TARGETS yarprun COMPONENT utilities DESTINATION ${CMAKE_INSTALL_BINDIR})

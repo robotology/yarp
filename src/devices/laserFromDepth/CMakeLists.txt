@@ -17,10 +17,10 @@ if(NOT SKIP_laserFromDepth)
                       ${YARP_dev_INCLUDE_DIRS})
 
   yarp_add_plugin(laserFromDepth laserFromDepth.h
-                          laserFromDepth.cpp)
-  target_link_libraries(laserFromDepth YARP_OS
-                                YARP_sig
-                                YARP_dev)
+                                 laserFromDepth.cpp)
+  target_link_libraries(laserFromDepth YARP::YARP_OS
+                                       YARP::YARP_sig
+                                       YARP::YARP_dev)
   yarp_install(TARGETS laserFromDepth
                EXPORT YARP
                COMPONENT runtime

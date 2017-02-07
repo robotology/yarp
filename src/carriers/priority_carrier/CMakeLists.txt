@@ -26,10 +26,10 @@ if(NOT SKIP_priority)
 
   yarp_add_plugin(yarp_priority PriorityCarrier.h
                                 PriorityCarrier.cpp)
-  target_link_libraries(yarp_priority YARP_OS
-                                      YARP_sig)
+  target_link_libraries(yarp_priority YARP::YARP_OS
+                                      YARP::YARP_sig)
   if(CREATE_LIB_MATH)
-     target_link_libraries(yarp_priority YARP_math)
+     target_link_libraries(yarp_priority YARP::YARP_math)
   endif()
 
   yarp_install(TARGETS yarp_priority

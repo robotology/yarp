@@ -17,7 +17,7 @@ if(NOT SKIP_human)
                              HumanStream.h
                              HumanCarrier.cpp
                              HumanStream.cpp)
-  target_link_libraries(yarp_human YARP_OS)
+  target_link_libraries(yarp_human YARP::YARP_OS)
   yarp_install(TARGETS yarp_human
                EXPORT YARP
                COMPONENT runtime

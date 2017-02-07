@@ -35,7 +35,7 @@ if (NOT SKIP_portmonitor)
                   dll/MonitorSharedLib.cpp
                   ${portmonitor_LUA_SRCS})
 
-  target_link_libraries(yarp_portmonitor YARP_OS)
+  target_link_libraries(yarp_portmonitor YARP::YARP_OS)
   if(LUA_FOUND)
     target_link_libraries(yarp_portmonitor ${LUA_LIBRARY})
   endif()

@@ -23,6 +23,7 @@ See full instructions at http://www.yarp.it/install.html
 
 On macOS:
 
+    brew tap robotology/cask
     brew install yarp
 
 On Linux:

@@ -80,7 +80,8 @@ public:
     Q_INVOKABLE void startDumpFrames();
     Q_INVOKABLE void stopDumpFrames();
     Q_INVOKABLE bool parseParameters(QStringList);
-    Q_INVOKABLE void clickCoords(int x, int y);
+    Q_INVOKABLE void clickCoords_2(int x, int y);
+    Q_INVOKABLE void clickCoords_4(int start_x, int start_y, int end_x, int end_y);
 
     QObject *getVideoProducer();
     int posX();

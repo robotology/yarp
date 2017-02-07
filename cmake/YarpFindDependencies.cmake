@@ -355,8 +355,15 @@ if(YARP_COMPILE_BINDINGS)
   checkandset_dependency(SWIG)
 endif()
 
+# First part of workaround for OpenCV 2.4 bug https://github.com/robotology/yarp/issues/1024#issuecomment-267074067
+# Can be removed once we only support OpenCV 3
+get_property(OpenCV24_WORKAROUND_ORIGINAL_INCLUDE_DIRS DIRECTORY PROPERTY INCLUDE_DIRECTORIES)
+# End first part of workaround
 find_package(OpenCV QUIET)
 checkandset_dependency(OpenCV)
+# Second part of the workaround
+set_property(DIRECTORY PROPERTY INCLUDE_DIRECTORIES ${OpenCV24_WORKAROUND_ORIGINAL_INCLUDE_DIRS})
+# End second part of workaround
 
 find_package(Lua QUIET)
 checkandset_dependency(Lua)
@@ -408,6 +415,12 @@ checkandset_dependency(Libusb1)
 find_package(Stage QUIET)
 checkandset_dependency(Stage)
 
+find_package(ZFP QUIET)
+checkandset_dependency(ZFP)
+
+find_package(OpenNI2 QUIET)
+checkandset_dependency(OpenNI2)
+
 
 # PRINT DEPENDENCIES STATUS:
 
@@ -439,6 +452,8 @@ print_dependency(PortAudio)
 print_dependency(NVIDIACg)
 print_dependency(Libusb1)
 print_dependency(Stage)
+print_dependency(ZFP)
+print_dependency(OpenNI2)
 
 
 # CHECK DEPENDENCIES:

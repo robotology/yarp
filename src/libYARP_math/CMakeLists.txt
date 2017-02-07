@@ -21,6 +21,7 @@ if (YARP_HAS_MATH_LIB)
                      include/yarp/math/RandVector.h
                      include/yarp/math/SVD.h
                      include/yarp/math/Quaternion.h
+                     include/yarp/math/Vec2D.h
                      include/yarp/math/FrameTransform.h)
 
   set(YARP_math_IMPL_HDRS include/yarp/impl/mt.h)
@@ -32,6 +33,7 @@ if (YARP_HAS_MATH_LIB)
                      src/RandVector.cpp
                      src/SVD.cpp
                      src/Quaternion.cpp
+                     src/Vec2D.cpp
                      src/FrameTransform.cpp
                      src/RandScalar.cpp
                      src/RandnScalar.cpp
@@ -53,8 +55,10 @@ if (YARP_HAS_MATH_LIB)
   add_library(YARP_math ${YARP_math_SRCS}
                         ${YARP_math_HDRS}
                         ${YARP_math_IMPL_HDRS})
-  target_link_libraries(YARP_math PRIVATE YARP_OS)
-  target_link_libraries(YARP_math PRIVATE YARP_sig)
+  add_library(YARP::YARP_math ALIAS YARP_math)
+
+  target_link_libraries(YARP_math PRIVATE YARP::YARP_OS)
+  target_link_libraries(YARP_math PRIVATE YARP::YARP_sig)
 
   set_property(TARGET YARP_math PROPERTY PUBLIC_HEADER ${YARP_math_HDRS})
   set_property(TARGET YARP_math PROPERTY PRIVATE_HEADER ${YARP_math_IMPL_HDRS})

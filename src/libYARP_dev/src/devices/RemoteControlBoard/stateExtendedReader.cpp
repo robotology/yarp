@@ -1,3 +1,10 @@
+/*
+ * Copyright (C) 2014 iCub Facility - Istituto Italiano di Tecnologia
+ * Authors: Alberto Cardellino <alberto.cardellino@iit.it>
+ * CopyPolicy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
+ */
+
+#include "stateExtendedReader.hpp"
 #include <string.h>
 
 #include <yarp/os/PortablePair.h>
@@ -18,7 +25,6 @@
 #include <yarp/dev/ControlBoardHelpers.h>
 #include <yarp/dev/PreciselyTimed.h>
 
-#include <stateExtendedReader.hpp>
 
 using namespace yarp::os;
 using namespace yarp::dev;

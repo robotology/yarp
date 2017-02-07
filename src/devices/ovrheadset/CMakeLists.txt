@@ -31,9 +31,9 @@ if(NOT SKIP_yarpmod_ovrheadset)
   yarp_add_plugin(yarp_ovrheadset ${yarp_ovrheadset_SRCS}
                                   ${yarp_ovrheadset_HDRS})
 
-  target_link_libraries(yarp_ovrheadset YARP_OS
-                                        YARP_sig
-                                        YARP_dev
+  target_link_libraries(yarp_ovrheadset YARP::YARP_OS
+                                        YARP::YARP_sig
+                                        YARP::YARP_dev
                                         LibOVR::OVR
                                         GLEW::GLEW
                                         GLFW3::GLFW3)

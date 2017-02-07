@@ -387,7 +387,7 @@ void Bottle::setReadOnly(bool readOnly)
 }
 
 
-#ifndef YARP_NO_DEPRECATED
+#ifndef YARP_NO_DEPRECATED // since YARP 2.3.65
 void Bottle::add(const char* txt)
 {
     addString(txt);

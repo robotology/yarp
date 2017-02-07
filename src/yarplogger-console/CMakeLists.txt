@@ -13,7 +13,9 @@ if(CREATE_YARPLOGGER)
   include_directories(SYSTEM ${ACE_INCLUDE_DIRS})
 
   add_executable(${PROJECTNAME} main.cpp)
-  target_link_libraries(${PROJECTNAME} YARP_OS YARP_init YARP_logger)
+  target_link_libraries(${PROJECTNAME} YARP::YARP_OS
+                                       YARP::YARP_init
+                                       YARP::YARP_logger)
 
   install(TARGETS ${PROJECTNAME} COMPONENT utilities DESTINATION ${CMAKE_INSTALL_BINDIR})
 

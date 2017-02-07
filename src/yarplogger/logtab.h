@@ -73,7 +73,6 @@ public:
     LogSortFilterProxyModel *proxyModelButtons;
     LogSortFilterProxyModel *proxyModelSearch;
     QClipboard              *clipboard;
-    QMenu                   *contextMenu;
     void                    displayYarprunTimestamp  (bool enabled);
     void                    displayLocalTimestamp    (bool enabled);
     void                    displayErrorLevel (bool enabled);

@@ -29,17 +29,18 @@
 #    define YARP_init_EXTERN YARP_IMPORT_EXTERN
 #  endif
 #  define YARP_init_DEPRECATED_API YARP_DEPRECATED_API
+#  define YARP_init_DEPRECATED_API_MSG(X) YARP_DEPRECATED_API_MSG(X)
 #endif
 
 #ifndef YARP_OS_impl_API
 // FIXME YARP should not export symbols from os/impl.
 //       Unfortunately at the moment, methods from impl are used in other
 //       internal libraries, forcing us to export them in the library
-//#  ifdef YARP_FILTER_API
-//#    define YARP_OS_impl_API
-//#  else
+#  ifdef YARP_FILTER_impl
+#    define YARP_OS_impl_API
+#  else
 #    define YARP_OS_impl_API YARP_OS_API
-//#  endif
+#  endif
 #endif
 
 #endif // YARP_OS_API_H

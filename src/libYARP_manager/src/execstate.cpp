@@ -389,6 +389,7 @@ Dying::~Dying()
 void Dying::stopModule(void)
 {
     ErrorLogger* logger = ErrorLogger::Instance();
+    yarp::os::Time::delay(executable->getPostStopWait());
     if(!executable->getBroker()->stop())
     {
         OSTRINGSTREAM msg;
@@ -400,7 +401,7 @@ void Dying::stopModule(void)
         castEvent(EventFactory::stopModuleEventFailed);
     }
     else
-    {
+    {        
         castEvent(EventFactory::stopModuleEventOk);
         executable->getEvent()->onExecutableStop(executable);
     }

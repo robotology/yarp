@@ -45,8 +45,8 @@ if(NOT SKIP_bayer)
                              BayerCarrier.cpp
                              ${DC1394_SRC})
 
-  target_link_libraries(yarp_bayer YARP_OS
-                                   YARP_sig
+  target_link_libraries(yarp_bayer YARP::YARP_OS
+                                   YARP::YARP_sig
                                    ${Libdc1394_LIBRARIES})
 
   yarp_install(TARGETS yarp_bayer

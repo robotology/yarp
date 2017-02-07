@@ -93,12 +93,14 @@ if(CREATE_LIB_MANAGER)
   add_library(YARP_manager STATIC ${YARP_manager_SRCS}
                                   ${YARP_manager_HDRS}
                                   ${YARP_manager_IMPL_HDRS})
+  add_library(YARP::YARP_manager ALIAS YARP_manager)
 
-  target_link_libraries(YARP_manager PRIVATE YARP_sig YARP_OS)
+  target_link_libraries(YARP_manager PRIVATE YARP::YARP_OS
+                                             YARP::YARP_sig)
   target_link_libraries(YARP_manager PRIVATE ${TinyXML_LIBRARIES})
 
   if(CREATE_LIB_MATH)
-    target_link_libraries(YARP_manager PRIVATE YARP_math)
+    target_link_libraries(YARP_manager PRIVATE YARP::YARP_math)
   endif()
 
   set_property(TARGET YARP_manager PROPERTY PUBLIC_HEADER ${YARP_manager_HDRS})

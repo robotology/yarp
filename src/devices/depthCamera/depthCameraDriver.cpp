@@ -41,7 +41,7 @@ streamFrameListener::streamFrameListener()
     w        = 0;
     h        = 0;
     dataSize = 0;
-    isReady    = false;
+    isReady  = false;
 }
 
 void streamFrameListener::onNewFrame(openni::VideoStream& stream)
@@ -91,6 +91,7 @@ void streamFrameListener::onNewFrame(openni::VideoStream& stream)
 
 depthCameraDriver::depthCameraDriver() : m_depthFrame(NULL), m_imageFrame(NULL), m_cameraDescription(NULL)
 {
+    m_depthRegistration = true;
     m_depthFrame        = new streamFrameListener();
     m_imageFrame        = new streamFrameListener();
     m_cameraDescription = new CameraParameters();
@@ -177,6 +178,25 @@ bool depthCameraDriver::initializeOpeNIDevice()
         }
     }
 
+    if(m_depthRegistration)
+    {
+        if(m_device.isImageRegistrationModeSupported(IMAGE_REGISTRATION_DEPTH_TO_COLOR))
+        {
+            if(m_device.setImageRegistrationMode(IMAGE_REGISTRATION_DEPTH_TO_COLOR) == STATUS_OK)
+            {
+                yInfo() << "DepthCameraDriver:Depth succesfully registered on rgb sensor";
+            }
+            else
+            {
+                yWarning() << "DepthCameraDriver: Depth registration failed.. sending  unregistered images";
+            }
+        }
+        else
+        {
+            yWarning() << "DepthCameraDriver: depth image registration not supported by this device";
+        }
+    }
+
     rc = m_depthStream.start();
     if (rc != STATUS_OK)
     {
@@ -250,6 +270,7 @@ bool depthCameraDriver::checkParam(const Bottle& input, RGBDParam& param, bool& 
             {
                 param.val[i] = b->get(i); // maybe i=1? check...
             }
+            found = true;
             return true;
         }
         else  // got a single value from file
@@ -508,7 +529,6 @@ bool depthCameraDriver::open(Searchable& config)
         yError() << "depthCameraDriver: missing DEPTH_INTRINSIC_PARAMETERS section on the configuration file";
         return false;
     }
-    Bottle& depth_intrinsic = config.findGroup("DEPTH_INTRINSIC_PARAMETERS");
 
     if(!checkParam(settings, description, m_cameraDescription->accuracy)        ) ret = false;
     if(!checkParam(settings, description, m_cameraDescription->clipPlanes)      ) ret = false;
@@ -524,6 +544,9 @@ bool depthCameraDriver::open(Searchable& config)
         yError() << "depthCamera driver input file not correct, please fix it!";
         return false;
     }
+
+    //"registered" is a hidden parameter for debugging pourpose
+    m_depthRegistration = !(config.check("registered") && config.find("registered").isBool() && config.find("registered").asBool() == false);
 
     if (!initializeOpeNIDevice())
     {

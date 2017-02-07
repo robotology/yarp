@@ -20,7 +20,6 @@
 #include <yarp/dev/ServerFrameGrabber.h>
 #include <yarp/dev/DevicePipe.h>
 #include <yarp/dev/DeviceGroup.h>
-#include <yarp/dev/TestFrameGrabber.h>
 #include <yarp/dev/ServerSoundGrabber.h>
 #include <yarp/dev/TestMotor.h>
 
@@ -41,6 +40,8 @@ extern DriverCreator *createRGBDSensorClient();
 extern DriverCreator *createControlBoardRemapper();
 extern DriverCreator *createRemoteControlBoardRemapper();
 extern DriverCreator *createNavigation2DClient();
+extern DriverCreator *createRobotDescriptionServer();
+extern DriverCreator *createRobotDescriptionClient();
 
 #ifdef WITH_YARPMATH
 extern DriverCreator *createFrameTransformServer();
@@ -55,10 +56,6 @@ extern DriverCreator *createClientControlBoard();
 #endif // YARP_NO_DEPRECATED
 
 void Drivers::init() {
-
-    add(new DriverCreatorOf<yarp::dev::TestFrameGrabber>("test_grabber",
-                                                         "grabber",
-                                                         "yarp::dev::TestFrameGrabber"));
 
     add(new DriverCreatorOf<yarp::dev::TestMotor>("test_motor",
                                                   "controlboard",
@@ -101,6 +98,8 @@ void Drivers::init() {
     add(createControlBoardRemapper());
     add(createRemoteControlBoardRemapper());
     add(createNavigation2DClient());
+    add(createRobotDescriptionServer());
+    add(createRobotDescriptionClient());
 
 #ifdef WITH_YARPMATH
     add(createFrameTransformServer());

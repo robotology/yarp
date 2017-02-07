@@ -231,13 +231,14 @@ bool RobotInterface::Robot::Private::calibrate(const RobotInterface::Device &dev
 
 bool RobotInterface::Robot::Private::attach(const RobotInterface::Device &device, const RobotInterface::ParamList &params)
 {
-    if (!(RobotInterface::hasParam(params, "network") || RobotInterface::hasParam(params, "networks"))) {
-        yError() << "Action \"" << ActionTypeToString(ActionTypeAttach) << "\" requires either \"network\" or \"networks\" parameter";
-        return false;
-    }
+    int check = 0;
+    if (RobotInterface::hasParam(params, "network")) check++;
+    if (RobotInterface::hasParam(params, "networks")) check++;
+    if (RobotInterface::hasParam(params, "all")) check++;
 
-    if (RobotInterface::hasParam(params, "network") && RobotInterface::hasParam(params, "networks")) {
-        yError() << "Action \"" << ActionTypeToString(ActionTypeAttach) << "\" cannot have both \"network\" and \"networks\" parameters";
+    if (check>1)
+    {
+        yError() << "Action \"" << ActionTypeToString(ActionTypeAttach) << "\" : you can have only one option: \"network\" , \"networks\" or \"all\" ";
         return false;
     }
 
@@ -261,7 +262,15 @@ bool RobotInterface::Robot::Private::attach(const RobotInterface::Device &device
         // yDebug() << "Attach device" << device.name() << "to" << targetDevice.name() << "as" << targetNetwork;
         drivers.push(targetDevice.driver(), targetNetwork.c_str());
 
-    } else {
+    }
+    else if (RobotInterface::hasParam(params, "all"))
+    {
+        for (DeviceList::iterator it = devices.begin(); it != devices.end(); ++it)
+        {
+            drivers.push(it->driver(),"all");
+        }
+    }
+    else if (RobotInterface::hasParam(params, "networks")) {
         yarp::os::Value v;
         v.fromString(RobotInterface::findParam(params, "networks").c_str());
         yarp::os::Bottle &targetNetworks = *(v.asList());
@@ -283,6 +292,11 @@ bool RobotInterface::Robot::Private::attach(const RobotInterface::Device &device
             // yDebug() << "Attach device" << device.name() << "to" << targetDevice.name() << "as" << targetNetwork;
             drivers.push(targetDevice.driver(), targetNetwork.c_str());
         }
+    }
+    else
+    {
+        yError() << "Action \"" << ActionTypeToString(ActionTypeAttach) << "\" requires either \"network\" or \"networks\" parameter";
+        return false;
     }
 
     if (!drivers.size()) {

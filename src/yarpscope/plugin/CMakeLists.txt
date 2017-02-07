@@ -39,8 +39,8 @@ source_group("Generated Files" FILES ${QtYARPScopePlugin_QRC_GEN_SRCS})
 add_library(QtYARPScopePlugin MODULE ${QtYARPScopePlugin_SRCS}
                                      ${QtYARPScopePlugin_HDRS}
                                      ${QtYARPScopePlugin_QRC_GEN_SRCS})
-target_link_libraries(QtYARPScopePlugin YARP_OS
-                                        YARP_init
+target_link_libraries(QtYARPScopePlugin YARP::YARP_OS
+                                        YARP::YARP_init
                                         ${QCustomPlot_LIBRARIES}
                                         Qt5::Widgets
                                         Qt5::Qml

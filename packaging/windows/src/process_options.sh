@@ -47,168 +47,177 @@ OPT_BUILD=$3
 OPT_GCCLIKE=false
 
 function target_name {
-	if $OPT_GCCLIKE ; then
-		TARGET=""
-	else
-		TARGET="$1.sln"
-	fi
+  if $OPT_GCCLIKE ; then
+    TARGET=""
+  else
+    TARGET="$1.sln"
+  fi
 }
 
 function target_lib_name {
-	if $OPT_GCCLIKE ; then
-		TARGET_LIB="lib$2.a"
-	else
-		TARGET_LIB="$1/$2.lib"
-	fi
+  if $OPT_GCCLIKE ; then
+    TARGET_LIB="lib$2.a"
+  else
+    TARGET_LIB="$1/$2.lib"
+  fi
 }
 
 if [ ! "k$OPT_COMPILER" = "kany" ]; then
 
-	if [ "k$OPT_BUILD" = "k" ]; then
-		echo "Provide options: compiler variant build"
-		echo "For example: v10 x86 Release"
-		exit 1
-	fi
+  if [ "k$OPT_BUILD" = "k" ]; then
+    echo "Provide options: compiler variant build"
+    echo "For example: v10 x86 Release"
+    exit 1
+  fi
 
-	source compiler_config_${OPT_COMPILER}_${OPT_VARIANT}.sh || {
-		echo "Compiler settings not found"
-		exit 1
-	}
+  source compiler_config_${OPT_COMPILER}_${OPT_VARIANT}.sh || {
+    echo "Compiler settings not found"
+    exit 1
+  }
 
-	if [ "k$COMPILER_FAMILY" = "kmingw" ] ; then
-	    OPT_GCCLIKE=true
-	elif [ "k$COMPILER_FAMILY" = "kgcc" ] ; then
-	    OPT_GCCLIKE=true
-	else
-	    OPT_GCCLIKE=false
-	fi
+  if [ "k$COMPILER_FAMILY" = "kmingw" ] ; then
+      OPT_GCCLIKE=true
+  elif [ "k$COMPILER_FAMILY" = "kgcc" ] ; then
+      OPT_GCCLIKE=true
+  else
+      OPT_GCCLIKE=false
+  fi
 
-	if [ "k$COMPILER_FAMILY" = "kmingw" ] ; then
-		LIBEXT="dll.a"
-	elif [ "k$COMPILER_FAMILY" = "kgcc" ] ; then
-		LIBEXT="so"
-	else
-		LIBEXT="lib"
-	fi
+  if [ "k$COMPILER_FAMILY" = "kmingw" ] ; then
+    LIBEXT="dll.a"
+  elif [ "k$COMPILER_FAMILY" = "kgcc" ] ; then
+    LIBEXT="so"
+  else
+    LIBEXT="lib"
+  fi
 
-	OPT_PLATFORM=""
-	OPT_VCNNN=""
-if [ "$OPT_COMPILER" == "v14" ] ; then
-		OPT_PLATFORM=v140
-		OPT_VCNNN="VC140"
-		OPT_HUMAN_PLATFORM_NAME="msvc14"
-	fi
-	if [ "$OPT_COMPILER" == "v12" ] ; then
-		OPT_PLATFORM=v120
-		OPT_VCNNN="VC120"
-		OPT_HUMAN_PLATFORM_NAME="msvc12"
-	fi
-	if [ "$OPT_COMPILER" == "v11" ] ; then
-		OPT_PLATFORM=v110
-		OPT_VCNNN="VC110"
-		OPT_HUMAN_PLATFORM_NAME="msvc11"
-	fi
-	
-	if [ "$OPT_COMPILER" == "v10" ] ; then
-		OPT_PLATFORM=v100
-		OPT_VCNNN="VC100"
-		OPT_HUMAN_PLATFORM_NAME="msvc10"
-	fi
-	if [ "k$OPT_COMPILER" = "kv9" ] ; then
-		OPT_PLATFORM=v90
-		OPT_VCNNN="VC90"
-		OPT_HUMAN_PLATFORM_NAME="msvc9"
-	fi
-	if [ "k$OPT_COMPILER" = "kv8" ] ; then
-		OPT_PLATFORM=v80
-		OPT_VCNNN="VC80"
-		OPT_HUMAN_PLATFORM_NAME="msvc8"
-	fi
-	if [ "k$OPT_COMPILER" = "kmingw" ] ; then
-		OPT_PLATFORM=mingw
-		OPT_HUMAN_PLATFORM_NAME="mingw"
-	fi
-	if [ "k$OPT_COMPILER" = "kgcc" ] ; then
-		OPT_PLATFORM=gcc
-	fi
-	if [ "k$OPT_PLATFORM" = "k" ]; then
-		echo "Please set platform for compiler $OPT_COMPILER in process_options.sh"
-		exit 1
-	fi
+  OPT_PLATFORM=""
+  OPT_VCNNN=""
+  if [ "$OPT_COMPILER" == "v14" ] ; then
+    OPT_PLATFORM=v140
+    OPT_VCNNN="VC140"
+    OPT_HUMAN_PLATFORM_NAME="msvc14"
+  fi
+  if [ "$OPT_COMPILER" == "v12" ] ; then
+    OPT_PLATFORM=v120
+    OPT_VCNNN="VC120"
+    OPT_HUMAN_PLATFORM_NAME="msvc12"
+  fi
+  if [ "$OPT_COMPILER" = "v11" ] ; then
+    OPT_PLATFORM=v110
+    OPT_VCNNN="VC110"
+    OPT_HUMAN_PLATFORM_NAME="msvc11"
+  fi
+  
+  if [ "k$OPT_COMPILER" = "kv10" ] ; then
+    OPT_PLATFORM=v100
+    OPT_VCNNN="VC100"
+    OPT_HUMAN_PLATFORM_NAME="msvc10"
+  fi
+  if [ "k$OPT_COMPILER" = "kv9" ] ; then
+    OPT_PLATFORM=v90
+    OPT_VCNNN="VC90"
+    OPT_HUMAN_PLATFORM_NAME="msvc9"
+  fi
+  if [ "k$OPT_COMPILER" = "kv8" ] ; then
+    OPT_PLATFORM=v80
+    OPT_VCNNN="VC80"
+    OPT_HUMAN_PLATFORM_NAME="msvc8"
+  fi
+  if [ "k$OPT_COMPILER" = "kmingw" ] ; then
+    OPT_PLATFORM=mingw
+    OPT_HUMAN_PLATFORM_NAME="mingw"
+  fi
+  if [ "k$OPT_COMPILER" = "kgcc" ] ; then
+    OPT_PLATFORM=gcc
+  fi
+  if [ "k$OPT_PLATFORM" = "k" ]; then
+    echo "Please set platform for compiler $OPT_COMPILER in process_options.sh"
+    exit 1
+  fi
 
-	OPT_PLATFORM_COMMAND="/p:PlatformToolset=$OPT_PLATFORM"
-	OPT_CONFIGURATION_COMMAND="/p:Configuration=$OPT_BUILD"
+  OPT_PLATFORM_COMMAND="/p:PlatformToolset=$OPT_PLATFORM"
+  OPT_CONFIGURATION_COMMAND="/p:Configuration=$OPT_BUILD"
 
-	OPT_GENERATOR=""
-	if [ "$OPT_COMPILER" == "v12" ] ; then
-		if [ "$OPT_VARIANT" == "x86" ] ; then
-			OPT_GENERATOR="Visual Studio 12"
+  OPT_GENERATOR=""
+  if [ "$OPT_COMPILER" == "v14" ] ; then
+    if [ "$OPT_VARIANT" == "x86" ] ; then
+      OPT_GENERATOR="Visual Studio 14"
             REDIST_VARIANT="x86"
-		elif [ "$OPT_VARIANT" == "x64" ] || [ "$OPT_VARIANT" == "amd64" ] || [ "$OPT_VARIANT" == "x86_amd64" ] ; then
-			OPT_GENERATOR="Visual Studio 12 Win64"
+    elif [ "$OPT_VARIANT" == "x64" ] || [ "$OPT_VARIANT" == "amd64" ] || [ "$OPT_VARIANT" == "x86_amd64" ] ; then
+      OPT_GENERATOR="Visual Studio 14 Win64"
             REDIST_VARIANT="x64"
-		fi		
-	fi
-	if [ "$OPT_COMPILER" == "v11" ] ; then
-		if [ "$OPT_VARIANT" == "x86" ] ; then
-			OPT_GENERATOR="Visual Studio 11"
+    fi    
+  fi
+  if [ "$OPT_COMPILER" == "v12" ] ; then
+    if [ "$OPT_VARIANT" == "x86" ] ; then
+      OPT_GENERATOR="Visual Studio 12"
             REDIST_VARIANT="x86"
-		elif [ "$OPT_VARIANT" == "x64" ] || [ "$OPT_VARIANT" == "amd64" ] || [ "$OPT_VARIANT" == "x86_amd64" ] ; then
-			OPT_GENERATOR="Visual Studio 11 Win64"
+    elif [ "$OPT_VARIANT" == "x64" ] || [ "$OPT_VARIANT" == "amd64" ] || [ "$OPT_VARIANT" == "x86_amd64" ] ; then
+      OPT_GENERATOR="Visual Studio 12 Win64"
             REDIST_VARIANT="x64"
-		fi		
-	fi
-	if [ "$OPT_COMPILER" == "v10" ] ; then
-		if [ "$OPT_VARIANT" == "x86" ] ; then
-			OPT_GENERATOR="Visual Studio 10"
+    fi    
+  fi
+  if [ "$OPT_COMPILER" == "v11" ] ; then
+    if [ "$OPT_VARIANT" == "x86" ] ; then
+      OPT_GENERATOR="Visual Studio 11"
             REDIST_VARIANT="x86"
-		elif [ "$OPT_VARIANT" == "x64" ] || [ "$OPT_VARIANT" == "amd64" ] || [ "$OPT_VARIANT" == "x86_amd64" ] ; then
-			OPT_GENERATOR="Visual Studio 10 Win64"
+    elif [ "$OPT_VARIANT" == "x64" ] || [ "$OPT_VARIANT" == "amd64" ] || [ "$OPT_VARIANT" == "x86_amd64" ] ; then
+      OPT_GENERATOR="Visual Studio 11 Win64"
             REDIST_VARIANT="x64"
-		fi
-	fi
-	if [ "$OPT_COMPILER" == "v9" ] ; then
-		if [ "$OPT_VARIANT" == "x86" ] ; then
-			OPT_GENERATOR="Visual Studio 9 2008"
-		elif [ "$OPT_VARIANT" == "x64" ] || [ "$OPT_VARIANT" == "amd64" ] || [ "$OPT_VARIANT" == "x86_amd64" ] ; then
-			OPT_GENERATOR="Visual Studio 9 2008 Win64"
-		fi
-	fi
-	if [ "$OPT_COMPILER" == "v8" ] ; then
-		if [ "$OPT_VARIANT" == "x86" ] || [ "$OPT_VARIANT" == "x64" ] || [ "$OPT_VARIANT" == "amd64" ] || [ "$OPT_VARIANT" == "x86_amd64" ] ; then
-			OPT_GENERATOR="Visual Studio 8 2005"
-		fi
-	fi
-	if [ "k$OPT_COMPILER" = "kmingw" ] ; then
-		OPT_GENERATOR="MSYS Makefiles"
-	fi
-	if [ "k$OPT_COMPILER" = "kgcc" ] ; then
-		OPT_GENERATOR="Unix Makefiles"
-	fi
-	if [ "k$OPT_GENERATOR" = "k" ] ; then 
-		echo "Please set generator for compiler $OPT_COMPILER variant $OPT_VARIANT in process_options.sh"
-		exit 1
-	fi
+    fi    
+  fi
+  if [ "$OPT_COMPILER" == "v10" ] ; then
+    if [ "$OPT_VARIANT" == "x86" ] ; then
+      OPT_GENERATOR="Visual Studio 10"
+            REDIST_VARIANT="x86"
+    elif [ "$OPT_VARIANT" == "x64" ] || [ "$OPT_VARIANT" == "amd64" ] || [ "$OPT_VARIANT" == "x86_amd64" ] ; then
+      OPT_GENERATOR="Visual Studio 10 Win64"
+            REDIST_VARIANT="x64"
+    fi
+  fi
+  if [ "$OPT_COMPILER" == "v9" ] ; then
+    if [ "$OPT_VARIANT" == "x86" ] ; then
+      OPT_GENERATOR="Visual Studio 9 2008"
+    elif [ "$OPT_VARIANT" == "x64" ] || [ "$OPT_VARIANT" == "amd64" ] || [ "$OPT_VARIANT" == "x86_amd64" ] ; then
+      OPT_GENERATOR="Visual Studio 9 2008 Win64"
+    fi
+  fi
+  if [ "$OPT_COMPILER" == "v8" ] ; then
+    if [ "$OPT_VARIANT" == "x86" ] || [ "$OPT_VARIANT" == "x64" ] || [ "$OPT_VARIANT" == "amd64" ] || [ "$OPT_VARIANT" == "x86_amd64" ] ; then
+      OPT_GENERATOR="Visual Studio 8 2005"
+    fi
+  fi
+  if [ "k$OPT_COMPILER" = "kmingw" ] ; then
+    OPT_GENERATOR="MSYS Makefiles"
+  fi
+  if [ "k$OPT_COMPILER" = "kgcc" ] ; then
+    OPT_GENERATOR="Unix Makefiles"
+  fi
+  if [ "k$OPT_GENERATOR" = "k" ] ; then 
+    echo "Please set generator for compiler $OPT_COMPILER variant $OPT_VARIANT in process_options.sh"
+    exit 1
+  fi
 
-	OPT_VC_REDIST_CRT=""
-	if [ ! "k$REDIST_PATH" = "k" ] ; then
-		OPT_VC_REDIST_CRT="${REDIST_PATH}/${REDIST_VARIANT}/Microsoft.${OPT_VCNNN}.CRT"
-		if [ ! -e "$OPT_VC_REDIST_CRT" ] ; then
-			OPT_VC_REDIST_CRT=""
-		fi
-	fi
+  OPT_VC_REDIST_CRT=""
+  if [ ! "k$REDIST_PATH" = "k" ] ; then
+    OPT_VC_REDIST_CRT="${REDIST_PATH}/${REDIST_VARIANT}/Microsoft.${OPT_VCNNN}.CRT"
+    if [ ! -e "$OPT_VC_REDIST_CRT" ] ; then
+      OPT_VC_REDIST_CRT=""
+    fi
+  fi
 
-	OPT_BUILDER="msbuild.exe"
-	OPT_BUILDER_VCBUILD="vcbuild.exe /useenv"
-	OPT_PLATFORM_COMMAND_VCBUILD=""
-	# this will need updating for non-x86
-	OPT_CONFIGURATION_COMMAND_VCBUILD="$OPT_BUILD"
+  OPT_BUILDER="msbuild.exe"
+  OPT_BUILDER_VCBUILD="vcbuild.exe /useenv"
+  OPT_PLATFORM_COMMAND_VCBUILD=""
+  # this will need updating for non-x86
+  OPT_CONFIGURATION_COMMAND_VCBUILD="$OPT_BUILD"
 
-	if $OPT_GCCLIKE ; then
-		OPT_BUILDER="make"
-		OPT_PLATFORM_COMMAND=""
-		OPT_CONFIGURATION_COMMAND=""
-		OPT_CMAKE_OPTION="-DCMAKE_BUILD_TYPE=$OPT_BUILD"
-	fi
+  if $OPT_GCCLIKE ; then
+    OPT_BUILDER="make"
+    OPT_PLATFORM_COMMAND=""
+    OPT_CONFIGURATION_COMMAND=""
+    OPT_CMAKE_OPTION="-DCMAKE_BUILD_TYPE=$OPT_BUILD"
+  fi
 fi
 

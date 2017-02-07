@@ -28,7 +28,8 @@ if(YARP_COMPILE_TESTS)
   if(ENABLE_YARPRUNTESTS)
     add_definitions(-DYARPRUN_TEST)
     add_executable(testModule ${CMAKE_SOURCE_DIR}/tests/libYARP_OS/testModule/module.cpp)
-     target_link_libraries(testModule YARP_init YARP_OS)
+     target_link_libraries(testModule YARP::YARP_init
+                                      YARP::YARP_OS)
   endif()
   mark_as_advanced(ENABLE_YARPRUNTESTS)
 
@@ -72,7 +73,7 @@ if(YARP_COMPILE_TESTS)
     string(TOLOWER ${EXE} EXE)
     add_executable(${EXE} ${harness_code})
     target_link_libraries(${EXE} ${YARP_LIBRARIES})
-    target_link_libraries(${EXE} YARP_serversql)
+    target_link_libraries(${EXE} YARP::YARP_serversql)
     if(YARP_HAS_ACE)
       target_link_libraries(${EXE} ${ACE_LIBRARIES})
     endif()
@@ -110,6 +111,16 @@ if(YARP_COMPILE_TESTS)
   # Compile ControlBoardRemapperTest only if fakeMotionControl is enabled
   if(ENABLE_yarpmod_fakeMotionControl)
     add_definitions(-DYARP_CONTROLBOARDREMAPPER_TESTS)
+  endif()
+
+  # Compile AnalogWrapperTest only if fakeAnalog is enabled
+  if(ENABLE_yarpmod_fakeAnalogSensor)
+    add_definitions(-DYARP_ANALOGWRAPPER_TESTS)
+  endif()
+
+  # Compile TestFrameGrabberTest only if test_grabber is enabled
+  if(ENABLE_yarpmod_test_grabber)
+    add_definitions(-DYARP_TESTFRAMEGRABBER_TESTS)
   endif()
 
   # Add in hardware specific tests, if requested

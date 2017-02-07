@@ -6,6 +6,7 @@
 
 #include <yarp/os/impl/RunCheckpoints.h>
 #include <yarp/conf/compiler.h>
+#include <ctime>
 
 #if defined(WIN32)
 #include <time.h>

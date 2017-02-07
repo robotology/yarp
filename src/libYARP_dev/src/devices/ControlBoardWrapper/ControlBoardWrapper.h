@@ -36,9 +36,9 @@
 
 #include <jointData.h>           // struct for YARP extended port
 
+#include "SubDevice.h"
 #include "StreamingMessagesParser.h"
 #include "RPCMessagesParser.h"
-#include "SubDevice.h"
 
 // ROS state publisher
 #include <yarpRosHelper.h>

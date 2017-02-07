@@ -5,6 +5,14 @@
 include(CMakeDependentOption)
 
 find_package(Doxygen)
+find_file(DOXYGEN_PLANTUM_JAR
+          NAMES plantuml.jar
+          PATHS /usr/share
+          PATH_SUFFIXES plantuml
+          DOC "PlantUML tool for using Doxygen")
+if(NOT DOXYGEN_PLANTUM_JAR)
+  set(DOXYGEN_PLANTUM_JAR "")
+endif()
 
 if(DOXYGEN_FOUND)
   option(YARP_DOXYGEN_HTML "Generate doxygen HTML output" ON)

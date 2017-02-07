@@ -111,12 +111,8 @@ function(ADD_INSTALL_RPATH_SUPPORT)
   endif()
 
   if(_rpath_available)
-    #Check CMake version in OS X. Required >= 2.8.12
-    if(CMAKE_VERSION VERSION_LESS 2.8.12 AND ${CMAKE_SYSTEM_NAME} MATCHES "Darwin")
-      message(WARNING "Your CMake version is too old. RPATH support on OS X requires CMake version at least 2.8.12")
-    endif()
 
-    # Enable RPATH on macOS. This also suppress warnings on CMake >= 3.0
+    # Enable RPATH on OSX.
     set(CMAKE_MACOSX_RPATH TRUE PARENT_SCOPE)
 
     # If install RPATH is disabled in CMake, it is useless to evaluate and set

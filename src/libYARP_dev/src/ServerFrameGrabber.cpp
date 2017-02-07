@@ -6,8 +6,6 @@
 
 
 #include <yarp/os/Log.h>
-
-#include <yarp/dev/TestFrameGrabber.h>
 #include <yarp/dev/ServerFrameGrabber.h>
 //#include <yarp/dev/RemoteFrameGrabber.h>
 #include <yarp/dev/PolyDriver.h>
@@ -19,6 +17,7 @@ using namespace yarp::sig;
 
 
 ServerFrameGrabber::ServerFrameGrabber() {
+    rgbVis_p = NULL;
     fgImage = NULL;
     fgImageRaw = NULL;
     fgSound = NULL;
@@ -32,6 +31,19 @@ ServerFrameGrabber::ServerFrameGrabber() {
     active = false;
     singleThreaded = false;
     p2 = NULL;
+}
+
+bool ServerFrameGrabber::close() {
+    if (!active) {
+        return false;
+    }
+    active = false;
+    thread.stop();
+    if (p2!=NULL) {
+        delete p2;
+        p2 = NULL;
+    }
+    return true;
 }
 
 bool ServerFrameGrabber::open(yarp::os::Searchable& config) {
@@ -97,6 +109,14 @@ bool ServerFrameGrabber::open(yarp::os::Searchable& config) {
         if(fgCtrl2)
             ifgCtrl2_Parser.configure(fgCtrl2);
         poly.view(fgTimed);
+        poly.view(rgbVis_p);
+
+        bool conf = rgbParser.configure(rgbVis_p);
+
+        if(!conf)
+        {
+            yWarning() << "ServerFrameGrabber: error configuring interfaces for parsers";
+        }
     }
 
     canDrop = !config.check("no_drop","if present, use strict policy for sending data");
@@ -202,13 +222,16 @@ bool ServerFrameGrabber::respond(const yarp::os::Bottle& cmd,
 
     IFrameGrabberControlsDC1394* fgCtrlDC1394=dynamic_cast<IFrameGrabberControlsDC1394*>(fgCtrl);
 
-    yInfo() << "cmd is "<< cmd.toString();
     switch (code)
     {
     // first check if requests are coming from new iFrameGrabberControl2 interface and process them
     case VOCAB_FRAMEGRABBER_CONTROL2:
     {
         return ifgCtrl2_Parser.respond(cmd, response);    // I don't like all those returns everywhere!!! :-(
+    } break;
+    case VOCAB_RGB_VISUAL_PARAMS:
+    {
+        return rgbParser.respond(cmd,response);
     } break;
 
     case VOCAB_SET:
@@ -581,6 +604,198 @@ bool ServerFrameGrabber::read(ConnectionReader& connection) {
     return true;
 }
 */
+
+bool ServerFrameGrabber::getDatum(yarp::sig::ImageOf<yarp::sig::PixelRgb>& image) {
+    return getImage(image);
+}
+
+bool ServerFrameGrabber::getDatum(yarp::sig::ImageOf<yarp::sig::PixelMono>& image) {
+    return getImage(image);
+}
+
+bool ServerFrameGrabber::getDatum(yarp::sig::Sound& sound) {
+    return getSound(sound);
+}
+
+bool ServerFrameGrabber::getDatum(ImageRgbSound& imageSound) {
+    return getDatum(imageSound.head,imageSound.body);
+}
+
+bool ServerFrameGrabber::getDatum(yarp::sig::ImageOf<yarp::sig::PixelRgb>& image,
+                      yarp::sig::Sound& sound) {
+    return getAudioVisual(image,sound);
+}
+
+bool ServerFrameGrabber::getImage(yarp::sig::ImageOf<yarp::sig::PixelRgb>& image) {
+    if (fgImage==NULL) { return false; }
+    return fgImage->getImage(image);
+}
+
+bool ServerFrameGrabber::getImage(yarp::sig::ImageOf<yarp::sig::PixelMono>& image) {
+    if (fgImageRaw==NULL) { return false; }
+    return fgImageRaw->getImage(image);
+}
+
+bool ServerFrameGrabber::getSound(yarp::sig::Sound& sound) {
+    if (fgSound==NULL) { return false; }
+    return fgSound->getSound(sound);
+}
+
+bool ServerFrameGrabber::startRecording() {
+    if (fgSound==NULL) { return false; }
+    return fgSound->startRecording();
+}
+
+bool ServerFrameGrabber::stopRecording() {
+    if (fgSound==NULL) { return false; }
+    return fgSound->stopRecording();
+}
+
+bool ServerFrameGrabber::getAudioVisual(yarp::sig::ImageOf<yarp::sig::PixelRgb>& image,
+                            yarp::sig::Sound& sound) {
+    if (fgAv==NULL) { return false; }
+    return fgAv->getAudioVisual(image,sound);
+}
+
+int ServerFrameGrabber::height() const {
+    if (fgImage) { return fgImage->height(); }
+    if (fgImageRaw) { return fgImageRaw->height(); }
+    return 0;
+}
+
+int ServerFrameGrabber::width() const {
+    if (fgImage) { return fgImage->width(); }
+    if (fgImageRaw) { return fgImageRaw->width(); }
+    return 0;
+}
+
+// set
+bool ServerFrameGrabber::setBrightness(double v) {
+    if (fgCtrl==NULL) { return false; }
+    return fgCtrl->setBrightness(v);
+}
+bool ServerFrameGrabber::setExposure(double v)
+{
+    if (fgCtrl==NULL) { return false; }
+    return fgCtrl->setExposure(v);
+}
+bool ServerFrameGrabber::setSharpness(double v) {
+    if (fgCtrl==NULL) { return false; }
+    return fgCtrl->setSharpness(v);
+}
+bool ServerFrameGrabber::setWhiteBalance(double blue, double red) {
+    if (fgCtrl==NULL) { return false; }
+    return fgCtrl->setWhiteBalance(blue,red);
+}
+bool ServerFrameGrabber::setHue(double v) {
+    if (fgCtrl==NULL) { return false; }
+    return fgCtrl->setHue(v);
+}
+bool ServerFrameGrabber::setSaturation(double v) {
+    if (fgCtrl==NULL) { return false; }
+    return fgCtrl->setSaturation(v);
+}
+bool ServerFrameGrabber::setGamma(double v) {
+    if (fgCtrl==NULL) { return false; }
+    return fgCtrl->setGamma(v);
+}
+bool ServerFrameGrabber::setShutter(double v) {
+    if (fgCtrl==NULL) { return false; }
+    return fgCtrl->setShutter(v);
+}
+bool ServerFrameGrabber::setGain(double v) {
+    if (fgCtrl==NULL) { return false; }
+    return fgCtrl->setGain(v);
+}
+bool ServerFrameGrabber::setIris(double v) {
+    if (fgCtrl==NULL) { return false; }
+    return fgCtrl->setIris(v);
+}
+
+/*
+virtual bool setTemperature(double v) {
+    if (fgCtrl==NULL) { return false; }
+    return fgCtrl->setTemperature(v);
+}
+virtual bool setWhiteShading(double r,double g,double b) {
+    if (fgCtrl==NULL) { return false; }
+    return fgCtrl->setWhiteShading(r,g,b);
+}
+virtual bool setOpticalFilter(double v) {
+    if (fgCtrl==NULL) { return false; }
+    return fgCtrl->setOpticalFilter(v);
+}
+virtual bool setCaptureQuality(double v) {
+    if (fgCtrl==NULL) { return false; }
+    return fgCtrl->setCaptureQuality(v);
+}
+*/
+
+// get
+
+double ServerFrameGrabber::getBrightness() {
+    if (fgCtrl==NULL) { return 0.0; }
+    return fgCtrl->getBrightness();
+}
+double ServerFrameGrabber::getExposure() {
+    if (fgCtrl==NULL) { return false; }
+    return fgCtrl->getExposure();
+}
+double ServerFrameGrabber::getSharpness() {
+    if (fgCtrl==NULL) { return 0.0; }
+    return fgCtrl->getSharpness();
+}
+bool ServerFrameGrabber::getWhiteBalance(double &blue, double &red) {
+    if (fgCtrl==NULL) { return false; }
+    return fgCtrl->getWhiteBalance(blue,red);
+}
+double ServerFrameGrabber::getHue() {
+    if (fgCtrl==NULL) { return 0.0; }
+    return fgCtrl->getHue();
+}
+double ServerFrameGrabber::getSaturation() {
+    if (fgCtrl==NULL) { return 0.0; }
+    return fgCtrl->getSaturation();
+}
+double ServerFrameGrabber::getGamma() {
+    if (fgCtrl==NULL) { return 0.0; }
+    return fgCtrl->getGamma();
+}
+double ServerFrameGrabber::getShutter() {
+    if (fgCtrl==NULL) { return 0.0; }
+    return fgCtrl->getShutter();
+}
+double ServerFrameGrabber::getGain() {
+    if (fgCtrl==NULL) { return 0.0; }
+    return fgCtrl->getGain();
+}
+double ServerFrameGrabber::getIris() {
+    if (fgCtrl==NULL) { return 0.0; }
+    return fgCtrl->getIris();
+}
+
+/*
+virtual double getTemperature() const {
+    if (fgCtrl==NULL) { return 0.0; }
+    return fgCtrl->getTemperature();
+}
+virtual bool getWhiteShading(double &r, double &g, double &b) const {
+    if (fgCtrl==NULL) { return false; }
+    return fgCtrl->getWhiteShading(r,g,b);
+}
+virtual double getOpticalFilter() const {
+    if (fgCtrl==NULL) { return 0.0; }
+    return fgCtrl->getOpticalFilter();
+}
+virtual double getCaptureQuality() const {
+    if (fgCtrl==NULL) { return false; }
+    return fgCtrl->getCaptureQuality();
+}
+*/
+
+bool ServerFrameGrabber::stopService() {
+    return close();
+}
 
 bool ServerFrameGrabber::startService() {
     if (singleThreaded) {

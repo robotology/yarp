@@ -18,7 +18,8 @@ if(NOT SKIP_depthimage)
   yarp_add_plugin(yarp_pm_depthimage
                   DepthImage.cpp
                   DepthImage.h)
-  target_link_libraries(yarp_pm_depthimage YARP_OS YARP_sig)
+  target_link_libraries(yarp_pm_depthimage YARP::YARP_OS
+                                           YARP::YARP_sig)
   yarp_install(TARGETS yarp_pm_depthimage
                EXPORT YARP
                COMPONENT runtime

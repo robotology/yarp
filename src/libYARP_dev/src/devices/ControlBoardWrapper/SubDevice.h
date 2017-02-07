@@ -32,7 +32,6 @@
 #include <string>
 #include <vector>
 
-#include "ControlBoardWrapper.h"
 #include "StreamingMessagesParser.h"
 #include "RPCMessagesParser.h"
 

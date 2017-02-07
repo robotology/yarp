@@ -23,9 +23,9 @@ if(NOT SKIP_opencv_grabber)
 
   yarp_add_plugin(yarp_opencv OpenCVGrabber.cpp
                               OpenCVGrabber.h)
-  target_link_libraries(yarp_opencv YARP_OS
-                                    YARP_sig
-                                    YARP_dev
+  target_link_libraries(yarp_opencv YARP::YARP_OS
+                                    YARP::YARP_sig
+                                    YARP::YARP_dev
                                     ${OpenCV_LIBRARIES})
   yarp_install(TARGETS yarp_opencv
                EXPORT YARP

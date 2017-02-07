@@ -11,6 +11,7 @@ source_group("Header Files" FILES ${YARP_eigen_HDRS})
 set_property(GLOBAL APPEND PROPERTY YARP_TREE_INCLUDE_DIRS "${PROJECT_SOURCE_DIR}/include")
 
 add_library(YARP_eigen INTERFACE)
+add_library(YARP::YARP_eigen ALIAS YARP_eigen)
 
 if(TARGET Eigen3::Eigen) # Since Eigen 3.3.1
   target_include_directories(YARP_eigen INTERFACE $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>

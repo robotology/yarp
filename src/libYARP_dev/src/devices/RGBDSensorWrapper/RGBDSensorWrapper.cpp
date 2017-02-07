@@ -5,12 +5,12 @@
  * CopyPolicy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
  */
 
+#include "RGBDSensorWrapper.h"
 #include <sstream>
 #include <stdio.h>
 #include <string.h>
 #include <yarp/os/Log.h>
 #include <yarp/os/LogStream.h>
-#include "RGBDSensorWrapper.h"
 #include <yarpRosHelper.h>
 #include "rosPixelCode.h"
 
@@ -165,6 +165,7 @@ RGBDSensorWrapper::RGBDSensorWrapper(): RateThread(DEFAULT_THREAD_PERIOD),
     isSubdeviceOwned = false;
     verbose          = 4;
     sensorStatus     = IRGBDSensor::RGBD_SENSOR_NOT_READY;
+    forceInfoSync    = true;
 }
 
 RGBDSensorWrapper::~RGBDSensorWrapper()
@@ -277,6 +278,11 @@ bool RGBDSensorWrapper::fromConfig(yarp::os::Searchable &config)
                 return false;
             }
             *(prm->var) = rosGroup.find(prm->parname).asString().c_str();
+        }
+        
+        if (rosGroup.check("forceInfoSync"))
+        {
+            forceInfoSync = rosGroup.find("forceInfoSync").asBool();    
         }
     }
 
@@ -790,6 +796,22 @@ bool RGBDSensorWrapper::writeData()
         return false;
     }
 
+    static Stamp oldColorStamp = Stamp(0, 0);
+    static Stamp oldDepthStamp = Stamp(0, 0);
+
+    if (((colorStamp.getTime() - oldColorStamp.getTime()) > 0) == false)
+    {
+        return true;
+    }
+
+    if (((depthStamp.getTime() - oldDepthStamp.getTime()) > 0) == false)
+    {
+        return true;
+    }
+
+    oldDepthStamp = depthStamp;
+    oldColorStamp = colorStamp;
+
     if (use_YARP)
     {
         FlexImage& yColorImage           = colorFrame_StreamingPort.prepare();
@@ -829,6 +851,8 @@ bool RGBDSensorWrapper::writeData()
 
         if (setCamInfo(camInfoC, rosFrameId, nodeSeq, COLOR_SENSOR))
         {
+            if(forceInfoSync)
+              camInfoC.header.stamp = rColorImage.header.stamp;
             rosPublisherPort_colorCaminfo.setEnvelope(colorStamp);
             rosPublisherPort_colorCaminfo.write();
         }
@@ -838,6 +862,8 @@ bool RGBDSensorWrapper::writeData()
         }
         if (setCamInfo(camInfoD, rosFrameId, nodeSeq, DEPTH_SENSOR))
         {
+            if(forceInfoSync)
+                camInfoD.header.stamp = rDepthImage.header.stamp;
             rosPublisherPort_depthCaminfo.setEnvelope(depthStamp);
             rosPublisherPort_depthCaminfo.write();
         }

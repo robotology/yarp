@@ -29,7 +29,9 @@ include_directories(SYSTEM ${ACE_INCLUDE_DIRS})
 add_library(YARP_name ${YARP_name_SRCS}
                       ${YARP_name_HDRS}
                       ${YARP_name_IMPL_HDRS})
-target_link_libraries(YARP_name PRIVATE YARP_OS)
+add_library(YARP::YARP_name ALIAS YARP_name)
+
+target_link_libraries(YARP_name PRIVATE YARP::YARP_OS)
 target_link_libraries(YARP_name PRIVATE ${ACE_LIBRARIES})
 
 set_property(TARGET YARP_name PROPERTY PUBLIC_HEADER ${YARP_name_HDRS})

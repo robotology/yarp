@@ -17,8 +17,8 @@ if(NOT SKIP_stage)
   include_directories(${Stage_INCLUDE_DIRS})
   yarp_add_plugin(yarp_stage StageControl.cpp
                              StageControl.h)
-  target_link_libraries(yarp_stage YARP_OS
-                                   YARP_dev
+  target_link_libraries(yarp_stage YARP::YARP_OS
+                                   YARP::YARP_dev
                                    ${Stage_LIBRARIES})
   yarp_install(TARGETS yarp_stage
                EXPORT YARP

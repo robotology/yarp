@@ -13,9 +13,9 @@ include_directories(${YARP_OS_INCLUDE_DIRS}
 set(yarp_SRCS yarp.cpp)
 
 add_executable(yarp ${yarp_SRCS})
-target_link_libraries(yarp YARP_OS
-                           YARP_init
-                           YARP_serversql)
+target_link_libraries(yarp YARP::YARP_OS
+                           YARP::YARP_init
+                           YARP::YARP_serversql)
 
 install(TARGETS yarp
         COMPONENT utilities
@@ -35,8 +35,8 @@ include_directories(SYSTEM ${CMAKE_SOURCE_DIR}/extern/diff_match_patch)
 
 add_executable(yarp-config ${yarp_config_SRCS}
                            ${yarp_config_HDRS})
-target_link_libraries(yarp-config YARP_OS
-                                  YARP_init
+target_link_libraries(yarp-config YARP::YARP_OS
+                                  YARP::YARP_init
                                   ${ACE_LIBRARIES})
 install(TARGETS yarp-config
         COMPONENT utilities

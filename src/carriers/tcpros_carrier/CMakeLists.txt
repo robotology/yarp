@@ -36,9 +36,9 @@ if(NOT SKIP_tcpros OR NOT SKIP_rossrv)
                   RosSlave.h
                   RosLookup.h
                   RosLookup.cpp)
-  target_link_libraries(yarp_tcpros YARP_OS
-                                    YARP_sig
-                                    YARP_wire_rep_utils)
+  target_link_libraries(yarp_tcpros YARP::YARP_OS
+                                    YARP::YARP_sig
+                                    YARP::YARP_wire_rep_utils)
   yarp_install(TARGETS yarp_tcpros
                EXPORT YARP
                COMPONENT runtime
