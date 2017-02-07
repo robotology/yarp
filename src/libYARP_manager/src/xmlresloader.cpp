@@ -17,7 +17,7 @@
 #include <cctype>
 #include <string>
 #include <fstream>
-
+#include <yarp/manager/impl/textparser.h>
 #include <tinyxml.h>
 
 
@@ -27,6 +27,7 @@ using namespace yarp::manager;
 
 XmlResLoader::XmlResLoader(const char* szPath, const char* szName)
 {
+    parser = new(TextParser);
     if(strlen(szPath))
     {
         strPath = szPath;
@@ -44,6 +45,7 @@ XmlResLoader::XmlResLoader(const char* szPath, const char* szName)
  */
 XmlResLoader::XmlResLoader(const char* szFileName)
 {
+    parser = new(TextParser);
     if(szFileName)
         strFileName = szFileName;
 }
@@ -52,6 +54,10 @@ XmlResLoader::XmlResLoader(const char* szFileName)
 
 XmlResLoader::~XmlResLoader()
 {
+    if(parser)
+    {
+        delete parser;
+    }
 }
 
 
@@ -200,6 +206,8 @@ bool XmlResLoader::parsXml(const char* szFile)
         return false;
     }
 
+
+
     if(!compareString(root->Value(), "resources"))
     {
         /*
@@ -208,6 +216,14 @@ bool XmlResLoader::parsXml(const char* szFile)
         logger->addWarning(msg);
         */
         return false;
+    }
+
+    for(TiXmlElement* var = root->FirstChildElement("var"); var; var = var->NextSiblingElement())
+    {
+        if(var->Attribute("name") && var->GetText())
+        {
+            parser->addVariable(var->Attribute("name"), var->GetText());
+        }
     }
 
     /* retrieving all computers descriptions */
@@ -225,16 +241,16 @@ bool XmlResLoader::parsXml(const char* szFile)
             {
                  /* retrieving name */
                 if(compareString(comptag->Value(), "name"))
-                    computer.setName(comptag->GetText());
+                    computer.setName(parser->parseText(comptag->GetText()).c_str());
 
                 /* retrieving description */
                  if(compareString(comptag->Value(), "description"))
-                    computer.setDescription(comptag->GetText());
+                    computer.setDescription(parser->parseText(comptag->GetText()).c_str());
 
                 /* retrieving disablility */
                 if(compareString(comptag->Value(), "disable"))
                 {
-                    if(compareString(comptag->GetText(), "yes"))
+                    if(compareString(parser->parseText(comptag->GetText()).c_str(), "yes"))
                         computer.setDisable(true);
                 }
 
@@ -244,7 +260,7 @@ bool XmlResLoader::parsXml(const char* szFile)
                     Platform os;
                     TiXmlElement* element;
                     if((element = (TiXmlElement*) comptag->FirstChild("name")))
-                        os.setName(element->GetText());
+                        os.setName(parser->parseText(element->GetText()).c_str());
                     else
                     {
                         OSTRINGSTREAM war;
@@ -254,10 +270,10 @@ bool XmlResLoader::parsXml(const char* szFile)
                     }
 
                     if((element = (TiXmlElement*) comptag->FirstChild("distribution")))
-                        os.setDistribution(element->GetText());
+                        os.setDistribution(parser->parseText(element->GetText()).c_str());
 
                     if((element = (TiXmlElement*) comptag->FirstChild("release")))
-                        os.setRelease(element->GetText());
+                        os.setRelease(parser->parseText(element->GetText()).c_str());
 
                     computer.setPlatform(os);
                 } // end of platform tag
@@ -268,7 +284,7 @@ bool XmlResLoader::parsXml(const char* szFile)
                     Memory mem;
                     TiXmlElement* element;
                     if((element = (TiXmlElement*) comptag->FirstChild("total_space")))
-                        mem.setTotalSpace((Capacity)atol(element->GetText()));
+                        mem.setTotalSpace((Capacity)atol(parser->parseText(element->GetText()).c_str()));
                    computer.setMemory(mem);
                 } // end of memory tag
 
@@ -278,7 +294,7 @@ bool XmlResLoader::parsXml(const char* szFile)
                     Storage stg;
                     TiXmlElement* element;
                     if((element = (TiXmlElement*) comptag->FirstChild("total_space")))
-                        stg.setTotalSpace((Capacity)atol(element->GetText()));
+                        stg.setTotalSpace((Capacity)atol(parser->parseText(element->GetText()).c_str()));
                    computer.setStorage(stg);
                 } // end of storage tag
 
@@ -288,13 +304,13 @@ bool XmlResLoader::parsXml(const char* szFile)
                     Processor proc;
                     TiXmlElement* element;
                     if((element = (TiXmlElement*) comptag->FirstChild("architecture")))
-                        proc.setArchitecture(element->GetText());
+                        proc.setArchitecture(parser->parseText(element->GetText()).c_str());
                     if((element = (TiXmlElement*) comptag->FirstChild("model")))
-                        proc.setModel(element->GetText());
+                        proc.setModel(parser->parseText(element->GetText()).c_str());
                     if((element = (TiXmlElement*) comptag->FirstChild("cores")))
-                        proc.setCores((size_t)atoi(element->GetText()));
+                        proc.setCores((size_t)atoi(parser->parseText(element->GetText()).c_str()));
                     if((element = (TiXmlElement*) comptag->FirstChild("frequency")))
-                        proc.setFrequency(atof(element->GetText()));
+                        proc.setFrequency(atof(parser->parseText(element->GetText()).c_str()));
                    computer.setProcessor(proc);
                 } // end of processor tag
 
@@ -304,11 +320,11 @@ bool XmlResLoader::parsXml(const char* szFile)
                     Network net;
                     TiXmlElement* element;
                     if((element = (TiXmlElement*) comptag->FirstChild("ip4")))
-                        net.setIP4(element->GetText());
+                        net.setIP4(parser->parseText(element->GetText()).c_str());
                     if((element = (TiXmlElement*) comptag->FirstChild("ip6")))
-                        net.setIP6(element->GetText());
+                        net.setIP6(parser->parseText(element->GetText()).c_str());
                     if((element = (TiXmlElement*) comptag->FirstChild("mac")))
-                        net.setMAC(element->GetText());
+                        net.setMAC(parser->parseText(element->GetText()).c_str());
                     computer.setNetwork(net);
                 } // end of network tag
 
@@ -319,20 +335,20 @@ bool XmlResLoader::parsXml(const char* szFile)
                     GPU gpu;
                     TiXmlElement* element;
                     if((element = (TiXmlElement*) comptag->FirstChild("name")))
-                        gpu.setName(element->GetText());
+                        gpu.setName(parser->parseText(element->GetText()).c_str());
                     if((element = (TiXmlElement*) comptag->FirstChild("capability")))
-                        gpu.setCompCompatibility(element->GetText());
+                        gpu.setCompCompatibility(parser->parseText(element->GetText()).c_str());
                     if((element = (TiXmlElement*) comptag->FirstChild("cores")))
-                        gpu.setCores((size_t)atoi(element->GetText()));
+                        gpu.setCores((size_t)atoi(parser->parseText(element->GetText()).c_str()));
                     if((element = (TiXmlElement*) comptag->FirstChild("frequency")))
-                        gpu.setFrequency(atof(element->GetText()));
+                        gpu.setFrequency(atof(parser->parseText(element->GetText()).c_str()));
                     if((element = (TiXmlElement*) comptag->FirstChild("register_block")))
-                        gpu.setResgisterPerBlock((size_t)atoi(element->GetText()));
+                        gpu.setResgisterPerBlock((size_t)atoi(parser->parseText(element->GetText()).c_str()));
                     if((element = (TiXmlElement*) comptag->FirstChild("thread_block")))
-                        gpu.setThreadPerBlock((size_t)atoi(element->GetText()));
+                        gpu.setThreadPerBlock((size_t)atoi(parser->parseText(element->GetText()).c_str()));
                     if((element = (TiXmlElement*) comptag->FirstChild("overlap")))
                     {
-                        if(compareString(element->GetText(), "yes"))
+                        if(compareString(parser->parseText(element->GetText()).c_str(), "yes"))
                             gpu.setOverlap(true);
                         else
                             gpu.setOverlap(false);
@@ -344,7 +360,7 @@ bool XmlResLoader::parsXml(const char* szFile)
                         TiXmlElement* element;
                         element = (TiXmlElement*) comptag->FirstChild("global_memory");
                         if((element = (TiXmlElement*) element->FirstChild("total_space")))
-                            gpu.setGlobalMemory((Capacity)atol(element->GetText()));
+                            gpu.setGlobalMemory((Capacity)atol(parser->parseText(element->GetText()).c_str()));
                     } // end of global memory tag
 
                     // shared memory
@@ -353,7 +369,7 @@ bool XmlResLoader::parsXml(const char* szFile)
                         TiXmlElement* element;
                         element = (TiXmlElement*) comptag->FirstChild("shared_memory");
                         if((element = (TiXmlElement*) element->FirstChild("total_space")))
-                            gpu.setSharedMemory((Capacity)atol(element->GetText()));
+                            gpu.setSharedMemory((Capacity)atol(parser->parseText(element->GetText()).c_str()));
                     } // end of shared memory tag
 
                     // constant memory
@@ -362,7 +378,7 @@ bool XmlResLoader::parsXml(const char* szFile)
                         TiXmlElement* element;
                         element = (TiXmlElement*) comptag->FirstChild("constant_memory");
                         if((element = (TiXmlElement*) element->FirstChild("total_space")))
-                            gpu.setConstantMemory((Capacity)atol(element->GetText()));
+                            gpu.setConstantMemory((Capacity)atol(parser->parseText(element->GetText()).c_str()));
                     } // end of shared memory tag
 
                    computer.addPeripheral(gpu);
