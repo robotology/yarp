@@ -42,6 +42,7 @@
 #include <linux/videodev2.h>
 #include <jpeglib.h>
 #include <libv4l2.h>
+#include <libv4lconvert.h>
 #include <map>
 
 #include <cv.h>
@@ -210,6 +211,7 @@ public:
 
 private:
 
+    v4lconvert_data *_v4lconvert_data;
     bool use_exposure_absolute;
 
     yarp::os::Stamp timeStamp;
