@@ -302,11 +302,28 @@ public:
     virtual int getRgbWidth();
 
     /**
+     * Get the possible configurations of the camera
+     * @param configurations  list of camera supported configurations as CameraConfig type
+     * @return true on success
+     */
+
+    virtual bool getRgbSupportedConfigurations(yarp::sig::VectorOf<CameraConfig> &configurations);
+    /**
+     * Get the resolution of the rgb image from the camera
+     * @param width  image width
+     * @param height image height
+     * @return true on success
+     */
+
+    virtual bool getRgbResolution(int &width, int &height);
+
+    /**
      * Set the resolution of the rgb image from the camera
      * @param width  image width
      * @param height image height
      * @return true on success
      */
+
     virtual bool setRgbResolution(int width, int height);
 
     /**
@@ -356,7 +373,8 @@ public:
 
 
 class yarp::dev::USBCameraDriverRgb :   public yarp::dev::USBCameraDriver,
-                                        public IFrameGrabberImage
+                                        public IFrameGrabberImage,
+                                        public IFrameGrabberImageRaw
 {
 private:
     USBCameraDriverRgb(const USBCameraDriverRgb&);
@@ -375,6 +393,14 @@ public:
         * @return true/false upon success/failure
         */
     bool getImage(yarp::sig::ImageOf<yarp::sig::PixelRgb>& image);
+
+    /**
+        * FrameGrabber image interface, returns the last acquired frame as
+        * a raw image.
+        * @param image that will store the last frame.
+        * @return true/false upon success/failure
+        */
+    bool getImage(yarp::sig::ImageOf<yarp::sig::PixelMono>& image);
 
     /**
         * Return the height of each frame.

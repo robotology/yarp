@@ -61,17 +61,18 @@ bool USBCameraDriver::open(yarp::os::Searchable& config)
 
     yarp::os::Property prop;
     prop.fromString(config.toString().c_str());
+    if(!prop.check("pixelType")){
+        switch(pixelType)
+        {
+            case VOCAB_PIXEL_MONO:
+                prop.put("pixelType", VOCAB_PIXEL_MONO);
+                break;
 
-    switch(pixelType)
-    {
-        case VOCAB_PIXEL_MONO:
-            prop.put("pixelType", VOCAB_PIXEL_MONO);
-            break;
-
-        case VOCAB_PIXEL_RGB:
-        default:
-            prop.put("pixelType", VOCAB_PIXEL_RGB);
-            break;
+            case VOCAB_PIXEL_RGB:
+            default:
+                prop.put("pixelType", VOCAB_PIXEL_RGB);
+                break;
+        }
     }
     if(!os_device->open(prop) )
         return false;
@@ -306,6 +307,21 @@ int USBCameraDriver::getRgbWidth(){
     return false;
 }
 
+
+bool USBCameraDriver::getRgbSupportedConfigurations(yarp::sig::VectorOf<CameraConfig> &configurations)
+{
+    if(deviceRgbVisualParam)
+        return deviceRgbVisualParam->getRgbSupportedConfigurations(configurations);
+    return false;
+}
+
+bool USBCameraDriver::getRgbResolution(int &width, int &height)
+{
+    if(deviceRgbVisualParam)
+        return deviceRgbVisualParam->getRgbResolution(width,height);
+    return false;
+}
+
 bool USBCameraDriver::setRgbResolution(int width, int height){
     if(width<=0 || height<=0){
         yError()<<"usbCamera: invalid width or height";
@@ -371,6 +387,15 @@ bool USBCameraDriverRgb::getImage(yarp::sig::ImageOf<yarp::sig::PixelRgb>& image
     return true;
 }
 
+bool USBCameraDriverRgb::getImage(yarp::sig::ImageOf<yarp::sig::PixelMono>& image)
+{
+    if( (image.width() != _width) || (image.height() != _height) )
+        image.resize(_width, _height);
+
+    deviceRaw->getRawBuffer(image.getRawImage());
+    return true;
+}
+
 int USBCameraDriverRgb::width () const
 {
     return USBCameraDriver::width();
@@ -380,7 +405,6 @@ int USBCameraDriverRgb::height () const
 {
     return USBCameraDriver::height();
 }
-
 
 //// RAW ///
 USBCameraDriverRaw::USBCameraDriverRaw()  : USBCameraDriver()
@@ -412,6 +436,8 @@ int USBCameraDriverRaw::height () const
 {
     return USBCameraDriver::height();
 }
+
+
 
 /*  Implementation of IFrameGrabberControls2 interface
  *
