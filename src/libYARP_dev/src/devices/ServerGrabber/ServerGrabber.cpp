@@ -344,8 +344,8 @@ bool ServerGrabber::fromConfig(yarp::os::Searchable &config)
     {
         if(param.split)
         {
-            pImg_Name = rootName + "/left:o";
-            pImg2_Name = rootName + "/right:o";
+            pImg_Name = rootName + "/left";
+            pImg2_Name = rootName + "/right";
         }
         else
             pImg_Name = rootName;
@@ -604,7 +604,7 @@ bool ServerGrabber::attachAll(const PolyDriverList &device2attach)
         switch(param.cap){
             case COLOR :
             {
-                if((fgImage==YARP_NULLPTR))
+                if(fgImage==YARP_NULLPTR)
                 {
                     yError()<<"ServerGrabber: capability required not supported";
                     return false;
@@ -613,7 +613,7 @@ bool ServerGrabber::attachAll(const PolyDriverList &device2attach)
             break;
             case RAW :
             {
-                if((fgImageRaw==YARP_NULLPTR))
+                if(fgImageRaw==YARP_NULLPTR)
                 {
                     yError()<<"ServerGrabber: capability required not supported";
                     return false;
@@ -627,7 +627,7 @@ bool ServerGrabber::attachAll(const PolyDriverList &device2attach)
             return false;
         }
 
-        if((rgbVis_p == YARP_NULLPTR))
+        if(rgbVis_p == YARP_NULLPTR)
         {
             yWarning()<<"ServerGrabber: Targets has not IVisualParamInterface, some features cannot be available";
         }
