@@ -225,6 +225,14 @@ list(APPEND YARP_devices_HDRS ${serverInertial_hdrs}
                               ${inertial_msgs_hdrs})
 include_directories(${serverInertial_incl_dirs})
 
+# add ServerGrabber device
+add_subdirectory(src/devices/ServerGrabber)
+list(APPEND YARP_devices_SRCS ${serverGrabber_srcs}
+                              ${grabber_msgs_srcs})
+list(APPEND YARP_devices_HDRS ${serverGrabber_hdrs}
+                              ${grabber_msgs_hdrs})
+include_directories(${serverGrabber_incl_dirs})
+
 # add RGBDSensorClient device
 add_subdirectory(src/devices/RGBDSensorClient)
 list(APPEND YARP_devices_SRCS ${RGBDClient_srcs}
