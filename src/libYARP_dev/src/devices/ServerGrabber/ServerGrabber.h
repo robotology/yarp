@@ -184,10 +184,6 @@ public:
      */
     virtual bool open(yarp::os::Searchable& config);
 
-    bool fromConfig(yarp::os::Searchable &config);
-
-    bool initialize_YARP(yarp::os::Searchable &params);
-
     //virtual bool read(ConnectionReader& connection);
 
     //DeviceResponder
@@ -203,14 +199,18 @@ public:
 
     bool        detach();
 
-    void shallowCopyImages(const yarp::sig::FlexImage& src, yarp::sig::FlexImage& dest);
-
     //RateThread
     bool threadInit();
 
     void threadRelease();
 
     void run();
+protected:
+    bool fromConfig(yarp::os::Searchable &config);
+
+    bool initialize_YARP(yarp::os::Searchable &params);
+
+    void shallowCopyImages(const yarp::sig::FlexImage& src, yarp::sig::FlexImage& dest);
 };
 
 #endif // YARP_DEV_SERVERGRABBER_H
