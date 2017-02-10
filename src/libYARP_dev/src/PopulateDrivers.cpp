@@ -42,6 +42,7 @@ extern DriverCreator *createRemoteControlBoardRemapper();
 extern DriverCreator *createNavigation2DClient();
 extern DriverCreator *createRobotDescriptionServer();
 extern DriverCreator *createRobotDescriptionClient();
+extern DriverCreator *createServerGrabber();
 
 #ifdef WITH_YARPMATH
 extern DriverCreator *createFrameTransformServer();
@@ -100,6 +101,7 @@ void Drivers::init() {
     add(createNavigation2DClient());
     add(createRobotDescriptionServer());
     add(createRobotDescriptionClient());
+    add(createServerGrabber());
 
 #ifdef WITH_YARPMATH
     add(createFrameTransformServer());
