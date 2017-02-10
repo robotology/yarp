@@ -149,7 +149,6 @@ set(YARP_devices_SRCS   src/devices/AnalogWrapper/AnalogWrapper.cpp
                         src/devices/BatteryWrapper/BatteryWrapper.cpp
                         src/devices/BatteryClient/BatteryClient.cpp
                         src/devices/Rangefinder2DWrapper/Rangefinder2DWrapper.cpp
-                        src/devices/ControlBoardWrapper/ControlBoardWrapper.cpp
                         src/devices/Navigation2DClient/Navigation2DClient.cpp
                         src/devices/VirtualAnalogWrapper/VirtualAnalogWrapper.cpp
                         src/devices/ControlBoardRemapper/ControlBoardRemapper.cpp
@@ -169,7 +168,6 @@ set(YARP_devices_HDRS   src/devices/AnalogWrapper/AnalogWrapper.h
                         src/devices/BatteryWrapper/BatteryWrapper.h
                         src/devices/BatteryClient/BatteryClient.h
                         src/devices/Rangefinder2DWrapper/Rangefinder2DWrapper.h
-                        src/devices/ControlBoardWrapper/ControlBoardWrapper.h
                         src/devices/Navigation2DClient/Navigation2DClient.h
                         src/devices/VirtualAnalogWrapper/VirtualAnalogWrapper.h
                         src/devices/ControlBoardRemapper/ControlBoardRemapper.h
@@ -178,7 +176,7 @@ set(YARP_devices_HDRS   src/devices/AnalogWrapper/AnalogWrapper.h
                         src/devices/RobotDescriptionClient/RobotDescriptionClient.h
                         src/devices/RobotDescriptionServer/RobotDescriptionServer.h)
 if (CREATE_LIB_MATH)
-  list(APPEND YARP_devices_SRCS src/devices/FrameTransformClient/FrameTransformClient.h
+  list(APPEND YARP_devices_HDRS src/devices/FrameTransformClient/FrameTransformClient.h
                                 src/devices/FrameTransformServer/FrameTransformServer.h
                                 src/devices/LocationsServer/LocationsServer.h
                                 src/devices/Rangefinder2DClient/Rangefinder2DClient.h)
