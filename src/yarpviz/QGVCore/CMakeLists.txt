@@ -38,5 +38,7 @@ add_library(qgvcore SHARED
 target_link_libraries(qgvcore                      
                  	  ${GRAPHVIZ_GVC_LIBRARY}
                       ${GRAPHVIZ_CGRAPH_LIBRARY}
-                      ${GRAPHVIZ_CDT_LIBRARY})
-qtyarp_use_modules(qgvcore Widgets Gui)
+                      ${GRAPHVIZ_CDT_LIBRARY}
+                      Qt5::Widgets
+                      Qt5::Gui)
+#qtyarp_use_modules(qgvcore Widgets Gui)
