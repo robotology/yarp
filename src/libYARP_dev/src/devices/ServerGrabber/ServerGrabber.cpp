@@ -208,6 +208,8 @@ ServerGrabber::ServerGrabber():RateThread(DEFAULT_THREAD_PERIOD), period(DEFAULT
     fgCtrl = YARP_NULLPTR;
     fgCtrl2 = YARP_NULLPTR;
     fgTimed = YARP_NULLPTR;
+    poly = YARP_NULLPTR;
+    poly2 = YARP_NULLPTR;
     img=YARP_NULLPTR;
     img2=YARP_NULLPTR;
     img_Raw=YARP_NULLPTR;
@@ -313,10 +315,10 @@ bool ServerGrabber::open(yarp::os::Searchable& config) {
 
 bool ServerGrabber::fromConfig(yarp::os::Searchable &config)
 {
-    if(config.check("period"))
+    if(config.find("period").isInt())
         period = config.find("period").asInt();
-    else if(config.check("framerate"))
-        period = (1/(config.find("period").asInt()))*1000;
+    else if(config.find("framerate").isInt())
+        period = (1/(config.find("framerate").asInt()))*1000;
     else
         yWarning()<<"ServerGrabber: period/framerate parameter not found, using default of"<< DEFAULT_THREAD_PERIOD << "ms";
     if(!config.check("subdevice"))
