@@ -105,11 +105,20 @@ bool OpenCVGrabber::open(Searchable & config) {
                          Value(CV_CAP_ANY), 
                          "if present, read from camera identified by this index").asInt();
 
+        if (camera_idx == -1)
+        {
+            yError() << "You are using an old, deprcated C-API cvCaptureFromCAM. Code should be fixed to use opencv VideoCapture class. In the meanwhile you have to relaunch the grabber with option --camera <id_of_the_camera>";
+        }
+
         // Try to open a capture object for the first camera
         m_capture = (void*)cvCaptureFromCAM(camera_idx);
         if (0 == m_capture) {
             yError("Unable to open camera for capture!");
             return false;
+        }
+        else
+        {
+            yInfo("Capturing from camera: %d",camera_idx);
         }
 
         if ( config.check("framerate","if present, specifies desired camera device framerate") ) {
