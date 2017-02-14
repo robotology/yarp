@@ -241,12 +241,15 @@ bool ServerGrabber::close() {
     pImg.interrupt();
     rpcPort.close();
     pImg.close();
-    poly->close();
-    delete poly;
-    poly=YARP_NULLPTR;
+    if(poly)
+    {
+        poly->close();
+        delete poly;
+        poly=YARP_NULLPTR;
+    }
     if(param.twoCameras)
     {
-        if(isSubdeviceOwned)
+        if(isSubdeviceOwned && poly2)
         {
             poly2->close();
             delete poly2;
@@ -321,8 +324,10 @@ bool ServerGrabber::fromConfig(yarp::os::Searchable &config)
         period = (1/(config.find("framerate").asInt()))*1000;
     else
         yWarning()<<"ServerGrabber: period/framerate parameter not found, using default of"<< DEFAULT_THREAD_PERIOD << "ms";
-    if(!config.check("subdevice"))
+    if(!config.check("subdevice") && !(config.findGroup("LEFT").isNull()) && !(config.findGroup("RIGHT").isNull()))
         param.twoCameras=true;
+    if(config.check("twoCameras"))//extra conf parameter for the yarprobotinterface
+        param.twoCameras=config.find("twoCameras").asBool();
     if(config.check("split"))
         param.split=config.find("split").asBool();
     if(config.find("capabilities").asString()=="COLOR")
@@ -784,7 +789,7 @@ bool ServerGrabber::openAndAttachSubDevice(Searchable &prop){
 
         if (!(poly->isValid()))
         {
-            yError("opening controlBoardWrapper2 subdevice... FAILED\n");
+            yError("opening  subdevice... FAILED\n");
             return false;
         }
         PolyDriverDescriptor pd(poly,"poly");
