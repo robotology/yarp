@@ -766,14 +766,29 @@ bool V4L_camera::getRawBuffer(unsigned char *buffer)
 {
     bool res=false;
     mutex.wait();
-    if(configured){
+    if(configured)
+    {
         imageProcess(param.raw_image);
-        memcpy(buffer, param.tmp_image, param.dst_image_size);
+        switch(param.camModel)
+        {
+            case LEOPARD_PYTHON:
+            {
+                memcpy(buffer, param.tmp_image, param.dst_image_size);
+            }
+            break;
+
+            case STANDARD_UVC:
+            default:
+            {
+                memcpy(buffer, param.raw_image, param.width * param.height);
+            }
+            break;
+        }
         res=true;
     }
-    else{
+    else
+    {
         yError()<<"usbCamera: unable to get the buffer, device unitialized";
-
         res=false;
     }
     mutex.post();
