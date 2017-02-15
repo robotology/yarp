@@ -324,6 +324,11 @@ bool ServerGrabber::fromConfig(yarp::os::Searchable &config)
         period = (1/(config.find("framerate").asInt()))*1000;
     else
         yWarning()<<"ServerGrabber: period/framerate parameter not found, using default of"<< DEFAULT_THREAD_PERIOD << "ms";
+    if(config.check("subdevice") && (!(config.findGroup("LEFT").isNull()) || !(config.findGroup("RIGHT").isNull())))
+    {
+        yError()<<"ServerGrabber: found subdevice and LEFT/RIGHT group both...";
+        return false;
+    }
     if(!config.check("subdevice") && !(config.findGroup("LEFT").isNull()) && !(config.findGroup("RIGHT").isNull()))
         param.twoCameras=true;
     if(config.check("twoCameras"))//extra conf parameter for the yarprobotinterface
@@ -391,6 +396,7 @@ bool ServerGrabber::fromConfig(yarp::os::Searchable &config)
         else
         {
             isSubdeviceOwned=false;
+            yWarning()<<"ServerGrabber: subdevice parameter not found..";
             if(!openDeferredAttach(config))
             return false;
         }
@@ -871,12 +877,16 @@ void ServerGrabber::run()
             {
                 if(fgImage!=YARP_NULLPTR && fgImage2 !=YARP_NULLPTR)
                 {
-                    flex_i.setPixelCode(VOCAB_PIXEL_RGB);
-                    flex_i.resize(fgImage->width(),fgImage->height());
-                    flex_i2.setPixelCode(VOCAB_PIXEL_RGB);
-                    flex_i2.resize(fgImage2->width(),fgImage2->height());
                     ImageOf<PixelRgb> i;
                     ImageOf<PixelRgb> i2;
+                    flex_i.setPixelCode(i.getPixelCode());
+                    flex_i.setPixelSize(i.getPixelSize());
+                    flex_i.setQuantum(i.getQuantum());
+                    flex_i.resize(fgImage->width(),fgImage->height());
+                    flex_i2.setPixelCode(i2.getPixelCode());
+                    flex_i2.setPixelSize(i2.getPixelSize());
+                    flex_i2.setQuantum(i2.getQuantum());
+                    flex_i2.resize(fgImage2->width(),fgImage2->height());
                     //ASK ma flex_i.width e height saranno 0 giusto?
                     i.setExternal(flex_i.getRawImage(),flex_i.width(),flex_i.height());
                     fgImage->getImage(i);
@@ -891,12 +901,16 @@ void ServerGrabber::run()
             {
                 if(fgImageRaw!=YARP_NULLPTR && fgImageRaw2 !=YARP_NULLPTR)
                 {
-                    flex_i.setPixelCode(VOCAB_PIXEL_MONO);
-                    flex_i.resize(fgImageRaw->width(),fgImageRaw->height());
-                    flex_i2.setPixelCode(VOCAB_PIXEL_MONO);
-                    flex_i2.resize(fgImageRaw2->width(),fgImageRaw2->height());
                     ImageOf<PixelMono> i;
                     ImageOf<PixelMono> i2;
+                    flex_i.setPixelCode(i.getPixelCode());
+                    flex_i.setPixelSize(i.getPixelSize());
+                    flex_i.setQuantum(i.getQuantum());
+                    flex_i.resize(fgImageRaw->width(),fgImageRaw->height());
+                    flex_i2.setPixelCode(i2.getPixelCode());
+                    flex_i2.setPixelSize(i2.getPixelSize());
+                    flex_i2.setQuantum(i2.getQuantum());
+                    flex_i2.resize(fgImageRaw2->width(),fgImageRaw2->height());
                     i.setExternal(flex_i.getRawImage(),flex_i.width(),flex_i.height());
                     fgImageRaw->getImage(i);
                     i2.setExternal(flex_i2.getRawImage(),flex_i2.width(),flex_i2.height());
@@ -991,7 +1005,9 @@ void ServerGrabber::run()
             if(fgImage!=YARP_NULLPTR)
             {
                 ImageOf<PixelRgb> i;
-                flex_i.setPixelCode(VOCAB_PIXEL_RGB);
+                flex_i.setPixelCode(i.getPixelCode());
+                flex_i.setPixelSize(i.getPixelSize());
+                flex_i.setQuantum(i.getQuantum());
                 flex_i.resize(fgImage->width(),fgImage->height());
                 i.setExternal(flex_i.getRawImage(),flex_i.width(),flex_i.height());
                 fgImage->getImage(i);
@@ -1004,7 +1020,9 @@ void ServerGrabber::run()
             if(fgImageRaw!=YARP_NULLPTR)
             {
                 ImageOf<PixelMono> i;
-                flex_i.setPixelCode(VOCAB_PIXEL_MONO);
+                flex_i.setPixelCode(i.getPixelCode());
+                flex_i.setPixelSize(i.getPixelSize());
+                flex_i.setQuantum(i.getQuantum());
                 flex_i.resize(fgImageRaw->width(),fgImageRaw->height());
                 i.setExternal(flex_i.getRawImage(),flex_i.width(),flex_i.height());
                 fgImageRaw->getImage(i);
