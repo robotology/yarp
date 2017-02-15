@@ -249,7 +249,7 @@ public:
         Bottle* connections = v.asList();
 
         mutex.lock();
-        for (std::multimap<ConstString,NodeItem>::iterator it = by_part_name.begin(); it != by_part_name.end(); it++) {
+        for (std::multimap<ConstString,NodeItem>::iterator it = by_part_name.begin(); it != by_part_name.end(); ++it) {
             NodeItem& item = it->second;
             if (!(item.isSubscriber() || item.isPublisher())) {
                 continue;
@@ -307,7 +307,7 @@ public:
         Value v;
         Bottle* subscriptions = v.asList();
         mutex.lock();
-        for (std::multimap<ConstString,NodeItem>::iterator it = by_part_name.begin(); it != by_part_name.end(); it++) {
+        for (std::multimap<ConstString,NodeItem>::iterator it = by_part_name.begin(); it != by_part_name.end(); ++it) {
             NodeItem& item = it->second;
             if (!item.isSubscriber()) {
                 continue;
@@ -327,7 +327,7 @@ public:
         Value v;
         Bottle* publications = v.asList();
         mutex.lock();
-        for (std::multimap<ConstString,NodeItem>::iterator it = by_part_name.begin(); it != by_part_name.end(); it++) {
+        for (std::multimap<ConstString,NodeItem>::iterator it = by_part_name.begin(); it != by_part_name.end(); ++it) {
             NodeItem& item = it->second;
             if (!item.isPublisher()) {
                 continue;

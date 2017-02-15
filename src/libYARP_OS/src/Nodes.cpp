@@ -42,8 +42,7 @@ public:
     {
         std::map<ConstString,Node *> by_name_cp = by_name;
         std::map<ConstString,int> is_external_cp = is_external;
-        for (std::map<ConstString,Node *>::const_iterator it = by_name_cp.begin();
-             it != by_name_cp.end(); it++) {
+        for (std::map<ConstString,Node *>::const_iterator it = by_name_cp.begin(); it != by_name_cp.end(); ++it) {
             if (it->second) {
                 bool ext = false;
                 if (is_external_cp.find(it->first) != is_external_cp.end()) {
@@ -217,8 +216,7 @@ void yarp::os::Nodes::Helper::interrupt()
     if (!active) {
         return;
     }
-    for (std::map<ConstString,Node *>::const_iterator it = by_name.begin();
-         it != by_name.end(); it++) {
+    for (std::map<ConstString,Node *>::const_iterator it = by_name.begin(); it != by_name.end(); ++it) {
         it->second->interrupt();
     }
 }
