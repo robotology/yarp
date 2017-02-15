@@ -132,7 +132,7 @@ bool NetworkClock::read(ConnectionReader& reader) {
                 waiterSemaphore->post();
         }
         else
-            waiter_i++;
+            ++waiter_i;
     }
     listMutex.unlock();
     return true;
