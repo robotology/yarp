@@ -29,7 +29,7 @@ namespace yarp {
              */
             bool YARP_sig_API write(const Sound& src, const char *dest);
 
-            class soundStreamReader
+            class YARP_sig_API soundStreamReader
             {
                 private:
                 FILE *fp;
