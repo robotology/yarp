@@ -203,8 +203,7 @@ Contact yarp::os::Nodes::Helper::query(const ConstString& name,const ConstString
     if (!active) {
         return result;
     }
-    for (std::map<ConstString,Node *>::const_iterator it = by_name.begin();
-         it != by_name.end(); it++) {
+    for (std::map<ConstString,Node *>::const_iterator it = by_name.begin(); it != by_name.end(); ++it) {
         result = it->second->query(name,category);
         if (result.isValid()) {
             return result;

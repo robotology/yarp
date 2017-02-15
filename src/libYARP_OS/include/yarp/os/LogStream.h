@@ -170,7 +170,7 @@ template <typename T>
 inline std::ostream& std::operator<<(std::ostream &os, const std::vector<T> &t)
 {
     os << '[';
-    for (typename std::vector<T>::const_iterator it = t.begin(); it != t.end(); it++) {
+    for (typename std::vector<T>::const_iterator it = t.begin(); it != t.end(); ++it) {
         const T &p = *it;
         if (it != t.begin()) {
             os << ", ";
