@@ -1,7 +1,7 @@
 From 4842124481bbe9eeda37cbeaef70fa318d377921 Mon Sep 17 00:00:00 2001
 From: "Daniele E. Domenichelli" <daniele.domenichelli@iit.it>
 Date: Tue, 18 Oct 2016 14:12:19 +0200
-Subject: [PATCH 18/21] XmlRpc++: Import different encoding and decoding base64
+Subject: [PATCH 18/22] XmlRpc++: Import different encoding and decoding base64
  functions
 
 The original base64 functions in XmlRpc++ license is currently unknown

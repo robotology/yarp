@@ -1,7 +1,7 @@
 From 53ea746a7fa2d2603df46763b8cb380dcc2407ab Mon Sep 17 00:00:00 2001
 From: "Daniele E. Domenichelli" <daniele.domenichelli@iit.it>
 Date: Thu, 27 Aug 2015 16:41:10 +0200
-Subject: [PATCH 14/21] [Cleanup]
+Subject: [PATCH 14/22] [Cleanup]
 
 ---
  extern/xmlrpcpp/xmlrpcpp/XmlRpcValue.h | 10 ++++++----

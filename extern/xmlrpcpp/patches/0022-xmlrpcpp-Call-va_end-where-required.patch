@@ -1,0 +1,32 @@
+From f8a7b800c4f9f361f762624593993cbac304973d Mon Sep 17 00:00:00 2001
+From: "Daniele E. Domenichelli" <daniele.domenichelli@iit.it>
+Date: Wed, 15 Feb 2017 15:37:53 +0100
+Subject: [PATCH 22/22] xmlrpcpp: Call va_end() where required
+
+---
+ extern/xmlrpcpp/xmlrpcpp/src/XmlRpcUtil.cpp | 2 ++
+ 1 file changed, 2 insertions(+)
+
+diff --git a/extern/xmlrpcpp/xmlrpcpp/src/XmlRpcUtil.cpp b/extern/xmlrpcpp/xmlrpcpp/src/XmlRpcUtil.cpp
+index c1bb19336..cb5aa7fb5 100644
+--- a/extern/xmlrpcpp/xmlrpcpp/src/XmlRpcUtil.cpp
++++ b/extern/xmlrpcpp/xmlrpcpp/src/XmlRpcUtil.cpp
+@@ -79,6 +79,7 @@ void XmlRpcUtil::log(int level, const char* fmt, ...)
+     char buf[1024];
+     va_start( va, fmt);
+     vsnprintf(buf,sizeof(buf)-1,fmt,va);
++    va_end(va);
+     buf[sizeof(buf)-1] = 0;
+     XmlRpcLogHandler::getLogHandler()->log(level, buf);
+   }
+@@ -91,6 +92,7 @@ void XmlRpcUtil::error(const char* fmt, ...)
+   va_start(va, fmt);
+   char buf[1024];
+   vsnprintf(buf,sizeof(buf)-1,fmt,va);
++  va_end(va);
+   buf[sizeof(buf)-1] = 0;
+   XmlRpcErrorHandler::getErrorHandler()->error(buf);
+ }
+-- 
+2.11.0
+

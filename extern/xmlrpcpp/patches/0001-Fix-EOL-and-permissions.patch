@@ -1,7 +1,7 @@
 From 19a3ac4fbd725719a6dae0ee87c9536d388d427a Mon Sep 17 00:00:00 2001
 From: "Paul Fitzpatrick" <paulfitz@alum.mit.edu>
 Date: Fri May 28 03:23:50 2010 +0000
-Subject: [PATCH 01/21] Fix EOL and permissions
+Subject: [PATCH 01/22] Fix EOL and permissions
 
 ---
  extern/xmlrpcpp/xmlrpcpp/src/XmlRpcClient.h        | 250 +++++-----

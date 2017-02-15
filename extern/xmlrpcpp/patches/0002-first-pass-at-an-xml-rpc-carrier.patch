@@ -1,7 +1,7 @@
 From 19a3ac4fbd725719a6dae0ee87c9536d388d427a Mon Sep 17 00:00:00 2001
 From: "Paul Fitzpatrick" <paulfitz@alum.mit.edu>
 Date: Fri May 28 03:23:50 2010 +0000
-Subject: [PATCH 02/21] first pass at an xml/rpc carrier
+Subject: [PATCH 02/22] first pass at an xml/rpc carrier
 
 ---
  .../xmlrpc_carrier/xmlrpc/XmlRpcClient.cpp         | 64 +++++++++++++---------

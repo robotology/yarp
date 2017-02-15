@@ -1,7 +1,7 @@
 From c44cf5c842b7bd679155d751ae7b4d46907a58a3 Mon Sep 17 00:00:00 2001
 From: "Daniele E. Domenichelli" <daniele.domenichelli@iit.it>
 Date: Mon, 4 Mar 2013 17:43:33 +0000
-Subject: [PATCH 11/21] [Cleanup]
+Subject: [PATCH 11/22] [Cleanup]
 
 svn path=/trunk/yarp2/; revision=9933
 ---
