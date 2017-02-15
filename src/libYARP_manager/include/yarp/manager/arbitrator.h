@@ -45,10 +45,10 @@ public:
 
     const char* getRule(const char* con)
     {
-        std::string val;
-        if(con && (rules.find(con) != rules.end()))
-            val = rules[con];
-        return val.c_str();
+        if(con && (rules.find(con) != rules.end())) {
+            return rules[con].c_str();
+        }
+        return NULL;
     }
 
     map<std::string, std::string>& getRuleMap(void) { return rules; }
