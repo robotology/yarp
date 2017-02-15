@@ -1,7 +1,7 @@
 From 9e57d52f1da4e962704a4ba133a526ec931141b0 Mon Sep 17 00:00:00 2001
 From: "Daniele E. Domenichelli" <daniele.domenichelli@iit.it>
 Date: Tue, 18 Oct 2016 14:12:32 +0200
-Subject: [PATCH 20/21] XmlRpc++: Adapt XmlRpcValue to use the new base64 metods
+Subject: [PATCH 20/22] XmlRpc++: Adapt XmlRpcValue to use the new base64 metods
 
 ---
  extern/xmlrpcpp/xmlrpcpp/src/XmlRpcValue.cpp | 38 ++++------------------------

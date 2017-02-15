@@ -1,7 +1,7 @@
 From 48e3b01d0a66e135f239f824033ff6c857827364 Mon Sep 17 00:00:00 2001
 From: Paul Fitzpatrick <paulfitz@alum.mit.edu>
 Date: Mon, 11 Jul 2011 16:51:09 +0000
-Subject: [PATCH 06/21] merge improved tcpros + .msg support from yarpros
+Subject: [PATCH 06/22] merge improved tcpros + .msg support from yarpros
  branch on launchpad
 
 svn path=/trunk/yarp2/; revision=8682

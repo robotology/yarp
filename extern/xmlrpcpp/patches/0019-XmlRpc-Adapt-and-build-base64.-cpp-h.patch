@@ -1,7 +1,7 @@
 From e5c25aa456515956a444b315e30e79f04de2c33d Mon Sep 17 00:00:00 2001
 From: "Daniele E. Domenichelli" <daniele.domenichelli@iit.it>
 Date: Tue, 18 Oct 2016 14:12:46 +0200
-Subject: [PATCH 19/21] XmlRpc++: Adapt and build base64.{cpp,h}
+Subject: [PATCH 19/22] XmlRpc++: Adapt and build base64.{cpp,h}
 
 The original methods were modified to:
 

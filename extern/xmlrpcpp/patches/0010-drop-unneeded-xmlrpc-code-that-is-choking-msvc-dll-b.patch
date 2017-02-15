@@ -1,7 +1,7 @@
 From 57c407b67df1110c74881f32e4bf8b05e1b1cd91 Mon Sep 17 00:00:00 2001
 From: Paul Fitzpatrick <paulfitz@alum.mit.edu>
 Date: Wed, 16 May 2012 21:12:05 +0000
-Subject: [PATCH 10/21] drop unneeded xmlrpc code that is choking msvc dll
+Subject: [PATCH 10/22] drop unneeded xmlrpc code that is choking msvc dll
  build
 
 svn path=/trunk/yarp2/; revision=9157

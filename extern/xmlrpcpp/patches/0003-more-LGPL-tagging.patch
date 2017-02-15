@@ -1,7 +1,7 @@
 From b3e24151e815a3cb634d0a1c6a8815449ff9db7a Mon Sep 17 00:00:00 2001
 From: Paul Fitzpatrick <paulfitz@alum.mit.edu>
 Date: Mon, 14 Jun 2010 14:31:38 +0000
-Subject: [PATCH 03/21] more LGPL tagging
+Subject: [PATCH 03/22] more LGPL tagging
 
 svn path=/trunk/yarp2/; revision=8007
 ---

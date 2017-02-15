@@ -1,7 +1,7 @@
 From 50b5bd857791bc176a17d464bb0a2ce21aff7ae8 Mon Sep 17 00:00:00 2001
 From: "Daniele E. Domenichelli" <daniele.domenichelli@iit.it>
 Date: Mon, 14 Nov 2016 15:06:31 +0100
-Subject: [PATCH 21/21] xmlrpcpp: Add missing include
+Subject: [PATCH 21/22] xmlrpcpp: Add missing include
 
 Fixes #945
 ---

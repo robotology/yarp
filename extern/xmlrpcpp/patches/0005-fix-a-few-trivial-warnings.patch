@@ -1,7 +1,7 @@
 From 2a78f5e6766785c435bf03053761760e4d944f3f Mon Sep 17 00:00:00 2001
 From: Paul Fitzpatrick <paulfitz@alum.mit.edu>
 Date: Mon, 30 Aug 2010 14:30:11 +0000
-Subject: [PATCH 05/21] fix a few trivial warnings
+Subject: [PATCH 05/22] fix a few trivial warnings
 
 svn path=/trunk/yarp2/; revision=8227
 ---
