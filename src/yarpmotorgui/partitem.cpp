@@ -39,7 +39,6 @@ PartItem::PartItem(QString robotName, int id, QString partName, ResourceFinder& 
     m_currentPidDlg = NULL;
     m_sequenceWindow = NULL;
     m_finder = &_finder;
-    m_partName = partName;
     m_mixedEnabled = false;
     m_positionDirectEnabled = false;
     m_openloopEnabled = false;
@@ -60,14 +59,16 @@ PartItem::PartItem(QString robotName, int id, QString partName, ResourceFinder& 
 
     //PolyDriver *cartesiandd[MAX_NUMBER_ACTIVATED];
 
-    QString robotPartPort;
+ 
     if (robotName.at(0) == '/') robotName.remove(0, 1);
     if (partName.at(0) == '/')  partName.remove(0, 1);
-    robotPartPort = QString("/%1/%2").arg(robotName).arg(partName);
+    m_robotPartPort = QString("/%1/%2").arg(robotName).arg(partName);
+    m_partName = partName;
+    m_robotName = robotName;
 
     //checking existence of the port
     int ind = 0;
-    QString portLocalName = QString("/yarpmotorgui%1/%2").arg(ind).arg(robotPartPort);
+    QString portLocalName = QString("/yarpmotorgui%1/%2").arg(ind).arg(m_robotPartPort);
 
 
     QString nameToCheck = portLocalName;
@@ -85,7 +86,7 @@ PartItem::PartItem(QString robotName, int id, QString partName, ResourceFinder& 
     while(adr.isValid()){
         ind++;
 
-        portLocalName = QString("/yarpmotorgui%1/%2").arg(ind).arg(robotPartPort);
+        portLocalName = QString("/yarpmotorgui%1/%2").arg(ind).arg(m_robotPartPort);
 
         nameToCheck = portLocalName;
         nameToCheck += "/rpc:o";
@@ -98,7 +99,7 @@ PartItem::PartItem(QString robotName, int id, QString partName, ResourceFinder& 
     // Initializing the polydriver options and instantiating the polydrivers
     m_partOptions.put("local", portLocalName.toLatin1().data());
     m_partOptions.put("device", "remote_controlboard");
-    m_partOptions.put("remote", robotPartPort.toLatin1().data());
+    m_partOptions.put("remote", m_robotPartPort.toLatin1().data());
     m_partOptions.put("carrier", "udp");
 
     m_partsdd = new PolyDriver();
@@ -107,8 +108,8 @@ PartItem::PartItem(QString robotName, int id, QString partName, ResourceFinder& 
     m_interfaceError = !openPolyDrivers();
     if (m_interfaceError == true)
     {
-        yError("Opening PolyDriver for part %s failed...", robotPartPort.toLatin1().data());
-        QMessageBox::critical(0,"Error opening a device", QString("Error while opening device for part ").append(robotPartPort.toLatin1().data()));
+        yError("Opening PolyDriver for part %s failed...", m_robotPartPort.toLatin1().data());
+        QMessageBox::critical(0, "Error opening a device", QString("Error while opening device for part ").append(m_robotPartPort.toLatin1().data()));
     }
 
     /*********************************************************************/
@@ -725,7 +726,7 @@ void PartItem::onCalibClicked(JointItem *joint)
         return;
     }
 
-    if(QMessageBox::question(this,"Question","Do you want really to recalibrate the joint?") != QMessageBox::Yes){
+    if(QMessageBox::question(this,"Question","Do you really want to recalibrate the joint?") != QMessageBox::Yes){
         return;
     }
     if (!m_iremCalib->calibrateSingleJoint(joint->getJointIndex()))
@@ -787,49 +788,7 @@ void PartItem::onHomeClicked(JointItem *joint)
     const int jointIndex = joint->getJointIndex();
     m_iPos->getAxes(&NUMBER_OF_JOINTS);
 
-    QString zero = QString("%1_zero").arg(m_partName);
-
-    if (!m_finder->isNull() && !m_finder->findGroup(zero.toLatin1().data()).isNull()){
-        bool ok = true;
-        Bottle xtmp;
-        xtmp = m_finder->findGroup(zero.toLatin1().data()).findGroup("PositionZero");
-        ok = ok && (xtmp.size() == NUMBER_OF_JOINTS+1);
-        double positionZero = xtmp.get(jointIndex+1).asDouble();
-        //fprintf(stderr, "%f\n", positionZero);
-
-        xtmp = m_finder->findGroup(zero.toLatin1().data()).findGroup("VelocityZero");
-        //fprintf(stderr, "VALUE VEL is %d \n", fnd->findGroup(buffer2).find("VelocityZero").toString().c_str());
-        ok = ok && (xtmp.size() == NUMBER_OF_JOINTS+1);
-        double velocityZero = xtmp.get(jointIndex+1).asDouble();
-        //fprintf(stderr, "%f\n", velocityZero);
-
-        if(!ok){
-            QMessageBox::critical(this,"Error", QString("Check the number of entries in the group %1").arg(zero));
-        } else {
-            m_iPos->setRefSpeed(jointIndex, velocityZero);
-            m_iPos->positionMove(jointIndex, positionZero);
-        }
-    }
-    else
-    {
-        if (!m_iremCalib)
-        {
-            QMessageBox::critical(this,"Operation not supported", QString("The IRemoteCalibrator interface was not found on this application"));
-            return;
-        }
-
-        QMessageBox::information(this, "Info", QString("Asking the yarprobotinterface to homing part %1 through the remoteCalibrator interface, since no custom zero group found in the supplied file").arg(m_partName));
-        if (!m_iremCalib->homingSingleJoint(jointIndex))
-        {
-            // provide better feedback to user by verifying if the calibrator device was set or not
-            bool isCalib = false;
-            m_iremCalib->isCalibratorDevicePresent(&isCalib);
-            if(!isCalib)
-                QMessageBox::critical(this, "Calibration failed", QString("No calibrator device was configured to perform this action, please verify that the wrapper config file for part %1 has the 'Calibrator' keyword in the attach phase").arg(m_partName));
-            else
-                QMessageBox::critical(this,"Calibration failed", QString("The remote calibrator reported that something went wrong during the calibration procedure"));
-        }
-    }
+    this->homeJoint(jointIndex);
 }
 
 void PartItem::onJointChangeMode(int mode,JointItem *joint)
@@ -1018,7 +977,7 @@ void PartItem::changeEvent( QEvent *event )
 
 }
 
-void PartItem::calibrateAll()
+void PartItem::calibratePart()
 {
     if (!m_iremCalib)
     {
@@ -1026,82 +985,100 @@ void PartItem::calibrateAll()
         return;
     }
 
-    if(QMessageBox::question(this,"Question", QString("Do you want really to recalibrate the whole part?")) == QMessageBox::Yes)
+    if (!m_iremCalib->calibrateWholePart())
     {
-        if (!m_iremCalib->calibrateWholePart())
-        {
-            // provide better feedback to user by verifying if the calibrator device was set or not
-            bool isCalib = false;
-            m_iremCalib->isCalibratorDevicePresent(&isCalib);
-            if(!isCalib)
-                QMessageBox::critical(this, "Calibration failed", QString("No calibrator device was configured to perform this action, please verify that the wrapper config file for part %1 has the 'Calibrator' keyword in the attach phase").arg(m_partName));
-            else
-                QMessageBox::critical(this,"Calibration failed", QString("The remote calibrator reported that something went wrong during the calibration procedure"));
-        }
+        // provide better feedback to user by verifying if the calibrator device was set or not
+        bool isCalib = false;
+        m_iremCalib->isCalibratorDevicePresent(&isCalib);
+        if(!isCalib)
+            QMessageBox::critical(this, "Calibration failed", QString("No calibrator device was configured to perform this action, please verify that the wrapper config file for part %1 has the 'Calibrator' keyword in the attach phase").arg(m_partName));
+        else
+            QMessageBox::critical(this,"Calibration failed", QString("The remote calibrator reported that something went wrong during the calibration procedure"));
     }
 }
 
-bool PartItem::checkAndHomeAll()
+bool PartItem::homeJoint(int jointIndex)
 {
-    return homeAll();
+    if (!m_iremCalib)
+    {
+        QMessageBox::critical(this, "Operation not supported", QString("The IRemoteCalibrator interface was not found on this application"));
+        return false;
+    }
+
+    if (!m_iremCalib->homingSingleJoint(jointIndex))
+    {
+        // provide better feedback to user by verifying if the calibrator device was set or not
+        bool isCalib = false;
+        m_iremCalib->isCalibratorDevicePresent(&isCalib);
+        if (!isCalib)
+        {
+            QMessageBox::critical(this, "Operation failed", QString("No calibrator device was configured to perform this action, please verify that the wrapper config file for part %1 has the 'Calibrator' keyword in the attach phase").arg(m_partName));
+            return false;
+        }
+        else
+        {
+            QMessageBox::critical(this, "Operation failed", QString("The remote calibrator reported that something went wrong during the calibration procedure"));
+            return false;
+        }
+    }
+    return true;
 }
 
-bool PartItem::homeAll()
+bool PartItem::homePart()
+{
+    int NUMBER_OF_JOINTS;
+    m_iPos->getAxes(&NUMBER_OF_JOINTS);
+    bool b = true;
+    for (int i = 0; i < NUMBER_OF_JOINTS; i++)
+    {
+        b &= homeJoint(i);
+        if (b == false) return false;
+    }
+    return true;
+}
+
+bool PartItem::homeToCustomPosition(std::string suffix)
 {
     bool ok = true;
     int NUMBER_OF_JOINTS;
     m_iPos->getAxes(&NUMBER_OF_JOINTS);
 
-    QString zero = QString("%1_zero").arg(m_partName);
+    QString groupName = m_robotPartPort + QString(suffix.c_str());
 
-    if (!m_finder->isNull() && !m_finder->findGroup(zero.toLatin1().data()).isNull()){
+    if (!m_finder->isNull() && !m_finder->findGroup(groupName.toLatin1().data()).isNull())
+    {
         Bottle xtmp, ytmp;
-        xtmp = m_finder->findGroup(zero.toLatin1().data()).findGroup("PositionZero");
+        xtmp = m_finder->findGroup(groupName.toLatin1().data()).findGroup("Position");
         ok = ok && (xtmp.size() == NUMBER_OF_JOINTS+1);
-        ytmp = m_finder->findGroup(zero.toLatin1().data()).findGroup("VelocityZero");
+        ytmp = m_finder->findGroup(groupName.toLatin1().data()).findGroup("Velocity");
         ok = ok && (ytmp.size() == NUMBER_OF_JOINTS+1);
-        if(ok){
-            for (int jointIndex = 0; jointIndex < NUMBER_OF_JOINTS; jointIndex++){
-                double positionZero = xtmp.get(jointIndex+1).asDouble();
-
-                double velocityZero = ytmp.get(jointIndex+1).asDouble();
-
-                m_iPos->setRefSpeed(jointIndex, velocityZero);
-                m_iPos->positionMove(jointIndex, positionZero);
+        if(ok)
+        {
+            for (int jointIndex = 0; jointIndex < NUMBER_OF_JOINTS; jointIndex++)
+            {
+                double position = xtmp.get(jointIndex+1).asDouble();
+                double velocity = ytmp.get(jointIndex + 1).asDouble();
+                m_iPos->setRefSpeed(jointIndex, velocity);
+                m_iPos->positionMove(jointIndex, position);
             }
-
-        }else{
-            QMessageBox::critical(this,"Error", QString("Check the number of entries in the group %1").arg(zero));
+        }
+        else
+        {
+            QMessageBox::critical(this, "Error", QString("Check the number of entries in the group %1").arg(groupName));
             ok = false;
         }
     }
     else
     {
-        if (!m_iremCalib)
-        {
-            QMessageBox::critical(this,"Operation not supported", QString("The IRemoteCalibrator interface was not found on this application"));
-            return false;
-        }
-
-        QMessageBox::information(this, "Info", QString("Asking the yarprobotinterface to homing part %1 through the remoteCalibrator interface, since no custom zero group found in the supplied file.").arg(m_partName));
-        ok = m_iremCalib->homingWholePart();
-        if(!ok)
-        {
-            // provide better feedback to user by verifying if the calibrator device was set or not
-            bool isCalib = false;
-            m_iremCalib->isCalibratorDevicePresent(&isCalib);
-            if(!isCalib)
-                QMessageBox::critical(this, "Homing failed", QString("No calibrator device was configured to perform this action, please verify that the wrapper config file for part %1 has the 'Calibrator' keyword in the attach phase").arg(m_partName));
-            else
-                QMessageBox::critical(this,"Homing failed", QString("The remote calibrator reported that something went wrong during the homing procedure"));
-        }
+        QMessageBox::critical(this, "Operation failed", QString("No custom position supplied in configuration file for part ") + QString(m_partName) +
+            QString(" By default I'm checking tags 'Position' and 'Velocity' inside group [") + groupName + QString("]"));
+        ok = false;
     }
     return ok;
 }
 
-void PartItem::idleAll()
+void PartItem::idlePart()
 {
-
     int NUMBER_OF_JOINTS;
     m_iPos->getAxes(&NUMBER_OF_JOINTS);
 
@@ -1150,7 +1127,7 @@ bool PartItem::checkAndCycleAllSeq()
     return m_sequenceWindow->checkAndCycleSeq();
 }
 
-void PartItem::runAll()
+void PartItem::runPart()
 {
     int NUMBER_OF_JOINTS;
     m_iPos->getAxes(&NUMBER_OF_JOINTS);
@@ -1366,9 +1343,10 @@ void PartItem::onSaveSequence(QList<SequenceItem> values, QString fileName)
 
     QFileInfo fInfo(fileName);
     QString completeFileName = QString("%1/%2.pos%3").arg(fInfo.absolutePath()).arg(fInfo.baseName()).arg(m_partName);
+    std::string completeFileName_s = completeFileName.toStdString();
 
     //QFile file(completeFileName);
-    yInfo("Saving file %s\n", completeFileName.toLatin1().data());
+    yInfo("Saving file %s\n", completeFileName_s.c_str());
 
     QFile file(completeFileName);
     if(!file.open(QIODevice::WriteOnly)){

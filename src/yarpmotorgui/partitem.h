@@ -67,11 +67,12 @@ public:
     bool checkAndRunTimeAllSeq();
     bool checkAndCycleAllSeq();
     bool checkAndCycleTimeAllSeq();
-    void runAll();
-    void idleAll();
-    bool homeAll();
-    bool checkAndHomeAll();
-    void calibrateAll();
+    void runPart();
+    void idlePart();
+    bool homeJoint(int joint);
+    bool homePart();
+    bool homeToCustomPosition(std::string suffix);
+    void calibratePart();
     bool checkAndGo();
     void stopSequence();
     void setTreeWidgetModeNode(QTreeWidgetItem *node);
@@ -93,6 +94,8 @@ private:
     QTreeWidgetItem *m_node;
     FlowLayout *m_layout;
     SequenceWindow *m_sequenceWindow;
+    QString m_robotPartPort;
+    QString m_robotName;
     QString m_partName;
     int     m_partId;
     bool   m_mixedEnabled;

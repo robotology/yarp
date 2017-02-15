@@ -25,6 +25,8 @@
 #include <QSettings>
 #include <QFileDialog>
 #include <map>
+#include <cstdlib>
+#include <yarp/os/LogStream.h>
 
 #define TREEMODE_OK     1
 #define TREEMODE_WARN   2
@@ -65,8 +67,12 @@ MainWindow::MainWindow(QWidget *parent) :
     m_cycleAllSeqTime = m_globalToolBar->addAction(QIcon(":/images/cycleAllSequenceTime.png"), "Cycle All Sequences (ignore Speed tab, produce coordinated movement using Timing)");
     m_stopAllSeq = m_globalToolBar->addAction(QIcon(":/stop.svg"), "Stop All Sequences");
     m_globalToolBar->addSeparator();
+    m_idleAllParts = m_globalToolBar->addAction(QIcon(":/idle.svg"), "Idle All Parts");
     m_runAllParts = m_globalToolBar->addAction(QIcon(":/play.svg"), "Run All Parts");
     m_homeAllParts = m_globalToolBar->addAction(QIcon(":/home.svg"), "Home All Parts");
+    m_globalToolBar->addSeparator();
+    m_script1 = m_globalToolBar->addAction(QIcon(":/action1.svg"), "Execute User Script1");
+    m_script2 = m_globalToolBar->addAction(QIcon(":/action2.svg"), "Execute User Script2");
     addToolBar(m_globalToolBar);
 
     QMenu *globalMenuCommands = m_ui->menuBar->addMenu("Global Joints Commands ");
@@ -80,10 +86,17 @@ MainWindow::MainWindow(QWidget *parent) :
     globalMenuCommands->addAction(m_cycleAllSeqTime);
     globalMenuCommands->addAction(m_stopAllSeq);
     globalMenuCommands->addSeparator();
+    globalMenuCommands->addAction(m_idleAllParts);
     globalMenuCommands->addAction(m_runAllParts);
     globalMenuCommands->addAction(m_homeAllParts);
+    m_customPosition1AllParts = globalMenuCommands->addAction(QIcon(":/home.svg"), "Move all parts to custom position 1");
+    m_customPosition2AllParts = globalMenuCommands->addAction(QIcon(":/home.svg"), "Move all parts to custom position 2");
+    globalMenuCommands->addSeparator();
+    globalMenuCommands->addAction(m_script1);
+    globalMenuCommands->addAction(m_script2);
 
     connect(m_goAll, SIGNAL(triggered()), this, SLOT(onGoAll()));
+    connect(m_idleAllParts, SIGNAL(triggered()), this, SLOT(onIdleAllParts()));
     connect(m_runAllParts, SIGNAL(triggered()), this, SLOT(onRunAllParts()));
     connect(m_homeAllParts, SIGNAL(triggered()), this, SLOT(onHomeAllParts()));
 
@@ -96,6 +109,11 @@ MainWindow::MainWindow(QWidget *parent) :
     connect(m_loadAllSeq, SIGNAL(triggered()), this, SLOT(onLoadAllSeq()));
     connect(m_saveAllSeq, SIGNAL(triggered()), this, SLOT(onSaveAllSeq()));
 
+    connect(m_script1, SIGNAL(triggered()), this, SLOT(onExecuteScript1()));
+    connect(m_script2, SIGNAL(triggered()), this, SLOT(onExecuteScript2()));
+
+    connect(m_customPosition1AllParts, &QAction::triggered, this, [this]{onHomeAllPartsToCustomPosition("_customPosition1"); });
+    connect(m_customPosition2AllParts, &QAction::triggered, this, [this]{onHomeAllPartsToCustomPosition("_customPosition2"); });
 
     //addToolBarBreak();
 
@@ -114,27 +132,30 @@ MainWindow::MainWindow(QWidget *parent) :
     m_partToolBar->addSeparator();
     openSequenceAction = m_partToolBar->addAction(QIcon(":/file-new.svg"), "Open Sequence Tab");
     m_partToolBar->addSeparator();
-    m_runAll = m_partToolBar->addAction(QIcon(":/play.svg"), "Run All");
-    m_calibAll = m_partToolBar->addAction(QIcon(":/images/calibrate.png"), "Calibrate All");
-    m_homeAll = m_partToolBar->addAction(QIcon(":/home.svg"), "Home All");
-    m_partToolBar->addSeparator();
-    m_idleAll = m_partToolBar->addAction(QIcon(":/idle.svg"), "Idle All");
+    m_runSinglePart = m_partToolBar->addAction(QIcon(":/play.svg"), "Run all joints of this part");
+    m_idleSinglePart = m_partToolBar->addAction(QIcon(":/idle.svg"), "Idle all joints of this part");
+    m_calibSinglePart = m_partToolBar->addAction(QIcon(":/images/calibrate.png"), "Calibrate all joints of this part");
+    m_homeSinglePart = m_partToolBar->addAction(QIcon(":/home.svg"), "Home all joints of this part");
+    m_customPosition1SinglePart = m_partToolBar->addAction(QIcon(":/home.svg"), "Move all joints of this part to custom position 1");
+    m_customPosition2SinglePart = m_partToolBar->addAction(QIcon(":/home.svg"), "Move all joints of this part to custom position 2");
+
     addToolBar(m_partToolBar);
 
     m_currentPartMenu = m_ui->menuBar->addMenu("Current Part: ");
     m_currentPartMenu->addAction(openSequenceAction);
     m_currentPartMenu->addSeparator();
-    m_currentPartMenu->addAction(m_runAll);
-    m_currentPartMenu->addAction(m_calibAll);
-    m_currentPartMenu->addAction(m_homeAll);
-    m_currentPartMenu->addSeparator();
-    m_currentPartMenu->addAction(m_idleAll);
+    m_currentPartMenu->addAction(m_runSinglePart);
+    m_currentPartMenu->addAction(m_calibSinglePart);
+    m_currentPartMenu->addAction(m_homeSinglePart);
+    m_currentPartMenu->addAction(m_idleSinglePart);
 
     connect(openSequenceAction,SIGNAL(triggered()),this,SLOT(onOpenSequenceTab()));
-    connect(m_runAll, SIGNAL(triggered()), this, SLOT(onRunAll()));
-    connect(m_idleAll, SIGNAL(triggered()), this, SLOT(onIdleAll()));
-    connect(m_homeAll, SIGNAL(triggered()), this, SLOT(onHomeAll()));
-    connect(m_calibAll, SIGNAL(triggered()), this, SLOT(onCalibAll()));
+    connect(m_runSinglePart, SIGNAL(triggered()), this, SLOT(onRunSinglePart()));
+    connect(m_idleSinglePart, SIGNAL(triggered()), this, SLOT(onIdleSinglePart()));
+    connect(m_homeSinglePart, SIGNAL(triggered()), this, SLOT(onHomeSinglePart()));
+    connect(m_calibSinglePart, SIGNAL(triggered()), this, SLOT(onCalibSinglePart()));
+    connect(m_customPosition1SinglePart, &QAction::triggered, this, [this]{onHomeSinglePartToCustomPosition("_customPosition1"); });
+    connect(m_customPosition2SinglePart, &QAction::triggered, this, [this]{onHomeSinglePartToCustomPosition("_customPosition2"); });
 
     QMenu *windows = m_ui->menuBar->addMenu("View");
     QAction *viewGlobalToolbar = windows->addAction("Global Commands Toolbar");
@@ -242,6 +263,7 @@ void MainWindow::onSequenceActivated()
     m_cycleAllSeq->setEnabled(false);
     m_cycleAllSeqTime->setEnabled(false);
     m_runAllParts->setEnabled(false);
+    m_idleAllParts->setEnabled(false);
     m_homeAllParts->setEnabled(false);
 }
 
@@ -259,6 +281,7 @@ void MainWindow::onSequenceStopped()
         m_cycleAllSeq->setEnabled(true);
         m_cycleAllSeqTime->setEnabled(true);
         m_runAllParts->setEnabled(true);
+        m_idleAllParts->setEnabled(true);
         m_homeAllParts->setEnabled(true);
     }
 }
@@ -396,12 +419,16 @@ bool MainWindow::init(QStringList enabledParts,
 
     if(!enable_calib_all)
     {
-        m_calibAll->setEnabled(false);
+        m_calibSinglePart->setEnabled(false);
     }
 
     int errorCount = 0;
     QScrollArea *scroll = NULL;
     PartItem *part = NULL;
+    m_finder = finder;
+    //m_finder.setVerbose(true);
+    m_user_script1 = m_finder.find("script1").asString();
+    m_user_script2 = m_finder.find("script2").asString();
 
     struct robot_type
     {
@@ -411,6 +438,7 @@ bool MainWindow::init(QStringList enabledParts,
 
     struct part_type
     {
+        std::string      robot_name_without_slash;
         std::string      robot_name;
         std::string      complete_name;
         std::string      part_name_without_slash;
@@ -431,7 +459,7 @@ bool MainWindow::init(QStringList enabledParts,
         {
             robot_type r;
             r.robot_name_without_slash = cur_robot_name;
-            if (r.robot_name_without_slash[0]='/') r.robot_name_without_slash.erase(0, 1);
+            if (r.robot_name_without_slash[0]=='/') r.robot_name_without_slash.erase(0, 1);
             r.tree_pointer = 0;
             robots[cur_robot_name]=r;
         }
@@ -439,8 +467,9 @@ bool MainWindow::init(QStringList enabledParts,
         p.partindex = i;
         p.complete_name = enabledParts.at(i).toStdString();
         p.part_name_without_slash = ss.substr(b2);
-        if (p.part_name_without_slash[0] = '/') p.part_name_without_slash.erase(0, 1);
+        if (p.part_name_without_slash[0] == '/') p.part_name_without_slash.erase(0, 1);
         p.robot_name = cur_robot_name;
+        p.robot_name_without_slash = robots[cur_robot_name].robot_name_without_slash;
         parts[ss.substr(b2)] = p;
     }
 
@@ -463,8 +492,10 @@ bool MainWindow::init(QStringList enabledParts,
         scroll->setWidgetResizable(true);
         std::string part_name = i_parts->first;
         std::string robot_name = i_parts->second.robot_name;
+        std::string robot_name_without_slash = i_parts->second.robot_name_without_slash;
+        std::string part_name_without_slash = i_parts->second.part_name_without_slash;
         int         part_id = i_parts->second.partindex;
-        part = new PartItem(robot_name.c_str(), part_id, part_name.c_str(), finder, debug_param_enabled, speedview_param_enabled, enable_calib_all, scroll);
+        part = new PartItem(robot_name_without_slash.c_str(), part_id, part_name_without_slash.c_str(), finder, debug_param_enabled, speedview_param_enabled, enable_calib_all, scroll);
 
         if(!part->getInterfaceError())
         {
@@ -558,7 +589,7 @@ void MainWindow::onCurrentPartChanged(int index)
 
 }
 
-void MainWindow::onCalibAll()
+void MainWindow::onCalibSinglePart()
 {
     if (!m_tabPanel){
         return;
@@ -570,40 +601,157 @@ void MainWindow::onCalibAll()
         return;
     }
 
-//     if(QMessageBox::question(this,"Question", QString("Do you want really to recalibrate the whole part?")) == QMessageBox::Yes)
+    if (QMessageBox::question(this, "Question", QString("Do you really want to recalibrate all joints of this part?")) == QMessageBox::Yes)
     {
-        part->calibrateAll(); // Error message is thrown inside
+        part->calibratePart(); // Error message is thrown inside
     }
 }
 
-void MainWindow::onHomeAllParts()
+void MainWindow::onExecuteScript1()
 {
+    if (m_user_script1 == "")
+    {
+        QMessageBox::information(this, "Info", QString("user script1 not specified. use --script1 option"));
+        return;
+    }
+
+    if (QMessageBox::question(this, "Question", QString("Do you really want to execute user script1?")) == QMessageBox::Yes)
+    {
+        if (system(NULL))
+        {
+            std::string script1_file = this->m_finder.findFileByName(m_user_script1);
+            if (script1_file != "")
+            {
+                int r = system(script1_file.c_str());
+                yDebug() << "yarpmotorgui_script1 returned value:" << r;
+            }
+            else
+            {
+                QMessageBox::information(this, "Info", QString("Unable to find script1 file"));
+            }
+        }
+        else
+        {
+            QMessageBox::information(this, "Info", QString("System is unable to run script1"));
+        }
+    }
+}
+
+void MainWindow::onExecuteScript2()
+{
+    if (m_user_script2 == "")
+    {
+        QMessageBox::information(this, "Info", QString("user script2 not specified. use --script2 option"));
+        return;
+    }
+
+    if (QMessageBox::question(this, "Question", QString("Do you really want to execute user script2?")) == QMessageBox::Yes)
+    {
+        if (system(NULL))
+        {
+            std::string script2_file = this->m_finder.findFileByName(m_user_script2);
+            if (script2_file != "")
+            {
+                int r = system(script2_file.c_str());
+                yDebug() << "yarpmotorgui_script2 returned value:" << r;
+            }
+            else
+            {
+                QMessageBox::information(this, "Info", QString("Unable to find script2 file"));
+            }
+        }
+        else
+        {
+            QMessageBox::information(this, "Info", QString("System is unable to run script2"));
+        }
+    }
+}
+
+void MainWindow::onHomeSinglePart()
+{
+    if (QMessageBox::question(this, "Question", "Do you really want to home all joints of this part?") != QMessageBox::Yes){
+        return;
+    }
+
     if (!m_tabPanel){
         return;
     }
 
-    QString parts;
+    QScrollArea *scroll = (QScrollArea *)m_tabPanel->currentWidget();
+    PartItem *part = (PartItem*)scroll->widget();
+    if (!part){
+        return;
+    }
+
+    part->homePart();
+}
+
+void MainWindow::onHomeAllParts()
+{
+    if (QMessageBox::question(this, "Question", "Do you really want to home all parts?") != QMessageBox::Yes){
+        return;
+    }
+
+    if (!m_tabPanel){
+        return;
+    }
 
     for (int i = 0; i<m_tabPanel->count(); i++)
     {
         QScrollArea *scroll = (QScrollArea *)m_tabPanel->widget(i);
         PartItem *part = (PartItem*)scroll->widget();
-        if(!part){
+        if (!part)
+        {
             continue;
         }
 
-        bool done = part->checkAndHomeAll();
-        if(!done){
-            parts.append(QString("- %1_zero\n").arg(part->getPartName()));
+        bool done = part->homePart();
+    }
+}
+
+void MainWindow::onHomeAllPartsToCustomPosition(std::string suffix)
+{
+    if (QMessageBox::question(this, "Question", "Do you really want to home all parts?") != QMessageBox::Yes){
+        return;
+    }
+
+    if (!m_tabPanel){
+        return;
+    }
+
+    for (int i = 0; i<m_tabPanel->count(); i++)
+    {
+        QScrollArea *scroll = (QScrollArea *)m_tabPanel->widget(i);
+        PartItem *part = (PartItem*)scroll->widget();
+        if(!part)
+        {
+            continue;
         }
-    }
 
-    if(!parts.isEmpty()){
-        QMessageBox::critical(this,"Error", QString("No zero group found in the supplied files. Define suitable\n%1").arg(parts));
+        bool done = part->homeToCustomPosition(suffix);
     }
 }
 
-void MainWindow::onHomeAll()
+void MainWindow::onHomeSinglePartToCustomPosition(std::string suffix)
+{
+    if (QMessageBox::question(this, "Question", "Do you really want to home all joints of this part?") != QMessageBox::Yes){
+        return;
+    }
+
+    if (!m_tabPanel){
+        return;
+    }
+
+    QScrollArea *scroll = (QScrollArea *)m_tabPanel->currentWidget();
+    PartItem *part = (PartItem*)scroll->widget();
+    if(!part){
+        return;
+    }
+
+    part->homeToCustomPosition(suffix);
+}
+
+void MainWindow::onIdleSinglePart()
 {
     if (!m_tabPanel){
         return;
@@ -615,22 +763,7 @@ void MainWindow::onHomeAll()
         return;
     }
 
-    part->homeAll();
-}
-
-void MainWindow::onIdleAll()
-{
-    if (!m_tabPanel){
-        return;
-    }
-
-    QScrollArea *scroll = (QScrollArea *)m_tabPanel->currentWidget();
-    PartItem *part = (PartItem*)scroll->widget();
-    if(!part){
-        return;
-    }
-
-    part->idleAll();
+    part->idlePart();
 }
 
 void MainWindow::onCycleTimeAllSeq()
@@ -821,8 +954,27 @@ void MainWindow::onGoAll()
 
 }
 
+void MainWindow::onIdleAllParts()
+{
+    if (QMessageBox::question(this, "Question", "Do you really want to idle all parts?") != QMessageBox::Yes){
+        return;
+    }
 
+    if (!m_tabPanel){
+        return;
+    }
 
+    for (int i = 0; i<m_tabPanel->count(); i++)
+    {
+        QScrollArea *scroll = (QScrollArea *)m_tabPanel->widget(i);
+        PartItem *part = (PartItem*)scroll->widget();
+        if (!part){
+            continue;
+        }
+
+        part->idlePart();
+    }
+}
 
 void MainWindow::onRunAllParts()
 {
@@ -837,11 +989,11 @@ void MainWindow::onRunAllParts()
             continue;
         }
 
-        part->runAll();
+        part->runPart();
     }
 }
 
-void MainWindow::onRunAll()
+void MainWindow::onRunSinglePart()
 {
     if (!m_tabPanel){
         return;
@@ -853,7 +1005,7 @@ void MainWindow::onRunAll()
         return;
     }
 
-    part->runAll();
+    part->runPart();
 }
 
 void MainWindow::onOpenSequenceTab()
