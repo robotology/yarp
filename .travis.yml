@@ -177,7 +177,9 @@ notifications:
       - "%{repository}/%{branch} (%{commit} - %{author}): %{build_url}: %{message}"
     use_notice: true
     skip_join: true
-
+  slack:
+    rooms:
+      - icub-facility:4meEzvbWZHS4z8oAStah5c6R#yarp
 
 before_install:
   # Prepare ros environment variables
