@@ -178,8 +178,7 @@ notifications:
     use_notice: true
     skip_join: true
   slack:
-    rooms:
-      - icub-facility:4meEzvbWZHS4z8oAStah5c6R#yarp
+    secure: PFCRF5GqjLKAghKHz+Dl2yOlRM5Ud8uI8s4AvshsHVmW4VNDhJfLzi3cGqWGjptZ2CBSMSrd5noANQCfeKObqwpeW3na8vrEO/l0RrgqV0idpiDOMotSRbCTB6I7DNKL31ZsQ4qm7eOroWlauNSiC+CBLmwShE9+N2zWC25JXSo=
 
 before_install:
   # Prepare ros environment variables

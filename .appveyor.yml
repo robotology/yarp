@@ -140,3 +140,8 @@ artifacts:
   - path: 'robotology/$(Qt5_REL_DIR)'
   - path: 'robotology/$(OpenCV_REL_DIR)'
   - path: 'robotology/$(JPEG_REL_DIR)'
+
+notifications:
+  - provider: Slack
+    incoming_webhook:
+      secure: y4pfqod7KJ2iS3k3TbRPSpZ17uNnIPWIWgH79GirKA3xJfIcbvNhB/+mpBbClSXspVaFuPDr19gFj7aBGmoLBhR1DIXAzPDoYonYYpEZdF4=
