@@ -87,7 +87,11 @@ private:
     ovrHmd hmd;
     GLFWwindow* window;
 
+#if OVR_PRODUCT_VERSION == 0 && OVR_MAJOR_VERSION <= 5
     ovrGLConfig config;
+#else
+    // FIXME 0.5->0.6
+#endif
 
 
     bool closed;

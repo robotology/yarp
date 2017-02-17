@@ -17,11 +17,22 @@
 class TextureBuffer
 {
 public:
+#if OVR_PRODUCT_VERSION == 0 && OVR_MAJOR_VERSION <= 5
     TextureBuffer(int w, int h, int eye);
+#else
+    TextureBuffer(int w, int h, int eye, ovrHmd hmd);
+#endif
+
     ~TextureBuffer();
 
     void resize(int w = 0, int h = 0);
     void update();
+
+#if OVR_PRODUCT_VERSION == 0 && OVR_MAJOR_VERSION <= 5
+#else
+    ovrHmd hmd;
+    ovrSwapTextureSet* textureSet;
+#endif
 
     unsigned int width;
     unsigned int height;

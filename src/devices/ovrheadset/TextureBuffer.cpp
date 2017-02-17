@@ -11,8 +11,15 @@
 #include <yarp/os/LogStream.h>
 #include <yarp/os/Time.h>
 
+#include "OVR_CAPI_GL.h"
 
+#if OVR_PRODUCT_VERSION == 0 && OVR_MAJOR_VERSION <= 5
 TextureBuffer::TextureBuffer(int w, int h, int eye) :
+#else
+TextureBuffer::TextureBuffer(int w, int h, int eye, ovrHmd hmd) :
+        hmd(hmd),
+        textureSet(nullptr),
+#endif
         width(w),
         height(h),
         // see http://stackoverflow.com/questions/27294882/glteximage2d-fails-with-error-1282-using-pbo-bad-texture-resolution
@@ -152,6 +159,7 @@ void TextureBuffer::createTextureAndBuffers()
 {
     yTrace();
 
+#if OVR_PRODUCT_VERSION == 0 && OVR_MAJOR_VERSION <= 5
     glGenTextures(1, &texId);
     glBindTexture(GL_TEXTURE_2D, texId);
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
@@ -159,6 +167,27 @@ void TextureBuffer::createTextureAndBuffers()
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
     glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, width, height, 0, GL_RGB, GL_UNSIGNED_BYTE, 0);
+#else
+    ovrHmd_CreateSwapTextureSetGL(hmd, GL_RGBA, width, height, &textureSet);
+    for (int i = 0; i < textureSet->TextureCount; ++i)
+    {
+        ovrGLTexture* tex = (ovrGLTexture*)&textureSet->Textures[i];
+        glBindTexture(GL_TEXTURE_2D, tex->OGL.TexId);
+
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
+
+        // FIXME 0.5->0.6
+        // glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR);
+        // glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+        // glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
+        // glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
+
+        glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, width, height, 0, GL_RGB, GL_UNSIGNED_BYTE, 0);
+    }
+#endif
     checkGlErrorMacro;
 
     glGenBuffers(2, pboIds);

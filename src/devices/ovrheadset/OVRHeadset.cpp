@@ -19,6 +19,9 @@
 
 #include <math.h>
 
+#include <OVR_CAPI_Util.h>
+
+
 #if defined(_WIN32)
  #define GLFW_EXPOSE_NATIVE_WIN32
  #define GLFW_EXPOSE_NATIVE_WGL
@@ -323,6 +326,8 @@ bool yarp::dev::OVRHeadset::threadInit()
     }
 
     // Detect and initialize Oculus Rift
+
+#if OVR_PRODUCT_VERSION == 0 && OVR_MAJOR_VERSION <= 5
     hmd = ovrHmd_Create(0);
     if (hmd) {
         yInfo() << "Oculus Rift FOUND.";
@@ -337,6 +342,21 @@ bool yarp::dev::OVRHeadset::threadInit()
         this->close();
         return false;
     }
+#else
+    ovrResult result = ovrHmd_Create(0, &hmd);
+    if (OVR_SUCCESS(result)) {
+        yInfo() << "Oculus Rift FOUND.";
+    } else {
+        yWarning() << "Oculus Rift NOT FOUND. Using debug device.";
+        result = ovrHmd_CreateDebug(ovrHmd_DK2, &hmd);
+    }
+    // If still not existing, we failed initializing it.
+    if (!OVR_SUCCESS(result)) {
+        yError() << "Oculus Rift not detected.";
+        this->close();
+        return false;
+    }
+#endif
 
     if (hmd->ProductName[0] == '\0') {
         yWarning() << "Rift detected, display not enabled.";
@@ -359,7 +379,12 @@ bool yarp::dev::OVRHeadset::threadInit()
     OVR::Sizei windowSize = hmd->Resolution;
 
 
+#if OVR_PRODUCT_VERSION == 0 && OVR_MAJOR_VERSION <= 5
     if (!createWindow(windowSize.w, windowSize.h, hmd->WindowsPos.x, hmd->WindowsPos.y)) {
+#else
+    // FIXME 0.5->0.6
+    if (!createWindow(windowSize.w, windowSize.h, 0, 0)) {
+#endif
         yError() << "Failed to create window";
         this->close();
         return false;
@@ -383,6 +408,7 @@ bool yarp::dev::OVRHeadset::threadInit()
     glfwGetFramebufferSize(window, &fbwidth, &fbheight);
 
 
+#if OVR_PRODUCT_VERSION == 0 && OVR_MAJOR_VERSION <= 5
     config.OGL.Header.API              = ovrRenderAPI_OpenGL;
     config.OGL.Header.BackBufferSize.w = fbwidth;
     config.OGL.Header.BackBufferSize.h = fbheight;
@@ -393,6 +419,9 @@ bool yarp::dev::OVRHeadset::threadInit()
 #elif defined(__APPLE__)
 #elif defined(__linux__)
     config.OGL.Disp = glfwGetX11Display();
+#endif
+#else
+    // FIXME 0.5->0.6
 #endif
 
     for (int i = 0; i < 2; ++i) {
@@ -406,16 +435,22 @@ bool yarp::dev::OVRHeadset::threadInit()
     ovrHmd_SetEnabledCaps(hmd, ovrHmdCap_LowPersistence |
                                ovrHmdCap_DynamicPrediction);
 
+#if OVR_PRODUCT_VERSION == 0 && OVR_MAJOR_VERSION <= 5
 #if defined(_WIN32)
     ovrHmd_AttachToWindow(hmd, glfwGetWin32Window(window), NULL, NULL);
 #endif
 
     ovrHmd_DismissHSWDisplay(hmd);
+#endif
 
 
     for (int i=0; i<2; i++)
     {
+#if OVR_PRODUCT_VERSION == 0 && OVR_MAJOR_VERSION <= 5
         displayPorts[i]->eyeRenderTexture = new TextureBuffer(texWidth, texHeight, i);
+#else
+        displayPorts[i]->eyeRenderTexture = new TextureBuffer(texWidth, texHeight, i, hmd);
+#endif
     }
 
     // Start the sensor which provides the Rift's pose and motion.
@@ -645,7 +680,11 @@ void yarp::dev::OVRHeadset::run()
 
     // Begin frame
     ++distortionFrameIndex;
+#if OVR_PRODUCT_VERSION == 0 && OVR_MAJOR_VERSION <= 5
     ovrFrameTiming frameTiming = ovrHmd_BeginFrame(hmd, distortionFrameIndex);
+#else
+    ovrFrameTiming frameTiming = ovrHmd_GetFrameTiming(hmd, distortionFrameIndex);
+#endif
 
     // Query the HMD for the current tracking state.
     ovrTrackingState ts = ovrHmd_GetTrackingState(hmd, ovr_GetTimeInSeconds());
@@ -655,8 +694,12 @@ void yarp::dev::OVRHeadset::run()
     //Get eye poses, feeding in correct IPD offset
     ovrVector3f ViewOffset[2] = {EyeRenderDesc[0].HmdToEyeViewOffset,EyeRenderDesc[1].HmdToEyeViewOffset};
     ovrPosef EyeRenderPose[2];
+#if OVR_PRODUCT_VERSION == 0 && OVR_MAJOR_VERSION <= 5
     ovrTrackingState ts_eyes;
     ovrHmd_GetEyePoses(hmd, distortionFrameIndex, ViewOffset, EyeRenderPose, &ts_eyes);
+#else
+    ovr_CalcEyePoses(headpose.ThePose, ViewOffset, EyeRenderPose);
+#endif
 
 
     // Query the HMD for the predicted state
@@ -840,6 +883,7 @@ void yarp::dev::OVRHeadset::run()
 
     if(displayPorts[0]->eyeRenderTexture && displayPorts[1]->eyeRenderTexture) {
         // Do distortion rendering, Present and flush/sync
+#if OVR_PRODUCT_VERSION == 0 && OVR_MAJOR_VERSION <= 5
         ovrGLTexture eyeTex[2];
         for (int i = 0; i<2; ++i) {
             eyeTex[i].OGL.Header.API = ovrRenderAPI_OpenGL;
@@ -847,9 +891,14 @@ void yarp::dev::OVRHeadset::run()
             eyeTex[i].OGL.Header.RenderViewport = OVR::Recti(0, 0, displayPorts[i]->eyeRenderTexture->width, displayPorts[i]->eyeRenderTexture->height);
             eyeTex[i].OGL.TexId = displayPorts[i]->eyeRenderTexture->texId;
         }
+#endif
 
         // Wait till time-warp point to reduce latency.
+#if OVR_PRODUCT_VERSION == 0 && OVR_MAJOR_VERSION <= 5
         ovr_WaitTillTime(frameTiming.TimewarpPointSeconds - 0.001);
+#else
+        // FIXME 0.5->0.6
+#endif
 
         //static double ttt =yarp::os::Time::now();
         //yDebug () << yarp::os::Time::now() - ttt;
@@ -905,8 +954,23 @@ void yarp::dev::OVRHeadset::run()
             reconfigureRendering();
         }
 
+#if OVR_PRODUCT_VERSION == 0 && OVR_MAJOR_VERSION <= 5
         // End frame
         ovrHmd_EndFrame(hmd, EyeRenderPose, &eyeTex[0].Texture);
+#else
+        ovrLayerEyeFov ld;
+        ld.Header.Type = ovrLayerType_EyeFov;
+        ld.Header.Flags = 0;
+        for (int eye = 0; eye < 2; eye++) {
+            ld.ColorTexture[eye] = displayPorts[eye]->eyeRenderTexture->textureSet;
+            ld.Viewport[eye] = OVR::Recti(0, 0, displayPorts[eye]->eyeRenderTexture->width, displayPorts[eye]->eyeRenderTexture->height);
+            ld.Fov[eye] = fov[eye]; // FIXME 0.5->0.6 hmd->DefaultEyeFov[eye]; ?
+            ld.RenderPose[eye] = EyeRenderPose[eye];
+        }
+        ovrLayerHeader* layers = &ld.Header;
+        ovrResult result = ovrHmd_SubmitFrame(hmd, 0, nullptr, &layers, 1);
+#endif
+
     } else {
         // Do not warn more than once every 5 seconds
         static double lastImgWarnTime = 0;
@@ -924,9 +988,13 @@ GLFWmonitor* yarp::dev::OVRHeadset::detectMonitor()
     GLFWmonitor** monitors = glfwGetMonitors(&count);
     for (int i = 0;  i < count;  i++) {
 #if defined(_WIN32)
+#if OVR_PRODUCT_VERSION == 0 && OVR_MAJOR_VERSION <= 5
         if (strcmp(glfwGetWin32Monitor(monitors[i]), hmd->DisplayDeviceName) == 0) {
             return monitors[i];
         }
+#else
+        // FIXME 0.5->0.6
+#endif
 #elif defined(__APPLE__)
         if (glfwGetCocoaMonitor(monitors[i]) == hmd->DisplayId) {
             return monitors[i];
@@ -1166,6 +1234,7 @@ void yarp::dev::OVRHeadset::onKey(int key, int scancode, int action, int mods)
 
 void yarp::dev::OVRHeadset::reconfigureRendering()
 {
+#if OVR_PRODUCT_VERSION == 0 && OVR_MAJOR_VERSION <= 5
     config.OGL.Header.Multisample = multiSampleEnabled ? 1 : 0;
 
     unsigned int distortionCaps = 0;
@@ -1176,6 +1245,12 @@ void yarp::dev::OVRHeadset::reconfigureRendering()
     if (flipInputEnabled)     distortionCaps |= ovrDistortionCap_FlipInput;
 
     ovrHmd_ConfigureRendering(hmd, &config.Config, distortionCaps, fov, EyeRenderDesc);
+#else
+    // FIXME 0.5->0.6
+    for (int i = 0; i < ovrEye_Count; ++i) {
+        ovrHmd_GetRenderDesc(hmd, (ovrEyeType)i, fov[i]);
+    }
+#endif
 }
 
 
