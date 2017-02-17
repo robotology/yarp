@@ -13,11 +13,11 @@
 #include <yarp/sig/Image.h>
 #include <yarp/sig/Vector.h>
 
-
 namespace yarp {
     namespace dev {
         class IRgbVisualParams;
         class IDepthVisualParams;
+        struct CameraConfig;
     }
 }
 /**
@@ -25,16 +25,18 @@ namespace yarp {
  * @param width image width
  * @param height image height
  * @param framerate camera framerate
- * @param pixelCodind camera pixel coding
+ * @param pixelCoding camera pixel coding
  */
-typedef struct {
+YARP_BEGIN_PACK
+struct yarp::dev::CameraConfig {
     int width;
     int height;
     double framerate;
     YarpVocabPixelTypesEnum pixelCoding;
 
-}CameraConfig;
-
+    CameraConfig() : width(0), height(0), framerate(0.0), pixelCoding(VOCAB_PIXEL_INVALID) {}
+};
+YARP_END_PACK
 
 // Interface name
 #define VOCAB_RGB_VISUAL_PARAMS       VOCAB4('v','i','s','r')
@@ -94,8 +96,8 @@ public:
      * @param configurations  list of camera supported configurations as CameraConfig type
      * @return true on success
      */
-    //TODO put =0
-    virtual bool getRgbSupportedConfigurations(yarp::sig::VectorOf<CameraConfig> &configurations){return false;}
+
+    virtual bool getRgbSupportedConfigurations(yarp::sig::VectorOf<yarp::dev::CameraConfig> &configurations) {return false;}
     /**
      * Get the resolution of the rgb image from the camera
      * @param width  image width
@@ -103,7 +105,6 @@ public:
      * @return true on success
      */
 
-    //TODO put =0
     virtual bool getRgbResolution(int &width, int &height) {return false;}
     /**
      * Set the resolution of the rgb image from the camera

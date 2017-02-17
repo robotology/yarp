@@ -51,7 +51,10 @@ bool Implement_RgbVisualParams_Sender::getRgbSupportedConfigurations(yarp::sig::
     }
     configurations.resize(response.get(3).asInt());
     for(int i=0; i<response.get(3).asInt(); i++){
-        memcpy((char*)&configurations[i],response.get(i+4).asBlob(),sizeof(CameraConfig));
+        configurations[i].width=response.get(4 + i*4).asInt();
+        configurations[i].height=response.get(4 + i*4 + 1).asInt();
+        configurations[i].framerate=response.get(4 + i*4 + 2).asDouble();
+        configurations[i].pixelCoding=static_cast<YarpVocabPixelTypesEnum>(response.get(4 + i*4 + 3).asVocab());
     }
     return true;
 }
@@ -233,8 +236,10 @@ bool Implement_RgbVisualParams_Parser::respond(const yarp::os::Bottle& cmd, yarp
                         response.addVocab(VOCAB_IS);
                         response.addInt(conf.size());
                         for(size_t i=0; i<conf.size(); i++){
-                            Value val(&conf[i],sizeof(CameraConfig));
-                            response.add(val);
+                            response.addInt(conf[i].width);
+                            response.addInt(conf[i].height);
+                            response.addDouble(conf[i].framerate);
+                            response.addVocab(conf[i].pixelCoding);
                         }
                     }
                     else
