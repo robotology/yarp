@@ -189,6 +189,19 @@ if(COMMAND set_package_properties)
                                              URL "https://developer.oculus.com/")
 endif()
 
+if(FindLibOVR_DEBUG)
+  include(CMakePrintHelpers)
+  cmake_print_variables(LibOVR_FOUND
+                        LibOVR_VERSION
+                        LibOVR_VERSION_PRODUCT
+                        LibOVR_VERSION_MAJOR
+                        LibOVR_VERSION_MINOR
+                        LibOVR_VERSION_PATCH
+                        LibOVR_VERSION_BUILD
+                        LibOVR_VERSION_STRING
+                        LibOVR_VERSION_DETAILED_STRING)
+endif()
+
 if(NOT LibOVR_FOUND)
   return()
 endif()
@@ -242,19 +255,14 @@ if(EXISTS "${LibOVR_LibOVR_LIBRARY_RELEASE}")
 endif()
 
 if(FindLibOVR_DEBUG)
-  include(CMakePrintHelpers)
-  cmake_print_variables(LibOVR_FOUND
-                        LibOVR_VERSION
-                        LibOVR_VERSION_PRODUCT
-                        LibOVR_VERSION_MAJOR
-                        LibOVR_VERSION_MINOR
-                        LibOVR_VERSION_PATCH
-                        LibOVR_VERSION_BUILD
-                        LibOVR_VERSION_STRING
-                        LibOVR_VERSION_DETAILED_STRING)
-  cmake_print_properties(TARGETS LibOVR::OVRKernel
-                                 LibOVR::OVR
-                         PROPERTIES IMPORTED_CONFIGURATIONS
-                                    IMPORTED_LOCATION_RELEASE
-                                    IMPORTED_LOCATION_DEBUG)
+  foreach(_t OVR OVRKernel)
+    if(TARGET LibOVR::${_t})
+      cmake_print_properties(TARGETS LibOVR::${_t}
+                             PROPERTIES IMPORTED_CONFIGURATIONS
+                                        IMPORTED_LOCATION_RELEASE
+                                        IMPORTED_LOCATION_DEBUG)
+    else()
+      message(STATUS "LibOVR::${_t} not found")
+    endif()
+  endforeach()
 endif()
