@@ -1026,13 +1026,27 @@ bool PartItem::homeJoint(int jointIndex)
 
 bool PartItem::homePart()
 {
-    int NUMBER_OF_JOINTS;
-    m_iPos->getAxes(&NUMBER_OF_JOINTS);
-    bool b = true;
-    for (int i = 0; i < NUMBER_OF_JOINTS; i++)
+    if (!m_iremCalib)
     {
-        b &= homeJoint(i);
-        if (b == false) return false;
+        QMessageBox::critical(this, "Operation not supported", QString("The IRemoteCalibrator interface was not found on this application"));
+        return false;
+    }
+
+    if (!m_iremCalib->homingWholePart())
+    {
+        // provide better feedback to user by verifying if the calibrator device was set or not
+        bool isCalib = false;
+        m_iremCalib->isCalibratorDevicePresent(&isCalib);
+        if (!isCalib)
+        {
+            QMessageBox::critical(this, "Operation failed", QString("No calibrator device was configured to perform this action, please verify that the wrapper config file for part %1 has the 'Calibrator' keyword in the attach phase").arg(m_partName));
+            return false;
+        }
+        else
+        {
+            QMessageBox::critical(this, "Operation failed", QString("The remote calibrator reported that something went wrong during the calibration procedure"));
+            return false;
+        }
     }
     return true;
 }

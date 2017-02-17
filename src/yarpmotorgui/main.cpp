@@ -73,7 +73,6 @@ int main(int argc, char *argv[])
     //retrieve information for the list of parts
     finder.setVerbose();
     finder.setDefaultConfigFile("yarpmotorgui.ini");
-    finder.setDefault("name", "icub");
     finder.configure(argc, argv);
 
     qRegisterMetaType<Pid>("Pid");
@@ -84,7 +83,8 @@ int main(int argc, char *argv[])
     {
         yInfo("yarpmotorgui options:");
         yInfo("--robot <name>: name of the robot");
-        yInfo("--parts ""( <name1> <name2> )"": parts of the robot to add to the list.");
+        yInfo("--parts ""( <name1> <name2> )"": parts of the robot to add to the list. (e.g. left_arm)");
+        yInfo("--names ""( <name1> <name2> )"": full name of the ports of the robot to add to the list. (e.g. /icub/left_arm). This option is mutually execusive with --robot --parts options");
         yInfo("--skip_parts ""( <name1> <name2> )"": parts of the robot to skip.");
         yInfo("--calib to enable calibration buttons (be careful!)");
         return 0;
@@ -113,56 +113,81 @@ int main(int argc, char *argv[])
         speedview_param_enabled = true;
     }
 
-    //ask the robot part to the description server
-    int count = 0;
-    std::string descLocalName = "/yarpmotorgui" + std::to_string(count) + "/descriptionClient";
-    Contact adr = Network::queryName(descLocalName);
-    while (adr.isValid())
+    if (finder.check("skip_description_server")==false) //option --skip_description_server is for debug only, users should not use it
     {
-        count++;
-        descLocalName = "/yarpmotorgui" + std::to_string(count) + "/descriptionClient";
-        adr = Network::queryName(descLocalName);
-    }
-
-    if (yarp::os::Network::exists("/robotDescription/rpc"))
-    {
-        PolyDriver* desc_driver = 0;
-        desc_driver = new PolyDriver;
-        std::vector<DeviceDescription> cbw2_list;
-        Property desc_driver_options;
-        desc_driver_options.put("device", "robotDescriptionClient");
-        desc_driver_options.put("local", descLocalName);
-        desc_driver_options.put("remote", "/robotDescription");
-        desc_driver->open(desc_driver_options);
-        if (desc_driver && desc_driver->isValid())
+        //ask the robot part to the description server
+        int count = 0;
+        std::string descLocalName = "/yarpmotorgui" + std::to_string(count) + "/descriptionClient";
+        Contact adr = Network::queryName(descLocalName);
+        while (adr.isValid())
         {
-            IRobotDescription* idesc = 0;
-            desc_driver->view(idesc);
-            if (idesc)
+            count++;
+            descLocalName = "/yarpmotorgui" + std::to_string(count) + "/descriptionClient";
+            adr = Network::queryName(descLocalName);
+        }
+
+        if (yarp::os::Network::exists("/robotDescription/rpc"))
+        {
+            PolyDriver* desc_driver = 0;
+            desc_driver = new PolyDriver;
+            std::vector<DeviceDescription> cbw2_list;
+            Property desc_driver_options;
+            desc_driver_options.put("device", "robotDescriptionClient");
+            desc_driver_options.put("local", descLocalName);
+            desc_driver_options.put("remote", "/robotDescription");
+            desc_driver->open(desc_driver_options);
+            if (desc_driver && desc_driver->isValid())
             {
-                idesc->getAllDevicesByType("controlboardwrapper2", cbw2_list);
-                std::vector<DeviceDescription> wrappers_list;
-                wrappers_list.reserve(cbw2_list.size());
-                wrappers_list.insert(wrappers_list.end(), cbw2_list.begin(), cbw2_list.end());
-                for (size_t i = 0; i < wrappers_list.size(); i++)
+                IRobotDescription* idesc = 0;
+                desc_driver->view(idesc);
+                if (idesc)
                 {
-                    yDebug() << wrappers_list[i].device_name;
-                    pParts.addString(wrappers_list[i].device_name);
+                    idesc->getAllDevicesByType("controlboardwrapper2", cbw2_list);
+                    std::vector<DeviceDescription> wrappers_list;
+                    wrappers_list.reserve(cbw2_list.size());
+                    wrappers_list.insert(wrappers_list.end(), cbw2_list.begin(), cbw2_list.end());
+                    for (size_t i = 0; i < wrappers_list.size(); i++)
+                    {
+                        yDebug() << wrappers_list[i].device_name;
+                        pParts.addString(wrappers_list[i].device_name);
+                    }
                 }
             }
         }
-    }
-    else
-    {
-        yWarning() << "robotDescriptionServer not found, robot parts will be set manually.";
+        else
+        {
+            yWarning() << "robotDescriptionServer not found, robot parts will be set manually.";
+        }
     }
 
     std::string robotName = finder.find("robot").asString();
     Bottle* b_part_skip = finder.find("skip_parts").asList();
     Bottle* b_part = finder.find("parts").asList();
-    if (pParts.size() == 0)
+    Bottle* b_name = finder.find("names").asList();    if (pParts.size() == 0)
     {
-        if (robotName != "" && b_part != 0)
+        if (robotName != "" && b_name != 0)
+        {
+            LOG_ERROR("You cannot use both --robot and --names options simultaneously\n");
+            QMessageBox::critical(0, "Error", "You cannot use both --robot and --names options simultaneously");
+            return 1;
+        }
+
+        if (b_name != 0 && b_part != 0)
+        {
+            LOG_ERROR("You cannot use both --parts and --names options simultaneously\n");
+            QMessageBox::critical(0, "Error", "You cannot use both --parts and --names options simultaneously");
+            return 1;
+        }
+        
+        if (b_name != 0 && b_part == 0)
+        {
+            //check port names from config file
+            for (int i = 0; i < b_name->size(); i++)
+            {
+                pParts.addString(b_name->get(i).asString());
+            }
+        }
+        else if (robotName != "" && b_part != 0)
         {
             //check parts from config file
             for (int i = 0; i < b_part->size(); i++)
@@ -171,6 +196,12 @@ int main(int argc, char *argv[])
                 if (ss.at(0) != '/')
                 {
                     ss = "/" + robotName + "/" + ss;
+                }
+                else
+                {
+                    LOG_ERROR("Option --parts should not contain /, please remove it\n");
+                    QMessageBox::critical(0, "Error", "Option --parts should not contain /, please remove it");
+                    return 1;
                 }
                 pParts.addString(ss);
             }
