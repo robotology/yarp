@@ -384,7 +384,11 @@ enum YarpVocabPixelTypesEnum
         VOCAB_PIXEL_ENCODING_BAYER_GBRG8 = VOCAB4('g', 'b', 'r', 'g'),  //gbrg8
         VOCAB_PIXEL_ENCODING_BAYER_GBRG16 = VOCAB4('g', 'b', '1', '6'),  //gbrg16
         VOCAB_PIXEL_ENCODING_BAYER_RGGB8 = -VOCAB4('r', 'g', 'g', 'b'),   //rggb8
-        VOCAB_PIXEL_ENCODING_BAYER_RGGB16 = VOCAB4('r', 'g', '1', '6')  //rggb16
+        VOCAB_PIXEL_ENCODING_BAYER_RGGB16 = VOCAB4('r', 'g', '1', '6'),  //rggb16
+        VOCAB_PIXEL_YUV_420 = VOCAB4('y','u','v','a'),
+        VOCAB_PIXEL_YUV_444 = VOCAB4('y','u','v','b'),
+        VOCAB_PIXEL_YUV_422 = VOCAB4('y','u','v','c'),
+        VOCAB_PIXEL_YUV_411 = VOCAB4('y','u','v','d')
     };
 
 
