@@ -218,7 +218,8 @@ bool OpenCVGrabber::getImage(ImageOf<PixelRgb> & image) {
 
     // Must have a capture object
     if (!m_cap.isOpened()) {
-        image.zero(); return false;
+        image.zero();
+        return false;
     }
 
     // Grab and retrieve a frame
@@ -232,42 +233,29 @@ bool OpenCVGrabber::getImage(ImageOf<PixelRgb> & image) {
     }
 
     if (frame.empty()) {
-        image.zero(); return false;
-    }
-    
-    if (!m_transpose && !m_flip_x && !m_flip_y)
-    {
-        return sendImage(frame, image);
+        image.zero();
+        return false;
     }
 
-    cv::Mat frame_out;
     if (m_transpose)
     {
-        cv::transpose(frame, frame_out);
-    }
-    else
-    {
-        frame_out = frame;
+        cv::transpose(frame, frame);
     }
 
     if (m_flip_x && m_flip_y)
     {
-        cv::flip(frame, frame_out, -1);
+        cv::flip(frame, frame, -1);
     }
-    else
+    else if (m_flip_x)
     {
-        if (m_flip_x)
-        {
-            cv::flip(frame, frame_out, 0);
-        }
-        else if (m_flip_y)
-        {
-            cv::flip(frame, frame_out, 1);
-        }
+        cv::flip(frame, frame, 0);
     }
-    bool ret = sendImage(frame_out, image);
+    else if (m_flip_y)
+    {
+        cv::flip(frame, frame, 1);
+    }
 
-    return ret;
+    return sendImage(frame, image);
 }
 
 
