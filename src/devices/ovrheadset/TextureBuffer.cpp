@@ -168,7 +168,11 @@ void TextureBuffer::createTextureAndBuffers()
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
     glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, width, height, 0, GL_RGB, GL_UNSIGNED_BYTE, 0);
 #else
+#if OVR_PRODUCT_VERSION == 0 && OVR_MAJOR_VERSION <= 6
     ovrHmd_CreateSwapTextureSetGL(hmd, GL_RGBA, width, height, &textureSet);
+#else
+    ovr_CreateSwapTextureSetGL(hmd, GL_RGBA, width, height, &textureSet);
+#endif
     for (int i = 0; i < textureSet->TextureCount; ++i)
     {
         ovrGLTexture* tex = (ovrGLTexture*)&textureSet->Textures[i];

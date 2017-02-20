@@ -342,7 +342,7 @@ bool yarp::dev::OVRHeadset::threadInit()
         this->close();
         return false;
     }
-#else
+#elif OVR_PRODUCT_VERSION == 0 && OVR_MAJOR_VERSION <= 6
     ovrResult result = ovrHmd_Create(0, &hmd);
     if (OVR_SUCCESS(result)) {
         yInfo() << "Oculus Rift FOUND.";
@@ -356,13 +356,31 @@ bool yarp::dev::OVRHeadset::threadInit()
         this->close();
         return false;
     }
+#else
+    ovrGraphicsLuid luid;
+    ovrResult result = ovr_Create(&hmd, &luid);
+    if (!OVR_SUCCESS(result)) {
+        yError() << "Oculus Rift not detected.";
+        this->close();
+        return false;
+    }
+
+    hmdDesc = ovr_GetHmdDesc(hmd);
 #endif
 
+#if OVR_PRODUCT_VERSION == 0 && OVR_MAJOR_VERSION <= 6
     if (hmd->ProductName[0] == '\0') {
+#else
+    if (hmdDesc.ProductName[0] == '\0') {
+#endif
         yWarning() << "Rift detected, display not enabled.";
     }
 
+#if OVR_PRODUCT_VERSION == 0 && OVR_MAJOR_VERSION <= 6
     DebugHmd(hmd);
+#else
+    DebugHmd(hmdDesc);
+#endif
 
 
     // Initialize the GLFW system for creating and positioning windows
@@ -376,7 +394,11 @@ bool yarp::dev::OVRHeadset::threadInit()
     glfwSetErrorCallback(glfwErrorCallback);
 
 //    bool windowed = (hmd->HmdCaps & ovrHmdCap_ExtendDesktop) ? false : true;
+#if OVR_PRODUCT_VERSION == 0 && OVR_MAJOR_VERSION <= 6
     OVR::Sizei windowSize = hmd->Resolution;
+#else
+    OVR::Sizei windowSize = hmdDesc.Resolution;
+#endif
 
 
 #if OVR_PRODUCT_VERSION == 0 && OVR_MAJOR_VERSION <= 5
@@ -432,8 +454,12 @@ bool yarp::dev::OVRHeadset::threadInit()
 
     reconfigureRendering();
 
+#if OVR_PRODUCT_VERSION == 0 && OVR_MAJOR_VERSION <= 6
     ovrHmd_SetEnabledCaps(hmd, ovrHmdCap_LowPersistence |
                                ovrHmdCap_DynamicPrediction);
+#else
+// FIXME 0.6->0.7: No longer needed?
+#endif
 
 #if OVR_PRODUCT_VERSION == 0 && OVR_MAJOR_VERSION <= 5
 #if defined(_WIN32)
@@ -441,6 +467,8 @@ bool yarp::dev::OVRHeadset::threadInit()
 #endif
 
     ovrHmd_DismissHSWDisplay(hmd);
+#else
+// FIXME 0.6->0.7: No longer needed?
 #endif
 
 
@@ -453,6 +481,7 @@ bool yarp::dev::OVRHeadset::threadInit()
 #endif
     }
 
+#if OVR_PRODUCT_VERSION == 0 && OVR_MAJOR_VERSION <= 6
     // Start the sensor which provides the Rift's pose and motion.
     ovrHmd_ConfigureTracking(hmd, ovrTrackingCap_Orientation |
                                   ovrTrackingCap_MagYawCorrection |
@@ -460,6 +489,15 @@ bool yarp::dev::OVRHeadset::threadInit()
 
     // Recenter position
     ovrHmd_RecenterPose(hmd);
+#else
+    // Start the sensor which provides the Rift's pose and motion.
+    ovr_ConfigureTracking(hmd, ovrTrackingCap_Orientation |
+                               ovrTrackingCap_MagYawCorrection |
+                               ovrTrackingCap_Position, 0);
+
+    // Recenter position
+    ovr_RecenterPose(hmd);
+#endif
 
     checkGlErrorMacro;
 
@@ -481,7 +519,11 @@ void yarp::dev::OVRHeadset::threadRelease()
 
     // Shut down LibOVR
     if (hmd) {
+#if OVR_PRODUCT_VERSION == 0 && OVR_MAJOR_VERSION <= 6
         ovrHmd_Destroy(hmd);
+#else
+        ovr_Destroy(hmd);
+#endif
         hmd = 0;
         ovr_Shutdown();
     }
@@ -682,12 +724,18 @@ void yarp::dev::OVRHeadset::run()
     ++distortionFrameIndex;
 #if OVR_PRODUCT_VERSION == 0 && OVR_MAJOR_VERSION <= 5
     ovrFrameTiming frameTiming = ovrHmd_BeginFrame(hmd, distortionFrameIndex);
-#else
+#elif OVR_PRODUCT_VERSION == 0 && OVR_MAJOR_VERSION <= 6
     ovrFrameTiming frameTiming = ovrHmd_GetFrameTiming(hmd, distortionFrameIndex);
+#else
+    ovrFrameTiming frameTiming = ovr_GetFrameTiming(hmd, distortionFrameIndex);
 #endif
 
     // Query the HMD for the current tracking state.
+#if OVR_PRODUCT_VERSION == 0 && OVR_MAJOR_VERSION <= 6
     ovrTrackingState ts = ovrHmd_GetTrackingState(hmd, ovr_GetTimeInSeconds());
+#else
+    ovrTrackingState ts = ovr_GetTrackingState(hmd, ovr_GetTimeInSeconds());
+#endif
     ovrPoseStatef headpose = ts.HeadPose;
     yarp::os::Stamp stamp(distortionFrameIndex, ts.HeadPose.TimeInSeconds);
 
@@ -703,7 +751,11 @@ void yarp::dev::OVRHeadset::run()
 
 
     // Query the HMD for the predicted state
+#if OVR_PRODUCT_VERSION == 0 && OVR_MAJOR_VERSION <= 6
     ovrTrackingState predicted_ts = ovrHmd_GetTrackingState(hmd, ovr_GetTimeInSeconds() + prediction);
+#else
+    ovrTrackingState predicted_ts = ovr_GetTrackingState(hmd, ovr_GetTimeInSeconds() + prediction);
+#endif
     ovrPoseStatef predicted_headpose = predicted_ts.HeadPose;
     yarp::os::Stamp predicted_stamp(distortionFrameIndex, predicted_ts.HeadPose.TimeInSeconds);
 
@@ -896,8 +948,10 @@ void yarp::dev::OVRHeadset::run()
         // Wait till time-warp point to reduce latency.
 #if OVR_PRODUCT_VERSION == 0 && OVR_MAJOR_VERSION <= 5
         ovr_WaitTillTime(frameTiming.TimewarpPointSeconds - 0.001);
+#elif OVR_PRODUCT_VERSION == 0 && OVR_MAJOR_VERSION <= 6
+        // FIXME 0.5->0.6: Not available?
 #else
-        // FIXME 0.5->0.6
+        // FIXME 0.6->0.7: No longer needed?
 #endif
 
         //static double ttt =yarp::os::Time::now();
@@ -968,7 +1022,11 @@ void yarp::dev::OVRHeadset::run()
             ld.RenderPose[eye] = EyeRenderPose[eye];
         }
         ovrLayerHeader* layers = &ld.Header;
+#if OVR_PRODUCT_VERSION == 0 && OVR_MAJOR_VERSION <= 6
         ovrResult result = ovrHmd_SubmitFrame(hmd, 0, nullptr, &layers, 1);
+#else
+        ovrResult result = ovr_SubmitFrame(hmd, 0, nullptr, &layers, 1);
+#endif
 #endif
 
     } else {
@@ -1086,7 +1144,11 @@ void yarp::dev::OVRHeadset::onKey(int key, int scancode, int action, int mods)
 
         if (!leftShiftPressed && !rightShiftPressed) {
             yDebug() << "Recentering pose";
+#if OVR_PRODUCT_VERSION == 0 && OVR_MAJOR_VERSION <= 6
             ovrHmd_RecenterPose(hmd);
+#else
+            ovr_RecenterPose(hmd);
+#endif
         } else {
             yDebug() << "Resetting yaw offset to current position";
             for (int i = 0; i < 2; ++i) {
@@ -1248,7 +1310,11 @@ void yarp::dev::OVRHeadset::reconfigureRendering()
 #else
     // FIXME 0.5->0.6
     for (int i = 0; i < ovrEye_Count; ++i) {
+#if OVR_PRODUCT_VERSION == 0 && OVR_MAJOR_VERSION <= 6
         ovrHmd_GetRenderDesc(hmd, (ovrEyeType)i, fov[i]);
+#else
+        ovr_GetRenderDesc(hmd, (ovrEyeType)i, fov[i]);
+#endif
     }
 #endif
 }
@@ -1311,7 +1377,12 @@ void yarp::dev::OVRHeadset::checkGlError(const char* file, int line) {
     yAssert(error == 0);
 }
 
+#if OVR_PRODUCT_VERSION == 0 && OVR_MAJOR_VERSION <= 6
 void yarp::dev::OVRHeadset::ovrDebugCallback(int level, const char* message)
+#else
+void yarp::dev::OVRHeadset::ovrDebugCallback(uintptr_t userData, int level, const char* message)
+// FIXME 0.6->0.7: What is userData for?
+#endif
 {
     switch (level) {
     case ovrLogLevel_Debug:
@@ -1329,6 +1400,7 @@ void yarp::dev::OVRHeadset::ovrDebugCallback(int level, const char* message)
     }
 }
 
+#if OVR_PRODUCT_VERSION == 0 && OVR_MAJOR_VERSION <= 6
 void yarp::dev::OVRHeadset::DebugHmd(ovrHmd hmd)
 {
     yDebug("  * ProductName: %s", hmd->ProductName);
@@ -1338,3 +1410,14 @@ void yarp::dev::OVRHeadset::DebugHmd(ovrHmd hmd)
     yDebug("  * Firmware Version: %d.%d", hmd->FirmwareMajor, hmd->FirmwareMinor);
     yDebug("  * Resolution: %dx%d", hmd->Resolution.w, hmd->Resolution.h);
 }
+#else
+void yarp::dev::OVRHeadset::DebugHmd(ovrHmdDesc hmdDesc)
+{
+    yDebug("  * ProductName: %s", hmdDesc.ProductName);
+    yDebug("  * Manufacturer: %s", hmdDesc.Manufacturer);
+    yDebug("  * VendorId:ProductId: %04X:%04X", hmdDesc.VendorId, hmdDesc.ProductId);
+    yDebug("  * SerialNumber: %s", hmdDesc.SerialNumber);
+    yDebug("  * Firmware Version: %d.%d", hmdDesc.FirmwareMajor, hmdDesc.FirmwareMinor);
+    yDebug("  * Resolution: %dx%d", hmdDesc.Resolution.w, hmdDesc.Resolution.h);
+}
+#endif

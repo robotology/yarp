@@ -66,8 +66,13 @@ private:
     static void glfwKeyCallback(GLFWwindow* window, int key, int scancode, int action, int mods);
     static void glfwErrorCallback(int error, const char* description);
     static void checkGlError(const char* file, int line);
+#if OVR_PRODUCT_VERSION == 0 && OVR_MAJOR_VERSION <= 6
     static void ovrDebugCallback(int level, const char* message);
     static void DebugHmd(ovrHmd hmd);
+#else
+    static void ovrDebugCallback(uintptr_t userData, int level, const char* message);
+    static void DebugHmd(ovrHmdDesc hmdDesc);
+#endif
 
     yarp::os::BufferedPort<yarp::os::Bottle>* orientationPort;
     yarp::os::BufferedPort<yarp::os::Bottle>* positionPort;
@@ -85,6 +90,11 @@ private:
     ovrEyeRenderDesc EyeRenderDesc[2];
 
     ovrHmd hmd;
+#if OVR_PRODUCT_VERSION == 0 && OVR_MAJOR_VERSION <= 6
+#else
+    ovrHmdDesc hmdDesc;
+#endif
+
     GLFWwindow* window;
 
 #if OVR_PRODUCT_VERSION == 0 && OVR_MAJOR_VERSION <= 5
