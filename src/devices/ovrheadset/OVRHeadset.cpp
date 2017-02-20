@@ -356,7 +356,7 @@ bool yarp::dev::OVRHeadset::threadInit()
         this->close();
         return false;
     }
-#else
+#elif OVR_PRODUCT_VERSION == 0 && OVR_MAJOR_VERSION <= 7
     ovrGraphicsLuid luid;
     ovrResult result = ovr_Create(&hmd, &luid);
     if (!OVR_SUCCESS(result)) {
@@ -366,6 +366,16 @@ bool yarp::dev::OVRHeadset::threadInit()
     }
 
     hmdDesc = ovr_GetHmdDesc(hmd);
+#else
+    ovrGraphicsLuid luid;
+    ovrResult result = ovr_Create(&session, &luid);
+    if (!OVR_SUCCESS(result)) {
+        yError() << "Oculus Rift not detected.";
+        this->close();
+        return false;
+    }
+
+    hmdDesc = ovr_GetHmdDesc(session);
 #endif
 
 #if OVR_PRODUCT_VERSION == 0 && OVR_MAJOR_VERSION <= 6
@@ -476,8 +486,10 @@ bool yarp::dev::OVRHeadset::threadInit()
     {
 #if OVR_PRODUCT_VERSION == 0 && OVR_MAJOR_VERSION <= 5
         displayPorts[i]->eyeRenderTexture = new TextureBuffer(texWidth, texHeight, i);
-#else
+#elif OVR_PRODUCT_VERSION == 0 && OVR_MAJOR_VERSION <= 7
         displayPorts[i]->eyeRenderTexture = new TextureBuffer(texWidth, texHeight, i, hmd);
+#else
+        displayPorts[i]->eyeRenderTexture = new TextureBuffer(texWidth, texHeight, i, session);
 #endif
     }
 
@@ -489,7 +501,7 @@ bool yarp::dev::OVRHeadset::threadInit()
 
     // Recenter position
     ovrHmd_RecenterPose(hmd);
-#else
+#elif OVR_PRODUCT_VERSION == 0 && OVR_MAJOR_VERSION <= 7
     // Start the sensor which provides the Rift's pose and motion.
     ovr_ConfigureTracking(hmd, ovrTrackingCap_Orientation |
                                ovrTrackingCap_MagYawCorrection |
@@ -497,6 +509,13 @@ bool yarp::dev::OVRHeadset::threadInit()
 
     // Recenter position
     ovr_RecenterPose(hmd);
+#elif OVR_PRODUCT_VERSION == 0 && OVR_MAJOR_VERSION <= 8
+    // FIXME 0.7->0.8: ovr_ConfigureTracking is no longer needed
+
+    // Recenter position
+    ovr_RecenterPose(session);
+#else
+
 #endif
 
     checkGlErrorMacro;
@@ -518,15 +537,26 @@ void yarp::dev::OVRHeadset::threadRelease()
     glfwTerminate();
 
     // Shut down LibOVR
-    if (hmd) {
 #if OVR_PRODUCT_VERSION == 0 && OVR_MAJOR_VERSION <= 6
+    if (hmd) {
         ovrHmd_Destroy(hmd);
-#else
-        ovr_Destroy(hmd);
-#endif
         hmd = 0;
         ovr_Shutdown();
     }
+#elif OVR_PRODUCT_VERSION == 0 && OVR_MAJOR_VERSION <= 7
+    if (hmd) {
+        ovr_Destroy(hmd);
+        hmd = 0;
+        ovr_Shutdown();
+    }
+#else
+    // FIXME 0.7->0.8: Should we check this?
+    if (session) {
+        ovr_Destroy(session);
+        session = 0;
+        ovr_Shutdown();
+    }
+#endif
 
     if (orientationPort) {
         orientationPort->interrupt();
@@ -726,15 +756,21 @@ void yarp::dev::OVRHeadset::run()
     ovrFrameTiming frameTiming = ovrHmd_BeginFrame(hmd, distortionFrameIndex);
 #elif OVR_PRODUCT_VERSION == 0 && OVR_MAJOR_VERSION <= 6
     ovrFrameTiming frameTiming = ovrHmd_GetFrameTiming(hmd, distortionFrameIndex);
-#else
+#elif OVR_PRODUCT_VERSION == 0 && OVR_MAJOR_VERSION <= 7
     ovrFrameTiming frameTiming = ovr_GetFrameTiming(hmd, distortionFrameIndex);
+#else
+    double frameTiming = ovr_GetPredictedDisplayTime(session, distortionFrameIndex);
 #endif
 
     // Query the HMD for the current tracking state.
 #if OVR_PRODUCT_VERSION == 0 && OVR_MAJOR_VERSION <= 6
     ovrTrackingState ts = ovrHmd_GetTrackingState(hmd, ovr_GetTimeInSeconds());
-#else
+#elif OVR_PRODUCT_VERSION == 0 && OVR_MAJOR_VERSION <= 7
     ovrTrackingState ts = ovr_GetTrackingState(hmd, ovr_GetTimeInSeconds());
+#else
+    // FIXME 0.7->0.8: What is latencyMarker?
+    ovrBool latencyMarker = false;
+    ovrTrackingState ts = ovr_GetTrackingState(session, ovr_GetTimeInSeconds(), latencyMarker);
 #endif
     ovrPoseStatef headpose = ts.HeadPose;
     yarp::os::Stamp stamp(distortionFrameIndex, ts.HeadPose.TimeInSeconds);
@@ -753,8 +789,12 @@ void yarp::dev::OVRHeadset::run()
     // Query the HMD for the predicted state
 #if OVR_PRODUCT_VERSION == 0 && OVR_MAJOR_VERSION <= 6
     ovrTrackingState predicted_ts = ovrHmd_GetTrackingState(hmd, ovr_GetTimeInSeconds() + prediction);
-#else
+#elif OVR_PRODUCT_VERSION == 0 && OVR_MAJOR_VERSION <= 7
     ovrTrackingState predicted_ts = ovr_GetTrackingState(hmd, ovr_GetTimeInSeconds() + prediction);
+#else
+    // FIXME 0.7->0.8: What is latencyMarker?
+    latencyMarker = false;
+    ovrTrackingState predicted_ts = ovr_GetTrackingState(session, ovr_GetTimeInSeconds() + prediction, latencyMarker);
 #endif
     ovrPoseStatef predicted_headpose = predicted_ts.HeadPose;
     yarp::os::Stamp predicted_stamp(distortionFrameIndex, predicted_ts.HeadPose.TimeInSeconds);
@@ -1024,8 +1064,10 @@ void yarp::dev::OVRHeadset::run()
         ovrLayerHeader* layers = &ld.Header;
 #if OVR_PRODUCT_VERSION == 0 && OVR_MAJOR_VERSION <= 6
         ovrResult result = ovrHmd_SubmitFrame(hmd, 0, nullptr, &layers, 1);
-#else
+#elif OVR_PRODUCT_VERSION == 0 && OVR_MAJOR_VERSION <= 7
         ovrResult result = ovr_SubmitFrame(hmd, 0, nullptr, &layers, 1);
+#else
+        ovrResult result = ovr_SubmitFrame(session, 0, nullptr, &layers, 1);
 #endif
 #endif
 
@@ -1146,8 +1188,10 @@ void yarp::dev::OVRHeadset::onKey(int key, int scancode, int action, int mods)
             yDebug() << "Recentering pose";
 #if OVR_PRODUCT_VERSION == 0 && OVR_MAJOR_VERSION <= 6
             ovrHmd_RecenterPose(hmd);
-#else
+#elif OVR_PRODUCT_VERSION == 0 && OVR_MAJOR_VERSION <= 7
             ovr_RecenterPose(hmd);
+#else
+            ovr_RecenterPose(session);
 #endif
         } else {
             yDebug() << "Resetting yaw offset to current position";
@@ -1312,8 +1356,10 @@ void yarp::dev::OVRHeadset::reconfigureRendering()
     for (int i = 0; i < ovrEye_Count; ++i) {
 #if OVR_PRODUCT_VERSION == 0 && OVR_MAJOR_VERSION <= 6
         ovrHmd_GetRenderDesc(hmd, (ovrEyeType)i, fov[i]);
-#else
+#elif OVR_PRODUCT_VERSION == 0 && OVR_MAJOR_VERSION <= 7
         ovr_GetRenderDesc(hmd, (ovrEyeType)i, fov[i]);
+#else
+        ovr_GetRenderDesc(session, (ovrEyeType)i, fov[i]);
 #endif
     }
 #endif

@@ -15,9 +15,13 @@
 
 #if OVR_PRODUCT_VERSION == 0 && OVR_MAJOR_VERSION <= 5
 TextureBuffer::TextureBuffer(int w, int h, int eye) :
-#else
+#elif OVR_PRODUCT_VERSION == 0 && OVR_MAJOR_VERSION <= 7
 TextureBuffer::TextureBuffer(int w, int h, int eye, ovrHmd hmd) :
         hmd(hmd),
+        textureSet(nullptr),
+#else
+TextureBuffer::TextureBuffer(int w, int h, int eye, ovrSession session) :
+        session(session),
         textureSet(nullptr),
 #endif
         width(w),
@@ -170,8 +174,10 @@ void TextureBuffer::createTextureAndBuffers()
 #else
 #if OVR_PRODUCT_VERSION == 0 && OVR_MAJOR_VERSION <= 6
     ovrHmd_CreateSwapTextureSetGL(hmd, GL_RGBA, width, height, &textureSet);
-#else
+#elif OVR_PRODUCT_VERSION == 0 && OVR_MAJOR_VERSION <= 7
     ovr_CreateSwapTextureSetGL(hmd, GL_RGBA, width, height, &textureSet);
+#else
+    ovr_CreateSwapTextureSetGL(session, GL_RGBA, width, height, &textureSet);
 #endif
     for (int i = 0; i < textureSet->TextureCount; ++i)
     {

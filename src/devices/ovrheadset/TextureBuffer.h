@@ -19,8 +19,10 @@ class TextureBuffer
 public:
 #if OVR_PRODUCT_VERSION == 0 && OVR_MAJOR_VERSION <= 5
     TextureBuffer(int w, int h, int eye);
-#else
+#elif OVR_PRODUCT_VERSION == 0 && OVR_MAJOR_VERSION <= 7
     TextureBuffer(int w, int h, int eye, ovrHmd hmd);
+#else
+    TextureBuffer(int w, int h, int eye, ovrSession session);
 #endif
 
     ~TextureBuffer();
@@ -29,8 +31,11 @@ public:
     void update();
 
 #if OVR_PRODUCT_VERSION == 0 && OVR_MAJOR_VERSION <= 5
-#else
+#elif OVR_PRODUCT_VERSION == 0 && OVR_MAJOR_VERSION <= 7
     ovrHmd hmd;
+    ovrSwapTextureSet* textureSet;
+#else
+    ovrSession session;
     ovrSwapTextureSet* textureSet;
 #endif
 

@@ -89,7 +89,12 @@ private:
     InputCallback* displayPorts[2];
     ovrEyeRenderDesc EyeRenderDesc[2];
 
+#if OVR_PRODUCT_VERSION == 0 && OVR_MAJOR_VERSION <= 7
     ovrHmd hmd;
+#else
+    ovrSession session;
+#endif
+
 #if OVR_PRODUCT_VERSION == 0 && OVR_MAJOR_VERSION <= 6
 #else
     ovrHmdDesc hmdDesc;
@@ -105,7 +110,11 @@ private:
 
 
     bool closed;
+#if OVR_PRODUCT_VERSION == 0 && OVR_MAJOR_VERSION <= 7
     unsigned int distortionFrameIndex;
+#else
+    long long distortionFrameIndex;
+#endif
 
     unsigned int texWidth;
     unsigned int texHeight;
