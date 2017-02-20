@@ -6,6 +6,7 @@
 
 #include <yarp/os/LogStream.h>
 #include <yarp/dev/IVisualParamsImpl.h>
+#include <cstring>
 
 using namespace yarp::os;
 using namespace yarp::dev;
@@ -35,6 +36,46 @@ int Implement_RgbVisualParams_Sender::getRgbWidth()
     cmd.addVocab(VOCAB_WIDTH);
     _port.write(cmd, response);
     return response.get(3).asInt();
+}
+bool Implement_RgbVisualParams_Sender::getRgbSupportedConfigurations(yarp::sig::VectorOf<CameraConfig> &configurations){
+    yarp::os::Bottle cmd, response;
+    cmd.addVocab(VOCAB_RGB_VISUAL_PARAMS);
+    cmd.addVocab(VOCAB_GET);
+    cmd.addVocab(VOCAB_SUPPORTED_CONF);
+    _port.write(cmd, response);
+
+    if((response.get(0).asVocab())== VOCAB_FAILED)
+    {
+        configurations.clear();
+        return false;
+    }
+    configurations.resize(response.get(3).asInt());
+    for(int i=0; i<response.get(3).asInt(); i++){
+        configurations[i].width=response.get(4 + i*4).asInt();
+        configurations[i].height=response.get(4 + i*4 + 1).asInt();
+        configurations[i].framerate=response.get(4 + i*4 + 2).asDouble();
+        configurations[i].pixelCoding=static_cast<YarpVocabPixelTypesEnum>(response.get(4 + i*4 + 3).asVocab());
+    }
+    return true;
+}
+bool Implement_RgbVisualParams_Sender::getRgbResolution(int &width, int &height){
+    yarp::os::Bottle cmd, response;
+    cmd.addVocab(VOCAB_RGB_VISUAL_PARAMS);
+    cmd.addVocab(VOCAB_GET);
+    cmd.addVocab(VOCAB_RESOLUTION);
+    _port.write(cmd, response);
+
+    // Minimal check on response, we suppose the response is always correctly formatted
+    if((response.get(0).asVocab()) == VOCAB_FAILED)
+    {
+        width = 0;
+        height= 0;
+        return false;
+    }
+    width  = response.get(3).asInt();
+    height = response.get(4).asInt();
+    return true;
+
 }
 
 bool Implement_RgbVisualParams_Sender::setRgbResolution(int width, int height)
@@ -183,6 +224,45 @@ bool Implement_RgbVisualParams_Parser::respond(const yarp::os::Bottle& cmd, yarp
                     response.addVocab(VOCAB_WIDTH);
                     response.addVocab(VOCAB_IS);
                     response.addInt(iRgbVisual->getRgbWidth());
+                break;
+
+                case VOCAB_SUPPORTED_CONF:
+                {
+                    yarp::sig::VectorOf<CameraConfig> conf;
+                    ret = iRgbVisual->getRgbSupportedConfigurations(conf);
+                    if(ret){
+                        response.addVocab(VOCAB_RGB_VISUAL_PARAMS);
+                        response.addVocab(VOCAB_SUPPORTED_CONF);
+                        response.addVocab(VOCAB_IS);
+                        response.addInt(conf.size());
+                        for(size_t i=0; i<conf.size(); i++){
+                            response.addInt(conf[i].width);
+                            response.addInt(conf[i].height);
+                            response.addDouble(conf[i].framerate);
+                            response.addVocab(conf[i].pixelCoding);
+                        }
+                    }
+                    else
+                        response.addVocab(VOCAB_FAILED);
+                }
+                break;
+
+
+                case VOCAB_RESOLUTION:
+                {
+                    int width, height;
+                    ret = iRgbVisual->getRgbResolution(width, height);
+                    if(ret)
+                    {
+                        response.addVocab(VOCAB_RGB_VISUAL_PARAMS);
+                        response.addVocab(VOCAB_RESOLUTION);
+                        response.addVocab(VOCAB_IS);
+                        response.addInt(width);
+                        response.addInt(height);
+                    }
+                    else
+                        response.addVocab(VOCAB_FAILED);
+                }
                 break;
 
                 case VOCAB_FOV:

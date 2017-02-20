@@ -69,7 +69,14 @@ bool TestFrameGrabber::open(yarp::os::Searchable& config) {
     intrinsic.put("k3",config.check("k3",Value(10.0),"").asDouble());
     intrinsic.put("t1",config.check("t1",Value(11.0),"").asDouble());
     intrinsic.put("t2",config.check("t2",Value(12.0),"").asDouble());
-
+    //Only for debug
+    CameraConfig conf1, conf2, conf3;
+    conf1.height=128; conf1.width=128; conf1.framerate=60.0; conf1.pixelCoding=VOCAB_PIXEL_RGB;
+    conf2.height=256; conf2.width=256; conf2.framerate=30.0; conf2.pixelCoding=VOCAB_PIXEL_BGR;
+    conf3.height=512; conf3.width=512; conf3.framerate=15.0; conf3.pixelCoding=VOCAB_PIXEL_MONO;
+    configurations.push_back(conf1);
+    configurations.push_back(conf2);
+    configurations.push_back(conf3);
     delete retM;
 
     if (config.check("freq",val,"rate of test images in Hz")) {
@@ -149,6 +156,17 @@ int TestFrameGrabber::getRgbHeight(){
 
 int TestFrameGrabber::getRgbWidth(){
     return w;
+}
+
+bool TestFrameGrabber::getRgbSupportedConfigurations(yarp::sig::VectorOf<CameraConfig> &configurations){
+    configurations=this->configurations;
+    return true;
+}
+
+bool TestFrameGrabber::getRgbResolution(int &width, int &height){
+    width=w;
+    height=h;
+    return true;
 }
 
 bool TestFrameGrabber::setRgbResolution(int width, int height){

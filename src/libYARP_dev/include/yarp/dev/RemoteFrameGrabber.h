@@ -8,12 +8,11 @@
 #ifndef YARP_DEV_REMOTEFRAMEGRABBER_H
 #define YARP_DEV_REMOTEFRAMEGRABBER_H
 
-#include <yarp/dev/ServerFrameGrabber.h>
 #include <yarp/os/Network.h>
 #include <yarp/os/Semaphore.h>
 #include <yarp/os/LogStream.h>
-#include <yarp/dev/IVisualParamsImpl.h>
 #include <yarp/dev/FrameGrabberControl2Impl.h>
+#include <yarp/dev/IVisualParamsImpl.h>
 
 /* This pragma is required only to compile yarp::dev::RemoteFrameGrabber*/
 #ifdef _MSC_VER

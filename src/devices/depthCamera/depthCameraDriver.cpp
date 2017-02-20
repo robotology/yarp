@@ -643,6 +643,22 @@ int depthCameraDriver::getRgbWidth()
     return m_imageStream.getVideoMode().getResolutionX();
 }
 
+bool  depthCameraDriver::getRgbSupportedConfigurations(yarp::sig::VectorOf<CameraConfig> &configurations){
+    yWarning()<<"depthCameraDriver:getRgbSupportedConfigurations not implemented yet";
+    return false;
+}
+bool   depthCameraDriver::getRgbResolution(int &width, int &height){
+    if(m_cameraDescription->rgbRes.isDescription)
+    {
+        return m_cameraDescription->rgbRes.val.at(0).asInt();
+    }
+    else{
+        width  = m_imageStream.getVideoMode().getResolutionX();
+        height = m_imageStream.getVideoMode().getResolutionY();
+    }
+    return true;
+}
+
 bool depthCameraDriver::setDepthResolution(int width, int height)
 {
     if(m_cameraDescription->depthRes.isDescription)
