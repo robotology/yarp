@@ -34,9 +34,12 @@ public:
 #elif OVR_PRODUCT_VERSION == 0 && OVR_MAJOR_VERSION <= 7
     ovrHmd hmd;
     ovrSwapTextureSet* textureSet;
-#else
+#elif OVR_PRODUCT_VERSION == 0 && OVR_MAJOR_VERSION <= 8
     ovrSession session;
     ovrSwapTextureSet* textureSet;
+#else
+    ovrSession session;
+    ovrTextureSwapChain textureSwapChain;
 #endif
 
     unsigned int width;

@@ -38,7 +38,9 @@
 #include <GLFW/glfw3.h>
 #include <GLFW/glfw3native.h>
 
+#if OVR_PRODUCT_VERSION == 0 && OVR_MAJOR_VERSION <= 8
 #include <OVR.h>
+#endif
 #include <OVR_System.h>
 #include <OVR_CAPI_GL.h>
 
@@ -310,7 +312,11 @@ bool yarp::dev::OVRHeadset::threadInit()
 {
     yTrace();
 
+#if OVR_PRODUCT_VERSION == 0 && OVR_MAJOR_VERSION <= 8
     OVR::System::Init(OVR::Log::ConfigureDefaultLog(OVR::LogMask_All));
+#else
+    OVR::System::Init();
+#endif
 
     ovrInitParams params;
     params.Flags = 0;
@@ -515,7 +521,8 @@ bool yarp::dev::OVRHeadset::threadInit()
     // Recenter position
     ovr_RecenterPose(session);
 #else
-
+    // Recenter position
+    ovr_RecenterTrackingOrigin(session);
 #endif
 
     checkGlErrorMacro;
@@ -776,7 +783,11 @@ void yarp::dev::OVRHeadset::run()
     yarp::os::Stamp stamp(distortionFrameIndex, ts.HeadPose.TimeInSeconds);
 
     //Get eye poses, feeding in correct IPD offset
+#if OVR_PRODUCT_VERSION == 0 && OVR_MAJOR_VERSION <= 8
     ovrVector3f ViewOffset[2] = {EyeRenderDesc[0].HmdToEyeViewOffset,EyeRenderDesc[1].HmdToEyeViewOffset};
+#else
+ovrVector3f ViewOffset[2] = {EyeRenderDesc[0].HmdToEyeOffset,EyeRenderDesc[1].HmdToEyeOffset};
+#endif
     ovrPosef EyeRenderPose[2];
 #if OVR_PRODUCT_VERSION == 0 && OVR_MAJOR_VERSION <= 5
     ovrTrackingState ts_eyes;
@@ -1056,7 +1067,11 @@ void yarp::dev::OVRHeadset::run()
         ld.Header.Type = ovrLayerType_EyeFov;
         ld.Header.Flags = 0;
         for (int eye = 0; eye < 2; eye++) {
+# if OVR_PRODUCT_VERSION == 0 && OVR_MAJOR_VERSION <= 8
             ld.ColorTexture[eye] = displayPorts[eye]->eyeRenderTexture->textureSet;
+#else
+            ld.ColorTexture[eye] = displayPorts[eye]->eyeRenderTexture->textureSwapChain;
+#endif
             ld.Viewport[eye] = OVR::Recti(0, 0, displayPorts[eye]->eyeRenderTexture->width, displayPorts[eye]->eyeRenderTexture->height);
             ld.Fov[eye] = fov[eye]; // FIXME 0.5->0.6 hmd->DefaultEyeFov[eye]; ?
             ld.RenderPose[eye] = EyeRenderPose[eye];
@@ -1190,8 +1205,10 @@ void yarp::dev::OVRHeadset::onKey(int key, int scancode, int action, int mods)
             ovrHmd_RecenterPose(hmd);
 #elif OVR_PRODUCT_VERSION == 0 && OVR_MAJOR_VERSION <= 7
             ovr_RecenterPose(hmd);
-#else
+#elif OVR_PRODUCT_VERSION == 0 && OVR_MAJOR_VERSION <= 8
             ovr_RecenterPose(session);
+#else
+            ovr_RecenterTrackingOrigin(session);
 #endif
         } else {
             yDebug() << "Resetting yaw offset to current position";

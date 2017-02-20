@@ -19,10 +19,14 @@ TextureBuffer::TextureBuffer(int w, int h, int eye) :
 TextureBuffer::TextureBuffer(int w, int h, int eye, ovrHmd hmd) :
         hmd(hmd),
         textureSet(nullptr),
-#else
+#elif OVR_PRODUCT_VERSION == 0 && OVR_MAJOR_VERSION <= 8
 TextureBuffer::TextureBuffer(int w, int h, int eye, ovrSession session) :
         session(session),
         textureSet(nullptr),
+#else
+TextureBuffer::TextureBuffer(int w, int h, int eye, ovrSession session) :
+        session(session),
+        textureSwapChain(0),
 #endif
         width(w),
         height(h),
@@ -172,18 +176,43 @@ void TextureBuffer::createTextureAndBuffers()
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
     glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, width, height, 0, GL_RGB, GL_UNSIGNED_BYTE, 0);
 #else
-#if OVR_PRODUCT_VERSION == 0 && OVR_MAJOR_VERSION <= 6
+# if OVR_PRODUCT_VERSION == 0 && OVR_MAJOR_VERSION <= 6
     ovrHmd_CreateSwapTextureSetGL(hmd, GL_RGBA, width, height, &textureSet);
-#elif OVR_PRODUCT_VERSION == 0 && OVR_MAJOR_VERSION <= 7
+# elif OVR_PRODUCT_VERSION == 0 && OVR_MAJOR_VERSION <= 7
     ovr_CreateSwapTextureSetGL(hmd, GL_RGBA, width, height, &textureSet);
-#else
+# elif OVR_PRODUCT_VERSION == 0 && OVR_MAJOR_VERSION <= 8
     ovr_CreateSwapTextureSetGL(session, GL_RGBA, width, height, &textureSet);
-#endif
-    for (int i = 0; i < textureSet->TextureCount; ++i)
-    {
+# else
+    // FIXME 0.8->1.3
+
+
+    ovrTextureSwapChainDesc desc = {};
+    desc.Type = ovrTexture_2D;
+    desc.ArraySize = 1;
+    desc.Format = OVR_FORMAT_R8G8B8A8_UNORM_SRGB;
+    desc.Width = width;
+    desc.Height = height;
+    desc.MipLevels = 1;
+    desc.SampleCount = 1;
+    desc.StaticImage = ovrFalse;
+
+    if (ovr_CreateTextureSwapChainGL(session, &desc, &textureSwapChain) == ovrSuccess) {
+        // FIXME 0.8->1.3: Check error?
+    }
+# endif
+
+# if OVR_PRODUCT_VERSION == 0 && OVR_MAJOR_VERSION <= 8
+    for (int i = 0; i < textureSet->TextureCount; ++i) {
         ovrGLTexture* tex = (ovrGLTexture*)&textureSet->Textures[i];
         glBindTexture(GL_TEXTURE_2D, tex->OGL.TexId);
-
+# else
+    int count = 0;
+    ovr_GetTextureSwapChainLength(session, textureSwapChain, &count);
+    for (int i = 0; i < count; ++i) {
+        unsigned int texId;
+        ovr_GetTextureSwapChainBufferGL(session, textureSwapChain, 0, &texId);
+        glBindTexture(GL_TEXTURE_2D, texId);
+# endif
         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
