@@ -15,7 +15,6 @@
 #include <yarp/os/YarpPlugin.h>
 #include <yarp/os/Carriers.h>
 #include <yarp/dev/Drivers.h>
-#include <yarp/rtf/TestCase.h>
 
 using namespace std;
 using namespace RTF;

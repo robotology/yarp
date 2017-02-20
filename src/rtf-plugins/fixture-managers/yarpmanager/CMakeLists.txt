@@ -12,6 +12,8 @@ include_directories(SYSTEM ${RTF_INCLUDE_DIRS})
 include_directories(${YARP_OS_INCLUDE_DIRS}
                     ${YARP_manager_INCLUDE_DIRS})
 
+add_definitions(-DSHLIBPP_FILTER_API)
+
 add_library(rtf_fixturemanager_yarpmanager MODULE YarpFixManager.h
                                                   YarpFixManager.cpp)
 set_property(TARGET rtf_fixturemanager_yarpmanager PROPERTY PREFIX "")
@@ -19,6 +21,7 @@ set_property(TARGET rtf_fixturemanager_yarpmanager PROPERTY OUTPUT_NAME yarpmana
 
 target_link_libraries(rtf_fixturemanager_yarpmanager PRIVATE RTF::RTF
                                                              YARP::YARP_OS
+                                                             YARP::YARP_init
                                                              YARP::YARP_manager)
 
 yarp_install(TARGETS rtf_fixturemanager_yarpmanager
