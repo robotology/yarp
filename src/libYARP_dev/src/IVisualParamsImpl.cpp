@@ -176,6 +176,7 @@ bool Implement_RgbVisualParams_Parser::respond(const yarp::os::Bottle& cmd, yarp
                     response.addVocab(VOCAB_HEIGHT);
                     response.addVocab(VOCAB_IS);
                     response.addInt(iRgbVisual->getRgbHeight());
+                    ret=true;
                 break;
 
                 case VOCAB_WIDTH:
@@ -183,6 +184,7 @@ bool Implement_RgbVisualParams_Parser::respond(const yarp::os::Bottle& cmd, yarp
                     response.addVocab(VOCAB_WIDTH);
                     response.addVocab(VOCAB_IS);
                     response.addInt(iRgbVisual->getRgbWidth());
+                    ret=true;
                 break;
 
                 case VOCAB_FOV:
@@ -237,7 +239,7 @@ bool Implement_RgbVisualParams_Parser::respond(const yarp::os::Bottle& cmd, yarp
 
                 default:
                 {
-                    yError() << "Rgb Visual Parameter interface parser received am unknown GET command. Command is " << cmd.toString();
+                    yError() << "Rgb Visual Parameter interface parser received an unknown GET command. Command is " << cmd.toString();
                     response.addVocab(VOCAB_FAILED);
                     ret = false;
                 }
