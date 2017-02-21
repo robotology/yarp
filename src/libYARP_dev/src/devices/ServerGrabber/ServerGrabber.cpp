@@ -321,10 +321,8 @@ bool ServerGrabber::fromConfig(yarp::os::Searchable &config)
 {
     if(config.find("period").isInt())
         period = config.find("period").asInt();
-    else if(config.find("framerate").isInt())
-        period = (1/(config.find("framerate").asInt()))*1000;
     else
-        yWarning()<<"ServerGrabber: period/framerate parameter not found, using default of"<< DEFAULT_THREAD_PERIOD << "ms";
+        yWarning()<<"ServerGrabber: period parameter not found, using default of"<< DEFAULT_THREAD_PERIOD << "ms";
     if((config.check("subdevice")) && (config.check("left_config") || config.check("right_config")))
     {
         yError()<<"ServerGrabber: found both 'subdevice' and 'left_config/right_config' parameters...";
@@ -459,8 +457,9 @@ bool ServerGrabber::respond(const yarp::os::Bottle& cmd,
             if(!ret || (response!=response2))
             {
                 response.clear();
-                response.add(VOCAB_FAILED);
+                response.addVocab(VOCAB_FAILED);
                 ret=false;
+                yWarning()<<"ServerGrabber: response different among cameras or failed";
             }
             return ret;
         }
@@ -474,12 +473,33 @@ bool ServerGrabber::respond(const yarp::os::Bottle& cmd,
             bool ret;
             ret=rgbParser.respond(cmd,response);
             ret&=rgbParser2.respond(cmd,response2);
-            if(!ret || (response!=response2))
+            if(ret)
             {
-                response.clear();
-                response.add(VOCAB_FAILED);
-                ret=false;
+                switch (cmd.get(2).asVocab())
+                {
+                    //Only the intrinsic parameters are allowed to be different among the two cameras
+                    // so we give both responses appending one to the other.
+                    case VOCAB_INTRINSIC_PARAM:
+                    {
+                        Bottle& newResponse = response.addList();
+                        newResponse.append(*response2.get(3).asList());
+                        break;
+                    }
+                    //In general if the two response are different we send a FAIL vocab
+                    default:
+                    {
+                        if(response!=response2)
+                        {
+                            response.clear();
+                            response.addVocab(VOCAB_FAILED);
+                            ret=false;
+                            yWarning()<<"ServerGrabber: response different among cameras or failed";
+                        }
+                        break;
+                    }
+                }
             }
+
             return ret;
         }
         else
@@ -498,8 +518,10 @@ bool ServerGrabber::respond(const yarp::os::Bottle& cmd,
             if(!ret || (response!=response2))
             {
                 response.clear();
+                response.addVocab(VOCAB_FAILED);
+                ret=false;
+                yWarning()<<"ServerGrabber: responses different among cameras or failed";
 
-                return DeviceResponder::respond(cmd,response);
             }
             return ret;
         }
