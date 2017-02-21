@@ -82,6 +82,12 @@ int harness_main(int argc, char *argv[]) {
 #endif
                 dirs += Network::getEnvironment("YARP_DATA_DIRS");
             }
+#ifdef WIN32
+            dirs += ";";
+#else
+            dirs += ":";
+#endif
+            dirs += TEST_DATA_DIR;
             Network::setEnvironment("YARP_DATA_DIRS", dirs);
             printf("YARP_DATA_DIRS=\"%s\"\n", Network::getEnvironment("YARP_DATA_DIRS").c_str());
 
