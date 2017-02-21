@@ -113,29 +113,34 @@ public:
 
         bool ok_view = ddtransformclient.view(itf);
         checkTrue(ok_view && itf!=0, "iTransform interface open reported successful");
-
         yarp::sig::Matrix m1(4, 4);
         m1[0][0] = cos(M_PI / 4); m1[0][1] = -sin(M_PI / 4); m1[0][2] = 0; m1[0][3] = 3;
         m1[1][0] = sin(M_PI / 4); m1[1][1] = cos(M_PI /4);   m1[1][2] = 0; m1[1][3] = 1;
         m1[2][0] = 0;             m1[2][1] = 0;              m1[2][2] = 1; m1[2][3] = 2;
         m1[3][0] = 0;             m1[3][1] = 0;              m1[3][2] = 0; m1[3][3] = 1;
-
         yarp::sig::Matrix m2(4, 4);
         m2[0][0] = cos(M_PI / 4);  m2[0][1] = 0; m2[0][2] = sin(M_PI / 4);  m2[0][3] = 0.1;
         m2[1][0] = 0;              m2[1][1] = 1; m2[1][2] = 0;              m2[1][3] = 0.2;
         m2[2][0] = -sin(M_PI / 4); m2[2][1] = 0; m2[2][2] = cos(M_PI / 4);  m2[2][3] = 0.3;
         m2[3][0] = 0;              m2[3][1] = 0; m2[3][2] = 0;              m2[3][3] = 1;
-
+        yarp::sig::Matrix sibiling(4, 4);
+        m2[0][0] = 1;              m2[0][1] = 0;              m2[0][2] = 0;              m2[0][3] = 10;
+        m2[1][0] = 0;              m2[1][1] = cos(M_PI / 3);  m2[1][2] = -sin(M_PI / 3); m2[1][3] = 15;
+        m2[2][0] = 0;              m2[2][1] = sin(M_PI / 3);  m2[2][2] =  cos(M_PI / 3); m2[2][3] = 5;
+        m2[3][0] = 0;              m2[3][1] = 0;              m2[3][2] = 0;              m2[3][3] = 1;
         yarp::sig::Matrix m3(4, 4);
         m3 = m1*m2;
+        
         double precision;
         precision = 0.00000001;
+        
         itf->setTransformStatic("frame2", "frame1", m1);
         itf->setTransformStatic("frame3", "frame2", m2);
         itf->setTransformStatic("frame4", "frame3", m3);
         itf->setTransformStatic("frame11", "frame10", m1);
         itf->setTransformStatic("frame3b", "frame2", m2);
-
+        itf->setTransformStatic("sibiling_test_frame", "frame1", sibiling);
+        
         yarp::sig::Matrix m4(4, 4);
         m4[0][0] = +0.9585267399;  m4[0][1] = -0.2305627908;  m4[0][2] = +0.1675329472;  m4[0][3] = 0.1;
         m4[1][0] = +0.2433237939;  m4[1][1] = +0.9680974922;  m4[1][2] = -0.0598395928;  m4[1][3] = 0.2;
@@ -152,7 +157,7 @@ public:
             sprintf(buff +strlen(buff), "%s ", ids[i].c_str());
         }
         report(0, std::string("Found frames: ") + std::string(buff));
-        bool b_ids = (ids.size() == 7);
+        bool b_ids = (ids.size() == 8);
         checkTrue(b_ids, "getAllFrameIds ok");
 
         //test 1
@@ -185,12 +190,17 @@ public:
             b_canb1 = itf->canTransform("frame3b", "frame1");
             checkTrue(b_canb1, "canTransform Bis ok");
         }
-        //test4 tris (isBrother.. TODO)
-        /*{
-            bool b_canb1;
-            b_canb1 = itf->canTransform("frame3b", "frame3");
-            checkTrue(b_canb1, "canTransform between brother ok");
-        }*/
+
+        //test4 tris (transform between sibilings)
+        {
+            bool              b_can, b_get;
+            yarp::sig::Matrix sib;
+            b_can = itf->canTransform("sibiling_test_frame", "frame3");
+            checkTrue(b_can, "canTransform between sibilings ok");
+            b_get = itf->getTransform("sibiling_test_frame", "frame3", sib);
+            checkTrue(b_get, "getTransform between sibilings ok");
+            checkTrue(isEqual(sib, SE3inv(m2) * SE3inv(m1) * sibiling, precision), "transform between sibilings ok");
+        }
 
         //test 5
         yarp::sig::Matrix mti(4, 4);

@@ -259,36 +259,60 @@ bool yarp::dev::FrameTransformClient::allFramesAsString(std::string &all_frames)
     return true;
 }
 
-bool yarp::dev::FrameTransformClient::canChainedTransform(const std::string &target_frame, const std::string &source_frame, std::string *error_msg) const
+yarp::dev::FrameTransformClient::ConnectionType yarp::dev::FrameTransformClient::getConnectionType(const std::string &target_frame, const std::string &source_frame, std::string* commonAncestor = NULL)
 {
     Transforms_client_storage& tfVec = *m_transform_storage;
-    size_t i;
+    size_t                     i, j;
+    std::vector<std::string>   tar2root_vec;
+    std::vector<std::string>   src2root_vec;
+    std::string                ancestor, child;
+    child = target_frame;
     RecursiveLockGuard l(tfVec.m_mutex);
-    for (i = 0; i < tfVec.size(); i++)
+    while(getParent(child, ancestor))
     {
-        if (tfVec[i].dst_frame_id == target_frame)
+        if(ancestor == source_frame)
         {
-            if (tfVec[i].src_frame_id == source_frame)
-            {
-                return true;
-            }
-            else
-            {
-                return canChainedTransform(tfVec[i].src_frame_id, source_frame, error_msg);
-            }
+            return DIRECT;
         }
+
+        tar2root_vec.push_back(ancestor);
+        child = ancestor;
     }
-    return false;
+    child = source_frame;
+    while(getParent(child, ancestor))
+    {
+        if(ancestor == target_frame)
+        {
+            return INVERSE;
+        }
+
+        src2root_vec.push_back(ancestor);
+        child = ancestor;
+    }
+
+    for(i = 0; i < tar2root_vec.size(); i++)
+    {
+        std::string a;
+        a = tar2root_vec[i];
+        for(j = 0; j < src2root_vec.size(); j++)
+        {
+            if(a == src2root_vec[j])
+            {
+                if(commonAncestor)
+                {
+                    *commonAncestor = a;
+                }
+                return UNDIRECT;
+            }
+        }    
+    }
+
+    return DISCONNECTED;
 }
 
 bool yarp::dev::FrameTransformClient::canTransform(const std::string &target_frame, const std::string &source_frame)
 {
-    if (canChainedTransform(target_frame, source_frame) || canChainedTransform(source_frame, target_frame))
-    {
-        return true;
-    }
-
-    return false;
+    return getConnectionType(target_frame, source_frame) != DISCONNECTED;
 }
 
 bool yarp::dev::FrameTransformClient::clear()
@@ -415,15 +439,26 @@ bool yarp::dev::FrameTransformClient::getChainedTransform(const std::string& tar
 
 bool yarp::dev::FrameTransformClient::getTransform(const std::string& target_frame_id, const std::string& source_frame_id, yarp::sig::Matrix& transform)
 {
-    if (canChainedTransform(target_frame_id, source_frame_id))
+    ConnectionType ct;
+    std::string    ancestor;
+    ct = getConnectionType(target_frame_id, source_frame_id, &ancestor);
+    if (ct == DIRECT)
     {
         return getChainedTransform(target_frame_id, source_frame_id, transform);
     }
-    else if (canChainedTransform(source_frame_id, target_frame_id))
+    else if (INVERSE)
     {
         yarp::sig::Matrix m(4, 4);
         getChainedTransform(source_frame_id, target_frame_id, m);
         transform = yarp::math::SE3inv(m);
+        return true;
+    }
+    else if(UNDIRECT)
+    {
+        yarp::sig::Matrix root2tar(4, 4), src2root(4, 4);
+        getChainedTransform(ancestor, source_frame_id, src2root);
+        getChainedTransform(target_frame_id, ancestor, root2tar);
+        transform = yarp::math::SE3inv(src2root) * root2tar;
         return true;
     }
 
