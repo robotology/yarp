@@ -910,11 +910,10 @@ void ServerGrabber::run()
                     flex_i2.setPixelSize(i2.getPixelSize());
                     flex_i2.setQuantum(i2.getQuantum());
                     flex_i2.resize(fgImage2->width(),fgImage2->height());
-                    //ASK ma flex_i.width e height saranno 0 giusto?
-                    i.setExternal(flex_i.getRawImage(),flex_i.width(),flex_i.height());
                     fgImage->getImage(i);
-                    i2.setExternal(flex_i2.getRawImage(),flex_i2.width(),flex_i2.height());
                     fgImage2->getImage(i2);
+                    memcpy(flex_i.getRawImage(), i.getRawImage(), i.getRawImageSize());
+                    memcpy(flex_i2.getRawImage(), i2.getRawImage(), i2.getRawImageSize());
                 }
                 else
                     yError()<<"ServerGrabber: Image not captured.. check hardware configuration";
@@ -934,10 +933,10 @@ void ServerGrabber::run()
                     flex_i2.setPixelSize(i2.getPixelSize());
                     flex_i2.setQuantum(i2.getQuantum());
                     flex_i2.resize(fgImageRaw2->width(),fgImageRaw2->height());
-                    i.setExternal(flex_i.getRawImage(),flex_i.width(),flex_i.height());
                     fgImageRaw->getImage(i);
-                    i2.setExternal(flex_i2.getRawImage(),flex_i2.width(),flex_i2.height());
                     fgImageRaw2->getImage(i2);
+                    memcpy(flex_i.getRawImage(), i.getRawImage(), i.getRawImageSize());
+                    memcpy(flex_i2.getRawImage(), i2.getRawImage(), i2.getRawImageSize());
                 }
                 else
                     yError()<<"ServerGrabber: Image not captured.. check hardware configuration";
@@ -1032,8 +1031,8 @@ void ServerGrabber::run()
                 flex_i.setPixelSize(i.getPixelSize());
                 flex_i.setQuantum(i.getQuantum());
                 flex_i.resize(fgImage->width(),fgImage->height());
-                i.setExternal(flex_i.getRawImage(),flex_i.width(),flex_i.height());
                 fgImage->getImage(i);
+                memcpy(flex_i.getRawImage(), i.getRawImage(), i.getRawImageSize());
             }
             else
                 yError()<<"ServerGrabber: Image not captured.. check hardware configuration";
@@ -1047,8 +1046,8 @@ void ServerGrabber::run()
                 flex_i.setPixelSize(i.getPixelSize());
                 flex_i.setQuantum(i.getQuantum());
                 flex_i.resize(fgImageRaw->width(),fgImageRaw->height());
-                i.setExternal(flex_i.getRawImage(),flex_i.width(),flex_i.height());
                 fgImageRaw->getImage(i);
+                memcpy(flex_i.getRawImage(), i.getRawImage(), i.getRawImageSize());
             }
             else
                 yError()<<"ServerGrabber: Image not captured.. check hardware configuration";
