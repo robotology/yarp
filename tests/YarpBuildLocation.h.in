@@ -8,5 +8,6 @@
 #define YARP_BUILD_LOCATION_H
 
 #cmakedefine CMAKE_BINARY_DIR "@CMAKE_NATIVE_BINARY_DIR@"
+#cmakedefine TEST_DATA_DIR "@TEST_DATA_DIR@"
 
 #endif

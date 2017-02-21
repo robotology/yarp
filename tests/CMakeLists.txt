@@ -16,6 +16,7 @@ if(YARP_COMPILE_TESTS)
   if(WIN32)
     string(REPLACE "\\" "\\\\" CMAKE_NATIVE_BINARY_DIR "${CMAKE_NATIVE_BINARY_DIR}")
   endif()
+  set(TEST_DATA_DIR "${CMAKE_CURRENT_SOURCE_DIR}/conf")
   configure_file("${CMAKE_CURRENT_SOURCE_DIR}/YarpBuildLocation.h.in"
                  "${CMAKE_CURRENT_BINARY_DIR}/YarpBuildLocation.h"
                  @ONLY)
