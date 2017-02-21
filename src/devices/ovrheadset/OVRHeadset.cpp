@@ -90,7 +90,7 @@ static void debugFov(const ovrFovPort fov[2]) {
 
 yarp::dev::OVRHeadset::OVRHeadset() :
         yarp::dev::DeviceDriver(),
-        yarp::os::RateThread(13), // ~75 fps
+        yarp::os::RateThread(11), // ~90 fps
         orientationPort(nullptr),
         positionPort(nullptr),
         angularVelocityPort(nullptr),
