@@ -23,11 +23,13 @@ if(NOT SKIP_yarpmod_ovrheadset)
 
   set(yarp_ovrheadset_SRCS OVRHeadset.cpp
                            TextureBuffer.cpp
-                           InputCallback.cpp)
+                           InputCallback.cpp
+                           GLDebug.cpp)
   set(yarp_ovrheadset_HDRS ImageType.h
                            OVRHeadset.h
                            TextureBuffer.h
-                           InputCallback.h)
+                           InputCallback.h
+                           GLDebug.h)
 
   yarp_add_plugin(yarp_ovrheadset ${yarp_ovrheadset_SRCS}
                                   ${yarp_ovrheadset_HDRS})

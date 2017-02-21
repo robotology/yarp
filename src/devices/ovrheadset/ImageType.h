@@ -1,7 +1,6 @@
 /*
  * Copyright (C) 2015-2017  iCub Facility, Istituto Italiano di Tecnologia
  * Author: Daniele E. Domenichelli <daniele.domenichelli@iit.it>
- *
  * CopyPolicy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
  */
 
@@ -10,7 +9,7 @@
 #define YARP_OVRHEADSET_IMAGETYPE_H
 
 
-namespace yarp { namespace sig { template <typename T> class PosedImage; }}
+//namespace yarp { namespace sig { template <typename T> class PosedImage; }}
 namespace yarp { namespace sig { template <typename T> class ImageOf; }}
 namespace yarp { namespace sig { struct PixelRgb; }}
 

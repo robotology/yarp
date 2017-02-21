@@ -1,17 +1,18 @@
 /*
  * Copyright (C) 2015-2017  iCub Facility, Istituto Italiano di Tecnologia
  * Author: Daniele E. Domenichelli <daniele.domenichelli@iit.it>
- *
  * CopyPolicy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
  */
 
 
 #include "TextureBuffer.h"
+#include "GLDebug.h"
 
 #include <yarp/os/LogStream.h>
 #include <yarp/os/Time.h>
 
-#include "OVR_CAPI_GL.h"
+#include <OVR_CAPI_GL.h>
+
 
 #if OVR_PRODUCT_VERSION == 0 && OVR_MAJOR_VERSION <= 5
 TextureBuffer::TextureBuffer(int w, int h, int eye) :
@@ -77,37 +78,6 @@ void TextureBuffer::resize(int w, int h)
 
     createTextureAndBuffers();
 }
-
-
-static void checkGlError(const char* file, int line) {
-    GLenum error = glGetError();
-    if (error != GL_NO_ERROR) {
-        switch(error) {
-        case GL_INVALID_ENUM:
-            yError() << "OpenGL Error GL_INVALID_ENUM: GLenum argument out of range";
-            break;
-        case GL_INVALID_VALUE:
-            yError() << "OpenGL Error GL_INVALID_VALUE: Numeric argument out of range";
-            break;
-        case GL_INVALID_OPERATION:
-            yError() << "OpenGL Error GL_INVALID_OPERATION: Operation illegal in current state";
-            break;
-        case GL_STACK_OVERFLOW:
-            yError() << "OpenGL Error GL_STACK_OVERFLOW: Command would cause a stack overflow";
-            break;
-        case GL_OUT_OF_MEMORY:
-            yError() << "OpenGL Error GL_OUT_OF_MEMORY: Not enough memory left to execute command";
-            break;
-        default:
-            yError() << "OpenGL Error " << error;
-            break;
-        }
-    }
-    yAssert(error == 0);
-}
-
-#define checkGlErrorMacro checkGlError(__FILE__, __LINE__)
-
 
 void TextureBuffer::update()
 {
