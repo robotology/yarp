@@ -427,6 +427,7 @@ bool ServerGrabber::initialize_YARP(yarp::os::Searchable &params)
         yError() << "ServerGrabber: unable to open image streaming Port" << pImg_Name.c_str();
         bRet = false;
     }
+    pImg.setReader(*this);
     if(param.twoCameras && param.split)
     {
         pImg2.promiseType(Type::byName("yarp/image"));
