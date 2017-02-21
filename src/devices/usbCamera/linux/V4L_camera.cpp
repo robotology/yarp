@@ -214,9 +214,8 @@ bool V4L_camera::getRgbFOV(double &horizontalFov, double &verticalFov){
 }
 
 bool V4L_camera::setRgbFOV(double horizontalFov, double verticalFov){
-    param.horizontalFov=horizontalFov;
-    param.verticalFov=verticalFov;
-    return true;
+    yError()<<"usbCamera: cannot set fov";
+    return false;
 }
 
 bool V4L_camera::getRgbIntrinsicParam(yarp::os::Property &intrinsic){
