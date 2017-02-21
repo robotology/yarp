@@ -136,8 +136,16 @@ bool Implement_RgbVisualParams_Sender::getRgbIntrinsicParam(yarp::os::Property &
         intrinsic.clear();
         return false;
     }
+    bool ret;
+    ret=Property::copyPortable(response.get(3), intrinsic);
+    if(!response.get(4).isNull())
+    {
+        Property& p=intrinsic.addGroup("right");
+        ret &= Property::copyPortable(response.get(4),p);
+        return ret;
+    }
+    return ret;
 
-    return Property::copyPortable(response.get(3), intrinsic);
 }
 
 bool Implement_RgbVisualParams_Sender::getRgbMirroring(bool& mirror)
