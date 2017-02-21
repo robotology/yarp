@@ -9,6 +9,7 @@
 #include <ServerGrabber.h>
 #include <yarp/dev/PolyDriver.h>
 #include <yarp/os/LogStream.h>
+#include <yarp/os/ResourceFinder.h>
 #include <cstring>
 
 using namespace yarp::os;
@@ -324,12 +325,12 @@ bool ServerGrabber::fromConfig(yarp::os::Searchable &config)
         period = (1/(config.find("framerate").asInt()))*1000;
     else
         yWarning()<<"ServerGrabber: period/framerate parameter not found, using default of"<< DEFAULT_THREAD_PERIOD << "ms";
-    if(config.check("subdevice") && (!(config.findGroup("LEFT").isNull()) || !(config.findGroup("RIGHT").isNull())))
+    if((config.check("subdevice")) && (config.check("left_config") || config.check("right_config")))
     {
-        yError()<<"ServerGrabber: found subdevice and LEFT/RIGHT group both...";
+        yError()<<"ServerGrabber: found both 'subdevice' and 'left_config/right_config' parameters...";
         return false;
     }
-    if(!config.check("subdevice") && !(config.findGroup("LEFT").isNull()) && !(config.findGroup("RIGHT").isNull()))
+    if(!config.check("subdevice") && config.check("left_config") && config.check("right_config"))
         param.twoCameras=true;
     if(config.check("twoCameras"))//extra conf parameter for the yarprobotinterface
         param.twoCameras=config.find("twoCameras").asBool();
@@ -364,7 +365,7 @@ bool ServerGrabber::fromConfig(yarp::os::Searchable &config)
 
         // check if we need to create subdevice or if they are
         // passed later on thorugh attachAll()
-        if(!(config.findGroup("LEFT").isNull()) && !(config.findGroup("RIGHT").isNull()))
+        if(config.check("left_config") && config.check("right_config"))
         {
             isSubdeviceOwned=true;
             if(! openAndAttachSubDevice(config))
@@ -376,7 +377,7 @@ bool ServerGrabber::fromConfig(yarp::os::Searchable &config)
         else
         {
             isSubdeviceOwned=false;
-            yWarning()<<"ServerGrabber: LEFT and RIGHT group not found...";
+            yInfo()<<"ServerGrabber: running, waiting for attach...";
             if(!openDeferredAttach(config))
             return false;
         }
@@ -738,8 +739,29 @@ bool ServerGrabber::openAndAttachSubDevice(Searchable &prop){
         Property p,p2;
         poly  = new PolyDriver;
         poly2 = new PolyDriver;
-        p.fromString(prop.findGroup("LEFT").toString().c_str());
-        p2.fromString(prop.findGroup("RIGHT").toString().c_str());
+        std::string file, file2;
+        if(!prop.check("left_config") || !prop.check("right_config"))
+        {
+            yError()<<"ServerGrabber: missing 'left_config' or 'right_config' filename... ";
+            return false;
+        }
+        ResourceFinder rf, rf2;
+        if(prop.check("context"))
+        {
+            rf.setDefaultContext(prop.find("context").asString().c_str());
+            rf2.setDefaultContext(prop.find("context").asString().c_str());
+        }
+        file=prop.find("left_config").toString();
+        file2=prop.find("right_config").toString();
+        p.fromConfigFile(rf.findFileByName(file));
+        p2.fromConfigFile(rf2.findFileByName(file2));
+        if(p.isNull() || p2.isNull())
+        {
+            yError()<<"ServerGrabber: unable to find files specified in 'left_config' and/or 'right_config'";
+            return false;
+        }
+//        p.fromString(prop.findGroup("LEFT").toString().c_str());
+//        p2.fromString(prop.findGroup("RIGHT").toString().c_str());
         if(param.cap==COLOR){
             p.put("pixelType", VOCAB_PIXEL_RGB);
             p2.put("pixelType", VOCAB_PIXEL_RGB);
