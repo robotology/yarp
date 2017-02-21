@@ -91,19 +91,19 @@ static void debugFov(const ovrFovPort fov[2]) {
 yarp::dev::OVRHeadset::OVRHeadset() :
         yarp::dev::DeviceDriver(),
         yarp::os::RateThread(13), // ~75 fps
-        orientationPort(NULL),
-        positionPort(NULL),
-        angularVelocityPort(NULL),
-        linearVelocityPort(NULL),
-        angularAccelerationPort(NULL),
-        linearAccelerationPort(NULL),
-        predictedOrientationPort(NULL),
-        predictedPositionPort(NULL),
-        predictedAngularVelocityPort(NULL),
-        predictedLinearVelocityPort(NULL),
-        predictedAngularAccelerationPort(NULL),
-        predictedLinearAccelerationPort(NULL),
-        window(NULL),
+        orientationPort(nullptr),
+        positionPort(nullptr),
+        angularVelocityPort(nullptr),
+        linearVelocityPort(nullptr),
+        angularAccelerationPort(nullptr),
+        linearAccelerationPort(nullptr),
+        predictedOrientationPort(nullptr),
+        predictedPositionPort(nullptr),
+        predictedAngularVelocityPort(nullptr),
+        predictedLinearVelocityPort(nullptr),
+        predictedAngularAccelerationPort(nullptr),
+        predictedLinearAccelerationPort(nullptr),
+        window(nullptr),
         closed(false),
         distortionFrameIndex(0),
         multiSampleEnabled(false),
@@ -116,8 +116,8 @@ yarp::dev::OVRHeadset::OVRHeadset() :
 {
     yTrace();
 
-    displayPorts[0] = NULL;
-    displayPorts[1] = NULL;
+    displayPorts[0] = nullptr;
+    displayPorts[1] = nullptr;
 
     yarp::os::Time::turboBoost();
 }
@@ -479,7 +479,7 @@ bool yarp::dev::OVRHeadset::threadInit()
 
 #if OVR_PRODUCT_VERSION == 0 && OVR_MAJOR_VERSION <= 5
 #if defined(_WIN32)
-    ovrHmd_AttachToWindow(hmd, glfwGetWin32Window(window), NULL, NULL);
+    ovrHmd_AttachToWindow(hmd, glfwGetWin32Window(window), nullptr, nullptr);
 #endif
 
     ovrHmd_DismissHSWDisplay(hmd);
@@ -569,37 +569,37 @@ void yarp::dev::OVRHeadset::threadRelease()
         orientationPort->interrupt();
         orientationPort->close();
         delete orientationPort;
-        orientationPort = NULL;
+        orientationPort = nullptr;
     }
     if (positionPort) {
         positionPort->interrupt();
         positionPort->close();
         delete positionPort;
-        positionPort = NULL;
+        positionPort = nullptr;
     }
     if (angularVelocityPort) {
         angularVelocityPort->interrupt();
         angularVelocityPort->close();
         delete angularVelocityPort;
-        angularVelocityPort = NULL;
+        angularVelocityPort = nullptr;
     }
     if (linearVelocityPort) {
         linearVelocityPort->interrupt();
         linearVelocityPort->close();
         delete linearVelocityPort;
-        linearVelocityPort = NULL;
+        linearVelocityPort = nullptr;
     }
     if (angularAccelerationPort) {
         angularAccelerationPort->interrupt();
         angularAccelerationPort->close();
         delete angularAccelerationPort;
-        angularAccelerationPort = NULL;
+        angularAccelerationPort = nullptr;
     }
     if (linearAccelerationPort) {
         linearAccelerationPort->interrupt();
         linearAccelerationPort->close();
         delete linearAccelerationPort;
-        linearAccelerationPort = NULL;
+        linearAccelerationPort = nullptr;
     }
 
 
@@ -607,37 +607,37 @@ void yarp::dev::OVRHeadset::threadRelease()
         predictedOrientationPort->interrupt();
         predictedOrientationPort->close();
         delete predictedOrientationPort;
-        predictedOrientationPort = NULL;
+        predictedOrientationPort = nullptr;
     }
     if (predictedPositionPort) {
         predictedPositionPort->interrupt();
         predictedPositionPort->close();
         delete predictedPositionPort;
-        predictedPositionPort = NULL;
+        predictedPositionPort = nullptr;
     }
     if (predictedAngularVelocityPort) {
         predictedAngularVelocityPort->interrupt();
         predictedAngularVelocityPort->close();
         delete predictedAngularVelocityPort;
-        predictedAngularVelocityPort = NULL;
+        predictedAngularVelocityPort = nullptr;
     }
     if (predictedLinearVelocityPort) {
         predictedLinearVelocityPort->interrupt();
         predictedLinearVelocityPort->close();
         delete predictedLinearVelocityPort;
-        predictedLinearVelocityPort = NULL;
+        predictedLinearVelocityPort = nullptr;
     }
     if (predictedAngularAccelerationPort) {
         predictedAngularAccelerationPort->interrupt();
         predictedAngularAccelerationPort->close();
         delete predictedAngularAccelerationPort;
-        predictedAngularAccelerationPort = NULL;
+        predictedAngularAccelerationPort = nullptr;
     }
     if (predictedLinearAccelerationPort) {
         predictedLinearAccelerationPort->interrupt();
         predictedLinearAccelerationPort->close();
         delete predictedLinearAccelerationPort;
-        predictedLinearAccelerationPort = NULL;
+        predictedLinearAccelerationPort = nullptr;
     }
 
 
@@ -647,7 +647,7 @@ void yarp::dev::OVRHeadset::threadRelease()
             displayPorts[i]->interrupt();
             displayPorts[i]->close();
             delete displayPorts[i];
-            displayPorts[i] = NULL;
+            displayPorts[i] = nullptr;
         }
     }
 }
@@ -1128,7 +1128,7 @@ GLFWmonitor* yarp::dev::OVRHeadset::detectMonitor()
         }
 #endif
     }
-    return NULL;
+    return nullptr;
 }
 
 
@@ -1153,16 +1153,16 @@ bool yarp::dev::OVRHeadset::createWindow(int w, int h, int x, int y)
     glfwWindowHint(GLFW_DEPTH_BITS, 16);
 
 #if defined(_WIN32)
-    window = glfwCreateWindow(w/2, h/2, "YARP Oculus", NULL, NULL);
+    window = glfwCreateWindow(w/2, h/2, "YARP Oculus", nullptr, nullptr);
 #elif !defined(__linux__)
-    window = glfwCreateWindow(w, h, "YARP Oculus", monitor, NULL);
+    window = glfwCreateWindow(w, h, "YARP Oculus", monitor, nullptr);
 #else
     // On linux, the display is rotated
     if (monitor) {
-        window = glfwCreateWindow(h, w, "YARP Oculus", monitor, NULL);
+        window = glfwCreateWindow(h, w, "YARP Oculus", monitor, nullptr);
     } else {
         // Using debug hmd
-        window = glfwCreateWindow(w/2, h/2, "YARP Oculus", monitor, NULL);
+        window = glfwCreateWindow(w/2, h/2, "YARP Oculus", monitor, nullptr);
     }
 #endif
 

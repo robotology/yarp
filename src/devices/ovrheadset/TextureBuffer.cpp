@@ -36,7 +36,7 @@ TextureBuffer::TextureBuffer(int w, int h, int eye, ovrSession session) :
         bufferSize(rowSize * h),
         pboIndex(0),
         pboNextIndex(1),
-        ptr(NULL),
+        ptr(nullptr),
         dataReady(true),
         missingFrames(0),
         imageWidth(0),
@@ -127,7 +127,7 @@ void TextureBuffer::update()
 
         if (ptr) {
             glUnmapBuffer(GL_PIXEL_UNPACK_BUFFER);
-            ptr = NULL;
+            ptr = nullptr;
         }
 
         // copy pixels from PBO to texture object
@@ -247,7 +247,7 @@ void TextureBuffer::deleteTextureAndBuffers()
 
     if (ptr) {
         glUnmapBuffer(GL_PIXEL_UNPACK_BUFFER);
-        ptr = NULL;
+        ptr = nullptr;
     }
 
     glDeleteBuffers(2, pboIds);

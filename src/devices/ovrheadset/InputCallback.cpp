@@ -16,7 +16,7 @@
 
 InputCallback::InputCallback(int eye) :
         yarp::os::BufferedPort<ImageType>(),
-        eyeRenderTexture(NULL),
+        eyeRenderTexture(nullptr),
         eye(eye),
         expected(0),
         droppedFrames(0),
@@ -37,7 +37,7 @@ InputCallback::~InputCallback()
     if (eyeRenderTexture) {
         delete eyeRenderTexture;
     }
-    eyeRenderTexture = NULL;
+    eyeRenderTexture = nullptr;
 }
 
 
