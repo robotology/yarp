@@ -190,6 +190,11 @@ int V4L_camera::getRgbWidth(){
     return width();
 }
 
+bool V4L_camera::getRgbResolution(int &width, int &height){
+    width=param.width;
+    height=param.height;
+    return true;
+}
 bool V4L_camera::setRgbResolution(int width, int height){
     mutex.wait();
     captureStop();
