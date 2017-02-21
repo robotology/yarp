@@ -82,8 +82,10 @@ class yarp::dev::FrameTransformClient: public DeviceDriver,
 {
 #ifndef DOXYGEN_SHOULD_SKIP_THIS
 private:
+    enum ConnectionType {DISCONNECTED = 0, DIRECT, INVERSE, UNDIRECT};
 
-    bool canChainedTransform(const std::string &target_frame, const std::string &source_frame, std::string *error_msg=NULL) const;
+    yarp::dev::FrameTransformClient::ConnectionType getConnectionType(const std::string &target_frame, const std::string &source_frame, std::string* commonAncestor);
+    
     bool canExplicitTransform(const std::string& target_frame_id, const std::string& source_frame_id) const;
     bool getChainedTransform(const std::string &target_frame_id, const std::string &source_frame_id, yarp::sig::Matrix &transform) const;
 
