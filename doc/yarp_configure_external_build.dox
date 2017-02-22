@@ -45,16 +45,18 @@ We recommend you now have a look at the tutorials in \ref yarp_resource_finder_t
 
 If you want to install data files inside directories specific to your project, you should add:
 \verbatim
- yarp_configure_external_installation(<PACKAGE>
-                                      [COMPONENT <component>]
-#                                     [NO_PATH_D]
-#                                     [WITH_PLUGINS])
+ yarp_configure_installation(<PACKAGE>
+                             [EXTERNAL_DIRECTORY <external_directory>]
+                             [COMPONENT <component>]
+#                            [NO_PATH_D]
+#                            [WITH_PLUGINS])
 # )
 \endverbatim
 
-Where \e PACKAGE is the name of your build/project. This command creates
-the following CMake variables containing paths relative to the install
-prefix:
+Where \e PACKAGE is the name of your build/project, and EXTERNAL_DIRECTORY
+is the project-specific directory in which the data files will be installed.
+This command creates the following CMake variables containing
+paths relative to the install prefix:
 
 \li <B><PACKAGE>_CONTEXTS_INSTALL_DIR</B> for "context" folders, containing configuration files and data that modules look for at runtime
 \li <B><PACKAGE>_PLUGIN_MANIFESTS_INSTALL_DIR</B> for plugin manifest files
@@ -79,6 +81,9 @@ and the analogue variables containing absolute paths:
 \li <B><PACKAGE>_MODULES_TEMPLATES_INSTALL_DIR_FULL</B>
 \li <B><PACKAGE>_DATA_INSTALL_DIR_FULL</B>
 \li <B><PACKAGE>_CONFIG_INSTALL_DIR_FULL</B>
+
+If EXTERNAL_DIRECTORY is not set, its value will default to "yarp", and (for instance)
+<PACKAGE>_CONTEXTS_INSTALL_DIR will be equal to YARP_CONTEXTS_INSTALL_DIR .
 
 Now you can install additional data files by using the macro \e yarp_install, e.g.:
 \verbatim

@@ -189,7 +189,7 @@ This solution should be adopted for packages that are installed.
 \e path.d is a special folder used by YARP to provide an easy way to install 3rd party applications in separate folders. This folder contains a list of text files that contains extra search paths. The ResourceFinder searches for the directory \e path.d in the same locations as "Installed" configuration files before checking the same directory for other files. Each file inside \e path.d indicates an additional path to a directory; the latter is appended to the list of directories used by the ResourceFinder. This mechanisms works similarly to YARP_DATA_DIRS; however it is handy because it allows 3rd party applications to extend the search path without affecting the user environment.
 
 To do so a package should install a .ini file in $YARP_PREFIX/yarp/config/path.d .
-This can be done using the \e yarp_configure_external_installation macro (see \ref yarp_external_build)
+This can be done using the \e yarp_configure_installation macro and its EXTERNAL_DIRECTORY parameter (see \ref yarp_external_build)
 
 Example: the iCub package in Linux.
 
