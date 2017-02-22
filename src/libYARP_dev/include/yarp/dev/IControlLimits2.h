@@ -60,7 +60,7 @@ public:
  * Interface for control devices, commands to get/set position and veloity limits
  * in encoder coordinates
  */
-class yarp::dev::IControlLimits2Raw: yarp::dev::IControlLimitsRaw
+class yarp::dev::IControlLimits2Raw: public yarp::dev::IControlLimitsRaw
 {
 public:
     /**
