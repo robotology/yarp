@@ -116,6 +116,66 @@ yarp::os::Stamp V4L_camera::getLastInputStamp()
     return timeStamp;
 }
 
+int V4L_camera::convertV4L_to_YARP_format(int format)
+{
+    switch (format)
+    {
+        case V4L2_PIX_FMT_GREY    : return VOCAB_PIXEL_MONO;
+        case V4L2_PIX_FMT_Y16     : return VOCAB_PIXEL_MONO16;
+        case V4L2_PIX_FMT_RGB24   : return VOCAB_PIXEL_RGB;
+        case V4L2_PIX_FMT_ABGR32  : return VOCAB_PIXEL_BGRA;
+        case V4L2_PIX_FMT_BGR24   : return VOCAB_PIXEL_BGR;
+        case V4L2_PIX_FMT_SGRBG8  : return VOCAB_PIXEL_ENCODING_BAYER_GRBG8;
+        case V4L2_PIX_FMT_SBGGR8  : return VOCAB_PIXEL_ENCODING_BAYER_BGGR8;
+        case V4L2_PIX_FMT_SBGGR16 : return VOCAB_PIXEL_ENCODING_BAYER_BGGR16;
+        case V4L2_PIX_FMT_SGBRG8  : return VOCAB_PIXEL_ENCODING_BAYER_GBRG8;
+        case V4L2_PIX_FMT_SRGGB8  : return VOCAB_PIXEL_ENCODING_BAYER_RGGB8;
+        case V4L2_PIX_FMT_YUV420  : return VOCAB_PIXEL_YUV_420;
+        case V4L2_PIX_FMT_YUV444  : return VOCAB_PIXEL_YUV_444;
+        case V4L2_PIX_FMT_YYUV    : return VOCAB_PIXEL_YUV_422;
+        case V4L2_PIX_FMT_YUV411P : return VOCAB_PIXEL_YUV_411;
+
+    }
+    return NOT_PRESENT;
+}
+
+void V4L_camera::populateConfigurations(){
+    struct v4l2_fmtdesc fmt;
+    struct v4l2_frmsizeenum frmsize;
+    struct v4l2_frmivalenum frmival;
+
+    fmt.index = 0;
+    fmt.type = V4L2_BUF_TYPE_VIDEO_CAPTURE;
+
+    while (ioctl(param.fd, VIDIOC_ENUM_FMT, &fmt) >= 0) {
+        memset(&frmsize, 0, sizeof(v4l2_frmsizeenum));
+        frmsize.pixel_format = fmt.pixelformat;
+        frmsize.index = 0;
+        frmsize.type= V4L2_BUF_TYPE_VIDEO_CAPTURE;
+        while (xioctl(param.fd, VIDIOC_ENUM_FRAMESIZES, &frmsize) >= 0) {
+            if (frmsize.type == V4L2_FRMSIZE_TYPE_DISCRETE) {
+                memset(&frmival, 0, sizeof(v4l2_frmivalenum));
+                frmival.index = 0;
+                frmival.pixel_format = fmt.pixelformat;
+                frmival.width = frmsize.discrete.width;
+                frmival.height = frmsize.discrete.height;
+                frmsize.type= V4L2_BUF_TYPE_VIDEO_CAPTURE;
+                while (xioctl(param.fd, VIDIOC_ENUM_FRAMEINTERVALS, &frmival) >= 0) {
+                    CameraConfig c;
+                    c.pixelCoding=(YarpVocabPixelTypesEnum) convertV4L_to_YARP_format(frmival.pixel_format);
+                    c.width = frmival.width;
+                    c.height = frmival.height;
+                    c.framerate = (1.0 * frmival.discrete.denominator) / frmival.discrete.numerator;
+                    param.configurations.push_back(c);
+                    frmival.index++;
+                }
+            }
+            frmsize.index++;
+        }
+        fmt.index++;
+    }
+}
+
 /**
  *    open device
  */
@@ -123,6 +183,7 @@ bool V4L_camera::open(yarp::os::Searchable& config)
 {
     struct stat st;
     yTrace() << "input params are " << config.toString();
+
 
     if(!fromConfig(config))
         return false;
@@ -149,7 +210,6 @@ bool V4L_camera::open(yarp::os::Searchable& config)
         fprintf(stderr, "Cannot open '%s': %d, %s\n", param.deviceId.c_str(), errno, strerror(errno));
         return false;
     }
-
 
     // if previous instance crashed, maybe will help (?)
     captureStop();
@@ -178,6 +238,7 @@ bool V4L_camera::open(yarp::os::Searchable& config)
     yarp::os::Time::delay(0.5);
     start();
 
+    populateConfigurations();
     return true;
 }
 
@@ -190,11 +251,16 @@ int V4L_camera::getRgbWidth(){
     return width();
 }
 
+bool V4L_camera::getRgbSupportedConfigurations(yarp::sig::VectorOf<CameraConfig> &configurations){
+    configurations=param.configurations;
+    return true;
+}
 bool V4L_camera::getRgbResolution(int &width, int &height){
     width=param.width;
     height=param.height;
     return true;
 }
+
 bool V4L_camera::setRgbResolution(int width, int height){
     mutex.wait();
     captureStop();

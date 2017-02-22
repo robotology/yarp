@@ -105,6 +105,7 @@ typedef struct
     void            *raw_image;
     cv::Mat         outMat;
     cv::Mat         img;
+    yarp::sig::VectorOf<yarp::dev::CameraConfig> configurations;
 
     unsigned int    n_buffers;
     struct buffer   *buffers;
@@ -184,6 +185,7 @@ public:
     /*Implementation of IRgbVisualParams interface*/
     virtual int getRgbHeight();
     virtual int getRgbWidth();
+    virtual bool getRgbSupportedConfigurations(yarp::sig::VectorOf<CameraConfig> &configurations);
     virtual bool getRgbResolution(int &width, int &height);
     virtual bool setRgbResolution(int width, int height);
     virtual bool getRgbFOV(double &horizontalFov, double &verticalFov);
@@ -233,6 +235,12 @@ private:
     std::map <std::string, supported_cams> camMap;
 
     bool fromConfig(yarp::os::Searchable& config);
+
+    void populateConfigurations();
+
+    int convertV4L_to_YARP_format(int format);
+
+
 
     // initialize device
     bool deviceInit();
