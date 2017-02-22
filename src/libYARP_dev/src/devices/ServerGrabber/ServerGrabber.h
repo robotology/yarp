@@ -72,44 +72,91 @@ public:
 /**
  * @ingroup dev_impl_wrapper
  *
- * Export a frame grabber to the network.  Provides the
- * IFrameGrabberImage, IFrameGrabberControls, and IAudioGrabberSound
- * interfaces.  The corresponding client is a RemoteFrameGrabber.
+ * \section ServerGrabber Description of input parameters
+ * A Network grabber for camera devices.
+ * In base of the configuration this device can handle one or two cameras.\n
+ * In case of two cameras, the RGB or RAW streaming will be produced on two separated ports or on a sigle port with the two images
+ * stitched horizontally.\n
+ * Moreover it has a rpc port that in case of two cameras decouples all the requests to both devices.\n
+ * The inheritance from yarp::dev::IWrapper and yarp::dev::IMultipleWrapper allows to be instantiated also through yarprobotinterface.
+ * See their documentation for more details about each interface.
  *
- * The network interface is a single Port.
- * Images are streamed out from that Port -- RemoteFrameGrabber
- * uses this stream to provide the IFrameGrabberImage interface.
- * The IFrameGrabberControls functionality is provided via RPC.
+ * This device is paired with its client called RemoteFrameGrabber to receive the data streams and perform remote operations.
  *
- * Here's a command-line example:
- * \verbatim
- [terminal A] yarpdev --device test_grabber --width 8 --height 8 --name /grabber --framerate 30
- [terminal B] yarp read /read
- [terminal C] yarp connect /grabber /read
- [terminal C] echo "[get] [gain]" | yarp rpc /grabber
- \endverbatim
- * The yarpdev line starts a TestFrameGrabber wrapped in a ServerGrabber.
- * Parameters are:
- * --width, --height set the size of the frame in pixels
- * --name portname set the name of the output port
- * --framerate set the frequency (Hz) at which images will be read and boradcast to
- * the network; if the parameter is not set images are provided at the maximum speed
- * supported by the device. Notice that the maximum frame rate is determined by
- * the device.
+ *   Parameters required by this device are:
+ * | Parameter name | SubParameter            | Type    | Units          | Default Value | Required                                                                                                                                  | Description                                                                                                  | Notes |
+ * |:--------------:|:-----------------------:|:-------:|:--------------:|:-------------:|:-----------------------------------------------------------------------------------------------------------------------------------------:|:------------------------------------------------------------------------------------------------------------:|:-----:|
+ * | period         |      -                  | int     | ms             |   30          | No                                                                                                                                        | refresh period(in ms) of the broadcasted values through yarp ports                                                                | default 30ms |
+ * | name           |      -                  | string  | -              |   /grabber    | No                                                                                                                                        | Prefix name of the ports opened by the ServerGrabber                                                         | Required suffix like '/rpc' will be added by the device      |
+ * | capabilities   |      -                  | string  | -              |   COLOR       | No                                                                                                                                        | two capabilities supported, COLOR and RAW respectively for rgb and raw streaming                             | - |
+ * | twoCameras     |      -                  | bool    | -              |   -           | required only for instantiating this device with the yarprobotinterface                                                                   | if true ServerGrabber will open and handle two devices, if false only one                                    | =true it makes required left_config and right_config parameters, =false subdevice parameter becomes required|
+ * | split          |      -                  | bool    | -              |   false       | No                                                                                                                                        | set 'true' to split the streaming of the two cameras on two different ports                | - |
+ * | subdevice      |      -                  | string  | -              |   -           | used for opening and handling a single device, alternative to 'attach' action                                                             | name of the subdevice to use as a data source                                                                | when used, parameters for the subdevice must be provided as well  |
+ * | left_config    |      -                  | string  | -              |   -           | used for opening and handling two devices, required if right_config present and/or twoCameras set to true                                 | name of the ini file containing the configuration of one of two subdevices to use as a data source           | when used, parameters for the subdevice must be provided in the file specified. This parameter is not admitted if the device is configured for working with one device. |
+ * | right_config   |      -                  | string  | -              |   -           | used for opening and handling two devices, required if left_config present and/or twoCameras set to true                                  | name of the ini file containing the configuration of one of two subdevices to use as a data source           | when used, parameters for the subdevice must be provided in the file specified. This parameter is not admitted if the device is configured for working with one device. |
+ * | context        |      -                  | string  | -              |   -           | No                                                                                                                                        | name of context where the yarp::os::ResourceFinder will search the ini files specified in left_config and right_config                          | - |
  *
- * After the "yarp connect" line, image descriptions will show up in
- * terminal B (you could view them with the yarpview application).
- * The "yarp rpc" command should query the gain (0.0 for the test grabber).
+ * Some example of configuration files:
  *
- * <TABLE>
- * <TR><TD> Command (text form) </TD><TD> Response </TD><TD> Code equivalent </TD></TR>
- * <TR><TD> [set] [bri] 1.0 </TD><TD> none </TD><TD> setBrightness() </TD></TR>
- * <TR><TD> [set] [gain] 1.0 </TD><TD> none </TD><TD> setGain() </TD></TR>
- * <TR><TD> [set] [shut] 1.0 </TD><TD> none </TD><TD> setShutter() </TD></TR>
- * <TR><TD> [get] [bri] </TD><TD> [is] [bri] 1.0 </TD><TD> getBrightness() </TD></TR>
- * <TR><TD> [get] [gain] </TD><TD> [is] [gain] 1.0 </TD><TD> getGain() </TD></TR>
- * <TR><TD> [get] [shut] </TD><TD> [is] [shut] 1.0 </TD><TD> getShutter() </TD></TR>
- * </TABLE>
+ * Example of configuration file using .ini format, for handling two cameras.
+ *
+ * \code{.unparsed}
+ * device grabberDual
+ * capabilities RAW
+ * split false
+ * period 30
+ * twoCameras true
+ * left_config  left_config.ini    #name of the config file containing the parameters for the camera device
+ * right_config right_config.ini   #name of the config file containing the parameters for the camera device
+ * \endcode
+ *
+ * Example of configuration file using .ini format, for handling one camera.
+ *
+ * \code{.unparsed}
+ * device grabberDual
+ * capabilities COLOR        # not necessary to specify 'COLOR', this is the default value if capabilities is omitted
+ * period 30
+ * subdevice test_grabber
+ * \endcode
+ *
+ * Example of configuration file using .xml format, for handling two cameras.
+ *
+ * \code{.xml}
+ * <device name="serverGrabber" type="grabberDual">
+ *  <param name="period"> 30 </param>
+ *  <param name="name">   /grabber  </param>
+ *  <param name="capabilities">  RGB        </param>
+ *  <param name="split"> false       </param>
+ *  <param name="twoCameras"> true </param>
+ *
+ *  <action phase="startup" level="5" type="attach">
+ *    <paramlist name="networks">
+ *      <elem name="LEFT">  testCamera_left </elem>
+ *      <elem name="RIGHT">  testCamera_right </elem>
+ *    </paramlist>
+ *  </action>
+ *  <action phase="shutdown" level="5" type="detach" />
+ * </device>
+ * \endcode
+ *
+ * Example of configuration file using .xml format, for handling one camera.
+ *
+ * \code{.xml}
+ * <device name="serverGrabber" type="grabberDual">
+ *  <param name="period"> 30 </param>
+ *  <param name="name">   /grabber  </param>
+ *  <param name="capabilities">  RGB        </param>
+ *  <param name="split"> false       </param>
+ *  <param name="twoCameras"> true </param>
+ *
+ *  <action phase="startup" level="5" type="attach">
+ *    <paramlist name="networks">
+ *      <elem name="subdevice">  usbCamera_left_single </elem>
+ *    </paramlist>
+ *  </action>
+ *  <action phase="shutdown" level="5" type="detach" />
+ * </device>
+ * \endcode
  *
  */
 class YARP_dev_API yarp::dev::ServerGrabber : public DeviceDriver,
@@ -173,12 +220,7 @@ public:
     //DeviceDriver
     virtual bool close();
     /**
-     * Configure with a set of options. These are:
-     * <TABLE>
-     * <TR><TD> subdevice </TD><TD> Common name of device to wrap (e.g. "test_grabber"). </TD></TR>
-     * <TR><TD> name </TD><TD> Port name to assign to this server (default /grabber). </TD></TR>
-     * </TABLE>
-     *
+     * Configure with a set of options.
      * @param config The options to use
      * @return true iff the object could be configured.
      */
