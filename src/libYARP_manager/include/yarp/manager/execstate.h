@@ -99,7 +99,7 @@ private:
     Executable* executable;
     bool bAborted;
     bool checkPriorityPorts(void);
-    bool checkResources(void);
+    bool checkResources(bool silent=true);
     bool timeout(double base, double timeout);
 };
 

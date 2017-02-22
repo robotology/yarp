@@ -116,37 +116,55 @@ bool Ready::checkPriorityPorts(void)
     return true;
 }
 
-bool Ready::checkResources(void)
+bool Ready::checkResources(bool silent)
 {
+    bool allOK = true;
     ResourceIterator itr;
     for(itr=executable->getResources().begin();
         itr!=executable->getResources().end(); itr++)
     {
-        if(!executable->getBroker()->exists((*itr).getPort()))
-            return false;
+        if(!executable->getBroker()->exists((*itr).getPort())) {
+            allOK = false;
+            if(silent)
+               return false;
+            else {
+                OSTRINGSTREAM msg;
+                msg<<(*itr).getPort()<<" does not exist";
+                ErrorLogger::Instance()->addError(msg);
+                continue;
+            }
+        }
         // check the rpc request/reply if required
         if(strlen((*itr).getRequest()) != 0) {
             const char* reply = executable->getBroker()->requestRpc((*itr).getPort(),
                                                                     (*itr).getRequest(),
                                                                     (*itr).getTimeout());
             if(reply == NULL) {
+                allOK = false;
                 OSTRINGSTREAM msg;
                 msg<<"cannot request resource "<<(*itr).getPort()<<" for "<<(*itr).getRequest();
                 ErrorLogger::Instance()->addError(msg);
-                return false;
+                if(silent)
+                   return false;
+                else
+                    continue;
             }
 
             if(!compareString(reply, (*itr).getReply())) {
+                allOK = false;
                 OSTRINGSTREAM msg;
                 msg<<"waiting for the expected reply from resource "<<(*itr).getPort();
                 msg<<" for request "<<(*itr).getRequest();
                 msg<<". (expected="<<(*itr).getReply()<<", received="<<reply<<")";
                 ErrorLogger::Instance()->addWarning(msg);
-                return false;
+                if(silent)
+                   return false;
+                else
+                    continue;
             }
         }
     }
-    return true;
+    return allOK;
 }
 
 bool Ready::timeout(double base, double timeout)
@@ -185,20 +203,21 @@ void Ready::startModule(void)
 
     // waiting for resources
     double base = yarp::os::Time::now();
-    while(!checkResources())
-    {
+    while(!checkResources()) {
         if(bAborted) return;
 
-        if(timeout(base, maxTimeout))
-        {
-            OSTRINGSTREAM msg;
-            msg<<"cannot run "<<executable->getCommand()<<" on "<<executable->getHost();
-            msg<<" : Timeout while waiting for some resources.";
-            logger->addError(msg);
+        if(timeout(base, maxTimeout)) {
+            // give it the last try and collect the error messages
+            if(!checkResources(false)) {
+                OSTRINGSTREAM msg;
+                msg<<"cannot run "<<executable->getCommand()<<" on "<<executable->getHost();
+                msg<<" : Timeout while waiting for some resources.";
+                logger->addError(msg);
 
-            castEvent(EventFactory::startModuleEventFailed);
-            executable->getEvent()->onExecutableDied(executable);
-            return;
+                castEvent(EventFactory::startModuleEventFailed);
+                executable->getEvent()->onExecutableDied(executable);
+                return;
+            }
         }
     }
 
