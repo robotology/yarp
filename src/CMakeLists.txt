@@ -5,7 +5,7 @@
 include(YarpInstallationHelpers)
 include(YarpDeprecatedOption)
 
-yarp_configure_external_installation(yarp WITH_PLUGINS)
+yarp_configure_installation(yarp WITH_PLUGINS)
 
 # public libraries
 add_subdirectory(libYARP_OS)

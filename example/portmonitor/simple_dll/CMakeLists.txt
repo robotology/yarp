@@ -14,7 +14,9 @@ include(YarpPlugin)
 include(YarpInstallationHelpers)
 
 set(YARP_FORCE_DYNAMIC_PLUGINS TRUE CACHE INTERNAL "yarp_pm_simple is always built with dynamic plugins")
-yarp_configure_external_installation(yarp)
+# Warning: the <package> option of yarp_configure_installation should be different from the plugin name
+
+yarp_configure_external_installation(simplemonitor_project WITH_PLUGINS)
 
 yarp_prepare_plugin(simplemonitor TYPE SimpleMonitorObject
                                   INCLUDE Simple.h

@@ -1,10 +1,10 @@
-# Copyright: (C) 2013, 2015 Istituto Italiano di Tecnologia
-# Authors: Elena Ceseracciu, Daniele Domenichelli
+# Copyright: (C) 2013, 2015, 2017 Istituto Italiano di Tecnologia
+# Authors: Elena Ceseracciu, Daniele Domenichelli, Silvio Traversaro
 # CopyPolicy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
 
 
 ## Skip this whole file if it has already been included
-if(COMMAND YARP_CONFIGURE_EXTERNAL_INSTALLATION)
+if(COMMAND YARP_CONFIGURE_INSTALLATION)
   return()
 endif()
 
@@ -30,16 +30,23 @@ endif()
 
 
 
-# yarp_configure_external_installation(<name>
-#                                      [COMPONENT <component>]
-#                                      [NO_PATH_D]
-#                                      [WITH_PLUGINS])
+# yarp_configure_installation(<package>
+#                             [COMPONENT <component>]
+#                             [EXTERNAL_DIRECTORY <external_directory>]
+#                             [NO_PATH_D]
+#                             [WITH_PLUGINS])
 #
-# This function sets the the following CMake variables that contain
+# This function sets a group of CMake variables that contain
 # paths relative to the installation prefix and that can be used as
 # "DESTINATION" argument to the yarp_install macro to copy/install data
 # into appropriate folders in the calling package's build tree and
-# installation directory:
+# installation directory, such that all the installed files can be
+# found automatically if the installation prefix is the same of YARP,
+# or if the <prefix>/${CMAKE_INSTALL_DATADIR}/<external_directory>
+# is contained in YARP_DATA_DIRS .
+#
+# Defining as <PACKAGE> the capitalized version of <package> obtained through
+# string(TO_UPPER ..), the define variables are:
 #
 #  * <PACKAGE>_CONTEXTS_INSTALL_DIR for "context" folders, containing
 #    configuration files and data that modules look for at runtime.
@@ -75,35 +82,47 @@ endif()
 #  * <PACKAGE>_DATA_INSTALL_DIR_FULL
 #  * <PACKAGE>_CONFIG_INSTALL_DIR_FULL
 #
+# If the EXTERNAL_DIRECTORY parameter is passed, all the configuration
+# files will be installed in subdirectories of
+# <prefix>/${CMAKE_INSTALL_DATADIR}/<external_directory> . By default
+# If the EXTERNAL_DIRECTORY parameter is passed, external_directory is set
+# to yarp.
+#
 # Unless the NO_PATH_D option is passed, this macro checks if the
 # installation directory of the package is the same as YARP's, in which
 # case it sets up automatic recognition of data directories;
 # otherwise, it warns the user to set up appropriately the
 # YARP_DATA_DIRS environment variable.
 #
-# If the WITH_PLUGINS argument is passed, a plugin manifest file
-# containing the search path for the plugins is generated and installed
+# If the WITH_PLUGINS argument is passed, a plugin manifest file called
+# <package>.ini containing the search path for the plugins is generated
+# and installed in <NAME>_PLUGIN_MANIFESTS_INSTALL_DIR. As this directory
+# is shared with the manifest of the single plugins, pay attention to
+# avoid naming naming a plugin in a project as <package> .
 #
 # An extra COMPONENT argument can be passed to this function to set the
 # component for the installed files. If not set, "configuration" will
 # be used.
 
-function(YARP_CONFIGURE_EXTERNAL_INSTALLATION _name)
+function(YARP_CONFIGURE_INSTALLATION _name)
 
   string(TOUPPER ${_name} _NAME)
 
   set(_options NO_PATH_D WITH_PLUGINS)
-  set(_oneValueArgs INSTALL_COMPONENT)
+  set(_oneValueArgs EXTERNAL_DIRECTORY INSTALL_COMPONENT)
   set(_multiValueArgs )
-  cmake_parse_arguments(YCEI "${_options}" "${_oneValueArgs}" "${_multiValueArgs}" ${ARGN} )
+  cmake_parse_arguments(YCI "${_options}" "${_oneValueArgs}" "${_multiValueArgs}" ${ARGN} )
 
-  if(NOT DEFINED YCEI_INSTALL_COMPONENT)
-    set(YCEI_INSTALL_COMPONENT configuration)
+  if(NOT DEFINED YCI_INSTALL_COMPONENT)
+    set(YCI_INSTALL_COMPONENT configuration)
   endif()
 
+  if(NOT DEFINED YCI_EXTERNAL_DIRECTORY)
+    set(YCI_EXTERNAL_DIRECTORY yarp)
+  endif()
 
   # Generate and set variables
-  set(${_NAME}_DATA_INSTALL_DIR "${CMAKE_INSTALL_DATADIR}/${_name}" CACHE INTERNAL "general data installation directory for ${_name} (relative to build/installation dir")
+  set(${_NAME}_DATA_INSTALL_DIR "${CMAKE_INSTALL_DATADIR}/${YCI_EXTERNAL_DIRECTORY}" CACHE INTERNAL "general data installation directory for ${_name} (relative to build/installation dir")
   set(${_NAME}_CONFIG_INSTALL_DIR "${${_NAME}_DATA_INSTALL_DIR}/config" CACHE INTERNAL "configuration files installation directory for ${_name} (relative to build/installation dir")
   set(${_NAME}_PLUGIN_MANIFESTS_INSTALL_DIR "${${_NAME}_DATA_INSTALL_DIR}/plugins" CACHE INTERNAL "plugin manifests installation directory for ${_name} (relative to build/installation dir")
   set(${_NAME}_MODULES_INSTALL_DIR "${${_NAME}_DATA_INSTALL_DIR}/modules" CACHE INTERNAL "modules' XML descriptions installation directory for ${_name} (relative to build/installation dir")
@@ -114,7 +133,7 @@ function(YARP_CONFIGURE_EXTERNAL_INSTALLATION _name)
   set(${_NAME}_MODULES_TEMPLATES_INSTALL_DIR "${${_NAME}_DATA_INSTALL_DIR}/templates/modules" CACHE INTERNAL "module templates' installation directory for ${_name} (relative to build/installation dir")
   set(${_NAME}_ROBOTS_INSTALL_DIR "${${_NAME}_DATA_INSTALL_DIR}/robots" CACHE INTERNAL "robot-specific configurations installation directory for ${_name} (relative to build/installation dir")
   set(${_NAME}_STATIC_PLUGINS_INSTALL_DIR "${CMAKE_INSTALL_LIBDIR}" CACHE INTERNAL "static plugins installation directory for ${_name} (relative to build/installation dir")
-  set(${_NAME}_DYNAMIC_PLUGINS_INSTALL_DIR "${CMAKE_INSTALL_LIBDIR}/${_name}" CACHE INTERNAL "dynamic plugins installation directory for ${_name} (relative to build/installation dir")
+  set(${_NAME}_DYNAMIC_PLUGINS_INSTALL_DIR "${CMAKE_INSTALL_LIBDIR}/${YCI_EXTERNAL_DIRECTORY}" CACHE INTERNAL "dynamic plugins installation directory for ${_name} (relative to build/installation dir")
 
   foreach(_dir DATA
                CONFIG
@@ -138,7 +157,7 @@ function(YARP_CONFIGURE_EXTERNAL_INSTALLATION _name)
 
   # Create and install the path.d file when required
   # If the name is yarp then no path.d is required.
-  if(NOT YCEI_NO_PATH_D AND NOT "${_name}" STREQUAL "yarp")
+  if(NOT YCI_NO_PATH_D AND NOT "${_name}" STREQUAL "yarp")
 
     # If YARP is installed (YARP_INSTALL_PREFIX) and this package has
     # the same CMAKE_INSTALL_PREFIX as YARP, a path.d file is installed
@@ -177,7 +196,7 @@ path \"@_path@\"
       # Install the file into yarp config dir
       install(FILES "${_install_file}"
               RENAME ${_name}.ini
-              COMPONENT ${YCEI_INSTALL_COMPONENT}
+              COMPONENT ${YCI_INSTALL_COMPONENT}
               DESTINATION "${_destination}")
 
     else()
@@ -214,7 +233,7 @@ path \"@_path@\"
 
   # Create and install the manifest file containing plugin search path
   # when requested
-  if(YCEI_WITH_PLUGINS)
+  if(YCI_WITH_PLUGINS)
     cmake_dependent_option(YARP_FORCE_DYNAMIC_PLUGINS "Force YARP to create dynamically loaded plugins even if building static libraries." OFF
                            "NOT BUILD_SHARED_LIBS" OFF)
     mark_as_advanced(YARP_FORCE_DYNAMIC_PLUGINS)
@@ -250,7 +269,7 @@ type \"@_type@\"
     configure_file("${_in_file}" "${_install_file}" @ONLY)
     install(FILES "${_install_file}"
             RENAME ${_name}.ini
-            COMPONENT "${YCEI_INSTALL_COMPONENT}"
+            COMPONENT "${YCI_INSTALL_COMPONENT}"
             DESTINATION "${_destination}")
 
     # Temporary fix to remove the outdated path.ini file that will cause
@@ -293,6 +312,16 @@ type \"@_type@\"
 
 endfunction()
 
+# yarp_configure_external_installation(<package>
+#                                      [COMPONENT <component>]
+#                                      [NO_PATH_D]
+#                                      [WITH_PLUGINS])
+#
+# Deprecated function, equivalent to yarp_configure_installation(<package> EXTERNAL_DIRECTORY <package> ...)
+function(YARP_CONFIGURE_EXTERNAL_INSTALLATION _name)
+    message(DEPRECATION "yarp_configure_external_installation(<package> ...) is deprecated.\nUse yarp_configure_installation(<package> EXTERNAL_DIRECTORY <package> ...) instead.") # Since YARP 2.3.70
+    yarp_configure_installation(${_name} EXTERNAL_DIRECTORY ${_name} ${ARGN})
+endfunction()
 
 
 # This macro has the same signature as CMake "install" command (i.e.,
