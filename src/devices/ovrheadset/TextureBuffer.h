@@ -16,31 +16,15 @@
 class TextureBuffer
 {
 public:
-#if OVR_PRODUCT_VERSION == 0 && OVR_MAJOR_VERSION <= 5
-    TextureBuffer(int w, int h, int eye);
-#elif OVR_PRODUCT_VERSION == 0 && OVR_MAJOR_VERSION <= 7
-    TextureBuffer(int w, int h, int eye, ovrHmd hmd);
-#else
     TextureBuffer(int w, int h, int eye, ovrSession session);
-#endif
-
     ~TextureBuffer();
 
     void resize(int w = 0, int h = 0);
     void update();
 
-#if OVR_PRODUCT_VERSION == 0 && OVR_MAJOR_VERSION <= 5
-#elif OVR_PRODUCT_VERSION == 0 && OVR_MAJOR_VERSION <= 7
-    ovrHmd hmd;
-    ovrSwapTextureSet* textureSet;
-#elif OVR_PRODUCT_VERSION == 0 && OVR_MAJOR_VERSION <= 8
-    ovrSession session;
-    ovrSwapTextureSet* textureSet;
-#else
     ovrSession session;
     ovrTextureSwapChain textureSwapChain;
     int textureSwapChainSize;
-#endif
 
     unsigned int width;
     unsigned int height;

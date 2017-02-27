@@ -383,7 +383,8 @@ checkandset_dependency(JPEG)
 find_package(MPI QUIET)
 checkandset_dependency(MPI)
 
-find_package(LibOVR QUIET)
+set(LibOVR_REQUIRED_VERSION 1.3)
+find_package(LibOVR ${LibOVR_REQUIRED_VERSION} QUIET)
 checkandset_dependency(LibOVR)
 
 find_package(GLFW3 QUIET)

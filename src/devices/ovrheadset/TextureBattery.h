@@ -17,7 +17,7 @@
 
 class TextureStatic;
 namespace yarp { namespace dev { class PolyDriver; } }
-namespace yarp { namespace dev { class BatteryClient; } }
+namespace yarp { namespace dev { class IBattery; } }
 
 class TextureBattery : public yarp::os::RateThread
 {
@@ -38,15 +38,13 @@ public:
         BatteryStatusChargingLow     = 12,
     };
 
-    TextureBattery(ovrSession session);
+    TextureBattery(ovrSession session, bool enabled);
     ~TextureBattery();
 
     ovrSession session;
 
     TextureStatic* currentTexture;
 
-    virtual bool threadInit();
-    virtual void threadRelease();
     virtual void run();
 
 private:
@@ -54,7 +52,7 @@ private:
     BatteryStatus currentStatus;
 
     yarp::dev::PolyDriver* drv;
-    yarp::dev::BatteryClient* batteryClient;
+    yarp::dev::IBattery* ibat;
 
     bool initBatteryClient();
 };

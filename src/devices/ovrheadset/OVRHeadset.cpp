@@ -47,9 +47,6 @@
 #include <GLFW/glfw3.h>
 #include <GLFW/glfw3native.h>
 
-#if OVR_PRODUCT_VERSION == 0 && OVR_MAJOR_VERSION <= 8
-#include <OVR.h>
-#endif
 #include <OVR_System.h>
 #include <OVR_CAPI_GL.h>
 
@@ -148,11 +145,7 @@ yarp::dev::OVRHeadset::OVRHeadset() :
         window(nullptr),
         closed(false),
         distortionFrameIndex(0),
-        multiSampleEnabled(false),
-        overdriveEnabled(true),
-        hqDistortionEnabled(true),
-        flipInputEnabled(true),
-        timeWarpEnabled(true),
+        flipInputEnabled(false),
         imagePoseEnabled(true),
         userPoseEnabled(false),
         logoEnabled(true),
@@ -160,11 +153,8 @@ yarp::dev::OVRHeadset::OVRHeadset() :
         batteryEnabled(true)
 {
     yTrace();
-
     displayPorts[0] = nullptr;
     displayPorts[1] = nullptr;
-
-    yarp::os::Time::turboBoost();
 }
 
 yarp::dev::OVRHeadset::~OVRHeadset()
@@ -273,17 +263,15 @@ bool yarp::dev::OVRHeadset::open(yarp::os::Searchable& cfg)
     }
     predictedLinearAccelerationPort->setWriteOnly();
 
-
-    for (int i = 0; i < 2; ++i) {
-        displayPorts[i] = new InputCallback(i);
-        if (!displayPorts[i]->open(i == 0 ? "/oculus/display/left:i" : "/oculus/display/right:i")) {
-            yError() << "Cannot open " << (i == 0 ? "left" : "right") << "display port";
+    for (int eye = 0; eye < ovrEye_Count; ++eye) {
+        displayPorts[eye] = new InputCallback(eye);
+        if (!displayPorts[eye]->open(eye == ovrEye_Left ? "/oculus/display/left:i" : "/oculus/display/right:i")) {
+            yError() << "Cannot open " << (eye == ovrEye_Left ? "left" : "right") << "display port";
             this->close();
             return false;
         }
-        displayPorts[i]->setReadOnly();
+        displayPorts[eye]->setReadOnly();
     }
-
 
     texWidth  = cfg.check("w",    yarp::os::Value(640), "Texture width (usually same as camera width)").asInt();
     texHeight = cfg.check("h",    yarp::os::Value(480), "Texture height (usually same as camera height)").asInt();
@@ -293,56 +281,29 @@ bool yarp::dev::OVRHeadset::open(yarp::os::Searchable& cfg)
     camHFOV[0] = hfov;
     camHFOV[1] = hfov;
 
-    if (cfg.check("multisample", "[M] Enable multisample")) {
-        multiSampleEnabled = true;
+    if (cfg.check("flipinput", "[F] Enable input flipping")) {
+        flipInputEnabled = true;
     }
 
-    if (cfg.check("no-overdrive", "[O] Disable overdrive")) {
-        overdriveEnabled = false;
+    if (cfg.check("no-imagepose", "[I] Disable image pose")) {
+        imagePoseEnabled = false;
     }
 
-    if (cfg.check("no-hqdistortion", "[H] Disable high quality distortion")) {
-        hqDistortionEnabled = false;
-    }
-
-    if (cfg.check("no-flipinput", "[F] Disable input flipping")) {
-        flipInputEnabled = false;
-    }
-
-    if (cfg.check("no-timewarp", "[T] Disable timewarp")) {
-        timeWarpEnabled = false;
-    }
-
-//    if (cfg.check("no-imagepose", "[I] Disable image pose")) {
-//        imagePoseEnabled = false;
-//    }
-    imagePoseEnabled = false;
-    if (cfg.check("imagepose", "[I] Enable image pose")) {
-        imagePoseEnabled = true;
-    }
-
-    userPoseEnabled = false;
     if (cfg.check("userpose", "[U] Use user pose instead of camera pose")) {
         userPoseEnabled = true;
     }
 
-    logoEnabled = true;
     if (cfg.check("no-logo", "[L] Disable logo")) {
         logoEnabled = false;
     }
 
-    crosshairsEnabled = true;
     if (cfg.check("no-crosshairs", "[C] Disable crosshairs")) {
         crosshairsEnabled = false;
     }
 
-    batteryEnabled = true;
     if (cfg.check("no-battery", "[C] Disable battery")) {
         batteryEnabled = false;
     }
-
-//    userHeight = cfg.check("userHeight", yarp::os::Value(0.),  "User height").asDouble();
-
 
     prediction = cfg.check("prediction", yarp::os::Value(0.01), "Prediction [sec]").asDouble();
 
@@ -361,8 +322,8 @@ bool yarp::dev::OVRHeadset::open(yarp::os::Searchable& cfg)
     }
 
     // Enable display port callbacks
-    for (int i=0; i<2; i++) {
-        displayPorts[i]->useCallback();
+    for (int eye = 0; eye < ovrEye_Count; ++eye) {
+        displayPorts[eye]->useCallback();
     }
 
     return true;
@@ -371,12 +332,7 @@ bool yarp::dev::OVRHeadset::open(yarp::os::Searchable& cfg)
 bool yarp::dev::OVRHeadset::threadInit()
 {
     yTrace();
-
-#if OVR_PRODUCT_VERSION == 0 && OVR_MAJOR_VERSION <= 8
-    OVR::System::Init(OVR::Log::ConfigureDefaultLog(OVR::LogMask_All));
-#else
     OVR::System::Init();
-#endif
 
     // Initializes LibOVR, and the Rift
     ovrInitParams initParams = { ovrInit_RequestVersion, OVR_MINOR_VERSION, ovrDebugCallback, reinterpret_cast<uintptr_t>(this), 0 };
@@ -393,47 +349,6 @@ bool yarp::dev::OVRHeadset::threadInit()
 //    }
 
     // Detect and initialize Oculus Rift
-
-#if OVR_PRODUCT_VERSION == 0 && OVR_MAJOR_VERSION <= 5
-    hmd = ovrHmd_Create(0);
-    if (hmd) {
-        yInfo() << "Oculus Rift FOUND.";
-    } else {
-        yWarning() << "Oculus Rift NOT FOUND. Using debug device.";
-        hmd = ovrHmd_CreateDebug(ovrHmd_DK2);
-    }
-
-    // If still not existing, we failed initializing it.
-    if (!hmd) {
-        yError() << "Oculus Rift not detected.";
-        this->close();
-        return false;
-    }
-#elif OVR_PRODUCT_VERSION == 0 && OVR_MAJOR_VERSION <= 6
-    ovrResult result = ovrHmd_Create(0, &hmd);
-    if (OVR_SUCCESS(result)) {
-        yInfo() << "Oculus Rift FOUND.";
-    } else {
-        yWarning() << "Oculus Rift NOT FOUND. Using debug device.";
-        result = ovrHmd_CreateDebug(ovrHmd_DK2, &hmd);
-    }
-    // If still not existing, we failed initializing it.
-    if (!OVR_SUCCESS(result)) {
-        yError() << "Oculus Rift not detected.";
-        this->close();
-        return false;
-    }
-#elif OVR_PRODUCT_VERSION == 0 && OVR_MAJOR_VERSION <= 7
-    ovrGraphicsLuid luid;
-    ovrResult result = ovr_Create(&hmd, &luid);
-    if (!OVR_SUCCESS(result)) {
-        yError() << "Oculus Rift not detected.";
-        this->close();
-        return false;
-    }
-
-    hmdDesc = ovr_GetHmdDesc(hmd);
-#else
     ovrGraphicsLuid luid;
     ovrResult result = ovr_Create(&session, &luid);
     if (!OVR_SUCCESS(result)) {
@@ -449,27 +364,17 @@ bool yarp::dev::OVRHeadset::threadInit()
         return false;
     }
 
-    // FIXME
-    // FloorLevel will give tracking poses where the floor height is 0
-    // ovr_SetTrackingOriginType(session, ovrTrackingOrigin_FloorLevel);
+    // FIXME: Which one is better in this case?
+    // ovrTrackingOrigin_FloorLevel will give tracking poses where the floor height is 0
+    // ovrTrackingOrigin_EyeLevel will give tracking poses where the eye height is 0
     ovr_SetTrackingOriginType(session, ovrTrackingOrigin_EyeLevel);
 
     hmdDesc = ovr_GetHmdDesc(session);
-#endif
-
-#if OVR_PRODUCT_VERSION == 0 && OVR_MAJOR_VERSION <= 6
-    if (hmd->ProductName[0] == '\0') {
-#else
     if (hmdDesc.ProductName[0] == '\0') {
-#endif
         yWarning() << "Rift detected, display not enabled.";
     }
 
-#if OVR_PRODUCT_VERSION == 0 && OVR_MAJOR_VERSION <= 6
-    DebugHmd(hmd);
-#else
     DebugHmd(hmdDesc);
-#endif
 
     // Initialize the GLFW system for creating and positioning windows
     // GLFW must be initialized after LibOVR
@@ -481,20 +386,9 @@ bool yarp::dev::OVRHeadset::threadInit()
     }
     glfwSetErrorCallback(glfwErrorCallback);
 
-//    bool windowed = (hmd->HmdCaps & ovrHmdCap_ExtendDesktop) ? false : true;
-#if OVR_PRODUCT_VERSION == 0 && OVR_MAJOR_VERSION <= 6
-    OVR::Sizei windowSize = hmd->Resolution;
-#else
     OVR::Sizei windowSize = hmdDesc.Resolution;
-#endif
 
-
-#if OVR_PRODUCT_VERSION == 0 && OVR_MAJOR_VERSION <= 5
-    if (!createWindow(windowSize.w, windowSize.h, hmd->WindowsPos.x, hmd->WindowsPos.y)) {
-#else
-    // FIXME 0.5->0.6
-    if (!createWindow(windowSize.w, windowSize.h, 0, 0)) {
-#endif
+    if (!createWindow(windowSize.w, windowSize.h)) {
         yError() << "Failed to create window";
         this->close();
         return false;
@@ -517,63 +411,21 @@ bool yarp::dev::OVRHeadset::threadInit()
     int fbwidth, fbheight;
     glfwGetFramebufferSize(window, &fbwidth, &fbheight);
 
-
-#if OVR_PRODUCT_VERSION == 0 && OVR_MAJOR_VERSION <= 5
-    config.OGL.Header.API              = ovrRenderAPI_OpenGL;
-    config.OGL.Header.BackBufferSize.w = fbwidth;
-    config.OGL.Header.BackBufferSize.h = fbheight;
-    config.OGL.Header.Multisample      = (multiSampleEnabled ? 1 : 0);
-#if defined(_WIN32)
-    config.OGL.Window = glfwGetWin32Window(window);
-    config.OGL.DC     = GetDC(glfwGetWin32Window(window));
-#elif defined(__APPLE__)
-#elif defined(__linux__)
-    config.OGL.Disp = glfwGetX11Display();
-#endif
-#else
-    // FIXME 0.5->0.6
-#endif
-
-    for (int i = 0; i < 2; ++i) {
-        camWidth[i] = texWidth;
-        camHeight[i] = texHeight;
+    for (int eye = 0; eye < ovrEye_Count; ++eye) {
+        camWidth[eye] = texWidth;
+        camHeight[eye] = texHeight;
     }
     reconfigureFOV();
 
     reconfigureRendering();
 
-#if OVR_PRODUCT_VERSION == 0 && OVR_MAJOR_VERSION <= 6
-    ovrHmd_SetEnabledCaps(hmd, ovrHmdCap_LowPersistence |
-                               ovrHmdCap_DynamicPrediction);
-#else
-// FIXME 0.6->0.7: No longer needed?
-#endif
-
-#if OVR_PRODUCT_VERSION == 0 && OVR_MAJOR_VERSION <= 5
-#if defined(_WIN32)
-    ovrHmd_AttachToWindow(hmd, glfwGetWin32Window(window), nullptr, nullptr);
-#endif
-
-    ovrHmd_DismissHSWDisplay(hmd);
-#else
-// FIXME 0.6->0.7: No longer needed?
-#endif
-
-
-    for (int i=0; i<2; i++)
-    {
-#if OVR_PRODUCT_VERSION == 0 && OVR_MAJOR_VERSION <= 5
-        displayPorts[i]->eyeRenderTexture = new TextureBuffer(texWidth, texHeight, i);
-#elif OVR_PRODUCT_VERSION == 0 && OVR_MAJOR_VERSION <= 7
-        displayPorts[i]->eyeRenderTexture = new TextureBuffer(texWidth, texHeight, i, hmd);
-#else
-        displayPorts[i]->eyeRenderTexture = new TextureBuffer(texWidth, texHeight, i, session);
-#endif
+    for (int eye = 0; eye < ovrEye_Count; ++eye) {
+        displayPorts[eye]->eyeRenderTexture = new TextureBuffer(texWidth, texHeight, eye, session);
     }
 
     textureLogo = new TextureStatic(session, yarp_logo);
     textureCrosshairs = new TextureStatic(session, crosshairs);
-    textureBattery = new TextureBattery(session);
+    textureBattery = new TextureBattery(session, batteryEnabled);
 
     ovrMirrorTextureDesc desc;
     memset(&desc, 0, sizeof(desc));
@@ -600,34 +452,8 @@ bool yarp::dev::OVRHeadset::threadInit()
     glFramebufferRenderbuffer(GL_READ_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, GL_RENDERBUFFER, 0);
     glBindFramebuffer(GL_READ_FRAMEBUFFER, 0);
 
-
-
-
-#if OVR_PRODUCT_VERSION == 0 && OVR_MAJOR_VERSION <= 6
-    // Start the sensor which provides the Rift's pose and motion.
-    ovrHmd_ConfigureTracking(hmd, ovrTrackingCap_Orientation |
-                                  ovrTrackingCap_MagYawCorrection |
-                                  ovrTrackingCap_Position , 0);
-
-    // Recenter position
-    ovrHmd_RecenterPose(hmd);
-#elif OVR_PRODUCT_VERSION == 0 && OVR_MAJOR_VERSION <= 7
-    // Start the sensor which provides the Rift's pose and motion.
-    ovr_ConfigureTracking(hmd, ovrTrackingCap_Orientation |
-                               ovrTrackingCap_MagYawCorrection |
-                               ovrTrackingCap_Position, 0);
-
-    // Recenter position
-    ovr_RecenterPose(hmd);
-#elif OVR_PRODUCT_VERSION == 0 && OVR_MAJOR_VERSION <= 8
-    // FIXME 0.7->0.8: ovr_ConfigureTracking is no longer needed
-
-    // Recenter position
-    ovr_RecenterPose(session);
-#else
     // Recenter position
     ovr_RecenterTrackingOrigin(session);
-#endif
 
     checkGlErrorMacro;
 
@@ -671,19 +497,6 @@ void yarp::dev::OVRHeadset::threadRelease()
     glfwTerminate();
 
     // Shut down LibOVR
-#if OVR_PRODUCT_VERSION == 0 && OVR_MAJOR_VERSION <= 6
-    if (hmd) {
-        ovrHmd_Destroy(hmd);
-        hmd = 0;
-        ovr_Shutdown();
-    }
-#elif OVR_PRODUCT_VERSION == 0 && OVR_MAJOR_VERSION <= 7
-    if (hmd) {
-        ovr_Destroy(hmd);
-        hmd = 0;
-        ovr_Shutdown();
-    }
-#else
     if (session) {
         // Disable Performance Hud Mode before destroying the session,
         // or it will stay after the device is closed.
@@ -694,7 +507,6 @@ void yarp::dev::OVRHeadset::threadRelease()
         session = 0;
         ovr_Shutdown();
     }
-#endif
 
     if (orientationPort) {
         orientationPort->interrupt();
@@ -772,13 +584,13 @@ void yarp::dev::OVRHeadset::threadRelease()
     }
 
 
-    for (int i = 0; i < 2; ++i) {
-        if (displayPorts[i]) {
-            displayPorts[i]->disableCallback();
-            displayPorts[i]->interrupt();
-            displayPorts[i]->close();
-            delete displayPorts[i];
-            displayPorts[i] = nullptr;
+    for (int eye = 0; eye < ovrEye_Count; ++eye) {
+        if (displayPorts[eye]) {
+            displayPorts[eye]->disableCallback();
+            displayPorts[eye]->interrupt();
+            displayPorts[eye]->close();
+            delete displayPorts[eye];
+            displayPorts[eye] = nullptr;
         }
     }
 }
@@ -810,17 +622,17 @@ bool yarp::dev::OVRHeadset::updateService()
            getEstUsed());
     yDebug("Display refresh: %3.1f[hz]", getIterations()/delay);
 
-    for (int i = 0; i < 2; ++i) {
+    for (int eye = 0; eye < ovrEye_Count; ++eye) {
         yDebug("%s eye: %3.1f[hz] - %d of %d frames missing, %d of %d frames dropped",
-               (i == 0 ? "Left " : "Right"),
-               (getIterations() - displayPorts[i]->eyeRenderTexture->missingFrames) / delay,
-               displayPorts[i]->eyeRenderTexture->missingFrames,
+               (eye == ovrEye_Left ? "Left " : "Right"),
+               (getIterations() - displayPorts[eye]->eyeRenderTexture->missingFrames) / delay,
+               displayPorts[eye]->eyeRenderTexture->missingFrames,
                getIterations(),
-               displayPorts[i]->droppedFrames,
+               displayPorts[eye]->droppedFrames,
                getIterations());
-        displayPorts[i]->eyeRenderTexture->missingFrames = 0;
+        displayPorts[eye]->eyeRenderTexture->missingFrames = 0;
         getIterations(),
-        displayPorts[i]->droppedFrames = 0;
+        displayPorts[eye]->droppedFrames = 0;
     }
 
     resetStat();
@@ -904,58 +716,22 @@ void yarp::dev::OVRHeadset::run()
 
     // Begin frame
     ++distortionFrameIndex;
-#if OVR_PRODUCT_VERSION == 0 && OVR_MAJOR_VERSION <= 5
-    ovrFrameTiming frameTiming = ovrHmd_BeginFrame(hmd, distortionFrameIndex);
-    // FIXME 0.5->0.6 no longer used (was used in ovr_WaitTillTime())
-#elif OVR_PRODUCT_VERSION == 0 && OVR_MAJOR_VERSION <= 6
-    ovrFrameTiming frameTiming = ovrHmd_GetFrameTiming(hmd, distortionFrameIndex);
-#elif OVR_PRODUCT_VERSION == 0 && OVR_MAJOR_VERSION <= 7
-    ovrFrameTiming frameTiming = ovr_GetFrameTiming(hmd, distortionFrameIndex);
-#else
     double frameTiming = ovr_GetPredictedDisplayTime(session, distortionFrameIndex);
-#endif
 
     // Query the HMD for the current tracking state.
-#if OVR_PRODUCT_VERSION == 0 && OVR_MAJOR_VERSION <= 6
-    ovrTrackingState ts = ovrHmd_GetTrackingState(hmd, ovr_GetTimeInSeconds());
-#elif OVR_PRODUCT_VERSION == 0 && OVR_MAJOR_VERSION <= 7
-    ovrTrackingState ts = ovr_GetTrackingState(hmd, ovr_GetTimeInSeconds());
-#else
-    // FIXME 0.7->0.8: What is latencyMarker?
-    ovrBool latencyMarker = false;
-    ovrTrackingState ts = ovr_GetTrackingState(session, ovr_GetTimeInSeconds(), latencyMarker);
-#endif
+    ovrTrackingState ts = ovr_GetTrackingState(session, ovr_GetTimeInSeconds(), false);
     ovrPoseStatef headpose = ts.HeadPose;
     yarp::os::Stamp stamp(distortionFrameIndex, ts.HeadPose.TimeInSeconds);
 
     //Get eye poses, feeding in correct IPD offset
-#if OVR_PRODUCT_VERSION == 0 && OVR_MAJOR_VERSION <= 8
-    ovrVector3f ViewOffset[2] = {EyeRenderDesc[0].HmdToEyeViewOffset,EyeRenderDesc[1].HmdToEyeViewOffset};
-#else
-ovrVector3f ViewOffset[2] = {EyeRenderDesc[0].HmdToEyeOffset,EyeRenderDesc[1].HmdToEyeOffset};
-#endif
+    ovrVector3f ViewOffset[2] = {EyeRenderDesc[0].HmdToEyeOffset,EyeRenderDesc[1].HmdToEyeOffset};
     ovrPosef EyeRenderPose[2];
-#if OVR_PRODUCT_VERSION == 0 && OVR_MAJOR_VERSION <= 5
-    ovrTrackingState ts_eyes;
-    ovrHmd_GetEyePoses(hmd, distortionFrameIndex, ViewOffset, EyeRenderPose, &ts_eyes);
-#else
     ovr_CalcEyePoses(headpose.ThePose, ViewOffset, EyeRenderPose);
-#endif
-
 
     // Query the HMD for the predicted state
-#if OVR_PRODUCT_VERSION == 0 && OVR_MAJOR_VERSION <= 6
-    ovrTrackingState predicted_ts = ovrHmd_GetTrackingState(hmd, ovr_GetTimeInSeconds() + prediction);
-#elif OVR_PRODUCT_VERSION == 0 && OVR_MAJOR_VERSION <= 7
-    ovrTrackingState predicted_ts = ovr_GetTrackingState(hmd, ovr_GetTimeInSeconds() + prediction);
-#else
-    // FIXME 0.7->0.8: What is latencyMarker?
-    latencyMarker = false;
-    ovrTrackingState predicted_ts = ovr_GetTrackingState(session, ovr_GetTimeInSeconds() + prediction, latencyMarker);
-#endif
+    ovrTrackingState predicted_ts = ovr_GetTrackingState(session, ovr_GetTimeInSeconds() + prediction, false);
     ovrPoseStatef predicted_headpose = predicted_ts.HeadPose;
     yarp::os::Stamp predicted_stamp(distortionFrameIndex, predicted_ts.HeadPose.TimeInSeconds);
-
 
     // Read orientation and write it on the port
     if (ts.StatusFlags & ovrStatus_OrientationTracked) {
@@ -1132,67 +908,46 @@ ovrVector3f ViewOffset[2] = {EyeRenderDesc[0].HmdToEyeOffset,EyeRenderDesc[1].Hm
 
     if(displayPorts[0]->eyeRenderTexture && displayPorts[1]->eyeRenderTexture) {
         // Do distortion rendering, Present and flush/sync
-#if OVR_PRODUCT_VERSION == 0 && OVR_MAJOR_VERSION <= 5
-        ovrGLTexture eyeTex[2];
-        for (int i = 0; i<2; ++i) {
-            eyeTex[i].OGL.Header.API = ovrRenderAPI_OpenGL;
-            eyeTex[i].OGL.Header.TextureSize = OVR::Sizei(displayPorts[i]->eyeRenderTexture->width, displayPorts[i]->eyeRenderTexture->height);
-            eyeTex[i].OGL.Header.RenderViewport = OVR::Recti(0, 0, displayPorts[i]->eyeRenderTexture->width, displayPorts[i]->eyeRenderTexture->height);
-            eyeTex[i].OGL.TexId = displayPorts[i]->eyeRenderTexture->texId;
-        }
-#endif
-
-        // Wait till time-warp point to reduce latency.
-#if OVR_PRODUCT_VERSION == 0 && OVR_MAJOR_VERSION <= 5
-        ovr_WaitTillTime(frameTiming.TimewarpPointSeconds - 0.001);
-#endif
 
         //static double ttt =yarp::os::Time::now();
         //yDebug () << yarp::os::Time::now() - ttt;
         //ttt = yarp::os::Time::now();
         // Update the textures
-        for (int i = 0; i<2; i++) {
-            displayPorts[i]->eyeRenderTexture->update();
+        for (int eye = 0; eye < ovrEye_Count; ++eye) {
+            displayPorts[eye]->eyeRenderTexture->update();
         }
 
 
-        for (int i = 0; i<2; i++) {
+        for (int eye = 0; eye < ovrEye_Count; ++eye) {
             if (imagePoseEnabled) {
                 if (userPoseEnabled) {
                     // Use orientation read from the HMD at the beginning of the frame
-                    EyeRenderPose[i].Orientation = headpose.ThePose.Orientation;
+                    EyeRenderPose[eye].Orientation = headpose.ThePose.Orientation;
                 } else {
                     // Use orientation received from the image
-                    EyeRenderPose[i].Orientation = displayPorts[i]->eyeRenderTexture->eyePose.Orientation;
+                    EyeRenderPose[eye].Orientation = displayPorts[eye]->eyeRenderTexture->eyePose.Orientation;
                 }
             } else {
-                EyeRenderPose[i].Orientation.w = -1.0f;
-                EyeRenderPose[i].Orientation.x = 0.0f;
-                EyeRenderPose[i].Orientation.y = 0.0f;
-                EyeRenderPose[i].Orientation.z = 0.0f;
+                EyeRenderPose[eye].Orientation.w = -1.0f;
+                EyeRenderPose[eye].Orientation.x = 0.0f;
+                EyeRenderPose[eye].Orientation.y = 0.0f;
+                EyeRenderPose[eye].Orientation.z = 0.0f;
             }
         }
 
-//        if (userHeight != 0) {
-//            for (int i = 0; i<2; i++) {
-//                EyeRenderPose[i].Position.y += static_cast<float>(userHeight);
-//            }
-//        }
-
-
-//          for (int i = 0; i<2; i++) {
-//              debugPose(displayPorts[i]->eyeRenderTexture->eyePose, (i==0?"camera left":"camera right"));
-//              debugPose(EyeRenderPose[i], (i==0?"render left":"render right"));
+//          for (int eye = 0; eye < ovrEye_Count; ++eye) {
+//              debugPose(displayPorts[eye]->eyeRenderTexture->eyePose, (eye == ovrEye_Left ? "camera left" : "camera right"));
+//              debugPose(EyeRenderPose[eye], (eye == ovrEye_Left ? "render left" : "render right"));
 //          }
 
         // If the image size is different from the texture size,
         bool needReconfigureFOV = false;
-        for (int i = 0; i<2; i++) {
-            if ((displayPorts[i]->eyeRenderTexture->imageWidth != 0 && displayPorts[i]->eyeRenderTexture->imageWidth != camWidth[i]) ||
-                (displayPorts[i]->eyeRenderTexture->imageHeight != 0 && displayPorts[i]->eyeRenderTexture->imageHeight != camHeight[i])) {
+        for (int eye = 0; eye < ovrEye_Count; ++eye) {
+            if ((displayPorts[eye]->eyeRenderTexture->imageWidth != 0 && displayPorts[eye]->eyeRenderTexture->imageWidth != camWidth[eye]) ||
+                (displayPorts[eye]->eyeRenderTexture->imageHeight != 0 && displayPorts[eye]->eyeRenderTexture->imageHeight != camHeight[eye])) {
 
-                camWidth[i] = displayPorts[i]->eyeRenderTexture->imageWidth;
-                camHeight[i] = displayPorts[i]->eyeRenderTexture->imageHeight;
+                camWidth[eye] = displayPorts[eye]->eyeRenderTexture->imageWidth;
+                camHeight[eye] = displayPorts[eye]->eyeRenderTexture->imageHeight;
                 needReconfigureFOV = true;
             }
         }
@@ -1201,24 +956,18 @@ ovrVector3f ViewOffset[2] = {EyeRenderDesc[0].HmdToEyeOffset,EyeRenderDesc[1].Hm
             reconfigureRendering();
         }
 
-#if OVR_PRODUCT_VERSION == 0 && OVR_MAJOR_VERSION <= 5
-        // End frame
-        ovrHmd_EndFrame(hmd, EyeRenderPose, &eyeTex[0].Texture);
-#else
         std::list<ovrLayerHeader*> layerList;
 
         ovrLayerEyeFov eyeLayer;
         eyeLayer.Header.Type = ovrLayerType_EyeFov;
-        eyeLayer.Header.Flags = ovrLayerFlag_HighQuality | ovrLayerFlag_TextureOriginAtBottomLeft;
-        eyeLayer.Header.Flags = 0;
-        for (int eye = 0; eye < 2; eye++) {
-# if OVR_PRODUCT_VERSION == 0 && OVR_MAJOR_VERSION <= 8
-            eyeLayer.ColorTexture[eye] = displayPorts[eye]->eyeRenderTexture->textureSet;
-# else
+        eyeLayer.Header.Flags = ovrLayerFlag_HighQuality;
+        if (flipInputEnabled) {
+            eyeLayer.Header.Flags |= ovrLayerFlag_TextureOriginAtBottomLeft;
+        }
+        for (int eye = 0; eye < 2; ++eye) {
             eyeLayer.ColorTexture[eye] = displayPorts[eye]->eyeRenderTexture->textureSwapChain;
-# endif
             eyeLayer.Viewport[eye] = OVR::Recti(0, 0, displayPorts[eye]->eyeRenderTexture->width, displayPorts[eye]->eyeRenderTexture->height);
-            eyeLayer.Fov[eye] = fov[eye]; // FIXME 0.5->0.6 hmd->DefaultEyeFov[eye]; ?
+            eyeLayer.Fov[eye] = fov[eye];
             eyeLayer.RenderPose[eye] = EyeRenderPose[eye];
         }
 
@@ -1229,7 +978,7 @@ ovrVector3f ViewOffset[2] = {EyeRenderDesc[0].HmdToEyeOffset,EyeRenderDesc[1].Hm
         ovrLayerQuad logoLayer;
         if (logoEnabled) {
             logoLayer.Header.Type = ovrLayerType_Quad;
-            logoLayer.Header.Flags = ovrLayerFlag_HighQuality | ovrLayerFlag_HeadLocked;
+            logoLayer.Header.Flags = ovrLayerFlag_HeadLocked;
             logoLayer.ColorTexture = textureLogo->textureSwapChain;
 
             // 50cm in front and 20cm down from the player's nose,
@@ -1253,7 +1002,7 @@ ovrVector3f ViewOffset[2] = {EyeRenderDesc[0].HmdToEyeOffset,EyeRenderDesc[1].Hm
         ovrLayerQuad crosshairsLayer;
         if (crosshairsEnabled) {
             crosshairsLayer.Header.Type = ovrLayerType_Quad;
-            crosshairsLayer.Header.Flags = ovrLayerFlag_HighQuality | ovrLayerFlag_HeadLocked;
+            crosshairsLayer.Header.Flags = ovrLayerFlag_HeadLocked;
             crosshairsLayer.ColorTexture = textureCrosshairs->textureSwapChain;
 
             // 50cm in front and 20cm down from the player's nose,
@@ -1277,7 +1026,7 @@ ovrVector3f ViewOffset[2] = {EyeRenderDesc[0].HmdToEyeOffset,EyeRenderDesc[1].Hm
         ovrLayerQuad batteryLayer;
         if (batteryEnabled) {
             batteryLayer.Header.Type = ovrLayerType_Quad;
-            batteryLayer.Header.Flags = ovrLayerFlag_HighQuality | ovrLayerFlag_HeadLocked;
+            batteryLayer.Header.Flags = ovrLayerFlag_HeadLocked;
             batteryLayer.ColorTexture = textureBattery->currentTexture->textureSwapChain;
 
             // 50cm in front and 20cm down from the player's nose,
@@ -1298,17 +1047,9 @@ ovrVector3f ViewOffset[2] = {EyeRenderDesc[0].HmdToEyeOffset,EyeRenderDesc[1].Hm
             layerList.push_back(&batteryLayer.Header);
         }
 
-
         ovrLayerHeader** layers = new ovrLayerHeader*[layerList.size()];
         std::copy(layerList.begin(), layerList.end(), layers);
-
-# if OVR_PRODUCT_VERSION == 0 && OVR_MAJOR_VERSION <= 6
-        ovrResult result = ovrHmd_SubmitFrame(hmd, distortionFrameIndex, nullptr, &layers, layerCount);
-# elif OVR_PRODUCT_VERSION == 0 && OVR_MAJOR_VERSION <= 7
-        ovrResult result = ovr_SubmitFrame(hmd, distortionFrameIndex, nullptr, &layers, layerCount);
-# else
         ovrResult result = ovr_SubmitFrame(session, distortionFrameIndex, nullptr, layers, layerList.size());
-# endif
         delete layers;
 
         // Blit mirror texture to back buffer
@@ -1321,10 +1062,9 @@ ovrVector3f ViewOffset[2] = {EyeRenderDesc[0].HmdToEyeOffset,EyeRenderDesc[1].Hm
         glBlitFramebuffer(0, bh, bw, 0, 0, 0, ww, wh, GL_COLOR_BUFFER_BIT, GL_NEAREST);
         glBindFramebuffer(GL_READ_FRAMEBUFFER, 0);
 
-        // FIXME        checkGlErrorMacro;
+        checkGlErrorMacro;
 
         glfwSwapBuffers(window);
-#endif
 
     } else {
         // Do not warn more than once every 5 seconds
@@ -1337,91 +1077,22 @@ ovrVector3f ViewOffset[2] = {EyeRenderDesc[0].HmdToEyeOffset,EyeRenderDesc[1].Hm
     }
 }
 
-GLFWmonitor* yarp::dev::OVRHeadset::detectMonitor()
-{
-    int count;
-    GLFWmonitor** monitors = glfwGetMonitors(&count);
-    for (int i = 0;  i < count;  i++) {
-#if defined(_WIN32)
-#if OVR_PRODUCT_VERSION == 0 && OVR_MAJOR_VERSION <= 5
-        if (strcmp(glfwGetWin32Monitor(monitors[i]), hmd->DisplayDeviceName) == 0) {
-            return monitors[i];
-        }
-#else
-        // FIXME 0.5->0.6
-#endif
-#elif defined(__APPLE__)
-        if (glfwGetCocoaMonitor(monitors[i]) == hmd->DisplayId) {
-            return monitors[i];
-        }
-#elif defined(__linux__)
-        int xpos, ypos;
-        const GLFWvidmode* mode = glfwGetVideoMode(monitors[i]);
-        glfwGetMonitorPos(monitors[i], &xpos, &ypos);
-        // NOTE on linux the screen is rotated, so we must match hmd width with
-        //      screen height and vice versa
-        if (hmd->WindowsPos.x == xpos &&
-            hmd->WindowsPos.y == ypos &&
-            hmd->Resolution.w == mode->height &&
-            hmd->Resolution.h == mode->width) {
-            return monitors[i];
-        }
-#endif
-    }
-    return nullptr;
-}
-
-
-bool yarp::dev::OVRHeadset::createWindow(int w, int h, int x, int y)
+bool yarp::dev::OVRHeadset::createWindow(int w, int h)
 {
     yTrace();
-
-#if !defined(_WIN32)
-    GLFWmonitor* monitor = detectMonitor();
-    if (monitor) {
-        const GLFWvidmode* mode = glfwGetVideoMode(monitor);
-        glfwWindowHint(GLFW_RED_BITS, mode->redBits);
-        glfwWindowHint(GLFW_GREEN_BITS, mode->greenBits);
-        glfwWindowHint(GLFW_BLUE_BITS, mode->blueBits);
-        glfwWindowHint(GLFW_REFRESH_RATE, mode->refreshRate);
-        glfwWindowHint(GLFW_DECORATED, GL_FALSE);
-    } else {
-       yWarning() << "Could not detect monitor";
-    }
-#endif
-
     glfwWindowHint(GLFW_DEPTH_BITS, 16);
-
-#if defined(_WIN32)
     window = glfwCreateWindow(w/2, h/2, "YARP Oculus", nullptr, nullptr);
-#elif !defined(__linux__)
-    window = glfwCreateWindow(w, h, "YARP Oculus", monitor, nullptr);
-#else
-    // On linux, the display is rotated
-    if (monitor) {
-        window = glfwCreateWindow(h, w, "YARP Oculus", monitor, nullptr);
-    } else {
-        // Using debug hmd
-        window = glfwCreateWindow(w/2, h/2, "YARP Oculus", monitor, nullptr);
-    }
-#endif
-
     if (!window) {
         yError() << "Could not create window";
         return false;
     }
 
     glfwSetWindowUserPointer(window, this);
-#if !defined(_WIN32)
-    glfwSetWindowPos(window, x, y);
-#endif
     glfwSetKeyCallback(window, glfwKeyCallback);
     glfwMakeContextCurrent(window);
 
     return true;
 }
-
-
 
 void yarp::dev::OVRHeadset::onKey(int key, int scancode, int action, int mods)
 {
@@ -1441,21 +1112,13 @@ void yarp::dev::OVRHeadset::onKey(int key, int scancode, int action, int mods)
 
         if (!leftShiftPressed && !rightShiftPressed) {
             yDebug() << "Recentering pose";
-#if OVR_PRODUCT_VERSION == 0 && OVR_MAJOR_VERSION <= 6
-            ovrHmd_RecenterPose(hmd);
-#elif OVR_PRODUCT_VERSION == 0 && OVR_MAJOR_VERSION <= 7
-            ovr_RecenterPose(hmd);
-#elif OVR_PRODUCT_VERSION == 0 && OVR_MAJOR_VERSION <= 8
-            ovr_RecenterPose(session);
-#else
             ovr_RecenterTrackingOrigin(session);
-#endif
         } else {
             yDebug() << "Resetting yaw offset to current position";
-            for (int i = 0; i < 2; ++i) {
+            for (int eye = 0; eye < ovrEye_Count; ++eye) {
                 float iyaw, ipitch, iroll;
                 if (imagePoseEnabled) {
-                    OVR::Quatf imageOrientation = displayPorts[i]->eyeRenderTexture->eyePose.Orientation;
+                    OVR::Quatf imageOrientation = displayPorts[eye]->eyeRenderTexture->eyePose.Orientation;
                     imageOrientation.GetEulerAngles<OVR::Axis_Y, OVR::Axis_X, OVR::Axis_Z>(&iyaw, &ipitch, &iroll);
                 } else {
                     iyaw = 0.0f;
@@ -1463,35 +1126,15 @@ void yarp::dev::OVRHeadset::onKey(int key, int scancode, int action, int mods)
                     iyaw = 0.0f;
                 }
 
-                iyaw -= displayPorts[i]->yawOffset;
-                displayPorts[i]->yawOffset = - iyaw;
-                yDebug() << (i==0? "Left" : "Right") << "eye yaw offset =" << displayPorts[i]->yawOffset;
+                iyaw -= displayPorts[eye]->yawOffset;
+                displayPorts[eye]->yawOffset = - iyaw;
+                yDebug() << (eye == ovrEye_Left? "Left" : "Right") << "eye yaw offset =" << displayPorts[eye]->yawOffset;
             }
         }
-        break;
-    case GLFW_KEY_T:
-        timeWarpEnabled = !timeWarpEnabled;
-        yDebug() << "Timewarp" << (timeWarpEnabled ? "ON" : "OFF");
-        reconfigureRendering();
-        break;
-    case GLFW_KEY_M:
-        multiSampleEnabled = !multiSampleEnabled;
-        yDebug() << "Multisample" << (multiSampleEnabled ? "ON" : "OFF");
-        reconfigureRendering();
         break;
     case GLFW_KEY_F:
         flipInputEnabled = !flipInputEnabled;
         yDebug() << "Flip input" << (flipInputEnabled ? "ON" : "OFF");
-        reconfigureRendering();
-        break;
-    case GLFW_KEY_H:
-        hqDistortionEnabled = !hqDistortionEnabled;
-        yDebug() << "High quality distortion" << (hqDistortionEnabled ? "ON" : "OFF");
-        reconfigureRendering();
-        break;
-    case GLFW_KEY_O:
-        overdriveEnabled = !overdriveEnabled;
-        yDebug() << "Overdrive" << (overdriveEnabled ? "ON" : "OFF");
         reconfigureRendering();
         break;
     case GLFW_KEY_I:
@@ -1518,6 +1161,11 @@ void yarp::dev::OVRHeadset::onKey(int key, int scancode, int action, int mods)
         break;
     case GLFW_KEY_B:
         batteryEnabled = !batteryEnabled;
+        if (batteryEnabled) {
+            textureBattery->resume();
+        } else {
+            textureBattery->suspend();
+        }
         yDebug() << "Overlays:" <<
             "Logo" << (logoEnabled ? "ON" : "OFF") <<
             "Crosshairs" << (crosshairsEnabled ? "ON" : "OFF") <<
@@ -1625,45 +1273,25 @@ void yarp::dev::OVRHeadset::onKey(int key, int scancode, int action, int mods)
 
 void yarp::dev::OVRHeadset::reconfigureRendering()
 {
-#if OVR_PRODUCT_VERSION == 0 && OVR_MAJOR_VERSION <= 5
-    config.OGL.Header.Multisample = multiSampleEnabled ? 1 : 0;
-
-    unsigned int distortionCaps = 0;
-    distortionCaps |= ovrDistortionCap_Vignette;
-    if (timeWarpEnabled)      distortionCaps |= ovrDistortionCap_TimeWarp;
-    if (overdriveEnabled)     distortionCaps |= ovrDistortionCap_Overdrive;
-    if (hqDistortionEnabled)  distortionCaps |= ovrDistortionCap_HqDistortion;
-    if (flipInputEnabled)     distortionCaps |= ovrDistortionCap_FlipInput;
-
-    ovrHmd_ConfigureRendering(hmd, &config.Config, distortionCaps, fov, EyeRenderDesc);
-#else
-    // FIXME 0.5->0.6
-    for (int i = 0; i < ovrEye_Count; ++i) {
-#if OVR_PRODUCT_VERSION == 0 && OVR_MAJOR_VERSION <= 6
-        ovrHmd_GetRenderDesc(hmd, (ovrEyeType)i, fov[i]);
-#elif OVR_PRODUCT_VERSION == 0 && OVR_MAJOR_VERSION <= 7
-        ovr_GetRenderDesc(hmd, (ovrEyeType)i, fov[i]);
-#else
-        ovr_GetRenderDesc(session, (ovrEyeType)i, fov[i]);
-#endif
+    for (int eye = 0; eye < ovrEye_Count; ++eye) {
+        ovr_GetRenderDesc(session, (ovrEyeType)eye, fov[eye]);
     }
-#endif
 }
 
 
 
 void yarp::dev::OVRHeadset::reconfigureFOV()
 {
-    for (int i = 0; i < 2; ++i) {
-        double camHFOV_rad = OVR::DegreeToRad(camHFOV[i]);
-        double texCamRatio = static_cast<double>(texWidth)/camWidth[i];
+    for (int eye = 0; eye < ovrEye_Count; ++eye) {
+        double camHFOV_rad = OVR::DegreeToRad(camHFOV[eye]);
+        double texCamRatio = static_cast<double>(texWidth)/camWidth[eye];
         double texHFOV_rad = 2 * (atan(texCamRatio * tan(camHFOV_rad/2)));
 
         double aspectRatio = static_cast<double>(texWidth)/texHeight;
-        fov[i].UpTan    = static_cast<float>(fabs(tan(texHFOV_rad/2)/aspectRatio));
-        fov[i].DownTan  = static_cast<float>(fabs(tan(texHFOV_rad/2)/aspectRatio));
-        fov[i].LeftTan  = static_cast<float>(fabs(tan(texHFOV_rad/2)));
-        fov[i].RightTan = static_cast<float>(fabs(tan(texHFOV_rad/2)));
+        fov[eye].UpTan    = static_cast<float>(fabs(tan(texHFOV_rad/2)/aspectRatio));
+        fov[eye].DownTan  = static_cast<float>(fabs(tan(texHFOV_rad/2)/aspectRatio));
+        fov[eye].LeftTan  = static_cast<float>(fabs(tan(texHFOV_rad/2)));
+        fov[eye].RightTan = static_cast<float>(fabs(tan(texHFOV_rad/2)));
     }
     debugFov(fov);
 }
@@ -1677,17 +1305,11 @@ void yarp::dev::OVRHeadset::glfwKeyCallback(GLFWwindow* window, int key, int sca
 void yarp::dev::OVRHeadset::glfwErrorCallback(int error, const char* description)
 {
     yError() << error << description;
-    // FIXME abort?
 }
 
-#if OVR_PRODUCT_VERSION == 0 && OVR_MAJOR_VERSION <= 6
-void yarp::dev::OVRHeadset::ovrDebugCallback(int level, const char* message)
-{
-#else
 void yarp::dev::OVRHeadset::ovrDebugCallback(uintptr_t userData, int level, const char* message)
 {
     yarp::dev::OVRHeadset* ovr = reinterpret_cast<yarp::dev::OVRHeadset*>(userData);
-#endif
     switch (level) {
     case ovrLogLevel_Debug:
         yDebug() << "ovrDebugCallback" << message;
@@ -1704,17 +1326,6 @@ void yarp::dev::OVRHeadset::ovrDebugCallback(uintptr_t userData, int level, cons
     }
 }
 
-#if OVR_PRODUCT_VERSION == 0 && OVR_MAJOR_VERSION <= 6
-void yarp::dev::OVRHeadset::DebugHmd(ovrHmd hmd)
-{
-    yDebug("  * ProductName: %s", hmd->ProductName);
-    yDebug("  * Manufacturer: %s", hmd->Manufacturer);
-    yDebug("  * VendorId:ProductId: %04X:%04X", hmd->VendorId, hmd->ProductId);
-    yDebug("  * SerialNumber: %s", hmd->SerialNumber);
-    yDebug("  * Firmware Version: %d.%d", hmd->FirmwareMajor, hmd->FirmwareMinor);
-    yDebug("  * Resolution: %dx%d", hmd->Resolution.w, hmd->Resolution.h);
-}
-#else
 void yarp::dev::OVRHeadset::DebugHmd(ovrHmdDesc hmdDesc)
 {
     yDebug("  * ProductName: %s", hmdDesc.ProductName);
@@ -1724,4 +1335,3 @@ void yarp::dev::OVRHeadset::DebugHmd(ovrHmdDesc hmdDesc)
     yDebug("  * Firmware Version: %d.%d", hmdDesc.FirmwareMajor, hmdDesc.FirmwareMinor);
     yDebug("  * Resolution: %dx%d", hmdDesc.Resolution.w, hmdDesc.Resolution.h);
 }
-#endif

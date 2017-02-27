@@ -23,7 +23,6 @@
 namespace yarp { namespace os { template <typename T> class BufferedPort; }}
 namespace yarp { namespace os { class Bottle; }}
 struct GLFWwindow;
-struct GLFWmonitor;
 class InputCallback;
 class TextureStatic;
 class TextureBattery;
@@ -56,21 +55,15 @@ public:
 
 
 private:
-    GLFWmonitor* detectMonitor();
-    bool createWindow(int w, int h, int x = 0, int y = 0);
+    bool createWindow(int w, int h);
     void onKey(int key, int scancode, int action, int mods);
     void reconfigureRendering();
     void reconfigureFOV();
 
     static void glfwKeyCallback(GLFWwindow* window, int key, int scancode, int action, int mods);
     static void glfwErrorCallback(int error, const char* description);
-#if OVR_PRODUCT_VERSION == 0 && OVR_MAJOR_VERSION <= 6
-    static void ovrDebugCallback(int level, const char* message);
-    static void DebugHmd(ovrHmd hmd);
-#else
     static void ovrDebugCallback(uintptr_t userData, int level, const char* message);
     static void DebugHmd(ovrHmdDesc hmdDesc);
-#endif
 
     yarp::os::BufferedPort<yarp::os::Bottle>* orientationPort;
     yarp::os::BufferedPort<yarp::os::Bottle>* positionPort;
@@ -91,33 +84,12 @@ private:
     TextureBattery* textureBattery;
     ovrMirrorTexture mirrorTexture;
     GLuint mirrorFBO;
-
-#if OVR_PRODUCT_VERSION == 0 && OVR_MAJOR_VERSION <= 7
-    ovrHmd hmd;
-#else
     ovrSession session;
-#endif
-
-#if OVR_PRODUCT_VERSION == 0 && OVR_MAJOR_VERSION <= 6
-#else
     ovrHmdDesc hmdDesc;
-#endif
-
     GLFWwindow* window;
 
-#if OVR_PRODUCT_VERSION == 0 && OVR_MAJOR_VERSION <= 5
-    ovrGLConfig config;
-#else
-    // FIXME 0.5->0.6
-#endif
-
-
     bool closed;
-#if OVR_PRODUCT_VERSION == 0 && OVR_MAJOR_VERSION <= 7
-    unsigned int distortionFrameIndex;
-#else
     long long distortionFrameIndex;
-#endif
 
     unsigned int texWidth;
     unsigned int texHeight;
@@ -126,11 +98,7 @@ private:
     unsigned int camHeight[2];
     ovrFovPort fov[2];
 
-    bool multiSampleEnabled;
-    bool overdriveEnabled;
-    bool hqDistortionEnabled;
     bool flipInputEnabled;
-    bool timeWarpEnabled;
     bool imagePoseEnabled;
     bool userPoseEnabled;
 

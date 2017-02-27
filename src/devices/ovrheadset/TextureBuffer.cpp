@@ -14,22 +14,10 @@
 #include <OVR_CAPI_GL.h>
 
 
-#if OVR_PRODUCT_VERSION == 0 && OVR_MAJOR_VERSION <= 5
-TextureBuffer::TextureBuffer(int w, int h, int eye) :
-#elif OVR_PRODUCT_VERSION == 0 && OVR_MAJOR_VERSION <= 7
-TextureBuffer::TextureBuffer(int w, int h, int eye, ovrHmd hmd) :
-        hmd(hmd),
-        textureSet(nullptr),
-#elif OVR_PRODUCT_VERSION == 0 && OVR_MAJOR_VERSION <= 8
-TextureBuffer::TextureBuffer(int w, int h, int eye, ovrSession session) :
-        session(session),
-        textureSet(nullptr),
-#else
 TextureBuffer::TextureBuffer(int w, int h, int eye, ovrSession session) :
         session(session),
         textureSwapChain(nullptr),
         textureSwapChainSize(0),
-#endif
         width(w),
         height(h),
         components(eye == 2 ? 4 : 3),
@@ -103,14 +91,11 @@ void TextureBuffer::update()
 
         glBindBuffer(GL_PIXEL_UNPACK_BUFFER, 0);
 
-#if OVR_PRODUCT_VERSION == 0 && OVR_MAJOR_VERSION <= 8
-#else
+        // Commit current texture and retrieve the next one
         ovr_CommitTextureSwapChain(session, textureSwapChain);
-
         ovr_GetTextureSwapChainCurrentIndex(session, textureSwapChain, &index);
         ovr_GetTextureSwapChainBufferGL(session, textureSwapChain, index, &texId);
         glBindTexture(GL_TEXTURE_2D, texId);
-#endif
 
         // bind PBO to update texture source
         glBindBuffer(GL_PIXEL_UNPACK_BUFFER, pboIds[index]);
@@ -148,23 +133,6 @@ void TextureBuffer::createTextureAndBuffers()
     yTrace();
     checkGlErrorMacro;
 
-#if OVR_PRODUCT_VERSION == 0 && OVR_MAJOR_VERSION <= 5
-    glGenTextures(1, &texId);
-    glBindTexture(GL_TEXTURE_2D, texId);
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
-    glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, width, height, 0, GL_RGB, GL_UNSIGNED_BYTE, 0);
-#else
-# if OVR_PRODUCT_VERSION == 0 && OVR_MAJOR_VERSION <= 6
-    ovrHmd_CreateSwapTextureSetGL(hmd, GL_RGBA, width, height, &textureSet);
-# elif OVR_PRODUCT_VERSION == 0 && OVR_MAJOR_VERSION <= 7
-    ovr_CreateSwapTextureSetGL(hmd, GL_RGBA, width, height, &textureSet);
-# elif OVR_PRODUCT_VERSION == 0 && OVR_MAJOR_VERSION <= 8
-    ovr_CreateSwapTextureSetGL(session, GL_RGBA, width, height, &textureSet);
-# else
-
     ovrTextureSwapChainDesc desc = {};
     desc.Type = ovrTexture_2D;
     desc.ArraySize = 1;
@@ -181,34 +149,19 @@ void TextureBuffer::createTextureAndBuffers()
     }
     checkGlErrorMacro;
 
-# endif
-
-# if OVR_PRODUCT_VERSION == 0 && OVR_MAJOR_VERSION <= 8
-    for (int i = 0; i < textureSet->TextureCount; ++i) {
-        ovrGLTexture* tex = (ovrGLTexture*)&textureSet->Textures[i];
-        glBindTexture(GL_TEXTURE_2D, tex->OGL.TexId);
-# else
-
     ovr_GetTextureSwapChainLength(session, textureSwapChain, &textureSwapChainSize);
 
+    // Set parameters for each texture in the swap chain
     for (int i = 0; i < textureSwapChainSize; ++i) {
         unsigned int texId;
         ovr_GetTextureSwapChainBufferGL(session, textureSwapChain, i, &texId);
         glBindTexture(GL_TEXTURE_2D, texId);
-# endif
         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
-
-# if OVR_PRODUCT_VERSION == 0 && OVR_MAJOR_VERSION <= 5
-        glTexImage2D(GL_TEXTURE_2D, 0, (components == 3 ? GL_RGB : GL_RGBA), width, height, 0, (components == 3 ? GL_RGB : GL_RGBA), GL_UNSIGNED_BYTE, nullptr);
-        checkGlErrorMacro;
-#endif
-
         glBindTexture(GL_TEXTURE_2D, 0);
     }
-#endif
 
     // Create one buffer for each texture in the swap chain
     pboIds = new GLuint[textureSwapChainSize];
@@ -253,12 +206,7 @@ void TextureBuffer::deleteTextureAndBuffers()
     glDeleteBuffers(textureSwapChainSize, pboIds);
     delete pboIds;
 
-#if OVR_PRODUCT_VERSION == 0 && OVR_MAJOR_VERSION <= 5
-    glDeleteTextures(1, &texId);
-    texId = 0;
-#else
     ovr_DestroyTextureSwapChain(session, textureSwapChain);
-#endif
 
     mutex.unlock();
 }

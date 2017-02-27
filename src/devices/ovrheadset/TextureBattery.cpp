@@ -24,13 +24,13 @@
 #include "img-battery-charging-caution.h"
 #include "img-battery-charging-low.h"
 
-TextureBattery::TextureBattery(ovrSession session) :
-        RateThread(2000),
+TextureBattery::TextureBattery(ovrSession session, bool enabled) :
+        RateThread(5000),
         session(session),
         currentTexture(nullptr),
         currentStatus(BatteryStatusMissing),
         drv(nullptr),
-        batteryClient(nullptr)
+        ibat(nullptr)
 {
     textures[BatteryStatusMissing] = new TextureStatic(session, battery_missing);
     textures[BatteryStatus100] = new TextureStatic(session, battery_100);
@@ -47,24 +47,40 @@ TextureBattery::TextureBattery(ovrSession session) :
     textures[BatteryStatusChargingLow] = new TextureStatic(session, battery_charging_low);
 
     currentTexture = textures[currentStatus];
+
+    if (!enabled) {
+        // Calling suspend() before start should ensure that run() is never called
+        suspend();
+    }
     start();
 }
 
 TextureBattery::~TextureBattery()
 {
     stop();
+
+    if (drv) {
+        drv->close();
+        delete drv;
+        drv = nullptr;
+        ibat = nullptr;
+    }
+
     for (TextureStatic* texture : textures) {
         delete texture;
+        texture = nullptr;
     }
+
     currentTexture = nullptr;
 }
 
 bool TextureBattery::initBatteryClient()
 {
-    if (batteryClient) {
+    if (ibat) {
         return true;
     }
 
+    // FIXME
     std::string robot_name = "foo";
     std::string localPort = "/oculus/battery:i";
     std::string remotePort = "/" + robot_name + "/battery:o";
@@ -75,6 +91,7 @@ bool TextureBattery::initBatteryClient()
     options.put("local", localPort.c_str());
     options.put("remote", remotePort.c_str());
     options.put("period", getRate());
+    options.put("quiet", true);
 
     drv = new yarp::dev::PolyDriver(options);
 
@@ -82,100 +99,86 @@ bool TextureBattery::initBatteryClient()
         yError("Problems instantiating the device driver");
         delete drv;
         drv = nullptr;
-        batteryClient = nullptr;
+        ibat = nullptr;
         return false;
     }
 
-//    drv->view(batteryClient);
-    if (!batteryClient) {
+    drv->view(ibat);
+    if (!ibat) {
         yError("Problems viewing the battery interface");
         drv->close();
         delete drv;
         drv = nullptr;
-        batteryClient = nullptr;
+        ibat = nullptr;
         return false;
     }
 
     return true;
 }
 
-bool TextureBattery::threadInit()
+
+void TextureBattery::run()
 {
-    initBatteryClient();
-    // Do not fail if we cannot connect to the battery
-    return true;
-}
+    //    currentStatus = (BatteryStatus)(((int)currentStatus + 1) % textures.size());
+    //    currentTexture = textures[currentStatus];
+    //    return;
 
-void TextureBattery::threadRelease()
-{
-    if (drv) {
-        drv->close();
-        delete drv;
-        drv = nullptr;
-        batteryClient = nullptr;
-    }
-}
-
-void TextureBattery::run() {
-    currentStatus = (BatteryStatus)(((int)currentStatus + 1) % 13);
-    currentTexture = textures[currentStatus];
-    return;
-
-#if 0
-    if (batteryClient) {
-        if (!initBatteryClient) {
+    if (!ibat) {
+        if (!initBatteryClient()) {
+            yWarning() << "Cannot connect to battery. Suspending thread.";
             currentTexture = textures[BatteryStatusMissing];
+            suspend();
             return;
         }
     }
-    yAssert(batteryClient);
+    yAssert(ibat);
 
     int status;
     double charge;
     bool ret = true;
-    ret &= batteryClient->getBatteryCharge(&charge);
-    ret &= batteryClient->getStatus(&status);
+    ret &= ibat->getBatteryCharge(charge);
+    ret &= ibat->getBatteryStatus(status);
 
     if (!ret) {
         currentTexture = textures[BatteryStatusMissing];
         return;
     }
 
-    if (charge > 0.90) {
-        if (status == BATTERY_OK_IN_CHARGE) {
+    if (charge > 95.0) {
+        if (status == yarp::dev::IBattery::BATTERY_OK_IN_CHARGE) {
             currentTexture = textures[BatteryStatusCharging];
         } else {
             currentTexture = textures[BatteryStatus100];
         }
-    } else if (charge > 0.80) {
-        if (status == BATTERY_OK_IN_CHARGE) {
+    } else if (charge > 80.0) {
+        if (status == yarp::dev::IBattery::BATTERY_OK_IN_CHARGE) {
             currentTexture = textures[BatteryStatusCharging080];
         } else {
             currentTexture = textures[BatteryStatus080];
         }
-    } else if (charge > 0.60) {
-        if (status == BATTERY_OK_IN_CHARGE) {
+    } else if (charge > 60.0) {
+        if (status == yarp::dev::IBattery::BATTERY_OK_IN_CHARGE) {
             currentTexture = textures[BatteryStatusCharging060];
         } else {
             currentTexture = textures[BatteryStatus060];
         }
-    } else if (charge > 0.40) {
-        if (status == BATTERY_OK_IN_CHARGE) {
+    } else if (charge > 40.0) {
+        if (status == yarp::dev::IBattery::BATTERY_OK_IN_CHARGE) {
             currentTexture = textures[BatteryStatusCharging040];
         } else {
             currentTexture = textures[BatteryStatus040];
         }
-    } else if (charge > 0.20) {
-        if (status == BATTERY_OK_IN_CHARGE) {
+    } else if (charge > 20.0) {
+        if (status == yarp::dev::IBattery::BATTERY_OK_IN_CHARGE) {
             currentTexture = textures[BatteryStatusChargingCaution];
         } else {
             currentTexture = textures[BatteryStatusCaution];
         }
     } else {
-        if (status == BATTERY_OK_IN_CHARGE) {
+        if (status == yarp::dev::IBattery::BATTERY_OK_IN_CHARGE) {
             currentTexture = textures[BatteryStatusChargingLow];
         } else {
             currentTexture = textures[BatteryStatusLow];
         }
-#endif
+    }
 }
