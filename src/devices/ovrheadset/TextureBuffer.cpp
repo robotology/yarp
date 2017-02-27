@@ -27,16 +27,17 @@ TextureBuffer::TextureBuffer(int w, int h, int eye, ovrSession session) :
 #else
 TextureBuffer::TextureBuffer(int w, int h, int eye, ovrSession session) :
         session(session),
-        textureSwapChain(0),
+        textureSwapChain(nullptr),
+        textureSwapChainSize(0),
 #endif
         width(w),
         height(h),
+        components(eye == 2 ? 4 : 3),
         // see http://stackoverflow.com/questions/27294882/glteximage2d-fails-with-error-1282-using-pbo-bad-texture-resolution
-        padding((4 - (w*3) % 4) % 4),
-        rowSize(w*3 + padding),
+        padding((4 - (w * components) % 4) % 4),
+        rowSize(w * components + padding),
         bufferSize(rowSize * h),
-        pboIndex(0),
-        pboNextIndex(1),
+        pboIds(nullptr),
         ptr(nullptr),
         dataReady(true),
         missingFrames(0),
@@ -46,10 +47,9 @@ TextureBuffer::TextureBuffer(int w, int h, int eye, ovrSession session) :
 {
     YARP_UNUSED(eye);
     yTrace();
-
+    checkGlErrorMacro;
     createTextureAndBuffers();
 }
-
 
 TextureBuffer::~TextureBuffer()
 {
@@ -57,7 +57,6 @@ TextureBuffer::~TextureBuffer()
 
     deleteTextureAndBuffers();
 }
-
 
 void TextureBuffer::resize(int w, int h)
 {
@@ -69,12 +68,9 @@ void TextureBuffer::resize(int w, int h)
 
     width = w;
     height = h;
-    padding = (4 - (w*3) % 4) % 4,
-    rowSize = w*3 + padding,
+    padding = (4 - (w * components) % 4) % 4,
+    rowSize = w * components + padding,
     bufferSize = rowSize * h,
-
-    pboIndex = 0;
-    pboNextIndex = 1;
 
     createTextureAndBuffers();
 }
@@ -86,14 +82,15 @@ void TextureBuffer::update()
     if (dataReady) {
         dataReady = false;
 
-        // "pboIndex" is used to copy pixels from a PBO to a texture object
-        // "pboNextIndex" is used to update pixels in the other PBO
-        pboIndex = (pboIndex + 1) % 2;
-        pboNextIndex = (pboIndex + 1) % 2;
+        GLuint texId;
+        int index;
+
+        ovr_GetTextureSwapChainCurrentIndex(session, textureSwapChain, &index);
+        ovr_GetTextureSwapChainBufferGL(session, textureSwapChain, index, &texId);
 
         // bind the texture and PBO
         glBindTexture(GL_TEXTURE_2D, texId);
-        glBindBuffer(GL_PIXEL_UNPACK_BUFFER, pboIds[pboIndex]);
+        glBindBuffer(GL_PIXEL_UNPACK_BUFFER, pboIds[index]);
 
         if (ptr) {
             glUnmapBuffer(GL_PIXEL_UNPACK_BUFFER);
@@ -102,10 +99,21 @@ void TextureBuffer::update()
 
         // copy pixels from PBO to texture object
         // Use offset instead of ponter.
-        glTexSubImage2D(GL_TEXTURE_2D, 0, 0, 0, width, height, GL_RGB, GL_UNSIGNED_BYTE, 0);
+        glTexSubImage2D(GL_TEXTURE_2D, 0, 0, 0, width, height, (components == 3 ? GL_RGB : GL_RGBA), GL_UNSIGNED_BYTE, 0);
+
+        glBindBuffer(GL_PIXEL_UNPACK_BUFFER, 0);
+
+#if OVR_PRODUCT_VERSION == 0 && OVR_MAJOR_VERSION <= 8
+#else
+        ovr_CommitTextureSwapChain(session, textureSwapChain);
+
+        ovr_GetTextureSwapChainCurrentIndex(session, textureSwapChain, &index);
+        ovr_GetTextureSwapChainBufferGL(session, textureSwapChain, index, &texId);
+        glBindTexture(GL_TEXTURE_2D, texId);
+#endif
 
         // bind PBO to update texture source
-        glBindBuffer(GL_PIXEL_UNPACK_BUFFER, pboIds[pboNextIndex]);
+        glBindBuffer(GL_PIXEL_UNPACK_BUFFER, pboIds[index]);
 
         // Note that glMapBufferARB() causes sync issue.
         // If GPU is working with this buffer, glMapBufferARB() will wait(stall)
@@ -114,10 +122,11 @@ void TextureBuffer::update()
         // If you do that, the previous data in PBO will be discarded and
         // glMapBufferARB() returns a new allocated pointer immediately
         // even if GPU is still working with the previous data.
-        glBufferData(GL_PIXEL_UNPACK_BUFFER, bufferSize, 0, GL_STREAM_DRAW);
+        glBufferData(GL_PIXEL_UNPACK_BUFFER, bufferSize, 0, GL_DYNAMIC_DRAW);
 
         // map the buffer object into client's memory
         ptr = (GLubyte*)glMapBuffer(GL_PIXEL_UNPACK_BUFFER, GL_WRITE_ONLY);
+
         // The buffer will be filled by the InputCallback, and then
         // unmapped on next update() call, therefore there is nothing
         // else to do here.
@@ -125,6 +134,8 @@ void TextureBuffer::update()
         // it is good idea to release PBOs with ID 0 after use.
         // Once bound with 0, all pixel operations behave normal ways.
         glBindBuffer(GL_PIXEL_UNPACK_BUFFER, 0);
+        checkGlErrorMacro;
+
     } else {
         ++missingFrames;
     }
@@ -132,10 +143,10 @@ void TextureBuffer::update()
     mutex.unlock();
 }
 
-
 void TextureBuffer::createTextureAndBuffers()
 {
     yTrace();
+    checkGlErrorMacro;
 
 #if OVR_PRODUCT_VERSION == 0 && OVR_MAJOR_VERSION <= 5
     glGenTextures(1, &texId);
@@ -153,8 +164,6 @@ void TextureBuffer::createTextureAndBuffers()
 # elif OVR_PRODUCT_VERSION == 0 && OVR_MAJOR_VERSION <= 8
     ovr_CreateSwapTextureSetGL(session, GL_RGBA, width, height, &textureSet);
 # else
-    // FIXME 0.8->1.3
-
 
     ovrTextureSwapChainDesc desc = {};
     desc.Type = ovrTexture_2D;
@@ -166,9 +175,12 @@ void TextureBuffer::createTextureAndBuffers()
     desc.SampleCount = 1;
     desc.StaticImage = ovrFalse;
 
-    if (ovr_CreateTextureSwapChainGL(session, &desc, &textureSwapChain) == ovrSuccess) {
-        // FIXME 0.8->1.3: Check error?
+    if (!ovr_CreateTextureSwapChainGL(session, &desc, &textureSwapChain) == ovrSuccess) {
+        yError() << "Failed to create texture swap chain";
+        return;
     }
+    checkGlErrorMacro;
+
 # endif
 
 # if OVR_PRODUCT_VERSION == 0 && OVR_MAJOR_VERSION <= 8
@@ -176,11 +188,12 @@ void TextureBuffer::createTextureAndBuffers()
         ovrGLTexture* tex = (ovrGLTexture*)&textureSet->Textures[i];
         glBindTexture(GL_TEXTURE_2D, tex->OGL.TexId);
 # else
-    int count = 0;
-    ovr_GetTextureSwapChainLength(session, textureSwapChain, &count);
-    for (int i = 0; i < count; ++i) {
+
+    ovr_GetTextureSwapChainLength(session, textureSwapChain, &textureSwapChainSize);
+
+    for (int i = 0; i < textureSwapChainSize; ++i) {
         unsigned int texId;
-        ovr_GetTextureSwapChainBufferGL(session, textureSwapChain, 0, &texId);
+        ovr_GetTextureSwapChainBufferGL(session, textureSwapChain, i, &texId);
         glBindTexture(GL_TEXTURE_2D, texId);
 # endif
         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
@@ -188,23 +201,40 @@ void TextureBuffer::createTextureAndBuffers()
         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
 
-        // FIXME 0.5->0.6
-        // glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR);
-        // glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-        // glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
-        // glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
+# if OVR_PRODUCT_VERSION == 0 && OVR_MAJOR_VERSION <= 5
+        glTexImage2D(GL_TEXTURE_2D, 0, (components == 3 ? GL_RGB : GL_RGBA), width, height, 0, (components == 3 ? GL_RGB : GL_RGBA), GL_UNSIGNED_BYTE, nullptr);
+        checkGlErrorMacro;
+#endif
 
-        glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, width, height, 0, GL_RGB, GL_UNSIGNED_BYTE, 0);
+        glBindTexture(GL_TEXTURE_2D, 0);
     }
 #endif
-    checkGlErrorMacro;
 
-    glGenBuffers(2, pboIds);
-    for (int i = 0; i < 2; ++i) {
+    // Create one buffer for each texture in the swap chain
+    pboIds = new GLuint[textureSwapChainSize];
+    glGenBuffers(textureSwapChainSize, pboIds);
+    for (int i = 0; i < textureSwapChainSize; ++i) {
         glBindBuffer(GL_PIXEL_UNPACK_BUFFER, pboIds[0]);
-        glBufferData(GL_PIXEL_UNPACK_BUFFER, bufferSize, 0, GL_STREAM_DRAW);
-        glClear(GL_COLOR_BUFFER_BIT);
+        glBufferData(GL_PIXEL_UNPACK_BUFFER, bufferSize, 0, GL_DYNAMIC_DRAW);
+        // Map and clear the buffer
+        ptr = (GLubyte*)glMapBuffer(GL_PIXEL_UNPACK_BUFFER, GL_WRITE_ONLY);
+        memset(ptr, 0, bufferSize);
+        glUnmapBuffer(GL_PIXEL_UNPACK_BUFFER);
+        ptr = nullptr;
+        glBindBuffer(GL_PIXEL_UNPACK_BUFFER, 0);
     }
+    ptr = nullptr;
+
+    // Map the first buffer of the swap chain
+    GLuint texId;
+    int index;
+    ovr_GetTextureSwapChainCurrentIndex(session, textureSwapChain, &index);
+    ovr_GetTextureSwapChainBufferGL(session, textureSwapChain, index, &texId);
+    glBindTexture(GL_TEXTURE_2D, texId);
+    glBindBuffer(GL_PIXEL_UNPACK_BUFFER, pboIds[index]);
+    glBufferData(GL_PIXEL_UNPACK_BUFFER, bufferSize, 0, GL_DYNAMIC_DRAW);
+    ptr = (GLubyte*)glMapBuffer(GL_PIXEL_UNPACK_BUFFER, GL_WRITE_ONLY);
+    glBindBuffer(GL_PIXEL_UNPACK_BUFFER, 0);
 
     checkGlErrorMacro;
 }
@@ -220,15 +250,15 @@ void TextureBuffer::deleteTextureAndBuffers()
         ptr = nullptr;
     }
 
-    glDeleteBuffers(2, pboIds);
-    pboIds[0] = 0;
-    pboIds[1] = 0;
+    glDeleteBuffers(textureSwapChainSize, pboIds);
+    delete pboIds;
 
+#if OVR_PRODUCT_VERSION == 0 && OVR_MAJOR_VERSION <= 5
     glDeleteTextures(1, &texId);
     texId = 0;
-
-    pboIndex = 0;
-    pboNextIndex = 1;
+#else
+    ovr_DestroyTextureSwapChain(session, textureSwapChain);
+#endif
 
     mutex.unlock();
 }

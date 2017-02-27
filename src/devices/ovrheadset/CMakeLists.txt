@@ -23,13 +23,35 @@ if(NOT SKIP_yarpmod_ovrheadset)
 
   set(yarp_ovrheadset_SRCS OVRHeadset.cpp
                            TextureBuffer.cpp
+                           TextureStatic.cpp
+                           TextureBattery.cpp
                            InputCallback.cpp
                            GLDebug.cpp)
+  set(yarp_ovrheadset_IMGS img-yarp-robot-64.h
+                           img-crosshairs.h
+                           img-battery-100.h
+                           img-battery-080.h
+                           img-battery-060.h
+                           img-battery-040.h
+                           img-battery-caution.h
+                           img-battery-low.h
+                           img-battery-charging.h
+                           img-battery-charging-080.h
+                           img-battery-charging-060.h
+                           img-battery-charging-040.h
+                           img-battery-charging-caution.h
+                           img-battery-charging-low.h
+                           img-battery-missing.h)
   set(yarp_ovrheadset_HDRS ImageType.h
                            OVRHeadset.h
                            TextureBuffer.h
+                           TextureStatic.h
+                           TextureBattery.h
                            InputCallback.h
-                           GLDebug.h)
+                           GLDebug.h
+                           ${yarp_ovrheadset_IMGS})
+
+  source_group("Texture Images" FILES ${yarp_ovrheadset_IMGS})
 
   yarp_add_plugin(yarp_ovrheadset ${yarp_ovrheadset_SRCS}
                                   ${yarp_ovrheadset_HDRS})

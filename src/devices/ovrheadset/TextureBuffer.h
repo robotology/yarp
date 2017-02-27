@@ -39,20 +39,19 @@ public:
 #else
     ovrSession session;
     ovrTextureSwapChain textureSwapChain;
+    int textureSwapChainSize;
 #endif
 
     unsigned int width;
     unsigned int height;
+    unsigned int components;
     unsigned int padding;
     unsigned int rowSize;
     unsigned int bufferSize;
 
     ovrPosef eyePose;
 
-    GLuint texId;
-    GLuint pboIds[2];
-    unsigned int pboIndex;
-    unsigned int pboNextIndex;
+    GLuint *pboIds;
 
     GLubyte* ptr;
     bool dataReady;

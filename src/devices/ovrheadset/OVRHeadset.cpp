@@ -8,7 +8,12 @@
 #include "OVRHeadset.h"
 #include "InputCallback.h"
 #include "TextureBuffer.h"
+#include "TextureStatic.h"
+#include "TextureBattery.h"
 #include "GLDebug.h"
+
+#include "img-yarp-robot-64.h"
+#include "img-crosshairs.h"
 
 #include <yarp/os/BufferedPort.h>
 #include <yarp/os/LogStream.h>
@@ -21,6 +26,10 @@
 
 #include <OVR_CAPI_Util.h>
 
+#if defined(_WIN32)
+#include <dxgi.h> // for GetDefaultAdapterLuid
+#pragma comment(lib, "dxgi.lib")
+#endif
 
 #if defined(_WIN32)
  #define GLFW_EXPOSE_NATIVE_WIN32
@@ -84,6 +93,38 @@ static void debugFov(const ovrFovPort fov[2]) {
     yDebug("\n\n\n");
 }
 
+static int compareLuid(const ovrGraphicsLuid& lhs, const ovrGraphicsLuid& rhs)
+{
+    return memcmp(&lhs, &rhs, sizeof(ovrGraphicsLuid));
+}
+
+static ovrGraphicsLuid GetDefaultAdapterLuid()
+{
+    ovrGraphicsLuid luid = ovrGraphicsLuid();
+
+#if defined(_WIN32)
+    IDXGIFactory* factory = nullptr;
+
+    if (SUCCEEDED(CreateDXGIFactory(IID_PPV_ARGS(&factory))))
+    {
+        IDXGIAdapter* adapter = nullptr;
+
+        if (SUCCEEDED(factory->EnumAdapters(0, &adapter)))
+        {
+            DXGI_ADAPTER_DESC desc;
+
+            adapter->GetDesc(&desc);
+            memcpy(&luid, &desc.AdapterLuid, sizeof(luid));
+            adapter->Release();
+        }
+
+        factory->Release();
+    }
+#endif
+
+    return luid;
+}
+
 yarp::dev::OVRHeadset::OVRHeadset() :
         yarp::dev::DeviceDriver(),
         yarp::os::RateThread(11), // ~90 fps
@@ -99,6 +140,11 @@ yarp::dev::OVRHeadset::OVRHeadset() :
         predictedLinearVelocityPort(nullptr),
         predictedAngularAccelerationPort(nullptr),
         predictedLinearAccelerationPort(nullptr),
+        textureLogo(nullptr),
+        textureCrosshairs(nullptr),
+        textureBattery(nullptr),
+        mirrorTexture(nullptr),
+        mirrorFBO(0),
         window(nullptr),
         closed(false),
         distortionFrameIndex(0),
@@ -108,7 +154,10 @@ yarp::dev::OVRHeadset::OVRHeadset() :
         flipInputEnabled(true),
         timeWarpEnabled(true),
         imagePoseEnabled(true),
-        userPoseEnabled(false)
+        userPoseEnabled(false),
+        logoEnabled(true),
+        crosshairsEnabled(true),
+        batteryEnabled(true)
 {
     yTrace();
 
@@ -277,6 +326,21 @@ bool yarp::dev::OVRHeadset::open(yarp::os::Searchable& cfg)
         userPoseEnabled = true;
     }
 
+    logoEnabled = true;
+    if (cfg.check("no-logo", "[L] Disable logo")) {
+        logoEnabled = false;
+    }
+
+    crosshairsEnabled = true;
+    if (cfg.check("no-crosshairs", "[C] Disable crosshairs")) {
+        crosshairsEnabled = false;
+    }
+
+    batteryEnabled = true;
+    if (cfg.check("no-battery", "[C] Disable battery")) {
+        batteryEnabled = false;
+    }
+
 //    userHeight = cfg.check("userHeight", yarp::os::Value(0.),  "User height").asDouble();
 
 
@@ -314,18 +378,19 @@ bool yarp::dev::OVRHeadset::threadInit()
     OVR::System::Init();
 #endif
 
-    ovrInitParams params;
-    params.Flags = 0;
-    params.RequestedMinorVersion = 0;
-    params.LogCallback = ovrDebugCallback;
-    params.ConnectionTimeoutMS = 0;
-
-    //Initialise rift
-    if (!ovr_Initialize(&params)) {
-        yError() << "Unable to initialize LibOVR. LibOVRRT not found?";
-        this->close();
-        return false;
+    // Initializes LibOVR, and the Rift
+    ovrInitParams initParams = { ovrInit_RequestVersion, OVR_MINOR_VERSION, ovrDebugCallback, reinterpret_cast<uintptr_t>(this), 0 };
+    ovrResult r = ovr_Initialize(&initParams);
+//    VALIDATE(OVR_SUCCESS(r), "Failed to initialize libOVR.");
+    if (!OVR_SUCCESS(r)) {
+        yError() << "Failed to initialize libOVR.";
     }
+    //Initialise rift
+//    if (!ovr_Initialize(&params)) {
+//        yError() << "Unable to initialize LibOVR. LibOVRRT not found?";
+//        this->close();
+//        return false;
+//    }
 
     // Detect and initialize Oculus Rift
 
@@ -377,6 +442,18 @@ bool yarp::dev::OVRHeadset::threadInit()
         return false;
     }
 
+    if (compareLuid(luid, GetDefaultAdapterLuid())) // If luid that the Rift is on is not the default adapter LUID...
+    {
+        yError() << "OpenGL supports only the default graphics adapter.";
+        this->close();
+        return false;
+    }
+
+    // FIXME
+    // FloorLevel will give tracking poses where the floor height is 0
+    // ovr_SetTrackingOriginType(session, ovrTrackingOrigin_FloorLevel);
+    ovr_SetTrackingOriginType(session, ovrTrackingOrigin_EyeLevel);
+
     hmdDesc = ovr_GetHmdDesc(session);
 #endif
 
@@ -393,7 +470,6 @@ bool yarp::dev::OVRHeadset::threadInit()
 #else
     DebugHmd(hmdDesc);
 #endif
-
 
     // Initialize the GLFW system for creating and positioning windows
     // GLFW must be initialized after LibOVR
@@ -495,6 +571,38 @@ bool yarp::dev::OVRHeadset::threadInit()
 #endif
     }
 
+    textureLogo = new TextureStatic(session, yarp_logo);
+    textureCrosshairs = new TextureStatic(session, crosshairs);
+    textureBattery = new TextureBattery(session);
+
+    ovrMirrorTextureDesc desc;
+    memset(&desc, 0, sizeof(desc));
+    desc.Width = windowSize.w;
+    desc.Height = windowSize.h;
+    desc.Format = OVR_FORMAT_R8G8B8A8_UNORM_SRGB;
+
+    // Create mirror texture and an FBO used to copy mirror texture to back buffer
+    result = ovr_CreateMirrorTextureGL(session, &desc, &mirrorTexture);
+    if (!OVR_SUCCESS(result))
+    {
+        yError() << "Failed to create mirror texture.";
+        this->close();
+        return false;
+    }
+
+    // Configure the mirror read buffer
+    GLuint texId;
+    ovr_GetMirrorTextureBufferGL(session, mirrorTexture, &texId);
+
+    glGenFramebuffers(1, &mirrorFBO);
+    glBindFramebuffer(GL_READ_FRAMEBUFFER, mirrorFBO);
+    glFramebufferTexture2D(GL_READ_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, texId, 0);
+    glFramebufferRenderbuffer(GL_READ_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, GL_RENDERBUFFER, 0);
+    glBindFramebuffer(GL_READ_FRAMEBUFFER, 0);
+
+
+
+
 #if OVR_PRODUCT_VERSION == 0 && OVR_MAJOR_VERSION <= 6
     // Start the sensor which provides the Rift's pose and motion.
     ovrHmd_ConfigureTracking(hmd, ovrTrackingCap_Orientation |
@@ -536,6 +644,29 @@ void yarp::dev::OVRHeadset::threadRelease()
     }
     closed = true;
 
+    if (mirrorFBO) {
+        glDeleteFramebuffers(1, &mirrorFBO);
+    }
+
+    if (mirrorTexture) {
+        ovr_DestroyMirrorTexture(session, mirrorTexture);
+    }
+
+    if (textureLogo) {
+        delete textureLogo;
+        textureLogo = nullptr;
+    }
+
+    if (textureCrosshairs) {
+        delete textureCrosshairs;
+        textureCrosshairs = nullptr;
+    }
+
+    if (textureBattery) {
+        delete textureBattery;
+        textureBattery = nullptr;
+    }
+
     // Shut down GLFW
     glfwTerminate();
 
@@ -553,8 +684,12 @@ void yarp::dev::OVRHeadset::threadRelease()
         ovr_Shutdown();
     }
 #else
-    // FIXME 0.7->0.8: Should we check this?
     if (session) {
+        // Disable Performance Hud Mode before destroying the session,
+        // or it will stay after the device is closed.
+        int PerfHudMode = (int)ovrPerfHud_Off;
+        ovr_SetInt(session, OVR_PERF_HUD_MODE, PerfHudMode);
+
         ovr_Destroy(session);
         session = 0;
         ovr_Shutdown();
@@ -750,13 +885,28 @@ void yarp::dev::OVRHeadset::run()
         return;
     }
 
+    ovrSessionStatus sessionStatus;
+    ovr_GetSessionStatus(session, &sessionStatus);
+    if (sessionStatus.ShouldQuit) {
+        close();
+        return;
+    }
+    if (sessionStatus.ShouldRecenter) {
+        ovr_RecenterTrackingOrigin(session);
+    }
+
     // Check window events;
     glfwPollEvents();
+
+    if (!sessionStatus.IsVisible) {
+        return;
+    }
 
     // Begin frame
     ++distortionFrameIndex;
 #if OVR_PRODUCT_VERSION == 0 && OVR_MAJOR_VERSION <= 5
     ovrFrameTiming frameTiming = ovrHmd_BeginFrame(hmd, distortionFrameIndex);
+    // FIXME 0.5->0.6 no longer used (was used in ovr_WaitTillTime())
 #elif OVR_PRODUCT_VERSION == 0 && OVR_MAJOR_VERSION <= 6
     ovrFrameTiming frameTiming = ovrHmd_GetFrameTiming(hmd, distortionFrameIndex);
 #elif OVR_PRODUCT_VERSION == 0 && OVR_MAJOR_VERSION <= 7
@@ -995,10 +1145,6 @@ ovrVector3f ViewOffset[2] = {EyeRenderDesc[0].HmdToEyeOffset,EyeRenderDesc[1].Hm
         // Wait till time-warp point to reduce latency.
 #if OVR_PRODUCT_VERSION == 0 && OVR_MAJOR_VERSION <= 5
         ovr_WaitTillTime(frameTiming.TimewarpPointSeconds - 0.001);
-#elif OVR_PRODUCT_VERSION == 0 && OVR_MAJOR_VERSION <= 6
-        // FIXME 0.5->0.6: Not available?
-#else
-        // FIXME 0.6->0.7: No longer needed?
 #endif
 
         //static double ttt =yarp::os::Time::now();
@@ -1059,27 +1205,125 @@ ovrVector3f ViewOffset[2] = {EyeRenderDesc[0].HmdToEyeOffset,EyeRenderDesc[1].Hm
         // End frame
         ovrHmd_EndFrame(hmd, EyeRenderPose, &eyeTex[0].Texture);
 #else
-        ovrLayerEyeFov ld;
-        ld.Header.Type = ovrLayerType_EyeFov;
-        ld.Header.Flags = 0;
+        std::list<ovrLayerHeader*> layerList;
+
+        ovrLayerEyeFov eyeLayer;
+        eyeLayer.Header.Type = ovrLayerType_EyeFov;
+        eyeLayer.Header.Flags = ovrLayerFlag_HighQuality | ovrLayerFlag_TextureOriginAtBottomLeft;
+        eyeLayer.Header.Flags = 0;
         for (int eye = 0; eye < 2; eye++) {
 # if OVR_PRODUCT_VERSION == 0 && OVR_MAJOR_VERSION <= 8
-            ld.ColorTexture[eye] = displayPorts[eye]->eyeRenderTexture->textureSet;
-#else
-            ld.ColorTexture[eye] = displayPorts[eye]->eyeRenderTexture->textureSwapChain;
-#endif
-            ld.Viewport[eye] = OVR::Recti(0, 0, displayPorts[eye]->eyeRenderTexture->width, displayPorts[eye]->eyeRenderTexture->height);
-            ld.Fov[eye] = fov[eye]; // FIXME 0.5->0.6 hmd->DefaultEyeFov[eye]; ?
-            ld.RenderPose[eye] = EyeRenderPose[eye];
+            eyeLayer.ColorTexture[eye] = displayPorts[eye]->eyeRenderTexture->textureSet;
+# else
+            eyeLayer.ColorTexture[eye] = displayPorts[eye]->eyeRenderTexture->textureSwapChain;
+# endif
+            eyeLayer.Viewport[eye] = OVR::Recti(0, 0, displayPorts[eye]->eyeRenderTexture->width, displayPorts[eye]->eyeRenderTexture->height);
+            eyeLayer.Fov[eye] = fov[eye]; // FIXME 0.5->0.6 hmd->DefaultEyeFov[eye]; ?
+            eyeLayer.RenderPose[eye] = EyeRenderPose[eye];
         }
-        ovrLayerHeader* layers = &ld.Header;
-#if OVR_PRODUCT_VERSION == 0 && OVR_MAJOR_VERSION <= 6
-        ovrResult result = ovrHmd_SubmitFrame(hmd, 0, nullptr, &layers, 1);
-#elif OVR_PRODUCT_VERSION == 0 && OVR_MAJOR_VERSION <= 7
-        ovrResult result = ovr_SubmitFrame(hmd, 0, nullptr, &layers, 1);
-#else
-        ovrResult result = ovr_SubmitFrame(session, 0, nullptr, &layers, 1);
-#endif
+
+        ovrPoseStatef lhandpose = ts.HandPoses[0];
+
+        layerList.push_back(&eyeLayer.Header);
+
+        ovrLayerQuad logoLayer;
+        if (logoEnabled) {
+            logoLayer.Header.Type = ovrLayerType_Quad;
+            logoLayer.Header.Flags = ovrLayerFlag_HighQuality | ovrLayerFlag_HeadLocked;
+            logoLayer.ColorTexture = textureLogo->textureSwapChain;
+
+            // 50cm in front and 20cm down from the player's nose,
+            // fixed relative to their torso.textureLogo
+            logoLayer.QuadPoseCenter.Position.x = 0.20f;
+            logoLayer.QuadPoseCenter.Position.y = -0.20f;
+            logoLayer.QuadPoseCenter.Position.z = -0.50f;
+            logoLayer.QuadPoseCenter.Orientation.x = 0;
+            logoLayer.QuadPoseCenter.Orientation.y = 0;
+            logoLayer.QuadPoseCenter.Orientation.z = 0;
+            logoLayer.QuadPoseCenter.Orientation.w = 1;
+
+            // Logo is 5cm wide, 5cm tall.
+            logoLayer.QuadSize.x = 0.05f;
+            logoLayer.QuadSize.y = 0.05f;
+            // Display all of the HUD texture.
+            logoLayer.Viewport = OVR::Recti(0, 0, textureLogo->width, textureLogo->height);
+            layerList.push_back(&logoLayer.Header);
+        }
+
+        ovrLayerQuad crosshairsLayer;
+        if (crosshairsEnabled) {
+            crosshairsLayer.Header.Type = ovrLayerType_Quad;
+            crosshairsLayer.Header.Flags = ovrLayerFlag_HighQuality | ovrLayerFlag_HeadLocked;
+            crosshairsLayer.ColorTexture = textureCrosshairs->textureSwapChain;
+
+            // 50cm in front and 20cm down from the player's nose,
+            // fixed relative to their torso.textureLogo
+            crosshairsLayer.QuadPoseCenter.Position.x = 0.0f;
+            crosshairsLayer.QuadPoseCenter.Position.y = 0.0f;
+            crosshairsLayer.QuadPoseCenter.Position.z = -5.0f;
+            crosshairsLayer.QuadPoseCenter.Orientation.x = 0;
+            crosshairsLayer.QuadPoseCenter.Orientation.y = 0;
+            crosshairsLayer.QuadPoseCenter.Orientation.z = 0;
+            crosshairsLayer.QuadPoseCenter.Orientation.w = 1;
+
+            // HUD is 8cm wide, 8cm tall.
+            crosshairsLayer.QuadSize.x = 0.08f;
+            crosshairsLayer.QuadSize.y = 0.08f;
+            // Display all of the HUD texture.
+            crosshairsLayer.Viewport = OVR::Recti(0, 0, textureCrosshairs->width, textureCrosshairs->height);
+            layerList.push_back(&crosshairsLayer.Header);
+        }
+
+        ovrLayerQuad batteryLayer;
+        if (batteryEnabled) {
+            batteryLayer.Header.Type = ovrLayerType_Quad;
+            batteryLayer.Header.Flags = ovrLayerFlag_HighQuality | ovrLayerFlag_HeadLocked;
+            batteryLayer.ColorTexture = textureBattery->currentTexture->textureSwapChain;
+
+            // 50cm in front and 20cm down from the player's nose,
+            // fixed relative to their torso.textureLogo
+            batteryLayer.QuadPoseCenter.Position.x = 0.25f;
+            batteryLayer.QuadPoseCenter.Position.y = 0.25f;
+            batteryLayer.QuadPoseCenter.Position.z = -0.50f;
+            batteryLayer.QuadPoseCenter.Orientation.x = 0;
+            batteryLayer.QuadPoseCenter.Orientation.y = 0;
+            batteryLayer.QuadPoseCenter.Orientation.z = 0;
+            batteryLayer.QuadPoseCenter.Orientation.w = 1;
+
+            // Logo is 5cm wide, 5cm tall.
+            batteryLayer.QuadSize.x = 0.05f;
+            batteryLayer.QuadSize.y = 0.05f;
+            // Display all of the HUD texture.
+            batteryLayer.Viewport = OVR::Recti(0, 0, textureBattery->currentTexture->width, textureBattery->currentTexture->height);
+            layerList.push_back(&batteryLayer.Header);
+        }
+
+
+        ovrLayerHeader** layers = new ovrLayerHeader*[layerList.size()];
+        std::copy(layerList.begin(), layerList.end(), layers);
+
+# if OVR_PRODUCT_VERSION == 0 && OVR_MAJOR_VERSION <= 6
+        ovrResult result = ovrHmd_SubmitFrame(hmd, distortionFrameIndex, nullptr, &layers, layerCount);
+# elif OVR_PRODUCT_VERSION == 0 && OVR_MAJOR_VERSION <= 7
+        ovrResult result = ovr_SubmitFrame(hmd, distortionFrameIndex, nullptr, &layers, layerCount);
+# else
+        ovrResult result = ovr_SubmitFrame(session, distortionFrameIndex, nullptr, layers, layerList.size());
+# endif
+        delete layers;
+
+        // Blit mirror texture to back buffer
+        glBindFramebuffer(GL_READ_FRAMEBUFFER, mirrorFBO);
+        glBindFramebuffer(GL_DRAW_FRAMEBUFFER, 0);
+        GLint bw = hmdDesc.Resolution.w;
+        GLint bh = hmdDesc.Resolution.h;
+        GLint ww, wh;
+        glfwGetWindowSize(window, &ww, &wh);
+        glBlitFramebuffer(0, bh, bw, 0, 0, 0, ww, wh, GL_COLOR_BUFFER_BIT, GL_NEAREST);
+        glBindFramebuffer(GL_READ_FRAMEBUFFER, 0);
+
+        // FIXME        checkGlErrorMacro;
+
+        glfwSwapBuffers(window);
 #endif
 
     } else {
@@ -1258,6 +1502,27 @@ void yarp::dev::OVRHeadset::onKey(int key, int scancode, int action, int mods)
         userPoseEnabled = !userPoseEnabled;
         yDebug() << "User pose" << (userPoseEnabled ? "ON" : "OFF");
         break;
+    case GLFW_KEY_L:
+        logoEnabled = !logoEnabled;
+        yDebug() << "Overlays:" <<
+            "Logo" << (logoEnabled ? "ON" : "OFF") <<
+            "Crosshairs" << (crosshairsEnabled ? "ON" : "OFF") <<
+            "Battery" << (batteryEnabled ? "ON" : "OFF");
+        break;
+    case GLFW_KEY_C:
+        crosshairsEnabled = !crosshairsEnabled;
+        yDebug() << "Overlays:" <<
+            "Logo" << (logoEnabled ? "ON" : "OFF") <<
+            "Crosshairs" << (crosshairsEnabled ? "ON" : "OFF") <<
+            "Battery" << (batteryEnabled ? "ON" : "OFF");
+        break;
+    case GLFW_KEY_B:
+        batteryEnabled = !batteryEnabled;
+        yDebug() << "Overlays:" <<
+            "Logo" << (logoEnabled ? "ON" : "OFF") <<
+            "Crosshairs" << (crosshairsEnabled ? "ON" : "OFF") <<
+            "Battery" << (batteryEnabled ? "ON" : "OFF");
+        break;
     case GLFW_KEY_ESCAPE:
         this->close();
         break;
@@ -1345,6 +1610,13 @@ void yarp::dev::OVRHeadset::onKey(int key, int scancode, int action, int mods)
             yDebug() << "Right eye roll offset =" << displayPorts[1]->rollOffset;
         }
         break;
+    case GLFW_KEY_SLASH:
+        {
+            int PerfHudMode = ovr_GetInt(session, OVR_PERF_HUD_MODE, 0);
+            PerfHudMode = (PerfHudMode + 1) % 8;
+            ovr_SetInt(session, OVR_PERF_HUD_MODE, PerfHudMode);
+        }
+        break;
     default:
         break;
     }
@@ -1410,11 +1682,12 @@ void yarp::dev::OVRHeadset::glfwErrorCallback(int error, const char* description
 
 #if OVR_PRODUCT_VERSION == 0 && OVR_MAJOR_VERSION <= 6
 void yarp::dev::OVRHeadset::ovrDebugCallback(int level, const char* message)
+{
 #else
 void yarp::dev::OVRHeadset::ovrDebugCallback(uintptr_t userData, int level, const char* message)
-// FIXME 0.6->0.7: What is userData for?
-#endif
 {
+    yarp::dev::OVRHeadset* ovr = reinterpret_cast<yarp::dev::OVRHeadset*>(userData);
+#endif
     switch (level) {
     case ovrLogLevel_Debug:
         yDebug() << "ovrDebugCallback" << message;

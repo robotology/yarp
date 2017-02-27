@@ -25,8 +25,8 @@ namespace yarp { namespace os { class Bottle; }}
 struct GLFWwindow;
 struct GLFWmonitor;
 class InputCallback;
-
-
+class TextureStatic;
+class TextureBattery;
 
 namespace yarp {
 namespace dev {
@@ -86,6 +86,11 @@ private:
     yarp::os::BufferedPort<yarp::os::Bottle>* predictedLinearAccelerationPort;
     InputCallback* displayPorts[2];
     ovrEyeRenderDesc EyeRenderDesc[2];
+    TextureStatic* textureLogo;
+    TextureStatic* textureCrosshairs;
+    TextureBattery* textureBattery;
+    ovrMirrorTexture mirrorTexture;
+    GLuint mirrorFBO;
 
 #if OVR_PRODUCT_VERSION == 0 && OVR_MAJOR_VERSION <= 7
     ovrHmd hmd;
@@ -128,6 +133,11 @@ private:
     bool timeWarpEnabled;
     bool imagePoseEnabled;
     bool userPoseEnabled;
+
+    // Layers
+    bool logoEnabled;
+    bool crosshairsEnabled;
+    bool batteryEnabled;
 
     double prediction;
 
