@@ -23,7 +23,7 @@
 #include <yarp/dev/DeviceDriver.h>
 #include <yarp/dev/ControlBoardPid.h>
 #include <yarp/os/Bottle.h>
-        
+
 
 #include "../iMCs01/driver/urbtc.h"
 #include "../iMCs01/driver/urobotc.h"
@@ -45,7 +45,7 @@ using namespace yarp::os;
  * Please note, encoder and position values have internally a range of short int only. For this reason
  * absolute (raw) position control works only within the range of -32768 to +32767. Currently all movements (including velocityMove)
  * are bounded to this range.\n
- * 
+ *
  */
 
 class yarp::dev::UrbtcControl :  public IPositionControlRaw,
@@ -67,21 +67,21 @@ protected:
     int                     _intNumControllers;     // number of encountered controllers (urbtc devicefiles)
     unsigned short          _intOffset;             // the initial offset of 32768 (without this motor will change position when initialized)
     int                     *_fd;                   // array of devicefile descriptors
-    char                   **_deviceFilename;      // array of devicefilenames
+    char                    **_deviceFilename;      // array of devicefilenames
     ccmd                    *_cmd;                  // array of ccmd structs (urbtc driver)
     uout                    *_out;                  // array of uout structs (urbtc driver)
     uin                     *_in;                   // array of uin structs (urbtc driver);
 
     char                    *_devicePrefix;
-    yarp::dev::Pid          _pidPosDefault;         // default pid values for position control 
-    yarp::dev::Pid          _pidVelDefault;         // default pid values for velocity control 
-    double					_pidAccuracy;           // to convert from nominator/denominator representation to 
-    double                  _dblFactDeg2Raw;         // this times radian value equals encoder value (without gear!)
-    int						_intLimitDefault;		// +/- defalt limits
+    yarp::dev::Pid          _pidPosDefault;         // default pid values for position control
+    yarp::dev::Pid          _pidVelDefault;         // default pid values for velocity control
+    double                  _pidAccuracy;           // to convert from nominator/denominator representation to
+    double                  _dblFactDeg2Raw;        // this times radian value equals encoder value (without gear!)
+    int                     _intLimitDefault;       // +/- defalt limits
 
-	int*					_limitsMax;				// upper limits in encoder tics
-	int*					_limitsMin;				// lower limits in encoder tics
-	bool*					_limitsExceeding;		// flags for limit exceedings
+    int*                    _limitsMax;             // upper limits in encoder tics
+    int*                    _limitsMin;             // lower limits in encoder tics
+    bool*                   _limitsExceeding;       // flags for limit exceedings
 
     int                     getNumberOfDevices();
     void                    setDeviceFilenames(int num);
@@ -96,7 +96,7 @@ protected:
 
     int                     _threadRate;            // milliseconds
     yarp::os::Semaphore     _mutex;
-    
+
     // Thread
     virtual void run();
 
@@ -110,7 +110,7 @@ public:
     UrbtcControl();
     virtual ~UrbtcControl();
 
-    
+
 
 
     // IPositionControlRaw
@@ -186,5 +186,4 @@ public:
 
 };
 
-#endif 
- 
+#endif
