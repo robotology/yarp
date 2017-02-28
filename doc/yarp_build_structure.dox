@@ -155,11 +155,6 @@ as "advanced" options.
  (.so/.dll/.dylib/...) will be built, instead of static.
 \li [ADVANCED] The USE_STL_STRING option - internally, YARP uses an
  ACE string class.  This can be toggled to std::string if desired.
-\li [ADVANCED] The CREATE_BUILTIN_DEVICE_TESTS option - normally, YARP
- won't test devices, but if you turn this flag on it will attempt some
- device tests.  This has the side-benefit of being useful for building
- documentation about those devices, by probing their "open" method with
- verbose turned on.
 \li The ENABLE_DASHBOARD_SUBMIT flag - if enabled, builds and tests can
  be submitted to the YARP online dashboard.
 
