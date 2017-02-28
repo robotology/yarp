@@ -340,9 +340,7 @@ mark_as_advanced(YARP_WRAP_STL_STRING_INLINE)
 #########################################################################
 # Control compilation of device tests.
 # Not really for end-user, but instead for the library developers
-cmake_dependent_option(CREATE_BUILTIN_DEVICE_TESTS "Do you want to create tests for builtin devices" OFF
-                       YARP_COMPILE_TESTS OFF)
-mark_as_advanced(CREATE_BUILTIN_DEVICE_TESTS)
+yarp_deprecated_option(CREATE_BUILTIN_DEVICE_TESTS) # Since YARP 2.3.68
 
 
 #########################################################################

@@ -21,7 +21,6 @@ mode [ball]
 device ffmpeg_writer
 out test.avi
 framerate 25
-
 \endverbatim
 If this text is saved in a file called ffmpeg_writer_basic.ini then the device can be created by doing:
 \verbatim

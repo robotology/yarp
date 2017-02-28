@@ -128,7 +128,7 @@ if(YARP_COMPILE_TESTS)
   mark_as_advanced(CREATE_PLUGIN_TESTS)
   if(CREATE_PLUGIN_TESTS)
     # add in our tests
-    file(GLOB inis ${CMAKE_SOURCE_DIR}/src/libYARP_dev/harness/*.ini)
+    file(GLOB inis ${CMAKE_SOURCE_DIR}/tests/libYARP_dev/*.ini)
     foreach(X ${inis})
       get_filename_component(XN ${X} NAME_WE)
       get_filename_component(XINI ${X} ABSOLUTE)
@@ -138,19 +138,19 @@ if(YARP_COMPILE_TESTS)
       set(_cmd $<TARGET_FILE:harness_dev> --file "${XINI}" --doc "${XDOX}")
       add_test(NAME "device::${XN}"
                COMMAND ${_cmd}
-               WORKING_DIRECTORY ${CMAKE_SOURCE_DIR}/src/libYARP_dev/harness)
+               WORKING_DIRECTORY ${CMAKE_SOURCE_DIR}/tests/libYARP_dev/)
       foreach(_Tool ${YARP_VALGRIND_TOOLS})
         string(TOUPPER "${_Tool}" _TOOL)
         if(YARP_VALGRIND_${_TOOL}_TESTS)
           add_test(NAME "device::${XN}::Valgrind::${_Tool}"
                    COMMAND ${VALGRIND_MEMCHECK_COMMAND} ${_cmd}
-                   WORKING_DIRECTORY ${CMAKE_SOURCE_DIR}/src/libYARP_dev/harness)
+                   WORKING_DIRECTORY ${CMAKE_SOURCE_DIR}/tests/libYARP_dev/)
         endif()
       endforeach()
       if(YARP_GDB_TESTS)
         add_test(NAME "device::${XN}::gdb"
                  COMMAND ${GDB_COMMAND} ${_cmd}
-                 WORKING_DIRECTORY ${CMAKE_SOURCE_DIR}/src/libYARP_dev/harness)
+                 WORKING_DIRECTORY ${CMAKE_SOURCE_DIR}/tests/libYARP_dev/)
       endif()
     endforeach(X ${inis})
   endif()
