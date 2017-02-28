@@ -141,7 +141,7 @@ bool RobotInterface::Robot::Private::openDevices()
 bool RobotInterface::Robot::Private::closeDevices()
 {
     bool ret = true;
-    for (RobotInterface::DeviceList::iterator it = devices.begin(); it != devices.end(); ++it) {
+    for (RobotInterface::DeviceList::reverse_iterator it = devices.rbegin(); it != devices.rend(); ++it) {
         RobotInterface::Device &device = *it;
 
         // yDebug() << device;
