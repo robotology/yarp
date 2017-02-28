@@ -716,7 +716,7 @@ void yarp::dev::OVRHeadset::run()
 
     // Begin frame
     ++distortionFrameIndex;
-    double frameTiming = ovr_GetPredictedDisplayTime(session, distortionFrameIndex);
+//    double frameTiming = ovr_GetPredictedDisplayTime(session, distortionFrameIndex);
 
     // Query the HMD for the current tracking state.
     ovrTrackingState ts = ovr_GetTrackingState(session, ovr_GetTimeInSeconds(), false);
@@ -1050,7 +1050,7 @@ void yarp::dev::OVRHeadset::run()
         ovrLayerHeader** layers = new ovrLayerHeader*[layerList.size()];
         std::copy(layerList.begin(), layerList.end(), layers);
         ovrResult result = ovr_SubmitFrame(session, distortionFrameIndex, nullptr, layers, layerList.size());
-        delete layers;
+        delete[] layers;
 
         // Blit mirror texture to back buffer
         glBindFramebuffer(GL_READ_FRAMEBUFFER, mirrorFBO);
@@ -1310,6 +1310,8 @@ void yarp::dev::OVRHeadset::glfwErrorCallback(int error, const char* description
 void yarp::dev::OVRHeadset::ovrDebugCallback(uintptr_t userData, int level, const char* message)
 {
     yarp::dev::OVRHeadset* ovr = reinterpret_cast<yarp::dev::OVRHeadset*>(userData);
+    YARP_UNUSED(ovr);
+
     switch (level) {
     case ovrLogLevel_Debug:
         yDebug() << "ovrDebugCallback" << message;
