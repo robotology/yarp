@@ -1,7 +1,6 @@
 /*
- * Copyright (C) 2015  iCub Facility, Istituto Italiano di Tecnologia
+ * Copyright (C) 2015-2017  iCub Facility, Istituto Italiano di Tecnologia
  * Author: Daniele E. Domenichelli <daniele.domenichelli@iit.it>
- *
  * CopyPolicy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
  */
 
@@ -24,10 +23,9 @@
 namespace yarp { namespace os { template <typename T> class BufferedPort; }}
 namespace yarp { namespace os { class Bottle; }}
 struct GLFWwindow;
-struct GLFWmonitor;
 class InputCallback;
-
-
+class TextureStatic;
+class TextureBattery;
 
 namespace yarp {
 namespace dev {
@@ -57,17 +55,15 @@ public:
 
 
 private:
-    GLFWmonitor* detectMonitor();
-    bool createWindow(int w, int h, int x = 0, int y = 0);
+    bool createWindow(int w, int h);
     void onKey(int key, int scancode, int action, int mods);
     void reconfigureRendering();
     void reconfigureFOV();
 
     static void glfwKeyCallback(GLFWwindow* window, int key, int scancode, int action, int mods);
     static void glfwErrorCallback(int error, const char* description);
-    static void checkGlError(const char* file, int line);
-    static void ovrDebugCallback(int level, const char* message);
-    static void DebugHmd(ovrHmd hmd);
+    static void ovrDebugCallback(uintptr_t userData, int level, const char* message);
+    static void DebugHmd(ovrHmdDesc hmdDesc);
 
     yarp::os::BufferedPort<yarp::os::Bottle>* orientationPort;
     yarp::os::BufferedPort<yarp::os::Bottle>* positionPort;
@@ -83,15 +79,17 @@ private:
     yarp::os::BufferedPort<yarp::os::Bottle>* predictedLinearAccelerationPort;
     InputCallback* displayPorts[2];
     ovrEyeRenderDesc EyeRenderDesc[2];
-
-    ovrHmd hmd;
+    TextureStatic* textureLogo;
+    TextureStatic* textureCrosshairs;
+    TextureBattery* textureBattery;
+    ovrMirrorTexture mirrorTexture;
+    GLuint mirrorFBO;
+    ovrSession session;
+    ovrHmdDesc hmdDesc;
     GLFWwindow* window;
 
-    ovrGLConfig config;
-
-
     bool closed;
-    unsigned int distortionFrameIndex;
+    long long distortionFrameIndex;
 
     unsigned int texWidth;
     unsigned int texHeight;
@@ -100,13 +98,14 @@ private:
     unsigned int camHeight[2];
     ovrFovPort fov[2];
 
-    bool multiSampleEnabled;
-    bool overdriveEnabled;
-    bool hqDistortionEnabled;
     bool flipInputEnabled;
-    bool timeWarpEnabled;
     bool imagePoseEnabled;
     bool userPoseEnabled;
+
+    // Layers
+    bool logoEnabled;
+    bool crosshairsEnabled;
+    bool batteryEnabled;
 
     double prediction;
 

@@ -1,7 +1,6 @@
 /*
- * Copyright (C) 2015  iCub Facility, Istituto Italiano di Tecnologia
+ * Copyright (C) 2015-2017  iCub Facility, Istituto Italiano di Tecnologia
  * Author: Daniele E. Domenichelli <daniele.domenichelli@iit.it>
- *
  * CopyPolicy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
  */
 
@@ -16,7 +15,7 @@
 
 InputCallback::InputCallback(int eye) :
         yarp::os::BufferedPort<ImageType>(),
-        eyeRenderTexture(NULL),
+        eyeRenderTexture(nullptr),
         eye(eye),
         expected(0),
         droppedFrames(0),
@@ -37,7 +36,7 @@ InputCallback::~InputCallback()
     if (eyeRenderTexture) {
         delete eyeRenderTexture;
     }
-    eyeRenderTexture = NULL;
+    eyeRenderTexture = nullptr;
 }
 
 
