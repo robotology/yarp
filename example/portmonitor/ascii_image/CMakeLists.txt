@@ -13,8 +13,10 @@ set(CMAKE_INCLUDE_CURRENT_DIR TRUE)
 include(YarpPlugin)
 include(YarpInstallationHelpers)
 
+
 set(YARP_FORCE_DYNAMIC_PLUGINS TRUE CACHE INTERNAL "yarp_pm_asciiimage is always built with dynamic plugins")
-yarp_configure_external_installation(yarp)
+# Warning: the <package> option of yarp_configure_plugins_installation should be different from the plugin name
+yarp_configure_plugins_installation(asciiimage_portmonitor)
 
 yarp_prepare_plugin(asciiimage TYPE AsciiImageMonitorObject
                                INCLUDE AsciiImage.h
