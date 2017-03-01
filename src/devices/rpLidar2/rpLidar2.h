@@ -36,24 +36,20 @@ struct Range_t
 class RpLidar2 : public RateThread, public yarp::dev::IRangefinder2D, public DeviceDriver
 {
 protected:
-    yarp::os::Mutex mutex;
-
-    int sensorsNum;
-
-    double min_angle;
-    double max_angle;
-    double min_distance;
-    double max_distance;
-    double resolution;
-    bool clip_max_enable;
-    bool clip_min_enable;
-    bool do_not_clip_infinity_enable;
+    yarp::os::Mutex       mutex;
+    int                   sensorsNum;
+    double                min_angle;
+    double                max_angle;
+    double                min_distance;
+    double                max_distance;
+    double                resolution;
+    bool                  clip_max_enable;
+    bool                  clip_min_enable;
+    bool                  do_not_clip_infinity_enable;
     std::vector <Range_t> range_skip_vector;
-
-    std::string info;
-    Device_status device_status;
-
-    yarp::sig::Vector laser_data;
+    std::string           info;
+    Device_status         device_status;
+    yarp::sig::Vector     laser_data;
 
 public:
     RpLidar2(int period = 10) : RateThread(period)
