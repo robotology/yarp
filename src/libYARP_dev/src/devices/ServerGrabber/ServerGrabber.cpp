@@ -237,11 +237,17 @@ bool ServerGrabber::close() {
         return false;
     }
     param.active = false;
-    detachAll();
-    rpcPort.interrupt();
     pImg.interrupt();
-    rpcPort.close();
     pImg.close();
+    rpcPort.interrupt();
+    rpcPort.close();
+    if(param.twoCameras && param.split)
+    {
+        pImg2.interrupt();
+        pImg2.close();
+    }
+    //Stopping the thread must be after closing the ports
+    detachAll();
     if(poly)
     {
         poly->close();
@@ -256,8 +262,6 @@ bool ServerGrabber::close() {
             delete poly2;
             poly2=YARP_NULLPTR;
         }
-        pImg2.interrupt();
-        pImg2.close();
     }
     isSubdeviceOwned=false;
     if (p2!=YARP_NULLPTR) {
