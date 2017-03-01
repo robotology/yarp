@@ -283,6 +283,20 @@ bool ServerGrabber::open(yarp::os::Searchable& config) {
         return false;
     }
 
+    if(isSubdeviceOwned){
+        if(! openAndAttachSubDevice(config))
+        {
+            yError("ServerGrabber: error while opening subdevice\n");
+            return false;
+        }
+    }
+    else
+    {
+        yInfo()<<"ServerGrabber: running, waiting for attach...";
+        if(!openDeferredAttach(config))
+        return false;
+    }
+
 
     if(!initialize_YARP(config) )
     {
@@ -317,6 +331,7 @@ bool ServerGrabber::open(yarp::os::Searchable& config) {
 
     addUsage("[get] [w]", "get width of image");
     addUsage("[get] [h]", "get height of image");
+
 
     return true;
 }
@@ -370,18 +385,10 @@ bool ServerGrabber::fromConfig(yarp::os::Searchable &config)
         if(config.check("left_config") && config.check("right_config"))
         {
             isSubdeviceOwned=true;
-            if(! openAndAttachSubDevice(config))
-            {
-                yError("ServerGrabber: error while opening subdevice\n");
-                return false;
-            }
         }
         else
         {
             isSubdeviceOwned=false;
-            yInfo()<<"ServerGrabber: running, waiting for attach...";
-            if(!openDeferredAttach(config))
-            return false;
         }
     }
     else
@@ -390,18 +397,10 @@ bool ServerGrabber::fromConfig(yarp::os::Searchable &config)
         if(config.check("subdevice"))
         {
             isSubdeviceOwned=true;
-            if(! openAndAttachSubDevice(config))
-            {
-                yError("ServerGrabber: error while opening subdevice\n");
-                return false;
-            }
         }
         else
         {
             isSubdeviceOwned=false;
-            yWarning()<<"ServerGrabber: subdevice parameter not found..";
-            if(!openDeferredAttach(config))
-            return false;
         }
     }
 
@@ -522,7 +521,7 @@ bool ServerGrabber::respond(const yarp::os::Bottle& cmd,
             if(!ret || (response!=response2))
             {
                 response.clear();
-                response.addVocab(VOCAB_FAILED);
+                response.addString("command not recognized");
                 ret=false;
                 yWarning()<<"ServerGrabber: responses different among cameras or failed";
 
@@ -539,10 +538,10 @@ bool ServerGrabber::respond(const yarp::os::Bottle& cmd,
 bool ServerGrabber::attachAll(const PolyDriverList &device2attach)
 {
     bool ret=false;
-    bool leftDone=false;//for avoiding double left
-    bool rightDone=false;//for avoiding double right
     if(param.twoCameras)
     {
+        bool leftDone=false;//for avoiding double left
+        bool rightDone=false;//for avoiding double right
         if (device2attach.size() != 2)
         {
             yError("ServerGrabber: expected two devices to be attached");
@@ -859,7 +858,7 @@ bool ServerGrabber::openAndAttachSubDevice(Searchable &prop){
 
 bool ServerGrabber::threadInit()
 {
-    if(param.twoCameras && !param.split)
+    if(param.twoCameras)
     {
         if(param.cap==COLOR)
         {
@@ -876,12 +875,25 @@ bool ServerGrabber::threadInit()
             img2_Raw->resize(fgImageRaw2->width(),fgImageRaw2->height());
         }
     }
+    else
+    {
+        if(param.cap==COLOR)
+        {
+            img= new ImageOf<PixelRgb>;
+            img->resize(fgImage->width(),fgImage->height());
+        }
+        else
+        {
+            img_Raw= new ImageOf<PixelMono>;
+            img_Raw->resize(fgImageRaw->width(),fgImageRaw->height());
+        }
+    }
     return true;
 }
 
 void ServerGrabber::threadRelease(){
 
-    if(param.twoCameras && !param.split)
+    if(param.twoCameras)
     {
         if(param.cap==COLOR)
         {
@@ -910,6 +922,25 @@ void ServerGrabber::threadRelease(){
             }
         }
     }
+    else
+    {
+        if(param.cap==COLOR)
+        {
+            if(img!=YARP_NULLPTR)
+            {
+                delete img;
+                img=YARP_NULLPTR;
+            }
+        }
+        else
+        {
+            if(img_Raw!=YARP_NULLPTR)
+            {
+                delete img_Raw;
+                img_Raw=YARP_NULLPTR;
+            }
+        }
+    }
 
 }
 
@@ -921,25 +952,20 @@ void ServerGrabber::run()
         {
             FlexImage& flex_i=pImg.prepare();
             FlexImage& flex_i2=pImg2.prepare();
-            //TODO scrivi su porte
             if(param.cap==COLOR)
             {
                 if(fgImage!=YARP_NULLPTR && fgImage2 !=YARP_NULLPTR)
                 {
-                    ImageOf<PixelRgb> i;
-                    ImageOf<PixelRgb> i2;
-                    flex_i.setPixelCode(i.getPixelCode());
-                    flex_i.setPixelSize(i.getPixelSize());
-                    flex_i.setQuantum(i.getQuantum());
-                    flex_i.resize(fgImage->width(),fgImage->height());
-                    flex_i2.setPixelCode(i2.getPixelCode());
-                    flex_i2.setPixelSize(i2.getPixelSize());
-                    flex_i2.setQuantum(i2.getQuantum());
-                    flex_i2.resize(fgImage2->width(),fgImage2->height());
-                    fgImage->getImage(i);
-                    fgImage2->getImage(i2);
-                    memcpy(flex_i.getRawImage(), i.getRawImage(), i.getRawImageSize());
-                    memcpy(flex_i2.getRawImage(), i2.getRawImage(), i2.getRawImageSize());
+                    fgImage->getImage(*img);
+                    flex_i.setPixelCode(img->getPixelCode());
+                    flex_i.setPixelSize(img->getPixelSize());
+                    flex_i.setQuantum(img->getQuantum());
+                    flex_i.setExternal(img->getRawImage(), img->width(),img->height());
+                    fgImage2->getImage(*img2);
+                    flex_i2.setPixelCode(img2->getPixelCode());
+                    flex_i2.setPixelSize(img2->getPixelSize());
+                    flex_i2.setQuantum(img2->getQuantum());
+                    flex_i2.setExternal(img2->getRawImage(), img2->width(), img2->height());
                 }
                 else
                     yError()<<"ServerGrabber: Image not captured.. check hardware configuration";
@@ -949,20 +975,16 @@ void ServerGrabber::run()
             {
                 if(fgImageRaw!=YARP_NULLPTR && fgImageRaw2 !=YARP_NULLPTR)
                 {
-                    ImageOf<PixelMono> i;
-                    ImageOf<PixelMono> i2;
-                    flex_i.setPixelCode(i.getPixelCode());
-                    flex_i.setPixelSize(i.getPixelSize());
-                    flex_i.setQuantum(i.getQuantum());
-                    flex_i.resize(fgImageRaw->width(),fgImageRaw->height());
-                    flex_i2.setPixelCode(i2.getPixelCode());
-                    flex_i2.setPixelSize(i2.getPixelSize());
-                    flex_i2.setQuantum(i2.getQuantum());
-                    flex_i2.resize(fgImageRaw2->width(),fgImageRaw2->height());
-                    fgImageRaw->getImage(i);
-                    fgImageRaw2->getImage(i2);
-                    memcpy(flex_i.getRawImage(), i.getRawImage(), i.getRawImageSize());
-                    memcpy(flex_i2.getRawImage(), i2.getRawImage(), i2.getRawImageSize());
+                    fgImageRaw->getImage(*img_Raw);
+                    flex_i.setPixelCode(img_Raw->getPixelCode());
+                    flex_i.setPixelSize(img_Raw->getPixelSize());
+                    flex_i.setQuantum(img_Raw->getQuantum());
+                    flex_i.setExternal(img_Raw->getRawImage(), img_Raw->width(),img_Raw->height());
+                    fgImageRaw2->getImage(*img2_Raw);
+                    flex_i2.setPixelCode(img2_Raw->getPixelCode());
+                    flex_i2.setPixelSize(img2_Raw->getPixelSize());
+                    flex_i2.setQuantum(img2_Raw->getQuantum());
+                    flex_i2.setExternal(img2_Raw->getRawImage(), img2_Raw->width(), img2_Raw->height());
                 }
                 else
                     yError()<<"ServerGrabber: Image not captured.. check hardware configuration";
@@ -1052,13 +1074,11 @@ void ServerGrabber::run()
         {
             if(fgImage!=YARP_NULLPTR)
             {
-                ImageOf<PixelRgb> i;
-                flex_i.setPixelCode(i.getPixelCode());
-                flex_i.setPixelSize(i.getPixelSize());
-                flex_i.setQuantum(i.getQuantum());
-                flex_i.resize(fgImage->width(),fgImage->height());
-                fgImage->getImage(i);
-                memcpy(flex_i.getRawImage(), i.getRawImage(), i.getRawImageSize());
+                fgImage->getImage(*img);
+                flex_i.setPixelCode(img->getPixelCode());
+                flex_i.setPixelSize(img->getPixelSize());
+                flex_i.setQuantum(img->getQuantum());
+                flex_i.setExternal(img->getRawImage(), img->width(),img->height());
             }
             else
                 yError()<<"ServerGrabber: Image not captured.. check hardware configuration";
@@ -1067,13 +1087,11 @@ void ServerGrabber::run()
         {
             if(fgImageRaw!=YARP_NULLPTR)
             {
-                ImageOf<PixelMono> i;
-                flex_i.setPixelCode(i.getPixelCode());
-                flex_i.setPixelSize(i.getPixelSize());
-                flex_i.setQuantum(i.getQuantum());
-                flex_i.resize(fgImageRaw->width(),fgImageRaw->height());
-                fgImageRaw->getImage(i);
-                memcpy(flex_i.getRawImage(), i.getRawImage(), i.getRawImageSize());
+                fgImageRaw->getImage(*img_Raw);
+                flex_i.setPixelCode(img_Raw->getPixelCode());
+                flex_i.setPixelSize(img_Raw->getPixelSize());
+                flex_i.setQuantum(img_Raw->getQuantum());
+                flex_i.setExternal(img_Raw->getRawImage(), img_Raw->width(),img_Raw->height());
             }
             else
                 yError()<<"ServerGrabber: Image not captured.. check hardware configuration";
