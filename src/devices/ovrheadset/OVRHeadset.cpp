@@ -715,7 +715,8 @@ void yarp::dev::OVRHeadset::run()
 
     // Begin frame
     ++distortionFrameIndex;
-//    double frameTiming = ovr_GetPredictedDisplayTime(session, distortionFrameIndex);
+    double frameTiming = ovr_GetPredictedDisplayTime(session, distortionFrameIndex);
+    YARP_UNUSED(frameTiming);
 
     // Query the HMD for the current tracking state.
     ovrTrackingState ts = ovr_GetTrackingState(session, ovr_GetTimeInSeconds(), false);
