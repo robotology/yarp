@@ -123,7 +123,7 @@ int V4L_camera::convertV4L_to_YARP_format(int format)
         case V4L2_PIX_FMT_GREY    : return VOCAB_PIXEL_MONO;
         case V4L2_PIX_FMT_Y16     : return VOCAB_PIXEL_MONO16;
         case V4L2_PIX_FMT_RGB24   : return VOCAB_PIXEL_RGB;
-        case V4L2_PIX_FMT_ABGR32  : return VOCAB_PIXEL_BGRA;
+//        case V4L2_PIX_FMT_ABGR32  : return VOCAB_PIXEL_BGRA; //unsupported by linux travis configuration
         case V4L2_PIX_FMT_BGR24   : return VOCAB_PIXEL_BGR;
         case V4L2_PIX_FMT_SGRBG8  : return VOCAB_PIXEL_ENCODING_BAYER_GRBG8;
         case V4L2_PIX_FMT_SBGGR8  : return VOCAB_PIXEL_ENCODING_BAYER_BGGR8;
@@ -618,7 +618,7 @@ bool V4L_camera::deviceInit()
 
         if (-1 == xioctl(param.fd, VIDIOC_S_CROP, &crop))
         {
-            yError() << "xioctl error VIDIOC_S_FMT" << strerror(errno);
+            yError() << "xioctl error VIDIOC_S_CROP" << strerror(errno);
             switch (errno)
             {
                 case EINVAL:
