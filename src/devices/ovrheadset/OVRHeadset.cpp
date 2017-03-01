@@ -970,9 +970,6 @@ void yarp::dev::OVRHeadset::run()
             eyeLayer.Fov[eye] = fov[eye];
             eyeLayer.RenderPose[eye] = EyeRenderPose[eye];
         }
-
-        ovrPoseStatef lhandpose = ts.HandPoses[0];
-
         layerList.push_back(&eyeLayer.Header);
 
         ovrLayerQuad logoLayer;
