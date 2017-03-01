@@ -56,6 +56,7 @@ if(NOT GLFW3_FOUND)
   find_library(GLFW3_GLFW_LIBRARY
               DOC "Absolute path to GLFW3 library."
               NAMES glfw3
+                    glfw3dll
               PATH_SUFFIXES lib
                             lib-vc2010
               PATHS /usr/
