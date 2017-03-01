@@ -137,6 +137,7 @@ yarp::dev::OVRHeadset::OVRHeadset() :
         predictedLinearVelocityPort(nullptr),
         predictedAngularAccelerationPort(nullptr),
         predictedLinearAccelerationPort(nullptr),
+        displayPorts{ nullptr, nullptr },
         textureLogo(nullptr),
         textureCrosshairs(nullptr),
         textureBattery(nullptr),
@@ -153,8 +154,6 @@ yarp::dev::OVRHeadset::OVRHeadset() :
         batteryEnabled(true)
 {
     yTrace();
-    displayPorts[0] = nullptr;
-    displayPorts[1] = nullptr;
 }
 
 yarp::dev::OVRHeadset::~OVRHeadset()
