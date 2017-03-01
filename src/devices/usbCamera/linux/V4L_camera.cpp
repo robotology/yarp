@@ -21,8 +21,6 @@
 
 #define errno_exit printf
 
-//#include <Leopard_MT9M021C.h>
-
 
 using namespace yarp::os;
 using namespace yarp::dev;
@@ -106,6 +104,11 @@ V4L_camera::V4L_camera() : RateThread(1000/DEFAULT_FRAMERATE), doCropping(false)
     configDistM = false;
     configIntrins = false;
     configured = false;
+
+    // leopard debugging
+    pixel_fmt_leo = V4L2_PIX_FMT_SGRBG8;
+    bit_shift = 4;
+    bit_bayer = 8;
 }
 
 yarp::os::Stamp V4L_camera::getLastInputStamp()
@@ -290,6 +293,41 @@ bool V4L_camera::fromConfig(yarp::os::Searchable& config)
             }
             return false;
         }
+    }
+
+    // Check for addictional leopard parameter for debugging purpose
+    if(param.camModel == LEOPARD_PYTHON)
+    {
+        yDebug() << "Using leopard camera!!";
+        bit_shift = config.check("shift", Value(4), "right shift of <n> bits").asInt();
+        bit_bayer = config.check("bit_bayer", Value(8), "uses <n> bits bayer conversion").asInt();
+        switch(bit_bayer)
+        {
+            case 8:
+            {
+                pixel_fmt_leo = V4L2_PIX_FMT_SGRBG8;
+            } break;
+
+            case 10:
+            {
+                pixel_fmt_leo = V4L2_PIX_FMT_SGRBG10;
+            } break;
+
+            case 12:
+            {
+                pixel_fmt_leo = V4L2_PIX_FMT_SGRBG12;
+            } break;
+
+            default:
+            {
+                yError() << "bayer conversion with " << bit_bayer << "not supported";
+                return false;
+            } break;
+        }
+
+        yDebug() << "--------------------------------";
+        yDebug() << bit_shift << "bits of right shift applied to raw data";
+        yDebug() << "Bits used for de-bayer " << bit_bayer;
     }
 
     if(config.check("crop") )
@@ -1150,7 +1188,7 @@ void V4L_camera::imageProcess(void* p, bool useRawData)
             {
                 for(int j=0; j<param.dst_fmt.fmt.pix.width; j++)
                 {
-                    param.tmp_image[i*param.width + j] =  (unsigned char) ( raw_p[i*param.width + j] >> 4);
+                    param.tmp_image[i*param.width + j] =  (unsigned char) ( raw_p[i*param.width + j] >> bit_shift);
                 }
             }
 
@@ -1171,7 +1209,7 @@ void V4L_camera::imageProcess(void* p, bool useRawData)
             param.dst_fmt.fmt.pix.sizeimage         = param.width * param.height * 3;  // 3 for rgb
 
             // workaround for buggy camera info
-            param.src_fmt.fmt.pix.pixelformat = V4L2_PIX_FMT_SGRBG8;
+            param.src_fmt.fmt.pix.pixelformat = pixel_fmt_leo;
             param.dst_fmt.fmt.pix.pixelformat = V4L2_PIX_FMT_RGB24;
 
             if( v4lconvert_convert((v4lconvert_data*) _v4lconvert_data,  &param.src_fmt,   &param.dst_fmt,

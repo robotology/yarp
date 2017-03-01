@@ -294,6 +294,11 @@ private:
     double get_V4L2_control(uint32_t id, bool verbatim=false);   // verbatim = do not convert value, for enum types
 
     double toEpochOffset;
+
+    // leopard de-bayer test
+    int bit_shift;
+    int bit_bayer;
+    int pixel_fmt_leo;
 };
 
 #endif // _V4L_CAMERA_HPP_
