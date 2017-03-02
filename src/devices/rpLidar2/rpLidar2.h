@@ -18,6 +18,7 @@
 #include <yarp/sig/Vector.h>
 #include <yarp/dev/SerialInterfaces.h>
 #include <vector>
+#include <rplidar.h>
 
 using namespace yarp::os;
 using namespace yarp::dev;
@@ -35,9 +36,14 @@ struct Range_t
 
 class RpLidar2 : public RateThread, public yarp::dev::IRangefinder2D, public DeviceDriver
 {
+    typedef rp::standalone::rplidar::RPlidarDriver rplidardrv;
+
+    void                  handleError(u_result error);
+    yarp::os::ConstString deviceinfo();
 protected:
     yarp::os::Mutex       mutex;
     int                   sensorsNum;
+    int                   buffer_life;
     double                min_angle;
     double                max_angle;
     double                min_distance;
@@ -47,9 +53,10 @@ protected:
     bool                  clip_min_enable;
     bool                  do_not_clip_infinity_enable;
     std::vector <Range_t> range_skip_vector;
-    std::string           info;
+    yarp::os::ConstString info;
     Device_status         device_status;
     yarp::sig::Vector     laser_data;
+    rplidardrv*           drv;
 
 public:
     RpLidar2(int period = 10) : RateThread(period)
