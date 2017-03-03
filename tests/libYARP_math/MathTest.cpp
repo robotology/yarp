@@ -635,9 +635,22 @@ public:
         report(0, "checking Quaternion class");
         Quaternion q1;
         Quaternion q2;
+        Quaternion q3;
+        Quaternion q4;
         Matrix m;
         Matrix m_check;
         Vector v_check;
+
+        double vA[3] = {0.7 * M_PI, 3 * M_PI, 1/6 * M_PI};
+        double vB[3] = {1.2, 2.4 * M_PI, 0.5 * M_PI};
+        Matrix mA = euler2dcm(Vector(3, vA));
+        Matrix mB = euler2dcm(Vector(3, vB));
+        q3.fromRotationMatrix(mA);
+        q4.fromRotationMatrix(mB);
+        assertEqual(mA*mB, (q3 * q4).toRotationMatrix(), "check quaternion multiplication");
+        q3 = Quaternion(2.0, 3.0, 4.0, 5.0);
+        q3.normalize();
+        assertEqual(q3.w()*q3.w() + q3.x()*q3.x() + q3.y()*q3.y() + q3.z()*q3.z(), 1, "check quaternion normalization");
 
         Vector vx(4);
         Vector vy(4);
@@ -662,7 +675,7 @@ public:
         // 0.80902   -0.58779   0.00000
         // 0.58779    0.80902   0.00000
         // 0.00000    0.00000   1.00000
-        
+
         m = mx*my*mz;
         m_check.resize(4, 4);
         m_check[0][0] = 0.5720614028176844;    m_check[0][1] = -0.4156269377774535;   m_check[0][2] = 0.7071067811865475;   m_check[0][3] = 0;
@@ -696,7 +709,6 @@ public:
         double quat_mod = q2.abs();
         assertEqual(quat_mod, 1.0, "check quaternion modulus");
 
-        Quaternion q3;
         q3.fromAxisAngle(vz);
         Vector vz_out = q3.toAxisAngle();
 

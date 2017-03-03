@@ -18,6 +18,7 @@
 
 using namespace yarp::eigen;
 using namespace yarp::sig;
+using namespace yarp::math;
 
 
 Vector yarp::math::operator+(const Vector &a, const double &s)
@@ -230,6 +231,14 @@ Vector& yarp::math::operator*=(Vector &a, const Vector &b)
     for (size_t i=0; i<n; i++)
         a[i]*=b[i];
     return a;
+}
+
+Quaternion yarp::math::operator*(const Quaternion& a, const Quaternion& b)
+{
+    return Quaternion(a.w()*b.x() + a.x()*b.w() + a.y()*b.z() - a.z()*b.y(),
+                      a.w()*b.y() + a.y()*b.w() + a.z()*b.x() - a.x()*b.z(),
+                      a.w()*b.z() + a.z()*b.w() + a.x()*b.y() - a.y()*b.x(),
+                      a.w()*b.w() - a.x()*b.x() - a.y()*b.y() - a.z()*b.z());
 }
 
 Vector yarp::math::operator/(const Vector &a, const Vector &b)

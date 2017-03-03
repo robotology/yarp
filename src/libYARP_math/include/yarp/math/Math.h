@@ -203,6 +203,15 @@ namespace yarp
         YARP_math_API yarp::sig::Vector& operator*=(yarp::sig::Vector &a, const yarp::sig::Vector &b);
 
         /**
+       * Quaternion-quaternion hamilton product operator (defined in Math.h).
+       * reference: "Stevens, Brian L., Frank L. Lewis, Aircraft Control and Simulation, Wiley–Interscience, 2nd Edition".
+       * @param a a quaternion
+       * @param b a quaternion
+       * @return a*b
+       */
+        YARP_math_API yarp::math::Quaternion operator*(const Quaternion& a, const Quaternion& b);
+
+        /**
        * Vector-vector element-wise division operator (defined in Math.h).
        * @param a a vector
        * @param b a vector
