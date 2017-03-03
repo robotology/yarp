@@ -130,14 +130,18 @@ bool BoschIMU::checkReadResponse(unsigned char* response)
     if(response[0] == (unsigned char) ERROR_HEAD)
     {
         if(response[1] != REGISTER_NOT_READY)   // if error is 0x07, do not print error messages
-            yError("Bosch BNO055 IMU - Received error response (0x%02X) - code 0x%02X", response[0], response[1]);
+        {
+            yError("Bosch BNO055 IMU - Inertial sensor didn't understand the command. \n\
+            If this error happens more than once in a row, please check serial communication is working fine and it isn't affected by electrical disturbance.");
+        }
         errorCounter[response[1]]++;
         readSysError();
         return false;
     }
 
     errorCounter[0]++;
-    yError("Bosch BNO055 IMU - Received unknown read response: 0x%02x 0x%02x. This should not happen!!", response[0], response[1]);
+    yError("Bosch BNO055 IMU - Received unknown response message. \n\
+            If this error happens more than once in a row, please check serial communication is working fine and it isn't affected by electrical disturbance.");
     dropGarbage();
     readSysError();
     return false;
@@ -151,14 +155,19 @@ bool BoschIMU::checkWriteResponse(unsigned char* response)
         {
             return true;
         }
-        yError("Bosch BNO055 IMU - Received error response (0x%02X) - code 0x%02X", response[0], response[1]);
+        if(response[1] != REGISTER_NOT_READY)   // if error is 0x07, do not print error messages
+        {
+            yError("Bosch BNO055 IMU - Inertial sensor didn't understand the command. \n\
+            If this error happens more than once in a row, please check serial communication is working fine and it isn't affected by electrical disturbance.");
+        }
         errorCounter[response[1]]++;
         readSysError();
         return false;
     }
 
     errorCounter[0]++;
-    yError("Bosch BNO055 IMU - Received unknown write response: 0x%02x 0x%02x. This should not happen!!", response[0], response[1]);
+    yError("Bosch BNO055 IMU - Received unknown response message. \n\
+            If this error happens more than once in a row, please check serial communication is working fine and it isn't affected by electrical disturbance.");
     dropGarbage();
     readSysError();
     return false;
