@@ -16,6 +16,7 @@ using namespace yarp::os;
 using namespace yarp::dev;
 using namespace yarp::sig;
 
+
 yarp::dev::DriverCreator *createServerGrabber()
 {
     return new yarp::dev::DriverCreatorOf<yarp::dev::ServerGrabber>
@@ -196,7 +197,32 @@ bool yarp::dev::DC1394::DC1394Parser::respond(const Bottle& cmd, Bottle& respons
     return true;
 }
 
+// **********ServerGrabberResponder**********
+
+
+yarp::dev::impl::ServerGrabberResponder::ServerGrabberResponder(bool _left){
+    left=_left;
+}
+yarp::dev::impl::ServerGrabberResponder::~ServerGrabberResponder(){}
+bool yarp::dev::impl::ServerGrabberResponder::configure(yarp::dev::ServerGrabber* _server)
+{
+    if(_server)
+    {
+        server=_server;
+        return true;
+    }
+    yError()<<"ServerGrabberResponder: invalid server pointer";
+    return false;
+}
+bool yarp::dev::impl::ServerGrabberResponder::respond(const os::Bottle &command, os::Bottle &reply){
+    return server->respond(command,reply,left,false);
+}
+
+// **********ServerGrabber**********
+
 ServerGrabber::ServerGrabber():RateThread(DEFAULT_THREAD_PERIOD), period(DEFAULT_THREAD_PERIOD) {
+    responder = YARP_NULLPTR;
+    responder2 =YARP_NULLPTR;
     rgbVis_p = YARP_NULLPTR;
     rgbVis_p2 = YARP_NULLPTR;
     fgImage = YARP_NULLPTR;
@@ -232,22 +258,39 @@ ServerGrabber::ServerGrabber():RateThread(DEFAULT_THREAD_PERIOD), period(DEFAULT
 
 }
 
+ServerGrabber::~ServerGrabber()
+{
+    if(param.active)
+        close();
+}
+
 bool ServerGrabber::close() {
     if (!param.active) {
         return false;
     }
+    stopThread();
+
     param.active = false;
     pImg.interrupt();
     pImg.close();
     rpcPort.interrupt();
     rpcPort.close();
+    if(responder){
+        delete responder;
+        responder=YARP_NULLPTR;
+    }
     if(param.twoCameras && param.split)
     {
         pImg2.interrupt();
         pImg2.close();
     }
-    //Stopping the thread must be after closing the ports
-    detachAll();
+    if(param.twoCameras)
+    {
+        rpcPort2.interrupt();
+        rpcPort2.close();
+    }
+
+    cleanUp();
     if(poly)
     {
         poly->close();
@@ -256,6 +299,11 @@ bool ServerGrabber::close() {
     }
     if(param.twoCameras)
     {
+        if(responder2)
+        {
+            delete responder2;
+            responder=YARP_NULLPTR;
+        }
         if(isSubdeviceOwned && poly2)
         {
             poly2->close();
@@ -305,32 +353,32 @@ bool ServerGrabber::open(yarp::os::Searchable& config) {
     }
 
     param.active = true;
-    //ASK/TODO update usage
-    DeviceResponder::makeUsage();
-    addUsage("[set] [bri] $fBrightness", "set brightness");
-    addUsage("[set] [expo] $fExposure", "set exposure");
-    addUsage("[set] [shar] $fSharpness", "set sharpness");
-    addUsage("[set] [whit] $fBlue $fRed", "set white balance");
-    addUsage("[set] [hue] $fHue", "set hue");
-    addUsage("[set] [satu] $fSaturation", "set saturation");
-    addUsage("[set] [gamm] $fGamma", "set gamma");
-    addUsage("[set] [shut] $fShutter", "set shutter");
-    addUsage("[set] [gain] $fGain", "set gain");
-    addUsage("[set] [iris] $fIris", "set iris");
+//    //ASK/TODO update usage and see if we need to add DeviceResponder as dependency
+//    DeviceResponder::makeUsage();
+//    addUsage("[set] [bri] $fBrightness", "set brightness");
+//    addUsage("[set] [expo] $fExposure", "set exposure");
+//    addUsage("[set] [shar] $fSharpness", "set sharpness");
+//    addUsage("[set] [whit] $fBlue $fRed", "set white balance");
+//    addUsage("[set] [hue] $fHue", "set hue");
+//    addUsage("[set] [satu] $fSaturation", "set saturation");
+//    addUsage("[set] [gamm] $fGamma", "set gamma");
+//    addUsage("[set] [shut] $fShutter", "set shutter");
+//    addUsage("[set] [gain] $fGain", "set gain");
+//    addUsage("[set] [iris] $fIris", "set iris");
 
-    addUsage("[get] [bri]",  "get brightness");
-    addUsage("[get] [expo]", "get exposure");
-    addUsage("[get] [shar]", "get sharpness");
-    addUsage("[get] [whit]", "get white balance");
-    addUsage("[get] [hue]",  "get hue");
-    addUsage("[get] [satu]", "get saturation");
-    addUsage("[get] [gamm]", "get gamma");
-    addUsage("[get] [shut]", "get shutter");
-    addUsage("[get] [gain]", "get gain");
-    addUsage("[get] [iris]", "get iris");
+//    addUsage("[get] [bri]",  "get brightness");
+//    addUsage("[get] [expo]", "get exposure");
+//    addUsage("[get] [shar]", "get sharpness");
+//    addUsage("[get] [whit]", "get white balance");
+//    addUsage("[get] [hue]",  "get hue");
+//    addUsage("[get] [satu]", "get saturation");
+//    addUsage("[get] [gamm]", "get gamma");
+//    addUsage("[get] [shut]", "get shutter");
+//    addUsage("[get] [gain]", "get gain");
+//    addUsage("[get] [iris]", "get iris");
 
-    addUsage("[get] [w]", "get width of image");
-    addUsage("[get] [h]", "get height of image");
+//    addUsage("[get] [w]", "get width of image");
+//    addUsage("[get] [h]", "get height of image");
 
 
     return true;
@@ -369,9 +417,17 @@ bool ServerGrabber::fromConfig(yarp::os::Searchable &config)
     yarp::os::ConstString rootName;
     rootName = config.check("name",Value("/grabber"),
                             "name of port to send data on").asString();
-    rpcPort_Name  = rootName + "/rpc";
+
+    responder = new yarp::dev::impl::ServerGrabberResponder(true);
+    if(!responder->configure(this))
+        return false;
     if(param.twoCameras)
     {
+        responder2 = new yarp::dev::impl::ServerGrabberResponder(false);
+        if(!responder2->configure(this))
+            return false;
+        rpcPort_Name  = rootName + "/left/rpc";
+        rpcPort2_Name  = rootName + "/right/rpc";
         if(param.split)
         {
             pImg_Name = rootName + "/left";
@@ -394,6 +450,7 @@ bool ServerGrabber::fromConfig(yarp::os::Searchable &config)
     else
     {
         pImg_Name = rootName;
+        rpcPort_Name  = rootName + "/rpc";
         if(config.check("subdevice"))
         {
             isSubdeviceOwned=true;
@@ -419,7 +476,7 @@ bool ServerGrabber::initialize_YARP(yarp::os::Searchable &params)
         bRet = false;
     }
 
-    rpcPort.setReader(*this);
+    rpcPort.setReader(*responder);
     pImg.promiseType(Type::byName("yarp/image"));
     pImg.setWriteOnly();
 
@@ -428,7 +485,17 @@ bool ServerGrabber::initialize_YARP(yarp::os::Searchable &params)
         yError() << "ServerGrabber: unable to open image streaming Port" << pImg_Name.c_str();
         bRet = false;
     }
-    pImg.setReader(*this);
+    pImg.setReader(*responder);
+
+    if(param.twoCameras)
+    {
+        if(!rpcPort2.open(rpcPort2_Name.c_str()))
+        {
+            yError() << "ServerGrabber: unable to open rpc Port" << rpcPort2_Name.c_str();
+            bRet = false;
+        }
+        rpcPort2.setReader(*responder2);
+    }
     if(param.twoCameras && param.split)
     {
         pImg2.promiseType(Type::byName("yarp/image"));
@@ -438,13 +505,14 @@ bool ServerGrabber::initialize_YARP(yarp::os::Searchable &params)
             yError() << "ServerGrabber: unable to open image streaming Port" << pImg2_Name.c_str();
             bRet = false;
         }
+        pImg2.setReader(*responder2);
     }
 
     return bRet;
 }
 
 bool ServerGrabber::respond(const yarp::os::Bottle& cmd,
-                                 yarp::os::Bottle& response) {
+                                 yarp::os::Bottle& response, bool left, bool both=false) {
     int code = cmd.get(0).asVocab();
     Bottle response2;
     switch (code)
@@ -455,14 +523,27 @@ bool ServerGrabber::respond(const yarp::os::Bottle& cmd,
         if(param.twoCameras)
         {
             bool ret;
-            ret=ifgCtrl_Parser.respond(cmd, response);
-            ret&=ifgCtrl2_Parser.respond(cmd, response2);
-            if(!ret || (response!=response2))
+            if(both){
+                ret=ifgCtrl_Parser.respond(cmd, response);
+                ret&=ifgCtrl2_Parser.respond(cmd, response2);
+                if(!ret || (response!=response2))
+                {
+                    response.clear();
+                    response.addVocab(VOCAB_FAILED);
+                    ret=false;
+                    yWarning()<<"ServerGrabber: response different among cameras or failed";
+                }
+            }
+            else
             {
-                response.clear();
-                response.addVocab(VOCAB_FAILED);
-                ret=false;
-                yWarning()<<"ServerGrabber: response different among cameras or failed";
+                if(left)
+                {
+                    ret=ifgCtrl_Parser.respond(cmd, response);
+                }
+                else
+                {
+                    ret=ifgCtrl2_Parser.respond(cmd, response);
+                }
             }
             return ret;
         }
@@ -516,15 +597,29 @@ bool ServerGrabber::respond(const yarp::os::Bottle& cmd,
         if(param.twoCameras)
         {
             bool ret;
-            ret=ifgCtrl_DC1394_Parser.respond(cmd, response);
-            ret&=ifgCtrl2_DC1394_Parser.respond(cmd, response2);
-            if(!ret || (response!=response2))
+            if(both)
             {
-                response.clear();
-                response.addString("command not recognized");
-                ret=false;
-                yWarning()<<"ServerGrabber: responses different among cameras or failed";
+                ret=ifgCtrl_DC1394_Parser.respond(cmd, response);
+                ret&=ifgCtrl2_DC1394_Parser.respond(cmd, response2);
+                if(!ret || (response!=response2))
+                {
+                    response.clear();
+                    response.addString("command not recognized");
+                    ret=false;
+                    yWarning()<<"ServerGrabber: responses different among cameras or failed";
 
+                }
+            }
+            else
+            {
+                if(left)
+                {
+                    ret=ifgCtrl_DC1394_Parser.respond(cmd, response);
+                }
+                else
+                {
+                    ret=ifgCtrl2_DC1394_Parser.respond(cmd, response);
+                }
             }
             return ret;
         }
@@ -532,7 +627,7 @@ bool ServerGrabber::respond(const yarp::os::Bottle& cmd,
             return ifgCtrl_DC1394_Parser.respond(cmd, response);
     } break;
     }
-    return DeviceResponder::respond(cmd,response);
+    return false;
 }
 
 bool ServerGrabber::attachAll(const PolyDriverList &device2attach)
@@ -707,12 +802,17 @@ bool ServerGrabber::attachAll(const PolyDriverList &device2attach)
 }
 bool ServerGrabber::detachAll()
 {
-    if (yarp::os::RateThread::isRunning())
-        yarp::os::RateThread::stop();
-
     //check if we already instantiated a subdevice previously
     if (isSubdeviceOwned)
         return false;
+    stopThread();
+    return true;
+
+}
+void ServerGrabber::stopThread()
+{
+    if (yarp::os::RateThread::isRunning())
+        yarp::os::RateThread::stop();
 
     rgbVis_p       = YARP_NULLPTR;
     rgbVis_p2      = YARP_NULLPTR;
@@ -724,7 +824,6 @@ bool ServerGrabber::detachAll()
     fgCtrl2        = YARP_NULLPTR;
     fgCtrl_DC1394  = YARP_NULLPTR;
     fgCtrl2_DC1394 = YARP_NULLPTR;
-    return true;
 }
 
 bool ServerGrabber::attach(PolyDriver *poly)
@@ -893,54 +992,7 @@ bool ServerGrabber::threadInit()
 
 void ServerGrabber::threadRelease(){
 
-    if(param.twoCameras)
-    {
-        if(param.cap==COLOR)
-        {
-            if(img!=YARP_NULLPTR)
-            {
-                delete img;
-                img=YARP_NULLPTR;
-            }
-            if(img2!=YARP_NULLPTR)
-            {
-                delete img2;
-                img2=YARP_NULLPTR;
-            }
-        }
-        else
-        {
-            if(img_Raw!=YARP_NULLPTR)
-            {
-                delete img_Raw;
-                img_Raw=YARP_NULLPTR;
-            }
-            if(img2_Raw!=YARP_NULLPTR)
-            {
-                delete img2_Raw;
-                img2_Raw=YARP_NULLPTR;
-            }
-        }
-    }
-    else
-    {
-        if(param.cap==COLOR)
-        {
-            if(img!=YARP_NULLPTR)
-            {
-                delete img;
-                img=YARP_NULLPTR;
-            }
-        }
-        else
-        {
-            if(img_Raw!=YARP_NULLPTR)
-            {
-                delete img_Raw;
-                img_Raw=YARP_NULLPTR;
-            }
-        }
-    }
+
 
 }
 
@@ -1110,4 +1162,55 @@ void ServerGrabber::shallowCopyImages(const yarp::sig::FlexImage& src, yarp::sig
     dest.setPixelSize(src.getPixelSize());
     dest.setQuantum(src.getQuantum());
     dest.setExternal(src.getRawImage(), src.width(), src.height());
+}
+void ServerGrabber::cleanUp()
+{
+    if(param.twoCameras)
+    {
+        if(param.cap==COLOR)
+        {
+            if(img!=YARP_NULLPTR)
+            {
+                delete img;
+                img=YARP_NULLPTR;
+            }
+            if(img2!=YARP_NULLPTR)
+            {
+                delete img2;
+                img2=YARP_NULLPTR;
+            }
+        }
+        else
+        {
+            if(img_Raw!=YARP_NULLPTR)
+            {
+                delete img_Raw;
+                img_Raw=YARP_NULLPTR;
+            }
+            if(img2_Raw!=YARP_NULLPTR)
+            {
+                delete img2_Raw;
+                img2_Raw=YARP_NULLPTR;
+            }
+        }
+    }
+    else
+    {
+        if(param.cap==COLOR)
+        {
+            if(img!=YARP_NULLPTR)
+            {
+                delete img;
+                img=YARP_NULLPTR;
+            }
+        }
+        else
+        {
+            if(img_Raw!=YARP_NULLPTR)
+            {
+                delete img_Raw;
+                img_Raw=YARP_NULLPTR;
+            }
+        }
+    }
 }
