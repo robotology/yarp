@@ -30,10 +30,37 @@ namespace yarp {
     namespace dev {
         class ServerGrabber;
         namespace DC1394 {
-        class DC1394Parser;
+            class DC1394Parser;
+        }
+        namespace impl {
+            class ServerGrabberResponder;
         }
     }
 }
+
+class yarp::dev::DC1394::DC1394Parser:    public DeviceResponder
+{
+private:
+    yarp::dev::IFrameGrabberControlsDC1394  *fgCtrl_DC1394;
+
+public:
+    DC1394Parser();
+    virtual ~DC1394Parser() {};
+    bool configure(yarp::dev::IFrameGrabberControlsDC1394 *interface);
+    virtual bool respond(const yarp::os::Bottle& cmd, yarp::os::Bottle& response);
+};
+
+class yarp::dev::impl::ServerGrabberResponder :public DeviceResponder
+{
+private:
+    bool left;
+    yarp::dev::ServerGrabber* server;
+public:
+    ServerGrabberResponder(bool _left=false);
+    ~ServerGrabberResponder();
+    bool configure(yarp::dev::ServerGrabber* _server);
+    bool respond(const os::Bottle &command, os::Bottle &reply);
+};
 
 typedef enum {
 //    AV,
@@ -57,17 +84,6 @@ typedef struct
 
 #define DEFAULT_THREAD_PERIOD   30 //ms
 
-class yarp::dev::DC1394::DC1394Parser:    public DeviceResponder
-{
-private:
-    yarp::dev::IFrameGrabberControlsDC1394  *fgCtrl_DC1394;
-
-public:
-    DC1394Parser();
-    virtual ~DC1394Parser() {};
-    bool configure(yarp::dev::IFrameGrabberControlsDC1394 *interface);
-    virtual bool respond(const yarp::os::Bottle& cmd, yarp::os::Bottle& response);
-};
 
 /**
  * @ingroup dev_impl_wrapper
@@ -77,7 +93,7 @@ public:
  * In base of the configuration this device can handle one or two cameras.\n
  * In case of two cameras, the RGB or RAW streaming will be produced on two separated ports or on a sigle port with the two images
  * stitched horizontally.\n
- * Moreover it has a rpc port that in case of two cameras decouples all the requests to both devices.\n
+ * Moreover it has two rpc ports that have the same name of the streaming ports + "/rpc" suffix.\n
  * The inheritance from yarp::dev::IWrapper and yarp::dev::IMultipleWrapper allows to be instantiated also through yarprobotinterface.
  * See their documentation for more details about each interface.
  *
@@ -160,7 +176,6 @@ public:
  *
  */
 class YARP_dev_API yarp::dev::ServerGrabber : public DeviceDriver,
-            public DeviceResponder,
             public yarp::dev::IWrapper,
             public yarp::dev::IMultipleWrapper,
             public yarp::os::RateThread
@@ -168,12 +183,16 @@ class YARP_dev_API yarp::dev::ServerGrabber : public DeviceDriver,
 private:
     int period;
     int count, count2;
+    yarp::dev::impl::ServerGrabberResponder* responder;
+    yarp::dev::impl::ServerGrabberResponder* responder2;
     yarp::dev::Implement_RgbVisualParams_Parser  rgbParser;
     yarp::dev::Implement_RgbVisualParams_Parser  rgbParser2;
     yarp::dev::IRgbVisualParams* rgbVis_p;
     yarp::dev::IRgbVisualParams* rgbVis_p2;
     yarp::os::ConstString rpcPort_Name;
+    yarp::os::ConstString rpcPort2_Name;
     yarp::os::Port rpcPort;
+    yarp::os::Port rpcPort2;
     yarp::os::ConstString pImg_Name;
     yarp::os::ConstString pImg2_Name;
     yarp::os::BufferedPort<yarp::sig::FlexImage> pImg;
@@ -217,6 +236,8 @@ public:
      */
     ServerGrabber();
 
+    ~ServerGrabber();
+
     //DeviceDriver
     virtual bool close();
     /**
@@ -229,8 +250,8 @@ public:
     //virtual bool read(ConnectionReader& connection);
 
     //DeviceResponder
-    virtual bool respond(const yarp::os::Bottle& command,
-                         yarp::os::Bottle& reply);
+    bool respond(const yarp::os::Bottle& command,
+                         yarp::os::Bottle& reply, bool left, bool both);
     // IMultipleWrapper interface
     bool        attachAll(const PolyDriverList &device2attach);
 
@@ -252,7 +273,11 @@ protected:
 
     bool initialize_YARP(yarp::os::Searchable &params);
 
+    void stopThread();
+
     void shallowCopyImages(const yarp::sig::FlexImage& src, yarp::sig::FlexImage& dest);
+
+    void cleanUp();
 };
 
 #endif // YARP_DEV_SERVERGRABBER_H
