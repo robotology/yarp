@@ -327,12 +327,14 @@ void PortCoreInputUnit::run() {
         case 'q':
             done = true;
             break;
+#if !defined(NDEBUG)
         case 'i':
             printf("Interrupt requested\n");
             //ACE_OS::kill(0,2); // SIGINT
             //ACE_OS::kill(Logger::get().getPid(),2); // SIGINT
             ACE_OS::kill(Logger::get().getPid(),15); // SIGTERM
             break;
+#endif
         case '?':
         case 'h':
             if (os!=YARP_NULLPTR) {
@@ -342,7 +344,9 @@ void PortCoreInputUnit::run() {
                 bw.appendLine("d       Signals the beginning of input for the port's owner");
                 bw.appendLine("do      The same as \"d\" except replies should be suppressed (\"data-only\")");
                 bw.appendLine("q       Disconnects");
+#if !defined(NDEBUG)
                 bw.appendLine("i       Interrupt parent process (unix only)");
+#endif
                 bw.appendLine("r       Reverse connection type to be a reader");
                 bw.appendLine("/port   Requests to send output to /port");
                 bw.appendLine("!/port  Requests to stop sending output to /port");
