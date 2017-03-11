@@ -8,6 +8,7 @@
 #define YARP_DEV_IENCODERS_H
 
 #include <yarp/os/Vocab.h>
+#include <yarp/dev/api.h>
 
 namespace yarp {
     namespace dev {
