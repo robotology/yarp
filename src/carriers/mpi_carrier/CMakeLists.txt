@@ -44,6 +44,8 @@ if(NOT SKIP_mpi)
   yarp_install(FILES mpi.ini
                COMPONENT runtime
                DESTINATION ${YARP_PLUGIN_MANIFESTS_INSTALL_DIR})
+
+  set_property(TARGET yarp_mpi PROPERTY FOLDER "Plugins/Carrier")
 endif()
 
 
@@ -81,4 +83,6 @@ if(NOT SKIP_mpibcast)
   yarp_install(FILES mpibcast.ini
                COMPONENT runtime
                DESTINATION ${YARP_PLUGIN_MANIFESTS_INSTALL_DIR})
+
+  set_property(TARGET yarp_mpibcast PROPERTY FOLDER "Plugins/Carrier")
 endif()

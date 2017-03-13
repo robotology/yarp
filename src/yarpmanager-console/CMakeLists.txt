@@ -9,11 +9,9 @@ if(CREATE_YARPMANAGER_CONSOLE)
   get_property(YARP_OS_INCLUDE_DIRS TARGET YARP_OS PROPERTY INCLUDE_DIRS)
   get_property(YARP_manager_INCLUDE_DIRS TARGET YARP_manager PROPERTY INCLUDE_DIRS)
 
-
-  file(GLOB folder_source *.cpp)
-  file(GLOB folder_header *.h)
-  source_group("Source Files" FILES ${folder_source})
-  source_group("Header Files" FILES ${folder_header})
+  set(yarpmanager_console_SRCS yarpmanager.cpp
+                               ymanager.cpp)
+  set(yarpmanager_console_HDRS ymanager.h)
 
   include_directories(${YARP_OS_INCLUDE_DIRS})
   include_directories(${YARP_manager_INCLUDE_DIRS})
@@ -24,7 +22,8 @@ if(CREATE_YARPMANAGER_CONSOLE)
     include_directories(${Libedit_INCLUDE_DIR})
   endif()
 
-  add_executable(yarpmanager-console ${folder_source} ${folder_header} )
+  add_executable(yarpmanager-console ${yarpmanager_console_SRCS}
+                                     ${yarpmanager_console_HDRS})
 
   target_link_libraries(yarpmanager-console YARP::YARP_init
                                             YARP::YARP_OS
@@ -39,4 +38,5 @@ if(CREATE_YARPMANAGER_CONSOLE)
           COMPONENT utilities
           DESTINATION ${CMAKE_INSTALL_BINDIR})
 
+  set_property(TARGET yarpmanager-console PROPERTY FOLDER "Command Line Tools")
 endif()

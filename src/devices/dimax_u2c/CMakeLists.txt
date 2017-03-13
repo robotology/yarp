@@ -36,4 +36,6 @@ if(NOT SKIP_dimax_u2c)
                COMPONENT runtime
                LIBRARY DESTINATION ${YARP_DYNAMIC_PLUGINS_INSTALL_DIR}
                ARCHIVE DESTINATION ${YARP_STATIC_PLUGINS_INSTALL_DIR})
+
+  set_property(TARGET yarp_dimax_u2c PROPERTY FOLDER "Unsupported")
 endif()

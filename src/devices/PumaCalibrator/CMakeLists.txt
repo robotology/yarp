@@ -26,4 +26,6 @@ if(NOT SKIP_pumacalibrator)
   yarp_install(FILES pumacalibrator.ini
                COMPONENT runtime
                DESTINATION ${YARP_PLUGIN_MANIFESTS_INSTALL_DIR})
+
+  set_property(TARGET pumacalibrator PROPERTY FOLDER "Unsupported")
 endif(NOT SKIP_pumacalibrator)

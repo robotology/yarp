@@ -37,4 +37,6 @@ if(NOT SKIP_serial OR NOT SKIP_serialport)
   yarp_install(FILES serial.ini
                COMPONENT runtime
                DESTINATION ${YARP_PLUGIN_MANIFESTS_INSTALL_DIR})
+
+  set_property(TARGET yarp_serial PROPERTY FOLDER "Plugins/Device")
 endif()

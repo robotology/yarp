@@ -26,4 +26,6 @@ if(NOT SKIP_zfp)
   yarp_install(FILES zfp.ini
                COMPONENT runtime
                DESTINATION ${YARP_PLUGIN_MANIFESTS_INSTALL_DIR})
+
+  set_property(TARGET yarp_pm_zfp PROPERTY FOLDER "Plugins/Port Monitor")
 endif()

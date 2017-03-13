@@ -111,10 +111,14 @@ if(CREATE_YARPMANAGER)
   qt5_add_resources(yarpmanager_QRC_GEN_SRCS ${yarpmanager_QRC_FILES})
   qt5_wrap_ui(yarpmanager_UI_GEN_SRCS ${yarpmanager_UI_FILES})
 
-  source_group("Header Files\\manager" FILES ${yarpmanager_manager_HDRS})
-  source_group("Header Files\\builder" FILES ${yarpmanager_builder_HDRS})
-  source_group("Source Files\\manager" FILES ${yarpmanager_manager_SRCS})
-  source_group("Source Files\\builder" FILES ${yarpmanager_builder_SRCS})
+  source_group(TREE "${CMAKE_CURRENT_SOURCE_DIR}"
+               PREFIX "Source Files"
+               FILES ${yarpmanager_manager_SRCS}
+                     ${yarpmanager_builder_SRCS})
+  source_group(TREE "${CMAKE_CURRENT_SOURCE_DIR}"
+               PREFIX "Header Files"
+               FILES ${yarpmanager_manager_HDRS}
+                     ${yarpmanager_builder_HDRS})
   source_group("Resources Files" FILES ${yarpmanager_QRC_FILES}
                                        ${yarpmanager_RC_FILES})
   source_group("UI Files" FILES ${yarpmanager_UI_FILES})
@@ -136,6 +140,8 @@ if(CREATE_YARPMANAGER)
                                     Qt5::Gui)
 
   install(TARGETS yarpmanager COMPONENT utilities DESTINATION ${CMAKE_INSTALL_BINDIR})
+
+  set_property(TARGET yarpmanager PROPERTY FOLDER "Graphical User Interfaces")
 
   yarp_osx_duplicate_and_add_bundle(TARGET yarpmanager
                                     APP_ICON Resources/AppIcon.icns

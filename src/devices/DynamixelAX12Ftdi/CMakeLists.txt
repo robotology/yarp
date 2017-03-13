@@ -28,6 +28,8 @@ if(NOT SKIP_dynamixelAX12Ftdi)
   yarp_install(FILES dynamixelAX12Ftdi.ini
                COMPONENT runtime
                DESTINATION ${YARP_PLUGIN_MANIFESTS_INSTALL_DIR})
+
+  set_property(TARGET yarp_dynamixelAX12Ftdi PROPERTY FOLDER "Unsupported")
 endif()
 
 

@@ -37,4 +37,6 @@ if(NOT SKIP_portaudio)
                DESTINATION ${YARP_PLUGIN_MANIFESTS_INSTALL_DIR})
   yarp_install(FILES portaudio.xml
                DESTINATION ${YARP_MODULES_INSTALL_DIR})
+
+  set_property(TARGET yarp_portaudio PROPERTY FOLDER "Plugins/Device")
 endif()

@@ -90,6 +90,8 @@ if(CREATE_YARPC)
     endif()
   endif(NOT CREATE_YARPC_STANDALONE)
 
+  set_property(TARGET yarpc PROPERTY FOLDER "Unmaintained")
+
   if(YARP_COMPILE_TESTS)
     add_executable(yarpc_test1 test1.cpp)
     target_link_libraries(yarpc_test1 YARP::yarpc)

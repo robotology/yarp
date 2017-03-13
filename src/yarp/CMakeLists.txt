@@ -21,6 +21,7 @@ install(TARGETS yarp
         COMPONENT utilities
         DESTINATION ${CMAKE_INSTALL_BINDIR})
 
+set_property(TARGET yarp PROPERTY FOLDER "Command Line Tools")
 
 set(yarp_config_SRCS yarpconfig.cpp
                      yarpcontext.cpp
@@ -41,3 +42,5 @@ target_link_libraries(yarp-config YARP::YARP_OS
 install(TARGETS yarp-config
         COMPONENT utilities
         DESTINATION ${CMAKE_INSTALL_BINDIR})
+
+set_property(TARGET yarp-config PROPERTY FOLDER "Command Line Tools")

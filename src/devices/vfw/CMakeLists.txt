@@ -35,6 +35,8 @@ if(NOT SKIP_vfw_grabber)
                  COMPONENT runtime
                  DESTINATION ${YARP_PLUGIN_MANIFESTS_INSTALL_DIR})
 
+    set_property(TARGET vfw PROPERTY FOLDER "Unsupported")
+
     if(YARP_COMPILE_TESTS)
       add_executable(vfw_test vfw_test.cpp
                               VfwGrabber.cpp

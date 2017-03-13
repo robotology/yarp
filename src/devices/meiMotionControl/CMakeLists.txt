@@ -28,4 +28,6 @@ if(NOT SKIP_meiMotionControl)
   yarp_install(FILES meimotioncontrol.ini
                COMPONENT runtime
                DESTINATION ${YARP_PLUGIN_MANIFESTS_INSTALL_DIR})
+
+  set_property(TARGET yarp_meiMotionControl PROPERTY FOLDER "Unsupported")
 endif(NOT SKIP_meiMotionControl)

@@ -44,4 +44,6 @@ if(NOT SKIP_ffmpeg_grabber OR NOT SKIP_ffmpeg_writer)
   yarp_install(FILES ffmpeg.ini
                COMPONENT runtime
                DESTINATION ${YARP_PLUGIN_MANIFESTS_INSTALL_DIR})
+
+  set_property(TARGET yarp_ffmpeg PROPERTY FOLDER "Plugins/Device")
 endif()

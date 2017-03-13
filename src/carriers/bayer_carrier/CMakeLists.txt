@@ -57,4 +57,6 @@ if(NOT SKIP_bayer)
   yarp_install(FILES bayer.ini
                COMPONENT runtime
                DESTINATION ${YARP_PLUGIN_MANIFESTS_INSTALL_DIR})
+
+  set_property(TARGET yarp_bayer PROPERTY FOLDER "Plugins/Carrier")
 endif()

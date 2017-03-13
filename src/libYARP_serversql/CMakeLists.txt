@@ -67,3 +67,4 @@ install(TARGETS YARP_serversql
 set_property(GLOBAL APPEND PROPERTY YARP_LIBS YARP_serversql)
 set_property(TARGET YARP_serversql PROPERTY INCLUDE_DIRS ${CMAKE_CURRENT_SOURCE_DIR}/include
                                                          ${YARP_OS_INCLUDE_DIRS})
+set_property(TARGET YARP_serversql PROPERTY FOLDER "Libraries/Private")

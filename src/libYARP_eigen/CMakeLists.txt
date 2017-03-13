@@ -6,7 +6,9 @@ project(YARP_eigen)
 
 set(YARP_eigen_HDRS include/yarp/eigen/Eigen.h)
 
-source_group("Header Files" FILES ${YARP_eigen_HDRS})
+source_group(TREE "${CMAKE_CURRENT_SOURCE_DIR}"
+             PREFIX "Header Files"
+             FILES ${YARP_eigen_HDRS})
 
 set_property(GLOBAL APPEND PROPERTY YARP_TREE_INCLUDE_DIRS "${PROJECT_SOURCE_DIR}/include")
 
@@ -34,3 +36,4 @@ install(DIRECTORY ${PROJECT_SOURCE_DIR}/include/yarp/eigen
         DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}/yarp)
 
 set_property(GLOBAL APPEND PROPERTY YARP_LIBS YARP_eigen)
+#set_property(TARGET YARP_eigen PROPERTY FOLDER "Libraries")

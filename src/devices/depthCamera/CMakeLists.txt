@@ -42,4 +42,6 @@ if(ENABLE_depthCamera)
   yarp_install(FILES       depthCamera.ini
                COMPONENT   runtime
                DESTINATION ${YARP_PLUGIN_MANIFESTS_INSTALL_DIR})
+
+  set_property(TARGET yarp_depthCamera PROPERTY FOLDER "Plugins/Device")
 endif()

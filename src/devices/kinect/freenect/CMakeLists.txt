@@ -44,6 +44,8 @@ if(NOT SKIP_primesensecamera OR NOT SKIP_kinect)
                LIBRARY DESTINATION ${YARP_DYNAMIC_PLUGINS_INSTALL_DIR}
                ARCHIVE DESTINATION ${YARP_STATIC_PLUGINS_INSTALL_DIR})
 
+  set_property(TARGET yarp_kinect PROPERTY FOLDER "Unsupported")
+
   if(YARP_COMPILE_TESTS)
     add_executable(test_kinect KinectExample.cpp
                                KinectDeviceDriver.cpp

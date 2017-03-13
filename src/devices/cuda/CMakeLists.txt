@@ -37,4 +37,6 @@ if(NOT SKIP_cuda)
   yarp_install(FILES cuda.ini
                COMPONENT runtime
                DESTINATION ${YARP_PLUGIN_MANIFESTS_INSTALL_DIR})
+
+  set_property(TARGET yarp_cuda PROPERTY FOLDER "Plugins/Device")
 endif()

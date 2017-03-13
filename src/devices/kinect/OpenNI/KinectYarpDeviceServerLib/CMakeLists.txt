@@ -32,9 +32,6 @@ include_directories(SYSTEM ${XN_NITE_INCLUDE})
 # Search for source code.
 file(GLOB folder_source *.cpp *.cc *.c)
 file(GLOB folder_header *.h)
-source_group("Source Files" FILES ${folder_source})
-source_group("Header Files" FILES ${folder_header})
-
 
 # Automatically add include directories if needed.
 foreach(header_file ${folder_header})
@@ -52,3 +49,5 @@ yarp_install(TARGETS KinectYarpDeviceServerLib
              COMPONENT runtime
              LIBRARY DESTINATION ${YARP_DYNAMIC_PLUGINS_INSTALL_DIR}
              ARCHIVE DESTINATION ${YARP_STATIC_PLUGINS_INSTALL_DIR})
+
+set_property(TARGET KinectYarpDeviceServerLib PROPERTY FOLDER "Unsupported")

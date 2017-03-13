@@ -69,4 +69,6 @@ if (NOT SKIP_OpenNI2DeviceServer OR NOT SKIP_OpenNI2DeviceClient)
   yarp_install(FILES openni2.ini
                COMPONENT runtime
                DESTINATION ${YARP_PLUGIN_MANIFESTS_INSTALL_DIR})
+
+  set_property(TARGET yarp_OpenNI2Device PROPERTY FOLDER "Unsupported")
 endif()

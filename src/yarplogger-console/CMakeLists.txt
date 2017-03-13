@@ -3,8 +3,6 @@
 # CopyPolicy: Released under the terms of the GNU GPL v2.0.
 
 if(CREATE_YARPLOGGER)
-
-  set(PROJECTNAME yarplogger-console)
   get_property(YARP_OS_INCLUDE_DIRS TARGET YARP_OS PROPERTY INCLUDE_DIRS)
   get_property(YARP_logger_INCLUDE_DIRS TARGET YARP_logger PROPERTY INCLUDE_DIRS)
 
@@ -12,11 +10,12 @@ if(CREATE_YARPLOGGER)
                       ${YARP_logger_INCLUDE_DIRS})
   include_directories(SYSTEM ${ACE_INCLUDE_DIRS})
 
-  add_executable(${PROJECTNAME} main.cpp)
-  target_link_libraries(${PROJECTNAME} YARP::YARP_OS
-                                       YARP::YARP_init
-                                       YARP::YARP_logger)
+  add_executable(yarplogger-console main.cpp)
+  target_link_libraries(yarplogger-console YARP::YARP_OS
+                                           YARP::YARP_init
+                                           YARP::YARP_logger)
 
-  install(TARGETS ${PROJECTNAME} COMPONENT utilities DESTINATION ${CMAKE_INSTALL_BINDIR})
+  install(TARGETS yarplogger-console COMPONENT utilities DESTINATION ${CMAKE_INSTALL_BINDIR})
 
+  set_property(TARGET yarplogger-console PROPERTY FOLDER "Command Line Tools")
 endif()

@@ -28,7 +28,7 @@ set(xmlrpcpp_HDRS xmlrpcpp/src/base64.h
 
 add_library(YARP_priv_xmlrpcpp STATIC ${xmlrpcpp_SRCS})
 
-set_property(TARGET YARP_priv_xmlrpcpp PROPERTY FOLDER "External Libraries")
+set_property(TARGET YARP_priv_xmlrpcpp PROPERTY FOLDER "Libraries/External")
 
 set(xmlrpcpp_INCLUDE_DIRS ${CMAKE_CURRENT_SOURCE_DIR}/xmlrpcpp/src PARENT_SCOPE)
 set(xmlrpcpp_LIBRARIES "YARP_priv_xmlrpcpp" PARENT_SCOPE)

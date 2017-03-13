@@ -33,4 +33,6 @@ if(ENABLE_imuBosch_BNO055)
   yarp_install(FILES imuBosch_BNO055.ini
                COMPONENT runtime
                DESTINATION ${YARP_PLUGIN_MANIFESTS_INSTALL_DIR})
+
+  set_property(TARGET imuBosch_BNO055 PROPERTY FOLDER "Plugins/Device")
 endif()

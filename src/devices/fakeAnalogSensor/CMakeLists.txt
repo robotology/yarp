@@ -33,4 +33,6 @@ if(ENABLE_fakeAnalogSensor)
   yarp_install(FILES fakeAnalogSensor.ini
                COMPONENT runtime
                DESTINATION ${YARP_PLUGIN_MANIFESTS_INSTALL_DIR})
+
+  set_property(TARGET yarp_fakeAnalogSensor PROPERTY FOLDER "Plugins/Device/Fake")
 endif()

@@ -29,4 +29,6 @@ if(NOT SKIP_laserFromDepth)
   yarp_install(FILES laserFromDepth.ini
                COMPONENT runtime
                DESTINATION ${YARP_PLUGIN_MANIFESTS_INSTALL_DIR})
+
+  set_property(TARGET laserFromDepth PROPERTY FOLDER "Plugins/Device")
 endif()

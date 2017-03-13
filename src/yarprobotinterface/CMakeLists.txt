@@ -55,4 +55,5 @@ if(CREATE_YARPROBOTINTERFACE)
           COMPONENT utilities
           DESTINATION ${CMAKE_INSTALL_BINDIR})
 
+  set_property(TARGET yarprobotinterface PROPERTY FOLDER "Command Line Tools")
 endif()

@@ -36,4 +36,6 @@ if(NOT SKIP_xmlrpc_carrier)
   yarp_install(FILES xmlrpc.ini
                COMPONENT runtime
                DESTINATION ${YARP_PLUGIN_MANIFESTS_INSTALL_DIR})
+
+  set_property(TARGET yarp_xmlrpc PROPERTY FOLDER "Plugins/Carrier")
 endif()

@@ -13,6 +13,7 @@ target_link_libraries(yarpserver YARP_serversql YARP_name)
 install(TARGETS yarpserver
         COMPONENT utilities
         DESTINATION ${CMAKE_INSTALL_BINDIR})
+set_property(TARGET yarpserver PROPERTY FOLDER "Command Line Tools")
 
 if(NOT YARP_NO_DEPRECATED) # since YARP 2.3.65, removed in YARP 2.3.68
   add_executable(yarpserver2 src/deprecated.cpp)
@@ -21,4 +22,5 @@ if(NOT YARP_NO_DEPRECATED) # since YARP 2.3.65, removed in YARP 2.3.68
                   yarpserver3
           COMPONENT deprecated
           DESTINATION ${CMAKE_INSTALL_BINDIR})
+  set_property(TARGET yarpserver2 yarpserver3 PROPERTY FOLDER "Deprecated")
 endif()

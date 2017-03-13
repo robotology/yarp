@@ -37,4 +37,6 @@ if(NOT SKIP_microphone)
   yarp_install(FILES microphone.ini
                COMPONENT runtime
                DESTINATION ${YARP_PLUGIN_MANIFESTS_INSTALL_DIR})
+
+  set_property(TARGET yarp_microphone PROPERTY FOLDER "Deprecated")
 endif()

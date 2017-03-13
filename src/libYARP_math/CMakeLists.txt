@@ -39,9 +39,13 @@ if (YARP_HAS_MATH_LIB)
                      src/RandnScalar.cpp
                      src/mt.cc)
 
-  source_group("Source Files" FILES ${YARP_math_SRCS})
-  source_group("Header Files" FILES ${YARP_math_HDRS})
-  source_group("Implementation Header Files" FILES ${YARP_math_IMPL_HDRS})
+  source_group(TREE "${CMAKE_CURRENT_SOURCE_DIR}"
+               PREFIX "Source Files"
+               FILES ${YARP_math_SRCS})
+  source_group(TREE "${CMAKE_CURRENT_SOURCE_DIR}"
+               PREFIX "Header Files"
+               FILES ${YARP_math_HDRS}
+                     ${YARP_math_IMPL_HDRS})
 
   set_property(GLOBAL APPEND PROPERTY YARP_TREE_INCLUDE_DIRS "${PROJECT_SOURCE_DIR}/include")
   get_property(YARP_TREE_INCLUDE_DIRS GLOBAL PROPERTY YARP_TREE_INCLUDE_DIRS)
@@ -74,6 +78,7 @@ if (YARP_HAS_MATH_LIB)
 
   set_property(GLOBAL APPEND PROPERTY YARP_LIBS YARP_math)
   set_property(TARGET YARP_math PROPERTY INCLUDE_DIRS ${YARP_TREE_INCLUDE_DIRS})
+  set_property(TARGET YARP_math PROPERTY FOLDER "Libraries")
 endif()
 
 set_property(GLOBAL PROPERTY YARP_HAS_MATH_LIB ${YARP_HAS_MATH_LIB})

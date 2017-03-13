@@ -29,4 +29,6 @@ if(CREATE_YARPFS)
                                YARP::YARP_init
                                ${ACE_LIBRARIES}
                                ${Fuse_LIBRARIES})
+
+  set_property(TARGET yarpfs PROPERTY FOLDER "Unsupported")
 endif()

@@ -33,6 +33,8 @@ if(YARP_LINK_PLUGINS)
   set_property(GLOBAL APPEND PROPERTY YARP_LIBS yarpcar ${yarpcar_LIBRARIES})
 endif()
 
+set_property(TARGET yarpcar PROPERTY FOLDER "Plugins/Carrier")
+
 include(YarpDeprecatedOption)
 yarp_renamed_option(ENABLE_yarpcar_bayer_carrier ENABLE_yarpcar_bayer) # since YARP 2.3.68
 yarp_renamed_option(ENABLE_yarpcar_human_carrier ENABLE_yarpcar_human) # since YARP 2.3.68

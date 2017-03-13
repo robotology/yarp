@@ -9,9 +9,13 @@ set(YARP_gsl_HDRS include/yarp/gsl/api.h
 set(YARP_gsl_SRCS src/Gsl.cpp)
 set(YARP_gsl_IMPL_HDRS include/yarp/gsl/impl/gsl_structs.h)
 
-source_group("Source Files" FILES ${YARP_gsl_SRCS})
-source_group("Header Files" FILES ${YARP_gsl_HDRS})
-source_group("Implementation Header Files" FILES ${YARP_gsl_IMPL_HDRS})
+source_group(TREE "${CMAKE_CURRENT_SOURCE_DIR}"
+             PREFIX "Source Files"
+             FILES ${YARP_gsl_SRCS})
+source_group(TREE "${CMAKE_CURRENT_SOURCE_DIR}"
+             PREFIX "Header Files"
+             FILES ${YARP_gsl_HDRS}
+                   ${YARP_gsl_IMPL_HDRS})
 
 set_property(GLOBAL APPEND PROPERTY YARP_TREE_INCLUDE_DIRS "${PROJECT_SOURCE_DIR}/include")
 get_property(YARP_TREE_INCLUDE_DIRS GLOBAL PROPERTY YARP_TREE_INCLUDE_DIRS)
@@ -37,3 +41,4 @@ install(TARGETS YARP_gsl
 
 set_property(GLOBAL APPEND PROPERTY YARP_LIBS YARP_gsl)
 set_property(TARGET YARP_gsl PROPERTY INCLUDE_DIRS ${YARP_TREE_INCLUDE_DIRS})
+set_property(TARGET YARP_gsl PROPERTY FOLDER "Libraries")

@@ -14,9 +14,12 @@ set(YARP_rtf_SRCS src/JointsPosMotion.cpp
                   src/TestAsserter.cpp
                   src/TestCase.cpp)
 
-
-source_group("Source Files" FILES ${YARP_rtf_SRCS})
-source_group("Header Files" FILES ${YARP_rtf_HDRS})
+source_group(TREE "${CMAKE_CURRENT_SOURCE_DIR}"
+             PREFIX "Source Files"
+             FILES ${YARP_rtf_SRCS})
+source_group(TREE "${CMAKE_CURRENT_SOURCE_DIR}"
+             PREFIX "Header Files"
+             FILES ${YARP_rtf_HDRS})
 
 set_property(GLOBAL APPEND PROPERTY YARP_TREE_INCLUDE_DIRS "${PROJECT_SOURCE_DIR}/include")
 get_property(YARP_TREE_INCLUDE_DIRS GLOBAL PROPERTY YARP_TREE_INCLUDE_DIRS)
@@ -45,3 +48,4 @@ install(TARGETS YARP_rtf
 
 set_property(GLOBAL APPEND PROPERTY YARP_LIBS YARP_rtf)
 set_property(TARGET YARP_rtf PROPERTY INCLUDE_DIRS ${YARP_TREE_INCLUDE_DIRS})
+set_property(TARGET YARP_rtf PROPERTY FOLDER "Libraries")

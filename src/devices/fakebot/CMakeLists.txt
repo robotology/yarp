@@ -29,5 +29,7 @@ if(NOT SKIP_fakebot)
   yarp_install(FILES fakebot.ini
                COMPONENT runtime
                DESTINATION ${YARP_PLUGIN_MANIFESTS_INSTALL_DIR})
+
+  set_property(TARGET yarp_fakebot PROPERTY FOLDER "Plugins/Device/Fake")
 endif()
 

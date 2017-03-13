@@ -48,6 +48,8 @@ if(NOT SKIP_tcpros OR NOT SKIP_rossrv)
                COMPONENT runtime
                DESTINATION ${YARP_PLUGIN_MANIFESTS_INSTALL_DIR})
 
+  set_property(TARGET yarp_tcpros PROPERTY FOLDER "Plugins/Carrier")
+
   add_executable(yarpros yarpros.cpp
                          TcpRosStream.cpp
                          RosLookup.cpp)
@@ -58,4 +60,6 @@ if(NOT SKIP_tcpros OR NOT SKIP_rossrv)
           EXPORT YARP
           COMPONENT utilities
           DESTINATION ${CMAKE_INSTALL_BINDIR})
+
+  set_property(TARGET yarpros PROPERTY FOLDER "Command Line Tools")
 endif()

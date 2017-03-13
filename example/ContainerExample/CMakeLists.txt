@@ -29,8 +29,6 @@ file(GLOB ContainerExample_QRC_FILES *.qrc)
 
 qt5_add_resources(ContainerExample_QRC_GEN_FILES ${ContainerExample_QRC_FILES})
 
-source_group("Source Files" FILES ${ContainerExample_SRCS})
-source_group("Header Files" FILES ${ContainerExample_HDRS})
 source_group("Resources Files" FILES ${ContainerExample_QRC_FILES})
 source_group("Generated Files" FILES ${ContainerExample_QRC_GEN_FILES})
 

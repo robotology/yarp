@@ -14,9 +14,13 @@ set(yarpscope_QML_FILES qml/QtYARPScope/main.qml)
 
 qt5_add_resources(yarpscope_QRC_GEN_SRCS ${yarpscope_QRC_FILES})
 
-source_group("Source Files" FILES ${yarpscope_SRCS})
-source_group("Header Files" FILES ${yarpscope_HDRS})
-source_group("Resource Files" FILES ${yarpscope_QRC_FILES})
+source_group(TREE "${CMAKE_CURRENT_SOURCE_DIR}"
+             PREFIX "Source Files"
+             FILES ${yarpscope_SRCS})
+source_group(TREE "${CMAKE_CURRENT_SOURCE_DIR}"
+             PREFIX "Header Files"
+             FILES ${yarpscope_HDRS})
+source_group("Resources Files" FILES ${yarpscope_QRC_FILES})
 source_group("QML Files" FILES ${yarpscope_QML_FILES})
 source_group("Generated Files" FILES ${yarpscope_QRC_GEN_SRCS})
 
@@ -35,6 +39,8 @@ target_link_libraries(yarpscope Qt5::Widgets
 install(TARGETS yarpscope
         COMPONENT utilities
         DESTINATION ${CMAKE_INSTALL_BINDIR})
+
+set_property(TARGET yarpscope PROPERTY FOLDER "Graphical User Interfaces")
 
 yarp_osx_duplicate_and_add_bundle(TARGET yarpscope
                                   INSTALL_COMPONENT utilities

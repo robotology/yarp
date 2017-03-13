@@ -29,4 +29,6 @@ if(NOT SKIP_laserHokuyo)
   yarp_install(FILES laserHokuyo.ini
                COMPONENT runtime
                DESTINATION ${YARP_PLUGIN_MANIFESTS_INSTALL_DIR})
+
+  set_property(TARGET laserHokuyo PROPERTY FOLDER "Plugins/Device")
 endif()

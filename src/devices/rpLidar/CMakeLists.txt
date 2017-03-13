@@ -29,4 +29,6 @@ if(NOT SKIP_rpLidar)
   yarp_install(FILES rpLidar.ini
                COMPONENT runtime
                DESTINATION ${YARP_PLUGIN_MANIFESTS_INSTALL_DIR})
+
+  set_property(TARGET rpLidar PROPERTY FOLDER "Plugins/Device")
 endif()

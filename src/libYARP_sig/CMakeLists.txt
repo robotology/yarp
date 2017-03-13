@@ -28,8 +28,13 @@ set(YARP_sig_SRCS src/ImageCopy.cpp
                   src/Vector.cpp
                   src/DeBayer.cpp)
 
-source_group("Source Files" FILES ${YARP_sig_SRCS})
-source_group("Header Files" FILES ${YARP_sig_HDRS})
+source_group(TREE "${CMAKE_CURRENT_SOURCE_DIR}"
+             PREFIX "Source Files"
+             FILES ${YARP_sig_SRCS})
+source_group(TREE "${CMAKE_CURRENT_SOURCE_DIR}"
+             PREFIX "Header Files"
+             FILES ${YARP_sig_HDRS}
+                   ${YARP_sig_IMPL_HDRS})
 
 set_property(GLOBAL APPEND PROPERTY YARP_TREE_INCLUDE_DIRS "${PROJECT_SOURCE_DIR}/include")
 get_property(YARP_TREE_INCLUDE_DIRS GLOBAL PROPERTY YARP_TREE_INCLUDE_DIRS)
@@ -39,7 +44,9 @@ include_directories(${YARP_TREE_INCLUDE_DIRS})
 # are also required.
 include_directories(SYSTEM ${ACE_INCLUDE_DIRS})
 
-add_library(YARP_sig ${YARP_sig_SRCS} ${YARP_sig_HDRS})
+add_library(YARP_sig ${YARP_sig_SRCS}
+                     ${YARP_sig_HDRS}
+                     ${YARP_sig_IMPL_HDRS})
 add_library(YARP::YARP_sig ALIAS YARP_sig)
 
 target_link_libraries(YARP_sig PRIVATE YARP::YARP_OS ${ACE_LIBRARIES})
@@ -58,3 +65,4 @@ install(TARGETS YARP_sig
 
 set_property(GLOBAL APPEND PROPERTY YARP_LIBS YARP_sig)
 set_property(TARGET YARP_sig PROPERTY INCLUDE_DIRS ${YARP_TREE_INCLUDE_DIRS})
+set_property(TARGET YARP_sig PROPERTY FOLDER "Libraries")

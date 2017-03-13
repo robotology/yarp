@@ -27,8 +27,6 @@ link_libraries(${XN_NITE_LIBRARY})
 # Search for source code.
 file(GLOB folder_source *.cpp *.cc *.c)
 file(GLOB folder_header *.h)
-source_group("Source Files" FILES ${folder_source})
-source_group("Header Files" FILES ${folder_header})
 
 # Automatically add include directories if needed.
 foreach(header_file ${folder_header})

@@ -28,8 +28,9 @@ if(YARP_COMPILE_TESTS)
   if(ENABLE_YARPRUNTESTS)
     add_definitions(-DYARPRUN_TEST)
     add_executable(testModule ${CMAKE_SOURCE_DIR}/tests/libYARP_OS/testModule/module.cpp)
-     target_link_libraries(testModule YARP::YARP_init
-                                      YARP::YARP_OS)
+    target_link_libraries(testModule YARP::YARP_init
+                                     YARP::YARP_OS)
+    set_property(TARGET testModule PROPERTY FOLDER "Test")
   endif()
   mark_as_advanced(ENABLE_YARPRUNTESTS)
 
@@ -77,6 +78,7 @@ if(YARP_COMPILE_TESTS)
     if(YARP_HAS_ACE)
       target_link_libraries(${EXE} ${ACE_LIBRARIES})
     endif()
+    set_property(TARGET ${EXE} PROPERTY FOLDER "Test")
 
     foreach(test ${harness_code})
       get_filename_component(XN ${test} NAME_WE)

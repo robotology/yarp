@@ -16,9 +16,13 @@ set(YARP_name_IMPL_HDRS )
 set(YARP_name_SRCS src/BootstrapServer.cpp
                    src/NameService.cpp)
 
-source_group("Source Files" FILES ${YARP_name_SRCS})
-source_group("Header Files" FILES ${YARP_name_HDRS})
-source_group("Implementation Header Files" FILES ${YARP_name_IMPL_HDRS})
+source_group(TREE "${CMAKE_CURRENT_SOURCE_DIR}"
+             PREFIX "Source Files"
+             FILES ${YARP_name_SRCS})
+source_group(TREE "${CMAKE_CURRENT_SOURCE_DIR}"
+             PREFIX "Header Files"
+             FILES ${YARP_name_HDRS}
+                   ${YARP_name_IMPL_HDRS})
 
 set_property(GLOBAL APPEND PROPERTY YARP_TREE_INCLUDE_DIRS "${PROJECT_SOURCE_DIR}/include")
 get_property(YARP_TREE_INCLUDE_DIRS GLOBAL PROPERTY YARP_TREE_INCLUDE_DIRS)
@@ -48,3 +52,4 @@ install(TARGETS YARP_name
 
 set_property(GLOBAL APPEND PROPERTY YARP_LIBS YARP_name)
 set_property(TARGET YARP_name PROPERTY INCLUDE_DIRS ${YARP_TREE_INCLUDE_DIRS})
+set_property(TARGET YARP_name PROPERTY FOLDER "Libraries/Private")

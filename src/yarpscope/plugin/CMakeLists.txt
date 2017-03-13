@@ -30,15 +30,21 @@ set(QtYARPScopePlugin_QML_FILES YARPScopeAbout.qml
 
 qt5_add_resources(QtYARPScopePlugin_QRC_GEN_SRCS ${QtYARPScopePlugin_QRC_FILES})
 
-source_group("Source Files" FILES ${QtYARPScopePlugin_SRCS})
-source_group("Header Files" FILES ${QtYARPScopePlugin_HDRS})
+source_group(TREE "${CMAKE_CURRENT_SOURCE_DIR}"
+             PREFIX "Source Files"
+             FILES ${QtYARPScopePlugin_SRCS})
+source_group(TREE "${CMAKE_CURRENT_SOURCE_DIR}"
+             PREFIX "Header Files"
+             FILES ${QtYARPScopePlugin_HDRS})
 source_group("Resources Files" FILES ${QtYARPScopePlugin_QRC_FILES})
 source_group("QML Files" FILES ${QtYARPScopePlugin_QML_FILES})
 source_group("Generated Files" FILES ${QtYARPScopePlugin_QRC_GEN_SRCS})
 
 add_library(QtYARPScopePlugin MODULE ${QtYARPScopePlugin_SRCS}
                                      ${QtYARPScopePlugin_HDRS}
-                                     ${QtYARPScopePlugin_QRC_GEN_SRCS})
+                                     ${QtYARPScopePlugin_QRC_FILES}
+                                     ${QtYARPScopePlugin_QRC_GEN_SRCS}
+                                     ${QtYARPScopePlugin_QML_FILES})
 target_link_libraries(QtYARPScopePlugin YARP::YARP_OS
                                         YARP::YARP_init
                                         ${QCustomPlot_LIBRARIES}
@@ -57,3 +63,5 @@ install(TARGETS QtYARPScopePlugin
         ARCHIVE DESTINATION "${CMAKE_INSTALL_QMLDIR}/${QtYARPScopePlugin_QMLDIR}")
 
 install(FILES qmldir DESTINATION "${CMAKE_INSTALL_QMLDIR}/${QtYARPScopePlugin_QMLDIR}")
+
+set_property(TARGET QtYARPScopePlugin PROPERTY FOLDER "Plugins/QML")

@@ -33,4 +33,6 @@ if(NOT SKIP_jrkerr)
   yarp_install(FILES jrkerr.ini
                COMPONENT runtime
                DESTINATION ${YARP_PLUGIN_MANIFESTS_INSTALL_DIR})
+
+  set_property(TARGET yarp_jrkerr PROPERTY FOLDER "Unsupported")
 endif()

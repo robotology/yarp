@@ -372,11 +372,15 @@ if(NOT SKIP_ACE)
                    src/ShmemCarrier.cpp)
 endif()
 
-source_group("Source Files" FILES ${YARP_OS_SRCS})
-source_group("Header Files" FILES ${YARP_OS_HDRS})
-source_group("IDL Header Files" FILES ${YARP_OS_IDL_HDRS})
-source_group("Implementation Header Files" FILES ${YARP_OS_IMPL_HDRS}
-                                                 ${YARP_OS_IMPL_HMAC_HDRS})
+source_group(TREE "${CMAKE_CURRENT_SOURCE_DIR}"
+             PREFIX "Source Files"
+             FILES ${YARP_OS_SRCS})
+source_group(TREE "${CMAKE_CURRENT_SOURCE_DIR}"
+             PREFIX "Header Files"
+             FILES ${YARP_OS_HDRS}
+                   ${YARP_OS_IDL_HDRS}
+                   ${YARP_OS_IMPL_HDRS}
+                   ${YARP_OS_IMPL_HMAC_HDRS})
 
 option(ENABLE_YARPRUN_LOG "Enable yarprun log file in temp dir" OFF)
 if (ENABLE_YARPRUN_LOG)
@@ -436,3 +440,4 @@ install(FILES ${YARP_OS_IMPL_HMAC_HDRS}
 
 set_property(GLOBAL APPEND PROPERTY YARP_LIBS YARP_OS)
 set_property(TARGET YARP_OS PROPERTY INCLUDE_DIRS ${YARP_TREE_INCLUDE_DIRS})
+set_property(TARGET YARP_OS PROPERTY FOLDER "Libraries")

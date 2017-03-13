@@ -243,11 +243,18 @@ list(APPEND YARP_devices_HDRS ${RGBDWrap_hdrs}
                               ${RGBDSensor_msgs_hdrs})
 include_directories(${RGBDWrap_incl_dirs})
 
-source_group("Source Files" FILES ${YARP_dev_SRCS})
-source_group("Header Files" FILES ${YARP_dev_HDRS})
-source_group("Implementation Header Files" FILES ${YARP_dev_IMPL_HDRS})
-source_group("Devices Files" FILES ${YARP_devices_SRCS}
-                                   ${YARP_devices_HDRS})
+
+source_group(TREE "${CMAKE_CURRENT_SOURCE_DIR}"
+             PREFIX "Source Files"
+             FILES ${YARP_dev_SRCS})
+source_group(TREE "${CMAKE_CURRENT_SOURCE_DIR}"
+             PREFIX "Header Files"
+             FILES ${YARP_dev_HDRS}
+                   ${YARP_dev_IMPL_HDRS})
+source_group(TREE "${CMAKE_CURRENT_SOURCE_DIR}"
+             PREFIX "Devices Files"
+             FILES ${YARP_devices_SRCS}
+                   ${YARP_devices_HDRS})
 
 set_property(GLOBAL APPEND PROPERTY YARP_TREE_INCLUDE_DIRS "${PROJECT_SOURCE_DIR}/include")
 get_property(YARP_TREE_INCLUDE_DIRS GLOBAL PROPERTY YARP_TREE_INCLUDE_DIRS)
@@ -264,8 +271,10 @@ include_directories(${YARP_TREE_INCLUDE_DIRS})
 include_directories(SYSTEM ${ACE_INCLUDE_DIRS})
 
 add_library(YARP_dev ${YARP_dev_SRCS}
+                     ${YARP_dev_HDRS}
+                     ${YARP_dev_IMPL_HDRS}
                      ${YARP_devices_SRCS}
-                     ${YARP_dev_HDRS})
+                     ${YARP_devices_HDRS})
 add_library(YARP::YARP_dev ALIAS YARP_dev)
 
 target_link_libraries(YARP_dev PRIVATE YARP::YARP_OS)
@@ -293,3 +302,4 @@ install(TARGETS YARP_dev
 
 set_property(GLOBAL APPEND PROPERTY YARP_LIBS YARP_dev)
 set_property(TARGET YARP_dev PROPERTY INCLUDE_DIRS ${YARP_TREE_INCLUDE_DIRS})
+set_property(TARGET YARP_dev PROPERTY FOLDER "Libraries")

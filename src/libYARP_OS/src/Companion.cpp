@@ -1402,8 +1402,6 @@ int Companion::cmdMake(int argc, char *argv[]) {
     f.addString("# Search for source code.");
     f.addString("file(GLOB folder_source *.cpp *.cc *.c)");
     f.addString("file(GLOB folder_header *.h)");
-    f.addString("source_group(\"Source Files\" FILES ${folder_source})");
-    f.addString("source_group(\"Header Files\" FILES ${folder_header})");
     f.addString("");
     f.addString("# Search for IDL files.");
     f.addString("file(GLOB idl_files *.thrift *.msg *.srv)");

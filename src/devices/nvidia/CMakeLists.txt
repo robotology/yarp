@@ -38,4 +38,6 @@ if(NOT SKIP_nvidia)
   yarp_install(FILES nvidia.ini
                COMPONENT runtime
                DESTINATION ${YARP_PLUGIN_MANIFESTS_INSTALL_DIR})
+
+  set_property(TARGET yarp_nvidia PROPERTY FOLDER "Plugins/Device")
 endif()

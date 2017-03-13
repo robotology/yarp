@@ -34,4 +34,6 @@ if(ENABLE_test_grabber)
   yarp_install(FILES test_grabber.ini
                COMPONENT runtime
                DESTINATION ${YARP_PLUGIN_MANIFESTS_INSTALL_DIR})
+
+  set_property(TARGET yarp_test_grabber PROPERTY FOLDER "Plugins/Device/Fake")
 endif()

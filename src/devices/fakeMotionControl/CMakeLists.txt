@@ -30,5 +30,7 @@ if(NOT SKIP_fakeMotionControl)
   yarp_install(FILES fakeMotionControl.ini
                COMPONENT runtime
                DESTINATION ${YARP_PLUGIN_MANIFESTS_INSTALL_DIR})
+
+  set_property(TARGET yarp_fakeMotionControl PROPERTY FOLDER "Plugins/Device/Fake")
 endif()
 

@@ -35,5 +35,7 @@ if(NOT SKIP_fakeIMU)
   yarp_install(FILES fakeIMU.ini
                COMPONENT runtime
                DESTINATION ${YARP_PLUGIN_MANIFESTS_INSTALL_DIR})
+
+  set_property(TARGET yarp_fakeIMU PROPERTY FOLDER "Plugins/Device/Fake")
 endif()
 

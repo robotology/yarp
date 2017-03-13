@@ -28,7 +28,6 @@ if(NOT SKIP_depthimage)
   yarp_install(FILES depthimage.ini
                COMPONENT runtime
                DESTINATION ${YARP_PLUGIN_MANIFESTS_INSTALL_DIR})
+
+  set_property(TARGET yarp_pm_depthimage PROPERTY FOLDER "Plugins/Port Monitor")
 endif()
-
-
-

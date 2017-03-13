@@ -13,3 +13,4 @@ target_link_libraries(yarprun YARP::YARP_OS
                               YARP::YARP_init)
 
 install(TARGETS yarprun COMPONENT utilities DESTINATION ${CMAKE_INSTALL_BINDIR})
+set_property(TARGET yarprun PROPERTY FOLDER "Command Line Tools")

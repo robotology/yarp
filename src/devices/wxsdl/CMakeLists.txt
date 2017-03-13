@@ -38,6 +38,8 @@ if(NOT SKIP_wxsdl)
                COMPONENT runtime
                DESTINATION ${YARP_PLUGIN_MANIFESTS_INSTALL_DIR})
 
+  set_property(TARGET vxsdl PROPERTY FOLDER "Unsupported")
+
   if(YARP_COMPILE_TESTS)
     add_executable(wxsdl_test WxsdlWriter.cpp
                               WxsdlWriter.h)

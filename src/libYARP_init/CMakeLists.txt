@@ -12,9 +12,13 @@ set(YARP_init_HDRS)
 set(YARP_init_IMPL_HDRS)
 set(YARP_init_SRCS src/CustomInit.cpp)
 
-source_group("Source Files" FILES ${YARP_init_SRCS})
-source_group("Header Files" FILES ${YARP_init_HDRS})
-source_group("Implementation Header Files" FILES ${YARP_init_IMPL_HDRS})
+source_group(TREE "${CMAKE_CURRENT_SOURCE_DIR}"
+             PREFIX "Source Files"
+             FILES ${YARP_init_SRCS})
+source_group(TREE "${CMAKE_CURRENT_SOURCE_DIR}"
+             PREFIX "Header Files"
+             FILES ${YARP_init_HDRS}
+                   ${YARP_init_IMPL_HDRS})
 
 add_library(YARP_init ${YARP_init_SRCS} ${YARP_init_HDRS})
 add_library(YARP::YARP_init ALIAS YARP_init)
@@ -47,3 +51,4 @@ install(TARGETS YARP_init
 
 set_property(GLOBAL APPEND PROPERTY YARP_LIBS YARP_init)
 set_property(TARGET YARP_init PROPERTY INCLUDE_DIRS ${YARP_TREE_INCLUDE_DIRS})
+set_property(TARGET YARP_init PROPERTY FOLDER "Libraries")

@@ -101,6 +101,8 @@ install(TARGETS yarpidl_thrift
 
 set_property(GLOBAL APPEND PROPERTY YARP_TOOLS yarpidl_thrift)
 
+set_property(TARGET yarpidl_thrift PROPERTY FOLDER "Command Line Tools")
+
 include (CMakeDependentOption)
 cmake_dependent_option(TEST_yarpidl_thrift "Test thrift-based IDL" OFF
                        YARP_COMPILE_TESTS OFF)

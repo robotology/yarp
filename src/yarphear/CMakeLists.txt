@@ -18,4 +18,5 @@ if (CREATE_DEVICE_LIBRARY_MODULES)
           COMPONENT utilities
           DESTINATION ${CMAKE_INSTALL_BINDIR})
 
+  set_property(TARGET yarphear PROPERTY FOLDER "Command Line Tools")
 endif(CREATE_DEVICE_LIBRARY_MODULES)

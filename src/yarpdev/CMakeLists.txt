@@ -11,3 +11,5 @@ target_link_libraries(yarpdev YARP_init YARP_dev)
 install(TARGETS yarpdev
         COMPONENT utilities
         DESTINATION ${CMAKE_INSTALL_BINDIR})
+
+set_property(TARGET yarpdev PROPERTY FOLDER "Command Line Tools")

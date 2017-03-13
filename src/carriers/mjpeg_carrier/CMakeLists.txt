@@ -46,6 +46,8 @@ if(NOT SKIP_mjpeg)
                COMPONENT runtime
                DESTINATION ${YARP_PLUGIN_MANIFESTS_INSTALL_DIR})
 
+  set_property(TARGET yarp_mjpeg PROPERTY FOLDER "Plugins/Carrier")
+
   if(YARP_COMPILE_TESTS)
     add_executable(test_mjpeg test_mjpeg.cpp
                               MjpegDecompression.cpp)

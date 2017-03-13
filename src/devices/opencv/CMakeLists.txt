@@ -38,4 +38,5 @@ if(NOT SKIP_opencv_grabber)
   yarp_install(FILES opencv_grabber.xml
                DESTINATION ${YARP_MODULES_INSTALL_DIR})
 
+  set_property(TARGET yarp_opencv PROPERTY FOLDER "Plugins/Device")
 endif()

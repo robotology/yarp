@@ -28,8 +28,12 @@ if(CREATE_YARPBATTERYGUI)
 
   qt5_wrap_ui(yarpbatterygui_UI_GEN_SRCS ${yarpbatterygui_UI_FILES})
 
-  source_group("Source Files" FILES ${yarpbatterygui_SRCS})
-  source_group("Header Files" FILES ${yarpbatterygui_HDRS})
+  source_group(TREE "${CMAKE_CURRENT_SOURCE_DIR}"
+               PREFIX "Source Files"
+               FILES ${yarpbatterygui_SRCS})
+  source_group(TREE "${CMAKE_CURRENT_SOURCE_DIR}"
+               PREFIX "Header Files"
+               FILES ${yarpbatterygui_HDRS})
   source_group("Resources Files" FILES ${yarpbatterygui_QRC_FILES})
   source_group("UI Files" FILES ${yarpbatterygui_UI_FILES})
   source_group("Generated Files" FILES ${yarpbatterygui_QRC_GEN_SRCS}
@@ -37,7 +41,9 @@ if(CREATE_YARPBATTERYGUI)
 
   add_executable(yarpbatterygui WIN32 ${yarpbatterygui_SRCS}
                                       ${yarpbatterygui_HDRS}
+                                      ${yarpbatterygui_QRC_FILES}
                                       ${yarpbatterygui_QRC_GEN_SRCS}
+                                      ${yarpbatterygui_UI_FILES}
                                       ${yarpbatterygui_UI_GEN_SRCS})
 
   target_link_libraries(yarpbatterygui YARP::YARP_OS
@@ -48,6 +54,8 @@ if(CREATE_YARPBATTERYGUI)
                                        Qt5::Gui)
 
   install(TARGETS yarpbatterygui COMPONENT utilities DESTINATION ${CMAKE_INSTALL_BINDIR})
+
+  set_property(TARGET yarpbatterygui PROPERTY FOLDER "Graphical User Interfaces")
 
   yarp_osx_duplicate_and_add_bundle(TARGET yarpbatterygui
                                     INSTALL_COMPONENT utilities

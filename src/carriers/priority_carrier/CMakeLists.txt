@@ -40,4 +40,6 @@ if(NOT SKIP_priority)
   yarp_install(FILES priority.ini
                COMPONENT runtime
                DESTINATION ${YARP_PLUGIN_MANIFESTS_INSTALL_DIR})
+
+  set_property(TARGET yarp_priority PROPERTY FOLDER "Plugins/Carrier")
 endif()

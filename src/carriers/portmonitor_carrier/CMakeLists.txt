@@ -49,4 +49,5 @@ if (NOT SKIP_portmonitor)
                COMPONENT runtime
                DESTINATION ${YARP_PLUGIN_MANIFESTS_INSTALL_DIR})
 
+  set_property(TARGET yarp_portmonitor PROPERTY FOLDER "Plugins/Carrier")
 endif()

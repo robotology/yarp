@@ -26,5 +26,7 @@ if(NOT SKIP_SerialServoBoard)
   yarp_install(FILES SerialServoBoard.ini
                COMPONENT runtime
                DESTINATION ${YARP_PLUGIN_MANIFESTS_INSTALL_DIR})
+
+  set_property(TARGET yarp_SerialServoBoard PROPERTY FOLDER "Unsupported")
 endif()
 

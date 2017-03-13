@@ -28,4 +28,6 @@ if(NOT SKIP_stage)
   yarp_install(FILES stage.ini
                COMPONENT runtime
                DESTINATION ${YARP_PLUGIN_MANIFESTS_INSTALL_DIR})
+
+  set_property(TARGET yarp_stage PROPERTY FOLDER "Unsupported")
 endif()

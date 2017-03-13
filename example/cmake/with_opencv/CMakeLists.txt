@@ -13,12 +13,9 @@ list(APPEND CMAKE_MODULE_PATH ${YARP_MODULE_PATH})
 # now FindOpenCV.cmake is in CMAKE_MODULE_PATH
 find_package(OpenCV)
 
-# searches for all .cpp and .h files in the current directory and add them
-# to the current project
+# searches for all .cpp and .h files in the current directory
 file(GLOB folder_source *.cpp)
 file(GLOB folder_header *.h)
-source_group("Source Files" FILES ${folder_source})
-source_group("Header Files" FILES ${folder_header})
 
 # add the current directory in the include path
 include_directories(${CMAKE_SOURCE_DIR})

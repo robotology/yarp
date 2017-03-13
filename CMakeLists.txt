@@ -44,6 +44,7 @@ set_property(GLOBAL PROPERTY YARP_TREE_INCLUDE_DIRS)
 set_property(GLOBAL PROPERTY YARP_LIBS)
 set_property(GLOBAL PROPERTY YARP_DEFS)
 
+set_property(GLOBAL PROPERTY USE_FOLDERS 1)
 
 # Check system configuration.
 # See cmake/YarpSystemCheck.cmake.
@@ -56,6 +57,8 @@ include(YarpOptions)
 # Check YARP dependencies, find necessary libraries.
 # See cmake/YarpFindDependencies.cmake.
 include(YarpFindDependencies)
+
+include(YarpSourceGroup)
 
 # Make some custom header files containing compile settings.
 add_subdirectory(cmake)

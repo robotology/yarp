@@ -30,4 +30,5 @@ if(NOT SKIP_fakeLaser)
                COMPONENT runtime
                DESTINATION ${YARP_PLUGIN_MANIFESTS_INSTALL_DIR})
 
+  set_property(TARGET fakeLaser PROPERTY FOLDER "Plugins/Device/Fake")
 endif()

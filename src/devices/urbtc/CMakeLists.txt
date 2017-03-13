@@ -27,4 +27,6 @@ if(NOT SKIP_urbtc)
   yarp_install(FILES urbtc.ini
                 COMPONENT runtime
                 DESTINATION ${YARP_PLUGIN_MANIFESTS_INSTALL_DIR})
+
+  set_property(TARGET urbtc PROPERTY FOLDER "Unsupported")
 endif()
