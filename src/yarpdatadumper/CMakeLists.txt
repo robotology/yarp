@@ -36,7 +36,7 @@ if(CREATE_YARPDATADUMPER)
           COMPONENT utilities
           DESTINATION "${CMAKE_INSTALL_BINDIR}")
 
-  if(WIN32)
+  if(CMAKE_HOST_WIN32)
     # install the yarpdatadumperAppGenerator.py helper script
     yarp_install(PROGRAMS yarpdatadumperAppGenerator.py
                  COMPONENT utilities
