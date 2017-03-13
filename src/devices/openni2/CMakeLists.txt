@@ -39,7 +39,7 @@ if (NOT SKIP_OpenNI2DeviceServer OR NOT SKIP_OpenNI2DeviceClient)
     add_definitions(-DOPENNI2_DRIVER_USES_NITE2)
   endif()
 
-  include_directories(SYSTEM ${OpenNI2_INCLUDE_LOCAL})
+  include_directories(SYSTEM ${OpenNI2_INCLUDE_DIRS})
   if(NITE2_FOUND)
     include_directories(SYSTEM ${NITE2_INCLUDE_LOCAL})
   endif()
@@ -55,7 +55,7 @@ if (NOT SKIP_OpenNI2DeviceServer OR NOT SKIP_OpenNI2DeviceClient)
   target_link_libraries(yarp_OpenNI2Device YARP::YARP_OS
                                            YARP::YARP_sig
                                            YARP::YARP_dev
-                                           ${OpenNI2_LIBRARY})
+                                           ${OpenNI2_LIBRARIES})
 
   if(NITE2_FOUND)
     target_link_libraries(yarp_OpenNI2Device ${NITE2_LIBRARY})
