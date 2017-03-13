@@ -281,7 +281,7 @@ target_link_libraries(YARP_dev PRIVATE YARP::YARP_OS)
 target_link_libraries(YARP_dev PRIVATE YARP::YARP_sig)
 
 if (CREATE_LIB_MATH)
-target_link_libraries(YARP_dev PRIVATE YARP::YARP_math)
+  target_link_libraries(YARP_dev PRIVATE YARP::YARP_math)
 endif()
 
 set_property(TARGET YARP_dev PROPERTY PUBLIC_HEADER ${YARP_dev_HDRS})
