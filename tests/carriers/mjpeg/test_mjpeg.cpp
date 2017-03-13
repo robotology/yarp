@@ -8,7 +8,7 @@
 #include <yarp/os/all.h>
 #include <yarp/sig/all.h>
 
-#include "MjpegDecompression.h"
+#include <MjpegDecompression.h>
 
 using namespace yarp::os;
 using namespace yarp::sig;
