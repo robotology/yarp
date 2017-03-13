@@ -47,12 +47,4 @@ if(NOT SKIP_mjpeg)
                DESTINATION ${YARP_PLUGIN_MANIFESTS_INSTALL_DIR})
 
   set_property(TARGET yarp_mjpeg PROPERTY FOLDER "Plugins/Carrier")
-
-  if(YARP_COMPILE_TESTS)
-    add_executable(test_mjpeg test_mjpeg.cpp
-                              MjpegDecompression.cpp)
-    target_link_libraries(test_mjpeg YARP_OS YARP_sig YARP_init)
-    target_link_libraries(test_mjpeg ${JPEG_LIBRARY})
-  endif()
-
 endif()

@@ -163,4 +163,6 @@ if(YARP_COMPILE_TESTS)
   if(YARP_TEST_INTEGRATION)
     add_subdirectory(integration)
   endif()
+
+  add_subdirectory(carriers)
 endif()
