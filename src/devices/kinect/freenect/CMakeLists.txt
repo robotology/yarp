@@ -38,7 +38,7 @@ if(NOT SKIP_primesensecamera OR NOT SKIP_kinect)
                                YARP_dev
                                ${LIBFREENECT_LIBRARIES}
                                ${USB_LIBRARIES})
-  yarp_install(TARGETS kinect
+  yarp_install(TARGETS yarp_kinect
                EXPORT YARP
                COMPONENT runtime
                LIBRARY DESTINATION ${YARP_DYNAMIC_PLUGINS_INSTALL_DIR}
