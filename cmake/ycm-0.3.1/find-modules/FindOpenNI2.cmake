@@ -33,19 +33,24 @@ include(StandardFindModule)
 standard_find_module(OpenNI2 libopenni2 SKIP_CMAKE_CONFIG)
 
 if(NOT OpenNI2_FOUND)
-    find_path(OpenNI2_INCLUDE_DIR NAMES OpenNI.h HINTS $ENV{OpenNI2_DIR}/Include)
-    find_library(OpenNI2_LIBRARY NAMES OpenNI2 libOpenNI2 HINTS $ENV{OpenNI2_DIR}/lib $ENV  {OpenNI2_DIR}/Redist)
-else()
-    find_path(OpenNI2_INCLUDE_DIR NAMES OpenNI.h HINTS $ENV{OpenNI2_DIR}/include)
-    find_library(OpenNI2_LIBRARY NAMES OpenNI2 libOpenNI2 HINTS $ENV{OpenNI2_DIR}/lib $ENV{OpenNI2_DIR}/redist)
+  find_path(OpenNI2_INCLUDE_DIR
+            NAMES OpenNI.h
+            HINTS $ENV{OpenNI2_DIR}/include
+                  $ENV{OpenNI2_DIR}/Include)
+  find_library(OpenNI2_LIBRARY
+               NAMES OpenNI2
+                     libOpenNI2
+               HINTS $ENV{OpenNI2_DIR}/lib
+                     $ENV{OpenNI2_DIR}/Redist
+                     $ENV{OpenNI2_DIR}/redist)
+
+  set(OpenNI2_LIBRARIES ${OpenNI2_LIBRARY})
+  set(OpenNI2_INCLUDE_DIRS ${OpenNI2_INCLUDE_DIR})
+
+  find_package_handle_standard_args(OpenNI2 DEFAULT_MSG OpenNI2_LIBRARIES OpenNI2_INCLUDE_DIRS)
+
+  set(OpenNI2_FOUND ${OPENNI2_FOUND})
 endif()
-
-set(OpenNI2_LIBRARIES ${OpenNI2_LIBRARY})
-set(OpenNI2_INCLUDE_DIRS ${OpenNI2_INCLUDE_DIR})
-
-find_package_handle_standard_args(OpenNI2 DEFAULT_MSG OpenNI2_LIBRARIES OpenNI2_INCLUDE_DIRS)
-
-set(OpenNI2_FOUND ${OPENNI2_FOUND})
 
 # Set package properties if FeatureSummary was included
 if(COMMAND set_package_properties)
