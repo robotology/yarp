@@ -24,7 +24,7 @@ if (YARP_HAS_MATH_LIB)
                      include/yarp/math/Vec2D.h
                      include/yarp/math/FrameTransform.h)
 
-  set(YARP_math_IMPL_HDRS include/yarp/impl/mt.h)
+  set(YARP_math_IMPL_HDRS include/yarp/math/impl/mt.h)
 
   set(YARP_math_SRCS src/math.cpp
                      src/NormRand.cpp

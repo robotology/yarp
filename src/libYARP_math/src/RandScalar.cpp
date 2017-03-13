@@ -14,7 +14,7 @@
 #include <math.h>
 
 // implementation of Marsenne Twister
-#include <yarp/impl/mt.h>
+#include <yarp/math/impl/mt.h>
 
 using namespace yarp::sig;
 using namespace yarp::math;
