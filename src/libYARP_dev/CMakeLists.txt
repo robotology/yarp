@@ -37,6 +37,7 @@ set(YARP_dev_HDRS include/yarp/dev/all.h
                   include/yarp/dev/IControlMode2.h
                   include/yarp/dev/IEncoders.h
                   include/yarp/dev/IEncodersTimed.h
+                  include/yarp/dev/IJoypadController.h
                   include/yarp/dev/IMotorEncoders.h
                   include/yarp/dev/IMotor.h
                   include/yarp/dev/IRemoteVariables.h
