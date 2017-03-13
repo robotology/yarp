@@ -127,6 +127,7 @@ public:
         return port;
     }
 
+    using TypedReaderCallback<T>::onRead;
     virtual void onRead (T &datum) {
          YARP_UNUSED(datum);
          // override this to do something
