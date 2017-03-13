@@ -313,7 +313,7 @@ bool RosTypeCodeGenYarp::readField(bool bare, const RosField& field) {
                         t.yarpReader.c_str());
                 fprintf(out,"    }\n");
             } else {
-                fprintf(out,"    if (!connection.expectBlock((char*)&%s[0],sizeof(%s)*%s)) return false;\n",
+                fprintf(out,"    if (len > 0 && !connection.expectBlock((char*)&%s[0],sizeof(%s)*%s)) return false;\n",
                         field.rosName.c_str(),
                         t.yarpType.c_str(),
                         len.c_str());
