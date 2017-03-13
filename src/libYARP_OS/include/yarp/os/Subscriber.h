@@ -25,7 +25,9 @@ namespace yarp {
  *
  */
 template <class T>
-class yarp::os::Subscriber : public AbstractContactable {
+class yarp::os::Subscriber : public AbstractContactable,
+                             public TypedReaderCallback<T>
+{
 public:
     using Contactable::open;
     using AbstractContactable::read;
@@ -123,6 +125,23 @@ public:
 
     virtual const Port& asPort() const {
         return port;
+    }
+
+    virtual void onRead (T &datum) {
+         YARP_UNUSED(datum);
+         // override this to do something
+    }
+
+    void useCallback (TypedReaderCallback< T > &callback) {
+        buffer().useCallback(callback);
+    }
+
+    void useCallback() {
+        buffer().useCallback(*this);
+    }
+
+    void disableCallback() {
+        buffer().disableCallback();
     }
 
 private:
