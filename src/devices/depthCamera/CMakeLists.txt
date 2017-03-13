@@ -19,7 +19,7 @@ if(ENABLE_depthCamera)
   get_property(YARP_sig_INCLUDE_DIRS TARGET YARP_sig PROPERTY INCLUDE_DIRS)
   get_property(YARP_dev_INCLUDE_DIRS TARGET YARP_dev PROPERTY INCLUDE_DIRS)
 
-  include_directories(SYSTEM ${OpenNI2_INCLUDE_LOCAL})
+  include_directories(SYSTEM ${OpenNI2_INCLUDE_DIRS})
   include_directories(${YARP_OS_INCLUDE_DIRS}
                       ${YARP_sig_INCLUDE_DIRS}
                       ${YARP_dev_INCLUDE_DIRS})
@@ -31,7 +31,7 @@ if(ENABLE_depthCamera)
   target_link_libraries(yarp_depthCamera YARP_OS
                                          YARP_sig
                                          YARP_dev
-                                         ${OpenNI2_LIBRARY})
+                                         ${OpenNI2_LIBRARIES})
 
   yarp_install(TARGETS     yarp_depthCamera
                EXPORT      YARP
