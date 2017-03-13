@@ -36,7 +36,7 @@ using namespace yarp::graph;
 
 MainWindow::MainWindow(QWidget *parent) :
     QMainWindow(parent),
-    ui(new Ui::MainWindow), scene(NULL), currentGraph(NULL)
+    ui(new Ui::MainWindow), scene(NULL), currentGraph(NULL), progressDlg(NULL)
 {
     ui->setupUi(this);
     stringModel.setStringList(messages);
@@ -65,7 +65,7 @@ MainWindow::MainWindow(QWidget *parent) :
     connect(ui->actionUpdateConnectionQosStatus, SIGNAL(triggered()),this,SLOT(onUpdateQosStatus()));
     connect(ui->actionProfilePortsRate, SIGNAL(triggered()),this,SLOT(onProfilePortsRate()));
 
-    progressDlg = new QProgressDialog("...", "Cancel", 0, 100, this);
+    //progressDlg = new QProgressDialog("...", "Cancel", 0, 100, this);
 
     layoutStyle = "ortho";
     ui->actionOrthogonal->setChecked(true);
@@ -91,7 +91,6 @@ MainWindow::MainWindow(QWidget *parent) :
 
 MainWindow::~MainWindow()
 {
-    delete progressDlg;
     delete ui;
 }
 
@@ -110,7 +109,8 @@ void MainWindow::initScene() {
 
 void MainWindow::onProgress(unsigned int percentage) {
     //yInfo()<<percentage<<"%";
-    progressDlg->setValue(percentage);
+    if(progressDlg)
+    	progressDlg->setValue(percentage);
 }
 
 void MainWindow::drawGraph(Graph &graph)
@@ -122,7 +122,6 @@ void MainWindow::drawGraph(Graph &graph)
 
     //Configure scene attributes
     //scene->setGraphAttribute("label", "yarp-viz");
-
     scene->setGraphAttribute("splines", layoutStyle.c_str()); //curved, polyline, line. ortho
     scene->setGraphAttribute("rankdir", "LR");
     scene->setGraphAttribute("bgcolor", "#2e3e56");
@@ -409,6 +408,8 @@ void MainWindow::onProfileYarpNetwork() {
 
     messages.append("Getting the ports details...");
     NetworkProfiler::ports_detail_set portsInfo;
+    progressDlg = new QProgressDialog("...", "Cancel", 0, 100, this);
+
     progressDlg->setLabelText("Getting the ports details...");
     progressDlg->reset();
     progressDlg->setRange(0, ports.size());
@@ -436,7 +437,8 @@ void MainWindow::onProfileYarpNetwork() {
     progressDlg->setValue(0);
     NetworkProfiler::creatNetworkGraph(portsInfo, mainGraph);
     progressDlg->close();
-
+    delete progressDlg;
+    progressDlg = NULL;
     // add process and port nodes to the tree
     QTreeWidgetItem* item= NULL;
     for (int i= moduleParentItem->childCount()-1; i>-1; i--) {
