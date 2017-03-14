@@ -331,7 +331,7 @@ endif()
 
 set(RTF_REQUIRED_VERSION 1.1.0.1)
 find_package(RTF ${RTF_REQUIRED_VERSION} QUIET)
-checkbuildandset_dependency(RTF)
+checkandset_dependency(RTF)
 
 find_package(SQLite QUIET)
 checkbuildandset_dependency(SQLite)
