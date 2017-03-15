@@ -405,7 +405,13 @@ checkandset_dependency(GLEW)
 find_package(FTDI QUIET)
 checkandset_dependency(FTDI)
 
-find_package(CUDA QUIET)
+# FindCUDA bug when crosscompiling
+# See https://gitlab.kitware.com/cmake/cmake/issues/16509
+if(NOT CMAKE_CROSSCOMPILING)
+  find_package(CUDA QUIET)
+else()
+  set(CUDA_FOUND FALSE)
+endif()
 checkandset_dependency(CUDA)
 
 find_package(FFMPEG QUIET)
