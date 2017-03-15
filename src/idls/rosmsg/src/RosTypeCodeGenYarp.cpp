@@ -449,7 +449,8 @@ bool RosTypeCodeGenYarp::writeField(bool bare, const RosField& field) {
                     fprintf(out,"    connection.appendInt(%s.size());\n",
                             field.rosName.c_str());
                 }
-                fprintf(out,"    connection.appendExternalBlock((char*)&%s[0],sizeof(%s)*%s.size());\n",
+                fprintf(out,"    if (%s.size()>0) {connection.appendExternalBlock((char*)&%s[0],sizeof(%s)*%s.size());}\n",
+                        field.rosName.c_str(), 
                         field.rosName.c_str(),
                         t.yarpType.c_str(),
                         field.rosName.c_str());
