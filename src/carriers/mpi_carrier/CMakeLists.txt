@@ -5,7 +5,7 @@
 
 include(CMakeDependentOption)
 cmake_dependent_option(MPI_DEBUG_MSG "Turn on status messages for MPI Carrier" OFF
-                       "NOT SKIP_mpi_carrier OR NOT SKIP_mpibcast_carrier" OFF)
+                       "NOT SKIP_mpi OR NOT SKIP_mpibcast" OFF)
 if(MPI_DEBUG_MSG)
   add_definitions(-DMPI_DEBUG)
 endif(MPI_DEBUG_MSG)

@@ -10,7 +10,7 @@ yarp_prepare_plugin(xmlrpc
                     DEPENDS "CREATE_OPTIONAL_CARRIERS;YARP_HAS_ACE"
                     DEFAULT ON)
 
-if(NOT SKIP_xmlrpc_carrier)
+if(NOT SKIP_xmlrpc)
   set(CMAKE_INCLUDE_CURRENT_DIR ON)
   get_property(YARP_OS_INCLUDE_DIRS TARGET YARP_OS PROPERTY INCLUDE_DIRS)
   include_directories(${YARP_OS_INCLUDE_DIRS})
