@@ -2,7 +2,7 @@
 # Author: Daniele E. Domenichelli <daniele.domenichelli@iit.it>
 # CopyPolicy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
 
-if(NOT SKIP_mjpeg)
+if(YARP_HAS_JPEG)
   if(MJPEG_AUTOCOMPRESS)
     add_definitions(-DMJPEG_AUTOCOMPRESS)
   endif()
