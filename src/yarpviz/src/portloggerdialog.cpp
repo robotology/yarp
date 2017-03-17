@@ -97,7 +97,6 @@ void PortLoggerDialog::openCons()
             QTreeWidgetItem* item;
             QStringList prop;
             prop.clear();
-            prop.append("Unknown");
             prop.append(sample.get(0).asString().c_str());
             prop.append(sample.get(1).asString().c_str());
             prop.append(sample.get(2).asString().c_str());
