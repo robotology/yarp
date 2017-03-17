@@ -64,11 +64,10 @@ bool JoypadCtrlParser::respond(const yarp::os::Bottle& cmd, yarp::os::Bottle& re
 
         if(cmd.get(3).asVocab() == VOCAB_COUNT)
         {
-            unsigned int   count;
-            getcountmethod getter;
-
             if(countGetters.find(toGet) != countGetters.end())
             {
+                unsigned int   count;
+                getcountmethod getter;
                 getter = countGetters[toGet];
                 if((device->*getter)(count))
                 {
@@ -207,7 +206,12 @@ JoypadControlServer::JoypadControlServer() : RateThread(DEFAULT_THREAD_PERIOD),
 
 JoypadControlServer::~JoypadControlServer()
 {
-    m_device = YARP_NULLPTR;
+    if(m_subDeviceOwned)
+    {
+        delete m_subDeviceOwned;
+    }
+    m_subDeviceOwned = YARP_NULLPTR;
+    m_device         = YARP_NULLPTR;
 }
 
 bool JoypadControlServer::open(yarp::os::Searchable& params)

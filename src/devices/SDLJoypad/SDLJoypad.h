@@ -10,6 +10,7 @@
 #include <yarp/dev/IJoypadController.h>
 #include <yarp/dev/DeviceDriver.h>
 #include <SDL.h>
+#include <vector>
 
 
 namespace yarp {
@@ -22,13 +23,14 @@ class yarp::dev::SDLJoypad : public yarp::dev::IJoypadController,
                              public yarp::dev::DeviceDriver
 {
 
-    SDL_Joystick* m_device;
-    unsigned int  m_buttonCount;
-    unsigned int  m_axisCount;
-    unsigned int  m_stickCount;
-    unsigned int  m_touchCount;
-    unsigned int  m_ballCount;
-    unsigned int  m_hatCount;
+    std::vector<SDL_Joystick*> m_device;
+    unsigned int               m_buttonCount;
+    unsigned int               m_axisCount;
+    unsigned int               m_stickCount;
+    unsigned int               m_touchCount;
+    unsigned int               m_ballCount;
+    unsigned int               m_hatCount;
+    bool                       m_allJoypad;
 
     void updateJoypad();
 public:

@@ -19,7 +19,7 @@ SDLJoypad::SDLJoypad()
     m_touchCount  = 0;
     m_ballCount   = 0;
     m_hatCount    = 0;
-    m_device      = 0;
+
 }
 
 SDLJoypad::~SDLJoypad()
@@ -57,39 +57,60 @@ bool SDLJoypad::open(yarp::os::Searchable& rf)
             yInfo ( "%d: %s\n", i, SDL_JoystickName(i));
         }
         yInfo ( "\n");
-
-        // choose between multiple joysticks
-        if (rf.check("DefaultJoystickNumber"))
+        if(!rf.check("UseAllJoypadAsOne"))
         {
-            joy_id = rf.find("DefaultJoystickNumber").asInt();
-            yInfo ( "SDLJoypad: Multiple joysticks found, using #%d, as specified in the configuration options\n", joy_id);
+            // choose between multiple joysticks
+            if (rf.check("DefaultJoystickNumber"))
+            {
+                joy_id = rf.find("DefaultJoystickNumber").asInt();
+                yInfo ( "SDLJoypad: Multiple joysticks found, using #%d, as specified in the configuration options\n", joy_id);
+            }
+            else
+            {
+                yWarning ( "SDLJoypad: No default joystick specified in the configuration options\n");
+                yWarning ( "SDLJoypad: Which joystick you want to use? (choose number) \n");
+                cin >> joy_id;
+            }
+            m_allJoypad = false;
         }
         else
         {
-            yWarning ( "SDLJoypad: No default joystick specified in the configuration options\n");
-            yWarning ( "SDLJoypad: Which joystick you want to use? (choose number) \n");
-            cin >> joy_id;
+            m_allJoypad = true;
         }
     }
 
-    m_device = SDL_JoystickOpen ( joy_id );
-    if ( m_device == NULL )
+    if(m_allJoypad)
     {
-        yError ( "SDLJoypad: Could not open joystick\n" );
-        return false;
+        for(size_t i = 0; i < joystick_num; ++i)
+        {
+            m_device.push_back(SDL_JoystickOpen(i));
+        }
     }
+    else
+    {
+        m_device.push_back(SDL_JoystickOpen(joy_id));
+    }
+    for(size_t i = 0; i < m_device.size(); ++i)
+    {
+        if ( m_device[i] == NULL )
+        {
+            yError () << "SDLJoypad: Could not open joystick with id" << i;
+            return false;
+        }
 
-    // Obtaining Joystick capabilities
-    m_axisCount   = SDL_JoystickNumAxes(m_device);
-    m_ballCount   = SDL_JoystickNumBalls(m_device);
-    m_hatCount    = SDL_JoystickNumHats(m_device);
-    m_buttonCount = SDL_JoystickNumButtons(m_device);
+        // Obtaining Joystick capabilities
+        m_axisCount   += SDL_JoystickNumAxes(m_device[i]);
+        m_ballCount   += SDL_JoystickNumBalls(m_device[i]);
+        m_hatCount    += SDL_JoystickNumHats(m_device[i]);
+        m_buttonCount += SDL_JoystickNumButtons(m_device[i]);
+    }
 
     return true;
 }
 
 bool SDLJoypad::close()
 {
+
     return false;
 }
 
@@ -137,14 +158,41 @@ bool SDLJoypad::getStickDoF(unsigned int stick_id, unsigned int& DoF)
 bool SDLJoypad::getButton(unsigned int button_id, float& value)
 {
     updateJoypad();
-    value = float(SDL_JoystickGetButton(m_device, button_id));
+    int i;
+    for(i = 0; i < m_device.size(); ++i)
+    {
+        int localCount = SDL_JoystickNumButtons(m_device[i]);
+        if(button_id > localCount - 1)
+        {
+            button_id -= localCount;
+        }
+        else
+        {
+            break;
+        }
+    }
+    value = float(SDL_JoystickGetButton(m_device[i], button_id));
     return true;
 }
 
 bool SDLJoypad::getAxis(unsigned int axis_id, double& value)
 {
     updateJoypad();
-    value = 2 * ((float(SDL_JoystickGetAxis(m_device, axis_id)) - (-32.768)) / 0xffff);
+    int i;
+    for(i = 0; i < m_device.size(); ++i)
+    {
+        int localCount = SDL_JoystickNumAxes(m_device[i]);
+        if(axis_id > localCount - 1)
+        {
+            axis_id -= localCount;
+        }
+        else
+        {
+            break;
+        }
+    }
+
+    value = 2 * ((float(SDL_JoystickGetAxis(m_device[i], axis_id)) - (-32.768)) / 0xffff);
     return true;
 }
 
@@ -161,19 +209,47 @@ bool SDLJoypad::getTouch(unsigned int touch_id, yarp::sig::Vector& value)
 bool SDLJoypad::getHat(unsigned int hat_id, unsigned char& value)
 {
     updateJoypad();
-    value = SDL_JoystickGetHat(m_device, hat_id);//TODO: map from their HAT define to our in case of #define changes
+    int i;
+    for(i = 0; i < m_device.size(); ++i)
+    {
+        int localCount = SDL_JoystickNumHats(m_device[i]);
+        if(hat_id > localCount - 1)
+        {
+            hat_id -= localCount;
+        }
+        else
+        {
+            break;
+        }
+    }
+    value = SDL_JoystickGetHat(m_device[i], hat_id);//TODO: map from their HAT define to our in case of #define changes
     return true;
 }
 
 bool SDLJoypad::getTrackball(unsigned int trackball_id, yarp::sig::Vector& value)
 {
     updateJoypad();
-    int x,y;
-    if(SDL_JoystickGetBall(m_device, trackball_id, &x, &y) == -1)
+    int x, y, i;
+
+    for(i = 0; i < m_device.size(); ++i)
+    {
+        int localCount = SDL_JoystickNumBalls(m_device[i]);
+        if(trackball_id > localCount - 1)
+        {
+            trackball_id -= localCount;
+        }
+        else
+        {
+            break;
+        }
+    }
+
+    if(SDL_JoystickGetBall(m_device[i], trackball_id, &x, &y) == -1)
     {
         yError() << "SDLJoypad: SDL_JoystickGetBall returned error";
         return false;
     }
+
     value.resize(2);
     value[0] = x;
     value[1] = y;
