@@ -26,6 +26,7 @@ PortLoggerDialog::PortLoggerDialog(yarp::graph::Graph *graph, QWidget *parent) :
     connect(ui->pushButtonRemove, SIGNAL(clicked()), this, SLOT(removeConnections()));
     connect(ui->pushButtonStart, SIGNAL(clicked()), this, SLOT(startStopLoggers()));
     connect(ui->toolButtonLogPath, SIGNAL(clicked()), this, SLOT(setLogPath()));
+    connect(ui->pushButtonOpen, SIGNAL(clicked()), this, SLOT(openCons()));
 
     ui->pushButtonStart->setEnabled(false);
     ui->checkBoxCollect->setChecked(true);
@@ -64,6 +65,49 @@ PortLoggerDialog::PortLoggerDialog(yarp::graph::Graph *graph, QWidget *parent) :
 
 PortLoggerDialog::~PortLoggerDialog() {
     delete ui;
+}
+
+
+void PortLoggerDialog::openCons()
+{
+    QString filters("Text files (*.txt);;All files (*.*)");
+    QString defaultFilter("Connections list file (*.txt)");
+    QString filename = QFileDialog::getOpenFileName(0, "Load connections list",
+                                                    QDir::homePath(),
+                                                    filters, &defaultFilter);
+    if(filename.size() == 0)
+        return;
+
+    fstream file;
+    file.open(filename.toStdString().c_str());
+    if (!file.is_open()) {
+        QMessageBox::critical(NULL, QObject::tr("Error"), QObject::tr("Cannot open the file for loading"));
+        return;
+    }
+
+   ui->treeWidgetCons->clear();
+    string line;
+    unsigned int count = 0;
+    while(getline(file, line)) {
+        count++;
+        Bottle sample(line.c_str());
+        if(sample.size() == 3) {
+            //data.addList() = sample;
+            //yInfo()<<sample.toString();
+            QTreeWidgetItem* item;
+            QStringList prop;
+            prop.clear();
+            prop.append("Unknown");
+            prop.append(sample.get(0).asString().c_str());
+            prop.append(sample.get(1).asString().c_str());
+            prop.append(sample.get(2).asString().c_str());
+            item = new QTreeWidgetItem( ui->treeWidgetCons, prop);
+
+        }
+        else
+            yWarning()<<"Wrong connection data at line"<<count;
+    }
+    file.close();
 }
 
 void PortLoggerDialog::addConnections() {

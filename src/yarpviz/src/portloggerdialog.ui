@@ -6,7 +6,7 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>912</width>
+    <width>997</width>
     <height>514</height>
    </rect>
   </property>
@@ -49,7 +49,7 @@
        </font>
       </property>
       <property name="textAlignment">
-       <set>AlignHCenter|AlignVCenter|AlignCenter</set>
+       <set>AlignCenter</set>
       </property>
      </column>
      <column>
@@ -63,7 +63,7 @@
        </font>
       </property>
       <property name="textAlignment">
-       <set>AlignHCenter|AlignVCenter|AlignCenter</set>
+       <set>AlignCenter</set>
       </property>
      </column>
      <column>
@@ -77,7 +77,7 @@
        </font>
       </property>
       <property name="textAlignment">
-       <set>AlignHCenter|AlignVCenter|AlignCenter</set>
+       <set>AlignCenter</set>
       </property>
      </column>
     </widget>
@@ -184,7 +184,7 @@
        </font>
       </property>
       <property name="textAlignment">
-       <set>AlignHCenter|AlignVCenter|AlignCenter</set>
+       <set>AlignCenter</set>
       </property>
      </column>
      <column>
@@ -198,7 +198,7 @@
        </font>
       </property>
       <property name="textAlignment">
-       <set>AlignHCenter|AlignVCenter|AlignCenter</set>
+       <set>AlignCenter</set>
       </property>
      </column>
      <column>
@@ -212,7 +212,7 @@
        </font>
       </property>
       <property name="textAlignment">
-       <set>AlignHCenter|AlignVCenter|AlignCenter</set>
+       <set>AlignCenter</set>
       </property>
      </column>
     </widget>
@@ -306,6 +306,13 @@
       <widget class="QPushButton" name="pushButtonStart">
        <property name="text">
         <string>&amp;Start</string>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <widget class="QPushButton" name="pushButtonOpen">
+       <property name="text">
+        <string>&amp;Open</string>
        </property>
       </widget>
      </item>

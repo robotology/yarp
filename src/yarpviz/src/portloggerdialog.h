@@ -24,6 +24,7 @@ private slots:
     void startStopLoggers();
     void MyTimerSlot();
     void setLogPath();
+    void openCons();
 
 private:
     bool saveLog(std::string filename, yarp::os::Bottle* samples);
