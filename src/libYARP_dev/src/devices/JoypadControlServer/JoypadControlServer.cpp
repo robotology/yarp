@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2016 iCub Facility, Istituto Italiano di Tecnologia
+ * Copyright (C) 2017 iCub Facility, Istituto Italiano di Tecnologia
  * Authors: Andrea Ruzzenenti <andrea.ruzzenenti@iit.it>
  * CopyPolicy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
  */
@@ -8,6 +8,7 @@
 #include <map>
 #include <vector>
 #include <yarp/os/LogStream.h>
+#include <yarp/math/Math.h>
 
 #define DEFAULT_THREAD_PERIOD   10 //ms
 
@@ -32,6 +33,13 @@ bool JoypadCtrlParser::configure(yarp::dev::IJoypadController* interface)
         ret = false;
     }
 
+    countGetters.insert(make_pair(VOCAB_BUTTON,    &IJoypadController::getButtonCount));
+    countGetters.insert(make_pair(VOCAB_HAT,       &IJoypadController::getHatCount));
+    countGetters.insert(make_pair(VOCAB_TRACKBALL, &IJoypadController::getTrackballCount));
+    countGetters.insert(make_pair(VOCAB_AXIS,      &IJoypadController::getAxisCount));
+    countGetters.insert(make_pair(VOCAB_STICK,     &IJoypadController::getStickCount));
+    countGetters.insert(make_pair(VOCAB_TOUCH,     &IJoypadController::getTouchSurfaceCount));
+
     return ret;
 }
 
@@ -48,19 +56,9 @@ bool JoypadCtrlParser::respond(const yarp::os::Bottle& cmd, yarp::os::Bottle& re
 
     if(cmd.get(1).asVocab() == VOCAB_GET)
     {
-
-        typedef bool (IJoypadController::*getcountmethod)(unsigned int&);
-
-        map<int, getcountmethod> countGetters;
-        int                      toGet;
+        int toGet;
 
         toGet = cmd.get(2).asVocab();
-        countGetters.insert(make_pair(VOCAB_BUTTON,    &IJoypadController::getButtonCount));
-        countGetters.insert(make_pair(VOCAB_HAT,       &IJoypadController::getHatCount));
-        countGetters.insert(make_pair(VOCAB_TRACKBALL, &IJoypadController::getTrackballCount));
-        countGetters.insert(make_pair(VOCAB_AXIS,      &IJoypadController::getAxisCount));
-        countGetters.insert(make_pair(VOCAB_STICK,     &IJoypadController::getStickCount));
-        countGetters.insert(make_pair(VOCAB_TOUCH,     &IJoypadController::getTouchSurfaceCount));
 
         if(cmd.get(3).asVocab() == VOCAB_COUNT)
         {
@@ -199,7 +197,8 @@ bool JoypadCtrlParser::respond(const yarp::os::Bottle& cmd, yarp::os::Bottle& re
 JoypadControlServer::JoypadControlServer() : RateThread(DEFAULT_THREAD_PERIOD),
                                              m_rate(DEFAULT_THREAD_PERIOD),
                                              m_device(YARP_NULLPTR),
-                                             m_subDeviceOwned(YARP_NULLPTR)
+                                             m_subDeviceOwned(YARP_NULLPTR),
+                                             m_separatePorts(false)
 {
 
 }
@@ -226,6 +225,15 @@ bool JoypadControlServer::open(yarp::os::Searchable& params)
         m_rate = params.find("period").asInt();
     }
 
+    if(params.check("use_separate_ports"))
+    {
+        m_separatePorts = params.find("use_separate_ports").asBool();
+    }
+    else
+    {
+        yError() << "JoypadControlServer: missing use_separate_ports in configuration";
+        return false;
+    }
     m_coordsMode = yarp::dev::IJoypadController::JypCtrlcoord_CARTESIAN;
     rootName = params.check("name",Value("/"), "starting '/' if needed.").asString().c_str();
 
@@ -461,10 +469,10 @@ bool JoypadControlServer::openPorts()
 
     struct solver
     {
-        countGet getter;
-        JoyPort* port;
+        countGet  getter;
+        Openable* port;
 
-        solver(countGet a, JoyPort* b) : getter(a), port(b)
+        solver(countGet a, Openable* b) : getter(a), port(b)
         {}
     };
 
@@ -511,7 +519,7 @@ void JoypadControlServer::run()
         write = true;
         if(m_device->getButtonCount(count))
         {
-            Bottle& b = m_portButtons.prepare();
+            Vector& b = m_portButtons.prepare();
             b.clear();
             for(size_t i = 0; i < count; ++i)
             {
@@ -521,7 +529,7 @@ void JoypadControlServer::run()
                     write = false;
                     break;
                 }
-                b.addDouble(v);
+                b.push_back(v);
             }
         }
         if(write)m_portButtons.write();
@@ -535,7 +543,7 @@ void JoypadControlServer::run()
         write = true;
         if(m_device->getHatCount(count))
         {
-            Bottle& b = m_portHats.prepare();
+            VecOfChar& b = m_portHats.prepare();
             b.clear();
             for(size_t i = 0; i < count; ++i)
             {
@@ -545,7 +553,7 @@ void JoypadControlServer::run()
                     write = false;
                     break;
                 }
-                b.addInt(v);
+                b.push_back(v);
             }
         }
         if(write)m_portHats.write();
@@ -559,7 +567,7 @@ void JoypadControlServer::run()
         write = true;
         if(m_device->getAxisCount(count))
         {
-            Bottle& b = m_portAxis.prepare();
+            Vector& b = m_portAxis.prepare();
             b.clear();
             for(size_t i = 0; i < count; ++i)
             {
@@ -570,7 +578,7 @@ void JoypadControlServer::run()
                     write = false;
                     break;
                 }
-                b.addDouble(v);
+                b.push_back(v);
             }
         }
         if(write)m_portAxis.write();
@@ -584,22 +592,18 @@ void JoypadControlServer::run()
         write = true;
         if(m_device->getTrackballCount(count))
         {
-            Bottle& b = m_portTrackball.prepare();
+            Vector& b = m_portTrackball.prepare();
             b.clear();
             for(size_t i = 0; i < count; ++i)
             {
-                yarp::sig::Vector v;
+                Vector v;
                 if(!m_device->getTrackball(i, v))
                 {
                     yError() << "cannot get axis with id" << i;
                     write = false;
                     break;
                 }
-                Bottle& ball = b.addList();
-                for(size_t j = 0; j < v.size(); ++i)
-                {
-                    ball.addDouble(v[j]);
-                }
+                b = yarp::math::cat(b, v);
             }
         }
         if(write)m_portTrackball.write();
@@ -613,7 +617,7 @@ void JoypadControlServer::run()
         write = true;
         if(m_device->getStickCount(count))
         {
-            Bottle& b = m_portStick.prepare();
+            Vector& b = m_portStick.prepare();
             b.clear();
             for(size_t i = 0; i < count; ++i)
             {
@@ -624,17 +628,13 @@ void JoypadControlServer::run()
                     write = false;
                     break;
                 }
-                Bottle& stick = b.addList();
-                for(size_t j = 0; j < dofCount; ++i)
-                {
-                    stick.addDouble(v[j]);
-                }
+                b = yarp::math::cat(b, v);
             }
         }
         if(write)m_portStick.write();
     }
 
-    if (m_portStick.valid)
+    if (m_portTouch.valid)
     {
         unsigned int count;
         bool         write;
@@ -642,21 +642,17 @@ void JoypadControlServer::run()
         write = true;
         if(m_device->getTouchSurfaceCount(count))
         {
-            Bottle& b = m_portTouch.prepare();
+            Vector& b = m_portTouch.prepare();
             b.clear();
             for(unsigned int i = 0; i < count; ++i)
             {
-                Vector       v;
+                Vector v;
                 if(!m_device->getTouch(i, v))
                 {
                     write = false;
                     break;
                 }
-                Bottle& touch = b.addList();
-                for(size_t j = 0; j < v.size(); ++i)
-                {
-                    touch.addDouble(v[j]);
-                }
+                b = yarp::math::cat(b, v);
             }
         }
         if(write)m_portTouch.write();

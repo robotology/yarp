@@ -157,7 +157,8 @@ set(YARP_devices_SRCS   src/devices/AnalogWrapper/AnalogWrapper.cpp
                         src/devices/ControlBoardRemapper/RemoteControlBoardRemapper.cpp
                         src/devices/RobotDescriptionClient/RobotDescriptionClient.cpp
                         src/devices/RobotDescriptionServer/RobotDescriptionServer.cpp
-                        src/devices/JoypadControlServer/JoypadControlServer.cpp)
+                        src/devices/JoypadControlServer/JoypadControlServer.cpp
+                        src/devices/JoypadControlClient/JoypadControlClient.cpp)
 if (CREATE_LIB_MATH)
   list(APPEND YARP_devices_SRCS src/devices/FrameTransformClient/FrameTransformClient.cpp
                                 src/devices/FrameTransformServer/FrameTransformServer.cpp
@@ -177,7 +178,8 @@ set(YARP_devices_HDRS   src/devices/AnalogWrapper/AnalogWrapper.h
                         src/devices/ControlBoardRemapper/RemoteControlBoardRemapper.h
                         src/devices/RobotDescriptionClient/RobotDescriptionClient.h
                         src/devices/RobotDescriptionServer/RobotDescriptionServer.h
-                        src/devices/JoypadControlServer/JoypadControlServer.h)
+                        src/devices/JoypadControlServer/JoypadControlServer.h
+                        src/devices/JoypadControlClient/JoypadControlClient.h)
 if (CREATE_LIB_MATH)
   list(APPEND YARP_devices_HDRS src/devices/FrameTransformClient/FrameTransformClient.h
                                 src/devices/FrameTransformServer/FrameTransformServer.h
