@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2016 iCub Facility, Istituto Italiano di Tecnologia
+ * Copyright (C) 2017 iCub Facility, Istituto Italiano di Tecnologia
  * Authors: Andrea Ruzzenenti <andrea.ruzzenenti@iit.it>
  * CopyPolicy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
  */
@@ -29,7 +29,8 @@ SDLJoypad::~SDLJoypad()
 
 bool SDLJoypad::open(yarp::os::Searchable& rf)
 {
-    int joy_id, joystick_num;
+    int joy_id;
+    size_t joystick_num;
     if (SDL_InitSubSystem( SDL_INIT_JOYSTICK ) < 0 )
     {
         yError ( "SDLJoypad: Unable to initialize Joystick: %s\n", SDL_GetError() );
@@ -52,30 +53,38 @@ bool SDLJoypad::open(yarp::os::Searchable& rf)
     else
     {
         yInfo ( "SDLJoypad: More than one joystick found:\n");
-        for (int i = 0; i < joystick_num; i++)
+        for (size_t i = 0; i < joystick_num; i++)
         {
-            yInfo ( "%d: %s\n", i, SDL_JoystickName(i));
+            yInfo () << i << ":" << SDL_JoystickName(i);
         }
         yInfo ( "\n");
         if(!rf.check("UseAllJoypadAsOne"))
         {
-            // choose between multiple joysticks
-            if (rf.check("DefaultJoystickNumber"))
+            if(rf.find("UseAllJoypadAsOne").asBool())
             {
-                joy_id = rf.find("DefaultJoystickNumber").asInt();
-                yInfo ( "SDLJoypad: Multiple joysticks found, using #%d, as specified in the configuration options\n", joy_id);
+                // choose between multiple joysticks
+                if (rf.check("DefaultJoystickNumber"))
+                {
+                    joy_id = rf.find("DefaultJoystickNumber").asInt();
+                    yInfo ( "SDLJoypad: Multiple joysticks found, using #%d, as specified in the configuration options\n", joy_id);
+                }
+                else
+                {
+                    yWarning ( "SDLJoypad: No default joystick specified in the configuration options\n");
+                    yWarning ( "SDLJoypad: Which joystick you want to use? (choose number) \n");
+                    cin >> joy_id;
+                }
+                m_allJoypad = false;
             }
             else
             {
-                yWarning ( "SDLJoypad: No default joystick specified in the configuration options\n");
-                yWarning ( "SDLJoypad: Which joystick you want to use? (choose number) \n");
-                cin >> joy_id;
+                m_allJoypad = true;
             }
-            m_allJoypad = false;
         }
         else
         {
-            m_allJoypad = true;
+            yError() << "SDLJoypad: missing UseAllJoypadAsOne parameter";
+            return false;
         }
     }
 
@@ -158,10 +167,10 @@ bool SDLJoypad::getStickDoF(unsigned int stick_id, unsigned int& DoF)
 bool SDLJoypad::getButton(unsigned int button_id, float& value)
 {
     updateJoypad();
-    int i;
+    size_t i;
     for(i = 0; i < m_device.size(); ++i)
     {
-        int localCount = SDL_JoystickNumButtons(m_device[i]);
+        unsigned int localCount = SDL_JoystickNumButtons(m_device[i]);
         if(button_id > localCount - 1)
         {
             button_id -= localCount;
@@ -178,10 +187,10 @@ bool SDLJoypad::getButton(unsigned int button_id, float& value)
 bool SDLJoypad::getAxis(unsigned int axis_id, double& value)
 {
     updateJoypad();
-    int i;
+    size_t i;
     for(i = 0; i < m_device.size(); ++i)
     {
-        int localCount = SDL_JoystickNumAxes(m_device[i]);
+        unsigned int localCount = SDL_JoystickNumAxes(m_device[i]);
         if(axis_id > localCount - 1)
         {
             axis_id -= localCount;
@@ -209,10 +218,10 @@ bool SDLJoypad::getTouch(unsigned int touch_id, yarp::sig::Vector& value)
 bool SDLJoypad::getHat(unsigned int hat_id, unsigned char& value)
 {
     updateJoypad();
-    int i;
+    size_t i;
     for(i = 0; i < m_device.size(); ++i)
     {
-        int localCount = SDL_JoystickNumHats(m_device[i]);
+        unsigned int localCount = SDL_JoystickNumHats(m_device[i]);
         if(hat_id > localCount - 1)
         {
             hat_id -= localCount;
@@ -229,11 +238,12 @@ bool SDLJoypad::getHat(unsigned int hat_id, unsigned char& value)
 bool SDLJoypad::getTrackball(unsigned int trackball_id, yarp::sig::Vector& value)
 {
     updateJoypad();
-    int x, y, i;
+    int x, y;
+    size_t i;
 
     for(i = 0; i < m_device.size(); ++i)
     {
-        int localCount = SDL_JoystickNumBalls(m_device[i]);
+        unsigned int localCount = SDL_JoystickNumBalls(m_device[i]);
         if(trackball_id > localCount - 1)
         {
             trackball_id -= localCount;
