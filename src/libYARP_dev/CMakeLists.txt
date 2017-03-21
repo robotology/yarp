@@ -179,7 +179,8 @@ set(YARP_devices_HDRS   src/devices/AnalogWrapper/AnalogWrapper.h
                         src/devices/RobotDescriptionClient/RobotDescriptionClient.h
                         src/devices/RobotDescriptionServer/RobotDescriptionServer.h
                         src/devices/JoypadControlServer/JoypadControlServer.h
-                        src/devices/JoypadControlClient/JoypadControlClient.h)
+                        src/devices/JoypadControlClient/JoypadControlClient.h
+                        src/devices/JoypadControlServer/JoypadControlNetUtils.h)
 if (CREATE_LIB_MATH)
   list(APPEND YARP_devices_HDRS src/devices/FrameTransformClient/FrameTransformClient.h
                                 src/devices/FrameTransformServer/FrameTransformServer.h

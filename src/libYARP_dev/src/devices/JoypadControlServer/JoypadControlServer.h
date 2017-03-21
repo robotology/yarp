@@ -15,6 +15,7 @@
 #include <yarp/os/BufferedPort.h>
 #include <yarp/os/Bottle.h>
 #include <map>
+#include "JoypadControlNetUtils.h"
 
 namespace yarp
 {
@@ -24,33 +25,7 @@ namespace yarp
     }
 }
 
-//-----Openable and JoyPort are for confortable loop managing of ports
-struct Openable
-{
-    bool valid;
 
-    virtual ~Openable(){}
-    virtual bool open()      = 0;
-    virtual void interrupt() = 0;
-    virtual void close()     = 0;
-    virtual void write()     = 0;
-};
-
-template <typename T>
-struct JoyPort : public Openable
-{
-
-    yarp::os::BufferedPort<T> port;
-    yarp::os::ConstString     name;
-
-    T& prepare(){return port.prepare();}
-    bool open()      YARP_OVERRIDE {return port.open(name);}
-    void interrupt() YARP_OVERRIDE {port.interrupt();}
-    void close()     YARP_OVERRIDE {port.close();}
-    void write()     YARP_OVERRIDE {port.write();}
-
-};
-//----------
 
 
 class JoypadCtrlParser: public yarp::dev::DeviceResponder
@@ -122,6 +97,7 @@ class yarp::dev::JoypadControlServer: public yarp::dev::DeviceDriver,
     typedef yarp::dev::IJoypadController::JoypadCtrl_coordinateMode coordsMode;
     typedef yarp::sig::Vector                  Vector;
     typedef yarp::sig::VectorOf<unsigned char> VecOfChar;
+    #define JoyPort yarp::dev::JoypadControl::JoyPort
 
 
     unsigned int                    m_rate;
@@ -162,6 +138,8 @@ public:
     bool        threadInit();
     void        threadRelease();
     void        run();
+
+    #undef JoyPort
 };
 
 #endif
