@@ -40,19 +40,21 @@ inline void checkAndDestroy(T* &p) {
 class ControlBoardHelper
 {
 public:
-    ControlBoardHelper(int n, const int *aMap, const double *angToEncs, const double *zs, const double *nw, const double *amps=NULL, const double *volts=NULL): zeros(0),
+    ControlBoardHelper(int n, const int *aMap, const double *angToEncs, const double *zs, const double *nw, const double *amps = NULL, const double *volts = NULL, const double *dutycycles = NULL) : 
+        zeros(0),
         signs(0),
         axisMap(0),
         invAxisMap(0),
         angleToEncoders(0),
         newtonsToSensors(0),
         ampereToSensors(0),
-        voltToSensors(0)
+        voltToSensors(0),
+        dutycycleToPWMs(0)
     {
         yAssert(n>=0);         // if number of joints is negative complain!
         yAssert(aMap!=0);      // at least the axisMap is required
 
-        alloc(n, amps, volts);
+        alloc(n, amps, volts, dutycycles);
 
         memcpy(axisMap, aMap, sizeof(int)*nj);
 
@@ -75,7 +77,10 @@ public:
             memcpy(ampereToSensors, amps, sizeof(double)*nj);
 
         if (volts!=0)
-            memcpy(voltToSensors, volts, sizeof(double)*nj);;
+            memcpy(voltToSensors, volts, sizeof(double)*nj);
+
+        if (dutycycles != 0)
+            memcpy(dutycycleToPWMs, dutycycles, sizeof(double)*nj);
 
         // invert the axis map
         memset (invAxisMap, 0, sizeof(int) * nj);
@@ -100,7 +105,7 @@ public:
         dealloc();
     }
 
-    bool alloc(int n, const double *amps, const double *volts)
+    bool alloc(int n, const double *amps, const double *volts, const double *dutycycles)
     {
         nj=n;
         if (nj<=0)
@@ -115,6 +120,7 @@ public:
         invAxisMap=new int [nj];
         angleToEncoders=new double [nj];
         newtonsToSensors=new double [nj];
+        dutycycleToPWMs = new double[nj];
 
         if(amps)
         {
@@ -128,6 +134,13 @@ public:
             yAssert(voltToSensors != 0);
         }
 
+        if (dutycycles)
+        {
+            dutycycleToPWMs = new double[nj];
+            yAssert(dutycycleToPWMs != 0);
+        }
+
+        newtonsToSensors = new double[nj];
         yAssert(zeros != 0 && signs != 0 && axisMap != 0 && invAxisMap != 0 && angleToEncoders != 0 && newtonsToSensors != 0);
         return true;
     }
@@ -142,6 +155,7 @@ public:
         checkAndDestroy<double> (newtonsToSensors);
         checkAndDestroy<double> (ampereToSensors);
         checkAndDestroy<double> (voltToSensors);
+        checkAndDestroy<double>(dutycycleToPWMs);
         return true;
     }
 
@@ -610,6 +624,64 @@ public:
     }
     // *******************************************//
 
+    //***************** dutycycle ******************//
+    inline void dutycycle2PWM(double dutycycle, int j, double &pwm, int &k)
+    {
+        if (dutycycleToPWMs)
+            pwm = dutycycle*dutycycleToPWMs[j];
+        else
+            pwm = dutycycle;
+        k = toHw(j);
+    }
+
+    inline double dutycycle2PWM(double dutycycle, int j)
+    {
+        if (dutycycleToPWMs)
+            return dutycycle*dutycycleToPWMs[j];
+        else
+            return dutycycle;
+    }
+
+    inline void dutycycle2PWM(const double *dutycycle, double *sens)
+    {
+        double tmp;
+        int index;
+        for (int j = 0; j<nj; j++)
+        {
+            dutycycle2PWM(dutycycle[j], j, tmp, index);
+            sens[index] = tmp;
+        }
+    }
+
+    inline void PWM2dutycycle(const double *pwm, double *dutycycle)
+    {
+        double tmp;
+        int index;
+        for (int j = 0; j<nj; j++)
+        {
+            PWM2dutycycle(pwm[j], j, tmp, index);
+            dutycycle[index] = tmp;
+        }
+    }
+
+    inline void PWM2dutycycle(double pwm, int j, double &dutycycle, int &k)
+    {
+        k = toUser(j);
+
+        if (dutycycleToPWMs)
+            dutycycle = (pwm / dutycycleToPWMs[k]);
+        else
+            dutycycle = pwm;
+    }
+
+    inline double PWM2dutycycle(double pwm, int j)
+    {
+        int k = toUser(j);
+
+        return (pwm / dutycycleToPWMs[k]);
+    }
+    // *******************************************//
+
     inline int axes()
     { return nj; }
 
@@ -623,6 +695,7 @@ public:
     double *newtonsToSensors;
     double *ampereToSensors;
     double *voltToSensors;
+    double *dutycycleToPWMs;
 };
 inline ControlBoardHelper *castToMapper(void *p)
 { return static_cast<ControlBoardHelper *>(p); }

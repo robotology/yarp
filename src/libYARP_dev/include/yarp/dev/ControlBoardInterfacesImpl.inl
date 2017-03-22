@@ -38,19 +38,6 @@ bool ImplementPositionControl<DERIVED, IMPLEMENT>::positionMove(int j, double v)
     return iPosition->positionMoveRaw(k, enc);
 }
 
-#ifndef YARP_NO_DEPRECATED // since YARP 2.3.65
-template <class DERIVED, class IMPLEMENT>
-YARP_DEPRECATED bool ImplementPositionControl<DERIVED, IMPLEMENT>::setPositionMode()
-{
-    if (helper==0) return false;
-YARP_WARNING_PUSH
-YARP_DISABLE_DEPRECATED_WARNING
-    iPosition->setPositionModeRaw();
-YARP_WARNING_POP
-    return true;
-}
-#endif // YARP_NO_DEPRECATED
-
 template <class DERIVED, class IMPLEMENT>
 bool ImplementPositionControl<DERIVED, IMPLEMENT>::positionMove(const double *refs)
 {
@@ -277,17 +264,6 @@ bool ImplementVelocityControl<DERIVED, IMPLEMENT>::getAxes(int *axes)
     (*axes)=castToMapper(helper)->axes();
     return true;
 }
-
-#ifndef YARP_NO_DEPRECATED // since YARP 2.3.65
-template <class DERIVED, class IMPLEMENT>
-YARP_DEPRECATED bool ImplementVelocityControl<DERIVED, IMPLEMENT>::setVelocityMode()
-{
-YARP_WARNING_PUSH
-YARP_DISABLE_DEPRECATED_WARNING
-    return iVelocity->setVelocityModeRaw();
-YARP_WARNING_POP
-}
-#endif // YARP_NO_DEPRECATED
 
 template <class DERIVED, class IMPLEMENT>
 bool ImplementVelocityControl<DERIVED, IMPLEMENT>::velocityMove(int j, double sp)

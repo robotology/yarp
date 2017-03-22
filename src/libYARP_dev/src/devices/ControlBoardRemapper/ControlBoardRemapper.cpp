@@ -978,16 +978,6 @@ bool ControlBoardRemapper::getAxes(int *ax)
     return true;
 }
 
-bool ControlBoardRemapper::setPositionMode()
-{
-    return this->setControlModeAllAxes(VOCAB_CM_POSITION);
-}
-
-bool ControlBoardRemapper::setOpenLoopMode()
-{
-    return this->setControlModeAllAxes(VOCAB_CM_OPENLOOP);
-}
-
 bool ControlBoardRemapper::positionMove(int j, double ref)
 {
     int off=(int)remappedControlBoards.lut[j].axisIndexInSubControlBoard;
@@ -1669,11 +1659,6 @@ bool ControlBoardRemapper::velocityMove(const double *v)
     }
 
     return ret;
-}
-
-bool ControlBoardRemapper::setVelocityMode()
-{
-    return this->setControlModeAllAxes(VOCAB_CM_VELOCITY);
 }
 
 /* IEncoders */
@@ -3248,11 +3233,6 @@ bool ControlBoardRemapper::getJointType(int j, yarp::dev::JointTypeEnum& type)
     return false;
 }
 
-bool ControlBoardRemapper::setTorqueMode()
-{
-    return this->setControlModeAllAxes(VOCAB_CM_TORQUE);
-}
-
 bool ControlBoardRemapper::getRefTorques(double *refs)
 {
     bool ret=true;
@@ -4259,11 +4239,6 @@ bool ControlBoardRemapper::setPosition(int j, double ref)
     }
 
     return false;
-}
-
-bool ControlBoardRemapper::setPositionDirectMode()
-{
-    return this->setControlModeAllAxes(VOCAB_CM_POSITION_DIRECT);
 }
 
 bool ControlBoardRemapper::setPositions(const int n_joints, const int *joints, double *dpos)

@@ -150,44 +150,6 @@ name /mymotor\n\
         checkEqual(reply.get(2).asInt(),10,"axis count is correct");
     }
 
-#ifndef YARP_NO_DEPRECATED
-    void testControlBoard() {
-        report(0,"test the controlboard wrapper");
-        PolyDriver dd;
-        Property p;
-        p.put("device","controlboard");
-        p.put("subdevice","test_motor");
-        p.put("name","/motor");
-        p.put("axes",16);
-        p.put("allow-deprecated-devices", "1");
-        bool result;
-        result = dd.open(p);
-        checkTrue(result,"server open reported successful");
-
-        PolyDriver dd2;
-        Property p2;
-        p2.put("device","clientcontrolboard");
-        p2.put("remote","/motor");
-        p2.put("local","/motor/client");
-        p2.put("carrier","tcp");
-        p2.put("ignoreProtocolCheck","true");
-        p2.put("allow-deprecated-devices", "1");
-        result = dd2.open(p2);
-        checkTrue(result,"client open reported successful");
-
-        if(!result)   return;  // cannot go on if the device was not opened
-
-        IPositionControl *pos = NULL;
-        result = dd2.view(pos);
-        checkTrue(result,"interface reported");
-        int axes = 0;
-        pos->getAxes(&axes);
-        checkEqual(axes,16,"interface seems functional");
-        result = dd.close() && dd2.close();
-        checkTrue(result,"close reported successful");
-    }
-#endif // YARP_NO_DEPRECATED
-
     void testControlBoard2() {
         report(0,"\ntest the controlboard wrapper 2");
         PolyDriver dd;
@@ -242,7 +204,7 @@ name /mymotor\n\
         testPropertyBug();
         testGroup();
 #ifndef YARP_NO_DEPRECATED
-        testControlBoard();
+        //put here your deprecated stuff
 #endif // YARP_NO_DEPRECATED
         testControlBoard2();
         Network::setLocalMode(false);

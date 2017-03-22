@@ -122,6 +122,8 @@ public:
 #define VOCAB_CM_POSITION_DIRECT    VOCAB4('p','o','s','d')
 #define VOCAB_CM_VELOCITY           VOCAB3('v','e','l')
 #define VOCAB_CM_OPENLOOP           VOCAB4('o','p','e','n')
+#define VOCAB_CM_CURRENT            VOCAB4('i','c','u','r')
+#define VOCAB_CM_PWM                VOCAB4('i','p','w','m')
 #define VOCAB_CM_IMPEDANCE_POS      VOCAB4('i','m','p','o')  // deprecated
 #define VOCAB_CM_IMPEDANCE_VEL      VOCAB4('i','m','v','e')  // deprecated
 

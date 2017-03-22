@@ -25,7 +25,6 @@ namespace yarp {
 }
 
 #if defined(_MSC_VER) && !defined(YARP_NO_DEPRECATED) // since YARP 2.3.65
-// A class implementing setPositionMode() or setVelocityMode() causes a warning on MSVC
 YARP_WARNING_PUSH
 YARP_DISABLE_DEPRECATED_WARNING
 #endif
@@ -321,25 +320,6 @@ public:
         return true;
     }
 
-#ifndef YARP_NO_DEPRECATED // since YARP 2.3.65
-#if !defined(_MSC_VER)
-// On the other compilers the warning is disabled only here.
-YARP_WARNING_PUSH
-YARP_DISABLE_DEPRECATED_WARNING
-#endif
-    YARP_DEPRECATED virtual bool setPositionMode() {
-        posMode = true;
-        return true;
-    }
-
-    YARP_DEPRECATED virtual bool setVelocityMode() {
-        posMode = false;
-        return false;
-    }
-#if !defined(_MSC_VER)
-YARP_WARNING_POP
-#endif
-#endif // YARP_NO_DEPRECATED
 };
 
 #if defined(_MSC_VER) && !defined(YARP_NO_DEPRECATED) // since YARP 2.3.65

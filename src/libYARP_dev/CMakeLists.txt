@@ -54,6 +54,8 @@ set(YARP_dev_HDRS include/yarp/dev/all.h
                   include/yarp/dev/ImplementImpedanceControl.h
                   include/yarp/dev/ImplementOpenLoopControl.h
                   include/yarp/dev/ImplementTorqueControl.h
+                  include/yarp/dev/ImplementCurrentControl.h
+                  include/yarp/dev/ImplementPWMControl.h
                   include/yarp/dev/ImplementAxisInfo.h
                   include/yarp/dev/IInteractionMode.h
                   include/yarp/dev/IInteractionModeImpl.h
@@ -65,6 +67,8 @@ set(YARP_dev_HDRS include/yarp/dev/all.h
                   include/yarp/dev/IPositionDirect.h
                   include/yarp/dev/IPositionDirectImpl.h
                   include/yarp/dev/ITorqueControl.h
+                  include/yarp/dev/ICurrentControl.h
+                  include/yarp/dev/IPWMControl.h
                   include/yarp/dev/IFrameTransform.h
                   include/yarp/dev/IVelocityControl2.h
                   include/yarp/dev/IVelocityControl2Impl.h
@@ -126,24 +130,9 @@ set(YARP_dev_SRCS src/ControlBoardInterfacesImpl.cpp
                   src/ServerFrameGrabber.cpp
                   src/ServerSerial.cpp
                   src/TorqueControlImpl.cpp
+                  src/CurrentControlImpl.cpp
+                  src/PWMControlImpl.cpp
                   src/IAxisInfoImpl.cpp)
-
-if(NOT YARP_NO_DEPRECATED)
-  set(YARP_dev_DEPRECATED_SRCS src/ClientControlBoard.cpp    # since YARP 2.3.65
-                               src/ServerControlBoard.cpp)   # since YARP 2.3.65
-  list(APPEND YARP_dev_SRCS ${YARP_dev_DEPRECATED_SRCS})
-  if(MSVC)
-    set_source_files_properties(${YARP_dev_DEPRECATED_SRCS}
-                                PROPERTIES COMPILE_FLAGS "/wd4996")
-  else()
-    check_cxx_compiler_flag("-Wno-deprecated-declarations" CXX_HAS_WNO_DEPRECATED_DECLARATIONS)
-    if(CXX_HAS_WNO_DEPRECATED_DECLARATIONS)
-      set_source_files_properties(${YARP_dev_DEPRECATED_SRCS}
-                                  PROPERTIES COMPILE_FLAGS "-Wno-deprecated-declarations")
-    endif()
-  endif()
-endif()
-
 
 set(YARP_devices_SRCS   src/devices/AnalogWrapper/AnalogWrapper.cpp
                         src/devices/AnalogSensorClient/AnalogSensorClient.cpp

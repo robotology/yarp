@@ -100,13 +100,3 @@ bool ImplementOpenLoopControl::getOutputs(double *v)
     castToMapper(helper)->toUser(dummy, v);
     return ret;
 }
-
-#ifndef YARP_NO_DEPRECATED // since YARP 2.3.65
-bool ImplementOpenLoopControl::setOpenLoopMode()
-{
-YARP_WARNING_PUSH
-YARP_DISABLE_DEPRECATED_WARNING
-    return raw->setOpenLoopModeRaw();
-YARP_WARNING_POP
-}
-#endif // YARP_NO_DEPRECATED

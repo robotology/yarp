@@ -102,6 +102,8 @@ public:
     yarp::dev::IInteractionMode      *iInteract;
     yarp::dev::IMotor                *imotor;
     yarp::dev::IRemoteVariables      *iVar;
+    yarp::dev::IPWMControl           *iPWM;
+    yarp::dev::ICurrentControl       *iCurr;
 
     yarp::sig::Vector subDev_joint_encoders;
     yarp::sig::Vector jointEncodersTimes;

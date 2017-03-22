@@ -41,6 +41,8 @@ SubDevice::SubDevice()
     iMode=0;
     iMode2=0;
     iInteract=0;
+    iCurr = 0;
+    iPWM = 0;
 
     base=-1;
     top=-1;
@@ -174,6 +176,8 @@ bool SubDevice::attach(yarp::dev::PolyDriver *d, const std::string &k)
             subdevice->view(iInteract);
             subdevice->view(imotor);
             subdevice->view(iVar);
+            subdevice->view(iCurr);
+            subdevice->view(iPWM);
         }
     else
         {
@@ -186,6 +190,12 @@ bool SubDevice::attach(yarp::dev::PolyDriver *d, const std::string &k)
 
     if ((iTorque==0) && (_subDevVerbose))
         yWarning("ControlBoardWrapper for part <%s>:  Warning iTorque not valid interface.", parentName.c_str());
+
+    if ((iCurr == 0) && (_subDevVerbose))
+        yWarning("ControlBoardWrapper for part <%s>:  Warning iCurr not valid interface.", parentName.c_str());
+
+    if ((iPWM == 0) && (_subDevVerbose))
+        yWarning("ControlBoardWrapper for part <%s>:  Warning iPWM not valid interface.", parentName.c_str());
 
     if ((iImpedance==0) && (_subDevVerbose))
         yWarning("ControlBoardWrapper for part <%s>:  Warning iImpedance not valid interface.", parentName.c_str());

@@ -20,7 +20,6 @@ namespace yarp{
 
 
 #if defined(_MSC_VER) && !defined(YARP_NO_DEPRECATED) // since YARP 2.3.65
-// A class implementing setPositionMode() causes a warning on MSVC
 YARP_WARNING_PUSH
 YARP_DISABLE_DEPRECATED_WARNING
 #endif
@@ -102,10 +101,6 @@ public:
     virtual bool getTargetPosition(const int joint, double *ref);
     virtual bool getTargetPositions(double *refs);
     virtual bool getTargetPositions(const int n_joint, const int *joints, double *refs);
-
-#ifndef YARP_NO_DEPRECATED // since YARP 2.3.65
-    YARP_DEPRECATED virtual bool setPositionMode();
-#endif // YARP_NO_DEPRECATED
 };
 
 #if defined(_MSC_VER) && !defined(YARP_NO_DEPRECATED) // since YARP 2.3.65

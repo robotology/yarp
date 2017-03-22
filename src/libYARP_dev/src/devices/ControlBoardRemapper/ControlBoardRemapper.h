@@ -254,10 +254,6 @@ public:
     /* IPositionControl */
     virtual bool getAxes(int *ax);
 
-    virtual bool setPositionMode();
-
-    virtual bool setOpenLoopMode();
-
     virtual bool positionMove(int j, double ref);
 
     virtual bool positionMove(const double *refs);
@@ -316,8 +312,6 @@ public:
     virtual bool velocityMove(int j, double v);
 
     virtual bool velocityMove(const double *v);
-
-    virtual bool setVelocityMode();
 
     /* IEncoders */
     virtual bool resetEncoder(int j);
@@ -481,8 +475,6 @@ public:
 
     virtual bool getJointType(int j, yarp::dev::JointTypeEnum &type);
 
-    virtual bool setTorqueMode();
-
     virtual bool getRefTorques(double *refs);
 
     virtual bool getRefTorque(int j, double *t);
@@ -580,8 +572,6 @@ public:
     virtual bool setRefOutput(int j, double v);
 
     virtual bool setRefOutputs(const double *outs);
-
-    virtual bool setPositionDirectMode();
 
     virtual bool setPosition(int j, double ref);
 

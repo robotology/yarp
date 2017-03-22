@@ -53,11 +53,6 @@ extern DriverCreator *createLocationsServer();
 extern DriverCreator *createRangefinder2DClient();
 #endif
 
-#ifndef YARP_NO_DEPRECATED
-extern DriverCreator *createServerControlBoard();
-extern DriverCreator *createClientControlBoard();
-#endif // YARP_NO_DEPRECATED
-
 void Drivers::init() {
 
     add(new DriverCreatorOf<yarp::dev::TestMotor>("test_motor",
@@ -114,8 +109,4 @@ void Drivers::init() {
     add(createRangefinder2DClient());
 #endif
 
-#ifndef YARP_NO_DEPRECATED
-    add(createClientControlBoard());
-    add(createServerControlBoard());
-#endif // YARP_NO_DEPRECATED
 }

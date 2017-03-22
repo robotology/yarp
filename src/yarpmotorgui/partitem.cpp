@@ -330,6 +330,7 @@ void PartItem::initInterfaces()
     m_iencs = NULL;
     m_iAmp = NULL;
     m_iPid = NULL;
+    m_iCur = NULL;
     m_iOpl = NULL;
     m_iTrq = NULL;
     m_iImp = NULL;
@@ -418,6 +419,11 @@ bool PartItem::openInterfaces()
         if (!m_partsdd->view(m_iinfo))
         {
             yError("...axisInfo was not ok...");
+        }
+
+        if (!m_partsdd->view(m_iCur))
+        {
+            yError("...iCur was not ok...");
         }
 
         if (!ok) {
@@ -664,8 +670,11 @@ void PartItem::onRefreshPids(int jointIndex)
     yarp::os::Time::delay(0.005);
 
     // Current
-    //???????iCur->getCurPid(jointIndex, &myCurPid);
-    yarp::os::Time::delay(0.005);
+    if (m_iCur)
+    {
+        m_iCur->getCurrentPid(jointIndex, &myCurPid);
+        yarp::os::Time::delay(0.005);
+    }
 
     // Torque
     m_iTrq->getTorquePid(jointIndex, &myTrqPid);
@@ -695,10 +704,15 @@ void PartItem::onRefreshPids(int jointIndex)
 
 void PartItem::onSendCurrentPid(int jointIndex, Pid newPid)
 {
+    if (m_iCur == 0)
+    {
+        yError() << "iCurrent interface not opened";
+        return;
+    }
     Pid myCurPid(0, 0, 0, 0, 0, 0);
-    //????iCur->setCurPid(jointIndex, newPid);
+    m_iCur->setCurrentPid(jointIndex, newPid);
     yarp::os::Time::delay(0.005);
-    //????iCur->getCurPid(jointIndex, &myCurPid);
+    m_iCur->getCurrentPid(jointIndex, &myCurPid);
 
     if (m_currentPidDlg){
         m_currentPidDlg->initCurrent(myCurPid);

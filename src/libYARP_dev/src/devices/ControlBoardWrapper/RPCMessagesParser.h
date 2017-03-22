@@ -95,6 +95,8 @@ protected:
     yarp::dev::IInteractionMode         *rpc_IInteract;
     yarp::dev::IMotor                   *rpc_IMotor;
     yarp::dev::IRemoteVariables         *rpc_IVar;
+    yarp::dev::ICurrentControl          *rpc_ICurrent;
+    yarp::dev::IPWMControl              *rpc_IPWM;
     yarp::sig::Vector                   tmpVect;
     yarp::os::Stamp                     lastRpcStamp;
     yarp::os::Semaphore                 mutex;
@@ -137,6 +139,10 @@ public:
     void handleRemoteCalibratorMsg(const yarp::os::Bottle& cmd, yarp::os::Bottle& response, bool *rec, bool *ok);
 
     void handleRemoteVariablesMsg(const yarp::os::Bottle& cmd, yarp::os::Bottle& response, bool *rec, bool *ok);
+
+    void handleCurrentMsg(const yarp::os::Bottle& cmd, yarp::os::Bottle& response, bool *rec, bool *ok);
+
+    void handlePWMMsg(const yarp::os::Bottle& cmd, yarp::os::Bottle& response, bool *rec, bool *ok);
 
     /**
     * Initialize the internal data.

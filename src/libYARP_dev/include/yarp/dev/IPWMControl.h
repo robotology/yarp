@@ -1,19 +1,18 @@
 /*
- * Copyright (C) 2006, 2008, 2009 RobotCub Consortium
- * Authors: Lorenzo Natale
- * CopyPolicy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
- *
- */
+* Copyright (C) 2016 iCub Facility, Istituto Italiano di Tecnologia
+* Authors: Marco Randazzo <marco.randazzo@iit.it>
+* CopyPolicy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
+*/
 
-#ifndef YARP_DEV_IOPENLOOPCONTROL_H
-#define YARP_DEV_IOPENLOOPCONTROL_H
+#ifndef YARP_DEV_IPWMCONTROL_H
+#define YARP_DEV_IPWMCONTROL_H
 
 #include <yarp/dev/api.h>
 
 namespace yarp {
     namespace dev {
-        class IOpenLoopControlRaw;
-        class IOpenLoopControl;
+        class IPWMControlRaw;
+        class IPWMControl;
     }
 }
 
@@ -22,20 +21,20 @@ namespace yarp {
  *
  * Interface for controlling the output of a motor control device.
  */
-class yarp::dev::IOpenLoopControlRaw
+class yarp::dev::IPWMControlRaw
 {
 public:
-    virtual ~IOpenLoopControlRaw(){}
+    virtual ~IPWMControlRaw(){}
 
     /**
      * Command direct output value to joint j.
      */
-    virtual bool setRefOutputRaw(int j, double v)=0;
+    virtual bool setRefDutyCycleRaw(int j, double v) = 0;
 
     /**
      * Command direct output value to all joints.
      */
-    virtual bool setRefOutputsRaw(const double *v)=0;
+    virtual bool setRefDutyCyclesRaw(const double *v) = 0;
 
     /**
      * Get the last reference sent using the setRefOutput function
@@ -43,26 +42,26 @@ public:
      * @param out pointer to storage for return value
      * @return success/failure
      */
-    virtual bool getRefOutputRaw(int j, double *v)=0;
+    virtual bool getRefDutyCycleRaw(int j, double *v) = 0;
 
     /**
      * Get the last reference sent using the setRefOutputs function
      * @param outs pinter to the vector that will store the output values
      * @return true/false on success/failure
      */
-    virtual bool getRefOutputsRaw(double *v)=0;
+    virtual bool getRefDutyCyclesRaw(double *v) = 0;
 
     /** Get the output of the controller (e.g. pwm value)
      * @param j joint number
      * @param out pointer to storage for return value
      * @return success/failure
      */
-    virtual bool getOutputRaw(int j, double *v)=0;
+    virtual bool getDutyCycleRaw(int j, double *v) = 0;
 
     /** Get the output of the controllers (e.g. pwm value)
      * @param outs pinter to the vector that will store the output values
      */
-    virtual bool getOutputsRaw(double *v)=0;
+    virtual bool getDutyCyclesRaw(double *v) = 0;
 };
 
 
@@ -71,20 +70,20 @@ public:
  *
  * Interface for controlling the output of a motor control device.
  */
-class YARP_dev_API yarp::dev::IOpenLoopControl
+class YARP_dev_API yarp::dev::IPWMControl
 {
 public:
-    virtual ~IOpenLoopControl(){}
+    virtual ~IPWMControl(){}
 
     /**
      * Command direct output value to joint j.
      */
-    virtual bool setRefOutput(int j, double v)=0;
+    virtual bool setRefDutyCycle(int j, double v) = 0;
 
     /**
      * Command direct output value to all joints.
      */
-    virtual bool setRefOutputs(const double *v)=0;
+    virtual bool setRefDutyCycles(const double *v) = 0;
 
     /**
      * Get the last reference sent using the setRefOutput function
@@ -92,37 +91,37 @@ public:
      * @param out pointer to storage for return value
      * @return success/failure
      */
-    virtual bool getRefOutput(int j, double *v)=0;
+    virtual bool getRefDutyCycle(int j, double *v) = 0;
 
     /**
      * Get the last reference sent using the setRefOutputs function
      * @param outs pinter to the vector that will store the output values
      * @return true/false on success/failure
      */
-    virtual bool getRefOutputs(double *v)=0;
+    virtual bool getRefDutyCycles(double *v) = 0;
 
     /** Get the output of the controller (e.g. pwm value)
      * @param j joint number
      * @param out pointer to storage for return value
      * @return success/failure
      */
-    virtual bool getOutput(int j, double *v)=0;
+    virtual bool getDutyCycle(int j, double *v) = 0;
 
     /** Get the output of the controllers (e.g. pwm value)
      * @param outs pinter to the vector that will store the output values
      */
-    virtual bool getOutputs(double *v)=0;
+    virtual bool getDutyCycles(double *v) = 0;
+
 };
 
 // all sets in streaming
 
 // Interface name
-#define VOCAB_OPENLOOP_INTERFACE VOCAB4('i','o','p','l')
+#define VOCAB_PWMCONTROL_INTERFACE VOCAB4('i','p','w','m')
 // methods names
-#define VOCAB_OPENLOOP_REF_OUTPUT  VOCAB3('r','e','f')
-#define VOCAB_OPENLOOP_REF_OUTPUTS VOCAB4('r','e','f','s')
-#define VOCAB_OPENLOOP_PWM_OUTPUT  VOCAB3('p','w','m')
-#define VOCAB_OPENLOOP_PWM_OUTPUTS VOCAB4('p','w','m','s')
+#define VOCAB_PWMCONTROL_REF_PWM  VOCAB3('r','e','f')
+#define VOCAB_PWMCONTROL_REF_PWMS VOCAB4('r','e','f','s')
+#define VOCAB_PWMCONTROL_PWM_OUTPUT  VOCAB3('p','w','m')
+#define VOCAB_PWMCONTROL_PWM_OUTPUTS VOCAB4('p','w','m','s')
 
-
-#endif // YARP_DEV_IOPENLOOPCONTROL_H
+#endif // YARP_DEV_IPWMCONTROL_H

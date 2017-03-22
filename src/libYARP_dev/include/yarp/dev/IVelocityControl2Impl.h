@@ -20,7 +20,6 @@ namespace yarp {
 }
 
 #if defined(_MSC_VER) && !defined(YARP_NO_DEPRECATED) // since YARP 2.3.65
-// A class implementing setVelocityMode() causes a warning on MSVC
 YARP_WARNING_PUSH
 YARP_DISABLE_DEPRECATED_WARNING
 #endif
@@ -87,10 +86,6 @@ public:
     virtual bool setVelPids(const Pid *pids);
     virtual bool getVelPid(int j, Pid *pid);
     virtual bool getVelPids(Pid *pids);
-
-#ifndef YARP_NO_DEPRECATED // since YARP 2.3.65
-    YARP_DEPRECATED virtual bool setVelocityMode();
-#endif // YARP_NO_DEPRECATED
 };
 
 #if defined(_MSC_VER) && !defined(YARP_NO_DEPRECATED) // since YARP 2.3.65

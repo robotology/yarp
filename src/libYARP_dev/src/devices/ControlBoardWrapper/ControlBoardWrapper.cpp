@@ -1391,85 +1391,6 @@ bool ControlBoardWrapper::getAxes(int *ax) {
     return true;
 }
 
-#ifndef YARP_NO_DEPRECATED // since YARP 2.3.65
-YARP_WARNING_PUSH
-YARP_DISABLE_DEPRECATED_WARNING
-/**
-* Set position mode. This command
-* is required by control boards implementing different
-* control methods (e.g. velocity/torque), in some cases
-* it can be left empty.
-* @return true/false on success/failure
-* @deprecated since YARP 2.3.65
-*/
-bool ControlBoardWrapper::setPositionMode() {
-    bool ret=true;
-
-    for(int l=0;l<controlledJoints;l++)
-    {
-        int off=device.lut[l].offset;
-        int subIndex=device.lut[l].deviceEntry;
-
-        yarp::dev::impl::SubDevice *p=device.getSubdevice(subIndex);
-
-        if (!p)
-            return false;
-
-        if (p->iMode2)
-        {
-            yDebug() << "setPositionMode() for ALL joint using NEW interface";
-
-            //calling new iControlMode2 interface
-            ret = ret && p->iMode2->setControlMode(off+p->base, VOCAB_CM_POSITION);
-        }
-        else if(p->iMode)
-        {
-            yDebug() << "setPositionMode() for ALL joint using OLD interface";
-
-            //calling old iControlMode interface
-            ret=ret&&p->iMode->setPositionMode(off+p->base);
-        }
-        else
-            ret=false;
-    }
-    return ret;
-}
-
-bool ControlBoardWrapper::setOpenLoopMode() {
-    bool ret=true;
-
-    for(int l=0;l<controlledJoints;l++)
-    {
-        int off=device.lut[l].offset;
-        int subIndex=device.lut[l].deviceEntry;
-
-        yarp::dev::impl::SubDevice *p=device.getSubdevice(subIndex);
-
-        if (!p)
-            return false;
-
-        if (p->iMode2)
-        {
-            yDebug() << "setOpenLoopMode() for ALL joint using NEW interface";
-
-            //calling new iControlMode2 interface
-            ret = ret && p->iMode2->setControlMode(off+p->base, VOCAB_CM_OPENLOOP);
-        }
-        else if(p->iMode)
-        {
-            yDebug() << "setOpenLoopMode() for ALL joint using OLD interface";
-
-            //calling iControlMode interface
-            ret=ret&&p->iMode->setOpenLoopMode(off+p->base);
-        }
-        else
-            ret=false;
-    }
-    return ret;
-}
-YARP_WARNING_POP
-#endif // YARP_NO_DEPRECATED
-
 /**
 * Set new reference point for a single axis.
 * @param j joint number
@@ -2591,41 +2512,6 @@ bool ControlBoardWrapper::velocityMove(const double *v)
 
     return ret;
 }
-
-#ifndef YARP_NO_DEPRECATED // since YARP 2.3.65
-YARP_WARNING_PUSH
-YARP_DISABLE_DEPRECATED_WARNING
-bool ControlBoardWrapper::setVelocityMode()
-{
-    bool ret=true;
-    int j_wrap = 0;         // index of the wrapper joint
-    for(unsigned int subDev_idx=0; subDev_idx < device.subdevices.size(); subDev_idx++)
-    {
-        yarp::dev::impl::SubDevice *p=device.getSubdevice(subDev_idx);
-
-        if(!p)
-            return false;
-
-        int wrapped_joints=(p->top - p->base) + 1;
-
-        if(p->iMode2)   // ControlMode2
-        {
-            for(int j_dev = 0; j_dev < wrapped_joints; j_dev++, j_wrap++)
-            {   ret = ret && p->iMode2->setControlMode(p->base + j_dev, VOCAB_CM_VELOCITY);   }
-        }
-        else if(p->iMode)
-        {
-            for(int j_dev = 0; j_dev < wrapped_joints; j_dev++, j_wrap++)
-            {
-                int off=device.lut[j_wrap].offset;
-                ret = ret && p->iMode->setVelocityMode(p->base+off);
-            }
-        }
-    }
-    return ret;
-}
-YARP_WARNING_POP
-#endif // YARP_NO_DEPRECATED
 
 /* IEncoders */
 
@@ -3852,39 +3738,6 @@ bool ControlBoardWrapper::getJointType(int j, yarp::dev::JointTypeEnum& type)
     return false;
 }
 
-#ifndef YARP_NO_DEPRECATED // since 2.3.65
-YARP_WARNING_PUSH
-YARP_DISABLE_DEPRECATED_WARNING
-bool ControlBoardWrapper::setTorqueMode()
-{
-    bool ret=true;
-    for(int l=0;l<controlledJoints;l++)
-    {
-        int off=device.lut[l].offset;
-        int subIndex=device.lut[l].deviceEntry;
-
-        yarp::dev::impl::SubDevice *p=device.getSubdevice(subIndex);
-
-        if (!p)
-            return false;
-
-        if(p->iMode2)   // ControlMode2
-        {
-            ret = ret && p->iMode2->setControlMode(off+p->base, VOCAB_CM_TORQUE);
-        }
-        else if(p->iMode)
-        {
-            //calling iControlMode interface
-            ret=ret&&p->iMode->setTorqueMode(off+p->base);
-        }
-        else
-            ret=false;
-    }
-    return ret;
-}
-YARP_WARNING_POP
-#endif // YARP_NO_DEPRECATED
-
 bool ControlBoardWrapper::getRefTorques(double *refs)
 {
     bool ret=true;
@@ -4977,32 +4830,6 @@ bool ControlBoardWrapper::setPosition(int j, double ref)
     return false;
 }
 
-#ifndef YARP_NO_DEPRECATED // since YARP 2.3.65
-YARP_WARNING_PUSH
-YARP_DISABLE_DEPRECATED_WARNING
-bool ControlBoardWrapper::setPositionDirectMode()
-{
-    bool ret=true;
-    for(int l=0;l<controlledJoints;l++)
-    {
-        int off=device.lut[l].offset;
-        int subIndex=device.lut[l].deviceEntry;
-
-        yarp::dev::impl::SubDevice *p=device.getSubdevice(subIndex);
-
-        if (!p)
-            return false;
-
-        if(p->iMode2)
-            ret = ret && p->iMode2->setControlMode(off+p->base, VOCAB_CM_POSITION_DIRECT);
-        else
-            ret=false;
-    }
-    return ret;
-}
-YARP_WARNING_POP
-#endif // YARP_NO_DEPRECATED
-
 bool ControlBoardWrapper::setPositions(const int n_joints, const int *joints, double *dpos)
 {
     bool ret = true;
@@ -5607,4 +5434,515 @@ bool ControlBoardWrapper::getRefOutputs(double *outs)
             ret=false;
     }
     return ret;
+}
+
+bool ControlBoardWrapper::setRefDutyCycle(int j, double v)
+{
+    int off; try{ off = device.lut.at(j).offset; }
+    catch (...){ yError() << "joint number " << j << " out of bound [0-" << controlledJoints << "] for part " << partName; return false; }
+    int subIndex = device.lut[j].deviceEntry;
+
+    yarp::dev::impl::SubDevice *p = device.getSubdevice(subIndex);
+    if (!p)
+        return false;
+
+    if (p->iPWM)
+    {
+        return p->iPWM->setRefDutyCycle(off + p->base, v);
+    }
+    return false;
+}
+
+bool ControlBoardWrapper::setRefDutyCycles(const double *v)
+{
+    bool ret = true;
+
+    for (int l = 0; l<controlledJoints; l++)
+    {
+        int off = device.lut[l].offset;
+        int subIndex = device.lut[l].deviceEntry;
+
+        yarp::dev::impl::SubDevice *p = device.getSubdevice(subIndex);
+        if (!p)
+            return false;
+
+        if (p->iPWM)
+        {
+            ret = ret&&p->iPWM->setRefDutyCycle(off + p->base, v[l]);
+        }
+        else
+            ret = false;
+    }
+    return ret;
+}
+
+bool ControlBoardWrapper::getRefDutyCycle(int j, double *v)
+{
+    int off; try{ off = device.lut.at(j).offset; }
+    catch (...){ yError() << "joint number " << j << " out of bound [0-" << controlledJoints << "] for part " << partName; return false; }
+    int subIndex = device.lut[j].deviceEntry;
+
+    yarp::dev::impl::SubDevice *p = device.getSubdevice(subIndex);
+    if (!p)
+        return false;
+
+    if (p->iPWM)
+    {
+        return p->iPWM->getRefDutyCycle(off + p->base, v);
+    }
+    return false;
+}
+
+bool ControlBoardWrapper::getRefDutyCycles(double *v)
+{
+    bool ret = true;
+
+    for (int l = 0; l<controlledJoints; l++)
+    {
+        int off = device.lut[l].offset;
+        int subIndex = device.lut[l].deviceEntry;
+
+        yarp::dev::impl::SubDevice *p = device.getSubdevice(subIndex);
+        if (!p)
+            return false;
+
+        if (p->iPWM)
+        {
+            ret = ret&&p->iPWM->getRefDutyCycle(off + p->base, v + l);
+        }
+        else
+            ret = false;
+    }
+    return ret;
+}
+
+bool ControlBoardWrapper::getDutyCycle(int j, double *v)
+{
+    int off; try{ off = device.lut.at(j).offset; }
+    catch (...){ yError() << "joint number " << j << " out of bound [0-" << controlledJoints << "] for part " << partName; return false; }
+    int subIndex = device.lut[j].deviceEntry;
+
+    yarp::dev::impl::SubDevice *p = device.getSubdevice(subIndex);
+    if (!p)
+        return false;
+
+    if (p->iPWM)
+    {
+        return p->iPWM->getDutyCycle(off + p->base, v);
+    }
+    return false;
+}
+
+bool ControlBoardWrapper::getDutyCycles(double *v)
+{
+    bool ret = true;
+
+    for (int l = 0; l<controlledJoints; l++)
+    {
+        int off = device.lut[l].offset;
+        int subIndex = device.lut[l].deviceEntry;
+
+        yarp::dev::impl::SubDevice *p = device.getSubdevice(subIndex);
+        if (!p)
+            return false;
+
+        if (p->iPWM)
+        {
+            ret = ret&&p->iPWM->getDutyCycle(off + p->base, v + l);
+        }
+        else
+            ret = false;
+    }
+    return ret;
+}
+
+
+//
+// ICurrentControl Interface
+//
+
+//bool ControlBoardWrapper::getAxes(int *ax);
+//bool ControlBoardWrapper::getCurrent(int j, double *t);
+//bool ControlBoardWrapper::getCurrents(double *t);
+bool ControlBoardWrapper::getCurrentRange(int j, double *min, double *max)
+{
+    int off; try{ off = device.lut.at(j).offset; }
+    catch (...){ yError() << "joint number " << j << " out of bound [0-" << controlledJoints << "] for part " << partName; return false; }
+    int subIndex = device.lut[j].deviceEntry;
+
+    yarp::dev::impl::SubDevice *p = device.getSubdevice(subIndex);
+    if (!p)
+        return false;
+
+    if (p->iCurr)
+    {
+        return p->iCurr->getCurrentRange(off + p->base, min, max);
+    }
+
+    return false;
+}
+
+bool ControlBoardWrapper::getCurrentRanges(double *min, double *max)
+{
+    bool ret = true;
+
+    for (int l = 0; l<controlledJoints; l++)
+    {
+        int off = device.lut[l].offset;
+        int subIndex = device.lut[l].deviceEntry;
+
+        yarp::dev::impl::SubDevice *p = device.getSubdevice(subIndex);
+        if (!p)
+            return false;
+
+        if (p->iCurr)
+        {
+            ret = ret&&p->iCurr->getCurrentRange(off + p->base, min+l, max+l);
+        }
+        else
+            ret = false;
+    }
+    return ret;
+}
+
+bool ControlBoardWrapper::setRefCurrents(const double *t)
+{
+    bool ret = true;
+
+    for (int l = 0; l<controlledJoints; l++)
+    {
+        int off = device.lut[l].offset;
+        int subIndex = device.lut[l].deviceEntry;
+
+        yarp::dev::impl::SubDevice *p = device.getSubdevice(subIndex);
+        if (!p)
+            return false;
+
+        if (p->iCurr)
+        {
+            ret = ret&&p->iCurr->setRefCurrent(off + p->base, t[l]);
+        }
+        else
+            ret = false;
+    }
+    return ret;
+}
+
+bool ControlBoardWrapper::setRefCurrent(int j, double t)
+{
+    int off; try{ off = device.lut.at(j).offset; }
+    catch (...){ yError() << "joint number " << j << " out of bound [0-" << controlledJoints << "] for part " << partName; return false; }
+    int subIndex = device.lut[j].deviceEntry;
+
+    yarp::dev::impl::SubDevice *p = device.getSubdevice(subIndex);
+    if (!p)
+        return false;
+
+    if (p->iCurr)
+    {
+        return p->iCurr->setRefCurrent(off + p->base, t);
+    }
+    return false;
+}
+
+bool ControlBoardWrapper::setRefCurrents(const int n_joint, const int *joints, const double *t)
+{
+    bool ret = true;
+
+    rpcDataMutex.wait();
+    //Reset subdev_jointsVectorLen vector
+    memset(rpcData.subdev_jointsVectorLen, 0x00, sizeof(int) * rpcData.deviceNum);
+
+    // Create a map of joints for each subDevice
+    int subIndex = 0;
+    for (int j = 0; j<n_joint; j++)
+    {
+        subIndex = device.lut[joints[j]].deviceEntry;
+        rpcData.jointNumbers[subIndex][rpcData.subdev_jointsVectorLen[subIndex]] = device.lut[joints[j]].offset + rpcData.subdevices_p[subIndex]->base;
+        rpcData.values[subIndex][rpcData.subdev_jointsVectorLen[subIndex]] = t[j];
+        rpcData.subdev_jointsVectorLen[subIndex]++;
+    }
+
+    for (subIndex = 0; subIndex<rpcData.deviceNum; subIndex++)
+    {
+        if (rpcData.subdevices_p[subIndex]->iCurr)   // Position Control 2
+        {
+            ret = ret && rpcData.subdevices_p[subIndex]->iCurr->setRefCurrents(rpcData.subdev_jointsVectorLen[subIndex],
+                rpcData.jointNumbers[subIndex],
+                rpcData.values[subIndex]);
+        }
+        else   // Classic Position Control
+        {
+            if (rpcData.subdevices_p[subIndex]->iCurr)
+            {
+                for (int i = 0; i < rpcData.subdev_jointsVectorLen[subIndex]; i++)
+                {
+                    ret = ret && rpcData.subdevices_p[subIndex]->iCurr->setRefCurrent(rpcData.jointNumbers[subIndex][i],
+                        rpcData.values[subIndex][i]);
+                }
+            }
+            else
+            {
+                ret = false;
+            }
+        }
+    }
+    rpcDataMutex.post();
+    return ret;
+}
+
+bool ControlBoardWrapper::getRefCurrents(double *t)
+{
+    bool ret = true;
+
+    for (int l = 0; l<controlledJoints; l++)
+    {
+        int off = device.lut[l].offset;
+        int subIndex = device.lut[l].deviceEntry;
+
+        yarp::dev::impl::SubDevice *p = device.getSubdevice(subIndex);
+        if (!p)
+            return false;
+
+        if (p->iCurr)
+        {
+            ret = ret&&p->iCurr->getRefCurrent(off + p->base, t+l);
+        }
+        else
+            ret = false;
+    }
+    return ret;
+}
+
+bool ControlBoardWrapper::getRefCurrent(int j, double *t)
+{
+    int off; try{ off = device.lut.at(j).offset; }
+    catch (...){ yError() << "joint number " << j << " out of bound [0-" << controlledJoints << "] for part " << partName; return false; }
+    int subIndex = device.lut[j].deviceEntry;
+
+    yarp::dev::impl::SubDevice *p = device.getSubdevice(subIndex);
+    if (!p)
+        return false;
+
+    if (p->iCurr)
+    {
+        return p->iCurr->getRefCurrent(off + p->base, t);
+    }
+
+    return false;
+}
+
+bool ControlBoardWrapper::setCurrentPid(int j, const Pid &pid)
+{
+    int off; try{ off = device.lut.at(j).offset; }
+    catch (...){ yError() << "joint number " << j << " out of bound [0-" << controlledJoints << "] for part " << partName; return false; }
+    int subIndex = device.lut[j].deviceEntry;
+
+    yarp::dev::impl::SubDevice *p = device.getSubdevice(subIndex);
+    if (!p)
+        return false;
+
+    if (p->iCurr)
+    {
+        return p->iCurr->setCurrentPid(off + p->base, pid);
+    }
+
+    return false;
+}
+
+bool ControlBoardWrapper::setCurrentPids(const Pid *pids)
+{
+    bool ret = true;
+
+    for (int l = 0; l<controlledJoints; l++)
+    {
+        int off = device.lut[l].offset;
+        int subIndex = device.lut[l].deviceEntry;
+
+        yarp::dev::impl::SubDevice *p = device.getSubdevice(subIndex);
+        if (!p)
+            return false;
+
+        if (p->pid)
+        {
+            ret = ret&&p->iCurr->setCurrentPid(off + p->base, pids[l]);
+        }
+        else
+            ret = false;
+    }
+    return ret;
+}
+
+bool ControlBoardWrapper::getCurrentError(int j, double *err)
+{
+    int off; try{ off = device.lut.at(j).offset; }
+    catch (...){ yError() << "joint number " << j << " out of bound [0-" << controlledJoints << "] for part " << partName; return false; }
+    int subIndex = device.lut[j].deviceEntry;
+
+    yarp::dev::impl::SubDevice *p = device.getSubdevice(subIndex);
+    if (!p)
+        return false;
+
+    if (p->iCurr)
+    {
+        return p->iCurr->getCurrentError(off + p->base, err);
+    }
+
+    return false;
+}
+
+bool ControlBoardWrapper::getCurrentErrors(double *errs)
+{
+    bool ret = true;
+
+    for (int l = 0; l<controlledJoints; l++)
+    {
+        int off = device.lut[l].offset;
+        int subIndex = device.lut[l].deviceEntry;
+
+        yarp::dev::impl::SubDevice *p = device.getSubdevice(subIndex);
+        if (!p)
+            return false;
+
+        if (p->pid)
+        {
+            ret = ret&&p->iCurr->getCurrentError(off + p->base, errs + l);
+        }
+        else
+            ret = false;
+    }
+    return ret;
+}
+
+bool ControlBoardWrapper::getCurrentPidOutput(int j, double *out)
+{
+    int off; try{ off = device.lut.at(j).offset; }
+    catch (...){ yError() << "joint number " << j << " out of bound [0-" << controlledJoints << "] for part " << partName; return false; }
+    int subIndex = device.lut[j].deviceEntry;
+
+    yarp::dev::impl::SubDevice *p = device.getSubdevice(subIndex);
+    if (!p)
+        return false;
+
+    if (p->iCurr)
+    {
+        return p->iCurr->getCurrentPidOutput(off + p->base, out);
+    }
+
+    return false;
+}
+
+bool ControlBoardWrapper::getCurrentPidOutputs(double *outs)
+{
+    bool ret = true;
+
+    for (int l = 0; l<controlledJoints; l++)
+    {
+        int off = device.lut[l].offset;
+        int subIndex = device.lut[l].deviceEntry;
+
+        yarp::dev::impl::SubDevice *p = device.getSubdevice(subIndex);
+        if (!p)
+            return false;
+
+        if (p->pid)
+        {
+            ret = ret&&p->iCurr->getCurrentPidOutput(off + p->base, outs + l);
+        }
+        else
+            ret = false;
+    }
+    return ret;
+}
+
+bool ControlBoardWrapper::getCurrentPid(int j, Pid *pid)
+{
+    int off; try{ off = device.lut.at(j).offset; }
+    catch (...){ yError() << "joint number " << j << " out of bound [0-" << controlledJoints << "] for part " << partName; return false; }
+    int subIndex = device.lut[j].deviceEntry;
+
+    yarp::dev::impl::SubDevice *p = device.getSubdevice(subIndex);
+    if (!p)
+        return false;
+
+    if (p->iCurr)
+    {
+        return p->iCurr->getCurrentPid(off + p->base, pid);
+    }
+
+    return false;
+}
+
+bool ControlBoardWrapper::getCurrentPids(Pid *pids)
+{
+    bool ret = true;
+
+    for (int l = 0; l<controlledJoints; l++)
+    {
+        int off = device.lut[l].offset;
+        int subIndex = device.lut[l].deviceEntry;
+
+        yarp::dev::impl::SubDevice *p = device.getSubdevice(subIndex);
+        if (!p)
+            return false;
+
+        if (p->pid)
+        {
+            ret = ret&&p->iCurr->getCurrentPid(off + p->base, pids + l);
+        }
+        else
+            ret = false;
+    }
+    return ret;
+}
+
+bool ControlBoardWrapper::resetCurrentPid(int j)
+{
+    int off; try{ off = device.lut.at(j).offset; }
+    catch (...){ yError() << "joint number " << j << " out of bound [0-" << controlledJoints << "] for part " << partName; return false; }
+    int subIndex = device.lut[j].deviceEntry;
+
+    yarp::dev::impl::SubDevice *p = device.getSubdevice(subIndex);
+    if (!p)
+        return false;
+
+    if (p->pid)
+    {
+        return p->iCurr->resetCurrentPid(off + p->base);
+    }
+    return false;
+}
+
+bool ControlBoardWrapper::disableCurrentPid(int j)
+{
+    int off; try{ off = device.lut.at(j).offset; }
+    catch (...){ yError() << "joint number " << j << " out of bound [0-" << controlledJoints << "] for part " << partName; return false; }
+    int subIndex = device.lut[j].deviceEntry;
+
+    yarp::dev::impl::SubDevice *p = device.getSubdevice(subIndex);
+    if (!p)
+        return false;
+
+    if (p->pid)
+    {
+        return p->iCurr->disableCurrentPid(off + p->base);
+    }
+    return false;
+}
+
+bool ControlBoardWrapper::enableCurrentPid(int j)
+{
+    int off; try{ off = device.lut.at(j).offset; }
+    catch (...){ yError() << "joint number " << j << " out of bound [0-" << controlledJoints << "] for part " << partName; return false; }
+    int subIndex = device.lut[j].deviceEntry;
+
+    yarp::dev::impl::SubDevice *p = device.getSubdevice(subIndex);
+    if (!p)
+        return false;
+
+    if (p->pid)
+    {
+        return p->iCurr->enableCurrentPid(off + p->base);
+    }
+    return false;
 }

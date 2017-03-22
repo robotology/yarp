@@ -29,7 +29,7 @@
 #include <stateExtendedReader.hpp>
 
 #define PROTOCOL_VERSION_MAJOR 1
-#define PROTOCOL_VERSION_MINOR 7
+#define PROTOCOL_VERSION_MINOR 8
 #define PROTOCOL_VERSION_TWEAK 0
 
 using namespace yarp::os;
@@ -113,7 +113,6 @@ public:
 
 
 #if defined(_MSC_VER) && !defined(YARP_NO_DEPRECATED) // since YARP 2.3.65
-// A class implementing setXxxxxMode() causes a warning on MSVC
 YARP_WARNING_PUSH
 YARP_DISABLE_DEPRECATED_WARNING
 #endif
@@ -156,7 +155,9 @@ class yarp::dev::RemoteControlBoard :
     public IPositionDirect,
     public IInteractionMode,
     public IRemoteCalibrator,
-    public IRemoteVariables
+    public IRemoteVariables,
+    public IPWMControl,
+    public ICurrentControl
 {
 
 #ifndef DOXYGEN_SHOULD_SKIP_THIS
@@ -3535,21 +3536,314 @@ public:
         return CHECK_FAIL(ok, response);
     }
 
-#ifndef YARP_NO_DEPRECATED // since YARP 2.3.65
-#if !defined(_MSC_VER)
-YARP_WARNING_PUSH
-YARP_DISABLE_DEPRECATED_WARNING
-#endif
-    YARP_DEPRECATED virtual bool setPositionMode() { return set1V(VOCAB_POSITION_MODE); }
-    YARP_DEPRECATED virtual bool setVelocityMode() { return set1V(VOCAB_VELOCITY_MODE); }
-    YARP_DEPRECATED virtual bool setTorqueMode() { return set1V(VOCAB_TORQUE_MODE); }
-    YARP_DEPRECATED virtual bool setOpenLoopMode() { return set1V(VOCAB_OPENLOOP_MODE); }
-    YARP_DEPRECATED virtual bool setPositionDirectMode() { return set1V(VOCAB_POSITION_DIRECT); }
-#if !defined(_MSC_VER)
-YARP_WARNING_PUSH
-#endif
-#endif // YARP_NO_DEPRECATED
+//    virtual bool getAxes(int *ax)
+//    {
+//    }
 
+    virtual bool getRefCurrents(double *t)
+    {
+        return get2V1DA(VOCAB_CURRENTCONTROL_INTERFACE, VOCAB_CURRENT_REFS, t);
+    }
+
+    virtual bool getRefCurrent(int j, double *t)
+    {
+        return get2V1I1D(VOCAB_CURRENTCONTROL_INTERFACE, VOCAB_CURRENT_REF, j, t);
+    }
+
+    virtual bool setRefCurrents(const double *refs)
+    {
+        if (!isLive()) return false;
+        CommandMessage& c = command_buffer.get();
+        c.head.clear();
+        c.head.addVocab(VOCAB_CURRENTCONTROL_INTERFACE);
+        c.head.addVocab(VOCAB_CURRENT_REFS);
+        c.body.resize(nj);
+        memcpy(&(c.body[0]), refs, sizeof(double)*nj);
+        command_buffer.write(writeStrict_moreJoints);
+        return true;
+    }
+
+    virtual bool setRefCurrent(int j, double ref)
+    {
+        if (!isLive()) return false;
+        CommandMessage& c = command_buffer.get();
+        c.head.clear();
+        c.head.addVocab(VOCAB_CURRENTCONTROL_INTERFACE);
+        c.head.addVocab(VOCAB_CURRENT_REF);
+        c.head.addInt(j);
+        c.body.resize(1);
+        memcpy(&(c.body[0]), &ref, sizeof(double));
+        command_buffer.write(writeStrict_singleJoint);
+        return true;
+    }
+
+    virtual bool setRefCurrents(const int n_joint, const int *joints, const double *refs)
+    {
+        if (!isLive()) return false;
+        CommandMessage& c = command_buffer.get();
+        c.head.clear();
+        c.head.addVocab(VOCAB_CURRENTCONTROL_INTERFACE);
+        c.head.addVocab(VOCAB_CURRENT_REF_GROUP);
+        c.head.addInt(n_joint);
+        Bottle &jointList = c.head.addList();
+        for (int i = 0; i < n_joint; i++)
+            jointList.addInt(joints[i]);
+        c.body.resize(n_joint);
+        memcpy(&(c.body[0]), refs, sizeof(double)*n_joint);
+        command_buffer.write(writeStrict_moreJoints);
+        return true;
+    }
+
+    virtual bool setCurrentPid(int j, const Pid &pid)
+    {
+        Bottle cmd, response;
+        cmd.addVocab(VOCAB_SET);
+        cmd.addVocab(VOCAB_CURRENTCONTROL_INTERFACE);
+        cmd.addVocab(VOCAB_CURRENT_PID);
+        cmd.addInt(j);
+        Bottle& l = cmd.addList();
+        l.addDouble(pid.kp);
+        l.addDouble(pid.kd);
+        l.addDouble(pid.ki);
+        l.addDouble(pid.max_int);
+        l.addDouble(pid.max_output);
+        l.addDouble(pid.offset);
+        l.addDouble(pid.scale);
+        l.addDouble(pid.stiction_up_val);
+        l.addDouble(pid.stiction_down_val);
+        l.addDouble(pid.kff);
+        bool ok = rpc_p.write(cmd, response);
+        return CHECK_FAIL(ok, response);
+    }
+
+//    virtual bool getCurrent(int j, double *t)
+//    {
+//    }
+
+//    virtual bool getCurrents(double *t)
+//    {
+//    }
+
+    virtual bool getCurrentRange(int j, double *min, double *max)
+    {
+        return get2V1I2D(VOCAB_CURRENTCONTROL_INTERFACE, VOCAB_CURRENT_RANGE, j, min, max);
+    }
+
+    virtual bool getCurrentRanges(double *min, double *max)
+    {
+        return get2V2DA(VOCAB_CURRENTCONTROL_INTERFACE, VOCAB_CURRENT_RANGE, min, max);
+    }
+
+    virtual bool setCurrentPids(const Pid *pids)
+    {
+        if (!isLive()) return false;
+        Bottle cmd, response;
+        cmd.addVocab(VOCAB_SET);
+        cmd.addVocab(VOCAB_CURRENTCONTROL_INTERFACE);
+        cmd.addVocab(VOCAB_CURRENT_PIDS);
+        Bottle& l = cmd.addList();
+        int i;
+        for (i = 0; i < nj; i++) {
+            Bottle& m = l.addList();
+            m.addDouble(pids[i].kp);
+            m.addDouble(pids[i].kd);
+            m.addDouble(pids[i].ki);
+            m.addDouble(pids[i].max_int);
+            m.addDouble(pids[i].max_output);
+            m.addDouble(pids[i].offset);
+            m.addDouble(pids[i].scale);
+            m.addDouble(pids[i].stiction_up_val);
+            m.addDouble(pids[i].stiction_down_val);
+            m.addDouble(pids[i].kff);
+        }
+
+        bool ok = rpc_p.write(cmd, response);
+        return CHECK_FAIL(ok, response);
+    }
+
+    virtual bool getCurrentError(int j, double *err)
+    {
+        return get2V1I1D(VOCAB_CURRENTCONTROL_INTERFACE, VOCAB_ERR, j, err);
+    }
+
+    virtual bool getCurrentErrors(double *errs)
+    {
+        return get2V1DA(VOCAB_CURRENTCONTROL_INTERFACE, VOCAB_ERRS, errs);
+    }
+
+    virtual bool getCurrentPidOutput(int j, double *out)
+    {
+        return get2V1I1D(VOCAB_CURRENTCONTROL_INTERFACE, VOCAB_CURRENT_PID_OUTPUT, j, out);
+    }
+
+    virtual bool getCurrentPidOutputs(double *outs)
+    {
+        return get2V1DA(VOCAB_CURRENTCONTROL_INTERFACE, VOCAB_CURRENT_PID_OUTPUTS, outs);
+    }
+
+    virtual bool getCurrentPid(int j, Pid *pid)
+    {
+        Bottle cmd, response;
+        cmd.addVocab(VOCAB_GET);
+        cmd.addVocab(VOCAB_CURRENTCONTROL_INTERFACE);
+        cmd.addVocab(VOCAB_CURRENT_PID);
+        cmd.addInt(j);
+        bool ok = rpc_p.write(cmd, response);
+        if (CHECK_FAIL(ok, response)) {
+            Bottle* lp = response.get(2).asList();
+            if (lp == 0)
+                return false;
+            Bottle& l = *lp;
+            pid->kp = l.get(0).asDouble();
+            pid->kd = l.get(1).asDouble();
+            pid->ki = l.get(2).asDouble();
+            pid->max_int = l.get(3).asDouble();
+            pid->max_output = l.get(4).asDouble();
+            pid->offset = l.get(5).asDouble();
+            pid->scale = l.get(6).asDouble();
+            pid->stiction_up_val = l.get(7).asDouble();
+            pid->stiction_down_val = l.get(8).asDouble();
+            pid->kff = l.get(9).asDouble();
+            return true;
+        }
+        return false;
+    }
+
+    virtual bool getCurrentPids(Pid *pids)
+    {
+        if (!isLive()) return false;
+        Bottle cmd, response;
+        cmd.addVocab(VOCAB_GET);
+        cmd.addVocab(VOCAB_CURRENTCONTROL_INTERFACE);
+        cmd.addVocab(VOCAB_CURRENT_PIDS);
+        bool ok = rpc_p.write(cmd, response);
+        if (CHECK_FAIL(ok, response)) {
+            int i;
+            Bottle* lp = response.get(2).asList();
+            if (lp == 0)
+                return false;
+            Bottle& l = *lp;
+            const int njs = l.size();
+            yAssert(njs == nj);
+            for (i = 0; i < nj; i++)
+            {
+                Bottle* mp = l.get(i).asList();
+                if (mp == 0)
+                    return false;
+                Bottle& m = *mp;
+                pids[i].kp = m.get(0).asDouble();
+                pids[i].kd = m.get(1).asDouble();
+                pids[i].ki = m.get(2).asDouble();
+                pids[i].max_int = m.get(3).asDouble();
+                pids[i].max_output = m.get(4).asDouble();
+                pids[i].offset = m.get(5).asDouble();
+                pids[i].scale = m.get(6).asDouble();
+                pids[i].stiction_up_val = m.get(7).asDouble();
+                pids[i].stiction_down_val = m.get(8).asDouble();
+                pids[i].kff = m.get(9).asDouble();
+            }
+            return true;
+        }
+        return false;
+    }
+
+    virtual bool resetCurrentPid(int j)
+    {
+        return set1V1I(VOCAB_RESET, j);
+    }
+
+    virtual bool disableCurrentPid(int j)
+    {
+        return set2V1I(VOCAB_CURRENTCONTROL_INTERFACE, VOCAB_DISABLE, j);
+    }
+
+    virtual bool enableCurrentPid(int j)
+    {
+        return set2V1I(VOCAB_CURRENTCONTROL_INTERFACE, VOCAB_ENABLE, j);
+    }
+
+    //iPWMControl
+    virtual bool setRefDutyCycle(int j, double v)
+    {
+        // using the streaming port
+        if (!isLive()) return false;
+        CommandMessage& c = command_buffer.get();
+        c.head.clear();
+        // in streaming port only SET command can be sent, so it is implicit
+        c.head.addVocab(VOCAB_PWMCONTROL_INTERFACE);
+        c.head.addVocab(VOCAB_PWMCONTROL_REF_PWM);
+        c.head.addInt(j);
+
+        c.body.clear();
+        c.body.resize(1);
+        c.body[0] = v;
+        command_buffer.write(writeStrict_singleJoint);
+        return true;
+    }
+
+    virtual bool setRefDutyCycles(const double *v)
+    {
+        // using the streaming port
+        if (!isLive()) return false;
+        CommandMessage& c = command_buffer.get();
+        c.head.clear();
+        c.head.addVocab(VOCAB_PWMCONTROL_INTERFACE);
+        c.head.addVocab(VOCAB_PWMCONTROL_REF_PWMS);
+
+        c.body.resize(nj);
+
+        memcpy(&(c.body[0]), v, sizeof(double)*nj);
+
+        command_buffer.write(writeStrict_moreJoints);
+
+        return true;
+    }
+
+    virtual bool getRefDutyCycle(int j, double *ref)
+    {
+        Bottle cmd, response;
+        cmd.addVocab(VOCAB_GET);
+        cmd.addVocab(VOCAB_PWMCONTROL_INTERFACE);
+        cmd.addVocab(VOCAB_PWMCONTROL_REF_PWM);
+        cmd.addInt(j);
+        response.clear();
+
+        bool ok = rpc_p.write(cmd, response);
+
+        if (CHECK_FAIL(ok, response))
+        {
+            // ok
+            *ref = response.get(2).asDouble();
+
+            getTimeStamp(response, lastStamp);
+            return true;
+        }
+        else
+            return false;
+    }
+
+    virtual bool getRefDutyCycles(double *refs)
+    {
+        return get2V1DA(VOCAB_PWMCONTROL_INTERFACE, VOCAB_PWMCONTROL_REF_PWMS, refs);
+    }
+
+    virtual bool getDutyCycle(int j, double *out)
+    {
+        double localArrivalTime = 0.0;
+        extendedPortMutex.wait();
+        bool ret = extendedIntputStatePort.getLastSingle(j, VOCAB_OUTPUT, out, lastStamp, localArrivalTime);
+        extendedPortMutex.post();
+        return ret;
+    }
+
+    virtual bool getDutyCycles(double *outs)
+    {
+        double localArrivalTime = 0.0;
+        extendedPortMutex.wait();
+        bool ret = extendedIntputStatePort.getLastVector(VOCAB_OUTPUTS, outs, lastStamp, localArrivalTime);
+        extendedPortMutex.post();
+        return ret;
+    }
 };
 
 #if defined(_MSC_VER) && !defined(YARP_NO_DEPRECATED) // since YARP 2.3.65

@@ -23,6 +23,8 @@
 #include <yarp/dev/IPositionControl.h>
 #include <yarp/dev/IPositionControl2.h>
 #include <yarp/dev/IOpenLoopControl.h>
+#include <yarp/dev/ICurrentControl.h>
+#include <yarp/dev/IPWMControl.h>
 #include <yarp/dev/IPositionDirect.h>
 #include <yarp/dev/IInteractionMode.h>
 #include <yarp/dev/IMotorEncoders.h>

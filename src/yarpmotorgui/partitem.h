@@ -140,6 +140,7 @@ private:
     IMotorEncoders     *m_iMot;
     IAmplifierControl  *m_iAmp;
     IPidControl        *m_iPid;
+    ICurrentControl    *m_iCur;
     IOpenLoopControl   *m_iOpl;
     ITorqueControl     *m_iTrq;
     IImpedanceControl  *m_iImp;

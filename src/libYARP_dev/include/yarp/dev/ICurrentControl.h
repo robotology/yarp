@@ -1,45 +1,34 @@
 /*
- * Copyright (C) 2016 iCub Facility, Istituto Italiano di Tecnologia
- * Authors: Marco Randazzo <marco.randazzo@iit.it>
- * CopyPolicy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
- */
+* Copyright (C) 2016 iCub Facility, Istituto Italiano di Tecnologia
+* Authors: Marco Randazzo <marco.randazzo@iit.it>
+* CopyPolicy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
+*/
 
-#ifndef YARP_DEV_ITORQUECONTROL_H
-#define YARP_DEV_ITORQUECONTROL_H
+#ifndef YARP_DEV_ICURRENTCONTROL_H
+#define YARP_DEV_ICURRENTCONTROL_H
 
 #include <yarp/os/Vocab.h>
 #include <yarp/dev/ControlBoardPid.h>
 
 namespace yarp {
     namespace dev {
-        class ITorqueControlRaw;
-        class ITorqueControl;
-        class MotorTorqueParameters;
+        class ICurrentControlRaw;
+        class ICurrentControl;
       }
 }
-
-class YARP_dev_API yarp::dev::MotorTorqueParameters
-{
-    public:
-    double bemf;
-    double bemf_scale;
-    double ktau;
-    double ktau_scale;
-    MotorTorqueParameters() : bemf(0), bemf_scale(0), ktau(0), ktau_scale(0) {};
-};
 
 /**
  * @ingroup dev_iface_motor
  *
- * Interface for control boards implementing torque control.
+ * Interface for control boards implementing current control.
  */
-class YARP_dev_API yarp::dev::ITorqueControl
+class YARP_dev_API yarp::dev::ICurrentControl
 {
 public:
     /**
      * Destructor.
      */
-    virtual ~ITorqueControl() {}
+    virtual ~ICurrentControl() {}
 
     /**
      * Get the number of controlled axes. This command asks the number of controlled
@@ -53,7 +42,7 @@ public:
      * @param t pointer to the array of torque values
      * @return true/false on success/failure
      */
-    virtual bool getRefTorques(double *t)=0;
+    virtual bool getRefCurrents(double *t) = 0;
 
     /** Get the reference value of the torque for a given joint.
      * This is NOT the feedback (see getTorque instead).
@@ -61,62 +50,34 @@ public:
      * @param t the returned reference torque of joint j
      * @return true/false on success/failure
      */
-    virtual bool getRefTorque(int j, double *t)=0;
+    virtual bool getRefCurrent(int j, double *t) = 0;
 
     /** Set the reference value of the torque for all joints.
      * @param t pointer to the array of torque values
      * @return true/false on success/failure
      */
-    virtual bool setRefTorques(const double *t)=0;
+    virtual bool setRefCurrents(const double *t) = 0;
 
     /** Set the reference value of the torque for a given joint.
      * @param j joint number
      * @param t new value
      * @return true/false on success/failure
      */
-    virtual bool setRefTorque(int j, double t)=0;
+    virtual bool setRefCurrent(int j, double t) = 0;
 
     /** Set new torque reference for a subset of joints.
      * @param joints pointer to the array of joint numbers
      * @param refs   pointer to the array specifing the new torque reference
      * @return true/false on success/failure
      */
-    virtual bool setRefTorques(const int n_joint, const int *joints, const double *t) {return false;}  // this function has a default implementation to keep backward compatibility with existing devices
-
-    /** Get the back-emf compensation gain for a given joint.
-     * @param j joint number
-     * @param bemf the returned bemf gain of joint j
-     * @return true/false on success/failure
-     */
-    virtual bool getBemfParam(int j, double *bemf)=0;
-
-    /** Set the back-emf compensation gain for a given joint.
-     * @param j joint number
-     * @param bemf new value
-     * @return true/false on success/failure
-     */
-    virtual bool setBemfParam(int j, double bemf)=0;
-
-    /** Get a subset of motor parameters (bemf, ktau etc) useful for torque control.
-     * @param j joint number
-     * @param params a struct containing the motor parameters to be retrieved
-     * @return true/false on success/failure
-     */
-    virtual bool getMotorTorqueParams(int j,  yarp::dev::MotorTorqueParameters *params) {return false;}
-
-    /** Set a subset of motor parameters (bemf, ktau etc) useful for torque control.
-     * @param j joint number
-     * @param params a struct containing the motor parameters to be set
-     * @return true/false on success/failure
-     */
-    virtual bool setMotorTorqueParams(int j,  const yarp::dev::MotorTorqueParameters params) {return false;}
+    virtual bool setRefCurrents(const int n_joint, const int *joints, const double *t) { return false; }  // this function has a default implementation to keep backward compatibility with existing devices
 
      /** Set new pid value for a joint axis.
      * @param j joint number
      * @param pid new pid value
      * @return true/false on success/failure
      */
-    virtual bool setTorquePid(int j, const Pid &pid)=0;
+    virtual bool setCurrentPid(int j, const Pid &pid) = 0;
 
     /** Get the value of the torque on a given joint (this is the
      * feedback if you have a torque sensor).
@@ -124,14 +85,14 @@ public:
      * @param t pointer to the result value
      * @return true/false on success/failure
      */
-    virtual bool getTorque(int j, double *t)=0;
+    virtual bool getCurrent(int j, double *t) = 0;
 
     /** Get the value of the torque for all joints (this is
      * the feedback if you have torque sensors).
      * @param t pointer to the array that will store the output
      * @return true/false on success/failure
      */
-    virtual bool getTorques(double *t)=0;
+    virtual bool getCurrents(double *t) = 0;
 
     /** Get the full scale of the torque sensor of a given joint
      * @param j joint number
@@ -139,85 +100,59 @@ public:
      * @param max maximum torque of the joint j
      * @return true/false on success/failure
      */
-    virtual bool getTorqueRange(int j, double *min, double *max)=0;
+    virtual bool getCurrentRange(int j, double *min, double *max) = 0;
 
     /** Get the full scale of the torque sensors of all joints
      * @param min pointer to the array that will store minimum torques of the joints
      * @param max pointer to the array that will store maximum torques of the joints
      * @return true/false on success/failure
      */
-    virtual bool getTorqueRanges(double *min, double *max)=0;
+    virtual bool getCurrentRanges(double *min, double *max) = 0;
 
     /** Set new pid value on multiple axes.
      * @param pids pointer to a vector of pids
      * @return true/false upon success/failure
      */
-    virtual bool setTorquePids(const Pid *pids)=0;
-
-    /** Set the torque error limit for the controller on a specific joint
-     * @param j joint number
-     * @param limit limit value
-     * @return true/false on success/failure
-     */
-    virtual bool setTorqueErrorLimit(int j, double limit)=0;
-
-    /** Get the torque error limit for the controller on all joints.
-     * @param limits pointer to the vector with the new limits
-     * @return true/false on success/failure
-     */
-    virtual bool setTorqueErrorLimits(const double *limits)=0;
+    virtual bool setCurrentPids(const Pid *pids) = 0;
 
     /** Get the current torque error for a joint.
      * @param j joint number
      * @param err pointer to the storage for the return value
      * @return true/false on success failure
      */
-    virtual bool getTorqueError(int j, double *err)=0;
+    virtual bool getCurrentError(int j, double *err) = 0;
 
     /** Get the torque error of all joints.
      * @param errs pointer to the vector that will store the errors
      * @return true/false on success/failure
      */
-    virtual bool getTorqueErrors(double *errs)=0;
+    virtual bool getCurrentErrors(double *errs) = 0;
 
     /** Get the output of the controller (e.g. pwm value)
      * @param j joint number
      * @param out pointer to storage for return value
      * @return true/false on success/failure
      */
-    virtual bool getTorquePidOutput(int j, double *out)=0;
+    virtual bool getCurrentPidOutput(int j, double *out) = 0;
 
     /** Get the output of the controllers (e.g. pwm value)
      * @param outs pointer to the vector that will store the output values
      * @return true/false on success/failure
      */
-    virtual bool getTorquePidOutputs(double *outs)=0;
+    virtual bool getCurrentPidOutputs(double *outs) = 0;
 
     /** Get current pid value for a specific joint.
      * @param j joint number
      * @param pid pointer to storage for the return value.
      * @return true/false on success/failure
      */
-    virtual bool getTorquePid(int j, Pid *pid)=0;
+    virtual bool getCurrentPid(int j, Pid *pid) = 0;
 
     /** Get current pid value for a specific joint.
      * @param pids vector that will store the values of the pids.
      * @return true/false on success/failure
      */
-    virtual bool getTorquePids(Pid *pids)=0;
-
-    /** Get the torque error limit for the controller on a specific joint
-     * @param j joint number
-     * @param limit pointer to the result value
-     * @return true/false on success/failure
-     */
-    virtual bool getTorqueErrorLimit(int j, double *limit)=0;
-
-    /** Get the torque error limit for all controllers
-     * @param limits pointer to the array that will store the output
-     * @return true/false on success/failure
-     */
-    virtual bool getTorqueErrorLimits(double *limits)=0;
+    virtual bool getCurrentPids(Pid *pids)=0;
 
     /** Reset the controller of a given joint, usually sets the
      * current position of the joint as the reference value for the PID, and resets
@@ -225,26 +160,19 @@ public:
      * @param j joint number
      * @return true/false on success/failure
      */
-    virtual bool resetTorquePid(int j)=0;
+    virtual bool resetCurrentPid(int j)=0;
 
     /** Disable the pid computation for a joint
      * @param j joint number
      * @return true/false on success/failure
      */
-    virtual bool disableTorquePid(int j)=0;
+    virtual bool disableCurrentPid(int j)=0;
 
     /** Enable the pid computation for a joint
      * @param j joint number
      * @return true/false on success/failure
      */
-    virtual bool enableTorquePid(int j)=0;
-
-    /** Set offset value for a given pid
-     * @param j joint number
-     * @param v the new value
-     * @return true/false on success/failure
-     */
-    virtual bool setTorqueOffset(int j, double v)=0;
+    virtual bool enableCurrentPid(int j)=0;
 };
 
 /**
@@ -252,13 +180,13 @@ public:
  *
  * Interface for control boards implementing torque control.
  */
-class yarp::dev::ITorqueControlRaw
+class yarp::dev::ICurrentControlRaw
 {
 public:
     /**
      * Destructor.
      */
-    virtual ~ITorqueControlRaw() {}
+    virtual ~ICurrentControlRaw() {}
 
     /**
      * Get the number of controlled axes. This command asks the number of controlled
@@ -274,14 +202,14 @@ public:
      * @return torque value
      * @return true/false on success/failure
      */
-    virtual bool getTorqueRaw(int j, double *t)=0;
+    virtual bool getCurrentRaw(int j, double *t)=0;
 
     /** Get the value of the torque for all joints (this is
      * the feedback if you have torque sensors).
      * @param t pointer to the array that will store the output
      * @return true/false on success/failure
      */
-    virtual bool getTorquesRaw(double *t)=0;
+    virtual bool getCurrentsRaw(double *t)=0;
 
     /** Get the full scale of the torque sensor of a given joint
      * @param j joint number
@@ -289,41 +217,41 @@ public:
      * @param max maximum torque of the joint j
      * @return true/false on success/failure
      */
-    virtual bool getTorqueRangeRaw(int j, double *min, double *max)=0;
+    virtual bool getCurrentRangeRaw(int j, double *min, double *max)=0;
 
     /** Get the full scale of the torque sensors of all joints
      * @param min pointer to the array that will store minimum torques of the joints
      * @param max pointer to the array that will store maximum torques of the joints
      * @return true/false on success/failure
      */
-    virtual bool getTorqueRangesRaw(double *min, double *max)=0;
+    virtual bool getCurrentRangesRaw(double *min, double *max)=0;
 
     /** Set the reference value of the torque for all joints.
      * @param t pointer to the array of torque values
      * @return true/false on success/failure
      */
-    virtual bool setRefTorquesRaw(const double *t)=0;
+    virtual bool setRefCurrentsRaw(const double *t)=0;
 
     /** Set the reference value of the torque for a given joint.
      * @param j joint number
      * @param t new value
      * @return true/false on success/failure
      */
-    virtual bool setRefTorqueRaw(int j, double t)=0;
+    virtual bool setRefCurrentRaw(int j, double t)=0;
 
     /** Set new torque reference for a subset of joints.
      * @param joints pointer to the array of joint numbers
      * @param refs   pointer to the array specifing the new torque reference
      * @return true/false on success/failure
      */
-    virtual bool setRefTorquesRaw(const int n_joint, const int *joints, const double *t) {return false;}  // this function has a default implementation to keep backward compatibility with existing devices
+    virtual bool setRefCurrentsRaw(const int n_joint, const int *joints, const double *t) {return false;}  // this function has a default implementation to keep backward compatibility with existing devices
 
     /** Get the reference value of the torque for all joints.
      * This is NOT the feedback (see getTorques instead).
      * @param t pointer to the array of torque values
      * @return true/false on success/failure
      */
-    virtual bool getRefTorquesRaw(double *t)=0;
+    virtual bool getRefCurrentsRaw(double *t)=0;
 
     /** Set the reference value of the torque for a given joint.
      * This is NOT the feedback (see getTorque instead).
@@ -331,113 +259,59 @@ public:
      * @param t new value
      * @return true/false on success/failure
      */
-    virtual bool getRefTorqueRaw(int j, double *t)=0;
-
-    /** Set the back-efm compensation gain for a given joint.
-     * @param j joint number
-     * @param bemf the returned bemf gain of joint j
-     * @return true/false on success/failure
-     */
-    virtual bool getBemfParamRaw(int j, double *bemf)=0;
-
-    /** Set the back-efm compensation gain for a given joint.
-     * @param j joint number
-     * @param bemf new value
-     * @return true/false on success/failure
-     */
-    virtual bool setBemfParamRaw(int j, double bemf)=0;
-
-    /** Get the motor parameters.
-     * @param j joint number
-     * @param params a struct containing the motor parameters to be retrieved
-     * @return true/false on success/failure
-     */
-    virtual bool getMotorTorqueParamsRaw(int j,  yarp::dev::MotorTorqueParameters *params) {return false;}
-
-    /** Set the motor parameters.
-     * @param j joint number
-     * @param params a struct containing the motor parameters to be set
-     * @return true/false on success/failure
-     */
-    virtual bool setMotorTorqueParamsRaw(int j,  const yarp::dev::MotorTorqueParameters params) {return false;}
+    virtual bool getRefCurrentRaw(int j, double *t)=0;
 
      /** Set new pid value for a joint axis.
      * @param j joint number
      * @param pid new pid value
      * @return true/false on success/failure
      */
-    virtual bool setTorquePidRaw(int j, const Pid &pid)=0;
+    virtual bool setCurrentPidRaw(int j, const Pid &pid)=0;
 
     /** Set new pid value on multiple axes.
      * @param pids pointer to a vector of pids
      * @return true/false upon success/failure
      */
-    virtual bool setTorquePidsRaw(const Pid *pids)=0;
-
-    /** Set the torque error limit for the controller on a specific joint
-     * @param j joint number
-     * @param limit limit value
-     * @return true/false on success/failure
-     */
-    virtual bool setTorqueErrorLimitRaw(int j, double limit)=0;
-
-    /** Get the torque error limit for the controller on all joints.
-     * @param limits pointer to the vector with the new limits
-     * @return true/false on success/failure
-     */
-    virtual bool setTorqueErrorLimitsRaw(const double *limits)=0;
+    virtual bool setCurrentPidsRaw(const Pid *pids)=0;
 
     /** Get the current torque error for a joint.
      * @param j joint number
      * @param err pointer to the storage for the return value
      * @return true/false on success failure
      */
-    virtual bool getTorqueErrorRaw(int j, double *err)=0;
+    virtual bool getCurrentErrorRaw(int j, double *err)=0;
 
     /** Get the torque error of all joints.
      * @param errs pointer to the vector that will store the errors
      * @return true/false on success/failure
      */
-    virtual bool getTorqueErrorsRaw(double *errs)=0;
+    virtual bool getCurrentErrorsRaw(double *errs)=0;
 
     /** Get the output of the controller (e.g. pwm value)
      * @param j joint number
      * @param out pointer to storage for return value
      * @return true/false on success/failure
      */
-    virtual bool getTorquePidOutputRaw(int j, double *out)=0;
+    virtual bool getCurrentPidOutputRaw(int j, double *out)=0;
 
     /** Get the output of the controllers (e.g. pwm value)
      * @param outs pinter to the vector that will store the output values
      * @return true/false on success/failure
      */
-    virtual bool getTorquePidOutputsRaw(double *outs)=0;
+    virtual bool getCurrentPidOutputsRaw(double *outs)=0;
 
     /** Get current pid value for a specific joint.
      * @param j joint number
      * @param pid pointer to storage for the return value.
      * @return true/false on success/failure
      */
-    virtual bool getTorquePidRaw(int j, Pid *pid)=0;
+    virtual bool getCurrentPidRaw(int j, Pid *pid)=0;
 
     /** Get current pid value for a specific joint.
      * @param pids vector that will store the values of the pids.
      * @return true/false on success/failure
      */
-    virtual bool getTorquePidsRaw(Pid *pids)=0;
-
-    /** Get the torque error limit for the controller on a specific joint
-     * @param j joint number
-     * @param limit pointer to storage
-     * @return true/false on success/failure
-     */
-    virtual bool getTorqueErrorLimitRaw(int j, double *limit)=0;
-
-    /** Get the torque error limit for all controllers
-     * @param limits pointer to the array that will store the output
-     * @return true/false on success/failure
-     */
-    virtual bool getTorqueErrorLimitsRaw(double *limits)=0;
+    virtual bool getCurrentPidsRaw(Pid *pids)=0;
 
     /** Reset the controller of a given joint, usually sets the
      * current position of the joint as the reference value for the PID, and resets
@@ -445,26 +319,35 @@ public:
      * @param j joint number
      * @return true/false on success/failure
      */
-    virtual bool resetTorquePidRaw(int j)=0;
+    virtual bool resetCurrentPidRaw(int j)=0;
 
     /** Disable the pid computation for a joint
      * @param j joint number
      * @return true/false on success/failure
      */
-    virtual bool disableTorquePidRaw(int j)=0;
+    virtual bool disableCurrentPidRaw(int j)=0;
 
     /** Enable the pid computation for a joint
      * @param j joint number
      * @return true/false on success/failure
      */
-    virtual bool enableTorquePidRaw(int j)=0;
+    virtual bool enableCurrentPidRaw(int j)=0;
 
-    /** Set offset value for a given pid
-     * @param j joint number
-     * @param v the new value
-     * @return true/false on success/failure
-     */
-    virtual bool setTorqueOffsetRaw(int j, double v)=0;
 };
 
-#endif // YARP_DEV_ITORQUECONTROL_H
+// Interface name
+#define VOCAB_CURRENTCONTROL_INTERFACE VOCAB4('i','c','u','r')
+// methods names
+#define VOCAB_CURRENTCONTROL1    VOCAB3('r','e','f')
+#define VOCAB_CURRENT_PID        VOCAB4('c','r','p','d')
+#define VOCAB_CURRENT_PIDS       VOCAB4('c','p','d','s')
+#define VOCAB_CURRENT_REF        VOCAB4('c','r','r','f')
+#define VOCAB_CURRENT_REFS       VOCAB4('c','r','f','s')
+#define VOCAB_CURRENT_REF_GROUP  VOCAB4('c','r','f','g')
+#define VOCAB_CURRENT_PID_OUTPUT  VOCAB4('c','p','o','t')
+#define VOCAB_CURRENT_PID_OUTPUTS  VOCAB4('c','p','o','s')
+#define VOCAB_CURRENT_RANGES     VOCAB4('r','n','g','s')
+#define VOCAB_CURRENT_RANGE      VOCAB3('r','n','g')
+
+
+#endif // YARP_DEV_ICURRENTCONTROL_H

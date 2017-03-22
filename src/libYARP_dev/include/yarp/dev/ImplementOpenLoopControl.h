@@ -19,7 +19,6 @@ namespace yarp {
 
 
 #if defined(_MSC_VER) && !defined(YARP_NO_DEPRECATED) // since YARP 2.3.65
-// A class implementing setOpenLoopMode() causes a warning on MSVC
 YARP_WARNING_PUSH
 YARP_DISABLE_DEPRECATED_WARNING
 #endif
@@ -40,11 +39,6 @@ public:
     bool getRefOutputs(double *v);
     bool getOutput(int j, double *v);
     bool getOutputs(double *v);
-
-#ifndef YARP_NO_DEPRECATED // since YARP 2.3.65
-    YARP_DEPRECATED bool setOpenLoopMode();
-#endif // YARP_NO_DEPRECATED
-
 };
 
 #if defined(_MSC_VER) && !defined(YARP_NO_DEPRECATED) // since YARP 2.3.65
