@@ -138,6 +138,13 @@ public:
         return addContext(contextName);
     }
 
+    /**
+     * @see setDefaultContext(const char *contextName)
+     */
+    bool setDefaultContext(const yarp::os::ConstString& contextName) {
+        return setDefaultContext(contextName.c_str());
+    }
+
 #ifndef YARP_NO_DEPRECATED // since YARP 2.3.70
     /**
      *
