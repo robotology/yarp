@@ -22,7 +22,7 @@ JoypadControlClient::JoypadControlClient():m_rpc_only(false)
 bool JoypadControlClient::getJoypadInfo()
 {
     unsigned int count;
-    vector<tuple<int, JoypadControl::Openable*, string> > vocabs_ports;
+    vector<tuple<int, JoypadControl::LoopablePort*, string> > vocabs_ports;
     vocabs_ports.push_back(make_tuple(VOCAB_BUTTON,    &m_buttonsPort,   "/buttons"));
     vocabs_ports.push_back(make_tuple(VOCAB_AXIS,      &m_axisPort,      "/axis"));
     vocabs_ports.push_back(make_tuple(VOCAB_STICK,     &m_stickPort,     "/sticks"));
@@ -42,7 +42,7 @@ bool JoypadControlClient::getJoypadInfo()
 
             yInfo() << "opening" << portname;
 
-            if(!get<1>(vocab_port)->open())
+            if(!get<1>(vocab_port)->contactable->open(portname))
             {
                 yError() << "unable to open" << portname << "port";
                 return false;

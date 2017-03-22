@@ -122,22 +122,22 @@ class yarp::dev::JoypadControlServer: public yarp::dev::DeviceDriver,
     bool openPorts();
 
 #endif //DOXYGEN_SHOULD_SKIP_THIS
+
 public:
     JoypadControlServer();
     ~JoypadControlServer();
 
-    bool        open(yarp::os::Searchable& params);
-    bool        fromConfig(yarp::os::Searchable& params);
-    bool        close();
-
-    bool        attachAll(const yarp::dev::PolyDriverList& p);
-    bool        detachAll();
-    bool        attach(yarp::dev::PolyDriver* poly);
-    bool        attach(yarp::dev::IJoypadController* s);
-    bool        detach();
-    bool        threadInit();
-    void        threadRelease();
-    void        run();
+    bool open(yarp::os::Searchable& params);
+    bool fromConfig(yarp::os::Searchable& params);
+    bool close();
+    bool attachAll(const yarp::dev::PolyDriverList& p);
+    bool detachAll();
+    bool attach(yarp::dev::PolyDriver* poly);
+    bool attach(yarp::dev::IJoypadController* s);
+    bool detach();
+    bool threadInit();
+    void threadRelease();
+    void run();
 
     #undef JoyPort
 };

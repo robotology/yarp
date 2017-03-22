@@ -6,38 +6,31 @@ namespace yarp
     {
         namespace JoypadControl
         {
-            class                       Openable;
+            class                       LoopablePort;
             template <typename T> class JoyPort;
         }
     }
 }
-struct yarp::dev::JoypadControl::Openable
+struct yarp::dev::JoypadControl::LoopablePort
 {
     bool                  valid;
     int                   count;
     yarp::os::ConstString name;
-    Openable():valid(false),count(0){}
+    LoopablePort():valid(false),count(0){}
 
-    virtual ~Openable(){}
-    virtual bool open()      = 0;
-    virtual void interrupt() = 0;
-    virtual void close()     = 0;
-    virtual void write()     = 0;
+    yarp::os::Contactable* contactable;
 };
 
 template <typename T>
-struct yarp::dev::JoypadControl::JoyPort : public yarp::dev::JoypadControl::Openable,
-                                           public yarp::os::BufferedPort<T>
+struct yarp::dev::JoypadControl::JoyPort : public  yarp::dev::JoypadControl::LoopablePort,
+                                           public  yarp::os::BufferedPort<T>
 {
     typedef yarp::os::BufferedPort<T> bufferedPort;
+
     T               storage;
     yarp::os::Mutex mutex;
-    T& prepare()                   {return bufferedPort::prepare();}
-    bool open()      YARP_OVERRIDE {return bufferedPort::open(name);}
-    T*   read()                    {return bufferedPort::read();}
-    void interrupt() YARP_OVERRIDE {bufferedPort::interrupt();}
-    void close()     YARP_OVERRIDE {bufferedPort::close();}
-    void write()     YARP_OVERRIDE {bufferedPort::write();}
+
+    JoyPort()                         {contactable = this;}
 
     using yarp::os::TypedReaderCallback<T>::onRead;
     virtual void onRead(T& datum) YARP_OVERRIDE
@@ -46,6 +39,5 @@ struct yarp::dev::JoypadControl::JoyPort : public yarp::dev::JoypadControl::Open
         storage = datum;
         mutex.unlock();
     }
-
 };
 //----------

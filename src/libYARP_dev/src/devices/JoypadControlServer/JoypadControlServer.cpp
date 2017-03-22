@@ -469,10 +469,10 @@ bool JoypadControlServer::openPorts()
 
     struct solver
     {
-        countGet                 getter;
-        JoypadControl::Openable* port;
+        countGet                     getter;
+        JoypadControl::LoopablePort* port;
 
-        solver(countGet a, JoypadControl::Openable* b) : getter(a), port(b)
+        solver(countGet a, JoypadControl::LoopablePort* b) : getter(a), port(b)
         {}
     };
 
@@ -496,7 +496,7 @@ bool JoypadControlServer::openPorts()
             }
             else
             {
-                getters[i].port->open();
+                getters[i].port->contactable->open();
                 getters[i].port->valid = true;
             }
         }
