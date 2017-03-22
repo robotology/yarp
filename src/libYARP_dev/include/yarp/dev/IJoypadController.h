@@ -11,10 +11,12 @@
 #include <yarp/dev/api.h>
 #include <yarp/os/Vocab.h>
 
-namespace yarp {
-    namespace dev {
+namespace yarp
+{
+    namespace dev
+    {
         class IJoypadController;
-      }
+    }
 }
 
 class  YARP_dev_API yarp::dev::IJoypadController

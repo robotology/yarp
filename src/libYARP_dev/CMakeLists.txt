@@ -275,9 +275,10 @@ if (CREATE_LIB_MATH)
   add_definitions(-DWITH_YARPMATH)
 endif()
 
-include_directories(${CMAKE_CURRENT_SOURCE_DIR}/src/devices/AnalogSensorClient)
-include_directories(${CMAKE_CURRENT_SOURCE_DIR}/src/devices/BatteryClient)
-include_directories(${CMAKE_CURRENT_SOURCE_DIR}/src/devices/FrameTransformClient)
+include_directories(${CMAKE_CURRENT_SOURCE_DIR}/src/devices/AnalogSensorClient
+                    ${CMAKE_CURRENT_SOURCE_DIR}/src/devices/BatteryClient
+                    ${CMAKE_CURRENT_SOURCE_DIR}/src/devices/FrameTransformClient
+                    ${CMAKE_CURRENT_SOURCE_DIR}/src/devices/JoypadControlServer)
 
 include_directories(${YARP_TREE_INCLUDE_DIRS})
 include_directories(SYSTEM ${ACE_INCLUDE_DIRS})

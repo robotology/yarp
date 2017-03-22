@@ -1,3 +1,9 @@
+/*
+ * Copyright (C) 2017 iCub Facility - Istituto Italiano di Tecnologia
+ * Author: Andrea Ruzzenenti <andrea.ruzzenenti@iit.it>
+ * CopyPolicy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
+ */
+
 #include "JoypadControlClient.h"
 #include <yarp/os/LogStream.h>
 #include <yarp/os/LockGuard.h>
@@ -14,7 +20,7 @@ yarp::dev::DriverCreator* createJoypadControlClient()
     return new DriverCreatorOf<yarp::dev::JoypadControlClient>("JoypadControlClient", "JoypadControlClient", "yarp::dev::JoypadControlClient");
 }
 
-JoypadControlClient::JoypadControlClient():m_rpc_only(false)
+JoypadControlClient::JoypadControlClient() : m_rpc_only(false)
 {
 
 }

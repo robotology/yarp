@@ -66,6 +66,7 @@ struct JoyData : public yarp::os::Portable
         connection.expectBlock((char*)Balls.data(),   Balls.length()   * sizeof(double));
         connection.expectBlock((char*)Touch.data(),   Touch.length()   * sizeof(double));
         connection.expectBlock((char*)&Hats[0],       Hats.size()      * sizeof(char));
+        return !connection.isError();
     }
 
     bool write(yarp::os::ConnectionWriter& connection)

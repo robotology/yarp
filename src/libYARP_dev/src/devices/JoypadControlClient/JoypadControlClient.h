@@ -8,7 +8,7 @@
 #include <yarp/dev/DeviceDriver.h>
 #include <yarp/os/RateThread.h>
 #include <vector>
-#include "../JoypadControlServer/JoypadControlNetUtils.h"
+#include <JoypadControlNetUtils.h>
 
 #define DEFAULT_THREAD_PERIOD 10
 namespace yarp

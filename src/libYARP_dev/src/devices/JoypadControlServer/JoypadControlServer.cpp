@@ -312,9 +312,9 @@ bool JoypadControlServer::attach(PolyDriver* poly)
     if(poly)
         poly->view(m_device);
 
-    if(m_device == NULL)
+    if(m_device == YARP_NULLPTR)
     {
-        yError() << "JoypadControlServer: attached device has no valid IRGBDSensor interface.";
+        yError() << "JoypadControlServer: attached device has no valid IJoypadController interface.";
         return false;
     }
     return true;
@@ -322,7 +322,7 @@ bool JoypadControlServer::attach(PolyDriver* poly)
 
 bool JoypadControlServer::attach(yarp::dev::IJoypadController *s)
 {
-    if(s == NULL)
+    if(s == YARP_NULLPTR)
     {
         yError() << "JoypadControlServer: attached device has no valid IJoystickController interface.";
         return false;
@@ -330,7 +330,6 @@ bool JoypadControlServer::attach(yarp::dev::IJoypadController *s)
     m_device = s;
     return true;
 }
-
 
 bool JoypadControlServer::detach()
 {
@@ -703,7 +702,7 @@ bool JoypadControlServer::detachAll()
     if (m_isSubdeviceOwned)
         return false;
 
-    m_device = NULL;
+    m_device = YARP_NULLPTR;
     return true;
 }
 
@@ -716,8 +715,8 @@ bool JoypadControlServer::close()
     {
         if(m_subDeviceOwned)m_subDeviceOwned->close();
 
-        m_subDeviceOwned   = NULL;
-        m_device           = NULL;
+        m_subDeviceOwned   = YARP_NULLPTR;
+        m_device           = YARP_NULLPTR;
         m_isSubdeviceOwned = false;
     }
 
