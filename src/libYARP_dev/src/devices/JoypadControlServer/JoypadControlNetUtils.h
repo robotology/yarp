@@ -21,7 +21,7 @@ namespace yarp
 struct yarp::dev::JoypadControl::LoopablePort
 {
     bool                  valid;
-    int                   count;
+    unsigned int          count;
     yarp::os::ConstString name;
     virtual ~LoopablePort(){}
     LoopablePort():valid(false),count(0){}

@@ -228,6 +228,11 @@ bool JoypadControlServer::open(yarp::os::Searchable& params)
     if(params.check("use_separate_ports"))
     {
         m_separatePorts = params.find("use_separate_ports").asBool();
+        if(!m_separatePorts)
+        {
+            yError() << "single port mode not supported at the moment";
+            return false;
+        }
     }
     else
     {
@@ -464,63 +469,68 @@ bool JoypadControlServer::openPorts()
 //        return false;
 //    }
 //    return true;
-    typedef bool (IJoypadController::*countGet)(unsigned int&);
-
-    struct solver
+    if(m_separatePorts)
     {
-        countGet                     getter;
-        JoypadControl::LoopablePort* port;
+        typedef bool (IJoypadController::*countGet)(unsigned int&);
 
-        solver(countGet a, JoypadControl::LoopablePort* b) : getter(a), port(b)
-        {}
-    };
-
-    vector<solver> getters;
-    unsigned int   count;
-
-    getters.push_back(solver(&IJoypadController::getAxisCount,         &m_portAxis     ));
-    getters.push_back(solver(&IJoypadController::getButtonCount,       &m_portButtons  ));
-    getters.push_back(solver(&IJoypadController::getStickCount,        &m_portStick    ));
-    getters.push_back(solver(&IJoypadController::getTouchSurfaceCount, &m_portTouch    ));
-    getters.push_back(solver(&IJoypadController::getTrackballCount,    &m_portTrackball));
-    getters.push_back(solver(&IJoypadController::getHatCount,          &m_portHats     ));
-
-    for(size_t i = 0; i < getters.size(); ++i)
-    {
-        if((m_device->*(getters[i].getter))(count))
+        struct solver
         {
-            if(count == 0)
+            countGet                     getter;
+            JoypadControl::LoopablePort* port;
+
+            solver(countGet a, JoypadControl::LoopablePort* b) : getter(a), port(b)
+            {}
+        };
+
+        vector<solver> getters;
+
+        getters.push_back(solver(&IJoypadController::getAxisCount,         &m_portAxis     ));
+        getters.push_back(solver(&IJoypadController::getButtonCount,       &m_portButtons  ));
+        getters.push_back(solver(&IJoypadController::getStickCount,        &m_portStick    ));
+        getters.push_back(solver(&IJoypadController::getTouchSurfaceCount, &m_portTouch    ));
+        getters.push_back(solver(&IJoypadController::getTrackballCount,    &m_portTrackball));
+        getters.push_back(solver(&IJoypadController::getHatCount,          &m_portHats     ));
+
+        for(size_t i = 0; i < getters.size(); ++i)
+        {
+            if((m_device->*(getters[i].getter))(getters[i].port->count))
             {
-                getters[i].port->valid = false;
+                if(getters[i].port->count == 0)
+                {
+                    getters[i].port->valid = false;
+                }
+                else
+                {
+                    getters[i].port->contactable->open(getters[i].port->name);
+                    getters[i].port->valid = true;
+                }
             }
             else
             {
-                getters[i].port->contactable->open(getters[i].port->name);
-                getters[i].port->valid = true;
+                return false;
             }
         }
-        else
-        {
-            return false;
-        }
-    }
 
-    return true;
+        return true;
+    }
+    else
+    {
+        return false;
+        //m_godPort.open(m_name + "/joydata:o");
+    }
 }
 
 void JoypadControlServer::run()
 {
-    if (m_portButtons.valid)
+    if(m_separatePorts)
     {
-        unsigned int count;
-        bool         write;
-
-        write = true;
-        if(m_device->getButtonCount(count))
+        if (m_portButtons.valid)
         {
+            bool write;
+            write = true;
             Vector& b = m_portButtons.prepare();
             b.clear();
-            for(size_t i = 0; i < count; ++i)
+            for(size_t i = 0; i < m_portButtons.count; ++i)
             {
                 float v;
                 if(!m_device->getButton(i, v))
@@ -530,21 +540,17 @@ void JoypadControlServer::run()
                 }
                 b.push_back(v);
             }
+            if(write)m_portButtons.write();
         }
-        if(write)m_portButtons.write();
-    }
 
-    if (m_portHats.valid)
-    {
-        unsigned int count;
-        bool         write;
-
-        write = true;
-        if(m_device->getHatCount(count))
+        if (m_portHats.valid)
         {
+            bool write;
+
+            write = true;
             VecOfChar& b = m_portHats.prepare();
             b.clear();
-            for(size_t i = 0; i < count; ++i)
+            for(size_t i = 0; i < m_portHats.count; ++i)
             {
                 unsigned char v;
                 if(!m_device->getHat(i, v))
@@ -554,21 +560,17 @@ void JoypadControlServer::run()
                 }
                 b.push_back(v);
             }
+            if(write)m_portHats.write();
         }
-        if(write)m_portHats.write();
-    }
 
-    if (m_portAxis.valid)
-    {
-        unsigned int count;
-        bool         write;
-
-        write = true;
-        if(m_device->getAxisCount(count))
+        if (m_portAxis.valid)
         {
+            bool write;
+
+            write = true;
             Vector& b = m_portAxis.prepare();
             b.clear();
-            for(size_t i = 0; i < count; ++i)
+            for(size_t i = 0; i < m_portAxis.count; ++i)
             {
                 double v;
                 if(!m_device->getAxis(i, v))
@@ -579,21 +581,17 @@ void JoypadControlServer::run()
                 }
                 b.push_back(v);
             }
+            if(write)m_portAxis.write();
         }
-        if(write)m_portAxis.write();
-    }
 
-    if (m_portTrackball.valid)
-    {
-        unsigned int count;
-        bool         write;
-
-        write = true;
-        if(m_device->getTrackballCount(count))
+        if (m_portTrackball.valid)
         {
+            bool write;
+
+            write     = true;
             Vector& b = m_portTrackball.prepare();
             b.clear();
-            for(size_t i = 0; i < count; ++i)
+            for(size_t i = 0; i < m_portTrackball.count; ++i)
             {
                 Vector v;
                 if(!m_device->getTrackball(i, v))
@@ -604,21 +602,16 @@ void JoypadControlServer::run()
                 }
                 b = yarp::math::cat(b, v);
             }
+            if(write)m_portTrackball.write();
         }
-        if(write)m_portTrackball.write();
-    }
 
-    if (m_portStick.valid)
-    {
-        unsigned int count;
-        bool         write;
-
-        write = true;
-        if(m_device->getStickCount(count))
+        if (m_portStick.valid)
         {
+            bool write;
+            write = true;
             Vector& b = m_portStick.prepare();
             b.clear();
-            for(size_t i = 0; i < count; ++i)
+            for(size_t i = 0; i < m_portStick.count; ++i)
             {
                 Vector       v;
                 unsigned int dofCount;
@@ -629,21 +622,16 @@ void JoypadControlServer::run()
                 }
                 b = yarp::math::cat(b, v);
             }
+            if(write)m_portStick.write();
         }
-        if(write)m_portStick.write();
-    }
 
-    if (m_portTouch.valid)
-    {
-        unsigned int count;
-        bool         write;
-
-        write = true;
-        if(m_device->getTouchSurfaceCount(count))
+        if (m_portTouch.valid)
         {
+            bool write;
+            write = true;
             Vector& b = m_portTouch.prepare();
             b.clear();
-            for(unsigned int i = 0; i < count; ++i)
+            for(unsigned int i = 0; i < m_portTouch.count; ++i)
             {
                 Vector v;
                 if(!m_device->getTouch(i, v))
@@ -653,8 +641,16 @@ void JoypadControlServer::run()
                 }
                 b = yarp::math::cat(b, v);
             }
+
+            if(write)m_portTouch.write();
         }
-        if(write)m_portTouch.write();
+    }
+    else
+    {
+        return;
+        //JoyData& message = m_godPort.prepare();
+        //for(size_t i = 0; i < m_device->getAxisCount();)
+        //message.Axes
     }
 }
 
