@@ -139,6 +139,11 @@ public:
     }
 
     /**
+     * Sets the context for the current ResourceFinder object.
+     *
+     * @param contextName The name of the context
+     * @return true on success, false otherwise
+     *
      * @see setDefaultContext(const char *contextName)
      */
     bool setDefaultContext(const yarp::os::ConstString& contextName) {
