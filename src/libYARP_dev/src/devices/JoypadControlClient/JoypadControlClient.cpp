@@ -44,7 +44,19 @@ bool JoypadControlClient::getJoypadInfo()
             ConstString portname = m_local + get<2>(vocab_port) + ":i";
             get<1>(vocab_port)->valid = true;
             get<1>(vocab_port)->count = count;
-            get<1>(vocab_port)->name  = portname;
+
+            if(get<0>(vocab_port) == VOCAB_STICK)
+            {
+                for(unsigned int i = 0; i < count; i++)
+                {
+                    unsigned int dofCount;
+                    if(!getStickDoF(i, dofCount))
+                    {
+                        return false;
+                    }
+                    m_stickDof.push_back(dofCount);
+                }
+            }
 
             yInfo() << "opening" << portname;
 
@@ -54,11 +66,13 @@ bool JoypadControlClient::getJoypadInfo()
                 return false;
             }
 
-            if(!yarp::os::NetworkBase::connect(m_local + get<2>(vocab_port) + ":i", m_remote + get<2>(vocab_port) + ":o"))
+            if(!yarp::os::NetworkBase::connect(m_remote + get<2>(vocab_port) + ":o", m_local + get<2>(vocab_port) + ":i"))
             {
                 yError() << "unable to connect" << portname << "port";
                 return false;
             }
+
+            get<1>(vocab_port)->useCallback();
         }
     }
 
@@ -104,12 +118,6 @@ bool JoypadControlClient::open(yarp::os::Searchable& config)
         yError() << "unable to get joypad info..";
         return false;
     }
-
-    /*if(!openPorts())
-    {
-        yError() << "unable to open ports..";
-        return false;
-    }*/
 
     return true;
 }
@@ -441,16 +449,26 @@ bool JoypadControlClient::getStick(unsigned int stick_id, yarp::sig::Vector& val
     }
     else
     {
-        LockGuard l(m_stickPort.mutex);
-        if(stick_id < m_stickPort.storage.size())
+        if (coordinate_mode == IJoypadController::JypCtrlcoord_POLAR)
         {
-            value = m_stickPort.storage[stick_id];
-            return true;
-        }
-        else
-        {
+            yError() << "JoypadControlClient: at the moment polar coordinate is not supported in streaming mode..";
             return false;
         }
+
+        LockGuard l(m_stickPort.mutex);
+        int offset = 0;
+
+        for(size_t j = 0; j < stick_id; j++)
+        {
+            offset += m_stickDof[j];
+        }
+
+        for(size_t i = 0; i < m_stickDof[stick_id]; ++i)
+        {
+            value.push_back(m_stickPort.storage[offset + i]);
+        }
+
+        return true;
     }
 }
 

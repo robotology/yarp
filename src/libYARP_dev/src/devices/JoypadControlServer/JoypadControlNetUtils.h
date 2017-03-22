@@ -4,6 +4,8 @@
  * CopyPolicy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
  */
 #include <yarp/os/BufferedPort.h>
+#include <yarp/sig/Vector.h>
+#include <yarp/os/LogStream.h>
 //-----Openable and JoyPort are for confortable loop managing of ports
 namespace yarp
 {
@@ -21,7 +23,10 @@ struct yarp::dev::JoypadControl::LoopablePort
     bool                  valid;
     int                   count;
     yarp::os::ConstString name;
+    virtual ~LoopablePort(){}
     LoopablePort():valid(false),count(0){}
+
+    virtual void useCallback() = 0;
 
     yarp::os::Contactable* contactable;
 };
@@ -35,7 +40,9 @@ struct yarp::dev::JoypadControl::JoyPort : public  yarp::dev::JoypadControl::Loo
     T               storage;
     yarp::os::Mutex mutex;
 
-    JoyPort()                         {contactable = this;}
+    JoyPort() {contactable = this;}
+    using bufferedPort::useCallback;
+    virtual void useCallback() YARP_OVERRIDE {bufferedPort::useCallback();}
 
     using yarp::os::TypedReaderCallback<T>::onRead;
     virtual void onRead(T& datum) YARP_OVERRIDE
@@ -45,4 +52,9 @@ struct yarp::dev::JoypadControl::JoyPort : public  yarp::dev::JoypadControl::Loo
         mutex.unlock();
     }
 };
+
 //----------
+template<>
+inline int BottleTagMap <unsigned char> () {
+    return 64;
+  }

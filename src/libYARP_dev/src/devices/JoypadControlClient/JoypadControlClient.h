@@ -36,6 +36,7 @@ private:
     JOYPORT<Vector>       m_touchPort;
     JOYPORT<CharVector>   m_hatsPort;
     JOYPORT<Vector>       m_stickPort;
+    std::vector<size_t>   m_stickDof;
     bool                  m_rpc_only;
     yarp::os::ConstString m_local;
     yarp::os::ConstString m_remote;
@@ -68,5 +69,7 @@ public:
     virtual bool getAxis(unsigned int axis_id, double& value) YARP_OVERRIDE;
     virtual bool getStick(unsigned int stick_id, yarp::sig::Vector& value, JoypadCtrl_coordinateMode coordinate_mode) YARP_OVERRIDE;
     virtual bool getTouch(unsigned int touch_id, yarp::sig::Vector& value) YARP_OVERRIDE;
+
+    #undef JoyPort
 
 };

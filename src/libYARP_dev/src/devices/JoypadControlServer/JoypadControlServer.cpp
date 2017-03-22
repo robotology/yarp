@@ -495,7 +495,7 @@ bool JoypadControlServer::openPorts()
             }
             else
             {
-                getters[i].port->contactable->open();
+                getters[i].port->contactable->open(getters[i].port->name);
                 getters[i].port->valid = true;
             }
         }
