@@ -209,6 +209,39 @@ bool RosTypeCodeGenYarp::endConstruct() {
     return true;
 }
 
+
+bool RosTypeCodeGenYarp::beginClear() {
+    fprintf(out, "  void clear() {\n");
+    first = true;
+    return true;
+}
+
+bool RosTypeCodeGenYarp::clearField(const RosField& field) {
+    if (!first) {
+        fprintf(out, "\n");
+    }
+    first = false;
+    fprintf(out, "    // *** %s ***\n", field.rosName.c_str());
+
+    if (!field.isConst()) {
+        if (field.isArray || !field.isPrimitive) {
+            fprintf(out, "    %s.clear();\n", field.rosName.c_str());
+        } else {
+            RosYarpType t = mapPrimitive(field);
+            fprintf(out, "    %s = %s;\n", field.rosName.c_str(), t.yarpDefaultValue.c_str());
+        }
+    }
+    constructField(field);
+    return true;
+}
+
+bool RosTypeCodeGenYarp::endClear() {
+    fprintf(out, "  }\n\n");
+    return true;
+}
+
+
+
 bool RosTypeCodeGenYarp::beginRead(bool bare, int len) {
     fprintf(out,"  bool read%s(yarp::os::ConnectionReader& connection) {\n",
             bare?"Bare":"Bottle");
@@ -672,7 +705,7 @@ RosYarpType RosTypeCodeGenYarp::mapPrimitive(const RosField& field) {
         ry.reader = "expectDouble";
         flavor = "double";
     } else if (name=="string") {
-        // ignore
+        ry.yarpDefaultValue = "\"\"";
     } else {
         fprintf(stderr, "Please translate %s in RosTypeCodeGenYarp.cpp\n",
                 name.c_str());

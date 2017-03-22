@@ -19,6 +19,14 @@ public:
   TickTime() {
   }
 
+  void clear() {
+    // *** sec ***
+    sec = 0;
+
+    // *** nsec ***
+    nsec = 0;
+  }
+
   bool readBare(yarp::os::ConnectionReader& connection) {
     // *** sec ***
     sec = connection.expectInt();

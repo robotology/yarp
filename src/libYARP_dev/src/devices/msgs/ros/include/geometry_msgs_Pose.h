@@ -1,8 +1,8 @@
 // This is an automatically generated file.
 // Generated from this geometry_msgs_Pose.msg definition:
+//   # A representation of pose in free space, composed of postion and orientation. 
 //   geometry_msgs/Point position
-//   geometry_msgs/Quaternion orientation
-// Instances of this class can be read and written with YARP ports,
+//   geometry_msgs/Quaternion orientation// Instances of this class can be read and written with YARP ports,
 // using a ROS-compatible format.
 
 #ifndef YARPMSG_TYPE_geometry_msgs_Pose
@@ -23,6 +23,14 @@ public:
   geometry_msgs_Quaternion orientation;
 
   geometry_msgs_Pose() {
+  }
+
+  void clear() {
+    // *** position ***
+    position.clear();
+
+    // *** orientation ***
+    orientation.clear();
   }
 
   bool readBare(yarp::os::ConnectionReader& connection) {
@@ -88,13 +96,17 @@ public:
 
   // Give source text for class, ROS will need this
   yarp::os::ConstString getTypeText() {
-    return "geometry_msgs/Point position\n\
+    return "# A representation of pose in free space, composed of postion and orientation. \n\
+geometry_msgs/Point position\n\
 geometry_msgs/Quaternion orientation\n================================================================================\n\
 MSG: geometry_msgs/Point\n\
+# This contains the position of a point in free space\n\
 float64 x\n\
 float64 y\n\
 float64 z\n================================================================================\n\
 MSG: geometry_msgs/Quaternion\n\
+# This represents an orientation in free space in quaternion form.\n\
+\n\
 float64 x\n\
 float64 y\n\
 float64 z\n\

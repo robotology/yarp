@@ -5,11 +5,12 @@
 //   #
 //   # This message is mostly used by the 
 //   # tf package. 
-//   # See its documentation for more information.
+//   # See it's documentation for more information.
 //   
 //   Header header
 //   string child_frame_id # the frame id of the child frame
-//   Transform transform// Instances of this class can be read and written with YARP ports,
+//   Transform transform
+// Instances of this class can be read and written with YARP ports,
 // using a ROS-compatible format.
 
 #ifndef YARPMSG_TYPE_geometry_msgs_TransformStamped
@@ -32,6 +33,17 @@ public:
   geometry_msgs_Transform transform;
 
   geometry_msgs_TransformStamped() {
+  }
+
+  void clear() {
+    // *** header ***
+    header.clear();
+
+    // *** child_frame_id ***
+    child_frame_id = "";
+
+    // *** transform ***
+    transform.clear();
   }
 
   bool readBare(yarp::os::ConnectionReader& connection) {
@@ -119,14 +131,27 @@ public:
 #\n\
 # This message is mostly used by the \n\
 # tf package. \n\
-# See its documentation for more information.\n\
+# See it's documentation for more information.\n\
 \n\
 Header header\n\
 string child_frame_id # the frame id of the child frame\n\
 Transform transform\n================================================================================\n\
 MSG: std_msgs/Header\n\
+[std_msgs/Header]:\n\
+# Standard metadata for higher-level stamped data types.\n\
+# This is generally used to communicate timestamped data\n\
+# in a particular coordinate frame.\n\
+#\n\
+# sequence ID: consecutively increasing ID\n\
 uint32 seq\n\
+#Two-integer timestamp that is expressed as:\n\
+# * stamp.sec: seconds (stamp_secs) since epoch (in Python the variable is called 'secs')\n\
+# * stamp.nsec: nanoseconds since stamp_secs (in Python the variable is called 'nsecs')\n\
+# time-handling sugar is provided by the client library\n\
 time stamp\n\
+#Frame this data is associated with\n\
+# 0: no frame\n\
+# 1: global frame\n\
 string frame_id\n================================================================================\n\
 MSG: geometry_msgs/Transform\n\
 # This represents the transform between two coordinate frames in free space.\n\
@@ -134,10 +159,14 @@ MSG: geometry_msgs/Transform\n\
 Vector3 translation\n\
 Quaternion rotation\n================================================================================\n\
 MSG: geometry_msgs/Vector3\n\
+# This represents a vector in free space.\n\
+\n\
 float64 x\n\
 float64 y\n\
 float64 z\n================================================================================\n\
 MSG: geometry_msgs/Quaternion\n\
+# This represents an orientation in free space in quaternion form.\n\
+\n\
 float64 x\n\
 float64 y\n\
 float64 z\n\

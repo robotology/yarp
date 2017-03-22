@@ -55,6 +55,32 @@ public:
     linear_acceleration_covariance.resize(9,0.0);
   }
 
+  void clear() {
+    // *** header ***
+    header.clear();
+
+    // *** orientation ***
+    orientation.clear();
+
+    // *** orientation_covariance ***
+    orientation_covariance.clear();
+    orientation_covariance.resize(9,0.0);
+
+    // *** angular_velocity ***
+    angular_velocity.clear();
+
+    // *** angular_velocity_covariance ***
+    angular_velocity_covariance.clear();
+    angular_velocity_covariance.resize(9,0.0);
+
+    // *** linear_acceleration ***
+    linear_acceleration.clear();
+
+    // *** linear_acceleration_covariance ***
+    linear_acceleration_covariance.clear();
+    linear_acceleration_covariance.resize(9,0.0);
+  }
+
   bool readBare(yarp::os::ConnectionReader& connection) {
     // *** header ***
     if (!header.read(connection)) return false;

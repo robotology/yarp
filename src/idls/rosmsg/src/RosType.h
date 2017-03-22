@@ -222,6 +222,10 @@ public:
     virtual bool constructField(const RosField& field) { return true; }
     virtual bool endConstruct() { return true; }
 
+    virtual bool beginClear() { return true; }
+    virtual bool clearField(const RosField& field) = 0;
+    virtual bool endClear() { return true; }
+
     virtual bool beginRead(bool bare, int len) { return true; }
     virtual bool readField(bool bare, const RosField& field) = 0;
     virtual bool endRead(bool bare) { return true; }

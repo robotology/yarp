@@ -50,6 +50,23 @@ public:
   sensor_msgs_JointState() {
   }
 
+  void clear() {
+    // *** header ***
+    header.clear();
+
+    // *** name ***
+    name.clear();
+
+    // *** position ***
+    position.clear();
+
+    // *** velocity ***
+    velocity.clear();
+
+    // *** effort ***
+    effort.clear();
+  }
+
   bool readBare(yarp::os::ConnectionReader& connection) {
     // *** header ***
     if (!header.read(connection)) return false;

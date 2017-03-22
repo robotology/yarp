@@ -37,6 +37,17 @@ public:
   std_msgs_Header() {
   }
 
+  void clear() {
+    // *** seq ***
+    seq = 0;
+
+    // *** stamp ***
+    stamp.clear();
+
+    // *** frame_id ***
+    frame_id = "";
+  }
+
   bool readBare(yarp::os::ConnectionReader& connection) {
     // *** seq ***
     seq = connection.expectInt();

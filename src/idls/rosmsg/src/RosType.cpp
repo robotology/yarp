@@ -455,6 +455,12 @@ bool RosType::emitType(RosTypeCodeGen& gen,
     }
     if (!gen.endConstruct()) return false;
 
+    if (!gen.beginClear()) return false;
+    for (int i = 0; i<(int)subRosType.size(); i++) {
+        if (!gen.clearField(subRosType[i])) return false;
+    }
+    if (!gen.endClear()) return false;
+
     if (!gen.beginRead(true,(int)subRosType.size())) return false;
     for (int i=0; i<(int)subRosType.size(); i++) {
         if (!gen.readField(true,subRosType[i])) return false;

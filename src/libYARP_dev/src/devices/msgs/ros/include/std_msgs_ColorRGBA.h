@@ -3,8 +3,7 @@
 //   float32 r
 //   float32 g
 //   float32 b
-//   float32 a
-// Instances of this class can be read and written with YARP ports,
+//   float32 a// Instances of this class can be read and written with YARP ports,
 // using a ROS-compatible format.
 
 #ifndef YARPMSG_TYPE_std_msgs_ColorRGBA
@@ -29,6 +28,20 @@ public:
   yarp::os::NetFloat32 a;
 
   std_msgs_ColorRGBA() {
+  }
+
+  void clear() {
+    // *** r ***
+    r = 0.0;
+
+    // *** g ***
+    g = 0.0;
+
+    // *** b ***
+    b = 0.0;
+
+    // *** a ***
+    a = 0.0;
   }
 
   bool readBare(yarp::os::ConnectionReader& connection) {

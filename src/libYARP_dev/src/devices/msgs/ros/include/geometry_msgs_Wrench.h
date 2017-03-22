@@ -26,6 +26,14 @@ public:
   geometry_msgs_Wrench() {
   }
 
+  void clear() {
+    // *** force ***
+    force.clear();
+
+    // *** torque ***
+    torque.clear();
+  }
+
   bool readBare(yarp::os::ConnectionReader& connection) {
     // *** force ***
     if (!force.read(connection)) return false;

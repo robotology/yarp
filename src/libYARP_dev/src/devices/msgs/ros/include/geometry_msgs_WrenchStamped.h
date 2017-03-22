@@ -26,6 +26,14 @@ public:
   geometry_msgs_WrenchStamped() {
   }
 
+  void clear() {
+    // *** header ***
+    header.clear();
+
+    // *** wrench ***
+    wrench.clear();
+  }
+
   bool readBare(yarp::os::ConnectionReader& connection) {
     // *** header ***
     if (!header.read(connection)) return false;

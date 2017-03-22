@@ -57,6 +57,38 @@ public:
   sensor_msgs_LaserScan() {
   }
 
+  void clear() {
+    // *** header ***
+    header.clear();
+
+    // *** angle_min ***
+    angle_min = 0.0;
+
+    // *** angle_max ***
+    angle_max = 0.0;
+
+    // *** angle_increment ***
+    angle_increment = 0.0;
+
+    // *** time_increment ***
+    time_increment = 0.0;
+
+    // *** scan_time ***
+    scan_time = 0.0;
+
+    // *** range_min ***
+    range_min = 0.0;
+
+    // *** range_max ***
+    range_max = 0.0;
+
+    // *** ranges ***
+    ranges.clear();
+
+    // *** intensities ***
+    intensities.clear();
+  }
+
   bool readBare(yarp::os::ConnectionReader& connection) {
     // *** header ***
     if (!header.read(connection)) return false;

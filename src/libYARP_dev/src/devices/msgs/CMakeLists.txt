@@ -7,6 +7,27 @@ yarp_idl_to_dir("${CMAKE_CURRENT_SOURCE_DIR}/stateExt.thrift"
                 yarp_msg_include_dirs)
 include("${CMAKE_CURRENT_SOURCE_DIR}/yarp/stateExt_thrift.cmake")
 
+yarp_idl_to_dir("${CMAKE_CURRENT_SOURCE_DIR}/ros/msg_file/sensor_msgs/RegionOfInterest.msg"
+                "${CMAKE_CURRENT_SOURCE_DIR}/ros"
+                ros_msg_sources
+                ros_msg_headers
+                ros_msg_include_dirs)
+include(${CMAKE_CURRENT_SOURCE_DIR}/ros/sensor_msgs_RegionOfInterest_msg.cmake)
+
+yarp_idl_to_dir("${CMAKE_CURRENT_SOURCE_DIR}/ros/msg_file/sensor_msgs/CameraInfo.msg"
+                "${CMAKE_CURRENT_SOURCE_DIR}/ros"
+                ros_msg_sources
+                ros_msg_headers
+                ros_msg_include_dirs)
+include(${CMAKE_CURRENT_SOURCE_DIR}/ros/sensor_msgs_CameraInfo_msg.cmake)
+
+yarp_idl_to_dir("${CMAKE_CURRENT_SOURCE_DIR}/ros/msg_file/sensor_msgs/Image.msg"
+                "${CMAKE_CURRENT_SOURCE_DIR}/ros"
+                ros_msg_sources
+                ros_msg_headers
+                ros_msg_include_dirs)
+include(${CMAKE_CURRENT_SOURCE_DIR}/ros/sensor_msgs_Image_msg.cmake)
+
 yarp_idl_to_dir("${CMAKE_CURRENT_SOURCE_DIR}/ros/msg_file/sensor_msgs/JointState.msg"
                 "${CMAKE_CURRENT_SOURCE_DIR}/ros"
                 ros_msg_sources
@@ -27,6 +48,20 @@ yarp_idl_to_dir("${CMAKE_CURRENT_SOURCE_DIR}/ros/msg_file/sensor_msgs/LaserScan.
                 ros_msg_headers
                 ros_msg_include_dirs)
 include(${CMAKE_CURRENT_SOURCE_DIR}/ros/sensor_msgs_LaserScan_msg.cmake)
+
+yarp_idl_to_dir("${CMAKE_CURRENT_SOURCE_DIR}/ros/msg_file/geometry_msgs/Transform.msg"
+                "${CMAKE_CURRENT_SOURCE_DIR}/ros"
+                ros_msg_sources
+                ros_msg_headers
+                ros_msg_include_dirs)
+include(${CMAKE_CURRENT_SOURCE_DIR}/ros/geometry_msgs_Transform_msg.cmake)
+
+yarp_idl_to_dir("${CMAKE_CURRENT_SOURCE_DIR}/ros/msg_file/geometry_msgs/TransformStamped.msg"
+                "${CMAKE_CURRENT_SOURCE_DIR}/ros"
+                ros_msg_sources
+                ros_msg_headers
+                ros_msg_include_dirs)
+include(${CMAKE_CURRENT_SOURCE_DIR}/ros/geometry_msgs_TransformStamped_msg.cmake)
 
 yarp_idl_to_dir("${CMAKE_CURRENT_SOURCE_DIR}/ros/msg_file/geometry_msgs/WrenchStamped.msg"
                 "${CMAKE_CURRENT_SOURCE_DIR}/ros"
@@ -49,6 +84,26 @@ yarp_idl_to_dir("${CMAKE_CURRENT_SOURCE_DIR}/ros/msg_file/nav_msgs/MapMetaData.m
                 ros_msg_include_dirs)
 include(${CMAKE_CURRENT_SOURCE_DIR}/ros/nav_msgs_MapMetaData_msg.cmake)
 
+yarp_idl_to_dir("${CMAKE_CURRENT_SOURCE_DIR}/ros/msg_file/tf/tfMessage.msg"
+                "${CMAKE_CURRENT_SOURCE_DIR}/ros"
+                ros_msg_sources
+                ros_msg_headers
+                ros_msg_include_dirs)
+include(${CMAKE_CURRENT_SOURCE_DIR}/ros/tf_tfMessage_msg.cmake)
+
+yarp_idl_to_dir("${CMAKE_CURRENT_SOURCE_DIR}/ros/msg_file/visualization_msgs/Marker.msg"
+                "${CMAKE_CURRENT_SOURCE_DIR}/ros"
+                ros_msg_sources
+                ros_msg_headers
+                ros_msg_include_dirs)
+include(${CMAKE_CURRENT_SOURCE_DIR}/ros/visualization_msgs_Marker_msg.cmake)
+
+yarp_idl_to_dir("${CMAKE_CURRENT_SOURCE_DIR}/ros/msg_file/visualization_msgs/MarkerArray.msg"
+                "${CMAKE_CURRENT_SOURCE_DIR}/ros"
+                ros_msg_sources
+                ros_msg_headers
+                ros_msg_include_dirs)
+include(${CMAKE_CURRENT_SOURCE_DIR}/ros/visualization_msgs_MarkerArray_msg.cmake)
 
 # # add automatically generated files to source list
 set(cbw2_msgs_srcs        ${yarp_msg_sources} ${ros_msg_sources}   PARENT_SCOPE)
