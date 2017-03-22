@@ -658,6 +658,24 @@ public:
 
         {
             ResourceFinder rf;
+            ConstString contextName = "my_app";
+            rf.setDefaultContext(contextName);
+            rf.setDefaultConfigFile("my_app.ini");
+            rf.configure(0,NULL);
+            checkEqual(rf.find("magic_number").asInt(),1000,"my_app.ini found as default config file");
+        }
+
+        {
+            ResourceFinder rf;
+            ConstString contextName = "my_app";
+            rf.setDefaultContext(contextName.c_str());
+            rf.setDefaultConfigFile("my_app.ini");
+            rf.configure(0,NULL);
+            checkEqual(rf.find("magic_number").asInt(),1000,"my_app.ini found as default config file");
+        }
+
+        {
+            ResourceFinder rf;
             rf.setDefaultContext("shadowtest");
             rf.setDefaultConfigFile("shadow.ini");
             rf.configure(0,NULL);
