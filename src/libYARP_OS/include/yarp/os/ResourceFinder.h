@@ -121,6 +121,18 @@ public:
      */
     bool configure(int argc, char *argv[], bool skipFirstArgument = true);
 
+    /**
+     * Sets the context for the current ResourceFinder object.
+     *
+     * A context is a folder collecting configuration files and data that may be
+     * used to configure modules at runtime.
+     * When the resource finder is configured with a specific contextName,
+     * contexts/<context-name> is added to the search path in which the
+     * initial configuration file and any additional files are sought.
+     *
+     * @param contextName The name of the context
+     * @return true on success, false otherwise
+     */
     bool setDefaultContext(const char *contextName) {
         clearContext();
         return addContext(contextName);
