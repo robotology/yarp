@@ -126,14 +126,17 @@ public:
         return addContext(contextName);
     }
 
+#ifndef YARP_NO_DEPRECATED // since YARP 2.3.70
     /**
      *
      * Deprecated name for setDefaultContext
      *
+     * @deprecated since YARP 2.3.70
      */
-    bool setContext(const char *contextName) {
+    YARP_DEPRECATED bool setContext(const char *contextName) {
         return setDefaultContext(contextName);
     }
+#endif // YARP_NO_DEPRECATED
 
     /**
      *
