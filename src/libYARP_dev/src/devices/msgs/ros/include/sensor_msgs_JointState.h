@@ -66,17 +66,17 @@ public:
     // *** position ***
     len = connection.expectInt();
     position.resize(len);
-    if (!connection.expectBlock((char*)&position[0],sizeof(yarp::os::NetFloat64)*len)) return false;
+    if (len > 0 && !connection.expectBlock((char*)&position[0],sizeof(yarp::os::NetFloat64)*len)) return false;
 
     // *** velocity ***
     len = connection.expectInt();
     velocity.resize(len);
-    if (!connection.expectBlock((char*)&velocity[0],sizeof(yarp::os::NetFloat64)*len)) return false;
+    if (len > 0 && !connection.expectBlock((char*)&velocity[0],sizeof(yarp::os::NetFloat64)*len)) return false;
 
     // *** effort ***
     len = connection.expectInt();
     effort.resize(len);
-    if (!connection.expectBlock((char*)&effort[0],sizeof(yarp::os::NetFloat64)*len)) return false;
+    if (len > 0 && !connection.expectBlock((char*)&effort[0],sizeof(yarp::os::NetFloat64)*len)) return false;
     return !connection.isError();
   }
 
@@ -143,15 +143,15 @@ public:
 
     // *** position ***
     connection.appendInt(position.size());
-    connection.appendExternalBlock((char*)&position[0],sizeof(yarp::os::NetFloat64)*position.size());
+    if (position.size()>0) {connection.appendExternalBlock((char*)&position[0],sizeof(yarp::os::NetFloat64)*position.size());}
 
     // *** velocity ***
     connection.appendInt(velocity.size());
-    connection.appendExternalBlock((char*)&velocity[0],sizeof(yarp::os::NetFloat64)*velocity.size());
+    if (velocity.size()>0) {connection.appendExternalBlock((char*)&velocity[0],sizeof(yarp::os::NetFloat64)*velocity.size());}
 
     // *** effort ***
     connection.appendInt(effort.size());
-    connection.appendExternalBlock((char*)&effort[0],sizeof(yarp::os::NetFloat64)*effort.size());
+    if (effort.size()>0) {connection.appendExternalBlock((char*)&effort[0],sizeof(yarp::os::NetFloat64)*effort.size());}
     return !connection.isError();
   }
 

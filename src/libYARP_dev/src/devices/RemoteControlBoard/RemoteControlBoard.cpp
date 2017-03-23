@@ -1095,7 +1095,8 @@ public:
         last_singleJoint.motorVelocity.resize(1);
         last_singleJoint.motorAcceleration.resize(1);
         last_singleJoint.torque.resize(1);
-        last_singleJoint.pidOutput.resize(1);
+        last_singleJoint.pwmDutycycle.resize(1);
+        last_singleJoint.current.resize(1);
         last_singleJoint.controlMode.resize(1);
         last_singleJoint.interactionMode.resize(1);
 
@@ -1107,7 +1108,8 @@ public:
         last_wholePart.motorVelocity.resize(nj);
         last_wholePart.motorAcceleration.resize(nj);
         last_wholePart.torque.resize(nj);
-        last_wholePart.pidOutput.resize(nj);
+        last_wholePart.current.resize(nj);
+        last_wholePart.pwmDutycycle.resize(nj);
         last_wholePart.controlMode.resize(nj);
         last_wholePart.interactionMode.resize(nj);
         return true;
@@ -3831,7 +3833,7 @@ public:
     {
         double localArrivalTime = 0.0;
         extendedPortMutex.wait();
-        bool ret = extendedIntputStatePort.getLastSingle(j, VOCAB_OUTPUT, out, lastStamp, localArrivalTime);
+        bool ret = extendedIntputStatePort.getLastSingle(j, VOCAB_PWMCONTROL_PWM_OUTPUT, out, lastStamp, localArrivalTime);
         extendedPortMutex.post();
         return ret;
     }
@@ -3840,7 +3842,7 @@ public:
     {
         double localArrivalTime = 0.0;
         extendedPortMutex.wait();
-        bool ret = extendedIntputStatePort.getLastVector(VOCAB_OUTPUTS, outs, lastStamp, localArrivalTime);
+        bool ret = extendedIntputStatePort.getLastVector(VOCAB_PWMCONTROL_PWM_OUTPUT, outs, lastStamp, localArrivalTime);
         extendedPortMutex.post();
         return ret;
     }

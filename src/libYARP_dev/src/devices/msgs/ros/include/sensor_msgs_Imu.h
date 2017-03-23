@@ -65,7 +65,7 @@ public:
     // *** orientation_covariance ***
     int len = 9;
     orientation_covariance.resize(len);
-    if (!connection.expectBlock((char*)&orientation_covariance[0],sizeof(yarp::os::NetFloat64)*len)) return false;
+    if (len > 0 && !connection.expectBlock((char*)&orientation_covariance[0],sizeof(yarp::os::NetFloat64)*len)) return false;
 
     // *** angular_velocity ***
     if (!angular_velocity.read(connection)) return false;
@@ -73,7 +73,7 @@ public:
     // *** angular_velocity_covariance ***
     len = 9;
     angular_velocity_covariance.resize(len);
-    if (!connection.expectBlock((char*)&angular_velocity_covariance[0],sizeof(yarp::os::NetFloat64)*len)) return false;
+    if (len > 0 && !connection.expectBlock((char*)&angular_velocity_covariance[0],sizeof(yarp::os::NetFloat64)*len)) return false;
 
     // *** linear_acceleration ***
     if (!linear_acceleration.read(connection)) return false;
@@ -81,7 +81,7 @@ public:
     // *** linear_acceleration_covariance ***
     len = 9;
     linear_acceleration_covariance.resize(len);
-    if (!connection.expectBlock((char*)&linear_acceleration_covariance[0],sizeof(yarp::os::NetFloat64)*len)) return false;
+    if (len > 0 && !connection.expectBlock((char*)&linear_acceleration_covariance[0],sizeof(yarp::os::NetFloat64)*len)) return false;
     return !connection.isError();
   }
 
@@ -142,19 +142,19 @@ public:
     if (!orientation.write(connection)) return false;
 
     // *** orientation_covariance ***
-    connection.appendExternalBlock((char*)&orientation_covariance[0],sizeof(yarp::os::NetFloat64)*orientation_covariance.size());
+    if (orientation_covariance.size()>0) {connection.appendExternalBlock((char*)&orientation_covariance[0],sizeof(yarp::os::NetFloat64)*orientation_covariance.size());}
 
     // *** angular_velocity ***
     if (!angular_velocity.write(connection)) return false;
 
     // *** angular_velocity_covariance ***
-    connection.appendExternalBlock((char*)&angular_velocity_covariance[0],sizeof(yarp::os::NetFloat64)*angular_velocity_covariance.size());
+    if (angular_velocity_covariance.size()>0) {connection.appendExternalBlock((char*)&angular_velocity_covariance[0],sizeof(yarp::os::NetFloat64)*angular_velocity_covariance.size());}
 
     // *** linear_acceleration ***
     if (!linear_acceleration.write(connection)) return false;
 
     // *** linear_acceleration_covariance ***
-    connection.appendExternalBlock((char*)&linear_acceleration_covariance[0],sizeof(yarp::os::NetFloat64)*linear_acceleration_covariance.size());
+    if (linear_acceleration_covariance.size()>0) {connection.appendExternalBlock((char*)&linear_acceleration_covariance[0],sizeof(yarp::os::NetFloat64)*linear_acceleration_covariance.size());}
     return !connection.isError();
   }
 

@@ -882,7 +882,8 @@ void ControlBoardWrapper::run()
         yarp_struct.motorVelocity.resize(controlledJoints);
         yarp_struct.motorAcceleration.resize(controlledJoints);
         yarp_struct.torque.resize(controlledJoints);
-        yarp_struct.pidOutput.resize(controlledJoints);
+        yarp_struct.pwmDutycycle.resize(controlledJoints);
+        yarp_struct.current.resize(controlledJoints);
         yarp_struct.controlMode.resize(controlledJoints);
         yarp_struct.interactionMode.resize(controlledJoints);
 
@@ -893,7 +894,8 @@ void ControlBoardWrapper::run()
         yarp_struct.motorVelocity_isValid       = getMotorEncoderSpeeds(yarp_struct.motorVelocity.getFirst());
         yarp_struct.motorAcceleration_isValid   = getMotorEncoderAccelerations(yarp_struct.motorAcceleration.getFirst());
         yarp_struct.torque_isValid              = getTorques(yarp_struct.torque.getFirst());
-        yarp_struct.pidOutput_isValid           = getOutputs(yarp_struct.pidOutput.getFirst());
+        yarp_struct.pwmDutycycle_isValid        = getDutyCycles(yarp_struct.pwmDutycycle.getFirst());
+        yarp_struct.current_isValid             = getCurrents(yarp_struct.current.getFirst());
         yarp_struct.controlMode_isValid         = getControlModes(yarp_struct.controlMode.getFirst());
         yarp_struct.interactionMode_isValid     = getInteractionModes((yarp::dev::InteractionModeEnum* ) yarp_struct.interactionMode.getFirst());
 
