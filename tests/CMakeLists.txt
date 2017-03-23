@@ -8,7 +8,29 @@ if(YARP_ENABLE_BROKEN_TESTS)
   add_definitions(-DBROKEN_TEST)
 endif()
 
+
 if(YARP_COMPILE_TESTS)
+  # Prepare 'build_generator', 'build_options' and 'build_module_path' variables
+  # for tests in subdirectories
+  set(build_generator --build-generator "${CMAKE_GENERATOR}")
+  if(CMAKE_GENERATOR_PLATFORM)
+    list(APPEND build_generator --build-generator-platform "${CMAKE_GENERATOR_PLATFORM}")
+  endif()
+  if(CMAKE_GENERATOR_TOOLSET)
+    list(APPEND build_generator --build-generator-toolset "${CMAKE_GENERATOR_TOOLSET}")
+  endif()
+  if(CMAKE_CONFIGURATION_TYPES)
+    list(APPEND build_generator --build-config $<CONFIGURATION>)
+  endif()
+
+  unset(build_options)
+  if(CMAKE_BUILD_TYPE)
+    list(APPEND build_options -DCMAKE_BUILD_TYPE=${CMAKE_BUILD_TYPE})
+  endif()
+
+  # Use only if cmake modules not installed by YARP are required by the test
+  set(build_module_path -DCMAKE_MODULE_PATH="${CMAKE_MODULE_PATH}")
+  string(REPLACE ";" "\;" build_module_path "${build_module_path}")
 
   # Add the CMAKE_BINARY_DIR as a macro so the testing infrastructure
   # can find the device compiled as dynamic plugins
@@ -161,6 +183,14 @@ if(YARP_COMPILE_TESTS)
     endforeach(X ${inis})
   endif()
 
+
+  add_subdirectory(carriers)
+  add_subdirectory(yarpidl_thrift)
+  add_subdirectory(yarpidl_rosmsg)
+
+
+
+
   # Integration tests
   option(YARP_TEST_INTEGRATION "Run integration tests (UNIX only)" FALSE)
   mark_as_advanced(YARP_TEST_INTEGRATION)
@@ -168,5 +198,8 @@ if(YARP_COMPILE_TESTS)
     add_subdirectory(integration)
   endif()
 
-  add_subdirectory(carriers)
+
+
+  yarp_deprecated_option(TEST_yarpidl_rosmsg) # Since YARP 2.3.70
+  yarp_deprecated_option(TEST_yarpidl_thrift) # Since YARP 2.3.70
 endif()

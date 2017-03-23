@@ -33,11 +33,3 @@ install(TARGETS yarpidl_rosmsg
 set_property(GLOBAL APPEND PROPERTY YARP_TOOLS yarpidl_rosmsg)
 
 set_property(TARGET yarpidl_rosmsg PROPERTY FOLDER "Command Line Tools")
-
-include (CMakeDependentOption)
-cmake_dependent_option(TEST_yarpidl_rosmsg "Test ROS msg based IDL" OFF
-                       YARP_COMPILE_TESTS OFF)
-mark_as_advanced(TEST_yarpidl_rosmsg)
-if (TEST_yarpidl_rosmsg)
-  add_subdirectory(tests)
-endif ()
