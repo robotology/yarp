@@ -177,11 +177,21 @@ public:
 #ifndef YARP_NO_DEPRECATED // since YARP 2.3.70
     // Constructor used when there is only one output port  -- obsolete, here for backward compatibility with skinwrapper
     /** @deprecated since YARP 2.3.70 */
-    YARP_DEPRECATED AnalogWrapper(const char* name, int rate=20);
+#if defined(_MSC_VER) && _MSC_VER == 1900
+    // For some unknown reason, Visual studio 2015 fails with this error:
+    // "C2416 attribute 'deprecated' cannot be applied in this context"
+    YARP_DEPRECATED
+#endif
+    AnalogWrapper(const char* name, int rate=20);
 
-    /** @deprecated since YARP 2.3.70 */
     // Contructor used when one or more output ports are specified  -- obsolete, here for backward compatibility with skinwrapper
-    YARP_DEPRECATED AnalogWrapper(const std::vector<yarp::dev::impl::AnalogPortEntry>& _analogPorts, int rate=20);
+    /** @deprecated since YARP 2.3.70 */
+#if defined(_MSC_VER) && _MSC_VER == 1900
+    // For some unknown reason, Visual studio 2015 fails with this error:
+    // "C2416 attribute 'deprecated' cannot be applied in this context"
+    YARP_DEPRECATED
+#endif
+    AnalogWrapper(const std::vector<yarp::dev::impl::AnalogPortEntry>& _analogPorts, int rate=20);
 #endif // YARP_NO_DEPRECATED
 
     ~AnalogWrapper();
