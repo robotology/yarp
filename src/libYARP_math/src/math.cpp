@@ -814,6 +814,55 @@ Matrix yarp::math::rpy2dcm(const Vector &v)
     return Rz*Ry*Rx;
 }
 
+Vector yarp::math::dcm2ypr(const yarp::sig::Matrix &R)
+{
+    yAssert((R.rows() >= 3) && (R.cols() >= 3));
+
+    Vector v(3); // yaw pitch roll
+
+    if (R(0, 2)<1.0)
+    {
+        if (R(0, 2)>-1.0)
+        {
+            v[0] = atan2(-R(0, 1), R(0, 0));
+            v[1] = asin(R(0, 2));
+            v[2] = atan2(-R(1, 2), R(2, 2));
+        }
+        else // == -1
+        {
+            // Not a unique solution: psi-phi=atan2(-R12,R11)
+            v[0] = 0.0;
+            v[1] = -M_PI / 2.0;
+            v[2] = -atan2(R(1, 0), R(1, 1));
+        }
+    }
+    else // == +1
+    {
+        // Not a unique solution: psi+phi=atan2(-R12,R11)
+        v[0] = 0.0;
+        v[1] = M_PI / 2.0;
+        v[2] = atan2(R(1, 0), R(1, 1));
+    }
+
+    return v;
+}
+
+Matrix yarp::math::ypr2dcm(const Vector &v)
+{
+    yAssert(v.length() >= 3);
+
+    Matrix Rz = eye(4, 4); Matrix Ry = eye(4, 4);   Matrix Rx = eye(4, 4);
+    double roll = v[2];   double cr = cos(roll);  double sr = sin(roll);
+    double pitch = v[1];  double cp = cos(pitch); double sp = sin(pitch);
+    double yaw = v[0];    double cy = cos(yaw);   double sy = sin(yaw);
+
+    Rz(0, 0) = cy; Rz(1, 1) = cy; Rz(0, 1) = -sy; Rz(1, 0) = sy;   // z-rotation with yaw
+    Ry(0, 0) = cp; Ry(2, 2) = cp; Ry(0, 2) = sp; Ry(2, 0) = -sp;   // y-rotation with pitch
+    Rx(1, 1) = cr; Rx(2, 2) = cr; Rx(1, 2) = -sr; Rx(2, 1) = sr;   // x-rotation with roll
+
+    return Rx*Ry*Rz;
+}
+
 Matrix yarp::math::SE3inv(const Matrix &H)
 {
     yAssert((H.rows()==4) && (H.cols()==4));

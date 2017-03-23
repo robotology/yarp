@@ -562,6 +562,34 @@ namespace yarp
         YARP_math_API yarp::sig::Matrix rpy2dcm(const yarp::sig::Vector &rpy);
 
         /**
+        * Converts a dcm (direction cosine matrix) rotation matrix to
+        * yaw-roll-pitch angles (defined in Math.h). Three angles are returned in a vector
+        * with the following format:
+        * \f[  \mathbf{v} = [\phi, \theta, \psi ]\f]
+        * such that the returned matrix satisfies the following:
+        * \f[  R = R_x(\psi) R_y(\theta) R_z(\phi) \f]
+        * @param R is the input XYZ rotation matrix.
+        * @return 3 by 1 vector for the yaw-pitch-roll angles representation.
+        */
+        YARP_math_API yarp::sig::Vector dcm2ypr(const yarp::sig::Matrix &R);
+
+        /**
+        * Converts yaw-pitch-roll angles in the corresponding dcm
+        * (direction cosine matrix) rotation matrix (defined in Math.h). The three angles
+        * are specified in a vector with the following structure:
+        * \f[  \mathbf{v} = [\phi, \theta, \psi ]\f]
+        * and the returned matrix is:
+        * \f[  R = R_x(\psi) R_y(\theta) R_z(\phi) \f]
+        * @param ypr is the input vector (\phi=yaw
+        *            z-rotation, \theta=pitch y-rotation, \psi=roll
+        *            x-rotation).
+        * @return 4 by 4 homogeneous matrix representing the XYZ
+        *         rotation with the rotation components in the top left
+        *         3 by 3 submatrix.
+        */
+        YARP_math_API yarp::sig::Matrix ypr2dcm(const yarp::sig::Vector &ypr);
+
+        /**
         * Returns the inverse of a 4 by 4 rototranslational matrix (defined in Math.h).
         * @param H is the 4 by 4 rototranslational matrix.
         * @return inverse of 4 by 4 rototranslational matrix.
