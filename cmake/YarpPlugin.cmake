@@ -388,6 +388,12 @@ YARP_DEFINE_SHARED_SUBCLASS(\@YARPPLUG_NAME\@, \@YARPPLUG_TYPE\@, \@YARPPLUG_PAR
     configure_file("${_YPP_TEMPLATE}"
                    "${_fname}"
                    @ONLY)
+    # Put the file in the right source group if defined
+    get_property(autogen_source_group_set GLOBAL PROPERTY AUTOGEN_SOURCE_GROUP SET)
+    if(autogen_source_group_set)
+      get_property(autogen_source_group GLOBAL PROPERTY AUTOGEN_SOURCE_GROUP)
+      source_group("${autogen_source_group}" FILES "${_fname}")
+    endif()
 
     # Unset all the variables used by the template
     unset(YARPPLUG_NAME)
@@ -524,8 +530,15 @@ macro(YARP_END_PLUGIN_LIBRARY bundle_name)
         set(YARP_CODE_POST "${YARP_CODE_POST}\n        add_owned_${dev}(\"${owner}\");")
       endforeach()
     endif()
-    configure_file(${YARP_MODULE_DIR}/template/yarp_plugin_library.cpp.in
-                   ${CMAKE_CURRENT_BINARY_DIR}/yarp_${X_YARP_PLUGIN_MASTER}_plugin_library.cpp @ONLY)
+    configure_file("${YARP_MODULE_DIR}/template/yarp_plugin_library.cpp.in"
+                   "${CMAKE_CURRENT_BINARY_DIR}/yarp_${X_YARP_PLUGIN_MASTER}_plugin_library.cpp" @ONLY)
+    # Put the file in the right source group if defined
+    get_property(autogen_source_group_set GLOBAL PROPERTY AUTOGEN_SOURCE_GROUP SET)
+    if(autogen_source_group_set)
+      get_property(autogen_source_group GLOBAL PROPERTY AUTOGEN_SOURCE_GROUP)
+      source_group("${autogen_source_group}" FILES "${CMAKE_CURRENT_BINARY_DIR}/yarp_${X_YARP_PLUGIN_MASTER}_plugin_library.cpp")
+    endif()
+
     get_property(code GLOBAL PROPERTY YARP_BUNDLE_CODE)
     get_property(libs GLOBAL PROPERTY YARP_BUNDLE_LIBS)
 
@@ -571,8 +584,14 @@ macro(YARP_ADD_PLUGIN_YARPDEV_EXECUTABLE exename bundle_name)
     set(YARP_CODE_PRE "YARP_DECLARE_DEVICES(${bundle_name})")
     set(YARP_CODE_POST "    YARP_REGISTER_DEVICES(${bundle_name})")
   endif()
-  configure_file(${YARP_MODULE_DIR}/template/yarp_plugin_yarpdev_main.cpp.in
-                 ${CMAKE_CURRENT_BINARY_DIR}/${bundle_name}_yarpdev.cpp @ONLY)
+  configure_file("${YARP_MODULE_DIR}/template/yarp_plugin_yarpdev_main.cpp.in"
+                 "${CMAKE_CURRENT_BINARY_DIR}/${bundle_name}_yarpdev.cpp" @ONLY)
+  # Put the file in the right source group if defined
+  get_property(autogen_source_group_set GLOBAL PROPERTY AUTOGEN_SOURCE_GROUP SET)
+  if(autogen_source_group_set)
+    get_property(autogen_source_group GLOBAL PROPERTY AUTOGEN_SOURCE_GROUP)
+    source_group("${autogen_source_group}" FILES "${CMAKE_CURRENT_BINARY_DIR}/${bundle_name}_yarpdev.cpp")
+  endif()
   add_executable(${exename} ${CMAKE_CURRENT_BINARY_DIR}/${bundle_name}_yarpdev.cpp)
   target_link_libraries(${exename} ${bundle_name})
   target_link_libraries(${exename} YARP::YARP_OS YARP::YARP_init YARP::YARP_dev)

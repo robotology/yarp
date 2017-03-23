@@ -150,6 +150,13 @@ function(YARP_IDL_TO_DIR yarpidl_file_base output_dir)
                        COMMAND ${CMAKE_COMMAND} -P ${dir}/place${yarpidlName}.cmake
                        DEPENDS ${yarpidl_file} ${YARPIDL_LOCATION})
     add_custom_target(${yarpidl_target_name} DEPENDS ${output_dir}/${yarpidl_target_name}.cmake)
+
+    # Put the target in the right folder if defined
+    get_property(autogen_source_group_set GLOBAL PROPERTY AUTOGEN_TARGETS_FOLDER SET)
+    if(autogen_source_group_set)
+      get_property(autogen_targets_folder GLOBAL PROPERTY AUTOGEN_TARGETS_FOLDER)
+      set_property(TARGET ${yarpidl_target_name} PROPERTY FOLDER "${autogen_targets_folder}")
+    endif()
   else()
     if(files_missing)
       message(FATAL_ERROR "Generated IDL files for ${yarpidl_file} not found and cannot make them because ALLOW_IDL_GENERATION=${ALLOW_IDL_GENERATION} (maybe this should be turned on?)")
@@ -353,7 +360,13 @@ function(YARP_ADD_IDL var first_file)
       list(APPEND ${var} ${output})
 
       # Mark the generated files as generated
-      set_source_files_properties("${output}" PROPERTIES GENERATED TRUE)
+      set_source_files_properties(${output} PROPERTIES GENERATED TRUE)
+      # Put the files in the right source group if defined
+      get_property(autogen_source_group_set GLOBAL PROPERTY AUTOGEN_SOURCE_GROUP SET)
+      if(autogen_source_group_set)
+        get_property(autogen_source_group GLOBAL PROPERTY AUTOGEN_SOURCE_GROUP)
+        source_group("${autogen_source_group}" FILES ${output})
+      endif()
     endif()
 
     # Force CMake to run again if the file is modified.
