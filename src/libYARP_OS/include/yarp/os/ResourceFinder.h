@@ -121,19 +121,46 @@ public:
      */
     bool configure(int argc, char *argv[], bool skipFirstArgument = true);
 
+    /**
+     * Sets the context for the current ResourceFinder object.
+     *
+     * A context is a folder collecting configuration files and data that may be
+     * used to configure modules at runtime.
+     * When the resource finder is configured with a specific contextName,
+     * contexts/<context-name> is added to the search path in which the
+     * initial configuration file and any additional files are sought.
+     *
+     * @param contextName The name of the context
+     * @return true on success, false otherwise
+     */
     bool setDefaultContext(const char *contextName) {
         clearContext();
         return addContext(contextName);
     }
 
     /**
+     * Sets the context for the current ResourceFinder object.
+     *
+     * @param contextName The name of the context
+     * @return true on success, false otherwise
+     *
+     * @see setDefaultContext(const char *contextName)
+     */
+    bool setDefaultContext(const yarp::os::ConstString& contextName) {
+        return setDefaultContext(contextName.c_str());
+    }
+
+#ifndef YARP_NO_DEPRECATED // since YARP 2.3.70
+    /**
      *
      * Deprecated name for setDefaultContext
      *
+     * @deprecated since YARP 2.3.70
      */
-    bool setContext(const char *contextName) {
+    YARP_DEPRECATED bool setContext(const char *contextName) {
         return setDefaultContext(contextName);
     }
+#endif // YARP_NO_DEPRECATED
 
     /**
      *
