@@ -81,6 +81,12 @@ bool JoypadControlClient::getJoypadInfo()
 
 bool JoypadControlClient::open(yarp::os::Searchable& config)
 {
+    if(config.check("help"))
+    {
+        yInfo() << "parameter:\n\n" <<
+                   "local  - prefix of the local port\n" <<
+                   "remote - prefix of the port provided to and opened by JoypadControlServer\n";
+    }
     if(!config.check("local"))
     {
         yError() << "JoypadControlClient: unable to 'local' parameter.. check configuration file";
@@ -513,5 +519,19 @@ bool JoypadControlClient::getTouch(unsigned int touch_id, yarp::sig::Vector& val
 
 bool JoypadControlClient::close()
 {
+
+    vector<JoypadControl::LoopablePort*> portv;
+    portv.push_back(&m_buttonsPort);
+    portv.push_back(&m_axisPort);
+    portv.push_back(&m_hatsPort);
+    portv.push_back(&m_touchPort);
+    portv.push_back(&m_trackballPort);
+    portv.push_back(&m_stickPort);
+
+    for(auto p : portv)
+    {
+        p->contactable->interrupt();
+        p->contactable->close();
+    }
     return true;
 }

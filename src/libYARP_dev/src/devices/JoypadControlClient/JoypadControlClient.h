@@ -40,7 +40,6 @@ private:
     bool                  m_rpc_only;
     yarp::os::ConstString m_local;
     yarp::os::ConstString m_remote;
-    yarp::os::Mutex       m_mutex;
 
     //--------------method
     bool getCount(const int& vocab_toget, unsigned int& value);

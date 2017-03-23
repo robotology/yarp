@@ -157,17 +157,25 @@ public:
 #define VOCAB_OK          VOCAB2('o','k')
 #define VOCAB_FAILED      VOCAB4('f','a','i','l')
 #define VOCAB_IJOYPADCTRL VOCAB4('i','j','p','c')
-#define VOCAB_GET         VOCAB4('j','g','e','t')
-#define VOCAB_BUTTON      VOCAB4('j','b','t','n')
-#define VOCAB_TRACKBALL   VOCAB4('j','t','r','b')
-#define VOCAB_HAT         VOCAB4('j','h','a','t')
-#define VOCAB_AXIS        VOCAB4('j','a','x','s')
-#define VOCAB_STICK       VOCAB4('j','s','t','k')
-#define VOCAB_STICKDOF    VOCAB4('j','d','o','f')
-#define VOCAB_TOUCH       VOCAB4('j','t','c','h')
-#define VOCAB_COUNT       VOCAB4('j','c','n','t')
-#define VOCAB_VALUE       VOCAB4('j','v','a','l')
-#define VOCAB_POLAR       VOCAB4('j','p','l','r')
-#define VOCAB_CARTESIAN   VOCAB4('j','c','r','t')
+#ifndef VOCAB_GET
+#define VOCAB_GET         VOCAB3('g','e','t')
+#endif
+#define VOCAB_BUTTON      VOCAB4('b','u','t','n')
+#define VOCAB_TRACKBALL   VOCAB4('t','r','b','l')
+#define VOCAB_HAT         VOCAB3('h','a','t')
+#define VOCAB_AXIS        VOCAB4('a','x','i','s')
+#define VOCAB_STICK       VOCAB4('s','t','c','k')
+#define VOCAB_STICKDOF    VOCAB4('s','d','o','f')
+#define VOCAB_TOUCH       VOCAB4('t','u','c','h')
+#define VOCAB_COUNT       VOCAB3('c','n','t')
+#define VOCAB_VALUE       VOCAB3('v','a','l')
+#define VOCAB_POLAR       VOCAB4('p','o','l','r')
+#define VOCAB_CARTESIAN   VOCAB4('c','a','r','t')
 
 #endif //#define YARP_DEV_IJOYPADCONTROLLER_H
+
+//todo list 23/03/2017..
+//1. complete the single port functionality between server and client and test
+//2. complete the rpc_only functionality in the client (add the parameter in the open() and test it)
+//3. complete the stick management in the sdl driver and test
+//4. sdl hat #define to vocab traduction (just in case they change something)

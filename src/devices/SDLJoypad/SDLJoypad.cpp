@@ -29,6 +29,13 @@ SDLJoypad::~SDLJoypad()
 
 bool SDLJoypad::open(yarp::os::Searchable& rf)
 {
+    if(rf.check("help"))
+    {
+        yInfo() << "parameters:\n\n" <<
+                   "UseAllJoypadAsOne     - set it to 1 to have all the connected joypad as one\n" <<
+                   "DefaultJoystickNumber - select the id of the joypad to use if there are more than one joypad and UseAllJoypadAsOne is setted to 0\n";
+        return false;
+    }
     int joy_id;
     size_t joystick_num;
     if (SDL_InitSubSystem( SDL_INIT_JOYSTICK ) < 0 )
@@ -166,6 +173,7 @@ bool SDLJoypad::getStickDoF(unsigned int stick_id, unsigned int& DoF)
 
 bool SDLJoypad::getButton(unsigned int button_id, float& value)
 {
+    if(button_id > m_buttonCount - 1){yError() << "SDLJoypad: button id out of bound!"; return false;}
     updateJoypad();
     size_t i;
     for(i = 0; i < m_device.size(); ++i)
@@ -186,11 +194,13 @@ bool SDLJoypad::getButton(unsigned int button_id, float& value)
 
 bool SDLJoypad::getAxis(unsigned int axis_id, double& value)
 {
+    if(axis_id > m_axisCount - 1){yError() << "SDLJoypad: axis id out of bound!"; return false;}
     updateJoypad();
     size_t i;
     for(i = 0; i < m_device.size(); ++i)
     {
-        unsigned int localCount = SDL_JoystickNumAxes(m_device[i]);
+        unsigned int localCount;
+        localCount = SDL_JoystickNumAxes(m_device[i]);
         if(axis_id > localCount - 1)
         {
             axis_id -= localCount;
@@ -200,7 +210,6 @@ bool SDLJoypad::getAxis(unsigned int axis_id, double& value)
             break;
         }
     }
-
     value = 2 * ((float(SDL_JoystickGetAxis(m_device[i], axis_id)) - (-32.768)) / 0xffff);
     return true;
 }
@@ -217,6 +226,7 @@ bool SDLJoypad::getTouch(unsigned int touch_id, yarp::sig::Vector& value)
 
 bool SDLJoypad::getHat(unsigned int hat_id, unsigned char& value)
 {
+    if(hat_id > m_hatCount - 1){yError() << "SDLJoypad: axis id out of bound!"; return false;}
     updateJoypad();
     size_t i;
     for(i = 0; i < m_device.size(); ++i)
@@ -231,16 +241,17 @@ bool SDLJoypad::getHat(unsigned int hat_id, unsigned char& value)
             break;
         }
     }
+
     value = SDL_JoystickGetHat(m_device[i], hat_id);//TODO: map from their HAT define to our in case of #define changes
     return true;
 }
 
 bool SDLJoypad::getTrackball(unsigned int trackball_id, yarp::sig::Vector& value)
 {
+    if(trackball_id > m_ballCount - 1){yError() << "SDLJoypad: trackball id out of bound!"; return false;}
     updateJoypad();
     int x, y;
     size_t i;
-
     for(i = 0; i < m_device.size(); ++i)
     {
         unsigned int localCount = SDL_JoystickNumBalls(m_device[i]);
@@ -253,7 +264,6 @@ bool SDLJoypad::getTrackball(unsigned int trackball_id, yarp::sig::Vector& value
             break;
         }
     }
-
     if(SDL_JoystickGetBall(m_device[i], trackball_id, &x, &y) == -1)
     {
         yError() << "SDLJoypad: SDL_JoystickGetBall returned error";
