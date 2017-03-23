@@ -45,6 +45,8 @@ set_property(GLOBAL PROPERTY YARP_LIBS)
 set_property(GLOBAL PROPERTY YARP_DEFS)
 
 set_property(GLOBAL PROPERTY USE_FOLDERS 1)
+set_property(GLOBAL PROPERTY AUTOGEN_TARGETS_FOLDER "Autogen Targets")
+set_property(GLOBAL PROPERTY AUTOGEN_SOURCE_GROUP "Generated Files")
 
 # Check system configuration.
 # See cmake/YarpSystemCheck.cmake.
