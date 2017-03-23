@@ -272,7 +272,6 @@ class yarp::dev::ControlBoardWrapper:   public yarp::dev::DeviceDriver,
                                         public yarp::dev::IRemoteCalibrator,
                                         public yarp::dev::IControlCalibration,
                                         public yarp::dev::IControlCalibration2,
-                                        public yarp::dev::IOpenLoopControl,
                                         public yarp::dev::ITorqueControl,
                                         public yarp::dev::IImpedanceControl,
                                         public yarp::dev::IControlMode2,
@@ -1309,8 +1308,6 @@ public:
 
     virtual bool setVelocityMode(int j);
 
-    virtual bool setOpenLoopMode(int j);
-
     virtual bool getControlMode(int j, int *mode);
 
     virtual bool getControlModes(int *modes);
@@ -1325,10 +1322,6 @@ public:
     virtual bool setControlModes(const int n_joints, const int *joints, int *modes);
 
     virtual bool setControlModes(int *modes);
-
-    virtual bool setRefOutput(int j, double v);
-
-    virtual bool setRefOutputs(const double *outs);
 
     // IPositionDirect
 
@@ -1403,20 +1396,6 @@ public:
     virtual bool setInteractionModes(int n_joints, int *joints, yarp::dev::InteractionModeEnum* modes);
 
     virtual bool setInteractionModes(yarp::dev::InteractionModeEnum* modes);
-
-    /**
-     * Get the last reference sent using the setOutput function
-     * @param outs pointer to the vector that will store the output values
-     * @return true/false on success/failure
-     */
-    virtual bool getRefOutput(int j, double *out);
-
-    /**
-     * Get the last reference sent using the setOutputs function
-     * @param outs pointer to the vector that will store the output values
-     * @return true/false on success/failure
-     */
-    virtual bool getRefOutputs(double *outs);
 
     //
     // IPWMControl Interface

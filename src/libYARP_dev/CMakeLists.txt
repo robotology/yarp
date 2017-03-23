@@ -52,14 +52,12 @@ set(YARP_dev_HDRS include/yarp/dev/all.h
                   include/yarp/dev/ImplementMotor.h
                   include/yarp/dev/ImplementRemoteVariables.h
                   include/yarp/dev/ImplementImpedanceControl.h
-                  include/yarp/dev/ImplementOpenLoopControl.h
                   include/yarp/dev/ImplementTorqueControl.h
                   include/yarp/dev/ImplementCurrentControl.h
                   include/yarp/dev/ImplementPWMControl.h
                   include/yarp/dev/ImplementAxisInfo.h
                   include/yarp/dev/IInteractionMode.h
                   include/yarp/dev/IInteractionModeImpl.h
-                  include/yarp/dev/IOpenLoopControl.h
                   include/yarp/dev/IOpenNI2DeviceDriver.h
                   include/yarp/dev/IPositionControl2.h
                   include/yarp/dev/IPositionControl2Impl.h
@@ -119,7 +117,6 @@ set(YARP_dev_SRCS src/ControlBoardInterfacesImpl.cpp
                   src/IPositionControl2Impl.cpp
                   src/IPositionDirectImpl.cpp
                   src/IVelocityControl2Impl.cpp
-                  src/OpenLoopControlImpl.cpp
                   src/PolyDriver.cpp
                   src/PolyDriverDescriptor.cpp
                   src/PolyDriverList.cpp

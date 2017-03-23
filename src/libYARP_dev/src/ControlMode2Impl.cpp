@@ -82,13 +82,6 @@ bool ImplementControlMode2::setTorqueMode(int j)
     return raw->setTorqueModeRaw(k);
 }
 
-bool ImplementControlMode2::setOpenLoopMode(int j)
-{
-    JOINTIDCHECK
-    int k=castToMapper(helper)->toHw(j);
-    return raw->setOpenLoopModeRaw(k);
-}
-
 bool ImplementControlMode2::setImpedancePositionMode(int j)
 {
     JOINTIDCHECK

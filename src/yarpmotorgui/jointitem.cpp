@@ -61,7 +61,8 @@ JointItem::JointItem(int index,QWidget *parent) :
     sliderTrajectoryPositionPressed = false;
     sliderTrajectoryVelocityPressed = false;
     sliderTorquePressed = false;
-    sliderOpenloopPressed = false;
+    sliderPWMPressed = false;
+    sliderCurrentPressed = false;
     sliderVelocityPressed = false;
     enableCalib = true;
     joint_speedVisible = false;
@@ -82,7 +83,8 @@ JointItem::JointItem(int index,QWidget *parent) :
     max_torque = 0;
     min_torque = 0;
     ref_torque = 0;
-    ref_openloop = 0;
+    ref_pwm = 0;
+    ref_current = 0;
 
     IDLE            = 0;
     POSITION        = 1;
@@ -90,7 +92,8 @@ JointItem::JointItem(int index,QWidget *parent) :
     MIXED           = 3;
     VELOCITY        = 4;
     TORQUE          = 5;
-    OPENLOOP        = 6;
+    PWM             = 6;
+    CURRENT         = 7;
 
 
 
@@ -109,11 +112,11 @@ JointItem::JointItem(int index,QWidget *parent) :
     ui->sliderTorqueTorque->disableClickOutOfHandle = true;
     ui->sliderTorqueTorque->enableViewTarget = false;
 
-    ui->sliderOpenloopOutput->installEventFilter(this);
-    connect(ui->sliderOpenloopOutput,SIGNAL(sliderPressed()),this,SLOT(onSliderOpenloopPressed()));
-    connect(ui->sliderOpenloopOutput,SIGNAL(sliderReleased()),this,SLOT(onSliderOpenloopReleased()));
-    ui->sliderOpenloopOutput->disableClickOutOfHandle = true;
-    ui->sliderOpenloopOutput->enableViewTarget = false;
+    ui->sliderPWMOutput->installEventFilter(this);
+    connect(ui->sliderPWMOutput, SIGNAL(sliderPressed()), this, SLOT(onSliderPWMPressed()));
+    connect(ui->sliderPWMOutput, SIGNAL(sliderReleased()), this, SLOT(onSliderPWMReleased()));
+    ui->sliderPWMOutput->disableClickOutOfHandle = true;
+    ui->sliderPWMOutput->enableViewTarget = false;
 
     ui->sliderDirectPosition->installEventFilter(this);
     connect(ui->sliderDirectPosition, SIGNAL(sliderPressed()), this, SLOT(onSliderDirectPositionPressed()));
@@ -214,26 +217,14 @@ JointItem::JointItem(int index,QWidget *parent) :
     ui->comboInteraction->setItemData(0,QColor(Qt::darkGray),Qt::BackgroundRole);
     ui->comboInteraction->setItemData(1,QColor(0,80,255),Qt::BackgroundRole);
 
-
-//    idleColor           = QColor( 249,236,141);
-//    positionColor       = QColor( 149,221,186);
-//    positionDirectColor = QColor( 119,206,111);
-//    mixedColor          = QColor( 150,(221+190)/2,(186+255)/2);
-//    velocityColor       = QColor( 150,190,255);
-//    torqueColor         = QColor( 219,166,171);
-//    openLoopColor       = QColor( 250,250,250);
-//    errorColor          = QColor(255,0,0);
-//    disconnectColor     = QColor(190,190,190);
-//    hwFaultColor        = QColor(255,0,0);
-//    calibratingColor    = QColor(220,220,220);
-
     ui->comboMode->setItemData( IDLE,           idleColor, Qt::BackgroundRole );
     ui->comboMode->setItemData( POSITION,       positionColor, Qt::BackgroundRole );
     ui->comboMode->setItemData( POSITION_DIR,   positionDirectColor, Qt::BackgroundRole );
     ui->comboMode->setItemData( MIXED,          mixedColor, Qt::BackgroundRole );
     ui->comboMode->setItemData( VELOCITY,       velocityColor, Qt::BackgroundRole );
     ui->comboMode->setItemData( TORQUE,         torqueColor, Qt::BackgroundRole );
-    ui->comboMode->setItemData( OPENLOOP,       openLoopColor, Qt::BackgroundRole );
+    ui->comboMode->setItemData( PWM,            pwmColor, Qt::BackgroundRole );
+    ui->comboMode->setItemData( CURRENT,        currentColor, Qt::BackgroundRole);
 
     ui->comboMode->setItemData( IDLE,           Idle, Qt::UserRole);
     ui->comboMode->setItemData( POSITION,       Position, Qt::UserRole );
@@ -241,7 +232,8 @@ JointItem::JointItem(int index,QWidget *parent) :
     ui->comboMode->setItemData( MIXED,          Mixed, Qt::UserRole );
     ui->comboMode->setItemData( VELOCITY,       Velocity, Qt::UserRole );
     ui->comboMode->setItemData( TORQUE,         Torque, Qt::UserRole );
-    ui->comboMode->setItemData( OPENLOOP,       OpenLoop, Qt::UserRole );
+    ui->comboMode->setItemData( PWM,            Pwm, Qt::UserRole);
+    ui->comboMode->setItemData( CURRENT,        Current, Qt::UserRole);
 
     QString styleSheet = QString("%1 QComboBox:!editable, QComboBox::drop-down:editable {background-color: rgb(149,221,186);} %2").arg(comboStyle1).arg(comboStyle2);
     ui->comboMode->setStyleSheet(styleSheet);
@@ -320,13 +312,22 @@ bool JointItem::eventFilter(QObject *obj, QEvent *event)
                     onSliderTorqueReleased();
                 }
             }
-            if(obj == ui->sliderOpenloopOutput){
-                slider = ui->sliderOpenloopOutput;
+            if (obj == ui->sliderPWMOutput){
+                slider = ui->sliderPWMOutput;
                 if(keyEvent->type() == QEvent::KeyPress){
-                    onSliderOpenloopPressed();
+                    onSliderPWMPressed();
                 }
                 if(keyEvent->type() == QEvent::KeyRelease){
-                    onSliderOpenloopReleased();
+                    onSliderPWMReleased();
+                }
+            }
+            if (obj == ui->sliderPWMOutput){
+                slider = ui->sliderPWMOutput;
+                if (keyEvent->type() == QEvent::KeyPress){
+                    onSliderCurrentPressed();
+                }
+                if (keyEvent->type() == QEvent::KeyRelease){
+                    onSliderCurrentReleased();
                 }
             }
             if(obj == ui->sliderVelocityVelocity){
@@ -384,9 +385,14 @@ void JointItem::enableControlPositionDirect(bool control)
     ui->stackedWidget->widget(POSITION_DIR)->setEnabled(control);
 }
 
-void JointItem::enableControlOpenloop(bool control)
+void JointItem::enableControlPWM(bool control)
 {
-    ui->stackedWidget->widget(OPENLOOP)->setEnabled(control);
+    ui->stackedWidget->widget(PWM)->setEnabled(control);
+}
+
+void JointItem::enableControlCurrent(bool control)
+{
+    ui->stackedWidget->widget(CURRENT)->setEnabled(control);
 }
 
 void JointItem::viewPositionTarget(bool visible)
@@ -413,7 +419,8 @@ void JointItem::setUnits(yarp::dev::JointTypeEnum t)
         ui->labelPositionDirvelUnits->setText(vel_metric_revolute);
         ui->labelMixedvelUnits->setText(vel_metric_revolute);
         ui->labelTorquevelUnits->setText(vel_metric_revolute);
-        ui->labelOpenLoopvelUnits->setText(vel_metric_revolute);
+        ui->labelPWMvelUnits->setText(vel_metric_revolute);
+        ui->labelCurrentvelUnits->setText(vel_metric_revolute);
         ui->labelVelocityvelUnits->setText(vel_metric_revolute);
 
         ui->labelIdleTorque->setText(trq_metric_revolute_title);
@@ -421,7 +428,8 @@ void JointItem::setUnits(yarp::dev::JointTypeEnum t)
         ui->labelPositionDirTorque->setText(trq_metric_revolute_title);
         ui->labelMixedTorque->setText(trq_metric_revolute_title);
         ui->labelTorqueTorque->setText(trq_metric_revolute_title);
-        ui->labelOpenLoopTorque->setText(trq_metric_revolute_title);
+        ui->labelPWMTorque->setText(trq_metric_revolute_title);
+        ui->labelCurrentTorque->setText(trq_metric_revolute_title);
         ui->labelVelocityTorque->setText(trq_metric_revolute_title);
 
         ui->labelIdleposUnits->setText(pos_metric_revolute);
@@ -429,7 +437,8 @@ void JointItem::setUnits(yarp::dev::JointTypeEnum t)
         ui->labelPositionDirposUnits->setText(pos_metric_revolute);
         ui->labelMixedposUnits->setText(pos_metric_revolute);
         ui->labelTorqueposUnits->setText(pos_metric_revolute);
-        ui->labelOpenLoopposUnits->setText(pos_metric_revolute);
+        ui->labelPWMposUnits->setText(pos_metric_revolute);
+        ui->labelCurrentposUnits->setText(pos_metric_revolute);
         ui->labelVelocityposUnits->setText(pos_metric_revolute);
 
         ui->labelIdletrqUnits->setText(trq_metric_revolute);
@@ -437,7 +446,8 @@ void JointItem::setUnits(yarp::dev::JointTypeEnum t)
         ui->labelPositionDirtrqUnits->setText(trq_metric_revolute);
         ui->labelMixedtrqUnits->setText(trq_metric_revolute);
         ui->labelTorquetrqUnits->setText(trq_metric_revolute);
-        ui->labelOpenLooptrqUnits->setText(trq_metric_revolute);
+        ui->labelPWMtrqUnits->setText(trq_metric_revolute);
+        ui->labelCurrenttrqUnits->setText(pos_metric_revolute);
         ui->labelVelocitytrqUnits->setText(trq_metric_revolute);
     }
     else if (t == yarp::dev::VOCAB_JOINTTYPE_PRISMATIC)
@@ -447,7 +457,8 @@ void JointItem::setUnits(yarp::dev::JointTypeEnum t)
         ui->labelPositionDirvelUnits->setText(vel_metric_prism);
         ui->labelMixedvelUnits->setText(vel_metric_prism);
         ui->labelTorquevelUnits->setText(vel_metric_prism);
-        ui->labelOpenLoopvelUnits->setText(vel_metric_prism);
+        ui->labelPWMvelUnits->setText(vel_metric_prism);
+        ui->labelCurrentvelUnits->setText(vel_metric_prism);
         ui->labelVelocityvelUnits->setText(vel_metric_prism);
 
         ui->labelIdleTorque->setText(trq_metric_prism_title);
@@ -455,7 +466,8 @@ void JointItem::setUnits(yarp::dev::JointTypeEnum t)
         ui->labelPositionDirTorque->setText(trq_metric_prism_title);
         ui->labelMixedTorque->setText(trq_metric_prism_title);
         ui->labelTorqueTorque->setText(trq_metric_prism_title);
-        ui->labelOpenLoopTorque->setText(trq_metric_prism_title);
+        ui->labelPWMTorque->setText(trq_metric_prism_title);
+        ui->labelCurrentTorque->setText(trq_metric_prism_title);
         ui->labelVelocityTorque->setText(trq_metric_prism_title);
 
         ui->labelIdleposUnits->setText(pos_metric_prism);
@@ -463,7 +475,8 @@ void JointItem::setUnits(yarp::dev::JointTypeEnum t)
         ui->labelPositionDirposUnits->setText(pos_metric_prism);
         ui->labelMixedposUnits->setText(pos_metric_prism);
         ui->labelTorqueposUnits->setText(pos_metric_prism);
-        ui->labelOpenLoopposUnits->setText(pos_metric_prism);
+        ui->labelPWMposUnits->setText(pos_metric_prism);
+        ui->labelCurrentposUnits->setText(pos_metric_prism);
         ui->labelVelocityposUnits->setText(pos_metric_prism);
 
         ui->labelIdletrqUnits->setText(trq_metric_prism);
@@ -471,7 +484,8 @@ void JointItem::setUnits(yarp::dev::JointTypeEnum t)
         ui->labelPositionDirtrqUnits->setText(trq_metric_prism);
         ui->labelMixedtrqUnits->setText(trq_metric_prism);
         ui->labelTorquetrqUnits->setText(trq_metric_prism);
-        ui->labelOpenLooptrqUnits->setText(trq_metric_prism);
+        ui->labelPWMtrqUnits->setText(trq_metric_prism);
+        ui->labelCurrenttrqUnits->setText(trq_metric_prism);
         ui->labelVelocitytrqUnits->setText(trq_metric_prism);
     }
     else
@@ -496,7 +510,7 @@ void JointItem::setSpeedVisible(bool visible)
     ui->editPositionDirSpeed->setVisible(visible);
     ui->editMixedSpeed->setVisible(visible);
     ui->editTorqueSpeed->setVisible(visible);
-    ui->editOpenLoopSpeed->setVisible(visible);
+    ui->editPWMSpeed->setVisible(visible);
     ui->editVelocitySpeed->setVisible(visible);
 
     ui->labelIdleSpeed->setVisible(visible);
@@ -509,8 +523,8 @@ void JointItem::setSpeedVisible(bool visible)
     ui->labelMixedvelUnits->setVisible(visible);
     ui->labelTorqueSpeed->setVisible(visible);
     ui->labelTorquevelUnits->setVisible(visible);
-    ui->labelOpenLoopSpeed->setVisible(visible);
-    ui->labelOpenLoopvelUnits->setVisible(visible);
+    ui->labelPWMSpeed->setVisible(visible);
+    ui->labelPWMvelUnits->setVisible(visible);
     ui->labelVelocitySpeed->setVisible(visible);
     ui->labelVelocityvelUnits->setVisible(visible);
 
@@ -521,7 +535,7 @@ void JointItem::setSpeedVisible(bool visible)
         ui->editPositionDirSpeed->setMinimumHeight(0);
         ui->editMixedSpeed->setMinimumHeight(0);
         ui->editTorqueSpeed->setMinimumHeight(0);
-        ui->editOpenLoopSpeed->setMinimumHeight(0);
+        ui->editPWMSpeed->setMinimumHeight(0);
         ui->editVelocitySpeed->setMinimumHeight(0);
 
         ui->labelPositionSpeed->setMinimumHeight(0);
@@ -532,8 +546,8 @@ void JointItem::setSpeedVisible(bool visible)
         ui->labelMixedvelUnits->setMinimumHeight(0);
         ui->labelTorqueSpeed->setMinimumHeight(0); 
         ui->labelTorquevelUnits->setMinimumHeight(0);
-        ui->labelOpenLoopSpeed->setMinimumHeight(0);
-        ui->labelOpenLoopvelUnits->setMinimumHeight(0);
+        ui->labelPWMSpeed->setMinimumHeight(0);
+        ui->labelPWMvelUnits->setMinimumHeight(0);
         ui->labelVelocitySpeed->setMinimumHeight(0);
         ui->labelVelocityvelUnits->setMinimumHeight(0);
         ui->labelIdleSpeed->setMinimumHeight(0);
@@ -544,7 +558,7 @@ void JointItem::setSpeedVisible(bool visible)
         ui->editPositionDirSpeed->setMinimumHeight(20);
         ui->editMixedSpeed->setMinimumHeight(20);
         ui->editTorqueSpeed->setMinimumHeight(20);
-        ui->editOpenLoopSpeed->setMinimumHeight(20);
+        ui->editPWMSpeed->setMinimumHeight(20);
         ui->editVelocitySpeed->setMinimumHeight(20);
 
         ui->labelPositionSpeed->setMinimumHeight(20);
@@ -555,8 +569,8 @@ void JointItem::setSpeedVisible(bool visible)
         ui->labelMixedvelUnits->setMinimumHeight(20);
         ui->labelTorqueSpeed->setMinimumHeight(20);
         ui->labelTorquevelUnits->setMinimumHeight(20);
-        ui->labelOpenLoopSpeed->setMinimumHeight(20);
-        ui->labelOpenLoopvelUnits->setMinimumHeight(20);
+        ui->labelPWMSpeed->setMinimumHeight(20);
+        ui->labelPWMvelUnits->setMinimumHeight(20);
         ui->labelVelocitySpeed->setMinimumHeight(20);
         ui->labelVelocityvelUnits->setMinimumHeight(20);
         ui->labelIdleSpeed->setMinimumHeight(20);
@@ -792,8 +806,8 @@ JointItem::~JointItem()
     disconnect(ui->sliderTorqueTorque,SIGNAL(sliderPressed()),this,SLOT(onSliderTorquePressed()));
     disconnect(ui->sliderTorqueTorque,SIGNAL(sliderReleased()),this,SLOT(onSliderTorqueReleased()));
 
-    disconnect(ui->sliderOpenloopOutput,SIGNAL(sliderPressed()),this,SLOT(onSliderOpenloopPressed()));
-    disconnect(ui->sliderOpenloopOutput,SIGNAL(sliderReleased()),this,SLOT(onSliderOpenloopReleased()));
+    disconnect(ui->sliderPWMOutput, SIGNAL(sliderPressed()), this, SLOT(onSliderPWMPressed()));
+    disconnect(ui->sliderPWMOutput, SIGNAL(sliderReleased()), this, SLOT(onSliderPWMReleased()));
 
     disconnect(ui->sliderDirectPosition, SIGNAL(sliderPressed()), this, SLOT(onSliderDirectPositionPressed()));
     disconnect(ui->sliderDirectPosition, SIGNAL(sliderReleased()), this, SLOT(onSliderDirectPositionReleased()));
@@ -983,16 +997,28 @@ void JointItem::onSliderTrajectoryVelocityReleased()
     sliderTrajectoryVelocityPressed = false;
 }
 
-void JointItem::onSliderOpenloopPressed()
+void JointItem::onSliderPWMPressed()
 {
-    sliderOpenloopPressed = true;
+    sliderPWMPressed = true;
 }
 
-void JointItem::onSliderOpenloopReleased()
+void JointItem::onSliderPWMReleased()
 {
-    ref_openloop = (double)ui->sliderOpenloopOutput->value() / ui->sliderOpenloopOutput->getSliderStep();
-    sliderOpenloopCommand(ref_openloop, jointIndex);
-    sliderOpenloopPressed = false;
+    ref_pwm = (double)ui->sliderPWMOutput->value() / ui->sliderPWMOutput->getSliderStep();
+    sliderPWMCommand(ref_pwm, jointIndex);
+    sliderPWMPressed = false;
+}
+
+void JointItem::onSliderCurrentPressed()
+{
+    sliderCurrentPressed = true;
+}
+
+void JointItem::onSliderCurrentReleased()
+{
+    ref_current = (double)ui->sliderPWMOutput->value() / ui->sliderPWMOutput->getSliderStep();
+    sliderCurrentCommand(ref_current, jointIndex);
+    sliderCurrentPressed = false;
 }
 
 void JointItem::onSliderTorquePressed()
@@ -1076,12 +1102,20 @@ void JointItem::updateSliderVelocity(double val)
     ui->sliderVelocityVelocity->setValue(val);
 }
 
-void JointItem::updateSliderOpenloop(double val)
+void JointItem::updateSliderPWM(double val)
 {
-    if (sliderOpenloopPressed)  {
+    if (sliderPWMPressed)  {
         return;
     }
-    ui->sliderOpenloopOutput->setValue(val);
+    ui->sliderPWMOutput->setValue(val);
+}
+
+void JointItem::updateSliderCurrent(double val)
+{
+    if (sliderCurrentPressed)  {
+        return;
+    }
+    ui->sliderPWMOutput->setValue(val);
 }
 
 void JointItem::updateSliderTorque(double val)
@@ -1100,16 +1134,29 @@ void JointItem::updateSliderTrajectoryVelocity(double val)
     ui->sliderTrajectoryVelocity->setValue(val);
 }
 
-void JointItem::setOpenLoop(double openLoopValue)
+void JointItem::setPWM(double pwmValue)
 {
-    if(sliderOpenloopPressed){
+    if(sliderPWMPressed){
         return;
     }
-    if(ui->stackedWidget->currentIndex() == OPENLOOP){
-        updateSliderOpenloop(openLoopValue);
+    if(ui->stackedWidget->currentIndex() == PWM){
+        updateSliderPWM(pwmValue);
         QString sVal;
-        sVal = QString("%L1").arg(openLoopValue, 0, 'f', 3);
-        ui->editOpenLoopOutput->setText(sVal);
+        sVal = QString("%L1").arg(pwmValue, 0, 'f', 3);
+        ui->editPWMOutput->setText(sVal);
+    }
+}
+
+void JointItem::setCurrent(double currentValue)
+{
+    if (sliderCurrentPressed){
+        return;
+    }
+    if (ui->stackedWidget->currentIndex() == CURRENT){
+        updateSliderCurrent(currentValue);
+        QString sVal;
+        sVal = QString("%L1").arg(currentValue, 0, 'f', 3);
+        ui->editPWMOutput->setText(sVal);
     }
 }
 
@@ -1153,8 +1200,11 @@ void JointItem::setPosition(double val)
     if(ui->stackedWidget->currentIndex() == TORQUE){
         ui->editTorqueCurrentPos->setText(sVal);
     }
-    if(ui->stackedWidget->currentIndex() == OPENLOOP){
-        ui->editOpenLoopCurrentPos->setText(sVal);
+    if(ui->stackedWidget->currentIndex() == PWM){
+        ui->editPWMCurrentPos->setText(sVal);
+    }
+    if (ui->stackedWidget->currentIndex() == CURRENT){
+        ui->editPWMCurrentPos->setText(sVal);
     }
 
 }
@@ -1227,8 +1277,8 @@ void JointItem::setTorque(double val)
     if(ui->stackedWidget->currentIndex() == TORQUE){
         ui->editTorqueTorque->setText(sVal);
     }
-    if(ui->stackedWidget->currentIndex() == OPENLOOP){
-        ui->editOpenLoopTorque->setText(sVal);
+    if(ui->stackedWidget->currentIndex() == PWM){
+        ui->editPWMTorque->setText(sVal);
     }
 }
 
@@ -1286,8 +1336,8 @@ void JointItem::setSpeed(double val)
         ui->editTorqueSpeed->setText(sVal);
         //updateSliderTorque(val);
     }
-    if(ui->stackedWidget->currentIndex() == OPENLOOP){
-        ui->editOpenLoopSpeed->setText(sVal);
+    if(ui->stackedWidget->currentIndex() == PWM){
+        ui->editPWMSpeed->setText(sVal);
     }
 
 }
@@ -1531,8 +1581,12 @@ void JointItem::setJointState(JointState newState)
         setJointInternalState(TORQUE);
         break;
     }
-    case OpenLoop:{
-        setJointInternalState(OPENLOOP);
+    case Pwm:{
+        setJointInternalState(PWM);
+        break;
+    }
+    case Current:{
+        setJointInternalState(CURRENT);
         break;
     }
     default:
@@ -1557,9 +1611,14 @@ void JointItem::enableAll()
 
 }
 
-void JointItem::setOpenLoopRange(double min, double max)
+void JointItem::setPWMRange(double min, double max)
 {
-    ui->sliderOpenloopOutput->setRange(min,max);
+    ui->sliderPWMOutput->setRange(min,max);
+}
+
+void JointItem::setCurrentRange(double min, double max)
+{
+    ui->sliderPWMOutput->setRange(min, max);
 }
 
 void JointItem::setPositionRange(double min, double max)
@@ -1663,7 +1722,7 @@ void JointItem::sequenceActivated()
 {
     ui->sliderMixedPosition->setEnabled(false);
     ui->sliderMixedVelocity->setEnabled(false);
-    ui->sliderOpenloopOutput->setEnabled(false);
+    ui->sliderPWMOutput->setEnabled(false);
     ui->sliderDirectPosition->setEnabled(false);
     ui->sliderTrajectoryPosition->setEnabled(false);
     ui->sliderTrajectoryVelocity->setEnabled(false);
@@ -1675,7 +1734,7 @@ void JointItem::sequenceStopped()
 {
     ui->sliderMixedPosition->setEnabled(true);
     ui->sliderMixedVelocity->setEnabled(true);
-    ui->sliderOpenloopOutput->setEnabled(true);
+    ui->sliderPWMOutput->setEnabled(true);
     ui->sliderDirectPosition->setEnabled(true);
     ui->sliderTrajectoryPosition->setEnabled(true);
     ui->sliderTrajectoryVelocity->setEnabled(true);

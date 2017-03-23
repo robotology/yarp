@@ -272,7 +272,6 @@ FakeMotionControl::FakeMotionControl() :
     ImplementTorqueControl(this),
     ImplementControlLimits2(this),
     ImplementPositionDirect(this),
-    ImplementOpenLoopControl(this),
     ImplementInteractionMode(this),
     ImplementMotor(this),
     ImplementAxisInfo(this),
@@ -457,7 +456,6 @@ bool FakeMotionControl::open(yarp::os::Searchable &config)
     ImplementImpedanceControl::initialize(_njoints, _axisMap, _angleToEncoder, NULL, _newtonsToSensor);
     ImplementTorqueControl::initialize(_njoints, _axisMap, _angleToEncoder, NULL, _newtonsToSensor);
     ImplementPositionDirect::initialize(_njoints, _axisMap, _angleToEncoder, NULL);
-    ImplementOpenLoopControl::initialize(_njoints, _axisMap);
     ImplementInteractionMode::initialize(_njoints, _axisMap, _angleToEncoder, NULL);
     ImplementMotor::initialize(_njoints, _axisMap);
     ImplementAxisInfo::initialize(_njoints, _axisMap);
@@ -1340,7 +1338,6 @@ bool FakeMotionControl::close()
     ImplementControlLimits2::uninitialize();
     ImplementTorqueControl::uninitialize();
     ImplementPositionDirect::uninitialize();
-    ImplementOpenLoopControl::uninitialize();
     ImplementInteractionMode::uninitialize();
     ImplementAxisInfo::uninitialize();
 
@@ -1902,10 +1899,6 @@ bool FakeMotionControl::setImpedanceVelocityModeRaw(int j)
     return DEPRECATED("setImpedanceVelocityModeRaw");
 }
 
-bool FakeMotionControl::setOpenLoopModeRaw(int j)
-{
-    return DEPRECATED("setOpenLoopModeRaw");
-}
 // puo' essere richiesto con get
 bool FakeMotionControl::getControlModeRaw(int j, int *v)
 {
@@ -2784,39 +2777,6 @@ bool FakeMotionControl::setInteractionModesRaw(yarp::dev::InteractionModeEnum* m
     return false;
 }
 
-
-//
-// OPENLOOP interface
-//
-bool FakeMotionControl::setRefOutputRaw(int j, double v)
-{
-     return false;
-}
-
-bool FakeMotionControl::setRefOutputsRaw(const double *v)
-{
-    bool ret = true;
-    for(int j=0; j<_njoints; j++)
-    {
-        ret = ret && setRefOutputRaw(j, v[j]);
-    }
-    return ret;
-}
-
-bool FakeMotionControl::getRefOutputRaw(int j, double *out)
-{
-      return false;
-}
-
-bool FakeMotionControl::getRefOutputsRaw(double *outs)
-{
-    bool ret = true;
-    for(int j=0; j<_njoints; j++)
-    {
-        ret = ret && getRefOutputRaw(j, &outs[j]);
-    }
-    return ret;
-}
 
 bool FakeMotionControl::getOutputRaw(int j, double *out)
 {

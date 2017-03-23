@@ -4032,11 +4032,6 @@ bool ControlBoardRemapper::setVelocityMode(int j)
     return this->setControlMode(j,VOCAB_CM_TORQUE);
 }
 
-bool ControlBoardRemapper::setOpenLoopMode(int j)
-{
-    return this->setControlMode(j,VOCAB_CM_OPENLOOP);
-}
-
 bool ControlBoardRemapper::getControlMode(int j, int *mode)
 {
     int off=(int)remappedControlBoards.lut[j].axisIndexInSubControlBoard;
@@ -4170,54 +4165,6 @@ bool ControlBoardRemapper::setControlModes(int *modes)
         ret = ret && ok;
     }
 
-    return ret;
-}
-
-bool ControlBoardRemapper::setRefOutput(int j, double v)
-{
-    int off=(int)remappedControlBoards.lut[j].axisIndexInSubControlBoard;
-    size_t subIndex=remappedControlBoards.lut[j].subControlBoardIndex;
-
-    yarp::dev::RemappedSubControlBoard *p=remappedControlBoards.getSubControlBoard(subIndex);
-
-    if (!p)
-    {
-        return false;
-    }
-
-    if (p->iOpenLoop)
-    {
-        return p->iOpenLoop->setRefOutput(off, v);
-    }
-
-    return false;
-}
-
-bool ControlBoardRemapper::setRefOutputs(const double *outs)
-{
-    bool ret=true;
-
-    for(int l=0;l<controlledJoints;l++)
-    {
-        int off=(int)remappedControlBoards.lut[l].axisIndexInSubControlBoard;
-        size_t subIndex=remappedControlBoards.lut[l].subControlBoardIndex;
-
-        yarp::dev::RemappedSubControlBoard *p=remappedControlBoards.getSubControlBoard(subIndex);
-
-        if (!p)
-        {
-            return false;
-        }
-
-        if (p->iOpenLoop)
-        {
-            ret=ret&&p->iOpenLoop->setRefOutput(off, outs[l]);
-        }
-        else
-        {
-            ret=false;
-        }
-    }
     return ret;
 }
 
@@ -4750,56 +4697,6 @@ bool ControlBoardRemapper::setInteractionModes(yarp::dev::InteractionModeEnum* m
                                                     allJointsBuffers.m_jointsInSubControlBoard[ctrlBrd].data(),
                                                     allJointsBuffers.m_bufferForSubControlBoardInteractionModes[ctrlBrd].data());
         ret = ret && ok;
-    }
-
-    return ret;
-}
-
-bool ControlBoardRemapper::getRefOutput(int j, double *out)
-{
-    int off=(int)remappedControlBoards.lut[j].axisIndexInSubControlBoard;
-    size_t subIndex=remappedControlBoards.lut[j].subControlBoardIndex;
-
-    yarp::dev::RemappedSubControlBoard *p=remappedControlBoards.getSubControlBoard(subIndex);
-
-    if (!p)
-    {
-        return false;
-    }
-
-    if (p->iOpenLoop)
-    {
-        return p->iOpenLoop->getRefOutput(off, out);
-    }
-
-    return false;
-}
-
-bool ControlBoardRemapper::getRefOutputs(double *outs)
-{
-    bool ret=true;
-
-    for(int l=0;l<controlledJoints;l++)
-    {
-        int off=(int)remappedControlBoards.lut[l].axisIndexInSubControlBoard;
-        size_t subIndex=remappedControlBoards.lut[l].subControlBoardIndex;
-
-        yarp::dev::RemappedSubControlBoard *p=remappedControlBoards.getSubControlBoard(subIndex);
-
-        if (!p)
-        {
-            return false;
-        }
-
-        if (p->iOpenLoop)
-        {
-            bool ok = p->iOpenLoop->getRefOutput(off, outs+l);
-            ret = ret && ok;
-        }
-        else
-        {
-            ret=false;
-        }
     }
 
     return ret;

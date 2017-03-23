@@ -35,7 +35,6 @@ SubDevice::SubDevice()
     calib2 = 0;
     iTimed= 0;
     info = 0;
-    iOpenLoop=0;
     iTorque=0;
     iImpedance=0;
     iMode=0;
@@ -114,7 +113,6 @@ void SubDevice::detach()
     iMode=0;
     iMode2=0;
     iTimed=0;
-    iOpenLoop=0;
     iInteract=0;
     iVar = 0;
     configuredF=false;
@@ -170,7 +168,6 @@ bool SubDevice::attach(yarp::dev::PolyDriver *d, const std::string &k)
             subdevice->view(iImpedance);
             subdevice->view(iMode);
             subdevice->view(iMode2);
-            subdevice->view(iOpenLoop);
             subdevice->view(iJntEnc);
             subdevice->view(iMotEnc);
             subdevice->view(iInteract);
@@ -199,9 +196,6 @@ bool SubDevice::attach(yarp::dev::PolyDriver *d, const std::string &k)
 
     if ((iImpedance==0) && (_subDevVerbose))
         yWarning("ControlBoardWrapper for part <%s>:  Warning iImpedance not valid interface.", parentName.c_str());
-
-    if ((iOpenLoop==0) && (_subDevVerbose))
-        yWarning("ControlBoardWrapper for part <%s>:  Warning iOpenLoop not valid interface.", parentName.c_str());
 
     if ((iInteract==0) && (_subDevVerbose))
         yWarning("ControlBoardWrapper for part <%s>:  Warning iInteractionMode not valid interface.", parentName.c_str());

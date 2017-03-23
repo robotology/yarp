@@ -90,7 +90,6 @@ protected:
     yarp::dev::IAxisInfo                *rpc_AxisInfo;
     yarp::dev::IRemoteCalibrator        *rpc_IRemoteCalibrator;
     yarp::dev::IControlCalibration2     *rpc_Icalib2;
-    yarp::dev::IOpenLoopControl         *rpc_IOpenLoop;
     yarp::dev::IImpedanceControl        *rpc_IImpedance;
     yarp::dev::IInteractionMode         *rpc_IInteract;
     yarp::dev::IMotor                   *rpc_IMotor;
@@ -128,9 +127,6 @@ public:
         yarp::os::Bottle& response, bool *rec, bool *ok);
 
     void handleInteractionModeMsg(const yarp::os::Bottle& cmd,
-        yarp::os::Bottle& response, bool *rec, bool *ok);
-
-    void handleOpenLoopMsg(const yarp::os::Bottle& cmd,
         yarp::os::Bottle& response, bool *rec, bool *ok);
 
     void handleProtocolVersionRequest(const yarp::os::Bottle& cmd,

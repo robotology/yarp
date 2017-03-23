@@ -100,7 +100,8 @@ private:
     int     m_partId;
     bool   m_mixedEnabled;
     bool   m_positionDirectEnabled;
-    bool   m_openloopEnabled;
+    bool   m_pwmEnabled;
+    bool   m_currentEnabled;
     PidDlg *m_currentPidDlg;
     Stamp  m_sequence_port_stamp;
     QTimer m_runTimer;
@@ -141,7 +142,7 @@ private:
     IAmplifierControl  *m_iAmp;
     IPidControl        *m_iPid;
     ICurrentControl    *m_iCur;
-    IOpenLoopControl   *m_iOpl;
+    IPWMControl        *m_iPWM;
     ITorqueControl     *m_iTrq;
     IImpedanceControl  *m_iImp;
     IAxisInfo         *m_iinfo;
@@ -175,7 +176,8 @@ public slots:
     void onEnableControlVelocity(bool control);
     void onEnableControlMixed(bool control);
     void onEnableControlPositionDirect(bool control);
-    void onEnableControlOpenloop(bool control);
+    void onEnableControlPWM(bool control);
+    void onEnableControlCurrent(bool control);
 
 private slots:
     void onSequenceActivated();
@@ -201,7 +203,7 @@ private slots:
     void onSliderTorqueCommand(double torqueVal, int index);
     void onSliderTrajectoryPositionCommand(double pos, int index);
     void onSliderTrajectoryVelocityCommand(double speedVal, int index);
-    void onSliderOpenloopCommand(double openloopVal, int index);
+    void onSliderPWMCommand(double dutyVal, int index);
     void onSliderVelocityCommand(double speedVal, int index);
     void onSequenceWindowDoubleClicked(int sequenceNum);
     void onHomeClicked(JointItem *joint);
@@ -215,7 +217,7 @@ private slots:
     void onUpdateAllRemoteVariables();
     void onSendTorquePid(int jointIndex, Pid newPid, MotorTorqueParameters newTorqueParam);
     void onSendStiffness(int jointIdex, double stiff, double damp, double force);
-    void onSendOpenLoop(int jointIndex, int openLoopVal);
+    void onSendPWM(int jointIndex, double dutyVal);
     void onRefreshPids(int jointIndex);
 
 

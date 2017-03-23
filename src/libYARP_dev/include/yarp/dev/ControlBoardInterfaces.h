@@ -22,7 +22,6 @@
 #include <yarp/dev/IVelocityControl2.h>
 #include <yarp/dev/IPositionControl.h>
 #include <yarp/dev/IPositionControl2.h>
-#include <yarp/dev/IOpenLoopControl.h>
 #include <yarp/dev/ICurrentControl.h>
 #include <yarp/dev/IPWMControl.h>
 #include <yarp/dev/IPositionDirect.h>
@@ -1015,9 +1014,6 @@ public:
 
 // interface IControlLimits sets/gets
 #define VOCAB_LIMITS VOCAB4('l','l','i','m')
-
-// interface OpenLoop Mode
-#define VOCAB_OPENLOOP_MODE VOCAB4('o','l','p','d')
 
 // interface IAxisInfo
 #define VOCAB_INFO_NAME VOCAB4('n','a','m','e')

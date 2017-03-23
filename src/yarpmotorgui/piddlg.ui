@@ -1365,9 +1365,9 @@
        </item>
       </layout>
      </widget>
-     <widget class="QWidget" name="tabOpenLoop">
+     <widget class="QWidget" name="tabPWM">
       <attribute name="title">
-       <string>Openloop Params</string>
+       <string>PWM Params</string>
       </attribute>
       <layout class="QHBoxLayout" name="horizontalLayout_3">
        <property name="spacing">
@@ -1386,7 +1386,7 @@
         <number>0</number>
        </property>
        <item>
-        <widget class="QTableWidget" name="tableOpenloop">
+        <widget class="QTableWidget" name="tablePWM">
          <property name="alternatingRowColors">
           <bool>true</bool>
          </property>
@@ -1398,7 +1398,7 @@
          </property>
          <row>
           <property name="text">
-           <string>Openloop value</string>
+           <string>PWM value</string>
           </property>
          </row>
          <row>

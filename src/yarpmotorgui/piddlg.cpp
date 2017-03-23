@@ -19,7 +19,7 @@
 #define     TAB_VELOCITY    1
 #define     TAB_TORQUE      2
 #define     TAB_STIFF       3
-#define     TAB_OPENLOOP    4
+#define     TAB_PWM         4
 #define     TAB_CURRENT     5
 #define     TAB_VARIABLES   6
 
@@ -85,7 +85,7 @@ PidDlg::PidDlg(QString partname, int jointIndex,QWidget *parent) :
     ui->tableVelocity->setItemDelegate(new TableDoubleDelegate);
     ui->tableTorque->setItemDelegate(new TableDoubleDelegate);
     ui->tableStiffness->setItemDelegate(new TableDoubleDelegate);
-    ui->tableOpenloop->setItemDelegate(new TableDoubleDelegate);
+    ui->tablePWM->setItemDelegate(new TableDoubleDelegate);
     ui->tableCurrent->setItemDelegate(new TableDoubleDelegate);
     ui->tableCurrent->setItemDelegate(new TableGenericDelegate);
 }
@@ -313,12 +313,12 @@ void PidDlg::initStiffness(double curStiffVal, double minStiff, double maxStiff,
 }
 
 
-void PidDlg::initOpenLoop(double openLoopVal, double pwm)
+void PidDlg::initPWM(double PWMVal, double pwm)
 {
-    ui->tableOpenloop->item(0,0)->setText(QString("%1").arg((int)openLoopVal));
-    ui->tableOpenloop->item(0,1)->setText(QString("%1").arg((int)openLoopVal));
+    ui->tablePWM->item(0, 0)->setText(QString("%1").arg((double)PWMVal));
+    ui->tablePWM->item(0, 1)->setText(QString("%1").arg((double)PWMVal));
 
-    ui->tableOpenloop->item(1,0)->setText(QString("%1").arg(pwm));
+    ui->tablePWM->item(1,0)->setText(QString("%1").arg(pwm));
 }
 
 void PidDlg::initCurrent(Pid myPid)
@@ -404,9 +404,9 @@ void PidDlg::onSend()
         sendStiffness(jointIndex,desiredStiff,desiredDamp,desiredForce);
         break;
     }
-    case TAB_OPENLOOP:{
-        int desiredOpenLoop = ui->tableOpenloop->item(0,1)->text().toDouble();
-        sendOpenLoop(jointIndex,desiredOpenLoop);
+    case TAB_PWM:{
+        int desiredDuty = ui->tablePWM->item(0,1)->text().toDouble();
+        sendPWM(jointIndex,desiredDuty);
         break;
     }
     case TAB_CURRENT:{

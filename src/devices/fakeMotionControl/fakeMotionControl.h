@@ -112,7 +112,6 @@ class yarp::dev::FakeMotionControl :    public DeviceDriver,
                                         public IPWMControlRaw,
                                         public IImpedanceControlRaw,
                                         public IInteractionModeRaw,
-                                        public IOpenLoopControlRaw,
                                         public IAxisInfoRaw,
                                         public ImplementControlCalibration2<FakeMotionControl, IControlCalibration2>,
                                         public ImplementAmplifierControl<FakeMotionControl, IAmplifierControl>,
@@ -127,7 +126,6 @@ class yarp::dev::FakeMotionControl :    public DeviceDriver,
                                         public ImplementTorqueControl,
                                         public ImplementControlLimits2,
                                         public ImplementPositionDirect,
-                                        public ImplementOpenLoopControl,
                                         public ImplementInteractionMode,
                                         public ImplementCurrentControl,
                                         public ImplementPWMControl,
@@ -263,8 +261,8 @@ public:
     virtual bool setErrorLimitsRaw(const double *limits);
     virtual bool getErrorRaw(int j, double *err);
     virtual bool getErrorsRaw(double *errs);
-//    virtual bool getOutputRaw(int j, double *out);    // uses iOpenLoop interface
-//    virtual bool getOutputsRaw(double *outs);         // uses iOpenLoop interface
+    virtual bool getOutputRaw(int j, double *out);
+    virtual bool getOutputsRaw(double *outs);
     virtual bool getPidRaw(int j, Pid *pid);
     virtual bool getPidsRaw(Pid *pids);
     virtual bool getReferenceRaw(int j, double *ref);
@@ -327,7 +325,6 @@ public:
     virtual bool setTorqueModeRaw(int j);
     virtual bool setImpedancePositionModeRaw(int j);
     virtual bool setImpedanceVelocityModeRaw(int j);
-    virtual bool setOpenLoopModeRaw(int j);
     virtual bool getControlModeRaw(int j, int *v);
     virtual bool getControlModesRaw(int *v);
 
@@ -487,14 +484,6 @@ public:
     virtual bool getTemperaturesRaw(double *vals);
     virtual bool getTemperatureLimitRaw(int m, double *temp);
     virtual bool setTemperatureLimitRaw(int m, const double temp);
-
-    // OPENLOOP interface
-    virtual bool setRefOutputRaw(int j, double v);
-    virtual bool setRefOutputsRaw(const double *v);
-    virtual bool getRefOutputRaw(int j, double *out);
-    virtual bool getRefOutputsRaw(double *outs);
-    virtual bool getOutputRaw(int j, double *out);
-    virtual bool getOutputsRaw(double *outs);
 
     // PWM interface
     virtual bool setRefDutyCycleRaw(int j, double v);

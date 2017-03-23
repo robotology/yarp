@@ -161,7 +161,12 @@
            </item>
            <item>
             <property name="text">
-             <string>Openloop</string>
+             <string>PWM</string>
+            </property>
+           </item>
+           <item>
+            <property name="text">
+             <string>Current</string>
             </property>
            </item>
           </widget>
@@ -256,7 +261,7 @@ QSlider::groove:horizontal:disabled {
  }</string>
         </property>
         <property name="currentIndex">
-         <number>0</number>
+         <number>7</number>
         </property>
         <widget class="QWidget" name="pageIdle">
          <layout class="QVBoxLayout" name="verticalLayout_3">
@@ -1576,7 +1581,7 @@ QSlider::groove:horizontal:disabled {
           </item>
          </layout>
         </widget>
-        <widget class="QWidget" name="pageOpenLoop">
+        <widget class="QWidget" name="pagePWM">
          <layout class="QVBoxLayout" name="verticalLayout_9">
           <property name="spacing">
            <number>2</number>
@@ -1596,9 +1601,9 @@ QSlider::groove:horizontal:disabled {
           <item>
            <widget class="QGroupBox" name="groupBox_11">
             <property name="title">
-             <string>Output</string>
+             <string>PWM</string>
             </property>
-            <layout class="QVBoxLayout" name="verticalLayout_16">
+            <layout class="QVBoxLayout" name="verticalLayout_161">
              <property name="spacing">
               <number>2</number>
              </property>
@@ -1615,7 +1620,7 @@ QSlider::groove:horizontal:disabled {
               <number>0</number>
              </property>
              <item>
-              <widget class="SliderWithTarget" name="sliderOpenloopOutput">
+              <widget class="SliderWithTarget" name="sliderPWMOutput">
                <property name="minimumSize">
                 <size>
                  <width>0</width>
@@ -1660,14 +1665,14 @@ QSlider::groove:horizontal:disabled {
               <number>2</number>
              </property>
              <item row="3" column="2">
-              <widget class="QLabel" name="labelOpenLoopvelUnits">
+              <widget class="QLabel" name="labelPWMvelUnits">
                <property name="text">
                 <string>deg/s</string>
                </property>
               </widget>
              </item>
              <item row="3" column="1">
-              <widget class="QLineEdit" name="editOpenLoopSpeed">
+              <widget class="QLineEdit" name="editPWMSpeed">
                <property name="maximumSize">
                 <size>
                  <width>16777215</width>
@@ -1683,14 +1688,14 @@ QSlider::groove:horizontal:disabled {
               </widget>
              </item>
              <item row="2" column="0">
-              <widget class="QLabel" name="labelOpenLoopTorque">
+              <widget class="QLabel" name="labelPWMTorque">
                <property name="text">
                 <string>Torque:</string>
                </property>
               </widget>
              </item>
              <item row="2" column="1">
-              <widget class="QLineEdit" name="editOpenLoopTorque">
+              <widget class="QLineEdit" name="editPWMTorque">
                <property name="maximumSize">
                 <size>
                  <width>16777215</width>
@@ -1706,14 +1711,14 @@ QSlider::groove:horizontal:disabled {
               </widget>
              </item>
              <item row="2" column="2">
-              <widget class="QLabel" name="labelOpenLooptrqUnits">
+              <widget class="QLabel" name="labelPWMtrqUnits">
                <property name="text">
                 <string>Nm</string>
                </property>
               </widget>
              </item>
              <item row="3" column="0">
-              <widget class="QLabel" name="labelOpenLoopSpeed">
+              <widget class="QLabel" name="labelPWMSpeed">
                <property name="text">
                 <string>Speed:</string>
                </property>
@@ -1727,7 +1732,7 @@ QSlider::groove:horizontal:disabled {
               </widget>
              </item>
              <item row="1" column="1">
-              <widget class="QLineEdit" name="editOpenLoopCurrentPos">
+              <widget class="QLineEdit" name="editPWMCurrentPos">
                <property name="styleSheet">
                 <string notr="true">background-color: rgb(255, 255, 255);</string>
                </property>
@@ -1737,7 +1742,7 @@ QSlider::groove:horizontal:disabled {
               </widget>
              </item>
              <item row="1" column="2">
-              <widget class="QLabel" name="labelOpenLoopposUnits">
+              <widget class="QLabel" name="labelPWMposUnits">
                <property name="text">
                 <string>deg</string>
                </property>
@@ -1746,17 +1751,206 @@ QSlider::groove:horizontal:disabled {
              <item row="0" column="0">
               <widget class="QLabel" name="label">
                <property name="text">
+                <string>DutyCycle</string>
+               </property>
+              </widget>
+             </item>
+             <item row="0" column="1">
+              <widget class="QLineEdit" name="editPWMOutput"/>
+             </item>
+             <item row="0" column="2">
+              <widget class="QLabel" name="label_2">
+               <property name="text">
+                <string>%</string>
+               </property>
+              </widget>
+             </item>
+            </layout>
+           </widget>
+          </item>
+         </layout>
+        </widget>
+        <widget class="QWidget" name="pageCurrent">
+         <layout class="QVBoxLayout" name="verticalLayout_91">
+          <property name="spacing">
+           <number>2</number>
+          </property>
+          <property name="leftMargin">
+           <number>2</number>
+          </property>
+          <property name="topMargin">
+           <number>2</number>
+          </property>
+          <property name="rightMargin">
+           <number>2</number>
+          </property>
+          <property name="bottomMargin">
+           <number>2</number>
+          </property>
+          <item>
+           <widget class="QGroupBox" name="groupBoxCurrent_11">
+            <property name="title">
+             <string>Current</string>
+            </property>
+            <layout class="QVBoxLayout" name="verticalLayout_16">
+             <property name="spacing">
+              <number>2</number>
+             </property>
+             <property name="leftMargin">
+              <number>4</number>
+             </property>
+             <property name="topMargin">
+              <number>0</number>
+             </property>
+             <property name="rightMargin">
+              <number>4</number>
+             </property>
+             <property name="bottomMargin">
+              <number>0</number>
+             </property>
+             <item>
+              <widget class="SliderWithTarget" name="sliderCurrentOutput">
+               <property name="minimumSize">
+                <size>
+                 <width>0</width>
+                 <height>40</height>
+                </size>
+               </property>
+               <property name="baseSize">
+                <size>
+                 <width>0</width>
+                 <height>40</height>
+                </size>
+               </property>
+               <property name="mouseTracking">
+                <bool>false</bool>
+               </property>
+               <property name="styleSheet">
+                <string notr="true">margin-top:10px;
+
+</string>
+               </property>
+               <property name="minimum">
+                <number>-50</number>
+               </property>
+               <property name="maximum">
+                <number>50</number>
+               </property>
+               <property name="orientation">
+                <enum>Qt::Horizontal</enum>
+               </property>
+              </widget>
+             </item>
+            </layout>
+           </widget>
+          </item>
+          <item>
+           <widget class="QWidget" name="widget_221" native="true">
+            <layout class="QGridLayout" name="gridLayout_61">
+             <property name="leftMargin">
+              <number>2</number>
+             </property>
+             <property name="rightMargin">
+              <number>2</number>
+             </property>
+             <item row="3" column="2">
+              <widget class="QLabel" name="labelCurrentvelUnits">
+               <property name="text">
+                <string>deg/s</string>
+               </property>
+              </widget>
+             </item>
+             <item row="3" column="1">
+              <widget class="QLineEdit" name="editCurrentSpeed">
+               <property name="maximumSize">
+                <size>
+                 <width>16777215</width>
+                 <height>16777215</height>
+                </size>
+               </property>
+               <property name="styleSheet">
+                <string notr="true">background-color: rgb(255, 255, 255);</string>
+               </property>
+               <property name="readOnly">
+                <bool>true</bool>
+               </property>
+              </widget>
+             </item>
+             <item row="2" column="0">
+              <widget class="QLabel" name="labelCurrentTorque">
+               <property name="text">
+                <string>Torque:</string>
+               </property>
+              </widget>
+             </item>
+             <item row="2" column="1">
+              <widget class="QLineEdit" name="editCurrentTorque">
+               <property name="maximumSize">
+                <size>
+                 <width>16777215</width>
+                 <height>16777215</height>
+                </size>
+               </property>
+               <property name="styleSheet">
+                <string notr="true">background-color: rgb(255, 255, 255);</string>
+               </property>
+               <property name="readOnly">
+                <bool>true</bool>
+               </property>
+              </widget>
+             </item>
+             <item row="2" column="2">
+              <widget class="QLabel" name="labelCurrenttrqUnits">
+               <property name="text">
+                <string>Nm</string>
+               </property>
+              </widget>
+             </item>
+             <item row="3" column="0">
+              <widget class="QLabel" name="labelCurrentSpeed">
+               <property name="text">
+                <string>Speed:</string>
+               </property>
+              </widget>
+             </item>
+             <item row="1" column="0">
+              <widget class="QLabel" name="labelCurrent_21">
+               <property name="text">
+                <string>Encoder:</string>
+               </property>
+              </widget>
+             </item>
+             <item row="1" column="1">
+              <widget class="QLineEdit" name="editCurrentCurrentPos">
+               <property name="styleSheet">
+                <string notr="true">background-color: rgb(255, 255, 255);</string>
+               </property>
+               <property name="readOnly">
+                <bool>true</bool>
+               </property>
+              </widget>
+             </item>
+             <item row="1" column="2">
+              <widget class="QLabel" name="labelCurrentposUnits">
+               <property name="text">
+                <string>deg</string>
+               </property>
+              </widget>
+             </item>
+             <item row="0" column="0">
+              <widget class="QLabel" name="labelCurrent">
+               <property name="text">
                 <string>Output:</string>
                </property>
               </widget>
              </item>
              <item row="0" column="1">
-              <widget class="QLineEdit" name="editOpenLoopOutput"/>
+              <widget class="QLineEdit" name="editCurrentOutput"/>
              </item>
              <item row="0" column="2">
-              <widget class="QLabel" name="label_2">
+              <widget class="QLabel" name="labelCurrent_2">
                <property name="text">
-                <string>Units</string>
+                <string>mA</string>
                </property>
               </widget>
              </item>

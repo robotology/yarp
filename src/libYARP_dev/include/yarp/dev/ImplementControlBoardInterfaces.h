@@ -42,7 +42,7 @@ YARP_DISABLE_DEPRECATED_WARNING
  *
  * Important: these templates are here for backward compatibility, newer implementations
  * are done with normal classes. If you need to implement something similar have a look
- * at implementations of other interfaes (e.g ITorqueControl or IOpenLoopControl).
+ * at implementations of other interfaes (e.g ITorqueControl).
  */
 template <class DERIVED, class IMPLEMENT>
 class yarp::dev::ImplementPositionControl : public IMPLEMENT

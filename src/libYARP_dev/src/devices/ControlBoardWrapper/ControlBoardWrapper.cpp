@@ -4504,28 +4504,6 @@ bool ControlBoardWrapper::setVelocityMode(int j)
     return false;
 }
 
-bool ControlBoardWrapper::setOpenLoopMode(int j)
-{
-    int off; try{off = device.lut.at(j).offset;} catch(...){yError() << "joint number " << j <<  " out of bound [0-"<< controlledJoints << "] for part " << partName; return false; }
-    int subIndex=device.lut[j].deviceEntry;
-
-    yarp::dev::impl::SubDevice *p=device.getSubdevice(subIndex);
-    if (!p)
-        return false;
-
-    if (p->iMode2)
-    {
-        return p->iMode2->setControlMode(off+p->base, VOCAB_CM_OPENLOOP);
-    }
-    else
-        if (p->iMode)
-        {
-            return p->iMode->setOpenLoopMode(off+p->base);
-        }
-
-    return false;
-}
-
 bool ControlBoardWrapper::getControlMode(int j, int *mode)
 {
     int off; try{off = device.lut.at(j).offset;} catch(...){yError() << "joint number " << j <<  " out of bound [0-"<< controlledJoints << "] for part " << partName; return false; }
@@ -4630,12 +4608,6 @@ bool ControlBoardWrapper::legacySetControlMode(const int j, const int mode)
         case VOCAB_CM_VELOCITY:
         {
             ret = p->iMode->setVelocityMode(off+p->base);
-        }
-        break;
-
-        case VOCAB_CM_OPENLOOP:
-        {
-            ret = p->iMode->setOpenLoopMode(off+p->base);
         }
         break;
 
@@ -4774,44 +4746,6 @@ bool ControlBoardWrapper::setControlModes(int *modes)
         }
     }
 
-    return ret;
-}
-
-bool ControlBoardWrapper::setRefOutput(int j, double v)
-{
-    int off; try{off = device.lut.at(j).offset;} catch(...){yError() << "joint number " << j <<  " out of bound [0-"<< controlledJoints << "] for part " << partName; return false; }
-    int subIndex=device.lut[j].deviceEntry;
-
-    yarp::dev::impl::SubDevice *p=device.getSubdevice(subIndex);
-    if (!p)
-        return false;
-
-    if (p->iOpenLoop)
-    {
-        return p->iOpenLoop->setRefOutput(off+p->base, v);
-    }
-    return false;
-}
-
-bool ControlBoardWrapper::setRefOutputs(const double *outs) {
-    bool ret=true;
-
-    for(int l=0;l<controlledJoints;l++)
-    {
-        int off=device.lut[l].offset;
-        int subIndex=device.lut[l].deviceEntry;
-
-        yarp::dev::impl::SubDevice *p=device.getSubdevice(subIndex);
-        if (!p)
-            return false;
-
-        if (p->iOpenLoop)
-        {
-            ret=ret&&p->iOpenLoop->setRefOutput(off+p->base, outs[l]);
-        }
-        else
-            ret=false;
-    }
     return ret;
 }
 
@@ -5391,46 +5325,6 @@ bool ControlBoardWrapper::setInteractionModes(yarp::dev::InteractionModeEnum* mo
         if (p->iInteract)
         {
             ret=ret && p->iInteract->setInteractionMode(off+p->base, modes[j]);
-        }
-        else
-            ret=false;
-    }
-    return ret;
-}
-
-bool ControlBoardWrapper::getRefOutput(int j, double *out)
-{
-    int off; try{off = device.lut.at(j).offset;} catch(...){yError() << "joint number " << j <<  " out of bound [0-"<< controlledJoints << "] for part " << partName; return false; }
-    int subIndex=device.lut[j].deviceEntry;
-
-    yarp::dev::impl::SubDevice *p=device.getSubdevice(subIndex);
-    if (!p)
-        return false;
-
-    if (p->iOpenLoop)
-    {
-        return p->iOpenLoop->getRefOutput(off+p->base, out);
-    }
-    *out=0.0;
-    return false;
-}
-
-bool ControlBoardWrapper::getRefOutputs(double *outs)
-{
-    bool ret=true;
-
-    for(int l=0;l<controlledJoints;l++)
-    {
-        int off=device.lut[l].offset;
-        int subIndex=device.lut[l].deviceEntry;
-
-        yarp::dev::impl::SubDevice *p=device.getSubdevice(subIndex);
-        if (!p)
-            return false;
-
-        if (p->iOpenLoop)
-        {
-            ret=ret && p->iOpenLoop->getRefOutput(off+p->base, outs+l);
         }
         else
             ret=false;

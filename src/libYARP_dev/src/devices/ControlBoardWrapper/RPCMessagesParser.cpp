@@ -293,12 +293,15 @@ void RPCMessagesParser::handleControlModeMsg(const yarp::os::Bottle& cmd,
                             *ok = rpc_iCtrlMode->setImpedanceVelocityMode(axis);
                         break;
 
-                        case VOCAB_CM_OPENLOOP:
-                            if(rpc_iCtrlMode2)
-                                *ok = rpc_iCtrlMode2->setControlMode(axis, VOCAB_CM_OPENLOOP);
-                            else
-                                *ok = rpc_iCtrlMode->setOpenLoopMode(axis);
-                        break;
+                        case VOCAB_CM_PWM:
+                            if (rpc_iCtrlMode2)
+                                *ok = rpc_iCtrlMode2->setControlMode(axis, VOCAB_CM_PWM);
+                            break;
+
+                        case VOCAB_CM_CURRENT:
+                            if (rpc_iCtrlMode2)
+                                *ok = rpc_iCtrlMode2->setControlMode(axis, VOCAB_CM_CURRENT);
+                            break;
 
                         case VOCAB_CM_MIXED:
                             if(rpc_iCtrlMode2)
@@ -1025,95 +1028,6 @@ void RPCMessagesParser::handleInteractionModeMsg(const yarp::os::Bottle& cmd,
     }
 }
 
-
-void RPCMessagesParser::handleOpenLoopMsg(const yarp::os::Bottle& cmd, yarp::os::Bottle& response, bool *rec, bool *ok)
-{
-    if (!rpc_IOpenLoop)
-    {
-        yError("Error I do not have a valid OpenLoopInterface interface");
-        *ok=false;
-        return;
-    }
-
-    if (ControlBoardWrapper_p->verbose())
-    {
-        yDebug("Handling OpenLoopInterface message: received command: %s\n",  cmd.toString().c_str());
-    }
-
-    int action = cmd.get(0).asVocab();
-
-    switch(action)
-    {
-        case VOCAB_SET:
-        {
-            yError() << "ControlBoardWrapper2 received a set command in the OpenLoopInterface on rpc port "
-                     << "This is wrong, no SET command should use rpc for this interface, but they should use the sreaming port!" ;
-            *rec = false;
-        }
-        break;
-
-        case VOCAB_GET:
-        {
-            response.clear();
-            response.addVocab(VOCAB_IS);
-            response.add(cmd.get(1));
-            switch (cmd.get(2).asVocab())
-            {
-                case VOCAB_OPENLOOP_REF_OUTPUT:
-                {
-                    double tmp;
-                    *rec = true;
-                    *ok = rpc_IOpenLoop->getRefOutput(cmd.get(3).asInt(), &tmp);
-                    response.addDouble(tmp);
-                }
-                break;
-
-                case VOCAB_OPENLOOP_REF_OUTPUTS:
-                {
-                    double *p = new double[controlledJoints];
-                    *rec = true;
-                    *ok = rpc_IOpenLoop->getRefOutputs(p);
-                    Bottle& b = response.addList();
-
-                    for (int i = 0; i < controlledJoints; i++)
-                        b.addDouble(p[i]);
-                    delete[] p;
-                }
-                break;
-
-                case VOCAB_OPENLOOP_PWM_OUTPUT:
-                {
-                    double tmp;
-                    *rec = true;
-                    *ok = rpc_IOpenLoop->getRefOutput(cmd.get(3).asInt(), &tmp);
-                    response.addDouble(tmp);
-                }
-                break;
-
-                case VOCAB_OPENLOOP_PWM_OUTPUTS:
-                {
-                    double *p = new double[controlledJoints];
-                    *rec = true;
-                    *ok = rpc_IOpenLoop->getRefOutputs(p);
-                    Bottle& b = response.addList();
-
-                    for (int i = 0; i < controlledJoints; i++)
-                        b.addDouble(p[i]);
-                    delete[] p;
-                }
-                break;
-            }
-        }
-            lastRpcStamp.update();
-            appendTimeStamp(response, lastRpcStamp);
-
-        break;
-        default:
-            *rec = false;
-        break;
-    }
-}
-
 void RPCMessagesParser::handleCurrentMsg(const yarp::os::Bottle& cmd, yarp::os::Bottle& response, bool *rec, bool *ok)
 {
     if (ControlBoardWrapper_p->verbose())
@@ -1515,10 +1429,6 @@ bool RPCMessagesParser::respond(const yarp::os::Bottle& cmd, yarp::os::Bottle& r
                 handleInteractionModeMsg(cmd, response, &rec, &ok);
             break;
 
-            case VOCAB_OPENLOOP_INTERFACE:
-                handleOpenLoopMsg(cmd, response, &rec, &ok);
-            break;
-
             case VOCAB_PROTOCOL_VERSION:
                 handleProtocolVersionRequest(cmd, response, &rec, &ok);
             break;
@@ -1622,22 +1532,6 @@ bool RPCMessagesParser::respond(const yarp::os::Bottle& cmd, yarp::os::Bottle& r
 
                         switch(cmd.get(1).asVocab())
                         {
-                            case VOCAB_OUTPUT:
-                            {
-                            yWarning() << "DEPRECATED setOutput (should be in streaming!) Check you are using the updated RemoteControlBoard class";
-                            yWarning() << "Correct message should be [" << Vocab::decode(VOCAB_OPENLOOP_INTERFACE) << "] [" << Vocab::decode(VOCAB_OPENLOOP_REF_OUTPUT) << "] joint value";
-                                ok = false;
-                            }
-                            break;
-
-                            case VOCAB_OUTPUTS:
-                            {
-                            yWarning() << "DEPRECATED setOutpus (should be in streaming!) Check you are using the updated RemoteControlBoard class";
-                            yWarning() << "Correct message should be [" << Vocab::decode(VOCAB_OPENLOOP_INTERFACE) << "] [" << Vocab::decode(VOCAB_OPENLOOP_REF_OUTPUTS) << "] joint value";
-                                ok = false;
-                            }
-                            break;
-
                             case VOCAB_OFFSET:
                             {
                                 double v;
@@ -3082,7 +2976,6 @@ void RPCMessagesParser::init(ControlBoardWrapper *x)
     rpc_AxisInfo          = dynamic_cast<yarp::dev::IAxisInfo *>            (ControlBoardWrapper_p);
     rpc_IRemoteCalibrator = dynamic_cast<yarp::dev::IRemoteCalibrator *>    (ControlBoardWrapper_p);
     rpc_Icalib2           = dynamic_cast<yarp::dev::IControlCalibration2 *> (ControlBoardWrapper_p);
-    rpc_IOpenLoop         = dynamic_cast<yarp::dev::IOpenLoopControl *>     (ControlBoardWrapper_p);
     rpc_IImpedance        = dynamic_cast<yarp::dev::IImpedanceControl *>    (ControlBoardWrapper_p);
     rpc_ITorque           = dynamic_cast<yarp::dev::ITorqueControl *>       (ControlBoardWrapper_p);
     rpc_iCtrlMode         = dynamic_cast<yarp::dev::IControlMode *>         (ControlBoardWrapper_p);

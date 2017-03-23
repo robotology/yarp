@@ -150,7 +150,6 @@ class yarp::dev::RemoteControlBoard :
     public IImpedanceControl,
 //    public IControlMode,
     public IControlMode2,
-    public IOpenLoopControl,
     public DeviceDriver,
     public IPositionDirect,
     public IInteractionMode,
@@ -2355,14 +2354,17 @@ public:
     }
 
     /* Get the the current PWM value used to control the motor.
-     * The units are firmware dependent, either machine units or percentage.
      * @param m motor number
-     * @param val filled with PWM value.
+     * @param val filled with PWM value [DutyCycle]
      * @return true/false success failure.
      */
     virtual bool getPWM(int m, double* val)
     {
-        return get1V1I1D(VOCAB_AMP_PWM, m, val);
+        double localArrivalTime = 0.0;
+        extendedPortMutex.wait();
+        bool ret = extendedIntputStatePort.getLastSingle(m, VOCAB_PWMCONTROL_PWM_OUTPUT, val, lastStamp, localArrivalTime);
+        extendedPortMutex.post();
+        return ret;
     }
 
     /* Get the PWM limit fot the given motor.
@@ -2861,11 +2863,6 @@ public:
         return setControlMode(j,VOCAB_CM_IMPEDANCE_VEL);
     }
 
-    bool setOpenLoopMode(int j)
-    {
-        return setControlMode(j,VOCAB_CM_OPENLOOP);
-    }
-
     bool getControlMode(int j, int *mode)
     {
         double localArrivalTime=0.0;
@@ -3257,108 +3254,14 @@ public:
         return CHECK_FAIL(ok, response);
     }
 
-    //
-    // OPENLOOP interface
-    //
-
-    bool setRefOutput(int j, double v)
+     virtual bool getOutput(int j, double *out)
     {
-        //return set2V1I1D(VOCAB_OPENLOOP_INTERFACE, VOCAB_OUTPUT, j, v);
-        // use the streaming port!
-        if (!isLive()) return false;
-        CommandMessage& c = command_buffer.get();
-        c.head.clear();
-        // in streaming port only SET command can be sent, so it is implicit
-        c.head.addVocab(VOCAB_OPENLOOP_INTERFACE);
-        c.head.addVocab(VOCAB_OPENLOOP_REF_OUTPUT);
-        c.head.addInt(j);
-
-        c.body.clear();
-        c.body.resize(1);
-        c.body[0] = v;
-        command_buffer.write(writeStrict_singleJoint);
-        return true;
+        return get1V1I1D(VOCAB_OUTPUT, j, out);
     }
 
-    bool setRefOutputs(const double *v)
-    {
-//        return set2V1DA(VOCAB_OPENLOOP_INTERFACE, VOCAB_OUTPUTS, v);
-        if (!isLive()) return false;
-        CommandMessage& c = command_buffer.get();
-        c.head.clear();
-        c.head.addVocab(VOCAB_OPENLOOP_INTERFACE);
-        c.head.addVocab(VOCAB_OPENLOOP_REF_OUTPUTS);
-
-        c.body.resize(nj);
-
-        memcpy(&(c.body[0]), v, sizeof(double)*nj);
-
-        command_buffer.write(writeStrict_moreJoints);
-
-        return true;
-    }
-
-    /**
-     * Get the last reference sent using the setOutput function
-     * @param j joint number
-     * @param out pointer to storage for return value
-     * @return success/failure
-     */
-    virtual bool getRefOutput(int j, double *out)
-    {
-        //return get2V1D(VOCAB_OPENLOOP_INTERFACE, VOCAB_OPENLOOP_REF_OUTPUTS, out);
-
-        Bottle cmd, response;
-        cmd.addVocab(VOCAB_GET);
-        cmd.addVocab(VOCAB_OPENLOOP_INTERFACE);
-        cmd.addVocab(VOCAB_OPENLOOP_REF_OUTPUT);
-        cmd.addInt(j);
-        response.clear();
-
-        bool ok = rpc_p.write(cmd, response);
-
-        if (CHECK_FAIL(ok, response))
-        {
-            // ok
-            *out = response.get(2).asDouble();
-
-            getTimeStamp(response, lastStamp);
-            return true;
-        }
-        else
-            return false;
-    }
-
-    /**
-     * Get the last reference sent using the setOutputs function
-     * @param outs pointer to the vector that will store the output values
-     * @return true/false on success/failure
-     */
-    virtual bool getRefOutputs(double *outs) {
-        return get2V1DA(VOCAB_OPENLOOP_INTERFACE, VOCAB_OPENLOOP_REF_OUTPUTS, outs);
-    }
-
-    virtual bool getOutput(int j, double *out)
-    {
-        double localArrivalTime=0.0;
-        extendedPortMutex.wait();
-        bool ret = extendedIntputStatePort.getLastSingle(j, VOCAB_OUTPUT, out, lastStamp, localArrivalTime);
-        extendedPortMutex.post();
-        return ret;
-    }
-
-    /**
-     * Get the last reference sent using the setOutputs function
-     * @param outs pointer to the vector that will store the output values
-     * @return true/false on success/failure
-     */
     virtual bool getOutputs(double *outs)
     {
-        double localArrivalTime=0.0;
-        extendedPortMutex.wait();
-        bool ret = extendedIntputStatePort.getLastVector(VOCAB_OUTPUTS, outs, lastStamp, localArrivalTime);
-        extendedPortMutex.post();
-        return ret;
+        return get1VDA(VOCAB_OUTPUTS, outs);
     }
 
     bool checkProtocolVersion(bool ignore)

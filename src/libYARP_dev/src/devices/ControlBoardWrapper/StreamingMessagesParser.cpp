@@ -26,7 +26,6 @@ void StreamingMessagesParser::init(ControlBoardWrapper *x) {
     stream_IPosDirect = dynamic_cast<yarp::dev::IPositionDirect *> (x);
     stream_IVel = dynamic_cast<yarp::dev::IVelocityControl *> (x);
     stream_IVel2 = dynamic_cast<yarp::dev::IVelocityControl2 *> (x);
-    stream_IOpenLoop=dynamic_cast<yarp::dev::IOpenLoopControl *> (x);
     stream_ITorque=dynamic_cast<yarp::dev::ITorqueControl *> (x);
     stream_IPWM = dynamic_cast<yarp::dev::IPWMControl *> (x);
     stream_ICurrent = dynamic_cast<yarp::dev::ICurrentControl *> (x);
@@ -77,10 +76,10 @@ void StreamingMessagesParser::onRead(CommandMessage& v)
                     {
                         bool ok = stream_IPWM->setRefDutyCycle(b.get(2).asVocab(), cmdVector[0]);
                         if (!ok)
-                            yError("Errors while trying to command an open loop message");
+                            yError("Errors while trying to command an pwm message");
                     }
                     else
-                        yError("OpenLoop interface not valid");
+                        yError("PWM interface not valid");
                 }
                 break;
                 case VOCAB_PWMCONTROL_REF_PWMS:
@@ -89,10 +88,10 @@ void StreamingMessagesParser::onRead(CommandMessage& v)
                     {
                         bool ok = stream_IPWM->setRefDutyCycles(cmdVector.data());
                         if (!ok)
-                            yError("Errors while trying to command an open loop message");
+                            yError("Errors while trying to command an pwm message");
                     }
                     else
-                        yError("OpenLoop interface not valid");
+                        yError("PWM interface not valid");
                 }
                 break;
             }
@@ -163,46 +162,6 @@ void StreamingMessagesParser::onRead(CommandMessage& v)
         }
         break;
 
-        case VOCAB_OPENLOOP_INTERFACE:
-        {
-            switch(b.get(1).asVocab())
-            {
-                case VOCAB_OPENLOOP_REF_OUTPUT:
-                {
-                    if (stream_IOpenLoop)
-                    {
-                        bool ok = stream_IOpenLoop->setRefOutput(b.get(2).asVocab(), cmdVector[0]);
-                        if (!ok)
-                            yError("Errors while trying to command an open loop message");
-                    }
-                    else
-                        yError("OpenLoop interface not valid");
-                }
-                break;
-
-                case VOCAB_OPENLOOP_REF_OUTPUTS:
-                {
-                    if (stream_IOpenLoop)
-                    {
-                        bool ok=stream_IOpenLoop->setRefOutputs(cmdVector.data());
-                        if (!ok)
-                            yError("Errors while trying to command an open loop message");
-                    }
-                    else
-                        yError("OpenLoop interface not valid\n");
-                }
-
-                default:
-                {
-                    yarp::os::ConstString str = yarp::os::Vocab::decode(b.get(0).asVocab());
-                    yError("Unrecognized message while receiving on command port (%s)\n", str.c_str());
-                }
-                break;
-            }
-            break;
-        }
-        break;
-
         // fallback to commands without interface name
         case VOCAB_POSITION_MODE:
             {
@@ -241,13 +200,6 @@ void StreamingMessagesParser::onRead(CommandMessage& v)
                         if (!ok)
                             yError("Errors while trying to start a velocity move");
                     }
-            }
-            break;
-
-        case VOCAB_OUTPUTS:
-            {
-                yError() << "DEPRECATED openloop setOutputS!! missing interface name! Check you are using the updated RemoteControlBoard class "
-                         << "Correct message should be [" << Vocab::decode(VOCAB_OPENLOOP_INTERFACE) << "] [" << Vocab::decode(VOCAB_OPENLOOP_REF_OUTPUTS) << "] list_if_values";
             }
             break;
 
