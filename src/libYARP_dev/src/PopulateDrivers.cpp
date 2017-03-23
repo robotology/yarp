@@ -43,6 +43,8 @@ extern DriverCreator *createNavigation2DClient();
 extern DriverCreator *createRobotDescriptionServer();
 extern DriverCreator *createRobotDescriptionClient();
 extern DriverCreator *createServerGrabber();
+extern DriverCreator *createJoypadControlServer();
+extern DriverCreator *createJoypadControlClient();
 
 #ifdef WITH_YARPMATH
 extern DriverCreator *createFrameTransformServer();
@@ -102,6 +104,8 @@ void Drivers::init() {
     add(createRobotDescriptionServer());
     add(createRobotDescriptionClient());
     add(createServerGrabber());
+    add(createJoypadControlServer());
+    add(createJoypadControlClient());
 
 #ifdef WITH_YARPMATH
     add(createFrameTransformServer());

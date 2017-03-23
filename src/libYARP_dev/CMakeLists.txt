@@ -37,6 +37,7 @@ set(YARP_dev_HDRS include/yarp/dev/all.h
                   include/yarp/dev/IControlMode2.h
                   include/yarp/dev/IEncoders.h
                   include/yarp/dev/IEncodersTimed.h
+                  include/yarp/dev/IJoypadController.h
                   include/yarp/dev/IMotorEncoders.h
                   include/yarp/dev/IMotor.h
                   include/yarp/dev/IRemoteVariables.h
@@ -155,7 +156,9 @@ set(YARP_devices_SRCS   src/devices/AnalogWrapper/AnalogWrapper.cpp
                         src/devices/ControlBoardRemapper/ControlBoardRemapperHelpers.cpp
                         src/devices/ControlBoardRemapper/RemoteControlBoardRemapper.cpp
                         src/devices/RobotDescriptionClient/RobotDescriptionClient.cpp
-                        src/devices/RobotDescriptionServer/RobotDescriptionServer.cpp)
+                        src/devices/RobotDescriptionServer/RobotDescriptionServer.cpp
+                        src/devices/JoypadControlServer/JoypadControlServer.cpp
+                        src/devices/JoypadControlClient/JoypadControlClient.cpp)
 if (CREATE_LIB_MATH)
   list(APPEND YARP_devices_SRCS src/devices/FrameTransformClient/FrameTransformClient.cpp
                                 src/devices/FrameTransformServer/FrameTransformServer.cpp
@@ -174,7 +177,10 @@ set(YARP_devices_HDRS   src/devices/AnalogWrapper/AnalogWrapper.h
                         src/devices/ControlBoardRemapper/ControlBoardRemapperHelpers.h
                         src/devices/ControlBoardRemapper/RemoteControlBoardRemapper.h
                         src/devices/RobotDescriptionClient/RobotDescriptionClient.h
-                        src/devices/RobotDescriptionServer/RobotDescriptionServer.h)
+                        src/devices/RobotDescriptionServer/RobotDescriptionServer.h
+                        src/devices/JoypadControlServer/JoypadControlServer.h
+                        src/devices/JoypadControlClient/JoypadControlClient.h
+                        src/devices/JoypadControlServer/JoypadControlNetUtils.h)
 if (CREATE_LIB_MATH)
   list(APPEND YARP_devices_HDRS src/devices/FrameTransformClient/FrameTransformClient.h
                                 src/devices/FrameTransformServer/FrameTransformServer.h
@@ -269,9 +275,10 @@ if (CREATE_LIB_MATH)
   add_definitions(-DWITH_YARPMATH)
 endif()
 
-include_directories(${CMAKE_CURRENT_SOURCE_DIR}/src/devices/AnalogSensorClient)
-include_directories(${CMAKE_CURRENT_SOURCE_DIR}/src/devices/BatteryClient)
-include_directories(${CMAKE_CURRENT_SOURCE_DIR}/src/devices/FrameTransformClient)
+include_directories(${CMAKE_CURRENT_SOURCE_DIR}/src/devices/AnalogSensorClient
+                    ${CMAKE_CURRENT_SOURCE_DIR}/src/devices/BatteryClient
+                    ${CMAKE_CURRENT_SOURCE_DIR}/src/devices/FrameTransformClient
+                    ${CMAKE_CURRENT_SOURCE_DIR}/src/devices/JoypadControlServer)
 
 include_directories(${YARP_TREE_INCLUDE_DIRS})
 include_directories(SYSTEM ${ACE_INCLUDE_DIRS})
