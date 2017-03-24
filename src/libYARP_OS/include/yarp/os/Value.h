@@ -268,12 +268,14 @@ public:
 
 #ifndef YARP_NO_DEPRECATED //since YARP 2.3.70
     // comparisons with strings worked "accidentally", users depend on them
-    bool YARP_DEPRECATED_MSG("Use asString() instead") operator==(const char *alt) const {
+    YARP_DEPRECATED_MSG("Use asString() instead")
+    bool operator==(const char *alt) const {
         return asString() == alt;
     }
 
     // comparisons with strings worked "accidentally", users depend on them
-    bool YARP_DEPRECATED_MSG("Use asString() instead") operator!=(const char *alt) const {
+    YARP_DEPRECATED_MSG("Use asString() instead")
+    bool operator!=(const char *alt) const {
         return asString() != alt;
     }
 #endif
