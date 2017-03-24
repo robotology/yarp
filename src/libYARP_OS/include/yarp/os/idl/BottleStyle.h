@@ -20,7 +20,7 @@ namespace yarp {
 }
 
 template <class T>
-class YARP_OS_API yarp::os::idl::BottleStyle : public T {
+class yarp::os::idl::BottleStyle : public T {
 public:
     virtual bool read(yarp::os::ConnectionReader& reader) {
         return T::readBottle(reader);

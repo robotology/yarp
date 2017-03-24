@@ -17,6 +17,8 @@
 */
 
 
+#define _USE_MATH_DEFINES
+
 #include <iostream>
 #include <iomanip>
 #include <sstream>
@@ -24,8 +26,6 @@
 #include <string>
 #include <stdio.h>
 #include <limits>
-
-#define _USE_MATH_DEFINES
 #include <cmath>
 
 #include <cv.h>
