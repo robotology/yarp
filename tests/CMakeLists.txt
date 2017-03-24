@@ -4,7 +4,7 @@
 
 
 include(CMakeDependentOption)
-cmake_dependent_option(YARP_ENABLE_BROKEN_TESTS OFF "Enable broken tests" YARP_COMPILE_TESTS OFF )
+cmake_dependent_option(YARP_ENABLE_BROKEN_TESTS OFF "Enable broken tests" YARP_COMPILE_TESTS OFF)
 mark_as_advanced(YARP_ENABLE_BROKEN_TESTS)
 if(YARP_ENABLE_BROKEN_TESTS)
   add_definitions(-DBROKEN_TEST)
@@ -47,19 +47,6 @@ if(YARP_COMPILE_TESTS)
                  "${CMAKE_CURRENT_BINARY_DIR}/YarpBuildLocation.h"
                  @ONLY)
   include_directories(${CMAKE_CURRENT_BINARY_DIR})
-
-
-
-  #### temporary variable for debug
-  set(ENABLE_YARPRUNTESTS FALSE CACHE BOOL "Enable yarprun tests")
-  if(ENABLE_YARPRUNTESTS)
-    add_definitions(-DYARPRUN_TEST)
-    add_executable(testModule ${CMAKE_SOURCE_DIR}/tests/libYARP_OS/testModule/module.cpp)
-    target_link_libraries(testModule YARP::YARP_init
-                                     YARP::YARP_OS)
-    set_property(TARGET testModule PROPERTY FOLDER "Test")
-  endif()
-  mark_as_advanced(ENABLE_YARPRUNTESTS)
 
   set(targets OS
               sig
@@ -153,7 +140,6 @@ if(YARP_COMPILE_TESTS)
     add_definitions(-DYARP_TESTFRAMEGRABBER_TESTS)
   endif()
 
-
   add_subdirectory(carriers)
   add_subdirectory(devices)
   add_subdirectory(yarpidl_thrift)
@@ -172,4 +158,5 @@ if(YARP_COMPILE_TESTS)
   yarp_deprecated_option(TEST_yarpidl_rosmsg) # Since YARP 2.3.70
   yarp_deprecated_option(TEST_yarpidl_thrift) # Since YARP 2.3.70
   yarp_deprecated_option(CREATE_PLUGIN_TESTS) # Since YARP 2.3.70
+  yarp_deprecated_option(ENABLE_YARPRUNTESTS) # Since YARP 2.3.70
 endif()
