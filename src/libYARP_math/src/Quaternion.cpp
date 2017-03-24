@@ -272,6 +272,16 @@ double Quaternion::abs()
                 internal_data[3] * internal_data[3]);
 }
 
+void Quaternion::normalize()
+{
+    double length = abs();
+    internal_data[0] /= length;
+    internal_data[1] /= length;
+    internal_data[2] /= length;
+    internal_data[3] /= length;
+    return;
+}
+
 double Quaternion::arg()
 {
     return atan2(sqrt(internal_data[1] * internal_data[1] +

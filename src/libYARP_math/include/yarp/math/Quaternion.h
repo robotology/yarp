@@ -47,6 +47,8 @@ public:
     */
     double abs();
 
+    void normalize();
+
     /**
     * Computes the argument or phase of the quaternion in radians.
     */
