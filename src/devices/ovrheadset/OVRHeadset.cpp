@@ -4,7 +4,10 @@
  * CopyPolicy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
  */
 
-
+#define AXIS_COUNT 8
+#define STICK_COUNT 2
+#define BUTTON_COUNT 13
+#define INPUTERRORCHECK if (inputStateError) return false
 #include "OVRHeadset.h"
 #include "InputCallback.h"
 #include "TextureBuffer.h"
@@ -151,11 +154,86 @@ yarp::dev::OVRHeadset::OVRHeadset() :
         userPoseEnabled(false),
         logoEnabled(true),
         crosshairsEnabled(true),
-        batteryEnabled(true)
+        batteryEnabled(true),
+        inputStateError(false)
 {
     yTrace();
-}
+    error_messages[ovrError_MemoryAllocationFailure       ] = "Failure to allocate memory.";
+    error_messages[ovrError_InvalidSession                ] = "Invalid ovrSession parameter provided.";
+    error_messages[ovrError_Timeout                       ] = "The operation timed out.";
+    error_messages[ovrError_NotInitialized                ] = "The system or component has not been initialized.";
+    error_messages[ovrError_InvalidParameter              ] = "Invalid parameter provided.See error info or log for details.";
+    error_messages[ovrError_ServiceError                  ] = "Generic service error.See error info or log for details.";
+    error_messages[ovrError_NoHmd                         ] = "The given HMD doesn't exist.";
+    error_messages[ovrError_Unsupported                   ] = "Function call is not supported on this hardware / software.";
+    error_messages[ovrError_DeviceUnavailable             ] = "Specified device type isn't available.";
+    error_messages[ovrError_InvalidHeadsetOrientation     ] = "The headset was in an invalid orientation for the requested operation(e.g.vertically oriented during ovr_RecenterPose).";
+    error_messages[ovrError_ClientSkippedDestroy          ] = "The client failed to call ovr_Destroy on an active session before calling ovr_Shutdown.Or the client crashed.";
+    error_messages[ovrError_ClientSkippedShutdown         ] = "The client failed to call ovr_Shutdown or the client crashed.";
+    error_messages[ovrError_ServiceDeadlockDetected       ] = "The service watchdog discovered a deadlock.";
+    error_messages[ovrError_InvalidOperation              ] = "Function call is invalid for object's current state.";
+    error_messages[ovrError_AudioDeviceNotFound           ] = "Failure to find the specified audio device.";
+    error_messages[ovrError_AudioComError                 ] = "Generic COM error.";
+    error_messages[ovrError_Initialize                    ] = "Generic initialization error.";
+    error_messages[ovrError_LibLoad                       ] = "Couldn't load LibOVRRT.";
+    error_messages[ovrError_LibVersion                    ] = "LibOVRRT version incompatibility.";
+    error_messages[ovrError_ServiceConnection             ] = "Couldn't connect to the OVR Service.";
+    error_messages[ovrError_ServiceVersion                ] = "OVR Service version incompatibility.";
+    error_messages[ovrError_IncompatibleOS                ] = "The operating system version is incompatible.";
+    error_messages[ovrError_DisplayInit                   ] = "Unable to initialize the HMD display.";
+    error_messages[ovrError_ServerStart                   ] = "Unable to start the server.Is it already running ?";
+    error_messages[ovrError_Reinitialization              ] = "Attempting to re - initialize with a different version.";
+    error_messages[ovrError_MismatchedAdapters            ] = "Chosen rendering adapters between client and service do not match.";
+    error_messages[ovrError_LeakingResources              ] = "Calling application has leaked resources.";
+    error_messages[ovrError_ClientVersion                 ] = "Client version too old to connect to service.";
+    error_messages[ovrError_OutOfDateOS                   ] = "The operating system is out of date.";
+    error_messages[ovrError_OutOfDateGfxDriver            ] = "The graphics driver is out of date.";
+    error_messages[ovrError_IncompatibleGPU               ] = "The graphics hardware is not supported.";
+    error_messages[ovrError_NoValidVRDisplaySystem        ] = "No valid VR display system found.";
+    error_messages[ovrError_Obsolete                      ] = "Feature or API is obsolete and no longer supported.";
+    error_messages[ovrError_DisabledOrDefaultAdapter      ] = "No supported VR display system found, but disabled or driverless adapter found.";
+    error_messages[ovrError_HybridGraphicsNotSupported    ] = "The system is using hybrid graphics(Optimus, etc...), which is not support.";
+    error_messages[ovrError_DisplayManagerInit            ] = "Initialization of the DisplayManager failed.";
+    error_messages[ovrError_TrackerDriverInit             ] = "Failed to get the interface for an attached tracker.";
+    error_messages[ovrError_LibSignCheck                  ] = "LibOVRRT signature check failure.";
+    error_messages[ovrError_LibPath                       ] = "LibOVRRT path failure.";
+    error_messages[ovrError_LibSymbols                    ] = "LibOVRRT symbol resolution failure.";
+    error_messages[ovrError_RemoteSession                 ] = "Failed to connect to the service because remote connections to the service are not allowed.";
+    error_messages[ovrError_DisplayLost                   ] = "In the event of a system - wide graphics reset or cable unplug this is returned to the app.";
+    error_messages[ovrError_TextureSwapChainFull          ] = "ovr_CommitTextureSwapChain was called too many times on a texture swapchain without calling submit to use the chain.";
+    error_messages[ovrError_TextureSwapChainInvalid       ] = "The ovrTextureSwapChain is in an incomplete or inconsistent state.Ensure ovr_CommitTextureSwapChain was called at least once first.";
+    error_messages[ovrError_GraphicsDeviceReset           ] = "Graphics device has been reset(TDR, etc...)";
+    error_messages[ovrError_DisplayRemoved                ] = "HMD removed from the display adapter.";
+    error_messages[ovrError_ContentProtectionNotAvailable ] = "Content protection is not available for the display.";
+    error_messages[ovrError_ApplicationInvisible          ] = "Application declared itself as an invisible type and is not allowed to submit frames.";
+    error_messages[ovrError_Disallowed                    ] = "The given request is disallowed under the current conditions.";
+    error_messages[ovrError_DisplayPluggedIncorrectly     ] = "Display portion of HMD is plugged into an incompatible port(ex: IGP)";
+    error_messages[ovrError_RuntimeException              ] = "A runtime exception occurred.The application is required to shutdown LibOVR and re - initialize it before this error state will be cleared.";
+    error_messages[ovrError_NoCalibration                 ] = "Result of a missing calibration block.";
+    error_messages[ovrError_OldVersion                    ] = "Result of an old calibration block.";
+    error_messages[ovrError_MisformattedBlock             ] = "Result of a bad calibration block due to lengths.";
 
+    buttonIdToOvrButton.push_back(ovrButton_A);
+    buttonIdToOvrButton.push_back(ovrButton_B);
+    buttonIdToOvrButton.push_back(ovrButton_RThumb);
+    buttonIdToOvrButton.push_back(ovrButton_RShoulder);
+    buttonIdToOvrButton.push_back(ovrButton_X);
+    buttonIdToOvrButton.push_back(ovrButton_Y);
+    buttonIdToOvrButton.push_back(ovrButton_LThumb);
+    buttonIdToOvrButton.push_back(ovrButton_LShoulder);
+    buttonIdToOvrButton.push_back(ovrButton_Enter);
+    buttonIdToOvrButton.push_back(ovrButton_Back);
+    buttonIdToOvrButton.push_back(ovrButton_VolUp);
+    buttonIdToOvrButton.push_back(ovrButton_VolDown);
+    buttonIdToOvrButton.push_back(ovrButton_Home);
+
+    DButtonToHat[0]               = YRPJOY_HAT_CENTERED;
+    DButtonToHat[ovrButton_Up]    = YRPJOY_HAT_UP;
+    DButtonToHat[ovrButton_Right] = YRPJOY_HAT_RIGHT;
+    DButtonToHat[ovrButton_Down]  = YRPJOY_HAT_DOWN;
+    DButtonToHat[ovrButton_Left]  = YRPJOY_HAT_LEFT;
+
+}
 yarp::dev::OVRHeadset::~OVRHeadset()
 {
     yTrace();
@@ -164,6 +242,47 @@ yarp::dev::OVRHeadset::~OVRHeadset()
 bool yarp::dev::OVRHeadset::open(yarp::os::Searchable& cfg)
 {
     yTrace();
+    //PORT OPENING CODE REFACTORING PROPOSAL
+    //std::vector<std::pair<yarp::os::BufferedPort<yarp::os::Bottle>*, std::string> > ports;
+    //ports.push_back(std::make_pair(orientationPort,                  "orientation"));
+    //ports.push_back(std::make_pair(positionPort,                     "position"));
+    //ports.push_back(std::make_pair(angularVelocityPort,              "angularVelocity"));
+    //ports.push_back(std::make_pair(linearVelocityPort,               "linearVelocity"));
+    //ports.push_back(std::make_pair(angularAccelerationPort,          "angularAcceleration"));
+    //ports.push_back(std::make_pair(linearAccelerationPort,           "linearAcceleration"));
+    //ports.push_back(std::make_pair(predictedOrientationPort,         "predictedOrientation"));
+    //ports.push_back(std::make_pair(predictedPositionPort,            "predictedPosition"));
+    //ports.push_back(std::make_pair(predictedAngularVelocityPort,     "predictedAngularVelocity"));
+    //ports.push_back(std::make_pair(predictedLinearVelocityPort,      "predictedLinearVelocity"));
+    //ports.push_back(std::make_pair(predictedAngularAccelerationPort, "predictedAngularAcceleration"));
+    //ports.push_back(std::make_pair(predictedLinearAccelerationPort,  "predictedLinearAcceleration"));
+    //
+    //for (auto port : ports)
+    //{
+    //    port.first = new yarp::os::BufferedPort<yarp::os::Bottle>;
+    //    std::string name, prefix;
+    //    bool        predicted;
+    //
+    //    predicted = port.second.find("predicted") != std::string::npos;
+    //    prefix = predicted ? "/oculus/predicted" : "/oculus";
+    //    name = prefix + "/headpose/" + port.second + ":o";
+    //    if (!port.first->open(name)) {
+    //        yError() << "Cannot open" << port.second << "port";
+    //        this->close();
+    //        return false;
+    //    }
+    //    port.first->setWriteOnly();
+    //}
+
+    if (cfg.check("stick_as_axis"))
+    {
+        getStickAsAxis = cfg.find("stick_as_axis").asBool();
+    }
+    else
+    {
+        yError() << "ovrHeadset: parameter stick_as_axis not found in configuration file";
+        return false;
+    }
 
     orientationPort = new yarp::os::BufferedPort<yarp::os::Bottle>;
     if (!orientationPort->open("/oculus/headpose/orientation:o")) {
@@ -594,7 +713,6 @@ void yarp::dev::OVRHeadset::threadRelease()
     }
 }
 
-
 bool yarp::dev::OVRHeadset::close()
 {
     yTrace();
@@ -672,7 +790,6 @@ bool yarp::dev::OVRHeadset::stopService()
 //     yDebug("eye1         %f,        %f,       %f     %f     %f     %f     %f\n\n", eye1[0], eye1[1], eye1[2], EyeRenderPose[1].Position.x,  EyeRenderPose[1].Position.y, EyeRenderPose[1].Position.z, iod1 - iod0);
 // }
 
-
 // static void debugPose(const ovrPosef pose, const char* name = "")
 // {
 //     float roll, pitch, yaw;
@@ -688,9 +805,10 @@ bool yarp::dev::OVRHeadset::stopService()
 //            pose.Position.z);
 // }
 
-
 void yarp::dev::OVRHeadset::run()
 {
+    ovrResult result;
+
     if (glfwWindowShouldClose(window)) {
         close();
         return;
@@ -732,6 +850,14 @@ void yarp::dev::OVRHeadset::run()
     ovrTrackingState predicted_ts = ovr_GetTrackingState(session, ovr_GetTimeInSeconds() + prediction, false);
     ovrPoseStatef predicted_headpose = predicted_ts.HeadPose;
     yarp::os::Stamp predicted_stamp(distortionFrameIndex, predicted_ts.HeadPose.TimeInSeconds);
+
+    // Get Input State
+    ovr_GetInputState(session, ovrControllerType_Active, &inputState);
+    if (!OVR_SUCCESS(result))
+    {
+        errorManager(result);
+        inputStateError = true;
+    }
 
     // Read orientation and write it on the port
     if (ts.StatusFlags & ovrStatus_OrientationTracked) {
@@ -1267,15 +1393,12 @@ void yarp::dev::OVRHeadset::onKey(int key, int scancode, int action, int mods)
     }
 }
 
-
 void yarp::dev::OVRHeadset::reconfigureRendering()
 {
     for (int eye = 0; eye < ovrEye_Count; ++eye) {
         ovr_GetRenderDesc(session, (ovrEyeType)eye, fov[eye]);
     }
 }
-
-
 
 void yarp::dev::OVRHeadset::reconfigureFOV()
 {
@@ -1333,4 +1456,95 @@ void yarp::dev::OVRHeadset::DebugHmd(ovrHmdDesc hmdDesc)
     yDebug("  * SerialNumber: %s", hmdDesc.SerialNumber);
     yDebug("  * Firmware Version: %d.%d", hmdDesc.FirmwareMajor, hmdDesc.FirmwareMinor);
     yDebug("  * Resolution: %dx%d", hmdDesc.Resolution.w, hmdDesc.Resolution.h);
+}
+
+void yarp::dev::OVRHeadset::errorManager(ovrResult error)
+{
+    if (error_messages.find(error) != error_messages.end())
+    {
+        yError() << error_messages[error];
+    }
+}
+
+bool yarp::dev::OVRHeadset::getAxisCount(unsigned int& axis_count)
+{
+    INPUTERRORCHECK;
+    axis_count = getStickAsAxis ? AXIS_COUNT : AXIS_COUNT - STICK_COUNT * 2;
+    return true;
+}
+bool yarp::dev::OVRHeadset::getButtonCount(unsigned int& button_count)
+{
+    INPUTERRORCHECK;
+    button_count = BUTTON_COUNT;
+    return true;
+}
+bool yarp::dev::OVRHeadset::getTrackballCount(unsigned int& Trackball_count) 
+{
+    INPUTERRORCHECK;
+    Trackball_count = 0;
+    return true;
+};
+bool yarp::dev::OVRHeadset::getHatCount(unsigned int& Hat_count) 
+{
+    INPUTERRORCHECK;
+    Hat_count = 1;
+    return true;
+}
+bool yarp::dev::OVRHeadset::getTouchSurfaceCount(unsigned int& touch_count) 
+{
+    INPUTERRORCHECK;
+    touch_count = 0;
+    return true;
+}
+bool yarp::dev::OVRHeadset::getStickCount(unsigned int& stick_count) 
+{
+    INPUTERRORCHECK;
+    stick_count = getStickAsAxis ? 0 : STICK_COUNT;
+    return true;
+}
+bool yarp::dev::OVRHeadset::getStickDoF(unsigned int stick_id, unsigned int& DoF) 
+{
+    DoF = 2;
+    return true;
+}
+bool yarp::dev::OVRHeadset::getButton(unsigned int button_id, float& value) 
+{
+    INPUTERRORCHECK;
+    if (button_id > buttonIdToOvrButton.size() - 1)
+    {
+        yError() << "OVRHeadset: button id out of bound";
+        return false;
+    }
+    value = inputState.Buttons & buttonIdToOvrButton[button_id] ? 1.0 : 0.0;
+    return true;
+}
+bool yarp::dev::OVRHeadset::getTrackball(unsigned int trackball_id, yarp::sig::Vector& value) 
+{
+    return false;
+}
+bool yarp::dev::OVRHeadset::getHat(unsigned int hat_id, unsigned char& value) 
+{
+    INPUTERRORCHECK;
+    if (hat_id > 0)
+    {
+        yError() << "OVRHeadset: hat id out of bound";
+        return false;
+    }
+    value = DButtonToHat[inputState.Buttons & ovrButton_Up]    |
+            DButtonToHat[inputState.Buttons & ovrButton_Down]  |
+            DButtonToHat[inputState.Buttons & ovrButton_Right] |
+            DButtonToHat[inputState.Buttons & ovrButton_Left];
+    return false;
+}
+bool yarp::dev::OVRHeadset::getAxis(unsigned int axis_id, double& value) 
+{
+    return false;
+}
+bool yarp::dev::OVRHeadset::getStick(unsigned int stick_id, yarp::sig::Vector& value, JoypadCtrl_coordinateMode coordinate_mode) 
+{
+    return false;
+}
+bool yarp::dev::OVRHeadset::getTouch(unsigned int touch_id, yarp::sig::Vector& value) 
+{
+    return false;
 }
