@@ -120,7 +120,6 @@ public:
         invAxisMap=new int [nj];
         angleToEncoders=new double [nj];
         newtonsToSensors=new double [nj];
-        dutycycleToPWMs = new double[nj];
 
         if(amps)
         {
