@@ -1097,11 +1097,11 @@ QColor MainWindow::getColorMode(int m)
         break;
     }
     case JointItem::Pwm:{
-        mode = torqueColor;
+        mode = pwmColor;
         break;
     }
     case JointItem::Current:{
-        mode = pwmColor;
+        mode = currentColor;
         break;
     }
 

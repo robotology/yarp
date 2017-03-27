@@ -140,7 +140,6 @@ public:
             yAssert(dutycycleToPWMs != 0);
         }
 
-        newtonsToSensors = new double[nj];
         yAssert(zeros != 0 && signs != 0 && axisMap != 0 && invAxisMap != 0 && angleToEncoders != 0 && newtonsToSensors != 0);
         return true;
     }

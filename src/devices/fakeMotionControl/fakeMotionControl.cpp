@@ -186,6 +186,7 @@ bool FakeMotionControl::alloc(int nj)
     _ref_speeds = allocAndCheck<double>(nj);
     _ref_accs = allocAndCheck<double>(nj);
     _ref_torques = allocAndCheck<double>(nj);
+    _ref_currents = allocAndCheck<double>(nj);
     _enabledAmp = allocAndCheck<bool>(nj);
     _enabledPid = allocAndCheck<bool>(nj);
     _calibrated = allocAndCheck<bool>(nj);
@@ -240,6 +241,7 @@ bool FakeMotionControl::dealloc()
     checkAndDestroy(_ref_speeds);
     checkAndDestroy(_ref_accs);
     checkAndDestroy(_ref_torques);
+    checkAndDestroy(_ref_currents);
     checkAndDestroy(_enabledAmp);
     checkAndDestroy(_enabledPid);
     checkAndDestroy(_calibrated);
@@ -340,6 +342,7 @@ FakeMotionControl::FakeMotionControl() :
     _posDir_references    = NULL;
     _ref_speeds       = NULL;
     _ref_torques      = NULL;
+    _ref_currents     = NULL;
     _kinematic_mj     = NULL;
     _kbemf            = NULL;
     _ktau             = NULL;
@@ -2197,12 +2200,14 @@ bool FakeMotionControl::disableAmpRaw(int j)
 
 bool FakeMotionControl::getCurrentRaw(int j, double *value)
 {
+    //just for testing purposes, this is not a real implementation
     *value = current[j];
     return true;
 }
 
 bool FakeMotionControl::getCurrentsRaw(double *vals)
 {
+    //just for testing purposes, this is not a real implementation
     bool ret = true;
     for(int j=0; j< _njoints; j++)
     {
@@ -2886,77 +2891,127 @@ bool FakeMotionControl::getCurrentsRaw(double *t)
 
 bool FakeMotionControl::getCurrentRangeRaw(int j, double *min, double *max)
 {
-    return NOT_YET_IMPLEMENTED("getCurrentRangeRaw");
+    //just for testing purposes, this is not a real implementation
+    *min = _ref_currents[j] / 100;
+    *max = _ref_currents[j] * 100;
+    return true;
 }
 
 bool FakeMotionControl::getCurrentRangesRaw(double *min, double *max)
 {
-    return NOT_YET_IMPLEMENTED("getCurrentRangesRaw");
+    //just for testing purposes, this is not a real implementation
+    for (int i = 0; i < _njoints; i++)
+    {
+        min[i] = _ref_currents[i] / 100;
+        max[i] = _ref_currents[i] * 100;
+    }
+    return true;
 }
 
 bool FakeMotionControl::setRefCurrentsRaw(const double *t)
 {
-    return NOT_YET_IMPLEMENTED("setRefCurrentsRaw");
+    for (int i = 0; i < _njoints; i++)
+    {
+        _ref_currents[i] = t[i];
+        current[i] = t[i] / 2;
+    }
+    return true;
 }
 
 bool FakeMotionControl::setRefCurrentRaw(int j, double t)
 {
-    return NOT_YET_IMPLEMENTED("setRefCurrentRaw");
+    _ref_currents[j] = t;
+    current[j] = t / 2;
+    return true;
 }
 
 bool FakeMotionControl::setRefCurrentsRaw(const int n_joint, const int *joints, const double *t)
 {
-    return NOT_YET_IMPLEMENTED("setRefCurrentsRaw");
+    bool ret = true;
+    for (int j = 0; j<n_joint; j++)
+    {
+        ret = ret &&setRefCurrentRaw(joints[j], t[j]);
+    }
+    return ret;
 }
 
 bool FakeMotionControl::getRefCurrentsRaw(double *t)
 {
-    return NOT_YET_IMPLEMENTED("getRefCurrentsRaw");
+    for (int i = 0; i < _njoints; i++)
+    {
+        t[i] = _ref_currents[i];
+    }
+    return true;
 }
 
 bool FakeMotionControl::getRefCurrentRaw(int j, double *t)
 {
-    return NOT_YET_IMPLEMENTED("getRefCurrentRaw");
+    *t = _ref_currents[j];
+    return true;
 }
 
 bool FakeMotionControl::setCurrentPidRaw(int j, const Pid &pid)
 {
-    return NOT_YET_IMPLEMENTED("setCurrentPidRaw");
+    _cpids[j] = pid;
+    return true;
 }
 
 bool FakeMotionControl::setCurrentPidsRaw(const Pid *pids)
 {
-    return NOT_YET_IMPLEMENTED("setCurrentPidsRaw");
+    for (int i = 0; i < _njoints; i++)
+    {
+        _cpids[i] = pids[i];
+    }
+    return true;
 }
 
 bool FakeMotionControl::getCurrentErrorRaw(int j, double *err)
 {
-    return NOT_YET_IMPLEMENTED("getCurrentErrorRaw");
+    //just for testing purposes, this is not a real implementation
+    *err = _ref_currents[j]/2;
+    return true;
 }
 
 bool FakeMotionControl::getCurrentErrorsRaw(double *errs)
 {
-    return NOT_YET_IMPLEMENTED("getCurrentErrorsRaw");
+    //just for testing purposes, this is not a real implementation
+    for (int i = 0; i < _njoints; i++)
+    {
+        errs[i] = _ref_currents[i] / 2;
+    }
+    return true;
 }
 
 bool FakeMotionControl::getCurrentPidOutputRaw(int j, double *out)
 {
-    return NOT_YET_IMPLEMENTED("getCurrentPidOutputRaw");
+    //just for testing purposes, this is not a real implementation
+    *out = _ref_currents[j] * 10;
+    return true;
 }
 
 bool FakeMotionControl::getCurrentPidOutputsRaw(double *outs)
 {
-    return NOT_YET_IMPLEMENTED("getCurrentPidOutputsRaw");
+    //just for testing purposes, this is not a real implementation
+    for (int i = 0; i < _njoints; i++)
+    {
+        outs[i] = _ref_currents[i] * 10;
+    }
+    return true;
 }
 
 bool FakeMotionControl::getCurrentPidRaw(int j, Pid *pid)
 {
-    return NOT_YET_IMPLEMENTED("getCurrentPidRaw");
+    *pid = _cpids[j];
+    return true;
 }
 
 bool FakeMotionControl::getCurrentPidsRaw(Pid *pids)
 {
-    return NOT_YET_IMPLEMENTED("getCurrentPidsRaw");
+    for (int i = 0; i < _njoints; i++)
+    {
+        pids[i] = _cpids[i];
+    }
+    return true;
 }
 
 bool FakeMotionControl::resetCurrentPidRaw(int j)

@@ -1051,14 +1051,121 @@ void RPCMessagesParser::handleCurrentMsg(const yarp::os::Bottle& cmd, yarp::os::
     {
         switch (action)
         {
-            case VOCAB_CURRENTCONTROL1:
+             case VOCAB_CURRENT_ENABLE:
             {
+                int j = cmd.get(3).asInt();
+                *ok = rpc_ICurrent->enableCurrentPid(j);
+            }
+            break;
 
+            case VOCAB_CURRENT_DISABLE:
+            {
+                int j = cmd.get(3).asInt();
+                *ok = rpc_ICurrent->disableCurrentPid(j);
+            }
+            break;
+
+            case VOCAB_CURRENT_RESET:
+            {
+                int j = cmd.get(3).asInt();
+                *ok = rpc_ICurrent->resetCurrentPid(j);
+            }
+            break;
+
+            case VOCAB_CURRENT_REF:
+            {
+                yError("VOCAB_CURRENT_REF methods is implemented as streaming");
+                *ok = false;
+            }
+            break;
+
+            case VOCAB_CURRENT_REFS:
+            {
+                yError("VOCAB_CURRENT_REFS methods is implemented as streaming");
+                *ok = false;
+            }
+            break;
+
+            case VOCAB_CURRENT_REF_GROUP:
+            {
+                yError("VOCAB_CURRENT_REF_GROUP methods is implemented as streaming");
+                *ok = false;
+            }
+            break;
+
+            case VOCAB_CURRENT_PID:
+            {
+                Pid p;
+                int j = cmd.get(3).asInt();
+                Bottle *b = cmd.get(4).asList();
+
+                if (b == NULL)
+                    break;
+
+                p.kp = b->get(0).asDouble();
+                p.kd = b->get(1).asDouble();
+                p.ki = b->get(2).asDouble();
+                p.max_int = b->get(3).asDouble();
+                p.max_output = b->get(4).asDouble();
+                p.offset = b->get(5).asDouble();
+                p.scale = b->get(6).asDouble();
+                p.stiction_up_val = b->get(7).asDouble();
+                p.stiction_down_val = b->get(8).asDouble();
+                p.kff = b->get(9).asDouble();
+                *ok = rpc_ICurrent->setCurrentPid(j, p);
+            }
+            break;
+
+            case VOCAB_CURRENT_PIDS:
+            {
+                Bottle *b = cmd.get(3).asList();
+
+                if (b == NULL)
+                    break;
+
+                int i;
+                const int njs = b->size();
+                if (njs == controlledJoints)
+                {
+                    Pid *p = new Pid[njs];
+
+                    bool allOK = true;
+
+                    for (i = 0; i < njs; i++)
+                    {
+                        Bottle *c = b->get(i).asList();
+
+                        if (c != NULL)
+                        {
+                            p[i].kp = c->get(0).asDouble();
+                            p[i].kd = c->get(1).asDouble();
+                            p[i].ki = c->get(2).asDouble();
+                            p[i].max_int = c->get(3).asDouble();
+                            p[i].max_output = c->get(4).asDouble();
+                            p[i].offset = c->get(5).asDouble();
+                            p[i].scale = c->get(6).asDouble();
+                            p[i].stiction_up_val = c->get(7).asDouble();
+                            p[i].stiction_down_val = c->get(8).asDouble();
+                            p[i].kff = c->get(9).asDouble();
+                        }
+                        else
+                        {
+                            allOK = false;
+                        }
+                    }
+                    if (allOK)
+                        *ok = rpc_ICurrent->setCurrentPids(p);
+                    else
+                        *ok = false;
+
+                    delete[] p;
+                }
             }
             break;
 
             default:
             {
+                yError() << "Unknown handleCurrentMsg message received";
                 *rec = false;
                 *ok = false;
             }
@@ -1069,16 +1176,148 @@ void RPCMessagesParser::handleCurrentMsg(const yarp::os::Bottle& cmd, yarp::os::
 
     case VOCAB_GET:
     {
+        *rec = true;
+        if (ControlBoardWrapper_p->verbose())
+            yDebug("get command received\n");
+        double dtmp = 0.0;
+        double dtmp2 = 0.0;
+        response.addVocab(VOCAB_IS);
+        response.add(cmd.get(1));
+
         switch (action)
         {
-            case VOCAB_CURRENTCONTROL1:
+            case VOCAB_CURRENT_ERROR:
             {
+                *ok = rpc_ICurrent->getCurrentError(cmd.get(3).asInt(), &dtmp);
+                response.addDouble(dtmp);
+            }
+            break;
 
+            case VOCAB_CURRENT_ERRORS:
+            {
+                double *p = new double[controlledJoints];
+                *ok = rpc_ICurrent->getCurrentErrors(p);
+                Bottle& b = response.addList();
+                int i;
+                for (i = 0; i < controlledJoints; i++)
+                    b.addDouble(p[i]);
+                delete[] p;
+            }
+            break;
+
+            case VOCAB_CURRENT_PID_OUTPUT:
+            {
+                *ok = rpc_ICurrent->getCurrentPidOutput(cmd.get(3).asInt(), &dtmp);
+                response.addDouble(dtmp);
+            }
+            break;
+
+            case VOCAB_CURRENT_PID_OUTPUTS:
+            {
+                double *p = new double[controlledJoints];
+                *ok = rpc_ICurrent->getCurrentPidOutputs(p);
+                Bottle& b = response.addList();
+                int i;
+                for (i = 0; i < controlledJoints; i++)
+                    b.addDouble(p[i]);
+                delete[] p;
+            }
+            break;
+
+            case VOCAB_CURRENT_PID:
+            {
+                Pid p;
+                *ok = rpc_ICurrent->getCurrentPid(cmd.get(3).asInt(), &p);
+                Bottle& b = response.addList();
+                b.addDouble(p.kp);
+                b.addDouble(p.kd);
+                b.addDouble(p.ki);
+                b.addDouble(p.max_int);
+                b.addDouble(p.max_output);
+                b.addDouble(p.offset);
+                b.addDouble(p.scale);
+                b.addDouble(p.stiction_up_val);
+                b.addDouble(p.stiction_down_val);
+                b.addDouble(p.kff);
+            }
+            break;
+
+            case VOCAB_CURRENT_PIDS:
+            {
+                Pid *p = new Pid[controlledJoints];
+                *ok = rpc_ICurrent->getCurrentPids(p);
+                Bottle& b = response.addList();
+                int i;
+                for (i = 0; i < controlledJoints; i++)
+                {
+                    Bottle& c = b.addList();
+                    c.addDouble(p[i].kp);
+                    c.addDouble(p[i].kd);
+                    c.addDouble(p[i].ki);
+                    c.addDouble(p[i].max_int);
+                    c.addDouble(p[i].max_output);
+                    c.addDouble(p[i].offset);
+                    c.addDouble(p[i].scale);
+                    c.addDouble(p[i].stiction_up_val);
+                    c.addDouble(p[i].stiction_down_val);
+                    c.addDouble(p[i].kff);
+                }
+                delete[] p;
+            }
+            break;
+
+            case VOCAB_CURRENT_REF:
+            {
+                *ok = rpc_ICurrent->getRefCurrent(cmd.get(3).asInt(), &dtmp);
+                response.addDouble(dtmp);
+            }
+            break;
+
+            case VOCAB_CURRENT_REFS:
+            {
+                double *p = new double[controlledJoints];
+                *ok = rpc_ICurrent->getRefCurrents(p);
+                Bottle& b = response.addList();
+                int i;
+                for (i = 0; i < controlledJoints; i++)
+                    b.addDouble(p[i]);
+                delete[] p;
+            }
+            break;
+
+            case VOCAB_CURRENT_RANGE:
+            {
+                
+                *ok = rpc_ICurrent->getCurrentRange(cmd.get(3).asInt(), &dtmp, &dtmp2);
+                response.addDouble(dtmp);
+                response.addDouble(dtmp2);
+            }
+            break;
+
+            case VOCAB_CURRENT_RANGES:
+            {
+                double *p1 = new double[controlledJoints];
+                double *p2 = new double[controlledJoints];
+                *ok = rpc_ICurrent->getCurrentRanges(p1,p2);
+                Bottle& b1 = response.addList();
+                Bottle& b2 = response.addList();
+                int i;
+                for (i = 0; i < controlledJoints; i++)
+                {
+                    b1.addDouble(p1[i]);
+                }
+                for (i = 0; i < controlledJoints; i++)
+                {
+                    b2.addDouble(p2[i]);
+                }
+                delete[] p1;
+                delete[] p2;
             }
             break;
 
             default:
             {
+                yError() << "Unknown handleCurrentMsg message received";
                 *rec = false;
                 *ok = false;
             }
@@ -1089,6 +1328,7 @@ void RPCMessagesParser::handleCurrentMsg(const yarp::os::Bottle& cmd, yarp::os::
 
     default:
     {
+        yError() << "Unknown handleCurrentMsg message received";
         *rec = false;
         *ok = false;
     }

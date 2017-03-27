@@ -338,16 +338,20 @@ public:
 // Interface name
 #define VOCAB_CURRENTCONTROL_INTERFACE VOCAB4('i','c','u','r')
 // methods names
-#define VOCAB_CURRENTCONTROL1    VOCAB3('r','e','f')
-#define VOCAB_CURRENT_PID        VOCAB4('c','r','p','d')
-#define VOCAB_CURRENT_PIDS       VOCAB4('c','p','d','s')
-#define VOCAB_CURRENT_REF        VOCAB4('c','r','r','f')
-#define VOCAB_CURRENT_REFS       VOCAB4('c','r','f','s')
-#define VOCAB_CURRENT_REF_GROUP  VOCAB4('c','r','f','g')
-#define VOCAB_CURRENT_PID_OUTPUT  VOCAB4('c','p','o','t')
-#define VOCAB_CURRENT_PID_OUTPUTS  VOCAB4('c','p','o','s')
-#define VOCAB_CURRENT_RANGES     VOCAB4('r','n','g','s')
-#define VOCAB_CURRENT_RANGE      VOCAB3('r','n','g')
 
+#define VOCAB_CURRENT_PID        VOCAB3('p','i','d')
+#define VOCAB_CURRENT_PIDS       VOCAB4('p','i','d','s')
+#define VOCAB_CURRENT_REF        VOCAB3('r','e','f')
+#define VOCAB_CURRENT_REFS       VOCAB4('r','e','f','s')
+#define VOCAB_CURRENT_REF_GROUP  VOCAB4('r','e','f','g')
+#define VOCAB_CURRENT_PID_OUTPUT  VOCAB3('o','u','t')
+#define VOCAB_CURRENT_PID_OUTPUTS VOCAB4('o','u','t','s')
+#define VOCAB_CURRENT_RANGE      VOCAB3('r','n','g')
+#define VOCAB_CURRENT_RANGES     VOCAB4('r','n','g','s')
+#define VOCAB_CURRENT_ERROR       VOCAB3('e','r','r')
+#define VOCAB_CURRENT_ERRORS      VOCAB4('e','r','r','s')
+#define VOCAB_CURRENT_ENABLE      VOCAB3('e','n','a')
+#define VOCAB_CURRENT_DISABLE     VOCAB3('d','i','s')
+#define VOCAB_CURRENT_RESET       VOCAB4('r','e','s','e')
 
 #endif // YARP_DEV_ICURRENTCONTROL_H

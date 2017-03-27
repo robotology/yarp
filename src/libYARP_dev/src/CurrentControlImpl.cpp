@@ -73,10 +73,10 @@ bool ImplementCurrentControl::getRefCurrent(int j, double *r)
     JOINTIDCHECK
     int k;
     bool ret;
-    double torque;
+    double current;
     k=castToMapper(helper)->toHw(j);
-    ret = iCurrentRaw->getRefCurrentRaw(k, &torque);
-    *r=castToMapper(helper)->ampereS2A(torque, k);
+    ret = iCurrentRaw->getRefCurrentRaw(k, &current);
+    *r = castToMapper(helper)->ampereS2A(current, k);
     return ret;
 }
 
@@ -106,7 +106,7 @@ bool ImplementCurrentControl::setRefCurrent(int j, double t)
 bool ImplementCurrentControl::getCurrents(double *t)
 {
     bool ret = iCurrentRaw->getCurrentsRaw(temp);
-    castToMapper(helper)->toUser(temp, t);
+    castToMapper(helper)->ampereS2A(temp, t);
     return ret;
 }
 
@@ -124,8 +124,12 @@ bool ImplementCurrentControl::getCurrent(int j, double *t)
 {
     JOINTIDCHECK
     int k;
+    bool ret;
+    double current;
     k=castToMapper(helper)->toHw(j);
-    return iCurrentRaw->getCurrentRaw(k, t);
+    ret = iCurrentRaw->getCurrentRaw(k, &current);
+    *t = castToMapper(helper)->ampereS2A(current, k);
+    return ret;
 }
 
 bool ImplementCurrentControl::getCurrentRanges(double *min, double *max)

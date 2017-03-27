@@ -74,7 +74,7 @@ void StreamingMessagesParser::onRead(CommandMessage& v)
                 {
                     if (stream_IPWM)
                     {
-                        bool ok = stream_IPWM->setRefDutyCycle(b.get(2).asVocab(), cmdVector[0]);
+                        bool ok = stream_IPWM->setRefDutyCycle(b.get(2).asInt(), cmdVector[0]);
                         if (!ok)
                             yError("Errors while trying to command an pwm message");
                     }
@@ -106,10 +106,10 @@ void StreamingMessagesParser::onRead(CommandMessage& v)
                 {
                     if (stream_ICurrent)
                     {
-                        bool ok = stream_ICurrent->setRefCurrent(b.get(1).asInt(), cmdVector[0]);
+                        bool ok = stream_ICurrent->setRefCurrent(b.get(2).asInt(), cmdVector[0]);
                         if (!ok)
                         {
-                            yError("Errors while trying to command a streaming current message on all joints\n");
+                            yError("Errors while trying to command a streaming current message on single joint\n");
                         }
                     }
                 }
@@ -220,7 +220,7 @@ void StreamingMessagesParser::onRead(CommandMessage& v)
             {
                 bool ok = stream_ITorque->setRefTorque(b.get(1).asInt(), cmdVector[0]);
                 if (!ok)
-                {   yError("Errors while trying to command a streaming torque direct message on all joints\n"); }
+                {   yError("Errors while trying to command a streaming torque direct message on single joint\n"); }
             }
         }
         break;

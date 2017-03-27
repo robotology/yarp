@@ -460,6 +460,11 @@ void PartItem::onSliderPWMCommand(double torqueVal, int index)
     m_iPWM->setRefDutyCycle(index, torqueVal);
 }
 
+void PartItem::onSliderCurrentCommand(double currentVal, int index)
+{
+    m_iCur->setRefCurrent(index, currentVal);
+}
+
 void PartItem::onSliderVelocityCommand(double speedVal, int index)
 {
     m_iVel->velocityMove(index, speedVal);
@@ -2132,6 +2137,9 @@ bool PartItem::updatePart()
             case VOCAB_CM_CURRENT:
             {
                 joint->setJointState(JointItem::Current);
+                double tmp = 0;
+                m_iCur->getRefCurrent(k, &tmp); //?
+                joint->setCurrent(tmp);
                 break;
             }
             case VOCAB_CM_PWM:

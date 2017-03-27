@@ -204,6 +204,7 @@ private slots:
     void onSliderTrajectoryPositionCommand(double pos, int index);
     void onSliderTrajectoryVelocityCommand(double speedVal, int index);
     void onSliderPWMCommand(double dutyVal, int index);
+    void onSliderCurrentCommand(double current, int index);
     void onSliderVelocityCommand(double speedVal, int index);
     void onSequenceWindowDoubleClicked(int sequenceNum);
     void onHomeClicked(JointItem *joint);

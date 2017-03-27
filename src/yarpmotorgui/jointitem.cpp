@@ -118,6 +118,12 @@ JointItem::JointItem(int index,QWidget *parent) :
     ui->sliderPWMOutput->disableClickOutOfHandle = true;
     ui->sliderPWMOutput->enableViewTarget = false;
 
+    ui->sliderCurrentOutput->installEventFilter(this);
+    connect(ui->sliderCurrentOutput, SIGNAL(sliderPressed()), this, SLOT(onSliderCurrentPressed()));
+    connect(ui->sliderCurrentOutput, SIGNAL(sliderReleased()), this, SLOT(onSliderCurrentReleased()));
+    ui->sliderCurrentOutput->disableClickOutOfHandle = true;
+    ui->sliderCurrentOutput->enableViewTarget = false;
+
     ui->sliderDirectPosition->installEventFilter(this);
     connect(ui->sliderDirectPosition, SIGNAL(sliderPressed()), this, SLOT(onSliderDirectPositionPressed()));
     connect(ui->sliderDirectPosition, SIGNAL(sliderReleased()), this, SLOT(onSliderDirectPositionReleased()));
@@ -321,8 +327,8 @@ bool JointItem::eventFilter(QObject *obj, QEvent *event)
                     onSliderPWMReleased();
                 }
             }
-            if (obj == ui->sliderPWMOutput){
-                slider = ui->sliderPWMOutput;
+            if (obj == ui->sliderCurrentOutput){
+                slider = ui->sliderCurrentOutput;
                 if (keyEvent->type() == QEvent::KeyPress){
                     onSliderCurrentPressed();
                 }
@@ -511,6 +517,7 @@ void JointItem::setSpeedVisible(bool visible)
     ui->editMixedSpeed->setVisible(visible);
     ui->editTorqueSpeed->setVisible(visible);
     ui->editPWMSpeed->setVisible(visible);
+    ui->editCurrentSpeed->setVisible(visible);
     ui->editVelocitySpeed->setVisible(visible);
 
     ui->labelIdleSpeed->setVisible(visible);
@@ -524,7 +531,9 @@ void JointItem::setSpeedVisible(bool visible)
     ui->labelTorqueSpeed->setVisible(visible);
     ui->labelTorquevelUnits->setVisible(visible);
     ui->labelPWMSpeed->setVisible(visible);
+    ui->labelCurrentSpeed->setVisible(visible);
     ui->labelPWMvelUnits->setVisible(visible);
+    ui->labelCurrentvelUnits->setVisible(visible);
     ui->labelVelocitySpeed->setVisible(visible);
     ui->labelVelocityvelUnits->setVisible(visible);
 
@@ -536,6 +545,7 @@ void JointItem::setSpeedVisible(bool visible)
         ui->editMixedSpeed->setMinimumHeight(0);
         ui->editTorqueSpeed->setMinimumHeight(0);
         ui->editPWMSpeed->setMinimumHeight(0);
+        ui->editCurrentSpeed->setMinimumHeight(0);
         ui->editVelocitySpeed->setMinimumHeight(0);
 
         ui->labelPositionSpeed->setMinimumHeight(0);
@@ -548,6 +558,8 @@ void JointItem::setSpeedVisible(bool visible)
         ui->labelTorquevelUnits->setMinimumHeight(0);
         ui->labelPWMSpeed->setMinimumHeight(0);
         ui->labelPWMvelUnits->setMinimumHeight(0);
+        ui->labelCurrentSpeed->setMinimumHeight(0);
+        ui->labelCurrentvelUnits->setMinimumHeight(0);
         ui->labelVelocitySpeed->setMinimumHeight(0);
         ui->labelVelocityvelUnits->setMinimumHeight(0);
         ui->labelIdleSpeed->setMinimumHeight(0);
@@ -559,6 +571,7 @@ void JointItem::setSpeedVisible(bool visible)
         ui->editMixedSpeed->setMinimumHeight(20);
         ui->editTorqueSpeed->setMinimumHeight(20);
         ui->editPWMSpeed->setMinimumHeight(20);
+        ui->editCurrentSpeed->setMinimumHeight(20);
         ui->editVelocitySpeed->setMinimumHeight(20);
 
         ui->labelPositionSpeed->setMinimumHeight(20);
@@ -571,6 +584,8 @@ void JointItem::setSpeedVisible(bool visible)
         ui->labelTorquevelUnits->setMinimumHeight(20);
         ui->labelPWMSpeed->setMinimumHeight(20);
         ui->labelPWMvelUnits->setMinimumHeight(20);
+        ui->labelCurrentSpeed->setMinimumHeight(20);
+        ui->labelCurrentvelUnits->setMinimumHeight(20);
         ui->labelVelocitySpeed->setMinimumHeight(20);
         ui->labelVelocityvelUnits->setMinimumHeight(20);
         ui->labelIdleSpeed->setMinimumHeight(20);
@@ -809,6 +824,9 @@ JointItem::~JointItem()
     disconnect(ui->sliderPWMOutput, SIGNAL(sliderPressed()), this, SLOT(onSliderPWMPressed()));
     disconnect(ui->sliderPWMOutput, SIGNAL(sliderReleased()), this, SLOT(onSliderPWMReleased()));
 
+    disconnect(ui->sliderCurrentOutput, SIGNAL(sliderPressed()), this, SLOT(onSliderCurrentPressed()));
+    disconnect(ui->sliderCurrentOutput, SIGNAL(sliderReleased()), this, SLOT(onSliderCurrentPressed()));
+
     disconnect(ui->sliderDirectPosition, SIGNAL(sliderPressed()), this, SLOT(onSliderDirectPositionPressed()));
     disconnect(ui->sliderDirectPosition, SIGNAL(sliderReleased()), this, SLOT(onSliderDirectPositionReleased()));
 
@@ -1016,7 +1034,7 @@ void JointItem::onSliderCurrentPressed()
 
 void JointItem::onSliderCurrentReleased()
 {
-    ref_current = (double)ui->sliderPWMOutput->value() / ui->sliderPWMOutput->getSliderStep();
+    ref_current = (double)ui->sliderCurrentOutput->value() / ui->sliderCurrentOutput->getSliderStep();
     sliderCurrentCommand(ref_current, jointIndex);
     sliderCurrentPressed = false;
 }
@@ -1115,7 +1133,7 @@ void JointItem::updateSliderCurrent(double val)
     if (sliderCurrentPressed)  {
         return;
     }
-    ui->sliderPWMOutput->setValue(val);
+    ui->sliderCurrentOutput->setValue(val);
 }
 
 void JointItem::updateSliderTorque(double val)
@@ -1156,7 +1174,7 @@ void JointItem::setCurrent(double currentValue)
         updateSliderCurrent(currentValue);
         QString sVal;
         sVal = QString("%L1").arg(currentValue, 0, 'f', 3);
-        ui->editPWMOutput->setText(sVal);
+        ui->editCurrentOutput->setText(sVal);
     }
 }
 
@@ -1204,7 +1222,7 @@ void JointItem::setPosition(double val)
         ui->editPWMCurrentPos->setText(sVal);
     }
     if (ui->stackedWidget->currentIndex() == CURRENT){
-        ui->editPWMCurrentPos->setText(sVal);
+        ui->editCurrentCurrentPos->setText(sVal);
     }
 
 }
@@ -1280,6 +1298,9 @@ void JointItem::setTorque(double val)
     if(ui->stackedWidget->currentIndex() == PWM){
         ui->editPWMTorque->setText(sVal);
     }
+    if (ui->stackedWidget->currentIndex() == CURRENT){
+        ui->editCurrentTorque->setText(sVal);
+    }
 }
 
 void JointItem::setMotorPosition(double val)
@@ -1338,6 +1359,9 @@ void JointItem::setSpeed(double val)
     }
     if(ui->stackedWidget->currentIndex() == PWM){
         ui->editPWMSpeed->setText(sVal);
+    }
+    if (ui->stackedWidget->currentIndex() == CURRENT){
+        ui->editCurrentSpeed->setText(sVal);
     }
 
 }
@@ -1618,7 +1642,7 @@ void JointItem::setPWMRange(double min, double max)
 
 void JointItem::setCurrentRange(double min, double max)
 {
-    ui->sliderPWMOutput->setRange(min, max);
+    ui->sliderCurrentOutput->setRange(min, max);
 }
 
 void JointItem::setPositionRange(double min, double max)
@@ -1723,6 +1747,7 @@ void JointItem::sequenceActivated()
     ui->sliderMixedPosition->setEnabled(false);
     ui->sliderMixedVelocity->setEnabled(false);
     ui->sliderPWMOutput->setEnabled(false);
+    ui->sliderCurrentOutput->setEnabled(false);
     ui->sliderDirectPosition->setEnabled(false);
     ui->sliderTrajectoryPosition->setEnabled(false);
     ui->sliderTrajectoryVelocity->setEnabled(false);
@@ -1735,6 +1760,7 @@ void JointItem::sequenceStopped()
     ui->sliderMixedPosition->setEnabled(true);
     ui->sliderMixedVelocity->setEnabled(true);
     ui->sliderPWMOutput->setEnabled(true);
+    ui->sliderCurrentOutput->setEnabled(true);
     ui->sliderDirectPosition->setEnabled(true);
     ui->sliderTrajectoryPosition->setEnabled(true);
     ui->sliderTrajectoryVelocity->setEnabled(true);

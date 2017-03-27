@@ -1071,19 +1071,17 @@ template <class DERIVED, class IMPLEMENT>
 bool ImplementAmplifierControl<DERIVED, IMPLEMENT>::getCurrents(double *currs)
 {
     bool ret=iAmplifier->getCurrentsRaw(dTemp);
-
-    castToMapper(helper)->toUser(dTemp, currs);
-
+    castToMapper(helper)->ampereS2A(dTemp, currs);
     return ret;
 }
 
 template <class DERIVED, class IMPLEMENT>
 bool ImplementAmplifierControl<DERIVED, IMPLEMENT>::getCurrent(int j, double *c)
 {
-    int k=castToMapper(helper)->toHw(j);
-
-    bool ret=iAmplifier->getCurrentRaw(k, c);
-
+    double temp = 0;
+    int k = castToMapper(helper)->toHw(j);
+    bool ret = iAmplifier->getCurrentRaw(k, &temp);
+    castToMapper(helper)->ampereS2A(temp, k, *c, j);
     return ret;
 }
 

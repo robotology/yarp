@@ -3536,7 +3536,7 @@ public:
 
     virtual bool getCurrentRanges(double *min, double *max)
     {
-        return get2V2DA(VOCAB_CURRENTCONTROL_INTERFACE, VOCAB_CURRENT_RANGE, min, max);
+        return get2V2DA(VOCAB_CURRENTCONTROL_INTERFACE, VOCAB_CURRENT_RANGES, min, max);
     }
 
     virtual bool setCurrentPids(const Pid *pids)
@@ -3568,12 +3568,12 @@ public:
 
     virtual bool getCurrentError(int j, double *err)
     {
-        return get2V1I1D(VOCAB_CURRENTCONTROL_INTERFACE, VOCAB_ERR, j, err);
+        return get2V1I1D(VOCAB_CURRENTCONTROL_INTERFACE, VOCAB_CURRENT_ERROR, j, err);
     }
 
     virtual bool getCurrentErrors(double *errs)
     {
-        return get2V1DA(VOCAB_CURRENTCONTROL_INTERFACE, VOCAB_ERRS, errs);
+        return get2V1DA(VOCAB_CURRENTCONTROL_INTERFACE, VOCAB_CURRENT_ERRORS, errs);
     }
 
     virtual bool getCurrentPidOutput(int j, double *out)
@@ -3654,17 +3654,17 @@ public:
 
     virtual bool resetCurrentPid(int j)
     {
-        return set1V1I(VOCAB_RESET, j);
+        return set2V1I(VOCAB_CURRENTCONTROL_INTERFACE, VOCAB_CURRENT_RESET, j);
     }
 
     virtual bool disableCurrentPid(int j)
     {
-        return set2V1I(VOCAB_CURRENTCONTROL_INTERFACE, VOCAB_DISABLE, j);
+        return set2V1I(VOCAB_CURRENTCONTROL_INTERFACE, VOCAB_CURRENT_DISABLE, j);
     }
 
     virtual bool enableCurrentPid(int j)
     {
-        return set2V1I(VOCAB_CURRENTCONTROL_INTERFACE, VOCAB_ENABLE, j);
+        return set2V1I(VOCAB_CURRENTCONTROL_INTERFACE, VOCAB_CURRENT_ENABLE, j);
     }
 
     //iPWMControl
@@ -3745,7 +3745,7 @@ public:
     {
         double localArrivalTime = 0.0;
         extendedPortMutex.wait();
-        bool ret = extendedIntputStatePort.getLastVector(VOCAB_PWMCONTROL_PWM_OUTPUT, outs, lastStamp, localArrivalTime);
+        bool ret = extendedIntputStatePort.getLastVector(VOCAB_PWMCONTROL_PWM_OUTPUTS, outs, lastStamp, localArrivalTime);
         extendedPortMutex.post();
         return ret;
     }
