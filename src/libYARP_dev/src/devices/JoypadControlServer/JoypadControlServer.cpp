@@ -74,6 +74,21 @@ bool JoypadCtrlParser::respond(const yarp::os::Bottle& cmd, yarp::os::Bottle& re
                     ret = true;
                 }
             }
+            else if (toGet == VOCAB_STICKDOF && cmd.get(4).isInt())
+            {
+                unsigned int count;
+                if (device->getStickDoF(cmd.get(4).asInt(), count))
+                {
+                    response.addVocab(VOCAB_OK);
+                    response.addInt(count);
+                    ret = true;
+                }
+                else
+                {
+                    response.addVocab(VOCAB_FAILED);
+                    ret = false;
+                }
+            }
             else
             {
                 response.addVocab(VOCAB_FAILED);

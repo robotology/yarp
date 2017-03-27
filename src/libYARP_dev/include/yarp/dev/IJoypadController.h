@@ -179,3 +179,7 @@ public:
 //2. complete the rpc_only functionality in the client (add the parameter in the open() and test it)
 //3. complete the stick management in the sdl driver and test
 //4. sdl hat #define to vocab traduction (just in case they change something)
+//5. SDLJoypad implement stick functionality
+//6. SDLJoypad implement deadband
+//7. SDLJoypad implement button/axis remapping
+//8. SDLJoypad implement actions
