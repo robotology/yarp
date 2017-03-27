@@ -82,7 +82,11 @@ private:
     static void glfwErrorCallback(int error, const char* description);
     static void ovrDebugCallback(uintptr_t userData, int level, const char* message);
     static void DebugHmd(ovrHmdDesc hmdDesc);
-    void errorManager(ovrResult error);
+    inline void errorManager(ovrResult error);
+    inline void fillAxisStorage();
+    inline void fillErrorStorage();
+    inline void fillButtonStorage();
+    inline void fillHatStorage();
 
     yarp::os::BufferedPort<yarp::os::Bottle>* orientationPort;
     yarp::os::BufferedPort<yarp::os::Bottle>* positionPort;
@@ -106,11 +110,12 @@ private:
     ovrSession session;
     ovrHmdDesc hmdDesc;
     GLFWwindow* window;
-
+    yarp::os::Mutex                  inputStateMutex;
     ovrInputState                    inputState;
     bool                             inputStateError;
     bool                             getStickAsAxis;
     std::vector<ovrButton>           buttonIdToOvrButton;
+    std::vector<float*>              axisIdToValue;
     std::map<int, int>               DButtonToHat;
     std::map<ovrResult, std::string> error_messages;
 

@@ -24,6 +24,7 @@
 #include <yarp/os/Stamp.h>
 #include <yarp/os/Time.h>
 #include <yarp/sig/Image.h>
+#include <yarp/os/LockGuard.h>
 
 #include <math.h>
 
@@ -158,6 +159,32 @@ yarp::dev::OVRHeadset::OVRHeadset() :
         inputStateError(false)
 {
     yTrace();
+
+}
+yarp::dev::OVRHeadset::~OVRHeadset()
+{
+    yTrace();
+}
+
+void yarp::dev::OVRHeadset::fillAxisStorage()
+{
+    axisIdToValue.push_back(inputState.IndexTrigger);
+    axisIdToValue.push_back(inputState.IndexTrigger + 1);
+    axisIdToValue.push_back(inputState.HandTrigger);
+    axisIdToValue.push_back(inputState.HandTrigger + 1);
+
+    if (getStickAsAxis)
+    {
+        axisIdToValue.push_back(&inputState.Thumbstick[0].x);
+        axisIdToValue.push_back(&inputState.Thumbstick[0].y);
+        axisIdToValue.push_back(&inputState.Thumbstick[1].x);
+        axisIdToValue.push_back(&inputState.Thumbstick[1].y);
+    }
+
+}
+
+void yarp::dev::OVRHeadset::fillErrorStorage()
+{
     error_messages[ovrError_MemoryAllocationFailure       ] = "Failure to allocate memory.";
     error_messages[ovrError_InvalidSession                ] = "Invalid ovrSession parameter provided.";
     error_messages[ovrError_Timeout                       ] = "The operation timed out.";
@@ -212,7 +239,10 @@ yarp::dev::OVRHeadset::OVRHeadset() :
     error_messages[ovrError_NoCalibration                 ] = "Result of a missing calibration block.";
     error_messages[ovrError_OldVersion                    ] = "Result of an old calibration block.";
     error_messages[ovrError_MisformattedBlock             ] = "Result of a bad calibration block due to lengths.";
+}
 
+void yarp::dev::OVRHeadset::fillButtonStorage()
+{
     buttonIdToOvrButton.push_back(ovrButton_A);
     buttonIdToOvrButton.push_back(ovrButton_B);
     buttonIdToOvrButton.push_back(ovrButton_RThumb);
@@ -226,17 +256,15 @@ yarp::dev::OVRHeadset::OVRHeadset() :
     buttonIdToOvrButton.push_back(ovrButton_VolUp);
     buttonIdToOvrButton.push_back(ovrButton_VolDown);
     buttonIdToOvrButton.push_back(ovrButton_Home);
+}
 
+void yarp::dev::OVRHeadset::fillHatStorage()
+{
     DButtonToHat[0]               = YRPJOY_HAT_CENTERED;
     DButtonToHat[ovrButton_Up]    = YRPJOY_HAT_UP;
     DButtonToHat[ovrButton_Right] = YRPJOY_HAT_RIGHT;
     DButtonToHat[ovrButton_Down]  = YRPJOY_HAT_DOWN;
     DButtonToHat[ovrButton_Left]  = YRPJOY_HAT_LEFT;
-
-}
-yarp::dev::OVRHeadset::~OVRHeadset()
-{
-    yTrace();
 }
 
 bool yarp::dev::OVRHeadset::open(yarp::os::Searchable& cfg)
@@ -283,6 +311,11 @@ bool yarp::dev::OVRHeadset::open(yarp::os::Searchable& cfg)
         yError() << "ovrHeadset: parameter stick_as_axis not found in configuration file";
         return false;
     }
+
+    fillAxisStorage();
+    fillButtonStorage();
+    fillErrorStorage();
+    fillHatStorage();
 
     orientationPort = new yarp::os::BufferedPort<yarp::os::Bottle>;
     if (!orientationPort->open("/oculus/headpose/orientation:o")) {
@@ -807,7 +840,7 @@ bool yarp::dev::OVRHeadset::stopService()
 
 void yarp::dev::OVRHeadset::run()
 {
-    ovrResult result;
+    ovrResult result = ovrError_InvalidSession;
 
     if (glfwWindowShouldClose(window)) {
         close();
@@ -852,7 +885,9 @@ void yarp::dev::OVRHeadset::run()
     yarp::os::Stamp predicted_stamp(distortionFrameIndex, predicted_ts.HeadPose.TimeInSeconds);
 
     // Get Input State
-    ovr_GetInputState(session, ovrControllerType_Active, &inputState);
+    inputStateMutex.lock();
+    result = ovr_GetInputState(session, ovrControllerType_Active, &inputState);
+    inputStateMutex.unlock();
     if (!OVR_SUCCESS(result))
     {
         errorManager(result);
@@ -1432,6 +1467,11 @@ void yarp::dev::OVRHeadset::ovrDebugCallback(uintptr_t userData, int level, cons
     yarp::dev::OVRHeadset* ovr = reinterpret_cast<yarp::dev::OVRHeadset*>(userData);
     YARP_UNUSED(ovr);
 
+    if (!message)
+    {
+        return;
+    }
+
     switch (level) {
     case ovrLogLevel_Debug:
         yDebug() << "ovrDebugCallback" << message;
@@ -1462,14 +1502,14 @@ void yarp::dev::OVRHeadset::errorManager(ovrResult error)
 {
     if (error_messages.find(error) != error_messages.end())
     {
-        yError() << error_messages[error];
+        yError() << error_messages[error].c_str();
     }
 }
 
 bool yarp::dev::OVRHeadset::getAxisCount(unsigned int& axis_count)
 {
     INPUTERRORCHECK;
-    axis_count = getStickAsAxis ? AXIS_COUNT : AXIS_COUNT - STICK_COUNT * 2;
+    axis_count = axisIdToValue.size();
     return true;
 }
 bool yarp::dev::OVRHeadset::getButtonCount(unsigned int& button_count)
@@ -1510,6 +1550,7 @@ bool yarp::dev::OVRHeadset::getStickDoF(unsigned int stick_id, unsigned int& DoF
 bool yarp::dev::OVRHeadset::getButton(unsigned int button_id, float& value) 
 {
     INPUTERRORCHECK;
+    yarp::os::LockGuard lock(inputStateMutex);
     if (button_id > buttonIdToOvrButton.size() - 1)
     {
         yError() << "OVRHeadset: button id out of bound";
@@ -1525,6 +1566,7 @@ bool yarp::dev::OVRHeadset::getTrackball(unsigned int trackball_id, yarp::sig::V
 bool yarp::dev::OVRHeadset::getHat(unsigned int hat_id, unsigned char& value) 
 {
     INPUTERRORCHECK;
+    yarp::os::LockGuard lock(inputStateMutex);
     if (hat_id > 0)
     {
         yError() << "OVRHeadset: hat id out of bound";
@@ -1534,15 +1576,45 @@ bool yarp::dev::OVRHeadset::getHat(unsigned int hat_id, unsigned char& value)
             DButtonToHat[inputState.Buttons & ovrButton_Down]  |
             DButtonToHat[inputState.Buttons & ovrButton_Right] |
             DButtonToHat[inputState.Buttons & ovrButton_Left];
-    return false;
+    return true;
 }
 bool yarp::dev::OVRHeadset::getAxis(unsigned int axis_id, double& value) 
 {
-    return false;
+    yarp::os::LockGuard lock(inputStateMutex);
+    if (axis_id > axisIdToValue.size())
+    {
+        yError() << "OVRHeadset: axis id out of bound";
+        return false;
+    }
+
+    value = *axisIdToValue[axis_id];
+    return true;
 }
 bool yarp::dev::OVRHeadset::getStick(unsigned int stick_id, yarp::sig::Vector& value, JoypadCtrl_coordinateMode coordinate_mode) 
 {
-    return false;
+    INPUTERRORCHECK;
+    yarp::os::LockGuard lock(inputStateMutex);
+    if (getStickAsAxis)
+    {
+        return false;
+    }
+    
+    if (stick_id > STICK_COUNT - 1)
+    {
+        yError() << "stick id out of bound";
+        return false;
+    }
+    value.clear();
+    if (coordinate_mode == JoypadCtrl_coordinateMode::JypCtrlcoord_POLAR)
+    {
+        value.push_back(sqrt(inputState.Thumbstick[stick_id].y * inputState.Thumbstick[stick_id].y +
+                             inputState.Thumbstick[stick_id].x * inputState.Thumbstick[stick_id].x));
+
+        value.push_back(atan2(inputState.Thumbstick[stick_id].y, inputState.Thumbstick[stick_id].x));
+    }
+    value.push_back(inputState.Thumbstick[stick_id].x);
+    value.push_back(inputState.Thumbstick[stick_id].y);
+    return true;
 }
 bool yarp::dev::OVRHeadset::getTouch(unsigned int touch_id, yarp::sig::Vector& value) 
 {
