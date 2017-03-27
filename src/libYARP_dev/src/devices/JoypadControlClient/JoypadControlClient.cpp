@@ -31,7 +31,7 @@ bool JoypadControlClient::getJoypadInfo()
     vector<tuple<int, JoypadControl::LoopablePort*, string> > vocabs_ports;
     vocabs_ports.push_back(make_tuple(VOCAB_BUTTON,    &m_buttonsPort,   "/buttons"));
     vocabs_ports.push_back(make_tuple(VOCAB_AXIS,      &m_axisPort,      "/axis"));
-    vocabs_ports.push_back(make_tuple(VOCAB_STICK,     &m_stickPort,     "/sticks"));
+    vocabs_ports.push_back(make_tuple(VOCAB_STICK,     &m_stickPort,     "/stick"));
     vocabs_ports.push_back(make_tuple(VOCAB_TRACKBALL, &m_trackballPort, "/trackballs"));
     vocabs_ports.push_back(make_tuple(VOCAB_TOUCH,     &m_touchPort,     "/touch"));
     vocabs_ports.push_back(make_tuple(VOCAB_HAT,       &m_hatsPort,      "/hat"));
@@ -41,7 +41,7 @@ bool JoypadControlClient::getJoypadInfo()
         if(!getCount(get<0>(vocab_port), count)) return false;
         if(count)
         {
-            ConstString portname = m_local + get<2>(vocab_port) + ":i";
+            std::string portname = m_local + get<2>(vocab_port) + ":i";
             get<1>(vocab_port)->valid = true;
             get<1>(vocab_port)->count = count;
 
@@ -52,6 +52,7 @@ bool JoypadControlClient::getJoypadInfo()
                     unsigned int dofCount;
                     if(!getStickDoF(i, dofCount))
                     {
+                        yError() << "unable to get sticks DoF";
                         return false;
                     }
                     m_stickDof.push_back(dofCount);
@@ -272,6 +273,7 @@ bool JoypadControlClient::getButton(unsigned int button_id, float& value)
         }
         else
         {
+            yError() << "JoypadControlCLient: GetButton() error.. VOCAB_FAILED";
             return false;
         }
     }
@@ -285,6 +287,7 @@ bool JoypadControlClient::getButton(unsigned int button_id, float& value)
         }
         else
         {
+            yError() << "JoypadControlCLient: GetButton() error.. button_id out of bound";
             return false;
         }
     }
@@ -385,6 +388,7 @@ bool JoypadControlClient::getAxis(unsigned int axis_id, double& value)
         }
         else
         {
+            yError() << "JoypadControlCLient: GetAxis() error.. VOCAB_FAILED";
             return false;
         }
     }
@@ -398,6 +402,7 @@ bool JoypadControlClient::getAxis(unsigned int axis_id, double& value)
         }
         else
         {
+            yError() << "JoypadControlCLient: GetAxis() error.. Axis_id out of bound";
             return false;
         }
     }
