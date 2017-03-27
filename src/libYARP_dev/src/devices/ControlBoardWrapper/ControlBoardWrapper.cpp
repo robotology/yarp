@@ -1429,12 +1429,14 @@ bool ControlBoardWrapper::positionMove(const double *refs)
     {
         int subIndex=device.lut[j_wrap].deviceEntry;
         yarp::dev::impl::SubDevice *p=device.getSubdevice(subIndex);
+        
+        if (!p)
+        {
+            return false;
+        }
 
         int wrapped_joints=(p->top - p->base) + 1;
         int *joints = new int[wrapped_joints];
-
-        if(!p)
-            return false;
 
         if(p->pos2)   // Position Control 2
         {
@@ -3839,26 +3841,15 @@ bool ControlBoardWrapper::setRefTorques(const int n_joints, const int *joints, c
 
     for(subIndex=0; subIndex<rpcData.deviceNum; subIndex++)
     {
-        if(rpcData.subdevices_p[subIndex]->iTorque)   // Position Control 2
+        if(rpcData.subdevices_p[subIndex]->iTorque)
         {
             ret= ret && rpcData.subdevices_p[subIndex]->iTorque->setRefTorques(rpcData.subdev_jointsVectorLen[subIndex],
                                                                                rpcData.jointNumbers[subIndex],
                                                                                rpcData.values[subIndex]);
         }
-        else   // Classic Position Control
+        else
         {
-            if(rpcData.subdevices_p[subIndex]->iTorque)
-            {
-                for(int i = 0; i < rpcData.subdev_jointsVectorLen[subIndex]; i++)
-                {
-                    ret=ret && rpcData.subdevices_p[subIndex]->iTorque->setRefTorque(rpcData.jointNumbers[subIndex][i],
-                                                                                     rpcData.values[subIndex][i]);
-                }
-            }
-            else
-            {
-                ret=false;
-            }
+            ret=false;
         }
     }
     rpcDataMutex.post();
@@ -4677,26 +4668,15 @@ bool ControlBoardWrapper::setControlModes(const int n_joints, const int *joints,
 
     for(subIndex=0; subIndex<rpcData.deviceNum; subIndex++)
     {
-        if(rpcData.subdevices_p[subIndex]->iMode2)   // Position Control 2
+        if(rpcData.subdevices_p[subIndex]->iMode2)
         {
             ret= ret && rpcData.subdevices_p[subIndex]->iMode2->setControlModes(rpcData.subdev_jointsVectorLen[subIndex],
                                                                                 rpcData.jointNumbers[subIndex],
                                                                                 rpcData.modes[subIndex]);
         }
-        else   // Classic Position Control
+        else
         {
-            if(rpcData.subdevices_p[subIndex]->iMode2)
-            {
-                for(int i = 0; i < rpcData.subdev_jointsVectorLen[subIndex]; i++)
-                {
-                    ret=ret && rpcData.subdevices_p[subIndex]->iMode2->setControlMode( rpcData.jointNumbers[subIndex][i],
-                                                                                       rpcData.modes[subIndex][i]);
-                }
-            }
-            else
-            {
-                ret=false;
-            }
+            ret=false;
         }
     }
     rpcDataMutex.post();
@@ -5561,26 +5541,15 @@ bool ControlBoardWrapper::setRefCurrents(const int n_joint, const int *joints, c
 
     for (subIndex = 0; subIndex<rpcData.deviceNum; subIndex++)
     {
-        if (rpcData.subdevices_p[subIndex]->iCurr)   // Position Control 2
+        if (rpcData.subdevices_p[subIndex]->iCurr)
         {
             ret = ret && rpcData.subdevices_p[subIndex]->iCurr->setRefCurrents(rpcData.subdev_jointsVectorLen[subIndex],
                 rpcData.jointNumbers[subIndex],
                 rpcData.values[subIndex]);
         }
-        else   // Classic Position Control
+        else
         {
-            if (rpcData.subdevices_p[subIndex]->iCurr)
-            {
-                for (int i = 0; i < rpcData.subdev_jointsVectorLen[subIndex]; i++)
-                {
-                    ret = ret && rpcData.subdevices_p[subIndex]->iCurr->setRefCurrent(rpcData.jointNumbers[subIndex][i],
-                        rpcData.values[subIndex][i]);
-                }
-            }
-            else
-            {
-                ret = false;
-            }
+            ret = false;
         }
     }
     rpcDataMutex.post();
