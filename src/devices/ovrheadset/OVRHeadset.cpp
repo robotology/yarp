@@ -4,10 +4,6 @@
  * CopyPolicy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
  */
 
-#define AXIS_COUNT 8
-#define STICK_COUNT 2
-#define BUTTON_COUNT 13
-#define INPUTERRORCHECK if (inputStateError) return false
 #include "OVRHeadset.h"
 #include "InputCallback.h"
 #include "TextureBuffer.h"
@@ -34,6 +30,10 @@
 #include <dxgi.h> // for GetDefaultAdapterLuid
 #pragma comment(lib, "dxgi.lib")
 #endif
+
+static constexpr unsigned int AXIS_COUNT   = 8;
+static constexpr unsigned int STICK_COUNT  = 2;
+static constexpr unsigned int BUTTON_COUNT = 13;
 
 #if defined(_WIN32)
  #define GLFW_EXPOSE_NATIVE_WIN32
@@ -159,7 +159,6 @@ yarp::dev::OVRHeadset::OVRHeadset() :
         inputStateError(false)
 {
     yTrace();
-
 }
 yarp::dev::OVRHeadset::~OVRHeadset()
 {
@@ -270,37 +269,6 @@ void yarp::dev::OVRHeadset::fillHatStorage()
 bool yarp::dev::OVRHeadset::open(yarp::os::Searchable& cfg)
 {
     yTrace();
-    //PORT OPENING CODE REFACTORING PROPOSAL
-    //std::vector<std::pair<yarp::os::BufferedPort<yarp::os::Bottle>*, std::string> > ports;
-    //ports.push_back(std::make_pair(orientationPort,                  "orientation"));
-    //ports.push_back(std::make_pair(positionPort,                     "position"));
-    //ports.push_back(std::make_pair(angularVelocityPort,              "angularVelocity"));
-    //ports.push_back(std::make_pair(linearVelocityPort,               "linearVelocity"));
-    //ports.push_back(std::make_pair(angularAccelerationPort,          "angularAcceleration"));
-    //ports.push_back(std::make_pair(linearAccelerationPort,           "linearAcceleration"));
-    //ports.push_back(std::make_pair(predictedOrientationPort,         "predictedOrientation"));
-    //ports.push_back(std::make_pair(predictedPositionPort,            "predictedPosition"));
-    //ports.push_back(std::make_pair(predictedAngularVelocityPort,     "predictedAngularVelocity"));
-    //ports.push_back(std::make_pair(predictedLinearVelocityPort,      "predictedLinearVelocity"));
-    //ports.push_back(std::make_pair(predictedAngularAccelerationPort, "predictedAngularAcceleration"));
-    //ports.push_back(std::make_pair(predictedLinearAccelerationPort,  "predictedLinearAcceleration"));
-    //
-    //for (auto port : ports)
-    //{
-    //    port.first = new yarp::os::BufferedPort<yarp::os::Bottle>;
-    //    std::string name, prefix;
-    //    bool        predicted;
-    //
-    //    predicted = port.second.find("predicted") != std::string::npos;
-    //    prefix = predicted ? "/oculus/predicted" : "/oculus";
-    //    name = prefix + "/headpose/" + port.second + ":o";
-    //    if (!port.first->open(name)) {
-    //        yError() << "Cannot open" << port.second << "port";
-    //        this->close();
-    //        return false;
-    //    }
-    //    port.first->setWriteOnly();
-    //}
 
     if (cfg.check("stick_as_axis"))
     {
@@ -1508,37 +1476,37 @@ void yarp::dev::OVRHeadset::errorManager(ovrResult error)
 
 bool yarp::dev::OVRHeadset::getAxisCount(unsigned int& axis_count)
 {
-    INPUTERRORCHECK;
+    if (inputStateError) return false;
     axis_count = axisIdToValue.size();
     return true;
 }
 bool yarp::dev::OVRHeadset::getButtonCount(unsigned int& button_count)
 {
-    INPUTERRORCHECK;
+    if (inputStateError) return false;
     button_count = BUTTON_COUNT;
     return true;
 }
 bool yarp::dev::OVRHeadset::getTrackballCount(unsigned int& Trackball_count) 
 {
-    INPUTERRORCHECK;
+    if (inputStateError) return false;
     Trackball_count = 0;
     return true;
 };
 bool yarp::dev::OVRHeadset::getHatCount(unsigned int& Hat_count) 
 {
-    INPUTERRORCHECK;
+    if (inputStateError) return false;
     Hat_count = 1;
     return true;
 }
 bool yarp::dev::OVRHeadset::getTouchSurfaceCount(unsigned int& touch_count) 
 {
-    INPUTERRORCHECK;
+    if (inputStateError) return false;
     touch_count = 0;
     return true;
 }
 bool yarp::dev::OVRHeadset::getStickCount(unsigned int& stick_count) 
 {
-    INPUTERRORCHECK;
+    if (inputStateError) return false;
     stick_count = getStickAsAxis ? 0 : STICK_COUNT;
     return true;
 }
@@ -1549,7 +1517,7 @@ bool yarp::dev::OVRHeadset::getStickDoF(unsigned int stick_id, unsigned int& DoF
 }
 bool yarp::dev::OVRHeadset::getButton(unsigned int button_id, float& value) 
 {
-    INPUTERRORCHECK;
+    if (inputStateError) return false;
     yarp::os::LockGuard lock(inputStateMutex);
     if (button_id > buttonIdToOvrButton.size() - 1)
     {
@@ -1565,7 +1533,7 @@ bool yarp::dev::OVRHeadset::getTrackball(unsigned int trackball_id, yarp::sig::V
 }
 bool yarp::dev::OVRHeadset::getHat(unsigned int hat_id, unsigned char& value) 
 {
-    INPUTERRORCHECK;
+    if (inputStateError) return false;
     yarp::os::LockGuard lock(inputStateMutex);
     if (hat_id > 0)
     {
@@ -1592,7 +1560,7 @@ bool yarp::dev::OVRHeadset::getAxis(unsigned int axis_id, double& value)
 }
 bool yarp::dev::OVRHeadset::getStick(unsigned int stick_id, yarp::sig::Vector& value, JoypadCtrl_coordinateMode coordinate_mode) 
 {
-    INPUTERRORCHECK;
+    if (inputStateError) return false;
     yarp::os::LockGuard lock(inputStateMutex);
     if (getStickAsAxis)
     {

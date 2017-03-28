@@ -13,11 +13,11 @@
 #include <yarp/os/RateThread.h>
 #include <yarp/dev/DeviceDriver.h>
 #include <yarp/dev/ServiceInterfaces.h>
+#include <yarp/dev/IJoypadController.h>
 
 #include <GL/glew.h>
 #include <OVR_CAPI.h>
 #include <OVR_CAPI_GL.h>
-#include <yarp/dev/IJoypadController.h>
 #include <map>
 #include <vector>
 
@@ -82,11 +82,11 @@ private:
     static void glfwErrorCallback(int error, const char* description);
     static void ovrDebugCallback(uintptr_t userData, int level, const char* message);
     static void DebugHmd(ovrHmdDesc hmdDesc);
-    inline void errorManager(ovrResult error);
-    inline void fillAxisStorage();
-    inline void fillErrorStorage();
-    inline void fillButtonStorage();
-    inline void fillHatStorage();
+    void errorManager(ovrResult error);
+    void fillAxisStorage();
+    void fillErrorStorage();
+    void fillButtonStorage();
+    void fillHatStorage();
 
     yarp::os::BufferedPort<yarp::os::Bottle>* orientationPort;
     yarp::os::BufferedPort<yarp::os::Bottle>* positionPort;
