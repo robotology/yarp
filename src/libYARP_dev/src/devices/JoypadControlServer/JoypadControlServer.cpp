@@ -8,7 +8,6 @@
 #include <map>
 #include <vector>
 #include <yarp/os/LogStream.h>
-#include <yarp/math/Math.h>
 
 #define DEFAULT_THREAD_PERIOD   10 //ms
 
@@ -17,6 +16,14 @@ using namespace yarp::dev;
 using namespace yarp::os;
 using namespace yarp::sig;
 JoypadCtrlParser::JoypadCtrlParser() : device(YARP_NULLPTR){}
+
+inline void cat(Vector& a, const Vector& b)
+{
+    for (size_t i = 0; i < b.size(); i++)
+    {
+        a.push_back(b[i]);
+    }
+}
 
 bool JoypadCtrlParser::configure(yarp::dev::IJoypadController* interface)
 {
@@ -624,7 +631,7 @@ void JoypadControlServer::run()
                     write = false;
                     break;
                 }
-                b = yarp::math::cat(b, v);
+                cat(b, v);
             }
             if(write)m_portTrackball.write();
         }
@@ -644,7 +651,7 @@ void JoypadControlServer::run()
                     write = false;
                     break;
                 }
-                b = yarp::math::cat(b, v);
+                cat(b, v);
             }
             if(write)m_portStick.write();
         }
@@ -663,7 +670,7 @@ void JoypadControlServer::run()
                     write = false;
                     break;
                 }
-                b = yarp::math::cat(b, v);
+                cat(b, v);
             }
 
             if(write)m_portTouch.write();
