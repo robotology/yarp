@@ -97,10 +97,12 @@ git commit -m "Prepare for next stable release (2.3.68.2)"
 * Open https://github.com/robotology/yarp/settings/branches/master, restore tick
   in `Include administrators` and save changes.
 
-* Create 2 labels on github (in https://github.com/robotology/yarp/labels)
-  * `Fixed in: YARP 2.3.68.2` using `#fbca04` as color.
-  * `Target: YARP v2.3.68.2` using `#d93f0b` as color.
-
+* Create 3 labels on github (in https://github.com/robotology/yarp/labels)
+  * For the current release:
+    * `Affects: YARP v2.3.68.1` using `#006b75` as color.
+  * For the next release:
+    * `Fixed in: YARP v2.3.68.2` using `#fbca04` as color.
+    * `Target: YARP v2.3.68.2` using `#d93f0b` as color.
 
 
 Steps for building a YARP feature release
