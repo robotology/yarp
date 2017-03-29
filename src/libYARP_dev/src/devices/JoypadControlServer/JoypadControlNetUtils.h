@@ -13,8 +13,8 @@ namespace yarp
     {
         namespace JoypadControl
         {
-            class                       LoopablePort;
-            template <typename T> class JoyPort;
+            struct                       LoopablePort;
+            template <typename T> struct JoyPort;
         }
     }
 }
