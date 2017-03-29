@@ -10,12 +10,12 @@ if ("@family@" STREQUAL "thrift")
   string(REGEX REPLACE "^/*([^/].+[^/])/*$" "\\1/" prefix "@include_prefix@")
 endif()
 
-file(STRINGS @dir@/@yarpidlName@_indexALL.txt index)
+file(STRINGS "@dir@/@yarpidlName@_indexALL.txt" index)
 foreach(genFile ${index})
   get_filename_component(type ${genFile} EXT)
   get_filename_component(main ${genFile} NAME_WE)
   if(${type} STREQUAL ".h")
-    if(EXISTS @dir@/${genFile})
+    if(EXISTS "@dir@/${genFile}")
       configure_file("@dir@/${genFile}"
                      "@output_dir@/include/${prefix}${genFile}"
                      COPYONLY)
@@ -24,7 +24,7 @@ foreach(genFile ${index})
     else()
       message(WARNING "${genFile} not found in @yarpidlName@ dir!")
     endif()
-    if(EXISTS @dir@/${main}Reply${type})
+    if(EXISTS "@dir@/${main}Reply${type}")
       configure_file("@dir@/${main}Reply${type}"
                      "@output_dir@/include/${prefix}${main}Reply${type}"
                      COPYONLY)
@@ -32,7 +32,7 @@ foreach(genFile ${index})
       list(REMOVE_DUPLICATES headers)
     endif()
   elseif(${type} STREQUAL ".cpp")
-    if(EXISTS @dir@/${genFile})
+    if(EXISTS "@dir@/${genFile}")
       configure_file("@dir@/${genFile}"
                      "@output_dir@/src/${genFile}"
                      COPYONLY)
@@ -48,7 +48,7 @@ foreach(genFile ${index})
 endforeach(genFile)
 
 
-file(WRITE @output_dir@/@yarpidl_target_name@.cmake
+file(WRITE "@output_dir@/@yarpidl_target_name@.cmake"
 "## This is an automatically-generated file.
 ## It could get re-generated if the ALLOW_IDL_GENERATION flag is on
 

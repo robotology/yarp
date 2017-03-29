@@ -326,11 +326,6 @@ bool TcpRosCarrier::expectSenderSpecifier(ConnectionState& proto) {
 bool TcpRosCarrier::write(ConnectionState& proto, SizedWriter& writer) {
     SizedWriter *flex_writer = &writer;
 
-
-    ConstString typ = "";
-    if (proto.getContactable()) {
-        typ = proto.getContactable()->getType().getName();
-    }
     if (raw!=2) {
         // At startup, we check for what kind of messages are going
         // through, and prepare an appropriate byte-rejiggering if
@@ -338,7 +333,7 @@ bool TcpRosCarrier::write(ConnectionState& proto, SizedWriter& writer) {
         if (translate==TCPROS_TRANSLATE_UNKNOWN) {
             dbg_printf("* TCPROS_TRANSLATE_UNKNOWN\n");
             FlexImage *img = NULL;
-            if (typ=="yarp/image"||typ=="yarp/bottle") {
+            if (user_type=="yarp/image"||user_type=="yarp/bottle") {
                 img = wi.checkForImage(writer);
             }
             if (img) {
