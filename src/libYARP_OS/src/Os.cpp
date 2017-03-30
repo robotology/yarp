@@ -142,3 +142,22 @@ int yarp::os::fork()
     pid_t pid = yarp::os::impl::fork();
     return pid;
 }
+
+
+#if defined(__APPLE__)
+#include "yarp/os/impl/MacOSAPI.h"
+#endif
+
+
+void yarp::os::setEnergySavingModeState(bool enabled)
+{
+#if defined(__APPLE__)
+    static void* handle = 0;
+    if (!enabled && !handle) {
+        handle = disableAppNap();
+    } else {
+        restoreAppNap(handle);
+    }
+
+#endif
+}
