@@ -13,10 +13,13 @@
 #include <yarp/os/RateThread.h>
 #include <yarp/dev/DeviceDriver.h>
 #include <yarp/dev/ServiceInterfaces.h>
+#include <yarp/dev/IJoypadController.h>
 
 #include <GL/glew.h>
 #include <OVR_CAPI.h>
 #include <OVR_CAPI_GL.h>
+#include <map>
+#include <vector>
 
 
 
@@ -33,7 +36,8 @@ namespace dev {
 
 class OVRHeadset : public yarp::dev::DeviceDriver,
                    public yarp::os::RateThread,
-                   public yarp::dev::IService
+                   public yarp::dev::IService,
+                   public yarp::dev::IJoypadController
 {
 public:
     explicit OVRHeadset();
@@ -53,6 +57,20 @@ public:
     virtual bool updateService();
     virtual bool stopService();
 
+    // yarp::dev::IJoypadController methods
+    virtual bool getAxisCount(unsigned int& axis_count) YARP_OVERRIDE;
+    virtual bool getButtonCount(unsigned int& button_count) YARP_OVERRIDE;
+    virtual bool getTrackballCount(unsigned int& Trackball_count) YARP_OVERRIDE;
+    virtual bool getHatCount(unsigned int& Hat_count) YARP_OVERRIDE;
+    virtual bool getTouchSurfaceCount(unsigned int& touch_count) YARP_OVERRIDE;
+    virtual bool getStickCount(unsigned int& stick_count) YARP_OVERRIDE;
+    virtual bool getStickDoF(unsigned int stick_id, unsigned int& DoF) YARP_OVERRIDE;
+    virtual bool getButton(unsigned int button_id, float& value) YARP_OVERRIDE;
+    virtual bool getTrackball(unsigned int trackball_id, yarp::sig::Vector& value) YARP_OVERRIDE;
+    virtual bool getHat(unsigned int hat_id, unsigned char& value) YARP_OVERRIDE;
+    virtual bool getAxis(unsigned int axis_id, double& value) YARP_OVERRIDE;
+    virtual bool getStick(unsigned int stick_id, yarp::sig::Vector& value, JoypadCtrl_coordinateMode coordinate_mode) YARP_OVERRIDE;
+    virtual bool getTouch(unsigned int touch_id, yarp::sig::Vector& value) YARP_OVERRIDE;
 
 private:
     bool createWindow(int w, int h);
@@ -64,6 +82,11 @@ private:
     static void glfwErrorCallback(int error, const char* description);
     static void ovrDebugCallback(uintptr_t userData, int level, const char* message);
     static void DebugHmd(ovrHmdDesc hmdDesc);
+    void errorManager(ovrResult error);
+    void fillAxisStorage();
+    void fillErrorStorage();
+    void fillButtonStorage();
+    void fillHatStorage();
 
     yarp::os::BufferedPort<yarp::os::Bottle>* orientationPort;
     yarp::os::BufferedPort<yarp::os::Bottle>* positionPort;
@@ -87,6 +110,14 @@ private:
     ovrSession session;
     ovrHmdDesc hmdDesc;
     GLFWwindow* window;
+    yarp::os::Mutex                  inputStateMutex;
+    ovrInputState                    inputState;
+    bool                             inputStateError;
+    bool                             getStickAsAxis;
+    std::vector<ovrButton>           buttonIdToOvrButton;
+    std::vector<float*>              axisIdToValue;
+    std::map<int, int>               DButtonToHat;
+    std::map<ovrResult, std::string> error_messages;
 
     bool closed;
     long long distortionFrameIndex;
