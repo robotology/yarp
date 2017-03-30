@@ -1486,36 +1486,36 @@ bool yarp::dev::OVRHeadset::getButtonCount(unsigned int& button_count)
     button_count = BUTTON_COUNT;
     return true;
 }
-bool yarp::dev::OVRHeadset::getTrackballCount(unsigned int& Trackball_count) 
+bool yarp::dev::OVRHeadset::getTrackballCount(unsigned int& Trackball_count)
 {
     if (inputStateError) return false;
     Trackball_count = 0;
     return true;
 };
-bool yarp::dev::OVRHeadset::getHatCount(unsigned int& Hat_count) 
+bool yarp::dev::OVRHeadset::getHatCount(unsigned int& Hat_count)
 {
     if (inputStateError) return false;
     Hat_count = 1;
     return true;
 }
-bool yarp::dev::OVRHeadset::getTouchSurfaceCount(unsigned int& touch_count) 
+bool yarp::dev::OVRHeadset::getTouchSurfaceCount(unsigned int& touch_count)
 {
     if (inputStateError) return false;
     touch_count = 0;
     return true;
 }
-bool yarp::dev::OVRHeadset::getStickCount(unsigned int& stick_count) 
+bool yarp::dev::OVRHeadset::getStickCount(unsigned int& stick_count)
 {
     if (inputStateError) return false;
     stick_count = getStickAsAxis ? 0 : STICK_COUNT;
     return true;
 }
-bool yarp::dev::OVRHeadset::getStickDoF(unsigned int stick_id, unsigned int& DoF) 
+bool yarp::dev::OVRHeadset::getStickDoF(unsigned int stick_id, unsigned int& DoF)
 {
     DoF = 2;
     return true;
 }
-bool yarp::dev::OVRHeadset::getButton(unsigned int button_id, float& value) 
+bool yarp::dev::OVRHeadset::getButton(unsigned int button_id, float& value)
 {
     if (inputStateError) return false;
     yarp::os::LockGuard lock(inputStateMutex);
@@ -1527,11 +1527,11 @@ bool yarp::dev::OVRHeadset::getButton(unsigned int button_id, float& value)
     value = inputState.Buttons & buttonIdToOvrButton[button_id] ? 1.0 : 0.0;
     return true;
 }
-bool yarp::dev::OVRHeadset::getTrackball(unsigned int trackball_id, yarp::sig::Vector& value) 
+bool yarp::dev::OVRHeadset::getTrackball(unsigned int trackball_id, yarp::sig::Vector& value)
 {
     return false;
 }
-bool yarp::dev::OVRHeadset::getHat(unsigned int hat_id, unsigned char& value) 
+bool yarp::dev::OVRHeadset::getHat(unsigned int hat_id, unsigned char& value)
 {
     if (inputStateError) return false;
     yarp::os::LockGuard lock(inputStateMutex);
@@ -1546,7 +1546,7 @@ bool yarp::dev::OVRHeadset::getHat(unsigned int hat_id, unsigned char& value)
             DButtonToHat[inputState.Buttons & ovrButton_Left];
     return true;
 }
-bool yarp::dev::OVRHeadset::getAxis(unsigned int axis_id, double& value) 
+bool yarp::dev::OVRHeadset::getAxis(unsigned int axis_id, double& value)
 {
     yarp::os::LockGuard lock(inputStateMutex);
     if (axis_id > axisIdToValue.size())
@@ -1558,7 +1558,7 @@ bool yarp::dev::OVRHeadset::getAxis(unsigned int axis_id, double& value)
     value = *axisIdToValue[axis_id];
     return true;
 }
-bool yarp::dev::OVRHeadset::getStick(unsigned int stick_id, yarp::sig::Vector& value, JoypadCtrl_coordinateMode coordinate_mode) 
+bool yarp::dev::OVRHeadset::getStick(unsigned int stick_id, yarp::sig::Vector& value, JoypadCtrl_coordinateMode coordinate_mode)
 {
     if (inputStateError) return false;
     yarp::os::LockGuard lock(inputStateMutex);
@@ -1566,7 +1566,7 @@ bool yarp::dev::OVRHeadset::getStick(unsigned int stick_id, yarp::sig::Vector& v
     {
         return false;
     }
-    
+
     if (stick_id > STICK_COUNT - 1)
     {
         yError() << "stick id out of bound";
@@ -1584,7 +1584,7 @@ bool yarp::dev::OVRHeadset::getStick(unsigned int stick_id, yarp::sig::Vector& v
     value.push_back(inputState.Thumbstick[stick_id].y);
     return true;
 }
-bool yarp::dev::OVRHeadset::getTouch(unsigned int touch_id, yarp::sig::Vector& value) 
+bool yarp::dev::OVRHeadset::getTouch(unsigned int touch_id, yarp::sig::Vector& value)
 {
     return false;
 }
