@@ -361,6 +361,12 @@ set(YARP_OS_SRCS src/AbstractCarrier.cpp
                  src/hmac_sha2.c
                  src/sha2.c
                  src/QosStyle.cpp)
+                 
+                 
+if(APPLE)
+  list(APPEND YARP_OS_IMPL_HDRS include/yarp/os/impl/MacOSAPI.h)
+  list(APPEND YARP_OS_SRCS src/MacOSAPI.mm)
+endif()
 
 if(NOT SKIP_ACE)
   # this carrier have not yet been implemented without ACE
@@ -415,6 +421,10 @@ else()
   target_compile_features(YARP_OS PUBLIC cxx_nullptr
                                          cxx_override
                                          cxx_rvalue_references)
+endif()
+
+if(APPLE)
+  target_link_libraries(YARP_OS PRIVATE "-framework Foundation")
 endif()
 
 set_property(TARGET YARP_OS PROPERTY PUBLIC_HEADER ${YARP_OS_HDRS})
