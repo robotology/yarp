@@ -84,7 +84,6 @@ yarp::sig::Vector FrameTransform::getRPYRot() const
 
 yarp::sig::Matrix FrameTransform::toMatrix() const
 {
-    yarp::sig::Vector rotV;
     yarp::sig::Matrix t_mat(4,4);
     t_mat = rotation.toRotationMatrix();
     t_mat[0][3] = translation.tX;
