@@ -15,119 +15,55 @@
 
 namespace yarp
 {
-    namespace math
+namespace math
+{
+
+
+
+class YARP_math_API FrameTransform
+{
+public:
+    std::string src_frame_id;
+    std::string dst_frame_id;
+    double      timestamp;
+
+    struct Translation_t
     {
-        class YARP_math_API FrameTransform
+        double tX;
+        double tY;
+        double tZ;
+
+        void set(double x, double y, double z)
         {
-            public:
-            std::string src_frame_id;
-            std::string dst_frame_id;
-            double      timestamp;
+            tX = x;
+            tY = y;
+            tZ = z;
+        }
+    } translation;
 
-            struct Translation_t
-            {
-                double tX;
-                double tY;
-                double tZ;
+    yarp::math::Quaternion rotation;
 
-                void set(double x, double y, double z)
-                {
-                    tX = x;
-                    tY = y;
-                    tZ = z;
-                }
-            } translation;
+    FrameTransform();
+    FrameTransform(const std::string&  parent,
+                   const std::string&  child,
+                   double              inTX,
+                   double              inTY,
+                   double              inTZ,
+                   double              inRX,
+                   double              inRY,
+                   double              inRZ,
+                   double              inRW);
+    ~FrameTransform(){}
+    void              transFromVec(double X, double Y, double Z);
+    void              rotFromRPY(double R, double P, double Y);
+    yarp::sig::Vector getRPYRot() const;
+    yarp::sig::Matrix toMatrix() const;
+    bool              fromMatrix(const yarp::sig::Matrix& mat);
+    std::string       toString();
+};
 
-            Quaternion rotation;
-
-            FrameTransform()
-            {
-                timestamp = 0;
-                translation.set(0, 0, 0);
-            }
-
-            FrameTransform
-                (
-                const std::string& parent,
-                const std::string& child,
-                double             inTX,
-                double             inTY,
-                double             inTZ,
-                double             inRX,
-                double             inRY,
-                double             inRZ,
-                double             inRW
-                )
-            {
-                src_frame_id = parent;
-                dst_frame_id = child;
-                translation.set(inTX, inTY, inTZ);
-                rotation.w() = inRW;
-                rotation.x() = inRX;
-                rotation.y() = inRY;
-                rotation.z() = inRZ;
-            }
-
-            ~FrameTransform(){};
-
-            void transFromVec(double X, double Y, double Z)
-            {
-                translation.set(X, Y, Z);
-            }
-
-            void rotFromRPY(double R, double P, double Y)
-            {
-                double               rot[3] = { R, P, Y };
-                size_t               i = 3;
-                yarp::sig::Vector    rotV;
-                yarp::sig::Matrix    rotM;
-                rotV = yarp::sig::Vector(i, rot);
-                rotM = rpy2dcm(rotV);
-                rotation.fromRotationMatrix(rotM);
-            }
-
-            yarp::sig::Vector getRPYRot() const
-            {
-                yarp::sig::Vector rotV;
-                yarp::sig::Matrix rotM;
-                rotM = rotation.toRotationMatrix();
-                rotV = dcm2rpy(rotM);
-                return rotV;
-            }
-
-            yarp::sig::Matrix toMatrix() const
-            {
-                yarp::sig::Vector rotV;
-                yarp::sig::Matrix t_mat(4,4);
-                t_mat = rotation.toRotationMatrix();
-                t_mat[0][3] = translation.tX;
-                t_mat[1][3] = translation.tY;
-                t_mat[2][3] = translation.tZ;
-                return t_mat;
-            }
-
-            bool fromMatrix(const yarp::sig::Matrix& mat)
-            {
-                if (mat.cols() != 4 || mat.rows() != 4)
-                {
-                    yError("FrameTransform::fromMatrix() failed, matrix should be = 4x4");
-                    yAssert(mat.cols() == 4 && mat.rows() == 4);
-                    return false;
-                }
-
-                yarp::sig::Vector q;
-
-                translation.tX = mat[0][3];
-                translation.tY = mat[1][3];
-                translation.tZ = mat[2][3];
-                rotation.fromRotationMatrix(mat);
-                return true;
-            }
-
-            std::string toString();
-        };
-    }
-}
+}//namespace dev
+}//namespace yarp
 
 #endif
 
