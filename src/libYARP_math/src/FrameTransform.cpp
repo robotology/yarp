@@ -7,6 +7,7 @@
 #include <yarp/math/FrameTransform.h>
 
 #include <cstdio>
+#include <math.h>
 using namespace yarp::math;
 using namespace std;
 string FrameTransform::toString()
@@ -29,6 +30,8 @@ FrameTransform::FrameTransform()
 {
     timestamp = 0;
     translation.set(0, 0, 0);
+    linAcceleration = linVelocity = angAcceleration = angVelocity = yarp::sig::Vector(3, NAN);
+    isValid         = VALID_POSITION | VALID_ROTATION;
 }
 
 FrameTransform::FrameTransform(const std::string&  parent,
@@ -41,13 +44,15 @@ FrameTransform::FrameTransform(const std::string&  parent,
                                double              inRZ,
                                double              inRW)
 {
-    src_frame_id = parent;
-    dst_frame_id = child;
+    src_frame_id    = parent;
+    dst_frame_id    = child;
     translation.set(inTX, inTY, inTZ);
-    rotation.w() = inRW;
-    rotation.x() = inRX;
-    rotation.y() = inRY;
-    rotation.z() = inRZ;
+    rotation.w()    = inRW;
+    rotation.x()    = inRX;
+    rotation.y()    = inRY;
+    rotation.z()    = inRZ;
+    linAcceleration = linVelocity = angAcceleration = angVelocity = yarp::sig::Vector(3, NAN);
+    isValid         = VALID_POSITION | VALID_ROTATION;
 }
 
 void FrameTransform::transFromVec(double X, double Y, double Z)

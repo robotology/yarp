@@ -13,6 +13,14 @@
 #include <yarp/math/Math.h>
 #include <yarp/math/Quaternion.h>
 
+#define VALID_POSITION         1  // 0b00000001
+#define VALID_ROTATION         2  // 0b00000010
+#define VALID_LIN_VELOCITY     4  // 0b00000100
+#define VALID_LIN_ACCELERATION 8  // 0b00001000
+#define VALID_ANG_VELOCITY     16 // 0b00010000
+#define VALID_ANG_ACCELERATION 32 // 0b00100000
+#define VALID_FULL VALID_POSITION | VALID_ROTATION | VALID_LIN_VELOCITY | VALID_LIN_ACCELERATION | VALID_ANG_VELOCITY | VALID_ANG_ACCELERATION
+
 namespace yarp
 {
 namespace math
@@ -42,6 +50,11 @@ public:
     } translation;
 
     yarp::math::Quaternion rotation;
+    yarp::sig::Vector      linVelocity;
+    yarp::sig::Vector      angVelocity;
+    yarp::sig::Vector      linAcceleration;
+    yarp::sig::Vector      angAcceleration;
+    bool                   isValid;
 
     FrameTransform();
     FrameTransform(const std::string&  parent,
