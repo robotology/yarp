@@ -370,6 +370,7 @@ ConstString Contact::convertHostToIp(const char *name)
         // convert the IP to a string and print it:
         inet_ntop(p->ai_family, addr, ipstr, sizeof ipstr);
     }
+    freeaddrinfo(res);
 #endif
 
     if (NameConfig::isLocalName(ipstr)) {
