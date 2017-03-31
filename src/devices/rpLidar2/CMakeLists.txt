@@ -9,6 +9,7 @@ yarp_prepare_plugin(rpLidar2
 
 if(NOT SKIP_rpLidar2)
   set(CMAKE_INCLUDE_CURRENT_DIR ON)
+  set(RPLIDAR_SDK_ROOT ${CMAKE_SOURCE_DIR}/extern/rplidar/sdk)
   get_property(YARP_OS_INCLUDE_DIRS TARGET YARP_OS PROPERTY INCLUDE_DIRS)
   get_property(YARP_sig_INCLUDE_DIRS TARGET YARP_sig PROPERTY INCLUDE_DIRS)
   get_property(YARP_dev_INCLUDE_DIRS TARGET YARP_dev PROPERTY INCLUDE_DIRS)
@@ -16,8 +17,8 @@ if(NOT SKIP_rpLidar2)
   include_directories(${YARP_OS_INCLUDE_DIRS}
                       ${YARP_sig_INCLUDE_DIRS}
                       ${YARP_dev_INCLUDE_DIRS}
-                      ${CMAKE_CURRENT_SOURCE_DIR}/sdk/include
-                      ${CMAKE_CURRENT_SOURCE_DIR}/sdk/src)
+                      ${RPLIDAR_SDK_ROOT}/include
+                      ${RPLIDAR_SDK_ROOT}/src)
 
   if (WIN32) 
   set (ARCH_DIR win32)
@@ -27,12 +28,13 @@ if(NOT SKIP_rpLidar2)
   set (ARCH_DIR linux)
   endif ()
 
+
   yarp_add_plugin(rpLidar2 rpLidar2.h
                            rpLidar2.cpp
-                           sdk/src/rplidar_driver.cpp
-                           sdk/src/arch/${ARCH_DIR}/net_serial.cpp
-                           sdk/src/arch/${ARCH_DIR}/timer.cpp
-                           sdk/src/hal/thread.cpp)
+                           ${RPLIDAR_SDK_ROOT}/src/rplidar_driver.cpp
+                           ${RPLIDAR_SDK_ROOT}/src/arch/${ARCH_DIR}/net_serial.cpp
+                           ${RPLIDAR_SDK_ROOT}/src/arch/${ARCH_DIR}/timer.cpp
+                           ${RPLIDAR_SDK_ROOT}/src/hal/thread.cpp)
 
   target_link_libraries(rpLidar2 YARP::YARP_OS
                                 YARP::YARP_sig
