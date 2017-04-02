@@ -71,7 +71,7 @@ public:
     void idlePart();
     bool homeJoint(int joint);
     bool homePart();
-    bool homeToCustomPosition(std::string suffix);
+    bool homeToCustomPosition(const yarp::os::Bottle& positionElement);
     void calibratePart();
     bool checkAndGo();
     void stopSequence();

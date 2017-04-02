@@ -24,6 +24,8 @@
 #include "partitem.h"
 #include "sliderOptions.h"
 
+#include <vector>
+
 namespace Ui {
 class MainWindow;
 }
@@ -72,10 +74,9 @@ private:
     QAction *m_idleAllParts;
     QAction *m_runAllParts;
     QAction *m_homeAllParts;
-    QAction *m_customPosition1AllParts;
-    QAction *m_customPosition2AllParts;
-    QAction *m_customPosition1SinglePart;
-    QAction *m_customPosition2SinglePart;
+    std::vector<QAction *> m_customPositionsAllParts;
+    std::vector<QAction *> m_customPositionsSinglePart;
+    std::vector<QAction *> m_customPositionsSinglePartToolbar;
     QAction *openSequenceAction;
     QAction *m_runSinglePart;
     QAction *m_calibSinglePart;
@@ -107,8 +108,8 @@ private slots:
     void onIdleSinglePart();
     void onHomeSinglePart();
     void onHomeAllParts();
-    void onHomeSinglePartToCustomPosition(std::string suffix);
-    void onHomeAllPartsToCustomPosition(std::string suffix);
+    void onHomeSinglePartToCustomPosition(const yarp::os::Bottle& positionElement);
+    void onHomeAllPartsToCustomPosition(const yarp::os::Bottle& positionElement);
     void onCalibSinglePart();
     void onGoAll();
     void onExecuteScript1();

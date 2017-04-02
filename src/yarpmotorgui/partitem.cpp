@@ -1092,43 +1092,40 @@ bool PartItem::homePart()
     return true;
 }
 
-bool PartItem::homeToCustomPosition(std::string suffix)
+bool PartItem::homeToCustomPosition(const yarp::os::Bottle& positionElement)
 {
     bool ok = true;
     int NUMBER_OF_JOINTS;
     m_iPos->getAxes(&NUMBER_OF_JOINTS);
 
-    QString groupName = m_robotPartPort + QString(suffix.c_str());
+    if (positionElement.isNull()) {
+        QMessageBox::critical(this, "Operation failed", QString("No custom position supplied in configuration file for part ") + QString(m_partName));
+        return false;
+    }
 
-    if (!m_finder->isNull() && !m_finder->findGroup(groupName.toLatin1().data()).isNull())
+    //Look for group called m_robotPartPort_Position and m_robotPartPort_Velocity
+    Bottle xtmp, ytmp;
+    xtmp = positionElement.findGroup(m_robotPartPort.toStdString() + "_Position");
+    ok = ok && (xtmp.size() == NUMBER_OF_JOINTS + 1);
+    ytmp = positionElement.findGroup(m_robotPartPort.toStdString() + "_Velocity");
+    ok = ok && (ytmp.size() == NUMBER_OF_JOINTS + 1);
+
+    if(ok)
     {
-        Bottle xtmp, ytmp;
-        xtmp = m_finder->findGroup(groupName.toLatin1().data()).findGroup("Position");
-        ok = ok && (xtmp.size() == NUMBER_OF_JOINTS+1);
-        ytmp = m_finder->findGroup(groupName.toLatin1().data()).findGroup("Velocity");
-        ok = ok && (ytmp.size() == NUMBER_OF_JOINTS+1);
-        if(ok)
+        for (int jointIndex = 0; jointIndex < NUMBER_OF_JOINTS; jointIndex++)
         {
-            for (int jointIndex = 0; jointIndex < NUMBER_OF_JOINTS; jointIndex++)
-            {
-                double position = xtmp.get(jointIndex+1).asDouble();
-                double velocity = ytmp.get(jointIndex + 1).asDouble();
-                m_iPos->setRefSpeed(jointIndex, velocity);
-                m_iPos->positionMove(jointIndex, position);
-            }
-        }
-        else
-        {
-            QMessageBox::critical(this, "Error", QString("Check the number of entries in the group %1").arg(groupName));
-            ok = false;
+            double position = xtmp.get(jointIndex+1).asDouble();
+            double velocity = ytmp.get(jointIndex + 1).asDouble();
+            m_iPos->setRefSpeed(jointIndex, velocity);
+            m_iPos->positionMove(jointIndex, position);
         }
     }
     else
     {
-        QMessageBox::critical(this, "Operation failed", QString("No custom position supplied in configuration file for part ") + QString(m_partName) +
-            QString(" By default I'm checking tags 'Position' and 'Velocity' inside group [") + groupName + QString("]"));
+        QMessageBox::critical(this, "Error", QString("Check the number of entries in the group %1").arg(m_robotPartPort));
         ok = false;
     }
+
     return ok;
 }
 
