@@ -24,6 +24,7 @@
 #include <QMessageBox>
 #include <QSettings>
 #include <QFileDialog>
+#include <QShortcut>
 #include <map>
 #include <cstdlib>
 #include <yarp/os/LogStream.h>
@@ -123,15 +124,23 @@ MainWindow::MainWindow(QWidget *parent) :
         //If there are customPositions create a submenu item
         QMenu *customPositionsMenu = globalMenuCommands->addMenu(QIcon(":/home.svg"), "Custom positions");
 
+        unsigned keyIndex = 0;
         for (std::map<std::string, yarp::os::Bottle>::const_iterator it(customPositions.begin()); it != customPositions.end(); ++it) {
+
             QAction *newAction = customPositionsMenu->addAction(("Move all parts to " + it->first).c_str());
             m_customPositionsAllParts.push_back(newAction);
             //
             const yarp::os::Bottle &position = it->second;
 
+            // Adding shortcut (to only the first 9 sequences)
+            if (keyIndex < 9) {
+                QKeySequence shortcut(Qt::CTRL + Qt::META + (Qt::Key_1 + keyIndex++));
+                newAction->setShortcut(shortcut);
+                newAction->setShortcutContext(Qt::ApplicationShortcut);
+            }
+
             //copy position in the lambda
             connect(newAction, &QAction::triggered, this, [this, position]{onHomeAllPartsToCustomPosition(position); });
-
         }
     }
 
@@ -207,12 +216,19 @@ MainWindow::MainWindow(QWidget *parent) :
         //If there are customPositions create a submenu item
         QMenu *customPositionsMenu = m_currentPartMenu->addMenu(QIcon(":/home.svg"), "Custom positions");
 
+        unsigned keyIndex = 0;
         for (std::map<std::string, yarp::os::Bottle>::const_iterator it(customPositions.begin()); it != customPositions.end(); ++it) {
             QAction *newAction = customPositionsMenu->addAction(("Move all joints of this part to " + it->first).c_str());
             m_customPositionsSinglePartToolbar.push_back(newAction);
             //
             const yarp::os::Bottle &position = it->second;
 
+            // Adding shortcut (to only the first 9 sequences)
+            if (keyIndex < 9) {
+                QKeySequence shortcut(Qt::CTRL + Qt::ALT + Qt::META + (Qt::Key_1 + keyIndex++));
+                newAction->setShortcut(shortcut);
+                newAction->setShortcutContext(Qt::ApplicationShortcut);
+            }
             //copy position in the lambda
             connect(newAction, &QAction::triggered, this, [this, position]{onHomeSinglePartToCustomPosition(position); });
             
