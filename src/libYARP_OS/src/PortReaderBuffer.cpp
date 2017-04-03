@@ -356,7 +356,7 @@ void PortReaderBufferBase::release(PortReader *completed) {
     //HELPER(implementation).configure(completed,true,false);
     //HELPER(implementation).stateSema.post();
     printf("release not implemented anymore; not needed\n");
-    yarp::os::exit(1);
+    std::exit(1);
 }
 
 int PortReaderBufferBase::check() {
@@ -536,7 +536,7 @@ void PortReaderBufferBase::setAutoRelease(bool flag) {
     //HELPER(implementation).setAutoRelease(flag);
     //HELPER(implementation).stateSema.post();
     printf("setAutoRelease not implemented anymore; not needed\n");
-    exit(1);
+    std::exit(1);
 }
 #endif // YARP_NO_DEPRECATED
 

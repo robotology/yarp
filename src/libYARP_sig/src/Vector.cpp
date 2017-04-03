@@ -13,8 +13,8 @@
 #include <yarp/os/NetFloat64.h>
 
 #include <yarp/os/impl/PlatformVector.h>
-#include <yarp/os/impl/PlatformStdio.h>
-#include <yarp/os/impl/PlatformStdlib.h>
+#include <cstdio>
+#include <cstdlib>
 #include <yarp/os/impl/Logger.h>
 
 #include <yarp/sig/Matrix.h>

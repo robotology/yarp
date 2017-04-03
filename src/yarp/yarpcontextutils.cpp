@@ -2,20 +2,26 @@
 * Copyright (C) 2013 Istituto Italiano di Tecnologia
 * Authors: Elena Ceseracciu
 * CopyPolicy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
-*
 */
+
+#include "yarpcontextutils.h"
+
+#include <yarp/os/Os.h>
+#include <yarp/os/Log.h>
+#include <yarp/os/impl/PlatformDirent.h>
+#include <yarp/os/impl/PlatformSysStat.h>
+#include <yarp/os/impl/PlatformUnistd.h>
+
 #include <set>
 #include <string>
 #include <fstream>
 #include <iostream>
 #include <cstdlib>
+#include <cstring>
+#include <cerrno>
 
-#include <yarp/os/Os.h>
-#include <yarp/os/Log.h>
-#include <yarp/os/impl/PlatformStdlib.h>
-#include "yarpcontextutils.h"
 
-#if defined(WIN32)
+#if defined(_WIN32)
 #pragma warning (disable : 4018)
 
 #ifdef DELETE
@@ -32,14 +38,12 @@
 
 #endif
 
-#include "diff_match_patch.h"
+#include <diff_match_patch.h>
 
-#if defined(WIN32)
+#if defined(_WIN32)
 #pragma warning(default:4018)
 #endif
 
-#include <errno.h>
-//#include <stdio>
 
 using namespace yarp::os;
 using namespace std;
@@ -72,7 +76,7 @@ ConstString getFolderStringNameHidden(folderType ftype)
 
 bool isHidden(ConstString fileName)
 {
-#ifdef WIN32
+#if defined(_WIN32)
     DWORD attributes = GetFileAttributes(fileName.c_str());
     if (attributes & FILE_ATTRIBUTE_HIDDEN)
         return true;
@@ -131,14 +135,15 @@ bool fileCopy(yarp::os::ConstString srcFileName, yarp::os::ConstString destFileN
 
 bool fileRemove(ConstString fileName)
 {
-    return !YARP_unlink(fileName.c_str());
+    return !unlink(fileName.c_str());
 }
 
 int recursiveCopy(ConstString srcDirName, ConstString destDirName, bool force, bool verbose)
 {
     bool ok = true;
-    ACE_stat statbuf;
-    if (YARP_stat(srcDirName.c_str(), &statbuf) == -1)
+
+    yarp::os::impl::YARP_stat statbuf;
+    if (yarp::os::impl::stat(srcDirName.c_str(), &statbuf) == -1)
     {
         if (verbose)
             printf("Error in checking properties for %s\n", srcDirName.c_str());
@@ -148,8 +153,8 @@ int recursiveCopy(ConstString srcDirName, ConstString destDirName, bool force, b
         ok = fileCopy(srcDirName, destDirName, force, verbose) && ok;
     else if ((statbuf.st_mode & S_IFMT) == S_IFDIR)
     {
-        struct YARP_DIRENT **namelist;
-        int n = YARP_scandir(srcDirName.c_str(), &namelist, NULL, YARP_alphasort);
+        yarp::os::impl::dirent **namelist;
+        int n = yarp::os::impl::scandir(srcDirName.c_str(), &namelist, NULL, yarp::os::impl::alphasort);
         if (n<0)
         {
             if (verbose)
@@ -205,8 +210,8 @@ int recursiveCopy(ConstString srcDirName, ConstString destDirName, bool force, b
 
 int recursiveRemove(ConstString dirName, bool verbose)
 {
-    ACE_stat statbuf;
-    if (YARP_stat(dirName.c_str(), &statbuf) == -1)
+    yarp::os::impl::YARP_stat statbuf;
+    if (yarp::os::impl::stat(dirName.c_str(), &statbuf) == -1)
     {
         if (verbose)
             printf("Error in checking properties for %s\n", dirName.c_str());
@@ -216,8 +221,8 @@ int recursiveRemove(ConstString dirName, bool verbose)
         return fileRemove(dirName) ? 0 : -1;
     else if ((statbuf.st_mode & S_IFMT) == S_IFDIR)
     {
-        struct YARP_DIRENT **namelist;
-        int n = YARP_scandir(dirName.c_str(), &namelist, NULL, YARP_alphasort);
+        yarp::os::impl::dirent **namelist;
+        int n = yarp::os::impl::scandir(dirName.c_str(), &namelist, NULL, yarp::os::impl::alphasort);
         if (n<0)
         {
             if (verbose)
@@ -246,8 +251,8 @@ int recursiveRemove(ConstString dirName, bool verbose)
 std::vector<yarp::os::ConstString> listContentDirs(const ConstString &curPath)
 {
     std::vector<yarp::os::ConstString> dirsList;
-    struct YARP_DIRENT **namelist;
-    int n = YARP_scandir(curPath.c_str(), &namelist, NULL, YARP_alphasort);
+    yarp::os::impl::dirent **namelist;
+    int n = yarp::os::impl::scandir(curPath.c_str(), &namelist, NULL, yarp::os::impl::alphasort);
     if (n<0) {
         return dirsList;
     }
@@ -256,9 +261,9 @@ std::vector<yarp::os::ConstString> listContentDirs(const ConstString &curPath)
         ConstString name = namelist[i]->d_name;
         if (name != "." && name != "..")
         {
-            ACE_stat statbuf;
+            yarp::os::impl::YARP_stat statbuf;
             ConstString path = curPath + PATH_SEPARATOR + name;
-            if (YARP_stat(path.c_str(), &statbuf) == -1)
+            if (yarp::os::impl::stat(path.c_str(), &statbuf) == -1)
                 printf("Error in checking properties for %s\n", path.c_str());
 
             if ((statbuf.st_mode & S_IFMT) == S_IFDIR)
@@ -273,8 +278,8 @@ std::vector<yarp::os::ConstString> listContentDirs(const ConstString &curPath)
 std::vector<yarp::os::ConstString> listContentFiles(const ConstString &curPath)
 {
     std::vector<yarp::os::ConstString> fileList;
-    struct YARP_DIRENT **namelist;
-    int n = YARP_scandir(curPath.c_str(), &namelist, NULL, YARP_alphasort);
+    yarp::os::impl::dirent **namelist;
+    int n = yarp::os::impl::scandir(curPath.c_str(), &namelist, NULL, yarp::os::impl::alphasort);
     if (n<0) {
         return fileList;
     }
@@ -292,9 +297,9 @@ std::vector<yarp::os::ConstString> listContentFiles(const ConstString &curPath)
 
         if (name != "." && name != "..")
         {
-            ACE_stat statbuf;
+            yarp::os::impl::YARP_stat statbuf;
             ConstString path = curPath + PATH_SEPARATOR + name;
-            if (YARP_stat(path.c_str(), &statbuf) == -1)
+            if (yarp::os::impl::stat(path.c_str(), &statbuf) == -1)
                 printf("Error in checking properties for %s\n", path.c_str());
             if ((statbuf.st_mode & S_IFMT) == S_IFREG)
             {
@@ -362,29 +367,26 @@ void printInstalledFolders(yarp::os::ResourceFinder &rf, folderType ftype)
 
 void prepareHomeFolder(yarp::os::ResourceFinder &rf, folderType ftype)
 {
-    ACE_DIR* dir = YARP_opendir((rf.getDataHome()).c_str());
-    if (dir != NULL)
-        YARP_closedir(dir);
-    else
-    {
+    yarp::os::impl::DIR* dir = yarp::os::impl::opendir((rf.getDataHome()).c_str());
+    if (dir != NULL) {
+        yarp::os::impl::closedir(dir);
+    } else {
         yarp::os::mkdir((rf.getDataHome()).c_str());
     }
 
-    dir = YARP_opendir((rf.getDataHome() + PATH_SEPARATOR + getFolderStringName(ftype)).c_str());
-    if (dir != NULL)
-        YARP_closedir(dir);
-    else
-    {
+    dir = yarp::os::impl::opendir((rf.getDataHome() + PATH_SEPARATOR + getFolderStringName(ftype)).c_str());
+    if (dir != NULL) {
+        yarp::os::impl::closedir(dir);
+    } else {
         yarp::os::mkdir((rf.getDataHome() + PATH_SEPARATOR + getFolderStringName(ftype)).c_str());
     }
-    dir = YARP_opendir((rf.getDataHome() + PATH_SEPARATOR + getFolderStringNameHidden(ftype)).c_str());
-    if (dir != NULL)
-        YARP_closedir(dir);
-    else
-    {
+    dir = yarp::os::impl::opendir((rf.getDataHome() + PATH_SEPARATOR + getFolderStringNameHidden(ftype)).c_str());
+    if (dir != NULL) {
+        yarp::os::impl::closedir(dir);
+    } else {
         ConstString hiddenPath = (rf.getDataHome() + PATH_SEPARATOR + getFolderStringNameHidden(ftype));
         yarp::os::mkdir(hiddenPath.c_str());
-#ifdef WIN32
+#if defined(_WIN32)
         SetFileAttributes(hiddenPath.c_str(), FILE_ATTRIBUTE_HIDDEN);
 #endif
     }
@@ -422,8 +424,8 @@ bool recursiveFileList(const char* basePath, const char* suffix, std::set<std::s
 
     strPath += mySuffix;
 
-    struct YARP_DIRENT **namelist;
-    int n = YARP_scandir(strPath.c_str(), &namelist, NULL, YARP_alphasort);
+    yarp::os::impl::dirent **namelist;
+    int n = yarp::os::impl::scandir(strPath.c_str(), &namelist, NULL, yarp::os::impl::alphasort);
     if (n<0)
     {
         std::cerr << "Could not read from  directory " << strPath << std::endl;
@@ -434,10 +436,10 @@ bool recursiveFileList(const char* basePath, const char* suffix, std::set<std::s
     {
 
         ConstString name = namelist[i]->d_name;
-        ACE_stat statbuf;
+        yarp::os::impl::YARP_stat statbuf;
         if (name != "." && name != "..")
         {
-            YARP_stat((strPath + PATH_SEPARATOR + name.c_str()).c_str(), &statbuf);
+            yarp::os::impl::stat((strPath + PATH_SEPARATOR + name.c_str()).c_str(), &statbuf);
             if ((statbuf.st_mode & S_IFMT) == S_IFREG)
             {
                 filenames.insert(mySuffix + name.c_str());
@@ -678,8 +680,8 @@ int importAll(folderType fType, bool verbose)
 
         ConstString curPath = contextPaths.get(curPathId).toString();
 
-        struct YARP_DIRENT **namelist;
-        int n = YARP_scandir(curPath.c_str(), &namelist, NULL, YARP_alphasort);
+        yarp::os::impl::dirent **namelist;
+        int n = yarp::os::impl::scandir(curPath.c_str(), &namelist, NULL, yarp::os::impl::alphasort);
         if (n<0) {
             continue;
         }
@@ -689,9 +691,9 @@ int importAll(folderType fType, bool verbose)
 
             if (name != "." && name != "..")
             {
-                ACE_stat statbuf;
+                yarp::os::impl::YARP_stat statbuf;
                 ConstString originalpath = curPath + PATH_SEPARATOR + name;
-                YARP_stat(originalpath.c_str(), &statbuf);
+                yarp::os::impl::stat(originalpath.c_str(), &statbuf);
                 if ((statbuf.st_mode & S_IFMT) == S_IFDIR)
                 {
                     ConstString destDirname = rf.getDataHome() + PATH_SEPARATOR + getFolderStringName(fType) + PATH_SEPARATOR + name;
@@ -826,7 +828,7 @@ int diff(yarp::os::ConstString contextName, folderType fType, bool verbose)
 #else
     //use this for an external diff program
     char command[500];
-#ifdef WIN32
+#if defined(_WIN32)
     strcpy(command, "winmerge ");
 #else
     strcpy(command, "meld ");

@@ -5,7 +5,7 @@
  *
  */
 
-#include <stdio.h>
+#include <cstdio>
 #include <yarp/os/RFModule.h>
 #include <yarp/os/Network.h>
 
@@ -36,17 +36,17 @@ public:
     /*
     * Message handler. Just echo all received messages.
     */
-    bool respond(const Bottle& command, Bottle& reply) 
+    bool respond(const Bottle& command, Bottle& reply)
     {
         printf("Got something, echo is on\n");
         if (command.get(0).asString()=="quit")
-            return false;     
+            return false;
         else
             reply=command;
         return true;
     }
 
-    /* 
+    /*
     * Configure function. Receive a previously initialized
     * resource finder object. Use it to configure your module.
     * Open port and attach it to message handler.
@@ -86,15 +86,15 @@ int main(int argc, char * argv[])
     MyModule module;
 
     yarp::os::ResourceFinder rf; //dummy resource finder, empty
-    
+
     //open a file
 
     printf("Configure module...\n");
     module.configure(rf);
     printf("Start module...\n");
     module.runModule();
-    
-    //remove file 
+
+    //remove file
     printf("Main returning...\n");
     return 0;
 }

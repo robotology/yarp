@@ -7,7 +7,7 @@
 
 #include <yarp/dev/DevicePipe.h>
 #include <yarp/os/Time.h>
-#include <stdio.h>
+#include <cstdio>
 
 #include <yarp/dev/AudioVisualInterfaces.h>
 

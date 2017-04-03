@@ -5,8 +5,8 @@
  *
  */
 
-#include <stdio.h>
-#include <stdlib.h>
+#include <cstdio>
+#include <cstdlib>
 
 #include <yarp/os/Vocab.h>
 #include <yarp/os/NestedContact.h>

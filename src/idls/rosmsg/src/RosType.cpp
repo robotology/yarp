@@ -8,9 +8,9 @@
 #include "RosType.h"
 #include "md5.h"
 
-#include <stdlib.h>
-#include <stdio.h>
-#include <string.h>
+#include <cstdlib>
+#include <cstdio>
+#include <cstring>
 #include <sys/stat.h>
 #include <string>
 #include <sstream>
@@ -30,7 +30,9 @@
 #  include <ace/OS_NS_sys_wait.h>
 #else
 #  include <unistd.h>
-#  include <sys/wait.h>
+#  if defined(YARP_HAS_SYS_WAIT_H)
+#    include <sys/wait.h>
+#  endif
 #  ifndef ACE_OS
 #    define ACE_OS
 #  endif
@@ -82,7 +84,7 @@ RosType::RosTypes::RosTypes() {
     system_resource = new std::vector<RosType>();
     if (!system_resource) {
         fprintf(stderr,"Failed to allocated storage for ros types\n");
-        exit(1);
+        std::exit(1);
     }
 }
 
@@ -95,7 +97,7 @@ RosType::RosTypes::RosTypes(const RosTypes& alt) {
     system_resource = new std::vector<RosType>();
     if (!system_resource) {
         fprintf(stderr,"Failed to allocated storage for ros types\n");
-        exit(1);
+        std::exit(1);
     }
     HELPER(system_resource) = HELPER(alt.system_resource);
 }
@@ -221,7 +223,7 @@ bool RosType::read(const char *tname, RosTypeSearch& env, RosTypeCodeGen& gen,
     }
     if (!fin) {
         fprintf(stderr, "[type] FAILED to open %s\n", path.c_str());
-        exit(1);
+        std::exit(1);
     }
 
     if (verbose) {
@@ -340,11 +342,11 @@ bool RosType::cache(const char *tname, RosTypeSearch& env,
     }
     if (!fin) {
         fprintf(stderr, "[type] FAILED to open %s\n", tname);
-        exit(1);
+        std::exit(1);
     }
     if (!fout) {
         fprintf(stderr, "[type] FAILED to open %s\n", rosType.c_str());
-        exit(1);
+        std::exit(1);
     }
 
     do {
@@ -531,7 +533,7 @@ bool RosTypeSearch::fetchFromRos(const std::string& target_file,
     if (verbose) {
         fprintf(stderr,"[ros]  %s\n", cmd.c_str());
     }
-    pid_t p = ACE_OS::fork();
+    pid_t p = yarp::os::fork();
     if (p==0) {
 #ifdef __linux__
         // This was ACE_OS::execlp, but that fails
@@ -539,7 +541,7 @@ bool RosTypeSearch::fetchFromRos(const std::string& target_file,
 #else
         ACE_OS::execlp("sh","sh","-c",cmd.c_str(),(char *)NULL);
 #endif
-        exit(0);
+        std::exit(0);
     } else {
         ACE_OS::wait(NULL);
     }
@@ -766,7 +768,7 @@ std::string RosTypeSearch::findFile(const char *tname) {
     // File not found. abort if needed
     if (abort_on_error) {
         fprintf(stderr, "[type] %s not found. Aborting\n", tname);
-        exit(1);
+        std::exit(1);
     } else {
         fprintf(stderr, "[type] %s not found. Continuing\n", tname);
     }

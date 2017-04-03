@@ -9,7 +9,7 @@
 #define YARP_MPIBCASTSTREAM
 
 #include <yarp/os/MpiStream.h>
-#include <string.h>
+#include <cstring>
 
 #define CMD_JOIN -1
 #define CMD_DISCONNECT -2

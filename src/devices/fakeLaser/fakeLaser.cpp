@@ -3,18 +3,20 @@
 * Author: Marco Randazzo <marco.randazzo@iit.it>
 * CopyPolicy: Released under the terms of the GPLv2 or later, see GPL.TXT
 */
- 
-#include <fakeLaser.h>
+
+#define _USE_MATH_DEFINES
+
+#include "fakeLaser.h"
 
 #include <yarp/os/Time.h>
 #include <yarp/os/Log.h>
 #include <yarp/os/LogStream.h>
+
 #include <iostream>
-#include <string.h>
-#include <stdlib.h>
 #include <limits>
-#define _USE_MATH_DEFINES
-#include <math.h>
+#include <cstring>
+#include <cstdlib>
+#include <cmath>
 
 //#define LASER_DEBUG
 #ifndef DEG2RAD
@@ -49,7 +51,7 @@ bool FakeLaser::open(yarp::os::Searchable& config)
 
     sensorsNum = (int)((max_angle-min_angle)/resolution);
     laser_data.resize(sensorsNum);
-    
+
     yInfo("Starting debug mode");
     yInfo("max_dist %f, min_dist %f", max_distance, min_distance);
     yInfo("max_angle %f, min_angle %f", max_angle, min_angle);
@@ -171,7 +173,7 @@ bool FakeLaser::getDeviceStatus(Device_status &status)
     mutex.wait();
     status = device_status;
     mutex.post();
-    return true; 
+    return true;
 }
 
 bool FakeLaser::threadInit()
@@ -179,7 +181,7 @@ bool FakeLaser::threadInit()
 #ifdef LASER_DEBUG
     yDebug("FakeLaser:: thread initialising...\n");
     yDebug("... done!\n");
-#endif 
+#endif
 
     return true;
 }
@@ -191,7 +193,7 @@ void FakeLaser::run()
     double t      = yarp::os::Time::now();
     static double t_orig = yarp::os::Time::now();
     double size = (t - (t_orig));
-    
+
     static int test_count = 0;
     static int test = 0;
 

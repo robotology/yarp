@@ -72,10 +72,10 @@ public:
         printf("Connecting...\n");
 
         Logger::get().setVerbosity(-1);
-    
+
         // we'll be sending messages to the game (and getting responses)
         Network::connect(p.getName(),"/game");
-    
+
         // there are occasional messages broadcast from the game to us
         Network::connect("/game",p.getName(),"mcast");
 
@@ -99,9 +99,9 @@ public:
                 prep = prep + "*";
             }
         }
-        cprintf("%s\n%s\n%s\n", 
+        cprintf("%s\n%s\n%s\n",
                 pad("").c_str(),
-                pad(prep).c_str(), 
+                pad(prep).c_str(),
                 pad(broadcast).c_str());
         broadcastMutex.post();
         int i;
@@ -118,8 +118,8 @@ public:
                 char buf[256];
                 ConstString playerName = player->get(0).asString();
                 if (strlen(playerName.c_str())<40) {
-                    ACE_OS::sprintf(buf,"PLAYER %s is at (%d,%d) with lifeforce %d", 
-                                    playerName.c_str(), 
+                    sprintf(buf,"PLAYER %s is at (%d,%d) with lifeforce %d",
+                                    playerName.c_str(),
                                     location.get(1).asInt(),
                                     location.get(2).asInt(),
                                     life.asInt());
@@ -130,7 +130,7 @@ public:
         for (int j=players.size(); j<=5; j++) {
             cprintf("%s\n", pad(String("")).c_str());
         }
-    
+
         gotoxy(xx,yy);
         mutex.post();
     }
@@ -221,7 +221,7 @@ int main(int argc, char *argv[]) {
     signal(SIGTERM,stop);
     signal(SIGPIPE,stop);
 #endif
-  
+
     mainloop();
 
     return 0;

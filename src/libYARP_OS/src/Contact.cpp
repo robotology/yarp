@@ -9,21 +9,24 @@
 
 
 #include <yarp/os/Contact.h>
+
 #include <yarp/os/NetType.h>
 #include <yarp/os/Searchable.h>
 #include <yarp/os/Value.h>
-#include <yarp/os/impl/NameConfig.h>
-#include <yarp/os/impl/PlatformStdlib.h>
 
+#include <yarp/os/impl/PlatformNetdb.h>
+#include <yarp/os/impl/NameConfig.h>
+
+#include <cstdlib>
+#include <cstdio>
+#include <cstring>
 
 #ifdef YARP_HAS_ACE
-#  include <ace/INET_Addr.h>
+# include <ace/INET_Addr.h>
 #else
-#  include <sys/types.h>
-#  include <sys/socket.h>
-#  include <netdb.h>
-#  include <arpa/inet.h>
-#  include <cstdio>
+# include <sys/types.h>
+# include <sys/socket.h>
+# include <arpa/inet.h>
 #endif
 
 
@@ -351,9 +354,9 @@ ConstString Contact::convertHostToIp(const char *name)
     hints.ai_socktype = SOCK_STREAM; // TCP stream sockets
     hints.ai_flags = AI_PASSIVE;     // fill in my IP for me
 
-    if ((status = getaddrinfo(name, "http", &hints, &res)) != 0) {
-        fprintf(stderr, "getaddrinfo error: %s\n", gai_strerror(status));
-        exit(1);
+    if ((status = yarp::os::impl::getaddrinfo(name, "http", &hints, &res)) != 0) {
+        fprintf(stderr, "getaddrinfo error: %s\n", yarp::os::impl::gai_strerror(status));
+        std::exit(1);
     }
 
     for(p = res; p != YARP_NULLPTR; p = p->ai_next) {
@@ -370,7 +373,7 @@ ConstString Contact::convertHostToIp(const char *name)
         // convert the IP to a string and print it:
         inet_ntop(p->ai_family, addr, ipstr, sizeof ipstr);
     }
-    freeaddrinfo(res);
+    yarp::os::impl::freeaddrinfo(res);
 #endif
 
     if (NameConfig::isLocalName(ipstr)) {

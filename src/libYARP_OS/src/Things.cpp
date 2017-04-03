@@ -5,7 +5,7 @@
  */
 
 #include <yarp/os/Things.h>
-#include <stdio.h>
+#include <cstdio>
 
 using namespace yarp::os;
 

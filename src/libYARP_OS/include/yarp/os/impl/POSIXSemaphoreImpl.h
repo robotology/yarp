@@ -8,7 +8,7 @@
 #define YARP_OS_IMPL_POSIXSEMAPHOREIMPL_H
 
 #include <semaphore.h>
-#include <time.h>
+#include <ctime>
 
 #include <yarp/os/api.h>
 

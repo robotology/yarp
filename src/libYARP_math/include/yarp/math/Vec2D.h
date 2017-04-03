@@ -16,7 +16,7 @@
 namespace yarp
 {
     namespace math
-    { 
+    {
         template <typename T>
         class Vec2D;
     }

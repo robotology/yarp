@@ -24,7 +24,7 @@
 #include <map>
 #include <set>
 
-#include <stdlib.h>
+#include <cstdlib>
 #include <sys/stat.h>
 #include <sstream>
 #include "t_generator.h"
@@ -2000,7 +2000,7 @@ void t_yarp_generator::generate_service(t_service* tservice) {
         if (!returntype->is_void()) {
           indent(f_curr_) << declare_field(&returnfield) << endl;
         }
-        
+
         indent(f_curr_) << function_prototype(*fn_iter,false,NULL,"init") << ";" << endl;
         indent(f_curr_) << "virtual bool write(yarp::os::ConnectionWriter& connection);" << endl;
         indent(f_curr_) << "virtual bool read(yarp::os::ConnectionReader& connection);" << endl;
@@ -2019,7 +2019,7 @@ void t_yarp_generator::generate_service(t_service* tservice) {
         //        << " : public yarp::os::Portable {"
         //        << endl;
         //indent(f_curr_) << "public:" << endl;
-        
+
         vector<t_field*> args = (*fn_iter)->get_arglist()->get_members();
         vector<t_field*>::iterator arg_iter;
         t_type* returntype = (*fn_iter)->get_returntype();
@@ -2044,7 +2044,7 @@ void t_yarp_generator::generate_service(t_service* tservice) {
         indent_down();
         indent(f_curr_) << "}" << endl;
         f_curr_ << endl;
-        
+
         indent(f_curr_) << "bool " << service_name_ << "_" << fname << "::read(yarp::os::ConnectionReader& connection) {" << endl;
         indent_up();
         if (!(*fn_iter)->is_oneway()) {

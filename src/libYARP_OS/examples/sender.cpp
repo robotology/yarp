@@ -9,12 +9,12 @@
 #include <yarp/os/Port.h>
 #include <yarp/os/Bottle.h>
 #include <yarp/os/Time.h>
-#include <stdio.h>
+#include <cstdio>
 
 using namespace yarp::os;
 
 int main() {
-    Bottle bot1; 
+    Bottle bot1;
     bot1.addString("testing"); // a simple message
     Port output;
     output.open("/out");

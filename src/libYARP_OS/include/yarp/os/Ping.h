@@ -7,7 +7,7 @@
 #ifndef YARP_OS_PING_H
 #define YARP_OS_PING_H
 
-#include <math.h>
+#include <cmath>
 #include <yarp/os/ConstString.h>
 
 namespace yarp {
@@ -21,15 +21,15 @@ namespace yarp {
 
 class yarp::os::Stat {
 public:
-    Stat() { 
+    Stat() {
         clear();
     }
 
     void clear() {
-        tot = tot2 = 0; 
+        tot = tot2 = 0;
         ct = at = 0;
         mu = 0;
-        sigma = 1e10; 
+        sigma = 1e10;
         // infinity would be better, but methods of getting infinity
         // require awkward dependencies
     }

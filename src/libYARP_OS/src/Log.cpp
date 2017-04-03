@@ -19,19 +19,19 @@
 
 #ifdef YARP_HAS_ACE
 # include <ace/Stack_Trace.h>
-#elif defined(YARP_HAS_EXECINFO)
+#elif defined(YARP_HAS_EXECINFO_H)
 # include <execinfo.h>
 #endif
 
 #include <yarp/conf/system.h>
 #include <yarp/os/Os.h>
 #include <yarp/os/LogStream.h>
-#include <yarp/os/impl/PlatformStdio.h>
+#include <cstdio>
 
 
 #define YARP_MAX_LOG_MSG_SIZE 512
 
-#ifndef WIN32
+#if !defined(_WIN32)
 
  #define RED     (colored_output ? "\033[01;31m" : "")
  #define GREEN   (colored_output ? "\033[01;32m" : "")
@@ -43,7 +43,7 @@
  #define RED_BG  (colored_output ? "\033[01;41m" : "")
  #define CLEAR   (colored_output ? "\033[00m" : "")
 
-#else // WIN32
+#else
 
  // TODO colored and verbose_output for WIN32
  #define RED     ""
@@ -56,7 +56,7 @@
  #define RED_BG  ""
  #define CLEAR   ""
 
-#endif // WIN32
+#endif
 
 bool yarp::os::impl::LogImpl::colored_output(getenv("YARP_COLORED_OUTPUT")     &&  (strcmp(yarp::os::getenv("YARP_COLORED_OUTPUT"), "1") == 0));
 bool yarp::os::impl::LogImpl::verbose_output(getenv("YARP_VERBOSE_OUTPUT")     &&  (strcmp(yarp::os::getenv("YARP_VERBOSE_OUTPUT"), "1") == 0));
@@ -231,7 +231,7 @@ void yarp::os::Log::trace(const char *msg, ...) const
     va_start(args, msg);
     if (msg) {
         char buf[YARP_MAX_LOG_MSG_SIZE];
-        int w =ACE_OS::vsnprintf(buf, YARP_MAX_LOG_MSG_SIZE, msg, args);
+        int w = vsnprintf(buf, YARP_MAX_LOG_MSG_SIZE, msg, args);
         if (w>0 && buf[w-1]=='\n') {
             buf[w-1]=0;
         }
@@ -257,7 +257,7 @@ void yarp::os::Log::debug(const char *msg, ...) const
     va_start(args, msg);
     if (msg) {
         char buf[YARP_MAX_LOG_MSG_SIZE];
-        int w = ACE_OS::vsnprintf(buf, YARP_MAX_LOG_MSG_SIZE, msg, args);
+        int w = vsnprintf(buf, YARP_MAX_LOG_MSG_SIZE, msg, args);
         if (w>0 && buf[w-1]=='\n') {
             buf[w-1]=0;
         }
@@ -283,7 +283,7 @@ void yarp::os::Log::info(const char *msg, ...) const
     va_start(args, msg);
     if (msg) {
         char buf[YARP_MAX_LOG_MSG_SIZE];
-        int w = ACE_OS::vsnprintf(buf, YARP_MAX_LOG_MSG_SIZE, msg, args);
+        int w = vsnprintf(buf, YARP_MAX_LOG_MSG_SIZE, msg, args);
         if (w>0 && buf[w-1]=='\n') {
             buf[w-1]=0;
         }
@@ -309,7 +309,7 @@ void yarp::os::Log::warning(const char *msg, ...) const
     va_start(args, msg);
     if (msg) {
         char buf[YARP_MAX_LOG_MSG_SIZE];
-        int w = ACE_OS::vsnprintf(buf, YARP_MAX_LOG_MSG_SIZE, msg, args);
+        int w = vsnprintf(buf, YARP_MAX_LOG_MSG_SIZE, msg, args);
         if (w>0 && buf[w-1]=='\n') {
             buf[w-1]=0;
         }
@@ -335,7 +335,7 @@ void yarp::os::Log::error(const char *msg, ...) const
     va_start(args, msg);
     if (msg) {
         char buf[YARP_MAX_LOG_MSG_SIZE];
-        int w = ACE_OS::vsnprintf(buf, YARP_MAX_LOG_MSG_SIZE, msg, args);
+        int w = vsnprintf(buf, YARP_MAX_LOG_MSG_SIZE, msg, args);
         if (w>0 && buf[w-1]=='\n') {
             buf[w-1]=0;
         }
@@ -362,7 +362,7 @@ void yarp::os::Log::fatal(const char *msg, ...) const
     va_start(args, msg);
     if (msg) {
         char buf[YARP_MAX_LOG_MSG_SIZE];
-        int w = ACE_OS::vsnprintf(buf, YARP_MAX_LOG_MSG_SIZE, msg, args);
+        int w = vsnprintf(buf, YARP_MAX_LOG_MSG_SIZE, msg, args);
         if (w>0 && buf[w-1]=='\n') {
             buf[w-1]=0;
         }
@@ -375,7 +375,7 @@ void yarp::os::Log::fatal(const char *msg, ...) const
     }
     va_end(args);
     yarp_print_trace(stderr, mPriv->file, mPriv->line);
-    yarp::os::exit(-1);
+    std::exit(-1);
 }
 
 yarp::os::LogStream yarp::os::Log::fatal() const
@@ -393,8 +393,8 @@ void yarp_print_trace(FILE *out, const char *file, int line) {
     ACE_Stack_Trace st(-1);
     // TODO demangle symbols using <cxxabi.h> and abi::__cxa_demangle
     //      when available.
-    ACE_OS::fprintf(out, "%s", st.c_str());
-#elif defined(YARP_HAS_EXECINFO)
+    fprintf(out, "%s", st.c_str());
+#elif defined(YARP_HAS_EXECINFO_H)
     const size_t max_depth = 100;
     size_t stack_depth;
     void *stack_addrs[max_depth];

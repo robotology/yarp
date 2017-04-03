@@ -17,8 +17,8 @@
 #include <yarp/os/ShiftStream.h>
 #include <yarp/os/Portable.h>
 #include <yarp/os/ConnectionState.h>
-#include <yarp/os/impl/PlatformStdio.h>
-#include <yarp/os/impl/PlatformStdlib.h>
+#include <cstdio>
+#include <cstdlib>
 
 namespace yarp {
     namespace os {

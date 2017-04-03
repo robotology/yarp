@@ -1,4 +1,4 @@
-#include <math.h>
+#include <cmath>
 #include <algorithm>
 #include <yarp/os/Value.h>
 
@@ -412,10 +412,10 @@ bool depthCameraDriver::setParams(const Bottle& settings, const Bottle& descript
         bool mirrorOk;
         Value& v = m_cameraDescription->depthMirroring.val[0];
         mirrorOk = false;
-        
+
         if(!v.isBool() )
             settingErrorMsg("Param " + m_cameraDescription->depthMirroring.name + " is not a bool as it should be.", ret);
-        
+
         for (int t = 0; t < 5; t++)
         {
             yarp::os::Time::delay(0.5);
@@ -509,7 +509,7 @@ bool depthCameraDriver::parseIntrinsic(const Searchable& config, const string& g
 bool depthCameraDriver::open(Searchable& config)
 {
     bool ret = true;
-    
+
     if(!config.check("SETTINGS"))
     {
         yError() << "depthCameraDriver: missing SETTINGS section on the configuration file";
@@ -634,7 +634,7 @@ int depthCameraDriver::getRgbHeight()
 }
 
 int depthCameraDriver::getRgbWidth()
-{    
+{
     if(m_cameraDescription->rgbRes.isDescription)
     {
         return m_cameraDescription->rgbRes.val.at(0).asInt();

@@ -5,7 +5,7 @@
  */
 
 #include "ServerInertial.h"
-#include <stdio.h>
+#include <cstdio>
 
 #include <yarp/os/BufferedPort.h>
 #include <yarp/dev/PolyDriver.h>

@@ -43,7 +43,7 @@
 #include "destinationportitem.h"
 #include "sourceportitem.h"
 
-#include <math.h>
+#include <cmath>
 
 #include <QPen>
 #include <QPainter>
@@ -637,12 +637,12 @@ QVariant LineHandle::itemChange(GraphicsItemChange change, const QVariant &value
 
                 dist =  current_point.y() -  base_point.y();
 
-                if(::abs(dist) <= AUTOSNIPE_MARGINE){
+                if (::fabs(dist) <= AUTOSNIPE_MARGINE) {
                     modified = true;
                     current_point = QPointF(current_point.x(), current_point.y() -dist);
                 }
                 dist =  current_point.x() -  base_point.x();
-                if(::abs(dist) <= AUTOSNIPE_MARGINE){
+                if (::fabs(dist) <= AUTOSNIPE_MARGINE) {
                     modified = true;
                     //moveBy(-dist, 0);
                     current_point = QPointF(current_point.x()-dist, current_point.y());
@@ -658,12 +658,12 @@ QVariant LineHandle::itemChange(GraphicsItemChange change, const QVariant &value
                     base_point = mapToItem(parent,parent->mapFromItem(parent->endItem(),parent->endItem()->connectionPoint()));
                 }
                 dist =  current_point.y() -  base_point.y();
-                if(::abs(dist) <= AUTOSNIPE_MARGINE){
+                if (::fabs(dist) <= AUTOSNIPE_MARGINE) {
                     modified = true;
                     current_point = QPointF(current_point.x(), current_point.y() -dist);
                 }
                 dist =  current_point.x() -  base_point.x();
-                if(::abs(dist) <= AUTOSNIPE_MARGINE){
+                if (::fabs(dist) <= AUTOSNIPE_MARGINE) {
                     modified = true;
                     //moveBy(-dist, 0);
                     current_point = QPointF(current_point.x()-dist, current_point.y());

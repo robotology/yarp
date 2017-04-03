@@ -5,7 +5,7 @@
  *
  */
 
-#include <stdio.h>
+#include <cstdio>
 #include <yarp/os/all.h>
 
 #include <tcpros_carrier_api.h>

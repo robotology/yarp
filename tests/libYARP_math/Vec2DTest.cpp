@@ -8,7 +8,7 @@
  * \infile Tests for Vec2D.
  */
 
-#include <yarp/os/impl/PlatformStdio.h>
+#include <cstdio>
 #include <yarp/os/impl/UnitTest.h>
 #include <yarp/os/Portable.h>
 
@@ -22,7 +22,7 @@
 #if defined(_MSC_VER)
 # define _USE_MATH_DEFINES
 #endif
-#include <math.h>
+#include <cmath>
 #include <string>
 
 using namespace yarp::os;

@@ -7,8 +7,8 @@
 #ifndef YARP_DEV_SERVERSERIAL_H
 #define YARP_DEV_SERVERSERIAL_H
 
-#include <stdio.h>
-#include <stdlib.h>
+#include <cstdio>
+#include <cstdlib>
 
 #include <yarp/os/BufferedPort.h>
 #include <yarp/dev/PolyDriver.h>

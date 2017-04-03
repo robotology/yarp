@@ -14,7 +14,7 @@
 #include <QQuickItem>
 #include "videoproducer.h"
 
-//#include <yarp/os/impl/PlatformStdio.h>
+//#include <cstdio>
 #include <yarp/os/Property.h>
 #include <yarp/os/Network.h>
 #include <yarp/os/BufferedPort.h>

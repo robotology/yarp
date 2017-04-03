@@ -9,9 +9,9 @@
 
 #include <yarp/math/RandScalar.h>
 #include <yarp/sig/Vector.h>
-#include <time.h>
-#include <stdio.h>
-#include <math.h>
+#include <ctime>
+#include <cstdio>
+#include <cmath>
 
 // implementation of Marsenne Twister
 #include <yarp/math/impl/mt.h>

@@ -24,8 +24,8 @@
 #include <iostream>
 #include <iomanip>
 #include <string>
-#include <stdlib.h>
-#include <time.h>
+#include <cstdlib>
+#include <ctime>
 
 #include "display.h"
 #include "ui_display.h"

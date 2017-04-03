@@ -12,7 +12,7 @@
 
 
 #include <iostream>
-#include <limits.h>
+#include <climits>
 #include <cmath>
 #include <yarp/os/LogStream.h>
 

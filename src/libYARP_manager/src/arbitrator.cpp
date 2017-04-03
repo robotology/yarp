@@ -17,7 +17,7 @@
 #include <cmath>
 #include <yarp/math/Math.h>
 //#include <gsl/gsl_version.h>
-//#include <gsl/gsl_math.h>
+//#include <gsl/gsl_cmath>
 //#include <gsl/gsl_eigen.h>
 #endif
 

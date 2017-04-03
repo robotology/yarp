@@ -6,7 +6,7 @@
 
 #include <yarp/conf/system.h>
 #include <yarp/os/impl/McastCarrier.h>
-#include <stdlib.h>
+#include <cstdlib>
 #include <yarp/os/impl/Logger.h>
 #include <yarp/os/Network.h>
 
@@ -22,7 +22,7 @@ ElectionOf<PeerRecord<McastCarrier> >& McastCarrier::getCaster() {
         NetworkBase::unlock();
         if (caster==YARP_NULLPTR) {
             YARP_ERROR(Logger::get(), "No memory for McastCarrier::caster");
-            exit(1);
+            std::exit(1);
         }
     } else {
         NetworkBase::unlock();
@@ -144,7 +144,7 @@ bool yarp::os::impl::McastCarrier::expectExtraHeader(ConnectionState& proto) {
         ip[i] = base[i];
         if (i!=0) { add += "."; }
         char buf[100];
-        ACE_OS::sprintf(buf,"%d",ip[i]);
+        sprintf(buf,"%d",ip[i]);
         add += buf;
     }
     port = 256*base[4]+base[5];

@@ -8,7 +8,7 @@
 #ifndef YARP_DEV_TESTFRAMEGRABBER_H
 #define YARP_DEV_TESTFRAMEGRABBER_H
 
-#include <stdio.h>
+#include <cstdio>
 
 #include <yarp/sig/ImageFile.h>
 #include <yarp/dev/FrameGrabberInterfaces.h>

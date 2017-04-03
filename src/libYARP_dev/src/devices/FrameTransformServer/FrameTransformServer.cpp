@@ -11,7 +11,7 @@
 #include <yarp/os/Log.h>
 #include <yarp/os/LogStream.h>
 #include <yarp/os/LockGuard.h>
-#include <stdlib.h>
+#include <cstdlib>
 
 using namespace yarp::sig;
 using namespace yarp::math;
@@ -49,7 +49,7 @@ int Transforms_server_storage::set_transform(FrameTransform t)
     {
        //@@@ this linear search requires optimization!
        if (m_transforms[i].dst_frame_id == t.dst_frame_id && m_transforms[i].src_frame_id == t.src_frame_id)
-       {   
+       {
           //transform already exists, update it
           m_transforms[i]=t;
           return i;
@@ -611,7 +611,7 @@ void FrameTransformServer::run()
         size_t    tfVecSize_timed_ros = m_ros_timed_transform_storage->size();
 #if 0
         yDebug() << "yarp size" << tfVecSize_yarp << "ros_size" << tfVecSize_ros;
-#endif 
+#endif
         yarp::os::Bottle& b = m_streamingPort.prepare();
         b.clear();
 

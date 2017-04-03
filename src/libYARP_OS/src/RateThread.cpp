@@ -13,14 +13,14 @@
 
 #include <yarp/os/Time.h>
 
-#include <math.h> //sqrt
+#include <cmath> //sqrt
 
 //added threadRelease/threadInit methods and synchronization -nat
 
 using namespace yarp::os::impl;
 using namespace yarp::os;
 
-//const ACE_Time_Value _timeout_value(20,0);    // (20 sec) timeout value for the release (20 sec)
+//const YARP_timeval _timeout_value(20,0);    // (20 sec) timeout value for the release (20 sec)
 
 class RateThreadCallbackAdapter: public ThreadImpl
 {
@@ -29,11 +29,11 @@ private:
     double adaptedPeriod;
     RateThread& owner;
     Semaphore mutex;
-    ACE_Time_Value now;
-    ACE_Time_Value currentRunTV;
-    ACE_Time_Value previousRunTV;
-    ACE_Time_Value sleep;
-    ACE_Time_Value sleepPeriodTV;
+    YARP_timeval now;
+    YARP_timeval currentRunTV;
+    YARP_timeval previousRunTV;
+    YARP_timeval sleep;
+    YARP_timeval sleepPeriodTV;
     //ACE_High_Res_Timer thread_timer; // timer to estimate thread time
 
     bool suspended;
@@ -163,7 +163,7 @@ public:
         count++;
         lock();
 
-        ACE_Time_Value elapsedTV;
+        YARP_timeval elapsedTV;
         getTime(elapsedTV);
         double elapsed=toDouble(elapsedTV)-currentRun;
 

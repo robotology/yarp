@@ -19,7 +19,7 @@
 #include <yarp/math/FrameTransform.h>
 #include <yarp/os/LogStream.h>
 #define M_PI 3.14159265358979323846
-#include<math.h>
+#include<cmath>
 
 using namespace yarp::os::impl;
 using namespace yarp::os;

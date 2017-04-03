@@ -7,7 +7,7 @@
 #ifndef THING_H
 #define THING_H
 
-#include <math.h>
+#include <cmath>
 #include <string.h>
 
 #include <ace/OS.h>
@@ -30,7 +30,7 @@ public:
     static Thing NOTHING;
 
     void set(ID n_x, ID n_y, ID n_id = -1);
-  
+
     void setID(ID n_id) { id = n_id; }
 
 
@@ -46,20 +46,20 @@ public:
     void applyMove();
 
     bool isAlive() {
-        return lifetime != 0; 
+        return lifetime != 0;
     }
 
     bool isBullet() {
         return lifetime >=0;
     }
-  
+
     void setLifetime (int lt) {
         lifetime = lt;
     }
- 
+
     void update() {
 
-        if( lifetime > 0) { 
+        if( lifetime > 0) {
             lifetime--;
         }
         applyMove();
@@ -67,7 +67,7 @@ public:
     }
 
 
-    void setName(const char *txt) { 
+    void setName(const char *txt) {
         ACE_OS::strncpy(name,txt,sizeof(name));
         for (unsigned int i=0; i<ACE_OS::strlen(name); i++) {
             char ch = name[i];

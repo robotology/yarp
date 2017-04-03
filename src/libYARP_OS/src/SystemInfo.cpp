@@ -4,9 +4,9 @@
  *  Copy Policy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
  */
 
-#include <stdio.h>
-#include <stdlib.h>
-#include <string.h>
+#include <cstdio>
+#include <cstdlib>
+#include <cstring>
 #include <yarp/os/SystemInfo.h>
 #include <yarp/os/SystemInfoSerializer.h>
 using namespace yarp::os;
@@ -37,7 +37,7 @@ extern char **environ;
 #include <sys/mount.h>
 #endif
 
-#if defined(WIN32)
+#if defined(_WIN32)
 #include <windows.h>
 #include <shlobj.h>
 #include <Lmcons.h>
@@ -109,7 +109,7 @@ bool getCpuEntry(const char* tag, const char *buff, yarp::os::ConstString& value
 #endif
 
 
-#if defined(WIN32)
+#if defined(_WIN32)
 class CpuLoadCollector: public yarp::os::RateThread
 {
 public:
@@ -239,7 +239,7 @@ SystemInfo::MemoryInfo SystemInfo::getMemoryInfo()
     memory.totalSpace = 0;
     memory.freeSpace = 0;
 
-#if defined(WIN32)
+#if defined(_WIN32)
     MEMORYSTATUSEX statex;
     statex.dwLength = sizeof (statex);
     if(GlobalMemoryStatusEx (&statex))
@@ -303,7 +303,7 @@ SystemInfo::StorageInfo SystemInfo::getStorageInfo()
     storage.totalSpace = 0;
     storage.freeSpace = 0;
 
-#if defined(WIN32)
+#if defined(_WIN32)
 
         DWORD dwSectorsPerCluster=0, dwBytesPerSector=0;
         DWORD dwFreeClusters=0, dwTotalClusters=0;
@@ -442,7 +442,7 @@ SystemInfo::ProcessorInfo SystemInfo::getProcessorInfo()
     processor.modelNumber = 0;
     processor.siblings = 0;
 
-#if defined(WIN32)
+#if defined(_WIN32)
     SYSTEM_INFO sysinf;
     GetSystemInfo(&sysinf);
     switch (sysinf.wProcessorArchitecture) {
@@ -556,7 +556,7 @@ SystemInfo::PlatformInfo SystemInfo::getPlatformInfo()
 {
     PlatformInfo platform;
 
-#if defined(WIN32)
+#if defined(_WIN32)
     platform.name = "Windows";
     OSVERSIONINFOEX osver;
     osver.dwOSVersionInfoSize = sizeof(osver);
@@ -678,7 +678,7 @@ SystemInfo::UserInfo SystemInfo::getUserInfo()
     UserInfo user;
     user.userID = 0;
 
-#if defined(WIN32)
+#if defined(_WIN32)
     char path[MAX_PATH+1];
     if(SHGetFolderPathA(YARP_NULLPTR, CSIDL_PROFILE, YARP_NULLPTR, 0, path ) == S_OK)
         user.homeDir = path;
@@ -714,7 +714,7 @@ SystemInfo::LoadInfo SystemInfo::getLoadInfo()
     load.cpuLoad15 = 0.0;
     load.cpuLoadInstant = 0;
 
-#if defined(WIN32)
+#if defined(_WIN32)
     if(globalLoadCollector)
     {
         load = globalLoadCollector->getCpuLoad();
@@ -806,7 +806,7 @@ SystemInfo::ProcessInfo SystemInfo::getProcessInfo(int pid) {
         info.schedPriority = param.__sched_priority;
     info.schedPolicy = sched_getscheduler(pid);
 
-#elif defined(WIN32)
+#elif defined(_WIN32)
     HANDLE hnd = OpenProcess(PROCESS_QUERY_INFORMATION | PROCESS_VM_READ, FALSE, pid);
     if(hnd) {
         TCHAR filename[MAX_PATH];

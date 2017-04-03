@@ -5,19 +5,17 @@
  */
 
 #include <yarp/os/RosNameSpace.h>
+
+#include <yarp/os/DummyConnector.h>
 #include <yarp/os/Os.h>
-#include <yarp/os/impl/PlatformStdio.h>
+#include <yarp/os/Vocab.h>
+
 #include <yarp/os/impl/Logger.h>
 #include <yarp/os/impl/NameClient.h>
 #include <yarp/os/impl/NameConfig.h>
-#include <yarp/os/DummyConnector.h>
-#include <yarp/os/Vocab.h>
+#include <yarp/os/impl/PlatformLimits.h>
 
-#ifdef YARP_HAS_ACE
-#  include <ace/os_include/os_netdb.h>
-#else
-#  include <netdb.h>
-#endif
+#include <cstdio>
 
 using namespace yarp::os;
 using namespace yarp::os::impl;
@@ -80,7 +78,7 @@ Contact RosNameSpace::queryName(const ConstString& name) {
 Contact RosNameSpace::registerName(const ConstString& name) {
     fprintf(stderr,"ROS name server does not do 'raw' registrations.\n");
     fprintf(stderr,"Use [Buffered]Port::open to get complete registrations.\n");
-    yarp::os::exit(1);
+    std::exit(1);
 
     return Contact();
 }
@@ -635,9 +633,8 @@ Contact RosNameSpace::rosify(const Contact& contact) {
     ConstString carrier = ((contact.getCarrier() == "rosrpc")  ? "rosrpc" : "http");
     ConstString hostname = contact.getHost();
     if (yarp::os::impl::NameConfig::isLocalName(hostname)) {
-        char hn[NI_MAXHOST];
-        hostname[NI_MAXHOST-1] = '\0';
-        yarp::os::gethostname(hn, sizeof(hostname));
+        char hn[HOST_NAME_MAX];
+        yarp::os::gethostname(hn, sizeof(hn));
         hostname = hn;
     }
     return Contact(carrier, hostname, contact.getPort());

@@ -3,28 +3,28 @@
  * CopyPolicy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
  */
 
-#ifdef WIN32
+#if defined(_WIN32)
 #include <GL/glew.h>
 #define GLEW_STATIC 1
 #else
 #include <GL/glew.h>
 #endif
 
-#include <assert.h>
+#include <cassert>
 
 #include <GL/gl.h>
 #include <GL/glext.h>
 #include <GL/glu.h>
 #include <GL/glut.h>
-#include <stdio.h>
-#include <stdlib.h>
+#include <cstdio>
+#include <cstdlib>
 #include <Cg/cgGL.h>
 
 
 
 class FBO_Filter {
 protected:
-    void checkProfile(const char *name, CGprofile profile, 
+    void checkProfile(const char *name, CGprofile profile,
                       CGprofile highlight = CG_PROFILE_UNKNOWN) {
         CGbool supported = cgGLIsProfileSupported(profile);
         bool show = (highlight==CG_PROFILE_UNKNOWN)||(highlight==profile);
@@ -32,7 +32,7 @@ protected:
             printf("Cg profile %s is%s supported.\n", name,
                    supported?"":" not");
         }
-    } 
+    }
 
     void checkProfiles(CGprofile highlight = CG_PROFILE_UNKNOWN) {
 #ifdef DEBUG
@@ -50,13 +50,13 @@ protected:
     void checkCg(const char *act) {
         CGerror error;
         const char *str = cgGetLastErrorString(&error);
-        
+
         if (error!=CG_NO_ERROR) {
             printf("nvidia device - %s: %s\n", act, str);
             if (error == CG_COMPILER_ERROR) {
                 printf("  %s\n", cgGetLastListing(cgContext));
             }
-            exit(1);
+            std::exit(1);
         } else {
             printf("nvidia device - %s: OK\n", act);
         }
@@ -86,21 +86,21 @@ protected:
 public :
     CGprogram getProgram() { return cgProgram; }
 
-    FBO_Filter(CGprofile cgp,      ///< Desired profile.  Typically 
+    FBO_Filter(CGprofile cgp,      ///< Desired profile.  Typically
                                     ///  CG_PROFILE_FP30 or CG_PROFILE_FP40
                char *name,         ///< filename of the Cg program.  Note that
                                     /// the entry point function should be named
-                                    /// "FragmentProgram" in the Cg 
-               GLuint outputTex,   ///< the open GL texture object 
-                                    /// to which the results will go 
-               int W,             ///< width of the output texture, 
+                                    /// "FragmentProgram" in the Cg
+               GLuint outputTex,   ///< the open GL texture object
+                                    /// to which the results will go
+               int W,             ///< width of the output texture,
                int H);
 
     ///TODO figure out readback formats from target texture information.
     GLuint apply(GLuint iTex,    ///< OpenGL texture object to use as input
-                 bool FBOtex,     ///< set to true if the input texture is the result of a previous 
+                 bool FBOtex,     ///< set to true if the input texture is the result of a previous
                                   ///  FBO_filter.  False if not.
-                 GLenum rb_fmt = GL_RGBA, 
+                 GLenum rb_fmt = GL_RGBA,
                  GLenum rb_type = GL_FLOAT);
 };
 
@@ -111,9 +111,9 @@ CGprogram FBO_Filter::load_cgprogram(CGprofile prof, char *name) {
 }
 
 void FBO_Filter::renderBegin() {
-  //since we might be operating on downsampled images, we need 
+  //since we might be operating on downsampled images, we need
   //to reshape our current drawing area. Record the previous
-  // settings first though. 
+  // settings first though.
   glGetIntegerv(GL_VIEWPORT, previousViewportDims);
 
   glViewport(0, 0, (GLsizei) tWidth, (GLsizei) tHeight);
@@ -214,8 +214,8 @@ FBO_Filter::FBO_Filter(CGprofile cgp, char *name, GLuint outputTex, int W, int H
 
     if (glewGetExtension("GL_EXT_framebuffer_object") != GL_TRUE) {
         printf("GL_EXT_framebuffer_object extension needed but not supported\n");
-        exit(1);
-    } 
+        std::exit(1);
+    }
 
     //create the framebuffer object.
     oTex = outputTex ;

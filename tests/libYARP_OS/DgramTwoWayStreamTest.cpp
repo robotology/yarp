@@ -10,7 +10,7 @@
 #include <yarp/os/ConstString.h>
 #include <yarp/os/impl/UnitTest.h>
 #include <yarp/os/NetType.h>
-#include <stdio.h>
+#include <cstdio>
 
 using namespace yarp::os::impl;
 using namespace yarp::os;

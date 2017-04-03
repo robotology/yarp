@@ -8,7 +8,7 @@
 #ifndef YARP_DEV_SERVERINERTIAL_SERVERINERTIAL_H
 #define YARP_DEV_SERVERINERTIAL_SERVERINERTIAL_H
 
-#include <stdio.h>
+#include <cstdio>
 
 #include <yarp/os/BufferedPort.h>
 #include <yarp/dev/PolyDriver.h>

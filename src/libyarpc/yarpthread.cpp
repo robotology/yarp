@@ -5,7 +5,7 @@
  *
  */
 
-#include <stdio.h>
+#include <cstdio>
 
 #include "yarp.h"
 #include "yarpimpl.h"
@@ -34,7 +34,7 @@ public:
     YarpcxxThread(yarpThreadCallbacksPtr callbacks,
                   void *client) : callbacks(callbacks), client(client) {
     }
-    
+
     virtual void run() {
         if (callbacks->run) callbacks->run(client);
     }
@@ -50,7 +50,7 @@ public:
             callbacks->afterStart(success,client);
         }
     }
-    
+
     virtual void onStop() {
         if (callbacks->onStop) callbacks->onStop(client);
     }
@@ -59,11 +59,11 @@ public:
         if (callbacks->threadInit) return !callbacks->threadInit(client);
         return true;
     }
-    
+
     virtual void threadRelease() {
         if (callbacks->threadRelease) callbacks->threadRelease(client);
     }
-    
+
 private:
     yarpThreadCallbacksPtr callbacks;
     void *client;

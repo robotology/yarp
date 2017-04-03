@@ -7,7 +7,7 @@
 #include "yarp/dev/ControlBoardInterfacesImpl.h"
 #include <yarp/dev/ControlBoardHelper.h>
 
-#include <stdio.h>
+#include <cstdio>
 using namespace yarp::dev;
 
 ////////////////////////

@@ -7,7 +7,7 @@
 #include "yarp/dev/ImplementAxisInfo.h"
 #include <yarp/dev/ControlBoardHelper.h>
 
-#include <stdio.h>
+#include <cstdio>
 using namespace yarp::dev;
 
 ////////////////////////

@@ -8,8 +8,8 @@
 #ifndef YARP_SERVERSQL_IMPL_SQLITETRIPLESOURCE_H
 #define YARP_SERVERSQL_IMPL_SQLITETRIPLESOURCE_H
 
-#include <stdlib.h>
-#include <stdio.h>
+#include <cstdlib>
+#include <cstdio>
 
 #include <sqlite3.h>
 
@@ -197,7 +197,7 @@ public:
                 fprintf(stderr,"(Query was): %s\n", query);
                 fprintf(stderr,"(Location): %s:%d\n", __FILE__, __LINE__);
                 if (verbose) {
-                    exit(1);
+                    std::exit(1);
                 }
                 sqlite3_free(msg);
             }

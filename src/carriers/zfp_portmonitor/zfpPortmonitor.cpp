@@ -4,9 +4,9 @@
  * CopyPolicy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
  */
 
-#include <stdio.h>
-#include <string.h>
-#include <math.h>
+#include <cstdio>
+#include <cstring>
+#include <cmath>
 #include <algorithm>
 #include <yarp/sig/Image.h>
 #include <yarp/os/LogStream.h>

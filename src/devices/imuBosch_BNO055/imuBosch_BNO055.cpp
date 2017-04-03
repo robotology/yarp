@@ -3,15 +3,15 @@
 // CopyPolicy: Released under the terms of the GNU GPL v2.0.
 
 
-#include <stdlib.h>
+#include <cstdlib>
 #include <unistd.h>
 #include <termios.h> // terminal io (serial port) interface
 #include <fcntl.h>   // File control definitions
-#include <errno.h>   // Error number definitions
+#include <cerrno>   // Error number definitions
 #include <arpa/inet.h>
 #include <iostream>
-#include <string.h>
-#include <math.h>
+#include <cstring>
+#include <cmath>
 
 #include <yarp/os/Time.h>
 #include <yarp/os/LogStream.h>

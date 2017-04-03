@@ -76,7 +76,7 @@ bool ScriptLocalBroker::init(const char* szcmd, const char* szparam,
             const char* guess=guessString.c_str();
             if (fileExists (guess))
             {
-#ifdef WIN32
+#if defined(_WIN32)
                 strCmd = "\"" + std::string(guess) + "\"";
 #else
                 strCmd = guess;

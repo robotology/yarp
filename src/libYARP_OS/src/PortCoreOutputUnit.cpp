@@ -17,7 +17,7 @@
 #include <yarp/os/impl/Companion.h>
 
 
-#define YMSG(x) ACE_OS::printf x;
+#define YMSG(x) printf x;
 #define YTRACE(x) YMSG(("at %s\n",x))
 
 

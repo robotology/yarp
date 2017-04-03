@@ -5,8 +5,8 @@
  *
  */
 
-#include <stdio.h>
-#include <string.h>
+#include <cstdio>
+#include <cstring>
 
 #include "yarp.h"
 #include "yarpimpl.h"
@@ -34,7 +34,7 @@ static int __default_onCompletion(void *client) {
 
 static int __installed_callbacks = 0;
 
-YARP_DEFINE(int) yarpPortableCallbacksInstall(yarpPortableCallbacksPtr 
+YARP_DEFINE(int) yarpPortableCallbacksInstall(yarpPortableCallbacksPtr
                                               callbacks) {
     if (!__installed_callbacks) {
         yarpPortableCallbacksComplete(callbacks);
@@ -44,7 +44,7 @@ YARP_DEFINE(int) yarpPortableCallbacksInstall(yarpPortableCallbacksPtr
     return 0;
 }
 
-YARP_DEFINE(int) yarpPortableCallbacksComplete(yarpPortableCallbacksPtr 
+YARP_DEFINE(int) yarpPortableCallbacksComplete(yarpPortableCallbacksPtr
                                                callbacks) {
     if (!callbacks->write) callbacks->write = __default_write;
     if (!callbacks->read) callbacks->read = __default_read;

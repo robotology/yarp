@@ -8,7 +8,7 @@
 #ifndef YARP_SIG_MATRIX_H
 #define YARP_SIG_MATRIX_H
 
-#include <stdlib.h> //defines size_t
+#include <cstdlib> //defines size_t
 #include <memory.h> //memset
 #include <yarp/os/Portable.h>
 #include <yarp/sig/Vector.h>

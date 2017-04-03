@@ -8,7 +8,7 @@
 #define YARP_OS_BYTES_H
 
 #include <yarp/os/api.h>
-#include <stddef.h> //defines size_t
+#include <cstddef> //defines size_t
 
 namespace yarp {
     namespace os {

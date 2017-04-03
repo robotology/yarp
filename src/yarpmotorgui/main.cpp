@@ -25,6 +25,7 @@
 #include <QMessageBox>
 #include <yarp/os/Log.h>
 #include <yarp/os/LogStream.h>
+#include <csignal>
 
 using namespace yarp::dev;
 using namespace yarp::os;
@@ -178,7 +179,7 @@ int main(int argc, char *argv[])
             QMessageBox::critical(0, "Error", "You cannot use both --parts and --names options simultaneously");
             return 1;
         }
-        
+
         if (b_name != 0 && b_part == 0)
         {
             //check port names from config file
@@ -221,7 +222,7 @@ int main(int argc, char *argv[])
             pParts = Bottle("/icub/head /icub/torso /icub/left_arm /icub/right_arm /icub/left_leg /icub/right_leg");
         }
     }
-    
+
     //Check 1 in the panel
     for(int n = 0; n < pParts.size(); n++)
     {
@@ -259,8 +260,8 @@ int main(int argc, char *argv[])
         }
     }
 
-    yarp::os::signal(yarp::os::YARP_SIGINT,  sighandler);
-    yarp::os::signal(yarp::os::YARP_SIGTERM, sighandler);
+    std::signal(SIGINT, sighandler);
+    std::signal(SIGTERM, sighandler);
 
     mainW  = &w;
     appRet = 0;

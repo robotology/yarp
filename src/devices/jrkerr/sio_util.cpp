@@ -13,7 +13,7 @@ THIS SOFTWARE IS PROVIDED BY THE AUTHOR ``AS IS'' AND ANY EXPRESS OR IMPLIED WAR
 
 ============================================ */
 
-#include <stdio.h>
+#include <cstdio>
 
 #include "sio_util.h"
 //---------------------------------------------------------------------------

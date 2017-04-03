@@ -20,7 +20,6 @@
 #  include <ace/Log_Msg.h>
 #  include <ace/INET_Addr.h>
 #  include <ace/ACE.h>
-#  include <ace/OS_NS_string.h>
 #  include <ace/OS_Memory.h>
 #  include <ace/OS_NS_sys_select.h>
 #  include <ace/os_include/net/os_if.h>
@@ -32,7 +31,6 @@
 #  include <unistd.h>
 #endif
 
-#include <yarp/os/Time.h>
 #include <cerrno>
 #include <cstring>
 
@@ -113,7 +111,7 @@ bool DgramTwoWayStream::open(const Contact& local, const Contact& remote) {
 
     int s = -1;
     if ((s=socket(AF_INET, SOCK_DGRAM, IPPROTO_UDP))==-1) {
-        exit(1);
+        std::exit(1);
     }
     struct sockaddr_in dgram_sin;
     memset((char *) &dgram_sin, 0, sizeof(dgram_sin));
@@ -121,18 +119,18 @@ bool DgramTwoWayStream::open(const Contact& local, const Contact& remote) {
     dgram_sin.sin_addr.s_addr = htonl(INADDR_ANY);
     dgram_sin.sin_port = htons(remote.getPort());
     if (local.isValid()) {
-        if (inet_aton(remote.getHost().c_str(), &dgram_sin.sin_addr)==0) {
+        if (inet_pton(AF_INET, remote.getHost().c_str(), &dgram_sin.sin_addr)==0) {
             YARP_ERROR(Logger::get(), "could not set up udp client\n");
-            exit(1);
+            std::exit(1);
         }
         if (connect(s, (struct sockaddr *)&dgram_sin, sizeof(dgram_sin))==-1) {
             YARP_ERROR(Logger::get(), "could not connect udp client\n");
-            exit(1);
+            std::exit(1);
         }
     } else {
         if (bind(s, (struct sockaddr *)&dgram_sin, sizeof(dgram_sin))==-1) {
             YARP_ERROR(Logger::get(), "could not create udp server\n");
-            exit(1);
+            std::exit(1);
         }
     }
     dgram_sockfd = s;
@@ -754,7 +752,7 @@ YARP_SSIZE_T DgramTwoWayStream::read(const Bytes& b) {
                 //printf("Monitored input of %d bytes\n", monitor.length());
                 if (monitor.length()>readBuffer.length()) {
                     printf("Too big!\n");
-                    exit(1);
+                    std::exit(1);
                 }
                 memcpy(readBuffer.get(),monitor.get(),monitor.length());
                 result = monitor.length();
@@ -827,7 +825,7 @@ YARP_SSIZE_T DgramTwoWayStream::read(const Bytes& b) {
             if (take>b.length()) {
                 take = b.length();
             }
-            ACE_OS::memcpy(b.get(),readBuffer.get()+readAt,take);
+            memcpy(b.get(),readBuffer.get()+readAt,take);
             readAt += take;
             readAvail -= take;
             return take;
@@ -839,7 +837,7 @@ YARP_SSIZE_T DgramTwoWayStream::read(const Bytes& b) {
 
 void DgramTwoWayStream::write(const Bytes& b) {
     //YARP_DEBUG(Logger::get(),"DGRAM prep writing");
-    //ACE_OS::printf("DGRAM write %d bytes\n",b.length());
+    //printf("DGRAM write %d bytes\n",b.length());
 
     if (reader) {
         return;

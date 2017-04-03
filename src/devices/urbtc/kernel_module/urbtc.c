@@ -1,5 +1,5 @@
 /*
- * 
+ *
  * Author information summary for YARP:
  *
  * Copyright (C) 2001-2004 Greg Kroah-Hartman (greg@kroah.com)
@@ -7,7 +7,7 @@
  *
  */
 /*
- * USB H8 based motor controller driver 
+ * USB H8 based motor controller driver
  *
  * based on USB Skeleton driver.
  */
@@ -20,7 +20,7 @@
  *	modify it under the terms of the GNU General Public License as
  *	published by the Free Software Foundation, version 2.
  *
- * This driver is based on the 2.6.3 version of drivers/usb/usb-skeleton.c 
+ * This driver is based on the 2.6.3 version of drivers/usb/usb-skeleton.c
  * but has been rewritten to be easy to read and use, as no locks are now
  * needed anymore.
  *
@@ -30,7 +30,7 @@
 
 #include <linux/config.h>
 #include <linux/kernel.h>
-#include <linux/errno.h>
+#include <linux/cerrno>
 #include <linux/init.h>
 #include <linux/slab.h>
 #include <linux/module.h>
@@ -90,7 +90,7 @@ struct usb_urbtc {
 static struct usb_driver urbtc_driver;
 
 static void urbtc_delete(struct kref *kref)
-{	
+{
 	struct usb_urbtc *dev = to_urbtc_dev(kref);
 
 	usb_put_dev(dev->udev);
@@ -149,7 +149,7 @@ static int urbtc_release(struct inode *inode, struct file *file)
 		if (dev->readbuf_enabled)
 			usb_kill_urb(dev->readbuf_urb);
 	}
-		
+
 	/* decrement the count on our device */
 	kref_put(&dev->kref, urbtc_delete);
 	return 0;
@@ -161,8 +161,8 @@ static void urbtc_read_bulk_callback(struct urb *urb, struct pt_regs *regs)
 	int res;
 
 	/* sync/async unlink faults aren't errors */
-	if (urb->status && 
-	    !(urb->status == -ENOENT || 
+	if (urb->status &&
+	    !(urb->status == -ENOENT ||
 	      urb->status == -ECONNRESET ||
 	      urb->status == -ESHUTDOWN)) {
 		dbg("%s - nonzero read bulk status received: %d",
@@ -195,7 +195,7 @@ static ssize_t urbtc_read(struct file *file, char *buffer, size_t count, loff_t 
 	struct usb_urbtc *dev = (struct usb_urbtc *)file->private_data;
 	int retval = 0;
 	int bytes_read;
-	
+
 	if (count != sizeof(struct uin))
 		return -EINVAL;
 
@@ -268,8 +268,8 @@ static void urbtc_write_bulk_callback(struct urb *urb, struct pt_regs *regs)
 	struct usb_urbtc *dev = (struct usb_urbtc *)urb->context;
 
 	/* sync/async unlink faults aren't errors */
-	if (urb->status && 
-	    !(urb->status == -ENOENT || 
+	if (urb->status &&
+	    !(urb->status == -ENOENT ||
 	      urb->status == -ECONNRESET ||
 	      urb->status == -ESHUTDOWN)) {
 		dbg("%s - nonzero write bulk status received: %d",
@@ -277,7 +277,7 @@ static void urbtc_write_bulk_callback(struct urb *urb, struct pt_regs *regs)
 	}
 
 	/* free up our allocated buffer */
-	usb_buffer_free(urb->dev, urb->transfer_buffer_length, 
+	usb_buffer_free(urb->dev, urb->transfer_buffer_length,
 			urb->transfer_buffer, urb->transfer_dma);
 	up(&dev->limit_sem);
 }
@@ -455,7 +455,7 @@ static struct file_operations urbtc_fops = {
 	.release =	urbtc_release,
 };
 
-/* 
+/*
  * usb class driver info in order to get a minor number from the usb core,
  * and to have the device registered with the driver core
  */

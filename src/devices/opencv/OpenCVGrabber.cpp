@@ -26,8 +26,8 @@
 #include <yarp/os/LogStream.h>
 #include <yarp/sig/Image.h>
 
-#include <stdio.h>
-#include <string.h> // memcpy
+#include <cstdio>
+#include <cstring> // memcpy
 
 #include <opencv2/highgui/highgui.hpp>
 #include <opencv2/imgproc/imgproc.hpp>
@@ -83,9 +83,9 @@ bool OpenCVGrabber::open(Searchable & config) {
 
         m_loop = false;
 
-        int camera_idx = 
-            config.check("camera", 
-                         Value(CV_CAP_ANY), 
+        int camera_idx =
+            config.check("camera",
+                         Value(CV_CAP_ANY),
                          "if present, read from camera identified by this index").asInt();
 
         // Try to open a capture object for the first camera

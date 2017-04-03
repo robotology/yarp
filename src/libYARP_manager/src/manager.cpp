@@ -6,7 +6,7 @@
  *  Copy Policy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
  */
 
-#include <string.h>
+#include <cstring>
 #include <yarp/manager/manager.h>
 #include <yarp/manager/yarpbroker.h>
 #include <yarp/manager/localbroker.h>
@@ -286,7 +286,7 @@ bool Manager::prepare(bool silent)
         exe->setParam((*itr)->getParam());
         exe->setHost((*itr)->getHost());
         exe->setStdio((*itr)->getStdio());
-        exe->setWorkDir((*itr)->getWorkDir());        
+        exe->setWorkDir((*itr)->getWorkDir());
         exe->setPostExecWait((*itr)->getPostExecWait());
         exe->setPostStopWait((*itr)->getPostStopWait());
         string env;
@@ -661,7 +661,7 @@ bool Manager::run(void)
             (*itr)->enableAutoConnect();
         else
             (*itr)->disableAutoConnect();
-        (*itr)->start();       
+        (*itr)->start();
         yarp::os::Time::delay(0.2);
         wait = (wait > (*itr)->getPostExecWait()) ? wait : (*itr)->getPostExecWait();
     }

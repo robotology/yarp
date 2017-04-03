@@ -5,7 +5,7 @@
  *
  */
 
-#include <stdio.h>
+#include <cstdio>
 
 #include "yarp.h"
 #include "yarpimpl.h"
@@ -117,7 +117,7 @@ YARP_DEFINE(int) yarpPortEnableBackgroundWrite(yarpPortPtr port,
      * will be called.
      *
      */
-YARP_DEFINE(int) yarpPortWrite(yarpPortPtr port, 
+YARP_DEFINE(int) yarpPortWrite(yarpPortPtr port,
                                yarpPortablePtr msg) {
     YARP_OK(port);
     Portable *amsg = MAKE_PORTABLE(msg);
@@ -135,7 +135,7 @@ YARP_DEFINE(int) yarpPortWrite(yarpPortPtr port,
      * before any other port methods.
      *
      */
-YARP_DEFINE(int) yarpPortRead(yarpPortPtr port, 
+YARP_DEFINE(int) yarpPortRead(yarpPortPtr port,
                               yarpPortablePtr msg,
                               int willReply) {
     YARP_OK(port);
@@ -150,7 +150,7 @@ YARP_DEFINE(int) yarpPortRead(yarpPortPtr port,
      * Give a reply to a previously read message.
      *
      */
-YARP_DEFINE(int) yarpPortReply(yarpPortPtr port, 
+YARP_DEFINE(int) yarpPortReply(yarpPortPtr port,
                                yarpPortablePtr msg) {
     YARP_OK(port);
     Portable *amsg = MAKE_PORTABLE(msg);
@@ -164,7 +164,7 @@ YARP_DEFINE(int) yarpPortReply(yarpPortPtr port,
      * Write a message to a port, then wait for a reply.
      *
      */
-YARP_DEFINE(int) yarpPortWriteWithReply(yarpPortPtr port, 
+YARP_DEFINE(int) yarpPortWriteWithReply(yarpPortPtr port,
                                         yarpPortablePtr msg,
                                         yarpPortablePtr reply) {
     YARP_OK(port);

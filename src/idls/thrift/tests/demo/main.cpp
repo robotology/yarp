@@ -5,7 +5,7 @@
  */
 
 
-#include <stdio.h>
+#include <cstdio>
 
 #include <yarp/os/all.h>
 #include <yarp/os/impl/UnitTest.h>
@@ -72,7 +72,7 @@ public:
         return result;
     }
 
-    virtual int32_t test_partial(const int32_t x, 
+    virtual int32_t test_partial(const int32_t x,
                                  const std::vector<int32_t> & lst,
                                  const int32_t y) {
         printf("test_partial with %d and %d\n", x, y);
@@ -196,12 +196,12 @@ public:
         called_did_set_id = false;
     }
 
-    virtual bool will_set_id() { 
+    virtual bool will_set_id() {
         called_will_set_id = true;
         return false;
     }
 
-    virtual bool did_set_id() { 
+    virtual bool did_set_id() {
         called_did_set_id = true;
         return false;
     }
@@ -636,7 +636,7 @@ bool test_missing_method() {
 
 bool test_unwrap() {
     printf("\n*** test_unwrap()\n");
-    
+
     DemoStructList s;
     s.lst.push_back(DemoStruct(5,10));
     s.lst.push_back(DemoStruct(9,900));
@@ -656,7 +656,7 @@ bool test_unwrap() {
 
 bool test_tostring() {
     printf("\n*** test_tostring()\n");
-    
+
     DemoStructList s;
     s.lst.push_back(DemoStruct(5,10));
     s.lst.push_back(DemoStruct(9,900));
@@ -880,7 +880,7 @@ bool test_help() {
         e.edit(d,false);
         Bottle bot("help");
         DummyConnector con;
-        
+
         bot.write(con.getWriter());
         e.read(con.getReader());
         bot.read(con.getReader());
@@ -898,7 +898,7 @@ bool test_help() {
         e.edit(d,false);
         Bottle bot("help x");
         DummyConnector con;
-        
+
         bot.write(con.getWriter());
         e.read(con.getReader());
         bot.read(con.getReader());
@@ -959,7 +959,7 @@ bool test_settings(UnitTest& test) {
 
     if (!sender_port.open("/sender")) return 1;
     if (!receiver_port.open("/receiver")) return 1;
-    yarp.connect("/sender","/receiver");    
+    yarp.connect("/sender","/receiver");
 
     settings.set_id(5);
     test.checkEqual(receiver.state().id,5,"int assignment");

@@ -9,7 +9,7 @@
 #define PortAudioBufferh
 
 #include <portaudio.h>
-#include <stdio.h>
+#include <cstdio>
 
 /* Select sample format. */
 #if 0
@@ -44,7 +44,7 @@ class circularBuffer
     {
         return (end + 1) % maxsize == start;
     }
- 
+
     inline const SAMPLE* getRawData()
     {
         return elems;
@@ -62,10 +62,10 @@ class circularBuffer
         if (end == start)
         {
             printf ("ERROR: buffer ovverrun!\n");
-            start = (start + 1) % maxsize; // full, overwrite 
+            start = (start + 1) % maxsize; // full, overwrite
         }
     }
- 
+
     inline int size()
     {
         int i;
@@ -73,7 +73,7 @@ class circularBuffer
             i = end-start;
         else if (end==start)
             i = 0;
-        else          
+        else
             i = maxsize - start + end;
         return i;
     }
@@ -88,7 +88,7 @@ class circularBuffer
         start = (start + 1) % maxsize;
         return elem;
     }
- 
+
     inline unsigned int getMaxSize()
     {
         return maxsize;

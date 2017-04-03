@@ -9,7 +9,7 @@
 #define YARP2_ROSTYPECODEGENYARP_INC
 
 #include <RosType.h>
-#include <stdio.h>
+#include <cstdio>
 
 class RosYarpType {
 public:

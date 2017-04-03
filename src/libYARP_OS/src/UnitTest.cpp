@@ -8,9 +8,9 @@
 #include <yarp/os/impl/UnitTest.h>
 #include <yarp/os/impl/Logger.h>
 
-#include <yarp/os/impl/PlatformStdio.h>
+#include <cstdio>
 #include <yarp/os/Network.h>
-#include <math.h>
+#include <cmath>
 
 #ifdef YARP_TEST_HEAP
 #include <yarp/os/Mutex.h>
@@ -193,7 +193,7 @@ bool UnitTest::checkEqualImpl(int x, int y,
                               const char *fname,
                               int fline) {
     char buf[1000];
-    ACE_OS::sprintf(buf, "in file %s:%d [%s] %s (%d) == %s (%d)",
+    sprintf(buf, "in file %s:%d [%s] %s (%d) == %s (%d)",
                     fname, fline, desc, txt1, x, txt2, y);
     if (x==y) {
         report(0,ConstString("  [") + desc + "] passed ok");
@@ -210,7 +210,7 @@ bool UnitTest::checkEqualishImpl(double x, double y,
                                  const char *fname,
                                  int fline) {
     char buf[1000];
-    ACE_OS::sprintf(buf, "in file %s:%d [%s] %s (%g) == %s (%g)",
+    sprintf(buf, "in file %s:%d [%s] %s (%g) == %s (%g)",
                     fname, fline, desc, txt1, x, txt2, y);
     bool ok = (fabs(x-y)<0.0001);
     if (ok) {
@@ -229,7 +229,7 @@ bool UnitTest::checkEqualImpl(const ConstString& x, const ConstString& y,
                               const char *fname,
                               int fline) {
     char buf[1000];
-    ACE_OS::sprintf(buf, "in file %s:%d [%s] %s (%s) == %s (%s)",
+    sprintf(buf, "in file %s:%d [%s] %s (%s) == %s (%s)",
                     fname, fline, desc, txt1, humanize(x).c_str(), txt2, humanize(y).c_str());
     bool ok = (x==y);
     if (ok) {

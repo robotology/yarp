@@ -14,8 +14,8 @@
 #include <yarp/os/ConnectionWriter.h>
 #include <yarp/os/ManagedBytes.h>
 #include <yarp/sig/Image.h>
-#include <stdlib.h>
-#include <string.h>
+#include <cstdlib>
+#include <cstring>
 
 #include <wire_rep_utils_api.h>
 
@@ -62,17 +62,17 @@ public:
     RosWireImage() {
     }
 
-    void init(const yarp::sig::FlexImage& img, 
+    void init(const yarp::sig::FlexImage& img,
               const yarp::os::ConstString& frame) {
         image = &img;
-        yarp::os::ConnectionWriter *pbuf = 
+        yarp::os::ConnectionWriter *pbuf =
             yarp::os::ConnectionWriter::createBufferedConnectionWriter();
         if (!pbuf) ::exit(1);
         yarp::os::ConnectionWriter& buf = *pbuf;
         yarp::os::StringOutputStream ss;
         // probably need to translate encoding format better, but at
         // a guess "rgb" and "bgr" will work ok.
-        yarp::os::ConstString encoding = 
+        yarp::os::ConstString encoding =
             yarp::os::Vocab::decode(image->getPixelCode()).c_str();
         switch (image->getPixelCode()) {
         case VOCAB_PIXEL_BGR:
@@ -155,7 +155,7 @@ public:
     }
 
     virtual yarp::os::PortReader *getReplyHandler() { return NULL; }
-    
+
     virtual yarp::os::Portable *getReference() { return NULL; }
 
     virtual bool dropRequested() { return false; }

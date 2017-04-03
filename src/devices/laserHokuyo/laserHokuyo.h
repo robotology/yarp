@@ -11,7 +11,7 @@
 #ifndef LASERHOKUYO_THREAD_H
 #define LASERHOKUYO_THREAD_H
 
-//#include <stdio.h>
+//#include <cstdio>
 #include <string>
 
 #include <yarp/os/RateThread.h>
@@ -30,7 +30,7 @@ class laserHokuyo : public RateThread, public yarp::dev::IRangefinder2D, public 
 protected:
     PolyDriver driver;
     ISerialDevice *pSerial;
-   
+
     yarp::os::Semaphore mutex;
 
     int cardId;
@@ -59,7 +59,7 @@ protected:
 
     Laser_mode_type laser_mode;
 
-    struct sensor_property_struct 
+    struct sensor_property_struct
     {
         std::string MODL;
         int DMIN;
@@ -76,7 +76,7 @@ protected:
 public:
     laserHokuyo(int period=20) : RateThread(period),mutex(1)
     {}
-    
+
 
     ~laserHokuyo()
     {

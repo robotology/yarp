@@ -8,9 +8,9 @@
 #include <yarp/math/RandnScalar.h>
 #include <yarp/math/RandScalar.h>
 #include <yarp/sig/Vector.h>
-#include <time.h>
-#include <stdio.h>
-#include <math.h>
+#include <ctime>
+#include <cstdio>
+#include <cmath>
 
 using namespace yarp::sig;
 using namespace yarp::math;

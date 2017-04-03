@@ -5,7 +5,7 @@
  */
 
 #include <yarp/dev/LaserMeasurementData.h>
-#include <math.h>
+#include <cmath>
 
 using namespace yarp::dev;
 

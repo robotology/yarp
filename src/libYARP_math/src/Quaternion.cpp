@@ -6,7 +6,7 @@
 
 #include <yarp/math/Quaternion.h>
 #include <yarp/math/Math.h>
-#include <math.h>
+#include <cmath>
 #include <cstdio>
 
 using namespace yarp::math;

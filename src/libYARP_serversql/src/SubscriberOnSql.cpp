@@ -5,8 +5,8 @@
  *
  */
 
-#include <stdlib.h>
-#include <stdio.h>
+#include <cstdlib>
+#include <cstdio>
 
 #include <sqlite3.h>
 
@@ -14,7 +14,7 @@
 #include <yarp/serversql/impl/SubscriberOnSql.h>
 #include <yarp/serversql/impl/ParseName.h>
 
-#ifndef WIN32
+#if !defined(_WIN32)
 #include <unistd.h>
 #else
 #include <io.h>
@@ -69,7 +69,7 @@ bool SubscriberOnSql::open(const ConstString& filename, bool fresh) {
     if (result!=SQLITE_OK) {
         sqlite3_close(db);
         fprintf(stderr,"Failed to set up subscriptions table\n");
-        exit(1);
+        std::exit(1);
     }
 
     const char *check_subscriptions_size = "PRAGMA table_info(subscriptions)";
@@ -78,7 +78,7 @@ bool SubscriberOnSql::open(const ConstString& filename, bool fresh) {
     result = sqlite3_prepare_v2(db, check_subscriptions_size, -1, &statement, YARP_NULLPTR);
     if (result!=SQLITE_OK) {
         fprintf(stderr,"Failed to set up subscriptions table\n");
-        exit(1);
+        std::exit(1);
     }
 
     int count = 0;
@@ -93,7 +93,7 @@ bool SubscriberOnSql::open(const ConstString& filename, bool fresh) {
         if (result!=SQLITE_OK) {
             sqlite3_close(db);
             fprintf(stderr,"Failed to set up subscriptions table\n");
-            exit(1);
+            std::exit(1);
         }
     }
 
@@ -106,7 +106,7 @@ bool SubscriberOnSql::open(const ConstString& filename, bool fresh) {
     if (result!=SQLITE_OK) {
         sqlite3_close(db);
         fprintf(stderr,"Failed to set up topics table\n");
-        exit(1);
+        std::exit(1);
     }
 
     const char *check_topic_size = "PRAGMA table_info(topics)";
@@ -115,7 +115,7 @@ bool SubscriberOnSql::open(const ConstString& filename, bool fresh) {
     result = sqlite3_prepare_v2(db, check_topic_size, -1, &statement, YARP_NULLPTR);
     if (result!=SQLITE_OK) {
         fprintf(stderr,"Failed to set up topics table\n");
-        exit(1);
+        std::exit(1);
     }
 
     count = 0;
@@ -131,7 +131,7 @@ bool SubscriberOnSql::open(const ConstString& filename, bool fresh) {
         if (result!=SQLITE_OK) {
             sqlite3_close(db);
             fprintf(stderr,"Failed to set up topics table\n");
-            exit(1);
+            std::exit(1);
         }
     }
 
@@ -144,7 +144,7 @@ bool SubscriberOnSql::open(const ConstString& filename, bool fresh) {
     if (result!=SQLITE_OK) {
         sqlite3_close(db);
         fprintf(stderr,"Failed to set up live table\n");
-        exit(1);
+        std::exit(1);
     }
 
     const char *create_struct_table = "CREATE TABLE IF NOT EXISTS structures (\n\
@@ -155,7 +155,7 @@ bool SubscriberOnSql::open(const ConstString& filename, bool fresh) {
     if (result!=SQLITE_OK) {
         sqlite3_close(db);
         fprintf(stderr,"Failed to set up structures table\n");
-        exit(1);
+        std::exit(1);
     }
 
     implementation = db;

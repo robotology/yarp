@@ -5,14 +5,14 @@
  * CopyPolicy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
  */
 
-// Example code to test timers in Linux (and ACE), 
+// Example code to test timers in Linux (and ACE),
 // run as sudo.
-// 
+//
 // Plug oscilloscope to the parallel port (any data bit),
 // you should see a square wave, compare the length of
 // the "high" level with th measure from the timer.
-// 
-// Test show that gettimeofday() is precise enough to 
+//
+// Test show that gettimeofday() is precise enough to
 // deal with the precision of the scheduler. RTSC
 // seem less precise, but this could be hw dependent.
 // Also RTSC could be more precise with short delays
@@ -24,7 +24,7 @@
 //
 // March 2008 -- Lorenzo Natale
 
-#include <math.h>
+#include <cmath>
 
 #include <ace/ACE.h>
 #include <sys/time.h>
@@ -40,7 +40,7 @@
 
 //this is the clock of your cpu, check /proc/cpuinfo
 const int SLEEP=40;
-#define CLOCK_TICKS 1663 
+#define CLOCK_TICKS 1663
 #define PARALLEL_PORT 0x378
 
 int main()
@@ -52,11 +52,11 @@ int main()
     if (ioperm(base, 1, 1))
         {
             fprintf(stderr, "Could not get the port at %x\n", base);
-            
+
         }
     ACE_hrtime_t usecs;
     ACE_Time_Value sleep;
-    
+
     int i;
     for(i=0;i<times;i++)
         {
@@ -73,7 +73,7 @@ int main()
 
             // RTSC(stop);
             outb(0x0, base);
-                        
+
             gettimeofday(&tv2,0);
 
             // wait some time

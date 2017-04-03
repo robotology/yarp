@@ -14,7 +14,7 @@
 #include <cctype>
 #include <string>
 #include <vector>
-#include <string.h>
+#include <cstring>
 #include <iostream>
 #include <sstream>
 

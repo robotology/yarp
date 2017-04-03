@@ -127,10 +127,6 @@ else()
   endif()
 endif()
 
-set(YARP_HAVE_SYS_TYPES_H ${HAVE_SYS_TYPES_H})
-set(YARP_HAVE_STDDEF_H ${HAVE_STDDEF_H})
-check_include_file_cxx(cstddef YARP_HAVE_CSTDDEF)
-
 
 #########################################################################
 # Set up compile flags
@@ -222,6 +218,7 @@ else()
     yarp_check_and_append_cxx_compiler_flag(WANTED_WARNING_FLAGS "-Wmicrosoft-exists")
     yarp_check_and_append_cxx_compiler_flag(WANTED_WARNING_FLAGS "-Wstatic-inline-explicit-instantiation")
     yarp_check_and_append_cxx_compiler_flag(WANTED_WARNING_FLAGS "-Wmisleading-indentation")
+    yarp_check_and_append_cxx_compiler_flag(WANTED_WARNING_FLAGS "-Wtautological-compare")
 
     ## Unwanted warning flags ##
     unset(UNWANTED_WARNING_FLAGS)
@@ -352,9 +349,15 @@ endif()
 
 
 #########################################################################
-# Try to locate execinfo.h
-check_include_files(execinfo.h YARP_HAS_EXECINFO)
+# Try to locate some system headers
 
+check_include_files(execinfo.h YARP_HAS_EXECINFO_H)
+check_include_files(sys/wait.h YARP_HAS_SYS_WAIT_H)
+check_include_files(sys/types.h YARP_HAS_SYS_TYPES_H)
+check_include_files(sys/prctl.h YARP_HAS_SYS_PRCTL_H)
+check_include_files(sys/signal.h YARP_HAS_SIGNAL_H)
+check_include_files(sys/signal.h YARP_HAS_SYS_SIGNAL_H)
+check_include_files(netdb.h YARP_HAS_NETDB_H)
 
 #########################################################################
 # Translate the names of some YARP options, for yarp_config_options.h.in

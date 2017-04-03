@@ -10,13 +10,13 @@
 #include <yarp/os/Semaphore.h>
 #include <yarp/os/impl/RunProcManager.h>
 
-#include <string.h>
+#include <cstring>
 #include <yarp/os/impl/RunCheckpoints.h>
 
 #define WAIT() { RUNLOG("<<<mutex.wait()") mutex.wait(); RUNLOG(">>>mutex.wait()") }
 #define POST() { RUNLOG("<<<mutex.post()") mutex.post(); RUNLOG(">>>mutex.post()") }
 
-#if defined(WIN32)
+#if defined(_WIN32)
     #include <process.h>
 
     #define SIGKILL 9
@@ -89,7 +89,7 @@ YarpRunProcInfo::YarpRunProcInfo(yarp::os::ConstString& alias,yarp::os::ConstStr
 
 bool YarpRunProcInfo::Signal(int signum)
 {
-#if defined(WIN32)
+#if defined(_WIN32)
     if (signum==SIGKILL)
     {
         if (mHandleCmd)
@@ -123,7 +123,7 @@ bool YarpRunProcInfo::IsActive()
     {
         return false;
     }
-#if defined(WIN32)
+#if defined(_WIN32)
     DWORD status;
     RUNLOG("<<<GetExitCodeProcess(mHandleCmd,&status)")
     bool ret=(::GetExitCodeProcess(mHandleCmd,&status) && status==STILL_ACTIVE);
@@ -137,7 +137,7 @@ bool YarpRunProcInfo::IsActive()
 
 bool YarpRunProcInfo::Clean()
 {
-#if !defined(WIN32)
+#if !defined(_WIN32)
     if (!mCleanCmd && waitpid(mPidCmd, YARP_NULLPTR, WNOHANG) == mPidCmd)
     {
         fprintf(stderr,"CLEANUP cmd %d\n",mPidCmd);
@@ -173,7 +173,7 @@ YarpRunInfoVector::~YarpRunInfoVector()
         }
     }
 
-#if defined(WIN32)
+#if defined(_WIN32)
     if (hZombieHunter)
     {
         HANDLE hkill=hZombieHunter;
@@ -196,7 +196,7 @@ bool YarpRunInfoVector::Add(YarpRunProcInfo *process)
         return false;
     }
 
-#if defined(WIN32)
+#if defined(_WIN32)
     if (hZombieHunter)
     {
         HANDLE hkill=hZombieHunter;
@@ -207,7 +207,7 @@ bool YarpRunInfoVector::Add(YarpRunProcInfo *process)
 
     m_apList[m_nProcesses++]=process;
 
-#if defined(WIN32)
+#if defined(_WIN32)
     hZombieHunter=CreateThread(0,0,ZombieHunter,this,0,0);
 #endif
 
@@ -271,7 +271,7 @@ int YarpRunInfoVector::Killall(int signum)
     return nKill;
 }
 
-#if defined(WIN32)
+#if defined(_WIN32)
 void YarpRunInfoVector::GetHandles(HANDLE* &lpHandles,DWORD &nCount)
 {
     WAIT()
@@ -500,7 +500,7 @@ YarpRunProcInfo(alias,on,pidCmd,handleCmd,hold)
 
 bool YarpRunCmdWithStdioInfo::Clean()
 {
-#if defined(WIN32)
+#if defined(_WIN32)
     if (mPidCmd)
     {
         mPidCmd=0;
@@ -611,7 +611,7 @@ void YarpRunCmdWithStdioInfo::TerminateStdio()
 ////////////////////////////////////
 ////////////////////////////////////
 
-#if defined(WIN32)
+#if defined(_WIN32)
 
 #define TA_FAILED        0
 #define TA_SUCCESS_CLEAN 1

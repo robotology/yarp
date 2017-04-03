@@ -335,7 +335,7 @@ void SDLPanel::putImage(ImageOf<PixelRgb>& image) {
         
         mutex.post();
 
-#ifdef WIN32
+#if defined(_WIN32)
         Refresh();
 #else
         wxMutexGuiEnter();

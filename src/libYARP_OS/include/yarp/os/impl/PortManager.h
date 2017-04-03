@@ -14,7 +14,7 @@
 #include <yarp/os/impl/Logger.h>
 #include <yarp/os/Route.h>
 
-#include <yarp/os/impl/PlatformStdio.h>
+#include <cstdio>
 
 namespace yarp {
     namespace os {

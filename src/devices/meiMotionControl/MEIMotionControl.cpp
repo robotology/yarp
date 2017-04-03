@@ -38,7 +38,7 @@ using namespace yarp::dev;
 
 bool NOT_IMPLEMENTED_YET(const char *txt)
 {
-    ACE_OS::fprintf(stderr, "%s not yet implemented for MEIMotionControl\n", txt);
+    fprintf(stderr, "%s not yet implemented for MEIMotionControl\n", txt);
 
     return false;
 }
@@ -49,7 +49,7 @@ bool NOT_IMPLEMENTED_YET(const char *txt)
 
 MEIMotionControlParameters::MEIMotionControlParameters(int nj)
 {
-	
+
 
 		_zeros = new double[nj];
 		_signs = new int[nj];
@@ -69,12 +69,12 @@ MEIMotionControlParameters::MEIMotionControlParameters(int nj)
 		nj= _BabybotArm::_nj;
 
 		int i;
-		for(i = 0; i<_njoints; i++) 
+		for(i = 0; i<_njoints; i++)
 		{
 			_zeros[i]			= _BabybotArm::_zeros[i];
 			_axis_map[i]		= _BabybotArm::_axis_map[i];
 			_signs[i]			= _BabybotArm::_signs[i];
-			_encoderToAngles[i] = _BabybotArm::_encoders[i]*_BabybotArm::_encWheels[i];		
+			_encoderToAngles[i] = _BabybotArm::_encoders[i]*_BabybotArm::_encWheels[i];
 			_fwdCouple[i]		= _BabybotArm::_fwdCouple[i];
 			_stiffPID[i]		= _BabybotArm::_stiffPID[i];
 			_maxDAC[i]			= _BabybotArm::_maxDAC[i];
@@ -204,7 +204,7 @@ void MEIMotionControlParameters::_realloc(int nj)
 		if (_maxDAC != NULL)			delete [] _maxDAC;
 		if (_limitsMax != NULL)			delete [] _limitsMax;
 		if (_limitsMin != NULL)			delete [] _limitsMin;
-		
+
 		_zeros				= new double [nj];
 		_signs				= new int [nj];
 		_axis_map			= new int [nj];
@@ -237,7 +237,7 @@ public:
 	bool read ();
 
 	inline int getJoints (void) const { return _Rnjoints; }
-	
+
 public:
 	enum { MEI_TIMEOUT = 20, MEI_POLLING_INTERVAL = 10 };
 
@@ -267,14 +267,14 @@ public:
 		double *_RfwdCouple;
 		double *_RfwdCoupleC;
 		double *_RinvCouple;
-		double *_RmaxDAC;		
+		double *_RmaxDAC;
 		double *_R16bit_oldpos;
 		double *_RposHome;			//10 double
 
 		double *_Rref_acc;
 		double *_Rref_speeds;
 		double *_Rref_positions;
-		
+
 		short *_Revents;
 
 		int16 *_Rwinding;			/// counting how many times the encoder wraps up.
@@ -288,12 +288,12 @@ public:
 		int _Rpolling_interval;						/// thread polling interval.
 		int _Rspeed;								/// speed of the bus.
 		int _RnetworkN;								/// network number.
-	
 
 
 
 
-	unsigned char _Rmy_address;					/// 
+
+	unsigned char _Rmy_address;					///
 };
 
 MEIResources::MEIResources ()
@@ -321,7 +321,7 @@ MEIResources::MEIResources ()
 
 
 
-	//here it is better to put a value which can change depending on the number of robot-joints- 
+	//here it is better to put a value which can change depending on the number of robot-joints-
 	MEIMotionControlParameters param(6);
 
 	initialize(param);
@@ -333,15 +333,15 @@ MEIResources::MEIResources ()
 }
 
 
-MEIResources::~MEIResources () 
-{ 
-//	uninitialize(); 
+MEIResources::~MEIResources ()
+{
+//	uninitialize();
 }
 
 bool MEIResources::initialize (const MEIMotionControlParameters& parms)
 {
 		_Rnjoints = parms._njoints;
-		
+
 
 		_RlimitsMax			= new double[_Rnjoints];
 		_RlimitsMin			= new double[_Rnjoints];
@@ -359,17 +359,17 @@ bool MEIResources::initialize (const MEIMotionControlParameters& parms)
 		_Raxis_map			= new int[_Rnjoints];
 		_Rinv_axis_map		= new int[_Rnjoints];		//3 int
 
-		_Rwinding			= new int16[_Rnjoints];		
+		_Rwinding			= new int16[_Rnjoints];
 		_Revents			= new short[4];				//2short
 
 		_Rref_acc           = new double[_Rnjoints];
 		_Rref_speeds		= new double[_Rnjoints];
 		_Rref_positions		= new double[_Rnjoints];
 
-	
+
 	for (int i = 0; i<parms._njoints; i++)
 	{
-		
+
 		_Rzeros[i] = parms._zeros[i];
 		_Rsigns[i] = parms._signs[i];
 		_Raxis_map[i] = parms._axis_map[i];
@@ -383,8 +383,8 @@ bool MEIResources::initialize (const MEIMotionControlParameters& parms)
 		_RlimitsMax[i] = parms._limitsMax[i];
 		_RlimitsMin[i] = parms._limitsMin[i];
 		_Rref_acc[i] = 0;
-		_Rref_speeds[i] = 0;	
-		_Rref_positions[i] = 0;	
+		_Rref_speeds[i] = 0;
+		_Rref_positions[i] = 0;
 	}
 
 
@@ -429,7 +429,7 @@ inline MEIResources& RES(void *res) { return *(MEIResources *)res; }
 
 
 
-MEIMotionControl::MEIMotionControl() : 
+MEIMotionControl::MEIMotionControl() :
     ImplementPositionControl<MEIMotionControl, IPositionControl>(this),
 	ImplementVelocityControl<MEIMotionControl, IVelocityControl>(this),
     ImplementPidControl<MEIMotionControl, IPidControl>(this),
@@ -470,11 +470,11 @@ bool MEIMotionControl::open (const MEIMotionControlParameters &params)
 			printf("\n I AM NOT ABLE TO INITIALIZE THE RESOURCES!!!\n");
             return false;
         }
-		
+
 
     ImplementPositionControl<MEIMotionControl, IPositionControl>::
         initialize(params._njoints, params._axis_map, params._encoderToAngles , params._zeros);
-    
+
     ImplementVelocityControl<MEIMotionControl, IVelocityControl>::
         initialize(params._njoints, params._axis_map, params._encoderToAngles, params._zeros);
 
@@ -503,10 +503,10 @@ bool MEIMotionControl::open (const MEIMotionControlParameters &params)
 	{
 		int error;
 		char buffer[MAX_ERROR_LEN];
-		error = dsp_init(r.MEIPORT);	
+		error = dsp_init(r.MEIPORT);
 		rc = dsp_reset();				// reset
 		if (error)
-			{	
+			{
 				error_msg(error, buffer);
 				printf("Value: %d Message: %s", error, buffer);
 				return false;
@@ -523,7 +523,7 @@ bool MEIMotionControl::open (const MEIMotionControlParameters &params)
 
 	//set the input port and the output port
 	//set_io is needed for anable the amplifiers
-	//check 
+	//check
 	int set0 = init_io(0, IO_INPUT);
 	int set1 = init_io(1, IO_OUTPUT);
 	int set3 = set_io(1,0);
@@ -540,27 +540,27 @@ bool MEIMotionControl::open (const MEIMotionControlParameters &params)
 
 
 bool MEIMotionControl::open(yarp::os::Searchable& config) {
-	
+
 	bool fromfileflag=false;
-	Searchable& p = config;	
+	Searchable& p = config;
 	MEIResources& r = RES (system_resources);
 
-    if (!p.check("GENERAL","section for general motor control parameters")) 
+    if (!p.check("GENERAL","section for general motor control parameters"))
 	{
         fprintf(stderr, "Cannot understand configuration parameters\n");
 		printf("\nI am going to load parameters from file\n");
         fromfileflag=true;
 	}
 
-	
+
 	if (fromfileflag==true)
 	{
 		Property robot;
 
-	
+
 		//take data from file
 		robot.fromConfigFile("MEIconfig.txt");
-		if (!robot.check("GENERAL")) 
+		if (!robot.check("GENERAL"))
 		{
 			printf("Cannot understand config file\n");
 			return false;
@@ -575,7 +575,7 @@ bool MEIMotionControl::open(yarp::os::Searchable& config) {
 
 	_filter_coeffs = new int16* [params._njoints];
 	ACE_ASSERT (_filter_coeffs != NULL);
-	
+
 	for(i = 0; i < params._njoints; i++)
 	{
 		_filter_coeffs[i] = new int16 [r.COEFFICIENTS];
@@ -603,7 +603,7 @@ bool MEIMotionControl::open(yarp::os::Searchable& config) {
         printf("Signs does not have the right number of entries\n");
         return false;
     }
-    
+
 	for (i = 1; i < params._njoints+1; i++) params._stiffPID[i-1] = xtmp.get(i).asInt();
 
 	xtmp = robot.findGroup("GENERAL").findGroup("MaxDAC","a list of MaxDAC values");
@@ -634,9 +634,9 @@ bool MEIMotionControl::open(yarp::os::Searchable& config) {
     for(j=0;j<params._njoints;j++)
         {
             char tmp[80];
-            sprintf(tmp, "Pid%d", j); 
+            sprintf(tmp, "Pid%d", j);
             xtmp = robot.findGroup("PIDS").findGroup(tmp);
-			
+
 			_filter_coeffs[j][r.DF_P]			= params._pids[j].kp = xtmp.get(1).asInt();
 			_filter_coeffs[j][r.DF_I]			= params._pids[j].ki = xtmp.get(2).asInt();
 			_filter_coeffs[j][r.DF_D]			= params._pids[j].kd = xtmp.get(3).asInt();
@@ -651,7 +651,7 @@ bool MEIMotionControl::open(yarp::os::Searchable& config) {
 			params._pids[j].kp = (double)_filter_coeffs[j][r.DF_P];
             params._pids[j].kd = (double)_filter_coeffs[j][r.DF_D];
             params._pids[j].ki = (double)_filter_coeffs[j][r.DF_I];
-    
+
             params._pids[j].max_int		= (double)_filter_coeffs[j][r.DF_I_LIMIT]	;
 			params._pids[j].offset		= (double)_filter_coeffs[j][r.DF_OFFSET];
             params._pids[j].max_output	= (double)_filter_coeffs[j][r.DF_DAC_LIMIT];
@@ -678,7 +678,7 @@ bool MEIMotionControl::open(yarp::os::Searchable& config) {
 
 	fromfileflag=false;
 
-	
+
 ////////////////////////////////////////////////////end new
 return open(params);
 }
@@ -695,7 +695,7 @@ else
     Bottle& xtmp = p.findGroup("MaxDAC");
 	ACE_ASSERT (xtmp.size() == nj+1);
 
-    for (i = 1; i < xtmp.size(); i++) 
+    for (i = 1; i < xtmp.size(); i++)
 	{
 		params._maxDAC[i-1] = xtmp.get(i).asDouble();
 	}
@@ -704,7 +704,7 @@ else
     xtmp = p.findGroup("AxisMap");
 	ACE_ASSERT (xtmp.size() == nj+1);
 	printf("_axis_map = ");
-    for (i = 1; i < xtmp.size(); i++) 
+    for (i = 1; i < xtmp.size(); i++)
 	{
 		params._axis_map[i-1] = xtmp.get(i).asInt();
 		printf("%d ",params._axis_map[i-1]);
@@ -713,7 +713,7 @@ else
 
 	xtmp = p.findGroup("FwdCouple");
 	ACE_ASSERT (xtmp.size() == nj+1);
-    for (i = 1; i < xtmp.size(); i++) 
+    for (i = 1; i < xtmp.size(); i++)
 	{
 		params._fwdCouple[i-1] = xtmp.get(i).asDouble();
 	}
@@ -722,11 +722,11 @@ else
 
     xtmp = p.findGroup("Zeros");
 	ACE_ASSERT (xtmp.size() == nj+1);
-    for (i = 1; i < xtmp.size(); i++) 
+    for (i = 1; i < xtmp.size(); i++)
 	{
 		params._zeros[i-1] = xtmp.get(i).asDouble();
 	}
-		
+
 	xtmp = p.findGroup("Signs");
 	ACE_ASSERT (xtmp.size() == nj+1);
 	for (i = 1; i < xtmp.size(); i++)
@@ -736,7 +736,7 @@ else
 
 	xtmp = p.findGroup("Stiff");
 	ACE_ASSERT (xtmp.size() == nj+1);
-    for (i = 1; i < xtmp.size(); i++) 
+    for (i = 1; i < xtmp.size(); i++)
 	{
 		params._stiffPID[i-1] = xtmp.get(i).asInt();
 	}
@@ -744,7 +744,7 @@ else
     /////// LIMITS
     xtmp = p.findGroup("Max");
  	ACE_ASSERT (xtmp.size() == nj+1);
-    for(i=1;i<xtmp.size(); i++) 
+    for(i=1;i<xtmp.size(); i++)
 	{
 		params._limitsMax[i-1]=xtmp.get(i).asDouble();
 	}
@@ -763,7 +763,7 @@ else
     for(j=0;j<nj;j++)
         {
             char tmp[80];
-            sprintf(tmp, "LPid%d", j); 
+            sprintf(tmp, "LPid%d", j);
             xtmp = p.findGroup(tmp);
 
 			_filter_coeffs[j][r.DF_P]			= params._pids[j].kp = xtmp.get(1).asInt();
@@ -795,20 +795,20 @@ else
 
     xtmp = p.findGroup("EncWheel");
 	ACE_ASSERT (xtmp.size() == nj+1);
-    for (i = 1; i < xtmp.size(); i++) 
+    for (i = 1; i < xtmp.size(); i++)
 	{
 		encWheels[i-1] = xtmp.get(i).asDouble();
 	}
 
-    xtmp = p.findGroup("Encoder");						
+    xtmp = p.findGroup("Encoder");
 	ACE_ASSERT (xtmp.size() == nj+1);
-	
-    for (i = 1; i < xtmp.size(); i++) 
+
+    for (i = 1; i < xtmp.size(); i++)
 	{
 		encoders[i-1] = xtmp.get(i).asDouble();
 		params._encoderToAngles[i-1] = encoders[i-1]*encWheels[i-1];
 	}
-		
+
 	params._fwdCouple[3] = params._fwdCouple[3]*encWheels[3];
 	params._fwdCouple[4] = params._fwdCouple[4]*encWheels[4];
 	params._fwdCouple[5] = params._fwdCouple[5]*encWheels[5];
@@ -829,13 +829,13 @@ else
 
 		return open(params);
 		}
-		
-		
+
+
 
 
 }
 
- 
+
 bool MEIMotionControl::close(void)
 {
 	MEIResources& r = RES(system_resources);
@@ -875,7 +875,7 @@ void MEIMotionControl::run ()
 }
 
 // return the number of controlled axes.
-bool MEIMotionControl::getAxes(int *ax)				
+bool MEIMotionControl::getAxes(int *ax)
 {
 	MEIResources& r = RES(system_resources);
     *ax = r.getJoints();
@@ -887,14 +887,14 @@ bool MEIMotionControl::getAxes(int *ax)
 bool MEIMotionControl::setPidRaw (int axis, const Pid &pid)
 {
 		MEIResources& r = RES(system_resources);
-	    
-			_filter_coeffs[axis][r.DF_P]			= int (pid.kp) ; 
+
+			_filter_coeffs[axis][r.DF_P]			= int (pid.kp) ;
 			_filter_coeffs[axis][r.DF_D]			= int (pid.kd) ;
 			_filter_coeffs[axis][r.DF_I]			= int (pid.ki) ;
 			_filter_coeffs[axis][r.DF_I_LIMIT]		= int (pid.max_int) ;
 			_filter_coeffs[axis][r.DF_OFFSET]		= int (pid.offset);
 			_filter_coeffs[axis][r.DF_DAC_LIMIT]	= int (pid.max_output);
-			
+
 			set_filter(axis, _filter_coeffs[axis]);
 
 	return true;
@@ -907,10 +907,10 @@ bool MEIMotionControl::getPidRaw (int axis, Pid *pids)
 	ACE_ASSERT (axis >= 0 && axis <= r.getJoints());
 
 	get_filter(axis, _filter_coeffs[axis]);
-	
+
 	int j = axis;
-	
-	
+
+
 	printf("\n filter_coeffs j:%d = %d ", j ,_filter_coeffs[j][0]);
 		printf(" %d",_filter_coeffs[j][1]);
 		printf(" %d",_filter_coeffs[j][2]);
@@ -921,7 +921,7 @@ bool MEIMotionControl::getPidRaw (int axis, Pid *pids)
 		printf(" %d",_filter_coeffs[j][7]);
 		printf(" %d",_filter_coeffs[j][8]);
 		printf(" %d",_filter_coeffs[j][9]);
-		
+
 		printf("\n");
 
 		pids[axis].kp = (double)_filter_coeffs[axis][r.DF_P];
@@ -951,7 +951,7 @@ bool MEIMotionControl::getPidsRaw (Pid *pids)
 	int i;
 	for (i = 0; i < r._Rnjoints; i++)
         {
-			
+
 		get_filter(i, _filter_coeffs[i]);
 
 		pids[i].kp			= (double)(_filter_coeffs[i][r.DF_P] );
@@ -971,7 +971,7 @@ bool MEIMotionControl::getPidsRaw (Pid *pids)
 		pids[i].max_int	,
 		pids[i].offset,
 		pids[i].max_output)	;
-		
+
 		printf("\n");
 		printf("\n filter_coeffs i:%d = %d ",
 		i,_filter_coeffs[i][0]);
@@ -994,9 +994,9 @@ bool MEIMotionControl::getPidsRaw (Pid *pids)
 bool MEIMotionControl::setPidsRaw(const Pid *pids)
 {
     MEIResources& r = RES(system_resources);
-    for (int i = 0; i < r.getJoints(); i++) 
+    for (int i = 0; i < r.getJoints(); i++)
 	{
-		_filter_coeffs[i][r.DF_P]			=	int(pids[i].kp) ; 
+		_filter_coeffs[i][r.DF_P]			=	int(pids[i].kp) ;
 		_filter_coeffs[i][r.DF_D]			=	int(pids[i].kd) ;
 		_filter_coeffs[i][r.DF_I]			=	int(pids[i].ki) ;
 		_filter_coeffs[i][r.DF_I_LIMIT]		=	int(pids[i].max_int);
@@ -1005,7 +1005,7 @@ bool MEIMotionControl::setPidsRaw(const Pid *pids)
 
 		set_filter(i, _filter_coeffs[i]);
     }
-	
+
 	return true;
 }
 
@@ -1092,7 +1092,7 @@ bool MEIMotionControl::getOutputsRaw(double *outs)
 
 
 //function to get the value of the positions setted as references
-bool MEIMotionControl::getReferenceRaw(int axis, double *ref)				
+bool MEIMotionControl::getReferenceRaw(int axis, double *ref)
 {
 	MEIResources& r = RES(system_resources);
 	ACE_ASSERT (axis >= 0 && axis <= r.getJoints());
@@ -1103,7 +1103,7 @@ bool MEIMotionControl::getReferenceRaw(int axis, double *ref)
 }
 
 
-bool MEIMotionControl::getReferencesRaw(double *ref)			
+bool MEIMotionControl::getReferencesRaw(double *ref)
 {
 	int i;
 	MEIResources& r = RES(system_resources);
@@ -1138,10 +1138,10 @@ bool MEIMotionControl::enablePidRaw(int axis)
 
 bool MEIMotionControl::setOffsetRaw(int axis, double v)
 {
-	
+
 	MEIResources& r = RES(system_resources);
 	ACE_ASSERT (axis >= 0 && axis <= r.getJoints());
-	
+
 	_filter_coeffs[axis][r.DF_OFFSET] = v;
 	set_filter(axis, _filter_coeffs[axis]);
 	return true;
@@ -1159,7 +1159,7 @@ bool MEIMotionControl::disablePidRaw(int axis)
 /*this function check the value of the flag _positionmode
 	it is just a way to safety manage the control
 	if _positionmode is true means you can control in position */
-bool MEIMotionControl::setPositionMode()		
+bool MEIMotionControl::setPositionMode()
 {
 	MEIResources& r = RES(system_resources);
 	if (_positionmode == false)
@@ -1195,7 +1195,7 @@ bool MEIMotionControl::setVelocityMode()
 
 
 /*it sets the reference postion and gives the command to move*/
-bool MEIMotionControl::positionMoveRaw(int axis, double ref)		
+bool MEIMotionControl::positionMoveRaw(int axis, double ref)
 {
 	MEIResources& r = RES(system_resources);
 	ACE_ASSERT (axis >= 0 && axis <= r.getJoints());
@@ -1226,7 +1226,7 @@ bool MEIMotionControl::positionMoveRaw(const double *refs)				//revisionata Matt
 	int i;
 	for (i = 0; i < r.getJoints (); i++)
 	{
-		int	check = axis_state(i);		
+		int	check = axis_state(i);
         if (ENABLED(i))
 			{
 				positionMoveRaw(i, refs[i]);
@@ -1239,7 +1239,7 @@ bool MEIMotionControl::positionMoveRaw(const double *refs)				//revisionata Matt
 				positionMoveRaw(i, refs[i]);
 			}
 		}
-	return true;   
+	return true;
 }
 
 bool MEIMotionControl::relativeMoveRaw(int j, double delta)
@@ -1254,7 +1254,7 @@ bool MEIMotionControl::relativeMoveRaw(const double *deltas)
 
 /// check motion done, single axis.
 //it returns true if the motion is terminated
-bool MEIMotionControl::checkMotionDoneRaw(int axis, bool *ret)			
+bool MEIMotionControl::checkMotionDoneRaw(int axis, bool *ret)
 {
 	MEIResources& r = RES(system_resources);
 	ACE_ASSERT (axis >= 0 && axis <= r.getJoints());
@@ -1265,7 +1265,7 @@ bool MEIMotionControl::checkMotionDoneRaw(int axis, bool *ret)
 			ret[axis] = false;
            return true;
         }
-	else 
+	else
 	{
 		printf("\nMotion on axis %d IS terminated!!", axis);
 		ret[axis] = true;
@@ -1288,9 +1288,9 @@ bool MEIMotionControl::checkMotionDoneRaw (bool *ret)
         }
 	return true;
 }
-	
 
-bool MEIMotionControl::setRefSpeedRaw(int axis, double sp)		
+
+bool MEIMotionControl::setRefSpeedRaw(int axis, double sp)
 {
 	MEIResources& r = RES(system_resources);
 	ACE_ASSERT (axis >= 0 && axis <= r.getJoints());
@@ -1311,7 +1311,7 @@ bool MEIMotionControl::setRefSpeedRaw(int axis, double sp)
 	return true;
 }
 
-bool MEIMotionControl::setRefSpeedsRaw(const double *spds)					
+bool MEIMotionControl::setRefSpeedsRaw(const double *spds)
 {
 	MEIResources& r = RES(system_resources);
       int i;
@@ -1333,7 +1333,7 @@ bool MEIMotionControl::setRefSpeedsRaw(const double *spds)
 	return true;
 }
 
-bool MEIMotionControl::setRefAccelerationRaw(int axis, double acc)			
+bool MEIMotionControl::setRefAccelerationRaw(int axis, double acc)
 {
 
 	MEIResources& r = RES(system_resources);
@@ -1341,18 +1341,18 @@ bool MEIMotionControl::setRefAccelerationRaw(int axis, double acc)
 	 return true;
 }
 
-bool MEIMotionControl::setRefAccelerationsRaw(const double *accs)	
+bool MEIMotionControl::setRefAccelerationsRaw(const double *accs)
 {
     MEIResources& r = RES(system_resources);
 	for (int i = 0; i < r.getJoints(); i++)
-		r._Rref_acc[i] = accs[i]; 
+		r._Rref_acc[i] = accs[i];
 
 	return true;
 }
 
 
 
-bool MEIMotionControl::getRefSpeedsRaw (double *spds)	
+bool MEIMotionControl::getRefSpeedsRaw (double *spds)
 {
 	MEIResources& r = RES(system_resources);
     for(int i = 0; i < r.getJoints(); i++)
@@ -1369,7 +1369,7 @@ bool MEIMotionControl::getRefSpeedRaw (int axis, double *spd)	//revisionata Matt
     ACE_ASSERT (axis >= 0 && axis <= r.getJoints());
 
 	spd[axis] = r._Rref_speeds[axis];
-	
+
 	return true;
 }
 
@@ -1426,13 +1426,13 @@ bool MEIMotionControl::velocityMoveRaw (int axis, double sp) 				//revisionata M
 {
 	MEIResources& r = RES(system_resources);
     ACE_ASSERT (axis >= 0 && axis <= r.getJoints());
-	
+
 	int check;
 	if(dsp_init(PCDSP_BASE))
 		return dsp_error;
 
 	//check if the axis is ready to worl or not
-	//	int check = axis_state(axis);		
+	//	int check = axis_state(axis);
 	if(_positionmode == false)
 		{
 		 if (!ENABLED(axis))
@@ -1464,7 +1464,7 @@ inline bool MEIMotionControl::velocityMoveRaw (const double *sp)
 
 	int i;
 	for(i = 0; i < r.getJoints(); i++)
-		{		
+		{
 			int check	= v_move(i, sp[i] , r._Rref_acc[i]);
 			if(check!=0)
 					printf("\n v_move exit with value %d, check the manual!!", check);
@@ -1502,7 +1502,7 @@ bool MEIMotionControl::setEncoderRaw(int axis, double val)
 bool MEIMotionControl::setEncodersRaw(const double *vals)
 {
 	MEIResources& r = RES(system_resources);
-		
+
 	int rc;
 
 	/// this is to (re)set the encoder ref value.
@@ -1528,24 +1528,24 @@ bool MEIMotionControl::resetEncoderRaw(int j)
 
 
 
-bool MEIMotionControl::resetEncodersRaw()		
+bool MEIMotionControl::resetEncodersRaw()
 {
 	MEIResources& r = RES(system_resources);
 
 	bool  ret;
     for(int i = 0; i < r.getJoints(); i++)
 		ret= resetEncoderRaw(i);
-	
+
     return ret;
 }
 
 bool MEIMotionControl::getEncodersRaw(double *v)		//revisionata Mattia
-{														
+{
 	MEIResources& r = RES(system_resources);
 	bool ret;
-	for (int i = 0; i < r.getJoints(); i++) 
+	for (int i = 0; i < r.getJoints(); i++)
 		ret = getEncoderRaw(i, v);
-	
+
 	return true;
 }
 
@@ -1619,18 +1619,18 @@ bool MEIMotionControl::getEncoderAccelerationRaw(int j, double *v)
     return NOT_IMPLEMENTED_YET("getEncoderAcc");
 }
 
-bool MEIMotionControl::disableAmpRaw(int axis)			
+bool MEIMotionControl::disableAmpRaw(int axis)
 {
 	MEIResources& r = RES(system_resources);
     ACE_ASSERT (axis >= 0 && axis <= r.getJoints());
-	
+
 	int amp = disable_amplifier(axis);
 
 	_amplifiers = false;
 	return true;
 }
 
-bool MEIMotionControl::enableAmpRaw(int axis)				
+bool MEIMotionControl::enableAmpRaw(int axis)
 {
 	MEIResources& r = RES(system_resources);
 
@@ -1643,9 +1643,9 @@ bool MEIMotionControl::enableAmpRaw(int axis)
 	int rc = controller_run(axis);
 
 	ACE_ASSERT (axis >= 0 && axis <= r.getJoints());
-	
 
-	int amp = enable_amplifier(axis);						//set the state of the amp to the 
+
+	int amp = enable_amplifier(axis);						//set the state of the amp to the
 	short ampli;
 	int level = get_amp_enable_level(axis, &ampli);
 	printf("\nAmp%d enable  state : %d",axis,ampli);
@@ -1660,7 +1660,7 @@ bool MEIMotionControl::enableAmpRaw(int axis)
 }
 
 
-bool MEIMotionControl::getCurrentsRaw(double *cs)	
+bool MEIMotionControl::getCurrentsRaw(double *cs)
 {
 	return NOT_IMPLEMENTED_YET("getCurrentRaw");
 }
@@ -1681,7 +1681,7 @@ bool MEIMotionControl::getMaxCurrentRaw(int axis, double v)
 	    return NOT_IMPLEMENTED_YET("getMaxCurrentRaw");
 }
 
-//before starting the calibration you have to move each axis of the arm 
+//before starting the calibration you have to move each axis of the arm
 //they have to stay as much as possible far away from their limit..
 //this function looks for a median point between two special encoder-steps
 //the problem is that if the initial position is between home-index and the
@@ -1702,7 +1702,7 @@ bool MEIMotionControl::calibrateRaw(int axis, double zero)
 	check = controller_run(axis);
 	check = enable_amplifier(axis);
 
-	
+
 	printf(("\nCalibration routine started.\n"));
 	if (! (_alreadyinint && _amplifiers) )
 		{
@@ -1728,7 +1728,7 @@ bool MEIMotionControl::calibrateRaw(int axis, double zero)
         {
 			clear_status(i);
 			controller_run(i);
-			if(i != axis) 
+			if(i != axis)
 				{
 					speeds1[i]	= 0.0;
 					speeds2[i]	= 0.0;
@@ -1744,14 +1744,14 @@ bool MEIMotionControl::calibrateRaw(int axis, double zero)
 		check = set_home_index_config(axis,INDEX_ONLY);
 		//the level of HOMe index is LOW
 		check = set_home_level(axis, FALSE);
-		
+
 		//this is needed just for velocity command
 		//remember to set is back to  NO_EVENT before using position command
 		//otherwise it is not going to work!
 		check = set_home(axis, STOP_EVENT);
 
 		//check if the axis is ready to work or not
-		check = axis_state(axis);		
+		check = axis_state(axis);
 		if(check!=0)
 		{
 			printf("\n some action did not exit in the right way for the %d axis \nI am going to reset the STOP",axis);
@@ -1789,7 +1789,7 @@ bool MEIMotionControl::calibrateRaw(int axis, double zero)
 		// go back to HOME position
 		printf("\nGoing back home...\n");
 		check = axis_state(axis);
-		
+
 		if(check!=0)
 		{
 			printf("\n some action did not exit in the right way for the %d axis \nI am going to reset the STOP",axis);
@@ -1808,7 +1808,7 @@ bool MEIMotionControl::calibrateRaw(int axis, double zero)
 		check = positionMoveRaw(axis,r._RposHome[axis]);
 		while (!motion_done(axis));
 		check = getEncoderRaw(axis,debug);
-		
+
 
 		printf(("\nGathering second index...\n"));
 		check = axis_state(axis);
@@ -1863,11 +1863,11 @@ bool MEIMotionControl::calibrateRaw(int axis, double zero)
 bool MEIMotionControl::doneRaw(int axis)
 {
 	MEIResources& r = RES(system_resources);
-	
+
 	bool ret[6] =		  {		0,		0,		0,		0,		0,		0};
 
 	checkMotionDoneRaw(axis, ret);
-	
+
 	if (ret[axis]==1)
 	return true;
 	else
@@ -1880,7 +1880,7 @@ bool MEIMotionControl::setPrintFunction(int (*f) (const char *fmt, ...))
 	return NOT_IMPLEMENTED_YET("setPrintFunction");
 }
 
-bool MEIMotionControl::getAmpStatusRaw(int *st)				
+bool MEIMotionControl::getAmpStatusRaw(int *st)
 {
 
 	MEIResources& r = RES(system_resources);
@@ -1894,10 +1894,10 @@ bool MEIMotionControl::getAmpStatusRaw(int *st)
         }
 
 	return true;
-	
+
 }
 
-bool MEIMotionControl::getAmpStatusRaw(int i, int *st)				
+bool MEIMotionControl::getAmpStatusRaw(int i, int *st)
 {
 
 	MEIResources& r = RES(system_resources);
@@ -1908,15 +1908,15 @@ bool MEIMotionControl::getAmpStatusRaw(int i, int *st)
 
     *st=value;
 
-	return true;	
+	return true;
 }
 
-bool MEIMotionControl::setLimitsRaw(int axis, double min, double max)	
+bool MEIMotionControl::setLimitsRaw(int axis, double min, double max)
 {
-		
+
 	MEIResources& r = RES(system_resources);
-	
-	//trick to re-initialize limits 
+
+	//trick to re-initialize limits
 	if(axis == 99)
 	{
 		for(int i=0; i<r.getJoints(); i++)
@@ -1929,7 +1929,7 @@ bool MEIMotionControl::setLimitsRaw(int axis, double min, double max)
 
 	}
 
-	//regular limit setting 
+	//regular limit setting
 	ACE_ASSERT (axis >= 0 && axis <= r.getJoints());
 
 	set_positive_sw_limit(axis,max,STOP_EVENT);
@@ -1939,7 +1939,7 @@ bool MEIMotionControl::setLimitsRaw(int axis, double min, double max)
 	return true;
 }
 
-bool MEIMotionControl::getLimitsRaw(int axis, double *min, double *max)	
+bool MEIMotionControl::getLimitsRaw(int axis, double *min, double *max)
 {
 	int iMin, iMax;
 
@@ -1947,7 +1947,7 @@ bool MEIMotionControl::getLimitsRaw(int axis, double *min, double *max)
 	ACE_ASSERT (axis >= 0 && axis <= r.getJoints());
 
 	double tmpmax,tmpmin;
-	
+
 	iMax =	get_positive_sw_limit(axis,&tmpmax,r._Revents);
 	iMin =	get_negative_sw_limit(axis,&tmpmin,r._Revents);
 
@@ -1961,7 +1961,7 @@ bool MEIMotionControl::loadBootMemory()
 {
 
     MEIResources& r = RES(system_resources);
-	
+
     int ret = 0;
     for(int j=0; j<r.getJoints(); j++)
         {
@@ -1978,7 +1978,7 @@ bool MEIMotionControl::loadBootMemory()
 bool MEIMotionControl::saveBootMemory ()
 {
     MEIResources& r = RES(system_resources);
-	
+
     int ret = 0;
     for(int j=0; j<r.getJoints(); j++)
         {
@@ -2021,7 +2021,7 @@ inline bool MEIMotionControl::ENABLED (int axis)
 		return false;
 	}
 	else return true;
-	
+
 }
 
 
@@ -2044,13 +2044,13 @@ bool MEIMotionControl::_readWord16Array (int msg, double *out)
 
 /// to send a Word16.
 bool MEIMotionControl::_writeWord16 (int msg, int axis, short s)
-{	
+{
 	return NOT_IMPLEMENTED_YET("_writeWord16");
 }
 
 /// write a DWord
 bool MEIMotionControl::_writeDWord (int msg, int axis, int value)
-{		
+{
 	return NOT_IMPLEMENTED_YET("_writeDWord");
 
 }
@@ -2063,9 +2063,9 @@ bool MEIMotionControl::_writeWord16Ex (int msg, int axis, short s1, short s2)
 
 ///
 /// sends a message and gets a dword back.
-/// 
+///
 bool MEIMotionControl::_readDWord (int msg, int axis, int& value)
-{    
+{
 	return NOT_IMPLEMENTED_YET("_readDWord");
 }
 

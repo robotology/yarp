@@ -75,7 +75,7 @@ bool yarp::rtf::TestCase::setup(int argc, char** argv)
         // if the config file cannot be found from default context or
         // there is not any context, use the robotname environment as context
         if(!useSuitContext && !useTestContext && !cfgfile.size() && envprop.check("robotname")) {
-            rf.setContext(envprop.find("robotname").asString().c_str());
+            rf.setDefaultContext(envprop.find("robotname").asString().c_str());
             cfgfile = rf.findFileByName(cfgname.c_str());
         }
         RTF_ASSERT_ERROR_IF(cfgfile.size(),

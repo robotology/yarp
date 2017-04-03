@@ -9,9 +9,9 @@
 #define YARPCXX_yarpcxx_INC
 
 #include <yarp.h>
-#include <stdlib.h>
-#include <stdio.h>
+#include <cstdlib>
+#include <cstdio>
 
-#define YARPCXX_VALID(x) if ((x)==NULL) { fprintf(stderr, "Memory allocation failure, %s:%d\n", __FILE__, __LINE__);  exit(1); }
+#define YARPCXX_VALID(x) if ((x)==NULL) { fprintf(stderr, "Memory allocation failure, %s:%d\n", __FILE__, __LINE__);  std::exit(1); }
 
 #endif

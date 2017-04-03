@@ -7,9 +7,9 @@
 #include <include/aboutdlg.h>
 #include <QMessageBox>
 #include "include/log.h"
-#include <signal.h>
+#include <csignal>
 
-#if defined(WIN32)
+#if defined(_WIN32)
     #pragma warning (disable : 4099)
     #pragma warning (disable : 4250)
     #pragma warning (disable : 4520)
@@ -82,12 +82,12 @@ MainWindow::MainWindow(yarp::os::ResourceFinder &rf, QWidget *parent) :
 
     QString port = QString("/%1/rpc:i").arg(moduleName);
     rpcPort.open( port.toLatin1().data() );
-    
+
     ::signal(SIGINT, sighandler);
     ::signal(SIGTERM, sighandler);
-    
+
     attach(rpcPort);
-    
+
     quitFromCmd = false;
 
     connect(ui->mainWidget,SIGNAL(itemDoubleClicked(QTreeWidgetItem*,int)),this,SLOT(onItemDoubleClicked(QTreeWidgetItem*,int)));
@@ -99,13 +99,13 @@ MainWindow::MainWindow(yarp::os::ResourceFinder &rf, QWidget *parent) :
     connect(this,SIGNAL(internalSetFrame(std::string,int)),this,SLOT(onInternalSetFrame(std::string,int)),Qt::BlockingQueuedConnection);
     connect(this,SIGNAL(internalGetFrame(std::string, int*)),this,SLOT(onInternalGetFrame(std::string,int*)),Qt::BlockingQueuedConnection);
     connect(this,SIGNAL(internalQuit()),this,SLOT(onInternalQuit()),Qt::QueuedConnection);
-    
+
     QShortcut *openShortcut = new QShortcut(QKeySequence("Ctrl+O"), parent);
     QObject::connect(openShortcut, SIGNAL(activated()), this, SLOT(onInternalLoad(QString)));
-    
+
     QShortcut *closeShortcut = new QShortcut(QKeySequence("Ctrl+Q"), parent);
     QObject::connect(closeShortcut, SIGNAL(activated()), this, SLOT(onInternalQuit()));
-    
+
 }
 
 /**********************************************************/
@@ -330,12 +330,12 @@ bool MainWindow::cmdSafeExit(void)
         if (utilities->masterThread->isSuspended()){
             utilities->masterThread->resume();
         }
-        
+
         utilities->masterThread->stop();
         LOG( "done stopping!\n");
         for (int i=0; i < subDirCnt; i++)
             utilities->partDetails[i].currFrame = 1;
-        
+
         LOG( "Module closing...\nCleaning up...\n");
         for (int x=0; x < subDirCnt; x++){
             utilities->partDetails[x].worker->release();
@@ -362,12 +362,12 @@ bool MainWindow::safeExit(void)
         if (utilities->masterThread->isSuspended()){
             utilities->masterThread->resume();
         }
-        
+
         utilities->masterThread->stop();
         LOG( "done stopping!\n");
         for (int i=0; i < subDirCnt; i++)
             utilities->partDetails[i].currFrame = 1;
-        
+
         LOG( "Module closing...\nCleaning up...\n");
         for (int x=0; x < subDirCnt; x++){
             utilities->partDetails[x].worker->release();
@@ -428,7 +428,7 @@ void MainWindow::closeEvent(QCloseEvent *event)
         QMessageBox::StandardButton resBtn = QMessageBox::question( this, APP_NAME,
                                                                "Quitting, Are you sure?\n",
                                                                QMessageBox::No | QMessageBox::Yes, QMessageBox::Yes);
-        
+
         if (resBtn != QMessageBox::Yes) {
             event->ignore();
 
@@ -586,7 +586,7 @@ void MainWindow::addPart(const char* szName, const char* type, int frames, const
         item->setText(PORT,QString("%1").arg(portName));
         ui->mainWidget->resizeColumnToContents(PORT);
     }
-    
+
     QProgressBar *progress = new QProgressBar();
     progress->setMaximum(100);
     progress->setValue(0);
@@ -650,7 +650,7 @@ void MainWindow::onMenuFileOpen()
         utilities->repeat = false;
         ui->actionRepeat->setChecked(false);
     }
-    
+
     if (ui->actionStrict->isChecked())
     {
         LOG("send strict mode is activated, setting it to false\n");
@@ -667,7 +667,7 @@ void MainWindow::onMenuFileOpen()
         ui->mainWidget->clear();
         for (int x=0; x < subDirCnt; x++)
             utilities->closePorts(utilities->partDetails[x]);
-        
+
         doGuiSetup(dir);
     }
 }
@@ -946,7 +946,7 @@ bool MainWindow::setTimeTaken(const char* szName, double time)
         row->setText(TIMETAKEN,QString("%1 s").arg(time, 0, 'f', 3));
         return true;
     }
-    
+
     return false;
 }
 
@@ -973,7 +973,7 @@ void MainWindow::onUpdateGuiRateThread()
                 if (utilities->partDetails[i].currFrame <= utilities->partDetails[i].maxFrame){
                     int rate = (int)utilities->partDetails[i].worker->getFrameRate();
                     setFrameRate(utilities->partDetails[i].name.c_str(),rate);
-                    
+
                     double time = utilities->partDetails[i].worker->getTimeTaken();
 
                     if (time > 700000){ //value of a time stamp...
@@ -1056,7 +1056,7 @@ void InitThread::run()
     if (subDirCnt > 0){
         utilities->getMaxTimeStamp();
     }
-    
+
     if (subDirCnt > 0){
         utilities->getMinTimeStamp();
     }
@@ -1064,18 +1064,18 @@ void InitThread::run()
     //set initial frames for all parts depending on first timestamps
     for (int x=0; x < subDirCnt; x++){
         utilities->initialFrame.push_back( utilities->partDetails[x].currFrame);
-        
+
         double totalTime = 0.0;
         double final = utilities->partDetails[x].timestamp[utilities->partDetails[x].timestamp.length()-1];
         double initial = utilities->partDetails[x].timestamp[utilities->partDetails[x].currFrame];
-        
+
         //LOG("initial timestamp is = %lf\n", initial);
         //LOG("final timestamp is  = %lf\n", final);
-        
+
         totalTime = final - initial;
-        
+
         LOG("The part %s, should last for: %lf with %d frames\n", utilities->partDetails[x].name.c_str(), totalTime, utilities->partDetails[x].maxFrame);
-        
+
     }
 
     utilities->masterThread = new MasterThread(utilities, subDirCnt, mainWindow);

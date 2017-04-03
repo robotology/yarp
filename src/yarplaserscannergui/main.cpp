@@ -24,7 +24,7 @@
 #include <sstream>
 #include <fstream>
 #include <string>
-#include <stdio.h>
+#include <cstdio>
 #include <limits>
 #include <cmath>
 
@@ -221,7 +221,7 @@ void drawLaser(const Vector *comp, vector<yarp::dev::LaserMeasurementData> *las,
         //if (length<0)     length = 0;
         //else if (length>15)    length = 15; //15m maximum
 
-        //the following rotation is performed to have x axis aligned with screen vertical 
+        //the following rotation is performed to have x axis aligned with screen vertical
         CvPoint ray;
         ray.x = int(-y*scale);
         ray.y = int(-x*scale);

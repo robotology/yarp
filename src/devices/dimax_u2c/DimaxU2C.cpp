@@ -4,7 +4,7 @@
  *
  */
 
-#include <stdio.h>
+#include <cstdio>
 #include <yarp/os/all.h>
 #include <yarp/sig/all.h>
 
@@ -20,7 +20,7 @@ DimaxU2C::DimaxU2C():
     //printf("Construct Servo object\n");
     servos = new Servo();
     if (!servos) {
-        ACE_OS::fprintf(stderr,"DimaxU2C: Failed to create a Servo object\n");
+        fprintf(stderr,"DimaxU2C: Failed to create a Servo object\n");
     }
 }
 
@@ -67,7 +67,7 @@ bool DimaxU2C::open(yarp::os::Searchable& config) {
         servos->init();
         return true;
     } else {
-        ACE_OS::fprintf(stderr,"DimaxU2C: No Servo object created\n");
+        fprintf(stderr,"DimaxU2C: No Servo object created\n");
         return false;
     }
     return true;

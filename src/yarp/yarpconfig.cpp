@@ -11,7 +11,7 @@
 #include <yarp/os/impl/NameConfig.h>
 #include "yarpcontext.h"
 #include "yarprobot.h"
-#include <stdio.h>
+#include <cstdio>
 #include <cstring>
 
 void show_help() {
@@ -32,8 +32,8 @@ int main(int argc, char *argv[]) {
 
     yarp::os::Property options;
     options.fromCommand(argc,argv);
-    if (options.check("help")) { 
-        show_help(); 
+    if (options.check("help")) {
+        show_help();
         return 0;
     }
     if (argc>=2) {

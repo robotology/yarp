@@ -6,7 +6,7 @@
 #ifndef YARP_DEV_SERVERSOUNDGRABBER_H
 #define YARP_DEV_SERVERSOUNDGRABBER_H
 
-#include <stdio.h>
+#include <cstdio>
 
 
 #include <yarp/os/BufferedPort.h>

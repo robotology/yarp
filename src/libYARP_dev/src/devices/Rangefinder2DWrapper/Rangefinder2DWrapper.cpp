@@ -4,13 +4,14 @@
  * CopyPolicy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
  */
 
-#include "Rangefinder2DWrapper.h"
-#include <sstream>
-#include <yarp/dev/ControlBoardInterfaces.h>
-#include <yarp/os/Log.h>
-#include <yarp/os/LogStream.h>
 #define _USE_MATH_DEFINES
-#include <math.h>
+
+#include "Rangefinder2DWrapper.h"
+#include <yarp/dev/ControlBoardInterfaces.h>
+#include <yarp/os/LogStream.h>
+
+#include <cmath>
+#include <sstream>
 
 using namespace yarp::sig;
 using namespace yarp::dev;

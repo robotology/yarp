@@ -6,11 +6,12 @@
  */
 
 #include <yarp/os/StringOutputStream.h>
-#include <yarp/os/impl/PlatformStdio.h>
-#include <yarp/os/impl/PlatformStdlib.h>
 
 #include <yarp/os/impl/UnitTest.h>
-//#include "TestList.h"
+
+#include <cstdio>
+#include <cstdlib>
+#include <cstring>
 
 using namespace yarp::os;
 using namespace yarp::os::impl;
@@ -23,7 +24,7 @@ public:
         report(0,"testing writing...");
         StringOutputStream sos;
         char txt[] = "Hello my friend";
-        Bytes b(txt,ACE_OS::strlen(txt));
+        Bytes b(txt,strlen(txt));
         sos.write(b);
         checkEqual(txt,sos.toString(),"single write");
         StringOutputStream sos2;

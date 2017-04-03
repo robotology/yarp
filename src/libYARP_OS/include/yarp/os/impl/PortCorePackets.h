@@ -13,7 +13,7 @@
 #  include <ace/config.h>
 #  include <ace/String_Base.h>
 #endif
-#include <stdio.h>
+#include <cstdio>
 
 namespace yarp {
     namespace os {

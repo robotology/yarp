@@ -19,7 +19,7 @@
 #include <yarp/os/NetInt64.h>
 
 #include <yarp/os/impl/PlatformVector.h>
-#include <yarp/os/impl/PlatformStdlib.h>
+#include <cstdlib>
 
 namespace yarp {
     namespace os {

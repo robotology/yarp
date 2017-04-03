@@ -9,7 +9,7 @@
 
 #include <yarp/conf/system.h>
 #include <yarp/os/Vocab.h>
-#include <string.h>
+#include <cstring>
 
 namespace yarp {
     namespace os {
@@ -27,7 +27,7 @@ extern "C" {
     /**
      *
      * Collection of hooks for creating/destroying a plugin.
-     * Be careful to check carefully for compatibility before 
+     * Be careful to check carefully for compatibility before
      * using create() or destroy().
      *
      */

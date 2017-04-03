@@ -11,7 +11,7 @@
 
 #include <yarp/os/Run.h>
 #include <yarp/os/Network.h>
-#include <stdio.h>
+#include <cstdio>
 
 
 int main(int argc, char *argv[])

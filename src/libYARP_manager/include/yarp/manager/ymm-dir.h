@@ -13,17 +13,17 @@
 #define YARP_MANAGER_YMMDIR
 
 
-#if defined(WIN32)
+#if defined(_WIN32)
 
     #define PATH_SEPERATOR      "\\"
 
     #define WIN32_LEAN_AND_MEAN
     #include <windows.h>
-    #include <string.h>
-    #include <stdlib.h>
+    #include <cstring>
+    #include <cstdlib>
     #include <sys/types.h>
     #include <sys/stat.h>
-    #include <errno.h>
+    #include <cerrno>
 
     /* File type and permission flags for stat() */
     #if defined(_MSC_VER)  &&  !defined(S_IREAD)

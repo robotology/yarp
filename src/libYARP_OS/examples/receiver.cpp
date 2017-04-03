@@ -8,7 +8,7 @@
 // source for receiver.cpp
 #include <yarp/os/Port.h>
 #include <yarp/os/Bottle.h>
-#include <stdio.h>
+#include <cstdio>
 
 using namespace yarp::os;
 

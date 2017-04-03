@@ -6,9 +6,8 @@
 
 
 #include <yarp/os/impl/Logger.h>
-#include <yarp/os/impl/PlatformStdlib.h>
-#include <yarp/os/impl/PlatformStdio.h>
 #include <yarp/os/impl/PlatformThread.h>
+#include <yarp/os/Os.h>
 #include <yarp/os/Network.h>
 #include <yarp/conf/system.h>
 
@@ -30,7 +29,7 @@ void Logger::fini() {
 
 void Logger::show(unsigned YARP_INT32 level, const ConstString& txt) {
     unsigned YARP_INT32 inLevel = level;
-    //ACE_OS::fprintf(stderr,"level %d txt %s\n", level, txt.c_str());
+    //fprintf(stderr,"level %d txt %s\n", level, txt.c_str());
     if (verbose>0) {
         level = 10000;
     }
@@ -46,14 +45,14 @@ void Logger::show(unsigned YARP_INT32 level, const ConstString& txt) {
     if (parent == YARP_NULLPTR) {
         if (level>=low) {
             if (inLevel<=LM_DEBUG) {
-                ACE_OS::fprintf(stream,"%s(%04x): %s\n",
+                fprintf(stream,"%s(%04x): %s\n",
                                 prefix.c_str(),
                                 (int)(long int)(PLATFORM_THREAD_SELF()),
                                 txt.c_str());
             } else {
-                ACE_OS::fprintf(stream,"%s: %s\n",prefix.c_str(),txt.c_str());
+                fprintf(stream,"%s: %s\n",prefix.c_str(),txt.c_str());
             }
-            ACE_OS::fflush(stream);
+            fflush(stream);
         }
     } else {
         ConstString more(prefix);
@@ -65,10 +64,10 @@ void Logger::show(unsigned YARP_INT32 level, const ConstString& txt) {
 
 
 void Logger::exit(int level) {
-    ACE_OS::exit(level);
+    exit(level);
 }
 
 
 void Logger::setPid() {
-    pid = ACE_OS::getpid();
+    pid = yarp::os::getpid();
 }

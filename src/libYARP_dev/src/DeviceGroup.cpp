@@ -4,7 +4,7 @@
  * CopyPolicy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
  */
 
-#include <stdio.h>
+#include <cstdio>
 #include <yarp/os/Time.h>
 #include <yarp/os/Log.h>
 #include <yarp/os/Semaphore.h>

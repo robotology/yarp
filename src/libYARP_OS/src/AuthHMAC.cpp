@@ -7,8 +7,8 @@
 
 #include <cstdlib>
 #include <cstring> //needed by strcpy
-#include <stdio.h>
-#include <time.h>
+#include <cstdio>
+#include <ctime>
 #include <yarp/os/ConstString.h>
 #include <yarp/os/Property.h>
 #include <yarp/os/Network.h>

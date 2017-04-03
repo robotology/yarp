@@ -12,7 +12,7 @@
 #include <yarp/os/NetType.h>
 #include "MjpegStream.h"
 
-#include <string.h>
+#include <cstring>
 
 namespace yarp {
     namespace os {

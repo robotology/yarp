@@ -197,7 +197,7 @@ bool yarp::os::impl::LocalCarrier::becomeLocal(ConnectionState& proto, bool send
     }
     proto.takeStreams(stream);
     //YARP_ERROR(Logger::get(),"*** don't trust local carrier yet ****");
-    //ACE_OS::exit(1);
+    //exit(1);
     return true;
 }
 

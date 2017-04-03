@@ -15,10 +15,10 @@
 #include <yarp/os/Network.h>
 #include <yarp/os/impl/RunCheckpoints.h>
 
-#include <stdlib.h>
+#include <cstdlib>
 #include <fcntl.h>
 
-#if defined(WIN32)
+#if defined(_WIN32)
 #include <windows.h>
 #include <process.h>
 #include <io.h>
@@ -73,7 +73,7 @@ protected:
 */
 
 class RunTerminator
-#if !defined(WIN32)
+#if !defined(_WIN32)
     : public yarp::os::Thread
 #endif
 {
@@ -81,7 +81,7 @@ public:
     RunTerminator(RunStdio* pStdio)
     {
         mStdio=pStdio;
-#if !defined(WIN32)
+#if !defined(_WIN32)
         int pipe_block[2];
         int warn_suppress = pipe(pipe_block);
         YARP_UNUSED(warn_suppress);
@@ -90,13 +90,13 @@ public:
 #endif
     }
 
-#if defined(WIN32)
+#if defined(_WIN32)
     void start(){}
 #endif
 
     ~RunTerminator()
     {
-#if !defined(WIN32)
+#if !defined(_WIN32)
         fclose(fwait);
         fclose(fpost);
 #endif
@@ -104,7 +104,7 @@ public:
 
     void run()
     {
-#if !defined(WIN32)
+#if !defined(_WIN32)
         char dummy[24];
         char* warn_suppress = fgets(dummy,16,fwait);
         YARP_UNUSED(warn_suppress);
@@ -115,7 +115,7 @@ public:
 
     void exit()
     {
-#if defined(WIN32)
+#if defined(_WIN32)
         mStdio->exit();
 #else
         fprintf(fpost,"SHKIATTETE!\n");
@@ -172,7 +172,7 @@ public:
         mRunning=false;
         wPort.close();
 
-#if defined(WIN32)
+#if defined(_WIN32)
         RUNLOG(">>>exit()")
         ::exit(0);
 #else
@@ -272,7 +272,7 @@ public:
 
         rPort.interrupt();
 
-#if defined(WIN32)
+#if defined(_WIN32)
         for (int t=0; t<10; ++t) yarp::os::Time::delay(1.0);
 #endif
         RUNLOG(">>>exit()")

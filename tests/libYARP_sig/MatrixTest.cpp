@@ -16,7 +16,7 @@
 #include <yarp/gsl/Gsl.h>
 #include <yarp/gsl/impl/gsl_structs.h>
 
-#include <math.h>
+#include <cmath>
 #include <vector>
 
 #include "TestList.h"

@@ -11,7 +11,7 @@
 #include <yarp/os/NetType.h>
 #include <mpi.h>
 
-#include <stdlib.h>
+#include <cstdlib>
 #include <unistd.h>
 
 using namespace yarp::os;

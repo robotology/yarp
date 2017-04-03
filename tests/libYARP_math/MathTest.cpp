@@ -5,27 +5,19 @@
 */
 
 
-/**
- * \infile Tests for math.
- */
+#define _USE_MATH_DEFINES
 
-// Added tests for random generator.
-
-#include <yarp/os/impl/PlatformStdio.h>
 #include <yarp/os/impl/UnitTest.h>
 
 #include <yarp/math/Math.h>
 #include <yarp/sig/Vector.h>
 #include <yarp/math/Rand.h>
 #include <yarp/math/SVD.h>
-
 #include <yarp/os/Time.h>
 
-#if defined(_MSC_VER)
-# define _USE_MATH_DEFINES
-#endif
-#include <math.h>
+#include <cmath>
 #include <string>
+#include <cstdio>
 
 using namespace yarp::os;
 using namespace yarp::os::impl;
@@ -136,19 +128,19 @@ public:
     void vectorOps()
     {
         report(0,"checking vector operators...");
-    
+
         Vector a(3);
         Vector b(3);
         Vector c;
         a=1;
         b=1;
-    
-        //test 
+
+        //test
         c=a+b;
 
         double acc=c[0]+c[1]+c[2];
         checkTrue(acc==6, "operator+ on vectors");
-        
+
         c=a-b;
         acc=c[0]+c[1]+c[2];
         checkTrue(acc==0,  "operator- on vectors");
@@ -178,7 +170,7 @@ public:
 
     void vectMatrix()
     {
-        
+
         Matrix m(3,2);
         m=eye(3,2);
         Vector v1(3);
@@ -214,7 +206,7 @@ public:
 
         Matrix exp(3,2);
         exp=24; //expected result
-        
+
         bool ret=(exp==C);
         checkTrue(ret, "Matrix::operator*");
 
@@ -226,7 +218,7 @@ public:
         for(int r=0; r<res.rows(); r++)
             for(int c=0; c<res.cols(); c++)
                     acc+=res[r][c];
-        
+
         double expected=res.rows()*res.cols()*3.0;
 
         checkTrue((acc==expected), "Matrix element wise division");
@@ -269,7 +261,7 @@ public:
         printf("%s\n", M.toString().c_str());
         printf("%s\n", T.toString().c_str());
     }
-    
+
     void matrixInv() {
         Vector v(0);
 
@@ -291,13 +283,13 @@ public:
             {
                 if (fabs(I[r][c]-ref[r][c])>0.0001)
                     invGood=false;
-            
+
             }
-            
+
         checkTrue(invGood, "luinv");
 
         //printf("luinv: %s\n", I.toString().c_str());
-        
+
         /*  [ 2 1 0 0 ]^-1   [ 1 -1  1 -1 ]
          *  [ 1 2 1 0 ]      [-1  2 -2  2 ]
          *  [ 0 1 2 1 ]    = [ 1 -2  3 -3 ]
@@ -311,9 +303,9 @@ public:
         I = B * Binv;
         printf("chinv: %s\n", I.toString().c_str());
         */
-        
+
     }
-    
+
     void matrixDet() {
         report(0,"checking matrix determinant...");
         Matrix A(4,4);
@@ -336,7 +328,7 @@ public:
         A(3,1) = 1;
         A(3,2) = 4;
         A(3,3) = 7;
-        
+
         double val = det(A);
         bool ok = ((val - -163) < 1e-10 && (-163 - val) < 1e-10);
         checkTrue(ok, "Matrix determinant");
@@ -481,7 +473,7 @@ public:
         assertEqual(a1/s, a1[0]/s, testName);
         testName = "vector /= scalar";
         an=bn; an/=s; assertEqual(an, bn/s, testName);
-        testName = "vector / vector"; 
+        testName = "vector / vector";
         assertEqual(an/ones(n), an, testName);
         assertEqual(a1/b1, a1[0]/b1[0], testName);
         testName = "vector /= vector";
@@ -516,8 +508,8 @@ public:
         testName = "a x b = -b x a";
         assertEqual(cross(an, bn), -1.0*cross(bn, an), testName);
     }
-    
-    virtual void runTests() 
+
+    virtual void runTests()
     {
         checkMiscOperations();
         vectorOps();
@@ -683,7 +675,7 @@ public:
         m_check[2][0] = 0.2230062590462850;    m_check[2][1] = 0.9084427381107635;    m_check[2][2] = 0.3535533905932738;   m_check[2][3] = 0;
         m_check[3][0] = 0;                     m_check[3][1] = 0;                     m_check[3][2] = 0;                    m_check[3][3] = 1.0;
         assertEqual(m, m_check, "check m computation");
-        
+
         // q1
         //0.8201 -0.3369i -0.4579j -0.06527k
         v_check.resize(4, 0.0);

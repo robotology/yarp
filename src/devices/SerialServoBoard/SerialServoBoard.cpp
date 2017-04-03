@@ -12,8 +12,8 @@
 
 #include <yarp/dev/SerialInterfaces.h>
 
-#include <stdio.h>
-#include <stdlib.h>
+#include <cstdio>
+#include <cstdlib>
 
 
 //TODO: check limits of operation (range of angles)?

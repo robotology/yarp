@@ -5,7 +5,7 @@
  *
  */
 
-#include <stdio.h>
+#include <cstdio>
 
 #include <yarp/dev/ControlBoardInterfaces.h>
 #include <yarp/os/Thread.h>

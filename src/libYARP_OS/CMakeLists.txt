@@ -165,15 +165,20 @@ set(YARP_OS_IMPL_HDRS include/yarp/os/impl/ACELockImpl.h
                       include/yarp/os/impl/NameConfig.h
                       include/yarp/os/impl/NameserCarrier.h
                       include/yarp/os/impl/NameServer.h
+                      include/yarp/os/impl/PlatformDirent.h
+                      include/yarp/os/impl/PlatformLimits.h
                       include/yarp/os/impl/PlatformList.h
                       include/yarp/os/impl/PlatformMap.h
+                      include/yarp/os/impl/PlatformNetdb.h
                       include/yarp/os/impl/PlatformSet.h
                       include/yarp/os/impl/PlatformSignal.h
                       include/yarp/os/impl/PlatformSize.h
+                      include/yarp/os/impl/PlatformSysStat.h
                       include/yarp/os/impl/PlatformStdio.h
                       include/yarp/os/impl/PlatformStdlib.h
                       include/yarp/os/impl/PlatformThread.h
                       include/yarp/os/impl/PlatformTime.h
+                      include/yarp/os/impl/PlatformUnistd.h
                       include/yarp/os/impl/PlatformVector.h
                       include/yarp/os/impl/PortCommand.h
                       include/yarp/os/impl/PortCore.h
@@ -275,6 +280,7 @@ set(YARP_OS_SRCS src/AbstractCarrier.cpp
                  src/NullConnectionWriter.cpp
                  src/Os.cpp
                  src/Ping.cpp
+                 src/PlatformTime.cpp
                  src/Portable.cpp
                  src/PortablePair.cpp
                  src/PortCommand.cpp

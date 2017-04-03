@@ -7,9 +7,9 @@
 #ifndef YARP_DEV_CONTROLBOARDHELPER_H
 #define YARP_DEV_CONTROLBOARDHELPER_H
 
-#include <string.h> // for memset
-#include <stdio.h> // for printf
-#include <math.h> //fabs
+#include <cstring> // for memset
+#include <cstdio> // for printf
+#include <cmath> //fabs
 #include <yarp/os/Log.h>
 
 /*

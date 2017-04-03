@@ -79,7 +79,7 @@ private:
 
         virtual void run() {
             for (int i=0; i<5; i++) {
-                //ACE_OS::printf("tick %d\n", i);
+                //printf("tick %d\n", i);
                 owner.state.wait();
                 owner.expectCount++;
                 owner.state.post();
@@ -104,7 +104,7 @@ private:
                 done = finished;
                 mutex.post();
                 owner.state.wait();
-                //ACE_OS::printf("burp\n");
+                //printf("burp\n");
                 owner.gotCount++;
                 owner.state.post();
             }
@@ -113,7 +113,7 @@ private:
                 owner.gotCount++;
                 owner.state.post();
             }
-            //ACE_OS::printf("done\n");
+            //printf("done\n");
         }
 
         virtual void close() {

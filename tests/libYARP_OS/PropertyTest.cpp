@@ -11,10 +11,10 @@
 
 #include <yarp/os/impl/UnitTest.h>
 #include <yarp/os/impl/Logger.h>
+#include <yarp/os/impl/PlatformSysStat.h>
 
-#include <yarp/os/impl/PlatformStdlib.h>
-
-#include <stdio.h>
+#include <cstdlib>
+#include <cstdio>
 
 using namespace yarp::os::impl;
 using namespace yarp::os;
@@ -559,11 +559,10 @@ check $x $y\n\
         report(0,"checking directory scanning");
         // change directory name if test files removed
         ConstString dirname = "__test_dir_1";
-        ACE_stat sb;
-        if (ACE_OS::stat(dirname.c_str(),&sb)<0) {
+        if (yarp::os::stat(dirname.c_str())<0) {
             yarp::os::mkdir(dirname.c_str());
         }
-        checkTrue(ACE_OS::stat(dirname.c_str(),&sb)>=0,"test directory present");
+        checkTrue(yarp::os::stat(dirname.c_str())>=0,"test directory present");
         {
             FILE *fout = fopen((dirname + "/t1.ini").c_str(),"w");
             yAssert(fout!=NULL);

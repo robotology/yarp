@@ -7,7 +7,7 @@
 #ifndef YARP_OS_RUN_H
 #define YARP_OS_RUN_H
 
-#include <string.h>
+#include <cstring>
 #include <yarp/os/api.h>
 #include <yarp/os/RpcServer.h>
 #include <yarp/os/Property.h>
@@ -164,7 +164,7 @@ public:
     static bool mLogged;
     static yarp::os::ConstString mLoggerPort;
 
-#if defined(WIN32)
+#if defined(_WIN32)
     static YarpRunInfoVector mProcessVector;
     static YarpRunInfoVector mStdioVector;
 #else
@@ -191,7 +191,7 @@ protected:
     static ConstString mPortName;
     static int mProcCNT;
 
-#if !defined(WIN32)
+#if !defined(_WIN32)
     static void cleanBeforeExec();
     static void writeToPipe(int fd,yarp::os::ConstString str);
     static int readFromPipe(int fd,char* &data,int& buffsize);

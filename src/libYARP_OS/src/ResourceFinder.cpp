@@ -4,22 +4,26 @@
  * CopyPolicy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
  */
 
-#include <stdio.h>
 
 #include <yarp/os/ResourceFinder.h>
+
 #include <yarp/os/Bottle.h>
-#include <yarp/os/Property.h>
-#include <yarp/os/impl/Logger.h>
 #include <yarp/os/ConstString.h>
-#include <yarp/os/impl/PlatformStdlib.h>
-#include <yarp/os/impl/NameClient.h>
-#include <yarp/os/impl/NameConfig.h>
-#include <yarp/os/Os.h>
 #include <yarp/os/Network.h>
+#include <yarp/os/Os.h>
+#include <yarp/os/Property.h>
 #include <yarp/os/SystemClock.h>
 #include <yarp/os/Time.h>
 
-#include <errno.h>
+#include <yarp/os/impl/Logger.h>
+#include <yarp/os/impl/NameClient.h>
+#include <yarp/os/impl/NameConfig.h>
+#include <yarp/os/impl/PlatformUnistd.h>
+#include <yarp/os/impl/PlatformSysStat.h>
+
+#include <cstdio>
+#include <cstdlib>
+#include <cerrno>
 
 using namespace yarp::os;
 using namespace yarp::os::impl;
@@ -41,7 +45,7 @@ YARP_DEPRECATED static ConstString expandUserFileName(const ConstString& fname) 
         conf = home + "/.yarp/" + fname;
     } else {
         YARP_ERROR(Logger::get(),"Cannot read configuration - please set YARP_CONF or HOME or HOMEPATH");
-        ACE_OS::exit(1);
+        std::exit(1);
     }
     YARP_DEBUG(Logger::get(),(ConstString("Configuration file: ") + conf).c_str());
     return conf;
@@ -57,7 +61,7 @@ static ConstString getPwd() {
         if (buf!=YARP_NULLPTR) delete[] buf;
         buf = new char[len];
         if (!buf) break;
-        char *dir = ACE_OS::getcwd(buf,len);
+        char *dir = yarp::os::getcwd(buf,len);
         if (dir) {
             result = dir;
             break;
@@ -885,8 +889,7 @@ YARP_WARNING_POP
     }
 
     bool exists(const char *fname, bool isDir) {
-        ACE_stat s;
-        int result = ACE_OS::stat(fname,&s);
+        int result = yarp::os::stat(fname);
         if (result!=0) {
             return false;
         }
@@ -902,7 +905,7 @@ YARP_WARNING_POP
         // Suppressing check for file here since it isn't really needed
         // and causes a lot of problems.
         /*
-        ACE_DIR *dir = ACE_OS::opendir(fname);
+        YARP_DIR *dir = ACE_OS::opendir(fname);
         if (dir!=YARP_NULLPTR) {
             ACE_OS::closedir(dir);
             dir = YARP_NULLPTR;
@@ -1273,7 +1276,7 @@ ConstString ResourceFinder::getDataHomeWithPossibleCreation(bool mayCreate)
     ConstString xdg_version = NetworkBase::getEnvironment("XDG_DATA_HOME",
                                                           &found);
     if (found) return createIfAbsent(mayCreate,xdg_version + slash + "yarp");
-#ifdef _WIN32
+#if defined(_WIN32)
     ConstString app_version = NetworkBase::getEnvironment("APPDATA");
     if (app_version != "") {
         return createIfAbsent(mayCreate,app_version + slash + "yarp");
@@ -1310,7 +1313,7 @@ ConstString ResourceFinder::getConfigHomeWithPossibleCreation(bool mayCreate)
     ConstString xdg_version = NetworkBase::getEnvironment("XDG_CONFIG_HOME",
                                                           &found);
     if (found) return createIfAbsent(mayCreate,xdg_version + slash + "yarp");
-#ifdef _WIN32
+#if defined(_WIN32)
     ConstString app_version = NetworkBase::getEnvironment("APPDATA");
     if (app_version != "") {
         return createIfAbsent(mayCreate,
@@ -1357,7 +1360,7 @@ Bottle ResourceFinder::getDataDirs()
         appendResourceType(xdg_version,"yarp");
         return xdg_version;
     }
-#ifdef _WIN32
+#if defined(_WIN32)
     ConstString app_version = NetworkBase::getEnvironment("YARP_DIR");
     if (app_version != "") {
         appendResourceType(app_version,"share");
@@ -1387,7 +1390,7 @@ Bottle ResourceFinder::getConfigDirs()
         appendResourceType(xdg_version,"yarp");
         return xdg_version;
     }
-#ifdef _WIN32
+#if defined(_WIN32)
     ConstString app_version = NetworkBase::getEnvironment("ALLUSERSPROFILE");
     if (app_version != "") {
         appendResourceType(app_version,"yarp");

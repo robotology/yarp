@@ -8,7 +8,7 @@
 #include "yarp/dev/ControlBoardInterfacesImpl.inl" //ControlBoardHelper
 #include <yarp/os/Log.h>
 
-#include <stdio.h>
+#include <cstdio>
 using namespace yarp::dev;
 
 bool StubImplPositionControlRaw::NOT_YET_IMPLEMENTED(const char *func)

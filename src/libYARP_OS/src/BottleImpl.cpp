@@ -15,11 +15,12 @@
 
 #include <yarp/os/impl/BufferedConnectionWriter.h>
 #include <yarp/os/impl/MemoryOutputStream.h>
-#include <yarp/os/impl/PlatformStdio.h>
-#include <yarp/os/impl/PlatformStdlib.h>
 #include <yarp/os/impl/StreamConnectionReader.h>
 
 #include <clocale>
+#include <cstdio>
+#include <cstring>
+#include <cstdlib>
 
 using yarp::os::impl::StoreInt;
 using yarp::os::impl::StoreVocab;
@@ -41,7 +42,7 @@ using yarp::os::Value;
 
 #define YARP_STRINIT(len) ((size_t)(len)), 0
 
-//#define YMSG(x) ACE_OS::printf x;
+//#define YMSG(x) printf x;
 //#define YTRACE(x) YMSG(("at %s\n",x))
 
 #define YMSG(x)
@@ -484,7 +485,7 @@ void BottleImpl::toBytes(const Bytes& data)
 {
     synch();
     yAssert(data.length() == byteCount());
-    ACE_OS::memcpy(data.get(), getBytes(), byteCount());
+    memcpy(data.get(), getBytes(), byteCount());
 }
 
 
@@ -684,14 +685,14 @@ void BottleImpl::setNested(bool nested)
 ConstString StoreInt::toString() const
 {
     char buf[256];
-    ACE_OS::sprintf(buf, "%d", x);
+    sprintf(buf, "%d", x);
     return ConstString(buf);
 }
 
 void StoreInt::fromString(const ConstString& src)
 {
-    // x = ACE_OS::atoi(src.c_str());
-    x = ACE_OS::strtol(src.c_str(), static_cast<char**>(YARP_NULLPTR), 0);
+    // x = atoi(src.c_str());
+    x = strtol(src.c_str(), static_cast<char**>(YARP_NULLPTR), 0);
 }
 
 bool StoreInt::readRaw(ConnectionReader& reader)
@@ -713,13 +714,13 @@ bool StoreInt::writeRaw(ConnectionWriter& writer)
 ConstString StoreInt64::toString() const
 {
     char buf[256];
-    ACE_OS::sprintf(buf, "%" YARP_INT64_FMT, x);
+    sprintf(buf, "%" YARP_INT64_FMT, x);
     return ConstString(buf);
 }
 
 void StoreInt64::fromString(const ConstString& src)
 {
-    x = ACE_OS::strtoll(src.c_str(), static_cast<char**>(YARP_NULLPTR), 0);
+    x = strtoll(src.c_str(), static_cast<char**>(YARP_NULLPTR), 0);
 }
 
 bool StoreInt64::readRaw(ConnectionReader& reader)
@@ -800,7 +801,7 @@ bool StoreVocab::writeRaw(ConnectionWriter& writer)
 ConstString StoreDouble::toString() const
 {
     char buf[512];
-    ACE_OS::sprintf(buf, "%f", x);
+    sprintf(buf, "%f", x);
     ConstString str(buf);
 
     // YARP Bug 2526259: Locale settings influence YARP behavior
@@ -840,7 +841,7 @@ void StoreDouble::fromString(const ConstString& src)
         struct lconv* lc = localeconv();
         tmp[offset] = lc->decimal_point[0];
     }
-    x = ACE_OS::strtod(tmp.c_str(), YARP_NULLPTR);
+    x = strtod(tmp.c_str(), YARP_NULLPTR);
 }
 
 bool StoreDouble::readRaw(ConnectionReader& reader)

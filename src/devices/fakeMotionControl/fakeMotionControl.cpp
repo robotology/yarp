@@ -7,7 +7,7 @@
 
 #include <iostream>
 #include <sstream>
-#include <string.h>
+#include <cstring>
 #include <yarp/os/Bottle.h>
 #include <yarp/os/Time.h>
 #include <yarp/os/LogStream.h>
@@ -28,7 +28,7 @@ using namespace yarp::os::impl;
 void FakeMotionControl::run() {
     if (lifetime>=0) {
         Time::delay(lifetime);
-        yarp::os::exit(0);
+        std::exit(0);
     }
 }
 

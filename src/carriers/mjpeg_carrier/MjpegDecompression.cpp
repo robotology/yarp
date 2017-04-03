@@ -5,9 +5,15 @@
  *
  */
 
-#include <stdio.h>
+#include "MjpegDecompression.h"
 
-#ifdef WIN32
+#include <yarp/os/Log.h>
+#include <yarp/sig/Image.h>
+
+#include <csetjmp>
+#include <cstdio>
+
+#if defined(_WIN32)
 #define INT32 long  // jpeg's definition
 #define QGLOBAL_H 1
 #endif
@@ -25,16 +31,11 @@ extern "C" {
 #pragma warning (pop)
 #endif
 
-#ifdef WIN32
+#if defined(_WIN32)
 #undef INT32
 #undef QGLOBAL_H
 #endif
 
-#include <setjmp.h>
-
-#include <yarp/os/Log.h>
-#include <yarp/sig/Image.h>
-#include "MjpegDecompression.h"
 
 using namespace yarp::os;
 using namespace yarp::sig;
@@ -206,7 +207,7 @@ MjpegDecompression::~MjpegDecompression() {
 }
 
 
-bool MjpegDecompression::decompress(const yarp::os::Bytes& data, 
+bool MjpegDecompression::decompress(const yarp::os::Bytes& data,
                                     yarp::sig::ImageOf<yarp::sig::PixelRgb>& image) {
     MjpegDecompressionHelper& helper = HELPER(system_resource);
     return helper.decompress(data, image);

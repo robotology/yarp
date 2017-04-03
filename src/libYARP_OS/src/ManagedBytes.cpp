@@ -4,10 +4,11 @@
  * CopyPolicy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
  */
 
-#include <yarp/os/impl/PlatformStdlib.h>
-
 #include <yarp/os/ManagedBytes.h>
 #include <yarp/os/Bottle.h>
+
+#include <cstdlib>
+#include <cstring>
 
 using namespace yarp::os;
 
@@ -78,7 +79,7 @@ bool ManagedBytes::allocateOnNeed(size_t neededLen, size_t allocateLen) {
     if (length()<neededLen && allocateLen>=neededLen) {
         char *buf = new char[allocateLen];
         yarp::os::NetworkBase::assertion(buf!=YARP_NULLPTR);
-        ACE_OS::memcpy(buf,get(),length());
+        memcpy(buf,get(),length());
         if (owned) {
             delete[] get();
             owned = false;
@@ -95,7 +96,7 @@ void ManagedBytes::copy() {
         YARP_SSIZE_T len = length();
         char *buf = new char[len];
         yarp::os::NetworkBase::assertion(buf!=YARP_NULLPTR);
-        ACE_OS::memcpy(buf,get(),len);
+        memcpy(buf,get(),len);
         b = Bytes(buf,len);
         owned = true;
     }

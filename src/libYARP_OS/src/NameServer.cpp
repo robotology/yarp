@@ -30,7 +30,7 @@
 using namespace yarp::os::impl;
 using namespace yarp::os;
 
-//#define YMSG(x) ACE_OS::printf x;
+//#define YMSG(x) printf x;
 //#define YTRACE(x) YMSG(("at %s\n",x))
 
 #define YMSG(x)

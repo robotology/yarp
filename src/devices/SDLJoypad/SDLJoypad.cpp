@@ -5,7 +5,7 @@
  */
 
 #include "SDLJoypad.h"
-#include <stdio.h>
+#include <cstdio>
 #include <yarp/os/LogStream.h>
 
 

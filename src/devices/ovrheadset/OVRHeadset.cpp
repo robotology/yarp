@@ -22,7 +22,7 @@
 #include <yarp/sig/Image.h>
 #include <yarp/os/LockGuard.h>
 
-#include <math.h>
+#include <cmath>
 
 #include <OVR_CAPI_Util.h>
 

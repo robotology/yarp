@@ -5,7 +5,7 @@
  *
  */
 
-#include <math.h>
+#include <cmath>
 
 #include <yarp/os/Stamp.h>
 #include <yarp/os/all.h>

@@ -31,9 +31,16 @@
 #cmakedefine ACE_ADDR_HAS_LOOPBACK_METHOD
 #cmakedefine ACE_HAS_STRING_HASH
 
-#cmakedefine YARP_HAS_EXECINFO
+#cmakedefine YARP_HAS_EXECINFO_H
+#cmakedefine YARP_HAS_SYS_WAIT_H
+#cmakedefine YARP_HAS_SYS_TYPES_H
+#cmakedefine YARP_HAS_SYS_PRCTL_H
+#cmakedefine YARP_HAS_SIGNAL_H
+#cmakedefine YARP_HAS_SYS_SIGNAL_H
+#cmakedefine YARP_HAS_NETDB_H
 
-#define YARP_POINTER_SIZE ${YARP_POINTER_SIZE}
+
+#define YARP_POINTER_SIZE @YARP_POINTER_SIZE@
 
 
 ///@{

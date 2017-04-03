@@ -14,7 +14,7 @@
 #include <yarp/dev/Drivers.h>
 
 #ifdef ICUB_USE_REALTIME_LINUX
-#include <signal.h>
+#include <csignal>
 #include <unistd.h>
 #include <sys/mman.h>
 #endif //ICUB_USE_REALTIME_LINUX
