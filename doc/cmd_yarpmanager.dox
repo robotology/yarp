@@ -27,7 +27,7 @@ programs on a set of machines.
 \li \ref application
 \li \ref resource
 \li \ref module
-\li \ref create 
+\li \ref create
 \li \ref export
 \li \ref faq
 
@@ -168,115 +168,66 @@ $ yarpmanager
 Application description file is a collection of modules (programs) or other applications and connections.
 
 Here is an example of application description file in XML format:
-\htmlonly
-<div class="fragment"><pre class="fragment">
-<tt><b><font color="#00458A">&lt;application&gt;</font></b>
+\code{.xml}
+<application>
 
-  <i><font color="#9A1900">&lt;!-- Generic information--&gt;</font></i>
-  <b><font color="#00458A">&lt;name&gt;</font></b>ApplicationName<b><font color="#00458A">&lt;/name&gt;</font></b>
-  <b><font color="#00458A">&lt;description&gt;</font></b>Template Application<b><font color="#00458A">&lt;/description&gt;</font></b>
-  <b><font color="#00458A">&lt;version&gt;&lt;/version&gt;</font></b>
+  <!-- Generic information-->
+  <name>ApplicationName</name>
+  <description>Template Application</description>
+  <version></version>
 
-  <b><font color="#00458A">&lt;authors&gt;</font></b>
-      <b><font color="#00458A">&lt;author</font></b> <font color="#009900">email</font><font color="#990000">=</font><font color="#FF0000">""</font><b><font color="#00458A">&gt;</font></b> first author.name <b><font color="#00458A">&lt;/author&gt;</font></b>
-      <b><font color="#00458A">&lt;author</font></b> <font color="#009900">email</font><font color="#990000">=</font><font color="#FF0000">""</font><b><font color="#00458A">&gt;</font></b> second author.name <b><font color="#00458A">&lt;/author&gt;</font></b>
+  <authors>
+      <author email=""> first author.name </author>
+      <author email=""> second author.name </author>
       ...
-  <b><font color="#00458A">&lt;/authors&gt;</font></b>
+  </authors>
 
-  <i><font color="#9A1900">&lt;!-- Required modules. --&gt;</font></i>
-  <b><font color="#00458A">&lt;module&gt;</font></b>
-      <b><font color="#00458A">&lt;name&gt;</font></b>Module_Name<b><font color="#00458A">&lt;/name&gt;</font></b>
-      <b><font color="#00458A">&lt;parameters&gt;&lt;/parameters&gt;</font></b>
-      <b><font color="#00458A">&lt;node&gt;&lt;/node&gt;</font></b>
-      <b><font color="#00458A">&lt;display&gt;&lt;/display&gt;</font></b>
-      <b><font color="#00458A">&lt;stdio&gt;&lt;/stdio&gt;</font></b>
-      <b><font color="#00458A">&lt;prefix&gt;&lt;/prefix&gt;</font></b>
-      <b><font color="#00458A">&lt;dependencies&gt;</font></b>
-          <b><font color="#00458A">&lt;port</font></b> <font color="#009900">timeout</font><font color="#990000">=</font><font color="#FF0000">"5.0"</font><b><font color="#00458A">&gt;&lt;/port&gt;</font></b>
-          <b><font color="#00458A">&lt;port</font></b> <font color="#009900">timeout</font><font color="#990000">=</font><font color="#FF0000">"5.0"</font> <font color="#009900">request</font><font color="#990000">=</font><font color="#FF0000">"ready"</font> <font color="#009900">reply</font><font color="#990000">=</font><font color="#FF0000">"yes"</font><b><font color="#00458A">&gt;&lt;/port&gt;</font></b>
+  <!-- Required modules. -->
+  <module>
+      <name></name>                     <!-- module/command name -->
+      <parameters></parameters>         <!-- parameters -->
+      <node></node>                     <!-- hostname to lunch the module  e.g. localhost, /node1 -->
+      <workdir></workdir>               <!-- work directory -->
+      <environment></environment>       <!-- set some environment variables for the module. e.g. 'VAR1=val; VAR2=val' -->
+      <deployer> </deployer>            <!-- use a third-party program to run the module. e.g. 'yarpdev' for yarp devices/plugins -->
+      <display></display>
+      <stdio></stdio>                   <!-- redirect the stdio to another host. (Obsolete!) -->
+      <prefix></prefix>                 <!-- prefix name will be added to all the ports open by module. e.g. /my-prefix -->
+      <dependencies>                    <!-- module execution will be postponed until the dependencies are satisfied -->
+          <port timeout="5.0"></port>
+          <port timeout="5.0" request="ready" reply="yes"></port>
           ...
-      <b><font color="#00458A">&lt;/dependencies&gt;</font></b>
-      <b><font color="#00458A">&lt;ensure&gt;</font></b>
-          <b><font color="#00458A">&lt;wait&gt;</font></b>10.0<b><font color="#00458A">&lt;/wait&gt;</font></b>
-      <b><font color="#00458A">&lt;/ensure&gt;</font></b>
-  <b><font color="#00458A">&lt;/module&gt;</font></b>
+      </dependencies>
+      <ensure>
+          <wait when="start">10.0</wait>   <!-- wait for 10.0 sec after running the module  -->
+          <wait when="stop">5.0</wait>     <!-- wait for 5.0 sec before stopping the module -->
+      </ensure>
+  </module>
   ...
 
-  <i><font color="#9A1900">&lt;!-- Embedded applications --&gt;</font></i>
-  <b><font color="#00458A">&lt;application&gt;</font></b>
-      <b><font color="#00458A">&lt;name&gt;</font></b>Application_Name<b><font color="#00458A">&lt;/name&gt;</font></b>
-      <b><font color="#00458A">&lt;prefix&gt;&lt;/prefix&gt;</font></b>
-   <b><font color="#00458A">&lt;/application&gt;</font></b>
+  <!-- Embedded applications -->
+  <application>
+      <name>Application_Name</name>
+      <prefix></prefix>
+   </application>
    ...
 
-  <i><font color="#9A1900">&lt;!-- Required connections --&gt;</font></i>
-  <b><font color="#00458A">&lt;connection</font></b> <font color="#009900">persist</font><font color="#990000">=</font><font color="#FF0000">"true"</font><b><font color="#00458A">&gt;</font></b>
-      <b><font color="#00458A">&lt;from</font></b> <font color="#009900">qos</font><font color="#990000">=</font><font color="#FF0000">"level:high; priority:10; policy:1"</font><b><font color="#00458A">&gt;&lt;/from&gt;</font></b>
-      <b><font color="#00458A">&lt;to&gt;&lt;/to&gt;</font></b>
-      <b><font color="#00458A">&lt;protocol&gt;&lt;/protocol&gt;</font></b>
-  <b><font color="#00458A">&lt;/connection&gt;</font></b>
+  <!-- Required connections -->
+  <connection persist="true">
+      <from qos="level:high; priority:10; policy:1"></from>   <!-- setting the channel Quality of Service -->
+      <to></to>
+      <protocol></protocol>                                   <!-- Yarp carrier e.g. tcp/udp -->
+  </connection>
 
-  <b><font color="#00458A">&lt;connection&gt;</font></b>
-      <b><font color="#00458A">&lt;from</font></b> <font color="#009900">external</font><font color="#990000">=</font><font color="#FF0000">"true"</font><b><font color="#00458A">&gt;&lt;/from&gt;</font></b>
-      <b><font color="#00458A">&lt;to&gt;&lt;/to&gt;</font></b>
-      <b><font color="#00458A">&lt;protocol&gt;&lt;/protocol&gt;</font></b>
-  <b><font color="#00458A">&lt;/connection&gt;</font></b>
+  <connection>
+      <from external="true"></from>    <!-- external means that the port is open by a module external to this application -->
+      <to></to>
+      <protocol></protocol>
+  </connection>
   ...
 
-<b><font color="#00458A">&lt;/application&gt;</font></b>
-</tt></pre>
-</div>
-\endhtmlonly
-
-\latexonly
-\noindent
-\mbox{}\textbf{\textless{}application\textgreater{}} \\
-\mbox{} \\
-\mbox{}\ \ \textit{\textless{}!-\/-\ Generic\ information-\/-\textgreater{}} \\
-\mbox{}\ \ \textbf{\textless{}name\textgreater{}}ApplicationName\textbf{\textless{}/name\textgreater{}} \\
-\mbox{}\ \ \textbf{\textless{}description\textgreater{}}Template\ Application\textbf{\textless{}/description\textgreater{}} \\
-\mbox{}\ \ \textbf{\textless{}version\textgreater{}\textless{}/version\textgreater{}} \\
-\mbox{} \\
-\mbox{}\ \ \textbf{\textless{}authors\textgreater{}} \\
-\mbox{}\ \ \ \ \ \ \textbf{\textless{}author}\ email=\texttt{"{}"{}}\textbf{\textgreater{}}\ first\ author.name\ \textbf{\textless{}/author\textgreater{}} \\
-\mbox{}\ \ \ \ \ \ \textbf{\textless{}author}\ email=\texttt{"{}"{}}\textbf{\textgreater{}}\ second\ author.name\ \textbf{\textless{}/author\textgreater{}} \\
-\mbox{}\ \ \ \ \ \ ... \\
-\mbox{}\ \ \textbf{\textless{}/authors\textgreater{}} \\
-\mbox{} \\
-\mbox{}\ \ \textit{\textless{}!-\/-\ Required\ modules.\ -\/-\textgreater{}} \\
-\mbox{}\ \ \textbf{\textless{}module\textgreater{}} \\
-\mbox{}\ \ \ \ \ \ \textbf{\textless{}name\textgreater{}}Module$\_$Name\textbf{\textless{}/name\textgreater{}} \\
-\mbox{}\ \ \ \ \ \ \textbf{\textless{}parameters\textgreater{}\textless{}/parameters\textgreater{}} \\
-\mbox{}\ \ \ \ \ \ \textbf{\textless{}node\textgreater{}\textless{}/node\textgreater{}} \\
-\mbox{}\ \ \ \ \ \ \textbf{\textless{}stdio\textgreater{}\textless{}/stdio\textgreater{}} \\
-\mbox{}\ \ \ \ \ \ \textbf{\textless{}prefix\textgreater{}\textless{}/prefix\textgreater{}} \\
-\mbox{}\ \ \textbf{\textless{}/module\textgreater{}} \\
-\mbox{}\ \ ... \\
-\mbox{}\ \ \ \  \\
-\mbox{}\ \ \textit{\textless{}!-\/-\ Embedded\ applications\ -\/-\textgreater{}} \\
-\mbox{}\ \ \textbf{\textless{}application\textgreater{}} \\
-\mbox{}\ \ \ \ \ \ \textbf{\textless{}name\textgreater{}}Application$\_$Name\textbf{\textless{}/name\textgreater{}} \\
-\mbox{}\ \ \ \ \ \ \textbf{\textless{}prefix\textgreater{}\textless{}/prefix\textgreater{}} \\
-\mbox{}\ \ \ \textbf{\textless{}/application\textgreater{}} \\
-\mbox{}\ \ \ ... \\
-\mbox{}\ \ \ \  \\
-\mbox{}\ \ \textit{\textless{}!-\/-\ Required\ connections\ -\/-\textgreater{}} \\
-\mbox{}\ \ \textbf{\textless{}connection\textgreater{}} \\
-\mbox{}\ \ \ \ \ \ \textbf{\textless{}from\textgreater{}\textless{}/from\textgreater{}} \\
-\mbox{}\ \ \ \ \ \ \textbf{\textless{}to\textgreater{}\textless{}/to\textgreater{}} \\
-\mbox{}\ \ \ \ \ \ \textbf{\textless{}protocol\textgreater{}\textless{}/protocol\textgreater{}} \\
-\mbox{}\ \ \textbf{\textless{}/connection\textgreater{}} \\
-\mbox{}\ \  \\
-\mbox{}\ \ \textbf{\textless{}connection\textgreater{}} \\
-\mbox{}\ \ \ \ \ \ \textbf{\textless{}from}\ external=\texttt{"{}true"{}}\textbf{\textgreater{}\textless{}/from\textgreater{}} \\
-\mbox{}\ \ \ \ \ \ \textbf{\textless{}to\textgreater{}\textless{}/to\textgreater{}} \\
-\mbox{}\ \ \ \ \ \ \textbf{\textless{}protocol\textgreater{}\textless{}/protocol\textgreater{}} \\
-\mbox{}\ \ \textbf{\textless{}/connection\textgreater{}}\ \  \\
-\mbox{}\ \ ... \\
-\mbox{}\ \  \\
-\mbox{}\textbf{\textless{}/application\textgreater{}} \\
-\mbox{}
-\endlatexonly
+</application>
+\endcode
 
 \subsection app_notes Notes
  - In application description file, if you set \<node\>\</node\> to "localhost", the manager will use an internal module launcher to run the module on localhost.
@@ -284,103 +235,57 @@ Here is an example of application description file in XML format:
  - \<prefix\> refers to port name's prefix. It will be added to the names of all ports that the module opens. For example, if a module open "/Port1" and \<prefix\>/MyPrefix\</prefix\>, after launching the module, the real port name will be "/Myprefix/Port1".
  - Other applications can be integrated by indicating their names. Setting \<prefix\> for an included application, port prefix will be applied to all modules and connections which are not set as external.
  - Persistent connection can be created by setting "persist" property of the corresponding connection tags. They are created by using YARP topics as described in \ref persistent_connections and will be removed when the application is unloaded from manager (i.e. closing the application window in yarpmanager).
- - The \<port\> tags inside \<dependencies\> indicate that the execution of the current module should be postponed until the ports become available. (g)yarpmanager waits for the ports and continuously checks their availability. If one of the required ports is not available within the time indicated by the "timeout" property, the module will not be launched.   
- - It is also possible to send a specific RPC request to a port to get status about the internal state of a module. This is useful when launching a module should be postponed until other modules get launched and ready. This can be done by specifying the request using "request" property and the expected reply using "reply" property in a \<port\> tag. The manager sends the request to the relevant port and check if the received reply matches the one indicated in the "reply" property before launching the module. If the reply does not match the expected one, the corresponding module will not launched. 
- - The \<ensure>\> and \<wait\> tags can be used to enforce an arbitrary wait after launching a module. In this case, the manager waits for that specific time to consider the module successfully launched.  
+ - The \<port\> tags inside \<dependencies\> indicate that the execution of the current module should be postponed until the ports become available. (g)yarpmanager waits for the ports and continuously checks their availability. If one of the required ports is not available within the time indicated by the "timeout" property, the module will not be launched.
+ - It is also possible to send a specific RPC request to a port to get status about the internal state of a module. This is useful when launching a module should be postponed until other modules get launched and ready. This can be done by specifying the request using "request" property and the expected reply using "reply" property in a \<port\> tag. The manager sends the request to the relevant port and check if the received reply matches the one indicated in the "reply" property before launching the module. If the reply does not match the expected one, the corresponding module will not launched.
+ - The \<ensure>\> and \<wait\> tags can be used to enforce an arbitrary wait after launching a module. In this case, the manager waits for that specific time to consider the module successfully launched.
  - The \<display\> tag specifies the visibility of the process window:
   - \--visible_na (default):the window is visible and inactive (it does not get the focus)
-  - \--minimized: the window is minimized 
+  - \--minimized: the window is minimized
   - \--hidden: the process is invisible. This option is useful for console/terminal applications. Notice that on the graphical yarpmanager you can see the standard output using the ''attach to stdout'' functionality (right click on the application and select it from the menu).
- - It is also possible to configure the Qos properties of a connection directly from the manager. This can be done using the "qos" attribute of \<connection\> tag or independently using \<from\> and \<to\> tags. The Qos properties provided within the \<connection\> tag will be applied to both side of the connection. The attribute accepts a string in form of multiple pairs of "property:value" which are separated using ";". For example, qos="level:high; priority:10; policy:1" configure the connection packet priority level to 'HIGH' and the scheduling policy/priority of the connection-dedicated thread respectively to 1 (i.e. SCHED_FIFO in Linux) and 10. Alternatively the packet priority level can be configured using "dscp:<value>" or "tos:<value>". Please refer to yarp::os::QosStyle and yarp::os::NetworkBase::setConnectionQos APIs for further information. 
- 
+ - It is also possible to configure the Qos properties of a connection directly from the manager. This can be done using the "qos" attribute of \<connection\> tag or independently using \<from\> and \<to\> tags. The Qos properties provided within the \<connection\> tag will be applied to both side of the connection. The attribute accepts a string in form of multiple pairs of "property:value" which are separated using ";". For example, qos="level:high; priority:10; policy:1" configure the connection packet priority level to 'HIGH' and the scheduling policy/priority of the connection-dedicated thread respectively to 1 (i.e. SCHED_FIFO in Linux) and 10. Alternatively the packet priority level can be configured using "dscp:<value>" or "tos:<value>". Please refer to yarp::os::QosStyle and yarp::os::NetworkBase::setConnectionQos APIs for further information.
+
 \section resource Resource description file
 The resource description file can be used to provide a general information of the machines that are part of the cluster. In very simple form, the resource description file is a list of the names of machines in the cluster.
 
 Here is an example of resource description file in XML format:
-\htmlonly
-<div class="fragment"><pre class="fragment">
-<tt><b><font color="#00458A">&lt;resources&gt;</font></b>
-    <i><font color="#9A1900">&lt;!-- Multiple computers can be introduced --&gt;</font></i>
-    <b><font color="#00458A">&lt;computer&gt;</font></b>
-        <b><font color="#00458A">&lt;name&gt;</font></b>hostname1<b><font color="#00458A">&lt;/name&gt;</font></b>
-        <b><font color="#00458A">&lt;description&gt;</font></b>Template resource<b><font color="#00458A">&lt;/description&gt;</font></b>
+\code{.xml}
+<resources>
+    <!-- Multiple computers can be introduced -->
+    <computer>
+        <name>hostname1</name>
+        <description>Template resource</description>
 
-        <i><font color="#9A1900">&lt;!-- A disabled resource will not be used by load balancer. --&gt;</font></i>
-        <b><font color="#00458A">&lt;disable&gt;</font></b>no<b><font color="#00458A">&lt;/disable&gt;</font></b>
-    <b><font color="#00458A">&lt;/computer&gt;</font></b>
+        <!-- A disabled resource will not be used by load balancer. -->
+        <disable>no</disable>
+    </computer>
 
-    <b><font color="#00458A">&lt;computer&gt;</font></b>
-        <b><font color="#00458A">&lt;name&gt;</font></b>hostname2<b><font color="#00458A">&lt;/name&gt;</font></b>
-        <b><font color="#00458A">&lt;description&gt;</font></b>a computer with GPU device<b><font color="#00458A">&lt;/description&gt;</font></b>
-        <b><font color="#00458A">&lt;disable&gt;</font></b>no<b><font color="#00458A">&lt;/disable&gt;</font></b>
-        <i><font color="#9A1900">&lt;!-- GPU description section. --&gt;</font></i>
-        <b><font color="#00458A">&lt;gpu&gt;</font></b>
-            <b><font color="#00458A">&lt;name&gt;</font></b>Tesla C1060<b><font color="#00458A">&lt;/name&gt;</font></b>
-            <b><font color="#00458A">&lt;cores&gt;</font></b>240<b><font color="#00458A">&lt;/cores&gt;</font></b>
-            <b><font color="#00458A">&lt;frequency&gt;</font></b>1600<b><font color="#00458A">&lt;/frequency&gt;</font></b>
-            <b><font color="#00458A">&lt;capability&gt;</font></b>1.3<b><font color="#00458A">&lt;/capability&gt;</font></b>
-            <b><font color="#00458A">&lt;registers_block&gt;</font></b>128<b><font color="#00458A">&lt;/registers_block&gt;</font></b>
-            <b><font color="#00458A">&lt;thread_block&gt;</font></b>512<b><font color="#00458A">&lt;/thread_block&gt;</font></b>
-            <b><font color="#00458A">&lt;overlap&gt;</font></b>yes<b><font color="#00458A">&lt;/overlap&gt;</font></b>
-            <b><font color="#00458A">&lt;global_memory&gt;</font></b>
-                <b><font color="#00458A">&lt;total_space&gt;</font></b>4000000<b><font color="#00458A">&lt;/total_space&gt;</font></b>
-            <b><font color="#00458A">&lt;/global_memory&gt;</font></b>
-            <b><font color="#00458A">&lt;shared_memory&gt;</font></b>
-                <b><font color="#00458A">&lt;total_space&gt;</font></b>128<b><font color="#00458A">&lt;/total_space&gt;</font></b>
-            <b><font color="#00458A">&lt;/shared_memory&gt;</font></b>
-            <b><font color="#00458A">&lt;constant_memory&gt;</font></b>
-                <b><font color="#00458A">&lt;total_space&gt;</font></b>16<b><font color="#00458A">&lt;/total_space&gt;</font></b>
-            <b><font color="#00458A">&lt;/constant_memory&gt;</font></b>
-        <b><font color="#00458A">&lt;/gpu&gt;</font></b>
-    <b><font color="#00458A">&lt;/computer&gt;</font></b>
+    <computer>
+        <name>hostname2</name>
+        <description>a computer with GPU device</description>
+        <disable>no</disable>
+        <!-- GPU description section. -->
+        <gpu>
+            <name>Tesla C1060</name>
+            <cores>240</cores>
+            <frequency>1600</frequency>
+            <capability>1.3</capability>
+            <registers_block>128</registers_block>
+            <thread_block>512</thread_block>
+            <overlap>yes</overlap>
+            <global_memory>
+                <total_space>4000000</total_space>
+            </global_memory>
+            <shared_memory>
+                <total_space>128</total_space>
+            </shared_memory>
+            <constant_memory>
+                <total_space>16</total_space>
+            </constant_memory>
+        </gpu>
+    </computer>
     ...
-
-<b><font color="#00458A">&lt;/resources&gt;</font></b>
-</tt></pre>
-</div>
-\endhtmlonly
-
-\latexonly
-\noindent
-\mbox{}\textbf{\textless{}resources\textgreater{}} \\
-\mbox{}\ \ \ \ \textit{\textless{}!-\/-\ Multiple\ computers\ can\ be\ introduced\ -\/-\textgreater{}} \\
-\mbox{}\ \ \ \ \textbf{\textless{}computer\textgreater{}} \\
-\mbox{}\ \ \ \ \ \ \ \ \textbf{\textless{}name\textgreater{}}hostname1\textbf{\textless{}/name\textgreater{}} \\
-\mbox{}\ \ \ \ \ \ \ \ \textbf{\textless{}description\textgreater{}}Template\ resource\textbf{\textless{}/description\textgreater{}} \\
-\mbox{} \\
-\mbox{}\ \ \ \ \ \ \ \ \textit{\textless{}!-\/-\ A\ disabled\ resource\ will\ not\ be\ used\ by\ load\ balancer.\ -\/-\textgreater{}} \\
-\mbox{}\ \ \ \ \ \ \ \ \textbf{\textless{}disable\textgreater{}}no\textbf{\textless{}/disable\textgreater{}} \\
-\mbox{}\ \ \ \ \textbf{\textless{}/computer\textgreater{}} \\
-\mbox{} \\
-\mbox{}\ \ \ \ \textbf{\textless{}computer\textgreater{}} \\
-\mbox{}\ \ \ \ \ \ \ \ \textbf{\textless{}name\textgreater{}}hostname2\textbf{\textless{}/name\textgreater{}} \\
-\mbox{}\ \ \ \ \ \ \ \ \textbf{\textless{}description\textgreater{}}a\ computer\ with\ GPU\ device\textbf{\textless{}/description\textgreater{}} \\
-\mbox{}\ \ \ \ \ \ \ \ \textbf{\textless{}disable\textgreater{}}no\textbf{\textless{}/disable\textgreater{}}\  \\
-\mbox{}\ \ \ \ \ \ \ \ \textit{\textless{}!-\/-\ GPU\ description\ section.\ -\/-\textgreater{}} \\
-\mbox{}\ \ \ \ \ \ \ \ \textbf{\textless{}gpu\textgreater{}} \\
-\mbox{}\ \ \ \ \ \ \ \ \ \ \ \ \textbf{\textless{}name\textgreater{}}Tesla\ C1060\textbf{\textless{}/name\textgreater{}} \\
-\mbox{}\ \ \ \ \ \ \ \ \ \ \ \ \textbf{\textless{}cores\textgreater{}}240\textbf{\textless{}/cores\textgreater{}}\  \\
-\mbox{}\ \ \ \ \ \ \ \ \ \ \ \ \textbf{\textless{}frequency\textgreater{}}1600\textbf{\textless{}/frequency\textgreater{}} \\
-\mbox{}\ \ \ \ \ \ \ \ \ \ \ \ \textbf{\textless{}capability\textgreater{}}1.3\textbf{\textless{}/capability\textgreater{}} \\
-\mbox{}\ \ \ \ \ \ \ \ \ \ \ \ \textbf{\textless{}registers$\_$block\textgreater{}}128\textbf{\textless{}/registers$\_$block\textgreater{}} \\
-\mbox{}\ \ \ \ \ \ \ \ \ \ \ \ \textbf{\textless{}thread$\_$block\textgreater{}}512\textbf{\textless{}/thread$\_$block\textgreater{}} \\
-\mbox{}\ \ \ \ \ \ \ \ \ \ \ \ \textbf{\textless{}overlap\textgreater{}}yes\textbf{\textless{}/overlap\textgreater{}} \\
-\mbox{}\ \ \ \ \ \ \ \ \ \ \ \ \textbf{\textless{}global$\_$memory\textgreater{}} \\
-\mbox{}\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textbf{\textless{}total$\_$space\textgreater{}}4000000\textbf{\textless{}/total$\_$space\textgreater{}} \\
-\mbox{}\ \ \ \ \ \ \ \ \ \ \ \ \textbf{\textless{}/global$\_$memory\textgreater{}} \\
-\mbox{}\ \ \ \ \ \ \ \ \ \ \ \ \textbf{\textless{}shared$\_$memory\textgreater{}} \\
-\mbox{}\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textbf{\textless{}total$\_$space\textgreater{}}128\textbf{\textless{}/total$\_$space\textgreater{}} \\
-\mbox{}\ \ \ \ \ \ \ \ \ \ \ \ \textbf{\textless{}/shared$\_$memory\textgreater{}} \\
-\mbox{}\ \ \ \ \ \ \ \ \ \ \ \ \textbf{\textless{}constant$\_$memory\textgreater{}} \\
-\mbox{}\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textbf{\textless{}total$\_$space\textgreater{}}16\textbf{\textless{}/total$\_$space\textgreater{}} \\
-\mbox{}\ \ \ \ \ \ \ \ \ \ \ \ \textbf{\textless{}/constant$\_$memory\textgreater{}} \\
-\mbox{}\ \ \ \ \ \ \ \ \textbf{\textless{}/gpu\textgreater{}}\  \\
-\mbox{}\ \ \ \ \textbf{\textless{}/computer\textgreater{}} \\
-\mbox{}\ \ \ \ ... \\
-\mbox{}\ \ \ \  \\
-\mbox{}\textbf{\textless{}/resources\textgreater{}} \\
-\mbox{}
-\endlatexonly
+</resources>
+\endcode
 
 \subsection res_notes Notes
  - Platform, Memory, Storage and Processor specification will be discovered automatically by (g)yarpmanager; but, peripherals such as GPU should to be specifically introduced.
@@ -390,128 +295,64 @@ Here is an example of resource description file in XML format:
 Module description file can be used to provide general information of module and its dependencies. It is mainly used by load balancer to automatically assign machines to module which satisfy the dependencies. By default, if there is no module description, load balancer assumes that the module can be executed on every available machines. Despite it is \b not \b mandatory, it is always useful to have XML description of each module which shows how it should be used for application building (e.g parameters, inputs, outputs).
 
 Here is an example of module description file in XML format:
-\htmlonly
-<div class="fragment"><pre class="fragment">
-<tt><b><font color="#00458A">&lt;module&gt;</font></b>
-    <b><font color="#00458A">&lt;name&gt;</font></b>module_name<b><font color="#00458A">&lt;/name&gt;</font></b>
-    <b><font color="#00458A">&lt;description&gt;</font></b>Template module<b><font color="#00458A">&lt;/description&gt;</font></b>
-    <b><font color="#00458A">&lt;version&gt;</font></b>1.0<b><font color="#00458A">&lt;/version&gt;</font></b>
+\code{.xml}
+<module>
+    <name>module_name</name>
+    <description>Template module</description>
+    <version>1.0</version>
 
-    <i><font color="#9A1900">&lt;!-- &lt;arguments&gt; can have multiple &lt;param&gt; tags--&gt;</font></i>
-    <b><font color="#00458A">&lt;arguments&gt;</font></b>
-        <b><font color="#00458A">&lt;param</font></b> <font color="#009900">desc</font><font color="#990000">=</font><font color="#FF0000">"first parameter"</font><b><font color="#00458A">&gt;</font></b> param1 <b><font color="#00458A">&lt;/param&gt;</font></b>
-    <b><font color="#00458A">&lt;/arguments&gt;</font></b>
+    <!-- <arguments> can have multiple <param> tags-->
+    <arguments>
+        <param desc="first parameter"> param1 </param>
+    </arguments>
 
-    <i><font color="#9A1900">&lt;!-- &lt;authors&gt; can have multiple &lt;author&gt; tags. --&gt;</font></i>
-    <b><font color="#00458A">&lt;authors&gt;</font></b>
-        <b><font color="#00458A">&lt;author</font></b> <font color="#009900">email</font><font color="#990000">=</font><font color="#FF0000">""</font><b><font color="#00458A">&gt;</font></b> author1 <b><font color="#00458A">&lt;/author&gt;</font></b>
-    <b><font color="#00458A">&lt;/authors&gt;</font></b>
+    <!-- <authors> can have multiple <author> tags. -->
+    <authors>
+        <author email=""> author1 </author>
+    </authors>
 
-     <i><font color="#9A1900">&lt;!-- &lt;data&gt; can have multiple &lt;input&gt; or &lt;output&gt; tags. --&gt;</font></i>
-     <b><font color="#00458A">&lt;data&gt;</font></b>
-        <i><font color="#9A1900">&lt;!-- input data if available--&gt;</font></i>
-        <b><font color="#00458A">&lt;input&gt;</font></b>
-            <b><font color="#00458A">&lt;type&gt;</font></b>DataType<b><font color="#00458A">&lt;/type&gt;</font></b>
+     <!-- <data> can have multiple <input> or <output> tags. -->
+     <data>
+        <!-- input data if available-->
+        <input>
+            <type>DataType</type>
 
-            <i><font color="#9A1900">&lt;!-- input port which receives the data. --&gt;</font></i>
-            <b><font color="#00458A">&lt;port</font></b> <font color="#009900">carrier</font><font color="#990000">=</font><font color="#FF0000">"tcp"</font><b><font color="#00458A">&gt;</font></b>/portname<b><font color="#00458A">&lt;/port&gt;</font></b>
-            <b><font color="#00458A">&lt;required&gt;</font></b>yes<b><font color="#00458A">&lt;/required&gt;</font></b>
-            <b><font color="#00458A">&lt;priority&gt;</font></b>no<b><font color="#00458A">&lt;/priority&gt;</font></b>
-            <b><font color="#00458A">&lt;description&gt;&lt;/description&gt;</font></b>
-        <b><font color="#00458A">&lt;/input&gt;</font></b>
+            <!-- input port which receives the data. -->
+            <port carrier="tcp">/portname</port>
+            <required>yes</required>
+            <priority>no</priority>
+            <description></description>
+        </input>
         ...
 
-        <i><font color="#9A1900">&lt;!-- output data if available --&gt;</font></i>
-        <b><font color="#00458A">&lt;output&gt;</font></b>
-            <b><font color="#00458A">&lt;type&gt;</font></b>DataType<b><font color="#00458A">&lt;/type&gt;</font></b>
-            <b><font color="#00458A">&lt;port</font></b> <font color="#009900">carrier</font><font color="#990000">=</font><font color="#FF0000">"tcp"</font><b><font color="#00458A">&gt;</font></b>/portname<b><font color="#00458A">&lt;/port&gt;</font></b>
-            <b><font color="#00458A">&lt;description&gt;&lt;/description&gt;</font></b>
-        <b><font color="#00458A">&lt;/output&gt;</font></b>
+        <!-- output data if available -->
+        <output>
+            <type>DataType</type>
+            <port carrier="tcp">/portname</port>
+            <description></description>
+        </output>
         ...
 
-    <b><font color="#00458A">&lt;/data&gt;</font></b>
+    </data>
 
-    <b><font color="#00458A">&lt;dependencies&gt;</font></b>
-        <b><font color="#00458A">&lt;computer&gt;</font></b>
-            <b><font color="#00458A">&lt;gpu&gt;</font></b>
-                <b><font color="#00458A">&lt;capability&gt;</font></b>1.3<b><font color="#00458A">&lt;/capability&gt;</font></b>
-            <b><font color="#00458A">&lt;/gpu&gt;</font></b>
+    <dependencies>
+        <computer>
+            <gpu>
+                <capability>1.3</capability>
+            </gpu>
             ...
-        <b><font color="#00458A">&lt;/computer&gt;</font></b>
+        </computer>
         ...
-    <b><font color="#00458A">&lt;/dependencies&gt;</font></b>
+    </dependencies>
 
-    <i><font color="#9A1900">&lt;!-- specific libraries or header files which are used for development --&gt;</font></i>
-    <b><font color="#00458A">&lt;development&gt;</font></b>
-        <b><font color="#00458A">&lt;header&gt;&lt;/header&gt;</font></b>
-        <b><font color="#00458A">&lt;library&gt;&lt;/library&gt;</font></b>
-    <b><font color="#00458A">&lt;/development&gt;</font></b>
+    <!-- specific libraries or header files which are used for development -->
+    <development>
+        <header></header>
+        <library></library>
+    </development>
 
-<b><font color="#00458A">&lt;/module&gt;</font></b>
-</tt></pre>
-</div>
-\endhtmlonly
-
-\latexonly
-\noindent
-\mbox{}\textbf{\textless{}module\textgreater{}}\ \ \ \  \\
-\mbox{}\ \ \ \ \textbf{\textless{}name\textgreater{}}module$\_$name\textbf{\textless{}/name\textgreater{}} \\
-\mbox{}\ \ \ \ \textbf{\textless{}description\textgreater{}}Template\ module\textbf{\textless{}/description\textgreater{}} \\
-\mbox{}\ \ \ \ \textbf{\textless{}version\textgreater{}}1.0\textbf{\textless{}/version\textgreater{}} \\
-\mbox{} \\
-\mbox{}\ \ \ \ \textit{\textless{}!-\/-\ \textless{}arguments\textgreater{}\ can\ have\ multiple\ \textless{}param\textgreater{}\ tags-\/-\textgreater{}} \\
-\mbox{}\ \ \ \ \textbf{\textless{}arguments\textgreater{}} \\
-\mbox{}\ \ \ \ \ \ \ \ \textbf{\textless{}param}\ desc=\texttt{"{}first\ parameter"{}}\textbf{\textgreater{}}\ param1\ \textbf{\textless{}/param\textgreater{}} \\
-\mbox{}\ \ \ \ \textbf{\textless{}/arguments\textgreater{}} \\
-\mbox{} \\
-\mbox{}\ \ \ \ \textit{\textless{}!-\/-\ \textless{}authors\textgreater{}\ can\ have\ multiple\ \textless{}author\textgreater{}\ tags.\ -\/-\textgreater{}} \\
-\mbox{}\ \ \ \ \textbf{\textless{}authors\textgreater{}} \\
-\mbox{}\ \ \ \ \ \ \ \ \textbf{\textless{}author}\ email=\texttt{"{}"{}}\textbf{\textgreater{}}\ author1\ \textbf{\textless{}/author\textgreater{}} \\
-\mbox{}\ \ \ \ \textbf{\textless{}/authors\textgreater{}} \\
-\mbox{} \\
-\mbox{}\ \ \ \ \ \textit{\textless{}!-\/-\ \textless{}data\textgreater{}\ can\ have\ multiple\ \textless{}input\textgreater{}\ or\ \textless{}output\textgreater{}\ tags.\ -\/-\textgreater{}} \\
-\mbox{}\ \ \ \ \ \textbf{\textless{}data\textgreater{}} \\
-\mbox{}\ \ \ \ \ \ \ \ \textit{\textless{}!-\/-\ input\ data\ if\ available-\/-\textgreater{}} \\
-\mbox{}\ \ \ \ \ \ \ \ \textbf{\textless{}input\textgreater{}}\ \ \ \ \ \ \ \ \ \ \ \  \\
-\mbox{}\ \ \ \ \ \ \ \ \ \ \ \ \textbf{\textless{}type\textgreater{}}DataType\textbf{\textless{}/type\textgreater{}} \\
-\mbox{} \\
-\mbox{}\ \ \ \ \ \ \ \ \ \ \ \ \textit{\textless{}!-\/-\ input\ port\ which\ receive\ the\ data.\ -\/-\textgreater{}} \\
-\mbox{}\ \ \ \ \ \ \ \ \ \ \ \ \textbf{\textless{}port}\ carrier=\texttt{"{}tcp"{}}\textbf{\textgreater{}}/portname\textbf{\textless{}/port\textgreater{}}\ \ \ \ \ \ \ \ \ \ \ \  \\
-\mbox{}\ \ \ \ \ \ \ \ \ \ \ \ \textbf{\textless{}required\textgreater{}}yes\textbf{\textless{}/required\textgreater{}}\ \ \ \ \ \ \ \ \ \ \  \\
-\mbox{}\ \ \ \ \ \ \ \ \ \ \ \ \textbf{\textless{}priority\textgreater{}}no\textbf{\textless{}/priority\textgreater{}} \\
-\mbox{}\ \ \ \ \ \ \ \ \ \ \ \ \textbf{\textless{}description\textgreater{}\textless{}/description\textgreater{}} \\
-\mbox{}\ \ \ \ \ \ \ \ \textbf{\textless{}/input\textgreater{}} \\
-\mbox{}\ \ \ \ \ \ \ \ ... \\
-\mbox{}\ \ \ \ \ \ \ \  \\
-\mbox{}\ \ \ \ \ \ \ \ \textit{\textless{}!-\/-\ output\ datas\ if\ available\ -\/-\textgreater{}} \\
-\mbox{}\ \ \ \ \ \ \ \ \textbf{\textless{}output\textgreater{}} \\
-\mbox{}\ \ \ \ \ \ \ \ \ \ \ \ \textbf{\textless{}type\textgreater{}}DataType\textbf{\textless{}/type\textgreater{}} \\
-\mbox{}\ \ \ \ \ \ \ \ \ \ \ \ \textbf{\textless{}port}\ carrier=\texttt{"{}tcp"{}}\textbf{\textgreater{}}/portname\textbf{\textless{}/port\textgreater{}} \\
-\mbox{}\ \ \ \ \ \ \ \ \ \ \ \ \textbf{\textless{}description\textgreater{}\textless{}/description\textgreater{}} \\
-\mbox{}\ \ \ \ \ \ \ \ \textbf{\textless{}/output\textgreater{}} \\
-\mbox{}\ \ \ \ \ \ \ \ ... \\
-\mbox{}\ \ \ \ \ \ \ \  \\
-\mbox{}\ \ \ \ \textbf{\textless{}/data\textgreater{}} \\
-\mbox{}\ \ \ \  \\
-\mbox{}\ \ \ \ \textbf{\textless{}dependencies\textgreater{}} \\
-\mbox{}\ \ \ \ \ \ \ \ \textbf{\textless{}computer\textgreater{}} \\
-\mbox{}\ \ \ \ \ \ \ \ \ \ \ \ \textbf{\textless{}gpu\textgreater{}} \\
-\mbox{}\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textbf{\textless{}capability\textgreater{}}1.3\textbf{\textless{}/capability\textgreater{}} \\
-\mbox{}\ \ \ \ \ \ \ \ \ \ \ \ \textbf{\textless{}/gpu\textgreater{}}\  \\
-\mbox{}\ \ \ \ \ \ \ \ \ \ \ \ ... \\
-\mbox{}\ \ \ \ \ \ \ \ \textbf{\textless{}/computer\textgreater{}} \\
-\mbox{}\ \ \ \ \ \ \ \ ... \\
-\mbox{}\ \ \ \ \textbf{\textless{}/dependencies\textgreater{}} \\
-\mbox{} \\
-\mbox{}\ \ \ \ \textit{\textless{}!-\/-\ specific\ libraries\ or\ header\ files\ which\ are\ used\ for\ development\ -\/-\textgreater{}} \\
-\mbox{}\ \ \ \ \textbf{\textless{}development\textgreater{}} \\
-\mbox{}\ \ \ \ \ \ \ \ \textbf{\textless{}header\textgreater{}\textless{}/header\textgreater{}} \\
-\mbox{}\ \ \ \ \ \ \ \ \textbf{\textless{}library\textgreater{}\textless{}/library\textgreater{}} \\
-\mbox{}\ \ \ \ \textbf{\textless{}/development\textgreater{}} \\
-\mbox{} \\
-\mbox{}\textbf{\textless{}/module\textgreater{}} \\
-\mbox{}
-\endlatexonly
+</module>
+\endcode
 
 \subsection mode_notes Notes
 
@@ -523,100 +364,51 @@ Here is an example of module description file in XML format:
  - In a multi-platform cluster of computers, if a module depends on specific platform (Operating system), \<platform\> dependency should be introduced.
 
  Resource conceptional model which can be used as module's dependency:
-\htmlonly
-<div class="fragment"><pre class="fragment">
-<tt><b><font color="#00458A">&lt;platform&gt;</font></b>
-    <b><font color="#00458A">&lt;name&gt;&lt;/name&gt;</font></b>
-    <b><font color="#00458A">&lt;distribution&gt;&lt;/distribution&gt;</font></b>
-    <b><font color="#00458A">&lt;release&gt;&lt;/release&gt;</font></b>
-<b><font color="#00458A">&lt;/platform&gt;</font></b>
+\code{.xml}
+<platform>
+    <name></name>
+    <distribution></distribution>
+    <release></release>
+</platform>
 
-<b><font color="#00458A">&lt;yarp_port&gt;</font></b>
-    <b><font color="#00458A">&lt;name&gt;&lt;/name&gt;</font></b>   <i><font color="#9A1900">&lt;!-- yarp port name --&gt;</font></i>
-<b><font color="#00458A">&lt;yarp_port&gt;</font></b>
+<yarp_port>
+    <name></name>   <!-- yarp port name -->
+<yarp_port>
 
-<b><font color="#00458A">&lt;memory&gt;</font></b>
-    <b><font color="#00458A">&lt;free_space&gt;&lt;/free_space&gt;</font></b>    <i><font color="#9A1900">&lt;!-- in KB --&gt;</font></i>
-<b><font color="#00458A">&lt;/memory&gt;</font></b>
+<memory>
+    <free_space></free_space>    <!-- in KB -->
+</memory>
 
-<b><font color="#00458A">&lt;storage&gt;</font></b>
-    <b><font color="#00458A">&lt;free_space&gt;&lt;/free_space&gt;</font></b>    <i><font color="#9A1900">&lt;!-- in KB --&gt;</font></i>
-<b><font color="#00458A">&lt;/storage&gt;</font></b>
+<storage>
+    <free_space></free_space>    <!-- in KB -->
+</storage>
 
-<b><font color="#00458A">&lt;processor&gt;</font></b>
-    <b><font color="#00458A">&lt;architecture&gt;&lt;/architecture&gt;</font></b>
-    <b><font color="#00458A">&lt;cores&gt;&lt;/cores&gt;</font></b>
-    <b><font color="#00458A">&lt;frequency&gt;&lt;/frequency&gt;</font></b>
-    <b><font color="#00458A">&lt;model&gt;&lt;/model&gt;</font></b>
-<b><font color="#00458A">&lt;/processor&gt;</font></b>
+<processor>
+    <architecture></architecture>
+    <cores></cores>
+    <frequency></frequency>
+    <model></model>
+</processor>
 
-<b><font color="#00458A">&lt;gpu&gt;</font></b>
-    <b><font color="#00458A">&lt;name&gt;&lt;/name&gt;</font></b>
-    <b><font color="#00458A">&lt;cores&gt;&lt;/cores&gt;</font></b>
-    <b><font color="#00458A">&lt;capability&gt;&lt;/capability&gt;</font></b>
-    <b><font color="#00458A">&lt;registers_block&gt;&lt;/registers_block&gt;</font></b>
-    <b><font color="#00458A">&lt;thread_block&gt;&lt;/thread_block&gt;</font></b>
-    <b><font color="#00458A">&lt;overlap&gt;&lt;/overlap&gt;</font></b>
-    <b><font color="#00458A">&lt;global_memory&gt;</font></b>
-        <b><font color="#00458A">&lt;total_space&gt;&lt;/total_space&gt;</font></b>     <i><font color="#9A1900">&lt;!-- in KB --&gt;</font></i>
-    <b><font color="#00458A">&lt;/global_memory&gt;</font></b>
-    <b><font color="#00458A">&lt;shared_memory&gt;</font></b>
-        <b><font color="#00458A">&lt;total_space&gt;&lt;/total_space&gt;</font></b>     <i><font color="#9A1900">&lt;!-- in KB --&gt;</font></i>
-    <b><font color="#00458A">&lt;/shared_memory&gt;</font></b>
-    <b><font color="#00458A">&lt;constant_memory&gt;</font></b>
-        <b><font color="#00458A">&lt;total_space&gt;&lt;/total_space&gt;</font></b>     <i><font color="#9A1900">&lt;!-- in KB --&gt;</font></i>
-    <b><font color="#00458A">&lt;/constant_memory&gt;</font></b>
-<b><font color="#00458A">&lt;/gpu&gt;</font></b>
-</tt></pre>
-</div>
-\endhtmlonly
+<gpu>
+    <name></name>
+    <cores></cores>
+    <capability></capability>
+    <registers_block></registers_block>
+    <thread_block></thread_block>
+    <overlap></overlap>
+    <global_memory>
+        <total_space></total_space>     <!-- in KB -->
+    </global_memory>
+    <shared_memory>
+        <total_space></total_space>     <!-- in KB -->
+    </shared_memory>
+    <constant_memory>
+        <total_space></total_space>     <!-- in KB -->
+    </constant_memory>
+</gpu>
+\endcode
 
-\latexonly
-\noindent
-\mbox{}\textbf{\textless{}platform\textgreater{}} \\
-\mbox{}\ \ \ \ \textbf{\textless{}name\textgreater{}\textless{}/name\textgreater{}} \\
-\mbox{}\ \ \ \ \textbf{\textless{}distribution\textgreater{}\textless{}/distribution\textgreater{}} \\
-\mbox{}\ \ \ \ \textbf{\textless{}release\textgreater{}\textless{}/release\textgreater{}} \\
-\mbox{}\textbf{\textless{}/platform\textgreater{}} \\
-\mbox{} \\
-\mbox{}\textbf{\textless{}yarp$\_$port\textgreater{}} \\
-\mbox{}\ \ \ \ \textbf{\textless{}name\textgreater{}\textless{}/name\textgreater{}}\ \ \ \textit{\textless{}!-\/-\ yarp\ port\ name\ -\/-\textgreater{}} \\
-\mbox{}\textbf{\textless{}yarp$\_$port\textgreater{}}\ \ \ \ \ \ \ \ \ \ \  \\
-\mbox{} \\
-\mbox{}\textbf{\textless{}memory\textgreater{}} \\
-\mbox{}\ \ \ \ \textbf{\textless{}free$\_$space\textgreater{}\textless{}/free$\_$space\textgreater{}}\ \ \ \ \textit{\textless{}!-\/-\ in\ KB\ -\/-\textgreater{}} \\
-\mbox{}\textbf{\textless{}/memory\textgreater{}} \\
-\mbox{} \\
-\mbox{}\textbf{\textless{}storage\textgreater{}} \\
-\mbox{}\ \ \ \ \textbf{\textless{}free$\_$space\textgreater{}\textless{}/free$\_$space\textgreater{}}\ \ \ \ \textit{\textless{}!-\/-\ in\ KB\ -\/-\textgreater{}} \\
-\mbox{}\textbf{\textless{}/storage\textgreater{}} \\
-\mbox{} \\
-\mbox{}\textbf{\textless{}processor\textgreater{}} \\
-\mbox{}\ \ \ \ \textbf{\textless{}architecture\textgreater{}\textless{}/architecture\textgreater{}} \\
-\mbox{}\ \ \ \ \textbf{\textless{}cores\textgreater{}\textless{}/cores\textgreater{}} \\
-\mbox{}\ \ \ \ \textbf{\textless{}frequency\textgreater{}\textless{}/frequency\textgreater{}} \\
-\mbox{}\ \ \ \ \textbf{\textless{}model\textgreater{}\textless{}/model\textgreater{}} \\
-\mbox{}\textbf{\textless{}/processor\textgreater{}} \\
-\mbox{} \\
-\mbox{}\textbf{\textless{}gpu\textgreater{}} \\
-\mbox{}\ \ \ \ \textbf{\textless{}name\textgreater{}\textless{}/name\textgreater{}} \\
-\mbox{}\ \ \ \ \textbf{\textless{}cores\textgreater{}\textless{}/cores\textgreater{}} \\
-\mbox{}\ \ \ \ \textbf{\textless{}capability\textgreater{}\textless{}/capability\textgreater{}} \\
-\mbox{}\ \ \ \ \textbf{\textless{}registers$\_$block\textgreater{}\textless{}/registers$\_$block\textgreater{}} \\
-\mbox{}\ \ \ \ \textbf{\textless{}thread$\_$block\textgreater{}\textless{}/thread$\_$block\textgreater{}} \\
-\mbox{}\ \ \ \ \textbf{\textless{}overlap\textgreater{}\textless{}/overlap\textgreater{}} \\
-\mbox{}\ \ \ \ \textbf{\textless{}global$\_$memory\textgreater{}} \\
-\mbox{}\ \ \ \ \ \ \ \ \textbf{\textless{}total$\_$space\textgreater{}\textless{}/total$\_$space\textgreater{}}\ \ \ \ \ \textit{\textless{}!-\/-\ in\ KB\ -\/-\textgreater{}} \\
-\mbox{}\ \ \ \ \textbf{\textless{}/global$\_$memory\textgreater{}} \\
-\mbox{}\ \ \ \ \textbf{\textless{}shared$\_$memory\textgreater{}} \\
-\mbox{}\ \ \ \ \ \ \ \ \textbf{\textless{}total$\_$space\textgreater{}\textless{}/total$\_$space\textgreater{}}\ \ \ \ \ \textit{\textless{}!-\/-\ in\ KB\ -\/-\textgreater{}} \\
-\mbox{}\ \ \ \ \textbf{\textless{}/shared$\_$memory\textgreater{}} \\
-\mbox{}\ \ \ \ \textbf{\textless{}constant$\_$memory\textgreater{}} \\
-\mbox{}\ \ \ \ \ \ \ \ \textbf{\textless{}total$\_$space\textgreater{}\textless{}/total$\_$space\textgreater{}}\ \ \ \ \ \textit{\textless{}!-\/-\ in\ KB\ -\/-\textgreater{}} \\
-\mbox{}\ \ \ \ \textbf{\textless{}/constant$\_$memory\textgreater{}} \\
-\mbox{}\textbf{\textless{}/gpu\textgreater{}}\ \ \ \ \  \\
-\mbox{}
-\endlatexonly
 
 \section create Create new XML description file
 yarpmanager allows for creating new application, module and resource description file using predefined templates. To create a new XML file, first make sure you set 'external_editor' to your preferable editor (e.g. gedit, notepad) then
@@ -660,21 +452,21 @@ Windows users can download Graphviz tools from http://www.graphviz.org/Download_
 
 \section faq Frequently asked questions
 \subsection wait_launch How to postpone launching a module?
-It can very often happen that you need to launch a module after some other modules already launched and are running. This is usually the case where a module needs to access some ports which should be open by other modules. To achieve this behavior, you simply needs to indicate which ports your module needs to be available using \<dependencies\> tag of the corresponding module in the application description file (see \ref app_notes). 
- 
-\subsection quick_launch How to quickly launch a single application in command line? 
-Imagine you need to run a single application (e.g., eyesviewer-localhost.xml) without using Guis. All you need is to use 'yarpmanager-console', give your application description file as its parameter and ask it to run the modules and connect them: 
+It can very often happen that you need to launch a module after some other modules already launched and are running. This is usually the case where a module needs to access some ports which should be open by other modules. To achieve this behavior, you simply needs to indicate which ports your module needs to be available using \<dependencies\> tag of the corresponding module in the application description file (see \ref app_notes).
+
+\subsection quick_launch How to quickly launch a single application in command line?
+Imagine you need to run a single application (e.g., eyesviewer-localhost.xml) without using Guis. All you need is to use 'yarpmanager-console', give your application description file as its parameter and ask it to run the modules and connect them:
 
 \verbatim
      yarpmanager-console --application my-app.xml --run --connect
 \endverbatim
-  
-If you want to run the application without getting blocked in yarpmanager-console, you can ask it to quit after running the application. 
+
+If you want to run the application without getting blocked in yarpmanager-console, you can ask it to quit after running the application.
 
 \verbatim
-     yarpmanager-console --application my-app.xml --run --connect --exit --silent 
+     yarpmanager-console --application my-app.xml --run --connect --exit --silent
 \endverbatim
 
-The '--silent' parameter avoids showing the verbose messages. Try 'yarpmanager-console --help' for further information.  
+The '--silent' parameter avoids showing the verbose messages. Try 'yarpmanager-console --help' for further information.
 
 */
