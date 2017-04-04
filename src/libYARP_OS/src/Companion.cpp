@@ -32,14 +32,14 @@
 #include <yarp/os/impl/NameClient.h>
 #include <yarp/os/impl/NameConfig.h>
 #include <yarp/os/impl/NameServer.h>
-#include <yarp/os/impl/PlatformUnistd.h>
+#include <yarp/os/impl/PlatformSignal.h>
 #include <yarp/os/impl/PlatformStdio.h>
+#include <yarp/os/impl/PlatformUnistd.h>
 #include <yarp/os/impl/PortCommand.h>
 #include <yarp/os/impl/PortCore.h>
 #include <yarp/os/impl/StreamConnectionReader.h>
 
 #include <algorithm>
-#include <csignal>
 #include <cstdio>
 #include <cstdlib>
 
@@ -162,7 +162,7 @@ static void companion_sigint_handler(int sig) {
                 if (port != YARP_NULLPTR) {
                     NetworkBase::unregisterName(port->getName());
                 }
-                ::exit(1);
+                std::exit(1);
             }
         }
         if (port != YARP_NULLPTR) {
@@ -170,7 +170,7 @@ static void companion_sigint_handler(int sig) {
         }
     } else {
         fprintf(stderr,"Aborting...\n");
-        ::exit(1);
+        std::exit(1);
     }
 }
 
@@ -182,24 +182,24 @@ static void companion_sigterm_handler(int sig) {
 static void companion_sigbreak_handler(int signum)
 {
     YARP_UNUSED(signum);
-    raise(SIGINT);
+    yarp::os::impl::raise(SIGINT);
 }
 #else
 static void companion_sighup_handler(int signum)
 {
     YARP_UNUSED(signum);
-    raise(SIGINT);
+    yarp::os::impl::raise(SIGINT);
 }
 #endif
 
 static void companion_install_handler() {
-    ::signal(SIGINT,companion_sigint_handler);
-    ::signal(SIGTERM,companion_sigterm_handler);
+    yarp::os::impl::signal(SIGINT, companion_sigint_handler);
+    yarp::os::impl::signal(SIGTERM, companion_sigterm_handler);
 
     #if defined(_WIN32)
-    ::signal(SIGBREAK, companion_sigbreak_handler);
+    yarp::os::impl::signal(SIGBREAK, companion_sigbreak_handler);
     #else
-    ::signal(SIGHUP, companion_sighup_handler);
+    yarp::os::impl::signal(SIGHUP, companion_sighup_handler);
     #endif
 }
 
@@ -2308,8 +2308,8 @@ ConstString Companion::version() {
 
 static void plugin_signal_handler(int) {
    // prevent infinite recursion if say_hi() causes another segfault
-    std::signal(SIGSEGV, SIG_DFL);
-    std::signal(SIGABRT, SIG_DFL);
+    yarp::os::impl::signal(SIGSEGV, SIG_DFL);
+    yarp::os::impl::signal(SIGABRT, SIG_DFL);
     throw std::exception();
 }
 
@@ -2331,8 +2331,8 @@ static bool plugin_test(YarpPluginSettings& settings) {
         printf("  * base class:     %s\n", baseClassName);
 
         bool ok = true;
-        std::signal(SIGSEGV, plugin_signal_handler);
-        std::signal(SIGABRT, plugin_signal_handler);
+        yarp::os::impl::signal(SIGSEGV, plugin_signal_handler);
+        yarp::os::impl::signal(SIGABRT, plugin_signal_handler);
         try {
             void* tmp = api.create();
             api.destroy(tmp);
@@ -2353,8 +2353,8 @@ static bool plugin_test(YarpPluginSettings& settings) {
             printf("  XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX\n");
             ok = false;
         }
-        std::signal(SIGSEGV, SIG_DFL);
-        std::signal(SIGABRT, SIG_DFL);
+        yarp::os::impl::signal(SIGSEGV, SIG_DFL);
+        yarp::os::impl::signal(SIGABRT, SIG_DFL);
         return ok;
     }
 }

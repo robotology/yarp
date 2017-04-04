@@ -7,9 +7,10 @@
 #define YARP_OS_IMPL_PLATFORMDIRENT_H
 
 #include <yarp/conf/system.h>
-#ifdef YARP_HAS_ACE
+#if defined(YARP_HAS_ACE)
 # include <ace/OS_NS_dirent.h>
 #else
+# include <sys/types.h>
 # include <dirent.h>
 #endif
 
@@ -17,7 +18,7 @@ namespace yarp {
 namespace os {
 namespace impl {
 
-#ifdef YARP_HAS_ACE
+#if defined(YARP_HAS_ACE)
     typedef ACE_DIRENT dirent;
     typedef ACE_DIR DIR;
     using ACE_OS::opendir;

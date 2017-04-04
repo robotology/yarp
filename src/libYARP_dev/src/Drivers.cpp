@@ -19,7 +19,7 @@
 #include <yarp/dev/Drivers.h>
 
 #include <yarp/os/impl/PlatformVector.h>
-#include <csignal>
+#include <yarp/os/impl/PlatformSignal.h>
 #include <yarp/os/impl/Logger.h>
 
 #include <yarp/os/YarpPlugin.h>
@@ -368,8 +368,8 @@ static void handler (int) {
 
 int Drivers::yarpdev(int argc, char *argv[]) {
 
-    ::signal(SIGINT, handler);
-    ::signal(SIGTERM, handler);
+    yarp::os::impl::signal(SIGINT, handler);
+    yarp::os::impl::signal(SIGTERM, handler);
 
     // get command line options
     ResourceFinder rf;

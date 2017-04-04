@@ -59,7 +59,7 @@ void yarp::os::abort(bool verbose)
 
 const char *yarp::os::getenv(const char *var)
 {
-    return std::getenv(var);
+    return yarp::os::impl::getenv(var);
 }
 
 int yarp::os::mkdir(const char *p)

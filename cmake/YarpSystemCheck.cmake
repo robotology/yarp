@@ -355,9 +355,14 @@ check_include_files(execinfo.h YARP_HAS_EXECINFO_H)
 check_include_files(sys/wait.h YARP_HAS_SYS_WAIT_H)
 check_include_files(sys/types.h YARP_HAS_SYS_TYPES_H)
 check_include_files(sys/prctl.h YARP_HAS_SYS_PRCTL_H)
-check_include_files(sys/signal.h YARP_HAS_SIGNAL_H)
+# Even if <csignal> is c++11, on some platforms it it still missing
+check_include_files(csignal YARP_HAS_CSIGNAL)
+check_include_files(signal.h YARP_HAS_SIGNAL_H)
 check_include_files(sys/signal.h YARP_HAS_SYS_SIGNAL_H)
 check_include_files(netdb.h YARP_HAS_NETDB_H)
+check_include_files(dlfcn.h YARP_HAS_DLFCN_H)
+check_include_files(ifaddrs.h YARP_HAS_IFADDRS_H)
+
 
 #########################################################################
 # Translate the names of some YARP options, for yarp_config_options.h.in

@@ -15,7 +15,9 @@
 
 #include <yarp/os/impl/Logger.h>
 #include <yarp/os/impl/SplitString.h>
+#include <yarp/os/impl/PlatformSysPrctl.h>
 #include <yarp/os/impl/PlatformSignal.h>
+#include <yarp/os/impl/PlatformStdlib.h>
 #include <yarp/os/impl/PlatformStdio.h>
 #include <yarp/os/impl/PlatformUnistd.h>
 #include <yarp/os/impl/RunCheckpoints.h>
@@ -35,10 +37,6 @@
 # define C_MAXARGS       128     // the max number of command parameters. rational?
 #endif
 
-#if defined(YARP_HAS_SYS_PRCTL_H)
-# include <sys/prctl.h>
-#endif
-
 #if defined(_WIN32)
 YarpRunInfoVector yarp::os::Run::mProcessVector;
 YarpRunInfoVector yarp::os::Run::mStdioVector;
@@ -54,7 +52,7 @@ inline yarp::os::ConstString lastError2String()
 //#define SIGSTDIO SIGHUP
 #define READ_FROM_PIPE 0
 #define WRITE_TO_PIPE  1
-#define REDIRECT_TO(from,to) dup2(to,from)
+#define REDIRECT_TO(from,to) yarp::os::impl::dup2(to,from)
 YarpRunInfoVector* yarp::os::Run::mProcessVector = YARP_NULLPTR;
 YarpRunInfoVector* yarp::os::Run::mStdioVector = YARP_NULLPTR;
 ZombieHunterThread* yarp::os::Run::mBraveZombieHunter = YARP_NULLPTR;
@@ -221,19 +219,21 @@ int yarp::os::Run::main(int argc, char *argv[])
 
         if (getppid()==1) return 0;
 #else
-        prctl(PR_SET_PDEATHSIG,SIGTERM);
+        yarp::os::impl::prctl(PR_SET_PDEATHSIG,SIGTERM);
 
         struct sigaction new_action;
         new_action.sa_handler=sigcstdioandler;
-        sigfillset(&new_action.sa_mask);
+        yarp::os::impl::sigfillset(&new_action.sa_mask);
         new_action.sa_flags=0;
 
-        sigaction(SIGTERM, &new_action, YARP_NULLPTR);
+        yarp::os::impl::sigaction(SIGTERM, &new_action, YARP_NULLPTR);
         yarp::os::impl::signal(SIGHUP, SIG_IGN);
         //yarp::os::impl::signal(SIGINT, SIG_IGN);
         yarp::os::impl::signal(SIGPIPE,SIG_IGN);
 
-        if (getppid()==1) return 0;
+        if (yarp::os::getpid() == 1) {
+            return 0;
+        }
 #endif
 
         RunReadWrite rw(uuid,fPortName,lPortName);
@@ -256,9 +256,9 @@ int yarp::os::Run::main(int argc, char *argv[])
 #else
         struct sigaction new_action;
         new_action.sa_handler=sigcstdioandler;
-        sigfillset(&new_action.sa_mask);
+        yarp::os::impl::sigfillset(&new_action.sa_mask);
         new_action.sa_flags=0;
-        sigaction(SIGTERM, &new_action, YARP_NULLPTR);
+        yarp::os::impl::sigaction(SIGTERM, &new_action, YARP_NULLPTR);
         //yarp::os::impl::signal(SIGINT,  SIG_IGN);
         yarp::os::impl::signal(SIGPIPE, SIG_IGN);
         yarp::os::impl::signal(SIGHUP,  SIG_IGN);
@@ -824,7 +824,7 @@ int yarp::os::Run::server()
     int pipe_server2manager[2];
     int pipe_manager2server[2];
 
-    if (pipe(pipe_server2manager))
+    if (yarp::os::impl::pipe(pipe_server2manager))
     {
         fprintf(stderr,"Can't open pipe because %s\n",strerror(errno));
         fflush(stderr);
@@ -832,7 +832,7 @@ int yarp::os::Run::server()
         return YARPRUN_ERROR;
     }
 
-    if (pipe(pipe_manager2server))
+    if (yarp::os::impl::pipe(pipe_manager2server))
     {
         fprintf(stderr,"Can't open pipe because %s\n",strerror(errno));
         fflush(stderr);
@@ -2441,13 +2441,13 @@ int yarp::os::Run::executeCmdAndStdio(yarp::os::Bottle& msg,yarp::os::Bottle& re
     yarp::os::ConstString strStdioUUID=msg.find("stdiouuid").asString();
 
     int  pipe_stdin_to_cmd[2];
-    int ret_stdin_to_cmd=pipe(pipe_stdin_to_cmd);
+    int ret_stdin_to_cmd=yarp::os::impl::pipe(pipe_stdin_to_cmd);
 
     int  pipe_cmd_to_stdout[2];
-    int  ret_cmd_to_stdout=pipe(pipe_cmd_to_stdout);
+    int  ret_cmd_to_stdout=yarp::os::impl::pipe(pipe_cmd_to_stdout);
 
     int  pipe_child_to_parent[2];
-    int  ret_child_to_parent=pipe(pipe_child_to_parent);
+    int  ret_child_to_parent=yarp::os::impl::pipe(pipe_child_to_parent);
 
     if (ret_child_to_parent!=0 || ret_cmd_to_stdout!=0 || ret_stdin_to_cmd!=0)
     {
@@ -2508,7 +2508,7 @@ int yarp::os::Run::executeCmdAndStdio(yarp::os::Bottle& msg,yarp::os::Bottle& re
 
         //yarp::os::impl::signal(SIGPIPE,SIG_DFL);
 
-        int ret=execlp("yarprun", "yarprun", "--write", strStdioUUID.c_str(), static_cast<char*>(YARP_NULLPTR));
+        int ret = yarp::os::impl::execlp("yarprun", "yarprun", "--write", strStdioUUID.c_str(), static_cast<char*>(YARP_NULLPTR));
 
         CLOSE(pipe_cmd_to_stdout[READ_FROM_PIPE]);
 
@@ -2585,7 +2585,7 @@ int yarp::os::Run::executeCmdAndStdio(yarp::os::Bottle& msg,yarp::os::Bottle& re
 
             //yarp::os::impl::signal(SIGPIPE,SIG_DFL);
 
-            int ret=execlp("yarprun", "yarprun", "--read", strStdioUUID.c_str(), static_cast<char*>(YARP_NULLPTR));
+            int ret = yarp::os::impl::execlp("yarprun", "yarprun", "--read", strStdioUUID.c_str(), static_cast<char*>(YARP_NULLPTR));
 
             CLOSE(pipe_stdin_to_cmd[WRITE_TO_PIPE]);
 
@@ -2683,14 +2683,14 @@ int yarp::os::Run::executeCmdAndStdio(yarp::os::Bottle& msg,yarp::os::Bottle& re
                     for(int i=0; i<ss.size(); i++) {
                         char* szenv = new char[strlen(ss.get(i))+1];
                         strcpy(szenv, ss.get(i));
-                        putenv(szenv); // putenv doesn't make copy of the string
+                        yarp::os::impl::putenv(szenv); // putenv doesn't make copy of the string
                     }
                     //delete [] szenv;
                 }
 
                 if (msg.check("workdir"))
                 {
-                    int ret=chdir(msg.find("workdir").asString().c_str());
+                    int ret = yarp::os::impl::chdir(msg.find("workdir").asString().c_str());
 
                     if (ret!=0)
                     {
@@ -2733,7 +2733,7 @@ int yarp::os::Run::executeCmdAndStdio(yarp::os::Bottle& msg,yarp::os::Bottle& re
                     //furthermore after fork() only the thread which called fork() is forked!
                     //            cleanBeforeExec();
 
-                    ret=execvp(cwd_arg_str[0],cwd_arg_str);
+                    ret = yarp::os::impl::execvp(cwd_arg_str[0],cwd_arg_str);
 
                     delete [] cwd_arg_str[0];
                     delete [] cwd_arg_str;
@@ -2746,7 +2746,7 @@ int yarp::os::Run::executeCmdAndStdio(yarp::os::Bottle& msg,yarp::os::Bottle& re
                     //furthermore after fork() only the thread which called fork() is forked!
                     //            cleanBeforeExec();
 
-                    ret=execvp(arg_str[0],arg_str);
+                    ret = yarp::os::impl::execvp(arg_str[0],arg_str);
                 }
 
                 fflush(stdout);
@@ -2882,10 +2882,10 @@ int yarp::os::Run::executeCmdStdout(yarp::os::Bottle& msg,yarp::os::Bottle& resu
 
 
     int  pipe_cmd_to_stdout[2];
-    int  ret_cmd_to_stdout=pipe(pipe_cmd_to_stdout);
+    int  ret_cmd_to_stdout=yarp::os::impl::pipe(pipe_cmd_to_stdout);
 
     int  pipe_child_to_parent[2];
-    int  ret_child_to_parent=pipe(pipe_child_to_parent);
+    int  ret_child_to_parent=yarp::os::impl::pipe(pipe_child_to_parent);
 
     if (ret_child_to_parent!=0 || ret_cmd_to_stdout!=0)
     {
@@ -2942,7 +2942,7 @@ int yarp::os::Run::executeCmdStdout(yarp::os::Bottle& msg,yarp::os::Bottle& resu
 
         //yarp::os::impl::signal(SIGPIPE,SIG_DFL);
 
-        int ret=execlp("yarprun", "yarprun", "--write", portName.c_str(), "--log", loggerName.c_str(), static_cast<char*>(YARP_NULLPTR));
+        int ret = yarp::os::impl::execlp("yarprun", "yarprun", "--write", portName.c_str(), "--log", loggerName.c_str(), static_cast<char*>(YARP_NULLPTR));
 
         CLOSE(pipe_cmd_to_stdout[READ_FROM_PIPE]);
 
@@ -3038,14 +3038,14 @@ int yarp::os::Run::executeCmdStdout(yarp::os::Bottle& msg,yarp::os::Bottle& resu
                     for(int i=0; i<ss.size(); i++) {
                         char* szenv = new char[strlen(ss.get(i))+1];
                         strcpy(szenv, ss.get(i));
-                        putenv(szenv); // putenv doesn't make copy of the string
+                        yarp::os::impl::putenv(szenv); // putenv doesn't make copy of the string
                     }
                     //delete [] szenv;
                 }
 
                 if (msg.check("workdir"))
                 {
-                    int ret=chdir(msg.find("workdir").asString().c_str());
+                    int ret = yarp::os::impl::chdir(msg.find("workdir").asString().c_str());
 
                     if (ret!=0)
                     {
@@ -3088,7 +3088,7 @@ int yarp::os::Run::executeCmdStdout(yarp::os::Bottle& msg,yarp::os::Bottle& resu
                     //furthermore after fork() only the thread which called fork() is forked!
                     //            cleanBeforeExec();
 
-                    ret=execvp(cwd_arg_str[0],cwd_arg_str);
+                    ret = yarp::os::impl::execvp(cwd_arg_str[0],cwd_arg_str);
 
                     delete [] cwd_arg_str[0];
                     delete [] cwd_arg_str;
@@ -3101,7 +3101,7 @@ int yarp::os::Run::executeCmdStdout(yarp::os::Bottle& msg,yarp::os::Bottle& resu
                     //furthermore after fork() only the thread which called fork() is forked!
                     //            cleanBeforeExec();
 
-                    ret=execvp(arg_str[0],arg_str);
+                    ret = yarp::os::impl::execvp(arg_str[0],arg_str);
                 }
 
                 fflush(stdout);
@@ -3232,7 +3232,7 @@ int yarp::os::Run::userStdio(yarp::os::Bottle& msg,yarp::os::Bottle& result)
 
     int pipe_child_to_parent[2];
 
-    if (pipe(pipe_child_to_parent))
+    if (yarp::os::impl::pipe(pipe_child_to_parent))
     {
         int error=errno;
 
@@ -3309,7 +3309,7 @@ int yarp::os::Run::userStdio(yarp::os::Bottle& msg,yarp::os::Bottle& result)
 
         //yarp::os::impl::signal(SIGHUP,rwSighupHandler);
 
-        int ret=execvp("xterm",command);
+        int ret = yarp::os::impl::execvp("xterm",command);
 
         cmdclean(command);
 
@@ -3405,7 +3405,7 @@ int yarp::os::Run::executeCmd(yarp::os::Bottle& msg,yarp::os::Bottle& result)
     yarp::os::ConstString strCmd(msg.find("cmd").toString());
 
     int  pipe_child_to_parent[2];
-    int ret_pipe_child_to_parent=pipe(pipe_child_to_parent);
+    int ret_pipe_child_to_parent=yarp::os::impl::pipe(pipe_child_to_parent);
 
     if (ret_pipe_child_to_parent!=0)
     {
@@ -3445,7 +3445,7 @@ int yarp::os::Run::executeCmd(yarp::os::Bottle& msg,yarp::os::Bottle& result)
 
     if (IS_NEW_PROCESS(pid_cmd)) // RUN COMMAND HERE
     {
-        int saved_stderr=dup(STDERR_FILENO);
+        int saved_stderr = yarp::os::impl::dup(STDERR_FILENO);
         int null_file=open("/dev/null",O_WRONLY);
         REDIRECT_TO(STDOUT_FILENO,null_file);
         REDIRECT_TO(STDERR_FILENO,null_file);
@@ -3470,13 +3470,13 @@ int yarp::os::Run::executeCmd(yarp::os::Bottle& msg,yarp::os::Bottle& result)
             for(int i=0; i<ss.size(); i++) {
                 char* szenv = new char[strlen(ss.get(i))+1];
                 strcpy(szenv, ss.get(i));
-                putenv(szenv); // putenv doesn't make copy of the string
+                yarp::os::impl::putenv(szenv); // putenv doesn't make copy of the string
             }
         }
 
         if (msg.check("workdir"))
         {
-            int ret=chdir(msg.find("workdir").asString().c_str());
+            int ret = yarp::os::impl::chdir(msg.find("workdir").asString().c_str());
 
             if (ret!=0)
             {
@@ -3520,7 +3520,7 @@ int yarp::os::Run::executeCmd(yarp::os::Bottle& msg,yarp::os::Bottle& result)
             //furthermore after fork() only the thread which called fork() is forked!
 //            cleanBeforeExec();
 
-            ret=execvp(cwd_arg_str[0],cwd_arg_str);
+            ret = yarp::os::impl::execvp(cwd_arg_str[0],cwd_arg_str);
 
             delete [] cwd_arg_str[0];
             delete [] cwd_arg_str;
@@ -3532,7 +3532,7 @@ int yarp::os::Run::executeCmd(yarp::os::Bottle& msg,yarp::os::Bottle& result)
             //exec* never returns and memory is claimed by the system
             //furthermore after fork() only the thread which called fork() is forked!
             //            cleanBeforeExec();
-            ret=execvp(arg_str[0],arg_str);
+            ret = yarp::os::impl::execvp(arg_str[0],arg_str);
         }
 
         if (ret==YARPRUN_ERROR)

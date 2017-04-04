@@ -4,14 +4,17 @@
 * CopyPolicy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
 */
 
-#include <yarp/os/Time.h>
-#include <yarp/os/RpcClient.h>
-#include <yarp/os/Network.h>
-#include <yarp/os/Semaphore.h>
 #include <yarp/os/impl/RunProcManager.h>
 
-#include <cstring>
+#include <yarp/os/Network.h>
+#include <yarp/os/RpcClient.h>
+#include <yarp/os/Semaphore.h>
+#include <yarp/os/Time.h>
+
+#include <yarp/os/impl/PlatformSysWait.h>
 #include <yarp/os/impl/RunCheckpoints.h>
+
+#include <cstring>
 
 #define WAIT() { RUNLOG("<<<mutex.wait()") mutex.wait(); RUNLOG(">>>mutex.wait()") }
 #define POST() { RUNLOG("<<<mutex.post()") mutex.post(); RUNLOG(">>>mutex.post()") }
@@ -72,7 +75,7 @@
 
     int SIGNAL(int pid,int signum)
     {
-        int ret=!kill(pid,signum);
+        int ret=!yarp::os::impl::kill(pid,signum);
         return ret;
     }
 #endif // LINUX
@@ -130,7 +133,7 @@ bool YarpRunProcInfo::IsActive()
     RUNLOG(">>>GetExitCodeProcess(mHandleCmd,&status)")
     return ret;
 #else
-    bool ret=!kill(mPidCmd,0);
+    bool ret=!yarp::os::impl::kill(mPidCmd,0);
     return ret;
 #endif
 }
@@ -138,7 +141,7 @@ bool YarpRunProcInfo::IsActive()
 bool YarpRunProcInfo::Clean()
 {
 #if !defined(_WIN32)
-    if (!mCleanCmd && waitpid(mPidCmd, YARP_NULLPTR, WNOHANG) == mPidCmd)
+    if (!mCleanCmd && yarp::os::impl::waitpid(mPidCmd, YARP_NULLPTR, WNOHANG) == mPidCmd)
     {
         fprintf(stderr,"CLEANUP cmd %d\n",mPidCmd);
         mCleanCmd=true;
@@ -526,19 +529,19 @@ bool YarpRunCmdWithStdioInfo::Clean()
 
 #else
 
-    if (!mCleanCmd && waitpid(mPidCmd, YARP_NULLPTR, WNOHANG) == mPidCmd)
+    if (!mCleanCmd && yarp::os::impl::waitpid(mPidCmd, YARP_NULLPTR, WNOHANG) == mPidCmd)
     {
         fprintf(stderr,"CLEANUP cmd %d\n",mPidCmd);
         mCleanCmd=true;
     }
 
-    if (!mCleanStdin && waitpid(mPidStdin, YARP_NULLPTR, WNOHANG) == mPidStdin)
+    if (!mCleanStdin && yarp::os::impl::waitpid(mPidStdin, YARP_NULLPTR, WNOHANG) == mPidStdin)
     {
         fprintf(stderr,"CLEANUP stdin %d\n",mPidStdin);
         mCleanStdin=true;
     }
 
-    if (!mCleanStdout && waitpid(mPidStdout, YARP_NULLPTR, WNOHANG) == mPidStdout)
+    if (!mCleanStdout && yarp::os::impl::waitpid(mPidStdout, YARP_NULLPTR, WNOHANG) == mPidStdout)
     {
         fprintf(stderr,"CLEANUP stdout %d\n",mPidStdout);
         mCleanStdout=true;
@@ -566,19 +569,19 @@ bool YarpRunCmdWithStdioInfo::Clean()
 
     if (!mCleanCmd && !mKillingCmd)
     {
-        kill(mPidCmd,SIGTERM);
+        yarp::os::impl::kill(mPidCmd,SIGTERM);
         mKillingCmd=true;
     }
 
     if (!mCleanStdin && !mKillingStdin)
     {
-        kill(mPidStdin,SIGTERM);
+        yarp::os::impl::kill(mPidStdin,SIGTERM);
         mKillingStdin=true;
     }
 
     if (!mCleanStdout && !mKillingStdout)
     {
-        kill(mPidStdout,SIGTERM);
+        yarp::os::impl::kill(mPidStdout,SIGTERM);
         mKillingStdout=true;
     }
 

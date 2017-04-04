@@ -18,28 +18,29 @@
 #cmakedefine YARP_HAS_CXX11
 
 // Use STL if C++11 is active, or if ACE is not available
-#ifdef YARP_HAS_CXX11
-#  define YARP_USE_STL 1
+#if defined(YARP_HAS_CXX11) || !defined(YARP_HAS_ACE)
+# define YARP_USE_STL 1
 #endif
 
-#ifndef YARP_HAS_ACE
-#  ifndef YARP_USE_STL
-#    define YARP_USE_STL 1
-#  endif
-#endif
-
+// ACE information
+#if defined(YARP_HAS_ACE)
 #cmakedefine ACE_ADDR_HAS_LOOPBACK_METHOD
 #cmakedefine ACE_HAS_STRING_HASH
+#endif
 
+// System headers
 #cmakedefine YARP_HAS_EXECINFO_H
 #cmakedefine YARP_HAS_SYS_WAIT_H
 #cmakedefine YARP_HAS_SYS_TYPES_H
 #cmakedefine YARP_HAS_SYS_PRCTL_H
+#cmakedefine YARP_HAS_CSIGNAL
 #cmakedefine YARP_HAS_SIGNAL_H
 #cmakedefine YARP_HAS_SYS_SIGNAL_H
 #cmakedefine YARP_HAS_NETDB_H
+#cmakedefine YARP_HAS_DLFCN_H
+#cmakedefine YARP_HAS_IFADDRS_H
 
-
+// Size of pointers
 #define YARP_POINTER_SIZE @YARP_POINTER_SIZE@
 
 

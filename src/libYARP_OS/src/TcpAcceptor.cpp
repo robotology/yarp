@@ -28,6 +28,8 @@
 // General files
 
 #include <yarp/os/impl/TcpAcceptor.h>
+#include <yarp/os/impl/PlatformSysWait.h>
+#include <yarp/os/impl/PlatformSignal.h>
 
 using namespace yarp::os::impl;
 using namespace yarp::os;

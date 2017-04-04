@@ -6,9 +6,8 @@
 
 #ifndef YARP_NO_DEPRECATED
 
-#include <yarp/os/impl/Logger.h>
-
 #include <yarp/os/Module.h>
+
 #include <yarp/os/ConnectionReader.h>
 #include <yarp/os/ConnectionWriter.h>
 #include <yarp/os/BufferedPort.h>
@@ -17,8 +16,10 @@
 #include <yarp/os/Network.h>
 #include <yarp/os/Vocab.h>
 
+#include <yarp/os/impl/Logger.h>
+#include <yarp/os/impl/PlatformSignal.h>
+
 #include <cstdio>
-#include <csignal>
 #include <cstdlib>
 
 
@@ -339,8 +340,8 @@ bool Module::runModule() {
     } else {
         printf("Module::runModule() signal handling currently only good for one module\n");
     }
-    signal(SIGINT, handler);
-    signal(SIGTERM, handler);
+    yarp::os::impl::signal(SIGINT, handler);
+    yarp::os::impl::signal(SIGTERM, handler);
     while (updateModule()) {
         if (terminated) break;
         if (isStopping()) break;

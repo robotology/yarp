@@ -15,7 +15,7 @@
 #  include <ace/ACE.h>
 #  include <ace/DLL.h>
 #else
-#  include <dlfcn.h>
+#  include <yarp/os/impl/PlatformDlfcn.h>
 #endif
 
 
@@ -34,7 +34,7 @@ public:
 #ifdef YARP_HAS_ACE
         return dll->error();
 #else
-        return dlerror();
+        return yarp::os::impl::dlerror();
 #endif
     }
 
@@ -83,7 +83,7 @@ bool SharedLibrary::open(const char *filename)
     }
     return true;
 #else
-    implementation->dll = dlopen(filename, RTLD_LAZY);
+    implementation->dll = yarp::os::impl::dlopen(filename, RTLD_LAZY);
     if (!implementation->dll) {
         implementation->error = implementation->getError();
         return false;
@@ -100,7 +100,7 @@ bool SharedLibrary::close()
         result = implementation->dll->close();
         delete implementation->dll;
 #else
-        result = dlclose(implementation->dll);
+        result = yarp::os::impl::dlclose(implementation->dll);
 #endif
         implementation->dll = YARP_NULLPTR;
     }
@@ -127,7 +127,7 @@ void *SharedLibrary::getSymbol(const char *symbolName)
 #ifdef YARP_HAS_ACE
     void* result = implementation->dll->symbol(symbolName);
 #else
-    void* result = dlsym(implementation->dll, symbolName);
+    void* result = yarp::os::impl::dlsym(implementation->dll, symbolName);
 #endif
     if (!result) {
         implementation->error = implementation->getError();

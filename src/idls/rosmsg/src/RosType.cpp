@@ -8,35 +8,20 @@
 #include "RosType.h"
 #include "md5.h"
 
-#include <cstdlib>
-#include <cstdio>
-#include <cstring>
-#include <sys/stat.h>
-#include <string>
-#include <sstream>
-#include <vector>
 #include <yarp/os/Network.h>
 #include <yarp/os/Port.h>
 #include <yarp/os/Bottle.h>
 #include <yarp/os/Os.h>
+#include <yarp/os/impl/PlatformSysStat.h>
+#include <yarp/os/impl/PlatformSysWait.h>
+#include <yarp/os/impl/PlatformUnistd.h>
 
-#ifdef YARP_PRESENT
-// this code used to be compilable without yarp, I have let this rust but
-// it would be straightforward to make it do so again
-#  include <yarp/conf/system.h>
-#endif
-#ifdef YARP_HAS_ACE
-#  include <ace/OS_NS_unistd.h>
-#  include <ace/OS_NS_sys_wait.h>
-#else
-#  include <unistd.h>
-#  if defined(YARP_HAS_SYS_WAIT_H)
-#    include <sys/wait.h>
-#  endif
-#  ifndef ACE_OS
-#    define ACE_OS
-#  endif
-#endif
+#include <cstdlib>
+#include <cstdio>
+#include <cstring>
+#include <string>
+#include <sstream>
+#include <vector>
 
 
 std::vector<std::string> normalizedMessage(const std::string& line) {
@@ -539,11 +524,11 @@ bool RosTypeSearch::fetchFromRos(const std::string& target_file,
         // This was ACE_OS::execlp, but that fails
         ::execlp("sh","sh","-c",cmd.c_str(),(char *)NULL);
 #else
-        ACE_OS::execlp("sh","sh","-c",cmd.c_str(),(char *)NULL);
+        yarp::os::impl::execlp("sh","sh","-c",cmd.c_str(),(char *)NULL);
 #endif
         std::exit(0);
     } else {
-        ACE_OS::wait(NULL);
+        yarp::os::impl::wait(NULL);
     }
 
     bool success = true;
@@ -558,7 +543,7 @@ bool RosTypeSearch::fetchFromRos(const std::string& target_file,
         fclose(fin);
         if (result==NULL) {
             fprintf(stderr, "[type] File is blank: %s\n", target_file.c_str());
-            ACE_OS::unlink(target_file.c_str());
+            yarp::os::impl::unlink(target_file.c_str());
             success = false;
         }
     }

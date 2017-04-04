@@ -14,24 +14,10 @@
 
 #include <yarp/os/all.h>
 #include <yarp/os/NetType.h>
+#include <yarp/os/impl/PlatformSysStat.h>
+#include <yarp/os/impl/PlatformSysWait.h>
+#include <yarp/os/impl/PlatformUnistd.h>
 
-#include <sys/stat.h>
-
-#ifdef YARP_PRESENT
-#  include <yarp/conf/system.h>
-#endif
-#ifdef YARP_HAS_ACE
-#  include <ace/OS_NS_unistd.h>
-#  include <ace/OS_NS_sys_wait.h>
-#else
-#  include <unistd.h>
-#  if defined(YARP_HAS_SYS_WAIT_H)
-#    include <sys/wait.h>
-#  endif
-#  ifndef ACE_OS
-#    define ACE_OS
-#  endif
-#endif
 #include <cstdlib>
 
 using namespace yarp::os;

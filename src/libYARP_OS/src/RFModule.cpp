@@ -15,10 +15,10 @@
 #include <yarp/os/Vocab.h>
 
 #include <yarp/os/impl/PlatformTime.h>
+#include <yarp/os/impl/PlatformSignal.h>
 
 #include <cstdio>
 #include <cstdlib>
-#include <csignal>
 
 using namespace yarp::os;
 using namespace yarp::os::impl;
@@ -245,7 +245,7 @@ static void handler (int sig) {
 // handle clean remote shutdown of processes in windows.
 #if defined(_WIN32)
 static void handler_sigbreak(int sig) {
-    raise(SIGINT);
+    yarp::os::impl::raise(SIGINT);
 }
 #endif
 
@@ -263,11 +263,11 @@ RFModule::RFModule() {
     }
 
 #if defined(_WIN32)
-    std::signal(SIGBREAK, handler_sigbreak);
+    yarp::os::impl::signal(SIGBREAK, handler_sigbreak);
 #endif
 
-    std::signal(SIGINT, handler);
-    std::signal(SIGTERM, handler);
+    yarp::os::impl::signal(SIGINT, handler);
+    yarp::os::impl::signal(SIGTERM, handler);
 }
 
 
