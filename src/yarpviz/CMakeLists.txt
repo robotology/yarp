@@ -9,6 +9,9 @@ set(PROJECTNAME yarpviz)
 project(${PROJECTNAME})
 
 
+set(CMAKE_AUTOMOC ON)
+set(CMAKE_INCLUDE_CURRENT_DIR ON)
+
 # Find YARP.  Point the YARP_DIR environment variable at your build.
 find_package(YARP REQUIRED)
 
@@ -20,7 +23,7 @@ list(APPEND CMAKE_MODULE_PATH ${YARP_MODULE_PATH})
 # include some helper functions
 include(GNUInstallDirs)
 include(YarpInstallationHelpers)
-include(YarpUseQt5)
+#include(YarpUseQt5)
 
 
 # setting default compilation to release/optmized

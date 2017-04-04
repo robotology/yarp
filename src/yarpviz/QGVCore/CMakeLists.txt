@@ -1,4 +1,6 @@
 
+set(CMAKE_AUTOMOC ON)
+
 # all files which may be mocced
 set(qgvlib_qt_HDRS
   private/QGVCore.cpp
