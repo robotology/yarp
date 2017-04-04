@@ -31,7 +31,7 @@ source_group("Header Files" FILES ${qgvlib_qt_HDRS})
 source_group("Generated Files" FILES ${yarpviz_qt_QRC_GEN_SRCS}
                                      ${yarpviz_qt_UI_GEN_SRCS})
 
-add_library(qgvcore SHARED
+add_library(qgvcore STATIC
             ${qgvlib_qt_SRCS}
             ${qgvlib_qt_HDRS} )
 
@@ -41,4 +41,3 @@ target_link_libraries(qgvcore
                       ${GRAPHVIZ_CDT_LIBRARY}
                       Qt5::Widgets
                       Qt5::Gui)
-#qtyarp_use_modules(qgvcore Widgets Gui)

@@ -7,6 +7,13 @@
 set(CMAKE_AUTOMOC ON)
 set(CMAKE_INCLUDE_CURRENT_DIR ON)
 
+#########################################################################
+# Control where libraries and executables are placed during the build
+set(CMAKE_RUNTIME_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/${CMAKE_INSTALL_BINDIR}")
+set(CMAKE_LIBRARY_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/${CMAKE_INSTALL_LIBDIR}")
+set(CMAKE_ARCHIVE_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/${CMAKE_INSTALL_LIBDIR}")
+
+
 include_directories(../QGVCore
                     ${YARP_INCLUDE_DIRS})
 
@@ -41,19 +48,12 @@ add_executable(${PROJECTNAME} WIN32 ${yarpviz_qt_SRCS}
 
 #find_package(Qt5PrintSupport REQUIRED)
 target_link_libraries(${PROJECTNAME} ${YARP_LIBRARIES} qgvcore Qt5::Widgets Qt5::Gui) 
-#qtyarp_use_modules(${PROJECTNAME} Widgets Gui)
-#qtyarp_use_modules(${PROJECTNAME} Widgets Gui PrintSupport)
 
-#qtyarp_deprecate_with_cmake_version(2.8.11)
-#if(WIN32 AND CMAKE_VERSION VERSION_LESS 2.8.11)
 if(WIN32)
     target_link_libraries(${PROJECTNAME} qgvcore Qt5::WinMain)
 endif()
-#install(TARGETS ${PROJECTNAME} COMPONENT utilities DESTINATION ${CMAKE_INSTALL_BINDIR})
 
-#yarp_osx_duplicate_and_add_bundle(TARGET_ORIG ${PROJECTNAME}
-#                                TARGET_DEST ${PROJECTNAME}.app
-#                                APP_ICON Resources/AppIcon.icns
-#                                INSTALL_COMPONENT utilities
-#                                INSTALL_DESTINATION "${CMAKE_INSTALL_BINDIR}")
-
+install(TARGETS ${PROJECTNAME}
+        EXPORT ${PROJECTNAME}
+        COMPONENT runtime
+        RUNTIME DESTINATION bin)
