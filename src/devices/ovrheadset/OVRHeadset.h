@@ -14,6 +14,8 @@
 #include <yarp/dev/DeviceDriver.h>
 #include <yarp/dev/ServiceInterfaces.h>
 #include <yarp/dev/IJoypadController.h>
+#include <yarp/dev/IFrameTransform.h>
+#include <yarp/dev/PolyDriver.h>
 
 #include <GL/glew.h>
 #include <OVR_CAPI.h>
@@ -88,6 +90,7 @@ private:
     void fillButtonStorage();
     void fillHatStorage();
 
+
     yarp::os::BufferedPort<yarp::os::Bottle>* orientationPort;
     yarp::os::BufferedPort<yarp::os::Bottle>* positionPort;
     yarp::os::BufferedPort<yarp::os::Bottle>* angularVelocityPort;
@@ -118,6 +121,12 @@ private:
     std::vector<float*>              axisIdToValue;
     std::map<int, int>               DButtonToHat;
     std::map<ovrResult, std::string> error_messages;
+
+    IFrameTransform* tfPublisher;
+    std::string      left_frame;
+    std::string      right_frame;
+    std::string      root_frame;
+    PolyDriver       driver;
 
     bool closed;
     long long distortionFrameIndex;

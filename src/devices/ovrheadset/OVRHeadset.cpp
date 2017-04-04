@@ -21,9 +21,11 @@
 #include <yarp/os/Time.h>
 #include <yarp/sig/Image.h>
 #include <yarp/os/LockGuard.h>
+#include <yarp/os/Property.h>
+#include <yarp/math/FrameTransform.h>
 
-#include <cmath>
-
+#include <math.h>
+#include <unordered_map>
 #include <OVR_CAPI_Util.h>
 
 #if defined(_WIN32)
@@ -60,6 +62,8 @@ static constexpr unsigned int BUTTON_COUNT = 13;
 // call will fail compiling.
 #undef check
 #endif
+
+typedef bool(yarp::os::Value::*valueIsType)(void) const;
 
 static void debugFov(const ovrFovPort fov[2]) {
     yDebug("             Left Eye                                           Right Eye\n");
@@ -156,7 +160,8 @@ yarp::dev::OVRHeadset::OVRHeadset() :
         logoEnabled(true),
         crosshairsEnabled(true),
         batteryEnabled(true),
-        inputStateError(false)
+        inputStateError(false),
+        tfPublisher(YARP_NULLPTR)
 {
     yTrace();
 }
@@ -266,24 +271,69 @@ void yarp::dev::OVRHeadset::fillHatStorage()
     DButtonToHat[ovrButton_Left]  = YRPJOY_HAT_LEFT;
 }
 
+
 bool yarp::dev::OVRHeadset::open(yarp::os::Searchable& cfg)
 {
     yTrace();
+    yarp::os::Property tfClientCfg;
 
-    if (cfg.check("stick_as_axis"))
+    //checking all the parameter in the configuration file..
     {
-        getStickAsAxis = cfg.find("stick_as_axis").asBool();
-    }
-    else
-    {
-        yError() << "ovrHeadset: parameter stick_as_axis not found in configuration file";
-        return false;
+        constexpr unsigned int STRING = 0;
+        constexpr unsigned int BOOL   = 1;
+        std::map<int, std::string>                err_msgs;
+        std::map<int, valueIsType>                isFunctionMap;
+        std::vector<std::pair<std::string, int> > paramParser;
+        
+        err_msgs[STRING] = "a string";
+        err_msgs[BOOL]   = "a boolean type";
+
+        isFunctionMap[STRING] = &yarp::os::Value::isString;
+        isFunctionMap[BOOL]   = &yarp::os::Value::isBool;
+
+        paramParser.push_back(std::make_pair("tfDevice",            STRING));
+        paramParser.push_back(std::make_pair("tfLocal",             STRING));
+        paramParser.push_back(std::make_pair("tfRemote",            STRING));
+        paramParser.push_back(std::make_pair("tf_left_hand_frame",  STRING));
+        paramParser.push_back(std::make_pair("tf_right_hand_frame", STRING));
+        paramParser.push_back(std::make_pair("tf_root_frame",       STRING));
+        paramParser.push_back(std::make_pair("stick_as_axis",       BOOL));
+        
+        for (auto p : paramParser)
+        {
+            if (!cfg.check(p.first) || !(cfg.find(p.first).*isFunctionMap[p.second])())
+            {
+                std::string err_type = err_msgs.find(p.second) == err_msgs.end() ? "[unknow type]" : err_msgs[p.second];
+                yError() << "ovrHeadset: parameter" << p.first << "not found or not" << err_type << "in configuration file";
+                return false;
+            }
+        }
     }
 
+    getStickAsAxis = cfg.find("stick_as_axis").asBool();
+    left_frame     = cfg.find("tf_left_hand_frame").asString();
+    right_frame    = cfg.find("tf_right_hand_frame").asString();
+    root_frame     = cfg.find("tf_root_frame").asString();
+    
     fillAxisStorage();
     fillButtonStorage();
     fillErrorStorage();
     fillHatStorage();
+    tfClientCfg.put("device", cfg.find("tfDevice").asString());
+    tfClientCfg.put("local", cfg.find("tfLocal").asString());
+    tfClientCfg.put("remote", cfg.find("tfRemote").asString());
+
+    if (!driver.open(tfClientCfg))
+    {
+        yError() << "unable to open PolyDriver";
+        return false;
+    }
+
+    if (!driver.view(tfPublisher) || tfPublisher == YARP_NULLPTR)
+    {
+        yError() << "unable to dynamic cast device to IFrameTransform interface";
+        return false;
+    }
 
     orientationPort = new yarp::os::BufferedPort<yarp::os::Bottle>;
     if (!orientationPort->open("/oculus/headpose/orientation:o")) {
@@ -852,6 +902,25 @@ void yarp::dev::OVRHeadset::run()
     ovrPoseStatef predicted_headpose = predicted_ts.HeadPose;
     yarp::os::Stamp predicted_stamp(distortionFrameIndex, predicted_ts.HeadPose.TimeInSeconds);
 
+    yarp::math::FrameTransform lFrame, rFrame;
+
+    lFrame.translation.tX = ts.HandPoses[ovrHand_Left].ThePose.Position.x;
+    lFrame.translation.tY = ts.HandPoses[ovrHand_Left].ThePose.Position.y;
+    lFrame.translation.tZ = ts.HandPoses[ovrHand_Left].ThePose.Position.z;
+    lFrame.rotation.w()   = ts.HandPoses[ovrHand_Left].ThePose.Orientation.w;
+    lFrame.rotation.x()   = ts.HandPoses[ovrHand_Left].ThePose.Orientation.x;
+    lFrame.rotation.y()   = ts.HandPoses[ovrHand_Left].ThePose.Orientation.y;
+    lFrame.rotation.z()   = ts.HandPoses[ovrHand_Left].ThePose.Orientation.z;
+
+    rFrame.translation.tX = ts.HandPoses[ovrHand_Right].ThePose.Position.x;
+    rFrame.translation.tY = ts.HandPoses[ovrHand_Right].ThePose.Position.y;
+    rFrame.translation.tZ = ts.HandPoses[ovrHand_Right].ThePose.Position.z;
+    rFrame.rotation.w()   = ts.HandPoses[ovrHand_Right].ThePose.Orientation.w;
+    rFrame.rotation.x()   = ts.HandPoses[ovrHand_Right].ThePose.Orientation.x;
+    rFrame.rotation.y()   = ts.HandPoses[ovrHand_Right].ThePose.Orientation.y;
+    rFrame.rotation.z()   = ts.HandPoses[ovrHand_Right].ThePose.Orientation.z;
+    tfPublisher->setTransform(left_frame,  root_frame, lFrame.toMatrix());
+    tfPublisher->setTransform(right_frame, root_frame, rFrame.toMatrix());
     // Get Input State
     inputStateMutex.lock();
     result = ovr_GetInputState(session, ovrControllerType_Active, &inputState);
