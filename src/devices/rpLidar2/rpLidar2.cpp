@@ -16,7 +16,7 @@
 #include <stdlib.h>
 #include <limits>
 
-#define _USE_MATH_DEFINES
+#define USE_MATH_DEFINES
 #include <math.h>
 
 //#define LASER_DEBUG
@@ -107,7 +107,7 @@ bool RpLidar2::open(yarp::os::Searchable& config)
     double fov = (max_angle - min_angle);
     if (fov >360)                          { yError() << "max_angle - min_angle <= 360";  return false; }
     sensorsNum = (int)(fov/resolution);
-    laser_data.resize(sensorsNum,0.0);
+    laser_data.resize(sensorsNum, 0.0);
 
     drv = RPlidarDriver::CreateDriver(RPlidarDriver::DRIVER_TYPE_SERIALPORT);
     if (!drv)
@@ -118,7 +118,7 @@ bool RpLidar2::open(yarp::os::Searchable& config)
 
 
 
-    if(IS_FAIL(drv->connect(serial.c_str(), (_u32)baudrate)))
+    if (IS_FAIL(drv->connect(serial.c_str(), (_u32)baudrate)))
     {
         yError() << "Error, cannot bind to the specified serial port:", serial.c_str();
         RPlidarDriver::DisposeDriver(drv);
@@ -129,14 +129,14 @@ bool RpLidar2::open(yarp::os::Searchable& config)
     yInfo("max_dist %f, min_dist %f",   max_distance, min_distance);
 
     result = drv->startMotor();
-    if(result != RESULT_OK)
+    if (result != RESULT_OK)
     {
         handleError(result);
         return false;
     }
     yInfo() << "Motor started succesfully";
     result = drv->startScan();
-    if(result != RESULT_OK)
+    if (result != RESULT_OK)
     {
         handleError(result);
         return false;
@@ -288,12 +288,12 @@ void RpLidar2::run()
         return;
     }
 
-    if(buffer_life && life%buffer_life == 0)
+    if (buffer_life && life%buffer_life == 0)
     {
         laser_data.zero();
     }
 
-    for(size_t i = 0; i < count; ++i)
+    for (size_t i = 0; i < count; ++i)
     {
 
         double distance = nodes[i].distance_q2 / 4.0f / 1000.0; //m
@@ -301,7 +301,10 @@ void RpLidar2::run()
         double quality  = nodes[i].sync_quality >> RPLIDAR_RESP_MEASUREMENT_QUALITY_SHIFT;
         angle = (360 - angle);
 
-        if (angle >= 360) angle -= 360;
+        if (angle >= 360)
+        {
+            angle -= 360;
+        }
 
         if (quality == 0)
         {
@@ -316,7 +319,9 @@ void RpLidar2::run()
         if (clip_min_enable)
         {
             if (distance < min_distance)
+            {
                 distance = max_distance;
+            }
         }
         if (clip_max_enable)
         {
@@ -365,7 +370,7 @@ void RpLidar2::threadRelease()
 
 void RpLidar2::handleError(u_result error)
 {
-    switch(error)
+    switch (error)
     {
     case RESULT_FAIL_BIT:
         yError() << "error: 'FAIL BIT'";
@@ -399,29 +404,28 @@ void RpLidar2::handleError(u_result error)
 
 ConstString RpLidar2::deviceinfo()
 {
-    if(drv)
+    if (drv)
     {
         u_result                       result;
         rplidar_response_device_info_t info;
         string                         serialNumber;
 
         result = drv->getDeviceInfo(info);
-        if(result != RESULT_OK)
+        if (result != RESULT_OK)
         {
             handleError(result);
             return "";
         }
 
-        for(int i = 0; i < 16; ++i)
+        for (int i = 0; i < 16; ++i)
         {
             serialNumber += to_string(info.serialnum[i]);
         }
 
-        return
-                "Firmware Version: "   + to_string(info.firmware_version) +
-                "\nHardware Version: " + to_string(info.hardware_version) +
-                "\nModel: "            + to_string(info.model) +
-                "\nSerial Number:"     + serialNumber;
+        return "Firmware Version: "   + to_string(info.firmware_version) +
+               "\nHardware Version: " + to_string(info.hardware_version) +
+               "\nModel: "            + to_string(info.model) +
+               "\nSerial Number:"     + serialNumber;
     }
     return "";
 }
