@@ -9,6 +9,8 @@
 #include <yarp/os/OutputStream.h>
 #include <yarp/os/Bytes.h>
 
+#include <cstring>
+
 namespace yarp {
     namespace os {
         namespace impl {

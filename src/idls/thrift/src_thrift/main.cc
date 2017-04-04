@@ -28,15 +28,15 @@
  */
 
 #include <cassert>
-#include <stdlib.h>
-#include <stdio.h>
+#include <cstdlib>
+#include <cstdio>
 #include <stdarg.h>
 #include <time.h>
 #include <string>
 #include <algorithm>
 #include <sys/types.h>
 #include <sys/stat.h>
-#include <errno.h>
+#include <cerrno>
 #include <limits.h>
 
 #ifdef MINGW
@@ -746,8 +746,8 @@ void validate_const_rec(std::string name, t_type* type, t_const_value* value) {
       }
     }
     if (!found) {
-      throw "type error: const " + name + " was declared as type " 
-        + type->get_name() + " which is an enum, but " 
+      throw "type error: const " + name + " was declared as type "
+        + type->get_name() + " which is an enum, but "
         + value->get_identifier() + " is not a valid value for that enum";
     }
   } else if (type->is_struct() || type->is_xception()) {
@@ -1061,7 +1061,7 @@ int main(int argc, char** argv) {
         g_incl_searchpath.push_back(arg);
       } else if ((strcmp(arg, "-o") == 0) || (strcmp(arg, "-out") == 0)) {
         out_path_is_absolute = (strcmp(arg, "-out") == 0) ? true : false;
-		  
+
 		arg = argv[++i];
         if (arg == NULL) {
           fprintf(stderr, "-o: missing output directory\n");

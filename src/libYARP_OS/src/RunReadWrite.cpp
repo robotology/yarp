@@ -4,21 +4,13 @@
 * CopyPolicy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
 */
 
-#include <stdio.h>
-#include <signal.h>
+#include <cstdio>
+#include <csignal>
 #include <yarp/os/Time.h>
 #include <yarp/os/Bottle.h>
 #include <yarp/os/Property.h>
 #include <yarp/os/impl/RunReadWrite.h>
 
-#if !defined(WIN32)
-//#include <sys/wait.h>
-//#include <errno.h>
-//#include <string.h>
-//#include <stdlib.h>
-#endif
-
-/////////////////////////////////////
 
 int RunWrite::loop()
 {
@@ -138,7 +130,7 @@ int RunReadWrite::loop()
     }
     /////////////////////
 
-    #if !defined(WIN32)
+    #if !defined(_WIN32)
     if (getppid()!=1)
     #endif
     {
@@ -147,7 +139,7 @@ int RunReadWrite::loop()
 
         while (mRunning)
         {
-            #if !defined(WIN32)
+            #if !defined(_WIN32)
             if (getppid()==1) break;
             #endif
 
@@ -161,7 +153,7 @@ int RunReadWrite::loop()
 
             if (!mRunning) break;
 
-            #if !defined(WIN32)
+            #if !defined(_WIN32)
             if (getppid()==1) break;
             #endif
 
@@ -199,7 +191,7 @@ int RunReadWrite::loop()
 
         if (mForwarded) fPort.close();
 
-#if defined(WIN32)
+#if defined(_WIN32)
         ::exit(0);
 #else
         int term_pipe[2];
@@ -240,7 +232,7 @@ void RunReadWrite::run()
     {
         RUNLOG("mRunning")
 
-        #if !defined(WIN32)
+        #if !defined(_WIN32)
         if (getppid()==1) break;
         #endif
 
@@ -248,7 +240,7 @@ void RunReadWrite::run()
 
         RUNLOG(txt)
 
-        #if !defined(WIN32)
+        #if !defined(_WIN32)
         if (getppid()==1) break;
         #endif
 

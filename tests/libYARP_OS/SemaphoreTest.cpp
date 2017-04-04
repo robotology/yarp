@@ -5,7 +5,7 @@
  *
  */
 
-#include <math.h>
+#include <cmath>
 
 #include <yarp/os/all.h>
 
@@ -48,7 +48,7 @@ public:
         report(0, "check blocking behavior...");
         SemaphoreTestHelper helper;
         helper.start();
-        Time::delay(0.5); 
+        Time::delay(0.5);
         checkEqual(helper.state,1,"helper blocked");
         helper.x.post();
         Time::delay(0.5);

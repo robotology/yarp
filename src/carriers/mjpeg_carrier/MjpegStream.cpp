@@ -5,14 +5,15 @@
  *
  */
 
-#include <stdio.h>
-#include <string.h>
 #include "MjpegStream.h"
 #include "MjpegDecompression.h"
 
 #include <yarp/os/Log.h>
 #include <yarp/sig/Image.h>
 #include <yarp/sig/ImageNetworkHeader.h>
+
+#include <cstdio>
+#include <cstring>
 
 using namespace yarp::os;
 using namespace yarp::sig;

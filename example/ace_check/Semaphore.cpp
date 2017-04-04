@@ -10,8 +10,8 @@
 Semaphore::Semaphore(int initialCount) {
     implementation = new SemaphoreImpl(initialCount);
     if (implementation==NULL) {
-        ACE_OS::printf("Could not allocate thread, exitting\n");
-        ACE_OS::exit(1);
+        printf("Could not allocate thread, exiting\n");
+        exit(1);
     }
 }
 

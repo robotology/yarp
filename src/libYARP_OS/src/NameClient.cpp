@@ -5,16 +5,20 @@
  */
 
 #include <yarp/os/impl/NameClient.h>
+
+#include <yarp/os/NetType.h>
+#include <yarp/os/Network.h>
+#include <yarp/os/Os.h>
+
 #include <yarp/os/impl/Logger.h>
 #include <yarp/os/impl/TcpFace.h>
-#include <yarp/os/NetType.h>
 #include <yarp/os/impl/NameServer.h>
 #include <yarp/os/impl/NameConfig.h>
+#include <yarp/os/impl/PlatformUnistd.h>
 #ifdef YARP_HAS_ACE
 #  include <yarp/os/impl/FallbackNameClient.h>
 #endif
-#include <yarp/os/Network.h>
-#include <yarp/os/impl/PlatformStdio.h>
+#include <cstdio>
 
 using namespace yarp::os::impl;
 using namespace yarp::os;
@@ -355,7 +359,7 @@ Contact NameClient::registerName(const ConstString& name, const Contact& suggest
         cmd.addString("set");
         cmd.addString(reg.c_str());
         cmd.addString("process");
-        cmd.addInt(ACE_OS::getpid());
+        cmd.addInt(yarp::os::getpid());
         send(cmd,reply);
     }
     return address;

@@ -13,7 +13,7 @@
 #include <yarp/os/Thread.h>
 #include <yarp/os/Semaphore.h>
 
-#include <stdio.h>
+#include <cstdio>
 
 namespace yarp {
     namespace os {

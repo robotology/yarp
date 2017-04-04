@@ -13,7 +13,7 @@
  */
 
 
-#include <string.h>
+#include <cstring>
 
 #include <yarp/os/PortablePair.h>
 #include <yarp/os/BufferedPort.h>

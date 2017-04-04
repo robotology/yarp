@@ -11,7 +11,7 @@
 #include <yarp/os/Searchable.h>
 #include <yarp/os/Portable.h>
 #include <yarp/os/Bottle.h>
-#include <stddef.h> // defines size_t
+#include <cstddef> // defines size_t
 
 namespace yarp {
     namespace os {
@@ -104,14 +104,14 @@ public:
     virtual bool isBool() const;
 
     /**
-     * Checks if value is an integer (32 bit or smaller). If so, asInt() will 
+     * Checks if value is an integer (32 bit or smaller). If so, asInt() will
      * return that integer.
      * @return true iff value is an integer
      */
     virtual bool isInt() const;
 
     /**
-     * Checks if value is a 64-bit integer or smaller. If so, asInt64() will 
+     * Checks if value is a 64-bit integer or smaller. If so, asInt64() will
      * return that integer.
      * @return true iff value is a 64-bit integer or smaller
      */

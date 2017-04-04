@@ -9,7 +9,7 @@
 
 #include <yarp/os/NameSpace.h>
 
-#include <stdio.h>
+#include <cstdio>
 
 namespace yarp {
     namespace os {
@@ -27,7 +27,7 @@ public:
     virtual Contact getNameServerContact() const {
         return contact;
     }
-    
+
     virtual Contact queryName(const ConstString& name);
 
     virtual Contact registerName(const ConstString& name);
@@ -38,42 +38,42 @@ public:
 
     virtual Contact unregisterContact(const Contact& contact);
 
-    virtual bool setProperty(const ConstString& name, const ConstString& key, 
+    virtual bool setProperty(const ConstString& name, const ConstString& key,
                              const Value& value);
 
     virtual Value *getProperty(const ConstString& name, const ConstString& key);
 
-    virtual bool connectPortToTopic(const Contact& src, 
+    virtual bool connectPortToTopic(const Contact& src,
                                     const Contact& dest,
                                     ContactStyle style) {
         return connectTopic("subscribe",false,true,src,dest,style);
     }
 
-    virtual bool connectTopicToPort(const Contact& src, 
+    virtual bool connectTopicToPort(const Contact& src,
                                     const Contact& dest,
                                     ContactStyle style) {
         return connectTopic("subscribe",true,false,src,dest,style);
     }
 
-    virtual bool disconnectPortFromTopic(const Contact& src, 
+    virtual bool disconnectPortFromTopic(const Contact& src,
                                          const Contact& dest,
                                          ContactStyle style) {
         return connectTopic("unsubscribe",false,true,src,dest,style);
     }
 
-    virtual bool disconnectTopicFromPort(const Contact& src, 
+    virtual bool disconnectTopicFromPort(const Contact& src,
                                          const Contact& dest,
                                          ContactStyle style) {
         return connectTopic("unsubscribe",true,false,src,dest,style);
     }
 
-    virtual bool connectPortToPortPersistently(const Contact& src, 
+    virtual bool connectPortToPortPersistently(const Contact& src,
                                                const Contact& dest,
                                                ContactStyle style) {
         return connectTopic("subscribe",false,false,src,dest,style);
     }
 
-    virtual bool disconnectPortToPortPersistently(const Contact& src, 
+    virtual bool disconnectPortToPortPersistently(const Contact& src,
                                                   const Contact& dest,
                                                   ContactStyle style) {
         return connectTopic("unsubscribe",false,false,src,dest,style);
@@ -82,7 +82,7 @@ public:
     virtual bool connectTopic(const ConstString& dir,
                               bool srcIsTopic,
                               bool destIsTopic,
-                              const Contact& src, 
+                              const Contact& src,
                               const Contact& dest,
                               ContactStyle style) {
         Contact dynamicSrc = src;

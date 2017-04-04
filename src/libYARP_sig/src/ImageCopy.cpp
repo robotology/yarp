@@ -722,7 +722,7 @@ void Image::copyPixels(const unsigned char *src, int id1,
 
         default:
             printf("*** Tried to copy type %d to %d\n", id1, id2);
-            exit(1);
+            std::exit(1);
             break;
         }
 

@@ -7,24 +7,29 @@
 #ifndef YARP_OS_IMPL_LOGGER_H
 #define YARP_OS_IMPL_LOGGER_H
 
-#include <stdio.h>
 #include <yarp/conf/api.h>
 #include <yarp/conf/system.h>
 #include <yarp/os/ConstString.h>
+#include <yarp/os/Log.h>
+
+#include <yarp/os/impl/PlatformStdio.h>
 
 #ifdef YARP_HAS_ACE
-#  include <ace/Log_Msg.h>
-#  include <ace/Log_Record.h>
-#  include <ace/Log_Msg_Callback.h>
+# include <ace/Log_Msg.h>
+# include <ace/Log_Record.h>
+# include <ace/Log_Msg_Callback.h>
+// In one of these files or their inclusions, there is a definition of "main"
+# ifdef main
+#  undef main
+# endif
 #else
 #  define LM_DEBUG      04
 #  define LM_INFO      010
 #  define LM_WARNING   040
 #  define LM_ERROR    0200
 #endif
-#include <yarp/os/impl/PlatformStdio.h>
+#include <cstdio>
 
-#include <yarp/os/Log.h>
 
 namespace yarp {
     namespace os {
@@ -198,12 +203,12 @@ private:
 #define YARP_FAIL(log,x)  ((Logger*)&(log))->internal_fail(x)
 
 #define YARP_LONGEST_MESSAGE 1000
-#define YARP_SPRINTF0(log,mode,msg)  { char _yarp_buf[YARP_LONGEST_MESSAGE]; ACE_OS::snprintf(&(_yarp_buf[0]),YARP_LONGEST_MESSAGE,msg); (log).internal_ ## mode(&(_yarp_buf[0])); }
-#define YARP_SPRINTF1(log,mode,msg,a)  { char _yarp_buf[YARP_LONGEST_MESSAGE]; ACE_OS::snprintf(&(_yarp_buf[0]),YARP_LONGEST_MESSAGE,msg,a); (log).internal_ ## mode(&(_yarp_buf[0])); }
-#define YARP_SPRINTF2(log,mode,msg,a,b)  { char _yarp_buf[YARP_LONGEST_MESSAGE]; ACE_OS::snprintf(&(_yarp_buf[0]),YARP_LONGEST_MESSAGE,msg,a,b); (log).internal_ ## mode(&(_yarp_buf[0])); }
-#define YARP_SPRINTF3(log,mode,msg,a,b,c)  { char _yarp_buf[YARP_LONGEST_MESSAGE]; ACE_OS::snprintf(&(_yarp_buf[0]),YARP_LONGEST_MESSAGE,msg,a,b,c); (log).internal_ ## mode(&(_yarp_buf[0])); }
-#define YARP_SPRINTF4(log,mode,msg,a,b,c,d)  { char _yarp_buf[YARP_LONGEST_MESSAGE]; ACE_OS::snprintf(&(_yarp_buf[0]),YARP_LONGEST_MESSAGE,msg,a,b,c,d); (log).internal_ ## mode(&(_yarp_buf[0])); }
-#define YARP_SPRINTF5(log,mode,msg,a,b,c,d,e)  { char _yarp_buf[YARP_LONGEST_MESSAGE]; ACE_OS::snprintf(&(_yarp_buf[0]),YARP_LONGEST_MESSAGE,msg,a,b,c,d,e); (log).internal_ ## mode(&(_yarp_buf[0])); }
+#define YARP_SPRINTF0(log,mode,msg)  { char _yarp_buf[YARP_LONGEST_MESSAGE]; snprintf(&(_yarp_buf[0]),YARP_LONGEST_MESSAGE,msg); (log).internal_ ## mode(&(_yarp_buf[0])); }
+#define YARP_SPRINTF1(log,mode,msg,a)  { char _yarp_buf[YARP_LONGEST_MESSAGE]; snprintf(&(_yarp_buf[0]),YARP_LONGEST_MESSAGE,msg,a); (log).internal_ ## mode(&(_yarp_buf[0])); }
+#define YARP_SPRINTF2(log,mode,msg,a,b)  { char _yarp_buf[YARP_LONGEST_MESSAGE]; snprintf(&(_yarp_buf[0]),YARP_LONGEST_MESSAGE,msg,a,b); (log).internal_ ## mode(&(_yarp_buf[0])); }
+#define YARP_SPRINTF3(log,mode,msg,a,b,c)  { char _yarp_buf[YARP_LONGEST_MESSAGE]; snprintf(&(_yarp_buf[0]),YARP_LONGEST_MESSAGE,msg,a,b,c); (log).internal_ ## mode(&(_yarp_buf[0])); }
+#define YARP_SPRINTF4(log,mode,msg,a,b,c,d)  { char _yarp_buf[YARP_LONGEST_MESSAGE]; snprintf(&(_yarp_buf[0]),YARP_LONGEST_MESSAGE,msg,a,b,c,d); (log).internal_ ## mode(&(_yarp_buf[0])); }
+#define YARP_SPRINTF5(log,mode,msg,a,b,c,d,e)  { char _yarp_buf[YARP_LONGEST_MESSAGE]; snprintf(&(_yarp_buf[0]),YARP_LONGEST_MESSAGE,msg,a,b,c,d,e); (log).internal_ ## mode(&(_yarp_buf[0])); }
 
 
 

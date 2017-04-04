@@ -530,7 +530,7 @@ void ImageStorage::_set_ipl_header(int x, int y, int pixel_type, int quantum,
         case VOCAB_PIXEL_INVALID:
             // not a type!
             printf ("*** Trying to allocate an invalid pixel type image\n");
-            exit(1);
+            std::exit(1);
             break;
 
         case -2:
@@ -771,7 +771,7 @@ void Image::wrapIplImage(void *iplImage) {
                    str.c_str());
             printf("Try RGB, BGR, or \n");
             printf("Or fix code at %s line %d\n",__FILE__,__LINE__);
-            exit(1);
+            std::exit(1);
         }
     }
 
@@ -799,7 +799,7 @@ void Image::wrapIplImage(void *iplImage) {
         case VOCAB_PIXEL_RGB:
         case VOCAB_PIXEL_BGR:
             fprintf(stderr,"No translation currently available for this pixel type\n");
-            exit(1);
+            std::exit(1);
             break;
         }
     } else if (p->depth == IPL_DEPTH_32S) {

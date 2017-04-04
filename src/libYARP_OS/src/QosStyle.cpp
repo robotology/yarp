@@ -8,7 +8,7 @@
 #include <yarp/os/ConstString.h>
 #include <yarp/os/Vocab.h>
 
-#include <stdlib.h>
+#include <cstdlib>
 
 
 yarp::os::QosStyle::QosStyle() :

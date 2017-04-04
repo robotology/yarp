@@ -7,9 +7,9 @@
 
 #include "TcpRosStream.h"
 
-#include <stdio.h>
-#include <string.h>
-#include <stdlib.h>
+#include <cstdio>
+#include <cstring>
+#include <cstdlib>
 #include <yarp/os/NetType.h>
 #include <yarp/os/NetInt32.h>
 #include <yarp/os/Bottle.h>

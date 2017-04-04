@@ -11,8 +11,8 @@
 #include <yarp/os/Thread.h>
 
 #include <string>
-#include <string.h>
-#include <stdio.h>
+#include <cstring>
+#include <cstdio>
 
 #include <yarp/os/impl/UnitTest.h>
 

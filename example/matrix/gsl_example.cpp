@@ -13,7 +13,7 @@
 #include <gsl/gsl_linalg.h>
 #include <gsl/gsl_blas.h>
 
-//#include <gsl/gsl_math.h>
+//#include <gsl/gsl_cmath>
 //#include <gsl/gsl_chebyshev.h>
 
 #include <yarp/sig/Matrix.h>
@@ -29,7 +29,7 @@ int main(int argc, const char **argv)
     v2=1;
 
     double r;
-    gsl_blas_ddot((gsl_vector *)(v1.getGslVector()), 
+    gsl_blas_ddot((gsl_vector *)(v1.getGslVector()),
                   (gsl_vector *)(v2.getGslVector()), &r);
 
     printf("Res vector: %lf\n", r);
@@ -49,15 +49,15 @@ int main(int argc, const char **argv)
     //gsl_matrix_view A2 = gsl_matrix_view_array(m2.data(), 3, 2);
     //gsl_matrix_view A3 = gsl_matrix_view_array(m3.data(), 2, 2);
 
-    gsl_blas_dgemm(CblasNoTrans, CblasNoTrans, 
-        1.0, 
-        (const gsl_matrix *) m1.getGslMatrix(), 
+    gsl_blas_dgemm(CblasNoTrans, CblasNoTrans,
+        1.0,
+        (const gsl_matrix *) m1.getGslMatrix(),
         (const gsl_matrix *) m2.getGslMatrix(),
-        0.0, 
+        0.0,
         (gsl_matrix *) m3.getGslMatrix());
 
     printf("Result: (%s)", m3.toString().c_str());
 
-    return 0; 
+    return 0;
 }
 

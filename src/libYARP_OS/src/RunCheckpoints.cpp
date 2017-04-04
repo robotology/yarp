@@ -6,23 +6,22 @@
 
 #include <yarp/os/impl/RunCheckpoints.h>
 #include <yarp/conf/compiler.h>
-#include <ctime>
+#include <yarp/os/impl/PlatformUnistd.h>
+#include <yarp/os/impl/PlatformTime.h>
 
-#if defined(WIN32)
-#include <time.h>
+#include <ctime>
+#include <cstdio>
+
+#if defined(_WIN32)
 #include <windows.h>
-#else
-#include <unistd.h>
-#include <sys/time.h>
 #endif
-#include <stdio.h>
 
 
 YarprunCheckpoints::YarprunCheckpoints()
 {
     char path[256];
 
-#if defined(WIN32)
+#if defined(_WIN32)
     time_t now=time(YARP_NULLPTR);
     srand((unsigned)now);
     sprintf(path,"C:/Users/user/Documents/yarprun_log/yarprun_log_%d_%s_%u.txt",GetCurrentProcessId(),ctime(&now),(unsigned)rand());

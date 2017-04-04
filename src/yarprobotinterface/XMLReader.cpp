@@ -13,6 +13,8 @@
 #include "Types.h"
 
 #include <yarp/os/LogStream.h>
+#include <yarp/os/Network.h>
+#include <yarp/os/Property.h>
 
 #include <tinyxml.h>
 #include <string>
@@ -20,8 +22,6 @@
 #include <sstream>
 #include <iterator>
 #include <algorithm>
-
-#include <yarp/os/Property.h>
 
 #define SYNTAX_ERROR(line) yFatal() << "Syntax error while loading" << curr_filename << "at line" << line << "."
 #define SYNTAX_WARNING(line) yWarning() << "Invalid syntax while loading" << curr_filename << "at line" << line << "."
@@ -250,16 +250,11 @@ RobotInterface::XMLReader::Private::~Private()
 RobotInterface::Robot& RobotInterface::XMLReader::Private::readRobotFile(const std::string &fileName)
 {
     filename = fileName;
-#ifdef WIN32
+#if defined(_WIN32)
     std::replace(filename.begin(), filename.end(), '/', '\\');
 #endif
-
     curr_filename = fileName;
-#ifdef WIN32
-    path = filename.substr(0, filename.rfind("\\"));
-#else // WIN32
-    path = filename.substr(0, filename.rfind("/"));
-#endif //WIN32
+    path = filename.substr(0, filename.rfind(yarp::os::Network::getDirectorySeparator()));
 
     yDebug() << "Reading file" << filename.c_str();
     TiXmlDocument *doc = new TiXmlDocument(filename.c_str());
@@ -427,12 +422,10 @@ RobotInterface::DeviceList RobotInterface::XMLReader::Private::readDevicesTag(Ti
     std::string filename;
     if (devicesElem->QueryStringAttribute("file", &filename) == TIXML_SUCCESS) {
         // yDebug() << "Found devices file [" << filename << "]";
-#ifdef WIN32
+#if defined(_WIN32)
         std::replace(filename.begin(), filename.end(), '/', '\\');
-        filename = path + "\\" + filename;
-#else // WIN32
-        filename = path + "/" + filename;
-#endif //WIN32
+#endif
+        filename = path + yarp::os::Network::getDirectorySeparator() + filename;
         return readDevicesFile(filename);
     }
 
@@ -720,12 +713,10 @@ RobotInterface::ParamList RobotInterface::XMLReader::Private::readParamsTag(TiXm
     std::string filename;
     if (paramsElem->QueryStringAttribute("file", &filename) == TIXML_SUCCESS) {
         // yDebug() << "Found params file [" << filename << "]";
-#ifdef WIN32
+#if defined(_WIN32)
         std::replace(filename.begin(), filename.end(), '/', '\\');
-        filename = path + "\\" + filename;
-#else // WIN32
-        filename = path + "/" + filename;
-#endif //WIN32
+#endif
+        filename = path + yarp::os::Network::getDirectorySeparator() + filename;
         return readParamsFile(filename);
     }
 
@@ -888,12 +879,10 @@ RobotInterface::ActionList RobotInterface::XMLReader::Private::readActionsTag(Ti
     std::string filename;
     if (actionsElem->QueryStringAttribute("file", &filename) == TIXML_SUCCESS) {
         // yDebug() << "Found actions file [" << filename << "]";
-#ifdef WIN32
+#if defined(_WIN32)
         std::replace(filename.begin(), filename.end(), '/', '\\');
-        filename = path + "\\" + filename;
-#else // WIN32
-        filename = path + "/" + filename;
-#endif //WIN32
+#endif
+        filename = path + yarp::os::Network::getDirectorySeparator() + filename;
         return readActionsFile(filename);
     }
 

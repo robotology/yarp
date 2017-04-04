@@ -9,10 +9,10 @@
 
 #include "ymanager.h"
 
-#include <cstring>
 #include <yarp/manager/xmlapploader.h>
 #include <yarp/manager/application.h>
 #include <yarp/manager/ymm-dir.h>
+#include <yarp/os/ResourceFinder.h>
 
 /*
  * TODO: using stringstream should be avoided to keep
@@ -20,28 +20,32 @@
  */
 #include <sstream>
 
-#include <yarp/os/ResourceFinder.h>
+#include <cstring>
+#include <csignal>
 
 using namespace yarp::os;
 using namespace yarp::manager;
 
-#if defined(WIN32)
-    #include <yarp/os/impl/PlatformSignal.h>
-    #define HEADER      ""
-    #define OKBLUE      ""
-    #define OKGREEN     ""
-    #define WARNING     ""
-    #define FAIL        ""
-    #define INFO        ""
-    #define ENDC        ""
+#if defined(_WIN32)
+# define HEADER      ""
+# define OKBLUE      ""
+# define OKGREEN     ""
+# define WARNING     ""
+# define FAIL        ""
+# define INFO        ""
+# define ENDC        ""
 #else
-    #include <unistd.h>
-    #include <sys/types.h>
-    #include <sys/wait.h>
-    #include <errno.h>
-    #include <sys/types.h>
-    #include <signal.h>
-
+# include <unistd.h>
+# include <cerrno>
+# if defined(YARP_HAS_SYS_TYPES_H)
+#  include <sys/types.h>
+# endif
+# if defined(YARP_HAS_SYS_WAIT_H)
+#  include <sys/wait.h>
+# endif
+# if defined(YARP_HAS_SYS_PRCTL_H)
+#  include <sys/prctl.h>
+# endif
     string HEADER = "";
     string OKBLUE = "";
     string OKGREEN = "";
@@ -100,7 +104,7 @@ Options:\n\
   --help                  Show help\n"
 
 
-#if defined(WIN32)
+#if defined(_WIN32)
 static Manager* __pManager = NULL;
 #endif
 
@@ -124,7 +128,7 @@ static Manager* __pManager = NULL;
 YConsoleManager::YConsoleManager(int argc, char* argv[]) : Manager()
 {
 
-#if defined(WIN32)
+#if defined(_WIN32)
     __pManager = (Manager*) this;
 #endif
 
@@ -286,10 +290,10 @@ YConsoleManager::YConsoleManager(int argc, char* argv[]) : Manager()
 #endif
 
 
-#if defined(WIN32)
-    ACE_OS::signal(SIGINT, (ACE_SignalHandler) YConsoleManager::onSignal);
-    ACE_OS::signal(SIGBREAK, (ACE_SignalHandler) YConsoleManager::onSignal);
-    ACE_OS::signal(SIGTERM, (ACE_SignalHandler) YConsoleManager::onSignal);
+#if defined(_WIN32)
+    ::signal(SIGINT, YConsoleManager::onSignal);
+    ::signal(SIGBREAK, YConsoleManager::onSignal);
+    ::signal(SIGTERM, YConsoleManager::onSignal);
 #else
     struct sigaction new_action, old_action;
 
@@ -394,7 +398,7 @@ YConsoleManager::~YConsoleManager()
 
 void YConsoleManager::onSignal(int signum)
 {
-#if defined(WIN32)
+#if defined(_WIN32)
     cout<<INFO<<"[force exit] yarpmanager will terminate all of the running modules on exit.";
     if( __pManager)
         __pManager->kill();
@@ -461,7 +465,7 @@ void YConsoleManager::myMain(void)
         }
     }
 
-#if defined(WIN32)
+#if defined(_WIN32)
     if(bShouldRun)
     {
         kill();
@@ -1192,7 +1196,7 @@ void YConsoleManager::updateAppNames(vector<string>* names)
 void YConsoleManager::setColorTheme(ColorTheme theme)
 {
 
-#if defined(WIN32)
+#if defined(_WIN32)
     // do nothing here
 #else
     switch(theme) {

@@ -10,7 +10,7 @@
 #include <yarp/conf/compiler.h>
 #include <yarp/serversql/impl/SqliteTripleSource.h>
 
-#ifndef WIN32
+#if !defined(_WIN32)
 #include <unistd.h>
 #else
 #include <io.h>
@@ -36,7 +36,7 @@ static bool sql_enact(sqlite3 *db, const char *cmd) {
         }
         sqlite3_close(db);
         fprintf(stderr,"Failed to set up database tables\n");
-        exit(1);
+        std::exit(1);
     }
     return true;
 }
@@ -83,7 +83,7 @@ TripleSource *TripleSourceCreator::open(const char *filename,
         }
         sqlite3_close(db);
         fprintf(stderr,"Failed to set up database tables\n");
-        exit(1);
+        std::exit(1);
     }
 
     string cmd_synch = string("PRAGMA synchronous=") + (cautious?"FULL":"OFF") + ";";

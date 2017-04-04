@@ -5,7 +5,7 @@
  */
 
 
-#include <stdio.h>
+#include <cstdio>
 
 #include <Demo.h>
 #include <Tennis.h>
@@ -115,7 +115,7 @@ int main(int argc, char *argv[]) {
 
     if (!test_signs()) return 1;
     if (!test_serialization()) return 1;
-    
+
     Demo demo1;
     if (!test_lists(test,demo1,"regular")) return 1;
     Demo::bottleStyle demo2;

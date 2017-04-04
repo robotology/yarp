@@ -14,16 +14,11 @@
 #include <yarp/os/impl/SplitString.h>
 
 #include <yarp/os/impl/PlatformMap.h>
-#include <yarp/os/impl/PlatformStdlib.h>
+#include <yarp/os/impl/PlatformDirent.h>
 
-#ifdef YARP_HAS_ACE
-#  include <ace/OS_NS_ctype.h>
-#else
-#  include <ctype.h>
-#  define ace_isalnum isalnum
-#endif
-
-#include <stdio.h>
+#include <cctype>
+#include <cstdio>
+#include <cstring>
 #include <algorithm>
 
 using namespace yarp::os::impl;
@@ -316,15 +311,15 @@ public:
         }
     }
 
-    bool readDir(const ConstString& dirname, ACE_DIR *&dir, ConstString& result, const ConstString& section=ConstString()) {
+    bool readDir(const ConstString& dirname, yarp::os::impl::DIR *&dir, ConstString& result, const ConstString& section=ConstString()) {
         bool ok = true;
         YARP_DEBUG(Logger::get(),
                    ConstString("reading directory ") + dirname);
 
-        struct YARP_DIRENT **namelist;
-        YARP_closedir(dir);
+        yarp::os::impl::dirent **namelist;
+        yarp::os::impl::closedir(dir);
         dir = YARP_NULLPTR;
-        int n = YARP_scandir(dirname.c_str(),&namelist,YARP_NULLPTR,YARP_alphasort);
+        int n = yarp::os::impl::scandir(dirname.c_str(), &namelist, YARP_NULLPTR, yarp::os::impl::alphasort);
         if (n<0) {
             return false;
         }
@@ -349,7 +344,7 @@ public:
 
     bool readFile(const ConstString& fname, ConstString& result, bool allowDir) {
         if (allowDir) {
-            ACE_DIR *dir = ACE_OS::opendir(fname.c_str());
+            yarp::os::impl::DIR *dir = yarp::os::impl::opendir(fname.c_str());
             if (dir) return readDir(fname,dir,result);
         }
         YARP_DEBUG(Logger::get(),
@@ -439,7 +434,7 @@ public:
 
         YARP_DEBUG(Logger::get(), ConstString("looking for ") + dirname.c_str());
 
-        ACE_DIR *dir = ACE_OS::opendir(dirname.c_str());
+        yarp::os::impl::DIR *dir = yarp::os::impl::opendir(dirname.c_str());
         if (!dir) {
             YARP_ERROR(Logger::get(), ConstString("cannot read from ") + dirname);
             return false;
@@ -734,7 +729,7 @@ public:
             }
 
             if (inVar) {
-                if (ACE_OS::ace_isalnum(ch)||(ch=='_')) {
+                if (isalnum(ch)||(ch=='_')) {
                     var += ch;
                     continue;
                 } else {

@@ -11,7 +11,7 @@
 
 #include <yarp/os/impl/PlatformMap.h>
 #include <yarp/os/impl/PlatformVector.h>
-#include <yarp/os/impl/PlatformStdio.h>
+#include <cstdio>
 #include <yarp/os/impl/Logger.h>
 
 

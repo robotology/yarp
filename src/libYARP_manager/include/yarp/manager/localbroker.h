@@ -26,7 +26,7 @@
 
 #include <yarp/manager/broker.h>
 
-#if defined(WIN32)
+#if defined(_WIN32)
     #include<Windows.h>
 #endif
 
@@ -102,7 +102,7 @@ private:
     bool psCmd(int pid);
     bool killCmd(int pid);
     bool stopCmd(int pid);
-#if defined(WIN32)
+#if defined(_WIN32)
     HANDLE read_from_pipe_cmd_to_stdout;
     HANDLE write_to_pipe_cmd_to_stdout;
     string lastError2String();

@@ -5,12 +5,12 @@
  *
  */
 
-#include <stdio.h>
 #include <yarp/os/all.h>
 #include <yarp/os/Carrier.h>
 
 #include <iostream>
 #include <string>
+#include <cstdio>
 
 using namespace yarp::os;
 

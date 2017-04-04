@@ -5,14 +5,14 @@
  */
 
 #include <yarp/os/impl/ThreadImpl.h>
-#include <yarp/os/impl/SemaphoreImpl.h>
-#include <yarp/os/impl/Logger.h>
 #include <yarp/os/NetType.h>
-#include <yarp/os/impl/PlatformThread.h>
-#include <yarp/os/impl/PlatformSignal.h>
-#include <yarp/os/impl/PlatformStdlib.h>
 
-#include <stdlib.h>
+#include <yarp/os/impl/Logger.h>
+#include <yarp/os/impl/PlatformSignal.h>
+#include <yarp/os/impl/PlatformThread.h>
+#include <yarp/os/impl/SemaphoreImpl.h>
+
+#include <cstdlib>
 
 #if defined(YARP_HAS_CXX11)
 #  if defined(YARP_HAS_ACE)
@@ -54,14 +54,11 @@ void ThreadImpl::fini()
     }
 }
 
-#ifdef __WIN32__
-static unsigned __stdcall theExecutiveBranch (void *args)
-#else
+
 PLATFORM_THREAD_RETURN theExecutiveBranch (void *args)
-#endif
 {
     // just for now -- rather deal with broken pipes through normal procedures
-    ACE_OS::signal(SIGPIPE, SIG_IGN);
+    yarp::os::impl::signal(SIGPIPE, SIG_IGN);
 
 
     /*

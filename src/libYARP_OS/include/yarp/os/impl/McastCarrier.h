@@ -16,7 +16,7 @@
 #include <yarp/os/impl/SplitString.h>
 #include <yarp/os/impl/PlatformSize.h>
 
-#include <stdio.h>
+#include <cstdio>
 
 namespace yarp {
     namespace os {

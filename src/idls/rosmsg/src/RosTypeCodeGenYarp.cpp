@@ -7,8 +7,8 @@
 
 #include <RosTypeCodeGenYarp.h>
 
-#include <stdio.h>
-#include <stdlib.h>
+#include <cstdio>
+#include <cstdlib>
 
 #include <yarp/os/Os.h>
 #include <iostream>
@@ -118,7 +118,7 @@ bool RosTypeCodeGenYarp::beginType(const std::string& tname,
         if (!out) {
             fprintf(stderr,"Failed to open %s for writing\n",
                     alt_fname.c_str());
-            exit(1);
+            std::exit(1);
         }
         if (verbose) {
             printf("Generating %s\n", alt_fname.c_str());
@@ -137,7 +137,7 @@ bool RosTypeCodeGenYarp::beginType(const std::string& tname,
     out = fopen(fname.c_str(),"w");
     if (!out) {
         fprintf(stderr,"Failed to open %s for writing\n", fname.c_str());
-        exit(1);
+        std::exit(1);
     }
     fprintf(out,"// This is an automatically generated file.\n");
     fprintf(out,"// Generated from this %s.msg definition:\n", safe_tname.c_str());
@@ -450,7 +450,7 @@ bool RosTypeCodeGenYarp::writeField(bool bare, const RosField& field) {
                             field.rosName.c_str());
                 }
                 fprintf(out,"    if (%s.size()>0) {connection.appendExternalBlock((char*)&%s[0],sizeof(%s)*%s.size());}\n",
-                        field.rosName.c_str(), 
+                        field.rosName.c_str(),
                         field.rosName.c_str(),
                         t.yarpType.c_str(),
                         field.rosName.c_str());
@@ -676,7 +676,7 @@ RosYarpType RosTypeCodeGenYarp::mapPrimitive(const RosField& field) {
     } else {
         fprintf(stderr, "Please translate %s in RosTypeCodeGenYarp.cpp\n",
                 name.c_str());
-        exit(1);
+        std::exit(1);
     }
     if (flavor=="int") {
         ry.yarpWriter = "appendInt";

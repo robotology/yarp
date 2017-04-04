@@ -7,7 +7,9 @@
 #include <yarp/os/NetType.h>
 #include <yarp/os/impl/Logger.h>
 #include <yarp/os/ManagedBytes.h>
-#include <yarp/os/impl/PlatformStdlib.h>
+
+#include <cstdlib>
+#include <cstring>
 
 using namespace yarp::os::impl;
 using namespace yarp::os;
@@ -15,7 +17,7 @@ using namespace yarp::os;
 int NetType::netInt(const yarp::os::Bytes& code) {
     yAssert(code.length()==sizeof(NetInt32));
     NetInt32 tmp;
-    ACE_OS::memcpy((char*)(&tmp),code.get(),code.length());
+    memcpy((char*)(&tmp),code.get(),code.length());
     return tmp;
 }
 
@@ -26,37 +28,37 @@ bool NetType::netInt(int data, const yarp::os::Bytes& code) {
         YARP_ERROR(Logger::get(),"not enough room for integer");
         return false;
     }
-    ACE_OS::memcpy(code.get(),b.get(),code.length());
+    memcpy(code.get(),b.get(),code.length());
     return true;
 }
 
 ConstString NetType::toHexString(int x) {
     char buf[256];
-    ACE_OS::sprintf(buf,"%x",x);
+    sprintf(buf,"%x",x);
     return buf;
 }
 
 ConstString NetType::toString(int x) {
     char buf[256];
-    ACE_OS::sprintf(buf,"%d",x);
+    sprintf(buf,"%d",x);
     return buf;
 }
 
 ConstString NetType::toString(long x) {
     char buf[256];
-    ACE_OS::sprintf(buf,"%ld",x);
+    sprintf(buf,"%ld",x);
     return buf;
 }
 
 ConstString NetType::toString(unsigned int x) {
     char buf[256];
-    ACE_OS::sprintf(buf,"%u",x);
+    sprintf(buf,"%u",x);
     return buf;
 }
 
 
 int NetType::toInt(const ConstString& x) {
-    return ACE_OS::atoi(x.c_str());
+    return atoi(x.c_str());
 }
 
 

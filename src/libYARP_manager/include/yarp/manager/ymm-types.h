@@ -71,7 +71,7 @@ typedef enum __Carrier {
 */
 #ifdef YMM_DEBUG
      #include <iostream>
-     #include <assert.h>
+     #include <cassert>
      #define __ASSERT( _cond ) assert(_cond)
      #define __CHECK_NULLPTR(_ptr) \
              assert(_ptr); \

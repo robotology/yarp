@@ -7,8 +7,8 @@
 
 #include "RosHeader.h"
 
-#include <stdio.h>
-#include <string.h>
+#include <cstdio>
+#include <cstring>
 #include <yarp/os/Bytes.h>
 #include <yarp/os/NetType.h>
 

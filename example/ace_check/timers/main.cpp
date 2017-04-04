@@ -7,10 +7,10 @@
 
 // Test timing on your system, this affects
 // the precision with which you can schedule
-// periodic thread. It boils down to 
+// periodic thread. It boils down to
 // - how precise are timers
 // - how precise is Sleep()
-// 
+//
 // In general this depends on:
 // - hardware
 // - frequency of the scheduler, in Windows
@@ -19,12 +19,12 @@
 // compile the kernel (default values have been changed
 // from 100Hz, to 1000Hz and now seems back to 250Hz).
 //
-// With scheduler at 1kHz, expected performances 
+// With scheduler at 1kHz, expected performances
 // should around +/- 1-2ms, or better.
-// 
+//
 // March 2008 -- Lorenzo Natale
 
-#include <math.h>
+#include <cmath>
 
 #include <ace/ACE.h>
 #include <ace/High_Res_Timer.h>
@@ -47,7 +47,7 @@ int main()
     ACE_Time_Value sleep;
     ACE_Time_Value elapsed;
     double avErrors[wTimes];
-    
+
     int i,k;
 
     for(i=0;i<wTimes;i++)
@@ -61,9 +61,9 @@ int main()
                 {
                     req=sleepT[k];
                     sleep.msec(sleepT[k]);
-                    
+
                     now1 = ACE_OS::gettimeofday ();
-                    
+
                     //ACE_OS::sleep(sleep);
                     usleep(sleep.sec()*1000000+sleep.usec()-1000);
 

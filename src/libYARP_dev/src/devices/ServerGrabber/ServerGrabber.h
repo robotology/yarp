@@ -8,7 +8,7 @@
 #ifndef YARP_DEV_SERVERGRABBER_H
 #define YARP_DEV_SERVERGRABBER_H
 
-#include <stdio.h>
+#include <cstdio>
 
 #include <yarp/dev/DataSource.h>
 #include <yarp/dev/FrameGrabberInterfaces.h>

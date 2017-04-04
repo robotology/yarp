@@ -5,7 +5,7 @@
  *
  */
 
-#include <stdio.h>
+#include <cstdio>
 
 #include <yarp/os/all.h>
 
@@ -37,7 +37,7 @@ int main(int argc, char *argv[]) {
 
     Network yarp;
     yarp.setLocalMode(1);
-    
+
     Port p1, p2;
     bool ok = p1.open("/test1") && p2.open("/test2");
     if (!ok) {
@@ -55,7 +55,7 @@ int main(int argc, char *argv[]) {
 
     MyPortable i1, i2;
     i1.val = 15;
-    
+
     printf("Writing (in background)...\n");
     p1.write(i1);
 
@@ -73,7 +73,7 @@ int main(int argc, char *argv[]) {
 
     p1.close();
     p2.close();
-    
+
     return 0;
 }
 

@@ -4,7 +4,7 @@
  * CopyPolicy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
  */
 
-#include <yarp/os/impl/PlatformStdio.h>
+#include <cstdio>
 #include <yarp/dev/DeviceDriver.h>
 #include <yarp/os/Vocab.h>
 #include <yarp/os/Value.h>

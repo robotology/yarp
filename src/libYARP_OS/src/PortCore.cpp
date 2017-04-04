@@ -22,7 +22,7 @@
 #include <yarp/os/SystemInfo.h>
 #include <yarp/os/DummyConnector.h>
 
-#include <yarp/os/impl/PlatformStdio.h>
+#include <cstdio>
 #ifdef YARP_HAS_ACE
 #  include <ace/INET_Addr.h>
 #  include <ace/Sched_Params.h>
@@ -35,7 +35,7 @@
 #endif
 
 
-//#define YMSG(x) ACE_OS::printf x;
+//#define YMSG(x) printf x;
 //#define YTRACE(x) YMSG(("at %s\n",x))
 
 #define YMSG(x)
@@ -2080,7 +2080,7 @@ bool PortCore::adminBlock(ConnectionReader& reader, void *id,
                                 op = Carriers::connect(addr);
                                 if (op==YARP_NULLPTR) {
                                     fprintf(stderr,"NO CONNECTION\n");
-                                    exit(1);
+                                    std::exit(1);
                                 } else {
                                     op->attachPort(contactable);
                                     op->open(r);
@@ -2627,7 +2627,7 @@ int PortCore::getPid() {
     return ACE_OS::getpid();
 #elif defined(__linux__)
     return getpid();
-#elif defined(WIN32)
+#elif defined(_WIN32)
     return (int) GetCurrentProcessId();
 #endif
     return -1;

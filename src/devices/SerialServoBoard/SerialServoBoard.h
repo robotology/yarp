@@ -9,9 +9,9 @@
 
 #include <yarp/dev/SerialInterfaces.h>
 
-#include <stdio.h>
-#include <stdlib.h>
-#include <string.h>
+#include <cstdio>
+#include <cstdlib>
+#include <cstring>
 
 #define round(x) ((x)>=0?(int)((x)+0.5):(int)((x)-0.5))
 #define FABS(x) (x>=0?x:-x)
@@ -125,12 +125,12 @@ public:
         dd.open(conf);
         if (!dd.isValid()) {
             printf("Failed to create and configure a device\n");
-            exit(1);
+            std::exit(1);
         }
 
         if (!dd.view(serial)) {
             printf("Failed to view device through IGPUDevice interface\n");
-            exit(1);
+            std::exit(1);
         }
 
 

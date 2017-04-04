@@ -7,9 +7,9 @@
 
 #include <yarp/os/Semaphore.h>
 #include <yarp/math/Rand.h>
-#include <time.h>
-#include <stdio.h>
-#include <math.h>
+#include <ctime>
+#include <cstdio>
+#include <cmath>
 
 using namespace yarp::os;
 using namespace yarp::sig;
@@ -18,8 +18,8 @@ using namespace yarp::math::impl;
 
 /*
 * This class was used in the past to wrap random generation
-* routines that were not thread safe. Nowdays it could be no 
-* longer required because gsl routines are already declared to be 
+* routines that were not thread safe. Nowdays it could be no
+* longer required because gsl routines are already declared to be
 * thread safe.
 */
 class ThreadSafeRandScalar : public RandScalar
@@ -31,7 +31,7 @@ public:
 
     }
 
-    void init()        
+    void init()
     {
         mutex.wait();
         RandScalar::init();

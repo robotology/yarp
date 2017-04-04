@@ -1,6 +1,7 @@
 #include "builderitem.h"
 #include "arrow.h"
-#include "math.h"
+#include <cmath>
+
 ItemSignalHandler *BuilderItem::signalHandler(){
     return sigHandler;
 }

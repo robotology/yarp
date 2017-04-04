@@ -9,7 +9,7 @@
 #pragma once
 
 #include <string>
-#include <time.h>
+#include <ctime>
 #include <iostream>
 
 // Headers for OpenNI

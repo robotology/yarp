@@ -164,7 +164,7 @@ bool FakeBot::getImage(yarp::sig::ImageOf<yarp::sig::PixelRgb>& image) {
 void FakeBot::run() {
     if (lifetime>=0) {
         Time::delay(lifetime);
-        yarp::os::exit(0);
+        std::exit(0);
     }
 }
 

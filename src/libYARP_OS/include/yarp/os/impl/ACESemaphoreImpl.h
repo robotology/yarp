@@ -11,7 +11,7 @@
 
 #include <yarp/os/impl/Logger.h>
 #include <yarp/os/NetType.h>
-#include <yarp/os/impl/PlatformStdlib.h>
+#include <cstdlib>
 #include <yarp/os/impl/PlatformTime.h>
 
 #ifdef ACE_WIN32

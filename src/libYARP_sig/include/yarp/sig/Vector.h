@@ -8,8 +8,8 @@
 #ifndef YARP_SIG_VECTOR_H
 #define YARP_SIG_VECTOR_H
 
-//#include <stdlib.h> //defines size_t
-#include <stddef.h> //defines size_t
+//#include <cstdlib> //defines size_t
+#include <cstddef> //defines size_t
 #include <yarp/os/Portable.h>
 #include <yarp/os/ConstString.h>
 #include <yarp/os/ManagedBytes.h>

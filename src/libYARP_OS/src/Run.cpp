@@ -4,42 +4,42 @@
  * CopyPolicy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
  */
 
-#include <stdio.h>
-#include <signal.h>
-#include <string>
-#include <yarp/os/Time.h>
-#include <yarp/os/impl/Logger.h>
-#include <yarp/os/impl/RunProcManager.h>
-#include <yarp/os/impl/SplitString.h>
+#include <yarp/os/Run.h>
+
+#include <yarp/os/Network.h>
+#include <yarp/os/Os.h>
+#include <yarp/os/RpcClient.h>
 #include <yarp/os/SystemInfo.h>
 #include <yarp/os/SystemInfoSerializer.h>
+#include <yarp/os/Time.h>
 
-#include <yarp/os/RpcClient.h>
-
-#include <yarp/os/Run.h>
-#include <yarp/os/Network.h>
-
-#if defined(WIN32)
-#if !defined(WIN32_LEAN_AND_MEAN)
-#define WIN32_LEAN_AND_MEAN
-#endif
-#include <windows.h>
-#else
-#include <unistd.h>
-#include <string.h>
-#define C_MAXARGS       128     // the max number of command parameters. rational?
-#endif
-
-#if !defined(WIN32)
-#if !defined(__APPLE__)
-#include <sys/prctl.h>
-#endif
-#endif
-
+#include <yarp/os/impl/Logger.h>
+#include <yarp/os/impl/SplitString.h>
+#include <yarp/os/impl/PlatformSignal.h>
+#include <yarp/os/impl/PlatformStdio.h>
+#include <yarp/os/impl/PlatformUnistd.h>
 #include <yarp/os/impl/RunCheckpoints.h>
+#include <yarp/os/impl/RunProcManager.h>
 #include <yarp/os/impl/RunReadWrite.h>
 
-#if defined(WIN32)
+#include <cstdio>
+#include <string>
+#include <cstring>
+
+#if defined(_WIN32)
+# if !defined(WIN32_LEAN_AND_MEAN)
+#  define WIN32_LEAN_AND_MEAN
+# endif
+# include <windows.h>
+#else
+# define C_MAXARGS       128     // the max number of command parameters. rational?
+#endif
+
+#if defined(YARP_HAS_SYS_PRCTL_H)
+# include <sys/prctl.h>
+#endif
+
+#if defined(_WIN32)
 YarpRunInfoVector yarp::os::Run::mProcessVector;
 YarpRunInfoVector yarp::os::Run::mStdioVector;
 inline yarp::os::ConstString lastError2String()
@@ -75,7 +75,7 @@ yarp::os::ConstString yarp::os::Run::mLoggerPort("/yarplogger");
 
 static RunTerminator *pTerminator = YARP_NULLPTR;
 
-void sigstdio_handler(int sig)
+void sigcstdioandler(int sig)
 {
     char msg[16];
     sprintf(msg,"SIGNAL %d",sig);
@@ -127,8 +127,6 @@ static bool fileExists(const char *fname) {
 
 
 /////////
-
-
 int yarp::os::Run::main(int argc, char *argv[])
 {
     Property config;
@@ -203,37 +201,37 @@ int yarp::os::Run::main(int argc, char *argv[])
             lPortName=config.findGroup("forward").get(2).asString();
         }
 
-#if defined(WIN32)
-        signal(SIGINT,  sigstdio_handler);
-        signal(SIGTERM, sigstdio_handler);
-        signal(SIGBREAK,sigstdio_handler);
+#if defined(_WIN32)
+        yarp::os::impl::signal(SIGINT, sigcstdioandler);
+        yarp::os::impl::signal(SIGTERM, sigcstdioandler);
+        yarp::os::impl::signal(SIGBREAK,sigcstdioandler);
 #elif defined(__APPLE__)
         //prctl(PR_SET_PDEATHSIG,SIGTERM);
 
         struct sigaction new_action;
-        new_action.sa_handler=sigstdio_handler;
+        new_action.sa_handler=sigcstdioandler;
         sigfillset(&new_action.sa_mask);
         new_action.sa_flags=0;
 
         sigaction(SIGTERM, &new_action, YARP_NULLPTR);
         sigaction(SIGHUP, &new_action, YARP_NULLPTR);
-        //signal(SIGHUP, SIG_IGN);
-        //signal(SIGINT, SIG_IGN);
-        signal(SIGPIPE,SIG_IGN);
+        //yarp::os::impl::signal(SIGHUP, SIG_IGN);
+        //yarp::os::impl::signal(SIGINT, SIG_IGN);
+        yarp::os::impl::signal(SIGPIPE,SIG_IGN);
 
         if (getppid()==1) return 0;
 #else
         prctl(PR_SET_PDEATHSIG,SIGTERM);
 
         struct sigaction new_action;
-        new_action.sa_handler=sigstdio_handler;
+        new_action.sa_handler=sigcstdioandler;
         sigfillset(&new_action.sa_mask);
         new_action.sa_flags=0;
 
         sigaction(SIGTERM, &new_action, YARP_NULLPTR);
-        signal(SIGHUP, SIG_IGN);
-        //signal(SIGINT, SIG_IGN);
-        signal(SIGPIPE,SIG_IGN);
+        yarp::os::impl::signal(SIGHUP, SIG_IGN);
+        //yarp::os::impl::signal(SIGINT, SIG_IGN);
+        yarp::os::impl::signal(SIGPIPE,SIG_IGN);
 
         if (getppid()==1) return 0;
 #endif
@@ -251,19 +249,19 @@ int yarp::os::Run::main(int argc, char *argv[])
         yarp::os::impl::Logger::get().setVerbosity(-1);
         yarp::os::ConstString portName=config.findGroup("write").get(1).asString();
 
-#if defined(WIN32)
-        signal(SIGINT,  sigstdio_handler);
-        signal(SIGTERM, sigstdio_handler);
-        signal(SIGBREAK,sigstdio_handler);
+#if defined(_WIN32)
+        yarp::os::impl::signal(SIGINT,  sigcstdioandler);
+        yarp::os::impl::signal(SIGTERM, sigcstdioandler);
+        yarp::os::impl::signal(SIGBREAK,sigcstdioandler);
 #else
         struct sigaction new_action;
-        new_action.sa_handler=sigstdio_handler;
+        new_action.sa_handler=sigcstdioandler;
         sigfillset(&new_action.sa_mask);
         new_action.sa_flags=0;
         sigaction(SIGTERM, &new_action, YARP_NULLPTR);
-        //signal(SIGINT,  SIG_IGN);
-        signal(SIGPIPE, SIG_IGN);
-        signal(SIGHUP,  SIG_IGN);
+        //yarp::os::impl::signal(SIGINT,  SIG_IGN);
+        yarp::os::impl::signal(SIGPIPE, SIG_IGN);
+        yarp::os::impl::signal(SIGHUP,  SIG_IGN);
 #endif
 
         if (config.check("log"))
@@ -292,14 +290,14 @@ int yarp::os::Run::main(int argc, char *argv[])
         yarp::os::impl::Logger::get().setVerbosity(-1);
         yarp::os::ConstString uuid=config.findGroup("read").get(1).asString();
 
-        #if defined(WIN32)
-        signal(SIGINT,  sigstdio_handler);
-        signal(SIGTERM, sigstdio_handler);
-        signal(SIGBREAK,sigstdio_handler);
+        #if defined(_WIN32)
+        yarp::os::impl::signal(SIGINT,  sigcstdioandler);
+        yarp::os::impl::signal(SIGTERM, sigcstdioandler);
+        yarp::os::impl::signal(SIGBREAK,sigcstdioandler);
         #else
-        //signal(SIGINT, SIG_IGN);
-        signal(SIGTERM,sigstdio_handler);
-        signal(SIGHUP, SIG_IGN);
+        //yarp::os::impl::signal(SIGINT, SIG_IGN);
+        yarp::os::impl::signal(SIGTERM,sigcstdioandler);
+        yarp::os::impl::signal(SIGHUP, SIG_IGN);
         #endif
 
         RunRead r(uuid);
@@ -488,7 +486,7 @@ void sigint_handler(int sig)
 
 ///////////////////////////
 // WINDOWS SERVER
-#if defined(WIN32)
+#if defined(_WIN32)
 int yarp::os::Run::server()
 {
     yarp::os::Semaphore serializer(1);
@@ -502,8 +500,8 @@ int yarp::os::Run::server()
 
     pServerPort=&port;
 
-    signal(SIGINT,sigint_handler);
-    signal(SIGTERM,sigint_handler);
+    yarp::os::impl::signal(SIGINT,sigint_handler);
+    yarp::os::impl::signal(SIGTERM,sigint_handler);
 
     // Enabling cpu load collector on windows
     //yarp::os::impl::SystemInfo::enableCpuLoadCollector();
@@ -740,10 +738,10 @@ void yarp::os::Run::cleanBeforeExec()
 {
     // zombie hunter stop
 
-    //signal(SIGPIPE,SIG_IGN);
-    //signal(SIGCHLD,SIG_DFL);
-    //signal(SIGINT, SIG_DFL);
-    //signal(SIGTERM,SIG_DFL);
+    //yarp::os::impl::signal(SIGPIPE,SIG_IGN);
+    //yarp::os::impl::signal(SIGCHLD,SIG_DFL);
+    //yarp::os::impl::signal(SIGINT, SIG_DFL);
+    //yarp::os::impl::signal(SIGTERM,SIG_DFL);
 
     if (mProcessVector)
     {
@@ -842,7 +840,7 @@ int yarp::os::Run::server()
         return YARPRUN_ERROR;
     }
 
-    int pid_process_manager=fork();
+    int pid_process_manager=yarp::os::fork();
 
     if (IS_INVALID(pid_process_manager))
     {
@@ -861,7 +859,7 @@ int yarp::os::Run::server()
 
     if (IS_PARENT_OF(pid_process_manager))
     {
-        signal(SIGPIPE,SIG_IGN);
+        yarp::os::impl::signal(SIGPIPE,SIG_IGN);
 
         CLOSE(pipe_server2manager[READ_FROM_PIPE]);
         CLOSE(pipe_manager2server[WRITE_TO_PIPE]);
@@ -880,8 +878,8 @@ int yarp::os::Run::server()
 
         pServerPort=&port;
 
-        signal(SIGINT,sigint_handler);
-        signal(SIGTERM,sigint_handler);
+        yarp::os::impl::signal(SIGINT,sigint_handler);
+        yarp::os::impl::signal(SIGTERM,sigint_handler);
 
         int rsp_size=1024;
         char *rsp_str=new char[rsp_size];
@@ -969,7 +967,7 @@ int yarp::os::Run::server()
 
     if (IS_NEW_PROCESS(pid_process_manager))
     {
-        signal(SIGPIPE,SIG_IGN);
+        yarp::os::impl::signal(SIGPIPE,SIG_IGN);
 
         CLOSE(pipe_server2manager[WRITE_TO_PIPE]);
         CLOSE(pipe_manager2server[READ_FROM_PIPE]);
@@ -982,9 +980,9 @@ int yarp::os::Run::server()
         mBraveZombieHunter=new ZombieHunterThread;
         mBraveZombieHunter->start();
 
-        signal(SIGCHLD,sigchld_handler);
-        //signal(SIGINT, SIG_IGN);
-        //signal(SIGTERM,SIG_IGN);
+        yarp::os::impl::signal(SIGCHLD,sigchld_handler);
+        //yarp::os::impl::signal(SIGINT, SIG_IGN);
+        //yarp::os::impl::signal(SIGTERM,SIG_IGN);
 
         int msg_size=1024;
         char *msg_str=new char[msg_size];
@@ -1622,7 +1620,7 @@ void yarp::os::Run::Help(const char *msg)
 
 // WINDOWS
 
-#if defined(WIN32)
+#if defined(_WIN32)
 
 // CMD SERVER
 int yarp::os::Run::executeCmdAndStdio(Bottle& msg,Bottle& result)
@@ -2468,7 +2466,7 @@ int yarp::os::Run::executeCmdAndStdio(yarp::os::Bottle& msg,yarp::os::Bottle& re
         return YARPRUN_ERROR;
     }
 
-    int pid_stdout=fork();
+    int pid_stdout=yarp::os::fork();
 
     if (IS_INVALID(pid_stdout))
     {
@@ -2508,7 +2506,7 @@ int yarp::os::Run::executeCmdAndStdio(yarp::os::Bottle& msg,yarp::os::Bottle& re
         //furthermore after fork() only the thread which called fork() is forked!
         //            cleanBeforeExec();
 
-        //signal(SIGPIPE,SIG_DFL);
+        //yarp::os::impl::signal(SIGPIPE,SIG_DFL);
 
         int ret=execlp("yarprun", "yarprun", "--write", strStdioUUID.c_str(), static_cast<char*>(YARP_NULLPTR));
 
@@ -2534,7 +2532,7 @@ int yarp::os::Run::executeCmdAndStdio(yarp::os::Bottle& msg,yarp::os::Bottle& re
 
         CLOSE(pipe_child_to_parent[WRITE_TO_PIPE]);
 
-        exit(ret);
+        std::exit(ret);
     }
 
     if (IS_PARENT_OF(pid_stdout))
@@ -2543,7 +2541,7 @@ int yarp::os::Run::executeCmdAndStdio(yarp::os::Bottle& msg,yarp::os::Bottle& re
 
         fprintf(stderr,"STARTED: server=%s alias=%s cmd=stdout pid=%d\n",mPortName.c_str(),strAlias.c_str(),pid_stdout);
 
-        int pid_stdin=fork();
+        int pid_stdin=yarp::os::fork();
 
         if (IS_INVALID(pid_stdin))
         {
@@ -2585,7 +2583,7 @@ int yarp::os::Run::executeCmdAndStdio(yarp::os::Bottle& msg,yarp::os::Bottle& re
             //furthermore after fork() only the thread which called fork() is forked!
             //            cleanBeforeExec();
 
-            //signal(SIGPIPE,SIG_DFL);
+            //yarp::os::impl::signal(SIGPIPE,SIG_DFL);
 
             int ret=execlp("yarprun", "yarprun", "--read", strStdioUUID.c_str(), static_cast<char*>(YARP_NULLPTR));
 
@@ -2611,7 +2609,7 @@ int yarp::os::Run::executeCmdAndStdio(yarp::os::Bottle& msg,yarp::os::Bottle& re
 
             CLOSE(pipe_child_to_parent[WRITE_TO_PIPE]);
 
-            exit(ret);
+            std::exit(ret);
         }
 
         if (IS_PARENT_OF(pid_stdin))
@@ -2621,7 +2619,7 @@ int yarp::os::Run::executeCmdAndStdio(yarp::os::Bottle& msg,yarp::os::Bottle& re
 
             fprintf(stderr,"STARTED: server=%s alias=%s cmd=stdin pid=%d\n",mPortName.c_str(),strAlias.c_str(),pid_stdin);
 
-            int pid_cmd=fork();
+            int pid_cmd=yarp::os::fork();
 
             if (IS_INVALID(pid_cmd))
             {
@@ -2710,14 +2708,14 @@ int yarp::os::Run::executeCmdAndStdio(yarp::os::Bottle& msg,yarp::os::Bottle& re
                         fclose(out_to_parent);
                         fprintf(stderr,"%s",out.c_str());
 
-                        exit(ret);
+                        std::exit(ret);
                     }
                 }
 
                 int ret=YARPRUN_ERROR;
 
                 char currWorkDirBuff[1024];
-                char *currWorkDir=getcwd(currWorkDirBuff,1024);
+                char *currWorkDir=yarp::os::impl::getcwd(currWorkDirBuff,1024);
 
                 if (currWorkDir)
                 {
@@ -2778,7 +2776,7 @@ int yarp::os::Run::executeCmdAndStdio(yarp::os::Bottle& msg,yarp::os::Bottle& re
 
                 CLOSE(pipe_child_to_parent[WRITE_TO_PIPE]);
 
-                exit(ret);
+                std::exit(ret);
             }
 
 
@@ -2906,7 +2904,7 @@ int yarp::os::Run::executeCmdStdout(yarp::os::Bottle& msg,yarp::os::Bottle& resu
         return YARPRUN_ERROR;
     }
 
-    int pid_stdout=fork();
+    int pid_stdout=yarp::os::fork();
 
     if (IS_INVALID(pid_stdout))
     {
@@ -2942,7 +2940,7 @@ int yarp::os::Run::executeCmdStdout(yarp::os::Bottle& msg,yarp::os::Bottle& resu
         //furthermore after fork() only the thread which called fork() is forked!
         //            cleanBeforeExec();
 
-        //signal(SIGPIPE,SIG_DFL);
+        //yarp::os::impl::signal(SIGPIPE,SIG_DFL);
 
         int ret=execlp("yarprun", "yarprun", "--write", portName.c_str(), "--log", loggerName.c_str(), static_cast<char*>(YARP_NULLPTR));
 
@@ -2968,7 +2966,7 @@ int yarp::os::Run::executeCmdStdout(yarp::os::Bottle& msg,yarp::os::Bottle& resu
 
         CLOSE(pipe_child_to_parent[WRITE_TO_PIPE]);
 
-        exit(ret);
+        std::exit(ret);
     }
 
     if (IS_PARENT_OF(pid_stdout))
@@ -2981,7 +2979,7 @@ int yarp::os::Run::executeCmdStdout(yarp::os::Bottle& msg,yarp::os::Bottle& resu
 
         //if (IS_PARENT_OF(pid_stdin))
         {
-            int pid_cmd=fork();
+            int pid_cmd=yarp::os::fork();
 
             if (IS_INVALID(pid_cmd))
             {
@@ -3065,7 +3063,7 @@ int yarp::os::Run::executeCmdStdout(yarp::os::Bottle& msg,yarp::os::Bottle& resu
                         fclose(out_to_parent);
                         fprintf(stderr,"%s",out.c_str());
 
-                        exit(ret);
+                        std::exit(ret);
                     }
                 }
 
@@ -3132,7 +3130,7 @@ int yarp::os::Run::executeCmdStdout(yarp::os::Bottle& msg,yarp::os::Bottle& resu
 
                 CLOSE(pipe_child_to_parent[WRITE_TO_PIPE]);
 
-                exit(ret);
+                std::exit(ret);
             }
 
 
@@ -3272,7 +3270,7 @@ int yarp::os::Run::userStdio(yarp::os::Bottle& msg,yarp::os::Bottle& result)
     cmdcpy(command[c++],"-e");
     cmdcpy(command[c++],strCmd.c_str());
 
-    int pid_cmd=fork();
+    int pid_cmd=yarp::os::fork();
 
     if (IS_INVALID(pid_cmd))
     {
@@ -3298,7 +3296,7 @@ int yarp::os::Run::userStdio(yarp::os::Bottle& msg,yarp::os::Bottle& result)
 
     if (IS_NEW_PROCESS(pid_cmd)) // RUN COMMAND HERE
     {
-        //signal(SIGPIPE,SIG_IGN);
+        //yarp::os::impl::signal(SIGPIPE,SIG_IGN);
 
         CLOSE(pipe_child_to_parent[READ_FROM_PIPE]);
 
@@ -3309,7 +3307,7 @@ int yarp::os::Run::userStdio(yarp::os::Bottle& msg,yarp::os::Bottle& result)
         //furthermore after fork() only the thread which called fork() is forked!
         //            cleanBeforeExec();
 
-        //signal(SIGHUP,rwSighupHandler);
+        //yarp::os::impl::signal(SIGHUP,rwSighupHandler);
 
         int ret=execvp("xterm",command);
 
@@ -3335,7 +3333,7 @@ int yarp::os::Run::userStdio(yarp::os::Bottle& msg,yarp::os::Bottle& result)
 
         CLOSE(pipe_child_to_parent[WRITE_TO_PIPE]);
 
-        exit(ret);
+        std::exit(ret);
     }
 
     if (IS_PARENT_OF(pid_cmd))
@@ -3426,7 +3424,7 @@ int yarp::os::Run::executeCmd(yarp::os::Bottle& msg,yarp::os::Bottle& result)
         return YARPRUN_ERROR;
     }
 
-    int pid_cmd=fork();
+    int pid_cmd=yarp::os::fork();
 
     if (IS_INVALID(pid_cmd))
     {
@@ -3559,7 +3557,7 @@ int yarp::os::Run::executeCmd(yarp::os::Bottle& msg,yarp::os::Bottle& result)
         delete [] cmd_str;
         delete [] arg_str;
 
-        exit(ret);
+        std::exit(ret);
     }
 
     if (IS_PARENT_OF(pid_cmd))

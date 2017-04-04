@@ -5,7 +5,7 @@
  *
  */
 
-#include <string.h>
+#include <cstring>
 #include "HumanStream.h"
 
 YARP_SSIZE_T HumanStream::read(const Bytes& b) {

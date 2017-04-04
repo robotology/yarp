@@ -10,7 +10,7 @@
 #include <yarp/os/ResourceFinder.h>
 #include <yarp/os/ResourceFinderOptions.h>
 #include <yarp/os/Bottle.h>
-#include <stdio.h>
+#include <cstdio>
 
 
 #include "yarpcontextutils.h"

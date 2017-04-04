@@ -25,7 +25,7 @@
 #define KILL_TIMEOUT            10.0
 #define EVENT_THREAD_PERIOD     500
 
-#if defined(WIN32)
+#if defined(_WIN32)
     #define SIGKILL 9
 #endif
 

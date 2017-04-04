@@ -12,9 +12,9 @@
 
 #include <fuse/fuse.h>
 //#include <fuse/fuse_lowlevel.h>
-#include <stdio.h>
-#include <string.h>
-#include <errno.h>
+#include <cstdio>
+#include <cstring>
+#include <cerrno>
 //#include <fcntl.h>
 
 #include <yarp/os/all.h>
@@ -22,7 +22,7 @@
 #include <yarp/os/impl/NameConfig.h>
 
 #include <string>
-#include <signal.h>
+#include <csignal>
 
 #include <ace/Containers_T.h>
 
@@ -73,7 +73,7 @@ private:
             if (leafLike) {
                 if (reply.size()>1) {
                     _isAct = true;
-                } 
+                }
             } else {
                 if (reply.size()>1) {
                     _isStem = true;
@@ -237,7 +237,7 @@ public:
 
         const char *yarp_str = str.c_str();
         printf(">>> Got %s\n", str.c_str());
-        
+
         offset = 0;
         size_t len = strlen(yarp_str);
         if (offset < len) {
@@ -246,7 +246,7 @@ public:
             memcpy(buf, yarp_str + offset, size);
         } else
             size = 0;
-        
+
         return size;
     }
 };

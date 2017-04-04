@@ -5,14 +5,14 @@
 
 #include <yarp/os/Random.h>
 
-#include <math.h>
-#include <yarp/os/impl/PlatformStdlib.h>
-#include <stdlib.h>
+#include <cmath>
+#include <cstdlib>
+#include <cstdlib>
 
 using namespace yarp::os;
 
 double Random::uniform() {
-    return double (ACE_OS::rand ()) / double (RAND_MAX);
+    return double (rand()) / double (RAND_MAX);
 }
 
 double Random::normal() {
@@ -69,12 +69,12 @@ double Random::normal(double m, double s)
 }
 
 void Random::seed(int seed) {
-    ACE_OS::srand (seed);
+    srand (seed);
 }
 
 
 int Random::uniform(int min, int max) {
-    int ret = int ((double (ACE_OS::rand()) / double (RAND_MAX)) * (max - min + 1) + min);
+    int ret = int ((double (rand()) / double (RAND_MAX)) * (max - min + 1) + min);
 
     // there's a small chance the value is = max+1
     if (ret <= max)

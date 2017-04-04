@@ -40,7 +40,7 @@
 
 #include "ffmpeg_api.h"
 
-#include <stdio.h>
+#include <cstdio>
 
 using namespace yarp::os;
 using namespace yarp::dev;
@@ -51,10 +51,10 @@ using namespace yarp::sig::file;
 
 //#define OMIT_AUDIO
 
-#include <stdlib.h>
-#include <stdio.h>
-#include <string.h>
-#include <math.h>
+#include <cstdlib>
+#include <cstdio>
+#include <cstring>
+#include <cmath>
 
 #ifndef M_PI
 #define M_PI 3.1415926535897931

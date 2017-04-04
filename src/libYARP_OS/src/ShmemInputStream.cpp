@@ -189,10 +189,10 @@ YARP_SSIZE_T ShmemInputStreamImpl::read(const Bytes& b)
     while (!(ret=read(data,(int)len)))
     {
         #ifdef _ACE_USE_SV_SEM
-        ACE_Time_Value tv=ACE_OS::gettimeofday();
+        YARP_timeval tv=ACE_OS::gettimeofday();
         tv.sec(tv.sec()+1);
         #else
-        ACE_Time_Value tv(1);
+        YARP_timeval tv(1);
         #endif
 
         m_pWaitDataMutex->acquire(tv);

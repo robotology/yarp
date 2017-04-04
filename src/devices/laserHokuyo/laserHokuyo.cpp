@@ -8,17 +8,18 @@
 // *** THIS FILE IS CURRENTLY UNDER DEVELOPMENT / DEBUG ***
 // ********************************************************
 
+#define _USE_MATH_DEFINES
+
 #include <laserHokuyo.h>
 
 #include <yarp/os/Time.h>
 #include <yarp/os/Log.h>
 #include <yarp/os/LogStream.h>
 #include <iostream>
-#include <string.h>
-#include <stdlib.h>
+#include <cstring>
+#include <cstdlib>
 #include <limits>
-#define _USE_MATH_DEFINES
-#include <math.h>
+#include <cmath>
 
 //#define LASER_DEBUG
 

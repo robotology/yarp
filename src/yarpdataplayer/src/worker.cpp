@@ -15,7 +15,7 @@
  * Public License for more details
 */
 
-#if defined(WIN32)
+#if defined(_WIN32)
     #pragma warning (disable : 4099)
     #pragma warning (disable : 4250)
     #pragma warning (disable : 4520)

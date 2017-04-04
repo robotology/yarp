@@ -5,7 +5,7 @@
  */
 
 
-#include <yarp/os/impl/PlatformStdio.h>
+#include <cstdio>
 #include <yarp/os/impl/SocketTwoWayStream.h>
 #include <yarp/os/impl/Companion.h>
 #include <yarp/os/impl/PortCommand.h>
@@ -61,7 +61,7 @@ Terminee::Terminee(const char *name) {
     ok = false;
     if (name == YARP_NULLPTR) {
         quit = true;
-        ACE_OS::printf("Terminator: Please supply a proper port name\n");
+        printf("Terminator: Please supply a proper port name\n");
         return;
     }
 

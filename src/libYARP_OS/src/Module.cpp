@@ -6,9 +6,6 @@
 
 #ifndef YARP_NO_DEPRECATED
 
-#include <yarp/os/impl/PlatformStdio.h>
-#include <yarp/os/impl/PlatformSignal.h>
-#include <yarp/os/impl/PlatformStdlib.h>
 #include <yarp/os/impl/Logger.h>
 
 #include <yarp/os/Module.h>
@@ -19,6 +16,10 @@
 #include <yarp/os/Searchable.h>
 #include <yarp/os/Network.h>
 #include <yarp/os/Vocab.h>
+
+#include <cstdio>
+#include <csignal>
+#include <cstdlib>
 
 
 using namespace yarp::os::impl;
@@ -90,14 +91,14 @@ public:
                     //printf("ITEM 1: %s\n", reply.get(0).toString().c_str());
                     if (reply.get(0).toString()=="help") {
                         for (int i=0; i<reply.size(); i++) {
-                            ACE_OS::printf("%s\n",
+                            printf("%s\n",
                                            reply.get(i).toString().c_str());
                         }
                     } else {
-                        ACE_OS::printf("%s\n", reply.toString().c_str());
+                        printf("%s\n", reply.toString().c_str());
                     }
                 } else {
-                    ACE_OS::printf("Command not understood -- %s\n", str.c_str());
+                    printf("Command not understood -- %s\n", str.c_str());
                 }
             }
         }
@@ -315,10 +316,10 @@ static void handler (int) {
     static int ct = 0;
     ct++;
     if (ct>3) {
-        ACE_OS::printf("Aborting...\n");
-        ACE_OS::exit(1);
+        printf("Aborting...\n");
+        std::exit(1);
     }
-    ACE_OS::printf("[try %d of 3] Trying to shut down\n",
+    printf("[try %d of 3] Trying to shut down\n",
                    ct);
     terminated = true;
     if (module!=YARP_NULLPTR) {
@@ -336,10 +337,10 @@ bool Module::runModule() {
         module = this;
         //module = &HELPER(implementation);
     } else {
-        ACE_OS::printf("Module::runModule() signal handling currently only good for one module\n");
+        printf("Module::runModule() signal handling currently only good for one module\n");
     }
-    ACE_OS::signal(SIGINT, (ACE_SignalHandler) handler);
-    ACE_OS::signal(SIGTERM, (ACE_SignalHandler) handler);
+    signal(SIGINT, handler);
+    signal(SIGTERM, handler);
     while (updateModule()) {
         if (terminated) break;
         if (isStopping()) break;
@@ -347,13 +348,13 @@ bool Module::runModule() {
         if (isStopping()) break;
         if (terminated) break;
     }
-    ACE_OS::printf("Module closing\n");
+    printf("Module closing\n");
     close();
-    ACE_OS::printf("Module finished\n");
+    printf("Module finished\n");
     if (1) { //terminated) {
         // only portable way to bring down a thread reading from
         // the keyboard -- no good way to interrupt.
-        ACE_OS::exit(1);
+        std::exit(1);
     }
     return true;
 }
@@ -377,7 +378,7 @@ bool Module::attachTerminal() {
 
 int Module::runModule(int argc, char *argv[], bool skipFirst) {
     if (!openFromCommand(argc,argv,skipFirst)) {
-        ACE_OS::printf("Module failed to open\n");
+        printf("Module failed to open\n");
         return 1;
     }
     attachTerminal();
@@ -396,7 +397,7 @@ bool Module::openFromCommand(int argc, char *argv[], bool skipFirst) {
     if (options.check("file",val,"configuration file to use, if any")) {
         ConstString fname = val->toString();
         options.unput("file");
-        ACE_OS::printf("Working with config file %s\n", fname.c_str());
+        printf("Working with config file %s\n", fname.c_str());
         options.fromConfigFile(fname,false);
 
         // interpret command line options as a set of flags again

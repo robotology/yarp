@@ -21,7 +21,7 @@
 
 #include "YarpBuildLocation.h"
 
-#include <stdio.h>
+#include <cstdio>
 
 using namespace yarp::os::impl;
 using namespace yarp::os;
@@ -245,7 +245,7 @@ int main(int argc, char *argv[]) {
         FILE *fout = fopen(dest2.c_str(),"w");
         if (fout==NULL) {
             printf("Problem writing to %s\n", dest2.c_str());
-            yarp::os::exit(1);
+            std::exit(1);
         }
         fprintf(fout,"/**\n");
         fprintf(fout," * \\ingroup dev_examples\n");

@@ -14,8 +14,8 @@
 #include <yarp/dev/Drivers.h>
 #include <yarp/os/impl/Logger.h>
 #include <yarp/os/Bottle.h>
-#include <yarp/os/impl/PlatformStdio.h>
-#include <yarp/os/impl/PlatformStdlib.h>
+#include <cstdio>
+#include <cstdlib>
 #include <yarp/dev/RemoteFrameGrabber.h>
 #include <yarp/dev/ServerFrameGrabber.h>
 #include <yarp/dev/DevicePipe.h>

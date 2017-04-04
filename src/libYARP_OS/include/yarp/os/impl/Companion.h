@@ -14,7 +14,7 @@
 
 #include <yarp/os/impl/PlatformMap.h>
 #include <yarp/os/impl/PlatformVector.h>
-#include <yarp/os/impl/PlatformStdio.h>
+#include <cstdio>
 
 // ACE headers may fiddle with main
 #ifdef main

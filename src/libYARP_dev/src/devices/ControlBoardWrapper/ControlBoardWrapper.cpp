@@ -12,7 +12,7 @@
 #include <yarp/os/Log.h>
 #include <yarp/os/LogStream.h>
 
-#include <string.h>         // for memset function
+#include <cstring>         // for memset function
 
 using namespace yarp::os;
 using namespace yarp::dev;

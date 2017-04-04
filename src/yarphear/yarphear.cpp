@@ -8,8 +8,8 @@
 
 #include <deque>
 
-#include <stdio.h>
-#include <math.h>
+#include <cstdio>
+#include <cmath>
 
 #include <yarp/os/all.h>
 #include <yarp/os/Log.h>

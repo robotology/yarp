@@ -83,19 +83,19 @@ Contact FallbackNameClient::seek() {
         }
         int len = 20;
         for (int i0=0; i0<len; i0++) {
-            ACE_OS::fprintf(stderr,"++");
+            fprintf(stderr,"++");
         }
-        ACE_OS::fprintf(stderr,"\n");
+        fprintf(stderr,"\n");
 
         for (int i=0; i<len; i++) {
             Time::delay(0.025);
-            ACE_OS::fprintf(stderr,"++");
+            fprintf(stderr,"++");
             if (seeker.getAddress().isValid()) {
-                ACE_OS::fprintf(stderr,"\n");
+                fprintf(stderr,"\n");
                 return seeker.getAddress();
             }
         }
-        ACE_OS::fprintf(stderr,"\n");
+        fprintf(stderr,"\n");
         YARP_INFO(Logger::get(),"No response to search for server");
         seeker.close();
         seeker.join();

@@ -7,7 +7,7 @@
 #include <yarp/os/YarpNameSpace.h>
 #include <yarp/os/DummyConnector.h>
 #include <yarp/os/impl/NameClient.h>
-#include <yarp/os/impl/PlatformStdio.h>
+#include <cstdio>
 #include <yarp/os/impl/Logger.h>
 #include <yarp/os/impl/NameConfig.h>
 

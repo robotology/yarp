@@ -7,7 +7,7 @@
 #include <stdio.h>
 #include <yarp/os/all.h>
 
-#include <math.h>
+#include <cmath>
 
 #include <stdlib.h>
 #include <time.h>
@@ -15,13 +15,13 @@
 using namespace yarp::os;
 
 // Port latency, basic test.
-// Send a sequence of message to a port. Test the 
+// Send a sequence of message to a port. Test the
 // time it takes for the message to be received.
 // Compute average.
 //
 // Time only makes sense if server and client run
 // on the same machine.
-// 
+//
 // Lorenzo Natale May 2008
 //
 // Added paralell port code August 2008.
@@ -83,7 +83,7 @@ public:
 
     double inline get()
     { return datum; }
-    
+
     void inline set(double v)
     {  datum=v; }
 
@@ -107,7 +107,7 @@ public:
             unsigned int rnd=rand();
             payload[k]=rnd; //paranoid
         }
-        
+
     }
 
     unsigned int getPayloadSize()
@@ -245,7 +245,7 @@ public:
     {
         port.close();
     }
-}; 
+};
 
 int server(double server_wait, const std::string &name, unsigned int payload)
 {
@@ -282,7 +282,7 @@ int client(int nframes, std::string &name)
     portName="/profiling/client/";
     portName+=name;
     portName+="/port:o";
-    
+
     reader.outPort.open(portName.c_str());
 
     while( (reader.count<nframes) || forever)
@@ -307,7 +307,7 @@ int client(int nframes, std::string &name)
 
     stdLatency=sqrt(stdLatency);
 
-    fprintf(stderr, "Received: %d average latency %.3lf +/- %.5lf [ms]\n", 
+    fprintf(stderr, "Received: %d average latency %.3lf +/- %.5lf [ms]\n",
             reader.count, averageLatency, stdLatency);
     return 0;
 }

@@ -27,7 +27,7 @@
 
 // General files
 #include <sys/socket.h>
-#include <stdio.h>
+#include <cstdio>
 
 #include <yarp/os/impl/TcpStream.h>
 

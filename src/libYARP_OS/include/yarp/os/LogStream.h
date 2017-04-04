@@ -17,6 +17,7 @@
 #include <yarp/os/Os.h>
 
 #include <cstdio>
+#include <cstdlib>
 
 namespace std {
 template <typename T>
@@ -61,7 +62,7 @@ public:
             if (stream->type == yarp::os::Log::FatalType) {
                 yarp_print_trace(stderr, stream->file, stream->line);
                 delete stream;
-                yarp::os::exit(-1);
+                std::exit(-1);
             }
             delete stream;
         }

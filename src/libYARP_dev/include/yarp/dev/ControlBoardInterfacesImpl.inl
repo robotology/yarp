@@ -7,7 +7,7 @@
 #include <yarp/dev/ImplementControlBoardInterfaces.h>
 #include <yarp/dev/ControlBoardHelper.h>
 
-#include <math.h>
+#include <cmath>
 
 // Be careful: this file contains template implementations and is included by translation
 // units that use the template (e.g. .cpp files). Avoid putting here non-template functions to

@@ -7,11 +7,11 @@
 
 #include <MicrophoneDeviceDriver.h>
 
-#include <stdio.h>
+#include <cstdio>
 #include <fcntl.h>
-#include <stdlib.h>
+#include <cstdlib>
 #include <unistd.h>
-#include <string.h>
+#include <cstring>
 #include <sys/ioctl.h>
 #include <sys/soundcard.h>
 
@@ -48,13 +48,13 @@ bool MicrophoneDeviceDriver::open(yarp::os::Searchable& config) {
     int chns = ( nChannels == 1 ) ? 1 : 2;
     int rate = samplesPerSec;
     dsp = ::open( devname, O_RDONLY );
-    if ( dsp < 0 ) { perror( devname ); exit(1); }
+    if ( dsp < 0 ) { perror( devname ); std::exit(1); }
     if ( ioctl( dsp, SNDCTL_DSP_RESET, NULL ) < 0 )
-        { perror( "ioctl" ); exit(1); }
+        { perror( "ioctl" ); std::exit(1); }
     if (      ( ioctl( dsp, SNDCTL_DSP_SETFMT,   &bits ) < 0 )
               ||( ioctl( dsp, SNDCTL_DSP_CHANNELS, &chns ) < 0 )
               ||( ioctl( dsp, SNDCTL_DSP_SPEED,    &rate ) < 0 )    )
-        { perror( "audio format not not supported\n" ); exit(1); }
+        { perror( "audio format not not supported\n" ); std::exit(1); }
 
     printf("Ok, opened microphone...\n");
 

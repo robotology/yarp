@@ -7,14 +7,14 @@
 
 #include "PortAudioBuffer.h"
 
-#include <stdio.h>
-#include <stdlib.h>
+#include <cstdio>
+#include <cstdlib>
 #include <portaudio.h>
 
 
 circularBuffer::circularBuffer(int bufferSize)
 {
-    maxsize  = bufferSize + 1; 
+    maxsize  = bufferSize + 1;
     start = 0;
     end   = 0;
     elems = (SAMPLE *) calloc(maxsize, sizeof(SAMPLE));

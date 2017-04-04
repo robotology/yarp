@@ -7,14 +7,14 @@
 #include <yarp/os/YarpPlugin.h>
 
 #include <yarp/os/impl/Logger.h>
-#include <yarp/os/impl/PlatformStdlib.h>
+#include <cstdlib>
 #include <yarp/os/impl/NameClient.h>
 #include <yarp/os/Property.h>
 #include <yarp/os/ResourceFinder.h>
 #include <yarp/os/Time.h>
 #include <yarp/os/Network.h>
 
-#include <stdio.h>
+#include <cstdio>
 
 using namespace yarp::os;
 using namespace yarp::os::impl;

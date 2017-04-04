@@ -11,9 +11,10 @@
 #include <yarp/dev/SerialInterfaces.h>
 #include <yarp/os/Bottle.h>
 
+#include <stdio.h>
+
 #include <ace/DEV_Connector.h>
 #include <ace/TTY_IO.h>
-#include <ace/OS_NS_stdio.h>
 
 namespace yarp {
     namespace dev {
@@ -24,7 +25,7 @@ namespace yarp {
 
 using namespace yarp::os;
 
-class yarp::dev::SerialDeviceDriverSettings 
+class yarp::dev::SerialDeviceDriverSettings
 {
 public:
     char CommChannel[100]; // Contains the name of the com port "COM1", "COM2" (windows) or "/etc/stty0", "/dev/stty1" (linux), etc...
@@ -70,7 +71,7 @@ public:
  * @ingroup dev_impl_media
  *
  * A basic Serial Communications Link (RS232, USB).
- * 
+ *
  */
 class yarp::dev::SerialDeviceDriver : public DeviceDriver, public ISerialDevice
 {

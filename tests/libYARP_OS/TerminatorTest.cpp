@@ -23,30 +23,30 @@ public:
 
         Network::setLocalMode(true);
 
-        ACE_OS::printf("registering port name: ");
+        printf("registering port name: ");
         Terminee terminee("/tmp/quit");
         if (terminee.isOk())
-            ACE_OS::printf("ok\n");
+            printf("ok\n");
         else {
-            ACE_OS::printf("failed\n");
+            printf("failed\n");
             report(1,"failed to set terminator socket");
         }
 
-        ACE_OS::printf("sending quit message: ");
+        printf("sending quit message: ");
         if (Terminator::terminateByName("/tmp/quit"))
-            ACE_OS::printf("ok\n");
+            printf("ok\n");
         else {
-            ACE_OS::printf("failed\n");
+            printf("failed\n");
             report(1,"failed to set termination connection");
         }
 
-        ACE_OS::printf("quit flag was set properly: ");
+        printf("quit flag was set properly: ");
         if (!terminee.mustQuit()) {
-            ACE_OS::printf("failed\n");
+            printf("failed\n");
             report(1,"failed to receive the quit message");
         }
         else {
-            ACE_OS::printf("ok\n");
+            printf("ok\n");
         }
     }
 

@@ -19,7 +19,7 @@
 #include <yarp/dev/Drivers.h>
 
 #include <yarp/os/impl/PlatformVector.h>
-#include <yarp/os/impl/PlatformSignal.h>
+#include <csignal>
 #include <yarp/os/impl/Logger.h>
 
 #include <yarp/os/YarpPlugin.h>
@@ -353,7 +353,7 @@ static void handler (int) {
     ct++;
     if (ct>3) {
         yInfo("Aborting...");
-        yarp::os::exit(1);
+        std::exit(1);
     }
     if (terminatorKey!="") {
         yInfo("[try %d of 3] Trying to shut down %s", ct, terminatorKey.c_str());
@@ -361,15 +361,15 @@ static void handler (int) {
         Terminator::terminateByName(terminatorKey.c_str());
     } else {
         yInfo("Aborting...");
-        yarp::os::exit(1);
+        std::exit(1);
     }
 }
 
 
 int Drivers::yarpdev(int argc, char *argv[]) {
 
-    ACE_OS::signal(SIGINT, (ACE_SignalHandler) handler);
-    ACE_OS::signal(SIGTERM, (ACE_SignalHandler) handler);
+    ::signal(SIGINT, handler);
+    ::signal(SIGTERM, handler);
 
     // get command line options
     ResourceFinder rf;

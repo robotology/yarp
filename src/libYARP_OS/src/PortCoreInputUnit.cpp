@@ -4,21 +4,22 @@
  * CopyPolicy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
  */
 
-
-#include <yarp/os/Time.h>
 #include <yarp/os/impl/PortCoreInputUnit.h>
-#include <yarp/os/impl/PortCommand.h>
-#include <yarp/os/impl/Logger.h>
-#include <yarp/os/impl/BufferedConnectionWriter.h>
+
 #include <yarp/os/Name.h>
-#include <yarp/os/Time.h>
 #include <yarp/os/PortReport.h>
 #include <yarp/os/PortInfo.h>
+#include <yarp/os/Time.h>
 
-#include <yarp/os/impl/PlatformStdio.h>
+#include <yarp/os/impl/BufferedConnectionWriter.h>
+#include <yarp/os/impl/Logger.h>
 #include <yarp/os/impl/PlatformSignal.h>
+#include <yarp/os/impl/PortCommand.h>
 
-//#define YMSG(x) ACE_OS::printf x;
+#include <cstdio>
+#include <csignal>
+
+//#define YMSG(x) printf x;
 //#define YTRACE(x) YMSG(("at %s\n",x))
 
 
@@ -192,7 +193,7 @@ void PortCoreInputUnit::run() {
             break;
         }
         char key = cmd.getKey();
-        //ACE_OS::printf("Port command is [%c:%d/%s]\n",
+        //printf("Port command is [%c:%d/%s]\n",
         //         (key>=32)?key:'?', key, cmd.getText().c_str());
 
         PortManager& man = getOwner();
@@ -330,9 +331,9 @@ void PortCoreInputUnit::run() {
 #if !defined(NDEBUG)
         case 'i':
             printf("Interrupt requested\n");
-            //ACE_OS::kill(0,2); // SIGINT
-            //ACE_OS::kill(Logger::get().getPid(),2); // SIGINT
-            ACE_OS::kill(Logger::get().getPid(),15); // SIGTERM
+            //yarp::os::impl::kill(0,2); // SIGINT
+            //yarp::os::impl::kill(Logger::get().getPid(),2); // SIGINT
+            yarp::os::impl::kill(Logger::get().getPid(),15); // SIGTERM
             break;
 #endif
         case '?':

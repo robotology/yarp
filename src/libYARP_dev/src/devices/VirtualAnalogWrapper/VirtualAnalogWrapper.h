@@ -29,8 +29,7 @@
 
 #include <string>
 #include <vector>
-
-#include <stdarg.h>
+#include <cstdarg>
 
 #ifdef MSVC
     #pragma warning(disable:4355)

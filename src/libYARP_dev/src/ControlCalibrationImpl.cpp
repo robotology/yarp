@@ -10,7 +10,7 @@
 #include <yarp/dev/ControlBoardInterfaces.h>
 #include <yarp/os/Log.h>
 
-#include <stdio.h>
+#include <cstdio>
 
 using namespace yarp::dev;
 

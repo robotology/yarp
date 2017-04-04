@@ -8,7 +8,7 @@
 #ifndef YARP_DEV_TESTMOTOR_H
 #define YARP_DEV_TESTMOTOR_H
 
-#include <stdio.h>
+#include <cstdio>
 
 
 #include <yarp/dev/ControlBoardInterfaces.h>

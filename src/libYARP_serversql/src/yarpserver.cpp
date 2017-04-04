@@ -5,8 +5,8 @@
  *
  */
 
-#include <stdio.h>
-#include <stdlib.h>
+#include <cstdio>
+#include <cstdlib>
 
 #include <yarp/conf/system.h>
 #include <yarp/os/all.h>

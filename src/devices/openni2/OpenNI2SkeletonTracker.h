@@ -9,7 +9,7 @@
 #define OPENNI2_SKELETON_TRACKER_H
 
 #include <string>
-#include <time.h>
+#include <ctime>
 #include <iostream>
 
 #include <OpenNI.h>
@@ -58,7 +58,7 @@ public:
     }UserSkeleton;
 
     int getDeviceStatus();
-     
+
     /**
      * Struct with the data from the RGB camera, the depth camera, and a set of userSkeletons
      */

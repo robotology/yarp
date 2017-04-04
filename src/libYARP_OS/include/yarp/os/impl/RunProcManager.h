@@ -6,28 +6,30 @@
 #ifndef YARP_OS_IMPL_RUNPROCMANAGER_H
 #define YARP_OS_IMPL_RUNPROCMANAGER_H
 
-#if defined(WIN32)
+#if defined(_WIN32)
 #  if !defined(WIN32_LEAN_AND_MEAN)
 #    define WIN32_LEAN_AND_MEAN
 #  endif
 #  include <windows.h>
 #else
 #  include <sys/types.h>
-#  include <sys/wait.h>
-#  include <errno.h>
-#  include <stdlib.h>
+#  if defined(YARP_HAS_SYS_WAIT_H)
+#    include <sys/wait.h>
+#  endif
+#  include <cerrno>
+#  include <cstdlib>
 #  include <fcntl.h>
 #  include <unistd.h>
 #endif
 
-#include <stdio.h>
-#include <signal.h>
+#include <cstdio>
+#include <csignal>
 #include <yarp/os/Run.h>
 #include <yarp/os/Bottle.h>
 #include <yarp/os/ConstString.h>
 
 
-#if defined(WIN32)
+#if defined(_WIN32)
 typedef DWORD PID;
 typedef HANDLE FDESC;
 #else
@@ -116,7 +118,7 @@ public:
 
     }
     bool Match(yarp::os::ConstString& alias){ return mAlias==alias; }
-#ifndef WIN32
+#if !defined(_WIN32)
     virtual bool Clean(PID pid,YarpRunProcInfo* &pRef)
     {
         if (mPidCmd==pid)
@@ -168,7 +170,7 @@ public:
     int Signal(yarp::os::ConstString& alias,int signum);
     int Killall(int signum);
 
-#if defined(WIN32)
+#if defined(_WIN32)
     HANDLE hZombieHunter;
     void GetHandles(HANDLE* &lpHandles,DWORD &nCount);
 #else
@@ -228,7 +230,7 @@ public:
 
     void TerminateStdio();
 
-#ifndef WIN32
+#if !defined(_WIN32)
     virtual bool Clean(PID pid,YarpRunProcInfo* &pRef)
     {
         pRef = YARP_NULLPTR;

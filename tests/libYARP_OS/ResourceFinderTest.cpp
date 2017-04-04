@@ -7,16 +7,20 @@
 
 #include <yarp/os/ResourceFinder.h>
 #include <yarp/os/Network.h>
-#include <yarp/os/impl/UnitTest.h>
-#include <yarp/os/impl/Logger.h>
 #include <yarp/os/Os.h>
-#include <yarp/os/impl/PlatformStdlib.h>
 #include <yarp/os/YarpPlugin.h>
+
+#include <yarp/os/impl/PlatformDirent.h>
+#include <yarp/os/impl/PlatformSysStat.h>
+#include <yarp/os/impl/PlatformUnistd.h>
+#include <yarp/os/impl/UnitTest.h>
+
+#include <cstdlib>
 
 using namespace yarp::os;
 using namespace yarp::os::impl;
 
-#include <stdio.h>
+#include <cstdio>
 
 class ResourceFinderTest : public UnitTest {
 public:
@@ -338,11 +342,10 @@ public:
 
 
     void mkdir(const ConstString& dirname) {
-        ACE_stat sb;
-        if (ACE_OS::stat(dirname.c_str(),&sb)<0) {
+        if (yarp::os::stat(dirname.c_str())<0) {
             yarp::os::mkdir(dirname.c_str());
         }
-        int r = ACE_OS::stat(dirname.c_str(),&sb);
+        int r = yarp::os::stat(dirname.c_str());
         if (r<0) {
             // show problem
             checkTrue(r>=0,"test directory present");
@@ -351,10 +354,10 @@ public:
 
     ConstString pathify(const Bottle& dirs) {
         char buf[1000];
-        char *result = getcwd(buf,sizeof(buf));
+        char *result = yarp::os::getcwd(buf,sizeof(buf));
         if (!result) {
             checkTrue(result!=NULL,"cwd/pwd not too long");
-            yarp::os::exit(1);
+            std::exit(1);
         }
         ConstString slash = Network::getDirectorySeparator();
         ConstString dir = buf;
@@ -733,7 +736,7 @@ public:
             rf.configure(0,NULL);
 
             char buf[1000];
-            char *result = getcwd(buf,sizeof(buf));
+            char *result = yarp::os::getcwd(buf,sizeof(buf));
             checkEqual(rf.getHomeContextPath(),result,"cwd found as context directory for writing");
             checkEqual(rf.getHomeRobotPath(),result,"cwd found as robot directory for writing");
         }

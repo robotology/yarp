@@ -9,9 +9,9 @@
 
 #include <vector>
 
-#include <stdio.h>
-#include <string.h>
-#include <stdlib.h>
+#include <cstdio>
+#include <cstring>
+#include <cstdlib>
 
 #include <yarp/os/StringInputStream.h>
 #include <yarp/os/StringOutputStream.h>
@@ -152,7 +152,7 @@ int WireTwiddler::configure(Bottle& desc, int offset, bool& ignored,
         //pass
     } else {
         fprintf(stderr,"%s does not know about %s\n", __FILE__, kind.c_str());
-        yarp::os::exit(1);
+        std::exit(1);
     }
 
     dbg_printf("Type %s (%s) len %d unit %d %s\n",
@@ -419,7 +419,7 @@ void WireTwiddlerReader::compute(const WireTwiddlerGap& gap) {
         bool bigendian = prop.find("is_bigendian").asInt()==1;
         if (bigendian) {
             fprintf(stderr,"Sorry, cannot handle bigendian images yet.\n");
-            yarp::os::exit(1);
+            std::exit(1);
         }
         ConstString encoding = prop.find("encoding").asString();
         int bpp = 1;
@@ -467,7 +467,7 @@ void WireTwiddlerReader::compute(const WireTwiddlerGap& gap) {
         default:
             fprintf(stderr, "Sorry, cannot handle [%s] images yet.\n",
                 encoding.c_str());
-            yarp::os::exit(1);
+            std::exit(1);
             break;
         }
         int quantum = 1;

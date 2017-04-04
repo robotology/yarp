@@ -4,7 +4,7 @@
  * CopyPolicy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
  */
 
-#include <string.h>
+#include <cstring>
 
 #include <yarp/os/PortablePair.h>
 #include <yarp/os/BufferedPort.h>

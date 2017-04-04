@@ -5,7 +5,7 @@
  *
  */
 
-#include <stdio.h>
+#include <cstdio>
 
 #include <string>
 
@@ -25,12 +25,14 @@
 #  include <ace/OS_NS_sys_wait.h>
 #else
 #  include <unistd.h>
-#  include <sys/wait.h>
+#  if defined(YARP_HAS_SYS_WAIT_H)
+#    include <sys/wait.h>
+#  endif
 #  ifndef ACE_OS
 #    define ACE_OS
 #  endif
 #endif
-#include <stdlib.h>
+#include <cstdlib>
 
 using namespace yarp::os;
 using namespace std;

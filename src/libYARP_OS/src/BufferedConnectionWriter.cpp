@@ -9,6 +9,8 @@
 #include <yarp/os/Bottle.h>
 #include <yarp/os/DummyConnector.h>
 
+#include <cstring>
+
 using namespace yarp::os::impl;
 using namespace yarp::os;
 
@@ -101,7 +103,7 @@ bool BufferedConnectionWriter::addPool(const yarp::os::Bytes& data) {
         if (add) target->push_back(pool);
     }
     if (pool != YARP_NULLPTR) {
-        ACE_OS::memcpy(pool->get()+poolIndex,data.get(),data.length());
+        memcpy(pool->get()+poolIndex,data.get(),data.length());
         poolIndex += data.length();
         pool->setUsed(poolIndex);
         return true;

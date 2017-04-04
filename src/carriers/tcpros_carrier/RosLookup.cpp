@@ -7,7 +7,7 @@
 
 #include "RosLookup.h"
 
-#include <stdlib.h>
+#include <cstdlib>
 
 using namespace yarp::os;
 
@@ -100,7 +100,7 @@ bool RosLookup::lookupTopic(const ConstString& name) {
     portnum = portnum2.asInt();
     protocol = "tcpros";
     if (verbose) {
-        printf("topic %s available at %s:%d\n", name.c_str(), 
+        printf("topic %s available at %s:%d\n", name.c_str(),
                hostname.c_str(), portnum);
     }
     return true;

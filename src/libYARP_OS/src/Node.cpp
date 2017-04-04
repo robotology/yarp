@@ -14,8 +14,9 @@
 #include <yarp/os/PortReport.h>
 #include <yarp/os/PortInfo.h>
 #include <yarp/os/Network.h>
+#include <yarp/os/Os.h>
 #include <yarp/os/RosNameSpace.h>
-#include <yarp/os/impl/PlatformStdlib.h>
+#include <cstdlib>
 #include <yarp/os/impl/NameClient.h>
 
 #include <algorithm>
@@ -298,7 +299,7 @@ public:
 
     void getPid(NodeArgs& na)
     {
-        na.reply = Value(static_cast<int>(ACE_OS::getpid()));
+        na.reply = Value(static_cast<int>(yarp::os::getpid()));
         na.success();
     }
 

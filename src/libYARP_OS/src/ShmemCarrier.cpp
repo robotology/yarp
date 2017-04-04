@@ -4,7 +4,7 @@
  * CopyPolicy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
  */
 
-#include <yarp/os/impl/PlatformStdlib.h>
+#include <cstdlib>
 #include <yarp/os/impl/ShmemCarrier.h>
 #include <yarp/os/ConstString.h>
 // removing old shmem version
@@ -103,8 +103,8 @@ bool yarp::os::impl::ShmemCarrier::becomeShmem(ConnectionState& proto, bool send
         // "classic" shmem
         //becomeShmemVersion<ShmemTwoWayStream>(proto,sender);
         //becomeShmemVersionTwoWayStream(proto,sender);
-        ACE_OS::printf("Classic shmem no longer exists\n");
-        ACE_OS::exit(1);
+        printf("Classic shmem no longer exists\n");
+        std::exit(1);
         return false;
     } else {
         // experimental shmem

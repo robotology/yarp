@@ -20,7 +20,7 @@
 
 #include <yarp/name/NameService.h>
 
-#include <stdio.h>
+#include <cstdio>
 
 namespace yarp {
     namespace name {

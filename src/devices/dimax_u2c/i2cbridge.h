@@ -35,7 +35,7 @@ typedef void*       HANDLE;
 #define INVALID_HANDLE_VALUE ((HANDLE)(-1))
 #endif
 
-#ifdef WIN32
+#if defined(_WIN32)
 //#include <windows.h>
 //#include <winbase.inl>
 //#include <windef.h>

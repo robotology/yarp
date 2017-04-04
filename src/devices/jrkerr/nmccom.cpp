@@ -15,7 +15,7 @@ THIS SOFTWARE IS PROVIDED BY THE AUTHOR ``AS IS'' AND ANY EXPRESS OR IMPLIED WAR
 //---------------------------------------------------------------------------
 
 
-#include <stdio.h>
+#include <cstdio>
 
 #include "nmccom.h"
 //#include "picio.h"
@@ -156,7 +156,7 @@ SERVOMOD *p;
 //char mess[40];
 
 InitVars( jrsendcmd);
-  
+
 jrsendcmd->ComPort = SioOpen( portname, baudrate);    //Open with default rate of 19200
 if ( jrsendcmd->ComPort == INVALID_HANDLE_VALUE) return 0;
 
@@ -451,7 +451,7 @@ return jrsendcmd->mod[addr].groupleader;
 //    }
 if ( jrsendcmd->ComPort!=INVALID_HANDLE_VALUE && jrsendcmd->ComPort!=NULL) NmcHardReset(0xFF, jrsendcmd);
 
-jrsendcmd->nummod = 0;    
+jrsendcmd->nummod = 0;
 SioClose( jrsendcmd->ComPort);
 }
 //---------------------------------------------------------------------------

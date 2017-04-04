@@ -1,7 +1,7 @@
 #include "include/mainwindow.h"
 #include <QApplication>
 
-#if defined(WIN32)
+#if defined(_WIN32)
     #pragma warning (disable : 4099)
     #pragma warning (disable : 4250)
     #pragma warning (disable : 4520)
@@ -11,12 +11,12 @@
 #include <yarp/os/ResourceFinder.h>
 #include <yarp/os/Network.h>
 
-#if defined(WIN32)
+#if defined(_WIN32)
     #include <windows.h>
 #else
-    #include <errno.h>
+    #include <cerrno>
     #include <sys/types.h>
-    #include <signal.h>
+    #include <csignal>
 #endif
 
 using namespace std;

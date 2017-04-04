@@ -63,7 +63,7 @@ private:
 
         virtual bool threadInit()
         {
-            ACE_OS::printf("-->Starting rate thread: %.2lf[ms]...", getRate());
+            printf("-->Starting rate thread: %.2lf[ms]...", getRate());
             n=0;
             t1=0;
             t2=0;
@@ -83,7 +83,7 @@ private:
             n++;
             t1=t2;
 
-            // ACE_OS::printf(".");
+            // printf(".");
         }
 
         virtual void threadRelease()
@@ -93,7 +93,7 @@ private:
             else
                 period=0;
 
-            ACE_OS::printf("thread quit\n");
+            printf("thread quit\n");
         }
 
     };
@@ -313,22 +313,22 @@ public:
 
         //try plausible rates
         double p;
-        ACE_OS::sprintf(message, "Thread1 requested period: %d[ms]", 15);
+        sprintf(message, "Thread1 requested period: %d[ms]", 15);
         report(0, message);
         p=test(15, 1);
-        ACE_OS::sprintf(message, "Thread1 estimated: %.2lf[ms]", p);
+        sprintf(message, "Thread1 estimated: %.2lf[ms]", p);
         report(0, message);
 
-        ACE_OS::sprintf(message, "Thread2 requested period: %d[ms]", 10);
+        sprintf(message, "Thread2 requested period: %d[ms]", 10);
         report(0, message);
         p=test(10, 1);
-        ACE_OS::sprintf(message, "Thread2 estimated period: %.2lf[ms]", p);
+        sprintf(message, "Thread2 estimated period: %.2lf[ms]", p);
         report(0, message);
 
-        ACE_OS::sprintf(message, "Thread3 requested period: %d[ms]", 1);
+        sprintf(message, "Thread3 requested period: %d[ms]", 1);
         report(0, message);
         p=test(1, 1);
-        ACE_OS::sprintf(message, "Thread3 estimated period: %.2lf[ms]", p);
+        sprintf(message, "Thread3 estimated period: %.2lf[ms]", p);
         report(0, message);
 
         report(0, "successful");

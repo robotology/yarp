@@ -8,7 +8,7 @@
 #ifndef PRIORITYCARRIER_INC
 #define PRIORITYCARRIER_INC
 
-#include <math.h>
+#include <cmath>
 #include <yarp/os/ModifyingCarrier.h>
 #include <yarp/os/Election.h>
 #include <yarp/os/NullConnectionReader.h>
@@ -45,12 +45,12 @@ public:
     virtual ~PriorityGroup() {}
     virtual bool acceptIncomingData(yarp::os::ConnectionReader& reader,
                                     PriorityCarrier *source);
-    bool recalculate(double t); 
+    bool recalculate(double t);
 
 public:
-    yarp::sig::Matrix InvA;         // the inverse of matrix (I-A) in the equation y(t) = [(I-A)^(-1) * B] .*x(t) 
+    yarp::sig::Matrix InvA;         // the inverse of matrix (I-A) in the equation y(t) = [(I-A)^(-1) * B] .*x(t)
     yarp::sig::Matrix B;            // matrix of biases B in the equation y(t) = [(I-A)^(-1) * B] .*x(t)
-    yarp::sig::Matrix Y;            // matrix y(t) 
+    yarp::sig::Matrix Y;            // matrix y(t)
     yarp::sig::Matrix X;            // matrix x(t)
     //yarp::os::Semaphore semDebug;   // this semaphor is used only when debug mode is active
                                     // to control the access to matrices from debug thread

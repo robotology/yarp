@@ -5,42 +5,43 @@
  */
 
 #include <yarp/os/Network.h>
+
+#include <yarp/os/Bottle.h>
+#include <yarp/os/Carriers.h>
+#include <yarp/os/ConstString.h>
+#include <yarp/os/DummyConnector.h>
+#include <yarp/os/InputStream.h>
+#include <yarp/os/MultiNameSpace.h>
+#include <yarp/os/NameSpace.h>
+#include <yarp/os/OutputProtocol.h>
+#include <yarp/os/Port.h>
+#include <yarp/os/Route.h>
 #include <yarp/os/Time.h>
 #include <yarp/os/Thread.h>
-#include <yarp/os/Port.h>
+#include <yarp/os/Vocab.h>
+#include <yarp/os/YarpPlugin.h>
 
+#include <yarp/os/impl/BottleImpl.h>
+#include <yarp/os/impl/BufferedConnectionWriter.h>
 #include <yarp/os/impl/Companion.h>
+#include <yarp/os/impl/Logger.h>
 #include <yarp/os/impl/NameClient.h>
 #include <yarp/os/impl/NameConfig.h>
-#include <yarp/os/impl/Logger.h>
-#include <yarp/os/ConstString.h>
-#include <yarp/os/Bottle.h>
-#include <yarp/os/Vocab.h>
-#include <yarp/os/DummyConnector.h>
-#include <yarp/os/NameSpace.h>
-#include <yarp/os/MultiNameSpace.h>
-
-#include <yarp/os/InputStream.h>
-#include <yarp/os/OutputProtocol.h>
-#include <yarp/os/Carriers.h>
-#include <yarp/os/impl/BufferedConnectionWriter.h>
-#include <yarp/os/impl/StreamConnectionReader.h>
-#include <yarp/os/Route.h>
-#include <yarp/os/YarpPlugin.h>
-#include <yarp/os/impl/PortCommand.h>
-#include <yarp/os/impl/NameConfig.h>
-#include <yarp/os/impl/ThreadImpl.h>
-#include <yarp/os/impl/PlatformStdio.h>
 #include <yarp/os/impl/PlatformSignal.h>
-#include <yarp/os/impl/BottleImpl.h>
+#include <yarp/os/impl/PlatformStdlib.h>
+#include <yarp/os/impl/PlatformStdio.h>
+#include <yarp/os/impl/PortCommand.h>
+#include <yarp/os/impl/StreamConnectionReader.h>
+#include <yarp/os/impl/ThreadImpl.h>
 
 #ifdef YARP_HAS_ACE
-#include <ace/config.h>
-#include <ace/String_Base.h>
-#include <ace/Init_ACE.h>
+# include <ace/config.h>
+# include <ace/Init_ACE.h>
+# include <ace/String_Base.h>
 #endif
 
-#include <stdlib.h>
+#include <cstdio>
+#include <cstdlib>
 
 using namespace yarp::os::impl;
 using namespace yarp::os;
@@ -616,7 +617,7 @@ void NetworkBase::autoInitMinimum() {
 void NetworkBase::initMinimum() {
     if (__yarp_is_initialized==0) {
         // Broken pipes need to be dealt with through other means
-        ACE_OS::signal(SIGPIPE, SIG_IGN);
+        yarp::os::impl::signal(SIGPIPE, SIG_IGN);
 
 #ifdef YARP_HAS_ACE
         ACE::init();
@@ -777,12 +778,12 @@ bool NetworkBase::setConnectionQos(const ConstString& src, const ConstString& de
         bool ret = write(srcCon, cmd, reply, true, true, 2.0);
         if(!ret) {
             if(!quiet)
-                 ACE_OS::fprintf(stderr, "Cannot write to '%s'\n",src.c_str());
+                 fprintf(stderr, "Cannot write to '%s'\n",src.c_str());
             return false;
         }
         if(reply.get(0).asString() != "ok") {
             if(!quiet)
-                 ACE_OS::fprintf(stderr, "Cannot set qos properties of '%s'. (%s)\n",
+                 fprintf(stderr, "Cannot set qos properties of '%s'. (%s)\n",
                                  src.c_str(), reply.toString().c_str());
             return false;
         }
@@ -809,12 +810,12 @@ bool NetworkBase::setConnectionQos(const ConstString& src, const ConstString& de
         bool ret = write(destCon, cmd, reply, true, true, 2.0);
         if(!ret) {
             if(!quiet)
-                 ACE_OS::fprintf(stderr, "Cannot write to '%s'\n",dest.c_str());
+                 fprintf(stderr, "Cannot write to '%s'\n",dest.c_str());
             return false;
         }
         if(reply.get(0).asString() != "ok") {
             if(!quiet)
-                 ACE_OS::fprintf(stderr, "Cannot set qos properties of '%s'. (%s)\n",
+                 fprintf(stderr, "Cannot set qos properties of '%s'. (%s)\n",
                                  dest.c_str(), reply.toString().c_str());
             return false;
         }
@@ -836,12 +837,12 @@ static bool getPortQos(const ConstString& port, const ConstString& unit,
     bool ret = NetworkBase::write(portCon, cmd, reply, true, true, 2.0);
     if(!ret) {
         if(!quiet)
-             ACE_OS::fprintf(stderr, "Cannot write to '%s'\n", port.c_str());
+             fprintf(stderr, "Cannot write to '%s'\n", port.c_str());
         return false;
     }
     if(reply.size() == 0 || reply.get(0).asString() == "fail") {
         if(!quiet)
-             ACE_OS::fprintf(stderr, "Cannot get qos properties of '%s'. (%s)\n",
+             fprintf(stderr, "Cannot get qos properties of '%s'. (%s)\n",
                              port.c_str(), reply.toString().c_str());
         return false;
     }
@@ -897,7 +898,7 @@ bool NetworkBase::write(const Contact& contact,
         }
         if (!port.addOutput(ec)) {
             if (!style.quiet) {
-                ACE_OS::fprintf(stderr, "Cannot make connection to '%s'\n",
+                fprintf(stderr, "Cannot make connection to '%s'\n",
                                 ec.toString().c_str());
             }
             return false;
@@ -1049,7 +1050,7 @@ NameStore *NetworkBase::getQueryBypass() {
 
 ConstString NetworkBase::getEnvironment(const char *key,
                                         bool *found) {
-    const char *result = ACE_OS::getenv(key);
+    const char *result = yarp::os::impl::getenv(key);
     if (found != YARP_NULLPTR) {
         *found = (result!=YARP_NULLPTR);
     }
@@ -1060,23 +1061,15 @@ ConstString NetworkBase::getEnvironment(const char *key,
 }
 
 void NetworkBase::setEnvironment(const ConstString& key, const ConstString& val) {
-#if defined(WIN32)
-    _putenv_s(key.c_str(),val.c_str());
-#else
-    ACE_OS::setenv(key.c_str(),val.c_str(),1);
-#endif
+    yarp::os::impl::setenv(key.c_str(),val.c_str(),1);
 }
 
 void NetworkBase::unsetEnvironment(const ConstString& key) {
-#if defined(WIN32)
-    _putenv_s(key.c_str(),"");
-#else
-    ACE_OS::unsetenv(key.c_str());
-#endif
+    yarp::os::impl::unsetenv(key.c_str());
 }
 
 ConstString NetworkBase::getDirectorySeparator() {
-#ifdef _WIN32
+#if defined(_WIN32)
     // note this may be wrong under cygwin
     // should be ok for mingw
     return "\\";
@@ -1086,7 +1079,7 @@ ConstString NetworkBase::getDirectorySeparator() {
 }
 
 ConstString NetworkBase::getPathSeparator() {
-#ifdef _WIN32
+#if defined(_WIN32)
     // note this may be wrong under cygwin
     // should be ok for mingw
     return ";";

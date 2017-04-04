@@ -12,7 +12,7 @@
 
 #include "ffmpeg_api.h"
 
-#include <stdio.h>
+#include <cstdio>
 
 #define ERROR_PROBLEM
 

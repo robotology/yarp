@@ -1,4 +1,4 @@
-/* 
+/*
  * Copyright (C)2014  iCub Facility - Istituto Italiano di Tecnologia
  * Author: Marco Randazzo
  * email:  marco.randazzo@iit.it
@@ -25,7 +25,7 @@
 #include <yarp/logger/YarpLogger.h>
 
 #include <string>
-#include <stdio.h>
+#include <cstdio>
 
 using namespace yarp::os;
 using namespace yarp::yarpLogger;
@@ -70,16 +70,16 @@ class logger_module : public yarp::os::RFModule
 
     virtual double getPeriod()
     {
-        return 10.0; 
+        return 10.0;
     }
-    
+
     virtual bool updateModule()
     {
         printf("logger running, listening to %d ports\n",the_logger->get_num_of_processes());
-        return true; 
+        return true;
     }
 
-    virtual bool respond(const yarp::os::Bottle& command,yarp::os::Bottle& reply) 
+    virtual bool respond(const yarp::os::Bottle& command,yarp::os::Bottle& reply)
     {
         reply.clear();
         if (command.get(0).asString()=="quit")
@@ -170,7 +170,7 @@ class logger_module : public yarp::os::RFModule
     }
 };
 
-int main(int argc, char *argv[]) 
+int main(int argc, char *argv[])
 {
     yarp::os::Network yarp;
     if (!yarp.checkNetwork())

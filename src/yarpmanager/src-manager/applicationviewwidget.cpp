@@ -1592,7 +1592,7 @@ void ApplicationViewWidget::onYARPHear()
             QString from = it->text(3);
             QString to = QString("/inspect/hear%1").arg(from);
 
-#if defined(WIN32)
+#if defined(_WIN32)
             QString cmd = "cmd.exe";
             QString param;
             param = QString("/C yarphear --name %1").arg(to);
@@ -1661,7 +1661,7 @@ void ApplicationViewWidget::onYARPRead()
             QString from = it->text(3);
             QString to = QString("/inspect/read%1").arg(from);
 
-#if defined(WIN32)
+#if defined(_WIN32)
             QString cmd = "cmd.exe";
             QString param;
             param = QString("/C yarp read %1").arg(to);
