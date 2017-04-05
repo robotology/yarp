@@ -34,10 +34,6 @@ namespace impl {
     using ACE_OS::setenv;
     using ACE_OS::unsetenv;
 # endif
-# if defined(_MSC_VER)
-    // FIXME FIXME FIXME
-    YARP_COMPILER_WARNING("Check if ACE_OS::putenv works")
-#endif
     using ACE_OS::putenv;
 #else
     using std::getenv;
