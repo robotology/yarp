@@ -13,7 +13,7 @@
 #include <gsl/gsl_linalg.h>
 #include <gsl/gsl_blas.h>
 
-//#include <gsl/gsl_cmath>
+//#include <gsl/gsl_math.h>
 //#include <gsl/gsl_chebyshev.h>
 
 #include <yarp/sig/Matrix.h>
