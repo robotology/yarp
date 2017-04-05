@@ -32,7 +32,6 @@
 #include <yarp/dev/DeviceDriver.h>
 #include <yarp/dev/ControlBoardInterfaces.h>
 
-#include <ace/OS_NS_cstdio>
 #include <ace/Vector_T.h>
 
 #include <cstdio>
@@ -45,7 +44,6 @@
 #include <iostream>
 #include <ace/DEV_Connector.h>
 #include <ace/TTY_IO.h>
-#include <ace/OS_NS_cstdio>
 #include <yarp/os/Time.h>
 
 #include <yarp/os/Semaphore.h>
