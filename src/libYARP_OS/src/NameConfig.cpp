@@ -20,6 +20,7 @@
 #include <yarp/os/impl/PlatformNetdb.h>
 #include <yarp/os/impl/PlatformUnistd.h>
 #include <yarp/os/impl/PlatformLimits.h>
+#include <yarp/os/impl/PlatformIfaddrs.h>
 #include <yarp/os/impl/SplitString.h>
 
 #include <cstdlib>
@@ -32,7 +33,6 @@
 #  include <cstring>
 #  include <arpa/inet.h>
 #  include <sys/socket.h>
-#  include <ifaddrs.h>
 #endif
 
 using namespace yarp::os::impl;
@@ -369,7 +369,9 @@ bool NameConfig::isLocalName(const ConstString& name) {
 #endif
 
     // just in case
-    if (name=="localhost"||name=="127.0.0.1") { result = true; }
+    if (name=="localhost"||name=="127.0.0.1") {
+        result = true;
+    }
 
     return result;
 }
@@ -377,7 +379,7 @@ bool NameConfig::isLocalName(const ConstString& name) {
 yarp::os::Bottle NameConfig::getIpsAsBottle() {
     yarp::os::Bottle result;
 
-#ifdef YARP_HAS_ACE
+#if defined(YARP_HAS_ACE)
     ACE_INET_Addr *ips = YARP_NULLPTR;
     size_t count = 0;
     if (ACE::get_ip_interfaces(count,ips)>=0) {

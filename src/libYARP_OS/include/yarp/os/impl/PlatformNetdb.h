@@ -14,14 +14,6 @@
 #endif
 
 
-#ifndef NI_MAXHOST
-  YARP_COMPILER_ERROR("NI_MAXHOST not defined on this platform")
-#endif
-
-#ifndef NI_NUMERICHOST
-  YARP_COMPILER_ERROR("NI_NUMERICHOST not defined on this platform")
-#endif
-
 namespace yarp {
 namespace os {
 namespace impl {

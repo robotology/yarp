@@ -18,9 +18,11 @@ namespace os {
 namespace impl {
 
 
-#if defined(_WIN32)
+#if defined(YARP_HAS_ACE)
+    using std::getenv;
+# if defined(_MSC_VER)
     // ACE bindings for setenv and unsetenv do not work
-    // on WIN32 (last tested ACE 6.4.2).
+    // on Visual Studio (last tested ACE 6.4.2, VS 2015).
     inline int setenv(const char *name, const char *value, int overwrite) {
         YARP_UNUSED(overwrite);
         return _putenv_s(name, value);
@@ -28,19 +30,22 @@ namespace impl {
     inline int unsetenv(const char *name) {
         return _putenv_s(name, "");
     }
-#elif defined(YARP_HAS_ACE)
+# else
     using ACE_OS::setenv;
     using ACE_OS::unsetenv;
+# endif
+# if defined(_MSC_VER)
+    // FIXME FIXME FIXME
+    YARP_COMPILER_WARNING("Check if ACE_OS::putenv works")
+#endif
+    using ACE_OS::putenv;
 #else
+    using std::getenv;
     using ::setenv;
     using ::unsetenv;
+    using ::putenv;
 #endif
 
-#ifdef YARP_HAS_ACE
-    using ACE_OS::getenv;
-#else
-    using ::getenv;
-#endif
 
 } // namespace impl
 } // namespace os

@@ -17,7 +17,6 @@
 #include <yarp/os/impl/PortCommand.h>
 
 #include <cstdio>
-#include <csignal>
 
 //#define YMSG(x) printf x;
 //#define YTRACE(x) YMSG(("at %s\n",x))

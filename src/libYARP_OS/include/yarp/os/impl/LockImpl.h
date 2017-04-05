@@ -22,7 +22,7 @@ namespace yarp {
 #ifdef YARP_HAS_CXX11
 #  include <yarp/os/impl/CXX11LockImpl.h>
 #else
-#  if defined(__linux__) || defined(__APPLE__)
+#  if defined(__unix__) || defined(__APPLE__)
 #    include <yarp/os/impl/POSIXLockImpl.h>
 #  else
 //   For everything else, there's ACE

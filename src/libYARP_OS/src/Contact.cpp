@@ -339,7 +339,7 @@ ConstString Contact::toURI(bool includeCarrier) const
 
 ConstString Contact::convertHostToIp(const char *name)
 {
-#ifdef YARP_HAS_ACE
+#if defined(YARP_HAS_ACE)
     ACE_INET_Addr addr((u_short)0,name);
     char ipstr[256];
     addr.get_host_addr(ipstr,sizeof(ipstr));

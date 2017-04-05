@@ -17,7 +17,7 @@ namespace yarp {
 namespace os {
 namespace impl {
 
-#ifdef YARP_HAS_ACE
+#if defined(YARP_HAS_ACE)
     typedef ACE_stat YARP_stat;
     using ACE_OS::stat;
     using ACE_OS::mkdir;

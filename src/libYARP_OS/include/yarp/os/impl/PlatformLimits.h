@@ -7,14 +7,10 @@
 #define YARP_OS_IMPL_PLATFORMLIMITS_H
 
 #include <yarp/conf/system.h>
-#ifdef YARP_HAS_ACE
+#if defined(YARP_HAS_ACE)
 # include <ace/os_include/os_limits.h>
 #else
-# include <limits.h>
-#endif
-
-#ifndef HOST_NAME_MAX
-  YARP_COMPILER_ERROR("HOST_NAME_MAX not defined on this platform")
+# include <climits>
 #endif
 
 #endif // YARP_OS_IMPL_PLATFORMLIMITS_H

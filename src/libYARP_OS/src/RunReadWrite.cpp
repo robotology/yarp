@@ -5,11 +5,11 @@
 */
 
 #include <cstdio>
-#include <csignal>
 #include <yarp/os/Time.h>
 #include <yarp/os/Bottle.h>
 #include <yarp/os/Property.h>
 #include <yarp/os/impl/RunReadWrite.h>
+#include <yarp/os/impl/PlatformSignal.h>
 
 
 int RunWrite::loop()
@@ -131,7 +131,7 @@ int RunReadWrite::loop()
     /////////////////////
 
     #if !defined(_WIN32)
-    if (getppid()!=1)
+    if (yarp::os::impl::getppid()!=1)
     #endif
     {
         RUNLOG("start()")
@@ -140,7 +140,7 @@ int RunReadWrite::loop()
         while (mRunning)
         {
             #if !defined(_WIN32)
-            if (getppid()==1) break;
+            if (yarp::os::impl::getppid()==1) break;
             #endif
 
             yarp::os::Bottle bot;
@@ -154,7 +154,7 @@ int RunReadWrite::loop()
             if (!mRunning) break;
 
             #if !defined(_WIN32)
-            if (getppid()==1) break;
+            if (yarp::os::impl::getppid()==1) break;
             #endif
 
             if (bot.size()==1)
@@ -195,9 +195,9 @@ int RunReadWrite::loop()
         ::exit(0);
 #else
         int term_pipe[2];
-        int warn_suppress = pipe(term_pipe);
+        int warn_suppress = yarp::os::impl::pipe(term_pipe);
         YARP_UNUSED(warn_suppress);
-        dup2(term_pipe[0],STDIN_FILENO);
+        yarp::os::impl::dup2(term_pipe[0],STDIN_FILENO);
         FILE* file_term_pipe=fdopen(term_pipe[1],"w");
         fprintf(file_term_pipe,"SHKIATTETE!\n");
         fflush(file_term_pipe);
@@ -233,7 +233,7 @@ void RunReadWrite::run()
         RUNLOG("mRunning")
 
         #if !defined(_WIN32)
-        if (getppid()==1) break;
+        if (yarp::os::impl::getppid()==1) break;
         #endif
 
         if (!fgets(txt,2048,stdin) || ferror(stdin) || feof(stdin)) break;
@@ -241,7 +241,7 @@ void RunReadWrite::run()
         RUNLOG(txt)
 
         #if !defined(_WIN32)
-        if (getppid()==1) break;
+        if (yarp::os::impl::getppid()==1) break;
         #endif
 
         if (!mRunning) break;

@@ -166,6 +166,8 @@ set(YARP_OS_IMPL_HDRS include/yarp/os/impl/ACELockImpl.h
                       include/yarp/os/impl/NameserCarrier.h
                       include/yarp/os/impl/NameServer.h
                       include/yarp/os/impl/PlatformDirent.h
+                      include/yarp/os/impl/PlatformDlfcn.h
+                      include/yarp/os/impl/PlatformIfaddrs.h
                       include/yarp/os/impl/PlatformLimits.h
                       include/yarp/os/impl/PlatformList.h
                       include/yarp/os/impl/PlatformMap.h
@@ -173,9 +175,11 @@ set(YARP_OS_IMPL_HDRS include/yarp/os/impl/ACELockImpl.h
                       include/yarp/os/impl/PlatformSet.h
                       include/yarp/os/impl/PlatformSignal.h
                       include/yarp/os/impl/PlatformSize.h
-                      include/yarp/os/impl/PlatformSysStat.h
                       include/yarp/os/impl/PlatformStdio.h
                       include/yarp/os/impl/PlatformStdlib.h
+                      include/yarp/os/impl/PlatformSysPrctl.h
+                      include/yarp/os/impl/PlatformSysStat.h
+                      include/yarp/os/impl/PlatformSysWait.h
                       include/yarp/os/impl/PlatformThread.h
                       include/yarp/os/impl/PlatformTime.h
                       include/yarp/os/impl/PlatformUnistd.h
@@ -408,19 +412,19 @@ add_library(YARP_OS ${YARP_OS_SRCS}
                     ${YARP_OS_IMPL_HMAC_HDRS})
 add_library(YARP::YARP_OS ALIAS YARP_OS)
 
-target_link_libraries(YARP_OS PRIVATE ${ACE_LIBRARIES})
+target_link_libraries(YARP_OS ${ACE_LIBRARIES})
 
 set_property(TARGET YARP_OS PROPERTY PUBLIC_HEADER ${YARP_OS_HDRS})
 set_property(TARGET YARP_OS PROPERTY PRIVATE_HEADER ${YARP_OS_IMPL_HDRS})
 
 if(CMAKE_SYSTEM_NAME STREQUAL "Linux")
-    target_link_libraries(YARP_OS PRIVATE pthread)
+    target_link_libraries(YARP_OS pthread)
 endif()
 
 if(YARP_HAS_LIBEDIT)
     add_definitions(-DWITH_LIBEDIT)
     include_directories(${Libedit_INCLUDE_DIRS})
-    target_link_libraries(YARP_OS PRIVATE ${Libedit_LIBRARIES})
+    target_link_libraries(YARP_OS ${Libedit_LIBRARIES})
 endif()
 
 option(YARP_TEST_HEAP "Replace new/delete operators with test harness (may be incompatible with ACE)" FALSE)

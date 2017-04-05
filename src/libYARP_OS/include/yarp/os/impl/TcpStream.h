@@ -30,12 +30,12 @@
 #include <sys/socket.h>
 #include <netinet/in.h>
 #include <arpa/inet.h>
-#if defined(YARP_HAS_SYS_WAIT_H)
-# include <sys/wait.h>
-#endif
-#include <csignal>
+
 #include <cstring>
-#include <unistd.h>
+
+#include <yarp/os/impl/PlatformSignal.h>
+#include <yarp/os/impl/PlatformUnistd.h>
+#include <yarp/os/impl/PlatformSysWait.h>
 
 namespace yarp {
     namespace os {
