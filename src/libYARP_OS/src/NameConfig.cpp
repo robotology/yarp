@@ -246,7 +246,7 @@ ConstString NameConfig::getHostName(bool prefer_loopback, const ConstString& see
     char hostname[NI_MAXHOST];
     ConstString ip;
     struct ifaddrs *ifaddr, *ifa;
-    if (getifaddrs(&ifaddr) == -1) {
+    if (yarp::os::impl::getifaddrs(&ifaddr) == -1) {
         perror("getifaddrs in getIps");
         std::exit(EXIT_FAILURE);
     }
