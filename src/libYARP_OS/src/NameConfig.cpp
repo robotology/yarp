@@ -27,12 +27,12 @@
 #include <cstdio>
 
 #ifdef YARP_HAS_ACE
-#  include <ace/INET_Addr.h>
-#  include <ace/Sock_Connect.h>
+# include <ace/INET_Addr.h>
+# include <ace/Sock_Connect.h>
 #else
-#  include <cstring>
-#  include <arpa/inet.h>
-#  include <sys/socket.h>
+# include <cstring>
+# include <arpa/inet.h>
+# include <sys/socket.h>
 #endif
 
 using namespace yarp::os::impl;
