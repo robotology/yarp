@@ -77,33 +77,22 @@ bool NameConfig::fromString(const ConstString& txt) {
 }
 
 ConstString NameConfig::expandFilename(const char *fname) {
-    ConstString root = NetworkBase::getEnvironment("YARP_CONF");
-
-    // yarp 2.4 modifications begin
-    // We should now be using YARP_CONFIG_HOME.
-    // We still respect the YARP_CONF variable if defined, but it
-    // is deprecated.
-    if (root=="") {
-        root = ResourceFinder::getConfigHome();
+#ifndef YARP_NO_DEPRECATED // Since YARP 2.3.70
+    ConstString yarp_conf = NetworkBase::getEnvironment("YARP_CONF");
+    if (!yarp_conf.empty()) {
+        YARP_WARN(Logger::get(), "The YARP_CONF variable is deprecated and it is no longer used. "
+                                 "Please check the documentation for yarp::os::ResourceFinder::getConfigHome()");
     }
-    // yarp 2.4 modifications end
+#endif
 
-    ConstString home = NetworkBase::getEnvironment("HOME");
-    ConstString homepath = NetworkBase::getEnvironment("HOMEPATH");
-    ConstString conf = "";
-    if (root!="") {
-        //conf = new File(new File(root,"conf"),"namer.conf");
-        //conf = root + "/conf/" + fname;
-        // users of YARP_CONF want /conf postfix removed
+    ConstString root = ResourceFinder::getConfigHome();
+    ConstString conf;
+    if (!root.empty()) {
         conf = root + NetworkBase::getDirectorySeparator() + fname;
-    } else if (homepath!="") {
-        conf = NetworkBase::getEnvironment("HOMEDRIVE") + homepath + "\\yarp\\conf\\" + fname;
-    } else if (home!="") {
-        conf = home + "/.yarp/conf/" + fname;
     } else {
-        YARP_ERROR(Logger::get(),"Cannot read configuration - please set YARP_CONF or HOME or HOMEPATH");
-        std::exit(1);
+        conf = fname;
     }
+
     YARP_DEBUG(Logger::get(),ConstString("Configuration file: ") + conf.c_str());
     return conf.c_str();
 }
