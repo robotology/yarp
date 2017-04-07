@@ -22,8 +22,6 @@ void show_help() {
     printf("  --namespace  report file that caches the current YARP namespace\n");
     printf("  --nameserver report file that caches nameserver contact information\n");
     printf("\n");
-    printf("Setting YARP_CONF overrides the path used for namespace/nameserver cache files.\n");
-    printf("\n");
     yarp_context_help();
     yarp_robot_help();
 }

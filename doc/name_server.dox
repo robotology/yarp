@@ -346,7 +346,6 @@ important key is "name", whose value is the name of the port.
 For yarp utilities to correctly discover how
 to contact the name server,
 there should be a file yarp.conf in the directory $HOME/.yarp/conf/
-(or in the directory specified by an environment variable $YARP_CONF)
 that looks like this:
 \verbatim
 192.168.0.3 10000

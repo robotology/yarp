@@ -7,6 +7,10 @@
 import os
 
 def find_name_server():
+    # ==================================================================
+    # WARNING: This code is deprecated and will no longer work,
+    #          see ResourceFinder documentation for paths searched
+    #          by YARP
     if "YARP_CONF" in os.environ.keys():
         base = os.environ["YARP_CONF"]
     elif "HOMEDIR" in os.environ.keys():
@@ -17,6 +21,7 @@ def find_name_server():
         print "Please set YARP_CONF to the location reported by this command:"
         print "  yarp conf"
         return None
+    # ==================================================================
 
     print "Config files should be in", base
 

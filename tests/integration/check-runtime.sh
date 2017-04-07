@@ -43,7 +43,7 @@ make
 make install
 
 cd $base
-export YARP_CONF=$PWD
+export YARP_CONFIG_DIR=$PWD
 echo "0 0 local" > yarp.conf
 export YARP_DATA_DIRS=$PWD/fakebot/share/yarp
 
