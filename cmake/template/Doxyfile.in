@@ -705,10 +705,10 @@ FILE_VERSION_FILTER    =
 # will be used as the name of the layout file.
 #
 # Note that if you run doxygen from a directory containing a file called
-# DoxygenLayout.xml, doxygen will parse it automatically even if the LAYOUT_FILE
+# DoxygenLayout.xml, doxygen will parse it automatically evesn if the LAYOUT_FILE
 # tag is left empty.
 
-LAYOUT_FILE            =
+LAYOUT_FILE            = @CMAKE_SOURCE_DIR@/doc/yarp-doxygen-layout.xml
 
 # The CITE_BIB_FILES tag can be used to specify one or more bib files containing
 # the reference definitions. This must be a list of .bib files. The .bib
@@ -1138,7 +1138,7 @@ HTML_FILE_EXTENSION    = .html
 # of the possible markers and block names see the documentation.
 # This tag requires that the tag GENERATE_HTML is set to YES.
 
-HTML_HEADER            = @CMAKE_SOURCE_DIR@/doc/yarp-header.html
+HTML_HEADER            = @CMAKE_SOURCE_DIR@/doc/yarp-doxygen-header.html
 
 # The HTML_FOOTER tag can be used to specify a user-defined HTML footer for each
 # generated HTML page. If the tag is left blank doxygen will generate a standard
@@ -1173,7 +1173,7 @@ HTML_STYLESHEET        =
 # list). For an example see the documentation.
 # This tag requires that the tag GENERATE_HTML is set to YES.
 
-HTML_EXTRA_STYLESHEET  = @CMAKE_SOURCE_DIR@/doc/yarp-doxygen.css
+HTML_EXTRA_STYLESHEET  = @CMAKE_SOURCE_DIR@/doc/yarp-doxygen-style.css
 
 # The HTML_EXTRA_FILES tag can be used to specify one or more extra images or
 # other source files which should be copied to the HTML output directory. Note
@@ -1443,7 +1443,7 @@ ECLIPSE_DOC_ID         = eu.robotology.YARP-@YARP_VERSION_SHORT@
 # The default value is: NO.
 # This tag requires that the tag GENERATE_HTML is set to YES.
 
-DISABLE_INDEX          = NO
+DISABLE_INDEX          = YES
 
 # The GENERATE_TREEVIEW tag is used to specify whether a tree-like index
 # structure should be generated to display hierarchical information. If the tag
