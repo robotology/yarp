@@ -99,7 +99,7 @@ namespace yarp {
          * Returns the null-terminated hostname in the character array
          * @c hostname, which has a length of @c size bytes.
          *
-         * @param[out] the system hostname
+         * @param[out] hostname the system hostname
          * @param size The size of the @c hostname array
          */
         YARP_OS_API void gethostname(char* hostname, size_t size);
