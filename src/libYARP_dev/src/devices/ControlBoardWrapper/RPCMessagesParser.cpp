@@ -2548,6 +2548,7 @@ bool RPCMessagesParser::respond(const yarp::os::Bottle& cmd, yarp::os::Bottle& r
                                 b.addDouble(p.stiction_down_val);
                                 b.addDouble(p.kff);
                             }
+                            break;
 
                             case VOCAB_VEL_PIDS:
                             {
@@ -2571,6 +2572,7 @@ bool RPCMessagesParser::respond(const yarp::os::Bottle& cmd, yarp::os::Bottle& r
                                 }
                                 delete[] p;
                             }
+                            break;
 
                             case VOCAB_REFERENCE:
                             {
