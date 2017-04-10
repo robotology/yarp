@@ -43,7 +43,7 @@
 #projectnumber
 {
     font-size: 20%;
-    font-family: "Courier New", "Courier", "Monaco", monospace;
+    font-family: monospace, fixed;
     color: #19c2d8;
     text-shadow: 0 2px 2px rgba(135,181,204,0.9);
 }
@@ -52,51 +52,13 @@
     background-color: #f6fbfd;
 }
 
-#main-nav .sm-dox a {
-    font-size: 14px;
-    font-family: Moonhouse, Roboto, sans-serif;
-    font-weight: bold;
-    font-style: oblique;
-    font-variant: small-caps;
-    color: #19526e;
-    text-shadow: 0 2px 2px rgba(255,255,255,0.9);
-}
-
-#main-nav .sm-dox a:hover {
-    color: white;
-    text-shadow: 0 2px 2px rgba(25,82,110,0.9);
-}
-
 #yarp-logo {
     max-height: 128px;
     max-width: 100%;
 }
 
-h1, h2, h3, h4 {
-    color: #19526e;
-    text-shadow: 0 2px 2px rgba(135,181,204,0.9);
-}
 
-h1 {
-    font-family: Moonhouse, Roboto, sans-serif;
-    font-variant: small-caps;
-}
-
-h2.groupheader {
-    font-family: Moonhouse, Roboto, sans-serif;
-    font-style: oblique;
-    font-variant: small-caps;
-}
-
-h2.memtitle {
-    font-weight: bold;
-}
-
-td.memname {
-    font-size: 120%;
-    font-weight: bold;
-}
-
+/* Page title */
 #doc-content div.title {
     font-size: 160%;
     font-weight: bold;
@@ -105,8 +67,65 @@ td.memname {
     text-shadow: 0 2px 2px rgba(135,181,204,0.9);
 }
 
+h1, h2, h3, h4 {
+    color: #19526e;
+    text-shadow: 0 2px 2px rgba(135,181,204,0.9);
+}
+
+h1, h2, h3 {
+    font-variant: small-caps;
+}
+
+/* Header for groups of functions */
+h2.groupheader {
+    font-weight: bold;
+    font-style: oblique;
+}
+
+/* Class member title (i.e. name of the method, etc.) */
+.memtitle {
+    font-weight: bold;
+    font-variant: normal;
+}
+
+/* Method name in method full description */
+.memname {
+    font-size: 110%;
+    font-weight: bold;
+}
+
+/* Method parameter names in method full description */
+.paramname {
+    color: #5991ac;
+    font-size: 110%;
+}
+
+/* Permalink symbol */
+span.permalink {
+    line-height: 1;
+    font-size: 100%;
+    vertical-align: top;
+    text-shadow: none;
+}
+span.permalink > a {
+    color: rgba(135,181,204,0.2);
+}
+span.permalink > a:hover {
+    color: rgba(135,181,204,1.0);
+}
+
+/* Number of the overload of the method (for example "[1/2]") next to the method name */
 .overload {
     font-size: 50%;
     color: #5991ac;
     text-shadow: 0 2px 2px rgba(135,181,204,0.9);
+}
+
+/* Definition at line xxx of file yyy. */
+p.definition {
+    font-size: 75%;
+    font-family: monospace, fixed;
+    text-align: right;
+    margin-bottom: 0px;
+
 }
