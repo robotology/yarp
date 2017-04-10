@@ -127,5 +127,28 @@ p.definition {
     font-family: monospace, fixed;
     text-align: right;
     margin-bottom: 0px;
+}
 
+/* Lists of classes/functions. Also file list at the end of the pages */
+#doc-content > div.contents {
+    font-size: 75%;
+    line-height: 1.2;
+}
+#doc-content > div.contents > ul {
+    padding-left: 30px;
+    font-family: monospace, fixed;
+    margin-top: 0px;
+    margin-bottom: 0px;
+}
+
+/* "<code>" elements (usually the "#include <...>" in the documentation */
+code {
+    border: 1px solid #C4CFE5;
+    background-color: #FBFCFD;
+    padding: 4px 6px;
+    margin: 4px 8px 4px 2px;
+    font-size:  9pt;
+    line-height: 125%;
+    font-size: 105%;
+    border-radius: 4px;
 }
