@@ -58,17 +58,17 @@ bool TestFrameGrabber::open(yarp::os::Searchable& config) {
                                "desired vertical fov of test image").asDouble();
     mirror=config.check("mirror",Value(false),
                         "mirroring disabled by default").asBool();
-    intrinsic.put("focalLengthX",config.check("focalLengthX",Value(4.0),"").asDouble());
-    intrinsic.put("focalLengthY",config.check("focalLengthY",Value(5.0),"").asDouble());
-    intrinsic.put("principalPointX",config.check("principalPointX",Value(6.0),"").asDouble());
-    intrinsic.put("principalPointY",config.check("principalPointY",Value(7.0),"").asDouble());
-    intrinsic.put("retificationMatrix",config.check("retificationMatrix",*retM,""));
-    intrinsic.put("distortionModel",config.check("distortionModel",Value("FishEye"),"").asString());
-    intrinsic.put("k1",config.check("k1",Value(8.0),"").asDouble());
-    intrinsic.put("k2",config.check("k2",Value(9.0),"").asDouble());
-    intrinsic.put("k3",config.check("k3",Value(10.0),"").asDouble());
-    intrinsic.put("t1",config.check("t1",Value(11.0),"").asDouble());
-    intrinsic.put("t2",config.check("t2",Value(12.0),"").asDouble());
+    intrinsic.put("focalLengthX",config.check("focalLengthX",Value(4.0),"Horizontal component of the focal lenght of the test_grabber").asDouble());
+    intrinsic.put("focalLengthY",config.check("focalLengthY",Value(5.0),"Vertical component of the focal lenght of the test_grabber").asDouble());
+    intrinsic.put("principalPointX",config.check("principalPointX",Value(6.0),"X coordinate of the principal point of the test_grabber").asDouble());
+    intrinsic.put("principalPointY",config.check("principalPointY",Value(7.0),"Y coordinate of the principal point of the test_grabber").asDouble());
+    intrinsic.put("retificationMatrix",config.check("retificationMatrix",*retM,"Matrix that describes the lens' distortion(fake)"));
+    intrinsic.put("distortionModel",config.check("distortionModel",Value("FishEye"),"Reference to group of parameters describing the distortion model of the camera").asString());
+    intrinsic.put("k1",config.check("k1",Value(8.0),"Radial distortion coefficient of the lens(fake)").asDouble());
+    intrinsic.put("k2",config.check("k2",Value(9.0),"Radial distortion coefficient of the lens(fake)").asDouble());
+    intrinsic.put("k3",config.check("k3",Value(10.0),"Radial distortion coefficient of the lens(fake)").asDouble());
+    intrinsic.put("t1",config.check("t1",Value(11.0),"Tangential distortion of the lens(fake)").asDouble());
+    intrinsic.put("t2",config.check("t2",Value(12.0),"Tangential distortion of the lens(fake)").asDouble());
     //Only for debug
     CameraConfig conf1, conf2, conf3;
     conf1.height=128; conf1.width=128; conf1.framerate=60.0; conf1.pixelCoding=VOCAB_PIXEL_RGB;
