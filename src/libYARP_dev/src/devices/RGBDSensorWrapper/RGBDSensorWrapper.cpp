@@ -380,8 +380,7 @@ bool RGBDSensorWrapper::openAndAttachSubDevice(Searchable& prop)
     */
 
     RateThread::setRate(rate);
-    RateThread::start();
-    return true;
+    return RateThread::start();
 }
 
 bool RGBDSensorWrapper::close()
@@ -394,7 +393,11 @@ bool RGBDSensorWrapper::close()
     {
         if(subDeviceOwned)
             subDeviceOwned->close();
-        subDeviceOwned = NULL;
+        if(subDeviceOwned)
+        {
+            delete subDeviceOwned;
+            subDeviceOwned=NULL;
+        }
         sensor_p = NULL;
         isSubdeviceOwned = false;
     }
@@ -529,9 +532,7 @@ bool RGBDSensorWrapper::attachAll(const PolyDriverList &device2attach)
         return false;
 
     RateThread::setRate(rate);
-    RateThread::start();
-
-    return true;
+    return RateThread::start();
 }
 
 bool RGBDSensorWrapper::detachAll()
