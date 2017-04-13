@@ -2076,7 +2076,7 @@ bool V4L_camera::getActive(int feature, bool *_isActive)
 
         case YARP_FEATURE_EXPOSURE:
         {
-            bool _hasMan, _hasMan2;
+            bool _hasMan(false), _hasMan2(false);
             hasFeature(V4L2_CID_EXPOSURE, &_hasMan) ||  hasFeature(V4L2_CID_EXPOSURE_ABSOLUTE, &_hasMan2);   // check manual version (normal and asbolute)
             double _hasAuto =  get_V4L2_control(V4L2_CID_EXPOSURE_AUTO, true); // check auto version
 
