@@ -21,7 +21,7 @@
 #include <cstdio>
 #include <cstring>
 
-#ifdef YARP_HAS_ACE
+#if defined(YARP_HAS_ACE)
 # include <ace/INET_Addr.h>
 #else
 # include <sys/types.h>
