@@ -349,7 +349,7 @@ bool RGBDSensorWrapper::openAndAttachSubDevice(Searchable& prop)
 
     if (!subDeviceOwned->isValid())
     {
-        yError("opening controlBoardWrapper2 subdevice... FAILED\n");
+        yError("opening IRGBDSensor subdevice... FAILED\n");
         return false;
     }
     isSubdeviceOwned = true;

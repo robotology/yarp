@@ -113,7 +113,7 @@ public:
  *
  * \code{.unparsed}
  * device RGBDSensorWrapper
- * subdevice RGBDsensor
+ * subdevice <RGBDsensor>
  * period 30
  * name /<robotName>/RGBDSensor
  * \endcode
