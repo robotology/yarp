@@ -1283,7 +1283,7 @@ ConstString ResourceFinder::getDataHomeWithPossibleCreation(bool mayCreate)
     }
 #endif
     ConstString home_version = NetworkBase::getEnvironment("HOME");
-#ifdef __APPLE__
+#if defined(__APPLE__)
     if (home_version != "") {
         return createIfAbsent(mayCreate,
                               home_version
@@ -1321,7 +1321,7 @@ ConstString ResourceFinder::getConfigHomeWithPossibleCreation(bool mayCreate)
     }
 #endif
 
-#ifdef __APPLE__
+#if defined(__APPLE__)
     ConstString home_mac_version = getDataHomeNoCreate();
     if (home_mac_version != "") {
         return createIfAbsent(mayCreate,
@@ -1401,7 +1401,7 @@ Bottle ResourceFinder::getConfigDirs()
 #endif
 
     Bottle result;
-#ifdef __APPLE__
+#if defined(__APPLE__)
     result.addString("/Library/Preferences/yarp");
 #endif
     result.addString("/etc/yarp");

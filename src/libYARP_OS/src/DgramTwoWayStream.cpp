@@ -13,7 +13,7 @@
 #include <yarp/os/Time.h>
 #include <yarp/os/NetType.h>
 
-#ifdef YARP_HAS_ACE
+#if defined(YARP_HAS_ACE)
 #  include <ace/SOCK_Dgram_Mcast.h>
 #  include <ace/SOCK_Dgram.h>
 #  include <ace/Handle_Set.h>
@@ -79,7 +79,7 @@ static void addCrc(char *buf, YARP_SSIZE_T length, YARP_SSIZE_T crcLength, int p
 
 
 bool DgramTwoWayStream::open(const Contact& remote) {
-#ifdef YARP_HAS_ACE
+#if defined(YARP_HAS_ACE)
     ACE_INET_Addr anywhere((u_short)0, (ACE_UINT32)INADDR_ANY);
     Contact local(anywhere.get_host_addr(),
                   anywhere.get_port_number());
@@ -93,7 +93,7 @@ bool DgramTwoWayStream::open(const Contact& local, const Contact& remote) {
     localAddress = local;
     remoteAddress = remote;
 
-#ifdef YARP_HAS_ACE
+#if defined(YARP_HAS_ACE)
     localHandle = ACE_INET_Addr((u_short)(localAddress.getPort()),(ACE_UINT32)INADDR_ANY);
     if (remote.isValid()) {
         remoteHandle.set(remoteAddress.getPort(),remoteAddress.getHost().c_str());
@@ -154,7 +154,7 @@ bool DgramTwoWayStream::open(const Contact& local, const Contact& remote) {
 
     configureSystemBuffers();
 
-#ifdef YARP_HAS_ACE
+#if defined(YARP_HAS_ACE)
     dgram->get_local_addr(localHandle);
     YARP_DEBUG(Logger::get(),ConstString("starting DGRAM entity on port number ") + NetType::toString(localHandle.get_port_number()));
     localAddress = Contact("127.0.0.1",
@@ -173,7 +173,7 @@ bool DgramTwoWayStream::open(const Contact& local, const Contact& remote) {
 }
 
 void DgramTwoWayStream::allocate(int readSize, int writeSize) {
-#ifdef __APPLE__
+#if defined(__APPLE__)
     //These are only as another default. We should modify the method to return bool
     //and fail if we cannot read the socket size.
 
@@ -183,7 +183,7 @@ void DgramTwoWayStream::allocate(int readSize, int writeSize) {
     int socketSendBufferSize = -1;
     int socketRecvBufferSize = -1;
 
-#ifdef YARP_HAS_ACE
+#if defined(YARP_HAS_ACE)
     //Defaults to socket size
     if (dgram) {
         int len = sizeof(_read_size);
@@ -305,7 +305,7 @@ void DgramTwoWayStream::allocate(int readSize, int writeSize) {
 
 
 void DgramTwoWayStream::configureSystemBuffers() {
-#ifdef __APPLE__
+#if defined(__APPLE__)
     //By default use system buffer size.
     //These can be overwritten by environment variables
     //Generic variable
@@ -332,7 +332,7 @@ void DgramTwoWayStream::configureSystemBuffers() {
     if (readBufferSize > 0) {
         int actualReadSize = -1;
 
-#ifdef YARP_HAS_ACE
+#if defined(YARP_HAS_ACE)
         int intSize = sizeof(readBufferSize);
         int setResult = dgram->set_option(SOL_SOCKET, SO_RCVBUF,
                                           (void*)&readBufferSize, intSize);
@@ -354,7 +354,7 @@ void DgramTwoWayStream::configureSystemBuffers() {
     }
     if (writeBufferSize > 0) {
         int actualWriteSize = -1;
-#ifdef YARP_HAS_ACE
+#if defined(YARP_HAS_ACE)
         int intSize = sizeof(writeBufferSize);
         int setResult = dgram->set_option(SOL_SOCKET, SO_SNDBUF,
                                           (void*)&writeBufferSize, intSize);
@@ -387,7 +387,7 @@ void DgramTwoWayStream::configureSystemBuffers() {
         window_size_desired = NetType::toInt(_dgram_buffer_size);
 
     int window_size = window_size_desired;
-#ifdef YARP_HAS_ACE
+#if defined(YARP_HAS_ACE)
     int result = dgram->set_option(SOL_SOCKET, SO_RCVBUF,
                                    (char *) &window_size, sizeof(window_size));
     dgram->set_option(SOL_SOCKET, SO_SNDBUF,
@@ -398,7 +398,7 @@ void DgramTwoWayStream::configureSystemBuffers() {
 #endif
 
     window_size = 0;
-#ifdef YARP_HAS_ACE
+#if defined(YARP_HAS_ACE)
     int len = 4;
     int result2 = dgram->get_option(SOL_SOCKET, SO_RCVBUF,
                                     (char *) &window_size, &len);
@@ -418,7 +418,7 @@ void DgramTwoWayStream::configureSystemBuffers() {
 }
 
 
-#ifdef YARP_HAS_ACE
+#if defined(YARP_HAS_ACE)
 int DgramTwoWayStream::restrictMcast(ACE_SOCK_Dgram_Mcast * dmcast,
                                      const Contact& group,
                                      const Contact& ipLocal,
@@ -480,7 +480,7 @@ int DgramTwoWayStream::restrictMcast(ACE_SOCK_Dgram_Mcast * dmcast,
 
 bool DgramTwoWayStream::openMcast(const Contact& group,
                                   const Contact& ipLocal) {
-#ifdef YARP_HAS_ACE
+#if defined(YARP_HAS_ACE)
     multiMode = true;
 
     localAddress = ipLocal;
@@ -488,7 +488,7 @@ bool DgramTwoWayStream::openMcast(const Contact& group,
                                 (ACE_UINT32)INADDR_ANY);
 
     ACE_SOCK_Dgram_Mcast::options mcastOptions = ACE_SOCK_Dgram_Mcast::DEFOPTS;
-#ifdef __APPLE__
+#if defined(__APPLE__)
     mcastOptions = static_cast<ACE_SOCK_Dgram_Mcast::options>(ACE_SOCK_Dgram_Mcast::OPT_BINDADDR_NO | ACE_SOCK_Dgram_Mcast::DEFOPT_NULLIFACE);
 #endif
 
@@ -530,7 +530,7 @@ bool DgramTwoWayStream::openMcast(const Contact& group,
 
 bool DgramTwoWayStream::join(const Contact& group, bool sender,
                              const Contact& ipLocal) {
-#ifdef YARP_HAS_ACE
+#if defined(YARP_HAS_ACE)
     YARP_DEBUG(Logger::get(),ConstString("subscribing to mcast address ") +
                group.toURI() + " for " +
                (sender?"writing":"reading"));
@@ -549,7 +549,7 @@ bool DgramTwoWayStream::join(const Contact& group, bool sender,
 
 
     ACE_SOCK_Dgram_Mcast::options mcastOptions = ACE_SOCK_Dgram_Mcast::DEFOPTS;
-#ifdef __APPLE__
+#if defined(__APPLE__)
     mcastOptions = static_cast<ACE_SOCK_Dgram_Mcast::options>(ACE_SOCK_Dgram_Mcast::OPT_BINDADDR_NO | ACE_SOCK_Dgram_Mcast::DEFOPT_NULLIFACE);
 #endif
 
@@ -677,7 +677,7 @@ void DgramTwoWayStream::closeMain() {
         }
         mutex.wait();
         if (dgram != YARP_NULLPTR) {
-#ifdef YARP_HAS_ACE
+#if defined(YARP_HAS_ACE)
             dgram->close();
             delete dgram;
 #else
@@ -714,7 +714,7 @@ YARP_SSIZE_T DgramTwoWayStream::read(const Bytes& b) {
             //yAssert(dgram != YARP_NULLPTR);
             //YARP_DEBUG(Logger::get(),"DGRAM Waiting for something!");
             YARP_SSIZE_T result = -1;
-#ifdef YARP_HAS_ACE
+#if defined(YARP_HAS_ACE)
             if (mgram && restrictInterfaceIp.isValid()) {
                 /*
                 printf("Consider remote mcast\n");
@@ -736,7 +736,7 @@ YARP_SSIZE_T DgramTwoWayStream::read(const Bytes& b) {
 #endif
                 if (dgram != YARP_NULLPTR) {
                 yAssert(dgram != YARP_NULLPTR);
-#ifdef YARP_HAS_ACE
+#if defined(YARP_HAS_ACE)
                 ACE_INET_Addr dummy((u_short)0, (ACE_UINT32)INADDR_ANY);
                 //YARP_DEBUG(Logger::get(),"DGRAM Waiting for something!");
                 result =
@@ -883,7 +883,7 @@ void DgramTwoWayStream::flush() {
         //yAssert(dgram != YARP_NULLPTR);
         YARP_SSIZE_T len = 0;
 
-#ifdef YARP_HAS_ACE
+#if defined(YARP_HAS_ACE)
         if (mgram != YARP_NULLPTR) {
             len = mgram->send(writeBuffer.get()+writeAt,writeAvail-writeAt);
             YARP_DEBUG(Logger::get(),
@@ -893,7 +893,7 @@ void DgramTwoWayStream::flush() {
         } else
 #endif
             if (dgram != YARP_NULLPTR) {
-#ifdef YARP_HAS_ACE
+#if defined(YARP_HAS_ACE)
             len = dgram->send(writeBuffer.get()+writeAt,writeAvail-writeAt,
                               remoteHandle);
 #else
@@ -995,7 +995,7 @@ void DgramTwoWayStream::removeMonitor() {
 bool DgramTwoWayStream::setTypeOfService(int tos) {
     if(!dgram)
         return false;
-#ifdef YARP_HAS_ACE
+#if defined(YARP_HAS_ACE)
     return (dgram->set_option(IPPROTO_IP, IP_TOS,
                               (int *)&tos, (int)sizeof(tos) ) == 0);
 #else
@@ -1009,7 +1009,7 @@ int DgramTwoWayStream::getTypeOfService() {
     int tos = -1;
     if(!dgram)
         return tos;
-#ifdef YARP_HAS_ACE
+#if defined(YARP_HAS_ACE)
     int optlen;
     dgram->get_option(IPPROTO_IP, IP_TOS,
                       (int *)&tos, &optlen);
