@@ -158,10 +158,11 @@ bool RGBDSensorParser::respond(const Bottle& cmd, Bottle& response)
 RGBDSensorWrapper::RGBDSensorWrapper(): RateThread(DEFAULT_THREAD_PERIOD),
                                         rate(DEFAULT_THREAD_PERIOD)
 {
-    sensor_p         = NULL;
+    sensor_p         = YARP_NULLPTR;
     use_YARP         = true;
     use_ROS          = false;
-    subDeviceOwned   = NULL;
+    subDeviceOwned   = YARP_NULLPTR;
+    rosNode          = YARP_NULLPTR;
     isSubdeviceOwned = false;
     verbose          = 4;
     sensorStatus     = IRGBDSensor::RGBD_SENSOR_NOT_READY;
@@ -170,7 +171,7 @@ RGBDSensorWrapper::RGBDSensorWrapper(): RateThread(DEFAULT_THREAD_PERIOD),
 
 RGBDSensorWrapper::~RGBDSensorWrapper()
 {
-    threadRelease();
+    close();
     sensor_p = NULL;
 }
 
@@ -194,13 +195,13 @@ bool RGBDSensorWrapper::open(yarp::os::Searchable &config)
 
      setId("RGBDSensorWrapper for " + depthFrame_StreamingPort_Name);
 
-    if(!initialize_YARP(config) )
+    if(use_YARP && !initialize_YARP(config))
     {
         yError() << sensorId << "Error initializing YARP ports";
         return false;
     }
 
-    if(!initialize_ROS(config) )
+    if(use_ROS && !initialize_ROS(config))
     {
         yError() << sensorId << "Error initializing ROS topic";
         return false;
