@@ -111,6 +111,9 @@ private:
     bool layoutSubgraph;
     QTreeWidgetItem *moduleParentItem;
     QTreeWidgetItem *portParentItem;
+    QTreeWidgetItem *machinesParentItem;
+    std::map<std::string, QGVSubGraph*> sceneSubGraphMap;
+    std::map<std::string, QGVNode*> sceneNodeMap;
 };
 
 #endif // MAINWINDOW_H

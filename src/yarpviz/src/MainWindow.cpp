@@ -84,8 +84,10 @@ MainWindow::MainWindow(QWidget *parent) :
     ui->actionProfilePortsRate->setEnabled(false);
     moduleParentItem = new QTreeWidgetItem( ui->nodesTreeWidget,  QStringList("Modules"));
     portParentItem = new QTreeWidgetItem( ui->nodesTreeWidget,  QStringList("Ports"));
+    machinesParentItem = new QTreeWidgetItem( ui->nodesTreeWidget,  QStringList("Machines"));
     moduleParentItem->setIcon(0, QIcon(":icons/resources/module.svg"));
     portParentItem->setIcon(0, QIcon(":icons/resources/port.svg"));
+    machinesParentItem->setIcon(0, QIcon(":icons/resources/computer_B.svg"));
 
 }
 
@@ -100,6 +102,8 @@ void MainWindow::initScene() {
         delete scene;
     }
     scene = new QGVScene("yarpviz", this);
+    sceneNodeMap.clear();
+    sceneSubGraphMap.clear();
     ui->graphicsView->setBackgroundBrush(QBrush(QColor("#2e3e56"), Qt::SolidPattern));
     ui->graphicsView->setScene(scene);
     connect(scene, SIGNAL(nodeContextMenu(QGVNode*)), SLOT(nodeContextMenu(QGVNode*)));
@@ -138,54 +142,74 @@ void MainWindow::drawGraph(Graph &graph)
     // drawing nodes
     // create a map between graph nodes and their visualization
     //std::map<const Vertex*, QGVNode*> nodeSet;
-    std::map<const string, QGVSubGraph*> subgraphSet;
 
 
     // adding all process nodes and subgraphs
     pvertex_const_iterator itr;
     const pvertex_set& vertices = graph.vertices();
+    int countChild =0;
     for(itr = vertices.begin(); itr!=vertices.end(); itr++) {
         dynamic_cast<YarpvizVertex*>(*itr)->setGraphicItem(NULL);
         const Property& prop = (*itr)->property;
-        QGVNode *node;
+        QGVSubGraph *sgraph;
         if(dynamic_cast<ProcessVertex*>(*itr) && !prop.check("hidden"))
         {
+            string name =  prop.find("name").asString() + countChild;
             if(layoutSubgraph) {
-                QGVSubGraph *sgraph = scene->addSubGraph(prop.toString().c_str());
-                //sgraph->setAttribute("label", prop.find("name").asString().c_str());
-                sgraph->setAttribute("color", "#2e3e56"); // hidden!
-                //sgraph->setAttribute("fillcolor", "#0180B5");
                 std::stringstream key;
-                key<<prop.find("host").asString()<<prop.find("name").asString()<<prop.find("pid").asInt();
-                subgraphSet[key.str()] = sgraph;
-                node = sgraph->addNode(prop.find("name").asString().c_str());
-            }else
-                node = scene->addNode(prop.find("name").asString().c_str());
+                key<<prop.find("hostname").asString();
+                QGVSubGraph *sgraphParent;
+                if(sceneSubGraphMap[key.str()] == NULL)
+                {
+                    sgraphParent = scene->addSubGraph(prop.toString().c_str());
+                    sceneSubGraphMap[key.str()] = sgraphParent;
+                }
+                else
+                {
+                    sgraphParent = sceneSubGraphMap[key.str()];
+                }
+                if(sgraphParent == NULL)
+                    cout<<"AAAAAAAAAAAAAAAAAAAAAAAAAAAAA"<<endl;
+                //sgraph->setAttribute("label", prop.find("name").asString().c_str());
+                sgraphParent->setAttribute("color", "#FFFFFF");
+                sgraphParent->setAttribute("label", prop.find("hostname").toString().c_str());
+                string host = prop.find("os").asString();
+                if(host == "Linux")
+                    sgraphParent->setIcon(QImage(":/icons/resources/Linux-icon.png"));
+                else if(host == "Windows")
+                    sgraphParent->setIcon(QImage(":/icons/resources/Windows-icon.png"));
+                else if(host == "Mac")
+                    sgraphParent->setIcon(QImage(":/icons/resources/Mac-icon.png"));
+                else
+                    sgraphParent->setIcon(QImage(":/icons/resources/Gnome-System-Run-64.png"));
+                //sgraph->setAttribute("fillcolor", "#0180B5");
+                sgraph = sgraphParent->addSubGraph(name.c_str());
+                countChild++;
+            }
+            else
+            {
+                sgraph = scene->addSubGraph(name.c_str());
+                countChild++;
+            }
 
             std::stringstream label;
             label << "   " << prop.find("name").asString().c_str()
                   << " (" << prop.find("pid").asInt() << ")   ";
-            node->setAttribute("shape", "box");
-            node->setAttribute("label", label.str().c_str());
+            sgraph->setAttribute("shape", "box");
+            sgraph->setAttribute("label", label.str().c_str());
             if(prop.check("color")) {
-                node->setAttribute("fillcolor", prop.find("color").asString().c_str());
-                node->setAttribute("color", prop.find("color").asString().c_str());
+                sgraph->setAttribute("fillcolor", prop.find("color").asString().c_str());
+                sgraph->setAttribute("color", prop.find("color").asString().c_str());
             }else {
-                node->setAttribute("fillcolor", "#a5cf80");
-                node->setAttribute("color", "#a5cf80");
+                sgraph->setAttribute("fillcolor", "#a5cf80");
+                sgraph->setAttribute("color", "#a5cf80");
             }
-            string host = prop.find("os").asString();
-            if(host == "Linux")
-                node->setIcon(QImage(":/icons/resources/Linux-icon.png"));
-            else if(host == "Windows")
-                node->setIcon(QImage(":/icons/resources/Windows-icon.png"));
-            else if(host == "Mac")
-                node->setIcon(QImage(":/icons/resources/Mac-icon.png"));
-            else
-                node->setIcon(QImage(":/icons/resources/Gnome-System-Run-64.png"));
             //nodeSet[*itr] = node;
-            dynamic_cast<YarpvizVertex*>(*itr)->setGraphicItem(node);
-            node->setVertex(*itr);
+            dynamic_cast<YarpvizVertex*>(*itr)->setGraphicItem(sgraph);
+            sgraph->setVertex(*itr);
+            std::stringstream keyProcess;
+            keyProcess<<prop.find("hostname").asString()<<prop.find("pid").asInt();
+            sceneSubGraphMap[keyProcess.str()]= sgraph;
         }
     }
 
@@ -195,17 +219,17 @@ void MainWindow::drawGraph(Graph &graph)
     int portCounts = 0;
     for(itr = vertices.begin(); itr!=vertices.end(); itr++) {
         const Property& prop = (*itr)->property;
-        if(dynamic_cast<PortVertex*>(*itr) && !prop.check("hidden")) {
+        if(dynamic_cast<PortVertex*>(*itr) && !prop.check("hidden") ) {
             if(!prop.check("orphan")) {
                 QGVNode *node;
                 if(layoutSubgraph) {
                     PortVertex* pv = dynamic_cast<PortVertex*>(*itr);
                     ProcessVertex* v = (ProcessVertex*) pv->getOwner();
                     std::stringstream key;
-                    key<<v->property.find("host").asString()<<v->property.find("name").asString()<<v->property.find("pid").asInt();
-                    QGVSubGraph *sgraph = subgraphSet[key.str()];
+                    key<<v->property.find("hostname").asString()<<v->property.find("pid").asInt();
+                    QGVSubGraph *sgraph = sceneSubGraphMap[key.str()];
                     if(sgraph)
-                        node =  sgraph->addNode(prop.find("name").asString().c_str());                    
+                        node =  sgraph->addNode(prop.find("name").asString().c_str());
                     else
                         node =  scene->addNode(prop.find("name").asString().c_str());
                 }
@@ -243,11 +267,7 @@ void MainWindow::drawGraph(Graph &graph)
             if(!v1.property.check("hidden") && !v2.property.check("hidden")) {
                 if(edge.property.find("type").asString() == "ownership" &&
                         edge.property.find("dir").asString() != "unknown") {
-                    //QGVEdge* gve = scene->addEdge(nodeSet[&v1], nodeSet[&v2], "");
-                    QGVEdge* gve = scene->addEdge((QGVNode*)((YarpvizVertex*)&v1)->getGraphicItem(),
-                                                  (QGVNode*)((YarpvizVertex*)&v2)->getGraphicItem(), "");
-                    gve->setAttribute("color", "grey");
-                    gve->setAttribute("style", "dashed");
+                    continue;
                 }
 
                 if(edge.property.find("type").asString() == "connection") {                    
@@ -449,6 +469,10 @@ void MainWindow::onProfileYarpNetwork() {
         item = portParentItem->child(i);
         delete item;
     }
+    for (int i= machinesParentItem->childCount()-1; i>-1; i--) {
+        item = machinesParentItem->child(i);
+        delete item;
+    }
     pvertex_const_iterator itr;
     const pvertex_set& vertices = mainGraph.vertices();
     for(itr = vertices.begin(); itr!=vertices.end(); itr++) {
@@ -470,6 +494,7 @@ void MainWindow::onProfileYarpNetwork() {
     NetworkProfiler::updateConnectionQosStatus(mainGraph);
     moduleParentItem->setExpanded(true);
     portParentItem->setExpanded(true);
+    machinesParentItem->setExpanded(true);
     currentGraph = &mainGraph;
     drawGraph(*currentGraph);
     ui->actionHighlight_Loops->setEnabled(true);
@@ -514,6 +539,11 @@ void MainWindow::updateNodeWidgetItems() {
     }
     for (int i= portParentItem->childCount()-1; i>-1; i--) {
         item = (NodeWidgetItem*) portParentItem->child(i);
+        yAssert(item != NULL);
+        item->check(!item->getVertex()->property.check("hidden"));
+    }
+    for (int i= machinesParentItem->childCount()-1; i>-1; i--) {
+        item = (NodeWidgetItem*) machinesParentItem->child(i);
         yAssert(item != NULL);
         item->check(!item->getVertex()->property.check("hidden"));
     }
@@ -571,6 +601,10 @@ void MainWindow::onHidePorts() {
         item = portParentItem->child(i);
         delete item;
     }
+    for (int i= machinesParentItem->childCount()-1; i>-1; i--) {
+        item = machinesParentItem->child(i);
+        delete item;
+    }
 
     if(ui->actionHidePorts->isChecked()) {
         NetworkProfiler::creatSimpleModuleGraph(mainGraph, simpleGraph);
@@ -605,6 +639,7 @@ void MainWindow::onHidePorts() {
         }
         moduleParentItem->setExpanded(true);
         portParentItem->setExpanded(true);
+        machinesParentItem->setExpanded(true);
         currentGraph = &mainGraph;
     }
     drawGraph(*currentGraph);

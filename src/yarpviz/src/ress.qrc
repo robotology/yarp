@@ -13,5 +13,6 @@
         <file>resources/arrow_down.png</file>
         <file>resources/arrow_up.png</file>
         <file>resources/profile_rate.png</file>
+        <file>resources/computer_B.svg</file>
     </qresource>
 </RCC>

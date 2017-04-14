@@ -46,6 +46,10 @@ public:
     void setAttribute(const QString &name, const QString &value);
     QString getAttribute(const QString &name) const;
     void updateLayout();
+    void setIcon(const QImage &icon);
+    void setVertex(void* v);
+    void* getVertex();
+    QString label() const;
 
     enum { Type = UserType + 4 };
     int type() const
@@ -56,7 +60,7 @@ public:
 
 private:
     friend class QGVScene;
-		QGVSubGraph(QGVGraphPrivate* subGraph, QGVScene *scene);
+    QGVSubGraph(QGVGraphPrivate* subGraph, QGVScene *scene);
 
     double _height, _width;
     QPen _pen;
@@ -64,9 +68,11 @@ private:
 
     QString _label;
     QRectF _label_rect;
+    QImage _icon;
 
     QGVScene *_scene;
-		QGVGraphPrivate *_sgraph;
+    QGVGraphPrivate *_sgraph;
+    void* vertex;
     QList<QGVNode*> _nodes;
 };
 

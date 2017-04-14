@@ -24,9 +24,9 @@ License along with this library.
 #include <QDebug>
 #include <QPainter>
 
-QGVSubGraph::QGVSubGraph(QGVGraphPrivate *subGraph, QGVScene *scene): _sgraph(subGraph), _scene(scene)
+QGVSubGraph::QGVSubGraph(QGVGraphPrivate *subGraph, QGVScene *scene): _sgraph(subGraph), _scene(scene), vertex(NULL)
 {
-    //setFlag(QGraphicsItem::ItemIsSelectable, true);
+    setFlag(QGraphicsItem::ItemIsSelectable, true);
 }
 
 QGVSubGraph::~QGVSubGraph()
@@ -88,10 +88,35 @@ void QGVSubGraph::paint(QPainter * painter, const QStyleOptionGraphicsItem * opt
     painter->save();
 
     painter->setPen(_pen);
-    painter->setBrush(_brush);
 
-    painter->drawRect(boundingRect());
-    painter->drawText(_label_rect, Qt::AlignCenter, _label);
+    if(isSelected()) {
+        QBrush tbrush(_brush);
+        tbrush.setColor(tbrush.color().darker(170));
+        painter->setBrush(tbrush);
+    }
+    else
+        painter->setBrush(_brush);
+
+    QPainterPath path;
+    path.addRoundedRect(boundingRect(), 10, 10);
+    painter->drawPath(path);
+    QFont font;
+    font.setPixelSize(12);
+    font.setBold(true);
+    painter->setFont(font);
+
+    if(_icon.isNull())
+    {
+        painter->drawText(_label_rect, Qt::AlignCenter , _label);
+    }
+    else
+    {
+        painter->drawText(_label_rect.adjusted(0,0,0, -_label_rect.height()*1/3),Qt::AlignTop | Qt::AlignCenter , _label);
+
+        const QRectF img_rect = _label_rect.adjusted(-_label_rect.width()-10, 0, 0, 0);
+        QImage img = _icon.scaled(img_rect.size().toSize(), Qt::KeepAspectRatio, Qt::SmoothTransformation);
+        painter->drawImage(img_rect.topLeft() + QPointF((img_rect.width() - img.rect().width())/2, 0), img);
+    }
     painter->restore();
 }
 
@@ -121,7 +146,6 @@ void QGVSubGraph::updateLayout()
 
     qreal gheight = QGVCore::graphHeight(_scene->_graph->graph());
     setPos(p2.x, gheight - p1.y);
-
     _pen.setWidth(1);
     _brush.setStyle(QGVCore::toBrushStyle(getAttribute("style")));
     _brush.setColor(QGVCore::toColor(getAttribute("fillcolor")));
@@ -135,4 +159,17 @@ void QGVSubGraph::updateLayout()
         _label_rect.setSize(QSize(xlabel->dimen.x+30, xlabel->dimen.y+10));
         _label_rect.moveCenter(QGVCore::toPoint(xlabel->pos, QGVCore::graphHeight(_scene->_graph->graph())) - pos());
     }
+}
+void QGVSubGraph::setIcon(const QImage &icon)
+{
+    _icon = icon;
+}
+
+
+void QGVSubGraph::setVertex(void* v) {
+    vertex = v;
+}
+
+void* QGVSubGraph::getVertex() {
+    return vertex;
 }

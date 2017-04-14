@@ -47,7 +47,6 @@ private:
     yarp::graph::Vertex* owner;
 };
 
-
 class ProcessVertex : public YarpvizVertex{
 public:
         ProcessVertex(int pid, const std::string hostname) : YarpvizVertex("(type process)") {
@@ -61,7 +60,18 @@ public:
         }
 };
 
+class MachineVertex : public YarpvizVertex{
+public:
+        MachineVertex(std::string os, const std::string hostname) : YarpvizVertex("(type process)") {
+            property.put("hostname", hostname);
+            property.put("os", os);
+        }
 
+        virtual bool operator == (const yarp::graph::Vertex &v1) const {
+            return property.find("hostname").asString() == v1.property.find("hostname").asString() &&
+                   property.find("os").asString() == v1.property.find("os").asString();
+        }
+};
 
 class NetworkProfiler {
 
