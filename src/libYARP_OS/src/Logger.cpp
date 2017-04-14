@@ -64,7 +64,7 @@ void Logger::show(unsigned YARP_INT32 level, const ConstString& txt) {
 
 
 void Logger::exit(int level) {
-    exit(level);
+    std::exit(level);
 }
 
 
