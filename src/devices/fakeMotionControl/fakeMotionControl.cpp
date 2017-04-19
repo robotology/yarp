@@ -102,6 +102,7 @@ void FakeMotionControl::resizeBuffers()
     maxCurrent.resize(_njoints);
     peakCurrent.resize(_njoints);
     pwm.resize(_njoints);
+    refpwm.resize(_njoints);
     pwmLimit.resize(_njoints);
     supplyVoltage.resize(_njoints);
 
@@ -119,6 +120,7 @@ void FakeMotionControl::resizeBuffers()
     peakCurrent.zero();
 
     pwm.zero();
+    refpwm.zero();
     pwmLimit.zero();
     supplyVoltage.zero();
 }
@@ -129,6 +131,8 @@ bool FakeMotionControl::alloc(int nj)
     _controlModes = allocAndCheck<int>(nj);
     _interactMode = allocAndCheck<int>(nj);
     _angleToEncoder = allocAndCheck<double>(nj);
+    _dutycycleToPWM = allocAndCheck<double>(nj);
+    _ampsToSensor = allocAndCheck<double>(nj);
     _encodersStamp = allocAndCheck<double>(nj);
     _DEPRECATED_encoderconversionoffset = allocAndCheck<float>(nj);
     _DEPRECATED_encoderconversionfactor = allocAndCheck<float>(nj);
@@ -182,6 +186,7 @@ bool FakeMotionControl::alloc(int nj)
     _ref_speeds = allocAndCheck<double>(nj);
     _ref_accs = allocAndCheck<double>(nj);
     _ref_torques = allocAndCheck<double>(nj);
+    _ref_currents = allocAndCheck<double>(nj);
     _enabledAmp = allocAndCheck<bool>(nj);
     _enabledPid = allocAndCheck<bool>(nj);
     _calibrated = allocAndCheck<bool>(nj);
@@ -198,6 +203,8 @@ bool FakeMotionControl::dealloc()
     checkAndDestroy(_controlModes);
     checkAndDestroy(_interactMode);
     checkAndDestroy(_angleToEncoder);
+    checkAndDestroy(_ampsToSensor);
+    checkAndDestroy(_dutycycleToPWM);
     checkAndDestroy(_encodersStamp);
     checkAndDestroy(_DEPRECATED_encoderconversionoffset);
     checkAndDestroy(_DEPRECATED_encoderconversionfactor);
@@ -234,6 +241,7 @@ bool FakeMotionControl::dealloc()
     checkAndDestroy(_ref_speeds);
     checkAndDestroy(_ref_accs);
     checkAndDestroy(_ref_torques);
+    checkAndDestroy(_ref_currents);
     checkAndDestroy(_enabledAmp);
     checkAndDestroy(_enabledPid);
     checkAndDestroy(_calibrated);
@@ -266,10 +274,11 @@ FakeMotionControl::FakeMotionControl() :
     ImplementTorqueControl(this),
     ImplementControlLimits2(this),
     ImplementPositionDirect(this),
-    ImplementOpenLoopControl(this),
     ImplementInteractionMode(this),
     ImplementMotor(this),
     ImplementAxisInfo(this),
+    ImplementPWMControl(this),
+    ImplementCurrentControl(this),
     _mutex(1)
 //     SAFETY_THRESHOLD(2.0)
 {
@@ -296,6 +305,8 @@ FakeMotionControl::FakeMotionControl() :
     _DEPRECATED_encoderconversionfactor = NULL;
     _DEPRECATED_encoderconversionoffset = NULL;
     _angleToEncoder = NULL;
+    _dutycycleToPWM = NULL;
+    _ampsToSensor = NULL;
     _hasHallSensor = NULL;
     _hasTempSensor = NULL;
     _hasRotorEncoder = NULL;
@@ -331,6 +342,7 @@ FakeMotionControl::FakeMotionControl() :
     _posDir_references    = NULL;
     _ref_speeds       = NULL;
     _ref_torques      = NULL;
+    _ref_currents     = NULL;
     _kinematic_mj     = NULL;
     _kbemf            = NULL;
     _ktau             = NULL;
@@ -447,11 +459,11 @@ bool FakeMotionControl::open(yarp::os::Searchable &config)
     ImplementImpedanceControl::initialize(_njoints, _axisMap, _angleToEncoder, NULL, _newtonsToSensor);
     ImplementTorqueControl::initialize(_njoints, _axisMap, _angleToEncoder, NULL, _newtonsToSensor);
     ImplementPositionDirect::initialize(_njoints, _axisMap, _angleToEncoder, NULL);
-    ImplementOpenLoopControl::initialize(_njoints, _axisMap);
     ImplementInteractionMode::initialize(_njoints, _axisMap, _angleToEncoder, NULL);
     ImplementMotor::initialize(_njoints, _axisMap);
     ImplementAxisInfo::initialize(_njoints, _axisMap);
-
+    ImplementPWMControl::initialize(_njoints, _axisMap, _dutycycleToPWM);
+    ImplementCurrentControl::initialize(_njoints, _axisMap, _ampsToSensor);
 
     if(!init() )
     {
@@ -795,6 +807,53 @@ bool FakeMotionControl::fromConfig(yarp::os::Searchable &config)
         }
     }
 
+    // current conversions factor
+    if (general.check("ampsToSensor"))
+    {
+        if (extractGroup(general, xtmp, "ampsToSensor", "a list of scales for the ampsToSensor conversion factors", _njoints))
+        {
+            for (i = 1; i < xtmp.size(); i++)
+            {
+                if (xtmp.get(i).isDouble())
+                {
+                    _ampsToSensor[i - 1] = xtmp.get(i).asDouble();
+                }
+            }
+        }
+        else
+            return false;
+    }
+    else
+    {
+        yInfo() << "Using default ampsToSensor";
+        for (i = 0; i < _njoints; i++)
+        {
+            _ampsToSensor[i] = 1.0;
+        }
+    }
+
+    // pwm conversions factor
+    if (general.check("dutycycleToPWM"))
+    {
+        if (extractGroup(general, xtmp, "dutycycleToPWM", "a list of scales for the dutycycleToPWM conversion factors", _njoints))
+        {
+            for (i = 1; i < xtmp.size(); i++)
+            {
+                if (xtmp.get(i).isDouble())
+                {
+                    _dutycycleToPWM[i - 1] = xtmp.get(i).asDouble();
+                }
+            }
+        }
+        else
+            return false;
+    }
+    else
+    {
+        yInfo() << "Using default ampsToSensor";
+        for (i = 0; i < _njoints; i++)
+            _dutycycleToPWM[i] = 1.0;
+    }
 
 //     double tmp_A2E;
     // Encoder scales
@@ -1284,7 +1343,6 @@ bool FakeMotionControl::close()
     ImplementControlLimits2::uninitialize();
     ImplementTorqueControl::uninitialize();
     ImplementPositionDirect::uninitialize();
-    ImplementOpenLoopControl::uninitialize();
     ImplementInteractionMode::uninitialize();
     ImplementAxisInfo::uninitialize();
 
@@ -1846,10 +1904,6 @@ bool FakeMotionControl::setImpedanceVelocityModeRaw(int j)
     return DEPRECATED("setImpedanceVelocityModeRaw");
 }
 
-bool FakeMotionControl::setOpenLoopModeRaw(int j)
-{
-    return DEPRECATED("setOpenLoopModeRaw");
-}
 // puo' essere richiesto con get
 bool FakeMotionControl::getControlModeRaw(int j, int *v)
 {
@@ -2148,12 +2202,14 @@ bool FakeMotionControl::disableAmpRaw(int j)
 
 bool FakeMotionControl::getCurrentRaw(int j, double *value)
 {
+    //just for testing purposes, this is not a real implementation
     *value = current[j];
     return true;
 }
 
 bool FakeMotionControl::getCurrentsRaw(double *vals)
 {
+    //just for testing purposes, this is not a real implementation
     bool ret = true;
     for(int j=0; j< _njoints; j++)
     {
@@ -2307,11 +2363,6 @@ bool FakeMotionControl::getMotorPolesRaw(int j, int& poles)
 }
 
 bool FakeMotionControl::getRotorIndexOffsetRaw(int j, double& rotorOffset)
-{
-    return true;
-}
-
-bool FakeMotionControl::getCurrentPidRaw(int j, Pid *pid)
 {
     return true;
 }
@@ -2734,39 +2785,6 @@ bool FakeMotionControl::setInteractionModesRaw(yarp::dev::InteractionModeEnum* m
 }
 
 
-//
-// OPENLOOP interface
-//
-bool FakeMotionControl::setRefOutputRaw(int j, double v)
-{
-     return false;
-}
-
-bool FakeMotionControl::setRefOutputsRaw(const double *v)
-{
-    bool ret = true;
-    for(int j=0; j<_njoints; j++)
-    {
-        ret = ret && setRefOutputRaw(j, v[j]);
-    }
-    return ret;
-}
-
-bool FakeMotionControl::getRefOutputRaw(int j, double *out)
-{
-      return false;
-}
-
-bool FakeMotionControl::getRefOutputsRaw(double *outs)
-{
-    bool ret = true;
-    for(int j=0; j<_njoints; j++)
-    {
-        ret = ret && getRefOutputRaw(j, &outs[j]);
-    }
-    return ret;
-}
-
 bool FakeMotionControl::getOutputRaw(int j, double *out)
 {
     return false;
@@ -2813,6 +2831,205 @@ bool FakeMotionControl::setTemperatureLimitRaw(int m, const double temp)
     return false;
 }
 
+//PWM interface
+bool FakeMotionControl::setRefDutyCycleRaw(int j, double v)
+{
+    refpwm[j] = v;
+    pwm[j] = v;
+    return true;
+}
+
+bool FakeMotionControl::setRefDutyCyclesRaw(const double *v)
+{
+    for (int i = 0; i < _njoints; i++)
+    {
+        refpwm[i] = v[i];
+        pwm[i] = v[i];
+    }
+    return true;
+}
+
+bool FakeMotionControl::getRefDutyCycleRaw(int j, double *v)
+{
+    *v = refpwm[j];
+    return true;
+}
+
+bool FakeMotionControl::getRefDutyCyclesRaw(double *v)
+{
+    for (int i = 0; i < _njoints; i++)
+    {
+        v[i] = refpwm[i];
+    }
+    return true;
+}
+
+bool FakeMotionControl::getDutyCycleRaw(int j, double *v)
+{
+    *v = pwm[j];
+    return true;
+}
+
+bool FakeMotionControl::getDutyCyclesRaw(double *v)
+{
+    for (int i = 0; i < _njoints; i++)
+    {
+        v[i] = pwm[i];
+    }
+    return true;
+}
+
+// Current interface
+/*bool FakeMotionControl::getCurrentRaw(int j, double *t)
+{
+    return NOT_YET_IMPLEMENTED("getCurrentRaw");
+}
+
+bool FakeMotionControl::getCurrentsRaw(double *t)
+{
+    return NOT_YET_IMPLEMENTED("getCurrentsRaw");
+}
+*/
+
+bool FakeMotionControl::getCurrentRangeRaw(int j, double *min, double *max)
+{
+    //just for testing purposes, this is not a real implementation
+    *min = _ref_currents[j] / 100;
+    *max = _ref_currents[j] * 100;
+    return true;
+}
+
+bool FakeMotionControl::getCurrentRangesRaw(double *min, double *max)
+{
+    //just for testing purposes, this is not a real implementation
+    for (int i = 0; i < _njoints; i++)
+    {
+        min[i] = _ref_currents[i] / 100;
+        max[i] = _ref_currents[i] * 100;
+    }
+    return true;
+}
+
+bool FakeMotionControl::setRefCurrentsRaw(const double *t)
+{
+    for (int i = 0; i < _njoints; i++)
+    {
+        _ref_currents[i] = t[i];
+        current[i] = t[i] / 2;
+    }
+    return true;
+}
+
+bool FakeMotionControl::setRefCurrentRaw(int j, double t)
+{
+    _ref_currents[j] = t;
+    current[j] = t / 2;
+    return true;
+}
+
+bool FakeMotionControl::setRefCurrentsRaw(const int n_joint, const int *joints, const double *t)
+{
+    bool ret = true;
+    for (int j = 0; j<n_joint; j++)
+    {
+        ret = ret &&setRefCurrentRaw(joints[j], t[j]);
+    }
+    return ret;
+}
+
+bool FakeMotionControl::getRefCurrentsRaw(double *t)
+{
+    for (int i = 0; i < _njoints; i++)
+    {
+        t[i] = _ref_currents[i];
+    }
+    return true;
+}
+
+bool FakeMotionControl::getRefCurrentRaw(int j, double *t)
+{
+    *t = _ref_currents[j];
+    return true;
+}
+
+bool FakeMotionControl::setCurrentPidRaw(int j, const Pid &pid)
+{
+    _cpids[j] = pid;
+    return true;
+}
+
+bool FakeMotionControl::setCurrentPidsRaw(const Pid *pids)
+{
+    for (int i = 0; i < _njoints; i++)
+    {
+        _cpids[i] = pids[i];
+    }
+    return true;
+}
+
+bool FakeMotionControl::getCurrentErrorRaw(int j, double *err)
+{
+    //just for testing purposes, this is not a real implementation
+    *err = _ref_currents[j]/2;
+    return true;
+}
+
+bool FakeMotionControl::getCurrentErrorsRaw(double *errs)
+{
+    //just for testing purposes, this is not a real implementation
+    for (int i = 0; i < _njoints; i++)
+    {
+        errs[i] = _ref_currents[i] / 2;
+    }
+    return true;
+}
+
+bool FakeMotionControl::getCurrentPidOutputRaw(int j, double *out)
+{
+    //just for testing purposes, this is not a real implementation
+    *out = _ref_currents[j] * 10;
+    return true;
+}
+
+bool FakeMotionControl::getCurrentPidOutputsRaw(double *outs)
+{
+    //just for testing purposes, this is not a real implementation
+    for (int i = 0; i < _njoints; i++)
+    {
+        outs[i] = _ref_currents[i] * 10;
+    }
+    return true;
+}
+
+bool FakeMotionControl::getCurrentPidRaw(int j, Pid *pid)
+{
+    *pid = _cpids[j];
+    return true;
+}
+
+bool FakeMotionControl::getCurrentPidsRaw(Pid *pids)
+{
+    for (int i = 0; i < _njoints; i++)
+    {
+        pids[i] = _cpids[i];
+    }
+    return true;
+}
+
+bool FakeMotionControl::resetCurrentPidRaw(int j)
+{
+    return NOT_YET_IMPLEMENTED("resetCurrentPidRaw");
+}
+
+bool FakeMotionControl::disableCurrentPidRaw(int j)
+{
+    return NOT_YET_IMPLEMENTED("disableCurrentPidRaw");
+}
+
+bool FakeMotionControl::enableCurrentPidRaw(int j)
+{
+    return NOT_YET_IMPLEMENTED("enableCurrentPidRaw");
+}
 
 // bool FakeMotionControl::checkRemoteControlModeStatus(int joint, int target_mode)
 // {

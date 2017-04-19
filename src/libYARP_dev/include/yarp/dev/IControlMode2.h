@@ -32,7 +32,6 @@ public:
     using IControlMode::setTorqueMode;
     using IControlMode::setImpedancePositionMode;
     using IControlMode::setImpedanceVelocityMode;
-    using IControlMode::setOpenLoopMode;
     using IControlMode::getControlMode;
     using IControlMode::getControlModes;
 
@@ -102,7 +101,6 @@ public:
     using IControlModeRaw::setTorqueModeRaw;
     using IControlModeRaw::setImpedancePositionModeRaw;
     using IControlModeRaw::setImpedanceVelocityModeRaw;
-    using IControlModeRaw::setOpenLoopModeRaw;
     using IControlModeRaw::getControlModeRaw;
     using IControlModeRaw::getControlModesRaw;
 
@@ -143,7 +141,6 @@ public:
 
 
 #define VOCAB_CM_UNKNOWN        VOCAB4('c','m','u','k')
-#define VOCAB_CM_OPENLOOP       VOCAB4('c','m','o','l')
 #define VOCAB_CM_IMPEDANCE_POS  VOCAB4('c','m','i','p')
 #define VOCAB_CM_IMPEDANCE_VEL  VOCAB4('c','m','i','v')
 

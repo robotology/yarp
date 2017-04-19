@@ -67,17 +67,6 @@ bool ImplementVelocityControl2::getAxes(int *ax)
     return true;
 }
 
-
-#ifndef YARP_NO_DEPRECATED // since YARP 2.3.65
-bool ImplementVelocityControl2::setVelocityMode()
-{
-YARP_WARNING_PUSH
-YARP_DISABLE_DEPRECATED_WARNING
-    return iVelocity2->setVelocityModeRaw();
-YARP_WARNING_POP
-}
-#endif // YARP_NO_DEPRECATED
-
 bool ImplementVelocityControl2::velocityMove(int j, double sp)
 {
     JOINTIDCHECK

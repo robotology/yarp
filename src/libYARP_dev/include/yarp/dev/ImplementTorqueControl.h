@@ -17,7 +17,6 @@ namespace yarp {
 }
 
 #if defined(_MSC_VER) && !defined(YARP_NO_DEPRECATED) // since YARP 2.3.65
-// A class implementing setTorqueMode() causes a warning on MSVC
 YARP_WARNING_PUSH
 YARP_DISABLE_DEPRECATED_WARNING
 #endif
@@ -90,10 +89,6 @@ public:
     virtual bool disableTorquePid(int j);
     virtual bool enableTorquePid(int j);
     virtual bool setTorqueOffset(int j, double v);
-
-#ifndef YARP_NO_DEPRECATED // since YARP 2.3.65
-    YARP_DEPRECATED virtual bool setTorqueMode();
-#endif // YARP_NO_DEPRECATED
 };
 
 #if defined(_MSC_VER) && !defined(YARP_NO_DEPRECATED) // since YARP 2.3.65

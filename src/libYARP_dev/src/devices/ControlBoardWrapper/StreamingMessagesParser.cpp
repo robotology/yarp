@@ -26,8 +26,9 @@ void StreamingMessagesParser::init(ControlBoardWrapper *x) {
     stream_IPosDirect = dynamic_cast<yarp::dev::IPositionDirect *> (x);
     stream_IVel = dynamic_cast<yarp::dev::IVelocityControl *> (x);
     stream_IVel2 = dynamic_cast<yarp::dev::IVelocityControl2 *> (x);
-    stream_IOpenLoop=dynamic_cast<yarp::dev::IOpenLoopControl *> (x);
     stream_ITorque=dynamic_cast<yarp::dev::ITorqueControl *> (x);
+    stream_IPWM = dynamic_cast<yarp::dev::IPWMControl *> (x);
+    stream_ICurrent = dynamic_cast<yarp::dev::ICurrentControl *> (x);
 }
 
 
@@ -65,37 +66,99 @@ void StreamingMessagesParser::onRead(CommandMessage& v)
     switch (b.get(0).asVocab())
     {
         // manage commands with interface name as first
-        case VOCAB_OPENLOOP_INTERFACE:
+        case VOCAB_PWMCONTROL_INTERFACE:
         {
-            switch(b.get(1).asVocab())
+            switch (b.get(1).asVocab())
             {
-                case VOCAB_OPENLOOP_REF_OUTPUT:
+                case VOCAB_PWMCONTROL_REF_PWM:
                 {
-                    if (stream_IOpenLoop)
+                    if (stream_IPWM)
                     {
-                        bool ok = stream_IOpenLoop->setRefOutput(b.get(2).asVocab(), cmdVector[0]);
+                        bool ok = stream_IPWM->setRefDutyCycle(b.get(2).asInt(), cmdVector[0]);
                         if (!ok)
-                            yError("Errors while trying to command an open loop message");
+                            yError("Errors while trying to command an pwm message");
                     }
                     else
-                        yError("OpenLoop interface not valid");
+                        yError("PWM interface not valid");
                 }
                 break;
-
-                case VOCAB_OPENLOOP_REF_OUTPUTS:
+                case VOCAB_PWMCONTROL_REF_PWMS:
                 {
-                    if (stream_IOpenLoop)
+                    if (stream_IPWM)
                     {
-                        bool ok=stream_IOpenLoop->setRefOutputs(cmdVector.data());
+                        bool ok = stream_IPWM->setRefDutyCycles(cmdVector.data());
                         if (!ok)
-                            yError("Errors while trying to command an open loop message");
+                            yError("Errors while trying to command an pwm message");
                     }
                     else
-                        yError("OpenLoop interface not valid\n");
+                        yError("PWM interface not valid");
                 }
                 break;
             }
-            break;
+        }
+        break;
+
+        case VOCAB_CURRENTCONTROL_INTERFACE:
+        {
+            switch (b.get(1).asVocab())
+            {
+                case VOCAB_CURRENT_REF:
+                {
+                    if (stream_ICurrent)
+                    {
+                        bool ok = stream_ICurrent->setRefCurrent(b.get(2).asInt(), cmdVector[0]);
+                        if (!ok)
+                        {
+                            yError("Errors while trying to command a streaming current message on single joint\n");
+                        }
+                    }
+                }
+                break;
+                case VOCAB_CURRENT_REFS:
+                {
+                    if (stream_ICurrent)
+                    {
+                        bool ok = stream_ICurrent->setRefCurrents(cmdVector.data());
+                        if (!ok)
+                        {
+                            yError("Errors while trying to command a streaming current message on all joints\n");
+                        }
+                    }
+                }
+                break;
+                case VOCAB_CURRENT_REF_GROUP:
+                {
+                    if (stream_ICurrent)
+                    {
+                        int n_joints = b.get(1).asInt();
+                        Bottle *jlut = b.get(2).asList();
+                        if (((int)jlut->size() != n_joints) && ((int)cmdVector.size() != n_joints))
+                        {
+                            yError("Received VOCAB_CURRENT_REF_GROUP size of joints vector or currents vector does not match the selected joint number\n");
+                        }
+
+                        int *joint_list = new int[n_joints];
+                        for (int i = 0; i < n_joints; i++)
+                            joint_list[i] = jlut->get(i).asInt();
+
+
+                        bool ok = stream_ICurrent->setRefCurrents(n_joints, joint_list, cmdVector.data());
+                        if (!ok)
+                        {
+                            yError("Error while trying to command a streaming current message on joint group\n");
+                        }
+
+                        delete[] joint_list;
+                    }
+                }
+                break;
+                default:
+                {
+                    yarp::os::ConstString str = yarp::os::Vocab::decode(b.get(0).asVocab());
+                    yError("Unrecognized message while receiving on command port (%s)\n", str.c_str());
+                }
+                break;
+            }
         }
         break;
 
@@ -140,13 +203,6 @@ void StreamingMessagesParser::onRead(CommandMessage& v)
             }
             break;
 
-        case VOCAB_OUTPUTS:
-            {
-                yError() << "DEPRECATED openloop setOutputS!! missing interface name! Check you are using the updated RemoteControlBoard class "
-                         << "Correct message should be [" << Vocab::decode(VOCAB_OPENLOOP_INTERFACE) << "] [" << Vocab::decode(VOCAB_OPENLOOP_REF_OUTPUTS) << "] list_if_values";
-            }
-            break;
-
         case VOCAB_POSITION_DIRECT:
         {
             if(stream_IPosDirect)
@@ -164,7 +220,7 @@ void StreamingMessagesParser::onRead(CommandMessage& v)
             {
                 bool ok = stream_ITorque->setRefTorque(b.get(1).asInt(), cmdVector[0]);
                 if (!ok)
-                {   yError("Errors while trying to command a streaming torque direct message on all joints\n"); }
+                {   yError("Errors while trying to command a streaming torque direct message on single joint\n"); }
             }
         }
         break;

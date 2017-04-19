@@ -94,7 +94,6 @@ public:
     yarp::dev::IPreciselyTimed       *iTimed;
     yarp::dev::ITorqueControl        *iTorque;
     yarp::dev::IImpedanceControl     *iImpedance;
-    yarp::dev::IOpenLoopControl      *iOpenLoop;
     yarp::dev::IControlMode          *iMode;
     yarp::dev::IControlMode2         *iMode2;
     yarp::dev::IAxisInfo             *info;
@@ -102,6 +101,8 @@ public:
     yarp::dev::IInteractionMode      *iInteract;
     yarp::dev::IMotor                *imotor;
     yarp::dev::IRemoteVariables      *iVar;
+    yarp::dev::IPWMControl           *iPWM;
+    yarp::dev::ICurrentControl       *iCurr;
 
     yarp::sig::Vector subDev_joint_encoders;
     yarp::sig::Vector jointEncodersTimes;

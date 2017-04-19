@@ -38,19 +38,6 @@ bool ImplementPositionControl<DERIVED, IMPLEMENT>::positionMove(int j, double v)
     return iPosition->positionMoveRaw(k, enc);
 }
 
-#ifndef YARP_NO_DEPRECATED // since YARP 2.3.65
-template <class DERIVED, class IMPLEMENT>
-YARP_DEPRECATED bool ImplementPositionControl<DERIVED, IMPLEMENT>::setPositionMode()
-{
-    if (helper==0) return false;
-YARP_WARNING_PUSH
-YARP_DISABLE_DEPRECATED_WARNING
-    iPosition->setPositionModeRaw();
-YARP_WARNING_POP
-    return true;
-}
-#endif // YARP_NO_DEPRECATED
-
 template <class DERIVED, class IMPLEMENT>
 bool ImplementPositionControl<DERIVED, IMPLEMENT>::positionMove(const double *refs)
 {
@@ -277,17 +264,6 @@ bool ImplementVelocityControl<DERIVED, IMPLEMENT>::getAxes(int *axes)
     (*axes)=castToMapper(helper)->axes();
     return true;
 }
-
-#ifndef YARP_NO_DEPRECATED // since YARP 2.3.65
-template <class DERIVED, class IMPLEMENT>
-YARP_DEPRECATED bool ImplementVelocityControl<DERIVED, IMPLEMENT>::setVelocityMode()
-{
-YARP_WARNING_PUSH
-YARP_DISABLE_DEPRECATED_WARNING
-    return iVelocity->setVelocityModeRaw();
-YARP_WARNING_POP
-}
-#endif // YARP_NO_DEPRECATED
 
 template <class DERIVED, class IMPLEMENT>
 bool ImplementVelocityControl<DERIVED, IMPLEMENT>::velocityMove(int j, double sp)
@@ -1095,19 +1071,17 @@ template <class DERIVED, class IMPLEMENT>
 bool ImplementAmplifierControl<DERIVED, IMPLEMENT>::getCurrents(double *currs)
 {
     bool ret=iAmplifier->getCurrentsRaw(dTemp);
-
-    castToMapper(helper)->toUser(dTemp, currs);
-
+    castToMapper(helper)->ampereS2A(dTemp, currs);
     return ret;
 }
 
 template <class DERIVED, class IMPLEMENT>
 bool ImplementAmplifierControl<DERIVED, IMPLEMENT>::getCurrent(int j, double *c)
 {
-    int k=castToMapper(helper)->toHw(j);
-
-    bool ret=iAmplifier->getCurrentRaw(k, c);
-
+    double temp = 0;
+    int k = castToMapper(helper)->toHw(j);
+    bool ret = iAmplifier->getCurrentRaw(k, &temp);
+    castToMapper(helper)->ampereS2A(temp, k, *c, j);
     return ret;
 }
 

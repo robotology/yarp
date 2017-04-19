@@ -121,7 +121,8 @@ private slots:
     void onEnableControlVelocity(bool val);
     void onEnableControlMixed(bool val);
     void onEnableControlPositionDirect(bool val);
-    void onEnableControlOpenloop(bool val);
+    void onEnableControlPWM(bool val);
+    void onEnableControlCurrent(bool val);
     void onSliderOptionsClicked();
     void onSetPosSliderOptionMW(int, double);
     void onSetVelSliderOptionMW(int, double);
@@ -131,7 +132,8 @@ signals:
     void sig_enableControlVelocity(bool);
     void sig_enableControlMixed(bool);
     void sig_enableControlPositionDirect(bool);
-    void sig_enableControlOpenloop(bool);
+    void sig_enableControlPWM(bool);
+    void sig_enableControlCurrent(bool);
     void sig_viewSpeedValues(bool);
     void sig_viewMotorPositions(bool);
     void sig_setPosSliderOptionMW(int, double);

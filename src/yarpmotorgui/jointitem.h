@@ -34,7 +34,7 @@ class JointItem : public QWidget
     Q_OBJECT
 
     public:
-    enum JointState {Idle = 0,Position,PositionDirect,Mixed,Velocity,Torque,OpenLoop,
+    enum JointState {Idle = 0,Position,PositionDirect,Mixed,Velocity,Torque,Pwm,Current,
                      Disconnected, HwFault, Calibrating, CalibDone, NotConfigured, Configured,Unknown, StateStarting} ;
     enum JointInteraction {Stiff, Compliant, InteractionStarting} ;
     explicit JointItem(int index, QWidget *parent = 0);
@@ -49,14 +49,16 @@ class JointItem : public QWidget
     void setRefTrajectoryPosition(double val);
     void setSpeed(double val);
     void setMotorPosition(double val);
-    void setOpenLoop(double val);
+    void setPWM(double val);
+    void setCurrent(double val);
     void updateMotionDone(bool done);
     void setJointName(QString name);
     int getJointIndex();
     void setPositionRange(double min, double max);
     void setVelocityRange(double min, double max);
     void setTrajectoryVelocityRange(double max);
-    void setOpenLoopRange(double min, double max);
+    void setPWMRange(double min, double max);
+    void setCurrentRange(double min, double max);
     void setTorqueRange(double max);
     double getTrajectoryPositionValue();
     double getTrajectoryVelocityValue();
@@ -71,7 +73,8 @@ class JointItem : public QWidget
     void enableControlVelocity(bool control);
     void enableControlMixed(bool control);
     void enableControlPositionDirect(bool control);
-    void enableControlOpenloop(bool control);
+    void enableControlPWM(bool control);
+    void enableControlCurrent(bool control);
     void sequenceActivated();
     void sequenceStopped();
 
@@ -84,6 +87,9 @@ class JointItem : public QWidget
     void enableTorqueSliderDoubleAuto();
     void enableTorqueSliderDoubleValue(double value);
     void disableTorqueSliderDouble();
+    void enableCurrentSliderDoubleAuto();
+    void enableCurrentSliderDoubleValue(double value);
+    void disableCurrentSliderDouble();
     void enableTrajectoryVelocitySliderDoubleAuto();
     void enableTrajectoryVelocitySliderDoubleValue(double value);
     void disableTrajectoryVelocitySliderDouble();
@@ -101,7 +107,8 @@ private:
     void updateSliderPosition                (SliderWithTarget *slider, double val);
     void updateSliderVelocity                (double val);
     void updateSliderTrajectoryVelocity      (double val);
-    void updateSliderOpenloop                (double val);
+    void updateSliderPWM                     (double val);
+    void updateSliderCurrent                 (double val);
     void updateSliderTorque                  (double val);
 
     void updateTrajectoryPositionTarget      (double val);
@@ -120,7 +127,8 @@ private:
     bool sliderTrajectoryVelocityPressed;
     bool sliderTrajectoryPositionPressed;
     bool sliderTorquePressed;
-    bool sliderOpenloopPressed;
+    bool sliderPWMPressed;
+    bool sliderCurrentPressed;
     bool motionDone;
     QString movingSliderStyle;
     bool enableCalib;
@@ -129,10 +137,6 @@ private:
     QTimer velocityTimer;
     double lastVelocity;
     bool velocityModeEnabled;
-    bool positionSliderStepIsAuto;
-    bool velocitySliderStepIsAuto;
-    bool torqueSliderStepIsAuto;
-    bool trajectoryVelocitySliderStepIsAuto;
 
     int     IDLE;
     int     POSITION;
@@ -140,25 +144,16 @@ private:
     int     MIXED;
     int     VELOCITY;
     int     TORQUE;
-    int     OPENLOOP;
+    int     PWM;
+    int     CURRENT;
 
     int shiftPositions;
-
-//    QColor idleColor;
-//    QColor positionColor;
-//    QColor positionDirectColor;
-//    QColor mixedColor;
-//    QColor velocityColor;
-//    QColor torqueColor;
-//    QColor openLoopColor;
-//    QColor errorColor;
-//    QColor disconnectColor;
-//    QColor hwFaultColor;
-//    QColor calibratingColor;
 
     JointState internalState;
     JointInteraction internalInteraction;
 
+    double max_current;
+    double min_current;
     double max_torque;
     double min_torque;
     double max_position;
@@ -171,7 +166,8 @@ private:
 
     double ref_speed;
     double ref_torque;
-    double ref_openloop;
+    double ref_pwm;
+    double ref_current;
     double ref_trajectory_velocity;
 
 
@@ -198,8 +194,11 @@ private slots:
     void onSliderTorquePressed();
     void onSliderTorqueReleased();
 
-    void onSliderOpenloopPressed();
-    void onSliderOpenloopReleased();
+    void onSliderCurrentPressed();
+    void onSliderCurrentReleased();
+
+    void onSliderPWMPressed();
+    void onSliderPWMReleased();
 
     void onSliderVelocityReleased();
     void onSliderVelocityPressed();
@@ -227,7 +226,8 @@ signals:
     void sliderDirectPositionCommand(double val, int jointIndex);
     void sliderTrajectoryVelocityCommand(double val, int jointIndex);
     void sliderTorqueCommand(double val, int jointIndex);
-    void sliderOpenloopCommand(double val, int jointIndex);
+    void sliderPWMCommand(double val, int jointIndex);
+    void sliderCurrentCommand(double val, int jointIndex);
     void sliderVelocityCommand(double val, int jointIndex);
 };
 

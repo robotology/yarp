@@ -44,16 +44,21 @@ Pid::~Pid()
 
 Pid::Pid()
 {
-    kp=0;
-    kd=0;
-    ki=0;
-    scale=0;
-    max_int=0;
-    max_output=0;
-    offset=0;
-    stiction_up_val=0;
-    stiction_down_val=0;
-    kff=0;
+    clear();
+}
+
+void Pid::clear()
+{
+    kp = 0;
+    kd = 0;
+    ki = 0;
+    scale = 0;
+    max_int = 0;
+    max_output = 0;
+    offset = 0;
+    stiction_up_val = 0;
+    stiction_down_val = 0;
+    kff = 0;
 }
 
 void Pid::setKp(double p)

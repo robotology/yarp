@@ -293,12 +293,15 @@ void RPCMessagesParser::handleControlModeMsg(const yarp::os::Bottle& cmd,
                             *ok = rpc_iCtrlMode->setImpedanceVelocityMode(axis);
                         break;
 
-                        case VOCAB_CM_OPENLOOP:
-                            if(rpc_iCtrlMode2)
-                                *ok = rpc_iCtrlMode2->setControlMode(axis, VOCAB_CM_OPENLOOP);
-                            else
-                                *ok = rpc_iCtrlMode->setOpenLoopMode(axis);
-                        break;
+                        case VOCAB_CM_PWM:
+                            if (rpc_iCtrlMode2)
+                                *ok = rpc_iCtrlMode2->setControlMode(axis, VOCAB_CM_PWM);
+                            break;
+
+                        case VOCAB_CM_CURRENT:
+                            if (rpc_iCtrlMode2)
+                                *ok = rpc_iCtrlMode2->setControlMode(axis, VOCAB_CM_CURRENT);
+                            break;
 
                         case VOCAB_CM_MIXED:
                             if(rpc_iCtrlMode2)
@@ -617,14 +620,9 @@ void RPCMessagesParser::handleTorqueMsg(const yarp::os::Bottle& cmd,
                         delete [] modes;
                     }
                     else
-#ifndef YARP_NO_DEPRECATED // since YARP 2.3.65
-YARP_WARNING_PUSH
-YARP_DISABLE_DEPRECATED_WARNING
-                        *ok = rpc_ITorque->setTorqueMode();
-YARP_WARNING_POP
-#else
+                    {
                         *ok = false;
-#endif // YARP_NO_DEPRECATED
+                    }
                 }
                 break;
 
@@ -1030,91 +1028,425 @@ void RPCMessagesParser::handleInteractionModeMsg(const yarp::os::Bottle& cmd,
     }
 }
 
-
-void RPCMessagesParser::handleOpenLoopMsg(const yarp::os::Bottle& cmd, yarp::os::Bottle& response, bool *rec, bool *ok)
+void RPCMessagesParser::handleCurrentMsg(const yarp::os::Bottle& cmd, yarp::os::Bottle& response, bool *rec, bool *ok)
 {
-    if (!rpc_IOpenLoop)
+    if (ControlBoardWrapper_p->verbose())
+        yDebug("Handling ICurrentControl message\n");
+
+    if (!rpc_ICurrent)
     {
-        yError("Error I do not have a valid OpenLoopInterface interface");
-        *ok=false;
+        yError("controlBoardWrapper: I do not have a valid ICurrentControl interface");
+        *ok = false;
         return;
     }
 
-    if (ControlBoardWrapper_p->verbose())
+    int code = cmd.get(0).asVocab();
+    int action = cmd.get(2).asVocab();
+
+    *ok = false;
+    *rec = true;
+    switch (code)
     {
-        yDebug("Handling OpenLoopInterface message: received command: %s\n",  cmd.toString().c_str());
+    case VOCAB_SET:
+    {
+        switch (action)
+        {
+             case VOCAB_CURRENT_ENABLE:
+            {
+                int j = cmd.get(3).asInt();
+                *ok = rpc_ICurrent->enableCurrentPid(j);
+            }
+            break;
+
+            case VOCAB_CURRENT_DISABLE:
+            {
+                int j = cmd.get(3).asInt();
+                *ok = rpc_ICurrent->disableCurrentPid(j);
+            }
+            break;
+
+            case VOCAB_CURRENT_RESET:
+            {
+                int j = cmd.get(3).asInt();
+                *ok = rpc_ICurrent->resetCurrentPid(j);
+            }
+            break;
+
+            case VOCAB_CURRENT_REF:
+            {
+                yError("VOCAB_CURRENT_REF methods is implemented as streaming");
+                *ok = false;
+            }
+            break;
+
+            case VOCAB_CURRENT_REFS:
+            {
+                yError("VOCAB_CURRENT_REFS methods is implemented as streaming");
+                *ok = false;
+            }
+            break;
+
+            case VOCAB_CURRENT_REF_GROUP:
+            {
+                yError("VOCAB_CURRENT_REF_GROUP methods is implemented as streaming");
+                *ok = false;
+            }
+            break;
+
+            case VOCAB_CURRENT_PID:
+            {
+                Pid p;
+                int j = cmd.get(3).asInt();
+                Bottle *b = cmd.get(4).asList();
+
+                if (b == NULL)
+                    break;
+
+                p.kp = b->get(0).asDouble();
+                p.kd = b->get(1).asDouble();
+                p.ki = b->get(2).asDouble();
+                p.max_int = b->get(3).asDouble();
+                p.max_output = b->get(4).asDouble();
+                p.offset = b->get(5).asDouble();
+                p.scale = b->get(6).asDouble();
+                p.stiction_up_val = b->get(7).asDouble();
+                p.stiction_down_val = b->get(8).asDouble();
+                p.kff = b->get(9).asDouble();
+                *ok = rpc_ICurrent->setCurrentPid(j, p);
+            }
+            break;
+
+            case VOCAB_CURRENT_PIDS:
+            {
+                Bottle *b = cmd.get(3).asList();
+
+                if (b == NULL)
+                    break;
+
+                int i;
+                const int njs = b->size();
+                if (njs == controlledJoints)
+                {
+                    Pid *p = new Pid[njs];
+
+                    bool allOK = true;
+
+                    for (i = 0; i < njs; i++)
+                    {
+                        Bottle *c = b->get(i).asList();
+
+                        if (c != NULL)
+                        {
+                            p[i].kp = c->get(0).asDouble();
+                            p[i].kd = c->get(1).asDouble();
+                            p[i].ki = c->get(2).asDouble();
+                            p[i].max_int = c->get(3).asDouble();
+                            p[i].max_output = c->get(4).asDouble();
+                            p[i].offset = c->get(5).asDouble();
+                            p[i].scale = c->get(6).asDouble();
+                            p[i].stiction_up_val = c->get(7).asDouble();
+                            p[i].stiction_down_val = c->get(8).asDouble();
+                            p[i].kff = c->get(9).asDouble();
+                        }
+                        else
+                        {
+                            allOK = false;
+                        }
+                    }
+                    if (allOK)
+                        *ok = rpc_ICurrent->setCurrentPids(p);
+                    else
+                        *ok = false;
+
+                    delete[] p;
+                }
+            }
+            break;
+
+            default:
+            {
+                yError() << "Unknown handleCurrentMsg message received";
+                *rec = false;
+                *ok = false;
+            }
+            break;
+        }
+    }
+    break;
+
+    case VOCAB_GET:
+    {
+        *rec = true;
+        if (ControlBoardWrapper_p->verbose())
+            yDebug("get command received\n");
+        double dtmp = 0.0;
+        double dtmp2 = 0.0;
+        response.addVocab(VOCAB_IS);
+        response.add(cmd.get(1));
+
+        switch (action)
+        {
+            case VOCAB_CURRENT_ERROR:
+            {
+                *ok = rpc_ICurrent->getCurrentError(cmd.get(3).asInt(), &dtmp);
+                response.addDouble(dtmp);
+            }
+            break;
+
+            case VOCAB_CURRENT_ERRORS:
+            {
+                double *p = new double[controlledJoints];
+                *ok = rpc_ICurrent->getCurrentErrors(p);
+                Bottle& b = response.addList();
+                int i;
+                for (i = 0; i < controlledJoints; i++)
+                    b.addDouble(p[i]);
+                delete[] p;
+            }
+            break;
+
+            case VOCAB_CURRENT_PID_OUTPUT:
+            {
+                *ok = rpc_ICurrent->getCurrentPidOutput(cmd.get(3).asInt(), &dtmp);
+                response.addDouble(dtmp);
+            }
+            break;
+
+            case VOCAB_CURRENT_PID_OUTPUTS:
+            {
+                double *p = new double[controlledJoints];
+                *ok = rpc_ICurrent->getCurrentPidOutputs(p);
+                Bottle& b = response.addList();
+                int i;
+                for (i = 0; i < controlledJoints; i++)
+                    b.addDouble(p[i]);
+                delete[] p;
+            }
+            break;
+
+            case VOCAB_CURRENT_PID:
+            {
+                Pid p;
+                *ok = rpc_ICurrent->getCurrentPid(cmd.get(3).asInt(), &p);
+                Bottle& b = response.addList();
+                b.addDouble(p.kp);
+                b.addDouble(p.kd);
+                b.addDouble(p.ki);
+                b.addDouble(p.max_int);
+                b.addDouble(p.max_output);
+                b.addDouble(p.offset);
+                b.addDouble(p.scale);
+                b.addDouble(p.stiction_up_val);
+                b.addDouble(p.stiction_down_val);
+                b.addDouble(p.kff);
+            }
+            break;
+
+            case VOCAB_CURRENT_PIDS:
+            {
+                Pid *p = new Pid[controlledJoints];
+                *ok = rpc_ICurrent->getCurrentPids(p);
+                Bottle& b = response.addList();
+                int i;
+                for (i = 0; i < controlledJoints; i++)
+                {
+                    Bottle& c = b.addList();
+                    c.addDouble(p[i].kp);
+                    c.addDouble(p[i].kd);
+                    c.addDouble(p[i].ki);
+                    c.addDouble(p[i].max_int);
+                    c.addDouble(p[i].max_output);
+                    c.addDouble(p[i].offset);
+                    c.addDouble(p[i].scale);
+                    c.addDouble(p[i].stiction_up_val);
+                    c.addDouble(p[i].stiction_down_val);
+                    c.addDouble(p[i].kff);
+                }
+                delete[] p;
+            }
+            break;
+
+            case VOCAB_CURRENT_REF:
+            {
+                *ok = rpc_ICurrent->getRefCurrent(cmd.get(3).asInt(), &dtmp);
+                response.addDouble(dtmp);
+            }
+            break;
+
+            case VOCAB_CURRENT_REFS:
+            {
+                double *p = new double[controlledJoints];
+                *ok = rpc_ICurrent->getRefCurrents(p);
+                Bottle& b = response.addList();
+                int i;
+                for (i = 0; i < controlledJoints; i++)
+                    b.addDouble(p[i]);
+                delete[] p;
+            }
+            break;
+
+            case VOCAB_CURRENT_RANGE:
+            {
+                
+                *ok = rpc_ICurrent->getCurrentRange(cmd.get(3).asInt(), &dtmp, &dtmp2);
+                response.addDouble(dtmp);
+                response.addDouble(dtmp2);
+            }
+            break;
+
+            case VOCAB_CURRENT_RANGES:
+            {
+                double *p1 = new double[controlledJoints];
+                double *p2 = new double[controlledJoints];
+                *ok = rpc_ICurrent->getCurrentRanges(p1,p2);
+                Bottle& b1 = response.addList();
+                Bottle& b2 = response.addList();
+                int i;
+                for (i = 0; i < controlledJoints; i++)
+                {
+                    b1.addDouble(p1[i]);
+                }
+                for (i = 0; i < controlledJoints; i++)
+                {
+                    b2.addDouble(p2[i]);
+                }
+                delete[] p1;
+                delete[] p2;
+            }
+            break;
+
+            default:
+            {
+                yError() << "Unknown handleCurrentMsg message received";
+                *rec = false;
+                *ok = false;
+            }
+            break;
+        }
+    }
+    break;
+
+    default:
+    {
+        yError() << "Unknown handleCurrentMsg message received";
+        *rec = false;
+        *ok = false;
+    }
+    break;
+    }
+}
+
+void RPCMessagesParser::handlePWMMsg(const yarp::os::Bottle& cmd, yarp::os::Bottle& response, bool *rec, bool *ok)
+{
+    if (ControlBoardWrapper_p->verbose())
+        yDebug("Handling IPWMControl message\n");
+
+    if (!rpc_IPWM)
+    {
+        yError("controlBoardWrapper: I do not have a valid IPWMControl interface");
+        *ok = false;
+        return;
     }
 
-    int action = cmd.get(0).asVocab();
+    int code = cmd.get(0).asVocab();
+    int action = cmd.get(2).asVocab();
 
-    switch(action)
+    *ok = false;
+    *rec = true;
+    switch (code)
     {
         case VOCAB_SET:
         {
-            yError() << "ControlBoardWrapper2 received a set command in the OpenLoopInterface on rpc port "
-                     << "This is wrong, no SET command should use rpc for this interface, but they should use the sreaming port!" ;
-            *rec = false;
+            *rec = true;
+            if (ControlBoardWrapper_p->verbose())
+                yDebug("set command received\n");
+
+            switch (action)
+            {
+                case VOCAB_PWMCONTROL_REF_PWM:
+                {
+                    //handled as streaming!
+                    yError() << "VOCAB_PWMCONTROL_REF_PWM handled as straming";
+                    *ok = false;
+                }
+                break;
+
+                default:
+                {
+                    yError() << "Unknown handlePWMMsg message received";
+                    *ok = false;
+                }
+                break;
+            }
         }
         break;
 
         case VOCAB_GET:
         {
-            response.clear();
+            *rec = true;
+            if (ControlBoardWrapper_p->verbose())
+                yDebug("get command received\n");
+            double dtmp = 0.0;
+            double dtmp2 = 0.0;
             response.addVocab(VOCAB_IS);
             response.add(cmd.get(1));
-            switch (cmd.get(2).asVocab())
+
+            switch (action)
             {
-                case VOCAB_OPENLOOP_REF_OUTPUT:
+                case VOCAB_PWMCONTROL_REF_PWM:
                 {
-                    double tmp;
-                    *rec = true;
-                    *ok = rpc_IOpenLoop->getRefOutput(cmd.get(3).asInt(), &tmp);
-                    response.addDouble(tmp);
+                    *ok = rpc_IPWM->getRefDutyCycle(cmd.get(3).asInt(), &dtmp);
+                    response.addDouble(dtmp);
                 }
                 break;
 
-                case VOCAB_OPENLOOP_REF_OUTPUTS:
+                case VOCAB_PWMCONTROL_REF_PWMS:
                 {
                     double *p = new double[controlledJoints];
-                    *rec = true;
-                    *ok = rpc_IOpenLoop->getRefOutputs(p);
+                    *ok = rpc_IPWM->getRefDutyCycles(p);
                     Bottle& b = response.addList();
-
-                    for (int i = 0; i < controlledJoints; i++)
+                    int i;
+                    for (i = 0; i < controlledJoints; i++)
                         b.addDouble(p[i]);
                     delete[] p;
                 }
                 break;
 
-                case VOCAB_OPENLOOP_PWM_OUTPUT:
+                case VOCAB_PWMCONTROL_PWM_OUTPUT:
                 {
-                    double tmp;
-                    *rec = true;
-                    *ok = rpc_IOpenLoop->getRefOutput(cmd.get(3).asInt(), &tmp);
-                    response.addDouble(tmp);
+                    *ok = rpc_IPWM->getDutyCycle(cmd.get(3).asInt(), &dtmp);
+                    response.addDouble(dtmp);
                 }
                 break;
 
-                case VOCAB_OPENLOOP_PWM_OUTPUTS:
+                case VOCAB_PWMCONTROL_PWM_OUTPUTS:
                 {
                     double *p = new double[controlledJoints];
-                    *rec = true;
-                    *ok = rpc_IOpenLoop->getRefOutputs(p);
+                    *ok = rpc_IPWM->getRefDutyCycles(p);
                     Bottle& b = response.addList();
-
-                    for (int i = 0; i < controlledJoints; i++)
+                    int i;
+                    for (i = 0; i < controlledJoints; i++)
                         b.addDouble(p[i]);
                     delete[] p;
+                }
+                break;
+
+                default:
+                {
+                    yError() << "Unknown handlePWMMsg message received";
+                    *ok = false;
                 }
                 break;
             }
         }
-            lastRpcStamp.update();
-            appendTimeStamp(response, lastRpcStamp);
-
         break;
+
         default:
+        {
+            yError() << "Unknown handlePWMMsg message received";
             *rec = false;
+            *ok = false;
+        }
         break;
     }
 }
@@ -1337,10 +1669,6 @@ bool RPCMessagesParser::respond(const yarp::os::Bottle& cmd, yarp::os::Bottle& r
                 handleInteractionModeMsg(cmd, response, &rec, &ok);
             break;
 
-            case VOCAB_OPENLOOP_INTERFACE:
-                handleOpenLoopMsg(cmd, response, &rec, &ok);
-            break;
-
             case VOCAB_PROTOCOL_VERSION:
                 handleProtocolVersionRequest(cmd, response, &rec, &ok);
             break;
@@ -1352,6 +1680,14 @@ bool RPCMessagesParser::respond(const yarp::os::Bottle& cmd, yarp::os::Bottle& r
             case VOCAB_REMOTE_VARIABILE_INTERFACE:
                 handleRemoteVariablesMsg(cmd, response, &rec, &ok);
             break;
+
+            case VOCAB_CURRENTCONTROL_INTERFACE:
+                handleCurrentMsg(cmd, response, &rec, &ok);
+            break;
+
+            case VOCAB_PWMCONTROL_INTERFACE:
+                handlePWMMsg(cmd, response, &rec, &ok);
+                break;
 
             default:
                 // fallback for old interfaces with no specific name
@@ -1436,22 +1772,6 @@ bool RPCMessagesParser::respond(const yarp::os::Bottle& cmd, yarp::os::Bottle& r
 
                         switch(cmd.get(1).asVocab())
                         {
-                            case VOCAB_OUTPUT:
-                            {
-                            yWarning() << "DEPRECATED setOutput (should be in streaming!) Check you are using the updated RemoteControlBoard class";
-                            yWarning() << "Correct message should be [" << Vocab::decode(VOCAB_OPENLOOP_INTERFACE) << "] [" << Vocab::decode(VOCAB_OPENLOOP_REF_OUTPUT) << "] joint value";
-                                ok = false;
-                            }
-                            break;
-
-                            case VOCAB_OUTPUTS:
-                            {
-                            yWarning() << "DEPRECATED setOutpus (should be in streaming!) Check you are using the updated RemoteControlBoard class";
-                            yWarning() << "Correct message should be [" << Vocab::decode(VOCAB_OPENLOOP_INTERFACE) << "] [" << Vocab::decode(VOCAB_OPENLOOP_REF_OUTPUTS) << "] joint value";
-                                ok = false;
-                            }
-                            break;
-
                             case VOCAB_OFFSET:
                             {
                                 double v;
@@ -1668,53 +1988,6 @@ bool RPCMessagesParser::respond(const yarp::os::Bottle& cmd, yarp::os::Bottle& r
                                 ok = rpc_IPid->enablePid (cmd.get(2).asInt());
                             }
                             break;
-
-#ifndef YARP_NO_DEPRECATED // since YARP 2.3.65
-                            case VOCAB_TORQUE_MODE:
-                            {
-YARP_WARNING_PUSH
-YARP_DISABLE_DEPRECATED_WARNING
-                                ok = rpc_ITorque->setTorqueMode();
-YARP_WARNING_POP
-                            }
-                            break;
-
-                            case VOCAB_VELOCITY_MODE:
-                            {
-YARP_WARNING_PUSH
-YARP_DISABLE_DEPRECATED_WARNING
-                                ok = rpc_IVelCtrl->setVelocityMode();
-YARP_WARNING_POP
-                            }
-                            break;
-
-                            case VOCAB_POSITION_MODE:
-                            {
-YARP_WARNING_PUSH
-YARP_DISABLE_DEPRECATED_WARNING
-                                ok = rpc_IPosCtrl->setPositionMode();
-YARP_WARNING_POP
-                            }
-                            break;
-
-                            case VOCAB_POSITION_DIRECT:
-                            {
-YARP_WARNING_PUSH
-YARP_DISABLE_DEPRECATED_WARNING
-                                ok = rpc_IPosDirect->setPositionDirectMode();
-YARP_WARNING_POP
-                            }
-                            break;
-
-                            case VOCAB_OPENLOOP_MODE:
-                            {
-YARP_WARNING_PUSH
-YARP_DISABLE_DEPRECATED_WARNING
-                                ok = rpc_IOpenLoop->setOpenLoopMode();
-YARP_WARNING_POP
-                            }
-                            break;
-#endif // YARP_NO_DEPRECATED
 
                             case VOCAB_POSITION_MOVE:
                             {
@@ -2275,6 +2548,7 @@ YARP_WARNING_POP
                                 b.addDouble(p.stiction_down_val);
                                 b.addDouble(p.kff);
                             }
+                            break;
 
                             case VOCAB_VEL_PIDS:
                             {
@@ -2298,6 +2572,7 @@ YARP_WARNING_POP
                                 }
                                 delete[] p;
                             }
+                            break;
 
                             case VOCAB_REFERENCE:
                             {
@@ -2943,11 +3218,12 @@ void RPCMessagesParser::init(ControlBoardWrapper *x)
     rpc_AxisInfo          = dynamic_cast<yarp::dev::IAxisInfo *>            (ControlBoardWrapper_p);
     rpc_IRemoteCalibrator = dynamic_cast<yarp::dev::IRemoteCalibrator *>    (ControlBoardWrapper_p);
     rpc_Icalib2           = dynamic_cast<yarp::dev::IControlCalibration2 *> (ControlBoardWrapper_p);
-    rpc_IOpenLoop         = dynamic_cast<yarp::dev::IOpenLoopControl *>     (ControlBoardWrapper_p);
     rpc_IImpedance        = dynamic_cast<yarp::dev::IImpedanceControl *>    (ControlBoardWrapper_p);
     rpc_ITorque           = dynamic_cast<yarp::dev::ITorqueControl *>       (ControlBoardWrapper_p);
     rpc_iCtrlMode         = dynamic_cast<yarp::dev::IControlMode *>         (ControlBoardWrapper_p);
     rpc_iCtrlMode2        = dynamic_cast<yarp::dev::IControlMode2 *>        (ControlBoardWrapper_p);
     rpc_IInteract         = dynamic_cast<yarp::dev::IInteractionMode *>     (ControlBoardWrapper_p);
+    rpc_ICurrent          = dynamic_cast<yarp::dev::ICurrentControl *>      (ControlBoardWrapper_p);
+    rpc_IPWM              = dynamic_cast<yarp::dev::IPWMControl *>          (ControlBoardWrapper_p);
     controlledJoints      = 0;
 }

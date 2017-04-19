@@ -34,9 +34,6 @@ public:
 
     // Inherit from IVelocityControl
     using IVelocityControl::getAxes;
-#ifndef YARP_NO_DEPRECATED // since YARP 2.3.65
-    using IVelocityControl::setVelocityMode;
-#endif // YARP_NO_DEPRECATED
     using IVelocityControl::velocityMove;
     using IVelocityControl::setRefAcceleration;
     using IVelocityControl::setRefAccelerations;
@@ -158,9 +155,6 @@ public:
 
     // Inherit from IVelocityControl
     using IVelocityControlRaw::getAxes;
-#ifndef YARP_NO_DEPRECATED // since YARP 2.3.65
-    using IVelocityControlRaw::setVelocityModeRaw;
-#endif // YARP_NO_DEPRECATED
     using IVelocityControlRaw::velocityMoveRaw;
     using IVelocityControlRaw::setRefAccelerationRaw;
     using IVelocityControlRaw::setRefAccelerationsRaw;

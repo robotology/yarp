@@ -28,19 +28,21 @@ public:
   bool motorAcceleration_isValid;
   yarp::sig::VectorOf<double> torque;
   bool torque_isValid;
-  yarp::sig::VectorOf<double> pidOutput;
-  bool pidOutput_isValid;
+  yarp::sig::VectorOf<double> pwmDutycycle;
+  bool pwmDutycycle_isValid;
+  yarp::sig::VectorOf<double> current;
+  bool current_isValid;
   yarp::sig::VectorOf<int> controlMode;
   bool controlMode_isValid;
   yarp::sig::VectorOf<int> interactionMode;
   bool interactionMode_isValid;
 
   // Default constructor
-  jointData() : jointPosition_isValid(0), jointVelocity_isValid(0), jointAcceleration_isValid(0), motorPosition_isValid(0), motorVelocity_isValid(0), motorAcceleration_isValid(0), torque_isValid(0), pidOutput_isValid(0), controlMode_isValid(0), interactionMode_isValid(0) {
+  jointData() : jointPosition_isValid(0), jointVelocity_isValid(0), jointAcceleration_isValid(0), motorPosition_isValid(0), motorVelocity_isValid(0), motorAcceleration_isValid(0), torque_isValid(0), pwmDutycycle_isValid(0), current_isValid(0), controlMode_isValid(0), interactionMode_isValid(0) {
   }
 
   // Constructor with field values
-  jointData(const yarp::sig::VectorOf<double>& jointPosition,const bool jointPosition_isValid,const yarp::sig::VectorOf<double>& jointVelocity,const bool jointVelocity_isValid,const yarp::sig::VectorOf<double>& jointAcceleration,const bool jointAcceleration_isValid,const yarp::sig::VectorOf<double>& motorPosition,const bool motorPosition_isValid,const yarp::sig::VectorOf<double>& motorVelocity,const bool motorVelocity_isValid,const yarp::sig::VectorOf<double>& motorAcceleration,const bool motorAcceleration_isValid,const yarp::sig::VectorOf<double>& torque,const bool torque_isValid,const yarp::sig::VectorOf<double>& pidOutput,const bool pidOutput_isValid,const yarp::sig::VectorOf<int>& controlMode,const bool controlMode_isValid,const yarp::sig::VectorOf<int>& interactionMode,const bool interactionMode_isValid) : jointPosition(jointPosition), jointPosition_isValid(jointPosition_isValid), jointVelocity(jointVelocity), jointVelocity_isValid(jointVelocity_isValid), jointAcceleration(jointAcceleration), jointAcceleration_isValid(jointAcceleration_isValid), motorPosition(motorPosition), motorPosition_isValid(motorPosition_isValid), motorVelocity(motorVelocity), motorVelocity_isValid(motorVelocity_isValid), motorAcceleration(motorAcceleration), motorAcceleration_isValid(motorAcceleration_isValid), torque(torque), torque_isValid(torque_isValid), pidOutput(pidOutput), pidOutput_isValid(pidOutput_isValid), controlMode(controlMode), controlMode_isValid(controlMode_isValid), interactionMode(interactionMode), interactionMode_isValid(interactionMode_isValid) {
+  jointData(const yarp::sig::VectorOf<double>& jointPosition,const bool jointPosition_isValid,const yarp::sig::VectorOf<double>& jointVelocity,const bool jointVelocity_isValid,const yarp::sig::VectorOf<double>& jointAcceleration,const bool jointAcceleration_isValid,const yarp::sig::VectorOf<double>& motorPosition,const bool motorPosition_isValid,const yarp::sig::VectorOf<double>& motorVelocity,const bool motorVelocity_isValid,const yarp::sig::VectorOf<double>& motorAcceleration,const bool motorAcceleration_isValid,const yarp::sig::VectorOf<double>& torque,const bool torque_isValid,const yarp::sig::VectorOf<double>& pwmDutycycle,const bool pwmDutycycle_isValid,const yarp::sig::VectorOf<double>& current,const bool current_isValid,const yarp::sig::VectorOf<int>& controlMode,const bool controlMode_isValid,const yarp::sig::VectorOf<int>& interactionMode,const bool interactionMode_isValid) : jointPosition(jointPosition), jointPosition_isValid(jointPosition_isValid), jointVelocity(jointVelocity), jointVelocity_isValid(jointVelocity_isValid), jointAcceleration(jointAcceleration), jointAcceleration_isValid(jointAcceleration_isValid), motorPosition(motorPosition), motorPosition_isValid(motorPosition_isValid), motorVelocity(motorVelocity), motorVelocity_isValid(motorVelocity_isValid), motorAcceleration(motorAcceleration), motorAcceleration_isValid(motorAcceleration_isValid), torque(torque), torque_isValid(torque_isValid), pwmDutycycle(pwmDutycycle), pwmDutycycle_isValid(pwmDutycycle_isValid), current(current), current_isValid(current_isValid), controlMode(controlMode), controlMode_isValid(controlMode_isValid), interactionMode(interactionMode), interactionMode_isValid(interactionMode_isValid) {
   }
 
   // Copy constructor
@@ -59,8 +61,10 @@ public:
     this->motorAcceleration_isValid = __alt.motorAcceleration_isValid;
     this->torque = __alt.torque;
     this->torque_isValid = __alt.torque_isValid;
-    this->pidOutput = __alt.pidOutput;
-    this->pidOutput_isValid = __alt.pidOutput_isValid;
+    this->pwmDutycycle = __alt.pwmDutycycle;
+    this->pwmDutycycle_isValid = __alt.pwmDutycycle_isValid;
+    this->current = __alt.current;
+    this->current_isValid = __alt.current_isValid;
     this->controlMode = __alt.controlMode;
     this->controlMode_isValid = __alt.controlMode_isValid;
     this->interactionMode = __alt.interactionMode;
@@ -83,8 +87,10 @@ public:
     this->motorAcceleration_isValid = __alt.motorAcceleration_isValid;
     this->torque = __alt.torque;
     this->torque_isValid = __alt.torque_isValid;
-    this->pidOutput = __alt.pidOutput;
-    this->pidOutput_isValid = __alt.pidOutput_isValid;
+    this->pwmDutycycle = __alt.pwmDutycycle;
+    this->pwmDutycycle_isValid = __alt.pwmDutycycle_isValid;
+    this->current = __alt.current;
+    this->current_isValid = __alt.current_isValid;
     this->controlMode = __alt.controlMode;
     this->controlMode_isValid = __alt.controlMode_isValid;
     this->interactionMode = __alt.interactionMode;
@@ -127,10 +133,14 @@ private:
   bool nested_write_torque(yarp::os::idl::WireWriter& writer);
   bool write_torque_isValid(yarp::os::idl::WireWriter& writer);
   bool nested_write_torque_isValid(yarp::os::idl::WireWriter& writer);
-  bool write_pidOutput(yarp::os::idl::WireWriter& writer);
-  bool nested_write_pidOutput(yarp::os::idl::WireWriter& writer);
-  bool write_pidOutput_isValid(yarp::os::idl::WireWriter& writer);
-  bool nested_write_pidOutput_isValid(yarp::os::idl::WireWriter& writer);
+  bool write_pwmDutycycle(yarp::os::idl::WireWriter& writer);
+  bool nested_write_pwmDutycycle(yarp::os::idl::WireWriter& writer);
+  bool write_pwmDutycycle_isValid(yarp::os::idl::WireWriter& writer);
+  bool nested_write_pwmDutycycle_isValid(yarp::os::idl::WireWriter& writer);
+  bool write_current(yarp::os::idl::WireWriter& writer);
+  bool nested_write_current(yarp::os::idl::WireWriter& writer);
+  bool write_current_isValid(yarp::os::idl::WireWriter& writer);
+  bool nested_write_current_isValid(yarp::os::idl::WireWriter& writer);
   bool write_controlMode(yarp::os::idl::WireWriter& writer);
   bool nested_write_controlMode(yarp::os::idl::WireWriter& writer);
   bool write_controlMode_isValid(yarp::os::idl::WireWriter& writer);
@@ -167,10 +177,14 @@ private:
   bool nested_read_torque(yarp::os::idl::WireReader& reader);
   bool read_torque_isValid(yarp::os::idl::WireReader& reader);
   bool nested_read_torque_isValid(yarp::os::idl::WireReader& reader);
-  bool read_pidOutput(yarp::os::idl::WireReader& reader);
-  bool nested_read_pidOutput(yarp::os::idl::WireReader& reader);
-  bool read_pidOutput_isValid(yarp::os::idl::WireReader& reader);
-  bool nested_read_pidOutput_isValid(yarp::os::idl::WireReader& reader);
+  bool read_pwmDutycycle(yarp::os::idl::WireReader& reader);
+  bool nested_read_pwmDutycycle(yarp::os::idl::WireReader& reader);
+  bool read_pwmDutycycle_isValid(yarp::os::idl::WireReader& reader);
+  bool nested_read_pwmDutycycle_isValid(yarp::os::idl::WireReader& reader);
+  bool read_current(yarp::os::idl::WireReader& reader);
+  bool nested_read_current(yarp::os::idl::WireReader& reader);
+  bool read_current_isValid(yarp::os::idl::WireReader& reader);
+  bool nested_read_current_isValid(yarp::os::idl::WireReader& reader);
   bool read_controlMode(yarp::os::idl::WireReader& reader);
   bool nested_read_controlMode(yarp::os::idl::WireReader& reader);
   bool read_controlMode_isValid(yarp::os::idl::WireReader& reader);
@@ -327,19 +341,33 @@ public:
       communicate();
       did_set_torque_isValid();
     }
-    void set_pidOutput(const yarp::sig::VectorOf<double>& pidOutput) {
-      will_set_pidOutput();
-      obj->pidOutput = pidOutput;
-      mark_dirty_pidOutput();
+    void set_pwmDutycycle(const yarp::sig::VectorOf<double>& pwmDutycycle) {
+      will_set_pwmDutycycle();
+      obj->pwmDutycycle = pwmDutycycle;
+      mark_dirty_pwmDutycycle();
       communicate();
-      did_set_pidOutput();
+      did_set_pwmDutycycle();
     }
-    void set_pidOutput_isValid(const bool pidOutput_isValid) {
-      will_set_pidOutput_isValid();
-      obj->pidOutput_isValid = pidOutput_isValid;
-      mark_dirty_pidOutput_isValid();
+    void set_pwmDutycycle_isValid(const bool pwmDutycycle_isValid) {
+      will_set_pwmDutycycle_isValid();
+      obj->pwmDutycycle_isValid = pwmDutycycle_isValid;
+      mark_dirty_pwmDutycycle_isValid();
       communicate();
-      did_set_pidOutput_isValid();
+      did_set_pwmDutycycle_isValid();
+    }
+    void set_current(const yarp::sig::VectorOf<double>& current) {
+      will_set_current();
+      obj->current = current;
+      mark_dirty_current();
+      communicate();
+      did_set_current();
+    }
+    void set_current_isValid(const bool current_isValid) {
+      will_set_current_isValid();
+      obj->current_isValid = current_isValid;
+      mark_dirty_current_isValid();
+      communicate();
+      did_set_current_isValid();
     }
     void set_controlMode(const yarp::sig::VectorOf<int>& controlMode) {
       will_set_controlMode();
@@ -411,11 +439,17 @@ public:
     bool get_torque_isValid() {
       return obj->torque_isValid;
     }
-    const yarp::sig::VectorOf<double>& get_pidOutput() {
-      return obj->pidOutput;
+    const yarp::sig::VectorOf<double>& get_pwmDutycycle() {
+      return obj->pwmDutycycle;
     }
-    bool get_pidOutput_isValid() {
-      return obj->pidOutput_isValid;
+    bool get_pwmDutycycle_isValid() {
+      return obj->pwmDutycycle_isValid;
+    }
+    const yarp::sig::VectorOf<double>& get_current() {
+      return obj->current;
+    }
+    bool get_current_isValid() {
+      return obj->current_isValid;
     }
     const yarp::sig::VectorOf<int>& get_controlMode() {
       return obj->controlMode;
@@ -443,8 +477,10 @@ public:
     virtual bool will_set_motorAcceleration_isValid() { return true; }
     virtual bool will_set_torque() { return true; }
     virtual bool will_set_torque_isValid() { return true; }
-    virtual bool will_set_pidOutput() { return true; }
-    virtual bool will_set_pidOutput_isValid() { return true; }
+    virtual bool will_set_pwmDutycycle() { return true; }
+    virtual bool will_set_pwmDutycycle_isValid() { return true; }
+    virtual bool will_set_current() { return true; }
+    virtual bool will_set_current_isValid() { return true; }
     virtual bool will_set_controlMode() { return true; }
     virtual bool will_set_controlMode_isValid() { return true; }
     virtual bool will_set_interactionMode() { return true; }
@@ -463,8 +499,10 @@ public:
     virtual bool did_set_motorAcceleration_isValid() { return true; }
     virtual bool did_set_torque() { return true; }
     virtual bool did_set_torque_isValid() { return true; }
-    virtual bool did_set_pidOutput() { return true; }
-    virtual bool did_set_pidOutput_isValid() { return true; }
+    virtual bool did_set_pwmDutycycle() { return true; }
+    virtual bool did_set_pwmDutycycle_isValid() { return true; }
+    virtual bool did_set_current() { return true; }
+    virtual bool did_set_current_isValid() { return true; }
     virtual bool did_set_controlMode() { return true; }
     virtual bool did_set_controlMode_isValid() { return true; }
     virtual bool did_set_interactionMode() { return true; }
@@ -575,16 +613,28 @@ public:
       is_dirty_torque_isValid = true;
       mark_dirty();
     }
-    void mark_dirty_pidOutput() {
-      if (is_dirty_pidOutput) return;
+    void mark_dirty_pwmDutycycle() {
+      if (is_dirty_pwmDutycycle) return;
       dirty_count++;
-      is_dirty_pidOutput = true;
+      is_dirty_pwmDutycycle = true;
       mark_dirty();
     }
-    void mark_dirty_pidOutput_isValid() {
-      if (is_dirty_pidOutput_isValid) return;
+    void mark_dirty_pwmDutycycle_isValid() {
+      if (is_dirty_pwmDutycycle_isValid) return;
       dirty_count++;
-      is_dirty_pidOutput_isValid = true;
+      is_dirty_pwmDutycycle_isValid = true;
+      mark_dirty();
+    }
+    void mark_dirty_current() {
+      if (is_dirty_current) return;
+      dirty_count++;
+      is_dirty_current = true;
+      mark_dirty();
+    }
+    void mark_dirty_current_isValid() {
+      if (is_dirty_current_isValid) return;
+      dirty_count++;
+      is_dirty_current_isValid = true;
       mark_dirty();
     }
     void mark_dirty_controlMode() {
@@ -627,13 +677,15 @@ public:
       is_dirty_motorAcceleration_isValid = flag;
       is_dirty_torque = flag;
       is_dirty_torque_isValid = flag;
-      is_dirty_pidOutput = flag;
-      is_dirty_pidOutput_isValid = flag;
+      is_dirty_pwmDutycycle = flag;
+      is_dirty_pwmDutycycle_isValid = flag;
+      is_dirty_current = flag;
+      is_dirty_current_isValid = flag;
       is_dirty_controlMode = flag;
       is_dirty_controlMode_isValid = flag;
       is_dirty_interactionMode = flag;
       is_dirty_interactionMode_isValid = flag;
-      dirty_count = flag ? 20 : 0;
+      dirty_count = flag ? 22 : 0;
     }
     bool is_dirty;
     int dirty_count;
@@ -651,8 +703,10 @@ public:
     bool is_dirty_motorAcceleration_isValid;
     bool is_dirty_torque;
     bool is_dirty_torque_isValid;
-    bool is_dirty_pidOutput;
-    bool is_dirty_pidOutput_isValid;
+    bool is_dirty_pwmDutycycle;
+    bool is_dirty_pwmDutycycle_isValid;
+    bool is_dirty_current;
+    bool is_dirty_current_isValid;
     bool is_dirty_controlMode;
     bool is_dirty_controlMode_isValid;
     bool is_dirty_interactionMode;

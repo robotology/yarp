@@ -52,7 +52,7 @@
 #endif
 
 #define PROTOCOL_VERSION_MAJOR 1
-#define PROTOCOL_VERSION_MINOR 7
+#define PROTOCOL_VERSION_MINOR 8
 #define PROTOCOL_VERSION_TWEAK 0
 
 /*
@@ -272,7 +272,6 @@ class yarp::dev::ControlBoardWrapper:   public yarp::dev::DeviceDriver,
                                         public yarp::dev::IRemoteCalibrator,
                                         public yarp::dev::IControlCalibration,
                                         public yarp::dev::IControlCalibration2,
-                                        public yarp::dev::IOpenLoopControl,
                                         public yarp::dev::ITorqueControl,
                                         public yarp::dev::IImpedanceControl,
                                         public yarp::dev::IControlMode2,
@@ -280,7 +279,9 @@ class yarp::dev::ControlBoardWrapper:   public yarp::dev::DeviceDriver,
                                         public yarp::dev::IAxisInfo,
                                         public yarp::dev::IPreciselyTimed,
                                         public yarp::dev::IInteractionMode,
-                                        public yarp::dev::IRemoteVariables
+                                        public yarp::dev::IRemoteVariables,
+                                        public yarp::dev::IPWMControl,
+                                        public yarp::dev::ICurrentControl
 {
 private:
 
@@ -1307,8 +1308,6 @@ public:
 
     virtual bool setVelocityMode(int j);
 
-    virtual bool setOpenLoopMode(int j);
-
     virtual bool getControlMode(int j, int *mode);
 
     virtual bool getControlModes(int *modes);
@@ -1324,10 +1323,6 @@ public:
 
     virtual bool setControlModes(int *modes);
 
-    virtual bool setRefOutput(int j, double v);
-
-    virtual bool setRefOutputs(const double *outs);
-
     // IPositionDirect
 
     virtual bool setPosition(int j, double ref);
@@ -1337,7 +1332,7 @@ public:
     virtual bool setPositions(const double *refs);
 
         /** Get the last position reference for the specified axis.
-     *  This is the dual of setPositionsRaw and shall return only values sent using
+     *  This is the dual of setPositions and shall return only values sent using
      *  IPositionDirect interface.
      *  If other interfaces like IPositionControl are implemented by the device, this call
      *  must ignore their values, i.e. this call must never return a reference sent using
@@ -1348,7 +1343,7 @@ public:
     virtual bool getRefPosition(const int joint, double *ref);
 
     /** Get the last position reference for all axes.
-     *  This is the dual of setPositionsRaw and shall return only values sent using
+     *  This is the dual of setPositions and shall return only values sent using
      *  IPositionDirect interface.
      *  If other interfaces like IPositionControl are implemented by the device, this call
      *  must ignore their values, i.e. this call must never return a reference sent using
@@ -1359,7 +1354,7 @@ public:
     virtual bool getRefPositions(double *refs);
 
     /** Get the last position reference for the specified group of axes.
-     *  This is the dual of setPositionsRaw and shall return only values sent using
+     *  This is the dual of setPositions and shall return only values sent using
      *  IPositionDirect interface.
      *  If other interfaces like IPositionControl are implemented by the device, this call
      *  must ignore their values, i.e. this call must never return a reference sent using
@@ -1402,27 +1397,42 @@ public:
 
     virtual bool setInteractionModes(yarp::dev::InteractionModeEnum* modes);
 
-    /**
-     * Get the last reference sent using the setOutput function
-     * @param outs pointer to the vector that will store the output values
-     * @return true/false on success/failure
-     */
-    virtual bool getRefOutput(int j, double *out);
+    //
+    // IPWMControl Interface
+    //
 
-    /**
-     * Get the last reference sent using the setOutputs function
-     * @param outs pointer to the vector that will store the output values
-     * @return true/false on success/failure
-     */
-    virtual bool getRefOutputs(double *outs);
+    virtual bool setRefDutyCycle(int j, double v);
+    virtual bool setRefDutyCycles(const double *v);
+    virtual bool getRefDutyCycle(int j, double *v);
+    virtual bool getRefDutyCycles(double *v);
+    virtual bool getDutyCycle(int j, double *v);
+    virtual bool getDutyCycles(double *v);
 
-#ifndef YARP_NO_DEPRECATED // since YARP 2.3.65
-    YARP_DEPRECATED virtual bool setPositionMode();
-    YARP_DEPRECATED virtual bool setOpenLoopMode();
-    YARP_DEPRECATED virtual bool setVelocityMode();
-    YARP_DEPRECATED virtual bool setTorqueMode();
-    YARP_DEPRECATED virtual bool setPositionDirectMode();
-#endif // YARP_NO_DEPRECATED
+    //
+    // ICurrentControl Interface
+    //
+
+    //virtual bool getAxes(int *ax);
+    //virtual bool getCurrent(int j, double *t);
+    //virtual bool getCurrents(double *t);
+    virtual bool getCurrentRange(int j, double *min, double *max);
+    virtual bool getCurrentRanges(double *min, double *max);
+    virtual bool setRefCurrents(const double *t);
+    virtual bool setRefCurrent(int j, double t);
+    virtual bool setRefCurrents(const int n_joint, const int *joints, const double *t);
+    virtual bool getRefCurrents(double *t);
+    virtual bool getRefCurrent(int j, double *t);
+    virtual bool setCurrentPid(int j, const Pid &pid);
+    virtual bool setCurrentPids(const Pid *pids);
+    virtual bool getCurrentError(int j, double *err);
+    virtual bool getCurrentErrors(double *errs);
+    virtual bool getCurrentPidOutput(int j, double *out);
+    virtual bool getCurrentPidOutputs(double *outs);
+    virtual bool getCurrentPid(int j, Pid *pid);
+    virtual bool getCurrentPids(Pid *pids);
+    virtual bool resetCurrentPid(int j);
+    virtual bool disableCurrentPid(int j);
+    virtual bool enableCurrentPid(int j);
 };
 
 #if defined(_MSC_VER) && !defined(YARP_NO_DEPRECATED) // since YARP 2.3.65

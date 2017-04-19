@@ -145,6 +145,12 @@ public:
      * \param p pid to be compared
      */
     bool operator==(const yarp::dev::Pid &p);
+
+    /*!
+    * \brief Set all pid paramters to zero
+    *
+    */
+    void clear();
 };
 
 #endif // YARP_DEV_CONTROLBOARDPID_H

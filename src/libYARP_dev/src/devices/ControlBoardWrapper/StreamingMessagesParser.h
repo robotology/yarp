@@ -78,8 +78,9 @@ protected:
     yarp::dev::IPositionDirect      *stream_IPosDirect;
     yarp::dev::IVelocityControl     *stream_IVel;
     yarp::dev::IVelocityControl2    *stream_IVel2;
-    yarp::dev::IOpenLoopControl     *stream_IOpenLoop;
     yarp::dev::ITorqueControl       *stream_ITorque;
+    yarp::dev::IPWMControl          *stream_IPWM;
+    yarp::dev::ICurrentControl      *stream_ICurrent;
     int                              stream_nJoints;
 
 public:

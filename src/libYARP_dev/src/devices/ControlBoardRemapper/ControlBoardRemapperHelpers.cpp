@@ -33,7 +33,6 @@ RemappedSubControlBoard::RemappedSubControlBoard()
     calib2 = 0;
     iTimed= 0;
     info = 0;
-    iOpenLoop=0;
     iTorque=0;
     iImpedance=0;
     iMode2=0;
@@ -65,7 +64,6 @@ void RemappedSubControlBoard::detach()
     iImpedance=0;
     iMode2=0;
     iTimed=0;
-    iOpenLoop=0;
     iInteract=0;
     iVar = 0;
     attachedF=false;
@@ -103,7 +101,6 @@ bool RemappedSubControlBoard::attach(yarp::dev::PolyDriver *d, const std::string
         subdevice->view(iTorque);
         subdevice->view(iImpedance);
         subdevice->view(iMode2);
-        subdevice->view(iOpenLoop);
         subdevice->view(iJntEnc);
         subdevice->view(iMotEnc);
         subdevice->view(iInteract);
@@ -124,11 +121,6 @@ bool RemappedSubControlBoard::attach(yarp::dev::PolyDriver *d, const std::string
     if ((iImpedance==0) && (_subDevVerbose))
     {
         yWarning() << "ControlBoardRemapper:  Warning iImpedance not valid interface";
-    }
-
-    if ((iOpenLoop==0) && (_subDevVerbose))
-    {
-        yWarning() << "ControlBoardRemapper:  Warning iOpenLoop not valid interface";
     }
 
     if ((iInteract==0) && (_subDevVerbose))

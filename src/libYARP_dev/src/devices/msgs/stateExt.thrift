@@ -28,10 +28,12 @@ struct jointData
   12: bool motorAcceleration_isValid;
   13: VectorOfDouble torque;
   14: bool torque_isValid;
-  15: VectorOfDouble pidOutput;
-  16: bool pidOutput_isValid;
-  17: VectorOfInt controlMode;
-  18: bool controlMode_isValid;
-  19: VectorOfInt interactionMode;
-  20: bool interactionMode_isValid;
+  15: VectorOfDouble pwmDutycycle;
+  16: bool pwmDutycycle_isValid;
+  17: VectorOfDouble current;
+  18: bool current_isValid;
+  19: VectorOfInt controlMode;
+  20: bool controlMode_isValid;
+  21: VectorOfInt interactionMode;
+  22: bool interactionMode_isValid;
  }

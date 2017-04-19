@@ -166,7 +166,8 @@ MainWindow::MainWindow(QWidget *parent) :
     QAction *enableControlVelocity = windows->addAction("Enable Velocity Control");
     QAction *enableControlMixed = windows->addAction("Enable Mixed Control");
     QAction *enableControlPositionDirect = windows->addAction("Enable Position Direct Control");
-    QAction *enableControlOpenloop = windows->addAction("Enable Openloop Control");
+    QAction *enableControlPWM = windows->addAction("Enable PWM Control");
+    QAction *enableControlCurrent = windows->addAction("Enable Current Control");
     QAction *sliderOptions = windows->addAction("Slider Options...");
 
     viewGlobalToolbar->setCheckable(true);
@@ -176,7 +177,8 @@ MainWindow::MainWindow(QWidget *parent) :
     enableControlVelocity->setCheckable(true);
     enableControlMixed->setCheckable(true);
     enableControlPositionDirect->setCheckable(true);
-    enableControlOpenloop->setCheckable(true);
+    enableControlPWM->setCheckable(true);
+    enableControlCurrent->setCheckable(true);
     viewPositionTarget->setCheckable(true);
 
     QSettings settings("YARP","yarpmotorgui");
@@ -194,7 +196,8 @@ MainWindow::MainWindow(QWidget *parent) :
     enableControlVelocity->setChecked(false);
     enableControlMixed->setChecked(false);
     enableControlPositionDirect->setChecked(false);
-    enableControlOpenloop->setChecked(false);
+    enableControlPWM->setChecked(false);
+    enableControlCurrent->setChecked(false);
 
     m_globalToolBar->setVisible(bViewGlobalToolbar);
     m_partToolBar->setVisible(bViewPartToolbar);
@@ -207,7 +210,8 @@ MainWindow::MainWindow(QWidget *parent) :
     connect(enableControlVelocity, SIGNAL(triggered(bool)), this, SLOT(onEnableControlVelocity(bool)));
     connect(enableControlMixed, SIGNAL(triggered(bool)), this, SLOT(onEnableControlMixed(bool)));
     connect(enableControlPositionDirect, SIGNAL(triggered(bool)), this, SLOT(onEnableControlPositionDirect(bool)));
-    connect(enableControlOpenloop, SIGNAL(triggered(bool)), this, SLOT(onEnableControlOpenloop(bool)));
+    connect(enableControlPWM, SIGNAL(triggered(bool)), this, SLOT(onEnableControlPWM(bool)));
+    connect(enableControlCurrent, SIGNAL(triggered(bool)), this, SLOT(onEnableControlCurrent(bool)));
     connect(sliderOptions, SIGNAL(triggered()), this, SLOT(onSliderOptionsClicked()));
 
     connect(this,SIGNAL(internalClose()),this,SLOT(close()),Qt::QueuedConnection);
@@ -325,9 +329,14 @@ void MainWindow::onEnableControlPositionDirect(bool val)
     sig_enableControlPositionDirect(val);
 }
 
-void MainWindow::onEnableControlOpenloop(bool val)
+void MainWindow::onEnableControlPWM(bool val)
 {
-    sig_enableControlOpenloop(val);
+    sig_enableControlPWM(val);
+}
+
+void MainWindow::onEnableControlCurrent(bool val)
+{
+    sig_enableControlCurrent(val);
 }
 
 void MainWindow::onSliderOptionsClicked()
@@ -510,7 +519,8 @@ bool MainWindow::init(QStringList enabledParts,
             connect(this, SIGNAL(sig_enableControlVelocity(bool)), part, SLOT(onEnableControlVelocity(bool)));
             connect(this, SIGNAL(sig_enableControlMixed(bool)), part, SLOT(onEnableControlMixed(bool)));
             connect(this, SIGNAL(sig_enableControlPositionDirect(bool)), part, SLOT(onEnableControlPositionDirect(bool)));
-            connect(this, SIGNAL(sig_enableControlOpenloop(bool)), part, SLOT(onEnableControlOpenloop(bool)));
+            connect(this, SIGNAL(sig_enableControlPWM(bool)), part, SLOT(onEnableControlPWM(bool)));
+            connect(this, SIGNAL(sig_enableControlCurrent(bool)), part, SLOT(onEnableControlCurrent(bool)));
 
             scroll->setWidget(part);
             m_tabPanel->addTab(scroll, part_name.c_str());
@@ -1086,8 +1096,12 @@ QColor MainWindow::getColorMode(int m)
         mode = torqueColor;
         break;
     }
-    case JointItem::OpenLoop:{
-        mode = openLoopColor;
+    case JointItem::Pwm:{
+        mode = pwmColor;
+        break;
+    }
+    case JointItem::Current:{
+        mode = currentColor;
         break;
     }
 
@@ -1148,8 +1162,12 @@ QString MainWindow::getStringMode(int m)
         mode = "Torque";
         break;
     }
-    case JointItem::OpenLoop:{
-        mode = "Open Loop";
+    case JointItem::Pwm:{
+        mode = "PWM";
+        break;
+    }
+    case JointItem::Current:{
+        mode = "Current";
         break;
     }
 

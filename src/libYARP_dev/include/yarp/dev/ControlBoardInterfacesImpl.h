@@ -16,8 +16,9 @@
 #include <yarp/dev/ImplementRemoteVariables.h>
 #include <yarp/dev/ImplementControlMode.h>
 #include <yarp/dev/ImplementControlMode2.h>
-#include <yarp/dev/ImplementOpenLoopControl.h>
 #include <yarp/dev/ImplementTorqueControl.h>
+#include <yarp/dev/ImplementCurrentControl.h>
+#include <yarp/dev/ImplementPWMControl.h>
 #include <yarp/dev/ImplementImpedanceControl.h>
 #include <yarp/dev/ImplementAxisInfo.h>
 #include <yarp/dev/IPositionControl2Impl.h>

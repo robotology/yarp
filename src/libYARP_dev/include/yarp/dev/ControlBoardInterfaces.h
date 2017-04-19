@@ -22,7 +22,8 @@
 #include <yarp/dev/IVelocityControl2.h>
 #include <yarp/dev/IPositionControl.h>
 #include <yarp/dev/IPositionControl2.h>
-#include <yarp/dev/IOpenLoopControl.h>
+#include <yarp/dev/ICurrentControl.h>
+#include <yarp/dev/IPWMControl.h>
 #include <yarp/dev/IPositionDirect.h>
 #include <yarp/dev/IInteractionMode.h>
 #include <yarp/dev/IMotorEncoders.h>
@@ -74,8 +75,6 @@ struct YARP_dev_API yarp::dev::CalibrationParameters
 };
 
 /**
- * @ingroup dev_iface_motor
- *
  * Interface for a generic control board device implementing a PID controller.
  */
 class YARP_dev_API yarp::dev::IPidControlRaw
@@ -491,7 +490,6 @@ public:
 };
 
 /**
- * @ingroup dev_iface_motor
  *
  * Interface for control devices, amplifier commands.
  */
@@ -627,7 +625,6 @@ public:
 };
 
 /**
- * @ingroup dev_iface_motor
  *
  * Interface for control devices, calibration commands.
  */
@@ -655,7 +652,6 @@ public:
 };
 
 /**
- * @ingroup dev_iface_motor
  *
  * New interface for control devices, calibration commands.
  */
@@ -885,6 +881,8 @@ public:
 };
 
 /**
+ * @ingroup dev_iface_motor
+ *
  * Interface for getting information about specific axes, if available.
  */
 class YARP_dev_API yarp::dev::IAxisInfo
@@ -1013,9 +1011,6 @@ public:
 
 // interface IControlLimits sets/gets
 #define VOCAB_LIMITS VOCAB4('l','l','i','m')
-
-// interface OpenLoop Mode
-#define VOCAB_OPENLOOP_MODE VOCAB4('o','l','p','d')
 
 // interface IAxisInfo
 #define VOCAB_INFO_NAME VOCAB4('n','a','m','e')

@@ -60,13 +60,6 @@ public:
     virtual bool setImpedanceVelocityMode(int j)=0;
 
     /**
-    * Set open loop mode, single axis.
-    * @param j joint number
-    * @return: true/false success failure.
-    */
-    virtual bool setOpenLoopMode(int j)=0;
-
-    /**
     * Get the current control mode.
     * @param j joint number
     * @param mode a vocab of the current control mode for joint j.
@@ -99,7 +92,6 @@ public:
     virtual bool setTorqueModeRaw(int j)=0;
     virtual bool setImpedancePositionModeRaw(int j)=0;
     virtual bool setImpedanceVelocityModeRaw(int j)=0;
-    virtual bool setOpenLoopModeRaw(int j)=0;
     virtual bool getControlModeRaw(int j, int *mode)=0;
     virtual bool getControlModesRaw(int* modes)=0;
 };
@@ -121,7 +113,8 @@ public:
 #define VOCAB_CM_POSITION           VOCAB3('p','o','s')
 #define VOCAB_CM_POSITION_DIRECT    VOCAB4('p','o','s','d')
 #define VOCAB_CM_VELOCITY           VOCAB3('v','e','l')
-#define VOCAB_CM_OPENLOOP           VOCAB4('o','p','e','n')
+#define VOCAB_CM_CURRENT            VOCAB4('i','c','u','r')
+#define VOCAB_CM_PWM                VOCAB4('i','p','w','m')
 #define VOCAB_CM_IMPEDANCE_POS      VOCAB4('i','m','p','o')  // deprecated
 #define VOCAB_CM_IMPEDANCE_VEL      VOCAB4('i','m','v','e')  // deprecated
 

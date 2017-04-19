@@ -199,29 +199,57 @@ bool jointData::nested_read_torque_isValid(yarp::os::idl::WireReader& reader) {
   }
   return true;
 }
-bool jointData::read_pidOutput(yarp::os::idl::WireReader& reader) {
-  if (!reader.read(pidOutput)) {
+bool jointData::read_pwmDutycycle(yarp::os::idl::WireReader& reader) {
+  if (!reader.read(pwmDutycycle)) {
     reader.fail();
     return false;
   }
   return true;
 }
-bool jointData::nested_read_pidOutput(yarp::os::idl::WireReader& reader) {
-  if (!reader.readNested(pidOutput)) {
+bool jointData::nested_read_pwmDutycycle(yarp::os::idl::WireReader& reader) {
+  if (!reader.readNested(pwmDutycycle)) {
     reader.fail();
     return false;
   }
   return true;
 }
-bool jointData::read_pidOutput_isValid(yarp::os::idl::WireReader& reader) {
-  if (!reader.readBool(pidOutput_isValid)) {
+bool jointData::read_pwmDutycycle_isValid(yarp::os::idl::WireReader& reader) {
+  if (!reader.readBool(pwmDutycycle_isValid)) {
     reader.fail();
     return false;
   }
   return true;
 }
-bool jointData::nested_read_pidOutput_isValid(yarp::os::idl::WireReader& reader) {
-  if (!reader.readBool(pidOutput_isValid)) {
+bool jointData::nested_read_pwmDutycycle_isValid(yarp::os::idl::WireReader& reader) {
+  if (!reader.readBool(pwmDutycycle_isValid)) {
+    reader.fail();
+    return false;
+  }
+  return true;
+}
+bool jointData::read_current(yarp::os::idl::WireReader& reader) {
+  if (!reader.read(current)) {
+    reader.fail();
+    return false;
+  }
+  return true;
+}
+bool jointData::nested_read_current(yarp::os::idl::WireReader& reader) {
+  if (!reader.readNested(current)) {
+    reader.fail();
+    return false;
+  }
+  return true;
+}
+bool jointData::read_current_isValid(yarp::os::idl::WireReader& reader) {
+  if (!reader.readBool(current_isValid)) {
+    reader.fail();
+    return false;
+  }
+  return true;
+}
+bool jointData::nested_read_current_isValid(yarp::os::idl::WireReader& reader) {
+  if (!reader.readBool(current_isValid)) {
     reader.fail();
     return false;
   }
@@ -298,8 +326,10 @@ bool jointData::read(yarp::os::idl::WireReader& reader) {
   if (!read_motorAcceleration_isValid(reader)) return false;
   if (!read_torque(reader)) return false;
   if (!read_torque_isValid(reader)) return false;
-  if (!read_pidOutput(reader)) return false;
-  if (!read_pidOutput_isValid(reader)) return false;
+  if (!read_pwmDutycycle(reader)) return false;
+  if (!read_pwmDutycycle_isValid(reader)) return false;
+  if (!read_current(reader)) return false;
+  if (!read_current_isValid(reader)) return false;
   if (!read_controlMode(reader)) return false;
   if (!read_controlMode_isValid(reader)) return false;
   if (!read_interactionMode(reader)) return false;
@@ -309,7 +339,7 @@ bool jointData::read(yarp::os::idl::WireReader& reader) {
 
 bool jointData::read(yarp::os::ConnectionReader& connection) {
   yarp::os::idl::WireReader reader(connection);
-  if (!reader.readListHeader(20)) return false;
+  if (!reader.readListHeader(22)) return false;
   return read(reader);
 }
 
@@ -425,20 +455,36 @@ bool jointData::nested_write_torque_isValid(yarp::os::idl::WireWriter& writer) {
   if (!writer.writeBool(torque_isValid)) return false;
   return true;
 }
-bool jointData::write_pidOutput(yarp::os::idl::WireWriter& writer) {
-  if (!writer.write(pidOutput)) return false;
+bool jointData::write_pwmDutycycle(yarp::os::idl::WireWriter& writer) {
+  if (!writer.write(pwmDutycycle)) return false;
   return true;
 }
-bool jointData::nested_write_pidOutput(yarp::os::idl::WireWriter& writer) {
-  if (!writer.writeNested(pidOutput)) return false;
+bool jointData::nested_write_pwmDutycycle(yarp::os::idl::WireWriter& writer) {
+  if (!writer.writeNested(pwmDutycycle)) return false;
   return true;
 }
-bool jointData::write_pidOutput_isValid(yarp::os::idl::WireWriter& writer) {
-  if (!writer.writeBool(pidOutput_isValid)) return false;
+bool jointData::write_pwmDutycycle_isValid(yarp::os::idl::WireWriter& writer) {
+  if (!writer.writeBool(pwmDutycycle_isValid)) return false;
   return true;
 }
-bool jointData::nested_write_pidOutput_isValid(yarp::os::idl::WireWriter& writer) {
-  if (!writer.writeBool(pidOutput_isValid)) return false;
+bool jointData::nested_write_pwmDutycycle_isValid(yarp::os::idl::WireWriter& writer) {
+  if (!writer.writeBool(pwmDutycycle_isValid)) return false;
+  return true;
+}
+bool jointData::write_current(yarp::os::idl::WireWriter& writer) {
+  if (!writer.write(current)) return false;
+  return true;
+}
+bool jointData::nested_write_current(yarp::os::idl::WireWriter& writer) {
+  if (!writer.writeNested(current)) return false;
+  return true;
+}
+bool jointData::write_current_isValid(yarp::os::idl::WireWriter& writer) {
+  if (!writer.writeBool(current_isValid)) return false;
+  return true;
+}
+bool jointData::nested_write_current_isValid(yarp::os::idl::WireWriter& writer) {
+  if (!writer.writeBool(current_isValid)) return false;
   return true;
 }
 bool jointData::write_controlMode(yarp::os::idl::WireWriter& writer) {
@@ -488,8 +534,10 @@ bool jointData::write(yarp::os::idl::WireWriter& writer) {
   if (!write_motorAcceleration_isValid(writer)) return false;
   if (!write_torque(writer)) return false;
   if (!write_torque_isValid(writer)) return false;
-  if (!write_pidOutput(writer)) return false;
-  if (!write_pidOutput_isValid(writer)) return false;
+  if (!write_pwmDutycycle(writer)) return false;
+  if (!write_pwmDutycycle_isValid(writer)) return false;
+  if (!write_current(writer)) return false;
+  if (!write_current_isValid(writer)) return false;
   if (!write_controlMode(writer)) return false;
   if (!write_controlMode_isValid(writer)) return false;
   if (!write_interactionMode(writer)) return false;
@@ -499,7 +547,7 @@ bool jointData::write(yarp::os::idl::WireWriter& writer) {
 
 bool jointData::write(yarp::os::ConnectionWriter& connection) {
   yarp::os::idl::WireWriter writer(connection);
-  if (!writer.writeListHeader(20)) return false;
+  if (!writer.writeListHeader(22)) return false;
   return write(writer);
 }
 bool jointData::Editor::write(yarp::os::ConnectionWriter& connection) {
@@ -591,17 +639,29 @@ bool jointData::Editor::write(yarp::os::ConnectionWriter& connection) {
     if (!writer.writeString("torque_isValid")) return false;
     if (!obj->nested_write_torque_isValid(writer)) return false;
   }
-  if (is_dirty_pidOutput) {
+  if (is_dirty_pwmDutycycle) {
     if (!writer.writeListHeader(3)) return false;
     if (!writer.writeString("set")) return false;
-    if (!writer.writeString("pidOutput")) return false;
-    if (!obj->nested_write_pidOutput(writer)) return false;
+    if (!writer.writeString("pwmDutycycle")) return false;
+    if (!obj->nested_write_pwmDutycycle(writer)) return false;
   }
-  if (is_dirty_pidOutput_isValid) {
+  if (is_dirty_pwmDutycycle_isValid) {
     if (!writer.writeListHeader(3)) return false;
     if (!writer.writeString("set")) return false;
-    if (!writer.writeString("pidOutput_isValid")) return false;
-    if (!obj->nested_write_pidOutput_isValid(writer)) return false;
+    if (!writer.writeString("pwmDutycycle_isValid")) return false;
+    if (!obj->nested_write_pwmDutycycle_isValid(writer)) return false;
+  }
+  if (is_dirty_current) {
+    if (!writer.writeListHeader(3)) return false;
+    if (!writer.writeString("set")) return false;
+    if (!writer.writeString("current")) return false;
+    if (!obj->nested_write_current(writer)) return false;
+  }
+  if (is_dirty_current_isValid) {
+    if (!writer.writeListHeader(3)) return false;
+    if (!writer.writeString("set")) return false;
+    if (!writer.writeString("current_isValid")) return false;
+    if (!obj->nested_write_current_isValid(writer)) return false;
   }
   if (is_dirty_controlMode) {
     if (!writer.writeListHeader(3)) return false;
@@ -708,13 +768,21 @@ bool jointData::Editor::read(yarp::os::ConnectionReader& connection) {
         if (!writer.writeListHeader(1)) return false;
         if (!writer.writeString("bool torque_isValid")) return false;
       }
-      if (field=="pidOutput") {
+      if (field=="pwmDutycycle") {
         if (!writer.writeListHeader(1)) return false;
-        if (!writer.writeString("yarp::sig::VectorOf<double> pidOutput")) return false;
+        if (!writer.writeString("yarp::sig::VectorOf<double> pwmDutycycle")) return false;
       }
-      if (field=="pidOutput_isValid") {
+      if (field=="pwmDutycycle_isValid") {
         if (!writer.writeListHeader(1)) return false;
-        if (!writer.writeString("bool pidOutput_isValid")) return false;
+        if (!writer.writeString("bool pwmDutycycle_isValid")) return false;
+      }
+      if (field=="current") {
+        if (!writer.writeListHeader(1)) return false;
+        if (!writer.writeString("yarp::sig::VectorOf<double> current")) return false;
+      }
+      if (field=="current_isValid") {
+        if (!writer.writeListHeader(1)) return false;
+        if (!writer.writeString("bool current_isValid")) return false;
       }
       if (field=="controlMode") {
         if (!writer.writeListHeader(1)) return false;
@@ -733,7 +801,7 @@ bool jointData::Editor::read(yarp::os::ConnectionReader& connection) {
         if (!writer.writeString("bool interactionMode_isValid")) return false;
       }
     }
-    if (!writer.writeListHeader(21)) return false;
+    if (!writer.writeListHeader(23)) return false;
     writer.writeString("*** Available fields:");
     writer.writeString("jointPosition");
     writer.writeString("jointPosition_isValid");
@@ -749,8 +817,10 @@ bool jointData::Editor::read(yarp::os::ConnectionReader& connection) {
     writer.writeString("motorAcceleration_isValid");
     writer.writeString("torque");
     writer.writeString("torque_isValid");
-    writer.writeString("pidOutput");
-    writer.writeString("pidOutput_isValid");
+    writer.writeString("pwmDutycycle");
+    writer.writeString("pwmDutycycle_isValid");
+    writer.writeString("current");
+    writer.writeString("current_isValid");
     writer.writeString("controlMode");
     writer.writeString("controlMode_isValid");
     writer.writeString("interactionMode");
@@ -832,14 +902,22 @@ bool jointData::Editor::read(yarp::os::ConnectionReader& connection) {
       will_set_torque_isValid();
       if (!obj->nested_read_torque_isValid(reader)) return false;
       did_set_torque_isValid();
-    } else if (key == "pidOutput") {
-      will_set_pidOutput();
-      if (!obj->nested_read_pidOutput(reader)) return false;
-      did_set_pidOutput();
-    } else if (key == "pidOutput_isValid") {
-      will_set_pidOutput_isValid();
-      if (!obj->nested_read_pidOutput_isValid(reader)) return false;
-      did_set_pidOutput_isValid();
+    } else if (key == "pwmDutycycle") {
+      will_set_pwmDutycycle();
+      if (!obj->nested_read_pwmDutycycle(reader)) return false;
+      did_set_pwmDutycycle();
+    } else if (key == "pwmDutycycle_isValid") {
+      will_set_pwmDutycycle_isValid();
+      if (!obj->nested_read_pwmDutycycle_isValid(reader)) return false;
+      did_set_pwmDutycycle_isValid();
+    } else if (key == "current") {
+      will_set_current();
+      if (!obj->nested_read_current(reader)) return false;
+      did_set_current();
+    } else if (key == "current_isValid") {
+      will_set_current_isValid();
+      if (!obj->nested_read_current_isValid(reader)) return false;
+      did_set_current_isValid();
     } else if (key == "controlMode") {
       will_set_controlMode();
       if (!obj->nested_read_controlMode(reader)) return false;

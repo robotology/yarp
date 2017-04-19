@@ -82,7 +82,6 @@ class ControlBoardRemapper : public yarp::dev::DeviceDriver,
                              public yarp::dev::IRemoteCalibrator,
                              public yarp::dev::IControlCalibration,
                              public yarp::dev::IControlCalibration2,
-                             public yarp::dev::IOpenLoopControl,
                              public yarp::dev::ITorqueControl,
                              public yarp::dev::IImpedanceControl,
                              public yarp::dev::IControlMode2,
@@ -254,10 +253,6 @@ public:
     /* IPositionControl */
     virtual bool getAxes(int *ax);
 
-    virtual bool setPositionMode();
-
-    virtual bool setOpenLoopMode();
-
     virtual bool positionMove(int j, double ref);
 
     virtual bool positionMove(const double *refs);
@@ -316,8 +311,6 @@ public:
     virtual bool velocityMove(int j, double v);
 
     virtual bool velocityMove(const double *v);
-
-    virtual bool setVelocityMode();
 
     /* IEncoders */
     virtual bool resetEncoder(int j);
@@ -481,8 +474,6 @@ public:
 
     virtual bool getJointType(int j, yarp::dev::JointTypeEnum &type);
 
-    virtual bool setTorqueMode();
-
     virtual bool getRefTorques(double *refs);
 
     virtual bool getRefTorque(int j, double *t);
@@ -562,8 +553,6 @@ public:
 
     virtual bool setVelocityMode(int j);
 
-    virtual bool setOpenLoopMode(int j);
-
     virtual bool getControlMode(int j, int *mode);
 
     virtual bool getControlModes(int *modes);
@@ -576,12 +565,6 @@ public:
     virtual bool setControlModes(const int n_joints, const int *joints, int *modes);
 
     virtual bool setControlModes(int *modes);
-
-    virtual bool setRefOutput(int j, double v);
-
-    virtual bool setRefOutputs(const double *outs);
-
-    virtual bool setPositionDirectMode();
 
     virtual bool setPosition(int j, double ref);
 
@@ -628,9 +611,6 @@ public:
 
     virtual bool setInteractionModes(yarp::dev::InteractionModeEnum *modes);
 
-    virtual bool getRefOutput(int j, double *out);
-
-    virtual bool getRefOutputs(double *outs);
 };
 
 }

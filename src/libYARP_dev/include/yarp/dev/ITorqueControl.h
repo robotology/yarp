@@ -1,6 +1,6 @@
 /*
- * Copyright (C) 2011 Robotics Brain and Cognitive Sciences Department, Istituto Italiano di Tecnologia
- * Authors: Marco Randazzo
+ * Copyright (C) 2016 iCub Facility, Istituto Italiano di Tecnologia
+ * Authors: Marco Randazzo <marco.randazzo@iit.it>
  * CopyPolicy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
  */
 
@@ -47,18 +47,6 @@ public:
      * @return the number of controlled axes.
      */
     virtual bool getAxes(int *ax) = 0;
-
-#ifndef YARP_NO_DEPRECATED // since YARP 2.3.65
-    /**
-     * Set torque control mode. This command
-     * is required by control boards implementing different
-     * control methods (e.g. velocity/torque), in some cases
-     * it can be left empty.
-     * @return true/false on success/failure
-     * @deprecated since YARP 2.3.65
-     */
-    YARP_DEPRECATED virtual bool setTorqueMode() { return false; }
-#endif // YARP_NO_DEPRECATED
 
    /** Get the reference value of the torque for all joints.
      * This is NOT the feedback (see getTorques instead).
@@ -279,18 +267,6 @@ public:
      * @return true/false on success/failure
      */
     virtual bool getAxes(int *ax) = 0;
-
-#ifndef YARP_NO_DEPRECATED // since YARP 2.3.65
-    /**
-     * Set torque control mode. This command
-     * is required by control boards implementing different
-     * control methods (e.g. velocity/torque), in some cases
-     * it can be left empty.
-     * @return true/false on success failure
-     * @deprecated since YARP 2.3.65
-     */
-    YARP_DEPRECATED virtual bool setTorqueModeRaw() { return false; }
-#endif // YARP_NO_DEPRECATED
 
     /** Get the value of the torque on a given joint (this is the
      * feedback if you have a torque sensor).

@@ -41,7 +41,8 @@ PartItem::PartItem(QString robotName, int id, QString partName, ResourceFinder& 
     m_finder = &_finder;
     m_mixedEnabled = false;
     m_positionDirectEnabled = false;
-    m_openloopEnabled = false;
+    m_pwmEnabled = false;
+    m_currentEnabled = false;
 
     m_controlModes = 0;
     m_refTrajectorySpeeds = 0;
@@ -159,10 +160,13 @@ PartItem::PartItem(QString robotName, int id, QString partName, ResourceFinder& 
         double max_pos = 100;
         double min_vel = 0;
         double max_vel = 100;
+        double min_cur = -2.0;
+        double max_cur = +2.0;
         for (int k = 0; k<number_of_joints; k++)
         {
             bool bpl = m_iLim->getLimits(k, &min_pos, &max_pos);
             bool bvl = m_iLim->getVelLimits(k, &min_vel, &max_vel);
+            bool bcr = m_iCur->getCurrentRange(k, &min_cur, &max_cur);
             if (bpl == false)
             {
                 yError() << "Error while getting position limits, part " << partName.toStdString() << " joint " << k;
@@ -170,6 +174,10 @@ PartItem::PartItem(QString robotName, int id, QString partName, ResourceFinder& 
             if (bvl == false || (min_vel == 0 && max_vel == 0))
             {
                 yError() << "Error while getting velocity limits, part " << partName.toStdString() << " joint " << k;
+            }
+            if (bcr == false || (min_cur == 0 && max_cur == 0))
+            {
+                yError() << "Error while getting current range, part " << partName.toStdString() << " joint " << k;
             }
 
             QSettings settings("YARP", "yarpmotorgui");
@@ -185,7 +193,8 @@ PartItem::PartItem(QString robotName, int id, QString partName, ResourceFinder& 
             
             JointItem *joint = new JointItem(k);
             joint->setJointName(jointname.c_str());
-            joint->setOpenLoopRange(-myPid.max_output,myPid.max_output);
+            joint->setPWMRange(-100.0, 100.0);
+            joint->setCurrentRange(min_cur, max_cur);
             m_layout->addWidget(joint);
             joint->setPositionRange(min_pos, max_pos);
             joint->setVelocityRange(min_vel, max_vel);
@@ -194,7 +203,8 @@ PartItem::PartItem(QString robotName, int id, QString partName, ResourceFinder& 
             joint->setUnits(jtype);
             joint->enableControlPositionDirect(m_positionDirectEnabled);
             joint->enableControlMixed(m_mixedEnabled);
-            joint->enableControlOpenloop(m_openloopEnabled);
+            joint->enableControlPWM(m_pwmEnabled);
+            joint->enableControlCurrent(m_currentEnabled);
 
             int val_pos_choice = settings.value("val_pos_choice", 0).toInt();
             int val_trq_choice = settings.value("val_trq_choice", 0).toInt();
@@ -205,6 +215,7 @@ PartItem::PartItem(QString robotName, int id, QString partName, ResourceFinder& 
             onSetPosSliderOptionPI(val_pos_choice, val_pos_custom_step);
             onSetVelSliderOptionPI(val_vel_choice, val_vel_custom_step);
             onSetTrqSliderOptionPI(val_trq_choice, val_trq_custom_step);
+            onSetCurSliderOptionPI(val_trq_choice, val_trq_custom_step);
 
             joint->setEnabledOptions(debug_param_enabled,
                                      speedview_param_enabled,
@@ -218,7 +229,8 @@ PartItem::PartItem(QString robotName, int id, QString partName, ResourceFinder& 
             connect(joint, SIGNAL(sliderMixedVelocityCommand(double, int)), this, SLOT(onSliderMixedVelocityCommand(double, int)));
             connect(joint, SIGNAL(sliderTorqueCommand(double, int)), this, SLOT(onSliderTorqueCommand(double, int)));
             connect(joint, SIGNAL(sliderDirectPositionCommand(double, int)), this, SLOT(onSliderDirectPositionCommand(double, int)));
-            connect(joint, SIGNAL(sliderOpenloopCommand(double, int)), this, SLOT(onSliderOpenloopCommand(double, int)));
+            connect(joint, SIGNAL(sliderPWMCommand(double, int)), this, SLOT(onSliderPWMCommand(double, int)));
+            connect(joint, SIGNAL(sliderCurrentCommand(double, int)), this, SLOT(onSliderCurrentCommand(double, int)));
             connect(joint, SIGNAL(sliderVelocityCommand(double, int)), this, SLOT(onSliderVelocityCommand(double, int)));
             connect(joint, SIGNAL(homeClicked(JointItem*)),this,SLOT(onHomeClicked(JointItem*)));
             connect(joint, SIGNAL(idleClicked(JointItem*)),this,SLOT(onIdleClicked(JointItem*)));
@@ -330,7 +342,8 @@ void PartItem::initInterfaces()
     m_iencs = NULL;
     m_iAmp = NULL;
     m_iPid = NULL;
-    m_iOpl = NULL;
+    m_iCur = NULL;
+    m_iPWM = NULL;
     m_iTrq = NULL;
     m_iImp = NULL;
     m_iLim = NULL;
@@ -382,7 +395,7 @@ bool PartItem::openInterfaces()
         if(!ok){
             yError("...trq was not ok...");
         }
-        ok = m_partsdd->view(m_iOpl);
+        ok = m_partsdd->view(m_iPWM);
         if(!ok){
             yError("...opl was not ok...");
         }
@@ -420,6 +433,11 @@ bool PartItem::openInterfaces()
             yError("...axisInfo was not ok...");
         }
 
+        if (!m_partsdd->view(m_iCur))
+        {
+            yError("...iCur was not ok...");
+        }
+
         if (!ok) {
             yError("Error while acquiring interfaces!");
             QMessageBox::critical(0,"Problems acquiring interfaces.","Check if interface is running");
@@ -445,9 +463,14 @@ QString PartItem::getPartName()
     return m_partName;
 }
 
-void PartItem::onSliderOpenloopCommand(double torqueVal, int index)
+void PartItem::onSliderPWMCommand(double torqueVal, int index)
 {
-    m_iOpl->setRefOutput(index, torqueVal);
+    m_iPWM->setRefDutyCycle(index, torqueVal);
+}
+
+void PartItem::onSliderCurrentCommand(double currentVal, int index)
+{
+    m_iCur->setRefCurrent(index, currentVal);
 }
 
 void PartItem::onSliderVelocityCommand(double speedVal, int index)
@@ -543,20 +566,20 @@ void PartItem::onJointInteraction(int interaction,JointItem *joint)
 }
 
 
-void PartItem::onSendOpenLoop(int jointIndex, int openLoopVal)
+void PartItem::onSendPWM(int jointIndex, double pwmVal)
 {
-    double openloop_reference = 0;
-    double openloop_current_pwm = 0;
+    double pwm_reference = 0;
+    double current_pwm = 0;
 
-    m_iOpl->setRefOutput(jointIndex, openLoopVal);
+    m_iPWM->setRefDutyCycle(jointIndex, pwmVal);
 
     yarp::os::Time::delay(0.010);
-    m_iOpl->getRefOutput(jointIndex, &openloop_reference);  //This is the reference reference
+    m_iPWM->getRefDutyCycle(jointIndex, &pwm_reference);  //This is the reference reference
     yarp::os::Time::delay(0.010);
-    m_iOpl->getOutput(jointIndex, &openloop_current_pwm);  //This is the reak PWM output
+    m_iPWM->getDutyCycle(jointIndex, &current_pwm);  //This is the reak PWM output
 
     if (m_currentPidDlg){
-        m_currentPidDlg->initOpenLoop(openloop_reference, openloop_current_pwm);
+        m_currentPidDlg->initPWM(pwm_reference, current_pwm);
     }
 }
 
@@ -649,8 +672,8 @@ void PartItem::onRefreshPids(int jointIndex)
     double damp_min = 0;
     double off_min = 0;
     double impedance_offset_val = 0;
-    double openloop_reference = 0;
-    double openloop_current_pwm = 0;
+    double pwm_reference = 0;
+    double current_pwm = 0;
 
     m_iImp->getCurrentImpedanceLimit(jointIndex, &stiff_min, &stiff_max, &damp_min, &damp_max);
     m_iTrq->getTorqueRange(jointIndex, &off_min, &off_max);
@@ -664,8 +687,11 @@ void PartItem::onRefreshPids(int jointIndex)
     yarp::os::Time::delay(0.005);
 
     // Current
-    //???????iCur->getCurPid(jointIndex, &myCurPid);
-    yarp::os::Time::delay(0.005);
+    if (m_iCur)
+    {
+        m_iCur->getCurrentPid(jointIndex, &myCurPid);
+        yarp::os::Time::delay(0.005);
+    }
 
     // Torque
     m_iTrq->getTorquePid(jointIndex, &myTrqPid);
@@ -677,9 +703,9 @@ void PartItem::onRefreshPids(int jointIndex)
     m_iImp->getImpedanceOffset(jointIndex, &impedance_offset_val);
     yarp::os::Time::delay(0.005);
 
-    // Openloop
-    m_iOpl->getRefOutput(jointIndex, &openloop_reference);
-    m_iOpl->getOutput(jointIndex, &openloop_current_pwm);
+    // PWM
+    m_iPWM->getRefDutyCycle(jointIndex, &pwm_reference);
+    m_iPWM->getDutyCycle(jointIndex, &current_pwm);
 
     if (m_currentPidDlg)
     {
@@ -688,17 +714,22 @@ void PartItem::onRefreshPids(int jointIndex)
         m_currentPidDlg->initVelocity(myVelPid);
         m_currentPidDlg->initCurrent(myCurPid);
         m_currentPidDlg->initStiffness(stiff_val, stiff_min, stiff_max, damp_val, damp_min, damp_max, impedance_offset_val, off_min, off_max);
-        m_currentPidDlg->initOpenLoop(openloop_reference, openloop_current_pwm);
+        m_currentPidDlg->initPWM(pwm_reference, current_pwm);
         m_currentPidDlg->initRemoteVariables(m_iVar);
     }
 }
 
 void PartItem::onSendCurrentPid(int jointIndex, Pid newPid)
 {
+    if (m_iCur == 0)
+    {
+        yError() << "iCurrent interface not opened";
+        return;
+    }
     Pid myCurPid(0, 0, 0, 0, 0, 0);
-    //????iCur->setCurPid(jointIndex, newPid);
+    m_iCur->setCurrentPid(jointIndex, newPid);
     yarp::os::Time::delay(0.005);
-    //????iCur->getCurPid(jointIndex, &myCurPid);
+    m_iCur->getCurrentPid(jointIndex, &myCurPid);
 
     if (m_currentPidDlg){
         m_currentPidDlg->initCurrent(myCurPid);
@@ -754,7 +785,7 @@ void PartItem::onPidClicked(JointItem *joint)
     connect(m_currentPidDlg, SIGNAL(updateAllRemoteVariables()), this, SLOT(onUpdateAllRemoteVariables()));
     connect(m_currentPidDlg, SIGNAL(sendTorquePid(int, Pid, MotorTorqueParameters)), this, SLOT(onSendTorquePid(int, Pid, MotorTorqueParameters)));
     connect(m_currentPidDlg, SIGNAL(sendStiffness(int, double, double, double)), this, SLOT(onSendStiffness(int, double, double, double)));
-    connect(m_currentPidDlg, SIGNAL(sendOpenLoop(int, int)), this, SLOT(onSendOpenLoop(int, int)));
+    connect(m_currentPidDlg, SIGNAL(sendPWM(int, double)), this, SLOT(onSendPWM(int, double)));
     connect(m_currentPidDlg, SIGNAL(refreshPids(int)), this, SLOT(onRefreshPids(int)));
 
     this->onRefreshPids(jointIndex);
@@ -888,9 +919,9 @@ void PartItem::onJointChangeMode(int mode,JointItem *joint)
             }
             break;
 //        } else {
-//            LOG_ERROR("joint: %d in OPENLOOP mode", jointIndex);
+//            LOG_ERROR("joint: %d in TORQUE mode", jointIndex);
 //            if(ctrlmode2){
-//                ctrlmode2->setOpenLoopMode(jointIndex);
+//                ctrlmode2->setTorqueMode(jointIndex);
 //            } else {
 //                LOG_ERROR("ERROR: cannot do!");
 //            }
@@ -898,11 +929,21 @@ void PartItem::onJointChangeMode(int mode,JointItem *joint)
 //        }
 
     }
-    case JointItem::OpenLoop:{
-        yInfo("joint: %d in OPENLOOP mode", jointIndex);
+    case JointItem::Pwm:{
+        yInfo("joint: %d in PWM mode", jointIndex);
         if (m_ictrlmode2){
-            m_ictrlmode2->setControlMode(jointIndex, VOCAB_CM_OPENLOOP);
+            m_ictrlmode2->setControlMode(jointIndex, VOCAB_CM_PWM);
         } else {
+            yError("ERROR: cannot do!");
+        }
+        break;
+    }
+    case JointItem::Current:{
+        yInfo("joint: %d in CURRENT mode", jointIndex);
+        if (m_ictrlmode2){
+            m_ictrlmode2->setControlMode(jointIndex, VOCAB_CM_CURRENT);
+        }
+        else {
             yError("ERROR: cannot do!");
         }
         break;
@@ -1779,12 +1820,21 @@ void PartItem::onEnableControlPositionDirect(bool control)
     }
 }
 
-void PartItem::onEnableControlOpenloop(bool control)
+void PartItem::onEnableControlPWM(bool control)
 {
     for (int i = 0; i<m_layout->count(); i++)
     {
         JointItem *joint = (JointItem*)m_layout->itemAt(i)->widget();
-        joint->enableControlOpenloop(control);
+        joint->enableControlPWM(control);
+    }
+}
+
+void PartItem::onEnableControlCurrent(bool control)
+{
+    for (int i = 0; i<m_layout->count(); i++)
+    {
+        JointItem *joint = (JointItem*)m_layout->itemAt(i)->widget();
+        joint->enableControlCurrent(control);
     }
 }
 
@@ -1874,6 +1924,31 @@ void PartItem::onSetVelSliderOptionPI(int mode, double step)
         }
     }
 }
+
+void PartItem::onSetCurSliderOptionPI(int mode, double step)
+{
+    for (int i = 0; i<m_layout->count(); i++)
+    {
+        JointItem *joint = (JointItem*)m_layout->itemAt(i)->widget();
+        if (mode == 0)
+        {
+            joint->enableCurrentSliderDoubleAuto();
+        }
+        else if (mode == 1)
+        {
+            joint->enableCurrentSliderDoubleValue(step);
+        }
+        else if (mode == 2)
+        {
+            joint->enableCurrentSliderDoubleValue(1.0);
+        }
+        else
+        {
+            joint->disableCurrentSliderDouble();
+        }
+    }
+}
+
 void PartItem::onSetTrqSliderOptionPI(int mode, double step)
 {
     for (int i = 0; i<m_layout->count(); i++)
@@ -1932,8 +2007,11 @@ QList<int> PartItem::getPartMode()
         case VOCAB_CM_TORQUE:
             modes.append(JointItem::Torque);
             break;
-        case VOCAB_CM_OPENLOOP:
-            modes.append(JointItem::OpenLoop);
+        case VOCAB_CM_PWM:
+            modes.append(JointItem::Pwm);
+            break;
+        case VOCAB_CM_CURRENT:
+            modes.append(JointItem::Current);
             break;
         case VOCAB_CM_HW_FAULT:
             modes.append(JointItem::HwFault);
@@ -2089,12 +2167,20 @@ bool PartItem::updatePart()
             case VOCAB_CM_TORQUE:
                 joint->setJointState(JointItem::Torque);
                 break;
-            case VOCAB_CM_OPENLOOP:
+            case VOCAB_CM_CURRENT:
             {
-                joint->setJointState(JointItem::OpenLoop);
-                double openLoopValue = 0;
-                m_iOpl->getRefOutput(k, &openLoopValue);
-                joint->setOpenLoop(openLoopValue);
+                joint->setJointState(JointItem::Current);
+                double tmp = 0;
+                m_iCur->getRefCurrent(k, &tmp); //?
+                joint->setCurrent(tmp);
+                break;
+            }
+            case VOCAB_CM_PWM:
+            {
+                joint->setJointState(JointItem::Pwm);
+                double tmp = 0;
+                m_iPWM->getRefDutyCycle(k, &tmp);
+                joint->setPWM(tmp);
                 break;
             }
             case VOCAB_CM_HW_FAULT:
