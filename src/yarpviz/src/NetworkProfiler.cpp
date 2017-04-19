@@ -144,7 +144,6 @@ bool NetworkProfiler::creatNetworkGraph(ports_detail_set details, yarp::graph::G
     unsigned int itr_count = 0;
     for(itr = details.begin(); itr!=details.end(); itr++) {
         PortDetails info = (*itr);
-        std::cout<<graph.size()<<std::endl;
 
         // port node
         PortVertex* port = new PortVertex(info.name);
@@ -159,7 +158,6 @@ bool NetworkProfiler::creatNetworkGraph(ports_detail_set details, yarp::graph::G
         process->property.put("priority", info.owner.priority);
         process->property.put("policy", info.owner.policy);
         process->property.put("os", info.owner.os);
-        std::cout<<process->property.toString()<<std::endl;
         graph.insert(*process);
 
         // create connection between ports and its owner
@@ -167,7 +165,6 @@ bool NetworkProfiler::creatNetworkGraph(ports_detail_set details, yarp::graph::G
 
         //machine node (owner of the process)
         MachineVertex* machine = new MachineVertex(info.owner.os, info.owner.hostname);
-        std::cout<<machine->property.toString()<<std::endl;
         graph.insert(*machine);
         process->setOwner(machine);
 
@@ -246,6 +243,22 @@ bool NetworkProfiler::creatSimpleModuleGraph(yarp::graph::Graph& graph, yarp::gr
     subgraph.clear();
     pvertex_const_iterator itr;
     const pvertex_set& vertices = graph.vertices();
+    //insert machines
+    for(itr = vertices.begin(); itr!=vertices.end(); itr++) {
+
+        if(!dynamic_cast<MachineVertex*>(*itr))
+                continue;
+        else
+        {
+            MachineVertex* mv1 = dynamic_cast<MachineVertex*>(*itr);
+            MachineVertex* mv2 = new MachineVertex(mv1->property.find("os").asString(),
+                                                   mv1->property.find("hostname").asString());
+            mv2->property = mv1->property;
+
+            subgraph.insert(*mv2);
+        }
+    }
+
     for(itr = vertices.begin(); itr!=vertices.end(); itr++) {
         if(!dynamic_cast<ProcessVertex*>(*itr))
             continue;
