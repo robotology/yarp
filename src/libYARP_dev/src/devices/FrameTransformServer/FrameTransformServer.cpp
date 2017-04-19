@@ -375,12 +375,12 @@ bool FrameTransformServer::threadInit()
         {
             m_rosNode = new yarp::os::Node(ROSNODENAME);
         }
-        if (!m_rosSubscriberPort_tf_timed.topic(ROSTOPICNAME_TF))
+        if (!m_rosPublisherPort_tf_timed.topic(ROSTOPICNAME_TF))
         {
             yError() << "FrameTransformServer: unable to publish data on " << ROSTOPICNAME_TF << " topic, check your yarp-ROS network configuration";
             return false;
         }
-        if (!m_rosSubscriberPort_tf_static.topic(ROSTOPICNAME_TF_STATIC))
+        if (!m_rosPublisherPort_tf_static.topic(ROSTOPICNAME_TF_STATIC))
         {
             yError() << "FrameTransformServer: unable to publish data on " << ROSTOPICNAME_TF_STATIC << " topic, check your yarp-ROS network configuration";
             return false;
@@ -680,28 +680,29 @@ void FrameTransformServer::run()
         {
             static int                        rosMsgCounter = 0;
             tf_tfMessage&                     rosOutData_timed = m_rosPublisherPort_tf_timed.prepare();
-            geometry_msgs_TransformStamped    FrameTransformimed;
-
+            geometry_msgs_TransformStamped    transform_timed;
+            rosOutData_timed.transforms.clear();
             for (size_t i = 0; i < tfVecSize_timed_yarp; i++)
             {
-                FrameTransformimed.child_frame_id = (*m_yarp_timed_transform_storage)[i].dst_frame_id;
-                FrameTransformimed.header.frame_id = (*m_yarp_timed_transform_storage)[i].src_frame_id;
-                FrameTransformimed.header.seq = rosMsgCounter;
-                FrameTransformimed.header.stamp = normalizeSecNSec((*m_yarp_timed_transform_storage)[i].timestamp);
-                FrameTransformimed.transform.rotation.x = (*m_yarp_timed_transform_storage)[i].rotation.x();
-                FrameTransformimed.transform.rotation.y = (*m_yarp_timed_transform_storage)[i].rotation.y();
-                FrameTransformimed.transform.rotation.z = (*m_yarp_timed_transform_storage)[i].rotation.z();
-                FrameTransformimed.transform.rotation.w = (*m_yarp_timed_transform_storage)[i].rotation.w();
-                FrameTransformimed.transform.translation.x = (*m_yarp_timed_transform_storage)[i].translation.tX;
-                FrameTransformimed.transform.translation.y = (*m_yarp_timed_transform_storage)[i].translation.tY;
-                FrameTransformimed.transform.translation.z = (*m_yarp_timed_transform_storage)[i].translation.tZ;
+                transform_timed.child_frame_id = (*m_yarp_timed_transform_storage)[i].dst_frame_id;
+                transform_timed.header.frame_id = (*m_yarp_timed_transform_storage)[i].src_frame_id;
+                transform_timed.header.seq = rosMsgCounter;
+                transform_timed.header.stamp = normalizeSecNSec((*m_yarp_timed_transform_storage)[i].timestamp);
+                transform_timed.transform.rotation.x = (*m_yarp_timed_transform_storage)[i].rotation.x();
+                transform_timed.transform.rotation.y = (*m_yarp_timed_transform_storage)[i].rotation.y();
+                transform_timed.transform.rotation.z = (*m_yarp_timed_transform_storage)[i].rotation.z();
+                transform_timed.transform.rotation.w = (*m_yarp_timed_transform_storage)[i].rotation.w();
+                transform_timed.transform.translation.x = (*m_yarp_timed_transform_storage)[i].translation.tX;
+                transform_timed.transform.translation.y = (*m_yarp_timed_transform_storage)[i].translation.tY;
+                transform_timed.transform.translation.z = (*m_yarp_timed_transform_storage)[i].translation.tZ;
 
-                rosOutData_timed.transforms[i] = FrameTransformimed;
+                rosOutData_timed.transforms.push_back(transform_timed);
             }
             m_rosPublisherPort_tf_timed.write();
 
             tf_tfMessage&                     rosOutData_static = m_rosPublisherPort_tf_static.prepare();
             geometry_msgs_TransformStamped    transform_static;
+            rosOutData_static.transforms.clear();
             for (size_t i = 0; i < tfVecSize_static_yarp; i++)
             {
                 transform_static.child_frame_id = (*m_yarp_static_transform_storage)[i].dst_frame_id;
@@ -716,7 +717,7 @@ void FrameTransformServer::run()
                 transform_static.transform.translation.y = (*m_yarp_static_transform_storage)[i].translation.tY;
                 transform_static.transform.translation.z = (*m_yarp_static_transform_storage)[i].translation.tZ;
 
-                rosOutData_static.transforms[i] = transform_static;
+                rosOutData_static.transforms.push_back(transform_static);
             }
             m_rosPublisherPort_tf_static.write();
 
