@@ -120,14 +120,10 @@ void Graph::insert(Vertex *vertex) {
 }
 */
 
-#include<stdio.h>
+
 void Graph::insert(const Vertex &vertex){
-    if( find(vertex) != mVertices.end()){
-        std::cout<<"C E' GIA'"<<std::endl;
-        return;
-    }
+    if( find(vertex) != mVertices.end()) return;
    // Vertex* v = new Vertex(vertex);
-    std::cout<<"INSERITO"<<std::endl;
     mVertices.push_back((Vertex*) &vertex);
 }
 

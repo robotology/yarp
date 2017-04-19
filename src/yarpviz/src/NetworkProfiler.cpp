@@ -147,6 +147,8 @@ bool NetworkProfiler::creatNetworkGraph(ports_detail_set details, yarp::graph::G
 
         // port node
         PortVertex* port = new PortVertex(info.name);
+        if(!info.inputs.size() && !info.outputs.size())
+            port->property.put("orphan", true);
         graph.insert(*port);
 
         //process node (owner)

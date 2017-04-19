@@ -31,7 +31,7 @@ QGVNode::QGVNode(QGVNodePrivate *node, QGVScene *scene): _node(node), _scene(sce
 QGVNode::~QGVNode()
 {
     _scene->removeItem(this);
-		delete _node;
+    delete _node;
 }
 
 QString QGVNode::label() const

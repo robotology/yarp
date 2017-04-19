@@ -74,6 +74,7 @@ private:
     void initScene();
     void onNodeContextMenuPort(QGVNode *node, YarpvizVertex* vertex);
     void updateNodeWidgetItems();
+    void populateTreeWidget();
 
 private slots:
     void nodeContextMenu(QGVNode* node);
@@ -85,9 +86,8 @@ private slots:
     void onLayoutPolyline();
     void onLayoutLine();
     void onLayoutCurved();
-    void onLayoutSubgraph();
     void onHidePorts();
-    void onHideConnectionsLable();
+    void onUpdateGraph();
     void onNodesTreeItemClicked(QTreeWidgetItem *item, int column);
     void onWindowMessageBox();
     void onWindowItem();
@@ -96,7 +96,7 @@ private slots:
     void onUpdateQosStatus();
     void onConfigureConsQos();
     void onProfilePortsRate();
-    void onSubGraphContextMenuProccess(QGVSubGraph *node);
+    void onSubGraphContextMenuProcess(QGVSubGraph *node);
 
 private:
     Ui::MainWindow *ui;
