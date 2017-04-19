@@ -160,10 +160,13 @@ PartItem::PartItem(QString robotName, int id, QString partName, ResourceFinder& 
         double max_pos = 100;
         double min_vel = 0;
         double max_vel = 100;
+        double min_cur = -2.0;
+        double max_cur = +2.0;
         for (int k = 0; k<number_of_joints; k++)
         {
             bool bpl = m_iLim->getLimits(k, &min_pos, &max_pos);
             bool bvl = m_iLim->getVelLimits(k, &min_vel, &max_vel);
+            bool bcr = m_iCur->getCurrentRange(k, &min_cur, &max_cur);
             if (bpl == false)
             {
                 yError() << "Error while getting position limits, part " << partName.toStdString() << " joint " << k;
@@ -171,6 +174,10 @@ PartItem::PartItem(QString robotName, int id, QString partName, ResourceFinder& 
             if (bvl == false || (min_vel == 0 && max_vel == 0))
             {
                 yError() << "Error while getting velocity limits, part " << partName.toStdString() << " joint " << k;
+            }
+            if (bcr == false || (min_cur == 0 && max_cur == 0))
+            {
+                yError() << "Error while getting current range, part " << partName.toStdString() << " joint " << k;
             }
 
             QSettings settings("YARP", "yarpmotorgui");
@@ -186,8 +193,8 @@ PartItem::PartItem(QString robotName, int id, QString partName, ResourceFinder& 
             
             JointItem *joint = new JointItem(k);
             joint->setJointName(jointname.c_str());
-            joint->setPWMRange(-100,100);
-            joint->setCurrentRange(-8000, 8000);
+            joint->setPWMRange(-100.0,100.0);
+            joint->setCurrentRange(min_cur, max_cur);
             m_layout->addWidget(joint);
             joint->setPositionRange(min_pos, max_pos);
             joint->setVelocityRange(min_vel, max_vel);
@@ -208,6 +215,7 @@ PartItem::PartItem(QString robotName, int id, QString partName, ResourceFinder& 
             onSetPosSliderOptionPI(val_pos_choice, val_pos_custom_step);
             onSetVelSliderOptionPI(val_vel_choice, val_vel_custom_step);
             onSetTrqSliderOptionPI(val_trq_choice, val_trq_custom_step);
+            onSetCurSliderOptionPI(val_trq_choice, val_trq_custom_step);
 
             joint->setEnabledOptions(debug_param_enabled,
                                      speedview_param_enabled,
@@ -1916,6 +1924,31 @@ void PartItem::onSetVelSliderOptionPI(int mode, double step)
         }
     }
 }
+
+void PartItem::onSetCurSliderOptionPI(int mode, double step)
+{
+    for (int i = 0; i<m_layout->count(); i++)
+    {
+        JointItem *joint = (JointItem*)m_layout->itemAt(i)->widget();
+        if (mode == 0)
+        {
+            joint->enableCurrentSliderDoubleAuto();
+        }
+        else if (mode == 1)
+        {
+            joint->enableCurrentSliderDoubleValue(step);
+        }
+        else if (mode == 2)
+        {
+            joint->enableCurrentSliderDoubleValue(1.0);
+        }
+        else
+        {
+            joint->disableCurrentSliderDouble();
+        }
+    }
+}
+
 void PartItem::onSetTrqSliderOptionPI(int mode, double step)
 {
     for (int i = 0; i<m_layout->count(); i++)

@@ -52,6 +52,11 @@ bool ImplementPWMControl::uninitialize()
     return true;
 }
 
+bool ImplementPWMControl::getNumberOfMotors(int *axes)
+{
+    return raw->getNumberOfMotorsRaw(axes);
+}
+
 bool ImplementPWMControl::setRefDutyCycle(int j, double v)
 {
     JOINTIDCHECK

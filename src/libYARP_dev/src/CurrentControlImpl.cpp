@@ -63,9 +63,9 @@ bool ImplementCurrentControl::uninitialize()
     return true;
 }
 
-bool ImplementCurrentControl::getAxes(int *axes)
+bool ImplementCurrentControl::getNumberOfMotors(int *axes)
 {
-    return iCurrentRaw->getAxes(axes);
+    return iCurrentRaw->getNumberOfMotorsRaw(axes);
 }
 
 bool ImplementCurrentControl::getRefCurrent(int j, double *r)

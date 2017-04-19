@@ -87,6 +87,9 @@ class JointItem : public QWidget
     void enableTorqueSliderDoubleAuto();
     void enableTorqueSliderDoubleValue(double value);
     void disableTorqueSliderDouble();
+    void enableCurrentSliderDoubleAuto();
+    void enableCurrentSliderDoubleValue(double value);
+    void disableCurrentSliderDouble();
     void enableTrajectoryVelocitySliderDoubleAuto();
     void enableTrajectoryVelocitySliderDoubleValue(double value);
     void disableTrajectoryVelocitySliderDouble();
@@ -134,10 +137,6 @@ private:
     QTimer velocityTimer;
     double lastVelocity;
     bool velocityModeEnabled;
-    bool positionSliderStepIsAuto;
-    bool velocitySliderStepIsAuto;
-    bool torqueSliderStepIsAuto;
-    bool trajectoryVelocitySliderStepIsAuto;
 
     int     IDLE;
     int     POSITION;
@@ -153,6 +152,8 @@ private:
     JointState internalState;
     JointInteraction internalInteraction;
 
+    double max_current;
+    double min_current;
     double max_torque;
     double min_torque;
     double max_position;

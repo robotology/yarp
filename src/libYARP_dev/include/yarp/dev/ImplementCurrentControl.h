@@ -52,7 +52,7 @@ public:
      */
     virtual ~ImplementCurrentControl();
 
-    virtual bool getAxes(int *ax);
+    virtual bool getNumberOfMotors(int *ax);
     virtual bool getRefCurrent(int j, double *);
     virtual bool getRefCurrents(double *t);
     virtual bool setRefCurrents(const double *t);

@@ -75,8 +75,6 @@ struct YARP_dev_API yarp::dev::CalibrationParameters
 };
 
 /**
- * @ingroup dev_iface_motor
- *
  * Interface for a generic control board device implementing a PID controller.
  */
 class YARP_dev_API yarp::dev::IPidControlRaw
@@ -492,7 +490,6 @@ public:
 };
 
 /**
- * @ingroup dev_iface_motor
  *
  * Interface for control devices, amplifier commands.
  */
@@ -628,7 +625,6 @@ public:
 };
 
 /**
- * @ingroup dev_iface_motor
  *
  * Interface for control devices, calibration commands.
  */
@@ -656,7 +652,6 @@ public:
 };
 
 /**
- * @ingroup dev_iface_motor
  *
  * New interface for control devices, calibration commands.
  */
@@ -886,6 +881,8 @@ public:
 };
 
 /**
+ * @ingroup dev_iface_motor
+ *
  * Interface for getting information about specific axes, if available.
  */
 class YARP_dev_API yarp::dev::IAxisInfo

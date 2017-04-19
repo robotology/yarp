@@ -27,6 +27,7 @@ public:
     bool uninitialize();
     ImplementPWMControl(IPWMControlRaw *v);
     ~ImplementPWMControl();
+    bool getNumberOfMotors(int *ax);
     bool setRefDutyCycle(int j, double v);
     bool setRefDutyCycles(const double *v);
     bool getRefDutyCycle(int j, double *v);

@@ -71,10 +71,6 @@ JointItem::JointItem(int index,QWidget *parent) :
     velocityModeEnabled = false;
     motionDone = true;
 
-    positionSliderStepIsAuto = true;
-    velocitySliderStepIsAuto = false;
-    trajectoryVelocitySliderStepIsAuto = false;
-
     max_position = 0;
     min_position = 0;
     max_velocity = 0;
@@ -82,6 +78,8 @@ JointItem::JointItem(int index,QWidget *parent) :
     max_trajectory_velocity = 0;
     max_torque = 0;
     min_torque = 0;
+    max_current = 0;
+    min_current = 0;
     ref_torque = 0;
     ref_pwm = 0;
     ref_current = 0;
@@ -595,7 +593,6 @@ void JointItem::setSpeedVisible(bool visible)
 
 void JointItem::enablePositionSliderDoubleAuto()
 {
-    positionSliderStepIsAuto = true;
     double positionSliderStep = 1 / (fabs(min_position - max_position) / 100.0);
     ui->sliderMixedPosition->setSliderStep(positionSliderStep);
     ui->sliderTrajectoryPosition->setSliderStep(positionSliderStep);
@@ -658,7 +655,6 @@ void JointItem::disablePositionSliderDouble()
 
 void JointItem::enableVelocitySliderDoubleAuto()
 {
-    velocitySliderStepIsAuto = true;
     double velocitySliderStep = 1 / (fabs(-max_velocity - max_velocity) / 100.0); //note that we are using -max_velocity
     ui->sliderVelocityVelocity->setSliderStep(velocitySliderStep);
     ui->sliderVelocityVelocity->setIsDouble(true);
@@ -706,7 +702,6 @@ void JointItem::disableVelocitySliderDouble()
 
 void JointItem::enableTorqueSliderDoubleAuto()
 {
-    torqueSliderStepIsAuto = true;
     double torqueSliderStep = 1 / (fabs(-max_torque - max_torque) / 100.0); //note that we are using -max_velocity
     ui->sliderTorqueTorque->setSliderStep(torqueSliderStep);
     ui->sliderTorqueTorque->setIsDouble(true);
@@ -735,9 +730,9 @@ void JointItem::enableTorqueSliderDoubleValue(double value)
 
 void JointItem::disableTorqueSliderDouble()
 {
-    if (fabs(max_velocity) < 1.0)
+    if (fabs(max_torque) < 1.0)
     {
-        yError("Unable to set integer velocity slider");
+        yError("Unable to set integer torque slider");
         return;
     }
     double torqueSliderStep = 1;
@@ -752,9 +747,55 @@ void JointItem::disableTorqueSliderDouble()
     setRefTorque(ref_torque);
 }
 
+void JointItem::enableCurrentSliderDoubleAuto()
+{
+    double currentSliderStep = 1 / (fabs(-max_current - max_current) / 100.0); //note that we are using -max_velocity
+    ui->sliderCurrentOutput->setSliderStep(currentSliderStep);
+    ui->sliderCurrentOutput->setIsDouble(true);
+    int sliderMin = -max_current*currentSliderStep; //note that we are using -max_current
+    int sliderMax = max_current*currentSliderStep;
+    ui->sliderCurrentOutput->setRange(sliderMin, sliderMax);
+    int v = ui->sliderCurrentOutput->value();
+    if (v > sliderMax) {}
+    if (v < sliderMin) {}
+    setCurrent(ref_current);
+}
+
+void JointItem::enableCurrentSliderDoubleValue(double value)
+{
+    double currentSliderStep = 1 / value;
+    ui->sliderCurrentOutput->setSliderStep(currentSliderStep);
+    ui->sliderCurrentOutput->setIsDouble(true);
+    int sliderMin = -max_current*currentSliderStep; //note that we are using -max_current
+    int sliderMax = max_current*currentSliderStep;
+    ui->sliderCurrentOutput->setRange(sliderMin, sliderMax);
+    int v = ui->sliderCurrentOutput->value();
+    if (v > sliderMax) {}
+    if (v < sliderMin) {}
+    setCurrent(ref_current);
+}
+
+void JointItem::disableCurrentSliderDouble()
+{
+    if (fabs(max_velocity) < 1.0)
+    {
+        yError("Unable to set integer velocity slider");
+        return;
+    }
+    double currentSliderStep = 1;
+    ui->sliderCurrentOutput->setSliderStep(currentSliderStep);
+    ui->sliderCurrentOutput->setIsDouble(false);
+    int sliderMin = -max_current; //note that we are using -max_current
+    int sliderMax = max_current;
+    ui->sliderCurrentOutput->setRange(sliderMin, sliderMax);
+    int v = ui->sliderCurrentOutput->value();
+    if (v > sliderMax) {}
+    if (v < sliderMin) {}
+    setCurrent(ref_current);
+}
+
 void JointItem::enableTrajectoryVelocitySliderDoubleAuto()
 {
-    trajectoryVelocitySliderStepIsAuto = true;
     double trajectoryVelocitySliderStep = 1 / (fabs(0 - max_trajectory_velocity) / 100.0); //note that we are using 0
     ui->sliderTrajectoryVelocity->setSliderStep(trajectoryVelocitySliderStep);
     ui->sliderTrajectoryVelocity->setIsDouble(true);
@@ -1642,6 +1683,15 @@ void JointItem::setPWMRange(double min, double max)
 
 void JointItem::setCurrentRange(double min, double max)
 {
+    if (min < max)
+    {
+        min_current = min;
+        max_current = max;
+    }
+    else
+    {
+        //Error
+    }
     ui->sliderCurrentOutput->setRange(min, max);
 }
 
