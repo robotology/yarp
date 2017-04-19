@@ -35,6 +35,14 @@ yarp_idl_to_dir("${CMAKE_CURRENT_SOURCE_DIR}/ros/msg_file/geometry_msgs/WrenchSt
                 ros_msg_include_dirs)
 include(${CMAKE_CURRENT_SOURCE_DIR}/ros/geometry_msgs_WrenchStamped_msg.cmake)
 
+# Imported from https://github.com/ros/geometry2/blob/indigo-devel/tf2_msgs/msg/TFMessage.msg
+yarp_idl_to_dir("${CMAKE_CURRENT_SOURCE_DIR}/ros/msg_file/tf2_msgs/TFMessage.msg"
+                "${CMAKE_CURRENT_SOURCE_DIR}/ros"
+                ros_msg_sources
+                ros_msg_headers
+                ros_msg_include_dirs)
+include(${CMAKE_CURRENT_SOURCE_DIR}/ros/tf2_msgs_TFMessage_msg.cmake)
+
 # # add automatically generated files to source list
 set(cbw2_msgs_srcs        ${yarp_msg_sources} ${ros_msg_sources}   PARENT_SCOPE)
 set(cbw2_msgs_hrds        ${yarp_msg_headers} ${ros_msg_headers}   PARENT_SCOPE)
