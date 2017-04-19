@@ -442,6 +442,7 @@ MAKE_COMMS(Bottle)
 %include <yarp/dev/IImpedanceControl.h>
 %include <yarp/dev/IVelocityControl.h>
 %include <yarp/dev/IOpenLoopControl.h>
+%include <yarp/dev/IAnalogSensor.h>
 
 #if !defined(SWIGCHICKEN) && !defined(SWIGALLEGROCL)
   %template(DVector) std::vector<double>;
@@ -768,6 +769,12 @@ typedef yarp::os::BufferedPort<ImageRgbFloat> BufferedPortImageRgbFloat;
 
     yarp::dev::IOpenLoopControl *viewIOpenLoopControl() {
             yarp::dev::IOpenLoopControl *result;
+        self->view(result);
+        return result;
+    }
+
+    yarp::dev::IAnalogSensor *viewIAnalogSensor() {
+        yarp::dev::IAnalogSensor *result;
         self->view(result);
         return result;
     }

@@ -18,9 +18,9 @@ if(NOT SKIP_laserHokuyo)
 
   yarp_add_plugin(laserHokuyo laserHokuyo.h
                               laserHokuyo.cpp)
-  target_link_libraries(laserHokuyo YARP_OS
-                                    YARP_sig
-                                    YARP_dev)
+  target_link_libraries(laserHokuyo YARP::YARP_OS
+                                    YARP::YARP_sig
+                                    YARP::YARP_dev)
   yarp_install(TARGETS laserHokuyo
                EXPORT YARP
                COMPONENT runtime

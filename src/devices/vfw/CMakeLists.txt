@@ -22,9 +22,9 @@ if(NOT SKIP_vfw_grabber)
                         ${YARP_dev_INCLUDE_DIRS})
     yarp_add_plugin(yarp_vfw VfwGrabber.cpp
                              VfwGrabber.h)
-    target_link_libraries(yarp_vfw YARP_OS
-                                   YARP_sig
-                                   YARP_dev
+    target_link_libraries(yarp_vfw YARP::YARP_OS
+                                   YARP::YARP_sig
+                                   YARP::YARP_dev
                                    ${vfw_library})
     yarp_install(TARGETS yarp_vfw
                  EXPORT YARP
@@ -39,10 +39,10 @@ if(NOT SKIP_vfw_grabber)
       add_executable(vfw_test vfw_test.cpp
                               VfwGrabber.cpp
                               VfwGrabber.h)
-      target_link_libraries(vfw_test YARP_OS
-                                     YARP_init
-                                     YARP_sig
-                                     YARP_dev
+      target_link_libraries(vfw_test YARP::YARP_OS
+                                     YARP::YARP_init
+                                     YARP::YARP_sig
+                                     YARP::YARP_dev
                                      ${vfw_library})
     endif()
 

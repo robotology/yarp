@@ -129,15 +129,11 @@ if(CREATE_YARPMANAGER)
                                    ${yarpmanager_UI_GEN_SRCS}
                                    ${yarpmanager_UI_FILES})
 
-  target_link_libraries(yarpmanager YARP_OS
-                                    YARP_init
-                                    YARP_manager)
-  qtyarp_use_modules(yarpmanager Widgets
-                                 Gui)
-  qtyarp_deprecate_with_cmake_version(2.8.11)
-  if(WIN32 AND CMAKE_VERSION VERSION_LESS 2.8.11)
-    target_link_libraries(yarpmanager Qt5::WinMain)
-  endif()
+  target_link_libraries(yarpmanager YARP::YARP_OS
+                                    YARP::YARP_init
+                                    YARP::YARP_manager
+                                    Qt5::Widgets
+                                    Qt5::Gui)
 
   install(TARGETS yarpmanager COMPONENT utilities DESTINATION ${CMAKE_INSTALL_BINDIR})
 

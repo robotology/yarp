@@ -95,7 +95,7 @@ Choose the following options:
 
 (leave default values as they are unless you know better)
 
-\remark the availability of \c CREATE_GUIS and \c CREATE_LIB_MATH require you have installed the libraries qt and gsl (you have, if you have followed the instructions above).
+\remark the availability of \c CREATE_GUIS and \c CREATE_LIB_MATH require you have installed the libraries qt5 and eigen3 (you have, if you have followed the instructions above).
 
 Project files generation is an iterative process, hit "Configure" until the option "Generate" becomes available. Then hit "Generate" and quit. Note: CMake uses red bars to highlight new options, these are not necessarily errors and can be ignored.
 

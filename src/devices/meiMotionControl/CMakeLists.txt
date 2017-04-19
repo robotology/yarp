@@ -18,8 +18,8 @@ if(NOT SKIP_meiMotionControl)
                       ${YARP_dev_INCLUDE_DIRS})
   yarp_add_plugin(yarp_meiMotionControl MEIMotionControl.cpp
                                         MEIMotionControl.h)
-  target_link_libraries(yarp_meiMotionControl YARP_OS
-                                              YARP_dev)
+  target_link_libraries(yarp_meiMotionControl YARP::YARP_OS
+                                              YARP::YARP_dev)
   yarp_install(TARGETS yarp_meiMotionControl
                EXPORT YARP
                COMPONENT runtime

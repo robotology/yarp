@@ -26,8 +26,8 @@ if(NOT SKIP_serial OR NOT SKIP_serialport)
 
   yarp_add_plugin(yarp_serial SerialDeviceDriver.cpp
                               SerialDeviceDriver.h)
-  target_link_libraries(yarp_serial YARP_OS
-                                    YARP_dev
+  target_link_libraries(yarp_serial YARP::YARP_OS
+                                    YARP::YARP_dev
                                     ${ACE_LIBRARIES})
   yarp_install(TARGETS yarp_serial
                EXPORT YARP

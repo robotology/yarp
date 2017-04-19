@@ -76,6 +76,8 @@ public:
      */
     virtual int  getRgbHeight() = 0;
     virtual int  getRgbWidth() = 0;
+    virtual bool getRgbSupportedConfigurations(yarp::sig::VectorOf<CameraConfig> &configurations) { return false;};
+    virtual bool getRgbResolution(int &width, int &height) { return false;};
     virtual bool setRgbResolution(int width, int height) = 0;
     virtual bool getRgbFOV(double &horizontalFov, double &verticalFov) = 0;
     virtual bool setRgbFOV(double horizontalFov, double verticalFov) = 0;

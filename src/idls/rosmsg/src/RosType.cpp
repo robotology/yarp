@@ -641,7 +641,8 @@ std::string RosTypeSearch::findFile(const char *tname) {
     std::string target = std::string(tname);
 
     // If this is a path to a file, return the path, if the file exists.
-    if (stat(tname, &dummy) == 0) {
+    if (stat(tname, &dummy) == 0)
+    {
         if (source_dir.empty() && package_name.empty()) {
             size_t at = target.rfind("/");
             if (at != std::string::npos) {
@@ -661,33 +662,70 @@ std::string RosTypeSearch::findFile(const char *tname) {
     if (!source_dir.empty()) {
         // Search in source directory
         std::string source_full = source_dir + "/" + target + (find_service? ".srv" : ".msg");
+        if (verbose)
+        {
+            printf("searching definition: %s... (source directory: %s)\n", source_full.c_str(), source_dir.c_str());
+        }
         if (stat(source_full.c_str(), &dummy)==0) {
             return source_full;
         }
 
         // Search for current package in source directory
         source_full = source_dir + "/" + package_name + "/" + target + (find_service? ".srv" : ".msg");
+        if (verbose)
+        {
+            printf("searching definition: %s... (package name: %s)\n", source_full.c_str(), package_name.c_str());
+        }
         if (stat(source_full.c_str(), &dummy)==0) {
             return source_full;
         }
 
         // Search for std_msgs package in source directory
         source_full = source_dir + "/std_msgs/" + target + (find_service? ".srv" : ".msg");
+        if (verbose)
+        {
+            printf("searching definition: %s...\n", source_full.c_str());
+        }
         if (stat(source_full.c_str(), &dummy)==0) {
             return source_full;
         }
 
+        // Search in current directory
+        source_full = "./" + target + (find_service ? ".srv" : ".msg");
+        if (verbose)
+        {
+            printf("searching definition: %s...\n", source_full.c_str());
+        }
+        if (stat(source_full.c_str(), &dummy) == 0) {
+            return source_full;
+        }
+    }
+    else
+    {
+        if (verbose)
+        {
+            printf("source dir is empty");
+        }
     }
 
     // Search in target directory (already fetched from ROS/web, no need to
     // fetch it again)
     std::string target_full = target_dir + "/" + target + (find_service? ".srv" : ".msg");
+    if (verbose)
+    {
+        printf("searching definition in target directory %s...\n", target_full.c_str());
+    }
     if (stat(target_full.c_str(), &dummy)==0) {
         return target_full;
     }
 
     // If not in sources, try to fetch it from ROS
-    if (allow_ros) {
+    if (allow_ros)
+    {
+        if (verbose)
+        {
+            printf("searching definition from ros...\n");
+        }
         bool success = fetchFromRos(target_full, tname, find_service);
         if (success) {
             return target_full;
@@ -695,7 +733,12 @@ std::string RosTypeSearch::findFile(const char *tname) {
     }
 
     // try to fetch it from the web
-    if (allow_web) {
+    if (allow_web)
+    {
+        if (verbose)
+        {
+            printf("searching definition from the web...\n");
+        }
         bool success = fetchFromWeb(target_full, tname, find_service);
         if (success) {
             return target_full;
@@ -703,7 +746,12 @@ std::string RosTypeSearch::findFile(const char *tname) {
     }
 
     // support Header natively, for the sake of tests
-    if (target == "std_msgs/Header") {
+    if (target == "std_msgs/Header")
+    {
+        if (verbose)
+        {
+            printf("using internal std_msgs/Header support\n");
+        }
         yarp::os::mkdir_p(target_full.c_str(),1);
         FILE *fout = fopen(target_full.c_str(),"w");
         if (fout) {

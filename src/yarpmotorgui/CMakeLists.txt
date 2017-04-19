@@ -61,16 +61,12 @@ if(CREATE_YARPMOTORGUI)
                                      ${yarpmotorgui_QRC_GEN_SRCS}
                                      ${yarpmotorgui_UI_GEN_SRCS})
 
-  target_link_libraries(yarpmotorgui YARP_OS
-                                        YARP_init
-                                        YARP_sig
-                                        YARP_dev)
-  qtyarp_use_modules(yarpmotorgui Widgets
-                                  Gui)
-  qtyarp_deprecate_with_cmake_version(2.8.11)
-  if(WIN32 AND CMAKE_VERSION VERSION_LESS 2.8.11)
-    target_link_libraries(yarpmotorgui Qt5::WinMain)
-  endif()
+  target_link_libraries(yarpmotorgui YARP::YARP_OS
+                                     YARP::YARP_init
+                                     YARP::YARP_sig
+                                     YARP::YARP_dev
+                                     Qt5::Widgets
+                                     Qt5::Gui)
 
   install(TARGETS yarpmotorgui COMPONENT utilities DESTINATION ${CMAKE_INSTALL_BINDIR})
 

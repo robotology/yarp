@@ -470,14 +470,7 @@ void MainWindow::viewModule(yarp::manager::Module *module)
 void MainWindow::viewApplication(yarp::manager::Application *app,bool editingMode)
 {
     for(int i=0;i<ui->mainTabs->count();i++){
-        GenericViewWidget *w = (GenericViewWidget *)ui->mainTabs->widget(i);
-        if(w->getType() ==  yarp::manager::APPLICATION){
-            ApplicationViewWidget *a = (ApplicationViewWidget *)w;
-            if(a->getAppName() == app->getName()){
-                ui->mainTabs->setCurrentIndex(i);
-                return;
-            }
-        }else if(ui->mainTabs->tabText(i) == app->getName()){
+        if(ui->mainTabs->tabText(i) == app->getName()){
             ui->mainTabs->setCurrentIndex(i);
             return;
         }

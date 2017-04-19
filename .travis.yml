@@ -25,159 +25,117 @@ env:
     - TRAVIS_NO_DEPRECATED=false
     - TRAVIS_WITH_BROKEN_TESTS=false
 
-  matrix:
-    # Normal build
-    - TRAVIS_WITH_CXX11=false
-    # C++11 build
-    - TRAVIS_WITH_CXX11=true
-
 matrix:
   exclude:
   - os: osx
     compiler: gcc
 
   include:
-    # No ACE build  (linux, gcc)
+    # No ACE build (linux, gcc)
     - os: linux
       compiler: gcc
-      env: TRAVIS_WITH_ACE=false TRAVIS_WITH_CXX11=false
+      env: TRAVIS_WITH_ACE=false
 
-    # No ACE build  (linux, clang)
+    # No ACE build (linux, clang)
     - os: linux
       compiler: clang
-      env: TRAVIS_WITH_ACE=false TRAVIS_WITH_CXX11=false
-
-    # C++11, no ACE build  (linux, gcc)
-    - os: linux
-      compiler: gcc
-      env: TRAVIS_WITH_ACE=false TRAVIS_WITH_CXX11=true
-
-    # C++11, no ACE build  (linux, clang)
-    - os: linux
-      compiler: clang
-      env: TRAVIS_WITH_ACE=false TRAVIS_WITH_CXX11=true
+      env: TRAVIS_WITH_ACE=false
 
     # Normal build with CLEAN_API (linux, gcc)
     - os: linux
       compiler: gcc
-      env: TRAVIS_WITH_CXX11=false TRAVIS_CLEAN_API=true
+      env: TRAVIS_CLEAN_API=true
 
     # Normal build with CLEAN_API (linux, clang)
     - os: linux
       compiler: clang
-      env: TRAVIS_WITH_CXX11=false TRAVIS_CLEAN_API=true
+      env: TRAVIS_CLEAN_API=true
 
     # Normal build with Ninja generator (linux, gcc)
     - os: linux
       compiler: gcc
-      env: TRAVIS_WITH_CXX11=false TRAVIS_CMAKE_GENERATOR="Ninja"
+      env: TRAVIS_CMAKE_GENERATOR="Ninja"
 
     # Normal build with Ninja generator (linux, clang)
     - os: linux
       compiler: clang
-      env: TRAVIS_WITH_CXX11=false TRAVIS_CMAKE_GENERATOR="Ninja"
+      env: TRAVIS_CMAKE_GENERATOR="Ninja"
 
     # Normal build no deprecated (linux, gcc)
     - os: linux
       compiler: gcc
-      env: TRAVIS_WITH_CXX11=false TRAVIS_NO_DEPRECATED=true
+      env: TRAVIS_NO_DEPRECATED=true
 
     # Normal build no deprecated (linux, clang)
     - os: linux
       compiler: clang
-      env: TRAVIS_WITH_CXX11=false TRAVIS_NO_DEPRECATED=true
+      env: TRAVIS_NO_DEPRECATED=true
 
     # Static build (linux, gcc)
     - os: linux
       compiler: gcc
-      env: TRAVIS_WITH_CXX11=false TRAVIS_STATIC=true
+      env: TRAVIS_STATIC=true
 
     # Static build (linux, clang)
     - os: linux
       compiler: clang
-      env: TRAVIS_WITH_CXX11=false TRAVIS_STATIC=true
+      env: TRAVIS_STATIC=true
 
     # Static build, no ACE (linux, gcc)
     - os: linux
       compiler: gcc
-      env: TRAVIS_WITH_ACE=false TRAVIS_WITH_CXX11=false TRAVIS_STATIC=true
+      env: TRAVIS_WITH_ACE=false TRAVIS_STATIC=true
 
     # Static build, no ACE (linux, clang)
     - os: linux
       compiler: clang
-      env: TRAVIS_WITH_ACE=false TRAVIS_WITH_CXX11=false TRAVIS_STATIC=true
+      env: TRAVIS_WITH_ACE=false TRAVIS_STATIC=true
 
     # Normal build with valgrind (linux, gcc)
     - os: linux
       compiler: gcc
-      env: TRAVIS_WITH_CXX11=false TRAVIS_WITH_VALGRIND=true
-
-    # C++11 build with valgrind (linux, gcc)
-    - os: linux
-      compiler: gcc
-      env: TRAVIS_WITH_CXX11=true TRAVIS_WITH_VALGRIND=true
+      env: TRAVIS_WITH_VALGRIND=true
 
     # No ACE build with valgrind (linux, gcc)
     - os: linux
       compiler: gcc
-      env: TRAVIS_WITH_ACE=false TRAVIS_WITH_CXX11=false TRAVIS_WITH_VALGRIND=true
+      env: TRAVIS_WITH_ACE=false TRAVIS_WITH_VALGRIND=true
 
-    # C++11 build with valgrind (linux, gcc)
+    # Normal build with valgrind and broken tests (linux, gcc)
     - os: linux
       compiler: gcc
-      env: TRAVIS_WITH_ACE=false TRAVIS_WITH_CXX11=true TRAVIS_WITH_VALGRIND=true
+      env: TRAVIS_WITH_VALGRIND=true TRAVIS_WITH_BROKEN_TESTS=true
 
     # Normal build with Xcode 7.3 (osx, clang)
     - os: osx
       osx_image: xcode7.3
       compiler: clang
-      env: TRAVIS_WITH_CXX11=false TRAVIS_CMAKE_GENERATOR="Xcode"
-
-    # C++11 build with Xcode 7.3 (osx, clang)
-    - os: osx
-      osx_image: xcode7.3
-      compiler: clang
-      env: TRAVIS_WITH_CXX11=true TRAVIS_CMAKE_GENERATOR="Xcode"
+      env: TRAVIS_CMAKE_GENERATOR="Xcode"
 
     # Normal build with Xcode 8 (osx, clang)
     - os: osx
       osx_image: xcode8
       compiler: clang
-      env: TRAVIS_WITH_CXX11=false TRAVIS_CMAKE_GENERATOR="Xcode"
-
-    # C++11 build with Xcode 8 (osx, clang)
-    - os: osx
-      osx_image: xcode8
-      compiler: clang
-      env: TRAVIS_WITH_CXX11=true TRAVIS_CMAKE_GENERATOR="Xcode"
-
-    # Normal build with valgrind and broken tests (linux, gcc)
-    - os: linux
-      compiler: gcc
-      env: TRAVIS_WITH_CXX11=false TRAVIS_WITH_VALGRIND=true TRAVIS_WITH_BROKEN_TESTS=true
+      env: TRAVIS_CMAKE_GENERATOR="Xcode"
 
     # Normal build with Coverage (linux, gcc)
 #    - os: linux
 #      compiler: gcc
-#      env: TRAVIS_WITH_CXX11=false TRAVIS_BUILD_TYPE=Profile
+#      env: TRAVIS_BUILD_TYPE=Profile
 
     # Normal build with integration tests (linux, gcc)
 #    - os: linux
 #      compiler: gcc
-#      env: TRAVIS_WITH_CXX11=false TRAVIS_WITH_INTEGRATION_TESTS=true
+#      env: TRAVIS_WITH_INTEGRATION_TESTS=true
 
     # Normal build with integration tests (linux, clang)
 #    - os: linux
 #      compiler: clang
-#      env: TRAVIS_WITH_CXX11=false TRAVIS_WITH_INTEGRATION_TESTS=true
-
+#      env: TRAVIS_WITH_INTEGRATION_TESTS=true
 
   allow_failures:
-    # Normal build with valgrind and broken tests (tests of already broken things)
-    - env: TRAVIS_WITH_CXX11=false TRAVIS_WITH_VALGRIND=true TRAVIS_WITH_BROKEN_TESTS=true
-
-    # Normal build with integration tests (sometimes integration::rpc test fails)
-#    - env: TRAVIS_WITH_CXX11=false TRAVIS_WITH_INTEGRATION_TESTS=true
+    # Broken tests are supposed to fail
+    - env: TRAVIS_WITH_VALGRIND=true TRAVIS_WITH_BROKEN_TESTS=true
 
 
 branches:
@@ -191,6 +149,10 @@ addons:
       - sourceline: 'deb http://packages.ros.org/ros/ubuntu trusty main'
         key_url: 'http://packages.ros.org/ros.key'
     packages:
+      - gcc-5
+      - g++-5
+      - clang-3.6
+      - libc++-dev
       - ninja-build
       - lcov
       - valgrind
@@ -203,7 +165,6 @@ addons:
       - qtdeclarative5-dev
       - qtmultimedia5-dev
       - libqt5opengl5-dev
-      - libgsl0-dev
       - libqcustomplot-dev
       - libopencv-dev
       - libeigen3-dev
@@ -233,6 +194,16 @@ before_install:
 
   # Add additional repositories
   - if [ "$TRAVIS_OS_NAME" == "osx" ]; then brew tap homebrew/science; fi
+
+  # Install gcc-5 on trusty from ubuntu-toolchain-r PPA
+  - if [ "$TRAVIS_OS_NAME" == "linux" ]; then sudo update-alternatives --install /usr/bin/gcc gcc /usr/bin/gcc-5 60 --slave /usr/bin/g++ g++ /usr/bin/g++-5; fi
+  - if [ "$TRAVIS_OS_NAME" == "linux" ]; then sudo update-alternatives --install /usr/bin/gcc gcc /usr/bin/gcc-4.8 40 --slave /usr/bin/g++ g++ /usr/bin/g++-4.8; fi
+  - if [ "$TRAVIS_OS_NAME" == "linux" ]; then export PATH=`echo $PATH | sed -e 's/\/usr\/local\/clang-3.5.0\/bin://'`; fi
+  - if [ "$TRAVIS_OS_NAME" == "linux" ]; then sudo update-alternatives --install /usr/bin/clang clang /usr/lib/llvm-3.6/bin/clang 60 --slave /usr/bin/clang++ clang++ /usr/lib/llvm-3.6/bin/clang++; fi
+  - if [ "$TRAVIS_OS_NAME" == "linux" ]; then sudo update-alternatives --install /usr/bin/clang clang /usr/local/clang-3.5.0/bin/clang 40 --slave /usr/bin/clang++ clang++ /usr/local/clang-3.5.0/bin/clang++; fi
+
+  # Clang on ubuntu trusty requires libc++-dev
+  - if [ "$TRAVIS_OS_NAME" == "linux" ]; then if [ "$CXX" == "clang++" ]; then export CXXFLGAS="$CXXFLAGS -stdlib=libc++"; fi; fi
 
   # Install ccache on osx
   - if [ "$TRAVIS_OS_NAME" == "osx" ]; then brew install ccache; fi
@@ -273,8 +244,8 @@ install:
   - if [ "$TRAVIS_OS_NAME" == "osx" ]; then brew install qt5; fi
   - if [ "$TRAVIS_OS_NAME" == "osx" ]; then export Qt5_DIR="/usr/local/opt/qt5/lib/cmake/Qt5"; fi
 
-  # Install GPL dependencies (gsl, qcustomplot)
-  - if [ "$TRAVIS_OS_NAME" == "osx" ]; then brew install gsl readline; fi
+  # Install GPL dependencies (qcustomplot)
+  - if [ "$TRAVIS_OS_NAME" == "osx" ]; then brew install readline; fi
 
   # Install other dependencies (opencv, eigen)
   - if [ "$TRAVIS_OS_NAME" == "osx" ]; then /usr/bin/yes | pip uninstall numpy || true; fi
@@ -298,16 +269,20 @@ before_script:
 
   # Prepare cmake options
   - . scripts/admin/generate-cmake-options.sh $(hostname) $(lsb_release -cs) continuous
-  - export YARP_CMAKE_OPTIONS=" $CMAKE_OPTIONS"
+  - export YARP_CMAKE_OPTIONS=" $CMAKE_OPTIONS -DYARP_EXPERIMENTAL_CXX11=ON"
   - if ! $TRAVIS_WITH_ACE; then export YARP_CMAKE_OPTIONS="${YARP_CMAKE_OPTIONS} -DSKIP_ACE=ON -DYARP_TEST_HEAP=ON"; fi
-  - if $TRAVIS_WITH_CXX11; then export YARP_CMAKE_OPTIONS="${YARP_CMAKE_OPTIONS} -DYARP_EXPERIMENTAL_CXX11=ON"; fi
   - if $TRAVIS_WITH_INTEGRATION_TESTS; then export YARP_CMAKE_OPTIONS="${YARP_CMAKE_OPTIONS} -DYARP_TEST_INTEGRATION=ON"; fi
   - if $TRAVIS_STATIC; then export YARP_CMAKE_OPTIONS="${YARP_CMAKE_OPTIONS} -DCREATE_SHARED_LIBRARY=OFF"; fi
   - if $TRAVIS_CLEAN_API; then export YARP_CMAKE_OPTIONS="${YARP_CMAKE_OPTIONS} -DYARP_CLEAN_API=ON -DYARP_COMPILE_TESTS=OFF"; fi
   - if $TRAVIS_WITH_VALGRIND; then export YARP_CMAKE_OPTIONS="${YARP_CMAKE_OPTIONS} -DYARP_VALGRIND_TESTS=ON -DYARP_VALGRIND_DRD_TESTS=OFF -DYARP_VALGRIND_HELGRIND_TESTS=OFF YARP_VALGRIND_MEMCHECK_TESTS=ON YARP_VALGRIND_SGCHECK_TESTS=OFF"; fi
   - if $TRAVIS_NO_DEPRECATED; then export YARP_CMAKE_OPTIONS="${YARP_CMAKE_OPTIONS} -DYARP_NO_DEPRECATED=ON"; fi
   - if $TRAVIS_WITH_BROKEN_TESTS; then export YARP_CMAKE_OPTIONS="${YARP_CMAKE_OPTIONS} -DYARP_ENABLE_BROKEN_TESTS=ON"; fi
-  - export YARP_CMAKE_OPTIONS="${YARP_CMAKE_OPTIONS} -DCREATE_LIB_MATH_USING_GSL=OFF"
+
+  # TinyXML on trusty is built with C++98 ABI and clang fails.
+  - if [ "$TRAVIS_OS_NAME" == "linux" ]; then if [ "$CC" == "clang" ]; then export YARP_CMAKE_OPTIONS="${YARP_CMAKE_OPTIONS} -DYARP_USE_SYSTEM_TINYXML=OFF"; fi; fi
+
+  # OpenCV on travis is built with C++98 ABI.
+  - if [ "$TRAVIS_OS_NAME" == "linux" ]; then if [ "$CC" == "clang" ]; then export YARP_CMAKE_OPTIONS="${YARP_CMAKE_OPTIONS} -DYARP_USE_OPENCV=OFF"; fi; fi
 
   # Print cmake flags
   - echo "--------------------     BEGIN CMAKE FLAGS    --------------------"

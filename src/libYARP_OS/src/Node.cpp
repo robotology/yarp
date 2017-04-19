@@ -473,11 +473,7 @@ std::vector<Contact> yarp::os::Node::Helper::query(const ConstString& name, cons
     mutex.lock();
     for (std::multimap<ConstString,NodeItem>::const_iterator it = by_part_name.begin(); it != by_part_name.end(); ++it) {
         if (it->first == name && (category.empty() || category == it->second.nc.getCategory())) {
-#if defined(YARP_HAS_CXX11)
-                contacts.emplace_back(it->second.contactable->where());
-#else
-                contacts.push_back(it->second.contactable->where());
-#endif
+            contacts.emplace_back(it->second.contactable->where());
         }
     }
     mutex.unlock();

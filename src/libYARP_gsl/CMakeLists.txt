@@ -19,7 +19,9 @@ get_property(YARP_TREE_INCLUDE_DIRS GLOBAL PROPERTY YARP_TREE_INCLUDE_DIRS)
 include_directories(${YARP_TREE_INCLUDE_DIRS})
 
 add_library(YARP_gsl ${YARP_gsl_SRCS} ${YARP_gsl_HDRS})
-target_link_libraries(YARP_gsl LINK_PRIVATE YARP_sig)
+add_library(YARP::YARP_gsl ALIAS YARP_gsl)
+
+target_link_libraries(YARP_gsl PRIVATE YARP_sig)
 
 set_property(TARGET YARP_gsl PROPERTY PUBLIC_HEADER ${YARP_gsl_HDRS})
 set_property(TARGET YARP_gsl PROPERTY PRIVATE_HEADER ${YARP_gsl_IMPL_HDRS})

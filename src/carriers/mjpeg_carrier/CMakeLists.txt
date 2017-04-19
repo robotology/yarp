@@ -32,9 +32,9 @@ if(NOT SKIP_mjpeg)
                   MjpegStream.cpp
                   MjpegDecompression.h
                   MjpegDecompression.cpp)
-  target_link_libraries(yarp_mjpeg YARP_OS
-                                   YARP_sig
-                                   YARP_wire_rep_utils
+  target_link_libraries(yarp_mjpeg YARP::YARP_OS
+                                   YARP::YARP_sig
+                                   YARP::YARP_wire_rep_utils
                                    ${JPEG_LIBRARY})
 
   yarp_install(TARGETS yarp_mjpeg

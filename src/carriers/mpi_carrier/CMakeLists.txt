@@ -34,7 +34,7 @@ if(NOT SKIP_mpi)
                            include/yarp/os/MpiStream.h
                            include/yarp/os/MpiP2PStream.h
                            include/yarp/os/MpiComm.h)
-  target_link_libraries(yarp_mpi YARP_OS
+  target_link_libraries(yarp_mpi YARP::YARP_OS
                                  ${MPI_LIBRARIES})
   yarp_install(TARGETS yarp_mpi
                EXPORT YARP
@@ -71,7 +71,7 @@ if(NOT SKIP_mpibcast)
                                 include/yarp/os/MpiStream.h
                                 include/yarp/os/MpiBcastStream.h
                                 include/yarp/os/MpiComm.h)
-  target_link_libraries(yarp_mpibcast YARP_OS
+  target_link_libraries(yarp_mpibcast YARP::YARP_OS
                                       ${MPI_LIBRARIES})
   yarp_install(TARGETS yarp_mpibcast
                COMPONENT runtime

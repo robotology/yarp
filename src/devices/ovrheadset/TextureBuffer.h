@@ -1,7 +1,6 @@
 /*
- * Copyright (C) 2015  iCub Facility, Istituto Italiano di Tecnologia
+ * Copyright (C) 2015-2017  iCub Facility, Istituto Italiano di Tecnologia
  * Author: Daniele E. Domenichelli <daniele.domenichelli@iit.it>
- *
  * CopyPolicy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
  */
 
@@ -17,24 +16,26 @@
 class TextureBuffer
 {
 public:
-    TextureBuffer(int w, int h, int eye);
+    TextureBuffer(int w, int h, int eye, ovrSession session);
     ~TextureBuffer();
 
     void resize(int w = 0, int h = 0);
     void update();
 
+    ovrSession session;
+    ovrTextureSwapChain textureSwapChain;
+    int textureSwapChainSize;
+
     unsigned int width;
     unsigned int height;
+    unsigned int components;
     unsigned int padding;
     unsigned int rowSize;
     unsigned int bufferSize;
 
     ovrPosef eyePose;
 
-    GLuint texId;
-    GLuint pboIds[2];
-    unsigned int pboIndex;
-    unsigned int pboNextIndex;
+    GLuint *pboIds;
 
     GLubyte* ptr;
     bool dataReady;

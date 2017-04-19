@@ -2,7 +2,7 @@
 # Authors: Paul Fitzpatrick, Arjan Gijsberts, Lorenzo Natale, Fabien Benureau, Stephane Lallee, Ali Paikan
 # CopyPolicy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
 
-cmake_minimum_required(VERSION 2.8.9)
+cmake_minimum_required(VERSION 3.0)
 
 include(CMakeDependentOption)
 include(CheckCXXCompilerFlag)

@@ -177,9 +177,6 @@ if(WIN32)
   endif()
 else()
 
-    if(NOT CMAKE_MINIMUM_REQUIRED_VERSION VERSION_LESS 3.0)
-      message(AUTHOR_WARNING "CMAKE_MINIMUM_REQUIRED_VERSION is now ${CMAKE_MINIMUM_REQUIRED_VERSION}. The check in this macro can be removed.")
-    endif()
     macro(YARP_CHECK_AND_APPEND_CXX_COMPILER_FLAG _out _flag)
       string(TOUPPER "${_flag}" _VAR)
       string(REGEX REPLACE " .+" "" _VAR "${_VAR}")
@@ -275,13 +272,6 @@ else()
     yarp_check_and_append_cxx_compiler_flag(HARDENING_FLAGS "-Wl,-znow")
     yarp_check_and_append_cxx_compiler_flag(HARDENING_FLAGS "-fPIE -pie")
 
-
-    ## C++98 flags ##
-    unset(CXX98_FLAGS)
-    check_cxx_compiler_flag("-std=c++98" CXX_HAS_STD_CXX98)
-    if(CXX_HAS_STD_CXX98)
-      set(CXX98_FLAGS "-std=c++98")
-    endif()
 
     ## C++11 flags ##
     unset(CXX11_FLAGS)

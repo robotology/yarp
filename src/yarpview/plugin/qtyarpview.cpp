@@ -24,6 +24,10 @@ QtYARPView::QtYARPView(QQuickItem *parent):
 
     connect(&sigHandler,SIGNAL(sendFps(double,double,double,double,double,double)),
             this, SLOT(onSendFps(double,double,double,double,double,double)));
+
+    connect(&videoProducer,SIGNAL(resizeWindowRequest()),
+            this, SLOT(onWindowSizeChangeRequested()));
+
     createObjects();
 }
 
@@ -32,8 +36,8 @@ QtYARPView::~QtYARPView()
     closePorts();
     deleteObjects();
 
-    if (_options.saveOnExit != 0){
-        saveOptFile(_options.fileName);
+    if (_options.m_saveOnExit != 0){
+        saveOptFile(_options.m_fileName);
     }
 }
 
@@ -58,35 +62,44 @@ QObject *QtYARPView::getVideoProducer()
 /*! \brief Returns the x position from the options.*/
 int QtYARPView::posX()
 {
-    return _options.posX;
+    return _options.m_posX;
 }
 
 /*! \brief Returns the y position from the options.*/
 int QtYARPView::posY()
 {
-    return _options.posY;
+    return _options.m_posY;
 }
 
 /*! \brief Returns the width from the options.*/
 int QtYARPView::windowWidth()
 {
-    return _options.windWidth;
+    return _options.m_windWidth;
 }
 
 /*! \brief Returns the height from the options.*/
 int QtYARPView::windowHeight()
 {
-    return _options.windHeight;
+    return _options.m_windHeight;
 }
 
 
 /*! \brief Synchs the video stream to the display.
  *
- *  \param check a bool parameter that enbales or disables the synch option
+ *  \param check a bool parameter that enables or disables the synch option
  */
-void QtYARPView::synchToDisplay(bool check)
+void QtYARPView::synchDisplayPeriod(bool check)
 {
-    sigHandler.synchToDisplay(check);
+    sigHandler.synchDisplayPeriod(check);
+}
+
+/*! \brief Synchs the size of the window with the size of the video stream.
+*
+*  \param check a bool parameter that enables or disables the synch option
+*/
+void QtYARPView::synchDisplaySize(bool check)
+{
+    sigHandler.synchDisplaySize(check);
 }
 
 /*! \brief Changes the refresh interval.
@@ -176,7 +189,7 @@ void QtYARPView::onSendFps(double portAvg, double portMin, double portMax,
 */
 int QtYARPView::refreshInterval()
 {
-    return _options.refreshTime;
+    return _options.m_refreshTime;
 }
 
 
@@ -243,53 +256,59 @@ void QtYARPView::setOptions(yarp::os::Searchable& options) {
     // switch to subsections if available
     yarp::os::Value *val;
     if (options.check("PortName",val)||options.check("name",val)) {
-        qsnprintf(_options.portName, 256, "%s", val->asString().c_str());
+        qsnprintf(_options.m_portName, 256, "%s", val->asString().c_str());
         qDebug("%s", val->asString().c_str());
     }
     if (options.check("NetName",val)||options.check("n",val)) {
-        qsnprintf(_options.networkName, 256, "%s", val->asString().c_str());
+        qsnprintf(_options.m_networkName, 256, "%s", val->asString().c_str());
     }
     if (options.check("OutPortName",val)||options.check("out",val)) {
-        qsnprintf(_options.outPortName, 256, "%s", val->asString().c_str());
+        qsnprintf(_options.m_outPortName, 256, "%s", val->asString().c_str());
     }
     if (options.check("OutNetName",val)||options.check("neto",val)) {
-        qsnprintf(_options.outNetworkName, 256, "%s", val->asString().c_str());
+        qsnprintf(_options.m_outNetworkName, 256, "%s", val->asString().c_str());
     }
     if (options.check("RefreshTime",val)||options.check("p",val)) {
-        _options.refreshTime = val->asInt();
-        sigHandler.changeRefreshInterval(_options.refreshTime);
+        _options.m_refreshTime = val->asInt();
+        sigHandler.changeRefreshInterval(_options.m_refreshTime);
         refreshIntervalChanged();
     }
     if (options.check("PosX",val)||options.check("x",val)) {
-        _options.posX = val->asInt();
+        _options.m_posX = val->asInt();
         posXChanged();
     }
     if (options.check("PosY",val)||options.check("y",val)) {
-        _options.posY = val->asInt();
+        _options.m_posY = val->asInt();
         posYChanged();
     }
     if (options.check("Width",val)||options.check("w",val)) {
-        _options.windWidth = val->asInt();
+        _options.m_windWidth = val->asInt();
         widthChanged();
     }
     if (options.check("Height",val)||options.check("h",val)) {
-        _options.windHeight = val->asInt();
+        _options.m_windHeight = val->asInt();
         heightChanged();
     }
     if (options.check("OutputEnabled",val)) {
-        _options.outputEnabled = val->asInt();
+        _options.m_outputEnabled = val->asInt();
     }
     if (options.check("out",val)) {
-        _options.outputEnabled = true;
+        _options.m_outputEnabled = true;
     }
     if (options.check("SaveOptions",val)||options.check("saveoptions",val)) {
-        _options.outputEnabled = val->asInt();
+        _options.m_outputEnabled = val->asInt();
     }
     if (options.check("synch"))
     {
-        _options.synch=true;
-        synchToDisplay(true);
-        synch(true);
+        _options.m_synchRate=true;
+        synchDisplayPeriod(true);
+        synchRate(true);
+    }
+    if (options.check("autosize"))
+    {
+        _options.m_autosize = true;
+        synchDisplaySize(true);
+        autosize(true);
     }
 }
 
@@ -304,6 +323,7 @@ void QtYARPView::printHelp()
     qDebug("  --h: height of the window");
     qDebug("  --p: refresh time [ms]");
     qDebug("  --synch: synchronous display, every image received by the input port is displayed");
+    qDebug("  --autosize: the display automatically resizes on every new frame");
     qDebug("  --out: output port name (no default is given, if this option is not specified the port is not created)");
     qDebug("  --neto: output network");
     qDebug("  --neti: input network");
@@ -316,25 +336,26 @@ void QtYARPView::printHelp()
 void QtYARPView::setOptionsToDefault()
 {
     // Options defaults
-    _options.refreshTime = 100;
-    qsnprintf(_options.portName, 256, "%s","/yarpview/img:i");
-    qsnprintf(_options.networkName, 256, "%s", "default");
-    qsnprintf(_options.outPortName, 256, "%s","/yarpview/o:point");
-    qsnprintf(_options.outNetworkName, 256, "%s", "default");
-    _options.outputEnabled = 0;
-    _options.windWidth = 300;
-    _options.windHeight = 300;
-    _options.posX = 100;
-    _options.posY = 100;
-    qsnprintf(_options.fileName, 256, "%s","yarpview.conf");
-    _options.saveOnExit = 0;
+    _options.m_refreshTime = 100;
+    qsnprintf(_options.m_portName, 256, "%s","/yarpview/img:i");
+    qsnprintf(_options.m_networkName, 256, "%s", "default");
+    qsnprintf(_options.m_outPortName, 256, "%s","/yarpview/o:point");
+    qsnprintf(_options.m_outNetworkName, 256, "%s", "default");
+    _options.m_outputEnabled = 0;
+    _options.m_windWidth = 300;
+    _options.m_windHeight = 300;
+    _options.m_posX = 100;
+    _options.m_posY = 100;
+    _options.m_autosize = false;
+    qsnprintf(_options.m_fileName, 256, "%s","yarpview.conf");
+    _options.m_saveOnExit = 0;
 
     posXChanged();
     posYChanged();
     widthChanged();
     heightChanged();
 
-    sigHandler.changeRefreshInterval(_options.refreshTime);
+    sigHandler.changeRefreshInterval(_options.m_refreshTime);
     refreshIntervalChanged();
 }
 
@@ -347,7 +368,7 @@ bool QtYARPView::openPorts()
     bool ret = false;
 
     ptr_inputPort->setReadOnly();
-    ret= ptr_inputPort->open(_options.portName);
+    ret= ptr_inputPort->open(_options.m_portName);
     setName(ptr_inputPort->getName().c_str());
 
     if (!ret){
@@ -355,10 +376,10 @@ bool QtYARPView::openPorts()
         return false;
     }
 
-    if (_options.outputEnabled == 1){
+    if (_options.m_outputEnabled == 1){
         _pOutPort = new yarp::os::BufferedPort<yarp::os::Bottle>;
-        qDebug("Registering port %s on network %s...", _options.outPortName, _options.outNetworkName);
-        bool ok = _pOutPort->open(_options.outPortName);
+        qDebug("Registering port %s on network %s...", _options.m_outPortName, _options.m_outNetworkName);
+        bool ok = _pOutPort->open(_options.m_outPortName);
         if (ok) {
             qDebug("Port registration succeed!");
         }
@@ -378,13 +399,13 @@ void QtYARPView::closePorts()
 
     ptr_inputPort->close();
 
-    if (_options.outputEnabled == 1 && _pOutPort){
+    if (_options.m_outputEnabled == 1 && _pOutPort){
         _pOutPort->close();
         bool ok = true;
         if  (ok)
-            qDebug("Port %s unregistration succeed!\n", _options.outPortName);
+            qDebug("Port %s unregistration succeed!\n", _options.m_outPortName);
         else
-            qDebug("ERROR: Port %s unregistration failed.\n", _options.outPortName);
+            qDebug("ERROR: Port %s unregistration failed.\n", _options.m_outPortName);
         delete _pOutPort;
         _pOutPort = NULL;
     }
@@ -403,22 +424,49 @@ void QtYARPView::saveOptFile(char *fileName)
         qDebug("ERROR: Impossible to save to option file.");
         return;
     }
-    optFile.write((QString("PortName %1\n").arg(_options.portName)).toLatin1().data());
-    optFile.write((QString("NetName %1\n").arg(_options.networkName)).toLatin1().data());
-    optFile.write((QString("OutPortName %1\n").arg(_options.outPortName)).toLatin1().data());
-    optFile.write((QString("OutNetName %s\n").arg(_options.outNetworkName)).toLatin1().data());
-    optFile.write((QString("RefreshTime %d\n").arg(_options.refreshTime)).toLatin1().data());
-    optFile.write((QString("PosX %d\n").arg(_options.posX)).toLatin1().data());
-    optFile.write((QString("PosY %d\n").arg(_options.posY)).toLatin1().data());
-    optFile.write((QString("Width %d\n").arg(_options.windWidth)).toLatin1().data());
-    optFile.write((QString("Height %d\n").arg(_options.windHeight)).toLatin1().data());
-    optFile.write((QString("OutputEnables %d\n").arg(_options.outputEnabled)).toLatin1().data());
-    optFile.write((QString("SaveOptions %d\n").arg(_options.saveOnExit)).toLatin1().data());
-    optFile.write((QString("synch %d\n").arg(_options.synch)).toLatin1().data());
+    optFile.write((QString("PortName %1\n").arg(_options.m_portName)).toLatin1().data());
+    optFile.write((QString("NetName %1\n").arg(_options.m_networkName)).toLatin1().data());
+    optFile.write((QString("OutPortName %1\n").arg(_options.m_outPortName)).toLatin1().data());
+    optFile.write((QString("OutNetName %s\n").arg(_options.m_outNetworkName)).toLatin1().data());
+    optFile.write((QString("RefreshTime %d\n").arg(_options.m_refreshTime)).toLatin1().data());
+    optFile.write((QString("PosX %d\n").arg(_options.m_posX)).toLatin1().data());
+    optFile.write((QString("PosY %d\n").arg(_options.m_posY)).toLatin1().data());
+    optFile.write((QString("Width %d\n").arg(_options.m_windWidth)).toLatin1().data());
+    optFile.write((QString("Height %d\n").arg(_options.m_windHeight)).toLatin1().data());
+    optFile.write((QString("OutputEnables %d\n").arg(_options.m_outputEnabled)).toLatin1().data());
+    optFile.write((QString("SaveOptions %d\n").arg(_options.m_saveOnExit)).toLatin1().data());
+    optFile.write((QString("synchRate %d\n").arg(_options.m_synchRate)).toLatin1().data());
+    optFile.write((QString("autosize %d\n").arg(_options.m_autosize)).toLatin1().data());
     optFile.close();
 }
 
-void QtYARPView::clickCoords(int x,int y)
+void QtYARPView::clickCoords_4(int start_x, int start_y, int end_x, int end_y)
+{
+    int imageWidth, imageHeight;
+
+    imageWidth = videoProducer.getWidth();
+    imageHeight = videoProducer.getHeight();
+
+    if ((imageWidth != 0) && (imageHeight != 0)) {
+        qDebug("Transmitting click information...");
+        if (_pOutPort != NULL) {
+            yarp::os::Bottle& bot = _pOutPort->prepare();
+            bot.clear();
+            bot.addInt(start_x);
+            bot.addInt(start_y);
+            bot.addInt(end_x);
+            bot.addInt(end_y);
+            //_pOutPort->Content() = _outBottle;
+            _pOutPort->write();
+        }
+
+    }
+    else {
+        qDebug("I would send a position, but there's no image for scaling");
+    }
+}
+
+void QtYARPView::clickCoords_2(int x,int y)
 {
     int imageWidth, imageHeight;
 
@@ -438,5 +486,13 @@ void QtYARPView::clickCoords(int x,int y)
 
     } else {
         qDebug("I would send a position, but there's no image for scaling");
+    }
+}
+
+void QtYARPView::onWindowSizeChangeRequested()
+{
+    if (sigHandler.getAutosizeMode())
+    {
+        emit sizeChanged();
     }
 }

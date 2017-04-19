@@ -28,16 +28,16 @@ StartDlg::~StartDlg()
 }
 
 
-void StartDlg::init(QString robotName,QStringList partsName,QList <int> ENA)
+void StartDlg::init(QStringList partsName)
 {
 
-    ui->lineEdit->setText(robotName);
     FlowLayout *layout = new FlowLayout(ui->groupBox);
 
-    for(int i=0;i<partsName.count();i++){
+    for(int i=0;i<partsName.count();i++)
+    {
         QCheckBox *check = new QCheckBox(partsName.at(i),ui->groupBox);
-        check->setChecked(ENA.at(i));
-        check->setMinimumSize(QSize(100,check->height()));
+        check->setChecked(true);
+        check->setMinimumSize(QSize(100, check->height()));
         layout->addWidget(check);
         checkList.append(check);
     }
@@ -47,20 +47,14 @@ void StartDlg::init(QString robotName,QStringList partsName,QList <int> ENA)
 }
 
 
-QList <int> StartDlg::getEnabledParts()
+std::vector<bool> StartDlg::getEnabledParts()
 {
-    QList <int> enabled;
-    for(int i=0; i<checkList.count();i++){
-        if(checkList.at(i)->isChecked()){
-            enabled.append(1);
-        }else{
-            enabled.append(0);
-        }
-    }
-    return enabled;
-}
+    std::vector<bool> enabled;
 
-QString StartDlg::getRobotName()
-{
-    return ui->lineEdit->text();
+    for(int i = 0; i < checkList.count(); i++)
+    {
+        enabled.push_back(checkList.at(i)->isChecked());
+    }
+
+    return enabled;
 }

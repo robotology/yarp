@@ -15,9 +15,11 @@ if(CREATE_OPTIONAL_CARRIERS)
                                          WireBottle.h
                                          WireTwiddler.cpp
                                          WireTwiddler.h)
-  target_link_libraries(YARP_wire_rep_utils LINK_PRIVATE YARP_OS
-                                                         YARP_sig
-                                                         ${ACE_LIBRARIES})
+  add_library(YARP::YARP_wire_rep_utils ALIAS YARP_wire_rep_utils)
+
+  target_link_libraries(YARP_wire_rep_utils PRIVATE YARP::YARP_OS
+                                                    YARP::YARP_sig
+                                                    ${ACE_LIBRARIES})
 
   set_property(TARGET YARP_wire_rep_utils PROPERTY INCLUDE_DIRS ${CMAKE_CURRENT_SOURCE_DIR})
   set_property(GLOBAL APPEND PROPERTY YARP_LIBS YARP_wire_rep_utils)

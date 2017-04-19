@@ -12,6 +12,7 @@
 
 #include <yarp/manager/ymm-types.h>
 #include <yarp/manager/manifestloader.h>
+#include <yarp/manager/impl/textparser.h>
 
 namespace yarp {
 namespace manager {
@@ -38,6 +39,7 @@ private:
     string strPath;
     string strFileName;
     vector<string> fileNames;
+    TextParser     parser;
     AppTemplate app;
     AppTemplate* parsXml(const char* szFile);
 };

@@ -23,8 +23,8 @@ if(NOT SKIP_jrkerr)
                               nmccom.h
                               picservo.h
                               sio_util.h)
-  target_link_libraries(yarp_jrkerr YARP_OS
-                                    YARP_dev)
+  target_link_libraries(yarp_jrkerr YARP::YARP_OS
+                                    YARP::YARP_dev)
   yarp_install(TARGETS yarp_jrkerr
                EXPORT YARP
                COMPONENT runtime

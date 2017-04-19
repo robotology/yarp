@@ -48,10 +48,10 @@ if(NOT SKIP_primesensecamera OR NOT SKIP_kinect)
     add_executable(test_kinect KinectExample.cpp
                                KinectDeviceDriver.cpp
                                KinectDeviceDriver.h)
-    target_link_libraries(test_kinect YARP_OS
-                                      YARP_init
-                                      YARP_sig
-                                      YARP_dev
+    target_link_libraries(test_kinect YARP::YARP_OS
+                                      YARP::YARP_init
+                                      YARP::YARP_sig
+                                      YARP::YARP_dev
                                       ${LIBFREENECT_LIBRARIES}
                                       ${USB_LIBRARIES})
   endif()

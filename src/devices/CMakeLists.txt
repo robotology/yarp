@@ -40,6 +40,7 @@ yarp_begin_plugin_library(yarpmod)
   add_subdirectory(ovrheadset)
   add_subdirectory(PumaCalibrator)
   add_subdirectory(meiMotionControl)
+  add_subdirectory(test_grabber)
 
   if(NOT YARP_NO_DEPRECATED) # since YARP 2.3.68
     add_subdirectory(microphone)
@@ -86,6 +87,8 @@ yarp_begin_plugin_library(yarpmod)
 endforeach(EXTFILE)
 
 yarp_end_plugin_library(yarpmod)
+add_library(YARP::yarpmod ALIAS yarpmod)
+
 
 install(TARGETS yarpmod
         EXPORT YARP

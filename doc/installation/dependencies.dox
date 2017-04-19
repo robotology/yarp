@@ -219,8 +219,9 @@ export CMAKE_PREFIX_PATH=$CMAKE_PREFIX_PATH:/path/to/Qt/5.3/gcc_64/
 
 \subsubsection dependencies_qt5_Linux Linux
 
-\paragraph dependencies_qt5_debian_ubuntu Debian (jessie, stretch), Ubuntu (utopic, vivid, xenial, yakkety, zesty)
-On recent Debian and Ubuntu systems, you need to install the following packages:
+\paragraph dependencies_qt5_debian_ubuntu Debian/Ubuntu
+On Debian (jessie or later) and Ubuntu (utopic or later) systems, you need to
+install the following packages:
 
 \li qtbase5-dev
 \li qtdeclarative5-dev
@@ -238,61 +239,6 @@ sudo apt-get install qtbase5-dev qtdeclarative5-dev qtmultimedia5-dev \
   qml-module-qtquick2 qml-module-qtquick-window2 \
   qml-module-qtmultimedia qml-module-qtquick-dialogs \
   qml-module-qtquick-controls
-\endverbatim
-
-
-\paragraph dependencies_qt5_debian_wheezy Debian (wheezy)
-On Debian wheezy, Qt5 packages are available in the backports
-repository.
-
-You can enable the backports repository you have to add
-
-\verbatim
-deb http://backports.debian.org/debian-backports/ wheezy-backports main
-\endverbatim
-
-to your \c /etc/apt/sources.list file, and then install the same
-packages required from Debian jessie from the backports repository:
-
-
-\verbatim
-sudo apt-get update
-sudo apt-get install -t wheezy-backports qtbase5-dev \
-  qtdeclarative5-dev qtmultimedia5-dev qml-module-qtquick2 \
-  qml-module-qtquick-window2 qml-module-qtmultimedia \
-  qml-module-qtquick-dialogs qml-module-qtquick-controls libqt5svg5
-\endverbatim
-
-
-\paragraph dependencies_qt5_ubuntu_trusty Ubuntu (trusty)
-Qt5 packages are available from the main repository, but the package
-names are slightly different:
-
-\li qtbase5-dev
-\li qtdeclarative5-dev
-\li qtmultimedia5-dev
-\li qtdeclarative5-qtquick2-plugin
-\li qtdeclarative5-window-plugin
-\li qtdeclarative5-qtmultimedia-plugin
-\li qtdeclarative5-controls-plugin
-\li qtdeclarative5-dialogs-plugin
-
-You can install them by running:
-
-\verbatim
-sudo apt-get install qtbase5-dev qtdeclarative5-dev qtmultimedia5-dev \
-  qtdeclarative5-qtquick2-plugin qtdeclarative5-window-plugin \
-  qtdeclarative5-qtmultimedia-plugin qtdeclarative5-controls-plugin \
-  qtdeclarative5-dialogs-plugin libqt5svg5
-\endverbatim
-
-The appmenu-qt5 package on this release is bugged, see
-<a href="https://github.com/robotology/yarp/issues/521">#521</a>.
-In order to get the menus on qt5 tools, a workaround is to uninstall the
-appmenu-qt5 package:
-
-\verbatim
-sudo apt-get remove --purge appmenu-qt5
 \endverbatim
 
 

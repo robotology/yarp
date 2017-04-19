@@ -43,7 +43,7 @@ if(CREATE_LIB_MANAGER)
                         include/yarp/manager/ymm-dir.h
                         include/yarp/manager/ymm-types.h)
 
-  set(YARP_manager_IMPL_HDRS )
+  set(YARP_manager_IMPL_HDRS include/yarp/manager/impl/textparser.h)
 
   set(YARP_manager_SRCS src/application.cpp
                         src/arbitrator.cpp
@@ -93,12 +93,14 @@ if(CREATE_LIB_MANAGER)
   add_library(YARP_manager STATIC ${YARP_manager_SRCS}
                                   ${YARP_manager_HDRS}
                                   ${YARP_manager_IMPL_HDRS})
+  add_library(YARP::YARP_manager ALIAS YARP_manager)
 
-  target_link_libraries(YARP_manager LINK_PRIVATE YARP_sig YARP_OS)
-  target_link_libraries(YARP_manager LINK_PRIVATE ${TinyXML_LIBRARIES})
+  target_link_libraries(YARP_manager PRIVATE YARP::YARP_OS
+                                             YARP::YARP_sig)
+  target_link_libraries(YARP_manager PRIVATE ${TinyXML_LIBRARIES})
 
   if(CREATE_LIB_MATH)
-    target_link_libraries(YARP_manager LINK_PRIVATE YARP_math)
+    target_link_libraries(YARP_manager PRIVATE YARP::YARP_math)
   endif()
 
   set_property(TARGET YARP_manager PROPERTY PUBLIC_HEADER ${YARP_manager_HDRS})

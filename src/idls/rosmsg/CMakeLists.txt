@@ -22,7 +22,9 @@ set(yarpidl_rosmsg_HDRS src/RosType.h
 add_executable(yarpidl_rosmsg ${yarpidl_rosmsg_SRCS}
                               ${yarpidl_rosmsg_HDRS})
 
-target_link_libraries(yarpidl_rosmsg YARP_init YARP_OS ${ACE_LIBRARIES})
+target_link_libraries(yarpidl_rosmsg YARP::YARP_init
+                                     YARP::YARP_OS
+                                     ${ACE_LIBRARIES})
 install(TARGETS yarpidl_rosmsg
         EXPORT YARP
         COMPONENT utilities

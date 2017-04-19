@@ -28,9 +28,9 @@ if(CREATE_YARPDATADUMPER)
     target_link_libraries(yarpdatadumper ${OpenCV_LIBRARIES})
   endif()
 
-  target_link_libraries(yarpdatadumper YARP_OS
-                                       YARP_init
-                                       YARP_sig)
+  target_link_libraries(yarpdatadumper YARP::YARP_OS
+                                       YARP::YARP_init
+                                       YARP::YARP_sig)
 
   install(TARGETS yarpdatadumper
           COMPONENT utilities

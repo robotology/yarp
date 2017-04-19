@@ -143,7 +143,7 @@ Set the following variables to true:
 (leave default values as they are unless you know better)
 
 \remark CREATE_GUIS and CREATE_LIB_MATH require you have installed the libraries
-qt and gsl (you have, if you have followed the instructions above).
+qt5 and eigen3 (you have, if you have followed the instructions above).
 
 Makefiles generation is an iterative process, hit "c" until the option
 "Generate" becomes available. Then hit "g" and quit.

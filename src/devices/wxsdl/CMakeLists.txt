@@ -20,9 +20,9 @@ if(NOT SKIP_wxsdl)
 
   yarp_add_plugin(yarp_wxsdl WxsdlWriter.cpp
                              WxsdlWriter.h)
-  target_link_libraries(yarp_wxsdl YARP_OS
-                                   YARP_sig
-                                   YARP_dev
+  target_link_libraries(yarp_wxsdl YARP::YARP_OS
+                                   YARP::YARP_sig
+                                   YARP::YARP_dev
                                    ${wxWidgets_LIBRARIES}
                                    ${SDL_LIBRARY})
   if(WIN32)
@@ -41,10 +41,10 @@ if(NOT SKIP_wxsdl)
   if(YARP_COMPILE_TESTS)
     add_executable(wxsdl_test WxsdlWriter.cpp
                               WxsdlWriter.h)
-    target_link_libraries(wxsdl_test YARP_OS
-                                     YARP_init
-                                     YARP_sig
-                                     YARP_dev
+    target_link_libraries(wxsdl_test YARP::YARP_OS
+                                     YARP::YARP_init
+                                     YARP::YARP_sig
+                                     YARP::YARP_dev
                                      ${wxWidgets_LIBRARIES}
                                      ${SDL_LIBRARY})
     set_target_properties(wxsdl_test PROPERTIES COMPILE_DEFINITIONS "${wxWidgets_DEFINITIONS} -DWXSDL_MAIN")

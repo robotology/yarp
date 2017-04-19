@@ -148,7 +148,7 @@ int main(int argc, char *argv[])
     }
 
     if(!config.check("load_subfolders")){
-        config.put("load_subfolders", "no");
+        config.put("load_subfolders", "yes");
     }
 
     if(!config.check("watchdog")){

@@ -21,10 +21,10 @@ if(ENABLE_imuBosch_BNO055)
                       ${YARP_math_INCLUDE_DIRS})
   yarp_add_plugin(imuBosch_BNO055 imuBosch_BNO055.cpp
                                   imuBosch_BNO055.h)
-  target_link_libraries(imuBosch_BNO055 YARP_OS
-                                        YARP_sig
-                                        YARP_dev
-                                        YARP_math)
+  target_link_libraries(imuBosch_BNO055 YARP::YARP_OS
+                                        YARP::YARP_sig
+                                        YARP::YARP_dev
+                                        YARP::YARP_math)
   yarp_install(TARGETS imuBosch_BNO055
                EXPORT YARP
                COMPONENT Runtime

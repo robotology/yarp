@@ -226,7 +226,7 @@ At the time of writing, these are the following - libraries first:
 threads, etc.
 \li \ref yarp_build_structure_yarpsig "libYARP_sig" - signal processing: images, sound, vectors, and the like.
 Intended mostly to be easy to connect with other libraries (e.g. OpenCV).
-\li \ref yarp_build_structure_yarpmath "libYARP_math" - an optional wrapper around the GNU Scientific Library.  (license note: the GSL is under the GPL, not the LGPL, so enabling this option places YARP under the GPL).
+\li \ref yarp_build_structure_yarpmath "libYARP_math" - math library.
 \li \ref yarp_build_structure_yarpdev "libYARP_dev" - device management.
 \li \ref yarp_build_structure_devices "devices" - optional plugin devices (some under non-LGPL licenses).
 \li \ref yarp_build_structure_carriers "carriers" - optional plugin network protocols.
@@ -352,9 +352,8 @@ We follow the pattern of \ref yarp_build_structure_yarpsig
 to create the YARP_math library,
 for mathematical operations.  There are a few wrinkles:
 \li YARP_math is optional.  We create an option CREATE_LIB_MATH
-which defaults to FALSE.  If FALSE, this target is skipped.
-\li YARP_math depends on GSL.  We use the cmake/FindGSL.cmake script to
-track this dependency down.
+which defaults to OFF.  If OFF, this target is skipped.
+\li YARP_math depends on Eigen3.
 
 @section yarp_build_structure_yarpdev src/libYARP_dev/CMakeLists.txt
 

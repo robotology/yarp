@@ -188,6 +188,17 @@ int main(int argc, char *argv[])
 
     Property p;
     p.fromCommand(argc,argv);
+    bool verbose = p.check("verbose");
+
+    if (verbose)
+    {
+        printf("Command line: ");
+        for (int c = 0; c < argc; c++)
+        {
+            printf("%s ", argv[c]);
+        }
+        printf("\n");
+    }
 
     if (!(p.check("name")||p.check("cmd"))) {
         return generate_cpp(argc,argv);
@@ -200,7 +211,6 @@ int main(int argc, char *argv[])
     }
 
     bool has_cmd = p.check("cmd");
-    bool verbose = p.check("verbose");
 
     RosTypeSearch env;
     configure_search(env,p);

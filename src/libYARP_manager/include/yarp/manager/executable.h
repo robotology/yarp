@@ -102,8 +102,10 @@ public:
     int getID(void) { return theID; }
     Module* getModule() { return module; }
 
-    void setPostExecWait(double t) { wait = t; }
-    double getPostExecWait() { return wait; }
+    void setPostExecWait(double t) { waitStart = t; }
+    double getPostExecWait() { return waitStart; }
+    void setPostStopWait(double t) { waitStop = t; }
+    double getPostStopWait() { return waitStop; }
 
     void enableAutoConnect(void) { bAutoConnect = true; }
     void disableAutoConnect(void) { bAutoConnect = false; }
@@ -124,8 +126,8 @@ private:
     string strWorkdir;
     string strEnv;
     int theID;
-    double wait;
-
+    double waitStart;
+    double waitStop;
     bool bWatchDog;
     Broker* broker;
     MEvent* event;

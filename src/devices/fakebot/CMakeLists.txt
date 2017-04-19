@@ -18,9 +18,9 @@ if(NOT SKIP_fakebot)
                       ${YARP_dev_INCLUDE_DIRS})
   yarp_add_plugin(yarp_fakebot FakeBot.cpp
                                FakeBot.h)
-  target_link_libraries(yarp_fakebot YARP_OS
-                                     YARP_sig
-                                     YARP_dev)
+  target_link_libraries(yarp_fakebot YARP::YARP_OS
+                                     YARP::YARP_sig
+                                     YARP::YARP_dev)
   yarp_install(TARGETS yarp_fakebot
                EXPORT YARP
                COMPONENT runtime

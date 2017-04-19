@@ -396,19 +396,21 @@ add_library(YARP_OS ${YARP_OS_SRCS}
                     ${YARP_OS_IDL_HDRS}
                     ${YARP_OS_IMPL_HDRS}
                     ${YARP_OS_IMPL_HMAC_HDRS})
-target_link_libraries(YARP_OS LINK_PRIVATE ${ACE_LIBRARIES})
+add_library(YARP::YARP_OS ALIAS YARP_OS)
+
+target_link_libraries(YARP_OS PRIVATE ${ACE_LIBRARIES})
 
 set_property(TARGET YARP_OS PROPERTY PUBLIC_HEADER ${YARP_OS_HDRS})
 set_property(TARGET YARP_OS PROPERTY PRIVATE_HEADER ${YARP_OS_IMPL_HDRS})
 
 if(CMAKE_SYSTEM_NAME STREQUAL "Linux")
-    target_link_libraries(YARP_OS LINK_PRIVATE pthread)
+    target_link_libraries(YARP_OS PRIVATE pthread)
 endif()
 
 if(YARP_HAS_LIBEDIT)
     add_definitions(-DWITH_LIBEDIT)
     include_directories(${Libedit_INCLUDE_DIRS})
-    target_link_libraries(YARP_OS LINK_PRIVATE ${Libedit_LIBRARIES})
+    target_link_libraries(YARP_OS PRIVATE ${Libedit_LIBRARIES})
 endif()
 
 option(YARP_TEST_HEAP "Replace new/delete operators with test harness (may be incompatible with ACE)" FALSE)

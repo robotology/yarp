@@ -2,7 +2,7 @@
 # Author: Daniele E. Domenichelli <daniele.domenichelli@iit.it>
 # CopyPolicy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
 
-cmake_minimum_required(VERSION 2.8.9)
+cmake_minimum_required(VERSION 3.0)
 
 project(ContainerExample)
 
@@ -35,9 +35,9 @@ source_group("Resources Files" FILES ${ContainerExample_QRC_FILES})
 source_group("Generated Files" FILES ${ContainerExample_QRC_GEN_FILES})
 
 add_executable(ContainerExample WIN32 ${ContainerExample_SRCS} ${ContainerExample_HDRS} ${ContainerExample_QRC_GEN_FILES})
-qtyarp_use_modules(ContainerExample Widgets
-                                    Qml
-                                    Quick)
+target_link_libraries(ContainerExample Qt5::Widgets
+                                       Qt5::Qml
+                                       Qt5::Quick)
 
 
 #-------------------------------------------------------------------------------

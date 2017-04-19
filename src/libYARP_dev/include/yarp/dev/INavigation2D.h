@@ -17,13 +17,14 @@ namespace yarp {
 
         enum NavigationStatusEnum
         {
-            navigation_status_idle             = VOCAB4('i', 'd', 'l', 'e'),
-            navigation_status_moving           = VOCAB4('m', 'o', 'v', 'g'),
-            navigation_status_waiting_obstacle = VOCAB4('w', 'a', 'i', 't'),
-            navigation_status_goal_reached     = VOCAB4('r', 'e', 'c', 'h'),
-            navigation_status_aborted          = VOCAB4('a', 'b', 'r', 't'),
-            navigation_status_paused           = VOCAB4('p', 'a', 'u', 's'),
-            navigation_status_thinking         = VOCAB4('t', 'h', 'n', 'k')
+            navigation_status_idle                  = VOCAB4('i', 'd', 'l', 'e'),
+            navigation_status_preparing_before_move = VOCAB4('p', 'r', 'e', 'p'),
+            navigation_status_moving                = VOCAB4('m', 'o', 'v', 'g'),
+            navigation_status_waiting_obstacle      = VOCAB4('w', 'a', 'i', 't'),
+            navigation_status_goal_reached          = VOCAB4('r', 'e', 'c', 'h'),
+            navigation_status_aborted               = VOCAB4('a', 'b', 'r', 't'),
+            navigation_status_paused                = VOCAB4('p', 'a', 'u', 's'),
+            navigation_status_thinking              = VOCAB4('t', 'h', 'n', 'k')
         };
 
         struct Map2DLocation

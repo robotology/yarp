@@ -31,7 +31,8 @@ Rectangle {
     property string version: "2.0"
 
     signal changeWindowSize(int w, int h)
-    signal synch(bool check);
+    signal synchRate(bool check);
+    signal autosize(bool check);
     signal setName(string name)
 
 
@@ -53,12 +54,29 @@ Rectangle {
             }
         }
 
-        onSynch:{
-            synch(check);
+        onSynchRate:{
+            synchRate(check);
         }
 
+        onAutosize:{
+            autosize(check);
+        }
+        
         onSetName:{
             setName(name)
+        }
+
+        onWidthChanged:{
+            //console.log("onWidthChanged")
+        }
+
+        onHeightChanged:{
+            //console.log("onHeightChanged")
+        }
+
+        onSizeChanged:{
+            //console.log("onSizeChanged")
+            setOriginalSize()
         }
     }
 
@@ -164,8 +182,12 @@ Rectangle {
         setIntervalDlg.visibility = Window.Windowed
     }
 
-    function synchToDisplay(checked){
-        yarpViewCore.synchToDisplay(checked)
+    function synchDisplayPeriod(checked){
+        yarpViewCore.synchDisplayPeriod(checked)
+    }
+
+    function synchDisplaySize(checked){
+        yarpViewCore.synchDisplaySize(checked)
     }
 
     function saveSingleImage(checked){
@@ -203,8 +225,19 @@ Rectangle {
         MouseArea{
             anchors.fill: parent
             id: coordsMouseArea
+            property var clickX
+            property var clickY
+            property var startclickX
+            property var startclickY
+            property var lastclickX
+            property var lastclickY
+            property var currX
+            property var currY
+            property bool pressing: false
 
             onClicked: {
+                startclickX = mouse.x
+                startclickY = mouse.y
                 var x = mouse.x
                 var y = mouse.y
 
@@ -217,16 +250,81 @@ Rectangle {
                 var ratioW = w/frameW
                 var ratioH = h/frameH
 
-                var clickX = x/ratioW
-                var clickY = y/ratioH
+                clickX = x/ratioW
+                clickY = y/ratioH
 
-                yarpViewCore.clickCoords(clickX,clickY)
+                yarpViewCore.clickCoords_2(clickX,clickY)
+            }
+            
+            onPressed: {
+                startclickX = mouse.x
+                startclickY = mouse.y
+                var x = mouse.x
+                var y = mouse.y
 
+                var frameW = yarpViewCore.videoProducer.frameWidth;
+                var frameH = yarpViewCore.videoProducer.frameHeight
+
+                var w = mainVideoOutput.width
+                var h = mainVideoOutput.height
+
+                var ratioW = w/frameW
+                var ratioH = h/frameH
+
+                clickX = x/ratioW
+                clickY = y/ratioH
+            }
+                
+            onPressAndHold: {
+                pressing = true;
+                canvasOverlay.requestPaint()
+            }
+            
+            onReleased: {
+                if (pressing)
+                {
+                    pressing = false;
+                    lastclickX=mouse.x;
+                    lastclickY=mouse.y;
+                    yarpViewCore.clickCoords_4(clickX,clickY,lastclickX,lastclickY)
+                }
+                canvasOverlay.requestPaint()
+            }
+            
+            onPositionChanged:
+            {
+                currX=mouse.x;
+                currY=mouse.y;   
+                canvasOverlay.requestPaint()
+            }           
+            
+            Canvas
+            {
+                id:canvasOverlay
+                width: parent.width
+                height: parent.height
+                anchors.fill: parent
+                visible: true
+ 
+                onPaint:
+                {
+                    var ctx = canvasOverlay.getContext("2d")
+                    ctx.clearRect(0, 0, canvasOverlay.width, canvasOverlay.height);
+                    if (coordsMouseArea.pressing)
+                    {
+                        ctx.lineWidth = 1
+                        ctx.strokeStyle = "red"
+                        ctx.beginPath()
+                        ctx.moveTo(coordsMouseArea.startclickX,coordsMouseArea.startclickY)
+                        ctx.lineTo(coordsMouseArea.currX,coordsMouseArea.currY)
+                        ctx.closePath()
+                        ctx.stroke()
+                    }   
+                }
             }
         }
     }
-
-
+    
 
 
     /************ Dialogs **************/

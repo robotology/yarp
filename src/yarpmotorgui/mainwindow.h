@@ -35,8 +35,8 @@ class MainWindow : public QMainWindow
 
 public:
     explicit MainWindow(QWidget *parent = 0);
-    bool init(QString robotName, QStringList enabledParts,
-              ResourceFinder *finder,
+    bool init(QStringList enabledParts,
+              ResourceFinder& finder,
               bool debug_param_enabled,
               bool speedview_param_enabled,
               bool enable_calib_all);
@@ -47,32 +47,42 @@ public:
 protected:
     void closeEvent(QCloseEvent *event);
 private:
-    Ui::MainWindow *ui;
-    QTabWidget *tabPanel;
-    QToolBar *globalToolBar;
-    QToolBar *partToolBar;
-    QLabel *partName;
-    QTimer timer;
-    QMenu *currentPartMenu;
-    QMutex mutex;
-    int sequenceActiveCount;
-    sliderOptions* sliderOpt;
+    Ui::MainWindow*  m_ui;
+    QTabWidget*      m_tabPanel;
+    QToolBar*        m_globalToolBar;
+    QToolBar*        m_partToolBar;
+    QLabel*          m_partName;
+    QTimer           m_timer;
+    QMenu*           m_currentPartMenu;
+    QMutex           m_mutex;
+    int              m_sequenceActiveCount;
+    sliderOptions*   m_sliderOpt;
+    ResourceFinder   m_finder;
+    std::string      m_user_script1;
+    std::string      m_user_script2;
 
-    QAction *goAll;
-    QAction *runAllSeq;
-    QAction *runAllSeqTime;
-    QAction *saveAllSeq;
-    QAction *loadAllSeq;
-    QAction *cycleAllSeq;
-    QAction *cycleAllSeqTime;
-    QAction *stopAllSeq;
-    QAction *runAllParts;
-    QAction *homeAllParts;
+    QAction *m_goAll;
+    QAction *m_runAllSeq;
+    QAction *m_runAllSeqTime;
+    QAction *m_saveAllSeq;
+    QAction *m_loadAllSeq;
+    QAction *m_cycleAllSeq;
+    QAction *m_cycleAllSeqTime;
+    QAction *m_stopAllSeq;
+    QAction *m_idleAllParts;
+    QAction *m_runAllParts;
+    QAction *m_homeAllParts;
+    QAction *m_customPosition1AllParts;
+    QAction *m_customPosition2AllParts;
+    QAction *m_customPosition1SinglePart;
+    QAction *m_customPosition2SinglePart;
     QAction *openSequenceAction;
-    QAction *runAll;
-    QAction *calibAll;
-    QAction *homeAll;
-    QAction *idleAll;
+    QAction *m_runSinglePart;
+    QAction *m_calibSinglePart;
+    QAction *m_homeSinglePart;
+    QAction *m_idleSinglePart;
+    QAction *m_script2;
+    QAction *m_script1;
 
 private:
     void updateModesTree(PartItem *part);
@@ -86,18 +96,23 @@ private slots:
     void onStopAllSeq();
     void onCurrentPartChanged(int index);
     void onOpenSequenceTab();
-    void onRunAll();
+    void onRunSinglePart();
     void onRunAllParts();
     void onRunTimeAllSeq();
     void onRunAllSeq();
     void onCycleAllSeq();
     void onCycleTimeAllSeq();
     void onUpdate();
-    void onIdleAll();
-    void onHomeAll();
+    void onIdleAllParts();
+    void onIdleSinglePart();
+    void onHomeSinglePart();
     void onHomeAllParts();
-    void onCalibAll();
+    void onHomeSinglePartToCustomPosition(std::string suffix);
+    void onHomeAllPartsToCustomPosition(std::string suffix);
+    void onCalibSinglePart();
     void onGoAll();
+    void onExecuteScript1();
+    void onExecuteScript2();
     void onViewGlobalToolbar(bool);
     void onViewPartToolbar(bool);
     void onViewSpeeds(bool);

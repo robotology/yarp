@@ -18,9 +18,9 @@ if(NOT SKIP_rpLidar)
 
   yarp_add_plugin(rpLidar rpLidar.h
                           rpLidar.cpp)
-  target_link_libraries(rpLidar YARP_OS
-                                YARP_sig
-                                YARP_dev)
+  target_link_libraries(rpLidar YARP::YARP_OS
+                                YARP::YARP_sig
+                                YARP::YARP_dev)
   yarp_install(TARGETS rpLidar
                EXPORT YARP
                COMPONENT runtime

@@ -20,8 +20,10 @@ VideoProducer::VideoProducer(QObject *parent) :
 
 VideoProducer::~VideoProducer()
 {
-    if(m_format){
+    if(m_format)
+    {
         delete m_format;
+        m_format = 0;
     }
 }
 
@@ -79,25 +81,30 @@ void VideoProducer::onNewVideoContentReceived(QVideoFrame *frame)
 {
     if (m_surface){
         if(m_surface->isActive() && (m_format->frameWidth() != frame->size().width() ||
-                                     m_format->frameHeight() != frame->size().height())){
+                                     m_format->frameHeight() != frame->size().height()))
+        {
             m_surface->stop();
             delete m_format;
             m_format = NULL;
         }
 
-        if(!m_surface->isActive()){
+        if (!m_surface->isActive())
+        {
             QSize s = frame->size();
             QVideoFrame::PixelFormat f = frame->pixelFormat();
-            m_format = new QVideoSurfaceFormat(s,f);
-            
+            m_format = new QVideoSurfaceFormat(s, f);
 
             bool b = m_surface->start(*m_format);
-            if(b){
-                qDebug("Surface STARTED! Dimensions: %dx%d -- PixelFormat: %d",s.width(),s.height(),(int)f);
-            }else{
+            if (b)
+            {
+                qDebug("Surface STARTED! Dimensions: %dx%d -- PixelFormat: %d", s.width(), s.height(), (int)f);
+            }
+            else
+            {
                 qDebug("Surface START ERROR");
                 delete m_format;
             }
+            emit resizeWindowRequest();
         }
     }
 

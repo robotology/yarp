@@ -17,7 +17,7 @@
 
 namespace yarp {
 namespace manager {
-
+class TextParser;
 
 /**
  * Class XmlResLoader
@@ -40,6 +40,7 @@ private:
     string strPath;
     string strFileName;
     vector<string> fileNames;
+    TextParser*    parser;
     ComputerContainer computers;
     Computer dummyComputer;
     bool parsXml(const char* szFile);
