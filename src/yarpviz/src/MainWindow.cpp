@@ -107,6 +107,7 @@ void MainWindow::initScene() {
     ui->graphicsView->setBackgroundBrush(QBrush(QColor("#2e3e56"), Qt::SolidPattern));
     ui->graphicsView->setScene(scene);
     connect(scene, SIGNAL(nodeContextMenu(QGVNode*)), SLOT(nodeContextMenu(QGVNode*)));
+    connect(scene, SIGNAL(subGraphContextMenu(QGVSubGraph*)), SLOT(onSubGraphContextMenuProccess(QGVSubGraph*)));
     connect(scene, SIGNAL(nodeDoubleClick(QGVNode*)), SLOT(nodeDoubleClick(QGVNode*)));
     connect(scene, SIGNAL(edgeContextMenu(QGVEdge*)), SLOT(edgeContextMenu(QGVEdge*)));
 }
@@ -114,7 +115,7 @@ void MainWindow::initScene() {
 void MainWindow::onProgress(unsigned int percentage) {
     //yInfo()<<percentage<<"%";
     if(progressDlg)
-    	progressDlg->setValue(percentage);
+        progressDlg->setValue(percentage);
 }
 
 void MainWindow::drawGraph(Graph &graph)
@@ -143,8 +144,7 @@ void MainWindow::drawGraph(Graph &graph)
     // create a map between graph nodes and their visualization
     //std::map<const Vertex*, QGVNode*> nodeSet;
 
-
-    // adding all process nodes and subgraphs
+    //adding all machine subgraphs
     pvertex_const_iterator itr;
     const pvertex_set& vertices = graph.vertices();
     int countChild =0;
@@ -152,44 +152,74 @@ void MainWindow::drawGraph(Graph &graph)
         dynamic_cast<YarpvizVertex*>(*itr)->setGraphicItem(NULL);
         const Property& prop = (*itr)->property;
         QGVSubGraph *sgraph;
-        if(dynamic_cast<ProcessVertex*>(*itr) && !prop.check("hidden"))
+        if(dynamic_cast<MachineVertex*>(*itr))
         {
-            string name =  prop.find("name").asString() + countChild;
+            string hostname =  prop.find("hostname").asString();
             if(layoutSubgraph) {
                 std::stringstream key;
-                key<<prop.find("hostname").asString();
-                QGVSubGraph *sgraphParent;
+                key<<hostname;
                 if(sceneSubGraphMap[key.str()] == NULL)
                 {
-                    sgraphParent = scene->addSubGraph(prop.toString().c_str());
-                    sceneSubGraphMap[key.str()] = sgraphParent;
+                    cout<<prop.toString().c_str()<<endl;
+                    sgraph = scene->addSubGraph(prop.toString().c_str());
+                    sceneSubGraphMap[key.str()] = sgraph;
+                    dynamic_cast<YarpvizVertex*>(*itr)->setGraphicItem(sgraph);
+                    sgraph->setVertex(*itr);
+                    //sgraph->setAttribute("label", prop.find("name").asString().c_str());
+                    sgraph->setAttribute("color", "#FFFFFF");
+                    sgraph->setAttribute("label", prop.find("hostname").toString().c_str());
+                    string host = prop.find("os").asString();
+                    if(host == "Linux")
+                        sgraph->setIcon(QImage(":/icons/resources/Linux-icon.png"));
+                    else if(host == "Windows")
+                        sgraph->setIcon(QImage(":/icons/resources/Windows-icon.png"));
+                    else if(host == "Mac")
+                        sgraph->setIcon(QImage(":/icons/resources/Mac-icon.png"));
+                    else
+                        sgraph->setIcon(QImage(":/icons/resources/Gnome-System-Run-64.png"));
+                    std::string endNodeName = key.str() + ".end";
+                    QGVNode * node = sgraph->addNode(endNodeName.c_str());
+                    node->setAttribute("shape", "circle");
+                    node->setAttribute("height", "0.0000000000001"); //a subgraph cannot be empty, adding fake hidden node
+                    node->setAttribute("fixedsize", "true");
+                    node->setAttribute("label", "");
+                    node->setAttribute("fillcolor", "#2e3e56");
+                    node->setAttribute("color", "#2e3e56");
+                    node->setAttribute("node_type", "end");
+                    node->setAttribute("rawname", endNodeName.c_str());
+                    sceneNodeMap[endNodeName] = node;
                 }
-                else
-                {
-                    sgraphParent = sceneSubGraphMap[key.str()];
-                }
+            }
+        }
+    }
+
+
+    // adding all process subgraphs
+
+    for(itr = vertices.begin(); itr!=vertices.end(); itr++) {
+        dynamic_cast<YarpvizVertex*>(*itr)->setGraphicItem(NULL);
+        const Property& prop = (*itr)->property;
+        QGVSubGraph *sgraph;
+        if(dynamic_cast<ProcessVertex*>(*itr) && !prop.find("hidden").asBool())
+        {
+            cout<<"ciao"<<endl;
+            string name =  prop.find("name").asString() + countChild;
+            if(layoutSubgraph)
+            {
+                std::stringstream key;
+                key<<prop.find("hostname").asString();
+                cout<<key.str()<<endl;
+                QGVSubGraph *sgraphParent = sceneSubGraphMap[key.str()];
                 if(sgraphParent == NULL)
-                    cout<<"AAAAAAAAAAAAAAAAAAAAAAAAAAAAA"<<endl;
-                //sgraph->setAttribute("label", prop.find("name").asString().c_str());
-                sgraphParent->setAttribute("color", "#FFFFFF");
-                sgraphParent->setAttribute("label", prop.find("hostname").toString().c_str());
-                string host = prop.find("os").asString();
-                if(host == "Linux")
-                    sgraphParent->setIcon(QImage(":/icons/resources/Linux-icon.png"));
-                else if(host == "Windows")
-                    sgraphParent->setIcon(QImage(":/icons/resources/Windows-icon.png"));
-                else if(host == "Mac")
-                    sgraphParent->setIcon(QImage(":/icons/resources/Mac-icon.png"));
-                else
-                    sgraphParent->setIcon(QImage(":/icons/resources/Gnome-System-Run-64.png"));
-                //sgraph->setAttribute("fillcolor", "#0180B5");
+                {
+                    continue;
+                }
                 sgraph = sgraphParent->addSubGraph(name.c_str());
                 countChild++;
             }
             else
             {
-                sgraph = scene->addSubGraph(name.c_str());
-                countChild++;
+                continue;
             }
 
             std::stringstream label;
@@ -209,6 +239,17 @@ void MainWindow::drawGraph(Graph &graph)
             sgraph->setVertex(*itr);
             std::stringstream keyProcess;
             keyProcess<<prop.find("hostname").asString()<<prop.find("pid").asInt();
+            std::string endNodeName = keyProcess.str() + ".end";
+            QGVNode * node = sgraph->addNode(endNodeName.c_str());
+            node->setAttribute("shape", "circle");
+            node->setAttribute("height", "0.0000000000001"); //a subgraph cannot be empty, adding fake hidden node
+            node->setAttribute("fixedsize", "true");
+            node->setAttribute("label", "");
+            node->setAttribute("fillcolor", "#2e3e56");
+            node->setAttribute("color", "#2e3e56");
+            node->setAttribute("node_type", "end");
+            node->setAttribute("rawname", endNodeName.c_str());
+            sceneNodeMap[endNodeName] = node;
             sceneSubGraphMap[keyProcess.str()]= sgraph;
         }
     }
@@ -219,35 +260,41 @@ void MainWindow::drawGraph(Graph &graph)
     int portCounts = 0;
     for(itr = vertices.begin(); itr!=vertices.end(); itr++) {
         const Property& prop = (*itr)->property;
-        if(dynamic_cast<PortVertex*>(*itr) && !prop.check("hidden") ) {
-            if(!prop.check("orphan")) {
-                QGVNode *node;
-                if(layoutSubgraph) {
-                    PortVertex* pv = dynamic_cast<PortVertex*>(*itr);
-                    ProcessVertex* v = (ProcessVertex*) pv->getOwner();
-                    std::stringstream key;
-                    key<<v->property.find("hostname").asString()<<v->property.find("pid").asInt();
-                    QGVSubGraph *sgraph = sceneSubGraphMap[key.str()];
-                    if(sgraph)
-                        node =  sgraph->addNode(prop.find("name").asString().c_str());
-                    else
-                        node =  scene->addNode(prop.find("name").asString().c_str());
-                }
+        if(dynamic_cast<PortVertex*>(*itr)) {
+            PortVertex* pv = dynamic_cast<PortVertex*>(*itr);
+            ProcessVertex* v = (ProcessVertex*) pv->getOwner();
+            std::stringstream key;
+            if(v->property.find("hidden").asBool())
+            {
+                pv->property.put("hidden",true);
+                updateNodeWidgetItems();
+                continue;
+            }
+            else if(prop.find("hidden").asBool())
+                continue;
+            QGVNode *node;
+            if(layoutSubgraph) {
+                key<<v->property.find("hostname").asString()<<v->property.find("pid").asInt();
+                QGVSubGraph *sgraph = sceneSubGraphMap[key.str()];
+                if(sgraph)
+                    node =  sgraph->addNode(prop.find("name").asString().c_str());
                 else
                     node =  scene->addNode(prop.find("name").asString().c_str());
-                node->setAttribute("shape", "ellipse");
-                if(prop.check("color")) {
-                    node->setAttribute("fillcolor", prop.find("color").asString().c_str());
-                    node->setAttribute("color", prop.find("color").asString().c_str());
-                } else {
-                    node->setAttribute("fillcolor", "#edad56");
-                    node->setAttribute("color", "#edad56");
-                }
-                //nodeSet[*itr] = node;
-                dynamic_cast<YarpvizVertex*>(*itr)->setGraphicItem(node);
-                node->setVertex(*itr);
-                portCounts++;
             }
+            else
+                node =  scene->addNode(prop.find("name").asString().c_str());
+            node->setAttribute("shape", "ellipse");
+            if(prop.check("color")) {
+                node->setAttribute("fillcolor", prop.find("color").asString().c_str());
+                node->setAttribute("color", prop.find("color").asString().c_str());
+            } else {
+                node->setAttribute("fillcolor", "#edad56");
+                node->setAttribute("color", "#edad56");
+            }
+            //nodeSet[*itr] = node;
+            dynamic_cast<YarpvizVertex*>(*itr)->setGraphicItem(node);
+            node->setVertex(*itr);
+            portCounts++;
         }
     }
 
@@ -264,7 +311,7 @@ void MainWindow::drawGraph(Graph &graph)
             const Vertex &v2 = edge.second();
             //yInfo()<<"Drawing:"<<v1.property.find("name").asString()<<" -> "<<v2.property.find("name").asString();
             // add ownership edges
-            if(!v1.property.check("hidden") && !v2.property.check("hidden")) {
+            if(!v1.property.find("hidden").asBool() && !v2.property.find("hidden").asBool()) {
                 if(edge.property.find("type").asString() == "ownership" &&
                         edge.property.find("dir").asString() != "unknown") {
                     continue;
@@ -348,17 +395,21 @@ void MainWindow::nodeContextMenu(QGVNode *node)
 {
     YarpvizVertex* v = (YarpvizVertex*) node->getVertex();
     yAssert(v != 0);
-    if(v->property.find("type").asString() == "process")
-        onNodeContextMenuProccess(node, v);
-    else if(v->property.find("type").asString() == "port")
+    cout<<"nodeContextMenu"<<endl;
+    if(v->property.find("type").asString() == "port")
         onNodeContextMenuPort(node, v);
     else
         yWarning()<<"nodeContextMenu(): Unknown node!";
 }
 
-void MainWindow::onNodeContextMenuProccess(QGVNode *node, YarpvizVertex* vertex) {
-    //Context menu exemple
-    QMenu menu(node->label());
+void MainWindow::onSubGraphContextMenuProccess(QGVSubGraph *sgraph) {
+    YarpvizVertex* vertex;
+    vertex = (YarpvizVertex*) sgraph->getVertex();
+    if(!vertex && vertex->property.find("type").asString() != "process")
+        return;
+    cout<<"ONSubConProc"<<endl;
+
+    QMenu menu(sgraph->getAttribute("label"));
     menu.addSeparator();
     menu.addAction(tr("Information..."));
     menu.addAction(tr("Hide"));
@@ -535,17 +586,17 @@ void MainWindow::updateNodeWidgetItems() {
     for (int i= moduleParentItem->childCount()-1; i>-1; i--) {
         item = (NodeWidgetItem*) moduleParentItem->child(i);
         yAssert(item != NULL);
-        item->check(!item->getVertex()->property.check("hidden"));
+        item->check(!item->getVertex()->property.find("hidden").asBool());
     }
     for (int i= portParentItem->childCount()-1; i>-1; i--) {
         item = (NodeWidgetItem*) portParentItem->child(i);
         yAssert(item != NULL);
-        item->check(!item->getVertex()->property.check("hidden"));
+        item->check(!item->getVertex()->property.find("hidden").asBool());
     }
     for (int i= machinesParentItem->childCount()-1; i>-1; i--) {
         item = (NodeWidgetItem*) machinesParentItem->child(i);
         yAssert(item != NULL);
-        item->check(!item->getVertex()->property.check("hidden"));
+        item->check(!item->getVertex()->property.find("hidden").asBool());
     }
 }
 
@@ -718,7 +769,7 @@ void MainWindow::onExportConList() {
         for(int i=0; i<v1.outEdges().size(); i++) {
             Edge& edge = (Edge&) v1.outEdges()[i];
             const Vertex &v2 = edge.second();
-            if(!v1.property.check("hidden") && !v2.property.check("hidden")) {
+            if(!v1.property.find("hidden").asBool() && !v2.property.find("hidden").asBool()) {
                 if(edge.property.find("type").asString() == "connection") {
                     Bottle bt;
                     bt.addString(v1.property.find("name").asString());

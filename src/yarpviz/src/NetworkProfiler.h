@@ -49,27 +49,33 @@ private:
 
 class ProcessVertex : public YarpvizVertex{
 public:
-        ProcessVertex(int pid, const std::string hostname) : YarpvizVertex("(type process)") {
+        ProcessVertex(int pid, const std::string hostname) : YarpvizVertex("(type process)"), owner(NULL) {
             property.put("hostname", hostname);
             property.put("pid", pid);
         }
+        void setOwner(yarp::graph::Vertex* owner) { ProcessVertex::owner = owner; }
+        yarp::graph::Vertex* getOwner() { return owner; }
 
         virtual bool operator == (const yarp::graph::Vertex &v1) const {
             return property.find("hostname").asString() == v1.property.find("hostname").asString() &&
                    property.find("pid").asInt() == v1.property.find("pid").asInt();
         }
+
+private:
+        yarp::graph::Vertex* owner;
 };
 
 class MachineVertex : public YarpvizVertex{
 public:
-        MachineVertex(std::string os, const std::string hostname) : YarpvizVertex("(type process)") {
+        MachineVertex(std::string os, const std::string hostname) : YarpvizVertex("(type machine)") {
             property.put("hostname", hostname);
             property.put("os", os);
         }
 
         virtual bool operator == (const yarp::graph::Vertex &v1) const {
             return property.find("hostname").asString() == v1.property.find("hostname").asString() &&
-                   property.find("os").asString() == v1.property.find("os").asString();
+                   property.find("os").asString() == v1.property.find("os").asString() &&
+                   property.find("type").asString() == v1.property.find("type").asString() ;
         }
 };
 
@@ -86,18 +92,22 @@ public:
         std::string name;
         std::string carrier;
     };
+    struct MachineInfo {
+        std::string os;
+        std::string hostname;
 
+    };
     struct ProcessInfo {
         std::string name;
         std::string arguments;
         std::string os;
         std::string hostname;
+        MachineInfo owner;
         int pid;
         int priority;
         int policy;
         ProcessInfo() { pid = priority = policy = -1; }
     };
-
     struct PortDetails {
         std::string name;
         std::vector<ConnectionInfo> outputs;

@@ -43,7 +43,7 @@ public:
         if(!checkFlag)
             vertex->property.put("hidden", true);
         else
-            vertex->property.unput("hidden");
+            vertex->property.put("hidden",false);
     }
 
     bool checked() { return checkFlag; }
@@ -72,7 +72,6 @@ public:
 
 private:
     void initScene();
-    void onNodeContextMenuProccess(QGVNode *node, YarpvizVertex* vertex);
     void onNodeContextMenuPort(QGVNode *node, YarpvizVertex* vertex);
     void updateNodeWidgetItems();
 
@@ -97,6 +96,7 @@ private slots:
     void onUpdateQosStatus();
     void onConfigureConsQos();
     void onProfilePortsRate();
+    void onSubGraphContextMenuProccess(QGVSubGraph *node);
 
 private:
     Ui::MainWindow *ui;

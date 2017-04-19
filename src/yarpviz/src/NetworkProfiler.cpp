@@ -144,38 +144,35 @@ bool NetworkProfiler::creatNetworkGraph(ports_detail_set details, yarp::graph::G
     unsigned int itr_count = 0;
     for(itr = details.begin(); itr!=details.end(); itr++) {
         PortDetails info = (*itr);
+        std::cout<<graph.size()<<std::endl;
 
         // port node
         PortVertex* port = new PortVertex(info.name);
-        if(!info.inputs.size() && !info.outputs.size())
-            port->property.put("orphan", true);
         graph.insert(*port);
 
-        //processor node (owner)
-        ProcessVertex* owner = new ProcessVertex(info.owner.pid, info.owner.hostname);
+        //process node (owner)
+        ProcessVertex* process = new ProcessVertex(info.owner.pid, info.owner.hostname);
         //prop.clear();
-        owner->property.put("name", info.owner.name);
-        owner->property.put("arguments", info.owner.arguments);
-        owner->property.put("hostname", info.owner.hostname);
-        owner->property.put("priority", info.owner.priority);
-        owner->property.put("policy", info.owner.policy);
-        owner->property.put("os", info.owner.os);
-        graph.insert(*owner);
+        process->property.put("name", info.owner.name);
+        process->property.put("arguments", info.owner.arguments);
+        process->property.put("hostname", info.owner.hostname);
+        process->property.put("priority", info.owner.priority);
+        process->property.put("policy", info.owner.policy);
+        process->property.put("os", info.owner.os);
+        std::cout<<process->property.toString()<<std::endl;
+        graph.insert(*process);
 
         // create connection between ports and its owner
-        if(info.inputs.size()) {
-            graph.insertEdge(*port, *owner, Property("(type ownership) (dir out)"));
-            port->property.put("dir", "in");            
-        }
-        if(info.outputs.size()) {
-            graph.insertEdge(*owner, *port, Property("(type ownership) (dir in)"));
-            port->property.put("dir", "out");        
-        }
-        port->setOwner(owner);
+        port->setOwner(process);
 
-        // TODO: shall we add unconnected ports?!!
+        //machine node (owner of the process)
+        MachineVertex* machine = new MachineVertex(info.owner.os, info.owner.hostname);
+        std::cout<<machine->property.toString()<<std::endl;
+        graph.insert(*machine);
+        process->setOwner(machine);
+
         if(!info.inputs.size() && !info.outputs.size())
-            graph.insertEdge(*owner, *port, Property("(type ownership) (dir unknown)"));
+            graph.insertEdge(*process, *port, Property("(type ownership) (dir unknown)"));
 
         // calculate progress
         if(NetworkProfiler::progCallback) {
