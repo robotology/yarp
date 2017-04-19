@@ -827,7 +827,9 @@ bool FakeMotionControl::fromConfig(yarp::os::Searchable &config)
     {
         yInfo() << "Using default ampsToSensor";
         for (i = 0; i < _njoints; i++)
+        {
             _ampsToSensor[i] = 1.0;
+        }
     }
 
     // pwm conversions factor

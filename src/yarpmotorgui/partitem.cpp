@@ -193,7 +193,7 @@ PartItem::PartItem(QString robotName, int id, QString partName, ResourceFinder& 
             
             JointItem *joint = new JointItem(k);
             joint->setJointName(jointname.c_str());
-            joint->setPWMRange(-100.0,100.0);
+            joint->setPWMRange(-100.0, 100.0);
             joint->setCurrentRange(min_cur, max_cur);
             m_layout->addWidget(joint);
             joint->setPositionRange(min_pos, max_pos);
