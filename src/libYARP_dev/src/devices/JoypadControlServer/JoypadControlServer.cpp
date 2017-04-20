@@ -241,7 +241,7 @@ bool JoypadControlServer::open(yarp::os::Searchable& params)
     {
         yInfo() << "parameters:\n\n" <<
                    "period             - refresh period of the broadcasted values in ms.. default" << DEFAULT_THREAD_PERIOD << "\n"
-                   " use_separate_ports - set it to 1 to use separate ports (buttons, axes, trackballs, hats) and 0 to stream all in one single port\n" <<
+                   "use_separate_ports - set it to 1 to use separate ports (buttons, axes, trackballs, hats) and 0 to stream all in one single port\n" <<
                    "name               - Prefix name of the ports opened by the JoypadControlServer, e.g. /robotName/joypad\n" <<
                    "subdevice          - name of the subdevice to open\n";
         return false;
@@ -758,10 +758,11 @@ bool JoypadControlServer::close()
 
     for(auto p : portv)
     {
-        p->contactable->interrupt();
+        //p->contactable->interrupt();
         p->contactable->close();
     }
 
+    m_rpcPort.close();
     return true;
 }
 

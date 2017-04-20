@@ -67,7 +67,7 @@ bool JoypadControlClient::getJoypadInfo()
                 return false;
             }
 
-            if(!yarp::os::NetworkBase::connect(m_remote + get<2>(vocab_port) + ":o", m_local + get<2>(vocab_port) + ":i"))
+            if(!yarp::os::NetworkBase::connect(m_remote + get<2>(vocab_port) + ":o", m_local + get<2>(vocab_port) + ":i"), "udp")
             {
                 yError() << "unable to connect" << portname << "port";
                 return false;
@@ -295,6 +295,7 @@ bool JoypadControlClient::getButton(unsigned int button_id, float& value)
 
 bool JoypadControlClient::getTrackball(unsigned int trackball_id, yarp::sig::Vector& value)
 {
+    value.clear();
     if(m_rpc_only)
     {
         Bottle cmd, response;
@@ -410,7 +411,8 @@ bool JoypadControlClient::getAxis(unsigned int axis_id, double& value)
 
 bool JoypadControlClient::getStick(unsigned int stick_id, yarp::sig::Vector& value, JoypadCtrl_coordinateMode coordinate_mode)
 {
-    if(m_rpc_only)
+    value.clear();
+    if(m_rpc_only || coordinate_mode == IJoypadController::JypCtrlcoord_POLAR)
     {
         Bottle cmd, response;
         int    dof, coordmode;
@@ -460,12 +462,6 @@ bool JoypadControlClient::getStick(unsigned int stick_id, yarp::sig::Vector& val
     }
     else
     {
-        if (coordinate_mode == IJoypadController::JypCtrlcoord_POLAR)
-        {
-            yError() << "JoypadControlClient: at the moment polar coordinate is not supported in streaming mode..";
-            return false;
-        }
-
         LockGuard l(m_stickPort.mutex);
         int offset = 0;
 
@@ -485,6 +481,7 @@ bool JoypadControlClient::getStick(unsigned int stick_id, yarp::sig::Vector& val
 
 bool JoypadControlClient::getTouch(unsigned int touch_id, yarp::sig::Vector& value)
 {
+    value.clear();
     if(m_rpc_only)
     {
         Bottle cmd, response;
@@ -538,5 +535,7 @@ bool JoypadControlClient::close()
         p->contactable->interrupt();
         p->contactable->close();
     }
+
+    m_rpcPort.close();
     return true;
 }
