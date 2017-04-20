@@ -65,16 +65,16 @@ int main(int argc, char *argv[])
     bool           ret;
     int            appRet;
     QApplication   a(argc, argv);
-    ResourceFinder finder;
-    Bottle         pParts;
-    QStringList    enabledParts;
-    vector<bool>   enabled;
-    MainWindow     w;
-
+    ResourceFinder &finder = ResourceFinder::getResourceFinderSingleton();
     //retrieve information for the list of parts
     finder.setVerbose();
     finder.setDefaultConfigFile("yarpmotorgui.ini");
     finder.configure(argc, argv);
+    
+    Bottle         pParts;
+    QStringList    enabledParts;
+    vector<bool>   enabled;
+    MainWindow     w;
 
     qRegisterMetaType<Pid>("Pid");
     qRegisterMetaType<SequenceItem>("SequenceItem");

@@ -24,9 +24,11 @@
 #include <QMessageBox>
 #include <QSettings>
 #include <QFileDialog>
+#include <QShortcut>
 #include <map>
 #include <cstdlib>
 #include <yarp/os/LogStream.h>
+#include <yarp/os/ResourceFinder.h>
 
 #define TREEMODE_OK     1
 #define TREEMODE_WARN   2
@@ -89,8 +91,59 @@ MainWindow::MainWindow(QWidget *parent) :
     globalMenuCommands->addAction(m_idleAllParts);
     globalMenuCommands->addAction(m_runAllParts);
     globalMenuCommands->addAction(m_homeAllParts);
-    m_customPosition1AllParts = globalMenuCommands->addAction(QIcon(":/home.svg"), "Move all parts to custom position 1");
-    m_customPosition2AllParts = globalMenuCommands->addAction(QIcon(":/home.svg"), "Move all parts to custom position 2");
+    //Looking for custom positions in the config file
+    yarp::os::ResourceFinder &finder = yarp::os::ResourceFinder::getResourceFinderSingleton();
+    //Positions have the following form: "customPosition_{NAME_OF_CUSTOM_POSITION}"
+    //To iterate on all groups, transform the finder into Bottle
+    yarp::os::Bottle ini(finder.toString().c_str());
+
+    std::map<std::string, yarp::os::Bottle> customPositions;
+
+    for (int index = 0; index < ini.size(); ++index) {
+        //Look for groups starting with "customPosition_"
+        yarp::os::Value item = ini.get(index);
+        if (!item.isList()) continue;
+        yarp::os::Bottle *subElement = item.asList();
+        //At least two elements and first should be string
+        if (!subElement
+            || subElement->size() < 2
+            || !subElement->get(0).isString())
+            continue;
+        //get first element
+        std::string key = subElement->get(0).asString();
+        std::string pattern = "customPosition_";
+        size_t subStringPosition = key.find(pattern);
+        if (subStringPosition != 0) continue; //not starting or not found
+
+        std::string customPositionName = key.substr(pattern.size());
+        customPositions.insert(std::map<std::string, yarp::os::Bottle>::value_type(customPositionName, subElement->tail()));
+    }
+
+    m_customPositionsAllParts.reserve(customPositions.size());
+    if (customPositions.size() > 0) {
+        //If there are customPositions create a submenu item
+        QMenu *customPositionsMenu = globalMenuCommands->addMenu(QIcon(":/home.svg"), "Custom positions");
+
+        unsigned keyIndex = 0;
+        for (std::map<std::string, yarp::os::Bottle>::const_iterator it(customPositions.begin()); it != customPositions.end(); ++it) {
+
+            QAction *newAction = customPositionsMenu->addAction(("Move all parts to " + it->first).c_str());
+            m_customPositionsAllParts.push_back(newAction);
+            //
+            const yarp::os::Bottle &position = it->second;
+
+            // Adding shortcut (to only the first 9 sequences)
+            if (keyIndex < 9) {
+                QKeySequence shortcut(Qt::CTRL + Qt::META + (Qt::Key_1 + keyIndex++));
+                newAction->setShortcut(shortcut);
+                newAction->setShortcutContext(Qt::ApplicationShortcut);
+            }
+
+            //copy position in the lambda
+            connect(newAction, &QAction::triggered, this, [this, position]{onHomeAllPartsToCustomPosition(position); });
+        }
+    }
+
     globalMenuCommands->addSeparator();
     globalMenuCommands->addAction(m_script1);
     globalMenuCommands->addAction(m_script2);
@@ -111,9 +164,6 @@ MainWindow::MainWindow(QWidget *parent) :
 
     connect(m_script1, SIGNAL(triggered()), this, SLOT(onExecuteScript1()));
     connect(m_script2, SIGNAL(triggered()), this, SLOT(onExecuteScript2()));
-
-    connect(m_customPosition1AllParts, &QAction::triggered, this, [this]{onHomeAllPartsToCustomPosition("_customPosition1"); });
-    connect(m_customPosition2AllParts, &QAction::triggered, this, [this]{onHomeAllPartsToCustomPosition("_customPosition2"); });
 
     //addToolBarBreak();
 
@@ -136,8 +186,19 @@ MainWindow::MainWindow(QWidget *parent) :
     m_idleSinglePart = m_partToolBar->addAction(QIcon(":/idle.svg"), "Idle all joints of this part");
     m_calibSinglePart = m_partToolBar->addAction(QIcon(":/images/calibrate.png"), "Calibrate all joints of this part");
     m_homeSinglePart = m_partToolBar->addAction(QIcon(":/home.svg"), "Home all joints of this part");
-    m_customPosition1SinglePart = m_partToolBar->addAction(QIcon(":/home.svg"), "Move all joints of this part to custom position 1");
-    m_customPosition2SinglePart = m_partToolBar->addAction(QIcon(":/home.svg"), "Move all joints of this part to custom position 2");
+
+    m_customPositionsSinglePartToolbar.reserve(customPositions.size());
+    if (customPositions.size() > 0) {
+        for (std::map<std::string, yarp::os::Bottle>::const_iterator it(customPositions.begin()); it != customPositions.end(); ++it) {
+            QAction *newAction = m_partToolBar->addAction(QIcon(":/home.svg"), ("Move all joints of this part to "  + it->first).c_str());
+            m_customPositionsSinglePartToolbar.push_back(newAction);
+            //
+            const yarp::os::Bottle &position = it->second;
+
+            //copy position in the lambda
+            connect(newAction, &QAction::triggered, this, [this, position]{onHomeSinglePartToCustomPosition(position); });
+        }
+    }
 
     addToolBar(m_partToolBar);
 
@@ -149,13 +210,37 @@ MainWindow::MainWindow(QWidget *parent) :
     m_currentPartMenu->addAction(m_homeSinglePart);
     m_currentPartMenu->addAction(m_idleSinglePart);
 
+    m_customPositionsSinglePart.reserve(customPositions.size());
+    if (customPositions.size() > 0) {
+
+        //If there are customPositions create a submenu item
+        QMenu *customPositionsMenu = m_currentPartMenu->addMenu(QIcon(":/home.svg"), "Custom positions");
+
+        unsigned keyIndex = 0;
+        for (std::map<std::string, yarp::os::Bottle>::const_iterator it(customPositions.begin()); it != customPositions.end(); ++it) {
+            QAction *newAction = customPositionsMenu->addAction(("Move all joints of this part to " + it->first).c_str());
+            m_customPositionsSinglePartToolbar.push_back(newAction);
+            //
+            const yarp::os::Bottle &position = it->second;
+
+            // Adding shortcut (to only the first 9 sequences)
+            if (keyIndex < 9) {
+                QKeySequence shortcut(Qt::CTRL + Qt::ALT + Qt::META + (Qt::Key_1 + keyIndex++));
+                newAction->setShortcut(shortcut);
+                newAction->setShortcutContext(Qt::ApplicationShortcut);
+            }
+            //copy position in the lambda
+            connect(newAction, &QAction::triggered, this, [this, position]{onHomeSinglePartToCustomPosition(position); });
+            
+        }
+    }
+
+
     connect(openSequenceAction,SIGNAL(triggered()),this,SLOT(onOpenSequenceTab()));
     connect(m_runSinglePart, SIGNAL(triggered()), this, SLOT(onRunSinglePart()));
     connect(m_idleSinglePart, SIGNAL(triggered()), this, SLOT(onIdleSinglePart()));
     connect(m_homeSinglePart, SIGNAL(triggered()), this, SLOT(onHomeSinglePart()));
     connect(m_calibSinglePart, SIGNAL(triggered()), this, SLOT(onCalibSinglePart()));
-    connect(m_customPosition1SinglePart, &QAction::triggered, this, [this]{onHomeSinglePartToCustomPosition("_customPosition1"); });
-    connect(m_customPosition2SinglePart, &QAction::triggered, this, [this]{onHomeSinglePartToCustomPosition("_customPosition2"); });
 
     QMenu *windows = m_ui->menuBar->addMenu("View");
     QAction *viewGlobalToolbar = windows->addAction("Global Commands Toolbar");
@@ -719,7 +804,7 @@ void MainWindow::onHomeAllParts()
     }
 }
 
-void MainWindow::onHomeAllPartsToCustomPosition(std::string suffix)
+void MainWindow::onHomeAllPartsToCustomPosition(const yarp::os::Bottle& positionElement)
 {
     if (QMessageBox::question(this, "Question", "Do you really want to home all parts?") != QMessageBox::Yes){
         return;
@@ -737,12 +822,11 @@ void MainWindow::onHomeAllPartsToCustomPosition(std::string suffix)
         {
             continue;
         }
-
-        bool done = part->homeToCustomPosition(suffix);
+        part->homeToCustomPosition(positionElement);
     }
 }
 
-void MainWindow::onHomeSinglePartToCustomPosition(std::string suffix)
+void MainWindow::onHomeSinglePartToCustomPosition(const yarp::os::Bottle& positionElement)
 {
     if (QMessageBox::question(this, "Question", "Do you really want to home all joints of this part?") != QMessageBox::Yes){
         return;
@@ -758,7 +842,7 @@ void MainWindow::onHomeSinglePartToCustomPosition(std::string suffix)
         return;
     }
 
-    part->homeToCustomPosition(suffix);
+    part->homeToCustomPosition(positionElement);
 }
 
 void MainWindow::onIdleSinglePart()
