@@ -66,6 +66,7 @@ MainWindow::MainWindow(QWidget *parent) :
     connect(ui->actionConfigure_connections_QOS, SIGNAL(triggered()),this,SLOT(onConfigureConsQos()));
     connect(ui->actionUpdateConnectionQosStatus, SIGNAL(triggered()),this,SLOT(onUpdateQosStatus()));
     connect(ui->actionProfilePortsRate, SIGNAL(triggered()),this,SLOT(onProfilePortsRate()));
+    connect(ui->actionAbout, SIGNAL(triggered()),this,SLOT(onAbout()));
 
     //progressDlg = new QProgressDialog("...", "Cancel", 0, 100, this);
 
@@ -438,6 +439,11 @@ void MainWindow::onSubGraphContextMenuProcess(QGVSubGraph *sgraph) {
         updateNodeWidgetItems();
         drawGraph(*currentGraph);
     }
+}
+
+void MainWindow::onAbout() {
+    QMessageBox::about(this, "yarpviz (version 2.0.0)",
+                       "A graphical tool for a graphical tool for profiling and visualizing Yarp network!\n\nAuthors:\n\t-Ali Paikan <ali.paikan@iit.it>\n\t-Nicolò Genesio <nicolo.genesio@iit.it>");
 }
 
 void MainWindow::onNodeContextMenuPort(QGVNode *node, YarpvizVertex* vertex) {
