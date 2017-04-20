@@ -317,6 +317,9 @@ void MainWindow::drawGraph(Graph &graph)
         for(int i=0; i<v1.outEdges().size(); i++) {
             const Edge& edge = v1.outEdges()[i];
             const Vertex &v2 = edge.second();
+            string targetName = v2.property.find("name").asString();
+            if(!ui->actionDebugMode->isChecked() && targetName.find("/yarplogger") != string::npos)
+                continue;
             //yInfo()<<"Drawing:"<<v1.property.find("name").asString()<<" -> "<<v2.property.find("name").asString();
             // add ownership edges
             if(!v1.property.find("hidden").asBool() && !v2.property.find("hidden").asBool()) {
