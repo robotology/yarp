@@ -19,7 +19,8 @@
 
 enum NodeItemType { UNKNOWN = 0,
                     MODULE = 1,
-                    PORT = 2 };
+                    PORT = 2,
+                    MACHINE = 3};
 
 
 class NodeWidgetItem : public QTreeWidgetItem {
@@ -31,6 +32,13 @@ public:
             std::stringstream lable;
             lable << vertex->property.find("name").asString().c_str()
                   << " (" << vertex->property.find("pid").asInt() << ")";
+            setText(0, lable.str().c_str());
+        }
+        else if(dynamic_cast<MachineVertex*> (vertex))
+        {
+            std::stringstream lable;
+            lable << vertex->property.find("hostname").asString().c_str()
+                  << " (" << vertex->property.find("os").asString() << ")";
             setText(0, lable.str().c_str());
         }
         checkFlag = false;

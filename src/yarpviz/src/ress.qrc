@@ -14,5 +14,6 @@
         <file>resources/arrow_up.png</file>
         <file>resources/profile_rate.png</file>
         <file>resources/computer_B.svg</file>
+        <file>resources/debugMode.svg</file>
     </qresource>
 </RCC>

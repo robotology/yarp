@@ -50,6 +50,7 @@ MainWindow::MainWindow(QWidget *parent) :
     connect(ui->actionHighlight_Loops, SIGNAL(triggered()),this,SLOT(onHighlightLoops()));
     connect(ui->actionHideConnectionsLable, SIGNAL(triggered()),this,SLOT(onUpdateGraph()));
     connect(ui->actionHideDisconnectedPorts, SIGNAL(triggered()),this,SLOT(onUpdateGraph()));
+    connect(ui->actionDebugMode, SIGNAL(triggered()),this,SLOT(onUpdateGraph()));
     connect(ui->actionOrthogonal, SIGNAL(triggered()),this,SLOT(onLayoutOrthogonal()));
     connect(ui->actionCurved, SIGNAL(triggered()),this,SLOT(onLayoutCurved()));
     connect(ui->actionPolyline, SIGNAL(triggered()),this,SLOT(onLayoutPolyline()));
@@ -210,7 +211,7 @@ void MainWindow::drawGraph(Graph &graph)
                 std::stringstream key;
                 key<<prop.find("hostname").asString();
                 QGVSubGraph *sgraphParent = sceneSubGraphMap[key.str()];
-                if(sgraphParent == NULL)
+                if(sgraphParent == NULL || (!ui->actionDebugMode->isChecked() && name.find("yarplogger") != string::npos))
                 {
                     continue;
                 }
@@ -261,10 +262,13 @@ void MainWindow::drawGraph(Graph &graph)
 
     for(itr = vertices.begin(); itr!=vertices.end(); itr++) {
         const Property& prop = (*itr)->property;
+        string portName = prop.find("name").asString();
         if(dynamic_cast<PortVertex*>(*itr)) {
             PortVertex* pv = dynamic_cast<PortVertex*>(*itr);
             ProcessVertex* v = (ProcessVertex*) pv->getOwner();
             if(ui->actionHideDisconnectedPorts->isChecked() && pv->property.find("orphan").asBool())
+                continue;
+            if(!ui->actionDebugMode->isChecked() && portName.find("/log") != string::npos)
                 continue;
             std::stringstream key;
             if(v->property.find("hidden").asBool())
@@ -280,12 +284,12 @@ void MainWindow::drawGraph(Graph &graph)
                 key<<v->property.find("hostname").asString()<<v->property.find("pid").asInt();
                 QGVSubGraph *sgraph = sceneSubGraphMap[key.str()];
                 if(sgraph)
-                    node =  sgraph->addNode(prop.find("name").asString().c_str());
+                    node =  sgraph->addNode(portName.c_str());
                 else
-                    node =  scene->addNode(prop.find("name").asString().c_str());
+                    node =  scene->addNode(portName.c_str());
             }
             else
-                node =  scene->addNode(prop.find("name").asString().c_str());
+                node =  scene->addNode(portName.c_str());
             node->setAttribute("shape", "ellipse");
             if(prop.check("color")) {
                 node->setAttribute("fillcolor", prop.find("color").asString().c_str());
@@ -609,7 +613,11 @@ void MainWindow::populateTreeWidget(){
             NodeWidgetItem *portItem =  new NodeWidgetItem(portParentItem, (*itr), PORT);
             portItem->setFlags( Qt::ItemIsSelectable | Qt::ItemIsEnabled | Qt::ItemIsUserCheckable );
             portItem->check(true);
-            //moduleItem->setIcon(0, QIcon(":/Gnome-System-Run-64.png"));
+        }
+        else if(dynamic_cast<MachineVertex*>(*itr)) {
+            NodeWidgetItem *machineItem =  new NodeWidgetItem(machinesParentItem, (*itr), MACHINE);
+            machineItem->setFlags( /*Qt::ItemIsSelectable | */Qt::ItemIsEnabled /*| Qt::ItemIsUserCheckable */);
+            machineItem->check(true);
         }
     }
     moduleParentItem->setExpanded(true);
