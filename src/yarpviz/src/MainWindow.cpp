@@ -269,7 +269,7 @@ void MainWindow::drawGraph(Graph &graph)
             ProcessVertex* v = (ProcessVertex*) pv->getOwner();
             if(ui->actionHideDisconnectedPorts->isChecked() && pv->property.find("orphan").asBool())
                 continue;
-            if(!ui->actionDebugMode->isChecked() && portName.find("/log") != string::npos)
+            if(!ui->actionDebugMode->isChecked() && (portName.find("/log") != string::npos || portName.find("/yarplogger") != string::npos ))
                 continue;
             std::stringstream key;
             if(v->property.find("hidden").asBool())
@@ -603,15 +603,23 @@ void MainWindow::populateTreeWidget(){
     for(itr = vertices.begin(); itr!=vertices.end(); itr++) {
         const Property& prop = (*itr)->property;
         if(dynamic_cast<ProcessVertex*>(*itr)) {
+            string processName = prop.find("name").asString();
+            if(!ui->actionDebugMode->isChecked() && processName.find("yarplogger") != string::npos)
+            {
+                continue;
+            }
             NodeWidgetItem *moduleItem =  new NodeWidgetItem(moduleParentItem, (*itr), MODULE);
             moduleItem->setFlags( Qt::ItemIsSelectable | Qt::ItemIsEnabled | Qt::ItemIsUserCheckable );
             moduleItem->check(true);
         }
         else if(dynamic_cast<PortVertex*>(*itr) && !ui->actionHidePorts->isChecked()) {
+            string portName = prop.find("name").asString();
             if(ui->actionHideDisconnectedPorts->isChecked()){
-                if((*itr)->property.check("orphan"))
+                if(prop.check("orphan"))
                     continue;
             }
+            if(!ui->actionDebugMode->isChecked() && (portName.find("/log") != string::npos || portName.find("/yarplogger") != string::npos ))
+                continue;
             NodeWidgetItem *portItem =  new NodeWidgetItem(portParentItem, (*itr), PORT);
             portItem->setFlags( Qt::ItemIsSelectable | Qt::ItemIsEnabled | Qt::ItemIsUserCheckable );
             portItem->check(true);
