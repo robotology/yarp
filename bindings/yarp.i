@@ -441,7 +441,8 @@ MAKE_COMMS(Bottle)
 %include <yarp/dev/ITorqueControl.h>
 %include <yarp/dev/IImpedanceControl.h>
 %include <yarp/dev/IVelocityControl.h>
-%include <yarp/dev/IOpenLoopControl.h>
+%include <yarp/dev/IPWMControl.h>
+%include <yarp/dev/ICurrentControl.h>
 %include <yarp/dev/IAnalogSensor.h>
 
 #if !defined(SWIGCHICKEN) && !defined(SWIGALLEGROCL)
@@ -767,8 +768,14 @@ typedef yarp::os::BufferedPort<ImageRgbFloat> BufferedPortImageRgbFloat;
         return result;
     }
 
-    yarp::dev::IOpenLoopControl *viewIOpenLoopControl() {
-            yarp::dev::IOpenLoopControl *result;
+    yarp::dev::IPWMControl *viewIPWMControl() {
+            yarp::dev::IPWMControl *result;
+        self->view(result);
+        return result;
+    }
+
+    yarp::dev::ICurrentControl *viewICurrentControl() {
+            yarp::dev::ICurrentControl *result;
         self->view(result);
         return result;
     }
