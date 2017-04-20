@@ -56,7 +56,7 @@ MainWindow::MainWindow(QWidget *parent) :
     connect(ui->actionPolyline, SIGNAL(triggered()),this,SLOT(onLayoutPolyline()));
     connect(ui->actionLine, SIGNAL(triggered()),this,SLOT(onLayoutLine()));
     connect(ui->actionSubgraph, SIGNAL(triggered()),this,SLOT(onUpdateGraph()));
-    connect(ui->actionHidePorts, SIGNAL(triggered()),this,SLOT(onHidePorts()));
+    connect(ui->actionHidePorts, SIGNAL(triggered()),this,SLOT(onUpdateGraph()));
     connect(ui->nodesTreeWidget, SIGNAL(itemClicked(QTreeWidgetItem*, int)), this,
             SLOT(onNodesTreeItemClicked(QTreeWidgetItem *, int)));
     connect(ui->actionMessageBox, SIGNAL(triggered()),this,SLOT(onWindowMessageBox()));
@@ -78,6 +78,7 @@ MainWindow::MainWindow(QWidget *parent) :
 
     ui->actionHighlight_Loops->setEnabled(false);
     ui->actionHidePorts->setEnabled(false);
+    ui->actionDebugMode->setEnabled(false);
     ui->actionUpdateConnectionQosStatus->setEnabled(false);
 
     ui->action_Save_project->setEnabled(false);
@@ -532,6 +533,7 @@ void MainWindow::onProfileYarpNetwork() {
     drawGraph(*currentGraph);
     ui->actionHighlight_Loops->setEnabled(true);
     ui->actionHidePorts->setEnabled(true);
+    ui->actionDebugMode->setEnabled(true);
     ui->actionUpdateConnectionQosStatus->setEnabled(true);
     ui->actionProfilePortsRate->setEnabled(true);
 }
@@ -605,7 +607,7 @@ void MainWindow::populateTreeWidget(){
             moduleItem->setFlags( Qt::ItemIsSelectable | Qt::ItemIsEnabled | Qt::ItemIsUserCheckable );
             moduleItem->check(true);
         }
-        else if(dynamic_cast<PortVertex*>(*itr)) {
+        else if(dynamic_cast<PortVertex*>(*itr) && !ui->actionHidePorts->isChecked()) {
             if(ui->actionHideDisconnectedPorts->isChecked()){
                 if((*itr)->property.check("orphan"))
                     continue;
@@ -661,68 +663,16 @@ void MainWindow::onLayoutCurved() {
 }
 
 
-void MainWindow::onHidePorts() {
-
-    QTreeWidgetItem* item = NULL;
-    for (int i= moduleParentItem->childCount()-1; i>-1; i--) {
-        item = moduleParentItem->child(i);
-        delete item;
-    }
-    for (int i= portParentItem->childCount()-1; i>-1; i--) {
-        item = portParentItem->child(i);
-        delete item;
-    }
-    for (int i= machinesParentItem->childCount()-1; i>-1; i--) {
-        item = machinesParentItem->child(i);
-        delete item;
-    }
-
-    if(ui->actionHidePorts->isChecked()) {
-        NetworkProfiler::creatSimpleModuleGraph(mainGraph, simpleGraph);
-        // add process and port nodes to the tree
-        pvertex_const_iterator itr;
-        const pvertex_set& vertices = simpleGraph.vertices();
-        for(itr = vertices.begin(); itr!=vertices.end(); itr++) {
-            if(dynamic_cast<ProcessVertex*>(*itr)) {
-                NodeWidgetItem *moduleItem =  new NodeWidgetItem(moduleParentItem, (*itr), MODULE);
-                moduleItem->setFlags( Qt::ItemIsSelectable | Qt::ItemIsEnabled | Qt::ItemIsUserCheckable );
-                moduleItem->check(true);
-            }
-        }
-        moduleParentItem->setExpanded(true);
-        portParentItem->setExpanded(true);
-        currentGraph = &simpleGraph;
-    }
-    else {
-        pvertex_const_iterator itr;
-        const pvertex_set& vertices = mainGraph.vertices();
-        for(itr = vertices.begin(); itr!=vertices.end(); itr++) {
-            if(dynamic_cast<ProcessVertex*>(*itr)) {
-                NodeWidgetItem *moduleItem =  new NodeWidgetItem(moduleParentItem, (*itr), MODULE);
-                moduleItem->setFlags( Qt::ItemIsSelectable | Qt::ItemIsEnabled | Qt::ItemIsUserCheckable );
-                moduleItem->check(true);
-            }
-            else if(dynamic_cast<PortVertex*>(*itr)) {
-                if(ui->actionHideDisconnectedPorts->isChecked()){
-                    if((*itr)->property.check("orphan"))
-                        continue;
-                }
-                NodeWidgetItem *portItem =  new NodeWidgetItem(portParentItem, (*itr), PORT);
-                portItem->setFlags( Qt::ItemIsSelectable | Qt::ItemIsEnabled | Qt::ItemIsUserCheckable );
-                portItem->check(true);
-            }
-        }
-        moduleParentItem->setExpanded(true);
-        portParentItem->setExpanded(true);
-        machinesParentItem->setExpanded(true);
-        currentGraph = &mainGraph;
-    }
-    drawGraph(*currentGraph);
-}
-
 void MainWindow::onUpdateGraph() {
     if(currentGraph)
     {
+        if(ui->actionHidePorts->isChecked()){
+            NetworkProfiler::creatSimpleModuleGraph(mainGraph, simpleGraph);
+            currentGraph = &simpleGraph;
+        }
+        else{
+            currentGraph = &mainGraph;
+        }
         populateTreeWidget();
         drawGraph(*currentGraph);
     }

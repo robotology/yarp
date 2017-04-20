@@ -94,7 +94,6 @@ private slots:
     void onLayoutPolyline();
     void onLayoutLine();
     void onLayoutCurved();
-    void onHidePorts();
     void onUpdateGraph();
     void onNodesTreeItemClicked(QTreeWidgetItem *item, int column);
     void onWindowMessageBox();
