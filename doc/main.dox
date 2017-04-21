@@ -1,12 +1,13 @@
 /*
  * Copyright (C) 2010-2016 RobotCub Consortium, Istituto Italiano di Tecnologia
  * CopyPolicy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
- *
  */
 
 
 /**
 \mainpage Welcome to YARP
+
+\tableofcontents
 
 <img src="yarp-logo-name.png" id="yarp-logo">
 \image latex yarp-logo-name.png height=128px
@@ -20,10 +21,9 @@ the circulatory system.
 
 More specifically, YARP supports building a robot control system as a
 \ref note_ports "collection of programs" communicating in a
-peer-to-peer way, with an extensible \ref carrier_config "family of connection types"
-(tcp, udp, multicast, local, MPI,
-mjpg-over-http, XML/RPC, tcpros, ...) that can be swapped in and out to
-match your needs.
+peer-to-peer way, with an extensible \ref carrier_config "family of connection
+types" (tcp, udp, multicast, local, MPI, mjpg-over-http, XML/RPC, tcpros, ...)
+that can be swapped in and out to match your needs.
 We also support similarly flexible interfacing
 with hardware devices.  Our strategic goal
 is to increase the longevity of robot software projects.
@@ -40,24 +40,36 @@ library is used for Windows builds, and to support extra
 protocols.  On Linux and macOS, ACE can optionally be omitted,
 giving a very light footprint (with the trade-off being the
 loss of support for some non-TCP-based protocols).
-YARP is free and open, under the LGPL (*).
+YARP is free and open, under the LGPL [\ref lgpl_note "*"].
 
-The general philosophy that has guided the development of YARP is described in [1-3], while [4] describes some recent development (\subpage portmonitor).
+The general philosophy that has guided the development of YARP is described in
+[\ref Fitzpatrick2014 "1"], [\ref Fitzpatrick2008 "2"] and [\ref Metta2006 "3"],
+while [\ref Paikan2014 "4"] describes some recent development
+(\subpage portmonitor "Port Monitor").
 
-Performances are fundamental in robotics. YARP provides features that allow developers to assign priorities to individual connections. We call this channel \subpage channelprioritization. Experimental validation demonstrated that these features allow reducing communication latency and improves determinism for selected channels in a YARP network [5-6].  
+Performances are fundamental in robotics. YARP provides features that allow
+developers to assign priorities to individual connections. We call this channel
+\subpage channelprioritization. Experimental validation demonstrated that these
+features allow reducing communication latency and improves determinism for
+selected channels in a YARP network [\ref Paikan2015a "5"] and
+[\ref Paikan2015b "6"].
 
-Getting set up:
+\anchor lgpl_note [*] Certain optional plugin devices, carriers, or libraries are
+under the GPL.
+
+
+\section yarp_setup Getting set up
 \li \subpage install
 \li \subpage yarp_cluster
 
-The basics of using YARP:
+\section yarp_basics_usage The basics of using YARP
 \li \subpage yarp_cmake_hello
 \li \subpage tutorials
 \li \subpage note_ports
 \li \subpage note_devices
 \li \subpage yarp_data_dirs
 
-Command line tools:
+\section yarp_command_line_tools Command line tools
 \li \subpage yarp
 \li \subpage yarpserver
 \li \subpage yarpdev
@@ -73,7 +85,7 @@ Command line tools:
 \li \subpage yarpidl_thrift
 \li \subpage yarpros
 
-GUIs:
+\section yarp_guis GUIs
 \li \subpage yarplogger
 \li \subpage yarpview
 \li \subpage yarpscope
@@ -83,47 +95,51 @@ GUIs:
 \li \subpage yarpbatterygui
 \li \subpage yarplaserscannergui
 
-Interoperability and advanced use:
-\li \subpage channelprioritization. 
+\section yarp_advanced_usage Interoperability and advanced use
+\li \subpage channelprioritization.
 \li \subpage yarp_without_yarp
 \li \subpage yarp_with_ros
 \li \subpage yarp_swig
 \li \subpage portmonitor
 
-More information:
+\section yarp_more_info More information
 \li \subpage what_is_yarp
 \li \subpage md_.github_CONTRIBUTING
 \li \subpage changelog
 
-YARP resources:
+\section yarp_resources YARP resources
 \li <a href="http://github.com/robotology/yarp">YARP project on GitHub</a>
 \li <a href="http://github.com/robotology/yarp/issues">YARP issue tracker</a>
 \li <a href="http://wiki.icub.org/wiki/YARP">Wiki</a>
 \li <a href="http://wiki.icub.org/wiki/Robotcub-hackers">Mailing&nbsp;list</a>
 
-Related links:
+\section yarp_related_links Related links
+\li <a href="https://github.com/robotology/">The Robotology organization on GitHub</a>
 \li <a href="http://www.icub.org">iCub family</a>
 \li <a href="http://playerstage.sourceforge.net/">Player/Stage</a>
 \li <a href="http://www.orocos.org/">Orocos</a>
 \li <a href="http://www.ros.org">ROS</a>
 \li <a href="http://gostai.com/products/urbi/">Urbi</a>
 
-Papers:
+\section yarp_papers Publications
 
-[1] A middle way for robotics middleware, Fitzpatrick, P., Ceseracciu, E.,
-Domenichelli, D., Paikan, A., Metta, G., and Natale, L., Journal of Software Engineering for Robotics, 5(2): 42-49, 2014. [<a href="http://joser.unibg.it/index.php?journal=joser&page=article&op=view&path%5B%5D=69">pdf</a>]
+\anchor Fitzpatrick2014 \li [1] A middle way for robotics middleware, Fitzpatrick, P., Ceseracciu, E.,
+Domenichelli, D., Paikan, A., Metta, G., and Natale, L., Journal of Software Engineering for Robotics, 5(2): 42-49, 2014.
+[<a href="http://joser.unibg.it/index.php?journal=joser&page=article&op=view&path%5B%5D=69">pdf</a>]
 
-[2] Towards Long-Lived Robot Genes, Paul Fitzpatrick, Giorgio Metta, and Lorenzo Natale,  Robotics and Autonomous Systems, 56(1):29-45, 2008. [<a href="http://lornat75.github.io/papers/2008/fitzpatrick-ras.pdf">pdf</a>]
+\anchor Fitzpatrick2008 \li [2] Towards Long-Lived Robot Genes, Paul Fitzpatrick, Giorgio Metta, and Lorenzo Natale,  Robotics and Autonomous Systems, 56(1):29-45, 2008.
+[<a href="http://lornat75.github.io/papers/2008/fitzpatrick-ras.pdf">pdf</a>]
 
-[3] YARP: Yet Another Robot Platform, Giorgio Metta, Paul Fitzpatrick, and Lorenzo Natale, International Journal of Advanced Robotic Systems, 3(1):43-48, 2006. [<a href="http://www.intechopen.com/journals/international_journal_of_advanced_robotic_systems/yarp__yet_another_robot_platform">pdf</a>]
+\anchor Metta2006 \li [3] YARP: Yet Another Robot Platform, Giorgio Metta, Paul Fitzpatrick, and Lorenzo Natale, International Journal of Advanced Robotic Systems, 3(1):43-48, 2006.
+[<a href="http://www.intechopen.com/journals/international_journal_of_advanced_robotic_systems/yarp__yet_another_robot_platform">pdf</a>]
 
-[4] Data Flow Port's Monitoring and Arbitration, Paikan, A., Fitzpatrick, P., Metta, G., and Natale, L., Journal of Software Engineering for Robotics, 5(1), pp. 80-88, 2014. [<a href="http://joser.unibg.it/index.php?journal=joser&page=article&op=view&path%5B%5D=72">pdf</a>]
+\anchor Paikan2014 \li [4] Data Flow Port's Monitoring and Arbitration, Paikan, A., Fitzpatrick, P., Metta, G., and Natale, L., Journal of Software Engineering for Robotics, 5(1), pp. 80-88, 2014.
+[<a href="http://joser.unibg.it/index.php?journal=joser&page=article&op=view&path%5B%5D=72">pdf</a>]
 
-[5] Paikan, A., Domenichelli, D., and Natale, L., Communication channel prioritization in a publish-subscribe architecture, in Proc. Software Engineering and Architectures for Realtime Interactive Systems Workshop, Arles, France, 2015. [<a href="http://arxiv.org/abs/1504.02128">pdf</a>]
+\anchor Paikan2015a \li [5] Paikan, A., Domenichelli, D., and Natale, L., Communication channel prioritization in a publish-subscribe architecture, in Proc. Software Engineering and Architectures for Realtime Interactive Systems Workshop, Arles, France, 2015.
+[<a href="http://arxiv.org/abs/1504.02128">pdf</a>]
 
-[6] Paikan, A., Pattacini, U., Domenichelli, D., Randazzo, M., Metta, G., and Natale, L.,A Best-Effort Approach for Run-Time Channel Prioritization in Real-Time Robotic Application, in Proc. IEEE/RSJ International Conference on Intelligent Robots and Systems, Hamburg, Germany, 2015, pp. 498-503. [<a href="http://lornat75.github.io/papers/2015/paikan-iros.pdf">pdf</a>]
+\anchor Paikan2015b \li [6] Paikan, A., Pattacini, U., Domenichelli, D., Randazzo, M., Metta, G., and Natale, L.,A Best-Effort Approach for Run-Time Channel Prioritization in Real-Time Robotic Application, in Proc. IEEE/RSJ International Conference on Intelligent Robots and Systems, Hamburg, Germany, 2015, pp. 498-503.
+[<a href="http://lornat75.github.io/papers/2015/paikan-iros.pdf">pdf</a>]
 
-(*) Certain optional plugin devices, carriers, or libraries are under the GPL.
-
- *
  */

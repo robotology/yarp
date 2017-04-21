@@ -1,0 +1,154 @@
+@font-face { font-family: Moonhouse; src: url('moonhouse.ttf'); }
+
+#titlearea
+{
+    overflow: hidden;
+    white-space: nowrap;
+}
+
+#titlearea table
+{
+    width: 100%;
+}
+
+#projectlogo
+{
+    width: 64px;
+    height: 64px;
+}
+
+#projectname
+{
+    font-size: 300%;
+    font-family: Moonhouse, Roboto, sans-serif;
+    font-weight: bold;
+    font-stretch: ultra-expanded;
+    font-style: oblique;
+    color: #5991ac;
+    text-shadow: 0 2px 2px rgba(135,181,204,0.9);
+    padding: 0px 0px;
+}
+
+#projectbrief
+{
+    font-size: 120%;
+    font-family: Moonhouse, Roboto, sans-serif;
+    font-weight: bold;
+    font-style: oblique;
+    font-variant: small-caps;
+    color: #87b5cc;
+    text-shadow: 0 2px 2px rgba(135,181,204,0.9);
+}
+
+#projectnumber
+{
+    font-size: 20%;
+    font-family: monospace, fixed;
+    color: #19c2d8;
+    text-shadow: 0 2px 2px rgba(135,181,204,0.9);
+}
+
+#titlearea {
+    background-color: #f6fbfd;
+}
+
+#yarp-logo {
+    max-height: 128px;
+    max-width: 100%;
+}
+
+
+/* Page title */
+#doc-content div.title {
+    font-size: 160%;
+    font-weight: bold;
+    font-style: oblique;
+    color: #19526e;
+    text-shadow: 0 2px 2px rgba(135,181,204,0.9);
+}
+
+h1, h2, h3, h4 {
+    color: #19526e;
+    text-shadow: 0 2px 2px rgba(135,181,204,0.9);
+}
+
+h1, h2, h3 {
+    font-variant: small-caps;
+}
+
+/* Header for groups of functions */
+h2.groupheader {
+    font-weight: bold;
+    font-style: oblique;
+}
+
+/* Class member title (i.e. name of the method, etc.) */
+.memtitle {
+    font-weight: bold;
+    font-variant: normal;
+}
+
+/* Method name in method full description */
+.memname {
+    font-size: 110%;
+    font-weight: bold;
+}
+
+/* Method parameter names in method full description */
+.paramname {
+    color: #5991ac;
+    font-size: 110%;
+}
+
+/* Permalink symbol */
+span.permalink {
+    line-height: 1;
+    font-size: 100%;
+    vertical-align: top;
+    text-shadow: none;
+}
+span.permalink > a {
+    color: rgba(135,181,204,0.2);
+}
+span.permalink > a:hover {
+    color: rgba(135,181,204,1.0);
+}
+
+/* Number of the overload of the method (for example "[1/2]") next to the method name */
+.overload {
+    font-size: 50%;
+    color: #5991ac;
+    text-shadow: 0 2px 2px rgba(135,181,204,0.9);
+}
+
+/* Definition at line xxx of file yyy. */
+p.definition {
+    font-size: 75%;
+    font-family: monospace, fixed;
+    text-align: right;
+    margin-bottom: 0px;
+}
+
+/* Lists of classes/functions. Also file list at the end of the pages */
+#doc-content > div.contents {
+    font-size: 75%;
+    line-height: 1.2;
+}
+#doc-content > div.contents > ul {
+    padding-left: 30px;
+    font-family: monospace, fixed;
+    margin-top: 0px;
+    margin-bottom: 0px;
+}
+
+/* "<code>" elements (usually the "#include <...>" in the documentation */
+code {
+    border: 1px solid #C4CFE5;
+    background-color: #FBFCFD;
+    padding: 4px 6px;
+    margin: 4px 8px 4px 2px;
+    font-size:  9pt;
+    line-height: 125%;
+    font-size: 105%;
+    border-radius: 4px;
+}
