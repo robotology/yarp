@@ -152,6 +152,7 @@
     <addaction name="actionHidePorts"/>
     <addaction name="actionHideConnectionsLable"/>
     <addaction name="actionHideDisconnectedPorts"/>
+    <addaction name="actionColorMode"/>
     <addaction name="actionDebugMode"/>
    </widget>
    <widget class="QMenu" name="menuView_2">
@@ -183,6 +184,7 @@
    </attribute>
    <addaction name="actionProfile_YARP_network"/>
    <addaction name="separator"/>
+   <addaction name="actionColorMode"/>
    <addaction name="actionDebugMode"/>
    <addaction name="actionHidePorts"/>
    <addaction name="actionHighlight_Loops"/>
@@ -367,6 +369,21 @@
    </property>
    <property name="toolTip">
     <string>Check it to show yarplogger and &quot;/log&quot; ports</string>
+   </property>
+  </action>
+  <action name="actionColorMode">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="icon">
+    <iconset resource="ress.qrc">
+     <normaloff>:/icons/resources/atooma.svg</normaloff>:/icons/resources/atooma.svg</iconset>
+   </property>
+   <property name="text">
+    <string>ColorMode</string>
+   </property>
+   <property name="toolTip">
+    <string>Enable the Color Mode</string>
    </property>
   </action>
  </widget>

@@ -28,6 +28,7 @@
 #include "qosconfigdialog.h"
 #include "portloggerdialog.h"
 #include "batchqosconfdialog.h"
+#include <iomanip>
 
 using namespace std;
 using namespace yarp::os;
@@ -51,6 +52,7 @@ MainWindow::MainWindow(QWidget *parent) :
     connect(ui->actionHideConnectionsLable, SIGNAL(triggered()),this,SLOT(onUpdateGraph()));
     connect(ui->actionHideDisconnectedPorts, SIGNAL(triggered()),this,SLOT(onUpdateGraph()));
     connect(ui->actionDebugMode, SIGNAL(triggered()),this,SLOT(onUpdateGraph()));
+    connect(ui->actionColorMode, SIGNAL(triggered()),this,SLOT(onUpdateGraph()));
     connect(ui->actionOrthogonal, SIGNAL(triggered()),this,SLOT(onLayoutOrthogonal()));
     connect(ui->actionCurved, SIGNAL(triggered()),this,SLOT(onLayoutCurved()));
     connect(ui->actionPolyline, SIGNAL(triggered()),this,SLOT(onLayoutPolyline()));
@@ -79,6 +81,8 @@ MainWindow::MainWindow(QWidget *parent) :
 
     ui->actionHighlight_Loops->setEnabled(false);
     ui->actionHidePorts->setEnabled(false);
+    ui->actionHideDisconnectedPorts->setEnabled(false);
+    ui->actionHideConnectionsLable->setEnabled(false);
     ui->actionDebugMode->setEnabled(false);
     ui->actionUpdateConnectionQosStatus->setEnabled(false);
 
@@ -207,6 +211,10 @@ void MainWindow::drawGraph(Graph &graph)
         QGVSubGraph *sgraph;
         if(dynamic_cast<ProcessVertex*>(*itr) && !prop.find("hidden").asBool())
         {
+            int randNum = rand()%(16777214 - 0 + 1) + 0;
+            stringstream hexStream;
+            hexStream<<std::hex<< randNum;
+            string hexRandNum ="#" + hexStream.str();
             string name =  prop.find("name").asString() + countChild;
             if(layoutSubgraph)
             {
@@ -237,6 +245,7 @@ void MainWindow::drawGraph(Graph &graph)
                 sgraph->setAttribute("fillcolor", "#a5cf80");
                 sgraph->setAttribute("color", "#a5cf80");
             }
+            sgraph->setAttribute("colorOfTheProcess", hexRandNum.c_str());
             //nodeSet[*itr] = node;
             dynamic_cast<YarpvizVertex*>(*itr)->setGraphicItem(sgraph);
             sgraph->setVertex(*itr);
@@ -282,11 +291,21 @@ void MainWindow::drawGraph(Graph &graph)
             else if(prop.find("hidden").asBool())
                 continue;
             QGVNode *node;
+            QString colorProcess;
             if(layoutSubgraph) {
                 key<<v->property.find("hostname").asString()<<v->property.find("pid").asInt();
                 QGVSubGraph *sgraph = sceneSubGraphMap[key.str()];
                 if(sgraph)
+                {
                     node =  sgraph->addNode(portName.c_str());
+                    if(ui->actionColorMode->isChecked())
+                    {
+                        QColor color(sgraph->getAttribute("colorOfTheProcess"));
+                        if(color.lightness()<100)
+                            node->setAttribute("labelfontcolor","#ffffff");
+                        colorProcess = sgraph->getAttribute("colorOfTheProcess");
+                    }
+                }
                 else
                     node =  scene->addNode(portName.c_str());
             }
@@ -296,7 +315,13 @@ void MainWindow::drawGraph(Graph &graph)
             if(prop.check("color")) {
                 node->setAttribute("fillcolor", prop.find("color").asString().c_str());
                 node->setAttribute("color", prop.find("color").asString().c_str());
-            } else {
+            }
+            else if(!colorProcess.isEmpty())
+            {
+                node->setAttribute("fillcolor", colorProcess);
+                node->setAttribute("color", colorProcess);
+            }
+            else {
                 node->setAttribute("fillcolor", "#edad56");
                 node->setAttribute("color", "#edad56");
             }
@@ -542,6 +567,8 @@ void MainWindow::onProfileYarpNetwork() {
     drawGraph(*currentGraph);
     ui->actionHighlight_Loops->setEnabled(true);
     ui->actionHidePorts->setEnabled(true);
+    ui->actionHideDisconnectedPorts->setEnabled(true);
+    ui->actionHideConnectionsLable->setEnabled(true);
     ui->actionDebugMode->setEnabled(true);
     ui->actionUpdateConnectionQosStatus->setEnabled(true);
     ui->actionProfilePortsRate->setEnabled(true);

@@ -15,5 +15,6 @@
         <file>resources/profile_rate.png</file>
         <file>resources/computer_B.svg</file>
         <file>resources/debugMode.svg</file>
+        <file>resources/atooma.svg</file>
     </qresource>
 </RCC>
