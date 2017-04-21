@@ -108,7 +108,7 @@ public:
     virtual ~Graph();
 
     //void insert(Vertex *vertex);
-    void insert(const Vertex &vertex);
+    pvertex_iterator insert(const Vertex &vertex);
     void remove(const Vertex &vertex);
     void remove(const pvertex_iterator vi);
 

@@ -160,14 +160,18 @@ bool NetworkProfiler::creatNetworkGraph(ports_detail_set details, yarp::graph::G
         process->property.put("priority", info.owner.priority);
         process->property.put("policy", info.owner.policy);
         process->property.put("os", info.owner.os);
-        graph.insert(*process);
+        process->property.put("hidden", false);
+        pvertex_iterator itrVert=graph.insert(*process);
+        // create connection between ports and its process
+        if(dynamic_cast<ProcessVertex*> (*itrVert))
+            port->setOwner((ProcessVertex*)(*itrVert));
 
-        // create connection between ports and its owner
-        port->setOwner(process);
+
 
         //machine node (owner of the process)
         MachineVertex* machine = new MachineVertex(info.owner.os, info.owner.hostname);
         graph.insert(*machine);
+        //todo do the same done for the process.
         process->setOwner(machine);
 
         if(!info.inputs.size() && !info.outputs.size())

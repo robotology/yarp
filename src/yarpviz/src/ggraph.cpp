@@ -121,10 +121,12 @@ void Graph::insert(Vertex *vertex) {
 */
 
 
-void Graph::insert(const Vertex &vertex){
-    if( find(vertex) != mVertices.end()) return;
+pvertex_iterator Graph::insert(const Vertex &vertex){
+    pvertex_iterator itr = find(vertex);
+    if( itr != mVertices.end()) return itr;
    // Vertex* v = new Vertex(vertex);
     mVertices.push_back((Vertex*) &vertex);
+    return mVertices.end()-1;
 }
 
 
