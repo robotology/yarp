@@ -49,6 +49,7 @@ public:
         if (name!="") {
             yAssert(topic(name));
         }
+        isStrict = false;
     }
 
     /**
@@ -145,7 +146,13 @@ public:
         buffer().disableCallback();
     }
 
+    void setStrict(bool strict = true) {
+        isStrict = strict;
+        if (buffered_port) buffered_port->setStrict(strict);
+    }
+    
 private:
+    bool isStrict;
     Port port;
     BufferedPort<T> *buffered_port;
 
@@ -157,6 +164,9 @@ private:
     BufferedPort<T>& buffer() {
         if (!buffered_port) {
             buffered_port = new BufferedPort<T>(port);
+            if (isStrict) {
+                buffered_port->setStrict(isStrict);
+            }
             yAssert(buffered_port);
         }
         return *buffered_port;
