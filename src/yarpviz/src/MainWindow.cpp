@@ -709,8 +709,12 @@ void MainWindow::onNodesTreeItemClicked(QTreeWidgetItem *item, int column){
     foreach( QGraphicsItem *item, items )
         item->setSelected(false);
     YarpvizVertex* yv = (YarpvizVertex*)((NodeWidgetItem*)(item))->getVertex();
-    if(yv->getGraphicItem()) {
-        ((QGVNode*)yv->getGraphicItem())->setSelected(true);
+    QGraphicsItem* graphicItem = (QGraphicsItem*) yv->getGraphicItem();
+    if(graphicItem) {
+        graphicItem->setSelected(true);
+        if(state){
+            ui->graphicsView->centerOn(graphicItem);
+        }
     }
 }
 
