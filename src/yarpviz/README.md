@@ -2,6 +2,7 @@ yarpviz
 =======
 The `yarpviz` is a graphical tool for profiling and visualizing Yarp network! 
 
+![scenario2](/src/resources/yarpviz.png)
 
 Dependencies
 ------------
