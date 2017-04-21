@@ -11,7 +11,7 @@ YARP
 ====
 
 [![YARP Homepage](https://img.shields.io/badge/YARP-Yet_Another_Robot_Platform-orange.svg)](http://www.yarp.it/)
-[![Latest Release](https://img.shields.io/github/release/robotology/yarp.svg?label=Latest Release)](https://github.com/robotology/yarp/releases)
+[![Latest Release](https://img.shields.io/github/release/robotology/yarp.svg?label=Latest%20Release)](https://github.com/robotology/yarp/releases)
 
 YARP is a library and toolkit for communication and device interfaces,
 used on everything from humanoids to embedded devices.
@@ -63,8 +63,8 @@ requirements than the LGPL:
 Status
 ------
 
-[![Build Status (Linux/macOS)](https://img.shields.io/travis/robotology/yarp/master.svg?label=Build Status (Linux/macOS))](https://travis-ci.org/robotology/yarp)
-[![Build status (Windows)](https://img.shields.io/appveyor/ci/robotology/yarp/master.svg?label=Build Status (Windows))](https://ci.appveyor.com/project/robotology/yarp)
+[![Build Status (Linux/macOS)](https://travis-ci.org/robotology/yarp.svg?branch=master)](https://travis-ci.org/robotology/yarp)
+[![Build status (Windows)](https://ci.appveyor.com/api/projects/status/github/robotology/yarp?branch=master&svg=true)](https://ci.appveyor.com/project/robotology/yarp)
 and [more](http://dashboard.icub.org/index.php?project=YARP)
 
 [![Coverage Status](https://img.shields.io/coveralls/robotology/yarp.svg?label=Coverage)](https://coveralls.io/r/robotology/yarp)
