@@ -13,6 +13,7 @@
 #include <yarp/os/RateThread.h>
 #include <yarp/os/Semaphore.h>
 #include <yarp/os/BufferedPort.h>
+#include <yarp/dev/ILocalization2D.h>
 #include <yarp/dev/ControlBoardInterfaces.h>
 #include <yarp/dev/IRangefinder2D.h>
 #include <yarp/dev/MapGrid2D.h>
@@ -26,8 +27,12 @@ using namespace yarp::dev;
 class FakeLaser : public RateThread, public yarp::dev::IRangefinder2D, public DeviceDriver
 {
 protected:
+    enum test_mode_t { NO_OBSTACLES = 0, USE_PATTERN =1, USE_MAPFILE =2 };
+    enum localization_mode_t { LOC_FROM_PORT = 0, LOC_FROM_CLIENT = 1 };
+
     PolyDriver driver;
-    std::string m_string_test_mode;
+    test_mode_t m_test_mode;
+    localization_mode_t m_loc_mode;
     yarp::os::Semaphore mutex;
 
     int period;
@@ -40,12 +45,12 @@ protected:
     double resolution;
 
     yarp::dev::MapGrid2D   m_map;
-    yarp::os::BufferedPort<yarp::os::Bottle> m_loc_port;
+    yarp::os::BufferedPort<yarp::os::Bottle>* m_loc_port;
+    PolyDriver*      m_pLoc;
+    ILocalization2D* m_iLoc;
     double m_loc_x;
     double m_loc_y;
     double m_loc_t;
-
-  //  yarp::dev:::Map2DLocation
 
     std::string info;
     Device_status device_status;
@@ -62,6 +67,9 @@ public:
         m_rd = new std::random_device;
         m_gen = new std::mt19937((*m_rd)());
         m_dis = new std::uniform_real_distribution<>(0, 0.01);
+        m_loc_port = 0;
+        m_pLoc = 0;
+        m_iLoc = 0;
     }
     
 
@@ -73,6 +81,16 @@ public:
         m_rd = 0;
         m_gen = 0;
         m_dis = 0;
+        if (m_loc_port)
+        {
+           delete m_loc_port;
+           m_loc_port = 0;
+        }
+        if (m_pLoc)
+        {
+            delete m_pLoc;
+            m_pLoc = 0;
+        }
     }
 
     virtual bool open(yarp::os::Searchable& config);
