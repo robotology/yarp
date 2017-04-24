@@ -34,6 +34,18 @@ bool FakeLaser::open(yarp::os::Searchable& config)
     yDebug("%s\n", config.toString().c_str());
 #endif
 
+    if (config.check("help"))
+    {
+        yInfo("Some examples:");
+        yInfo("yarpdev --device fakeLaser --help");
+        yInfo("yarpdev --device Rangefinder2DWrapper --subdevice fakeLaser --period 10 --name /ikart/laser:o --test no_obstacles");
+        yInfo("yarpdev --device Rangefinder2DWrapper --subdevice fakeLaser --period 10 --name /ikart/laser:o --test use_pattern");
+        yInfo("yarpdev --device Rangefinder2DWrapper --subdevice fakeLaser --period 10 --name /ikart/laser:o --test use_mapfile --map_file mymap.map");
+        yInfo("yarpdev --device Rangefinder2DWrapper --subdevice fakeLaser --period 10 --name /ikart/laser:o --test use_mapfile --map_file mymap.map --localization_port /fakeLaser/location:i");
+        yInfo("yarpdev --device Rangefinder2DWrapper --subdevice fakeLaser --period 10 --name /ikart/laser:o --test use_mapfile --map_file mymap.map --localization_client /fakeLaser/localizationClient");
+        return false;
+    }
+
     bool br = config.check("GENERAL");
     if (br != false)
     {
@@ -41,7 +53,11 @@ bool FakeLaser::open(yarp::os::Searchable& config)
         period = general_config.check("Period", Value(50), "Period of the sampling thread").asInt();
     }
 
-    m_string_test_mode = config.check("test", Value(string("complete_test")), "string to select test mode").asString();
+    string string_test_mode = config.check("test", Value(string("use_pattern")), "string to select test mode").asString();
+    if      (string_test_mode == "no_obstacles") m_test_mode = NO_OBSTACLES;
+    else if (string_test_mode == "use_pattern") m_test_mode = USE_PATTERN;
+    else if (string_test_mode == "use_mapfile") m_test_mode = USE_MAPFILE;
+    else    { yError() << "invalid/unknown value for param 'test'"; return false; }
 
     min_distance = 0.1;  //m
     max_distance = 3.5;  //m
@@ -51,7 +67,7 @@ bool FakeLaser::open(yarp::os::Searchable& config)
 
     sensorsNum = (int)((max_angle-min_angle)/resolution);
     laser_data.resize(sensorsNum);
-    if (m_string_test_mode == "map_test")
+    if (m_test_mode == USE_MAPFILE)
     {
         string map_file;
         if (config.check("map_file"))
@@ -63,8 +79,47 @@ bool FakeLaser::open(yarp::os::Searchable& config)
             yError() << "Missing map_file";
             return false;
         }
-        m_map.loadFromFile(map_file);
-        m_loc_port.open("/fakeLaser/location:i");
+        bool ret = m_map.loadFromFile(map_file);
+        if (ret == false)
+        {
+            yError() << "A problem occurred while opening:" << map_file;
+            return false;
+        }
+
+        if (config.check("localization_port"))
+        {
+            string localization_port_name = config.check("localization_port", Value(string("/fakeLaser/location:i")), "name of localization input port").asString();
+            m_loc_port = new yarp::os::BufferedPort<yarp::os::Bottle>;
+            m_loc_port->open(localization_port_name.c_str());
+            yInfo() << "Robot localization will be obtained from port" << localization_port_name;
+        }
+        else if (config.check("localization_client"))
+        {
+            Property loc_options;
+            string localization_device_name = config.check("localization_client", Value(string("/fakeLaser/localizationClient")), "local name of localization client device").asString();
+            loc_options.put("device", "localization2DClient");
+            loc_options.put("local", localization_device_name.c_str());
+            loc_options.put("remote", "/localizationServer");
+            loc_options.put("period", 10);
+            m_pLoc = new PolyDriver;
+            if (m_pLoc->open(loc_options) == false)
+            {
+                yError() << "Unable to open localization driver";
+                return false;
+            }
+            m_pLoc->view(m_iLoc);
+            if (m_iLoc == 0)
+            {
+                yError() << "Unable to open localization interface";
+                return false;
+            }
+            yInfo() << "Robot localization will be obtained from localization_client" << localization_device_name;
+        }
+        else
+        {
+            yInfo() << "No localization method selected. Robot location set to 0,0,0";
+        }
+
         m_loc_x=0;
         m_loc_y=0;
         m_loc_t=0;
@@ -76,7 +131,7 @@ bool FakeLaser::open(yarp::os::Searchable& config)
     yInfo("max_angle %f, min_angle %f", max_angle, min_angle);
     yInfo("resolution %f", resolution);
     yInfo("sensors %d", sensorsNum);
-    yInfo("test mode: %s", m_string_test_mode.c_str());
+    yInfo("test mode: %d", m_test_mode);
     Time::turboBoost();
     RateThread::start();
     return true;
@@ -87,6 +142,12 @@ bool FakeLaser::close()
     RateThread::stop();
 
     driver.close();
+    
+    if (m_loc_port)
+    {
+        m_loc_port->interrupt();
+        m_loc_port->close();
+    }
     return true;
 }
 
@@ -216,7 +277,7 @@ void FakeLaser::run()
     static int test_count = 0;
     static int test = 0;
 
-    if (m_string_test_mode == "complete_test")
+    if (m_test_mode == USE_PATTERN)
     {
         for (int i = 0; i < sensorsNum; i++)
         {
@@ -244,22 +305,40 @@ void FakeLaser::run()
             t_orig = yarp::os::Time::now();
         }
     }
-    else if (m_string_test_mode=="no_obstacles")
+    else if (m_test_mode == NO_OBSTACLES)
     {
         for (int i = 0; i < sensorsNum; i++)
         {
             laser_data.push_back(std::numeric_limits<double>::infinity());
         }
     }
-    else if (m_string_test_mode == "map_test")
+    else if (m_test_mode == USE_MAPFILE)
     {
-        Bottle* b = m_loc_port.read(false);
-        if (b)
+        if (m_loc_mode == LOC_FROM_PORT)
         {
-          m_loc_x = b->get(0).asDouble();
-          m_loc_y = b->get(1).asDouble();
-          m_loc_t = b->get(2).asDouble();
+            Bottle* b = m_loc_port->read(false);
+            if (b)
+            {
+                m_loc_x = b->get(0).asDouble();
+                m_loc_y = b->get(1).asDouble();
+                m_loc_t = b->get(2).asDouble();
+            }
         }
+        else if (m_loc_mode == LOC_FROM_CLIENT)
+        {
+            yarp::dev::Map2DLocation loc;
+            if (m_iLoc->getCurrentPosition(loc))
+            {
+                m_loc_x = loc.x;
+                m_loc_y = loc.y;
+                m_loc_t = loc.theta;
+            }
+            else
+            {
+                yError() << "Error occurred while getting current position from localization server";
+            }
+        }
+
         for (int i = 0; i < sensorsNum; i++)
         {
             //compute the ray in the robot reference frame
@@ -276,10 +355,6 @@ void FakeLaser::run()
             double distance = checkStraightLine(src,dst);
             laser_data.push_back(distance + (*m_dis)(*m_gen));
         }
-    }
-    else
-    {
-        yError() << "Unknown test mode:" << m_string_test_mode;
     }
 
     mutex.post();
