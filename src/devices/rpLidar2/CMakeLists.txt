@@ -28,7 +28,7 @@ if(NOT SKIP_rpLidar2)
   set (ARCH_DIR linux)
   endif ()
 
-
+  add_definitions(-D_USE_MATH_DEFINES)
   yarp_add_plugin(rpLidar2 rpLidar2.h
                            rpLidar2.cpp
                            ${RPLIDAR_SDK_ROOT}/src/rplidar_driver.cpp

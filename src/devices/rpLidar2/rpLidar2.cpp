@@ -16,8 +16,14 @@
 #include <stdlib.h>
 #include <limits>
 
-#define USE_MATH_DEFINES
-#include <math.h>
+#ifndef _USE_MATH_DEFINES
+#define _USE_MATH_DEFINES
+#endif
+#include <cmath>
+
+#ifndef DEG2RAD
+#define DEG2RAD M_PI/180.0
+#endif
 
 //#define LASER_DEBUG
 //#define FORCE_SCAN
@@ -25,9 +31,6 @@
 using namespace std;
 using namespace rp::standalone::rplidar;
 
-#ifndef DEG2RAD
-#define DEG2RAD M_PI/180.0
-#endif
 
 //-------------------------------------------------------------------------------------
 
