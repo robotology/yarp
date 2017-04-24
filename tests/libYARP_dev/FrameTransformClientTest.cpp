@@ -124,10 +124,10 @@ public:
         m2[2][0] = -sin(M_PI / 4); m2[2][1] = 0; m2[2][2] = cos(M_PI / 4);  m2[2][3] = 0.3;
         m2[3][0] = 0;              m2[3][1] = 0; m2[3][2] = 0;              m2[3][3] = 1;
         yarp::sig::Matrix sibiling(4, 4);
-        m2[0][0] = 1;              m2[0][1] = 0;              m2[0][2] = 0;              m2[0][3] = 10;
-        m2[1][0] = 0;              m2[1][1] = cos(M_PI / 3);  m2[1][2] = -sin(M_PI / 3); m2[1][3] = 15;
-        m2[2][0] = 0;              m2[2][1] = sin(M_PI / 3);  m2[2][2] =  cos(M_PI / 3); m2[2][3] = 5;
-        m2[3][0] = 0;              m2[3][1] = 0;              m2[3][2] = 0;              m2[3][3] = 1;
+        sibiling[0][0] = 1;              sibiling[0][1] = 0;              sibiling[0][2] = 0;              sibiling[0][3] = 10;
+        sibiling[1][0] = 0;              sibiling[1][1] = cos(M_PI / 3);  sibiling[1][2] = -sin(M_PI / 3); sibiling[1][3] = 15;
+        sibiling[2][0] = 0;              sibiling[2][1] = sin(M_PI / 3);  sibiling[2][2] =  cos(M_PI / 3); sibiling[2][3] = 5;
+        sibiling[3][0] = 0;              sibiling[3][1] = 0;              sibiling[3][2] = 0;              sibiling[3][3] = 1;
         yarp::sig::Matrix m3(4, 4);
         m3 = m1*m2;
         
