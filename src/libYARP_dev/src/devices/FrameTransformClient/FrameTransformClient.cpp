@@ -446,19 +446,19 @@ bool yarp::dev::FrameTransformClient::getTransform(const std::string& target_fra
     {
         return getChainedTransform(target_frame_id, source_frame_id, transform);
     }
-    else if (INVERSE)
+    else if (ct == INVERSE)
     {
         yarp::sig::Matrix m(4, 4);
         getChainedTransform(source_frame_id, target_frame_id, m);
         transform = yarp::math::SE3inv(m);
         return true;
     }
-    else if(UNDIRECT)
+    else if(ct == UNDIRECT)
     {
-        yarp::sig::Matrix root2tar(4, 4), src2root(4, 4);
-        getChainedTransform(ancestor, source_frame_id, src2root);
+        yarp::sig::Matrix root2tar(4, 4), root2src(4, 4);
+        getChainedTransform(source_frame_id, ancestor, root2src);
         getChainedTransform(target_frame_id, ancestor, root2tar);
-        transform = yarp::math::SE3inv(src2root) * root2tar;
+        transform = yarp::math::SE3inv(root2src) * root2tar;
         return true;
     }
 
