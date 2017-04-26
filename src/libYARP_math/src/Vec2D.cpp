@@ -198,15 +198,6 @@ yarp::math::Vec2D<T>& yarp::math::Vec2D<T>::operator =(const yarp::math::Vec2D<T
     return *this;
 }
 
-template yarp::math::Vec2D<double> YARP_math_API operator + (yarp::math::Vec2D<double> lhs, const yarp::math::Vec2D<double>& rhs);
-template yarp::math::Vec2D<int>    YARP_math_API operator + (yarp::math::Vec2D<int> lhs, const yarp::math::Vec2D<int>& rhs);
-template yarp::math::Vec2D<double> YARP_math_API operator - (yarp::math::Vec2D<double> lhs, const yarp::math::Vec2D<double>& rhs);
-template yarp::math::Vec2D<int>    YARP_math_API operator - (yarp::math::Vec2D<int> lhs, const yarp::math::Vec2D<int>& rhs);
-template yarp::math::Vec2D<double> YARP_math_API operator * (const yarp::sig::Matrix& lhs, yarp::math::Vec2D<double> rhs);
-template yarp::math::Vec2D<int>    YARP_math_API operator * (const yarp::sig::Matrix& lhs, yarp::math::Vec2D<int> rhs);
-template class YARP_math_API yarp::math::Vec2D<double>;
-template class YARP_math_API yarp::math::Vec2D<int>;
-
 template <typename T>
 bool yarp::math::Vec2D<T>::operator ==(const yarp::math::Vec2D<T>& rhs)
 {
@@ -222,4 +213,14 @@ bool yarp::math::Vec2D<T>::operator !=(const yarp::math::Vec2D<T>& rhs)
         this->y == rhs.y) return false;
     return true;
 }
+
+template yarp::math::Vec2D<double> YARP_math_API operator + (yarp::math::Vec2D<double> lhs, const yarp::math::Vec2D<double>& rhs);
+template yarp::math::Vec2D<int>    YARP_math_API operator + (yarp::math::Vec2D<int> lhs, const yarp::math::Vec2D<int>& rhs);
+template yarp::math::Vec2D<double> YARP_math_API operator - (yarp::math::Vec2D<double> lhs, const yarp::math::Vec2D<double>& rhs);
+template yarp::math::Vec2D<int>    YARP_math_API operator - (yarp::math::Vec2D<int> lhs, const yarp::math::Vec2D<int>& rhs);
+template yarp::math::Vec2D<double> YARP_math_API operator * (const yarp::sig::Matrix& lhs, yarp::math::Vec2D<double> rhs);
+template yarp::math::Vec2D<int>    YARP_math_API operator * (const yarp::sig::Matrix& lhs, yarp::math::Vec2D<int> rhs);
+
+template class YARP_math_API yarp::math::Vec2D<double>;
+template class YARP_math_API yarp::math::Vec2D<int>;
 
