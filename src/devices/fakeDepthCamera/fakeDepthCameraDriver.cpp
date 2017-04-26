@@ -20,7 +20,7 @@ fakeDepthCameraDriver::~fakeDepthCameraDriver()
 bool fakeDepthCameraDriver::open(Searchable& config)
 {
     Property cfg;
-    cfg.put("device", "test-grabber");
+    cfg.put("device", "test_grabber");
     testgrabber.open(cfg);
     testgrabber.view(image);
 
@@ -189,9 +189,9 @@ bool fakeDepthCameraDriver::getExtrinsicParam(Matrix& extrinsic)
 bool fakeDepthCameraDriver::getRgbImage(FlexImage& rgbImage, Stamp* timeStamp)
 {
     ImageOf<yarp::sig::PixelRgb> imageof;
-    image->getImage(imageof);
-    rgbImage.resize(imageof);
+    if(!image->getImage(imageof)) return false;
     rgbImage.setPixelCode(VOCAB_PIXEL_RGB);
+    rgbImage.resize(imageof);
     memcpy((void*)rgbImage.getRawImage(), (void*)imageof.getRawImage(), imageof.getRawImageSize());
     timeStamp->update(yarp::os::Time::now());
     return true;
@@ -200,7 +200,7 @@ bool fakeDepthCameraDriver::getRgbImage(FlexImage& rgbImage, Stamp* timeStamp)
 bool fakeDepthCameraDriver::getDepthImage(ImageOf<PixelFloat>& depthImage, Stamp* timeStamp)
 {
     ImageOf<yarp::sig::PixelRgb> imageof;
-    image->getImage(imageof);
+    if(!image->getImage(imageof)) return false;
     depthImage.resize(imageof);
     for (size_t i = 0; i < imageof.width(); i++)
     {
