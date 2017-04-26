@@ -656,15 +656,16 @@ bool yarp::dev::FrameTransformClient::transformQuaternion(const std::string &tar
 
 bool yarp::dev::FrameTransformClient::waitForTransform(const std::string &target_frame_id, const std::string &source_frame_id, const double &timeout)
 {
-    //loop fintanto che ccantTRransform e' true o ppure scade timeout
+    //loop until canTransform == true or timeout expires
     double start = yarp::os::Time::now();
     while (canTransform(target_frame_id, source_frame_id))
     {
         if (yarp::os::Time::now() - start > timeout)
         {
-            yError() << "timeout reached";
+            yError() << "FrameTransformClient::waitForTransform() timeout expired";
             return false;
         }
+        yarp::os::Time::delay(0.001);
     }
     return true;
 }
