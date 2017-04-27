@@ -1,4 +1,4 @@
-/*#include <yarp/dev/IJoypadController.h>
+#include <yarp/dev/IJoypadController.h>
 #include <yarp/dev/IFrameTransform.h>
 #include <yarp/os/RFModule.h>
 #include <yarp/dev/PolyDriver.h>
@@ -50,16 +50,20 @@ public:
         param.parse(rf, "rightRootFrame", ParamParser::TYPE_STRING);
         param.parse(rf, "leftFrame",      ParamParser::TYPE_STRING);
         param.parse(rf, "rightFrame",     ParamParser::TYPE_STRING);
-        param.parse(rf, "rightFrame",     ParamParser::TYPE_LIST);
+        //param.parse(rf, "rightFrame",     ParamParser::TYPE_LIST);
 
-        maxVelocity = rf.find("velocity").asDouble();
-
-        b        = *rf.find("left_home_position").asList();
-        velocity = maxVelocity * rate;
+        maxVelocity             = rf.find("velocity").asDouble();
+        b                       = *rf.find("left_home_position").asList();
+        velocity                = maxVelocity * rate;
+        leftFrame.dst_frame_id  = rf.find("leftFrame").asString();
+        leftFrame.src_frame_id  = rf.find("leftRootFrame").asString();
+        rightFrame.dst_frame_id = rf.find("rightFrame").asString();
+        rightFrame.src_frame_id = rf.find("rightRootFrame").asString();
         
         cfg.put("device", "JoypadControlClient");
         cfg.put("local", "/framecontroller");
         cfg.put("remote", rf.find("remote").asString());
+
         if (!joypadPD.open(cfg))
         {
             return false;
@@ -103,7 +107,8 @@ public:
 
         leftFrame.translation.set( leftFrame.translation.tX + axisVector[0]  * velocity, leftFrame.translation.tY + axisVector[1] * velocity, leftFrame.translation.tZ + axisVector[2]   * velocity);
         rightFrame.translation.set(rightFrame.translation.tX + axisVector[3] * velocity, rightFrame.translation.tY + axisVector[4] * velocity, rightFrame.translation.tZ + axisVector[5] * velocity);
-        //tfPublisher->setTransform("isaac_left_arm_effector", "isaac_root", );
+        tfPublisher->setTransform(leftFrame.dst_frame_id, leftFrame.src_frame_id, leftFrame.toMatrix());
+        tfPublisher->setTransform(rightFrame.dst_frame_id, rightFrame.src_frame_id, rightFrame.toMatrix());
         return true;
     }
 };
@@ -115,5 +120,5 @@ int main(int argc, char *argv[])
 
     FrameController fc;
     return fc.runModule(rf);
-}*/
+}
 
