@@ -260,7 +260,7 @@ private:
 #ifndef DOXYGEN_SHOULD_SKIP_THIS
     //method
     inline bool initializeOpeNIDevice();
-    inline bool setParams(const os::Bottle& settings, const os::Bottle& description);
+    inline bool setParams();
     inline bool parseIntrinsic(const yarp::os::Searchable& config, const std::string& groupName, impl::IntrinsicParams &params);
     bool        getImage(FlexImage& Frame, Stamp* Stamp, impl::streamFrameListener *sourceFrame);
     bool        getImage(depthImage& Frame, Stamp* Stamp, impl::streamFrameListener *sourceFrame);

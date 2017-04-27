@@ -393,8 +393,6 @@ bool RGBDSensorWrapper::close()
     if(isSubdeviceOwned)
     {
         if(subDeviceOwned)
-            subDeviceOwned->close();
-        if(subDeviceOwned)
         {
             delete subDeviceOwned;
             subDeviceOwned=NULL;
