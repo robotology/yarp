@@ -31,7 +31,7 @@ bool NetworkProfiler::yarpNameList(ports_name_set &ports) {
     Bottle msg, reply;
     msg.addString("bot");
     msg.addString("list");
-    if(!NetworkBase::write(Contact::byName(nameserver), msg, reply, style)) {
+    if(!NetworkBase::write(Contact(nameserver), msg, reply, style)) {
         yError() << "Cannot write to yarp name server";
         return false;
     }
@@ -46,7 +46,7 @@ bool NetworkProfiler::yarpNameList(ports_name_set &ports) {
         if(entry != NULL) {
             ConstString portname = entry->check("name", Value("")).asString();
             if (portname != "" && portname != "fallback" && portname != nameserver) {
-                Contact c = Contact::byConfig(*entry);
+                Contact c = Contact::fromConfig(*entry);
                 if(c.getCarrier() != "mcast")
                     ports.push_back(*entry);
             }
@@ -221,7 +221,7 @@ bool NetworkProfiler::yarpClean(float timeout) {
     NetworkProfiler::yarpNameList(ports);
     for(int i=0; i<ports.size(); i++) {
         std::string portname = ports[i].find("name").asString();
-        Contact addr = Contact::byConfig(ports[i]);
+        Contact addr = Contact::fromConfig(ports[i]);
         if (addr.isValid()) {
             if (timeout>=0)
                 addr.setTimeout(timeout);

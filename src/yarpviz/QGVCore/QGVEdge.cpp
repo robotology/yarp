@@ -98,12 +98,12 @@ void QGVEdge::paint(QPainter * painter, const QStyleOptionGraphicsItem * option,
 
 void QGVEdge::setAttribute(const QString &name, const QString &value)
 {
-		agsafeset(_edge->edge(), name.toLocal8Bit().data(), value.toLocal8Bit().data(), "");
+    agsafeset(_edge->edge(), name.toLocal8Bit().data(), value.toLocal8Bit().data(), (char*) "");
 }
 
 QString QGVEdge::getAttribute(const QString &name) const
 {
-		char* value = agget(_edge->edge(), name.toLocal8Bit().data());
+    char* value = agget(_edge->edge(), name.toLocal8Bit().data());
     if(value)
         return value;
     return QString();
@@ -113,9 +113,9 @@ void QGVEdge::updateLayout()
 {
     prepareGeometryChange();
 
-		qreal gheight = QGVCore::graphHeight(_scene->_graph->graph());
+    qreal gheight = QGVCore::graphHeight(_scene->_graph->graph());
 
-		const splines* spl = ED_spl(_edge->edge());
+    const splines* spl = ED_spl(_edge->edge());
     _path = QGVCore::toPath(spl, gheight);
 
 
@@ -138,7 +138,7 @@ void QGVEdge::updateLayout()
     _pen.setStyle(QGVCore::toPenStyle(getAttribute("style")));
 
     //Edge label
-		textlabel_t *xlabel = ED_xlabel(_edge->edge());
+    textlabel_t *xlabel = ED_xlabel(_edge->edge());
     if(xlabel)
     {
         _label = xlabel->text;
