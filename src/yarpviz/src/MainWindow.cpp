@@ -510,9 +510,14 @@ void MainWindow::onProfileYarpNetwork() {
     }
 
     mainGraph.clear();
-
-    messages.append("Cleaning death ports...");
-    NetworkProfiler::yarpClean(0.1);
+    QMessageBox::StandardButton shouldClean;
+    shouldClean = QMessageBox::question(this, "Profiling", "Do you want to run yarp clean before profiling?",
+                                  QMessageBox::Yes|QMessageBox::No);
+    if (shouldClean == QMessageBox::Yes)
+    {
+        messages.append("Cleaning death ports...");
+        NetworkProfiler::yarpClean(0.1);
+    }
 
     messages.append("Getting the ports list...");
     NetworkProfiler::ports_name_set ports;
