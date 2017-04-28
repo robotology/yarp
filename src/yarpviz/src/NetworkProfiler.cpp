@@ -62,6 +62,7 @@ bool NetworkProfiler::getPortDetails(const string& portName, PortDetails& info) 
     Port ping;
     ping.open("/yarpviz");
     ping.setAdminMode(true);
+    ping.setTimeout(1.0);
     if(!NetworkBase::connect(ping.getName(), portName)) {
         yWarning()<<"Cannot connect to"<<portName;
         ping.close();
