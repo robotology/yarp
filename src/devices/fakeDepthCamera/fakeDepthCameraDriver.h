@@ -1,5 +1,5 @@
 /*
-* Copyright (C) 2015 iCub Facility - Istituto Italiano di Tecnologia
+* Copyright (C) 2017 iCub Facility - Istituto Italiano di Tecnologia
 * Author: Andrea Ruzzenenti <andrea.ruzzenenti@iit.it>
 * CopyPolicy: Released under the terms of the GPLv2 or later, see GPL.TXT
 */
@@ -91,17 +91,17 @@ public:
     virtual yarp::os::ConstString getLastErrorMsg(Stamp* timeStamp = NULL);
 
 private:
-    double rgb_h;
-    double rgb_w;
-    double dep_h;
-    double dep_w;
-    double accuracy;
-    double rgb_Vfov;
-    double rgb_Hfov;
-    double dep_Vfov;
-    double dep_Hfov;
-    double dep_near;
-    double dep_far;
+    double rgb_h{480};
+    double rgb_w{640};
+    double dep_h{480};
+    double dep_w{640};
+    double accuracy{0.001};
+    double rgb_Vfov{36};
+    double rgb_Hfov{50};
+    double dep_Vfov{36};
+    double dep_Hfov{50};
+    double dep_near{0.4};
+    double dep_far{6};
 
     yarp::dev::PolyDriver testgrabber;
     IFrameGrabberImage*   image;

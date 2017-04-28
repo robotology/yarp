@@ -8,25 +8,9 @@
 */
 
 
-#define RETURN_FALSE_STATUS_NOT_OK(s) if(s != STATUS_OK){yError() << OpenNI::getExtendedError(); return false;}
+#define RETURN_FALSE_STATUS_NOT_OK(s) if (s != STATUS_OK){yError() << OpenNI::getExtendedError(); return false;}
 
-struct yarp::dev::impl::plum_bob
-{
-    double k1;
-    double k2;
-    double t1;
-    double t2;
-    double k3;
-};
 
-struct yarp::dev::impl::IntrinsicParams
-{
-    double   principalPointX;
-    double   principalPointY;
-    double   focalLengthX;
-    double   focalLengthY;
-    plum_bob distortionModel;
-};
 
 struct yarp::dev::impl::RGBDParam
 {
@@ -58,4 +42,3 @@ struct yarp::dev::impl::CameraParameters
     IntrinsicParams         rgbIntrinsic;
     yarp::sig::Matrix       transformationMatrix;
 };
-

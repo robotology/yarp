@@ -1,4 +1,10 @@
-#include <cmath>
+/*
+* Copyright (C) 2017 iCub Facility - Istituto Italiano di Tecnologia
+* Author: Andrea Ruzzenenti <andrea.ruzzenenti@iit.it>
+* CopyPolicy: Released under the terms of the GPLv2 or later, see GPL.TXT
+*/
+
+#include <math.h>
 #include <algorithm>
 #include <yarp/os/Value.h>
 #include <map>
@@ -11,6 +17,17 @@ using namespace std;
 
 fakeDepthCameraDriver::fakeDepthCameraDriver()
 {
+    rgb_h{480};
+    rgb_w{640};
+    dep_h{480};
+    dep_w{640};
+    accuracy{0.001};
+    rgb_Vfov{36};
+    rgb_Hfov{50};
+    dep_Vfov{36};
+    dep_Hfov{50};
+    dep_near{0.4};
+    dep_far{6};
 }
 
 fakeDepthCameraDriver::~fakeDepthCameraDriver()
@@ -35,7 +52,7 @@ bool fakeDepthCameraDriver::open(Searchable& config)
     param.push_back(make_tuple(&dep_Vfov, "dep_Vfov", 50.0));
     param.push_back(make_tuple(&dep_Hfov, "dep_Hfov", 36.0));
     param.push_back(make_tuple(&dep_near, "dep_near", 0.2));
-    param.push_back(make_tuple(&dep_far , "dep_far",  6.0));
+    param.push_back(make_tuple(&dep_far,  "dep_far",  6.0));
     for (auto p : param)
     {
         if (config.check(get<1>(p)))
@@ -189,7 +206,7 @@ bool fakeDepthCameraDriver::getExtrinsicParam(Matrix& extrinsic)
 bool fakeDepthCameraDriver::getRgbImage(FlexImage& rgbImage, Stamp* timeStamp)
 {
     ImageOf<yarp::sig::PixelRgb> imageof;
-    if(!image->getImage(imageof)) return false;
+    if (!image->getImage(imageof)) {return false;}
     rgbImage.setPixelCode(VOCAB_PIXEL_RGB);
     rgbImage.resize(imageof);
     memcpy((void*)rgbImage.getRawImage(), (void*)imageof.getRawImage(), imageof.getRawImageSize());
@@ -200,7 +217,7 @@ bool fakeDepthCameraDriver::getRgbImage(FlexImage& rgbImage, Stamp* timeStamp)
 bool fakeDepthCameraDriver::getDepthImage(ImageOf<PixelFloat>& depthImage, Stamp* timeStamp)
 {
     ImageOf<yarp::sig::PixelRgb> imageof;
-    if(!image->getImage(imageof)) return false;
+    if (!image->getImage(imageof)) {return false;}
     depthImage.resize(imageof);
     for (size_t i = 0; i < imageof.width(); i++)
     {
