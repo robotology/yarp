@@ -50,13 +50,14 @@ public:
     {
         if (rf.check("help"))
         {
-            yInfo() << "parameters:\n"                                                         <<
-                       "velocity           - velocity in m/s \n"                               <<
-                       "rootFrame          - the source frame id for left and right frames \n" <<
-                       "leftFrameInitial   - frame id of the actual left hand frame \n"        <<
-                       "rightFrameInitial  - frame id of the actual right hand frame \n"       <<
-                       "leftFrame          - target frame id for left hand \n"                 <<
-                       "rightFrame         - target frame id for right hand \n"                ;
+            yInfo() << "parameters:\n"                                                                  <<
+                       "velocity           - double - velocity in m/s \n"                               <<
+                       "rootFrame          - string - the source frame id for left and right frames \n" <<
+                       "leftFrameInitial   - string - frame id of the actual left hand frame \n"        <<
+                       "rightFrameInitial  - string - frame id of the actual right hand frame \n"       <<
+                       "leftFrame          - string - target frame id for left hand \n"                 <<
+                       "rightFrame         - string - target frame id for right hand \n"                <<
+                       "invertPOV          - bool   - command from a frontal POV \n";
             return false;
         }
         unsigned int count;
@@ -165,7 +166,7 @@ public:
             joypad->getAxis(i, axisVector[i]);
             deadband(axisVector[i], 0.05);
             
-            if (buttonVector[i + 3] > 0.5)
+            if (buttonVector[4 - i] > 0.1)
             {
                 axisVector[i] = -axisVector[i];
             }
