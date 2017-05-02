@@ -77,6 +77,7 @@ typedef struct
     bool singleThreaded;
     bool twoCameras;
     bool split;
+    bool splitterMode;
     bool hasAudio;
     Capabilities cap;
 
@@ -269,6 +270,7 @@ public:
 
     void run();
 protected:
+
     bool fromConfig(yarp::os::Searchable &config);
 
     bool initialize_YARP(yarp::os::Searchable &params);
