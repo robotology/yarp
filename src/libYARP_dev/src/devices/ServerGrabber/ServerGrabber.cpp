@@ -844,6 +844,52 @@ void ServerGrabber::stopThread()
     fgCtrl2_DC1394 = YARP_NULLPTR;
 }
 
+void ServerGrabber::split(const yarp::sig::Image& inputImage, yarp::sig::Image& _img, yarp::sig::Image& _img2)
+{
+
+    int dualImage_rowSizeByte = inputImage.getRowSize();
+    int inHeight = inputImage.height();
+    int singleImage_rowSizeByte = _img.getRowSize();
+    unsigned char *pixelLeft    = _img.getRawImage();
+    unsigned char *pixelRight   = _img2.getRawImage();
+    unsigned char *pixelInput   = inputImage.getRawImage();
+
+    for(int h=0; h<inHeight; h++)
+    {
+        memcpy(pixelLeft  + h*singleImage_rowSizeByte, pixelInput,                          singleImage_rowSizeByte);
+        memcpy(pixelRight + h*singleImage_rowSizeByte, pixelInput+=singleImage_rowSizeByte, singleImage_rowSizeByte);
+        pixelInput+= dualImage_rowSizeByte/2;
+    }
+}
+
+void ServerGrabber::setupFlexImage(const Image &_img, FlexImage &flex_i)
+{
+    flex_i.setPixelCode(_img.getPixelCode());
+    flex_i.setPixelSize(_img.getPixelSize());
+    flex_i.setQuantum(_img.getQuantum());
+    flex_i.setExternal(_img.getRawImage(), _img.width(),_img.height());
+
+}
+
+void ServerGrabber::stitch(FlexImage &flex_i, const Image &_img, const Image &_img2){
+
+    int singleImage_rowSizeByte  = _img.getRowSize();
+    unsigned char * pixelLeft    = _img.getRawImage();
+    unsigned char * pixelRight   = _img2.getRawImage();
+    unsigned char * pixelOutLeft = flex_i.getRawImage();
+    unsigned char * pixelOutRight=flex_i.getRawImage()+ singleImage_rowSizeByte;
+    for(int h=0; h<_img.height(); h++)
+    {
+        memcpy(pixelOutLeft, pixelLeft,singleImage_rowSizeByte);
+        memcpy(pixelOutRight, pixelRight, singleImage_rowSizeByte);
+        pixelOutLeft+=2*singleImage_rowSizeByte;
+        pixelOutRight+=2*singleImage_rowSizeByte;
+        pixelLeft+= singleImage_rowSizeByte;
+        pixelRight+= singleImage_rowSizeByte;
+    }
+
+}
+
 bool ServerGrabber::attach(PolyDriver *poly)
 {
     if(param.twoCameras)
@@ -1047,15 +1093,9 @@ void ServerGrabber::run()
                 if(fgImage!=YARP_NULLPTR && fgImage2 !=YARP_NULLPTR)
                 {
                     fgImage->getImage(*img);
-                    flex_i.setPixelCode(img->getPixelCode());
-                    flex_i.setPixelSize(img->getPixelSize());
-                    flex_i.setQuantum(img->getQuantum());
-                    flex_i.setExternal(img->getRawImage(), img->width(),img->height());
+                    setupFlexImage(*img,flex_i);
                     fgImage2->getImage(*img2);
-                    flex_i2.setPixelCode(img2->getPixelCode());
-                    flex_i2.setPixelSize(img2->getPixelSize());
-                    flex_i2.setQuantum(img2->getQuantum());
-                    flex_i2.setExternal(img2->getRawImage(), img2->width(), img2->height());
+                    setupFlexImage(*img2,flex_i2);
                 }
                 else
                     yError()<<"ServerGrabber: Image not captured.. check hardware configuration";
@@ -1066,15 +1106,9 @@ void ServerGrabber::run()
                 if(fgImageRaw!=YARP_NULLPTR && fgImageRaw2 !=YARP_NULLPTR)
                 {
                     fgImageRaw->getImage(*img_Raw);
-                    flex_i.setPixelCode(img_Raw->getPixelCode());
-                    flex_i.setPixelSize(img_Raw->getPixelSize());
-                    flex_i.setQuantum(img_Raw->getQuantum());
-                    flex_i.setExternal(img_Raw->getRawImage(), img_Raw->width(),img_Raw->height());
+                    setupFlexImage(*img_Raw,flex_i);
                     fgImageRaw2->getImage(*img2_Raw);
-                    flex_i2.setPixelCode(img2_Raw->getPixelCode());
-                    flex_i2.setPixelSize(img2_Raw->getPixelSize());
-                    flex_i2.setQuantum(img2_Raw->getQuantum());
-                    flex_i2.setExternal(img2_Raw->getRawImage(), img2_Raw->width(), img2_Raw->height());
+                    setupFlexImage(*img2_Raw,flex_i2);
                 }
                 else
                     yError()<<"ServerGrabber: Image not captured.. check hardware configuration";
@@ -1103,20 +1137,7 @@ void ServerGrabber::run()
                     flex_i.resize(fgImage->width()*2,fgImage->height());
                     fgImage->getImage(*img);
                     fgImage2->getImage(*img2);
-                    int singleImage_rowSizeByte= img->getRowSize();
-                    unsigned char * pixelLeft=img->getRawImage();
-                    unsigned char * pixelRight=img2->getRawImage();
-                    unsigned char * pixelOutLeft=flex_i.getRawImage();
-                    unsigned char * pixelOutRight=flex_i.getRawImage()+ singleImage_rowSizeByte;
-                    for(int h=0; h<img->height(); h++)
-                    {
-                        memcpy(pixelOutLeft, pixelLeft,singleImage_rowSizeByte);
-                        memcpy(pixelOutRight, pixelRight, singleImage_rowSizeByte);
-                        pixelOutLeft+=2*singleImage_rowSizeByte;
-                        pixelOutRight+=2*singleImage_rowSizeByte;
-                        pixelLeft+= singleImage_rowSizeByte;
-                        pixelRight+= singleImage_rowSizeByte;
-                    }
+                    stitch(flex_i, *img, *img2);
                 }
                 else
                     yError()<<"ServerGrabber: Image not captured.. check hardware configuration";
@@ -1130,20 +1151,7 @@ void ServerGrabber::run()
                     flex_i.resize(fgImageRaw->width()*2,fgImageRaw->height());
                     fgImageRaw->getImage(*img_Raw);
                     fgImageRaw2->getImage(*img2_Raw);
-                    int singleImage_rowSizeByte= img_Raw->getRowSize();
-                    unsigned char * pixelLeft=img_Raw->getRawImage();
-                    unsigned char * pixelRight=img2_Raw->getRawImage();
-                    unsigned char * pixelOutLeft=flex_i.getRawImage();
-                    unsigned char * pixelOutRight=flex_i.getRawImage()+ singleImage_rowSizeByte;
-                    for(int h=0; h<img_Raw->height(); h++)
-                    {
-                        memcpy(pixelOutLeft, pixelLeft,singleImage_rowSizeByte);
-                        memcpy(pixelOutRight, pixelRight, singleImage_rowSizeByte);
-                        pixelOutLeft+=2*singleImage_rowSizeByte;
-                        pixelOutRight+=2*singleImage_rowSizeByte;
-                        pixelLeft+= singleImage_rowSizeByte;
-                        pixelRight+= singleImage_rowSizeByte;
-                    }
+                    stitch(flex_i, *img_Raw, *img2_Raw);
                 }
                 else
                     yError()<<"ServerGrabber: Image not captured.. check hardware configuration";
@@ -1170,28 +1178,11 @@ void ServerGrabber::run()
                 {
                     yarp::sig::ImageOf<yarp::sig::PixelRgb> inputImage;
                     fgImage->getImage(inputImage);
-                    int dualImage_rowSizeByte = inputImage.getRowSize();
-                    int inHeight = inputImage.height();
-                    int singleImage_rowSizeByte = img->getRowSize();
-                    unsigned char *pixelLeft    = img->getRawImage();
-                    unsigned char *pixelRight   = img2->getRawImage();
-                    unsigned char *pixelInput   = inputImage.getRawImage();
 
-                    for(int h=0; h<inHeight; h++)
-                    {
-                        memcpy(pixelLeft  + h*singleImage_rowSizeByte, pixelInput,                          singleImage_rowSizeByte);
-                        memcpy(pixelRight + h*singleImage_rowSizeByte, pixelInput+=singleImage_rowSizeByte, singleImage_rowSizeByte);
-                        pixelInput+= dualImage_rowSizeByte/2;
-                    }
+                    split(inputImage,*img,*img2);
 
-                    flex_i.setPixelCode(img->getPixelCode());
-                    flex_i.setPixelSize(img->getPixelSize());
-                    flex_i.setQuantum(img->getQuantum());
-                    flex_i.setExternal(img->getRawImage(), img2->width(),img2->height());
-                    flex_i2.setPixelCode(img2->getPixelCode());
-                    flex_i2.setPixelSize(img2->getPixelSize());
-                    flex_i2.setQuantum(img2->getQuantum());
-                    flex_i2.setExternal(img2->getRawImage(), img2->width(),img->height());
+                    setupFlexImage(*img,flex_i);
+                    setupFlexImage(*img2,flex_i2);
                 }
                 else
                     yError()<<"ServerGrabber: Image not captured.. check hardware configuration";
@@ -1202,28 +1193,12 @@ void ServerGrabber::run()
                 {
                     yarp::sig::ImageOf<yarp::sig::PixelMono> inputImage;
                     fgImageRaw->getImage(inputImage);
-                    int dualImage_rowSizeByte = inputImage.getRowSize();
-                    int inHeight = inputImage.height();
-                    int singleImage_rowSizeByte = img_Raw->getRowSize();
-                    unsigned char *pixelLeft    = img_Raw->getRawImage();
-                    unsigned char *pixelRight   = img2_Raw->getRawImage();
-                    unsigned char *pixelInput   = inputImage.getRawImage();
 
-                    for(int h=0; h<inHeight; h++)
-                    {
-                        memcpy(pixelLeft  + h*singleImage_rowSizeByte, pixelInput,                          singleImage_rowSizeByte);
-                        memcpy(pixelRight + h*singleImage_rowSizeByte, pixelInput+=singleImage_rowSizeByte, singleImage_rowSizeByte);
-                        pixelInput+= dualImage_rowSizeByte/2;
-                    }
+                    split(inputImage,*img_Raw,*img2_Raw);
 
-                    flex_i.setPixelCode(img_Raw->getPixelCode());
-                    flex_i.setPixelSize(img_Raw->getPixelSize());
-                    flex_i.setQuantum(img_Raw->getQuantum());
-                    flex_i.setExternal(img_Raw->getRawImage(), img2_Raw->width(),img2_Raw->height());
-                    flex_i2.setPixelCode(img2_Raw->getPixelCode());
-                    flex_i2.setPixelSize(img2_Raw->getPixelSize());
-                    flex_i2.setQuantum(img2_Raw->getQuantum());
-                    flex_i2.setExternal(img2_Raw->getRawImage(), img2_Raw->width(),img2_Raw->height());
+                    setupFlexImage(*img_Raw,flex_i);
+                    setupFlexImage(*img2_Raw,flex_i2);
+
                 }
                 else
                     yError()<<"ServerGrabber: Image not captured.. check hardware configuration";
@@ -1248,10 +1223,7 @@ void ServerGrabber::run()
                 if(fgImage!=YARP_NULLPTR)
                 {
                     fgImage->getImage(*img);
-                    flex_i.setPixelCode(img->getPixelCode());
-                    flex_i.setPixelSize(img->getPixelSize());
-                    flex_i.setQuantum(img->getQuantum());
-                    flex_i.setExternal(img->getRawImage(), img->width(),img->height());
+                    setupFlexImage(*img,flex_i);
                 }
                 else
                     yError()<<"ServerGrabber: Image not captured.. check hardware configuration";
@@ -1261,10 +1233,7 @@ void ServerGrabber::run()
                 if(fgImageRaw!=YARP_NULLPTR)
                 {
                     fgImageRaw->getImage(*img_Raw);
-                    flex_i.setPixelCode(img_Raw->getPixelCode());
-                    flex_i.setPixelSize(img_Raw->getPixelSize());
-                    flex_i.setQuantum(img_Raw->getQuantum());
-                    flex_i.setExternal(img_Raw->getRawImage(), img_Raw->width(),img_Raw->height());
+                    setupFlexImage(*img_Raw,flex_i);
                 }
                 else
                     yError()<<"ServerGrabber: Image not captured.. check hardware configuration";
