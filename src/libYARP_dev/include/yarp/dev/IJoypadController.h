@@ -94,7 +94,7 @@ public:
      Get the value of a button. from 0-unpressed to 1-fullpressed and values in the middle in the analog-face-button case
     * @brief getButton
     * @param button_id Id of the button to get. Must be > -1 && < getButtonCount(), return false otherwise
-    * @param value reference to be valued. true if pressed, false otherwise
+    * @param value reference to be valued.
     * @return true if succeded, false otherwise
     */
     virtual bool getButton(unsigned int button_id, float& value) = 0;
@@ -103,7 +103,7 @@ public:
      Get the axes change of a Trackball.
     * @brief getTrackball
     * @param trackball_id Id of the Trackball to get. Must be > -1 && < getTrackballCount(), return false otherwise
-    * @param value reference to be valued. true if pressed, false otherwise
+    * @param value reference to be valued
     * @return true if succeded, false otherwise
     */
     virtual bool getTrackball(unsigned int trackball_id, yarp::sig::Vector& value) = 0;
