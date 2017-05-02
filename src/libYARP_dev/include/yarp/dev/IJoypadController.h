@@ -66,7 +66,8 @@ public:
     virtual bool getHatCount(unsigned int& Hat_count) = 0;
 
     /**
-      get the number of touch surface
+      get the number of touch surface. multiple touch surface can rappresent either multiple physical monotouch surface or a multitouch surface
+      or a combination of the two
      * @brief hasTouchSurface
      * @param touch_count unsigned int reference that will contain the result
      * @return true if succeded. false otherwise
@@ -94,7 +95,7 @@ public:
      Get the value of a button. from 0-unpressed to 1-fullpressed and values in the middle in the analog-face-button case
     * @brief getButton
     * @param button_id Id of the button to get. Must be > -1 && < getButtonCount(), return false otherwise
-    * @param value reference to be valued.
+    * @param value reference to be valued. The value will be from 0.0 (not even touched) to 1.0 (fully pressed)
     * @return true if succeded, false otherwise
     */
     virtual bool getButton(unsigned int button_id, float& value) = 0;
@@ -103,7 +104,7 @@ public:
      Get the axes change of a Trackball.
     * @brief getTrackball
     * @param trackball_id Id of the Trackball to get. Must be > -1 && < getTrackballCount(), return false otherwise
-    * @param value reference to be valued
+    * @param value reference to be valued. the value will be from 0.0 (not moving) to 1.0 (full velocity)
     * @return true if succeded, false otherwise
     */
     virtual bool getTrackball(unsigned int trackball_id, yarp::sig::Vector& value) = 0;
@@ -121,7 +122,9 @@ public:
      Get the value of an axis if present, return false otherwise
     * @brief getAxis
     * @param axis_id Id of the axis to get. must be > -1 && < getAxisCount(), return false otherwise
-    * @param value reference to be valued
+    * @param value reference to be valued. the absolute boundaries for the values should be -1.0 and 1.0 However
+    * the actual range depends on the physical device (example: analog trigger does not have a central position thus can
+    * give a value from 0.0 to 0.1)
     * @return true if succeded, false otherwise
     */
     virtual bool getAxis(unsigned int axis_id, double& value) = 0;
@@ -131,6 +134,7 @@ public:
     * @brief getStick
     * @param stick_id Id of the stick to get. must be > -1 && < getStickCount(), return false otherwise
     * @param value a vector that will contain the joystick position. the size of the vector will give you the Number of degrees of freedom
+    * and the value will be from -1.0 to 1.0
     * @param coordinate_mode to get data in cartesian mode or polar (spheric in 3 dof position cases) mode
     * @return true if succeded, false otherwise
     */
@@ -139,7 +143,7 @@ public:
     /**
      Get the value of a touch if present, return false otherwise
     * @brief getTouch
-    * @param value a vector that will contain the joystick position. the size of the vector will give you the Number of degrees of freedom
+    * @param value a vector that will contain the touch values normalized from 0.0 to 1.0.
     * @return true if succeded, false otherwise
     */
     virtual bool getTouch(unsigned int touch_id, yarp::sig::Vector& value) = 0;
