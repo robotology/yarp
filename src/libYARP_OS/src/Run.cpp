@@ -73,7 +73,7 @@ yarp::os::ConstString yarp::os::Run::mLoggerPort("/yarplogger");
 
 static RunTerminator *pTerminator = YARP_NULLPTR;
 
-void sigcstdioandler(int sig)
+void sigstdio_handler(int sig)
 {
     char msg[16];
     sprintf(msg,"SIGNAL %d",sig);
@@ -200,14 +200,14 @@ int yarp::os::Run::main(int argc, char *argv[])
         }
 
 #if defined(_WIN32)
-        yarp::os::impl::signal(SIGINT, sigcstdioandler);
-        yarp::os::impl::signal(SIGTERM, sigcstdioandler);
-        yarp::os::impl::signal(SIGBREAK,sigcstdioandler);
+        yarp::os::impl::signal(SIGINT, sigstdio_handler);
+        yarp::os::impl::signal(SIGTERM, sigstdio_handler);
+        yarp::os::impl::signal(SIGBREAK,sigstdio_handler);
 #elif defined(__APPLE__)
         //prctl(PR_SET_PDEATHSIG,SIGTERM);
 
         struct sigaction new_action;
-        new_action.sa_handler=sigcstdioandler;
+        new_action.sa_handler=sigstdio_handler;
         sigfillset(&new_action.sa_mask);
         new_action.sa_flags=0;
 
@@ -222,7 +222,7 @@ int yarp::os::Run::main(int argc, char *argv[])
         yarp::os::impl::prctl(PR_SET_PDEATHSIG,SIGTERM);
 
         struct sigaction new_action;
-        new_action.sa_handler=sigcstdioandler;
+        new_action.sa_handler=sigstdio_handler;
         yarp::os::impl::sigfillset(&new_action.sa_mask);
         new_action.sa_flags=0;
 
@@ -250,12 +250,12 @@ int yarp::os::Run::main(int argc, char *argv[])
         yarp::os::ConstString portName=config.findGroup("write").get(1).asString();
 
 #if defined(_WIN32)
-        yarp::os::impl::signal(SIGINT,  sigcstdioandler);
-        yarp::os::impl::signal(SIGTERM, sigcstdioandler);
-        yarp::os::impl::signal(SIGBREAK,sigcstdioandler);
+        yarp::os::impl::signal(SIGINT,  sigstdio_handler);
+        yarp::os::impl::signal(SIGTERM, sigstdio_handler);
+        yarp::os::impl::signal(SIGBREAK,sigstdio_handler);
 #else
         struct sigaction new_action;
-        new_action.sa_handler=sigcstdioandler;
+        new_action.sa_handler=sigstdio_handler;
         yarp::os::impl::sigfillset(&new_action.sa_mask);
         new_action.sa_flags=0;
         yarp::os::impl::sigaction(SIGTERM, &new_action, YARP_NULLPTR);
@@ -291,12 +291,12 @@ int yarp::os::Run::main(int argc, char *argv[])
         yarp::os::ConstString uuid=config.findGroup("read").get(1).asString();
 
         #if defined(_WIN32)
-        yarp::os::impl::signal(SIGINT,  sigcstdioandler);
-        yarp::os::impl::signal(SIGTERM, sigcstdioandler);
-        yarp::os::impl::signal(SIGBREAK,sigcstdioandler);
+        yarp::os::impl::signal(SIGINT,  sigstdio_handler);
+        yarp::os::impl::signal(SIGTERM, sigstdio_handler);
+        yarp::os::impl::signal(SIGBREAK,sigstdio_handler);
         #else
         //yarp::os::impl::signal(SIGINT, SIG_IGN);
-        yarp::os::impl::signal(SIGTERM,sigcstdioandler);
+        yarp::os::impl::signal(SIGTERM,sigstdio_handler);
         yarp::os::impl::signal(SIGHUP, SIG_IGN);
         #endif
 
