@@ -78,7 +78,8 @@ public:
 * Still single thread! concurrent access is unsafe.
 */
 class yarp::dev::FrameTransformClient: public DeviceDriver,
-                                  public IFrameTransform
+                                  public IFrameTransform,
+                                  public yarp::os::PortReader
 {
 #ifndef DOXYGEN_SHOULD_SKIP_THIS
 private:
@@ -91,7 +92,8 @@ private:
 
 protected:
 
-    yarp::os::Port                m_rpcPort;
+    yarp::os::Port                m_rpc_InterfaceToServer;
+    yarp::os::Port                m_rpc_InterfaceToUser;
     yarp::os::ConstString         m_local_name;
     yarp::os::ConstString         m_remote_name;
     Transforms_client_storage*    m_transform_storage;
@@ -104,7 +106,7 @@ public:
     /* DeviceDriver methods */
     bool open(yarp::os::Searchable& config);
     bool close();
-
+    virtual bool read(yarp::os::ConnectionReader& connection);
 
     /* IPreciselyTimed methods */
     /**
