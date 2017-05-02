@@ -248,6 +248,7 @@ ServerGrabber::ServerGrabber():RateThread(DEFAULT_THREAD_PERIOD), period(DEFAULT
     param.singleThreaded = false;
     param.hasAudio = false;
     param.twoCameras = false;
+    param.splitterMode = false;
     param.split = false;
 //    param.cap=AV;
     param.cap=COLOR;
@@ -404,7 +405,8 @@ bool ServerGrabber::fromConfig(yarp::os::Searchable &config)
         param.twoCameras=config.find("twoCameras").asBool();
     if(config.check("split", "set 'true' to split the streaming on two different ports"))
         param.split=config.find("split").asBool();
-    if(config.check("capabilities","two capabilities supported, COLOR and RAW respectively for rgb and raw streaming")){
+    if(config.check("capabilities","two capabilities supported, COLOR and RAW respectively for rgb and raw streaming"))
+    {
         if(config.find("capabilities").asString()=="COLOR")
             param.cap=COLOR;
         else if(config.find("capabilities").asString()=="RAW")
@@ -422,6 +424,8 @@ bool ServerGrabber::fromConfig(yarp::os::Searchable &config)
     yarp::os::ConstString rootName;
     rootName = config.check("name",Value("/grabber"),
                             "name of port to send data on").asString();
+    if(!param.twoCameras && param.split)
+        param.splitterMode = true;
 
     responder = new yarp::dev::impl::ServerGrabberResponder(true);
     if(!responder->configure(this))
@@ -454,7 +458,15 @@ bool ServerGrabber::fromConfig(yarp::os::Searchable &config)
     }
     else
     {
-        pImg_Name = rootName;
+        if(param.splitterMode)
+        {
+            pImg_Name = rootName + "/left";
+            pImg2_Name = rootName + "/right";
+        }
+        else
+        {
+            pImg_Name = rootName;
+        }
         rpcPort_Name  = rootName + "/rpc";
         if(config.check("subdevice"))
         {
@@ -501,7 +513,7 @@ bool ServerGrabber::initialize_YARP(yarp::os::Searchable &params)
         }
         rpcPort2.setReader(*responder2);
     }
-    if(param.twoCameras && param.split)
+    if((param.twoCameras && param.split) || param.splitterMode)
     {
         pImg2.promiseType(Type::byName("yarp/image"));
         pImg2.setWriteOnly();
@@ -510,7 +522,8 @@ bool ServerGrabber::initialize_YARP(yarp::os::Searchable &params)
             yError() << "ServerGrabber: unable to open image streaming Port" << pImg2_Name.c_str();
             bRet = false;
         }
-        pImg2.setReader(*responder2);
+        if(!param.splitterMode)
+            pImg2.setReader(*responder2);
     }
 
     return bRet;
@@ -984,12 +997,32 @@ bool ServerGrabber::threadInit()
         if(param.cap==COLOR)
         {
             img= new ImageOf<PixelRgb>;
-            img->resize(fgImage->width(),fgImage->height());
+            if(param.splitterMode)
+            {
+                img->resize(fgImage->width()/2,fgImage->height());
+
+                img2= new ImageOf<PixelRgb>;
+                img2->resize(fgImage->width()/2,fgImage->height());
+            }
+            else
+            {
+                img->resize(fgImage->width(),fgImage->height());
+            }
         }
         else
         {
             img_Raw= new ImageOf<PixelMono>;
-            img_Raw->resize(fgImageRaw->width(),fgImageRaw->height());
+            if(param.splitterMode)
+            {
+                img_Raw->resize(fgImageRaw->width()/2,fgImageRaw->height());
+
+                img2_Raw= new ImageOf<PixelMono>;
+                img2_Raw->resize(fgImageRaw->width()/2,fgImageRaw->height());
+            }
+            else
+            {
+                img_Raw->resize(fgImage->width(),fgImage->height());
+            }
         }
     }
     return true;
@@ -1126,38 +1159,122 @@ void ServerGrabber::run()
     }
     else
     {
-        FlexImage& flex_i=pImg.prepare();
-        if(param.cap==COLOR)
+        if(param.splitterMode)
         {
-            if(fgImage!=YARP_NULLPTR)
+            FlexImage& flex_i=pImg.prepare();
+            FlexImage& flex_i2=pImg2.prepare();
+
+            if(param.cap==COLOR)
             {
-                fgImage->getImage(*img);
-                flex_i.setPixelCode(img->getPixelCode());
-                flex_i.setPixelSize(img->getPixelSize());
-                flex_i.setQuantum(img->getQuantum());
-                flex_i.setExternal(img->getRawImage(), img->width(),img->height());
+                if(fgImage!=YARP_NULLPTR)
+                {
+                    yarp::sig::ImageOf<yarp::sig::PixelRgb> inputImage;
+                    fgImage->getImage(inputImage);
+                    int dualImage_rowSizeByte = inputImage.getRowSize();
+                    int inHeight = inputImage.height();
+                    int singleImage_rowSizeByte = img->getRowSize();
+                    unsigned char *pixelLeft    = img->getRawImage();
+                    unsigned char *pixelRight   = img2->getRawImage();
+                    unsigned char *pixelInput   = inputImage.getRawImage();
+
+                    for(int h=0; h<inHeight; h++)
+                    {
+                        memcpy(pixelLeft  + h*singleImage_rowSizeByte, pixelInput,                          singleImage_rowSizeByte);
+                        memcpy(pixelRight + h*singleImage_rowSizeByte, pixelInput+=singleImage_rowSizeByte, singleImage_rowSizeByte);
+                        pixelInput+= dualImage_rowSizeByte/2;
+                    }
+
+                    flex_i.setPixelCode(img->getPixelCode());
+                    flex_i.setPixelSize(img->getPixelSize());
+                    flex_i.setQuantum(img->getQuantum());
+                    flex_i.setExternal(img->getRawImage(), img2->width(),img2->height());
+                    flex_i2.setPixelCode(img2->getPixelCode());
+                    flex_i2.setPixelSize(img2->getPixelSize());
+                    flex_i2.setQuantum(img2->getQuantum());
+                    flex_i2.setExternal(img2->getRawImage(), img2->width(),img->height());
+                }
+                else
+                    yError()<<"ServerGrabber: Image not captured.. check hardware configuration";
             }
-            else
-                yError()<<"ServerGrabber: Image not captured.. check hardware configuration";
+            if(param.cap==RAW)
+            {
+                if(fgImageRaw!=YARP_NULLPTR)
+                {
+                    yarp::sig::ImageOf<yarp::sig::PixelMono> inputImage;
+                    fgImageRaw->getImage(inputImage);
+                    int dualImage_rowSizeByte = inputImage.getRowSize();
+                    int inHeight = inputImage.height();
+                    int singleImage_rowSizeByte = img_Raw->getRowSize();
+                    unsigned char *pixelLeft    = img_Raw->getRawImage();
+                    unsigned char *pixelRight   = img2_Raw->getRawImage();
+                    unsigned char *pixelInput   = inputImage.getRawImage();
+
+                    for(int h=0; h<inHeight; h++)
+                    {
+                        memcpy(pixelLeft  + h*singleImage_rowSizeByte, pixelInput,                          singleImage_rowSizeByte);
+                        memcpy(pixelRight + h*singleImage_rowSizeByte, pixelInput+=singleImage_rowSizeByte, singleImage_rowSizeByte);
+                        pixelInput+= dualImage_rowSizeByte/2;
+                    }
+
+                    flex_i.setPixelCode(img_Raw->getPixelCode());
+                    flex_i.setPixelSize(img_Raw->getPixelSize());
+                    flex_i.setQuantum(img_Raw->getQuantum());
+                    flex_i.setExternal(img_Raw->getRawImage(), img2_Raw->width(),img2_Raw->height());
+                    flex_i2.setPixelCode(img2_Raw->getPixelCode());
+                    flex_i2.setPixelSize(img2_Raw->getPixelSize());
+                    flex_i2.setQuantum(img2_Raw->getQuantum());
+                    flex_i2.setExternal(img2_Raw->getRawImage(), img2_Raw->width(),img2_Raw->height());
+                }
+                else
+                    yError()<<"ServerGrabber: Image not captured.. check hardware configuration";
+            }
+            Stamp s = Stamp(count,Time::now());
+            pImg.setStrict(!param.canDrop);
+            pImg.setEnvelope(s);
+            pImg.write();
+            pImg2.setStrict(!param.canDrop);
+            Stamp s2 = Stamp(count2,Time::now());
+            pImg2.setEnvelope(s2);
+            pImg2.write();
+            count++;
+            count2++;
         }
-        if(param.cap==RAW)
+        else
         {
-            if(fgImageRaw!=YARP_NULLPTR)
+            FlexImage& flex_i=pImg.prepare();
+
+            if(param.cap==COLOR)
             {
-                fgImageRaw->getImage(*img_Raw);
-                flex_i.setPixelCode(img_Raw->getPixelCode());
-                flex_i.setPixelSize(img_Raw->getPixelSize());
-                flex_i.setQuantum(img_Raw->getQuantum());
-                flex_i.setExternal(img_Raw->getRawImage(), img_Raw->width(),img_Raw->height());
+                if(fgImage!=YARP_NULLPTR)
+                {
+                    fgImage->getImage(*img);
+                    flex_i.setPixelCode(img->getPixelCode());
+                    flex_i.setPixelSize(img->getPixelSize());
+                    flex_i.setQuantum(img->getQuantum());
+                    flex_i.setExternal(img->getRawImage(), img->width(),img->height());
+                }
+                else
+                    yError()<<"ServerGrabber: Image not captured.. check hardware configuration";
             }
-            else
-                yError()<<"ServerGrabber: Image not captured.. check hardware configuration";
+            if(param.cap==RAW)
+            {
+                if(fgImageRaw!=YARP_NULLPTR)
+                {
+                    fgImageRaw->getImage(*img_Raw);
+                    flex_i.setPixelCode(img_Raw->getPixelCode());
+                    flex_i.setPixelSize(img_Raw->getPixelSize());
+                    flex_i.setQuantum(img_Raw->getQuantum());
+                    flex_i.setExternal(img_Raw->getRawImage(), img_Raw->width(),img_Raw->height());
+                }
+                else
+                    yError()<<"ServerGrabber: Image not captured.. check hardware configuration";
+            }
+            Stamp s = Stamp(count,Time::now());
+            pImg.setStrict(!param.canDrop);
+            pImg.setEnvelope(s);
+            pImg.write();
+            count++;
         }
-        Stamp s = Stamp(count,Time::now());
-        pImg.setStrict(!param.canDrop);
-        pImg.setEnvelope(s);
-        pImg.write();
-        count++;
     }
 }
 
@@ -1170,52 +1287,30 @@ void ServerGrabber::shallowCopyImages(const yarp::sig::FlexImage& src, yarp::sig
 }
 void ServerGrabber::cleanUp()
 {
-    if(param.twoCameras)
+    if(param.cap==COLOR)
     {
-        if(param.cap==COLOR)
+        if(img!=YARP_NULLPTR)
         {
-            if(img!=YARP_NULLPTR)
-            {
-                delete img;
-                img=YARP_NULLPTR;
-            }
-            if(img2!=YARP_NULLPTR)
-            {
-                delete img2;
-                img2=YARP_NULLPTR;
-            }
+            delete img;
+            img=YARP_NULLPTR;
         }
-        else
+        if(img2!=YARP_NULLPTR)
         {
-            if(img_Raw!=YARP_NULLPTR)
-            {
-                delete img_Raw;
-                img_Raw=YARP_NULLPTR;
-            }
-            if(img2_Raw!=YARP_NULLPTR)
-            {
-                delete img2_Raw;
-                img2_Raw=YARP_NULLPTR;
-            }
+            delete img2;
+            img2=YARP_NULLPTR;
         }
     }
     else
     {
-        if(param.cap==COLOR)
+        if(img_Raw!=YARP_NULLPTR)
         {
-            if(img!=YARP_NULLPTR)
-            {
-                delete img;
-                img=YARP_NULLPTR;
-            }
+            delete img_Raw;
+            img_Raw=YARP_NULLPTR;
         }
-        else
+        if(img2_Raw!=YARP_NULLPTR)
         {
-            if(img_Raw!=YARP_NULLPTR)
-            {
-                delete img_Raw;
-                img_Raw=YARP_NULLPTR;
-            }
+            delete img2_Raw;
+            img2_Raw=YARP_NULLPTR;
         }
     }
 }
