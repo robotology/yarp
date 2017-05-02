@@ -386,7 +386,8 @@ bool ServerGrabber::open(yarp::os::Searchable& config) {
 
 bool ServerGrabber::fromConfig(yarp::os::Searchable &config)
 {
-    if(config.find("period").isInt())
+    if(config.check("period","refresh period(in ms) of the broadcasted values through yarp ports")
+            && config.find("period").isInt())
         period = config.find("period").asInt();
     else
         yWarning()<<"ServerGrabber: period parameter not found, using default of"<< DEFAULT_THREAD_PERIOD << "ms";
@@ -395,16 +396,20 @@ bool ServerGrabber::fromConfig(yarp::os::Searchable &config)
         yError()<<"ServerGrabber: found both 'subdevice' and 'left_config/right_config' parameters...";
         return false;
     }
-    if(!config.check("subdevice") && config.check("left_config") && config.check("right_config"))
+    if(!config.check("subdevice", "name of the subdevice to use as a data source")
+            && config.check("left_config","name of the ini file containing the configuration of one of two subdevices to use as a data source")
+            && config.check("right_config" , "name of the ini file containing the configuration of one of two subdevices to use as a data source"))
         param.twoCameras=true;
-    if(config.check("twoCameras"))//extra conf parameter for the yarprobotinterface
+    if(config.check("twoCameras", "if true ServerGrabber will open and handle two devices, if false only one"))//extra conf parameter for the yarprobotinterface
         param.twoCameras=config.find("twoCameras").asBool();
-    if(config.check("split"))
+    if(config.check("split", "set 'true' to split the streaming on two different ports"))
         param.split=config.find("split").asBool();
-    if(config.find("capabilities").asString()=="COLOR")
-        param.cap=COLOR;
-    else if(config.find("capabilities").asString()=="RAW")
-        param.cap=RAW;
+    if(config.check("capabilities","two capabilities supported, COLOR and RAW respectively for rgb and raw streaming")){
+        if(config.find("capabilities").asString()=="COLOR")
+            param.cap=COLOR;
+        else if(config.find("capabilities").asString()=="RAW")
+            param.cap=RAW;
+    }
     else
         yWarning()<<"ServerGrabber: 'capabilities' parameter not found or mispelled, the option available are COLOR(default) and RAW, using default";
     param.canDrop = !config.check("no_drop","if present, use strict policy for sending data");
