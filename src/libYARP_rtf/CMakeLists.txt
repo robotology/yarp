@@ -8,7 +8,8 @@ project(YARP_rtf)
 
 set(YARP_rtf_HDRS include/yarp/rtf/JointsPosMotion.h
                   include/yarp/rtf/TestAsserter.h
-                  include/yarp/rtf/TestCase.h)
+                  include/yarp/rtf/TestCase.h
+                  include/yarp/rtf/api.h)
 
 set(YARP_rtf_SRCS src/JointsPosMotion.cpp
                   src/TestAsserter.cpp
