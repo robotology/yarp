@@ -57,51 +57,53 @@ bool ImplementPWMControl::getNumberOfMotors(int *axes)
     return raw->getNumberOfMotorsRaw(axes);
 }
 
-bool ImplementPWMControl::setRefDutyCycle(int j, double v)
+bool ImplementPWMControl::setRefDutyCycle(int j, double duty)
 {
     JOINTIDCHECK
-        int k = castToMapper(helper)->toHw(j);
-
-    return raw->setRefDutyCycleRaw(k, v);
+    int k;
+    double pwm;
+    castToMapper(helper)->dutycycle2PWM(duty, j, pwm, k);
+    return raw->setRefDutyCycleRaw(k, pwm);
 }
 
-bool ImplementPWMControl::setRefDutyCycles(const double *v)
+bool ImplementPWMControl::setRefDutyCycles(const double *duty)
 {
-    castToMapper(helper)->toHw(v, dummy);
-
+    castToMapper(helper)->dutycycle2PWM(duty, dummy);
     return raw->setRefDutyCyclesRaw(dummy);
 }
 
 bool ImplementPWMControl::getRefDutyCycle(int j, double *v)
 {
     JOINTIDCHECK
-        int k = castToMapper(helper)->toHw(j);
-
-    bool ret = raw->getRefDutyCycleRaw(k, v);
+    double pwm;
+    int k = castToMapper(helper)->toHw(j);
+    bool ret = raw->getRefDutyCycleRaw(k, &pwm);
+    *v = castToMapper(helper)->PWM2dutycycle(pwm, k);
     return ret;
 }
 
-bool ImplementPWMControl::getRefDutyCycles(double *v)
+bool ImplementPWMControl::getRefDutyCycles(double *duty)
 {
-    bool ret = raw->getRefDutyCyclesRaw(dummy);
-
-    castToMapper(helper)->toUser(dummy, v);
+    bool ret;
+    ret = raw->getRefDutyCyclesRaw(dummy);
+    castToMapper(helper)->PWM2dutycycle(dummy, duty);
     return ret;
 }
 
-bool ImplementPWMControl::getDutyCycle(int j, double *v)
+bool ImplementPWMControl::getDutyCycle(int j, double *duty)
 {
     JOINTIDCHECK
-        int k = castToMapper(helper)->toHw(j);
-
-    bool ret = raw->getDutyCycleRaw(k, v);
+    double pwm;
+    int k = castToMapper(helper)->toHw(j);
+    bool ret = raw->getDutyCycleRaw(k, &pwm);
+    *duty = castToMapper(helper)->PWM2dutycycle(pwm, k);
     return ret;
 }
 
-bool ImplementPWMControl::getDutyCycles(double *v)
+bool ImplementPWMControl::getDutyCycles(double *duty)
 {
-    bool ret = raw->getDutyCyclesRaw(dummy);
-
-    castToMapper(helper)->toUser(dummy, v);
+    bool ret;
+    ret = raw->getDutyCyclesRaw(dummy);
+    castToMapper(helper)->PWM2dutycycle(dummy, duty);
     return ret;
 }

@@ -2756,6 +2756,14 @@ bool RPCMessagesParser::respond(const yarp::os::Bottle& cmd, yarp::os::Bottle& r
                             }
                             break;
 
+                            case VOCAB_MOTORS_NUMBER:
+                            {
+                                int tmp;
+                                ok = rpc_IMotor->getNumberOfMotors(&tmp);
+                                response.addInt(tmp);
+                            }
+                            break;
+
                             case VOCAB_AXES:
                             {
                                 int tmp;
