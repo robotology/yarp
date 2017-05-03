@@ -110,6 +110,18 @@ inline TickTime normalizeSecNSec(double yarpTimeStamp)
     return ret;
 }
 
+inline double normalizeToYarpTime(TickTime rosTimeStamp)
+{
+    double yarptime = rosTimeStamp.sec;
+    if (rosTimeStamp.nsec > 1000000000UL)
+    {
+        yWarning() << "Check on rosTimeStamp.nsec > 1000000000UL failed";
+
+    }
+    yarptime = yarptime + rosTimeStamp.nsec * 1000000000.0;
+    return yarptime;
+}
+
 /**
   * FrameTransformServer
   */
@@ -401,11 +413,13 @@ bool FrameTransformServer::threadInit()
             yError() << "FrameTransformServer: unable to subscribe to " << ROSTOPICNAME_TF << " topic, check your yarp-ROS network configuration";
             return false;
         }
+        m_rosSubscriberPort_tf_timed.setStrict();
         if (!m_rosSubscriberPort_tf_static.topic(ROSTOPICNAME_TF_STATIC))
         {
             yError() << "FrameTransformServer: unable to subscribe to " << ROSTOPICNAME_TF_STATIC << " topic, check your yarp-ROS network configuration";
             return false;
         }
+        m_rosSubscriberPort_tf_static.setStrict();
     }
 
     m_yarp_static_transform_storage = new Transforms_server_storage();
@@ -526,7 +540,7 @@ void FrameTransformServer::run()
     {
         double current_time = yarp::os::Time::now();
 
-        //timeout check for yarp timed transforms. Obviously not need need for ros transforms, since ROS aleady mangages timeouts
+        //timeout check for yarp timed transforms.
         bool repeat_check;
         do
         {
@@ -544,57 +558,80 @@ void FrameTransformServer::run()
         }
         while (repeat_check);
 
+        //timeout check for ROS timed transforms.
+        do
+        {
+            repeat_check = false;
+            size_t tfVecSize_timed_ros = m_ros_timed_transform_storage->size();
+            for (size_t i = 0; i < tfVecSize_timed_ros; i++)
+            {
+                if (current_time - (*m_ros_timed_transform_storage)[i].timestamp > m_FrameTransformTimeout)
+                {
+                    m_ros_timed_transform_storage->delete_transform(i);
+                    repeat_check = true;
+                    break;
+                }
+            }
+        } while (repeat_check);
+
         //ros subscriber
         if (m_enable_subscribe_ros_tf)
         {
-            tf_tfMessage*   rosInData_timed = m_rosSubscriberPort_tf_timed.read(false);
-            tf_tfMessage*   rosInData_static = m_rosSubscriberPort_tf_static.read(false);
-
-            if (rosInData_timed != 0)
+            tf_tfMessage*   rosInData_timed = 0;
+            do
             {
-                std::vector <geometry_msgs_TransformStamped> tfs = rosInData_timed->transforms;
-                size_t tfs_size = tfs.size();
-                for (size_t i = 0; i < tfs_size; i++)
+                rosInData_timed = m_rosSubscriberPort_tf_timed.read(false);
+                if (rosInData_timed != 0)
                 {
-                    FrameTransform t;
-                    t.translation.tX = tfs[i].transform.translation.x;
-                    t.translation.tY = tfs[i].transform.translation.y;
-                    t.translation.tZ = tfs[i].transform.translation.z;
-                    t.rotation.x() = tfs[i].transform.rotation.x;
-                    t.rotation.y() = tfs[i].transform.rotation.y;
-                    t.rotation.z() = tfs[i].transform.rotation.z;
-                    t.rotation.w() = tfs[i].transform.rotation.w;
-                    t.src_frame_id = tfs[i].header.frame_id;
-                    t.dst_frame_id = tfs[i].child_frame_id;
-                    //@@@ add timestamp
-                    //@@@ set_transform should take care of updating (and not adding!) an already existing transform.
-                    //@@ This requires a fast hash table, for now, we just clearing all the storage.
-                    (*m_ros_timed_transform_storage).set_transform(t);
+                    std::vector <geometry_msgs_TransformStamped> tfs = rosInData_timed->transforms;
+                    size_t tfs_size = tfs.size();
+                    for (size_t i = 0; i < tfs_size; i++)
+                    {
+                        FrameTransform t;
+                        t.translation.tX = tfs[i].transform.translation.x;
+                        t.translation.tY = tfs[i].transform.translation.y;
+                        t.translation.tZ = tfs[i].transform.translation.z;
+                        t.rotation.x() = tfs[i].transform.rotation.x;
+                        t.rotation.y() = tfs[i].transform.rotation.y;
+                        t.rotation.z() = tfs[i].transform.rotation.z;
+                        t.rotation.w() = tfs[i].transform.rotation.w;
+                        t.src_frame_id = tfs[i].header.frame_id;
+                        t.dst_frame_id = tfs[i].child_frame_id;
+                        //@@@ should we use yarp or ROS timestamps? 
+                        t.timestamp = yarp::os::Time::now();
+                        //t.timestamp = tfs[i].header.stamp.sec; //@@@this needs some revising
+                        (*m_ros_timed_transform_storage).set_transform(t);
+                    }
                 }
-            }
+            } while (rosInData_timed != 0);
 
-            if (rosInData_static != 0)
+            tf_tfMessage*   rosInData_static = 0;
+            do
             {
-                std::vector <geometry_msgs_TransformStamped> tfs = rosInData_static->transforms;
-                size_t tfs_size = tfs.size();
-                for (size_t i = 0; i < tfs_size; i++)
+                rosInData_static = m_rosSubscriberPort_tf_static.read(false);
+                if (rosInData_static != 0)
                 {
-                    FrameTransform t;
-                    t.translation.tX = tfs[i].transform.translation.x;
-                    t.translation.tY = tfs[i].transform.translation.y;
-                    t.translation.tZ = tfs[i].transform.translation.z;
-                    t.rotation.x() = tfs[i].transform.rotation.x;
-                    t.rotation.y() = tfs[i].transform.rotation.y;
-                    t.rotation.z() = tfs[i].transform.rotation.z;
-                    t.rotation.w() = tfs[i].transform.rotation.w;
-                    t.src_frame_id = tfs[i].header.frame_id;
-                    t.dst_frame_id = tfs[i].child_frame_id;
-                    //@@@ add timestamp
-                    //@@@ set_transform should take care of updating (and not adding!) an already existing transform.
-                    //@@ This requires a fast hash table, for now, we just clearing all the storage.
-                    (*m_ros_static_transform_storage).set_transform(t);
+                    std::vector <geometry_msgs_TransformStamped> tfs = rosInData_static->transforms;
+                    size_t tfs_size = tfs.size();
+                    for (size_t i = 0; i < tfs_size; i++)
+                    {
+                        FrameTransform t;
+                        t.translation.tX = tfs[i].transform.translation.x;
+                        t.translation.tY = tfs[i].transform.translation.y;
+                        t.translation.tZ = tfs[i].transform.translation.z;
+                        t.rotation.x() = tfs[i].transform.rotation.x;
+                        t.rotation.y() = tfs[i].transform.rotation.y;
+                        t.rotation.z() = tfs[i].transform.rotation.z;
+                        t.rotation.w() = tfs[i].transform.rotation.w;
+                        t.src_frame_id = tfs[i].header.frame_id;
+                        t.dst_frame_id = tfs[i].child_frame_id;
+                        //@@@ should we use yarp or ROS timestamps? 
+                        t.timestamp = yarp::os::Time::now();
+                        //t.timestamp = normalizeToYarpTime(tfs[i].header.stamp); //@@@ is this ok?
+                        (*m_ros_static_transform_storage).set_transform(t);
+                    }
                 }
-            }
+            } while (rosInData_static != 0);
         }
 
         //yarp streaming port
