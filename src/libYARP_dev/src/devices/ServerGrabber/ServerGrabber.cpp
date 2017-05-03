@@ -332,6 +332,12 @@ bool ServerGrabber::open(yarp::os::Searchable& config) {
         return false;
     }
 
+    if(!initialize_YARP(config))
+    {
+        yError() <<"ServerGrabber: Error initializing YARP ports";
+        return false;
+    }
+
     if(isSubdeviceOwned){
         if(! openAndAttachSubDevice(config))
         {
@@ -346,12 +352,6 @@ bool ServerGrabber::open(yarp::os::Searchable& config) {
         return false;
     }
 
-
-    if(!initialize_YARP(config) )
-    {
-        yError() <<"ServerGrabber: Error initializing YARP ports";
-        return false;
-    }
 
     param.active = true;
 //    //ASK/TODO update usage and see if we need to add DeviceResponder as dependency
