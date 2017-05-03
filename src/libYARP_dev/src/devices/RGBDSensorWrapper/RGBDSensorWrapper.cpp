@@ -206,7 +206,9 @@ bool RGBDSensorWrapper::open(yarp::os::Searchable &config)
         yError() << sensorId << "Error initializing ROS topic";
         return false;
     }
-    return true;
+
+    RateThread::setRate(rate);
+    return RateThread::start();
 }
 
 bool RGBDSensorWrapper::fromConfig(yarp::os::Searchable &config)
@@ -357,13 +359,6 @@ bool RGBDSensorWrapper::openAndAttachSubDevice(Searchable& prop)
     if(!attach(subDeviceOwned))
         return false;
 
-    // Configuring parsers
-    IRgbVisualParams * rgbVis_p;
-    IDepthVisualParams * depthVis_p;
-
-    subDeviceOwned->view(rgbVis_p);
-    subDeviceOwned->view(depthVis_p);
-
     if(!parser.configure(sensor_p) )
     {
         yError() << "RGBD wrapper: error configuring interfaces for parsers";
@@ -380,8 +375,7 @@ bool RGBDSensorWrapper::openAndAttachSubDevice(Searchable& prop)
     }
     */
 
-    RateThread::setRate(rate);
-    return RateThread::start();
+    return true;
 }
 
 bool RGBDSensorWrapper::close()
@@ -530,8 +524,7 @@ bool RGBDSensorWrapper::attachAll(const PolyDriverList &device2attach)
     if(!attach(sensor_p))
         return false;
 
-    RateThread::setRate(rate);
-    return RateThread::start();
+    return true;
 }
 
 bool RGBDSensorWrapper::detachAll()

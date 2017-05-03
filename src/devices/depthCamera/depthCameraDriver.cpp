@@ -409,7 +409,10 @@ bool depthCameraDriver::setParams()
         mirrorOk = false;
 
         if (!v.isBool())
+        {
             settingErrorMsg("Param " + m_cameraDescription->rgbMirroring.name + " is not a bool as it should be.", ret);
+            return false;
+        }
 
         for (int t = 0; t < 5; t++)
         {
@@ -417,7 +420,7 @@ bool depthCameraDriver::setParams()
             yarp::os::Time::delay(0.5);
             if (setRgbMirroring(v.asBool()))
             {
-                yInfo() << "depthCamera: rgb mirroring parameter setted succesfully";
+                yInfo() << "depthCamera: rgb mirroring parameter set succesfully";
                 mirrorOk = true;
                 break;
             }
@@ -578,12 +581,6 @@ bool depthCameraDriver::open(Searchable& config)
         return false;
     }
 
-    // setting Parameters
-    if (!setParams())
-    {
-        return false;
-    }
-
     if (!parseIntrinsic(config, "RGB_INTRINSIC_PARAMETERS", m_cameraDescription->rgbIntrinsic))
     {
         return false;
@@ -636,6 +633,12 @@ bool depthCameraDriver::open(Searchable& config)
         }
     }
 
+    // setting Parameters
+    if (!setParams())
+    {
+        return false;
+    }
+
     return true;
 }
 
@@ -670,13 +673,13 @@ int depthCameraDriver::getRgbWidth()
     return m_imageStream.getVideoMode().getResolutionX();
 }
 
-bool  depthCameraDriver::getRgbSupportedConfigurations(yarp::sig::VectorOf<CameraConfig> &configurations)
+bool depthCameraDriver::getRgbSupportedConfigurations(yarp::sig::VectorOf<CameraConfig> &configurations)
 {
     yWarning()<<"depthCameraDriver:getRgbSupportedConfigurations not implemented yet";
     return false;
 }
 
-bool   depthCameraDriver::getRgbResolution(int &width, int &height)
+bool depthCameraDriver::getRgbResolution(int &width, int &height)
 {
     if (m_cameraDescription->rgbRes.isDescription)
     {
