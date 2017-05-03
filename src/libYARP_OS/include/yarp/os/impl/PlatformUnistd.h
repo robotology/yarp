@@ -28,10 +28,18 @@ namespace impl {
     using ACE_OS::pipe;
     using ACE_OS::dup;
     using ACE_OS::dup2;
-    using ACE_OS::execlp;
     using ACE_OS::execvp;
     using ACE_OS::chdir;
     using ACE_OS::unlink;
+
+    // ACE version of execl/execlp/execle are just fake implementation, see
+    // https://github.com/DOCGroup/ACE_TAO/issues/409
+    // https://github.com/DOCGroup/ACE_TAO/blob/ACE%2BTAO-6_4_3/ACE/ace/OS_NS_unistd.cpp#L227
+    // (last ACE version tested: 6.4.3).
+    // This is not a big issue since (at the moment) it is used only in
+    // #if !defined(_WIN32) branches, but we might need to fix this at some
+    // point.
+    using ::execlp;
 #else
     using ::rmdir;
     using ::gethostname;
