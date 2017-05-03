@@ -334,6 +334,54 @@ public:
             checkTrue(result,"close reported successful");
         }
 
+        yDebug("\n\n---------------------------------------\n\n");
+        //Testing the "SplitterMode"
+        yInfo() << "Test 5";
+        {
+            report(0,"test the splitter mode");
+            bool result;
+            PolyDriver dd,dd2;
+            Property p,p2;
+            p.put("device","remote_grabber");
+            p.put("remote","/grabber/left");
+            p.put("local","/grabber/client");
+            p2.put("device","grabberDual");
+            p2.put("subdevice","test_grabber");
+            int width = 320;
+            p2.put("width",width);
+            p2.put("split",true);
+            result =dd2.open(p2);
+            checkTrue(result,"server open reported successful");
+            result = dd.open(p);
+            checkTrue(result,"client open reported successful");
+
+            IFrameGrabberImage *grabber = NULL;
+            result = dd.view(grabber);
+            checkTrue(result,"interface reported");
+            ImageOf<PixelRgb> img;
+            grabber->getImage(img);
+            checkTrue(img.width()>0,"interface seems functional");
+            result=Network::exists("/grabber/rpc") && Network::exists("/grabber/left")
+                    && Network::exists("/grabber/right");
+            checkTrue(result,"checking if all the ports have been opened correctly");
+            yarp::os::BufferedPort<ImageOf<PixelRgb>> pLeft, pRight;
+            result &= pLeft.open("/provaLeft");
+            result &= pRight.open("/provaRight");
+            checkTrue(result,"checking if all the test ports have been opened correctly");
+            result &= Network::connect("/grabber/left",pLeft.getName());
+            result &= Network::connect("/grabber/right",pRight.getName());
+            checkTrue(result,"checking the connections");
+            ImageOf<PixelRgb>* imgL;
+            ImageOf<PixelRgb>* imgR;
+            imgL = pLeft.read();
+            imgR = pRight.read();
+            result &= imgL->width() == width/2;
+            result &= imgR->width() == width/2;
+            checkTrue(result,"checking imgL and imgR dimensions");
+            result = dd2.close() && dd.close();
+            checkTrue(result,"close reported successful");
+        }
+
     }
 
     virtual void runTests() {
