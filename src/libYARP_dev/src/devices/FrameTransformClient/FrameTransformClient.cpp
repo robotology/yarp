@@ -11,6 +11,8 @@
 
 /*! \file FrameTransformClient.cpp */
 
+//example: yarpdev --device transformClient --local /transformClient --remote /transformServer
+
 using namespace yarp::dev;
 using namespace yarp::os;
 using namespace yarp::sig;
@@ -176,6 +178,61 @@ yarp::math::FrameTransform& Transforms_client_storage::operator[]   (std::size_t
 };
 
 //------------------------------------------------------------------------------------------------------------------------------
+bool yarp::dev::FrameTransformClient::read(yarp::os::ConnectionReader& connection)
+{
+    yarp::os::Bottle in;
+    yarp::os::Bottle out;
+    bool ok = in.read(connection);
+    if (!ok) return false;
+
+    std::string request = in.get(0).asString();
+    if (request == "help")
+    {
+        out.addVocab(Vocab::encode("many"));
+        out.addString("'get_transform <src> <dst>: print the transform from <src> to <dst>");
+    }
+    else if (request == "list")
+    {
+        std::vector<std::string> v;
+        this->getAllFrameIds(v);
+        out.addVocab(Vocab::encode("many"));
+        out.addString("List of available reference frames:");
+        int count = 0;
+        for (auto vec = v.begin(); vec != v.end(); vec++)
+        {
+            count++;
+            std::string str = std::to_string(count) + "- " + *vec;
+            out.addString(str.c_str());
+        }
+    }
+    else if (request == "get_transform")
+    {
+        std::string src = in.get(1).asString();
+        std::string dst = in.get(2).asString();
+        out.addVocab(Vocab::encode("many"));
+        yarp::sig::Matrix m;
+        this->getTransform(src, dst, m);
+        out.addString("Tranform from " + src + " to " + dst + " is: ");
+        out.addString(m.toString());
+    }
+    else
+    {
+        yError("Invalid vocab received in FrameTransformClient");
+        out.clear();
+        out.addVocab(VOCAB_ERR);
+    }
+
+    yarp::os::ConnectionWriter *returnToSender = connection.getWriter();
+    if (returnToSender != NULL)
+    {
+        out.write(*returnToSender);
+    }
+    else
+    {
+        yError() << "FrameTransformClient: invalid return to sender";
+    }
+    return true;
+}
 
 bool yarp::dev::FrameTransformClient::open(yarp::os::Searchable &config)
 {
@@ -206,8 +263,10 @@ bool yarp::dev::FrameTransformClient::open(yarp::os::Searchable &config)
         yWarning("FrameTransformClient: using default period of %d ms" , m_period);
     }
 
-    ConstString local_rpc = m_local_name;
-    local_rpc += "/rpc";
+    ConstString local_rpcServer = m_local_name;
+    local_rpcServer += "/rpc:o";
+    ConstString local_rpcUser = m_local_name;
+    local_rpcUser += "/rpc:i";
     ConstString remote_rpc = m_remote_name;
     remote_rpc += "/rpc";
     ConstString remote_streaming_name = m_remote_name;
@@ -215,9 +274,16 @@ bool yarp::dev::FrameTransformClient::open(yarp::os::Searchable &config)
     ConstString local_streaming_name = m_local_name;
     local_streaming_name += "/transforms:i";
 
-    if (!m_rpcPort.open(local_rpc.c_str()))
+    if (!m_rpc_InterfaceToUser.open(local_rpcUser.c_str()))
     {
-        yError("FrameTransformClient::open() error could not open rpc port %s, check network", local_rpc.c_str());
+        yError("FrameTransformClient::open() error could not open rpc port %s, check network", local_rpcUser.c_str());
+        return false;
+    }
+    m_rpc_InterfaceToUser.setReader(*this);
+
+    if (!m_rpc_InterfaceToServer.open(local_rpcServer.c_str()))
+    {
+        yError("FrameTransformClient::open() error could not open rpc port %s, check network", local_rpcServer.c_str());
         return false;
     }
 
@@ -229,7 +295,7 @@ bool yarp::dev::FrameTransformClient::open(yarp::os::Searchable &config)
         return false;
     }
 
-    ok=Network::connect(local_rpc.c_str(), remote_rpc.c_str());
+    ok = Network::connect(local_rpcServer.c_str(), remote_rpc.c_str());
     if (!ok)
     {
         yError("FrameTransformClient::open() error could not connect to %s", remote_rpc.c_str());
@@ -241,7 +307,7 @@ bool yarp::dev::FrameTransformClient::open(yarp::os::Searchable &config)
 
 bool yarp::dev::FrameTransformClient::close()
 {
-    m_rpcPort.close();
+    m_rpc_InterfaceToServer.close();
     if (m_transform_storage != 0)
     {
         delete m_transform_storage;
@@ -321,7 +387,7 @@ bool yarp::dev::FrameTransformClient::clear()
     yarp::os::Bottle resp;
     b.addVocab(VOCAB_ITRANSFORM);
     b.addVocab(VOCAB_TRANSFORM_DELETE_ALL);
-    bool ret = m_rpcPort.write(b, resp);
+    bool ret = m_rpc_InterfaceToServer.write(b, resp);
     if (ret)
     {
         if (resp.get(0).asVocab() != VOCAB_OK)
@@ -497,7 +563,7 @@ bool yarp::dev::FrameTransformClient::setTransform(const std::string& target_fra
     b.addDouble(tf.rotation.x());
     b.addDouble(tf.rotation.y());
     b.addDouble(tf.rotation.z());
-    bool ret = m_rpcPort.write(b, resp);
+    bool ret = m_rpc_InterfaceToServer.write(b, resp);
     if (ret)
     {
         if (resp.get(0).asVocab() != VOCAB_OK)
@@ -544,7 +610,7 @@ bool yarp::dev::FrameTransformClient::setTransformStatic(const std::string &targ
     b.addDouble(tf.rotation.x());
     b.addDouble(tf.rotation.y());
     b.addDouble(tf.rotation.z());
-    bool ret = m_rpcPort.write(b, resp);
+    bool ret = m_rpc_InterfaceToServer.write(b, resp);
     if (ret)
     {
         if (resp.get(0).asVocab() != VOCAB_OK)
@@ -569,7 +635,7 @@ bool yarp::dev::FrameTransformClient::deleteTransform(const std::string &target_
     b.addVocab(VOCAB_TRANSFORM_DELETE);
     b.addString(target_frame_id);
     b.addString(source_frame_id);
-    bool ret = m_rpcPort.write(b, resp);
+    bool ret = m_rpc_InterfaceToServer.write(b, resp);
     if (ret)
     {
         if (resp.get(0).asVocab()!=VOCAB_OK)
