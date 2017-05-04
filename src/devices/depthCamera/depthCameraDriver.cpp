@@ -241,56 +241,33 @@ bool depthCameraDriver::checkParam(const Bottle& settings, const Bottle& descrip
 bool depthCameraDriver::checkParam(const Bottle& input, RGBDParam& param, bool& found)
 {
     bool ret = false;
-    yarp::os::Value v;
+    Bottle bt=input.findGroup(param.name).tail(); // the first element is the name of the parameter
 
-    if (input.check(param.name))
+    if (!bt.isNull())
     {
-        v = input.find(param.name);
-        if (v.isNull())
+        Bottle* b;
+        if (param.size>1 && bt.size()==1)
         {
-            yError() << "Parameter " << param.name << " malformed. Check your config file.";
+            b = bt.get(0).asList();
+        }
+        else
+            b = &bt;
+        if (b->isNull())
+        {
+            yError()<<"depthCameraDriver: check"<<param.name<<"in config file";
             return false;
         }
-
-        if (param.size > 1 && !v.isList())
+        if (b->size() != param.size)
         {
-            yError() << "depthCameraDriver: parameter" << param.name << "size should be" << param.size <<  \
-                        ". suggestion: parameter with more than 1 value should be between '(' parentheses";
+            yError() << "depthCameraDriver: parameter" << param.name << "size should be" << param.size;
             return false;
         }
-
-        if (v.isList() )
+        param.val.resize(param.size);
+        for (int i=0;i<b->size();i++)
         {
-            // check single or more params
-            if (param.size == 1)
-            {
-                yError() << "Parameter " << param.name << " should be a single value.";
-                return false;
-            }
-
-            // check size of data match
-            Bottle* b = v.asList();
-            if (b->size() != param.size)
-            {
-                yError() << "Parameter " << param.name << " size should be " << param.size << ", got " << b->size() << "instead. Check your config file";
-                return false;
-            }
-
-            // All ok here, fill the data
-            param.val.resize(param.size);
-            for(int i=0; i<param.size; i++)
-            {
-                param.val[i] = b->get(i); // maybe i=1? check...
-            }
-
+            ret = true;
+            param.val[i] = b->get(i);
             found = true;
-            return true;
-        }
-        else  // got a single value from file
-        {
-            ret          = true;
-            param.val[0] = v;
-            found        = true;
         }
     }
     else
@@ -361,10 +338,14 @@ bool depthCameraDriver::setParams()
         p2 = m_cameraDescription->rgb_Fov.val[1];
 
         if (!p1.isDouble() || !p2.isDouble() )
+        {
             settingErrorMsg("Param " + m_cameraDescription->rgb_Fov.name + " is not a double as it should be.", ret);
+        }
 
         if (! setRgbFOV(p1.asDouble(), p2.asDouble() ) )
+        {
             settingErrorMsg("Setting param " + m_cameraDescription->rgb_Fov.name + " failed... quitting.", ret);
+        }
     }
 
     //DEPTH_RES
@@ -375,10 +356,14 @@ bool depthCameraDriver::setParams()
         p2 = m_cameraDescription->depthRes.val[1];
 
         if (!p1.isInt() || !p2.isInt() )
-            settingErrorMsg("Param " + m_cameraDescription->depthRes.name + " is not a double as it should be.", ret);
+        {
+            settingErrorMsg("Param " + m_cameraDescription->depthRes.name + " is not a int as it should be.", ret);
+        }
 
         if (! setDepthResolution(p1.asInt(), p2.asInt()))
+        {
             settingErrorMsg("Setting param " + m_cameraDescription->depthRes.name + " failed... quitting.", ret);
+        }
     }
 
     //RGB_RES
@@ -426,7 +411,9 @@ bool depthCameraDriver::setParams()
             }
         }
         if (!mirrorOk)
+        {
             settingErrorMsg("Setting param " + m_cameraDescription->rgbMirroring.name + " failed... quitting.", ret);
+        }
     }
     // depth MIRRORING
     if (m_cameraDescription->depthMirroring.isSetting && ret)
@@ -438,7 +425,9 @@ bool depthCameraDriver::setParams()
         mirrorOk = false;
 
         if (!v.isBool() )
+        {
             settingErrorMsg("Param " + m_cameraDescription->depthMirroring.name + " is not a bool as it should be.", ret);
+        }
 
         for (int t = 0; t < 5; t++)
         {
@@ -452,7 +441,9 @@ bool depthCameraDriver::setParams()
             }
         }
         if (!mirrorOk)
+        {
             settingErrorMsg("Setting param " + m_cameraDescription->depthMirroring.name + " failed... quitting.", ret);
+        }
     }
     return ret;
 }
@@ -604,15 +595,18 @@ bool depthCameraDriver::open(Searchable& config)
         return false;
     }
 
-    if (!extrinsic.find("transformation").isList())
-    {
-        yError() << "transformation parameter is not formatted as a list, values should be between round brackets '('";
-        return false;
-    }
+    Bottle transformation = extrinsic.findGroup("transformation").tail();
+    Bottle* tf;
 
-    Bottle* transformation;
-    transformation = extrinsic.find("transformation").asList();
-    if (!(transformation->size() == 4*4))
+    if (transformation.size()==1)
+    {
+        tf = transformation.get(0).asList();
+    }
+    else
+    {
+        tf=&transformation;
+    }
+    if (!(tf->size() == 4*4))
     {
         yError() << "depthCameraDriver: the size of the transformation matrix is wrong";
         return false;
@@ -623,7 +617,7 @@ bool depthCameraDriver::open(Searchable& config)
         for(int j = 0; j < 4; j++)
         {
             int k = i*4+j;
-            Value& v = transformation->get(k);
+            Value& v = tf->get(k);
             if (!v.isDouble())
             {
                 yError() << "wrong data format on transformation matrix (position" << k << ")";
