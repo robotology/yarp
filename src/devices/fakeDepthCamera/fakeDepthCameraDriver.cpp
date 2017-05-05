@@ -135,7 +135,8 @@ bool fakeDepthCameraDriver::getRgbFOV(double &horizontalFov, double &verticalFov
 
 bool fakeDepthCameraDriver::getRgbMirroring(bool& mirror)
 {
-    return false;
+    mirror = false;
+    return true;
 }
 
 bool fakeDepthCameraDriver::setRgbMirroring(bool mirror)
@@ -145,7 +146,19 @@ bool fakeDepthCameraDriver::setRgbMirroring(bool mirror)
 
 bool fakeDepthCameraDriver::getRgbIntrinsicParam(Property& intrinsic)
 {
-    return false;
+    intrinsic.put("focalLengthX",    512);
+    intrinsic.put("focalLengthY",    512);
+    intrinsic.put("principalPointX", 235);
+    intrinsic.put("principalPointY", 231);
+    intrinsic.put("distortionModel", "plumb_bob");
+    intrinsic.put("k1", 0);
+    intrinsic.put("k2", 0);
+    intrinsic.put("t1", 0);
+    intrinsic.put("t2", 0);
+    intrinsic.put("k3", 0);
+
+    intrinsic.put("stamp", yarp::os::Time::now());
+    return true;
 }
 
 int  fakeDepthCameraDriver::getDepthHeight()
@@ -167,7 +180,19 @@ bool fakeDepthCameraDriver::getDepthFOV(double& horizontalFov, double& verticalF
 
 bool fakeDepthCameraDriver::getDepthIntrinsicParam(Property& intrinsic)
 {
-    return false;
+    intrinsic.put("focalLengthX",    512);
+    intrinsic.put("focalLengthY",    512);
+    intrinsic.put("principalPointX", 235);
+    intrinsic.put("principalPointY", 231);
+    intrinsic.put("distortionModel", "plumb_bob");
+    intrinsic.put("k1", 0);
+    intrinsic.put("k2", 0);
+    intrinsic.put("t1", 0);
+    intrinsic.put("t2", 0);
+    intrinsic.put("k3", 0);
+
+    intrinsic.put("stamp", yarp::os::Time::now());
+    return true;
 }
 
 double fakeDepthCameraDriver::getDepthAccuracy()
@@ -191,7 +216,8 @@ bool fakeDepthCameraDriver::setDepthClipPlanes(double nearPlane, double farPlane
 
 bool fakeDepthCameraDriver::getDepthMirroring(bool& mirror)
 {
-    return false;
+    mirror = false;
+    return true;
 }
 
 bool fakeDepthCameraDriver::setDepthMirroring(bool mirror)
@@ -201,12 +227,18 @@ bool fakeDepthCameraDriver::setDepthMirroring(bool mirror)
 
 bool fakeDepthCameraDriver::getExtrinsicParam(Matrix& extrinsic)
 {
-    return false;
+    extrinsic.resize(4, 4);
+    extrinsic.zero();
+
+    extrinsic[0][0] = 1;
+    extrinsic[1][1] = 1;
+    extrinsic[2][2] = 1;
+    extrinsic[3][3] = 1;
+    return true;
 }
 
 bool fakeDepthCameraDriver::getRgbImage(FlexImage& rgbImage, Stamp* timeStamp)
 {
-    ImageOf<yarp::sig::PixelRgb> imageof;
     if (!image->getImage(imageof)) {return false;}
     rgbImage.setPixelCode(VOCAB_PIXEL_RGB);
     rgbImage.resize(imageof);
@@ -217,12 +249,11 @@ bool fakeDepthCameraDriver::getRgbImage(FlexImage& rgbImage, Stamp* timeStamp)
 
 bool fakeDepthCameraDriver::getDepthImage(ImageOf<PixelFloat>& depthImage, Stamp* timeStamp)
 {
-    ImageOf<yarp::sig::PixelRgb> imageof;
     if (!image->getImage(imageof)) {return false;}
     depthImage.resize(imageof);
-    for (size_t i = 0; i < imageof.width(); i++)
+    for (int i = 0; i < imageof.width(); i++)
     {
-        for (size_t j = 0; j < imageof.height(); j++)
+        for (int j = 0; j < imageof.height(); j++)
         {
             PixelRgb pix = (*(PixelRgb*)imageof.getPixelAddress(i, j));
             *(PixelFloat*)depthImage.getPixelAddress(i, j) = (float(pix.b) / 255.0)/3.0 + (float(pix.g) / 255.0) / 3.0 + (float(pix.r) / 255.0) / 3.0;

@@ -10,7 +10,6 @@
 #include <iostream>
 #include <string>
 #include <yarp/dev/DeviceDriver.h>
-#include <yarp/dev/FrameGrabberControl2.h>
 #include <yarp/os/RateThread.h>
 #include <yarp/sig/all.h>
 #include <yarp/sig/Matrix.h>
@@ -19,15 +18,6 @@
 #include <yarp/dev/IRGBDSensor.h>
 #include <yarp/dev/FrameGrabberInterfaces.h>
 #include <yarp/dev/PolyDriver.h>
-
-
-#ifndef RAD2DEG
-#define RAD2DEG (180/3.14159265359)
-#endif
-
-#ifndef DEG2RAD
-#define DEG2RAD (3.14159265359/180.0)
-#endif
 
 namespace yarp
 {
@@ -103,8 +93,9 @@ private:
     double dep_near{0.4};
     double dep_far{6};
 
-    yarp::dev::PolyDriver testgrabber;
-    IFrameGrabberImage*   image;
+    yarp::sig::ImageOf<yarp::sig::PixelRgb> imageof;
+    yarp::dev::PolyDriver                   testgrabber;
+    IFrameGrabberImage*                     image;
 
 
 };
