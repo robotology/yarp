@@ -59,6 +59,7 @@ if(NOT SKIP_yarpmod_ovrheadset)
   target_link_libraries(yarp_ovrheadset YARP::YARP_OS
                                         YARP::YARP_sig
                                         YARP::YARP_dev
+                                        YARP::YARP_math
                                         LibOVR::OVR
                                         GLEW::GLEW
                                         GLFW3::GLFW3)
