@@ -3,15 +3,8 @@
 # CopyPolicy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
 
 
-## Skip this whole file if it has already been included
-if(COMMAND YARP_CONFIGURE_EXTERNAL_INSTALLATION)
-  return()
-endif()
-
-include(CMakeParseArguments)
+# Needed by yarp_configure_external_installation in caller scope
 include(GNUInstallDirs)
-include(CMakeDependentOption)
-
 
 # Define CMAKE_INSTALL_QMLDIR for installing QML plugins
 if(NOT DEFINED CMAKE_INSTALL_QMLDIR)
@@ -27,6 +20,14 @@ if(NOT IS_ABSOLUTE ${CMAKE_INSTALL_QMLDIR})
 else()
   set(CMAKE_INSTALL_FULL_QMLDIR "${CMAKE_INSTALL_QMLDIR}")
 endif()
+
+## Skip this whole file if it has already been included
+if(COMMAND YARP_CONFIGURE_EXTERNAL_INSTALLATION)
+  return()
+endif()
+
+include(CMakeParseArguments)
+include(CMakeDependentOption)
 
 
 
