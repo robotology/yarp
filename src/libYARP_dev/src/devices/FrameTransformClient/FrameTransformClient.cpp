@@ -605,7 +605,7 @@ bool yarp::dev::FrameTransformClient::waitForTransform(const std::string &target
 {
     //loop fintanto che ccantTRransform e' true o ppure scade timeout
     double start = yarp::os::Time::now();
-    while (canTransform(target_frame_id, source_frame_id))
+    while (!canTransform(target_frame_id, source_frame_id))
     {
         if (yarp::os::Time::now() - start > timeout)
         {
