@@ -30,13 +30,3 @@ bool StubImplEncodersRaw::NOT_YET_IMPLEMENTED(const char *func)
 
     return false;
 }
-
-bool StubImplPidControlRaw::NOT_YET_IMPLEMENTED(const char *func)
-{
-    if (func)
-        yError("%s: not yet implemented\n", func);
-    else
-        yError("Function not yet implemented\n");
-
-    return false;
-}
