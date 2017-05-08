@@ -96,7 +96,8 @@ namespace yarp
  * |                              |  rgbFOV             | double, double      |  Read / write   | degrees        |   -           |  Alternative to HW_DESCRIPTION   | Horizontal and Vertical fields of view of the rgb camera                               | 2 values expected as horizontal and vertical FOVs                     |
  * |                              |  depthFOV           | double, double      |  Read / write   | degrees        |   -           |  Alternative to HW_DESCRIPTION   | Horizontal and Vertical fields of view of the depth camera                             | 2 values expected as horizontal and vertical FOVs                     |
  * |                              |  rgbMirroring       | bool                |  Read / write   | true/false     |  false        |  Alternative to HW_DESCRIPTION   | Set the mirroring to the acquired rgb image                                            |                                                                       |
- * |                              |  depthMirroring     | bool                |  Read / write   | true/false     |  false        |  Alternative to HW_DESCRIPTION   | Set the mirroring to the acquired rgb image                                            |                                                                       |
+ * |                              |  depthMirroring     | bool                |  Read / write   | true/false     |  false        |  Alternative to HW_DESCRIPTION   | Set the mirroring to the acquired depth image                                          |                                                                       |
+ * |                              |  clipPlanes         | double, double      |  Read / write   | meters         |   -           |  Alternative to HW_DESCRIPTION   | Minumum and maximum distance at which an object is seen by the depth sensor            |  parameter introduced mainly for simulated sensors, it can be used to set the clip planes if Openni gives wrong values |
  * |  HW_DESCRIPTION              |      -              |  group              |                 | -              |   -           |   Yes                            | Hardware description of device property.                                               |  Read only property. Setting will be disabled                         |
  * |                              | same as 'SETTINGS' group | -              |    Read only    | -              |   -           |   Alternative to SETTING group   | Parameters here are alternative to the SETTING group                                   |                                                                       |
  * |  RGB_INTRINSIC_PARAMETERS    |      -              | group               |                 | -              |   -           |   Yes                            | Description of rgb camera visual parameters                                            |                                                                       |
@@ -259,7 +260,7 @@ private:
 #ifndef DOXYGEN_SHOULD_SKIP_THIS
     //method
     inline bool initializeOpeNIDevice();
-    inline bool setParams(const os::Bottle& settings, const os::Bottle& description);
+    inline bool setParams();
     inline bool parseIntrinsic(const yarp::os::Searchable& config, const std::string& groupName, impl::IntrinsicParams &params);
     bool        getImage(FlexImage& Frame, Stamp* Stamp, impl::streamFrameListener *sourceFrame);
     bool        getImage(depthImage& Frame, Stamp* Stamp, impl::streamFrameListener *sourceFrame);

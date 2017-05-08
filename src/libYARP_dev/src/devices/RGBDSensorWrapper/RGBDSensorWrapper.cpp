@@ -158,10 +158,11 @@ bool RGBDSensorParser::respond(const Bottle& cmd, Bottle& response)
 RGBDSensorWrapper::RGBDSensorWrapper(): RateThread(DEFAULT_THREAD_PERIOD),
                                         rate(DEFAULT_THREAD_PERIOD)
 {
-    sensor_p         = NULL;
+    sensor_p         = YARP_NULLPTR;
     use_YARP         = true;
     use_ROS          = false;
-    subDeviceOwned   = NULL;
+    subDeviceOwned   = YARP_NULLPTR;
+    rosNode          = YARP_NULLPTR;
     isSubdeviceOwned = false;
     verbose          = 4;
     sensorStatus     = IRGBDSensor::RGBD_SENSOR_NOT_READY;
@@ -170,7 +171,7 @@ RGBDSensorWrapper::RGBDSensorWrapper(): RateThread(DEFAULT_THREAD_PERIOD),
 
 RGBDSensorWrapper::~RGBDSensorWrapper()
 {
-    threadRelease();
+    close();
     sensor_p = NULL;
 }
 
@@ -194,17 +195,34 @@ bool RGBDSensorWrapper::open(yarp::os::Searchable &config)
 
      setId("RGBDSensorWrapper for " + depthFrame_StreamingPort_Name);
 
-    if(!initialize_YARP(config) )
+    if(use_YARP && !initialize_YARP(config))
     {
         yError() << sensorId << "Error initializing YARP ports";
         return false;
     }
 
-    if(!initialize_ROS(config) )
+    if(use_ROS && !initialize_ROS(config))
     {
         yError() << sensorId << "Error initializing ROS topic";
         return false;
     }
+
+    // check if we need to create subdevice or if they are
+    // passed later on thorugh attachAll()
+    if(isSubdeviceOwned)
+    {
+        if(! openAndAttachSubDevice(config))
+        {
+            yError("RGBDSensorWrapper: error while opening subdevice\n");
+            return false;
+        }
+    }
+    else
+    {
+        if(!openDeferredAttach(config))
+            return false;
+    }
+
     return true;
 }
 
@@ -306,23 +324,11 @@ bool RGBDSensorWrapper::fromConfig(yarp::os::Searchable &config)
         }
     }
 
-    // check if we need to create subdevice or if they are
-    // passed later on thorugh attachAll()
     if(config.check("subdevice"))
-    {
         isSubdeviceOwned=true;
-        if(! openAndAttachSubDevice(config))
-        {
-            yError("RGBDSensorWrapper: error while opening subdevice\n");
-            return false;
-        }
-    }
     else
-    {
         isSubdeviceOwned=false;
-        if(!openDeferredAttach(config))
-            return false;
-    }
+
     return true;
 }
 
@@ -349,19 +355,12 @@ bool RGBDSensorWrapper::openAndAttachSubDevice(Searchable& prop)
 
     if (!subDeviceOwned->isValid())
     {
-        yError("opening controlBoardWrapper2 subdevice... FAILED\n");
+        yError("opening IRGBDSensor subdevice... FAILED\n");
         return false;
     }
     isSubdeviceOwned = true;
     if(!attach(subDeviceOwned))
         return false;
-
-    // Configuring parsers
-    IRgbVisualParams * rgbVis_p;
-    IDepthVisualParams * depthVis_p;
-
-    subDeviceOwned->view(rgbVis_p);
-    subDeviceOwned->view(depthVis_p);
 
     if(!parser.configure(sensor_p) )
     {
@@ -378,9 +377,6 @@ bool RGBDSensorWrapper::openAndAttachSubDevice(Searchable& prop)
         return false;
     }
     */
-
-    RateThread::setRate(rate);
-    RateThread::start();
     return true;
 }
 
@@ -393,8 +389,10 @@ bool RGBDSensorWrapper::close()
     if(isSubdeviceOwned)
     {
         if(subDeviceOwned)
-            subDeviceOwned->close();
-        subDeviceOwned = NULL;
+        {
+            delete subDeviceOwned;
+            subDeviceOwned=NULL;
+        }
         sensor_p = NULL;
         isSubdeviceOwned = false;
     }
@@ -529,9 +527,7 @@ bool RGBDSensorWrapper::attachAll(const PolyDriverList &device2attach)
         return false;
 
     RateThread::setRate(rate);
-    RateThread::start();
-
-    return true;
+    return RateThread::start();
 }
 
 bool RGBDSensorWrapper::detachAll()
@@ -555,7 +551,8 @@ bool RGBDSensorWrapper::attach(yarp::dev::IRGBDSensor *s)
         return false;
     }
     sensor_p = s;
-    return true;
+    RateThread::setRate(rate);
+    return RateThread::start();
 }
 
 bool RGBDSensorWrapper::attach(PolyDriver* poly)
@@ -568,7 +565,9 @@ bool RGBDSensorWrapper::attach(PolyDriver* poly)
         yError() << "RGBDSensorWrapper: attached device has no valid IRGBDSensor interface.";
         return false;
     }
-    return true;
+
+    RateThread::setRate(rate);
+    return RateThread::start();
 }
 
 bool RGBDSensorWrapper::detach()
