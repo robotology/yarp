@@ -215,6 +215,68 @@ bool yarp::dev::FrameTransformClient::read(yarp::os::ConnectionReader& connectio
         out.addString("Tranform from " + src + " to " + dst + " is: ");
         out.addString(m.toString());
     }
+    else if (request == "list_ports")
+    {
+        out.addVocab(Vocab::encode("many"));
+        for (auto it = m_array_broadcast_transform.begin(); it != m_array_broadcast_transform.end(); it++)
+        {
+            if (*it)
+            {
+                std::string  s = (*it)->port.getName() + (*it)->transform_src + (*it)->transform_dst;
+                out.addString(s);
+            }
+        }
+    }
+    else if (request == "publish_transform")
+    {
+        std::string src  = in.get(1).asString();
+        std::string dst  = in.get(2).asString();
+        std::string port = in.get(3).asString();
+        bool ret = true;
+        for (auto it = m_array_broadcast_transform.begin(); it != m_array_broadcast_transform.end(); it++)
+        {
+            if ((*it) && (*it)->port.getName() == port)
+            {
+                ret = false;
+                break;
+            }
+        }
+        if (ret == true)
+        {
+            broadcast_port_t* b = new broadcast_port_t;
+            b->transform_src = src;
+            b->transform_dst = dst;
+            b->port.open(port);
+            m_array_broadcast_transform.push_back(b);
+        }
+        else
+        {
+            out.addString("unable to perform operation");
+        }
+    }
+    else if (request == "unpublish_transform")
+    {
+        bool ret = false;
+        std::string port = in.get(1).asString();
+        for (auto it = m_array_broadcast_transform.begin(); it != m_array_broadcast_transform.end(); it++)
+        {
+            if ((*it)->port.getName() == port)
+            {
+                (*it)->port.close();
+                 m_array_broadcast_transform.erase(it);
+                 ret = true;
+                 break;
+            }
+        }
+        if (ret)
+        {
+            out.addString("port " + port + " has been closed");
+        }
+        else
+        {
+            out.addString("port " + port + " was not found");
+        }
+    }
     else
     {
         yError("Invalid vocab received in FrameTransformClient");

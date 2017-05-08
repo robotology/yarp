@@ -29,6 +29,7 @@ namespace yarp {
 
 #define DEFAULT_THREAD_PERIOD 20 //ms
 const int TRANSFORM_TIMEOUT_MS = 100; //ms
+const int MAX_PORTS = 5;
 
 #ifndef DOXYGEN_SHOULD_SKIP_THIS
 
@@ -98,6 +99,13 @@ protected:
     yarp::os::ConstString         m_remote_name;
     Transforms_client_storage*    m_transform_storage;
     int                           m_period;
+    struct broadcast_port_t
+    {
+        yarp::os::Port port;
+        std::string transform_src;
+        std::string transform_dst;
+    };
+    std::vector<broadcast_port_t*>  m_array_broadcast_transform;
 
 #endif /*DOXYGEN_SHOULD_SKIP_THIS*/
 
