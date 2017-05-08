@@ -50,6 +50,7 @@ private:
     Ui::MainWindow *ui;
     yarp::manager::Manager lazyManager;
     yarp::os::Property config;
+    QString fileName;
 
     EntitiesTreeWidget *entitiesTree;
     QToolBar *builderToolBar;
@@ -63,6 +64,7 @@ protected:
 
 private slots:
     void onSave();
+    void onSaveAs();
     void onOpen();
     void onClose();
     void onImportFiles();

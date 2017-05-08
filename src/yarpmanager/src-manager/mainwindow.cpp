@@ -115,6 +115,7 @@ MainWindow::MainWindow(QWidget *parent) :
     connect(ui->actionQuit,SIGNAL(triggered()),this,SLOT(close()));
     connect(ui->actionOpen_File,SIGNAL(triggered()),this,SLOT(onOpen()));
     connect(ui->actionSave,SIGNAL(triggered()),this,SLOT(onSave()));
+    connect(ui->actionSave_As,SIGNAL(triggered()),this,SLOT(onSaveAs()));
     connect(ui->actionHelp,SIGNAL(triggered()),this,SLOT(onHelp()));
     connect(ui->actionAbout,SIGNAL(triggered()),this,SLOT(onAbout()));
     connect(ui->action_Builder_Window, SIGNAL(triggered()),this, SLOT(onViewBuilderWindows()));
@@ -1056,6 +1057,66 @@ void MainWindow::onSave()
             QMessageBox::critical(this,"Error",QString("Error Saving the file"));
         }
     }
+}
+
+void MainWindow::onSaveAs()
+{
+    QString filters("Application description files (*.xml);;Modules description files (*.xml);;Resource description files (*.xml);;Any files (*.xml)");
+    QString defaultFilter("Application description files (*.xml);;Modules description files (*.xml);;Resource description files (*.xml);;Any files (*.xml)");
+    QString filename = QFileDialog::getSaveFileName(0, "Save File As",
+                                                    QDir::currentPath(),
+                                                    filters, &defaultFilter);
+    if(filename.trimmed().size() == 0 || filename.contains(" ")){
+        QMessageBox::critical(NULL, QObject::tr("Error"), QObject::tr(string("Invalid file name " + filename.toStdString()).c_str()));
+        return;
+    }
+
+    GenericViewWidget *w = (GenericViewWidget *)ui->mainTabs->currentWidget();
+    if(!w){
+        return;
+    }
+    yarp::manager::NodeType type = ((GenericViewWidget*)w)->getType();
+    if(type == yarp::manager::APPLICATION){
+        ApplicationViewWidget *ww = (ApplicationViewWidget*)w;
+        ww->setFileName(filename);
+        size_t it1 = filename.toStdString().find(".xml");
+        if(it1 == string::npos)
+        {
+            yError("yarpmanager: '.xml' not present in filename");
+            return;
+        }
+        QString appName = filename.toStdString().substr(0,it1).c_str();
+        QString shortAppName; // without the path
+        size_t it2 =appName.toStdString().find_last_of("/");
+        cout<<it2<<endl;
+        if(it2 != string::npos)
+        {
+            shortAppName = appName.toStdString().substr(it2+1).c_str();
+        }
+        else
+        {
+            shortAppName = appName;
+        }
+        ww->setAppName(shortAppName);
+        yDebug(shortAppName.toStdString());
+    }
+    if(filename.isEmpty()){
+        return;
+    }
+
+    if(lazyManager.addApplication(filename.toLatin1().data())){
+        syncApplicationList();
+    }
+
+    if(lazyManager.addResource(filename.toLatin1().data())){
+        syncApplicationList();
+    }
+    if(lazyManager.addModule(filename.toLatin1().data())){
+        syncApplicationList();
+    }
+    reportErrors();
+    onSave();
+
 }
 
 /*! \brief Open File (Modules, Applications, Resources) */

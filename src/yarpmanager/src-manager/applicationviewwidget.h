@@ -70,7 +70,9 @@ public:
 
     bool save();
     QString getFileName();
+    void setFileName(QString filename);
     QString getAppName();
+    void setAppName(QString appName);
 
     bool isEditingMode();
 

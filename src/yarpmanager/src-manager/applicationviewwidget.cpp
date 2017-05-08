@@ -184,12 +184,26 @@ QString ApplicationViewWidget::getFileName()
     return "";
 }
 
+void ApplicationViewWidget::setFileName(QString filename)
+{
+    if(builder)
+        builder->setFileName(filename);
+    return;
+}
+
 QString ApplicationViewWidget::getAppName()
 {
     if (builder) {
         return builder->getAppName();
     }
     return "";
+}
+
+void ApplicationViewWidget::setAppName(QString appName)
+{
+    if(builder)
+        builder->setAppName(appName);
+    return;
 }
 
 ApplicationViewWidget::~ApplicationViewWidget()
