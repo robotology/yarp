@@ -107,7 +107,7 @@ V4L_camera::V4L_camera() : RateThread(1000/DEFAULT_FRAMERATE), doCropping(false)
 
     // leopard debugging
     pixel_fmt_leo = V4L2_PIX_FMT_SGRBG8;
-    bit_shift = 4;
+    bit_shift = 2;  // after firmware update, the shift has to be 2 instead of 4
     bit_bayer = 8;
 }
 
@@ -368,9 +368,9 @@ bool V4L_camera::fromConfig(yarp::os::Searchable& config)
     // Check for addictional leopard parameter for debugging purpose
     if(param.camModel == LEOPARD_PYTHON)
     {
-        yDebug() << "Using leopard camera!!";
-        bit_shift = config.check("shift", Value(4), "right shift of <n> bits").asInt();
-        bit_bayer = config.check("bit_bayer", Value(8), "uses <n> bits bayer conversion").asInt();
+        yDebug() << "-------------------------------\nUsing leopard camera!!";
+        bit_shift = config.check("shift", bit_shift, "right shift of <n> bits").asInt();
+        bit_bayer = config.check("bit_bayer", bit_bayer, "uses <n> bits bayer conversion").asInt();
         switch(bit_bayer)
         {
             case 8:
@@ -1295,9 +1295,12 @@ void V4L_camera::imageProcess(void* p, bool useRawData)
                 return;
             }
 
+            // Resize
             cv::Mat img(cv::Size(param.src_fmt.fmt.pix.width, param.src_fmt.fmt.pix.height), CV_8UC3, param.tmp_image2);
             param.img=img;
             cv::resize(img, param.outMat, cvSize(param.width, param.height), 0, 0, cv::INTER_CUBIC);
+
+//            param.outMat = cv::Mat(cv::Size(param.src_fmt.fmt.pix.width, param.src_fmt.fmt.pix.height), CV_8UC3, param.tmp_image2);
         }
         break;
 
