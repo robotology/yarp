@@ -403,9 +403,6 @@ bool Port::addOutput(const Contact& contact) {
 }
 
 
-/**
- * write something to the port
- */
 bool Port::write(PortWriter& writer, PortWriter *callback) const {
     PortCoreAdapter& core = IMPL();
     if (core.isInterrupted()) return false;
@@ -426,9 +423,6 @@ bool Port::write(PortWriter& writer, PortWriter *callback) const {
     return result;
 }
 
-/**
- * write something to the port
- */
 bool Port::write(PortWriter& writer, PortReader& reader,
                  PortWriter *callback) const {
     PortCoreAdapter& core = IMPL();
@@ -449,9 +443,6 @@ bool Port::write(PortWriter& writer, PortReader& reader,
     return result;
 }
 
-/**
- * read something from the port
- */
 bool Port::read(PortReader& reader, bool willReply) {
     if(!isOpen()) return false;
     PortCoreAdapter& core = IMPL();
@@ -473,12 +464,6 @@ bool Port::replyAndDrop(PortWriter& writer) {
     return core.reply(writer,true,core.isInterrupted());
 }
 
-/**
- * set an external writer for port data
- */
-//void Port::setWriter(PortWriter& writer) {
-//  YARP_ERROR(Logger::get(),"Port::setWriter not implemented");
-//}
 
 void Port::setReader(PortReader& reader) {
     PortCoreAdapter& core = IMPL();
