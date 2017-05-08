@@ -1385,7 +1385,6 @@ void V4L_camera::imageProcess(void* p, bool useRawData)
     timeElapsed = yarp::os::Time::now() - timeStart;
     myCounter++;
     timeTot += timeElapsed;
-//     yDebug("Conversion time is %.6f ms", timeElapsed*1000);
 
     if((myCounter % 60) == 0)
     {
@@ -1662,8 +1661,17 @@ bool V4L_camera::set_V4L2_control(uint32_t id, double value, bool verbatim)
         if(verbatim)
             control.value = value;
         else
+        {
+            if(param.camModel == LEOPARD_PYTHON)
+            {
+                if( (V4L2_CID_EXPOSURE == id) || (V4L2_CID_EXPOSURE_ABSOLUTE == id) || (V4L2_CID_EXPOSURE_AUTO == id))
+                {
+                    queryctrl.maximum = 8000;
+                    queryctrl.minimum = 0;
+                }
+            }
             control.value = (int32_t) (value * (queryctrl.maximum - queryctrl.minimum) + queryctrl.minimum);
-
+        }
         if (-1 == ioctl(param.fd, VIDIOC_S_CTRL, &control))
         {
             perror ("VIDIOC_S_CTRL");
@@ -1737,6 +1745,14 @@ double V4L_camera::get_V4L2_control(uint32_t id, bool verbatim)
     if(verbatim)
         return control.value;
 
+    if(param.camModel == LEOPARD_PYTHON)
+    {
+        if( (V4L2_CID_EXPOSURE == id) || (V4L2_CID_EXPOSURE_ABSOLUTE == id) || (V4L2_CID_EXPOSURE_AUTO == id))
+        {
+            queryctrl.maximum = 8000;
+            queryctrl.minimum = 0;
+        }
+    }
     return (double) (control.value - queryctrl.minimum) /  (queryctrl.maximum - queryctrl.minimum);
 }
 
