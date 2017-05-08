@@ -23,6 +23,7 @@
 #include <QApplication>
 #include <QDebug>
 #include <QMessageBox>
+#include <QtGlobal>
 #include <yarp/os/Log.h>
 #include <yarp/os/LogStream.h>
 #include <csignal>
@@ -51,7 +52,11 @@ static void sighandler(int sig)
 
 int main(int argc, char *argv[])
 {
+#if QT_VERSION > QT_VERSION_CHECK(5, 5, 0)
+    qputenv("QT_AUTO_SCREEN_SCALE_FACTOR", QByteArray("1"));
+#else
     qputenv("QT_DEVICE_PIXEL_RATIO", QByteArray("auto"));
+#endif
 
 
     Network yarp;
