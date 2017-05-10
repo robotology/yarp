@@ -41,6 +41,8 @@ bool JoypadControlClient::getJoypadInfo()
         if(!getCount(get<0>(vocab_port), count)) return false;
         if(count)
         {
+            string source;
+            string destination;
             std::string portname = m_local + get<2>(vocab_port) + ":i";
             get<1>(vocab_port)->valid = true;
             get<1>(vocab_port)->count = count;
@@ -67,7 +69,9 @@ bool JoypadControlClient::getJoypadInfo()
                 return false;
             }
 
-            if(!yarp::os::NetworkBase::connect(m_remote + get<2>(vocab_port) + ":o", m_local + get<2>(vocab_port) + ":i"), "udp")
+            source      = m_remote + get<2>(vocab_port) + ":o";
+            destination = m_local  + get<2>(vocab_port) + ":i";
+            if(!yarp::os::NetworkBase::connect(source.c_str(), destination.c_str(), "udp"))
             {
                 yError() << "unable to connect" << portname << "port";
                 return false;
