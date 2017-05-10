@@ -124,6 +124,7 @@ private:
     string strAppName;
     string strDefBroker;
     YarpBroker connector;
+    vector<string> listOfXml;
 
     KnowledgeBase knowledge;
     ExecutablePContainer runnables;

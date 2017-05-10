@@ -86,6 +86,10 @@ Manager::~Manager()
 
 bool Manager::addApplication(const char* szFileName, char* szAppName_, int len)
 {
+    if(find(listOfXml.begin(), listOfXml.end(),szFileName) == listOfXml.end())
+        listOfXml.push_back(szFileName);
+    else
+        return false;
     XmlAppLoader appload(szFileName);
     if(!appload.init())
         return false;
