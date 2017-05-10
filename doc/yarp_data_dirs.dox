@@ -24,7 +24,7 @@ The key points to keep in mind are:
 \li    Installation directories are generally non-writable, users without root privileges cannot edit installed configuration files unless they first copy them inside their own private directories, the latter must take precedence and hide the others;
 \li    Therefore it is normal that configuration files can be in multiple places, inside user-specific, private or shared installation directories;
 \li    External packages can install files so that YARP can find them (see \ref datafiles_3rdparty "here");
-\li    Type of files are divided in families that are placed in specific sub-directories. Current allowed sub-directories are listed \ref datafiles_datadirs "here".
+\li    Types of files are divided in families that are placed in specific sub-directories. Current allowed sub-directories are listed \ref datafiles_datadirs "here".
 
 File customization can happen by copying files or contexts from the shared installation directories to the ones private to the user. The \ref yarp-config utility simplifies this process.
 
