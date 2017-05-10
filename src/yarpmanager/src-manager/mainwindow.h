@@ -45,12 +45,16 @@ private:
     void syncApplicationList(QString selectNodeForEditing = "");
     bool loadRecursiveTemplates(const char* szPath);
     bool loadRecursiveApplications(const char* szPath);
+    bool initializeFile(string _class);
 
 private:
     Ui::MainWindow *ui;
     yarp::manager::Manager lazyManager;
     yarp::os::Property config;
     QString fileName;
+    QString currentAppName;
+    QString currentAppDescription;
+    QString currentAppVersion;
 
     EntitiesTreeWidget *entitiesTree;
     QToolBar *builderToolBar;

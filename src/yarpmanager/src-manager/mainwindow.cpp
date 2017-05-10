@@ -316,7 +316,6 @@ void MainWindow::syncApplicationList(QString selectNodeForEditing)
     ui->entitiesTree->clearModules();
     ui->entitiesTree->clearResources();
     //ui->entitiesTree->clearTemplates();
-
     yarp::manager::KnowledgeBase* kb = lazyManager.getKnowledgeBase();
     yarp::manager::ApplicaitonPContainer apps =  kb->getApplications();
     unsigned int cnt = 0;
@@ -427,6 +426,38 @@ bool MainWindow::loadRecursiveApplications(const char* szPath)
     }
     closedir(dir);
     return true;
+}
+
+bool MainWindow::initializeFile(string _class)
+{
+    QFile f(fileName);
+    bool b = f.open(QIODevice::ReadWrite);
+    QString appTemplate  = "<application>\n"
+                 "      <name>" + currentAppName + "</name>\n"
+                 "      <description>" + currentAppDescription + "</description>\n"
+                 "      <version>" + currentAppVersion + "</version>\n"
+                 "      <authors>\n"
+                 "      </authors>\n"
+                 "</application>\n";
+    if(b){
+        if(_class == "Resource")
+            f.write(str_res_template.c_str());
+        else if(_class == "Module")
+            f.write(str_mod_template.c_str());
+        else if(_class == "Application")
+            f.write(appTemplate.toStdString().c_str());
+        else
+            return false;
+        f.flush();
+        f.close();
+        return true;
+    }else{
+        yarp::manager::ErrorLogger* logger  = yarp::manager::ErrorLogger::Instance();
+        QString err = QString("Cannot create %1").arg(fileName);
+        logger->addError(err.toLatin1().data());
+        reportErrors();
+        return false;
+    }
 }
 
 /*! \brief Load the Resource on the MainWindow
@@ -850,26 +881,12 @@ void MainWindow::onNewApplication()
     NewApplicationWizard *newApplicationWizard = new NewApplicationWizard(&config);
     newApplicationWizard->setWindowTitle("Create New Application");
     if(newApplicationWizard->exec() == QDialog::Accepted){
-        qDebug() << "Accepted " << newApplicationWizard->name;
 
-        QFile f(newApplicationWizard->fileName);
-        if(!f.open(QIODevice::WriteOnly)){
-            yarp::manager::ErrorLogger* logger  = yarp::manager::ErrorLogger::Instance();
-            logger->addError(QString("Cannot create %1").arg(newApplicationWizard->fileName.toLatin1().data()).toLatin1().data());
-            reportErrors();
-            delete newApplicationWizard;
-            return;
-        }
-
-        QString s  = "<application>\n"
-                     "      <name>" + newApplicationWizard->name + "</name>\n"
-                     "      <description>" + newApplicationWizard->description + "</description>\n"
-                     "      <version>" + newApplicationWizard->version + "</version>\n"
-                     "      <authors>\n"
-                     "      </authors>\n"
-                     "</application>\n";
-        f.write(s.toLatin1());
-        f.close();
+        currentAppName = newApplicationWizard->name;
+        currentAppDescription = newApplicationWizard->description;
+        currentAppVersion = newApplicationWizard->version;
+        fileName = newApplicationWizard->fileName;
+        initializeFile("Application");
 
         if(lazyManager.addApplication(newApplicationWizard->fileName.toLatin1().data(),
                                       newApplicationWizard->name.toLatin1().data())){
@@ -881,36 +898,12 @@ void MainWindow::onNewApplication()
         }
 
         delete newApplicationWizard;
+        QFile f(fileName);
+        f.remove();
         return;
     }
     delete newApplicationWizard;
     qDebug() << "Rejected";
-//    yarp::manager::ErrorLogger* logger  = yarp::manager::ErrorLogger::Instance();
-
-//    QString fileName = QFileDialog::getSaveFileName(this,"Create new Application description file",QApplication::applicationDirPath(),
-//                                 "Application description files (*.xml)");
-
-//    QFile f(fileName);
-//    bool b = f.open(QIODevice::ReadWrite);
-//    if(b){
-//        f.write(str_app_template.c_str());
-//        f.flush();
-//        f.close();
-//    }else{
-//        QString err = QString("Cannot create %1").arg(fileName);
-//        logger->addError(err.toLatin1().data());
-//        reportErrors();
-//        return;
-//    }
-
-//    yarp::manager::LocalBroker launcher;
-//    if(launcher.init(ext_editor.c_str(), fileName.toLatin1().data(), NULL, NULL, NULL, NULL)){
-//        if(!launcher.start() && strlen(launcher.error())){
-//            QString msg = QString("Error while launching %1. %2").arg(ext_editor.c_str()).arg(launcher.error());
-//            logger->addError(msg.toLatin1().data());
-//            reportErrors();
-//        }
-//    }
 }
 
 /*! \brief Create a new Resource */
@@ -918,18 +911,13 @@ void MainWindow::onNewResource()
 {
     yarp::manager::ErrorLogger* logger  = yarp::manager::ErrorLogger::Instance();
 
-    QString fileName = QFileDialog::getSaveFileName(this,"Create new Resource description file",QApplication::applicationDirPath(),
+    fileName = QFileDialog::getSaveFileName(this,"Create new Resource description file",QApplication::applicationDirPath(),
                                  "Resource description files (*.xml)");
 
-    QFile f(fileName);
-    bool b = f.open(QIODevice::ReadWrite);
-    if(b){
-        f.write(str_res_template.c_str());
-        f.flush();
-        f.close();
-    }else{
-        QString err = QString("Cannot create %1").arg(fileName);
-        logger->addError(err.toLatin1().data());
+    if(!initializeFile("Resource"))
+    {
+        QString msg = QString("Error while initializing %1.").arg(fileName.toStdString().c_str());
+        logger->addError(msg.toLatin1().data());
         reportErrors();
         return;
     }
@@ -950,18 +938,13 @@ void MainWindow::onNewModule()
 {
     yarp::manager::ErrorLogger* logger  = yarp::manager::ErrorLogger::Instance();
 
-    QString fileName = QFileDialog::getSaveFileName(this,"Create new Module description file",QApplication::applicationDirPath(),
+    fileName = QFileDialog::getSaveFileName(this,"Create new Module description file",QApplication::applicationDirPath(),
                                  "Module description files (*.xml)");
 
-    QFile f(fileName);
-    bool b = f.open(QIODevice::ReadWrite);
-    if(b){
-        f.write(str_mod_template.c_str());
-        f.flush();
-        f.close();
-    }else{
-        QString err = QString("Cannot create %1").arg(fileName);
-        logger->addError(err.toLatin1().data());
+    if(!initializeFile("Module"))
+    {
+        QString msg = QString("Error while initializing %1.").arg(fileName.toStdString().c_str());
+        logger->addError(msg.toLatin1().data());
         reportErrors();
         return;
     }
@@ -1061,15 +1044,23 @@ void MainWindow::onSave()
 
 void MainWindow::onSaveAs()
 {
-    QString filters("Application description files (*.xml);;Modules description files (*.xml);;Resource description files (*.xml);;Any files (*.xml)");
-    QString defaultFilter("Application description files (*.xml);;Modules description files (*.xml);;Resource description files (*.xml);;Any files (*.xml)");
-    QString filename = QFileDialog::getSaveFileName(0, "Save File As",
-                                                    QDir::currentPath(),
-                                                    filters, &defaultFilter);
-    if(filename.trimmed().size() == 0 || filename.contains(" ")){
-        QMessageBox::critical(NULL, QObject::tr("Error"), QObject::tr(string("Invalid file name " + filename.toStdString()).c_str()));
+    NewApplicationWizard *newApplicationWizard = new NewApplicationWizard(&config,true);
+    newApplicationWizard->setWindowTitle("Save Application as");
+    if(newApplicationWizard->exec() == QDialog::Accepted){
+        fileName = newApplicationWizard->fileName;
+        delete newApplicationWizard;
+    }
+    else
+    {
+        delete newApplicationWizard;
         return;
     }
+    if(fileName.trimmed().size() == 0 || fileName.contains(" ")){
+        QMessageBox::critical(NULL, QObject::tr("Error"), QObject::tr(string("Invalid file name " + fileName.toStdString()).c_str()));
+        return;
+    }
+
+    //onTabClose() //useful for checking I'm overwriting a xml if I have to stop the applications or not..
 
     GenericViewWidget *w = (GenericViewWidget *)ui->mainTabs->currentWidget();
     if(!w){
@@ -1078,14 +1069,14 @@ void MainWindow::onSaveAs()
     yarp::manager::NodeType type = ((GenericViewWidget*)w)->getType();
     if(type == yarp::manager::APPLICATION){
         ApplicationViewWidget *ww = (ApplicationViewWidget*)w;
-        ww->setFileName(filename);
-        size_t it1 = filename.toStdString().find(".xml");
+        ww->setFileName(fileName);
+        size_t it1 = fileName.toStdString().find(".xml");
         if(it1 == string::npos)
         {
             yError("yarpmanager: '.xml' not present in filename");
             return;
         }
-        QString appName = filename.toStdString().substr(0,it1).c_str();
+        QString appName = fileName.toStdString().substr(0,it1).c_str();
         QString shortAppName; // without the path
         size_t it2 =appName.toStdString().find_last_of("/");
         cout<<it2<<endl;
@@ -1098,20 +1089,19 @@ void MainWindow::onSaveAs()
             shortAppName = appName;
         }
         ww->setAppName(shortAppName);
-        yDebug(shortAppName.toStdString());
     }
-    if(filename.isEmpty()){
+    if(fileName.isEmpty()){
         return;
     }
 
-    if(lazyManager.addApplication(filename.toLatin1().data())){
+    if(lazyManager.addApplication(fileName.toLatin1().data())){
         syncApplicationList();
     }
 
-    if(lazyManager.addResource(filename.toLatin1().data())){
+    if(lazyManager.addResource(fileName.toLatin1().data())){
         syncApplicationList();
     }
-    if(lazyManager.addModule(filename.toLatin1().data())){
+    if(lazyManager.addModule(fileName.toLatin1().data())){
         syncApplicationList();
     }
     reportErrors();

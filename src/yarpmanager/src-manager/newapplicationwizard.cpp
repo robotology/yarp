@@ -1,6 +1,8 @@
 #include "newapplicationwizard.h"
 #include <QGridLayout>
 #include <QFileDialog>
+#include <QFileInfo>
+#include <QMessageBox>
 
 #include <yarp/manager/ymm-dir.h>
 
@@ -21,7 +23,7 @@ inline bool absolute(const char *path) {  //copied from yarp_OS ResourceFinder.c
 }
 
 
-NewApplicationWizard::NewApplicationWizard(yarp::os::Property *config)
+NewApplicationWizard::NewApplicationWizard(yarp::os::Property *config, bool _saveAs):alreadyExists(false), saveAs(_saveAs)
 {
     CustomWizardPage *page = new CustomWizardPage;
 
@@ -43,7 +45,6 @@ NewApplicationWizard::NewApplicationWizard(yarp::os::Property *config)
 
     versionLbl = new QLabel("Version: ");
     versionLbl->setWordWrap(true);
-
     versionEdit = new QLineEdit();
     versionEdit->setPlaceholderText("1.0");
 
@@ -64,6 +65,7 @@ NewApplicationWizard::NewApplicationWizard(yarp::os::Property *config)
 
     folderCombo = new QComboBox();
     folderCombo->setEditable(false);
+    folderCombo->setDisabled(saveAs);
 
 
 
@@ -143,14 +145,54 @@ NewApplicationWizard::NewApplicationWizard(yarp::os::Property *config)
 
 }
 
+
 void NewApplicationWizard::onNameChanged(QString name)
 {
-    if(!name.isEmpty()){
+    if(!name.isEmpty())
+    {
         fileEdit->setText(QString("%1.xml").arg(name.toLatin1().data()));
-    }else{
+        buildFileName();
+        if(fileExists(this->fileName))
+        {
+            fileEdit->setStyleSheet("color: #FF0000");
+            alreadyExists = true;
+        }
+        else
+        {
+            fileEdit->setStyleSheet("color: #000000");
+            alreadyExists = false;
+        }
+    }
+    else
+    {
         fileEdit->setText("");
     }
 }
+
+bool NewApplicationWizard::fileExists(QString path) {
+    QFileInfo check_file(path);
+    // check if file exists
+    if (check_file.exists() && check_file.isFile())
+    {
+        return true;
+    }
+    else
+    {
+        return false;
+    }
+}
+
+void NewApplicationWizard::buildFileName(){
+    QString sep="";
+    if(folderCombo->currentText().at(folderCombo->currentText().size()-1) != '/') //checking if the path terminate with / or not
+        #ifdef WIN32
+            sep="\\";
+        #else
+            sep="/";
+        #endif
+    this->fileName = QString("%1"+sep+"%2").arg(folderCombo->currentText().toLatin1().data()).arg(fileEdit->text().toLatin1().data());
+}
+
 
 void NewApplicationWizard::onBrowse( )
 {
@@ -185,8 +227,18 @@ void NewApplicationWizard::accept()
     }else{
         version = versionEdit->text();
     }
-
-    this->fileName = QString("%1/%2").arg(folderCombo->currentText().toLatin1().data()).arg(fileEdit->text().toLatin1().data());
+    buildFileName();
+    if(alreadyExists)
+    {
+        QMessageBox::StandardButton reply;
+        reply = QMessageBox::question(this, "Quit","The file choosen already exists, do you want to overwrite it?",
+                                      QMessageBox::Yes|QMessageBox::No);
+        if (reply == QMessageBox::No)
+        {
+            QDialog::reject();
+            return;
+        }
+    }
     QDialog::accept();
 }
 
