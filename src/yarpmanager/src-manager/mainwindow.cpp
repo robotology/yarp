@@ -501,6 +501,14 @@ void MainWindow::viewModule(yarp::manager::Module *module)
  */
 void MainWindow::viewApplication(yarp::manager::Application *app,bool editingMode)
 {
+    if (std::find(listOfApplicationsOpen.begin(), listOfApplicationsOpen.end(), app->getXmlFile()) != listOfApplicationsOpen.end())
+    {
+        QMessageBox::information(this,
+                                QString("Opening %1").arg(app->getName()),
+                                "Tab already open");
+        return;
+    }
+    listOfApplicationsOpen.push_back(app->getXmlFile());
     for(int i=0;i<ui->mainTabs->count();i++){
         GenericViewWidget *w = (GenericViewWidget *)ui->mainTabs->widget(i);
         if(w->getType() ==  yarp::manager::APPLICATION){
@@ -696,7 +704,10 @@ bool MainWindow::onTabClose(int index)
         }
 
         if(aw && aw->isRunning()){
-            if( QMessageBox::warning(this,QString("Closing %1").arg(ui->mainTabs->tabText(index)),"You have some running module. After closing the application window you might not be able to recover them. Are you sure?",QMessageBox::Yes,QMessageBox::No) == QMessageBox::No){
+            if( QMessageBox::warning(this,
+                                     QString("Closing %1").arg(ui->mainTabs->tabText(index)),
+                                     "You have some running module. After closing the application window you might not be able to recover them. Are you sure?",
+                                     QMessageBox::Yes,QMessageBox::No) == QMessageBox::No){
                 return false;
             }
         }
@@ -707,7 +718,12 @@ bool MainWindow::onTabClose(int index)
             if(btn == QMessageBox::Yes){
                 bool ret = aw->save();
                 if(ret){
+                    listOfApplicationsOpen.erase(std::remove(listOfApplicationsOpen.begin(), listOfApplicationsOpen.end(), aw->getFileName()), listOfApplicationsOpen.end());
                     onReopenApplication(aw->getAppName(),aw->getFileName());
+                    ui->mainTabs->removeTab(index);
+                    delete w;
+                    return true;
+
                 }else{
                     QMessageBox::critical(this,"Error",QString("Error Saving the file"));
                     return false;
@@ -730,6 +746,7 @@ bool MainWindow::onTabClose(int index)
             }
 
         }
+        listOfApplicationsOpen.erase(std::remove(listOfApplicationsOpen.begin(), listOfApplicationsOpen.end(), aw->getFileName()), listOfApplicationsOpen.end());
         aw->closeManager();
     }
     ui->mainTabs->removeTab(index);
@@ -892,7 +909,7 @@ void MainWindow::onNewApplication()
 {
     NewApplicationWizard *newApplicationWizard = new NewApplicationWizard(&config);
     newApplicationWizard->setWindowTitle("Create New Application");
-    if(newApplicationWizard->exec() == QDialog::Accepted){
+    if (newApplicationWizard->exec() == QDialog::Accepted){
 
         currentAppName = newApplicationWizard->name;
         currentAppDescription = newApplicationWizard->description;
@@ -900,12 +917,15 @@ void MainWindow::onNewApplication()
         fileName = newApplicationWizard->fileName;
         initializeFile("Application");
 
-        if(lazyManager.addApplication(newApplicationWizard->fileName.toLatin1().data(),
-                                      newApplicationWizard->name.toLatin1().data())){
+        if (lazyManager.addApplication(newApplicationWizard->fileName.toLatin1().data(),
+                                      newApplicationWizard->name.toLatin1().data()))
+        {
 
             syncApplicationList(newApplicationWizard->name);
 
-        } else {
+        }
+        else
+        {
             reportErrors();
         }
 
