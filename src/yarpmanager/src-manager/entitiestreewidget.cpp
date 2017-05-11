@@ -403,6 +403,13 @@ void EntitiesTreeWidget::clearTemplates()
     }
 }
 
+QTreeWidgetItem * EntitiesTreeWidget::getWidgetItemByFilename(const QString xmlFile){
+    QList<QTreeWidgetItem*> clist = this->findItems(xmlFile, Qt::MatchContains|Qt::MatchRecursive, 0);
+    if (clist.size())
+        return clist.at(0)->parent();
+    return YARP_NULLPTR;
+}
+
 /*! \brief Called when a context menu has been requested
     \param p the point where the context menu should appear
 */
@@ -579,7 +586,8 @@ void EntitiesTreeWidget::onRemove()
                 yarp::manager::Application *app = (yarp::manager::Application*)item->data(0,Qt::UserRole + 1).toLongLong();
                 if (app) {
                     QString appName = item->text(0);
-                    removeApplication(appName);
+                    QString xmlFile = app->getXmlFile();
+                    removeApplication(xmlFile,appName);
                 }
 
             }
@@ -602,6 +610,7 @@ void EntitiesTreeWidget::onRemove()
         }
 
         while(item->childCount()>0) {
+            cout<<"removing "<<item->child(0)->text(0).toStdString()<<" the father is "<<item->text(0).toStdString();
             delete item->takeChild(0);
         }
 

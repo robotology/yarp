@@ -40,7 +40,7 @@ public:
     bool addResource(const char* szFileName);
     bool addResources(const char* szPath);
 
-    bool removeApplication(const char* szAppName);
+    bool removeApplication(const char* szFileName, const char* szAppName);
     bool removeModule(const char* szModName);
     bool removeResource(const char* szResName);
 

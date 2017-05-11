@@ -101,7 +101,7 @@ public slots:
     void viewResource(yarp::manager::Computer *res);
     void viewApplication(yarp::manager::Application *app, bool editingMode);
 
-    void onRemoveApplication(QString);
+    void onRemoveApplication(QString , QString);
     void onRemoveModule(QString);
     void onRemoveResource(QString);
     void onReopenApplication(QString,QString);

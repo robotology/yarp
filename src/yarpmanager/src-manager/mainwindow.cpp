@@ -90,7 +90,7 @@ MainWindow::MainWindow(QWidget *parent) :
     connect(ui->entitiesTree,SIGNAL(viewApplication(yarp::manager::Application*,bool)),this,SLOT(viewApplication(yarp::manager::Application*,bool)));
     connect(ui->entitiesTree,SIGNAL(openFiles()),this,SLOT(onOpen()));
     connect(ui->entitiesTree,SIGNAL(importFiles()),this,SLOT(onImportFiles()));
-    connect(ui->entitiesTree,SIGNAL(removeApplication(QString)),this,SLOT(onRemoveApplication(QString)));
+    connect(ui->entitiesTree,SIGNAL(removeApplication(QString, QString)),this,SLOT(onRemoveApplication(QString, QString)));
     connect(ui->entitiesTree,SIGNAL(removeModule(QString)),this,SLOT(onRemoveModule(QString)));
     connect(ui->entitiesTree,SIGNAL(removeResource(QString)),this,SLOT(onRemoveResource(QString)));
     connect(ui->entitiesTree,SIGNAL(reopenApplication(QString,QString)),this,SLOT(onReopenApplication(QString,QString)),Qt::DirectConnection);
@@ -716,8 +716,20 @@ bool MainWindow::onTabClose(int index)
             if(btn == QMessageBox::Cancel){
                 return false;
             }
-        }
+            if (btn == QMessageBox::No){
+                QFile file(aw->getFileName());
+                if(!file.exists()){
+                    listOfApplicationsOpen.erase(std::remove(listOfApplicationsOpen.begin(), listOfApplicationsOpen.end(), aw->getFileName()), listOfApplicationsOpen.end());
+                    ui->entitiesTree->setCurrentItem(ui->entitiesTree->getWidgetItemByFilename(aw->getFileName()));
+                    ui->entitiesTree->onRemove();
+                    aw->closeManager();
+                    ui->mainTabs->removeTab(index);
+                    delete w;
+                    return true;
+                }
+            }
 
+        }
         aw->closeManager();
     }
     ui->mainTabs->removeTab(index);
@@ -900,6 +912,7 @@ void MainWindow::onNewApplication()
         delete newApplicationWizard;
         QFile f(fileName);
         f.remove();
+        onModified(true);
         return;
     }
     delete newApplicationWizard;
@@ -1009,6 +1022,7 @@ void MainWindow::onModified(bool mod)
         ApplicationViewWidget *w = (ApplicationViewWidget*)gw;
         if(mod){
             ui->mainTabs->setTabText(index,w->getAppName() + "*");
+            gw->setModified(mod);
         }else{
             ui->mainTabs->setTabText(index,w->getAppName());
         }
@@ -1149,16 +1163,16 @@ void MainWindow::onHelp()
     QDesktopServices::openUrl(QUrl("http://www.yarp.it/yarpmanager.html"));
 }
 
-void MainWindow::onRemoveApplication(QString appName)
+void MainWindow::onRemoveApplication(QString xmlFile, QString appName)
 {
-    lazyManager.removeApplication(appName.toLatin1().data());
+    lazyManager.removeApplication(xmlFile.toLatin1().data(),appName.toLatin1().data());
     syncApplicationList();
 }
 
 
 void MainWindow::onReopenApplication(QString appName,QString fileName)
 {
-    lazyManager.removeApplication(appName.toLatin1().data());
+    lazyManager.removeApplication(fileName.toLatin1().data(),appName.toLatin1().data());
     lazyManager.addApplication(fileName.toLatin1().data(),appName.toLatin1().data());
     syncApplicationList();
 }
