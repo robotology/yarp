@@ -794,7 +794,7 @@ YARP_SSIZE_T DgramTwoWayStream::read(const Bytes& b) {
                                   "(Might be something like: sudo /sbin/sysctl -w net.core.rmem_max=8388608)");
 #else
                         YARP_INFO(Logger::get(),
-                                  "To change the limit use: systcl for Linux/FreeBSD, ndd for Solaris, no for AIX");
+                                  "To change the limit use: sysctl for Linux/FreeBSD, ndd for Solaris, no for AIX");
 #endif
                         bufferAlerted = true;
                     } else {

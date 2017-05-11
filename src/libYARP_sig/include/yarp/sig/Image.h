@@ -338,7 +338,7 @@ private:
  * Image class with user control of representation details.
  * Can be necessary when interfacing with other image types.
  */
-class yarp::sig::FlexImage : public yarp::sig::Image {
+class YARP_sig_API yarp::sig::FlexImage : public yarp::sig::Image {
 public:
 
     void setPixelCode(int imgPixelCode) {
