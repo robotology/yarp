@@ -23,12 +23,34 @@ namespace yarp {
  *
  * \brief A mini-server for performing network communication in the background.
  *
- * If you are a beginner, you might want to use the Port class first,
+ * If you are a beginner, you might want to use the yarp::os::Port class first,
  * and then come back to BufferedPort when you want to send and receive
  * messages in the background without having to stop your processing.
  * This is convenient, but requires a little care to understand the
  * life-cycle of objects written to and read from the network
  * (see BufferedPort::read and BufferedPort::write).
+ * 
+ * By default a BufferedPort attempts to reduce latency between senders 
+ * and receivers. To do so messages may be dropped by the writer if BufferedPort::write 
+ * is called too quickly. The reader may also drop old messages if BufferedPort::read 
+ * is not called fast enough, so that new messages can travel with high priority. This policy 
+ * is sometimes called Oldest Packet Drop (ODP).
+ *
+ * If your application cannot afford dropping messages you can change the buffering policy. 
+ * Use BufferedPort::writeStrict() when writing to a port, this waits for pending 
+ * transmissions to be finished before writing new data. Call  BufferedPort::setStrict() 
+ * to change the buffering policy to FIFO at the receiver side. In this way all messages will be stored
+ * inside the BufferedPort and delivered to the reader. Pay attention that in this case a slow reader
+ * may cause increasing latency and memory use.
+ * 
+ * Methods that can be useful to monitor the status of read and write operations are: 
+ * yarp::os::BufferedPort::getPendingReads() and yarp::os::BufferedPort::isWriting(). 
+ *
+ * For examples and help, see:
+ * \li \ref what_is_a_port
+ * \li \ref note_ports
+ * \li \ref port_expert
+ * \li \ref yarp_buffering
  */
 template <class T>
 class yarp::os::BufferedPort : public Contactable,

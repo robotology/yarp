@@ -29,6 +29,10 @@ Using YARP ports for communication:
 \li \subpage yarp_http
 \li \subpage idls
 
+Make sure you understand how to control YARP buffering policies the life-cycle of messages:
+
+\li \subpage yarp_buffering 
+
 How to write a standard module, search and install configuration files:
 \li \subpage yarp_resource_finder_tutorials
 \li \subpage yarp_rfmodule_tutorial

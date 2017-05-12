@@ -28,10 +28,18 @@ namespace yarp {
  * outgoing connections.  Data coming from any incoming connection can
  * be received by calling Port::read.  Calls to Port::write
  * result in data being sent to all the outgoing connections.
- * For help sending and receiving data in the background, see
+ * Communication with Port objects is blocking by default, this means 
+ * that YARP will not drop messages and timing between readers and senders
+ * will be coupled (notice that messages may still get dropped in the network 
+ * if you use an unreliable protocol like UDP).
+ * For help sending and receiving data in the background and decouple timing, see
  * BufferedPort, or PortReaderBuffer and PortWriterBuffer.
  *
- * For examples and help, see: \ref what_is_a_port
+ * For examples and help, see: 
+ * \li \ref what_is_a_port 
+ * \li \ref note_ports 
+ * \li \ref port_expert
+ * \li \ref yarp_buffering
  *
  */
 class YARP_OS_API yarp::os::Port : public UnbufferedContactable {
