@@ -37,7 +37,7 @@ The default value for these variables is dependent on the operating system.
 Linux
 -----
 
-Default values for Linux are based on the XDG Base Directory Specification (see <http://standards.freedesktop.org/basedir-spec/basedir-spec-0.8.html>). They rely on XDG environment variables, which default to:
+Default values for Linux are based on the XDG Base Directory Specification (see <http://standards.freedesktop.org/basedir-spec/basedir-spec-0.8.html>). They rely on XDG environment variables, whose default values are:
 
 <b>$XDG_DATA_HOME</b>: 
 > \$HOME/.local/share/
@@ -88,7 +88,7 @@ Default values for Yarp are therefore:
 macOS
 -----
 
-On maxOS, the following environment variable is used:
+On macOS, the following environment variable is used:
 
 <b>$HOME</b>: 
 > `/Users/<username>`  
