@@ -378,7 +378,7 @@ There is one other thing you might like to consider when deciding how
 to express your data on the network.  If you embed a few "tags" in
 your data, then it can be made compatible with the network format used
 by Bottles.  Then ports using the format can be read from and written
-to from the command line (with "yarp read", "yarp write", and "yarp
+to the command line (with "yarp read", "yarp write", and "yarp
 rpc"), or a web-browser, etc.  For example, we could make Target's
 write method be:
 \code
@@ -448,7 +448,7 @@ you have some novel kind of network, or want to send messages
 via audio, etc.  Ports will still work.
 
 Carriers can be connection based (tcp, shmem) or connectionless (udp,
-mcast).  Be aware that you on connectionless carriers data flows in
+mcast).  Be aware that on connectionless carriers data flows in
 one direction only.  As a consequence of this, replies are not
 possible.  Data transmission may also be unreliable for such carriers.
 YARP guarantees that if a message is sent and successfully received,

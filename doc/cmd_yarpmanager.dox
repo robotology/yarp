@@ -112,7 +112,7 @@ $ yarpserver
 \subsection example_y Using yarpmanager
 Open another terminal and try this:
 \verbatim
-$ cd ${YARP_ROOT}/src/yarpmanager/tests
+$ cd <path to yarp local repository>/data/yarpmanager/tests
 $ yarpmanager-console
 >> help
      # a list of yarpmanager-console keywords
@@ -130,7 +130,7 @@ $ yarpmanager-console
 \subsection example_g Using (g)yarpmanager
 Open another terminal and try this:
 \verbatim
-$ cd ${YARP_ROOT}/src/yarpmanager/tests
+$ cd <path to yarp local repository>/data/yarpmanager/tests
 $ yarpmanager
 \endverbatim
 
@@ -152,7 +152,7 @@ $ yarprun --server /node2
 
 Then try this:
 \verbatim
-$ cd ${YARP_ROOT}/src/yarpmanager/tests
+$ cd <path to yarp local repository>/data/yarpmanager/tests
 $ yarpmanager
 \endverbatim
 

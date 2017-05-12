@@ -7,6 +7,8 @@
 #ifndef YARP_DEV_ICONTROLMODE_H
 #define YARP_DEV_ICONTROLMODE_H
 
+#include <yarp/os/Vocab.h>
+
 namespace yarp {
     namespace dev {
     class IControlModeRaw;
