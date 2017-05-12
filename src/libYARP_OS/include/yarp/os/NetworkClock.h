@@ -34,6 +34,8 @@ public:
 
     virtual bool read(ConnectionReader& reader);
 private:
+  
+    ConstString clockName;
     void *pwaiters;
     Port port;
 
@@ -44,6 +46,7 @@ private:
     YARP_INT32 nsec;
     double t;
     bool closing;
+    bool initted;
 };
 
 #endif // YARP_OS_NETWORKCLOCK_H
