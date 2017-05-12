@@ -68,8 +68,8 @@ under the GPL.
 \li \subpage note_devices
 \li \subpage yarp_data_dirs
 
-\section Learning YARP
-The best way to learn how to use YARP is to read the tutorials and documentation pages that are reported in the page \subpage tutorials. Do not forget to checkout the command line tools and guis sections below. Advanced topics for interoperability and technical papers are reported at the end of this page. The page \supage tutorials is continuously updated  so it is a good idea to periodically check it.
+\section yarp_learning Learning YARP
+The best way to learn how to use YARP is to read the tutorials and documentation pages that are reported in the page \subpage tutorials. Do not forget to checkout the command line tools and guis sections below. Advanced topics for interoperability and technical papers are reported at the end of this page. The page \supage tutorials is continuously updated so it is a good idea to periodically check it.
 
 
 \section yarp_command_line_tools Command line tools

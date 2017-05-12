@@ -46,7 +46,7 @@ Objects are recycled within the BufferedPort to save CPU cycles, so the next tim
 \endcode
 
 \section  s_buffering_reading Life-cycle: reading from a port
-To read from a BufferedPort you call yarp::os::BufferedPort::read(), this returns a pointer to the message which arrived most recently (or the oldest message, if you changed the buffering policy to FIFO using yarp::os::BufferedPort::setStrict()). This object is reserved and not touched by YARP, until the next call to yarp::os::BufferedPort::read(). This code example clarify this issue:
+To read from a BufferedPort you call yarp::os::BufferedPort::read(), this returns a pointer to the message which arrived most recently (or the oldest message in the queue, if you changed the buffering policy to FIFO using yarp::os::BufferedPort::setStrict()). This object is reserved and not touched by YARP, until the next call to yarp::os::BufferedPort::read(). This code example clarify this issue:
 
 \code 
  BufferedPort<Bottle> port;
@@ -61,20 +61,21 @@ To read from a BufferedPort you call yarp::os::BufferedPort::read(), this return
  // If you access b1 you may get garbage. 
 \endcode
 
-In practice this is a mistake people rarely do, because it is much better to read messages from a Port in a loop, e.g.:
+Notice, however, that you never run in troubles if you follow the best practice and access messages in a loop, i.e.:
+
+
 
 \code 
  BufferedPort<Bottle> port;
  ...
  while (true) {
     Bottle *b1=port.read();
-    // read b1, YARP will not touch it until the next call to read().
+    // It is safe to read b1, YARP will not touch it.
  
  }
-  
 \endcode
 
-however, it is important to keep in mind.
+In the code above the scope of b1 automatically enforces safe access to the messages.
 
 
 */
