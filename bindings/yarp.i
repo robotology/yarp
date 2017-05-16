@@ -306,6 +306,8 @@ void setExternal2(yarp::sig::Image *img, PyObject* mem, int w, int h) {
 %enddef
 %define YARP_init_API
 %enddef
+%define YARP_OS_DEPRECATED_API
+%enddef
 
 %define _YARP2_NETINT32_
 %enddef
@@ -401,6 +403,8 @@ namespace yarp {
 %include <yarp/os/DummyConnector.h>
 %include <yarp/os/Things.h>
 %include <yarp/os/QosStyle.h>
+%include <yarp/os/Log.h>
+%include <yarp/os/LogStream.h>
 
 %define MAKE_COMMS(name)
 %feature("notabstract") yarp::os::BufferedPort<name>;
