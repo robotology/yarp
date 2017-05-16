@@ -27,27 +27,28 @@
 include(FindPackageHandleStandardArgs)
 include(SelectLibraryConfigurations)
 
-find_path(ZFP_INCLUDE_DIR
+find_path(ZFP_INCLUDE_DIRS
           NAMES zfp.h
-          PATHS $ENV{ZFP_ROOT}/inc
+          PATHS $ENV{ZFP_DIR}/include
           DOC "ZFP include directory")
+
 find_library(ZFP_LIBRARY_RELEASE
              NAMES ZFP zfp
-             PATHS $ENV{ZFP_ROOT}/lib
+             PATHS $ENV{ZFP_DIR}/lib
              DOC "ZFP library file (release version)")
+
 find_library(ZFP_LIBRARY_DEBUG
              NAMES ZFPd zfpd
-             PATHS $ENV{ZFP_ROOT}/lib
+             PATHS $ENV{ZFP_DIR}/lib
              DOC "ZFP library file (debug version)")
 
-mark_as_advanced(ZFP_INCLUDE_DIR
+mark_as_advanced(ZFP_INCLUDE_DIRS
                  ZFP_LIBRARY_RELEASE
                  ZFP_LIBRARY_DEBUG)
 
 select_library_configurations(ZFP)
 
 set(ZFP_LIBRARIES ${ZFP_LIBRARY})
-set(ZFP_INCLUDE_DIRS ${ZFP_INCLUDE_DIR})
 
 find_package_handle_standard_args(ZFP
                                   FOUND_VAR ZFP_FOUND
