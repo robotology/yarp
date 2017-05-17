@@ -471,6 +471,81 @@ protected:
         return CHECK_FAIL(ok, response);
     }
 
+     bool setValWithPidType(int voc, PidControlTypeEnum type, int axis, double val)
+     {
+        if (!isLive()) return false;
+        Bottle cmd, response;
+        cmd.addVocab(VOCAB_SET);
+        cmd.addVocab(VOCAB_PID);
+        cmd.addVocab(voc);
+        cmd.addVocab(type);
+        cmd.addInt(axis);
+        cmd.addDouble(val);
+        bool ok = rpc_p.write(cmd, response);
+        return CHECK_FAIL(ok, response);
+    }
+
+    bool setValWithPidType(int voc, PidControlTypeEnum type, const double* val_arr)
+    {
+        if (!isLive()) return false;
+        Bottle cmd, response;
+        cmd.addVocab(VOCAB_SET);
+        cmd.addVocab(VOCAB_PID);
+        cmd.addVocab(voc);
+        cmd.addVocab(type);
+        Bottle& l = cmd.addList();
+        int i;
+        for (i = 0; i < nj; i++)
+            l.addDouble(val_arr[i]);
+        bool ok = rpc_p.write(cmd, response);
+        return CHECK_FAIL(ok, response);
+    }
+
+    bool getValWithPidType(int voc, PidControlTypeEnum type, int j, double *val)
+    {
+        Bottle cmd, response;
+        cmd.addVocab(VOCAB_GET);
+        cmd.addVocab(VOCAB_PID);
+        cmd.addVocab(voc);
+        cmd.addVocab(type);
+        cmd.addInt(j);
+        bool ok = rpc_p.write(cmd, response);
+
+        if (CHECK_FAIL(ok, response))
+        {
+            *val = response.get(2).asDouble();
+            getTimeStamp(response, lastStamp);
+            return true;
+        }
+        return false;
+    }
+
+    bool getValWithPidType(int voc, PidControlTypeEnum type, double *val)
+    {
+        if (!isLive()) return false;
+        Bottle cmd, response;
+        cmd.addVocab(VOCAB_GET);
+        cmd.addVocab(VOCAB_PID);
+        cmd.addVocab(voc);
+        cmd.addVocab(type);
+        bool ok = rpc_p.write(cmd, response);
+        if (CHECK_FAIL(ok, response))
+        {
+            int i;
+            Bottle* lp = response.get(2).asList();
+            if (lp == 0)
+                return false;
+            Bottle& l = *lp;
+            int njs = l.size();
+            yAssert (nj == njs);
+            for (i = 0; i < nj; i++)
+                val[i] = l.get(i).asDouble();
+            getTimeStamp(response, lastStamp);
+            return true;
+        }
+        return false;
+    }
+
     bool set2V1I(int v1, int v2, int axis) {
         Bottle cmd, response;
         cmd.addVocab(VOCAB_SET);
@@ -1132,17 +1207,12 @@ public:
         return true;
     }
 
-    /**
-     * Set new pid value for a joint axis.
-     * @param j joint number
-     * @param pid new pid value
-     * @return true/false on success/failure
-     */
-
-    virtual bool setPid(int j, const Pid &pid) {
+    virtual bool setPid(const PidControlTypeEnum& pidtype, int j, const Pid &pid) {
         Bottle cmd, response;
         cmd.addVocab(VOCAB_SET);
         cmd.addVocab(VOCAB_PID);
+        cmd.addVocab(VOCAB_PID);
+        cmd.addVocab(pidtype);
         cmd.addInt(j);
         Bottle& l = cmd.addList();
         l.addDouble(pid.kp);
@@ -1159,16 +1229,13 @@ public:
         return CHECK_FAIL(ok, response);
     }
 
-    /**
-     * Set new pid value on multiple axes.
-     * @param pids pointer to a vector of pids
-     * @return true/false upon success/failure
-     */
-    virtual bool setPids(const Pid *pids) {
+    virtual bool setPids(const PidControlTypeEnum& pidtype, const Pid *pids) {
         if (!isLive()) return false;
         Bottle cmd, response;
         cmd.addVocab(VOCAB_SET);
+        cmd.addVocab(VOCAB_PID);
         cmd.addVocab(VOCAB_PIDS);
+        cmd.addVocab(pidtype);
         Bottle& l = cmd.addList();
         int i;
         for (i = 0; i < nj; i++) {
@@ -1189,101 +1256,37 @@ public:
         return CHECK_FAIL(ok, response);
     }
 
-
-    /**
-     * Set the controller reference point for a given axis.
-     * Warning this method can result in very large torques
-     * and should be used carefully. If you do not understand
-     * this warning you should avoid using this method.
-     * Have a look at other interfaces (e.g. position control).
-     * @param j joint number
-     * @param ref new reference point
-     * @return true/false upon success/failure
-     */
-    virtual bool setReference(int j, double ref) {
-        return set1V1I1D(VOCAB_REF, j, ref);
+    virtual bool setPidReference(const PidControlTypeEnum& pidtype, int j, double ref)
+    {
+        return setValWithPidType(VOCAB_REF, pidtype, j, ref);
     }
 
-
-    /**
-     * Set the controller reference points, multiple axes.
-     * Warning this method can result in very large torques
-     * and should be used carefully. If you do not understand
-     * this warning you should avoid using this method.
-     * Have a look at other interfaces (e.g. position control).
-     * @param refs pointer to the vector that contains the new reference points.
-     * @return true/false upon success/failure
-     */
-    virtual bool setReferences(const double *refs) {
-        return set1VDA(VOCAB_REFS, refs);
+    virtual bool setPidReferences(const PidControlTypeEnum& pidtype, const double *refs) {
+        return setValWithPidType(VOCAB_REFS, pidtype, refs);
     }
 
-
-    /**
-     * Set the error limit for the controller on a specifi joint
-     * @param j joint number
-     * @param limit limit value
-     * @return true/false on success/failure
-     */
-    virtual bool setErrorLimit(int j, double limit) {
-        return set1V1I1D(VOCAB_LIM, j, limit);
+    virtual bool setPidErrorLimit(const PidControlTypeEnum& pidtype, int j, double limit) {
+        return setValWithPidType(VOCAB_LIM, pidtype, j, limit);
     }
 
-    /**
-     * Get the error limit for the controller on all joints.
-     * @param limits pointer to the vector with the new limits
-     * @return true/false on success/failure
-     */
-    virtual bool setErrorLimits(const double *limits) {
-        return set1VDA(VOCAB_LIMS, limits);
+    virtual bool setPidErrorLimits(const PidControlTypeEnum& pidtype, const double *limits) {
+        return setValWithPidType(VOCAB_LIMS, pidtype, limits);
     }
 
-    /**
-     * Get the current error for a joint.
-     * @param j joint number
-     * @param err pointer to the storage for the return value
-     * @return true/false on success failure
-     */
-    virtual bool getError(int j, double *err) {
-        return get1V1I1D(VOCAB_ERR, j, err);
+    virtual bool getPidError(const PidControlTypeEnum& pidtype, int j, double *err) {
+        return getValWithPidType(VOCAB_ERR, pidtype, j, err);
     }
 
-    /** Get the error of all joints.
-     * @param errs pointer to the vector that will store the errors
-     */
-    virtual bool getErrors(double *errs) {
-        return get1VDA(VOCAB_ERRS, errs);
+    virtual bool getPidErrors(const PidControlTypeEnum& pidtype, double *errs) {
+        return getValWithPidType(VOCAB_ERRS, pidtype, errs);
     }
 
-//    /**
-//     * Get the output of the controller (e.g. pwm value)
-//     * @param j joint number
-//     * @param out pointer to storage for return value
-//     * @return success/failure
-//     */
-//    virtual bool getOutput(int j, double *out) {
-//        return get1V1I1D(VOCAB_OUTPUT, j, out);
-//    }
-//
-//    /**
-//     * Get the output of the controllers (e.g. pwm value)
-//     * @param outs pinter to the vector that will store the output values
-//     * @return true/false on success/failure
-//     */
-//    virtual bool getOutputs(double *outs) {
-//        return get1VDA(VOCAB_OUTPUTS, outs);
-//    }
-
-    /**
-     * Get current pid value for a specific joint.
-     * @param j joint number
-     * @param pid pointer to storage for the return value.
-     * @return success/failure
-     */
-    virtual bool getPid(int j, Pid *pid) {
+    virtual bool getPid(const PidControlTypeEnum& pidtype, int j, Pid *pid) {
         Bottle cmd, response;
         cmd.addVocab(VOCAB_GET);
         cmd.addVocab(VOCAB_PID);
+        cmd.addVocab(VOCAB_PID);
+        cmd.addVocab(pidtype);
         cmd.addInt(j);
         bool ok = rpc_p.write(cmd, response);
         if (CHECK_FAIL(ok, response)) {
@@ -1306,110 +1309,125 @@ public:
         return false;
     }
 
-    /**
-     * Get current pid value for all controlled axes.
-     * @param pids vector that will store the values of the pids.
-     * @return success/failure
-     */
-    virtual bool getPids(Pid *pids) {
+    virtual bool getPids(const PidControlTypeEnum& pidtype, Pid *pids) {
         if (!isLive()) return false;
         Bottle cmd, response;
         cmd.addVocab(VOCAB_GET);
+        cmd.addVocab(VOCAB_PID);
         cmd.addVocab(VOCAB_PIDS);
+        cmd.addVocab(pidtype);
         bool ok = rpc_p.write(cmd, response);
-        if (CHECK_FAIL(ok, response)) {
+        if (CHECK_FAIL(ok, response))
+        {
             int i;
             Bottle* lp = response.get(2).asList();
             if (lp == 0)
                 return false;
-            Bottle& l = *lp;
-            const int njs = l.size();
+            const int njs = lp->size();
             yAssert (njs == nj);
             for (i = 0; i < nj; i++)
             {
-                Bottle* mp = l.get(i).asList();
+                Bottle* mp = lp->get(i).asList();
                 if (mp == 0)
                     return false;
-                Bottle& m = *mp;
-                pids[i].kp = m.get(0).asDouble();
-                pids[i].kd = m.get(1).asDouble();
-                pids[i].ki = m.get(2).asDouble();
-                pids[i].max_int = m.get(3).asDouble();
-                pids[i].max_output = m.get(4).asDouble();
-                pids[i].offset = m.get(5).asDouble();
-                pids[i].scale = m.get(6).asDouble();
-                pids[i].stiction_up_val = m.get(7).asDouble();
-                pids[i].stiction_down_val = m.get(8).asDouble();
-                pids[i].kff = m.get(9).asDouble();
+                pids[i].kp = mp->get(0).asDouble();
+                pids[i].kd = mp->get(1).asDouble();
+                pids[i].ki = mp->get(2).asDouble();
+                pids[i].max_int = mp->get(3).asDouble();
+                pids[i].max_output = mp->get(4).asDouble();
+                pids[i].offset = mp->get(5).asDouble();
+                pids[i].scale = mp->get(6).asDouble();
+                pids[i].stiction_up_val = mp->get(7).asDouble();
+                pids[i].stiction_down_val = mp->get(8).asDouble();
+                pids[i].kff = mp->get(9).asDouble();
             }
             return true;
         }
         return false;
     }
 
-    /**
-     * Get the current reference position of the controller for a specific joint.
-     * @param j is joint number
-     * @param ref pointer to storage for return value
-     * @return true/false on success/failure
-     */
-    virtual bool getReference(int j, double *ref) {
-        return get1V1I1D(VOCAB_REF, j, ref);
+    virtual bool getPidReference(const PidControlTypeEnum& pidtype, int j, double *ref) {
+        return getValWithPidType(VOCAB_REF, pidtype, j, ref);
     }
 
-    /** Get the current reference position of all controllers.
-     * @param refs vector that will store the output.
-     */
-    virtual bool getReferences(double *refs) {
-        return get1VDA(VOCAB_REFS, refs);
+    virtual bool getPidReferences(const PidControlTypeEnum& pidtype, double *refs) {
+        return getValWithPidType(VOCAB_REFS, pidtype, refs);
     }
 
-    /**
-     * Get the error limit for the controller on a specific joint
-     * @param j is the joint number
-     * @param limit pointer to storage
-     * @return true/false on success/failure
-     */
-    virtual bool getErrorLimit(int j, double *limit) {
-        return get1V1I1D(VOCAB_LIM, j, limit);
+    virtual bool getPidErrorLimit(const PidControlTypeEnum& pidtype, int j, double *limit) {
+        return getValWithPidType(VOCAB_LIM, pidtype, j, limit);
     }
 
-    /**
-     * Get the error limit for all controllers
-     * @param limits pointer to the array that will store the output
-     * @return true/false on success/failure
-     */
-    virtual bool getErrorLimits(double *limits) {
-        return get1VDA(VOCAB_LIMS, limits);
+    virtual bool getPidErrorLimits(const PidControlTypeEnum& pidtype, double *limits) {
+        return getValWithPidType(VOCAB_LIMS, pidtype, limits);
     }
 
-    /**
-     * Reset the controller of a given joint, usually sets the
-     * current position of the joint as the reference value for the PID, and resets
-     * the integrator.
-     * @param j joint number
-     * @return true on success, false on failure.
-     */
-    virtual bool resetPid(int j) {
-        return set1V1I(VOCAB_RESET, j);
+    virtual bool resetPid(const PidControlTypeEnum& pidtype, int j) {
+        if (!isLive()) return false;
+        Bottle cmd, response;
+        cmd.addVocab(VOCAB_SET);
+        cmd.addVocab(VOCAB_PID);
+        cmd.addVocab(VOCAB_RESET);
+        cmd.addVocab(pidtype);
+        cmd.addInt(j);
+        bool ok = rpc_p.write(cmd, response);
+        return CHECK_FAIL(ok, response);
     }
 
-    /**
-     * Disable the pid computation for a joint
-     * @param j is the joint number
-     * @return true/false on success/failure
-     */
-    virtual bool disablePid(int j) {
-        return set1V1I(VOCAB_DISABLE, j);
+    virtual bool disablePid(const PidControlTypeEnum& pidtype, int j) {
+        if (!isLive()) return false;
+        Bottle cmd, response;
+        cmd.addVocab(VOCAB_SET);
+        cmd.addVocab(VOCAB_PID);
+        cmd.addVocab(VOCAB_DISABLE);
+        cmd.addVocab(pidtype);
+        cmd.addInt(j);
+        bool ok = rpc_p.write(cmd, response);
+        return CHECK_FAIL(ok, response);
     }
 
-    /**
-     * Enable the pid computation for a joint
-     * @param j is the joint number
-     * @return true/false on success/failure
-     */
-    virtual bool enablePid(int j) {
-        return set1V1I(VOCAB_ENABLE, j);
+    virtual bool enablePid(const PidControlTypeEnum& pidtype, int j) {
+        if (!isLive()) return false;
+        Bottle cmd, response;
+        cmd.addVocab(VOCAB_SET);
+        cmd.addVocab(VOCAB_PID);
+        cmd.addVocab(VOCAB_ENABLE);
+        cmd.addVocab(pidtype);
+        cmd.addInt(j);
+        bool ok = rpc_p.write(cmd, response);
+        return CHECK_FAIL(ok, response);
+    }
+
+    virtual bool isPidEnabled(const PidControlTypeEnum& pidtype, int j, bool* enabled)
+    {
+        Bottle cmd, response;
+        cmd.addVocab(VOCAB_GET);
+        cmd.addVocab(VOCAB_PID);
+        cmd.addVocab(VOCAB_ENABLE);
+        cmd.addVocab(pidtype);
+        cmd.addInt(j);
+        bool ok = rpc_p.write(cmd, response);
+        if (CHECK_FAIL(ok, response))
+        {
+            *enabled = response.get(2).asBool();
+            return true;
+        }
+        return false;
+    }
+
+    virtual bool getPidOutput(const PidControlTypeEnum& pidtype, int j, double *out)
+    {
+        return getValWithPidType(VOCAB_OUTPUT, pidtype, j, out);
+    }
+
+    virtual bool getPidOutputs(const PidControlTypeEnum& pidtype, double *outs)
+    {
+        return getValWithPidType(VOCAB_OUTPUTS, pidtype, outs);
+    }
+
+    virtual bool setPidOffset(const PidControlTypeEnum& pidtype, int j, double v)
+    {
+        return setValWithPidType(VOCAB_OFFSET, pidtype, j, v);
     }
 
     /* IEncoder */
@@ -2232,9 +2250,6 @@ public:
      */
     virtual bool enableAmp(int j)
     { return set1V1I(VOCAB_AMP_ENABLE, j); }
-
-    virtual bool setOffset(int j, double v)
-    { return set1V1I1D(VOCAB_OFFSET, j, v); }
 
     /**
      * Disable the amplifier on a specific joint. All computations within the board
@@ -3252,16 +3267,6 @@ public:
 
         bool ok = rpc_p.write(cmd, response);
         return CHECK_FAIL(ok, response);
-    }
-
-     virtual bool getOutput(int j, double *out)
-    {
-        return get1V1I1D(VOCAB_OUTPUT, j, out);
-    }
-
-    virtual bool getOutputs(double *outs)
-    {
-        return get1VDA(VOCAB_OUTPUTS, outs);
     }
 
     bool checkProtocolVersion(bool ignore)

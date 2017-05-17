@@ -189,7 +189,7 @@ PartItem::PartItem(QString robotName, int id, QString partName, ResourceFinder& 
 
             Pid myPid(0,0,0,0,0,0);
             yarp::os::Time::delay(0.005);
-            m_iPid->getPid(k, &myPid);
+            m_iPid->getPid(VOCAB_PIDTYPE_POSITION, k, &myPid);
             
             JointItem *joint = new JointItem(k);
             joint->setJointName(jointname.c_str());
@@ -635,9 +635,9 @@ void PartItem::onSendTorquePid(int jointIndex,Pid newPid,MotorTorqueParameters n
 void PartItem::onSendPositionPid(int jointIndex,Pid newPid)
 {
     Pid myPosPid(0,0,0,0,0,0);
-    m_iPid->setPid(jointIndex, newPid);
+    m_iPid->setPid(VOCAB_PIDTYPE_POSITION, jointIndex, newPid);
     yarp::os::Time::delay(0.005);
-    m_iPid->getPid(jointIndex, &myPosPid);
+    m_iPid->getPid(VOCAB_PIDTYPE_POSITION, jointIndex, &myPosPid);
 
     if (m_currentPidDlg){
         m_currentPidDlg->initPosition(myPosPid);
@@ -679,22 +679,22 @@ void PartItem::onRefreshPids(int jointIndex)
     m_iTrq->getTorqueRange(jointIndex, &off_min, &off_max);
 
     // Position
-    m_iPid->getPid(jointIndex, &myPosPid);
+    m_iPid->getPid(VOCAB_PIDTYPE_POSITION, jointIndex, &myPosPid);
     yarp::os::Time::delay(0.005);
 
     // Velocity
-    m_iVel->getVelPid(jointIndex, &myVelPid);
+    m_iPid->getPid(VOCAB_PIDTYPE_VELOCITY, jointIndex, &myVelPid);
     yarp::os::Time::delay(0.005);
 
     // Current
     if (m_iCur)
     {
-        m_iCur->getCurrentPid(jointIndex, &myCurPid);
+        m_iPid->getPid(VOCAB_PIDTYPE_CURRENT, jointIndex, &myCurPid);
         yarp::os::Time::delay(0.005);
     }
 
     // Torque
-    m_iTrq->getTorquePid(jointIndex, &myTrqPid);
+    m_iPid->getPid(VOCAB_PIDTYPE_TORQUE, jointIndex, &myTrqPid);
     m_iTrq->getMotorTorqueParams(jointIndex, &motorTorqueParams);
     yarp::os::Time::delay(0.005);
 

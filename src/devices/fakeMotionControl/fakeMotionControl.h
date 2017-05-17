@@ -166,9 +166,22 @@ private:
     int    *_motorPoles;                        /** */
     double *_rotorlimits_max;                   /** */
     double *_rotorlimits_min;                   /** */
-    Pid *_pids;                                 /** initial gains */
+    Pid *_ppids;                                /** initial position gains */
     Pid *_tpids;                                /** initial torque gains */
     Pid *_cpids;                                /** initial current gains */
+    Pid *_vpids;                                /** initial velocity gains */
+    bool *_ppids_ena;                           
+    bool *_tpids_ena;                           
+    bool *_cpids_ena;                           
+    bool *_vpids_ena;                           
+    double *_ppids_lim;                         
+    double *_tpids_lim;                         
+    double *_cpids_lim;                         
+    double *_vpids_lim;                         
+    double *_ppids_ref;                         
+    double *_tpids_ref;                         
+    double *_cpids_ref;                         
+    double *_vpids_ref;                         
 
     std::string *_axisName;                          /** axis name */
     JointTypeEnum *_jointType;                          /** axis type */
@@ -254,26 +267,27 @@ public:
     bool init(void);
 
     /////////   PID INTERFACE   /////////
-    virtual bool setPidRaw(int j, const Pid &pid);
-    virtual bool setPidsRaw(const Pid *pids);
-    virtual bool setReferenceRaw(int j, double ref);
-    virtual bool setReferencesRaw(const double *refs);
-    virtual bool setErrorLimitRaw(int j, double limit);
-    virtual bool setErrorLimitsRaw(const double *limits);
-    virtual bool getErrorRaw(int j, double *err);
-    virtual bool getErrorsRaw(double *errs);
-    virtual bool getOutputRaw(int j, double *out);
-    virtual bool getOutputsRaw(double *outs);
-    virtual bool getPidRaw(int j, Pid *pid);
-    virtual bool getPidsRaw(Pid *pids);
-    virtual bool getReferenceRaw(int j, double *ref);
-    virtual bool getReferencesRaw(double *refs);
-    virtual bool getErrorLimitRaw(int j, double *limit);
-    virtual bool getErrorLimitsRaw(double *limits);
-    virtual bool resetPidRaw(int j);
-    virtual bool disablePidRaw(int j);
-    virtual bool enablePidRaw(int j);
-    virtual bool setOffsetRaw(int j, double v);
+    virtual bool setPidRaw(const PidControlTypeEnum& pidtype,int j, const Pid &pid);
+    virtual bool setPidsRaw(const PidControlTypeEnum& pidtype,const Pid *pids);
+    virtual bool setPidReferenceRaw(const PidControlTypeEnum& pidtype,int j, double ref);
+    virtual bool setPidReferencesRaw(const PidControlTypeEnum& pidtype,const double *refs);
+    virtual bool setPidErrorLimitRaw(const PidControlTypeEnum& pidtype,int j, double limit);
+    virtual bool setPidErrorLimitsRaw(const PidControlTypeEnum& pidtype,const double *limits);
+    virtual bool getPidErrorRaw(const PidControlTypeEnum& pidtype,int j, double *err);
+    virtual bool getPidErrorsRaw(const PidControlTypeEnum& pidtype, double *errs);
+    virtual bool getPidOutputRaw(const PidControlTypeEnum& pidtype,int j, double *out);
+    virtual bool getPidOutputsRaw(const PidControlTypeEnum& pidtype,double *outs);
+    virtual bool getPidRaw(const PidControlTypeEnum& pidtype,int j, Pid *pid);
+    virtual bool getPidsRaw(const PidControlTypeEnum& pidtype,Pid *pids);
+    virtual bool getPidReferenceRaw(const PidControlTypeEnum& pidtype,int j, double *ref);
+    virtual bool getPidReferencesRaw(const PidControlTypeEnum& pidtype,double *refs);
+    virtual bool getPidErrorLimitRaw(const PidControlTypeEnum& pidtype,int j, double *limit);
+    virtual bool getPidErrorLimitsRaw(const PidControlTypeEnum& pidtype,double *limits);
+    virtual bool resetPidRaw(const PidControlTypeEnum& pidtype,int j);
+    virtual bool disablePidRaw(const PidControlTypeEnum& pidtype,int j);
+    virtual bool enablePidRaw(const PidControlTypeEnum& pidtype,int j);
+    virtual bool setPidOffsetRaw(const PidControlTypeEnum& pidtype,int j, double v);
+    virtual bool isPidEnabledRaw(const PidControlTypeEnum& pidtype, int j, bool* enabled);
 
     // POSITION CONTROL INTERFACE RAW
     virtual bool getAxes(int *ax);

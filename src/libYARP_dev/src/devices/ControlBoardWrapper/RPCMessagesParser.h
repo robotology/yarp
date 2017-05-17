@@ -140,6 +140,8 @@ public:
 
     void handlePWMMsg(const yarp::os::Bottle& cmd, yarp::os::Bottle& response, bool *rec, bool *ok);
 
+    void handlePidMsg(const yarp::os::Bottle& cmd, yarp::os::Bottle& response, bool *rec, bool *ok);
+
     /**
     * Initialize the internal data.
     * @return true/false on success/failure

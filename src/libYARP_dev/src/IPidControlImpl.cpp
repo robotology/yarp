@@ -11,6 +11,94 @@
 
 using namespace yarp::dev;
 
+void ImplementPidControl::convert_units_to_machine (const yarp::dev::PidControlTypeEnum& pidtype, double userval, int j, double &machineval, int &k)
+{
+    switch (pidtype)
+    {
+        case yarp::dev::VOCAB_PIDTYPE_POSITION:
+            castToMapper(helper)->posA2E(userval,j, machineval,k);
+        break;
+        case yarp::dev::VOCAB_PIDTYPE_VELOCITY:
+            castToMapper(helper)->velA2E(userval,j, machineval,k);
+        break;
+        case yarp::dev::VOCAB_PIDTYPE_TORQUE:
+            castToMapper(helper)->trqN2S(userval,j, machineval,k);
+        break;
+        case yarp::dev::VOCAB_PIDTYPE_CURRENT:
+            castToMapper(helper)->ampereA2S(userval,j, machineval,k);
+        break;
+        default:
+            yError() << "convert_units_to_machine: invalid pidtype";
+        break;
+    }
+}
+
+void ImplementPidControl::convert_units_to_machine (const yarp::dev::PidControlTypeEnum& pidtype, const double* userval, double* machineval)
+{
+    switch (pidtype)
+    {
+        case yarp::dev::VOCAB_PIDTYPE_POSITION:
+            castToMapper(helper)->posA2E(userval, machineval);
+        break;
+        case yarp::dev::VOCAB_PIDTYPE_VELOCITY:
+            castToMapper(helper)->velA2E(userval, machineval);
+        break;
+        case yarp::dev::VOCAB_PIDTYPE_TORQUE:
+            castToMapper(helper)->trqN2S(userval, machineval);
+        break;
+        case yarp::dev::VOCAB_PIDTYPE_CURRENT:
+            castToMapper(helper)->ampereA2S(userval, machineval);
+        break;
+        default:
+            yError() << "convert_units_to_machine: invalid pidtype";
+        break;
+    }
+}
+
+void ImplementPidControl::convert_units_to_user(const yarp::dev::PidControlTypeEnum& pidtype, const double machineval, double* userval, int k)
+{
+    switch (pidtype)
+    {
+        case yarp::dev::VOCAB_PIDTYPE_POSITION:
+            *userval = castToMapper(helper)->posE2A(machineval, k);
+        break;
+        case yarp::dev::VOCAB_PIDTYPE_VELOCITY:
+            *userval = castToMapper(helper)->velE2A(machineval, k);
+        break;
+        case yarp::dev::VOCAB_PIDTYPE_TORQUE:
+            *userval = castToMapper(helper)->trqS2N(machineval,k);
+        break;
+        case yarp::dev::VOCAB_PIDTYPE_CURRENT:
+            *userval = castToMapper(helper)->ampereS2A(machineval,k);
+        break;
+        default:
+            yError() << "convert_units_to_machine: invalid pidtype";
+        break;
+    }
+}
+
+void ImplementPidControl::convert_units_to_user(const yarp::dev::PidControlTypeEnum& pidtype, const double* machineval, double* userval)
+{
+    switch (pidtype)
+    {
+        case yarp::dev::VOCAB_PIDTYPE_POSITION:
+            castToMapper(helper)->posE2A(machineval, userval);
+        break;
+        case yarp::dev::VOCAB_PIDTYPE_VELOCITY:
+            castToMapper(helper)->velE2A(machineval, userval);
+        break;
+        case yarp::dev::VOCAB_PIDTYPE_TORQUE:
+            castToMapper(helper)->trqS2N(machineval,userval);
+        break;
+        case yarp::dev::VOCAB_PIDTYPE_CURRENT:
+            castToMapper(helper)->ampereS2A(machineval,userval);
+        break;
+        default:
+            yError() << "convert_units_to_machine: invalid pidtype";
+        break;
+    }
+}
+
 //////////////////// Implement PidControl interface
 ImplementPidControl::ImplementPidControl(IPidControlRaw *y)
 {
@@ -25,12 +113,12 @@ ImplementPidControl::~ImplementPidControl()
     uninitialize();
 }
 
-bool ImplementPidControl:: initialize (int size, const int *amap, const double *enc, const double *zos)
+bool ImplementPidControl:: initialize (int size, const int *amap, const double *enc, const double *zos, const double* newtons, const double* amps)
 {
     if (helper!=0)
         return false;
 
-    helper=(void *)(new ControlBoardHelper(size, amap, enc, zos,0));
+    helper=(void *)(new ControlBoardHelper(size, amap, enc, zos,newtons,amps));
     yAssert (helper != 0);
     temp=new double [size];
     yAssert (temp != 0);
@@ -56,13 +144,13 @@ bool ImplementPidControl::uninitialize ()
     return true;
 }
 
-bool ImplementPidControl::setPid(int j, const Pid &pid)
+bool ImplementPidControl::setPid(const PidControlTypeEnum& pidtype, int j, const Pid &pid)
 {
     int k=castToMapper(helper)->toHw(j);
-    return iPid->setPidRaw(k,pid);
+    return iPid->setPidRaw(pidtype, k,pid);
 }
 
-bool ImplementPidControl::setPids(const Pid *pids)
+bool ImplementPidControl::setPids(const PidControlTypeEnum& pidtype,  const Pid *pids)
 {
     int tmp=0;
     int nj=castToMapper(helper)->axes();
@@ -73,96 +161,96 @@ bool ImplementPidControl::setPids(const Pid *pids)
         tmpPids[tmp]=pids[j];
     }
 
-    return iPid->setPidsRaw(tmpPids);
+    return iPid->setPidsRaw(pidtype, tmpPids);
 }
 
-bool ImplementPidControl::setReference(int j, double ref)
+bool ImplementPidControl::setPidReference(const PidControlTypeEnum& pidtype,  int j, double ref)
 {
     int k=0;
-    double enc;
-    castToMapper(helper)->posA2E(ref, j, enc, k);
-
-    return iPid->setReferenceRaw(k, enc);
+    double raw;
+    //castToMapper(helper)->posA2E(ref, j, enc, k); ///&&&
+    this->convert_units_to_machine(pidtype,ref,j,raw,k);
+    return iPid->setPidReferenceRaw(pidtype, k, raw);
 }
 
-bool ImplementPidControl::setReferences(const double *refs)
+bool ImplementPidControl::setPidReferences(const PidControlTypeEnum& pidtype,  const double *refs)
 {
-    castToMapper(helper)->posA2E(refs, temp);
-
-    return iPid->setReferencesRaw(temp);
+    //castToMapper(helper)->posA2E(refs, temp); ///&&&
+    this->convert_units_to_machine(pidtype,refs,temp);
+    return iPid->setPidReferencesRaw(pidtype, temp);
 }
 
-bool ImplementPidControl::setErrorLimit(int j, double limit)
-{
-    int k;
-    double enc;
-    castToMapper(helper)->posA2E(limit, j, enc, k);
-
-    return iPid->setErrorLimitRaw(k, enc);
-}
-
-bool ImplementPidControl::setErrorLimits(const double *limits)
-{
-    castToMapper(helper)->posA2E(limits, temp);
-
-    return iPid->setErrorLimitsRaw(temp);
-}
-
-
-bool ImplementPidControl::getError(int j, double *err)
+bool ImplementPidControl::setPidErrorLimit(const PidControlTypeEnum& pidtype,  int j, double limit)
 {
     int k;
-    double enc;
+    double raw;
+    //castToMapper(helper)->posA2E(limit, j, enc, k); ///&&&
+    this->convert_units_to_machine(pidtype,limit,j,raw,k);
+    return iPid->setPidErrorLimitRaw(pidtype, k, raw);
+}
+
+bool ImplementPidControl::setPidErrorLimits(const PidControlTypeEnum& pidtype,  const double *limits)
+{
+    //castToMapper(helper)->posA2E(limits, temp); ///&&&
+    this->convert_units_to_machine(pidtype,limits,temp);
+    return iPid->setPidErrorLimitsRaw(pidtype, temp);
+}
+
+
+bool ImplementPidControl::getPidError(const PidControlTypeEnum& pidtype, int j, double *err)
+{
+    int k;
+    double raw;
     k=castToMapper(helper)->toHw(j);
 
-    bool ret=iPid->getErrorRaw(k, &enc);
+    bool ret=iPid->getPidErrorRaw(pidtype, k, &raw);
 
-    *err=castToMapper(helper)->velE2A(enc, k);
-
+    //*err=castToMapper(helper)->velE2A(enc, k); ///&&&
+    this->convert_units_to_user(pidtype,raw,err,k);
     return ret;
 }
 
-bool ImplementPidControl::getErrors(double *errs)
+bool ImplementPidControl::getPidErrors(const PidControlTypeEnum& pidtype,  double *errs)
 {
     bool ret;
-    ret=iPid->getErrorsRaw(temp);
+    ret=iPid->getPidErrorsRaw(pidtype, temp);
 
-    castToMapper(helper)->velE2A(temp, errs);
-
+    //castToMapper(helper)->velE2A(temp, errs); ///&&&
+    this->convert_units_to_user(pidtype,temp,errs);
     return ret;
 }
 
-bool ImplementPidControl::getOutput(int j, double *out)
+bool ImplementPidControl::getPidOutput(const PidControlTypeEnum& pidtype,  int j, double *out)
 {
     int k;
 
     k=castToMapper(helper)->toHw(j);
 
-    bool ret=iPid->getOutputRaw(k, out);
+    bool ret=iPid->getPidOutputRaw(pidtype, k, out);
 
     return ret;
 }
 
-bool ImplementPidControl::getOutputs(double *outs)
+bool ImplementPidControl::getPidOutputs(const PidControlTypeEnum& pidtype,  double *outs)
 {
-    bool ret=iPid->getOutputsRaw(temp);
+    bool ret=iPid->getPidOutputsRaw(pidtype, temp);
 
     castToMapper(helper)->toUser(temp, outs);
 
     return ret;
 }
 
-bool ImplementPidControl::getPid(int j, Pid *pid)
+bool ImplementPidControl::getPid(const PidControlTypeEnum& pidtype, int j, Pid *pid)
 {
     int k;
     k=castToMapper(helper)->toHw(j);
 
-    return iPid->getPidRaw(k, pid);
+    return iPid->getPidRaw(pidtype, k, pid);
 }
 
-bool ImplementPidControl::getPids(Pid *pids)
+bool ImplementPidControl::getPids(const PidControlTypeEnum& pidtype, Pid *pids)
 {
-    bool ret=iPid->getPidsRaw(tmpPids);
+    bool ret=iPid->getPidsRaw(pidtype, tmpPids);
     int nj=castToMapper(helper)->axes();
 
     for(int j=0;j<nj;j++)
@@ -171,82 +259,93 @@ bool ImplementPidControl::getPids(Pid *pids)
     return ret;
 }
 
-bool ImplementPidControl::getReference(int j, double *ref)
+bool ImplementPidControl::getPidReference(const PidControlTypeEnum& pidtype, int j, double *ref)
 {
     bool ret;
     int k;
-    double enc;
+    double raw;
 
     k=castToMapper(helper)->toHw(j);
 
-    ret=iPid->getReferenceRaw(k, &enc);
+    ret=iPid->getPidReferenceRaw(pidtype, k, &raw);
 
-    *ref=castToMapper(helper)->posE2A(enc, k);
+    //*ref=castToMapper(helper)->posE2A(enc, k); ///&&&
+    this->convert_units_to_user(pidtype,raw,ref,k);
     return ret;
 }
 
-bool ImplementPidControl::getReferences(double *refs)
+bool ImplementPidControl::getPidReferences(const PidControlTypeEnum& pidtype, double *refs)
 {
     bool ret;
-    ret=iPid->getReferencesRaw(temp);
+    ret=iPid->getPidReferencesRaw(pidtype, temp);
 
-    castToMapper(helper)->posE2A(temp, refs);
+    //castToMapper(helper)->posE2A(temp, refs); ///&&&
+    this->convert_units_to_user(pidtype,temp,refs);
     return ret;
 }
 
-bool ImplementPidControl::getErrorLimit(int j, double *ref)
+bool ImplementPidControl::getPidErrorLimit(const PidControlTypeEnum& pidtype, int j, double *ref)
 {
     bool ret;
     int k;
-    double enc;
+    double raw;
 
     k=castToMapper(helper)->toHw(j);
 
-    ret=iPid->getErrorLimitRaw(k, &enc);
+    ret=iPid->getPidErrorLimitRaw(pidtype, k, &raw);
 
-    *ref=castToMapper(helper)->posE2A(enc, k);
+    //*ref=castToMapper(helper)->posE2A(enc, k); ///&&&
+    this->convert_units_to_user(pidtype,raw,ref,k);
     return ret;
 }
 
-bool ImplementPidControl::getErrorLimits(double *refs)
+bool ImplementPidControl::getPidErrorLimits(const PidControlTypeEnum& pidtype, double *refs)
 {
     bool ret;
-    ret=iPid->getErrorLimitsRaw(temp);
+    ret=iPid->getPidErrorLimitsRaw(pidtype, temp);
 
-    castToMapper(helper)->posE2A(temp, refs);
+    //castToMapper(helper)->posE2A(temp, refs); ///&&&
+    this->convert_units_to_user(pidtype,temp,refs);
     return ret;
 }
 
-bool ImplementPidControl::resetPid(int j)
+bool ImplementPidControl::resetPid(const PidControlTypeEnum& pidtype, int j)
 {
     int k=0;
     k=castToMapper(helper)->toHw(j);
 
-    return iPid->resetPidRaw(k);
+    return iPid->resetPidRaw(pidtype, k);
 }
 
-bool ImplementPidControl::enablePid(int j)
+bool ImplementPidControl::enablePid(const PidControlTypeEnum& pidtype, int j)
 {
     int k=0;
     k=castToMapper(helper)->toHw(j);
 
-    return iPid->enablePidRaw(k);
+    return iPid->enablePidRaw(pidtype, k);
 }
 
-bool ImplementPidControl::disablePid(int j)
+bool ImplementPidControl::disablePid(const PidControlTypeEnum& pidtype, int j)
 {
     int k=0;
     k=castToMapper(helper)->toHw(j);
 
-    return iPid->disablePidRaw(k);
+    return iPid->disablePidRaw(pidtype, k);
 }
 
-bool ImplementPidControl::setOffset(int j, double v)
+bool ImplementPidControl::setPidOffset(const PidControlTypeEnum& pidtype, int j, double v)
 {
     int k=0;
     k=castToMapper(helper)->toHw(j);
 
-    return iPid->setOffsetRaw(k, v);
+    return iPid->setPidOffsetRaw(pidtype, k, v);
 }
 
+bool ImplementPidControl::isPidEnabled(const PidControlTypeEnum& pidtype, int j, bool* enabled)
+{
+    int k=0;
+    k=castToMapper(helper)->toHw(j);
+
+    return iPid->isPidEnabledRaw(pidtype, k, enabled);
+}
 

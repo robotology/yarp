@@ -210,45 +210,47 @@ public:
     virtual bool attachAll(const yarp::dev::PolyDriverList &l);
 
     /* IPidControl */
-    virtual bool setPid(int j, const Pid &p);
+    virtual bool setPid(const PidControlTypeEnum& pidtype,int j, const Pid &p);
 
-    virtual bool setPids(const Pid *ps);
+    virtual bool setPids(const PidControlTypeEnum& pidtype,const Pid *ps);
 
-    virtual bool setReference(int j, double ref);
+    virtual bool setPidReference(const PidControlTypeEnum& pidtype,int j, double ref);
 
-    virtual bool setReferences(const double *refs);
+    virtual bool setPidReferences(const PidControlTypeEnum& pidtype,const double *refs);
 
-    virtual bool setErrorLimit(int j, double limit);
+    virtual bool setPidErrorLimit(const PidControlTypeEnum& pidtype,int j, double limit);
 
-    virtual bool setErrorLimits(const double *limits);
+    virtual bool setPidErrorLimits(const PidControlTypeEnum& pidtype,const double *limits);
 
-    virtual bool getError(int j, double *err);
+    virtual bool getPidError(const PidControlTypeEnum& pidtype,int j, double *err);
 
-    virtual bool getErrors(double *errs);
+    virtual bool getPidErrors(const PidControlTypeEnum& pidtype,double *errs);
 
-    virtual bool getOutput(int j, double *out);
+    virtual bool getPidOutput(const PidControlTypeEnum& pidtype,int j, double *out);
 
-    virtual bool getOutputs(double *outs);
+    virtual bool getPidOutputs(const PidControlTypeEnum& pidtype,double *outs);
 
-    virtual bool setOffset(int j, double v);
+    virtual bool setPidOffset(const PidControlTypeEnum& pidtype,int j, double v);
 
-    virtual bool getPid(int j, Pid *p);
+    virtual bool getPid(const PidControlTypeEnum& pidtype,int j, Pid *p);
 
-    virtual bool getPids(Pid *pids);
+    virtual bool getPids(const PidControlTypeEnum& pidtype,Pid *pids);
 
-    virtual bool getReference(int j, double *ref);
+    virtual bool getPidReference(const PidControlTypeEnum& pidtype,int j, double *ref);
 
-    virtual bool getReferences(double *refs);
+    virtual bool getPidReferences(const PidControlTypeEnum& pidtype,double *refs);
 
-    virtual bool getErrorLimit(int j, double *limit);
+    virtual bool getPidErrorLimit(const PidControlTypeEnum& pidtype,int j, double *limit);
 
-    virtual bool getErrorLimits(double *limits);
+    virtual bool getPidErrorLimits(const PidControlTypeEnum& pidtype,double *limits);
 
-    virtual bool resetPid(int j);
+    virtual bool resetPid(const PidControlTypeEnum& pidtype,int j);
 
-    virtual bool disablePid(int j);
+    virtual bool disablePid(const PidControlTypeEnum& pidtype,int j);
 
-    virtual bool enablePid(int j);
+    virtual bool enablePid(const PidControlTypeEnum& pidtype,int j);
+
+    virtual bool isPidEnabled(const PidControlTypeEnum& pidtype, int j, bool* enabled);
 
     /* IPositionControl */
     virtual bool getAxes(int *ax);

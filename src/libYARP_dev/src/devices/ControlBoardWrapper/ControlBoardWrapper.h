@@ -400,138 +400,29 @@ public:
     */
     virtual void run();
 
-    /* IPidControl */
-    /** Set new pid value for a joint axis.
-    * @param j joint number
-    * @param p new pid value
-    * @return true/false on success/failure
-    */
-    virtual bool setPid(int j, const Pid &p);
-
-    /** Set new pid value on multiple axes.
-    * @param ps pointer to a vector of pids
-    * @return true/false upon success/failure
-    */
-    virtual bool setPids(const Pid *ps);
-
-    /** Set the controller reference point for a given axis.
-    * Warning this method can result in very large torques
-    * and should be used carefully. If you do not understand
-    * this warning you should avoid using this method.
-    * Have a look at other interfaces (e.g. position control).
-    * @param j joint number
-    * @param ref new reference point
-    * @return true/false upon success/failure
-    */
-    virtual bool setReference(int j, double ref);
-
-    /** Set the controller reference points, multiple axes.
-    * Warning this method can result in very large torques
-    * and should be used carefully. If you do not understand
-    * this warning you should avoid using this method.
-    * Have a look at other interfaces (e.g. position control).
-    * @param refs pointer to the vector that contains the new reference points.
-    * @return true/false upon success/failure
-    */
-    virtual bool setReferences(const double *refs);
-
-    /** Set the error limit for the controller on a specifi joint
-    * @param j joint number
-    * @param limit limit value
-    * @return true/false on success/failure
-    */
-    virtual bool setErrorLimit(int j, double limit);
-
-    /** Get the error limit for the controller on all joints.
-    * @param limits pointer to the vector with the new limits
-    * @return true/false on success/failure
-    */
-    virtual bool setErrorLimits(const double *limits);
-
-    /** Get the current error for a joint.
-    * @param j joint number
-    * @param err pointer to the storage for the return value
-    * @return true/false on success failure
-    */
-    virtual bool getError(int j, double *err);
-
-    /** Get the error of all joints.
-    * @param errs pointer to the vector that will store the errors.
-    * @return true/false on success/failure.
-    */
-    virtual bool getErrors(double *errs);
-
-    /** Get the output of the controller (e.g. pwm value)
-    * @param j joint number
-    * @param out pointer to storage for return value
-    * @return success/failure
-    */
-    virtual bool getOutput(int j, double *out);
-
-    /** Get the output of the controllers (e.g. pwm value)
-    * @param outs pinter to the vector that will store the output values
-    */
-    virtual bool getOutputs(double *outs);
-
-    virtual bool setOffset(int j, double v);
-
-    /** Get current pid value for a specific joint.
-    * @param j joint number
-    * @param p pointer to storage for the return value.
-    * @return success/failure
-    */
-    virtual bool getPid(int j, Pid *p);
-
-    /** Get current pid value for a specific joint.
-    * @param pids vector that will store the values of the pids.
-    * @return success/failure
-    */
-    virtual bool getPids(Pid *pids);
-
-    /** Get the current reference position of the controller for a specific joint.
-    * @param j joint number
-    * @param ref pointer to storage for return value
-    * @return reference value
-    */
-    virtual bool getReference(int j, double *ref);
-
-    /** Get the current reference position of all controllers.
-    * @param refs vector that will store the output.
-    */
-    virtual bool getReferences(double *refs);
-
-    /** Get the error limit for the controller on a specific joint
-    * @param j joint number
-    * @param limit pointer to storage
-    * @return success/failure
-    */
-    virtual bool getErrorLimit(int j, double *limit);
-    /** Get the error limit for all controllers
-    * @param limits pointer to the array that will store the output
-    * @return success or failure
-    */
-    virtual bool getErrorLimits(double *limits);
-
-    /** Reset the controller of a given joint, usually sets the
-    * current position of the joint as the reference value for the PID, and resets
-    * the integrator.
-    * @param j joint number
-    * @return true on success, false on failure.
-    */
-    virtual bool resetPid(int j);
-    /**
-    * Disable the pid computation for a joint
-    * @param j is the axis number
-    * @return true if successful, false on failure
-    **/
-    virtual bool disablePid(int j);
-
-    /**
-    * Enable the pid computation for a joint
-    * @param j is the axis number
-    * @return true/false on success/failure
-    */
-    virtual bool enablePid(int j);
+    /* IPidControl 
+    These methods are documented by Doxygen in IPidControl.h*/
+    virtual bool setPid(const PidControlTypeEnum& pidtype, int j, const Pid &p);
+    virtual bool setPids(const PidControlTypeEnum& pidtype, const Pid *ps);
+    virtual bool setPidReference(const PidControlTypeEnum& pidtype, int j, double ref);
+    virtual bool setPidReferences(const PidControlTypeEnum& pidtype, const double *refs);
+    virtual bool setPidErrorLimit(const PidControlTypeEnum& pidtype, int j, double limit);
+    virtual bool setPidErrorLimits(const PidControlTypeEnum& pidtype, const double *limits);
+    virtual bool getPidError(const PidControlTypeEnum& pidtype, int j, double *err);
+    virtual bool getPidErrors(const PidControlTypeEnum& pidtype, double *errs);
+    virtual bool getPidOutput(const PidControlTypeEnum& pidtype, int j, double *out);
+    virtual bool getPidOutputs(const PidControlTypeEnum& pidtype, double *outs);
+    virtual bool setPidOffset(const PidControlTypeEnum& pidtype, int j, double v);
+    virtual bool getPid(const PidControlTypeEnum& pidtype, int j, Pid *p);
+    virtual bool getPids(const PidControlTypeEnum& pidtype, Pid *pids);
+    virtual bool getPidReference(const PidControlTypeEnum& pidtype, int j, double *ref);
+    virtual bool getPidReferences(const PidControlTypeEnum& pidtype, double *refs);
+    virtual bool getPidErrorLimit(const PidControlTypeEnum& pidtype, int j, double *limit);
+    virtual bool getPidErrorLimits(const PidControlTypeEnum& pidtype, double *limits);
+    virtual bool resetPid(const PidControlTypeEnum& pidtype, int j);
+    virtual bool disablePid(const PidControlTypeEnum& pidtype, int j);
+    virtual bool enablePid(const PidControlTypeEnum& pidtype, int j);
+    virtual bool isPidEnabled(const PidControlTypeEnum& pidtype, int j, bool* enabled);
 
     /* IPositionControl */
 
