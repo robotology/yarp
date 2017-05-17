@@ -23,6 +23,7 @@
 EntitiesTreeWidget::EntitiesTreeWidget(QWidget *parent) : QTreeWidget(parent)
 {
 
+    missingFile = false;
     applicationNode = new QTreeWidgetItem(this,QStringList() << "Application");
     modulesNode = new QTreeWidgetItem(this,QStringList() << "Modules");
     resourcesNode = new QTreeWidgetItem(this,QStringList() << "Resources");
@@ -536,6 +537,12 @@ void EntitiesTreeWidget::onReopen()
                 QString fileName = QString("%1").arg(app->getXmlFile());
                 QString appName = it->text(0);
 
+                QFile file(fileName);
+                if(!file.exists()){
+                    missingFile=true;
+                    onRemove();
+                }
+
                 reopenApplication(appName,fileName);
             }
 
@@ -546,6 +553,11 @@ void EntitiesTreeWidget::onReopen()
             if (res) {
                 QString fileName = QString("%1").arg(res->getXmlFile());
                 QString resName = it->text(0);
+                QFile file(fileName);
+                if(!file.exists()){
+                    missingFile=true;
+                    onRemove();
+                }
 
                 reopenResource(resName,fileName);
             }
@@ -556,6 +568,11 @@ void EntitiesTreeWidget::onReopen()
             if (mod) {
                 QString fileName = QString("%1").arg(mod->getXmlFile());
                 QString modName = it->text(0);
+                QFile file(fileName);
+                if(!file.exists()){
+                    missingFile=true;
+                    onRemove();
+                }
 
                 reopenModule(modName,fileName);
             }
@@ -579,7 +596,7 @@ void EntitiesTreeWidget::onRemove()
 
 
 
-    if (QMessageBox::question(this,"Removing","Are you sure to remove this item?") == QMessageBox::Yes) {
+    if (missingFile || QMessageBox::question(this,"Removing","Are you sure to remove this item?") == QMessageBox::Yes) {
 
         if (item->parent() == applicationNode) {
             if (item->data(0,Qt::UserRole)  == yarp::manager::APPLICATION) {
@@ -610,7 +627,6 @@ void EntitiesTreeWidget::onRemove()
         }
 
         while(item->childCount()>0) {
-            cout<<"removing "<<item->child(0)->text(0).toStdString()<<" the father is "<<item->text(0).toStdString();
             delete item->takeChild(0);
         }
 
@@ -618,5 +634,6 @@ void EntitiesTreeWidget::onRemove()
             int index = item->parent()->indexOfChild(item);
             delete item->parent()->takeChild(index);
         }
+        missingFile = false;
     }
 }

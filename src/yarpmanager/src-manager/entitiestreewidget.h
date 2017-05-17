@@ -63,6 +63,8 @@ private:
 
     QString ext_editor;
 
+    bool missingFile;
+
 
 signals:
     void viewResource(yarp::manager::Computer*);
