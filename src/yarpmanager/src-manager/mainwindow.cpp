@@ -123,6 +123,11 @@ MainWindow::MainWindow(QWidget *parent) :
 
     connect(this,SIGNAL(selectItem(QString)),ui->entitiesTree,SLOT(onSelectItem(QString)));
 
+    //Adding actions for making the window listen key events(shortcuts)
+    this->addAction(ui->actionQuit);
+    this->addAction(ui->actionSave);
+    this->addAction(ui->actionSave_As);
+    this->addAction(ui->actionClose);
     onTabChangeItem(-1);
 
     ui->action_Manager_Window->setChecked(true);
@@ -312,7 +317,7 @@ void MainWindow::reportErrors()
  */
 void MainWindow::syncApplicationList(QString selectNodeForEditing)
 {
-    ui->entitiesTree->clearApplication();
+    ui->entitiesTree->clearApplications();
     ui->entitiesTree->clearModules();
     ui->entitiesTree->clearResources();
     //ui->entitiesTree->clearTemplates();
@@ -916,12 +921,15 @@ void MainWindow::onNewApplication()
         currentAppVersion = newApplicationWizard->version;
         fileName = newApplicationWizard->fileName;
         initializeFile("Application");
+        char* appName;
+        appName = new char (newApplicationWizard->name.toLatin1().size());
+        strcpy(appName, newApplicationWizard->name.toLatin1().data());
 
         if (lazyManager.addApplication(newApplicationWizard->fileName.toLatin1().data(),
-                                      newApplicationWizard->name.toLatin1().data()))
+                                      appName,true))
         {
-
-            syncApplicationList(newApplicationWizard->name);
+            QString newApp(appName);
+            syncApplicationList(newApp);
 
         }
         else
@@ -929,6 +937,7 @@ void MainWindow::onNewApplication()
             reportErrors();
         }
 
+        delete appName;
         delete newApplicationWizard;
         QFile f(fileName);
         f.remove();

@@ -84,7 +84,7 @@ Manager::~Manager()
 }
 
 
-bool Manager::addApplication(const char* szFileName, char* szAppName_, int len)
+bool Manager::addApplication(const char* szFileName, char* szAppName_, bool modifyName)
 {
     if(find(listOfXml.begin(), listOfXml.end(),szFileName) == listOfXml.end())
         listOfXml.push_back(szFileName);
@@ -96,7 +96,8 @@ bool Manager::addApplication(const char* szFileName, char* szAppName_, int len)
     Application* application = appload.getNextApplication();
     if(!application)
         return false;
-    return knowledge.addApplication(application, szAppName_, len);
+
+    return knowledge.addApplication(application, szAppName_, modifyName);
 }
 
 

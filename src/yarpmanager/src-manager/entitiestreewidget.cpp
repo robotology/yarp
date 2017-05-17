@@ -358,7 +358,7 @@ void EntitiesTreeWidget::mousePressEvent(QMouseEvent *event)
 
 /*! \brief Clear the application node
 */
-void EntitiesTreeWidget::clearApplication()
+void EntitiesTreeWidget::clearApplications()
 {
     if (!applicationNode) {
         return;

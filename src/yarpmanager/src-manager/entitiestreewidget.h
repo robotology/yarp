@@ -30,7 +30,7 @@ public:
     void addModule(yarp::manager::Module* mod);
     void addAppTemplate(yarp::manager::AppTemplate* tmp);
 
-    void clearApplication();
+    void clearApplications();
     void clearModules();
     void clearResources();
     void clearTemplates();

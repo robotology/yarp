@@ -75,7 +75,7 @@ bool KnowledgeBase::createFrom(ModuleLoader* _mloader,
 }
 
 
-bool KnowledgeBase::addApplication(Application* app, char* szAppName_, int len)
+bool KnowledgeBase::addApplication(Application* app, char* szAppName_, bool modifyName)
 {
     __CHECK_NULLPTR(app);
     ErrorLogger* logger  = ErrorLogger::Instance();
@@ -96,8 +96,11 @@ bool KnowledgeBase::addApplication(Application* app, char* szAppName_, int len)
         app->setLabel(newlable.str().c_str());
     }
 
-    if(szAppName_)
-        strncpy(szAppName_, app->getName(), len);
+    if(modifyName){
+        delete szAppName_;
+        szAppName_ = new char(app->getNameLenght());
+        strcpy(szAppName_, app->getName());
+    }
     if(!kbGraph.addNode(app))
     {
         OSTRINGSTREAM msg;

@@ -142,14 +142,13 @@ NewApplicationWizard::NewApplicationWizard(yarp::os::Property *config, bool _sav
 
     connect(browseBtn,SIGNAL(clicked()),this,SLOT(onBrowse()));
     connect(nameEdit,SIGNAL(textChanged(QString)),this,SLOT(onNameChanged(QString)));
-    connect(folderCombo,SIGNAL(activated(int)),
-            this,SLOT(onSwitchCall()));
+    connect(folderCombo, SIGNAL(activated(int)), this, SLOT(onSwitchCall()));
 
 }
 
 void NewApplicationWizard::checkFileAlreadyExists(){
     buildFileName();
-    if(fileExists(this->fileName))
+    if (fileExists(this->fileName))
     {
         fileEdit->setStyleSheet("color: #FF0000");
         alreadyExists = true;
@@ -165,7 +164,7 @@ void NewApplicationWizard::checkFileAlreadyExists(){
 
 void NewApplicationWizard::onNameChanged(QString name)
 {
-    if(!name.isEmpty())
+    if (!name.isEmpty())
     {
         fileEdit->setText(QString("%1.xml").arg(name.toLatin1().data()));
         checkFileAlreadyExists();
@@ -196,11 +195,11 @@ bool NewApplicationWizard::fileExists(QString path) {
 
 void NewApplicationWizard::buildFileName(){
     QString sep="";
-    if(folderCombo->currentText().at(folderCombo->currentText().size()-1) != '/') //checking if the path terminate with / or not
+    if (folderCombo->currentText().at(folderCombo->currentText().size()-1) != '/') //checking if the path terminate with / or not
         #ifdef WIN32
-            sep="\\";
+            {sep="\\";}
         #else
-            sep="/";
+            {sep="/";}
         #endif
     this->fileName = QString("%1"+sep+"%2").arg(folderCombo->currentText().toLatin1().data()).arg(fileEdit->text().toLatin1().data());
 }
@@ -225,27 +224,26 @@ void NewApplicationWizard::onBrowse( )
 
 void NewApplicationWizard::accept()
 {
-    if(nameEdit->text().isEmpty()){
+    if (nameEdit->text().isEmpty()){
         name = nameEdit->placeholderText();
     }else{
         name = nameEdit->text();
     }
-    if(descrEdit->text().isEmpty()){
+    if (descrEdit->text().isEmpty()){
         description = descrEdit->placeholderText();
     }else{
         description = descrEdit->text();
     }
-    if(versionEdit->text().isEmpty()){
+    if (versionEdit->text().isEmpty()){
         version = versionEdit->placeholderText();
     }else{
         version = versionEdit->text();
     }
     buildFileName();
-    if(alreadyExists)
+    if (alreadyExists)
     {
         QMessageBox::StandardButton reply;
-        reply = QMessageBox::question(this, "Quit","The file choosen already exists, do you want to overwrite it?",
-                                      QMessageBox::Yes|QMessageBox::No);
+        reply = QMessageBox::question(this, "Quit", "The file choosen already exists, do you want to overwrite it?", QMessageBox::Yes|QMessageBox::No);
         if (reply == QMessageBox::No)
         {
             QDialog::reject();
