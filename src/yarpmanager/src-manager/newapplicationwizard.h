@@ -51,7 +51,9 @@ signals:
 
 private slots:
     void onBrowse();
+    void checkFileAlreadyExists();
     void onNameChanged(QString name);
+    void onSwitchCall();
     bool fileExists(QString path);
     void buildFileName();
 

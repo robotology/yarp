@@ -142,6 +142,23 @@ NewApplicationWizard::NewApplicationWizard(yarp::os::Property *config, bool _sav
 
     connect(browseBtn,SIGNAL(clicked()),this,SLOT(onBrowse()));
     connect(nameEdit,SIGNAL(textChanged(QString)),this,SLOT(onNameChanged(QString)));
+    connect(folderCombo,SIGNAL(activated(int)),
+            this,SLOT(onSwitchCall()));
+
+}
+
+void NewApplicationWizard::checkFileAlreadyExists(){
+    buildFileName();
+    if(fileExists(this->fileName))
+    {
+        fileEdit->setStyleSheet("color: #FF0000");
+        alreadyExists = true;
+    }
+    else
+    {
+        fileEdit->setStyleSheet("color: #000000");
+        alreadyExists = false;
+    }
 
 }
 
@@ -151,22 +168,17 @@ void NewApplicationWizard::onNameChanged(QString name)
     if(!name.isEmpty())
     {
         fileEdit->setText(QString("%1.xml").arg(name.toLatin1().data()));
-        buildFileName();
-        if(fileExists(this->fileName))
-        {
-            fileEdit->setStyleSheet("color: #FF0000");
-            alreadyExists = true;
-        }
-        else
-        {
-            fileEdit->setStyleSheet("color: #000000");
-            alreadyExists = false;
-        }
+        checkFileAlreadyExists();
     }
     else
     {
         fileEdit->setText("");
     }
+}
+
+void NewApplicationWizard::onSwitchCall()
+{
+    checkFileAlreadyExists();
 }
 
 bool NewApplicationWizard::fileExists(QString path) {
@@ -205,6 +217,7 @@ void NewApplicationWizard::onBrowse( )
     if(!dir.isEmpty()){
         folderCombo->addItem(dir);
         folderCombo->setCurrentText(dir);
+        folderCombo->activated(folderCombo->count());
     }
 
 }
