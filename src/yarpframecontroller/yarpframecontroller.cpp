@@ -63,12 +63,13 @@ public:
         unsigned int count;
         Property     cfg;
         Bottle       b;
-        if(!param.parse(rf, "velocity",          ParamParser::TYPE_DOUBLE)) return false;
-        if(!param.parse(rf, "rootFrame",         ParamParser::TYPE_STRING)) return false;
-        if(!param.parse(rf, "leftFrameInitial",  ParamParser::TYPE_STRING)) return false;
-        if(!param.parse(rf, "rightFrameInitial", ParamParser::TYPE_STRING)) return false;
-        if(!param.parse(rf, "leftFrame",         ParamParser::TYPE_STRING)) return false;
-        if(!param.parse(rf, "rightFrame",        ParamParser::TYPE_STRING)) return false;
+        if (!param.parse(rf,  "velocity",          ParamParser::TYPE_DOUBLE)) return false;
+        if (!param.parse(rf,  "rootFrame",         ParamParser::TYPE_STRING)) return false;
+        if (!param.parse(rf,  "leftFrameInitial",  ParamParser::TYPE_STRING)) return false;
+        if (!param.parse(rf,  "rightFrameInitial", ParamParser::TYPE_STRING)) return false;
+        if (!param.parse(rf,  "leftFrame",         ParamParser::TYPE_STRING)) return false;
+        if (!param.parse(rf,  "rightFrame",        ParamParser::TYPE_STRING)) return false;
+        if (!param.parse(rf,  "remote",            ParamParser::TYPE_STRING)) return false;
         //param.parse(rf, "rightFrame",      ParamParser::TYPE_LIST);
 
         maxVelocity             = rf.find("velocity").asDouble();
@@ -108,7 +109,7 @@ public:
         }
 
 
-        if (!joypad->getAxisCount(count) || count < axisCount || !joypad->getButtonCount(count) || count < buttonCount || joypad->getStickCount(count) || count < stickCount)
+        if (!joypad->getAxisCount(count) || count < axisCount || !joypad->getButtonCount(count) || count < buttonCount)
         {
             yError() << "joypad not compliant.. you need" << axisCount <<  "axes," << buttonCount << "button/s and " << stickCount << "stick/s";
             return false;
