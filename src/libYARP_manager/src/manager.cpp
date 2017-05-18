@@ -404,6 +404,11 @@ bool Manager::updateConnection(unsigned int id, const char* from,
     return true;
 }
 
+Node* Manager::getNode(string appName)
+{
+    Node* node = knowledge.getNode(appName);
+    return node;
+}
 
 bool Manager::exist(unsigned int id)
 {

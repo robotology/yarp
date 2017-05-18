@@ -1598,6 +1598,11 @@ bool KnowledgeBase::checkConsistency(void)
     return true;
 }
 
+Node* KnowledgeBase::getNode(string appName)
+{
+    return kbGraph.getNode(appName.c_str());
+}
+
 bool KnowledgeBase::constrainSatisfied(Node* node,
                                        bool bAutoDependancy,
                                        bool bSilent)

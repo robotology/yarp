@@ -751,6 +751,7 @@ bool MainWindow::onTabClose(int index)
             }
 
         }
+        QString prova = aw->getFileName();
         listOfApplicationsOpen.erase(std::remove(listOfApplicationsOpen.begin(), listOfApplicationsOpen.end(), aw->getFileName()), listOfApplicationsOpen.end());
         aw->closeManager();
     }
@@ -1103,8 +1104,6 @@ void MainWindow::onSaveAs()
         return;
     }
 
-    //onTabClose() //useful for checking I'm overwriting a xml if I have to stop the applications or not..
-
     GenericViewWidget *w = (GenericViewWidget *)ui->mainTabs->currentWidget();
     if(!w){
         return;
@@ -1112,6 +1111,8 @@ void MainWindow::onSaveAs()
     yarp::manager::NodeType type = ((GenericViewWidget*)w)->getType();
     if(type == yarp::manager::APPLICATION){
         ApplicationViewWidget *ww = (ApplicationViewWidget*)w;
+        QString oldAppName = ww->getAppName();
+        QString oldFileName = ww->getFileName();
         ww->setFileName(fileName);
         size_t it1 = fileName.toStdString().find(".xml");
         if(it1 == string::npos)
@@ -1120,36 +1121,31 @@ void MainWindow::onSaveAs()
             return;
         }
         QString appName = fileName.toStdString().substr(0,it1).c_str();
-        QString shortAppName; // without the path
         size_t it2 =appName.toStdString().find_last_of("/");
-        cout<<it2<<endl;
         if(it2 != string::npos)
         {
-            shortAppName = appName.toStdString().substr(it2+1).c_str();
+            currentAppName = appName.toStdString().substr(it2+1).c_str();
         }
         else
         {
-            shortAppName = appName;
+            currentAppName = appName;
         }
-        ww->setAppName(shortAppName);
-    }
-    if(fileName.isEmpty()){
-        return;
-    }
-
-    if(lazyManager.addApplication(fileName.toLatin1().data())){
+        ww->setAppName(currentAppName);
+        if(fileName.isEmpty()){
+            return;
+        }
+        reportErrors();
+        onSave();
+        ww->setAppName(oldAppName);
+        ww->setFileName(oldFileName);
+        onTabClose(ui->mainTabs->currentIndex());
         syncApplicationList();
+        Application* newApp = (Application*) lazyManager.getNode(currentAppName.toStdString());
+        if (newApp)
+        {
+            viewApplication(newApp,true);
+        }
     }
-
-    if(lazyManager.addResource(fileName.toLatin1().data())){
-        syncApplicationList();
-    }
-    if(lazyManager.addModule(fileName.toLatin1().data())){
-        syncApplicationList();
-    }
-    reportErrors();
-    onSave();
-
 }
 
 /*! \brief Open File (Modules, Applications, Resources) */

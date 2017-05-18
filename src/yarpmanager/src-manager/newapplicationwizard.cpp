@@ -5,6 +5,7 @@
 #include <QMessageBox>
 
 #include <yarp/manager/ymm-dir.h>
+#include <yarp/os/Network.h>
 
 using namespace std;
 using namespace yarp::manager;
@@ -70,6 +71,7 @@ NewApplicationWizard::NewApplicationWizard(yarp::os::Property *config, bool _sav
 
 
     browseBtn = new QPushButton("...");
+    browseBtn->setDisabled(saveAs);
 
 
 
@@ -195,12 +197,11 @@ bool NewApplicationWizard::fileExists(QString path) {
 
 void NewApplicationWizard::buildFileName(){
     QString sep="";
-    if (folderCombo->currentText().at(folderCombo->currentText().size()-1) != '/') //checking if the path terminate with / or not
-        #ifdef WIN32
-            {sep="\\";}
-        #else
-            {sep="/";}
-        #endif
+    //checking if the path terminate with / or not
+    if (folderCombo->currentText().at(folderCombo->currentText().size()-1) != '/')
+    {
+        sep = yarp::os::Network::getDirectorySeparator().c_str();
+    }
     this->fileName = QString("%1"+sep+"%2").arg(folderCombo->currentText().toLatin1().data()).arg(fileEdit->text().toLatin1().data());
 }
 

@@ -52,6 +52,8 @@ public:
     bool updateConnection(unsigned int id, const char* from,
                 const char* to, const char* carrier);
 
+    Node* getNode(string appName);
+
     bool run(void);
     bool run(unsigned int id, bool async=false);
     bool stop(void);

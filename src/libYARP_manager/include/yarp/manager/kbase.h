@@ -64,6 +64,8 @@ public:
                             bool bAutoDependancy=false, bool bSilent=false);
     bool checkConsistency(void);
 
+    Node* getNode(string appName);
+
     const ModulePContainer& getSelModules(void) { return selmodules; }
     const CnnContainer& getSelConnection(void) { return selconnections; }
     const ResourcePContainer& getSelResources(void) { return selresources; }

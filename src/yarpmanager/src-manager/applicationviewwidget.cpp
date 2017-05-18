@@ -178,31 +178,41 @@ bool ApplicationViewWidget::save()
 
 QString ApplicationViewWidget::getFileName()
 {
-    return app->getXmlFile();
+
+    if (app)
+        return app->getXmlFile();
+    else if (builder)
+        return builder->getFileName();
+    else
+        return "";
 }
 
 void ApplicationViewWidget::setFileName(QString filename)
 {
-    app->setXmlFile(filename.toStdString().c_str());
-    if(builder)
+    if (app)
+        app->setXmlFile(filename.toStdString().c_str());
+    if (builder)
         builder->setFileName(filename);
     return;
 }
 
 QString ApplicationViewWidget::getAppName()
 {
-    if (builder) {
+    if (app)
+        return app->getName();
+    else if (builder) {
         return builder->getAppName();
     }
     else
-        return app->getName();
+        return "";
 }
 
 void ApplicationViewWidget::setAppName(QString appName)
 {
-    app->setName(appName.toStdString().c_str());
-    if(builder)
+    if (builder)
         builder->setAppName(appName);
+    if (app)
+        app->setName(appName.toStdString().c_str());
     return;
 }
 
