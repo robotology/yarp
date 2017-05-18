@@ -3215,23 +3215,6 @@ bool FakeMotionControl::setCurrentPidsRaw(const Pid *pids)
     return true;
 }
 
-bool FakeMotionControl::getCurrentPidOutputRaw(int j, double *out)
-{
-    //just for testing purposes, this is not a real implementation
-    *out = _ref_currents[j] * 10;
-    return true;
-}
-
-bool FakeMotionControl::getCurrentPidOutputsRaw(double *outs)
-{
-    //just for testing purposes, this is not a real implementation
-    for (int i = 0; i < _njoints; i++)
-    {
-        outs[i] = _ref_currents[i] * 10;
-    }
-    return true;
-}
-
 bool FakeMotionControl::getCurrentPidRaw(int j, Pid *pid)
 {
     *pid = _cpids[j];

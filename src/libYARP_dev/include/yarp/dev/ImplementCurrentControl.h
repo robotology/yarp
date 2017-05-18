@@ -64,8 +64,6 @@ public:
     virtual bool getCurrentRanges(double *min, double *max);
     virtual bool setCurrentPid(int j, const Pid &pid);
     virtual bool setCurrentPids(const Pid *pids);
-    virtual bool getCurrentPidOutput(int j, double *out);
-    virtual bool getCurrentPidOutputs(double *outs);
     virtual bool getCurrentPid(int j, Pid *pid);
     virtual bool getCurrentPids(Pid *pids);
 };

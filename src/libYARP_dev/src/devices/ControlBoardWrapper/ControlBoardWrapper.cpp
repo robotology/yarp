@@ -5595,47 +5595,6 @@ bool ControlBoardWrapper::setCurrentPids(const Pid *pids)
     return ret;
 }
 
-bool ControlBoardWrapper::getCurrentPidOutput(int j, double *out)
-{
-    int off; try{ off = device.lut.at(j).offset; }
-    catch (...){ yError() << "joint number " << j << " out of bound [0-" << controlledJoints << "] for part " << partName; return false; }
-    int subIndex = device.lut[j].deviceEntry;
-
-    yarp::dev::impl::SubDevice *p = device.getSubdevice(subIndex);
-    if (!p)
-        return false;
-
-    if (p->iCurr)
-    {
-        return p->iCurr->getCurrentPidOutput(off + p->base, out);
-    }
-
-    return false;
-}
-
-bool ControlBoardWrapper::getCurrentPidOutputs(double *outs)
-{
-    bool ret = true;
-
-    for (int l = 0; l<controlledJoints; l++)
-    {
-        int off = device.lut[l].offset;
-        int subIndex = device.lut[l].deviceEntry;
-
-        yarp::dev::impl::SubDevice *p = device.getSubdevice(subIndex);
-        if (!p)
-            return false;
-
-        if (p->pid)
-        {
-            ret = ret&&p->iCurr->getCurrentPidOutput(off + p->base, outs + l);
-        }
-        else
-            ret = false;
-    }
-    return ret;
-}
-
 bool ControlBoardWrapper::getCurrentPid(int j, Pid *pid)
 {
     int off; try{ off = device.lut.at(j).offset; }

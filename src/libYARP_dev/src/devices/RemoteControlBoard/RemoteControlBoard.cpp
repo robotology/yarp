@@ -3571,16 +3571,6 @@ public:
         return CHECK_FAIL(ok, response);
     }
 
-    virtual bool getCurrentPidOutput(int j, double *out)
-    {
-        return get2V1I1D(VOCAB_CURRENTCONTROL_INTERFACE, VOCAB_CURRENT_PID_OUTPUT, j, out);
-    }
-
-    virtual bool getCurrentPidOutputs(double *outs)
-    {
-        return get2V1DA(VOCAB_CURRENTCONTROL_INTERFACE, VOCAB_CURRENT_PID_OUTPUTS, outs);
-    }
-
     virtual bool getCurrentPid(int j, Pid *pid)
     {
         Bottle cmd, response;

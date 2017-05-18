@@ -1165,25 +1165,6 @@ void RPCMessagesParser::handleCurrentMsg(const yarp::os::Bottle& cmd, yarp::os::
 
         switch (action)
         {
-            case VOCAB_CURRENT_PID_OUTPUT:
-            {
-                *ok = rpc_ICurrent->getCurrentPidOutput(cmd.get(3).asInt(), &dtmp);
-                response.addDouble(dtmp);
-            }
-            break;
-
-            case VOCAB_CURRENT_PID_OUTPUTS:
-            {
-                double *p = new double[controlledJoints];
-                *ok = rpc_ICurrent->getCurrentPidOutputs(p);
-                Bottle& b = response.addList();
-                int i;
-                for (i = 0; i < controlledJoints; i++)
-                    b.addDouble(p[i]);
-                delete[] p;
-            }
-            break;
-
             case VOCAB_CURRENT_PID:
             {
                 Pid p;

@@ -170,20 +170,6 @@ bool ImplementCurrentControl::setCurrentPids(const Pid *pids)
     return iCurrentRaw->setCurrentPidsRaw(tmpPids);
 }
 
-bool ImplementCurrentControl::getCurrentPidOutput(int j, double *out)
-{
-    JOINTIDCHECK
-    int k=castToMapper(helper)->toHw(j);
-    return iCurrentRaw->getCurrentPidOutputRaw(k, out);
-}
-
-bool ImplementCurrentControl::getCurrentPidOutputs(double *outs)
-{
-    bool ret = iCurrentRaw->getCurrentPidOutputsRaw(temp);
-    castToMapper(helper)->toUser(temp, outs);
-    return ret;
-}
-
 bool ImplementCurrentControl::getCurrentPid(int j, Pid *pid)
 {
     JOINTIDCHECK

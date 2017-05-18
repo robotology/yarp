@@ -116,19 +116,6 @@ public:
      */
     virtual bool setCurrentPids(const Pid *pids) = 0;
 
-    /** Get the output of the PID controller (e.g. pwm value)
-     * @param m motor number
-     * @param out pointer to storage for return value
-     * @return true/false on success/failure
-     */
-    virtual bool getCurrentPidOutput(int m, double *out) = 0;
-
-    /** Get the output of the controllers (e.g. pwm value)
-     * @param outs pointer to the vector that will store the output values
-     * @return true/false on success/failure
-     */
-    virtual bool getCurrentPidOutputs(double *outs) = 0;
-
     /** Get current pid value for a specific motor.
     * @param m motor number
      * @param pid pointer to storage for the return value.
@@ -240,19 +227,6 @@ public:
      * @return true/false on success/failure
      */
     virtual bool setCurrentPidsRaw(const Pid *pids)=0;
-
-    /** Get the output of the controller (e.g. pwm value)
-     * @param m motor number
-     * @param out pointer to storage for return value
-     * @return true/false on success/failure
-     */
-    virtual bool getCurrentPidOutputRaw(int m, double *out)=0;
-
-    /** Get the output of the controllers (e.g. pwm value)
-     * @param outs pinter to the vector that will store the output values
-     * @return true/false on success/failure
-     */
-    virtual bool getCurrentPidOutputsRaw(double *outs)=0;
 
     /** Get current pid value for a specific motor.
      * @param m motor number
