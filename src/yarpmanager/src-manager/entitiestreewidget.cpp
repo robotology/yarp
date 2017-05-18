@@ -219,18 +219,45 @@ void EntitiesTreeWidget::onItemDoubleClicked(QTreeWidgetItem *item,int column)
 
     if (item->data(0,Qt::UserRole).toInt()  == (int)yarp::manager::APPLICATION) {
         yarp::manager::Application *app = (yarp::manager::Application*)item->data(0,Qt::UserRole + 1).toLongLong();
-        viewApplication(app);
+        if(app)
+        {
+            QString fileName = QString("%1").arg(app->getXmlFile());
+
+            QFile file(fileName);
+            if(!file.exists()){
+                missingFile=true;
+                onRemove();
+                return;
+            }
+            viewApplication(app);
+        }
     }
 
     if (item->data(0,Qt::UserRole).toInt()  == (int)yarp::manager::MODULE) {
         yarp::manager::Module *mod = (yarp::manager::Module*)item->data(0,Qt::UserRole + 1).toLongLong();
         if (mod) {
+            QString fileName = QString("%1").arg(mod->getXmlFile());
+
+            QFile file(fileName);
+            if(!file.exists()){
+                missingFile=true;
+                onRemove();
+                return;
+            }
             viewModule(mod);
         }
     }
 
     if (item->data(0,Qt::UserRole).toInt()  == (int)yarp::manager::RESOURCE) {
         yarp::manager::Computer *res = (yarp::manager::Computer*)item->data(0,Qt::UserRole + 1).toLongLong();
+        QString fileName = QString("%1").arg(res->getXmlFile());
+
+        QFile file(fileName);
+        if(!file.exists()){
+            missingFile=true;
+            onRemove();
+            return;
+        }
         viewResource(res);
     }
 
@@ -452,7 +479,17 @@ void EntitiesTreeWidget::onEditApplication()
     if (it->parent() == applicationNode) {
         if (it->data(0,Qt::UserRole)  == yarp::manager::APPLICATION) {
             yarp::manager::Application *app = (yarp::manager::Application*)it->data(0,Qt::UserRole + 1).toLongLong();
-            viewApplication(app,true);
+            if(app){
+                QString fileName = QString("%1").arg(app->getXmlFile());
+
+                QFile file(fileName);
+                if(!file.exists()){
+                    missingFile=true;
+                    onRemove();
+                    return;
+                }
+                viewApplication(app,true);
+            }
         }
     }
 }
@@ -541,6 +578,7 @@ void EntitiesTreeWidget::onReopen()
                 if(!file.exists()){
                     missingFile=true;
                     onRemove();
+                    return;
                 }
 
                 reopenApplication(appName,fileName);

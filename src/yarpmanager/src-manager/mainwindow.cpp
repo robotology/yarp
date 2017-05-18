@@ -705,7 +705,8 @@ bool MainWindow::onTabClose(int index)
 
         if (!aw)
         {
-            yWarning("ApplicationViewWidget is NULL!");
+            yError("ApplicationViewWidget is NULL!");
+            return false;
         }
 
         if(aw && aw->isRunning()){
