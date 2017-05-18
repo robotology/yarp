@@ -2,10 +2,11 @@
 # Author: Daniele E. Domenichelli <daniele.domenichelli@iit.it>
 # CopyPolicy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
 
-if(NOT ${CMAKE_MINIMUM_REQUIRED_VERSION} VERSION_LESS 3.8)
+if(NOT ${CMAKE_MINIMUM_REQUIRED_VERSION} VERSION_LESS 3.8.2)
     message(AUTHOR_WARNING "CMAKE_MINIMUM_REQUIRED_VERSION is now ${CMAKE_MINIMUM_REQUIRED_VERSION}. This file can be removed.")
 endif()
-if(NOT CMAKE_VERSION VERSION_LESS 3.9)
+# source_group(TREE) is working in CMake 3.8 and CMake 3.8.2, but not in CMake 3.8.1.
+if(NOT CMAKE_VERSION VERSION_LESS 3.8.2 OR CMAKE_VERSION VERSION_EQUAL 3.8)
   return()
 endif()
 
