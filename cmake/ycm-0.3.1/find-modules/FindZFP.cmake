@@ -27,7 +27,7 @@
 include(FindPackageHandleStandardArgs)
 include(SelectLibraryConfigurations)
 
-find_path(ZFP_INCLUDE_DIRS
+find_path(ZFP_INCLUDE_DIR
           NAMES zfp.h
           PATHS $ENV{ZFP_DIR}/include
           DOC "ZFP include directory")
@@ -48,6 +48,7 @@ mark_as_advanced(ZFP_INCLUDE_DIRS
 
 select_library_configurations(ZFP)
 
+set(ZFP_INCLUDE_DIRS ${ZFP_INCLUDE_DIR})
 set(ZFP_LIBRARIES ${ZFP_LIBRARY})
 
 find_package_handle_standard_args(ZFP
