@@ -592,7 +592,7 @@ SystemInfo::PlatformInfo SystemInfo::getPlatformInfo()
            platform.distribution = "XP Professional x64 Edition";
         else if((osver.dwMajorVersion == 5) && (osver.dwMinorVersion == 1))
            platform.distribution = "XP";
-        else if((osver.dwMajorVersion == 5) && (osver.dwMinorVersion == 2))
+        else if((osver.dwMajorVersion == 5) && (osver.dwMinorVersion == 0))
             platform.distribution = "2000";
     }
 
@@ -890,10 +890,20 @@ SystemInfo::ProcessInfo SystemInfo::getProcessInfo(int pid) {
         size_t argv_len;
         //getting length of execute string
         int result = sysctl(mib, 3, YARP_NULLPTR, &argv_len, YARP_NULLPTR, 0);
+        if (return != 0) {
+            perror("sysctl");
+            return info;
+        }
 
         //now getting the string
         proc_argv = (char*)malloc(sizeof(char) * argv_len);
         result = sysctl(mib, 3, proc_argv, &argv_len, YARP_NULLPTR, 0);
+        if (return != 0) {
+            perror("sysctl");
+            free(proc_argv);
+            return info;
+        }
+
         //looking for '\0', i.e. NULL char
         //skip first string which is the executable
         size_t index = 0;

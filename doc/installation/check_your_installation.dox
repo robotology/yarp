@@ -20,9 +20,11 @@ Depending on your system the console will look something like this:
 
 \image html check-your-installation-yarpserver.png
 
-If you type on a web browser http://127.0.0.1:10000 you get information about the name server (registered ports, info, etc.).
+If you type on a web browser http://127.0.0.1:10000 you get information about
+the name server (registered ports, info, etc.).
 
-We can just check functionality by running a simple example. On another terminal type:
+We can just check functionality by running a simple example. On another terminal
+type:
 
 \code
   yarp read /portread
@@ -51,13 +53,14 @@ Now, anything typed on the YARP write will be sent and printed on the read side.
 
 \section sec-play-recorded-sequence Play a recorded sequence
 
-You can also use the yarpdataplayer to replay a recorded sequence. This will reproduce all the sensory information available on the real robot during a simple experiment. Follow the instructions here:
+You can also use the yarpdataplayer to replay a recorded sequence. This will
+reproduce all the sensory information available on the real robot during a
+simple experiment. Follow the instructions here:
 
-http://www.yarp.it/group__yarpdataplayerExample.html
+\ref yarpdataplayerExample
 
 \image html check-your-installation-yarpdataplayer-example.jpg
 
 You are now ready to learn more, proceed to the \ref tutorials.
 
  */
- 
