@@ -592,7 +592,7 @@ SystemInfo::PlatformInfo SystemInfo::getPlatformInfo()
            platform.distribution = "XP Professional x64 Edition";
         else if((osver.dwMajorVersion == 5) && (osver.dwMinorVersion == 1))
            platform.distribution = "XP";
-        else if((osver.dwMajorVersion == 5) && (osver.dwMinorVersion == 2))
+        else if((osver.dwMajorVersion == 5) && (osver.dwMinorVersion == 0))
             platform.distribution = "2000";
     }
 
