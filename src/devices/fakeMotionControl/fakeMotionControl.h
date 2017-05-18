@@ -521,15 +521,10 @@ public:
     virtual bool getRefCurrentRaw(int j, double *t);
     virtual bool setCurrentPidRaw(int j, const Pid &pid);
     virtual bool setCurrentPidsRaw(const Pid *pids);
-    virtual bool getCurrentErrorRaw(int j, double *err);
-    virtual bool getCurrentErrorsRaw(double *errs);
     virtual bool getCurrentPidOutputRaw(int j, double *out);
     virtual bool getCurrentPidOutputsRaw(double *outs);
     virtual bool getCurrentPidRaw(int j, Pid *pid);
     virtual bool getCurrentPidsRaw(Pid *pids);
-    virtual bool resetCurrentPidRaw(int j);
-    virtual bool disableCurrentPidRaw(int j);
-    virtual bool enableCurrentPidRaw(int j);
 
     void run();
 private:

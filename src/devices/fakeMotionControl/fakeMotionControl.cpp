@@ -3215,23 +3215,6 @@ bool FakeMotionControl::setCurrentPidsRaw(const Pid *pids)
     return true;
 }
 
-bool FakeMotionControl::getCurrentErrorRaw(int j, double *err)
-{
-    //just for testing purposes, this is not a real implementation
-    *err = _ref_currents[j]/2;
-    return true;
-}
-
-bool FakeMotionControl::getCurrentErrorsRaw(double *errs)
-{
-    //just for testing purposes, this is not a real implementation
-    for (int i = 0; i < _njoints; i++)
-    {
-        errs[i] = _ref_currents[i] / 2;
-    }
-    return true;
-}
-
 bool FakeMotionControl::getCurrentPidOutputRaw(int j, double *out)
 {
     //just for testing purposes, this is not a real implementation
@@ -3264,20 +3247,6 @@ bool FakeMotionControl::getCurrentPidsRaw(Pid *pids)
     return true;
 }
 
-bool FakeMotionControl::resetCurrentPidRaw(int j)
-{
-    return NOT_YET_IMPLEMENTED("resetCurrentPidRaw");
-}
-
-bool FakeMotionControl::disableCurrentPidRaw(int j)
-{
-    return NOT_YET_IMPLEMENTED("disableCurrentPidRaw");
-}
-
-bool FakeMotionControl::enableCurrentPidRaw(int j)
-{
-    return NOT_YET_IMPLEMENTED("enableCurrentPidRaw");
-}
 
 // bool FakeMotionControl::checkRemoteControlModeStatus(int joint, int target_mode)
 // {

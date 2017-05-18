@@ -1315,15 +1315,10 @@ public:
     virtual bool getRefCurrent(int j, double *t);
     virtual bool setCurrentPid(int j, const Pid &pid);
     virtual bool setCurrentPids(const Pid *pids);
-    virtual bool getCurrentError(int j, double *err);
-    virtual bool getCurrentErrors(double *errs);
     virtual bool getCurrentPidOutput(int j, double *out);
     virtual bool getCurrentPidOutputs(double *outs);
     virtual bool getCurrentPid(int j, Pid *pid);
     virtual bool getCurrentPids(Pid *pids);
-    virtual bool resetCurrentPid(int j);
-    virtual bool disableCurrentPid(int j);
-    virtual bool enableCurrentPid(int j);
 };
 
 #if defined(_MSC_VER) && !defined(YARP_NO_DEPRECATED) // since YARP 2.3.65

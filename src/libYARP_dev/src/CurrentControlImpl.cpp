@@ -170,26 +170,6 @@ bool ImplementCurrentControl::setCurrentPids(const Pid *pids)
     return iCurrentRaw->setCurrentPidsRaw(tmpPids);
 }
 
-bool ImplementCurrentControl::getCurrentError(int j, double *err)
-{
-    JOINTIDCHECK
-    int k;
-    bool ret;
-    double temp;
-    k=castToMapper(helper)->toHw(j);
-    ret = iCurrentRaw->getCurrentErrorRaw(k, &temp);
-    *err=castToMapper(helper)->ampereS2A(temp, k);
-    return ret;
-}
-
-bool ImplementCurrentControl::getCurrentErrors(double *errs)
-{
-    bool ret;
-    ret = iCurrentRaw->getCurrentErrorsRaw(temp);
-    castToMapper(helper)->ampereS2A(temp, errs);
-    return ret;
-}
-
 bool ImplementCurrentControl::getCurrentPidOutput(int j, double *out)
 {
     JOINTIDCHECK
@@ -225,25 +205,4 @@ bool ImplementCurrentControl::getCurrentPids(Pid *pids)
     }
 
     return ret;
-}
-
-bool ImplementCurrentControl::resetCurrentPid(int j)
-{
-    JOINTIDCHECK
-    int k=castToMapper(helper)->toHw(j);
-    return iCurrentRaw->resetCurrentPidRaw(k);
-}
-
-bool ImplementCurrentControl::disableCurrentPid(int j)
-{
-    JOINTIDCHECK
-    int k=castToMapper(helper)->toHw(j);
-    return iCurrentRaw->disableCurrentPidRaw(k);
-}
-
-bool ImplementCurrentControl::enableCurrentPid(int j)
-{
-    JOINTIDCHECK
-    int k=castToMapper(helper)->toHw(j);
-    return iCurrentRaw->enableCurrentPidRaw(k);
 }

@@ -3571,16 +3571,6 @@ public:
         return CHECK_FAIL(ok, response);
     }
 
-    virtual bool getCurrentError(int j, double *err)
-    {
-        return get2V1I1D(VOCAB_CURRENTCONTROL_INTERFACE, VOCAB_CURRENT_ERROR, j, err);
-    }
-
-    virtual bool getCurrentErrors(double *errs)
-    {
-        return get2V1DA(VOCAB_CURRENTCONTROL_INTERFACE, VOCAB_CURRENT_ERRORS, errs);
-    }
-
     virtual bool getCurrentPidOutput(int j, double *out)
     {
         return get2V1I1D(VOCAB_CURRENTCONTROL_INTERFACE, VOCAB_CURRENT_PID_OUTPUT, j, out);
@@ -3655,21 +3645,6 @@ public:
             return true;
         }
         return false;
-    }
-
-    virtual bool resetCurrentPid(int j)
-    {
-        return set2V1I(VOCAB_CURRENTCONTROL_INTERFACE, VOCAB_CURRENT_RESET, j);
-    }
-
-    virtual bool disableCurrentPid(int j)
-    {
-        return set2V1I(VOCAB_CURRENTCONTROL_INTERFACE, VOCAB_CURRENT_DISABLE, j);
-    }
-
-    virtual bool enableCurrentPid(int j)
-    {
-        return set2V1I(VOCAB_CURRENTCONTROL_INTERFACE, VOCAB_CURRENT_ENABLE, j);
     }
 
     //iPWMControl

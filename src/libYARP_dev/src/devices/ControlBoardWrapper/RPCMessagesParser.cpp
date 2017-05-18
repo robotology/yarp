@@ -1051,27 +1051,6 @@ void RPCMessagesParser::handleCurrentMsg(const yarp::os::Bottle& cmd, yarp::os::
     {
         switch (action)
         {
-             case VOCAB_CURRENT_ENABLE:
-            {
-                int j = cmd.get(3).asInt();
-                *ok = rpc_ICurrent->enableCurrentPid(j);
-            }
-            break;
-
-            case VOCAB_CURRENT_DISABLE:
-            {
-                int j = cmd.get(3).asInt();
-                *ok = rpc_ICurrent->disableCurrentPid(j);
-            }
-            break;
-
-            case VOCAB_CURRENT_RESET:
-            {
-                int j = cmd.get(3).asInt();
-                *ok = rpc_ICurrent->resetCurrentPid(j);
-            }
-            break;
-
             case VOCAB_CURRENT_REF:
             {
                 yError("VOCAB_CURRENT_REF methods is implemented as streaming");
@@ -1186,25 +1165,6 @@ void RPCMessagesParser::handleCurrentMsg(const yarp::os::Bottle& cmd, yarp::os::
 
         switch (action)
         {
-            case VOCAB_CURRENT_ERROR:
-            {
-                *ok = rpc_ICurrent->getCurrentError(cmd.get(3).asInt(), &dtmp);
-                response.addDouble(dtmp);
-            }
-            break;
-
-            case VOCAB_CURRENT_ERRORS:
-            {
-                double *p = new double[controlledJoints];
-                *ok = rpc_ICurrent->getCurrentErrors(p);
-                Bottle& b = response.addList();
-                int i;
-                for (i = 0; i < controlledJoints; i++)
-                    b.addDouble(p[i]);
-                delete[] p;
-            }
-            break;
-
             case VOCAB_CURRENT_PID_OUTPUT:
             {
                 *ok = rpc_ICurrent->getCurrentPidOutput(cmd.get(3).asInt(), &dtmp);

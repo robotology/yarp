@@ -116,19 +116,6 @@ public:
      */
     virtual bool setCurrentPids(const Pid *pids) = 0;
 
-    /** Get the controller error for a motor  (expressed in amperes).
-     * @param m motor number
-     * @param err pointer to the storage for the return value
-     * @return true/false on success failure
-     */
-    virtual bool getCurrentError(int m, double *err) = 0;
-
-    /** Get the controller error of all motors (expressed in amperes).
-     * @param errs pointer to the vector that will store the errors.
-     * @return true/false on success/failure
-     */
-    virtual bool getCurrentErrors(double *errs) = 0;
-
     /** Get the output of the PID controller (e.g. pwm value)
      * @param m motor number
      * @param out pointer to storage for return value
@@ -154,24 +141,6 @@ public:
      * @return true/false on success/failure
      */
     virtual bool getCurrentPids(Pid *pids)=0;
-
-    /** Reset the current pid controller of a given motor
-    * @param m motor number
-     * @return true/false on success/failure
-     */
-    virtual bool resetCurrentPid(int m)=0;
-
-    /** Disable the current pid computation for a motor
-    * @param m motor number
-     * @return true/false on success/failure
-     */
-    virtual bool disableCurrentPid(int m)=0;
-
-    /** Enable the current pid computation for an axis.
-     * @param m motor number
-     * @return true/false on success/failure
-     */
-    virtual bool enableCurrentPid(int m)=0;
 };
 
 /**
@@ -272,19 +241,6 @@ public:
      */
     virtual bool setCurrentPidsRaw(const Pid *pids)=0;
 
-    /** Get the controller error for a single motor.
-     * @param m motor number
-     * @param err pointer to the storage for the return value
-     * @return true/false on success failure
-     */
-    virtual bool getCurrentErrorRaw(int m, double *err)=0;
-
-    /** Get the controller error of all motors.
-     * @param errs pointer to the vector that will store the errors
-     * @return true/false on success/failure
-     */
-    virtual bool getCurrentErrorsRaw(double *errs)=0;
-
     /** Get the output of the controller (e.g. pwm value)
      * @param m motor number
      * @param out pointer to storage for return value
@@ -310,25 +266,6 @@ public:
      * @return true/false on success/failure
      */
     virtual bool getCurrentPidsRaw(Pid *pids)=0;
-
-    /** Reset the current pid controller of a given motor.
-    * @param m motor number
-    * @return true/false on success/failure
-    */
-    virtual bool resetCurrentPidRaw(int m)=0;
-
-    /** Disable the current pid computation for a motor.
-     * @param m motor number
-     * @return true/false on success/failure
-     */
-    virtual bool disableCurrentPidRaw(int m)=0;
-
-    /** Enable the current pid computation for a motor.
-     * @param m motor number
-     * @return true/false on success/failure
-     */
-    virtual bool enableCurrentPidRaw(int m)=0;
-
 };
 
 // Interface name
