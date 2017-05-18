@@ -62,10 +62,6 @@ public:
     virtual bool getCurrent(int j, double *t);
     virtual bool getCurrentRange(int j, double *min, double *max);
     virtual bool getCurrentRanges(double *min, double *max);
-    virtual bool setCurrentPid(int j, const Pid &pid);
-    virtual bool setCurrentPids(const Pid *pids);
-    virtual bool getCurrentPid(int j, Pid *pid);
-    virtual bool getCurrentPids(Pid *pids);
 };
 
 #endif // YARP_DEV_IMPLEMENTCURRENTCONTROL_H

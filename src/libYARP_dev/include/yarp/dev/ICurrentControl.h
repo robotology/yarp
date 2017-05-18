@@ -102,32 +102,6 @@ public:
     * @return true/false on success/failure
     */
     virtual bool getRefCurrent(int m, double *curr) = 0;
-
-     /** Set new pid value for a controlled motor.
-     * @param m motor number
-     * @param pid new pid value
-     * @return true/false on success/failure
-     */
-    virtual bool setCurrentPid(int m, const Pid &pid) = 0;
-
-    /** Set new pid value on multiple axes.
-     * @param pids pointer to a vector of pids
-     * @return true/false upon success/failure
-     */
-    virtual bool setCurrentPids(const Pid *pids) = 0;
-
-    /** Get current pid value for a specific motor.
-    * @param m motor number
-     * @param pid pointer to storage for the return value.
-     * @return true/false on success/failure
-     */
-    virtual bool getCurrentPid(int m, Pid *pid) = 0;
-
-    /** Get current pid value for a specific motor.
-     * @param pids vector that will store the values of the pids.
-     * @return true/false on success/failure
-     */
-    virtual bool getCurrentPids(Pid *pids)=0;
 };
 
 /**
@@ -214,51 +188,16 @@ public:
     * @return true/false on success/failure
     */
     virtual bool getRefCurrentRaw(int m, double *curr)=0;
-
-     /** Set new pid value for a controlled motor.
-     * @param m motor number
-     * @param pid new pid value
-     * @return true/false on success/failure
-     */
-    virtual bool setCurrentPidRaw(int m, const Pid &pid)=0;
-
-    /** Set new pid value on multiple axes.
-     * @param pids pointer to a vector of pids
-     * @return true/false on success/failure
-     */
-    virtual bool setCurrentPidsRaw(const Pid *pids)=0;
-
-    /** Get current pid value for a specific motor.
-     * @param m motor number
-     * @param pid pointer to storage for the return value.
-     * @return true/false on success/failure
-     */
-    virtual bool getCurrentPidRaw(int m, Pid *pid)=0;
-
-    /** Get current pid value for a specific motor.
-     * @param pids vector that will store the values of the pids.
-     * @return true/false on success/failure
-     */
-    virtual bool getCurrentPidsRaw(Pid *pids)=0;
 };
 
 // Interface name
 #define VOCAB_CURRENTCONTROL_INTERFACE VOCAB4('i','c','u','r')
 // methods names
 
-#define VOCAB_CURRENT_PID          VOCAB3('p','i','d')
-#define VOCAB_CURRENT_PIDS         VOCAB4('p','i','d','s')
 #define VOCAB_CURRENT_REF          VOCAB3('r','e','f')
 #define VOCAB_CURRENT_REFS         VOCAB4('r','e','f','s')
 #define VOCAB_CURRENT_REF_GROUP    VOCAB4('r','e','f','g')
-#define VOCAB_CURRENT_PID_OUTPUT   VOCAB3('o','u','t')
-#define VOCAB_CURRENT_PID_OUTPUTS  VOCAB4('o','u','t','s')
 #define VOCAB_CURRENT_RANGE        VOCAB3('r','n','g')
 #define VOCAB_CURRENT_RANGES       VOCAB4('r','n','g','s')
-#define VOCAB_CURRENT_ERROR        VOCAB3('e','r','r')
-#define VOCAB_CURRENT_ERRORS       VOCAB4('e','r','r','s')
-#define VOCAB_CURRENT_ENABLE       VOCAB3('e','n','a')
-#define VOCAB_CURRENT_DISABLE      VOCAB3('d','i','s')
-#define VOCAB_CURRENT_RESET        VOCAB4('r','e','s','e')
 
 #endif // YARP_DEV_ICURRENTCONTROL_H

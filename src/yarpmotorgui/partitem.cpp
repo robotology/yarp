@@ -727,9 +727,9 @@ void PartItem::onSendCurrentPid(int jointIndex, Pid newPid)
         return;
     }
     Pid myCurPid(0, 0, 0, 0, 0, 0);
-    m_iCur->setCurrentPid(jointIndex, newPid);
+    m_iPid->setPid(VOCAB_PIDTYPE_CURRENT, jointIndex, newPid);
     yarp::os::Time::delay(0.005);
-    m_iCur->getCurrentPid(jointIndex, &myCurPid);
+    m_iPid->getPid(VOCAB_PIDTYPE_CURRENT, jointIndex, &myCurPid);
 
     if (m_currentPidDlg){
         m_currentPidDlg->initCurrent(myCurPid);

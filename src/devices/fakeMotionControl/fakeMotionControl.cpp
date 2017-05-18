@@ -3200,37 +3200,6 @@ bool FakeMotionControl::getRefCurrentRaw(int j, double *t)
     return true;
 }
 
-bool FakeMotionControl::setCurrentPidRaw(int j, const Pid &pid)
-{
-    _cpids[j] = pid;
-    return true;
-}
-
-bool FakeMotionControl::setCurrentPidsRaw(const Pid *pids)
-{
-    for (int i = 0; i < _njoints; i++)
-    {
-        _cpids[i] = pids[i];
-    }
-    return true;
-}
-
-bool FakeMotionControl::getCurrentPidRaw(int j, Pid *pid)
-{
-    *pid = _cpids[j];
-    return true;
-}
-
-bool FakeMotionControl::getCurrentPidsRaw(Pid *pids)
-{
-    for (int i = 0; i < _njoints; i++)
-    {
-        pids[i] = _cpids[i];
-    }
-    return true;
-}
-
-
 // bool FakeMotionControl::checkRemoteControlModeStatus(int joint, int target_mode)
 // {
 //     return false;

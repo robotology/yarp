@@ -519,10 +519,6 @@ public:
     virtual bool setRefCurrentsRaw(const int n_joint, const int *joints, const double *t);
     virtual bool getRefCurrentsRaw(double *t);
     virtual bool getRefCurrentRaw(int j, double *t);
-    virtual bool setCurrentPidRaw(int j, const Pid &pid);
-    virtual bool setCurrentPidsRaw(const Pid *pids);
-    virtual bool getCurrentPidRaw(int j, Pid *pid);
-    virtual bool getCurrentPidsRaw(Pid *pids);
 
     void run();
 private:

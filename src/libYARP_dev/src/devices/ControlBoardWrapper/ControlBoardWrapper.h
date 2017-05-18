@@ -1313,10 +1313,6 @@ public:
     virtual bool setRefCurrents(const int n_joint, const int *joints, const double *t);
     virtual bool getRefCurrents(double *t);
     virtual bool getRefCurrent(int j, double *t);
-    virtual bool setCurrentPid(int j, const Pid &pid);
-    virtual bool setCurrentPids(const Pid *pids);
-    virtual bool getCurrentPid(int j, Pid *pid);
-    virtual bool getCurrentPids(Pid *pids);
 };
 
 #if defined(_MSC_VER) && !defined(YARP_NO_DEPRECATED) // since YARP 2.3.65
