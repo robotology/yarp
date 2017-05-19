@@ -506,24 +506,8 @@ void MainWindow::viewModule(yarp::manager::Module *module)
  */
 void MainWindow::viewApplication(yarp::manager::Application *app,bool editingMode)
 {
-    if (std::find(listOfApplicationsOpen.begin(), listOfApplicationsOpen.end(), app->getXmlFile()) != listOfApplicationsOpen.end())
-    {
-        QMessageBox::information(this,
-                                QString("Opening %1").arg(app->getName()),
-                                "Tab already open");
-        return;
-    }
-    listOfApplicationsOpen.push_back(app->getXmlFile());
-    for(int i=0;i<ui->mainTabs->count();i++){
-        GenericViewWidget *w = (GenericViewWidget *)ui->mainTabs->widget(i);
-        if(w->getType() ==  yarp::manager::APPLICATION){
-            ApplicationViewWidget *a = (ApplicationViewWidget *)w;
-            if(a->getAppName() == app->getName()){
-                a->setFileName(app->getXmlFile());
-                ui->mainTabs->setCurrentIndex(i);
-                return;
-            }
-        }else if(ui->mainTabs->tabText(i) == app->getName()){
+    for (int i=0; i<ui->mainTabs->count(); i++){
+        if (ui->mainTabs->tabText(i) == app->getName()){
             ui->mainTabs->setCurrentIndex(i);
             return;
         }
@@ -721,19 +705,12 @@ bool MainWindow::onTabClose(int index)
 
         QString fileOfCurrentApp = aw->getFileName();
 
-        if (fileOfCurrentApp == "")
-        {
-            //it may happen that entitiestreewidget destroy the references (to aw) before mainwindow can use them
-            return false;
-        }
-
         if(aw->isModified() && aw->isEditingMode()){
             QMessageBox::StandardButton btn = QMessageBox::question(this,"Save",QString("%1 has been modified\nDo you want to save it before closing?").arg(aw->getAppName().toLatin1().data()),
                                                                     QMessageBox::Yes | QMessageBox::No | QMessageBox::Cancel);
             if(btn == QMessageBox::Yes){
                 bool ret = aw->save();
                 if(ret){
-                    listOfApplicationsOpen.erase(std::remove(listOfApplicationsOpen.begin(), listOfApplicationsOpen.end(), fileOfCurrentApp), listOfApplicationsOpen.end());
                     onReopenApplication(aw->getAppName(),fileOfCurrentApp);
                     ui->mainTabs->removeTab(index);
                     delete w;
@@ -750,7 +727,6 @@ bool MainWindow::onTabClose(int index)
             if (btn == QMessageBox::No){
                 QFile file(fileOfCurrentApp);
                 if(!file.exists()){
-                    listOfApplicationsOpen.erase(std::remove(listOfApplicationsOpen.begin(), listOfApplicationsOpen.end(), fileOfCurrentApp), listOfApplicationsOpen.end());
                     ui->entitiesTree->setCurrentItem(ui->entitiesTree->getWidgetItemByFilename(fileOfCurrentApp));
                     ui->entitiesTree->onRemove();
                     aw->closeManager();
@@ -761,7 +737,6 @@ bool MainWindow::onTabClose(int index)
             }
 
         }
-        listOfApplicationsOpen.erase(std::remove(listOfApplicationsOpen.begin(), listOfApplicationsOpen.end(), fileOfCurrentApp), listOfApplicationsOpen.end());
         aw->closeManager();
     }
     ui->mainTabs->removeTab(index);
