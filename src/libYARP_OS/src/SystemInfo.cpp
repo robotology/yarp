@@ -890,7 +890,7 @@ SystemInfo::ProcessInfo SystemInfo::getProcessInfo(int pid) {
         size_t argv_len;
         //getting length of execute string
         int result = sysctl(mib, 3, YARP_NULLPTR, &argv_len, YARP_NULLPTR, 0);
-        if (return != 0) {
+        if (result != 0) {
             perror("sysctl");
             return info;
         }
@@ -898,7 +898,7 @@ SystemInfo::ProcessInfo SystemInfo::getProcessInfo(int pid) {
         //now getting the string
         proc_argv = (char*)malloc(sizeof(char) * argv_len);
         result = sysctl(mib, 3, proc_argv, &argv_len, YARP_NULLPTR, 0);
-        if (return != 0) {
+        if (result != 0) {
             perror("sysctl");
             free(proc_argv);
             return info;
