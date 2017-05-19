@@ -111,13 +111,6 @@ public:
      */
     virtual bool setMotorTorqueParams(int j,  const yarp::dev::MotorTorqueParameters params) {return false;}
 
-     /** Set new pid value for a joint axis.
-     * @param j joint number
-     * @param pid new pid value
-     * @return true/false on success/failure
-     */
-    virtual bool setTorquePid(int j, const Pid &pid)=0;
-
     /** Get the value of the torque on a given joint (this is the
      * feedback if you have a torque sensor).
      * @param j joint number
@@ -148,10 +141,21 @@ public:
      */
     virtual bool getTorqueRanges(double *min, double *max)=0;
 
+#ifndef YARP_NO_DEPRECATED // since YARP 2.3.68
+
+     /** Set new pid value for a joint axis.
+     * @param j joint number
+     * @param pid new pid value
+     * @return true/false on success/failure
+     */
+    YARP_DEPRECATED_MSG("Use setPid(VOCAB_PIDTYPE_TORQUE,...) instead")
+    virtual bool setTorquePid(int j, const Pid &pid)=0;
+
     /** Set new pid value on multiple axes.
      * @param pids pointer to a vector of pids
      * @return true/false upon success/failure
      */
+    YARP_DEPRECATED_MSG("Use setPids(VOCAB_PIDTYPE_TORQUE,...) instead")
     virtual bool setTorquePids(const Pid *pids)=0;
 
     /** Set the torque error limit for the controller on a specific joint
@@ -159,12 +163,14 @@ public:
      * @param limit limit value
      * @return true/false on success/failure
      */
+    YARP_DEPRECATED_MSG("Use setPidErrorLimits(VOCAB_PIDTYPE_TORQUE,...) instead")
     virtual bool setTorqueErrorLimit(int j, double limit)=0;
 
     /** Get the torque error limit for the controller on all joints.
      * @param limits pointer to the vector with the new limits
      * @return true/false on success/failure
      */
+    YARP_DEPRECATED_MSG("Use setPidErrorLimits(VOCAB_PIDTYPE_TORQUE,...) instead")
     virtual bool setTorqueErrorLimits(const double *limits)=0;
 
     /** Get the current torque error for a joint.
@@ -172,12 +178,14 @@ public:
      * @param err pointer to the storage for the return value
      * @return true/false on success failure
      */
+    YARP_DEPRECATED_MSG("Use getPidError(VOCAB_PIDTYPE_TORQUE,...) instead")
     virtual bool getTorqueError(int j, double *err)=0;
 
     /** Get the torque error of all joints.
      * @param errs pointer to the vector that will store the errors
      * @return true/false on success/failure
      */
+    YARP_DEPRECATED_MSG("Use getPidErrors(VOCAB_PIDTYPE_TORQUE,...) instead")
     virtual bool getTorqueErrors(double *errs)=0;
 
     /** Get the output of the controller (e.g. pwm value)
@@ -185,12 +193,14 @@ public:
      * @param out pointer to storage for return value
      * @return true/false on success/failure
      */
+    YARP_DEPRECATED_MSG("Use getPidOutput(VOCAB_PIDTYPE_TORQUE,...) instead")
     virtual bool getTorquePidOutput(int j, double *out)=0;
 
     /** Get the output of the controllers (e.g. pwm value)
      * @param outs pointer to the vector that will store the output values
      * @return true/false on success/failure
      */
+    YARP_DEPRECATED_MSG("Use getPidOutputs(VOCAB_PIDTYPE_TORQUE,...) instead")
     virtual bool getTorquePidOutputs(double *outs)=0;
 
     /** Get current pid value for a specific joint.
@@ -198,12 +208,14 @@ public:
      * @param pid pointer to storage for the return value.
      * @return true/false on success/failure
      */
+    YARP_DEPRECATED_MSG("Use getPid(VOCAB_PIDTYPE_TORQUE,...) instead")
     virtual bool getTorquePid(int j, Pid *pid)=0;
 
     /** Get current pid value for a specific joint.
      * @param pids vector that will store the values of the pids.
      * @return true/false on success/failure
      */
+    YARP_DEPRECATED_MSG("Use getPid(VOCAB_PIDTYPE_TORQUE,...) instead")
     virtual bool getTorquePids(Pid *pids)=0;
 
     /** Get the torque error limit for the controller on a specific joint
@@ -211,12 +223,14 @@ public:
      * @param limit pointer to the result value
      * @return true/false on success/failure
      */
+    YARP_DEPRECATED_MSG("Use getPidErrorLimit(VOCAB_PIDTYPE_TORQUE,...) instead")
     virtual bool getTorqueErrorLimit(int j, double *limit)=0;
 
     /** Get the torque error limit for all controllers
      * @param limits pointer to the array that will store the output
      * @return true/false on success/failure
      */
+    YARP_DEPRECATED_MSG("Use getPidErrorLimits(VOCAB_PIDTYPE_TORQUE,...) instead")
     virtual bool getTorqueErrorLimits(double *limits)=0;
 
     /** Reset the controller of a given joint, usually sets the
@@ -225,18 +239,21 @@ public:
      * @param j joint number
      * @return true/false on success/failure
      */
+    YARP_DEPRECATED_MSG("Use resetPid(VOCAB_PIDTYPE_TORQUE,...) instead")
     virtual bool resetTorquePid(int j)=0;
 
     /** Disable the pid computation for a joint
      * @param j joint number
      * @return true/false on success/failure
      */
+    YARP_DEPRECATED_MSG("Use disablePid(VOCAB_PIDTYPE_TORQUE,...) instead")
     virtual bool disableTorquePid(int j)=0;
 
     /** Enable the pid computation for a joint
      * @param j joint number
      * @return true/false on success/failure
      */
+    YARP_DEPRECATED_MSG("Use enablePid(VOCAB_PIDTYPE_TORQUE,...) instead")
     virtual bool enableTorquePid(int j)=0;
 
     /** Set offset value for a given pid
@@ -244,7 +261,9 @@ public:
      * @param v the new value
      * @return true/false on success/failure
      */
+    YARP_DEPRECATED_MSG("Use setPidOffset(VOCAB_PIDTYPE_TORQUE,...) instead")
     virtual bool setTorqueOffset(int j, double v)=0;
+#endif
 };
 
 /**
@@ -361,17 +380,20 @@ public:
      */
     virtual bool setMotorTorqueParamsRaw(int j,  const yarp::dev::MotorTorqueParameters params) {return false;}
 
+#ifndef YARP_NO_DEPRECATED // since YARP 2.3.68
      /** Set new pid value for a joint axis.
      * @param j joint number
      * @param pid new pid value
      * @return true/false on success/failure
      */
+    YARP_DEPRECATED_MSG("Use setPidRaw(VOCAB_PIDTYPE_TORQUE,...) instead")
     virtual bool setTorquePidRaw(int j, const Pid &pid)=0;
 
     /** Set new pid value on multiple axes.
      * @param pids pointer to a vector of pids
      * @return true/false upon success/failure
      */
+     YARP_DEPRECATED_MSG("Use setPidRaw(VOCAB_PIDTYPE_TORQUE,...) instead")
     virtual bool setTorquePidsRaw(const Pid *pids)=0;
 
     /** Set the torque error limit for the controller on a specific joint
@@ -379,12 +401,14 @@ public:
      * @param limit limit value
      * @return true/false on success/failure
      */
+     YARP_DEPRECATED_MSG("Use setPidErrorLimitRaw(VOCAB_PIDTYPE_TORQUE,...) instead")
     virtual bool setTorqueErrorLimitRaw(int j, double limit)=0;
 
     /** Get the torque error limit for the controller on all joints.
      * @param limits pointer to the vector with the new limits
      * @return true/false on success/failure
      */
+    YARP_DEPRECATED_MSG("Use setPidErrorLimitsRaw(VOCAB_PIDTYPE_TORQUE,...) instead")
     virtual bool setTorqueErrorLimitsRaw(const double *limits)=0;
 
     /** Get the current torque error for a joint.
@@ -392,12 +416,14 @@ public:
      * @param err pointer to the storage for the return value
      * @return true/false on success failure
      */
+    YARP_DEPRECATED_MSG("Use getPidErrorRaw(VOCAB_PIDTYPE_TORQUE,...) instead")
     virtual bool getTorqueErrorRaw(int j, double *err)=0;
 
     /** Get the torque error of all joints.
      * @param errs pointer to the vector that will store the errors
      * @return true/false on success/failure
      */
+    YARP_DEPRECATED_MSG("Use getPidErrorsRaw(VOCAB_PIDTYPE_TORQUE,...) instead")
     virtual bool getTorqueErrorsRaw(double *errs)=0;
 
     /** Get the output of the controller (e.g. pwm value)
@@ -405,12 +431,14 @@ public:
      * @param out pointer to storage for return value
      * @return true/false on success/failure
      */
+    YARP_DEPRECATED_MSG("Use getPidOutputRaw(VOCAB_PIDTYPE_TORQUE,...) instead")
     virtual bool getTorquePidOutputRaw(int j, double *out)=0;
 
     /** Get the output of the controllers (e.g. pwm value)
      * @param outs pinter to the vector that will store the output values
      * @return true/false on success/failure
      */
+    YARP_DEPRECATED_MSG("Use getPidOutputsRaw(VOCAB_PIDTYPE_TORQUE,...) instead")
     virtual bool getTorquePidOutputsRaw(double *outs)=0;
 
     /** Get current pid value for a specific joint.
@@ -418,12 +446,14 @@ public:
      * @param pid pointer to storage for the return value.
      * @return true/false on success/failure
      */
+    YARP_DEPRECATED_MSG("Use getPidRaw(VOCAB_PIDTYPE_TORQUE,...) instead")
     virtual bool getTorquePidRaw(int j, Pid *pid)=0;
 
     /** Get current pid value for a specific joint.
      * @param pids vector that will store the values of the pids.
      * @return true/false on success/failure
      */
+    YARP_DEPRECATED_MSG("Use getPidRaw(VOCAB_PIDTYPE_TORQUE,...) instead")
     virtual bool getTorquePidsRaw(Pid *pids)=0;
 
     /** Get the torque error limit for the controller on a specific joint
@@ -431,12 +461,14 @@ public:
      * @param limit pointer to storage
      * @return true/false on success/failure
      */
+    YARP_DEPRECATED_MSG("Use getPidErrorLimitRaw(VOCAB_PIDTYPE_TORQUE,...) instead")
     virtual bool getTorqueErrorLimitRaw(int j, double *limit)=0;
 
     /** Get the torque error limit for all controllers
      * @param limits pointer to the array that will store the output
      * @return true/false on success/failure
      */
+    YARP_DEPRECATED_MSG("Use getPidErrorLimitsRaw(VOCAB_PIDTYPE_TORQUE,...) instead")
     virtual bool getTorqueErrorLimitsRaw(double *limits)=0;
 
     /** Reset the controller of a given joint, usually sets the
@@ -445,18 +477,21 @@ public:
      * @param j joint number
      * @return true/false on success/failure
      */
+    YARP_DEPRECATED_MSG("Use resetPidRaw(VOCAB_PIDTYPE_TORQUE,...) instead")
     virtual bool resetTorquePidRaw(int j)=0;
 
     /** Disable the pid computation for a joint
      * @param j joint number
      * @return true/false on success/failure
      */
+    YARP_DEPRECATED_MSG("Use disablePidRaw(VOCAB_PIDTYPE_TORQUE,...) instead")
     virtual bool disableTorquePidRaw(int j)=0;
 
     /** Enable the pid computation for a joint
      * @param j joint number
      * @return true/false on success/failure
      */
+    YARP_DEPRECATED_MSG("Use enablePidRaw(VOCAB_PIDTYPE_TORQUE,...) instead")
     virtual bool enableTorquePidRaw(int j)=0;
 
     /** Set offset value for a given pid
@@ -464,7 +499,9 @@ public:
      * @param v the new value
      * @return true/false on success/failure
      */
+   YARP_DEPRECATED_MSG("Use setPidOffsetRaw(VOCAB_PIDTYPE_TORQUE,...) instead")
     virtual bool setTorqueOffsetRaw(int j, double v)=0;
+    #endif
 };
 
 #endif // YARP_DEV_ITORQUECONTROL_H
