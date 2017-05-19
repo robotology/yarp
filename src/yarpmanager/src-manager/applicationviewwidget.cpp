@@ -178,18 +178,50 @@ bool ApplicationViewWidget::save()
 
 QString ApplicationViewWidget::getFileName()
 {
-    if (builder) {
-        return builder->getFileName();
+
+    if (app)
+    {
+        const char* ret = app->getXmlFile();
+        if (ret)
+            return ret;
     }
-    return "";
+    if (builder)
+        return builder->getFileName();
+    else
+        return "";
+}
+
+void ApplicationViewWidget::setFileName(QString filename)
+{
+    if (app)
+        app->setXmlFile(filename.toStdString().c_str());
+    if (builder)
+        builder->setFileName(filename);
+    return;
 }
 
 QString ApplicationViewWidget::getAppName()
 {
+    if (app)
+    {
+        const char* ret = app->getName();
+        if (ret)
+            return ret;
+    }
     if (builder) {
         return builder->getAppName();
     }
-    return "";
+    else
+        return "";
+}
+
+void ApplicationViewWidget::setAppName(QString appName)
+{
+    if (builder)
+        builder->setAppName(appName);
+    if (app)
+        app->setName(appName.toStdString().c_str());
+    return;
 }
 
 ApplicationViewWidget::~ApplicationViewWidget()

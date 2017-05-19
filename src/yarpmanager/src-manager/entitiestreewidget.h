@@ -30,10 +30,12 @@ public:
     void addModule(yarp::manager::Module* mod);
     void addAppTemplate(yarp::manager::AppTemplate* tmp);
 
-    void clearApplication();
+    void clearApplications();
     void clearModules();
     void clearResources();
     void clearTemplates();
+
+    QTreeWidgetItem * getWidgetItemByFilename(const QString xmlFile);
 
     void setExtEditor(string editor);
 
@@ -61,6 +63,8 @@ private:
 
     QString ext_editor;
 
+    bool missingFile;
+
 
 signals:
     void viewResource(yarp::manager::Computer*);
@@ -68,7 +72,7 @@ signals:
     void viewApplication(yarp::manager::Application*, bool editing = false);
     void importFiles();
     void openFiles();
-    void removeApplication(QString);
+    void removeApplication(QString,QString);
     void removeModule(QString);
     void removeResource(QString);
     void reopenApplication(QString, QString);

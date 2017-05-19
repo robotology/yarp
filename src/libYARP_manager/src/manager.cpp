@@ -84,15 +84,20 @@ Manager::~Manager()
 }
 
 
-bool Manager::addApplication(const char* szFileName, char* szAppName_, int len)
+bool Manager::addApplication(const char* szFileName, char* szAppName_, bool modifyName)
 {
+    if(find(listOfXml.begin(), listOfXml.end(),szFileName) == listOfXml.end())
+        listOfXml.push_back(szFileName);
+    else
+        return true;//it means that the app exist already so it is safe to return true
     XmlAppLoader appload(szFileName);
     if(!appload.init())
         return false;
     Application* application = appload.getNextApplication();
     if(!application)
         return false;
-    return knowledge.addApplication(application, szAppName_, len);
+
+    return knowledge.addApplication(application, szAppName_, modifyName);
 }
 
 
@@ -103,7 +108,11 @@ bool Manager::addApplications(const char* szPath)
         return false;
     Application* application;
     while((application = appload.getNextApplication()))
+    {
+        const char* currentFile = application->getXmlFile();
         knowledge.addApplication(application);
+        listOfXml.push_back(currentFile);
+    }
     return true;
 }
 
@@ -157,7 +166,7 @@ bool Manager::addResources(const char* szPath)
 }
 
 
-bool Manager::removeApplication(const char* szAppName)
+bool Manager::removeApplication(const char *szFileName, const char* szAppName)
 {
     //Note: use it with care. it is better we first check that no application
     //is loaded.
@@ -166,11 +175,10 @@ bool Manager::removeApplication(const char* szAppName)
         logger->addError("Application cannot be removed if there is a loaded application");
         return false;
     }
-
+    listOfXml.erase(std::remove(listOfXml.begin(), listOfXml.end(), szFileName), listOfXml.end());
     Application* app = knowledge.getApplication(szAppName);
     if(!app)
         return false;
-
     return knowledge.removeApplication(app);
 }
 
@@ -396,6 +404,11 @@ bool Manager::updateConnection(unsigned int id, const char* from,
     return true;
 }
 
+Node* Manager::getNode(string appName)
+{
+    Node* node = knowledge.getNode(appName);
+    return node;
+}
 
 bool Manager::exist(unsigned int id)
 {

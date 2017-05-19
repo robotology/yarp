@@ -294,6 +294,7 @@ public:
     void setVersion(const char* szVersion) { if(szVersion) strVersion = szVersion; }
     void setDescription(const char* szDesc) { if(szDesc) strDescription = szDesc; }
     const char* getName(void) { return strName.c_str(); }
+    size_t getNameLenght() {return strName.length(); }
     const char* getVersion(void) { return strVersion.c_str(); }
     const char* getDescription(void) { return strDescription.c_str(); }
     virtual Node* clone(void);
