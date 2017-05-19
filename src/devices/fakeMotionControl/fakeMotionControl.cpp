@@ -2860,26 +2860,6 @@ bool FakeMotionControl::velocityMoveRaw(const int n_joint, const int *joints, co
     return ret;
 }
 
-bool FakeMotionControl::setVelPidRaw(int j, const Pid &pid)
-{
-    return NOT_YET_IMPLEMENTED("Our boards do not have a Velocity Pid");
-}
-
-bool FakeMotionControl::setVelPidsRaw(const Pid *pids)
-{
-    return false;
-}
-
-bool FakeMotionControl::getVelPidRaw(int j, Pid *pid)
-{
-    return NOT_YET_IMPLEMENTED("Our boards do not have a Velocity Pid");
-}
-
-bool FakeMotionControl::getVelPidsRaw(Pid *pids)
-{
-    return false;
-}
-
 // PositionDirect Interface
 bool FakeMotionControl::setPositionRaw(int j, double ref)
 {

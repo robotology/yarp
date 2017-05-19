@@ -462,10 +462,6 @@ public:
 
     // IVelocityControl2
     virtual bool velocityMoveRaw(const int n_joint, const int *joints, const double *spds);
-    virtual bool setVelPidRaw(int j, const Pid &pid);
-    virtual bool setVelPidsRaw(const Pid *pids);
-    virtual bool getVelPidRaw(int j, Pid *pid);
-    virtual bool getVelPidsRaw(Pid *pids);
     virtual bool getRefVelocityRaw(const int joint, double *ref);
     virtual bool getRefVelocitiesRaw(double *refs);
     virtual bool getRefVelocitiesRaw(const int n_joint, const int *joints, double *refs);

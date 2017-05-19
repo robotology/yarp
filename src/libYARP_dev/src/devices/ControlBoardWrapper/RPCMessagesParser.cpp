@@ -1935,78 +1935,6 @@ bool RPCMessagesParser::respond(const yarp::os::Bottle& cmd, yarp::os::Bottle& r
 
                         switch(cmd.get(1).asVocab())
                         {
-
-
-
-
-                            case VOCAB_VEL_PID:
-                            {
-                                Pid p;
-                                int j = cmd.get(2).asInt();
-                                Bottle *b = cmd.get(3).asList();
-
-                                if (b==NULL)
-                                    break;
-
-                                p.kp = b->get(0).asDouble();
-                                p.kd = b->get(1).asDouble();
-                                p.ki = b->get(2).asDouble();
-                                p.max_int = b->get(3).asDouble();
-                                p.max_output = b->get(4).asDouble();
-                                p.offset = b->get(5).asDouble();
-                                p.scale = b->get(6).asDouble();
-                                p.stiction_up_val = b->get(7).asDouble();
-                                p.stiction_down_val = b->get(8).asDouble();
-                                p.kff = b->get(9).asDouble();
-                                ok = rpc_IVelCtrl2->setVelPid(j, p);
-                            }
-
-                            case VOCAB_VEL_PIDS:
-                            {
-                                Bottle *b = cmd.get(2).asList();
-
-                                if (b==NULL)
-                                    break;
-
-                                int i;
-                                const int njs = b->size();
-                                if (njs==controlledJoints)
-                                {
-                                    Pid *p = new Pid[njs];
-
-                                    bool allOK=true;
-
-                                    for (i = 0; i < njs; i++)
-                                    {
-                                        Bottle *c = b->get(i).asList();
-
-                                        if (c!=NULL)
-                                        {
-                                            p[i].kp = c->get(0).asDouble();
-                                            p[i].kd = c->get(1).asDouble();
-                                            p[i].ki = c->get(2).asDouble();
-                                            p[i].max_int = c->get(3).asDouble();
-                                            p[i].max_output = c->get(4).asDouble();
-                                            p[i].offset = c->get(5).asDouble();
-                                            p[i].scale = c->get(6).asDouble();
-                                            p[i].stiction_up_val = c->get(7).asDouble();
-                                            p[i].stiction_down_val = c->get(8).asDouble();
-                                            p[i].kff = c->get(9).asDouble();
-                                        }
-                                        else
-                                        {
-                                            allOK=false;
-                                        }
-                                    }
-                                    if (allOK)
-                                        ok = rpc_IVelCtrl2->setVelPids(p);
-                                    else
-                                        ok=false;
-
-                                    delete[] p;
-                                }
-                            }
-
                             case VOCAB_POSITION_MOVE:
                             {
                                 ok = rpc_IPosCtrl->positionMove(cmd.get(2).asInt(), cmd.get(3).asDouble());
@@ -2468,48 +2396,6 @@ bool RPCMessagesParser::respond(const yarp::os::Bottle& cmd, yarp::os::Bottle& r
                             {
                                 ok = rcp_IAmp->getMaxCurrent(cmd.get(2).asInt(), &dtmp);
                                 response.addDouble(dtmp);
-                            }
-                            break;
-
-                            case VOCAB_VEL_PID:
-                            {
-                                Pid p;
-                                ok = rpc_IVelCtrl2->getVelPid(cmd.get(2).asInt(), &p);
-                                Bottle& b = response.addList();
-                                b.addDouble(p.kp);
-                                b.addDouble(p.kd);
-                                b.addDouble(p.ki);
-                                b.addDouble(p.max_int);
-                                b.addDouble(p.max_output);
-                                b.addDouble(p.offset);
-                                b.addDouble(p.scale);
-                                b.addDouble(p.stiction_up_val);
-                                b.addDouble(p.stiction_down_val);
-                                b.addDouble(p.kff);
-                            }
-                            break;
-
-                            case VOCAB_VEL_PIDS:
-                            {
-                                Pid *p = new Pid[controlledJoints];
-                                ok = rpc_IVelCtrl2->getVelPids(p);
-                                Bottle& b = response.addList();
-                                int i;
-                                for (i = 0; i < controlledJoints; i++)
-                                {
-                                    Bottle& c = b.addList();
-                                    c.addDouble(p[i].kp);
-                                    c.addDouble(p[i].kd);
-                                    c.addDouble(p[i].ki);
-                                    c.addDouble(p[i].max_int);
-                                    c.addDouble(p[i].max_output);
-                                    c.addDouble(p[i].offset);
-                                    c.addDouble(p[i].scale);
-                                    c.addDouble(p[i].stiction_up_val);
-                                    c.addDouble(p[i].stiction_down_val);
-                                    c.addDouble(p[i].kff);
-                                }
-                                delete[] p;
                             }
                             break;
 

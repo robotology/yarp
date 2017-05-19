@@ -1268,14 +1268,6 @@ public:
 
     virtual bool getRefVelocities(const int n_joint, const int* joints, double* vels);
 
-    virtual bool setVelPid(int j, const Pid &pid);
-
-    virtual bool setVelPids(const Pid *pids);
-
-    virtual bool getVelPid(int j, Pid *pid);
-
-    virtual bool getVelPids(Pid *pids);
-
     virtual bool getInteractionMode(int j, yarp::dev::InteractionModeEnum* mode);
 
     virtual bool getInteractionModes(int n_joints, int *joints, yarp::dev::InteractionModeEnum* modes);
