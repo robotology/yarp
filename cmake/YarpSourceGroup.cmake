@@ -17,7 +17,8 @@ endif()
 function(_yarp_source_group_overridden)
 endfunction()
 
-# Override source_group for CMake < 3.8 to support the TREE argument
+# Override source_group for CMake < 3.8 and CMake = 3.8.1 to support the TREE
+# argument
 function(source_group)
   set(options )
   set(oneValueArgs TREE PREFIX)
