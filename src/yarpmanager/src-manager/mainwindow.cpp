@@ -519,6 +519,7 @@ void MainWindow::viewApplication(yarp::manager::Application *app,bool editingMod
         if(w->getType() ==  yarp::manager::APPLICATION){
             ApplicationViewWidget *a = (ApplicationViewWidget *)w;
             if(a->getAppName() == app->getName()){
+                a->setFileName(app->getXmlFile());
                 ui->mainTabs->setCurrentIndex(i);
                 return;
             }
@@ -718,14 +719,22 @@ bool MainWindow::onTabClose(int index)
             }
         }
 
+        QString fileOfCurrentApp = aw->getFileName();
+
+        if (fileOfCurrentApp == "")
+        {
+            //it may happen that entitiestreewidget destroy the references (to aw) before mainwindow can use them
+            return false;
+        }
+
         if(aw->isModified() && aw->isEditingMode()){
             QMessageBox::StandardButton btn = QMessageBox::question(this,"Save",QString("%1 has been modified\nDo you want to save it before closing?").arg(aw->getAppName().toLatin1().data()),
                                                                     QMessageBox::Yes | QMessageBox::No | QMessageBox::Cancel);
             if(btn == QMessageBox::Yes){
                 bool ret = aw->save();
                 if(ret){
-                    listOfApplicationsOpen.erase(std::remove(listOfApplicationsOpen.begin(), listOfApplicationsOpen.end(), aw->getFileName()), listOfApplicationsOpen.end());
-                    onReopenApplication(aw->getAppName(),aw->getFileName());
+                    listOfApplicationsOpen.erase(std::remove(listOfApplicationsOpen.begin(), listOfApplicationsOpen.end(), fileOfCurrentApp), listOfApplicationsOpen.end());
+                    onReopenApplication(aw->getAppName(),fileOfCurrentApp);
                     ui->mainTabs->removeTab(index);
                     delete w;
                     return true;
@@ -739,10 +748,10 @@ bool MainWindow::onTabClose(int index)
                 return false;
             }
             if (btn == QMessageBox::No){
-                QFile file(aw->getFileName());
+                QFile file(fileOfCurrentApp);
                 if(!file.exists()){
-                    listOfApplicationsOpen.erase(std::remove(listOfApplicationsOpen.begin(), listOfApplicationsOpen.end(), aw->getFileName()), listOfApplicationsOpen.end());
-                    ui->entitiesTree->setCurrentItem(ui->entitiesTree->getWidgetItemByFilename(aw->getFileName()));
+                    listOfApplicationsOpen.erase(std::remove(listOfApplicationsOpen.begin(), listOfApplicationsOpen.end(), fileOfCurrentApp), listOfApplicationsOpen.end());
+                    ui->entitiesTree->setCurrentItem(ui->entitiesTree->getWidgetItemByFilename(fileOfCurrentApp));
                     ui->entitiesTree->onRemove();
                     aw->closeManager();
                     ui->mainTabs->removeTab(index);
@@ -752,8 +761,7 @@ bool MainWindow::onTabClose(int index)
             }
 
         }
-        QString prova = aw->getFileName();
-        listOfApplicationsOpen.erase(std::remove(listOfApplicationsOpen.begin(), listOfApplicationsOpen.end(), aw->getFileName()), listOfApplicationsOpen.end());
+        listOfApplicationsOpen.erase(std::remove(listOfApplicationsOpen.begin(), listOfApplicationsOpen.end(), fileOfCurrentApp), listOfApplicationsOpen.end());
         aw->closeManager();
     }
     ui->mainTabs->removeTab(index);
@@ -922,10 +930,19 @@ void MainWindow::onNewApplication()
         currentAppDescription = newApplicationWizard->description;
         currentAppVersion = newApplicationWizard->version;
         fileName = newApplicationWizard->fileName;
-        initializeFile("Application");
         char* appName;
         appName = new char (newApplicationWizard->name.toLatin1().size());
         strcpy(appName, newApplicationWizard->name.toLatin1().data());
+        if (newApplicationWizard->alreadyExists)
+        {
+            if (!lazyManager.removeApplication(newApplicationWizard->fileName.toLatin1().data(),
+                                      appName))
+            {
+                reportErrors();
+                return;
+            }
+        }
+        initializeFile("Application");
 
         if (lazyManager.addApplication(newApplicationWizard->fileName.toLatin1().data(),
                                       appName,true))

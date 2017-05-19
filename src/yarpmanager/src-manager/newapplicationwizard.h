@@ -24,6 +24,7 @@ public:
     QString version;
     QString authors;
     QString fileName;
+    bool alreadyExists;
 
 private:
     QLabel *nameLbl;
@@ -41,7 +42,6 @@ private:
     QLineEdit *fileEdit;
 
     yarp::os::Property *m_config;
-    bool alreadyExists;
     bool saveAs;
 
 

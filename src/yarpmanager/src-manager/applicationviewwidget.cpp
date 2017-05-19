@@ -180,8 +180,12 @@ QString ApplicationViewWidget::getFileName()
 {
 
     if (app)
-        return app->getXmlFile();
-    else if (builder)
+    {
+        const char* ret = app->getXmlFile();
+        if (ret)
+            return ret;
+    }
+    if (builder)
         return builder->getFileName();
     else
         return "";
@@ -199,8 +203,12 @@ void ApplicationViewWidget::setFileName(QString filename)
 QString ApplicationViewWidget::getAppName()
 {
     if (app)
-        return app->getName();
-    else if (builder) {
+    {
+        const char* ret = app->getName();
+        if (ret)
+            return ret;
+    }
+    if (builder) {
         return builder->getAppName();
     }
     else
