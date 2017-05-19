@@ -178,13 +178,6 @@ bool ApplicationViewWidget::save()
 
 QString ApplicationViewWidget::getFileName()
 {
-
-    if (app)
-    {
-        const char* ret = app->getXmlFile();
-        if (ret)
-            return ret;
-    }
     if (builder)
         return builder->getFileName();
     else
@@ -193,8 +186,6 @@ QString ApplicationViewWidget::getFileName()
 
 void ApplicationViewWidget::setFileName(QString filename)
 {
-    if (app)
-        app->setXmlFile(filename.toStdString().c_str());
     if (builder)
         builder->setFileName(filename);
     return;
@@ -202,12 +193,6 @@ void ApplicationViewWidget::setFileName(QString filename)
 
 QString ApplicationViewWidget::getAppName()
 {
-    if (app)
-    {
-        const char* ret = app->getName();
-        if (ret)
-            return ret;
-    }
     if (builder) {
         return builder->getAppName();
     }
@@ -219,8 +204,6 @@ void ApplicationViewWidget::setAppName(QString appName)
 {
     if (builder)
         builder->setAppName(appName);
-    if (app)
-        app->setName(appName.toStdString().c_str());
     return;
 }
 
