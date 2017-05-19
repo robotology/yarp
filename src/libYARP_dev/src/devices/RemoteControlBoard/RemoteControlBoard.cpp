@@ -2744,11 +2744,6 @@ public:
         return setControlMode(j,VOCAB_CM_POSITION);
     }
 
-    bool setPositionDirectMode(int j)
-    {
-        return setControlMode(j,VOCAB_CM_POSITION_DIRECT);
-    }
-
     bool setVelocityMode(int j)
     {
         return setControlMode(j,VOCAB_CM_VELOCITY);
