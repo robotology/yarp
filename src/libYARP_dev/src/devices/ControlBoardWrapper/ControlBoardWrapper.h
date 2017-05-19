@@ -1139,9 +1139,7 @@ public:
 
     virtual bool setMotorTorqueParams(int j,  const yarp::dev::MotorTorqueParameters params);
 
-    virtual bool setTorquePid(int j, const Pid &pid);
-
-    virtual bool setImpedance(int j, double stiff, double damp);
+     virtual bool setImpedance(int j, double stiff, double damp);
 
     virtual bool setImpedanceOffset(int j, double offset);
 
@@ -1153,41 +1151,11 @@ public:
 
     virtual bool getTorqueRanges(double *min, double *max);
 
-    virtual bool setTorquePids(const Pid *pids);
-
-    virtual bool setTorqueErrorLimit(int j, double limit);
-
-    virtual bool setTorqueErrorLimits(const double *limits);
-
-    virtual bool getTorqueError(int j, double *err);
-
-    virtual bool getTorqueErrors(double *errs);
-
-    virtual bool getTorquePidOutput(int j, double *out);
-
-    virtual bool getTorquePidOutputs(double *outs);
-
-    virtual bool getTorquePid(int j, Pid *pid);
-
     virtual bool getImpedance(int j, double* stiff, double* damp);
 
     virtual bool getImpedanceOffset(int j, double* offset);
 
     virtual bool getCurrentImpedanceLimit(int j, double *min_stiff, double *max_stiff, double *min_damp, double *max_damp);
-
-    virtual bool getTorquePids(Pid *pids);
-
-    virtual bool getTorqueErrorLimit(int j, double *limit);
-
-    virtual bool getTorqueErrorLimits(double *limits);
-
-    virtual bool resetTorquePid(int j);
-
-    virtual bool disableTorquePid(int j);
-
-    virtual bool enableTorquePid(int j);
-
-    virtual bool setTorqueOffset(int j, double v);
 
     virtual bool setPositionMode(int j);
 

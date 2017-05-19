@@ -73,22 +73,6 @@ public:
     virtual bool getMotorTorqueParams(int j, yarp::dev::MotorTorqueParameters *params);
     virtual bool getTorqueRange(int j, double *min, double *max);
     virtual bool getTorqueRanges(double *min, double *max);
-    virtual bool setTorquePid(int j, const Pid &pid);
-    virtual bool setTorquePids(const Pid *pids);
-    virtual bool setTorqueErrorLimit(int j, double limit);
-    virtual bool setTorqueErrorLimits(const double *limits);
-    virtual bool getTorqueError(int j, double *err);
-    virtual bool getTorqueErrors(double *errs);
-    virtual bool getTorquePidOutput(int j, double *out);
-    virtual bool getTorquePidOutputs(double *outs);
-    virtual bool getTorquePid(int j, Pid *pid);
-    virtual bool getTorquePids(Pid *pids);
-    virtual bool getTorqueErrorLimit(int j, double *limit);
-    virtual bool getTorqueErrorLimits(double *limits);
-    virtual bool resetTorquePid(int j);
-    virtual bool disableTorquePid(int j);
-    virtual bool enableTorquePid(int j);
-    virtual bool setTorqueOffset(int j, double v);
 };
 
 #if defined(_MSC_VER) && !defined(YARP_NO_DEPRECATED) // since YARP 2.3.65

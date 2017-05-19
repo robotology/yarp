@@ -2721,39 +2721,6 @@ bool FakeMotionControl::getRefTorqueRaw(int j, double *t)
     return false;
 }
 
-bool FakeMotionControl::setTorquePidRaw(int j, const Pid &pid)
-{
-    return false;
-}
-
-bool FakeMotionControl::setTorquePidsRaw(const Pid *pids)
-{
-    return false;
-}
-
-bool FakeMotionControl::getTorqueErrorRaw(int j, double *err)
-{
-    return false;
-}
-
-bool FakeMotionControl::getTorqueErrorsRaw(double *errs)
-{
-    bool ret = true;
-    for(int j=0; j<_njoints && ret; j++)
-        ret &= getTorqueErrorRaw(j, &errs[j]);
-    return ret;
-}
-
-bool FakeMotionControl::getTorquePidRaw(int j, Pid *pid)
-{
-    return false;
-}
-
-bool FakeMotionControl::getTorquePidsRaw(Pid *pids)
-{
-    return false;
-}
-
 bool FakeMotionControl::getImpedanceRaw(int j, double *stiffness, double *damping)
 {
     return false;
@@ -2787,56 +2754,6 @@ bool FakeMotionControl::getBemfParamRaw(int j, double *bemf)
 bool FakeMotionControl::setBemfParamRaw(int j, double bemf)
 {
     return DEPRECATED("setBemfParamRaw");
-}
-
-bool FakeMotionControl::setTorqueErrorLimitRaw(int j, double limit)
-{
-    return NOT_YET_IMPLEMENTED("setTorqueErrorLimitRaw");
-}
-
-bool FakeMotionControl::setTorqueErrorLimitsRaw(const double *limits)
-{
-    return NOT_YET_IMPLEMENTED("setTorqueErrorLimitsRaw");
-}
-
-bool FakeMotionControl::getTorquePidOutputRaw(int j, double *out)
-{
-    return false;
-}
-
-bool FakeMotionControl::getTorquePidOutputsRaw(double *outs)
-{
-    return NOT_YET_IMPLEMENTED("getTorquePidOutputsRaw");
-}
-
-bool FakeMotionControl::getTorqueErrorLimitRaw(int j, double *limit)
-{
-    return NOT_YET_IMPLEMENTED("getTorqueErrorLimitRaw");
-}
-
-bool FakeMotionControl::getTorqueErrorLimitsRaw(double *limits)
-{
-    return NOT_YET_IMPLEMENTED("getTorqueErrorLimitsRaw");
-}
-
-bool FakeMotionControl::resetTorquePidRaw(int j)
-{
-    return NOT_YET_IMPLEMENTED("resetTorquePidRaw");
-}
-
-bool FakeMotionControl::disableTorquePidRaw(int j)
-{
-    return NOT_YET_IMPLEMENTED("disableTorquePidRaw");
-}
-
-bool FakeMotionControl::enableTorquePidRaw(int j)
-{
-    return NOT_YET_IMPLEMENTED("enableTorquePidRaw");
-}
-
-bool FakeMotionControl::setTorqueOffsetRaw(int j, double v)
-{
-    return NOT_YET_IMPLEMENTED("setTorqueOffsetRaw");
 }
 
 bool FakeMotionControl::getMotorTorqueParamsRaw(int j, MotorTorqueParameters *params)

@@ -2622,29 +2622,6 @@ public:
         return false;
     }
 
-    bool setTorquePid(int j, const Pid &pid)
-    {
-        Bottle cmd, response;
-        cmd.addVocab(VOCAB_SET);
-        cmd.addVocab(VOCAB_TORQUE);
-        cmd.addVocab(VOCAB_PID);
-        cmd.addInt(j);
-
-        Bottle& b = cmd.addList();
-        b.addDouble(pid.kp);
-        b.addDouble(pid.kd);
-        b.addDouble(pid.ki);
-        b.addDouble(pid.max_int);
-        b.addDouble(pid.max_output);
-        b.addDouble(pid.offset);
-        b.addDouble(pid.scale);
-        b.addDouble(pid.stiction_up_val);
-        b.addDouble(pid.stiction_down_val);
-        b.addDouble(pid.kff);
-        bool ok = rpc_p.write(cmd, response);
-        return CHECK_FAIL(ok, response);
-    }
-
     bool getTorque(int j, double *t)
     {
         double localArrivalTime=0.0;
@@ -2668,63 +2645,6 @@ public:
 
     bool getTorqueRanges(double *min, double *max)
     { return get2V2DA(VOCAB_TORQUE, VOCAB_RANGES, min, max); }
-
-    bool setTorquePids(const Pid *pids)
-    {
-        if (!isLive()) return false;
-        bool ret=true;
-        for (int j=0;j<nj;j++)
-        {
-            ret=ret&&setTorquePid(j, pids[j]);
-        }
-        return ret;
-    }
-
-    bool setTorqueErrorLimit(int j, double limit)
-    { return set2V1I1D(VOCAB_TORQUE, VOCAB_LIM, j, limit); }
-
-    bool setTorqueErrorLimits(const double *limits)
-    { return set2V1DA(VOCAB_TORQUE, VOCAB_LIM, limits); }
-
-    bool getTorqueError(int j, double *err)
-    { return get2V1I1D(VOCAB_TORQUE, VOCAB_ERR, j, err); }
-
-    bool getTorqueErrors(double *errs)
-    { return get2V1DA(VOCAB_TORQUE, VOCAB_ERRS, errs); }
-
-    bool getTorquePidOutput(int j, double *out)
-    { return get2V1I1D(VOCAB_TORQUE, VOCAB_OUTPUT, j, out); }
-
-    bool getTorquePidOutputs(double *out)
-    { return get2V1DA(VOCAB_TORQUE, VOCAB_OUTPUTS, out); }
-
-    bool getTorquePid(int j, Pid *pid)
-    {
-        Bottle cmd, response;
-        cmd.addVocab(VOCAB_GET);
-        cmd.addVocab(VOCAB_TORQUE);
-        cmd.addVocab(VOCAB_PID);
-        cmd.addInt(j);
-        bool ok = rpc_p.write(cmd, response);
-        if (CHECK_FAIL(ok, response)) {
-            Bottle* lp = response.get(2).asList();
-            if (lp == 0)
-                return false;
-            Bottle& l = *lp;
-            pid->kp = l.get(0).asDouble();
-            pid->kd = l.get(1).asDouble();
-            pid->ki = l.get(2).asDouble();
-            pid->max_int = l.get(3).asDouble();
-            pid->max_output = l.get(4).asDouble();
-            pid->offset = l.get(5).asDouble();
-            pid->scale = l.get(6).asDouble();
-            pid->stiction_up_val = l.get(7).asDouble();
-            pid->stiction_down_val = l.get(8).asDouble();
-            pid->kff = l.get(9).asDouble();
-            return true;
-        }
-        return false;
-    }
 
     bool getImpedance(int j, double *stiffness, double *damping)
     {
@@ -2817,35 +2737,6 @@ public:
         }
         return false;
     }
-
-    bool getTorquePids(Pid *pids)
-    {
-        if (!isLive()) return false;
-        bool ret=true;
-        for(int j=0; j<nj; j++)
-        {
-            ret=ret&&getTorquePid(j,pids+j);
-        }
-        return ret;
-    }
-
-    bool getTorqueErrorLimit(int j, double *limit)
-    { return get2V1I1D(VOCAB_TORQUE, VOCAB_LIM, j, limit); }
-
-    bool getTorqueErrorLimits(double *limits)
-    { return get2V1DA(VOCAB_TORQUE, VOCAB_LIM, limits); }
-
-    bool resetTorquePid(int j)
-    { return set2V1I(VOCAB_TORQUE, VOCAB_RESET, j); }
-
-    bool disableTorquePid(int j)
-    { return set2V1I(VOCAB_TORQUE, VOCAB_DISABLE, j);}
-
-    bool enableTorquePid(int j)
-    { return set2V1I(VOCAB_TORQUE, VOCAB_ENABLE, j); }
-
-    bool setTorqueOffset(int j, double o)
-    { return set2V1I1D(VOCAB_TORQUE, VOCAB_ENABLE, j, o); }
 
     // IControlMode
     bool setPositionMode(int j)
