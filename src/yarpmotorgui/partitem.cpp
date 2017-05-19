@@ -620,11 +620,11 @@ void PartItem::onSendTorquePid(int jointIndex,Pid newPid,MotorTorqueParameters n
 {
     Pid myTrqPid(0,0,0,0,0,0);
     yarp::dev::MotorTorqueParameters TrqParam;
-    m_iTrq->setTorquePid(jointIndex, newPid);
+    m_iPid->setPid(VOCAB_PIDTYPE_TORQUE, jointIndex, newPid);
 
     m_iTrq->setMotorTorqueParams(jointIndex, newTrqParam);
     yarp::os::Time::delay(0.005);
-    m_iTrq->getTorquePid(jointIndex, &myTrqPid);
+    m_iPid->getPid(VOCAB_PIDTYPE_TORQUE,jointIndex, &myTrqPid);
     m_iTrq->getMotorTorqueParams(jointIndex, &TrqParam);
 
     if (m_currentPidDlg){
@@ -647,9 +647,9 @@ void PartItem::onSendPositionPid(int jointIndex,Pid newPid)
 void PartItem::onSendVelocityPid(int jointIndex, Pid newPid)
 {
     Pid myVelPid(0, 0, 0, 0, 0, 0);
-    m_iVel->setVelPid(jointIndex, newPid);
+    m_iPid->setPid(VOCAB_PIDTYPE_VELOCITY, jointIndex, newPid);
     yarp::os::Time::delay(0.005);
-    m_iVel->getVelPid(jointIndex, &myVelPid);
+    m_iPid->getPid(VOCAB_PIDTYPE_VELOCITY, jointIndex, &myVelPid);
 
     if (m_currentPidDlg){
         m_currentPidDlg->initVelocity(myVelPid);
