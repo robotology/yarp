@@ -56,8 +56,6 @@ private:
     QString currentAppDescription;
     QString currentAppVersion;
 
-    vector<QString> listOfApplicationsOpen;
-
     EntitiesTreeWidget *entitiesTree;
     QToolBar *builderToolBar;
     GenericViewWidget *prevWidget;
