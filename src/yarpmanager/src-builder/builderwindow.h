@@ -57,7 +57,9 @@ public:
     void setOutputPortAvailable(QString, bool);
     void setInputPortAvailable(QString, bool);
     QString getFileName();
+    void setFileName(QString filename);
     QString getAppName();
+    void setAppName(QString appName);
 
     QToolBar *getToolBar();
 

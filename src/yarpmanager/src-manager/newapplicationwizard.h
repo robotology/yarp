@@ -16,7 +16,7 @@ class NewApplicationWizard : public QWizard
 {
     Q_OBJECT
 public:
-    NewApplicationWizard(yarp::os::Property *);
+    NewApplicationWizard(yarp::os::Property * config, bool _saveAs=false);
 
 public:
     QString name;
@@ -24,6 +24,7 @@ public:
     QString version;
     QString authors;
     QString fileName;
+    bool alreadyExists;
 
 private:
     QLabel *nameLbl;
@@ -41,6 +42,7 @@ private:
     QLineEdit *fileEdit;
 
     yarp::os::Property *m_config;
+    bool saveAs;
 
 
 
@@ -49,7 +51,11 @@ signals:
 
 private slots:
     void onBrowse();
+    void checkFileAlreadyExists();
     void onNameChanged(QString name);
+    void onSwitchCall();
+    bool fileExists(QString path);
+    void buildFileName();
 
 public slots:
     void accept();

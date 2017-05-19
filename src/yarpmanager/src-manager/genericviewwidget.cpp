@@ -27,6 +27,11 @@ bool GenericViewWidget::isModified()
     return m_modified;
 }
 
+void GenericViewWidget::setModified(bool mod)
+{
+    m_modified=mod;
+}
+
 void GenericViewWidget::onModified(bool mod)
 {
     this->m_modified = mod;

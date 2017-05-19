@@ -33,14 +33,14 @@ public:
             const char* szResPath, bool withWatchDog=false);
     virtual ~Manager();
 
-    bool addApplication(const char* szFileName, char* szAppName_=NULL, int len=0);
+    bool addApplication(const char* szFileName, char* szAppName_=NULL, bool modifyName=false);
     bool addApplications(const char* szPath);
     bool addModule(const char* szFileName);
     bool addModules(const char* szPath);
     bool addResource(const char* szFileName);
     bool addResources(const char* szPath);
 
-    bool removeApplication(const char* szAppName);
+    bool removeApplication(const char* szFileName, const char* szAppName);
     bool removeModule(const char* szModName);
     bool removeResource(const char* szResName);
 
@@ -51,6 +51,8 @@ public:
                 const char* szworkdir, const char* szenv );
     bool updateConnection(unsigned int id, const char* from,
                 const char* to, const char* carrier);
+
+    Node* getNode(string appName);
 
     bool run(void);
     bool run(unsigned int id, bool async=false);
@@ -124,6 +126,7 @@ private:
     string strAppName;
     string strDefBroker;
     YarpBroker connector;
+    vector<string> listOfXml;
 
     KnowledgeBase knowledge;
     ExecutablePContainer runnables;

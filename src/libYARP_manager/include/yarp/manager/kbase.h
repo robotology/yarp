@@ -51,7 +51,7 @@ public:
                     ResourceLoader* _resloader);
     bool addApplication(Application* application,
                         char* szAppName_=NULL,
-                        int len=0);
+                        bool modifyName=false);
     bool addModule(Module* module);
     bool addResource(GenericResource* resource);
     bool removeApplication(Application* application);
@@ -63,6 +63,8 @@ public:
     bool reasolveDependency(Application* app,
                             bool bAutoDependancy=false, bool bSilent=false);
     bool checkConsistency(void);
+
+    Node* getNode(string appName);
 
     const ModulePContainer& getSelModules(void) { return selmodules; }
     const CnnContainer& getSelConnection(void) { return selconnections; }

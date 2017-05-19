@@ -125,13 +125,26 @@ QString BuilderWindow::getFileName()
         return "";
     return QString(application->getXmlFile());
 }
-
+void BuilderWindow::setFileName(QString filename)
+{
+    Application* application = manager.getKnowledgeBase()->getApplication();
+    if(application)
+        application->setXmlFile(filename.toStdString().c_str());
+    return;
+}
 QString BuilderWindow::getAppName()
 {
     Application* application = manager.getKnowledgeBase()->getApplication();
     if(!application)
         return "";
     return QString(application->getName());
+}
+void BuilderWindow::setAppName(QString appName)
+{
+    Application* application = manager.getKnowledgeBase()->getApplication();
+    if(application)
+        application->setName(appName.toStdString().c_str());
+    return;
 }
 
 void BuilderWindow::prepareManagerFrom(Manager* lazy,
