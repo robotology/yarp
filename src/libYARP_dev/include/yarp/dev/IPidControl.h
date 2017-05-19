@@ -20,10 +20,10 @@ namespace yarp
 
         enum YARP_dev_API PidControlTypeEnum
         {
-            VOCAB_PIDTYPE_POSITION = VOCAB4('s', 't', 'i', 'f'),
-            VOCAB_PIDTYPE_VELOCITY = VOCAB4('c', 'o', 'm', 'p'),
-            VOCAB_PIDTYPE_TORQUE   = VOCAB4('u', 'n', 'k', 'n'),
-            VOCAB_PIDTYPE_CURRENT  = VOCAB4('u', 'c', 'k', 'n')
+            VOCAB_PIDTYPE_POSITION = VOCAB3('p', 'o', 's'),
+            VOCAB_PIDTYPE_VELOCITY = VOCAB3('v', 'e', 'l'),
+            VOCAB_PIDTYPE_TORQUE   = VOCAB3('t', 'r', 'q'),
+            VOCAB_PIDTYPE_CURRENT  = VOCAB3('c', 'u', 'r')
         };
     }
 }

@@ -29,7 +29,7 @@
 #include <stateExtendedReader.hpp>
 
 #define PROTOCOL_VERSION_MAJOR 1
-#define PROTOCOL_VERSION_MINOR 8
+#define PROTOCOL_VERSION_MINOR 9
 #define PROTOCOL_VERSION_TWEAK 0
 
 using namespace yarp::os;
