@@ -415,6 +415,7 @@ bool yarp::dev::FrameTransformClient::open(yarp::os::Searchable &config)
 bool yarp::dev::FrameTransformClient::close()
 {
     m_rpc_InterfaceToServer.close();
+    m_rpc_InterfaceToUser.close();
     if (m_transform_storage != 0)
     {
         delete m_transform_storage;
@@ -845,6 +846,7 @@ bool yarp::dev::FrameTransformClient::waitForTransform(const std::string &target
 
 FrameTransformClient::FrameTransformClient() : RateThread(0.010)
 {
+    m_transform_storage = 0;
 }
 
 FrameTransformClient::~FrameTransformClient()
