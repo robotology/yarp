@@ -24,6 +24,10 @@
 # (To distribute this file outside of YCM, substitute the full
 #  License text for the above reference.)
 
+if(POLICY CMP0054)
+  cmake_policy(SET CMP0054 NEW)
+endif()
+
 function(GET_ALL_CMAKE_PROPERTIES _var)
 
   execute_process(COMMAND ${CMAKE_COMMAND} --help-property-list
