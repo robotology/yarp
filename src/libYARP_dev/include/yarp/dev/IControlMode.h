@@ -26,40 +26,60 @@ class YARP_dev_API yarp::dev::IControlMode
 public:
     virtual ~IControlMode(){}
 
+#ifndef YARP_NO_DEPRECATED // since YARP 2.3.70
     /**
     * Set position mode, single axis.
     * @param j joint number
     * @return: true/false success failure.
+    * @deprecated since YARP 2.3.70
     */
-    virtual bool setPositionMode(int j)=0;
+    YARP_DEPRECATED_MSG("Use IControlMode2::setControlMode(j, VOCAB_CM_POSITION) instead")
+    YARP_DEPRECATED virtual bool setPositionMode(int j) { return false; }
+#endif // YARP_NO_DEPRECATED
 
+#ifndef YARP_NO_DEPRECATED // since YARP 2.3.70
     /**
     * Set velocity mode, single axis.
     * @param j joint number
     * @return: true/false success failure.
+    * @deprecated since YARP 2.3.70
     */
-    virtual bool setVelocityMode(int j)=0;
+    YARP_DEPRECATED_MSG("Use IControlMode2::setControlMode(j, VOCAB_CM_VELOCITY) instead")
+    YARP_DEPRECATED virtual bool setVelocityMode(int j) { return false; }
+#endif // YARP_NO_DEPRECATED
 
+#ifndef YARP_NO_DEPRECATED // since YARP 2.3.70
     /**
     * Set torque mode, single axis.
     * @param j joint number
     * @return: true/false success failure.
+    * @deprecated since YARP 2.3.70
     */
-    virtual bool setTorqueMode(int j)=0;
+    YARP_DEPRECATED_MSG("Use IControlMode2::setControlMode(j, VOCAB_CM_TORQUE) instead")
+    YARP_DEPRECATED virtual bool setTorqueMode(int j) { return false; }
+#endif // YARP_NO_DEPRECATED
 
+#ifndef YARP_NO_DEPRECATED // since YARP 2.3.70
     /**
     * Set impedance position mode, single axis.
     * @param j joint number
     * @return: true/false success failure.
+    * @deprecated since YARP 2.3.70
     */
-    virtual bool setImpedancePositionMode(int j)=0;
+    YARP_DEPRECATED_MSG("Use IControlMode2::setControlMode(j, VOCAB_CM_IMPEDANCE_POS) instead")
+    YARP_DEPRECATED virtual bool setImpedancePositionMode(int j) { return false; }
+#endif // YARP_NO_DEPRECATED
 
+#ifndef YARP_NO_DEPRECATED // since YARP 2.3.70
     /**
     * Set impedance velocity mode, single axis.
     * @param j joint number
     * @return: true/false success failure.
+    * @deprecated since YARP 2.3.70
     */
-    virtual bool setImpedanceVelocityMode(int j)=0;
+    YARP_DEPRECATED_MSG("Use IControlMode2::setControlMode(j, VOCAB_CM_IMPEDANCE_VEL) instead")
+    YARP_DEPRECATED virtual bool setImpedanceVelocityMode(int j) { return false; }
+#endif // YARP_NO_DEPRECATED
 
     /**
     * Get the current control mode.
@@ -89,11 +109,13 @@ class yarp::dev::IControlModeRaw
 public:
     virtual ~IControlModeRaw(){}
 
-    virtual bool setPositionModeRaw(int j)=0;
-    virtual bool setVelocityModeRaw(int j)=0;
-    virtual bool setTorqueModeRaw(int j)=0;
-    virtual bool setImpedancePositionModeRaw(int j)=0;
-    virtual bool setImpedanceVelocityModeRaw(int j)=0;
+#ifndef YARP_NO_DEPRECATED // since YARP 2.3.70
+    YARP_DEPRECATED virtual bool setPositionModeRaw(int j) { return false; }
+    YARP_DEPRECATED virtual bool setVelocityModeRaw(int j) { return false; }
+    YARP_DEPRECATED virtual bool setTorqueModeRaw(int j) { return false; }
+    YARP_DEPRECATED virtual bool setImpedancePositionModeRaw(int j) { return false; }
+    YARP_DEPRECATED virtual bool setImpedanceVelocityModeRaw(int j) { return false; }
+#endif // YARP_NO_DEPRECATED
     virtual bool getControlModeRaw(int j, int *mode)=0;
     virtual bool getControlModesRaw(int* modes)=0;
 };

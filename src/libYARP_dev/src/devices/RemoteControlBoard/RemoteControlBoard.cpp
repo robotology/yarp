@@ -2739,31 +2739,6 @@ public:
     }
 
     // IControlMode
-    bool setPositionMode(int j)
-    {
-        return setControlMode(j,VOCAB_CM_POSITION);
-    }
-
-    bool setVelocityMode(int j)
-    {
-        return setControlMode(j,VOCAB_CM_VELOCITY);
-    }
-
-    bool setTorqueMode(int j)
-    {
-        return setControlMode(j,VOCAB_CM_TORQUE);
-    }
-
-    bool setImpedancePositionMode(int j)
-    {
-        return setControlMode(j,VOCAB_CM_IMPEDANCE_POS);
-    }
-
-    bool setImpedanceVelocityMode(int j)
-    {
-        return setControlMode(j,VOCAB_CM_IMPEDANCE_VEL);
-    }
-
     bool getControlMode(int j, int *mode)
     {
         double localArrivalTime=0.0;
@@ -3377,6 +3352,21 @@ public:
         extendedPortMutex.post();
         return ret;
     }
+
+#ifndef YARP_NO_DEPRECATED // since YARP 2.3.70
+#if !defined(_MSC_VER)
+YARP_WARNING_PUSH
+YARP_DISABLE_DEPRECATED_WARNING
+#endif
+    YARP_DEPRECATED bool setPositionMode(int j) { return setControlMode(j,VOCAB_CM_POSITION); }
+    YARP_DEPRECATED bool setVelocityMode(int j) { return setControlMode(j,VOCAB_CM_VELOCITY); }
+    YARP_DEPRECATED bool setTorqueMode(int j) { return setControlMode(j,VOCAB_CM_TORQUE); }
+    YARP_DEPRECATED bool setImpedancePositionMode(int j) { return setControlMode(j,VOCAB_CM_IMPEDANCE_POS); }
+    YARP_DEPRECATED bool setImpedanceVelocityMode(int j) { return setControlMode(j,VOCAB_CM_IMPEDANCE_VEL); }
+#if !defined(_MSC_VER)
+YARP_WARNING_POP
+#endif
+#endif // YARP_NO_DEPRECATED
 };
 
 #if defined(_MSC_VER) && !defined(YARP_NO_DEPRECATED) // since YARP 2.3.65
