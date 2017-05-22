@@ -9,8 +9,8 @@ modules. The ResourceFinder is a helper class that allows to find and read confi
 
 \section rf_basic_intro Introduction
 
-Suppose we wish to write a module called 'random_motion' that performs random movements of a single joint.
-The module is generic in that it can control any of the available joints of one of the limbs of a robot, either a real or a simulated one.
+Suppose we wish to write a module called 'rf_basic' that performs random movements of a single joint.
+The module is generic, so it can control any of the available joints of one of the limbs of a robot, either a real or a simulated one.
 
 The module should receive the following parameters:
 
@@ -27,7 +27,7 @@ ResourceFinder rf;
 rf.configure(argc, argv);
 \endcode
 
-This creates an instance of the ResourceFinder, and configures it from data from the command line. We can query the value of the parameters:
+This creates an instance of the ResourceFinder, and configures it using data from the command line. We can query the value of the parameters:
 
 \code
 ConstString robotName=rf.find("robot").asString();
@@ -41,7 +41,7 @@ cout<<"joint: "<<joint<<endl;
 
 \endcode
 
-This achieves what we want. The program \e random_motion can parse the parameters from the command line as desired. For example (we here assume you are in the source directory of random_motion and that you wrote a valid CMakeLists.txt):
+This achieves what we want. The program \e rf_basic can parse the parameters from the command line as desired. For example (we here assume you are in the source directory of rf_basic and that you wrote a valid CMakeLists.txt):
 
 \code
 mkdir build
@@ -49,7 +49,7 @@ cd build
 cmake ../
 make
 
-./random_motion --robot robby --part head --joint 3
+./rf_basic --robot robby --part head --joint 3
 
 Running with:
 robot:robby
@@ -71,11 +71,11 @@ part head
 joint 0
 \endcode
 
-The code above already achieves what we wanted. The ResourceFinder automatically checks for a parameter \e --from that specifies from which file to read configuration parameters:
+The code above already achieves what we wanted. The ResourceFinder automatically checks for a parameter `--from` that specifies from which file to read configuration parameters:
 
 \code
 
-./random_motion --from ../randomMotion/config.ini
+./rf_basic --from ../randomMotion/config.ini
 
 robot icub
 part head
@@ -84,9 +84,9 @@ joint 0
 
 Notice that we here assume you are in the \e build directory.
 
-Now in many cases you don't want to bother about the exact path to the ini file. This happens for example if you are writing a script that executes the module and you don't know the exact configuration of the machine (it could even be running a different operating system!). This is the case for example when writing scripts for the \ref yarpmanager.
+In many cases you don't want to bother about the exact path of the ini file. This happens for example if you are writing a script that executes the module and you don't know the exact configuration of the machine (it could even be running a different operating system!). This is the case for example when writing scripts for the \ref yarpmanager.
 
-We will see you to do this. But first let's first provide the ResourceFinder with a default configuration file so that the user does not have to specify it in the command line (notice that the parameter \e --from overwrites this setting):
+But first let's provide the ResourceFinder with a default configuration file so that the user does not have to specify it in the command line (notice that the parameter \e --from overwrites this setting):
 
 \code
 ResourceFinder rf;
@@ -97,18 +97,18 @@ rf.configure(argc, argv);
 
 Now we can put \e config.ini in one of the data directories defined by YARP. A possible option is the directory .local/share/yarp/contexts inside the home of the user (in windows this is \%APPDATA\%/yarp/contexts, see \ref yarp_data_dirs for more details). By default this is the first place in which the ResourceFinder searches for files if not instructed with a precise path (like in this case).
 
-To avoid confusions and clashes with other similar files we keep the file inside the directory \e randomMotion; we call this directory a \e context for the module random_motion.
+To avoid confusions and clashes with other similar files we keep the file inside the directory \e randomMotion; we call this directory a \e context for the module rf_basic.
 
 \code
-cp -r ../randomMotion $HOME/.local/share/yarp/contexts
+cp -r ../randomMotion/ $HOME/.local/share/yarp/contexts
 \endcode
 
 Now from any working directory in the computer you can run your module and it will read parameters from $HOME/.local/share/yarp/contexts/randomMotion/config.ini and do its job.
 
-To do this we can run random_motion with the parameter \e --context:
+To do this we can run rf_basic with the parameter `--context`:
 
 \code
-./random_motion --context randomMotion
+./rf_basic --context randomMotion
 [...]
 || found /home/nat/.local/share/yarp/contexts/randomMotion/config.ini
 Running with:
@@ -122,7 +122,7 @@ This is useful because:
 \li the context directory can contain more than a single file, by changing only this directory we change the whole configuration of the module with a single command;
 \li YARP defines a set of places that can contain context directories, in our example the \e randomMotion folder can be installed with the executable and located at runtime without the user providing its exact path (which is system dependent).
 
-In fact we can now create another directory to store a different configuration file. This file could for example configure random_motion to connect to a simulator and move joint number 2 of the arm.
+In fact we can now create another directory to store a different configuration file. This file could for example configure rf_basic to connect to a simulator and move joint number 2 of the arm.
 
 We create a new directory and add there a new file:
 
@@ -130,7 +130,7 @@ We create a new directory and add there a new file:
 mkdir $HOME/.local/share/yarp/contexts/randomMotionSim
 \endcode
 
-Create with you preferred editor a file called \e config.ini that contains the following lines:
+Create with your preferred editor a file called \e config.ini that contains the following lines:
 
 \code
 robot robbySim
@@ -143,7 +143,7 @@ Put the file in the directory \e randomMotionSim you just created.
 We run:
 
 \code
-./random_motion --context randomMotionSim
+./rf_basic --context randomMotionSim
 [...]
 || found /home/nat/.local/share/yarp/contexts/randomMotionSim/config.ini
 Running with:
@@ -163,7 +163,7 @@ rf.setDefaultContext("randomMotion");
 Now running:
 
 \code
-./random_motion
+./rf_basic
 [...]
 || found /home/nat/.local/share/yarp/contexts/randomMotion/config.ini
 Running with:
@@ -183,7 +183,7 @@ rm -rf $HOME/.local/share/yarp/contexts/randomMotionSim
 We have seen how the ResourceFinder facilitates passing parameters to a module from a file. The ResourceFinder follows particular
 rules to locate configuration files that allow, for example, to switch the "initialization context" from which a module will be configured.
 
-For simplicity in the above example we used specific Linux commands and directories. Adapting this tutorials to other operating systems should be strightforward.
+For simplicity, in the above example, we used specific Linux commands and directories. Adapting this tutorials to other operating systems should be strightforward.
 
 Normally context directories are not copied manually to the home of the user, but they are installed together with other contexts in YARP's directories and managed with the yarp-config tool. The tutorial \ref yarp_resource_finder_installation describes how to use CMake to configure your build so that configuration files are automatically installed and it links to the yarp-config help page.
 
