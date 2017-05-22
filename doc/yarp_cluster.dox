@@ -21,7 +21,7 @@ If you are doing any non-trivial networking, you need to learn how
 to test your network and debug throughput issues.  A key resource
 in this battle is the "iperf" program.
 
-- Download from http://iperf.sourceforge.net/
+- Download from http://software.es.net/iperf/
 - Linux: apt-get install iperf (or similar command)
 - macOS: brew install iperf (if you use homebrew)
 
