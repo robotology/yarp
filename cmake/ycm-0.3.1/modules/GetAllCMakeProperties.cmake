@@ -24,6 +24,7 @@
 # (To distribute this file outside of YCM, substitute the full
 #  License text for the above reference.)
 
+cmake_policy(PUSH)
 if(POLICY CMP0054)
   cmake_policy(SET CMP0054 NEW)
 endif()
@@ -62,3 +63,5 @@ function(GET_ALL_CMAKE_PROPERTIES _var)
   set(${_var} ${${_var}} PARENT_SCOPE)
 
 endfunction()
+
+cmake_policy(POP)
