@@ -20,6 +20,7 @@
 #include <yarp/dev/PolyDriver.h>
 #include <yarp/math/FrameTransform.h>
 #include <yarp/os/RecursiveMutex.h>
+#include <yarp/os/RateThread.h>
 
 namespace yarp {
     namespace dev {
@@ -80,7 +81,8 @@ public:
 */
 class yarp::dev::FrameTransformClient: public DeviceDriver,
                                   public IFrameTransform,
-                                  public yarp::os::PortReader
+                                  public yarp::os::PortReader,
+                                  public yarp::os::RateThread
 {
 #ifndef DOXYGEN_SHOULD_SKIP_THIS
 private:
@@ -99,13 +101,15 @@ protected:
     yarp::os::ConstString         m_remote_name;
     Transforms_client_storage*    m_transform_storage;
     int                           m_period;
+    yarp::os::Mutex               m_rpc_mutex;
     struct broadcast_port_t
     {
+        std::string format;
         yarp::os::Port port;
         std::string transform_src;
         std::string transform_dst;
     };
-    std::vector<broadcast_port_t*>  m_array_broadcast_transform;
+    std::vector<broadcast_port_t*>  m_array_of_ports;
 
 #endif /*DOXYGEN_SHOULD_SKIP_THIS*/
 
@@ -137,6 +141,12 @@ public:
      bool     transformPose(const std::string &target_frame_id, const std::string &source_frame_id, const yarp::sig::Vector &input_pose, yarp::sig::Vector &transformed_pose);
      bool     transformQuaternion(const std::string &target_frame_id, const std::string &source_frame_id, const yarp::math::Quaternion &input_quaternion, yarp::math::Quaternion &transformed_quaternion);
      bool     waitForTransform(const std::string &target_frame_id, const std::string &source_frame_id, const double &timeout) ;
+
+     FrameTransformClient();
+    ~FrameTransformClient();
+     bool     threadInit();
+     void     threadRelease();
+     void     run();
 };
 
 #endif // YARP_DEV_FRAMETRANSFORMCLIENT_FRAMETRANSFORMCLIENT_H

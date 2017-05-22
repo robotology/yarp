@@ -180,6 +180,7 @@ yarp::math::FrameTransform& Transforms_client_storage::operator[]   (std::size_t
 //------------------------------------------------------------------------------------------------------------------------------
 bool yarp::dev::FrameTransformClient::read(yarp::os::ConnectionReader& connection)
 {
+    LockGuard lock (m_rpc_mutex);
     yarp::os::Bottle in;
     yarp::os::Bottle out;
     bool ok = in.read(connection);
@@ -190,8 +191,13 @@ bool yarp::dev::FrameTransformClient::read(yarp::os::ConnectionReader& connectio
     {
         out.addVocab(Vocab::encode("many"));
         out.addString("'get_transform <src> <dst>: print the transform from <src> to <dst>");
+        out.addString("'list_frames: print all the available refence frames");
+        out.addString("'list_ports: print all the opened ports for tranform broadcasting");
+        out.addString("'publish_transform <src> <dst> <portname> <format>: opens a port to publish transform from src to dst");
+        out.addString("'unpublish_transform <portname>: closes a previously opened port to publish a transform");
+        out.addString("'unpublish_all <portname>: closes a all previously opened ports to publish a transform");
     }
-    else if (request == "list")
+    else if (request == "list_frames")
     {
         std::vector<std::string> v;
         this->getAllFrameIds(v);
@@ -218,11 +224,15 @@ bool yarp::dev::FrameTransformClient::read(yarp::os::ConnectionReader& connectio
     else if (request == "list_ports")
     {
         out.addVocab(Vocab::encode("many"));
-        for (auto it = m_array_broadcast_transform.begin(); it != m_array_broadcast_transform.end(); it++)
+        if (m_array_of_ports.size()==0)
+        {
+            out.addString("No ports are currently active");
+        }
+        for (auto it = m_array_of_ports.begin(); it != m_array_of_ports.end(); it++)
         {
             if (*it)
             {
-                std::string  s = (*it)->port.getName() + (*it)->transform_src + (*it)->transform_dst;
+                std::string  s = (*it)->port.getName() + " "+ (*it)->transform_src +  " -> " + (*it)->transform_dst;
                 out.addString(s);
             }
         }
@@ -231,11 +241,16 @@ bool yarp::dev::FrameTransformClient::read(yarp::os::ConnectionReader& connectio
     {
         std::string src  = in.get(1).asString();
         std::string dst  = in.get(2).asString();
-        std::string port = in.get(3).asString();
+        std::string port_name = in.get(3).asString();
+        std::string format = "matrix";
+        if (in.size() > 4)
+            {format= in.get(4).asString();}
+        if (port_name[0]='/')  port_name.erase(port_name.begin());
+        std::string full_port_name = m_local_name + "/" + port_name;
         bool ret = true;
-        for (auto it = m_array_broadcast_transform.begin(); it != m_array_broadcast_transform.end(); it++)
+        for (auto it = m_array_of_ports.begin(); it != m_array_of_ports.end(); it++)
         {
-            if ((*it) && (*it)->port.getName() == port)
+            if ((*it) && (*it)->port.getName() == full_port_name)
             {
                 ret = false;
                 break;
@@ -246,36 +261,66 @@ bool yarp::dev::FrameTransformClient::read(yarp::os::ConnectionReader& connectio
             broadcast_port_t* b = new broadcast_port_t;
             b->transform_src = src;
             b->transform_dst = dst;
-            b->port.open(port);
-            m_array_broadcast_transform.push_back(b);
+            b->format = format;
+            bool pret = b->port.open(full_port_name);
+            if (pret)
+            {
+                std::string s;
+                s="Port " + full_port_name + "opened";
+                out.addString("Operation complete");
+                m_array_of_ports.push_back(b);
+                if (m_array_of_ports.size()==1) this->start();
+            }
+            else
+            {
+                delete b;
+                out.addString("operation failed");
+            }
         }
         else
         {
             out.addString("unable to perform operation");
         }
     }
+    else if (request == "unpublish_all")
+    {
+        for (auto it = m_array_of_ports.begin(); it != m_array_of_ports.end(); it++)
+        {
+            (*it)->port.close();
+            delete (*it);
+            (*it)=0;
+        }
+        m_array_of_ports.clear();
+        if (m_array_of_ports.size()==0) this->askToStop();
+        out.addString("operation complete");
+    }
     else if (request == "unpublish_transform")
     {
         bool ret = false;
-        std::string port = in.get(1).asString();
-        for (auto it = m_array_broadcast_transform.begin(); it != m_array_broadcast_transform.end(); it++)
+        std::string port_name = in.get(1).asString();
+        if (port_name[0]='/')  port_name.erase(port_name.begin());
+        std::string full_port_name = m_local_name + "/" + port_name;
+        for (auto it = m_array_of_ports.begin(); it != m_array_of_ports.end(); it++)
         {
-            if ((*it)->port.getName() == port)
+            if ((*it)->port.getName() == port_name)
             {
                 (*it)->port.close();
-                 m_array_broadcast_transform.erase(it);
+                delete (*it);
+                (*it)=0;
+                 m_array_of_ports.erase(it);
                  ret = true;
                  break;
             }
         }
         if (ret)
         {
-            out.addString("port " + port + " has been closed");
+            out.addString("port " + full_port_name + " has been closed");
         }
         else
         {
-            out.addString("port " + port + " was not found");
+            out.addString("port " + full_port_name + " was not found");
         }
+        if (m_array_of_ports.size()==0) this->askToStop();
     }
     else
     {
@@ -796,6 +841,53 @@ bool yarp::dev::FrameTransformClient::waitForTransform(const std::string &target
         yarp::os::Time::delay(0.001);
     }
     return true;
+}
+
+FrameTransformClient::FrameTransformClient() : RateThread(0.010)
+{
+}
+
+FrameTransformClient::~FrameTransformClient()
+{
+}
+
+bool     yarp::dev::FrameTransformClient::threadInit()
+{
+    yInfo("Thread started");
+    return true;
+}
+
+void     yarp::dev::FrameTransformClient::threadRelease()
+{
+    yInfo("Thread stopped");
+}
+
+void     yarp::dev::FrameTransformClient::run()
+{
+    LockGuard lock (m_rpc_mutex);
+    if (m_array_of_ports.size()==0)
+    {
+        return;
+    }
+
+    for (auto it=m_array_of_ports.begin(); it!=m_array_of_ports.end(); it++)
+    {
+        if (*it)
+        {
+            std::string src = (*it)->transform_src;
+            std::string dst = (*it)->transform_dst;
+            yarp::sig::Matrix m;
+            this->getTransform(src, dst, m);
+            if ((*it)->format == "matrix")
+            {
+                (*it)->port.write(m);
+            }
+            else
+            {
+                yError() << "Unknown format requested: " << (*it)->format;
+            }
+        }
+    }
 }
 
 yarp::dev::DriverCreator *createFrameTransformClient()
