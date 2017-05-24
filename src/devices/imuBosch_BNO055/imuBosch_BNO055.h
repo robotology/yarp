@@ -6,13 +6,13 @@
 #define BOSCH_IMU_DEVICE
 
 #include <yarp/sig/Vector.h>
-#include <yarp/os/Semaphore.h>
 #include <yarp/os/RateThread.h>
 #include <yarp/dev/PolyDriver.h>
 #include <yarp/os/ResourceFinder.h>
 #include <yarp/dev/SerialInterfaces.h>
 #include <yarp/dev/GenericSensorInterfaces.h>
 #include <yarp/math/Quaternion.h>
+#include <yarp/os/Mutex.h>
 
 namespace yarp {
     namespace dev {
@@ -132,7 +132,6 @@ class yarp::dev::BoschIMU:   public yarp::dev::DeviceDriver,
 {
 protected:
 
-    yarp::os::Semaphore         mutex;
     bool                        verbose;
     short                       status;
     int                         nChannels;
@@ -141,6 +140,7 @@ protected:
     yarp::sig::Vector           RPY_angle;
     double                      timeStamp;
     double                      timeLastReport;
+    yarp::os::Mutex             mutex;
 
     bool                        checkError;
 

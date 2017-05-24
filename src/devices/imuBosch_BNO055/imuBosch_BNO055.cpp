@@ -24,8 +24,7 @@ using namespace std;
 using namespace yarp::os;
 using namespace yarp::dev;
 
-BoschIMU::BoschIMU():   RateThread(20), mutex(1),
-                        checkError(false)
+BoschIMU::BoschIMU() : RateThread(20), checkError(false)
 {
     data.resize(12);
     data.zero();
@@ -555,7 +554,7 @@ void BoschIMU::run()
     }
 
     // Protect only this section in order to avoid slow race conditions when gathering this data
-    mutex.wait();
+    mutex.lock();
 
     data.zero();
 
@@ -587,7 +586,7 @@ void BoschIMU::run()
         quaternion.z() = quaternion_tmp.z();
     }
 
-    mutex.post();
+    mutex.unlock();
 
     if(timeStamp > timeLastReport + TIME_REPORT_INTERVAL)
     {
@@ -611,7 +610,7 @@ void BoschIMU::run()
 
 bool BoschIMU::read(yarp::sig::Vector &out)
 {
-    mutex.wait();
+    mutex.lock();
     out.resize(nChannels);
     out.zero();
 
@@ -624,7 +623,7 @@ bool BoschIMU::read(yarp::sig::Vector &out)
         out[15] = quaternion.z();
     }
 
-    mutex.post();
+    mutex.unlock();
     return true;
 };
 
