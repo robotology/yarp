@@ -436,9 +436,12 @@ void BoschIMU::run()
 
     // TODO: how to optimally protect only code filling the data vector?
 
-    mutex.wait();
+    yarp::sig::Vector data_tmp;
+    data_tmp.resize(nChannels);
+    data_tmp.zero();
 
-    data.zero();
+    // Save the last errors count required later
+    errCounter errs_old = errs;
 
     ///////////////////////////////////////////
     //
@@ -463,18 +466,18 @@ void BoschIMU::run()
     //
     ///////////////////////////////////////////
 
-    if(sendReadCommand(REG_ACC_DATA, 6, response, "Read accelerations") )
-    {
+    if (sendReadCommand(REG_ACC_DATA, 6, response, "Read accelerations")) {
         // Manually compose the data to safely handling endianess
         raw_data[0] = response[3] << 8 | response[2];
         raw_data[1] = response[5] << 8 | response[4];
         raw_data[2] = response[7] << 8 | response[6];
-        data[3] = (double) raw_data[0]/100.0;
-        data[4] = (double) raw_data[1]/100.0;
-        data[5] = (double) raw_data[2]/100.0;
+        data_tmp[3] = (double)raw_data[0] / 100.0;
+        data_tmp[4] = (double)raw_data[1] / 100.0;
+        data_tmp[5] = (double)raw_data[2] / 100.0;
     }
-    else
+    else {
         errs.acceError++;
+    }
 
     ///////////////////////////////////////////
     //
@@ -482,19 +485,19 @@ void BoschIMU::run()
     //
     ///////////////////////////////////////////
 
-    if(sendReadCommand(REG_GYRO_DATA, 6, response, "Read Gyros") )
-    {
+    if (sendReadCommand(REG_GYRO_DATA, 6, response, "Read Gyros")) {
         // Manually compose the data to handle endianess safely
         raw_data[0] = response[3] << 8 | response[2];
         raw_data[1] = response[5] << 8 | response[4];
         raw_data[2] = response[7] << 8 | response[6];
-        data[6] = (double) raw_data[0]/16.0;
-        data[7] = (double) raw_data[1]/16.0;
-        data[8] = (double) raw_data[2]/16.0;
+        data_tmp[6] = (double)raw_data[0] / 16.0;
+        data_tmp[7] = (double)raw_data[1] / 16.0;
+        data_tmp[8] = (double)raw_data[2] / 16.0;
         //     yDebug() << "Gyro x: " << data[6] << "y: " << data[7] << "z: " << data[8];
     }
-    else
+    else {
         errs.gyroError++;
+    }
 
     ///////////////////////////////////////////
     //
@@ -502,19 +505,19 @@ void BoschIMU::run()
     //
     ///////////////////////////////////////////
 
-    if(sendReadCommand(REG_MAGN_DATA, 6, response, "Read Magnetometer") )
-    {
+    if (sendReadCommand(REG_MAGN_DATA, 6, response, "Read Magnetometer")) {
         // Manually compose the data to safely handling endianess
-        raw_data[0] = response[3] << 8 | response[2];
-        raw_data[1] = response[5] << 8 | response[4];
-        raw_data[2] = response[7] << 8 | response[6];
-        data[ 9] = (double) raw_data[0]/16.0;
-        data[10] = (double) raw_data[1]/16.0;
-        data[11] = (double) raw_data[2]/16.0;
-    //     yDebug() << "Magn x: " << data[9] << "y: " << data[10] << "z: " << data[11];
+        raw_data[0]  = response[3] << 8 | response[2];
+        raw_data[1]  = response[5] << 8 | response[4];
+        raw_data[2]  = response[7] << 8 | response[6];
+        data_tmp[9]  = (double)raw_data[0] / 16.0;
+        data_tmp[10] = (double)raw_data[1] / 16.0;
+        data_tmp[11] = (double)raw_data[2] / 16.0;
+        // yDebug() << "Magn x: " << data[9] << "y: " << data[10] << "z: " << data[11];
     }
-    else
+    else {
         errs.magnError++;
+    }
 
     ///////////////////////////////////////////
     //
@@ -522,33 +525,68 @@ void BoschIMU::run()
     //
     ///////////////////////////////////////////
 
-    if(sendReadCommand(REG_QUATERN_DATA, 8, response, "Read quaternion") )
-    {
+    yarp::math::Quaternion quaternion_tmp;
+    if (sendReadCommand(REG_QUATERN_DATA, 8, response, "Read quaternion")) {
         // Manually compose the data to safely handling endianess
         raw_data[0] = response[3] << 8 | response[2];
         raw_data[1] = response[5] << 8 | response[4];
         raw_data[2] = response[7] << 8 | response[6];
         raw_data[3] = response[9] << 8 | response[8];
 
-        quaternion.w() = ((double) raw_data[0])/(2<<13);
-        quaternion.x() = ((double) raw_data[1])/(2<<13);
-        quaternion.y() = ((double) raw_data[2])/(2<<13);
-        quaternion.z() = ((double) raw_data[3])/(2<<13);
+        quaternion_tmp.w() = ((double)raw_data[0]) / (2 << 13);
+        quaternion_tmp.x() = ((double)raw_data[1]) / (2 << 13);
+        quaternion_tmp.y() = ((double)raw_data[2]) / (2 << 13);
+        quaternion_tmp.z() = ((double)raw_data[3]) / (2 << 13);
 
         RPY_angle.resize(3);
-        RPY_angle = yarp::math::dcm2rpy(quaternion.toRotationMatrix());
-        data[0] = RPY_angle[0] * 180/M_PI;
-        data[1] = RPY_angle[1] * 180/M_PI;
-        data[2] = RPY_angle[2] * 180/M_PI;
+        RPY_angle   = yarp::math::dcm2rpy(quaternion.toRotationMatrix());
+        data_tmp[0] = RPY_angle[0] * 180 / M_PI;
+        data_tmp[1] = RPY_angle[1] * 180 / M_PI;
+        data_tmp[2] = RPY_angle[2] * 180 / M_PI;
     }
-    else
+    else {
         errs.quatError++;
+    }
 
     // If 100ms have passed since the last received message
     if (timeStamp+0.1 < yarp::os::Time::now())
     {
 //         status=TIMEOUT;
     }
+
+    // Protect only this section in order to avoid slow race conditions when gathering this data
+    mutex.wait();
+
+    data.zero();
+
+    if (errs_old.acceError != errs.acceError) {
+        data[3] = data_tmp[3];
+        data[4] = data_tmp[4];
+        data[5] = data_tmp[5];
+    }
+
+    if (errs_old.gyroError != errs.gyroError) {
+        data[6] = data_tmp[6];
+        data[7] = data_tmp[7];
+        data[8] = data_tmp[8];
+    }
+
+    if (errs_old.magnError != errs.magnError) {
+        data[9]  = data_tmp[9];
+        data[10] = data_tmp[10];
+        data[11] = data_tmp[11];
+    }
+
+    if (errs_old.quatError != errs.quatError) {
+        data[0]        = data_tmp[0];
+        data[1]        = data_tmp[1];
+        data[2]        = data_tmp[2];
+        quaternion.w() = quaternion_tmp.w();
+        quaternion.x() = quaternion_tmp.x();
+        quaternion.y() = quaternion_tmp.y();
+        quaternion.z() = quaternion_tmp.z();
+    }
+
     mutex.post();
 
     if(timeStamp > timeLastReport + TIME_REPORT_INTERVAL)
