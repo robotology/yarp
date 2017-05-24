@@ -17,6 +17,7 @@
 #include <yarp/os/LogStream.h>
 #include <yarp/os/Log.h>
 #include <yarp/math/Math.h>
+#include <yarp/os/LockGuard.h>
 
 #include "imuBosch_BNO055.h"
 
@@ -435,8 +436,6 @@ void BoschIMU::run()
 //     void *tmp = (void*) &response[2];
 //     raw_data = static_cast<int16_t *> (tmp);
 
-    // TODO: how to optimally protect only code filling the data vector?
-
     // In order to avoid zeros when a single read from a sensor is missing,
     // initialize the new measure to be equal to the previous one
     data_tmp = data;
@@ -553,15 +552,13 @@ void BoschIMU::run()
     }
 
     // Protect only this section in order to avoid slow race conditions when gathering this data
-    mutex.lock();
-
-    data       = data_tmp;
-    quaternion = quaternion_tmp;
-
-    mutex.unlock();
-
-    if(timeStamp > timeLastReport + TIME_REPORT_INTERVAL)
     {
+        LockGuard guard(mutex);
+        data       = data_tmp;
+        quaternion = quaternion_tmp;
+    }
+
+    if (timeStamp > timeLastReport + TIME_REPORT_INTERVAL) {
         // if almost 1 errors occourred in last interval, then print report
         if(errs.acceError + errs.gyroError + errs.magnError + errs.quatError != 0)
         {
@@ -582,7 +579,7 @@ void BoschIMU::run()
 
 bool BoschIMU::read(yarp::sig::Vector &out)
 {
-    mutex.lock();
+    LockGuard guard(mutex);
     out.resize(nChannels);
     out.zero();
 
@@ -595,7 +592,6 @@ bool BoschIMU::read(yarp::sig::Vector &out)
         out[15] = quaternion.z();
     }
 
-    mutex.unlock();
     return true;
 };
 
