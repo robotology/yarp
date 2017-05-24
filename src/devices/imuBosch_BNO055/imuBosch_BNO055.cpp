@@ -435,12 +435,9 @@ void BoschIMU::run()
 
     // TODO: how to optimally protect only code filling the data vector?
 
-    yarp::sig::Vector data_tmp;
-    data_tmp.resize(nChannels);
-    data_tmp.zero();
-
-    // Save the last errors count required later
-    errCounter errs_old = errs;
+    // In order to avoid zeros when a single read from a sensor is missing,
+    // initialize the new measure to be equal to the previous one
+    yarp::sig::Vector data_tmp = data;
 
     ///////////////////////////////////////////
     //
@@ -556,35 +553,8 @@ void BoschIMU::run()
     // Protect only this section in order to avoid slow race conditions when gathering this data
     mutex.lock();
 
-    data.zero();
-
-    if (errs_old.acceError != errs.acceError) {
-        data[3] = data_tmp[3];
-        data[4] = data_tmp[4];
-        data[5] = data_tmp[5];
-    }
-
-    if (errs_old.gyroError != errs.gyroError) {
-        data[6] = data_tmp[6];
-        data[7] = data_tmp[7];
-        data[8] = data_tmp[8];
-    }
-
-    if (errs_old.magnError != errs.magnError) {
-        data[9]  = data_tmp[9];
-        data[10] = data_tmp[10];
-        data[11] = data_tmp[11];
-    }
-
-    if (errs_old.quatError != errs.quatError) {
-        data[0]        = data_tmp[0];
-        data[1]        = data_tmp[1];
-        data[2]        = data_tmp[2];
-        quaternion.w() = quaternion_tmp.w();
-        quaternion.x() = quaternion_tmp.x();
-        quaternion.y() = quaternion_tmp.y();
-        quaternion.z() = quaternion_tmp.z();
-    }
+    data       = data_tmp;
+    quaternion = quaternion_tmp;
 
     mutex.unlock();
 
