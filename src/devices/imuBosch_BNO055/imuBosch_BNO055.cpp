@@ -28,6 +28,8 @@ BoschIMU::BoschIMU() : RateThread(20), checkError(false)
 {
     data.resize(12);
     data.zero();
+    data_tmp.resize(12);
+    data_tmp.zero();
     errorCounter.resize(11);
     errorCounter.zero();
     totMessagesRead = 0;
@@ -437,7 +439,7 @@ void BoschIMU::run()
 
     // In order to avoid zeros when a single read from a sensor is missing,
     // initialize the new measure to be equal to the previous one
-    yarp::sig::Vector data_tmp = data;
+    data_tmp = data;
 
     ///////////////////////////////////////////
     //
@@ -521,7 +523,7 @@ void BoschIMU::run()
     //
     ///////////////////////////////////////////
 
-    yarp::math::Quaternion quaternion_tmp;
+    quaternion_tmp = quaternion;
     if (sendReadCommand(REG_QUATERN_DATA, 8, response, "Read quaternion")) {
         // Manually compose the data to safely handling endianess
         raw_data[0] = response[3] << 8 | response[2];

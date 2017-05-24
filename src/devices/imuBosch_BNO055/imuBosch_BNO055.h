@@ -136,7 +136,9 @@ protected:
     short                       status;
     int                         nChannels;
     yarp::sig::Vector           data;
+    yarp::sig::Vector           data_tmp;
     yarp::math::Quaternion      quaternion;
+    yarp::math::Quaternion      quaternion_tmp;
     yarp::sig::Vector           RPY_angle;
     double                      timeStamp;
     double                      timeLastReport;
