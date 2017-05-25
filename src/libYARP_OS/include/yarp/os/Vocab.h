@@ -18,12 +18,12 @@ namespace yarp {
 }
 
 // We need a macro for efficient switching.
-// Use as, for example, VOCAB('s', 'e', 't')
-#define VOCAB(a, b, c, d) ((((int)(d))<<24)+(((int)(c))<<16)+(((int)(b))<<8)+((int)(a)))
-#define VOCAB4(a, b, c, d) VOCAB((a), (b), (c), (d))
-#define VOCAB3(a, b, c) VOCAB((a), (b), (c), (0))
-#define VOCAB2(a, b) VOCAB((a), (b), (0), (0))
-#define VOCAB1(a) VOCAB((a), (0), (0), (0))
+// Use as, for example, VOCAB('s','e','t')
+#define VOCAB(a,b,c,d) ((((int)(d))<<24)+(((int)(c))<<16)+(((int)(b))<<8)+((int)(a)))
+#define VOCAB4(a,b,c,d) VOCAB((a),(b),(c),(d))
+#define VOCAB3(a,b,c) VOCAB((a),(b),(c),(0))
+#define VOCAB2(a,b) VOCAB((a),(b),(0),(0))
+#define VOCAB1(a) VOCAB((a),(0),(0),(0))
 
 /**
  * Short readable codes.  They are integers, for efficient switching,
@@ -37,10 +37,10 @@ namespace yarp {
  * VOCABn macro defined in yarp/os/Vocab.h.
  * \code
  *   switch(code) {
- *      case VOCAB3('s', 'e', 't'): // switch on "set"
+ *      case VOCAB3('s','e','t'): // switch on "set"
  *          ...
  *          break;
- *      case VOCAB4('s', 't', 'o', 'p'): // switch on "stop"
+ *      case VOCAB4('s','t','o','p'): // switch on "stop"
  *          ...
  *          break;
  *   }

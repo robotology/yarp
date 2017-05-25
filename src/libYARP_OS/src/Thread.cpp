@@ -17,7 +17,7 @@ private:
     Thread& owner;
 public:
 
-    ThreadCallbackAdapter(Thread& owner) : owner(owner) {
+    explicit ThreadCallbackAdapter(Thread& owner) : owner(owner) {
     }
 
     virtual ~ThreadCallbackAdapter() {
