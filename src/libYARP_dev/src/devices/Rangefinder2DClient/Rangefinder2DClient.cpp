@@ -249,6 +249,8 @@ bool yarp::dev::Rangefinder2DClient::open(yarp::os::Searchable &config)
         if (iTrf != 0)
         {
             yError() << "A Problem occurred while trying to view the IFrameTransform interface";
+            drv->close();
+            delete drv;
             return false;
         }
 
@@ -282,7 +284,7 @@ bool yarp::dev::Rangefinder2DClient::open(yarp::os::Searchable &config)
         }
     }
 
-
+    delete drv;
     return true;
 }
 
