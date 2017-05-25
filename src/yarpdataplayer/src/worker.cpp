@@ -205,14 +205,14 @@ int WorkerClass::sendImages(int part, int frame)
         return 1;
     } else {
         Image &temp = utilities->partDetails[part].imagePort.prepare();
-       
+
         static IplImage *test = NULL;
         if (test !=NULL)
             cvReleaseImage(&test);
 
         test = cvCloneImage(img);
         temp.wrapIplImage(test);
-        
+
 #else
     bool fileValid = true;
 
@@ -256,6 +256,11 @@ int WorkerClass::sendImages(int part, int frame)
     if (!fileValid)
     {
         LOG_ERROR("Cannot load file %s !\n", tmpPath.c_str() );
+#ifdef HAS_OPENCV
+        cvReleaseImage(&img);
+#else
+        delete img;
+#endif
         return 1;
     }
     else
@@ -279,7 +284,6 @@ int WorkerClass::sendImages(int part, int frame)
 #else
         delete img;
 #endif
-        
     }
 
     return 0;
