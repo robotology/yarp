@@ -9,6 +9,10 @@
 #   ZFP_INCLUDE_DIRS    - ZFP include directory
 #   ZFP_LIBRARIES       - ZFP libraries
 #   ZFP_FOUND           - if false, you cannot build anything that requires ZFP
+#   ZFP_VERSION         - ZFP version
+#   ZFP_MAJOR_VERSION   - ZFP major version
+#   ZFP_MINOR_VERSION   - ZFP minor version
+#   ZFP_PATCH_VERSION   - ZFP release version
 
 #=============================================================================
 # Copyright 2016 iCub Facility, Istituto Italiano di Tecnologia
