@@ -245,7 +245,7 @@ bool yarp::dev::FrameTransformClient::read(yarp::os::ConnectionReader& connectio
         std::string format = "matrix";
         if (in.size() > 4)
             {format= in.get(4).asString();}
-        if (port_name[0]='/')  port_name.erase(port_name.begin());
+        if (port_name[0]=='/')  port_name.erase(port_name.begin());
         std::string full_port_name = m_local_name + "/" + port_name;
         bool ret = true;
         for (auto it = m_array_of_ports.begin(); it != m_array_of_ports.end(); it++)
@@ -298,7 +298,7 @@ bool yarp::dev::FrameTransformClient::read(yarp::os::ConnectionReader& connectio
     {
         bool ret = false;
         std::string port_name = in.get(1).asString();
-        if (port_name[0]='/')  port_name.erase(port_name.begin());
+        if (port_name[0]=='/')  port_name.erase(port_name.begin());
         std::string full_port_name = m_local_name + "/" + port_name;
         for (auto it = m_array_of_ports.begin(); it != m_array_of_ports.end(); it++)
         {
