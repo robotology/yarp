@@ -13,6 +13,7 @@
 #include <yarp/os/Port.h>
 #include <yarp/os/OutputProtocol.h>
 #include <yarp/os/Carrier.h>
+#include <yarp/os/impl/Companion.h>
 
 using namespace std;
 using namespace yarp::os;
@@ -218,31 +219,12 @@ bool NetworkProfiler::yarpClean(float timeout) {
     if (timeout <= 0)
         timeout = -1;
 
-    NetworkProfiler::ports_name_set ports;
-    NetworkProfiler::yarpNameList(ports);
-    for(int i=0; i<ports.size(); i++) {
-        std::string portname = ports[i].find("name").asString();
-        Contact addr = Contact::fromConfig(ports[i]);
-        if (addr.isValid()) {
-            if (timeout>=0)
-                addr.setTimeout(timeout);
-            /**
-             * TODO: fix the yarp clean
-             */
-
-            /*
-            OutputProtocol *out = Carriers::connect(addr);
-            if (out == NULL)
-                NetworkBase::unregisterName(portname);
-            else
-                delete out;
-            */
-        }
-    }
-
-    string serverName = NetworkBase::getNameServerName();
-    Bottle cmd("gc"), reply;
-    NetworkBase::write(serverName, cmd, reply);
+    stringstream sstream;
+    sstream<<timeout;
+    char* argv[2];
+    argv[0] = (char*) "--timeout";
+    argv[1] = (char*) sstream.str().c_str();
+    yarp::os::impl::Companion::getInstance().cmdClean(2,argv);
     return true;
 }
 

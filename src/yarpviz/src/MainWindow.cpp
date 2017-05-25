@@ -503,7 +503,7 @@ void MainWindow::onProfileYarpNetwork() {
 
     if(mainGraph.nodesCount()) {
         QMessageBox::StandardButton reply;
-        reply = QMessageBox::question(this, "Profiling", "Running profiler will clear the current project.\n Are you sure?",
+        reply = QMessageBox::question(this, "Profiling: clear current project", "Running profiler will clear the current project.\n Are you sure?",
                                       QMessageBox::Yes|QMessageBox::No);
         if (reply == QMessageBox::No)
             return;
@@ -511,12 +511,12 @@ void MainWindow::onProfileYarpNetwork() {
 
     mainGraph.clear();
     QMessageBox::StandardButton shouldClean;
-    shouldClean = QMessageBox::question(this, "Profiling", "Do you want to run yarp clean before profiling?",
+    shouldClean = QMessageBox::question(this, "Profiling: yarp clean", "Do you want to run yarp clean before profiling?",
                                   QMessageBox::Yes|QMessageBox::No);
     if (shouldClean == QMessageBox::Yes)
     {
         messages.append("Cleaning death ports...");
-        NetworkProfiler::yarpClean(0.1);
+        NetworkProfiler::yarpClean(0.3);
     }
 
     messages.append("Getting the ports list...");
