@@ -435,7 +435,8 @@ checkandset_dependency(Libusb1)
 find_package(Stage QUIET)
 checkandset_dependency(Stage)
 
-find_package(ZFP QUIET)
+set(ZFP_REQUIRED_VERSION 0.5.1)
+find_package(ZFP ${ZFP_REQUIRED_VERSION} QUIET)
 checkandset_dependency(ZFP)
 
 find_package(OpenNI2 QUIET)
