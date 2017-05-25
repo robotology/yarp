@@ -256,6 +256,11 @@ int WorkerClass::sendImages(int part, int frame)
     if (!fileValid)
     {
         LOG_ERROR("Cannot load file %s !\n", tmpPath.c_str() );
+#ifdef HAS_OPENCV
+        cvReleaseImage(&img);
+#else
+        delete img;
+#endif
         return 1;
     }
     else
