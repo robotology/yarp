@@ -921,7 +921,7 @@ int LocalBroker::ExecuteCmd(void)
                 close(pipe_child_to_parent[WRITE_TO_PIPE]);
                 delete [] szcmd;
                 delete [] szarg;
-                ::exit(ret);
+                std::exit(ret);
             }
         }
 
