@@ -28,13 +28,72 @@
 #include <yarp/os/RpcServer.h>
 #include <yarp/os/PortInfo.h>
 
+#include <yarp/dev/PolyDriver.h>
+#include <yarp/dev/Drivers.h>
+
+#include <yarp/sig/Image.h>
+
 //#include "TestList.h"
 
 using namespace yarp::os;
 using namespace yarp::os::impl;
 
-
 #ifndef DOXYGEN_SHOULD_SKIP_THIS
+
+#ifdef BROKEN_TEST
+
+namespace yarp {
+    namespace dev {
+        class BrokenDevice;
+    }
+}
+
+/**
+ * @ingroup dev_impl_media
+ *
+ * A fake camera for testing.
+ */
+class yarp::dev::BrokenDevice : public DeviceDriver,
+                                public yarp::os::RateThread
+{
+private:
+
+public:
+    /**
+     * Constructor.
+     */
+    BrokenDevice():RateThread(30), img(YARP_NULLPTR){}
+
+    virtual bool close()
+    {
+        pImg.close();
+        RateThread::stop();
+        return true;
+
+    }
+
+    virtual bool open(yarp::os::Searchable& config) { return RateThread::start(); }
+
+    //RateThread
+    bool threadInit(){ return true; }
+
+    void threadRelease(){}
+
+    void run()
+    {
+        img = &pImg.prepare();
+        img->resize(10, 10);
+        pImg.write();
+    }
+
+
+private:
+    yarp::sig::ImageOf<yarp::sig::PixelRgb>* img;
+    yarp::os::BufferedPort<yarp::sig::ImageOf<yarp::sig::PixelRgb>> pImg;
+
+};
+
+#endif
 
 class TcpTestServer : public RateThread
 {
@@ -1470,6 +1529,15 @@ public:
         }
     }
 
+    void testPrepareDeadlock(){
+        report(0,"testing the deadlock when you close a device(RateThread) after the prepare of a closed port");
+        yarp::dev::PolyDriver p;
+        Property prop;
+        prop.put("device","brokenDevice");
+        p.open(prop);
+        p.close();
+    }
+
     virtual void runTests() {
         NetworkBase::setLocalMode(true);
 
@@ -1530,6 +1598,13 @@ public:
         testAdminReader();
 
         testCallbackLock();
+
+#ifdef BROKEN_TEST
+        yarp::dev::Drivers::factory().add(new yarp::dev::DriverCreatorOf<yarp::dev::BrokenDevice>("brokenDevice",
+                                                      "brokenDevice",
+                                                      "yarp::dev::BrokenDevice"));
+        testPrepareDeadlock();
+#endif
 
 
 
