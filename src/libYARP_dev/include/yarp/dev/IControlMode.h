@@ -34,7 +34,7 @@ public:
     * @deprecated since YARP 2.3.70
     */
     YARP_DEPRECATED_MSG("Use IControlMode2::setControlMode(j, VOCAB_CM_POSITION) instead")
-    YARP_DEPRECATED virtual bool setPositionMode(int j) { return false; }
+    virtual bool setPositionMode(int j) { return false; }
 #endif // YARP_NO_DEPRECATED
 
 #ifndef YARP_NO_DEPRECATED // since YARP 2.3.70
@@ -45,7 +45,7 @@ public:
     * @deprecated since YARP 2.3.70
     */
     YARP_DEPRECATED_MSG("Use IControlMode2::setControlMode(j, VOCAB_CM_VELOCITY) instead")
-    YARP_DEPRECATED virtual bool setVelocityMode(int j) { return false; }
+    virtual bool setVelocityMode(int j) { return false; }
 #endif // YARP_NO_DEPRECATED
 
 #ifndef YARP_NO_DEPRECATED // since YARP 2.3.70
@@ -56,7 +56,7 @@ public:
     * @deprecated since YARP 2.3.70
     */
     YARP_DEPRECATED_MSG("Use IControlMode2::setControlMode(j, VOCAB_CM_TORQUE) instead")
-    YARP_DEPRECATED virtual bool setTorqueMode(int j) { return false; }
+    virtual bool setTorqueMode(int j) { return false; }
 #endif // YARP_NO_DEPRECATED
 
 #ifndef YARP_NO_DEPRECATED // since YARP 2.3.70
@@ -67,7 +67,7 @@ public:
     * @deprecated since YARP 2.3.70
     */
     YARP_DEPRECATED_MSG("Use IControlMode2::setControlMode(j, VOCAB_CM_IMPEDANCE_POS) instead")
-    YARP_DEPRECATED virtual bool setImpedancePositionMode(int j) { return false; }
+    virtual bool setImpedancePositionMode(int j) { return false; }
 #endif // YARP_NO_DEPRECATED
 
 #ifndef YARP_NO_DEPRECATED // since YARP 2.3.70
@@ -78,7 +78,7 @@ public:
     * @deprecated since YARP 2.3.70
     */
     YARP_DEPRECATED_MSG("Use IControlMode2::setControlMode(j, VOCAB_CM_IMPEDANCE_VEL) instead")
-    YARP_DEPRECATED virtual bool setImpedanceVelocityMode(int j) { return false; }
+    virtual bool setImpedanceVelocityMode(int j) { return false; }
 #endif // YARP_NO_DEPRECATED
 
     /**
