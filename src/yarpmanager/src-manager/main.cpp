@@ -13,6 +13,8 @@
 
 #include <yarp/os/Network.h>
 #include <yarp/os/Property.h>
+#include <yarp/os/Os.h>
+#include <yarp/os/Log.h>
 #include <yarp/os/ResourceFinder.h>
 #include <yarp/os/ConstString.h>
 #include <yarp/os/ResourceFinderOptions.h>
@@ -20,11 +22,23 @@
 
 #define HELP_MESSAGE        "\
 Usage:\n\
-      yarpmanager [option...]\n\n\
+   yarpmanager [option]\n\n\
 Options:\n\
-  --help                  Show help\n\
-  --from                  Configuration file name\n\
-  --application           Path to application to open\n"
+  --from                Configuration file name\n\
+  --application         Path to application to open\n\
+  --ymanagerini_dir     \n\
+  --apppath             \n\
+  --modpath             \n\
+  --respath             \n\
+  --templpath           \n\
+  --load_subfolders     \n\
+  --watchdog            \n\
+  --module_failure      \n\
+  --connection_failure  \n\
+  --auto_connect        \n\
+  --auto_dependency     \n\
+  --add_current_dir     add the current dir to the search path\n\
+"
 
 #define DEF_CONFIG_FILE     "ymanager.ini"
 
@@ -72,14 +86,24 @@ int main(int argc, char *argv[])
     yarp::os::Property config;
     config.fromString(rf.toString());
 
-    if(config.check("help")){
-        qDebug("%s",HELP_MESSAGE);
+    if(config.check("help"))
+    {
+        yInfo("%s",HELP_MESSAGE);
         return 0;
     }
 
     /**
     *  preparing default options
     */
+    bool add_curr_dir = false;
+    if(config.check("add_current_dir"))
+    {
+        add_curr_dir=true;
+    }
+    const int cur_dir_max_size=512;
+    char current_dir[cur_dir_max_size]; current_dir[0]=0;
+    yarp::os::getcwd(current_dir,cur_dir_max_size);
+    config.put("current_dir", current_dir);
 
     std::string inifile=rf.findFile("from").c_str();
     std::string inipath="";
@@ -99,6 +123,7 @@ int main(int argc, char *argv[])
 
     yarp::os::Bottle appPaths;
     if(!config.check("apppath")){
+
         appPaths= rf.findPaths("applications");
 
         yarp::os::ResourceFinderOptions findRobotScripts;
@@ -113,6 +138,11 @@ int main(int argc, char *argv[])
         for (int ind=0; ind < appPaths2.size(); ++ind){
             appPathsStr += (appPaths2.get(ind).asString() + ";").c_str();
         }
+        if (add_curr_dir)
+        {
+            appPathsStr += (current_dir + std::string(";")).c_str();
+        }
+        std::string sss= appPathsStr.toLatin1().data();
         config.put("apppath", appPathsStr.toLatin1().data());
     }
 
@@ -122,6 +152,10 @@ int main(int argc, char *argv[])
        QString modPathsStr="";
        for (int ind=0; ind < appPaths.size(); ++ind){
            modPathsStr += (appPaths.get(ind).asString() + ";").c_str();
+       }
+       if (add_curr_dir)
+       {
+           modPathsStr += (current_dir + std::string(";")).c_str();
        }
        config.put("modpath", modPathsStr.toLatin1().data());
     }
@@ -133,6 +167,10 @@ int main(int argc, char *argv[])
        for (int ind=0; ind < appPaths.size(); ++ind){
            resPathsStr += (appPaths.get(ind).asString() + ";").c_str();
        }
+       if (add_curr_dir)
+       {
+           resPathsStr += (current_dir + std::string(";")).c_str();
+       }
        config.put("respath", resPathsStr.toLatin1().data());
     }
 
@@ -142,6 +180,10 @@ int main(int argc, char *argv[])
        QString templPathsStr="";
        for (int ind=0; ind < appPaths.size(); ++ind){
             templPathsStr += (appPaths.get(ind).asString() + ";").c_str();
+       }
+       if (add_curr_dir)
+       {
+           templPathsStr += (current_dir + std::string(";")).c_str();
        }
        config.put("templpath", templPathsStr.toLatin1().data());
 
