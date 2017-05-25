@@ -260,7 +260,9 @@ static ConstString getStdin() {
 
 static void writeBottleAsFile(const char *fileName, const Bottle& bot) {
     FILE *fout = fopen(fileName, "w");
-    if (fout == YARP_NULLPTR) return;
+    if (!fout) {
+        return;
+    }
     for (int i=0; i<bot.size(); i++) {
         fprintf(fout, "%s\n", bot.get(i).toString().c_str());
     }
@@ -1431,7 +1433,7 @@ int Companion::cmdMake(int argc, char *argv[]) {
     const char *target = "CMakeLists.txt";
 
     FILE *fin = fopen(target, "r");
-    if (fin != YARP_NULLPTR) {
+    if (fin) {
         printf("File %s already exists, please remove it first\n", target);
         fclose(fin);
         fin = YARP_NULLPTR;

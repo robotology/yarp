@@ -114,10 +114,9 @@ static yarp::os::Bottle parsePaths(const yarp::os::ConstString& txt) {
 static bool fileExists(const char *fname) {
         FILE *fp = YARP_NULLPTR;
         fp = fopen(fname, "r");
-        if (fp == YARP_NULLPTR)
+        if (!fp) {
             return false;
-        else
-        {
+        } else {
             fclose(fp);
             return true;
         }

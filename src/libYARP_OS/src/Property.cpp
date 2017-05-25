@@ -350,7 +350,9 @@ public:
         YARP_DEBUG(Logger::get(),
                    ConstString("reading file ") + fname);
         FILE *fin = fopen(fname.c_str(), "r");
-        if (fin==YARP_NULLPTR) return false;
+        if (!fin) {
+            return false;
+        }
         char buf[25600];
         while(fgets(buf, sizeof(buf)-1, fin) != YARP_NULLPTR) {
             result += buf;

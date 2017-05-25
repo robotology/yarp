@@ -157,7 +157,9 @@ bool NameConfig::createPath(const ConstString& fileName, int ignoreLevel) {
 ConstString NameConfig::readConfig(const ConstString& fileName) {
     char buf[25600];
     FILE *fin = fopen(fileName.c_str(), "r");
-    if (fin==YARP_NULLPTR) return "";
+    if (!fin) {
+        return "";
+    }
     ConstString result = "";
     while(fgets(buf, sizeof(buf)-1, fin) != YARP_NULLPTR) {
         result += buf;
@@ -204,7 +206,9 @@ bool NameConfig::writeConfig(const ConstString& fileName, const ConstString& tex
         return false;
     }
     FILE *fout = fopen(fileName.c_str(), "w");
-    if (fout==YARP_NULLPTR) return false;
+    if (!fout) {
+        return false;
+    }
     fprintf(fout, "%s", text.c_str());
     fclose(fout);
     fout = YARP_NULLPTR;
