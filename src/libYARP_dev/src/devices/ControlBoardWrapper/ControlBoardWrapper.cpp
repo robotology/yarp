@@ -4692,13 +4692,13 @@ bool ControlBoardWrapper::setControlModes(int *modes)
     for(int subDev_idx=0; subDev_idx < nDev; subDev_idx++)
     {
         int subIndex=device.lut[j_wrap].deviceEntry;
-        yarp::dev::impl::SubDevice *p=device.getSubdevice(subIndex);
+        yarp::dev::impl::SubDevice *p = device.getSubdevice(subIndex);
+        if(!p) {
+            return false;
+        }
 
         int wrapped_joints=(p->top - p->base) + 1;
         int *joints = new int[wrapped_joints];
-
-        if(!p)
-            return false;
 
         if(p->iMode2)   // Control Mode interface 2
         {
