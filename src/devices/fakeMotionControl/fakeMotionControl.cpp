@@ -275,10 +275,10 @@ FakeMotionControl::FakeMotionControl() :
     ImplementControlLimits2(this),
     ImplementPositionDirect(this),
     ImplementInteractionMode(this),
+    ImplementCurrentControl(this),
+    ImplementPWMControl(this),
     ImplementMotor(this),
     ImplementAxisInfo(this),
-    ImplementPWMControl(this),
-    ImplementCurrentControl(this),
     _mutex(1)
 //     SAFETY_THRESHOLD(2.0)
 {
