@@ -245,7 +245,8 @@ public:
      *
      * @deprecated since YARP 2.3.60
      */
-    YARP_DEPRECATED yarp::os::ConstString getContextPath();
+    YARP_DEPRECATED_MSG("Use getHomeContextPath() instead")
+    yarp::os::ConstString getContextPath();
 #endif // YARP_NO_DEPRECATED
 
     /**

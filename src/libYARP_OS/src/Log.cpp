@@ -29,7 +29,7 @@
 #include <yarp/os/impl/PlatformStdio.h>
 
 
-#define YARP_MAX_LOG_MSG_SIZE 512
+#define YARP_MAX_LOG_MSG_SIZE 1024
 
 #ifndef WIN32
 
@@ -232,6 +232,7 @@ void yarp::os::Log::trace(const char *msg, ...) const
     if (msg) {
         char buf[YARP_MAX_LOG_MSG_SIZE];
         int w =ACE_OS::vsnprintf(buf, YARP_MAX_LOG_MSG_SIZE, msg, args);
+        buf[YARP_MAX_LOG_MSG_SIZE-1]=0;
         if (w>0 && buf[w-1]=='\n') {
             buf[w-1]=0;
         }
@@ -258,6 +259,7 @@ void yarp::os::Log::debug(const char *msg, ...) const
     if (msg) {
         char buf[YARP_MAX_LOG_MSG_SIZE];
         int w = ACE_OS::vsnprintf(buf, YARP_MAX_LOG_MSG_SIZE, msg, args);
+        buf[YARP_MAX_LOG_MSG_SIZE-1]=0;
         if (w>0 && buf[w-1]=='\n') {
             buf[w-1]=0;
         }
@@ -284,6 +286,7 @@ void yarp::os::Log::info(const char *msg, ...) const
     if (msg) {
         char buf[YARP_MAX_LOG_MSG_SIZE];
         int w = ACE_OS::vsnprintf(buf, YARP_MAX_LOG_MSG_SIZE, msg, args);
+        buf[YARP_MAX_LOG_MSG_SIZE-1]=0;
         if (w>0 && buf[w-1]=='\n') {
             buf[w-1]=0;
         }
@@ -310,6 +313,7 @@ void yarp::os::Log::warning(const char *msg, ...) const
     if (msg) {
         char buf[YARP_MAX_LOG_MSG_SIZE];
         int w = ACE_OS::vsnprintf(buf, YARP_MAX_LOG_MSG_SIZE, msg, args);
+        buf[YARP_MAX_LOG_MSG_SIZE-1]=0;
         if (w>0 && buf[w-1]=='\n') {
             buf[w-1]=0;
         }
@@ -336,6 +340,7 @@ void yarp::os::Log::error(const char *msg, ...) const
     if (msg) {
         char buf[YARP_MAX_LOG_MSG_SIZE];
         int w = ACE_OS::vsnprintf(buf, YARP_MAX_LOG_MSG_SIZE, msg, args);
+        buf[YARP_MAX_LOG_MSG_SIZE-1]=0;
         if (w>0 && buf[w-1]=='\n') {
             buf[w-1]=0;
         }
@@ -363,6 +368,7 @@ void yarp::os::Log::fatal(const char *msg, ...) const
     if (msg) {
         char buf[YARP_MAX_LOG_MSG_SIZE];
         int w = ACE_OS::vsnprintf(buf, YARP_MAX_LOG_MSG_SIZE, msg, args);
+        buf[YARP_MAX_LOG_MSG_SIZE-1]=0;
         if (w>0 && buf[w-1]=='\n') {
             buf[w-1]=0;
         }
