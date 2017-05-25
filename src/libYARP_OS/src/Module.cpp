@@ -55,7 +55,7 @@ public:
      */
     virtual void onRead(yarp::os::Bottle& v) {
         yarp::os::Bottle reply;
-        owner.safeRespond(v,reply);
+        owner.safeRespond(v, reply);
     }
 
     /**
@@ -86,7 +86,7 @@ public:
             if (!isEof) {
                 Bottle cmd(str.c_str());
                 Bottle reply;
-                bool ok = owner.safeRespond(cmd,reply);
+                bool ok = owner.safeRespond(cmd, reply);
                 if (ok) {
                     //printf("ALL: %s\n", reply.toString().c_str());
                     //printf("ITEM 1: %s\n", reply.get(0).toString().c_str());
@@ -123,26 +123,26 @@ public:
         prefix += ".";
 
         key = prefix + key;
-        if (key.substr(0,1)==".") {
-            key = key.substr(1,key.length());
+        if (key.substr(0, 1)==".") {
+            key = key.substr(1, key.length());
         }
 
         if (!present.check(key.c_str())) {
-            present.put(key.c_str(),"present");
+            present.put(key.c_str(), "present");
             order.addString(key.c_str());
         }
 
         if (report.isFound) {
-            actual.put(key.c_str(),report.value);
+            actual.put(key.c_str(), report.value);
         }
 
         if (report.isComment==true) {
-            comment.put(key.c_str(),report.value);
+            comment.put(key.c_str(), report.value);
             return;
         }
 
         if (report.isDefault==true) {
-            fallback.put(key.c_str(),report.value);
+            fallback.put(key.c_str(), report.value);
             return;
         }
 
@@ -151,14 +151,14 @@ public:
                 if (report.isFound) {
                     ConstString hasValue = report.value.c_str();
                     if (hasValue.length()>35) {
-                        hasValue = hasValue.substr(0,30) + " ...";
+                        hasValue = hasValue.substr(0, 30) + " ...";
                     }
                     printf("Checking \"%s\": = %s (%s)\n", key.c_str(),
                            hasValue.c_str(),
                            comment.check(key.c_str(),
                                          Value("")).toString().c_str());
                 } else {
-                    reported.put(key.c_str(),1);
+                    reported.put(key.c_str(), 1);
                     bool hasDefault = fallback.check(key.c_str());
                     ConstString defString = "";
                     if (hasDefault) {
@@ -206,7 +206,7 @@ bool ModuleHelper::read(ConnectionReader& connection) {
     Bottle cmd, response;
     if (!cmd.read(connection)) { return false; }
     //printf("command received: %s\n", cmd.toString().c_str());
-    bool result = owner.safeRespond(cmd,response);
+    bool result = owner.safeRespond(cmd, response);
     if (response.size()>=1) {
         ConnectionWriter *writer = connection.getWriter();
         if (writer!=YARP_NULLPTR) {
@@ -265,7 +265,7 @@ bool Module::interruptModule() {
 }
 
 bool Module::respond(const Bottle& command, Bottle& reply) {
-    return basicRespond(command,reply);
+    return basicRespond(command, reply);
 }
 
 bool Module::isStopping() {
@@ -278,18 +278,18 @@ void Module::setName(const char *name) {
 
 bool Module::basicRespond(const Bottle& command, Bottle& reply) {
     switch (command.get(0).asVocab()) {
-    case VOCAB3('s','e','t'):
-        state.put(command.get(1).toString(),command.get(2));
+    case VOCAB3('s', 'e', 't'):
+        state.put(command.get(1).toString(), command.get(2));
         reply.addVocab(Vocab::encode("ack"));
         return true;
         break;
-    case VOCAB3('g','e','t'):
-        reply.add(state.check(command.get(1).toString(),Value(0)));
+    case VOCAB3('g', 'e', 't'):
+        reply.add(state.check(command.get(1).toString(), Value(0)));
         return true;
         break;
-    case VOCAB4('q','u','i','t'):
-    case VOCAB4('e','x','i','t'):
-    case VOCAB3('b','y','e'):
+    case VOCAB4('q', 'u', 'i', 't'):
+    case VOCAB4('e', 'x', 'i', 't'):
+    case VOCAB3('b', 'y', 'e'):
         reply.addVocab(Vocab::encode("bye"));
         stopFlag = true;
         interruptModule();
@@ -302,10 +302,10 @@ bool Module::basicRespond(const Bottle& command, Bottle& reply) {
 }
 
 bool Module::safeRespond(const Bottle& command, Bottle& reply) {
-    bool ok = respond(command,reply);
+    bool ok = respond(command, reply);
     if (!ok) {
         // just in case derived classes don't correctly pass on messages
-        ok = basicRespond(command,reply);
+        ok = basicRespond(command, reply);
     }
     return ok;
 }
@@ -326,7 +326,7 @@ static void handler (int) {
     if (module!=YARP_NULLPTR) {
         Bottle cmd, reply;
         cmd.fromString("quit");
-        module->safeRespond(cmd,reply);
+        module->safeRespond(cmd, reply);
         //printf("sent %s, got %s\n", cmd.toString().c_str(),
         //     reply.toString().c_str());
     }
@@ -367,7 +367,7 @@ bool Module::attach(Port& port) {
 }
 
 bool Module::attach(TypedReader<Bottle>& port, bool handleStream) {
-    return HELPER(implementation).attach(port,handleStream);
+    return HELPER(implementation).attach(port, handleStream);
 }
 
 
@@ -378,7 +378,7 @@ bool Module::attachTerminal() {
 }
 
 int Module::runModule(int argc, char *argv[], bool skipFirst) {
-    if (!openFromCommand(argc,argv,skipFirst)) {
+    if (!openFromCommand(argc, argv, skipFirst)) {
         printf("Module failed to open\n");
         return 1;
     }
@@ -390,32 +390,32 @@ int Module::runModule(int argc, char *argv[], bool skipFirst) {
 
 bool Module::openFromCommand(int argc, char *argv[], bool skipFirst) {
     Property options;
-    options.fromCommand(argc,argv,skipFirst);
+    options.fromCommand(argc, argv, skipFirst);
 
     options.setMonitor(&HELPER(implementation));
     // check if we're being asked to read the options from file
     Value *val;
-    if (options.check("file",val,"configuration file to use, if any")) {
+    if (options.check("file", val, "configuration file to use, if any")) {
         ConstString fname = val->toString();
         options.unput("file");
         printf("Working with config file %s\n", fname.c_str());
-        options.fromConfigFile(fname,false);
+        options.fromConfigFile(fname, false);
 
         // interpret command line options as a set of flags again
         // (just in case we need to override something)
-        options.fromCommand(argc,argv,true,false);
+        options.fromCommand(argc, argv, true, false);
     }
 
     // probably folloing options will be removed, so don't advertise them
     options.setMonitor(YARP_NULLPTR);
     // check if we want to use nested options (less ambiguous)
-    if (options.check("nested",val)||options.check("lispy",val)) {
+    if (options.check("nested", val)||options.check("lispy", val)) {
         ConstString lispy = val->toString();
         options.fromString(lispy);
     }
     options.setMonitor(&HELPER(implementation));
 
-    name = options.check("name",Value(name),"name of module").asString();
+    name = options.check("name", Value(name), "name of module").asString();
 
     return open(options);
 }

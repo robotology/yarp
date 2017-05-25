@@ -71,7 +71,7 @@ extern "C" {
  * working with.
  *
  */
-#define YARP_DEFINE_SHARED_SUBCLASS(factoryname,classname,basename) \
+#define YARP_DEFINE_SHARED_SUBCLASS(factoryname, classname, basename) \
     YARP_SHARED_CLASS_FN void *factoryname ## _create () { \
         classname *cn = new classname; \
         basename *bn = dynamic_cast<basename *>(cn); \
@@ -81,12 +81,12 @@ extern "C" {
     YARP_SHARED_CLASS_FN void factoryname ## _destroy (void *obj) { delete dynamic_cast<classname *>(static_cast<basename *>(obj)); } \
     YARP_SHARED_CLASS_FN int factoryname ## _getVersion (char *ver, int len) { return 0; } \
     YARP_SHARED_CLASS_FN int factoryname ## _getAbi (char *abi, int len) { return 0; } \
-    YARP_SHARED_CLASS_FN int factoryname ## _getClassName (char *name, int len) { char cname[] = # classname; strncpy(name,cname,len); return strlen(cname)+1; } \
-    YARP_SHARED_CLASS_FN int factoryname ## _getBaseClassName (char *name, int len) { char cname[] = # basename; strncpy(name,cname,len); return strlen(cname)+1; } \
-    YARP_SHARED_CLASS_FN int factoryname(void *api,int len) { \
+    YARP_SHARED_CLASS_FN int factoryname ## _getClassName (char *name, int len) { char cname[] = # classname; strncpy(name, cname, len); return strlen(cname)+1; } \
+    YARP_SHARED_CLASS_FN int factoryname ## _getBaseClassName (char *name, int len) { char cname[] = # basename; strncpy(name, cname, len); return strlen(cname)+1; } \
+    YARP_SHARED_CLASS_FN int factoryname(void *api, int len) { \
         struct yarp::os::SharedLibraryClassApi *sapi = (struct yarp::os::SharedLibraryClassApi *) api; \
         if (len<(int)sizeof(yarp::os::SharedLibraryClassApi)) return -1; \
-        sapi->startCheck = VOCAB4('Y','A','R','P'); \
+        sapi->startCheck = VOCAB4('Y', 'A', 'R', 'P'); \
         sapi->structureSize = sizeof(yarp::os::SharedLibraryClassApi); \
         sapi->systemVersion = 5; \
         sapi->create = factoryname ## _create; \
@@ -96,7 +96,7 @@ extern "C" {
         sapi->getClassName = factoryname ## _getClassName; \
         sapi->getBaseClassName = factoryname ## _getBaseClassName; \
         for (int i=0; i<YARP_SHAREDLIBRARYCLASSAPI_PADDING; i++) { sapi->roomToGrow[i] = 0; } \
-        sapi->endCheck = VOCAB4('P','L','U','G'); \
+        sapi->endCheck = VOCAB4('P', 'L', 'U', 'G'); \
         return sapi->startCheck; \
     }
 // The double cast in the _create() and _destroy() functions are
@@ -111,7 +111,7 @@ extern "C" {
 // function.
 
 #define YARP_DEFAULT_FACTORY_NAME "yarp_default_factory"
-#define YARP_DEFINE_DEFAULT_SHARED_CLASS(classname) YARP_DEFINE_SHARED_SUBCLASS(yarp_default_factory,classname,classname)
-#define YARP_DEFINE_SHARED_CLASS(factoryname,classname) YARP_DEFINE_SHARED_SUBCLASS(factoryname,classname,classname)
+#define YARP_DEFINE_DEFAULT_SHARED_CLASS(classname) YARP_DEFINE_SHARED_SUBCLASS(yarp_default_factory, classname, classname)
+#define YARP_DEFINE_SHARED_CLASS(factoryname, classname) YARP_DEFINE_SHARED_SUBCLASS(factoryname, classname, classname)
 
 #endif // YARP_OS_SHAREDLIBRARYCLASS_H

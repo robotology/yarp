@@ -184,7 +184,7 @@ public:
      *
      */
     bool setDefaultConfigFile(const char *fname) {
-        return setDefault("from",fname);
+        return setDefault("from", fname);
     }
 
     /**
@@ -237,7 +237,7 @@ public:
      * Like findPath(key), but continues on to find all
      * instances of the path.
      *
-     * so findPaths("app") would return ["/foo/app","/bar/app",...]
+     * so findPaths("app") would return ["/foo/app", "/bar/app", ...]
      * depending on the search path in effect.
      * The first path is the list comes from the highest-priority
      * location, and would be the path returned by findPath("app")
@@ -469,7 +469,7 @@ private:
 
     static ConstString getDataHomeWithPossibleCreation(bool mayCreate);
     static ConstString getConfigHomeWithPossibleCreation(bool mayCreate);
-    static ConstString createIfAbsent(bool mayCreate,const ConstString& path);
+    static ConstString createIfAbsent(bool mayCreate, const ConstString& path);
 };
 
 

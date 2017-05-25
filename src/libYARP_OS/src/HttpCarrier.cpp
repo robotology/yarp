@@ -62,7 +62,7 @@ static bool asJson(yarp::os::ConstString &accum,
     }
     if (v.isList()) {
         yarp::os::Bottle *bot = v.asList();
-        return asJson(accum,bot);
+        return asJson(accum, bot);
     }
     return false;
 }
@@ -121,7 +121,7 @@ static bool asJson(yarp::os::ConstString& accum,
         bool need_comma = false;
         if (offset2) {
             accum += "\"type\": ";
-            asJson(accum,bot->get(0));
+            asJson(accum, bot->get(0));
             need_comma = true;
         }
         for (int i=offset; i<bot->size(); i++) {
@@ -130,9 +130,9 @@ static bool asJson(yarp::os::ConstString& accum,
             if (need_comma) {
                 accum += ", ";
             }
-            asJson(accum,boti->get(0));
+            asJson(accum, boti->get(0));
             accum += ": ";
-            asJson(accum,boti->get(1));
+            asJson(accum, boti->get(1));
             need_comma = true;
         }
         accum += "}";
@@ -146,7 +146,7 @@ static bool asJson(yarp::os::ConstString& accum,
         if (i>offset) {
             accum += ", ";
         }
-        asJson(accum,bot->get(i));
+        asJson(accum, bot->get(i));
     }
     accum += "]";
     return true;
@@ -173,21 +173,21 @@ yarp::os::impl::HttpTwoWayStream::HttpTwoWayStream(TwoWayStream *delegate, const
     ConstString sData = "";
     Property& p = prop;
     //p.fromQuery(txt);
-    format = p.check("format",Value("html")).asString().c_str();
-    outer = p.check("outer",Value("auto")).asString().c_str();
+    format = p.check("format", Value("html")).asString().c_str();
+    outer = p.check("outer", Value("auto")).asString().c_str();
     bool admin = p.check("admin");
     bool req = p.check("req");
     if (p.check("cmd")) {
-        s = p.check("cmd",Value("")).asString().c_str();
+        s = p.check("cmd", Value("")).asString().c_str();
     } else if (p.check("data")||req) {
         if (req) {
-            s = p.check("req",Value("")).asString();
+            s = p.check("req", Value("")).asString();
             if (!p.check("format")) {
                 format = "json";
-                p.put("format","json");
+                p.put("format", "json");
             }
         } else {
-            s = p.check("data",Value("")).asString();
+            s = p.check("data", Value("")).asString();
         }
         s += " ";
         ConstString sFixed = "";
@@ -203,7 +203,7 @@ yarp::os::impl::HttpTwoWayStream::HttpTwoWayStream(TwoWayStream *delegate, const
                     var += ch;
                 } else {
                     arg = false;
-                    sFixed+=p.check(var.c_str(),Value("")).toString().c_str();
+                    sFixed+=p.check(var.c_str(), Value("")).toString().c_str();
                     if (i!=s.length()-1) {
                         sFixed += ch; // omit padding
                     }
@@ -277,7 +277,7 @@ yarp::os::impl::HttpTwoWayStream::HttpTwoWayStream(TwoWayStream *delegate, const
             header += "\r\n";
         }
 
-        Bytes b1((char*)header.c_str(),header.length());
+        Bytes b1((char*)header.c_str(), header.length());
         delegate->getOutputStream().write(b1);
 
         if (chunked) {
@@ -287,7 +287,7 @@ yarp::os::impl::HttpTwoWayStream::HttpTwoWayStream(TwoWayStream *delegate, const
             }
         }
 
-        Bytes b2((char*)body.c_str(),body.length());
+        Bytes b2((char*)body.c_str(), body.length());
         delegate->getOutputStream().write(b2);
         delegate->getOutputStream().write('\r');
         delegate->getOutputStream().write('\n');
@@ -327,7 +327,7 @@ yarp::os::impl::HttpTwoWayStream::HttpTwoWayStream(TwoWayStream *delegate, const
                     s[i] = ' ';
                 }
                 if (s[i]=='?') {
-                    s = s.substr(0,i);
+                    s = s.substr(0, i);
                     break;
                 }
             }
@@ -460,7 +460,7 @@ void yarp::os::impl::HttpTwoWayStream::apply(char ch) {
             proc += "\n";
         }
         if (data||!filterData) {
-            Bytes tmp((char*)proc.c_str(),proc.length());
+            Bytes tmp((char*)proc.c_str(), proc.length());
             delegate->getOutputStream().write(tmp);
             delegate->getOutputStream().flush();
         }
@@ -544,14 +544,14 @@ bool yarp::os::impl::HttpCarrier::checkHeader(const Bytes& header, const char *p
 }
 
 bool yarp::os::impl::HttpCarrier::checkHeader(const Bytes& header) {
-    bool ok = checkHeader(header,"GET /");
+    bool ok = checkHeader(header, "GET /");
     if (!ok) {
         // http carrier accepts POST /form but not general posts
         // (leave that to xmlrpc carrier)
-        ok = checkHeader(header,"POST /fo");
+        ok = checkHeader(header, "POST /fo");
     } else {
         // make sure it isn't a MJPEG stream get
-        ok = !checkHeader(header,"GET /?ac");
+        ok = !checkHeader(header, "GET /?ac");
     }
     return ok;
 }
@@ -611,7 +611,7 @@ bool yarp::os::impl::HttpCarrier::sendHeader(ConnectionState& proto) {
         target += "\r\n";
     }
     target += "\r\n";
-    Bytes b((char*)target.c_str(),target.length());
+    Bytes b((char*)target.c_str(), target.length());
     proto.os().write(b);
     return true;
 
@@ -657,7 +657,7 @@ bool yarp::os::impl::HttpCarrier::expectSenderSpecifier(ConnectionState& proto) 
     if (expectPost) {
         //printf("[[[this is a post message of length %d]]]\n", contentLength);
         ManagedBytes blk(contentLength+1);
-        Bytes start(blk.get(),contentLength);
+        Bytes start(blk.get(), contentLength);
         proto.is().readFull(start);
         blk.get()[contentLength] = '\0';
         //printf("message: %s\n", blk.get());
@@ -667,8 +667,8 @@ bool yarp::os::impl::HttpCarrier::expectSenderSpecifier(ConnectionState& proto) 
         input = url;
     }
     prop.fromQuery(input.c_str());
-    prop.put("REQUEST_URI",url.c_str());
-    //printf("Property %s\n",prop.toString().c_str());
+    prop.put("REQUEST_URI", url.c_str());
+    //printf("Property %s\n", prop.toString().c_str());
 
     Contact home = NetworkBase::getNameServerContact();
     Contact me = proto.getStreams().getLocalAddress();
@@ -716,7 +716,7 @@ bool yarp::os::impl::HttpCarrier::expectSenderSpecifier(ConnectionState& proto) 
     prefix = from;
 
 
-    //Bytes b2((char*)from.c_str(),from.length());
+    //Bytes b2((char*)from.c_str(), from.length());
     //proto.os().write(b2);
     //proto.os().flush();
     // Message gets finished by the stream
@@ -729,11 +729,11 @@ bool yarp::os::impl::HttpCarrier::expectReplyToHeader(ConnectionState& proto) {
     YARP_SSIZE_T len = 1;
     while (len>0) {
         char buf[2];
-        Bytes b((char *)&buf[0],1);
+        Bytes b((char *)&buf[0], 1);
         len = proto.is().read(b);
         if (len>0) {
             buf[len] = '\0';
-            input += ConstString(buf,len);
+            input += ConstString(buf, len);
         }
     }
     stream = new HttpTwoWayStream(proto.giveStreams(),
@@ -780,7 +780,7 @@ bool yarp::os::impl::HttpCarrier::write(ConnectionState& proto, SizedWriter& wri
     DummyConnector con;
     con.setTextMode(true);
     for (size_t i=writer.headerLength(); i<writer.length(); i++) {
-        con.getWriter().appendBlock(writer.data(i),writer.length(i));
+        con.getWriter().appendBlock(writer.data(i), writer.length(i));
     }
     Bottle b;
     b.read(con.getReader());
@@ -791,10 +791,10 @@ bool yarp::os::impl::HttpCarrier::write(ConnectionState& proto, SizedWriter& wri
         header += NetType::toHexString(body.length()).c_str();
         header += "\r\n";
 
-        Bytes b2((char*)header.c_str(),header.length());
+        Bytes b2((char*)header.c_str(), header.length());
         proto.os().write(b2);
 
-        Bytes b3((char*)body.c_str(),body.length());
+        Bytes b3((char*)body.c_str(), body.length());
         proto.os().write(b3);
 
         proto.os().write('\r');
@@ -805,9 +805,9 @@ bool yarp::os::impl::HttpCarrier::write(ConnectionState& proto, SizedWriter& wri
         ConstString header;
         header += NetType::toHexString(txt.length()).c_str();
         header += "\r\n";
-        Bytes b2((char*)header.c_str(),header.length());
+        Bytes b2((char*)header.c_str(), header.length());
         proto.os().write(b2);
-        Bytes b3((char*)txt.c_str(),txt.length());
+        Bytes b3((char*)txt.c_str(), txt.length());
         proto.os().write(b3);
         proto.os().write('\r');
         proto.os().write('\n');
@@ -820,12 +820,12 @@ bool yarp::os::impl::HttpCarrier::reply(ConnectionState& proto, SizedWriter& wri
     DummyConnector con;
     con.setTextMode(true);
     for (size_t i=writer.headerLength(); i<writer.length(); i++) {
-        con.getWriter().appendBlock(writer.data(i),writer.length(i));
+        con.getWriter().appendBlock(writer.data(i), writer.length(i));
     }
     Bottle b;
     b.read(con.getReader());
 
-    ConstString mime = b.check("mime",Value("text/html")).asString();
+    ConstString mime = b.check("mime", Value("text/html")).asString();
 
     ConstString body;
 
@@ -833,7 +833,7 @@ bool yarp::os::impl::HttpCarrier::reply(ConnectionState& proto, SizedWriter& wri
     if (stream != YARP_NULLPTR) {
         if (stream->useJson()) {
             mime = "text/json";
-            asJson(body,&b,stream->typeHint());
+            asJson(body, &b, stream->typeHint());
             using_json = true;
         }
     }
@@ -852,7 +852,7 @@ bool yarp::os::impl::HttpCarrier::reply(ConnectionState& proto, SizedWriter& wri
         header += NetType::toHexString(body.length()+N);
         header += "\r\n";
 
-        Bytes b2((char*)header.c_str(),header.length());
+        Bytes b2((char*)header.c_str(), header.length());
         proto.os().write(b2);
 
         // chrome etc won't render until enough chars are received.
@@ -860,7 +860,7 @@ bool yarp::os::impl::HttpCarrier::reply(ConnectionState& proto, SizedWriter& wri
             proto.os().write(' ');
         }
 
-        Bytes b3((char*)body.c_str(),body.length());
+        Bytes b3((char*)body.c_str(), body.length());
         proto.os().write(b3);
 
         proto.os().write('\r');
@@ -880,17 +880,17 @@ bool yarp::os::impl::HttpCarrier::reply(ConnectionState& proto, SizedWriter& wri
     // Could check response codes, mime types here.
 
     if (body.length()!=0 || using_json) {
-        ConstString mime = b.check("mime",Value(using_json?"application/json":"text/html")).asString();
+        ConstString mime = b.check("mime", Value(using_json?"application/json":"text/html")).asString();
         ConstString header("HTTP/1.1 200 OK\nContent-Type: ");
         header += mime;
         header += "\n";
         header += "Access-Control-Allow-Origin: *\n";
         header += "\n";
-        Bytes b2((char*)header.c_str(),header.length());
+        Bytes b2((char*)header.c_str(), header.length());
         proto.os().write(b2);
 
         //body = b.toString();
-        Bytes b3((char*)body.c_str(),body.length());
+        Bytes b3((char*)body.c_str(), body.length());
         proto.os().write(b3);
     } else {
         writer.write(proto.os());

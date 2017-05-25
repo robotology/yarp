@@ -47,14 +47,14 @@ private:
         }
     };
 
-    PLATFORM_MAP(ConstString,Entry) action;
+    PLATFORM_MAP(ConstString, Entry) action;
     PlatformVector<ConstString> names;
 
 public:
     void add(const char *name, RET (T::*fn)(int argc, char *argv[]))
     {
-        Entry e(name,fn);
-        PLATFORM_MAP_SET(action,ConstString(name),e);
+        Entry e(name, fn);
+        PLATFORM_MAP_SET(action, ConstString(name), e);
         // maintain a record of order of keys
         names.push_back(ConstString(name));
     }
@@ -63,11 +63,11 @@ public:
     {
         ConstString sname(name);
         Entry e;
-        int result = PLATFORM_MAP_FIND_RAW(action,sname,e);
+        int result = PLATFORM_MAP_FIND_RAW(action, sname, e);
         if (result!=-1) {
-            return (owner->*(e.fn))(argc,argv);
+            return (owner->*(e.fn))(argc, argv);
         } else {
-            YARP_SPRINTF1(Logger::get(),error,"Could not find command \"%s\"",name);
+            YARP_SPRINTF1(Logger::get(), error, "Could not find command \"%s\"", name);
         }
         return RET();
     }

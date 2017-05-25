@@ -77,7 +77,7 @@ public:
     static int exists(const char *target, bool silent = false) {
         ContactStyle style;
         style.quiet = silent;
-        return exists(target,style);
+        return exists(target, style);
     }
 
     static int exists(const char *target, const ContactStyle& style);
@@ -120,7 +120,7 @@ public:
     static int sendMessage(const ConstString& port, yarp::os::PortWriter& writable,
                            bool silent = false) {
         ConstString output;
-        return sendMessage(port,writable,output,silent);
+        return sendMessage(port, writable, output, silent);
     }
 
     static int sendMessage(const ConstString& port, yarp::os::PortWriter& writable,
@@ -228,7 +228,7 @@ private:
         }
     };
 
-    PLATFORM_MAP(ConstString,Entry) action;
+    PLATFORM_MAP(ConstString, Entry) action;
     PlatformVector<ConstString> names;
     PlatformVector<ConstString> tips;
     bool adminMode;
@@ -237,8 +237,8 @@ private:
 
     void add(const char *name, int (Companion::*fn)(int argc, char *argv[]),
              const char *tip = YARP_NULLPTR) {
-        Entry e(name,fn);
-        PLATFORM_MAP_SET(action,ConstString(name),e);
+        Entry e(name, fn);
+        PLATFORM_MAP_SET(action, ConstString(name), e);
         // maintain a record of order of keys
         names.push_back(ConstString(name));
         if (tip!=YARP_NULLPTR) {

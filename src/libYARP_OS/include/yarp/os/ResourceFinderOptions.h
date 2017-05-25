@@ -80,7 +80,7 @@ public:
     }
 
     static ResourceFinderOptions findAllMatch() {
-        return ResourceFinderOptions(ModuleDefault,All);
+        return ResourceFinderOptions(ModuleDefault, All);
     }
 };
 

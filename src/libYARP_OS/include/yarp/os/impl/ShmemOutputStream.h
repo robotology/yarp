@@ -56,7 +56,7 @@ public:
     }
 
     bool isOk() { return m_bOpen; }
-    bool open(int port,int size=SHMEM_DEFAULT_SIZE);
+    bool open(int port, int size=SHMEM_DEFAULT_SIZE);
     bool write(const Bytes& b);
     void close();
 
@@ -69,9 +69,9 @@ protected:
     int m_Port;
 
 #if defined(_ACE_USE_SV_SEM)
-    ACE_Mutex *m_pAccessMutex,*m_pWaitDataMutex;
+    ACE_Mutex *m_pAccessMutex, *m_pWaitDataMutex;
 #else
-    ACE_Process_Mutex *m_pAccessMutex,*m_pWaitDataMutex;
+    ACE_Process_Mutex *m_pAccessMutex, *m_pWaitDataMutex;
 #endif
 
     ACE_Shared_Memory *m_pMap;

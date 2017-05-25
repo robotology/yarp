@@ -30,12 +30,12 @@ namespace yarp {
  *
  * For "GET /", the URL following the "/" is
  * currently translated to text as follows:
- *   "," becomes newline
+ *   ", " becomes newline
  *   "+" becomes " "
  * This text is then passed on to the port, just as for a normal
  * text connection.
  * For example
- *   "GET /d,list"
+ *   "GET /d, list"
  * is the same as telnetting into a port and typing:
  *   CONNECT anon
  *   d
@@ -120,7 +120,7 @@ public:
     virtual bool sendHeader(ConnectionState& proto);
     virtual bool expectSenderSpecifier(ConnectionState& proto);
     virtual bool expectReplyToHeader(ConnectionState& proto);
-    virtual bool sendIndex(ConnectionState& proto,SizedWriter& writer);
+    virtual bool sendIndex(ConnectionState& proto, SizedWriter& writer);
     virtual bool expectIndex(ConnectionState& proto);
     virtual bool sendAck(ConnectionState& proto);
     virtual bool expectAck(ConnectionState& proto);

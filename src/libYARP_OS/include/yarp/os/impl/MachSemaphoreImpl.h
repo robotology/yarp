@@ -24,7 +24,7 @@ public:
 
     virtual ~SemaphoreImpl()
     {
-        semaphore_destroy(mach_task_self(),sema);
+        semaphore_destroy(mach_task_self(), sema);
     }
 
     // blocking wait
@@ -39,14 +39,14 @@ public:
         mach_timespec_t	ts = { 0, 0 };
         ts.tv_sec = ts.tv_sec + (int)timeout;
         ts.tv_nsec = (long)((timeout-(int)timeout)*1000000000L+0.5);
-        return semaphore_timedwait(sema,ts) == KERN_SUCCESS;
+        return semaphore_timedwait(sema, ts) == KERN_SUCCESS;
     }
 
     // polling wait
     bool check()
     {
         mach_timespec_t timeout = { 0, 0 };
-        return semaphore_timedwait(sema,timeout) == KERN_SUCCESS;
+        return semaphore_timedwait(sema, timeout) == KERN_SUCCESS;
     }
 
     // increment

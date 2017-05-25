@@ -408,14 +408,14 @@ public:
         }
         bool missed = false;
         T *prev = last;
-        last = (T *)implementation.readBase(missed,false);
+        last = (T *)implementation.readBase(missed, false);
         if (last != YARP_NULLPTR) {
             if (autoDiscard) {
                 // go up to date
                 while (check()) {
                     //printf("Dropping something\n");
                     bool tmp;
-                    last = (T *)implementation.readBase(tmp,true);
+                    last = (T *)implementation.readBase(tmp, true);
                 }
             }
         }
@@ -458,7 +458,7 @@ public:
             delete reader;
             reader = YARP_NULLPTR;
         }
-        reader = new TypedReaderThread<T>(*this,callback);
+        reader = new TypedReaderThread<T>(*this, callback);
     }
 
     void disableCallback() {
@@ -516,12 +516,12 @@ public:
 
     virtual bool acceptObject(T *obj,
                               PortWriter *wrapper) {
-        return implementation.acceptObjectBase(obj,wrapper);
+        return implementation.acceptObjectBase(obj, wrapper);
     }
 
     virtual bool forgetObject(T *obj,
                               yarp::os::PortWriter *wrapper) {
-        return implementation.forgetObjectBase(obj,wrapper);
+        return implementation.forgetObjectBase(obj, wrapper);
     }
 
 

@@ -349,7 +349,7 @@ public:
     bool fromConfigFile(const ConstString& fname, bool wipe=true);
 
     /**
-     * \brief Variant of fromConfigFile(fname,wipe) that includes extra
+     * \brief Variant of fromConfigFile(fname, wipe) that includes extra
      * "environment variables".
      *
      * These will be expanded, along with any other variables in the

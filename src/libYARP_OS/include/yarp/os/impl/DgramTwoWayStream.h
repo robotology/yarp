@@ -51,7 +51,7 @@ public:
 
     virtual bool openMonitor(int readSize=0, int writeSize=0)
     {
-        allocate(readSize,writeSize);
+        allocate(readSize, writeSize);
         return true;
     }
 
@@ -74,7 +74,7 @@ public:
 
     virtual bool join(const Contact& group, bool sender)
     {
-        return join(group,sender,Contact());
+        return join(group, sender, Contact());
     }
 
     virtual ~DgramTwoWayStream();
@@ -132,7 +132,7 @@ public:
 
     void setMonitor(const yarp::os::Bytes& data)
     {
-        monitor = yarp::os::ManagedBytes(data,false);
+        monitor = yarp::os::ManagedBytes(data, false);
         monitor.copy();
     }
 

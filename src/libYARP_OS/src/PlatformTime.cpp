@@ -35,7 +35,7 @@ void yarp::os::impl::sleepThread(YARP_timeval& sleep_period) {
     if (Time::isSystemClock()) {
 #ifdef YARP_HAS_ACE
         if (sleep_period.usec() < 0 || sleep_period.sec() < 0)
-            sleep_period.set(0,0);
+            sleep_period.set(0, 0);
         ACE_OS::sleep(sleep_period);
 #else
         if (sleep_period.tv_usec < 0 || sleep_period.tv_sec < 0) {
@@ -91,7 +91,7 @@ double yarp::os::impl::toDouble(const YARP_timeval &v) {
 }
 
 
-void yarp::os::impl::fromDouble(YARP_timeval &v, double x,int unit) {
+void yarp::os::impl::fromDouble(YARP_timeval &v, double x, int unit) {
 #ifdef YARP_HAS_ACE
         v.msec(static_cast<int>(x*1000/unit+0.5));
 #else

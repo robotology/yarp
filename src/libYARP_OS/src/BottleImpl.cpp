@@ -43,7 +43,7 @@ using yarp::os::Value;
 #define YARP_STRINIT(len) ((size_t)(len)), 0
 
 //#define YMSG(x) printf x;
-//#define YTRACE(x) YMSG(("at %s\n",x))
+//#define YTRACE(x) YMSG(("at %s\n", x))
 
 #define YMSG(x)
 #define YTRACE(x)
@@ -525,13 +525,13 @@ bool BottleImpl::write(ConnectionWriter& writer)
         /*
           if (!nested) {
           // No byte count any more, to facilitate nesting
-          //YMSG(("bottle byte count %d\n",byteCount()));
+          //YMSG(("bottle byte count %d\n", byteCount()));
           //writer.appendInt(byteCount()+sizeof(NetInt32));
 
           writer.appendInt(StoreList::code + speciality);
           }
         */
-        // writer.appendBlockCopy(Bytes((char*)getBytes(),byteCount()));
+        // writer.appendBlockCopy(Bytes((char*)getBytes(), byteCount()));
         writer.appendBlock(getBytes(), byteCount());
     }
     return !writer.isError();
@@ -854,7 +854,7 @@ bool StoreDouble::readRaw(ConnectionReader& reader)
 
 bool StoreDouble::writeRaw(ConnectionWriter& writer)
 {
-    // writer.appendBlockCopy(Bytes((char*)&x,sizeof(x)));
+    // writer.appendBlockCopy(Bytes((char*)&x, sizeof(x)));
     NetFloat64 flt = x;
     writer.appendBlock(reinterpret_cast<char*>(&flt), sizeof(flt));
     return true;

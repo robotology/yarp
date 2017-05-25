@@ -280,7 +280,7 @@ public:
     {
         // yarp::os::ConstString y =
         x = alt.asString();
-        // ConstString tmp(y.c_str(),y.length());
+        // ConstString tmp(y.c_str(), y.length());
         // x = tmp;
     }
 };

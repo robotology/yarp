@@ -41,7 +41,7 @@ public:
                       int index,
                       InputProtocol *ip,
                       bool reversed) :
-            PortCoreUnit(owner,index),
+            PortCoreUnit(owner, index),
             ip(ip),
             phase(1),
             access(1),
@@ -114,14 +114,14 @@ public:
 
     void setCarrierParams(const yarp::os::Property& params)
     {
-        if(ip) {
+        if (ip) {
             ip->getReceiver().setCarrierParams(params);
         }
     }
 
     void getCarrierParams(yarp::os::Property& params)
     {
-        if(ip) {
+        if (ip) {
             ip->getReceiver().getCarrierParams(params);
         }
     }

@@ -65,7 +65,7 @@ public:
         save = (op==YDR_ENCODE);
         if (!save) {
             printf("reading binary\n");
-            b.fromBinary((const char *)buf,buflen);
+            b.fromBinary((const char *)buf, buflen);
             printf("read binary\n");
         } else {
             b.clear();
@@ -172,13 +172,13 @@ public:
 
     bool process_bytes(char **data, size_t *count, size_t max_count) {
         if (save) {
-            return add(Value(*data,*count));
+            return add(Value(*data, *count));
         } else {
             if (get().isBlob()) {
                 unsigned int len = (unsigned int)last.asBlobLength();
                 if (len<=max_count) {
                     const char *src = last.asBlob();
-                    memcpy(*data,src,len);
+                    memcpy(*data, src, len);
                     *count = len;
                     return true;
                 } else {
@@ -200,7 +200,7 @@ public:
             int size = 0;
             const char *data = b.toBinary(&size);
             if ((unsigned int)size<obuflen) {
-                memcpy(obuf,data,obuflen);
+                memcpy(obuf, data, obuflen);
             }
         }
         return true;
@@ -244,7 +244,7 @@ int ydr_int(YDR *xdrs, int *p) {
 }
 
 int ydr_bytes(YDR *xdrs, char **data, size_t *count, size_t max_count) {
-    return control(xdrs).process_bytes(data,count,max_count)?1:0;
+    return control(xdrs).process_bytes(data, count, max_count)?1:0;
 }
 
 int ydr_array(YDR *ydrs, void *addr, unsigned int *size,
@@ -279,7 +279,7 @@ void ydr_destroy(YDR *xdrs) {
 int ydrmem_create(YDR *xdrs, void* buf, size_t buflen, int op) {
     xdrs->controller = new YDRHelper;
     if (xdrs->controller == YARP_NULLPTR) return 0;
-    control(xdrs).create(buf,buflen,op);
+    control(xdrs).create(buf, buflen, op);
     return 1;
 }
 

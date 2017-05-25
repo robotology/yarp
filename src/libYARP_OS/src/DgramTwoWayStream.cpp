@@ -45,9 +45,9 @@ using namespace yarp::os;
 static bool checkCrc(char *buf, YARP_SSIZE_T length, YARP_SSIZE_T crcLength, int pct,
                      int *store_altPct = YARP_NULLPTR) {
     NetInt32 alt =
-        (NetInt32)NetType::getCrc(buf+crcLength,(length>crcLength)?(length-crcLength):0);
-    Bytes b(buf,4);
-    Bytes b2(buf+4,4);
+        (NetInt32)NetType::getCrc(buf+crcLength, (length>crcLength)?(length-crcLength):0);
+    Bytes b(buf, 4);
+    Bytes b2(buf+4, 4);
     NetInt32 curr = NetType::netInt(b);
     int altPct = NetType::netInt(b2);
     bool ok = (alt == curr && pct==altPct);
@@ -71,10 +71,10 @@ static void addCrc(char *buf, YARP_SSIZE_T length, YARP_SSIZE_T crcLength, int p
     NetInt32 alt =
         (NetInt32)NetType::getCrc(buf+crcLength,
                                            (length>crcLength)?(length-crcLength):0);
-    Bytes b(buf,4);
-    Bytes b2(buf+4,4);
-    NetType::netInt((NetInt32)alt,b);
-    NetType::netInt((NetInt32)pct,b2);
+    Bytes b(buf, 4);
+    Bytes b2(buf+4, 4);
+    NetType::netInt((NetInt32)alt, b);
+    NetType::netInt((NetInt32)pct, b2);
 }
 
 
@@ -84,9 +84,9 @@ bool DgramTwoWayStream::open(const Contact& remote) {
     Contact local(anywhere.get_host_addr(),
                   anywhere.get_port_number());
 #else
-    Contact local("localhost",-1);
+    Contact local("localhost", -1);
 #endif
-    return open(local,remote);
+    return open(local, remote);
 }
 
 bool DgramTwoWayStream::open(const Contact& local, const Contact& remote) {
@@ -94,9 +94,9 @@ bool DgramTwoWayStream::open(const Contact& local, const Contact& remote) {
     remoteAddress = remote;
 
 #if defined(YARP_HAS_ACE)
-    localHandle = ACE_INET_Addr((u_short)(localAddress.getPort()),(ACE_UINT32)INADDR_ANY);
+    localHandle = ACE_INET_Addr((u_short)(localAddress.getPort()), (ACE_UINT32)INADDR_ANY);
     if (remote.isValid()) {
-        remoteHandle.set(remoteAddress.getPort(),remoteAddress.getHost().c_str());
+        remoteHandle.set(remoteAddress.getPort(), remoteAddress.getHost().c_str());
     }
     dgram = new ACE_SOCK_Dgram;
     yAssert(dgram != YARP_NULLPTR);
@@ -148,7 +148,7 @@ bool DgramTwoWayStream::open(const Contact& local, const Contact& remote) {
 #endif
 
     if (result!=0) {
-        YARP_ERROR(Logger::get(),"could not open datagram socket");
+        YARP_ERROR(Logger::get(), "could not open datagram socket");
         return false;
     }
 
@@ -156,14 +156,14 @@ bool DgramTwoWayStream::open(const Contact& local, const Contact& remote) {
 
 #if defined(YARP_HAS_ACE)
     dgram->get_local_addr(localHandle);
-    YARP_DEBUG(Logger::get(),ConstString("starting DGRAM entity on port number ") + NetType::toString(localHandle.get_port_number()));
+    YARP_DEBUG(Logger::get(), ConstString("starting DGRAM entity on port number ") + NetType::toString(localHandle.get_port_number()));
     localAddress = Contact("127.0.0.1",
                            localHandle.get_port_number());
 #else
-    localAddress = Contact("127.0.0.1",local_port);
+    localAddress = Contact("127.0.0.1", local_port);
 #endif
 
-    YARP_DEBUG(Logger::get(),ConstString("Update: DGRAM from ") +
+    YARP_DEBUG(Logger::get(), ConstString("Update: DGRAM from ") +
                localAddress.toURI() +
                " to " + remoteAddress.toURI());
 
@@ -280,17 +280,17 @@ void DgramTwoWayStream::allocate(int readSize, int writeSize) {
         if (sz!=0) {
             _read_size = _write_size = sz;
         }
-        YARP_INFO(Logger::get(),ConstString("Datagram packet size set to ") +
+        YARP_INFO(Logger::get(), ConstString("Datagram packet size set to ") +
                   NetType::toString(_read_size));
     }
     if (readSize!=0) {
         _read_size = readSize;
-        YARP_INFO(Logger::get(),ConstString("Datagram read size reset to ") +
+        YARP_INFO(Logger::get(), ConstString("Datagram read size reset to ") +
                   NetType::toString(_read_size));
     }
     if (writeSize!=0) {
         _write_size = writeSize;
-        YARP_INFO(Logger::get(),ConstString("Datagram write size reset to ") +
+        YARP_INFO(Logger::get(), ConstString("Datagram write size reset to ") +
                   NetType::toString(_write_size));
     }
     readBuffer.allocate(_read_size);
@@ -446,14 +446,14 @@ int DgramTwoWayStream::restrictMcast(ACE_SOCK_Dgram_Mcast * dmcast,
         htonl (group_addr.get_ip_address ());
 
     if (add) {
-        YARP_DEBUG(Logger::get(),"Trying to correct mcast membership...\n");
+        YARP_DEBUG(Logger::get(), "Trying to correct mcast membership...\n");
         result =
             ((ACE_SOCK*)dmcast)->set_option (IPPROTO_IP,
                                              IP_ADD_MEMBERSHIP,
                                              &multicast_address,
                                              sizeof (struct ip_mreq));
     } else {
-        YARP_DEBUG(Logger::get(),"Trying to correct mcast output...");
+        YARP_DEBUG(Logger::get(), "Trying to correct mcast output...");
         result =
             ((ACE_SOCK*)dmcast)->set_option (IPPROTO_IP,
                                              IP_MULTICAST_IF,
@@ -498,26 +498,26 @@ bool DgramTwoWayStream::openMcast(const Contact& group,
     yAssert(dgram != YARP_NULLPTR);
 
     int result = -1;
-    ACE_INET_Addr addr(group.getPort(),group.getHost().c_str());
+    ACE_INET_Addr addr(group.getPort(), group.getHost().c_str());
     if (ipLocal.isValid()) {
         result = dmcast->open(addr, YARP_NULLPTR, 1);
         if (result==0) {
-            result = restrictMcast(dmcast,group,ipLocal,false);
+            result = restrictMcast(dmcast, group, ipLocal, false);
         }
     } else {
         result = dmcast->open(addr, YARP_NULLPTR, 1);
     }
 
     if (result!=0) {
-        YARP_ERROR(Logger::get(),"could not open multicast datagram socket");
+        YARP_ERROR(Logger::get(), "could not open multicast datagram socket");
         return false;
     }
 
     configureSystemBuffers();
 
     remoteAddress = group;
-    localHandle.set(localAddress.getPort(),localAddress.getHost().c_str());
-    remoteHandle.set(remoteAddress.getPort(),remoteAddress.getHost().c_str());
+    localHandle.set(localAddress.getPort(), localAddress.getHost().c_str());
+    remoteHandle.set(remoteAddress.getPort(), remoteAddress.getHost().c_str());
 
     allocate();
 
@@ -531,7 +531,7 @@ bool DgramTwoWayStream::openMcast(const Contact& group,
 bool DgramTwoWayStream::join(const Contact& group, bool sender,
                              const Contact& ipLocal) {
 #if defined(YARP_HAS_ACE)
-    YARP_DEBUG(Logger::get(),ConstString("subscribing to mcast address ") +
+    YARP_DEBUG(Logger::get(), ConstString("subscribing to mcast address ") +
                group.toURI() + " for " +
                (sender?"writing":"reading"));
 
@@ -539,7 +539,7 @@ bool DgramTwoWayStream::join(const Contact& group, bool sender,
 
     if (sender) {
         if (ipLocal.isValid()) {
-            return openMcast(group,ipLocal);
+            return openMcast(group, ipLocal);
         } else {
             // just use udp as normal
             return open(group);
@@ -559,31 +559,31 @@ bool DgramTwoWayStream::join(const Contact& group, bool sender,
     mgram = dmcast;
     yAssert(dgram != YARP_NULLPTR);
 
-    ACE_INET_Addr addr(group.getPort(),group.getHost().c_str());
+    ACE_INET_Addr addr(group.getPort(), group.getHost().c_str());
 
     int result = -1;
     if (ipLocal.isValid()) {
         result = 0;
-        result = dmcast->join(addr,1);
+        result = dmcast->join(addr, 1);
 
         if (result==0) {
-            result = restrictMcast(dmcast,group,ipLocal,true);
+            result = restrictMcast(dmcast, group, ipLocal, true);
         }
     } else {
-        result = dmcast->join(addr,1);
+        result = dmcast->join(addr, 1);
     }
 
     configureSystemBuffers();
 
     if (result!=0) {
-        YARP_ERROR(Logger::get(),"cannot connect to multi-cast address");
+        YARP_ERROR(Logger::get(), "cannot connect to multi-cast address");
         happy = false;
         return false;
     }
     localAddress = group;
     remoteAddress = group;
-    localHandle.set(localAddress.getPort(),localAddress.getHost().c_str());
-    remoteHandle.set(remoteAddress.getPort(),remoteAddress.getHost().c_str());
+    localHandle.set(localAddress.getPort(), localAddress.getHost().c_str());
+    remoteHandle.set(remoteAddress.getPort(), remoteAddress.getHost().c_str());
 
     allocate();
     return true;
@@ -617,11 +617,11 @@ void DgramTwoWayStream::interrupt() {
                                ConstString("* mcast interrupt, interface ") +
                                restrictInterfaceIp.toString().c_str()
                                );
-                    tmp.join(localAddress,true,
+                    tmp.join(localAddress, true,
                              restrictInterfaceIp);
                 } else {
-                    YARP_DEBUG(Logger::get(),"* dgram interrupt");
-                    tmp.open(Contact(localAddress.getHost(),0),
+                    YARP_DEBUG(Logger::get(), "* dgram interrupt");
+                    tmp.open(Contact(localAddress.getHost(), 0),
                              localAddress);
                 }
                 YARP_DEBUG(Logger::get(),
@@ -644,7 +644,7 @@ void DgramTwoWayStream::interrupt() {
                     yarp::os::Time::delay(0.25);
                 }
             }
-            YARP_DEBUG(Logger::get(),"dgram interrupt done");
+            YARP_DEBUG(Logger::get(), "dgram interrupt done");
         }
         mutex.wait();
         interrupting = false;
@@ -712,22 +712,22 @@ YARP_SSIZE_T DgramTwoWayStream::read(const Bytes& b) {
 
 
             //yAssert(dgram != YARP_NULLPTR);
-            //YARP_DEBUG(Logger::get(),"DGRAM Waiting for something!");
+            //YARP_DEBUG(Logger::get(), "DGRAM Waiting for something!");
             YARP_SSIZE_T result = -1;
 #if defined(YARP_HAS_ACE)
             if (mgram && restrictInterfaceIp.isValid()) {
                 /*
                 printf("Consider remote mcast\n");
                 printf("What we know:\n");
-                printf("  %s\n",restrictInterfaceIp.toString().c_str());
-                printf("  %s\n",localAddress.toString().c_str());
-                printf("  %s\n",remoteAddress.toString().c_str());
+                printf("  %s\n", restrictInterfaceIp.toString().c_str());
+                printf("  %s\n", localAddress.toString().c_str());
+                printf("  %s\n", remoteAddress.toString().c_str());
                 */
                 ACE_INET_Addr iface(restrictInterfaceIp.getPort(),
                                     restrictInterfaceIp.getHost().c_str());
                 ACE_INET_Addr dummy((u_short)0, (ACE_UINT32)INADDR_ANY);
                 result =
-                    dgram->recv(readBuffer.get(),readBuffer.length(),dummy);
+                    dgram->recv(readBuffer.get(), readBuffer.length(), dummy);
                 YARP_DEBUG(Logger::get(),
                            ConstString("MCAST Got ") + NetType::toString((int)result) +
                            " bytes");
@@ -738,11 +738,11 @@ YARP_SSIZE_T DgramTwoWayStream::read(const Bytes& b) {
                 yAssert(dgram != YARP_NULLPTR);
 #if defined(YARP_HAS_ACE)
                 ACE_INET_Addr dummy((u_short)0, (ACE_UINT32)INADDR_ANY);
-                //YARP_DEBUG(Logger::get(),"DGRAM Waiting for something!");
+                //YARP_DEBUG(Logger::get(), "DGRAM Waiting for something!");
                 result =
-                    dgram->recv(readBuffer.get(),readBuffer.length(),dummy);
+                    dgram->recv(readBuffer.get(), readBuffer.length(), dummy);
 #else
-                result = recv(dgram_sockfd,readBuffer.get(),readBuffer.length(),0);
+                result = recv(dgram_sockfd, readBuffer.get(), readBuffer.length(), 0);
 #endif
                 YARP_DEBUG(Logger::get(),
                            ConstString("DGRAM Got ") + NetType::toString((int)result) +
@@ -754,7 +754,7 @@ YARP_SSIZE_T DgramTwoWayStream::read(const Bytes& b) {
                     printf("Too big!\n");
                     std::exit(1);
                 }
-                memcpy(readBuffer.get(),monitor.get(),monitor.length());
+                memcpy(readBuffer.get(), monitor.get(), monitor.length());
                 result = monitor.length();
             }
 
@@ -775,7 +775,7 @@ YARP_SSIZE_T DgramTwoWayStream::read(const Bytes& b) {
 
             // deal with CRC
             int altPct = 0;
-            bool crcOk = checkCrc(readBuffer.get(),readAvail,CRC_SIZE,pct,
+            bool crcOk = checkCrc(readBuffer.get(), readAvail, CRC_SIZE, pct,
                                   &altPct);
             if (altPct!=-1) {
                 pct++;
@@ -825,7 +825,7 @@ YARP_SSIZE_T DgramTwoWayStream::read(const Bytes& b) {
             if (take>b.length()) {
                 take = b.length();
             }
-            memcpy(b.get(),readBuffer.get()+readAt,take);
+            memcpy(b.get(), readBuffer.get()+readAt, take);
             readAt += take;
             readAvail -= take;
             return take;
@@ -836,8 +836,8 @@ YARP_SSIZE_T DgramTwoWayStream::read(const Bytes& b) {
 }
 
 void DgramTwoWayStream::write(const Bytes& b) {
-    //YARP_DEBUG(Logger::get(),"DGRAM prep writing");
-    //printf("DGRAM write %d bytes\n",b.length());
+    //YARP_DEBUG(Logger::get(), "DGRAM prep writing");
+    //printf("DGRAM write %d bytes\n", b.length());
 
     if (reader) {
         return;
@@ -848,7 +848,7 @@ void DgramTwoWayStream::write(const Bytes& b) {
 
     Bytes local = b;
     while (local.length()>0) {
-        //YARP_DEBUG(Logger::get(),"DGRAM prep writing");
+        //YARP_DEBUG(Logger::get(), "DGRAM prep writing");
         YARP_SSIZE_T rem = local.length();
         YARP_SSIZE_T space = writeBuffer.length()-writeAvail;
         bool shouldFlush = false;
@@ -858,7 +858,7 @@ void DgramTwoWayStream::write(const Bytes& b) {
         }
         memcpy(writeBuffer.get()+writeAvail, local.get(), rem);
         writeAvail+=rem;
-        local = Bytes(local.get()+rem,local.length()-rem);
+        local = Bytes(local.get()+rem, local.length()-rem);
         if (shouldFlush) {
             flush();
         }
@@ -875,7 +875,7 @@ void DgramTwoWayStream::flush() {
     if (writeAvail<=CRC_SIZE) {
         return;
     }
-    addCrc(writeBuffer.get(),writeAvail,CRC_SIZE,pct);
+    addCrc(writeBuffer.get(), writeAvail, CRC_SIZE, pct);
     pct++;
 
     while (writeAvail>0) {
@@ -885,7 +885,7 @@ void DgramTwoWayStream::flush() {
 
 #if defined(YARP_HAS_ACE)
         if (mgram != YARP_NULLPTR) {
-            len = mgram->send(writeBuffer.get()+writeAt,writeAvail-writeAt);
+            len = mgram->send(writeBuffer.get()+writeAt, writeAvail-writeAt);
             YARP_DEBUG(Logger::get(),
                        ConstString("MCAST - wrote ") +
                        NetType::toString((int)len) + " bytes"
@@ -894,11 +894,11 @@ void DgramTwoWayStream::flush() {
 #endif
             if (dgram != YARP_NULLPTR) {
 #if defined(YARP_HAS_ACE)
-            len = dgram->send(writeBuffer.get()+writeAt,writeAvail-writeAt,
+            len = dgram->send(writeBuffer.get()+writeAt, writeAvail-writeAt,
                               remoteHandle);
 #else
-            len = send(dgram_sockfd,writeBuffer.get()+writeAt,
-                       writeAvail-writeAt,0);
+            len = send(dgram_sockfd, writeBuffer.get()+writeAt,
+                       writeAvail-writeAt, 0);
 #endif
             YARP_DEBUG(Logger::get(),
                        ConstString("DGRAM - wrote ") +
@@ -906,8 +906,8 @@ void DgramTwoWayStream::flush() {
                        remoteAddress.toString()
                        );
         } else {
-            Bytes b(writeBuffer.get()+writeAt,writeAvail-writeAt);
-            monitor = ManagedBytes(b,false);
+            Bytes b(writeBuffer.get()+writeAt, writeAvail-writeAt);
+            monitor = ManagedBytes(b, false);
             monitor.copy();
             //printf("Monitored output of %d bytes\n", monitor.length());
             len = monitor.length();
@@ -971,12 +971,12 @@ void DgramTwoWayStream::reset() {
 
 
 void DgramTwoWayStream::beginPacket() {
-    //YARP_ERROR(Logger::get(),ConstString("Packet begins: ")+(reader?"reader":"writer"));
+    //YARP_ERROR(Logger::get(), ConstString("Packet begins: ")+(reader?"reader":"writer"));
     pct = 0;
 }
 
 void DgramTwoWayStream::endPacket() {
-    //YARP_ERROR(Logger::get(),ConstString("Packet ends: ")+(reader?"reader":"writer"));
+    //YARP_ERROR(Logger::get(), ConstString("Packet ends: ")+(reader?"reader":"writer"));
     if (!reader) {
         pct = 0;
     }
@@ -993,7 +993,7 @@ void DgramTwoWayStream::removeMonitor() {
 
 
 bool DgramTwoWayStream::setTypeOfService(int tos) {
-    if(!dgram)
+    if (!dgram)
         return false;
 #if defined(YARP_HAS_ACE)
     return (dgram->set_option(IPPROTO_IP, IP_TOS,
@@ -1007,7 +1007,7 @@ bool DgramTwoWayStream::setTypeOfService(int tos) {
 
 int DgramTwoWayStream::getTypeOfService() {
     int tos = -1;
-    if(!dgram)
+    if (!dgram)
         return tos;
 #if defined(YARP_HAS_ACE)
     int optlen;

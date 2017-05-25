@@ -65,7 +65,7 @@ public:
      * @return true iff the object pair was successfully read
      */
     virtual bool read(ConnectionReader& connection) {
-        return readPair(connection,head,body);
+        return readPair(connection, head, body);
     }
 
     /**
@@ -74,7 +74,7 @@ public:
      * @return true iff the object pair was successfully written
      */
     virtual bool write(ConnectionWriter& connection) {
-        return writePair(connection,head,body);
+        return writePair(connection, head, body);
     }
 
     /**

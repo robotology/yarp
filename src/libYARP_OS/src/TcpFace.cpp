@@ -24,12 +24,12 @@ TcpFace::~TcpFace() {
 
 
 bool TcpFace::open(const Contact& address) {
-    YARP_DEBUG(Logger::get(),ConstString("opening for address ") + address.toURI());
+    YARP_DEBUG(Logger::get(), ConstString("opening for address ") + address.toURI());
 
     this->address = address;
 #ifdef YARP_HAS_ACE
     ACE_INET_Addr serverAddr((address.getPort()>0)?address.getPort():0);
-    int result = peerAcceptor.open(serverAddr,1);
+    int result = peerAcceptor.open(serverAddr, 1);
     if (address.getPort()<=0) {
         ACE_INET_Addr localAddr;
         peerAcceptor.get_local_addr(localAddr);
@@ -67,12 +67,12 @@ void TcpFace::closeFace() {
 }
 
 static void showError(Logger& log) {
-    YARP_ERROR(log,"Authentication failed.");
-    YARP_ERROR(log,"Authentication was enabled in the auth.conf file.");
-    YARP_ERROR(log,"If you do not want to use authentication, please");
-    YARP_ERROR(log,"remove this file.");
-    YARP_ERROR(log,"If you do want to set up authentication, check:");
-    YARP_ERROR(log,"  http://www.yarp.it/yarp_port_auth.html");
+    YARP_ERROR(log, "Authentication failed.");
+    YARP_ERROR(log, "Authentication was enabled in the auth.conf file.");
+    YARP_ERROR(log, "If you do not want to use authentication, please");
+    YARP_ERROR(log, "remove this file.");
+    YARP_ERROR(log, "If you do want to set up authentication, check:");
+    YARP_ERROR(log, "  http://www.yarp.it/yarp_port_auth.html");
 }
 
 /**

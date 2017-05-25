@@ -34,7 +34,7 @@ public:
     }
 
     virtual void write(const Bytes& b) {
-        ConstString tmp((char*)b.get(),b.length());
+        ConstString tmp((char*)b.get(), b.length());
         data += tmp;
     }
 

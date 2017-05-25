@@ -43,7 +43,7 @@ public:
     RunTerminator(RunStdio* pStdio)
     {
         mStdio=pStdio;
-        CreatePipe(&hReadPipe,&hWritePipe,YARP_NULLPTR,0);
+        CreatePipe(&hReadPipe, &hWritePipe, YARP_NULLPTR, 0);
     }
 
     ~RunTerminator()
@@ -56,7 +56,7 @@ public:
     {
         DWORD nr;
         char dummy[24];
-        ReadFile(hReadPipe,dummy,1,&nr,YARP_NULLPTR);
+        ReadFile(hReadPipe, dummy, 1, &nr, YARP_NULLPTR);
         RUNLOG("mStdio->exit()")
         mStdio->exit();
     }
@@ -64,11 +64,11 @@ public:
     void exit()
     {
         DWORD nw;
-        WriteFile(hWritePipe,"*",1,&nw,YARP_NULLPTR);
+        WriteFile(hWritePipe, "*", 1, &nw, YARP_NULLPTR);
     }
 
 protected:
-    HANDLE hReadPipe,hWritePipe;
+    HANDLE hReadPipe, hWritePipe;
     RunStdio* mStdio;
 };
 */
@@ -86,8 +86,8 @@ public:
         int pipe_block[2];
         int warn_suppress = yarp::os::impl::pipe(pipe_block);
         YARP_UNUSED(warn_suppress);
-        fwait=fdopen(pipe_block[0],"r");
-        fpost=fdopen(pipe_block[1],"w");
+        fwait=fdopen(pipe_block[0], "r");
+        fpost=fdopen(pipe_block[1], "w");
 #endif
     }
 
@@ -107,7 +107,7 @@ public:
     {
 #if !defined(_WIN32)
         char dummy[24];
-        char* warn_suppress = fgets(dummy,16,fwait);
+        char* warn_suppress = fgets(dummy, 16, fwait);
         YARP_UNUSED(warn_suppress);
         RUNLOG("mStdio->exit()")
         mStdio->exit();
@@ -119,13 +119,13 @@ public:
 #if defined(_WIN32)
         mStdio->exit();
 #else
-        fprintf(fpost,"SHKIATTETE!\n");
+        fprintf(fpost, "SHKIATTETE!\n");
         fflush(fpost);
 #endif
     }
 
 protected:
-    FILE *fwait,*fpost;
+    FILE *fwait, *fpost;
     RunStdio* mStdio;
 };
 
@@ -134,12 +134,12 @@ protected:
 class RunWrite : public RunStdio
 {
 public:
-    RunWrite(yarp::os::ConstString& portName,yarp::os::ConstString& loggerName)
+    RunWrite(yarp::os::ConstString& portName, yarp::os::ConstString& loggerName)
     {
         mVerbose=true;
 
         char buff[16];
-        sprintf(buff,"/%d",getpid());
+        sprintf(buff, "/%d", getpid());
         wPortName=portName+buff;
         wLoggerName=loggerName;
 
@@ -147,7 +147,7 @@ public:
         //persistent connection to the logger, off by default
         yarp::os::ContactStyle style;
         style.persistent=true;
-        yarp::os::Network::connect(wPortName.c_str(),loggerName.c_str(),style);
+        yarp::os::Network::connect(wPortName.c_str(), loggerName.c_str(), style);
         */
 
         mRunning=true;
@@ -180,9 +180,9 @@ public:
         int term_pipe[2];
         int warn_suppress = yarp::os::impl::pipe(term_pipe);
         YARP_UNUSED(warn_suppress);
-        yarp::os::impl::dup2(term_pipe[0],STDIN_FILENO);
-        FILE* file_term_pipe=fdopen(term_pipe[1],"w");
-        fprintf(file_term_pipe,"SHKIATTETE!\n");
+        yarp::os::impl::dup2(term_pipe[0], STDIN_FILENO);
+        FILE* file_term_pipe=fdopen(term_pipe[1], "w");
+        fprintf(file_term_pipe, "SHKIATTETE!\n");
         fflush(file_term_pipe);
         fclose(file_term_pipe);
         RUNLOG(">>>exit()")
@@ -236,7 +236,7 @@ protected:
 class RunReadWrite : public RunStdio, public yarp::os::Thread
 {
 public:
-    RunReadWrite(yarp::os::ConstString &portsName,yarp::os::ConstString &fpName,yarp::os::ConstString &lpName)
+    RunReadWrite(yarp::os::ConstString &portsName, yarp::os::ConstString &fpName, yarp::os::ConstString &lpName)
     {
         UUID=portsName;
         wPortName=portsName+"/stdio:o";
@@ -246,13 +246,13 @@ public:
         if (fpName!="")
         {
             char buff[16];
-            sprintf(buff,"/%d",getpid());
+            sprintf(buff, "/%d", getpid());
             mForwarded=true;
             fPortName=fpName+buff;
 
             yarp::os::ContactStyle style;
             style.persistent=true;
-            yarp::os::Network::connect(fPortName.c_str(),lpName.c_str(),style);
+            yarp::os::Network::connect(fPortName.c_str(), lpName.c_str(), style);
         }
         else
         {

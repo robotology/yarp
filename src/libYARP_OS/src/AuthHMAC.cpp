@@ -36,7 +36,7 @@ AuthHMAC::AuthHMAC() :
         authentication_enabled(false)
 {
     static int auth_warning_shown = false;
-    if(auth_warning_shown) {
+    if (auth_warning_shown) {
         // If the warning was already shown, we have nothing to do.
         // return as soon as possible
         return;
@@ -48,7 +48,7 @@ AuthHMAC::AuthHMAC() :
     Network::lock();
     ResourceFinderOptions opt;
     opt.messageFilter = ResourceFinderOptions::ShowNone;
-    fname = rf.findFile("auth.conf",opt);
+    fname = rf.findFile("auth.conf", opt);
     Network::unlock();
 
 
@@ -81,7 +81,7 @@ AuthHMAC::AuthHMAC() :
     HMAC_INIT(&context, tmp, (unsigned int)key_len);
     srand((unsigned)time(YARP_NULLPTR));
 
-    if(!authentication_enabled) {
+    if (!authentication_enabled) {
         yInfo("Authentication enabled.\n");
         authentication_enabled = true;
     }

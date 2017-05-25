@@ -141,7 +141,7 @@ ConstString NameClient::send(const ConstString& cmd, bool multi) {
     if (NetworkBase::getQueryBypass()) {
         ContactStyle style;
         Bottle bcmd(cmd.c_str()), reply;
-        NetworkBase::writeToNameServer(bcmd,reply,style);
+        NetworkBase::writeToNameServer(bcmd, reply, style);
         ConstString si = reply.toString(), so;
         for (int i=0; i<(int)si.length(); i++) {
             if (si[i]!='\"') {
@@ -159,15 +159,15 @@ ConstString NameClient::send(const ConstString& cmd, bool multi) {
 
     do {
 
-        YARP_DEBUG(Logger::get(),ConstString("sending to nameserver: ") + cmd);
+        YARP_DEBUG(Logger::get(), ConstString("sending to nameserver: ") + cmd);
 
         if (isFakeMode()) {
-            //YARP_DEBUG(Logger::get(),"fake mode nameserver");
+            //YARP_DEBUG(Logger::get(), "fake mode nameserver");
             return getServer().apply(cmd, Contact("tcp", "127.0.0.1", NetworkBase::getDefaultPortRange())) + "\n";
         }
 
         TcpFace face;
-        YARP_DEBUG(Logger::get(),ConstString("connecting to ") + getAddress().toURI());
+        YARP_DEBUG(Logger::get(), ConstString("connecting to ") + getAddress().toURI());
         OutputProtocol *ip = YARP_NULLPTR;
         if (!retry) {
             ip = face.write(server);
@@ -175,14 +175,14 @@ ConstString NameClient::send(const ConstString& cmd, bool multi) {
             retried = true;
         }
         if (ip==YARP_NULLPTR) {
-            YARP_INFO(Logger::get(),"No connection to nameserver");
+            YARP_INFO(Logger::get(), "No connection to nameserver");
             if (!allowScan) {
-                YARP_INFO(Logger::get(),"*** try running: yarp detect ***");
+                YARP_INFO(Logger::get(), "*** try running: yarp detect ***");
             }
             Contact alt;
             if (!isFakeMode()) {
                 if (allowScan) {
-                    YARP_INFO(Logger::get(),"no connection to nameserver, scanning mcast");
+                    YARP_INFO(Logger::get(), "no connection to nameserver, scanning mcast");
                     reportScan = true;
 #ifdef YARP_HAS_ACE
                     alt = FallbackNameClient::seek();
@@ -212,7 +212,7 @@ ConstString NameClient::send(const ConstString& cmd, bool multi) {
             }
         }
         ConstString cmdn = cmd + "\n";
-        Bytes b((char*)cmdn.c_str(),cmdn.length());
+        Bytes b((char*)cmdn.c_str(), cmdn.length());
         ip->getOutputStream().write(b);
         bool more = multi;
         while (more) {
@@ -235,7 +235,7 @@ ConstString NameClient::send(const ConstString& cmd, bool multi) {
         delete ip;
         YARP_SPRINTF1(Logger::get(),
                       debug,
-                      "<<< received from nameserver: %s",result.c_str());
+                      "<<< received from nameserver: %s", result.c_str());
     } while (retry&&!retried);
 
     return result;
@@ -246,17 +246,17 @@ bool NameClient::send(Bottle& cmd, Bottle& reply) {
     setup();
     if (NetworkBase::getQueryBypass()) {
         ContactStyle style;
-        NetworkBase::writeToNameServer(cmd,reply,style);
+        NetworkBase::writeToNameServer(cmd, reply, style);
         return true;
     }
     if (isFakeMode()) {
-        YARP_DEBUG(Logger::get(),"fake mode nameserver");
+        YARP_DEBUG(Logger::get(), "fake mode nameserver");
         return getServer().apply(cmd, reply, Contact("tcp", "127.0.0.1", NetworkBase::getDefaultPortRange()));
     } else {
         Contact server = getAddress();
         ContactStyle style;
         style.carrier = "name_ser";
-        return NetworkBase::write(server,cmd,reply,style);
+        return NetworkBase::write(server, cmd, reply, style);
     }
 }
 
@@ -283,7 +283,7 @@ Contact NameClient::queryName(const ConstString& name) {
 }
 
 Contact NameClient::registerName(const ConstString& name) {
-    return registerName(name,Contact());
+    return registerName(name, Contact());
 }
 
 Contact NameClient::registerName(const ConstString& name, const Contact& suggest) {
@@ -329,7 +329,7 @@ Contact NameClient::registerName(const ConstString& name, const Contact& suggest
         }
     }
     Bottle reply;
-    send(cmd,reply);
+    send(cmd, reply);
 
     Contact address = extractAddress(reply);
     if (address.isValid()) {
@@ -341,11 +341,11 @@ Contact NameClient::registerName(const ConstString& name, const Contact& suggest
 
         cmd.fromString("set /port offers tcp text text_ack udp mcast shmem name_ser");
         cmd.get(1) = Value(reg.c_str());
-        send(cmd,reply);
+        send(cmd, reply);
 
         // accept the same set of carriers
         cmd.get(2) = Value("accepts");
-        send(cmd,reply);
+        send(cmd, reply);
         */
 
         cmd.clear();
@@ -353,14 +353,14 @@ Contact NameClient::registerName(const ConstString& name, const Contact& suggest
         cmd.addString(reg.c_str());
         cmd.addString("ips");
         cmd.append(NameConfig::getIpsAsBottle());
-        send(cmd,reply);
+        send(cmd, reply);
 
         cmd.clear();
         cmd.addString("set");
         cmd.addString(reg.c_str());
         cmd.addString("process");
         cmd.addInt(yarp::os::getpid());
-        send(cmd,reply);
+        send(cmd, reply);
     }
     return address;
 }
@@ -429,10 +429,10 @@ void NameClient::setup() {
     mutex.lock();
     if ((!fake)&&(!isSetup)) {
         if (!updateAddress()) {
-            YARP_ERROR(Logger::get(),"Cannot find name server");
+            YARP_ERROR(Logger::get(), "Cannot find name server");
         }
 
-        YARP_DEBUG(Logger::get(),ConstString("name server address is ") +
+        YARP_DEBUG(Logger::get(), ConstString("name server address is ") +
                    address.toURI());
         isSetup = true;
     }

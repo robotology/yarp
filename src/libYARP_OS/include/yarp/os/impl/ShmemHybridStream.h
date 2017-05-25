@@ -85,13 +85,13 @@ public:
     virtual const Contact& getRemoteAddress() { return m_RemoteAddress; }
 
 protected:
-    enum {CONNECT=0,ACKNOWLEDGE,READ,WRITE,CLOSE,WAKE_UP_MF,RESIZE};
+    enum {CONNECT=0, ACKNOWLEDGE, READ, WRITE, CLOSE, WAKE_UP_MF, RESIZE};
 
     // DATA
 
     bool m_bLinked;
 
-    Contact m_LocalAddress,m_RemoteAddress;
+    Contact m_LocalAddress, m_RemoteAddress;
     ACE_SOCK_Stream m_SockStream;
     ACE_SOCK_Acceptor m_Acceptor;
 

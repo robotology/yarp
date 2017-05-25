@@ -37,7 +37,7 @@ typedef int FDESC;
 typedef void* HANDLE;
 
 int CLOSE(int h);
-int SIGNAL(int pid,int signum);
+int SIGNAL(int pid, int signum);
 
 class ZombieHunterThread : public yarp::os::Thread
 {
@@ -110,14 +110,14 @@ protected:
 class YarpRunProcInfo
 {
 public:
-    YarpRunProcInfo(yarp::os::ConstString& alias,yarp::os::ConstString& on,PID pidCmd,HANDLE handleCmd,bool hold);
+    YarpRunProcInfo(yarp::os::ConstString& alias, yarp::os::ConstString& on, PID pidCmd, HANDLE handleCmd, bool hold);
     virtual ~YarpRunProcInfo()
     {
 
     }
     bool Match(yarp::os::ConstString& alias){ return mAlias==alias; }
 #if !defined(_WIN32)
-    virtual bool Clean(PID pid,YarpRunProcInfo* &pRef)
+    virtual bool Clean(PID pid, YarpRunProcInfo* &pRef)
     {
         if (mPidCmd==pid)
         {
@@ -165,12 +165,12 @@ public:
 
     int Size(){ return m_nProcesses; }
     bool Add(YarpRunProcInfo *process);
-    int Signal(yarp::os::ConstString& alias,int signum);
+    int Signal(yarp::os::ConstString& alias, int signum);
     int Killall(int signum);
 
 #if defined(_WIN32)
     HANDLE hZombieHunter;
-    void GetHandles(HANDLE* &lpHandles,DWORD &nCount);
+    void GetHandles(HANDLE* &lpHandles, DWORD &nCount);
 #else
     bool CleanZombie(int zombie);
 #endif
@@ -229,7 +229,7 @@ public:
     void TerminateStdio();
 
 #if !defined(_WIN32)
-    virtual bool Clean(PID pid,YarpRunProcInfo* &pRef)
+    virtual bool Clean(PID pid, YarpRunProcInfo* &pRef)
     {
         pRef = YARP_NULLPTR;
 
@@ -238,7 +238,7 @@ public:
             mPidCmd=0;
 
             if (!mKillingStdin && mPidStdin) yarp::os::impl::kill(mPidStdin, SIGTERM);
-            if (!mKillingStdout && mPidStdout) yarp::os::impl::kill(mPidStdout,SIGTERM);
+            if (!mKillingStdout && mPidStdout) yarp::os::impl::kill(mPidStdout, SIGTERM);
 
             mKillingStdin=mKillingStdout=true;
         }
@@ -246,8 +246,8 @@ public:
         {
             mPidStdin=0;
 
-            if (!mKillingCmd && mPidCmd) yarp::os::impl::kill(mPidCmd,SIGTERM);
-            if (!mKillingStdout && mPidStdout) yarp::os::impl::kill(mPidStdout,SIGTERM);
+            if (!mKillingCmd && mPidCmd) yarp::os::impl::kill(mPidCmd, SIGTERM);
+            if (!mKillingStdout && mPidStdout) yarp::os::impl::kill(mPidStdout, SIGTERM);
 
             mKillingCmd=mKillingStdout=true;
         }
@@ -255,8 +255,8 @@ public:
         {
             mPidStdout=0;
 
-            if (!mKillingCmd && mPidCmd) yarp::os::impl::kill(mPidCmd,SIGTERM);
-            if (!mKillingStdin && mPidStdin) yarp::os::impl::kill(mPidStdin,SIGTERM);
+            if (!mKillingCmd && mPidCmd) yarp::os::impl::kill(mPidCmd, SIGTERM);
+            if (!mKillingStdin && mPidStdin) yarp::os::impl::kill(mPidStdin, SIGTERM);
 
             mKillingCmd=mKillingStdin=true;
         }
@@ -307,7 +307,7 @@ protected:
 inline yarp::os::ConstString int2String(int x)
 {
     char buff[16];
-    sprintf(buff,"%d",x);
+    sprintf(buff, "%d", x);
     return yarp::os::ConstString(buff);
 }
 

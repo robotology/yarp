@@ -74,7 +74,7 @@ int TcpConnector::connect(TcpStream &new_stream, const Contact& address) {
 
     struct hostent *hostInfo = yarp::os::impl::gethostbyname(address.getHost().c_str());
     if (hostInfo) {
-        bcopy(hostInfo->h_addr,(char *)(&servAddr.sin_addr),hostInfo->h_length);
+        bcopy(hostInfo->h_addr, (char *)(&servAddr.sin_addr), hostInfo->h_length);
     } else {
         inet_pton(AF_INET, address.getHost().c_str(), &servAddr.sin_addr);
     }

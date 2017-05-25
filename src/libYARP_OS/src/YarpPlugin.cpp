@@ -22,22 +22,22 @@ using namespace yarp::os::impl;
 bool YarpPluginSettings::open(SharedLibraryFactory& factory,
                               const ConstString& dll_name,
                               const ConstString& fn_name) {
-    return subopen(factory,dll_name,fn_name);
+    return subopen(factory, dll_name, fn_name);
 }
 
 bool YarpPluginSettings::subopen(SharedLibraryFactory& factory,
                                  const ConstString& dll_name,
                                  const ConstString& fn_name) {
-    YARP_SPRINTF2(impl::Logger::get(),debug,"Trying plugin [dll: %s] [fn: %s]",
-                  dll_name.c_str(),fn_name.c_str());
-    bool ok = factory.open(dll_name.c_str(),fn_name.c_str());
+    YARP_SPRINTF2(impl::Logger::get(), debug, "Trying plugin [dll: %s] [fn: %s]",
+                  dll_name.c_str(), fn_name.c_str());
+    bool ok = factory.open(dll_name.c_str(), fn_name.c_str());
     if (verbose) {
-        fprintf(stderr,"Trying to find library '%s' containing function '%s' -- %s\n", dll_name.c_str(), fn_name.c_str(), ok ? "found" :"fail");
+        fprintf(stderr, "Trying to find library '%s' containing function '%s' -- %s\n", dll_name.c_str(), fn_name.c_str(), ok ? "found" :"fail");
     }
     if (ok) {
-        YARP_SPRINTF2(impl::Logger::get(),debug,
+        YARP_SPRINTF2(impl::Logger::get(), debug,
                       "Found plugin [dll: %s] [fn: %s]",
-                      dll_name.c_str(),fn_name.c_str());
+                      dll_name.c_str(), fn_name.c_str());
         this->dll_name = dll_name;
         this->fn_name = fn_name;
     } else if (verbose || (factory.getStatus() != SharedLibraryFactory::STATUS_LIBRARY_NOT_FOUND)) {
@@ -47,8 +47,8 @@ bool YarpPluginSettings::subopen(SharedLibraryFactory& factory,
 }
 
 bool YarpPluginSettings::open(SharedLibraryFactory& factory) {
-    YARP_SPRINTF3(impl::Logger::get(),debug,"Plugin [name: %s] [dll: %s] [fn: %s]",
-                  name.c_str(),dll_name.c_str(),fn_name.c_str());
+    YARP_SPRINTF3(impl::Logger::get(), debug, "Plugin [name: %s] [dll: %s] [fn: %s]",
+                  name.c_str(), dll_name.c_str(), fn_name.c_str());
     if (selector!=YARP_NULLPTR && name != "") {
         // we may have a YARP-specific search path available,
         // and a proper name for the DLL
@@ -124,32 +124,32 @@ void YarpPluginSettings::reportStatus(SharedLibraryFactory& factory) const {
     switch (problem) {
     case SharedLibraryFactory::STATUS_LIBRARY_NOT_LOADED:
         if (verbose) {
-            fprintf(stderr,"Cannot load plugin from shared library (%s)\n", dll_name.c_str());
-            fprintf(stderr,"(%s)\n", factory.getError().c_str());
+            fprintf(stderr, "Cannot load plugin from shared library (%s)\n", dll_name.c_str());
+            fprintf(stderr, "(%s)\n", factory.getError().c_str());
         }
         break;
     case SharedLibraryFactory::STATUS_LIBRARY_NOT_FOUND:
-        fprintf(stderr,"Cannot load plugin from shared library (%s)\n", dll_name.c_str());
-        fprintf(stderr,"(%s)\n", factory.getError().c_str());
+        fprintf(stderr, "Cannot load plugin from shared library (%s)\n", dll_name.c_str());
+        fprintf(stderr, "(%s)\n", factory.getError().c_str());
         break;
     case SharedLibraryFactory::STATUS_FACTORY_NOT_FOUND:
-        fprintf(stderr,"cannot find YARP hook in shared library (%s:%s)\n", dll_name.c_str(), fn_name.c_str());
-        fprintf(stderr,"(%s)\n", factory.getError().c_str());
+        fprintf(stderr, "cannot find YARP hook in shared library (%s:%s)\n", dll_name.c_str(), fn_name.c_str());
+        fprintf(stderr, "(%s)\n", factory.getError().c_str());
         break;
     case SharedLibraryFactory::STATUS_FACTORY_NOT_FUNCTIONAL:
-        fprintf(stderr,"YARP hook in shared library misbehaved (%s:%s)\n", dll_name.c_str(), fn_name.c_str());
-        fprintf(stderr,"(the library may be too old/new and need to be recompiled to match YARP version)\n");
-        fprintf(stderr,"(%s)\n", factory.getError().c_str());
+        fprintf(stderr, "YARP hook in shared library misbehaved (%s:%s)\n", dll_name.c_str(), fn_name.c_str());
+        fprintf(stderr, "(the library may be too old/new and need to be recompiled to match YARP version)\n");
+        fprintf(stderr, "(%s)\n", factory.getError().c_str());
         break;
     default:
-        fprintf(stderr,"Unknown error (%s:%s)\n", dll_name.c_str(), fn_name.c_str());
-        fprintf(stderr,"(%s)\n", factory.getError().c_str());
+        fprintf(stderr, "Unknown error (%s:%s)\n", dll_name.c_str(), fn_name.c_str());
+        fprintf(stderr, "(%s)\n", factory.getError().c_str());
         break;
     }
 }
 
 void YarpPluginSettings::reportFailure() const {
-    fprintf(stderr,"Failed to create %s from shared library %s\n",
+    fprintf(stderr, "Failed to create %s from shared library %s\n",
             fn_name.c_str(), dll_name.c_str());
 }
 
@@ -175,7 +175,7 @@ void YarpPluginSelector::scan() {
         NetworkBase::lock();
         ResourceFinder& rf = ResourceFinder::getResourceFinderSingleton();
         if (!rf.isConfigured()) {
-            rf.configure(0,YARP_NULLPTR);
+            rf.configure(0, YARP_NULLPTR);
         }
         rf.setQuiet(true);
         Bottle plugins = rf.findPaths("plugins");
@@ -195,7 +195,7 @@ void YarpPluginSelector::scan() {
                           debug,
                           "Plugin directory not found");
         }
-        config.put("last_update_time",Time::now());
+        config.put("last_update_time", Time::now());
         state = config;
         NetworkBase::unlock();
     }

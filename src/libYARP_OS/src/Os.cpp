@@ -68,7 +68,7 @@ int yarp::os::mkdir(const char *p)
 }
 
 int yarp::os::mkdir_p(const char *p, int ignoreLevels) {
-    bool ok = yarp::os::impl::NameConfig::createPath(p,ignoreLevels);
+    bool ok = yarp::os::impl::NameConfig::createPath(p, ignoreLevels);
     return ok?0:1;
 }
 
@@ -79,7 +79,7 @@ int yarp::os::rmdir(const char *p)
 
 int yarp::os::rename(const char *oldname, const char *newname)
 {
-    return std::rename(oldname,newname);
+    return std::rename(oldname, newname);
 }
 
 int yarp::os::stat(const char *path)
@@ -110,9 +110,9 @@ void yarp::os::getprogname(char* progname, size_t size)
 #ifdef YARP_HAS_ACE
     const char* tmp = ACE_OS::getprogname();
     if (std::strlen(tmp)==0) {
-        std::strncpy(progname,"no_progname",size);
+        std::strncpy(progname, "no_progname", size);
     } else {
-        std::strncpy(progname,tmp,size);
+        std::strncpy(progname, tmp, size);
     }
 #else
     // not available
@@ -126,7 +126,7 @@ void yarp::os::gethostname(char* hostname, size_t size)
 {
     yarp::os::impl::gethostname(hostname, size);
     if (std::strlen(hostname)==0) {
-        std::strncpy(hostname,"no_hostname",size);
+        std::strncpy(hostname, "no_hostname", size);
     }
 }
 

@@ -254,7 +254,7 @@ private:
             yError("Check that YARP_DATA_DIRS leads to at least one directory with plugins/%s.ini or share/yarp/plugins/%s.ini in it", name.c_str(), name.c_str());
             return false;
         }
-        return readFromSearchable(group,name);
+        return readFromSearchable(group, name);
     }
 };
 

@@ -64,7 +64,7 @@ YARP_SSIZE_T InputStream::readFull(const Bytes& b) {
     YARP_SSIZE_T remLen = fullLen;
     YARP_SSIZE_T result = 1;
     while (result>0&&remLen>0) {
-        result = read(b,off,remLen);
+        result = read(b, off, remLen);
         if (result>0) {
             remLen -= result;
             off += result;
@@ -76,7 +76,7 @@ YARP_SSIZE_T InputStream::readFull(const Bytes& b) {
 YARP_SSIZE_T InputStream::readDiscard(size_t len) {
     if (len<100) {
         char buf[100];
-        Bytes b(buf,len);
+        Bytes b(buf, len);
         return readFull(b);
     }
     ManagedBytes b(len);

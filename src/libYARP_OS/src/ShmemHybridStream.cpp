@@ -13,11 +13,11 @@
 using namespace yarp::os;
 using namespace yarp::os::impl;
 
-int ShmemHybridStream::open(const Contact& yarp_address,bool sender)
+int ShmemHybridStream::open(const Contact& yarp_address, bool sender)
 {
     m_bLinked=false;
 
-    ACE_INET_Addr ace_address(yarp_address.getPort(),yarp_address.getHost().c_str());
+    ACE_INET_Addr ace_address(yarp_address.getPort(), yarp_address.getHost().c_str());
 
     if (sender)
     {
@@ -31,13 +31,13 @@ int ShmemHybridStream::open(const Contact& yarp_address,bool sender)
 
         if (result<0)
         {
-            YARP_ERROR(Logger::get(),ConstString("ShmemHybridStream open result")+NetType::toString(result));
+            YARP_ERROR(Logger::get(), ConstString("ShmemHybridStream open result")+NetType::toString(result));
             return result;
         }
 
         m_Acceptor.get_local_addr(ace_server_addr);
 
-        m_LocalAddress = Contact(ace_server_addr.get_host_addr(),ace_server_addr.get_port_number());
+        m_LocalAddress = Contact(ace_server_addr.get_host_addr(), ace_server_addr.get_port_number());
         m_RemoteAddress = m_LocalAddress; // finalized in call to accept()
 
         return result;
@@ -54,45 +54,45 @@ int ShmemHybridStream::accept()
 
     if (result<0)
     {
-        YARP_ERROR(Logger::get(),ConstString("ShmemHybridStream server returned ")+NetType::toString((int)result));
+        YARP_ERROR(Logger::get(), ConstString("ShmemHybridStream server returned ")+NetType::toString((int)result));
         close();
         return -1;
     }
 
-    ACE_INET_Addr local,remote;
+    ACE_INET_Addr local, remote;
     m_SockStream.get_local_addr(local);
     m_SockStream.get_remote_addr(remote);
-    m_LocalAddress=Contact(local.get_host_addr(),local.get_port_number());
-    m_RemoteAddress=Contact(remote.get_host_addr(),remote.get_port_number());
+    m_LocalAddress=Contact(local.get_host_addr(), local.get_port_number());
+    m_RemoteAddress=Contact(remote.get_host_addr(), remote.get_port_number());
 
     ShmemPacket_t recv_conn_data;
-    result=m_SockStream.recv_n(&recv_conn_data,sizeof recv_conn_data);
+    result=m_SockStream.recv_n(&recv_conn_data, sizeof recv_conn_data);
     if (result<=0)
     {
-        YARP_ERROR(Logger::get(),ConstString("Socket returned ")+NetType::toString((int)result));
+        YARP_ERROR(Logger::get(), ConstString("Socket returned ")+NetType::toString((int)result));
         close();
         return -1;
     }
 
-    if (!in.open(m_RemoteAddress.getPort(),&m_SockStream))
+    if (!in.open(m_RemoteAddress.getPort(), &m_SockStream))
     {
-        YARP_ERROR(Logger::get(),ConstString("ShmemHybridStream can't create shared memory"));
+        YARP_ERROR(Logger::get(), ConstString("ShmemHybridStream can't create shared memory"));
         close();
         return -1;
     }
 
     if (!out.open(m_LocalAddress.getPort()))
     {
-        YARP_ERROR(Logger::get(),ConstString("ShmemHybridStream can't create shared memory"));
+        YARP_ERROR(Logger::get(), ConstString("ShmemHybridStream can't create shared memory"));
         close();
         return -1;
     }
 
     ShmemPacket_t send_conn_data;
     send_conn_data.command=ACKNOWLEDGE;
-    if (m_SockStream.send_n(&send_conn_data,sizeof send_conn_data)<=0)
+    if (m_SockStream.send_n(&send_conn_data, sizeof send_conn_data)<=0)
     {
-        YARP_ERROR(Logger::get(),ConstString("ShmemHybridStream socket writing error"));
+        YARP_ERROR(Logger::get(), ConstString("ShmemHybridStream socket writing error"));
         close();
         return -1;
     }
@@ -109,43 +109,43 @@ int ShmemHybridStream::connect(const ACE_INET_Addr& ace_address)
     if (m_bLinked) return -1;
 
     ACE_SOCK_Connector connector;
-    YARP_SSIZE_T result=connector.connect(m_SockStream,ace_address);
+    YARP_SSIZE_T result=connector.connect(m_SockStream, ace_address);
     if (result<0)
     {
-        YARP_ERROR(Logger::get(),ConstString("ShmemHybridStream client returned ")+NetType::toString((int)result));
+        YARP_ERROR(Logger::get(), ConstString("ShmemHybridStream client returned ")+NetType::toString((int)result));
         close();
         return -1;
     }
 
-    ACE_INET_Addr local,remote;
+    ACE_INET_Addr local, remote;
     m_SockStream.get_local_addr(local);
     m_SockStream.get_remote_addr(remote);
-    m_LocalAddress=Contact(local.get_host_addr(),local.get_port_number());
-    m_RemoteAddress=Contact(remote.get_host_addr(),remote.get_port_number());
+    m_LocalAddress=Contact(local.get_host_addr(), local.get_port_number());
+    m_RemoteAddress=Contact(remote.get_host_addr(), remote.get_port_number());
 
     out.open(m_LocalAddress.getPort());
 
     ShmemPacket_t send_conn_data;
     send_conn_data.command=CONNECT;
     send_conn_data.size=SHMEM_DEFAULT_SIZE;
-    result=m_SockStream.send_n(&send_conn_data,sizeof send_conn_data);
+    result=m_SockStream.send_n(&send_conn_data, sizeof send_conn_data);
     if (result<=0)
     {
-        YARP_ERROR(Logger::get(),ConstString("Socket returned ")+NetType::toString((int)result));
+        YARP_ERROR(Logger::get(), ConstString("Socket returned ")+NetType::toString((int)result));
         close();
         return -1;
     }
 
     ShmemPacket_t recv_conn_data;
-    result=m_SockStream.recv_n(&recv_conn_data,sizeof recv_conn_data);
+    result=m_SockStream.recv_n(&recv_conn_data, sizeof recv_conn_data);
     if (result<=0)
     {
-        YARP_ERROR(Logger::get(),ConstString("Socket returned ")+NetType::toString((int)result));
+        YARP_ERROR(Logger::get(), ConstString("Socket returned ")+NetType::toString((int)result));
         close();
         return -1;
     }
 
-    in.open(m_RemoteAddress.getPort(),&m_SockStream);
+    in.open(m_RemoteAddress.getPort(), &m_SockStream);
 
     m_bLinked=true;
 

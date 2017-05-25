@@ -86,8 +86,8 @@ public:
     }
 
     void setEnvelope(const Bytes& bytes) {
-        envelope = ConstString(bytes.get(),bytes.length());
-        //envelope.set(bytes.get(),bytes.length(),1);
+        envelope = ConstString(bytes.get(), bytes.length());
+        //envelope.set(bytes.get(), bytes.length(), 1);
     }
 
     void resetExternal() {
@@ -126,10 +126,10 @@ public:
 #else
             obj = new PortReaderPacket();
 #endif
-            PLATFORM_LIST_PUSH_BACK(inactive,obj);
+            PLATFORM_LIST_PUSH_BACK(inactive, obj);
         }
         PortReaderPacket *next = YARP_NULLPTR;
-        PLATFORM_LIST_GET(inactive,next);
+        PLATFORM_LIST_GET(inactive, next);
         yAssert(next!=YARP_NULLPTR);
         inactive.remove(next);
         //active.insert_tail(next);
@@ -139,7 +139,7 @@ public:
     PortReaderPacket *getActivePacket() {
         PortReaderPacket *next = YARP_NULLPTR;
         if (getCount()>=1) {
-            PLATFORM_LIST_GET(active,next);
+            PLATFORM_LIST_GET(active, next);
             //active.get(next);
             yAssert(next!=YARP_NULLPTR);
             active.remove(next);
@@ -149,14 +149,14 @@ public:
 
     void addActivePacket(PortReaderPacket *packet) {
         if (packet!=YARP_NULLPTR) {
-            PLATFORM_LIST_PUSH_BACK(active,packet);
+            PLATFORM_LIST_PUSH_BACK(active, packet);
             //active.insert_tail(packet);
         }
     }
 
     void addInactivePacket(PortReaderPacket *packet) {
         if (packet!=YARP_NULLPTR) {
-            PLATFORM_LIST_PUSH_BACK(inactive,packet);
+            PLATFORM_LIST_PUSH_BACK(inactive, packet);
             //inactive.insert_tail(packet);
         }
     }
@@ -272,7 +272,7 @@ public:
         sis.add("\r\n");
         StreamConnectionReader sbr;
         Route route;
-        sbr.reset(sis,YARP_NULLPTR,route,0,true);
+        sbr.reset(sis, YARP_NULLPTR, route, 0, true);
         return envelope.read(sbr);
     }
 
@@ -353,7 +353,7 @@ yarp::os::PortReader *PortReaderBufferBase::create() {
 
 void PortReaderBufferBase::release(PortReader *completed) {
     //HELPER(implementation).stateSema.wait();
-    //HELPER(implementation).configure(completed,true,false);
+    //HELPER(implementation).configure(completed, true, false);
     //HELPER(implementation).stateSema.post();
     printf("release not implemented anymore; not needed\n");
     std::exit(1);
@@ -372,7 +372,7 @@ void PortReaderBufferBase::interrupt() {
     HELPER(implementation).contentSema.post();
 }
 
-PortReader *PortReaderBufferBase::readBase(bool& missed,bool cleanup) {
+PortReader *PortReaderBufferBase::readBase(bool& missed, bool cleanup) {
     missed = false;
     if (period<0 || cleanup) {
         HELPER(implementation).contentSema.wait();
@@ -431,7 +431,7 @@ bool PortReaderBufferBase::read(ConnectionReader& connection) {
     if (connection.getReference()!=YARP_NULLPTR) {
         //printf("REF %ld %d\n", (long int)connection.getReference(),
         //     connection.isValid());
-        return acceptObjectBase(connection.getReference(),YARP_NULLPTR);
+        return acceptObjectBase(connection.getReference(), YARP_NULLPTR);
     }
 
     if (replier != YARP_NULLPTR) {
@@ -471,19 +471,19 @@ bool PortReaderBufferBase::read(ConnectionReader& connection) {
                 HELPER(implementation).dropContent();
             pruned = (readerPacket!=YARP_NULLPTR);
         }
-        //HELPER(implementation).configure(reader,false,true);
+        //HELPER(implementation).configure(reader, false, true);
         HELPER(implementation).pool.addActivePacket(reader);
         HELPER(implementation).ct++;
         HELPER(implementation).stateSema.post();
         if (!pruned) {
             HELPER(implementation).contentSema.post();
         }
-        //YARP_ERROR(Logger::get(),">>>>>>>>>>>>>>>>> adding data");
+        //YARP_ERROR(Logger::get(), ">>>>>>>>>>>>>>>>> adding data");
     } else {
         HELPER(implementation).stateSema.wait();
         HELPER(implementation).pool.addInactivePacket(reader);
         HELPER(implementation).stateSema.post();
-        //YARP_ERROR(Logger::get(),">>>>>>>>>>>>>>>>> skipping data");
+        //YARP_ERROR(Logger::get(), ">>>>>>>>>>>>>>>>> skipping data");
 
         // important to give reader a shot anyway, allowing proper closing
         YARP_DEBUG(Logger::get(), "giving PortReaderBuffer chance to close");
@@ -564,7 +564,7 @@ bool PortReaderBufferBase::acceptObjectBase(PortReader *obj,
     }
     bool ok = true;
     if (ok) {
-        reader->setExternal(obj,wrapper);
+        reader->setExternal(obj, wrapper);
 
         HELPER(implementation).stateSema.wait();
         bool pruned = false;
@@ -576,19 +576,19 @@ bool PortReaderBufferBase::acceptObjectBase(PortReader *obj,
             //reader = readerPacket->getReader();
             //pruned = (reader!=YARP_NULLPTR);
         }
-        //HELPER(implementation).configure(reader,false,true);
+        //HELPER(implementation).configure(reader, false, true);
         HELPER(implementation).pool.addActivePacket(reader);
         HELPER(implementation).ct++;
         HELPER(implementation).stateSema.post();
         if (!pruned) {
             HELPER(implementation).contentSema.post();
         }
-        //YARP_ERROR(Logger::get(),">>>>>>>>>>>>>>>>> adding data");
+        //YARP_ERROR(Logger::get(), ">>>>>>>>>>>>>>>>> adding data");
     } else {
         HELPER(implementation).stateSema.wait();
         HELPER(implementation).pool.addInactivePacket(reader);
         HELPER(implementation).stateSema.post();
-        //YARP_ERROR(Logger::get(),">>>>>>>>>>>>>>>>> skipping data");
+        //YARP_ERROR(Logger::get(), ">>>>>>>>>>>>>>>>> skipping data");
 
         // important to give reader a shot anyway, allowing proper closing
         YARP_DEBUG(Logger::get(), "giving PortReaderBuffer chance to close");

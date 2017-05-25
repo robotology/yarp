@@ -192,7 +192,7 @@ public:
     /**
      *
      * Add a buffer by recording a reference to it, without copying it.
-     * Be careful, this is the opposite of what appendBlock(ptr,len)
+     * Be careful, this is the opposite of what appendBlock(ptr, len)
      * does. Sorry about that.
      *
      * @param data the buffer to add
@@ -200,7 +200,7 @@ public:
      */
     virtual void appendBlock(const yarp::os::Bytes& data) {
         stopPool();
-        push(data,false);
+        push(data, false);
     }
 
     /**
@@ -211,33 +211,33 @@ public:
      *
      */
     virtual void appendBlockCopy(const Bytes& data) {
-        push(data,true);
+        push(data, true);
     }
 
     // defined by yarp::os::ConnectionWriter
     virtual void appendInt(int data) {
         NetInt32 i = data;
-        yarp::os::Bytes b((char*)(&i),sizeof(i));
-        push(b,true);
+        yarp::os::Bytes b((char*)(&i), sizeof(i));
+        push(b, true);
     }
 
     // defined by yarp::os::ConnectionWriter
     virtual void appendInt64(const YARP_INT64& data) {
         NetInt64 i = data;
-        yarp::os::Bytes b((char*)(&i),sizeof(i));
-        push(b,true);
+        yarp::os::Bytes b((char*)(&i), sizeof(i));
+        push(b, true);
     }
 
     // defined by yarp::os::ConnectionWriter
     virtual void appendDouble(double data) {
         NetFloat64 i = data;
-        yarp::os::Bytes b((char*)(&i),sizeof(i));
-        push(b,true);
+        yarp::os::Bytes b((char*)(&i), sizeof(i));
+        push(b, true);
     }
 
     virtual void appendStringBase(const ConstString& data) {
-        yarp::os::Bytes b((char*)(data.c_str()),data.length()+1);
-        push(b,true);
+        yarp::os::Bytes b((char*)(data.c_str()), data.length()+1);
+        push(b, true);
     }
 
     /**
@@ -250,11 +250,11 @@ public:
      *
      */
     virtual void appendLine(const ConstString& data) {
-        yarp::os::Bytes b((char*)(data.c_str()),data.length());
-        push(b,true);
+        yarp::os::Bytes b((char*)(data.c_str()), data.length());
+        push(b, true);
         const char *eol = "\r\n"; // for windows compatibility
-        yarp::os::Bytes beol((char*)eol,2);
-        push(beol,true);
+        yarp::os::Bytes beol((char*)eol, 2);
+        push(beol, true);
     }
 
     // defined by yarp::os::ConnectionWriter
@@ -273,11 +273,11 @@ public:
         size_t i;
         for (i=0; i<header_used; i++) {
             yarp::os::ManagedBytes& b = *(header[i]);
-            connection.appendBlock(b.get(),b.used());
+            connection.appendBlock(b.get(), b.used());
         }
         for (i=0; i<lst_used; i++) {
             yarp::os::ManagedBytes& b = *(lst[i]);
-            connection.appendBlock(b.get(),b.used());
+            connection.appendBlock(b.get(), b.used());
         }
         return !connection.isError();
     }
@@ -353,7 +353,7 @@ public:
 
     // defined by yarp::os::ConnectionWriter
     virtual void appendBlock(const char *data, size_t len) {
-        appendBlockCopy(yarp::os::Bytes((char*)data,len));
+        appendBlockCopy(yarp::os::Bytes((char*)data, len));
     }
 
     // defined by yarp::os::ConnectionWriter
@@ -365,13 +365,13 @@ public:
         } else {
             ConstString s = str;
             str += terminate;
-            appendBlockCopy(yarp::os::Bytes((char*)(s.c_str()),s.length()));
+            appendBlockCopy(yarp::os::Bytes((char*)(s.c_str()), s.length()));
         }
     }
 
     // defined by yarp::os::ConnectionWriter
     virtual void appendExternalBlock(const char *data, size_t len) {
-        appendBlock(yarp::os::Bytes((char*)data,len));
+        appendBlock(yarp::os::Bytes((char*)data, len));
     }
 
     // defined by yarp::os::ConnectionWriter
@@ -559,16 +559,16 @@ public:
     }
 
     virtual bool expectBlock(const char *data, size_t len) {
-        bool ok = reader->expectBlock(data,len);
+        bool ok = reader->expectBlock(data, len);
         if (ok) {
-            readerStore.appendBlock(data,len);
+            readerStore.appendBlock(data, len);
         }
         return ok;
     }
 
     virtual ConstString expectText(int terminatingChar) {
         ConstString str = reader->expectText(terminatingChar);
-        readerStore.appendString(str.c_str(),terminatingChar);
+        readerStore.appendString(str.c_str(), terminatingChar);
         return str;
     }
 
@@ -662,8 +662,8 @@ public:
 
 
     virtual void appendBlock(const char *data, size_t len) {
-        writer->appendBlock(data,len);
-        writerStore.appendBlock(data,len);
+        writer->appendBlock(data, len);
+        writerStore.appendBlock(data, len);
     }
 
     virtual void appendInt(int data) {
@@ -682,17 +682,17 @@ public:
     }
 
     virtual void appendString(const char *str, int terminate) {
-        writer->appendString(str,terminate);
-        writerStore.appendString(str,terminate);
+        writer->appendString(str, terminate);
+        writerStore.appendString(str, terminate);
     }
 
     virtual void appendExternalBlock(const char *data, size_t len) {
-        writer->appendExternalBlock(data,len);
-        writerStore.appendExternalBlock(data,len);
+        writer->appendExternalBlock(data, len);
+        writerStore.appendExternalBlock(data, len);
     }
 
     virtual void declareSizes(int argc, int *argv) {
-        writer->declareSizes(argc,argv);
+        writer->declareSizes(argc, argv);
     }
 
     virtual void setReplyHandler(PortReader& reader) {
@@ -708,7 +708,7 @@ public:
             connection.appendInt(BOTTLE_TAG_LIST); // nested structure
             connection.appendInt(3);               // with three elements
             connection.appendInt(BOTTLE_TAG_VOCAB);
-            connection.appendInt(VOCAB3('r','p','c'));
+            connection.appendInt(VOCAB3('r', 'p', 'c'));
             bool ok = readerStore.write(connection);
             if (ok) {
                 writerStore.write(connection);

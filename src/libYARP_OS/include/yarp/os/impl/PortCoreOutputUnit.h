@@ -36,7 +36,7 @@ public:
      *
      */
     PortCoreOutputUnit(PortCore& owner, int index, OutputProtocol *op) :
-            PortCoreUnit(owner,index),
+            PortCoreUnit(owner, index),
             op(op),
             closing(false),
             finished(false),
@@ -118,14 +118,14 @@ public:
     // documented in PortCoreUnit
     void setCarrierParams(const yarp::os::Property& params)
     {
-        if(op)
+        if (op)
             op->getConnection().setCarrierParams(params);
     }
 
     // documented in PortCoreUnit
     void getCarrierParams(yarp::os::Property& params)
     {
-        if(op)
+        if (op)
             op->getConnection().getCarrierParams(params);
     }
 

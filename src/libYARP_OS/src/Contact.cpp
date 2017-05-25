@@ -108,7 +108,7 @@ Contact::~Contact()
 
 Contact& Contact::operator=(const Contact& rhs)
 {
-    if(&rhs != this) {
+    if (&rhs != this) {
         *mPriv = *(rhs.mPriv);
     }
     return *this;
@@ -117,7 +117,7 @@ Contact& Contact::operator=(const Contact& rhs)
 #if defined(YARP_HAS_CXX11) && YARP_COMPILER_CXX_RVALUE_REFERENCES
 Contact& Contact::operator=(Contact&& rhs)
 {
-    if(&rhs != this) {
+    if (&rhs != this) {
         std::swap(mPriv, rhs.mPriv);
     }
     return *this;
@@ -127,10 +127,10 @@ Contact& Contact::operator=(Contact&& rhs)
 Contact Contact::fromConfig(const Searchable& config)
 {
     Contact result;
-    result.mPriv->port = config.check("port_number",Value(-1)).asInt();
-    result.mPriv->hostname = config.check("ip",Value("")).asString().c_str();
-    result.mPriv->regName = config.check("name",Value("")).asString().c_str();
-    result.mPriv->carrier = config.check("carrier",Value("tcp")).asString().c_str();
+    result.mPriv->port = config.check("port_number", Value(-1)).asInt();
+    result.mPriv->hostname = config.check("ip", Value("")).asString().c_str();
+    result.mPriv->regName = config.check("name", Value("")).asString().c_str();
+    result.mPriv->carrier = config.check("carrier", Value("tcp")).asString().c_str();
     return result;
 }
 
@@ -152,7 +152,7 @@ Contact Contact::fromString(const ConstString& txt)
         }
     }
     if (base!=ConstString::npos) {
-        c.mPriv->carrier = str.substr(0,base);
+        c.mPriv->carrier = str.substr(0, base);
         start = base+offset;
         // check if we have a direct machine:NNN syntax
         ConstString::size_type colon = ConstString::npos;
@@ -189,7 +189,7 @@ Contact Contact::fromString(const ConstString& txt)
             if (c.mPriv->carrier.empty()) {
                 c.mPriv->carrier = "tcp";
             }
-            c.mPriv->hostname = str.substr(start+1,colon-start-1);
+            c.mPriv->hostname = str.substr(start+1, colon-start-1);
             c.mPriv->port = atoi(str.substr(colon+1, nums).c_str());
             start = i;
         }
@@ -340,9 +340,9 @@ ConstString Contact::toURI(bool includeCarrier) const
 ConstString Contact::convertHostToIp(const char *name)
 {
 #if defined(YARP_HAS_ACE)
-    ACE_INET_Addr addr((u_short)0,name);
+    ACE_INET_Addr addr((u_short)0, name);
     char ipstr[256];
-    addr.get_host_addr(ipstr,sizeof(ipstr));
+    addr.get_host_addr(ipstr, sizeof(ipstr));
 
 #else
     char ipstr[INET6_ADDRSTRLEN];
@@ -390,7 +390,7 @@ Contact Contact::empty() {
 }
 
 Contact Contact::invalid() {
-    return Contact("","",-1);
+    return Contact("", "", -1);
 }
 
 Contact Contact::byName(const ConstString& name)

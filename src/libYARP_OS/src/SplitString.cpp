@@ -19,7 +19,7 @@ SplitString::SplitString() :
 
 SplitString::SplitString(const char *command, const char splitter)
 {
-    apply(command,splitter);
+    apply(command, splitter);
 }
 
 int SplitString::size()
@@ -30,7 +30,7 @@ int SplitString::size()
 void SplitString::set(int index, const char *txt)
 {
     if (index>=0&&index<size()) {
-        strncpy(buf[index],(char*)txt,MAX_ARG_LEN);
+        strncpy(buf[index], (char*)txt, MAX_ARG_LEN);
     }
 }
 

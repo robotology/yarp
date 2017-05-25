@@ -21,7 +21,7 @@ yarp::os::ConnectionWriter *StreamConnectionReader::getWriter() {
         return YARP_NULLPTR;
     }
     if (writer==YARP_NULLPTR) {
-        writer = new BufferedConnectionWriter(isTextMode(),isBareMode());
+        writer = new BufferedConnectionWriter(isTextMode(), isBareMode());
         yAssert(writer!=YARP_NULLPTR);
     }
     writer->clear();
@@ -79,12 +79,12 @@ bool StreamConnectionReader::convertTextMode() {
 Bytes StreamConnectionReader::readEnvelope() {
     if (protocol != YARP_NULLPTR) {
         const ConstString& env = protocol->getEnvelope();
-        return Bytes((char*)env.c_str(),env.length());
+        return Bytes((char*)env.c_str(), env.length());
     }
     if (parentConnectionReader != YARP_NULLPTR) {
         return parentConnectionReader->readEnvelope();
     }
-    return Bytes(YARP_NULLPTR,0);
+    return Bytes(YARP_NULLPTR, 0);
 }
 
 

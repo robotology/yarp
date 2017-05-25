@@ -134,7 +134,7 @@ public:
     void reply(SizedWriter& writer)
     {
         writer.stopWrite();
-        delegate->reply(*this,writer);
+        delegate->reply(*this, writer);
         pendingReply = false;
     }
 
@@ -420,7 +420,7 @@ private:
     bool need_send_delegate; ///< turns false once we've cached send modifier
     bool recv_delegate_fail; ///< turns true if recv modifier could not be cached
     bool send_delegate_fail; ///< turns true if send modifier could not be cached
-    Route route;             ///< names of (sender,carrier,receiver) triplet
+    Route route;             ///< names of (sender, carrier, receiver) triplet
     SizedWriter *writer;     ///< writer for current message
     StreamConnectionReader reader;  ///< reader for incoming messages
     yarp::os::Portable *ref; ///< source for current message, so we can

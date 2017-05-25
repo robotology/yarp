@@ -51,18 +51,18 @@ bool NameConfig::fromString(const ConstString& txt) {
 
             Bottle& b = config.findGroup("name");
             if (b.isNull()) {
-                fprintf(stderr,"Cannot find yarp group in config file\n");
+                fprintf(stderr, "Cannot find yarp group in config file\n");
                 std::exit(1);
             }
             address = Contact(b.find("host").asString().c_str(),
                               b.find("port").asInt());
-            mode = b.check("mode",Value("yarp")).asString().c_str();
+            mode = b.check("mode", Value("yarp")).asString().c_str();
             return (address.getPort()!=0);
         }
     }
 
     if (ss.size()>=2) {
-        address = Contact(ss.get(0),NetType::toInt(ss.get(1)));
+        address = Contact(ss.get(0), NetType::toInt(ss.get(1)));
         if (ss.size()>=3) {
             mode = ss.get(2);
         } else {
@@ -93,7 +93,7 @@ ConstString NameConfig::expandFilename(const char *fname) {
         conf = fname;
     }
 
-    YARP_DEBUG(Logger::get(),ConstString("Configuration file: ") + conf.c_str());
+    YARP_DEBUG(Logger::get(), ConstString("Configuration file: ") + conf.c_str());
     return conf.c_str();
 }
 
@@ -136,9 +136,9 @@ bool NameConfig::createPath(const ConstString& fileName, int ignoreLevel) {
             return false;
         }
     }
-    ConstString base = fileName.substr(0,index);
+    ConstString base = fileName.substr(0, index);
     if (yarp::os::stat((char*)base.c_str())<0) {
-        bool result = createPath(base,ignoreLevel-1);
+        bool result = createPath(base, ignoreLevel-1);
         if (result==false) {
             return false;
         }
@@ -156,7 +156,7 @@ bool NameConfig::createPath(const ConstString& fileName, int ignoreLevel) {
 
 ConstString NameConfig::readConfig(const ConstString& fileName) {
     char buf[25600];
-    FILE *fin = fopen(fileName.c_str(),"r");
+    FILE *fin = fopen(fileName.c_str(), "r");
     if (fin==YARP_NULLPTR) return "";
     ConstString result = "";
     while(fgets(buf, sizeof(buf)-1, fin) != YARP_NULLPTR) {
@@ -169,7 +169,7 @@ ConstString NameConfig::readConfig(const ConstString& fileName) {
 
 
 bool NameConfig::fromFile(const char *ns) {
-    ConstString fname = getConfigFileName(YARP_NULLPTR,ns);
+    ConstString fname = getConfigFileName(YARP_NULLPTR, ns);
     if (fname!="") {
         ConstString txt = readConfig(fname);
         if (txt!="") {
@@ -188,7 +188,7 @@ bool NameConfig::toFile(bool clean) {
             ConstString m = (mode!="")?mode:"yarp";
             txt += address.getHost() + " " + NetType::toString(address.getPort()) + " " + m + "\n";
         }
-        return writeConfig(fname,txt);
+        return writeConfig(fname, txt);
     }
     return false;
 }
@@ -203,9 +203,9 @@ bool NameConfig::writeConfig(const ConstString& fileName, const ConstString& tex
     if (!createPath(fileName)) {
         return false;
     }
-    FILE *fout = fopen(fileName.c_str(),"w");
+    FILE *fout = fopen(fileName.c_str(), "w");
     if (fout==YARP_NULLPTR) return false;
-    fprintf(fout,"%s",text.c_str());
+    fprintf(fout, "%s", text.c_str());
     fclose(fout);
     fout = YARP_NULLPTR;
     return true;
@@ -227,7 +227,7 @@ ConstString NameConfig::getHostName(bool prefer_loopback, const ConstString& see
     ACE_INET_Addr *ips = YARP_NULLPTR;
     size_t count = 0;
     char hostAddress[256];
-    if (ACE::get_ip_interfaces(count,ips)>=0) {
+    if (ACE::get_ip_interfaces(count, ips)>=0) {
         for (size_t i=0; i<count; i++) {
             ConstString ip = ips[i].get_host_addr(hostAddress, 256);
 #else
@@ -328,7 +328,7 @@ bool NameConfig::isLocalName(const ConstString& name) {
 #ifdef YARP_HAS_ACE
     ACE_INET_Addr *ips = YARP_NULLPTR;
     size_t count = 0;
-    if (ACE::get_ip_interfaces(count,ips)>=0) {
+    if (ACE::get_ip_interfaces(count, ips)>=0) {
         for (size_t i=0; i<count; i++) {
             ConstString ip = ips[i].get_host_addr();
             if (ip==name) {
@@ -371,7 +371,7 @@ yarp::os::Bottle NameConfig::getIpsAsBottle() {
 #if defined(YARP_HAS_ACE)
     ACE_INET_Addr *ips = YARP_NULLPTR;
     size_t count = 0;
-    if (ACE::get_ip_interfaces(count,ips)>=0) {
+    if (ACE::get_ip_interfaces(count, ips)>=0) {
         for (size_t i=0; i<count; i++) {
             ConstString ip = ips[i].get_host_addr();
             result.addString(ip.c_str());

@@ -42,7 +42,7 @@ Contact RosNameSpace::queryName(const ConstString& name) {
     ConstString cat = nc.getCategory();
     bool is_service = false;
 
-    Bottle cmd,reply;
+    Bottle cmd, reply;
     if (cat.find("-1")==ConstString::npos) {
         cmd.addString("lookupNode");
         cmd.addString("dummy_id");
@@ -76,15 +76,15 @@ Contact RosNameSpace::queryName(const ConstString& name) {
 }
 
 Contact RosNameSpace::registerName(const ConstString& name) {
-    fprintf(stderr,"ROS name server does not do 'raw' registrations.\n");
-    fprintf(stderr,"Use [Buffered]Port::open to get complete registrations.\n");
+    fprintf(stderr, "ROS name server does not do 'raw' registrations.\n");
+    fprintf(stderr, "Use [Buffered]Port::open to get complete registrations.\n");
     std::exit(1);
 
     return Contact();
 }
 
 Contact RosNameSpace::registerContact(const Contact& contact) {
-    return registerAdvanced(contact,YARP_NULLPTR);
+    return registerAdvanced(contact, YARP_NULLPTR);
 }
 
 Contact RosNameSpace::registerAdvanced(const Contact& contact, NameStore *store) {
@@ -188,19 +188,19 @@ Contact RosNameSpace::registerAdvanced(const Contact& contact, NameStore *store)
     ConstString pub = "";
     ConstString sub = "";
     if (pub_idx!=ConstString::npos) {
-        node = name.substr(0,pub_idx);
-        pub = name.substr(pub_idx+2,name.length());
-        YARP_SPRINTF1(Logger::get(),debug,"Publish to %s",pub.c_str());
+        node = name.substr(0, pub_idx);
+        pub = name.substr(pub_idx+2, name.length());
+        YARP_SPRINTF1(Logger::get(), debug, "Publish to %s", pub.c_str());
     }
     if (sub_idx!=ConstString::npos) {
-        node = name.substr(0,sub_idx);
-        sub = name.substr(sub_idx+2,name.length());
-        YARP_SPRINTF1(Logger::get(),debug,"Subscribe to %s",sub.c_str());
+        node = name.substr(0, sub_idx);
+        sub = name.substr(sub_idx+2, name.length());
+        YARP_SPRINTF1(Logger::get(), debug, "Subscribe to %s", sub.c_str());
     }
     if (node=="") {
         node = name;
     }
-    YARP_SPRINTF4(Logger::get(),debug,"Name [%s] Node [%s] sub [%s] pub [%s]",
+    YARP_SPRINTF4(Logger::get(), debug, "Name [%s] Node [%s] sub [%s] pub [%s]",
                   name.c_str(), node.c_str(), sub.c_str(), pub.c_str());
 
     {
@@ -235,7 +235,7 @@ Contact RosNameSpace::registerAdvanced(const Contact& contact, NameStore *store)
 }
 
 Contact RosNameSpace::unregisterName(const ConstString& name) {
-    return unregisterAdvanced(name,YARP_NULLPTR);
+    return unregisterAdvanced(name, YARP_NULLPTR);
 }
 
 Contact RosNameSpace::unregisterAdvanced(const ConstString& name, NameStore *store) {
@@ -288,28 +288,28 @@ Contact RosNameSpace::unregisterAdvanced(const ConstString& name, NameStore *sto
     ConstString pub = "";
     ConstString sub = "";
     if (pub_idx!=ConstString::npos) {
-        node = name.substr(0,pub_idx);
-        pub = name.substr(pub_idx+2,name.length());
+        node = name.substr(0, pub_idx);
+        pub = name.substr(pub_idx+2, name.length());
     }
     if (sub_idx!=ConstString::npos) {
-        node = name.substr(0,sub_idx);
-        sub = name.substr(sub_idx+2,name.length());
+        node = name.substr(0, sub_idx);
+        sub = name.substr(sub_idx+2, name.length());
     }
     if (node=="") {
         node = name;
     }
-    YARP_SPRINTF3(Logger::get(),debug,"Name [%s] sub [%s] pub [%s]\n",
+    YARP_SPRINTF3(Logger::get(), debug, "Name [%s] sub [%s] pub [%s]\n",
                   name.c_str(), sub.c_str(), pub.c_str());
 
     if (pub!="") {
-        NetworkBase::disconnect(name,ConstString("topic:/") + pub);
+        NetworkBase::disconnect(name, ConstString("topic:/") + pub);
     }
     if (sub!="") {
         NetworkBase::disconnect(ConstString("topic:/") + sub, name);
     }
 
     Contact contact = NetworkBase::queryName(name);
-    Bottle cmd,reply;
+    Bottle cmd, reply;
     cmd.addString("unregisterPublisher");
     cmd.addString(name);
     cmd.addString("/yarp/registration");
@@ -325,7 +325,7 @@ Contact RosNameSpace::unregisterAdvanced(const ConstString& name, NameStore *sto
 Contact RosNameSpace::unregisterContact(const Contact& contact) {
     // Remainder of method is supporting older /name+#/foo syntax
 
-    Bottle cmd,reply;
+    Bottle cmd, reply;
     cmd.addString("unregisterSubscriber");
     cmd.addString(contact.getName());
     cmd.addString("/yarp/registration");
@@ -358,7 +358,7 @@ bool RosNameSpace::connectPortToTopic(const Contact& src,
     cmd.addString("*");
     cmd.addString(rosify(src).toString());
 
-    return connectTopic(cmd,false,src,dest,style,false);
+    return connectTopic(cmd, false, src, dest, style, false);
 }
 
 bool RosNameSpace::connectTopicToPort(const Contact& src,
@@ -371,7 +371,7 @@ bool RosNameSpace::connectTopicToPort(const Contact& src,
     cmd.addString("*");
     cmd.addString(rosify(dest).toString());
 
-    return connectTopic(cmd,true,src,dest,style,true);
+    return connectTopic(cmd, true, src, dest, style, true);
 }
 
 bool RosNameSpace::disconnectPortFromTopic(const Contact& src,
@@ -382,7 +382,7 @@ bool RosNameSpace::disconnectPortFromTopic(const Contact& src,
     cmd.addString(toRosNodeName(src.getName()));
     cmd.addString(dest.getName());
     cmd.addString(rosify(src).toString());
-    return connectTopic(cmd,false,src,dest,style,false);
+    return connectTopic(cmd, false, src, dest, style, false);
 }
 
 bool RosNameSpace::disconnectTopicFromPort(const Contact& src,
@@ -393,7 +393,7 @@ bool RosNameSpace::disconnectTopicFromPort(const Contact& src,
     cmd.addString(toRosNodeName(dest.getName()));
     cmd.addString(src.getName());
     cmd.addString(rosify(dest).toString());
-    return connectTopic(cmd,true,src,dest,style,false);
+    return connectTopic(cmd, true, src, dest, style, false);
 }
 
 bool RosNameSpace::connectPortToPortPersistently(const Contact& src,
@@ -428,12 +428,12 @@ bool RosNameSpace::connectTopic(Bottle& cmd,
     bool ok = NetworkBase::write(base,
                                     cmd,
                                     reply);
-    bool fail = (reply.check("faultCode",Value(0)).asInt()!=0)||!ok;
+    bool fail = (reply.check("faultCode", Value(0)).asInt()!=0)||!ok;
     if (fail) {
         if (!style.quiet) {
-            fprintf(stderr,"Failure: name server did not accept connection to topic.\n");
+            fprintf(stderr, "Failure: name server did not accept connection to topic.\n");
             if (reply.check("faultString")) {
-                fprintf(stderr,"Cause: %s\n", reply.check("faultString",Value("")).asString().c_str());
+                fprintf(stderr, "Cause: %s\n", reply.check("faultString", Value("")).asString().c_str());
             }
         }
     }
@@ -483,7 +483,7 @@ Contact RosNameSpace::detectNameServer(bool useDetectedServer,
 
     if (!c.isValid()) {
         scanNeeded = true;
-        fprintf(stderr,"Checking for ROS_MASTER_URI...\n");
+        fprintf(stderr, "Checking for ROS_MASTER_URI...\n");
         ConstString addr = NetworkBase::getEnvironment("ROS_MASTER_URI");
         c = Contact::fromString(addr.c_str());
         if (c.isValid()) {
@@ -533,7 +533,7 @@ bool RosNameSpace::writeToNameServer(PortWriter& cmd,
                                  *(use_cache?&cache:&reply),
                                  style);
     if (!ok) {
-        fprintf(stderr,"Failed to contact ROS server\n");
+        fprintf(stderr, "Failed to contact ROS server\n");
         return false;
     }
 
@@ -555,12 +555,12 @@ bool RosNameSpace::writeToNameServer(PortWriter& cmd,
                     Bottle *links = unit->get(1).asList();
                     if (!links) continue;
                     if (i<2) {
-                        topics.put(stem,1);
+                        topics.put(stem, 1);
                     } else {
-                        services.put(stem,1);
+                        services.put(stem, 1);
                     }
                     for (int j=0; j<links->size(); j++) {
-                        nodes.put(links->get(j).asString(),1);
+                        nodes.put(links->get(j).asString(), 1);
                     }
                 }
             }

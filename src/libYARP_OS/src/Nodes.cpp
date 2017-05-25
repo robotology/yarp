@@ -22,8 +22,8 @@ class yarp::os::Nodes::Helper
 {
 public:
     Mutex mutex;
-    std::map<ConstString,Node *> by_name;
-    std::map<ConstString,int> is_external;
+    std::map<ConstString, Node *> by_name;
+    std::map<ConstString, int> is_external;
     bool active;
     ConstString active_name;
     Node *dummy;
@@ -40,9 +40,9 @@ public:
 
     void clear()
     {
-        std::map<ConstString,Node *> by_name_cp = by_name;
-        std::map<ConstString,int> is_external_cp = is_external;
-        for (std::map<ConstString,Node *>::const_iterator it = by_name_cp.begin(); it != by_name_cp.end(); ++it) {
+        std::map<ConstString, Node *> by_name_cp = by_name;
+        std::map<ConstString, int> is_external_cp = is_external;
+        for (std::map<ConstString, Node *>::const_iterator it = by_name_cp.begin(); it != by_name_cp.end(); ++it) {
             if (it->second) {
                 bool ext = false;
                 if (is_external_cp.find(it->first) != is_external_cp.end()) {
@@ -67,7 +67,7 @@ public:
     void update(Contactable& contactable);
     void prepare(const ConstString& name);
     void remove(Contactable& contactable);
-    Contact query(const ConstString& name,const ConstString& category);
+    Contact query(const ConstString& name, const ConstString& category);
     void interrupt();
 
     bool enable(bool flag)
@@ -85,7 +85,7 @@ public:
         mutex.lock();
         NestedContact nc;
         nc.fromString(name);
-        std::map<ConstString,Node *>::const_iterator it = by_name.find(nc.getNodeName());
+        std::map<ConstString, Node *>::const_iterator it = by_name.find(nc.getNodeName());
         if (it!=by_name.end()) {
             result = it->second->where();
         }
@@ -99,7 +99,7 @@ public:
         mutex.lock();
         NestedContact nc;
         nc.fromString(name);
-        std::map<ConstString,Node *>::const_iterator it = by_name.find(nc.getNodeName());
+        std::map<ConstString, Node *>::const_iterator it = by_name.find(nc.getNodeName());
         if (it!=by_name.end()) {
             result = it->second->query(nc.getNestedName());
         }
@@ -146,7 +146,7 @@ Node *yarp::os::Nodes::Helper::getNode(const ConstString& name, bool create)
     if (!nc.isNested()) {
         return YARP_NULLPTR;
     }
-    std::map<ConstString,Node *>::const_iterator it = by_name.find(nc.getNodeName());
+    std::map<ConstString, Node *>::const_iterator it = by_name.find(nc.getNodeName());
     Node *node = YARP_NULLPTR;
     if (it == by_name.end()) {
         if (create) {
@@ -166,7 +166,7 @@ void yarp::os::Nodes::Helper::add(Contactable& contactable)
     if (!active) {
         return;
     }
-    Node *node = getNode(contactable.getName(),true);
+    Node *node = getNode(contactable.getName(), true);
     if (node) node->add(contactable);
 }
 
@@ -175,7 +175,7 @@ void yarp::os::Nodes::Helper::update(Contactable& contactable)
     if (!active) {
         return;
     }
-    Node *node = getNode(contactable.getName(),true);
+    Node *node = getNode(contactable.getName(), true);
     if (node) node->update(contactable);
 }
 
@@ -184,7 +184,7 @@ void yarp::os::Nodes::Helper::prepare(const ConstString& name)
     if (!active) {
         return;
     }
-    getNode(name,true);
+    getNode(name, true);
 }
 
 void yarp::os::Nodes::Helper::remove(Contactable& contactable)
@@ -192,18 +192,18 @@ void yarp::os::Nodes::Helper::remove(Contactable& contactable)
     if (!active) {
         return;
     }
-    Node *node = getNode(contactable.getName(),false);
+    Node *node = getNode(contactable.getName(), false);
     if (node) node->remove(contactable);
 }
 
-Contact yarp::os::Nodes::Helper::query(const ConstString& name,const ConstString& category)
+Contact yarp::os::Nodes::Helper::query(const ConstString& name, const ConstString& category)
 {
     Contact result;
     if (!active) {
         return result;
     }
-    for (std::map<ConstString,Node *>::const_iterator it = by_name.begin(); it != by_name.end(); ++it) {
-        result = it->second->query(name,category);
+    for (std::map<ConstString, Node *>::const_iterator it = by_name.begin(); it != by_name.end(); ++it) {
+        result = it->second->query(name, category);
         if (result.isValid()) {
             return result;
         }
@@ -216,7 +216,7 @@ void yarp::os::Nodes::Helper::interrupt()
     if (!active) {
         return;
     }
-    for (std::map<ConstString,Node *>::const_iterator it = by_name.begin(); it != by_name.end(); ++it) {
+    for (std::map<ConstString, Node *>::const_iterator it = by_name.begin(); it != by_name.end(); ++it) {
         it->second->interrupt();
     }
 }
@@ -256,10 +256,10 @@ void Nodes::remove(Contactable& contactable)
 }
 
 
-Contact Nodes::query(const ConstString& name,const ConstString& category)
+Contact Nodes::query(const ConstString& name, const ConstString& category)
 {
     mPriv->mutex.lock();
-    Contact result = mPriv->query(name,category);
+    Contact result = mPriv->query(name, category);
     mPriv->mutex.unlock();
     return result;
 }
@@ -333,7 +333,7 @@ bool Nodes::requireActiveName()
 void Nodes::addExternalNode(const ConstString& name, Node& node)
 {
     mPriv->mutex.lock();
-    mPriv->addExternalNode(name,node);
+    mPriv->addExternalNode(name, node);
     mPriv->mutex.unlock();
 }
 

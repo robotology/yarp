@@ -20,7 +20,7 @@
 using namespace yarp::os::impl;
 using namespace yarp::os;
 
-//const YARP_timeval _timeout_value(20,0);    // (20 sec) timeout value for the release (20 sec)
+//const YARP_timeval _timeout_value(20, 0);    // (20 sec) timeout value for the release (20 sec)
 
 class RateThreadCallbackAdapter: public ThreadImpl
 {
@@ -173,9 +173,9 @@ public:
         unlock();
 
         //compute sleep time
-        fromDouble(sleepPeriodTV,adaptedPeriod,1000);
-        addTime(sleepPeriodTV,currentRunTV);
-        subtractTime(sleepPeriodTV,elapsedTV);
+        fromDouble(sleepPeriodTV, adaptedPeriod, 1000);
+        addTime(sleepPeriodTV, currentRunTV);
+        subtractTime(sleepPeriodTV, elapsedTV);
         // Time::delay(sleep_period/1000.0);
         sleepThread(sleepPeriodTV);
     }
@@ -329,7 +329,7 @@ void RateThread::getEstPeriod(double &av, double &std)
 
 void RateThread::getEstUsed(double &av, double &std)
 {
-    ((RateThreadCallbackAdapter*)implementation)->getEstUsed(av,std);
+    ((RateThreadCallbackAdapter*)implementation)->getEstUsed(av, std);
 }
 
 void RateThread::resetStat()
@@ -415,11 +415,11 @@ bool RateThreadWrapper::open(double framerate, bool polling) {
     int period = 0;
     if (framerate>0) {
         period=(int) (0.5+1000.0/framerate);
-        YARP_SPRINTF2(Logger::get(),info,
+        YARP_SPRINTF2(Logger::get(), info,
                       "Setting framerate to: %.0lf[Hz] (thread period %d[ms])\n",
                       framerate, period);
     } else {
-        YARP_SPRINTF0(Logger::get(),info,
+        YARP_SPRINTF0(Logger::get(), info,
                       "No framerate specified, polling the device");
         period=0; //continuous
     }

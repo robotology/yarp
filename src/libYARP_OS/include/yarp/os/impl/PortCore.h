@@ -129,7 +129,7 @@ public:
 
     void releaseOutModifier()
     {
-        if(outputModifier != YARP_NULLPTR) {
+        if (outputModifier != YARP_NULLPTR) {
             outputModifier->close();
             delete outputModifier;
             outputModifier = YARP_NULLPTR;
@@ -138,7 +138,7 @@ public:
 
     void releaseInModifier()
     {
-        if(inputModifier != YARP_NULLPTR) {
+        if (inputModifier != YARP_NULLPTR) {
             inputModifier->close();
             delete inputModifier;
             inputModifier = YARP_NULLPTR;
@@ -163,7 +163,7 @@ public:
             stateMutex(1),
             packetMutex(1),
             connectionChange(1),
-            log("port",Logger::get()),
+            log("port", Logger::get()),
             face(YARP_NULLPTR),
             reader(YARP_NULLPTR),
             adminReader(YARP_NULLPTR),
@@ -485,7 +485,7 @@ public:
 
     virtual bool removeIO(const Route& route, bool synch)
     {
-        return removeUnit(route,synch);
+        return removeUnit(route, synch);
     }
 
     virtual void reportUnit(PortCoreUnit *unit, bool active);

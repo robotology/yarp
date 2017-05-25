@@ -111,7 +111,7 @@ public:
 #ifndef DOXYGEN_SHOULD_SKIP_THIS
     virtual PortWriterWrapper *create(PortWriterBufferManager& man,
                                       void *tracker) {
-        return new PortWriterBufferAdaptor<T>(man,tracker);
+        return new PortWriterBufferAdaptor<T>(man, tracker);
     }
 #endif /*DOXYGEN_SHOULD_SKIP_THIS*/
 

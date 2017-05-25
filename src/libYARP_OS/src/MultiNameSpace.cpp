@@ -106,8 +106,8 @@ public:
             static double last_shown = now-10;
             if (now-last_shown>3) {
                 last_shown = now;
-                fprintf(stderr,"warning: YARP name server(s) not configured, ports will be anonymous\n");
-                fprintf(stderr,"warning: check your namespace and settings with 'yarp detect'\n");
+                fprintf(stderr, "warning: YARP name server(s) not configured, ports will be anonymous\n");
+                fprintf(stderr, "warning: check your namespace and settings with 'yarp detect'\n");
             }
             return false;
         }
@@ -138,7 +138,7 @@ public:
                 spaces.push_back(ns);
             } else {
                 // shrug
-                YARP_SPRINTF1(Logger::get(),error,
+                YARP_SPRINTF1(Logger::get(), error,
                               "cannot deal with namespace of type %s",
                               mode.c_str());
                 return false;
@@ -257,7 +257,7 @@ bool MultiNameSpace::connectPortToTopic(const Contact& src,
                                         ContactStyle style) {
     NameSpace *ns = HELPER(this).getOne();
     if (!ns) return false;
-    return ns->connectPortToTopic(src,dest,style);
+    return ns->connectPortToTopic(src, dest, style);
 }
 
 bool MultiNameSpace::connectTopicToPort(const Contact& src,
@@ -265,7 +265,7 @@ bool MultiNameSpace::connectTopicToPort(const Contact& src,
                                         ContactStyle style) {
     NameSpace *ns = HELPER(this).getOne();
     if (!ns) return false;
-    return ns->connectTopicToPort(src,dest,style);
+    return ns->connectTopicToPort(src, dest, style);
 }
 
 bool MultiNameSpace::disconnectPortFromTopic(const Contact& src,
@@ -273,7 +273,7 @@ bool MultiNameSpace::disconnectPortFromTopic(const Contact& src,
                                              ContactStyle style) {
     NameSpace *ns = HELPER(this).getOne();
     if (!ns) return false;
-    return ns->disconnectPortFromTopic(src,dest,style);
+    return ns->disconnectPortFromTopic(src, dest, style);
 }
 
 bool MultiNameSpace::disconnectTopicFromPort(const Contact& src,
@@ -281,7 +281,7 @@ bool MultiNameSpace::disconnectTopicFromPort(const Contact& src,
                                              ContactStyle style) {
     NameSpace *ns = HELPER(this).getOne();
     if (!ns) return false;
-    return ns->disconnectTopicFromPort(src,dest,style);
+    return ns->disconnectTopicFromPort(src, dest, style);
 }
 
 bool MultiNameSpace::connectPortToPortPersistently(const Contact& src,
@@ -289,7 +289,7 @@ bool MultiNameSpace::connectPortToPortPersistently(const Contact& src,
                                                    ContactStyle style) {
     NameSpace *ns = HELPER(this).getOne();
     if (!ns) return false;
-    return ns->connectPortToPortPersistently(src,dest,style);
+    return ns->connectPortToPortPersistently(src, dest, style);
 }
 
 bool MultiNameSpace::disconnectPortToPortPersistently(const Contact& src,
@@ -297,7 +297,7 @@ bool MultiNameSpace::disconnectPortToPortPersistently(const Contact& src,
                                                       ContactStyle style) {
     NameSpace *ns = HELPER(this).getOne();
     if (!ns) return false;
-    return ns->disconnectPortToPortPersistently(src,dest,style);
+    return ns->disconnectPortToPortPersistently(src, dest, style);
 }
 
 Contact MultiNameSpace::registerName(const ConstString& name) {
@@ -358,13 +358,13 @@ bool MultiNameSpace::setProperty(const ConstString& name, const ConstString& key
                                 const Value& value) {
     NameSpace *ns = HELPER(this).getOne();
     if (!ns) return false;
-    return ns->setProperty(name,key,value);
+    return ns->setProperty(name, key, value);
 }
 
 Value *MultiNameSpace::getProperty(const ConstString& name, const ConstString& key) {
     NameSpace *ns = HELPER(this).getOne();
     if (!ns) return YARP_NULLPTR;
-    return ns->getProperty(name,key);
+    return ns->getProperty(name, key);
 }
 
 Contact MultiNameSpace::detectNameServer(bool useDetectedServer,
@@ -379,13 +379,13 @@ Contact MultiNameSpace::detectNameServer(bool useDetectedServer,
     Contact fake, r;
     if (name.find("/ros")!=ConstString::npos) {
         RosNameSpace ns(fake);
-        r = ns.detectNameServer(useDetectedServer,scanNeeded,serverUsed);
+        r = ns.detectNameServer(useDetectedServer, scanNeeded, serverUsed);
         if (r.isValid()&&useDetectedServer&&scanNeeded) {
             HELPER(this).activate(true);
         }
     } else {
         YarpNameSpace ns(fake);
-        r = ns.detectNameServer(useDetectedServer,scanNeeded,serverUsed);
+        r = ns.detectNameServer(useDetectedServer, scanNeeded, serverUsed);
         if (r.isValid()&&useDetectedServer&&scanNeeded) {
             HELPER(this).activate(true);
         }
@@ -399,5 +399,5 @@ bool MultiNameSpace::writeToNameServer(PortWriter& cmd,
                                        const ContactStyle& style) {
     NameSpace *ns = HELPER(this).getOne();
     if (!ns) return false;
-    return ns->writeToNameServer(cmd,reply,style);
+    return ns->writeToNameServer(cmd, reply, style);
 }

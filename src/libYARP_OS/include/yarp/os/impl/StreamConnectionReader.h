@@ -78,7 +78,7 @@ public:
 
     virtual bool setSize(size_t len)
     {
-        reset(*in,str,route,len,textMode,bareMode);
+        reset(*in, str, route, len, textMode, bareMode);
         return true;
     }
 
@@ -129,7 +129,7 @@ public:
             return 0;
         }
         NetInt32 x = 0;
-        yarp::os::Bytes b((char*)(&x),sizeof(x));
+        yarp::os::Bytes b((char*)(&x), sizeof(x));
         yAssert(in!=YARP_NULLPTR);
         YARP_SSIZE_T r = in->read(b);
         if (r<0 || (size_t)r<b.length()) {
@@ -146,7 +146,7 @@ public:
             return 0;
         }
         NetInt64 x = 0;
-        yarp::os::Bytes b((char*)(&x),sizeof(x));
+        yarp::os::Bytes b((char*)(&x), sizeof(x));
         yAssert(in!=YARP_NULLPTR);
         YARP_SSIZE_T r = in->read(b);
         if (r<0 || (size_t)r<b.length()) {
@@ -163,7 +163,7 @@ public:
             return 0;
         }
         NetFloat64 x = 0;
-        yarp::os::Bytes b((char*)(&x),sizeof(x));
+        yarp::os::Bytes b((char*)(&x), sizeof(x));
         yAssert(in!=YARP_NULLPTR);
         YARP_SSIZE_T r = in->read(b);
         if (r<0 || (size_t)r<b.length()) {
@@ -180,7 +180,7 @@ public:
             return "";
         }
         char *buf = new char[len];
-        yarp::os::Bytes b(buf,len);
+        yarp::os::Bytes b(buf, len);
         yAssert(in!=YARP_NULLPTR);
         YARP_SSIZE_T r = in->read(b);
         if (r<0 || (size_t)r<b.length()) {
@@ -201,7 +201,7 @@ public:
         }
         yAssert(in!=YARP_NULLPTR);
         bool success = false;
-        ConstString result = in->readLine('\n',&success);
+        ConstString result = in->readLine('\n', &success);
         if (!success) {
             err = true;
             return "";
@@ -276,7 +276,7 @@ public:
 
     virtual bool expectBlock(const char *data, size_t len)
     {
-        return expectBlock(yarp::os::Bytes((char*)data,len));
+        return expectBlock(yarp::os::Bytes((char*)data, len));
     }
 
     virtual ::yarp::os::ConstString expectText(int terminatingChar)
@@ -286,7 +286,7 @@ public:
         }
         yAssert(in!=YARP_NULLPTR);
         bool lsuccess = false;
-        ConstString result = in->readLine(terminatingChar,&lsuccess);
+        ConstString result = in->readLine(terminatingChar, &lsuccess);
         if (lsuccess) {
             messageLen -= result.length()+1;
         }

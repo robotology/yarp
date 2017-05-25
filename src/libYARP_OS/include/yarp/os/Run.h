@@ -121,7 +121,7 @@ public:
      * @param s is the SIGNAL number.
      * @return 0=success -1=failed.
      */
-    static int kill(const ConstString &node, const ConstString &keyv,int s);
+    static int kill(const ConstString &node, const ConstString &keyv, int s);
     /**
      * Get a report of all applications running on a yarprun server.
      * @param node is the yarprun server port name. It must be unique in the network.
@@ -130,7 +130,7 @@ public:
      * @param num_processes return the number of running processes.
      * @return 0=success -1=failed.
      */
-    // static int ps(const ConstString &node,ConstString** &processes,int &num_processes);
+    // static int ps(const ConstString &node, ConstString** &processes, int &num_processes);
     /**
      * Report if an application is still running on a yarprun server.
      * @param node is the yarprun server port name. It must be unique in the network.
@@ -174,15 +174,15 @@ public:
     static void CleanZombie(int pid);
 #endif
 
-    static yarp::os::Bottle sendMsg(Bottle& msg,yarp::os::ConstString target,int RETRY=20,double DELAY=0.5);
+    static yarp::os::Bottle sendMsg(Bottle& msg, yarp::os::ConstString target, int RETRY=20, double DELAY=0.5);
 
 protected:
     static void Help(const char* msg="");
     static int server();
-    static int executeCmdAndStdio(Bottle& msg,Bottle& result);
-    static int executeCmdStdout(Bottle& msg,Bottle& result,yarp::os::ConstString& loggerName);
-    static int executeCmd(Bottle& msg,Bottle& result);
-    static int userStdio(Bottle& msg,Bottle& result);
+    static int executeCmdAndStdio(Bottle& msg, Bottle& result);
+    static int executeCmdStdout(Bottle& msg, Bottle& result, yarp::os::ConstString& loggerName);
+    static int executeCmd(Bottle& msg, Bottle& result);
+    static int userStdio(Bottle& msg, Bottle& result);
 
     static inline bool IS_PARENT_OF(int pid){ return pid>0; }
     static inline bool IS_NEW_PROCESS(int pid){ return !pid; }
@@ -193,14 +193,14 @@ protected:
 
 #if !defined(_WIN32)
     static void cleanBeforeExec();
-    static void writeToPipe(int fd,yarp::os::ConstString str);
-    static int readFromPipe(int fd,char* &data,int& buffsize);
+    static void writeToPipe(int fd, yarp::os::ConstString str);
+    static int readFromPipe(int fd, char* &data, int& buffsize);
 #endif
 
-    static void cmdcpy(char* &dst,const char* src)
+    static void cmdcpy(char* &dst, const char* src)
     {
         dst=new char[(strlen(src)/8+2)*16];
-        strcpy(dst,src);
+        strcpy(dst, src);
     }
 
     static void cmdclean(char **cmd)

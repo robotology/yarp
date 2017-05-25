@@ -79,7 +79,7 @@ public:
 
 protected:
     int getSpecifier(const Bytes& b);
-    void createStandardHeader(int specifier,const yarp::os::Bytes& header);
+    void createStandardHeader(int specifier, const yarp::os::Bytes& header);
     virtual bool write(ConnectionState& proto, SizedWriter& writer);
     bool sendConnectionStateSpecifier(ConnectionState& proto);
     bool sendSenderSpecifier(ConnectionState& proto);
@@ -89,7 +89,7 @@ protected:
             char *base = b.get();
             if (base[0]=='Y' && base[1]=='A' &&
                 base[6]=='R' && base[7]=='P') {
-                yarp::os::Bytes b2(b.get()+2,4);
+                yarp::os::Bytes b2(b.get()+2, 4);
                 int x = NetType::netInt(b2);
                 return x;
             }
@@ -97,7 +97,7 @@ protected:
         return -1;
     }
 
-    static void createYarpNumber(int x,const yarp::os::Bytes& header) {
+    static void createYarpNumber(int x, const yarp::os::Bytes& header) {
         if (header.length()!=8) {
             return;
         }
@@ -106,8 +106,8 @@ protected:
         base[1] = 'A';
         base[6] = 'R';
         base[7] = 'P';
-        yarp::os::Bytes code(base+2,4);
-        NetType::netInt(x,code);
+        yarp::os::Bytes code(base+2, 4);
+        NetType::netInt(x, code);
     }
 };
 

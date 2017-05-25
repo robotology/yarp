@@ -102,14 +102,14 @@ public:
     void close_reader()
     {
         if (sd!=-1) {
-            ::shutdown(sd,SHUT_RD);
+            ::shutdown(sd, SHUT_RD);
         }
     }
 
     void close_writer()
     {
         if (sd!=-1) {
-            ::shutdown(sd,SHUT_WR);
+            ::shutdown(sd, SHUT_WR);
         }
     }
 

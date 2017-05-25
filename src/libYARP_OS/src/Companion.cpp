@@ -81,12 +81,12 @@
             yarp::os::Bottle helpCommand, helpBottle;
             helpCommand.addString("help");
             bool helpOk=false;
-            if(rpcHelpPort)
-                helpOk = rpcHelpPort->write(helpCommand,helpBottle);
-            if(helpOk)
+            if (rpcHelpPort)
+                helpOk = rpcHelpPort->write(helpCommand, helpBottle);
+            if (helpOk)
             {
                 yarp::os::Bottle* cmdList = YARP_NULLPTR;
-                if (helpBottle.get(0).isVocab() && helpBottle.get(0).asVocab()==VOCAB4('m','a','n','y') )
+                if (helpBottle.get(0).isVocab() && helpBottle.get(0).asVocab()==VOCAB4('m', 'a', 'n', 'y') )
                 {
                     cmdList=helpBottle.get(1).asList();
                 }
@@ -169,7 +169,7 @@ static void companion_sigint_handler(int sig) {
             port->interrupt();
         }
     } else {
-        fprintf(stderr,"Aborting...\n");
+        fprintf(stderr, "Aborting...\n");
         std::exit(1);
     }
 }
@@ -222,13 +222,13 @@ static ConstString getStdin() {
 
 #ifdef WITH_LIBEDIT
     if (yarp::os::impl::isatty(yarp::os::impl::fileno(stdin))) {
-        if(szLine) {
+        if (szLine) {
             free(szLine);
             szLine = (char*)YARP_NULLPTR;
         }
 
         szLine = readline(">>");
-        if(szLine && *szLine) {
+        if (szLine && *szLine) {
             txt = szLine;
             add_history(szLine);
         } else if (!szLine) {
@@ -241,7 +241,7 @@ static ConstString getStdin() {
     bool done = false;
     char buf[2048];
     while (!done) {
-        char *result = fgets(buf,sizeof(buf),stdin);
+        char *result = fgets(buf, sizeof(buf), stdin);
         if (result != YARP_NULLPTR) {
             for (unsigned int i=0; i<strlen(buf); i++) {
                 if (buf[i]=='\n') {
@@ -259,10 +259,10 @@ static ConstString getStdin() {
 }
 
 static void writeBottleAsFile(const char *fileName, const Bottle& bot) {
-    FILE *fout = fopen(fileName,"w");
+    FILE *fout = fopen(fileName, "w");
     if (fout == YARP_NULLPTR) return;
     for (int i=0; i<bot.size(); i++) {
-        fprintf(fout,"%s\n",bot.get(i).toString().c_str());
+        fprintf(fout, "%s\n", bot.get(i).toString().c_str());
     }
     fclose(fout);
     fout = YARP_NULLPTR;
@@ -375,14 +375,14 @@ int Companion::dispatch(const char *name, int argc, char *argv[]) {
 
     ConstString sname(name);
     Entry e;
-    int result = PLATFORM_MAP_FIND_RAW(action,sname,e);
+    int result = PLATFORM_MAP_FIND_RAW(action, sname, e);
     int v = -1;
     if (result!=-1) {
-        v = (this->*(e.fn))(argc_copy,argv_copy);
+        v = (this->*(e.fn))(argc_copy, argv_copy);
     } else {
         YARP_SPRINTF1(Logger::get(),
                       error,
-                      "Could not find command \"%s\"",name);
+                      "Could not find command \"%s\"", name);
     }
     delete[] argv_copy_org;
     return v;
@@ -392,7 +392,7 @@ int Companion::dispatch(const char *name, int argc, char *argv[]) {
 int Companion::main(int argc, char *argv[]) {
     ResourceFinder& rf = ResourceFinder::getResourceFinderSingleton();
     if (!rf.isConfigured()) {
-        rf.configure(argc,argv);
+        rf.configure(argc, argv);
     }
 
     // eliminate 0th arg, the program name
@@ -436,7 +436,7 @@ int Companion::main(int argc, char *argv[]) {
     }
 
     if (argc<=0) {
-        fprintf(stderr,"Please supply a command\n");
+        fprintf(stderr, "Please supply a command\n");
         return -1;
     }
 
@@ -444,7 +444,7 @@ int Companion::main(int argc, char *argv[]) {
     argc--;
     argv++;
     instance.adminMode = adminMode;
-    return instance.dispatch(cmd,argc,argv);
+    return instance.dispatch(cmd, argc, argv);
 }
 
 
@@ -498,12 +498,12 @@ int Companion::cmdPing(int argc, char *argv[]) {
             ping.sample();
             return 1;
         }
-        return ping(targetName,false);
+        return ping(targetName, false);
     }
-    fprintf(stderr,"Usage:\n");
-    fprintf(stderr,"  yarp ping /port\n");
-    fprintf(stderr,"  yarp ping --time /port\n");
-    fprintf(stderr,"  yarp ping --rate /port\n");
+    fprintf(stderr, "Usage:\n");
+    fprintf(stderr, "  yarp ping /port\n");
+    fprintf(stderr, "  yarp ping --time /port\n");
+    fprintf(stderr, "  yarp ping --rate /port\n");
     return 1;
 }
 
@@ -515,7 +515,7 @@ int Companion::ping(const char *port, bool quiet) {
     Contact address = NetworkBase::queryName(port);
     if (!address.isValid()) {
         if (!quiet) {
-            YARP_ERROR(Logger::get(),"could not find port");
+            YARP_ERROR(Logger::get(), "could not find port");
         }
         return 1;
     }
@@ -523,20 +523,20 @@ int Companion::ping(const char *port, bool quiet) {
     if (address.getCarrier()=="tcp") {
         out = Carriers::connect(address);
         if (out == YARP_NULLPTR) {
-            YARP_ERROR(Logger::get(),"port found, but cannot connect");
+            YARP_ERROR(Logger::get(), "port found, but cannot connect");
             return 1;
         }
-        Route r(connectionName,port,"text_ack");
+        Route r(connectionName, port, "text_ack");
         bool ok = out->open(r);
         if (!ok) {
-            YARP_ERROR(Logger::get(),"could not connect to port");
+            YARP_ERROR(Logger::get(), "could not connect to port");
             return 1;
         }
         OutputStream& os = out->getOutputStream();
         InputStream& is = out->getInputStream();
         StreamConnectionReader reader;
 
-        PortCommand pc(0,"*");
+        PortCommand pc(0, "*");
         BufferedConnectionWriter bw(out->getConnection().isTextMode());
         pc.write(bw);
         bw.write(os);
@@ -556,7 +556,7 @@ int Companion::ping(const char *port, bool quiet) {
             delete out;
         }
     } else {
-        int e = exists(port,quiet);
+        int e = exists(port, quiet);
         printf("%s %s.\n", port, (e==0)?"exists":"is not responding");
         return e;
     }
@@ -567,14 +567,14 @@ int Companion::ping(const char *port, bool quiet) {
 
 int Companion::cmdExists(int argc, char *argv[]) {
     if (argc == 1) {
-        return exists(argv[0],true);
+        return exists(argv[0], true);
     }
     if (argc == 2) {
-        bool ok = NetworkBase::isConnected(argv[0],argv[1],false);
+        bool ok = NetworkBase::isConnected(argv[0], argv[1], false);
         return ok?0:1;
     }
 
-    fprintf(stderr,"Please specify a port name\n");
+    fprintf(stderr, "Please specify a port name\n");
     return 1;
 }
 
@@ -613,12 +613,12 @@ int Companion::exists(const char *target, const ContactStyle& style) {
 
 int Companion::cmdWait(int argc, char *argv[]) {
     if (argc == 1) {
-        return wait(argv[0],false);
+        return wait(argv[0], false);
     }
     if (argc == 2) {
-        return wait(argv[0],false,argv[1]);
+        return wait(argv[0], false, argv[1]);
     }
-    fprintf(stderr,"Please specify a single port name, or a source and destination port name\n");
+    fprintf(stderr, "Please specify a single port name, or a source and destination port name\n");
     return 1;
 }
 
@@ -630,10 +630,10 @@ int Companion::wait(const char *target, bool silent, const char *target2) {
         if (ct%30==1) {
             if (!silent) {
                 if (target2 != YARP_NULLPTR) {
-                    YARP_SPRINTF2(Logger::get(),info,
+                    YARP_SPRINTF2(Logger::get(), info,
                                   "Waiting for %s->%s...", target, target2);
                 } else {
-                    YARP_SPRINTF1(Logger::get(),info,
+                    YARP_SPRINTF1(Logger::get(), info,
                                   "Waiting for %s...", target);
                 }
             }
@@ -641,9 +641,9 @@ int Companion::wait(const char *target, bool silent, const char *target2) {
         ct++;
         int result = 0;
         if (target2 != YARP_NULLPTR) {
-            result = NetworkBase::isConnected(target,target2,true)?0:1;
+            result = NetworkBase::isConnected(target, target2, true)?0:1;
         } else {
-            result = exists(target,true);
+            result = exists(target, true);
         }
         if (result!=0) {
             Time::delay(0.1);
@@ -725,7 +725,7 @@ int Companion::cmdName(int argc, char *argv[]) {
     }
     if (reply.size()==1&&reply.get(0).isString()) {
         printf("%s", reply.get(0).asString().c_str());
-    } else if (reply.get(0).isVocab() && reply.get(0).asVocab()==VOCAB4('m','a','n','y')) {
+    } else if (reply.get(0).isVocab() && reply.get(0).asVocab()==VOCAB4('m', 'a', 'n', 'y')) {
         for (int i=1; i<reply.size(); i++) {
             Value& v = reply.get(i);
             if (v.isString()) {
@@ -743,14 +743,14 @@ int Companion::cmdName(int argc, char *argv[]) {
 int Companion::cmdConf(int argc, char *argv[]) {
     NameConfig nc;
     if (argc==0) {
-        printf("%s\n",nc.getConfigFileName().c_str());
+        printf("%s\n", nc.getConfigFileName().c_str());
         return 0;
     }
     if (argc>=2) {
         nc.fromFile();
         Contact prev = nc.getAddress();
         ConstString prevMode = nc.getMode();
-        Contact next(argv[0],atoi(argv[1]));
+        Contact next(argv[0], atoi(argv[1]));
         nc.setAddress(next);
         if (argc>=3) {
             nc.setMode(argv[2]);
@@ -762,7 +762,7 @@ int Companion::cmdConf(int argc, char *argv[]) {
         Contact current = nc.getAddress();
         ConstString currentMode = nc.getMode();
         printf("Configuration file:\n");
-        printf("  %s\n",nc.getConfigFileName().c_str());
+        printf("  %s\n", nc.getConfigFileName().c_str());
         if (prev.isValid()) {
             printf("Stored:\n");
             printf("  host %s port number %d (%s name server)\n",
@@ -791,7 +791,7 @@ int Companion::cmdConf(int argc, char *argv[]) {
         if (ConstString(argv[0])=="--clean") {
             nc.toFile(true);
             printf("Cleared configuration file:\n");
-            printf("  %s\n",nc.getConfigFileName().c_str());
+            printf("  %s\n", nc.getConfigFileName().c_str());
             return 0;
         }
     }
@@ -931,7 +931,7 @@ int Companion::sendMessage(const ConstString& port, PortWriter& writable,
         }
         return 1;
     }
-    Route route("admin",port,"text");
+    Route route("admin", port, "text");
 
 
     bool ok = out->open(route);
@@ -942,7 +942,7 @@ int Companion::sendMessage(const ConstString& port, PortWriter& writable,
     }
 
     BufferedConnectionWriter bw(out->getConnection().isTextMode());
-    PortCommand disconnect('\0',"q");
+    PortCommand disconnect('\0', "q");
     bool wok = writable.write(bw);
     if (!wok) {
         if (!quiet) fprintf(stderr, "Cannot write on connection\n");
@@ -963,8 +963,8 @@ int Companion::sendMessage(const ConstString& port, PortWriter& writable,
     b.read(con);
     output = b.toString().c_str();
     if (!quiet) {
-        //fprintf(stderr,"%s\n", b.toString().c_str());
-        YARP_SPRINTF1(Logger::get(),info,"%s", b.toString().c_str());
+        //fprintf(stderr, "%s\n", b.toString().c_str());
+        YARP_SPRINTF1(Logger::get(), info, "%s", b.toString().c_str());
     }
     ip.endRead();
     out->close();
@@ -993,7 +993,7 @@ int Companion::cmdConnect(int argc, char *argv[]) {
         } else if (arg=="--list-carriers") {
             Bottle lst = Carriers::listCarriers();
             for (int i=0; i<lst.size(); i++) {
-                printf("%s%s",(i>0)?" ":"",lst.get(i).asString().c_str());
+                printf("%s%s", (i>0)?" ":"", lst.get(i).asString().c_str());
             }
             printf("\n");
             return 0;
@@ -1027,7 +1027,7 @@ int Companion::cmdConnect(int argc, char *argv[]) {
             argc--;
         }
     } else {
-        fprintf(stderr,"[get help with 'yarp connect --help']\n");
+        fprintf(stderr, "[get help with 'yarp connect --help']\n");
     }
     if (argc<2||argc>3) {
         if (persist&&argc<2) {
@@ -1041,7 +1041,7 @@ int Companion::cmdConnect(int argc, char *argv[]) {
             if (argc==0) {
                 return subscribe(YARP_NULLPTR, YARP_NULLPTR);
             } else {
-                int result = ping(argv[0],true);
+                int result = ping(argv[0], true);
                 int result2 = subscribe(argv[0], YARP_NULLPTR);
                 return (result==0)?result2:result;
             }
@@ -1058,10 +1058,10 @@ int Companion::cmdConnect(int argc, char *argv[]) {
     }
 
     if (persist) {
-        return subscribe(src,dest.c_str(),mode);
+        return subscribe(src, dest.c_str(), mode);
     }
 
-    return connect(src,dest.c_str(),false);
+    return connect(src, dest.c_str(), false);
 }
 
 
@@ -1082,9 +1082,9 @@ int Companion::cmdDisconnect(int argc, char *argv[]) {
     const char *src = argv[0];
     const char *dest = argv[1];
     if (persist) {
-        return unsubscribe(src,dest);
+        return unsubscribe(src, dest);
     }
-    return disconnect(src,dest);
+    return disconnect(src, dest);
 }
 
 
@@ -1099,7 +1099,7 @@ int Companion::cmdRead(int argc, char *argv[]) {
     const char *src = YARP_NULLPTR;
     bool showEnvelope = false;
     while (argc>1) {
-        if (strcmp(argv[1],"envelope")==0) {
+        if (strcmp(argv[1], "envelope")==0) {
             showEnvelope = true;
         } else {
             src = argv[1];
@@ -1107,7 +1107,7 @@ int Companion::cmdRead(int argc, char *argv[]) {
         argc--;
         argv++;
     }
-    return read(name,src,showEnvelope);
+    return read(name, src, showEnvelope);
 }
 
 
@@ -1118,7 +1118,7 @@ int Companion::cmdWrite(int argc, char *argv[]) {
     }
 
     const char *src = argv[0];
-    return write(src,argc-1,argv+1);
+    return write(src, argc-1, argv+1);
 }
 
 
@@ -1166,7 +1166,7 @@ int Companion::cmdRpcServer(int argc, char *argv[]) {
         printf("Waiting for a message...\n");
         Bottle cmd;
         Bottle response;
-        port.read(cmd,true);
+        port.read(cmd, true);
         printf("Message: %s\n", cmd.toString().c_str());
         printf("Reply: ");
         if (echo) {
@@ -1197,7 +1197,7 @@ int Companion::cmdRpc(int argc, char *argv[]) {
     const char *dest = argv[0];
     const char *src;
     if (ConstString(dest)=="--client") {
-        return cmdRpc2(argc,argv);
+        return cmdRpc2(argc, argv);
     }
     Contact address = Name(dest).toAddress();
     if (address.getCarrier()=="") {
@@ -1206,7 +1206,7 @@ int Companion::cmdRpc(int argc, char *argv[]) {
     // no need for a port
     src = "anon_rpc";
     if (argc>1) { src = argv[1]; }
-    return rpc(src,dest);
+    return rpc(src, dest);
 }
 
 
@@ -1232,7 +1232,7 @@ int Companion::cmdRpc2(int argc, char *argv[]) {
     }
     if (ok) {
         if (ConstString(dest)!="--client") {
-            //NetworkBase::connect(p.getName().c_str(),dest);
+            //NetworkBase::connect(p.getName().c_str(), dest);
             ok = p.addOutput(dest);
         }
     }
@@ -1241,8 +1241,8 @@ int Companion::cmdRpc2(int argc, char *argv[]) {
         if (EOFreached()) {
             break;
         }
-        Bottle cmd(txt.c_str()),reply;
-        ok = p.write(cmd,reply);
+        Bottle cmd(txt.c_str()), reply;
+        ok = p.write(cmd, reply);
         if (ok) {
             printf("%s\n", reply.toString().c_str());
         }
@@ -1252,7 +1252,7 @@ int Companion::cmdRpc2(int argc, char *argv[]) {
 
 
 int Companion::cmdRegression(int argc, char *argv[]) {
-    fprintf(stderr,"no regression tests linked in this version\n");
+    fprintf(stderr, "no regression tests linked in this version\n");
     return 1;
 }
 
@@ -1261,7 +1261,7 @@ int Companion::cmdServer(int argc, char *argv[]) {
     // Note: if YARP is compiled with a "persistent name server",
     // then the command "yarp server" will be intercepted here:
     //   [YARP root]/src/yarp/yarp.cpp
-    return NameServer::main(argc,argv);
+    return NameServer::main(argc, argv);
 }
 
 
@@ -1300,20 +1300,20 @@ public:
 int Companion::cmdCheck(int argc, char *argv[]) {
     Logger& log = Logger::get();
 
-    YARP_INFO(log,"==================================================================");
-    YARP_INFO(log,"=== This is \"yarp check\"");
-    YARP_INFO(log,"=== It is a very simple sanity check for your installation");
-    YARP_INFO(log,"=== If it freezes, try deleting the file reported by \"yarp conf\"");
-    YARP_INFO(log,"=== Also, if you are mixing terminal types, e.g. bash/cmd.exe");
-    YARP_INFO(log,"=== on windows, make sure the \"yarp conf\" file is the same on each");
-    YARP_INFO(log,"==================================================================");
-    YARP_INFO(log,"=== Trying to register some ports");
+    YARP_INFO(log, "==================================================================");
+    YARP_INFO(log, "=== This is \"yarp check\"");
+    YARP_INFO(log, "=== It is a very simple sanity check for your installation");
+    YARP_INFO(log, "=== If it freezes, try deleting the file reported by \"yarp conf\"");
+    YARP_INFO(log, "=== Also, if you are mixing terminal types, e.g. bash/cmd.exe");
+    YARP_INFO(log, "=== on windows, make sure the \"yarp conf\" file is the same on each");
+    YARP_INFO(log, "==================================================================");
+    YARP_INFO(log, "=== Trying to register some ports");
 
     CompanionCheckHelper check;
     Port in;
     bool faking = false;
     if (!NetworkBase::exists(NetworkBase::getNameServerName())) {
-        YARP_INFO(log,"=== NO NAME SERVER!  Switching to local, fake mode");
+        YARP_INFO(log, "=== NO NAME SERVER!  Switching to local, fake mode");
         NetworkBase::setLocalMode(true);
         faking = true;
     }
@@ -1324,15 +1324,15 @@ int Companion::cmdCheck(int argc, char *argv[]) {
 
     Time::delay(1);
 
-    YARP_INFO(log,"==================================================================");
-    YARP_INFO(log,"=== Trying to connect some ports");
+    YARP_INFO(log, "==================================================================");
+    YARP_INFO(log, "=== Trying to connect some ports");
 
-    connect(out.getName().c_str(),in.getName().c_str());
+    connect(out.getName().c_str(), in.getName().c_str());
 
     Time::delay(1);
 
-    YARP_INFO(log,"==================================================================");
-    YARP_INFO(log,"=== Trying to write some data");
+    YARP_INFO(log, "==================================================================");
+    YARP_INFO(log, "=== Trying to write some data");
 
     Bottle bot;
     bot.addInt(42);
@@ -1340,36 +1340,36 @@ int Companion::cmdCheck(int argc, char *argv[]) {
 
     Time::delay(1);
 
-    YARP_INFO(log,"==================================================================");
+    YARP_INFO(log, "==================================================================");
     bool ok = false;
     for (int i=0; i<3; i++) {
-        YARP_INFO(log,"=== Trying to read some data");
+        YARP_INFO(log, "=== Trying to read some data");
         Time::delay(1);
         if (check.get() != YARP_NULLPTR) {
             int x = check.get()->getInt(0);
             char buf[256];
             sprintf(buf, "*** Read number %d", x);
-            YARP_INFO(log,buf);
+            YARP_INFO(log, buf);
             if (x==42) {
                 ok = true;
                 break;
             }
         }
     }
-    YARP_INFO(log,"==================================================================");
-    YARP_INFO(log,"=== Trying to close some ports");
+    YARP_INFO(log, "==================================================================");
+    YARP_INFO(log, "=== Trying to close some ports");
     in.close();
     out.close();
     Time::delay(1);
     if (!ok) {
-        YARP_INFO(log,"*** YARP seems broken.");
+        YARP_INFO(log, "*** YARP seems broken.");
         //diagnose();
         return 1;
     } else {
         if (faking) {
-            YARP_INFO(log,"*** YARP seems okay, but there is no name server available.");
+            YARP_INFO(log, "*** YARP seems okay, but there is no name server available.");
         } else {
-            YARP_INFO(log,"*** YARP seems okay!");
+            YARP_INFO(log, "*** YARP seems okay!");
         }
     }
     return 0;
@@ -1430,7 +1430,7 @@ int Companion::cmdMake(int argc, char *argv[]) {
 
     const char *target = "CMakeLists.txt";
 
-    FILE *fin = fopen(target,"r");
+    FILE *fin = fopen(target, "r");
     if (fin != YARP_NULLPTR) {
         printf("File %s already exists, please remove it first\n", target);
         fclose(fin);
@@ -1438,7 +1438,7 @@ int Companion::cmdMake(int argc, char *argv[]) {
         return 1;
     }
 
-    writeBottleAsFile(target,f);
+    writeBottleAsFile(target, f);
     printf("Wrote to %s\n", target);
     printf("Run cmake to generate makefiles or project files for compiling.\n");
     return 0;
@@ -1446,7 +1446,7 @@ int Companion::cmdMake(int argc, char *argv[]) {
 
 
 int Companion::cmdRun(int argc, char *argv[]) {
-    return Run::main(argc,argv);
+    return Run::main(argc, argv);
 }
 
 
@@ -1455,13 +1455,13 @@ int Companion::cmdNamespace(int argc, char *argv[]) {
     NameConfig nc;
     if (argc!=0) {
         ConstString fname = nc.getConfigFileName(YARP_CONFIG_NAMESPACE_FILENAME);
-        printf("Setting namespace in: %s\n",fname.c_str());
+        printf("Setting namespace in: %s\n", fname.c_str());
         printf("Remove this file to revert to the default namespace (/root)\n");
         Bottle cmd;
         for (int i=0; i<argc; i++) {
             cmd.addString(argv[i]);
         }
-        nc.writeConfig(fname,cmd.toString().c_str());
+        nc.writeConfig(fname, cmd.toString().c_str());
     }
 
     Bottle ns = nc.getNamespaces();
@@ -1483,11 +1483,11 @@ int Companion::cmdNamespace(int argc, char *argv[]) {
 int Companion::cmdClean(int argc, char *argv[]) {
     Property options;
     if (argc==0) {
-        printf("# If the cleaning process has long delays, you may wish to use a timeout,\n");
+        printf("# If the cleaning process has long delays, you may wish to use a timeout, \n");
         printf("# specifying how long to wait (in seconds) for a test connection to a port:\n");
         printf("#   yarp clean --timeout 5.0\n");
     } else {
-        options.fromCommand(argc,argv,false);
+        options.fromCommand(argc, argv, false);
     }
 
     NameConfig nc;
@@ -1514,7 +1514,7 @@ int Companion::cmdClean(int argc, char *argv[]) {
     for (int i=1; i<reply.size(); i++) {
         Bottle *entry = reply.get(i).asList();
         if (entry != YARP_NULLPTR) {
-            ConstString port = entry->check("name",Value("")).asString();
+            ConstString port = entry->check("name", Value("")).asString();
             if (port!="" && port!="fallback" && port!=name.c_str()) {
                 Contact c = Contact::fromConfig(*entry);
                 if (c.getCarrier()=="mcast") {
@@ -1547,8 +1547,8 @@ int Companion::cmdClean(int argc, char *argv[]) {
     printf("Giving name server a chance to do garbage collection.\n");
     ConstString serverName = NetworkBase::getNameServerName();
     Bottle cmd2("gc"), reply2;
-    NetworkBase::write(serverName,cmd2,reply2);
-    printf("Name server says: %s\n",reply2.toString().c_str());
+    NetworkBase::write(serverName, cmd2, reply2);
+    printf("Name server says: %s\n", reply2.toString().c_str());
 
     return 0;
 }
@@ -1570,16 +1570,16 @@ int Companion::cmdResource(int argc, char *argv[]) {
     ResourceFinder rf;
     rf.setVerbose();
     Property p;
-    p.fromCommand(argc,argv,false);
+    p.fromCommand(argc, argv, false);
     if (p.check("find")) {
         rf.setDefaultConfigFile(p.find("find").asString().c_str());
     }
-    bool ok = rf.configure(argc,argv,false);
+    bool ok = rf.configure(argc, argv, false);
     if (ok) {
         if (rf.check("show")) {
             printf(">>> %s\n", rf.toString().c_str());
         }
-        printf("\"%s\"\n",rf.findFile("from").c_str());
+        printf("\"%s\"\n", rf.findFile("from").c_str());
     }
     return (ok?0:1);
 }
@@ -1599,35 +1599,35 @@ int Companion::cmdDetectRos(bool write) {
         delete tcpros;
     }
     if (!(have_xmlrpc&&have_tcpros)) {
-        fprintf(stderr,"ROS support requires enabling some optional carriers\n");
-        fprintf(stderr,"   xmlrpc %s\n", have_xmlrpc?"(already enabled)":"");
-        fprintf(stderr,"   tcpros %s\n", have_tcpros?"(already enabled)":"");
+        fprintf(stderr, "ROS support requires enabling some optional carriers\n");
+        fprintf(stderr, "   xmlrpc %s\n", have_xmlrpc?"(already enabled)":"");
+        fprintf(stderr, "   tcpros %s\n", have_tcpros?"(already enabled)":"");
         return 1;
     }
 
     ConstString uri = NetworkBase::getEnvironment("ROS_MASTER_URI");
     if (uri=="") {
-        fprintf(stderr,"ROS_MASTER_URI environment variable not set.\n");
+        fprintf(stderr, "ROS_MASTER_URI environment variable not set.\n");
         uri = "http://127.0.0.1:11311/";
     }
     Contact root = Contact::fromString(uri);
     root.setCarrier("xmlrpc");
-    fprintf(stderr,"Trying ROS_MASTER_URI=%s...\n", uri.c_str());
+    fprintf(stderr, "Trying ROS_MASTER_URI=%s...\n", uri.c_str());
     OutputProtocol *out = Carriers::connect(root);
     bool ok = (out != YARP_NULLPTR);
     if (ok) delete out;
     if (!ok) {
-        fprintf(stderr,"Could not reach server.\n");
+        fprintf(stderr, "Could not reach server.\n");
         return 1;
     } else {
-        fprintf(stderr,"Reachable.  Writing.\n");
+        fprintf(stderr, "Reachable.  Writing.\n");
     }
     NameConfig nc;
     nc.fromFile();
     nc.setAddress(root);
     nc.setMode("ros");
     nc.toFile();
-    fprintf(stderr,"Configuration stored.  Testing.\n");
+    fprintf(stderr, "Configuration stored.  Testing.\n");
     return cmdWhere(0, YARP_NULLPTR);
 }
 
@@ -1759,15 +1759,15 @@ int Companion::subscribe(const char *src, const char *dest, const char *mode) {
                 //if (topic.get(1).asInt()) srcTopic=" (topic)";
                 //if (topic.get(2).asInt()) destTopic=" (topic)";
                 printf("Persistent connection %s%s -> %s%s",
-                       b->check("src",Value("?")).asString().c_str(),
+                       b->check("src", Value("?")).asString().c_str(),
                        srcTopic,
-                       b->check("dest",Value("?")).asString().c_str(),
+                       b->check("dest", Value("?")).asString().c_str(),
                        destTopic);
-                ConstString mode = b->check("mode",Value("")).asString();
+                ConstString mode = b->check("mode", Value("")).asString();
                 if (mode!="") {
                     printf(" [%s]", mode.c_str());
                 }
-                ConstString carrier = b->check("carrier",Value("")).asString();
+                ConstString carrier = b->check("carrier", Value("")).asString();
                 if (carrier!="") {
                     printf(" (%s)", carrier.c_str());
                 }
@@ -1814,12 +1814,12 @@ int Companion::connect(const char *src, const char *dest, bool silent) {
         // this case
         ConstString newDest = srcAddr.getCarrierName() + ":/" + slashify(dest);
         ConstString newSrc = slashify(srcAddr.getRegName());
-        PortCommand pc('\0',slashify(newDest));
-        err = sendMessage(newSrc.c_str(),pc,result,silent);
+        PortCommand pc('\0', slashify(newDest));
+        err = sendMessage(newSrc.c_str(), pc, result, silent);
     } else {
         // do not risk changing old behavior
-        PortCommand pc('\0',slashify(dest));
-        err = sendMessage(src,pc,result,silent);
+        PortCommand pc('\0', slashify(dest));
+        err = sendMessage(src, pc, result, silent);
     }
     if (err==0) {
         err = 1;
@@ -1837,21 +1837,21 @@ int Companion::connect(const char *src, const char *dest, bool silent) {
 
 
 int Companion::poll(const char *target, bool silent) {
-    PortCommand pc('\0',"*");
-    return sendMessage(target,pc,silent);
+    PortCommand pc('\0', "*");
+    return sendMessage(target, pc, silent);
 }
 
 int Companion::disconnect(const char *src, const char *dest, bool silent) {
-    //PortCommand pc('\0',ConstString("!")+dest);
-    //return sendMessage(src,pc,silent);
-    bool ok = NetworkBase::disconnect(src,dest,silent);
+    //PortCommand pc('\0', ConstString("!")+dest);
+    //return sendMessage(src, pc, silent);
+    bool ok = NetworkBase::disconnect(src, dest, silent);
     return ok?0:1;
 }
 
 int Companion::disconnectInput(const char *src, const char *dest,
                                bool silent) {
-    PortCommand pc('\0',ConstString("~")+dest);
-    return sendMessage(src,pc,silent);
+    PortCommand pc('\0', ConstString("~")+dest);
+    return sendMessage(src, pc, silent);
 }
 
 
@@ -1881,7 +1881,7 @@ public:
             companion_active_port = &core;
             address = core.where();
         } else {
-            //YARP_ERROR(Logger::get(),"Could not create port");
+            //YARP_ERROR(Logger::get(), "Could not create port");
             done.post();
         }
     }
@@ -1956,9 +1956,9 @@ int Companion::cmdReadWrite(int argc, char *argv[])
 
     companion_install_handler();
     BottleReader reader;
-    reader.open(read_port_name,false);
+    reader.open(read_port_name, false);
 
-    int ret = write(write_port_name,1,(char**)&verbatim);
+    int ret = write(write_port_name, 1, (char**)&verbatim);
 
     reader.close();
 
@@ -2016,7 +2016,7 @@ int Companion::cmdTopic(int argc, char *argv[]) {
                                  false,
                                  true);
     if (ok) {
-        ok = reply.get(0).asVocab()==VOCAB2('o','k');
+        ok = reply.get(0).asVocab()==VOCAB2('o', 'k');
     }
     if (!ok) {
         fprintf(stderr, "Failed to %s topic %s:\n  %s\n",
@@ -2035,12 +2035,12 @@ int Companion::read(const char *name, const char *src, bool showEnvelope) {
     companion_install_handler();
     BottleReader reader;
     applyArgs(reader.core);
-    reader.open(name,showEnvelope);
+    reader.open(name, showEnvelope);
     if (src != YARP_NULLPTR) {
         ContactStyle style;
         style.quiet = false;
         style.verboseOnSuccess = false;
-        NetworkBase::connect(src,reader.getName(),style);
+        NetworkBase::connect(src, reader.getName(), style);
     }
     reader.wait();
     reader.close();
@@ -2070,7 +2070,7 @@ int Companion::write(const char *name, int ntargets, char *targets[]) {
         } else {
             temp = "any";
         }
-        std::replace(temp.begin(),temp.end(),'/','_');
+        std::replace(temp.begin(), temp.end(), '/', '_');
         hist_file += slash;
         hist_file += temp;
         read_history(hist_file.c_str());
@@ -2097,8 +2097,8 @@ int Companion::write(const char *name, int ntargets, char *targets[]) {
         if (ConstString(targets[i])=="verbatim") {
             raw = false;
         } else {
-            if (connect(port.getName().c_str(),targets[i],true)!=0) {
-                if (connect(port.getName().c_str(),targets[i],false)!=0) {
+            if (connect(port.getName().c_str(), targets[i], true)!=0) {
+                if (connect(port.getName().c_str(), targets[i], false)!=0) {
                     return 1;
                 }
             }
@@ -2169,11 +2169,11 @@ int Companion::write(const char *name, int ntargets, char *targets[]) {
 int Companion::forward(const char *localName, const char *targetName) {
     Port p;
     p.open(localName);
-    NetworkBase::connect(localName,targetName);
+    NetworkBase::connect(localName, targetName);
     while (true) {
         Bottle in, out;
-        p.read(in,true);
-        p.write(in,out);
+        p.read(in, true);
+        p.write(in, out);
         printf("in [%s] out [%s]\n", in.toString().c_str(),
                out.toString().c_str());
         p.reply(out);
@@ -2197,7 +2197,7 @@ int Companion::rpc(const char *connectionName, const char *targetName) {
         port.openFake(connectionName);
         if (!port.addOutput(targetName)) {
             fprintf(stderr, "Cannot make connection\n");
-            YARP_ERROR(Logger::get(),"Alternative method: precede port name with --client");
+            YARP_ERROR(Logger::get(), "Alternative method: precede port name with --client");
             return 1;
         }
         if (adminMode) {
@@ -2241,14 +2241,14 @@ int Companion::rpc(const char *connectionName, const char *targetName) {
                 }
 
                 Bottle reply;
-                bool ok = port.write(bot,reply);
+                bool ok = port.write(bot, reply);
                 if (!ok) {
                     resendContent = bot;
                     resendFlag = true;
                     resendCount++;
                     break;
                 }
-                if (reply.get(0).isVocab() && reply.get(0).asVocab()==VOCAB4('m','a','n','y')) {
+                if (reply.get(0).isVocab() && reply.get(0).asVocab()==VOCAB4('m', 'a', 'n', 'y')) {
                     printf("Responses:\n");
                     Bottle *lst = &reply;
                     int start = 1;
@@ -2317,14 +2317,14 @@ static bool plugin_test(YarpPluginSettings& settings) {
     SharedLibraryFactory lib;
     settings.open(lib);
     if (!lib.isValid()) {
-        fprintf(stderr,"    Cannot find or load shared library\n");
+        fprintf(stderr, "    Cannot find or load shared library\n");
         return false;
     } else {
         const SharedLibraryClassApi& api = lib.getApi();
         char className[256] = "unknown";
-        api.getClassName(className,sizeof(className));
+        api.getClassName(className, sizeof(className));
         char baseClassName[256] = "unknown";
-        api.getBaseClassName(baseClassName,sizeof(baseClassName));
+        api.getBaseClassName(baseClassName, sizeof(baseClassName));
         printf("  * library:        %s\n", lib.getName().c_str());
         printf("  * system version: %d\n", (int)api.systemVersion);
         printf("  * class name:     %s\n", className);
@@ -2411,8 +2411,8 @@ int Companion::cmdPlugin(int argc, char *argv[]) {
         for (int i=0; i<lst.size(); i++) {
             Value& options = lst.get(i);
             ConstString name = options.asList()->get(0).toString();
-            ConstString path = options.check("path",Value("unknown path")).asString();
-            ConstString type = options.check("type",Value("unknown type")).asString();
+            ConstString path = options.check("path", Value("unknown path")).asString();
+            ConstString type = options.check("type", Value("unknown type")).asString();
             if (type == "shared") {
                 printf("  %15s:\t%s\n", name.c_str(), path.c_str());
             }
@@ -2424,7 +2424,7 @@ int Companion::cmdPlugin(int argc, char *argv[]) {
         Bottle lst = selector.getSelectedPlugins();
         for (int i=0; i<lst.size(); i++) {
             Value& options = lst.get(i);
-            ConstString name = options.check("name",Value("untitled")).asString();
+            ConstString name = options.check("name", Value("untitled")).asString();
             printf("%s\n", name.c_str());
         }
         return 0;
@@ -2439,8 +2439,8 @@ int Companion::cmdPlugin(int argc, char *argv[]) {
         bool ok = true;
         for (int i=0; i<lst.size(); i++) {
             Value& options = lst.get(i);
-            ConstString name = options.check("name",Value("untitled")).asString();
-            ConstString type = options.check("type",Value("unknown type")).asString();
+            ConstString name = options.check("name", Value("untitled")).asString();
+            ConstString type = options.check("type", Value("unknown type")).asString();
             printf("\n");
             printf("%s %s\n", type.c_str(), name.c_str());
             printf("  * ini file:       %s\n", options.find("inifile").toString().c_str());
@@ -2458,12 +2458,12 @@ int Companion::cmdPlugin(int argc, char *argv[]) {
         YarpPluginSettings settings;
         settings.setVerboseMode(verbose);
         if (argc>=2) {
-            settings.setLibraryMethodName(argv[0],argv[1]);
+            settings.setLibraryMethodName(argv[0], argv[1]);
         } else {
             settings.setPluginName(argv[0]);
         }
         if (!settings.setSelector(selector)) {
-            fprintf(stderr,"cannot find a plugin with the specified name\n");
+            fprintf(stderr, "cannot find a plugin with the specified name\n");
         } else {
             printf("Yes, this is a YARP plugin\n");
         }
@@ -2534,7 +2534,7 @@ Output ports:
 - /portsMerge/o0 the output port
 
 Input ports:
-- /portsMerge/i* the input ports (*=1,2...n)
+- /portsMerge/i* the input ports (*=1, 2...n)
 
 \section tested_os_sec Tested OS
 Linux and Windows.
@@ -2572,7 +2572,7 @@ int Companion::cmdMerge(int argc, char *argv[]) {
     }
 
     Property options;
-    options.fromCommand(argc,argv,false);
+    options.fromCommand(argc, argv, false);
     Bottle& inputs = options.findGroup("input");
     if (!inputs.isNull()) {
         nPorts = inputs.size()-1;
@@ -2585,18 +2585,18 @@ int Companion::cmdMerge(int argc, char *argv[]) {
 
     //set a callback
     for (int i = 0; i< nPorts; i++) {
-        inData[i].init(inPort[i],product);
+        inData[i].init(inPort[i], product);
         inPort[i].useCallback(inData[i]);
     }
 
     //open the ports
     char buff[255];
-    ConstString s = options.check("worker",Value("/portsMerge/i")).asString();
+    ConstString s = options.check("worker", Value("/portsMerge/i")).asString();
     for (int i = 0; i< nPorts; i++) {
-        sprintf(buff,"%s%d", s.c_str(), i);
+        sprintf(buff, "%s%d", s.c_str(), i);
         inPort[i].open(buff);
     }
-    s = options.check("output",Value("/portsMerge/o0")).asString();
+    s = options.check("output", Value("/portsMerge/o0")).asString();
     outPort.open(s.c_str());
 
     //makes the connection
@@ -2607,7 +2607,7 @@ int Companion::cmdMerge(int argc, char *argv[]) {
         } else {
             tmp = argv[i];
         }
-        bool b = yarp::os::NetworkBase::connect(tmp.c_str(),inPort[i].getName().c_str(),options.check("carrier",Value("udp")).asString().c_str(),false);
+        bool b = yarp::os::NetworkBase::connect(tmp.c_str(), inPort[i].getName().c_str(), options.check("carrier", Value("udp")).asString().c_str(), false);
         if (!b) {
             delete [] inPort;
             delete [] inData;
@@ -2646,7 +2646,7 @@ int Companion::cmdSample(int argc, char *argv[]) {
     BufferedPort<Bottle> port;
 
     Property options;
-    options.fromCommand(argc,argv,false);
+    options.fromCommand(argc, argv, false);
     if (argc==0 || !((options.check("period")||options.check("rate"))&&options.check("output"))) {
         printf("This is yarp sample. Syntax:\n");
         printf("  yarp sample --output /port --period 0.01\n");
@@ -2660,7 +2660,7 @@ int Companion::cmdSample(int argc, char *argv[]) {
     }
 
     if (!port.open(options.find("output").asString().c_str())) {
-        fprintf(stderr,"Failed to open output port\n");
+        fprintf(stderr, "Failed to open output port\n");
         return 1;
     }
     if (options.check("period")) {
@@ -2673,10 +2673,10 @@ int Companion::cmdSample(int argc, char *argv[]) {
         ConstString input = options.find("input").asString();
         ConstString carrier = options.find("carrier").asString();
         if (carrier!="") {
-            NetworkBase::connect(input.c_str(),port.getName().c_str(),
+            NetworkBase::connect(input.c_str(), port.getName().c_str(),
                                  carrier.c_str());
         } else {
-            NetworkBase::connect(input.c_str(),port.getName().c_str());
+            NetworkBase::connect(input.c_str(), port.getName().c_str());
         }
     }
 

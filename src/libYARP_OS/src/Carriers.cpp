@@ -94,12 +94,12 @@ Carrier* Carriers::Private::chooseCarrier(const ConstString *name,
             // let's try to register it, and see if a dll is found.
             if (NetworkBase::registerCarrier(name->c_str(), YARP_NULLPTR)) {
                 // We made progress, let's try again...
-                return Carriers::Private::chooseCarrier(name,header,false);
+                return Carriers::Private::chooseCarrier(name, header, false);
             }
         } else {
             if (scanForCarrier(header)) {
                 // We made progress, let's try again...
-                return Carriers::Private::chooseCarrier(name,header,true);
+                return Carriers::Private::chooseCarrier(name, header, true);
             }
         }
     }
@@ -168,7 +168,7 @@ bool Carriers::Private::checkForCarrier(const Bytes *header, Searchable& group)
 {
     Bottle code = group.findGroup("code").tail();
     if (code.size()==0) return false;
-    if (matchCarrier(header,code)) {
+    if (matchCarrier(header, code)) {
         ConstString name = group.find("name").asString();
         if (NetworkBase::registerCarrier(name.c_str(), YARP_NULLPTR)) {
             return true;
@@ -186,7 +186,7 @@ bool Carriers::Private::scanForCarrier(const Bytes *header)
     selector.scan();
     Bottle lst = selector.getSelectedPlugins();
     for (int i=0; i<lst.size(); i++) {
-        if (checkForCarrier(header,lst.get(i))) {
+        if (checkForCarrier(header, lst.get(i))) {
             return true;
         }
     }
@@ -195,7 +195,7 @@ bool Carriers::Private::scanForCarrier(const Bytes *header)
 
 bool Carriers::Private::select(Searchable& options)
 {
-    return options.check("type",Value("none")).asString() == "carrier";
+    return options.check("type", Value("none")).asString() == "carrier";
 }
 
 
@@ -326,7 +326,7 @@ Bottle Carriers::listCarriers()
     Bottle plugins = getInstance().mPriv->getSelectedPlugins();
     for (int i = 0; i < plugins.size(); i++) {
         Value& options = plugins.get(i);
-        ConstString name = options.check("name",Value("untitled")).asString();
+        ConstString name = options.check("name", Value("untitled")).asString();
         if (done.check(name)) {
             continue;
         }
@@ -334,7 +334,7 @@ Bottle Carriers::listCarriers()
         SharedLibraryFactory lib;
         YarpPluginSettings settings;
         settings.setSelector(*getInstance().mPriv);
-        settings.readFromSearchable(options,name);
+        settings.readFromSearchable(options, name);
         settings.open(lib);
         ConstString location = lib.getName().c_str();
         if (location=="") {

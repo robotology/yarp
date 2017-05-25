@@ -56,12 +56,12 @@ public:
     }
 
     bool isOk() { return m_bOpen; }
-    bool open(int port,ACE_SOCK_Stream *pSock,int size=SHMEM_DEFAULT_SIZE);
+    bool open(int port, ACE_SOCK_Stream *pSock, int size=SHMEM_DEFAULT_SIZE);
     YARP_SSIZE_T read(const Bytes& b);
     void close();
 
 protected:
-    int read(char *data,int len);
+    int read(char *data, int len);
     bool Resize();
     bool m_bOpen;
 
@@ -69,9 +69,9 @@ protected:
     int m_Port;
 
 #if defined(_ACE_USE_SV_SEM)
-    ACE_Mutex *m_pAccessMutex,*m_pWaitDataMutex;
+    ACE_Mutex *m_pAccessMutex, *m_pWaitDataMutex;
 #else
-    ACE_Process_Mutex *m_pAccessMutex,*m_pWaitDataMutex;
+    ACE_Process_Mutex *m_pAccessMutex, *m_pWaitDataMutex;
 #endif
 
     yarp::os::Semaphore m_ReadSerializerMutex;

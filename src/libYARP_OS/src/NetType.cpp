@@ -17,42 +17,42 @@ using namespace yarp::os;
 int NetType::netInt(const yarp::os::Bytes& code) {
     yAssert(code.length()==sizeof(NetInt32));
     NetInt32 tmp;
-    memcpy((char*)(&tmp),code.get(),code.length());
+    memcpy((char*)(&tmp), code.get(), code.length());
     return tmp;
 }
 
 bool NetType::netInt(int data, const yarp::os::Bytes& code) {
     NetInt32 i = data;
-    yarp::os::Bytes b((char*)(&i),sizeof(i));
+    yarp::os::Bytes b((char*)(&i), sizeof(i));
     if (code.length()!=sizeof(i)) {
-        YARP_ERROR(Logger::get(),"not enough room for integer");
+        YARP_ERROR(Logger::get(), "not enough room for integer");
         return false;
     }
-    memcpy(code.get(),b.get(),code.length());
+    memcpy(code.get(), b.get(), code.length());
     return true;
 }
 
 ConstString NetType::toHexString(int x) {
     char buf[256];
-    sprintf(buf,"%x",x);
+    sprintf(buf, "%x", x);
     return buf;
 }
 
 ConstString NetType::toString(int x) {
     char buf[256];
-    sprintf(buf,"%d",x);
+    sprintf(buf, "%d", x);
     return buf;
 }
 
 ConstString NetType::toString(long x) {
     char buf[256];
-    sprintf(buf,"%ld",x);
+    sprintf(buf, "%ld", x);
     return buf;
 }
 
 ConstString NetType::toString(unsigned int x) {
     char buf[256];
-    sprintf(buf,"%u",x);
+    sprintf(buf, "%u", x);
     return buf;
 }
 

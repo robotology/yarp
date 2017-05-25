@@ -116,7 +116,7 @@ public:
      *    int main(int argc, char *argv[]) {
      *        Network yarp;
      *        YourModule module;
-     *        return module.runModule(argc,argv);
+     *        return module.runModule(argc, argv);
      *    }
      * \endcode
      * @param argc the number of arguments

@@ -21,23 +21,23 @@ RpcServer::~RpcServer() {
 }
 
 bool RpcServer::write(PortWriter& writer, PortWriter *callback) const {
-    YARP_SPRINTF1(Logger::get(),error,"RpcServer %s cannot write, please use a regular Port or RpcClient for that",port.getName().c_str());
+    YARP_SPRINTF1(Logger::get(), error, "RpcServer %s cannot write, please use a regular Port or RpcClient for that", port.getName().c_str());
     return false;
 }
 
 bool RpcServer::write(PortWriter& writer, PortReader& reader,
                                 PortWriter *callback) const {
-    YARP_SPRINTF1(Logger::get(),error,"RpcServer %s cannot write, please use a regular Port or RpcClient for that",port.getName().c_str());
+    YARP_SPRINTF1(Logger::get(), error, "RpcServer %s cannot write, please use a regular Port or RpcClient for that", port.getName().c_str());
     return false;
 }
 
 bool RpcServer::read(PortReader& reader, bool willReply) {
     if (!willReply) {
-        YARP_SPRINTF1(Logger::get(),error,"RpcServer %s must reply, please use a regular Port if you do not want to",port.getName().c_str());
+        YARP_SPRINTF1(Logger::get(), error, "RpcServer %s must reply, please use a regular Port if you do not want to", port.getName().c_str());
         // this is an error for RpcServer
         return false;
     }
-    return port.read(reader,true);
+    return port.read(reader, true);
 }
 
 void RpcServer::setInputMode(bool expectInput) {

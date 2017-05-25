@@ -88,20 +88,20 @@ SystemInfo::capacity_t getMemEntry(const char *tag, const char *bufptr)
 
 bool getCpuEntry(const char* tag, const char *buff, yarp::os::ConstString& value)
 {
-    if(strlen(buff) <= strlen(tag))
+    if (strlen(buff) <= strlen(tag))
         return false;
 
-    if(strncmp(buff, tag, strlen(tag)) != 0)
+    if (strncmp(buff, tag, strlen(tag)) != 0)
         return false;
 
     const char *pos1 = strchr(buff, ':');
-    if(!pos1)
+    if (!pos1)
         return false;
 
     while((*pos1 != '\0') && ((*pos1 == ' ')||(*pos1 == ':')||(*pos1 == '\t'))) pos1++;
     const char* pos2 = buff + strlen(buff)-1;
     while((*pos2 != ':') && ((*pos2 == ' ')||(*pos2 == '\n'))) pos2--;
-    if(pos2 < pos1)
+    if (pos2 < pos1)
         return false;
     value = yarp::os::ConstString(pos1, pos2-pos1+1);
     return true;
@@ -131,7 +131,7 @@ public:
         sem.wait();
         load.cpuLoadInstant = (int) phdCpuLoad();
         samples.push_back(load.cpuLoadInstant);
-        if(samples.size() > 180)
+        if (samples.size() > 180)
             samples.erase(samples.begin());
 
         std::vector<int>::reverse_iterator rti;
@@ -142,10 +142,10 @@ public:
             sum += (*rti);
             n++;
             // every 1min
-            if(n<12)
+            if (n<12)
                 load.cpuLoad1 = (double)(sum/n)/100.0;
             // every 5min
-            if(n<60)
+            if (n<60)
                 load.cpuLoad5 = (double)(sum/n)/100.0;
             // every 15min
             load.cpuLoad15 = (double)(sum/n)/100.0;
@@ -169,25 +169,25 @@ private:
     double phdCpuLoad()
     {
         DWORD ret;
-        if(firstRun)
+        if (firstRun)
         {
             phdStatus = PdhOpenQuery(YARP_NULLPTR, 0, &hPhdQuery);
-            if(phdStatus != ERROR_SUCCESS)
+            if (phdStatus != ERROR_SUCCESS)
                 return 0;
 
-            PdhAddCounter(hPhdQuery, TEXT("\\Processor(_Total)\\% Processor Time"),0,&phdCounter);
+            PdhAddCounter(hPhdQuery, TEXT("\\Processor(_Total)\\% Processor Time"), 0, &phdCounter);
             PdhCollectQueryData(hPhdQuery);
             firstRun = false;
             return 0;
         }
 
         phdStatus = PdhCollectQueryData(hPhdQuery);
-        if(phdStatus != ERROR_SUCCESS)
+        if (phdStatus != ERROR_SUCCESS)
             return 0;
         phdStatus = PdhGetFormattedCounterValue(phdCounter,
                                                 PDH_FMT_DOUBLE|PDH_FMT_NOCAP100,
                                                 &ret, &phdFmtValue);
-        if(phdStatus != ERROR_SUCCESS)
+        if (phdStatus != ERROR_SUCCESS)
             return 0;
         return phdFmtValue.doubleValue;
     }
@@ -212,7 +212,7 @@ static CpuLoadCollector* globalLoadCollector = YARP_NULLPTR;
 
 void enableCpuLoadCollector(void)
 {
-    if(globalLoadCollector == YARP_NULLPTR)
+    if (globalLoadCollector == YARP_NULLPTR)
     {
         globalLoadCollector = new CpuLoadCollector();
         globalLoadCollector->start();
@@ -221,7 +221,7 @@ void enableCpuLoadCollector(void)
 
 void disableCpuLoadCollector(void)
 {
-    if(globalLoadCollector)
+    if (globalLoadCollector)
     {
         globalLoadCollector->stop();
         delete globalLoadCollector;
@@ -242,7 +242,7 @@ SystemInfo::MemoryInfo SystemInfo::getMemoryInfo()
 #if defined(_WIN32)
     MEMORYSTATUSEX statex;
     statex.dwLength = sizeof (statex);
-    if(GlobalMemoryStatusEx (&statex))
+    if (GlobalMemoryStatusEx (&statex))
     {
         memory.totalSpace = (capacity_t)(statex.ullTotalPhys/1048576);  //in Mb
         memory.freeSpace = (capacity_t)(statex.ullAvailPhys/1048576);   //in Mb
@@ -252,15 +252,15 @@ SystemInfo::MemoryInfo SystemInfo::getMemoryInfo()
 #if defined(__linux__)
     char buffer[128];
     FILE* procmem = fopen("/proc/meminfo", "r");
-    if(procmem)
+    if (procmem)
     {
         while(fgets(buffer, 128, procmem))
         {
             capacity_t ret;
-            if((ret=getMemEntry("MemTotal:", buffer)) > 0)
+            if ((ret=getMemEntry("MemTotal:", buffer)) > 0)
                 memory.totalSpace = ret/1024;
 
-            if((ret=getMemEntry("MemFree:", buffer)) > 0)
+            if ((ret=getMemEntry("MemFree:", buffer)) > 0)
                 memory.freeSpace = ret/1024;
         }
         fclose(procmem);
@@ -308,9 +308,9 @@ SystemInfo::StorageInfo SystemInfo::getStorageInfo()
         DWORD dwSectorsPerCluster=0, dwBytesPerSector=0;
         DWORD dwFreeClusters=0, dwTotalClusters=0;
         yarp::os::ConstString strHome = getUserInfo().homeDir;
-        if(!strHome.length())
+        if (!strHome.length())
             strHome = "C:\\";
-        if(GetDiskFreeSpaceA(strHome.c_str(), &dwSectorsPerCluster,
+        if (GetDiskFreeSpaceA(strHome.c_str(), &dwSectorsPerCluster,
             &dwBytesPerSector, &dwFreeClusters, &dwTotalClusters))
         {
             storage.freeSpace = (capacity_t)((dwFreeClusters/1048576.0)* dwSectorsPerCluster * dwBytesPerSector);
@@ -320,11 +320,11 @@ SystemInfo::StorageInfo SystemInfo::getStorageInfo()
 
 #if defined(__linux__)
     yarp::os::ConstString strHome = getUserInfo().homeDir;
-    if(!strHome.length())
+    if (!strHome.length())
         strHome = "/home";
 
     struct statvfs vfs;
-    if(statvfs(strHome.c_str(), &vfs) == 0)
+    if (statvfs(strHome.c_str(), &vfs) == 0)
     {
         storage.totalSpace = (int)(vfs.f_blocks*vfs.f_bsize/(1048576)); // in MB
         storage.freeSpace = (int)(vfs.f_bavail*vfs.f_bsize/(1048576));  // in MB
@@ -334,7 +334,7 @@ SystemInfo::StorageInfo SystemInfo::getStorageInfo()
 
 #if defined(__APPLE__)
     yarp::os::ConstString strHome = getUserInfo().homeDir;
-    if(!strHome.length())
+    if (!strHome.length())
         strHome = "/";
 
     struct statfs vfs;
@@ -368,7 +368,7 @@ SystemInfo::NetworkInfo SystemInfo::getNetworkInfo()
             tmpAddrPtr = &((struct sockaddr_in *)ifa->ifa_addr)->sin_addr;
             char addressBuffer[INET_ADDRSTRLEN];
             const char* ret = inet_ntop(AF_INET, tmpAddrPtr, addressBuffer, INET_ADDRSTRLEN);
-            if(ret && (strcmp(ifa->ifa_name, "eth0") == 0))
+            if (ret && (strcmp(ifa->ifa_name, "eth0") == 0))
                 network.ip4 = addressBuffer;
         }
         else if (ifa->ifa_addr->sa_family == AF_INET6)
@@ -377,12 +377,12 @@ SystemInfo::NetworkInfo SystemInfo::getNetworkInfo()
             tmpAddrPtr=&((struct sockaddr_in6 *)ifa->ifa_addr)->sin6_addr;
             char addressBuffer[INET6_ADDRSTRLEN];
             const char* ret = inet_ntop(AF_INET6, tmpAddrPtr, addressBuffer, INET6_ADDRSTRLEN);
-            if(ret && (strcmp(ifa->ifa_name, "eth0") == 0))
+            if (ret && (strcmp(ifa->ifa_name, "eth0") == 0))
                 network.ip6 = addressBuffer;
         }
     }
 
-    if(ifAddrStruct)
+    if (ifAddrStruct)
         freeifaddrs(ifAddrStruct);
 
     // getting mac addrress
@@ -393,7 +393,7 @@ SystemInfo::NetworkInfo SystemInfo::getNetworkInfo()
     int s;
     bool found = false;
 
-    if( (s = socket(AF_INET, SOCK_DGRAM, 0)) == -1 )
+    if ( (s = socket(AF_INET, SOCK_DGRAM, 0)) == -1 )
         return network;
 
     ifc.ifc_len = sizeof(buf);
@@ -417,13 +417,13 @@ SystemInfo::NetworkInfo SystemInfo::getNetworkInfo()
     }
     close(s);
 
-    if(found)
+    if (found)
     {
         unsigned char addr[6];
         char mac[32];
         bcopy(ifr.ifr_hwaddr.sa_data, addr, 6);
         sprintf(mac, "%2.2x:%2.2x:%2.2x:%2.2x:%2.2x:%2.2x",
-            addr[0],addr[1],addr[2],addr[3],addr[4],addr[5]);
+            addr[0], addr[1], addr[2], addr[3], addr[4], addr[5]);
         network.mac = mac;
     }
 
@@ -464,7 +464,7 @@ SystemInfo::ProcessorInfo SystemInfo::getProcessorInfo()
     DWORD dwMHz;
     DWORD BufSize = sizeof(DWORD);
     HKEY hKey;
-    if(RegOpenKeyEx(HKEY_LOCAL_MACHINE,
+    if (RegOpenKeyEx(HKEY_LOCAL_MACHINE,
                         "HARDWARE\\DESCRIPTION\\System\\CentralProcessor\\0",
                         0, KEY_READ, &hKey) == ERROR_SUCCESS)
     {
@@ -481,32 +481,32 @@ SystemInfo::ProcessorInfo SystemInfo::getProcessorInfo()
 #if defined(__linux__)
     char buffer[128];
     FILE* proccpu = fopen("/proc/cpuinfo", "r");
-    if(proccpu)
+    if (proccpu)
     {
         while(fgets(buffer, 128, proccpu))
         {
             yarp::os::ConstString value;
-            if(getCpuEntry("model", buffer, value) &&
+            if (getCpuEntry("model", buffer, value) &&
                !getCpuEntry("model name", buffer, value))
                 processor.modelNumber = atoi(value.c_str());
-            if(getCpuEntry("model name", buffer, value))
+            if (getCpuEntry("model name", buffer, value))
                 processor.model = value;
-            if(getCpuEntry("vendor_id", buffer, value))
+            if (getCpuEntry("vendor_id", buffer, value))
                 processor.vendor = value;
-            if(getCpuEntry("cpu family", buffer, value))
+            if (getCpuEntry("cpu family", buffer, value))
                 processor.family = atoi(value.c_str());
-            if(getCpuEntry("cpu cores", buffer, value))
+            if (getCpuEntry("cpu cores", buffer, value))
                 processor.cores = atoi(value.c_str());
-            if(getCpuEntry("siblings", buffer, value))
+            if (getCpuEntry("siblings", buffer, value))
                 processor.siblings = atoi(value.c_str());
-            if(getCpuEntry("cpu MHz", buffer, value))
+            if (getCpuEntry("cpu MHz", buffer, value))
                 processor.frequency = atof(value.c_str());
         }
         fclose(proccpu);
     }
 
     struct utsname uts;
-    if(uname(&uts) == 0)
+    if (uname(&uts) == 0)
     {
       processor.architecture = uts.machine;
     }
@@ -560,39 +560,39 @@ SystemInfo::PlatformInfo SystemInfo::getPlatformInfo()
     platform.name = "Windows";
     OSVERSIONINFOEX osver;
     osver.dwOSVersionInfoSize = sizeof(osver);
-    if(GetVersionEx((LPOSVERSIONINFO)&osver))
+    if (GetVersionEx((LPOSVERSIONINFO)&osver))
     {
         char buff[64];
-        sprintf(buff,"%d.%d", osver.dwMajorVersion, osver.dwMinorVersion);
+        sprintf(buff, "%d.%d", osver.dwMajorVersion, osver.dwMinorVersion);
         platform.release = buff;
         platform.codename = buff;
-        if((osver.dwMajorVersion == 6) && (osver.dwMinorVersion == 1) &&
+        if ((osver.dwMajorVersion == 6) && (osver.dwMinorVersion == 1) &&
             (osver.wProductType == VER_NT_WORKSTATION))
            platform.distribution = "7";
-        else if((osver.dwMajorVersion == 6) && (osver.dwMinorVersion == 1) &&
+        else if ((osver.dwMajorVersion == 6) && (osver.dwMinorVersion == 1) &&
             (osver.wProductType != VER_NT_WORKSTATION))
            platform.distribution = "Server 2008 R2";
-        else if((osver.dwMajorVersion == 6) && (osver.dwMinorVersion == 0) &&
+        else if ((osver.dwMajorVersion == 6) && (osver.dwMinorVersion == 0) &&
             (osver.wProductType == VER_NT_WORKSTATION))
            platform.distribution = "Vista";
-        else if((osver.dwMajorVersion == 6) && (osver.dwMinorVersion == 0) &&
+        else if ((osver.dwMajorVersion == 6) && (osver.dwMinorVersion == 0) &&
             (osver.wProductType != VER_NT_WORKSTATION))
            platform.distribution = "Server 2008";
-        else if((osver.dwMajorVersion == 5) && (osver.dwMinorVersion == 2))
+        else if ((osver.dwMajorVersion == 5) && (osver.dwMinorVersion == 2))
            platform.distribution = "Server 2003";
-    //    else if((osver.dwMajorVersion == 5) && (osver.dwMinorVersion == 2) &&
+    //    else if ((osver.dwMajorVersion == 5) && (osver.dwMinorVersion == 2) &&
     //        (osver.wSuiteMask & VER_SUITE_WH_SERVER))
     //       platform.distribution = "Home Server";
-    //    else if((osver.dwMajorVersion == 5) && (osver.dwMinorVersion == 2) &&
+    //    else if ((osver.dwMajorVersion == 5) && (osver.dwMinorVersion == 2) &&
     //            (GetSystemMetrics(SM_SERVERR2) != 0))
     //       platform.distribution = "Server 2003 R2";
-        else if((osver.dwMajorVersion == 5) && (osver.dwMinorVersion == 2) &&
+        else if ((osver.dwMajorVersion == 5) && (osver.dwMinorVersion == 2) &&
                 (osver.wProductType == VER_NT_WORKSTATION))
                 /* &&(osver.wProcessorArchitecture == PROCESSOR_ARCHITECTURE_AMD64)*/
            platform.distribution = "XP Professional x64 Edition";
-        else if((osver.dwMajorVersion == 5) && (osver.dwMinorVersion == 1))
+        else if ((osver.dwMajorVersion == 5) && (osver.dwMinorVersion == 1))
            platform.distribution = "XP";
-        else if((osver.dwMajorVersion == 5) && (osver.dwMinorVersion == 0))
+        else if ((osver.dwMajorVersion == 5) && (osver.dwMinorVersion == 0))
             platform.distribution = "2000";
     }
 
@@ -602,7 +602,7 @@ SystemInfo::PlatformInfo SystemInfo::getPlatformInfo()
     if (a[i] == '\0') {
         std::string tmpVariable(a + prev, a + i);
         size_t equalsSign=tmpVariable.find("=");
-        if(equalsSign!=std::string::npos && equalsSign!=0) // among enviroment variables there are DOS-related ones that start with a =
+        if (equalsSign!=std::string::npos && equalsSign!=0) // among enviroment variables there are DOS-related ones that start with a =
         {
             platform.environmentVars.put(tmpVariable.substr(0, equalsSign), tmpVariable.substr(equalsSign+1));
         }
@@ -617,7 +617,7 @@ SystemInfo::PlatformInfo SystemInfo::getPlatformInfo()
 
 #if defined(__linux__)
     struct utsname uts;
-    if(uname(&uts) == 0)
+    if (uname(&uts) == 0)
     {
       platform.name = uts.sysname;
       platform.kernel = uts.release;
@@ -632,11 +632,11 @@ SystemInfo::PlatformInfo SystemInfo::getPlatformInfo()
         while(fgets(buffer, 128, release))
         {
             yarp::os::ConstString value;
-            if(getCpuEntry("Distributor ID", buffer, value))
+            if (getCpuEntry("Distributor ID", buffer, value))
                 platform.distribution = value;
-            if(getCpuEntry("Release", buffer, value))
+            if (getCpuEntry("Release", buffer, value))
                 platform.release = value;
-            if(getCpuEntry("Codename", buffer, value))
+            if (getCpuEntry("Codename", buffer, value))
                 platform.codename = value;
         }
         pclose(release);
@@ -647,7 +647,7 @@ SystemInfo::PlatformInfo SystemInfo::getPlatformInfo()
     for (int i = 0; varChar; i++) {
         std::string tmpVariable(varChar);
         size_t equalsSign=tmpVariable.find('=');
-        if(equalsSign!=std::string::npos)
+        if (equalsSign!=std::string::npos)
         {
             platform.environmentVars.put(tmpVariable.substr(0, equalsSign), tmpVariable.substr(equalsSign+1));
         }
@@ -680,12 +680,12 @@ SystemInfo::UserInfo SystemInfo::getUserInfo()
 
 #if defined(_WIN32)
     char path[MAX_PATH+1];
-    if(SHGetFolderPathA(YARP_NULLPTR, CSIDL_PROFILE, YARP_NULLPTR, 0, path ) == S_OK)
+    if (SHGetFolderPathA(YARP_NULLPTR, CSIDL_PROFILE, YARP_NULLPTR, 0, path ) == S_OK)
         user.homeDir = path;
 
     char username[UNLEN+1];
     DWORD nsize = UNLEN+1;
-    if(GetUserName(username, &nsize))
+    if (GetUserName(username, &nsize))
     {
         user.userName = username;
         user.realName = username;
@@ -695,7 +695,7 @@ SystemInfo::UserInfo SystemInfo::getUserInfo()
 #if defined(__linux__) || defined(__APPLE__)
     struct passwd* pwd = getpwuid(getuid());
     user.userID = getuid();
-    if(pwd)
+    if (pwd)
     {
         user.userName = pwd->pw_name;
         user.realName = pwd->pw_gecos;
@@ -715,11 +715,11 @@ SystemInfo::LoadInfo SystemInfo::getLoadInfo()
     load.cpuLoadInstant = 0;
 
 #if defined(_WIN32)
-    if(globalLoadCollector)
+    if (globalLoadCollector)
     {
         load = globalLoadCollector->getCpuLoad();
         int siblings = getProcessorInfo().siblings;
-        if( siblings > 1)
+        if ( siblings > 1)
         {
             load.cpuLoad1 *= siblings;
             load.cpuLoad5 *= siblings;
@@ -730,16 +730,16 @@ SystemInfo::LoadInfo SystemInfo::getLoadInfo()
 
 #if defined(__linux__)
     FILE* procload = fopen("/proc/loadavg", "r");
-    if(procload)
+    if (procload)
     {
         char buff[128];
         int ret = fscanf(procload, "%lf %lf %lf %s",
                          &(load.cpuLoad1), &(load.cpuLoad5),
                          &(load.cpuLoad15), buff);
-        if(ret>0)
+        if (ret>0)
         {
             char* tail  = strchr(buff, '/');
-            if(tail && (tail != buff))
+            if (tail && (tail != buff))
                 load.cpuLoadInstant = (int)(strtol(buff, &tail, 0) - 1);
         }
         fclose(procload);
@@ -792,7 +792,7 @@ SystemInfo::ProcessInfo SystemInfo::getProcessInfo(int pid) {
             // split the cmdline to find the arguments
             info.name = cmdline;
             size_t index = info.name.find(' ');
-            if(index != info.name.npos) {
+            if (index != info.name.npos) {
                 info.name = info.name.substr(0, index);
                 info.arguments = cmdline;
                 info.arguments = info.arguments.substr(index+1);
@@ -802,13 +802,13 @@ SystemInfo::ProcessInfo SystemInfo::getProcessInfo(int pid) {
 
     // scheduling params
     struct sched_param param;
-    if( sched_getparam(pid, &param) == 0 )
+    if ( sched_getparam(pid, &param) == 0 )
         info.schedPriority = param.__sched_priority;
     info.schedPolicy = sched_getscheduler(pid);
 
 #elif defined(_WIN32)
     HANDLE hnd = OpenProcess(PROCESS_QUERY_INFORMATION | PROCESS_VM_READ, FALSE, pid);
-    if(hnd) {
+    if (hnd) {
         TCHAR filename[MAX_PATH];
         if (GetModuleBaseName(hnd, 0, filename, MAX_PATH)) {
         info.name = filename;
@@ -826,12 +826,12 @@ SystemInfo::ProcessInfo SystemInfo::getProcessInfo(int pid) {
     hr = CoInitializeEx(0, COINIT_MULTITHREADED);
     hr = CoInitializeSecurity(YARP_NULLPTR, -1, YARP_NULLPTR, YARP_NULLPTR, RPC_C_AUTHN_LEVEL_DEFAULT, RPC_C_IMP_LEVEL_IMPERSONATE, YARP_NULLPTR, EOAC_NONE, YARP_NULLPTR);
     hr = CoCreateInstance(CLSID_WbemLocator, 0, CLSCTX_INPROC_SERVER, IID_IWbemLocator, (LPVOID *) &WbemLocator);
-    if(WbemLocator != YARP_NULLPTR) {
+    if (WbemLocator != YARP_NULLPTR) {
         //connect to the WMI
         hr = WbemLocator->ConnectServer(L"ROOT\\CIMV2", YARP_NULLPTR, YARP_NULLPTR, 0, 0, 0, 0, &WbemServices);
-        if(WbemServices != YARP_NULLPTR) {
+        if (WbemServices != YARP_NULLPTR) {
             //Run the WQL Query
-            hr = WbemServices->ExecQuery(L"WQL", L"SELECT ProcessId,CommandLine FROM Win32_Process", WBEM_FLAG_FORWARD_ONLY, YARP_NULLPTR, &EnumWbem);
+            hr = WbemServices->ExecQuery(L"WQL", L"SELECT ProcessId, CommandLine FROM Win32_Process", WBEM_FLAG_FORWARD_ONLY, YARP_NULLPTR, &EnumWbem);
             // Iterate over the enumerator
             if (EnumWbem != YARP_NULLPTR) {
                 IWbemClassObject *result = YARP_NULLPTR;
@@ -850,7 +850,7 @@ SystemInfo::ProcessInfo SystemInfo::getProcessInfo(int pid) {
                         info.arguments.resize(res);
                         WideCharToMultiByte(CP_UTF8, 0, CommandLine.bstrVal, -1, &info.arguments[0], res, YARP_NULLPTR, YARP_NULLPTR);
                         size_t idx = info.arguments.find(' ');
-                        if(idx == info.arguments.npos) {
+                        if (idx == info.arguments.npos) {
                             info.arguments.clear();
                         } else {
                             info.arguments = info.arguments.substr(idx+2); // it seems windows adds two spaces after the program name

@@ -15,7 +15,7 @@ using namespace yarp::os::impl;
 
 using namespace yarp::os;
 
-bool ShmemOutputStreamImpl::open(int port,int size)
+bool ShmemOutputStreamImpl::open(int port, int size)
 {
     m_pAccessMutex=m_pWaitDataMutex=YARP_NULLPTR;
     m_pMap=YARP_NULLPTR;
@@ -27,15 +27,15 @@ bool ShmemOutputStreamImpl::open(int port,int size)
     char obj_name[1024];
     char temp_dir_path[1024];
 
-    if (ACE::get_temp_dir(temp_dir_path,1024)==-1)
+    if (ACE::get_temp_dir(temp_dir_path, 1024)==-1)
     {
-        YARP_ERROR(Logger::get(),"ShmemHybridStream: no temp directory found.");
+        YARP_ERROR(Logger::get(), "ShmemHybridStream: no temp directory found.");
         return false;
     }
 
 #ifdef ACE_LACKS_SYSV_SHMEM
 
-    sprintf(obj_name,"%sSHMEM_FILE_%d_0",temp_dir_path,port);
+    sprintf(obj_name, "%sSHMEM_FILE_%d_0", temp_dir_path, port);
 
     m_pMap=new ACE_Shared_Memory_MM(obj_name, //const ACE_TCHAR *filename,
         size+sizeof(ShmemHeader_t), //int len = -1,
@@ -46,7 +46,7 @@ bool ShmemOutputStreamImpl::open(int port,int size)
 
 #else
 
-    m_pMap=new ACE_Shared_Memory_SV(port,size+sizeof(ShmemHeader_t),ACE_Shared_Memory_SV::ACE_CREATE);
+    m_pMap=new ACE_Shared_Memory_SV(port, size+sizeof(ShmemHeader_t), ACE_Shared_Memory_SV::ACE_CREATE);
 
 #endif
 
@@ -54,14 +54,14 @@ bool ShmemOutputStreamImpl::open(int port,int size)
     m_pData=(char*)(m_pHeader+1);
 
 #ifdef _ACE_USE_SV_SEM
-    sprintf(obj_name,"%sSHMEM_ACCESS_MUTEX_%d",temp_dir_path,port);
-    m_pAccessMutex=new ACE_Mutex(USYNC_PROCESS,obj_name);
-    sprintf(obj_name,"%sSHMEM_WAITDATA_MUTEX_%d",temp_dir_path,port);
-    m_pWaitDataMutex=new ACE_Mutex(USYNC_PROCESS,obj_name);
+    sprintf(obj_name, "%sSHMEM_ACCESS_MUTEX_%d", temp_dir_path, port);
+    m_pAccessMutex=new ACE_Mutex(USYNC_PROCESS, obj_name);
+    sprintf(obj_name, "%sSHMEM_WAITDATA_MUTEX_%d", temp_dir_path, port);
+    m_pWaitDataMutex=new ACE_Mutex(USYNC_PROCESS, obj_name);
 #else
-    sprintf(obj_name,"SHMEM_ACCESS_MUTEX_%d",port);
+    sprintf(obj_name, "SHMEM_ACCESS_MUTEX_%d", port);
     m_pAccessMutex=new ACE_Process_Mutex(obj_name);
-    sprintf(obj_name,"SHMEM_WAITDATA_MUTEX_%d",port);
+    sprintf(obj_name, "SHMEM_WAITDATA_MUTEX_%d", port);
     m_pWaitDataMutex=new ACE_Process_Mutex(obj_name);
 #endif
 
@@ -87,7 +87,7 @@ bool ShmemOutputStreamImpl::Resize(int newsize)
 {
     ++m_ResizeNum;
 
-    //printf("output stream resize %d to %d\n",m_ResizeNum,newsize);
+    //printf("output stream resize %d to %d\n", m_ResizeNum, newsize);
     //fflush(stdout);
 
     ACE_Shared_Memory* pNewMap;
@@ -99,14 +99,14 @@ bool ShmemOutputStreamImpl::Resize(int newsize)
 
     char file_path[1024];
 
-    if (ACE::get_temp_dir(file_path,1024)==-1)
+    if (ACE::get_temp_dir(file_path, 1024)==-1)
     {
-        YARP_ERROR(Logger::get(),"ShmemHybridStream: no temp directory found.");
+        YARP_ERROR(Logger::get(), "ShmemHybridStream: no temp directory found.");
         return false;
     }
 
     char file_name[1024];
-    sprintf(file_name,"%sSHMEM_FILE_%d_%d",file_path,m_Port,m_ResizeNum);
+    sprintf(file_name, "%sSHMEM_FILE_%d_%d", file_path, m_Port, m_ResizeNum);
 
     pNewMap=new ACE_Shared_Memory_MM(file_name, //const ACE_TCHAR *filename,
         newsize+sizeof(ShmemHeader_t), //int len = -1,
@@ -119,13 +119,13 @@ bool ShmemOutputStreamImpl::Resize(int newsize)
 
     int shmemkey=(m_ResizeNum<<16)+m_Port;
 
-    pNewMap=new ACE_Shared_Memory_SV(shmemkey,newsize+sizeof(ShmemHeader_t),ACE_Shared_Memory_SV::ACE_CREATE);
+    pNewMap=new ACE_Shared_Memory_SV(shmemkey, newsize+sizeof(ShmemHeader_t), ACE_Shared_Memory_SV::ACE_CREATE);
 
 #endif
 
     if (!pNewMap)
     {
-        YARP_ERROR(Logger::get(),ConstString("ShmemOutputStream can't create shared memory"));
+        YARP_ERROR(Logger::get(), ConstString("ShmemOutputStream can't create shared memory"));
         return false;
     }
 
@@ -145,13 +145,13 @@ bool ShmemOutputStreamImpl::Resize(int newsize)
         // one or two blocks in circular queue?
         if (m_pHeader->tail<m_pHeader->head)
         {
-            memcpy(pNewData,m_pData+m_pHeader->tail,m_pHeader->avail);
+            memcpy(pNewData, m_pData+m_pHeader->tail, m_pHeader->avail);
         }
         else
         {
             int firstchunk=m_pHeader->size-m_pHeader->tail;
-            memcpy(pNewData,m_pData+m_pHeader->tail,firstchunk);
-            memcpy(pNewData+firstchunk,m_pData,m_pHeader->head);
+            memcpy(pNewData, m_pData+m_pHeader->tail, firstchunk);
+            memcpy(pNewData+firstchunk, m_pData, m_pHeader->head);
         }
     }
 
@@ -188,13 +188,13 @@ bool ShmemOutputStreamImpl::write(const Bytes& b)
 
     if ((int)m_pHeader->head+(int)b.length()<=(int)m_pHeader->size)
     {
-        memcpy(m_pData+m_pHeader->head,b.get(),b.length());
+        memcpy(m_pData+m_pHeader->head, b.get(), b.length());
     }
     else
     {
         int first_block_size=m_pHeader->size-m_pHeader->head;
-        memcpy(m_pData+m_pHeader->head,b.get(),first_block_size);
-        memcpy(m_pData,b.get()+first_block_size,b.length()-first_block_size);
+        memcpy(m_pData+m_pHeader->head, b.get(), first_block_size);
+        memcpy(m_pData, b.get()+first_block_size, b.length()-first_block_size);
     }
 
     m_pHeader->avail+=(int)b.length();

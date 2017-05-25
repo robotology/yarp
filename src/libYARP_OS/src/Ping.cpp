@@ -37,7 +37,7 @@ void Ping::connect() {
     rpc.quiet = true;
     Bottle cmd, reply;
     cmd.addVocab(Vocab::encode("ver"));
-    bool ok = NetworkBase::write(c,cmd,reply,rpc);
+    bool ok = NetworkBase::write(c, cmd, reply, rpc);
     if (!ok) {
         yError("Port did not respond as expected");
     }
@@ -54,14 +54,14 @@ void Ping::report() {
         int space = 14;
         int decimal = 5;
         printf("  %s connection time (%s with name lookup)\n",
-               renderTime(lastConnect.targetTime.mean(),space,decimal).c_str(),
-               renderTime(lastConnect.totalTime.mean(),space,decimal).c_str());
+               renderTime(lastConnect.targetTime.mean(), space, decimal).c_str(),
+               renderTime(lastConnect.totalTime.mean(), space, decimal).c_str());
         if (accumConnect.totalTime.count()>1) {
             printf("  %s +/- %s on average (%s +/- %s with name lookup)\n",
-                   renderTime(accumConnect.targetTime.mean(),space,decimal).c_str(),
-                   renderTime(accumConnect.targetTime.deviation(),space,decimal).c_str(),
-                   renderTime(accumConnect.totalTime.mean(),space,decimal).c_str(),
-                   renderTime(accumConnect.totalTime.deviation(),space,decimal).c_str());
+                   renderTime(accumConnect.targetTime.mean(), space, decimal).c_str(),
+                   renderTime(accumConnect.targetTime.deviation(), space, decimal).c_str(),
+                   renderTime(accumConnect.totalTime.mean(), space, decimal).c_str(),
+                   renderTime(accumConnect.totalTime.deviation(), space, decimal).c_str());
         }
     }
 }
@@ -86,7 +86,7 @@ ConstString Ping::renderTime(double t, int space, int decimal) {
         times = 1e9;
     }
     char buf[512];
-    safe_printf(buf,sizeof(buf),"%.*f%s",decimal,t*times,
+    safe_printf(buf, sizeof(buf), "%.*f%s", decimal, t*times,
                 unit.c_str());
     return buf;
 }
@@ -129,7 +129,7 @@ void Ping::sample() {
     p.setReader(sampler);
     p.open("...");
     printf("Pausing for 5 seconds...\n");
-    NetworkBase::connect(target,p.getName());
+    NetworkBase::connect(target, p.getName());
     Time::delay(5);
     p.close();
     printf("Period is %g +/- %g (%d)\n",

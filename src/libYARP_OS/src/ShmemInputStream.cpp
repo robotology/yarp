@@ -15,7 +15,7 @@ using namespace yarp::os::impl;
 using namespace yarp::os::impl;
 using namespace yarp::os;
 
-bool ShmemInputStreamImpl::open(int port,ACE_SOCK_Stream *pSock,int size)
+bool ShmemInputStreamImpl::open(int port, ACE_SOCK_Stream *pSock, int size)
 {
     m_pSock=pSock;
 
@@ -30,15 +30,15 @@ bool ShmemInputStreamImpl::open(int port,ACE_SOCK_Stream *pSock,int size)
     char obj_name[1024];
     char temp_dir_path[1024];
 
-    if (ACE::get_temp_dir(temp_dir_path,1024)==-1)
+    if (ACE::get_temp_dir(temp_dir_path, 1024)==-1)
     {
-        YARP_ERROR(Logger::get(),"ShmemHybridStream: no temp directory found.");
+        YARP_ERROR(Logger::get(), "ShmemHybridStream: no temp directory found.");
         return false;
     }
 
 #ifdef ACE_LACKS_SYSV_SHMEM
 
-    sprintf(obj_name,"%sSHMEM_FILE_%d_%d",temp_dir_path,port,0);
+    sprintf(obj_name, "%sSHMEM_FILE_%d_%d", temp_dir_path, port, 0);
 
     m_pMap=new ACE_Shared_Memory_MM(obj_name, //const ACE_TCHAR *filename,
         size+sizeof(ShmemHeader_t), //int len = -1,
@@ -49,7 +49,7 @@ bool ShmemInputStreamImpl::open(int port,ACE_SOCK_Stream *pSock,int size)
 
 #else
 
-    m_pMap=new ACE_Shared_Memory_SV(port,size+sizeof(ShmemHeader_t));
+    m_pMap=new ACE_Shared_Memory_SV(port, size+sizeof(ShmemHeader_t));
 
 #endif
 
@@ -57,14 +57,14 @@ bool ShmemInputStreamImpl::open(int port,ACE_SOCK_Stream *pSock,int size)
     m_pData=(char*)(m_pHeader+1);
 
 #ifdef _ACE_USE_SV_SEM
-    sprintf(obj_name,"%sSHMEM_ACCESS_MUTEX_%d",temp_dir_path,port);
-    m_pAccessMutex=new ACE_Mutex(USYNC_PROCESS,obj_name);
-    sprintf(obj_name,"%sSHMEM_WAITDATA_MUTEX_%d",temp_dir_path,port);
-    m_pWaitDataMutex=new ACE_Mutex(USYNC_PROCESS,obj_name);
+    sprintf(obj_name, "%sSHMEM_ACCESS_MUTEX_%d", temp_dir_path, port);
+    m_pAccessMutex=new ACE_Mutex(USYNC_PROCESS, obj_name);
+    sprintf(obj_name, "%sSHMEM_WAITDATA_MUTEX_%d", temp_dir_path, port);
+    m_pWaitDataMutex=new ACE_Mutex(USYNC_PROCESS, obj_name);
 #else
-    sprintf(obj_name,"SHMEM_ACCESS_MUTEX_%d",port);
+    sprintf(obj_name, "SHMEM_ACCESS_MUTEX_%d", port);
     m_pAccessMutex=new ACE_Process_Mutex(obj_name);
-    sprintf(obj_name,"SHMEM_WAITDATA_MUTEX_%d",port);
+    sprintf(obj_name, "SHMEM_WAITDATA_MUTEX_%d", port);
     m_pWaitDataMutex=new ACE_Process_Mutex(obj_name);
 #endif
 
@@ -81,21 +81,21 @@ bool ShmemInputStreamImpl::Resize()
 
     ACE_Shared_Memory* pNewMap;
 
-    //printf("input stream resize %d to %d\n",m_ResizeNum,m_pHeader->newsize);
+    //printf("input stream resize %d to %d\n", m_ResizeNum, m_pHeader->newsize);
     //fflush(stdout);
 
 #ifdef ACE_LACKS_SYSV_SHMEM
 
     char file_path[1024];
 
-    if (ACE::get_temp_dir(file_path,1024)==-1)
+    if (ACE::get_temp_dir(file_path, 1024)==-1)
     {
-        YARP_ERROR(Logger::get(),"ShmemHybridStream: no temp directory found.");
+        YARP_ERROR(Logger::get(), "ShmemHybridStream: no temp directory found.");
         return false;
     }
 
     char file_name[1024];
-    sprintf(file_name,"%sSHMEM_FILE_%d_%d",file_path,m_Port,m_ResizeNum);
+    sprintf(file_name, "%sSHMEM_FILE_%d_%d", file_path, m_Port, m_ResizeNum);
 
     pNewMap=new ACE_Shared_Memory_MM(file_name, //const ACE_TCHAR *filename,
         m_pHeader->newsize+sizeof(ShmemHeader_t), //int len = -1,
@@ -108,13 +108,13 @@ bool ShmemInputStreamImpl::Resize()
 
     int shmemkey=(m_ResizeNum<<16)+m_Port;
 
-    pNewMap=new ACE_Shared_Memory_SV(shmemkey,m_pHeader->size+sizeof(ShmemHeader_t));
+    pNewMap=new ACE_Shared_Memory_SV(shmemkey, m_pHeader->size+sizeof(ShmemHeader_t));
 
 #endif
 
     if (!pNewMap)
     {
-        YARP_ERROR(Logger::get(),ConstString("ShmemOutputStream can't create shared memory"));
+        YARP_ERROR(Logger::get(), ConstString("ShmemOutputStream can't create shared memory"));
         return false;
     }
 
@@ -131,7 +131,7 @@ bool ShmemInputStreamImpl::Resize()
     return true;
 }
 
-int ShmemInputStreamImpl::read(char *data,int len)
+int ShmemInputStreamImpl::read(char *data, int len)
 {
     m_pAccessMutex->acquire();
 
@@ -155,12 +155,12 @@ int ShmemInputStreamImpl::read(char *data,int len)
     {
         int first_block_size=m_pHeader->size-m_pHeader->tail;
 
-        memcpy((void*)data,(void*)(m_pData+m_pHeader->tail),first_block_size);
-        memcpy((void*)(data+first_block_size),(void*)m_pData,len-first_block_size);
+        memcpy((void*)data, (void*)(m_pData+m_pHeader->tail), first_block_size);
+        memcpy((void*)(data+first_block_size), (void*)m_pData, len-first_block_size);
     }
     else
     {
-        memcpy((void*)data,(void*)(m_pData+m_pHeader->tail),len);
+        memcpy((void*)data, (void*)(m_pData+m_pHeader->tail), len);
     }
 
     m_pHeader->avail-=len;
@@ -182,11 +182,11 @@ YARP_SSIZE_T ShmemInputStreamImpl::read(const Bytes& b)
         return -1;
     }
 
-    char *data=b.get(),buf;
+    char *data=b.get(), buf;
     size_t len=b.length();
     YARP_SSIZE_T ret;
 
-    while (!(ret=read(data,(int)len)))
+    while (!(ret=read(data, (int)len)))
     {
         #ifdef _ACE_USE_SV_SEM
         YARP_timeval tv=ACE_OS::gettimeofday();
@@ -197,7 +197,7 @@ YARP_SSIZE_T ShmemInputStreamImpl::read(const Bytes& b)
 
         m_pWaitDataMutex->acquire(tv);
 
-        if (!m_pSock->recv(&buf,1))
+        if (!m_pSock->recv(&buf, 1))
         {
             //printf("STREAM IS BROKEN\n");
             //fflush(stdout);

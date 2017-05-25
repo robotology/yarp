@@ -25,7 +25,7 @@ bool BufferedConnectionWriter::applyConvertTextMode() {
             sos.write(m.usedBytes());
         }
         const ConstString& str = sos.str();
-        b.fromBinary(str.c_str(),str.length());
+        b.fromBinary(str.c_str(), str.length());
         ConstString replacement = b.toString() + "\n";
         for (size_t i=0; i<lst.size(); i++) {
             delete lst[i];
@@ -34,7 +34,7 @@ bool BufferedConnectionWriter::applyConvertTextMode() {
         target = &lst;
         lst.clear();
         stopPool();
-        Bytes data((char*)replacement.c_str(),replacement.length());
+        Bytes data((char*)replacement.c_str(), replacement.length());
         appendBlockCopy(data);
     }
     return true;
@@ -50,18 +50,18 @@ bool BufferedConnectionWriter::convertTextMode() {
 ConstString BufferedConnectionWriter::toString() {
     stopWrite();
     size_t total_size = dataSize();
-    ConstString output(total_size,0);
+    ConstString output(total_size, 0);
     char *dest = (char *)output.c_str();
     for (size_t i=0; i<header_used; i++) {
         const char *data = header[i]->get();
         size_t len = header[i]->used();
-        memmove(dest,data,len);
+        memmove(dest, data, len);
         dest += len;
     }
     for (size_t i=0; i<lst_used; i++) {
         const char *data = lst[i]->get();
         size_t len = lst[i]->used();
-        memmove(dest,data,len);
+        memmove(dest, data, len);
         dest += len;
     }
     return output;
@@ -103,7 +103,7 @@ bool BufferedConnectionWriter::addPool(const yarp::os::Bytes& data) {
         if (add) target->push_back(pool);
     }
     if (pool != YARP_NULLPTR) {
-        memcpy(pool->get()+poolIndex,data.get(),data.length());
+        memcpy(pool->get()+poolIndex, data.get(), data.length());
         poolIndex += data.length();
         pool->setUsed(poolIndex);
         return true;
@@ -121,7 +121,7 @@ void BufferedConnectionWriter::push(const Bytes& data, bool copy) {
         yarp::os::ManagedBytes*&bytes = (*target)[*target_used];
         if (bytes->isOwner()!=copy||bytes->length()<data.length()) {
             delete bytes;
-            bytes = new yarp::os::ManagedBytes(data,false);
+            bytes = new yarp::os::ManagedBytes(data, false);
             if (copy) bytes->copy();
             (*target_used)++;
             return;
@@ -130,15 +130,15 @@ void BufferedConnectionWriter::push(const Bytes& data, bool copy) {
         bytes->setUsed(data.length());
     }
     if (buf == YARP_NULLPTR) {
-        buf = new yarp::os::ManagedBytes(data,false);
+        buf = new yarp::os::ManagedBytes(data, false);
         if (copy) buf->copy();
         target->push_back(buf);
     } else {
         if (copy) {
             buf->copy();
-            memmove(buf->get(),data.get(),data.length());
+            memmove(buf->get(), data.get(), data.length());
         } else {
-            *buf = ManagedBytes(data,false);
+            *buf = ManagedBytes(data, false);
         }
     }
     (*target_used)++;

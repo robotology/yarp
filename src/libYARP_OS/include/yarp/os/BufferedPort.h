@@ -103,7 +103,7 @@ public:
     // documentation provided in Contactable
     virtual bool open(const Contact& contact, bool registerName = true) {
         attachIfNeeded();
-        return port.open(contact,registerName);
+        return port.open(contact, registerName);
     }
 
     // documentation provided in Contactable
@@ -113,7 +113,7 @@ public:
 
     // documentation provided in Contactable
     virtual bool addOutput(const ConstString& name, const ConstString& carrier) {
-        return port.addOutput(name,carrier);
+        return port.addOutput(name, carrier);
     }
 
     // documentation provided in Contactable
@@ -248,7 +248,7 @@ public:
      *
      */
     virtual T *read(bool shouldWait=true) {
-        if(!port.isOpen()) return YARP_NULLPTR;
+        if (!port.isOpen()) return YARP_NULLPTR;
         if (interrupted) return YARP_NULLPTR;
         T *result = reader.read(shouldWait);
         // in some circs PortReaderBuffer::read(true) may return false

@@ -24,7 +24,7 @@ Protocol::Protocol(TwoWayStream* stream) :
         need_send_delegate(false),
         recv_delegate_fail(false),
         send_delegate_fail(false),
-        route("null","null","tcp"),
+        route("null", "null", "tcp"),
         writer(YARP_NULLPTR),
         ref(YARP_NULLPTR),
         envelope(""),
@@ -146,14 +146,14 @@ bool Protocol::getRecvDelegate() {
     ConstString tag = b.find("recv").asString();
     recv_delegate = Carriers::chooseCarrier(ConstString(tag.c_str()));
     if (!recv_delegate) {
-        fprintf(stderr,"Need carrier \"%s\", but cannot find it.\n",
+        fprintf(stderr, "Need carrier \"%s\", but cannot find it.\n",
                 tag.c_str());
         recv_delegate_fail = true;
         close();
         return false;
     }
     if (!recv_delegate->modifiesIncomingData()) {
-        fprintf(stderr,"Carrier \"%s\" does not modify incoming data as expected.\n",
+        fprintf(stderr, "Carrier \"%s\" does not modify incoming data as expected.\n",
                 tag.c_str());
         recv_delegate_fail = true;
         close();
@@ -161,7 +161,7 @@ bool Protocol::getRecvDelegate() {
     }
     // Configure the receiver modifier.
     if (!recv_delegate->configure(*this)) {
-        fprintf(stderr,"Carrier \"%s\" could not configure the send delegate.\n",
+        fprintf(stderr, "Carrier \"%s\" could not configure the send delegate.\n",
                 tag.c_str());
         recv_delegate_fail = true;
         close();
@@ -180,14 +180,14 @@ bool Protocol::getSendDelegate() {
     ConstString tag = b.find("send").asString();
     send_delegate = Carriers::chooseCarrier(ConstString(tag.c_str()));
     if (!send_delegate) {
-        fprintf(stderr,"Need carrier \"%s\", but cannot find it.\n",
+        fprintf(stderr, "Need carrier \"%s\", but cannot find it.\n",
                 tag.c_str());
         send_delegate_fail = true;
         close();
         return false;
     }
     if (!send_delegate->modifiesOutgoingData()) {
-        fprintf(stderr,"Carrier \"%s\" does not modify outgoing data as expected.\n",
+        fprintf(stderr, "Carrier \"%s\" does not modify outgoing data as expected.\n",
                 tag.c_str());
         send_delegate_fail = true;
         close();
@@ -195,7 +195,7 @@ bool Protocol::getSendDelegate() {
     }
     // Configure the sender modifier.
     if (!send_delegate->configure(*this)) {
-        fprintf(stderr,"Carrier \"%s\" could not configure the send delegate.\n",
+        fprintf(stderr, "Carrier \"%s\" could not configure the send delegate.\n",
                 tag.c_str());
         send_delegate_fail = true;
         close();
@@ -284,8 +284,8 @@ bool Protocol::expectIndex() {
     }
     if (ok) {
         // Set up a reader for the user payload.
-        reader.reset(is(),&getStreams(),getRoute(),
-                     messageLen,delegate->isTextMode(),
+        reader.reset(is(), &getStreams(), getRoute(),
+                     messageLen, delegate->isTextMode(),
                      delegate->isBareMode());
         // Pass on a reference to the object being
         // send, if we know it, for local connections.
@@ -293,7 +293,7 @@ bool Protocol::expectIndex() {
             reader.setReference(ref);
         }
     } else {
-        reader.reset(is(),&getStreams(),getRoute(),0,false);
+        reader.reset(is(), &getStreams(), getRoute(), 0, false);
     }
     return ok;
 }
@@ -309,14 +309,14 @@ void Protocol::setCarrier(const ConstString& carrierNameBase) {
         if (delegate!=YARP_NULLPTR) {
             if (delegate->modifiesIncomingData()) {
                 if (active) {
-                    fprintf(stderr,"Carrier \"%s\" cannot be used this way, try \"tcp+recv.%s\" instead.\n",carrierName.c_str(),carrierName.c_str());
+                    fprintf(stderr, "Carrier \"%s\" cannot be used this way, try \"tcp+recv.%s\" instead.\n", carrierName.c_str(), carrierName.c_str());
                 }
                 close();
                 return;
             }
             // Configure the carrier.
             if (!delegate->configure(*this)) {
-                fprintf(stderr,"Carrier \"%s\" could not be configured.\n",
+                fprintf(stderr, "Carrier \"%s\" could not be configured.\n",
                         carrierName.c_str());
                 close();
                 return;
@@ -349,14 +349,14 @@ bool Protocol::expectProtocolSpecifier() {
     // assumption is showing its age, and should really
     // be generalized.
     char buf[8];
-    yarp::os::Bytes header((char*)&buf[0],sizeof(buf));
+    yarp::os::Bytes header((char*)&buf[0], sizeof(buf));
     YARP_SSIZE_T len = is().readFull(header);
     if (len==-1) {
-        YARP_DEBUG(log,"no connection");
+        YARP_DEBUG(log, "no connection");
         return false;
     }
-    if((size_t)len!=header.length()) {
-        YARP_DEBUG(log,"data stream died");
+    if ((size_t)len!=header.length()) {
+        YARP_DEBUG(log, "data stream died");
         return false;
     }
     bool already = false;
@@ -370,13 +370,13 @@ bool Protocol::expectProtocolSpecifier() {
         if (delegate==YARP_NULLPTR) {
             // Carrier not found; send a human-readable message.
             ConstString msg = "* Error. Protocol not found.\r\n* Hello. You appear to be trying to communicate with a YARP Port.\r\n* The first 8 bytes sent to a YARP Port are critical for identifying the\r\n* protocol you wish to speak.\r\n* The first 8 bytes you sent were not associated with any particular protocol.\r\n* If you are a human, try typing \"CONNECT foo\" followed by a <RETURN>.\r\n* The 8 bytes \"CONNECT \" correspond to a simple text-mode protocol.\r\n* Goodbye.\r\n";
-            yarp::os::Bytes b((char*)msg.c_str(),msg.length());
+            yarp::os::Bytes b((char*)msg.c_str(), msg.length());
             os().write(b);
             os().flush();
         }
     }
     if (delegate==YARP_NULLPTR) {
-        YARP_DEBUG(log,"unrecognized protocol");
+        YARP_DEBUG(log, "unrecognized protocol");
         return false;
     }
     setRoute(getRoute().addCarrierName(delegate->getName()));
@@ -416,18 +416,18 @@ bool Protocol::write(SizedWriter& writer) {
     bool replied = false;
     yAssert(delegate!=YARP_NULLPTR);
     getStreams().beginPacket(); // Message begins.
-    bool ok = delegate->write(*this,writer);
+    bool ok = delegate->write(*this, writer);
     getStreams().endPacket();   // Message ends.
     PortReader *reply = writer.getReplyHandler();
     if (reply!=YARP_NULLPTR) {
         if (!delegate->supportReply()) {
             // We are expected to get a reply, but cannot.
-            YARP_INFO(log,ConstString("connection ") + getRoute().toString() + " does not support replies (try \"tcp\" or \"text_ack\")");
+            YARP_INFO(log, ConstString("connection ") + getRoute().toString() + " does not support replies (try \"tcp\" or \"text_ack\")");
         }
         if (ok) {
             // Read reply.
-            reader.reset(is(),&getStreams(), getRoute(),
-                         messageLen,delegate->isTextMode(),
+            reader.reset(is(), &getStreams(), getRoute(),
+                         messageLen, delegate->isTextMode(),
                          delegate->isBareMode());
             replied = reply->read(reader);
         }

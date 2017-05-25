@@ -136,8 +136,8 @@ public:
      * p.check("width") // this is true
      * p.check("foo")   // this is false
      * Value *v;
-     * p.check("help",v)  // this is false, there is no value associated
-     * p.check("width",v) // this is true, and v->asInt() is 10
+     * p.check("help", v)  // this is false, there is no value associated
+     * p.check("width", v) // this is true, and v->asInt() is 10
      * \endcode
      *
      * @param key The keyword to look for

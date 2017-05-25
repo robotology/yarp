@@ -72,20 +72,20 @@ public:
             obj = new PortCorePacket();
 #endif
             yAssert(obj!=YARP_NULLPTR);
-            PLATFORM_LIST_PUSH_BACK(inactive,obj);
+            PLATFORM_LIST_PUSH_BACK(inactive, obj);
         }
         PortCorePacket *next = YARP_NULLPTR;
-        PLATFORM_LIST_GET(inactive,next);
+        PLATFORM_LIST_GET(inactive, next);
         if (next==YARP_NULLPTR) {
-            fprintf(stderr,"*** YARP consistency check failed.\n");
-            fprintf(stderr,"*** There has been a low-level failure in \"PortCorePackets\".\n");
-            fprintf(stderr,"*** This typically occurs when ports are accessed in a non-threadsafe way.\n");
-            fprintf(stderr,"*** For help: https://github.com/robotology/yarp/issues/new\n");
+            fprintf(stderr, "*** YARP consistency check failed.\n");
+            fprintf(stderr, "*** There has been a low-level failure in \"PortCorePackets\".\n");
+            fprintf(stderr, "*** This typically occurs when ports are accessed in a non-threadsafe way.\n");
+            fprintf(stderr, "*** For help: https://github.com/robotology/yarp/issues/new\n");
             yAssert(1==0);
         }
         yAssert(next!=YARP_NULLPTR);
         inactive.remove(next);
-        PLATFORM_LIST_PUSH_BACK(active,next);
+        PLATFORM_LIST_PUSH_BACK(active, next);
         return next;
     }
 
@@ -103,7 +103,7 @@ public:
             }
             packet->completed = true;
             active.remove(packet);
-            PLATFORM_LIST_PUSH_BACK(inactive,packet);
+            PLATFORM_LIST_PUSH_BACK(inactive, packet);
         }
     }
 

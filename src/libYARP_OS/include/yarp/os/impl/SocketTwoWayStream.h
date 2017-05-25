@@ -80,15 +80,15 @@ public:
 
     virtual void interrupt()
     {
-        YARP_DEBUG(Logger::get(),"^^^^^^^^^^^ interrupting socket");
+        YARP_DEBUG(Logger::get(), "^^^^^^^^^^^ interrupting socket");
         if (happy) {
             happy = false;
             stream.close_reader();
-            YARP_DEBUG(Logger::get(),"^^^^^^^^^^^ interrupting socket reader");
+            YARP_DEBUG(Logger::get(), "^^^^^^^^^^^ interrupting socket reader");
             stream.close_writer();
-            YARP_DEBUG(Logger::get(),"^^^^^^^^^^^ interrupting socket writer");
+            YARP_DEBUG(Logger::get(), "^^^^^^^^^^^ interrupting socket writer");
             stream.close();
-            YARP_DEBUG(Logger::get(),"^^^^^^^^^^^ interrupting socket fully");
+            YARP_DEBUG(Logger::get(), "^^^^^^^^^^^ interrupting socket fully");
         }
     }
 
@@ -104,14 +104,14 @@ public:
         if (!isOk()) { return -1; }
         YARP_SSIZE_T result;
         if (haveReadTimeout) {
-            result = stream.recv_n(b.get(),b.length(),&readTimeout);
+            result = stream.recv_n(b.get(), b.length(), &readTimeout);
         } else {
-            result = stream.recv_n(b.get(),b.length());
+            result = stream.recv_n(b.get(), b.length());
         }
         if (!happy) { return -1; }
         if (result<=0) {
             happy = false;
-            YARP_DEBUG(Logger::get(),"bad socket read");
+            YARP_DEBUG(Logger::get(), "bad socket read");
         }
         return result;
     }
@@ -121,14 +121,14 @@ public:
         if (!isOk()) { return -1; }
         YARP_SSIZE_T result;
         if (haveReadTimeout) {
-            result = stream.recv(b.get(),b.length(),&readTimeout);
+            result = stream.recv(b.get(), b.length(), &readTimeout);
         } else {
-            result = stream.recv(b.get(),b.length());
+            result = stream.recv(b.get(), b.length());
         }
         if (!happy) { return -1; }
         if (result<=0) {
             happy = false;
-            YARP_DEBUG(Logger::get(),"bad socket read");
+            YARP_DEBUG(Logger::get(), "bad socket read");
         }
         return result;
     }
@@ -139,13 +139,13 @@ public:
         if (!isOk()) { return; }
         YARP_SSIZE_T result;
         if (haveWriteTimeout) {
-            result = stream.send_n(b.get(),b.length(),&writeTimeout);
+            result = stream.send_n(b.get(), b.length(), &writeTimeout);
         } else {
-            result = stream.send_n(b.get(),b.length());
+            result = stream.send_n(b.get(), b.length());
         }
         if (result<0) {
             happy = false;
-            YARP_DEBUG(Logger::get(),"bad socket write");
+            YARP_DEBUG(Logger::get(), "bad socket write");
         }
     }
 
@@ -176,7 +176,7 @@ public:
         if (timeout<1e-12) {
             haveWriteTimeout = false;
         } else {
-            PLATFORM_TIME_SET(writeTimeout,timeout);
+            PLATFORM_TIME_SET(writeTimeout, timeout);
             haveWriteTimeout = true;
         }
         return true;
@@ -187,7 +187,7 @@ public:
         if (timeout<1e-12) {
             haveReadTimeout = false;
         } else {
-            PLATFORM_TIME_SET(readTimeout,timeout);
+            PLATFORM_TIME_SET(readTimeout, timeout);
             haveReadTimeout = true;
         }
         return true;

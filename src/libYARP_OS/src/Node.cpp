@@ -170,9 +170,9 @@ public:
 class yarp::os::Node::Helper : public PortReader
 {
 public:
-    std::multimap<ConstString,NodeItem> by_part_name;
-    std::multimap<ConstString,NodeItem> by_category;
-    std::map<Contactable*,NodeItem> name_cache;
+    std::multimap<ConstString, NodeItem> by_part_name;
+    std::multimap<ConstString, NodeItem> by_category;
+    std::map<Contactable*, NodeItem> name_cache;
     Port port;
     Node *owner;
 
@@ -250,7 +250,7 @@ public:
         Bottle* connections = v.asList();
 
         mutex.lock();
-        for (std::multimap<ConstString,NodeItem>::iterator it = by_part_name.begin(); it != by_part_name.end(); ++it) {
+        for (std::multimap<ConstString, NodeItem>::iterator it = by_part_name.begin(); it != by_part_name.end(); ++it) {
             NodeItem& item = it->second;
             if (!(item.isSubscriber() || item.isPublisher())) {
                 continue;
@@ -308,7 +308,7 @@ public:
         Value v;
         Bottle* subscriptions = v.asList();
         mutex.lock();
-        for (std::multimap<ConstString,NodeItem>::iterator it = by_part_name.begin(); it != by_part_name.end(); ++it) {
+        for (std::multimap<ConstString, NodeItem>::iterator it = by_part_name.begin(); it != by_part_name.end(); ++it) {
             NodeItem& item = it->second;
             if (!item.isSubscriber()) {
                 continue;
@@ -328,7 +328,7 @@ public:
         Value v;
         Bottle* publications = v.asList();
         mutex.lock();
-        for (std::multimap<ConstString,NodeItem>::iterator it = by_part_name.begin(); it != by_part_name.end(); ++it) {
+        for (std::multimap<ConstString, NodeItem>::iterator it = by_part_name.begin(); it != by_part_name.end(); ++it) {
             NodeItem& item = it->second;
             if (!item.isPublisher()) {
                 continue;
@@ -368,7 +368,7 @@ public:
             style.admin = true;
             style.carrier = "tcp";
             Bottle reply;
-            if (!NetworkBase::write(c,na.request,reply,style)) {
+            if (!NetworkBase::write(c, na.request, reply, style)) {
                 continue;
             }
             na.fromExternal(reply);
@@ -410,7 +410,7 @@ void yarp::os::Node::Helper::prepare(const ConstString& name)
         port.setReader(*this);
         Property *prop = port.acquireProperties(false);
         if (prop) {
-            prop->put("node_like",1);
+            prop->put("node_like", 1);
         }
         port.releaseProperties(prop);
         port.open(name);
@@ -425,7 +425,7 @@ void yarp::os::Node::Helper::add(Contactable& contactable)
     item.nc.fromString(contactable.getName());
     if (name=="") name = item.nc.getNodeName();
     if (name!=item.nc.getNodeName()) {
-        fprintf(stderr,"Node name mismatch, expected [%s] but got [%s]\n",
+        fprintf(stderr, "Node name mismatch, expected [%s] but got [%s]\n",
                 name.c_str(), item.nc.getNodeName().c_str());
         return;
     }
@@ -434,8 +434,8 @@ void yarp::os::Node::Helper::add(Contactable& contactable)
 
     mutex.lock();
     name_cache[&contactable] = item;
-    by_part_name.insert(std::pair<ConstString,NodeItem>(item.nc.getNestedName(),item));
-    by_category.insert(std::pair<ConstString,NodeItem>(item.nc.getCategory(),item));
+    by_part_name.insert(std::pair<ConstString, NodeItem>(item.nc.getNestedName(), item));
+    by_category.insert(std::pair<ConstString, NodeItem>(item.nc.getCategory(), item));
     mutex.unlock();
 }
 
@@ -472,7 +472,7 @@ std::vector<Contact> yarp::os::Node::Helper::query(const ConstString& name, cons
 {
     std::vector<Contact> contacts;
     mutex.lock();
-    for (std::multimap<ConstString,NodeItem>::const_iterator it = by_part_name.begin(); it != by_part_name.end(); ++it) {
+    for (std::multimap<ConstString, NodeItem>::const_iterator it = by_part_name.begin(); it != by_part_name.end(); ++it) {
         if (it->first == name && (category.empty() || category == it->second.nc.getCategory())) {
             contacts.emplace_back(it->second.contactable->where());
         }
@@ -553,7 +553,7 @@ Node::Node(const ConstString& name) :
     mPriv->name = name;
     prepare(name);
     ConstString rname = mPriv->port.getName();
-    nodes.addExternalNode(rname,*this);
+    nodes.addExternalNode(rname, *this);
     nodes.setActiveName(rname);
 }
 
@@ -584,7 +584,7 @@ void Node::remove(Contactable& contactable)
 
 Contact Node::query(const ConstString& name, const ConstString& category)
 {
-    std::vector<Contact> contacts = mPriv->query(name,category);
+    std::vector<Contact> contacts = mPriv->query(name, category);
     if (contacts.size() >= 1) {
         return contacts.at(0);
     }

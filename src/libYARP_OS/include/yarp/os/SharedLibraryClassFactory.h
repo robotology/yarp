@@ -29,7 +29,7 @@ public:
     SharedLibraryClassFactory() {
     }
 
-    SharedLibraryClassFactory(const char *dll_name, const char *fn_name = YARP_NULLPTR) : SharedLibraryFactory(dll_name,fn_name) {
+    SharedLibraryClassFactory(const char *dll_name, const char *fn_name = YARP_NULLPTR) : SharedLibraryFactory(dll_name, fn_name) {
     }
 
     T *create() {

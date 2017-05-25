@@ -31,7 +31,7 @@ using namespace yarp::os::impl;
 using namespace yarp::os;
 
 //#define YMSG(x) printf x;
-//#define YTRACE(x) YMSG(("at %s\n",x))
+//#define YTRACE(x) YMSG(("at %s\n", x))
 
 #define YMSG(x)
 #define YTRACE(x)
@@ -88,7 +88,7 @@ Contact NameServer::registerName(const ConstString& name,
     bool reusablePort = false;
     bool reusableIp = false;
 
-    //YARP_DEBUG(Logger::get(),"in registerName...");
+    //YARP_DEBUG(Logger::get(), "in registerName...");
 
     if (name!="...") {
         unregisterName(name);
@@ -115,7 +115,7 @@ Contact NameServer::registerName(const ConstString& name,
     if (machine == "...") {
         if (carrier!="mcast") {
             if (remote=="...") {
-                YARP_ERROR(Logger::get(),"remote machine name was not found!  can only guess it is local...");
+                YARP_ERROR(Logger::get(), "remote machine name was not found!  can only guess it is local...");
                 machine = "127.0.0.1";
             } else {
                 machine = remote;
@@ -139,11 +139,11 @@ Contact NameServer::registerName(const ConstString& name,
 
     suggestion = Contact(portName, carrier, machine, port);
 
-    YARP_DEBUG(Logger::get(),ConstString("Registering ") +
+    YARP_DEBUG(Logger::get(), ConstString("Registering ") +
                suggestion.toURI() + " for " + suggestion.getRegName());
 
     NameRecord& nameRecord = getNameRecord(suggestion.getRegName());
-    nameRecord.setAddress(suggestion,reusablePort,reusableIp);
+    nameRecord.setAddress(suggestion, reusablePort, reusableIp);
 
     Bottle event;
     event.addVocab(Vocab::encode("add"));
@@ -159,19 +159,19 @@ Contact NameServer::queryName(const ConstString& name) {
     ConstString pat = "";
     if (name.find("/net=") == 0) {
         size_t patStart = 5;
-        size_t patEnd = name.find('/',patStart);
+        size_t patEnd = name.find('/', patStart);
         if (patEnd>=patStart && patEnd!=ConstString::npos) {
-            pat = name.substr(patStart,patEnd-patStart);
+            pat = name.substr(patStart, patEnd-patStart);
             base = name.substr(patEnd);
-            YARP_DEBUG(Logger::get(),ConstString("Special query form ") +
+            YARP_DEBUG(Logger::get(), ConstString("Special query form ") +
                        name + " (" + pat + "/" + base + ")");
         }
     }
 
-    NameRecord *rec = getNameRecord(base,false);
+    NameRecord *rec = getNameRecord(base, false);
     if (rec!=YARP_NULLPTR) {
         if (pat!="") {
-            ConstString ip = rec->matchProp("ips",pat);
+            ConstString ip = rec->matchProp("ips", pat);
             if (ip!="") {
                 SplitString sip(ip.c_str());
                 Contact c = rec->getAddress();
@@ -187,14 +187,14 @@ Contact NameServer::queryName(const ConstString& name) {
 
 NameServer::NameRecord *NameServer::getNameRecord(const ConstString& name,
                                                   bool create) {
-    PLATFORM_MAP_ITERATOR(ConstString,NameRecord,entry);
-    int result = PLATFORM_MAP_FIND(nameMap,name,entry);
+    PLATFORM_MAP_ITERATOR(ConstString, NameRecord, entry);
+    int result = PLATFORM_MAP_FIND(nameMap, name, entry);
     if (result==-1) {
         if (!create) {
             return YARP_NULLPTR;
         }
-        PLATFORM_MAP_SET(nameMap,name,NameRecord());
-        result = PLATFORM_MAP_FIND(nameMap,name,entry);
+        PLATFORM_MAP_SET(nameMap, name, NameRecord());
+        result = PLATFORM_MAP_FIND(nameMap, name, entry);
     }
     yAssert(result!=-1);
     //yAssert(entry!=YARP_NULLPTR);
@@ -204,14 +204,14 @@ NameServer::NameRecord *NameServer::getNameRecord(const ConstString& name,
 
 NameServer::HostRecord *NameServer::getHostRecord(const ConstString& name,
                                                   bool create) {
-    PLATFORM_MAP_ITERATOR(ConstString,HostRecord,entry);
-    int result = PLATFORM_MAP_FIND(hostMap,name,entry);
+    PLATFORM_MAP_ITERATOR(ConstString, HostRecord, entry);
+    int result = PLATFORM_MAP_FIND(hostMap, name, entry);
     if (result==-1) {
         if (!create) {
             return YARP_NULLPTR;
         }
-        PLATFORM_MAP_SET(hostMap,name,HostRecord());
-        result = PLATFORM_MAP_FIND(hostMap,name,entry);
+        PLATFORM_MAP_SET(hostMap, name, HostRecord());
+        result = PLATFORM_MAP_FIND(hostMap, name, entry);
         //yAssert(entry!=YARP_NULLPTR);
         PLATFORM_MAP_ITERATOR_SECOND(entry).setBase(basePort);
     }
@@ -367,8 +367,8 @@ ConstString NameServer::cmdRoute(int argc, char *argv[]) {
 
     for (int i=0; i<argc; i++) {
         ConstString carrier = argv[i];
-        if (srcRec.checkProp("offers",carrier) &&
-            destRec.checkProp("accepts",carrier)) {
+        if (srcRec.checkProp("offers", carrier) &&
+            destRec.checkProp("accepts", carrier)) {
             bool ok = true;
             if (carrier=="local"||carrier=="shmem") {
                 if (srcRec.getProp("ips") == destRec.getProp("ips")) {
@@ -440,7 +440,7 @@ ConstString NameServer::cmdSet(int argc, char *argv[]) {
     NameRecord& nameRecord = getNameRecord(target);
     nameRecord.clearProp(key);
     for (int i=2; i<argc; i++) {
-        nameRecord.addProp(key,argv[i]);
+        nameRecord.addProp(key, argv[i]);
     }
     return terminate(ConstString("port ") + target + " property " + key + " = " +
                      nameRecord.getProp(key) + "\n");
@@ -474,7 +474,7 @@ ConstString NameServer::cmdMatch(int argc, char *argv[]) {
     ConstString prefix = argv[2];
     NameRecord& nameRecord = getNameRecord(target);
     return terminate(ConstString("port ") + target + " property " + key + " = " +
-                     nameRecord.matchProp(key,prefix) + "\n");
+                     nameRecord.matchProp(key, prefix) + "\n");
 }
 
 ConstString NameServer::cmdCheck(int argc, char *argv[]) {
@@ -491,7 +491,7 @@ ConstString NameServer::cmdCheck(int argc, char *argv[]) {
     NameRecord& nameRecord = getNameRecord(target);
     for (int i=2; i<argc; i++) {
         ConstString val = "false";
-        if (nameRecord.checkProp(key,argv[i])) {
+        if (nameRecord.checkProp(key, argv[i])) {
             val = "true";
         }
         if (i>2) {
@@ -510,7 +510,7 @@ ConstString NameServer::cmdList(int argc, char *argv[]) {
     ConstString response = "";
 
     PlatformMultiSet<ConstString> lines;
-    for (PLATFORM_MAP(ConstString,NameRecord)::iterator it = nameMap.begin(); it!=nameMap.end(); it++) {
+    for (PLATFORM_MAP(ConstString, NameRecord)::iterator it = nameMap.begin(); it!=nameMap.end(); it++) {
         NameRecord& rec = PLATFORM_MAP_ITERATOR_SECOND(it);
         lines.insert(textify(rec.getAddress()));
     }
@@ -542,7 +542,7 @@ ConstString NameServer::cmdBot(int argc, char *argv[]) {
         ConstString key = argv[0];
         argc--;
         argv++;
-        Bottle result = ndispatcher.dispatch(this,key.c_str(),argc,argv);
+        Bottle result = ndispatcher.dispatch(this, key.c_str(), argc, argv);
         txt = result.toString().c_str();
     }
     return txt;
@@ -559,7 +559,7 @@ Bottle NameServer::ncmdList(int argc, char *argv[]) {
     }
 
     response.addString("ports");
-    for (PLATFORM_MAP(ConstString,NameRecord)::iterator it = nameMap.begin(); it!=nameMap.end(); it++) {
+    for (PLATFORM_MAP(ConstString, NameRecord)::iterator it = nameMap.begin(); it!=nameMap.end(); it++) {
         NameRecord& rec = PLATFORM_MAP_ITERATOR_SECOND(it);
         ConstString iname = rec.getAddress().getRegName();
         if (iname.find(prefix)==0) {
@@ -604,7 +604,7 @@ yarp::os::Bottle NameServer::ncmdSet(int argc, char *argv[]) {
         NameRecord& nameRecord = getNameRecord(target);
         nameRecord.clearProp(key);
         for (int i=2; i<argc; i++) {
-            nameRecord.addProp(key,argv[i]);
+            nameRecord.addProp(key, argv[i]);
         }
         response.addString("ok");
     }
@@ -703,12 +703,12 @@ ConstString NameServer::apply(const ConstString& txt, const Contact& remote) {
     SplitString ss(txt.c_str());
     if (ss.size()>=2) {
         ConstString key = ss.get(1);
-        //YARP_DEBUG(Logger::get(),ConstString("dispatching to ") + key);
-        ss.set(1,remote.getHost().c_str());
-        result = dispatcher.dispatch(this,key.c_str(),ss.size()-1,
+        //YARP_DEBUG(Logger::get(), ConstString("dispatching to ") + key);
+        ss.set(1, remote.getHost().c_str());
+        result = dispatcher.dispatch(this, key.c_str(), ss.size()-1,
                                      (char **)(ss.get()+1));
         if (result == "") {
-            Bottle b = ndispatcher.dispatch(this,key.c_str(),ss.size()-1,
+            Bottle b = ndispatcher.dispatch(this, key.c_str(), ss.size()-1,
                                             (char **)(ss.get()+1));
             result = b.toString().c_str();
             if (result!="") {
@@ -730,7 +730,7 @@ bool NameServer::apply(const Bottle& cmd, Bottle& result,
     rcmd.addString("ignored_legacy");
     rcmd.append(cmd);
     ConstString in = rcmd.toString().c_str();
-    ConstString out = apply(in,remote).c_str();
+    ConstString out = apply(in, remote).c_str();
     result.fromString(out.c_str());
     return true;
 }
@@ -766,7 +766,7 @@ public:
             msg = ref + msg;
         }
         if (reader.isActive()&&haveMessage) {
-            YARP_DEBUG(Logger::get(),ConstString("name server got message ") + msg);
+            YARP_DEBUG(Logger::get(), ConstString("name server got message ") + msg);
             size_t index = msg.find("NAME_SERVER");
             if (index==0) {
                 Contact remote = reader.getRemoteContact();
@@ -775,7 +775,7 @@ public:
                            remote.toURI());
                 YARP_DEBUG(Logger::get(),
                            ConstString("name server request is ") + msg);
-                ConstString result = server->apply(msg,remote);
+                ConstString result = server->apply(msg, remote);
                 ConnectionWriter *os = reader.getWriter();
                 if (os!=YARP_NULLPTR) {
                     if (result=="") {
@@ -791,7 +791,7 @@ public:
                         tmp += result[i];
                     }
                     tmp += '\r';
-                    os->appendString(tmp.c_str(),'\n');
+                    os->appendString(tmp.c_str(), '\n');
 
                     YARP_DEBUG(Logger::get(),
                                ConstString("name server reply is ") + result);
@@ -800,7 +800,7 @@ public:
                     if (end!=ConstString::npos) {
                         resultSparse[end] = '\0';
                     }
-                    YARP_INFO(Logger::get(),resultSparse);
+                    YARP_INFO(Logger::get(), resultSparse);
                 }
             } else {
                 YARP_INFO(Logger::get(),
@@ -808,7 +808,7 @@ public:
                 ConnectionWriter *os = reader.getWriter();
                 if (os!=YARP_NULLPTR) {
                     // this result is necessary for YARP1 support
-                    os->appendString("???????????????????????????????????????",'\n');
+                    os->appendString("???????????????????????????????????????", '\n');
                     //os->flush();
                     //os->close();
                 }
@@ -852,7 +852,7 @@ int NameServer::main(int argc, char *argv[]) {
     //Network yarp;
 
     // pick an address
-    Contact suggest("...",0); // suggestion is initially empty
+    Contact suggest("...", 0); // suggestion is initially empty
 
     ConstString nameSpace = "";
 
@@ -864,14 +864,14 @@ int NameServer::main(int argc, char *argv[]) {
             argc--;
         }
         if (argc>=2) {
-            suggest = Contact(argv[0],NetType::toInt(argv[1]));
+            suggest = Contact(argv[0], NetType::toInt(argv[1]));
         } else if (argc>=1) {
-            suggest = Contact("...",NetType::toInt(argv[0]));
+            suggest = Contact("...", NetType::toInt(argv[0]));
         }
     }
 
     Property config;
-    config.fromCommand(argc,argv,false);
+    config.fromCommand(argc, argv, false);
 
     bool bNoAuto=config.check("noauto");
 
@@ -895,26 +895,26 @@ int NameServer::main(int argc, char *argv[]) {
     // merge
     if (prev.isValid()) {
         if (suggest.getHost()=="...") {
-            suggest = Contact(prev.getHost(),suggest.getPort());
+            suggest = Contact(prev.getHost(), suggest.getPort());
         }
         if (suggest.getPort()==0) {
-            suggest = Contact(suggest.getHost(),prev.getPort());
+            suggest = Contact(suggest.getHost(), prev.getPort());
         }
     }
 
     // still something not set?
     if (suggest.getPort()==0) {
-        suggest = Contact(suggest.getHost(),NetworkBase::getDefaultPortRange());
+        suggest = Contact(suggest.getHost(), NetworkBase::getDefaultPortRange());
     }
     if (suggest.getHost()=="...") {
         // should get my IP
-        suggest = Contact(conf.getHostName(),suggest.getPort());
+        suggest = Contact(conf.getHostName(), suggest.getPort());
     }
 
     // finally, should make sure IP is local, and if not, correct it
     if (!conf.isLocalName(suggest.getHost())) {
-        YARP_INFO(Logger::get(),"Overriding non-local address for name server");
-        suggest = Contact(conf.getHostName(),suggest.getPort());
+        YARP_INFO(Logger::get(), "Overriding non-local address for name server");
+        suggest = Contact(conf.getHostName(), suggest.getPort());
     }
 
     // and save
@@ -926,7 +926,7 @@ int NameServer::main(int argc, char *argv[]) {
 
     MainNameServer name(suggest.getPort() + 2);
     // register root for documentation purposes
-    name.registerName(conf.getNamespace(),suggest);
+    name.registerName(conf.getNamespace(), suggest);
 
     Port server;
     name.setPort(server);
@@ -937,7 +937,7 @@ int NameServer::main(int argc, char *argv[]) {
         YARP_DEBUG(Logger::get(), ConstString("Name server listening at ") +
                    suggest.toURI());
 
-        YARP_SPRINTF2(Logger::get(),info,
+        YARP_SPRINTF2(Logger::get(), info,
                       "Name server can be browsed at http://%s:%d/",
                       suggest.getHost().c_str(), suggest.getPort());
 
@@ -946,13 +946,13 @@ int NameServer::main(int argc, char *argv[]) {
         fallback.start();
 
         // register fallback root for documentation purposes
-        name.registerName("fallback",FallbackNameServer::getAddress());
+        name.registerName("fallback", FallbackNameServer::getAddress());
         YARP_INFO(Logger::get(), ConstString("Bootstrap server listening at ") +
                   FallbackNameServer::getAddress().toURI());
 #endif
 
         while (true) {
-            YARP_DEBUG(Logger::get(),"name server running happily");
+            YARP_DEBUG(Logger::get(), "name server running happily");
             Time::delay(60);
         }
         server.close();

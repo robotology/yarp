@@ -84,7 +84,7 @@ public:
     // documentation provided in Contactable
     virtual bool open(const Contact& contact, bool registerName = true) {
         clear();
-        return port.open(contact,registerName);
+        return port.open(contact, registerName);
     }
 
     // documentation provided in Contactable

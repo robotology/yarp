@@ -193,10 +193,10 @@ bool yarp::os::impl::LocalCarrier::expectExtraHeader(ConnectionState& proto) {
 bool yarp::os::impl::LocalCarrier::becomeLocal(ConnectionState& proto, bool sender) {
     LocalCarrierStream *stream = new LocalCarrierStream();
     if (stream != YARP_NULLPTR) {
-        stream->attach(this,sender);
+        stream->attach(this, sender);
     }
     proto.takeStreams(stream);
-    //YARP_ERROR(Logger::get(),"*** don't trust local carrier yet ****");
+    //YARP_ERROR(Logger::get(), "*** don't trust local carrier yet ****");
     //exit(1);
     return true;
 }
@@ -224,27 +224,27 @@ bool yarp::os::impl::LocalCarrier::write(ConnectionState& proto, SizedWriter& wr
 bool yarp::os::impl::LocalCarrier::respondToHeader(ConnectionState& proto) {
     // i am the receiver
 
-    return becomeLocal(proto,false);
+    return becomeLocal(proto, false);
 }
 
 
 bool yarp::os::impl::LocalCarrier::expectReplyToHeader(ConnectionState& proto) {
     // i am the sender
 
-    return becomeLocal(proto,true);
+    return becomeLocal(proto, true);
 }
 
 bool yarp::os::impl::LocalCarrier::expectIndex(ConnectionState& proto) {
 
-    YARP_DEBUG(Logger::get(),"local recv: wait send");
+    YARP_DEBUG(Logger::get(), "local recv: wait send");
     sent.wait();
-    YARP_DEBUG(Logger::get(),"local recv: got send");
+    YARP_DEBUG(Logger::get(), "local recv: got send");
     proto.setReference(ref);
     received.post();
     if (ref != YARP_NULLPTR) {
-        YARP_DEBUG(Logger::get(),"local recv: received");
+        YARP_DEBUG(Logger::get(), "local recv: received");
     } else {
-        YARP_DEBUG(Logger::get(),"local recv: shutdown");
+        YARP_DEBUG(Logger::get(), "local recv: shutdown");
         proto.is().interrupt();
         return false;
     }
@@ -254,11 +254,11 @@ bool yarp::os::impl::LocalCarrier::expectIndex(ConnectionState& proto) {
 
 void yarp::os::impl::LocalCarrier::accept(yarp::os::Portable *ref) {
     this->ref = ref;
-    YARP_DEBUG(Logger::get(),"local send: send ref");
+    YARP_DEBUG(Logger::get(), "local send: send ref");
     sent.post();
     if (ref != YARP_NULLPTR && !doomed) {
-        YARP_DEBUG(Logger::get(),"local send: wait receipt");
+        YARP_DEBUG(Logger::get(), "local send: wait receipt");
         received.wait();
-        YARP_DEBUG(Logger::get(),"local send: received");
+        YARP_DEBUG(Logger::get(), "local send: received");
     }
 }

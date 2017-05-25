@@ -46,37 +46,37 @@ public:
     virtual bool connectPortToTopic(const Contact& src,
                                     const Contact& dest,
                                     ContactStyle style) {
-        return connectTopic("subscribe",false,true,src,dest,style);
+        return connectTopic("subscribe", false, true, src, dest, style);
     }
 
     virtual bool connectTopicToPort(const Contact& src,
                                     const Contact& dest,
                                     ContactStyle style) {
-        return connectTopic("subscribe",true,false,src,dest,style);
+        return connectTopic("subscribe", true, false, src, dest, style);
     }
 
     virtual bool disconnectPortFromTopic(const Contact& src,
                                          const Contact& dest,
                                          ContactStyle style) {
-        return connectTopic("unsubscribe",false,true,src,dest,style);
+        return connectTopic("unsubscribe", false, true, src, dest, style);
     }
 
     virtual bool disconnectTopicFromPort(const Contact& src,
                                          const Contact& dest,
                                          ContactStyle style) {
-        return connectTopic("unsubscribe",true,false,src,dest,style);
+        return connectTopic("unsubscribe", true, false, src, dest, style);
     }
 
     virtual bool connectPortToPortPersistently(const Contact& src,
                                                const Contact& dest,
                                                ContactStyle style) {
-        return connectTopic("subscribe",false,false,src,dest,style);
+        return connectTopic("subscribe", false, false, src, dest, style);
     }
 
     virtual bool disconnectPortToPortPersistently(const Contact& src,
                                                   const Contact& dest,
                                                   ContactStyle style) {
-        return connectTopic("unsubscribe",false,false,src,dest,style);
+        return connectTopic("unsubscribe", false, false, src, dest, style);
     }
 
     virtual bool connectTopic(const ConstString& dir,
@@ -124,7 +124,7 @@ public:
         bool fail = (reply.get(0).toString()=="fail")||!ok;
         if (fail) {
             if (!style.quiet) {
-                fprintf(stderr,"Failure: name server did not accept connection to topic.\n");
+                fprintf(stderr, "Failure: name server did not accept connection to topic.\n");
             }
         }
         return !fail;

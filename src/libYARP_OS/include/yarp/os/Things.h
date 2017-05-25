@@ -57,7 +57,7 @@ public:
      */
     bool setConnectionReader(yarp::os::ConnectionReader& reader) {
         conReader = &reader;
-        if(portable)
+        if (portable)
             delete portable;
         portable = YARP_NULLPTR;
         return true;
@@ -67,15 +67,15 @@ public:
      * Things writer
      */
     bool write(yarp::os::ConnectionWriter& connection) {
-        if(writer)
+        if (writer)
             return writer->write(connection);
-        if(portable)
+        if (portable)
             return portable->write(connection);
         return false;
     }
 
     void reset() {
-        if(portable)
+        if (portable)
             delete portable;
         conReader = YARP_NULLPTR;
         writer = YARP_NULLPTR;
@@ -87,18 +87,18 @@ public:
     template<typename T>
     T* cast_as(void)
     {
-        if(this->writer)
+        if (this->writer)
             return dynamic_cast<T*>(this->writer);
 
-        if(this->reader)
+        if (this->reader)
             return dynamic_cast<T*>(this->reader);
 
-        if(!this->portable)
+        if (!this->portable)
         {
-            if(!this->conReader)
+            if (!this->conReader)
                 return YARP_NULLPTR;
             this->portable = new T();
-            if(!this->portable->read(*this->conReader))
+            if (!this->portable->read(*this->conReader))
             {
                 delete this->portable;
                 this->portable = YARP_NULLPTR;

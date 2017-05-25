@@ -19,7 +19,7 @@
 #include <cstdio>
 
 //#define YMSG(x) printf x;
-//#define YTRACE(x) YMSG(("at %s\n",x))
+//#define YTRACE(x) YMSG(("at %s\n", x))
 
 
 using namespace yarp::os::impl;
@@ -28,13 +28,13 @@ using namespace yarp::os;
 bool PortCoreInputUnit::start() {
 
 
-    YARP_DEBUG(Logger::get(),ConstString("new input connection to ")+
+    YARP_DEBUG(Logger::get(), ConstString("new input connection to ")+
                getOwner().getName()+ " starting");
 
     /*
     if (ip!=YARP_NULLPTR) {
         Route route = ip->getRoute();
-        YARP_DEBUG(Logger::get(),ConstString("starting output for ") +
+        YARP_DEBUG(Logger::get(), ConstString("starting output for ") +
                    route.toString());
     }
     */
@@ -43,12 +43,12 @@ bool PortCoreInputUnit::start() {
 
     bool result = PortCoreUnit::start();
     if (result) {
-        YARP_DEBUG(Logger::get(),ConstString("new input connection to ")+
+        YARP_DEBUG(Logger::get(), ConstString("new input connection to ")+
                    getOwner().getName()+ " started ok");
         phase.wait();
         phase.post();
     } else {
-        YARP_DEBUG(Logger::get(),ConstString("new input connection to ")+
+        YARP_DEBUG(Logger::get(), ConstString("new input connection to ")+
                    getOwner().getName()+ " failed to start");
 
         phase.post();
@@ -77,7 +77,7 @@ void PortCoreInputUnit::run() {
         ip->open(getName().c_str());
     }
     if (!ok) {
-            YARP_DEBUG(Logger::get(),ConstString("new input connection to ")+
+            YARP_DEBUG(Logger::get(), ConstString("new input connection to ")+
                     getOwner().getName()+ " is broken");
         done = true;
     } else {
@@ -93,11 +93,11 @@ void PortCoreInputUnit::run() {
                             route.getFromName().c_str(),
                             route.getToName().c_str());
             getOwner().removeIO(Route(route.getFromName(),
-                                        route.getToName(),"*"),true);
+                                        route.getToName(), "*"), true);
         }
         officialRoute = route;
         setMode();
-        getOwner().reportUnit(this,true);
+        getOwner().reportUnit(this, true);
 
         ConstString msg = ConstString("Receiving input from ") +
             route.getFromName() + " to " + route.getToName() +
@@ -105,13 +105,13 @@ void PortCoreInputUnit::run() {
             route.getCarrierName();
         if (Name(route.getFromName()).isRooted()) {
             if (reversed||ip->getConnection().isPush()) {
-                YARP_INFO(Logger::get(),msg);
+                YARP_INFO(Logger::get(), msg);
                 posted = true;
             } else {
-                YARP_DEBUG(Logger::get(),msg);
+                YARP_DEBUG(Logger::get(), msg);
             }
         } else {
-            YARP_DEBUG(Logger::get(),msg);
+            YARP_DEBUG(Logger::get(), msg);
         }
 
         // Report the new connection
@@ -167,7 +167,7 @@ void PortCoreInputUnit::run() {
                 if (!ok) continue;
             } else {
                 PortManager& man = getOwner();
-                bool ok = man.readBlock(br,id,YARP_NULLPTR);
+                bool ok = man.readBlock(br, id, YARP_NULLPTR);
                 if (!br.isActive()) { done = true; break; }
                 if (!ok) continue;
             }
@@ -183,7 +183,7 @@ void PortCoreInputUnit::run() {
             if (!br.isActive()) { done = true; break; }
             if (!ok) continue;
         } else {
-            cmd = PortCommand('d',"");
+            cmd = PortCommand('d', "");
             if (!ip->isOk()) { done = true; break; }
         }
 
@@ -209,7 +209,7 @@ void PortCoreInputUnit::run() {
                           route.toString().c_str(),
                           getOwner().getName().c_str(),
                           cmd.getText().c_str());
-            man.addOutput(cmd.getText(),id,os);
+            man.addOutput(cmd.getText(), id, os);
             break;
         case '!':
             YARP_SPRINTF3(Logger::get(),
@@ -218,7 +218,7 @@ void PortCoreInputUnit::run() {
                           route.toString().c_str(),
                           getOwner().getName().c_str(),
                           cmd.getText().c_str());
-            man.removeOutput(cmd.getText().substr(1,ConstString::npos),id,os);
+            man.removeOutput(cmd.getText().substr(1, ConstString::npos), id, os);
             break;
         case '~':
             YARP_SPRINTF3(Logger::get(),
@@ -227,10 +227,10 @@ void PortCoreInputUnit::run() {
                           route.toString().c_str(),
                           getOwner().getName().c_str(),
                           cmd.getText().c_str());
-            man.removeInput(cmd.getText().substr(1,ConstString::npos),id,os);
+            man.removeInput(cmd.getText().substr(1, ConstString::npos), id, os);
             break;
         case '*':
-            man.describe(id,os);
+            man.describe(id, os);
             break;
         case 'D':
         case 'd':
@@ -255,7 +255,7 @@ void PortCoreInputUnit::run() {
                     if (env.length()>2) {
                         //YARP_ERROR(Logger::get(),
                         //"***** received an envelope! [%s]", env.c_str());
-                        ConstString env2 = env.substr(2,env.length());
+                        ConstString env2 = env.substr(2, env.length());
                         man.setEnvelope(env2);
                         ip->setEnvelope(env2);
                     }
@@ -264,7 +264,7 @@ void PortCoreInputUnit::run() {
                 if (env.length()>2) {
                     //YARP_ERROR(Logger::get(),
                     //"***** received an envelope! [%s]", env.c_str());
-                    ConstString env2 = env.substr(2,env.length());
+                    ConstString env2 = env.substr(2, env.length());
                     man.setEnvelope(env2);
                     ip->setEnvelope(env2);
                 }
@@ -273,15 +273,15 @@ void PortCoreInputUnit::run() {
                     localReader->read(br);
                     if (!br.isActive()) { done = true; break; }
                 } else {
-                    if(ip->getReceiver().acceptIncomingData(br)) {
+                    if (ip->getReceiver().acceptIncomingData(br)) {
                         ConnectionReader* cr = &(ip->getReceiver().modifyIncomingData(br));
                         yarp::os::impl::PortDataModifier& modifier = getOwner().getPortModifier();
                         modifier.inputMutex.lock();
-                        if(modifier.inputModifier) {
-                            if(modifier.inputModifier->acceptIncomingData(*cr)) {
+                        if (modifier.inputModifier) {
+                            if (modifier.inputModifier->acceptIncomingData(*cr)) {
                                 cr = &(modifier.inputModifier->modifyIncomingData(*cr));
                                 modifier.inputMutex.unlock();
-                                man.readBlock(*cr,id,os);
+                                man.readBlock(*cr, id, os);
                             }
                             else {
                                 modifier.inputMutex.unlock();
@@ -290,7 +290,7 @@ void PortCoreInputUnit::run() {
                         }
                         else {
                             modifier.inputMutex.unlock();
-                            man.readBlock(*cr,id,os);
+                            man.readBlock(*cr, id, os);
                         }
                     }
                     else
@@ -301,7 +301,7 @@ void PortCoreInputUnit::run() {
             break;
         case 'a':
             {
-                man.adminBlock(br,id,os);
+                man.adminBlock(br, id, os);
             }
             break;
         case 'r':
@@ -330,9 +330,9 @@ void PortCoreInputUnit::run() {
 #if !defined(NDEBUG)
         case 'i':
             printf("Interrupt requested\n");
-            //yarp::os::impl::kill(0,2); // SIGINT
-            //yarp::os::impl::kill(Logger::get().getPid(),2); // SIGINT
-            yarp::os::impl::kill(Logger::get().getPid(),15); // SIGTERM
+            //yarp::os::impl::kill(0, 2); // SIGINT
+            //yarp::os::impl::kill(Logger::get().getPid(), 2); // SIGINT
+            yarp::os::impl::kill(Logger::get().getPid(), 15); // SIGTERM
             break;
 #endif
         case '?':
@@ -381,26 +381,26 @@ void PortCoreInputUnit::run() {
 
     setDoomed();
 
-    YARP_DEBUG(Logger::get(),"PortCoreInputUnit closing ip");
+    YARP_DEBUG(Logger::get(), "PortCoreInputUnit closing ip");
     access.wait();
     if (ip!=YARP_NULLPTR) {
         ip->close();
     }
     access.post();
-    YARP_DEBUG(Logger::get(),"PortCoreInputUnit closed ip");
+    YARP_DEBUG(Logger::get(), "PortCoreInputUnit closed ip");
 
     ConstString msg = ConstString("Removing input from ") +
         route.getFromName() + " to " + route.getToName();
 
     if (Name(route.getFromName()).isRooted()) {
         if (posted) {
-            YARP_INFO(Logger::get(),msg);
+            YARP_INFO(Logger::get(), msg);
         }
     } else {
-        YARP_DEBUG(Logger::get(),"PortCoreInputUnit (unrooted) shutting down");
+        YARP_DEBUG(Logger::get(), "PortCoreInputUnit (unrooted) shutting down");
     }
 
-    getOwner().reportUnit(this,false);
+    getOwner().reportUnit(this, false);
 
     if (wasNoticed) {
         // Report the disappearing connection
@@ -451,15 +451,15 @@ void PortCoreInputUnit::closeMain() {
     Route r = getRoute();
     access.post();
 
-    Logger log(r.toString().c_str(),Logger::get());
+    Logger log(r.toString().c_str(), Logger::get());
 
-    YARP_DEBUG(log,"PortCoreInputUnit closing");
+    YARP_DEBUG(log, "PortCoreInputUnit closing");
 
     if (running) {
-        YARP_DEBUG(log,"PortCoreInputUnit joining");
+        YARP_DEBUG(log, "PortCoreInputUnit joining");
         interrupt();
         join();
-        YARP_DEBUG(log,"PortCoreInputUnit joined");
+        YARP_DEBUG(log, "PortCoreInputUnit joined");
     }
 
     if (ip!=YARP_NULLPTR) {
@@ -483,7 +483,7 @@ bool PortCoreInputUnit::skipIncomingData(yarp::os::ConnectionReader& reader) {
         while (pending>0) {
             char buf[10000];
             size_t next = (pending<sizeof(buf))?pending:sizeof(buf);
-            reader.expectBlock(&buf[0],next);
+            reader.expectBlock(&buf[0], next);
             pending -= next;
         }
         return true;

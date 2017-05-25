@@ -146,7 +146,7 @@ public:
     { return std::string(c_str(), length()); }
 
     inline ConstString(const std::string& str) {
-        init(str.c_str(),str.length());
+        init(str.c_str(), str.length());
     }
     /** @} */
 
@@ -290,7 +290,7 @@ private:
 
     inline ConstString(const char *str) : s(str) {}
 
-    inline ConstString(const char *str, size_t len) : s(str,len) {}
+    inline ConstString(const char *str, size_t len) : s(str, len) {}
 
     inline ConstString(size_t len, char c) : s(len, c) {}
 
@@ -308,7 +308,7 @@ private:
     inline void push_back (char c) { s.push_back(c); }
 
     inline ConstString& assign(const char *s, size_t n) {
-        this->s.assign(s,n);
+        this->s.assign(s, n);
         return *this;
     }
 
@@ -319,7 +319,7 @@ private:
     inline const char& at(size_t pos) const { return s.at(pos); }
 
     inline const ConstString& operator=(const ConstString& str) {
-        if(&str != this) {
+        if (&str != this) {
             s = str.s;
         }
         return *this;
@@ -388,7 +388,7 @@ private:
     inline size_t rfind(const char *needle, size_t start, size_t len) const { return s.rfind(needle, start, len); }
     inline size_t rfind(char needle, size_t start = npos) const { return s.rfind(needle, start); }
 
-    inline ConstString substr(size_t start = 0, size_t n = npos) const { return s.substr(start,n); }
+    inline ConstString substr(size_t start = 0, size_t n = npos) const { return s.substr(start, n); }
 
 
     unsigned long hash() const;

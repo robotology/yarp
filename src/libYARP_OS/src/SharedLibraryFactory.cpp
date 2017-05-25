@@ -21,7 +21,7 @@ yarp::os::SharedLibraryFactory::SharedLibraryFactory(const char *dll_name,
         returnValue(0),
         rct(1)
 {
-    open(dll_name,fn_name);
+    open(dll_name, fn_name);
 }
 
 yarp::os::SharedLibraryFactory::~SharedLibraryFactory()
@@ -72,10 +72,10 @@ bool yarp::os::SharedLibraryFactory::open(const char *dll_name, const char *fn_n
 
 bool yarp::os::SharedLibraryFactory::isValid() const
 {
-    if (returnValue != VOCAB4('Y','A','R','P')) {
+    if (returnValue != VOCAB4('Y', 'A', 'R', 'P')) {
         return false;
     }
-    if (api.startCheck != VOCAB4('Y','A','R','P')) {
+    if (api.startCheck != VOCAB4('Y', 'A', 'R', 'P')) {
         return false;
     }
     if (api.structureSize != sizeof(SharedLibraryClassApi)) {
@@ -84,7 +84,7 @@ bool yarp::os::SharedLibraryFactory::isValid() const
     if (api.systemVersion != 5) {
         return false;
     }
-    if (api.endCheck != VOCAB4('P','L','U','G')) {
+    if (api.endCheck != VOCAB4('P', 'L', 'U', 'G')) {
         return false;
     }
     return true;
@@ -145,6 +145,6 @@ bool yarp::os::SharedLibraryFactory::useFactoryFunction(void *factory)
         return false;
     }
     returnValue =
-        ((int (*)(void *ptr,int len)) factory)(&api,sizeof(SharedLibraryClassApi));
+        ((int (*)(void *ptr, int len)) factory)(&api, sizeof(SharedLibraryClassApi));
     return isValid();
 }

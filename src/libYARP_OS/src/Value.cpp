@@ -71,7 +71,7 @@ Value::Value(const Value& alt) :
 
 const Value& Value::operator=(const Value& alt)
 {
-    if(&alt != this) {
+    if (&alt != this) {
         if (proxy == YARP_NULLPTR) {
             if (isLeaf() && alt.proxy) {
                 // we are guaranteed to be a Storable
@@ -367,7 +367,7 @@ Value *Value::makeVocab(const ConstString& str)
 
 Value *Value::makeBlob(void *data, int length)
 {
-    ConstString s((char*)data,length);
+    ConstString s((char*)data, length);
     return new StoreBlob(s);
 }
 

@@ -33,14 +33,14 @@ int SocketTwoWayStream::open(const Contact& address) {
         NameConfig config;
         host = config.getHostName(true);
     }
-    ACE_INET_Addr addr(address.getPort(),host.c_str());
+    ACE_INET_Addr addr(address.getPort(), host.c_str());
     YARP_timeval openTimeout;
     YARP_timeval *timeout = YARP_NULLPTR;
     if (address.hasTimeout()) {
         openTimeout.set(address.getTimeout());
         timeout = &openTimeout;
     }
-    int result = connector.connect(stream,addr,timeout,ACE_Addr::sap_any,1);
+    int result = connector.connect(stream, addr, timeout, ACE_Addr::sap_any, 1);
 #else
     TcpConnector connector;
     int result = connector.connect(stream, address);
@@ -81,8 +81,8 @@ void SocketTwoWayStream::updateAddresses() {
     char remoteHostAddress[256];
     local.get_host_addr(localHostAddress, 256);
     remote.get_host_addr(remoteHostAddress, 256);
-    localAddress = Contact(localHostAddress,local.get_port_number());
-    remoteAddress = Contact(remoteHostAddress,remote.get_port_number());
+    localAddress = Contact(localHostAddress, local.get_port_number());
+    remoteAddress = Contact(remoteHostAddress, remote.get_port_number());
 #else
     stream.set_option (IPPROTO_TCP, TCP_NODELAY, &one,
                        sizeof(int));
@@ -102,7 +102,7 @@ void SocketTwoWayStream::updateAddresses() {
                         localHostAddress,
                         (local.sa_family == AF_INET ? INET_ADDRSTRLEN:
                                                       INET6_ADDRSTRLEN));
-        if(ret) {
+        if (ret) {
             localAddress = Contact(localHostAddress, ntohs(reinterpret_cast<struct sockaddr_in*>(&local)->sin_port));
         } else {
             YARP_ERROR(Logger::get(), "SocketTwoWayStream::updateAddresses failed getting local address");
@@ -113,7 +113,7 @@ void SocketTwoWayStream::updateAddresses() {
                        remoteHostAddress,
                        (remote.sa_family == AF_INET ? INET_ADDRSTRLEN:
                                                       INET6_ADDRSTRLEN));
-        if(ret) {
+        if (ret) {
             remoteAddress = Contact(remoteHostAddress, ntohs(reinterpret_cast<struct sockaddr_in*>(&remote)->sin_port));
         } else {
             YARP_ERROR(Logger::get(), "SocketTwoWayStream::updateAddresses failed getting local address");
@@ -121,7 +121,7 @@ void SocketTwoWayStream::updateAddresses() {
         delete[] localHostAddress;
         delete[] remoteHostAddress;
     } else {
-        YARP_ERROR(Logger::get(),"Unknown address type");
+        YARP_ERROR(Logger::get(), "Unknown address type");
     }
 #endif
 }

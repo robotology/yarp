@@ -14,11 +14,11 @@
 #  include <ace/OS_NS_sys_time.h>
 #  include <ace/Time_Value.h>
 #  include <ace/High_Res_Timer.h>
-#  define PLATFORM_TIME_SET(x,y) x.set(y)
+#  define PLATFORM_TIME_SET(x, y) x.set(y)
 #else
 #  include <sys/time.h>
 #  define ACE_Time_Value struct timeval
-#  define PLATFORM_TIME_SET(x,y) fromDouble(x,y)
+#  define PLATFORM_TIME_SET(x, y) fromDouble(x, y)
 #endif
 
 namespace yarp {
@@ -37,7 +37,7 @@ namespace yarp {
             void subtractTime(YARP_timeval & val,
                               const YARP_timeval & subtract);
             double toDouble(const YARP_timeval &v);
-            void fromDouble(YARP_timeval &v, double x,int unit=1);
+            void fromDouble(YARP_timeval &v, double x, int unit=1);
         }
     }
 }

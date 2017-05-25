@@ -51,7 +51,7 @@ public:
             if (!isEof) {
                 Bottle cmd(str.c_str());
                 Bottle reply;
-                bool ok = owner.safeRespond(cmd,reply);
+                bool ok = owner.safeRespond(cmd, reply);
                 if (ok) {
                     //printf("ALL: %s\n", reply.toString().c_str());
                     //printf("ITEM 1: %s\n", reply.get(0).toString().c_str());
@@ -113,7 +113,7 @@ bool RFModuleRespondHandler::read(ConnectionReader& connection) {
     if (!cmd.read(connection)) { return false; }
     //printf("command received: %s\n", cmd.toString().c_str());
 
-    bool result = owner.safeRespond(cmd,response);
+    bool result = owner.safeRespond(cmd, response);
     if (response.size() >= 1) {
         ConnectionWriter *writer = connection.getWriter();
         if (writer!=YARP_NULLPTR) {
@@ -217,7 +217,7 @@ static void handler (int sig) {
 //    if (module!=YARP_NULLPTR) {
 //        Bottle cmd, reply;
 //        cmd.fromString("quit");
-//        module->safeRespond(cmd,reply);
+//        module->safeRespond(cmd, reply);
 //        printf("sent %s, got %s\n", cmd.toString().c_str(),
 //             reply.toString().c_str());
 //    }
@@ -302,7 +302,7 @@ int RFModule::runModule() {
         getTime(currentRunTV);
 
         // If updateModule() returns false we exit the main loop.
-        if(!updateModule()) {
+        if (!updateModule()) {
             break;
         }
 
@@ -311,7 +311,7 @@ int RFModule::runModule() {
         // the module stopping, and eventually we exit the main loop.
         do {
             getTime(elapsedTV);
-            fromDouble(sleepPeriodTV,getPeriod());
+            fromDouble(sleepPeriodTV, getPeriod());
             addTime(sleepPeriodTV, currentRunTV);
             subtractTime(sleepPeriodTV, elapsedTV);
             if (toDouble(sleepPeriodTV) > 1) {
@@ -395,7 +395,7 @@ bool RFModule::configure(yarp::os::ResourceFinder &rf) {
 
 
 bool RFModule::respond(const Bottle& command, Bottle& reply) {
-    return basicRespond(command,reply);
+    return basicRespond(command, reply);
 }
 
 
@@ -509,9 +509,9 @@ bool RFModule::safeRespond(const Bottle& command, Bottle& reply) {
 
 bool RFModule::basicRespond(const Bottle& command, Bottle& reply) {
     switch (command.get(0).asVocab()) {
-    case VOCAB4('q','u','i','t'):
-    case VOCAB4('e','x','i','t'):
-    case VOCAB3('b','y','e'):
+    case VOCAB4('q', 'u', 'i', 't'):
+    case VOCAB4('e', 'x', 'i', 't'):
+    case VOCAB3('b', 'y', 'e'):
         reply.addVocab(Vocab::encode("bye"));
         stopModule(false); //calls interruptModule()
    //     interruptModule();

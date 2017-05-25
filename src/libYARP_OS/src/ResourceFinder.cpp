@@ -44,10 +44,10 @@ YARP_DEPRECATED static ConstString expandUserFileName(const ConstString& fname) 
     } else if (home!="") {
         conf = home + "/.yarp/" + fname;
     } else {
-        YARP_ERROR(Logger::get(),"Cannot read configuration - please set YARP_CONF or HOME or HOMEPATH");
+        YARP_ERROR(Logger::get(), "Cannot read configuration - please set YARP_CONF or HOME or HOMEPATH");
         std::exit(1);
     }
-    YARP_DEBUG(Logger::get(),(ConstString("Configuration file: ") + conf).c_str());
+    YARP_DEBUG(Logger::get(), (ConstString("Configuration file: ") + conf).c_str());
     return conf;
 }
 #endif // YARP_NO_DEPRECATED
@@ -61,7 +61,7 @@ static ConstString getPwd() {
         if (buf!=YARP_NULLPTR) delete[] buf;
         buf = new char[len];
         if (!buf) break;
-        char *dir = yarp::os::getcwd(buf,len);
+        char *dir = yarp::os::getcwd(buf, len);
         if (dir) {
             result = dir;
             break;
@@ -85,7 +85,7 @@ static Bottle parsePaths(const ConstString& txt) {
     for (ConstString::size_type i=0; i<txt.length(); i++) {
         char ch = txt[i];
         if (ch==sep) {
-            result.addString(ConstString(at,len-slash_tweak));
+            result.addString(ConstString(at, len-slash_tweak));
             at += len+1;
             len = 0;
             slash_tweak = 0;
@@ -95,7 +95,7 @@ static Bottle parsePaths(const ConstString& txt) {
         len++;
     }
     if (len>0) {
-        result.addString(ConstString(at,len-slash_tweak));
+        result.addString(ConstString(at, len-slash_tweak));
     }
     return result;
 }
@@ -125,7 +125,7 @@ static void appendResourceType(Bottle& paths,
     if (resourceType=="") return;
     for (int i=0; i<paths.size(); i++) {
         ConstString txt = paths.get(i).asString();
-        appendResourceType(txt,resourceType);
+        appendResourceType(txt, resourceType);
         paths.get(i) = Value(txt);
     }
 }
@@ -185,7 +185,7 @@ public:
     YARP_DEPRECATED bool configureFromPolicy(Property& config, const char *policyName) {
         this->policyName = policyName;
         if (verbose) {
-            fprintf(RTARGET,"||| policy set to %s\n", policyName);
+            fprintf(RTARGET, "||| policy set to %s\n", policyName);
         }
         ConstString rootVar = policyName;
         const char *result =
@@ -199,10 +199,10 @@ public:
         } else {
             root = result;
         }
-        root = config.check(policyName,Value(root)).asString().c_str();
+        root = config.check(policyName, Value(root)).asString().c_str();
         if (root == "") {
             if (verbose||needEnv) {
-                fprintf(RTARGET,"||| environment variable %s not set\n",
+                fprintf(RTARGET, "||| environment variable %s not set\n",
                         rootVar.c_str());
             }
             if (needEnv) {
@@ -210,8 +210,8 @@ public:
             }
         } else {
             if (verbose) {
-                fprintf(RTARGET,"||| %s: %s\n",
-                        rootVar.c_str(),root.c_str());
+                fprintf(RTARGET, "||| %s: %s\n",
+                        rootVar.c_str(), root.c_str());
             }
         }
         ConstString checked = "";
@@ -228,40 +228,40 @@ YARP_WARNING_POP
         if (!ok) {
             if (root!="") {
                 if (verbose) {
-                    fprintf(RTARGET,"||| loading policy from %s\n",
+                    fprintf(RTARGET, "||| loading policy from %s\n",
                             rootConfig.c_str());
                 }
                 checked += " " + rootConfig;
-                ok = config.fromConfigFile(rootConfig.c_str(),false);
+                ok = config.fromConfigFile(rootConfig.c_str(), false);
             }
         }
         if (!needEnv) {
             if (!ok) {
                 if (verbose) {
-                    fprintf(RTARGET,"||| loading policy from %s\n",
+                    fprintf(RTARGET, "||| loading policy from %s\n",
                             userConfig.c_str());
                 }
                 checked += " " + userConfig;
-                ok = config.fromConfigFile(userConfig.c_str(),false);
+                ok = config.fromConfigFile(userConfig.c_str(), false);
             }
             if (!ok) {
                 if (verbose) {
-                    fprintf(RTARGET,"||| loading policy from %s\n",
+                    fprintf(RTARGET, "||| loading policy from %s\n",
                             altConfig.c_str());
                 }
                 checked += " " + altConfig;
-                ok = config.fromConfigFile(altConfig.c_str(),false);
+                ok = config.fromConfigFile(altConfig.c_str(), false);
             }
 #ifndef YARP_NO_DEPRECATED // since YARP 2.3.21
             if (!ok) {
                 if (verbose) {
-                    fprintf(RTARGET,"||| loading policy from %s\n",
+                    fprintf(RTARGET, "||| loading policy from %s\n",
                             deprecatedConfig.c_str());
                 }
                 checked += " " + deprecatedConfig;
-                ok = config.fromConfigFile(deprecatedConfig.c_str(),false);
+                ok = config.fromConfigFile(deprecatedConfig.c_str(), false);
                 if (ok) {
-                    fprintf(RTARGET, "||| WARNING: Loading policies from /etc/ is deprecated,\n"
+                    fprintf(RTARGET, "||| WARNING: Loading policies from /etc/ is deprecated, \n"
                                      "|||          you should move them in /etc/yarp/policies/ .\n");
                 }
             }
@@ -269,18 +269,18 @@ YARP_WARNING_POP
             if (!ok) {
                 altConfig = ConstString("/usr/local/etc/") + policyName + ".ini";
                 if (verbose) {
-                    fprintf(RTARGET,"||| loading policy from %s\n",
+                    fprintf(RTARGET, "||| loading policy from %s\n",
                             altConfig.c_str());
                 }
                 checked += " " + altConfig;
-                ok = config.fromConfigFile(altConfig.c_str(),false);
+                ok = config.fromConfigFile(altConfig.c_str(), false);
             }
         }
         /*
           // this would violate the spec
         if (!ok) {
             if (verbose) {
-                fprintf(RTARGET,"||| in desperation, loading policy from %s\n",
+                fprintf(RTARGET, "||| in desperation, loading policy from %s\n",
                         policyName);
             }
             checked += " ";
@@ -290,16 +290,16 @@ YARP_WARNING_POP
         */
         if (!ok) {
             if (!quiet) {
-                fprintf(RTARGET,"||| failed to load policy from%s\n",
+                fprintf(RTARGET, "||| failed to load policy from%s\n",
                         checked.c_str());
             }
             return false;
         }
 
         // currently only support "capability" style configuration
-        if (config.check("style",Value("")).asString()!="capability") {
+        if (config.check("style", Value("")).asString()!="capability") {
             if (!quiet) {
-                fprintf(RTARGET,"||| policy \"style\" can currently only be \"capability\"\n");
+                fprintf(RTARGET, "||| policy \"style\" can currently only be \"capability\"\n");
             }
             return false;
         }
@@ -318,29 +318,29 @@ YARP_WARNING_POP
         }
 
         Property p;
-        p.fromCommand(argc,argv,skip);
+        p.fromCommand(argc, argv, skip);
 
         bool user_specified_from = p.check("from");
 
         if (p.check("verbose")) {
-            setVerbose(p.check("verbose",Value(1)).asInt());
+            setVerbose(p.check("verbose", Value(1)).asInt());
         }
 
         if (isVerbose()) {
-            fprintf(RTARGET,"||| configuring\n");
+            fprintf(RTARGET, "||| configuring\n");
         }
 
         ConstString name = "";
         if (policyName!=YARP_NULLPTR) {
             name = policyName;
         }
-        name = p.check("policy",Value(name.c_str())).asString();
+        name = p.check("policy", Value(name.c_str())).asString();
         if (name=="") {
             const char *result =
                 yarp::os::getenv("YARP_POLICY");
             if (result!=YARP_NULLPTR) {
                 if (verbose) {
-                    fprintf(RTARGET,"||| Read policy from YARP_POLICY\n");
+                    fprintf(RTARGET, "||| Read policy from YARP_POLICY\n");
                 }
                 name = result;
             }
@@ -348,7 +348,7 @@ YARP_WARNING_POP
         bool skip_policy = false;
         if (name=="") {
             if (verbose) {
-                fprintf(RTARGET,"||| no policy found\n");
+                fprintf(RTARGET, "||| no policy found\n");
             }
             skip_policy = true;
         }
@@ -358,43 +358,43 @@ YARP_WARNING_POP
 
         bool configured_normally = true;
         if (!skip_policy) {
-            config.fromString(p.toString().c_str(),false);
+            config.fromString(p.toString().c_str(), false);
 YARP_WARNING_PUSH
 YARP_DISABLE_DEPRECATED_WARNING
-            configured_normally = configureFromPolicy(config,name.c_str());
+            configured_normally = configureFromPolicy(config, name.c_str());
 YARP_WARNING_POP
         }
 
         if (p.check("context")) {
             clearAppNames();
-            ConstString c = p.check("context",Value("default")).asString();
+            ConstString c = p.check("context", Value("default")).asString();
             addAppName(c.c_str());
             if (verbose) {
-                fprintf(RTARGET,"||| added context %s\n",
+                fprintf(RTARGET, "||| added context %s\n",
                         c.c_str());
             }
         }
 
-        config.fromCommand(argc,argv,skip,false);
+        config.fromCommand(argc, argv, skip, false);
         if (config.check("from")) {
             ConstString from = config.check("from",
                                             Value("config.ini")).toString();
             if (verbose) {
-                fprintf(RTARGET,"||| default config file specified as %s\n",
+                fprintf(RTARGET, "||| default config file specified as %s\n",
                         from.c_str());
             }
             mainActive = true;
-            ConstString corrected = findFile(config,from.c_str(),YARP_NULLPTR);
+            ConstString corrected = findFile(config, from.c_str(), YARP_NULLPTR);
             mainActive = false;
             if (corrected!="") {
                 from = corrected;
             }
             ConstString fromPath = extractPath(from.c_str());
             configFilePath = fromPath;
-            if (!config.fromConfigFile(from,false) && user_specified_from) {
+            if (!config.fromConfigFile(from, false) && user_specified_from) {
                 configured_normally = false;
             }
-            config.fromCommand(argc,argv,skip,false);
+            config.fromCommand(argc, argv, skip, false);
         }
         return configured_normally;
     }
@@ -408,57 +408,57 @@ YARP_WARNING_POP
         }
 
         Property p;
-        p.fromCommand(argc,argv,skip);
+        p.fromCommand(argc, argv, skip);
 
         bool user_specified_from = p.check("from");
 
         if (p.check("verbose")) {
-            setVerbose(p.check("verbose",Value(1)).asInt());
+            setVerbose(p.check("verbose", Value(1)).asInt());
         }
 
         if (isVerbose()) {
-            fprintf(RTARGET,"||| configuring\n");
+            fprintf(RTARGET, "||| configuring\n");
         }
 
         bool configured_normally = true;
 
         if (p.check("context")) {
             clearAppNames();
-            ConstString c = p.check("context",Value("default")).asString();
+            ConstString c = p.check("context", Value("default")).asString();
             addAppName(c.c_str());
             if (verbose) {
-                fprintf(RTARGET,"||| added context %s\n",
+                fprintf(RTARGET, "||| added context %s\n",
                         c.c_str());
             }
         }
 
-        config.fromCommand(argc,argv,skip,false);
+        config.fromCommand(argc, argv, skip, false);
         if (config.check("from")) {
             ConstString from = config.check("from",
                                             Value("config.ini")).toString();
             if (verbose) {
-                fprintf(RTARGET,"||| default config file specified as %s\n",
+                fprintf(RTARGET, "||| default config file specified as %s\n",
                         from.c_str());
             }
             mainActive = true;
-            ConstString corrected = findFile(config,from.c_str(),YARP_NULLPTR);
+            ConstString corrected = findFile(config, from.c_str(), YARP_NULLPTR);
             mainActive = false;
             if (corrected!="") {
                 from = corrected;
             }
             ConstString fromPath = extractPath(from.c_str());
             configFilePath = fromPath;
-            if (!config.fromConfigFile(from,false) && user_specified_from) {
+            if (!config.fromConfigFile(from, false) && user_specified_from) {
                 configured_normally = false;
             }
-            config.fromCommand(argc,argv,skip,false);
+            config.fromCommand(argc, argv, skip, false);
         }
         return configured_normally;
     }
 
     bool setDefault(Property& config, const char *key, const yarp::os::Value &val) {
         if (!config.check(key)) {
-            config.put(key,val);
+            config.put(key, val);
         }
         return true;
     }
@@ -533,7 +533,7 @@ YARP_WARNING_POP
                                 bool isDir,
                                 const Bottle& doc,
                                 const char *doc2) {
-        ConstString s = getPath(base1,base2,base3,name);
+        ConstString s = getPath(base1, base2, base3, name);
 
         // check cache first
         Bottle *prev = cache.find(s).asList();
@@ -548,20 +548,20 @@ YARP_WARNING_POP
 
         if (verbose) {
             ConstString base = doc.toString();
-            fprintf(RTARGET,"||| checking [%s] (%s%s%s)\n", s.c_str(),
+            fprintf(RTARGET, "||| checking [%s] (%s%s%s)\n", s.c_str(),
                     base.c_str(),
                     (base.length()==0) ? "" : " ",
                     doc2);
         }
-        bool ok = exists(s.c_str(),isDir);
+        bool ok = exists(s.c_str(), isDir);
         Value status;
         yAssert(status.asList());
         status.asList()->addDouble(SystemClock::nowSystem());
         status.asList()->addInt(ok?1:0);
-        cache.put(s,status);
+        cache.put(s, status);
         if (ok) {
             if (verbose) {
-                fprintf(RTARGET,"||| found %s\n", s.c_str());
+                fprintf(RTARGET, "||| found %s\n", s.c_str());
             }
             return s;
         }
@@ -570,19 +570,19 @@ YARP_WARNING_POP
 
     yarp::os::ConstString findPath(Property& config, const ConstString& name,
                                    const ResourceFinderOptions *externalOptions) {
-        ConstString fname = config.check(name,Value(name)).asString();
-        ConstString result = findFileBase(config,fname,true,externalOptions);
+        ConstString fname = config.check(name, Value(name)).asString();
+        ConstString result = findFileBase(config, fname, true, externalOptions);
         return result;
     }
 
     yarp::os::Bottle findPaths(Property& config, const ConstString& name,
                                const ResourceFinderOptions *externalOptions,
                                bool enforcePlural = true) {
-        ConstString fname = config.check(name,Value(name)).asString();
+        ConstString fname = config.check(name, Value(name)).asString();
         Bottle paths;
         if (externalOptions) {
             if (externalOptions->duplicateFilesPolicy == ResourceFinderOptions::All) {
-                findFileBase(config,fname,true,paths,*externalOptions);
+                findFileBase(config, fname, true, paths, *externalOptions);
                 return paths;
             }
         }
@@ -593,26 +593,26 @@ YARP_WARNING_POP
         if (enforcePlural) {
             opts.duplicateFilesPolicy = ResourceFinderOptions::All;
         }
-        findFileBase(config,fname,true,paths,opts);
+        findFileBase(config, fname, true, paths, opts);
         return paths;
     }
 
     yarp::os::ConstString findPath(Property& config) {
-        ConstString result = findFileBase(config,"",true,YARP_NULLPTR);
+        ConstString result = findFileBase(config, "", true, YARP_NULLPTR);
 		if (result=="") result = getPwd();
         return result;
     }
 
     yarp::os::ConstString findFile(Property& config, const ConstString& name,
                                    const ResourceFinderOptions *externalOptions) {
-        ConstString fname = config.check(name,Value(name)).asString();
-        ConstString result = findFileBase(config,fname,false,externalOptions);
+        ConstString fname = config.check(name, Value(name)).asString();
+        ConstString result = findFileBase(config, fname, false, externalOptions);
         return result;
     }
 
     yarp::os::ConstString findFileByName(Property& config, const ConstString& fname,
                                    const ResourceFinderOptions *externalOptions) {
-        ConstString result = findFileBase(config,fname,false,externalOptions);
+        ConstString result = findFileBase(config, fname, false, externalOptions);
         return result;
     }
 
@@ -622,7 +622,7 @@ YARP_WARNING_POP
         Bottle output;
         ResourceFinderOptions opts;
         if (externalOptions==YARP_NULLPTR) externalOptions = &opts;
-        findFileBase(config,name,isDir,output,*externalOptions);
+        findFileBase(config, name, isDir, output, *externalOptions);
         return output.get(0).asString();
     }
 
@@ -639,12 +639,12 @@ YARP_WARNING_POP
                       Bottle& output, const ResourceFinderOptions& opts) {
         Bottle doc;
         int prelen = output.size();
-        findFileBaseInner(config,name,isDir,true,output,opts,doc,YARP_NULLPTR);
+        findFileBaseInner(config, name, isDir, true, output, opts, doc, YARP_NULLPTR);
         if (output.size()!=prelen) return;
         bool justTop = (opts.duplicateFilesPolicy==ResourceFinderOptions::First);
         if (justTop) {
             if (canShowErrors(opts)) {
-                fprintf(RTARGET,"||| did not find %s\n", name.c_str());
+                fprintf(RTARGET, "||| did not find %s\n", name.c_str());
             }
         }
     }
@@ -676,22 +676,22 @@ YARP_WARNING_POP
         // check current directory
         if (locs & ResourceFinderOptions::Directory) {
             if (name==""&&isDir) {
-                addString(output,getPwd());
+                addString(output, getPwd());
                 if (justTop) return;
             }
-            ConstString str = check(getPwd(),resourceType,"",name,isDir,doc,"pwd");
+            ConstString str = check(getPwd(), resourceType, "", name, isDir, doc, "pwd");
             if (str!="") {
                 if (mainActive) useNearMain = true;
-                addString(output,str);
+                addString(output, str);
                 if (justTop) return;
             }
         }
 
         if ((locs & ResourceFinderOptions::NearMainConfig) && useNearMain) {
             if (configFilePath!="") {
-                ConstString str = check(configFilePath.c_str(),resourceType,"",name,isDir,doc,"defaultConfigFile path");
+                ConstString str = check(configFilePath.c_str(), resourceType, "", name, isDir, doc, "defaultConfigFile path");
                 if (str!="") {
-                    addString(output,str);
+                    addString(output, str);
                     if (justTop) return;
                 }
             }
@@ -710,14 +710,14 @@ YARP_WARNING_POP
             opts2.searchLocations = (ResourceFinderOptions::SearchLocations)(ResourceFinderOptions::User | ResourceFinderOptions::Sysadmin | ResourceFinderOptions::Installed);
             opts2.resourceType = "robots";
             opts2.duplicateFilesPolicy = ResourceFinderOptions::All;
-            findFileBaseInner(config,robot.c_str(),true,allowPathd,paths,opts2,doc,"robot");
-            appendResourceType(paths,resourceType);
+            findFileBaseInner(config, robot.c_str(), true, allowPathd, paths, opts2, doc, "robot");
+            appendResourceType(paths, resourceType);
             for (int j=0; j<paths.size(); j++) {
                 ConstString str = check(paths.get(j).asString().c_str(),
-                                        "","",
-                                        name,isDir,doc,"robot");
+                                        "", "",
+                                        name, isDir, doc, "robot");
                 if (str!="") {
-                    addString(output,str);
+                    addString(output, str);
                     if (justTop) return;
                 }
             }
@@ -728,26 +728,26 @@ YARP_WARNING_POP
             (!useNearMain) &&
             root != "") {
             ConstString cap =
-                config.check("capability_directory",Value("app")).asString();
+                config.check("capability_directory", Value("app")).asString();
             Bottle defCaps =
                 config.findGroup("default_capability").tail();
 
             // check app dirs
             for (int i=0; i<apps.size(); i++) {
-                ConstString str = check(root.c_str(),cap,apps.get(i).asString().c_str(),
-                                        name,isDir,doc,"deprecated-old-style-context");
+                ConstString str = check(root.c_str(), cap, apps.get(i).asString().c_str(),
+                                        name, isDir, doc, "deprecated-old-style-context");
                 if (str!="") {
-                    addString(output,str);
+                    addString(output, str);
                     if (justTop) return;
                 }
             }
 
             // check ROOT/app/default/
             for (int i=0; i<defCaps.size(); i++) {
-                ConstString str = check(root.c_str(),cap,defCaps.get(i).asString().c_str(),
-                                        name,isDir,doc,"deprecated-old-style-context");
+                ConstString str = check(root.c_str(), cap, defCaps.get(i).asString().c_str(),
+                                        name, isDir, doc, "deprecated-old-style-context");
                 if (str!="") {
-                    addString(output,str);
+                    addString(output, str);
                     if (justTop) return;
                 }
             }
@@ -765,16 +765,16 @@ YARP_WARNING_POP
                 // Nested search to locate context directory
                 Bottle paths;
                 ResourceFinderOptions opts2;
-                prependResourceType(app,"contexts");
+                prependResourceType(app, "contexts");
                 opts2.searchLocations = (ResourceFinderOptions::SearchLocations)ResourceFinderOptions::Default;
                 opts2.duplicateFilesPolicy = ResourceFinderOptions::All;
-                findFileBaseInner(config,app.c_str(),true,allowPathd,paths,opts2,doc,"context");
-                appendResourceType(paths,resourceType);
+                findFileBaseInner(config, app.c_str(), true, allowPathd, paths, opts2, doc, "context");
+                appendResourceType(paths, resourceType);
                 for (int j=0; j<paths.size(); j++) {
-                    ConstString str = check(paths.get(j).asString().c_str(),"","",
-                                            name,isDir,doc,"context");
+                    ConstString str = check(paths.get(j).asString().c_str(), "", "",
+                                            name, isDir, doc, "context");
                     if (str!="") {
-                        addString(output,str);
+                        addString(output, str);
                         if (justTop) return;
                     }
                 }
@@ -786,11 +786,11 @@ YARP_WARNING_POP
             (flavor & ResourceFinderOptions::ConfigLike)) {
             ConstString home = ResourceFinder::getConfigHomeNoCreate();
             if (home!="") {
-                appendResourceType(home,resourceType);
-                ConstString str = check(home.c_str(),"","",name,isDir,
-                                        doc,"YARP_CONFIG_HOME");
+                appendResourceType(home, resourceType);
+                ConstString str = check(home.c_str(), "", "", name, isDir,
+                                        doc, "YARP_CONFIG_HOME");
                 if (str!="") {
-                    addString(output,str);
+                    addString(output, str);
                     if (justTop) return;
                 }
             }
@@ -801,11 +801,11 @@ YARP_WARNING_POP
             (flavor & ResourceFinderOptions::DataLike)) {
             ConstString home = ResourceFinder::getDataHomeNoCreate();
             if (home!="") {
-                appendResourceType(home,resourceType);
-                ConstString str = check(home.c_str(),"","",name,isDir,
-                                        doc,"YARP_DATA_HOME");
+                appendResourceType(home, resourceType);
+                ConstString str = check(home.c_str(), "", "", name, isDir,
+                                        doc, "YARP_DATA_HOME");
                 if (str!="") {
-                    addString(output,str);
+                    addString(output, str);
                     if (justTop) return;
                 }
             }
@@ -814,13 +814,13 @@ YARP_WARNING_POP
         // check YARP_CONFIG_DIRS
         if (locs & ResourceFinderOptions::Sysadmin) {
             Bottle dirs = ResourceFinder::getConfigDirs();
-            appendResourceType(dirs,resourceType);
+            appendResourceType(dirs, resourceType);
             for (int i=0; i<dirs.size(); i++) {
                 ConstString str = check(dirs.get(i).asString().c_str(),
-                                        "","",name,isDir,
-                                        doc,"YARP_CONFIG_DIRS");
+                                        "", "", name, isDir,
+                                        doc, "YARP_CONFIG_DIRS");
                 if (str!="") {
-                    addString(output,str);
+                    addString(output, str);
                     if (justTop) return;
                 }
             }
@@ -829,13 +829,13 @@ YARP_WARNING_POP
         // check YARP_DATA_DIRS
         if (locs & ResourceFinderOptions::Installed) {
             Bottle dirs = ResourceFinder::getDataDirs();
-            appendResourceType(dirs,resourceType);
+            appendResourceType(dirs, resourceType);
             for (int i=0; i<dirs.size(); i++) {
                 ConstString str = check(dirs.get(i).asString().c_str(),
-                                        "","",name,isDir,
-                                        doc,"YARP_DATA_DIRS");
+                                        "", "", name, isDir,
+                                        doc, "YARP_DATA_DIRS");
                 if (str!="") {
-                    addString(output,str);
+                    addString(output, str);
                     if (justTop) return;
                 }
             }
@@ -847,7 +847,7 @@ YARP_WARNING_POP
             ResourceFinderOptions opts2;
             opts2.searchLocations = (ResourceFinderOptions::SearchLocations)(opts.searchLocations & ResourceFinderOptions::Installed);
             opts2.resourceType = "config";
-            findFileBaseInner(config,"path.d",true,false,pathds,opts2,doc,"path.d");
+            findFileBaseInner(config, "path.d", true, false, pathds, opts2, doc, "path.d");
 
             for (int i=0; i<pathds.size(); i++) {
                 // check /.../path.d/*
@@ -864,12 +864,12 @@ YARP_WARNING_POP
                     ConstString search_name = sections.get(i).asString();
                     Bottle group = pathd.findGroup(search_name);
                     Bottle paths = group.findGroup("path").tail();
-                    appendResourceType(paths,resourceType);
+                    appendResourceType(paths, resourceType);
                     for (int j=0; j<paths.size(); j++) {
-                        ConstString str = check(paths.get(j).asString().c_str(),"","",
-                                                name,isDir,doc,"yarp.d");
+                        ConstString str = check(paths.get(j).asString().c_str(), "", "",
+                                                name, isDir, doc, "yarp.d");
                         if (str!="") {
-                            addString(output,str);
+                            addString(output, str);
                             if (justTop) return;
                         }
                     }
@@ -927,7 +927,7 @@ YARP_WARNING_POP
 
     ConstString getHomeContextPath(Property& config, const ConstString& context )
     {
-        if(useNearMain)
+        if (useNearMain)
             return configFilePath;
         else
         {
@@ -936,23 +936,23 @@ YARP_WARNING_POP
             ConstString slash = NetworkBase::getDirectorySeparator();
             if (path.length()>1) {
               if (path[path.length()-1] == slash[0]) {
-                path = path.substr(0,path.length()-slash.size());
+                path = path.substr(0, path.length()-slash.size());
                 }
             }
 
             ConstString parentPath=getPath(ResourceFinder::getDataHome(), "contexts", "", "");
-            if(yarp::os::stat(parentPath.c_str()))
+            if (yarp::os::stat(parentPath.c_str()))
                 yarp::os::mkdir(parentPath.c_str());
 
             if (yarp::os::mkdir(path.c_str()) <0 && errno != EEXIST)
-                fprintf(RTARGET,"||| WARNING  Could not create %s directory\n", path.c_str());
+                fprintf(RTARGET, "||| WARNING  Could not create %s directory\n", path.c_str());
             return path;
         }
     }
 
     ConstString getHomeRobotPath()
     {
-        if(useNearMain)
+        if (useNearMain)
             return configFilePath;
         bool found = false;
         ConstString robot = NetworkBase::getEnvironment("YARP_ROBOT_NAME",
@@ -963,34 +963,34 @@ YARP_WARNING_POP
         ConstString slash = NetworkBase::getDirectorySeparator();
         if (path.length()>1) {
             if (path[path.length()-1]==slash[0]) {
-            path = path.substr(0,path.length()-slash.size());
+            path = path.substr(0, path.length()-slash.size());
             }
         }
 
         ConstString parentPath=getPath(ResourceFinder::getDataHome(), "robots", "", "");
-        if(yarp::os::stat(parentPath.c_str()))
+        if (yarp::os::stat(parentPath.c_str()))
             yarp::os::mkdir(parentPath.c_str());
 
         if (yarp::os::mkdir(path.c_str()) <0 && errno != EEXIST)
-            fprintf(RTARGET,"||| WARNING  Could not create %s directory\n", path.c_str());
+            fprintf(RTARGET, "||| WARNING  Could not create %s directory\n", path.c_str());
         return path;
     }
 
 #ifndef YARP_NO_DEPRECATED // since YARP 2.3.60
     ConstString context2path(Property& config, const ConstString& context ) {
-        if(useNearMain)
+        if (useNearMain)
             return configFilePath;
         else
         {
             if (root != "") //configured with policy
             {
                 ConstString cap =
-                config.check("capability_directory",Value("app")).asString();
-                ConstString path = getPath(root,cap,context,"");
+                config.check("capability_directory", Value("app")).asString();
+                ConstString path = getPath(root, cap, context, "");
                 ConstString slash = NetworkBase::getDirectorySeparator();
                 if (path.length()>1) {
                     if (path[path.length()-1]==slash[0]) {
-                        path = path.substr(0,path.length()-slash.size());
+                        path = path.substr(0, path.length()-slash.size());
                     }
                 }
                 return path;
@@ -1064,7 +1064,7 @@ bool ResourceFinder::configure(const char *policyName, int argc, char *argv[],
     isConfiguredFlag = true;
 YARP_WARNING_PUSH
 YARP_DISABLE_DEPRECATED_WARNING
-return HELPER(implementation).configure(config,policyName,argc,argv,
+return HELPER(implementation).configure(config, policyName, argc, argv,
                                             skipFirstArgument);
 YARP_WARNING_POP
 }
@@ -1073,7 +1073,7 @@ YARP_WARNING_POP
 bool ResourceFinder::configure(int argc, char *argv[], bool skipFirstArgument)
 {
     isConfiguredFlag = true;
-    return HELPER(implementation).configure(config,argc,argv,skipFirstArgument);
+    return HELPER(implementation).configure(config, argc, argv, skipFirstArgument);
 }
 
 
@@ -1081,7 +1081,7 @@ bool ResourceFinder::addContext(const char *appName)
 {
     if (appName[0]=='\0') return true;
     if (HELPER(implementation).isVerbose()) {
-        fprintf(RTARGET,"||| adding context [%s]\n", appName);
+        fprintf(RTARGET, "||| adding context [%s]\n", appName);
     }
     return HELPER(implementation).addAppName(appName);
 }
@@ -1089,7 +1089,7 @@ bool ResourceFinder::addContext(const char *appName)
 bool ResourceFinder::clearContext()
 {
     if (HELPER(implementation).isVerbose()) {
-        fprintf(RTARGET,"||| clearing context\n");
+        fprintf(RTARGET, "||| clearing context\n");
     }
     return HELPER(implementation).clearAppNames();
 }
@@ -1098,87 +1098,87 @@ bool ResourceFinder::setDefault(const char *key, const yarp::os::ConstString& va
 {
     Value val2;
     val2.fromString(val.c_str());
-    return HELPER(implementation).setDefault(config,key,val2);
+    return HELPER(implementation).setDefault(config, key, val2);
 }
 
 bool ResourceFinder::setDefault(const char *key, const yarp::os::Value& val)
 {
-    return HELPER(implementation).setDefault(config,key,val);
+    return HELPER(implementation).setDefault(config, key, val);
 }
 
 yarp::os::ConstString ResourceFinder::findFile(const ConstString& name)
 {
     if (HELPER(implementation).isVerbose()) {
-        fprintf(RTARGET,"||| finding file [%s]\n", name.c_str());
+        fprintf(RTARGET, "||| finding file [%s]\n", name.c_str());
     }
-    return HELPER(implementation).findFile(config,name,YARP_NULLPTR);
+    return HELPER(implementation).findFile(config, name, YARP_NULLPTR);
 }
 
 yarp::os::ConstString ResourceFinder::findFile(const ConstString& name,
                                                const ResourceFinderOptions& options)
 {
     if (HELPER(implementation).isVerbose()) {
-        fprintf(RTARGET,"||| finding file [%s]\n", name.c_str());
+        fprintf(RTARGET, "||| finding file [%s]\n", name.c_str());
     }
-    return HELPER(implementation).findFile(config,name,&options);
+    return HELPER(implementation).findFile(config, name, &options);
 }
 
 yarp::os::ConstString ResourceFinder::findFileByName(const ConstString& name)
 {
     if (HELPER(implementation).isVerbose()) {
-        fprintf(RTARGET,"||| finding file %s\n", name.c_str());
+        fprintf(RTARGET, "||| finding file %s\n", name.c_str());
     }
-    return HELPER(implementation).findFileByName(config,name,YARP_NULLPTR);
+    return HELPER(implementation).findFileByName(config, name, YARP_NULLPTR);
 }
 
 yarp::os::ConstString ResourceFinder::findFileByName(const ConstString& name,
                                                      const ResourceFinderOptions& options)
 {
     if (HELPER(implementation).isVerbose()) {
-        fprintf(RTARGET,"||| finding file %s\n", name.c_str());
+        fprintf(RTARGET, "||| finding file %s\n", name.c_str());
     }
-    return HELPER(implementation).findFileByName(config,name,&options);
+    return HELPER(implementation).findFileByName(config, name, &options);
 }
 
 
 yarp::os::ConstString ResourceFinder::findPath(const ConstString& name)
 {
     if (HELPER(implementation).isVerbose()) {
-        fprintf(RTARGET,"||| finding path [%s]\n", name.c_str());
+        fprintf(RTARGET, "||| finding path [%s]\n", name.c_str());
     }
-    return HELPER(implementation).findPath(config,name,YARP_NULLPTR);
+    return HELPER(implementation).findPath(config, name, YARP_NULLPTR);
 }
 
 yarp::os::ConstString ResourceFinder::findPath(const ConstString& name,
                                                const ResourceFinderOptions& options)
 {
     if (HELPER(implementation).isVerbose()) {
-        fprintf(RTARGET,"||| finding path [%s]\n", name.c_str());
+        fprintf(RTARGET, "||| finding path [%s]\n", name.c_str());
     }
-    return HELPER(implementation).findPath(config,name,&options);
+    return HELPER(implementation).findPath(config, name, &options);
 }
 
 yarp::os::Bottle ResourceFinder::findPaths(const ConstString& name)
 {
     if (HELPER(implementation).isVerbose()) {
-        fprintf(RTARGET,"||| finding paths [%s]\n", name.c_str());
+        fprintf(RTARGET, "||| finding paths [%s]\n", name.c_str());
     }
-    return HELPER(implementation).findPaths(config,name,YARP_NULLPTR);
+    return HELPER(implementation).findPaths(config, name, YARP_NULLPTR);
 }
 
 yarp::os::Bottle ResourceFinder::findPaths(const ConstString& name,
                                            const ResourceFinderOptions& options)
 {
     if (HELPER(implementation).isVerbose()) {
-        fprintf(RTARGET,"||| finding paths [%s]\n", name.c_str());
+        fprintf(RTARGET, "||| finding paths [%s]\n", name.c_str());
     }
-    return HELPER(implementation).findPaths(config,name,&options);
+    return HELPER(implementation).findPaths(config, name, &options);
 }
 
 yarp::os::ConstString ResourceFinder::findPath()
 {
     if (HELPER(implementation).isVerbose()) {
-        fprintf(RTARGET,"||| finding path\n");
+        fprintf(RTARGET, "||| finding path\n");
     }
     return HELPER(implementation).findPath(config);
 }
@@ -1257,7 +1257,7 @@ Bottle ResourceFinder::getContexts()
 
 ResourceFinder ResourceFinder::findNestedResourceFinder(const char *key)
 {
-    return ResourceFinder(findGroup(key),implementation);
+    return ResourceFinder(findGroup(key), implementation);
 }
 
 
@@ -1275,11 +1275,11 @@ ConstString ResourceFinder::getDataHomeWithPossibleCreation(bool mayCreate)
     if (yarp_version != "") return yarp_version;
     ConstString xdg_version = NetworkBase::getEnvironment("XDG_DATA_HOME",
                                                           &found);
-    if (found) return createIfAbsent(mayCreate,xdg_version + slash + "yarp");
+    if (found) return createIfAbsent(mayCreate, xdg_version + slash + "yarp");
 #if defined(_WIN32)
     ConstString app_version = NetworkBase::getEnvironment("APPDATA");
     if (app_version != "") {
-        return createIfAbsent(mayCreate,app_version + slash + "yarp");
+        return createIfAbsent(mayCreate, app_version + slash + "yarp");
     }
 #endif
     ConstString home_version = NetworkBase::getEnvironment("HOME");
@@ -1312,7 +1312,7 @@ ConstString ResourceFinder::getConfigHomeWithPossibleCreation(bool mayCreate)
     if (found) return yarp_version;
     ConstString xdg_version = NetworkBase::getEnvironment("XDG_CONFIG_HOME",
                                                           &found);
-    if (found) return createIfAbsent(mayCreate,xdg_version + slash + "yarp");
+    if (found) return createIfAbsent(mayCreate, xdg_version + slash + "yarp");
 #if defined(_WIN32)
     ConstString app_version = NetworkBase::getEnvironment("APPDATA");
     if (app_version != "") {
@@ -1343,7 +1343,7 @@ ConstString ResourceFinder::createIfAbsent(bool mayCreate,
                                            const ConstString& path)
 {
     if (!mayCreate) return path;
-    NameConfig::createPath(path,0);
+    NameConfig::createPath(path, 0);
     return path;
 }
 
@@ -1357,14 +1357,14 @@ Bottle ResourceFinder::getDataDirs()
     Bottle xdg_version = parsePaths(NetworkBase::getEnvironment("XDG_DATA_DIRS",
                                                                 &found));
     if (found) {
-        appendResourceType(xdg_version,"yarp");
+        appendResourceType(xdg_version, "yarp");
         return xdg_version;
     }
 #if defined(_WIN32)
     ConstString app_version = NetworkBase::getEnvironment("YARP_DIR");
     if (app_version != "") {
-        appendResourceType(app_version,"share");
-        appendResourceType(app_version,"yarp");
+        appendResourceType(app_version, "share");
+        appendResourceType(app_version, "yarp");
         Bottle result;
         result.addString(app_version);
         return result;
@@ -1387,13 +1387,13 @@ Bottle ResourceFinder::getConfigDirs()
     Bottle xdg_version = parsePaths(NetworkBase::getEnvironment("XDG_CONFIG_DIRS",
                                                                 &found));
     if (found) {
-        appendResourceType(xdg_version,"yarp");
+        appendResourceType(xdg_version, "yarp");
         return xdg_version;
     }
 #if defined(_WIN32)
     ConstString app_version = NetworkBase::getEnvironment("ALLUSERSPROFILE");
     if (app_version != "") {
-        appendResourceType(app_version,"yarp");
+        appendResourceType(app_version, "yarp");
         Bottle result;
         result.addString(app_version);
         return result;
@@ -1414,11 +1414,11 @@ bool ResourceFinder::readConfig(Property& config,
                                 const ConstString& key,
                                 const ResourceFinderOptions& options)
 {
-    Bottle bot = HELPER(implementation).findPaths(config,key,&options,false);
+    Bottle bot = HELPER(implementation).findPaths(config, key, &options, false);
 
     for (int i=bot.size()-1; i>=0; i--) {
         ConstString fname = bot.get(i).asString();
-        config.fromConfigFile(fname,false);
+        config.fromConfigFile(fname, false);
     }
 
     return bot.size()>=1;

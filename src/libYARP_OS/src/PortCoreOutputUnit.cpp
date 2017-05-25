@@ -18,7 +18,7 @@
 
 
 #define YMSG(x) printf x;
-#define YTRACE(x) YMSG(("at %s\n",x))
+#define YTRACE(x) YMSG(("at %s\n", x))
 
 
 using namespace yarp::os::impl;
@@ -60,7 +60,7 @@ void PortCoreOutputUnit::run() {
     } else {
         phase.post();
         Route r = getRoute();
-        Logger log(r.toString().c_str(),Logger::get());
+        Logger log(r.toString().c_str(), Logger::get());
         while (!closing) {
             YARP_DEBUG(log, "PortCoreOutputUnit waiting");
             activate.wait();
@@ -97,14 +97,14 @@ void PortCoreOutputUnit::runSingleThreaded() {
     if (op != YARP_NULLPTR) {
         Route route = op->getRoute();
         setMode();
-        getOwner().reportUnit(this,true);
+        getOwner().reportUnit(this, true);
 
         ConstString msg = ConstString("Sending output from ") +
             route.getFromName() + " to " + route.getToName() + " using " +
             route.getCarrierName();
         if (Name(route.getToName()).isRooted()) {
             if (Name(route.getFromName()).isRooted()) {
-                YARP_INFO(Logger::get(),msg);
+                YARP_INFO(Logger::get(), msg);
             }
         }
 
@@ -139,12 +139,12 @@ void PortCoreOutputUnit::closeBasic() {
                          "output for route %s asking other side to close by out-of-band means",
                          route.toString().c_str());
             Companion::disconnectInput(route.getToName().c_str(),
-                                       route.getFromName().c_str(),true);
+                                       route.getFromName().c_str(), true);
         } else {
             if (op->getConnection().canEscape()) {
                 BufferedConnectionWriter buf(op->getConnection().isTextMode(),
                                              op->getConnection().isBareMode());
-                PortCommand pc('\0',ConstString("q"));
+                PortCommand pc('\0', ConstString("q"));
                 pc.write(buf);
                 //printf("Asked for %s to close...\n",
                 //     op->getRoute().toString().c_str());
@@ -161,7 +161,7 @@ void PortCoreOutputUnit::closeBasic() {
             }
         }
 
-        getOwner().reportUnit(this,false);
+        getOwner().reportUnit(this, false);
 
         // Report the disappearing connection
         PortInfo info;
@@ -196,7 +196,7 @@ void PortCoreOutputUnit::closeBasic() {
 void PortCoreOutputUnit::closeMain() {
     if (finished) return;
 
-    YARP_DEBUG(Logger::get(),"PortCoreOutputUnit closing");
+    YARP_DEBUG(Logger::get(), "PortCoreOutputUnit closing");
 
     if (running) {
         // give a kick (unfortunately unavoidable)
@@ -211,14 +211,14 @@ void PortCoreOutputUnit::closeMain() {
         join();
     }
 
-    YARP_DEBUG(Logger::get(),"PortCoreOutputUnit internal join");
+    YARP_DEBUG(Logger::get(), "PortCoreOutputUnit internal join");
 
     closeBasic();
     running = false;
     closing = false;
     finished = true;
 
-    YARP_DEBUG(Logger::get(),"PortCoreOutputUnit closed");
+    YARP_DEBUG(Logger::get(), "PortCoreOutputUnit closed");
 }
 
 
@@ -241,9 +241,9 @@ bool PortCoreOutputUnit::sendHelper() {
             buf.setReplyHandler(*cachedReader);
         }
 
-        if(op->getSender().modifiesOutgoingData())
+        if (op->getSender().modifiesOutgoingData())
         {
-            if(op->getSender().acceptOutgoingData(*cachedWriter))
+            if (op->getSender().acceptOutgoingData(*cachedWriter))
                 cachedWriter = &op->getSender().modifyOutgoingData(*cachedWriter);
             else
                return (done = true);
@@ -290,7 +290,7 @@ bool PortCoreOutputUnit::sendHelper() {
         if (!done) {
             if (op->getConnection().isActive()) {
                 replied = op->write(buf);
-                if(replied && op->getSender().modifiesReply()) {
+                if (replied && op->getSender().modifiesReply()) {
                     cachedReader = &op->getSender().modifyReply(*cachedReader);
                 }
             }
@@ -334,9 +334,9 @@ void *PortCoreOutputUnit::send(yarp::os::PortWriter& writer,
         if (running == false) {
             // we must have a thread if we're going to be skipping waits
             threaded = true;
-            YARP_DEBUG(Logger::get(),"starting a thread for output");
+            YARP_DEBUG(Logger::get(), "starting a thread for output");
             start();
-            YARP_DEBUG(Logger::get(),"started a thread for output");
+            YARP_DEBUG(Logger::get(), "started a thread for output");
         }
     }
 

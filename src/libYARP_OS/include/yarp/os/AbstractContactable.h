@@ -50,7 +50,7 @@ public:
     }
 
     virtual bool open(const Contact& contact, bool registerName = true) {
-        return asPort().open(contact,registerName);
+        return asPort().open(contact, registerName);
     }
 
     virtual bool addOutput(const ConstString& name) {
@@ -58,7 +58,7 @@ public:
     }
 
     virtual bool addOutput(const ConstString& name, const ConstString& carrier) {
-        return asPort().addOutput(name,carrier);
+        return asPort().addOutput(name, carrier);
     }
 
     virtual bool addOutput(const Contact& contact) {
@@ -155,16 +155,16 @@ public:
 
     virtual bool write(PortWriter& writer,
                        PortWriter *callback = YARP_NULLPTR) const {
-        return asPort().write(writer,callback);
+        return asPort().write(writer, callback);
     }
 
     virtual bool write(PortWriter& writer, PortReader& reader,
                        PortWriter *callback = YARP_NULLPTR) const {
-        return asPort().write(writer,reader,callback);
+        return asPort().write(writer, reader, callback);
     }
 
     virtual bool read(PortReader& reader, bool willReply = false) {
-        return asPort().read(reader,willReply);
+        return asPort().read(reader, willReply);
     }
 
     virtual bool reply(PortWriter& writer) {
