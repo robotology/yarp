@@ -15,6 +15,8 @@
 #include <QFileDialog>
 #include <yarp/os/Log.h>
 #include <yarp/os/LogStream.h>
+#include <yarp/os/Bottle.h>
+#include <yarp/os/Carriers.h>
 #include <yarp/manager/localbroker.h>
 #include "yscopewindow.h"
 #include <QTreeWidgetItem>
@@ -1186,6 +1188,9 @@ bool ApplicationViewWidget::onConnect()
     for(int i=0;i<ui->connectionList->topLevelItemCount();i++) {
         QTreeWidgetItem *it = ui->connectionList->topLevelItem(i);
         if (it->isSelected()) {
+            QString carrier = it->text(5);
+            if (!scanAvailableCarriers(carrier))
+                continue;
             MIDs.push_back(it->text(1).toInt());
             safeManager.updateConnection(it->text(1).toInt(),
                                      it->text(3).toLatin1().data(),
@@ -1217,6 +1222,9 @@ bool ApplicationViewWidget::onDisconnect()
     for(int i=0;i<ui->connectionList->topLevelItemCount();i++) {
         QTreeWidgetItem *it = ui->connectionList->topLevelItem(i);
         if (it->isSelected()) {
+            QString carrier = it->text(5);
+            if (!scanAvailableCarriers(carrier, false))
+                continue;
             MIDs.push_back(it->text(1).toInt());
             safeManager.updateConnection(it->text(1).toInt(),
                                      it->text(3).toLatin1().data(),
@@ -1428,6 +1436,22 @@ void ApplicationViewWidget::selectAllNestedApplicationModule(QTreeWidgetItem *it
     }
 }
 
+bool ApplicationViewWidget::scanAvailableCarriers(QString carrier, bool isConnection){
+    yarp::os::Bottle lst=yarp::os::Carriers::listCarriers();
+    yarp::manager::ErrorLogger* logger  = yarp::manager::ErrorLogger::Instance();
+    bool res=false;
+    for (int i=0; i<lst.size(); i++)
+    {
+        if (lst.get(i).asString() == carrier.toStdString())
+            res = true;
+    }
+    if (!res && isConnection)
+    {
+        string msg = "Unable to find '"+ carrier.toStdString() + "' among the available carriers ";
+        logger->addError(msg.c_str());
+    }
+    return res;
+}
 
 /*! \brief Select/deselect all connections
     \param check
