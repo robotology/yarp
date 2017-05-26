@@ -119,6 +119,7 @@ private:
     QDockWidget *builderWidget;
     BuilderWindow *builder;
     QToolBar *builderToolBar;
+    QStringList stringLst;
 
     Ui::ApplicationViewWidget *ui;
     SafeManager safeManager;

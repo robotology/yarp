@@ -660,6 +660,14 @@ void ApplicationViewWidget::updateApplicationWindow()
         l << type << sId << status << from << to << carrier;
         CustomTreeWidgetItem *it = new CustomTreeWidgetItem(ui->connectionList,l);
         ui->moduleList->addTopLevelItem(it);
+
+        //scanning available carriers:
+        scanAvailableCarriers(carrier,false);
+
+        QComboBox *comboBox = new QComboBox(this);
+        comboBox->addItems(stringLst);
+        comboBox->setEditable(true);
+        ui->connectionList->setItemWidget((QTreeWidgetItem *) it,5, comboBox);
         it->setData(0,Qt::UserRole,yarp::manager::INOUTD);
         it->setIcon(0,QIcon(":/disconnect22.svg"));
         it->setTextColor(2,QColor("#BF0303"));
@@ -1188,9 +1196,18 @@ bool ApplicationViewWidget::onConnect()
     for(int i=0;i<ui->connectionList->topLevelItemCount();i++) {
         QTreeWidgetItem *it = ui->connectionList->topLevelItem(i);
         if (it->isSelected()) {
-            QString carrier = it->text(5);
-            if (!scanAvailableCarriers(carrier))
-                continue;
+            QComboBox* box = qobject_cast<QComboBox*>(ui->connectionList->itemWidget((QTreeWidgetItem *)it, 5));
+            QString carrier;
+            if (box)
+            {
+                carrier = box->currentText();
+
+            }
+            else
+            {
+                carrier=it->text(5);
+            }
+            scanAvailableCarriers(carrier);
             MIDs.push_back(it->text(1).toInt());
             safeManager.updateConnection(it->text(1).toInt(),
                                      it->text(3).toLatin1().data(),
@@ -1222,9 +1239,18 @@ bool ApplicationViewWidget::onDisconnect()
     for(int i=0;i<ui->connectionList->topLevelItemCount();i++) {
         QTreeWidgetItem *it = ui->connectionList->topLevelItem(i);
         if (it->isSelected()) {
-            QString carrier = it->text(5);
-            if (!scanAvailableCarriers(carrier, false))
-                continue;
+            QComboBox* box = qobject_cast<QComboBox*>(ui->connectionList->itemWidget((QTreeWidgetItem *)it, 5));
+            QString carrier;
+            if (box)
+            {
+                carrier = box->currentText();
+
+            }
+            else
+            {
+                carrier=it->text(5);
+            }
+            scanAvailableCarriers(carrier, false);
             MIDs.push_back(it->text(1).toInt());
             safeManager.updateConnection(it->text(1).toInt(),
                                      it->text(3).toLatin1().data(),
@@ -1440,10 +1466,14 @@ bool ApplicationViewWidget::scanAvailableCarriers(QString carrier, bool isConnec
     yarp::os::Bottle lst=yarp::os::Carriers::listCarriers();
     yarp::manager::ErrorLogger* logger  = yarp::manager::ErrorLogger::Instance();
     bool res=false;
+    stringLst.clear();
+    stringLst.push_back(carrier);
     for (int i=0; i<lst.size(); i++)
     {
         if (lst.get(i).asString() == carrier.toStdString())
             res = true;
+        else
+            stringLst.push_back(lst.get(i).asString().c_str());
     }
     if (!res && isConnection)
     {
@@ -1878,6 +1908,8 @@ void ApplicationViewWidget::onSelfConnect(int which)
         it->setTextColor(2,QColor("#008C00"));
         QString from = it->text(3);
         QString to = it->text(4);
+        QComboBox* box = qobject_cast<QComboBox*>(ui->connectionList->itemWidget((QTreeWidgetItem *)it, 5));
+        box->setEnabled(false);
         builder->setConnectionConnected(true,from,to);
     }
 
@@ -1898,6 +1930,8 @@ void ApplicationViewWidget::onSelfDisconnect(int which)
         it->setTextColor(2,QColor("#BF0303"));
         QString from = it->text(3);
         QString to = it->text(4);
+        QComboBox* box = qobject_cast<QComboBox*>(ui->connectionList->itemWidget((QTreeWidgetItem *)it, 5));
+        box->setEnabled(true);
         builder->setConnectionConnected(false,from,to);
     }
     reportErrors();
