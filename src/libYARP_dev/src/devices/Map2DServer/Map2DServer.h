@@ -36,11 +36,6 @@
 
 #include "include/geometry_msgs_TransformStamped.h"
 #include "include/tf_tfMessage.h"
-#include <yarp/math/FrameTransform.h>
-
-/* Using yarp::dev::impl namespace for all helper class inside yarp::dev to reduce
- * name conflicts
- */
 
 namespace yarp
 {
@@ -50,10 +45,23 @@ namespace yarp
     }
 }
 
-#define ROSNODENAME "/tfNode"
-#define ROSTOPICNAME_TF "/tf"
-#define ROSTOPICNAME_TF_STATIC "/tf_static"
 #define DEFAULT_THREAD_PERIOD 20 //ms
+
+/**
+ *  @ingroup dev_impl_wrapper
+ *
+ * \section Map2DServer
+ * A device capable of read/save collections of maps from disk, and make them accessible to any Map2DClient device.
+ *
+ *  Parameters required by this device are:
+ * | Parameter name | SubParameter   | Type    | Units          | Default Value    | Required     | Description                                                       | Notes |
+ * |:--------------:|:--------------:|:-------:|:--------------:|:----------------:|:-----------: |:-----------------------------------------------------------------:|:-----:|
+ * | name           |      -         | string  | -              | /mapServer/rpc   | No           | Full name of the rpc port openend by the Map2DServer device .     |       |
+ * | mapCollection  |      -         | string  | -              |   -              | No           | The name of .ini file containgin a map collection.                |       |
+
+ * \section Notes:
+ * Integration with ROS map server is currently under development.
+ */
 
 class yarp::dev::Map2DServer : public yarp::dev::DeviceDriver, public yarp::os::PortReader
 {

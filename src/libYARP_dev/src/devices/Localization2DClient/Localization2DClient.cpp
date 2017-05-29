@@ -39,16 +39,6 @@ bool yarp::dev::Localization2DClient::open(yarp::os::Searchable &config)
         return false;
     }
 
-    if (config.check("period"))
-    {
-        m_period = config.find("period").asInt();
-    }
-    else
-    {
-        m_period = 10;
-        yWarning("Navigation2DClient: using default period of %d ms" , m_period);
-    }
-
     ConstString
             local_rpc,
             remote_rpc,

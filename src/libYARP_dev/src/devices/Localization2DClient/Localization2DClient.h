@@ -29,13 +29,18 @@ namespace yarp {
     }
 }
 
-#define DEFAULT_THREAD_PERIOD 20 //ms
-
-
 /**
-* @ingroup dev_impl_wrapper
-*
-*/
+ *  @ingroup dev_impl_wrapper
+ *
+ * \section Localization2DClient
+ * A device which allows a user application retrieve the current position of the robot in the world.
+ *
+ *  Parameters required by this device are:
+ * | Parameter name | SubParameter   | Type    | Units          | Default Value | Required     | Description                                                       | Notes |
+ * |:--------------:|:--------------:|:-------:|:--------------:|:-------------:|:-----------: |:-----------------------------------------------------------------:|:-----:|
+ * | local          |      -         | string  | -   |   -           | Yes          | Full port name openend by the Localization2DClient device.                            |       |
+ * | remote         |      -         | string  | -   |   -           | Yes          | Full port name of the port opened on the server side, to which the Localization2DClient connects to.                           | E.g.(https://github.com/robotology/navigation/src/localizationServer)    |
+ */
 
 class yarp::dev::Localization2DClient : public DeviceDriver,
                                        public ILocalization2D
@@ -46,7 +51,6 @@ protected:
     yarp::os::Port                m_rpc_port_localization_server;
     yarp::os::ConstString         m_local_name;
     yarp::os::ConstString         m_remote_name;
-    int                           m_period;
 
 #endif /*DOXYGEN_SHOULD_SKIP_THIS*/
 

@@ -27,10 +27,6 @@ yarp::dev::DriverCreator *createMap2DServer() {
 }
 
 /**
-  * Helper functions
-  */
-
-/**
   * Map2DServer
   */
 
@@ -298,16 +294,14 @@ bool Map2DServer::open(yarp::os::Searchable &config)
         }
     }
 
-    std::string name;
     if (!config.check("name"))
     {
-        name = "mapServer";
+        m_rpcPortName = "/mapServer/rpc";
     }
     else
     {
-        name = config.find("name").asString().c_str();
+        m_rpcPortName = config.find("name").asString().c_str();
     }
-    m_rpcPortName = "/" + name + "/rpc";
 
     //open rpc port
     if (!m_rpcPort.open(m_rpcPortName.c_str()))

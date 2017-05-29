@@ -30,19 +30,23 @@ namespace yarp {
 class Map2D_type
 {
     private:
-
-
-
 };
 
 #endif /*DOXYGEN_SHOULD_SKIP_THIS*/
 
 /**
-* @ingroup dev_impl_wrapper
-*
-* The client side of any IBattery capable device.
-* Still single thread! concurrent access is unsafe.
-*/
+ *  @ingroup dev_impl_wrapper
+ *
+ * \section Map2DClient
+ * A device which allows a client application to store/retrieve user maps device in a map server.
+ *
+ *  Parameters required by this device are:
+ * | Parameter name | SubParameter   | Type    | Units          | Default Value | Required     | Description                                                       | Notes |
+ * |:--------------:|:--------------:|:-------:|:--------------:|:-------------:|:-----------: |:-----------------------------------------------------------------:|:-----:|
+ * | local          |      -         | string  | -   |   -           | Yes          | Full port name openend by the Map2DClient device.                            |       |
+ * | remote         |     -          | string  | -   |   -           | Yes          | Full port name of the port opened by the Map2DServer, to which the Map2DClient connects to.           |  |
+ */
+
 class yarp::dev::Map2DClient : public DeviceDriver,
                                public IMap2D
 {

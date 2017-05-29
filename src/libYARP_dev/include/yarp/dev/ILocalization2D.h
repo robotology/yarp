@@ -20,7 +20,7 @@ namespace yarp {
 /**
  * @ingroup dev_iface_motor
  *
- * Control board, encoder interface.
+ * ILocalization2D interface.
  */
 class yarp::dev::ILocalization2D
 {
@@ -66,4 +66,4 @@ public:
 #define VOCAB_NAV_SUSPEND           VOCAB4('s','u','s','p')
 #define VOCAB_NAV_RESUME            VOCAB4('r','e','s','m')
 
-#endif // YARP_DEV_INAVIGATION2D_H
+#endif // YARP_DEV_ILOCALIZATION2D_H
