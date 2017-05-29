@@ -339,6 +339,9 @@ bool V4L_camera::fromConfig(yarp::os::Searchable& config)
     else
         param.deviceId = config.find("d").asString();
 
+    param.flip=config.check("flip",Value("false")).asBool();
+
+
 
     if(!config.check("camModel") )
     {
@@ -1380,6 +1383,11 @@ void V4L_camera::imageProcess(void* p, bool useRawData)
             yError() << "Unsupported camera, don't know how to do color reconstruction to RGB";
             break;
         }
+    }
+
+    if(param.outMat.data && param.flip){
+        // Flipping around y-axis
+        cv::flip(param.outMat, param.outMat, 1);
     }
 
     timeElapsed = yarp::os::Time::now() - timeStart;

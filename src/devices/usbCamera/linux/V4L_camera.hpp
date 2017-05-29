@@ -106,6 +106,7 @@ typedef struct
     cv::Mat         outMat;
     cv::Mat         img;
     yarp::sig::VectorOf<yarp::dev::CameraConfig> configurations;
+    bool            flip;
 
     unsigned int    n_buffers;
     struct buffer   *buffers;
