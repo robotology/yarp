@@ -40,12 +40,14 @@ extern DriverCreator *createRGBDSensorClient();
 extern DriverCreator *createControlBoardRemapper();
 extern DriverCreator *createRemoteControlBoardRemapper();
 extern DriverCreator *createNavigation2DClient();
+extern DriverCreator *createLocalization2DClient();
 extern DriverCreator *createRobotDescriptionServer();
 extern DriverCreator *createRobotDescriptionClient();
 extern DriverCreator *createServerGrabber();
-extern DriverCreator *createJoypadControlServer();
 extern DriverCreator *createJoypadControlClient();
-
+extern DriverCreator *createJoypadControlServer();
+extern DriverCreator *createMap2DClient();
+extern DriverCreator *createMap2DServer();
 #ifdef WITH_YARPMATH
 extern DriverCreator *createFrameTransformServer();
 extern DriverCreator *createFrameTransformClient();
@@ -96,12 +98,14 @@ void Drivers::init() {
     add(createControlBoardRemapper());
     add(createRemoteControlBoardRemapper());
     add(createNavigation2DClient());
+    add(createLocalization2DClient());
     add(createRobotDescriptionServer());
     add(createRobotDescriptionClient());
     add(createServerGrabber());
     add(createJoypadControlServer());
     add(createJoypadControlClient());
-
+    add(createMap2DClient());
+    add(createMap2DServer());
 #ifdef WITH_YARPMATH
     add(createFrameTransformServer());
     add(createFrameTransformClient());

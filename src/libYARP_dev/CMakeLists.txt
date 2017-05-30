@@ -30,6 +30,7 @@ set(YARP_dev_HDRS include/yarp/dev/all.h
                   include/yarp/dev/GPUInterface.h
                   include/yarp/dev/IAnalogSensor.h
                   include/yarp/dev/IBattery.h
+                  include/yarp/dev/IMap2D.h
                   include/yarp/dev/IRangefinder2D.h
                   include/yarp/dev/IControlLimits2.h
                   include/yarp/dev/IControlLimits2Impl.h
@@ -92,7 +93,10 @@ set(YARP_dev_HDRS include/yarp/dev/all.h
                   include/yarp/dev/ControlBoardInterfacesImpl.inl
                   include/yarp/dev/IRobotDescription.h
                   include/yarp/dev/IPidControl.h
-                  include/yarp/dev/IPidControlImpl.h)
+                  include/yarp/dev/IPidControlImpl.h
+                  include/yarp/dev/ILocalization2D.h
+                  include/yarp/dev/MapGrid2D.h
+                  include/yarp/dev/Map2DLocation.h)
 
 set(YARP_dev_IMPL_HDRS )
 
@@ -132,7 +136,8 @@ set(YARP_dev_SRCS src/ControlBoardInterfacesImpl.cpp
                   src/CurrentControlImpl.cpp
                   src/PWMControlImpl.cpp
                   src/IAxisInfoImpl.cpp
-                  src/IPidControlImpl.cpp)
+                  src/IPidControlImpl.cpp
+                  src/MapGrid2D.cpp)
 
 set(YARP_devices_SRCS   src/devices/AnalogWrapper/AnalogWrapper.cpp
                         src/devices/AnalogSensorClient/AnalogSensorClient.cpp
@@ -140,14 +145,18 @@ set(YARP_devices_SRCS   src/devices/AnalogWrapper/AnalogWrapper.cpp
                         src/devices/BatteryClient/BatteryClient.cpp
                         src/devices/Rangefinder2DWrapper/Rangefinder2DWrapper.cpp
                         src/devices/Navigation2DClient/Navigation2DClient.cpp
+                        src/devices/Localization2DClient/Localization2DClient.cpp
                         src/devices/VirtualAnalogWrapper/VirtualAnalogWrapper.cpp
                         src/devices/ControlBoardRemapper/ControlBoardRemapper.cpp
                         src/devices/ControlBoardRemapper/ControlBoardRemapperHelpers.cpp
                         src/devices/ControlBoardRemapper/RemoteControlBoardRemapper.cpp
                         src/devices/RobotDescriptionClient/RobotDescriptionClient.cpp
                         src/devices/RobotDescriptionServer/RobotDescriptionServer.cpp
+                        src/devices/JoypadControlClient/JoypadControlClient.cpp
                         src/devices/JoypadControlServer/JoypadControlServer.cpp
-                        src/devices/JoypadControlClient/JoypadControlClient.cpp)
+                        src/devices/Map2DClient/Map2DClient.cpp
+                        src/devices/Map2DServer/Map2DServer.cpp)
+
 if (CREATE_LIB_MATH)
   list(APPEND YARP_devices_SRCS src/devices/FrameTransformClient/FrameTransformClient.cpp
                                 src/devices/FrameTransformServer/FrameTransformServer.cpp
@@ -161,6 +170,7 @@ set(YARP_devices_HDRS   src/devices/AnalogWrapper/AnalogWrapper.h
                         src/devices/BatteryClient/BatteryClient.h
                         src/devices/Rangefinder2DWrapper/Rangefinder2DWrapper.h
                         src/devices/Navigation2DClient/Navigation2DClient.h
+                        src/devices/Localization2DClient/Localization2DClient.h
                         src/devices/VirtualAnalogWrapper/VirtualAnalogWrapper.h
                         src/devices/ControlBoardRemapper/ControlBoardRemapper.h
                         src/devices/ControlBoardRemapper/ControlBoardRemapperHelpers.h
@@ -169,7 +179,9 @@ set(YARP_devices_HDRS   src/devices/AnalogWrapper/AnalogWrapper.h
                         src/devices/RobotDescriptionServer/RobotDescriptionServer.h
                         src/devices/JoypadControlServer/JoypadControlServer.h
                         src/devices/JoypadControlClient/JoypadControlClient.h
-                        src/devices/JoypadControlServer/JoypadControlNetUtils.h)
+                        src/devices/JoypadControlServer/JoypadControlNetUtils.h
+                        src/devices/Map2DClient/Map2DClient.h
+                        src/devices/Map2DServer/Map2DServer.h)
 if (CREATE_LIB_MATH)
   list(APPEND YARP_devices_HDRS src/devices/FrameTransformClient/FrameTransformClient.h
                                 src/devices/FrameTransformServer/FrameTransformServer.h
