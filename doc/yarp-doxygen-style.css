@@ -145,10 +145,9 @@ p.definition {
 code {
     border: 1px solid #C4CFE5;
     background-color: #FBFCFD;
-    padding: 4px 6px;
-    margin: 4px 8px 4px 2px;
-    font-size:  9pt;
-    line-height: 125%;
-    font-size: 105%;
+    padding: 1px 3px;
+    font-size: 9pt;
+    line-height: 160%;
+    font-size: 85%;
     border-radius: 4px;
 }
