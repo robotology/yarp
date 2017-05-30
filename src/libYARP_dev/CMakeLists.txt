@@ -15,6 +15,7 @@ set(YARP_dev_HDRS include/yarp/dev/all.h
                   include/yarp/dev/ControlBoardHelpers.h
                   include/yarp/dev/ControlBoardInterfaces.h
                   include/yarp/dev/ControlBoardInterfacesImpl.h
+                  include/yarp/dev/ControlBoardInterfacesImpl.inl
                   include/yarp/dev/ControlBoardPid.h
                   include/yarp/dev/DataSource.h
                   include/yarp/dev/DeviceDriver.h
@@ -30,53 +31,53 @@ set(YARP_dev_HDRS include/yarp/dev/all.h
                   include/yarp/dev/GPUInterface.h
                   include/yarp/dev/IAnalogSensor.h
                   include/yarp/dev/IBattery.h
-                  include/yarp/dev/IMap2D.h
-                  include/yarp/dev/IRangefinder2D.h
                   include/yarp/dev/IControlLimits2.h
                   include/yarp/dev/IControlLimits2Impl.h
-                  include/yarp/dev/IControlMode.h
                   include/yarp/dev/IControlMode2.h
+                  include/yarp/dev/IControlMode.h
+                  include/yarp/dev/ICurrentControl.h
                   include/yarp/dev/IEncoders.h
                   include/yarp/dev/IEncodersTimed.h
-                  include/yarp/dev/IJoypadController.h
-                  include/yarp/dev/IMotorEncoders.h
-                  include/yarp/dev/IMotor.h
-                  include/yarp/dev/IRemoteVariables.h
                   include/yarp/dev/IImpedanceControl.h
-                  include/yarp/dev/IRGBDSensor.h
-                  include/yarp/dev/IKinectDeviceDriver.h
-                  include/yarp/dev/ImplementControlBoardInterfaces.h
-                  include/yarp/dev/ImplementControlMode.h
-                  include/yarp/dev/ImplementControlMode2.h
-                  include/yarp/dev/ImplementEncodersTimed.h
-                  include/yarp/dev/ImplementMotorEncoders.h
-                  include/yarp/dev/ImplementMotor.h
-                  include/yarp/dev/ImplementRemoteVariables.h
-                  include/yarp/dev/ImplementImpedanceControl.h
-                  include/yarp/dev/ImplementTorqueControl.h
-                  include/yarp/dev/ImplementCurrentControl.h
-                  include/yarp/dev/ImplementPWMControl.h
-                  include/yarp/dev/ImplementAxisInfo.h
                   include/yarp/dev/IInteractionMode.h
                   include/yarp/dev/IInteractionModeImpl.h
+                  include/yarp/dev/IJoypadController.h
+                  include/yarp/dev/IKinectDeviceDriver.h
+                  include/yarp/dev/IMotorEncoders.h
+                  include/yarp/dev/IMotor.h
+                  include/yarp/dev/ImplementAxisInfo.h
+                  include/yarp/dev/ImplementControlBoardInterfaces.h
+                  include/yarp/dev/ImplementControlMode2.h
+                  include/yarp/dev/ImplementControlMode.h
+                  include/yarp/dev/ImplementCurrentControl.h
+                  include/yarp/dev/ImplementEncodersTimed.h
+                  include/yarp/dev/ImplementImpedanceControl.h
+                  include/yarp/dev/ImplementMotorEncoders.h
+                  include/yarp/dev/ImplementMotor.h
+                  include/yarp/dev/ImplementPWMControl.h
+                  include/yarp/dev/ImplementRemoteVariables.h
+                  include/yarp/dev/ImplementTorqueControl.h
                   include/yarp/dev/IOpenNI2DeviceDriver.h
+                  include/yarp/dev/IPidControl.h
+                  include/yarp/dev/IPidControlImpl.h
                   include/yarp/dev/IPositionControl2.h
                   include/yarp/dev/IPositionControl2Impl.h
                   include/yarp/dev/IPositionControl.h
                   include/yarp/dev/IPositionDirect.h
                   include/yarp/dev/IPositionDirectImpl.h
-                  include/yarp/dev/ITorqueControl.h
-                  include/yarp/dev/ICurrentControl.h
                   include/yarp/dev/IPWMControl.h
-                  include/yarp/dev/IFrameTransform.h
+                  include/yarp/dev/IRangefinder2D.h
+                  include/yarp/dev/IRemoteVariables.h
+                  include/yarp/dev/IRGBDSensor.h
+                  include/yarp/dev/IRobotDescription.h
+                  include/yarp/dev/ITorqueControl.h
                   include/yarp/dev/IVelocityControl2.h
                   include/yarp/dev/IVelocityControl2Impl.h
                   include/yarp/dev/IVelocityControl.h
-                  include/yarp/dev/INavigation2D.h
                   include/yarp/dev/IVirtualAnalogSensor.h
-                  include/yarp/dev/LaserMeasurementData.h
                   include/yarp/dev/IVisualParams.h
                   include/yarp/dev/IVisualParamsImpl.h
+                  include/yarp/dev/LaserMeasurementData.h
                   include/yarp/dev/PolyDriverDescriptor.h
                   include/yarp/dev/PolyDriver.h
                   include/yarp/dev/PolyDriverList.h
@@ -89,103 +90,109 @@ set(YARP_dev_HDRS include/yarp/dev/all.h
                   include/yarp/dev/ServerSoundGrabber.h
                   include/yarp/dev/ServiceInterfaces.h
                   include/yarp/dev/TestMotor.h
-                  include/yarp/dev/Wrapper.h
-                  include/yarp/dev/ControlBoardInterfacesImpl.inl
-                  include/yarp/dev/IRobotDescription.h
-                  include/yarp/dev/IPidControl.h
-                  include/yarp/dev/IPidControlImpl.h
-                  include/yarp/dev/ILocalization2D.h
-                  include/yarp/dev/MapGrid2D.h
-                  include/yarp/dev/Map2DLocation.h)
+                  include/yarp/dev/Wrapper.h)
+
+if (CREATE_LIB_MATH)
+  list(APPEND YARP_dev_HDRS include/yarp/dev/IFrameTransform.h
+                            include/yarp/dev/ILocalization2D.h
+                            include/yarp/dev/IMap2D.h
+                            include/yarp/dev/INavigation2D.h
+                            include/yarp/dev/Map2DLocation.h
+                            include/yarp/dev/MapGrid2D.h)
+endif()
 
 set(YARP_dev_IMPL_HDRS )
 
 set(YARP_dev_SRCS src/ControlBoardInterfacesImpl.cpp
                   src/ControlBoardPid.cpp
                   src/ControlCalibrationImpl.cpp
-                  src/RemoteCalibratorImpl.cpp
-                  src/ControlModeImpl.cpp
                   src/ControlMode2Impl.cpp
+                  src/ControlModeImpl.cpp
+                  src/CurrentControlImpl.cpp
                   src/DeviceDriver.cpp
                   src/DeviceGroup.cpp
                   src/DevicePipe.cpp
                   src/Drivers.cpp
                   src/Dummy.cpp
-                  src/LaserMeasurementData.cpp
+                  src/FrameGrabberControl2Impl.cpp
+                  src/IAxisInfoImpl.cpp
                   src/IControlLimit2sImpl.cpp
                   src/IEncodersTimedImpl.cpp
+                  src/IInteractionModeImpl.cpp
                   src/IMotorEncodersImpl.cpp
                   src/IMotorImpl.cpp
-                  src/IRemoteVariablesImpl.cpp
                   src/ImpedanceControlImpl.cpp
-                  src/IInteractionModeImpl.cpp
-                  src/IVisualParamsImpl.cpp
+                  src/IPidControlImpl.cpp
                   src/IPositionControl2Impl.cpp
                   src/IPositionDirectImpl.cpp
+                  src/IRemoteVariablesImpl.cpp
                   src/IVelocityControl2Impl.cpp
+                  src/IVisualParamsImpl.cpp
+                  src/LaserMeasurementData.cpp
                   src/PolyDriver.cpp
                   src/PolyDriverDescriptor.cpp
                   src/PolyDriverList.cpp
                   src/PopulateDrivers.cpp
-                  src/FrameGrabberControl2Impl.cpp
+                  src/PWMControlImpl.cpp
+                  src/RemoteCalibratorImpl.cpp
                   src/RemoteFrameGrabber.cpp
                   src/RemoteFrameGrabberDC1394.cpp
                   src/ServerFrameGrabber.cpp
                   src/ServerSerial.cpp
-                  src/TorqueControlImpl.cpp
-                  src/CurrentControlImpl.cpp
-                  src/PWMControlImpl.cpp
-                  src/IAxisInfoImpl.cpp
-                  src/IPidControlImpl.cpp
-                  src/MapGrid2D.cpp)
+                  src/TorqueControlImpl.cpp)
 
-set(YARP_devices_SRCS   src/devices/AnalogWrapper/AnalogWrapper.cpp
-                        src/devices/AnalogSensorClient/AnalogSensorClient.cpp
-                        src/devices/BatteryWrapper/BatteryWrapper.cpp
-                        src/devices/BatteryClient/BatteryClient.cpp
-                        src/devices/Rangefinder2DWrapper/Rangefinder2DWrapper.cpp
-                        src/devices/Navigation2DClient/Navigation2DClient.cpp
-                        src/devices/Localization2DClient/Localization2DClient.cpp
-                        src/devices/VirtualAnalogWrapper/VirtualAnalogWrapper.cpp
-                        src/devices/ControlBoardRemapper/ControlBoardRemapper.cpp
-                        src/devices/ControlBoardRemapper/ControlBoardRemapperHelpers.cpp
-                        src/devices/ControlBoardRemapper/RemoteControlBoardRemapper.cpp
-                        src/devices/RobotDescriptionClient/RobotDescriptionClient.cpp
-                        src/devices/RobotDescriptionServer/RobotDescriptionServer.cpp
-                        src/devices/JoypadControlClient/JoypadControlClient.cpp
-                        src/devices/JoypadControlServer/JoypadControlServer.cpp
-                        src/devices/Map2DClient/Map2DClient.cpp
-                        src/devices/Map2DServer/Map2DServer.cpp)
+if(CREATE_LIB_MATH)
+  list(APPEND YARP_dev_SRCS src/MapGrid2D.cpp)
+endif()
+
+set(YARP_devices_SRCS src/devices/AnalogSensorClient/AnalogSensorClient.cpp
+                      src/devices/AnalogWrapper/AnalogWrapper.cpp
+                      src/devices/BatteryClient/BatteryClient.cpp
+                      src/devices/BatteryWrapper/BatteryWrapper.cpp
+                      src/devices/ControlBoardRemapper/ControlBoardRemapper.cpp
+                      src/devices/ControlBoardRemapper/ControlBoardRemapperHelpers.cpp
+                      src/devices/ControlBoardRemapper/RemoteControlBoardRemapper.cpp
+                      src/devices/JoypadControlClient/JoypadControlClient.cpp
+                      src/devices/JoypadControlServer/JoypadControlServer.cpp
+                      src/devices/Rangefinder2DWrapper/Rangefinder2DWrapper.cpp
+                      src/devices/RobotDescriptionClient/RobotDescriptionClient.cpp
+                      src/devices/RobotDescriptionServer/RobotDescriptionServer.cpp
+                      src/devices/VirtualAnalogWrapper/VirtualAnalogWrapper.cpp)
 
 if (CREATE_LIB_MATH)
   list(APPEND YARP_devices_SRCS src/devices/FrameTransformClient/FrameTransformClient.cpp
                                 src/devices/FrameTransformServer/FrameTransformServer.cpp
+                                src/devices/Localization2DClient/Localization2DClient.cpp
                                 src/devices/LocationsServer/LocationsServer.cpp
+                                src/devices/Map2DClient/Map2DClient.cpp
+                                src/devices/Map2DServer/Map2DServer.cpp
+                                src/devices/Navigation2DClient/Navigation2DClient.cpp
                                 src/devices/Rangefinder2DClient/Rangefinder2DClient.cpp)
 endif()
 
-set(YARP_devices_HDRS   src/devices/AnalogWrapper/AnalogWrapper.h
-                        src/devices/AnalogSensorClient/AnalogSensorClient.h
-                        src/devices/BatteryWrapper/BatteryWrapper.h
-                        src/devices/BatteryClient/BatteryClient.h
-                        src/devices/Rangefinder2DWrapper/Rangefinder2DWrapper.h
-                        src/devices/Navigation2DClient/Navigation2DClient.h
-                        src/devices/Localization2DClient/Localization2DClient.h
-                        src/devices/VirtualAnalogWrapper/VirtualAnalogWrapper.h
-                        src/devices/ControlBoardRemapper/ControlBoardRemapper.h
-                        src/devices/ControlBoardRemapper/ControlBoardRemapperHelpers.h
-                        src/devices/ControlBoardRemapper/RemoteControlBoardRemapper.h
-                        src/devices/RobotDescriptionClient/RobotDescriptionClient.h
-                        src/devices/RobotDescriptionServer/RobotDescriptionServer.h
-                        src/devices/JoypadControlServer/JoypadControlServer.h
-                        src/devices/JoypadControlClient/JoypadControlClient.h
-                        src/devices/JoypadControlServer/JoypadControlNetUtils.h
-                        src/devices/Map2DClient/Map2DClient.h
-                        src/devices/Map2DServer/Map2DServer.h)
+set(YARP_devices_HDRS src/devices/AnalogSensorClient/AnalogSensorClient.h
+                      src/devices/AnalogWrapper/AnalogWrapper.h
+                      src/devices/BatteryClient/BatteryClient.h
+                      src/devices/BatteryWrapper/BatteryWrapper.h
+                      src/devices/ControlBoardRemapper/ControlBoardRemapper.h
+                      src/devices/ControlBoardRemapper/ControlBoardRemapperHelpers.h
+                      src/devices/ControlBoardRemapper/RemoteControlBoardRemapper.h
+                      src/devices/JoypadControlClient/JoypadControlClient.h
+                      src/devices/JoypadControlServer/JoypadControlNetUtils.h
+                      src/devices/JoypadControlServer/JoypadControlServer.h
+                      src/devices/Rangefinder2DWrapper/Rangefinder2DWrapper.h
+                      src/devices/RobotDescriptionClient/RobotDescriptionClient.h
+                      src/devices/RobotDescriptionServer/RobotDescriptionServer.h
+                      src/devices/VirtualAnalogWrapper/VirtualAnalogWrapper.h)
+
 if (CREATE_LIB_MATH)
   list(APPEND YARP_devices_HDRS src/devices/FrameTransformClient/FrameTransformClient.h
                                 src/devices/FrameTransformServer/FrameTransformServer.h
+                                src/devices/Localization2DClient/Localization2DClient.h
                                 src/devices/LocationsServer/LocationsServer.h
+                                src/devices/Map2DClient/Map2DClient.h
+                                src/devices/Map2DServer/Map2DServer.h
+                                src/devices/Navigation2DClient/Navigation2DClient.h
                                 src/devices/Rangefinder2DClient/Rangefinder2DClient.h)
 endif()
 

@@ -54,8 +54,9 @@ if(YARP_COMPILE_TESTS)
                            ${CMAKE_SOURCE_DIR}/tests/libYARP_${test_family}/*.h)
 
     if("${test_family}" STREQUAL "dev" AND NOT YARP_HAS_MATH_LIB)
-       # Without MATH lib, we don't compile FrameTransformClient
+       # Without MATH lib, we don't compile FrameTransformClient and MapGrid2D
        list(REMOVE_ITEM harness_code ${CMAKE_CURRENT_SOURCE_DIR}/libYARP_dev/FrameTransformClientTest.cpp)
+       list(REMOVE_ITEM harness_code ${CMAKE_CURRENT_SOURCE_DIR}/libYARP_dev/MapGrid2DTest.cpp)
     endif()
 
     get_property(YARP_TREE_INCLUDE_DIRS
