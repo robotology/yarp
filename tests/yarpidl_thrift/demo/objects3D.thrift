@@ -14,7 +14,7 @@ struct PointXYZ
 3: double z;
 }
 
-struct Polygon
+struct Polygonx
 {
 1: list<i32> vertices;
 }
@@ -28,7 +28,7 @@ struct SurfaceMesh
 1: string meshName
 2: list<PointXYZ> points;
 3: optional list<RGBA> rgbColour;
-4: optional list<Polygon> polygons;
+4: optional list<Polygonx> polygons;
 }
 
 struct Box3D
