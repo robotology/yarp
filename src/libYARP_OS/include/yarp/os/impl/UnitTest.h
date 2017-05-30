@@ -20,6 +20,9 @@ namespace yarp {
     }
 }
 
+// Explicit instantiation
+template class YARP_OS_impl_API PlatformVector<yarp::os::impl::UnitTest *>;
+
 /**
  * Simple unit testing framework.  There are libraries out there for
  * this, but we don't want to add another dependency to YARP.
