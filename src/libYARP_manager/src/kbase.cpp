@@ -99,8 +99,10 @@ bool KnowledgeBase::addApplication(Application* app, char* szAppName_, bool modi
     if(modifyName){
         if (szAppName_)
             delete szAppName_;
-        szAppName_ = new char(app->getNameLenght());
-        strcpy(szAppName_, app->getName());
+        size_t len = app->getNameLenght();
+        szAppName_ = new char(len + 1);
+        strncpy(szAppName_, app->getName(), len);
+        szAppName_[len] = '\0';
     }
     if(!kbGraph.addNode(app))
     {
