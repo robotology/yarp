@@ -75,7 +75,9 @@ void toXmlRpcValue(Value& vin, XmlRpcValue& vout)
 
 bool XmlRpcCarrier::expectSenderSpecifier(ConnectionState& proto)
 {
-    proto.setRoute(proto.getRoute().addFromName("rpc"));
+    Route route = proto.getRoute();
+    route.setFromName("rpc");
+    proto.setRoute(route);
     return true;
 }
 

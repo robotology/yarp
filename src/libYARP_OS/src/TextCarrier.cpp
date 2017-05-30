@@ -90,7 +90,9 @@ bool yarp::os::impl::TextCarrier::expectReplyToHeader(ConnectionState& proto) {
 
 bool yarp::os::impl::TextCarrier::expectSenderSpecifier(ConnectionState& proto) {
     YARP_SPRINTF0(Logger::get(), debug, "TextCarrier::expectSenderSpecifier");
-    proto.setRoute(proto.getRoute().addFromName(proto.is().readLine()));
+    Route route = proto.getRoute();
+    route.setFromName(proto.is().readLine());
+    proto.setRoute(route);
     return true;
 }
 

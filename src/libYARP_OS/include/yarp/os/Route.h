@@ -7,166 +7,235 @@
 #ifndef YARP_OS_ROUTE_H
 #define YARP_OS_ROUTE_H
 
+#include <yarp/conf/compiler.h>
+#include <yarp/conf/system.h>
 #include <yarp/os/api.h>
-#include <yarp/os/ConstString.h>
-#include <yarp/os/Contact.h>
+
+// Defined in this file:
+namespace yarp { namespace os { class ConstString; }}
+
+// Other forward declarations:
+namespace yarp { namespace os { class ConstString; }}
+namespace yarp { namespace os { class Contact; }}
+
 
 namespace yarp {
-    namespace os {
-        class Route;
-    }
-}
+namespace os {
 
 /**
- * Information about a connection between two ports.
+ * @ingroup comm_class
+ * @brief Information about a connection between two ports.
+ *
  * Contains the names of the endpoints, and the name of
  * the carrier in use between them.
  */
-class YARP_OS_API yarp::os::Route {
+class YARP_OS_API Route {
 public:
-    /**
-     *
-     * Constructor.
-     *
-     */
-    Route() {}
+
+/** @{ */
 
     /**
-     * Create a route.
+     * @brief Default constructor.
+     */
+    Route();
+
+    /**
+     * @brief Create a route.
      *
-     * @param fromKey Source of route.
-     * @param toKey Destination of route.
+     * @param fromName Source of route.
+     * @param toName Destination of route.
      * @param carrier Type of carrier.
      */
-    Route(const ConstString& fromKey,
-          const ConstString& toKey,
-          const ConstString& carrier) :
-            fromKey(fromKey),
-            toKey(toKey),
-            carrier(carrier) {
-    }
+    Route(const ConstString& fromName,
+          const ConstString& toName,
+          const ConstString& carrierName);
 
     /**
-     * Copy constructor
+     * @brief Copy constructor
      *
-     * @param alt Route to copy.
+     * @param rhs Route to copy.
      */
-    Route(const Route& alt) :
-            fromKey(alt.fromKey),
-            toKey(alt.toKey),
-            fromContact(alt.fromContact),
-            toContact(alt.toContact),
-            carrier(alt.carrier) {
-    }
+    Route(const Route& rhs);
+
+#if defined(YARP_HAS_CXX11) && YARP_COMPILER_CXX_RVALUE_REFERENCES
+    /**
+     * @brief Move constructor.
+     *
+     * @param rhs the Route to be moved
+     */
+    Route(Route&& rhs);
+#endif
 
     /**
-     * Get the source of the route.
+     * @brief Destructor.
+     */
+    virtual ~Route();
+
+    /**
+     * Copy assignment operator.
+     *
+     * @param rhs the Route to copy
+     * @return this object
+     */
+    Route& operator=(const Route& rhs);
+
+#if defined(YARP_HAS_CXX11) && YARP_COMPILER_CXX_RVALUE_REFERENCES
+    /**
+     * @brief Move assignment operator.
+     *
+     * @param rhs the Route to be moved
+     * @return this object
+     */
+    Route& operator=(Route&& rhs);
+#endif
+
+/** @} */
+/** @{ */
+
+    /**
+     * @brief Get the source of the route.
      *
      * @return the source of the route (a port name)
      */
-    const ConstString& getFromName() const {
-        return fromKey;
-    }
+    const ConstString& getFromName() const;
 
     /**
-     * Get the destination of the route.
+     * @brief Set the source of the route.
      *
+     * @param fromName the source of the route (a port name)
+     */
+    void setFromName(const ConstString& fromName);
+
+/** @} */
+/** @{ */
+
+    /**
+     * @brief Get the destination of the route.
      *
      * @return the destination of the route (a port name)
      */
-    const ConstString& getToName() const {
-        return toKey;
-    }
-
+    const ConstString& getToName() const;
 
     /**
-     * Get the destination contact of the route, if avaiable
+     * @brief Set the destination of the route.
      *
+     * @param toName the destination of the route (a port name)
+     */
+    void setToName(const ConstString& toName);
+
+/** @} */
+/** @{ */
+
+    /**
+     * @brief Get the destination contact of the route, if avaiable
      *
      * @return the destination of the route as a contact
      */
-    const Contact& getToContact() const {
-        return toContact;
-    }
+    const Contact& getToContact() const;
 
     /**
-     * Get the carrier type of the route.
+     * @brief Set the destination contact of the route
      *
+     * @param toContact the destination of the route as a contact
+     */
+    void setToContact(const Contact& toContact);
+
+/** @} */
+/** @{ */
+
+    /**
+     * @brief Get the carrier type of the route.
      *
      * @return the carrier type of the route.
      */
-    const ConstString& getCarrierName() const {
-        return carrier;
-    }
+    const ConstString& getCarrierName() const;
 
     /**
-     * Copy this route with a different source.
+     * @brief Set the carrier type of the route.
      *
-     * @param fromName The new source of the route.
-     *
-     * @return the created route.
+     * @param carrierName the carrier type of the route.
      */
-    Route addFromName(const ConstString& fromName) const {
-        Route result(*this);
-        result.fromKey = fromName;
-        return result;
-    }
+    void setCarrierName(const ConstString& carrierName);
+
+/** @} */
+/** @{ */
 
     /**
-     * Copy this route with a different destination.
-     *
-     * @param toName The new destination of the route.
-     *
-     * @return the created route.
+     * @brief Swap from and to names
      */
-    Route addToName(const ConstString& toName) const {
-        Route result(*this);
-        result.toKey = toName;
-        return result;
-    }
+    void swapNames();
+
+/** @} */
+/** @{ */
 
     /**
-     * Copy this route with a different contact.
-     *
-     * @param toContact new destination contact of the route.
-     *
-     * @return the created route.
-     */
-    Route addToContact(const Contact& toContact) const {
-        Route result(*this);
-        result.toContact = toContact;
-        return result;
-    }
-
-    /**
-     * Copy this route with a different carrier.
-     *
-     * @param carrierName The new carrier of the route.
-     *
-     * @return the created route.
-     */
-    Route addCarrierName(const ConstString& carrierName) const {
-        Route result(*this);
-        result.carrier = carrierName;
-        return result;
-    }
-
-    /**
-     * Render a text form of the route, "source->carrier->dest"
+     * @brief Render a text form of the route, "source->carrier->dest"
      *
      * @return the route in text form.
      */
-    ConstString toString() const {
-        return getFromName() + "->" + getCarrierName() + "->" +
-            getToName();
-    }
+    ConstString toString() const;
+
+/** @} */
+
+#ifndef YARP_NO_DEPRECATED // Since YARP 2.3.70
+
+/** @{ */
+
+    /**
+     * @brief Copy this route with a different source.
+     *
+     * @param fromName The new source of the route.
+     * @return the created route.
+     *
+     * @deprecated since YARP 2.3.70
+     */
+    YARP_DEPRECATED_MSG("Use setFromName instead")
+    Route addFromName(const ConstString& fromName) const;
+
+    /**
+     * @brief Copy this route with a different destination.
+     *
+     * @param toName The new destination of the route.
+     * @return the created route.
+     *
+     * @deprecated since YARP 2.3.70
+     */
+    YARP_DEPRECATED_MSG("Use setToName instead")
+    Route addToName(const ConstString& toName) const;
+
+    /**
+     * @brief Copy this route with a different contact.
+     *
+     * @param toContact new destination contact of the route.
+     * @return the created route.
+     *
+     * @deprecated since YARP 2.3.70
+     */
+    YARP_DEPRECATED_MSG("Use setToConstact instead")
+    Route addToContact(const Contact& toContact) const;
+
+    /**
+     * @brief Copy this route with a different carrier.
+     *
+     * @param carrierName The new carrier of the route.
+     * @return the created route.
+     *
+     * @deprecated since YARP 2.3.70
+     */
+    YARP_DEPRECATED_MSG("Use setCarrierName instead")
+    Route addCarrierName(const ConstString& carrierName) const;
+#endif // YARP_NO_DEPRECATED
+
 
 private:
-    ConstString fromKey;
-    ConstString toKey;
-    Contact fromContact;
-    Contact toContact;
-    ConstString carrier;
+#ifndef DOXYGEN_SHOULD_SKIP_THIS
+private:
+    class Private;
+    Private * mPriv;
+#endif // DOXYGEN_SHOULD_SKIP_THIS
 };
+
+} // namespace os
+} // namespace yarp
 
 #endif // YARP_OS_ROUTE_H

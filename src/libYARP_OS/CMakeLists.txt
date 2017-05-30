@@ -309,6 +309,7 @@ set(YARP_OS_SRCS src/AbstractCarrier.cpp
                  src/ResourceFinderOptions.cpp
                  src/RFModule.cpp
                  src/RosNameSpace.cpp
+                 src/Route.cpp
                  src/RpcClient.cpp
                  src/RpcServer.cpp
                  src/RunCheckpoints.cpp

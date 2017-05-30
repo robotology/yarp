@@ -155,7 +155,9 @@ bool yarp::os::impl::NameserCarrier::sendHeader(ConnectionState& proto) {
 }
 
 bool yarp::os::impl::NameserCarrier::expectSenderSpecifier(ConnectionState& proto) {
-    proto.setRoute(proto.getRoute().addFromName("anon"));
+    Route route = proto.getRoute();
+    route.setFromName("anon");
+    proto.setRoute(route);
     return true;
 }
 
