@@ -16,6 +16,7 @@ include_directories(${YARP_INCLUDE_DIRS})
 
 # ACE is required for yarp/os/impl/UnitTests.h
 find_package(ACE REQUIRED)
+include_directories(${ACE_INCLUDE_DIRS})
 
 include(YarpIDL)
 
@@ -29,7 +30,6 @@ yarp_idl_to_dir(sub/directory/clock_rpc.thrift ${generated_libs_dir} S5 H5 I5)
 yarp_idl_to_dir(settings.thrift ${generated_libs_dir} S6 H6 I6)
 
 include_directories(${generated_libs_dir}/include)
-include_directories(${YARP_INCLUDE_DIRS})
 add_executable(demo_yarp_idl_to_dir main.cpp ${S1} ${S2} ${S3} ${S4} ${S5} ${S6} ${H1} ${H2} ${H3} ${H4} ${H5} ${H6})
 target_link_libraries(demo_yarp_idl_to_dir ${YARP_LIBRARIES} ${ACE_LIBRARIES})
 
@@ -45,7 +45,6 @@ set(IDL_FILES demo.thrift
               sub/directory/clock_rpc.thrift
               settings.thrift)
 yarp_add_idl(IDL_GEN_FILES ${IDL_FILES})
-include_directories(${YARP_INCLUDE_DIRS})
 add_executable(demo_yarp_add_idl main.cpp ${IDL_GEN_FILES})
 target_link_libraries(demo_yarp_add_idl ${YARP_LIBRARIES} ${ACE_LIBRARIES})
 

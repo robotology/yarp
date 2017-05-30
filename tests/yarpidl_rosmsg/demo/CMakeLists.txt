@@ -16,6 +16,7 @@ include_directories(${YARP_INCLUDE_DIRS})
 
 # ACE is required for yarp/os/impl/UnitTests.h
 find_package(ACE REQUIRED)
+include_directories(${ACE_INCLUDE_DIRS})
 
 include(YarpIDL)
 
