@@ -97,7 +97,8 @@ bool KnowledgeBase::addApplication(Application* app, char* szAppName_, bool modi
     }
 
     if(modifyName){
-        delete szAppName_;
+        if (szAppName_)
+            delete szAppName_;
         szAppName_ = new char(app->getNameLenght());
         strcpy(szAppName_, app->getName());
     }
