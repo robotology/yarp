@@ -14,8 +14,10 @@ endif()
 
 if(ENABLE_yarpmod_ffmpeg_grabber)
   list(APPEND _inis ffmpeg_grabber_basic.ini
-                    remote_grabber_basic.ini
-                    ffmpeg_grabber_video4linux.ini)
+                    remote_grabber_basic.ini)
+  if(EXISTS "/dev/video0")
+    list(APPEND _inis ffmpeg_grabber_video4linux.ini)
+  endif()
   if(YARP_ENABLE_BROKEN_TESTS)
     list(APPEND _inis grabber_audiovisual.ini) # Fails with a segmentation fault
   endif()
@@ -25,7 +27,8 @@ if(ENABLE_yarpmod_ffmpeg_writer)
   list(APPEND _inis ffmpeg_writer_basic.ini)
 endif()
 
-if(ENABLE_yarpmod_opencv_grabber)
+# FIXME: Check if this can be enabled on Windows
+if(ENABLE_yarpmod_opencv_grabber AND EXISTS "/dev/video0")
   list(APPEND _inis opencv_grabber_basic.ini)
 endif()
 
@@ -34,7 +37,7 @@ if(ENABLE_yarpmod_portaudio)
                     portaudio_basic.ini)
 endif()
 
-if(NOT YARP_NO_DEPRECATED) # controlboard is deprecated since YARP 2.3.65
+if(YARP_ENABLE_BROKEN_TESTS) # controlboard was removed since YARP 2.3.70
   list(APPEND _inis controlboard_basic.ini)
   if(ENABLE_yarpmod_test_grabber)
     list(APPEND _inis group_basic.ini)
