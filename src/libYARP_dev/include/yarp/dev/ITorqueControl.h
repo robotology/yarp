@@ -154,7 +154,7 @@ public:
      */
     YARP_DEPRECATED_MSG("Use setPid(VOCAB_PIDTYPE_TORQUE,...) instead")
     virtual bool setTorquePid(int j, const Pid &pid)
-    { IPidControl* p; p=dynamic_cast<IPidControl*>(this); if (p) {return p->setPid(VOCAB_PIDTYPE_TORQUE,j,pid);} else {yError()<< "setTorquePid is DEPRECATED, use setPidRaw(VOCAB_PIDTYPE_TORQUE,...) instead" ;return false;}}
+    { IPidControl* p; p=dynamic_cast<IPidControl*>(this); if (p) {return p->setPid(VOCAB_PIDTYPE_TORQUE,j,pid);} else {yError()<< "setTorquePid is DEPRECATED, use setPid(VOCAB_PIDTYPE_TORQUE,...) instead" ;return false;}}
 
 
     /** Set new pid value on multiple axes.
@@ -425,7 +425,7 @@ public:
      * @param pids pointer to a vector of pids
      * @return true/false upon success/failure
      */
-     YARP_DEPRECATED_MSG("Use setPidRaw(VOCAB_PIDTYPE_TORQUE,...) instead")
+     YARP_DEPRECATED_MSG("Use setPidsRaw(VOCAB_PIDTYPE_TORQUE,...) instead")
     virtual bool setTorquePidsRaw(const Pid *pids)
     { IPidControlRaw* p; p=dynamic_cast<IPidControlRaw*>(this); if (p) {return p->setPidsRaw(VOCAB_PIDTYPE_TORQUE,pids);} else {yError()<< "setTorquePidsRaw is DEPRECATED, use setPidsRaw(VOCAB_PIDTYPE_TORQUE,...) instead" ;return false;}}
 

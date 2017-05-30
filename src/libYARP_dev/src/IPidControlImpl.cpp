@@ -168,14 +168,12 @@ bool ImplementPidControl::setPidReference(const PidControlTypeEnum& pidtype,  in
 {
     int k=0;
     double raw;
-    //castToMapper(helper)->posA2E(ref, j, enc, k); ///&&&
     this->convert_units_to_machine(pidtype,ref,j,raw,k);
     return iPid->setPidReferenceRaw(pidtype, k, raw);
 }
 
 bool ImplementPidControl::setPidReferences(const PidControlTypeEnum& pidtype,  const double *refs)
 {
-    //castToMapper(helper)->posA2E(refs, temp); ///&&&
     this->convert_units_to_machine(pidtype,refs,temp);
     return iPid->setPidReferencesRaw(pidtype, temp);
 }
@@ -184,14 +182,12 @@ bool ImplementPidControl::setPidErrorLimit(const PidControlTypeEnum& pidtype,  i
 {
     int k;
     double raw;
-    //castToMapper(helper)->posA2E(limit, j, enc, k); ///&&&
     this->convert_units_to_machine(pidtype,limit,j,raw,k);
     return iPid->setPidErrorLimitRaw(pidtype, k, raw);
 }
 
 bool ImplementPidControl::setPidErrorLimits(const PidControlTypeEnum& pidtype,  const double *limits)
 {
-    //castToMapper(helper)->posA2E(limits, temp); ///&&&
     this->convert_units_to_machine(pidtype,limits,temp);
     return iPid->setPidErrorLimitsRaw(pidtype, temp);
 }
@@ -205,7 +201,6 @@ bool ImplementPidControl::getPidError(const PidControlTypeEnum& pidtype, int j, 
 
     bool ret=iPid->getPidErrorRaw(pidtype, k, &raw);
 
-    //*err=castToMapper(helper)->velE2A(enc, k); ///&&&
     this->convert_units_to_user(pidtype,raw,err,k);
     return ret;
 }
@@ -215,7 +210,6 @@ bool ImplementPidControl::getPidErrors(const PidControlTypeEnum& pidtype,  doubl
     bool ret;
     ret=iPid->getPidErrorsRaw(pidtype, temp);
 
-    //castToMapper(helper)->velE2A(temp, errs); ///&&&
     this->convert_units_to_user(pidtype,temp,errs);
     return ret;
 }
@@ -269,7 +263,6 @@ bool ImplementPidControl::getPidReference(const PidControlTypeEnum& pidtype, int
 
     ret=iPid->getPidReferenceRaw(pidtype, k, &raw);
 
-    //*ref=castToMapper(helper)->posE2A(enc, k); ///&&&
     this->convert_units_to_user(pidtype,raw,ref,k);
     return ret;
 }
@@ -279,7 +272,6 @@ bool ImplementPidControl::getPidReferences(const PidControlTypeEnum& pidtype, do
     bool ret;
     ret=iPid->getPidReferencesRaw(pidtype, temp);
 
-    //castToMapper(helper)->posE2A(temp, refs); ///&&&
     this->convert_units_to_user(pidtype,temp,refs);
     return ret;
 }
@@ -294,7 +286,6 @@ bool ImplementPidControl::getPidErrorLimit(const PidControlTypeEnum& pidtype, in
 
     ret=iPid->getPidErrorLimitRaw(pidtype, k, &raw);
 
-    //*ref=castToMapper(helper)->posE2A(enc, k); ///&&&
     this->convert_units_to_user(pidtype,raw,ref,k);
     return ret;
 }
@@ -304,7 +295,6 @@ bool ImplementPidControl::getPidErrorLimits(const PidControlTypeEnum& pidtype, d
     bool ret;
     ret=iPid->getPidErrorLimitsRaw(pidtype, temp);
 
-    //castToMapper(helper)->posE2A(temp, refs); ///&&&
     this->convert_units_to_user(pidtype,temp,refs);
     return ret;
 }

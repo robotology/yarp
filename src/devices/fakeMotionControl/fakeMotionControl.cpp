@@ -1413,7 +1413,7 @@ bool FakeMotionControl::setPidRaw(const PidControlTypeEnum& pidtype, int j, cons
             _cpids[j]=pid;
         break;
         case VOCAB_PIDTYPE_TORQUE:
-           _tpids[j]=pid;
+            _tpids[j]=pid;
         break;
         default:
         break;
