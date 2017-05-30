@@ -24,11 +24,34 @@
 using namespace yarp::os;
 using namespace yarp::dev;
 
+/**
+* @ingroup dev_impl_wrapper
+* FakeLaser sensor device for testing purposes and reference for IRangefinder2D devices
+*
+* \section Description of input parameters
+*
+* Parameters accepted in the config argument of the open method:
+* | Parameter name      | Type   | Units | Default Value | Required | Description | Notes |
+* |:-------------------:|:------:|:-----:|:-------------:|:--------:|:-----------:|:-----:|
+* | test                | string |   -   |       -       | Yes      | Choose the modality   | It can be one of the following: no_obstacles, use_pattern, use_mapfile | 
+* | localization_port   | string |   -   |       -       | No       | Full name of the port to which device connects to receive the localization data   |  | 
+* | localization_client | string |   -   |       -       | No       | Full name of the local transformClient opened by the device | It cannot be used togheter if localization_port parameter is set | 
+* | map_file            | string |   -   |       -       | No       | Full path to a .map file   | Mandatory if --test use_mapfile option has been set | 
+*
+* \section Usage examples:
+* yarpdev --device fakeLaser --help
+* yarpdev --device Rangefinder2DWrapper --subdevice fakeLaser --period 10 --name /ikart/laser:o --test no_obstacles
+* yarpdev --device Rangefinder2DWrapper --subdevice fakeLaser --period 10 --name /ikart/laser:o --test use_pattern
+* yarpdev --device Rangefinder2DWrapper --subdevice fakeLaser --period 10 --name /ikart/laser:o --test use_mapfile --map_file mymap.map
+* yarpdev --device Rangefinder2DWrapper --subdevice fakeLaser --period 10 --name /ikart/laser:o --test use_mapfile --map_file mymap.map --localization_port /fakeLaser/location:i
+* yarpdev --device Rangefinder2DWrapper --subdevice fakeLaser --period 10 --name /ikart/laser:o --test use_mapfile --map_file mymap.map --localization_client /fakeLaser/localizationClient
+*/
+
 class FakeLaser : public RateThread, public yarp::dev::IRangefinder2D, public DeviceDriver
 {
 protected:
     enum test_mode_t { NO_OBSTACLES = 0, USE_PATTERN =1, USE_MAPFILE =2 };
-    enum localization_mode_t { LOC_FROM_PORT = 0, LOC_FROM_CLIENT = 1 };
+    enum localization_mode_t { LOC_NOT_SET=0, LOC_FROM_PORT = 1, LOC_FROM_CLIENT = 2 };
 
     PolyDriver driver;
     test_mode_t m_test_mode;
@@ -72,7 +95,6 @@ public:
         m_iLoc = 0;
     }
     
-
     ~FakeLaser()
     {
         delete m_rd;

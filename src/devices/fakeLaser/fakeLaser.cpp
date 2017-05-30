@@ -25,6 +25,8 @@
 
 using namespace std;
 
+// see FakeLaser.h for device documentation
+
 bool FakeLaser::open(yarp::os::Searchable& config)
 {
     info = "Fake Laser device for test/debugging";
@@ -54,9 +56,9 @@ bool FakeLaser::open(yarp::os::Searchable& config)
     }
 
     string string_test_mode = config.check("test", Value(string("use_pattern")), "string to select test mode").asString();
-    if      (string_test_mode == "no_obstacles") m_test_mode = NO_OBSTACLES;
-    else if (string_test_mode == "use_pattern") m_test_mode = USE_PATTERN;
-    else if (string_test_mode == "use_mapfile") m_test_mode = USE_MAPFILE;
+    if      (string_test_mode == "no_obstacles") { m_test_mode = NO_OBSTACLES; }
+    else if (string_test_mode == "use_pattern") { m_test_mode = USE_PATTERN; }
+    else if (string_test_mode == "use_mapfile") { m_test_mode = USE_MAPFILE; }
     else    { yError() << "invalid/unknown value for param 'test'"; return false; }
 
     min_distance = 0.1;  //m
@@ -283,25 +285,25 @@ void FakeLaser::run()
         {
             double value = 0;
             if (test == 0)
-                value = i / 100.0;
+                { value = i / 100.0; }
             else if (test == 1)
-                value = size * 2;
+                { value = size * 2; }
             else if (test == 2)
             {
-                if (i >= 0 && i <= 10) value = 1.0 + i / 20.0;
-                else if (i >= 90 && i <= 100) value = 2.0 + (i - 90) / 20.0;
-                else value = min_distance;
+                if (i >= 0 && i <= 10) { value = 1.0 + i / 20.0; }
+                else if (i >= 90 && i <= 100) { value = 2.0 + (i - 90) / 20.0; }
+                else { value = min_distance; }
             }
 
-            if (value < min_distance) value = min_distance;
-            if (value > max_distance) value = max_distance;
+            if (value < min_distance) { value = min_distance; }
+            if (value > max_distance) { value = max_distance; }
             laser_data.push_back(value);
         }
 
         test_count++;
         if (test_count == 60)
         {
-            test_count = 0; test++; if (test > 2) test = 0;
+            test_count = 0; test++; if (test > 2) { test = 0; }
             t_orig = yarp::os::Time::now();
         }
     }
@@ -314,7 +316,11 @@ void FakeLaser::run()
     }
     else if (m_test_mode == USE_MAPFILE)
     {
-        if (m_loc_mode == LOC_FROM_PORT)
+        if (m_loc_mode == LOC_NOT_SET)
+        {
+            //do nothing
+        }
+        else if (m_loc_mode == LOC_FROM_PORT)
         {
             Bottle* b = m_loc_port->read(false);
             if (b)
@@ -337,6 +343,10 @@ void FakeLaser::run()
             {
                 yError() << "Error occurred while getting current position from localization server";
             }
+        }
+        else
+        {
+            yDebug() << "No localization mode selected. This branch should be not reachable.";
         }
 
         for (int i = 0; i < sensorsNum; i++)
@@ -372,8 +382,8 @@ double FakeLaser::checkStraightLine(MapGrid2D::XYCell src, MapGrid2D::XYCell dst
 
     int sx;
     int sy;
-    if (src.x < dst.x) sx = 1; else sx = -1;
-    if (src.y < dst.y) sy = 1; else sy = -1;
+    if (src.x < dst.x) { sx = 1; } else { sx = -1; }
+    if (src.y < dst.y) { sy = 1; } else { sy = -1; }
 
     while (1)
     {
