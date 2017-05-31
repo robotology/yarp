@@ -119,6 +119,7 @@ set(YARP_dev_SRCS src/ControlBoardInterfacesImpl.cpp
                   src/IControlLimit2sImpl.cpp
                   src/IEncodersTimedImpl.cpp
                   src/IInteractionModeImpl.cpp
+                  src/IJoypadController.cpp
                   src/IMotorEncodersImpl.cpp
                   src/IMotorImpl.cpp
                   src/ImpedanceControlImpl.cpp

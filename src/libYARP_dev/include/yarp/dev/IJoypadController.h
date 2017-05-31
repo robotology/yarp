@@ -10,6 +10,9 @@
 #include <yarp/sig/Vector.h>
 #include <yarp/dev/api.h>
 #include <yarp/os/Vocab.h>
+#include <map>
+
+#define HAT_ACTIONS_ID_SHIFT 100
 
 namespace yarp
 {
@@ -21,7 +24,11 @@ namespace yarp
 
 class  YARP_dev_API yarp::dev::IJoypadController
 {
+protected:
+    std::map<int, std::string> m_actions;
 
+    virtual bool parseActions(const yarp::os::Searchable& cfg, int *count = YARP_NULLPTR);
+    virtual bool executeAction(int action_id);
 public:
 
     enum JoypadCtrl_coordinateMode {JypCtrlcoord_POLAR  =  0, JypCtrlcoord_CARTESIAN = 1};
@@ -113,7 +120,7 @@ public:
      Get the value of an Hat.
     * @brief getHat
     * @param hat_id Id of the POV hat to get. Must be > -1 && < getHatCount(), return false otherwise
-    * @param value reference to be valued.
+    * @param value reference to be valued. use the YRPJOY_HAT_ macro series to get the currently pressed directions
     * @return true if succeded, false otherwise
     */
     virtual bool getHat(unsigned int hat_id, unsigned char& value) = 0;
@@ -154,7 +161,7 @@ public:
 #define YRPJOY_HAT_DOWN		 0x04
 #define YRPJOY_HAT_LEFT		 0x08
 #define YRPJOY_HAT_RIGHTUP	 (YRPJOY_HAT_RIGHT|YRPJOY_HAT_UP)
-#define YRPJOY_HAT_RIGHTDOWN (YRPJOY_HAT_RIGHT|YRPJOY_HAT_DOWN)
+#define YRPJOY_HAT_RIGHTDOWN     (YRPJOY_HAT_RIGHT|YRPJOY_HAT_DOWN)
 #define YRPJOY_HAT_LEFTUP	 (YRPJOY_HAT_LEFT |YRPJOY_HAT_UP)
 #define YRPJOY_HAT_LEFTDOWN	 (YRPJOY_HAT_LEFT |YRPJOY_HAT_DOWN)
 
@@ -181,9 +188,7 @@ public:
 //todo list 23/03/2017..
 //1. complete the single port functionality between server and client and test
 //2. complete the rpc_only functionality in the client (add the parameter in the open() and test it)
-//3. complete the stick management in the sdl driver and test
-//4. sdl hat #define to vocab traduction (just in case they change something)
-//5. SDLJoypad implement stick functionality
-//6. SDLJoypad implement deadband
-//7. SDLJoypad implement button/axis remapping
-//8. SDLJoypad implement actions
+//3. sdl hat #define to vocab traduction (just in case they change something)
+//4. SDLJoypad implement stick functionality
+//5. SDLJoypad implement deadband
+//6. SDLJoypad implement button/axis remapping

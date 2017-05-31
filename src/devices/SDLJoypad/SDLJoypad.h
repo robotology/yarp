@@ -11,18 +11,32 @@
 #include <yarp/dev/DeviceDriver.h>
 #include <SDL.h>
 #include <vector>
+#include <yarp/os/RateThread.h>
 
 
 namespace yarp {
     namespace dev {
-        class SDLJoypad;
+        class  SDLJoypad;
+        namespace SDLJoypadImpl
+        {
+            struct stick;
+        }
       }
 }
+
+struct yarp::dev::SDLJoypadImpl::stick
+{
+    std::vector<unsigned int>  axes_ids;
+    float                      deadZone;
+    std::vector<int>           direction;
+};
 
 class yarp::dev::SDLJoypad : public yarp::dev::IJoypadController,
                              public yarp::dev::DeviceDriver
 {
+    typedef std::vector<yarp::dev::SDLJoypadImpl::stick> stickVector;
 
+    SDL_Event                  m_event;
     std::vector<SDL_Joystick*> m_device;
     unsigned int               m_buttonCount;
     unsigned int               m_axisCount;
@@ -31,12 +45,18 @@ class yarp::dev::SDLJoypad : public yarp::dev::IJoypadController,
     unsigned int               m_ballCount;
     unsigned int               m_hatCount;
     bool                       m_allJoypad;
+    stickVector                m_sticks;
+    std::vector<bool>          m_axes;
+    double                     m_actionTimestamp;
 
     void updateJoypad();
+    void pollActions();
+    bool parseStickInfo(const yarp::os::Searchable& cfg);
+    bool getRawAxis(unsigned int axis_id, double& value);
 public:
 
     SDLJoypad();
-    ~SDLJoypad();
+    virtual ~SDLJoypad();
     //DeviceDriver
     virtual bool open(yarp::os::Searchable& config);
     virtual bool close();
