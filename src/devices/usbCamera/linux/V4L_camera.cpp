@@ -403,6 +403,7 @@ bool V4L_camera::fromConfig(yarp::os::Searchable& config)
         yDebug() << "Bits used for de-bayer " << bit_bayer;
     }
 
+    //crop is used to pass from 16:9 to 4:3
     if(config.check("crop") )
     {
         doCropping = true;
@@ -1309,10 +1310,6 @@ void V4L_camera::imageProcess(void* p, bool useRawData)
 
         case STANDARD_UVC:
         {
-//             std::cout << "dst w " << param.dst_fmt.fmt.pix.width << "; src w " << param.src_fmt.fmt.pix.width << std::endl;
-//             std::cout << "dst h " << param.dst_fmt.fmt.pix.height << "; src h " << param.src_fmt.fmt.pix.height << std::endl;
-//             std::cout << "param w " << param.width << "; param h " << param.height << std::endl;
-//             std::cout << "dst size " << param.dst_image_size << "; src size " << param.image_size << std::endl;
 
             if( v4lconvert_convert((v4lconvert_data*) _v4lconvert_data,  &param.src_fmt,   &param.dst_fmt,
                                                       (unsigned char *)p, param.image_size, param.tmp_image, param.rgb_src_image_size)  <0 )
@@ -1340,21 +1337,10 @@ void V4L_camera::imageProcess(void* p, bool useRawData)
                         memcpy((void *) &param.tmp_image2[h*tmp2_rowSize+tmp2_rowSize/2],  (void *)&param.tmp_image[h*tmp1_rowSize+tmp1_rowSize/2], tmp2_rowSize/2);
                     }
 // 666
-//                     cv::Mat img( param.src_fmt.fmt.pix.height, param.src_fmt.fmt.pix.width*12/16, CV_8UC3, param.tmp_image2);
                     cv::Mat img(cv::Size(param.src_fmt.fmt.pix.width*12/16, param.src_fmt.fmt.pix.height), CV_8UC3, param.tmp_image2);
                     param.img=img;
-//                     cv::resize(img, param.outMat, cvSize(param.src_fmt.fmt.pix.width*12/16, param.src_fmt.fmt.pix.height));
-//                     cv::resize(img, param.outMat, cvSize(0, 0), param.src_fmt.fmt.pix.width*12/16/param.width, param.src_fmt.fmt.pix.height/param.height, cv::INTER_CUBIC);
                     cv::resize(img, param.outMat, cvSize(param.width, param.height), 0, 0, cv::INTER_CUBIC);
 
-//                     memcpy((unsigned char *)param.dst_image, (unsigned char *) param.outMat.data, param.width* param.height*3);
-
-
-//                     for(int h=0; h<param.src_fmt.fmt.pix.height; h++)
-//                     {
-//                         memcpy((void *) &param.tmp_image2[h*tmp_rowSize_out],                    (void *)&param.tmp_image[h*tmp_rowSize],               tmp_rowSize_out/2);
-//                         memcpy((void *) &param.tmp_image2[h*tmp_rowSize_out+tmp_rowSize_out/2],  (void *)&param.tmp_image[h*tmp_rowSize+tmp_rowSize/2], tmp_rowSize_out/2);
-//                     }
                 }
                 else
                 {
@@ -1362,10 +1348,6 @@ void V4L_camera::imageProcess(void* p, bool useRawData)
                     {
                         memcpy((void *) &param.tmp_image2[h*tmp2_rowSize], (void *)&param.tmp_image[h*tmp1_rowSize], tmp2_rowSize);
                     }
-//                     for(int h=0; h<param.src_fmt.fmt.pix.height; h++)
-//                     {
-//                         memcpy((void *) &param.dst_image[h*rowSize/16*12], (void *)&param.tmp_image[h*rowSize], rowSize/16*12);
-//                     }
                 }
             }
             else
@@ -1373,7 +1355,6 @@ void V4L_camera::imageProcess(void* p, bool useRawData)
                 cv::Mat img(cv::Size(param.src_fmt.fmt.pix.width, param.src_fmt.fmt.pix.height), CV_8UC3, param.tmp_image);
                 param.img=img;
                 cv::resize(img, param.outMat, cvSize(param.width, param.height), 0, 0, cv::INTER_CUBIC);
-//                 memcpy((unsigned char *)param.dst_image, (unsigned char *)param.tmp_image, param.image_size);
             }
             break;
         }
