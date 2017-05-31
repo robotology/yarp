@@ -50,7 +50,7 @@ public:
                     AppLoader* _apploader,
                     ResourceLoader* _resloader);
     bool addApplication(Application* application,
-                        char* szAppName_=NULL,
+                        char **szAppName_=NULL,
                         bool modifyName=false);
     bool addModule(Module* module);
     bool addResource(GenericResource* resource);

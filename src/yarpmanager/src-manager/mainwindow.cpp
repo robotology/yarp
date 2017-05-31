@@ -905,9 +905,11 @@ void MainWindow::onNewApplication()
         currentAppDescription = newApplicationWizard->description;
         currentAppVersion = newApplicationWizard->version;
         fileName = newApplicationWizard->fileName;
+        size_t len = newApplicationWizard->name.toLatin1().size();
         char* appName;
-        appName = new char (newApplicationWizard->name.toLatin1().size());
-        strcpy(appName, newApplicationWizard->name.toLatin1().data());
+        appName = new char [len+1];
+        strncpy(appName, newApplicationWizard->name.toLatin1().data(), len);
+        appName[len] = '\0';
         if (newApplicationWizard->alreadyExists)
         {
             if (!lazyManager.removeApplication(newApplicationWizard->fileName.toLatin1().data(),
@@ -920,7 +922,7 @@ void MainWindow::onNewApplication()
         initializeFile("Application");
 
         if (lazyManager.addApplication(newApplicationWizard->fileName.toLatin1().data(),
-                                      appName,true))
+                                      &appName,true))
         {
             QString newApp(appName);
             syncApplicationList(newApp);
@@ -931,7 +933,7 @@ void MainWindow::onNewApplication()
             reportErrors();
         }
 
-        delete appName;
+        delete [] appName;
         delete newApplicationWizard;
         QFile f(fileName);
         f.remove();
@@ -1190,8 +1192,9 @@ void MainWindow::onRemoveApplication(QString xmlFile, QString appName)
 
 void MainWindow::onReopenApplication(QString appName,QString fileName)
 {
-    lazyManager.removeApplication(fileName.toLatin1().data(),appName.toLatin1().data());
-    lazyManager.addApplication(fileName.toLatin1().data(),appName.toLatin1().data());
+    lazyManager.removeApplication(fileName.toLatin1().data(), appName.toLatin1().data());
+    char * appNamePtr = appName.toLatin1().data();
+    lazyManager.addApplication(fileName.toLatin1().data(), &appNamePtr);
     syncApplicationList();
 }
 
