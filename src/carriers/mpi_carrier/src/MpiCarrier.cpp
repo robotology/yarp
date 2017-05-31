@@ -109,7 +109,10 @@ bool MpiCarrier::expectSenderSpecifier(ConnectionState& proto) {
     #endif
 
     other = proto.is().readLine();
-    proto.setRoute(proto.getRoute().addFromName(other));
+    Route r = proto.getRoute();
+    r.setFromName(other);
+    proto.setRoute(r);
+
     // Receiver
     route = name + "<-" + other;
 

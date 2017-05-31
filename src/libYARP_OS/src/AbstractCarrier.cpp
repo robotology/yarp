@@ -124,7 +124,9 @@ bool AbstractCarrier::expectSenderSpecifier(ConnectionState& proto)
     // add null termination for YARP1
     b.get()[len] = '\0';
     ConstString s = b.get();
-    proto.setRoute(proto.getRoute().addFromName(s));
+    Route route = proto.getRoute();
+    route.setFromName(s);
+    proto.setRoute(route);
     return true;
 }
 

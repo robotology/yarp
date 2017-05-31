@@ -39,8 +39,12 @@ Protocol::Protocol(TwoWayStream* stream) :
 }
 
 bool Protocol::open(const ConstString& name) {
-    if (name=="") return false;
-    setRoute(getRoute().addToName(name));
+    if (name=="") {
+        return false;
+    }
+    Route r = getRoute();
+    r.setToName(name);
+    setRoute(r);
     // We are not the initiator of the connection, so we
     // expect to receive a header (carrier-dependent).
     bool ok = expectHeader();
@@ -72,7 +76,7 @@ void Protocol::setRoute(const Route& route) {
     if (from.find(' ')!=ConstString::npos) {
         Bottle b(from.c_str());
         if (b.size()>1) {
-            r = r.addFromName(b.get(0).toString().c_str());
+            r.setFromName(b.get(0).toString().c_str());
             for (int i=1; i<b.size(); i++) {
                 Value& v = b.get(i);
                 Bottle *lst = v.asList();
@@ -83,7 +87,7 @@ void Protocol::setRoute(const Route& route) {
                     carrier = carrier + "+" + v.toString().c_str();
                 }
             }
-            r = r.addCarrierName(carrier);
+            r.setCarrierName(carrier);
         }
     }
 
@@ -303,7 +307,9 @@ void Protocol::setCarrier(const ConstString& carrierNameBase) {
     // has all the protocol-specific behavior.
     ConstString carrierName = carrierNameBase;
     if (carrierNameBase=="") carrierName = "tcp";
-    setRoute(getRoute().addCarrierName(carrierName));
+    Route route = getRoute();
+    route.setCarrierName(carrierName);
+    setRoute(route);
     if (delegate==YARP_NULLPTR) {
         delegate = Carriers::chooseCarrier(carrierName);
         if (delegate!=YARP_NULLPTR) {
@@ -379,7 +385,9 @@ bool Protocol::expectProtocolSpecifier() {
         YARP_DEBUG(log, "unrecognized protocol");
         return false;
     }
-    setRoute(getRoute().addCarrierName(delegate->getName()));
+    Route r = getRoute();
+    r.setCarrierName(delegate->getName());
+    setRoute(r);
     delegate->setParameters(header);
     return true;
 }

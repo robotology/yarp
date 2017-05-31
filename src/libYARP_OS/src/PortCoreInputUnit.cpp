@@ -137,7 +137,8 @@ void PortCoreInputUnit::run() {
             OutputProtocol *op = &(ip->getOutput());
             Route r = op->getRoute();
             // reverse route
-            op->rename(Route().addFromName(r.getToName()).addToName(r.getFromName()).addCarrierName(r.getCarrierName()));
+            r.swapNames();
+            op->rename(r);
 
             getOwner().addOutput(op);
             ip = YARP_NULLPTR;
@@ -317,7 +318,8 @@ void PortCoreInputUnit::run() {
                 ip->endRead();
                 Route r = op->getRoute();
                 // reverse route
-                op->rename(Route().addFromName(r.getToName()).addToName(r.getFromName()).addCarrierName(r.getCarrierName()));
+                r.swapNames();
+                op->rename(r);
 
                 getOwner().addOutput(op);
                 ip = YARP_NULLPTR;

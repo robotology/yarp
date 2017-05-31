@@ -618,7 +618,9 @@ bool yarp::os::impl::HttpCarrier::sendHeader(ConnectionState& proto) {
 }
 
 bool yarp::os::impl::HttpCarrier::expectSenderSpecifier(ConnectionState& proto) {
-    proto.setRoute(proto.getRoute().addFromName("web"));
+    Route route = proto.getRoute();
+    route.setFromName("web");
+    proto.setRoute(route);
     ConstString remainder = proto.is().readLine();
     if (!urlDone) {
         for (unsigned int i=0; i<remainder.length(); i++) {

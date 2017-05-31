@@ -184,7 +184,9 @@ bool yarp::os::impl::LocalCarrier::expectExtraHeader(ConnectionState& proto) {
     //printf("receiver %ld (%s) sees sender %ld (%s)\n",
     //       (long int) this, portName.c_str(),
     //       (long int) peer, peer->portName.c_str());
-    proto.setRoute(proto.getRoute().addFromName(peer->portName));
+    Route route = proto.getRoute();
+    route.setFromName(peer->portName);
+    proto.setRoute(route);
     peerMutex.post();
 
     return true;

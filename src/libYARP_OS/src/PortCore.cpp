@@ -875,10 +875,10 @@ bool PortCore::addOutput(const ConstString& dest, void *id, OutputStream *os,
     if (aname=="") {
         aname = address.toURI(false);
     }
-    Route r = Route(getName(), aname,
-                    (parts.getCarrier()!="")?parts.getCarrier():
-                    address.getCarrier());
-    r = r.addToContact(contact);
+    Route r(getName(),
+            aname,
+            ((parts.getCarrier()!="") ? parts.getCarrier() : address.getCarrier()));
+    r.setToContact(contact);
 
     // Check for any restrictions on the port.  Perhaps it can only
     // read, or write.
@@ -963,7 +963,8 @@ bool PortCore::addOutput(const ConstString& dest, void *id, OutputStream *os,
         // sender.  HTTP and ROS have pull connections, initiated
         // by the receiver.
         // We invert the route, flip the protocol direction, and add.
-        op->rename(Route().addFromName(r.getToName()).addToName(r.getFromName()).addCarrierName(r.getCarrierName()));
+        r.swapNames();
+        op->rename(r);
         InputProtocol *ip =  &(op->getInput());
         stateMutex.wait();
         if (!finished) {
@@ -2085,7 +2086,9 @@ bool PortCore::adminBlock(ConnectionReader& reader, void *id,
                                     op->attachPort(contactable);
                                     op->open(r);
                                 }
-                                op->rename(Route().addFromName(op->getRoute().getToName()).addToName(op->getRoute().getFromName()).addCarrierName(op->getRoute().getCarrierName()));
+                                Route route = op->getRoute();
+                                route.swapNames();
+                                op->rename(route);
                                 InputProtocol *ip =  &(op->getInput());
                                 stateMutex.wait();
                                 PortCoreUnit *unit = new PortCoreInputUnit(*this,

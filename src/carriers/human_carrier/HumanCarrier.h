@@ -93,7 +93,9 @@ public:
 
     virtual bool expectSenderSpecifier(ConnectionState& proto) {
         // interpret everything that sendHeader wrote
-        proto.setRoute(proto.getRoute().addFromName(proto.is().readLine()));
+        Route route = proto.getRoute();
+        route.setFromName(proto.is().readLine());
+        proto.setRoute(route);
         return proto.is().isOk();
     }
 
