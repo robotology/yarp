@@ -8,7 +8,7 @@ Instantiates \ref cmd_device_controlboard "controlboard" device implemented by y
 device controlboard
 subdevice test_motor
 axis 8
-
+allow-deprecated-devices 1
 \endverbatim
 If this text is saved in a file called controlboard_basic.ini then the device can be created by doing:
 \verbatim
@@ -33,6 +33,7 @@ Here is a list of properties checked when starting up a device based on this con
 <tr><td>stream_state</td><td>whether to stream state (1) or not (0)</td><td>1</td></tr>
 <tr><td>subdevice</td><td>name of specific control device to wrap</td><td></td></tr>
 <tr><td>name</td><td>prefix for port names</td><td>/controlboard</td></tr>
+<tr><td>allow-deprecated-devices</td><td></td><td></td></tr>
 </table>
 
 \sa yarp::dev::ServerControlBoard

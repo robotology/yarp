@@ -3,11 +3,21 @@
 # CopyPolicy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
 
 cmake_minimum_required(VERSION 3.0)
-
+project(demo)
 enable_testing()
+
+set_property(GLOBAL PROPERTY USE_FOLDERS 1)
+set_property(GLOBAL PROPERTY AUTOGEN_TARGETS_FOLDER "Autogen Targets")
+set_property(GLOBAL PROPERTY AUTOGEN_SOURCE_GROUP "Generated Files")
 
 find_package(YARP REQUIRED)
 list(APPEND CMAKE_MODULE_PATH ${YARP_MODULE_PATH})
+include_directories(${YARP_INCLUDE_DIRS})
+
+# ACE is required for yarp/os/impl/UnitTests.h
+find_package(ACE REQUIRED)
+include_directories(${ACE_INCLUDE_DIRS})
+
 include(YarpIDL)
 
 # Test using yarp_idl_to_dir
@@ -20,12 +30,11 @@ yarp_idl_to_dir(HeaderTest.msg ${generated_libs_dir} S5 H5)
 yarp_idl_to_dir(HeaderTest2.srv ${generated_libs_dir} S6 H6)
 
 include_directories(${generated_libs_dir}/include)
-include_directories(${YARP_INCLUDE_DIRS})
-add_executable(demo_test main.cpp ${S1} ${S2} ${S3} ${S4} ${H1} ${H2} ${H3} ${H4} ${S5} ${H5} ${S6} ${H6})
-target_link_libraries(demo_test ${YARP_LIBRARIES})
+add_executable(demo_yarp_idl_to_dir main.cpp ${S1} ${S2} ${S3} ${S4} ${H1} ${H2} ${H3} ${H4} ${S5} ${H5} ${S6} ${H6})
+target_link_libraries(demo_yarp_idl_to_dir ${YARP_LIBRARIES} ${ACE_LIBRARIES})
 
-add_test(demo_basic demo_test --help)
-
+add_test(NAME demo_yarp_idl_to_dir
+         COMMAND demo_yarp_idl_to_dir --help)
 
 # Test using yarp_add_idl
 set(IDL_FILES SharedData.msg
@@ -36,9 +45,8 @@ set(IDL_FILES SharedData.msg
               HeaderTest2.srv)
 yarp_add_idl(IDL_GEN_FILES ${IDL_FILES})
 
-include_directories(${YARP_INCLUDE_DIRS})
-add_executable(demo_test2 main.cpp ${IDL_GEN_FILES})
-target_link_libraries(demo_test2 ${YARP_LIBRARIES})
+add_executable(demo_yarp_add_idl main.cpp ${IDL_GEN_FILES})
+target_link_libraries(demo_yarp_add_idl ${YARP_LIBRARIES} ${ACE_LIBRARIES})
 
-add_test(demo_basic2 demo_test2 --help)
-
+add_test(NAME demo_yarp_add_idl
+         COMMAND demo_yarp_add_idl --help)

@@ -1,14 +1,38 @@
 # Copyright: (C) 2009 RobotCub Consortium
 # Authors: Paul Fitzpatrick
 # CopyPolicy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
+
+
 include(CMakeDependentOption)
-cmake_dependent_option(YARP_ENABLE_BROKEN_TESTS OFF "Enable broken tests" YARP_COMPILE_TESTS OFF )
+cmake_dependent_option(YARP_ENABLE_BROKEN_TESTS OFF "Enable broken tests" YARP_COMPILE_TESTS OFF)
 mark_as_advanced(YARP_ENABLE_BROKEN_TESTS)
 if(YARP_ENABLE_BROKEN_TESTS)
   add_definitions(-DBROKEN_TEST)
 endif()
 
+
 if(YARP_COMPILE_TESTS)
+  # Prepare 'build_generator', 'build_options' and 'build_module_path' variables
+  # for tests in subdirectories
+  set(build_generator --build-generator "${CMAKE_GENERATOR}")
+  if(CMAKE_GENERATOR_PLATFORM)
+    list(APPEND build_generator --build-generator-platform "${CMAKE_GENERATOR_PLATFORM}")
+  endif()
+  if(CMAKE_GENERATOR_TOOLSET)
+    list(APPEND build_generator --build-generator-toolset "${CMAKE_GENERATOR_TOOLSET}")
+  endif()
+  if(CMAKE_CONFIGURATION_TYPES)
+    list(APPEND build_generator --build-config $<CONFIGURATION>)
+  endif()
+
+  unset(build_options)
+  if(CMAKE_BUILD_TYPE)
+    list(APPEND build_options -DCMAKE_BUILD_TYPE=${CMAKE_BUILD_TYPE})
+  endif()
+
+  # Use only if cmake modules not installed by YARP are required by the test
+  set(build_module_path -DCMAKE_MODULE_PATH="${CMAKE_MODULE_PATH}")
+  string(REPLACE ";" "\;" build_module_path "${build_module_path}")
 
   # Add the CMAKE_BINARY_DIR as a macro so the testing infrastructure
   # can find the device compiled as dynamic plugins
@@ -23,19 +47,6 @@ if(YARP_COMPILE_TESTS)
                  "${CMAKE_CURRENT_BINARY_DIR}/YarpBuildLocation.h"
                  @ONLY)
   include_directories(${CMAKE_CURRENT_BINARY_DIR})
-
-
-
-  #### temporary variable for debug
-  set(ENABLE_YARPRUNTESTS FALSE CACHE BOOL "Enable yarprun tests")
-  if(ENABLE_YARPRUNTESTS)
-    add_definitions(-DYARPRUN_TEST)
-    add_executable(testModule ${CMAKE_SOURCE_DIR}/tests/libYARP_OS/testModule/module.cpp)
-    target_link_libraries(testModule YARP::YARP_init
-                                     YARP::YARP_OS)
-    set_property(TARGET testModule PROPERTY FOLDER "Test")
-  endif()
-  mark_as_advanced(ENABLE_YARPRUNTESTS)
 
   set(targets OS
               sig
@@ -129,37 +140,11 @@ if(YARP_COMPILE_TESTS)
     add_definitions(-DYARP_TESTFRAMEGRABBER_TESTS)
   endif()
 
-  # Add in hardware specific tests, if requested
-  option(CREATE_PLUGIN_TESTS "Compile plugin tests" FALSE)
-  mark_as_advanced(CREATE_PLUGIN_TESTS)
-  if(CREATE_PLUGIN_TESTS)
-    # add in our tests
-    file(GLOB inis ${CMAKE_SOURCE_DIR}/tests/libYARP_dev/*.ini)
-    foreach(X ${inis})
-      get_filename_component(XN ${X} NAME_WE)
-      get_filename_component(XINI ${X} ABSOLUTE)
-      # need to cache examples for reference
-      set(DOC_DIR "${CMAKE_SOURCE_DIR}/doc/device_invocation")
-      set(XDOX ${DOC_DIR}/${XN}.dox)
-      set(_cmd $<TARGET_FILE:harness_dev> --file "${XINI}" --doc "${XDOX}")
-      add_test(NAME "device::${XN}"
-               COMMAND ${_cmd}
-               WORKING_DIRECTORY ${CMAKE_SOURCE_DIR}/tests/libYARP_dev/)
-      foreach(_Tool ${YARP_VALGRIND_TOOLS})
-        string(TOUPPER "${_Tool}" _TOOL)
-        if(YARP_VALGRIND_${_TOOL}_TESTS)
-          add_test(NAME "device::${XN}::Valgrind::${_Tool}"
-                   COMMAND ${VALGRIND_MEMCHECK_COMMAND} ${_cmd}
-                   WORKING_DIRECTORY ${CMAKE_SOURCE_DIR}/tests/libYARP_dev/)
-        endif()
-      endforeach()
-      if(YARP_GDB_TESTS)
-        add_test(NAME "device::${XN}::gdb"
-                 COMMAND ${GDB_COMMAND} ${_cmd}
-                 WORKING_DIRECTORY ${CMAKE_SOURCE_DIR}/tests/libYARP_dev/)
-      endif()
-    endforeach(X ${inis})
-  endif()
+  add_subdirectory(carriers)
+  add_subdirectory(devices)
+  add_subdirectory(yarpidl_thrift)
+  add_subdirectory(yarpidl_rosmsg)
+
 
   # Integration tests
   option(YARP_TEST_INTEGRATION "Run integration tests (UNIX only)" FALSE)
@@ -168,5 +153,10 @@ if(YARP_COMPILE_TESTS)
     add_subdirectory(integration)
   endif()
 
-  add_subdirectory(carriers)
+
+
+  yarp_deprecated_option(TEST_yarpidl_rosmsg) # Since YARP 2.3.70
+  yarp_deprecated_option(TEST_yarpidl_thrift) # Since YARP 2.3.70
+  yarp_deprecated_option(CREATE_PLUGIN_TESTS) # Since YARP 2.3.70
+  yarp_deprecated_option(ENABLE_YARPRUNTESTS) # Since YARP 2.3.70
 endif()

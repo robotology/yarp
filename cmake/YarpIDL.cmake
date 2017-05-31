@@ -117,8 +117,7 @@ function(YARP_IDL_TO_DIR yarpidl_file_base output_dir)
     execute_process(COMMAND ${YARPIDL_${family}_LOCATION} --out ${dir} --gen yarp:include_prefix --I ${CMAKE_CURRENT_SOURCE_DIR} ${yarpidl_file}
                     WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}
                     RESULT_VARIABLE res
-                    OUTPUT_QUIET
-                    ERROR_QUIET)
+                    OUTPUT_QUIET)
     # Failure is bad news, let user know.
     if(NOT "${res}" STREQUAL "0")
       message(FATAL_ERROR "yarpidl_${family} (${YARPIDL_${family}_LOCATION}) failed, aborting.")

@@ -107,7 +107,7 @@ public:
 
         root.add(getSystemInfoTest());
 
-#ifdef YARPRUN_TEST
+#ifdef BROKEN_TEST
         root.add(getRunTest());
 #endif
 

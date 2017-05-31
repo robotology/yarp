@@ -7,10 +7,8 @@ Instantiates \ref cmd_device_ffmpeg_grabber "ffmpeg_grabber" device implemented 
 \verbatim
 # read from a video4linux source
 device ffmpeg_grabber
-v4l
+v4l2
 v4ldevice /dev/video0
-channel 1
-standard ntsc
 width 640
 height 480
 \endverbatim
@@ -39,11 +37,12 @@ Here is a list of properties checked when starting up a device based on this con
 <tr><td>nodelay</td><td>media will play in simulated realtime unless this is present</td><td></td></tr>
 <tr><td>pace</td><td>simulated realtime multiplier factor (must be <1 right now)</td><td>1.0</td></tr>
 <tr><td>v4l</td><td>if present, read from video4linux</td><td></td></tr>
+<tr><td>v4l1</td><td>if present, read from video4linux</td><td></td></tr>
+<tr><td>v4l2</td><td>if present, read from video4linux2</td><td></td></tr>
 <tr><td>v4ldevice</td><td>device name</td><td>/dev/video0</td></tr>
-<tr><td>time_base_den</td><td>denominator of basic time unit</td><td>29</td></tr>
-<tr><td>time_base_num</td><td>numerator of basic time unit</td><td>1</td></tr>
-<tr><td>channel</td><td>channel identifier</td><td>0</td></tr>
-<tr><td>standard</td><td>pal versus ntsc</td><td>ntsc</td></tr>
+<tr><td>time_base_num</td><td></td><td></td></tr>
+<tr><td>channel</td><td></td><td></td></tr>
+<tr><td>standard</td><td></td><td></td></tr>
 <tr><td>width</td><td>width of image</td><td>640</td></tr>
 <tr><td>height</td><td>height of image</td><td>480</td></tr>
 <tr><td>audio</td><td>optional audio device</td><td></td></tr>

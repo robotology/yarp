@@ -1,5 +1,5 @@
 set(CMAKE_SKIP_INSTALL_RPATH ON CACHE BOOL "")
-set(YARP_EXPERIMENTAL_CXX11 ON CACHE BOOL "")
+set(YARP_EXPERIMENTAL_CXX11 OFF CACHE BOOL "") # At the moment this flag is broken on MSVC
 set(YARP_COMPILE_TESTS ON CACHE BOOL "")
 set(CREATE_GUIS ON CACHE BOOL "")
 set(CREATE_LIB_MATH ON CACHE BOOL "")
@@ -26,5 +26,3 @@ set(ENABLE_yarpmod_fakeLaser ON CACHE BOOL "")
 set(ENABLE_yarpmod_rpLidar ON CACHE BOOL "")
 set(ENABLE_yarpmod_laserHokuyo ON CACHE BOOL "")
 set(ENABLE_yarpmod_test_grabber ON CACHE BOOL "")
-# set(TEST_yarpidl_rosmsg ON CACHE BOOL "")
-# set(TEST_yarpidl_thrift ON CACHE BOOL "")

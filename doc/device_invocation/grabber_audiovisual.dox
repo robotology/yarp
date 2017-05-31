@@ -8,7 +8,7 @@ Instantiates \ref cmd_device_grabber "grabber" device implemented by yarp::dev::
 # wrap an audiovisual source for the network
 device grabber
 subdevice ffmpeg_grabber
-source $YARP_ROOT/example/dev/movie/tiny.avi
+source tiny.avi
 # the movie has images and sound; let's send them on different ports
 # (or could use shared-ports flag to put them on same port)
 name /visual
@@ -42,15 +42,16 @@ Here is a list of properties checked when starting up a device based on this con
 <tr><td>ffmpeg_grabber.nodelay</td><td>media will play in simulated realtime unless this is present</td><td></td></tr>
 <tr><td>ffmpeg_grabber.pace</td><td>simulated realtime multiplier factor (must be <1 right now)</td><td>1.0</td></tr>
 <tr><td>ffmpeg_grabber.v4l</td><td>if present, read from video4linux</td><td></td></tr>
+<tr><td>ffmpeg_grabber.v4l1</td><td>if present, read from video4linux</td><td></td></tr>
 <tr><td>ffmpeg_grabber.v4l2</td><td>if present, read from video4linux2</td><td></td></tr>
 <tr><td>ffmpeg_grabber.ieee1394</td><td>if present, read from firewire</td><td></td></tr>
 <tr><td>no_drop</td><td>if present, use strict policy for sending data</td><td></td></tr>
 <tr><td>stamp</td><td>if present, add timestamps to data</td><td></td></tr>
 <tr><td>name</td><td>name of port to send data on</td><td>/grabber</td></tr>
-<tr><td>framerate</td><td>maximum rate in Hz to read from subdevice</td><td>0</td></tr>
 <tr><td>shared-ports</td><td>If present, send audio and images on same port</td><td></td></tr>
-<tr><td>name2</td><td>Name of second port to send data on, when audio and images sent seperately</td><td>/grabber2</td></tr>
+<tr><td>name2</td><td>Name of second port to send data on, when audio and images sent separately</td><td>/grabber2</td></tr>
 <tr><td>single_threaded</td><td>if present, operate in single threaded mode</td><td></td></tr>
+<tr><td>framerate</td><td>maximum rate in Hz to read from subdevice</td><td>0</td></tr>
 </table>
 
 \sa yarp::dev::ServerFrameGrabber

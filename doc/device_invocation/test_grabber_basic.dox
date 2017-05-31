@@ -29,11 +29,25 @@ Here is a list of properties checked when starting up a device based on this con
 <table>
 <tr><td>PROPERTY</td><td>DESCRIPTION</td><td>DEFAULT</td></tr>
 <tr><td>device</td><td></td><td></td></tr>
-<tr><td>width</td><td>desired width of test image</td><td>128</td></tr>
-<tr><td>height</td><td>desired height of test image</td><td>128</td></tr>
+<tr><td>width</td><td>desired width of test image</td><td>320</td></tr>
+<tr><td>height</td><td>desired height of test image</td><td>240</td></tr>
+<tr><td>horizontalFov</td><td>desired horizontal fov of test image</td><td>1.0</td></tr>
+<tr><td>verticalFov</td><td>desired vertical fov of test image</td><td>2.0</td></tr>
+<tr><td>mirror</td><td>mirroring disabled by default</td><td>0</td></tr>
+<tr><td>focalLengthX</td><td>Horizontal component of the focal lenght of the test_grabber</td><td>4.0</td></tr>
+<tr><td>focalLengthY</td><td>Vertical component of the focal lenght of the test_grabber</td><td>5.0</td></tr>
+<tr><td>principalPointX</td><td>X coordinate of the principal point of the test_grabber</td><td>6.0</td></tr>
+<tr><td>principalPointY</td><td>Y coordinate of the principal point of the test_grabber</td><td>7.0</td></tr>
+<tr><td>retificationMatrix</td><td>Matrix that describes the lens' distortion(fake)</td><td>1.0 0.0 0.0 0.0 1.0 0.0 0.0 0.0 1.0</td></tr>
+<tr><td>distortionModel</td><td>Reference to group of parameters describing the distortion model of the camera</td><td>FishEye</td></tr>
+<tr><td>k1</td><td>Radial distortion coefficient of the lens(fake)</td><td>8.0</td></tr>
+<tr><td>k2</td><td>Radial distortion coefficient of the lens(fake)</td><td>9.0</td></tr>
+<tr><td>k3</td><td>Radial distortion coefficient of the lens(fake)</td><td>10.0</td></tr>
+<tr><td>t1</td><td>Tangential distortion of the lens(fake)</td><td>11.0</td></tr>
+<tr><td>t2</td><td>Tangential distortion of the lens(fake)</td><td>12.0</td></tr>
 <tr><td>freq</td><td>rate of test images in Hz</td><td></td></tr>
 <tr><td>period</td><td>period of test images in seconds</td><td></td></tr>
-<tr><td>mode</td><td>bouncy [ball], scrolly [line], grid [grid], random [rand], none [none]</td><td>line</td></tr>
+<tr><td>mode</td><td>bouncy [ball], scrolly [line], grid [grid], grid multisize [size], random [rand], none [none]</td><td>line</td></tr>
 <tr><td>src</td><td></td><td></td></tr>
 <tr><td>bayer</td><td>should emit bayer test image?</td><td></td></tr>
 <tr><td>mono</td><td>should emit a monochrome image?</td><td></td></tr>
