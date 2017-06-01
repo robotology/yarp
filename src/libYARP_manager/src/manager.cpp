@@ -83,8 +83,7 @@ Manager::~Manager()
     clearExecutables();
 }
 
-
-bool Manager::addApplication(const char* szFileName, char* szAppName_, bool modifyName)
+bool Manager::addApplication(const char* szFileName, char** szAppName_, bool modifyName)
 {
     if(find(listOfXml.begin(), listOfXml.end(),szFileName) == listOfXml.end())
         listOfXml.push_back(szFileName);
