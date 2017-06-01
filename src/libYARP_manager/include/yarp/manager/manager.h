@@ -33,7 +33,7 @@ public:
             const char* szResPath, bool withWatchDog=false);
     virtual ~Manager();
 
-    bool addApplication(const char* szFileName, char* szAppName_=NULL, bool modifyName=false);
+    bool addApplication(const char* szFileName, char** szAppName_=NULL, bool modifyName=false);
     bool addApplications(const char* szPath);
     bool addModule(const char* szFileName);
     bool addModules(const char* szPath);
