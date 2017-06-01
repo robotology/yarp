@@ -8,6 +8,7 @@
 
 #include <yarp/os/Network.h>
 #include <yarp/os/Os.h>
+#include <yarp/os/LogStream.h>
 #include <yarp/os/RpcClient.h>
 #include <yarp/os/SystemInfo.h>
 #include <yarp/os/SystemInfoSerializer.h>
@@ -494,8 +495,10 @@ int yarp::os::Run::server()
 
     if (!port.open(mPortName.c_str()))
     {
+        yError() << "Yarprun failed to open port: " << mPortName.c_str();
         return YARPRUN_ERROR;
     }
+    yInfo() << "Yarprun succesfully started on port: " << mPortName.c_str();
 
     pServerPort=&port;
 
@@ -870,10 +873,12 @@ int yarp::os::Run::server()
 
         if (!port.open(mPortName.c_str()))
         {
-            if (mPortName[0]!='/') fprintf(stderr, "Invalid port name '%s', it should start with '/'\n", mPortName.c_str());
+            yError() << "Yarprun failed to open port: " << mPortName.c_str();
 
+            if (mPortName[0]!='/') yError("Invalid port name '%s', it should start with '/'\n", mPortName.c_str());
             return YARPRUN_ERROR;
         }
+        yInfo() << "Yarprun succesfully started on port: " << mPortName.c_str();
 
         pServerPort=&port;
 
