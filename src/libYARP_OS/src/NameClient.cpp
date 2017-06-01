@@ -8,6 +8,7 @@
 #include <yarp/os/impl/Logger.h>
 #include <yarp/os/impl/TcpFace.h>
 #include <yarp/os/NetType.h>
+#include <yarp/os/Carriers.h>
 #include <yarp/os/impl/NameServer.h>
 #include <yarp/os/impl/NameConfig.h>
 #ifdef YARP_HAS_ACE
@@ -331,18 +332,23 @@ Contact NameClient::registerName(const ConstString& name, const Contact& suggest
     if (address.isValid()) {
         ConstString reg = address.getRegName();
 
-        /*
 
-          // this never really got used
+        std::string cmdOffers ="set /port offers ";
+        yarp::os::Bottle lst=yarp::os::Carriers::listCarriers();
+        for (int i=0; i<lst.size(); i++)
+        {
+            cmdOffers = cmdOffers + " " + lst.get(i).asString();
+        }
 
-        cmd.fromString("set /port offers tcp text text_ack udp mcast shmem name_ser");
+
+        cmd.fromString(cmdOffers);
         cmd.get(1) = Value(reg.c_str());
         send(cmd,reply);
 
         // accept the same set of carriers
         cmd.get(2) = Value("accepts");
         send(cmd,reply);
-        */
+
 
         cmd.clear();
         cmd.addString("set");
