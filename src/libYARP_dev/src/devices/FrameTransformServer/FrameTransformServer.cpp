@@ -432,7 +432,56 @@ bool FrameTransformServer::threadInit()
     return true;
 }
 
+bool FrameTransformServer::parseStartingTf(yarp::os::Searchable &config)
+{
+    if (config.find("starting_tf").isInt())
+    {
+        for (int i = 0; i < config.find("starting_tf").asInt(); i++)
+        {
+            string         tfGroupName;
+            FrameTransform t;
 
+            tfGroupName = "tf" + std::to_string(i);
+
+            if (config.check(tfGroupName))
+            {
+                Bottle* b = config.find(tfGroupName).asList();
+                if(!b)
+                {
+                    yError() << "transformServer: param" << tfGroupName << "empty..";
+                    return false;
+                }
+
+                if(b->size() != 8        or
+                   !b->get(0).isDouble() or
+                   !b->get(1).isDouble() or
+                   !b->get(2).isDouble() or
+                   !b->get(3).isDouble() or
+                   !b->get(4).isDouble() or
+                   !b->get(5).isDouble() or
+                   !b->get(6).isString() or
+                   !b->get(7).isString())
+                {
+                    yError() << "transformServer: param" << tfGroupName << "not correct.. a tf requires 8 param in the format:" <<
+                                "x(dbl) y(dbl) z(dbl) r(dbl) p(dbl) y(dbl) src(str) dst(str)";
+                    return false;
+                }
+
+                t.translation.set(b->get(0).asDouble(), b->get(1).asDouble(), b->get(2).asDouble());
+                t.rotFromRPY(b->get(3).asDouble(), b->get(4).asDouble(), b->get(5).asDouble());
+                t.src_frame_id = b->get(6).asString();
+                t.dst_frame_id = b->get(7).asString();
+                m_yarp_static_transform_storage->set_transform(t);
+            }
+        }
+        return true;
+    }
+    else
+    {
+        yInfo() << "transformServer: no starting tf found";
+    }
+    return true;
+}
 
 bool FrameTransformServer::open(yarp::os::Searchable &config)
 {
@@ -496,6 +545,10 @@ bool FrameTransformServer::open(yarp::os::Searchable &config)
     }
 
     this->start();
+
+    yarp::os::Time::delay(0.5);
+    parseStartingTf(config);
+
     return true;
 }
 
