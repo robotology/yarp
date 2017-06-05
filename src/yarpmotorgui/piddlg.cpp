@@ -66,7 +66,7 @@
 #define     CURRENT_MAXINT     5
 #define     CURRENT_OFFSET     6
 
-PidDlg::PidDlg(QString partname, int jointIndex,QWidget *parent) :
+PidDlg::PidDlg(QString partname, int jointIndex, QString jointName, QWidget *parent) :
     QDialog(parent),
     ui(new Ui::PidDlg)
 {
@@ -74,7 +74,7 @@ PidDlg::PidDlg(QString partname, int jointIndex,QWidget *parent) :
 
     this->jointIndex = jointIndex;
 
-    QString title = QString("Pid Control %1 JNT:%2").arg(partname).arg(jointIndex);
+    QString title = QString("Pid Control %1 JNT:%2 (%3)").arg(partname).arg(jointIndex).arg(jointName);
     setWindowTitle(title);
 
     connect(ui->btnRefresh, SIGNAL(clicked()), this, SLOT(onRefresh()));

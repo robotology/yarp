@@ -776,8 +776,8 @@ void PartItem::onCalibClicked(JointItem *joint)
 void PartItem::onPidClicked(JointItem *joint)
 {
     const int jointIndex = joint->getJointIndex();
-
-    m_currentPidDlg = new PidDlg(m_partName, jointIndex);
+    QString jointName = joint->getJointName();
+    m_currentPidDlg = new PidDlg(m_partName, jointIndex, jointName);
     connect(m_currentPidDlg, SIGNAL(sendPositionPid(int, Pid)), this, SLOT(onSendPositionPid(int, Pid)));
     connect(m_currentPidDlg, SIGNAL(sendVelocityPid(int, Pid)), this, SLOT(onSendVelocityPid(int, Pid)));
     connect(m_currentPidDlg, SIGNAL(sendCurrentPid(int, Pid)), this, SLOT(onSendCurrentPid(int, Pid)));
