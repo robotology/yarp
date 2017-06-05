@@ -155,6 +155,7 @@ void YarpPluginSettings::reportFailure() const {
 
 
 void YarpPluginSelector::scan() {
+    LockGuard lock(mutex);
     config.clear();
     plugins.clear();
     search_path.clear();

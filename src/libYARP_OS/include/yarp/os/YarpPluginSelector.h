@@ -10,6 +10,8 @@
 #include <yarp/os/api.h>
 #include <yarp/os/Bottle.h>
 #include <yarp/os/Property.h>
+#include <yarp/os/Mutex.h>
+#include <yarp/os/LockGuard.h>
 
 namespace yarp {
     namespace os {
@@ -29,6 +31,7 @@ private:
     Bottle plugins;
     Bottle search_path;
     Property config;
+    mutable yarp::os::Mutex mutex;
 public:
     /**
      *
@@ -62,6 +65,7 @@ public:
      *
      */
     Bottle getSelectedPlugins() const {
+        yarp::os::LockGuard guard(mutex);
         return plugins;
     }
 
@@ -72,6 +76,7 @@ public:
      *
      */
     Bottle getSearchPath() const {
+        yarp::os::LockGuard lock(mutex);
         return search_path;
     }
 };
