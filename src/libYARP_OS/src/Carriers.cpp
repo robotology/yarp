@@ -315,15 +315,17 @@ Bottle Carriers::listCarriers()
     Bottle lst;
     Property done;
 
-    PlatformVector<Carrier*>& delegates = getInstance().mPriv->delegates;
+    Carriers& instance = getInstance();
+
+    PlatformVector<Carrier*>& delegates = instance.mPriv->delegates;
     for (size_t i = 0; i < delegates.size(); i++) {
         Carrier& c = *delegates[i];
         lst.addString(c.getName());
         done.put(c.getName(), 1);
     }
 
-    getInstance().mPriv->scan();
-    Bottle plugins = getInstance().mPriv->getSelectedPlugins();
+    instance.mPriv->scan();
+    Bottle plugins = instance.mPriv->getSelectedPlugins();
     for (int i = 0; i < plugins.size(); i++) {
         Value& options = plugins.get(i);
         ConstString name = options.check("name", Value("untitled")).asString();
@@ -333,7 +335,7 @@ Bottle Carriers::listCarriers()
 
         SharedLibraryFactory lib;
         YarpPluginSettings settings;
-        settings.setSelector(*getInstance().mPriv);
+        settings.setSelector(*instance.mPriv);
         settings.readFromSearchable(options, name);
         settings.open(lib);
         ConstString location = lib.getName().c_str();
