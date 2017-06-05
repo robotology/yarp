@@ -113,6 +113,10 @@ public:
 
         bool ok_view = ddtransformclient.view(itf);
         checkTrue(ok_view && itf!=0, "iTransform interface open reported successful");
+        if(!ok_view)
+        {
+            return;
+        }
         yarp::sig::Matrix m1(4, 4);
         m1[0][0] = cos(M_PI / 4); m1[0][1] = -sin(M_PI / 4); m1[0][2] = 0; m1[0][3] = 3;
         m1[1][0] = sin(M_PI / 4); m1[1][1] = cos(M_PI /4);   m1[1][2] = 0; m1[1][3] = 1;
