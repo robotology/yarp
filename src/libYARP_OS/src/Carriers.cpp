@@ -298,7 +298,7 @@ bool Carrier::reply(ConnectionState& proto, SizedWriter& writer)
 
 Carriers& Carriers::getInstance()
 {
-    yarp::os::LockGuard(Private::mutex);
+    yarp::os::LockGuard guard(Private::mutex);
     if (Private::yarp_carriers_instance == YARP_NULLPTR) {
         Private::yarp_carriers_instance = new Carriers();
         yAssert(Private::yarp_carriers_instance != YARP_NULLPTR);
@@ -309,7 +309,7 @@ Carriers& Carriers::getInstance()
 
 void Carriers::removeInstance()
 {
-    yarp::os::LockGuard(Private::mutex);
+    yarp::os::LockGuard guard(Private::mutex);
     if (Private::yarp_carriers_instance != YARP_NULLPTR) {
         delete Private::yarp_carriers_instance;
         Private::yarp_carriers_instance = YARP_NULLPTR;
@@ -320,7 +320,7 @@ void Carriers::removeInstance()
 Bottle Carriers::listCarriers()
 {
     Carriers& instance = getInstance();
-    yarp::os::LockGuard(Private::mutex);
+    yarp::os::LockGuard guard(Private::mutex);
 
     Bottle lst;
     Property done;
