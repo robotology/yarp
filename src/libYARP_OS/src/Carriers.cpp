@@ -26,6 +26,9 @@
 #include <yarp/os/YarpPlugin.h>
 #include <yarp/os/impl/PlatformVector.h>
 
+#include <yarp/os/LockGuard.h>
+#include <yarp/os/Mutex.h>
+
 using namespace yarp::os::impl;
 using namespace yarp::os;
 
@@ -35,6 +38,7 @@ class Carriers::Private : public YarpPluginSelector
 {
 public:
     static Carriers* yarp_carriers_instance;
+    static yarp::os::Mutex mutex;
 
     PlatformVector<Carrier*> delegates;
 
@@ -51,6 +55,7 @@ public:
 };
 
 Carriers* Carriers::Private::yarp_carriers_instance = YARP_NULLPTR;
+yarp::os::Mutex Carriers::Private::mutex = yarp::os::Mutex();
 
 
 Carrier* Carriers::Private::chooseCarrier(const ConstString *name,
@@ -293,6 +298,7 @@ bool Carrier::reply(ConnectionState& proto, SizedWriter& writer)
 
 Carriers& Carriers::getInstance()
 {
+    yarp::os::LockGuard(Private::mutex);
     if (Private::yarp_carriers_instance == YARP_NULLPTR) {
         Private::yarp_carriers_instance = new Carriers();
         yAssert(Private::yarp_carriers_instance != YARP_NULLPTR);
@@ -303,6 +309,7 @@ Carriers& Carriers::getInstance()
 
 void Carriers::removeInstance()
 {
+    yarp::os::LockGuard(Private::mutex);
     if (Private::yarp_carriers_instance != YARP_NULLPTR) {
         delete Private::yarp_carriers_instance;
         Private::yarp_carriers_instance = YARP_NULLPTR;
@@ -312,10 +319,11 @@ void Carriers::removeInstance()
 
 Bottle Carriers::listCarriers()
 {
+    Carriers& instance = getInstance();
+    yarp::os::LockGuard(Private::mutex);
+
     Bottle lst;
     Property done;
-
-    Carriers& instance = getInstance();
 
     PlatformVector<Carrier*>& delegates = instance.mPriv->delegates;
     for (size_t i = 0; i < delegates.size(); i++) {
