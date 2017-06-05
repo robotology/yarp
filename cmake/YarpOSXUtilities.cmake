@@ -6,6 +6,11 @@
 
 include(GetAllCMakeProperties)
 
+cmake_policy(PUSH)
+if(POLICY CMP0054)
+  cmake_policy(SET CMP0054 NEW)
+endif()
+
 function(YARP_OSX_DUPLICATE_AND_ADD_BUNDLE)
 
  if(APPLE)
@@ -128,3 +133,5 @@ function(YARP_OSX_DUPLICATE_AND_ADD_BUNDLE)
  endif()
 
 endfunction()
+
+cmake_policy(POP)
