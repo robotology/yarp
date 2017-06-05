@@ -175,9 +175,10 @@ public:
 
     virtual void runTests()
     {
-        bool netMode = Network::setLocalMode(true);
+        Network::setLocalMode(true);
         testDataType();
         testClientServer();
+        Network::setLocalMode(false);
     }
 };
 
