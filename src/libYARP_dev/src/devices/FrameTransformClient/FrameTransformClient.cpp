@@ -386,7 +386,6 @@ bool yarp::dev::FrameTransformClient::open(yarp::os::Searchable &config)
         yError("FrameTransformClient::open() error could not open rpc port %s, check network", local_rpcUser.c_str());
         return false;
     }
-    m_rpc_InterfaceToUser.setReader(*this);
 
     if (!m_rpc_InterfaceToServer.open(local_rpcServer.c_str()))
     {
@@ -395,7 +394,7 @@ bool yarp::dev::FrameTransformClient::open(yarp::os::Searchable &config)
     }
 
     m_transform_storage = new Transforms_client_storage(local_streaming_name);
-    bool ok=Network::connect(remote_streaming_name.c_str(), local_streaming_name.c_str(), "udp");
+    bool ok = Network::connect(remote_streaming_name.c_str(), local_streaming_name.c_str(), "udp");
     if (!ok)
     {
         yError("FrameTransformClient::open() error could not connect to %s", remote_streaming_name.c_str());
@@ -409,6 +408,8 @@ bool yarp::dev::FrameTransformClient::open(yarp::os::Searchable &config)
         return false;
     }
 
+
+    m_rpc_InterfaceToUser.setReader(*this);
     return true;
 }
 
