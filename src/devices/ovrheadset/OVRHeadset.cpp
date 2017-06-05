@@ -24,7 +24,7 @@
 #include <yarp/os/Property.h>
 #include <yarp/math/FrameTransform.h>
 
-#include <math.h>
+#include <cmath>
 #include <unordered_map>
 #include <OVR_CAPI_Util.h>
 
@@ -284,7 +284,7 @@ bool yarp::dev::OVRHeadset::open(yarp::os::Searchable& cfg)
         std::map<int, std::string>                err_msgs;
         std::map<int, valueIsType>                isFunctionMap;
         std::vector<std::pair<std::string, int> > paramParser;
-        
+
         err_msgs[STRING] = "a string";
         err_msgs[BOOL]   = "a boolean type";
 
@@ -298,7 +298,7 @@ bool yarp::dev::OVRHeadset::open(yarp::os::Searchable& cfg)
         paramParser.push_back(std::make_pair("tf_right_hand_frame", STRING));
         paramParser.push_back(std::make_pair("tf_root_frame",       STRING));
         paramParser.push_back(std::make_pair("stick_as_axis",       BOOL));
-        
+
         for (auto p : paramParser)
         {
             if (!cfg.check(p.first) || !(cfg.find(p.first).*isFunctionMap[p.second])())
@@ -314,7 +314,7 @@ bool yarp::dev::OVRHeadset::open(yarp::os::Searchable& cfg)
     left_frame     = cfg.find("tf_left_hand_frame").asString();
     right_frame    = cfg.find("tf_right_hand_frame").asString();
     root_frame     = cfg.find("tf_root_frame").asString();
-    
+
     fillAxisStorage();
     fillButtonStorage();
     fillErrorStorage();

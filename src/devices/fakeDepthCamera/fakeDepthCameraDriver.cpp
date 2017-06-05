@@ -4,11 +4,13 @@
 * CopyPolicy: Released under the terms of the GPLv2 or later, see GPL.TXT
 */
 
-#include <math.h>
-#include <algorithm>
-#include <yarp/os/Value.h>
-#include <map>
 #include "fakeDepthCameraDriver.h"
+
+#include <yarp/os/Value.h>
+
+#include <algorithm>
+#include <map>
+#include <cmath>
 
 using namespace yarp::dev;
 using namespace yarp::sig;
