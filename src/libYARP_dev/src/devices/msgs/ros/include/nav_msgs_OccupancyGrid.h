@@ -37,6 +37,17 @@ public:
   nav_msgs_OccupancyGrid() {
   }
 
+  void clear() {
+    // *** header ***
+    header.clear();
+
+    // *** info ***
+    info.clear();
+
+    // *** data ***
+    data.clear();
+  }
+
   bool readBare(yarp::os::ConnectionReader& connection) {
     // *** header ***
     if (!header.read(connection)) return false;
@@ -47,7 +58,7 @@ public:
     // *** data ***
     int len = connection.expectInt();
     data.resize(len);
-    if (!connection.expectBlock((char*)&data[0],sizeof(char)*len)) return false;
+    if (len > 0 && !connection.expectBlock((char*)&data[0],sizeof(char)*len)) return false;
     return !connection.isError();
   }
 
@@ -87,7 +98,7 @@ public:
 
     // *** data ***
     connection.appendInt(data.size());
-    connection.appendExternalBlock((char*)&data[0],sizeof(char)*data.size());
+    if (data.size()>0) {connection.appendExternalBlock((char*)&data[0],sizeof(char)*data.size());}
     return !connection.isError();
   }
 

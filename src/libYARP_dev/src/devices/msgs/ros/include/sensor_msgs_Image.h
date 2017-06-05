@@ -27,7 +27,6 @@
 //   uint8 is_bigendian    # is this data bigendian?
 //   uint32 step           # Full row length in bytes
 //   uint8[] data          # actual matrix data, size is (step * rows)
-//   
 // Instances of this class can be read and written with YARP ports,
 // using a ROS-compatible format.
 
@@ -54,6 +53,29 @@ public:
   sensor_msgs_Image() {
   }
 
+  void clear() {
+    // *** header ***
+    header.clear();
+
+    // *** height ***
+    height = 0;
+
+    // *** width ***
+    width = 0;
+
+    // *** encoding ***
+    encoding = "";
+
+    // *** is_bigendian ***
+    is_bigendian = 0;
+
+    // *** step ***
+    step = 0;
+
+    // *** data ***
+    data.clear();
+  }
+
   bool readBare(yarp::os::ConnectionReader& connection) {
     // *** header ***
     if (!header.read(connection)) return false;
@@ -78,7 +100,7 @@ public:
     // *** data ***
     len = connection.expectInt();
     data.resize(len);
-    if (!connection.expectBlock((char*)&data[0],sizeof(unsigned char)*len)) return false;
+    if (len > 0 && !connection.expectBlock((char*)&data[0],sizeof(unsigned char)*len)) return false;
     return !connection.isError();
   }
 
@@ -143,7 +165,7 @@ public:
 
     // *** data ***
     connection.appendInt(data.size());
-    connection.appendExternalBlock((char*)&data[0],sizeof(unsigned char)*data.size());
+    if (data.size()>0) {connection.appendExternalBlock((char*)&data[0],sizeof(unsigned char)*data.size());}
     return !connection.isError();
   }
 
@@ -224,14 +246,14 @@ string encoding       # Encoding of pixels -- channel meaning, ordering, size\n\
 \n\
 uint8 is_bigendian    # is this data bigendian?\n\
 uint32 step           # Full row length in bytes\n\
-uint8[] data          # actual matrix data, size is (step * rows)\n\
-\n================================================================================\n\
+uint8[] data          # actual matrix data, size is (step * rows)\n================================================================================\n\
 MSG: std_msgs/Header\n\
+[std_msgs/Header]:\n\
 # Standard metadata for higher-level stamped data types.\n\
-# This is generally used to communicate timestamped data \n\
+# This is generally used to communicate timestamped data\n\
 # in a particular coordinate frame.\n\
-# \n\
-# sequence ID: consecutively increasing ID \n\
+#\n\
+# sequence ID: consecutively increasing ID\n\
 uint32 seq\n\
 #Two-integer timestamp that is expressed as:\n\
 # * stamp.sec: seconds (stamp_secs) since epoch (in Python the variable is called 'secs')\n\
@@ -241,8 +263,7 @@ time stamp\n\
 #Frame this data is associated with\n\
 # 0: no frame\n\
 # 1: global frame\n\
-string frame_id\n\
-";
+string frame_id";
   }
 
   // Name the class, ROS will need this

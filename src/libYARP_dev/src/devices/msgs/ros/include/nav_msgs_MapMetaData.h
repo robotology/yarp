@@ -39,6 +39,23 @@ public:
   nav_msgs_MapMetaData() {
   }
 
+  void clear() {
+    // *** map_load_time ***
+    map_load_time.clear();
+
+    // *** resolution ***
+    resolution = 0.0;
+
+    // *** width ***
+    width = 0;
+
+    // *** height ***
+    height = 0;
+
+    // *** origin ***
+    origin.clear();
+  }
+
   bool readBare(yarp::os::ConnectionReader& connection) {
     // *** map_load_time ***
     if (!map_load_time.read(connection)) return false;

@@ -27,6 +27,14 @@ public:
   geometry_msgs_Transform() {
   }
 
+  void clear() {
+    // *** translation ***
+    translation.clear();
+
+    // *** rotation ***
+    rotation.clear();
+  }
+
   bool readBare(yarp::os::ConnectionReader& connection) {
     // *** translation ***
     if (!translation.read(connection)) return false;
@@ -95,10 +103,14 @@ public:
 Vector3 translation\n\
 Quaternion rotation\n================================================================================\n\
 MSG: geometry_msgs/Vector3\n\
+# This represents a vector in free space.\n\
+\n\
 float64 x\n\
 float64 y\n\
 float64 z\n================================================================================\n\
 MSG: geometry_msgs/Quaternion\n\
+# This represents an orientation in free space in quaternion form.\n\
+\n\
 float64 x\n\
 float64 y\n\
 float64 z\n\

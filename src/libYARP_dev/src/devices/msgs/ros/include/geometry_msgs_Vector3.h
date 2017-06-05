@@ -17,6 +17,9 @@
 #include <yarp/os/idl/WireTypes.h>
 #include "TickTime.h"
 #include "std_msgs_Header.h"
+#include "geometry_msgs_Point.h"
+#include "geometry_msgs_Quaternion.h"
+#include "geometry_msgs_Pose.h"
 
 class geometry_msgs_Vector3 : public yarp::os::idl::WirePortable {
 public:
@@ -25,6 +28,17 @@ public:
   yarp::os::NetFloat64 z;
 
   geometry_msgs_Vector3() {
+  }
+
+  void clear() {
+    // *** x ***
+    x = 0.0;
+
+    // *** y ***
+    y = 0.0;
+
+    // *** z ***
+    z = 0.0;
   }
 
   bool readBare(yarp::os::ConnectionReader& connection) {

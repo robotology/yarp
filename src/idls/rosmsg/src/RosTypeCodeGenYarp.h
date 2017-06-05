@@ -57,6 +57,10 @@ public:
     virtual bool constructField(const RosField& field);
     virtual bool endConstruct();
 
+    virtual bool beginClear();
+    virtual bool clearField(const RosField& field);
+    virtual bool endClear();
+
     virtual bool beginRead(bool bare, int len);
     virtual bool readField(bool bare, const RosField& field);
     virtual bool endRead(bool bare);

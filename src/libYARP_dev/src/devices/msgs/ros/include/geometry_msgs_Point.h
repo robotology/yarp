@@ -1,9 +1,9 @@
 // This is an automatically generated file.
 // Generated from this geometry_msgs_Point.msg definition:
+//   # This contains the position of a point in free space
 //   float64 x
 //   float64 y
-//   float64 z
-// Instances of this class can be read and written with YARP ports,
+//   float64 z// Instances of this class can be read and written with YARP ports,
 // using a ROS-compatible format.
 
 #ifndef YARPMSG_TYPE_geometry_msgs_Point
@@ -23,6 +23,17 @@ public:
   yarp::os::NetFloat64 z;
 
   geometry_msgs_Point() {
+  }
+
+  void clear() {
+    // *** x ***
+    x = 0.0;
+
+    // *** y ***
+    y = 0.0;
+
+    // *** z ***
+    z = 0.0;
   }
 
   bool readBare(yarp::os::ConnectionReader& connection) {
@@ -103,7 +114,8 @@ public:
 
   // Give source text for class, ROS will need this
   yarp::os::ConstString getTypeText() {
-    return "float64 x\n\
+    return "# This contains the position of a point in free space\n\
+float64 x\n\
 float64 y\n\
 float64 z";
   }
