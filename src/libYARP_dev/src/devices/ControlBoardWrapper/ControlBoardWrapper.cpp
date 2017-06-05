@@ -841,34 +841,43 @@ void ControlBoardWrapper::run()
         yWarning() << "number of streaming intput messages to be read is " << inputStreamingPort.getPendingReads() << " and can overflow";
     }
 
+    // Update the time by averaging all timestamps
+    double joint_timeStamp = 0.0;
+
+    for (unsigned int k = 0; k < device.subdevices.size(); k++)
+    {
+        int axes = device.subdevices[k].axes;
+
+        device.subdevices[k].refreshJointEncoders();
+        device.subdevices[k].refreshMotorEncoders();
+
+        for (int l = 0; l < axes; l++)
+        {
+            joint_timeStamp+=device.subdevices[k].jointEncodersTimes[l];
+        }
+    }
+
+    timeMutex.wait();
+    time.update(joint_timeStamp/controlledJoints);
+    timeMutex.post();
+
     if(useROS != ROS_only)
     {
         yarp::sig::Vector& v = outputPositionStatePort.prepare();
         v.resize(controlledJoints);
 
-        //getEncoders for all subdevices
         double *joint_encoders=v.data();
-        double joint_timeStamp=0.0;
 
-        for(unsigned int k=0;k<device.subdevices.size();k++)
+        for (unsigned int k = 0; k < device.subdevices.size(); k++)
         {
             int axes=device.subdevices[k].axes;
 
-            device.subdevices[k].refreshJointEncoders();
-            device.subdevices[k].refreshMotorEncoders();
-
-            for(int l=0;l<axes;l++)
+            for(int l = 0; l < axes; l++)
             {
                 joint_encoders[l]=device.subdevices[k].subDev_joint_encoders[l];
-                joint_timeStamp+=device.subdevices[k].jointEncodersTimes[l];
             }
             joint_encoders+=device.subdevices[k].axes; //jump to next group
         }
-
-        //joint_timeStamp =  yarp::os::Time::now();
-        timeMutex.wait();
-        time.update(joint_timeStamp/controlledJoints);
-        timeMutex.post();
 
         outputPositionStatePort.setEnvelope(time);
         outputPositionStatePort.write();

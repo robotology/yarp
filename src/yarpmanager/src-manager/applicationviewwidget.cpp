@@ -1237,6 +1237,12 @@ bool ApplicationViewWidget::onRefresh()
         } else {
             if (it->isSelected()) {
                 modulesIDs.push_back(it->text(1).toInt());
+                safeManager.updateExecutable(it->text(1).toInt(),
+                                         it->text(4).toLatin1().data(),
+                                         it->text(3).toLatin1().data(),
+                                         it->text(5).toLatin1().data(),
+                                         it->text(6).toLatin1().data(),
+                                         it->text(7).toLatin1().data());
                 it->setText(2,"waiting");
                 it->setIcon(0,QIcon(":/refresh22.svg"));
                 it->setTextColor(2,QColor("#000000"));
