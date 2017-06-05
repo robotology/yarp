@@ -40,7 +40,7 @@ public:
      */
     virtual ~IPidControlRaw() {}
 
-#ifndef YARP_NO_DEPRECATED // since YARP 2.3.68
+#ifndef YARP_NO_DEPRECATED // since YARP 2.3.70
     /** Set new position pid value for a joint axis.
      * @param j joint number
      * @param pid new pid value
@@ -48,7 +48,7 @@ public:
      * @deprecated since YARP 2.3.68
      */
     YARP_DEPRECATED_MSG("Use setPidRaw(VOCAB_PIDTYPE_POSITION,...) instead")
-    virtual inline bool setPidRaw(int j, const Pid  &pid) {return setPidRaw(VOCAB_PIDTYPE_POSITION, j, pid);}
+    bool setPidRaw(int j, const Pid  &pid) {return setPidRaw(VOCAB_PIDTYPE_POSITION, j, pid);}
 
     /** Set new position pid value on multiple axes.
      * @param pids pointer to a vector of pids
@@ -56,7 +56,7 @@ public:
      * @deprecated since YARP 2.3.68
      */
     YARP_DEPRECATED_MSG("Use setPidsRaw(VOCAB_PIDTYPE_POSITION,...) instead")
-    virtual bool setPidsRaw(const Pid *pids)  {return setPidsRaw(VOCAB_PIDTYPE_POSITION, pids);}
+    bool setPidsRaw(const Pid *pids)  {return setPidsRaw(VOCAB_PIDTYPE_POSITION, pids);}
 
 
     /** Set the controller reference point for a given axis.
@@ -70,7 +70,7 @@ public:
      * @deprecated since YARP 2.3.68
      */
     YARP_DEPRECATED_MSG("Use setPidReferenceRaw(VOCAB_PIDTYPE_POSITION,...) instead")
-    virtual bool setReferenceRaw(int j, double ref)   {return setPidReferenceRaw(VOCAB_PIDTYPE_POSITION, j, ref);}
+    bool setReferenceRaw(int j, double ref)   {return setPidReferenceRaw(VOCAB_PIDTYPE_POSITION, j, ref);}
 
     /** Set the controller reference points, multiple axes.
      * Warning this method can result in very large torques
@@ -82,7 +82,7 @@ public:
      * @deprecated since YARP 2.3.68
      */
     YARP_DEPRECATED_MSG("Use setPidReferencesRaw(VOCAB_PIDTYPE_POSITION,...) instead")
-    virtual bool setReferencesRaw(const double *refs)  {return setPidReferencesRaw(VOCAB_PIDTYPE_POSITION, refs);}
+    bool setReferencesRaw(const double *refs)  {return setPidReferencesRaw(VOCAB_PIDTYPE_POSITION, refs);}
 
     /** Set the error limit for the position controller on a specific joint
      * @param j joint number
@@ -91,7 +91,7 @@ public:
      * @deprecated since YARP 2.3.68
      */
     YARP_DEPRECATED_MSG("Use setPidErrorLimitRaw(VOCAB_PIDTYPE_POSITION,...) instead")
-    virtual bool setErrorLimitRaw(int j, double limit)  {return setPidErrorLimitRaw(VOCAB_PIDTYPE_POSITION, j, limit);}
+    bool setErrorLimitRaw(int j, double limit)  {return setPidErrorLimitRaw(VOCAB_PIDTYPE_POSITION, j, limit);}
 
     /** Get the error limit for the position controller on all joints.
      * @param limits pointer to the vector with the new limits
@@ -99,7 +99,7 @@ public:
      * @deprecated since YARP 2.3.68
      */
     YARP_DEPRECATED_MSG("Use setPidErrorLimitsRaw(VOCAB_PIDTYPE_POSITION,...) instead")
-    virtual bool setErrorLimitsRaw(const double *limits) {return setPidErrorLimitsRaw(VOCAB_PIDTYPE_POSITION, limits);}
+    bool setErrorLimitsRaw(const double *limits) {return setPidErrorLimitsRaw(VOCAB_PIDTYPE_POSITION, limits);}
 
     /** Get the current position error for a joint.
      * @param j joint number
@@ -108,14 +108,14 @@ public:
      * @deprecated since YARP 2.3.68
      */
     YARP_DEPRECATED_MSG("Use getPidErrorRaw(VOCAB_PIDTYPE_POSITION,...) instead")
-    virtual bool getErrorRaw(int j, double *err)  {return getPidErrorRaw(VOCAB_PIDTYPE_POSITION, j, err);}
+    bool getErrorRaw(int j, double *err)  {return getPidErrorRaw(VOCAB_PIDTYPE_POSITION, j, err);}
 
     /** Get the position error of all joints.
      * @param errs pointer to the vector that will store the errors
      * @deprecated since YARP 2.3.68
      */
     YARP_DEPRECATED_MSG("Use getPidErrorsRaw(VOCAB_PIDTYPE_POSITION,...) instead")
-    virtual bool getErrorsRaw(double *errs) {return getPidErrorsRaw(VOCAB_PIDTYPE_POSITION, errs);}
+    bool getErrorsRaw(double *errs) {return getPidErrorsRaw(VOCAB_PIDTYPE_POSITION, errs);}
 
     /** Get the output of the position controller (e.g. pwm value)
      * @param j joint number
@@ -124,14 +124,14 @@ public:
      * @deprecated since YARP 2.3.68
      */
     YARP_DEPRECATED_MSG("Use getPidOutputRaw(VOCAB_PIDTYPE_POSITION,...) instead")
-    virtual bool getOutputRaw(int j, double *out) {return getPidOutputRaw(VOCAB_PIDTYPE_POSITION, j, out);}
+    bool getOutputRaw(int j, double *out) {return getPidOutputRaw(VOCAB_PIDTYPE_POSITION, j, out);}
 
     /** Get the output of the position controllers (e.g. pwm value)
      * @param outs pinter to the vector that will store the output values
      * @deprecated since YARP 2.3.68
      */
     YARP_DEPRECATED_MSG("Use getPidOutputsRaw(VOCAB_PIDTYPE_POSITION,...) instead")
-    virtual bool getOutputsRaw(double *outs) {return getPidOutputsRaw(VOCAB_PIDTYPE_POSITION, outs);}
+    bool getOutputsRaw(double *outs) {return getPidOutputsRaw(VOCAB_PIDTYPE_POSITION, outs);}
 
     /** Get current position pid value for a specific joint.
      * @param j joint number
@@ -140,7 +140,7 @@ public:
      * @deprecated since YARP 2.3.68
      */
     YARP_DEPRECATED_MSG("Use getPidRaw(VOCAB_PIDTYPE_POSITION,...) instead")
-    virtual bool getPidRaw(int j, Pid *pid) {return getPidRaw(VOCAB_PIDTYPE_POSITION, j ,pid);}
+    bool getPidRaw(int j, Pid *pid) {return getPidRaw(VOCAB_PIDTYPE_POSITION, j ,pid);}
 
     /** Get current position pid value for a specific joint.
      * @param pids vector that will store the values of the pids.
@@ -148,7 +148,7 @@ public:
      * @deprecated since YARP 2.3.68
      */
     YARP_DEPRECATED_MSG("Use getPidsRaw(VOCAB_PIDTYPE_POSITION,...) instead")
-    virtual bool getPidsRaw(Pid *pids) {return getPidsRaw(VOCAB_PIDTYPE_POSITION, pids);}
+    bool getPidsRaw(Pid *pids) {return getPidsRaw(VOCAB_PIDTYPE_POSITION, pids);}
 
     /** Get the current reference position of the controller for a specific joint.
      * @param j joint number
@@ -157,14 +157,14 @@ public:
      * @deprecated since YARP 2.3.68
      */
     YARP_DEPRECATED_MSG("Use getPidReferenceRaw(VOCAB_PIDTYPE_POSITION,...) instead")
-    virtual bool getReferenceRaw(int j, double *ref) {return getPidReferenceRaw(VOCAB_PIDTYPE_POSITION, j ,ref);}
+    bool getReferenceRaw(int j, double *ref) {return getPidReferenceRaw(VOCAB_PIDTYPE_POSITION, j ,ref);}
 
     /** Get the current reference position of all controllers.
      * @param refs vector that will store the output.
      * @deprecated since YARP 2.3.68
      */
     YARP_DEPRECATED_MSG("Use getPidReferencesRaw(VOCAB_PIDTYPE_POSITION,...) instead")
-    virtual bool getReferencesRaw(double *refs) {return getPidReferencesRaw(VOCAB_PIDTYPE_POSITION, refs);}
+    bool getReferencesRaw(double *refs) {return getPidReferencesRaw(VOCAB_PIDTYPE_POSITION, refs);}
 
     /** Get the position error limit for the controller on a specific joint
      * @param j joint number
@@ -173,7 +173,7 @@ public:
      * @deprecated since YARP 2.3.68
      */
     YARP_DEPRECATED_MSG("Use getPidErrorLimitRaw(VOCAB_PIDTYPE_POSITION,...) instead")
-    virtual bool getErrorLimitRaw(int j, double *limit) {return getPidErrorLimitRaw(VOCAB_PIDTYPE_POSITION, j, limit);}
+    bool getErrorLimitRaw(int j, double *limit) {return getPidErrorLimitRaw(VOCAB_PIDTYPE_POSITION, j, limit);}
 
     /** Get the position error limit for all controllers
      * @param limits pointer to the array that will store the output
@@ -181,7 +181,7 @@ public:
      * @deprecated since YARP 2.3.68
      */
     YARP_DEPRECATED_MSG("Use getPidErrorLimitsRaw(VOCAB_PIDTYPE_POSITION,...) instead")
-    virtual bool getErrorLimitsRaw(double *limits) {return getPidErrorLimitsRaw(VOCAB_PIDTYPE_POSITION, limits);}
+    bool getErrorLimitsRaw(double *limits) {return getPidErrorLimitsRaw(VOCAB_PIDTYPE_POSITION, limits);}
 
     /** Reset the position controller of a given joint, usually sets the
      * current position of the joint as the reference value for the PID, and resets
@@ -191,23 +191,23 @@ public:
      * @deprecated since YARP 2.3.68
      */
     YARP_DEPRECATED_MSG("Use resetPidRaw(VOCAB_PIDTYPE_POSITION,...) instead")
-    virtual bool resetPidRaw(int j)  {return resetPidRaw(VOCAB_PIDTYPE_POSITION, j);}
+    bool resetPidRaw(int j)  {return resetPidRaw(VOCAB_PIDTYPE_POSITION, j);}
 
     /** Disable the pid computation for a joint
     * @deprecated since YARP 2.3.68*/
     YARP_DEPRECATED_MSG("Use disablePidRaw(VOCAB_PIDTYPE_POSITION,...) instead")
-    virtual bool disablePidRaw(int j)  {return disablePidRaw(VOCAB_PIDTYPE_POSITION, j);}
+    bool disablePidRaw(int j)  {return disablePidRaw(VOCAB_PIDTYPE_POSITION, j);}
 
     /** Enable the pid computation for a joint
     * @deprecated since YARP 2.3.68*/
     YARP_DEPRECATED_MSG("Use enablePidRaw(VOCAB_PIDTYPE_POSITION,...) instead")
-    virtual bool enablePidRaw(int j)  {return enablePidRaw(VOCAB_PIDTYPE_POSITION, j);}
+    bool enablePidRaw(int j)  {return enablePidRaw(VOCAB_PIDTYPE_POSITION, j);}
 
     /** Set offset value for a given position controller
     * @deprecated since YARP 2.3.68*/
     YARP_DEPRECATED_MSG("Use setPidOffsetRaw(VOCAB_PIDTYPE_POSITION,...) instead")
-    virtual bool setOffsetRaw(int j, double v)  {return setPidOffsetRaw(VOCAB_PIDTYPE_POSITION, j, v);}
-#endif //#ifndef YARP_NO_DEPRECATED // since YARP 2.3.68
+    bool setOffsetRaw(int j, double v)  {return setPidOffsetRaw(VOCAB_PIDTYPE_POSITION, j, v);}
+#endif //#ifndef YARP_NO_DEPRECATED // since YARP 2.3.70
 
     //////////////////////////////////////
     /** Set new pid value for a joint axis.
@@ -388,7 +388,7 @@ public:
      */
     virtual ~IPidControl() {}
 
-#ifndef YARP_NO_DEPRECATED // since YARP 2.3.68
+#ifndef YARP_NO_DEPRECATED // since YARP 2.3.70
     /** Set new pid value for a joint axis.
      * @param j joint number
      * @param pid new pid value
@@ -396,7 +396,7 @@ public:
      * @deprecated since YARP 2.3.68
      */
     YARP_DEPRECATED_MSG("Use the setPid(VOCAB_PIDTYPE_POSITION,...) instead")
-    virtual bool setPid(int j, const Pid &pid) {return setPid(VOCAB_PIDTYPE_POSITION, j ,pid);}
+    bool setPid(int j, const Pid &pid) {return setPid(VOCAB_PIDTYPE_POSITION, j ,pid);}
 
     /** Set new pid value on multiple axes.
      * @param pids pointer to a vector of pids
@@ -404,7 +404,7 @@ public:
      * @deprecated since YARP 2.3.68
      */
     YARP_DEPRECATED_MSG("Use the setPids(VOCAB_PIDTYPE_POSITION,...) instead")
-    virtual bool setPids(const Pid *pids)  {return setPids(VOCAB_PIDTYPE_POSITION, pids);}
+    bool setPids(const Pid *pids)  {return setPids(VOCAB_PIDTYPE_POSITION, pids);}
 
     /** Set the controller reference point for a given axis.
      * Warning this method can result in very large torques
@@ -417,7 +417,7 @@ public:
      * @deprecated since YARP 2.3.68
      */
     YARP_DEPRECATED_MSG("Use setPidReference(VOCAB_PIDTYPE_POSITION,...) instead")
-    virtual bool setReference(int j, double ref)  {return setPidReference(VOCAB_PIDTYPE_POSITION, j ,ref);}
+    bool setReference(int j, double ref)  {return setPidReference(VOCAB_PIDTYPE_POSITION, j ,ref);}
 
     /** Set the controller reference points, multiple axes.
      * Warning this method can result in very large torques
@@ -429,7 +429,7 @@ public:
      * @deprecated since YARP 2.3.68
      */
     YARP_DEPRECATED_MSG("Use setPidReferences(VOCAB_PIDTYPE_POSITION,...) instead")
-    virtual bool setReferences(const double *refs) {return setPidReferences(VOCAB_PIDTYPE_POSITION, refs);}
+    bool setReferences(const double *refs) {return setPidReferences(VOCAB_PIDTYPE_POSITION, refs);}
 
     /** Set the error limit for the controller on a specifi joint
      * @param j joint number
@@ -438,7 +438,7 @@ public:
      * @deprecated since YARP 2.3.68
      */
     YARP_DEPRECATED_MSG("Use setPidErrorLimit(VOCAB_PIDTYPE_POSITION,...) instead")
-    virtual bool setErrorLimit(int j, double limit) {return setPidErrorLimit(VOCAB_PIDTYPE_POSITION, j, limit);}
+    bool setErrorLimit(int j, double limit) {return setPidErrorLimit(VOCAB_PIDTYPE_POSITION, j, limit);}
 
     /** Get the error limit for the controller on all joints.
      * @param limits pointer to the vector with the new limits
@@ -446,7 +446,7 @@ public:
      * @deprecated since YARP 2.3.68
      */
     YARP_DEPRECATED_MSG("Use setPidErrorLimits(VOCAB_PIDTYPE_POSITION,...) instead")
-    virtual bool setErrorLimits(const double *limits) {return setPidErrorLimits(VOCAB_PIDTYPE_POSITION, limits);}
+    bool setErrorLimits(const double *limits) {return setPidErrorLimits(VOCAB_PIDTYPE_POSITION, limits);}
 
     /** Get the current error for a joint.
      * @param j joint number
@@ -455,14 +455,14 @@ public:
      * @deprecated since YARP 2.3.68
      */
     YARP_DEPRECATED_MSG("Use getPidError(VOCAB_PIDTYPE_POSITION,...) instead")
-    virtual bool getError(int j, double *err) {return getPidError(VOCAB_PIDTYPE_POSITION, j, err);}
+    bool getError(int j, double *err) {return getPidError(VOCAB_PIDTYPE_POSITION, j, err);}
 
     /** Get the error of all joints.
      * @param errs pointer to the vector that will store the errors
      * @deprecated since YARP 2.3.68
      */
     YARP_DEPRECATED_MSG("Use getPidErrors(VOCAB_PIDTYPE_POSITION,...) instead")
-    virtual bool getErrors(double *errs)  {return getPidErrors(VOCAB_PIDTYPE_POSITION, errs);}
+    bool getErrors(double *errs)  {return getPidErrors(VOCAB_PIDTYPE_POSITION, errs);}
 
     /** Get the output of the controller (e.g. pwm value)
      * @param j joint number
@@ -471,14 +471,14 @@ public:
      * @deprecated since YARP 2.3.68
      */
     YARP_DEPRECATED_MSG("Use getPidOutput(VOCAB_PIDTYPE_POSITION,...) instead")
-    virtual bool getOutput(int j, double *out)  {return getPidOutput(VOCAB_PIDTYPE_POSITION, j, out);}
+    bool getOutput(int j, double *out)  {return getPidOutput(VOCAB_PIDTYPE_POSITION, j, out);}
 
     /** Get the output of the controllers (e.g. pwm value)
      * @param outs pinter to the vector that will store the output values
      * @deprecated since YARP 2.3.68
      */
     YARP_DEPRECATED_MSG("Use getPidOutputs(VOCAB_PIDTYPE_POSITION,...) instead")
-    virtual bool getOutputs(double *outs)   {return getPidOutputs(VOCAB_PIDTYPE_POSITION, outs);}
+    bool getOutputs(double *outs)   {return getPidOutputs(VOCAB_PIDTYPE_POSITION, outs);}
 
     /** Get current pid value for a specific joint.
      * @param j joint number
@@ -487,7 +487,7 @@ public:
      * @deprecated since YARP 2.3.68
      */
     YARP_DEPRECATED_MSG("Use getPid(VOCAB_PIDTYPE_POSITION,...)  instead")
-    virtual bool getPid(int j, Pid *pid) {return getPid(VOCAB_PIDTYPE_POSITION, j, pid);}
+    bool getPid(int j, Pid *pid) {return getPid(VOCAB_PIDTYPE_POSITION, j, pid);}
 
     /** Get current pid value for a specific joint.
      * @param pids vector that will store the values of the pids.
@@ -495,7 +495,7 @@ public:
      * @deprecated since YARP 2.3.68
      */
     YARP_DEPRECATED_MSG("Use getPids(VOCAB_PIDTYPE_POSITION,...)  instead")
-    virtual bool getPids(Pid *pids) {return getPids(VOCAB_PIDTYPE_POSITION, pids);}
+    bool getPids(Pid *pids) {return getPids(VOCAB_PIDTYPE_POSITION, pids);}
 
     /** Get the current reference position of the controller for a specific joint.
      * @param j joint number
@@ -503,14 +503,14 @@ public:
      * @return reference value
      */
     YARP_DEPRECATED_MSG("Use getPidReference(VOCAB_PIDTYPE_POSITION,...) instead")
-    virtual bool getReference(int j, double *ref) {return getPidReference(VOCAB_PIDTYPE_POSITION, j, ref);}
+    bool getReference(int j, double *ref) {return getPidReference(VOCAB_PIDTYPE_POSITION, j, ref);}
 
     /** Get the current reference position of all controllers.
      * @param refs vector that will store the output.
      * @deprecated since YARP 2.3.68
      */
     YARP_DEPRECATED_MSG("Use getPidReferences(VOCAB_PIDTYPE_POSITION,...)  instead")
-    virtual bool getReferences(double *refs) {return getPidReferences(VOCAB_PIDTYPE_POSITION, refs);}
+    bool getReferences(double *refs) {return getPidReferences(VOCAB_PIDTYPE_POSITION, refs);}
 
     /** Get the error limit for the controller on a specific joint
      * @param j joint number
@@ -519,7 +519,7 @@ public:
      * @deprecated since YARP 2.3.68
      */
     YARP_DEPRECATED_MSG("Use getPidErrorLimit(VOCAB_PIDTYPE_POSITION,...)  instead")
-    virtual bool getErrorLimit(int j, double *limit) {return getPidErrorLimit(VOCAB_PIDTYPE_POSITION, j, limit);}
+    bool getErrorLimit(int j, double *limit) {return getPidErrorLimit(VOCAB_PIDTYPE_POSITION, j, limit);}
 
     /** Get the error limit for all controllers
      * @param limits pointer to the array that will store the output
@@ -527,7 +527,7 @@ public:
      * @deprecated since YARP 2.3.68
      */
     YARP_DEPRECATED_MSG("Use getPidErrorLimits(VOCAB_PIDTYPE_POSITION,...)  instead")
-    virtual bool getErrorLimits(double *limits) {return getPidErrorLimits(VOCAB_PIDTYPE_POSITION, limits);}
+    bool getErrorLimits(double *limits) {return getPidErrorLimits(VOCAB_PIDTYPE_POSITION, limits);}
 
     /** Reset the controller of a given joint, usually sets the
      * current position of the joint as the reference value for the PID, and resets
@@ -537,23 +537,23 @@ public:
      * @deprecated since YARP 2.3.68
      */
     YARP_DEPRECATED_MSG("Use resetPid(VOCAB_PIDTYPE_POSITION,...)  instead")
-    virtual bool resetPid(int j) {return resetPid(VOCAB_PIDTYPE_POSITION, j);}
+    bool resetPid(int j) {return resetPid(VOCAB_PIDTYPE_POSITION, j);}
 
     /** Disable the pid computation for a joint
     *@deprecated since YARP 2.3.68*/
     YARP_DEPRECATED_MSG("Use disablePid(VOCAB_PIDTYPE_POSITION,...)  instead")
-    virtual bool disablePid(int j) {return disablePid(VOCAB_PIDTYPE_POSITION, j);}
+    bool disablePid(int j) {return disablePid(VOCAB_PIDTYPE_POSITION, j);}
 
     /** Enable the pid computation for a joint
     *@deprecated since YARP 2.3.68*/
     YARP_DEPRECATED_MSG("Use enablePid(VOCAB_PIDTYPE_POSITION,...)  instead")
-    virtual bool enablePid(int j) {return enablePid(VOCAB_PIDTYPE_POSITION, j);}
+    bool enablePid(int j) {return enablePid(VOCAB_PIDTYPE_POSITION, j);}
 
     /** Set offset value for a given controller
     *@deprecated since YARP 2.3.68*/
     YARP_DEPRECATED_MSG("Use setPidOffset(VOCAB_PIDTYPE_POSITION,...)  instead")
-    virtual bool setOffset(int j, double v) {return setPidOffset(VOCAB_PIDTYPE_POSITION, j ,v);}
-#endif //#ifndef YARP_NO_DEPRECATED // since YARP 2.3.68
+    bool setOffset(int j, double v) {return setPidOffset(VOCAB_PIDTYPE_POSITION, j ,v);}
+#endif //#ifndef YARP_NO_DEPRECATED // since YARP 2.3.70
 
     /////////////////////////////////////////////////////////////////
     /** Set new pid value for a joint axis.
