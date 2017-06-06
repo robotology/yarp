@@ -24,7 +24,7 @@ public:
         count = 1;
     }
 
-    virtual void report(const SearchReport& report, const char *context) {
+    virtual void report(const SearchReport& report, const char *context) override {
         ConstString ctx = context;
         ConstString key = report.key.c_str();
         ConstString prefix = "";

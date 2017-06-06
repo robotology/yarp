@@ -31,7 +31,7 @@ using namespace yarp::os;
 
 class ImageTest : public UnitTest {
 public:
-    virtual ConstString getName() { return "ImageTest"; }
+    virtual ConstString getName() override { return "ImageTest"; }
 
     void passImage(ImageOf<PixelRgb> img) {
         report(0, "passed a blank image ok");
@@ -556,7 +556,7 @@ public:
     }
 
 
-    virtual void runTests() {
+    virtual void runTests() override {
         testCreate();
         bool netMode = Network::setLocalMode(true);
         testTransmit();

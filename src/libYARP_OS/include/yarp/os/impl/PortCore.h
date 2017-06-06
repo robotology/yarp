@@ -283,7 +283,7 @@ public:
     /**
      * Callback for data.
      */
-    virtual bool read(yarp::os::ConnectionReader& reader)
+    virtual bool read(yarp::os::ConnectionReader& reader) override
     {
         // does nothing by default
         return true;
@@ -292,7 +292,7 @@ public:
     /**
      * Begin main thread.
      */
-    virtual bool start();
+    virtual bool start() override;
 
 
     /**
@@ -324,12 +324,12 @@ public:
     /**
      * Shut down port.
      */
-    virtual void close();
+    virtual void close() override;
 
     /**
      * The body of the main thread.
      */
-    virtual void run();
+    virtual void run() override;
 
     /**
      * A diagnostic for testing purposes.
@@ -370,7 +370,7 @@ public:
     /**
      * Set some extra meta data to pass along with the message
      */
-    void setEnvelope(const ConstString& envelope);
+    void setEnvelope(const ConstString& envelope) override;
 
     ConstString getEnvelope();
 
@@ -418,7 +418,7 @@ public:
      * Process an administrative message.
      */
     bool adminBlock(yarp::os::ConnectionReader& reader, void *id,
-                    OutputStream *os);
+                    OutputStream *os) override;
 
 
     /**
@@ -457,38 +457,38 @@ public:
 
     // documented in PortManager
     virtual bool addOutput(const ConstString& dest, void *id, OutputStream *os,
-                           bool onlyIfNeeded);
+                           bool onlyIfNeeded) override;
 
     // documented in PortManager
-    virtual void removeOutput(const ConstString& dest, void *id, OutputStream *os);
+    virtual void removeOutput(const ConstString& dest, void *id, OutputStream *os) override;
 
     // documented in PortManager
-    virtual void removeInput(const ConstString& dest, void *id, OutputStream *os);
+    virtual void removeInput(const ConstString& dest, void *id, OutputStream *os) override;
 
     // documented in PortManager
-    virtual void describe(void *id, OutputStream *os);
+    virtual void describe(void *id, OutputStream *os) override;
 
     // documented in PortManager
-    virtual bool readBlock(yarp::os::ConnectionReader& reader, void *id, OutputStream *os);
+    virtual bool readBlock(yarp::os::ConnectionReader& reader, void *id, OutputStream *os) override;
 
 
     /**
      * Generate a description of the connections associated with the
      * port.
      */
-    virtual void report(const yarp::os::PortInfo& info);
+    virtual void report(const yarp::os::PortInfo& info) override;
 
     /**
      * Add another output to the port.
      */
     void addOutput(OutputProtocol *op);
 
-    virtual bool removeIO(const Route& route, bool synch)
+    virtual bool removeIO(const Route& route, bool synch) override
     {
         return removeUnit(route, synch);
     }
 
-    virtual void reportUnit(PortCoreUnit *unit, bool active);
+    virtual void reportUnit(PortCoreUnit *unit, bool active) override;
 
     void setTimeout(float timeout)
     {

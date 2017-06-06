@@ -23,7 +23,7 @@ using namespace yarp::os::impl;
 
 class ThriftTest : public UnitTest {
 public:
-    virtual ConstString getName() {
+    virtual ConstString getName() override {
         return "ThriftTest";
     }
 };

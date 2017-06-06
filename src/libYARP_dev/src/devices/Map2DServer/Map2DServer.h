@@ -74,8 +74,8 @@ public:
     
     bool saveMaps(std::string filename);
     bool loadMaps(std::string filename);
-    bool open(yarp::os::Searchable &params);
-    bool close();
+    bool open(yarp::os::Searchable &params) override;
+    bool close() override;
     yarp::os::Bottle getOptions();
 
 private:
@@ -91,7 +91,7 @@ private:
     yarp::os::Publisher<tf_tfMessage>        m_rosPublisherPort_tf_timed;
     yarp::os::Subscriber<tf_tfMessage>       m_rosSubscriberPort_tf_timed;
 
-    virtual bool read(yarp::os::ConnectionReader& connection);
+    virtual bool read(yarp::os::ConnectionReader& connection) override;
     inline  void list_response(yarp::os::Bottle& out);
 
 #endif //DOXYGEN_SHOULD_SKIP_THIS

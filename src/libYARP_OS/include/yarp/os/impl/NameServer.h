@@ -88,7 +88,7 @@ public:
 
     static int main(int argc, char *argv[]);
 
-    virtual ConstString apply(const ConstString& txt, const Contact& remote);
+    virtual ConstString apply(const ConstString& txt, const Contact& remote) override;
 
     bool apply(const yarp::os::Bottle& cmd, yarp::os::Bottle& result,
                const Contact& remote);
@@ -160,7 +160,7 @@ private:
             return prefix + NetType::toString(getFree());
         }
 
-        virtual int fresh()
+        virtual int fresh() override
         {
             int result = base;
             base++;
@@ -207,7 +207,7 @@ private:
             return result;
         }
 
-        virtual int fresh()
+        virtual int fresh() override
         {
             int result = base;
             base += legacyStep;
@@ -237,7 +237,7 @@ private:
             this->basePort = basePort;
         }
 
-        virtual int fresh()
+        virtual int fresh() override
         {
             int result = base;
             base++;

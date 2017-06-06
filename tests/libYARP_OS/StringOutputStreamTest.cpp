@@ -18,7 +18,7 @@ using namespace yarp::os::impl;
 
 class StringOutputStreamTest : public UnitTest {
 public:
-    virtual ConstString getName() { return "StringOutputStreamTest"; }
+    virtual ConstString getName() override { return "StringOutputStreamTest"; }
 
     void testWrite() {
         report(0,"testing writing...");
@@ -33,7 +33,7 @@ public:
         checkEqual("yo",sos2.toString(),"multiple writes");
     }
 
-    virtual void runTests() {
+    virtual void runTests() override {
         testWrite();
     }
 };

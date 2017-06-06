@@ -17,7 +17,7 @@ using namespace yarp::os;
 class ContactTest : public UnitTest
 {
 public:
-    virtual ConstString getName()
+    virtual ConstString getName() override
     {
         return "ContactTest";
     }
@@ -308,7 +308,7 @@ YARP_WARNING_POP;
         }
     }
 
-    virtual void runTests() {
+    virtual void runTests() override {
         testString();
         testCopy();
         testFactory();

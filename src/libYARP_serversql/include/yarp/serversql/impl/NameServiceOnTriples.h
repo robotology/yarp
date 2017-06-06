@@ -108,9 +108,9 @@ public:
                             const yarp::os::ConstString& prefix,
                             bool nested = false);
 
-    virtual bool announce(const yarp::os::ConstString& name, int activity);
+    virtual bool announce(const yarp::os::ConstString& name, int activity) override;
 
-    virtual yarp::os::Contact query(const yarp::os::ConstString& portName);
+    virtual yarp::os::Contact query(const yarp::os::ConstString& portName) override;
 
     bool cmdQuery(NameTripleState& act, bool nested = false);
 
@@ -135,16 +135,16 @@ public:
     virtual bool apply(yarp::os::Bottle& cmd,
                        yarp::os::Bottle& reply,
                        yarp::os::Bottle& event,
-                       const yarp::os::Contact& remote);
+                       const yarp::os::Contact& remote) override;
 
-    virtual void goPublic()
+    virtual void goPublic() override
     {
         gonePublic = true;
     }
 
-    void lock();
+    void lock() override;
 
-    void unlock();
+    void unlock() override;
 
     void setDelegate(yarp::os::NameSpace *delegate)
     {

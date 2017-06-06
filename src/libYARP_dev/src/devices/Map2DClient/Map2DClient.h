@@ -62,14 +62,14 @@ protected:
 public:
 
      /* DeviceDriver methods */
-    bool open(yarp::os::Searchable& config);
-    bool close();
+    bool open(yarp::os::Searchable& config) override;
+    bool close() override;
 
-    virtual bool     clear      ();
-    virtual bool     remove_map (std::string map_name);
-    virtual bool     store_map  (const yarp::dev::MapGrid2D& map);
-    virtual bool     get_map    (std::string map_name, yarp::dev::MapGrid2D& map);
-    virtual bool     get_map_names(std::vector<std::string>& map_names);
+    virtual bool     clear      () override;
+    virtual bool     remove_map (std::string map_name) override;
+    virtual bool     store_map  (const yarp::dev::MapGrid2D& map) override;
+    virtual bool     get_map    (std::string map_name, yarp::dev::MapGrid2D& map) override;
+    virtual bool     get_map_names(std::vector<std::string>& map_names) override;
 };
 
 #endif // YARP_DEV_MAP2DCLIENT_H

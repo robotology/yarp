@@ -747,7 +747,7 @@ public:
         this->server = server;
     }
 
-    virtual bool read(ConnectionReader& reader) {
+    virtual bool read(ConnectionReader& reader) override {
         YTRACE("NameServer::read start");
         ConstString ref = "NAME_SERVER ";
         bool ok = true;
@@ -832,13 +832,13 @@ public:
         this->port = &port;
     }
 
-    virtual void onEvent(Bottle& event) {
+    virtual void onEvent(Bottle& event) override {
         if (port!=YARP_NULLPTR) {
             port->write(event);
         }
     }
 
-    virtual PortReader *create() {
+    virtual PortReader *create() override {
         return new MainNameServerWorker(this);
     }
 };

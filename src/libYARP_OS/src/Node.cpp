@@ -35,7 +35,7 @@ public:
     ROSReport() {
     }
 
-    virtual void report(const PortInfo& info) {
+    virtual void report(const PortInfo& info) override {
         if (info.tag == PortInfo::PORTINFO_CONNECTION) {
             NameClient& nic = NameClient::getNameClient();
             Contact c;
@@ -234,7 +234,7 @@ public:
         port.interrupt();
     }
 
-    virtual bool read(ConnectionReader& reader);
+    virtual bool read(ConnectionReader& reader) override;
 
     void getBusStats(NodeArgs& na)
     {

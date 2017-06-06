@@ -152,32 +152,32 @@ public:
     ~RGBDSensorClient();
 
 
-    virtual int  getRgbHeight();
-    virtual int  getRgbWidth();
-    virtual bool getRgbSupportedConfigurations(yarp::sig::VectorOf<CameraConfig> &configurations);
-    virtual bool getRgbResolution(int &width, int &height);
-    virtual bool setRgbResolution(int width, int height);
-    virtual bool getRgbFOV(double &horizontalFov, double &verticalFov);
-    virtual bool setRgbFOV(double horizontalFov, double verticalFov);
-    virtual bool getRgbIntrinsicParam(yarp::os::Property &intrinsic);
-    virtual bool getRgbMirroring(bool& mirror);
-    virtual bool setRgbMirroring(bool mirror);
+    virtual int  getRgbHeight() override;
+    virtual int  getRgbWidth() override;
+    virtual bool getRgbSupportedConfigurations(yarp::sig::VectorOf<CameraConfig> &configurations) override;
+    virtual bool getRgbResolution(int &width, int &height) override;
+    virtual bool setRgbResolution(int width, int height) override;
+    virtual bool getRgbFOV(double &horizontalFov, double &verticalFov) override;
+    virtual bool setRgbFOV(double horizontalFov, double verticalFov) override;
+    virtual bool getRgbIntrinsicParam(yarp::os::Property &intrinsic) override;
+    virtual bool getRgbMirroring(bool& mirror) override;
+    virtual bool setRgbMirroring(bool mirror) override;
 
     /*
      * IDepthVisualParams interface. Look at IVisualParams.h for documentation
      */
-    virtual int    getDepthHeight();
-    virtual int    getDepthWidth();
-    virtual bool   setDepthResolution(int width, int height);
-    virtual bool   getDepthFOV(double &horizontalFov, double &verticalFov);
-    virtual bool   setDepthFOV(double horizontalFov, double verticalFov);
-    virtual double getDepthAccuracy();
-    virtual bool   setDepthAccuracy(double accuracy);
-    virtual bool   getDepthClipPlanes(double &near, double &far);
-    virtual bool   setDepthClipPlanes(double near, double far);
-    virtual bool   getDepthIntrinsicParam(yarp::os::Property &intrinsic);
-    virtual bool   getDepthMirroring(bool& mirror);
-    virtual bool   setDepthMirroring(bool mirror);
+    virtual int    getDepthHeight() override;
+    virtual int    getDepthWidth() override;
+    virtual bool   setDepthResolution(int width, int height) override;
+    virtual bool   getDepthFOV(double &horizontalFov, double &verticalFov) override;
+    virtual bool   setDepthFOV(double horizontalFov, double verticalFov) override;
+    virtual double getDepthAccuracy() override;
+    virtual bool   setDepthAccuracy(double accuracy) override;
+    virtual bool   getDepthClipPlanes(double &near, double &far) override;
+    virtual bool   setDepthClipPlanes(double near, double far) override;
+    virtual bool   getDepthIntrinsicParam(yarp::os::Property &intrinsic) override;
+    virtual bool   getDepthMirroring(bool& mirror) override;
+    virtual bool   setDepthMirroring(bool mirror) override;
 
     // Device Driver interface //
     /**
@@ -193,13 +193,13 @@ public:
      * otherwise NULL. The user is responsible for deallocating the
      * device.
      */
-    bool open(yarp::os::Searchable& config);
+    bool open(yarp::os::Searchable& config) override;
 
     /**
      * Close the DeviceDriver.
      * @return true/false on success/failure.
      */
-    bool close();
+    bool close() override;
 
     /*
      *  IRgbVisualParams interface. Look at IVisualParams.h for documentation
@@ -215,7 +215,7 @@ public:
      *         of the depth optical frame with respect to the rgb frame
      * @return true if success
      */
-    bool getExtrinsicParam(yarp::sig::Matrix &extrinsic);
+    bool getExtrinsicParam(yarp::sig::Matrix &extrinsic) override;
 
     /**
      * Get the surrent status of the sensor, using enum type
@@ -223,14 +223,14 @@ public:
      * @return an enum representing the status of the robot or an error code
      * if any error is present
      */
-    IRGBDSensor::RGBDSensor_status getSensorStatus();
+    IRGBDSensor::RGBDSensor_status getSensorStatus() override;
 
     /**
      * Return an error message in case of error. For debugging purpose and user notification.
      * Error message will be reset after any succesful command
      * @return A string explaining the last error occurred.
      */
-    yarp::os::ConstString getLastErrorMsg(yarp::os::Stamp *timeStamp = NULL);
+    yarp::os::ConstString getLastErrorMsg(yarp::os::Stamp *timeStamp = NULL) override;
 
     /**
      * Get the rgb frame from the device.
@@ -244,7 +244,7 @@ public:
      * @param timeStamp time in which the image was acquired. Optional, the user must provide memory allocation
      * @return True on success
      */
-    bool getRgbImage(yarp::sig::FlexImage &rgbImage, yarp::os::Stamp *timeStamp = NULL);
+    bool getRgbImage(yarp::sig::FlexImage &rgbImage, yarp::os::Stamp *timeStamp = NULL) override;
 
     /**
      * Get the depth frame from the device.
@@ -258,7 +258,7 @@ public:
      * @param timeStamp time in which the image was acquired. Optional, the user must provide memory allocation
      * @return True on success
      */
-    bool getDepthImage(yarp::sig::ImageOf<yarp::sig::PixelFloat> &depthImage, yarp::os::Stamp *timeStamp = NULL);
+    bool getDepthImage(yarp::sig::ImageOf<yarp::sig::PixelFloat> &depthImage, yarp::os::Stamp *timeStamp = NULL) override;
 
     /**
     * Get the both the color and depth frame in a single call. Implementation should assure the best possible synchronization
@@ -271,7 +271,7 @@ public:
     * @param depthStamp pointer to memory to hold the Stamp of the depth frame
     * @return true if able to get both data.
     */
-    bool getImages(yarp::sig::FlexImage &colorFrame, yarp::sig::ImageOf<yarp::sig::PixelFloat> &depthFrame, yarp::os::Stamp *colorStamp=NULL, yarp::os::Stamp *depthStamp=NULL);
+    bool getImages(yarp::sig::FlexImage &colorFrame, yarp::sig::ImageOf<yarp::sig::PixelFloat> &depthFrame, yarp::os::Stamp *colorStamp=NULL, yarp::os::Stamp *depthStamp=NULL) override;
 
 
     // IFrame Grabber Control 2

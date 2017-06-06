@@ -58,7 +58,7 @@ private slots:
     void buildFileName();
 
 public slots:
-    void accept();
+    void accept() override;
 };
 
 class CustomWizardPage : public QWizardPage

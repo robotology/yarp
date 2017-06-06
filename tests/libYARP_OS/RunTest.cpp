@@ -61,7 +61,7 @@ public:
     void stop()
     {}
 
-    void run()
+    void run() override
     {
         yarp::os::Run::main(_argc, _argv);
     }
@@ -70,7 +70,7 @@ public:
 
 class RunTest : public UnitTest {
 public:
-    virtual ConstString getName() { return "RunTest"; }
+    virtual ConstString getName() override { return "RunTest"; }
 
     virtual void testRun() {
         //this could be local or using an external nameserver, to be decided
@@ -121,7 +121,7 @@ public:
         tmpPort.write(msg, reply);
     }
 
-    virtual void runTests() {
+    virtual void runTests() override {
         testRun();
     }
 };

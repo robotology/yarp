@@ -37,13 +37,13 @@ public:
      * @param connection a network connection to a port
      * @return true if the message was read successfully
      */
-    virtual bool read(yarp::os::ConnectionReader& connection);
+    virtual bool read(yarp::os::ConnectionReader& connection) override;
 
 
     RFModuleRespondHandler(RFModule& owner) : owner(owner), attachedToPort(false), attachedTerminal(false) {}
 
 
-    virtual void run() {
+    virtual void run() override {
         yInfo("Listening to terminal (type \"quit\" to stop module).");
         bool isEof = false;
         while (!(isEof || isStopping() || owner.isStopping())) {
@@ -145,7 +145,7 @@ private:
 public:
     RFModuleThreadedHandler(RFModule& owner) : owner(owner) {};
 
-    void run() { owner.runModule(); }
+    void run() override { owner.runModule(); }
 };
 
 

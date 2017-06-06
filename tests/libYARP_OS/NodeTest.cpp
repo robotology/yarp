@@ -35,7 +35,7 @@ public:
 
 class NodeTest : public UnitTest {
 public:
-    virtual ConstString getName() { return "NodeTest"; }
+    virtual ConstString getName() override { return "NodeTest"; }
 
     void parseNameTest();
     void basicNodeTest();
@@ -48,7 +48,7 @@ public:
     void singleNameTest();
     void typePropTest();
 
-    virtual void runTests();
+    virtual void runTests() override;
 
 private:
 

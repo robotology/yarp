@@ -23,29 +23,29 @@ public:
     virtual ~ThreadCallbackAdapter() {
     }
 
-    virtual void beforeStart() {
+    virtual void beforeStart() override {
         owner.beforeStart();
     }
 
-    virtual void afterStart(bool success) {
+    virtual void afterStart(bool success) override {
         owner.afterStart(success);
     }
 
-    virtual void run() {
+    virtual void run() override {
         owner.run();
     }
 
-    virtual void close() {
+    virtual void close() override {
         if (isRunning()) {
             owner.onStop();
         }
         ThreadImpl::close();
     }
 
-    virtual bool threadInit()
+    virtual bool threadInit() override
     {return owner.threadInit();}
 
-    virtual void threadRelease()
+    virtual void threadRelease() override
     {owner.threadRelease();}
 };
 

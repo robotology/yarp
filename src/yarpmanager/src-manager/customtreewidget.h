@@ -13,6 +13,7 @@
 
 #include <QTreeWidget>
 #include <QMenu>
+#include <yarp/conf/compiler.h>
 
 
 /*! \class CustomTreeWidgetItem
@@ -29,7 +30,7 @@ public:
 
     CustomTreeWidgetItem(QTreeWidgetItem *item, const QStringList &strings, int type = Type) :
         QTreeWidgetItem(item,strings,type){}
-    bool operator< (const QTreeWidgetItem &other) const{
+    bool operator< (const QTreeWidgetItem &other) const override {
         int sortCol = treeWidget()->sortColumn();
         if(sortCol == 1){
             int myNumber = text(sortCol).toInt();
@@ -55,7 +56,7 @@ public:
     void setContextMenu(QMenu *);
 
 protected:
-    void mousePressEvent(QMouseEvent *e);
+    void mousePressEvent(QMouseEvent *e) override;
 
 private:
     Qt::SortOrder sort;

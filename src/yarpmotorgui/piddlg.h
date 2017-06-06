@@ -76,7 +76,7 @@ class TableIntDelegate : public QItemDelegate
 {
 public:
     QWidget* createEditor(QWidget *parent, const QStyleOptionViewItem & option,
-                      const QModelIndex & index) const
+                      const QModelIndex & index) const override
     {
         Q_UNUSED(option);
         Q_UNUSED(index);
@@ -92,7 +92,7 @@ class TableDoubleDelegate : public QItemDelegate
 {
 public:
     QWidget* createEditor(QWidget *parent, const QStyleOptionViewItem & option,
-                      const QModelIndex & index) const
+                      const QModelIndex & index) const override
     {
         Q_UNUSED(option);
         Q_UNUSED(index);
@@ -108,7 +108,7 @@ class TableGenericDelegate : public QItemDelegate
 {
 public:
     QWidget* createEditor(QWidget *parent, const QStyleOptionViewItem & option,
-        const QModelIndex & index) const
+        const QModelIndex & index) const override
     {
         Q_UNUSED(option);
         Q_UNUSED(index);

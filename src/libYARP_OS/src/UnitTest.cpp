@@ -64,7 +64,7 @@ public:
         // no parent
     }
 
-    virtual ConstString getName() {
+    virtual ConstString getName() override {
         return "root";
     }
 };

@@ -136,11 +136,11 @@ public:
     /**
      * Thread init
      */
-    bool threadInit();
+    bool threadInit() override;
     /**
      * Thread release
      */
-    void threadRelease();
+    void threadRelease() override;
     /**
      * Function that steps forwards the data set
      */
@@ -160,7 +160,7 @@ public:
     /**
      * Run function
      */
-    void run();
+    void run() override;
     /**
      * Function that steps from command rpc
      */

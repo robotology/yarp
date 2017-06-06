@@ -639,7 +639,7 @@ public:
         checkEqual(s3.getCount(),42,"bottle-to-stamp ok");
     }
 
-    virtual void runTests() {
+    virtual void runTests() override {
         testClear();
         testSize();
         testString();
@@ -677,7 +677,7 @@ public:
         testCopyPortable();
     }
 
-    virtual ConstString getName() {
+    virtual ConstString getName() override {
         return "BottleTest";
     }
 };

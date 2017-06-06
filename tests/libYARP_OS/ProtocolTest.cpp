@@ -16,7 +16,7 @@ using namespace yarp::os::impl;
 
 class ProtocolTest : public UnitTest {
 public:
-    virtual ConstString getName() { return "ProtocolTest"; }
+    virtual ConstString getName() override { return "ProtocolTest"; }
 
     ConstString simplify(ConstString x) {
         return humanize(x);
@@ -74,7 +74,7 @@ public:
         checkEqual(str2,ConstString(expect2),"bottle representation");
     }
 
-    virtual void runTests() {
+    virtual void runTests() override {
         testBottle();
     }
 };

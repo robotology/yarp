@@ -100,18 +100,18 @@ public:
     }
 private:
     BufferedPort<Bottle> tcpPort;
-    bool threadInit()
+    bool threadInit() override
     {
         return tcpPort.open("/TcpTestServer");
     }
 
-    void threadRelease()
+    void threadRelease() override
     {
         tcpPort.interrupt();
         tcpPort.close();
     }
 
-    void run()
+    void run() override
     {
         Bottle& b = tcpPort.prepare();
         b.clear();
@@ -140,7 +140,7 @@ public:
 class ServiceProvider : public PortReader {
 public:
 
-    virtual bool read(ConnectionReader& connection) {
+    virtual bool read(ConnectionReader& connection) override {
         Bottle receive;
         receive.read(connection);
         receive.addInt(5);
@@ -160,14 +160,14 @@ public:
 
     ServiceTester(UnitTest& owner) : owner(owner) {}
 
-    virtual bool write(ConnectionWriter& connection) {
+    virtual bool write(ConnectionWriter& connection) override {
         ct = 0;
         send.write(connection);
         connection.setReplyHandler(*this);
         return true;
     }
 
-    virtual bool read(ConnectionReader& connection) {
+    virtual bool read(ConnectionReader& connection) override {
         receive.read(connection);
         ct++;
         return true;
@@ -190,7 +190,7 @@ public:
         this->faithful = faithful;
     }
 
-    virtual void run() {
+    virtual void run() override {
         for (int i=0; i<3; i++) {
             Bottle b,b2;
             p.read(b,true);
@@ -214,7 +214,7 @@ public:
         Network::connect("/writer","/reader");
     }
 
-    virtual void run() {
+    virtual void run() override {
         total = 0;
         for (int i=0; i<3; i++) {
             Bottle b, b2;
@@ -235,7 +235,7 @@ public:
     DelegatedCallback() : produce(0) {}
 
     using TypedReaderCallback<Bottle>::onRead;
-    virtual void onRead(Bottle& bot) {
+    virtual void onRead(Bottle& bot) override {
         saved = bot;
         produce.post();
     }
@@ -252,7 +252,7 @@ public:
         ict = oct = ct = 0;
     }
 
-    virtual void report(const PortInfo& info) {
+    virtual void report(const PortInfo& info) override {
         if (info.tag == PortInfo::PORTINFO_CONNECTION) {
             if (info.incoming == false) {
                 oct++;
@@ -279,7 +279,7 @@ public:
         stop();
     }
 
-    virtual void run() {
+    virtual void run() override {
         while (!done) {
             Bottle msg("1 \"end of terminal\"");
             p.write(msg);
@@ -296,7 +296,7 @@ public:
         p.open(name);
     }
 
-    virtual void run() {
+    virtual void run() override {
         Bottle cmd, reply;
         cmd.fromString("[add] 1 2");
         p.write(cmd,reply);
@@ -312,7 +312,7 @@ public:
         p.open(name);
     }
 
-    virtual void run() {
+    virtual void run() override {
         Bottle cmd;
         cmd.fromString("[add] 1 2");
         p.write(cmd);
@@ -328,7 +328,7 @@ public:
     }
 
     using BufferedPort<Bottle>::onRead;
-    virtual void onRead(Bottle& b) {
+    virtual void onRead(Bottle& b) override {
         ct++;
     }
 };
@@ -340,7 +340,7 @@ class PortTest : public UnitTest {
 public:
     int safePort() { return Network::getDefaultPortRange()+100; }
 
-    virtual ConstString getName() { return "PortTest"; }
+    virtual ConstString getName() override { return "PortTest"; }
 
     void testOpen() {
         report(0,"checking opening and closing ports");
@@ -1534,7 +1534,7 @@ public:
         checkTrue(p.close(),"Closing the broken_device");
     }
 
-    virtual void runTests() {
+    virtual void runTests() override {
         NetworkBase::setLocalMode(true);
 
         //Progression test:

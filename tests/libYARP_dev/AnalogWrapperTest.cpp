@@ -20,7 +20,7 @@ using namespace yarp::dev;
 class AnalogWrapperTest : public UnitTest
 {
 public:
-    virtual ConstString getName() { return "AnalogWrapperTest"; }
+    virtual ConstString getName() override { return "AnalogWrapperTest"; }
 
     void testAnalogWrapper() {
         report(0,"\ntest the Analogwrapper ");
@@ -147,7 +147,7 @@ public:
         }
     }
 
-    virtual void runTests() {
+    virtual void runTests() override {
         Network::setLocalMode(true);
         testAnalogWrapper();
         Network::setLocalMode(false);

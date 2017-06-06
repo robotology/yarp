@@ -25,7 +25,7 @@ class NullBottle : public Bottle
 {
 public:
     NullBottle() : Bottle() { setReadOnly(true); }
-    virtual bool isNull() const { return true; }
+    virtual bool isNull() const override { return true; }
     static NullBottle* bottleNull;
 };
 

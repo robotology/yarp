@@ -45,10 +45,10 @@ public:
 
 #ifdef YARP_LITTLE_ENDIAN
     using yarp::os::TypedReaderCallback<yarp::sig::ImageOf<yarp::sig::PixelBgra> >::onRead;
-    void onRead(yarp::sig::ImageOf<yarp::sig::PixelBgra> &img);
+    void onRead(yarp::sig::ImageOf<yarp::sig::PixelBgra> &img) override;
 #else
     using yarp::os::TypedReaderCallback<yarp::sig::ImageOf<yarp::sig::PixelRgb> >::onRead;
-    void onRead(yarp::sig::ImageOf<yarp::sig::PixelRgba> &img);
+    void onRead(yarp::sig::ImageOf<yarp::sig::PixelRgba> &img) override;
 #endif
  
 private:

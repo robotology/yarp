@@ -15,7 +15,7 @@ using namespace yarp::os::impl;
 
 class NameConfigTest : public UnitTest {
 public:
-    virtual ConstString getName() { return "NameConfigTest"; }
+    virtual ConstString getName() override { return "NameConfigTest"; }
 
     void testRead() {
         report(0,"no tests yet");
@@ -28,7 +28,7 @@ public:
         //report(0,txt);
     }
 
-    virtual void runTests() {
+    virtual void runTests() override {
         testRead();
     }
 };

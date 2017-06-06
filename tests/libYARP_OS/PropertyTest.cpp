@@ -21,7 +21,7 @@ using namespace yarp::os;
 
 class PropertyTest : public UnitTest {
 public:
-    virtual ConstString getName() { return "PropertyTest"; }
+    virtual ConstString getName() override { return "PropertyTest"; }
 
     void checkPutGet() {
         report(0,"checking puts and gets");
@@ -613,7 +613,7 @@ check $x $y\n\
         checkEqual(pCopy.toString(),p.toString(),"test if addGroup works fine with Property copy operator");
     }
 
-    virtual void runTests() {
+    virtual void runTests() override {
         checkPutGet();
         checkExternal();
         checkTypes();

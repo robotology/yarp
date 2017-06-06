@@ -3,6 +3,7 @@
 
 #include <QGraphicsScene>
 #include <QGraphicsSceneDragDropEvent>
+#include <yarp/conf/compiler.h>
 
 class CustomView;
 class BuilderWindow;
@@ -28,13 +29,13 @@ protected:
 
 
 protected:
-    void dragEnterEvent(QGraphicsSceneDragDropEvent *event);
-    void dropEvent(QGraphicsSceneDragDropEvent *event);
-    void dragMoveEvent(QGraphicsSceneDragDropEvent *event);
-    void mouseMoveEvent(QGraphicsSceneMouseEvent *event);
-    void mousePressEvent(QGraphicsSceneMouseEvent *event);
-    void mouseReleaseEvent(QGraphicsSceneMouseEvent *event);
-    //void wheelEvent(QGraphicsSceneWheelEvent *event);
+    void dragEnterEvent(QGraphicsSceneDragDropEvent *event) override;
+    void dropEvent(QGraphicsSceneDragDropEvent *event) override;
+    void dragMoveEvent(QGraphicsSceneDragDropEvent *event) override;
+    void mouseMoveEvent(QGraphicsSceneMouseEvent *event) override;
+    void mousePressEvent(QGraphicsSceneMouseEvent *event) override;
+    void mouseReleaseEvent(QGraphicsSceneMouseEvent *event) override;
+    //void wheelEvent(QGraphicsSceneWheelEvent *event) override;
 
 signals:
     void addedApplication(void *app,QPointF);

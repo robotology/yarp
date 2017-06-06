@@ -40,7 +40,7 @@ public:
     virtual ~JoypadCtrlParser(){}
 
     bool         configure(yarp::dev::IJoypadController* interface);
-    virtual bool respond(const yarp::os::Bottle& cmd, yarp::os::Bottle& response);
+    virtual bool respond(const yarp::os::Bottle& cmd, yarp::os::Bottle& response) override;
 };
 
 //TODO: finish the single port mode.. the struct below is for this purpose
@@ -53,7 +53,7 @@ struct JoyData : public yarp::os::Portable
     yarp::sig::Vector Touch;
     yarp::sig::VectorOf<unsigned char> Hats;
 
-    bool read(yarp::os::ConnectionReader& connection)
+    bool read(yarp::os::ConnectionReader& connection) override
     {
         Buttons.resize(connection.expectInt());
         Sticks.resize(connection.expectInt());
@@ -70,7 +70,7 @@ struct JoyData : public yarp::os::Portable
         return !connection.isError();
     }
 
-    bool write(yarp::os::ConnectionWriter& connection)
+    bool write(yarp::os::ConnectionWriter& connection) override
     {
         connection.appendInt(Buttons.length());
         connection.appendInt(Sticks.length());
@@ -132,17 +132,17 @@ public:
     JoypadControlServer();
     ~JoypadControlServer();
 
-    bool open(yarp::os::Searchable& params);
+    bool open(yarp::os::Searchable& params) override;
     bool fromConfig(yarp::os::Searchable& params);
-    bool close();
-    bool attachAll(const yarp::dev::PolyDriverList& p);
-    bool detachAll();
-    bool attach(yarp::dev::PolyDriver* poly);
+    bool close() override;
+    bool attachAll(const yarp::dev::PolyDriverList& p) override;
+    bool detachAll() override;
+    bool attach(yarp::dev::PolyDriver* poly) override;
     bool attach(yarp::dev::IJoypadController* s);
-    bool detach();
-    bool threadInit();
-    void threadRelease();
-    void run();
+    bool detach() override;
+    bool threadInit() override;
+    void threadRelease() override;
+    void run() override;
 
     #undef JoyPort
 };

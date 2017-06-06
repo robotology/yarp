@@ -24,7 +24,7 @@ class DeviceDriverTest : public DeviceDriver,
                          public IFrameGrabberImage
 {
 public:
-    virtual bool open(yarp::os::Searchable& config)
+    virtual bool open(yarp::os::Searchable& config) override
     {
         w = config.check("width",yarp::os::Value(128),
                          "desired width of test image").asInt();
@@ -34,16 +34,16 @@ public:
 
     }
 
-    virtual bool getImage(yarp::sig::ImageOf<yarp::sig::PixelRgb>& image)
+    virtual bool getImage(yarp::sig::ImageOf<yarp::sig::PixelRgb>& image) override
     {
         image.resize(w, h);
         image.zero();
         return true;
     }
 
-    virtual int height() const { return h; }
+    virtual int height() const override { return h; }
 
-    virtual int width() const { return w; }
+    virtual int width() const override { return w; }
 
 private:
     int w, h;
@@ -55,7 +55,7 @@ class DeprecatedDeviceDriverTest : public DeprecatedDeviceDriver
 
 class PolyDriverTest : public UnitTest {
 public:
-    virtual ConstString getName() { return "PolyDriverTest"; }
+    virtual ConstString getName() override { return "PolyDriverTest"; }
 
     void testDeprecated() {
         report(0,"deprecated device test");
@@ -190,7 +190,7 @@ name /mymotor\n\
         checkTrue(result,"close reported successful");
     }
 
-    virtual void runTests() {
+    virtual void runTests() override {
         Network::setLocalMode(true);
         Drivers::factory().add(new DriverCreatorOf<DeviceDriverTest>("devicedrivertest",
                                                                      "devicedrivertest",

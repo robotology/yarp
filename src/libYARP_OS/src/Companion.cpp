@@ -1273,7 +1273,7 @@ class CompanionCheckHelper : public PortReader {
 public:
     BottleImpl bot;
     bool got;
-    virtual bool read(yarp::os::ConnectionReader& reader) {
+    virtual bool read(yarp::os::ConnectionReader& reader) override {
         bot.read(reader);
         got = true;
         return true;
@@ -1289,7 +1289,7 @@ public:
 class TextReader : public PortReader {
 public:
     ConstString str;
-    virtual bool read(yarp::os::ConnectionReader& reader) {
+    virtual bool read(yarp::os::ConnectionReader& reader) override {
         str = reader.expectText();
         return reader.isValid();
     }
@@ -1903,7 +1903,7 @@ public:
         }
     }
 
-    virtual bool read(ConnectionReader& reader) {
+    virtual bool read(ConnectionReader& reader) override {
         BottleImpl bot;
         if (!reader.isValid()) {
             done.post();
@@ -2494,7 +2494,7 @@ public:
     }
 
     using yarp::os::TypedReaderCallback<Bottle>::onRead;
-    virtual void onRead(Bottle& datum) {
+    virtual void onRead(Bottle& datum) override {
         mutex.wait();
         value = datum;
         port->getEnvelope(stamp);

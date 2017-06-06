@@ -184,22 +184,22 @@ public:
 
     ~BoschIMU();
 
-    virtual bool open(yarp::os::Searchable& config);
-    virtual bool close();
+    virtual bool open(yarp::os::Searchable& config) override;
+    virtual bool close() override;
 
     /*
      * Read a vector from the sensor.
      * @param out a vector containing the sensor's last readings.
      * @return true/false success/failure
      */
-    virtual bool read(yarp::sig::Vector &out);
+    virtual bool read(yarp::sig::Vector &out) override;
 
     /**
      * Get the number of channels of the sensor.
      * @param nc pointer to storage, return value
      * @return true/false success/failure
      */
-    virtual bool getChannels(int *nc);
+    virtual bool getChannels(int *nc) override;
 
     /**
      * Calibrate the sensor, single channel.
@@ -207,11 +207,11 @@ public:
      * @param v reset valure
      * @return true/false success/failure
      */
-    virtual bool calibrate(int ch, double v);
+    virtual bool calibrate(int ch, double v) override;
 
-    virtual bool threadInit();
-    virtual void threadRelease();
-    virtual void run();
+    virtual bool threadInit() override;
+    virtual void threadRelease() override;
+    virtual void run() override;
 };
 
 

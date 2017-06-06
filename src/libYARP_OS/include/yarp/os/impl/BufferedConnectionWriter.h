@@ -129,7 +129,7 @@ public:
      * Clear all cached data.
      *
      */
-    virtual void clear() {
+    virtual void clear() override {
         target = &lst;
         target_used = &lst_used;
 
@@ -215,21 +215,21 @@ public:
     }
 
     // defined by yarp::os::ConnectionWriter
-    virtual void appendInt(int data) {
+    virtual void appendInt(int data) override {
         NetInt32 i = data;
         yarp::os::Bytes b((char*)(&i), sizeof(i));
         push(b, true);
     }
 
     // defined by yarp::os::ConnectionWriter
-    virtual void appendInt64(const YARP_INT64& data) {
+    virtual void appendInt64(const YARP_INT64& data) override {
         NetInt64 i = data;
         yarp::os::Bytes b((char*)(&i), sizeof(i));
         push(b, true);
     }
 
     // defined by yarp::os::ConnectionWriter
-    virtual void appendDouble(double data) {
+    virtual void appendDouble(double data) override {
         NetFloat64 i = data;
         yarp::os::Bytes b((char*)(&i), sizeof(i));
         push(b, true);
@@ -258,17 +258,17 @@ public:
     }
 
     // defined by yarp::os::ConnectionWriter
-    virtual bool isTextMode() {
+    virtual bool isTextMode() override {
         return textMode;
     }
 
     // defined by yarp::os::ConnectionWriter
-    virtual bool isBareMode() {
+    virtual bool isBareMode() override {
         return bareMode;
     }
 
     // defined by yarp::os::SizedWriter
-    bool write(ConnectionWriter& connection) {
+    bool write(ConnectionWriter& connection) override {
         stopWrite();
         size_t i;
         for (i=0; i<header_used; i++) {
@@ -283,7 +283,7 @@ public:
     }
 
     // defined by yarp::os::SizedWriter
-    void write(OutputStream& os);
+    void write(OutputStream& os) override;
 
     /**
      *
@@ -306,12 +306,12 @@ public:
     }
 
     // defined by yarp::os::SizedWriter
-    virtual size_t length() {
+    virtual size_t length() override {
         return header_used+lst_used;
     }
 
     // defined by yarp::os::SizedWriter
-    virtual size_t headerLength() {
+    virtual size_t headerLength() override {
         return header_used;
     }
 
@@ -325,7 +325,7 @@ public:
     }
 
     // defined by yarp::os::SizedWriter
-    virtual size_t length(size_t index) {
+    virtual size_t length(size_t index) override {
         if (index<header_used) {
             yarp::os::ManagedBytes& b = *(header[index]);
             return b.used();
@@ -335,7 +335,7 @@ public:
     }
 
     // defined by yarp::os::SizedWriter
-    virtual const char *data(size_t index) {
+    virtual const char *data(size_t index) override {
         if (index<header_used) {
             yarp::os::ManagedBytes& b = *(header[index]);
             return (const char *)b.get();
@@ -352,12 +352,12 @@ public:
     ConstString toString();
 
     // defined by yarp::os::ConnectionWriter
-    virtual void appendBlock(const char *data, size_t len) {
+    virtual void appendBlock(const char *data, size_t len) override {
         appendBlockCopy(yarp::os::Bytes((char*)data, len));
     }
 
     // defined by yarp::os::ConnectionWriter
-    virtual void appendString(const char *str, int terminate = '\n') {
+    virtual void appendString(const char *str, int terminate = '\n') override {
         if (terminate=='\n') {
             appendLine(str);
         } else if (terminate==0) {
@@ -370,27 +370,27 @@ public:
     }
 
     // defined by yarp::os::ConnectionWriter
-    virtual void appendExternalBlock(const char *data, size_t len) {
+    virtual void appendExternalBlock(const char *data, size_t len) override {
         appendBlock(yarp::os::Bytes((char*)data, len));
     }
 
     // defined by yarp::os::ConnectionWriter
-    virtual void declareSizes(int argc, int *argv) {
+    virtual void declareSizes(int argc, int *argv) override {
         // this method is never called yet, so no point using it yet.
     }
 
     // defined by yarp::os::ConnectionWriter
-    virtual void setReplyHandler(PortReader& reader) {
+    virtual void setReplyHandler(PortReader& reader) override {
         this->reader = &reader;
     }
 
     // defined by yarp::os::SizedWriter
-    virtual PortReader *getReplyHandler() {
+    virtual PortReader *getReplyHandler() override {
         return reader;
     }
 
     // defined by yarp::os::ConnectionWriter
-    virtual bool convertTextMode();
+    virtual bool convertTextMode() override;
 
     /**
      *
@@ -405,51 +405,51 @@ public:
     }
 
     // defined by yarp::os::SizedWriter
-    virtual yarp::os::Portable *getReference() {
+    virtual yarp::os::Portable *getReference() override {
         return ref;
     }
 
     // defined by yarp::os::ConnectionWriter
-    virtual void setReference(yarp::os::Portable *obj) {
+    virtual void setReference(yarp::os::Portable *obj) override {
         ref = obj;
     }
 
     // defined by yarp::os::ConnectionWriter
-    virtual bool isValid() {
+    virtual bool isValid() override {
         return true;
     }
 
     // defined by yarp::os::ConnectionWriter
-    virtual bool isActive() {
+    virtual bool isActive() override {
         return true;
     }
 
     // defined by yarp::os::ConnectionWriter
-    virtual bool isError() {
+    virtual bool isError() override {
         return false;  // output errors are of no significance at user level
     }
 
     // defined by yarp::os::ConnectionWriter
-   virtual void requestDrop() {
+   virtual void requestDrop() override {
         shouldDrop = true;
     }
 
     // defined by yarp::os::SizedWriter
-    bool dropRequested() {
+    bool dropRequested() override {
         return shouldDrop;
     }
 
     // defined by yarp::os::SizedWriter
-    virtual void startWrite() {}
+    virtual void startWrite() override {}
 
     // defined by yarp::os::SizedWriter
-    virtual void stopWrite() {
+    virtual void stopWrite() override {
         // convert, last thing, if requested
         applyConvertTextMode();
     }
 
     // defined by yarp::os::ConnectionWriter
-    virtual SizedWriter *getBuffer() {
+    virtual SizedWriter *getBuffer() override {
         return this;
     }
 
@@ -558,7 +558,7 @@ public:
         }
     }
 
-    virtual bool expectBlock(const char *data, size_t len) {
+    virtual bool expectBlock(const char *data, size_t len) override {
         bool ok = reader->expectBlock(data, len);
         if (ok) {
             readerStore.appendBlock(data, len);
@@ -566,13 +566,13 @@ public:
         return ok;
     }
 
-    virtual ConstString expectText(int terminatingChar) {
+    virtual ConstString expectText(int terminatingChar) override {
         ConstString str = reader->expectText(terminatingChar);
         readerStore.appendString(str.c_str(), terminatingChar);
         return str;
     }
 
-    virtual int expectInt() {
+    virtual int expectInt() override {
         int x = reader->expectInt();
         if (!skipNextInt) {
             readerStore.appendInt(x);
@@ -582,61 +582,61 @@ public:
         return x;
     }
 
-    virtual YARP_INT64 expectInt64() {
+    virtual YARP_INT64 expectInt64() override {
         YARP_INT64 x = reader->expectInt64();
         readerStore.appendInt64(x);
         return x;
     }
 
-    virtual bool pushInt(int x) {
+    virtual bool pushInt(int x) override {
         bool ok = reader->pushInt(x);
         skipNextInt = skipNextInt || ok;
         return ok;
     }
 
-    virtual double expectDouble() {
+    virtual double expectDouble() override {
         double x = reader->expectDouble();
         readerStore.appendDouble(x);
         return x;
     }
 
-    virtual bool isTextMode() {
+    virtual bool isTextMode() override {
         return false;
     }
 
-    virtual bool isBareMode() {
+    virtual bool isBareMode() override {
         return false;
     }
 
-    virtual bool convertTextMode() {
+    virtual bool convertTextMode() override {
         return false;
     }
 
-    virtual size_t getSize() {
+    virtual size_t getSize() override {
         return reader->getSize();
     }
 
 
-    virtual ConnectionWriter *getWriter() {
+    virtual ConnectionWriter *getWriter() override {
         writer = reader->getWriter();
         writing = true;
         wrote = true;
         return this;
     }
 
-    virtual Portable *getReference() {
+    virtual Portable *getReference() override {
         return reader->getReference();
     }
 
-    virtual Contact getRemoteContact() {
+    virtual Contact getRemoteContact() override {
         return reader->getRemoteContact();
     }
 
-    virtual Contact getLocalContact() {
+    virtual Contact getLocalContact() override {
         return reader->getLocalContact();
     }
 
-    virtual bool isValid() {
+    virtual bool isValid() override {
         // shared
         if (writing) {
             return writer->isValid();
@@ -644,7 +644,7 @@ public:
         return reader->isValid();
     }
 
-    virtual bool isActive() {
+    virtual bool isActive() override {
         // shared
         if (writing) {
             return writer->isActive();
@@ -652,7 +652,7 @@ public:
         return reader->isActive();
     }
 
-    virtual bool isError() {
+    virtual bool isError() override {
         // shared
         if (writing) {
             return writer->isError();
@@ -661,49 +661,49 @@ public:
     }
 
 
-    virtual void appendBlock(const char *data, size_t len) {
+    virtual void appendBlock(const char *data, size_t len) override {
         writer->appendBlock(data, len);
         writerStore.appendBlock(data, len);
     }
 
-    virtual void appendInt(int data) {
+    virtual void appendInt(int data) override {
         writer->appendInt(data);
         writerStore.appendInt(data);
     }
 
-    virtual void appendInt64(const YARP_INT64& data) {
+    virtual void appendInt64(const YARP_INT64& data) override {
         writer->appendInt64(data);
         writerStore.appendInt64(data);
     }
 
-    virtual void appendDouble(double data) {
+    virtual void appendDouble(double data) override {
         writer->appendDouble(data);
         writerStore.appendDouble(data);
     }
 
-    virtual void appendString(const char *str, int terminate) {
+    virtual void appendString(const char *str, int terminate) override {
         writer->appendString(str, terminate);
         writerStore.appendString(str, terminate);
     }
 
-    virtual void appendExternalBlock(const char *data, size_t len) {
+    virtual void appendExternalBlock(const char *data, size_t len) override {
         writer->appendExternalBlock(data, len);
         writerStore.appendExternalBlock(data, len);
     }
 
-    virtual void declareSizes(int argc, int *argv) {
+    virtual void declareSizes(int argc, int *argv) override {
         writer->declareSizes(argc, argv);
     }
 
-    virtual void setReplyHandler(PortReader& reader) {
+    virtual void setReplyHandler(PortReader& reader) override {
         writer->setReplyHandler(reader);
     }
 
-    virtual void setReference(Portable *obj) {
+    virtual void setReference(Portable *obj) override {
         writer->setReference(obj);
     }
 
-    virtual bool write(ConnectionWriter& connection) {
+    virtual bool write(ConnectionWriter& connection) override {
         if (hasReply()) {
             connection.appendInt(BOTTLE_TAG_LIST); // nested structure
             connection.appendInt(3);               // with three elements
@@ -719,19 +719,19 @@ public:
         }
     }
 
-    virtual void requestDrop() {
+    virtual void requestDrop() override {
     }
 
-    virtual yarp::os::Searchable& getConnectionModifiers() {
+    virtual yarp::os::Searchable& getConnectionModifiers() override {
         return blank;
     }
 
     BufferedConnectionWriter& getMessage() { return readerStore; }
     BufferedConnectionWriter& getReply() { return writerStore; }
     bool hasReply() { return wrote; }
-    virtual SizedWriter *getBuffer() { return YARP_NULLPTR; }
+    virtual SizedWriter *getBuffer() override { return YARP_NULLPTR; }
 
-    virtual bool setSize(size_t len) {
+    virtual bool setSize(size_t len) override {
         return reader->setSize(len);
     }
 };

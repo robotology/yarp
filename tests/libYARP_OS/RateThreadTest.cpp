@@ -31,11 +31,11 @@ public:
         done = false;
     }
 
-    virtual double now() {
+    virtual double now() override {
         return t;
     }
 
-    virtual void delay(double seconds) {
+    virtual void delay(double seconds) override {
         double target = t+seconds;
         SystemClock c;
         while (t<target && !done) {
@@ -43,7 +43,7 @@ public:
         }
     }
 
-    virtual bool isValid() const {
+    virtual bool isValid() const override {
         return true;
     }
 };
@@ -61,7 +61,7 @@ private:
 
         RateThread1(int r): RateThread(r){}
 
-        virtual bool threadInit()
+        virtual bool threadInit() override
         {
             printf("-->Starting rate thread: %.2lf[ms]...", getRate());
             n=0;
@@ -72,7 +72,7 @@ private:
             return true;
         }
 
-        virtual void run()
+        virtual void run() override
         {
             t2=Time::now();
 
@@ -86,7 +86,7 @@ private:
             // printf(".");
         }
 
-        virtual void threadRelease()
+        virtual void threadRelease() override
         {
             if (n>0)
                 period=1000*average/(n-1);
@@ -109,22 +109,22 @@ private:
         void threadWillFail(bool f)
         {fail=f;}
 
-        virtual bool threadInit()
+        virtual bool threadInit() override
         {
             state=-1;
             return !fail;
         }
 
-        virtual void afterStart(bool s)
+        virtual void afterStart(bool s) override
         {
             if (s)
                 state=0;
         }
 
-        virtual void run()
+        virtual void run() override
         {}
 
-        virtual void threadRelease()
+        virtual void threadRelease() override
         {
             state++;
         }
@@ -145,14 +145,14 @@ private:
             state=-1;
         }
 
-        virtual bool threadInit()
+        virtual bool threadInit() override
         {
             Time::delay(0.5);
             state++;
             return !fail;
         }
 
-        virtual void afterStart(bool s)
+        virtual void afterStart(bool s) override
         {
             if (s)
                 state++;
@@ -160,10 +160,10 @@ private:
                 state=-2;
         }
 
-        virtual void run()
+        virtual void run() override
         {}
 
-        virtual void threadRelease()
+        virtual void threadRelease() override
         {
             Time::delay(0.5);
             state++;
@@ -177,7 +177,7 @@ private:
 
         RateThread4(int r): RateThread(r),count(10){}
 
-        virtual void run()
+        virtual void run() override
         {
                 count--;
 
@@ -195,7 +195,7 @@ private:
 
         RateThread5(int r): RateThread(r),count(0){}
 
-        virtual void run() {
+        virtual void run() override {
             count++;
         }
     };
@@ -208,7 +208,7 @@ private:
             done = false;
         }
 
-        void run() {
+        void run() override {
             if (done) askToStop();
         }
     };
@@ -226,21 +226,21 @@ private:
                         runExecuted(false),
                         initNotified(false){}
 
-        virtual bool threadInit()
+        virtual bool threadInit() override
         {
             initCalled=true;
             return true;
         }
 
-        virtual void threadRelease()
+        virtual void threadRelease() override
         {
             releaseCalled=true;
         }
 
-        virtual void run()
+        virtual void run() override
         {}
 
-        virtual void afterStart(bool s)
+        virtual void afterStart(bool s) override
         {
             initNotified=true;
         }
@@ -248,7 +248,7 @@ private:
     };
 
 public:
-    virtual ConstString getName() { return "RateThreadTest"; }
+    virtual ConstString getName() override { return "RateThreadTest"; }
 
     double test(int rate, double delay)
     {
@@ -408,7 +408,7 @@ public:
         }
     }
 
-    virtual void runTests() {
+    virtual void runTests() override {
         testInitSuccessFailure();
         testInitReleaseSynchro();
         testRunnable();

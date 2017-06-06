@@ -25,7 +25,7 @@ public:
     MessageStackThread(MessageStackHelper& helper) : helper(helper) {
     }
 
-    void run();
+    void run() override;
 };
 
 class MessageStackHelper {

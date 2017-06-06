@@ -26,25 +26,25 @@ class yarp::os::impl::TextCarrier : public TcpCarrier
 public:
     TextCarrier(bool ackVariant = false);
 
-    virtual Carrier *create();
+    virtual Carrier *create() override;
 
-    virtual ConstString getName();
+    virtual ConstString getName() override;
 
     virtual ConstString getSpecifierName();
 
-    virtual bool checkHeader(const Bytes& header);
-    virtual void getHeader(const Bytes& header);
-    virtual bool requireAck();
-    virtual bool isTextMode();
-    virtual bool supportReply();
-    virtual bool sendHeader(ConnectionState& proto);
-    virtual bool expectReplyToHeader(ConnectionState& proto);
-    virtual bool expectSenderSpecifier(ConnectionState& proto);
-    virtual bool sendIndex(ConnectionState& proto, SizedWriter& writer);
-    virtual bool expectIndex(ConnectionState& proto);
-    virtual bool sendAck(ConnectionState& proto);
-    virtual bool expectAck(ConnectionState& proto);
-    virtual bool respondToHeader(ConnectionState& proto);
+    virtual bool checkHeader(const Bytes& header) override;
+    virtual void getHeader(const Bytes& header) override;
+    virtual bool requireAck() override;
+    virtual bool isTextMode() override;
+    virtual bool supportReply() override;
+    virtual bool sendHeader(ConnectionState& proto) override;
+    virtual bool expectReplyToHeader(ConnectionState& proto) override;
+    virtual bool expectSenderSpecifier(ConnectionState& proto) override;
+    virtual bool sendIndex(ConnectionState& proto, SizedWriter& writer) override;
+    virtual bool expectIndex(ConnectionState& proto) override;
+    virtual bool sendAck(ConnectionState& proto) override;
+    virtual bool expectAck(ConnectionState& proto) override;
+    virtual bool respondToHeader(ConnectionState& proto) override;
 private:
     bool ackVariant;
 };

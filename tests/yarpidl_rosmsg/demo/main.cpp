@@ -21,7 +21,7 @@ using namespace yarp::os::impl;
 
 class RosMsgTest : public UnitTest {
 public:
-    virtual ConstString getName() {
+    virtual ConstString getName() override {
         return "RosMsg";
     }
 };

@@ -23,7 +23,7 @@ public:
         state = 1;
     }
 
-    virtual void run() {
+    virtual void run() override {
         x.wait();
         state = 2;
         x.post();
@@ -32,7 +32,7 @@ public:
 
 class SemaphoreTest : public UnitTest {
 public:
-    virtual ConstString getName() { return "SemaphoreTest"; }
+    virtual ConstString getName() override { return "SemaphoreTest"; }
 
     void checkBasic() {
         report(0, "basic semaphore sanity check...");
@@ -68,7 +68,7 @@ public:
         checkTrue(result, "wait succeeded");
     }
 
-    virtual void runTests() {
+    virtual void runTests() override {
         checkBasic();
         checkBlock();
         checkTimed();

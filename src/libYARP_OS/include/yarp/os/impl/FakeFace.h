@@ -23,10 +23,10 @@ namespace yarp {
 class yarp::os::impl::FakeFace : public yarp::os::Face
 {
 public:
-    virtual bool open(const Contact& address);
-    virtual void close();
-    virtual InputProtocol *read();
-    virtual OutputProtocol *write(const Contact& address);
+    virtual bool open(const Contact& address) override;
+    virtual void close() override;
+    virtual InputProtocol *read() override;
+    virtual OutputProtocol *write(const Contact& address) override;
 private:
 };
 

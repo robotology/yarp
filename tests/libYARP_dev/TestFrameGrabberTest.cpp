@@ -26,7 +26,7 @@ using namespace yarp::sig;
 class TestFrameGrabberTest : public UnitTest
 {
 public:
-    virtual ConstString getName() { return "TestFrameGrabberTest"; }
+    virtual ConstString getName() override { return "TestFrameGrabberTest"; }
 
     void testTestFrameGrabber() {
         report(0,"\ntest the TestFrameGrabber ");
@@ -384,7 +384,7 @@ public:
 
     }
 
-    virtual void runTests() {
+    virtual void runTests() override {
         Network::setLocalMode(true);
         testTestFrameGrabber();
         Network::setLocalMode(false);

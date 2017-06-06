@@ -26,9 +26,9 @@
 
 class YarpPluginFixture : public RTF::FixtureManager {
 public:
-    virtual bool setup(int argc, char** argv);
-    virtual bool check();
-    virtual void tearDown();
+    virtual bool setup(int argc, char** argv) override;
+    virtual bool check() override;
+    virtual void tearDown() override;
 private:
     yarp::os::Bottle devices;
     yarp::os::Bottle plugins;

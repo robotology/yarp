@@ -23,7 +23,7 @@ typedef PortablePair<PortablePair<PortablePair<Bottle, ImageOf<PixelRgb> >,
 
 class BufferedConnectionWriterTest : public UnitTest {
 public:
-    virtual ConstString getName() { return "BufferedConnectionWriterTest"; }
+    virtual ConstString getName() override { return "BufferedConnectionWriterTest"; }
 
     void testWrite() {
         report(0,"testing writing...");
@@ -155,7 +155,7 @@ public:
         }
     }
 
-    virtual void runTests() {
+    virtual void runTests() override {
         testWrite();
         testRestart();
     }

@@ -101,7 +101,7 @@ public:
 
     PingSampler() : mutex(1) { ct = 0; lastTime = 0; }
 
-    virtual bool read(ConnectionReader& connection) {
+    virtual bool read(ConnectionReader& connection) override {
         double now = Time::now();
         Bottle b;
         bool ok = b.read(connection);

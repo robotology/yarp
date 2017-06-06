@@ -56,11 +56,11 @@ protected:
 
 public:
     /* DeviceDriver methods */
-    bool open(yarp::os::Searchable& config);
-    bool close();
+    bool open(yarp::os::Searchable& config) override;
+    bool close() override;
 
-    bool   getCurrentPosition(yarp::dev::Map2DLocation &loc);
-    bool   setInitialPose(yarp::dev::Map2DLocation& loc);
+    bool   getCurrentPosition(yarp::dev::Map2DLocation &loc) override;
+    bool   setInitialPose(yarp::dev::Map2DLocation& loc) override;
 };
 
 #endif // YARP_DEV_LOCALIZATION2DCLIENT_H

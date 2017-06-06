@@ -87,7 +87,7 @@ public:
     }
 
     using TypedReaderCallback<Sound>::onRead;
-    void onRead(Sound& sound)
+    void onRead(Sound& sound) override
      {
         #ifdef TEST
         //this block can be used to measure time elapsed between two sound packets

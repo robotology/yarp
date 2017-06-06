@@ -44,7 +44,7 @@ public:
      * @param connection a network connection to a port
      * @return true if the message was read successfully
      */
-    virtual bool read(yarp::os::ConnectionReader& connection);
+    virtual bool read(yarp::os::ConnectionReader& connection) override;
 
     using yarp::os::TypedReaderCallback<yarp::os::Bottle>::onRead;
     /**
@@ -53,7 +53,7 @@ public:
      * if this handler is used.
      * @param v the message
      */
-    virtual void onRead(yarp::os::Bottle& v) {
+    virtual void onRead(yarp::os::Bottle& v) override {
         yarp::os::Bottle reply;
         owner.safeRespond(v, reply);
     }
@@ -78,7 +78,7 @@ public:
         return true;
     }
 
-    virtual void run() {
+    virtual void run() override {
         printf("Listening to terminal (type \"quit\" to stop module)\n");
         bool isEof = false;
         while (!(isEof||isStopping()||owner.isStopping())) {
@@ -114,7 +114,7 @@ private:
     Property comment, fallback, present, actual, reported;
     Bottle order;
 public:
-    virtual void report(const SearchReport& report, const char *context) {
+    virtual void report(const SearchReport& report, const char *context) override {
         ConstString ctx = context;
         ConstString key = report.key.c_str();
         ConstString prefix = "";

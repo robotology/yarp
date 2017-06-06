@@ -27,7 +27,7 @@ using namespace yarp::os::impl;
 class WireTest : public UnitTest
 {
 public:
-    virtual ConstString getName() { return "WireTest"; }
+    virtual ConstString getName() override { return "WireTest"; }
 
     void checkWire()
     {
@@ -99,7 +99,7 @@ public:
 
     }
 
-    virtual void runTests()
+    virtual void runTests() override
     {
         NetworkBase::setLocalMode(true);
 

@@ -195,7 +195,7 @@ public:
     * Close the device driver by deallocating all resources and closing ports.
     * @return true if successful or false otherwise.
     */
-    virtual bool close();
+    virtual bool close() override;
 
 
     /**
@@ -203,365 +203,365 @@ public:
     * @param prop is a Searchable object which contains the parameters.
     * Allowed parameters are described in the class documentation.
     */
-    virtual bool open(yarp::os::Searchable &prop);
+    virtual bool open(yarp::os::Searchable &prop) override;
 
-    virtual bool detachAll();
+    virtual bool detachAll() override;
 
-    virtual bool attachAll(const yarp::dev::PolyDriverList &l);
+    virtual bool attachAll(const yarp::dev::PolyDriverList &l) override;
 
     /* IPidControl */
-    virtual bool setPid(const PidControlTypeEnum& pidtype,int j, const Pid &p);
+    virtual bool setPid(const PidControlTypeEnum& pidtype,int j, const Pid &p) override;
 
-    virtual bool setPids(const PidControlTypeEnum& pidtype,const Pid *ps);
+    virtual bool setPids(const PidControlTypeEnum& pidtype,const Pid *ps) override;
 
-    virtual bool setPidReference(const PidControlTypeEnum& pidtype,int j, double ref);
+    virtual bool setPidReference(const PidControlTypeEnum& pidtype,int j, double ref) override;
 
-    virtual bool setPidReferences(const PidControlTypeEnum& pidtype,const double *refs);
+    virtual bool setPidReferences(const PidControlTypeEnum& pidtype,const double *refs) override;
 
-    virtual bool setPidErrorLimit(const PidControlTypeEnum& pidtype,int j, double limit);
+    virtual bool setPidErrorLimit(const PidControlTypeEnum& pidtype,int j, double limit) override;
 
-    virtual bool setPidErrorLimits(const PidControlTypeEnum& pidtype,const double *limits);
+    virtual bool setPidErrorLimits(const PidControlTypeEnum& pidtype,const double *limits) override;
 
-    virtual bool getPidError(const PidControlTypeEnum& pidtype,int j, double *err);
+    virtual bool getPidError(const PidControlTypeEnum& pidtype,int j, double *err) override;
 
-    virtual bool getPidErrors(const PidControlTypeEnum& pidtype,double *errs);
+    virtual bool getPidErrors(const PidControlTypeEnum& pidtype,double *errs) override;
 
-    virtual bool getPidOutput(const PidControlTypeEnum& pidtype,int j, double *out);
+    virtual bool getPidOutput(const PidControlTypeEnum& pidtype,int j, double *out) override;
 
-    virtual bool getPidOutputs(const PidControlTypeEnum& pidtype,double *outs);
+    virtual bool getPidOutputs(const PidControlTypeEnum& pidtype,double *outs) override;
 
-    virtual bool setPidOffset(const PidControlTypeEnum& pidtype,int j, double v);
+    virtual bool setPidOffset(const PidControlTypeEnum& pidtype,int j, double v) override;
 
-    virtual bool getPid(const PidControlTypeEnum& pidtype,int j, Pid *p);
+    virtual bool getPid(const PidControlTypeEnum& pidtype,int j, Pid *p) override;
 
-    virtual bool getPids(const PidControlTypeEnum& pidtype,Pid *pids);
+    virtual bool getPids(const PidControlTypeEnum& pidtype,Pid *pids) override;
 
-    virtual bool getPidReference(const PidControlTypeEnum& pidtype,int j, double *ref);
+    virtual bool getPidReference(const PidControlTypeEnum& pidtype,int j, double *ref) override;
 
-    virtual bool getPidReferences(const PidControlTypeEnum& pidtype,double *refs);
+    virtual bool getPidReferences(const PidControlTypeEnum& pidtype,double *refs) override;
 
-    virtual bool getPidErrorLimit(const PidControlTypeEnum& pidtype,int j, double *limit);
+    virtual bool getPidErrorLimit(const PidControlTypeEnum& pidtype,int j, double *limit) override;
 
-    virtual bool getPidErrorLimits(const PidControlTypeEnum& pidtype,double *limits);
+    virtual bool getPidErrorLimits(const PidControlTypeEnum& pidtype,double *limits) override;
 
-    virtual bool resetPid(const PidControlTypeEnum& pidtype,int j);
+    virtual bool resetPid(const PidControlTypeEnum& pidtype,int j) override;
 
-    virtual bool disablePid(const PidControlTypeEnum& pidtype,int j);
+    virtual bool disablePid(const PidControlTypeEnum& pidtype,int j) override;
 
-    virtual bool enablePid(const PidControlTypeEnum& pidtype,int j);
+    virtual bool enablePid(const PidControlTypeEnum& pidtype,int j) override;
 
-    virtual bool isPidEnabled(const PidControlTypeEnum& pidtype, int j, bool* enabled);
+    virtual bool isPidEnabled(const PidControlTypeEnum& pidtype, int j, bool* enabled) override;
 
     /* IPositionControl */
-    virtual bool getAxes(int *ax);
+    virtual bool getAxes(int *ax) override;
 
-    virtual bool positionMove(int j, double ref);
+    virtual bool positionMove(int j, double ref) override;
 
-    virtual bool positionMove(const double *refs);
+    virtual bool positionMove(const double *refs) override;
 
-    virtual bool positionMove(const int n_joints, const int *joints, const double *refs);
+    virtual bool positionMove(const int n_joints, const int *joints, const double *refs) override;
 
-    virtual bool getTargetPosition(const int joint, double *ref);
+    virtual bool getTargetPosition(const int joint, double *ref) override;
 
-    virtual bool getTargetPositions(double *refs);
+    virtual bool getTargetPositions(double *refs) override;
 
-    virtual bool getTargetPositions(const int n_joint, const int *joints, double *refs);
+    virtual bool getTargetPositions(const int n_joint, const int *joints, double *refs) override;
 
-    virtual bool relativeMove(int j, double delta);
+    virtual bool relativeMove(int j, double delta) override;
 
-    virtual bool relativeMove(const double *deltas);
+    virtual bool relativeMove(const double *deltas) override;
 
-    virtual bool relativeMove(const int n_joints, const int *joints, const double *deltas);
+    virtual bool relativeMove(const int n_joints, const int *joints, const double *deltas) override;
 
-    virtual bool checkMotionDone(int j, bool *flag);
+    virtual bool checkMotionDone(int j, bool *flag) override;
 
-    virtual bool checkMotionDone(bool *flag);
+    virtual bool checkMotionDone(bool *flag) override;
 
-    virtual bool checkMotionDone(const int n_joints, const int *joints, bool *flags);
+    virtual bool checkMotionDone(const int n_joints, const int *joints, bool *flags) override;
 
-    virtual bool setRefSpeed(int j, double sp);
+    virtual bool setRefSpeed(int j, double sp) override;
 
-    virtual bool setRefSpeeds(const double *spds);
+    virtual bool setRefSpeeds(const double *spds) override;
 
-    virtual bool setRefSpeeds(const int n_joints, const int *joints, const double *spds);
+    virtual bool setRefSpeeds(const int n_joints, const int *joints, const double *spds) override;
 
-    virtual bool setRefAcceleration(int j, double acc);
+    virtual bool setRefAcceleration(int j, double acc) override;
 
-    virtual bool setRefAccelerations(const double *accs);
+    virtual bool setRefAccelerations(const double *accs) override;
 
-    virtual bool setRefAccelerations(const int n_joints, const int *joints, const double *accs);
+    virtual bool setRefAccelerations(const int n_joints, const int *joints, const double *accs) override;
 
-    virtual bool getRefSpeed(int j, double *ref);
+    virtual bool getRefSpeed(int j, double *ref) override;
 
-    virtual bool getRefSpeeds(double *spds);
+    virtual bool getRefSpeeds(double *spds) override;
 
-    virtual bool getRefSpeeds(const int n_joints, const int *joints, double *spds);
+    virtual bool getRefSpeeds(const int n_joints, const int *joints, double *spds) override;
 
-    virtual bool getRefAcceleration(int j, double *acc);
+    virtual bool getRefAcceleration(int j, double *acc) override;
 
-    virtual bool getRefAccelerations(double *accs);
+    virtual bool getRefAccelerations(double *accs) override;
 
-    virtual bool getRefAccelerations(const int n_joints, const int *joints, double *accs);
+    virtual bool getRefAccelerations(const int n_joints, const int *joints, double *accs) override;
 
-    virtual bool stop(int j);
+    virtual bool stop(int j) override;
 
-    virtual bool stop();
+    virtual bool stop() override;
 
-    virtual bool stop(const int n_joints, const int *joints);
+    virtual bool stop(const int n_joints, const int *joints) override;
 
     /* IVelocityControl */
-    virtual bool velocityMove(int j, double v);
+    virtual bool velocityMove(int j, double v) override;
 
-    virtual bool velocityMove(const double *v);
+    virtual bool velocityMove(const double *v) override;
 
     /* IEncoders */
-    virtual bool resetEncoder(int j);
+    virtual bool resetEncoder(int j) override;
 
-    virtual bool resetEncoders();
+    virtual bool resetEncoders() override;
 
-    virtual bool setEncoder(int j, double val);
+    virtual bool setEncoder(int j, double val) override;
 
-    virtual bool setEncoders(const double *vals);
+    virtual bool setEncoders(const double *vals) override;
 
-    virtual bool getEncoder(int j, double *v);
+    virtual bool getEncoder(int j, double *v) override;
 
-    virtual bool getEncoders(double *encs);
+    virtual bool getEncoders(double *encs) override;
 
-    virtual bool getEncodersTimed(double *encs, double *t);
+    virtual bool getEncodersTimed(double *encs, double *t) override;
 
-    virtual bool getEncoderTimed(int j, double *v, double *t);
+    virtual bool getEncoderTimed(int j, double *v, double *t) override;
 
-    virtual bool getEncoderSpeed(int j, double *sp);
+    virtual bool getEncoderSpeed(int j, double *sp) override;
 
-    virtual bool getEncoderSpeeds(double *spds);
+    virtual bool getEncoderSpeeds(double *spds) override;
 
-    virtual bool getEncoderAcceleration(int j, double *acc);
+    virtual bool getEncoderAcceleration(int j, double *acc) override;
 
-    virtual bool getEncoderAccelerations(double *accs);
+    virtual bool getEncoderAccelerations(double *accs) override;
 
     /* IMotorEncoders */
-    virtual bool getNumberOfMotorEncoders(int *num);
+    virtual bool getNumberOfMotorEncoders(int *num) override;
 
-    virtual bool resetMotorEncoder(int m);
+    virtual bool resetMotorEncoder(int m) override;
 
-    virtual bool resetMotorEncoders();
+    virtual bool resetMotorEncoders() override;
 
-    virtual bool setMotorEncoderCountsPerRevolution(int m, const double cpr);
+    virtual bool setMotorEncoderCountsPerRevolution(int m, const double cpr) override;
 
-    virtual bool getMotorEncoderCountsPerRevolution(int m, double *cpr);
+    virtual bool getMotorEncoderCountsPerRevolution(int m, double *cpr) override;
 
-    virtual bool setMotorEncoder(int m, const double val);
+    virtual bool setMotorEncoder(int m, const double val) override;
 
-    virtual bool setMotorEncoders(const double *vals);
+    virtual bool setMotorEncoders(const double *vals) override;
 
-    virtual bool getMotorEncoder(int m, double *v);
+    virtual bool getMotorEncoder(int m, double *v) override;
 
-    virtual bool getMotorEncoders(double *encs);
+    virtual bool getMotorEncoders(double *encs) override;
 
-    virtual bool getMotorEncodersTimed(double *encs, double *t);
+    virtual bool getMotorEncodersTimed(double *encs, double *t) override;
 
-    virtual bool getMotorEncoderTimed(int m, double *v, double *t);
+    virtual bool getMotorEncoderTimed(int m, double *v, double *t) override;
 
-    virtual bool getMotorEncoderSpeed(int m, double *sp);
+    virtual bool getMotorEncoderSpeed(int m, double *sp) override;
 
-    virtual bool getMotorEncoderSpeeds(double *spds);
+    virtual bool getMotorEncoderSpeeds(double *spds) override;
 
-    virtual bool getMotorEncoderAcceleration(int m, double *acc);
+    virtual bool getMotorEncoderAcceleration(int m, double *acc) override;
 
-    virtual bool getMotorEncoderAccelerations(double *accs);
+    virtual bool getMotorEncoderAccelerations(double *accs) override;
 
     /* IAmplifierControl */
-    virtual bool enableAmp(int j);
+    virtual bool enableAmp(int j) override;
 
-    virtual bool disableAmp(int j);
+    virtual bool disableAmp(int j) override;
 
-    virtual bool getAmpStatus(int *st);
+    virtual bool getAmpStatus(int *st) override;
 
-    virtual bool getAmpStatus(int j, int *v);
+    virtual bool getAmpStatus(int j, int *v) override;
 
-    virtual bool getCurrents(double *vals);
+    virtual bool getCurrents(double *vals) override;
 
-    virtual bool getCurrent(int j, double *val);
+    virtual bool getCurrent(int j, double *val) override;
 
-    virtual bool setMaxCurrent(int j, double v);
+    virtual bool setMaxCurrent(int j, double v) override;
 
-    virtual bool getMaxCurrent(int j, double *v);
+    virtual bool getMaxCurrent(int j, double *v) override;
 
-    virtual bool getNominalCurrent(int m, double *val);
+    virtual bool getNominalCurrent(int m, double *val) override;
 
-    virtual bool getPeakCurrent(int m, double *val);
+    virtual bool getPeakCurrent(int m, double *val) override;
 
-    virtual bool setPeakCurrent(int m, const double val);
+    virtual bool setPeakCurrent(int m, const double val) override;
 
-    virtual bool getPWM(int m, double *val);
+    virtual bool getPWM(int m, double *val) override;
 
-    virtual bool getPWMLimit(int m, double *val);
+    virtual bool getPWMLimit(int m, double *val) override;
 
-    virtual bool setPWMLimit(int m, const double val);
+    virtual bool setPWMLimit(int m, const double val) override;
 
-    virtual bool getPowerSupplyVoltage(int m, double *val);
+    virtual bool getPowerSupplyVoltage(int m, double *val) override;
 
     /* IControlLimits */
-    virtual bool setLimits(int j, double min, double max);
+    virtual bool setLimits(int j, double min, double max) override;
 
-    virtual bool getLimits(int j, double *min, double *max);
+    virtual bool getLimits(int j, double *min, double *max) override;
 
-    virtual bool setVelLimits(int j, double min, double max);
+    virtual bool setVelLimits(int j, double min, double max) override;
 
-    virtual bool getVelLimits(int j, double *min, double *max);
+    virtual bool getVelLimits(int j, double *min, double *max) override;
 
     /* IRemoteVariables */
 
-    virtual bool getRemoteVariable(yarp::os::ConstString key, yarp::os::Bottle &val);
+    virtual bool getRemoteVariable(yarp::os::ConstString key, yarp::os::Bottle &val) override;
 
-    virtual bool setRemoteVariable(yarp::os::ConstString key, const yarp::os::Bottle &val);
+    virtual bool setRemoteVariable(yarp::os::ConstString key, const yarp::os::Bottle &val) override;
 
-    virtual bool getRemoteVariablesList(yarp::os::Bottle *listOfKeys);
+    virtual bool getRemoteVariablesList(yarp::os::Bottle *listOfKeys) override;
 
     /* IRemoteCalibrator */
 
-    bool isCalibratorDevicePresent(bool *isCalib);
+    bool isCalibratorDevicePresent(bool *isCalib) override;
 
-    virtual yarp::dev::IRemoteCalibrator *getCalibratorDevice();
+    virtual yarp::dev::IRemoteCalibrator *getCalibratorDevice() override;
 
-    virtual bool calibrateSingleJoint(int j);
+    virtual bool calibrateSingleJoint(int j) override;
 
-    virtual bool calibrateWholePart();
+    virtual bool calibrateWholePart() override;
 
-    virtual bool homingSingleJoint(int j);
+    virtual bool homingSingleJoint(int j) override;
 
-    virtual bool homingWholePart();
+    virtual bool homingWholePart() override;
 
-    virtual bool parkSingleJoint(int j, bool _wait = true);
+    virtual bool parkSingleJoint(int j, bool _wait = true) override;
 
-    virtual bool parkWholePart();
+    virtual bool parkWholePart() override;
 
-    virtual bool quitCalibrate();
+    virtual bool quitCalibrate() override;
 
-    virtual bool quitPark();
+    virtual bool quitPark() override;
 
     /* IControlCalibration */
 
     using yarp::dev::IControlCalibration2::calibrate;
 
-    virtual bool calibrate(int j, double p);
+    virtual bool calibrate(int j, double p) override;
 
-    virtual bool calibrate2(int j, unsigned int ui, double v1, double v2, double v3);
+    virtual bool calibrate2(int j, unsigned int ui, double v1, double v2, double v3) override;
 
-    virtual bool setCalibrationParameters(int j, const CalibrationParameters &params);
+    virtual bool setCalibrationParameters(int j, const CalibrationParameters &params) override;
 
-    virtual bool done(int j);
+    virtual bool done(int j) override;
 
-    virtual bool abortPark();
+    virtual bool abortPark() override;
 
-    virtual bool abortCalibration();
+    virtual bool abortCalibration() override;
 
     /* IMotor */
-    virtual bool getNumberOfMotors(int *num);
+    virtual bool getNumberOfMotors(int *num) override;
 
-    virtual bool getTemperature(int m, double *val);
+    virtual bool getTemperature(int m, double *val) override;
 
-    virtual bool getTemperatures(double *vals);
+    virtual bool getTemperatures(double *vals) override;
 
-    virtual bool getTemperatureLimit(int m, double *val);
+    virtual bool getTemperatureLimit(int m, double *val) override;
 
-    virtual bool setTemperatureLimit(int m, const double val);
+    virtual bool setTemperatureLimit(int m, const double val) override;
 
-    virtual bool getGearboxRatio(int m, double *val);
+    virtual bool getGearboxRatio(int m, double *val) override;
 
-    virtual bool setGearboxRatio(int m, const double val);
+    virtual bool setGearboxRatio(int m, const double val) override;
 
     /* IAxisInfo */
-    virtual bool getAxisName(int j, yarp::os::ConstString &name);
+    virtual bool getAxisName(int j, yarp::os::ConstString &name) override;
 
-    virtual bool getJointType(int j, yarp::dev::JointTypeEnum &type);
+    virtual bool getJointType(int j, yarp::dev::JointTypeEnum &type) override;
 
-    virtual bool getRefTorques(double *refs);
+    virtual bool getRefTorques(double *refs) override;
 
-    virtual bool getRefTorque(int j, double *t);
+    virtual bool getRefTorque(int j, double *t) override;
 
-    virtual bool setRefTorques(const double *t);
+    virtual bool setRefTorques(const double *t) override;
 
-    virtual bool setRefTorque(int j, double t);
+    virtual bool setRefTorque(int j, double t) override;
 
-    virtual bool setRefTorques(const int n_joint, const int *joints, const double *t);
+    virtual bool setRefTorques(const int n_joint, const int *joints, const double *t) override;
 
-    virtual bool getBemfParam(int j, double *t);
+    virtual bool getBemfParam(int j, double *t) override;
 
-    virtual bool setBemfParam(int j, double t);
+    virtual bool setBemfParam(int j, double t) override;
 
-    virtual bool getMotorTorqueParams(int j, yarp::dev::MotorTorqueParameters *params);
+    virtual bool getMotorTorqueParams(int j, yarp::dev::MotorTorqueParameters *params) override;
 
-    virtual bool setMotorTorqueParams(int j, const yarp::dev::MotorTorqueParameters params);
+    virtual bool setMotorTorqueParams(int j, const yarp::dev::MotorTorqueParameters params) override;
 
-    virtual bool setImpedance(int j, double stiff, double damp);
+    virtual bool setImpedance(int j, double stiff, double damp) override;
 
-    virtual bool setImpedanceOffset(int j, double offset);
+    virtual bool setImpedanceOffset(int j, double offset) override;
 
-    virtual bool getTorque(int j, double *t);
+    virtual bool getTorque(int j, double *t) override;
 
-    virtual bool getTorques(double *t);
+    virtual bool getTorques(double *t) override;
 
-    virtual bool getTorqueRange(int j, double *min, double *max);
+    virtual bool getTorqueRange(int j, double *min, double *max) override;
 
-    virtual bool getTorqueRanges(double *min, double *max);
+    virtual bool getTorqueRanges(double *min, double *max) override;
 
-    virtual bool getImpedance(int j, double *stiff, double *damp);
+    virtual bool getImpedance(int j, double *stiff, double *damp) override;
 
-    virtual bool getImpedanceOffset(int j, double *offset);
+    virtual bool getImpedanceOffset(int j, double *offset) override;
 
     virtual bool getCurrentImpedanceLimit(int j, double *min_stiff, double *max_stiff, double *min_damp,
-                                          double *max_damp);
+                                          double *max_damp) override;
 
-    virtual bool getControlMode(int j, int *mode);
+    virtual bool getControlMode(int j, int *mode) override;
 
-    virtual bool getControlModes(int *modes);
+    virtual bool getControlModes(int *modes) override;
 
     // iControlMode2
-    virtual bool getControlModes(const int n_joint, const int *joints, int *modes);
+    virtual bool getControlModes(const int n_joint, const int *joints, int *modes) override;
 
-    virtual bool setControlMode(const int j, const int mode);
+    virtual bool setControlMode(const int j, const int mode) override;
 
-    virtual bool setControlModes(const int n_joints, const int *joints, int *modes);
+    virtual bool setControlModes(const int n_joints, const int *joints, int *modes) override;
 
-    virtual bool setControlModes(int *modes);
+    virtual bool setControlModes(int *modes) override;
 
-    virtual bool setPosition(int j, double ref);
+    virtual bool setPosition(int j, double ref) override;
 
-    virtual bool setPositions(const int n_joints, const int *joints, double *dpos);
+    virtual bool setPositions(const int n_joints, const int *joints, double *dpos) override;
 
-    virtual bool setPositions(const double *refs);
+    virtual bool setPositions(const double *refs) override;
 
-    virtual bool getRefPosition(const int joint, double *ref);
+    virtual bool getRefPosition(const int joint, double *ref) override;
 
-    virtual bool getRefPositions(double *refs);
+    virtual bool getRefPositions(double *refs) override;
 
-    virtual bool getRefPositions(const int n_joint, const int *joints, double *refs);
+    virtual bool getRefPositions(const int n_joint, const int *joints, double *refs) override;
 
-    virtual yarp::os::Stamp getLastInputStamp();
+    virtual yarp::os::Stamp getLastInputStamp() override;
 
     //
     // IVelocityControl2 Interface
     //
-    virtual bool velocityMove(const int n_joints, const int *joints, const double *spds);
+    virtual bool velocityMove(const int n_joints, const int *joints, const double *spds) override;
 
-    virtual bool getRefVelocity(const int joint, double *vel);
+    virtual bool getRefVelocity(const int joint, double *vel) override;
 
-    virtual bool getRefVelocities(double *vels);
+    virtual bool getRefVelocities(double *vels) override;
 
-    virtual bool getRefVelocities(const int n_joint, const int *joints, double *vels);
+    virtual bool getRefVelocities(const int n_joint, const int *joints, double *vels) override;
 
-    virtual bool getInteractionMode(int j, yarp::dev::InteractionModeEnum *mode);
+    virtual bool getInteractionMode(int j, yarp::dev::InteractionModeEnum *mode) override;
 
-    virtual bool getInteractionModes(int n_joints, int *joints, yarp::dev::InteractionModeEnum *modes);
+    virtual bool getInteractionModes(int n_joints, int *joints, yarp::dev::InteractionModeEnum *modes) override;
 
-    virtual bool getInteractionModes(yarp::dev::InteractionModeEnum *modes);
+    virtual bool getInteractionModes(yarp::dev::InteractionModeEnum *modes) override;
 
-    virtual bool setInteractionMode(int j, yarp::dev::InteractionModeEnum mode);
+    virtual bool setInteractionMode(int j, yarp::dev::InteractionModeEnum mode) override;
 
-    virtual bool setInteractionModes(int n_joints, int *joints, yarp::dev::InteractionModeEnum *modes);
+    virtual bool setInteractionModes(int n_joints, int *joints, yarp::dev::InteractionModeEnum *modes) override;
 
-    virtual bool setInteractionModes(yarp::dev::InteractionModeEnum *modes);
+    virtual bool setInteractionModes(yarp::dev::InteractionModeEnum *modes) override;
 
 };
 

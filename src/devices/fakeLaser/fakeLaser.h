@@ -115,29 +115,29 @@ public:
         }
     }
 
-    virtual bool open(yarp::os::Searchable& config);
-    virtual bool close();
-    virtual bool threadInit();
-    virtual void threadRelease();
-    virtual void run();
+    virtual bool open(yarp::os::Searchable& config) override;
+    virtual bool close() override;
+    virtual bool threadInit() override;
+    virtual void threadRelease() override;
+    virtual void run() override;
 
 private:
     double checkStraightLine(MapGrid2D::XYCell src, MapGrid2D::XYCell dst);
 
 public:
     //IRangefinder2D interface
-    virtual bool getRawData(yarp::sig::Vector &out);
-    virtual bool getLaserMeasurement(std::vector<LaserMeasurementData> &data);
-    virtual bool getDeviceStatus     (Device_status &status);
-    virtual bool getDeviceInfo       (yarp::os::ConstString &device_info);
-    virtual bool getDistanceRange    (double& min, double& max);
-    virtual bool setDistanceRange    (double min, double max);
-    virtual bool getScanLimits        (double& min, double& max);
-    virtual bool setScanLimits        (double min, double max);
-    virtual bool getHorizontalResolution      (double& step);
-    virtual bool setHorizontalResolution      (double step);
-    virtual bool getScanRate         (double& rate);
-    virtual bool setScanRate         (double rate);
+    virtual bool getRawData(yarp::sig::Vector &out) override;
+    virtual bool getLaserMeasurement(std::vector<LaserMeasurementData> &data) override;
+    virtual bool getDeviceStatus     (Device_status &status) override;
+    virtual bool getDeviceInfo       (yarp::os::ConstString &device_info) override;
+    virtual bool getDistanceRange    (double& min, double& max) override;
+    virtual bool setDistanceRange    (double min, double max) override;
+    virtual bool getScanLimits        (double& min, double& max) override;
+    virtual bool setScanLimits        (double min, double max) override;
+    virtual bool getHorizontalResolution      (double& step) override;
+    virtual bool setHorizontalResolution      (double step) override;
+    virtual bool getScanRate         (double& rate) override;
+    virtual bool setScanRate         (double rate) override;
 
 };
 

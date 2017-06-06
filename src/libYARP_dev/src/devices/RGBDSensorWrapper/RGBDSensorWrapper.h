@@ -75,7 +75,7 @@ public:
     virtual ~RGBDSensorParser() {};
     bool configure(IRGBDSensor *interface);
     bool configure(IRgbVisualParams *rgbInterface, IDepthVisualParams *depthInterface);
-    virtual bool respond(const yarp::os::Bottle& cmd, yarp::os::Bottle& response);
+    virtual bool respond(const yarp::os::Bottle& cmd, yarp::os::Bottle& response) override;
 };
 
 
@@ -231,9 +231,9 @@ public:
     RGBDSensorWrapper();
     ~RGBDSensorWrapper();
 
-    bool        open(yarp::os::Searchable &params);
+    bool        open(yarp::os::Searchable &params) override;
     bool        fromConfig(yarp::os::Searchable &params);
-    bool        close();
+    bool        close() override;
 
     void        setId(const std::string &id);
     std::string getId();
@@ -241,16 +241,16 @@ public:
     /**
       * Specify which sensor this thread has to read from.
       */
-    bool        attachAll(const PolyDriverList &p);
-    bool        detachAll();
+    bool        attachAll(const PolyDriverList &p) override;
+    bool        detachAll() override;
 
-    bool        attach(PolyDriver *poly);
+    bool        attach(PolyDriver *poly) override;
     bool        attach(yarp::dev::IRGBDSensor *s);
-    bool        detach();
+    bool        detach() override;
 
-    bool        threadInit();
-    void        threadRelease();
-    void        run();
+    bool        threadInit() override;
+    void        threadRelease() override;
+    void        run() override;
 };
 
 #endif   // YARP_DEV_RGBDSENSORWRAPPER_RGBDSENSORWRAPPER_H

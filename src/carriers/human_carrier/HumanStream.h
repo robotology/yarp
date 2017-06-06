@@ -28,15 +28,15 @@ public:
         inputCache = outputCache = "";
     }
 
-    virtual void close() {
+    virtual void close() override {
         std::cout << "Bye bye" << std::endl;
     }
 
-    virtual bool isOk() {
+    virtual bool isOk() override {
         return true;
     }
 
-    virtual void interrupt() {
+    virtual void interrupt() override {
         interrupting = true;
         while (needInterrupt) {
             std::cout << "*** INTERRUPT: Please hit enter ***" << std::endl;
@@ -48,44 +48,44 @@ public:
 
     // InputStream
     using yarp::os::InputStream::read;
-    virtual YARP_SSIZE_T read(const Bytes& b);
+    virtual YARP_SSIZE_T read(const Bytes& b) override;
 
     // OutputStream
     using yarp::os::OutputStream::write;
-    virtual void write(const Bytes& b);
+    virtual void write(const Bytes& b) override;
 
     // TwoWayStream
 
-    virtual InputStream& getInputStream() {
+    virtual InputStream& getInputStream() override {
         return *this;
     }
 
-    virtual OutputStream& getOutputStream() {
+    virtual OutputStream& getOutputStream() override {
         return *this;
     }
 
-    virtual const yarp::os::Contact& getLocalAddress() {
+    virtual const yarp::os::Contact& getLocalAddress() override {
         // left undefined
         return local;
     }
 
-    virtual const yarp::os::Contact& getRemoteAddress() {
+    virtual const yarp::os::Contact& getRemoteAddress() override {
         // left undefined
         return remote;
     }
 
-    virtual void reset() {
+    virtual void reset() override {
         inputCache = outputCache = "";
         std::cout << "Stream reset" << std::endl;
     }
 
-    virtual void beginPacket() {
+    virtual void beginPacket() override {
         std::cout << "Packet begins" << std::endl;
         inputCache = "";
         outputCache = "";
     }
 
-    virtual void endPacket() {
+    virtual void endPacket() override {
         std::cout << "Packet ends" << std::endl;
     }
 

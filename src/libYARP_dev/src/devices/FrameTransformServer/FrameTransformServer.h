@@ -81,13 +81,13 @@ public:
     FrameTransformServer();
     ~FrameTransformServer();
 
-    bool open(yarp::os::Searchable &params);
-    bool close();
+    bool open(yarp::os::Searchable &params) override;
+    bool close() override;
     yarp::os::Bottle getOptions();
 
-    bool threadInit();
-    void threadRelease();
-    void run();
+    bool threadInit() override;
+    void threadRelease() override;
+    void run() override;
 
 private:
 #ifndef DOXYGEN_SHOULD_SKIP_THIS
@@ -112,7 +112,7 @@ private:
     yarp::os::Subscriber<tf_tfMessage>       m_rosSubscriberPort_tf_timed;
     yarp::os::Subscriber<tf_tfMessage>       m_rosSubscriberPort_tf_static;
 
-    virtual bool read(yarp::os::ConnectionReader& connection);
+    virtual bool read(yarp::os::ConnectionReader& connection) override;
     inline  void list_response(yarp::os::Bottle& out);
     bool         parseStartingTf(yarp::os::Searchable &config);
 

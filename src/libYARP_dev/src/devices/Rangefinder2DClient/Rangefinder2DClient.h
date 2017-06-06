@@ -51,7 +51,7 @@ public:
     Rangefinder2DInputPortProcessor();
 
     using yarp::os::BufferedPort<yarp::os::Bottle>::onRead;
-    virtual void onRead(yarp::os::Bottle &v);
+    virtual void onRead(yarp::os::Bottle &v) override;
 
     inline int getLast(yarp::os::Bottle &data, yarp::os::Stamp &stmp);
 
@@ -99,8 +99,8 @@ protected:
 public:
 
     /* DevideDriver methods */
-    bool open(yarp::os::Searchable& config);
-    bool close();
+    bool open(yarp::os::Searchable& config) override;
+    bool close() override;
 
 
     /* IPreciselyTimed methods */
@@ -108,28 +108,28 @@ public:
     * Get the time stamp for the last read data
     * @return last time stamp.
     */
-    yarp::os::Stamp getLastInputStamp();
+    yarp::os::Stamp getLastInputStamp() override;
 
     /**
     * Get the device measurements
     * @param data a vector containing the measurement data, expressed in cartesian/polar format
     * @return true/false..
     */
-    virtual bool getLaserMeasurement(std::vector<LaserMeasurementData> &data);
+    virtual bool getLaserMeasurement(std::vector<LaserMeasurementData> &data) override;
 
     /**
     * Get the device measurements
     * @param ranges the vector containing the raw measurement data, as acquired by the device.
     * @return true/false.
     */
-    virtual bool getRawData(yarp::sig::Vector &data);
+    virtual bool getRawData(yarp::sig::Vector &data) override;
 
     /**
     * get the device status
     * @param status the device status
     * @return true/false.
     */
-    bool getDeviceStatus(Device_status &status);
+    bool getDeviceStatus(Device_status &status) override;
 
     /**
     * get the device detection range
@@ -137,7 +137,7 @@ public:
     * @param max the maximum detection distance
     * @return true/false.
     */
-    bool getDistanceRange(double& min, double& max);
+    bool getDistanceRange(double& min, double& max) override;
 
     /**
     * set the device detection range. Invalid setting will be discarded.
@@ -145,7 +145,7 @@ public:
     * @param max the maximum detection distance
     * @return true/false on success/failure.
     */
-    bool setDistanceRange(double min, double max);
+    bool setDistanceRange(double min, double max) override;
 
     /**
     * get the scan angular range.
@@ -153,7 +153,7 @@ public:
     * @param max end angle of the scan
     * @return true/false.
     */
-    bool getScanLimits(double& min, double& max);
+    bool getScanLimits(double& min, double& max) override;
 
     /**
     * set the scan angular range.
@@ -161,42 +161,42 @@ public:
     * @param max end angle of the scan
     * @return true/false on success/failure.
     */
-    bool setScanLimits(double min, double max);
+    bool setScanLimits(double min, double max) override;
 
     /**
     * get the angular step between two measurments.
     * @param step the angular step between two measurments
     * @return true/false.
     */
-    bool getHorizontalResolution(double& step);
+    bool getHorizontalResolution(double& step) override;
 
     /**
     * get the angular step between two measurments (if available)
     * @param step the angular step between two measurments
     * @return true/false on success/failure.
     */
-    bool setHorizontalResolution(double step);
+    bool setHorizontalResolution(double step) override;
 
     /**
     * get the scan rate (scans per seconds)
     * @param rate the scan rate
     * @return true/false.
     */
-    bool getScanRate(double& rate);
+    bool getScanRate(double& rate) override;
 
     /**
     * set the scan rate (scans per seconds)
     * @param rate the scan rate
     * @return true/false on success/failure.
     */
-    bool setScanRate(double rate);
+    bool setScanRate(double rate) override;
 
     /**
     * get the device hardware charactestics
     * @param device_info string containing the device infos
     * @return true/false.
     */
-    bool getDeviceInfo(yarp::os::ConstString &device_info);
+    bool getDeviceInfo(yarp::os::ConstString &device_info) override;
 
 };
 

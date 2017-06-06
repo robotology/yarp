@@ -56,12 +56,12 @@ protected:
 public:
 
     /* DeviceDriver methods */
-    bool open(yarp::os::Searchable& config);
-    bool close();
+    bool open(yarp::os::Searchable& config) override;
+    bool close() override;
 
-    virtual bool detachAll();
-    virtual bool attachAll(const yarp::dev::PolyDriverList &l);
-    virtual bool read(yarp::os::ConnectionReader& connection);
+    virtual bool detachAll() override;
+    virtual bool attachAll(const yarp::dev::PolyDriverList &l) override;
+    virtual bool read(yarp::os::ConnectionReader& connection) override;
 
 private:
     bool add_device(DeviceDescription dev);

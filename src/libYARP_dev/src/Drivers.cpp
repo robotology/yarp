@@ -42,7 +42,7 @@ public:
         delegates.clear();
     }
 
-    virtual bool select(Searchable& options) {
+    virtual bool select(Searchable& options) override {
         return options.check("type",Value("none")).asString() == "device";
     }
 
@@ -194,17 +194,17 @@ public:
         return dev.isValid();
     }
 
-    virtual bool open(yarp::os::Searchable& config) {
+    virtual bool open(yarp::os::Searchable& config) override {
         if (!isValid()) return false;
         return dev.getContent().open(config);
     }
 
-    virtual bool close() {
+    virtual bool close() override {
         if (!isValid()) return false;
         return dev.getContent().close();
     }
 
-    DeviceDriver *getImplementation() {
+    DeviceDriver *getImplementation() override {
         return &dev.getContent();
     }
 

@@ -88,7 +88,7 @@ public:
     virtual bool apply(yarp::os::Bottle& cmd,
                        yarp::os::Bottle& reply,
                        yarp::os::Bottle& event,
-                       const yarp::os::Contact& remote) {
+                       const yarp::os::Contact& remote) override {
         yarp::os::ConstString tag = cmd.get(0).asString();
         bool ok = false;
         if (tag=="subscribe"||tag=="unsubscribe"||tag=="announce"||
@@ -179,7 +179,7 @@ public:
         return ok;
     }
 
-    virtual void onEvent(yarp::os::Bottle& event) {
+    virtual void onEvent(yarp::os::Bottle& event) override {
     }
 
     int replyCode(bool flag) {

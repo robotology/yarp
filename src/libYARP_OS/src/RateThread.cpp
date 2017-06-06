@@ -180,18 +180,18 @@ public:
         sleepThread(sleepPeriodTV);
     }
 
-    void run() {
+    void run() override {
         adaptedPeriod=period;
         while(!isClosing()) {
             singleStep();
         }
     }
 
-    bool threadInit() {
+    bool threadInit() override {
         return owner.threadInit();
     }
 
-    void threadRelease() {
+    void threadRelease() override {
         owner.threadRelease();
     }
 
@@ -217,11 +217,11 @@ public:
         suspended=false;
     }
 
-    void afterStart(bool s) {
+    void afterStart(bool s) override {
         owner.afterStart(s);
     }
 
-    void beforeStart() {
+    void beforeStart() override {
         owner.beforeStart();
     }
 

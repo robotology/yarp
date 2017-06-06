@@ -44,35 +44,35 @@ public:
 
     virtual ~MpiBcastCarrier();
 
-    virtual void close();
+    virtual void close() override;
 
-    virtual Carrier *create() {
+    virtual Carrier *create() override {
         return new MpiBcastCarrier();
     }
 
-    virtual void createStream(bool sender);
+    virtual void createStream(bool sender) override;
 
-    virtual ConstString getName() {
+    virtual ConstString getName() override {
         return "bcast";
     }
 
-    virtual bool supportReply() {
+    virtual bool supportReply() override {
         return false;
     }
 
-    virtual bool isBroadcast() {
+    virtual bool isBroadcast() override {
         return true;
     }
 
-    virtual void prepareDisconnect();
+    virtual void prepareDisconnect() override;
 
-    virtual bool expectReplyToHeader(ConnectionState&  proto) {
+    virtual bool expectReplyToHeader(ConnectionState&  proto) override {
         bool ok = MpiCarrier::expectReplyToHeader(proto);
         dynamic_cast<MpiBcastStream*> (stream)->post();
         return ok;
     }
 
-    virtual bool isActive();
+    virtual bool isActive() override;
 
     virtual bool isElect();
 };

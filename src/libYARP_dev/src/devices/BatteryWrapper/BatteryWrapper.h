@@ -54,8 +54,8 @@ public:
     BatteryWrapper();
     ~BatteryWrapper();
 
-    bool open(yarp::os::Searchable &params);
-    bool close();
+    bool open(yarp::os::Searchable &params) override;
+    bool close() override;
     yarp::os::Bottle getOptions();
 
     void setId(const std::string &id);
@@ -64,15 +64,15 @@ public:
     /**
       * Specify which analog sensor this thread has to read from.
       */
-    bool attachAll(const PolyDriverList &p);
-    bool detachAll();
+    bool attachAll(const PolyDriverList &p) override;
+    bool detachAll() override;
 
     void attach(yarp::dev::IBattery *s);
     void detach();
 
-    bool threadInit();
-    void threadRelease();
-    void run();
+    bool threadInit() override;
+    void threadRelease() override;
+    void run() override;
 
 private:
 #ifndef DOXYGEN_SHOULD_SKIP_THIS
@@ -86,7 +86,7 @@ private:
     std::string sensorId;
 
     bool initialize_YARP(yarp::os::Searchable &config);
-    virtual bool read(yarp::os::ConnectionReader& connection);
+    virtual bool read(yarp::os::ConnectionReader& connection) override;
 
 #endif //DOXYGEN_SHOULD_SKIP_THIS
 };

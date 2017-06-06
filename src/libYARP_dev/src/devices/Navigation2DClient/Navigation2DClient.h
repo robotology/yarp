@@ -54,30 +54,30 @@ protected:
 public:
 
     /* DeviceDriver methods */
-    bool open(yarp::os::Searchable& config);
-    bool close();
+    bool open(yarp::os::Searchable& config) override;
+    bool close() override;
 
-    bool   gotoTargetByAbsoluteLocation(Map2DLocation loc);
-    bool   gotoTargetByLocationName(yarp::os::ConstString location_name);
-    bool   gotoTargetByRelativeLocation(double x, double y, double theta);
+    bool   gotoTargetByAbsoluteLocation(Map2DLocation loc) override;
+    bool   gotoTargetByLocationName(yarp::os::ConstString location_name) override;
+    bool   gotoTargetByRelativeLocation(double x, double y, double theta) override;
 
-    bool   getAbsoluteLocationOfCurrentTarget(Map2DLocation& loc);
+    bool   getAbsoluteLocationOfCurrentTarget(Map2DLocation& loc) override;
     bool   getNameOfCurrentTarget(yarp::os::ConstString& location_name);
-    bool   getRelativeLocationOfCurrentTarget(double& x, double& y, double& theta);
+    bool   getRelativeLocationOfCurrentTarget(double& x, double& y, double& theta) override;
 
-    bool   getCurrentPosition(Map2DLocation &loc);
-    bool   setInitialPose(yarp::dev::Map2DLocation& loc);
-    bool   storeCurrentPosition(yarp::os::ConstString location_name);
+    bool   getCurrentPosition(Map2DLocation &loc) override;
+    bool   setInitialPose(yarp::dev::Map2DLocation& loc) override;
+    bool   storeCurrentPosition(yarp::os::ConstString location_name) override;
 
-    bool   storeLocation(yarp::os::ConstString location_name, Map2DLocation loc);
-    bool   getLocation(yarp::os::ConstString location_name, Map2DLocation& loc);
-    bool   deleteLocation(yarp::os::ConstString location_name);
-    bool   getLocationsList(std::vector<yarp::os::ConstString>& locations);
-    bool   getNavigationStatus(NavigationStatusEnum& status);
-    bool   clearAllLocations();
-    bool   stopNavigation();
-    bool   suspendNavigation();
-    bool   resumeNavigation();
+    bool   storeLocation(yarp::os::ConstString location_name, Map2DLocation loc) override;
+    bool   getLocation(yarp::os::ConstString location_name, Map2DLocation& loc) override;
+    bool   deleteLocation(yarp::os::ConstString location_name) override;
+    bool   getLocationsList(std::vector<yarp::os::ConstString>& locations) override;
+    bool   getNavigationStatus(NavigationStatusEnum& status) override;
+    bool   clearAllLocations() override;
+    bool   stopNavigation() override;
+    bool   suspendNavigation() override;
+    bool   resumeNavigation() override;
 };
 
 #endif // YARP_DEV_NAVIGATION2DCLIENT_H

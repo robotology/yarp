@@ -51,7 +51,7 @@ public:
     static bool checkForCarrier(const Bytes *header, Searchable& group);
     static bool scanForCarrier(const Bytes *header);
 
-    virtual bool select(Searchable& options);
+    virtual bool select(Searchable& options) override;
 };
 
 Carriers* Carriers::Private::yarp_carriers_instance = YARP_NULLPTR;

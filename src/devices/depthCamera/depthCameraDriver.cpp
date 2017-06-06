@@ -42,7 +42,7 @@ public:
     }
 
 private:
-    virtual void onNewFrame(openni::VideoStream& stream);
+    virtual void onNewFrame(openni::VideoStream& stream) override;
     openni::VideoFrameRef   frameRef;
 };
 

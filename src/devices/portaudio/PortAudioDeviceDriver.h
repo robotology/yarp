@@ -45,9 +45,9 @@ class streamThread : public yarp::os::Thread
    bool         something_to_play;
    bool         something_to_record;
    PaStream*    stream;
-   virtual void threadRelease();
-   virtual bool threadInit();
-   virtual void run();
+   virtual void threadRelease() override;
+   virtual bool threadInit() override;
+   virtual void run() override;
 
    private:
    PaError      err;
@@ -76,7 +76,7 @@ public:
 
     virtual ~PortAudioDeviceDriver();
 
-    virtual bool open(yarp::os::Searchable& config);
+    virtual bool open(yarp::os::Searchable& config) override;
 
     /**
      * Configures the device.
@@ -97,11 +97,11 @@ public:
      */
     bool open(PortAudioDeviceDriverSettings& config);
 
-    virtual bool close(void);
-    virtual bool getSound(yarp::sig::Sound& sound);
-    virtual bool renderSound(yarp::sig::Sound& sound);
-    virtual bool startRecording();
-    virtual bool stopRecording();
+    virtual bool close(void) override;
+    virtual bool getSound(yarp::sig::Sound& sound) override;
+    virtual bool renderSound(yarp::sig::Sound& sound) override;
+    virtual bool startRecording() override;
+    virtual bool stopRecording() override;
     
     bool abortSound(void);
     bool immediateSound(yarp::sig::Sound& sound);

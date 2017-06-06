@@ -37,13 +37,13 @@ public:
     using MpiStream::write;
     using MpiStream::read;
 
-    ssize_t read(const Bytes& b);
-    void write(const Bytes& b);
+    ssize_t read(const Bytes& b) override;
+    void write(const Bytes& b) override;
     void startJoin();
     void post() {
         comm->sema.post();
     }
-    void close() {
+    void close() override {
         #ifdef MPI_DEBUG
         printf("[MpiBcastStream @ %s] Closing stream\n", name.c_str());
         #endif

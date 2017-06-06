@@ -29,7 +29,7 @@ const double TOL = 1e-8;
 
 class MathTest : public UnitTest {
 public:
-    virtual ConstString getName() { return "MathTest"; }
+    virtual ConstString getName() override { return "MathTest"; }
 
     // Assert that 2 vectors are equal
     void assertEqual(const Vector &a, const Vector &b, string testName, bool verbose=false){
@@ -509,7 +509,7 @@ public:
         assertEqual(cross(an, bn), -1.0*cross(bn, an), testName);
     }
 
-    virtual void runTests()
+    virtual void runTests() override
     {
         checkMiscOperations();
         vectorOps();

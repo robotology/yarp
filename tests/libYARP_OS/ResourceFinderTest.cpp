@@ -24,7 +24,7 @@ using namespace yarp::os::impl;
 
 class ResourceFinderTest : public UnitTest {
 public:
-    virtual ConstString getName() { return "ResourceFinderTest"; }
+    virtual ConstString getName() override { return "ResourceFinderTest"; }
 
     void testBasics() {
         report(0,"testing the basics of RF...");
@@ -814,7 +814,7 @@ public:
         }
     }
 
-    virtual void runTests() {
+    virtual void runTests() override {
         testBasics();
         testCommandLineArgs();
         testContext();

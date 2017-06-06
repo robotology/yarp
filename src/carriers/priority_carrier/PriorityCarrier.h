@@ -63,9 +63,9 @@ class yarp::os::PriorityDebugThread : public yarp::os::RateThread {
 public:
     PriorityDebugThread(PriorityCarrier* carrier);
     virtual ~PriorityDebugThread();
-    void run();
-    bool threadInit();
-    void threadRelease();
+    void run() override;
+    bool threadInit() override;
+    void threadRelease() override;
 
 public:
     int count;
@@ -112,15 +112,15 @@ public:
         }
     }
 
-    virtual Carrier *create() {
+    virtual Carrier *create() override {
         return new PriorityCarrier();
     }
 
-    virtual ConstString getName() {
+    virtual ConstString getName() override {
         return "priority";
     }
 
-    virtual ConstString toString() {
+    virtual ConstString toString() override {
         return "priority_carrier";
     }
 
@@ -152,11 +152,11 @@ public:
 
     double getActualInput(double t);
 
-    virtual bool configure(yarp::os::ConnectionState& proto);
+    virtual bool configure(yarp::os::ConnectionState& proto) override;
 
-    virtual bool acceptIncomingData(yarp::os::ConnectionReader& reader);
+    virtual bool acceptIncomingData(yarp::os::ConnectionReader& reader) override;
 
-    virtual void setCarrierParams(const yarp::os::Property& params) {
+    virtual void setCarrierParams(const yarp::os::Property& params) override {
         yarp::os::Property property = params;
         timeConstant = property.check("tc", Value(timeConstant)).asDouble();
         timeResting = property.check("tr", Value(timeResting)).asDouble();
@@ -167,7 +167,7 @@ public:
             excitation = property.findGroup("ex");
     }
 
-    virtual void getCarrierParams(yarp::os::Property& params) {
+    virtual void getCarrierParams(yarp::os::Property& params) override {
         params.put("tc", timeConstant);
         params.put("tr", timeResting);
         params.put("st", stimulation);

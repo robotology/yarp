@@ -21,6 +21,7 @@
 
 #include <QStandardItemModel>
 #include <QSortFilterProxyModel>
+#include <yarp/conf/compiler.h>
 
 class YarprunPortsSortFilterProxyModel : public QSortFilterProxyModel
 {
@@ -28,7 +29,7 @@ public:
   YarprunPortsSortFilterProxyModel ( QObject *parent = 0 );
 
 protected:
-  bool lessThan( const QModelIndex &left, const QModelIndex &right ) const;
+  bool lessThan( const QModelIndex &left, const QModelIndex &right ) const override;
 };
 
 #endif // YARPRUN_PORTS_SORTING_H

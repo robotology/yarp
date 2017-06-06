@@ -26,7 +26,7 @@ using namespace yarp::math;
 
 class RandTest : public UnitTest {
 public:
-    virtual ConstString getName() { return "RandTest"; }
+    virtual ConstString getName() override { return "RandTest"; }
 
     void normalRnd()
     {
@@ -179,7 +179,7 @@ public:
         checkTrue(!tmp, "default seed initialization for two sequences");
     }
 
-    virtual void runTests()
+    virtual void runTests() override
     {
         rand();
         randMatrix();

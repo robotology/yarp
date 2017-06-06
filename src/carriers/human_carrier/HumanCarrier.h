@@ -12,59 +12,59 @@ public:
 
     // First, the easy bits...
 
-    virtual Carrier *create() {
+    virtual Carrier *create() override {
         return new HumanCarrier();
     }
 
-    virtual ConstString getName() {
+    virtual ConstString getName() override {
         return "human";
     }
 
-    virtual bool isConnectionless() {
+    virtual bool isConnectionless() override {
         return true;
     }
 
-    virtual bool canAccept() {
+    virtual bool canAccept() override {
         return true;
     }
 
-    virtual bool canOffer() {
+    virtual bool canOffer() override {
         return true;
     }
 
-    virtual bool isTextMode() {
+    virtual bool isTextMode() override {
         // let's be text mode, for human-friendliness
         return true;
     }
 
-    virtual bool canEscape() {
+    virtual bool canEscape() override {
         return true;
     }
 
-    virtual bool requireAck() {
+    virtual bool requireAck() override {
         return true;
     }
 
-    virtual bool supportReply() {
+    virtual bool supportReply() override {
         return true;
     }
 
-    virtual bool isLocal() {
+    virtual bool isLocal() override {
         return false;
     }
 
-    virtual ConstString toString() {
+    virtual ConstString toString() override {
         return "humans are handy";
     }
 
-    virtual void getHeader(const Bytes& header) {
+    virtual void getHeader(const Bytes& header) override {
         const char *target = "HUMANITY";
         for (size_t i=0; i<8 && i<header.length(); i++) {
             header.get()[i] = target[i];
         }
     }
 
-    virtual bool checkHeader(const Bytes& header) {
+    virtual bool checkHeader(const Bytes& header) override {
         if (header.length()!=8) {
             return false;
         }
@@ -77,21 +77,21 @@ public:
         return true;
     }
 
-    virtual void setParameters(const Bytes& header) {
+    virtual void setParameters(const Bytes& header) override {
         // no parameters - no carrier variants
     }
 
 
     // Now, the initial hand-shaking
 
-    virtual bool prepareSend(ConnectionState& proto) {
+    virtual bool prepareSend(ConnectionState& proto) override {
         // nothing special to do
         return true;
     }
 
-    virtual bool sendHeader(ConnectionState& proto);
+    virtual bool sendHeader(ConnectionState& proto) override;
 
-    virtual bool expectSenderSpecifier(ConnectionState& proto) {
+    virtual bool expectSenderSpecifier(ConnectionState& proto) override {
         // interpret everything that sendHeader wrote
         Route route = proto.getRoute();
         route.setFromName(proto.is().readLine());
@@ -99,12 +99,12 @@ public:
         return proto.is().isOk();
     }
 
-    virtual bool expectExtraHeader(ConnectionState& proto) {
+    virtual bool expectExtraHeader(ConnectionState& proto) override {
         // interpret any extra header information sent - optional
         return true;
     }
 
-    virtual bool respondToHeader(ConnectionState& proto) {
+    virtual bool respondToHeader(ConnectionState& proto) override {
         // SWITCH TO NEW STREAM TYPE
         HumanStream *stream = new HumanStream();
         if (stream==NULL) { return false; }
@@ -112,7 +112,7 @@ public:
         return true;
     }
 
-    virtual bool expectReplyToHeader(ConnectionState& proto) {
+    virtual bool expectReplyToHeader(ConnectionState& proto) override {
         // SWITCH TO NEW STREAM TYPE
         HumanStream *stream = new HumanStream();
         if (stream==NULL) { return false; }
@@ -120,14 +120,14 @@ public:
         return true;
     }
 
-    virtual bool isActive() {
+    virtual bool isActive() override {
         return true;
     }
 
 
     // Payload time!
 
-    virtual bool write(ConnectionState& proto, SizedWriter& writer) {
+    virtual bool write(ConnectionState& proto, SizedWriter& writer) override {
         bool ok = sendIndex(proto,writer);
         if (!ok) return false;
         writer.write(proto.os());
@@ -141,7 +141,7 @@ public:
         return true;
     }
 
-    virtual bool expectIndex(ConnectionState& proto) {
+    virtual bool expectIndex(ConnectionState& proto) override {
         ConstString prefix = "human says ";
         ConstString compare = prefix;
         Bytes b2((char*)prefix.c_str(),prefix.length());
@@ -153,14 +153,14 @@ public:
 
     // Acknowledgements, we don't do them
 
-    virtual bool sendAck(ConnectionState& proto) {
+    virtual bool sendAck(ConnectionState& proto) override {
         ConstString prefix = "computers rule!\r\n";
         Bytes b2((char*)prefix.c_str(),prefix.length());
         proto.os().write(b2);
         return true;
     }
 
-    virtual bool expectAck(ConnectionState& proto) {
+    virtual bool expectAck(ConnectionState& proto) override {
         ConstString prefix = "computers rule!\r\n";
         ConstString compare = prefix;
         Bytes b2((char*)prefix.c_str(),prefix.length());

@@ -66,12 +66,12 @@ public:
      * Prepare to serve this output.  A thread will start if a call
      * to send() has been made with options that require a thread.
      */
-    virtual bool start();
+    virtual bool start() override;
 
     /**
      * The body of a thread managing background sends.
      */
-    virtual void run();
+    virtual void run() override;
 
     /**
      * Perform send operations without a separate thread.
@@ -79,25 +79,25 @@ public:
     virtual void runSingleThreaded();
 
     // documented in PortCoreUnit
-    virtual bool isOutput()
+    virtual bool isOutput() override
     {
         return true;
     }
 
     // documented in PortCoreUnit
-    virtual void close()
+    virtual void close() override
     {
         closeMain();
     }
 
     // documented in PortCoreUnit
-    virtual bool isFinished()
+    virtual bool isFinished() override
     {
         return finished;
     }
 
     // documented in PortCoreUnit
-    virtual Route getRoute();
+    virtual Route getRoute() override;
 
     // documented in PortCoreUnit
     virtual void *send(yarp::os::PortWriter& writer,
@@ -107,23 +107,23 @@ public:
                        const ConstString& envelopeString,
                        bool waitAfter,
                        bool waitBefore,
-                       bool *gotReply);
+                       bool *gotReply) override;
 
     // documented in PortCoreUnit
-    virtual void *takeTracker();
+    virtual void *takeTracker() override;
 
     // documented in PortCoreUnit
-    virtual bool isBusy();
+    virtual bool isBusy() override;
 
     // documented in PortCoreUnit
-    void setCarrierParams(const yarp::os::Property& params)
+    void setCarrierParams(const yarp::os::Property& params) override
     {
         if (op)
             op->getConnection().setCarrierParams(params);
     }
 
     // documented in PortCoreUnit
-    void getCarrierParams(yarp::os::Property& params)
+    void getCarrierParams(yarp::os::Property& params) override
     {
         if (op)
             op->getConnection().getCarrierParams(params);

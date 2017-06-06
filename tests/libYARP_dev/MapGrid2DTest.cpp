@@ -31,7 +31,7 @@ using namespace yarp::os::impl;
 
 class MapGrid2DTest : public UnitTest {
 public:
-    virtual ConstString getName() { return "MapGrid2DTest"; }
+    virtual ConstString getName() override { return "MapGrid2DTest"; }
 
     void ReadMapfromString(MapGrid2D& m, std::string s)
     {
@@ -173,7 +173,7 @@ public:
         return true;
     }
 
-    virtual void runTests()
+    virtual void runTests() override
     {
         Network::setLocalMode(true);
         testDataType();

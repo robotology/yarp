@@ -52,13 +52,13 @@ public:
     const DumpBottle &operator=(const DumpBottle &obj) { *p=*(obj.p); return *this; }
     ~DumpBottle() { delete p; }
 
-    const string toFile(const string &dirName, unsigned int cnt)
+    const string toFile(const string &dirName, unsigned int cnt) override
     {
         string ret=p->toString().c_str();
         return ret;
     }
 
-    void *getPtr() { return NULL; }
+    void *getPtr() override { return NULL; }
 };
 
 
@@ -85,7 +85,7 @@ public:
     const DumpImage &operator=(const DumpImage &obj) { *p=*(obj.p); return *this; }
     ~DumpImage() { delete p; }
 
-    const string toFile(const string &dirName, unsigned int cnt)
+    const string toFile(const string &dirName, unsigned int cnt) override
     {
         int code=p->getPixelCode();
         string ext;
@@ -99,7 +99,7 @@ public:
 
         ostringstream fName;
         fName << setw(8) << setfill('0') << cnt << ext;
-        
+
         string extfName=dirName;
         extfName+="/";
         extfName+=fName.str();
@@ -113,7 +113,7 @@ public:
         return ret;
     }
 
-    void *getPtr() { return p->getIplImage(); }
+    void *getPtr() override { return p->getIplImage(); }
 };
 
 
@@ -217,7 +217,7 @@ private:
     bool txTime;
 
     using BufferedPort<T>::onRead;
-    void onRead(T &obj)
+    void onRead(T &obj) override
     {
         if (++cnt==dwnsample)
         {
@@ -323,7 +323,7 @@ public:
         finfo << (connected?"[connected]":"[disconnected]") << endl;
     }
 
-    bool threadInit()
+    bool threadInit() override
     {
         oldTime=Time::now();
         cumulSize=0;
@@ -371,7 +371,7 @@ public:
         return true;
     }
 
-    void run()
+    void run() override
     {
         buf.lock();
         unsigned int sz=buf.size(); //!!! access to size must be protected: problem spotted with Linux stl
@@ -456,7 +456,7 @@ public:
         }
     }
 
-    void threadRelease()
+    void threadRelease() override
     {
         // call run() for the last time to flush the queue
         closing=true;
@@ -482,7 +482,7 @@ private:
 public:
     DumpReporter() : thread(NULL) { }
     void setThread(DumpThread *thread) { this->thread=thread; }
-    void report(const PortInfo &info)
+    void report(const PortInfo &info) override
     {
         if ((thread!=NULL) && info.incoming)
             thread->writeSource(info.sourceName.c_str(),info.created);
@@ -509,7 +509,7 @@ private:
 public:
     DumpModule() { }
 
-    bool configure(ResourceFinder &rf)
+    bool configure(ResourceFinder &rf) override
     {
         Time::turboBoost();
 
@@ -636,7 +636,7 @@ public:
         return true;
     }
 
-    bool close()
+    bool close() override
     {
         t->stop();
 
@@ -662,8 +662,8 @@ public:
         return true;
     }
 
-    double getPeriod()    { return 1.0;  }
-    bool   updateModule() { return true; }
+    double getPeriod() override { return 1.0;  }
+    bool   updateModule() override { return true; }
 };
 
 

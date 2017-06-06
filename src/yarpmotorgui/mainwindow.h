@@ -47,7 +47,7 @@ public:
     void term();
 
 protected:
-    void closeEvent(QCloseEvent *event);
+    void closeEvent(QCloseEvent *event) override;
 private:
     Ui::MainWindow*  m_ui;
     QTabWidget*      m_tabPanel;

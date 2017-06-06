@@ -15,7 +15,7 @@ using namespace yarp::os::impl;
 
 class StringInputStreamTest : public UnitTest {
 public:
-    virtual ConstString getName() { return "StringInputStreamTest"; }
+    virtual ConstString getName() override { return "StringInputStreamTest"; }
 
     void testRead() {
         report(0,"test reading...");
@@ -37,7 +37,7 @@ public:
         checkEqual("my",buf,"second read");
     }
 
-    virtual void runTests() {
+    virtual void runTests() override {
         testRead();
     }
 };

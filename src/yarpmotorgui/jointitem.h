@@ -97,7 +97,7 @@ class JointItem : public QWidget
     void resetTarget();
 
 protected:
-    bool eventFilter(QObject *obj, QEvent *event);
+    bool eventFilter(QObject *obj, QEvent *event) override;
 
 private:
     void enableAll();
@@ -239,7 +239,7 @@ class WheelEventFilter : public QObject
 
 
 protected:
-    bool eventFilter(QObject *obj, QEvent *event);
+    bool eventFilter(QObject *obj, QEvent *event) override;
 };
 
 

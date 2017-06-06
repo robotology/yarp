@@ -115,7 +115,7 @@ public:
     */
     void init(yarp::dev::ControlBoardWrapper *x);
 
-    virtual bool respond(const yarp::os::Bottle& cmd, yarp::os::Bottle& response);
+    virtual bool respond(const yarp::os::Bottle& cmd, yarp::os::Bottle& response) override;
 
     void handleTorqueMsg(const yarp::os::Bottle& cmd,
         yarp::os::Bottle& response, bool *rec, bool *ok);

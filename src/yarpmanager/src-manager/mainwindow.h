@@ -63,7 +63,7 @@ private:
     string ext_editor;
 
 protected:
-    void closeEvent(QCloseEvent *);
+    void closeEvent(QCloseEvent *) override;
 
 
 private slots:

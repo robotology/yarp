@@ -87,8 +87,8 @@ private:
     void fixedTimeMove(SequenceItem sequence);
 
 protected:
-    void resizeEvent(QResizeEvent *event);
-    void changeEvent(QEvent *event );
+    void resizeEvent(QResizeEvent *event) override;
+    void changeEvent(QEvent *event) override;
 
 private:
     QTreeWidgetItem *m_node;

@@ -42,16 +42,16 @@ public:
     ~fakeIMU();
 
     // Device Driver interface
-    virtual bool open(yarp::os::Searchable &config);
-    virtual bool close();
+    virtual bool open(yarp::os::Searchable &config) override;
+    virtual bool close() override;
 
     // IGenericSensor interface.
-    virtual bool read(yarp::sig::Vector &out);
-    virtual bool getChannels(int *nc);
-    virtual bool calibrate(int ch, double v);
+    virtual bool read(yarp::sig::Vector &out) override;
+    virtual bool getChannels(int *nc) override;
+    virtual bool calibrate(int ch, double v) override;
 
     // IPreciselyTimed interface
-    virtual yarp::os::Stamp getLastInputStamp();
+    virtual yarp::os::Stamp getLastInputStamp() override;
 
     yarp::sig::Vector rpy, gravity;
     yarp::sig::Matrix dcm;
@@ -59,8 +59,8 @@ public:
 
 private:
 
-    bool threadInit();
-    void run();
+    bool threadInit() override;
+    void run() override;
     unsigned int nchannels;
     double dummy_value;
     yarp::os::Stamp lastStamp;

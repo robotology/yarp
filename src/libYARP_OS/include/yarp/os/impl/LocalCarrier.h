@@ -49,9 +49,9 @@ class yarp::os::impl::LocalCarrierStream : public SocketTwoWayStream
 public:
     void attach(LocalCarrier *owner, bool sender);
 
-    virtual void interrupt();
-    virtual void close();
-    virtual bool isOk();
+    virtual void interrupt() override;
+    virtual void close() override;
+    virtual bool isOk() override;
 
 private:
     LocalCarrier *owner;
@@ -69,25 +69,25 @@ public:
 
     virtual ~LocalCarrier();
 
-    virtual Carrier *create();
+    virtual Carrier *create() override;
 
-    virtual ConstString getName();
+    virtual ConstString getName() override;
 
-    virtual bool requireAck();
-    virtual bool isConnectionless();
-    virtual bool canEscape();
-    virtual bool isLocal();
+    virtual bool requireAck() override;
+    virtual bool isConnectionless() override;
+    virtual bool canEscape() override;
+    virtual bool isLocal() override;
     virtual ConstString getSpecifierName();
-    virtual bool checkHeader(const Bytes& header);
-    virtual void getHeader(const Bytes& header);
-    virtual void setParameters(const Bytes& header);
-    virtual bool sendHeader(ConnectionState& proto);
-    virtual bool expectExtraHeader(ConnectionState& proto);
+    virtual bool checkHeader(const Bytes& header) override;
+    virtual void getHeader(const Bytes& header) override;
+    virtual void setParameters(const Bytes& header) override;
+    virtual bool sendHeader(ConnectionState& proto) override;
+    virtual bool expectExtraHeader(ConnectionState& proto) override;
     virtual bool becomeLocal(ConnectionState& proto, bool sender);
-    virtual bool write(ConnectionState& proto, SizedWriter& writer);
-    virtual bool respondToHeader(ConnectionState& proto);
-    virtual bool expectReplyToHeader(ConnectionState& proto);
-    virtual bool expectIndex(ConnectionState& proto);
+    virtual bool write(ConnectionState& proto, SizedWriter& writer) override;
+    virtual bool respondToHeader(ConnectionState& proto) override;
+    virtual bool expectReplyToHeader(ConnectionState& proto) override;
+    virtual bool expectIndex(ConnectionState& proto) override;
 
     void removePeer();
     void shutdown();

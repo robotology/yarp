@@ -65,7 +65,7 @@ public:
 
     inline void resetStat();
     using yarp::os::BufferedPort<yarp::os::Bottle>::onRead;
-    virtual void onRead(yarp::os::Bottle &v);
+    virtual void onRead(yarp::os::Bottle &v) override;
     inline int getLast(yarp::os::Bottle &data, yarp::os::Stamp &stmp);
     inline int getIterations();
     void getEstFrequency(int &ite, double &av, double &min, double &max);
@@ -116,9 +116,9 @@ protected:
 public:
 
     /* DeviceDriver methods */
-    bool open(yarp::os::Searchable& config);
-    bool close();
-    virtual bool read(yarp::os::ConnectionReader& connection);
+    bool open(yarp::os::Searchable& config) override;
+    bool close() override;
+    virtual bool read(yarp::os::ConnectionReader& connection) override;
 
     /* IPreciselyTimed methods */
     /**
@@ -127,26 +127,26 @@ public:
     */
     yarp::os::Stamp getLastInputStamp();
 
-     bool     allFramesAsString(std::string &all_frames);
-     bool     canTransform(const std::string &target_frame, const std::string &source_frame);
-     bool     clear() ;
-     bool     frameExists(const std::string &frame_id) ;
-     bool     getAllFrameIds(std::vector< std::string > &ids) ;
-     bool     getParent(const std::string &frame_id, std::string &parent_frame_id) ;
-     bool     getTransform(const std::string &target_frame_id, const std::string &source_frame_id, yarp::sig::Matrix &transform) ;
-     bool     setTransform(const std::string &target_frame_id, const std::string &source_frame_id, const yarp::sig::Matrix &transform) ;
-     bool     setTransformStatic(const std::string &target_frame_id, const std::string &source_frame_id, const yarp::sig::Matrix &transform);
-     bool     deleteTransform(const std::string &target_frame_id, const std::string &source_frame_id)     ;
-     bool     transformPoint(const std::string &target_frame_id, const std::string &source_frame_id, const yarp::sig::Vector &input_point, yarp::sig::Vector &transformed_point);
-     bool     transformPose(const std::string &target_frame_id, const std::string &source_frame_id, const yarp::sig::Vector &input_pose, yarp::sig::Vector &transformed_pose);
-     bool     transformQuaternion(const std::string &target_frame_id, const std::string &source_frame_id, const yarp::math::Quaternion &input_quaternion, yarp::math::Quaternion &transformed_quaternion);
-     bool     waitForTransform(const std::string &target_frame_id, const std::string &source_frame_id, const double &timeout) ;
+     bool     allFramesAsString(std::string &all_frames) override;
+     bool     canTransform(const std::string &target_frame, const std::string &source_frame) override;
+     bool     clear() override;
+     bool     frameExists(const std::string &frame_id) override;
+     bool     getAllFrameIds(std::vector< std::string > &ids) override;
+     bool     getParent(const std::string &frame_id, std::string &parent_frame_id) override;
+     bool     getTransform(const std::string &target_frame_id, const std::string &source_frame_id, yarp::sig::Matrix &transform) override;
+     bool     setTransform(const std::string &target_frame_id, const std::string &source_frame_id, const yarp::sig::Matrix &transform) override;
+     bool     setTransformStatic(const std::string &target_frame_id, const std::string &source_frame_id, const yarp::sig::Matrix &transform) override;
+     bool     deleteTransform(const std::string &target_frame_id, const std::string &source_frame_id) override;
+     bool     transformPoint(const std::string &target_frame_id, const std::string &source_frame_id, const yarp::sig::Vector &input_point, yarp::sig::Vector &transformed_point) override;
+     bool     transformPose(const std::string &target_frame_id, const std::string &source_frame_id, const yarp::sig::Vector &input_pose, yarp::sig::Vector &transformed_pose) override;
+     bool     transformQuaternion(const std::string &target_frame_id, const std::string &source_frame_id, const yarp::math::Quaternion &input_quaternion, yarp::math::Quaternion &transformed_quaternion) override;
+     bool     waitForTransform(const std::string &target_frame_id, const std::string &source_frame_id, const double &timeout) override;
 
      FrameTransformClient();
     ~FrameTransformClient();
-     bool     threadInit();
-     void     threadRelease();
-     void     run();
+     bool     threadInit() override;
+     void     threadRelease() override;
+     void     run() override;
 };
 
 #endif // YARP_DEV_FRAMETRANSFORMCLIENT_FRAMETRANSFORMCLIENT_H

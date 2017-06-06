@@ -14,7 +14,7 @@ if(NOT SKIP_xmlrpc)
   set(CMAKE_INCLUDE_CURRENT_DIR ON)
   get_property(YARP_OS_INCLUDE_DIRS TARGET YARP_OS PROPERTY INCLUDE_DIRS)
   include_directories(${YARP_OS_INCLUDE_DIRS})
-  include_directories(${xmlrpcpp_INCLUDE_DIRS})
+  include_directories(SYSTEM ${xmlrpcpp_INCLUDE_DIRS})
 
   check_cxx_compiler_flag("-Wformat-nonliteral" CXX_HAS_WFORMAT_NONLITERAL)
   if(CXX_HAS_WFORMAT_NONLITERAL)

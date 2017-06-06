@@ -52,17 +52,17 @@ public:
 
     bool isRunning();
 
-    void onModStart(int which);
-    void onModStop(int which);
-    void onModStdout(int which, const char* msg);
-    void onConConnect(int which);
-    void onConDisconnect(int which);
-    void onResAvailable(int which);
-    void onResUnAvailable(int which);
-    void onConAvailable(int from, int to);
-    void onConUnAvailable(int from, int to);
-    void onError(void);
-    void onLoadBalance(void);
+    void onModStart(int which) override;
+    void onModStop(int which) override;
+    void onModStdout(int which, const char* msg) override;
+    void onConConnect(int which) override;
+    void onConDisconnect(int which) override;
+    void onResAvailable(int which) override;
+    void onResUnAvailable(int which) override;
+    void onConAvailable(int from, int to) override;
+    void onConUnAvailable(int from, int to) override;
+    void onError(void) override;
+    void onLoadBalance(void) override;
     void closeManager();
     QToolBar* getBuilderToolBar();
     bool isBuilderFloating();

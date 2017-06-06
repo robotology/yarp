@@ -27,14 +27,14 @@ public:
     }
 
     using BufferedPort<Bottle>::onRead;
-    void onRead(Bottle& datum) {
+    void onRead(Bottle& datum) override {
         count += datum.size();
     }
 };
 
 class PortReaderBufferTest : public UnitTest {
 public:
-    virtual ConstString getName() { return "PortReaderBufferTest"; }
+    virtual ConstString getName() override { return "PortReaderBufferTest"; }
 
 
     void checkAccept() {
@@ -170,7 +170,7 @@ public:
         }
     }
 
-    virtual void runTests() {
+    virtual void runTests() override {
         Network::setLocalMode(true);
 
         //checkLocal(); // still rather experimental

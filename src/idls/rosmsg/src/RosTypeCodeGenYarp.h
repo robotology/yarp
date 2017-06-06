@@ -47,32 +47,32 @@ public:
     RosYarpType mapPrimitive(const RosField& field);
 
     virtual bool beginType(const std::string& tname,
-                           RosTypeCodeGenState& state);
+                           RosTypeCodeGenState& state) override;
 
-    virtual bool beginDeclare();
-    virtual bool declareField(const RosField& field);
-    virtual bool endDeclare();
+    virtual bool beginDeclare() override;
+    virtual bool declareField(const RosField& field) override;
+    virtual bool endDeclare() override;
 
-    virtual bool beginConstruct();
-    virtual bool constructField(const RosField& field);
-    virtual bool endConstruct();
+    virtual bool beginConstruct() override;
+    virtual bool constructField(const RosField& field) override;
+    virtual bool endConstruct() override;
 
-    virtual bool beginClear();
-    virtual bool clearField(const RosField& field);
-    virtual bool endClear();
+    virtual bool beginClear() override;
+    virtual bool clearField(const RosField& field) override;
+    virtual bool endClear() override;
 
-    virtual bool beginRead(bool bare, int len);
-    virtual bool readField(bool bare, const RosField& field);
-    virtual bool endRead(bool bare);
+    virtual bool beginRead(bool bare, int len) override;
+    virtual bool readField(bool bare, const RosField& field) override;
+    virtual bool endRead(bool bare) override;
 
-    virtual bool beginWrite(bool bare, int len);
-    virtual bool writeField(bool bare,const RosField& field);
-    virtual bool endWrite(bool bare);
+    virtual bool beginWrite(bool bare, int len) override;
+    virtual bool writeField(bool bare,const RosField& field) override;
+    virtual bool endWrite(bool bare) override;
 
     virtual bool endType(const std::string& tname,
-                         const RosField& field);
+                         const RosField& field) override;
 
-    virtual bool hasNativeTimeClass() const {
+    virtual bool hasNativeTimeClass() const override {
         return false;
     }
 

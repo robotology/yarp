@@ -30,7 +30,7 @@ public:
         stop();
     }
 
-    virtual void run() {
+    virtual void run() override {
         done.post();
         x.wait();
         state = 2;
@@ -50,7 +50,7 @@ public:
         stop();
     }
 
-    virtual void run() {
+    virtual void run() override {
         x.wait();
         done.post();
     }
@@ -58,7 +58,7 @@ public:
 
 class EventTest : public UnitTest {
 public:
-    virtual ConstString getName() { return "EventTest"; }
+    virtual ConstString getName() override { return "EventTest"; }
 
     void checkBasic() {
         report(0, "basic event sanity check...");
@@ -127,7 +127,7 @@ public:
         checkEqual(ct, 2, "both awoke");
     }
 
-    virtual void runTests() {
+    virtual void runTests() override {
         checkBasic();
         checkBlock();
         checkSingleWakeup();

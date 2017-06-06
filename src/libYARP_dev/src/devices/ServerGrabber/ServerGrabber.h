@@ -47,7 +47,7 @@ public:
     DC1394Parser();
     virtual ~DC1394Parser() {};
     bool configure(yarp::dev::IFrameGrabberControlsDC1394 *interface);
-    virtual bool respond(const yarp::os::Bottle& cmd, yarp::os::Bottle& response);
+    virtual bool respond(const yarp::os::Bottle& cmd, yarp::os::Bottle& response) override;
 };
 
 class yarp::dev::impl::ServerGrabberResponder :public DeviceResponder
@@ -59,7 +59,7 @@ public:
     ServerGrabberResponder(bool _left=false);
     ~ServerGrabberResponder();
     bool configure(yarp::dev::ServerGrabber* _server);
-    bool respond(const os::Bottle &command, os::Bottle &reply);
+    bool respond(const os::Bottle &command, os::Bottle &reply) override;
 };
 
 typedef enum {
@@ -240,35 +240,35 @@ public:
     ~ServerGrabber();
 
     //DeviceDriver
-    virtual bool close();
+    virtual bool close() override;
     /**
      * Configure with a set of options.
      * @param config The options to use
      * @return true iff the object could be configured.
      */
-    virtual bool open(yarp::os::Searchable& config);
+    virtual bool open(yarp::os::Searchable& config) override;
 
-    //virtual bool read(ConnectionReader& connection);
+    //virtual bool read(ConnectionReader& connection) override;
 
     //DeviceResponder
     bool respond(const yarp::os::Bottle& command,
                          yarp::os::Bottle& reply, bool left, bool both);
     // IMultipleWrapper interface
-    bool        attachAll(const PolyDriverList &device2attach);
+    bool        attachAll(const PolyDriverList &device2attach) override;
 
-    bool        detachAll();
+    bool        detachAll() override;
 
     // IWrapper interface
-    bool        attach(PolyDriver *poly);
+    bool        attach(PolyDriver *poly) override;
 
-    bool        detach();
+    bool        detach() override;
 
     //RateThread
-    bool threadInit();
+    bool threadInit() override;
 
-    void threadRelease();
+    void threadRelease() override;
 
-    void run();
+    void run() override;
 protected:
 
     bool fromConfig(yarp::os::Searchable &config);

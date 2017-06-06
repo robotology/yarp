@@ -202,59 +202,59 @@ public:
     static int pixFormatToCode(openni::PixelFormat p);
 
     // DeviceDriver
-    virtual bool open(yarp::os::Searchable& config);
-    virtual bool close();
+    virtual bool open(yarp::os::Searchable& config) override;
+    virtual bool close() override;
 
     // IRGBDSensor
-    virtual int    getRgbHeight();
-    virtual int    getRgbWidth();
-    virtual bool   getRgbSupportedConfigurations(yarp::sig::VectorOf<CameraConfig> &configurations);
-    virtual bool   getRgbResolution(int &width, int &height);
-    virtual bool   setRgbResolution(int width, int height);
-    virtual bool   getRgbFOV(double& horizontalFov, double& verticalFov);
-    virtual bool   setRgbFOV(double horizontalFov, double verticalFov);
-    virtual bool   getRgbMirroring(bool& mirror);
-    virtual bool   setRgbMirroring(bool mirror);
+    virtual int    getRgbHeight() override;
+    virtual int    getRgbWidth() override;
+    virtual bool   getRgbSupportedConfigurations(yarp::sig::VectorOf<CameraConfig> &configurations) override;
+    virtual bool   getRgbResolution(int &width, int &height) override;
+    virtual bool   setRgbResolution(int width, int height) override;
+    virtual bool   getRgbFOV(double& horizontalFov, double& verticalFov) override;
+    virtual bool   setRgbFOV(double horizontalFov, double verticalFov) override;
+    virtual bool   getRgbMirroring(bool& mirror) override;
+    virtual bool   setRgbMirroring(bool mirror) override;
 
-    virtual bool   getRgbIntrinsicParam(Property& intrinsic);
-    virtual int    getDepthHeight();
-    virtual int    getDepthWidth();
-    virtual bool   setDepthResolution(int width, int height);
-    virtual bool   getDepthFOV(double& horizontalFov, double& verticalFov);
-    virtual bool   setDepthFOV(double horizontalFov, double verticalFov);
-    virtual bool   getDepthIntrinsicParam(Property& intrinsic);
-    virtual double getDepthAccuracy();
-    virtual bool   setDepthAccuracy(double accuracy);
-    virtual bool   getDepthClipPlanes(double& nearPlane, double& farPlane);
-    virtual bool   setDepthClipPlanes(double nearPlane, double farPlane);
-    virtual bool   getDepthMirroring(bool& mirror);
-    virtual bool   setDepthMirroring(bool mirror);
+    virtual bool   getRgbIntrinsicParam(Property& intrinsic) override;
+    virtual int    getDepthHeight() override;
+    virtual int    getDepthWidth() override;
+    virtual bool   setDepthResolution(int width, int height) override;
+    virtual bool   getDepthFOV(double& horizontalFov, double& verticalFov) override;
+    virtual bool   setDepthFOV(double horizontalFov, double verticalFov) override;
+    virtual bool   getDepthIntrinsicParam(Property& intrinsic) override;
+    virtual double getDepthAccuracy() override;
+    virtual bool   setDepthAccuracy(double accuracy) override;
+    virtual bool   getDepthClipPlanes(double& nearPlane, double& farPlane) override;
+    virtual bool   setDepthClipPlanes(double nearPlane, double farPlane) override;
+    virtual bool   getDepthMirroring(bool& mirror) override;
+    virtual bool   setDepthMirroring(bool mirror) override;
 
 
-    virtual bool   getExtrinsicParam(sig::Matrix &extrinsic);
-    virtual bool   getRgbImage(FlexImage& rgbImage, Stamp* timeStamp = NULL);
-    virtual bool   getDepthImage(depthImage& depthImage, Stamp* timeStamp = NULL);
-    virtual bool   getImages(FlexImage& colorFrame, depthImage& depthFrame, Stamp* colorStamp=NULL, Stamp* depthStamp=NULL);
+    virtual bool   getExtrinsicParam(sig::Matrix &extrinsic) override;
+    virtual bool   getRgbImage(FlexImage& rgbImage, Stamp* timeStamp = NULL) override;
+    virtual bool   getDepthImage(depthImage& depthImage, Stamp* timeStamp = NULL) override;
+    virtual bool   getImages(FlexImage& colorFrame, depthImage& depthFrame, Stamp* colorStamp=NULL, Stamp* depthStamp=NULL) override;
 
-    virtual RGBDSensor_status     getSensorStatus();
-    virtual yarp::os::ConstString getLastErrorMsg(Stamp* timeStamp = NULL);
+    virtual RGBDSensor_status     getSensorStatus() override;
+    virtual yarp::os::ConstString getLastErrorMsg(Stamp* timeStamp = NULL) override;
 
     //IFrameGrabberControls2
-    virtual bool   getCameraDescription(CameraDescriptor *camera);
-    virtual bool   hasFeature(int feature, bool*   hasFeature);
-    virtual bool   setFeature(int feature, double  value);
-    virtual bool   getFeature(int feature, double* value);
-    virtual bool   setFeature(int feature, double  value1,  double  value2);
-    virtual bool   getFeature(int feature, double* value1,  double* value2);
-    virtual bool   hasOnOff(  int feature, bool*   HasOnOff);
-    virtual bool   setActive( int feature, bool    onoff);
-    virtual bool   getActive( int feature, bool*   isActive);
-    virtual bool   hasAuto(   int feature, bool*   hasAuto);
-    virtual bool   hasManual( int feature, bool*   hasManual);
-    virtual bool   hasOnePush(int feature, bool*   hasOnePush);
-    virtual bool   setMode(   int feature, FeatureMode mode);
-    virtual bool   getMode(   int feature, FeatureMode *mode);
-    virtual bool   setOnePush(int feature);
+    virtual bool   getCameraDescription(CameraDescriptor *camera) override;
+    virtual bool   hasFeature(int feature, bool*   hasFeature) override;
+    virtual bool   setFeature(int feature, double  value) override;
+    virtual bool   getFeature(int feature, double* value) override;
+    virtual bool   setFeature(int feature, double  value1,  double  value2) override;
+    virtual bool   getFeature(int feature, double* value1,  double* value2) override;
+    virtual bool   hasOnOff(  int feature, bool*   HasOnOff) override;
+    virtual bool   setActive( int feature, bool    onoff) override;
+    virtual bool   getActive( int feature, bool*   isActive) override;
+    virtual bool   hasAuto(   int feature, bool*   hasAuto) override;
+    virtual bool   hasManual( int feature, bool*   hasManual) override;
+    virtual bool   hasOnePush(int feature, bool*   hasOnePush) override;
+    virtual bool   setMode(   int feature, FeatureMode mode) override;
+    virtual bool   getMode(   int feature, FeatureMode *mode) override;
+    virtual bool   setOnePush(int feature) override;
 
 private:
 #ifndef DOXYGEN_SHOULD_SKIP_THIS

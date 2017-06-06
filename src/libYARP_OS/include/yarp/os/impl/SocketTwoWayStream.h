@@ -58,27 +58,27 @@ public:
         close();
     }
 
-    virtual InputStream& getInputStream()
+    virtual InputStream& getInputStream() override
     {
         return *this;
     }
 
-    virtual OutputStream& getOutputStream()
+    virtual OutputStream& getOutputStream() override
     {
         return *this;
     }
 
-    virtual const Contact& getLocalAddress()
+    virtual const Contact& getLocalAddress() override
     {
         return localAddress;
     }
 
-    virtual const Contact& getRemoteAddress()
+    virtual const Contact& getRemoteAddress() override
     {
         return remoteAddress;
     }
 
-    virtual void interrupt()
+    virtual void interrupt() override
     {
         YARP_DEBUG(Logger::get(), "^^^^^^^^^^^ interrupting socket");
         if (happy) {
@@ -92,14 +92,14 @@ public:
         }
     }
 
-    virtual void close()
+    virtual void close() override
     {
         stream.close();
         happy = false;
     }
 
     using yarp::os::InputStream::read;
-    virtual YARP_SSIZE_T read(const Bytes& b)
+    virtual YARP_SSIZE_T read(const Bytes& b) override
     {
         if (!isOk()) { return -1; }
         YARP_SSIZE_T result;
@@ -116,7 +116,7 @@ public:
         return result;
     }
 
-    virtual YARP_SSIZE_T partialRead(const Bytes& b)
+    virtual YARP_SSIZE_T partialRead(const Bytes& b) override
     {
         if (!isOk()) { return -1; }
         YARP_SSIZE_T result;
@@ -134,7 +134,7 @@ public:
     }
 
     using yarp::os::OutputStream::write;
-    virtual void write(const Bytes& b)
+    virtual void write(const Bytes& b) override
     {
         if (!isOk()) { return; }
         YARP_SSIZE_T result;
@@ -149,29 +149,29 @@ public:
         }
     }
 
-    virtual void flush()
+    virtual void flush() override
     {
         //stream.flush();
     }
 
-    virtual bool isOk()
+    virtual bool isOk() override
     {
         return happy;
     }
 
-    virtual void reset()
+    virtual void reset() override
     {
     }
 
-    virtual void beginPacket()
+    virtual void beginPacket() override
     {
     }
 
-    virtual void endPacket()
+    virtual void endPacket() override
     {
     }
 
-    virtual bool setWriteTimeout(double timeout)
+    virtual bool setWriteTimeout(double timeout) override
     {
         if (timeout<1e-12) {
             haveWriteTimeout = false;
@@ -182,7 +182,7 @@ public:
         return true;
     }
 
-    virtual bool setReadTimeout(double timeout)
+    virtual bool setReadTimeout(double timeout) override
     {
         if (timeout<1e-12) {
             haveReadTimeout = false;
@@ -193,8 +193,8 @@ public:
         return true;
     }
 
-    virtual bool setTypeOfService(int tos);
-    virtual int getTypeOfService();
+    virtual bool setTypeOfService(int tos) override;
+    virtual int getTypeOfService() override;
 
 private:
     ACE_SOCK_Stream stream;

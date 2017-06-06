@@ -35,9 +35,9 @@ const double TOL = 1e-8;
 
 class Vec2DTest : public UnitTest {
 public:
-    virtual ConstString getName() { return "Vec2DTest"; }
+    virtual ConstString getName() override { return "Vec2DTest"; }
 
-    virtual void runTests()
+    virtual void runTests() override
     {
         Vec2D<int> s;
         Vec2D<int> a(1, 2);

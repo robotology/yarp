@@ -50,28 +50,28 @@ protected:
 
 public:
     /* DeviceDriver methods */
-    bool open(yarp::os::Searchable& config);
-    bool close();
+    bool open(yarp::os::Searchable& config) override;
+    bool close() override;
 
     /**
     * Ask the complete list of all yarp device drivers registered by a robot description server.
     */
-    bool getAllDevices(std::vector<DeviceDescription>& dev_list);
+    bool getAllDevices(std::vector<DeviceDescription>& dev_list) override;
 
     /**
     * Ask a list of all registered yarp device drivers whose type corresponds to the given param.
     */
-    bool getAllDevicesByType(const std::string &type, std::vector<DeviceDescription>& dev_list);
+    bool getAllDevicesByType(const std::string &type, std::vector<DeviceDescription>& dev_list) override;
 
     /**
     * Register a new running yarp device into a robot description server.
     */
-    bool registerDevice(const DeviceDescription& dev);
+    bool registerDevice(const DeviceDescription& dev) override;
 
     /**
     * Unregister a running yarp device from a robot description server.
     */
-    bool unregisterDevice(const std::string& device_name);
+    bool unregisterDevice(const std::string& device_name) override;
 };
 
 #endif // YARP_DEV_ROBOTDESCRIPTION_CLIENT_H

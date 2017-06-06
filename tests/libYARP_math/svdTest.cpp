@@ -29,7 +29,7 @@ const double TOL = 1e-8;
 
 class SVDTest : public UnitTest {
 public:
-    virtual ConstString getName() { return "SVDTest"; }
+    virtual ConstString getName() override { return "SVDTest"; }
 
     // Assert that 2 matrices are equal
     void assertEqual(const Matrix &A, const Matrix &B, string testName, bool verbose=false)
@@ -274,7 +274,7 @@ public:
         }
     }
 
-    virtual void runTests()
+    virtual void runTests() override
     {
         svd();
         svdCheckResizeOfOutputMatrices();

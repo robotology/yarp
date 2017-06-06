@@ -38,14 +38,14 @@ public:
     int open(const Contact& yarp_address, bool sender);
     int accept();
 
-    virtual void close()
+    virtual void close() override
     {
         m_bLinked=false;
         in.close();
         out.close();
     }
 
-    virtual void interrupt()
+    virtual void interrupt() override
     {
         //printf("INTERRUPT\n");
         //fflush(stdout);
@@ -53,13 +53,13 @@ public:
     }
 
     using yarp::os::OutputStream::write;
-    virtual void write(const Bytes& b)
+    virtual void write(const Bytes& b) override
     {
         if (!out.write(b)) close();
     }
 
     using yarp::os::InputStream::read;
-    virtual YARP_SSIZE_T read(const Bytes& b)
+    virtual YARP_SSIZE_T read(const Bytes& b) override
     {
         YARP_SSIZE_T ret=in.read(b);
         if (ret==-1) close();
@@ -67,22 +67,22 @@ public:
     }
 
     // TwoWayStrem implementation
-    virtual yarp::os::InputStream& getInputStream() { return *this; }
-    virtual yarp::os::OutputStream& getOutputStream() { return *this; }
-    virtual bool isOk() { return m_bLinked && in.isOk() && out.isOk(); }
+    virtual yarp::os::InputStream& getInputStream() override { return *this; }
+    virtual yarp::os::OutputStream& getOutputStream() override { return *this; }
+    virtual bool isOk() override { return m_bLinked && in.isOk() && out.isOk(); }
 
-    virtual void reset()
+    virtual void reset() override
     {
         //printf("RECEIVED RESET COMMAND\n");
         //fflush(stdout);
         close();
     }
 
-    virtual void beginPacket() {}
-    virtual void endPacket() {}
+    virtual void beginPacket() override {}
+    virtual void endPacket() override {}
 
-    virtual const Contact& getLocalAddress() { return m_LocalAddress; }
-    virtual const Contact& getRemoteAddress() { return m_RemoteAddress; }
+    virtual const Contact& getLocalAddress() override { return m_LocalAddress; }
+    virtual const Contact& getRemoteAddress() override { return m_RemoteAddress; }
 
 protected:
     enum {CONNECT=0, ACKNOWLEDGE, READ, WRITE, CLOSE, WAKE_UP_MF, RESIZE};

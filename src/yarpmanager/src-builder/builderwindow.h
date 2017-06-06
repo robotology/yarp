@@ -154,11 +154,11 @@ public:
 
 
 protected:
-    void wheelEvent(QWheelEvent *event);
-    void keyPressEvent(QKeyEvent *event);
-    void mousePressEvent(QMouseEvent* event);
-    void mouseReleaseEvent(QMouseEvent* event);
-    void contextMenuEvent(QContextMenuEvent *event);
+    void wheelEvent(QWheelEvent *event) override;
+    void keyPressEvent(QKeyEvent *event) override;
+    void mousePressEvent(QMouseEvent* event) override;
+    void mouseReleaseEvent(QMouseEvent* event) override;
+    void contextMenuEvent(QContextMenuEvent *event) override;
 
     void deleteAllItems();
     void deleteSelectedItems(QGraphicsItem *it = NULL);

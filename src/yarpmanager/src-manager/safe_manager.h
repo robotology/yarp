@@ -50,7 +50,7 @@ public:
     virtual void onConAvailable(int from, int to) {}
     virtual void onConUnAvailable(int from, int to) {}
     virtual void onError(void) {}
-    virtual void onLoadBalance(void) {}    
+    virtual void onLoadBalance(void) {}
 };
 
 
@@ -63,9 +63,9 @@ public:
     bool prepare(yarp::manager::Manager* lazy, yarp::os::Property* config, ApplicationEvent* event=NULL);
     void close();
 
-    bool threadInit();
-    void run();
-    void threadRelease();
+    bool threadInit() override;
+    void run() override;
+    void threadRelease() override;
 
     void safeRun(std::vector<int>& MIDs);
     void safeStop(std::vector<int>& MIDs);
@@ -86,17 +86,17 @@ public:
 
 
 protected:
-    void onExecutableStart(void* which);
-    void onExecutableStop(void* which);
-    void onExecutableStdout(void* which, const char* msg);
-    void onCnnStablished(void* which);
-    void onExecutableDied(void* which);
-    void onExecutableFailed(void* which);
-    void onCnnFailed(void* which);
-    void onError(void* which);
+    void onExecutableStart(void* which) override;
+    void onExecutableStop(void* which) override;
+    void onExecutableStdout(void* which, const char* msg) override;
+    void onCnnStablished(void* which) override;
+    void onExecutableDied(void* which) override;
+    void onExecutableFailed(void* which) override;
+    void onCnnFailed(void* which) override;
+    void onError(void* which) override;
 
 private:
-    yarp::os::Property* m_pConfig;    
+    yarp::os::Property* m_pConfig;
     ThreadAction action;
     ApplicationEvent* eventReceiver;
     bool busyAction;

@@ -83,7 +83,7 @@ public:
     static void fini();
 
 #ifdef YARP_HAS_ACE
-    virtual void log(ACE_Log_Record& log_record) {
+    virtual void log(ACE_Log_Record& log_record) override {
         show(log_record.type(), log_record.msg_data());
     }
 #endif

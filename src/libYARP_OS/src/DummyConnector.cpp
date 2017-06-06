@@ -19,7 +19,7 @@ public:
     BufferedConnectionWriter *altWriter;
     bool tmode;
 
-    BufferedConnectionWriter *getWriter() {
+    BufferedConnectionWriter *getWriter() override {
         altWriter->reset(tmode);
         return altWriter;
     }

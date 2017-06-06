@@ -17,7 +17,7 @@ using namespace yarp::os::impl;
 
 class TimeTest : public UnitTest {
 public:
-    virtual ConstString getName() { return "TimeTest"; }
+    virtual ConstString getName() override { return "TimeTest"; }
 
     void testDelay() {
         report(0,"testing delay (there will be a short pause)...");
@@ -34,7 +34,7 @@ public:
         checkEqual(true,inLimits,"delay for 3.0 seconds");
     }
 
-    virtual void runTests() {
+    virtual void runTests() override {
         testDelay();
     }
 };

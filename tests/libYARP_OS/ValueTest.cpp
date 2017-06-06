@@ -61,7 +61,7 @@ using namespace yarp::os;
 
 class ValueTest : public UnitTest {
 public:
-    virtual ConstString getName() { return "ValueTest"; }
+    virtual ConstString getName() override { return "ValueTest"; }
 
     void checkCopy() {
         report(0,"check value copying");
@@ -326,7 +326,7 @@ public:
         testStringFromString("1foo");
     }
 
-    virtual void runTests() {
+    virtual void runTests() override {
         checkCopy();
         checkMixedCopy();
         checkReadWrite();

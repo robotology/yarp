@@ -42,17 +42,17 @@ public:
 /**
  *
  * Allow to monitor and modify port data from Lua script  Under development.
- * Affected by carrier modifiers.  
+ * Affected by carrier modifiers.
  *
  * Examples: tcp+recv.portmonitor+type.lua+file.my_lua_script_file
  *
  */
 
 /**
- * TODO: 
+ * TODO:
  *      - how to pass the filename with prefix via connection parameter?
- *        e.g. ...+file.'my_lua_script_file.lua' 
- *      - using resource finder to find the script file  
+ *        e.g. ...+file.'my_lua_script_file.lua'
+ *      - using resource finder to find the script file
  *
  */
 class yarp::os::PortMonitor : public yarp::os::ModifyingCarrier
@@ -61,7 +61,7 @@ class yarp::os::PortMonitor : public yarp::os::ModifyingCarrier
 public:
     PortMonitor(){
         bReady = false;
-        binder = NULL;        
+        binder = NULL;
         group = NULL;
         localReader = NULL;
     }
@@ -73,35 +73,35 @@ public:
         if (binder) delete binder;
     }
 
-    virtual Carrier *create() {
+    virtual Carrier *create() override {
         return new PortMonitor();
     }
 
-    virtual ConstString getName() {
+    virtual ConstString getName() override {
         return "portmonitor";
     }
 
-    virtual ConstString toString() {
+    virtual ConstString toString() override {
         return "portmonitor_carrier";
     }
 
-    virtual bool configure(yarp::os::ConnectionState& proto);
-    virtual bool configureFromProperty(yarp::os::Property& options);
+    virtual bool configure(yarp::os::ConnectionState& proto) override;
+    virtual bool configureFromProperty(yarp::os::Property& options) override;
 
-    //virtual bool modifiesIncomingData();
-    virtual bool acceptIncomingData(yarp::os::ConnectionReader& reader);
+    //virtual bool modifiesIncomingData() override;
+    virtual bool acceptIncomingData(yarp::os::ConnectionReader& reader) override;
 
-    virtual yarp::os::ConnectionReader& modifyIncomingData(yarp::os::ConnectionReader& reader);
+    virtual yarp::os::ConnectionReader& modifyIncomingData(yarp::os::ConnectionReader& reader) override;
 
-    virtual yarp::os::PortWriter& modifyOutgoingData(yarp::os::PortWriter& writer);
+    virtual yarp::os::PortWriter& modifyOutgoingData(yarp::os::PortWriter& writer) override;
 
-    virtual bool acceptOutgoingData(yarp::os::PortWriter& wrtier);
+    virtual bool acceptOutgoingData(yarp::os::PortWriter& wrtier) override;
 
-    virtual yarp::os::PortReader& modifyReply(yarp::os::PortReader& reader);
+    virtual yarp::os::PortReader& modifyReply(yarp::os::PortReader& reader) override;
 
-    virtual void setCarrierParams(const yarp::os::Property& params);
+    virtual void setCarrierParams(const yarp::os::Property& params) override;
 
-    virtual void getCarrierParams(yarp::os::Property& params);
+    virtual void getCarrierParams(yarp::os::Property& params) override;
 
 
     void lock() { mutex.wait(); }
@@ -117,7 +117,7 @@ public:
     ConstString portName;
     ConstString sourceName;
 
-private:    
+private:
     static ElectionOf<PortMonitorGroup> *peers;
     static ElectionOf<PortMonitorGroup>& getPeers();
 
@@ -129,8 +129,8 @@ private:
     yarp::os::ConnectionReader* localReader;
     yarp::os::Things thing;
     MonitorBinding* binder;
-    PortMonitorGroup *group;    
-    yarp::os::Semaphore mutex; 
+    PortMonitorGroup *group;
+    yarp::os::Semaphore mutex;
 };
 
 #endif //PORTMONITOR_INC

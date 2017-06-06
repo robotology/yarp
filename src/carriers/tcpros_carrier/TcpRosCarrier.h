@@ -67,60 +67,60 @@ public:
         persistent = true;
     }
 
-    virtual Carrier *create() {
+    virtual Carrier *create() override {
         return new TcpRosCarrier();
     }
 
-    virtual ConstString getName() {
+    virtual ConstString getName() override {
         return isService?"rossrv":"tcpros";
     }
 
-    virtual bool isConnectionless() {
+    virtual bool isConnectionless() override {
         return false;
     }
 
-    virtual bool canAccept() {
+    virtual bool canAccept() override {
         return true;
     }
 
-    virtual bool canOffer() {
+    virtual bool canOffer() override {
         return true;
     }
 
-    virtual bool isTextMode() {
+    virtual bool isTextMode() override {
         return false;
     }
 
-    virtual bool isBareMode() {
+    virtual bool isBareMode() override {
         return true;
     }
 
-    virtual bool canEscape() {
+    virtual bool canEscape() override {
         return false;
     }
 
-    virtual bool requireAck() {
+    virtual bool requireAck() override {
         return false;
     }
 
-    virtual bool supportReply() {
+    virtual bool supportReply() override {
         return true;
     }
 
-    virtual bool isPush() {
+    virtual bool isPush() override {
         // if topic-like, pull ; if service-like, push!
         return isService;
     }
 
-    virtual bool isLocal() {
+    virtual bool isLocal() override {
         return false;
     }
 
-    virtual ConstString toString() {
+    virtual ConstString toString() override {
         return isService?"rossrv_carrier":"tcpros_carrier";
     }
 
-    virtual void getHeader(const Bytes& header) {
+    virtual void getHeader(const Bytes& header) override {
         // no header, will need to do some fancy footwork
         const char *target = "NONONONO";
         for (size_t i=0; i<8 && i<header.length(); i++) {
@@ -128,65 +128,65 @@ public:
         }
     }
 
-    virtual bool checkHeader(const Bytes& header);
+    virtual bool checkHeader(const Bytes& header) override;
 
-    virtual void setParameters(const Bytes& header);
+    virtual void setParameters(const Bytes& header) override;
 
     // Now, the initial hand-shaking
 
-    virtual bool prepareSend(ConnectionState& proto) {
+    virtual bool prepareSend(ConnectionState& proto) override {
         return true;
     }
 
-    virtual bool sendHeader(ConnectionState& proto);
+    virtual bool sendHeader(ConnectionState& proto) override;
 
-    virtual bool expectSenderSpecifier(ConnectionState& proto);
+    virtual bool expectSenderSpecifier(ConnectionState& proto) override;
 
-    virtual bool expectExtraHeader(ConnectionState& proto) {
+    virtual bool expectExtraHeader(ConnectionState& proto) override {
         return true;
     }
 
-    bool respondToHeader(ConnectionState& proto) {
+    bool respondToHeader(ConnectionState& proto) override {
         sender = false;
         return true;
     }
 
-    virtual bool expectReplyToHeader(ConnectionState& proto);
+    virtual bool expectReplyToHeader(ConnectionState& proto) override;
 
-    virtual bool isActive() {
+    virtual bool isActive() override {
         return true;
     }
 
 
     // Payload time!
 
-    virtual bool write(ConnectionState& proto, SizedWriter& writer);
+    virtual bool write(ConnectionState& proto, SizedWriter& writer) override;
 
-    virtual bool reply(ConnectionState& proto, SizedWriter& writer);
+    virtual bool reply(ConnectionState& proto, SizedWriter& writer) override;
 
     virtual bool sendIndex(ConnectionState& proto, SizedWriter& writer) {
         return true;
     }
 
-    virtual bool expectIndex(ConnectionState& proto) {
+    virtual bool expectIndex(ConnectionState& proto) override {
         return true;
     }
 
-    virtual bool sendAck(ConnectionState& proto) {
+    virtual bool sendAck(ConnectionState& proto) override {
         return true;
     }
 
-    virtual bool expectAck(ConnectionState& proto) {
+    virtual bool expectAck(ConnectionState& proto) override {
         return true;
     }
 
-    virtual ConstString getBootstrapCarrierName() { return ""; }
+    virtual ConstString getBootstrapCarrierName() override { return ""; }
 
     virtual int connect(const yarp::os::Contact& src,
                         const yarp::os::Contact& dest,
                         const yarp::os::ContactStyle& style,
                         int mode,
-                        bool reversed);
+                        bool reversed) override;
 
 private:
     void processRosHeader(RosHeader& header);
@@ -206,7 +206,7 @@ public:
         isService = true;
     }
 
-    virtual Carrier *create() {
+    virtual Carrier *create() override {
         return new RosSrvCarrier();
     }
 };

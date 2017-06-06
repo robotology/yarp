@@ -17,6 +17,7 @@
 #include <QDropEvent>
 #include <QDebug>
 #include <QItemDelegate>
+#include <yarp/conf/compiler.h>
 
 class SequenceTreeWidget;
 class SequenceItem;
@@ -42,7 +43,7 @@ public:
     void loadSequence(QList<SequenceItem>);
 
 protected:
-    void closeEvent(QCloseEvent *event);
+    void closeEvent(QCloseEvent *event) override;
 
 private:
      QList<SequenceItem> getValuesFromList();
@@ -108,7 +109,7 @@ private:
     QStringList copyValues;
 
 protected:
-    void dropEvent(QDropEvent *event);
+    void dropEvent(QDropEvent *event) override;
 
 signals:
     void deletedItem(int index);

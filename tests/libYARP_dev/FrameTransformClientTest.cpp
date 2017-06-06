@@ -82,7 +82,7 @@ public:
         return true;
     }
 
-    virtual ConstString getName()
+    virtual ConstString getName() override
     {
         return "FrameTransformClientTest";
     }
@@ -386,7 +386,7 @@ public:
         checkTrue(cl2, "ddtransformserver successfully closed");
     }
 
-    virtual void runTests()
+    virtual void runTests() override
     {
         Network::setLocalMode(true);
         testFrameTransformClient();

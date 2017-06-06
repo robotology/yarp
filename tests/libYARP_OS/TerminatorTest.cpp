@@ -16,7 +16,7 @@ using namespace yarp::os;
 
 class TerminatorTest : public UnitTest {
 public:
-    virtual ConstString getName() { return "TerminatorTest"; }
+    virtual ConstString getName() override { return "TerminatorTest"; }
 
     virtual void testTerminationPair() {
         report(0,"checking terminator connection");
@@ -50,7 +50,7 @@ public:
         }
     }
 
-    virtual void runTests() {
+    virtual void runTests() override {
         testTerminationPair();
     }
 };

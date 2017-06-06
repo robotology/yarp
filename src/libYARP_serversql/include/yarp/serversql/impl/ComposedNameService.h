@@ -37,31 +37,31 @@ public:
     virtual bool apply(yarp::os::Bottle& cmd,
                        yarp::os::Bottle& reply,
                        yarp::os::Bottle& event,
-                       const yarp::os::Contact& remote) {
+                       const yarp::os::Contact& remote) override {
         if (ns1->apply(cmd,reply,event,remote)) {
             return true;
         }
         return ns2->apply(cmd,reply,event,remote);
     }
 
-    virtual void onEvent(yarp::os::Bottle& event) {
+    virtual void onEvent(yarp::os::Bottle& event) override {
         ns1->onEvent(event);
         ns2->onEvent(event);
     }
 
-    virtual void goPublic() {
+    virtual void goPublic() override {
         ns1->goPublic();
         ns2->goPublic();
     }
 
-    virtual yarp::os::Contact query(const yarp::os::ConstString& name) {
+    virtual yarp::os::Contact query(const yarp::os::ConstString& name) override {
         yarp::os::Contact result;
         result = ns1->query(name);
         if (!result.isValid()) result = ns2->query(name);
         return result;
     }
 
-    virtual bool announce(const yarp::os::ConstString& name, int activity) {
+    virtual bool announce(const yarp::os::ConstString& name, int activity) override {
         if (ns2->announce(name,activity)) return true;
         return ns1->announce(name,activity);
     }

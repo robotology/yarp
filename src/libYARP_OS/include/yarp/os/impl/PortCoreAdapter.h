@@ -68,7 +68,7 @@ public:
     void finishReading();
     void finishWriting();
     void resumeFull();
-    virtual bool read(ConnectionReader& reader);
+    virtual bool read(ConnectionReader& reader) override;
     bool read(PortReader& reader, bool willReply = false);
     bool reply(PortWriter& writer, bool drop, bool interrupted);
     void configReader(PortReader& reader);

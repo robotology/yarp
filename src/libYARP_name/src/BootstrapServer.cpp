@@ -47,7 +47,7 @@ public:
         fallback = NULL;
     }
 
-    virtual ConstString apply(const ConstString& txt, const Contact& remote) {
+    virtual ConstString apply(const ConstString& txt, const Contact& remote) override {
         DummyConnector con, con2;
         con.setTextMode(true);
         ConnectionWriter& writer = con.getWriter();

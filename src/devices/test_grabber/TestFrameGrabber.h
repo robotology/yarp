@@ -66,7 +66,7 @@ public:
      */
     TestFrameGrabber();
 
-    virtual bool close();
+    virtual bool close() override;
 
     /**
      * Configure with a set of options. These are:
@@ -84,85 +84,85 @@ public:
      * @param config The options to use
      * @return true iff the object could be configured.
      */
-    virtual bool open(yarp::os::Searchable& config);
+    virtual bool open(yarp::os::Searchable& config) override;
 
     void timing();
 
-    virtual int height() const;
+    virtual int height() const override;
 
-    virtual int width() const;
+    virtual int width() const override;
     //IRgbVisualParams
-    virtual int getRgbHeight();
+    virtual int getRgbHeight() override;
 
-    virtual int getRgbWidth();
+    virtual int getRgbWidth() override;
 
-    virtual bool getRgbSupportedConfigurations(yarp::sig::VectorOf<CameraConfig> &configurations);
+    virtual bool getRgbSupportedConfigurations(yarp::sig::VectorOf<CameraConfig> &configurations) override;
 
-    virtual bool getRgbResolution(int &width, int &height);
+    virtual bool getRgbResolution(int &width, int &height) override;
 
-    virtual bool setRgbResolution(int width, int height);
+    virtual bool setRgbResolution(int width, int height) override;
 
-    virtual bool getRgbFOV(double &horizontalFov, double &verticalFov);
+    virtual bool getRgbFOV(double &horizontalFov, double &verticalFov) override;
 
-    virtual bool setRgbFOV(double horizontalFov, double verticalFov);
+    virtual bool setRgbFOV(double horizontalFov, double verticalFov) override;
 
-    virtual bool getRgbIntrinsicParam(yarp::os::Property &intrinsic);
+    virtual bool getRgbIntrinsicParam(yarp::os::Property &intrinsic) override;
 
-    virtual bool getRgbMirroring(bool &mirror);
+    virtual bool getRgbMirroring(bool &mirror) override;
 
-    virtual bool setRgbMirroring(bool mirror);
+    virtual bool setRgbMirroring(bool mirror) override;
     //
-    virtual bool getImage(yarp::sig::ImageOf<yarp::sig::PixelRgb>& image);
+    virtual bool getImage(yarp::sig::ImageOf<yarp::sig::PixelRgb>& image) override;
 
-    virtual bool getImage(yarp::sig::ImageOf<yarp::sig::PixelMono>& image);
+    virtual bool getImage(yarp::sig::ImageOf<yarp::sig::PixelMono>& image) override;
 
-    virtual bool setBrightness(double v);
+    virtual bool setBrightness(double v) override;
 
-    virtual bool setExposure(double v);
+    virtual bool setExposure(double v) override;
 
-    virtual bool setSharpness(double v);
+    virtual bool setSharpness(double v) override;
 
-    virtual bool setWhiteBalance(double blue, double red);
+    virtual bool setWhiteBalance(double blue, double red) override;
 
-    virtual bool setHue(double v);
+    virtual bool setHue(double v) override;
 
-    virtual bool setSaturation(double v);
+    virtual bool setSaturation(double v) override;
 
-    virtual bool setGamma(double v);
+    virtual bool setGamma(double v) override;
 
-    virtual bool setShutter(double v);
+    virtual bool setShutter(double v) override;
 
-    virtual bool setGain(double v);
+    virtual bool setGain(double v) override;
 
-    virtual bool setIris(double v);
+    virtual bool setIris(double v) override;
 
-    virtual double getBrightness();
+    virtual double getBrightness() override;
 
-    virtual double getExposure();
+    virtual double getExposure() override;
 
-    virtual double getSharpness();
+    virtual double getSharpness() override;
 
-    virtual bool getWhiteBalance(double &blue, double &red);
+    virtual bool getWhiteBalance(double &blue, double &red) override;
 
-    virtual double getHue();
+    virtual double getHue() override;
 
-    virtual double getSaturation();
+    virtual double getSaturation() override;
 
-    virtual double getGamma();
+    virtual double getGamma() override;
 
-    virtual double getShutter();
+    virtual double getShutter() override;
 
-    virtual double getGain();
+    virtual double getGain() override;
 
-    virtual double getIris();
+    virtual double getIris() override;
 
-    virtual yarp::os::Stamp getLastInputStamp();
+    virtual yarp::os::Stamp getLastInputStamp() override;
 
-    virtual bool hasAudio();
+    virtual bool hasAudio() override;
 
-    virtual bool hasVideo();
+    virtual bool hasVideo() override;
 
-    virtual bool hasRawVideo();
+    virtual bool hasRawVideo() override;
 
 private:
     yarp::sig::ImageOf<yarp::sig::PixelRgb> background, rgb_image;

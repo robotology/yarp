@@ -3,6 +3,7 @@
 
 #include <QTreeWidget>
 #include <QMouseEvent>
+#include <yarp/conf/compiler.h>
 
 class CustomTree : public QTreeWidget
 {
@@ -11,7 +12,7 @@ public:
     explicit CustomTree(QWidget *parent = 0);
 
 protected:
-    void mousePressEvent(QMouseEvent *event);
+    void mousePressEvent(QMouseEvent *event) override;
 
 signals:
 

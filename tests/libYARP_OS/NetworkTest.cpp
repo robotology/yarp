@@ -31,7 +31,7 @@ public:
     NetworkTestWorker1() : fini(0) {
     }
 
-    void run() {
+    void run() override {
         Time::delay(0.5);
         p.open(name.c_str());
         fini.wait();
@@ -42,7 +42,7 @@ public:
 class NetworkServiceProvider : public PortReader {
 public:
 
-    virtual bool read(ConnectionReader& connection) {
+    virtual bool read(ConnectionReader& connection) override {
         Bottle receive;
         //printf("service provider reading data\n");
         receive.read(connection);
@@ -66,7 +66,7 @@ public:
         p.open(name);
     }
 
-    virtual void run() {
+    virtual void run() override {
         Bottle b1,b2;
         while (!isStopping()) {
             p.read(b1,true);
@@ -79,7 +79,7 @@ public:
         }
     }
 
-    virtual void onStop() {
+    virtual void onStop() override {
         p.interrupt();
         p.close();
     }
@@ -87,7 +87,7 @@ public:
 
 class NetworkTest : public UnitTest {
 public:
-    virtual ConstString getName() { return "NetworkTest"; }
+    virtual ConstString getName() override { return "NetworkTest"; }
 
     void checkConnect() {
         report(0,"checking return value of connect method");
@@ -252,7 +252,7 @@ public:
         p2.close();
     }
 
-    virtual void runTests() {
+    virtual void runTests() override {
         Network::setLocalMode(true);
         checkConnect();
         checkSync();

@@ -104,6 +104,9 @@ public:
     }
 
     void run()
+#if !defined(_WIN32)
+    override
+#endif
     {
 #if !defined(_WIN32)
         char dummy[24];
@@ -166,7 +169,7 @@ public:
 
     int loop();
 
-    void exit()
+    void exit() override
     {
         RUNLOG("<<<exit()")
 
@@ -213,7 +216,7 @@ public:
 
     int loop();
 
-    void exit()
+    void exit() override
     {
         RUNLOG("<<<exit()")
 
@@ -262,10 +265,10 @@ public:
 
    ~RunReadWrite(){}
 
-    void run();
+    void run() override;
     int loop();
 
-    void exit()
+    void exit() override
     {
         RUNLOG("<<<exit()")
 

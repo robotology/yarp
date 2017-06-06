@@ -82,7 +82,7 @@ public:
         return cond;
     }
 
-    int find(Triple& t, TripleContext *context) {
+    int find(Triple& t, TripleContext *context) override {
         int out = -1;
         sqlite3_stmt *statement = YARP_NULLPTR;
         char *query = YARP_NULLPTR;
@@ -110,7 +110,7 @@ public:
         return out;
     }
 
-    void remove_query(Triple& ti, TripleContext *context) {
+    void remove_query(Triple& ti, TripleContext *context) override {
         char *query = YARP_NULLPTR;
         query = sqlite3_mprintf("DELETE FROM tags WHERE %s",condition(ti,context).c_str());
         if (verbose) {
@@ -123,7 +123,7 @@ public:
         sqlite3_free(query);
     }
 
-    void prune(TripleContext *context) {
+    void prune(TripleContext *context) override {
         char *query = YARP_NULLPTR;
         query = sqlite3_mprintf("DELETE FROM tags WHERE rid IS NOT NULL AND rid  NOT IN (SELECT id FROM tags)");
         if (verbose) {
@@ -136,7 +136,7 @@ public:
         sqlite3_free(query);
     }
 
-    std::list<Triple> query(Triple& ti, TripleContext *context) {
+    std::list<Triple> query(Triple& ti, TripleContext *context) override {
         std::list<Triple> q;
         sqlite3_stmt *statement = YARP_NULLPTR;
         char *query = YARP_NULLPTR;
@@ -182,7 +182,7 @@ public:
         return buf;
     }
 
-    void insert(Triple& t, TripleContext *context) {
+    void insert(Triple& t, TripleContext *context) override {
         char *msg = YARP_NULLPTR;
         char *query = sqlite3_mprintf("INSERT INTO tags (rid,ns,name,value) VALUES(%s,%Q,%Q,%Q)",
                                       expressContext(context).c_str(),
@@ -205,7 +205,7 @@ public:
         sqlite3_free(query);
     }
 
-    void update(Triple& t, TripleContext *context) {
+    void update(Triple& t, TripleContext *context) override {
         char *msg = YARP_NULLPTR;
         char *query = YARP_NULLPTR;
         if (t.hasName||t.hasNs) {
@@ -237,7 +237,7 @@ public:
     }
 
 
-    virtual void begin(TripleContext *context) {
+    virtual void begin(TripleContext *context) override {
         int result = sqlite3_exec(db, "BEGIN TRANSACTION;", YARP_NULLPTR, YARP_NULLPTR, YARP_NULLPTR);
         if (verbose) {
             printf("Query: BEGIN TRANSACTION;\n");
@@ -247,7 +247,7 @@ public:
         }
     }
 
-    virtual void end(TripleContext *context) {
+    virtual void end(TripleContext *context) override {
         int result = sqlite3_exec(db, "END TRANSACTION;", YARP_NULLPTR, YARP_NULLPTR, YARP_NULLPTR);
         if (verbose) {
             printf("Query: END TRANSACTION;\n");

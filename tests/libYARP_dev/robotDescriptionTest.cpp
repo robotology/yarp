@@ -26,7 +26,7 @@ class RobotDescriptionTest : public UnitTest
 {
 public:
 
-    virtual ConstString getName()
+    virtual ConstString getName() override
     {
         return "RobotDescriptionTest";
     }
@@ -76,7 +76,7 @@ public:
         bool b6 = (std::find(list2.begin(), list2.end(), dev3) != list2.end());
         checkTrue((sl1 == 3) && b1 && b2 &&  b3, "IRobotDescription::getAllDevices() successfully tested");
         checkTrue((sl2 == 2) && b4 && b5 && !b6, "IRobotDescription::getControlBoardWrapperDevices() successfully tested");
-        
+
         // Test unregister device
         idesc->unregisterDevice("/icubTest/test");
         idesc->getAllDevicesByType("testDevice", list2);
@@ -89,7 +89,7 @@ public:
         checkTrue(cl2, "robotDescriptionServer successfully closed");
     }
 
-    virtual void runTests()
+    virtual void runTests() override
     {
         Network::setLocalMode(true);
         testRobotDescription();

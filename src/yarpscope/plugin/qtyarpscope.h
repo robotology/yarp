@@ -43,20 +43,20 @@ public:
     Q_INVOKABLE void playPressed(int check);
     ~QtYARPScope();
     void usage();
-    void paint(QPainter *painter);
+    void paint(QPainter *painter) override;
 
 
 
 
 protected:
-    void routeMouseEvents( QMouseEvent* event );
-    void routeMouseEvents( QWheelEvent* event );
+    void routeMouseEvents( QMouseEvent* event);
+    void routeMouseEvents( QWheelEvent* event);
 
-    virtual void mousePressEvent( QMouseEvent* event );
-    virtual void mouseReleaseEvent( QMouseEvent* event );
-    virtual void mouseMoveEvent( QMouseEvent* event );
-    virtual void mouseDoubleClickEvent( QMouseEvent* event );
-    virtual void wheelEvent(QWheelEvent* event);
+    virtual void mousePressEvent( QMouseEvent* event) override;
+    virtual void mouseReleaseEvent( QMouseEvent* event) override;
+    virtual void mouseMoveEvent( QMouseEvent* event) override;
+    virtual void mouseDoubleClickEvent( QMouseEvent* event) override;
+    virtual void wheelEvent(QWheelEvent* event) override;
 
 private:
     //QCustomPlot m_CustomPlot;

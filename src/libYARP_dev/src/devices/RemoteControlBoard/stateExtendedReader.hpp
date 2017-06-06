@@ -60,7 +60,7 @@ public:
     void init(int numberOfJoints);
 
     using yarp::os::BufferedPort<jointData>::onRead;
-    virtual void onRead(jointData &v);
+    virtual void onRead(jointData &v) override;
 
     // use vocab to identify the data to be read
     // get a value for a single joint
