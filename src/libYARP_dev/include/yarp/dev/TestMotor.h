@@ -24,10 +24,6 @@ namespace yarp {
     }
 }
 
-#if defined(_MSC_VER) && !defined(YARP_NO_DEPRECATED) // since YARP 2.3.65
-YARP_WARNING_PUSH
-YARP_DISABLE_DEPRECATED_WARNING
-#endif
 
 /**
  * @ingroup dev_impl_motor
@@ -321,10 +317,6 @@ public:
     }
 
 };
-
-#if defined(_MSC_VER) && !defined(YARP_NO_DEPRECATED) // since YARP 2.3.65
-YARP_WARNING_POP
-#endif
 
 /**
  * @ingroup dev_runtime

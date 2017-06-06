@@ -19,12 +19,6 @@ namespace yarp{
 }
 
 
-#if defined(_MSC_VER) && !defined(YARP_NO_DEPRECATED) // since YARP 2.3.65
-YARP_WARNING_PUSH
-YARP_DISABLE_DEPRECATED_WARNING
-#endif
-
-
 /**
  * Default implementation of the IPositionDirect interface. This class can
  * be used to easily provide an implementation of IPositionDirect.
@@ -75,10 +69,6 @@ public:
     virtual bool getRefPositions(double *refs);
     virtual bool getRefPositions(const int n_joint, const int *joints, double *refs);
 };
-
-#if defined(_MSC_VER) && !defined(YARP_NO_DEPRECATED) // since YARP 2.3.65
-YARP_WARNING_POP
-#endif
 
 
 /**

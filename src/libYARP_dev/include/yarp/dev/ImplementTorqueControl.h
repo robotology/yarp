@@ -16,10 +16,6 @@ namespace yarp {
     }
 }
 
-#if defined(_MSC_VER) && !defined(YARP_NO_DEPRECATED) // since YARP 2.3.65
-YARP_WARNING_PUSH
-YARP_DISABLE_DEPRECATED_WARNING
-#endif
 
 class YARP_dev_API yarp::dev::ImplementTorqueControl: public ITorqueControl
 {
@@ -74,9 +70,5 @@ public:
     virtual bool getTorqueRange(int j, double *min, double *max);
     virtual bool getTorqueRanges(double *min, double *max);
 };
-
-#if defined(_MSC_VER) && !defined(YARP_NO_DEPRECATED) // since YARP 2.3.65
-YARP_WARNING_POP
-#endif
 
 #endif // YARP_DEV_IMPLEMENTTORQUECONTROL_H

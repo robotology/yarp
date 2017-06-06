@@ -25,11 +25,6 @@ namespace yarp{
 }
 
 
-#if defined(_MSC_VER) && !defined(YARP_NO_DEPRECATED) // since YARP 2.3.65
-YARP_WARNING_PUSH
-YARP_DISABLE_DEPRECATED_WARNING
-#endif
-
 /**
  * Default implementation of the IPositionControl interface. This template class can
  * be used to easily provide an implementation of IPositionControl. It takes two
@@ -161,10 +156,6 @@ public:
     virtual bool stop(int j);
     virtual bool stop();
 };
-
-#if defined(_MSC_VER) && !defined(YARP_NO_DEPRECATED) // since YARP 2.3.65
-YARP_WARNING_POP
-#endif
 
 template <class DERIVED, class IMPLEMENT>
 class yarp::dev::ImplementEncoders : public IMPLEMENT
