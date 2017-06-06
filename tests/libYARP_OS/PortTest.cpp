@@ -1530,8 +1530,8 @@ public:
         yarp::dev::PolyDriver p;
         Property prop;
         prop.put("device","brokenDevice");
-        p.open(prop);
-        p.close();
+        checkTrue(p.open(prop),"Opening the broken_device");
+        checkTrue(p.close(),"Closing the broken_device");
     }
 
     virtual void runTests() {
