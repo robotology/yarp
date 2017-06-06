@@ -3645,37 +3645,6 @@ bool ControlBoardRemapper::getCurrentImpedanceLimit(int j, double *min_stiff, do
     return false;
 }
 
-bool ControlBoardRemapper::setPositionMode(int j)
-{
-    return this->setControlMode(j,VOCAB_CM_POSITION);
-}
-
-bool ControlBoardRemapper::setTorqueMode(int j)
-{
-    return this->setControlMode(j,VOCAB_CM_TORQUE);
-}
-
-bool ControlBoardRemapper::setImpedancePositionMode(int j)
-{
-    bool ok = true;
-    ok = ok && this->setControlMode(j,VOCAB_CM_POSITION);
-    ok = ok && this->setInteractionMode(j,VOCAB_IM_COMPLIANT);
-    return ok;
-}
-
-bool ControlBoardRemapper::setImpedanceVelocityMode(int j)
-{
-    bool ok = true;
-    ok = ok && this->setControlMode(j,VOCAB_CM_VELOCITY);
-    ok = ok && this->setInteractionMode(j,VOCAB_IM_COMPLIANT);
-    return ok;
-}
-
-bool ControlBoardRemapper::setVelocityMode(int j)
-{
-    return this->setControlMode(j,VOCAB_CM_TORQUE);
-}
-
 bool ControlBoardRemapper::getControlMode(int j, int *mode)
 {
     int off=(int)remappedControlBoards.lut[j].axisIndexInSubControlBoard;

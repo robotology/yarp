@@ -513,16 +513,6 @@ public:
     virtual bool getCurrentImpedanceLimit(int j, double *min_stiff, double *max_stiff, double *min_damp,
                                           double *max_damp);
 
-    virtual bool setPositionMode(int j);
-
-    virtual bool setTorqueMode(int j);
-
-    virtual bool setImpedancePositionMode(int j);
-
-    virtual bool setImpedanceVelocityMode(int j);
-
-    virtual bool setVelocityMode(int j);
-
     virtual bool getControlMode(int j, int *mode);
 
     virtual bool getControlModes(int *modes);
