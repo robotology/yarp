@@ -155,52 +155,54 @@ void YarpPluginSettings::reportFailure() const {
 
 
 void YarpPluginSelector::scan() {
-    LockGuard lock(mutex);
-    config.clear();
-    plugins.clear();
-    search_path.clear();
-    NetworkBase::lock();
-    Property& state = NameClient::getNameClient().getPluginState();
-    config = state;
-    NetworkBase::unlock();
+    // This method needs to be accessed by one thread only
+    LockGuard guard(mutex);
+
+    // If it was scanned in the last 5 seconds, there is no need to scan again
     bool need_scan = true;
     if (config.check("last_update_time")) {
-        if (Time::now()-config.find("last_update_time").asDouble()<5) {
+        if (Time::now()-config.find("last_update_time").asDouble() < 5) {
             need_scan = false;
         }
     }
-    if (need_scan) {
-        YARP_SPRINTF0(Logger::get(),
-                      debug,
-                      "Scanning. I'm scanning. I hope you like scanning too.");
-        NetworkBase::lock();
-        ResourceFinder& rf = ResourceFinder::getResourceFinderSingleton();
-        if (!rf.isConfigured()) {
-            rf.configure(0,YARP_NULLPTR);
-        }
-        rf.setQuiet(true);
-        Bottle plugins = rf.findPaths("plugins");
-        if (plugins.size()==0) {
-            plugins = rf.findPaths("share/yarp/plugins");
-        }
-        if (plugins.size()>0) {
-            for (int i=0; i<plugins.size(); i++) {
-                ConstString target = plugins.get(i).asString();
-                YARP_SPRINTF1(Logger::get(),
-                              debug,
-                              "Loading configuration files related to plugins from %s.", target.c_str());
-                config.fromConfigDir(target, "inifile", false);
-            }
-        } else {
-            YARP_SPRINTF0(Logger::get(),
-                          debug,
-                          "Plugin directory not found");
-        }
-        config.put("last_update_time",Time::now());
-        state = config;
-        NetworkBase::unlock();
+    if(!need_scan) {
+        return;
     }
 
+    YARP_SPRINTF0(Logger::get(),
+                  debug,
+                  "Scanning. I'm scanning. I hope you like scanning too.");
+
+    // Search plugins directories
+    ResourceFinder& rf = ResourceFinder::getResourceFinderSingleton();
+    if (!rf.isConfigured()) {
+        rf.configure(0, YARP_NULLPTR);
+    }
+    rf.setQuiet(true);
+    Bottle plugin_paths = rf.findPaths("plugins");
+    if (plugin_paths.size()==0) {
+        plugin_paths = rf.findPaths("share/yarp/plugins");
+    }
+
+    // Search .ini files in plugins directories
+    config.clear();
+    if (plugin_paths.size()>0) {
+        for (int i=0; i<plugin_paths.size(); i++) {
+            ConstString target = plugin_paths.get(i).asString();
+            YARP_SPRINTF1(Logger::get(),
+                          debug,
+                          "Loading configuration files related to plugins from %s.", target.c_str());
+            config.fromConfigDir(target, "inifile", false);
+        }
+    } else {
+        YARP_SPRINTF0(Logger::get(),
+                      debug,
+                      "Plugin directory not found");
+    }
+
+    // Read the .ini files and populate the lists
+    plugins.clear();
+    search_path.clear();
     Bottle inilst = config.findGroup("inifile").tail();
     for (int i=0; i<inilst.size(); i++) {
         ConstString inifile = inilst.get(i).asString();
@@ -221,4 +223,7 @@ void YarpPluginSelector::scan() {
             search_path.addList() = group;
         }
     }
+
+    // Update last_update_time
+    config.put("last_update_time", Time::now());
 }
