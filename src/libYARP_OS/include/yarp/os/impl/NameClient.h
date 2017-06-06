@@ -280,11 +280,6 @@ public:
         return nodes;
     }
 
-    Property& getPluginState()
-    {
-        return pluginState;
-    }
-
 private:
     NameClient();
     NameClient(const NameClient& nic);
@@ -304,7 +299,6 @@ private:
     bool isSetup;
     NameStore *altStore;
     yarp::os::ResourceFinder resourceFinder;
-    yarp::os::Property pluginState;
     yarp::os::Nodes nodes;
 
     static yarp::os::Mutex mutex;
