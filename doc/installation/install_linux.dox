@@ -52,7 +52,7 @@ basic dependencies:
 
 For Qt5 different packages are needed for different systems.
 
-\subsubsection install_qt5_debian_jessie Qt5 for Debian (jessie)
+\subsubsection install_qt5_debian_stretch Qt5 for Debian (stretch)
 
 On Debian testing you need to install the following packages:
 
@@ -60,7 +60,19 @@ On Debian testing you need to install the following packages:
 sudo apt-get install qtbase5-dev qtdeclarative5-dev qtmultimedia5-dev \
   qml-module-qtquick2 qml-module-qtquick-window2 \
   qml-module-qtmultimedia qml-module-qtquick-dialogs \
-  qml-module-qtquick-controls libqt5svg5
+  qml-module-qtquick-controls qml-module-qt-labs-folderlistmodel \
+  qml-module-qt-labs-settings
+\endcode
+
+\subsubsection install_qt5_debian_jessie Qt5 for Debian (jessie)
+
+On Debian jessie you need to install the following packages:
+
+\code
+sudo apt-get install qtbase5-dev qtdeclarative5-dev qtmultimedia5-dev \
+  qml-module-qtquick2 qml-module-qtquick-window2 \
+  qml-module-qtmultimedia qml-module-qtquick-dialogs \
+  qml-module-qtquick-controls
 \endcode
 
 \subsubsection install_qt5_debian_wheezy Qt5 for Debian (wheezy)
@@ -84,7 +96,7 @@ sudo apt-get install -t wheezy-backports qtbase5-dev \
   qml-module-qtquick-dialogs qml-module-qtquick-controls libqt5svg5
 \endcode
 
-\subsubsection install_qt5_ubuntu Qt5 for Ubuntu (utopic and vivid)
+\subsubsection install_qt5_ubuntu Qt5 for Ubuntu
 Qt5 is available from the main repository. See
 \ref dependencies_qt5_debian_jessie for instructions.
 
