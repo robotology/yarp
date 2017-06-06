@@ -38,11 +38,15 @@ if (THRIFT_USE_EXTERNAL)
     set_source_files_properties(${CMAKE_CURRENT_BINARY_DIR}/parser.cc PROPERTIES COMPILE_FLAGS "/wd4065 /wd4244")
     set_source_files_properties(${CMAKE_CURRENT_BINARY_DIR}/lexer.cc PROPERTIES COMPILE_FLAGS "/wd4068 /wd4003 /wd4102")
   elseif(CXX_HAS_WREDUNDANT_DECLS)
-    set_source_files_properties(${CMAKE_CURRENT_BINARY_DIR}/parser.cc PROPERTIES COMPILE_FLAGS "-Wno-redundant-decls")
-    set_source_files_properties(${CMAKE_CURRENT_BINARY_DIR}/lexer.cc PROPERTIES COMPILE_FLAGS "-Wno-redundant-decls")
+    set_property(SOURCE ${CMAKE_CURRENT_BINARY_DIR}/parser.cc
+                        ${CMAKE_CURRENT_BINARY_DIR}/lexer.cc
+                 APPEND_STRING
+                 PROPERTY COMPILE_FLAGS " -Wno-redundant-decls")
   endif()
   if(CXX_HAS_WMISLEADING_INDENTATION)
-    set_source_files_properties(${CMAKE_CURRENT_BINARY_DIR}/lexer.cc PROPERTIES COMPILE_FLAGS "-Wno-misleading-indentation")
+    set_property(SOURCE ${CMAKE_CURRENT_BINARY_DIR}/lexer.cc
+                 APPEND_STRING
+                 PROPERTY COMPILE_FLAGS " -Wno-misleading-indentation")
   endif()
 
   include_directories(${CMAKE_CURRENT_SOURCE_DIR})
@@ -76,11 +80,21 @@ if (NOT THRIFT_USE_EXTERNAL)
     set_source_files_properties(src_gen/parser.cc PROPERTIES COMPILE_FLAGS "/wd4065 /wd4244")
     set_source_files_properties(src_gen/lexer.cc PROPERTIES COMPILE_FLAGS "/wd4068 /wd4003 /wd4102")
   elseif(CXX_HAS_WREDUNDANT_DECLS)
-    set_source_files_properties(src_gen/parser.cc PROPERTIES COMPILE_FLAGS "-Wno-redundant-decls")
-    set_source_files_properties(src_gen/lexer.cc PROPERTIES COMPILE_FLAGS "-Wno-redundant-decls")
+    set_property(SOURCE src_gen/parser.cc
+                        src_gen/lexer.cc
+                 APPEND_STRING
+                 PROPERTY COMPILE_FLAGS " -Wno-redundant-decls")
   endif()
   if(CXX_HAS_WMISLEADING_INDENTATION)
-    set_source_files_properties(src_gen/lexer.cc PROPERTIES COMPILE_FLAGS "-Wno-misleading-indentation")
+    set_property(SOURCE src_gen/lexer.cc
+                 APPEND_STRING
+                 PROPERTY COMPILE_FLAGS " -Wno-misleading-indentation")
+  endif()
+  if(CXX_HAS_WSUGGEST_OVERRIDE)
+    set_property(SOURCE src_thrift/main.cc
+                        src_thrift/parse/parse.cc
+                 APPEND_STRING
+                 PROPERTY COMPILE_FLAGS " -Wno-suggest-override")
   endif()
   add_executable(yarpidl_thrift
     src_gen/parser.cc

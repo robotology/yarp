@@ -219,6 +219,8 @@ else()
     yarp_check_and_append_cxx_compiler_flag(WANTED_WARNING_FLAGS "-Wstatic-inline-explicit-instantiation")
     yarp_check_and_append_cxx_compiler_flag(WANTED_WARNING_FLAGS "-Wmisleading-indentation")
     yarp_check_and_append_cxx_compiler_flag(WANTED_WARNING_FLAGS "-Wtautological-compare")
+    yarp_check_and_append_cxx_compiler_flag(WANTED_WARNING_FLAGS "-Winconsistent-missing-override")
+    yarp_check_and_append_cxx_compiler_flag(WANTED_WARNING_FLAGS "-Wsuggest-override")
 
     ## Unwanted warning flags ##
     unset(UNWANTED_WARNING_FLAGS)
