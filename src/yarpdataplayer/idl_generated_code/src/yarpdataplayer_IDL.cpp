@@ -10,8 +10,8 @@ class yarpdataplayer_IDL_step : public yarp::os::Portable {
 public:
   bool _return;
   void init();
-  virtual bool write(yarp::os::ConnectionWriter& connection) override;
-  virtual bool read(yarp::os::ConnectionReader& connection) override;
+  virtual bool write(yarp::os::ConnectionWriter& connection) YARP_OVERRIDE;
+  virtual bool read(yarp::os::ConnectionReader& connection) YARP_OVERRIDE;
 };
 
 class yarpdataplayer_IDL_setFrame : public yarp::os::Portable {
@@ -20,8 +20,8 @@ public:
   int32_t frameNum;
   bool _return;
   void init(const std::string& name, const int32_t frameNum);
-  virtual bool write(yarp::os::ConnectionWriter& connection) override;
-  virtual bool read(yarp::os::ConnectionReader& connection) override;
+  virtual bool write(yarp::os::ConnectionWriter& connection) YARP_OVERRIDE;
+  virtual bool read(yarp::os::ConnectionReader& connection) YARP_OVERRIDE;
 };
 
 class yarpdataplayer_IDL_getFrame : public yarp::os::Portable {
@@ -29,8 +29,8 @@ public:
   std::string name;
   int32_t _return;
   void init(const std::string& name);
-  virtual bool write(yarp::os::ConnectionWriter& connection) override;
-  virtual bool read(yarp::os::ConnectionReader& connection) override;
+  virtual bool write(yarp::os::ConnectionWriter& connection) YARP_OVERRIDE;
+  virtual bool read(yarp::os::ConnectionReader& connection) YARP_OVERRIDE;
 };
 
 class yarpdataplayer_IDL_load : public yarp::os::Portable {
@@ -38,40 +38,40 @@ public:
   std::string path;
   bool _return;
   void init(const std::string& path);
-  virtual bool write(yarp::os::ConnectionWriter& connection) override;
-  virtual bool read(yarp::os::ConnectionReader& connection) override;
+  virtual bool write(yarp::os::ConnectionWriter& connection) YARP_OVERRIDE;
+  virtual bool read(yarp::os::ConnectionReader& connection) YARP_OVERRIDE;
 };
 
 class yarpdataplayer_IDL_play : public yarp::os::Portable {
 public:
   bool _return;
   void init();
-  virtual bool write(yarp::os::ConnectionWriter& connection) override;
-  virtual bool read(yarp::os::ConnectionReader& connection) override;
+  virtual bool write(yarp::os::ConnectionWriter& connection) YARP_OVERRIDE;
+  virtual bool read(yarp::os::ConnectionReader& connection) YARP_OVERRIDE;
 };
 
 class yarpdataplayer_IDL_pause : public yarp::os::Portable {
 public:
   bool _return;
   void init();
-  virtual bool write(yarp::os::ConnectionWriter& connection) override;
-  virtual bool read(yarp::os::ConnectionReader& connection) override;
+  virtual bool write(yarp::os::ConnectionWriter& connection) YARP_OVERRIDE;
+  virtual bool read(yarp::os::ConnectionReader& connection) YARP_OVERRIDE;
 };
 
 class yarpdataplayer_IDL_stop : public yarp::os::Portable {
 public:
   bool _return;
   void init();
-  virtual bool write(yarp::os::ConnectionWriter& connection) override;
-  virtual bool read(yarp::os::ConnectionReader& connection) override;
+  virtual bool write(yarp::os::ConnectionWriter& connection) YARP_OVERRIDE;
+  virtual bool read(yarp::os::ConnectionReader& connection) YARP_OVERRIDE;
 };
 
 class yarpdataplayer_IDL_quit : public yarp::os::Portable {
 public:
   bool _return;
   void init();
-  virtual bool write(yarp::os::ConnectionWriter& connection) override;
-  virtual bool read(yarp::os::ConnectionReader& connection) override;
+  virtual bool write(yarp::os::ConnectionWriter& connection) YARP_OVERRIDE;
+  virtual bool read(yarp::os::ConnectionReader& connection) YARP_OVERRIDE;
 };
 
 bool yarpdataplayer_IDL_step::write(yarp::os::ConnectionWriter& connection) {
