@@ -447,6 +447,7 @@ bool FrameTransformServer::parseStartingTf(yarp::os::Searchable &config)
 
             tfName   = group.get(i).asList()->get(0).asString();
             b        = group.findGroup(tfName).tail();
+            string s = b.toString();
 
             if(b.size() == 18)
             {
@@ -457,9 +458,13 @@ bool FrameTransformServer::parseStartingTf(yarp::os::Searchable &config)
                 {
                     if(!b.get(i).isDouble())
                     {
+                        yError() << "transformServer: param " << tfName << ", element " << i << " is not a double.";
                         r = false;
                     }
-                    m.data()[i] = b.get(i).asDouble();
+                    else
+                    {
+                        m.data()[i] = b.get(i).asDouble();
+                    }
                 }
 
                 if(!b.get(16).isString() || !b.get(17).isString())
