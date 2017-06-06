@@ -432,7 +432,55 @@ bool FrameTransformServer::threadInit()
     return true;
 }
 
+bool FrameTransformServer::parseStartingTf(yarp::os::Searchable &config)
+{
 
+    if (config.check("USER_TF"))
+    {
+        Bottle group = config.findGroup("USER_TF").tail();
+
+        for (int i = 0; i < group.size(); i++)
+        {
+            string         tfName;
+            FrameTransform t;
+            Bottle         b;
+
+            tfName   = group.get(i).asList()->get(0).asString();
+            b        = group.findGroup(tfName).tail();
+
+            if( b.size() != 8       or
+               !b.get(0).isDouble() or
+               !b.get(1).isDouble() or
+               !b.get(2).isDouble() or
+               !b.get(3).isDouble() or
+               !b.get(4).isDouble() or
+               !b.get(5).isDouble() or
+               !b.get(6).isString() or
+               !b.get(7).isString())
+            {
+                yError() << "transformServer: param" << tfName << "not correct.. a tf requires 8 param in the format:" <<
+                            "x(dbl) y(dbl) z(dbl) r(dbl) p(dbl) y(dbl) src(str) dst(str)";
+                return false;
+            }
+
+            t.translation.set(b.get(0).asDouble(), b.get(1).asDouble(), b.get(2).asDouble());
+            t.rotFromRPY(b.get(3).asDouble(), b.get(4).asDouble(), b.get(5).asDouble());
+            t.src_frame_id = b.get(6).asString();
+            t.dst_frame_id = b.get(7).asString();
+
+            if(m_yarp_static_transform_storage->set_transform(t))
+            {
+                yInfo() << tfName << "from" << t.src_frame_id << "to" << t.dst_frame_id << "succesfully set";
+            }
+        }
+        return true;
+    }
+    else
+    {
+        yInfo() << "transformServer: no starting tf found";
+    }
+    return true;
+}
 
 bool FrameTransformServer::open(yarp::os::Searchable &config)
 {
@@ -496,6 +544,10 @@ bool FrameTransformServer::open(yarp::os::Searchable &config)
     }
 
     this->start();
+
+    yarp::os::Time::delay(0.5);
+    parseStartingTf(config);
+
     return true;
 }
 

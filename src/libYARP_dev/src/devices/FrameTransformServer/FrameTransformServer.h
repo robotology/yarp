@@ -114,6 +114,7 @@ private:
 
     virtual bool read(yarp::os::ConnectionReader& connection);
     inline  void list_response(yarp::os::Bottle& out);
+    bool         parseStartingTf(yarp::os::Searchable &config);
 
 #endif //DOXYGEN_SHOULD_SKIP_THIS
 };
