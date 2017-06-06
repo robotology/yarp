@@ -30,7 +30,7 @@ protected:
     * @param amap is a lookup table mapping axes onto physical drivers.
     * @return true if initialized succeeded, false if it wasn't executed, or assert.
     */
-    bool initialize(int size, const int *amap, const double *enc, const double *zos);
+    bool initialize(int size, const int *amap, const double *enc, const double *zos, const double* newtons, const double* amps);
 
     /**
     * Clean up internal data and memory.
@@ -45,26 +45,32 @@ public:
     */
     ImplementPidControl(yarp::dev::IPidControlRaw *y);
 
-    virtual bool setPid(int j, const Pid &pid);
-    virtual bool setPids(const Pid *pids);
-    virtual bool setReference(int j, double ref);
-    virtual bool setReferences(const double *refs);
-    virtual bool setErrorLimit(int j, double limit);
-    virtual bool setErrorLimits(const double *limits);
-    virtual bool getError(int j, double *err);
-    virtual bool getErrors(double *errs);
-    virtual bool getOutput(int j, double *out);
-    virtual bool getOutputs(double *outs);
-    virtual bool getPid(int j, Pid *pid);
-    virtual bool getPids(Pid *pids);
-    virtual bool getReference(int j, double *ref);
-    virtual bool getReferences(double *refs);
-    virtual bool getErrorLimit(int j, double *ref);
-    virtual bool getErrorLimits(double *refs);
-    virtual bool resetPid(int j);
-    virtual bool enablePid(int j);
-    virtual bool disablePid(int j);
-    virtual bool setOffset(int j, double v);
+    virtual bool setPid(const PidControlTypeEnum& pidtype, int j, const Pid &pid);
+    virtual bool setPids(const PidControlTypeEnum& pidtype, const Pid *pids);
+    virtual bool setPidReference(const PidControlTypeEnum& pidtype, int j, double ref);
+    virtual bool setPidReferences(const PidControlTypeEnum& pidtype, const double *refs);
+    virtual bool setPidErrorLimit(const PidControlTypeEnum& pidtype, int j, double limit);
+    virtual bool setPidErrorLimits(const PidControlTypeEnum& pidtype, const double *limits);
+    virtual bool getPidError(const PidControlTypeEnum& pidtype, int j, double *err);
+    virtual bool getPidErrors(const PidControlTypeEnum& pidtype, double *errs);
+    virtual bool getPidOutput(const PidControlTypeEnum& pidtype, int j, double *out);
+    virtual bool getPidOutputs(const PidControlTypeEnum& pidtype, double *outs);
+    virtual bool getPid(const PidControlTypeEnum& pidtype, int j, Pid *pid);
+    virtual bool getPids(const PidControlTypeEnum& pidtype, Pid *pids);
+    virtual bool getPidReference(const PidControlTypeEnum& pidtype, int j, double *ref);
+    virtual bool getPidReferences(const PidControlTypeEnum& pidtype, double *refs);
+    virtual bool getPidErrorLimit(const PidControlTypeEnum& pidtype, int j, double *ref);
+    virtual bool getPidErrorLimits(const PidControlTypeEnum& pidtype, double *refs);
+    virtual bool resetPid(const PidControlTypeEnum& pidtype, int j);
+    virtual bool enablePid(const PidControlTypeEnum& pidtype, int j);
+    virtual bool disablePid(const PidControlTypeEnum& pidtype, int j);
+    virtual bool setPidOffset(const PidControlTypeEnum& pidtype, int j, double v);
+    virtual bool isPidEnabled(const PidControlTypeEnum& pidtype, int j, bool* enabled);
+
+    void convert_units_to_machine (const yarp::dev::PidControlTypeEnum& pidtype, double userval, int j, double &machineval, int &k);
+    void convert_units_to_machine (const yarp::dev::PidControlTypeEnum& pidtype, const double* userval, double* machineval);
+    void convert_units_to_user(const yarp::dev::PidControlTypeEnum& pidtype, const double machineval, double* userval, int k);
+    void convert_units_to_user(const yarp::dev::PidControlTypeEnum& pidtype, const double* machineval, double* userval);
 
     virtual ~ImplementPidControl();
 };

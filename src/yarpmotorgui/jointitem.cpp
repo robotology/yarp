@@ -942,6 +942,11 @@ void JointItem::setJointName(QString name)
     jointName = name;
 }
 
+QString JointItem::getJointName()
+{
+    return jointName;
+}
+
 void JointItem::onSliderVelocityPressed()
 {
     sliderVelocityPressed = true;

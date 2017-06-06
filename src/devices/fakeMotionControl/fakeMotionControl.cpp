@@ -156,9 +156,22 @@ bool FakeMotionControl::alloc(int nj)
     _rotorlimits_max = allocAndCheck<double>(nj);
     _rotorlimits_min = allocAndCheck<double>(nj);
 
-    _pids=allocAndCheck<Pid>(nj);
+    _ppids=allocAndCheck<Pid>(nj);
     _tpids=allocAndCheck<Pid>(nj);
     _cpids = allocAndCheck<Pid>(nj);
+    _vpids = allocAndCheck<Pid>(nj);
+    _ppids_ena=allocAndCheck<bool>(nj);
+    _tpids_ena=allocAndCheck<bool>(nj);
+    _cpids_ena = allocAndCheck<bool>(nj);
+    _vpids_ena = allocAndCheck<bool>(nj);
+    _ppids_lim=allocAndCheck<double>(nj);
+    _tpids_lim=allocAndCheck<double>(nj);
+    _cpids_lim = allocAndCheck<double>(nj);
+    _vpids_lim = allocAndCheck<double>(nj);
+    _ppids_ref=allocAndCheck<double>(nj);
+    _tpids_ref=allocAndCheck<double>(nj);
+    _cpids_ref = allocAndCheck<double>(nj);
+    _vpids_ref = allocAndCheck<double>(nj);
 
 //     _impedance_params=allocAndCheck<ImpedanceParameters>(nj);
 //     _impedance_limits=allocAndCheck<ImpedanceLimits>(nj);
@@ -219,9 +232,22 @@ bool FakeMotionControl::dealloc()
     checkAndDestroy(_maxJntCmdVelocity);
     checkAndDestroy(_maxMotorVelocity);
     checkAndDestroy(_newtonsToSensor);
-    checkAndDestroy(_pids);
+    checkAndDestroy(_ppids);
     checkAndDestroy(_tpids);
     checkAndDestroy(_cpids);
+    checkAndDestroy(_vpids);
+    checkAndDestroy(_ppids_ena);
+    checkAndDestroy(_tpids_ena);
+    checkAndDestroy(_cpids_ena);
+    checkAndDestroy(_vpids_ena);
+    checkAndDestroy(_ppids_lim);
+    checkAndDestroy(_tpids_lim);
+    checkAndDestroy(_cpids_lim);
+    checkAndDestroy(_vpids_lim);
+    checkAndDestroy(_ppids_ref);
+    checkAndDestroy(_tpids_ref);
+    checkAndDestroy(_cpids_ref);
+    checkAndDestroy(_vpids_ref);
 //     checkAndDestroy(_impedance_params);
 //     checkAndDestroy(_impedance_limits);
     checkAndDestroy(_limitsMax);
@@ -296,9 +322,22 @@ FakeMotionControl::FakeMotionControl() :
 
     _gearbox       = 0;
 //     opened        = 0;
-    _pids         = NULL;
+    _ppids         = NULL;
     _tpids        = NULL;
     _cpids        = NULL;
+    _vpids        = NULL;
+    _ppids_ena         = NULL;
+    _tpids_ena        = NULL;
+    _cpids_ena        = NULL;
+    _vpids_ena        = NULL;
+    _ppids_lim         = NULL;
+    _tpids_lim        = NULL;
+    _cpids_lim        = NULL;
+    _vpids_lim        = NULL;
+    _ppids_ref         = NULL;
+    _tpids_ref        = NULL;
+    _cpids_ref        = NULL;
+    _vpids_ref        = NULL;
     _njoints      = 0;
     _axisMap      = NULL;
     _encodersStamp = NULL;
@@ -451,7 +490,7 @@ bool FakeMotionControl::open(yarp::os::Searchable &config)
     ImplementEncodersTimed::initialize(_njoints, _axisMap, _angleToEncoder, NULL);
     ImplementMotorEncoders::initialize(_njoints, _axisMap, _angleToEncoder, NULL);
     ImplementPositionControl2::initialize(_njoints, _axisMap, _angleToEncoder, NULL);
-    ImplementPidControl::initialize(_njoints, _axisMap, _angleToEncoder, NULL);
+    ImplementPidControl::initialize(_njoints, _axisMap, _angleToEncoder, NULL, _newtonsToSensor, _ampsToSensor);
     ImplementControlMode2::initialize(_njoints, _axisMap);
     ImplementVelocityControl<FakeMotionControl, IVelocityControl>::initialize(_njoints, _axisMap, _angleToEncoder, NULL);
     ImplementVelocityControl2::initialize(_njoints, _axisMap, _angleToEncoder, NULL);
@@ -1360,76 +1399,157 @@ void FakeMotionControl::cleanup(void)
 
 ///////////// PID INTERFACE
 
-bool FakeMotionControl::setPidRaw(int j, const Pid &pid)
+bool FakeMotionControl::setPidRaw(const PidControlTypeEnum& pidtype, int j, const Pid &pid)
 {
-
+    switch (pidtype)
+    {
+        case VOCAB_PIDTYPE_POSITION:
+            _ppids[j]=pid;
+        break;
+        case VOCAB_PIDTYPE_VELOCITY:
+            _vpids[j]=pid;
+        break;
+        case VOCAB_PIDTYPE_CURRENT:
+            _cpids[j]=pid;
+        break;
+        case VOCAB_PIDTYPE_TORQUE:
+            _tpids[j]=pid;
+        break;
+        default:
+        break;
+    }
     return true;
 }
 
-bool FakeMotionControl::setPidsRaw(const Pid *pids)
+bool FakeMotionControl::setPidsRaw(const PidControlTypeEnum& pidtype, const Pid *pids)
 {
     bool ret = true;
     for(int j=0; j< _njoints; j++)
     {
-        ret &= setPidRaw(j, pids[j]);
+        ret &= setPidRaw(pidtype, j, pids[j]);
     }
     return ret;
 }
 
-bool FakeMotionControl::setReferenceRaw(int j, double ref)
+bool FakeMotionControl::setPidReferenceRaw(const PidControlTypeEnum& pidtype, int j, double ref)
 {
-    int mode = 0;
-    getControlModeRaw(j, &mode);
-    if (mode != VOCAB_CM_POSITION_DIRECT &&
-        mode != VOCAB_CM_IDLE)
+    switch (pidtype)
     {
-        yError() << "setReferenceRaw: skipping command because  joint " << j << " is not in VOCAB_CM_POSITION_DIRECT mode";
+        case VOCAB_PIDTYPE_POSITION:
+            _ppids_ref[j]=ref;
+        break;
+        case VOCAB_PIDTYPE_VELOCITY:
+            _vpids_ref[j]=ref;
+        break;
+        case VOCAB_PIDTYPE_CURRENT:
+            _cpids_ref[j]=ref;
+        break;
+        case VOCAB_PIDTYPE_TORQUE:
+            _tpids_ref[j]=ref;
+        break;
+        default:
+        break;
     }
-
-   return false;
+    return true;
 }
 
-bool FakeMotionControl::setReferencesRaw(const double *refs)
+bool FakeMotionControl::setPidReferencesRaw(const PidControlTypeEnum& pidtype, const double *refs)
 {
     bool ret = true;
     for(int j=0, index=0; j< _njoints; j++, index++)
     {
-        ret &= setReferenceRaw(j, refs[index]);
+        ret &= setPidReferenceRaw(pidtype, j, refs[index]);
     }
     return ret;
 }
 
-bool FakeMotionControl::setErrorLimitRaw(int j, double limit)
+bool FakeMotionControl::setPidErrorLimitRaw(const PidControlTypeEnum& pidtype, int j, double limit)
 {
-    return NOT_YET_IMPLEMENTED("setErrorLimitRaw");
+    switch (pidtype)
+    {
+        case VOCAB_PIDTYPE_POSITION:
+            _ppids_lim[j]=limit;
+        break;
+        case VOCAB_PIDTYPE_VELOCITY:
+            _vpids_lim[j]=limit;
+        break;
+        case VOCAB_PIDTYPE_CURRENT:
+            _cpids_lim[j]=limit;
+        break;
+        case VOCAB_PIDTYPE_TORQUE:
+            _tpids_lim[j]=limit;
+        break;
+        default:
+        break;
+    }
+    return true;
 }
 
-bool FakeMotionControl::setErrorLimitsRaw(const double *limits)
+bool FakeMotionControl::setPidErrorLimitsRaw(const PidControlTypeEnum& pidtype, const double *limits)
 {
-    return NOT_YET_IMPLEMENTED("setErrorLimitsRaw");
+    bool ret = true;
+    for(int j=0, index=0; j< _njoints; j++, index++)
+    {
+        ret &= setPidErrorLimitRaw(pidtype, j, limits[index]);
+    }
+    return ret;
 }
 
-bool FakeMotionControl::getErrorRaw(int j, double *err)
+bool FakeMotionControl::getPidErrorRaw(const PidControlTypeEnum& pidtype, int j, double *err)
 {
-    return false;
+    switch (pidtype)
+    {
+        case VOCAB_PIDTYPE_POSITION:
+            *err=0.1;
+        break;
+        case VOCAB_PIDTYPE_VELOCITY:
+            *err=0.2;
+        break;
+        case VOCAB_PIDTYPE_CURRENT:
+            *err=0.3;
+        break;
+        case VOCAB_PIDTYPE_TORQUE:
+            *err=0.4;
+        break;
+        default:
+        break;
+    }
+    return true;
 }
 
-bool FakeMotionControl::getErrorsRaw(double *errs)
+bool FakeMotionControl::getPidErrorsRaw(const PidControlTypeEnum& pidtype, double *errs)
 {
     bool ret = true;
     for(int j=0; j< _njoints; j++)
     {
-        ret &= getErrorRaw(j, &errs[j]);
+        ret &= getPidErrorRaw(pidtype, j, &errs[j]);
     }
     return ret;
 }
 
-bool FakeMotionControl::getPidRaw(int j, Pid *pid)
+bool FakeMotionControl::getPidRaw(const PidControlTypeEnum& pidtype, int j, Pid *pid)
 {
-    return false;
+    switch (pidtype)
+    {
+        case VOCAB_PIDTYPE_POSITION:
+            *pid=_ppids[j];
+        break;
+        case VOCAB_PIDTYPE_VELOCITY:
+            *pid=_vpids[j];
+        break;
+        case VOCAB_PIDTYPE_CURRENT:
+            *pid=_cpids[j];
+        break;
+        case VOCAB_PIDTYPE_TORQUE:
+            *pid=_tpids[j];
+        break;
+        default:
+        break;
+    }
+    return true;
 }
 
-bool FakeMotionControl::getPidsRaw(Pid *pids)
+bool FakeMotionControl::getPidsRaw(const PidControlTypeEnum& pidtype, Pid *pids)
 {
     bool ret = true;
 
@@ -1437,17 +1557,34 @@ bool FakeMotionControl::getPidsRaw(Pid *pids)
     // This is because otherwise too many msg will be placed into can queue
     for(int j=0, index=0; j<_njoints; j++, index++)
     {
-        ret &=getPidRaw(j, &pids[j]);
+        ret &=getPidRaw(pidtype, j, &pids[j]);
     }
     return ret;
 }
 
-bool FakeMotionControl::getReferenceRaw(int j, double *ref)
+bool FakeMotionControl::getPidReferenceRaw(const PidControlTypeEnum& pidtype, int j, double *ref)
 {
-    return false;
+    switch (pidtype)
+    {
+        case VOCAB_PIDTYPE_POSITION:
+            *ref=_ppids_ref[j];
+        break;
+        case VOCAB_PIDTYPE_VELOCITY:
+            *ref=_vpids_ref[j];
+        break;
+        case VOCAB_PIDTYPE_CURRENT:
+            *ref=_cpids_ref[j];
+        break;
+        case VOCAB_PIDTYPE_TORQUE:
+            *ref=_tpids_ref[j];
+        break;
+        default:
+        break;
+    }
+    return true;
 }
 
-bool FakeMotionControl::getReferencesRaw(double *refs)
+bool FakeMotionControl::getPidReferencesRaw(const PidControlTypeEnum& pidtype, double *refs)
 {
     bool ret = true;
 
@@ -1455,39 +1592,166 @@ bool FakeMotionControl::getReferencesRaw(double *refs)
     // This is because otherwise too many msg will be placed into can queue
     for(int j=0; j< _njoints; j++)
     {
-        ret &= getReferenceRaw(j, &refs[j]);
+        ret &= getPidReferenceRaw(pidtype, j, &refs[j]);
     }
     return ret;
 }
 
-bool FakeMotionControl::getErrorLimitRaw(int j, double *limit)
+bool FakeMotionControl::getPidErrorLimitRaw(const PidControlTypeEnum& pidtype, int j, double *limit)
 {
-    return NOT_YET_IMPLEMENTED("getErrorLimit");
+    switch (pidtype)
+    {
+        case VOCAB_PIDTYPE_POSITION:
+            *limit=_ppids_lim[j];
+        break;
+        case VOCAB_PIDTYPE_VELOCITY:
+            *limit=_vpids_lim[j];
+        break;
+        case VOCAB_PIDTYPE_CURRENT:
+            *limit=_cpids_lim[j];
+        break;
+        case VOCAB_PIDTYPE_TORQUE:
+            *limit=_tpids_lim[j];
+        break;
+        default:
+        break;
+    }
+    return true;
 }
 
-bool FakeMotionControl::getErrorLimitsRaw(double *limits)
+bool FakeMotionControl::getPidErrorLimitsRaw(const PidControlTypeEnum& pidtype, double *limits)
 {
-    return NOT_YET_IMPLEMENTED("getErrorLimit");
+    bool ret = true;
+    for(int j=0, index=0; j<_njoints; j++, index++)
+    {
+        ret &=getPidErrorLimitRaw(pidtype, j, &limits[j]);
+    }
+    return ret;
 }
 
-bool FakeMotionControl::resetPidRaw(int j)
+bool FakeMotionControl::resetPidRaw(const PidControlTypeEnum& pidtype, int j)
 {
-    return NOT_YET_IMPLEMENTED("resetPid");
+    return true;
 }
 
-bool FakeMotionControl::disablePidRaw(int j)
+bool FakeMotionControl::disablePidRaw(const PidControlTypeEnum& pidtype, int j)
 {
-    return DEPRECATED("disablePidRaw");
+    switch (pidtype)
+    {
+        case VOCAB_PIDTYPE_POSITION:
+            _ppids_ena[j]=false;
+        break;
+        case VOCAB_PIDTYPE_VELOCITY:
+            _vpids_ena[j]=false;
+        break;
+        case VOCAB_PIDTYPE_CURRENT:
+            _cpids_ena[j]=false;
+        break;
+        case VOCAB_PIDTYPE_TORQUE:
+            _tpids_ena[j]=false;
+        break;
+        default:
+        break;
+    }
+    return true;
 }
 
-bool FakeMotionControl::enablePidRaw(int j)
+bool FakeMotionControl::enablePidRaw(const PidControlTypeEnum& pidtype, int j)
 {
-    return DEPRECATED("enablePidRaw");
+    switch (pidtype)
+    {
+        case VOCAB_PIDTYPE_POSITION:
+            _ppids_ena[j]=true;
+        break;
+        case VOCAB_PIDTYPE_VELOCITY:
+            _vpids_ena[j]=true;
+        break;
+        case VOCAB_PIDTYPE_CURRENT:
+            _cpids_ena[j]=true;
+        break;
+        case VOCAB_PIDTYPE_TORQUE:
+            _tpids_ena[j]=true;
+        break;
+        default:
+        break;
+    }
+    return true;
 }
 
-bool FakeMotionControl::setOffsetRaw(int j, double v)
+bool FakeMotionControl::setPidOffsetRaw(const PidControlTypeEnum& pidtype, int j, double v)
 {
-    return NOT_YET_IMPLEMENTED("setOffset");
+    switch (pidtype)
+    {
+        case VOCAB_PIDTYPE_POSITION:
+            _ppids[j].offset=v;
+        break;
+        case VOCAB_PIDTYPE_VELOCITY:
+            _vpids[j].offset=v;
+        break;
+        case VOCAB_PIDTYPE_CURRENT:
+            _cpids[j].offset=v;
+        break;
+        case VOCAB_PIDTYPE_TORQUE:
+            _tpids[j].offset=v;
+        break;
+        default:
+        break;
+    }
+    return true;
+}
+
+bool FakeMotionControl::isPidEnabledRaw(const PidControlTypeEnum& pidtype, int j, bool* enabled)
+{
+    switch (pidtype)
+    {
+        case VOCAB_PIDTYPE_POSITION:
+            *enabled=_ppids_ena[j];
+        break;
+        case VOCAB_PIDTYPE_VELOCITY:
+            *enabled=_vpids_ena[j];
+        break;
+        case VOCAB_PIDTYPE_CURRENT:
+            *enabled=_cpids_ena[j];
+        break;
+        case VOCAB_PIDTYPE_TORQUE:
+            *enabled=_tpids_ena[j];
+        break;
+        default:
+        break;
+    }
+    return true;
+}
+
+bool FakeMotionControl::getPidOutputRaw(const PidControlTypeEnum& pidtype, int j, double *out)
+{
+    switch (pidtype)
+    {
+        case VOCAB_PIDTYPE_POSITION:
+            *out=1.1;
+        break;
+        case VOCAB_PIDTYPE_VELOCITY:
+            *out=1.2;
+        break;
+        case VOCAB_PIDTYPE_CURRENT:
+            *out=1.3;
+        break;
+        case VOCAB_PIDTYPE_TORQUE:
+            *out=1.4;
+        break;
+        default:
+        break;
+    }
+    return true;
+}
+
+bool FakeMotionControl::getPidOutputsRaw(const PidControlTypeEnum& pidtype, double *outs)
+{
+    bool ret = true;
+    for(int j=0; j< _njoints; j++)
+    {
+        ret &= getPidOutputRaw(pidtype, j, &outs[j]);
+    }
+    return ret;
 }
 
 ////////////////////////////////////////
@@ -2457,39 +2721,6 @@ bool FakeMotionControl::getRefTorqueRaw(int j, double *t)
     return false;
 }
 
-bool FakeMotionControl::setTorquePidRaw(int j, const Pid &pid)
-{
-    return false;
-}
-
-bool FakeMotionControl::setTorquePidsRaw(const Pid *pids)
-{
-    return false;
-}
-
-bool FakeMotionControl::getTorqueErrorRaw(int j, double *err)
-{
-    return false;
-}
-
-bool FakeMotionControl::getTorqueErrorsRaw(double *errs)
-{
-    bool ret = true;
-    for(int j=0; j<_njoints && ret; j++)
-        ret &= getTorqueErrorRaw(j, &errs[j]);
-    return ret;
-}
-
-bool FakeMotionControl::getTorquePidRaw(int j, Pid *pid)
-{
-    return false;
-}
-
-bool FakeMotionControl::getTorquePidsRaw(Pid *pids)
-{
-    return false;
-}
-
 bool FakeMotionControl::getImpedanceRaw(int j, double *stiffness, double *damping)
 {
     return false;
@@ -2525,56 +2756,6 @@ bool FakeMotionControl::setBemfParamRaw(int j, double bemf)
     return DEPRECATED("setBemfParamRaw");
 }
 
-bool FakeMotionControl::setTorqueErrorLimitRaw(int j, double limit)
-{
-    return NOT_YET_IMPLEMENTED("setTorqueErrorLimitRaw");
-}
-
-bool FakeMotionControl::setTorqueErrorLimitsRaw(const double *limits)
-{
-    return NOT_YET_IMPLEMENTED("setTorqueErrorLimitsRaw");
-}
-
-bool FakeMotionControl::getTorquePidOutputRaw(int j, double *out)
-{
-    return false;
-}
-
-bool FakeMotionControl::getTorquePidOutputsRaw(double *outs)
-{
-    return NOT_YET_IMPLEMENTED("getTorquePidOutputsRaw");
-}
-
-bool FakeMotionControl::getTorqueErrorLimitRaw(int j, double *limit)
-{
-    return NOT_YET_IMPLEMENTED("getTorqueErrorLimitRaw");
-}
-
-bool FakeMotionControl::getTorqueErrorLimitsRaw(double *limits)
-{
-    return NOT_YET_IMPLEMENTED("getTorqueErrorLimitsRaw");
-}
-
-bool FakeMotionControl::resetTorquePidRaw(int j)
-{
-    return NOT_YET_IMPLEMENTED("resetTorquePidRaw");
-}
-
-bool FakeMotionControl::disableTorquePidRaw(int j)
-{
-    return NOT_YET_IMPLEMENTED("disableTorquePidRaw");
-}
-
-bool FakeMotionControl::enableTorquePidRaw(int j)
-{
-    return NOT_YET_IMPLEMENTED("enableTorquePidRaw");
-}
-
-bool FakeMotionControl::setTorqueOffsetRaw(int j, double v)
-{
-    return NOT_YET_IMPLEMENTED("setTorqueOffsetRaw");
-}
-
 bool FakeMotionControl::getMotorTorqueParamsRaw(int j, MotorTorqueParameters *params)
 {
     return false;
@@ -2594,26 +2775,6 @@ bool FakeMotionControl::velocityMoveRaw(const int n_joint, const int *joints, co
         ret &= velocityMoveRaw(joints[i], spds[i]);
     }
     return ret;
-}
-
-bool FakeMotionControl::setVelPidRaw(int j, const Pid &pid)
-{
-    return NOT_YET_IMPLEMENTED("Our boards do not have a Velocity Pid");
-}
-
-bool FakeMotionControl::setVelPidsRaw(const Pid *pids)
-{
-    return false;
-}
-
-bool FakeMotionControl::getVelPidRaw(int j, Pid *pid)
-{
-    return NOT_YET_IMPLEMENTED("Our boards do not have a Velocity Pid");
-}
-
-bool FakeMotionControl::getVelPidsRaw(Pid *pids)
-{
-    return false;
 }
 
 // PositionDirect Interface
@@ -2784,22 +2945,6 @@ bool FakeMotionControl::setInteractionModesRaw(yarp::dev::InteractionModeEnum* m
     return false;
 }
 
-
-bool FakeMotionControl::getOutputRaw(int j, double *out)
-{
-    return false;
-}
-
-bool FakeMotionControl::getOutputsRaw(double *outs)
-{
-    bool ret = true;
-    for(int j=0; j< _njoints; j++)
-    {
-        ret &= getOutputRaw(j, &outs[j]);
-    }
-    return ret;
-}
-
 bool FakeMotionControl::getNumberOfMotorsRaw(int* num)
 {
     *num=_njoints;
@@ -2950,85 +3095,6 @@ bool FakeMotionControl::getRefCurrentRaw(int j, double *t)
 {
     *t = _ref_currents[j];
     return true;
-}
-
-bool FakeMotionControl::setCurrentPidRaw(int j, const Pid &pid)
-{
-    _cpids[j] = pid;
-    return true;
-}
-
-bool FakeMotionControl::setCurrentPidsRaw(const Pid *pids)
-{
-    for (int i = 0; i < _njoints; i++)
-    {
-        _cpids[i] = pids[i];
-    }
-    return true;
-}
-
-bool FakeMotionControl::getCurrentErrorRaw(int j, double *err)
-{
-    //just for testing purposes, this is not a real implementation
-    *err = _ref_currents[j]/2;
-    return true;
-}
-
-bool FakeMotionControl::getCurrentErrorsRaw(double *errs)
-{
-    //just for testing purposes, this is not a real implementation
-    for (int i = 0; i < _njoints; i++)
-    {
-        errs[i] = _ref_currents[i] / 2;
-    }
-    return true;
-}
-
-bool FakeMotionControl::getCurrentPidOutputRaw(int j, double *out)
-{
-    //just for testing purposes, this is not a real implementation
-    *out = _ref_currents[j] * 10;
-    return true;
-}
-
-bool FakeMotionControl::getCurrentPidOutputsRaw(double *outs)
-{
-    //just for testing purposes, this is not a real implementation
-    for (int i = 0; i < _njoints; i++)
-    {
-        outs[i] = _ref_currents[i] * 10;
-    }
-    return true;
-}
-
-bool FakeMotionControl::getCurrentPidRaw(int j, Pid *pid)
-{
-    *pid = _cpids[j];
-    return true;
-}
-
-bool FakeMotionControl::getCurrentPidsRaw(Pid *pids)
-{
-    for (int i = 0; i < _njoints; i++)
-    {
-        pids[i] = _cpids[i];
-    }
-    return true;
-}
-
-bool FakeMotionControl::resetCurrentPidRaw(int j)
-{
-    return NOT_YET_IMPLEMENTED("resetCurrentPidRaw");
-}
-
-bool FakeMotionControl::disableCurrentPidRaw(int j)
-{
-    return NOT_YET_IMPLEMENTED("disableCurrentPidRaw");
-}
-
-bool FakeMotionControl::enableCurrentPidRaw(int j)
-{
-    return NOT_YET_IMPLEMENTED("enableCurrentPidRaw");
 }
 
 // bool FakeMotionControl::checkRemoteControlModeStatus(int joint, int target_mode)

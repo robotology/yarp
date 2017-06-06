@@ -189,7 +189,7 @@ PartItem::PartItem(QString robotName, int id, QString partName, ResourceFinder& 
 
             Pid myPid(0,0,0,0,0,0);
             yarp::os::Time::delay(0.005);
-            m_iPid->getPid(k, &myPid);
+            m_iPid->getPid(VOCAB_PIDTYPE_POSITION, k, &myPid);
             
             JointItem *joint = new JointItem(k);
             joint->setJointName(jointname.c_str());
@@ -620,11 +620,11 @@ void PartItem::onSendTorquePid(int jointIndex,Pid newPid,MotorTorqueParameters n
 {
     Pid myTrqPid(0,0,0,0,0,0);
     yarp::dev::MotorTorqueParameters TrqParam;
-    m_iTrq->setTorquePid(jointIndex, newPid);
+    m_iPid->setPid(VOCAB_PIDTYPE_TORQUE, jointIndex, newPid);
 
     m_iTrq->setMotorTorqueParams(jointIndex, newTrqParam);
     yarp::os::Time::delay(0.005);
-    m_iTrq->getTorquePid(jointIndex, &myTrqPid);
+    m_iPid->getPid(VOCAB_PIDTYPE_TORQUE,jointIndex, &myTrqPid);
     m_iTrq->getMotorTorqueParams(jointIndex, &TrqParam);
 
     if (m_currentPidDlg){
@@ -635,9 +635,9 @@ void PartItem::onSendTorquePid(int jointIndex,Pid newPid,MotorTorqueParameters n
 void PartItem::onSendPositionPid(int jointIndex,Pid newPid)
 {
     Pid myPosPid(0,0,0,0,0,0);
-    m_iPid->setPid(jointIndex, newPid);
+    m_iPid->setPid(VOCAB_PIDTYPE_POSITION, jointIndex, newPid);
     yarp::os::Time::delay(0.005);
-    m_iPid->getPid(jointIndex, &myPosPid);
+    m_iPid->getPid(VOCAB_PIDTYPE_POSITION, jointIndex, &myPosPid);
 
     if (m_currentPidDlg){
         m_currentPidDlg->initPosition(myPosPid);
@@ -647,9 +647,9 @@ void PartItem::onSendPositionPid(int jointIndex,Pid newPid)
 void PartItem::onSendVelocityPid(int jointIndex, Pid newPid)
 {
     Pid myVelPid(0, 0, 0, 0, 0, 0);
-    m_iVel->setVelPid(jointIndex, newPid);
+    m_iPid->setPid(VOCAB_PIDTYPE_VELOCITY, jointIndex, newPid);
     yarp::os::Time::delay(0.005);
-    m_iVel->getVelPid(jointIndex, &myVelPid);
+    m_iPid->getPid(VOCAB_PIDTYPE_VELOCITY, jointIndex, &myVelPid);
 
     if (m_currentPidDlg){
         m_currentPidDlg->initVelocity(myVelPid);
@@ -679,22 +679,22 @@ void PartItem::onRefreshPids(int jointIndex)
     m_iTrq->getTorqueRange(jointIndex, &off_min, &off_max);
 
     // Position
-    m_iPid->getPid(jointIndex, &myPosPid);
+    m_iPid->getPid(VOCAB_PIDTYPE_POSITION, jointIndex, &myPosPid);
     yarp::os::Time::delay(0.005);
 
     // Velocity
-    m_iVel->getVelPid(jointIndex, &myVelPid);
+    m_iPid->getPid(VOCAB_PIDTYPE_VELOCITY, jointIndex, &myVelPid);
     yarp::os::Time::delay(0.005);
 
     // Current
     if (m_iCur)
     {
-        m_iCur->getCurrentPid(jointIndex, &myCurPid);
+        m_iPid->getPid(VOCAB_PIDTYPE_CURRENT, jointIndex, &myCurPid);
         yarp::os::Time::delay(0.005);
     }
 
     // Torque
-    m_iTrq->getTorquePid(jointIndex, &myTrqPid);
+    m_iPid->getPid(VOCAB_PIDTYPE_TORQUE, jointIndex, &myTrqPid);
     m_iTrq->getMotorTorqueParams(jointIndex, &motorTorqueParams);
     yarp::os::Time::delay(0.005);
 
@@ -727,9 +727,9 @@ void PartItem::onSendCurrentPid(int jointIndex, Pid newPid)
         return;
     }
     Pid myCurPid(0, 0, 0, 0, 0, 0);
-    m_iCur->setCurrentPid(jointIndex, newPid);
+    m_iPid->setPid(VOCAB_PIDTYPE_CURRENT, jointIndex, newPid);
     yarp::os::Time::delay(0.005);
-    m_iCur->getCurrentPid(jointIndex, &myCurPid);
+    m_iPid->getPid(VOCAB_PIDTYPE_CURRENT, jointIndex, &myCurPid);
 
     if (m_currentPidDlg){
         m_currentPidDlg->initCurrent(myCurPid);
@@ -776,8 +776,8 @@ void PartItem::onCalibClicked(JointItem *joint)
 void PartItem::onPidClicked(JointItem *joint)
 {
     const int jointIndex = joint->getJointIndex();
-
-    m_currentPidDlg = new PidDlg(m_partName, jointIndex);
+    QString jointName = joint->getJointName();
+    m_currentPidDlg = new PidDlg(m_partName, jointIndex, jointName);
     connect(m_currentPidDlg, SIGNAL(sendPositionPid(int, Pid)), this, SLOT(onSendPositionPid(int, Pid)));
     connect(m_currentPidDlg, SIGNAL(sendVelocityPid(int, Pid)), this, SLOT(onSendVelocityPid(int, Pid)));
     connect(m_currentPidDlg, SIGNAL(sendCurrentPid(int, Pid)), this, SLOT(onSendCurrentPid(int, Pid)));

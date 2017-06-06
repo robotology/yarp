@@ -53,6 +53,7 @@ class JointItem : public QWidget
     void setCurrent(double val);
     void updateMotionDone(bool done);
     void setJointName(QString name);
+    QString getJointName();
     int getJointIndex();
     void setPositionRange(double min, double max);
     void setVelocityRange(double min, double max);

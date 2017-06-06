@@ -82,10 +82,6 @@ public:
     virtual bool setRefAccelerations(const int n_joint, const int *joints, const double *accs);
     virtual bool getRefAccelerations(const int n_joint, const int *joints, double *accs);
     virtual bool stop(const int n_joint, const int *joints);
-    virtual bool setVelPid(int j, const Pid &pid);
-    virtual bool setVelPids(const Pid *pids);
-    virtual bool getVelPid(int j, Pid *pid);
-    virtual bool getVelPids(Pid *pids);
 };
 
 #if defined(_MSC_VER) && !defined(YARP_NO_DEPRECATED) // since YARP 2.3.65
@@ -173,18 +169,6 @@ public:
 
     virtual bool stopRaw(const int n_joint, const int *joints)
     {return NOT_YET_IMPLEMENTED("stopRaw");}
-
-    virtual bool setVelPidRaw(int j, const Pid &pid)
-    {return NOT_YET_IMPLEMENTED("setVelPidRaw");}
-
-    virtual bool setVelPidsRaw(const Pid *pids)
-    {return NOT_YET_IMPLEMENTED("setVelPidsRaw");}
-
-    virtual bool getVelPidRaw(int j, Pid *pid)
-    {return NOT_YET_IMPLEMENTED("getVelPidRaw");}
-
-    virtual bool getVelPidsRaw(Pid *pids)
-    {return NOT_YET_IMPLEMENTED("getVelPidsRaw");}
 
 };
 #endif // YARP_DEV_IVELOCITYCONTROL2IMPL_H

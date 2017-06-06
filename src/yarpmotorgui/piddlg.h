@@ -33,7 +33,7 @@ class PidDlg : public QDialog
     Q_OBJECT
 
 public:
-    explicit PidDlg(QString partname, int jointIndex,QWidget *parent = 0);
+    explicit PidDlg(QString partname, int jointIndex, QString jointName, QWidget *parent = 0);
     ~PidDlg();
 
     void initPosition(Pid myPid);
