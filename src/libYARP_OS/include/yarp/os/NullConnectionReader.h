@@ -26,24 +26,24 @@ class YARP_OS_API yarp::os::NullConnectionReader : public ConnectionReader {
 private:
     Value blank;
 public:
-    virtual bool expectBlock(const char *data, size_t len);
-    virtual ConstString expectText(int terminatingChar = '\n');
-    virtual int expectInt();
-    virtual bool pushInt(int x);
-    virtual double expectDouble();
-    virtual bool isTextMode();
-    virtual bool convertTextMode();
-    virtual size_t getSize();
-    virtual ConnectionWriter *getWriter();
-    virtual Bytes readEnvelope();
-    virtual Portable *getReference();
-    virtual Contact getRemoteContact();
-    virtual Contact getLocalContact();
-    virtual bool isValid();
-    virtual bool isActive();
-    virtual bool isError();
-    virtual void requestDrop();
-    virtual Searchable& getConnectionModifiers();
+    virtual bool expectBlock(const char *data, size_t len) YARP_OVERRIDE;
+    virtual ConstString expectText(int terminatingChar = '\n') YARP_OVERRIDE;
+    virtual int expectInt() YARP_OVERRIDE;
+    virtual bool pushInt(int x) YARP_OVERRIDE;
+    virtual double expectDouble() YARP_OVERRIDE;
+    virtual bool isTextMode() YARP_OVERRIDE;
+    virtual bool convertTextMode() YARP_OVERRIDE;
+    virtual size_t getSize() YARP_OVERRIDE;
+    virtual ConnectionWriter *getWriter() YARP_OVERRIDE;
+    virtual Bytes readEnvelope() YARP_OVERRIDE;
+    virtual Portable *getReference() YARP_OVERRIDE;
+    virtual Contact getRemoteContact() YARP_OVERRIDE;
+    virtual Contact getLocalContact() YARP_OVERRIDE;
+    virtual bool isValid() YARP_OVERRIDE;
+    virtual bool isActive() YARP_OVERRIDE;
+    virtual bool isError() YARP_OVERRIDE;
+    virtual void requestDrop() YARP_OVERRIDE;
+    virtual Searchable& getConnectionModifiers() YARP_OVERRIDE;
 };
 
 

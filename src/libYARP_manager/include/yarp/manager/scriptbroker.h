@@ -32,7 +32,7 @@ public:
      using LocalBroker::init;
      bool init(const char* szcmd, const char* szparam,
             const char* szhost, const char* szstdio,
-            const char* szworkdir, const char* szenv );
+            const char* szworkdir, const char* szenv) YARP_OVERRIDE;
 private:
     std::string script;
 };
@@ -50,7 +50,7 @@ public:
      using YarpBroker::init;
      bool init(const char* szcmd, const char* szparam,
             const char* szhost, const char* szstdio,
-            const char* szworkdir, const char* szenv );
+            const char* szworkdir, const char* szenv) YARP_OVERRIDE;
 private:
     bool whichFile(const char* server, const char* filename, std::string& filenameWithPath);
     std::string script;

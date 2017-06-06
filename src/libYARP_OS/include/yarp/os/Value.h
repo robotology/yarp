@@ -238,19 +238,19 @@ public:
     virtual size_t asBlobLength() const;
 
     // documented in Portable
-    virtual bool read(ConnectionReader& connection);
+    virtual bool read(ConnectionReader& connection) YARP_OVERRIDE;
 
     // documented in Portable
-    virtual bool write(ConnectionWriter& connection);
+    virtual bool write(ConnectionWriter& connection) YARP_OVERRIDE;
 
     // documented in Searchable
-    virtual bool check(const ConstString& key) const;
+    virtual bool check(const ConstString& key) const YARP_OVERRIDE;
 
     // documented in Searchable
-    virtual Value& find(const ConstString& key) const;
+    virtual Value& find(const ConstString& key) const YARP_OVERRIDE;
 
     // documented in Searchable
-    virtual Bottle& findGroup(const ConstString& key) const;
+    virtual Bottle& findGroup(const ConstString& key) const YARP_OVERRIDE;
 
     /**
      * Equality test.
@@ -288,7 +288,7 @@ public:
      */
     void fromString(const char *str);
 
-    ConstString toString() const;
+    ConstString toString() const YARP_OVERRIDE;
 
     /**
      * Create a new value of the same type.
@@ -308,7 +308,7 @@ public:
      */
     virtual int getCode() const;
 
-    virtual bool isNull() const;
+    virtual bool isNull() const YARP_OVERRIDE;
 
     virtual bool isLeaf() const;
 

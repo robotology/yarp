@@ -67,7 +67,7 @@ public:
     const Property& operator=(const Property& prop);
 
     // documented in Searchable
-    bool check(const ConstString& key) const;
+    bool check(const ConstString& key) const YARP_OVERRIDE;
 
     /**
      * \brief Associate the given \c key with the given string.
@@ -157,10 +157,10 @@ public:
     void unput(const ConstString& key);
 
     // documented in Searchable
-    virtual Value& find(const ConstString& key) const;
+    virtual Value& find(const ConstString& key) const YARP_OVERRIDE;
 
     // documented in Searchable
-    virtual Bottle& findGroup(const ConstString& key) const;
+    virtual Bottle& findGroup(const ConstString& key) const YARP_OVERRIDE;
 
     /**
      * \brief Remove all associations.
@@ -418,13 +418,13 @@ public:
 
 
     // documented in Searchable
-    ConstString toString() const;
+    ConstString toString() const YARP_OVERRIDE;
 
     // documented in Portable
-    bool read(ConnectionReader& reader);
+    bool read(ConnectionReader& reader) YARP_OVERRIDE;
 
     // documented in Portable
-    bool write(ConnectionWriter& writer);
+    bool write(ConnectionWriter& writer) YARP_OVERRIDE;
 
 private:
     void *implementation;

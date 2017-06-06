@@ -45,157 +45,157 @@ public:
      */
     virtual const Port& asPort() const = 0;
 
-    virtual bool open(const ConstString& name) {
+    virtual bool open(const ConstString& name) YARP_OVERRIDE {
         return asPort().open(name);
     }
 
-    virtual bool open(const Contact& contact, bool registerName = true) {
+    virtual bool open(const Contact& contact, bool registerName = true) YARP_OVERRIDE {
         return asPort().open(contact, registerName);
     }
 
-    virtual bool addOutput(const ConstString& name) {
+    virtual bool addOutput(const ConstString& name) YARP_OVERRIDE {
         return asPort().addOutput(name);
     }
 
-    virtual bool addOutput(const ConstString& name, const ConstString& carrier) {
+    virtual bool addOutput(const ConstString& name, const ConstString& carrier) YARP_OVERRIDE {
         return asPort().addOutput(name, carrier);
     }
 
-    virtual bool addOutput(const Contact& contact) {
+    virtual bool addOutput(const Contact& contact) YARP_OVERRIDE {
         return asPort().addOutput(contact);
     }
 
-    virtual void close() {
+    virtual void close() YARP_OVERRIDE {
         asPort().close();
     }
 
-    virtual void interrupt() {
+    virtual void interrupt() YARP_OVERRIDE {
         asPort().interrupt();
     }
 
-    virtual void resume() {
+    virtual void resume() YARP_OVERRIDE {
         asPort().resume();
     }
 
-    virtual Contact where() const {
+    virtual Contact where() const YARP_OVERRIDE {
         return asPort().where();
     }
 
-    virtual ConstString getName() const {
+    virtual ConstString getName() const YARP_OVERRIDE {
         return asPort().getName();
     }
 
-    virtual bool setEnvelope(PortWriter& envelope) {
+    virtual bool setEnvelope(PortWriter& envelope) YARP_OVERRIDE {
         return asPort().setEnvelope(envelope);
     }
 
-    virtual bool getEnvelope(PortReader& envelope) {
+    virtual bool getEnvelope(PortReader& envelope) YARP_OVERRIDE {
         return asPort().getEnvelope(envelope);
     }
 
-    virtual int getInputCount() {
+    virtual int getInputCount() YARP_OVERRIDE {
         return asPort().getInputCount();
     }
 
-    virtual int getOutputCount() {
+    virtual int getOutputCount() YARP_OVERRIDE {
         return asPort().getOutputCount();
     }
 
-    virtual void getReport(PortReport& reporter) {
+    virtual void getReport(PortReport& reporter) YARP_OVERRIDE {
         return asPort().getReport(reporter);
     }
 
-    virtual void setReporter(PortReport& reporter) {
+    virtual void setReporter(PortReport& reporter) YARP_OVERRIDE {
         return asPort().setReporter(reporter);
     }
 
-    virtual void resetReporter() {
+    virtual void resetReporter() YARP_OVERRIDE {
         return asPort().resetReporter();
     }
 
-    virtual bool isWriting() {
+    virtual bool isWriting() YARP_OVERRIDE {
         return asPort().isWriting();
     }
 
-    virtual void setReader(PortReader& reader) {
+    virtual void setReader(PortReader& reader) YARP_OVERRIDE {
         asPort().setReader(reader);
     }
 
-    virtual void setAdminReader(PortReader& reader) {
+    virtual void setAdminReader(PortReader& reader) YARP_OVERRIDE {
         asPort().setAdminReader(reader);
     }
 
-    virtual void setInputMode(bool expectInput) {
+    virtual void setInputMode(bool expectInput) YARP_OVERRIDE {
         asPort().setInputMode(expectInput);
     }
 
-    virtual void setOutputMode(bool expectOutput) {
+    virtual void setOutputMode(bool expectOutput) YARP_OVERRIDE {
         asPort().setOutputMode(expectOutput);
     }
 
-    virtual void setRpcMode(bool expectRpc) {
+    virtual void setRpcMode(bool expectRpc) YARP_OVERRIDE {
         asPort().setRpcMode(expectRpc);
     }
 
-    virtual Type getType() {
+    virtual Type getType() YARP_OVERRIDE {
         return asPort().getType();
     }
 
-    virtual void promiseType(const Type& typ) {
+    virtual void promiseType(const Type& typ) YARP_OVERRIDE {
         asPort().promiseType(typ);
     }
 
-    virtual Property *acquireProperties(bool readOnly) {
+    virtual Property *acquireProperties(bool readOnly) YARP_OVERRIDE {
         return asPort().acquireProperties(readOnly);
     }
 
-    virtual void releaseProperties(Property *prop) {
+    virtual void releaseProperties(Property *prop) YARP_OVERRIDE {
         asPort().releaseProperties(prop);
     }
 
     virtual bool write(PortWriter& writer,
-                       PortWriter *callback = YARP_NULLPTR) const {
+                       PortWriter *callback = YARP_NULLPTR) const YARP_OVERRIDE {
         return asPort().write(writer, callback);
     }
 
     virtual bool write(PortWriter& writer, PortReader& reader,
-                       PortWriter *callback = YARP_NULLPTR) const {
+                       PortWriter *callback = YARP_NULLPTR) const YARP_OVERRIDE {
         return asPort().write(writer, reader, callback);
     }
 
-    virtual bool read(PortReader& reader, bool willReply = false) {
+    virtual bool read(PortReader& reader, bool willReply = false) YARP_OVERRIDE {
         return asPort().read(reader, willReply);
     }
 
-    virtual bool reply(PortWriter& writer) {
+    virtual bool reply(PortWriter& writer) YARP_OVERRIDE {
         return asPort().reply(writer);
     }
 
-    virtual bool replyAndDrop(PortWriter& writer) {
+    virtual bool replyAndDrop(PortWriter& writer) YARP_OVERRIDE {
         return asPort().replyAndDrop(writer);
     }
 
-    virtual void includeNodeInName(bool flag) {
+    virtual void includeNodeInName(bool flag) YARP_OVERRIDE {
         return asPort().includeNodeInName(flag);
     }
 
-    virtual bool setCallbackLock(yarp::os::Mutex *mutex = YARP_NULLPTR) {
+    virtual bool setCallbackLock(yarp::os::Mutex *mutex = YARP_NULLPTR) YARP_OVERRIDE {
         return asPort().setCallbackLock(mutex);
     }
 
-    virtual bool removeCallbackLock() {
+    virtual bool removeCallbackLock() YARP_OVERRIDE {
         return asPort().removeCallbackLock();
     }
 
-    virtual bool lockCallback() {
+    virtual bool lockCallback() YARP_OVERRIDE {
         return asPort().lockCallback();
     }
 
-    virtual bool tryLockCallback() {
+    virtual bool tryLockCallback() YARP_OVERRIDE {
         return asPort().tryLockCallback();
     }
 
-    virtual void unlockCallback() {
+    virtual void unlockCallback() YARP_OVERRIDE {
         return asPort().unlockCallback();
     }
 };

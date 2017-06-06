@@ -61,13 +61,13 @@ public:
      */
     virtual ~ImplementPositionDirect();
 
-    virtual bool getAxes(int *axes);
-    virtual bool setPosition(int j, double ref);
-    virtual bool setPositions(const int n_joint, const int *joints, double *refs);
-    virtual bool setPositions(const double *refs);
-    virtual bool getRefPosition(const int joint, double *ref);
-    virtual bool getRefPositions(double *refs);
-    virtual bool getRefPositions(const int n_joint, const int *joints, double *refs);
+    virtual bool getAxes(int *axes) YARP_OVERRIDE;
+    virtual bool setPosition(int j, double ref) YARP_OVERRIDE;
+    virtual bool setPositions(const int n_joint, const int *joints, double *refs) YARP_OVERRIDE;
+    virtual bool setPositions(const double *refs) YARP_OVERRIDE;
+    virtual bool getRefPosition(const int joint, double *ref) YARP_OVERRIDE;
+    virtual bool getRefPositions(double *refs) YARP_OVERRIDE;
+    virtual bool getRefPositions(const int n_joint, const int *joints, double *refs) YARP_OVERRIDE;
 };
 
 
@@ -97,16 +97,16 @@ private:
 public:
     virtual ~StubImplPositionDirectRaw(){}
 
-    virtual bool getAxes(int *axis)
+    virtual bool getAxes(int *axis) YARP_OVERRIDE
     {return NOT_YET_IMPLEMENTED("getAxes");}
 
-    virtual bool setPosition(int j, double ref)
+    virtual bool setPosition(int j, double ref) YARP_OVERRIDE
     {return NOT_YET_IMPLEMENTED("setPosition");}
 
-    virtual bool setPositions(const int n_joint, const int *joints, double *refs)
+    virtual bool setPositions(const int n_joint, const int *joints, double *refs) YARP_OVERRIDE
     {return NOT_YET_IMPLEMENTED("setPositions");}
 
-    virtual bool setPositions(const double *refs)
+    virtual bool setPositions(const double *refs) YARP_OVERRIDE
     {return NOT_YET_IMPLEMENTED("setPositions");}
 };
 

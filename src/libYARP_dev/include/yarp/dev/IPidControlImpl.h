@@ -45,27 +45,27 @@ public:
     */
     ImplementPidControl(yarp::dev::IPidControlRaw *y);
 
-    virtual bool setPid(const PidControlTypeEnum& pidtype, int j, const Pid &pid);
-    virtual bool setPids(const PidControlTypeEnum& pidtype, const Pid *pids);
-    virtual bool setPidReference(const PidControlTypeEnum& pidtype, int j, double ref);
-    virtual bool setPidReferences(const PidControlTypeEnum& pidtype, const double *refs);
-    virtual bool setPidErrorLimit(const PidControlTypeEnum& pidtype, int j, double limit);
-    virtual bool setPidErrorLimits(const PidControlTypeEnum& pidtype, const double *limits);
-    virtual bool getPidError(const PidControlTypeEnum& pidtype, int j, double *err);
-    virtual bool getPidErrors(const PidControlTypeEnum& pidtype, double *errs);
-    virtual bool getPidOutput(const PidControlTypeEnum& pidtype, int j, double *out);
-    virtual bool getPidOutputs(const PidControlTypeEnum& pidtype, double *outs);
-    virtual bool getPid(const PidControlTypeEnum& pidtype, int j, Pid *pid);
-    virtual bool getPids(const PidControlTypeEnum& pidtype, Pid *pids);
-    virtual bool getPidReference(const PidControlTypeEnum& pidtype, int j, double *ref);
-    virtual bool getPidReferences(const PidControlTypeEnum& pidtype, double *refs);
-    virtual bool getPidErrorLimit(const PidControlTypeEnum& pidtype, int j, double *ref);
-    virtual bool getPidErrorLimits(const PidControlTypeEnum& pidtype, double *refs);
-    virtual bool resetPid(const PidControlTypeEnum& pidtype, int j);
-    virtual bool enablePid(const PidControlTypeEnum& pidtype, int j);
-    virtual bool disablePid(const PidControlTypeEnum& pidtype, int j);
-    virtual bool setPidOffset(const PidControlTypeEnum& pidtype, int j, double v);
-    virtual bool isPidEnabled(const PidControlTypeEnum& pidtype, int j, bool* enabled);
+    virtual bool setPid(const PidControlTypeEnum& pidtype, int j, const Pid &pid) YARP_OVERRIDE;
+    virtual bool setPids(const PidControlTypeEnum& pidtype, const Pid *pids) YARP_OVERRIDE;
+    virtual bool setPidReference(const PidControlTypeEnum& pidtype, int j, double ref) YARP_OVERRIDE;
+    virtual bool setPidReferences(const PidControlTypeEnum& pidtype, const double *refs) YARP_OVERRIDE;
+    virtual bool setPidErrorLimit(const PidControlTypeEnum& pidtype, int j, double limit) YARP_OVERRIDE;
+    virtual bool setPidErrorLimits(const PidControlTypeEnum& pidtype, const double *limits) YARP_OVERRIDE;
+    virtual bool getPidError(const PidControlTypeEnum& pidtype, int j, double *err) YARP_OVERRIDE;
+    virtual bool getPidErrors(const PidControlTypeEnum& pidtype, double *errs) YARP_OVERRIDE;
+    virtual bool getPidOutput(const PidControlTypeEnum& pidtype, int j, double *out) YARP_OVERRIDE;
+    virtual bool getPidOutputs(const PidControlTypeEnum& pidtype, double *outs) YARP_OVERRIDE;
+    virtual bool getPid(const PidControlTypeEnum& pidtype, int j, Pid *pid) YARP_OVERRIDE;
+    virtual bool getPids(const PidControlTypeEnum& pidtype, Pid *pids) YARP_OVERRIDE;
+    virtual bool getPidReference(const PidControlTypeEnum& pidtype, int j, double *ref) YARP_OVERRIDE;
+    virtual bool getPidReferences(const PidControlTypeEnum& pidtype, double *refs) YARP_OVERRIDE;
+    virtual bool getPidErrorLimit(const PidControlTypeEnum& pidtype, int j, double *ref) YARP_OVERRIDE;
+    virtual bool getPidErrorLimits(const PidControlTypeEnum& pidtype, double *refs) YARP_OVERRIDE;
+    virtual bool resetPid(const PidControlTypeEnum& pidtype, int j) YARP_OVERRIDE;
+    virtual bool enablePid(const PidControlTypeEnum& pidtype, int j) YARP_OVERRIDE;
+    virtual bool disablePid(const PidControlTypeEnum& pidtype, int j) YARP_OVERRIDE;
+    virtual bool setPidOffset(const PidControlTypeEnum& pidtype, int j, double v) YARP_OVERRIDE;
+    virtual bool isPidEnabled(const PidControlTypeEnum& pidtype, int j, bool* enabled) YARP_OVERRIDE;
 
     void convert_units_to_machine (const yarp::dev::PidControlTypeEnum& pidtype, double userval, int j, double &machineval, int &k);
     void convert_units_to_machine (const yarp::dev::PidControlTypeEnum& pidtype, const double* userval, double* machineval);

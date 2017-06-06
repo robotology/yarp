@@ -27,43 +27,43 @@ public:
 
     virtual ~RosNameSpace();
 
-    virtual Contact getNameServerContact() const;
+    virtual Contact getNameServerContact() const YARP_OVERRIDE;
 
-    virtual Contact queryName(const ConstString& name);
-    virtual Contact registerName(const ConstString& name);
-    virtual Contact registerContact(const Contact& contact);
-    virtual Contact unregisterName(const ConstString& name);
-    virtual Contact unregisterContact(const Contact& contact);
+    virtual Contact queryName(const ConstString& name) YARP_OVERRIDE;
+    virtual Contact registerName(const ConstString& name) YARP_OVERRIDE;
+    virtual Contact registerContact(const Contact& contact) YARP_OVERRIDE;
+    virtual Contact unregisterName(const ConstString& name) YARP_OVERRIDE;
+    virtual Contact unregisterContact(const Contact& contact) YARP_OVERRIDE;
     virtual Contact registerAdvanced(const Contact& contact,
-                                     NameStore *store);
+                                     NameStore *store) YARP_OVERRIDE;
     virtual Contact unregisterAdvanced(const ConstString& name,
-                                       NameStore *store);
+                                       NameStore *store) YARP_OVERRIDE;
 
     virtual bool setProperty(const ConstString& name,
                              const ConstString& key,
-                             const Value& value);
+                             const Value& value) YARP_OVERRIDE;
 
     virtual Value *getProperty(const ConstString& name,
-                               const ConstString& key);
+                               const ConstString& key) YARP_OVERRIDE;
 
     virtual bool connectPortToTopic(const Contact& src,
                                     const Contact& dest,
-                                    ContactStyle style);
+                                    ContactStyle style) YARP_OVERRIDE;
     virtual bool connectTopicToPort(const Contact& src,
                                     const Contact& dest,
-                                    ContactStyle style);
+                                    ContactStyle style) YARP_OVERRIDE;
     virtual bool disconnectPortFromTopic(const Contact& src,
                                          const Contact& dest,
-                                         ContactStyle style);
+                                         ContactStyle style) YARP_OVERRIDE;
     virtual bool disconnectTopicFromPort(const Contact& src,
                                          const Contact& dest,
-                                         ContactStyle style);
+                                         ContactStyle style) YARP_OVERRIDE;
     virtual bool connectPortToPortPersistently(const Contact& src,
                                                const Contact& dest,
-                                               ContactStyle style);
+                                               ContactStyle style) YARP_OVERRIDE;
     virtual bool disconnectPortToPortPersistently(const Contact& src,
                                                   const Contact& dest,
-                                                  ContactStyle style);
+                                                  ContactStyle style) YARP_OVERRIDE;
     virtual bool connectTopic(Bottle& cmd,
                               bool srcIsTopic,
                               const Contact& src,
@@ -71,17 +71,17 @@ public:
                               ContactStyle style,
                               bool activeRegistration);
 
-    virtual bool localOnly() const;
-    virtual bool usesCentralServer() const;
-    virtual bool serverAllocatesPortNumbers() const;
-    virtual bool connectionHasNameOfEndpoints() const;
+    virtual bool localOnly() const YARP_OVERRIDE;
+    virtual bool usesCentralServer() const YARP_OVERRIDE;
+    virtual bool serverAllocatesPortNumbers() const YARP_OVERRIDE;
+    virtual bool connectionHasNameOfEndpoints() const YARP_OVERRIDE;
 
     virtual Contact detectNameServer(bool useDetectedServer,
                                      bool& scanNeeded,
-                                     bool& serverUsed);
+                                     bool& serverUsed) YARP_OVERRIDE;
     virtual bool writeToNameServer(PortWriter& cmd,
                                    PortReader& reply,
-                                   const ContactStyle& style);
+                                   const ContactStyle& style) YARP_OVERRIDE;
 
 
     /**
@@ -96,7 +96,7 @@ public:
     static ConstString fromRosNodeName(const ConstString& name);
     static Contact rosify(const Contact& contact);
 
-    virtual void run();
+    virtual void run() YARP_OVERRIDE;
 
 private:
     Contact contact;

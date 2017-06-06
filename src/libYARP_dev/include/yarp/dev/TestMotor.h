@@ -61,13 +61,13 @@ public:
         last = -1;
     }
 
-    virtual bool getAxes(int *ax) {
+    virtual bool getAxes(int *ax) YARP_OVERRIDE {
         *ax = njoints;
         yInfo("TestMotor reporting %d axes present", *ax);
         return true;
     }
 
-    virtual bool open(yarp::os::Searchable& config) {
+    virtual bool open(yarp::os::Searchable& config) YARP_OVERRIDE {
         njoints = config.check("axes",yarp::os::Value(4),"number of axes to pretend to have").asInt();
         pos.resize(njoints);
         speed.resize(njoints);
@@ -85,7 +85,7 @@ public:
     }
 
 
-    virtual bool positionMove(int j, double ref) {
+    virtual bool positionMove(int j, double ref) YARP_OVERRIDE {
         posMode = true;
         if (j<njoints) {
             pos[j] = ref;
@@ -94,7 +94,7 @@ public:
     }
 
 
-    virtual bool positionMove(const double *refs) {
+    virtual bool positionMove(const double *refs) YARP_OVERRIDE {
         posMode = true;
         for (int i=0; i<njoints; i++) {
             pos[i] = refs[i];
@@ -103,7 +103,7 @@ public:
     }
 
 
-    virtual bool relativeMove(int j, double delta) {
+    virtual bool relativeMove(int j, double delta) YARP_OVERRIDE {
         posMode = true;
         if (j<njoints) {
             pos[j] += delta;
@@ -112,7 +112,7 @@ public:
     }
 
 
-    virtual bool relativeMove(const double *deltas) {
+    virtual bool relativeMove(const double *deltas) YARP_OVERRIDE {
         posMode = true;
         for (int i=0; i<njoints; i++) {
             pos[i] += deltas[i];
@@ -121,18 +121,18 @@ public:
     }
 
 
-    virtual bool checkMotionDone(int j, bool *flag) {
+    virtual bool checkMotionDone(int j, bool *flag) YARP_OVERRIDE {
         yarp::os::Time::delay(delay/1000.0);
         return true;
     }
 
 
-    virtual bool checkMotionDone(bool *flag) {
+    virtual bool checkMotionDone(bool *flag) YARP_OVERRIDE {
         return true;
     }
 
 
-    virtual bool setRefSpeed(int j, double sp) {
+    virtual bool setRefSpeed(int j, double sp) YARP_OVERRIDE {
         if (j<njoints) {
             speed[j] = sp;
         }
@@ -140,7 +140,7 @@ public:
     }
 
 
-    virtual bool setRefSpeeds(const double *spds) {
+    virtual bool setRefSpeeds(const double *spds) YARP_OVERRIDE {
         for (int i=0; i<njoints; i++) {
             speed[i] = spds[i];
         }
@@ -148,7 +148,7 @@ public:
     }
 
 
-    virtual bool setRefAcceleration(int j, double acc) {
+    virtual bool setRefAcceleration(int j, double acc) YARP_OVERRIDE {
         if (j<njoints) {
             this->acc[j] = acc;
         }
@@ -156,7 +156,7 @@ public:
     }
 
 
-    virtual bool setRefAccelerations(const double *accs) {
+    virtual bool setRefAccelerations(const double *accs) YARP_OVERRIDE {
         for (int i=0; i<njoints; i++) {
             acc[i] = accs[i];
         }
@@ -164,7 +164,7 @@ public:
     }
 
 
-    virtual bool getRefSpeed(int j, double *ref) {
+    virtual bool getRefSpeed(int j, double *ref) YARP_OVERRIDE {
         if (j<njoints) {
             (*ref) = speed[j];
         }
@@ -172,7 +172,7 @@ public:
     }
 
 
-    virtual bool getRefSpeeds(double *spds) {
+    virtual bool getRefSpeeds(double *spds) YARP_OVERRIDE {
         for (int i=0; i<njoints; i++) {
             spds[i] = speed[i];
         }
@@ -180,7 +180,7 @@ public:
     }
 
 
-    virtual bool getRefAcceleration(int j, double *acc) {
+    virtual bool getRefAcceleration(int j, double *acc) YARP_OVERRIDE {
         if (j<njoints) {
             (*acc) = this->acc[j];
         }
@@ -188,7 +188,7 @@ public:
     }
 
 
-    virtual bool getRefAccelerations(double *accs) {
+    virtual bool getRefAccelerations(double *accs) YARP_OVERRIDE {
         for (int i=0; i<njoints; i++) {
             accs[i] = acc[i];
         }
@@ -196,28 +196,28 @@ public:
     }
 
 
-    virtual bool stop(int j) {
+    virtual bool stop(int j) YARP_OVERRIDE {
         return true;
     }
 
 
-    virtual bool stop() {
+    virtual bool stop() YARP_OVERRIDE {
         return true;
     }
 
 
-    virtual bool close() {
+    virtual bool close() YARP_OVERRIDE {
         return true;
     }
 
-    virtual bool resetEncoder(int j) {
+    virtual bool resetEncoder(int j) YARP_OVERRIDE {
         if (j<njoints) {
             pos[j] = 0;
         }
         return true;
     }
 
-    virtual bool resetEncoders() {
+    virtual bool resetEncoders() YARP_OVERRIDE {
         for (int i=0; i<njoints; i++) {
             pos[i] = 0;
         }
@@ -225,7 +225,7 @@ public:
         return true;
     }
 
-    virtual bool setEncoder(int j, double val) {
+    virtual bool setEncoder(int j, double val) YARP_OVERRIDE {
         if (j<njoints) {
             pos[j] = val;
         }
@@ -233,7 +233,7 @@ public:
         return true;
     }
 
-    virtual bool setEncoders(const double *vals) {
+    virtual bool setEncoders(const double *vals) YARP_OVERRIDE {
         for (int i=0; i<njoints; i++) {
             pos[i] = vals[i];
         }
@@ -241,7 +241,7 @@ public:
         return true;
     }
 
-    virtual bool getEncoder(int j, double *v) {
+    virtual bool getEncoder(int j, double *v) YARP_OVERRIDE {
         update();
         if (j<njoints) {
             (*v) = pos[j];
@@ -249,7 +249,7 @@ public:
         return true;
     }
 
-    virtual bool getEncoders(double *encs) {
+    virtual bool getEncoders(double *encs) YARP_OVERRIDE {
         update();
         for (int i=0; i<njoints; i++) {
             encs[i] = pos[i];
@@ -258,49 +258,49 @@ public:
     }
 
 
-    virtual bool getEncoderTimed(int j, double *encs, double *time)
+    virtual bool getEncoderTimed(int j, double *encs, double *time) YARP_OVERRIDE
     {
         bool ret = getEncoder(j, encs);
         *time = yarp::os::Time::now();
         return ret;
     }
 
-    virtual bool getEncodersTimed(double *encs, double *time)
+    virtual bool getEncodersTimed(double *encs, double *time) YARP_OVERRIDE
     {
         bool ret = getEncoders(encs);
         *time = yarp::os::Time::now();
         return ret;
     }
 
-    virtual bool getEncoderSpeed(int j, double *sp) {
+    virtual bool getEncoderSpeed(int j, double *sp) YARP_OVERRIDE {
         if (j<njoints) {
             (*sp) = 0;
         }
         return true;
     }
 
-    virtual bool getEncoderSpeeds(double *spds) {
+    virtual bool getEncoderSpeeds(double *spds) YARP_OVERRIDE {
         for (int i=0; i<njoints; i++) {
             spds[i] = 0;
         }
         return true;
     }
 
-    virtual bool getEncoderAcceleration(int j, double *spds) {
+    virtual bool getEncoderAcceleration(int j, double *spds) YARP_OVERRIDE {
         if (j<njoints) {
             (*spds) = 0;
         }
         return true;
     }
 
-    virtual bool getEncoderAccelerations(double *accs) {
+    virtual bool getEncoderAccelerations(double *accs) YARP_OVERRIDE {
         for (int i=0; i<njoints; i++) {
             accs[i] = 0;
         }
         return true;
     }
 
-    virtual bool velocityMove(int j, double sp) {
+    virtual bool velocityMove(int j, double sp) YARP_OVERRIDE {
         posMode = false;
         if (j<njoints) {
             vel[j] = sp;
@@ -308,7 +308,7 @@ public:
         return true;
     }
 
-    virtual bool velocityMove(const double *sp) {
+    virtual bool velocityMove(const double *sp) YARP_OVERRIDE {
         posMode = false;
         for (int i=0; i<njoints; i++) {
             vel[i] = sp[i];

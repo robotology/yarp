@@ -50,22 +50,22 @@ public:
 
     virtual ~ImplementMotorEncoders();
 
-    virtual bool getNumberOfMotorEncoders(int *num);
+    virtual bool getNumberOfMotorEncoders(int *num) YARP_OVERRIDE;
 
-    virtual bool resetMotorEncoder(int m);
-    virtual bool resetMotorEncoders();
-    virtual bool setMotorEncoder(int m, const double val);
-    virtual bool setMotorEncoders(const double *vals);
-    virtual bool setMotorEncoderCountsPerRevolution(int m, const double cpr);
-    virtual bool getMotorEncoderCountsPerRevolution(int m, double *cpr);
-    virtual bool getMotorEncoder(int m, double *v);
-    virtual bool getMotorEncodersTimed(double *encs, double *time);
-    virtual bool getMotorEncoderTimed(int m, double *v, double *t);
-    virtual bool getMotorEncoders(double *encs);
-    virtual bool getMotorEncoderSpeed(int m, double *spds);
-    virtual bool getMotorEncoderSpeeds(double *spds);
-    virtual bool getMotorEncoderAcceleration(int m, double *spds);
-    virtual bool getMotorEncoderAccelerations(double *accs);
+    virtual bool resetMotorEncoder(int m) YARP_OVERRIDE;
+    virtual bool resetMotorEncoders() YARP_OVERRIDE;
+    virtual bool setMotorEncoder(int m, const double val) YARP_OVERRIDE;
+    virtual bool setMotorEncoders(const double *vals) YARP_OVERRIDE;
+    virtual bool setMotorEncoderCountsPerRevolution(int m, const double cpr) YARP_OVERRIDE;
+    virtual bool getMotorEncoderCountsPerRevolution(int m, double *cpr) YARP_OVERRIDE;
+    virtual bool getMotorEncoder(int m, double *v) YARP_OVERRIDE;
+    virtual bool getMotorEncodersTimed(double *encs, double *time) YARP_OVERRIDE;
+    virtual bool getMotorEncoderTimed(int m, double *v, double *t) YARP_OVERRIDE;
+    virtual bool getMotorEncoders(double *encs) YARP_OVERRIDE;
+    virtual bool getMotorEncoderSpeed(int m, double *spds) YARP_OVERRIDE;
+    virtual bool getMotorEncoderSpeeds(double *spds) YARP_OVERRIDE;
+    virtual bool getMotorEncoderAcceleration(int m, double *spds) YARP_OVERRIDE;
+    virtual bool getMotorEncoderAccelerations(double *accs) YARP_OVERRIDE;
 };
 
 #endif // YARP_DEV_IMPLEMENTMOTORENCODERS_H

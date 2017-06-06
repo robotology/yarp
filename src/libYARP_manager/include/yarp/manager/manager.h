@@ -107,14 +107,14 @@ public:
     ErrorLogger* getLogger(void) { return logger;}
 
 protected:
-    virtual void onExecutableStart(void* which);
-    virtual void onExecutableStop(void* which);
-    virtual void onExecutableDied(void* which);
-    virtual void onExecutableFailed(void* which);
-    virtual void onCnnStablished(void* which);
-    virtual void onCnnFailed(void* which);
-    virtual void onError(void* which);
-    virtual void onExecutableStdout(void* which, const char* msg);
+    virtual void onExecutableStart(void* which) YARP_OVERRIDE;
+    virtual void onExecutableStop(void* which) YARP_OVERRIDE;
+    virtual void onExecutableDied(void* which) YARP_OVERRIDE;
+    virtual void onExecutableFailed(void* which) YARP_OVERRIDE;
+    virtual void onCnnStablished(void* which) YARP_OVERRIDE;
+    virtual void onCnnFailed(void* which) YARP_OVERRIDE;
+    virtual void onError(void* which) YARP_OVERRIDE;
+    virtual void onExecutableStdout(void* which, const char* msg) YARP_OVERRIDE;
 
 
 private:

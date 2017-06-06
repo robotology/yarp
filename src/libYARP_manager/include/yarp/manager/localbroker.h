@@ -48,35 +48,35 @@ public:
 
     LocalBroker();
     virtual ~LocalBroker();
-    bool init();
+    bool init() YARP_OVERRIDE;
     bool init(const char* szcmd, const char* szparam,
               const char* szhost, const char* szstdio,
-              const char* szworkdir, const char* szenv );
-    void fini(void);
-    bool start();
-    bool stop();
-    bool kill();
+              const char* szworkdir, const char* szenv) YARP_OVERRIDE;
+    void fini(void) YARP_OVERRIDE;
+    bool start() YARP_OVERRIDE;
+    bool stop() YARP_OVERRIDE;
+    bool kill() YARP_OVERRIDE;
     bool connect(const char* from, const char* to,
-                 const char* carrier, bool persist=false);
+                 const char* carrier, bool persist=false) YARP_OVERRIDE;
     bool disconnect(const char* from, const char* to,
-                    const char *carrier);
-    int running(void);
-    bool exists(const char* port);
-    const char* requestRpc(const char* szport, const char* request, double timeout);
+                    const char *carrier) YARP_OVERRIDE;
+    int running(void) YARP_OVERRIDE;
+    bool exists(const char* port) YARP_OVERRIDE;
+    const char* requestRpc(const char* szport, const char* request, double timeout) YARP_OVERRIDE;
     bool connected(const char* from, const char* to,
-                   const char* carrier);
-    const char* error(void);
-    bool initialized(void) { return bInitialized;}
-    bool attachStdout(void);
-    void detachStdout(void);
+                   const char* carrier) YARP_OVERRIDE;
+    const char* error(void) YARP_OVERRIDE;
+    bool initialized(void) YARP_OVERRIDE { return bInitialized;}
+    bool attachStdout(void) YARP_OVERRIDE;
+    void detachStdout(void) YARP_OVERRIDE;
 
     /** Define if the application will be visible or not */
     void setWindowMode(WindowMode m);
 
 public: // for rate thread
-    void run();
-    bool threadInit();
-    void threadRelease();
+    void run() YARP_OVERRIDE;
+    bool threadInit() YARP_OVERRIDE;
+    void threadRelease() YARP_OVERRIDE;
 
 protected:
 

@@ -41,7 +41,7 @@ public:
     }
 
 
-    virtual bool read(ConnectionReader& connection) {
+    virtual bool read(ConnectionReader& connection) YARP_OVERRIDE {
         // An exception will get thrown upon error.
         // Pending: translate this in expectBlock to a return value.
         connection.convertTextMode(); // if connection is text-mode, convert!
@@ -49,7 +49,7 @@ public:
         return true;
     }
 
-    virtual bool write(ConnectionWriter& connection) {
+    virtual bool write(ConnectionWriter& connection) YARP_OVERRIDE {
         connection.appendBlock((char*)(&t), sizeof(T));
         connection.convertTextMode(); // if connection is text-mode, convert!
         return true;

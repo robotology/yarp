@@ -48,14 +48,14 @@ public:
 
     virtual ~ImplementMotor();
 
-    virtual bool getNumberOfMotors(int *num);
+    virtual bool getNumberOfMotors(int *num) YARP_OVERRIDE;
 
-    virtual bool getTemperature      (int m, double* val);
-    virtual bool getTemperatures     (double *vals);
-    virtual bool getTemperatureLimit (int m, double* val);
-    virtual bool setTemperatureLimit (int m, const double val);
-    virtual bool getGearboxRatio     (int m, double* val);
-    virtual bool setGearboxRatio     (int m, const double val);
+    virtual bool getTemperature      (int m, double* val) YARP_OVERRIDE;
+    virtual bool getTemperatures     (double *vals) YARP_OVERRIDE;
+    virtual bool getTemperatureLimit (int m, double* val) YARP_OVERRIDE;
+    virtual bool setTemperatureLimit (int m, const double val) YARP_OVERRIDE;
+    virtual bool getGearboxRatio     (int m, double* val) YARP_OVERRIDE;
+    virtual bool setGearboxRatio     (int m, const double val) YARP_OVERRIDE;
 };
 
 #endif // YARP_DEV_IMPLEMENTMOTOR_H

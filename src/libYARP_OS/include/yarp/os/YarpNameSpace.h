@@ -24,58 +24,58 @@ public:
 
     virtual ~YarpNameSpace();
 
-    virtual Contact getNameServerContact() const {
+    virtual Contact getNameServerContact() const YARP_OVERRIDE {
         return contact;
     }
 
-    virtual Contact queryName(const ConstString& name);
+    virtual Contact queryName(const ConstString& name) YARP_OVERRIDE;
 
-    virtual Contact registerName(const ConstString& name);
+    virtual Contact registerName(const ConstString& name) YARP_OVERRIDE;
 
-    virtual Contact registerContact(const Contact& contact);
+    virtual Contact registerContact(const Contact& contact) YARP_OVERRIDE;
 
-    virtual Contact unregisterName(const ConstString& name);
+    virtual Contact unregisterName(const ConstString& name) YARP_OVERRIDE;
 
-    virtual Contact unregisterContact(const Contact& contact);
+    virtual Contact unregisterContact(const Contact& contact) YARP_OVERRIDE;
 
     virtual bool setProperty(const ConstString& name, const ConstString& key,
-                             const Value& value);
+                             const Value& value) YARP_OVERRIDE;
 
-    virtual Value *getProperty(const ConstString& name, const ConstString& key);
+    virtual Value *getProperty(const ConstString& name, const ConstString& key) YARP_OVERRIDE;
 
     virtual bool connectPortToTopic(const Contact& src,
                                     const Contact& dest,
-                                    ContactStyle style) {
+                                    ContactStyle style)  YARP_OVERRIDE {
         return connectTopic("subscribe", false, true, src, dest, style);
     }
 
     virtual bool connectTopicToPort(const Contact& src,
                                     const Contact& dest,
-                                    ContactStyle style) {
+                                    ContactStyle style) YARP_OVERRIDE {
         return connectTopic("subscribe", true, false, src, dest, style);
     }
 
     virtual bool disconnectPortFromTopic(const Contact& src,
                                          const Contact& dest,
-                                         ContactStyle style) {
+                                         ContactStyle style) YARP_OVERRIDE {
         return connectTopic("unsubscribe", false, true, src, dest, style);
     }
 
     virtual bool disconnectTopicFromPort(const Contact& src,
                                          const Contact& dest,
-                                         ContactStyle style) {
+                                         ContactStyle style) YARP_OVERRIDE {
         return connectTopic("unsubscribe", true, false, src, dest, style);
     }
 
     virtual bool connectPortToPortPersistently(const Contact& src,
                                                const Contact& dest,
-                                               ContactStyle style) {
+                                               ContactStyle style) YARP_OVERRIDE {
         return connectTopic("subscribe", false, false, src, dest, style);
     }
 
     virtual bool disconnectPortToPortPersistently(const Contact& src,
                                                   const Contact& dest,
-                                                  ContactStyle style) {
+                                                  ContactStyle style) YARP_OVERRIDE {
         return connectTopic("unsubscribe", false, false, src, dest, style);
     }
 
@@ -130,29 +130,29 @@ public:
         return !fail;
     }
 
-    virtual bool localOnly() const {
+    virtual bool localOnly() const YARP_OVERRIDE {
         return false;
     }
 
-    virtual bool usesCentralServer() const {
+    virtual bool usesCentralServer() const YARP_OVERRIDE {
         return true;
     }
 
-    virtual bool serverAllocatesPortNumbers() const {
+    virtual bool serverAllocatesPortNumbers() const YARP_OVERRIDE {
         return true;
     }
 
-    virtual bool connectionHasNameOfEndpoints() const {
+    virtual bool connectionHasNameOfEndpoints() const YARP_OVERRIDE {
         return true;
     }
 
     virtual Contact detectNameServer(bool useDetectedServer,
                                      bool& scanNeeded,
-                                     bool& serverUsed);
+                                     bool& serverUsed) YARP_OVERRIDE;
 
     virtual bool writeToNameServer(PortWriter& cmd,
                                    PortReader& reply,
-                                   const ContactStyle& style);
+                                   const ContactStyle& style) YARP_OVERRIDE;
 
 private:
     void *system_resource;
@@ -163,11 +163,11 @@ class yarp::os::YarpDummyNameSpace : public YarpNameSpace {
 public:
     YarpDummyNameSpace() : YarpNameSpace(Contact()) {}
 
-    virtual bool localOnly() const {
+    virtual bool localOnly() const YARP_OVERRIDE {
         return true;
     }
 
-    virtual Contact getNameServerContact() const {
+    virtual Contact getNameServerContact() const YARP_OVERRIDE {
         return Contact("/root");
     }
  };

@@ -34,7 +34,7 @@ public:
     TestCase(std::string name);
     virtual ~TestCase();
 
-    bool setup(int argc, char** argv);
+    bool setup(int argc, char** argv) YARP_OVERRIDE;
     virtual bool setup(yarp::os::Property& property);
 
 private:

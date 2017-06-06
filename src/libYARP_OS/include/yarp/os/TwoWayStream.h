@@ -112,23 +112,23 @@ private:
 public:
     virtual ~NullStream();
 
-    virtual InputStream& getInputStream();
-    virtual OutputStream& getOutputStream();
+    virtual InputStream& getInputStream() YARP_OVERRIDE;
+    virtual OutputStream& getOutputStream() YARP_OVERRIDE;
 
-    virtual const Contact& getLocalAddress();
-    virtual const Contact& getRemoteAddress();
+    virtual const Contact& getLocalAddress() YARP_OVERRIDE;
+    virtual const Contact& getRemoteAddress() YARP_OVERRIDE;
 
-    virtual bool isOk();
-    virtual void reset();
-    virtual void close();
-    virtual void beginPacket();
-    virtual void endPacket();
+    virtual bool isOk() YARP_OVERRIDE;
+    virtual void reset() YARP_OVERRIDE;
+    virtual void close() YARP_OVERRIDE;
+    virtual void beginPacket() YARP_OVERRIDE;
+    virtual void endPacket() YARP_OVERRIDE;
 
     using yarp::os::InputStream::read;
-    virtual YARP_SSIZE_T read(const Bytes& b);
+    virtual YARP_SSIZE_T read(const Bytes& b) YARP_OVERRIDE;
 
     using yarp::os::OutputStream::write;
-    virtual void write(const Bytes& b);
+    virtual void write(const Bytes& b) YARP_OVERRIDE;
 };
 
 #endif // YARP_OS_TWOWAYSTREAM_H

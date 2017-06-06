@@ -301,7 +301,7 @@ public:
     size_t getNameLenght() {return strName.length(); }
     const char* getVersion(void) { return strVersion.c_str(); }
     const char* getDescription(void) { return strDescription.c_str(); }
-    virtual Node* clone(void);
+    virtual Node* clone(void) YARP_OVERRIDE;
 
     void addAuthor(Author& author) { authors.push_back(author); }
     int authorCount(void) { return authors.size(); }

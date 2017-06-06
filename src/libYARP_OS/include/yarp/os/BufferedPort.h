@@ -95,34 +95,34 @@ public:
 
 
     // documentation provided in Contactable
-    virtual bool open(const ConstString& name) {
+    virtual bool open(const ConstString& name) YARP_OVERRIDE {
         attachIfNeeded();
         return port.open(name);
     }
 
     // documentation provided in Contactable
-    virtual bool open(const Contact& contact, bool registerName = true) {
+    virtual bool open(const Contact& contact, bool registerName = true) YARP_OVERRIDE {
         attachIfNeeded();
         return port.open(contact, registerName);
     }
 
     // documentation provided in Contactable
-    virtual bool addOutput(const ConstString& name) {
+    virtual bool addOutput(const ConstString& name) YARP_OVERRIDE {
         return port.addOutput(name);
     }
 
     // documentation provided in Contactable
-    virtual bool addOutput(const ConstString& name, const ConstString& carrier) {
+    virtual bool addOutput(const ConstString& name, const ConstString& carrier) YARP_OVERRIDE {
         return port.addOutput(name, carrier);
     }
 
     // documentation provided in Contactable
-    virtual bool addOutput(const Contact& contact){
+    virtual bool addOutput(const Contact& contact) YARP_OVERRIDE {
         return port.addOutput(contact);
     }
 
     // documentation provided in Contactable
-    virtual void close() {
+    virtual void close() YARP_OVERRIDE {
         port.close();
         reader.detach();
         writer.detach();
@@ -130,12 +130,12 @@ public:
     }
 
     // documentation provided in Contactable
-    virtual void interrupt() {
+    virtual void interrupt() YARP_OVERRIDE {
         interrupted = true;
         port.interrupt();
     }
 
-    virtual void resume() {
+    virtual void resume() YARP_OVERRIDE {
         port.resume();
         interrupted = false;
     }
@@ -143,17 +143,17 @@ public:
     /**
      * Get the number of objects ready to be read.
      */
-    virtual int getPendingReads() {
+    virtual int getPendingReads() YARP_OVERRIDE {
         return reader.getPendingReads();
     }
 
     // documentation provided in Contactable
-    virtual Contact where() const {
+    virtual Contact where() const YARP_OVERRIDE {
         return port.where();
     }
 
     // documentation provided in Contactable
-    virtual ConstString getName() const {
+    virtual ConstString getName() const YARP_OVERRIDE {
         return where().getName();
     }
 
@@ -237,7 +237,7 @@ public:
      * fast as the come in, watch out.
      *
      */
-    void setStrict(bool strict=true) {
+    void setStrict(bool strict=true) YARP_OVERRIDE {
         attachIfNeeded();
         reader.setStrict(strict);
     }
@@ -251,7 +251,7 @@ public:
      * @return a message, or YARP_NULLPTR
      *
      */
-    virtual T *read(bool shouldWait=true) {
+    virtual T *read(bool shouldWait=true) YARP_OVERRIDE {
         if (!port.isOpen()) return YARP_NULLPTR;
         if (interrupted) return YARP_NULLPTR;
         T *result = reader.read(shouldWait);
@@ -263,25 +263,25 @@ public:
         return result;
     }
 
-    virtual T *lastRead() {
+    virtual T *lastRead() YARP_OVERRIDE {
         return reader.lastRead();
     }
 
-    virtual bool isClosed() {
+    virtual bool isClosed() YARP_OVERRIDE {
         return reader.isClosed();
     }
 
-    void setReplier(PortReader& reader) {
+    void setReplier(PortReader& reader) YARP_OVERRIDE {
         attachIfNeeded();
         this->reader.setReplier(reader);
     }
 
-    void setReader(PortReader& reader) {
+    void setReader(PortReader& reader) YARP_OVERRIDE {
         attachIfNeeded();
         setReplier(reader);
     }
 
-    void setAdminReader(PortReader& reader) {
+    void setAdminReader(PortReader& reader) YARP_OVERRIDE {
         attachIfNeeded();
         port.setAdminReader(reader);
     }
@@ -290,7 +290,7 @@ public:
      * this method will be called with new data, as long as you've
      * requested this be done by calling useCallback()
      */
-    virtual void onRead(T& datum) {
+    virtual void onRead(T& datum) YARP_OVERRIDE {
         YARP_UNUSED(datum);
         // override this to do something
     }
@@ -299,7 +299,7 @@ public:
      * Set an object whose onRead method will be called when data is
      * available.
      */
-    void useCallback(TypedReaderCallback<T>& callback) {
+    void useCallback(TypedReaderCallback<T>& callback) YARP_OVERRIDE {
         attachIfNeeded();
         reader.useCallback(callback);
     }
@@ -313,119 +313,119 @@ public:
         reader.useCallback(*this);
     }
 
-    void disableCallback() {
+    void disableCallback() YARP_OVERRIDE {
         attachIfNeeded();
         reader.disableCallback();
     }
 
     // documented in Contactable
-    virtual bool setEnvelope(PortWriter& envelope) {
+    virtual bool setEnvelope(PortWriter& envelope) YARP_OVERRIDE {
         return port.setEnvelope(envelope);
     }
 
 
     // documented in Contactable
-    virtual bool getEnvelope(PortReader& envelope) {
+    virtual bool getEnvelope(PortReader& envelope) YARP_OVERRIDE {
         return reader.getEnvelope(envelope);
     }
 
     // documented in Contactable
-    virtual int getInputCount() {
+    virtual int getInputCount() YARP_OVERRIDE {
         return port.getInputCount();
     }
 
     // documented in Contactable
-    virtual int getOutputCount() {
+    virtual int getOutputCount() YARP_OVERRIDE {
         return port.getOutputCount();
     }
 
     // documented in Contactable
-    bool isWriting() {
+    bool isWriting() YARP_OVERRIDE {
         return port.isWriting();
     }
 
     // documented in Contactable
-    virtual void getReport(PortReport& reporter) {
+    virtual void getReport(PortReport& reporter) YARP_OVERRIDE {
         port.getReport(reporter);
     }
 
     // documented in Contactable
-    virtual void setReporter(PortReport& reporter) {
+    virtual void setReporter(PortReport& reporter) YARP_OVERRIDE {
         port.setReporter(reporter);
     }
 
     // documented in Contactable
-    virtual void resetReporter() {
+    virtual void resetReporter() YARP_OVERRIDE {
         port.resetReporter();
     }
 
     // documented in TypedReader
-    virtual void *acquire() {
+    virtual void *acquire() YARP_OVERRIDE {
         return reader.acquire();
     }
 
     // documented in TypedReader
-    virtual void release(void *handle) {
+    virtual void release(void *handle) YARP_OVERRIDE {
         reader.release(handle);
     }
 
 
     // documented in TypedReader
-    virtual void setTargetPeriod(double period) {
+    virtual void setTargetPeriod(double period) YARP_OVERRIDE {
         attachIfNeeded();
         reader.setTargetPeriod(period);
     }
 
-    virtual Type getType() {
+    virtual Type getType() YARP_OVERRIDE {
         return port.getType();
     }
 
-    virtual void promiseType(const Type& typ) {
+    virtual void promiseType(const Type& typ) YARP_OVERRIDE {
         port.promiseType(typ);
     }
 
-    virtual void setInputMode(bool expectInput) {
+    virtual void setInputMode(bool expectInput) YARP_OVERRIDE {
         port.setInputMode(expectInput);
     }
 
-    virtual void setOutputMode(bool expectOutput) {
+    virtual void setOutputMode(bool expectOutput) YARP_OVERRIDE {
         port.setOutputMode(expectOutput);
     }
 
-    virtual void setRpcMode(bool expectRpc) {
+    virtual void setRpcMode(bool expectRpc) YARP_OVERRIDE {
         port.setRpcMode(expectRpc);
     }
 
 
-    virtual Property *acquireProperties(bool readOnly) {
+    virtual Property *acquireProperties(bool readOnly) YARP_OVERRIDE {
         return port.acquireProperties(readOnly);
     }
 
-    virtual void releaseProperties(Property *prop) {
+    virtual void releaseProperties(Property *prop) YARP_OVERRIDE {
         port.releaseProperties(prop);
     }
 
-    virtual void includeNodeInName(bool flag) {
+    virtual void includeNodeInName(bool flag) YARP_OVERRIDE {
         return port.includeNodeInName(flag);
     }
 
-    virtual bool setCallbackLock(yarp::os::Mutex *mutex) {
+    virtual bool setCallbackLock(yarp::os::Mutex *mutex) YARP_OVERRIDE {
         return port.setCallbackLock(mutex);
     }
 
-    virtual bool removeCallbackLock() {
+    virtual bool removeCallbackLock() YARP_OVERRIDE {
         return port.removeCallbackLock();
     }
 
-    virtual bool lockCallback() {
+    virtual bool lockCallback() YARP_OVERRIDE {
         return port.lockCallback();
     }
 
-    virtual bool tryLockCallback() {
+    virtual bool tryLockCallback() YARP_OVERRIDE {
         return port.tryLockCallback();
     }
 
-    virtual void unlockCallback() {
+    virtual void unlockCallback() YARP_OVERRIDE {
         return port.unlockCallback();
     }
 

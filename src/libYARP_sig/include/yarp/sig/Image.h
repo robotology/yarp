@@ -266,13 +266,13 @@ public:
      * Read image from a connection.
      * @return true iff image was read correctly
      */
-    virtual bool read(yarp::os::ConnectionReader& connection);
+    virtual bool read(yarp::os::ConnectionReader& connection) YARP_OVERRIDE;
 
     /**
      * Write image to a connection.
      * @return true iff image was written correctly
      */
-    virtual bool write(yarp::os::ConnectionWriter& connection);
+    virtual bool write(yarp::os::ConnectionWriter& connection) YARP_OVERRIDE;
 
     void setQuantum(int imgQuantum);
 
@@ -305,7 +305,7 @@ public:
         return data;
     }
 
-    virtual yarp::os::Type getReadType() {
+    virtual yarp::os::Type getReadType() YARP_OVERRIDE {
         return yarp::os::Type::byName("yarp/image");
     }
 
@@ -602,11 +602,11 @@ private: \
   T nullPixel; \
 public: \
 \
-  virtual int getPixelSize() const { \
+  virtual int getPixelSize() const YARP_OVERRIDE { \
     return sizeof(T); \
   } \
 \
-  virtual int getPixelCode() const { \
+  virtual int getPixelCode() const YARP_OVERRIDE { \
     return tag; \
   } \
 \

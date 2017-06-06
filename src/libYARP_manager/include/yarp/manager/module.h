@@ -16,6 +16,7 @@
 #include <yarp/manager/data.h>
 #include <yarp/manager/utility.h>
 #include <yarp/manager/resource.h>
+#include <yarp/conf/api.h>
 
 using namespace std;
 
@@ -109,7 +110,7 @@ public:
     Module(const char* szName);
     Module(const Module &mod);
     virtual ~Module();
-    virtual Node* clone(void);
+    virtual Node* clone(void) YARP_OVERRIDE;
     Module& operator=(const Module& rhs);
 
     void setName(const char* szName) { if(szName) strName = szName; }

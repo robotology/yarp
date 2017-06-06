@@ -44,7 +44,7 @@ public:
     virtual void check() {
     }
 
-    virtual InputStream& getInputStream() {
+    virtual InputStream& getInputStream() YARP_OVERRIDE {
         check();
         if (stream == YARP_NULLPTR) {
             return nullStream;
@@ -52,7 +52,7 @@ public:
         return stream->getInputStream();
     }
 
-    virtual OutputStream& getOutputStream() {
+    virtual OutputStream& getOutputStream() YARP_OVERRIDE {
         check();
         if (stream == YARP_NULLPTR) {
             return nullStream;
@@ -60,19 +60,19 @@ public:
         return stream->getOutputStream();
     }
 
-    virtual const Contact& getLocalAddress() {
+    virtual const Contact& getLocalAddress() YARP_OVERRIDE {
         check();
         return (stream == YARP_NULLPTR) ? nullStream.getLocalAddress()
                                         : (stream->getLocalAddress());
     }
 
-    virtual const Contact& getRemoteAddress() {
+    virtual const Contact& getRemoteAddress() YARP_OVERRIDE {
         check();
         return (stream == YARP_NULLPTR) ? nullStream.getRemoteAddress()
                                         : (stream->getRemoteAddress());
     }
 
-    virtual void close() {
+    virtual void close() YARP_OVERRIDE {
         if (stream != YARP_NULLPTR) {
             stream->close();
             delete stream;
@@ -117,26 +117,26 @@ public:
         return stream == YARP_NULLPTR;
     }
 
-    virtual bool isOk() {
+    virtual bool isOk() YARP_OVERRIDE {
         if (stream != YARP_NULLPTR) {
             return stream->isOk();
         }
         return false;
     }
 
-    virtual void reset() {
+    virtual void reset() YARP_OVERRIDE {
         if (stream != YARP_NULLPTR) {
             stream->reset();
         }
     }
 
-    virtual void beginPacket() {
+    virtual void beginPacket() YARP_OVERRIDE {
         if (stream != YARP_NULLPTR) {
             stream->beginPacket();
         }
     }
 
-    virtual void endPacket() {
+    virtual void endPacket() YARP_OVERRIDE {
         if (stream != YARP_NULLPTR) {
             stream->endPacket();
         }

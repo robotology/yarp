@@ -65,10 +65,10 @@ public:
      * Destructor. Perform uninitialize if needed.
      */
     virtual ~ImplementControlLimits2();
-    virtual bool setLimits(int axis, double min, double max);
-    virtual bool getLimits(int axis, double *min, double *max);
-    virtual bool setVelLimits(int axis, double min, double max);
-    virtual bool getVelLimits(int axis, double *min, double *max);
+    virtual bool setLimits(int axis, double min, double max) YARP_OVERRIDE;
+    virtual bool getLimits(int axis, double *min, double *max) YARP_OVERRIDE;
+    virtual bool setVelLimits(int axis, double min, double max) YARP_OVERRIDE;
+    virtual bool getVelLimits(int axis, double *min, double *max) YARP_OVERRIDE;
 };
 
 
@@ -110,22 +110,22 @@ public:
      */
     virtual ~StubImplControlLimits2Raw() {};
 
-    virtual bool setLimitsRaw(int axis, double min, double max)
+    virtual bool setLimitsRaw(int axis, double min, double max) YARP_OVERRIDE
     {
         return NOT_YET_IMPLEMENTED("setLimitsRaw");
     }
 
-    virtual bool getLimitsRaw(int axis, double *min, double *max)
+    virtual bool getLimitsRaw(int axis, double *min, double *max) YARP_OVERRIDE
     {
         return NOT_YET_IMPLEMENTED("getLimitsRaw");
     }
 
-    virtual bool setVelLimitsRaw(int axis, double min, double max)
+    virtual bool setVelLimitsRaw(int axis, double min, double max) YARP_OVERRIDE
     {
         return NOT_YET_IMPLEMENTED("setVelLimitsRaw");
     }
 
-    virtual bool getVelLimitsRaw(int axis, double *min, double *max)
+    virtual bool getVelLimitsRaw(int axis, double *min, double *max) YARP_OVERRIDE
     {
         return NOT_YET_IMPLEMENTED("getVelLimitsRaw");
     }

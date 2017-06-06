@@ -32,14 +32,14 @@ public:
     ImplementControlMode(IControlModeRaw *v);
     ~ImplementControlMode();
 #ifndef YARP_NO_DEPRECATED // since YARP 2.3.70
-    YARP_DEPRECATED bool setTorqueMode(int j);
-    YARP_DEPRECATED bool setImpedancePositionMode(int j);
-    YARP_DEPRECATED bool setImpedanceVelocityMode(int j);
-    YARP_DEPRECATED bool setPositionMode(int j);
-    YARP_DEPRECATED bool setVelocityMode(int j);
+    YARP_DEPRECATED bool setTorqueMode(int j) YARP_OVERRIDE;
+    YARP_DEPRECATED bool setImpedancePositionMode(int j) YARP_OVERRIDE;
+    YARP_DEPRECATED bool setImpedanceVelocityMode(int j) YARP_OVERRIDE;
+    YARP_DEPRECATED bool setPositionMode(int j) YARP_OVERRIDE;
+    YARP_DEPRECATED bool setVelocityMode(int j) YARP_OVERRIDE;
 #endif // YARP_NO_DEPRECATED
-    bool getControlMode(int j, int *f);
-    bool getControlModes(int *modes);
+    bool getControlMode(int j, int *f) YARP_OVERRIDE;
+    bool getControlModes(int *modes) YARP_OVERRIDE;
 };
 
 #if defined(_MSC_VER) && !defined(YARP_NO_DEPRECATED) // since YARP 2.3.70

@@ -12,6 +12,7 @@
 #include <yarp/manager/ymm-types.h>
 #include <yarp/manager/node.h>
 #include <yarp/manager/utility.h>
+#include <yarp/conf/api.h>
 
 using namespace std;
 
@@ -77,8 +78,8 @@ public:
     MultiResource(const MultiResource& rhs);
     MultiResource& operator=(const MultiResource& rhs);
     virtual ~MultiResource();
-    virtual Node* clone(void);
-    virtual bool satisfy(GenericResource* resource);
+    virtual Node* clone(void) YARP_OVERRIDE;
+    virtual bool satisfy(GenericResource* resource) YARP_OVERRIDE;
 
     int resourceCount(void) const { return resources.size(); }
     GenericResource& getResourceAt(int index) const { return *(resources[index]); }

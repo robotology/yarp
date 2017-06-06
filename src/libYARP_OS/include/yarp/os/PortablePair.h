@@ -64,7 +64,7 @@ public:
      * @param connection an interface to the network connection for reading
      * @return true iff the object pair was successfully read
      */
-    virtual bool read(ConnectionReader& connection) {
+    virtual bool read(ConnectionReader& connection) YARP_OVERRIDE {
         return readPair(connection, head, body);
     }
 
@@ -73,7 +73,7 @@ public:
      * @param connection an interface to the network connection for writing
      * @return true iff the object pair was successfully written
      */
-    virtual bool write(ConnectionWriter& connection) {
+    virtual bool write(ConnectionWriter& connection) YARP_OVERRIDE {
         return writePair(connection, head, body);
     }
 
@@ -81,7 +81,7 @@ public:
      * This is called when the port has finished all writing operations.
      * Passes call on to head and body.
      */
-    virtual void onCompletion() {
+    virtual void onCompletion() YARP_OVERRIDE {
         head.onCompletion();
         body.onCompletion();
     }

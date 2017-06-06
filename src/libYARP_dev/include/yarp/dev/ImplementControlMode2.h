@@ -42,19 +42,19 @@ public:
 
     // Control mode
 #ifndef YARP_NO_DEPRECATED // since YARP 2.3.70
-    YARP_DEPRECATED bool setTorqueMode(int j);
-    YARP_DEPRECATED bool setImpedancePositionMode(int j);
-    YARP_DEPRECATED bool setImpedanceVelocityMode(int j);
-    YARP_DEPRECATED bool setPositionMode(int j);
-    YARP_DEPRECATED bool setVelocityMode(int j);
+    YARP_DEPRECATED bool setTorqueMode(int j) YARP_OVERRIDE;
+    YARP_DEPRECATED bool setImpedancePositionMode(int j) YARP_OVERRIDE;
+    YARP_DEPRECATED bool setImpedanceVelocityMode(int j) YARP_OVERRIDE;
+    YARP_DEPRECATED bool setPositionMode(int j) YARP_OVERRIDE;
+    YARP_DEPRECATED bool setVelocityMode(int j) YARP_OVERRIDE;
 #endif // YARP_NO_DEPRECATED
-    bool getControlMode(int j, int *f);
-    bool getControlModes(int *modes);
+    bool getControlMode(int j, int *f) YARP_OVERRIDE;
+    bool getControlModes(int *modes) YARP_OVERRIDE;
     // Control Mode 2
-    bool getControlModes(const int n_joint, const int *joints, int *modes);
-    bool setControlMode(const int j, const int mode);
-    bool setControlModes(const int n_joint, const int *joints, int *modes);
-    bool setControlModes(int *modes);
+    bool getControlModes(const int n_joint, const int *joints, int *modes) YARP_OVERRIDE;
+    bool setControlMode(const int j, const int mode) YARP_OVERRIDE;
+    bool setControlModes(const int n_joint, const int *joints, int *modes) YARP_OVERRIDE;
+    bool setControlModes(int *modes) YARP_OVERRIDE;
 };
 
 #if defined(_MSC_VER) && !defined(YARP_NO_DEPRECATED) // since YARP 2.3.70

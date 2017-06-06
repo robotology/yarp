@@ -33,15 +33,15 @@ public:
         data = "";
     }
 
-    virtual void write(const Bytes& b) {
+    virtual void write(const Bytes& b) YARP_OVERRIDE {
         ConstString tmp((char*)b.get(), b.length());
         data += tmp;
     }
 
-    virtual void close() {
+    virtual void close() YARP_OVERRIDE {
     }
 
-    virtual bool isOk() { 
+    virtual bool isOk() YARP_OVERRIDE {
         return true;
     }
 

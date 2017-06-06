@@ -123,9 +123,9 @@ public:
 
     size_t resetUsed();
 
-    bool read(ConnectionReader& reader);
+    bool read(ConnectionReader& reader) YARP_OVERRIDE;
 
-    bool write(ConnectionWriter& writer);
+    bool write(ConnectionWriter& writer) YARP_OVERRIDE;
 
     /**
      *

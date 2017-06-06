@@ -28,10 +28,10 @@ public:
     XmlResLoader(const char* szFileName);
     XmlResLoader(const char* szPath, const char* szResName);
     virtual ~XmlResLoader();
-    bool init(void);
-    void reset(void);
-    void fini(void);
-    GenericResource* getNextResource(void);
+    bool init(void) YARP_OVERRIDE;
+    void reset(void) YARP_OVERRIDE;
+    void fini(void) YARP_OVERRIDE;
+    GenericResource* getNextResource(void) YARP_OVERRIDE;
 
 protected:
 

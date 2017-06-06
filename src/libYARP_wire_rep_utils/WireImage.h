@@ -115,11 +115,11 @@ public:
         ros_seq_stamp.nsec = (int)((t-(int)t)*1e9);
     }
 
-    virtual size_t length() { return 3; }
+    virtual size_t length() YARP_OVERRIDE { return 3; }
 
-    virtual size_t headerLength() { return 0; }
+    virtual size_t headerLength() YARP_OVERRIDE { return 0; }
 
-    virtual size_t length(size_t index) {
+    virtual size_t length(size_t index) YARP_OVERRIDE {
         size_t result = 0;
         switch (index) {
         case 0:
@@ -138,7 +138,7 @@ public:
         return result;
     }
 
-    virtual const char *data(size_t index) {
+    virtual const char *data(size_t index) YARP_OVERRIDE {
         const char *result = 0 /*NULL*/;
         switch (index) {
         case 0:
@@ -154,15 +154,15 @@ public:
         return result;
     }
 
-    virtual yarp::os::PortReader *getReplyHandler() { return NULL; }
+    virtual yarp::os::PortReader *getReplyHandler() YARP_OVERRIDE { return NULL; }
 
-    virtual yarp::os::Portable *getReference() { return NULL; }
+    virtual yarp::os::Portable *getReference() YARP_OVERRIDE { return NULL; }
 
-    virtual bool dropRequested() { return false; }
+    virtual bool dropRequested() YARP_OVERRIDE { return false; }
 
-    virtual void startWrite() {}
+    virtual void startWrite() YARP_OVERRIDE {}
 
-    virtual void stopWrite() {}
+    virtual void stopWrite() YARP_OVERRIDE {}
 };
 
 class YARP_wire_rep_utils_API WireImage {

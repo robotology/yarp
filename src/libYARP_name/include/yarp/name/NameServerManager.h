@@ -42,29 +42,29 @@ public:
         this->port = &port;
     }
 
-    virtual void onEvent(yarp::os::Bottle& event) {
+    virtual void onEvent(yarp::os::Bottle& event) YARP_OVERRIDE {
         ns.onEvent(event);
         if (port!=NULL) {
             port->write(event);
         }
     }
 
-    virtual yarp::os::PortReader *create() {
+    virtual yarp::os::PortReader *create() YARP_OVERRIDE {
         return new NameServerConnectionHandler(this);
     }
 
-    virtual void lock() {
+    virtual void lock() YARP_OVERRIDE {
         mutex.wait();
     }
 
-    virtual void unlock() {
+    virtual void unlock() YARP_OVERRIDE {
         mutex.post();
     }
 
     virtual bool apply(yarp::os::Bottle& cmd,
                        yarp::os::Bottle& reply,
                        yarp::os::Bottle& event,
-                       const yarp::os::Contact& remote) {
+                       const yarp::os::Contact& remote) YARP_OVERRIDE {
         bool ok = ns.apply(cmd,reply,event,remote);
         return ok;
     }

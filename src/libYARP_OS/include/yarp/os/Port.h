@@ -60,10 +60,10 @@ public:
     virtual ~Port();
 
     // documentation provided in Contactable
-    bool open(const ConstString& name);
+    bool open(const ConstString& name) YARP_OVERRIDE;
 
     // documentation provided in Contactable
-    bool open(const Contact& contact, bool registerName = true);
+    bool open(const Contact& contact, bool registerName = true) YARP_OVERRIDE;
 
     /**
      *
@@ -79,25 +79,25 @@ public:
     bool openFake(const ConstString& name);
 
     // documentation provided in Contactable
-    bool addOutput(const ConstString& name);
+    bool addOutput(const ConstString& name) YARP_OVERRIDE;
 
     // documentation provided in Contactable
-    bool addOutput(const ConstString& name, const ConstString& carrier);
+    bool addOutput(const ConstString& name, const ConstString& carrier) YARP_OVERRIDE;
 
     // documentation provided in Contactable
-    bool addOutput(const Contact& contact);
+    bool addOutput(const Contact& contact) YARP_OVERRIDE;
 
     // documentation provided in Contactable
-    void close();
+    void close() YARP_OVERRIDE;
 
     // documentation provided in Contactable
-    virtual void interrupt();
+    virtual void interrupt() YARP_OVERRIDE;
 
     // documentation provided in Contactable
-    virtual void resume();
+    virtual void resume() YARP_OVERRIDE;
 
     // documentation provided in Contactable
-    Contact where() const;
+    Contact where() const YARP_OVERRIDE;
 
 
     /**
@@ -108,7 +108,7 @@ public:
      * is done (otherwise writer.onCompletion() is called)
      * @return true iff the object is successfully written
      */
-    bool write(PortWriter& writer, PortWriter *callback = YARP_NULLPTR) const;
+    bool write(PortWriter& writer, PortWriter *callback = YARP_NULLPTR) const YARP_OVERRIDE;
 
     /**
      * Write an object to the port, then expect one back.
@@ -121,7 +121,7 @@ public:
      * @return true iff an object is successfully written and read
      */
     bool write(PortWriter& writer, PortReader& reader,
-               PortWriter *callback = YARP_NULLPTR) const;
+               PortWriter *callback = YARP_NULLPTR) const YARP_OVERRIDE;
 
     /**
      * Read an object from the port.
@@ -130,7 +130,7 @@ public:
      * @param willReply you must set this to true if you intend to call reply()
      * @return true iff the object is successfully read
      */
-    bool read(PortReader& reader, bool willReply = false);
+    bool read(PortReader& reader, bool willReply = false) YARP_OVERRIDE;
 
     /**
      * Send an object as a reply to an object read from the port.
@@ -140,7 +140,7 @@ public:
      * network connection - see for example Bottle
      * @return true iff the object is successfully written
      */
-    bool reply(PortWriter& writer);
+    bool reply(PortWriter& writer) YARP_OVERRIDE;
 
     /**
      * Same as reply(), but closes connection after reply.
@@ -151,13 +151,13 @@ public:
      * network connection - see for example Bottle
      * @return true iff the object is successfully written
      */
-    bool replyAndDrop(PortWriter& writer);
+    bool replyAndDrop(PortWriter& writer) YARP_OVERRIDE;
 
     // documentation provided in Contactable
-    void setReader(PortReader& reader);
+    void setReader(PortReader& reader) YARP_OVERRIDE;
 
     // documentation provided in Contactable
-    virtual void setAdminReader(PortReader& reader);
+    virtual void setAdminReader(PortReader& reader) YARP_OVERRIDE;
 
     /**
      * Set a creator for readers for port data.
@@ -178,28 +178,28 @@ public:
 
 
     // documented in Contactable
-    bool isWriting();
+    bool isWriting() YARP_OVERRIDE;
 
     // documented in Contactable
-    virtual bool setEnvelope(PortWriter& envelope);
+    virtual bool setEnvelope(PortWriter& envelope) YARP_OVERRIDE;
 
     // documented in Contactable
-    virtual bool getEnvelope(PortReader& envelope);
+    virtual bool getEnvelope(PortReader& envelope) YARP_OVERRIDE;
 
     // documented in Contactable
-    virtual int getInputCount();
+    virtual int getInputCount() YARP_OVERRIDE;
 
     // documented in Contactable
-    virtual int getOutputCount();
+    virtual int getOutputCount() YARP_OVERRIDE;
 
     // documented in Contactable
-    virtual void getReport(PortReport& reporter);
+    virtual void getReport(PortReport& reporter) YARP_OVERRIDE;
 
     // documented in Contactable
-    virtual void setReporter(PortReport& reporter);
+    virtual void setReporter(PortReport& reporter) YARP_OVERRIDE;
 
     // documented in Contactable
-    virtual void resetReporter();
+    virtual void resetReporter() YARP_OVERRIDE;
 
     /**
      *
@@ -221,7 +221,7 @@ public:
      * @param expectInput set to true if this port will be used for input
      *
      */
-    void setInputMode(bool expectInput);
+    void setInputMode(bool expectInput) YARP_OVERRIDE;
 
     /**
      *
@@ -231,7 +231,7 @@ public:
      * @param expectOutput set to true if this port will be used for output
      *
      */
-    void setOutputMode(bool expectOutput);
+    void setOutputMode(bool expectOutput) YARP_OVERRIDE;
 
     /**
      *
@@ -241,7 +241,7 @@ public:
      * @param expectRpc set to true if this port will be used for RPC only
      *
      */
-    void setRpcMode(bool expectRpc);
+    void setRpcMode(bool expectRpc) YARP_OVERRIDE;
 
     /**
      *
@@ -271,14 +271,14 @@ public:
      */
     int getVerbosity();
 
-    virtual Type getType();
-    virtual void promiseType(const Type& typ);
+    virtual Type getType() YARP_OVERRIDE;
+    virtual void promiseType(const Type& typ) YARP_OVERRIDE;
 
-    virtual Property *acquireProperties(bool readOnly);
+    virtual Property *acquireProperties(bool readOnly) YARP_OVERRIDE;
 
-    virtual void releaseProperties(Property *prop);
+    virtual void releaseProperties(Property *prop) YARP_OVERRIDE;
 
-    virtual void includeNodeInName(bool flag);
+    virtual void includeNodeInName(bool flag) YARP_OVERRIDE;
 
     bool sharedOpen(Port& port);
 
@@ -289,15 +289,15 @@ public:
      */
     bool isOpen() const;
 
-    virtual bool setCallbackLock(yarp::os::Mutex *mutex = YARP_NULLPTR);
+    virtual bool setCallbackLock(yarp::os::Mutex *mutex = YARP_NULLPTR) YARP_OVERRIDE;
 
-    virtual bool removeCallbackLock();
+    virtual bool removeCallbackLock() YARP_OVERRIDE;
 
-    virtual bool lockCallback();
+    virtual bool lockCallback() YARP_OVERRIDE;
 
-    virtual bool tryLockCallback();
+    virtual bool tryLockCallback() YARP_OVERRIDE;
 
-    virtual void unlockCallback();
+    virtual void unlockCallback() YARP_OVERRIDE;
 
 private:
     void *implementation;

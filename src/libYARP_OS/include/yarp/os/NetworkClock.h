@@ -25,14 +25,14 @@ class YARP_OS_API yarp::os::NetworkClock : public Clock, PortReader {
 public:
     NetworkClock();
     virtual ~NetworkClock();
-    
+
     bool open(const ConstString& name);
 
-    virtual double now();
-    virtual void delay(double seconds);
-    virtual bool isValid() const;
+    virtual double now() YARP_OVERRIDE;
+    virtual void delay(double seconds) YARP_OVERRIDE;
+    virtual bool isValid() const YARP_OVERRIDE;
 
-    virtual bool read(ConnectionReader& reader);
+    virtual bool read(ConnectionReader& reader) YARP_OVERRIDE;
 private:
     void *pwaiters;
     Port port;

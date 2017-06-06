@@ -38,24 +38,24 @@ public:
     virtual ~RpcClient();
 
     // documented in UnbufferedContactable
-    virtual bool read(PortReader& reader, bool willReply = false);
+    virtual bool read(PortReader& reader, bool willReply = false) YARP_OVERRIDE;
 
     // documented in UnbufferedContactable
-    virtual bool reply(PortWriter& writer);
+    virtual bool reply(PortWriter& writer) YARP_OVERRIDE;
 
     // documented in UnbufferedContactable
-    virtual bool replyAndDrop(PortWriter& writer);
+    virtual bool replyAndDrop(PortWriter& writer) YARP_OVERRIDE;
 
 
-   void setInputMode(bool expectInput);
-   void setOutputMode(bool expectOutput);
-   void setRpcMode(bool expectRpc);
+    void setInputMode(bool expectInput) YARP_OVERRIDE;
+    void setOutputMode(bool expectOutput) YARP_OVERRIDE;
+    void setRpcMode(bool expectRpc) YARP_OVERRIDE;
 
-   virtual Port& asPort() {
+    virtual Port& asPort() YARP_OVERRIDE {
         return port;
     }
-    
-    virtual const Port& asPort() const {
+
+    virtual const Port& asPort() const YARP_OVERRIDE {
         return port;
     }
 

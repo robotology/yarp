@@ -115,7 +115,7 @@ public:
     void stopWatchDog();
 
 public: // from BrokerEventSink
-    void onBrokerStdout(const char* msg);
+    void onBrokerStdout(const char* msg) YARP_OVERRIDE;
 
 private:
     bool bAutoConnect;
@@ -164,7 +164,7 @@ public:
     virtual ~ConcurentWrapper() { if(isRunning()) stop(); }
 
 
-    void run() {
+    void run() YARP_OVERRIDE {
         if(labor && executable)
             (executable->*labor)();
     }
@@ -188,7 +188,7 @@ public:
     virtual ~ConcurentRateWrapper() { if(isRunning()) stop(); }
 
 
-    void run() {
+    void run() YARP_OVERRIDE {
         if(labor && executable)
             (executable->*labor)();
     }

@@ -55,20 +55,20 @@ public:
      */
     virtual ~ImplementTorqueControl();
 
-    virtual bool getAxes(int *ax);
-    virtual bool getRefTorque(int j, double *);
-    virtual bool getRefTorques(double *t);
-    virtual bool setRefTorques(const double *t);
-    virtual bool setRefTorque(int j, double t);
-    virtual bool setRefTorques(const int n_joint, const int *joints, const double *t);
-    virtual bool getTorques(double *t);
-    virtual bool getTorque(int j, double *t);
-    virtual bool getBemfParam(int j, double *bemf);
-    virtual bool setBemfParam(int j, double bemf);
-    virtual bool setMotorTorqueParams(int j, const yarp::dev::MotorTorqueParameters params);
-    virtual bool getMotorTorqueParams(int j, yarp::dev::MotorTorqueParameters *params);
-    virtual bool getTorqueRange(int j, double *min, double *max);
-    virtual bool getTorqueRanges(double *min, double *max);
+    virtual bool getAxes(int *ax) YARP_OVERRIDE;
+    virtual bool getRefTorque(int j, double *) YARP_OVERRIDE;
+    virtual bool getRefTorques(double *t) YARP_OVERRIDE;
+    virtual bool setRefTorques(const double *t) YARP_OVERRIDE;
+    virtual bool setRefTorque(int j, double t) YARP_OVERRIDE;
+    virtual bool setRefTorques(const int n_joint, const int *joints, const double *t) YARP_OVERRIDE;
+    virtual bool getTorques(double *t) YARP_OVERRIDE;
+    virtual bool getTorque(int j, double *t) YARP_OVERRIDE;
+    virtual bool getBemfParam(int j, double *bemf) YARP_OVERRIDE;
+    virtual bool setBemfParam(int j, double bemf) YARP_OVERRIDE;
+    virtual bool setMotorTorqueParams(int j, const yarp::dev::MotorTorqueParameters params) YARP_OVERRIDE;
+    virtual bool getMotorTorqueParams(int j, yarp::dev::MotorTorqueParameters *params) YARP_OVERRIDE;
+    virtual bool getTorqueRange(int j, double *min, double *max) YARP_OVERRIDE;
+    virtual bool getTorqueRanges(double *min, double *max) YARP_OVERRIDE;
 };
 
 #endif // YARP_DEV_IMPLEMENTTORQUECONTROL_H

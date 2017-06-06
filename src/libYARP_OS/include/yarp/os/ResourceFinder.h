@@ -285,11 +285,11 @@ public:
     yarp::os::Bottle getContexts();
 
     // Searchable interface
-    virtual bool check(const ConstString& key) const;
-    virtual Value& find(const ConstString& key) const;
-    virtual Bottle& findGroup(const ConstString& key) const;
-    virtual bool isNull() const;
-    virtual ConstString toString() const;
+    virtual bool check(const ConstString& key) const YARP_OVERRIDE;
+    virtual Value& find(const ConstString& key) const YARP_OVERRIDE;
+    virtual Bottle& findGroup(const ConstString& key) const YARP_OVERRIDE;
+    virtual bool isNull() const YARP_OVERRIDE;
+    virtual ConstString toString() const YARP_OVERRIDE;
 
 
     /**

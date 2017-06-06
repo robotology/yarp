@@ -23,19 +23,19 @@ namespace yarp {
 class YARP_OS_API yarp::os::ModifyingCarrier : public AbstractCarrier {
 public:
 
-    virtual Carrier *create() = 0;
+    virtual Carrier *create() YARP_OVERRIDE = 0;
 
-    virtual ConstString getName() = 0;
+    virtual ConstString getName() YARP_OVERRIDE = 0;
 
-    virtual bool checkHeader(const yarp::os::Bytes &header);
-    virtual void getHeader(const yarp::os::Bytes &header);
-    virtual bool respondToHeader(yarp::os::ConnectionState& proto);
-    virtual bool modifiesIncomingData();
-    virtual bool modifiesOutgoingData();
-    virtual bool modifiesReply();
-    virtual void setCarrierParams(const yarp::os::Property& params);
-    virtual void getCarrierParams(yarp::os::Property& params);
-    virtual bool configureFromProperty(yarp::os::Property& prop);
+    virtual bool checkHeader(const yarp::os::Bytes &header) YARP_OVERRIDE;
+    virtual void getHeader(const yarp::os::Bytes &header) YARP_OVERRIDE;
+    virtual bool respondToHeader(yarp::os::ConnectionState& proto) YARP_OVERRIDE;
+    virtual bool modifiesIncomingData() YARP_OVERRIDE;
+    virtual bool modifiesOutgoingData() YARP_OVERRIDE;
+    virtual bool modifiesReply() YARP_OVERRIDE;
+    virtual void setCarrierParams(const yarp::os::Property& params) YARP_OVERRIDE;
+    virtual void getCarrierParams(yarp::os::Property& params) YARP_OVERRIDE;
+    virtual bool configureFromProperty(yarp::os::Property& prop) YARP_OVERRIDE;
     // only remains to implement modifyIncomingData()
 };
 

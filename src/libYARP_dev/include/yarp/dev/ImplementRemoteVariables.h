@@ -47,11 +47,11 @@ public:
 
     virtual ~ImplementRemoteVariables();
 
-    virtual bool getRemoteVariable(yarp::os::ConstString key, yarp::os::Bottle& val);
+    virtual bool getRemoteVariable(yarp::os::ConstString key, yarp::os::Bottle& val) YARP_OVERRIDE;
 
-    virtual bool setRemoteVariable(yarp::os::ConstString key, const yarp::os::Bottle& val);
+    virtual bool setRemoteVariable(yarp::os::ConstString key, const yarp::os::Bottle& val) YARP_OVERRIDE;
 
-    virtual bool getRemoteVariablesList(yarp::os::Bottle* listOfKeys);
+    virtual bool getRemoteVariablesList(yarp::os::Bottle* listOfKeys) YARP_OVERRIDE;
 };
 
 #endif // YARP_DEV_IMPLEMENTREMOTEVARIABLES_H

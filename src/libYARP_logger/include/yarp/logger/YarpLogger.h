@@ -203,8 +203,8 @@ class yarp::yarpLogger::LoggerEngine
 
         public:
         std::string getPortName();
-        void        run();
-        void        threadRelease();
+        void        run() YARP_OVERRIDE;
+        void        threadRelease() YARP_OVERRIDE;
         bool        listen_to_LOGLEVEL_UNDEFINED;
         bool        listen_to_LOGLEVEL_TRACE;
         bool        listen_to_LOGLEVEL_DEBUG;
