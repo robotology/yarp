@@ -2143,30 +2143,6 @@ bool FakeMotionControl::stopRaw(const int n_joint, const int *joints)
 ///////////// END Position Control INTERFACE  //////////////////
 
 // ControlMode
-bool FakeMotionControl::setPositionModeRaw(int j)
-{
-    return DEPRECATED("setPositionModeRaw");
-}
-
-bool FakeMotionControl::setVelocityModeRaw(int j)
-{
-    return DEPRECATED("setVelocityModeRaw");
-}
-
-bool FakeMotionControl::setTorqueModeRaw(int j)
-{
-    return DEPRECATED("setTorqueModeRaw");
-}
-
-bool FakeMotionControl::setImpedancePositionModeRaw(int j)
-{
-    return DEPRECATED("setImpedancePositionModeRaw");
-}
-
-bool FakeMotionControl::setImpedanceVelocityModeRaw(int j)
-{
-    return DEPRECATED("setImpedanceVelocityModeRaw");
-}
 
 // puo' essere richiesto con get
 bool FakeMotionControl::getControlModeRaw(int j, int *v)

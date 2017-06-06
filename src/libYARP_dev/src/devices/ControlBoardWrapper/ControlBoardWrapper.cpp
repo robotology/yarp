@@ -4043,107 +4043,6 @@ bool ControlBoardWrapper::getCurrentImpedanceLimit(int j, double *min_stiff, dou
     return false;
 }
 
-bool ControlBoardWrapper::setPositionMode(int j)
-{
-    int off; try{off = device.lut.at(j).offset;} catch(...){yError() << "joint number " << j <<  " out of bound [0-"<< controlledJoints << "] for part " << partName; return false; }
-    int subIndex=device.lut[j].deviceEntry;
-
-    yarp::dev::impl::SubDevice *p=device.getSubdevice(subIndex);
-    if (!p)
-        return false;
-
-    if (p->iMode2)
-    {
-        return p->iMode2->setControlMode(off+p->base, VOCAB_CM_POSITION);
-    }
-    else
-        if (p->iMode)
-        {
-            return p->iMode->setPositionMode(off+p->base);
-        }
-
-    return false;
-}
-
-bool ControlBoardWrapper::setTorqueMode(int j)
-{
-    int off; try{off = device.lut.at(j).offset;} catch(...){yError() << "joint number " << j <<  " out of bound [0-"<< controlledJoints << "] for part " << partName; return false; }
-    int subIndex=device.lut[j].deviceEntry;
-
-    yarp::dev::impl::SubDevice *p=device.getSubdevice(subIndex);
-    if (!p)
-        return false;
-
-    if (p->iMode2)
-    {
-        return p->iMode2->setControlMode(off+p->base, VOCAB_CM_TORQUE);
-    }
-    else
-        if (p->iMode)
-        {
-            return p->iMode->setTorqueMode(off+p->base);
-        }
-
-    return false;
-}
-
-bool ControlBoardWrapper::setImpedancePositionMode(int j)
-{
-    int off; try{off = device.lut.at(j).offset;} catch(...){yError() << "joint number " << j <<  " out of bound [0-"<< controlledJoints << "] for part " << partName; return false; }
-    int subIndex=device.lut[j].deviceEntry;
-
-    yarp::dev::impl::SubDevice *p=device.getSubdevice(subIndex);
-    if (!p)
-        return false;
-
-//        Let´s propagate the legacy version as is until it will be removed
-    if (p->iMode)
-    {
-        return p->iMode->setImpedancePositionMode(off+p->base);
-    }
-
-    return false;
-}
-
-bool ControlBoardWrapper::setImpedanceVelocityMode(int j)
-{
-    int off; try{off = device.lut.at(j).offset;} catch(...){yError() << "joint number " << j <<  " out of bound [0-"<< controlledJoints << "] for part " << partName; return false; }
-    int subIndex=device.lut[j].deviceEntry;
-
-    yarp::dev::impl::SubDevice *p=device.getSubdevice(subIndex);
-    if (!p)
-        return false;
-//        Let´s propagate the legacy version as is until it will be removed
-    if (p->iMode)
-    {
-        return p->iMode->setImpedanceVelocityMode(off+p->base);
-    }
-
-    return false;
-}
-
-bool ControlBoardWrapper::setVelocityMode(int j)
-{
-    int off; try{off = device.lut.at(j).offset;} catch(...){yError() << "joint number " << j <<  " out of bound [0-"<< controlledJoints << "] for part " << partName; return false; }
-    int subIndex=device.lut[j].deviceEntry;
-
-    yarp::dev::impl::SubDevice *p=device.getSubdevice(subIndex);
-    if (!p)
-        return false;
-
-    if (p->iMode2)
-    {
-        return p->iMode2->setControlMode(off+p->base, VOCAB_CM_VELOCITY);
-    }
-    else
-        if (p->iMode)
-        {
-            return p->iMode->setVelocityMode(off+p->base);
-        }
-
-    return false;
-}
-
 bool ControlBoardWrapper::getControlMode(int j, int *mode)
 {
     int off; try{off = device.lut.at(j).offset;} catch(...){yError() << "joint number " << j <<  " out of bound [0-"<< controlledJoints << "] for part " << partName; return false; }
@@ -4207,72 +4106,6 @@ bool ControlBoardWrapper::getControlModes(const int n_joint, const int *joints, 
      return ret;
 }
 
-bool ControlBoardWrapper::legacySetControlMode(const int j, const int mode)
-{
-    bool ret = true;
-    int off; try{off = device.lut.at(j).offset;} catch(...){yError() << "joint number " << j <<  " out of bound [0-"<< controlledJoints << "] for part " << partName; return false; }
-    int subIndex=device.lut[j].deviceEntry;
-
-    yarp::dev::impl::SubDevice *p=device.getSubdevice(subIndex);
-    if (!p)
-        return false;
-
-    switch(mode)
-    {
-        case VOCAB_CM_IDLE:
-        {
-
-            if(p->amp)
-            {
-                ret = ret && p->amp->disableAmp(off+p->base);
-            }
-            if(p->pid)
-            {
-                ret = ret && p->pid->disablePid(VOCAB_PIDTYPE_POSITION, off+p->base);
-            }
-        }
-        break;
-
-        case VOCAB_CM_TORQUE:
-        {
-            ret = p->iMode->setTorqueMode(off+p->base);
-        }
-        break;
-
-        case VOCAB_CM_POSITION:
-        {
-            ret = p->iMode->setPositionMode(off+p->base);
-        }
-        break;
-
-        case VOCAB_CM_VELOCITY:
-        {
-            ret = p->iMode->setVelocityMode(off+p->base);
-        }
-        break;
-
-        case VOCAB_CM_IMPEDANCE_POS:
-        {
-            ret = p->iMode->setImpedancePositionMode(off+p->base);
-        }
-        break;
-
-        case VOCAB_CM_IMPEDANCE_VEL:
-        {
-            ret = p->iMode->setImpedanceVelocityMode(off+p->base);
-        }
-        break;
-
-        default:
-        {
-            yError("ControlBoardWrapper received an invalid  setControlMode %s for joint %d\n", yarp::os::Vocab::decode(mode).c_str(), j);
-            ret = false;
-        }
-        break;
-    }
-    return ret;
-}
-
 bool ControlBoardWrapper::setControlMode(const int j, const int mode)
 {
     bool ret = true;
@@ -4286,13 +4119,6 @@ bool ControlBoardWrapper::setControlMode(const int j, const int mode)
     if (p->iMode2)
     {
         ret = p->iMode2->setControlMode(off+p->base, mode);
-    }
-    else
-    {
-        if (p->iMode)
-        {
-            legacySetControlMode(j, mode);
-        }
     }
     return ret;
 }
@@ -4359,13 +4185,6 @@ bool ControlBoardWrapper::setControlModes(int *modes)
 
             ret = ret && p->iMode2->setControlModes(wrapped_joints, joints, &modes[j_wrap]);
             j_wrap+=wrapped_joints;
-        }
-        else
-        {
-            for(int j_wrap = 0; j_wrap < wrapped_joints; j_wrap++)
-            {
-                ret = ret && legacySetControlMode(j_wrap, modes[j_wrap]);
-            }
         }
 
         if(joints!=0)

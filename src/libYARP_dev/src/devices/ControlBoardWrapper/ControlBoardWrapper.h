@@ -153,7 +153,7 @@ public:
 
 
 #if defined(_MSC_VER) && !defined(YARP_NO_DEPRECATED) // since YARP 2.3.65
-// A class implementing setXxxxxMode() causes a warning on MSVC
+// A class implementing setXxxxxMode(int) causes a warning on MSVC
 YARP_WARNING_PUSH
 YARP_DISABLE_DEPRECATED_WARNING
 #endif
@@ -1157,24 +1157,12 @@ public:
 
     virtual bool getCurrentImpedanceLimit(int j, double *min_stiff, double *max_stiff, double *min_damp, double *max_damp);
 
-    virtual bool setPositionMode(int j);
-
-    virtual bool setTorqueMode(int j);
-
-    virtual bool setImpedancePositionMode(int j);
-
-    virtual bool setImpedanceVelocityMode(int j);
-
-    virtual bool setVelocityMode(int j);
-
     virtual bool getControlMode(int j, int *mode);
 
     virtual bool getControlModes(int *modes);
 
     // iControlMode2
     virtual bool getControlModes(const int n_joint, const int *joints, int *modes);
-
-    bool legacySetControlMode(const int j, const int mode);
 
     virtual bool setControlMode(const int j, const int mode);
 

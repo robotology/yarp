@@ -335,11 +335,6 @@ public:
     /////////////////////////////// END Position Control INTERFACE
 
     // ControlMode
-    virtual bool setPositionModeRaw(int j);
-    virtual bool setVelocityModeRaw(int j);
-    virtual bool setTorqueModeRaw(int j);
-    virtual bool setImpedancePositionModeRaw(int j);
-    virtual bool setImpedanceVelocityModeRaw(int j);
     virtual bool getControlModeRaw(int j, int *v);
     virtual bool getControlModesRaw(int *v);
 
