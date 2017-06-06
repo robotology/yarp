@@ -43,6 +43,7 @@ public:
     virtual bool respond(const yarp::os::Bottle& cmd, yarp::os::Bottle& response);
 };
 
+//TODO: finish the single port mode.. the struct below is for this purpose
 struct JoyData : public yarp::os::Portable
 {
     yarp::sig::Vector Buttons;
@@ -108,6 +109,7 @@ class yarp::dev::JoypadControlServer: public yarp::dev::DeviceDriver,
     yarp::dev::PolyDriver*          m_subDeviceOwned;
     bool                            m_isSubdeviceOwned;
     bool                            m_separatePorts;
+    bool                            m_profile;
     yarp::os::ConstString           m_rpcPortName;
     yarp::os::ConstString           m_name;
     JoyPort<Vector>                 m_portAxis;
@@ -116,12 +118,13 @@ class yarp::dev::JoypadControlServer: public yarp::dev::DeviceDriver,
     JoyPort<Vector>                 m_portButtons;
     JoyPort<VecOfChar>              m_portHats;
     JoyPort<Vector>                 m_portTrackball;
-    yarp::os::BufferedPort<JoyData> m_godPort;
+    yarp::os::BufferedPort<JoyData> m_godPort; //TODO: single port purpose
     coordsMode                      m_coordsMode;
 
 
     bool openAndAttachSubDevice(yarp::os::Searchable& prop);
     bool openPorts();
+    void profile();
 
 #endif //DOXYGEN_SHOULD_SKIP_THIS
 

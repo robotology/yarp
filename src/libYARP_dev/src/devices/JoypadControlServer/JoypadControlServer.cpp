@@ -243,7 +243,8 @@ bool JoypadControlServer::open(yarp::os::Searchable& params)
                    "period             - refresh period of the broadcasted values in ms.. default" << DEFAULT_THREAD_PERIOD << "\n"
                    "use_separate_ports - set it to 1 to use separate ports (buttons, axes, trackballs, hats) and 0 to stream all in one single port\n" <<
                    "name               - Prefix name of the ports opened by the JoypadControlServer, e.g. /robotName/joypad\n" <<
-                   "subdevice          - name of the subdevice to open\n";
+                   "subdevice          - name of the subdevice to open\n" <<
+                   "profile            - print the joypad data for debugging purpose";
         return false;
     }
     yarp::os::ConstString rootName;
@@ -255,6 +256,8 @@ bool JoypadControlServer::open(yarp::os::Searchable& params)
     {
         m_rate = params.find("period").asInt();
     }
+
+    m_profile = params.check("profile");
 
     if(params.check("use_separate_ports"))
     {
@@ -551,6 +554,87 @@ bool JoypadControlServer::openPorts()
     }
 }
 
+void JoypadControlServer::profile()
+{
+    string       message;
+    unsigned int count;
+
+    message = "Axes: ";
+    m_device->getAxisCount(count);
+    for(int i = 0; i < count; ++i)
+    {
+        double data;
+        m_device->getAxis(i, data);
+        message += to_string(data) + " ";
+    }
+    yInfo() << message;
+
+    message = "Hats: ";
+    m_device->getHatCount(count);
+    for(int i = 0; i < count; ++i)
+    {
+        unsigned char data;
+        m_device->getHat(i, data);
+        message += to_string(data) + " ";
+    }
+    yInfo() << message;
+
+    message = "Buttons: ";
+    m_device->getButtonCount(count);
+    for(int i = 0; i < count; ++i)
+    {
+        float data;
+        m_device->getButton(i, data);
+        message += to_string(data) + " ";
+    }
+    yInfo() << message;
+
+    message = "Stick: ";
+    m_device->getStickCount(count);
+    for(int i = 0; i < count; ++i)
+    {
+        Vector data;
+        m_device->getStick(i, data, yarp::dev::IJoypadController::JypCtrlcoord_CARTESIAN);
+        message += "n_" + to_string(i) + ": ";
+        for (int j = 0; j < data.size(); ++j)
+        {
+            message += to_string(data[j]) + " ";
+        }
+        message += "\n";
+
+    }
+    yInfo() << message;
+
+    message = "trackball: ";
+    m_device->getTrackballCount(count);
+    for(int i = 0; i < count; ++i)
+    {
+        Vector data;
+        m_device->getTrackball(i, data);
+        message += "n_" + to_string(i) + ": ";
+        for (int j = 0; j < data.size(); ++j)
+        {
+            message += to_string(data[j]) + " ";
+        }
+        message += "\n";
+    }
+
+    message = "touch Surface: ";
+    m_device->getTouchSurfaceCount(count);
+    for(int i = 0; i < count; ++i)
+    {
+        Vector data;
+        m_device->getTouch(i, data);
+        message += "n_" + to_string(i) + ": ";
+        for (int j = 0; j < data.size(); ++j)
+        {
+            message += to_string(data[j]) + " ";
+        }
+        message += "\n";
+    }
+    yInfo() << message;
+}
+
 void JoypadControlServer::run()
 {
     if(m_separatePorts)
@@ -682,6 +766,11 @@ void JoypadControlServer::run()
         //JoyData& message = m_godPort.prepare();
         //for(size_t i = 0; i < m_device->getAxisCount();)
         //message.Axes
+    }
+
+    if(m_profile)
+    {
+        profile();
     }
 }
 
