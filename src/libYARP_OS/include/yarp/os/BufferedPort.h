@@ -202,6 +202,10 @@ public:
      *
      */
     void write(bool forceStrict=false) {
+        if(isClosed())
+        {
+            return;
+        }
         writer.write(forceStrict);
     }
 
