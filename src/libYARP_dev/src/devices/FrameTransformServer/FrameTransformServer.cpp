@@ -448,25 +448,57 @@ bool FrameTransformServer::parseStartingTf(yarp::os::Searchable &config)
             tfName   = group.get(i).asList()->get(0).asString();
             b        = group.findGroup(tfName).tail();
 
-            if( b.size() != 8       or
-               !b.get(0).isDouble() or
-               !b.get(1).isDouble() or
-               !b.get(2).isDouble() or
-               !b.get(3).isDouble() or
-               !b.get(4).isDouble() or
-               !b.get(5).isDouble() or
-               !b.get(6).isString() or
-               !b.get(7).isString())
+            if(b.size() == 18)
+            {
+                bool   r(true);
+                Matrix m(4, 4);
+
+                for(int i = 0; i < 16; i++)
+                {
+                    if(!b.get(i).isDouble())
+                    {
+                        r = false;
+                    }
+                    m.data()[i] = b.get(i).asDouble();
+                }
+
+                if(!b.get(16).isString() || !b.get(17).isString())
+                {
+                    r = false;
+                }
+
+                if(!r)
+                {
+                    yError() << "transformServer: param" << tfName << "not correct.. for the 4x4 matrix mode" <<
+                                "you must provide 18 parameter. the matrix, the source frame(string) and the destination frame(string)";
+                    return false;
+                }
+
+                t.fromMatrix(m);
+                t.src_frame_id = b.get(16).asString();
+                t.dst_frame_id = b.get(17).asString();
+            }
+            else if( b.size() == 8       &&
+                     b.get(0).isDouble() &&
+                     b.get(1).isDouble() &&
+                     b.get(2).isDouble() &&
+                     b.get(3).isDouble() &&
+                     b.get(4).isDouble() &&
+                     b.get(5).isDouble() &&
+                     b.get(6).isString() &&
+                     b.get(7).isString())
+            {
+                t.translation.set(b.get(0).asDouble(), b.get(1).asDouble(), b.get(2).asDouble());
+                t.rotFromRPY(b.get(3).asDouble(), b.get(4).asDouble(), b.get(5).asDouble());
+                t.src_frame_id = b.get(6).asString();
+                t.dst_frame_id = b.get(7).asString();
+            }
+            else
             {
                 yError() << "transformServer: param" << tfName << "not correct.. a tf requires 8 param in the format:" <<
                             "x(dbl) y(dbl) z(dbl) r(dbl) p(dbl) y(dbl) src(str) dst(str)";
                 return false;
             }
-
-            t.translation.set(b.get(0).asDouble(), b.get(1).asDouble(), b.get(2).asDouble());
-            t.rotFromRPY(b.get(3).asDouble(), b.get(4).asDouble(), b.get(5).asDouble());
-            t.src_frame_id = b.get(6).asString();
-            t.dst_frame_id = b.get(7).asString();
 
             if(m_yarp_static_transform_storage->set_transform(t))
             {
