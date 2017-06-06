@@ -103,11 +103,6 @@ set(YARP_STATIC_PLUGINS_INSTALL_DIR_FULL "@PACKAGE_YARP_STATIC_PLUGINS_INSTALL_D
 set(YARP_DYNAMIC_PLUGINS_INSTALL_DIR_FULL "@PACKAGE_YARP_DYNAMIC_PLUGINS_INSTALL_DIR@")
 set(YARP_QML2_IMPORT_DIR_FULL "@PACKAGE_YARP_QML2_IMPORT_DIR@")
 
-# Pass along some compilation options that may be useful for clients
-# to check.
-set(YARP_HAS_MATH_LIB TRUE)
-set(YARP_HAS_NAME_LIB @YARP_HAS_NAME_LIB@)
-
 set(YARP_IS_SHARED_LIBRARY @CREATE_SHARED_LIBRARY@)
 
 # Check if IDL is available
@@ -129,6 +124,13 @@ if(TARGET YARP::YARP_name)
   set(YARP_NAME_LIBRARY YARP::YARP_name)
 endif()
 set(YARP_INIT_LIBRARY YARP::YARP_init)
+
+# Pass along some compilation options that may be useful for clients
+# to check.
+set(YARP_HAS_MATH_LIB FALSE)
+if(TARGET YARP::YARP_math)
+  set(YARP_HAS_MATH_LIB TRUE)
+endif()
 
 # load IDL functions
 include(${YARP_MODULE_DIR}/YarpIDL.cmake)
