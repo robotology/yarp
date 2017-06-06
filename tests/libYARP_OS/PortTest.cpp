@@ -40,8 +40,6 @@ using namespace yarp::os::impl;
 
 #ifndef DOXYGEN_SHOULD_SKIP_THIS
 
-#ifdef BROKEN_TEST
-
 namespace yarp {
     namespace dev {
         class BrokenDevice;
@@ -51,7 +49,7 @@ namespace yarp {
 /**
  * @ingroup dev_impl_media
  *
- * A fake camera for testing.
+ * A fake device for testing closure after a prepare of a closed port.
  */
 class yarp::dev::BrokenDevice : public DeviceDriver,
                                 public yarp::os::RateThread
@@ -92,8 +90,6 @@ private:
     yarp::os::BufferedPort<yarp::sig::ImageOf<yarp::sig::PixelRgb>> pImg;
 
 };
-
-#endif
 
 class TcpTestServer : public RateThread
 {
@@ -1599,12 +1595,10 @@ public:
 
         testCallbackLock();
 
-#ifdef BROKEN_TEST
         yarp::dev::Drivers::factory().add(new yarp::dev::DriverCreatorOf<yarp::dev::BrokenDevice>("brokenDevice",
                                                       "brokenDevice",
                                                       "yarp::dev::BrokenDevice"));
         testPrepareDeadlock();
-#endif
 
 
 
