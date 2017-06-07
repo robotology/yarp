@@ -16,7 +16,7 @@ using namespace yarp::sig;
 using namespace yarp::os;
 using namespace std;
 
-#define actionsExecutionTime = 1.0;
+#define actionsExecutionTime 1.0
 SDLJoypad::SDLJoypad()
 {
     m_buttonCount = 0;
@@ -307,7 +307,7 @@ bool SDLJoypad::getButton(unsigned int button_id, float& value)
         }
     }
     value = float(SDL_JoystickGetButton(m_device[i], button_id));
-    if(value > 0.5 and m_actions.find(button_id) != m_actions.end() and yarp::os::Time::now() - m_actionTimestamp > actionsExecutionTime)
+    if(value > 0.5 && m_actions.find(button_id) != m_actions.end() && yarp::os::Time::now() - m_actionTimestamp > actionsExecutionTime)
     {
         executeAction(button_id);
         m_actionTimestamp = yarp::os::Time::now();
