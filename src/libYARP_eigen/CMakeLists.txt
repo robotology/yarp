@@ -17,12 +17,12 @@ add_library(YARP::YARP_eigen ALIAS YARP_eigen)
 
 if(TARGET Eigen3::Eigen) # Since Eigen 3.3.1
   target_include_directories(YARP_eigen INTERFACE $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>
-                                                  $<INSTALL_INTERFACE:include>)
+                                                  $<INSTALL_INTERFACE:${CMAKE_INSTALL_INCLUDEDIR}>)
   target_link_libraries(YARP_eigen INTERFACE YARP_sig
                                              Eigen3::Eigen)
 else()
   target_include_directories(YARP_eigen INTERFACE $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>
-                                                  $<INSTALL_INTERFACE:include>
+                                                  $<INSTALL_INTERFACE:${CMAKE_INSTALL_INCLUDEDIR}>
                                                   ${EIGEN3_INCLUDE_DIR})
   target_link_libraries(YARP_eigen INTERFACE YARP_sig)
 endif()
