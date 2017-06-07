@@ -561,7 +561,7 @@ void JoypadControlServer::profile()
 
     message = "Axes: ";
     m_device->getAxisCount(count);
-    for(int i = 0; i < count; ++i)
+    for(unsigned int i = 0; i < count; ++i)
     {
         double data;
         m_device->getAxis(i, data);
@@ -571,7 +571,7 @@ void JoypadControlServer::profile()
 
     message = "Hats: ";
     m_device->getHatCount(count);
-    for(int i = 0; i < count; ++i)
+    for(unsigned int i = 0; i < count; ++i)
     {
         unsigned char data;
         m_device->getHat(i, data);
@@ -581,7 +581,7 @@ void JoypadControlServer::profile()
 
     message = "Buttons: ";
     m_device->getButtonCount(count);
-    for(int i = 0; i < count; ++i)
+    for(unsigned int i = 0; i < count; ++i)
     {
         float data;
         m_device->getButton(i, data);
@@ -591,12 +591,12 @@ void JoypadControlServer::profile()
 
     message = "Stick: ";
     m_device->getStickCount(count);
-    for(int i = 0; i < count; ++i)
+    for(unsigned int i = 0; i < count; ++i)
     {
         Vector data;
         m_device->getStick(i, data, yarp::dev::IJoypadController::JypCtrlcoord_CARTESIAN);
         message += "n_" + to_string(i) + ": ";
-        for (int j = 0; j < data.size(); ++j)
+        for (size_t j = 0; j < data.size(); ++j)
         {
             message += to_string(data[j]) + " ";
         }
@@ -607,12 +607,12 @@ void JoypadControlServer::profile()
 
     message = "trackball: ";
     m_device->getTrackballCount(count);
-    for(int i = 0; i < count; ++i)
+    for(unsigned int i = 0; i < count; ++i)
     {
         Vector data;
         m_device->getTrackball(i, data);
         message += "n_" + to_string(i) + ": ";
-        for (int j = 0; j < data.size(); ++j)
+        for (size_t j = 0; j < data.size(); ++j)
         {
             message += to_string(data[j]) + " ";
         }
@@ -621,12 +621,12 @@ void JoypadControlServer::profile()
 
     message = "touch Surface: ";
     m_device->getTouchSurfaceCount(count);
-    for(int i = 0; i < count; ++i)
+    for(unsigned int i = 0; i < count; ++i)
     {
         Vector data;
         m_device->getTouch(i, data);
         message += "n_" + to_string(i) + ": ";
-        for (int j = 0; j < data.size(); ++j)
+        for (size_t j = 0; j < data.size(); ++j)
         {
             message += to_string(data[j]) + " ";
         }
