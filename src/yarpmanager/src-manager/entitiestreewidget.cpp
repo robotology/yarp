@@ -184,12 +184,12 @@ void EntitiesTreeWidget::addAppTemplate(yarp::manager::AppTemplate* tmp)
 }
 
 
-void EntitiesTreeWidget::onSelectItem(QString name)
+void EntitiesTreeWidget::onSelectItem(QString name, bool open)
 {
     for(int i=0;applicationNode->childCount();i++) {
         if (applicationNode->child(i)->text(0) == name) {
             yarp::manager::Application *app = (yarp::manager::Application*)applicationNode->child(i)->data(0,Qt::UserRole + 1).toLongLong();
-            viewApplication(app,true);
+            viewApplication(app, !open);
             return;
         }
     }

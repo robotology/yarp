@@ -79,7 +79,7 @@ signals:
     void reopenResource(QString, QString);
     void reopenModule(QString, QString);
 public slots:
-    void onSelectItem(QString);
+    void onSelectItem(QString, bool open = false);
     void onContext(QPoint);
     void onLoadFile();
     void onEditApplication();

@@ -42,7 +42,7 @@ public:
     void reportErrors();
 
 private:
-    void syncApplicationList(QString selectNodeForEditing = "");
+    void syncApplicationList(QString selectNodeForEditing = "", bool open = false);
     bool loadRecursiveTemplates(const char* szPath);
     bool loadRecursiveApplications(const char* szPath);
     bool initializeFile(string _class);
@@ -109,7 +109,7 @@ public slots:
     void onReopenResource(QString,QString);
 
 signals:
-    void selectItem(QString);
+    void selectItem(QString, bool);
 };
 
 #endif // MAINWINDOW_H
