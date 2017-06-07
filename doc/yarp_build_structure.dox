@@ -514,11 +514,11 @@ See \ref yarp_build_structure_template_libh.  Note that the name
 of the library initialization function may change in future versions
 of YARP, so it is best to use these macros.
 
-@section yarp_build_structure_template_options cmake/template/yarp_config_options.h.in
+@section yarp_build_structure_template_options src/libYARP_conf/include/yarp/conf/options.h.in
 
 This is the template for a generated header file built during
 configuration.
-It is placed in generated_include/yarp/conf/options.h,
+It is placed in <CMAKE_BINARY_DIR>/src/conf/libYARP_conf/include/yarp/conf/options.h,
 and should be accessed as "#include <yarp/conf/options.h>".
 It is intended to store options about what parts of YARP have been compiled.
 Right now, it just optionally defines YARP_HAS_MATH_LIB,
@@ -526,21 +526,21 @@ since that is all anyone has needed so far.
 \sa \ref yarp_build_structure_conf
 \sa \ref yarp_build_structure_options
 
-@section yarp_build_structure_template_version cmake/template/yarp_config_version.h.in
+@section yarp_build_structure_template_version src/libYARP_conf/include/yarp/conf/version.h.in
 
 This is the template for a generated header file built during
 configuration.
-It is placed in generated_include/yarp/conf/version.h,
+It is placed in <CMAKE_BINARY_DIR>/src/conf/libYARP_conf/include/yarp/conf/version.h,
 and should be accessed as "#include <yarp/conf/version.h>".
 It is intended to store the version number of YARP.
 \sa \ref yarp_build_structure_conf
 \sa \ref yarp_build_structure_version
 
-@section yarp_build_structure_template_system cmake/template/yarp_config_system.h.in
+@section yarp_build_structure_template_system src/libYARP_conf/include/yarp/conf/system.h.in
 
 This is the template for a generated header file built during
 configuration.
-It is placed in generated_include/yarp/conf/system.h,
+It is placed in <CMAKE_BINARY_DIR>/src/conf/libYARP_conf/include/yarp/conf/system.h,
 and should be accessed as "#include <yarp/conf/system.h>".
 It is intended to store some facts about the system upon which YARP
 is built: the types YARP_INT32, YARP_INT16, YARP_FLOAT64,
@@ -549,11 +549,11 @@ or STL strings
 \sa \ref yarp_build_structure_conf
 \sa \ref yarp_build_structure_system_check
 
-@section yarp_build_structure_template_api cmake/template/yarp_config_api.h.in
+@section yarp_build_structure_template_api src/libYARP_conf/include/yarp/conf/api.h.in
 
 This is the template for a generated header file built during
 configuration.
-It is placed in generated_include/yarp/conf/api.h,
+It is placed in <CMAKE_BINARY_DIR>/src/conf/libYARP_conf/include/yarp/conf/api.h,
 and should be accessed as "#include <yarp/conf/api.h>".
 It holds macros for defining the public API to YARP, if YARP has
 been configured build as a shared library and the YARP_CLEAN_API

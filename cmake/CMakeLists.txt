@@ -2,23 +2,6 @@
 # Authors: Paul Fitzpatrick, Giorgio Metta, Lorenzo Natale
 # CopyPolicy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
 
-set_property(GLOBAL PROPERTY YARP_TREE_INCLUDE_DIRS ${CMAKE_BINARY_DIR}/generated_include)
-
-# compiler.h is generated in YarpSystemCheck.cmake
-install(FILES ${CMAKE_BINARY_DIR}/generated_include/yarp/conf/compiler.h
-        COMPONENT development
-        DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}/yarp/conf)
-
-foreach(conf version system options api numeric)
-  set(outconf ${CMAKE_BINARY_DIR}/generated_include/yarp/conf/${conf}.h)
-  configure_file(${YARP_MODULE_DIR}/template/yarp_conf_${conf}.h.in
-                  ${outconf})
-  message(STATUS "generated ${outconf}")
-  install(FILES ${outconf}
-          COMPONENT development
-          DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}/yarp/conf)
-endforeach(conf)
-
 # YARP CMake Modules
 set(YARP_CMAKE_FILES YarpDeprecatedWarning.cmake
                      YarpPlugin.cmake
