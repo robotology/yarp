@@ -350,6 +350,7 @@ static void handler_sigbreak(int sig) {
 
 
 RFModule::RFModule() {
+    yarp::os::Network::initMinimum();
     implementation = new RFModuleHelper(*this);
     stopFlag = false;
 
@@ -376,6 +377,7 @@ RFModule::~RFModule() {
         delete &HELPER(implementation);
         implementation = YARP_NULLPTR;
     }
+    yarp::os::Network::finiMinimum();
 }
 
 
