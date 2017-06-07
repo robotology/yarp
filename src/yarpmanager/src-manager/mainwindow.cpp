@@ -916,6 +916,11 @@ void MainWindow::onNewApplication()
                                       appName))
             {
                 reportErrors();
+                if(appName)
+                {
+                    delete [] appName;
+                    appName = YARP_NULLPTR;
+                }
                 return;
             }
         }
@@ -933,7 +938,11 @@ void MainWindow::onNewApplication()
             reportErrors();
         }
 
-        delete [] appName;
+        if(appName)
+        {
+            delete [] appName;
+            appName = YARP_NULLPTR;
+        }
         delete newApplicationWizard;
         QFile f(fileName);
         f.remove();
