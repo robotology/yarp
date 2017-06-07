@@ -217,6 +217,25 @@ void ApplicationViewWidget::showBuilder(bool show)
     builderWidget->setVisible(show);
 }
 
+bool ApplicationViewWidget::anyModuleSelected()
+{
+    return !ui->moduleList->selectedItems().isEmpty();
+}
+bool ApplicationViewWidget::anyConnectionSelected()
+{
+    return !ui->connectionList->selectedItems().isEmpty();
+}
+
+CustomTreeWidget* ApplicationViewWidget::getModuleList()
+{
+    return ui->moduleList;
+}
+
+CustomTreeWidget* ApplicationViewWidget::getConnectionList()
+{
+    return ui->connectionList;
+}
+
 QToolBar* ApplicationViewWidget::getBuilderToolBar()
 {
     return builderToolBar;
@@ -1409,6 +1428,7 @@ void ApplicationViewWidget::selectAllNestedApplicationModule(QTreeWidgetItem *it
     }
 }
 
+
 /*! \brief Select/deselect all connections
     \param check
 */
@@ -1465,37 +1485,42 @@ void ApplicationViewWidget::selectAll()
 }
 
 /*! \brief Run all modules in the application */
-void ApplicationViewWidget::runApplicationSet()
+void ApplicationViewWidget::runApplicationSet(bool onlySelected)
 {
-    selectAllModule(true);
+    if(!onlySelected)
+        selectAllModule(true);
     onRun();
 }
 
 /*! \brief Stop all modules in the application */
-void ApplicationViewWidget::stopApplicationSet()
+void ApplicationViewWidget::stopApplicationSet(bool onlySelected)
 {
-    selectAllModule(true);
+    if(!onlySelected)
+        selectAllModule(true);
     onStop();
 }
 
 /*! \brief Kill all running modules in the application */
-void ApplicationViewWidget::killApplicationSet()
+void ApplicationViewWidget::killApplicationSet(bool onlySelected)
 {
-    selectAllModule(true);
+    if(!onlySelected)
+        selectAllModule(true);
     onKill();
 }
 
 /*! \brief Connect all modules in the application to their ports using connections list*/
-void ApplicationViewWidget::connectConnectionSet()
+void ApplicationViewWidget::connectConnectionSet(bool onlySelected)
 {
-    selectAllConnections(true);
+    if(!onlySelected)
+        selectAllConnections(true);
     onConnect();
 }
 
 /*! \brief Disconnect all modules in the application to their ports using connections list*/
-void ApplicationViewWidget::disconnectConnectionSet()
+void ApplicationViewWidget::disconnectConnectionSet(bool onlySelected)
 {
-    selectAllConnections(true);
+    if(!onlySelected)
+        selectAllConnections(true);
     onDisconnect();
 }
 
