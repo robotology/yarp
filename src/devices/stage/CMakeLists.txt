@@ -9,10 +9,6 @@ yarp_prepare_plugin(stage
                     DEPENDS "CREATE_DEVICE_LIBRARY_MODULES;YARP_HAS_STAGE;YARP_COMPILE_UNMAINTAINED")
 
 if(NOT SKIP_stage)
-  get_property(YARP_OS_INCLUDE_DIRS TARGET YARP_OS PROPERTY INCLUDE_DIRS)
-  get_property(YARP_dev_INCLUDE_DIRS TARGET YARP_dev PROPERTY INCLUDE_DIRS)
-  include_directories(${YARP_OS_INCLUDE_DIRS}
-                      ${YARP_dev_INCLUDE_DIRS})
 
   include_directories(${Stage_INCLUDE_DIRS})
   yarp_add_plugin(yarp_stage StageControl.cpp

@@ -16,12 +16,6 @@ yarp_prepare_plugin(ffmpeg_writer
 
 if(NOT SKIP_ffmpeg_grabber OR NOT SKIP_ffmpeg_writer)
   set(CMAKE_INCLUDE_CURRENT_DIR ON)
-  get_property(YARP_OS_INCLUDE_DIRS TARGET YARP_OS PROPERTY INCLUDE_DIRS)
-  get_property(YARP_sig_INCLUDE_DIRS TARGET YARP_sig PROPERTY INCLUDE_DIRS)
-  get_property(YARP_dev_INCLUDE_DIRS TARGET YARP_dev PROPERTY INCLUDE_DIRS)
-  include_directories(${YARP_OS_INCLUDE_DIRS}
-                      ${YARP_sig_INCLUDE_DIRS}
-                      ${YARP_dev_INCLUDE_DIRS})
   include_directories(SYSTEM ${FFMPEG_INCLUDE_DIR})
   yarp_add_plugin(yarp_ffmpeg FfmpegGrabber.cpp
                               FfmpegWriter.cpp
@@ -29,9 +23,9 @@ if(NOT SKIP_ffmpeg_grabber OR NOT SKIP_ffmpeg_writer)
                               FfmpegWriter.h
                               ffmpeg_api.h
                               ffmpeg_api.cpp)
-  target_link_libraries(yarp_ffmpeg YARP_OS
-                                    YARP_sig
-                                    YARP_dev
+  target_link_libraries(yarp_ffmpeg YARP::YARP_OS
+                                    YARP::YARP_sig
+                                    YARP::YARP_dev
                                     ${FFMPEG_LIBRARIES})
   if(MINGW)
     target_link_libraries(yarp_ffmpeg ws2_32)

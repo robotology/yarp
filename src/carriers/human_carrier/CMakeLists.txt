@@ -11,8 +11,6 @@ yarp_prepare_plugin(human
 
 if(NOT SKIP_human)
   set(CMAKE_INCLUDE_CURRENT_DIR ON)
-  get_property(YARP_OS_INCLUDE_DIRS TARGET YARP_OS PROPERTY INCLUDE_DIRS)
-  include_directories(${YARP_OS_INCLUDE_DIRS})
   yarp_add_plugin(yarp_human HumanCarrier.h
                              HumanStream.h
                              HumanCarrier.cpp

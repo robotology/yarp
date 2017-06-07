@@ -9,12 +9,6 @@ yarp_prepare_plugin(wxsdl
                     DEPENDS "CREATE_DEVICE_LIBRARY_MODULES;YARP_HAS_WXWIDGETS;YARP_HAS_SDL")
 
 if(NOT SKIP_wxsdl)
-  get_property(YARP_OS_INCLUDE_DIRS TARGET YARP_OS PROPERTY INCLUDE_DIRS)
-  get_property(YARP_sig_INCLUDE_DIRS TARGET YARP_sig PROPERTY INCLUDE_DIRS)
-  get_property(YARP_dev_INCLUDE_DIRS TARGET YARP_dev PROPERTY INCLUDE_DIRS)
-  include_directories(${YARP_OS_INCLUDE_DIRS}
-                      ${YARP_sig_INCLUDE_DIRS}
-                      ${YARP_dev_INCLUDE_DIRS})
   include_directories(SYSTEM ${wxWidgets_INCLUDE_DIRS}
                              ${SDL_INCLUDE_DIR})
 

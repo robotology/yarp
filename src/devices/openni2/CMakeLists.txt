@@ -25,12 +25,6 @@ yarp_prepare_plugin(OpenNI2DeviceClient
 
 if (NOT SKIP_OpenNI2DeviceServer OR NOT SKIP_OpenNI2DeviceClient)
   set(CMAKE_INCLUDE_CURRENT_DIR ON)
-  get_property(YARP_OS_INCLUDE_DIRS TARGET YARP_OS PROPERTY INCLUDE_DIRS)
-  get_property(YARP_sig_INCLUDE_DIRS TARGET YARP_sig PROPERTY INCLUDE_DIRS)
-  get_property(YARP_dev_INCLUDE_DIRS TARGET YARP_dev PROPERTY INCLUDE_DIRS)
-  include_directories(${YARP_OS_INCLUDE_DIRS}
-                      ${YARP_sig_INCLUDE_DIRS}
-                      ${YARP_dev_INCLUDE_DIRS})
 
   if(NOT NITE2_FOUND)
     message(STATUS "OpenNI2Device: NITE2 library was not found, skeleton extraction feature will be skipped by driver. "
@@ -55,6 +49,7 @@ if (NOT SKIP_OpenNI2DeviceServer OR NOT SKIP_OpenNI2DeviceClient)
   target_link_libraries(yarp_OpenNI2Device YARP::YARP_OS
                                            YARP::YARP_sig
                                            YARP::YARP_dev
+                                           YARP::YARP_math
                                            ${OpenNI2_LIBRARIES})
 
   if(NITE2_FOUND)

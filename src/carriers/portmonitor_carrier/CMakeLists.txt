@@ -15,8 +15,6 @@ if (NOT SKIP_portmonitor)
   set(CMAKE_INCLUDE_CURRENT_DIR ON)
   include_directories(${CMAKE_CURRENT_SOURCE_DIR}/dll)
 
-  get_property(YARP_OS_INCLUDE_DIRS TARGET YARP_OS PROPERTY INCLUDE_DIRS)
-  include_directories(${YARP_OS_INCLUDE_DIRS})
 
   if(LUA_FOUND)
     include_directories(${CMAKE_CURRENT_SOURCE_DIR}/lua)
@@ -35,11 +33,13 @@ if (NOT SKIP_portmonitor)
                   dll/MonitorSharedLib.cpp
                   ${portmonitor_LUA_SRCS})
 
-  target_link_libraries(yarp_portmonitor YARP::YARP_OS)
+  target_link_libraries(yarp_portmonitor YARP::YARP_OS
+                                         ${ACE_LIBRARIES})
+
   if(LUA_FOUND)
     target_link_libraries(yarp_portmonitor ${LUA_LIBRARY})
   endif()
-  target_link_libraries(yarp_portmonitor ${ACE_LIBRARIES})
+
   yarp_install(TARGETS yarp_portmonitor
                EXPORT YARP
                COMPONENT runtime

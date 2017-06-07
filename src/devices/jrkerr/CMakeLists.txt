@@ -11,10 +11,6 @@ yarp_prepare_plugin(jrkerr
 
 if(NOT SKIP_jrkerr)
   set(CMAKE_INCLUDE_CURRENT_DIR ON)
-  get_property(YARP_OS_INCLUDE_DIRS TARGET YARP_OS PROPERTY INCLUDE_DIRS)
-  get_property(YARP_dev_INCLUDE_DIRS TARGET YARP_dev PROPERTY INCLUDE_DIRS)
-  include_directories(${YARP_OS_INCLUDE_DIRS}
-                      ${YARP_dev_INCLUDE_DIRS})
   yarp_add_plugin(yarp_jrkerr JrkerrMotionControl.cpp
                               nmccom.cpp
                               picservo.cpp

@@ -13,20 +13,12 @@ yarp_prepare_plugin(fakeIMU
 
 if(NOT SKIP_fakeIMU)
   set(CMAKE_INCLUDE_CURRENT_DIR ON)
-  get_property(YARP_OS_INCLUDE_DIRS TARGET YARP_OS PROPERTY INCLUDE_DIRS)
-  get_property(YARP_sig_INCLUDE_DIRS TARGET YARP_sig PROPERTY INCLUDE_DIRS)
-  get_property(YARP_dev_INCLUDE_DIRS TARGET YARP_dev PROPERTY INCLUDE_DIRS)
-  get_property(YARP_math_INCLUDE_DIRS TARGET YARP_math PROPERTY INCLUDE_DIRS)
-  include_directories(${YARP_OS_INCLUDE_DIRS}
-                      ${YARP_sig_INCLUDE_DIRS}
-                      ${YARP_dev_INCLUDE_DIRS}
-                      ${YARP_math_INCLUDE_DIRS})
   yarp_add_plugin(yarp_fakeIMU fakeIMU.cpp
                                fakeIMU.h)
-  target_link_libraries(yarp_fakeIMU YARP_OS
-                                     YARP_sig
-                                     YARP_dev
-                                     YARP_math)
+  target_link_libraries(yarp_fakeIMU YARP::YARP_OS
+                                     YARP::YARP_sig
+                                     YARP::YARP_dev
+                                     YARP::YARP_math)
   yarp_install(TARGETS yarp_fakeIMU
                EXPORT YARP
                COMPONENT runtime

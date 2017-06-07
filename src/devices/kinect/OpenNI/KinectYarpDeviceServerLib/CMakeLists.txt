@@ -2,13 +2,6 @@
 # Author: Duarte Aragao
 # CopyPolicy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
 
-get_property(YARP_OS_INCLUDE_DIRS TARGET YARP_OS PROPERTY INCLUDE_DIRS)
-get_property(YARP_sig_INCLUDE_DIRS TARGET YARP_sig PROPERTY INCLUDE_DIRS)
-get_property(YARP_dev_INCLUDE_DIRS TARGET YARP_dev PROPERTY INCLUDE_DIRS)
-include_directories(${YARP_OS_INCLUDE_DIRS}
-                    ${YARP_sig_INCLUDE_DIRS}
-                    ${YARP_dev_INCLUDE_DIRS})
-
 #OPENNI Lib
 # message("$ENV{OPEN_NI_INCLUDE}")
 #ONLY TESTED WITH THE ROS OPENNI
@@ -39,9 +32,9 @@ foreach(header_file ${folder_header})
 endforeach(header_file ${folder_header})
 
 yarp_add_plugin(KinectYarpDeviceServerLib ${folder_source} ${folder_header})
-target_link_libraries(KinectYarpDeviceServerLib YARP_OS
-                                                YARP_sig
-                                                YARP_dev
+target_link_libraries(KinectYarpDeviceServerLib YARP::YARP_OS
+                                                YARP::YARP_sig
+                                                YARP::YARP_dev
                                                 ${OPEN_NI_LIBRARY}
                                                 ${XN_NITE_LIBRARY})
 yarp_install(TARGETS KinectYarpDeviceServerLib

@@ -16,12 +16,6 @@ if(NOT SKIP_mjpeg)
   endif()
 
   set(CMAKE_INCLUDE_CURRENT_DIR ON)
-  get_property(YARP_OS_INCLUDE_DIRS TARGET YARP_OS PROPERTY INCLUDE_DIRS)
-  get_property(YARP_sig_INCLUDE_DIRS TARGET YARP_sig PROPERTY INCLUDE_DIRS)
-  get_property(YARP_wire_rep_utils_INCLUDE_DIRS TARGET YARP_wire_rep_utils PROPERTY INCLUDE_DIRS)
-  include_directories(${YARP_OS_INCLUDE_DIRS}
-                      ${YARP_sig_INCLUDE_DIRS}
-                      ${YARP_wire_rep_utils_INCLUDE_DIRS})
 
   include_directories(SYSTEM ${JPEG_INCLUDE_DIR})
 

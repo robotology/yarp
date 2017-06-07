@@ -19,8 +19,6 @@ yarp_prepare_plugin(mpi
                     DEPENDS "CREATE_OPTIONAL_CARRIERS;YARP_HAS_MPI")
 
 if(NOT SKIP_mpi)
-  get_property(YARP_OS_INCLUDE_DIRS TARGET YARP_OS PROPERTY INCLUDE_DIRS)
-  include_directories(${YARP_OS_INCLUDE_DIRS})
   include_directories(${CMAKE_CURRENT_SOURCE_DIR}/include)
 
   include_directories(SYSTEM ${MPI_INCLUDE_PATH})
@@ -57,8 +55,6 @@ yarp_prepare_plugin(mpibcast
                     DEPENDS "CREATE_OPTIONAL_CARRIERS;YARP_HAS_MPI")
 
 if(NOT SKIP_mpibcast)
-  get_property(YARP_OS_INCLUDE_DIRS TARGET YARP_OS PROPERTY INCLUDE_DIRS)
-  include_directories(${YARP_OS_INCLUDE_DIRS})
   include_directories(${CMAKE_CURRENT_SOURCE_DIR}/include)
 
   include_directories(SYSTEM ${MPI_INCLUDE_PATH})

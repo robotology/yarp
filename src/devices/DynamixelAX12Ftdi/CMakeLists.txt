@@ -10,15 +10,11 @@ yarp_prepare_plugin(dynamixelAX12Ftdi
 
 if(NOT SKIP_dynamixelAX12Ftdi)
   set(CMAKE_INCLUDE_CURRENT_DIR ON)
-  get_property(YARP_OS_INCLUDE_DIRS TARGET YARP_OS PROPERTY INCLUDE_DIRS)
-  get_property(YARP_dev_INCLUDE_DIRS TARGET YARP_dev PROPERTY INCLUDE_DIRS)
-  include_directories(${YARP_OS_INCLUDE_DIRS}
-                      ${YARP_dev_INCLUDE_DIRS})
   include_directories(SYSTEM ${FTDI_INCLUDE_DIR})
   yarp_add_plugin(yarp_dynamixelAX12Ftdi DynamixelAX12FtdiDriver.cpp
                                          DynamixelAX12FtdiDriver.h)
-  target_link_libraries(yarp_dynamixelAX12Ftdi YARP_OS
-                                               YARP_dev
+  target_link_libraries(yarp_dynamixelAX12Ftdi YARP::YARP_OS
+                                               YARP::YARP_dev
                                                ${FTDI_LIBRARY})
   yarp_install(TARGETS yarp_dynamixelAX12Ftdi
                EXPORT YARP

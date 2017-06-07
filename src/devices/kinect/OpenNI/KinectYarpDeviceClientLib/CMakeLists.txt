@@ -2,13 +2,6 @@
 # Author: Duarte Aragao
 # CopyPolicy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
 
-get_property(YARP_OS_INCLUDE_DIRS TARGET YARP_OS PROPERTY INCLUDE_DIRS)
-get_property(YARP_sig_INCLUDE_DIRS TARGET YARP_sig PROPERTY INCLUDE_DIRS)
-get_property(YARP_dev_INCLUDE_DIRS TARGET YARP_dev PROPERTY INCLUDE_DIRS)
-include_directories(${YARP_OS_INCLUDE_DIRS}
-                    ${YARP_sig_INCLUDE_DIRS}
-                    ${YARP_dev_INCLUDE_DIRS})
-
 # Search for source code.
 file(GLOB folder_source *.cpp *.cc *.c)
 file(GLOB folder_header *.h)

@@ -14,11 +14,6 @@ yarp_prepare_plugin(bayer
 if(NOT SKIP_bayer)
   set(CMAKE_INCLUDE_CURRENT_DIR ON)
 
-  get_property(YARP_OS_INCLUDE_DIRS TARGET YARP_OS PROPERTY INCLUDE_DIRS)
-  get_property(YARP_sig_INCLUDE_DIRS TARGET YARP_sig PROPERTY INCLUDE_DIRS)
-  include_directories(${YARP_OS_INCLUDE_DIRS}
-                      ${YARP_sig_INCLUDE_DIRS})
-
   if(NOT YARP_HAS_LIBDC1394)
     set(DC1394_SRC ${CMAKE_SOURCE_DIR}/extern/libdc1394_bayer/libdc1394_bayer.c
                    ${CMAKE_SOURCE_DIR}/extern/libdc1394_bayer/conversions.h)

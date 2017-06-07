@@ -9,13 +9,6 @@ yarp_prepare_plugin(rpLidar2
 
 if(NOT SKIP_rpLidar2)
   set(CMAKE_INCLUDE_CURRENT_DIR ON)
-  get_property(YARP_OS_INCLUDE_DIRS TARGET YARP_OS PROPERTY INCLUDE_DIRS)
-  get_property(YARP_sig_INCLUDE_DIRS TARGET YARP_sig PROPERTY INCLUDE_DIRS)
-  get_property(YARP_dev_INCLUDE_DIRS TARGET YARP_dev PROPERTY INCLUDE_DIRS)
-  include_directories(${YARP_OS_INCLUDE_DIRS}
-                      ${YARP_sig_INCLUDE_DIRS}
-                      ${YARP_dev_INCLUDE_DIRS})
-
 
   set(RPLIDAR_SDK_ROOT ${CMAKE_SOURCE_DIR}/extern/rplidar/sdk)
   if(WIN32)

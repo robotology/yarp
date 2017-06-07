@@ -14,21 +14,14 @@ if(ENABLE_SDLJoypad)
 
   set(CMAKE_INCLUDE_CURRENT_DIR ON)
 
-  get_property(YARP_OS_INCLUDE_DIRS TARGET YARP_OS PROPERTY INCLUDE_DIRS)
-  get_property(YARP_sig_INCLUDE_DIRS TARGET YARP_sig PROPERTY INCLUDE_DIRS)
-  get_property(YARP_dev_INCLUDE_DIRS TARGET YARP_dev PROPERTY INCLUDE_DIRS)
-
   include_directories(SYSTEM ${SDL_INCLUDE_DIR})
-  include_directories(${YARP_OS_INCLUDE_DIRS}
-                      ${YARP_sig_INCLUDE_DIRS}
-                      ${YARP_dev_INCLUDE_DIRS})
 
   yarp_add_plugin(yarp_SDLJoypad SDLJoypad.cpp
                                  SDLJoypad.h)
 
-  target_link_libraries(yarp_SDLJoypad YARP_OS
-                                       YARP_sig
-                                       YARP_dev
+  target_link_libraries(yarp_SDLJoypad YARP::YARP_OS
+                                       YARP::YARP_sig
+                                       YARP::YARP_dev
                                        ${SDL_LIBRARY})
 
   yarp_install(TARGETS yarp_SDLJoypad

@@ -7,9 +7,6 @@ option(CREATE_DEVICE_LIBRARY_MODULES "Compile device modules" FALSE)
 
 include(YarpPlugin)
 
-get_property(YARP_OS_INCLUDE_DIRS TARGET YARP_OS PROPERTY INCLUDE_DIRS)
-include_directories(${YARP_OS_INCLUDE_DIRS})
-
 # Prepare a plugin library called "yarpmod".
 yarp_begin_plugin_library(yarpmod)
   add_subdirectory(cuda)

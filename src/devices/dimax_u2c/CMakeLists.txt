@@ -11,12 +11,6 @@ yarp_prepare_plugin(dimax_u2c
 
 if(NOT SKIP_dimax_u2c)
   set(CMAKE_INCLUDE_CURRENT_DIR ON)
-  get_property(YARP_OS_INCLUDE_DIRS TARGET YARP_OS PROPERTY INCLUDE_DIRS)
-  get_property(YARP_sig_INCLUDE_DIRS TARGET YARP_sig PROPERTY INCLUDE_DIRS)
-  get_property(YARP_dev_INCLUDE_DIRS TARGET YARP_dev PROPERTY INCLUDE_DIRS)
-  include_directories(${YARP_OS_INCLUDE_DIRS}
-                      ${YARP_sig_INCLUDE_DIRS}
-                      ${YARP_dev_INCLUDE_DIRS})
   link_directories(${CMAKE_CURRENT_SOURCE_DIR}/blob)
   yarp_add_plugin(yarp_dimax_u2c DimaxU2C.cpp
                                  I2c.cpp

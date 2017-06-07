@@ -13,14 +13,7 @@ yarp_prepare_plugin(priority
 
 if(NOT SKIP_priority)
   set(CMAKE_INCLUDE_CURRENT_DIR ON)
-
-  get_property(YARP_OS_INCLUDE_DIRS TARGET YARP_OS PROPERTY INCLUDE_DIRS)
-  get_property(YARP_sig_INCLUDE_DIRS TARGET YARP_sig PROPERTY INCLUDE_DIRS)
-  include_directories(${YARP_OS_INCLUDE_DIRS}
-                      ${YARP_sig_INCLUDE_DIRS})
   if(CREATE_LIB_MATH)
-    get_property(YARP_math_INCLUDE_DIRS TARGET YARP_math PROPERTY INCLUDE_DIRS)
-    include_directories(${YARP_math_INCLUDE_DIRS})
     add_definitions(-DWITH_YARPMATH)
   endif()
 

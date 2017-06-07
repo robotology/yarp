@@ -20,12 +20,6 @@ yarp_prepare_plugin(rossrv
 
 if(NOT SKIP_tcpros OR NOT SKIP_rossrv)
   set(CMAKE_INCLUDE_CURRENT_DIR ON)
-  get_property(YARP_OS_INCLUDE_DIRS TARGET YARP_OS PROPERTY INCLUDE_DIRS)
-  get_property(YARP_sig_INCLUDE_DIRS TARGET YARP_sig PROPERTY INCLUDE_DIRS)
-  get_property(YARP_wire_rep_utils_INCLUDE_DIRS TARGET YARP_wire_rep_utils PROPERTY INCLUDE_DIRS)
-  include_directories(${YARP_OS_INCLUDE_DIRS}
-                      ${YARP_sig_INCLUDE_DIRS}
-                      ${YARP_wire_rep_utils_INCLUDE_DIRS})
   yarp_add_plugin(yarp_tcpros
                   TcpRosCarrier.h
                   TcpRosCarrier.cpp
@@ -53,9 +47,9 @@ if(NOT SKIP_tcpros OR NOT SKIP_rossrv)
   add_executable(yarpros yarpros.cpp
                          TcpRosStream.cpp
                          RosLookup.cpp)
-  target_link_libraries(yarpros YARP_OS
-                                YARP_init
-                                YARP_wire_rep_utils)
+  target_link_libraries(yarpros YARP::YARP_OS
+                                YARP::YARP_init
+                                YARP::YARP_wire_rep_utils)
   install(TARGETS yarpros
           EXPORT YARP
           COMPONENT utilities
