@@ -31,6 +31,9 @@ include_directories(SYSTEM ${RTF_INCLUDE_DIRS})
 add_library(YARP_rtf ${YARP_rtf_SRCS} ${YARP_rtf_HDRS})
 add_library(YARP::YARP_rtf ALIAS YARP_rtf)
 
+target_include_directories(YARP_rtf PUBLIC $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>
+                                           $<INSTALL_INTERFACE:${CMAKE_INSTALL_INCLUDEDIR}>)
+
 target_link_libraries(YARP_rtf PUBLIC RTF::RTF
                                PRIVATE YARP::YARP_OS
                                        YARP::YARP_sig

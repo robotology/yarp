@@ -41,6 +41,9 @@ add_library(YARP_logger STATIC ${YARP_logger_SRCS}
                                 ${YARP_logger_IMPL_HDRS})
 add_library(YARP::YARP_logger ALIAS YARP_logger)
 
+target_include_directories(YARP_logger PUBLIC $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>
+                                              $<INSTALL_INTERFACE:${CMAKE_INSTALL_INCLUDEDIR}>)
+
 target_link_libraries(YARP_logger PRIVATE YARP::YARP_OS
                                           YARP::YARP_sig)
 

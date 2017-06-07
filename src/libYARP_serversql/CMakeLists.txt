@@ -43,6 +43,9 @@ add_library(YARP_serversql STATIC ${YARP_serversql_SRCS}
                                   ${YARP_serversql_IMPL_HDRS})
 add_library(YARP::YARP_serversql ALIAS YARP_serversql)
 
+target_include_directories(YARP_serversql PUBLIC $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>
+                                                 $<INSTALL_INTERFACE:${CMAKE_INSTALL_INCLUDEDIR}>)
+
 target_link_libraries(YARP_serversql PRIVATE YARP::YARP_OS
                                              YARP::YARP_init
                                              YARP::YARP_name)

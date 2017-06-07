@@ -299,6 +299,9 @@ add_library(YARP_dev ${YARP_dev_SRCS}
                      ${YARP_devices_HDRS})
 add_library(YARP::YARP_dev ALIAS YARP_dev)
 
+target_include_directories(YARP_dev PUBLIC $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>
+                                           $<INSTALL_INTERFACE:${CMAKE_INSTALL_INCLUDEDIR}>)
+
 target_link_libraries(YARP_dev PRIVATE YARP::YARP_OS)
 target_link_libraries(YARP_dev PRIVATE YARP::YARP_sig)
 

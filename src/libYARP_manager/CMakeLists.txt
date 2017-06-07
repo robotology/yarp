@@ -99,6 +99,9 @@ if(CREATE_LIB_MANAGER)
                                   ${YARP_manager_IMPL_HDRS})
   add_library(YARP::YARP_manager ALIAS YARP_manager)
 
+  target_include_directories(YARP_manager PUBLIC $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>
+                                                 $<INSTALL_INTERFACE:${CMAKE_INSTALL_INCLUDEDIR}>)
+
   target_link_libraries(YARP_manager PRIVATE YARP::YARP_OS
                                              YARP::YARP_sig)
   target_link_libraries(YARP_manager PRIVATE ${TinyXML_LIBRARIES})

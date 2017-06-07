@@ -49,6 +49,9 @@ add_library(YARP_sig ${YARP_sig_SRCS}
                      ${YARP_sig_IMPL_HDRS})
 add_library(YARP::YARP_sig ALIAS YARP_sig)
 
+target_include_directories(YARP_sig PUBLIC $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>
+                                           $<INSTALL_INTERFACE:${CMAKE_INSTALL_INCLUDEDIR}>)
+
 target_link_libraries(YARP_sig PRIVATE YARP::YARP_OS ${ACE_LIBRARIES})
 
 set_property(TARGET YARP_sig PROPERTY PUBLIC_HEADER ${YARP_sig_HDRS})

@@ -17,6 +17,9 @@ if(CREATE_OPTIONAL_CARRIERS)
                                          WireTwiddler.h)
   add_library(YARP::YARP_wire_rep_utils ALIAS YARP_wire_rep_utils)
 
+  target_include_directories(YARP_wire_rep_utils PUBLIC $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}>
+                                                        $<INSTALL_INTERFACE:${CMAKE_INSTALL_INCLUDEDIR}>)
+
   target_link_libraries(YARP_wire_rep_utils PRIVATE YARP::YARP_OS
                                                     YARP::YARP_sig
                                                     ${ACE_LIBRARIES})
