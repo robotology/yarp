@@ -1830,7 +1830,6 @@ void ApplicationViewWidget::onSelfConnect(int which)
         QString from = it->text(3);
         QString to = it->text(4);
         builder->setConnectionConnected(true,from,to);
-        it->setSelected(true);
     }
 
            /* row[m_conColumns.m_col_status] = "connected";
@@ -1851,7 +1850,6 @@ void ApplicationViewWidget::onSelfDisconnect(int which)
         QString from = it->text(3);
         QString to = it->text(4);
         builder->setConnectionConnected(false,from,to);
-        it->setSelected(true);
     }
     reportErrors();
 }
@@ -1902,7 +1900,6 @@ void ApplicationViewWidget::onSelfStart(int which)
         it->setIcon(0,QIcon(":/apply.svg"));
         it->setTextColor(2,QColor("#008C00"));
         builder->setModuleRunning(true,which);
-        it->setSelected(true);
         //row[m_modColumns.m_col_editable] = false;
         //row[m_modColumns.m_col_color] = Gdk::Color("#008C00");
         //row.set_value(0, m_refPixRunning);
@@ -1919,7 +1916,6 @@ void ApplicationViewWidget::onSelfStop(int which)
         it->setIcon(0,QIcon(":/close.svg"));
         it->setTextColor(2,QColor("#BF0303"));
         builder->setModuleRunning(false,which);
-        it->setSelected(true);
     }
     reportErrors();
 }

@@ -124,7 +124,7 @@ MainWindow::MainWindow(QWidget *parent) :
     connect(ui->action_Builder_Window, SIGNAL(triggered()),this, SLOT(onViewBuilderWindows()));
     connect(ui->action_Manager_Window, SIGNAL(triggered()),this, SLOT(onViewBuilderWindows()));
 
-    connect(this,SIGNAL(selectItem(QString)),ui->entitiesTree,SLOT(onSelectItem(QString)));
+    connect(this,SIGNAL(selectItem(QString, bool)),ui->entitiesTree,SLOT(onSelectItem(QString, bool)));
 
     //Adding actions for making the window listen key events(shortcuts)
     this->addAction(ui->actionQuit);
@@ -318,7 +318,7 @@ void MainWindow::reportErrors()
 
 /*! \brief Synchs the application list on filesystem with the application tree.
  */
-void MainWindow::syncApplicationList(QString selectNodeForEditing)
+void MainWindow::syncApplicationList(QString selectNodeForEditing, bool open)
 {
     ui->entitiesTree->clearApplications();
     ui->entitiesTree->clearModules();
@@ -333,7 +333,7 @@ void MainWindow::syncApplicationList(QString selectNodeForEditing)
         if(app){
             ui->entitiesTree->addApplication(app);
             if(strcmp(selectNodeForEditing.toLatin1().data(),app->getName())==0){
-                selectItem(selectNodeForEditing);
+                selectItem(selectNodeForEditing, open);
             }
 
         }
@@ -553,6 +553,7 @@ void MainWindow::viewApplication(yarp::manager::Application *app,bool editingMod
         ui->actionRun->setEnabled(true);
         ui->actionStop->setEnabled(true);
         ui->actionKill->setEnabled(true);
+        onRefresh();
     }
 }
 
@@ -919,6 +920,11 @@ void MainWindow::onNewApplication()
                                       appName))
             {
                 reportErrors();
+                if(appName)
+                {
+                    delete [] appName;
+                    appName = YARP_NULLPTR;
+                }
                 return;
             }
         }
@@ -936,7 +942,11 @@ void MainWindow::onNewApplication()
             reportErrors();
         }
 
-        delete [] appName;
+        if(appName)
+        {
+            delete [] appName;
+            appName = YARP_NULLPTR;
+        }
         delete newApplicationWizard;
         QFile f(fileName);
         f.remove();
@@ -1156,8 +1166,16 @@ void MainWindow::onOpen()
         return;
     }
 
-    if(lazyManager.addApplication(fileName.toLatin1().data())){
-        syncApplicationList();
+    char* name = YARP_NULLPTR;
+
+    if(lazyManager.addApplication(fileName.toLatin1().data(), &name, true)){
+        QString appName(name);
+        syncApplicationList(appName,true);
+    }
+    if(name)
+    {
+        delete [] name;
+        name = YARP_NULLPTR;
     }
 
     if(lazyManager.addResource(fileName.toLatin1().data())){
