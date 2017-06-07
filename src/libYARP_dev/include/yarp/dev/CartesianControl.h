@@ -13,7 +13,7 @@
 #include <yarp/sig/Vector.h>
 
 /*!
- * \file CartesianControl.h defines control board standard interfaces
+ * \file CartesianControl.h defines operational control interfaces
  */
 
 namespace yarp {

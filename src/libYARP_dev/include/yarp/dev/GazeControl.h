@@ -13,7 +13,7 @@
 #include <yarp/sig/Vector.h>
 
 /*!
- * \file GazeControl.h defines control board standard interfaces
+ * \file GazeControl.h defines gaze control interfaces
  */
 
 namespace yarp {
