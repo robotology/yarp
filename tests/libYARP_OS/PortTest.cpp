@@ -62,7 +62,7 @@ public:
      */
     BrokenDevice():RateThread(30), img(YARP_NULLPTR){}
 
-    virtual bool close()
+    virtual bool close() override
     {
         pImg.close();
         RateThread::stop();
@@ -70,14 +70,14 @@ public:
 
     }
 
-    virtual bool open(yarp::os::Searchable& config) { return RateThread::start(); }
+    virtual bool open(yarp::os::Searchable& config) override { return RateThread::start(); }
 
     //RateThread
-    bool threadInit(){ return true; }
+    bool threadInit() override { return true; }
 
-    void threadRelease(){}
+    void threadRelease() override {}
 
-    void run()
+    void run() override
     {
         img = &pImg.prepare();
         img->resize(10, 10);
