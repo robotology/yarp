@@ -550,6 +550,7 @@ void MainWindow::viewApplication(yarp::manager::Application *app,bool editingMod
         ui->actionRun->setEnabled(true);
         ui->actionStop->setEnabled(true);
         ui->actionKill->setEnabled(true);
+        onRefresh();
     }
 }
 
