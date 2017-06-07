@@ -8,7 +8,7 @@ using namespace yarp::os;
 #define myError() yError() << MESSAGE_PREFIX
 #define myDebug() yDebug() << MESSAGE_PREFIX
 #define myWarning() yWarning() << MESSAGE_PREFIX
-constexpr char buttActionGroupName[] = "BUTTON_EXECUTE";
+#define buttActionGroupName "BUTTON_EXECUTE"
 
 bool yarp::dev::IJoypadController::executeAction(int action_id)
 {
@@ -62,9 +62,9 @@ bool yarp::dev::IJoypadController::parseActions(const yarp::os::Searchable& cfg,
             actCount = 0;
             return false;
         }
-        if(!keyvalue.get(0).isInt()                 or
-            keyvalue.get(0).asInt() < 0             or
-            keyvalue.get(0).asInt() > buttonCount-1 or
+        if(!keyvalue.get(0).isInt()                 ||
+            keyvalue.get(0).asInt() < 0             ||
+            keyvalue.get(0).asInt() > buttonCount-1 ||
            !keyvalue.get(1).isString())
         {
             myError() << "Button's actions parameters must be in the format 'unsigned int string' and the button id must be in range";
