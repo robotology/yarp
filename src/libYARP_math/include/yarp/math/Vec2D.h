@@ -22,8 +22,9 @@ namespace yarp
     }
 }
 
+
 template <typename T>
-class YARP_math_API yarp::math::Vec2D : public yarp::os::Portable
+class yarp::math::Vec2D : public yarp::os::Portable
 {
     static_assert (std::is_same<int, T>::value ||
                    std::is_same<double, T>::value, "Vec2D can be specialized only as int, double");
@@ -90,5 +91,11 @@ yarp::math::Vec2D<T> YARP_math_API operator - (yarp::math::Vec2D<T> lhs, const y
 
 template <typename T>
 yarp::math::Vec2D<T> YARP_math_API operator * (const yarp::sig::Matrix& lhs, yarp::math::Vec2D<T> rhs);
+
+
+// Explicit instantiation
+template class YARP_math_API yarp::math::Vec2D<double>;
+template class YARP_math_API yarp::math::Vec2D<int>;
+
 
 #endif //#ifndef YARP_VEC2D
