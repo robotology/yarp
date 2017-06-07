@@ -102,9 +102,9 @@ if(CREATE_LIB_MANAGER)
   target_include_directories(YARP_manager PUBLIC $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>
                                                  $<INSTALL_INTERFACE:${CMAKE_INSTALL_INCLUDEDIR}>)
 
-  target_link_libraries(YARP_manager PRIVATE YARP::YARP_OS
-                                             YARP::YARP_sig)
-  target_link_libraries(YARP_manager PRIVATE ${TinyXML_LIBRARIES})
+  target_link_libraries(YARP_manager PUBLIC YARP::YARP_OS
+                                     PRIVATE YARP::YARP_sig
+                                             ${TinyXML_LIBRARIES})
 
   if(CREATE_LIB_MATH)
     target_link_libraries(YARP_manager PRIVATE YARP::YARP_math)

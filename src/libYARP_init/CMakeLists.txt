@@ -23,7 +23,8 @@ source_group(TREE "${CMAKE_CURRENT_SOURCE_DIR}"
 add_library(YARP_init ${YARP_init_SRCS} ${YARP_init_HDRS})
 add_library(YARP::YARP_init ALIAS YARP_init)
 
-target_link_libraries(YARP_init PRIVATE YARP::YARP_OS)
+target_link_libraries(YARP_init PRIVATE YARP::YARP_conf
+                                        YARP::YARP_OS)
 
 if(YARP_LINK_PLUGINS)
     if(CREATE_OPTIONAL_CARRIERS)

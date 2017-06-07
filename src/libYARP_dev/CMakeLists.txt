@@ -304,7 +304,7 @@ target_include_directories(YARP_dev PUBLIC $<BUILD_INTERFACE:${CMAKE_CURRENT_SOU
                                            $<INSTALL_INTERFACE:${CMAKE_INSTALL_INCLUDEDIR}>)
 
 target_link_libraries(YARP_dev PRIVATE YARP::YARP_OS)
-target_link_libraries(YARP_dev PRIVATE YARP::YARP_sig)
+target_link_libraries(YARP_dev PUBLIC YARP::YARP_sig)
 
 if (CREATE_LIB_MATH)
   target_link_libraries(YARP_dev PRIVATE YARP::YARP_math)

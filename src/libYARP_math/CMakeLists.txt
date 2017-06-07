@@ -64,8 +64,9 @@ if (YARP_HAS_MATH_LIB)
   target_include_directories(YARP_math PUBLIC $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>
                                               $<INSTALL_INTERFACE:${CMAKE_INSTALL_INCLUDEDIR}>)
 
-  target_link_libraries(YARP_math PRIVATE YARP::YARP_OS)
-  target_link_libraries(YARP_math PRIVATE YARP::YARP_sig)
+  target_link_libraries(YARP_math PUBLIC YARP::YARP_OS
+                                         YARP::YARP_sig
+                                  PRIVATE YARP::YARP_eigen)
 
   set_property(TARGET YARP_math PROPERTY PUBLIC_HEADER ${YARP_math_HDRS})
   set_property(TARGET YARP_math PROPERTY PRIVATE_HEADER ${YARP_math_IMPL_HDRS})
