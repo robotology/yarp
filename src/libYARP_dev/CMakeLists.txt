@@ -38,6 +38,7 @@ set(YARP_dev_HDRS include/yarp/dev/all.h
                   include/yarp/dev/ICurrentControl.h
                   include/yarp/dev/IEncoders.h
                   include/yarp/dev/IEncodersTimed.h
+                  include/yarp/dev/IHapticDevice.h
                   include/yarp/dev/IImpedanceControl.h
                   include/yarp/dev/IInteractionMode.h
                   include/yarp/dev/IInteractionModeImpl.h
