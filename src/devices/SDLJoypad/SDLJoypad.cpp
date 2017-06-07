@@ -10,14 +10,13 @@
 #include <cmath>
 #include <yarp/os/Time.h>
 
-
 using namespace yarp::dev;
 using namespace yarp::dev::SDLJoypadImpl;
 using namespace yarp::sig;
 using namespace yarp::os;
 using namespace std;
 
-constexpr double actionsExecutionTime = 1.0;
+#define actionsExecutionTime = 1.0;
 SDLJoypad::SDLJoypad()
 {
     m_buttonCount = 0;
@@ -158,7 +157,7 @@ bool SDLJoypad::open(yarp::os::Searchable& rf)
 
 bool SDLJoypad::parseStickInfo(const yarp::os::Searchable& cfg)
 {
-    if(!cfg.check("sticks") or !cfg.find("sticks").isInt())
+    if(!cfg.check("sticks") || !cfg.find("sticks").isInt())
     {
         yError() << "SDLJoypad: missing 'sticks' parameter or not an integer";
         return false;
@@ -192,7 +191,7 @@ bool SDLJoypad::parseStickInfo(const yarp::os::Searchable& cfg)
             return false;
         }
 
-        if(!stickParams.check("axes") or !stickParams.find("axes").isInt())
+        if(!stickParams.check("axes") || !stickParams.find("axes").isInt())
         {
             yError() << "SDLJoypad: missing 'axes' count in" << stickName << "group or not an integer";
             return false;
@@ -207,7 +206,7 @@ bool SDLJoypad::parseStickInfo(const yarp::os::Searchable& cfg)
             axisName   = "axis"         + std::to_string(j) + "_id";
             invertName = "invert_axis_" + std::to_string(j);
 
-            if(!stickParams.check(axisName) or !stickParams.find(axisName).isInt())
+            if(!stickParams.check(axisName) || !stickParams.find(axisName).isInt())
             {
                 yError() << "SDLJoypad: missing" << axisName << "param in" << stickName << "group or not an integer.";
                 return false;
@@ -220,7 +219,7 @@ bool SDLJoypad::parseStickInfo(const yarp::os::Searchable& cfg)
                 return false;
             }
 
-            if(!stickParams.check(invertName) or !stickParams.find(invertName).isBool())
+            if(!stickParams.check(invertName) || !stickParams.find(invertName).isBool())
             {
                 yError() << "SDLJoypad: missing" << invertName << "param in" << stickName << "group or not an bool.";
                 return false;
@@ -231,7 +230,7 @@ bool SDLJoypad::parseStickInfo(const yarp::os::Searchable& cfg)
             m_axes[axis_id] = false;
         }
 
-        if(!stickParams.check("deadZone") or !stickParams.find("deadZone").isDouble())
+        if(!stickParams.check("deadZone") || !stickParams.find("deadZone").isDouble())
         {
             yError() << "SDLJoypad: missing deadZone param in" << stickName << "group or not an double.";
             return false;
