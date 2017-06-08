@@ -388,14 +388,15 @@ int Drivers::yarpdev(int argc, char *argv[]) {
 
     // check if we're being asked to read the options from file
     Value *val;
-    if (options.check("file",val)) {
+    if (options.check("file",val))
+    {
         // FIXME use argv[0]
-        fprintf(stderr,"*** yarpdev --file is deprecated, please use --from\n");
-        fprintf(stderr,"*** yarpdev --file will be removed in a future version of YARP\n");
+        yError("*** yarpdev --file is deprecated, please use --from\n");
+        yError("*** yarpdev --file will be removed in a future version of YARP\n");
 
         ConstString fname = val->toString();
         options.unput("file");
-        printf("yarpdev: working with config file %s\n", fname.c_str());
+        yDebug("yarpdev: working with config file %s\n", fname.c_str());
         options.fromConfigFile(fname,false);
 
         // interpret command line options as a set of flags again
@@ -404,30 +405,42 @@ int Drivers::yarpdev(int argc, char *argv[]) {
     }
 
     // check if we want to use nested options (less ambiguous)
-    if (options.check("nested",val)||options.check("lispy",val)) {
+    if (options.check("nested",val)||options.check("lispy",val))
+    {
         ConstString lispy = val->toString();
-        printf("yarpdev: working with config %s\n", lispy.c_str());
+        yDebug("yarpdev: working with config %s\n", lispy.c_str());
         options.fromString(lispy);
     }
 
-    if (!options.check("device")) {
+    if (!options.check("device"))
+    {
         // no device mentioned - maybe user needs help
-
-        if (options.check("list")) {
-            printf("Here are devices listed for your system:\n");
-            printf("%s", Drivers::factory().toString().c_str());
-        } else {
-            printf("Welcome to yarpdev, a program to create YARP devices\n");
-            printf("To see the devices available, try:\n");
-            printf("   yarpdev --list\n");
-            printf("To create a device whose name you know, call yarpdev like this:\n");
-            printf("   yarpdev --device DEVICENAME --OPTION VALUE ...\n");
-            printf("For example:\n");
-            printf("   yarpdev --device test_grabber --width 32 --height 16 --name /grabber\n");
-            printf("You can always move options to a configuration file:\n");
-            printf("   yarpdev [--device DEVICENAME] --from CONFIG_FILENAME\n");
-            printf("If you have problems, you can add the \"verbose\" flag to get more information\n");
-            printf("   yarpdev --verbose --device ffmpeg_grabber\n");
+        if (options.check("list"))
+        {
+            yInfo("Here are devices listed for your system:");
+            yInfo("%s", Drivers::factory().toString().c_str());
+        }
+        else
+        {
+            yInfo("Welcome to yarpdev, a program to create YARP devices\n");
+            yInfo("To see the devices available, try:\n");
+            yInfo("   yarpdev --list\n");
+            yInfo("To create a device whose name you know, call yarpdev like this:\n");
+            yInfo("   yarpdev --device DEVICENAME --OPTION VALUE ...\n");
+            yInfo("   For example:\n");
+            yInfo("   yarpdev --device test_grabber --width 32 --height 16 --name /grabber\n");
+            yInfo("You can always move options to a configuration file:\n");
+            yInfo("   yarpdev [--device DEVICENAME] --from CONFIG_FILENAME\n");
+            yInfo("If you have problems, you can add the \"verbose\" flag to get more information\n");
+            yInfo("   yarpdev --verbose --device ffmpeg_grabber\n");
+            if (options.check ("from"))
+            {
+                yError("Unable to find --device option in file %s. Closing.", options.find("from").asString().c_str());
+            }
+            else
+            {
+                yWarning("--device option not specified. Closing.");
+            }
         }
         return 0;
     }
@@ -446,7 +459,7 @@ int Drivers::yarpdev(int argc, char *argv[]) {
     bool ret=Network::checkNetwork();
     if (!ret)
     {
-        fprintf(stderr, "YARP network not available, check if yarp server is reachable\n");
+        yError("YARP network not available, check if yarp server is reachable\n");
         return -1;
     }
 
@@ -455,15 +468,19 @@ int Drivers::yarpdev(int argc, char *argv[]) {
         toDox(dd,stdout);
     }
     if (!dd.isValid()) {
-        printf("yarpdev: ***ERROR*** device not available.\n");
-        if (argc==1) {
-            printf("Here are the known devices:\n");
-            printf("%s", Drivers::factory().toString().c_str());
-        } else {
-            printf("Suggestions:\n");
-            printf("+ Do \"yarpdev --list\" to see list of supported devices.\n");
-            if (!options.check("verbose")) {
-                printf("+ Or append \"--verbose\" option to get more information.\n");
+        yError("yarpdev: ***ERROR*** device not available.\n");
+        if (argc==1)
+        {
+            yInfo("Here are the known devices:\n");
+            yInfo("%s", Drivers::factory().toString().c_str());
+        }
+        else 
+        {
+            yInfo("Suggestions:\n");
+            yInfo("+ Do \"yarpdev --list\" to see list of supported devices.\n");
+            if (!options.check("verbose"))
+            {
+                yInfo("+ Or append \"--verbose\" option to get more information.\n");
             }
         }
         return 1;
@@ -491,13 +508,13 @@ int Drivers::yarpdev(int argc, char *argv[]) {
             terminee = new Terminee(s.c_str());
             terminatorKey = s.c_str();
             if (terminee == 0) {
-                printf("Can't allocate terminator port\n");
+                yError("Can't allocate terminator port\n");
                 terminatorKey = "";
                 dd.close();
                 return 1;
             }
             if (!terminee->isOk()) {
-                printf("Failed to create terminator port\n");
+                yError("Failed to create terminator port\n");
                 terminatorKey = "";
                 delete terminee;
                 terminee = NULL;
@@ -516,7 +533,7 @@ int Drivers::yarpdev(int argc, char *argv[]) {
         if (backgrounded) {
             // we don't need to poll this, so forget about the
             // service interface
-            printf("yarpdev: service backgrounded\n");
+            yDebug("yarpdev: service backgrounded\n");
             service = NULL;
         }
     }
@@ -554,7 +571,7 @@ int Drivers::yarpdev(int argc, char *argv[]) {
 }
 
 DeviceDriver *StubDriverCreator::create() {
-    //printf("Creating %s from %s\n", desc.c_str(), libname.c_str());
+    //yDebug("Creating %s from %s\n", desc.c_str(), libname.c_str());
     StubDriver *result = new StubDriver(libname.c_str(),fnname.c_str(),false);
     if (result==NULL) return result;
     if (!result->isValid()) {
@@ -562,7 +579,7 @@ DeviceDriver *StubDriverCreator::create() {
         result = NULL;
         return NULL;
     }
-    //printf("Created %s from %s\n", desc.c_str(), libname.c_str());
+    //yDebug("Created %s from %s\n", desc.c_str(), libname.c_str());
     return result;
 }
 
