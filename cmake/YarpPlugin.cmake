@@ -50,9 +50,9 @@ if(COMMAND YARP_END_PLUGIN_LIBRARY)
 endif()
 
 include(GNUInstallDirs)
-include(YarpInstallationHelpers)
 include(CMakeParseArguments)
 include(CMakeDependentOption)
+include(${CMAKE_CURRENT_LIST_DIR}/YarpInstallationHelpers.cmake)
 
 
 ################################################################################

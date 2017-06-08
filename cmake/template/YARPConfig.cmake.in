@@ -132,5 +132,7 @@ if(TARGET YARP::YARP_math)
   set(YARP_HAS_MATH_LIB TRUE)
 endif()
 
-# load IDL functions
+# Load CMake helper functions
 include(${YARP_MODULE_DIR}/YarpIDL.cmake)
+include(${YARP_MODULE_DIR}/YarpPlugin.cmake)
+include(${YARP_MODULE_DIR}/YarpInstallationHelpers.cmake)
