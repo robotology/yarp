@@ -264,14 +264,21 @@
     <property name="title">
      <string>Manage</string>
     </property>
+    <addaction name="actionRun_all"/>
+    <addaction name="actionStop_all"/>
+    <addaction name="actionKill_all"/>
+    <addaction name="separator"/>
+    <addaction name="actionConnect_all"/>
+    <addaction name="actionDisconnect_all"/>
+    <addaction name="separator"/>
+    <addaction name="actionRefresh_Status"/>
+    <addaction name="separator"/>
     <addaction name="actionRun"/>
     <addaction name="actionStop"/>
     <addaction name="actionKill"/>
     <addaction name="separator"/>
     <addaction name="actionConnect"/>
     <addaction name="actionDisconnect"/>
-    <addaction name="separator"/>
-    <addaction name="actionRefresh_Status"/>
    </widget>
    <widget class="QMenu" name="menuHelp">
     <property name="title">
@@ -294,6 +301,12 @@
    <addaction name="menuHelp"/>
   </widget>
   <widget class="QToolBar" name="mainToolBar">
+   <property name="windowTitle">
+    <string>Main Toolbar</string>
+   </property>
+   <property name="movable">
+    <bool>true</bool>
+   </property>
    <attribute name="toolBarArea">
     <enum>TopToolBarArea</enum>
    </attribute>
@@ -305,16 +318,48 @@
    <addaction name="separator"/>
    <addaction name="actionSelect_All"/>
    <addaction name="actionRefresh_Status"/>
+  </widget>
+  <widget class="QStatusBar" name="statusBar"/>
+  <widget class="QToolBar" name="applicationActionToolBar">
+   <property name="windowTitle">
+    <string>Application Action Toolbar</string>
+   </property>
+   <property name="movable">
+    <bool>true</bool>
+   </property>
+   <attribute name="toolBarArea">
+    <enum>LeftToolBarArea</enum>
+   </attribute>
+   <attribute name="toolBarBreak">
+    <bool>false</bool>
+   </attribute>
+   <addaction name="actionRun_all"/>
+   <addaction name="actionStop_all"/>
+   <addaction name="actionKill_all"/>
    <addaction name="separator"/>
+   <addaction name="actionConnect_all"/>
+   <addaction name="actionDisconnect_all"/>
+  </widget>
+  <widget class="QToolBar" name="selectionActionToolBar">
+   <property name="windowTitle">
+    <string>Selection Action Toolbar</string>
+   </property>
+   <property name="movable">
+    <bool>true</bool>
+   </property>
+   <attribute name="toolBarArea">
+    <enum>TopToolBarArea</enum>
+   </attribute>
+   <attribute name="toolBarBreak">
+    <bool>false</bool>
+   </attribute>
    <addaction name="actionRun"/>
-   <addaction name="actionConnect"/>
-   <addaction name="actionDisconnect"/>
    <addaction name="actionStop"/>
    <addaction name="actionKill"/>
    <addaction name="separator"/>
-   <addaction name="actionHelp"/>
+   <addaction name="actionConnect"/>
+   <addaction name="actionDisconnect"/>
   </widget>
-  <widget class="QStatusBar" name="statusBar"/>
   <action name="actionNew_Application">
    <property name="icon">
     <iconset resource="../res.qrc">
@@ -435,52 +480,64 @@
     <string>Export Graph...</string>
    </property>
   </action>
-  <action name="actionRun">
-   <property name="icon">
-    <iconset resource="../../yarpdataplayer/src/RC/res.qrc">
-     <normaloff>:/play.svg</normaloff>:/play.svg</iconset>
-   </property>
-   <property name="text">
-    <string>Run</string>
-   </property>
-   <property name="shortcut">
-    <string>F5</string>
-   </property>
-  </action>
-  <action name="actionStop">
-   <property name="icon">
-    <iconset resource="../../yarpdataplayer/src/RC/res.qrc">
-     <normaloff>:/stop.svg</normaloff>:/stop.svg</iconset>
-   </property>
-   <property name="text">
-    <string>Stop</string>
-   </property>
-  </action>
-  <action name="actionKill">
+  <action name="actionRun_all">
    <property name="icon">
     <iconset resource="../res.qrc">
-     <normaloff>:/kill.svg</normaloff>:/kill.svg</iconset>
+     <normaloff>:/play_all.svg</normaloff>:/play_all.svg</iconset>
    </property>
    <property name="text">
-    <string>Kill</string>
+    <string>Run all</string>
+   </property>
+   <property name="toolTip">
+    <string>Run all</string>
    </property>
   </action>
-  <action name="actionConnect">
+  <action name="actionStop_all">
    <property name="icon">
     <iconset resource="../res.qrc">
-     <normaloff>:/connect.svg</normaloff>:/connect.svg</iconset>
+     <normaloff>:/stop_all.svg</normaloff>:/stop_all.svg</iconset>
    </property>
    <property name="text">
-    <string>Connect</string>
+    <string>Stop all</string>
+   </property>
+   <property name="toolTip">
+    <string>Stop all</string>
    </property>
   </action>
-  <action name="actionDisconnect">
+  <action name="actionKill_all">
    <property name="icon">
     <iconset resource="../res.qrc">
-     <normaloff>:/disconnect.svg</normaloff>:/disconnect.svg</iconset>
+     <normaloff>:/kill_all.svg</normaloff>:/kill_all.svg</iconset>
    </property>
    <property name="text">
-    <string>Disconnect</string>
+    <string>Kill all</string>
+   </property>
+   <property name="toolTip">
+    <string>Kill all</string>
+   </property>
+  </action>
+  <action name="actionConnect_all">
+   <property name="icon">
+    <iconset resource="../res.qrc">
+     <normaloff>:/connect_all.svg</normaloff>:/connect_all.svg</iconset>
+   </property>
+   <property name="text">
+    <string>Connect all</string>
+   </property>
+   <property name="toolTip">
+    <string>Connect all</string>
+   </property>
+  </action>
+  <action name="actionDisconnect_all">
+   <property name="icon">
+    <iconset resource="../res.qrc">
+     <normaloff>:/disconnect_all.svg</normaloff>:/disconnect_all.svg</iconset>
+   </property>
+   <property name="text">
+    <string>Disconnect all</string>
+   </property>
+   <property name="toolTip">
+    <string>Disconnect all</string>
    </property>
   </action>
   <action name="actionRefresh_Status">
@@ -490,6 +547,9 @@
    </property>
    <property name="text">
     <string>Refresh Status</string>
+   </property>
+   <property name="shortcut">
+    <string>F5</string>
    </property>
   </action>
   <action name="actionHelp">
@@ -524,6 +584,66 @@
    </property>
    <property name="text">
     <string>&amp;Manager Window</string>
+   </property>
+  </action>
+  <action name="actionRun">
+   <property name="icon">
+    <iconset resource="../../yarpdataplayer/src/RC/res.qrc">
+     <normaloff>:/play.svg</normaloff>:/play.svg</iconset>
+   </property>
+   <property name="text">
+    <string>Play selected</string>
+   </property>
+   <property name="toolTip">
+    <string>Run selected</string>
+   </property>
+  </action>
+  <action name="actionStop">
+   <property name="icon">
+    <iconset resource="../../yarpdataplayer/src/RC/res.qrc">
+     <normaloff>:/stop.svg</normaloff>:/stop.svg</iconset>
+   </property>
+   <property name="text">
+    <string>Stop selected</string>
+   </property>
+   <property name="toolTip">
+    <string>Stop selected</string>
+   </property>
+  </action>
+  <action name="actionConnect">
+   <property name="icon">
+    <iconset resource="../res.qrc">
+     <normaloff>:/connect.svg</normaloff>:/connect.svg</iconset>
+   </property>
+   <property name="text">
+    <string>Connect selected</string>
+   </property>
+   <property name="toolTip">
+    <string>Connect selected</string>
+   </property>
+  </action>
+  <action name="actionDisconnect">
+   <property name="icon">
+    <iconset resource="../res.qrc">
+     <normaloff>:/disconnect.svg</normaloff>:/disconnect.svg</iconset>
+   </property>
+   <property name="text">
+    <string>Disconnect selected</string>
+   </property>
+   <property name="toolTip">
+    <string>Disconnect selected</string>
+   </property>
+  </action>
+  <action name="actionKill">
+   <property name="icon">
+    <iconset resource="../res.qrc">
+     <normaloff>:/kill.svg</normaloff>:/kill.svg</iconset>
+   </property>
+   <property name="text">
+    <string>Kill selected</string>
+   </property>
+   <property name="toolTip">
+    <string>Kill selected</string>
    </property>
   </action>
  </widget>

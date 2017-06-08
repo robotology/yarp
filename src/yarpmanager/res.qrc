@@ -1,9 +1,11 @@
-<!DOCTYPE RCC>
-<RCC version="1.0">
-    <qresource>
+<RCC>
+    <qresource prefix="/">
         <file alias="logo.svg">../../data/icons/512x512/yarpmanager.svg</file>
         <file alias="stop.svg">../../data/icons/512x512/actions-media-stop_B.svg</file>
         <file alias="play.svg">../../data/icons/512x512/actions-media-play_B.svg</file>
+				<file alias="play_all.svg">../../data/icons/512x512/action_play_all.svg</file>
+				<file alias="connect_all.svg">../../data/icons/512x512/action_connect_all.svg</file>
+				<file alias="disconnect_all.svg">../../data/icons/512x512/action_disconnect_all.svg</file>
         <file alias="folder-new.svg">../../data/icons/512x512/folder-new.svg</file>
         <file alias="folder.svg">../../data/icons/512x512/folder-sand.svg</file>
         <file alias="folder-app.svg">../../data/icons/512x512/folder-sand.svg</file>
@@ -16,6 +18,7 @@
         <file alias="apply.svg">../../data/icons/512x512/actions-apply.svg</file>
         <file alias="clear.svg">../../data/icons/512x512/actions-edit-clear.svg</file>
         <file alias="kill.svg">../../data/icons/512x512/actions-kill.svg</file>
+        <file alias="kill_all.svg">../../data/icons/512x512/action_kill_all.svg</file>
         <file alias="connect.svg">../../data/icons/512x512/actions-connect.svg</file>
         <file alias="refresh.svg">../../data/icons/512x512/actions-refresh.svg</file>
         <file alias="disconnect.svg">../../data/icons/512x512/actions-disconnect.svg</file>
@@ -29,6 +32,7 @@
         <file alias="close22.svg">../../data/icons/22x22/window-close-symbolic_A.svg</file>
         <file alias="close22-red.svg">../../data/icons/22x22/window-close-symbolic_B.svg</file>
         <file alias="stop22.svg">../../data/icons/22x22/actions-media-stop_B.svg</file>
+				<file alias="stop_all.svg">../../data/icons/512x512/action_stop_all.svg</file>
         <file alias="play22.svg">../../data/icons/22x22/actions-media-play_B.svg</file>
         <file alias="disconnect22.svg">../../data/icons/22x22/network-disconnected.svg</file>
         <file alias="connect22.svg">../../data/icons/22x22/actions-connect.svg</file>

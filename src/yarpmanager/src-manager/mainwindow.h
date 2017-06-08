@@ -76,11 +76,16 @@ private slots:
     void onNewResource();
     void onNewApplication();
     void onExportGraph();
-    void onRun();
-    void onStop();
-    void onKill();
-    void onConnect();
-    void onDisconnect();
+    void onRun(bool onlySelected=false);
+    void onStop(bool onlySelected=false);
+    void onKill(bool onlySelected=false);
+    void onConnect(bool onlySelected=false);
+    void onDisconnect(bool onlySelected=false);
+    void onRunSelected();
+    void onStopSelected();
+    void onKillSelected();
+    void onConnectSelected();
+    void onDisconnectSelected();
     void onRefresh();
     void onSelectAll();
     bool onTabClose(int);
@@ -107,6 +112,7 @@ public slots:
     void onReopenApplication(QString,QString);
     void onReopenModule(QString,QString);
     void onReopenResource(QString,QString);
+    void onApplicationSelectionChanged();
 
 signals:
     void selectItem(QString, bool);
