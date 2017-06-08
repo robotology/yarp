@@ -99,10 +99,10 @@ public:
   }
 
   // read and write structure on a connection
-  bool read(yarp::os::idl::WireReader& reader) YARP_OVERRIDE;
-  bool read(yarp::os::ConnectionReader& connection) YARP_OVERRIDE;
-  bool write(yarp::os::idl::WireWriter& writer) YARP_OVERRIDE;
-  bool write(yarp::os::ConnectionWriter& connection) YARP_OVERRIDE;
+  bool read(yarp::os::idl::WireReader& reader);
+  bool read(yarp::os::ConnectionReader& connection);
+  bool write(yarp::os::idl::WireWriter& writer);
+  bool write(yarp::os::ConnectionWriter& connection);
 
 private:
   bool write_jointPosition(yarp::os::idl::WireWriter& writer);
@@ -510,8 +510,8 @@ public:
     void clean() {
       dirty_flags(false);
     }
-    bool read(yarp::os::ConnectionReader& connection) YARP_OVERRIDE;
-    bool write(yarp::os::ConnectionWriter& connection) YARP_OVERRIDE;
+    bool read(yarp::os::ConnectionReader& connection);
+    bool write(yarp::os::ConnectionWriter& connection);
   private:
 
     jointData *obj;

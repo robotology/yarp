@@ -98,6 +98,13 @@ yarp_idl_to_dir("${CMAKE_CURRENT_SOURCE_DIR}/ros/msg_file/visualization_msgs/Mar
                 ros_msg_include_dirs)
 include(${CMAKE_CURRENT_SOURCE_DIR}/ros/visualization_msgs_Marker_msg.cmake)
 
+yarp_idl_to_dir("${CMAKE_CURRENT_SOURCE_DIR}/ros/msg_file/tf2_msgs/TFMessage.msg"
+                "${CMAKE_CURRENT_SOURCE_DIR}/ros"
+                ros_msg_sources
+                ros_msg_headers
+                ros_msg_include_dirs)
+include(${CMAKE_CURRENT_SOURCE_DIR}/ros/tf2_msgs_TFMessage_msg.cmake)
+
 yarp_idl_to_dir("${CMAKE_CURRENT_SOURCE_DIR}/ros/msg_file/visualization_msgs/MarkerArray.msg"
                 "${CMAKE_CURRENT_SOURCE_DIR}/ros"
                 ros_msg_sources

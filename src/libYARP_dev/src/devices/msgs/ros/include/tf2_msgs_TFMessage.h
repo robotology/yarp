@@ -1,11 +1,10 @@
 // This is an automatically generated file.
-// Generated from this tf_tfMessage.msg definition:
-//   geometry_msgs/TransformStamped[] transforms
-// Instances of this class can be read and written with YARP ports,
+// Generated from this tf2_msgs_TFMessage.msg definition:
+//   geometry_msgs/TransformStamped[] transforms// Instances of this class can be read and written with YARP ports,
 // using a ROS-compatible format.
 
-#ifndef YARPMSG_TYPE_tf_tfMessage
-#define YARPMSG_TYPE_tf_tfMessage
+#ifndef YARPMSG_TYPE_tf2_msgs_TFMessage
+#define YARPMSG_TYPE_tf2_msgs_TFMessage
 
 #include <string>
 #include <vector>
@@ -18,11 +17,11 @@
 #include "geometry_msgs_Transform.h"
 #include "geometry_msgs_TransformStamped.h"
 
-class tf_tfMessage : public yarp::os::idl::WirePortable {
+class tf2_msgs_TFMessage : public yarp::os::idl::WirePortable {
 public:
   std::vector<geometry_msgs_TransformStamped> transforms;
 
-  tf_tfMessage() {
+  tf2_msgs_TFMessage() {
   }
 
   void clear() {
@@ -92,8 +91,8 @@ public:
 
   // This class will serialize ROS style or YARP style depending on protocol.
   // If you need to force a serialization style, use one of these classes:
-  typedef yarp::os::idl::BareStyle<tf_tfMessage> rosStyle;
-  typedef yarp::os::idl::BottleStyle<tf_tfMessage> bottleStyle;
+  typedef yarp::os::idl::BareStyle<tf2_msgs_TFMessage> rosStyle;
+  typedef yarp::os::idl::BottleStyle<tf2_msgs_TFMessage> bottleStyle;
 
   // Give source text for class, ROS will need this
   yarp::os::ConstString getTypeText() {
@@ -148,7 +147,7 @@ float64 w";
 
   // Name the class, ROS will need this
   yarp::os::Type getType() {
-    yarp::os::Type typ = yarp::os::Type::byName("tf/tfMessage","tf/tfMessage");
+    yarp::os::Type typ = yarp::os::Type::byName("tf2_msgs/TFMessage","tf2_msgs/TFMessage");
     typ.addProperty("md5sum",yarp::os::Value("94810edda583a504dfda3829e70d7eec"));
     typ.addProperty("message_definition",yarp::os::Value(getTypeText()));
     return typ;

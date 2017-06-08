@@ -42,7 +42,7 @@ public:
    * Closes yarprobotinterface.
    */
   virtual std::string exit();
-  virtual bool read(yarp::os::ConnectionReader& connection) YARP_OVERRIDE;
+  virtual bool read(yarp::os::ConnectionReader& connection);
   virtual std::vector<std::string> help(const std::string& functionName="--all");
 };
 
