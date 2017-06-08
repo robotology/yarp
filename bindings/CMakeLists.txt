@@ -121,6 +121,17 @@ endif()
 
 
 #############################################################################
+## Disable suggest-override warnings
+
+if(NOT MSVC)
+  check_cxx_compiler_flag("-Wno-suggest-override" CXX_HAS_WNO_SUGGEST_OVERRIDE)
+  if(CXX_HAS_WNO_SUGGEST_OVERRIDE)
+    add_definitions(-Wno-suggest-override)
+  endif()
+endif()
+
+
+#############################################################################
 ## Create Java bindings
 
 if(CREATE_JAVA)
