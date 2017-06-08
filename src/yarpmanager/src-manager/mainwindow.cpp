@@ -85,6 +85,7 @@ MainWindow::MainWindow(QWidget *parent) :
     prevWidget = NULL;
 
 
+
     connect(ui->entitiesTree,SIGNAL(viewResource(yarp::manager::Computer*)),this,SLOT(viewResource(yarp::manager::Computer*)));
     connect(ui->entitiesTree,SIGNAL(viewModule(yarp::manager::Module*)),this,SLOT(viewModule(yarp::manager::Module*)));
     connect(ui->entitiesTree,SIGNAL(viewApplication(yarp::manager::Application*,bool)),this,SLOT(viewApplication(yarp::manager::Application*,bool)));
@@ -97,11 +98,18 @@ MainWindow::MainWindow(QWidget *parent) :
     connect(ui->entitiesTree,SIGNAL(reopenModule(QString,QString)),this,SLOT(onReopenModule(QString,QString)),Qt::DirectConnection);
     connect(ui->entitiesTree,SIGNAL(reopenResource(QString,QString)),this,SLOT(onReopenResource(QString,QString)),Qt::DirectConnection);
 
-    connect(ui->actionRun,SIGNAL(triggered()),this,SLOT(onRun()));
-    connect(ui->actionStop,SIGNAL(triggered()),this,SLOT(onStop()));
-    connect(ui->actionKill,SIGNAL(triggered()),this,SLOT(onKill()));
-    connect(ui->actionConnect,SIGNAL(triggered()),this,SLOT(onConnect()));
-    connect(ui->actionDisconnect,SIGNAL(triggered()),this,SLOT(onDisconnect()));
+    connect(ui->actionRun_all,SIGNAL(triggered()),this,SLOT(onRun()));
+    connect(ui->actionStop_all,SIGNAL(triggered()),this,SLOT(onStop()));
+    connect(ui->actionKill_all,SIGNAL(triggered()),this,SLOT(onKill()));
+    connect(ui->actionConnect_all,SIGNAL(triggered()),this,SLOT(onConnect()));
+    connect(ui->actionDisconnect_all,SIGNAL(triggered()),this,SLOT(onDisconnect()));
+   
+    connect(ui->actionRun,SIGNAL(triggered()),this,SLOT(onRunSelected()));
+    connect(ui->actionStop,SIGNAL(triggered()),this,SLOT(onStopSelected()));
+    connect(ui->actionKill,SIGNAL(triggered()),this,SLOT(onKillSelected()));
+    connect(ui->actionConnect,SIGNAL(triggered()),this,SLOT(onConnectSelected()));
+    connect(ui->actionDisconnect,SIGNAL(triggered()),this,SLOT(onDisconnectSelected()));
+    
     connect(ui->actionRefresh_Status,SIGNAL(triggered()),this,SLOT(onRefresh()));
     connect(ui->actionSelect_All,SIGNAL(triggered()),this,SLOT(onSelectAll()));
     connect(ui->actionExport_Graph,SIGNAL(triggered()),this,SLOT(onExportGraph()));
@@ -128,7 +136,14 @@ MainWindow::MainWindow(QWidget *parent) :
     this->addAction(ui->actionSave);
     this->addAction(ui->actionSave_As);
     this->addAction(ui->actionClose);
+    this->addAction(ui->actionRefresh_Status);
     onTabChangeItem(-1);
+
+    ui->actionConnect->setEnabled(false);
+    ui->actionDisconnect->setEnabled(false);
+    ui->actionRun->setEnabled(false);
+    ui->actionStop->setEnabled(false);
+    ui->actionKill->setEnabled(false);
 
     ui->action_Manager_Window->setChecked(true);
 
@@ -531,11 +546,20 @@ void MainWindow::viewApplication(yarp::manager::Application *app,bool editingMod
     int index = ui->mainTabs->addTab(w,app->getName());
     ui->mainTabs->setTabIcon(index,QIcon(":/run22.svg"));
     ui->mainTabs->setCurrentIndex(index);
-
+    if(!editingMode)
+    {
+        connect(w->getConnectionList(),SIGNAL(itemSelectionChanged()),this,SLOT(onApplicationSelectionChanged()));
+        connect(w->getModuleList(),SIGNAL(itemSelectionChanged()),this,SLOT(onApplicationSelectionChanged()));
+    }
     if(editingMode){
         ui->actionSelect_All->setEnabled(false);
         ui->actionRefresh_Status->setEnabled(false);
         ui->actionExport_Graph->setEnabled(false);
+        ui->actionConnect_all->setEnabled(false);
+        ui->actionDisconnect_all->setEnabled(false);
+        ui->actionRun_all->setEnabled(false);
+        ui->actionStop_all->setEnabled(false);
+        ui->actionKill_all->setEnabled(false);
         ui->actionConnect->setEnabled(false);
         ui->actionDisconnect->setEnabled(false);
         ui->actionRun->setEnabled(false);
@@ -545,11 +569,11 @@ void MainWindow::viewApplication(yarp::manager::Application *app,bool editingMod
         ui->actionSelect_All->setEnabled(true);
         ui->actionRefresh_Status->setEnabled(true);
         ui->actionExport_Graph->setEnabled(true);
-        ui->actionConnect->setEnabled(true);
-        ui->actionDisconnect->setEnabled(true);
-        ui->actionRun->setEnabled(true);
-        ui->actionStop->setEnabled(true);
-        ui->actionKill->setEnabled(true);
+        ui->actionConnect_all->setEnabled(true);
+        ui->actionDisconnect_all->setEnabled(true);
+        ui->actionRun_all->setEnabled(true);
+        ui->actionStop_all->setEnabled(true);
+        ui->actionKill_all->setEnabled(true);
         onRefresh();
     }
 }
@@ -571,7 +595,7 @@ void MainWindow::onExportGraph()
 
 /*! \brief When Run is clicked the applications in the current Application Tab will go on run state
  */
-void MainWindow::onRun()
+void MainWindow::onRun(bool onlySelected)
 {
     QWidget *w = ui->mainTabs->currentWidget();
     if(!w){
@@ -580,13 +604,13 @@ void MainWindow::onRun()
     yarp::manager::NodeType type = ((GenericViewWidget*)w)->getType();
     if(type == yarp::manager::APPLICATION){
         ApplicationViewWidget *ww = (ApplicationViewWidget*)w;
-        ww->runApplicationSet();
+        ww->runApplicationSet(onlySelected);
     }
 }
 
 /*! \brief When Stop is clicked the applications running in the current Application Tab will go on stop state
  */
-void MainWindow::onStop()
+void MainWindow::onStop(bool onlySelected)
 {
     QWidget *w = ui->mainTabs->currentWidget();
     if(!w){
@@ -595,13 +619,13 @@ void MainWindow::onStop()
     yarp::manager::NodeType type = ((GenericViewWidget*)w)->getType();
     if(type == yarp::manager::APPLICATION){
         ApplicationViewWidget *ww = (ApplicationViewWidget*)w;
-        ww->stopApplicationSet();
+        ww->stopApplicationSet(onlySelected);
     }
 }
 
 /*! \brief When Stop is clicked the applications running in the current Application Tab will be killed
  */
-void MainWindow::onKill()
+void MainWindow::onKill(bool onlySelected)
 {
     QWidget *w = ui->mainTabs->currentWidget();
     if(!w){
@@ -610,13 +634,13 @@ void MainWindow::onKill()
     yarp::manager::NodeType type = ((GenericViewWidget*)w)->getType();
     if(type == yarp::manager::APPLICATION){
         ApplicationViewWidget *ww = (ApplicationViewWidget*)w;
-        ww->killApplicationSet();
+        ww->killApplicationSet(onlySelected);
     }
 }
 
 /*! \brief When Connect is clicked the applications ports will be connected
  */
-void MainWindow::onConnect()
+void MainWindow::onConnect(bool onlySelected)
 {
     QWidget *w = ui->mainTabs->currentWidget();
     if(!w){
@@ -625,12 +649,12 @@ void MainWindow::onConnect()
     yarp::manager::NodeType type = ((GenericViewWidget*)w)->getType();
     if(type == yarp::manager::APPLICATION){
         ApplicationViewWidget *ww = (ApplicationViewWidget*)w;
-        ww->connectConnectionSet();
+        ww->connectConnectionSet(onlySelected);
     }
 }
 /*! \brief When Disconnect is clicked the applications ports will be disconnected
  */
-void MainWindow::onDisconnect()
+void MainWindow::onDisconnect(bool onlySelected)
 {
     QWidget *w = ui->mainTabs->currentWidget();
     if(!w){
@@ -639,8 +663,29 @@ void MainWindow::onDisconnect()
     yarp::manager::NodeType type = ((GenericViewWidget*)w)->getType();
     if(type == yarp::manager::APPLICATION){
         ApplicationViewWidget *ww = (ApplicationViewWidget*)w;
-        ww->disconnectConnectionSet();
+        ww->disconnectConnectionSet(onlySelected);
     }
+}
+
+void MainWindow::onRunSelected()
+{
+    onRun(true);
+}
+void MainWindow::onStopSelected()
+{
+    onStop(true);
+}
+void MainWindow::onKillSelected()
+{
+    onKill(true);
+}
+void MainWindow::onConnectSelected()
+{
+    onConnect(true);
+}
+void MainWindow::onDisconnectSelected()
+{
+    onDisconnect(true);
 }
 /*! \brief Refresh the applications state
  */
@@ -811,6 +856,11 @@ void MainWindow::onTabChangeItem(int index)
             ui->actionSelect_All->setEnabled(false);
             ui->actionRefresh_Status->setEnabled(false);
             ui->actionExport_Graph->setEnabled(false);
+            ui->actionConnect_all->setEnabled(false);
+            ui->actionDisconnect_all->setEnabled(false);
+            ui->actionRun_all->setEnabled(false);
+            ui->actionStop_all->setEnabled(false);
+            ui->actionKill_all->setEnabled(false);
             ui->actionConnect->setEnabled(false);
             ui->actionDisconnect->setEnabled(false);
             ui->actionRun->setEnabled(false);
@@ -820,11 +870,12 @@ void MainWindow::onTabChangeItem(int index)
             ui->actionSelect_All->setEnabled(true);
             ui->actionRefresh_Status->setEnabled(true);
             ui->actionExport_Graph->setEnabled(true);
-            ui->actionConnect->setEnabled(true);
-            ui->actionDisconnect->setEnabled(true);
-            ui->actionRun->setEnabled(true);
-            ui->actionStop->setEnabled(true);
-            ui->actionKill->setEnabled(true);
+            ui->actionConnect_all->setEnabled(true);
+            ui->actionDisconnect_all->setEnabled(true);
+            ui->actionRun_all->setEnabled(true);
+            ui->actionStop_all->setEnabled(true);
+            ui->actionKill_all->setEnabled(true);
+            onApplicationSelectionChanged();
         }
 
 
@@ -870,6 +921,11 @@ void MainWindow::onTabChangeItem(int index)
         }
         ui->actionSelect_All->setEnabled(false);
         ui->actionExport_Graph->setEnabled(false);
+        ui->actionConnect_all->setEnabled(false);
+        ui->actionDisconnect_all->setEnabled(false);
+        ui->actionRun_all->setEnabled(false);
+        ui->actionStop_all->setEnabled(false);
+        ui->actionKill_all->setEnabled(false);
         ui->actionConnect->setEnabled(false);
         ui->actionDisconnect->setEnabled(false);
         ui->actionRun->setEnabled(false);
@@ -1240,6 +1296,23 @@ void MainWindow::onReopenResource(QString resName,QString fileName)
     lazyManager.removeResource(resName.toLatin1().data());
     lazyManager.addResource(fileName.toLatin1().data());
     syncApplicationList();
+}
+
+void MainWindow::onApplicationSelectionChanged()
+{
+    QWidget *w = ui->mainTabs->currentWidget();
+    if(!w){
+        return;
+    }
+    yarp::manager::NodeType type = ((GenericViewWidget*)w)->getType();
+    if(type == yarp::manager::APPLICATION){
+        ApplicationViewWidget *ww = (ApplicationViewWidget*)w;
+        ui->actionRun->setEnabled(ww->anyModuleSelected());
+        ui->actionStop->setEnabled(ww->anyModuleSelected());
+        ui->actionKill->setEnabled(ww->anyModuleSelected());
+        ui->actionConnect->setEnabled(ww->anyConnectionSelected());
+        ui->actionDisconnect->setEnabled(ww->anyConnectionSelected());
+    }
 }
 
 void MainWindow::onViewBuilderWindows() {

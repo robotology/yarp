@@ -21,6 +21,7 @@
 #include <QList>
 #include <QDockWidget>
 #include "yarpbuilderlib.h"
+#include <customtreewidget.h>
 
 namespace Ui {
 class ApplicationViewWidget;
@@ -41,11 +42,11 @@ public:
                                    QWidget *parent = 0);
     ~ApplicationViewWidget();
 
-    void runApplicationSet();
-    void stopApplicationSet();
-    void killApplicationSet();
-    void connectConnectionSet();
-    void disconnectConnectionSet();
+    void runApplicationSet(bool onlySelected);
+    void stopApplicationSet(bool onlySelected);
+    void killApplicationSet(bool onlySelected);
+    void connectConnectionSet(bool onlySelected);
+    void disconnectConnectionSet(bool onlySelected);
     void refresh();
     void selectAll();
     void exportGraph();
@@ -67,6 +68,12 @@ public:
     QToolBar* getBuilderToolBar();
     bool isBuilderFloating();
     void showBuilder(bool);
+
+    bool anyModuleSelected();
+    bool anyConnectionSelected();
+
+    CustomTreeWidget* getModuleList();
+    CustomTreeWidget* getConnectionList();
 
     bool save();
     QString getFileName();
@@ -103,6 +110,7 @@ private:
     void attachStdOutNestedApplication(QTreeWidgetItem *it,std::vector<int> *MIDs);
     void modStdOutNestedApplication(QTreeWidgetItem *it, int id,QString s);
     void selectAllNestedApplicationModule(QTreeWidgetItem *it, bool check);
+
 
 
 private:
@@ -200,7 +208,6 @@ signals:
     void selfStart(int);
     void selfStop(int);
     void builderWindowFloating(bool);
-
 
 
 };
