@@ -36,7 +36,7 @@
 #include <string>
 
 #include "include/geometry_msgs_TransformStamped.h"
-#include "include/tf_tfMessage.h"
+#include "include/tf2_msgs_TFMessage.h"
 #include <yarp/math/FrameTransform.h>
 
 /* Using yarp::dev::impl namespace for all helper class inside yarp::dev to reduce
@@ -107,10 +107,10 @@ private:
 
     yarp::os::RpcServer                      m_rpcPort;
     yarp::os::BufferedPort<yarp::os::Bottle> m_streamingPort;
-    yarp::os::Publisher<tf_tfMessage>        m_rosPublisherPort_tf_timed;
-    yarp::os::Publisher<tf_tfMessage>        m_rosPublisherPort_tf_static;
-    yarp::os::Subscriber<tf_tfMessage>       m_rosSubscriberPort_tf_timed;
-    yarp::os::Subscriber<tf_tfMessage>       m_rosSubscriberPort_tf_static;
+    yarp::os::Publisher<tf2_msgs_TFMessage>        m_rosPublisherPort_tf_timed;
+    yarp::os::Publisher<tf2_msgs_TFMessage>        m_rosPublisherPort_tf_static;
+    yarp::os::Subscriber<tf2_msgs_TFMessage>       m_rosSubscriberPort_tf_timed;
+    yarp::os::Subscriber<tf2_msgs_TFMessage>       m_rosSubscriberPort_tf_static;
 
     virtual bool read(yarp::os::ConnectionReader& connection) override;
     inline  void list_response(yarp::os::Bottle& out);

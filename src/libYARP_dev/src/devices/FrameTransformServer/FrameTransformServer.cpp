@@ -666,7 +666,7 @@ void FrameTransformServer::run()
         //ros subscriber
         if (m_enable_subscribe_ros_tf)
         {
-            tf_tfMessage*   rosInData_timed = 0;
+            tf2_msgs_TFMessage*   rosInData_timed = 0;
             do
             {
                 rosInData_timed = m_rosSubscriberPort_tf_timed.read(false);
@@ -694,7 +694,7 @@ void FrameTransformServer::run()
                 }
             } while (rosInData_timed != 0);
 
-            tf_tfMessage*   rosInData_static = 0;
+            tf2_msgs_TFMessage*   rosInData_static = 0;
             do
             {
                 rosInData_static = m_rosSubscriberPort_tf_static.read(false);
@@ -807,7 +807,7 @@ void FrameTransformServer::run()
         if (m_enable_publish_ros_tf)
         {
             static int                        rosMsgCounter = 0;
-            tf_tfMessage&                     rosOutData_timed = m_rosPublisherPort_tf_timed.prepare();
+            tf2_msgs_TFMessage&               rosOutData_timed = m_rosPublisherPort_tf_timed.prepare();
             geometry_msgs_TransformStamped    transform_timed;
             rosOutData_timed.transforms.clear();
             for (size_t i = 0; i < tfVecSize_timed_yarp; i++)
@@ -828,7 +828,7 @@ void FrameTransformServer::run()
             }
             m_rosPublisherPort_tf_timed.write();
 
-            tf_tfMessage&                     rosOutData_static = m_rosPublisherPort_tf_static.prepare();
+            tf2_msgs_TFMessage& rosOutData_static = m_rosPublisherPort_tf_static.prepare();
             geometry_msgs_TransformStamped    transform_static;
             rosOutData_static.transforms.clear();
             for (size_t i = 0; i < tfVecSize_static_yarp; i++)
