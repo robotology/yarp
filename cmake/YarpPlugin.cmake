@@ -470,6 +470,13 @@ macro(YARP_ADD_PLUGIN _library_name)
   # while inserting any generated source code needed for initialization.
   get_property(srcs GLOBAL PROPERTY YARP_BUNDLE_CODE)
   add_library(${_library_name} ${_library_type} ${srcs} ${ARGN})
+
+  # If we are building YARP, add ALIAS targets.
+  # Only required for CMake 3.4 or earlier
+  if(TARGET YARP_OS AND NOT (NOT CMAKE_VERSION VERSION_LESS 3.5))
+    add_library(YARP::${_library_name} ALIAS ${_library_name})
+  endif()
+
   if(YARP_FORCE_DYNAMIC_PLUGINS OR BUILD_SHARED_LIBS)
     # Do not add the "lib" prefix to dynamic plugin libraries.
     # This simplifies search on different platforms and makes it easier
@@ -548,13 +555,18 @@ macro(YARP_END_PLUGIN_LIBRARY bundle_name)
 
     if(NOT YARP_FORCE_DYNAMIC_PLUGINS AND NOT BUILD_SHARED_LIBS)
       set_property(TARGET ${X_YARP_PLUGIN_MASTER} APPEND PROPERTY COMPILE_DEFINITIONS YARP_STATIC_PLUGIN)
-      # Before CMake 3.5 "PRIVATE" does not export the library with the
-      # namespace, causing issues with the linking of static libraries.
-      if(NOT CMAKE_VERSION VERSION_LESS 3.5)
-        target_link_libraries(${X_YARP_PLUGIN_MASTER} PRIVATE ${libs})
+
+      # If we are building YARP with an old CMake we need to link to the alias
+      # targets or targets linking to yarpcar and yarpmod will not be able to
+      # link properly
+      if(TARGET YARP_OS AND NOT (NOT CMAKE_VERSION VERSION_LESS 3.5))
+        foreach(lib ${libs})
+          target_link_libraries(${X_YARP_PLUGIN_MASTER} PRIVATE YARP::${lib})
+        endforeach()
       else()
-        target_link_libraries(${X_YARP_PLUGIN_MASTER} ${libs})
+        target_link_libraries(${X_YARP_PLUGIN_MASTER} PRIVATE ${libs})
       endif()
+
     endif()
     # give user access to a list of all the plugin libraries
     set(${X_YARP_PLUGIN_MASTER}_LIBRARIES ${libs})
@@ -585,8 +597,10 @@ macro(YARP_ADD_PLUGIN_YARPDEV_EXECUTABLE exename bundle_name)
     source_group("${autogen_source_group}" FILES "${CMAKE_CURRENT_BINARY_DIR}/${bundle_name}_yarpdev.cpp")
   endif()
   add_executable(${exename} ${CMAKE_CURRENT_BINARY_DIR}/${bundle_name}_yarpdev.cpp)
-  target_link_libraries(${exename} ${bundle_name})
-  target_link_libraries(${exename} YARP::YARP_OS YARP::YARP_init YARP::YARP_dev)
+  target_link_libraries(${exename} PRIVATE ${bundle_name})
+  target_link_libraries(${exename} PRIVATE YARP::YARP_OS
+                                           YARP::YARP_init
+                                           YARP::YARP_dev)
 endmacro()
 
 
