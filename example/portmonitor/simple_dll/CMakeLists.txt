@@ -5,13 +5,8 @@
 cmake_minimum_required(VERSION 3.0)
 
 find_package(YARP REQUIRED)
-list(APPEND CMAKE_MODULE_PATH ${YARP_MODULE_PATH})
 
-include_directories(${YARP_INCLUDE_DIRS})
 set(CMAKE_INCLUDE_CURRENT_DIR TRUE)
-
-include(YarpPlugin)
-include(YarpInstallationHelpers)
 
 set(YARP_FORCE_DYNAMIC_PLUGINS TRUE CACHE INTERNAL "yarp_pm_simple is always built with dynamic plugins")
 # Warning: the <package> option of yarp_configure_plugins_installation should be different from the plugin name

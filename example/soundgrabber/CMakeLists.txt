@@ -3,12 +3,9 @@
 # CopyPolicy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
 
 cmake_minimum_required(VERSION 3.0)
+project(record_sound)
 
-FIND_PACKAGE(YARP REQUIRED)
-INCLUDE_DIRECTORIES(${YARP_INCLUDE_DIRS})
+find_package(YARP REQUIRED)
 
-PROJECT(record_sound) 
-
-ADD_EXECUTABLE(record_sound record_sound.cpp)
-TARGET_LINK_LIBRARIES(record_sound ${YARP_LIBRARIES})
-
+add_executable(record_sound record_sound.cpp)
+target_link_libraries(record_sound ${YARP_LIBRARIES})

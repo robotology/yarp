@@ -59,7 +59,7 @@ cmake_minimum_required(VERSION 3.0)
 
 find_package(YARP REQUIRED)
 
-include_directories(${CMAKE_CURRENT_SOURCE_DIR} ${YARP_INCLUDE_DIRS})
+include_directories(${CMAKE_CURRENT_SOURCE_DIR})
 
 add_executable(sender sender.cpp SharedData.cpp)
 target_link_libraries(sender ${YARP_LIBRARIES})
@@ -192,7 +192,7 @@ We can use `yarp_idl_to_dir` to tell CMake to parse SharedData.thrift with the t
 set(generated_libs_dir "${CMAKE_CURRENT_SOURCE_DIR}")
 yarp_idl_to_dir(SharedData.thrift ${generated_libs_dir} sources headers include_dirs)
 
-include_directories(${include_dirs} ${YARP_INCLUDE_DIRS})
+include_directories(${include_dirs})
 
 # create the sender
 add_executable(sender sender.cpp ${headers} ${sources})

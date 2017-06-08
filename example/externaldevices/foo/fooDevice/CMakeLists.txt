@@ -4,6 +4,8 @@
 
 cmake_minimum_required(VERSION 3.0)
 
+find_package(YARP REQUIRED)
+
 yarp_prepare_plugin(foodevice
                     TYPE yarp::dev::foodevice
                     INCLUDE "foodevice.h"
@@ -12,7 +14,5 @@ yarp_prepare_plugin(foodevice
 
 if(NOT SKIP_foodevice)
   set(CMAKE_INCLUDE_CURRENT_DIR TRUE)
-  find_package(YARP REQUIRED)
-  include_directories(${YARP_INCLUDE_DIRS})
   yarp_add_plugin(foodevice foodevice.cpp foodevice.h)
 endif(NOT SKIP_foodevice)

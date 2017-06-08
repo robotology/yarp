@@ -77,7 +77,7 @@ namespace yarp
                 */
                 bool   isWall           (XYCell cell) const;
                 /**
-                * Checks if a specific cell of the map is free, i.e. the robot can freely pass through the cell 
+                * Checks if a specific cell of the map is free, i.e. the robot can freely pass through the cell
                 * @param cell is the cell location, referred to the top-left corner of the map.
                 * @return true if cell is valid cell inside the map, false otherwise.
                 */
@@ -121,11 +121,11 @@ namespace yarp
 
                 /**
                 * Sets the origin of the map reference frame (according to ROS convention)
-                * @param x,y,theta is the pose of the origin, expressed in [m], [deg] and referred to the bottom-left corner of the map, pointing outwards. 
+                * @param x,y,theta is the pose of the origin, expressed in [m], [deg] and referred to the bottom-left corner of the map, pointing outwards.
                 * @return true if cell is valid value inside the map, false otherwise.
                 */
                 bool   setOrigin        (double x, double y, double theta);
-                
+
                 /**
                 * Retrieves the origin of the map reference frame (according to ROS convention)
                 * @param x,y,theta is the pose of the origin, expressed in [m], [deg] and referred to the bottom-left corner of the map, pointing outwards.
@@ -200,7 +200,7 @@ namespace yarp
 
                 //convert a world location (wrt the map reference frame located in m_origin, measured in meters), to a cell from the upper-left corner.
                 XYCell world2Cell(XYWorld world) const;
-                
+
                 /**
                 * Checks if a cell is inside the map.
                 * @param cell is the cell location, referred to the top-left corner of the map.
@@ -214,7 +214,7 @@ namespace yarp
                 * @return true if cell is inside the map, false otherwise.
                 */
                 bool   isInsideMap(XYWorld world) const;
-                
+
                 /**
                 * Checks is two maps are identical.
                 * @return true if all the internal data of the maps are identical, false otherwise.
@@ -223,8 +223,8 @@ namespace yarp
 
                 /**
                 * Performs the obstacle enlargement operation. It's useful to set size to a value equal or larger to the robot bounding box.
-                * In this way a navigation algorithm can easly check obstacle collision by comparing the location of the center of the robot with cell value (free/occupied etc) 
-                * @param size the size of the enlargment, in meters. If size>0 the requested enlargement is performed. If the function is called multipled times, the enlargement sums up. 
+                * In this way a navigation algorithm can easly check obstacle collision by comparing the location of the center of the robot with cell value (free/occupied etc)
+                * @param size the size of the enlargment, in meters. If size>0 the requested enlargement is performed. If the function is called multipled times, the enlargement sums up.
                 If size <= 0 the enlargement stored in the map is cleaned up.
                 * @return true always.
                 */

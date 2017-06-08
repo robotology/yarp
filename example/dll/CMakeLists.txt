@@ -4,12 +4,12 @@
 
 cmake_minimum_required(VERSION 3.0)
 
-FIND_PACKAGE(YARP REQUIRED)
-LINK_LIBRARIES(${YARP_LIBRARIES})
-INCLUDE_DIRECTORIES(${YARP_INCLUDE_DIRS})
+find_package(YARP REQUIRED)
 
-INCLUDE_DIRECTORIES(${CMAKE_SOURCE_DIR})
+include_directories(${CMAKE_SOURCE_DIR})
 
-ADD_LIBRARY(hello SHARED Hello.cpp Hello.h)
+add_library(hello SHARED Hello.cpp Hello.h)
+target_link_libraries(hello ${YARP_LIBRARIES})
 
-ADD_EXECUTABLE(program program.cpp)
+add_executable(program program.cpp)
+target_link_libraries(program ${YARP_LIBRARIES})

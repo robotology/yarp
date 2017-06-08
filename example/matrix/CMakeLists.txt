@@ -6,15 +6,15 @@
 # compiled YARP.
 
 cmake_minimum_required(VERSION 3.0)
+project(Matrix)
 
-PROJECT (Matrix)
+find_package(YARP REQUIRED)
 
-FIND_PACKAGE(YARP REQUIRED)
-INCLUDE_DIRECTORIES(${YARP_INCLUDE_DIRS})
-LINK_LIBRARIES(${YARP_LIBRARIES})
+include_directories(${CMAKE_SOURCE_DIR})
 
-INCLUDE_DIRECTORIES(${CMAKE_SOURCE_DIR})
-  
-ADD_EXECUTABLE(basic_ops basic_ops.cpp)
-ADD_EXECUTABLE(gsl_example gsl_example.cpp)
+add_executable(basic_ops basic_ops.cpp)
+target_link_libraries(basic_ops ${YARP_LIBRARIES})
+
+add_executable(gsl_example gsl_example.cpp)
+target_link_libraries(gsl_example ${YARP_LIBRARIES})
 

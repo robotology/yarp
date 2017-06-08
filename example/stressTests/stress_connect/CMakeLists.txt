@@ -6,8 +6,5 @@ cmake_minimum_required(VERSION 3.0)
 
 find_package(YARP REQUIRED)
 
-include_directories(${YARP_INCLUDE_DIRS})
-
-link_libraries(${YARP_LIBRARIES})
-
 add_executable(stress_connect stress_connect.cpp)
+target_link_libraries(stress_connect ${YARP_LIBRARIES})

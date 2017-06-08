@@ -5,7 +5,7 @@
 cmake_minimum_required(VERSION 3.0)
 
 find_package(YARP REQUIRED)
-set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} ${YARP_MODULE_PATH})
+
 add_subdirectory(thrift)
 add_subdirectory(generated)
 add_subdirectory(userImpl)

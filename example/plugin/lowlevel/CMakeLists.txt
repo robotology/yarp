@@ -8,7 +8,6 @@ set(BUILD_SHARED_LIBS ON)
 
 find_package(YARP REQUIRED)
 
-include_directories(${YARP_INCLUDE_DIRS})
 include_directories(${CMAKE_SOURCE_DIR})
 
 add_library(hoopy hoopy.cpp)

@@ -14,14 +14,10 @@ set_property(GLOBAL PROPERTY AUTOGEN_TARGETS_FOLDER "Autogen Targets")
 set_property(GLOBAL PROPERTY AUTOGEN_SOURCE_GROUP "Generated Files")
 
 find_package(YARP REQUIRED)
-list(APPEND CMAKE_MODULE_PATH ${YARP_MODULE_PATH})
-include_directories(${YARP_INCLUDE_DIRS})
 
 # ACE is required for yarp/os/impl/UnitTests.h
 find_package(ACE REQUIRED)
 include_directories(${ACE_INCLUDE_DIRS})
-
-include(YarpIDL)
 
 # Test using yarp_idl_to_dir
 set(generated_libs_dir "${CMAKE_CURRENT_BINARY_DIR}")

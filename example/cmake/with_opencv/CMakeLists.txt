@@ -7,9 +7,6 @@ cmake_minimum_required(VERSION 3.0)
 # execute YarpConfig.cmake
 find_package(YARP)
 
-# pick up YARP find scripts
-list(APPEND CMAKE_MODULE_PATH ${YARP_MODULE_PATH})
-
 # now FindOpenCV.cmake is in CMAKE_MODULE_PATH
 find_package(OpenCV)
 
@@ -19,8 +16,7 @@ file(GLOB folder_header *.h)
 
 # add the current directory in the include path
 include_directories(${CMAKE_SOURCE_DIR})
-# add YARP include directories
-include_directories(${YARP_INCLUDE_DIRS})
+
 # add OpenCV include directories
 include_directories(${OPENCV_INCLUDE_DIR})
 

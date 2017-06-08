@@ -20,8 +20,7 @@ set(CMAKE_AUTOMOC ON)
 string(REPLACE "-rdynamic" "" CMAKE_SHARED_LIBRARY_LINK_CXX_FLAGS "${CMAKE_SHARED_LIBRARY_LINK_CXX_FLAGS}")
 
 
-include_directories(${CMAKE_CURRENT_SOURCE_DIR}/qtquick2applicationviewer
-                    ${YARP_INCLUDE_DIRS})
+include_directories(${CMAKE_CURRENT_SOURCE_DIR}/qtquick2applicationviewer)
 
 file(GLOB_RECURSE ContainerExample_SRCS *.cpp)
 file(GLOB_RECURSE ContainerExample_HDRS *.h)

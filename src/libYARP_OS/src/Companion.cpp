@@ -1390,15 +1390,10 @@ int Companion::cmdMake(int argc, char *argv[]) {
     f.addString("# Replace \"yarpy\" with whatever your executable should be called.");
     f.addString("");
     f.addString("cmake_minimum_required(VERSION 3.0)");
-    f.addString("");
-    f.addString("set(KEYWORD \"yarpy\")");
-    f.addString("");
-    f.addString("# Start a project.");
-    f.addString("project(${KEYWORD})");
+    f.addString("project(yarpy)");
     f.addString("");
     f.addString("# Find YARP.  Point the YARP_DIR environment variable at your build.");
     f.addString("find_package(YARP REQUIRED)");
-    f.addString("list(APPEND CMAKE_MODULE_PATH ${YARP_MODULE_PATH})");
     f.addString("");
     f.addString("# Search for source code.");
     f.addString("file(GLOB folder_source *.cpp *.cc *.c)");
@@ -1419,16 +1414,13 @@ int Companion::cmdMake(int argc, char *argv[]) {
     f.addString("  include_directories(${p})");
     f.addString("endforeach(header_file ${folder_header})");
     f.addString("");
-    f.addString("# Include any directories needed for YARP");
-    f.addString("include_directories(${YARP_INCLUDE_DIRS})");
-    f.addString("");
     f.addString("# Set up our main executable.");
-    f.addString("if (folder_source)");
-    f.addString("  add_executable(${KEYWORD} ${folder_source} ${folder_header})");
-    f.addString("  target_link_libraries(${KEYWORD} ${YARP_LIBRARIES})");
-    f.addString("else (folder_source)");
+    f.addString("if(folder_source)");
+    f.addString("  add_executable(${PROJECT_NAME} ${folder_source} ${folder_header})");
+    f.addString("  target_link_libraries(${PROJECT_NAME} ${YARP_LIBRARIES})");
+    f.addString("else()");
     f.addString("  message(FATAL_ERROR \"No source code files found. Please add something\")");
-    f.addString("endif (folder_source)");
+    f.addString("endif()");
 
     const char *target = "CMakeLists.txt";
 

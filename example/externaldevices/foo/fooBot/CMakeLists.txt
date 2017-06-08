@@ -4,6 +4,8 @@
 
 cmake_minimum_required(VERSION 3.0)
 
+find_package(YARP REQUIRED)
+
 yarp_prepare_plugin(foobot
                     TYPE yarp::dev::foobot
                     INCLUDE "foobot.h"
@@ -12,7 +14,5 @@ yarp_prepare_plugin(foobot
 
 if(NOT SKIP_foobot)
   set(CMAKE_INCLUDE_CURRENT_DIR TRUE)
-  find_package(YARP REQUIRED)
-  include_directories(${YARP_INCLUDE_DIRS})
   yarp_add_plugin(foobot foobot.cpp foobot.h)
 endif(NOT SKIP_foobot)

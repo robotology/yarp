@@ -3,12 +3,9 @@
 # CopyPolicy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
 
 cmake_minimum_required(VERSION 3.0)
+project(Rand)
 
-PROJECT (Rand)
+find_package(YARP)
 
-FIND_PACKAGE(YARP)
-INCLUDE_DIRECTORIES(${YARP_INCLUDE_DIRS})
-
-ADD_EXECUTABLE(rand rand.cpp)
-TARGET_LINK_LIBRARIES(rand ${YARP_LIBRARIES})
-
+add_executable(rand rand.cpp)
+target_link_libraries(rand ${YARP_LIBRARIES})

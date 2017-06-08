@@ -574,6 +574,8 @@ the following variables are defined:
   \li YARP_INCLUDE_DIRS
   \li YARP_DEFINES
   \li YARP_MODULE_PATH
+Moreover, it includes the CMake modules required to use YARP commands in your
+cmake files.
 
 \sa \ref yarp_build_structure_describe
 

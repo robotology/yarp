@@ -5,9 +5,6 @@
 cmake_minimum_required(VERSION 3.0)
 
 find_package(YARP REQUIRED)
-list(APPEND CMAKE_MODULE_PATH ${YARP_MODULE_PATH})
-include_directories(${YARP_INCLUDE_DIRS})
-include(YarpPlugin)
 
 yarp_begin_plugin_library(foobaz)
 add_subdirectory(baz)

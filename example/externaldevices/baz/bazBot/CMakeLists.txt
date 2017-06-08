@@ -4,6 +4,8 @@
 
 cmake_minimum_required(VERSION 3.0)
 
+find_package(YARP REQUIRED)
+
 yarp_prepare_plugin(bazbot
                     CATEGORY device
                     TYPE yarp::dev::bazbot
@@ -12,7 +14,5 @@ yarp_prepare_plugin(bazbot
 
 if(NOT SKIP_bazbot)
   set(CMAKE_INCLUDE_CURRENT_DIR TRUE)
-  find_package(YARP REQUIRED)
-  include_directories(${YARP_INCLUDE_DIRS})
   yarp_add_plugin(bazbot bazbot.cpp bazbot.h)
 endif(NOT SKIP_bazbot)

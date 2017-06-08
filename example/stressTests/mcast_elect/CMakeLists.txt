@@ -1,13 +1,11 @@
 # Copyright: (C) 2010 RobotCub Consortium
 # Author: Paul Fitzpatrick
 # CopyPolicy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
- 
+
 cmake_minimum_required(VERSION 3.0)
 
-set(KEYWORD "mcast_elect")
-
 # Start a project.
-project(${KEYWORD})
+project(mcast_elect)
 
 # Find YARP.  Point the YARP_DIR environment variable at your build.
 find_package(YARP REQUIRED)
@@ -22,13 +20,10 @@ foreach(header_file ${folder_header})
   include_directories(${p})
 endforeach(header_file ${folder_header})
 
-# Include any directories needed for YARP
-include_directories(${YARP_INCLUDE_DIRS})
-
 # Set up our main executable.
 if (folder_source)
-  add_executable(${KEYWORD} ${folder_source} ${folder_header})
-  target_link_libraries(${KEYWORD} ${YARP_LIBRARIES})
+  add_executable(mcast_elect ${folder_source} ${folder_header})
+  target_link_libraries(mcast_elect ${YARP_LIBRARIES})
 else (folder_source)
   message(FATAL_ERROR "No source code files found. Please add something")
 endif (folder_source)

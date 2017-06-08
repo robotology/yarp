@@ -4,18 +4,14 @@
 
 cmake_minimum_required(VERSION 3.0)
 
+include_directories(${CMAKE_SOURCE_DIR})
+
 find_package(YARP REQUIRED)
-list(APPEND CMAKE_MODULE_PATH ${YARP_MODULE_PATH})
-include_directories(${YARP_INCLUDE_DIRS})
-link_libraries(${YARP_LIBRARIES})
 
 find_package(OpenCV REQUIRED)
-
-include_directories(${CMAKE_SOURCE_DIR} ${OPENCV_INCLUDE_DIR})
-
-# In addition to specifying the libraries to link, the directories containing the
-# libraries should be added in case the libraries are in a non-standard location
 link_directories(${OPENCV_LINK_DIRECTORIES})
-link_libraries(${OPENCV_LIBRARIES})
+include_directories(${OPENCV_INCLUDE_DIR})
 
 add_executable(opencv_test main.cpp)
+target_link_libraries(${YARP_LIBRARIES}
+                      ${OPENCV_LIBRARIES})

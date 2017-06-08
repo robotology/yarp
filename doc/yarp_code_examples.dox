@@ -34,7 +34,6 @@ where you compiled YARP (or give the path through the CMake GUI).
 \verbatim
 cmake_minimum_required(VERSION 3.0)
 find_package(YARP REQUIRED)
-include_directories(${YARP_INCLUDE_DIRS})
 add_executable(simple_sender simple_sender.cpp)
 target_link_libraries(simple_sender ${YARP_LIBRARIES})
 add_executable(simple_receiver simple_receiver.cpp)

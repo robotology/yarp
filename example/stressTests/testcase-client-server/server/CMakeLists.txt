@@ -2,32 +2,28 @@
 # Author: Lorenzo Natale
 # CopyPolicy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
 
-SET(PROJECTNAME collatzServer)
-PROJECT(${PROJECTNAME})
-
+project(collatzServer)
 cmake_minimum_required(VERSION 3.0)
 
 # Add Yarp to the "packages" used by this project.
-FIND_PACKAGE(YARP REQUIRED)
-INCLUDE_DIRECTORIES(${YARP_INCLUDE_DIRS})
-LINK_LIBRARIES(${YARP_LIBRARIES})
+find_package(YARP REQUIRED)
 
 # Find .cpp and .h automatically. This is a bit lazy,
 # and in principle it would be better to list these files
 # manually.
-FILE(GLOB folder_source src/*.cpp)
-FILE(GLOB folder_header include/*.hpp include/*.h ../common/*.hpp ../common/*.h)
+file(GLOB folder_source src/*.cpp)
+file(GLOB folder_header include/*.hpp include/*.h ../common/*.hpp ../common/*.h)
 
 # Declare groups of source and header, makes tings pretty in VisualStudio.
-SOURCE_GROUP("Source Files" FILES ${folder_source})
-SOURCE_GROUP("Header Files" FILES ${folder_header})
+source_group("Source Files" FILES ${folder_source})
+source_group("Header Files" FILES ${folder_header})
 
 # Create everything needed to build our executable.
-INCLUDE_DIRECTORIES(${PROJECT_SOURCE_DIR}/include ${PROJECT_SOURCE_DIR}/../common)
-ADD_EXECUTABLE(${PROJECTNAME} ${folder_source} ${folder_header})
+include_directories(${PROJECT_SOURCE_DIR}/include ${PROJECT_SOURCE_DIR}/../common)
+add_executable(collatzServer ${folder_source} ${folder_header})
+target_link_libraries(collatzServer ${YARP_LIBRARIES})
 
 # Make VisualStudio a bit quieter with warnings.
-IF(MSVC)
-  SET_TARGET_PROPERTIES(${PROJECTNAME} PROPERTIES COMPILE_FLAGS /wd4996)
-ENDIF(MSVC)
-
+if(MSVC)
+  set_target_properties(collatzServer PROPERTIES COMPILE_FLAGS /wd4996)
+endif()

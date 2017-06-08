@@ -4,8 +4,7 @@
 
 cmake_minimum_required(VERSION 3.0)
 
-FIND_PACKAGE(YARP REQUIRED)
-LINK_LIBRARIES(${YARP_LIBRARIES})
-INCLUDE_DIRECTORIES(${YARP_INCLUDE_DIRS})
+find_package(YARP REQUIRED)
 
-ADD_EXECUTABLE(wav_test wav_test.cpp)
+add_executable(wav_test wav_test.cpp)
+target_link_libraries(wav_test ${YARP_LIBRARIES})

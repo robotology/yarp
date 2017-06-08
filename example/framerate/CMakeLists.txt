@@ -7,10 +7,7 @@
 
 cmake_minimum_required(VERSION 3.0)
 
-FIND_PACKAGE(YARP REQUIRED)
-INCLUDE_DIRECTORIES(${YARP_INCLUDE_DIRS})
+find_package(YARP REQUIRED)
 
-ADD_EXECUTABLE(framerate main.cpp)
-TARGET_LINK_LIBRARIES(framerate ${YARP_LIBRARIES})
-INSTALL_TARGETS(/bin framerate)
-
+add_executable(framerate main.cpp)
+target_link_libraries(framerate ${YARP_LIBRARIES})

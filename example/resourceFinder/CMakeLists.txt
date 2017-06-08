@@ -6,9 +6,6 @@ cmake_minimum_required(VERSION 3.0)
 project(resourceFinder)
 
 find_package(YARP REQUIRED)
-list(APPEND CMAKE_MODULE_PATH ${YARP_MODULE_PATH})
-
-include_directories(${YARP_INCLUDE_DIRS})
 
 add_executable(rf_basic tutorial_rf_basic.cpp)
 target_link_libraries(rf_basic ${YARP_LIBRARIES})
@@ -16,9 +13,7 @@ target_link_libraries(rf_basic ${YARP_LIBRARIES})
 add_executable(rf_advanced tutorial_rf_advanced.cpp)
 target_link_libraries(rf_advanced ${YARP_LIBRARIES})
 
-
 # to install data files:
-include(YarpInstallationHelpers)
 set(conf randomMotion/config.ini)
 # alternatively, if you are too lazy to list all files explicitly, you can "GLOB" them with:
 # file(GLOB conf conf/*.ini)

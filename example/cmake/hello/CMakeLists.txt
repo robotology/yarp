@@ -8,9 +8,6 @@ cmake_minimum_required(VERSION 3.0)
 # find YARP
 find_package(YARP REQUIRED)
 
-# add YARP include directories
-include_directories(${YARP_INCLUDE_DIRS})
-
 # set up our program
 add_executable(hello hello.cpp)
 

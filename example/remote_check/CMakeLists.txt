@@ -6,11 +6,9 @@
 # compiled YARP.
 
 cmake_minimum_required(VERSION 3.0)
+project(remote_check)
 
-FIND_PACKAGE(YARP REQUIRED)
-INCLUDE_DIRECTORIES(${YARP_INCLUDE_DIRS})
+find_package(YARP REQUIRED)
 
-PROJECT(remote_check)
-
-ADD_EXECUTABLE(remote_check main.cpp)
-TARGET_LINK_LIBRARIES(remote_check ${YARP_LIBRARIES})
+add_executable(remote_check main.cpp)
+target_link_libraries(remote_check ${YARP_LIBRARIES})
