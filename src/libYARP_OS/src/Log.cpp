@@ -242,6 +242,9 @@ void yarp::os::Log::trace(const char *msg, ...) const
         if (forward_callback) {
             forward_callback(yarp::os::Log::TraceType, buf, mPriv->file, mPriv->line, mPriv->func);
         }
+        if (w > YARP_MAX_LOG_MSG_SIZE-1) {
+            yarp::os::Log(mPriv->file, mPriv->line, mPriv->func).warning("Previous trace message was truncated");
+        }
     }
     va_end(args);
 }
@@ -268,6 +271,9 @@ void yarp::os::Log::debug(const char *msg, ...) const
         }
         if (forward_callback) {
             forward_callback(yarp::os::Log::DebugType, buf, mPriv->file, mPriv->line, mPriv->func);
+        }
+        if (w > YARP_MAX_LOG_MSG_SIZE-1) {
+            yarp::os::Log(mPriv->file, mPriv->line, mPriv->func).warning("Previous debug message was truncated");
         }
     }
     va_end(args);
@@ -296,6 +302,9 @@ void yarp::os::Log::info(const char *msg, ...) const
         if (forward_callback) {
             forward_callback(yarp::os::Log::InfoType, buf, mPriv->file, mPriv->line, mPriv->func);
         }
+        if (w > YARP_MAX_LOG_MSG_SIZE-1) {
+            yarp::os::Log(mPriv->file, mPriv->line, mPriv->func).warning("Previous info message was truncated");
+        }
     }
     va_end(args);
 }
@@ -322,6 +331,9 @@ void yarp::os::Log::warning(const char *msg, ...) const
         }
         if (forward_callback) {
             forward_callback(yarp::os::Log::WarningType, buf, mPriv->file, mPriv->line, mPriv->func);
+        }
+        if (w > YARP_MAX_LOG_MSG_SIZE-1) {
+            yarp::os::Log(mPriv->file, mPriv->line, mPriv->func).warning("Previous warning message was truncated");
         }
     }
     va_end(args);
@@ -350,6 +362,9 @@ void yarp::os::Log::error(const char *msg, ...) const
         if (forward_callback) {
             forward_callback(yarp::os::Log::ErrorType, buf, mPriv->file, mPriv->line, mPriv->func);
         }
+        if (w > YARP_MAX_LOG_MSG_SIZE-1) {
+            yarp::os::Log(mPriv->file, mPriv->line, mPriv->func).warning("Previous error message was truncated");
+        }
     }
     va_end(args);
 }
@@ -377,6 +392,9 @@ void yarp::os::Log::fatal(const char *msg, ...) const
         }
         if (forward_callback) {
             forward_callback(yarp::os::Log::FatalType, buf, mPriv->file, mPriv->line, mPriv->func);
+        }
+        if (w > YARP_MAX_LOG_MSG_SIZE-1) {
+            yarp::os::Log(mPriv->file, mPriv->line, mPriv->func).warning("Previous fatal message was truncated");
         }
     }
     va_end(args);
