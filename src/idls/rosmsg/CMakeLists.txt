@@ -21,6 +21,7 @@ set(yarpidl_rosmsg_HDRS src/RosType.h
 
 add_executable(yarpidl_rosmsg ${yarpidl_rosmsg_SRCS}
                               ${yarpidl_rosmsg_HDRS})
+add_executable(YARP::yarpidl_rosmsg ALIAS yarpidl_rosmsg)
 
 target_link_libraries(yarpidl_rosmsg YARP::YARP_init
                                      YARP::YARP_OS

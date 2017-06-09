@@ -289,17 +289,7 @@ function(YARP_ADD_IDL var first_file)
         message(FATAL_ERROR "Unknown extension ${ext}. Supported extensiona are .thrift, .msg, and .srv")
     endif()
 
-
-    # Choose target depending on family and on whether we are building
-    # or using YARP
-    # FIXME CMake 2.8.12 Use ALIAS and always YARP::yarpidl_${family}
-    if(TARGET YARP::yarpidl_${family})
-        # Outside YARP
-        set(YARPIDL_${family}_COMMAND YARP::yarpidl_${family})
-    else()
-        # Building YARP
-        set(YARPIDL_${family}_COMMAND yarpidl_${family})
-    endif()
+    set(YARPIDL_${family}_COMMAND YARP::yarpidl_${family})
 
     # Set intermediate output directory, remove extra '/' and ensure that
     # the directory exists.

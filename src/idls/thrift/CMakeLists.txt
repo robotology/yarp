@@ -59,10 +59,9 @@ if (THRIFT_USE_EXTERNAL)
     ${thrift_source_c}
     ${insert_source_cc}
     )
-  install(TARGETS yarpidl_thrift COMPONENT utilities DESTINATION ${CMAKE_INSTALL_BINDIR})
-endif ()
 
-if (NOT THRIFT_USE_EXTERNAL)
+else()
+
   # Use built-in version of thrift, pre flex/bisoned for min. dependencies.
 
   include_directories(SYSTEM ${CMAKE_CURRENT_SOURCE_DIR}/src_gen)
@@ -108,6 +107,7 @@ if (NOT THRIFT_USE_EXTERNAL)
 
 endif ()
 
+add_executable(YARP::yarpidl_thrift ALIAS yarpidl_thrift)
 install(TARGETS yarpidl_thrift
         EXPORT YARP
         COMPONENT utilities
