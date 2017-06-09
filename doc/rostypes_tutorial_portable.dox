@@ -9,7 +9,7 @@ datatypes, in YARP objects that can be sent through ports are called
 \em portable objects. \ref port_expert shows how you can manually implement a
 portable object.
 
-For ROS interoperability YARP supports ROS msg types. In this tutorials we see
+For ROS interoperability YARP supports ROS msg types. In this tutorial we see
 how you can automatically generate YARP portable objects using ROS syntax.
 The advantage in this case is that your type is compatible with ROS and can be
 directly read from a topic.
