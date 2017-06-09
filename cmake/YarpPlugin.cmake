@@ -473,7 +473,7 @@ macro(YARP_ADD_PLUGIN _library_name)
 
   # If we are building YARP, add ALIAS targets.
   # Only required for CMake 3.4 or earlier
-  if(TARGET YARP_OS AND NOT (NOT CMAKE_VERSION VERSION_LESS 3.5))
+  if(TARGET YARP_OS AND CMAKE_VERSION VERSION_LESS 3.5)
     add_library(YARP::${_library_name} ALIAS ${_library_name})
   endif()
 
@@ -559,7 +559,7 @@ macro(YARP_END_PLUGIN_LIBRARY bundle_name)
       # If we are building YARP with an old CMake we need to link to the alias
       # targets or targets linking to yarpcar and yarpmod will not be able to
       # link properly
-      if(TARGET YARP_OS AND NOT (NOT CMAKE_VERSION VERSION_LESS 3.5))
+      if(TARGET YARP_OS AND CMAKE_VERSION VERSION_LESS 3.5)
         foreach(lib ${libs})
           target_link_libraries(${X_YARP_PLUGIN_MASTER} PRIVATE YARP::${lib})
         endforeach()
