@@ -370,11 +370,6 @@ set(MACOSX_BUNDLE_SHORT_VERSION_STRING "${YARP_VERSION_SHORT}")
 
 #########################################################################
 # Compile libraries using -fPIC to produce position independent code.
-# Since CMake 2.8.10 the CMAKE_POSITION_INDEPENDENT_CODE variable is
-# used by CMake to determine whether position indipendent code
-# executable and library targets should be created.
-# For older versions the position independent code is handled in
-# YarpDescribe.cmake,
 set(CMAKE_POSITION_INDEPENDENT_CODE ON)
 
 
