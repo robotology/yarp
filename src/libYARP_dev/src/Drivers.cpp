@@ -24,6 +24,9 @@
 
 #include <yarp/os/YarpPlugin.h>
 
+#include <vector>
+#include <sstream>
+
 using namespace yarp::os;
 using namespace yarp::dev;
 using namespace std;
@@ -366,6 +369,27 @@ static void handler (int) {
 }
 
 
+
+// Split with delimiter method.
+// See https://stackoverflow.com/questions/236129
+// TODO Move somewhere else?
+namespace {
+template<typename Out>
+void split(const ConstString &s, char delim, Out result) {
+    std::stringstream ss;
+    ss.str(s);
+    ConstString item;
+    while (std::getline(ss, item, delim)) {
+        *(result++) = item;
+    }
+}
+std::vector<ConstString> split(const ConstString &s, char delim) {
+    std::vector<ConstString> elems;
+    split(s, delim, std::back_inserter(elems));
+    return elems;
+}
+} // namespace
+
 int Drivers::yarpdev(int argc, char *argv[]) {
 
     yarp::os::impl::signal(SIGINT, handler);
@@ -418,7 +442,9 @@ int Drivers::yarpdev(int argc, char *argv[]) {
         if (options.check("list"))
         {
             yInfo("Here are devices listed for your system:");
-            yInfo("%s", Drivers::factory().toString().c_str());
+            for (auto s : split(Drivers::factory().toString(), '\n')) {
+                yInfo("%s", s.c_str());
+            }
         }
         else
         {
