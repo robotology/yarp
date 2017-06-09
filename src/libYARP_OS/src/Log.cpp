@@ -29,7 +29,9 @@
 #include <cstdio>
 
 
-#define YARP_MAX_LOG_MSG_SIZE 1024
+#define YARP_DEFAUT_LOG_MSG_SIZE 1024
+#define YARP_MAX_LOG_MSG_SIZE    32767
+
 
 #if !defined(_WIN32)
 
@@ -230,9 +232,20 @@ void yarp::os::Log::trace(const char *msg, ...) const
     va_list args;
     va_start(args, msg);
     if (msg) {
-        char buf[YARP_MAX_LOG_MSG_SIZE];
-        int w = vsnprintf(buf, YARP_MAX_LOG_MSG_SIZE, msg, args);
-        buf[YARP_MAX_LOG_MSG_SIZE-1]=0;
+        char* buf = 0;
+        int ssize = YARP_DEFAUT_LOG_MSG_SIZE;
+        int w=0;
+        do
+        {
+            buf = new char[ssize];
+            w = vsnprintf(buf, ssize, msg, args);
+            if (w<0)
+            {
+                delete [] buf;
+                ssize=ssize*2;
+            }
+        }
+        while (w<0 && w<YARP_MAX_LOG_MSG_SIZE);
         if (w>0 && buf[w-1]=='\n') {
             buf[w-1]=0;
         }
@@ -242,6 +255,7 @@ void yarp::os::Log::trace(const char *msg, ...) const
         if (forward_callback) {
             forward_callback(yarp::os::Log::TraceType, buf, mPriv->file, mPriv->line, mPriv->func);
         }
+        delete [] buf;
     }
     va_end(args);
 }
@@ -257,9 +271,20 @@ void yarp::os::Log::debug(const char *msg, ...) const
     va_list args;
     va_start(args, msg);
     if (msg) {
-        char buf[YARP_MAX_LOG_MSG_SIZE];
-        int w = vsnprintf(buf, YARP_MAX_LOG_MSG_SIZE, msg, args);
-        buf[YARP_MAX_LOG_MSG_SIZE-1]=0;
+        char* buf = 0;
+        int ssize = YARP_DEFAUT_LOG_MSG_SIZE;
+        int w=0;
+        do
+        {
+            buf = new char[ssize];
+            w = vsnprintf(buf, ssize, msg, args);
+            if (w<0)
+            {
+                delete [] buf;
+                ssize=ssize*2;
+            }
+        }
+        while (w<0 && w<YARP_MAX_LOG_MSG_SIZE);
         if (w>0 && buf[w-1]=='\n') {
             buf[w-1]=0;
         }
@@ -269,6 +294,7 @@ void yarp::os::Log::debug(const char *msg, ...) const
         if (forward_callback) {
             forward_callback(yarp::os::Log::DebugType, buf, mPriv->file, mPriv->line, mPriv->func);
         }
+        delete [] buf;
     }
     va_end(args);
 }
@@ -284,9 +310,20 @@ void yarp::os::Log::info(const char *msg, ...) const
     va_list args;
     va_start(args, msg);
     if (msg) {
-        char buf[YARP_MAX_LOG_MSG_SIZE];
-        int w = vsnprintf(buf, YARP_MAX_LOG_MSG_SIZE, msg, args);
-        buf[YARP_MAX_LOG_MSG_SIZE-1]=0;
+        char* buf = 0;
+        int ssize = YARP_DEFAUT_LOG_MSG_SIZE;
+        int w=0;
+        do
+        {
+            buf = new char[ssize];
+            w = vsnprintf(buf, ssize, msg, args);
+            if (w<0)
+            {
+                delete [] buf;
+                ssize=ssize*2;
+            }
+        }
+        while (w<0 && w<YARP_MAX_LOG_MSG_SIZE);
         if (w>0 && buf[w-1]=='\n') {
             buf[w-1]=0;
         }
@@ -296,6 +333,7 @@ void yarp::os::Log::info(const char *msg, ...) const
         if (forward_callback) {
             forward_callback(yarp::os::Log::InfoType, buf, mPriv->file, mPriv->line, mPriv->func);
         }
+        delete [] buf;
     }
     va_end(args);
 }
@@ -311,9 +349,20 @@ void yarp::os::Log::warning(const char *msg, ...) const
     va_list args;
     va_start(args, msg);
     if (msg) {
-        char buf[YARP_MAX_LOG_MSG_SIZE];
-        int w = vsnprintf(buf, YARP_MAX_LOG_MSG_SIZE, msg, args);
-        buf[YARP_MAX_LOG_MSG_SIZE-1]=0;
+        char* buf = 0;
+        int ssize = YARP_DEFAUT_LOG_MSG_SIZE;
+        int w=0;
+        do
+        {
+            buf = new char[ssize];
+            w = vsnprintf(buf, ssize, msg, args);
+            if (w<0)
+            {
+                delete [] buf;
+                ssize=ssize*2;
+            }
+        }
+        while (w<0 && w<YARP_MAX_LOG_MSG_SIZE);
         if (w>0 && buf[w-1]=='\n') {
             buf[w-1]=0;
         }
@@ -323,6 +372,7 @@ void yarp::os::Log::warning(const char *msg, ...) const
         if (forward_callback) {
             forward_callback(yarp::os::Log::WarningType, buf, mPriv->file, mPriv->line, mPriv->func);
         }
+        delete [] buf;
     }
     va_end(args);
 }
@@ -338,9 +388,20 @@ void yarp::os::Log::error(const char *msg, ...) const
     va_list args;
     va_start(args, msg);
     if (msg) {
-        char buf[YARP_MAX_LOG_MSG_SIZE];
-        int w = vsnprintf(buf, YARP_MAX_LOG_MSG_SIZE, msg, args);
-        buf[YARP_MAX_LOG_MSG_SIZE-1]=0;
+        char* buf = 0;
+        int ssize = YARP_DEFAUT_LOG_MSG_SIZE;
+        int w=0;
+        do
+        {
+            buf = new char[ssize];
+            w = vsnprintf(buf, ssize, msg, args);
+            if (w<0)
+            {
+                delete [] buf;
+                ssize=ssize*2;
+            }
+        }
+        while (w<0 && w<YARP_MAX_LOG_MSG_SIZE);
         if (w>0 && buf[w-1]=='\n') {
             buf[w-1]=0;
         }
@@ -350,6 +411,7 @@ void yarp::os::Log::error(const char *msg, ...) const
         if (forward_callback) {
             forward_callback(yarp::os::Log::ErrorType, buf, mPriv->file, mPriv->line, mPriv->func);
         }
+        delete [] buf;
     }
     va_end(args);
 }
@@ -366,9 +428,20 @@ void yarp::os::Log::fatal(const char *msg, ...) const
     va_list args;
     va_start(args, msg);
     if (msg) {
-        char buf[YARP_MAX_LOG_MSG_SIZE];
-        int w = vsnprintf(buf, YARP_MAX_LOG_MSG_SIZE, msg, args);
-        buf[YARP_MAX_LOG_MSG_SIZE-1]=0;
+        char* buf = 0;
+        int ssize = YARP_DEFAUT_LOG_MSG_SIZE;
+        int w=0;
+        do
+        {
+            buf = new char[ssize];
+            w = vsnprintf(buf, ssize, msg, args);
+            if (w<0)
+            {
+                delete [] buf;
+                ssize=ssize*2;
+            }
+        }
+        while (w<0 && w<YARP_MAX_LOG_MSG_SIZE);
         if (w>0 && buf[w-1]=='\n') {
             buf[w-1]=0;
         }
@@ -378,6 +451,7 @@ void yarp::os::Log::fatal(const char *msg, ...) const
         if (forward_callback) {
             forward_callback(yarp::os::Log::FatalType, buf, mPriv->file, mPriv->line, mPriv->func);
         }
+        delete [] buf;
     }
     va_end(args);
     yarp_print_trace(stderr, mPriv->file, mPriv->line);
