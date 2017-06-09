@@ -4,7 +4,6 @@
 
 include(CMakeDependentOption)
 
-find_package(Doxygen)
 find_file(DOXYGEN_PLANTUM_JAR
           NAMES plantuml.jar
           PATHS /usr/share
