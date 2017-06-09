@@ -42,6 +42,7 @@ message(STATUS "  CXX Compiler: ${CMAKE_CXX_COMPILER_ID} ${CMAKE_CXX_COMPILER_VE
 # using YARP without a global install.
 set_property(GLOBAL PROPERTY YARP_TREE_INCLUDE_DIRS)
 set_property(GLOBAL PROPERTY YARP_LIBS)
+set_property(GLOBAL PROPERTY YARP_TOOLS)
 set_property(GLOBAL PROPERTY YARP_DEFS)
 
 set_property(GLOBAL PROPERTY USE_FOLDERS 1)
