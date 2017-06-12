@@ -490,9 +490,9 @@ bool DgramTwoWayStream::openMcast(const Contact& group,
                                 (ACE_UINT32)INADDR_ANY);
 
     ACE_SOCK_Dgram_Mcast::options mcastOptions = ACE_SOCK_Dgram_Mcast::DEFOPTS;
-#if defined(__APPLE__)
+    #if defined(__APPLE__)
     mcastOptions = static_cast<ACE_SOCK_Dgram_Mcast::options>(ACE_SOCK_Dgram_Mcast::OPT_BINDADDR_NO | ACE_SOCK_Dgram_Mcast::DEFOPT_NULLIFACE);
-#endif
+    #endif
 
     ACE_SOCK_Dgram_Mcast *dmcast = new ACE_SOCK_Dgram_Mcast(mcastOptions);
     dgram = dmcast;
@@ -501,13 +501,9 @@ bool DgramTwoWayStream::openMcast(const Contact& group,
 
     int result = -1;
     ACE_INET_Addr addr(group.getPort(), group.getHost().c_str());
-    if (ipLocal.isValid()) {
-        result = dmcast->open(addr, YARP_NULLPTR, 1);
-        if (result==0) {
-            result = restrictMcast(dmcast, group, ipLocal, false);
-        }
-    } else {
-        result = dmcast->open(addr, YARP_NULLPTR, 1);
+    result = dmcast->open(addr, YARP_NULLPTR, 1);
+    if (result==0) {
+        result = restrictMcast(dmcast, group, ipLocal, false);
     }
 
     if (result!=0) {
@@ -597,7 +593,6 @@ bool DgramTwoWayStream::join(const Contact& group, bool sender,
             // just use udp as normal
             return open(group);
         }
-        //return;
     }
 
 #if defined(YARP_HAS_ACE)
@@ -834,7 +829,7 @@ YARP_SSIZE_T DgramTwoWayStream::read(const Bytes& b) {
 
             } else
 #endif
-                if (dgram != YARP_NULLPTR) {
+            if (dgram != YARP_NULLPTR) {
                 yAssert(dgram != YARP_NULLPTR);
 #if defined(YARP_HAS_ACE)
                 ACE_INET_Addr dummy((u_short)0, (ACE_UINT32)INADDR_ANY);
