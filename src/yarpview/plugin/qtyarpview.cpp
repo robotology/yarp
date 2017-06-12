@@ -240,6 +240,11 @@ bool QtYARPView::parseParameters(QStringList params)
         return false;
     }
 
+    if (!yarp::os::Network::checkNetwork()) {
+        qCritical("Cannot connect to yarp server");
+        return false;
+    }
+
     // Otherwise, simply set the options asked
     setOptions(options);
 
