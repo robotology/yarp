@@ -129,12 +129,12 @@ void MainWindow::onProgress(unsigned int percentage) {
 
 void MainWindow::drawGraph(Graph &graph)
 {
+    initScene();
     if(graph.nodesCount() == 0)
         return;
 
     layoutSubgraph = ui->actionSubgraph->isChecked();
 
-    initScene();
 
     //Configure scene attributes
     //scene->setGraphAttribute("label", "yarp-viz");
