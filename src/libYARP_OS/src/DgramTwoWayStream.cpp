@@ -480,10 +480,12 @@ int DgramTwoWayStream::restrictMcast(ACE_SOCK_Dgram_Mcast * dmcast,
 
 bool DgramTwoWayStream::openMcast(const Contact& group,
                                   const Contact& ipLocal) {
-#if defined(YARP_HAS_ACE)
+
     multiMode = true;
 
     localAddress = ipLocal;
+
+#if defined(YARP_HAS_ACE)
     localHandle = ACE_INET_Addr((u_short)(localAddress.getPort()),
                                 (ACE_UINT32)INADDR_ANY);
 
@@ -513,24 +515,75 @@ bool DgramTwoWayStream::openMcast(const Contact& group,
         return false;
     }
 
-    configureSystemBuffers();
+#else
+    dgram = YARP_NULLPTR;
+    dgram_sockfd = -1;
 
+    int s = -1;
+    struct sockaddr_in dgram_sin;
+    // create what looks like an ordinary UDP socket
+    if ((s=socket(AF_INET, SOCK_DGRAM, IPPROTO_UDP))==-1) {
+        YARP_ERROR(Logger::get(), "could not create sender socket\n");
+        std::exit(1);
+    }
+    // set up destination address
+    memset((char *) &dgram_sin, 0, sizeof(dgram_sin));
+    dgram_sin.sin_family = AF_INET;
+    dgram_sin.sin_addr.s_addr = inet_addr(group.getHost().c_str());
+    dgram_sin.sin_port = htons(group.getPort());
+
+
+    if (inet_pton(AF_INET, group.getHost().c_str(), &dgram_sin.sin_addr)==0) {
+        YARP_ERROR(Logger::get(), "could not set up mcast client\n");
+        std::exit(1);
+    }
+    if (connect(s, (struct sockaddr *)&dgram_sin, sizeof(dgram_sin))==-1) {
+        YARP_ERROR(Logger::get(), "could not connect mcast client\n");
+        std::exit(1);
+    }
+
+
+    dgram_sockfd = s;
+    dgram = this;
+    int local_port = -1;
+
+    struct sockaddr_in sin;
+    socklen_t len = sizeof(sin);
+    if (getsockname(dgram_sockfd, (struct sockaddr *)&sin, &len) == 0 &&
+        sin.sin_family == AF_INET) {
+        local_port = ntohs(sin.sin_port);
+    }
+
+
+
+#endif
+    configureSystemBuffers();
     remoteAddress = group;
+#ifdef YARP_HAS_ACE
+
     localHandle.set(localAddress.getPort(), localAddress.getHost().c_str());
     remoteHandle.set(remoteAddress.getPort(), remoteAddress.getHost().c_str());
+#else
 
+    remoteAddress = group;
+    localAddress = Contact("127.0.0.1", local_port);
+    localHandle = local_port;
+    remoteHandle = remoteAddress.getPort();
+
+
+#endif
+    YARP_DEBUG(Logger::get(), ConstString("Update: DGRAM from ") +
+               localAddress.toURI() +
+               " to " + remoteAddress.toURI());
     allocate();
 
     return true;
-#else
-    return false;
-#endif
 }
 
 
 bool DgramTwoWayStream::join(const Contact& group, bool sender,
                              const Contact& ipLocal) {
-#if defined(YARP_HAS_ACE)
+
     YARP_DEBUG(Logger::get(), ConstString("subscribing to mcast address ") +
                group.toURI() + " for " +
                (sender?"writing":"reading"));
@@ -547,7 +600,7 @@ bool DgramTwoWayStream::join(const Contact& group, bool sender,
         //return;
     }
 
-
+#if defined(YARP_HAS_ACE)
     ACE_SOCK_Dgram_Mcast::options mcastOptions = ACE_SOCK_Dgram_Mcast::DEFOPTS;
 #if defined(__APPLE__)
     mcastOptions = static_cast<ACE_SOCK_Dgram_Mcast::options>(ACE_SOCK_Dgram_Mcast::OPT_BINDADDR_NO | ACE_SOCK_Dgram_Mcast::DEFOPT_NULLIFACE);
@@ -573,23 +626,70 @@ bool DgramTwoWayStream::join(const Contact& group, bool sender,
         result = dmcast->join(addr, 1);
     }
 
-    configureSystemBuffers();
-
     if (result!=0) {
         YARP_ERROR(Logger::get(), "cannot connect to multi-cast address");
         happy = false;
         return false;
     }
+#else
+    struct ip_mreq mreq;
+    int s = -1;
+    if ((s=socket(AF_INET,SOCK_DGRAM,0)) < 0) {
+        YARP_ERROR(Logger::get(), "could not create receiver socket\n");
+        happy = false;
+        return false;
+    }
+    struct sockaddr_in addr;
+    u_int yes=1;
+
+    /* set up destination address */
+    memset(&addr,0,sizeof(addr));
+    addr.sin_family=AF_INET;
+    addr.sin_addr.s_addr=htonl(INADDR_ANY);
+    addr.sin_port=htons(group.getPort());
+
+    // allow multiple sockets to use the same PORT number
+    if (setsockopt(s,SOL_SOCKET,SO_REUSEADDR,&yes,sizeof(yes)) < 0)
+    {
+        YARP_ERROR(Logger::get(), "could not allow sockets use the same PORT number\n");
+        happy = false;
+        return false;
+    }
+    // bind to receive address
+    if (bind(s, (struct sockaddr *)&addr, sizeof(addr))==-1)
+    {
+        YARP_ERROR(Logger::get(), "could not create mcast server\n");
+        happy = false;
+        return false;
+    }
+
+    // use setsockopt() to request that the kernel join a multicast group
+    mreq.imr_multiaddr.s_addr=inet_addr(group.getHost().c_str());
+    mreq.imr_interface.s_addr=htonl(INADDR_ANY);
+    if (setsockopt(s,IPPROTO_IP,IP_ADD_MEMBERSHIP,&mreq,sizeof(mreq)) < 0)
+    {
+        YARP_ERROR(Logger::get(), "could not join the multicast group\n");
+        perror("sendto");
+        happy = false;
+        return false;
+    }
+
+    dgram_sockfd = s;
+    dgram = this;
+#endif
+    configureSystemBuffers();
+
     localAddress = group;
     remoteAddress = group;
+#ifdef YARP_HAS_ACE
     localHandle.set(localAddress.getPort(), localAddress.getHost().c_str());
     remoteHandle.set(remoteAddress.getPort(), remoteAddress.getHost().c_str());
-
+#else
+    localHandle = localAddress.getPort();
+    remoteHandle = remoteAddress.getPort();
+#endif
     allocate();
     return true;
-#else
-    return false;
-#endif
 }
 
 DgramTwoWayStream::~DgramTwoWayStream() {

@@ -157,10 +157,6 @@ bool yarp::os::impl::McastCarrier::expectExtraHeader(ConnectionState& proto) {
 
 
 bool yarp::os::impl::McastCarrier::becomeMcast(ConnectionState& proto, bool sender) {
-#ifndef YARP_HAS_ACE
-    return false;
-#else
-    YARP_UNUSED(sender);
     DgramTwoWayStream *stream = new DgramTwoWayStream();
     yAssert(stream!=YARP_NULLPTR);
     Contact remote = proto.getStreams().getRemoteAddress();
@@ -211,7 +207,6 @@ bool yarp::os::impl::McastCarrier::becomeMcast(ConnectionState& proto, bool send
     }
     proto.takeStreams(stream);
     return true;
-#endif
 }
 
 bool yarp::os::impl::McastCarrier::respondToHeader(ConnectionState& proto) {

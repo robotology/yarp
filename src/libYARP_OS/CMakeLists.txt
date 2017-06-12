@@ -254,6 +254,7 @@ set(YARP_OS_SRCS src/AbstractCarrier.cpp
                  src/Logger.cpp
                  src/LogForwarder.cpp
                  src/ManagedBytes.cpp
+                 src/McastCarrier.cpp
                  src/MessageStack.cpp
                  src/ModifyingCarrier.cpp
                  src/MultiNameSpace.cpp
@@ -377,9 +378,8 @@ endif()
 
 
 if(NOT SKIP_ACE)
-  # these carriers have not yet been implemented without ACE
+  # this carrier have not yet been implemented without ACE
   set(YARP_OS_SRCS ${YARP_OS_SRCS}
-                   src/McastCarrier.cpp
                    src/ShmemCarrier.cpp)
 endif()
 

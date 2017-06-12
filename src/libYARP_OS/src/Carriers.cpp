@@ -12,8 +12,8 @@
 #include <yarp/os/impl/TcpCarrier.h>
 #include <yarp/os/impl/TextCarrier.h>
 
-#ifdef YARP_HAS_ACE
 #  include <yarp/os/impl/McastCarrier.h>
+#ifdef YARP_HAS_ACE
 #  include <yarp/os/impl/ShmemCarrier.h>
 #endif
 
@@ -216,9 +216,7 @@ Carriers::Carriers() :
 #endif
     mPriv->delegates.push_back(new TcpCarrier());
     mPriv->delegates.push_back(new TcpCarrier(false));
-#ifdef YARP_HAS_ACE
     mPriv->delegates.push_back(new McastCarrier());
-#endif
     mPriv->delegates.push_back(new UdpCarrier());
     mPriv->delegates.push_back(new TextCarrier());
     mPriv->delegates.push_back(new TextCarrier(true));
