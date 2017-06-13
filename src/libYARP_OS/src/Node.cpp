@@ -282,6 +282,10 @@ public:
             opaque_id++;
         }
 
+        if (connections->size() == 0) {
+            connections->addList(); // add empty list
+        }
+
         na.reply = v;
         na.success();
     }
