@@ -36,6 +36,19 @@ macro(qtyarp_qml_plugin _target _path)
                      COPYONLY)
     endif()
   endforeach()
+
+  # Update RPATH
+  if(NOT CMAKE_SKIP_RPATH AND NOT CMAKE_SKIP_INSTALL_RPATH)
+    file(RELATIVE_PATH _rel_path "${CMAKE_INSTALL_FULL_QMLDIR}/${_path}" "${CMAKE_INSTALL_FULL_LIBDIR}")
+    get_target_property(_rpath "${_target}" INSTALL_RPATH)
+    if (${CMAKE_SYSTEM_NAME} MATCHES "Darwin")
+      list(APPEND _rpath "@loader_path/${_rel_path}")
+    else()
+      list(APPEND _rpath "\$ORIGIN/${_rel_path}")
+    endif()
+    message(WARNING "SETTING RPATH TO ${_rpath}")
+    set_target_properties("${_target}" PROPERTIES INSTALL_RPATH "${_rpath}")
+  endif()
 endmacro()
 
 
