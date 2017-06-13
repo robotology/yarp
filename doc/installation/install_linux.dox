@@ -33,6 +33,11 @@ your distribution).
 
 (replace wheezy with the name of the distribution).
 
+Import the repository public key:
+\code
+  sudo apt-key adv --keyserver keyserver.ubuntu.com --recv-keys 57A5ACB6110576A6
+\endcode
+
 Update the list of packages and install YARP.
 \code
   sudo apt-get update
