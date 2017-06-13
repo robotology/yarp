@@ -34,7 +34,7 @@ ApplicationWindow {
         id: toolBar
     }
 
-    QtYARPScopePlugin{
+    QtYARPScopePlugin {
         anchors.fill: parent
         id: graph
         objectName: "YARPScope1"
