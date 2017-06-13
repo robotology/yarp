@@ -275,7 +275,8 @@ void QtYARPScope::paint(QPainter *painter)
         int plotterWidth = (w/cols) * hSpan;
         int plotterHeight = (h/rows) * vSpan;
 
-        QPixmap picture( plotter->customPlot.size() );
+        QPixmap picture(QSize(plotter->customPlot.width() * plotter->customPlot.devicePixelRatio(),
+                              plotter->customPlot.height() * plotter->customPlot.devicePixelRatio()));
 
         QCPPainter qcpPainter( &picture );
         plotter->customPlot.toPainter( &qcpPainter );
