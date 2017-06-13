@@ -20,12 +20,10 @@ class Route::Private
 public:
     Private(const ConstString& fromName,
             const ConstString& toName,
-            const ConstString& fromContact,
-            const ConstString& toContact,
+            const Contact& toContact,
             const ConstString& carrierName) :
         fromName(fromName),
         toName(toName),
-        fromContact(fromContact),
         toContact(toContact),
         carrierName(carrierName)
     {
@@ -33,7 +31,6 @@ public:
 
     ConstString fromName;
     ConstString toName;
-    Contact fromContact;
     Contact toContact;
     ConstString carrierName;
 
@@ -49,8 +46,7 @@ public:
 Route::Route() :
         mPriv(new Private(ConstString(),
                           ConstString(),
-                          ConstString(),
-                          ConstString(),
+                          Contact(),
                           ConstString()))
 {
 }
@@ -60,8 +56,7 @@ Route::Route(const ConstString& fromName,
              const ConstString& carrierName) :
         mPriv(new Private(fromName,
                           toName,
-                          ConstString(),
-                          ConstString(),
+                          Contact(),
                           carrierName))
 {
 }
