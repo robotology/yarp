@@ -26,7 +26,13 @@
  */
 int main(int argc, char *argv[])
 {
+#if QT_VERSION >= QT_VERSION_CHECK(5, 6, 0)
+    QCoreApplication::setAttribute(Qt::AA_EnableHighDpiScaling);
+#else
+    qputenv("QT_DEVICE_PIXEL_RATIO", QByteArray("auto"));
+#endif
     QApplication app(argc, argv);
+
     QVariant retVal;
 
     // De-comment this to trace all imports

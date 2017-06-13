@@ -25,8 +25,8 @@ using namespace yarp::os;
 
 int main(int argc, char *argv[])
 {
-#if QT_VERSION > QT_VERSION_CHECK(5, 5, 0)
-    qputenv("QT_AUTO_SCREEN_SCALE_FACTOR", QByteArray("1"));
+#if QT_VERSION >= QT_VERSION_CHECK(5, 6, 0)
+    QCoreApplication::setAttribute(Qt::AA_EnableHighDpiScaling);
 #else
     qputenv("QT_DEVICE_PIXEL_RATIO", QByteArray("auto"));
 #endif
