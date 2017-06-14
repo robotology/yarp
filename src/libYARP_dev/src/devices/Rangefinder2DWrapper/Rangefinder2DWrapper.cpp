@@ -453,12 +453,6 @@ bool Rangefinder2DWrapper::read(yarp::os::ConnectionReader& connection)
 
 bool Rangefinder2DWrapper::threadInit()
 {
-    // open data port
-    if (!streamingPort.open(streamingPortName.c_str()))
-        {
-            yError("Rangefinder2DWrapper: failed to open port %s", streamingPortName.c_str());
-            return false;
-        }
     return true;
 }
 
@@ -499,13 +493,14 @@ bool Rangefinder2DWrapper::open(yarp::os::Searchable &config)
         setId("Rangefinder2DWrapper");
     }
 
+    checkROSParams(config);
+
     if(!initialize_YARP(config) )
     {
         yError() << sensorId << "Error initializing YARP ports";
         return false;
     }
 
-    checkROSParams(config);
 
     // call ROS node/topic initilization, if needed
     if (!initialize_ROS())
@@ -539,9 +534,20 @@ bool Rangefinder2DWrapper::open(yarp::os::Searchable &config)
 
 bool Rangefinder2DWrapper::initialize_YARP(yarp::os::Searchable &params)
 {
-    streamingPort.open(streamingPortName.c_str());
-    rpcPort.open(rpcPortName.c_str() );
-    rpcPort.setReader(*this);
+    if(useROS != ROS_only)
+    {
+	    if (!streamingPort.open(streamingPortName.c_str()))
+            {
+                yError("Rangefinder2DWrapper: failed to open port %s", streamingPortName.c_str());
+                return false;
+            }
+	    if (!rpcPort.open(rpcPortName.c_str()))
+            {
+                yError("Rangefinder2DWrapper: failed to open port %s", rpcPortName.c_str());
+                return false;
+            }
+	    rpcPort.setReader(*this);
+    }
     return true;
 }
 
