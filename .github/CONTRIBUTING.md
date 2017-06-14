@@ -1,4 +1,4 @@
-Contributing to YARP
+Contributing to YARP                                             {#contributing}
 ====================
 
 
