@@ -220,8 +220,9 @@ Deprecated features are definitely removed every 4 release series.
 
 * **Linux**: See [YARP Supported Distributions](http://wiki.icub.org/wiki/YARP_Supported_Distributions)
 * **Windows**:
-  * Visual Studio 10 2010 32 bit
-  * Visual Studio 11 2012 32/64 bit
   * Visual Studio 12 2013 32/64 bit
-  * Visual Studio 14 2015 32/64 bit (work in progress)
-* **OSX** (FIXME)
+  * Visual Studio 14 2015 32/64 bit
+  * Visual Studio 15 2017 32/64 bit (work in progress)
+* **macOS**:
+  * 10.11 El Capitan
+  * 10.12 Sierra
