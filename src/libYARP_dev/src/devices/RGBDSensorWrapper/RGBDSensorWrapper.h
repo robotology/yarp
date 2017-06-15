@@ -75,7 +75,7 @@ public:
     virtual ~RGBDSensorParser() {};
     bool configure(IRGBDSensor *interface);
     bool configure(IRgbVisualParams *rgbInterface, IDepthVisualParams *depthInterface);
-    virtual bool respond(const yarp::os::Bottle& cmd, yarp::os::Bottle& response);
+    virtual bool respond(const yarp::os::Bottle& cmd, yarp::os::Bottle& response) override;
 };
 
 
@@ -98,6 +98,7 @@ public:
  * | subdevice      |      -                  | string  | -              |   -           | alternative to 'attach' action | name of the subdevice to use as a data source                                                       | when used, parameters for the subdevice must be provided as well |
  * | ROS            |      -                  | group   |  -             |   -           | No                             | Group containing parameter for ROS topic initialization                                             | if missing, it is assumed to not use ROS topics |
  * |   -            |  useROS                 | string  | true/false/only|   -           |  if ROS group is present       | set 'true' to have both yarp ports and ROS topic, set 'only' to have only ROS topic and no yarp port|  - |
+ * |   -            |  forceInfoSync          | string  | bool           |   -           |  no                            | set 'true' to force the timestamp on the camera_info message to match the image one                 |  - |
  * |   -            |  ROS_colorTopicName     | string  |  -             |   -           |  if ROS group is present       | set the name for ROS image topic                                                                    | must start with a leading '/' |
  * |   -            |  ROS_depthTopicName     | string  |  -             |   -           |  if ROS group is present       | set the name for ROS depth topic                                                                    | must start with a leading '/' |
  * |   -            |  ROS_colorInfoTopicName | string  |  -             |   -           |  if ROS group is present       | set the name for ROS imageInfo topic                                                                | must start with a leading '/' |
@@ -112,7 +113,7 @@ public:
  *
  * \code{.unparsed}
  * device RGBDSensorWrapper
- * subdevice RGBDsensor
+ * subdevice <RGBDsensor>
  * period 30
  * name /<robotName>/RGBDSensor
  * \endcode
@@ -180,6 +181,7 @@ private:
     int                            verbose;
     bool                           use_YARP;
     bool                           use_ROS;
+    bool                           forceInfoSync;
     bool                           initialize_YARP(yarp::os::Searchable &config);
     bool                           initialize_ROS(yarp::os::Searchable &config);
     bool                           read(yarp::os::ConnectionReader& connection);
@@ -229,9 +231,9 @@ public:
     RGBDSensorWrapper();
     ~RGBDSensorWrapper();
 
-    bool        open(yarp::os::Searchable &params);
+    bool        open(yarp::os::Searchable &params) override;
     bool        fromConfig(yarp::os::Searchable &params);
-    bool        close();
+    bool        close() override;
 
     void        setId(const std::string &id);
     std::string getId();
@@ -239,16 +241,16 @@ public:
     /**
       * Specify which sensor this thread has to read from.
       */
-    bool        attachAll(const PolyDriverList &p);
-    bool        detachAll();
+    bool        attachAll(const PolyDriverList &p) override;
+    bool        detachAll() override;
 
-    bool        attach(PolyDriver *poly);
+    bool        attach(PolyDriver *poly) override;
     bool        attach(yarp::dev::IRGBDSensor *s);
-    bool        detach();
+    bool        detach() override;
 
-    bool        threadInit();
-    void        threadRelease();
-    void        run();
+    bool        threadInit() override;
+    void        threadRelease() override;
+    void        run() override;
 };
 
 #endif   // YARP_DEV_RGBDSENSORWRAPPER_RGBDSENSORWRAPPER_H

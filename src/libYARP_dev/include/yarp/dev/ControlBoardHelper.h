@@ -7,10 +7,11 @@
 #ifndef YARP_DEV_CONTROLBOARDHELPER_H
 #define YARP_DEV_CONTROLBOARDHELPER_H
 
-#include <string.h> // for memset
-#include <stdio.h> // for printf
-#include <math.h> //fabs
+#include <cstring> // for memset
+#include <cstdio> // for printf
+#include <cmath> //fabs
 #include <yarp/os/Log.h>
+#include <yarp/os/LogStream.h>
 
 /*
  * simple helper template to alloc memory.
@@ -40,42 +41,53 @@ inline void checkAndDestroy(T* &p) {
 class ControlBoardHelper
 {
 public:
-    ControlBoardHelper(int n, const int *aMap, const double *angToEncs, const double *zs, const double *nw, const double *amps=NULL, const double *volts=NULL): zeros(0),
+    ControlBoardHelper(int n, const int *aMap, const double *angToEncs, const double *zs, const double *newtons, const double *amps = NULL, const double *volts = NULL, const double *dutycycles = NULL) : 
+        zeros(0),
         signs(0),
         axisMap(0),
         invAxisMap(0),
         angleToEncoders(0),
         newtonsToSensors(0),
         ampereToSensors(0),
-        voltToSensors(0)
+        voltToSensors(0),
+        dutycycleToPWMs(0)
     {
         yAssert(n>=0);         // if number of joints is negative complain!
         yAssert(aMap!=0);      // at least the axisMap is required
 
-        alloc(n, amps, volts);
+        alloc(n);
 
         memcpy(axisMap, aMap, sizeof(int)*nj);
 
         if (zs!=0)
             memcpy(zeros, zs, sizeof(double)*nj);
         else
-            memset(zeros, 0, sizeof(double)*nj);
+            std::fill_n(zeros, nj, 0.0);
 
         if (angToEncs!=0)
             memcpy(angleToEncoders, angToEncs, sizeof(double)*nj);
         else
-            memset(angleToEncoders, 0, sizeof(double)*nj);
+            std::fill_n(angleToEncoders, nj, 1.0);
 
-        if (nw!=0)
-            memcpy(newtonsToSensors, nw, sizeof(double)*nj);
+        if (newtons!=0)
+            memcpy(newtonsToSensors, newtons, sizeof(double)*nj);
         else
-            memset(newtonsToSensors, 0, sizeof(double)*nj);
+            std::fill_n(newtonsToSensors, nj, 1.0);
 
         if (amps!=0)
             memcpy(ampereToSensors, amps, sizeof(double)*nj);
+        else
+            std::fill_n(ampereToSensors, nj, 1.0);
 
         if (volts!=0)
-            memcpy(voltToSensors, volts, sizeof(double)*nj);;
+            memcpy(voltToSensors, volts, sizeof(double)*nj);
+        else
+            std::fill_n(voltToSensors, nj, 1.0);
+
+        if (dutycycles != 0)
+            memcpy(dutycycleToPWMs, dutycycles, sizeof(double)*nj);
+        else
+            std::fill_n(dutycycleToPWMs, nj, 1.0);
 
         // invert the axis map
         memset (invAxisMap, 0, sizeof(int) * nj);
@@ -100,7 +112,7 @@ public:
         dealloc();
     }
 
-    bool alloc(int n, const double *amps, const double *volts)
+    bool alloc(int n)
     {
         nj=n;
         if (nj<=0)
@@ -115,20 +127,20 @@ public:
         invAxisMap=new int [nj];
         angleToEncoders=new double [nj];
         newtonsToSensors=new double [nj];
+        ampereToSensors=new double [nj];
+        voltToSensors=new double [nj];
+        dutycycleToPWMs = new double[nj];
 
-        if(amps)
-        {
-            ampereToSensors=new double [nj];
-            yAssert(ampereToSensors != 0);
-        }
+        yAssert( zeros != 0);
+        yAssert( signs != 0);
+        yAssert( axisMap != 0);
+        yAssert( invAxisMap != 0);
+        yAssert( angleToEncoders != 0);
+        yAssert( newtonsToSensors != 0);
+        yAssert( ampereToSensors != 0);
+        yAssert( voltToSensors != 0);
+        yAssert( dutycycleToPWMs != 0);
 
-        if(volts)
-        {
-            voltToSensors=new double [nj];
-            yAssert(voltToSensors != 0);
-        }
-
-        yAssert(zeros != 0 && signs != 0 && axisMap != 0 && invAxisMap != 0 && angleToEncoders != 0 && newtonsToSensors != 0);
         return true;
     }
 
@@ -142,6 +154,7 @@ public:
         checkAndDestroy<double> (newtonsToSensors);
         checkAndDestroy<double> (ampereToSensors);
         checkAndDestroy<double> (voltToSensors);
+        checkAndDestroy<double>(dutycycleToPWMs);
         return true;
     }
 
@@ -610,6 +623,64 @@ public:
     }
     // *******************************************//
 
+    //***************** dutycycle ******************//
+    inline void dutycycle2PWM(double dutycycle, int j, double &pwm, int &k)
+    {
+        if (dutycycleToPWMs)
+            pwm = dutycycle*dutycycleToPWMs[j];
+        else
+            pwm = dutycycle;
+        k = toHw(j);
+    }
+
+    inline double dutycycle2PWM(double dutycycle, int j)
+    {
+        if (dutycycleToPWMs)
+            return dutycycle*dutycycleToPWMs[j];
+        else
+            return dutycycle;
+    }
+
+    inline void dutycycle2PWM(const double *dutycycle, double *sens)
+    {
+        double tmp;
+        int index;
+        for (int j = 0; j<nj; j++)
+        {
+            dutycycle2PWM(dutycycle[j], j, tmp, index);
+            sens[index] = tmp;
+        }
+    }
+
+    inline void PWM2dutycycle(const double *pwm, double *dutycycle)
+    {
+        double tmp;
+        int index;
+        for (int j = 0; j<nj; j++)
+        {
+            PWM2dutycycle(pwm[j], j, tmp, index);
+            dutycycle[index] = tmp;
+        }
+    }
+
+    inline void PWM2dutycycle(double pwm, int j, double &dutycycle, int &k)
+    {
+        k = toUser(j);
+
+        if (dutycycleToPWMs)
+            dutycycle = (pwm / dutycycleToPWMs[k]);
+        else
+            dutycycle = pwm;
+    }
+
+    inline double PWM2dutycycle(double pwm, int j)
+    {
+        int k = toUser(j);
+
+        return (pwm / dutycycleToPWMs[k]);
+    }
+    // *******************************************//
+
     inline int axes()
     { return nj; }
 
@@ -623,6 +694,7 @@ public:
     double *newtonsToSensors;
     double *ampereToSensors;
     double *voltToSensors;
+    double *dutycycleToPWMs;
 };
 inline ControlBoardHelper *castToMapper(void *p)
 { return static_cast<ControlBoardHelper *>(p); }

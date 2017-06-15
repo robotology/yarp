@@ -187,7 +187,9 @@ bool TcpRosCarrier::expectReplyToHeader(ConnectionState& proto) {
         string name = header.data["callerid"];
         dbg_printf("<incoming> callerid is %s\n", name.c_str());
         dbg_printf("Route was %s\n", proto.getRoute().toString().c_str());
-        proto.setRoute(proto.getRoute().addToName(name.c_str()));
+        Route route = proto.getRoute();
+        route.setToName(name.c_str());
+        proto.setRoute(route);
         dbg_printf("Route is now %s\n", proto.getRoute().toString().c_str());
     }
 
@@ -222,8 +224,9 @@ bool TcpRosCarrier::expectReplyToHeader(ConnectionState& proto) {
 }
 
 bool TcpRosCarrier::expectSenderSpecifier(ConnectionState& proto) {
-    proto.setRoute(proto.getRoute().addFromName("tcpros"));
-
+    Route route = proto.getRoute();
+    route.setFromName("tcpros");
+    proto.setRoute(route);
     dbg_printf("Trying for tcpros header\n");
     ManagedBytes m(headerLen1);
     Bytes mrem(m.get()+4,m.length()-4);
@@ -260,11 +263,13 @@ bool TcpRosCarrier::expectSenderSpecifier(ConnectionState& proto) {
     }
     dbg_printf("<outgoing> Type of data is %s\n", rosname.c_str());
 
+    route = proto.getRoute();
     if (header.data.find("callerid")!=header.data.end()) {
-        proto.setRoute(proto.getRoute().addFromName(header.data["callerid"].c_str()));
+        route.setFromName(header.data["callerid"].c_str());
     } else {
-        proto.setRoute(proto.getRoute().addFromName("tcpros"));
+        route.setFromName("tcpros");
     }
+    proto.setRoute(route);
 
     // Let's just ignore everything that is sane and holy, and
     // send the same header right back.

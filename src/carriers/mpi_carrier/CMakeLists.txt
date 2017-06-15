@@ -19,8 +19,6 @@ yarp_prepare_plugin(mpi
                     DEPENDS "CREATE_OPTIONAL_CARRIERS;YARP_HAS_MPI")
 
 if(NOT SKIP_mpi)
-  get_property(YARP_OS_INCLUDE_DIRS TARGET YARP_OS PROPERTY INCLUDE_DIRS)
-  include_directories(${YARP_OS_INCLUDE_DIRS})
   include_directories(${CMAKE_CURRENT_SOURCE_DIR}/include)
 
   include_directories(SYSTEM ${MPI_INCLUDE_PATH})
@@ -34,7 +32,7 @@ if(NOT SKIP_mpi)
                            include/yarp/os/MpiStream.h
                            include/yarp/os/MpiP2PStream.h
                            include/yarp/os/MpiComm.h)
-  target_link_libraries(yarp_mpi YARP_OS
+  target_link_libraries(yarp_mpi YARP::YARP_OS
                                  ${MPI_LIBRARIES})
   yarp_install(TARGETS yarp_mpi
                EXPORT YARP
@@ -44,6 +42,8 @@ if(NOT SKIP_mpi)
   yarp_install(FILES mpi.ini
                COMPONENT runtime
                DESTINATION ${YARP_PLUGIN_MANIFESTS_INSTALL_DIR})
+
+  set_property(TARGET yarp_mpi PROPERTY FOLDER "Plugins/Carrier")
 endif()
 
 
@@ -55,8 +55,6 @@ yarp_prepare_plugin(mpibcast
                     DEPENDS "CREATE_OPTIONAL_CARRIERS;YARP_HAS_MPI")
 
 if(NOT SKIP_mpibcast)
-  get_property(YARP_OS_INCLUDE_DIRS TARGET YARP_OS PROPERTY INCLUDE_DIRS)
-  include_directories(${YARP_OS_INCLUDE_DIRS})
   include_directories(${CMAKE_CURRENT_SOURCE_DIR}/include)
 
   include_directories(SYSTEM ${MPI_INCLUDE_PATH})
@@ -71,7 +69,7 @@ if(NOT SKIP_mpibcast)
                                 include/yarp/os/MpiStream.h
                                 include/yarp/os/MpiBcastStream.h
                                 include/yarp/os/MpiComm.h)
-  target_link_libraries(yarp_mpibcast YARP_OS
+  target_link_libraries(yarp_mpibcast YARP::YARP_OS
                                       ${MPI_LIBRARIES})
   yarp_install(TARGETS yarp_mpibcast
                COMPONENT runtime
@@ -81,4 +79,6 @@ if(NOT SKIP_mpibcast)
   yarp_install(FILES mpibcast.ini
                COMPONENT runtime
                DESTINATION ${YARP_PLUGIN_MANIFESTS_INSTALL_DIR})
+
+  set_property(TARGET yarp_mpibcast PROPERTY FOLDER "Plugins/Carrier")
 endif()

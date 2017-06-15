@@ -25,7 +25,7 @@ public:
     MessageStackThread(MessageStackHelper& helper) : helper(helper) {
     }
 
-    void run();
+    void run() override;
 };
 
 class MessageStackHelper {
@@ -133,11 +133,11 @@ void MessageStack::attach(PortReader& owner) {
         delete &HELPER(implementation);
         implementation = YARP_NULLPTR;
     }
-    implementation = new MessageStackHelper(max_threads,owner);
+    implementation = new MessageStackHelper(max_threads, owner);
     yAssert(implementation);
 }
 
 void MessageStack::stack(PortWriter& msg, const ConstString& tag) {
     if (!implementation) return;
-    HELPER(implementation).stack(msg,tag);
+    HELPER(implementation).stack(msg, tag);
 }

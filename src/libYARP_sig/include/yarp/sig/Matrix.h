@@ -8,7 +8,7 @@
 #ifndef YARP_SIG_MATRIX_H
 #define YARP_SIG_MATRIX_H
 
-#include <stdlib.h> //defines size_t
+#include <cstdlib> //defines size_t
 #include <memory.h> //memset
 #include <yarp/os/Portable.h>
 #include <yarp/sig/Vector.h>
@@ -319,13 +319,13 @@ public:
       * Read vector from a connection.
       * return true iff a vector was read correctly
       */
-      virtual bool read(yarp::os::ConnectionReader& connection);
+      virtual bool read(yarp::os::ConnectionReader& connection) YARP_OVERRIDE;
 
       /**
       * Write vector to a connection.
       * return true iff a vector was written correctly
       */
-      virtual bool write(yarp::os::ConnectionWriter& connection);
+      virtual bool write(yarp::os::ConnectionWriter& connection) YARP_OVERRIDE;
 
 };
 

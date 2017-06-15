@@ -9,6 +9,8 @@
 #include <yarp/os/OutputStream.h>
 #include <yarp/os/Bytes.h>
 
+#include <cstring>
+
 namespace yarp {
     namespace os {
         namespace impl {
@@ -25,12 +27,12 @@ public:
     MemoryOutputStream(char* location): _location(location) {
     }
     using yarp::os::OutputStream::write;
-    void write(const yarp::os::Bytes& b) {
+    void write(const yarp::os::Bytes& b) override {
         memcpy(_location, b.get(), b.length());
         _location += b.length();
     }
-    void close() {}
-    bool isOk() { return true; }
+    void close() override {}
+    bool isOk() override { return true; }
 private:
     char *_location;
 };

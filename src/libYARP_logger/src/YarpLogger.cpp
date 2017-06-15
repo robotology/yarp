@@ -20,7 +20,7 @@
 #include <cstring>
 #include <string>
 #include <sstream>
-#include <stdio.h>
+#include <cstdio>
 #include <fstream>
 #include <iterator>
 #include <yarp/os/RpcClient.h>
@@ -277,7 +277,7 @@ void LoggerEngine::logger_thread::run()
                 unknown_format_received++;
                 continue;
             }
-            
+
             MessageEntry body;
             std::string s;
 

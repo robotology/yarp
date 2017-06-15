@@ -44,16 +44,21 @@ Pid::~Pid()
 
 Pid::Pid()
 {
-    kp=0;
-    kd=0;
-    ki=0;
-    scale=0;
-    max_int=0;
-    max_output=0;
-    offset=0;
-    stiction_up_val=0;
-    stiction_down_val=0;
-    kff=0;
+    clear();
+}
+
+void Pid::clear()
+{
+    kp = 0;
+    kd = 0;
+    ki = 0;
+    scale = 0;
+    max_int = 0;
+    max_output = 0;
+    offset = 0;
+    stiction_up_val = 0;
+    stiction_down_val = 0;
+    kff = 0;
 }
 
 void Pid::setKp(double p)
@@ -100,4 +105,41 @@ void Pid::setStictionValues(double up_value, double down_value)
 void Pid::setKff(double ff)
 {
     kff=ff;
+}
+
+bool Pid::operator==(const yarp::dev::Pid &p)
+{
+
+    if(kp != p.kp)
+        return false;
+
+    if(ki != p.ki)
+        return false;
+
+    if(kd != p.kd)
+        return false;
+
+    if(max_output != p.max_output)
+        return false;
+
+    if(max_int != p.max_int)
+        return false;
+
+    if(kff != p.kff)
+        return false;
+
+    if(offset != p.offset)
+        return false;
+
+    if(scale != p.scale)
+        return false;
+
+    if(stiction_down_val !=  p.stiction_down_val)
+        return false;
+
+    if(stiction_up_val != p.stiction_up_val)
+        return false;
+
+    return true;
+
 }

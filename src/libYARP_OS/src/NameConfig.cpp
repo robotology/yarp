@@ -6,32 +6,34 @@
 
 
 #include <yarp/os/impl/NameConfig.h>
-#include <yarp/os/impl/SplitString.h>
-#include <yarp/os/NetType.h>
-#include <yarp/os/impl/Logger.h>
+
 #include <yarp/os/Bottle.h>
+#include <yarp/os/NetType.h>
+#include <yarp/os/Network.h>
 #include <yarp/os/Os.h>
 #include <yarp/os/Property.h>
-#include <yarp/os/Network.h>
 #include <yarp/os/ResourceFinder.h>
+#include <yarp/conf/system.h>
 
-#include <yarp/os/impl/PlatformStdlib.h>
+#include <yarp/os/impl/Logger.h>
+#include <yarp/os/impl/PlatformSysStat.h>
+#include <yarp/os/impl/PlatformNetdb.h>
+#include <yarp/os/impl/PlatformUnistd.h>
+#include <yarp/os/impl/PlatformLimits.h>
+#include <yarp/os/impl/PlatformIfaddrs.h>
+#include <yarp/os/impl/SplitString.h>
+
+#include <cstdlib>
+#include <cstdio>
 
 #ifdef YARP_HAS_ACE
-#  include <ace/OS_NS_sys_stat.h>
-#  include <ace/OS_NS_netdb.h>
-#  include <ace/INET_Addr.h>
-#  include <ace/Sock_Connect.h>
+# include <ace/INET_Addr.h>
+# include <ace/Sock_Connect.h>
 #else
-#  include <cstring>
-#  include <arpa/inet.h>
-#  include <sys/socket.h>
-#  include <netdb.h>
-#  include <ifaddrs.h>
+# include <cstring>
+# include <arpa/inet.h>
+# include <sys/socket.h>
 #endif
-
-#include <stdio.h>
-#include <yarp/conf/system.h>
 
 using namespace yarp::os::impl;
 using namespace yarp::os;
@@ -49,18 +51,18 @@ bool NameConfig::fromString(const ConstString& txt) {
 
             Bottle& b = config.findGroup("name");
             if (b.isNull()) {
-                fprintf(stderr,"Cannot find yarp group in config file\n");
-                exit(1);
+                fprintf(stderr, "Cannot find yarp group in config file\n");
+                std::exit(1);
             }
             address = Contact(b.find("host").asString().c_str(),
                               b.find("port").asInt());
-            mode = b.check("mode",Value("yarp")).asString().c_str();
+            mode = b.check("mode", Value("yarp")).asString().c_str();
             return (address.getPort()!=0);
         }
     }
 
     if (ss.size()>=2) {
-        address = Contact(ss.get(0),NetType::toInt(ss.get(1)));
+        address = Contact(ss.get(0), NetType::toInt(ss.get(1)));
         if (ss.size()>=3) {
             mode = ss.get(2);
         } else {
@@ -75,34 +77,23 @@ bool NameConfig::fromString(const ConstString& txt) {
 }
 
 ConstString NameConfig::expandFilename(const char *fname) {
-    ConstString root = NetworkBase::getEnvironment("YARP_CONF");
-
-    // yarp 2.4 modifications begin
-    // We should now be using YARP_CONFIG_HOME.
-    // We still respect the YARP_CONF variable if defined, but it
-    // is deprecated.
-    if (root=="") {
-        root = ResourceFinder::getConfigHome();
+#ifndef YARP_NO_DEPRECATED // Since YARP 2.3.70
+    ConstString yarp_conf = NetworkBase::getEnvironment("YARP_CONF");
+    if (!yarp_conf.empty()) {
+        YARP_WARN(Logger::get(), "The YARP_CONF variable is deprecated and it is no longer used. "
+                                 "Please check the documentation for yarp::os::ResourceFinder::getConfigHome()");
     }
-    // yarp 2.4 modifications end
+#endif
 
-    ConstString home = NetworkBase::getEnvironment("HOME");
-    ConstString homepath = NetworkBase::getEnvironment("HOMEPATH");
-    ConstString conf = "";
-    if (root!="") {
-        //conf = new File(new File(root,"conf"),"namer.conf");
-        //conf = root + "/conf/" + fname;
-        // users of YARP_CONF want /conf postfix removed
+    ConstString root = ResourceFinder::getConfigHome();
+    ConstString conf;
+    if (!root.empty()) {
         conf = root + NetworkBase::getDirectorySeparator() + fname;
-    } else if (homepath!="") {
-        conf = NetworkBase::getEnvironment("HOMEDRIVE") + homepath + "\\yarp\\conf\\" + fname;
-    } else if (home!="") {
-        conf = home + "/.yarp/conf/" + fname;
     } else {
-        YARP_ERROR(Logger::get(),"Cannot read configuration - please set YARP_CONF or HOME or HOMEPATH");
-        ACE_OS::exit(1);
+        conf = fname;
     }
-    YARP_DEBUG(Logger::get(),ConstString("Configuration file: ") + conf.c_str());
+
+    YARP_DEBUG(Logger::get(), ConstString("Configuration file: ") + conf.c_str());
     return conf.c_str();
 }
 
@@ -145,16 +136,15 @@ bool NameConfig::createPath(const ConstString& fileName, int ignoreLevel) {
             return false;
         }
     }
-    ConstString base = fileName.substr(0,index);
-    ACE_stat sb;
-    if (ACE_OS::stat((char*)base.c_str(),&sb)<0) {
-        bool result = createPath(base,ignoreLevel-1);
+    ConstString base = fileName.substr(0, index);
+    if (yarp::os::stat((char*)base.c_str())<0) {
+        bool result = createPath(base, ignoreLevel-1);
         if (result==false) {
             return false;
         }
     }
     if (ignoreLevel<=0) {
-        if (ACE_OS::stat(fileName.c_str(),&sb)<0) {
+        if (yarp::os::stat(fileName.c_str())<0) {
             if (yarp::os::mkdir(fileName.c_str())>=0) {
                 return true;
             }
@@ -166,8 +156,10 @@ bool NameConfig::createPath(const ConstString& fileName, int ignoreLevel) {
 
 ConstString NameConfig::readConfig(const ConstString& fileName) {
     char buf[25600];
-    FILE *fin = fopen(fileName.c_str(),"r");
-    if (fin==YARP_NULLPTR) return "";
+    FILE *fin = fopen(fileName.c_str(), "r");
+    if (!fin) {
+        return "";
+    }
     ConstString result = "";
     while(fgets(buf, sizeof(buf)-1, fin) != YARP_NULLPTR) {
         result += buf;
@@ -179,7 +171,7 @@ ConstString NameConfig::readConfig(const ConstString& fileName) {
 
 
 bool NameConfig::fromFile(const char *ns) {
-    ConstString fname = getConfigFileName(YARP_NULLPTR,ns);
+    ConstString fname = getConfigFileName(YARP_NULLPTR, ns);
     if (fname!="") {
         ConstString txt = readConfig(fname);
         if (txt!="") {
@@ -198,7 +190,7 @@ bool NameConfig::toFile(bool clean) {
             ConstString m = (mode!="")?mode:"yarp";
             txt += address.getHost() + " " + NetType::toString(address.getPort()) + " " + m + "\n";
         }
-        return writeConfig(fname,txt);
+        return writeConfig(fname, txt);
     }
     return false;
 }
@@ -213,9 +205,11 @@ bool NameConfig::writeConfig(const ConstString& fileName, const ConstString& tex
     if (!createPath(fileName)) {
         return false;
     }
-    FILE *fout = fopen(fileName.c_str(),"w");
-    if (fout==YARP_NULLPTR) return false;
-    fprintf(fout,"%s",text.c_str());
+    FILE *fout = fopen(fileName.c_str(), "w");
+    if (!fout) {
+        return false;
+    }
+    fprintf(fout, "%s", text.c_str());
     fclose(fout);
     fout = YARP_NULLPTR;
     return true;
@@ -237,29 +231,34 @@ ConstString NameConfig::getHostName(bool prefer_loopback, const ConstString& see
     ACE_INET_Addr *ips = YARP_NULLPTR;
     size_t count = 0;
     char hostAddress[256];
-    if (ACE::get_ip_interfaces(count,ips)>=0) {
+    if (ACE::get_ip_interfaces(count, ips)>=0) {
         for (size_t i=0; i<count; i++) {
             ConstString ip = ips[i].get_host_addr(hostAddress, 256);
 #else
     int family, s;
-    char hostname[NI_MAXHOST]; hostname[NI_MAXHOST-1] = '\0';
+    char hostname[NI_MAXHOST];
     ConstString ip;
     struct ifaddrs *ifaddr, *ifa;
-    if (getifaddrs(&ifaddr) == -1) {
+    if (yarp::os::impl::getifaddrs(&ifaddr) == -1) {
         perror("getifaddrs in getIps");
-        exit(EXIT_FAILURE);
+        std::exit(EXIT_FAILURE);
     }
     for (ifa = ifaddr; ifa != YARP_NULLPTR; ifa = ifa->ifa_next) {
         if (ifa->ifa_addr == YARP_NULLPTR) continue;
         family = ifa->ifa_addr->sa_family;
         if (family == AF_INET || family == AF_INET6) {
-            s = getnameinfo(ifa->ifa_addr,
-                    (family == AF_INET) ? sizeof(struct sockaddr_in) :
-                            sizeof(struct sockaddr_in6),
-                            hostname, NI_MAXHOST, YARP_NULLPTR, 0, NI_NUMERICHOST);
+            s = yarp::os::impl::getnameinfo(ifa->ifa_addr,
+                            (family == AF_INET) ?
+                                sizeof(struct sockaddr_in) :
+                                sizeof(struct sockaddr_in6),
+                            hostname,
+                            NI_MAXHOST,
+                            YARP_NULLPTR,
+                            0,
+                            NI_NUMERICHOST);
             if (s != 0) {
-                printf("getnameinfo() failed: %s\n", gai_strerror(s));
-                exit(EXIT_FAILURE);
+                printf("getnameinfo() failed: %s\n", yarp::os::impl::gai_strerror(s));
+                std::exit(EXIT_FAILURE);
             }
             ip = ConstString(hostname);
 #endif
@@ -333,7 +332,7 @@ bool NameConfig::isLocalName(const ConstString& name) {
 #ifdef YARP_HAS_ACE
     ACE_INET_Addr *ips = YARP_NULLPTR;
     size_t count = 0;
-    if (ACE::get_ip_interfaces(count,ips)>=0) {
+    if (ACE::get_ip_interfaces(count, ips)>=0) {
         for (size_t i=0; i<count; i++) {
             ConstString ip = ips[i].get_host_addr();
             if (ip==name) {
@@ -348,8 +347,8 @@ bool NameConfig::isLocalName(const ConstString& name) {
      * If this does not work properly, use a more sophisticated way
      * instead of just gethostname.
      */
-    char hostname[NI_MAXHOST]; hostname[NI_MAXHOST-1] = '\0';
-    ::gethostname(hostname, NI_MAXHOST);
+    char hostname[HOST_NAME_MAX];
+    yarp::os::impl::gethostname(hostname, HOST_NAME_MAX);
     if (strcmp(hostname, name.c_str()) == 0) result = true;
     if (!result) {
         Bottle lst = getIpsAsBottle();
@@ -363,7 +362,9 @@ bool NameConfig::isLocalName(const ConstString& name) {
 #endif
 
     // just in case
-    if (name=="localhost"||name=="127.0.0.1") { result = true; }
+    if (name=="localhost"||name=="127.0.0.1") {
+        result = true;
+    }
 
     return result;
 }
@@ -371,10 +372,10 @@ bool NameConfig::isLocalName(const ConstString& name) {
 yarp::os::Bottle NameConfig::getIpsAsBottle() {
     yarp::os::Bottle result;
 
-#ifdef YARP_HAS_ACE
+#if defined(YARP_HAS_ACE)
     ACE_INET_Addr *ips = YARP_NULLPTR;
     size_t count = 0;
-    if (ACE::get_ip_interfaces(count,ips)>=0) {
+    if (ACE::get_ip_interfaces(count, ips)>=0) {
         for (size_t i=0; i<count; i++) {
             ConstString ip = ips[i].get_host_addr();
             result.addString(ip.c_str());
@@ -387,19 +388,24 @@ yarp::os::Bottle NameConfig::getIpsAsBottle() {
     struct ifaddrs *ifaddr, *ifa;
     if (getifaddrs(&ifaddr) == -1) {
         perror("getifaddrs in getIpsAsBottle");
-        exit(EXIT_FAILURE);
+        std::exit(EXIT_FAILURE);
     }
     for (ifa = ifaddr; ifa != YARP_NULLPTR; ifa = ifa->ifa_next) {
         if (ifa->ifa_addr == YARP_NULLPTR) continue;
         family = ifa->ifa_addr->sa_family;
         if (family == AF_INET || family == AF_INET6) {
-            s = getnameinfo(ifa->ifa_addr,
-                    (family == AF_INET) ? sizeof(struct sockaddr_in) :
-                            sizeof(struct sockaddr_in6),
-                            host, NI_MAXHOST, YARP_NULLPTR, 0, NI_NUMERICHOST);
+            s = yarp::os::impl::getnameinfo(ifa->ifa_addr,
+                                            (family == AF_INET) ?
+                                                sizeof(struct sockaddr_in) :
+                                                sizeof(struct sockaddr_in6),
+                                            host,
+                                            NI_MAXHOST,
+                                            YARP_NULLPTR,
+                                            0,
+                                            NI_NUMERICHOST);
             if (s != 0) {
-                printf("getnameinfo() failed: %s\n", gai_strerror(s));
-                exit(EXIT_FAILURE);
+                printf("getnameinfo() failed: %s\n", yarp::os::impl::gai_strerror(s));
+                std::exit(EXIT_FAILURE);
             }
             result.addString(host);
         }

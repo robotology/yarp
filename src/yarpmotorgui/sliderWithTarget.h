@@ -14,6 +14,7 @@
 #include <QLabel>
 #include <QTimer>
 #include <QStyleOptionSlider>
+#include <yarp/conf/compiler.h>
 
 class SliderWithTarget : public QSlider
 {
@@ -38,8 +39,8 @@ protected:
     double width_at_target;
     double sliderStep;
     bool hasTargetOption;
-    void paintEvent(QPaintEvent *ev) Q_DECL_OVERRIDE;
-    void mousePressEvent(QMouseEvent * event) Q_DECL_OVERRIDE;
+    void paintEvent(QPaintEvent *ev) override;
+    void mousePressEvent(QMouseEvent * event) override;
 };
 
 

@@ -77,6 +77,8 @@ public:
 
     bool configuredF;
 
+    yarp::dev::ControlBoardWrapper   *parent;
+
     yarp::dev::PolyDriver            *subdevice;
     yarp::dev::IPidControl           *pid;
     yarp::dev::IPositionControl      *pos;
@@ -92,7 +94,6 @@ public:
     yarp::dev::IPreciselyTimed       *iTimed;
     yarp::dev::ITorqueControl        *iTorque;
     yarp::dev::IImpedanceControl     *iImpedance;
-    yarp::dev::IOpenLoopControl      *iOpenLoop;
     yarp::dev::IControlMode          *iMode;
     yarp::dev::IControlMode2         *iMode2;
     yarp::dev::IAxisInfo             *info;
@@ -100,6 +101,8 @@ public:
     yarp::dev::IInteractionMode      *iInteract;
     yarp::dev::IMotor                *imotor;
     yarp::dev::IRemoteVariables      *iVar;
+    yarp::dev::IPWMControl           *iPWM;
+    yarp::dev::ICurrentControl       *iCurr;
 
     yarp::sig::Vector subDev_joint_encoders;
     yarp::sig::Vector jointEncodersTimes;
@@ -112,7 +115,7 @@ public:
     void detach();
     inline void setVerbose(bool _verbose) {_subDevVerbose = _verbose; }
 
-    bool configure(int base, int top, int axes, const std::string &id);
+    bool configure(int base, int top, int axes, const std::string &id, yarp::dev::ControlBoardWrapper *_parent);
 
     inline void refreshJointEncoders()
     {

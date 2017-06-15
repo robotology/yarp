@@ -73,7 +73,7 @@ bool WireWriter::writeI64(const YARP_INT64& x) {
 
 bool WireWriter::writeBool(bool x) {
     writer.appendInt(BOTTLE_TAG_VOCAB);
-    writer.appendInt(x?VOCAB2('o','k'):VOCAB4('f','a','i','l'));
+    writer.appendInt(x?VOCAB2('o', 'k'):VOCAB4('f', 'a', 'i', 'l'));
     return !writer.isError();
 }
 
@@ -130,14 +130,14 @@ bool WireWriter::writeTag(const char *tag, int split, int len) {
 bool WireWriter::writeString(const yarp::os::ConstString& tag) {
     writer.appendInt(BOTTLE_TAG_STRING);
     writer.appendInt((int)tag.length());
-    writer.appendBlock(tag.c_str(),tag.length());
+    writer.appendBlock(tag.c_str(), tag.length());
     return !writer.isError();
 }
 
 bool WireWriter::writeBinary(const yarp::os::ConstString& tag) {
     writer.appendInt(BOTTLE_TAG_BLOB);
     writer.appendInt((int)tag.length());
-    writer.appendBlock(tag.c_str(),tag.length());
+    writer.appendBlock(tag.c_str(), tag.length());
     return !writer.isError();
 }
 
@@ -146,7 +146,7 @@ bool WireWriter::writeListHeader(int len) {
     if (get_mode) {
         writer.appendInt(len+3);
         writer.appendInt(BOTTLE_TAG_VOCAB);
-        writer.appendInt(VOCAB2('i','s'));
+        writer.appendInt(VOCAB2('i', 's'));
         if (get_is_vocab) {
             writer.appendInt(BOTTLE_TAG_VOCAB);
             writer.appendInt(Vocab::encode(get_string.c_str()));
@@ -169,7 +169,7 @@ bool WireWriter::writeListBegin(int tag, unsigned YARP_INT32 len) {
 }
 
 bool WireWriter::writeSetBegin(int tag, unsigned YARP_INT32 len) {
-    return writeListBegin(tag,len);
+    return writeListBegin(tag, len);
 }
 
 bool WireWriter::writeMapBegin(int tag, int tag2, unsigned YARP_INT32 len) {
@@ -193,6 +193,6 @@ bool WireWriter::writeMapEnd() {
 bool WireWriter::writeOnewayResponse() {
     if (!writeListHeader(1)) return false;
     writer.appendInt(BOTTLE_TAG_VOCAB);
-    writer.appendInt(VOCAB4('d','o','n','e'));
+    writer.appendInt(VOCAB4('d', 'o', 'n', 'e'));
     return true;
 }

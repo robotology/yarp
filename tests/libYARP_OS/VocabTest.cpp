@@ -17,7 +17,7 @@ using namespace yarp::os::impl;
 
 class VocabTest : public UnitTest {
 public:
-    virtual ConstString getName() { return "VocabTest"; }
+    virtual ConstString getName() override { return "VocabTest"; }
 
     void checkConvert() {
         report(0,"checking vocabulary conversions");
@@ -40,7 +40,7 @@ public:
         }
     }
 
-    virtual void runTests() {
+    virtual void runTests() override {
         checkConvert();
     }
 };

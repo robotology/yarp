@@ -14,7 +14,7 @@ using namespace yarp::os::impl;
 
 class ElectionTest : public UnitTest {
 public:
-    virtual ConstString getName() { return "ElectionTest"; }
+    virtual ConstString getName() override { return "ElectionTest"; }
 
     void testBasics() {
         report(0,"testing the basics of elections");
@@ -44,7 +44,7 @@ public:
         }
     }
 
-    virtual void runTests() {
+    virtual void runTests() override {
         testBasics();
     }
 };

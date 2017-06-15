@@ -4,10 +4,11 @@
  * CopyPolicy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
  */
 
-#include <yarp/os/impl/PlatformStdlib.h>
-
 #include <yarp/os/ManagedBytes.h>
 #include <yarp/os/Bottle.h>
+
+#include <cstdlib>
+#include <cstring>
 
 using namespace yarp::os;
 
@@ -21,7 +22,7 @@ ManagedBytes::ManagedBytes() :
 
 ManagedBytes::ManagedBytes(size_t len) :
         Portable(),
-        b(Bytes(new char[len],len)),
+        b(Bytes(new char[len], len)),
         owned(true),
         use(0),
         use_set(false) {
@@ -68,7 +69,7 @@ ManagedBytes::~ManagedBytes() {
 void ManagedBytes::allocate(size_t len) {
     clear();
     char *buf = new char[len];
-    b = Bytes(buf,len);
+    b = Bytes(buf, len);
     owned = true;
     use = 0;
     use_set = false;
@@ -78,12 +79,12 @@ bool ManagedBytes::allocateOnNeed(size_t neededLen, size_t allocateLen) {
     if (length()<neededLen && allocateLen>=neededLen) {
         char *buf = new char[allocateLen];
         yarp::os::NetworkBase::assertion(buf!=YARP_NULLPTR);
-        ACE_OS::memcpy(buf,get(),length());
+        memcpy(buf, get(), length());
         if (owned) {
             delete[] get();
             owned = false;
         }
-        b = Bytes(buf,allocateLen);
+        b = Bytes(buf, allocateLen);
         owned = true;
         return true;
     }
@@ -95,8 +96,8 @@ void ManagedBytes::copy() {
         YARP_SSIZE_T len = length();
         char *buf = new char[len];
         yarp::os::NetworkBase::assertion(buf!=YARP_NULLPTR);
-        ACE_OS::memcpy(buf,get(),len);
-        b = Bytes(buf,len);
+        memcpy(buf, get(), len);
+        b = Bytes(buf, len);
         owned = true;
     }
 }
@@ -130,7 +131,7 @@ const Bytes& ManagedBytes::bytes() {
 }
 
 Bytes ManagedBytes::usedBytes() {
-    return Bytes(get(),used());
+    return Bytes(get(), used());
 }
 
 size_t ManagedBytes::setUsed(size_t used) {
@@ -164,14 +165,14 @@ bool ManagedBytes::read(ConnectionReader& reader) {
     if (get()==YARP_NULLPTR) {
         return false;
     }
-    return reader.expectBlock(get(),length());
+    return reader.expectBlock(get(), length());
 }
 
 bool ManagedBytes::write(ConnectionWriter& writer) {
     writer.appendInt(BOTTLE_TAG_LIST+BOTTLE_TAG_BLOB);
     writer.appendInt(1);
     writer.appendInt((int)length());
-    writer.appendExternalBlock(get(),length());
+    writer.appendExternalBlock(get(), length());
     writer.convertTextMode();
     return !writer.isError();
 }

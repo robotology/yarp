@@ -42,7 +42,7 @@ YARP_END_PACK
 
 class BinPortableTest : public UnitTest {
 public:
-    virtual ConstString getName() { return "BinPortableTest"; }
+    virtual ConstString getName() override { return "BinPortableTest"; }
 
     void testInt() {
         report(0,"checking binary read/write of native int");
@@ -87,7 +87,7 @@ public:
         checkEqual(t2.content().y, 20, "y value");
     }
 
-    virtual void runTests() {
+    virtual void runTests() override {
         NetworkBase::setLocalMode(true);
         testInt();
         testText();

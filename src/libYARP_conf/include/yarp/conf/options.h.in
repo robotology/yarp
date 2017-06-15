@@ -1,0 +1,12 @@
+/*
+ * Copyright: (C) 2009 RobotCub Consortium
+ * Author: Paul Fitzpatrick
+ * CopyPolicy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
+ */
+
+#ifndef YARP_CONFIG_OPTIONS_H
+#define YARP_CONFIG_OPTIONS_H
+
+#cmakedefine YARP_HAS_MATH_LIB
+
+#endif

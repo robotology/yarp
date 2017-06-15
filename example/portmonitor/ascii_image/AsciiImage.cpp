@@ -5,7 +5,7 @@
  */
 
 #include <stdio.h>
-#include <math.h>
+#include <cmath>
 #include <algorithm>
 #include <yarp/sig/Image.h>
 #include "AsciiImage.h"
@@ -20,7 +20,7 @@ static char available[] = {' ', '`', '.', '~', '+', 'I', 'X', 'O', '8', '%', 'W'
 
 bool AsciiImageMonitorObject::create(const yarp::os::Property& options)
 {
-   printf("created!\n"); 
+   printf("created!\n");
    return true;
 }
 
@@ -29,7 +29,7 @@ void AsciiImageMonitorObject::destroy(void)
     printf("destroyed!\n");
 }
 
-bool AsciiImageMonitorObject::setparam(const yarp::os::Property& params) 
+bool AsciiImageMonitorObject::setparam(const yarp::os::Property& params)
 {
     return false;
 }
@@ -40,7 +40,7 @@ bool AsciiImageMonitorObject::getparam(yarp::os::Property& params)
 }
 
 bool AsciiImageMonitorObject::accept(yarp::os::Things& thing)
-{   
+{
     ImageOf<PixelRgb>* img = thing.cast_as< ImageOf<PixelRgb> >();
     if(img == NULL) {
         printf("AsciiImageMonitorObject: expected type ImageOf<PixelRgb> but got wrong data type!\n");

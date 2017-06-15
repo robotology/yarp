@@ -140,6 +140,13 @@ AnalogPortEntry &AnalogPortEntry::operator =(const AnalogPortEntry &alt)
 
  // closing anonimous namespace
 
+
+/**
+  * It reads the data from an analog sensor and sends them on one or more ports.
+  * It creates one rpc port and its related handler for every output port.
+  */
+
+#ifndef YARP_NO_DEPRECATED // since YARP 2.3.70
 // Constructor used when there is only one output port
 AnalogWrapper::AnalogWrapper(const char* name, int rate): RateThread(rate)
 {
@@ -156,6 +163,7 @@ AnalogWrapper::AnalogWrapper(const char* name, int rate): RateThread(rate)
     sensorId = "AnalogServer";
     createPort(name, rate);
 }
+#endif // YARP_NO_DEPRECATED
 
 bool AnalogWrapper::createPort(const char* name, int rate)
 {
@@ -169,6 +177,7 @@ bool AnalogWrapper::createPort(const char* name, int rate)
     return true;
 }
 
+#ifndef YARP_NO_DEPRECATED // since YARP 2.3.70
 // Contructor used when one or more output ports are specified
 AnalogWrapper::AnalogWrapper(const std::vector<AnalogPortEntry>& _analogPorts, int rate): RateThread(rate)
 {
@@ -183,6 +192,8 @@ AnalogWrapper::AnalogWrapper(const std::vector<AnalogPortEntry>& _analogPorts, i
     sensorId = "AnalogServer";
     createPorts(_analogPorts, rate);
 }
+#endif // YARP_NO_DEPRECATED
+
 bool AnalogWrapper::createPorts(const std::vector<AnalogPortEntry>& _analogPorts, int rate)
 {
     analogSensor_p=0;
@@ -482,14 +493,46 @@ bool AnalogWrapper::checkROSParams(Searchable &config)
     }
     else if (rosMsgType == "sensor_msgs/JointState")
     {
+        std::string jointName = "";
         yInfo() << sensorId << "ROS_msgType is " << rosMsgType;
-        if (!rosGroup.check("joint_names"))
+        bool oldParam = false;
+        bool newParam = false;
+
+        if(rosGroup.check("joint_names"))
         {
-            yError() << sensorId << " cannot find some ros parameters";
+            oldParam = true;
+            jointName = "joint_names";
+            yWarning() << sensorId << " using DEPRECATED 'joint_names' parameter. Please use 'jointNames' instead.";
+        }
+
+        if(rosGroup.check("jointNames"))
+        {
+            newParam = true;
+            jointName = "jointNames";
+        }
+
+        if(!oldParam && !newParam)
+        {
+            yError() << sensorId << " missing 'jointNames' parameter needed when broadcasting 'sensor_msgs/JointState' message type";
             useROS = ROS_config_error;
             return false;
         }
-        yarp::os::Bottle& jnam =rosGroup.findGroup("joint_names");
+        // Throw an error if noth new and old are present
+        if(oldParam && newParam)
+        {
+            yError() << sensorId << " found both DEPRECATED 'joint_names' and new 'jointNames' parameters. Please remove the old 'joint_names' from your config file.";
+            useROS = ROS_config_error;
+            return false;
+        }
+
+        yarp::os::Bottle& jnam = rosGroup.findGroup(jointName);
+        if(jnam.isNull())
+        {
+            yError() << sensorId << "Cannot find 'jointNames' parameters.";
+            return false;
+        }
+
+        // Cannot check number of channels here because need to wait for the attach function
         int joint_names_size = jnam.size()-1;
         for (int i = 0; i < joint_names_size; i++)
         {
@@ -806,7 +849,7 @@ void AnalogWrapper::run()
 
                     if (data_size != ros_joint_names.size())
                     {
-                        yDebug() << "Invalid ros_joint_names size:" << data_size << "!=" << ros_joint_names.size();
+                        yDebug() << "Invalid jointNames size:" << data_size << "!=" << ros_joint_names.size();
                     }
                     else
                     {

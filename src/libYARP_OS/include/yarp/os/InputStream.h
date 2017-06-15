@@ -57,7 +57,7 @@ public:
      */
     virtual int read() {
         unsigned char result;
-        YARP_SSIZE_T ct = read(yarp::os::Bytes((char*)&result,1));
+        YARP_SSIZE_T ct = read(yarp::os::Bytes((char*)&result, 1));
         if (ct<1) {
             return -1;
         }
@@ -78,7 +78,7 @@ public:
      *
      */
     virtual YARP_SSIZE_T read(const Bytes& b, size_t offset, YARP_SSIZE_T len) {
-        return read(yarp::os::Bytes(b.get()+offset,len));
+        return read(yarp::os::Bytes(b.get()+offset, len));
     }
 
     /**

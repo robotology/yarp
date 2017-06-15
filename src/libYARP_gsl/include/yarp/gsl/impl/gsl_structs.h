@@ -11,7 +11,7 @@
 #ifndef YARP_GSL_IMPL_GSL_COMPATIBILITY_H
 #define YARP_GSL_IMPL_GSL_COMPATIBILITY_H
 
-#include <stddef.h>
+#include <cstddef>
 
 
 #ifndef gsl_block

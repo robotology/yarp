@@ -102,8 +102,10 @@ public:
     int getID(void) { return theID; }
     Module* getModule() { return module; }
 
-    void setPostExecWait(double t) { wait = t; }
-    double getPostExecWait() { return wait; }
+    void setPostExecWait(double t) { waitStart = t; }
+    double getPostExecWait() { return waitStart; }
+    void setPostStopWait(double t) { waitStop = t; }
+    double getPostStopWait() { return waitStop; }
 
     void enableAutoConnect(void) { bAutoConnect = true; }
     void disableAutoConnect(void) { bAutoConnect = false; }
@@ -113,7 +115,7 @@ public:
     void stopWatchDog();
 
 public: // from BrokerEventSink
-    void onBrokerStdout(const char* msg);
+    void onBrokerStdout(const char* msg) YARP_OVERRIDE;
 
 private:
     bool bAutoConnect;
@@ -124,8 +126,8 @@ private:
     string strWorkdir;
     string strEnv;
     int theID;
-    double wait;
-
+    double waitStart;
+    double waitStop;
     bool bWatchDog;
     Broker* broker;
     MEvent* event;
@@ -162,7 +164,7 @@ public:
     virtual ~ConcurentWrapper() { if(isRunning()) stop(); }
 
 
-    void run() {
+    void run() YARP_OVERRIDE {
         if(labor && executable)
             (executable->*labor)();
     }
@@ -186,7 +188,7 @@ public:
     virtual ~ConcurentRateWrapper() { if(isRunning()) stop(); }
 
 
-    void run() {
+    void run() YARP_OVERRIDE {
         if(labor && executable)
             (executable->*labor)();
     }

@@ -13,12 +13,6 @@ if(NOT SKIP_nvidia)
                   -DGLX_GLXEXT_PROTOTYPES)
 
   set(CMAKE_INCLUDE_CURRENT_DIR ON)
-  get_property(YARP_OS_INCLUDE_DIRS TARGET YARP_OS PROPERTY INCLUDE_DIRS)
-  get_property(YARP_sig_INCLUDE_DIRS TARGET YARP_sig PROPERTY INCLUDE_DIRS)
-  get_property(YARP_dev_INCLUDE_DIRS TARGET YARP_dev PROPERTY INCLUDE_DIRS)
-  include_directories(${YARP_OS_INCLUDE_DIRS}
-                      ${YARP_sig_INCLUDE_DIRS}
-                      ${YARP_dev_INCLUDE_DIRS})
 
   include_directories(SYSTEM ${NVIDIACg_INCLUDE_DIRS})
 
@@ -26,9 +20,9 @@ if(NOT SKIP_nvidia)
                               NVIDIADeviceDriver.h
                               FBO_Filter.h)
 
-  target_link_libraries(yarp_nvidia YARP_OS
-                                    YARP_sig
-                                    YARP_dev
+  target_link_libraries(yarp_nvidia YARP::YARP_OS
+                                    YARP::YARP_sig
+                                    YARP::YARP_dev
                                     ${NVIDIACg_LIBRARIES})
   yarp_install(TARGETS yarp_nvidia
                EXPORT YARP
@@ -38,4 +32,6 @@ if(NOT SKIP_nvidia)
   yarp_install(FILES nvidia.ini
                COMPONENT runtime
                DESTINATION ${YARP_PLUGIN_MANIFESTS_INSTALL_DIR})
+
+  set_property(TARGET yarp_nvidia PROPERTY FOLDER "Plugins/Device")
 endif()

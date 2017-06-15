@@ -10,7 +10,7 @@
 #include <yarp/os/ConstString.h>
 #include <yarp/os/impl/UnitTest.h>
 #include <yarp/os/NetType.h>
-#include <stdio.h>
+#include <cstdio>
 
 using namespace yarp::os::impl;
 using namespace yarp::os;
@@ -28,7 +28,7 @@ public:
         readCursor = 0;
     }
 
-    virtual void onMonitorInput() {
+    virtual void onMonitorInput() override {
         //printf("Waiting for input %d %d\n", readCursor, cursor);
         removeMonitor();
         if (readCursor<cursor) {
@@ -38,7 +38,7 @@ public:
         }
     }
 
-    virtual void onMonitorOutput() {
+    virtual void onMonitorOutput() override {
         if (cursor<MAX_PACKET) {
             store[cursor] = ManagedBytes(getMonitor(),false);
             store[cursor].copy();
@@ -114,7 +114,7 @@ public:
 
 class DgramTwoWayStreamTest : public UnitTest {
 public:
-    virtual ConstString getName() { return "DgramTwoWayStreamTest"; }
+    virtual ConstString getName() override { return "DgramTwoWayStreamTest"; }
 
     void checkNormal() {
         report(0, "checking that dgrams are output sensibly");
@@ -256,7 +256,7 @@ public:
         }
     }
 
-    virtual void runTests() {
+    virtual void runTests() override {
         checkNormal();
     }
 };

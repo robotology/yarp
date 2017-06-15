@@ -5,7 +5,7 @@
  */
 
 
-#include <stdio.h>
+#include <cstdio>
 
 #include <yarp/dev/ControlBoardInterfacesImpl.h>
 #include <yarp/dev/ControlBoardHelper.h>
@@ -64,16 +64,6 @@ bool ImplementPositionDirect::getAxes(int *axes)
     (*axes)=castToMapper(helper)->axes();
     return true;
 }
-
-#ifndef YARP_NO_DEPRECATED // since YARP 2.3.65
-bool ImplementPositionDirect::setPositionDirectMode()
-{
-YARP_WARNING_PUSH
-YARP_DISABLE_DEPRECATED_WARNING
-    return iPDirect->setPositionDirectModeRaw();
-YARP_WARNING_POP
-}
-#endif
 
 bool ImplementPositionDirect::setPosition(int j, double ref)
 {

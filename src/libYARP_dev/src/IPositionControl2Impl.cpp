@@ -5,7 +5,7 @@
  */
 
 
-#include <stdio.h>
+#include <cstdio>
 
 #include <yarp/dev/ControlBoardInterfacesImpl.h>
 #include <yarp/dev/ControlBoardHelper.h>
@@ -70,16 +70,6 @@ bool ImplementPositionControl2::uninitialize()
 
     return true;
 }
-
-#ifndef YARP_NO_DEPRECATED
-bool ImplementPositionControl2::setPositionMode()
-{
-YARP_WARNING_PUSH
-YARP_DISABLE_DEPRECATED_WARNING
-    return iPosition2->setPositionModeRaw();
-YARP_WARNING_POP
-}
-#endif
 
 bool ImplementPositionControl2::positionMove(int j, double ang)
 {

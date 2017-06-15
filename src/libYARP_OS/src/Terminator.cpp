@@ -5,7 +5,7 @@
  */
 
 
-#include <yarp/os/impl/PlatformStdio.h>
+#include <cstdio>
 #include <yarp/os/impl/SocketTwoWayStream.h>
 #include <yarp/os/impl/Companion.h>
 #include <yarp/os/impl/PortCommand.h>
@@ -28,8 +28,8 @@ bool Terminator::terminateByName(const char *name) {
     if (s.find("/quit")==ConstString::npos) {
         // name doesn't include /quit
         // old mechanism won't work, let's try new
-        PortCommand pc('\0',"i");
-        Companion::sendMessage(s,pc,true);
+        PortCommand pc('\0', "i");
+        Companion::sendMessage(s, pc, true);
         return true;
     }
 
@@ -42,14 +42,14 @@ bool Terminator::terminateByName(const char *name) {
     Bottle cmd("quit"), reply;
     Contact c = NetworkBase::queryName(s.c_str());
     if (!c.isValid()) {
-        fprintf(stderr,"Terminator port not found\n");
+        fprintf(stderr, "Terminator port not found\n");
         return false;
     }
     ContactStyle style;
     style.quiet = false;
     style.carrier = "text_ack";
     style.expectReply = true;
-    NetworkBase::write(c,cmd,reply,style);
+    NetworkBase::write(c, cmd, reply, style);
 
     return true;
 }
@@ -61,7 +61,7 @@ Terminee::Terminee(const char *name) {
     ok = false;
     if (name == YARP_NULLPTR) {
         quit = true;
-        ACE_OS::printf("Terminator: Please supply a proper port name\n");
+        printf("Terminator: Please supply a proper port name\n");
         return;
     }
 
@@ -78,7 +78,7 @@ Terminee::Terminee(const char *name) {
     ok = helper.open(s.c_str());
     if (!ok) {
         quit = true;
-        fprintf(stderr,"Kill port conflict: make sure you supply a distinct --name /PORTNAME\n");
+        fprintf(stderr, "Kill port conflict: make sure you supply a distinct --name /PORTNAME\n");
     } else {
         quit = false;
         start();
@@ -110,15 +110,15 @@ void Terminee::run() {
     TermineeHelper& helper = HELPER(implementation);
     while (!isStopping() && !quit) {
         Bottle cmd, reply;
-        bool ok = helper.read(cmd,true);
+        bool ok = helper.read(cmd, true);
 		if (!ok) {
 			continue;
 		}
         if (cmd.get(0).asString()=="quit") {
             quit = true;
-            reply.addVocab(VOCAB2('o','k'));
+            reply.addVocab(VOCAB2('o', 'k'));
         } else {
-            reply.addVocab(VOCAB4('h','u','h','?'));
+            reply.addVocab(VOCAB4('h', 'u', 'h', '?'));
         }
         helper.reply(reply);
     }

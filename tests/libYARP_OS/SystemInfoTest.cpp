@@ -23,7 +23,7 @@ private:
     }
 
 public:
-    virtual ConstString getName() {
+    virtual ConstString getName() override {
         return "SystemInfoTest";
     }
 
@@ -70,7 +70,7 @@ public:
         report(0, ConstString(str.str()));
     }
 
-    virtual void runTests() {
+    virtual void runTests() override {
         startCheck();
     }
 };

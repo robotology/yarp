@@ -20,26 +20,20 @@ namespace yarp {
 //Decide which implementation to use
 #include <yarp/conf/system.h>
 
-#ifdef YARP_HAS_CXX11
+#if defined(YARP_HAS_CXX11)
 #  include <yarp/os/impl/CXX11SemaphoreImpl.h>
-#else
-#  ifdef __linux__
+#elif defined(__unix__)
 // There is a problem with YARP+ACE semaphores on some Linux distributions,
 // where semaphores fail to work correctly.  Workaround.
-#    include <yarp/os/impl/POSIXSemaphoreImpl.h>
-#  else
+#  include <yarp/os/impl/POSIXSemaphoreImpl.h>
+# elif defined(__APPLE__)
 // On Mac, POSIX semaphores are just too burdensome
-#    ifdef __APPLE__
-#      include <yarp/os/impl/MachSemaphoreImpl.h>
-#    else
-//   For everything else, there's ACE
-#      ifdef YARP_HAS_ACE
-#        include <yarp/os/impl/ACESemaphoreImpl.h>
-#      else
-#        error Cannot implement semaphores
-#      endif
-#    endif
-#  endif
+#  include <yarp/os/impl/MachSemaphoreImpl.h>
+# elif defined(YARP_HAS_ACE)
+// For everything else, there's ACE
+# include <yarp/os/impl/ACESemaphoreImpl.h>
+# else
+YARP_COMPILER_ERROR(Cannot implement semaphores on this platform)
 #endif
 
 #endif // YARP_OS_IMPL_SEMAPHOREIMPL_H

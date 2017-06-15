@@ -14,8 +14,12 @@ set(yarpview_QML_FILES qml/QtYARPView/main.qml qml/QtYARPView/mainCompact.qml)
 
 qt5_add_resources(yarpview_QRC_GEN_SRCS ${yarpview_QRC_FILES})
 
-source_group("Source Files" FILES ${yarpview_SRCS})
-source_group("Header Files" FILES ${yarpview_HDRS})
+source_group(TREE "${CMAKE_CURRENT_SOURCE_DIR}"
+             PREFIX "Source Files"
+             FILES ${yarpview_SRCS})
+source_group(TREE "${CMAKE_CURRENT_SOURCE_DIR}"
+             PREFIX "Header Files"
+             FILES ${yarpview_HDRS})
 source_group("Resources Files" FILES ${yarpview_QRC_FILES})
 source_group("QML Files" FILES ${yarpview_QML_FILES})
 source_group("Generated Files" FILES ${yarpview_QRC_GEN_SRCS})
@@ -24,21 +28,19 @@ qtyarp_use_qml_plugin()
 
 add_executable(yarpview WIN32 ${yarpview_SRCS}
                               ${yarpview_HDRS}
-                              ${yarpview_QRC_GEN_SRCS}
                               ${yarpview_QRC_FILES}
+                              ${yarpview_QRC_GEN_SRCS}
                               ${yarpview_QML_FILES})
 
-qtyarp_use_modules(yarpview Widgets
-                            Qml
-                            Quick)
-qtyarp_deprecate_with_cmake_version(2.8.11)
-if(WIN32 AND CMAKE_VERSION VERSION_LESS 2.8.11)
-  target_link_libraries(yarpview Qt5::WinMain)
-endif()
+target_link_libraries(yarpview Qt5::Widgets
+                               Qt5::Qml
+                               Qt5::Quick)
 
 install(TARGETS yarpview
         COMPONENT utilities
         DESTINATION ${CMAKE_INSTALL_BINDIR})
+
+set_property(TARGET yarpview PROPERTY FOLDER "Graphical User Interfaces")
 
 yarp_osx_duplicate_and_add_bundle(TARGET yarpview
                                   APP_ICON icons/AppIcon.icns

@@ -5,7 +5,7 @@
  *
  */
 
-#include <stdio.h>
+#include <cstdio>
 
 #include "yarp.h"
 #include "yarpimpl.h"
@@ -44,7 +44,7 @@ YARP_DEFINE(int) yarpReaderExpectDouble(yarpReaderPtr reader, double *data) {
      * Read text from a connection.
      *
      */
-YARP_DEFINE(int) yarpReaderExpectText(yarpReaderPtr reader, 
+YARP_DEFINE(int) yarpReaderExpectText(yarpReaderPtr reader,
                                       yarpStringPtr str,
                                       char terminal) {
     YARP_OK(reader);
@@ -57,7 +57,7 @@ YARP_DEFINE(int) yarpReaderExpectText(yarpReaderPtr reader,
      * Read a block of data from a connection.
      *
      */
-YARP_DEFINE(int) yarpReaderExpectBlock(yarpReaderPtr reader, 
+YARP_DEFINE(int) yarpReaderExpectBlock(yarpReaderPtr reader,
                                        const char *data,
                                        int len) {
     YARP_OK(reader);

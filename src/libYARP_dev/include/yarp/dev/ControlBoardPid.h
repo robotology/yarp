@@ -138,6 +138,19 @@ public:
      * \param Kff new gain
      */
     void setKff(double Kff);
+
+    /*!
+     * \brief return true if all params are equal
+     *
+     * \param p pid to be compared
+     */
+    bool operator==(const yarp::dev::Pid &p);
+
+    /*!
+    * \brief Set all pid paramters to zero
+    *
+    */
+    void clear();
 };
 
 #endif // YARP_DEV_CONTROLBOARDPID_H

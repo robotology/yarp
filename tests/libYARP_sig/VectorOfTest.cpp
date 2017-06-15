@@ -31,13 +31,13 @@ public:
         portOut=p;
     }
 
-    bool threadInit()
+    bool threadInit() override
     {
         success=false;
         return true;
     }
 
-    void run()
+    void run() override
     {
         VectorOf<T> v;
 
@@ -82,13 +82,13 @@ public:
     }
 
 
-    bool threadInit()
+    bool threadInit() override
     {
         success=false;
         return true;
     }
 
-    void run()
+    void run() override
     {
         VectorOf<int> v;
 
@@ -135,13 +135,13 @@ public:
         portIn = p;
     }
 
-    bool threadInit()
+    bool threadInit() override
     {
         success = false;
         return true;
     }
 
-    void run()
+    void run() override
     {
         Bottle v;
 
@@ -190,7 +190,7 @@ public:
 class VectorOfTest : public UnitTest {
 
 public:
-    virtual ConstString getName() { return "VectorOfTest"; }
+    virtual ConstString getName() override { return "VectorOfTest"; }
     void checkSendReceiveInt()
     {
         report(0, "check VectorO<int> send receive");
@@ -260,7 +260,7 @@ public:
     }
 
 
-    virtual void runTests() {
+    virtual void runTests() override {
         Network::setLocalMode(true);
         checkSendReceiveInt();
         Network::setLocalMode(false);

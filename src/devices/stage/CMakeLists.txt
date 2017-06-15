@@ -9,16 +9,12 @@ yarp_prepare_plugin(stage
                     DEPENDS "CREATE_DEVICE_LIBRARY_MODULES;YARP_HAS_STAGE;YARP_COMPILE_UNMAINTAINED")
 
 if(NOT SKIP_stage)
-  get_property(YARP_OS_INCLUDE_DIRS TARGET YARP_OS PROPERTY INCLUDE_DIRS)
-  get_property(YARP_dev_INCLUDE_DIRS TARGET YARP_dev PROPERTY INCLUDE_DIRS)
-  include_directories(${YARP_OS_INCLUDE_DIRS}
-                      ${YARP_dev_INCLUDE_DIRS})
 
   include_directories(${Stage_INCLUDE_DIRS})
   yarp_add_plugin(yarp_stage StageControl.cpp
                              StageControl.h)
-  target_link_libraries(yarp_stage YARP_OS
-                                   YARP_dev
+  target_link_libraries(yarp_stage YARP::YARP_OS
+                                   YARP::YARP_dev
                                    ${Stage_LIBRARIES})
   yarp_install(TARGETS yarp_stage
                EXPORT YARP
@@ -28,4 +24,6 @@ if(NOT SKIP_stage)
   yarp_install(FILES stage.ini
                COMPONENT runtime
                DESTINATION ${YARP_PLUGIN_MANIFESTS_INSTALL_DIR})
+
+  set_property(TARGET yarp_stage PROPERTY FOLDER "Unsupported")
 endif()

@@ -36,19 +36,19 @@ public:
 
     virtual ~NameserTwoWayStream();
 
-    virtual InputStream& getInputStream();
-    virtual OutputStream& getOutputStream();
-    virtual const Contact& getLocalAddress();
-    virtual const Contact& getRemoteAddress();
+    virtual InputStream& getInputStream() override;
+    virtual OutputStream& getOutputStream() override;
+    virtual const Contact& getLocalAddress() override;
+    virtual const Contact& getRemoteAddress() override;
 
-    virtual bool isOk();
-    virtual void reset();
-    virtual void close();
-    virtual void beginPacket();
-    virtual void endPacket();
+    virtual bool isOk() override;
+    virtual void reset() override;
+    virtual void close() override;
+    virtual void beginPacket() override;
+    virtual void endPacket() override;
 
     using yarp::os::InputStream::read;
-    virtual YARP_SSIZE_T read(const yarp::os::Bytes& b);
+    virtual YARP_SSIZE_T read(const yarp::os::Bytes& b) override;
 };
 
 
@@ -64,25 +64,25 @@ private:
 public:
     NameserCarrier();
 
-    virtual ConstString getName();
+    virtual ConstString getName() override;
     virtual ConstString getSpecifierName();
 
-    virtual Carrier *create();
+    virtual Carrier *create() override;
 
-    virtual bool checkHeader(const Bytes& header);
-    virtual void getHeader(const Bytes& header);
-    virtual bool requireAck();
-    virtual bool isTextMode();
-    virtual bool supportReply();
-    virtual bool canEscape();
-    virtual bool sendHeader(ConnectionState& proto);
-    virtual bool expectSenderSpecifier(ConnectionState& proto);
-    virtual bool expectIndex(ConnectionState& proto);
-    virtual bool sendAck(ConnectionState& proto);
-    virtual bool expectAck(ConnectionState& proto);
-    virtual bool respondToHeader(ConnectionState& proto);
-    virtual bool expectReplyToHeader(ConnectionState& proto);
-    virtual bool write(ConnectionState& proto, SizedWriter& writer);
+    virtual bool checkHeader(const Bytes& header) override;
+    virtual void getHeader(const Bytes& header) override;
+    virtual bool requireAck() override;
+    virtual bool isTextMode() override;
+    virtual bool supportReply() override;
+    virtual bool canEscape() override;
+    virtual bool sendHeader(ConnectionState& proto) override;
+    virtual bool expectSenderSpecifier(ConnectionState& proto) override;
+    virtual bool expectIndex(ConnectionState& proto) override;
+    virtual bool sendAck(ConnectionState& proto) override;
+    virtual bool expectAck(ConnectionState& proto) override;
+    virtual bool respondToHeader(ConnectionState& proto) override;
+    virtual bool expectReplyToHeader(ConnectionState& proto) override;
+    virtual bool write(ConnectionState& proto, SizedWriter& writer) override;
 };
 
 #endif // YARP_OS_IMPL_NAMESERCARRIER_H

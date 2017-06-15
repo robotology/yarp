@@ -17,8 +17,8 @@
 #include <yarp/os/ShiftStream.h>
 #include <yarp/os/Portable.h>
 #include <yarp/os/ConnectionState.h>
-#include <yarp/os/impl/PlatformStdio.h>
-#include <yarp/os/impl/PlatformStdlib.h>
+#include <cstdio>
+#include <cstdlib>
 
 namespace yarp {
     namespace os {
@@ -56,31 +56,31 @@ public:
     }
 
     // Documented in yarp::os::ConnectionState.
-    virtual void setRoute(const Route& route);
+    virtual void setRoute(const Route& route) override;
 
     // Documented in yarp::os::ConnectionState.
-    virtual const Route& getRoute()
+    virtual const Route& getRoute() override
     {
         return route;
     }
 
     // Documented in yarp::os::InputProtocol.
-    void interrupt();
+    void interrupt() override;
 
     // Documented in yarp::os::InputProtocol.
-    void close()
+    void close() override
     {
         closeHelper();
     }
 
     // Documented in yarp::os::ConnectionState.
-    TwoWayStream& getStreams()
+    TwoWayStream& getStreams() override
     {
         return shift;
     }
 
     // Documented in yarp::os::ConnectionState.
-    void takeStreams(TwoWayStream *streams)
+    void takeStreams(TwoWayStream *streams) override
     {
         shift.takeStream(streams);
         if (streams!=YARP_NULLPTR) {
@@ -89,37 +89,37 @@ public:
     }
 
     // Documented in yarp::os::ConnectionState.
-    TwoWayStream *giveStreams()
+    TwoWayStream *giveStreams() override
     {
         return shift.giveStream();
     }
 
     // Documented in yarp::os::InputProtocol.
-    OutputStream& getOutputStream()
+    OutputStream& getOutputStream() override
     {
         return shift.getOutputStream();
     }
 
     // Documented in yarp::os::InputProtocol.
-    InputStream& getInputStream()
+    InputStream& getInputStream() override
     {
         return shift.getInputStream();
     }
 
     // Documented in yarp::os::OutputProtocol.
-    virtual bool open(const Route& route);
+    virtual bool open(const Route& route) override;
 
     // Documented in yarp::os::OutputProtocol.
-    virtual void rename(const Route& route)
+    virtual void rename(const Route& route) override
     {
         setRoute(route);
     }
 
     // Documented in yarp::os::InputProtocol.
-    virtual bool open(const ConstString& name);
+    virtual bool open(const ConstString& name) override;
 
     // Documented in yarp::os::OutputProtocol.
-    virtual bool isOk()
+    virtual bool isOk() override
     {
         if (!checkStreams() || recv_delegate_fail || recv_delegate_fail) {
             return false;
@@ -128,67 +128,67 @@ public:
     }
 
     // Documented in yarp::os::OutputProtocol.
-    virtual bool write(SizedWriter& writer);
+    virtual bool write(SizedWriter& writer) override;
 
     // Documented in yarp::os::InputProtocol.
-    void reply(SizedWriter& writer)
+    void reply(SizedWriter& writer) override
     {
         writer.stopWrite();
-        delegate->reply(*this,writer);
+        delegate->reply(*this, writer);
         pendingReply = false;
     }
 
     // Documented in yarp::os::InputProtocol.
-    virtual OutputProtocol& getOutput()
+    virtual OutputProtocol& getOutput() override
     {
         return *this;
     }
 
     // Documented in yarp::os::OutputProtocol.
-    virtual InputProtocol& getInput()
+    virtual InputProtocol& getInput() override
     {
         return *this;
     }
 
     // Documented in yarp::os::InputProtocol.
-    virtual yarp::os::ConnectionReader& beginRead();
+    virtual yarp::os::ConnectionReader& beginRead() override;
 
     // Documented in yarp::os::InputProtocol.
-    virtual void endRead()
+    virtual void endRead() override
     {
         reader.flushWriter();
         sendAck();  // acknowledge after reply (if there is one)
     }
 
     // Documented in yarp::os::OutputProtocol.
-    virtual void beginWrite()
+    virtual void beginWrite() override
     {
         getSendDelegate();
     }
 
     // Documented in yarp::os::InputProtocol.
-    virtual void suppressReply()
+    virtual void suppressReply() override
     {
         reader.suppressReply();
     }
 
     // Documented in yarp::os::ConnectionState.
-    virtual bool checkStreams()
+    virtual bool checkStreams() override
     {
         return shift.isOk();
     }
 
     // Documented in yarp::os::ConnectionState.
-    void setReference(yarp::os::Portable *ref)
+    void setReference(yarp::os::Portable *ref) override
     {
         this->ref = ref;
     }
 
     // Documented in yarp::os::ConnectionState.
-    yarp::os::ConstString getSenderSpecifier();
+    yarp::os::ConstString getSenderSpecifier() override;
 
     // Documented in yarp::os::InputProtocol.
-    virtual bool setTimeout(double timeout)
+    virtual bool setTimeout(double timeout) override
     {
         bool ok = os().setWriteTimeout(timeout);
         if (!ok) return false;
@@ -196,31 +196,31 @@ public:
     }
 
     // Documented in yarp::os::InputProtocol.
-    virtual void setEnvelope(const yarp::os::ConstString& str)
+    virtual void setEnvelope(const yarp::os::ConstString& str) override
     {
         envelope = str;
     }
 
     // Documented in yarp::os::ConnectionState.
-    virtual const ConstString& getEnvelope()
+    virtual const ConstString& getEnvelope() override
     {
         return envelope;
     }
 
     // Documented in yarp::os::ConnectionState.
-    Log& getLog()
+    Log& getLog() override
     {
         return log;
     }
 
     // Documented in yarp::os::ConnectionState.
-    void setRemainingLength(int len)
+    void setRemainingLength(int len) override
     {
         messageLen = len;
     }
 
     // Documented in yarp::os::ConnectionState.
-    Connection& getConnection()
+    Connection& getConnection() override
     {
         if (delegate==YARP_NULLPTR) {
             return nullConnection;
@@ -229,7 +229,7 @@ public:
     }
 
     // Documented in yarp::os::InputProtocol.
-    Connection& getReceiver()
+    Connection& getReceiver() override
     {
         if (recv_delegate==YARP_NULLPTR) {
             return nullConnection;
@@ -238,7 +238,7 @@ public:
     }
 
     // Documented in yarp::os::OutputProtocol.
-    Connection& getSender()
+    Connection& getSender() override
     {
         if (send_delegate==YARP_NULLPTR) {
             return nullConnection;
@@ -247,13 +247,13 @@ public:
     }
 
     // Documented in yarp::os::InputProtocol.
-    virtual void attachPort(yarp::os::Contactable *port)
+    virtual void attachPort(yarp::os::Contactable *port) override
     {
         this->port = port;
     }
 
     // Documented in yarp::os::ConnectionState.
-    virtual Contactable *getContactable()
+    virtual Contactable *getContactable() override
     {
         return port;
     }
@@ -270,7 +270,7 @@ public:
 
 
     // Documented in yarp::os::InputProtocol.
-    virtual bool isReplying()
+    virtual bool isReplying() override
     {
         return pendingReply;
     }
@@ -420,7 +420,7 @@ private:
     bool need_send_delegate; ///< turns false once we've cached send modifier
     bool recv_delegate_fail; ///< turns true if recv modifier could not be cached
     bool send_delegate_fail; ///< turns true if send modifier could not be cached
-    Route route;             ///< names of (sender,carrier,receiver) triplet
+    Route route;             ///< names of (sender, carrier, receiver) triplet
     SizedWriter *writer;     ///< writer for current message
     StreamConnectionReader reader;  ///< reader for incoming messages
     yarp::os::Portable *ref; ///< source for current message, so we can

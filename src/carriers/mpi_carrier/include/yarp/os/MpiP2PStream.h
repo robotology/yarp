@@ -27,9 +27,9 @@ public:
     using MpiStream::write;
     using MpiStream::read;
 
-    ssize_t read(const Bytes& b);
-    void write(const Bytes& b);
-    void close() {
+    ssize_t read(const Bytes& b) override;
+    void write(const Bytes& b) override;
+    void close() override {
         #ifdef MPI_DEBUG
         printf("[MpiP2PStream @ %s] Closing stream\n", name.c_str());
         #endif

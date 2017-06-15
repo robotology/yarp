@@ -21,6 +21,7 @@ namespace yarp {
 // need to made one function for each new test, and add to collectTests()
 // method
 extern yarp::os::impl::UnitTest& getPolyDriverTest();
+extern yarp::os::impl::UnitTest& getRobotDescriptionTest();
 
 #ifdef YARP_CONTROLBOARDREMAPPER_TESTS
 extern yarp::os::impl::UnitTest& getControlBoardRemapperTest();
@@ -30,8 +31,13 @@ extern yarp::os::impl::UnitTest& getControlBoardRemapperTest();
 extern yarp::os::impl::UnitTest& getAnalogWrapperTest();
 #endif
 
+#ifdef YARP_TESTFRAMEGRABBER_TESTS
+extern yarp::os::impl::UnitTest& getTestFrameGrabberTest();
+#endif
+
 #ifdef WITH_YARPMATH
 extern yarp::os::impl::UnitTest& getFrameTransformClientTest();
+extern yarp::os::impl::UnitTest& getMapGrid2DTest();
 #endif
 
 class yarp::os::impl::TestList {
@@ -39,14 +45,19 @@ public:
     static void collectTests() {
         UnitTest& root = UnitTest::getRoot();
         root.add(getPolyDriverTest());
+        root.add(getRobotDescriptionTest());
 #ifdef YARP_CONTROLBOARDREMAPPER_TESTS
         root.add(getControlBoardRemapperTest());
 #endif
 #ifdef YARP_ANALOGWRAPPER_TESTS
         root.add(getAnalogWrapperTest());
 #endif
+#ifdef YARP_TESTFRAMEGRABBER_TESTS
+        root.add(getTestFrameGrabberTest());
+#endif
 #ifdef WITH_YARPMATH
         root.add(getFrameTransformClientTest());
+        root.add(getMapGrid2DTest());
 #endif	
     }
 };

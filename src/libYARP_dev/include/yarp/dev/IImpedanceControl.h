@@ -115,6 +115,5 @@ public:
 #define VOCAB_ICONTROLMODE VOCAB4('i','c','m','d')
 #define VOCAB_POSITION VOCAB3('p','o','s')
 #define VOCAB_VELOCITY VOCAB3('v','e','l')
-#define VOCAB_IOPENLOOP VOCAB3('o','l','o')
 
 #endif // YARP_DEV_IIMPEDANCECONTROL_H

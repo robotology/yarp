@@ -9,7 +9,7 @@
  * \infile Tests for Rand.h/Rand.cpp
  */
 
-#include <yarp/os/impl/PlatformStdio.h>
+#include <cstdio>
 #include <yarp/os/impl/UnitTest.h>
 
 #include <yarp/math/Rand.h>
@@ -17,7 +17,7 @@
 #include <yarp/sig/Vector.h>
 #include <yarp/sig/Matrix.h>
 
-#include <math.h>
+#include <cmath>
 
 using namespace yarp::os;
 using namespace yarp::os::impl;
@@ -26,7 +26,7 @@ using namespace yarp::math;
 
 class RandTest : public UnitTest {
 public:
-    virtual ConstString getName() { return "RandTest"; }
+    virtual ConstString getName() override { return "RandTest"; }
 
     void normalRnd()
     {
@@ -129,7 +129,7 @@ public:
             average+=rv[k];
         }
         average/=N;
-        
+
         //computing std
         double std=0.0;
         for(k=0;k<N;k++)
@@ -179,7 +179,7 @@ public:
         checkTrue(!tmp, "default seed initialization for two sequences");
     }
 
-    virtual void runTests() 
+    virtual void runTests() override
     {
         rand();
         randMatrix();

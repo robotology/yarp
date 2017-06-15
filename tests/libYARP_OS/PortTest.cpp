@@ -28,13 +28,68 @@
 #include <yarp/os/RpcServer.h>
 #include <yarp/os/PortInfo.h>
 
+#include <yarp/dev/PolyDriver.h>
+#include <yarp/dev/Drivers.h>
+
+#include <yarp/sig/Image.h>
+
 //#include "TestList.h"
 
 using namespace yarp::os;
 using namespace yarp::os::impl;
 
-
 #ifndef DOXYGEN_SHOULD_SKIP_THIS
+
+namespace yarp {
+    namespace dev {
+        class BrokenDevice;
+    }
+}
+
+/**
+ * @ingroup dev_impl_media
+ *
+ * A fake device for testing closure after a prepare of a closed port.
+ */
+class yarp::dev::BrokenDevice : public DeviceDriver,
+                                public yarp::os::RateThread
+{
+private:
+
+public:
+    /**
+     * Constructor.
+     */
+    BrokenDevice():RateThread(30), img(YARP_NULLPTR){}
+
+    virtual bool close() override
+    {
+        pImg.close();
+        RateThread::stop();
+        return true;
+
+    }
+
+    virtual bool open(yarp::os::Searchable& config) override { return RateThread::start(); }
+
+    //RateThread
+    bool threadInit() override { return true; }
+
+    void threadRelease() override {}
+
+    void run() override
+    {
+        img = &pImg.prepare();
+        img->resize(10, 10);
+        pImg.write();
+    }
+
+
+private:
+    yarp::sig::ImageOf<yarp::sig::PixelRgb>* img;
+    yarp::os::BufferedPort<yarp::sig::ImageOf<yarp::sig::PixelRgb>> pImg;
+
+};
 
 class TcpTestServer : public RateThread
 {
@@ -45,18 +100,18 @@ public:
     }
 private:
     BufferedPort<Bottle> tcpPort;
-    bool threadInit()
+    bool threadInit() override
     {
         return tcpPort.open("/TcpTestServer");
     }
 
-    void threadRelease()
+    void threadRelease() override
     {
         tcpPort.interrupt();
         tcpPort.close();
     }
 
-    void run()
+    void run() override
     {
         Bottle& b = tcpPort.prepare();
         b.clear();
@@ -85,7 +140,7 @@ public:
 class ServiceProvider : public PortReader {
 public:
 
-    virtual bool read(ConnectionReader& connection) {
+    virtual bool read(ConnectionReader& connection) override {
         Bottle receive;
         receive.read(connection);
         receive.addInt(5);
@@ -105,14 +160,14 @@ public:
 
     ServiceTester(UnitTest& owner) : owner(owner) {}
 
-    virtual bool write(ConnectionWriter& connection) {
+    virtual bool write(ConnectionWriter& connection) override {
         ct = 0;
         send.write(connection);
         connection.setReplyHandler(*this);
         return true;
     }
 
-    virtual bool read(ConnectionReader& connection) {
+    virtual bool read(ConnectionReader& connection) override {
         receive.read(connection);
         ct++;
         return true;
@@ -135,7 +190,7 @@ public:
         this->faithful = faithful;
     }
 
-    virtual void run() {
+    virtual void run() override {
         for (int i=0; i<3; i++) {
             Bottle b,b2;
             p.read(b,true);
@@ -159,7 +214,7 @@ public:
         Network::connect("/writer","/reader");
     }
 
-    virtual void run() {
+    virtual void run() override {
         total = 0;
         for (int i=0; i<3; i++) {
             Bottle b, b2;
@@ -180,7 +235,7 @@ public:
     DelegatedCallback() : produce(0) {}
 
     using TypedReaderCallback<Bottle>::onRead;
-    virtual void onRead(Bottle& bot) {
+    virtual void onRead(Bottle& bot) override {
         saved = bot;
         produce.post();
     }
@@ -197,7 +252,7 @@ public:
         ict = oct = ct = 0;
     }
 
-    virtual void report(const PortInfo& info) {
+    virtual void report(const PortInfo& info) override {
         if (info.tag == PortInfo::PORTINFO_CONNECTION) {
             if (info.incoming == false) {
                 oct++;
@@ -224,7 +279,7 @@ public:
         stop();
     }
 
-    virtual void run() {
+    virtual void run() override {
         while (!done) {
             Bottle msg("1 \"end of terminal\"");
             p.write(msg);
@@ -241,7 +296,7 @@ public:
         p.open(name);
     }
 
-    virtual void run() {
+    virtual void run() override {
         Bottle cmd, reply;
         cmd.fromString("[add] 1 2");
         p.write(cmd,reply);
@@ -257,7 +312,7 @@ public:
         p.open(name);
     }
 
-    virtual void run() {
+    virtual void run() override {
         Bottle cmd;
         cmd.fromString("[add] 1 2");
         p.write(cmd);
@@ -273,7 +328,7 @@ public:
     }
 
     using BufferedPort<Bottle>::onRead;
-    virtual void onRead(Bottle& b) {
+    virtual void onRead(Bottle& b) override {
         ct++;
     }
 };
@@ -285,7 +340,7 @@ class PortTest : public UnitTest {
 public:
     int safePort() { return Network::getDefaultPortRange()+100; }
 
-    virtual ConstString getName() { return "PortTest"; }
+    virtual ConstString getName() override { return "PortTest"; }
 
     void testOpen() {
         report(0,"checking opening and closing ports");
@@ -1470,7 +1525,16 @@ public:
         }
     }
 
-    virtual void runTests() {
+    void testPrepareDeadlock(){
+        report(0,"testing the deadlock when you close a device(RateThread) after the prepare of a closed port");
+        yarp::dev::PolyDriver p;
+        Property prop;
+        prop.put("device","brokenDevice");
+        checkTrue(p.open(prop),"Opening the broken_device");
+        checkTrue(p.close(),"Closing the broken_device");
+    }
+
+    virtual void runTests() override {
         NetworkBase::setLocalMode(true);
 
         //Progression test:
@@ -1530,6 +1594,11 @@ public:
         testAdminReader();
 
         testCallbackLock();
+
+        yarp::dev::Drivers::factory().add(new yarp::dev::DriverCreatorOf<yarp::dev::BrokenDevice>("brokenDevice",
+                                                      "brokenDevice",
+                                                      "yarp::dev::BrokenDevice"));
+        testPrepareDeadlock();
 
 
 

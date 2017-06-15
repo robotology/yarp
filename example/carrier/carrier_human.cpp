@@ -329,7 +329,7 @@ int main(int argc, char *argv[]) {
         yInfo() << "Please run in two terminals as:\n";
         yInfo() << "  carrier_human --server\n";
         yInfo() << "  carrier_human --client\n";
-        yarp::os::exit(1);
+        std::exit(1);
     }
 
     std::string mode = argv[1];

@@ -54,7 +54,7 @@ bool WireReader::clear()
         while (pending>0) {
             char buf[1000];
             size_t next = (pending<sizeof(buf))?pending:sizeof(buf);
-            reader.expectBlock(&buf[0],next);
+            reader.expectBlock(&buf[0], next);
             pending -= next;
         }
         return true;
@@ -165,7 +165,7 @@ bool WireReader::readBool(bool& x)
         return false;
     }
     int v = reader.expectInt();
-    x = (v!=0) && (v!=VOCAB4('f','a','i','l'));
+    x = (v!=0) && (v!=VOCAB4('f', 'a', 'i', 'l'));
     state->len--;
     return !reader.isError();
 }
@@ -285,7 +285,7 @@ bool WireReader::readString(ConstString& str, bool *is_vocab)
         return false;
     }
     str.resize(len);
-    reader.expectBlock((const char *)str.c_str(),len);
+    reader.expectBlock((const char *)str.c_str(), len);
     // This is needed for compatiblity with versions of yarp before March 2015
     if (len>0) {
         if (str[len-1] == '\0') {
@@ -329,7 +329,7 @@ bool WireReader::readBinary(ConstString& str)
         return false;
     }
     str.resize(len);
-    reader.expectBlock((const char *)str.c_str(),len);
+    reader.expectBlock((const char *)str.c_str(), len);
     return !reader.isError();
 }
 
@@ -367,7 +367,7 @@ bool WireReader::readEnum(YARP_INT32& x, WireVocab& converter)
         }
         std::string str;
         str.resize(len);
-        reader.expectBlock((const char *)str.c_str(),len);
+        reader.expectBlock((const char *)str.c_str(), len);
         str.resize(len-1);
         state->len--;
         if (reader.isError()) {
@@ -429,7 +429,7 @@ bool WireReader::readListReturn()
     if (!readVocab(v)) {
         return false;
     }
-    if (v!=VOCAB2('i','s')) {
+    if (v!=VOCAB2('i', 's')) {
         return false;
     }
     ConstString dummy;
@@ -466,11 +466,11 @@ yarp::os::ConstString WireReader::readTag()
     flush_if_needed = true;
     ConstString str;
     bool is_vocab;
-    if (!readString(str,&is_vocab)) {
+    if (!readString(str, &is_vocab)) {
         fail();
         return "";
     }
-    scanString(str,is_vocab);
+    scanString(str, is_vocab);
     if (!is_vocab) return str.c_str();
     while (is_vocab&&state->len>0) {
         if (state->code>=0) {
@@ -483,8 +483,8 @@ yarp::os::ConstString WireReader::readTag()
         }
         if (is_vocab) {
             ConstString str2;
-            if (!readString(str2,&is_vocab)) return "";
-            scanString(str2,is_vocab);
+            if (!readString(str2, &is_vocab)) return "";
+            scanString(str2, is_vocab);
             str += "_";
             str += str2;
         }
@@ -503,14 +503,14 @@ void WireReader::readListBegin(WireState& nstate, unsigned YARP_INT32& len)
 
 void WireReader::readSetBegin(WireState& nstate, unsigned YARP_INT32& len)
 {
-    readListBegin(nstate,len);
+    readListBegin(nstate, len);
 }
 
 void WireReader::readMapBegin(WireState& nstate,
                               WireState& nstate2,
                               unsigned YARP_INT32& len)
 {
-    readListBegin(nstate,len);
+    readListBegin(nstate, len);
 }
 
 void WireReader::readListEnd()

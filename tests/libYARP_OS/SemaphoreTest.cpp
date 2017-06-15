@@ -5,7 +5,7 @@
  *
  */
 
-#include <math.h>
+#include <cmath>
 
 #include <yarp/os/all.h>
 
@@ -23,7 +23,7 @@ public:
         state = 1;
     }
 
-    virtual void run() {
+    virtual void run() override {
         x.wait();
         state = 2;
         x.post();
@@ -32,7 +32,7 @@ public:
 
 class SemaphoreTest : public UnitTest {
 public:
-    virtual ConstString getName() { return "SemaphoreTest"; }
+    virtual ConstString getName() override { return "SemaphoreTest"; }
 
     void checkBasic() {
         report(0, "basic semaphore sanity check...");
@@ -48,7 +48,7 @@ public:
         report(0, "check blocking behavior...");
         SemaphoreTestHelper helper;
         helper.start();
-        Time::delay(0.5); 
+        Time::delay(0.5);
         checkEqual(helper.state,1,"helper blocked");
         helper.x.post();
         Time::delay(0.5);
@@ -68,7 +68,7 @@ public:
         checkTrue(result, "wait succeeded");
     }
 
-    virtual void runTests() {
+    virtual void runTests() override {
         checkBasic();
         checkBlock();
         checkTimed();

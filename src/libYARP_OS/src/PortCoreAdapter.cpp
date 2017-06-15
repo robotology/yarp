@@ -137,7 +137,7 @@ bool yarp::os::impl::PortCoreAdapter::read(ConnectionReader& reader)
     }
 
     if (closed) {
-        YARP_DEBUG(Logger::get(),"Port::read shutting down");
+        YARP_DEBUG(Logger::get(), "Port::read shutting down");
         readBlock.post();
         return false;
     }
@@ -153,7 +153,7 @@ bool yarp::os::impl::PortCoreAdapter::read(ConnectionReader& reader)
         readResult = readDelegate->read(reader);
     } else {
         // read and ignore
-        YARP_DEBUG(Logger::get(),"data received in Port, no reader for it");
+        YARP_DEBUG(Logger::get(), "data received in Port, no reader for it");
         Bottle b;
         b.read(reader);
     }
@@ -169,7 +169,7 @@ bool yarp::os::impl::PortCoreAdapter::read(ConnectionReader& reader)
     if (result&&willReply) {
         consume.wait();
         if (closed) {
-            YARP_DEBUG(Logger::get(),"Port::read shutting down");
+            YARP_DEBUG(Logger::get(), "Port::read shutting down");
             readBlock.post();
             return false;
         }
@@ -198,7 +198,7 @@ bool yarp::os::impl::PortCoreAdapter::read(PortReader& reader, bool willReply)
     // decided not to.
     if (replyDue) {
         Bottle emptyMessage;
-        reply(emptyMessage,false,false);
+        reply(emptyMessage, false, false);
         replyDue = false;
         dropDue = false;
     }

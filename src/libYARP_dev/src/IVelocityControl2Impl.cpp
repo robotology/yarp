@@ -5,7 +5,7 @@
  */
 
 
-#include <stdio.h>
+#include <cstdio>
 
 #include <yarp/dev/ControlBoardInterfacesImpl.h>
 #include <yarp/dev/ControlBoardHelper.h>
@@ -66,17 +66,6 @@ bool ImplementVelocityControl2::getAxes(int *ax)
     (*ax)=castToMapper(helper)->axes();
     return true;
 }
-
-
-#ifndef YARP_NO_DEPRECATED // since YARP 2.3.65
-bool ImplementVelocityControl2::setVelocityMode()
-{
-YARP_WARNING_PUSH
-YARP_DISABLE_DEPRECATED_WARNING
-    return iVelocity2->setVelocityModeRaw();
-YARP_WARNING_POP
-}
-#endif // YARP_NO_DEPRECATED
 
 bool ImplementVelocityControl2::velocityMove(int j, double sp)
 {
@@ -223,49 +212,4 @@ bool ImplementVelocityControl2::stop(const int n_joint, const int *joints)
 bool ImplementVelocityControl2::stop()
 {
     return iVelocity2->stopRaw();
-}
-
-
-bool ImplementVelocityControl2::setVelPid(int j, const Pid &pid)
-{
-    JOINTIDCHECK
-    int k=castToMapper(helper)->toHw(j);
-    return iVelocity2->setVelPidRaw(k,pid);
-}
-
-
-bool ImplementVelocityControl2::setVelPids(const Pid *pids)
-{
-    int tmp=0;
-    int nj=castToMapper(helper)->axes();
-
-    for(int j=0;j<nj;j++)
-    {
-        tmp=castToMapper(helper)->toHw(j);
-        tempPids[tmp]=pids[j];     // here the conversion consists into reordering the Pids array
-    }
-
-    return iVelocity2->setVelPidsRaw(tempPids);
-}
-
-
-bool ImplementVelocityControl2::getVelPid(int j, Pid *pid)
-{
-    JOINTIDCHECK
-    int k;
-    k=castToMapper(helper)->toHw(j);
-
-    return iVelocity2->getVelPidRaw(k, pid);
-}
-
-
-bool ImplementVelocityControl2::getVelPids(Pid *pids)
-{
-    bool ret=iVelocity2->getVelPidsRaw(tempPids);
-    int nj=castToMapper(helper)->axes();
-
-    for(int j=0;j<nj;j++)
-        pids[castToMapper(helper)->toUser(j)]=tempPids[j];
-
-    return ret;
 }

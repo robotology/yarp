@@ -15,7 +15,7 @@
 #include <yarp/os/NetInt32.h>
 
 #include <yarp/os/impl/PlatformVector.h>
-#include <yarp/os/impl/PlatformStdio.h>
+#include <cstdio>
 #include <yarp/os/impl/Logger.h>
 
 using namespace yarp::sig;
@@ -166,7 +166,7 @@ ConstString Matrix::toString(int precision, int width, const char* endRowStr) co
     if(width>0) // if width is specified use a space as separator
     {
         for(r=0;r<nrows;r++)
-        {        
+        {
             for(c=0;c<ncols;c++)
             {
                 sprintf(tmp, "% *.*lf ", width, precision, (*this)[r][c]);
@@ -212,7 +212,7 @@ void Matrix::updatePointers()
 const Matrix &Matrix::operator=(const Matrix &r)
 {
     if (this == &r) return *this;
-    
+
     if(nrows!=r.nrows || ncols!=r.ncols)
     {
         if (storage)
@@ -315,7 +315,7 @@ void Matrix::zero()
     memset(storage, 0, sizeof(double)*ncols*nrows);
 }
 
-Matrix Matrix::removeCols(int first_col, int how_many) 
+Matrix Matrix::removeCols(int first_col, int how_many)
 {
     Matrix ret;
     ret.resize(nrows, ncols-how_many);
@@ -332,9 +332,9 @@ Matrix Matrix::removeCols(int first_col, int how_many)
             c_out++;
         }
 
-    if (storage) 
-      delete [] storage; 
-    
+    if (storage)
+      delete [] storage;
+
     nrows=ret.nrows;
     ncols=ret.ncols;
     storage=new double[ncols*nrows];
@@ -343,7 +343,7 @@ Matrix Matrix::removeCols(int first_col, int how_many)
     return ret;
 }
 
-Matrix Matrix::removeRows(int first_row, int how_many) 
+Matrix Matrix::removeRows(int first_row, int how_many)
 {
     Matrix ret;
     ret.resize(nrows-how_many, ncols);
@@ -360,9 +360,9 @@ Matrix Matrix::removeRows(int first_row, int how_many)
             r_out++;
         }
 
-    if (storage) 
-        delete [] storage; 
-    
+    if (storage)
+        delete [] storage;
+
     nrows=ret.nrows;
     ncols=ret.ncols;
     storage=new double[ncols*nrows];
@@ -492,7 +492,7 @@ bool Matrix::setRow(int row, const Vector &r)
 bool Matrix::setCol(int col, const Vector &c)
 {
     if((col<0) || (col>=ncols) || (c.length() != (size_t)nrows))
-        return false; 
+        return false;
 
     for(int r=0;r<nrows;r++)
         (*this)[r][col]=c[r];
@@ -551,7 +551,7 @@ Matrix::Matrix(const Matrix &m): yarp::os::Portable(),
     nrows=m.nrows;
     ncols=m.ncols;
 
-    if (m.storage!=0) 
+    if (m.storage!=0)
     {
         storage=new double [nrows*ncols];
         memcpy(storage, m.storage, nrows*ncols*sizeof(double));

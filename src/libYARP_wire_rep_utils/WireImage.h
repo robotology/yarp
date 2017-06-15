@@ -14,8 +14,8 @@
 #include <yarp/os/ConnectionWriter.h>
 #include <yarp/os/ManagedBytes.h>
 #include <yarp/sig/Image.h>
-#include <stdlib.h>
-#include <string.h>
+#include <cstdlib>
+#include <cstring>
 
 #include <wire_rep_utils_api.h>
 
@@ -62,17 +62,17 @@ public:
     RosWireImage() {
     }
 
-    void init(const yarp::sig::FlexImage& img, 
+    void init(const yarp::sig::FlexImage& img,
               const yarp::os::ConstString& frame) {
         image = &img;
-        yarp::os::ConnectionWriter *pbuf = 
+        yarp::os::ConnectionWriter *pbuf =
             yarp::os::ConnectionWriter::createBufferedConnectionWriter();
         if (!pbuf) ::exit(1);
         yarp::os::ConnectionWriter& buf = *pbuf;
         yarp::os::StringOutputStream ss;
         // probably need to translate encoding format better, but at
         // a guess "rgb" and "bgr" will work ok.
-        yarp::os::ConstString encoding = 
+        yarp::os::ConstString encoding =
             yarp::os::Vocab::decode(image->getPixelCode()).c_str();
         switch (image->getPixelCode()) {
         case VOCAB_PIXEL_BGR:
@@ -115,11 +115,11 @@ public:
         ros_seq_stamp.nsec = (int)((t-(int)t)*1e9);
     }
 
-    virtual size_t length() { return 3; }
+    virtual size_t length() YARP_OVERRIDE { return 3; }
 
-    virtual size_t headerLength() { return 0; }
+    virtual size_t headerLength() YARP_OVERRIDE { return 0; }
 
-    virtual size_t length(size_t index) {
+    virtual size_t length(size_t index) YARP_OVERRIDE {
         size_t result = 0;
         switch (index) {
         case 0:
@@ -138,7 +138,7 @@ public:
         return result;
     }
 
-    virtual const char *data(size_t index) {
+    virtual const char *data(size_t index) YARP_OVERRIDE {
         const char *result = 0 /*NULL*/;
         switch (index) {
         case 0:
@@ -154,15 +154,15 @@ public:
         return result;
     }
 
-    virtual yarp::os::PortReader *getReplyHandler() { return NULL; }
-    
-    virtual yarp::os::Portable *getReference() { return NULL; }
+    virtual yarp::os::PortReader *getReplyHandler() YARP_OVERRIDE { return NULL; }
 
-    virtual bool dropRequested() { return false; }
+    virtual yarp::os::Portable *getReference() YARP_OVERRIDE { return NULL; }
 
-    virtual void startWrite() {}
+    virtual bool dropRequested() YARP_OVERRIDE { return false; }
 
-    virtual void stopWrite() {}
+    virtual void startWrite() YARP_OVERRIDE {}
+
+    virtual void stopWrite() YARP_OVERRIDE {}
 };
 
 class YARP_wire_rep_utils_API WireImage {

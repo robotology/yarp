@@ -86,7 +86,7 @@ public:
      * @param header a buffer to hold the first 8 bytes to send on a
      *               connection
      */
-    virtual void getHeader(const Bytes& header) = 0;
+    virtual void getHeader(const Bytes& header) YARP_OVERRIDE = 0;
 
 
     /**
@@ -99,7 +99,7 @@ public:
      *
      * @return true if carrier is connectionless
      */
-    virtual bool isConnectionless() = 0;
+    virtual bool isConnectionless() YARP_OVERRIDE = 0;
 
 
     /**
@@ -111,7 +111,7 @@ public:
      *
      * @return true if carrier uses a broadcast mechanism.
      */
-    virtual bool isBroadcast() {
+    virtual bool isBroadcast() YARP_OVERRIDE {
         return false;
     }
 
@@ -134,7 +134,7 @@ public:
      *
      * @return true if carrier is text-based
      */
-    virtual bool isTextMode() = 0;
+    virtual bool isTextMode() YARP_OVERRIDE = 0;
 
     /**
      * Check if carrier can encode administrative messages, as opposed
@@ -143,7 +143,7 @@ public:
      *
      * @return true if carrier can encode administrative messages
      */
-    virtual bool canEscape() = 0;
+    virtual bool canEscape() YARP_OVERRIDE = 0;
 
     /**
      * Carriers that do not distinguish data from administrative headers
@@ -155,7 +155,7 @@ public:
      *
      * @param envelope the envelope to transmit bundled with data.
      */
-    virtual void handleEnvelope(const yarp::os::ConstString& envelope) {
+    virtual void handleEnvelope(const yarp::os::ConstString& envelope) YARP_OVERRIDE {
         YARP_UNUSED(envelope);
     }
 
@@ -165,7 +165,7 @@ public:
      *
      * @return true if carrier requires acknowledgement.
      */
-    virtual bool requireAck() = 0;
+    virtual bool requireAck() YARP_OVERRIDE = 0;
 
     /**
      * This flag is used by YARP to determine whether the connection
@@ -173,7 +173,7 @@ public:
      *
      * @return true if carrier supports replies
      */
-    virtual bool supportReply() = 0;
+    virtual bool supportReply() YARP_OVERRIDE = 0;
 
     /**
      * Check if carrier operates within a single process.
@@ -183,7 +183,7 @@ public:
      *
      * @return true if carrier will only operate within a single process
      */
-    virtual bool isLocal() = 0;
+    virtual bool isLocal() YARP_OVERRIDE = 0;
 
 
     /**
@@ -197,7 +197,7 @@ public:
      *
      * @return true if carrier is "push" style, false if "pull" style
      */
-    virtual bool isPush() {
+    virtual bool isPush() YARP_OVERRIDE {
         return true;
     }
 
@@ -293,13 +293,13 @@ public:
      *
      * @return true if carrier is active.
      */
-    virtual bool isActive() = 0;
+    virtual bool isActive() YARP_OVERRIDE = 0;
 
     /**
      * Do cleanup and preparation for the coming disconnect, if
      * necessary.
      */
-    virtual void prepareDisconnect() {}
+    virtual void prepareDisconnect() YARP_OVERRIDE {}
 
 
     /**
@@ -366,7 +366,7 @@ public:
      *
      * @return true if carrier wants Carrier::modifyIncomingData called.
      */
-    virtual bool modifiesIncomingData() {
+    virtual bool modifiesIncomingData() YARP_OVERRIDE {
         return false;
     }
 
@@ -384,7 +384,7 @@ public:
      *       input, the setParentConnectionReader(&reader) should be called for
      *       the new one, or the envelope will not be handled correctly.
      */
-    virtual ConnectionReader& modifyIncomingData(ConnectionReader& reader) {
+    virtual ConnectionReader& modifyIncomingData(ConnectionReader& reader) YARP_OVERRIDE {
         return reader;
     }
 
@@ -395,7 +395,7 @@ public:
      * @return true if data should be accepted, false if it should be
      *         discarded.
      */
-    virtual bool acceptIncomingData(ConnectionReader& reader) {
+    virtual bool acceptIncomingData(ConnectionReader& reader) YARP_OVERRIDE {
         return true;
     }
 
@@ -405,7 +405,7 @@ public:
      *
      * @return true if carrier wants Carrier::modifyOutgoingData called.
      */
-    virtual bool modifiesOutgoingData() {
+    virtual bool modifiesOutgoingData() YARP_OVERRIDE {
         return false;
     }
 
@@ -419,7 +419,7 @@ public:
      * @param writer for outgoing data.
      * @return writer for modified version of outgoing data.
      */
-    virtual PortWriter& modifyOutgoingData(PortWriter& writer) {
+    virtual PortWriter& modifyOutgoingData(PortWriter& writer) YARP_OVERRIDE {
         return writer;
     }
 
@@ -429,7 +429,7 @@ public:
      *
      * @return true if carrier wants Carrier::modifyReply called.
      */
-    virtual bool modifiesReply() {
+    virtual bool modifiesReply() YARP_OVERRIDE {
         return false;
     }
 
@@ -439,7 +439,7 @@ public:
      * @param reader for the replied message.
      * @return reader for modified version of the replied message.
      */
-    virtual PortReader& modifyReply(PortReader& reader) {
+    virtual PortReader& modifyReply(PortReader& reader) YARP_OVERRIDE {
         return reader;
     }
 
@@ -450,7 +450,7 @@ public:
      * @return true if data should be accepted, false if it should be
      *         discarded.
      */
-    virtual bool acceptOutgoingData(PortWriter& writer) {
+    virtual bool acceptOutgoingData(PortWriter& writer) YARP_OVERRIDE {
         return true;
     }
 
@@ -473,7 +473,7 @@ public:
      *
      * @param params properties
      */
-    virtual void setCarrierParams(const Property& params) { }
+    virtual void setCarrierParams(const Property& params) YARP_OVERRIDE { }
 
     /**
      * Get carrier configuration and deliver it by port administrative
@@ -481,7 +481,7 @@ public:
      *
      * @param params properties
      */
-    virtual void getCarrierParams(Property& params) { }
+    virtual void getCarrierParams(Property& params) YARP_OVERRIDE { }
 
 };
 

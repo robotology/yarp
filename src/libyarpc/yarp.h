@@ -10,7 +10,7 @@
 #ifndef YET_ANOTHER_ROBOT_PLATFORM_CVERSION_INC
 #define YET_ANOTHER_ROBOT_PLATFORM_CVERSION_INC
 
-#ifndef WIN32
+#if !defined(_WIN32)
 #define YARP_DECLARE(return_type) return_type
 #else
 #ifdef yarpc_EXPORTS

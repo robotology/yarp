@@ -250,7 +250,7 @@ public:
      *
      * @return a textual representation of the bottle.
      */
-    ConstString toString() const;
+    ConstString toString() const YARP_OVERRIDE;
 
     /**
      * Output a representation of the bottle to a network connection.
@@ -258,7 +258,7 @@ public:
      * @param writer the interface to the network connection for writing
      * @result true iff the representation was written successfully.
      */
-    bool write(ConnectionWriter& writer);
+    bool write(ConnectionWriter& writer) YARP_OVERRIDE;
 
     /**
      * Set the bottle's value based on input from a network connection.
@@ -266,7 +266,7 @@ public:
      * @param reader the interface to the network connection for reading
      * @return true iff the bottle was read successfully.
      */
-    bool read(ConnectionReader& reader);
+    bool read(ConnectionReader& reader) YARP_OVERRIDE;
 
     /**
      * Copy the bottle's value to a object that can read a
@@ -291,15 +291,15 @@ public:
      */
     bool read(PortWriter& writer, bool textMode = false);
 
-    void onCommencement();
+    void onCommencement() YARP_OVERRIDE;
 
-    virtual bool check(const ConstString& key) const;
+    virtual bool check(const ConstString& key) const YARP_OVERRIDE;
 
-    virtual Value& find(const ConstString& key) const;
+    virtual Value& find(const ConstString& key) const YARP_OVERRIDE;
 
-    Bottle& findGroup(const ConstString& key) const;
+    Bottle& findGroup(const ConstString& key) const YARP_OVERRIDE;
 
-    virtual bool isNull() const;
+    virtual bool isNull() const YARP_OVERRIDE;
 
     /**
      * Copy all or part of another Bottle.

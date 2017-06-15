@@ -44,7 +44,7 @@ yarp::os::ConnectionWriter *yarp::os::NullConnectionReader::getWriter() {
 }
 
 yarp::os::Bytes yarp::os::NullConnectionReader::readEnvelope() {
-    return Bytes(YARP_NULLPTR,0);
+    return Bytes(YARP_NULLPTR, 0);
 }
 
 yarp::os::Portable *yarp::os::NullConnectionReader::getReference() {

@@ -17,7 +17,7 @@ using namespace yarp::os::impl;
 
 class PortCommandTest : public UnitTest {
 public:
-    virtual ConstString getName() { return "PortCommandTest"; }
+    virtual ConstString getName() override { return "PortCommandTest"; }
 
     void testTextWriting() {
         report(0,"testing text-mode writing...");
@@ -46,7 +46,7 @@ public:
         checkEqual('d',cmd.getKey(),"basic data command");
     }
 
-    virtual void runTests() {
+    virtual void runTests() override {
         testTextWriting();
         testTextReading();
     }

@@ -4,9 +4,6 @@
 
 option(CREATE_OPTIONAL_CARRIERS "Compile some optional carriers" FALSE)
 
-get_property(YARP_OS_INCLUDE_DIRS TARGET YARP_OS PROPERTY INCLUDE_DIRS)
-include_directories(${YARP_OS_INCLUDE_DIRS})
-
 include(YarpPlugin)
 yarp_begin_plugin_library(yarpcar)
   add_subdirectory(human_carrier)
@@ -18,7 +15,10 @@ yarp_begin_plugin_library(yarpcar)
   add_subdirectory(priority_carrier)
   add_subdirectory(portmonitor_carrier)
   add_subdirectory(depth_image_portmonitor)
-  yarp_end_plugin_library(yarpcar)
+  add_subdirectory(zfp_portmonitor)
+yarp_end_plugin_library(yarpcar)
+add_library(YARP::yarpcar ALIAS yarpcar)
+
 install(TARGETS yarpcar
         EXPORT YARP
         COMPONENT runtime
@@ -29,6 +29,8 @@ install(TARGETS yarpcar
 if(YARP_LINK_PLUGINS)
   set_property(GLOBAL APPEND PROPERTY YARP_LIBS yarpcar ${yarpcar_LIBRARIES})
 endif()
+
+set_property(TARGET yarpcar PROPERTY FOLDER "Plugins/Carrier")
 
 include(YarpDeprecatedOption)
 yarp_renamed_option(ENABLE_yarpcar_bayer_carrier ENABLE_yarpcar_bayer) # since YARP 2.3.68

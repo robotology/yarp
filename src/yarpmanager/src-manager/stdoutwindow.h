@@ -12,6 +12,7 @@
 #define STDOUTWINDOW_H
 
 #include <QWidget>
+#include <yarp/conf/compiler.h>
 
 namespace Ui {
 class StdoutWindow;
@@ -29,7 +30,7 @@ public:
     void addMessage(QString text);
 
 protected:
-    void closeEvent(QCloseEvent * event);
+    void closeEvent(QCloseEvent * event) override;
 
 private:
     Ui::StdoutWindow *ui;

@@ -20,9 +20,13 @@
 %}
 
 %import "yarp/conf/api.h"
+
+#if !defined (SWIGMATLAB)
 %feature("director") yarp::os::PortReader;
 %feature("director") yarp::os::RFModule;
 %feature("director") yarp::os::Thread;
+#endif
+
 %feature("autodoc", "1");
 
 #if defined (SWIGPYTHON) || defined (SWIGRUBY)
@@ -306,6 +310,10 @@ void setExternal2(yarp::sig::Image *img, PyObject* mem, int w, int h) {
 %enddef
 %define YARP_init_API
 %enddef
+%define YARP_OS_DEPRECATED_API
+%enddef
+%define YARP_OVERRIDE override
+%enddef
 
 %define _YARP2_NETINT32_
 %enddef
@@ -401,12 +409,18 @@ namespace yarp {
 %include <yarp/os/DummyConnector.h>
 %include <yarp/os/Things.h>
 %include <yarp/os/QosStyle.h>
+%include <yarp/os/Log.h>
+%include <yarp/os/LogStream.h>
 
 %define MAKE_COMMS(name)
 %feature("notabstract") yarp::os::BufferedPort<name>;
 %feature("notabstract") BufferedPort ## name;
+
+#if !defined (SWIGMATLAB)
 %feature("director") yarp::os::TypedReaderCallback<name>;
 %feature("director") yarp::os::TypedReaderCallback<yarp::os::name>;
+#endif
+
 %template(TypedReader ## name) yarp::os::TypedReader<name>;
 %template(name ## Callback) yarp::os::TypedReaderCallback<name>;
 %template(BufferedPort ## name) yarp::os::BufferedPort<name>;
@@ -441,7 +455,9 @@ MAKE_COMMS(Bottle)
 %include <yarp/dev/ITorqueControl.h>
 %include <yarp/dev/IImpedanceControl.h>
 %include <yarp/dev/IVelocityControl.h>
-%include <yarp/dev/IOpenLoopControl.h>
+%include <yarp/dev/IPWMControl.h>
+%include <yarp/dev/ICurrentControl.h>
+%include <yarp/dev/IAnalogSensor.h>
 
 #if !defined(SWIGCHICKEN) && !defined(SWIGALLEGROCL)
   %template(DVector) std::vector<double>;
@@ -527,6 +543,12 @@ typedef yarp::os::TypedReaderCallback<Sound> TypedReaderCallbackSound;
 typedef yarp::os::BufferedPort<Sound> BufferedPortSound;
 %}
 
+%{
+typedef yarp::os::TypedReader<yarp::sig::Vector> TypedReaderVector;
+typedef yarp::os::TypedReaderCallback<yarp::sig::Vector> TypedReaderCallbackVector;
+typedef yarp::os::BufferedPort<yarp::sig::Vector> BufferedPortVector;
+%}
+
 %feature("notabstract") ImageRgb;
 %feature("notabstract") yarp::os::BufferedPort<ImageRgb>;
 %feature("notabstract") BufferedPortImageRgb;
@@ -550,6 +572,10 @@ typedef yarp::os::BufferedPort<Sound> BufferedPortSound;
 %feature("notabstract") Sound;
 %feature("notabstract") yarp::os::BufferedPort<Sound>;
 %feature("notabstract") BufferedPortSound;
+
+%feature("notabstract") Vector;
+%feature("notabstract") yarp::os::BufferedPort<Vector>;
+%feature("notabstract") BufferedPortVector;
 
 %template(ImageRgb) yarp::sig::ImageOf<yarp::sig::PixelRgb>;
 %template(TypedReaderImageRgb) yarp::os::TypedReader<yarp::sig::ImageOf<yarp::sig::PixelRgb> >;
@@ -579,6 +605,10 @@ typedef yarp::os::BufferedPort<Sound> BufferedPortSound;
 %template(TypedReaderSound) yarp::os::TypedReader<yarp::sig::Sound >;
 %template(TypedReaderCallbackSound) yarp::os::TypedReaderCallback<yarp::sig::Sound>;
 %template(BufferedPortSound) yarp::os::BufferedPort<yarp::sig::Sound >;
+
+%template(TypedReaderVector) yarp::os::TypedReader<yarp::sig::Vector >;
+%template(TypedReaderCallbackVector) yarp::os::TypedReaderCallback<yarp::sig::Vector>;
+%template(BufferedPortVector) yarp::os::BufferedPort<yarp::sig::Vector >;
 
 // Add getPixel and setPixel methods to access float values
 %extend yarp::sig::ImageOf<yarp::sig::PixelFloat> {
@@ -766,8 +796,20 @@ typedef yarp::os::BufferedPort<ImageRgbFloat> BufferedPortImageRgbFloat;
         return result;
     }
 
-    yarp::dev::IOpenLoopControl *viewIOpenLoopControl() {
-            yarp::dev::IOpenLoopControl *result;
+    yarp::dev::IPWMControl *viewIPWMControl() {
+            yarp::dev::IPWMControl *result;
+        self->view(result);
+        return result;
+    }
+
+    yarp::dev::ICurrentControl *viewICurrentControl() {
+            yarp::dev::ICurrentControl *result;
+        self->view(result);
+        return result;
+    }
+
+    yarp::dev::IAnalogSensor *viewIAnalogSensor() {
+        yarp::dev::IAnalogSensor *result;
         self->view(result);
         return result;
     }
@@ -1097,6 +1139,21 @@ typedef yarp::os::BufferedPort<ImageRgbFloat> BufferedPortImageRgbFloat;
         bool data = true;
         self->checkMotionDone(&data);
         return data;
+    }
+
+    int storeContext() {
+        // bad id to return if the real
+        // storeContext returns false
+        int badContextId = -1000;
+        int ret = badContextId;
+        // call the real storeContext
+        bool ok = self->storeContext(&ret);
+        // if not ok, return the badContextId
+        if( !ok ) {
+            ret = badContextId;
+        }
+
+        return ret;
     }
 }
 

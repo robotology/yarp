@@ -74,6 +74,10 @@ init:
   - cmd: if "%platform%"=="Win32" set JPEG_INSTALLER=https://sourceforge.net/projects/libjpeg-turbo/files/1.5.1/libjpeg-turbo-1.5.1-vc.exe/download
   - cmd: if "%platform%"=="x64" set JPEG_INSTALLER=https://sourceforge.net/projects/libjpeg-turbo/files/1.5.1/libjpeg-turbo-1.5.1-vc64.exe/download
 
+  # Prepare YARP for tests
+  - cmd: set PATH=%PATH%;%APPVEYOR_BUILD_FOLDER%\build\bin\%CONFIGURATION%
+  - cmd: set YARP_DATA_DIRS=%APPVEYOR_BUILD_FOLDER%\build\share\yarp
+
   # Print some useful informations:
   - cmd: set
   - cmd: cmake --version
@@ -127,7 +131,6 @@ after_build:
   - cmd: move /Y %APPVEYOR_BUILD_FOLDER%\build\*.exe %APPVEYOR_BUILD_FOLDER%
 
 test_script:
-  - cmd: set YARP_DATA_DIRS=%APPVEYOR_BUILD_FOLDER%\build\share\yarp
   - cmd: cmake --build %APPVEYOR_BUILD_FOLDER%\build --target RUN_TESTS --config %CONFIGURATION%
 
 after_test:
@@ -145,3 +148,6 @@ notifications:
   - provider: Slack
     incoming_webhook:
       secure: y4pfqod7KJ2iS3k3TbRPSpZ17uNnIPWIWgH79GirKA3xJfIcbvNhB/+mpBbClSXspVaFuPDr19gFj7aBGmoLBhR1DIXAzPDoYonYYpEZdF4=
+
+#on_finish:
+#  - ps: $blockRdp = $true; iex ((new-object net.webclient).DownloadString('https://raw.githubusercontent.com/appveyor/ci/master/scripts/enable-rdp.ps1'))

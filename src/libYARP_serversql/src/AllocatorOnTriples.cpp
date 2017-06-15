@@ -5,8 +5,8 @@
  *
  */
 
-#include <stdio.h>
-#include <stdlib.h>
+#include <cstdio>
+#include <cstdlib>
 
 #include <yarp/serversql/impl/AllocatorOnTriples.h>
 
@@ -124,7 +124,7 @@ Contact AllocatorOnTriples::completePortNumber(const Contact& c) {
                 fprintf(stderr,"Ran out of port numbers\n");
                 fprintf(stderr,"* Make sure ports/programs get closed properly.\n");
                 fprintf(stderr,"* If programs terminate without closing ports, run \"yarp clean\" from time to time..\n");
-                exit(1);
+                std::exit(1);
             }
         } else {
             regid++;
@@ -196,7 +196,7 @@ Contact AllocatorOnTriples::completeHost(const yarp::os::Contact& c) {
         int v2 = mcastCursor/255;
         if (v2>=255) {
             fprintf(stderr,"Ran out of mcast addresses\n");
-            exit(1);
+            std::exit(1);
         }
         sprintf(buf,"224.1.%d.%d", v2+1,v1+1);
         name = buf;

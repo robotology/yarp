@@ -12,8 +12,8 @@
 #include <yarp/os/impl/TcpCarrier.h>
 #include <yarp/os/impl/TextCarrier.h>
 
-#ifdef YARP_HAS_ACE
 #  include <yarp/os/impl/McastCarrier.h>
+#ifdef YARP_HAS_ACE
 #  include <yarp/os/impl/ShmemCarrier.h>
 #endif
 
@@ -26,6 +26,9 @@
 #include <yarp/os/YarpPlugin.h>
 #include <yarp/os/impl/PlatformVector.h>
 
+#include <yarp/os/LockGuard.h>
+#include <yarp/os/Mutex.h>
+
 using namespace yarp::os::impl;
 using namespace yarp::os;
 
@@ -35,6 +38,7 @@ class Carriers::Private : public YarpPluginSelector
 {
 public:
     static Carriers* yarp_carriers_instance;
+    static yarp::os::Mutex mutex;
 
     PlatformVector<Carrier*> delegates;
 
@@ -47,10 +51,11 @@ public:
     static bool checkForCarrier(const Bytes *header, Searchable& group);
     static bool scanForCarrier(const Bytes *header);
 
-    virtual bool select(Searchable& options);
+    virtual bool select(Searchable& options) override;
 };
 
 Carriers* Carriers::Private::yarp_carriers_instance = YARP_NULLPTR;
+yarp::os::Mutex Carriers::Private::mutex = yarp::os::Mutex();
 
 
 Carrier* Carriers::Private::chooseCarrier(const ConstString *name,
@@ -94,12 +99,12 @@ Carrier* Carriers::Private::chooseCarrier(const ConstString *name,
             // let's try to register it, and see if a dll is found.
             if (NetworkBase::registerCarrier(name->c_str(), YARP_NULLPTR)) {
                 // We made progress, let's try again...
-                return Carriers::Private::chooseCarrier(name,header,false);
+                return Carriers::Private::chooseCarrier(name, header, false);
             }
         } else {
             if (scanForCarrier(header)) {
                 // We made progress, let's try again...
-                return Carriers::Private::chooseCarrier(name,header,true);
+                return Carriers::Private::chooseCarrier(name, header, true);
             }
         }
     }
@@ -168,7 +173,7 @@ bool Carriers::Private::checkForCarrier(const Bytes *header, Searchable& group)
 {
     Bottle code = group.findGroup("code").tail();
     if (code.size()==0) return false;
-    if (matchCarrier(header,code)) {
+    if (matchCarrier(header, code)) {
         ConstString name = group.find("name").asString();
         if (NetworkBase::registerCarrier(name.c_str(), YARP_NULLPTR)) {
             return true;
@@ -186,7 +191,7 @@ bool Carriers::Private::scanForCarrier(const Bytes *header)
     selector.scan();
     Bottle lst = selector.getSelectedPlugins();
     for (int i=0; i<lst.size(); i++) {
-        if (checkForCarrier(header,lst.get(i))) {
+        if (checkForCarrier(header, lst.get(i))) {
             return true;
         }
     }
@@ -195,7 +200,7 @@ bool Carriers::Private::scanForCarrier(const Bytes *header)
 
 bool Carriers::Private::select(Searchable& options)
 {
-    return options.check("type",Value("none")).asString() == "carrier";
+    return options.check("type", Value("none")).asString() == "carrier";
 }
 
 
@@ -211,9 +216,7 @@ Carriers::Carriers() :
 #endif
     mPriv->delegates.push_back(new TcpCarrier());
     mPriv->delegates.push_back(new TcpCarrier(false));
-#ifdef YARP_HAS_ACE
     mPriv->delegates.push_back(new McastCarrier());
-#endif
     mPriv->delegates.push_back(new UdpCarrier());
     mPriv->delegates.push_back(new TextCarrier());
     mPriv->delegates.push_back(new TextCarrier(true));
@@ -293,6 +296,7 @@ bool Carrier::reply(ConnectionState& proto, SizedWriter& writer)
 
 Carriers& Carriers::getInstance()
 {
+    yarp::os::LockGuard guard(Private::mutex);
     if (Private::yarp_carriers_instance == YARP_NULLPTR) {
         Private::yarp_carriers_instance = new Carriers();
         yAssert(Private::yarp_carriers_instance != YARP_NULLPTR);
@@ -303,6 +307,7 @@ Carriers& Carriers::getInstance()
 
 void Carriers::removeInstance()
 {
+    yarp::os::LockGuard guard(Private::mutex);
     if (Private::yarp_carriers_instance != YARP_NULLPTR) {
         delete Private::yarp_carriers_instance;
         Private::yarp_carriers_instance = YARP_NULLPTR;
@@ -312,29 +317,32 @@ void Carriers::removeInstance()
 
 Bottle Carriers::listCarriers()
 {
+    Carriers& instance = getInstance();
+    yarp::os::LockGuard guard(Private::mutex);
+
     Bottle lst;
     Property done;
 
-    PlatformVector<Carrier*>& delegates = getInstance().mPriv->delegates;
+    PlatformVector<Carrier*>& delegates = instance.mPriv->delegates;
     for (size_t i = 0; i < delegates.size(); i++) {
         Carrier& c = *delegates[i];
         lst.addString(c.getName());
         done.put(c.getName(), 1);
     }
 
-    getInstance().mPriv->scan();
-    Bottle plugins = getInstance().mPriv->getSelectedPlugins();
+    instance.mPriv->scan();
+    Bottle plugins = instance.mPriv->getSelectedPlugins();
     for (int i = 0; i < plugins.size(); i++) {
         Value& options = plugins.get(i);
-        ConstString name = options.check("name",Value("untitled")).asString();
+        ConstString name = options.check("name", Value("untitled")).asString();
         if (done.check(name)) {
             continue;
         }
 
         SharedLibraryFactory lib;
         YarpPluginSettings settings;
-        settings.setSelector(*getInstance().mPriv);
-        settings.readFromSearchable(options,name);
+        settings.setSelector(*instance.mPriv);
+        settings.readFromSearchable(options, name);
         settings.open(lib);
         ConstString location = lib.getName().c_str();
         if (location=="") {

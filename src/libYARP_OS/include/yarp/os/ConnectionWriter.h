@@ -181,7 +181,7 @@ public:
 
     virtual void appendRawString(const ConstString& str) {
         appendInt(str.length());
-        appendBlock((char*)str.c_str(),str.length());
+        appendBlock((char*)str.c_str(), str.length());
     }
 
     /**

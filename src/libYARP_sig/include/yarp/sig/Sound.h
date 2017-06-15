@@ -99,9 +99,9 @@ public:
 
     int getChannels() const { return channels; }
 
-    virtual bool read(yarp::os::ConnectionReader& connection);
+    virtual bool read(yarp::os::ConnectionReader& connection) YARP_OVERRIDE;
 
-    virtual bool write(yarp::os::ConnectionWriter& connection);
+    virtual bool write(yarp::os::ConnectionWriter& connection) YARP_OVERRIDE;
 
     unsigned char *getRawData() const;
 

@@ -26,10 +26,10 @@
 #else
 #  include <pthread.h>
 #  define Platform_hthread_t pthread_t
-#  if !defined(__APPLE__)
-#    define Platform_thread_t long int
-#  else
+#  if defined(__APPLE__)
 #    define Platform_thread_t pthread_t
+#  else
+#    define Platform_thread_t long int
 #  endif
 #  define PLATFORM_THREAD_SELF() pthread_self()
 #  define PLATFORM_THREAD_RETURN void *

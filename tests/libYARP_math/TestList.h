@@ -24,6 +24,7 @@ namespace yarp {
 extern yarp::os::impl::UnitTest& getMathTest();
 extern yarp::os::impl::UnitTest& getSVDTest();
 extern yarp::os::impl::UnitTest& getRandTest();
+extern yarp::os::impl::UnitTest& getVec2DTest();
 
 class yarp::os::impl::TestList {
 public:
@@ -32,6 +33,7 @@ public:
         root.add(getMathTest());
         root.add(getSVDTest());
         root.add(getRandTest());
+        root.add(getVec2DTest());
     }
 };
 

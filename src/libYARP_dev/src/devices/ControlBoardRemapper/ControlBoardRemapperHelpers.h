@@ -65,7 +65,6 @@ public:
     yarp::dev::IPreciselyTimed       *iTimed;
     yarp::dev::ITorqueControl        *iTorque;
     yarp::dev::IImpedanceControl     *iImpedance;
-    yarp::dev::IOpenLoopControl      *iOpenLoop;
     yarp::dev::IControlMode2         *iMode2;
     yarp::dev::IAxisInfo             *info;
     yarp::dev::IPositionDirect       *posDir;

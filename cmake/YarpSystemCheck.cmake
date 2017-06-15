@@ -127,10 +127,6 @@ else()
   endif()
 endif()
 
-set(YARP_HAVE_SYS_TYPES_H ${HAVE_SYS_TYPES_H})
-set(YARP_HAVE_STDDEF_H ${HAVE_STDDEF_H})
-check_include_file_cxx(cstddef YARP_HAVE_CSTDDEF)
-
 
 #########################################################################
 # Set up compile flags
@@ -177,9 +173,6 @@ if(WIN32)
   endif()
 else()
 
-    if(NOT CMAKE_MINIMUM_REQUIRED_VERSION VERSION_LESS 3.0)
-      message(AUTHOR_WARNING "CMAKE_MINIMUM_REQUIRED_VERSION is now ${CMAKE_MINIMUM_REQUIRED_VERSION}. The check in this macro can be removed.")
-    endif()
     macro(YARP_CHECK_AND_APPEND_CXX_COMPILER_FLAG _out _flag)
       string(TOUPPER "${_flag}" _VAR)
       string(REGEX REPLACE " .+" "" _VAR "${_VAR}")
@@ -225,6 +218,9 @@ else()
     yarp_check_and_append_cxx_compiler_flag(WANTED_WARNING_FLAGS "-Wmicrosoft-exists")
     yarp_check_and_append_cxx_compiler_flag(WANTED_WARNING_FLAGS "-Wstatic-inline-explicit-instantiation")
     yarp_check_and_append_cxx_compiler_flag(WANTED_WARNING_FLAGS "-Wmisleading-indentation")
+    yarp_check_and_append_cxx_compiler_flag(WANTED_WARNING_FLAGS "-Wtautological-compare")
+    yarp_check_and_append_cxx_compiler_flag(WANTED_WARNING_FLAGS "-Winconsistent-missing-override")
+    yarp_check_and_append_cxx_compiler_flag(WANTED_WARNING_FLAGS "-Wsuggest-override")
 
     ## Unwanted warning flags ##
     unset(UNWANTED_WARNING_FLAGS)
@@ -276,13 +272,6 @@ else()
     yarp_check_and_append_cxx_compiler_flag(HARDENING_FLAGS "-fPIE -pie")
 
 
-    ## C++98 flags ##
-    unset(CXX98_FLAGS)
-    check_cxx_compiler_flag("-std=c++98" CXX_HAS_STD_CXX98)
-    if(CXX_HAS_STD_CXX98)
-      set(CXX98_FLAGS "-std=c++98")
-    endif()
-
     ## C++11 flags ##
     unset(CXX11_FLAGS)
     check_cxx_compiler_flag("-std=c++11" CXX_HAS_STD_CXX11)
@@ -321,56 +310,25 @@ endif()
 
 
 #########################################################################
-# Generate compiler.h header
+# Try to locate some system headers
 
-# Read the file containing all the documentation for compiler.h
-# Change offset here in case yarp_conf_compiler.dox.in comment changes
-file(READ
-     "${YARP_MODULE_DIR}/template/yarp_conf_compiler.dox.in"
-     _compiler_dox
-     OFFSET 97)
-
-
-# WriteCompilerDetectionHeader is supported since CMake 3.1, but until 3.3 there
-# is a bug in the non-c++11 compatible nullptr implementation, therefore we use
-# a pre-generated version of the file
-if(NOT ${CMAKE_MINIMUM_REQUIRED_VERSION} VERSION_LESS 3.3)
-  message(AUTHOR_WARNING "CMAKE_MINIMUM_REQUIRED_VERSION is now ${CMAKE_MINIMUM_REQUIRED_VERSION}. This check can be removed.")
-endif()
-if(${CMAKE_VERSION} VERSION_LESS 3.3)
-  string(REPLACE "\\\;" ";" _compiler_dox ${_compiler_dox})
-  configure_file(${YARP_MODULE_DIR}/template/yarp_conf_compiler.h.in
-                 ${CMAKE_BINARY_DIR}/generated_include/yarp/conf/compiler.h
-                 @ONLY)
-else()
-  include(WriteCompilerDetectionHeader)
-
-  get_property(_cxx_known_features GLOBAL PROPERTY CMAKE_CXX_KNOWN_FEATURES)
-
-  write_compiler_detection_header(
-    FILE "${CMAKE_BINARY_DIR}/generated_include/yarp/conf/compiler.h"
-    PREFIX YARP
-    COMPILERS
-      GNU
-      Clang
-      AppleClang
-      MSVC
-    FEATURES ${_cxx_known_features}
-    VERSION 3.1.0
-    PROLOG ${_compiler_dox})
-endif()
+check_include_files(execinfo.h YARP_HAS_EXECINFO_H)
+check_include_files(sys/wait.h YARP_HAS_SYS_WAIT_H)
+check_include_files(sys/types.h YARP_HAS_SYS_TYPES_H)
+check_include_files(sys/prctl.h YARP_HAS_SYS_PRCTL_H)
+# Even if <csignal> is c++11, on some platforms it it still missing
+check_include_files(csignal YARP_HAS_CSIGNAL)
+check_include_files(signal.h YARP_HAS_SIGNAL_H)
+check_include_files(sys/signal.h YARP_HAS_SYS_SIGNAL_H)
+check_include_files(netdb.h YARP_HAS_NETDB_H)
+check_include_files(dlfcn.h YARP_HAS_DLFCN_H)
+check_include_files(ifaddrs.h YARP_HAS_IFADDRS_H)
 
 
 #########################################################################
-# Try to locate execinfo.h
-check_include_files(execinfo.h YARP_HAS_EXECINFO)
-
-
-#########################################################################
-# Translate the names of some YARP options, for yarp_config_options.h.in
+# Translate the names of some YARP options, for yarp/conf/options.h
 # and YARPConfig.cmake.in
 set(YARP_HAS_MATH_LIB ${CREATE_LIB_MATH})
-set(YARP_HAS_NAME_LIB TRUE)
 
 
 #########################################################################

@@ -3,7 +3,7 @@
 #include <QDebug>
 #include <QCursor>
 #include <QGraphicsScene>
-#include "math.h"
+#include <cmath>
 
 #define TRIANGLEH   (double)((double)PORT_LINE_WIDTH * (double)sqrt(3.0) ) / 2.0
 

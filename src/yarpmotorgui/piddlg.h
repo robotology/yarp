@@ -33,7 +33,7 @@ class PidDlg : public QDialog
     Q_OBJECT
 
 public:
-    explicit PidDlg(QString partname, int jointIndex,QWidget *parent = 0);
+    explicit PidDlg(QString partname, int jointIndex, QString jointName, QWidget *parent = 0);
     ~PidDlg();
 
     void initPosition(Pid myPid);
@@ -43,7 +43,7 @@ public:
     void initStiffness(double curStiffVal, double minStiff, double maxStiff,
                        double curDampVal, double minDamp, double maxDamp,
                        double curForceVal, double minForce, double maxForce);
-    void initOpenLoop(double openLoopVal, double pwm);
+    void initPWM(double pwmVal, double pwm);
     void initRemoteVariables(IRemoteVariables* iVar);
 
 
@@ -52,7 +52,8 @@ signals:
     void sendPositionPid(int jointIndex, Pid pid);
     void sendVelocityPid(int jointIndex, Pid pid);
     void sendTorquePid(int jointIndex,Pid,MotorTorqueParameters newTorqueParam);
-    void sendOpenLoop(int jointIndex,int openLoopVal);
+    void sendPWM(int jointIndex,double dutyVal);
+    void sendCurrent(int jointIndex,int currentVal);
     void sendCurrentPid(int jointIndex, Pid pid);
     void sendSingleRemoteVariable(std::string key, yarp::os::Bottle val);
     void refreshPids(int jointIndex);
@@ -75,7 +76,7 @@ class TableIntDelegate : public QItemDelegate
 {
 public:
     QWidget* createEditor(QWidget *parent, const QStyleOptionViewItem & option,
-                      const QModelIndex & index) const
+                      const QModelIndex & index) const override
     {
         Q_UNUSED(option);
         Q_UNUSED(index);
@@ -91,7 +92,7 @@ class TableDoubleDelegate : public QItemDelegate
 {
 public:
     QWidget* createEditor(QWidget *parent, const QStyleOptionViewItem & option,
-                      const QModelIndex & index) const
+                      const QModelIndex & index) const override
     {
         Q_UNUSED(option);
         Q_UNUSED(index);
@@ -107,7 +108,7 @@ class TableGenericDelegate : public QItemDelegate
 {
 public:
     QWidget* createEditor(QWidget *parent, const QStyleOptionViewItem & option,
-        const QModelIndex & index) const
+        const QModelIndex & index) const override
     {
         Q_UNUSED(option);
         Q_UNUSED(index);

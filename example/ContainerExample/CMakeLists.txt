@@ -2,7 +2,7 @@
 # Author: Daniele E. Domenichelli <daniele.domenichelli@iit.it>
 # CopyPolicy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
 
-cmake_minimum_required(VERSION 2.8.9)
+cmake_minimum_required(VERSION 3.0)
 
 project(ContainerExample)
 
@@ -20,8 +20,7 @@ set(CMAKE_AUTOMOC ON)
 string(REPLACE "-rdynamic" "" CMAKE_SHARED_LIBRARY_LINK_CXX_FLAGS "${CMAKE_SHARED_LIBRARY_LINK_CXX_FLAGS}")
 
 
-include_directories(${CMAKE_CURRENT_SOURCE_DIR}/qtquick2applicationviewer
-                    ${YARP_INCLUDE_DIRS})
+include_directories(${CMAKE_CURRENT_SOURCE_DIR}/qtquick2applicationviewer)
 
 file(GLOB_RECURSE ContainerExample_SRCS *.cpp)
 file(GLOB_RECURSE ContainerExample_HDRS *.h)
@@ -29,15 +28,13 @@ file(GLOB ContainerExample_QRC_FILES *.qrc)
 
 qt5_add_resources(ContainerExample_QRC_GEN_FILES ${ContainerExample_QRC_FILES})
 
-source_group("Source Files" FILES ${ContainerExample_SRCS})
-source_group("Header Files" FILES ${ContainerExample_HDRS})
 source_group("Resources Files" FILES ${ContainerExample_QRC_FILES})
 source_group("Generated Files" FILES ${ContainerExample_QRC_GEN_FILES})
 
 add_executable(ContainerExample WIN32 ${ContainerExample_SRCS} ${ContainerExample_HDRS} ${ContainerExample_QRC_GEN_FILES})
-qtyarp_use_modules(ContainerExample Widgets
-                                    Qml
-                                    Quick)
+target_link_libraries(ContainerExample Qt5::Widgets
+                                       Qt5::Qml
+                                       Qt5::Quick)
 
 
 #-------------------------------------------------------------------------------

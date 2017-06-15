@@ -404,6 +404,13 @@ int RGBDSensorClient::getRgbWidth()
 {
     return RgbMsgSender->getRgbWidth();
 }
+bool RGBDSensorClient::getRgbSupportedConfigurations(yarp::sig::VectorOf<CameraConfig> &configurations)
+{
+    return RgbMsgSender->getRgbSupportedConfigurations(configurations);
+}
+bool RGBDSensorClient::getRgbResolution(int &width, int &height){
+    return RgbMsgSender->getRgbResolution(width, height);
+}
 
 bool RGBDSensorClient::setRgbResolution(int width, int height)
 {

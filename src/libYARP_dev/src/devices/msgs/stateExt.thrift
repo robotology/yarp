@@ -1,24 +1,39 @@
+struct VectorOfDouble {
+  1: list<double> content;
+} (
+  yarp.name = "yarp::sig::VectorOf<double>"
+  yarp.includefile="yarp/sig/Vector.h"
+)
+
+struct VectorOfInt {
+  1: list<i32> content;
+} (
+  yarp.name = "yarp::sig::VectorOf<int>"
+  yarp.includefile="yarp/sig/Vector.h"
+)
 
 struct jointData
 {
-  1: list<double> jointPosition;
+  1: VectorOfDouble jointPosition;
   2: bool jointPosition_isValid;
-  3: list<double> jointVelocity;
+  3: VectorOfDouble jointVelocity;
   4: bool jointVelocity_isValid;
-  5: list<double> jointAcceleration;
+  5: VectorOfDouble jointAcceleration;
   6: bool jointAcceleration_isValid;
-  7: list<double> motorPosition;
+  7: VectorOfDouble motorPosition;
   8: bool motorPosition_isValid;
-  9: list<double> motorVelocity;
+  9: VectorOfDouble motorVelocity;
   10: bool motorVelocity_isValid;
-  11: list<double> motorAcceleration;
+  11: VectorOfDouble motorAcceleration;
   12: bool motorAcceleration_isValid;
-  13: list<double> torque;
+  13: VectorOfDouble torque;
   14: bool torque_isValid;
-  15: list<double> pidOutput;
-  16: bool pidOutput_isValid;
-  17: list<i32> controlMode;
-  18: bool controlMode_isValid;
-  19: list<i32> interactionMode;
-  20: bool interactionMode_isValid;
-}
+  15: VectorOfDouble pwmDutycycle;
+  16: bool pwmDutycycle_isValid;
+  17: VectorOfDouble current;
+  18: bool current_isValid;
+  19: VectorOfInt controlMode;
+  20: bool controlMode_isValid;
+  21: VectorOfInt interactionMode;
+  22: bool interactionMode_isValid;
+ }

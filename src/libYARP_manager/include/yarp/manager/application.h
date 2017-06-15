@@ -161,7 +161,7 @@ public:
     ModuleInterface( const char* szName) {
         if(szName) strName = szName;
         iRank = -1;
-        wait = 0.0;
+        waitStart = waitStop = 0.0;
     }
 
     ModuleInterface(Module* module);
@@ -198,8 +198,11 @@ public:
     void addResource(ResYarpPort &res) { resources.push_back(res); }
     ResourceContainer& getResources(void) { return resources; }
 
-    void setPostExecWait(double t) { wait = t; }
-    double getPostExecWait() { return wait; }
+    void setPostExecWait(double t) { waitStart = t; }
+    double getPostExecWait() { return waitStart; }
+    void setPostStopWait(double t) { waitStop = t; }
+    double getPostStopWait() { return waitStop; }
+
 
     int portmapCount(void) { return portmaps.size(); }
     Portmap& getPortmapAt(int index){ return portmaps[index]; }
@@ -228,7 +231,8 @@ private:
     string strDisplay;
     int iRank;
     ResourceContainer resources;
-    double wait;
+    double waitStart;
+    double waitStop;
     PortmapContainer portmaps;
     PortmapIterator findPortmap(Portmap& portmap);
     string strTag;
@@ -297,7 +301,7 @@ public:
     size_t getNameLenght() {return strName.length(); }
     const char* getVersion(void) { return strVersion.c_str(); }
     const char* getDescription(void) { return strDescription.c_str(); }
-    virtual Node* clone(void);
+    virtual Node* clone(void) YARP_OVERRIDE;
 
     void addAuthor(Author& author) { authors.push_back(author); }
     int authorCount(void) { return authors.size(); }

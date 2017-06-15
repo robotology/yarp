@@ -2,19 +2,15 @@
 # Author: Paul Fitzpatrick
 # CopyPolicy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
 
-cmake_minimum_required(VERSION 2.8.9)
-
-# Start a project.
-PROJECT(math_examples)
+cmake_minimum_required(VERSION 3.0)
+project(math_examples)
 
 # Find YARP.  Point the YARP_DIR environment variable at your build.
-FIND_PACKAGE(YARP REQUIRED)
-INCLUDE_DIRECTORIES(${YARP_INCLUDE_DIRS})
+find_package(YARP REQUIRED)
 
-IF (NOT YARP_HAS_MATH_LIB)
-	MESSAGE(FATAL_ERROR "YARP found, but was not compiled with math library enabled")
-ENDIF (NOT YARP_HAS_MATH_LIB)
+if(NOT YARP_HAS_MATH_LIB)
+  message(FATAL_ERROR "YARP found, but was not compiled with math library enabled")
+endif(NOT YARP_HAS_MATH_LIB)
 
-ADD_EXECUTABLE(benchmark benchmark.cpp)
-TARGET_LINK_LIBRARIES(benchmark ${YARP_LIBRARIES})
-
+add_executable(benchmark benchmark.cpp)
+target_link_libraries(benchmark ${YARP_LIBRARIES})

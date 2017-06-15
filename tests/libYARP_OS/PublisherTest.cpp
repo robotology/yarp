@@ -31,7 +31,7 @@ static bool waitForOutput(Contactable& c,double timeout) {
 
 class PublisherTest : public UnitTest {
 public:
-    virtual ConstString getName() { return "PublisherTest"; }
+    virtual ConstString getName() override { return "PublisherTest"; }
 
     void testPublisherToBufferedPort() {
         report(0,"Publisher to BufferedPort test");
@@ -169,7 +169,7 @@ public:
         }
     }
 
-    virtual void runTests() {
+    virtual void runTests() override {
         Network::setLocalMode(true);
         testPublisherToBufferedPort();
         testBufferedPortToSubscriber();

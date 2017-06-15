@@ -66,35 +66,35 @@ public:
         formatParamsAudio = NULL;
     }
 
-    virtual bool open(yarp::os::Searchable & config);
+    virtual bool open(yarp::os::Searchable & config) override;
 
-    virtual bool close();
+    virtual bool close() override;
 
-    virtual bool getImage(yarp::sig::ImageOf<yarp::sig::PixelRgb> & image);
+    virtual bool getImage(yarp::sig::ImageOf<yarp::sig::PixelRgb> & image) override;
 
-    virtual bool getSound(yarp::sig::Sound& sound);
+    virtual bool getSound(yarp::sig::Sound& sound) override;
 
-    virtual int height() const { return m_h; }
+    virtual int height() const override { return m_h; }
 
-    virtual int width() const { return m_w; }
+    virtual int width() const override { return m_w; }
 
     virtual bool getAudioVisual(yarp::sig::ImageOf<yarp::sig::PixelRgb>& image,
-                                yarp::sig::Sound& sound);
+                                yarp::sig::Sound& sound) override;
 
 
-    virtual bool hasAudio() {
+    virtual bool hasAudio() override {
         return _hasAudio;
     }
 
-    virtual bool hasVideo() {
+    virtual bool hasVideo() override {
         return _hasVideo;
     }
 
-    virtual bool startRecording() {
+    virtual bool startRecording() override {
         return true;
     }
 
-    virtual bool stopRecording() {
+    virtual bool stopRecording() override {
         return true;
     }
 

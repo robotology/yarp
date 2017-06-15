@@ -13,6 +13,7 @@
 #include <yarp/manager/ymm-types.h>
 #include <yarp/manager/node.h>
 #include <yarp/manager/utility.h>
+#include <yarp/conf/api.h>
 
 using namespace std;
 
@@ -30,7 +31,7 @@ public:
     InputData(const char* szName);
     InputData(const InputData &input);
     virtual ~InputData();
-    virtual Node* clone(void);
+    virtual Node* clone(void) YARP_OVERRIDE;
     void setName(const char* szName) {
         if(szName){
             strName = szName;
@@ -77,7 +78,7 @@ public:
     OutputData(const char* szName);
     OutputData(const OutputData &input);
     virtual ~OutputData();
-    virtual Node* clone(void);
+    virtual Node* clone(void) YARP_OVERRIDE;
     void setName(const char* szName) {
         if(szName){
             strName = szName;

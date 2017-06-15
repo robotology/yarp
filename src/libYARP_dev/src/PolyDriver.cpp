@@ -24,7 +24,7 @@ public:
         count = 1;
     }
 
-    virtual void report(const SearchReport& report, const char *context) {
+    virtual void report(const SearchReport& report, const char *context) override {
         ConstString ctx = context;
         ConstString key = report.key.c_str();
         ConstString prefix = "";
@@ -213,13 +213,17 @@ bool PolyDriver::coreOpen(yarp::os::Searchable& prop) {
     if (prop.check("device",part)) {
         str = part->toString().c_str();
     }
+
+#ifndef YARP_NO_DEPRECATED // since YARP 2.3.70
     Bottle bot(str.c_str());
     if (bot.size()>1) {
         // this wasn't a device name, but some codes -- rearrange
+        yWarning("Passing 'device' parameter with a list of parameters as value is deprecated. This might be an internal bug. If you didn't do it please report an issue at https://github.com/robotology/yarp");
         p.fromString(str.c_str());
         str = p.find("device").asString().c_str();
         config = &p;
     }
+#endif
 
     DeviceDriver *driver = NULL;
 

@@ -19,7 +19,7 @@ using namespace yarp::os;
 
 class PortablePairTest : public UnitTest {
 public:
-    virtual ConstString getName() { return "PortablePairTest"; }
+    virtual ConstString getName() override { return "PortablePairTest"; }
     
     void checkStandard() {
         PortablePair<Bottle,Bottle> pp;
@@ -69,7 +69,7 @@ public:
     }
 
     
-    virtual void runTests() {
+    virtual void runTests() override {
         checkStandard();
         bool netMode = Network::setLocalMode(true);
         checkTransmit();

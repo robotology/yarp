@@ -74,26 +74,28 @@ public:
     /*
      *  IRgbVisualParams interface. Look at IVisualParams.h for documentation
      */
-    virtual int  getRgbHeight() = 0;
-    virtual int  getRgbWidth() = 0;
-    virtual bool setRgbResolution(int width, int height) = 0;
-    virtual bool getRgbFOV(double &horizontalFov, double &verticalFov) = 0;
-    virtual bool setRgbFOV(double horizontalFov, double verticalFov) = 0;
-    virtual bool getRgbIntrinsicParam(yarp::os::Property &intrinsic) = 0;
+    virtual int  getRgbHeight() YARP_OVERRIDE = 0;
+    virtual int  getRgbWidth() YARP_OVERRIDE = 0;
+    virtual bool getRgbSupportedConfigurations(yarp::sig::VectorOf<CameraConfig> &configurations) YARP_OVERRIDE { return false;};
+    virtual bool getRgbResolution(int &width, int &height) YARP_OVERRIDE { return false;};
+    virtual bool setRgbResolution(int width, int height) YARP_OVERRIDE = 0;
+    virtual bool getRgbFOV(double &horizontalFov, double &verticalFov) YARP_OVERRIDE = 0;
+    virtual bool setRgbFOV(double horizontalFov, double verticalFov) YARP_OVERRIDE = 0;
+    virtual bool getRgbIntrinsicParam(yarp::os::Property &intrinsic) YARP_OVERRIDE = 0;
 
     /*
      * IDepthVisualParams interface. Look at IVisualParams.h for documentation
      */
-    virtual int    getDepthHeight() = 0;
-    virtual int    getDepthWidth() = 0;
-    virtual bool   setDepthResolution(int width, int height) = 0;
-    virtual bool   getDepthFOV(double &horizontalFov, double &verticalFov) = 0;
-    virtual bool   setDepthFOV(double horizontalFov, double verticalFov) = 0;
-    virtual double getDepthAccuracy() = 0;
-    virtual bool   setDepthAccuracy(double accuracy) = 0;
-    virtual bool   getDepthClipPlanes(double &nearPlane, double &farPlane) = 0;
-    virtual bool   setDepthClipPlanes(double nearPlane, double farPlane) = 0;
-    virtual bool   getDepthIntrinsicParam(yarp::os::Property &intrinsic) = 0;
+    virtual int    getDepthHeight() YARP_OVERRIDE = 0;
+    virtual int    getDepthWidth() YARP_OVERRIDE = 0;
+    virtual bool   setDepthResolution(int width, int height) YARP_OVERRIDE = 0;
+    virtual bool   getDepthFOV(double &horizontalFov, double &verticalFov) YARP_OVERRIDE = 0;
+    virtual bool   setDepthFOV(double horizontalFov, double verticalFov) YARP_OVERRIDE = 0;
+    virtual double getDepthAccuracy() YARP_OVERRIDE = 0;
+    virtual bool   setDepthAccuracy(double accuracy) YARP_OVERRIDE = 0;
+    virtual bool   getDepthClipPlanes(double &nearPlane, double &farPlane) YARP_OVERRIDE = 0;
+    virtual bool   setDepthClipPlanes(double nearPlane, double farPlane) YARP_OVERRIDE = 0;
+    virtual bool   getDepthIntrinsicParam(yarp::os::Property &intrinsic) YARP_OVERRIDE = 0;
 
     /*
      * IRGBDSensor specific interface methods

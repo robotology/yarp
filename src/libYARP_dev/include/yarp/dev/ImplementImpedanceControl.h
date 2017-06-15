@@ -48,12 +48,12 @@ public:
      */
     virtual ~ImplementImpedanceControl();
 
-    virtual bool getAxes(int *ax);
-    virtual bool getImpedance(int j, double *stiffness, double *damping);
-    virtual bool setImpedance(int j, double  stiffness, double  damping);
-    virtual bool setImpedanceOffset(int j, double offset);
-    virtual bool getImpedanceOffset(int j, double* offset);
-    virtual bool getCurrentImpedanceLimit(int j, double *min_stiff, double *max_stiff, double *min_damp, double *max_damp);
+    virtual bool getAxes(int *ax) YARP_OVERRIDE;
+    virtual bool getImpedance(int j, double *stiffness, double *damping) YARP_OVERRIDE;
+    virtual bool setImpedance(int j, double  stiffness, double  damping) YARP_OVERRIDE;
+    virtual bool setImpedanceOffset(int j, double offset) YARP_OVERRIDE;
+    virtual bool getImpedanceOffset(int j, double* offset) YARP_OVERRIDE;
+    virtual bool getCurrentImpedanceLimit(int j, double *min_stiff, double *max_stiff, double *min_damp, double *max_damp) YARP_OVERRIDE;
 
 };
 

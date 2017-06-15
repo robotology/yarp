@@ -232,11 +232,11 @@ public:
     void close();
     void stop();
 
-    virtual void run();
-    virtual bool threadInit();
-    virtual void threadRelease();
-    virtual void afterStart(bool success);
-    virtual void beforeStart();
+    virtual void run() YARP_OVERRIDE;
+    virtual bool threadInit() YARP_OVERRIDE;
+    virtual void threadRelease() YARP_OVERRIDE;
+    virtual void afterStart(bool success) YARP_OVERRIDE;
+    virtual void beforeStart() YARP_OVERRIDE;
 
     Runnable *getAttachment() const;
 };

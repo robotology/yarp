@@ -8,7 +8,7 @@
 #ifndef PRIORITYCARRIER_INC
 #define PRIORITYCARRIER_INC
 
-#include <math.h>
+#include <cmath>
 #include <yarp/os/ModifyingCarrier.h>
 #include <yarp/os/Election.h>
 #include <yarp/os/NullConnectionReader.h>
@@ -45,12 +45,12 @@ public:
     virtual ~PriorityGroup() {}
     virtual bool acceptIncomingData(yarp::os::ConnectionReader& reader,
                                     PriorityCarrier *source);
-    bool recalculate(double t); 
+    bool recalculate(double t);
 
 public:
-    yarp::sig::Matrix InvA;         // the inverse of matrix (I-A) in the equation y(t) = [(I-A)^(-1) * B] .*x(t) 
+    yarp::sig::Matrix InvA;         // the inverse of matrix (I-A) in the equation y(t) = [(I-A)^(-1) * B] .*x(t)
     yarp::sig::Matrix B;            // matrix of biases B in the equation y(t) = [(I-A)^(-1) * B] .*x(t)
-    yarp::sig::Matrix Y;            // matrix y(t) 
+    yarp::sig::Matrix Y;            // matrix y(t)
     yarp::sig::Matrix X;            // matrix x(t)
     //yarp::os::Semaphore semDebug;   // this semaphor is used only when debug mode is active
                                     // to control the access to matrices from debug thread
@@ -63,9 +63,9 @@ class yarp::os::PriorityDebugThread : public yarp::os::RateThread {
 public:
     PriorityDebugThread(PriorityCarrier* carrier);
     virtual ~PriorityDebugThread();
-    void run();
-    bool threadInit();
-    void threadRelease();
+    void run() override;
+    bool threadInit() override;
+    void threadRelease() override;
 
 public:
     int count;
@@ -112,15 +112,15 @@ public:
         }
     }
 
-    virtual Carrier *create() {
+    virtual Carrier *create() override {
         return new PriorityCarrier();
     }
 
-    virtual ConstString getName() {
+    virtual ConstString getName() override {
         return "priority";
     }
 
-    virtual ConstString toString() {
+    virtual ConstString toString() override {
         return "priority_carrier";
     }
 
@@ -152,11 +152,11 @@ public:
 
     double getActualInput(double t);
 
-    virtual bool configure(yarp::os::ConnectionState& proto);
+    virtual bool configure(yarp::os::ConnectionState& proto) override;
 
-    virtual bool acceptIncomingData(yarp::os::ConnectionReader& reader);
+    virtual bool acceptIncomingData(yarp::os::ConnectionReader& reader) override;
 
-    virtual void setCarrierParams(const yarp::os::Property& params) {
+    virtual void setCarrierParams(const yarp::os::Property& params) override {
         yarp::os::Property property = params;
         timeConstant = property.check("tc", Value(timeConstant)).asDouble();
         timeResting = property.check("tr", Value(timeResting)).asDouble();
@@ -167,7 +167,7 @@ public:
             excitation = property.findGroup("ex");
     }
 
-    virtual void getCarrierParams(yarp::os::Property& params) {
+    virtual void getCarrierParams(yarp::os::Property& params) override {
         params.put("tc", timeConstant);
         params.put("tr", timeResting);
         params.put("st", stimulation);

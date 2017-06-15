@@ -12,20 +12,13 @@ yarp_prepare_plugin(opencv_grabber
 if(NOT SKIP_opencv_grabber)
   set(CMAKE_INCLUDE_CURRENT_DIR ON)
 
-  get_property(YARP_OS_INCLUDE_DIRS TARGET YARP_OS PROPERTY INCLUDE_DIRS)
-  get_property(YARP_sig_INCLUDE_DIRS TARGET YARP_sig PROPERTY INCLUDE_DIRS)
-  get_property(YARP_dev_INCLUDE_DIRS TARGET YARP_dev PROPERTY INCLUDE_DIRS)
-  include_directories(${YARP_OS_INCLUDE_DIRS}
-                      ${YARP_sig_INCLUDE_DIRS}
-                      ${YARP_dev_INCLUDE_DIRS})
-
   include_directories(SYSTEM ${OpenCV_INCLUDE_DIRS})
 
   yarp_add_plugin(yarp_opencv OpenCVGrabber.cpp
                               OpenCVGrabber.h)
-  target_link_libraries(yarp_opencv YARP_OS
-                                    YARP_sig
-                                    YARP_dev
+  target_link_libraries(yarp_opencv YARP::YARP_OS
+                                    YARP::YARP_sig
+                                    YARP::YARP_dev
                                     ${OpenCV_LIBRARIES})
   yarp_install(TARGETS yarp_opencv
                EXPORT YARP
@@ -38,4 +31,5 @@ if(NOT SKIP_opencv_grabber)
   yarp_install(FILES opencv_grabber.xml
                DESTINATION ${YARP_MODULES_INSTALL_DIR})
 
+  set_property(TARGET yarp_opencv PROPERTY FOLDER "Plugins/Device")
 endif()

@@ -162,7 +162,7 @@ STRIP_FROM_PATH        = @CMAKE_BINARY_DIR@ \
 # specify the list of include paths that are normally passed to the compiler
 # using the -I flag.
 
-STRIP_FROM_INC_PATH    = @CMAKE_BINARY_DIR@/generated_include \
+STRIP_FROM_INC_PATH    = @CMAKE_BINARY_DIR@/src/libYARP_conf/include \
                          @CMAKE_SOURCE_DIR@/src/libYARP_OS/include/ \
                          @CMAKE_SOURCE_DIR@/src/libYARP_sig/include/ \
                          @CMAKE_SOURCE_DIR@/src/libYARP_dev/include/ \
@@ -170,6 +170,7 @@ STRIP_FROM_INC_PATH    = @CMAKE_BINARY_DIR@/generated_include \
                          @CMAKE_SOURCE_DIR@/src/libYARP_math/include/ \
                          @CMAKE_SOURCE_DIR@/src/libYARP_name/include/ \
                          @CMAKE_SOURCE_DIR@/src/libYARP_gsl/include/ \
+                         @CMAKE_SOURCE_DIR@/src/libYARP_eigen/include/ \
                          @CMAKE_SOURCE_DIR@/src/devices \
                          @CMAKE_SOURCE_DIR@/src/carriers \
                          @CMAKE_SOURCE_DIR@/doc \
@@ -794,7 +795,7 @@ WARN_LOGFILE           = @CMAKE_BINARY_DIR@/doxygen.log
 # spaces. See also FILE_PATTERNS and EXTENSION_MAPPING
 # Note: If this tag is empty the current directory is searched.
 
-INPUT                  = @CMAKE_BINARY_DIR@/generated_include \
+INPUT                  = @CMAKE_BINARY_DIR@/src/conf/libYARP_conf/include \
                          @CMAKE_SOURCE_DIR@/src/libYARP_OS/include \
                          @CMAKE_SOURCE_DIR@/src/libYARP_OS/src \
                          @CMAKE_SOURCE_DIR@/src/libYARP_sig/include \
@@ -807,6 +808,7 @@ INPUT                  = @CMAKE_BINARY_DIR@/generated_include \
                          @CMAKE_SOURCE_DIR@/src/libYARP_name/src \
                          @CMAKE_SOURCE_DIR@/src/libYARP_gsl/include \
                          @CMAKE_SOURCE_DIR@/src/libYARP_gsl/src \
+                         @CMAKE_SOURCE_DIR@/src/libYARP_eigen/include \
                          @CMAKE_SOURCE_DIR@/src/devices \
                          @CMAKE_SOURCE_DIR@/src/carriers \
                          @CMAKE_SOURCE_DIR@/doc \
@@ -2094,6 +2096,7 @@ PREDEFINED             = __cplusplus:=201103L \
                          YARP_sig_API= \
                          YARP_init_API= \
                          YARP_gsl_API= \
+                         YARP_eigen_API= \
                          YARP_WRAP_STL_STRING \
                          Q_SLOTS=slots \
                          Q_SIGNALS=signals

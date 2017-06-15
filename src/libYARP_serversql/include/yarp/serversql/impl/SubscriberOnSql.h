@@ -41,24 +41,24 @@ public:
 
     virtual bool addSubscription(const yarp::os::ConstString& src,
                                  const yarp::os::ConstString& dest,
-                                 const yarp::os::ConstString& mode);
+                                 const yarp::os::ConstString& mode) override;
 
     virtual bool removeSubscription(const yarp::os::ConstString& src,
-                                    const yarp::os::ConstString& dest);
+                                    const yarp::os::ConstString& dest) override;
 
     virtual bool listSubscriptions(const yarp::os::ConstString& port,
-                                   yarp::os::Bottle& reply);
+                                   yarp::os::Bottle& reply) override;
 
-    virtual bool welcome(const yarp::os::ConstString& port, int activity);
+    virtual bool welcome(const yarp::os::ConstString& port, int activity) override;
 
     bool hookup(const yarp::os::ConstString& port);
 
     bool breakdown(const yarp::os::ConstString& port);
 
     virtual bool setTopic(const yarp::os::ConstString& port,
-                          const yarp::os::ConstString& structure, bool active);
+                          const yarp::os::ConstString& structure, bool active) override;
 
-    virtual bool listTopics(yarp::os::Bottle& topics);
+    virtual bool listTopics(yarp::os::Bottle& topics) override;
 
     bool transitiveWelcome(const yarp::os::ConstString& topic,
                            const yarp::os::ConstString& src,
@@ -81,10 +81,10 @@ public:
 
     virtual bool setType(const yarp::os::ConstString& family,
                          const yarp::os::ConstString& structure,
-                         const yarp::os::ConstString& value);
+                         const yarp::os::ConstString& value) override;
 
     virtual yarp::os::ConstString getType(const yarp::os::ConstString& family,
-                                          const yarp::os::ConstString& structure);
+                                          const yarp::os::ConstString& structure) override;
 
 
     void setVerbose(bool verbose) {

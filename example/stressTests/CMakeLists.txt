@@ -2,16 +2,22 @@
 # Author: Lorenzo Natale
 # CopyPolicy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
 
-cmake_minimum_required(VERSION 2.8.9)
+cmake_minimum_required(VERSION 3.0)
+project(stressTests)
 
-PROJECT (stressTests)
+find_package(YARP REQUIRED)
 
-FIND_PACKAGE(YARP REQUIRED)
-INCLUDE_DIRECTORIES(${YARP_INCLUDE_DIRS})
-LINK_LIBRARIES(${YARP_LIBRARIES})
+add_executable(stressrpc stressrpc.cpp)
+target_link_libraries(stressrpc ${YARP_LIBRARIES})
 
-ADD_EXECUTABLE(stressrpc stressrpc.cpp)
-ADD_EXECUTABLE(stressrpcMD stressrpcMD.cpp)
-ADD_EXECUTABLE(callback callback.cpp)
-ADD_EXECUTABLE(smallrpc smallrpc.cpp)
-ADD_EXECUTABLE(windows1 windows1.cpp)
+add_executable(stressrpcMD stressrpcMD.cpp)
+target_link_libraries(stressrpcMD ${YARP_LIBRARIES})
+
+add_executable(callback callback.cpp)
+target_link_libraries(callback ${YARP_LIBRARIES})
+
+add_executable(smallrpc smallrpc.cpp)
+target_link_libraries(smallrpc ${YARP_LIBRARIES})
+
+add_executable(windows1 windows1.cpp)
+target_link_libraries(windows1 ${YARP_LIBRARIES})

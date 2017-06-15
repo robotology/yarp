@@ -39,7 +39,7 @@ public:
         positive = true;
     }
 
-    virtual void run() {
+    virtual void run() override {
         do {
             mutex.wait();
             if (ct==0) {

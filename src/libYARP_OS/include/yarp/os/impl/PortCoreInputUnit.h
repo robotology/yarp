@@ -41,7 +41,7 @@ public:
                       int index,
                       InputProtocol *ip,
                       bool reversed) :
-            PortCoreUnit(owner,index),
+            PortCoreUnit(owner, index),
             ip(ip),
             phase(1),
             access(1),
@@ -77,7 +77,7 @@ public:
      * Start a thread running to serve this input.
      *
      */
-    virtual bool start();
+    virtual bool start() override;
 
     /**
      *
@@ -86,19 +86,19 @@ public:
      * data gets to the user
      *
      */
-    virtual void run();
+    virtual void run() override;
 
-    virtual bool isInput()
+    virtual bool isInput() override
     {
         return true;
     }
 
-    virtual void close()
+    virtual void close() override
     {
         closeMain();
     }
 
-    virtual bool isFinished()
+    virtual bool isFinished() override
     {
         return finished;
     }
@@ -108,20 +108,20 @@ public:
         return name;
     }
 
-    virtual Route getRoute();
+    virtual Route getRoute() override;
 
-    virtual bool interrupt();
+    virtual bool interrupt() override;
 
-    void setCarrierParams(const yarp::os::Property& params)
+    void setCarrierParams(const yarp::os::Property& params) override
     {
-        if(ip) {
+        if (ip) {
             ip->getReceiver().setCarrierParams(params);
         }
     }
 
-    void getCarrierParams(yarp::os::Property& params)
+    void getCarrierParams(yarp::os::Property& params) override
     {
-        if(ip) {
+        if (ip) {
             ip->getReceiver().getCarrierParams(params);
         }
     }
@@ -132,7 +132,7 @@ public:
         return ip;
     }
 
-    virtual bool isBusy();
+    virtual bool isBusy() override;
 
 private:
     InputProtocol *ip;

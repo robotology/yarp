@@ -2,11 +2,9 @@
 # Author: Paul Fitzpatrick
 # CopyPolicy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
 
-cmake_minimum_required(VERSION 2.8.9)
+cmake_minimum_required(VERSION 3.0)
+
 find_package(YARP REQUIRED)
-include_directories(${YARP_INCLUDE_DIRS})
-list(APPEND CMAKE_MODULE_PATH ${YARP_MODULE_PATH})
-include(YarpPlugin)
 
 yarp_begin_plugin_library(userlib)
 add_subdirectory(fake_grabber)

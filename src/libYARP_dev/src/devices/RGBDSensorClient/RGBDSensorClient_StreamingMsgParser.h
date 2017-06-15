@@ -36,7 +36,7 @@ public:
     ~RgbImageReader_Impl();
 
     using yarp::os::TypedReaderCallback<yarp::sig::FlexImage>::onRead;
-    void onRead(yarp::sig::FlexImage& datum);
+    void onRead(yarp::sig::FlexImage& datum) override;
     yarp::sig::FlexImage getImage();
 };
 
@@ -51,7 +51,7 @@ public:
     ~FloatImageReader_Impl();
 
     using yarp::os::TypedReaderCallback<yarp::sig::ImageOf< yarp::sig::PixelFloat> >::onRead;
-    void onRead(yarp::sig::ImageOf< yarp::sig::PixelFloat> & datum);
+    void onRead(yarp::sig::ImageOf< yarp::sig::PixelFloat> & datum)  override;
     yarp::sig::ImageOf<yarp::sig::PixelFloat> getImage();
 };
 

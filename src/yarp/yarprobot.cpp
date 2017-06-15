@@ -11,7 +11,7 @@
 #include <yarp/os/ResourceFinderOptions.h>
 #include <yarp/os/Bottle.h>
 #include <yarp/os/Os.h>
-#include <stdio.h>
+#include <cstdio>
 
 #include "yarpcontextutils.h"
 #include "yarprobot.h"

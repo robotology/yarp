@@ -81,7 +81,7 @@ public:
      */
     virtual Route getRoute()
     {
-        return Route("null","null","null");
+        return Route("null", "null", "null");
     }
 
     /**
@@ -181,7 +181,7 @@ public:
     void setMode()
     {
         Name name(getRoute().getCarrierName() + ConstString("://test"));
-        mode = name.getCarrierModifier("log",&hasMode);
+        mode = name.getCarrierModifier("log", &hasMode);
     }
 
     /**

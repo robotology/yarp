@@ -20,6 +20,9 @@ namespace yarp {
     }
 }
 
+// Explicit instantiation
+template class YARP_OS_impl_API PlatformVector<yarp::os::impl::UnitTest *>;
+
 /**
  * Simple unit testing framework.  There are libraries out there for
  * this, but we don't want to add another dependency to YARP.
@@ -146,10 +149,10 @@ private:
 
 // add info
 
-#define checkEqual(x,y,desc) checkEqualImpl(x,y,desc,#x,#y,__FILE__,__LINE__)
-#define checkEqualish(x,y,desc) checkEqualishImpl(x,y,desc,#x,#y,__FILE__,__LINE__)
-#define checkTrue(x,desc) checkEqualImpl((x)?true:false,true,desc,#x,"true",__FILE__,__LINE__)
-#define checkFalse(x,desc) checkEqualImpl((x)?true:false,false,desc,#x,"false",__FILE__,__LINE__)
+#define checkEqual(x, y, desc) checkEqualImpl(x, y, desc, #x, #y, __FILE__, __LINE__)
+#define checkEqualish(x, y, desc) checkEqualishImpl(x, y, desc, #x, #y, __FILE__, __LINE__)
+#define checkTrue(x, desc) checkEqualImpl((x)?true:false, true, desc, #x, "true", __FILE__, __LINE__)
+#define checkFalse(x, desc) checkEqualImpl((x)?true:false, false, desc, #x, "false", __FILE__, __LINE__)
 
 
 #endif // YARP_OS_IMPL_UNITTEST_H

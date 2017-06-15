@@ -13,23 +13,16 @@ yarp_prepare_plugin(priority
 
 if(NOT SKIP_priority)
   set(CMAKE_INCLUDE_CURRENT_DIR ON)
-
-  get_property(YARP_OS_INCLUDE_DIRS TARGET YARP_OS PROPERTY INCLUDE_DIRS)
-  get_property(YARP_sig_INCLUDE_DIRS TARGET YARP_sig PROPERTY INCLUDE_DIRS)
-  include_directories(${YARP_OS_INCLUDE_DIRS}
-                      ${YARP_sig_INCLUDE_DIRS})
   if(CREATE_LIB_MATH)
-    get_property(YARP_math_INCLUDE_DIRS TARGET YARP_math PROPERTY INCLUDE_DIRS)
-    include_directories(${YARP_math_INCLUDE_DIRS})
     add_definitions(-DWITH_YARPMATH)
   endif()
 
   yarp_add_plugin(yarp_priority PriorityCarrier.h
                                 PriorityCarrier.cpp)
-  target_link_libraries(yarp_priority YARP_OS
-                                      YARP_sig)
+  target_link_libraries(yarp_priority YARP::YARP_OS
+                                      YARP::YARP_sig)
   if(CREATE_LIB_MATH)
-     target_link_libraries(yarp_priority YARP_math)
+     target_link_libraries(yarp_priority YARP::YARP_math)
   endif()
 
   yarp_install(TARGETS yarp_priority
@@ -40,4 +33,6 @@ if(NOT SKIP_priority)
   yarp_install(FILES priority.ini
                COMPONENT runtime
                DESTINATION ${YARP_PLUGIN_MANIFESTS_INSTALL_DIR})
+
+  set_property(TARGET yarp_priority PROPERTY FOLDER "Plugins/Carrier")
 endif()

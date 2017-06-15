@@ -6,7 +6,7 @@
 
 #include <yarp/math/Quaternion.h>
 #include <yarp/math/Math.h>
-#include <math.h>
+#include <cmath>
 #include <cstdio>
 
 using namespace yarp::math;
@@ -270,6 +270,16 @@ double Quaternion::abs()
                 internal_data[1] * internal_data[1] +
                 internal_data[2] * internal_data[2] +
                 internal_data[3] * internal_data[3]);
+}
+
+void Quaternion::normalize()
+{
+    double length = abs();
+    internal_data[0] /= length;
+    internal_data[1] /= length;
+    internal_data[2] /= length;
+    internal_data[3] /= length;
+    return;
 }
 
 double Quaternion::arg()

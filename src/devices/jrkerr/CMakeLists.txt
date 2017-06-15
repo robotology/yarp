@@ -11,10 +11,6 @@ yarp_prepare_plugin(jrkerr
 
 if(NOT SKIP_jrkerr)
   set(CMAKE_INCLUDE_CURRENT_DIR ON)
-  get_property(YARP_OS_INCLUDE_DIRS TARGET YARP_OS PROPERTY INCLUDE_DIRS)
-  get_property(YARP_dev_INCLUDE_DIRS TARGET YARP_dev PROPERTY INCLUDE_DIRS)
-  include_directories(${YARP_OS_INCLUDE_DIRS}
-                      ${YARP_dev_INCLUDE_DIRS})
   yarp_add_plugin(yarp_jrkerr JrkerrMotionControl.cpp
                               nmccom.cpp
                               picservo.cpp
@@ -23,8 +19,8 @@ if(NOT SKIP_jrkerr)
                               nmccom.h
                               picservo.h
                               sio_util.h)
-  target_link_libraries(yarp_jrkerr YARP_OS
-                                    YARP_dev)
+  target_link_libraries(yarp_jrkerr YARP::YARP_OS
+                                    YARP::YARP_dev)
   yarp_install(TARGETS yarp_jrkerr
                EXPORT YARP
                COMPONENT runtime
@@ -33,4 +29,6 @@ if(NOT SKIP_jrkerr)
   yarp_install(FILES jrkerr.ini
                COMPONENT runtime
                DESTINATION ${YARP_PLUGIN_MANIFESTS_INSTALL_DIR})
+
+  set_property(TARGET yarp_jrkerr PROPERTY FOLDER "Unsupported")
 endif()

@@ -7,13 +7,11 @@ option(CREATE_DEVICE_LIBRARY_MODULES "Compile device modules" FALSE)
 
 include(YarpPlugin)
 
-get_property(YARP_OS_INCLUDE_DIRS TARGET YARP_OS PROPERTY INCLUDE_DIRS)
-include_directories(${YARP_OS_INCLUDE_DIRS})
-
 # Prepare a plugin library called "yarpmod".
 yarp_begin_plugin_library(yarpmod)
   add_subdirectory(cuda)
   add_subdirectory(depthCamera)
+  add_subdirectory(fakeDepthCamera)
   add_subdirectory(fakebot)
   add_subdirectory(fakeMotionControl)
   add_subdirectory(fakeAnalogSensor)
@@ -34,12 +32,15 @@ yarp_begin_plugin_library(yarpmod)
   add_subdirectory(fakeLaser)
   add_subdirectory(laserFromDepth)
   add_subdirectory(rpLidar)
+  add_subdirectory(rpLidar2)
   add_subdirectory(laserHokuyo)
   add_subdirectory(kinect)
   add_subdirectory(openni2)
   add_subdirectory(ovrheadset)
   add_subdirectory(PumaCalibrator)
   add_subdirectory(meiMotionControl)
+  add_subdirectory(test_grabber)
+  add_subdirectory(SDLJoypad)
 
   if(NOT YARP_NO_DEPRECATED) # since YARP 2.3.68
     add_subdirectory(microphone)
@@ -86,6 +87,8 @@ yarp_begin_plugin_library(yarpmod)
 endforeach(EXTFILE)
 
 yarp_end_plugin_library(yarpmod)
+add_library(YARP::yarpmod ALIAS yarpmod)
+
 
 install(TARGETS yarpmod
         EXPORT YARP
@@ -97,3 +100,5 @@ install(TARGETS yarpmod
 if (YARP_LINK_PLUGINS)
   set_property(GLOBAL APPEND PROPERTY YARP_LIBS yarpmod ${yarpmod_LIBRARIES})
 endif()
+
+set_property(TARGET yarpmod PROPERTY FOLDER "Plugins/Device")

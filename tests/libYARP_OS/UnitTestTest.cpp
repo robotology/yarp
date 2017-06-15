@@ -12,7 +12,7 @@ using namespace yarp::os::impl;
 
 class UnitTestTest : public UnitTest {
 public:
-    virtual ConstString getName() { return "UnitTestTest"; }
+    virtual ConstString getName() override { return "UnitTestTest"; }
 
     void checkHeapMonitor() {
         if (!heapMonitorSupported()) {
@@ -47,7 +47,7 @@ public:
         checkTrue(!isolatedTest.isOk(),"memory allocation was flagged as error");
     }
 
-    virtual void runTests() {
+    virtual void runTests() override {
         checkHeapMonitor();
     }
 };

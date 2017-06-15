@@ -59,4 +59,3 @@ inline Eigen::Map<const Eigen::Matrix<double,Eigen::Dynamic,Eigen::Dynamic,Eigen
 
 
 #endif
-

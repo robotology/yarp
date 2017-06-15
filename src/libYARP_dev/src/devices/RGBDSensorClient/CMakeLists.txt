@@ -11,7 +11,6 @@ set(RGBDClient_srcs     src/devices/RGBDSensorClient/RGBDSensorClient.cpp
 
 set(RGBDClient_hrds     src/devices/RGBDSensorClient/RGBDSensorClient.h
                         src/devices/RGBDSensorClient/RGBDSensorClient_StreamingMsgParser.h
-#                       src/devices/DepthSensorClient/yarpRosHelper.h
                         PARENT_SCOPE)
 
 

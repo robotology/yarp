@@ -7,7 +7,7 @@
 #include "yarp/dev/ControlBoardInterfacesImpl.h"
 #include <yarp/dev/ControlBoardHelper.h>
 
-#include <stdio.h>
+#include <cstdio>
 using namespace yarp::dev;
 #define JOINTIDCHECK if (j >= castToMapper(helper)->axes()){yError("joint id out of bound"); return false;}
 #define MJOINTIDCHECK if (joints[idx] >= castToMapper(helper)->axes()){yError("joint id out of bound"); return false;}
@@ -60,48 +60,57 @@ bool ImplementControlMode2::uninitialize ()
     return true;
 }
 
-
+#ifndef YARP_NO_DEPRECATED // since YARP 2.3.70
 bool ImplementControlMode2::setPositionMode(int j)
 {
     JOINTIDCHECK
     int k=castToMapper(helper)->toHw(j);
+YARP_WARNING_PUSH
+YARP_DISABLE_DEPRECATED_WARNING
     return raw->setPositionModeRaw(k);
+YARP_WARNING_POP
 }
 
 bool ImplementControlMode2::setVelocityMode(int j)
 {
     JOINTIDCHECK
     int k=castToMapper(helper)->toHw(j);
+YARP_WARNING_PUSH
+YARP_DISABLE_DEPRECATED_WARNING
     return raw->setVelocityModeRaw(k);
+YARP_WARNING_POP
 }
 
 bool ImplementControlMode2::setTorqueMode(int j)
 {
     JOINTIDCHECK
     int k=castToMapper(helper)->toHw(j);
+YARP_WARNING_PUSH
+YARP_DISABLE_DEPRECATED_WARNING
     return raw->setTorqueModeRaw(k);
-}
-
-bool ImplementControlMode2::setOpenLoopMode(int j)
-{
-    JOINTIDCHECK
-    int k=castToMapper(helper)->toHw(j);
-    return raw->setOpenLoopModeRaw(k);
+YARP_WARNING_POP
 }
 
 bool ImplementControlMode2::setImpedancePositionMode(int j)
 {
     JOINTIDCHECK
     int k=castToMapper(helper)->toHw(j);
+YARP_WARNING_PUSH
+YARP_DISABLE_DEPRECATED_WARNING
     return raw->setImpedancePositionModeRaw(k);
+YARP_WARNING_POP
 }
 
 bool ImplementControlMode2::setImpedanceVelocityMode(int j)
 {
     JOINTIDCHECK
     int k=castToMapper(helper)->toHw(j);
+YARP_WARNING_PUSH
+YARP_DISABLE_DEPRECATED_WARNING
     return raw->setImpedanceVelocityModeRaw(k);
+YARP_WARNING_POP
 }
+#endif // YARP_NO_DEPRECATED
 
 bool ImplementControlMode2::getControlMode(int j, int *f)
 {

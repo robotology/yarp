@@ -21,7 +21,7 @@
 #define WRITE_TO_PIPE           1
 #define READ_FROM_PIPE          0
 
-#if defined(WIN32)
+#if defined(_WIN32)
     #include<Windows.h>
     #define SIGKILL 9
 #else
@@ -31,7 +31,7 @@
     #include <fcntl.h>
     #include <cerrno>
     #include <unistd.h>
-    #include <string.h>
+    #include <cstring>
 
     #define PIPE_TIMEOUT        0
     #define PIPE_EVENT          1
@@ -43,7 +43,7 @@ using namespace yarp::os;
 using namespace yarp::manager;
 
 
-#if defined(WIN32)
+#if defined(_WIN32)
 class LocalTerminateParams
 {
 public:
@@ -226,7 +226,7 @@ bool LocalBroker::init(const char* szcmd, const char* szparam,
     }
     */
 
-#if defined(WIN32)
+#if defined(_WIN32)
     // do nothing
     bInitialized = true;
     return true;
@@ -270,7 +270,7 @@ bool LocalBroker::stop()
     if(bOnlyConnector) return false;
 
     strError.clear();
-#if defined(WIN32)
+#if defined(_WIN32)
     stopCmd(ID);
     stopStdout();
 #else
@@ -299,7 +299,7 @@ bool LocalBroker::kill()
 
     strError.clear();
 
-#if defined(WIN32)
+#if defined(_WIN32)
     killCmd(ID);
     stopStdout();
 #else
@@ -513,7 +513,7 @@ bool LocalBroker::threadInit()
 void LocalBroker::run()
 {
 
-#if defined(WIN32)
+#if defined(_WIN32)
     //windows implementaion
     DWORD dwRead;
     CHAR buff[1024];
@@ -560,7 +560,7 @@ void LocalBroker::setWindowMode(WindowMode m)
 }
 
 
-#if defined(WIN32)
+#if defined(_WIN32)
 
 string LocalBroker::lastError2String()
 {
@@ -599,8 +599,8 @@ int LocalBroker::ExecuteCmd(void)
     DWORD dwCreationFlags;
 
     //these come from xml
-    /* 
-    // These are not supported until we find a way to send break signals to 
+    /*
+    // These are not supported until we find a way to send break signals to
     // consoles that are not inherited
     if (strDisplay=="--visible_na")
         windowMode=WINDOW_VISIBLE;
@@ -610,7 +610,7 @@ int LocalBroker::ExecuteCmd(void)
 
     // this is for "attach to stoud only"
     if (windowMode==WINDOW_VISIBLE)
-    { 
+    {
         //this is common to all processes
         cmd_startup_info.dwFlags |= STARTF_USESHOWWINDOW;
         cmd_startup_info.wShowWindow = SW_SHOWNA;
@@ -634,7 +634,7 @@ int LocalBroker::ExecuteCmd(void)
 
         dwCreationFlags=CREATE_NEW_PROCESS_GROUP; //CREATE_NEW_CONSOLE|CREATE_NEW_PROCESS_GROUP,
     }
-  
+
 
 
     /*
@@ -682,7 +682,7 @@ int LocalBroker::ExecuteCmd(void)
                                 bWorkdir?strWorkdirOk.c_str():NULL, // working directory
                                 &cmd_startup_info,   // STARTUPINFO pointer
                                 &cmd_process_info);  // receives PROCESS_INFORMATION
-       
+
     if (!bSuccess && bWorkdir)
     {
             bSuccess=CreateProcess(NULL,    // command name
@@ -743,13 +743,13 @@ bool LocalBroker::stopCmd(int pid)
 
     LocalTerminateParams params(pid);
     EnumWindows((WNDENUMPROC)LocalTerminateAppEnum,(LPARAM)&params);
-    
-    // I believe we do not need this. It is ignored by console applications created with CREATE_NEW_PROCESS_GROUP 
-    GenerateConsoleCtrlEvent(CTRL_C_EVENT, pid); 
+
+    // I believe we do not need this. It is ignored by console applications created with CREATE_NEW_PROCESS_GROUP
+    GenerateConsoleCtrlEvent(CTRL_C_EVENT, pid);
 
     //send BREAK_EVENT becaue we created the process with CREATE_NEW_PROCESS_GROUP
-    GenerateConsoleCtrlEvent(CTRL_BREAK_EVENT, pid); 
-    
+    GenerateConsoleCtrlEvent(CTRL_BREAK_EVENT, pid);
+
     CloseHandle(hProc);
     return true;
 }
@@ -896,7 +896,7 @@ int LocalBroker::ExecuteCmd(void)
         int nargs = 0;
         char **szarg = new char*[C_MAXARGS + 1];
         parseArguments(szcmd, &nargs, szarg);
-        szarg[nargs]=0;                
+        szarg[nargs]=0;
         if(strEnv.size())
         {
             yarp::os::impl::SplitString ss(strEnv.c_str(), ';');
@@ -921,7 +921,7 @@ int LocalBroker::ExecuteCmd(void)
                 close(pipe_child_to_parent[WRITE_TO_PIPE]);
                 delete [] szcmd;
                 delete [] szarg;
-                ::exit(ret);
+                std::exit(ret);
             }
         }
 

@@ -89,7 +89,7 @@ public:
     // running into DLL linkage trouble
     inline bool readString(std::string& str, bool *is_vocab = YARP_NULLPTR) {
         yarp::os::ConstString tmp;
-        bool ok = readString(tmp,is_vocab);
+        bool ok = readString(tmp, is_vocab);
         str = tmp;
         return ok;
     }

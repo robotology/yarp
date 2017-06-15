@@ -31,18 +31,18 @@ public:
      */
     ShmemCarrier(int version = 2);
 
-    virtual Carrier *create();
+    virtual Carrier *create() override;
 
-    virtual ConstString getName();
+    virtual ConstString getName() override;
 
     virtual int getSpecifierCode();
-    virtual bool requireAck();
-    virtual bool isConnectionless();
-    virtual bool checkHeader(const Bytes& header);
-    virtual void getHeader(const Bytes& header);
-    virtual void setParameters(const Bytes& header);
-    virtual bool respondToHeader(ConnectionState& proto);
-    virtual bool expectReplyToHeader(ConnectionState& proto);
+    virtual bool requireAck() override;
+    virtual bool isConnectionless() override;
+    virtual bool checkHeader(const Bytes& header) override;
+    virtual void getHeader(const Bytes& header) override;
+    virtual void setParameters(const Bytes& header) override;
+    virtual bool respondToHeader(ConnectionState& proto) override;
+    virtual bool expectReplyToHeader(ConnectionState& proto) override;
 
     /*
       -- unfortunately member templates not working on Visual Studio 6?

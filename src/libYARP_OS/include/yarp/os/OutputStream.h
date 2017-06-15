@@ -38,7 +38,7 @@ public:
      *
      */
     virtual void write(char ch) {
-        write(yarp::os::Bytes(&ch,1));
+        write(yarp::os::Bytes(&ch, 1));
     }
 
     /**
@@ -52,7 +52,7 @@ public:
      *
      */
     virtual void write(const Bytes& b, int offset, int len) {
-        write(yarp::os::Bytes(b.get()+offset,len));
+        write(yarp::os::Bytes(b.get()+offset, len));
     }
 
     /**
@@ -88,7 +88,7 @@ public:
      *
      */
     virtual void writeLine(const char *data, int len) {
-        yarp::os::Bytes b((char*)data,len);
+        yarp::os::Bytes b((char*)data, len);
         write(b);
         write('\n');
     }

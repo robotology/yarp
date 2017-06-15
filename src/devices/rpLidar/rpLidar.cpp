@@ -4,6 +4,8 @@
 * CopyPolicy: Released under the terms of the GPLv2 or later, see GPL.TXT
 */
 
+#define _USE_MATH_DEFINES
+
 #include <rpLidar.h>
 
 #include <yarp/os/Time.h>
@@ -12,12 +14,11 @@
 #include <yarp/os/LockGuard.h>
 #include <yarp/os/ResourceFinder.h>
 #include <iostream>
-#include <string.h>
-#include <stdlib.h>
+#include <cstring>
+#include <cstdlib>
 #include <limits>
 
-#define _USE_MATH_DEFINES
-#include <math.h>
+#include <cmath>
 
 //#define LASER_DEBUG
 //#define FORCE_SCAN

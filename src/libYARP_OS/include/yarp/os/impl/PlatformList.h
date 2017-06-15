@@ -13,15 +13,15 @@
 #  define PLATFORM_LIST(x) ACE_Double_Linked_List<x>
 #  define PLATFORM_LIST_EMPTY(x) x.is_empty()
 #  define PLATFORM_LIST_CLEAR(x) x.reset()
-#  define PLATFORM_LIST_PUSH_BACK(x,y) x.insert_tail(y)
-#  define PLATFORM_LIST_GET(x,y) x.get(y)
+#  define PLATFORM_LIST_PUSH_BACK(x, y) x.insert_tail(y)
+#  define PLATFORM_LIST_GET(x, y) x.get(y)
 #else
 #  include <list>
 #  define PLATFORM_LIST(x) std::list<x *>
 #  define PLATFORM_LIST_EMPTY(x) x.empty()
 #  define PLATFORM_LIST_CLEAR(x) while (!x.empty()) { delete x.back(); x.pop_back(); }
-#  define PLATFORM_LIST_PUSH_BACK(x,y) x.push_back(y)
-#  define PLATFORM_LIST_GET(x,y) y = x.front()
+#  define PLATFORM_LIST_PUSH_BACK(x, y) x.push_back(y)
+#  define PLATFORM_LIST_GET(x, y) y = x.front()
 #endif
 
 #endif

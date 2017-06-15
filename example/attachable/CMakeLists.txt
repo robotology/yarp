@@ -2,12 +2,10 @@
 # Authors: Lorenzo Natale
 # CopyPolicy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
 
-cmake_minimum_required(VERSION 2.8.9)
+cmake_minimum_required(VERSION 3.0)
+project(attachable)
 
-FIND_PACKAGE(YARP REQUIRED)
-INCLUDE_DIRECTORIES(${YARP_INCLUDE_DIRS})
+find_package(YARP REQUIRED)
 
-PROJECT(attachable)
-
-ADD_EXECUTABLE(attachable main.cpp)
-TARGET_LINK_LIBRARIES(attachable ${YARP_LIBRARIES})
+add_executable(attachable main.cpp)
+target_link_libraries(attachable ${YARP_LIBRARIES})

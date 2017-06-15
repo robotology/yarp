@@ -28,6 +28,8 @@
 // General files
 
 #include <yarp/os/impl/TcpAcceptor.h>
+#include <yarp/os/impl/PlatformSysWait.h>
+#include <yarp/os/impl/PlatformSignal.h>
 
 using namespace yarp::os::impl;
 using namespace yarp::os;
@@ -79,10 +81,8 @@ int TcpAcceptor::shared_open(const Contact& address) {
     servAddr.sin_addr.s_addr = INADDR_ANY;
     servAddr.sin_family = AF_INET;
     servAddr.sin_port = htons((address.getPort()>0)?address.getPort():0);
-    inet_aton(address.getHost().c_str(), &servAddr.sin_addr);
+    inet_pton(AF_INET, address.getHost().c_str(), &servAddr.sin_addr);
     memset(servAddr.sin_zero, '\0', sizeof servAddr.sin_zero);
-
-//    servAddress = Address(inet_ntoa(servAddr.sin_addr),servAddr.sin_port);
 
     if (bind(get_handle(), (struct sockaddr *)&servAddr,
             sizeof (struct sockaddr)) == -1) {
@@ -123,8 +123,6 @@ int TcpAcceptor::shared_open(const Contact& address) {
  * Accept connection and set field for clientAddress.
  */
 int TcpAcceptor::accept(TcpStream &new_stream) {
-//    printf("Waiting for client to accept...\n");
-
     sockaddr *addr = 0;
     int len = 0; int *len_ptr = &len;
 
@@ -134,13 +132,6 @@ int TcpAcceptor::accept(TcpStream &new_stream) {
         return -1;
     }
 
-//    clientAddress = Address(inet_ntoa(clientAddr.sin_addr),clientAddr.sin_port);
-
-//    char text[256];
-//    sprintf(text, "Connected to client %s", inet_ntoa(clientAddr.sin_addr));
-//    sprintf(text, " with server fd %i and client fd %i", sockets.get_serv_sockfd(), sockets.get_client_sockfd());
-//    printf("%s\n", text);
-//    happy = true;
     return 1;
 }
 

@@ -11,6 +11,7 @@
 #define YARP_MANAGER_Exec_State
 
 #include <yarp/manager/fsm.h>
+#include <yarp/conf/api.h>
 
 
 namespace yarp {
@@ -70,11 +71,11 @@ public:
     ~Suspended();
 
 public:
-    void start(void);
-    void stop(void);
-    void kill(void);
-    void refresh(void);
-    void moduleFailed(void);
+    void start(void) YARP_OVERRIDE;
+    void stop(void) YARP_OVERRIDE;
+    void kill(void) YARP_OVERRIDE;
+    void refresh(void) YARP_OVERRIDE;
+    void moduleFailed(void) YARP_OVERRIDE;
 
 public:
     Executable* executable;
@@ -91,15 +92,15 @@ public:
     ~Ready();
 
 public:
-    void kill(void);
-    void startModule(void);
-    void moduleFailed(void);
+    void kill(void) YARP_OVERRIDE;
+    void startModule(void) YARP_OVERRIDE;
+    void moduleFailed(void) YARP_OVERRIDE;
 
 private:
     Executable* executable;
     bool bAborted;
     bool checkPriorityPorts(void);
-    bool checkResources(void);
+    bool checkResources(bool silent=true);
     bool timeout(double base, double timeout);
 };
 
@@ -115,10 +116,10 @@ public:
     ~Connecting();
 
 public:
-    void refresh(void);
-    void kill(void);
-    void connectAllPorts(void);
-    void moduleFailed(void);
+    void refresh(void) YARP_OVERRIDE;
+    void kill(void) YARP_OVERRIDE;
+    void connectAllPorts(void) YARP_OVERRIDE;
+    void moduleFailed(void) YARP_OVERRIDE;
 
 private:
     Executable* executable;
@@ -138,12 +139,12 @@ public:
     ~Running();
 
 public:
-    void refresh(void);
-    void kill(void);
-    void start(void);
-    void stop(void);
-    void moduleFailed(void);
-    void connectionFailed(void* which);
+    void refresh(void) YARP_OVERRIDE;
+    void kill(void) YARP_OVERRIDE;
+    void start(void) YARP_OVERRIDE;
+    void stop(void) YARP_OVERRIDE;
+    void moduleFailed(void) YARP_OVERRIDE;
+    void connectionFailed(void* which) YARP_OVERRIDE;
 
 private:
     Executable* executable;
@@ -160,12 +161,12 @@ public:
     ~Dying();
 
 public:
-    void refresh(void);
-    void kill(void);
-    void moduleFailed(void);
-    void stopModule(void);
-    void killModule(void);
-    void disconnectAllPorts(void);
+    void refresh(void) YARP_OVERRIDE;
+    void kill(void) YARP_OVERRIDE;
+    void moduleFailed(void) YARP_OVERRIDE;
+    void stopModule(void) YARP_OVERRIDE;
+    void killModule(void) YARP_OVERRIDE;
+    void disconnectAllPorts(void) YARP_OVERRIDE;
 
 private:
     Executable* executable;
@@ -182,11 +183,11 @@ public:
     ~Dead();
 
 public:
-    void start(void);
-    void stop(void);
-    void kill(void);
-    void refresh(void);
-    void moduleFailed(void);
+    void start(void) YARP_OVERRIDE;
+    void stop(void) YARP_OVERRIDE;
+    void kill(void) YARP_OVERRIDE;
+    void refresh(void) YARP_OVERRIDE;
+    void moduleFailed(void) YARP_OVERRIDE;
 
 private:
     Executable* executable;
@@ -216,7 +217,7 @@ public:
 
 protected:
     void onTransition(FSM::StateBase* previous,
-                    FSM::Event* event, FSM::StateBase* current);
+                    FSM::Event* event, FSM::StateBase* current) YARP_OVERRIDE;
 
 private:
     Executable* executable;

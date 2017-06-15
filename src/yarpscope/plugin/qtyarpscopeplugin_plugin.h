@@ -12,6 +12,7 @@
 #define QTYARPSCOPEPLUGIN_PLUGIN_H
 
 #include <QQmlExtensionPlugin>
+#include <yarp/conf/compiler.h>
 
 class QtYARPScopePluginPlugin : public QQmlExtensionPlugin
 {
@@ -19,7 +20,7 @@ class QtYARPScopePluginPlugin : public QQmlExtensionPlugin
     Q_PLUGIN_METADATA(IID "org.qt-project.Qt.QQmlExtensionInterface")
 
 public:
-    void registerTypes(const char *uri);
+    void registerTypes(const char *uri) override;
 };
 
 #endif // QTYARPSCOPEPLUGIN_PLUGIN_H

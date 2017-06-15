@@ -14,11 +14,6 @@ yarp_prepare_plugin(bayer
 if(NOT SKIP_bayer)
   set(CMAKE_INCLUDE_CURRENT_DIR ON)
 
-  get_property(YARP_OS_INCLUDE_DIRS TARGET YARP_OS PROPERTY INCLUDE_DIRS)
-  get_property(YARP_sig_INCLUDE_DIRS TARGET YARP_sig PROPERTY INCLUDE_DIRS)
-  include_directories(${YARP_OS_INCLUDE_DIRS}
-                      ${YARP_sig_INCLUDE_DIRS})
-
   if(NOT YARP_HAS_LIBDC1394)
     set(DC1394_SRC ${CMAKE_SOURCE_DIR}/extern/libdc1394_bayer/libdc1394_bayer.c
                    ${CMAKE_SOURCE_DIR}/extern/libdc1394_bayer/conversions.h)
@@ -45,8 +40,8 @@ if(NOT SKIP_bayer)
                              BayerCarrier.cpp
                              ${DC1394_SRC})
 
-  target_link_libraries(yarp_bayer YARP_OS
-                                   YARP_sig
+  target_link_libraries(yarp_bayer YARP::YARP_OS
+                                   YARP::YARP_sig
                                    ${Libdc1394_LIBRARIES})
 
   yarp_install(TARGETS yarp_bayer
@@ -57,4 +52,6 @@ if(NOT SKIP_bayer)
   yarp_install(FILES bayer.ini
                COMPONENT runtime
                DESTINATION ${YARP_PLUGIN_MANIFESTS_INSTALL_DIR})
+
+  set_property(TARGET yarp_bayer PROPERTY FOLDER "Plugins/Carrier")
 endif()

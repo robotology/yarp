@@ -3,20 +3,21 @@
 // CopyPolicy: Released under the terms of the GNU GPL v2.0.
 
 
-#include <stdlib.h>
+#include <cstdlib>
 #include <unistd.h>
 #include <termios.h> // terminal io (serial port) interface
 #include <fcntl.h>   // File control definitions
-#include <errno.h>   // Error number definitions
+#include <cerrno>   // Error number definitions
 #include <arpa/inet.h>
 #include <iostream>
-#include <string.h>
-#include <math.h>
+#include <cstring>
+#include <cmath>
 
 #include <yarp/os/Time.h>
 #include <yarp/os/LogStream.h>
 #include <yarp/os/Log.h>
 #include <yarp/math/Math.h>
+#include <yarp/os/LockGuard.h>
 
 #include "imuBosch_BNO055.h"
 
@@ -24,11 +25,12 @@ using namespace std;
 using namespace yarp::os;
 using namespace yarp::dev;
 
-BoschIMU::BoschIMU():   RateThread(20), mutex(1),
-                        checkError(false)
+BoschIMU::BoschIMU() : RateThread(20), checkError(false)
 {
     data.resize(12);
     data.zero();
+    data_tmp.resize(12);
+    data_tmp.zero();
     errorCounter.resize(11);
     errorCounter.zero();
     totMessagesRead = 0;
@@ -434,11 +436,9 @@ void BoschIMU::run()
 //     void *tmp = (void*) &response[2];
 //     raw_data = static_cast<int16_t *> (tmp);
 
-    // TODO: how to optimally protect only code filling the data vector?
-
-    mutex.wait();
-
-    data.zero();
+    // In order to avoid zeros when a single read from a sensor is missing,
+    // initialize the new measure to be equal to the previous one
+    data_tmp = data;
 
     ///////////////////////////////////////////
     //
@@ -463,18 +463,18 @@ void BoschIMU::run()
     //
     ///////////////////////////////////////////
 
-    if(sendReadCommand(REG_ACC_DATA, 6, response, "Read accelerations") )
-    {
+    if (sendReadCommand(REG_ACC_DATA, 6, response, "Read accelerations")) {
         // Manually compose the data to safely handling endianess
         raw_data[0] = response[3] << 8 | response[2];
         raw_data[1] = response[5] << 8 | response[4];
         raw_data[2] = response[7] << 8 | response[6];
-        data[3] = (double) raw_data[0]/100.0;
-        data[4] = (double) raw_data[1]/100.0;
-        data[5] = (double) raw_data[2]/100.0;
+        data_tmp[3] = (double)raw_data[0] / 100.0;
+        data_tmp[4] = (double)raw_data[1] / 100.0;
+        data_tmp[5] = (double)raw_data[2] / 100.0;
     }
-    else
+    else {
         errs.acceError++;
+    }
 
     ///////////////////////////////////////////
     //
@@ -482,19 +482,19 @@ void BoschIMU::run()
     //
     ///////////////////////////////////////////
 
-    if(sendReadCommand(REG_GYRO_DATA, 6, response, "Read Gyros") )
-    {
+    if (sendReadCommand(REG_GYRO_DATA, 6, response, "Read Gyros")) {
         // Manually compose the data to handle endianess safely
         raw_data[0] = response[3] << 8 | response[2];
         raw_data[1] = response[5] << 8 | response[4];
         raw_data[2] = response[7] << 8 | response[6];
-        data[6] = (double) raw_data[0]/16.0;
-        data[7] = (double) raw_data[1]/16.0;
-        data[8] = (double) raw_data[2]/16.0;
+        data_tmp[6] = (double)raw_data[0] / 16.0;
+        data_tmp[7] = (double)raw_data[1] / 16.0;
+        data_tmp[8] = (double)raw_data[2] / 16.0;
         //     yDebug() << "Gyro x: " << data[6] << "y: " << data[7] << "z: " << data[8];
     }
-    else
+    else {
         errs.gyroError++;
+    }
 
     ///////////////////////////////////////////
     //
@@ -502,19 +502,19 @@ void BoschIMU::run()
     //
     ///////////////////////////////////////////
 
-    if(sendReadCommand(REG_MAGN_DATA, 6, response, "Read Magnetometer") )
-    {
+    if (sendReadCommand(REG_MAGN_DATA, 6, response, "Read Magnetometer")) {
         // Manually compose the data to safely handling endianess
-        raw_data[0] = response[3] << 8 | response[2];
-        raw_data[1] = response[5] << 8 | response[4];
-        raw_data[2] = response[7] << 8 | response[6];
-        data[ 9] = (double) raw_data[0]/16.0;
-        data[10] = (double) raw_data[1]/16.0;
-        data[11] = (double) raw_data[2]/16.0;
-    //     yDebug() << "Magn x: " << data[9] << "y: " << data[10] << "z: " << data[11];
+        raw_data[0]  = response[3] << 8 | response[2];
+        raw_data[1]  = response[5] << 8 | response[4];
+        raw_data[2]  = response[7] << 8 | response[6];
+        data_tmp[9]  = (double)raw_data[0] / 16.0;
+        data_tmp[10] = (double)raw_data[1] / 16.0;
+        data_tmp[11] = (double)raw_data[2] / 16.0;
+        // yDebug() << "Magn x: " << data[9] << "y: " << data[10] << "z: " << data[11];
     }
-    else
+    else {
         errs.magnError++;
+    }
 
     ///////////////////////////////////////////
     //
@@ -522,37 +522,43 @@ void BoschIMU::run()
     //
     ///////////////////////////////////////////
 
-    if(sendReadCommand(REG_QUATERN_DATA, 8, response, "Read quaternion") )
-    {
+    quaternion_tmp = quaternion;
+    if (sendReadCommand(REG_QUATERN_DATA, 8, response, "Read quaternion")) {
         // Manually compose the data to safely handling endianess
         raw_data[0] = response[3] << 8 | response[2];
         raw_data[1] = response[5] << 8 | response[4];
         raw_data[2] = response[7] << 8 | response[6];
         raw_data[3] = response[9] << 8 | response[8];
 
-        quaternion.w() = ((double) raw_data[0])/(2<<13);
-        quaternion.x() = ((double) raw_data[1])/(2<<13);
-        quaternion.y() = ((double) raw_data[2])/(2<<13);
-        quaternion.z() = ((double) raw_data[3])/(2<<13);
+        quaternion_tmp.w() = ((double)raw_data[0]) / (2 << 13);
+        quaternion_tmp.x() = ((double)raw_data[1]) / (2 << 13);
+        quaternion_tmp.y() = ((double)raw_data[2]) / (2 << 13);
+        quaternion_tmp.z() = ((double)raw_data[3]) / (2 << 13);
 
         RPY_angle.resize(3);
-        RPY_angle = yarp::math::dcm2rpy(quaternion.toRotationMatrix());
-        data[0] = RPY_angle[0] * 180/M_PI;
-        data[1] = RPY_angle[1] * 180/M_PI;
-        data[2] = RPY_angle[2] * 180/M_PI;
+        RPY_angle   = yarp::math::dcm2rpy(quaternion.toRotationMatrix());
+        data_tmp[0] = RPY_angle[0] * 180 / M_PI;
+        data_tmp[1] = RPY_angle[1] * 180 / M_PI;
+        data_tmp[2] = RPY_angle[2] * 180 / M_PI;
     }
-    else
+    else {
         errs.quatError++;
+    }
 
     // If 100ms have passed since the last received message
     if (timeStamp+0.1 < yarp::os::Time::now())
     {
 //         status=TIMEOUT;
     }
-    mutex.post();
 
-    if(timeStamp > timeLastReport + TIME_REPORT_INTERVAL)
+    // Protect only this section in order to avoid slow race conditions when gathering this data
     {
+        LockGuard guard(mutex);
+        data       = data_tmp;
+        quaternion = quaternion_tmp;
+    }
+
+    if (timeStamp > timeLastReport + TIME_REPORT_INTERVAL) {
         // if almost 1 errors occourred in last interval, then print report
         if(errs.acceError + errs.gyroError + errs.magnError + errs.quatError != 0)
         {
@@ -573,7 +579,7 @@ void BoschIMU::run()
 
 bool BoschIMU::read(yarp::sig::Vector &out)
 {
-    mutex.wait();
+    LockGuard guard(mutex);
     out.resize(nChannels);
     out.zero();
 
@@ -586,7 +592,6 @@ bool BoschIMU::read(yarp::sig::Vector &out)
         out[15] = quaternion.z();
     }
 
-    mutex.post();
     return true;
 };
 

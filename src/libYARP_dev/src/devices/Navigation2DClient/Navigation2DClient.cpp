@@ -22,27 +22,36 @@ using namespace yarp::sig;
 bool yarp::dev::Navigation2DClient::open(yarp::os::Searchable &config)
 {
     m_local_name.clear();
-    m_remote_name.clear();
+    m_navigation_server_name.clear();
+    m_locations_server_name.clear();
+    m_localization_server_name.clear();
 
     m_local_name           = config.find("local").asString().c_str();
-    m_remote_name          = config.find("remote").asString().c_str();
-    m_remote_location_name = config.find("locationRemote").asString().c_str();
+    m_navigation_server_name = config.find("navigation_server").asString().c_str();
+    m_locations_server_name = config.find("locations_server").asString().c_str();
+    m_localization_server_name = config.find("localization_server").asString().c_str();
 
     if (m_local_name == "")
     {
-        yError("Navigation2DClient::open() error you have to provide valid local name");
+        yError("Navigation2DClient::open() error you have to provide a valid 'local' param");
         return false;
     }
 
-    if (m_remote_name == "")
+    if (m_navigation_server_name == "")
     {
-        yError("Navigation2DClient::open() error you have to provide valid remote name");
+        yError("Navigation2DClient::open() error you have to provide a valid 'navigation_server' param");
         return false;
     }
 
-    if (m_remote_location_name == "")
+    if (m_locations_server_name == "")
     {
-        yError("Navigation2DClient::open() error you have to provide valid locationRemote name");
+        yError("Navigation2DClient::open() error you have to provide valid 'locations_server' param");
+        return false;
+    }
+
+    if (m_localization_server_name == "")
+    {
+        yError("Navigation2DClient::open() error you have to provide valid 'localization_server' param");
         return false;
     }
 
@@ -59,16 +68,20 @@ bool yarp::dev::Navigation2DClient::open(yarp::os::Searchable &config)
     ConstString
             local_rpc_1,
             local_rpc_2,
+            local_rpc_3,
             remote_rpc_1,
             remote_rpc_2,
+            remote_rpc_3,
             remote_streaming_name,
             local_streaming_name;
 
     local_rpc_1           = m_local_name           + "/navigation/rpc";
     local_rpc_2           = m_local_name           + "/locations/rpc";
-    remote_rpc_1          = m_remote_name          + "/rpc";
-    remote_rpc_2          = m_remote_location_name + "/rpc";
-    remote_streaming_name = m_remote_name          + "/stream:o";
+    local_rpc_3           = m_local_name           + "/localization/rpc";
+    remote_rpc_1          = m_navigation_server_name + "/rpc";
+    remote_rpc_2          = m_locations_server_name + "/rpc";
+    remote_rpc_3          = m_localization_server_name + "/rpc";
+    remote_streaming_name = m_localization_server_name + "/stream:o";
     local_streaming_name  = m_local_name           + "/stream:i";
 
     if (!m_rpc_port_navigation_server.open(local_rpc_1.c_str()))
@@ -80,6 +93,12 @@ bool yarp::dev::Navigation2DClient::open(yarp::os::Searchable &config)
     if (!m_rpc_port_locations_server.open(local_rpc_2.c_str()))
     {
         yError("Navigation2DClient::open() error could not open rpc port %s, check network", local_rpc_2.c_str());
+        return false;
+    }
+
+    if (!m_rpc_port_localization_server.open(local_rpc_3.c_str()))
+    {
+        yError("Navigation2DClient::open() error could not open rpc port %s, check network", local_rpc_3.c_str());
         return false;
     }
 
@@ -108,6 +127,13 @@ bool yarp::dev::Navigation2DClient::open(yarp::os::Searchable &config)
         return false;
     }
 
+    ok = Network::connect(local_rpc_3.c_str(), remote_rpc_3.c_str());
+    if (!ok)
+    {
+        yError("Navigation2DClient::open() error could not connect to %s", remote_rpc_3.c_str());
+        return false;
+    }
+
     return true;
 }
 
@@ -115,7 +141,7 @@ bool yarp::dev::Navigation2DClient::close()
 {
     m_rpc_port_navigation_server.close();
     m_rpc_port_locations_server.close();
-
+    m_rpc_port_localization_server.close();
     return true;
 }
 
@@ -262,6 +288,35 @@ bool yarp::dev::Navigation2DClient::gotoTargetByRelativeLocation(double x, doubl
     return true;
 }
 
+bool  yarp::dev::Navigation2DClient::setInitialPose(Map2DLocation& loc)
+{
+    yarp::os::Bottle b;
+    yarp::os::Bottle resp;
+
+    b.addVocab(VOCAB_INAVIGATION);
+    b.addVocab(VOCAB_NAV_SET_INITIAL_POS);
+    b.addString(loc.map_id);
+    b.addDouble(loc.x);
+    b.addDouble(loc.y);
+    b.addDouble(loc.theta);
+
+    bool ret = m_rpc_port_localization_server.write(b, resp);
+    if (ret)
+    {
+        if (resp.get(0).asVocab() != VOCAB_OK)
+        {
+            yError() << "Navigation2DClient::setInitialPose() received error from localization server";
+            return false;
+        }
+    }
+    else
+    {
+        yError() << "Navigation2DClient::setInitialPose() error on writing on rpc port";
+        return false;
+    }
+    return true;
+}
+
 bool  yarp::dev::Navigation2DClient::getCurrentPosition(Map2DLocation& loc)
 {
     yarp::os::Bottle b;
@@ -270,12 +325,12 @@ bool  yarp::dev::Navigation2DClient::getCurrentPosition(Map2DLocation& loc)
     b.addVocab(VOCAB_INAVIGATION);
     b.addVocab(VOCAB_NAV_GET_CURRENT_POS);
 
-    bool ret = m_rpc_port_navigation_server.write(b, resp);
+    bool ret = m_rpc_port_localization_server.write(b, resp);
     if (ret)
     {
         if (resp.get(0).asVocab() != VOCAB_OK || resp.size() != 5)
         {
-            yError() << "Navigation2DClient::getCurrentPosition() recived error from navigation server";
+            yError() << "Navigation2DClient::getCurrentPosition() recived error from localization server";
             return false;
         }
         else

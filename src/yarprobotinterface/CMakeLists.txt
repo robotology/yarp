@@ -46,13 +46,14 @@ if(CREATE_YARPROBOTINTERFACE)
                                     ${yarprobotinterface_IDLS_HDRS})
 
   target_link_libraries(yarprobotinterface
-                        YARP_OS
-                        YARP_dev
-                        YARP_init
+                        YARP::YARP_OS
+                        YARP::YARP_dev
+                        YARP::YARP_init
                         ${TinyXML_LIBRARIES})
 
   install(TARGETS yarprobotinterface
           COMPONENT utilities
           DESTINATION ${CMAKE_INSTALL_BINDIR})
 
+  set_property(TARGET yarprobotinterface PROPERTY FOLDER "Command Line Tools")
 endif()

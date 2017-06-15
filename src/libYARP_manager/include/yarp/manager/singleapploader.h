@@ -24,9 +24,9 @@ class SingleAppLoader : public AppLoader {
 public:
     SingleAppLoader(const char* szModule, const char* strHost);
     virtual ~SingleAppLoader();
-    virtual bool init(void);
-    virtual void fini(void);
-    virtual Application* getNextApplication(void);
+    virtual bool init(void) YARP_OVERRIDE;
+    virtual void fini(void) YARP_OVERRIDE;
+    virtual Application* getNextApplication(void) YARP_OVERRIDE;
 
 protected:
 

@@ -32,12 +32,12 @@ public:
      ModuleItem(Module *module, int moduleId, bool nestedInApp = false, bool editingMode = false,
                 Manager *manager = NULL, BuilderItem * parent = 0);
     ~ModuleItem();
-    QRectF boundingRect() const;
-    QPointF connectionPoint();
+    QRectF boundingRect() const override;
+    QPointF connectionPoint() override;
     int getId();
     void setRunning(bool);
     void setModuleSelected(bool selected);
-    int type() const ;
+    int type() const override;
     void updateGraphicModel();
 
 
@@ -64,11 +64,11 @@ private:
 
 
 protected:
-    void paint(QPainter * painter, const QStyleOptionGraphicsItem * option, QWidget * widget = 0);
-    void mouseMoveEvent(QGraphicsSceneMouseEvent *e);
-    void mousePressEvent(QGraphicsSceneMouseEvent *e);
-    void mouseReleaseEvent(QGraphicsSceneMouseEvent *e);
-    QVariant itemChange(GraphicsItemChange change, const QVariant &value);
+    void paint(QPainter * painter, const QStyleOptionGraphicsItem * option, QWidget * widget = 0) override;
+    void mouseMoveEvent(QGraphicsSceneMouseEvent *e) override;
+    void mousePressEvent(QGraphicsSceneMouseEvent *e) override;
+    void mouseReleaseEvent(QGraphicsSceneMouseEvent *e) override;
+    QVariant itemChange(GraphicsItemChange change, const QVariant &value) override;
 
     void portPressed(PortItem *port, QGraphicsSceneMouseEvent *e);
     void portReleased(PortItem *port, QGraphicsSceneMouseEvent *e);
@@ -88,9 +88,9 @@ public:
     //PortItem(QString portName, int type, BuilderItem *parent = 0);
     PortItem(InputData*, BuilderItem *parent = 0);
     PortItem(OutputData*, BuilderItem *parent = 0);
-    QRectF boundingRect() const;
-    QPointF connectionPoint();
-    int type() const ;
+    QRectF boundingRect() const override;
+    QPointF connectionPoint() override;
+    int type() const override;
     int getPortType();
     InputData *getInputData();
     OutputData *getOutputData();
@@ -99,13 +99,13 @@ public:
     OutputData *outData;
     InputData *inData;
 protected:
-    void paint(QPainter * painter, const QStyleOptionGraphicsItem * option, QWidget * widget = 0);
-    void hoverEnterEvent(QGraphicsSceneHoverEvent * event);
-    void hoverLeaveEvent(QGraphicsSceneHoverEvent * event);
-    void mousePressEvent(QGraphicsSceneMouseEvent *event);
-    void mouseReleaseEvent(QGraphicsSceneMouseEvent *event);
-    void mouseMoveEvent(QGraphicsSceneMouseEvent *event);
-    QVariant itemChange(GraphicsItemChange change, const QVariant &value);
+    void paint(QPainter * painter, const QStyleOptionGraphicsItem * option, QWidget * widget = 0) override;
+    void hoverEnterEvent(QGraphicsSceneHoverEvent * event) override;
+    void hoverLeaveEvent(QGraphicsSceneHoverEvent * event) override;
+    void mousePressEvent(QGraphicsSceneMouseEvent *event) override;
+    void mouseReleaseEvent(QGraphicsSceneMouseEvent *event) override;
+    void mouseMoveEvent(QGraphicsSceneMouseEvent *event) override;
+    QVariant itemChange(GraphicsItemChange change, const QVariant &value) override;
 
 private:
     PortStatus portAvailable;

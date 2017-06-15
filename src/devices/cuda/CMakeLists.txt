@@ -15,19 +15,12 @@ if(NOT SKIP_cuda)
   add_definitions(-DCUDA_NUMTHREADS=${CUDA_NUMTHREADS}
                   -DCUDA_NUMTHREADBLOCKS=${CUDA_NUMTHREADBLOCKS})
 
-  get_property(YARP_OS_INCLUDE_DIRS TARGET YARP_OS PROPERTY INCLUDE_DIRS)
-  get_property(YARP_sig_INCLUDE_DIRS TARGET YARP_sig PROPERTY INCLUDE_DIRS)
-  get_property(YARP_dev_INCLUDE_DIRS TARGET YARP_dev PROPERTY INCLUDE_DIRS)
-  include_directories(${YARP_OS_INCLUDE_DIRS}
-                      ${YARP_sig_INCLUDE_DIRS}
-                      ${YARP_dev_INCLUDE_DIRS})
-
   yarp_add_plugin(yarp_cuda CUDADeviceDriver.cpp
                             CUDADeviceDriver.h
                             FunctionClass.h)
-  target_link_libraries(yarp_cuda YARP_OS
-                                  YARP_sig
-                                  YARP_dev
+  target_link_libraries(yarp_cuda YARP::YARP_OS
+                                  YARP::YARP_sig
+                                  YARP::YARP_dev
                                   ${CUDA_LIBRARIES})
   yarp_install(TARGETS yarp_cuda
                EXPORT YARP
@@ -37,4 +30,6 @@ if(NOT SKIP_cuda)
   yarp_install(FILES cuda.ini
                COMPONENT runtime
                DESTINATION ${YARP_PLUGIN_MANIFESTS_INSTALL_DIR})
+
+  set_property(TARGET yarp_cuda PROPERTY FOLDER "Plugins/Device")
 endif()

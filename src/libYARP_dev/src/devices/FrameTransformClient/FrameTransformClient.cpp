@@ -11,6 +11,8 @@
 
 /*! \file FrameTransformClient.cpp */
 
+//example: yarpdev --device transformClient --local /transformClient --remote /transformServer
+
 using namespace yarp::dev;
 using namespace yarp::os;
 using namespace yarp::sig;
@@ -176,6 +178,168 @@ yarp::math::FrameTransform& Transforms_client_storage::operator[]   (std::size_t
 };
 
 //------------------------------------------------------------------------------------------------------------------------------
+bool yarp::dev::FrameTransformClient::read(yarp::os::ConnectionReader& connection)
+{
+    LockGuard lock (m_rpc_mutex);
+    yarp::os::Bottle in;
+    yarp::os::Bottle out;
+    bool ok = in.read(connection);
+    if (!ok) return false;
+
+    std::string request = in.get(0).asString();
+    if (request == "help")
+    {
+        out.addVocab(Vocab::encode("many"));
+        out.addString("'get_transform <src> <dst>: print the transform from <src> to <dst>");
+        out.addString("'list_frames: print all the available refence frames");
+        out.addString("'list_ports: print all the opened ports for tranform broadcasting");
+        out.addString("'publish_transform <src> <dst> <portname> <format>: opens a port to publish transform from src to dst");
+        out.addString("'unpublish_transform <portname>: closes a previously opened port to publish a transform");
+        out.addString("'unpublish_all <portname>: closes a all previously opened ports to publish a transform");
+    }
+    else if (request == "list_frames")
+    {
+        std::vector<std::string> v;
+        this->getAllFrameIds(v);
+        out.addVocab(Vocab::encode("many"));
+        out.addString("List of available reference frames:");
+        int count = 0;
+        for (auto vec = v.begin(); vec != v.end(); vec++)
+        {
+            count++;
+            std::string str = std::to_string(count) + "- " + *vec;
+            out.addString(str.c_str());
+        }
+    }
+    else if (request == "get_transform")
+    {
+        std::string src = in.get(1).asString();
+        std::string dst = in.get(2).asString();
+        out.addVocab(Vocab::encode("many"));
+        yarp::sig::Matrix m;
+        this->getTransform(src, dst, m);
+        out.addString("Tranform from " + src + " to " + dst + " is: ");
+        out.addString(m.toString());
+    }
+    else if (request == "list_ports")
+    {
+        out.addVocab(Vocab::encode("many"));
+        if (m_array_of_ports.size()==0)
+        {
+            out.addString("No ports are currently active");
+        }
+        for (auto it = m_array_of_ports.begin(); it != m_array_of_ports.end(); it++)
+        {
+            if (*it)
+            {
+                std::string  s = (*it)->port.getName() + " "+ (*it)->transform_src +  " -> " + (*it)->transform_dst;
+                out.addString(s);
+            }
+        }
+    }
+    else if (request == "publish_transform")
+    {
+        std::string src  = in.get(1).asString();
+        std::string dst  = in.get(2).asString();
+        std::string port_name = in.get(3).asString();
+        std::string format = "matrix";
+        if (in.size() > 4)
+            {format= in.get(4).asString();}
+        if (port_name[0]=='/')  port_name.erase(port_name.begin());
+        std::string full_port_name = m_local_name + "/" + port_name;
+        bool ret = true;
+        for (auto it = m_array_of_ports.begin(); it != m_array_of_ports.end(); it++)
+        {
+            if ((*it) && (*it)->port.getName() == full_port_name)
+            {
+                ret = false;
+                break;
+            }
+        }
+        if (ret == true)
+        {
+            broadcast_port_t* b = new broadcast_port_t;
+            b->transform_src = src;
+            b->transform_dst = dst;
+            b->format = format;
+            bool pret = b->port.open(full_port_name);
+            if (pret)
+            {
+                std::string s;
+                s="Port " + full_port_name + "opened";
+                out.addString("Operation complete");
+                m_array_of_ports.push_back(b);
+                if (m_array_of_ports.size()==1) this->start();
+            }
+            else
+            {
+                delete b;
+                out.addString("operation failed");
+            }
+        }
+        else
+        {
+            out.addString("unable to perform operation");
+        }
+    }
+    else if (request == "unpublish_all")
+    {
+        for (auto it = m_array_of_ports.begin(); it != m_array_of_ports.end(); it++)
+        {
+            (*it)->port.close();
+            delete (*it);
+            (*it)=0;
+        }
+        m_array_of_ports.clear();
+        if (m_array_of_ports.size()==0) this->askToStop();
+        out.addString("operation complete");
+    }
+    else if (request == "unpublish_transform")
+    {
+        bool ret = false;
+        std::string port_name = in.get(1).asString();
+        if (port_name[0]=='/')  port_name.erase(port_name.begin());
+        std::string full_port_name = m_local_name + "/" + port_name;
+        for (auto it = m_array_of_ports.begin(); it != m_array_of_ports.end(); it++)
+        {
+            if ((*it)->port.getName() == port_name)
+            {
+                (*it)->port.close();
+                delete (*it);
+                (*it)=0;
+                 m_array_of_ports.erase(it);
+                 ret = true;
+                 break;
+            }
+        }
+        if (ret)
+        {
+            out.addString("port " + full_port_name + " has been closed");
+        }
+        else
+        {
+            out.addString("port " + full_port_name + " was not found");
+        }
+        if (m_array_of_ports.size()==0) this->askToStop();
+    }
+    else
+    {
+        yError("Invalid vocab received in FrameTransformClient");
+        out.clear();
+        out.addVocab(VOCAB_ERR);
+    }
+
+    yarp::os::ConnectionWriter *returnToSender = connection.getWriter();
+    if (returnToSender != NULL)
+    {
+        out.write(*returnToSender);
+    }
+    else
+    {
+        yError() << "FrameTransformClient: invalid return to sender";
+    }
+    return true;
+}
 
 bool yarp::dev::FrameTransformClient::open(yarp::os::Searchable &config)
 {
@@ -206,8 +370,10 @@ bool yarp::dev::FrameTransformClient::open(yarp::os::Searchable &config)
         yWarning("FrameTransformClient: using default period of %d ms" , m_period);
     }
 
-    ConstString local_rpc = m_local_name;
-    local_rpc += "/rpc";
+    ConstString local_rpcServer = m_local_name;
+    local_rpcServer += "/rpc:o";
+    ConstString local_rpcUser = m_local_name;
+    local_rpcUser += "/rpc:i";
     ConstString remote_rpc = m_remote_name;
     remote_rpc += "/rpc";
     ConstString remote_streaming_name = m_remote_name;
@@ -215,33 +381,42 @@ bool yarp::dev::FrameTransformClient::open(yarp::os::Searchable &config)
     ConstString local_streaming_name = m_local_name;
     local_streaming_name += "/transforms:i";
 
-    if (!m_rpcPort.open(local_rpc.c_str()))
+    if (!m_rpc_InterfaceToUser.open(local_rpcUser.c_str()))
     {
-        yError("FrameTransformClient::open() error could not open rpc port %s, check network", local_rpc.c_str());
+        yError("FrameTransformClient::open() error could not open rpc port %s, check network", local_rpcUser.c_str());
+        return false;
+    }
+
+    if (!m_rpc_InterfaceToServer.open(local_rpcServer.c_str()))
+    {
+        yError("FrameTransformClient::open() error could not open rpc port %s, check network", local_rpcServer.c_str());
         return false;
     }
 
     m_transform_storage = new Transforms_client_storage(local_streaming_name);
-    bool ok=Network::connect(remote_streaming_name.c_str(), local_streaming_name.c_str(), "udp");
+    bool ok = Network::connect(remote_streaming_name.c_str(), local_streaming_name.c_str(), "udp");
     if (!ok)
     {
         yError("FrameTransformClient::open() error could not connect to %s", remote_streaming_name.c_str());
         return false;
     }
 
-    ok=Network::connect(local_rpc.c_str(), remote_rpc.c_str());
+    ok = Network::connect(local_rpcServer.c_str(), remote_rpc.c_str());
     if (!ok)
     {
         yError("FrameTransformClient::open() error could not connect to %s", remote_rpc.c_str());
         return false;
     }
 
+
+    m_rpc_InterfaceToUser.setReader(*this);
     return true;
 }
 
 bool yarp::dev::FrameTransformClient::close()
 {
-    m_rpcPort.close();
+    m_rpc_InterfaceToServer.close();
+    m_rpc_InterfaceToUser.close();
     if (m_transform_storage != 0)
     {
         delete m_transform_storage;
@@ -259,37 +434,60 @@ bool yarp::dev::FrameTransformClient::allFramesAsString(std::string &all_frames)
     return true;
 }
 
-bool yarp::dev::FrameTransformClient::canDirectTransform(const std::string &target_frame, const std::string &source_frame, std::string *error_msg) const
+yarp::dev::FrameTransformClient::ConnectionType yarp::dev::FrameTransformClient::getConnectionType(const std::string &target_frame, const std::string &source_frame, std::string* commonAncestor = NULL)
 {
     Transforms_client_storage& tfVec = *m_transform_storage;
-    size_t i;
+    size_t                     i, j;
+    std::vector<std::string>   tar2root_vec;
+    std::vector<std::string>   src2root_vec;
+    std::string                ancestor, child;
+    child = target_frame;
     RecursiveLockGuard l(tfVec.m_mutex);
-    for (i = 0; i < tfVec.size(); i++)
+    while(getParent(child, ancestor))
     {
-        if (tfVec[i].dst_frame_id == target_frame)
+        if(ancestor == source_frame)
         {
-            if (tfVec[i].src_frame_id == source_frame)
-            {
-                return true;
-            }
-            else
-            {
-                return canDirectTransform(tfVec[i].src_frame_id, source_frame, error_msg);
-            }
+            return DIRECT;
         }
+
+        tar2root_vec.push_back(ancestor);
+        child = ancestor;
     }
-    return false;
+    child = source_frame;
+    while(getParent(child, ancestor))
+    {
+        if(ancestor == target_frame)
+        {
+            return INVERSE;
+        }
+
+        src2root_vec.push_back(ancestor);
+        child = ancestor;
+    }
+
+    for(i = 0; i < tar2root_vec.size(); i++)
+    {
+        std::string a;
+        a = tar2root_vec[i];
+        for(j = 0; j < src2root_vec.size(); j++)
+        {
+            if(a == src2root_vec[j])
+            {
+                if(commonAncestor)
+                {
+                    *commonAncestor = a;
+                }
+                return UNDIRECT;
+            }
+        }    
+    }
+
+    return DISCONNECTED;
 }
 
 bool yarp::dev::FrameTransformClient::canTransform(const std::string &target_frame, const std::string &source_frame)
 {
-
-    if (canDirectTransform(target_frame, source_frame) || canDirectTransform(source_frame, target_frame))
-    {
-        return true;
-    }
-
-    return false;
+    return getConnectionType(target_frame, source_frame) != DISCONNECTED;
 }
 
 bool yarp::dev::FrameTransformClient::clear()
@@ -298,7 +496,7 @@ bool yarp::dev::FrameTransformClient::clear()
     yarp::os::Bottle resp;
     b.addVocab(VOCAB_ITRANSFORM);
     b.addVocab(VOCAB_TRANSFORM_DELETE_ALL);
-    bool ret = m_rpcPort.write(b, resp);
+    bool ret = m_rpc_InterfaceToServer.write(b, resp);
     if (ret)
     {
         if (resp.get(0).asVocab() != VOCAB_OK)
@@ -367,12 +565,30 @@ bool yarp::dev::FrameTransformClient::getParent(const std::string &frame_id, std
     return false;
 }
 
-bool yarp::dev::FrameTransformClient::getDirectTransform(const std::string &target_frame_id, const std::string &source_frame_id, yarp::sig::Matrix &transform)
+bool yarp::dev::FrameTransformClient::canExplicitTransform(const std::string& target_frame_id, const std::string& source_frame_id) const
 {
     Transforms_client_storage& tfVec = *m_transform_storage;
-    size_t i;
-    RecursiveLockGuard l(tfVec.m_mutex);
-    size_t tfVec_size = tfVec.size();
+    size_t                     i, tfVec_size;
+    RecursiveLockGuard         l(tfVec.m_mutex);
+
+    tfVec_size = tfVec.size();
+    for (i = 0; i < tfVec_size; i++)
+    {
+        if (tfVec[i].dst_frame_id == target_frame_id && tfVec[i].src_frame_id == source_frame_id)
+        {
+            return true;
+        }
+    }
+    return false;
+}
+
+bool yarp::dev::FrameTransformClient::getChainedTransform(const std::string& target_frame_id, const std::string& source_frame_id, yarp::sig::Matrix& transform) const
+{
+    Transforms_client_storage& tfVec = *m_transform_storage;
+    size_t                     i, tfVec_size;
+    RecursiveLockGuard         l(tfVec.m_mutex);
+
+    tfVec_size = tfVec.size();
     for (i = 0; i < tfVec_size; i++)
     {
         if (tfVec[i].dst_frame_id == target_frame_id)
@@ -385,7 +601,7 @@ bool yarp::dev::FrameTransformClient::getDirectTransform(const std::string &targ
             else
             {
                 yarp::sig::Matrix m;
-                if (getDirectTransform(tfVec[i].src_frame_id, source_frame_id, m))
+                if (getChainedTransform(tfVec[i].src_frame_id, source_frame_id, m))
                 {
                     transform = m * tfVec[i].toMatrix();
                     return true;
@@ -396,17 +612,28 @@ bool yarp::dev::FrameTransformClient::getDirectTransform(const std::string &targ
     return false;
 }
 
-bool yarp::dev::FrameTransformClient::getTransform(const std::string &target_frame_id, const std::string &source_frame_id, yarp::sig::Matrix &transform)
+bool yarp::dev::FrameTransformClient::getTransform(const std::string& target_frame_id, const std::string& source_frame_id, yarp::sig::Matrix& transform)
 {
-    if (canDirectTransform(target_frame_id, source_frame_id))
+    ConnectionType ct;
+    std::string    ancestor;
+    ct = getConnectionType(target_frame_id, source_frame_id, &ancestor);
+    if (ct == DIRECT)
     {
-        return getDirectTransform(target_frame_id, source_frame_id, transform);
+        return getChainedTransform(target_frame_id, source_frame_id, transform);
     }
-    else if (canDirectTransform(source_frame_id, target_frame_id))
+    else if (ct == INVERSE)
     {
         yarp::sig::Matrix m(4, 4);
-        getDirectTransform(source_frame_id, target_frame_id, m);
+        getChainedTransform(source_frame_id, target_frame_id, m);
         transform = yarp::math::SE3inv(m);
+        return true;
+    }
+    else if(ct == UNDIRECT)
+    {
+        yarp::sig::Matrix root2tar(4, 4), root2src(4, 4);
+        getChainedTransform(source_frame_id, ancestor, root2src);
+        getChainedTransform(target_frame_id, ancestor, root2tar);
+        transform = yarp::math::SE3inv(root2src) * root2tar;
         return true;
     }
 
@@ -414,11 +641,12 @@ bool yarp::dev::FrameTransformClient::getTransform(const std::string &target_fra
     return false;
 }
 
-bool yarp::dev::FrameTransformClient::setTransform(const std::string &target_frame_id, const std::string &source_frame_id, const yarp::sig::Matrix &transform)
+bool yarp::dev::FrameTransformClient::setTransform(const std::string& target_frame_id, const std::string& source_frame_id, const yarp::sig::Matrix& transform)
 {
-    if (canTransform(target_frame_id, source_frame_id))
+
+    if (!canExplicitTransform(target_frame_id, source_frame_id) && canTransform(target_frame_id, source_frame_id))
     {
-        yError() << "FrameTransformClient::setTransform() such transform already exist, directly or by chaining transforms";
+        yError() << "FrameTransformClient::setTransform() such transform already exist by chaining transforms";
         return false;
     }
 
@@ -436,7 +664,7 @@ bool yarp::dev::FrameTransformClient::setTransform(const std::string &target_fra
     b.addVocab(VOCAB_TRANSFORM_SET);
     b.addString(source_frame_id);
     b.addString(target_frame_id);
-    b.addDouble(100.0); //transform lifetime
+    b.addDouble(1000.0); //transform lifetime
     b.addDouble(tf.translation.tX);
     b.addDouble(tf.translation.tY);
     b.addDouble(tf.translation.tZ);
@@ -444,7 +672,7 @@ bool yarp::dev::FrameTransformClient::setTransform(const std::string &target_fra
     b.addDouble(tf.rotation.x());
     b.addDouble(tf.rotation.y());
     b.addDouble(tf.rotation.z());
-    bool ret = m_rpcPort.write(b, resp);
+    bool ret = m_rpc_InterfaceToServer.write(b, resp);
     if (ret)
     {
         if (resp.get(0).asVocab() != VOCAB_OK)
@@ -465,13 +693,13 @@ bool yarp::dev::FrameTransformClient::setTransformStatic(const std::string &targ
 {
     if (canTransform(target_frame_id, source_frame_id))
     {
-        yError() << "FrameTransformClient::setTransform() such transform already exist, directly or by chaining transforms";
+        yError() << "FrameTransformClient::setTransform() such static transform already exist, directly or by chaining transforms";
         return false;
     }
 
     yarp::os::Bottle b;
     yarp::os::Bottle resp;
-    FrameTransform      tf;
+    FrameTransform   tf;
 
     if (!tf.fromMatrix(transform))
     {
@@ -491,7 +719,7 @@ bool yarp::dev::FrameTransformClient::setTransformStatic(const std::string &targ
     b.addDouble(tf.rotation.x());
     b.addDouble(tf.rotation.y());
     b.addDouble(tf.rotation.z());
-    bool ret = m_rpcPort.write(b, resp);
+    bool ret = m_rpc_InterfaceToServer.write(b, resp);
     if (ret)
     {
         if (resp.get(0).asVocab() != VOCAB_OK)
@@ -516,7 +744,7 @@ bool yarp::dev::FrameTransformClient::deleteTransform(const std::string &target_
     b.addVocab(VOCAB_TRANSFORM_DELETE);
     b.addString(target_frame_id);
     b.addString(source_frame_id);
-    bool ret = m_rpcPort.write(b, resp);
+    bool ret = m_rpc_InterfaceToServer.write(b, resp);
     if (ret)
     {
         if (resp.get(0).asVocab()!=VOCAB_OK)
@@ -603,17 +831,66 @@ bool yarp::dev::FrameTransformClient::transformQuaternion(const std::string &tar
 
 bool yarp::dev::FrameTransformClient::waitForTransform(const std::string &target_frame_id, const std::string &source_frame_id, const double &timeout)
 {
-    //loop fintanto che ccantTRransform e' true o ppure scade timeout
+    //loop until canTransform == true or timeout expires
     double start = yarp::os::Time::now();
     while (!canTransform(target_frame_id, source_frame_id))
     {
         if (yarp::os::Time::now() - start > timeout)
         {
-            yError() << "timeout reached";
+            yError() << "FrameTransformClient::waitForTransform() timeout expired";
             return false;
         }
+        yarp::os::Time::delay(0.001);
     }
     return true;
+}
+
+FrameTransformClient::FrameTransformClient() : RateThread(0.010)
+{
+    m_transform_storage = 0;
+}
+
+FrameTransformClient::~FrameTransformClient()
+{
+}
+
+bool     yarp::dev::FrameTransformClient::threadInit()
+{
+    yInfo("Thread started");
+    return true;
+}
+
+void     yarp::dev::FrameTransformClient::threadRelease()
+{
+    yInfo("Thread stopped");
+}
+
+void     yarp::dev::FrameTransformClient::run()
+{
+    LockGuard lock (m_rpc_mutex);
+    if (m_array_of_ports.size()==0)
+    {
+        return;
+    }
+
+    for (auto it=m_array_of_ports.begin(); it!=m_array_of_ports.end(); it++)
+    {
+        if (*it)
+        {
+            std::string src = (*it)->transform_src;
+            std::string dst = (*it)->transform_dst;
+            yarp::sig::Matrix m;
+            this->getTransform(src, dst, m);
+            if ((*it)->format == "matrix")
+            {
+                (*it)->port.write(m);
+            }
+            else
+            {
+                yError() << "Unknown format requested: " << (*it)->format;
+            }
+        }
+    }
 }
 
 yarp::dev::DriverCreator *createFrameTransformClient()

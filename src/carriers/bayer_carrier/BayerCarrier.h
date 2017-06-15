@@ -84,108 +84,108 @@ public:
         if (local) delete local;
     }
 
-    virtual Carrier *create() {
+    virtual Carrier *create() override {
         return new BayerCarrier();
     }
 
-    virtual ConstString getName() {
+    virtual ConstString getName() override {
         return "bayer";
     }
 
-    virtual ConstString toString() {
+    virtual ConstString toString() override {
         return "bayer_carrier";
     }
 
-    virtual yarp::os::ConnectionReader& modifyIncomingData(yarp::os::ConnectionReader& reader);
+    virtual yarp::os::ConnectionReader& modifyIncomingData(yarp::os::ConnectionReader& reader) override;
 
 
     ////////////////////////////////////////////////////////////////////////
     // ConnectionReader methods
 
-    virtual bool expectBlock(const char *data, size_t len) {
+    virtual bool expectBlock(const char *data, size_t len) override {
         return local->expectBlock(data,len);
     }
 
-    virtual ConstString expectText(int terminatingChar = '\n') {
+    virtual ConstString expectText(int terminatingChar = '\n') override {
         return local->expectText(terminatingChar);
     }
 
-    virtual int expectInt() {
+    virtual int expectInt() override {
         return local->expectInt();
     }
 
-    virtual YARP_INT64 expectInt64() {
+    virtual YARP_INT64 expectInt64() override {
         return local->expectInt64();
     }
 
-    virtual bool pushInt(int x) {
+    virtual bool pushInt(int x) override {
         return local->pushInt(x);
     }
 
-    virtual double expectDouble() {
+    virtual double expectDouble() override {
         return local->expectDouble();
     }
 
-    virtual bool isTextMode() {
+    virtual bool isTextMode() override {
         return false;
     }
 
-    virtual bool isBareMode() {
+    virtual bool isBareMode() override {
         return false;
     }
 
-    virtual bool convertTextMode() {
+    virtual bool convertTextMode() override {
         return true;
     }
 
-    virtual size_t getSize() {
+    virtual size_t getSize() override {
         if (image_data_len) {
             processBuffered();
         }
         return sizeof(header)+image_data_len;
     }
 
-    virtual ConnectionWriter *getWriter() {
+    virtual ConnectionWriter *getWriter() override {
         return parent->getWriter();
     }
 
-    virtual Bytes readEnvelope() { 
+    virtual Bytes readEnvelope() override {
         return parent->readEnvelope();
     }
 
-    virtual Portable *getReference() {
+    virtual Portable *getReference() override {
         return parent->getReference();
     }
 
-    virtual Contact getRemoteContact() {
+    virtual Contact getRemoteContact() override {
         return parent->getRemoteContact();
     }
 
-    virtual Contact getLocalContact() {
+    virtual Contact getLocalContact() override {
         return parent->getLocalContact();
     }
 
-    virtual bool isValid() {
+    virtual bool isValid() override {
         return true;
     }
 
-    virtual bool isActive() {
+    virtual bool isActive() override {
         return parent->isActive();
     }
 
-    virtual bool isError() {
+    virtual bool isError() override {
         return parent->isError()||!happy;
     }
 
-    virtual void requestDrop() {
+    virtual void requestDrop() override {
         parent->requestDrop();
     }
 
-    virtual yarp::os::Searchable& getConnectionModifiers() {
+    virtual yarp::os::Searchable& getConnectionModifiers() override {
         return parent->getConnectionModifiers();
     }
 
-    virtual bool setSize(size_t len) {
+    virtual bool setSize(size_t len) override {
         return parent->setSize(len);
     }
 
@@ -193,12 +193,12 @@ public:
     // InputStream methods
 
     using yarp::os::InputStream::read;
-    virtual YARP_SSIZE_T read(const yarp::os::Bytes& b);
+    virtual YARP_SSIZE_T read(const yarp::os::Bytes& b) override;
 
-    virtual void close() {
+    virtual void close() override {
     }
 
-    virtual bool isOk() {
+    virtual bool isOk() override {
         return happy;
     }
 

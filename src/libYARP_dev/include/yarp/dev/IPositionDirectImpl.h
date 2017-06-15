@@ -19,13 +19,6 @@ namespace yarp{
 }
 
 
-#if defined(_MSC_VER) && !defined(YARP_NO_DEPRECATED) // since YARP 2.3.65
-// A class implementing setPositionDirectMode() causes a warning on MSVC
-YARP_WARNING_PUSH
-YARP_DISABLE_DEPRECATED_WARNING
-#endif
-
-
 /**
  * Default implementation of the IPositionDirect interface. This class can
  * be used to easily provide an implementation of IPositionDirect.
@@ -68,22 +61,14 @@ public:
      */
     virtual ~ImplementPositionDirect();
 
-    virtual bool getAxes(int *axes);
-    virtual bool setPosition(int j, double ref);
-    virtual bool setPositions(const int n_joint, const int *joints, double *refs);
-    virtual bool setPositions(const double *refs);
-    virtual bool getRefPosition(const int joint, double *ref);
-    virtual bool getRefPositions(double *refs);
-    virtual bool getRefPositions(const int n_joint, const int *joints, double *refs);
-
-#ifndef YARP_NO_DEPRECATED // since YARP 2.3.65
-    YARP_DEPRECATED virtual bool setPositionDirectMode();
-#endif // YARP_NO_DEPRECATED
+    virtual bool getAxes(int *axes) YARP_OVERRIDE;
+    virtual bool setPosition(int j, double ref) YARP_OVERRIDE;
+    virtual bool setPositions(const int n_joint, const int *joints, double *refs) YARP_OVERRIDE;
+    virtual bool setPositions(const double *refs) YARP_OVERRIDE;
+    virtual bool getRefPosition(const int joint, double *ref) YARP_OVERRIDE;
+    virtual bool getRefPositions(double *refs) YARP_OVERRIDE;
+    virtual bool getRefPositions(const int n_joint, const int *joints, double *refs) YARP_OVERRIDE;
 };
-
-#if defined(_MSC_VER) && !defined(YARP_NO_DEPRECATED) // since YARP 2.3.65
-YARP_WARNING_POP
-#endif
 
 
 /**
@@ -112,16 +97,16 @@ private:
 public:
     virtual ~StubImplPositionDirectRaw(){}
 
-    virtual bool getAxes(int *axis)
+    virtual bool getAxes(int *axis) YARP_OVERRIDE
     {return NOT_YET_IMPLEMENTED("getAxes");}
 
-    virtual bool setPosition(int j, double ref)
+    virtual bool setPosition(int j, double ref) YARP_OVERRIDE
     {return NOT_YET_IMPLEMENTED("setPosition");}
 
-    virtual bool setPositions(const int n_joint, const int *joints, double *refs)
+    virtual bool setPositions(const int n_joint, const int *joints, double *refs) YARP_OVERRIDE
     {return NOT_YET_IMPLEMENTED("setPositions");}
 
-    virtual bool setPositions(const double *refs)
+    virtual bool setPositions(const double *refs) YARP_OVERRIDE
     {return NOT_YET_IMPLEMENTED("setPositions");}
 };
 

@@ -28,20 +28,20 @@ class YARP_dev_API yarp::dev::DevicePipe : public DeviceDriver,
                                            public IService {
 
 public:
-    virtual bool open(yarp::os::Searchable& config);
+    virtual bool open(yarp::os::Searchable& config) YARP_OVERRIDE;
 
-    virtual bool close();
+    virtual bool close() YARP_OVERRIDE;
 
-    virtual bool startService() {
+    virtual bool startService() YARP_OVERRIDE {
         // please call updateService
         return false;
     }
 
-    virtual bool stopService() {
+    virtual bool stopService() YARP_OVERRIDE {
         return close();
     }
 
-    virtual bool updateService();
+    virtual bool updateService() YARP_OVERRIDE;
 
 protected:
     PolyDriver source, sink;

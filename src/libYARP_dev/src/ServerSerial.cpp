@@ -194,7 +194,7 @@ yarp::dev::ImplementCallbackHelper2::ImplementCallbackHelper2(yarp::dev::ServerS
     //ACE_ASSERT (ser != 0);
     if (ser==0) {
         yError("Could not get serial device\n");
-        yarp::os::exit(1);
+        std::exit(1);
     }
 
 

@@ -11,6 +11,10 @@
 #include <yarp/dev/IVelocityControl.h>
 #include <yarp/dev/ControlBoardPid.h>
 
+//TO PROVIDE BACKWARD COMPATIBILITY FOR DEPRECATED METHODS: TO BE REMOVED LATER!
+#include <yarp/dev/IPidControl.h>
+#include <yarp/os/LogStream.h>
+
 namespace yarp {
     namespace dev {
         class IVelocityControl2;
@@ -34,9 +38,6 @@ public:
 
     // Inherit from IVelocityControl
     using IVelocityControl::getAxes;
-#ifndef YARP_NO_DEPRECATED // since YARP 2.3.65
-    using IVelocityControl::setVelocityMode;
-#endif // YARP_NO_DEPRECATED
     using IVelocityControl::velocityMove;
     using IVelocityControl::setRefAcceleration;
     using IVelocityControl::setRefAccelerations;
@@ -114,31 +115,44 @@ public:
      */
     virtual bool stop(const int n_joint, const int *joints)=0;
 
+#ifndef YARP_NO_DEPRECATED // since YARP 2.3.68
     /** Set new velocity pid value for a joint
      * @param j joint number
      * @param pid new pid value
      * @return true/false on success/failure
      */
-    virtual bool setVelPid(int j, const yarp::dev::Pid &pid)=0;
+    YARP_DEPRECATED_MSG("Use setPid(VOCAB_PIDTYPE_VELOCITY,...) instead")
+    virtual bool setVelPid(int j, const yarp::dev::Pid &pid)
+    { IPidControl* p; p=dynamic_cast<IPidControl*>(this); if (p) {return p->setPid(VOCAB_PIDTYPE_VELOCITY,j,pid);} else {yError()<< "setVelPid is DEPRECATED, use setPid(VOCAB_PIDTYPE_VELOCITY,...) instead" ;return false;}}
 
     /** Set new velocity pid value on multiple joints
      * @param pids pointer to a vector of pids
      * @return true/false upon success/failure
      */
-    virtual bool setVelPids(const yarp::dev::Pid *pids)=0;
+    YARP_DEPRECATED_MSG("Use setPids(VOCAB_PIDTYPE_VELOCITY,...) instead")
+    virtual bool setVelPids(const yarp::dev::Pid *pids)
+    { IPidControl* p; p=dynamic_cast<IPidControl*>(this); if (p) {return p->setPids(VOCAB_PIDTYPE_VELOCITY,pids);} else {yError()<< "setVelPids is DEPRECATED, use setPids(VOCAB_PIDTYPE_VELOCITY,...) instead" ;return false;}}
+
 
     /** Get current velocity pid value for a specific joint.
      * @param j joint number
      * @param pid pointer to storage for the return value.
      * @return success/failure
      */
-    virtual bool getVelPid(int j, yarp::dev::Pid *pid)=0;
+    YARP_DEPRECATED_MSG("Use getPid(VOCAB_PIDTYPE_VELOCITY,...) instead")
+    virtual bool getVelPid(int j, yarp::dev::Pid *pid)
+    { IPidControl* p; p=dynamic_cast<IPidControl*>(this); if (p) {return p->getPid(VOCAB_PIDTYPE_VELOCITY,j,pid);} else {yError()<< "getVelPid is DEPRECATED, use getPid(VOCAB_PIDTYPE_VELOCITY,...) instead" ;return false;}}
+
 
     /** Get current velocity pid value for a specific subset of joints.
      * @param pids vector that will store the values of the pids.
      * @return success/failure
      */
-    virtual bool getVelPids(yarp::dev::Pid *pids)=0;
+    YARP_DEPRECATED_MSG("Use getPids(VOCAB_PIDTYPE_VELOCITY,...) instead")
+    virtual bool getVelPids(yarp::dev::Pid *pids)
+    { IPidControl* p; p=dynamic_cast<IPidControl*>(this); if (p) {return p->getPids(VOCAB_PIDTYPE_VELOCITY,pids);} else {yError()<< "getVelPids is DEPRECATED, use getPids(VOCAB_PIDTYPE_VELOCITY,...) instead" ;return false;}}
+
+#endif
 };
 
 
@@ -158,9 +172,6 @@ public:
 
     // Inherit from IVelocityControl
     using IVelocityControlRaw::getAxes;
-#ifndef YARP_NO_DEPRECATED // since YARP 2.3.65
-    using IVelocityControlRaw::setVelocityModeRaw;
-#endif // YARP_NO_DEPRECATED
     using IVelocityControlRaw::velocityMoveRaw;
     using IVelocityControlRaw::setRefAccelerationRaw;
     using IVelocityControlRaw::setRefAccelerationsRaw;
@@ -221,31 +232,42 @@ public:
      */
     virtual bool stopRaw(const int n_joint, const int *joints)=0;
 
+#ifndef YARP_NO_DEPRECATED // since YARP 2.3.68
     /** Set new velocity pid value for a joint
      * @param j joint number
      * @param pid new pid value
      * @return true/false on success/failure
      */
-    virtual bool setVelPidRaw(int j, const yarp::dev::Pid &pid)=0;
+    YARP_DEPRECATED_MSG("Use setPidRaw(VOCAB_PIDTYPE_VELOCITY,...) instead")
+    virtual bool setVelPidRaw(int j, const yarp::dev::Pid &pid)
+    { IPidControlRaw* p; p=dynamic_cast<IPidControlRaw*>(this); if (p) {return p->setPidRaw(VOCAB_PIDTYPE_VELOCITY,j,pid);} else {yError()<< "setVelPidRaw is DEPRECATED, use setPidRaw(VOCAB_PIDTYPE_VELOCITY,...) instead" ;return false;}}
 
     /** Set new velocity pid value on multiple joints
      * @param pids pointer to a vector of pids
      * @return true/false upon success/failure
      */
-    virtual bool setVelPidsRaw(const yarp::dev::Pid *pids)=0;
+    YARP_DEPRECATED_MSG("Use setPidsRaw(VOCAB_PIDTYPE_VELOCITY,...) instead")
+    virtual bool setVelPidsRaw(const yarp::dev::Pid *pids)
+    { IPidControlRaw* p; p=dynamic_cast<IPidControlRaw*>(this); if (p) {return p->setPidsRaw(VOCAB_PIDTYPE_VELOCITY,pids);} else {yError()<< "setVelPidsRaw is DEPRECATED, use setPidsRaw(VOCAB_PIDTYPE_VELOCITY,...) instead" ;return false;}}
 
     /** Get current velocity pid value for a specific joint.
      * @param j joint number
      * @param pid pointer to storage for the return value.
      * @return success/failure
      */
-    virtual bool getVelPidRaw(int j, yarp::dev::Pid *pid)=0;
+    YARP_DEPRECATED_MSG("Use getPidRaw(VOCAB_PIDTYPE_VELOCITY,...) instead")
+    virtual bool getVelPidRaw(int j, yarp::dev::Pid *pid)
+    { IPidControlRaw* p; p=dynamic_cast<IPidControlRaw*>(this); if (p) {return p->getPidRaw(VOCAB_PIDTYPE_VELOCITY,j,pid);} else {yError()<< "getVelPidRaw is DEPRECATED, use getPidRaw(VOCAB_PIDTYPE_VELOCITY,...) instead" ;return false;}}
 
     /** Get current velocity pid value for a specific subset of joints.
      * @param pids vector that will store the values of the pids.
      * @return success/failure
      */
-    virtual bool getVelPidsRaw(yarp::dev::Pid *pids)=0;
+    YARP_DEPRECATED_MSG("Use getPidsRaw(VOCAB_PIDTYPE_VELOCITY,...) instead")
+    virtual bool getVelPidsRaw(yarp::dev::Pid *pids)
+    { IPidControlRaw* p; p=dynamic_cast<IPidControlRaw*>(this); if (p) {return p->getPidsRaw(VOCAB_PIDTYPE_VELOCITY,pids);} else {yError()<< "getVelPidsRaw is DEPRECATED, use getPidsRaw(VOCAB_PIDTYPE_VELOCITY,...) instead" ;return false;}}
+
+#endif
 };
 
 #define VOCAB_VELOCITY_MOVE_GROUP VOCAB4('v','m','o','g')

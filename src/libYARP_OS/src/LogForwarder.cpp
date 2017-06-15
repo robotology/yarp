@@ -57,11 +57,11 @@ yarp::os::LogForwarder::LogForwarder()
     outputPort =YARP_NULLPTR;
     outputPort = new yarp::os::BufferedPort<yarp::os::Bottle>;
     char host_name [MAX_STRING_SIZE]; //unsafe
-    yarp::os::gethostname(host_name,MAX_STRING_SIZE);
+    yarp::os::gethostname(host_name, MAX_STRING_SIZE);
     char prog_name [MAX_STRING_SIZE]; //unsafe
-    yarp::os::getprogname(prog_name,MAX_STRING_SIZE);
+    yarp::os::getprogname(prog_name, MAX_STRING_SIZE);
     int pid = yarp::os::getpid();
-    sprintf(logPortName, "/log/%s/%s/%d",host_name,prog_name,pid);  //unsafe, better to use snprintf when available
+    sprintf(logPortName, "/log/%s/%s/%d", host_name, prog_name, pid);  //unsafe, better to use snprintf when available
     if (outputPort->open(logPortName) == false)
     {
         printf("LogForwarder error while opening port %s\n", logPortName);

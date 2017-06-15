@@ -2,30 +2,28 @@
 # Author: Paul Fitzpatrick
 # CopyPolicy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
 
-PROJECT(clientmt)
+cmake_minimum_required(VERSION 3.0)
+project(clientmt)
 
-cmake_minimum_required(VERSION 2.8.9)
-
-FIND_PACKAGE(YARP REQUIRED)
-INCLUDE_DIRECTORIES(${YARP_INCLUDE_DIRS})
-LINK_LIBRARIES(${YARP_LIBRARIES})
+find_package(YARP REQUIRED)
 
 # using ACE
-ADD_DEFINITIONS(-D_REENTRANT)
+add_definitions(-D_REENTRANT)
 
-INCLUDE_DIRECTORIES(${CMAKE_SOURCE_DIR})
+include_directories(${CMAKE_SOURCE_DIR})
 
-IF (WIN32 AND NOT CYGWIN)
-  ADD_DEFINITIONS(-DWIN32 -D_WINDOWS)
-ENDIF (WIN32 AND NOT CYGWIN)
+if(WIN32 AND NOT CYGWIN)
+  add_definitions(-DWIN32 -D_WINDOWS)
+endif(WIN32 AND NOT CYGWIN)
 
-IF(WIN32 AND CYGWIN)
-  ADD_DEFINITIONS(-DCYGWIN)
-ENDIF(WIN32 AND CYGWIN)
+if(WIN32 AND CYGWIN)
+  add_definitions(-DCYGWIN)
+endif(WIN32 AND CYGWIN)
 
-IF (NOT WIN32)
-   LINK_LIBRARIES(ncurses)
-ENDIF (NOT WIN32)
+add_executable(clientmt main.cpp)
 
-ADD_EXECUTABLE(clientmt main.cpp)
+target_link_libraries(clientmt ${YARP_LIBRARIES})
+if(NOT WIN32)
+  target_link_libraries(clientmt ncurses)
+endif(NOT WIN32)
 

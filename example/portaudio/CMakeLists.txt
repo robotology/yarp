@@ -2,22 +2,24 @@
 # Authors: Paul Fitzpatrick, Francesco Nori
 # CopyPolicy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
 
-cmake_minimum_required(VERSION 2.8.9)
+cmake_minimum_required(VERSION 3.0)
 
-FIND_PACKAGE(YARP REQUIRED)
-INCLUDE_DIRECTORIES(${YARP_INCLUDE_DIRS})
-LINK_LIBRARIES(${YARP_LIBRARIES})
+find_package(YARP REQUIRED)
 
-ADD_EXECUTABLE(sound_receiver sound_receiver.cpp)
-ADD_EXECUTABLE(sound_sender_mic sound_sender_mic.cpp)
-ADD_EXECUTABLE(sound_sender_file sound_sender_file.cpp)
-ADD_EXECUTABLE(sound_sender_file_chunks sound_sender_file_chunks.cpp)
-ADD_EXECUTABLE(sound_sender_file_sum sound_sender_file_sum.cpp)
-ADD_EXECUTABLE(sound_loopback sound_loopback.cpp)
+add_executable(sound_receiver sound_receiver.cpp)
+target_link_libraries(sound_receiver ${YARP_LIBRARIES})
 
-TARGET_LINK_LIBRARIES(sound_loopback ${YARP_LIBRARIES})
-TARGET_LINK_LIBRARIES(sound_sender_mic ${YARP_LIBRARIES})
-TARGET_LINK_LIBRARIES(sound_sender_file ${YARP_LIBRARIES})
-TARGET_LINK_LIBRARIES(sound_sender_file_chunks ${YARP_LIBRARIES})
-TARGET_LINK_LIBRARIES(sound_sender_file_sum ${YARP_LIBRARIES})
-TARGET_LINK_LIBRARIES(sound_receiver ${YARP_LIBRARIES})
+add_executable(sound_sender_mic sound_sender_mic.cpp)
+target_link_libraries(sound_sender_mic ${YARP_LIBRARIES})
+
+add_executable(sound_sender_file sound_sender_file.cpp)
+target_link_libraries(sound_sender_file ${YARP_LIBRARIES})
+
+add_executable(sound_sender_file_chunks sound_sender_file_chunks.cpp)
+target_link_libraries(sound_sender_file_chunks ${YARP_LIBRARIES})
+
+add_executable(sound_sender_file_sum sound_sender_file_sum.cpp)
+target_link_libraries(sound_sender_file_sum ${YARP_LIBRARIES})
+
+add_executable(sound_loopback sound_loopback.cpp)
+target_link_libraries(sound_loopback ${YARP_LIBRARIES})

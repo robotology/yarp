@@ -2,17 +2,15 @@
 # Author: Paul Fitzpatrick
 # CopyPolicy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
 
-cmake_minimum_required(VERSION 2.8.9)
+cmake_minimum_required(VERSION 3.0)
+project(magicktest)
 
-PROJECT(magicktest)
+find_package(YARP REQUIRED)
+find_package(ImageMagick COMPONENTS Magick++ REQUIRED)
 
-FIND_PACKAGE(YARP REQUIRED)
-FIND_PACKAGE(ImageMagick COMPONENTS Magick++ REQUIRED)
+include_directories(${ImageMagick_INCLUDE_DIRS})
 
-INCLUDE_DIRECTORIES(${ImageMagick_INCLUDE_DIRS})
-LINK_LIBRARIES(${ImageMagick_LIBRARIES})
+add_executable(magicktest main.cpp)
 
-INCLUDE_DIRECTORIES(${YARP_INCLUDE_DIRS})
-LINK_LIBRARIES(${YARP_LIBRARIES})
-
-ADD_EXECUTABLE(magicktest main.cpp)
+target_link_libraries(magicktest ${ImageMagick_LIBRARIES}
+                          ${YARP_LIBRARIES})

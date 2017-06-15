@@ -4,7 +4,6 @@
 
 include(CMakeDependentOption)
 
-find_package(Doxygen)
 find_file(DOXYGEN_PLANTUM_JAR
           NAMES plantuml.jar
           PATHS /usr/share
@@ -53,6 +52,7 @@ if(DOXYGEN_FOUND)
      YARP_DOXYGEN_MAN OR
      YARP_DOXYGEN_DOCBOOK)
     add_custom_target(dox SOURCES "${YARP_MODULE_DIR}/template/${DOX_FILE}.in")
+    set_property(TARGET dox PROPERTY FOLDER "Documentation")
 
     if(YARP_DOXYGEN_HTML OR
        YARP_DOXYGEN_LATEX OR

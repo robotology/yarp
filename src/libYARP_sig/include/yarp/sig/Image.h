@@ -266,13 +266,13 @@ public:
      * Read image from a connection.
      * @return true iff image was read correctly
      */
-    virtual bool read(yarp::os::ConnectionReader& connection);
+    virtual bool read(yarp::os::ConnectionReader& connection) YARP_OVERRIDE;
 
     /**
      * Write image to a connection.
      * @return true iff image was written correctly
      */
-    virtual bool write(yarp::os::ConnectionWriter& connection);
+    virtual bool write(yarp::os::ConnectionWriter& connection) YARP_OVERRIDE;
 
     void setQuantum(int imgQuantum);
 
@@ -305,7 +305,7 @@ public:
         return data;
     }
 
-    virtual yarp::os::Type getReadType() {
+    virtual yarp::os::Type getReadType() YARP_OVERRIDE {
         return yarp::os::Type::byName("yarp/image");
     }
 
@@ -384,7 +384,11 @@ enum YarpVocabPixelTypesEnum
         VOCAB_PIXEL_ENCODING_BAYER_GBRG8 = VOCAB4('g', 'b', 'r', 'g'),  //gbrg8
         VOCAB_PIXEL_ENCODING_BAYER_GBRG16 = VOCAB4('g', 'b', '1', '6'),  //gbrg16
         VOCAB_PIXEL_ENCODING_BAYER_RGGB8 = -VOCAB4('r', 'g', 'g', 'b'),   //rggb8
-        VOCAB_PIXEL_ENCODING_BAYER_RGGB16 = VOCAB4('r', 'g', '1', '6')  //rggb16
+        VOCAB_PIXEL_ENCODING_BAYER_RGGB16 = VOCAB4('r', 'g', '1', '6'),  //rggb16
+        VOCAB_PIXEL_YUV_420 = VOCAB4('y','u','v','a'),
+        VOCAB_PIXEL_YUV_444 = VOCAB4('y','u','v','b'),
+        VOCAB_PIXEL_YUV_422 = VOCAB4('y','u','v','c'),
+        VOCAB_PIXEL_YUV_411 = VOCAB4('y','u','v','d')
     };
 
 
@@ -598,11 +602,11 @@ private: \
   T nullPixel; \
 public: \
 \
-  virtual int getPixelSize() const { \
+  virtual int getPixelSize() const YARP_OVERRIDE { \
     return sizeof(T); \
   } \
 \
-  virtual int getPixelCode() const { \
+  virtual int getPixelCode() const YARP_OVERRIDE { \
     return tag; \
   } \
 \

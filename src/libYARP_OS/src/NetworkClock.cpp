@@ -59,9 +59,9 @@ bool NetworkClock::open(const ConstString& name) {
         if (src.isValid()) {
             bool ok = port.open("");
             if (!ok) return false;
-            return NetworkBase::connect(name,port.getName());
+            return NetworkBase::connect(name, port.getName());
         } else {
-            fprintf(stderr,"Cannot find time port \"%s\"; for a time topic specify \"%s@\"\n", name.c_str(), name.c_str());
+            fprintf(stderr, "Cannot find time port \"%s\"; for a time topic specify \"%s@\"\n", name.c_str(), name.c_str());
             return false;
         }
     }
@@ -109,7 +109,7 @@ bool NetworkClock::isValid() const {
 bool NetworkClock::read(ConnectionReader& reader) {
     Bottle bot;
     bool ok = bot.read(reader);
-    if(!ok) return false;
+    if (!ok) return false;
 
     timeMutex.lock();
     sec = bot.get(0).asInt();

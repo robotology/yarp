@@ -156,7 +156,7 @@ protected:
 
 public: // implementing IEventSink::castEvent()
 
-    virtual void castEvent(Event* event)
+    virtual void castEvent(Event* event) YARP_OVERRIDE
     {
         semEvent.wait();
         if(!state)

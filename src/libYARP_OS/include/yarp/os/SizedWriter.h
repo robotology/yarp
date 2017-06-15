@@ -44,14 +44,14 @@ public:
 
     virtual void write(OutputStream& os) {
         for (size_t i=0; i<length(); i++) {
-            Bytes b((char*)data(i),length(i));
+            Bytes b((char*)data(i), length(i));
             os.write(b);
         }
     }
 
-    virtual bool write(ConnectionWriter& connection) {
+    virtual bool write(ConnectionWriter& connection) YARP_OVERRIDE {
         for (size_t i=0; i<length(); i++) {
-            connection.appendBlock((char*)data(i),length(i));
+            connection.appendBlock((char*)data(i), length(i));
         }
         return true;
     }

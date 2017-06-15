@@ -5,8 +5,8 @@
  */
 
 
-#include <stdio.h>
-#include <string.h>
+#include <cstdio>
+#include <cstring>
 
 #include <yarp/os/Log.h>
 #include <yarp/sig/IplImage.h>

@@ -57,7 +57,39 @@ public:
   sensor_msgs_LaserScan() {
   }
 
-  bool readBare(yarp::os::ConnectionReader& connection) {
+  void clear() {
+    // *** header ***
+    header.clear();
+
+    // *** angle_min ***
+    angle_min = 0.0;
+
+    // *** angle_max ***
+    angle_max = 0.0;
+
+    // *** angle_increment ***
+    angle_increment = 0.0;
+
+    // *** time_increment ***
+    time_increment = 0.0;
+
+    // *** scan_time ***
+    scan_time = 0.0;
+
+    // *** range_min ***
+    range_min = 0.0;
+
+    // *** range_max ***
+    range_max = 0.0;
+
+    // *** ranges ***
+    ranges.clear();
+
+    // *** intensities ***
+    intensities.clear();
+  }
+
+  bool readBare(yarp::os::ConnectionReader& connection) YARP_OVERRIDE {
     // *** header ***
     if (!header.read(connection)) return false;
 
@@ -85,16 +117,16 @@ public:
     // *** ranges ***
     int len = connection.expectInt();
     ranges.resize(len);
-    if (!connection.expectBlock((char*)&ranges[0],sizeof(yarp::os::NetFloat32)*len)) return false;
+    if (len > 0 && !connection.expectBlock((char*)&ranges[0],sizeof(yarp::os::NetFloat32)*len)) return false;
 
     // *** intensities ***
     len = connection.expectInt();
     intensities.resize(len);
-    if (!connection.expectBlock((char*)&intensities[0],sizeof(yarp::os::NetFloat32)*len)) return false;
+    if (len > 0 && !connection.expectBlock((char*)&intensities[0],sizeof(yarp::os::NetFloat32)*len)) return false;
     return !connection.isError();
   }
 
-  bool readBottle(yarp::os::ConnectionReader& connection) {
+  bool readBottle(yarp::os::ConnectionReader& connection) YARP_OVERRIDE {
     connection.convertTextMode();
     yarp::os::idl::WireReader reader(connection);
     if (!reader.readListHeader(10)) return false;
@@ -142,12 +174,12 @@ public:
   }
 
   using yarp::os::idl::WirePortable::read;
-  bool read(yarp::os::ConnectionReader& connection) {
+  bool read(yarp::os::ConnectionReader& connection) YARP_OVERRIDE {
     if (connection.isBareMode()) return readBare(connection);
     return readBottle(connection);
   }
 
-  bool writeBare(yarp::os::ConnectionWriter& connection) {
+  bool writeBare(yarp::os::ConnectionWriter& connection) YARP_OVERRIDE {
     // *** header ***
     if (!header.write(connection)) return false;
 
@@ -174,15 +206,15 @@ public:
 
     // *** ranges ***
     connection.appendInt(ranges.size());
-    connection.appendExternalBlock((char*)&ranges[0],sizeof(yarp::os::NetFloat32)*ranges.size());
+    if (ranges.size()>0) {connection.appendExternalBlock((char*)&ranges[0],sizeof(yarp::os::NetFloat32)*ranges.size());}
 
     // *** intensities ***
     connection.appendInt(intensities.size());
-    connection.appendExternalBlock((char*)&intensities[0],sizeof(yarp::os::NetFloat32)*intensities.size());
+    if (intensities.size()>0) {connection.appendExternalBlock((char*)&intensities[0],sizeof(yarp::os::NetFloat32)*intensities.size());}
     return !connection.isError();
   }
 
-  bool writeBottle(yarp::os::ConnectionWriter& connection) {
+  bool writeBottle(yarp::os::ConnectionWriter& connection) YARP_OVERRIDE {
     connection.appendInt(BOTTLE_TAG_LIST);
     connection.appendInt(10);
 
@@ -235,7 +267,7 @@ public:
   }
 
   using yarp::os::idl::WirePortable::write;
-  bool write(yarp::os::ConnectionWriter& connection) {
+  bool write(yarp::os::ConnectionWriter& connection) YARP_OVERRIDE {
     if (connection.isBareMode()) return writeBare(connection);
     return writeBottle(connection);
   }
@@ -296,7 +328,7 @@ string frame_id";
   }
 
   // Name the class, ROS will need this
-  yarp::os::Type getType() {
+  yarp::os::Type getType() YARP_OVERRIDE {
     yarp::os::Type typ = yarp::os::Type::byName("sensor_msgs/LaserScan","sensor_msgs/LaserScan");
     typ.addProperty("md5sum",yarp::os::Value("90c7ef2dc6895d81024acba2ac42f369"));
     typ.addProperty("message_definition",yarp::os::Value(getTypeText()));

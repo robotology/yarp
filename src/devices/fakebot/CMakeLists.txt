@@ -10,17 +10,11 @@ yarp_prepare_plugin(fakebot
 
 if(NOT SKIP_fakebot)
   set(CMAKE_INCLUDE_CURRENT_DIR ON)
-  get_property(YARP_OS_INCLUDE_DIRS TARGET YARP_OS PROPERTY INCLUDE_DIRS)
-  get_property(YARP_sig_INCLUDE_DIRS TARGET YARP_sig PROPERTY INCLUDE_DIRS)
-  get_property(YARP_dev_INCLUDE_DIRS TARGET YARP_dev PROPERTY INCLUDE_DIRS)
-  include_directories(${YARP_OS_INCLUDE_DIRS}
-                      ${YARP_sig_INCLUDE_DIRS}
-                      ${YARP_dev_INCLUDE_DIRS})
   yarp_add_plugin(yarp_fakebot FakeBot.cpp
                                FakeBot.h)
-  target_link_libraries(yarp_fakebot YARP_OS
-                                     YARP_sig
-                                     YARP_dev)
+  target_link_libraries(yarp_fakebot YARP::YARP_OS
+                                     YARP::YARP_sig
+                                     YARP::YARP_dev)
   yarp_install(TARGETS yarp_fakebot
                EXPORT YARP
                COMPONENT runtime
@@ -29,5 +23,7 @@ if(NOT SKIP_fakebot)
   yarp_install(FILES fakebot.ini
                COMPONENT runtime
                DESTINATION ${YARP_PLUGIN_MANIFESTS_INSTALL_DIR})
+
+  set_property(TARGET yarp_fakebot PROPERTY FOLDER "Plugins/Device/Fake")
 endif()
 

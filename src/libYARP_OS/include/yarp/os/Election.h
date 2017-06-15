@@ -66,7 +66,7 @@ private:
 
     yarp::os::Semaphore mutex;
 
-    typedef typename std::map<yarp::os::ConstString,PR> map_type;
+    typedef typename std::map<yarp::os::ConstString, PR> map_type;
     map_type nameMap;
     long ct;
 
@@ -90,7 +90,7 @@ private:
     PR *add(const yarp::os::ConstString& key, typename PR::peer_type *entity) {
         mutex.wait();
         ct++;
-        PR *rec = getRecordRaw(key,true);
+        PR *rec = getRecordRaw(key, true);
         yAssert(rec);
         rec->add(entity);
         mutex.post();
@@ -99,7 +99,7 @@ private:
     void remove(const yarp::os::ConstString& key, typename PR::peer_type *entity) {
         mutex.wait();
         ct++;
-        PR *rec = getRecordRaw(key,false);
+        PR *rec = getRecordRaw(key, false);
         yAssert(rec);
         rec->remove(entity);
         mutex.post();
@@ -107,7 +107,7 @@ private:
 
     typename PR::peer_type *getElect(const yarp::os::ConstString& key) {
         mutex.wait();
-        PR *rec = getRecordRaw(key,false);
+        PR *rec = getRecordRaw(key, false);
         mutex.post();
         if (rec) {
             return rec->getFirst();
@@ -117,7 +117,7 @@ private:
 
     PR *getRecord(const yarp::os::ConstString& key) {
         mutex.wait();
-        PR *rec = getRecordRaw(key,false);
+        PR *rec = getRecordRaw(key, false);
         mutex.post();
         return rec;
     }

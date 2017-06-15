@@ -14,16 +14,11 @@
 #include <yarp/os/impl/SplitString.h>
 
 #include <yarp/os/impl/PlatformMap.h>
-#include <yarp/os/impl/PlatformStdlib.h>
+#include <yarp/os/impl/PlatformDirent.h>
 
-#ifdef YARP_HAS_ACE
-#  include <ace/OS_NS_ctype.h>
-#else
-#  include <ctype.h>
-#  define ace_isalnum isalnum
-#endif
-
-#include <stdio.h>
+#include <cctype>
+#include <cstdio>
+#include <cstring>
 #include <algorithm>
 
 using namespace yarp::os::impl;
@@ -67,7 +62,7 @@ public:
 
 class PropertyHelper {
 public:
-    PLATFORM_MAP(ConstString,PropertyItem) data;
+    PLATFORM_MAP(ConstString, PropertyItem) data;
     Property& owner;
 
     PropertyHelper(Property& owner, int hash_size) :
@@ -77,8 +72,8 @@ public:
         owner(owner) {}
 
     PropertyItem *getPropNoCreate(const ConstString& key) const {
-        PLATFORM_MAP_ITERATOR(ConstString,PropertyItem,entry);
-        int result = PLATFORM_MAP_FIND((*((PLATFORM_MAP(ConstString,PropertyItem) *)&data)),key,entry);
+        PLATFORM_MAP_ITERATOR(ConstString, PropertyItem, entry);
+        int result = PLATFORM_MAP_FIND((*((PLATFORM_MAP(ConstString, PropertyItem) *)&data)), key, entry);
         if (result==-1) {
             return YARP_NULLPTR;
         }
@@ -88,14 +83,14 @@ public:
     }
 
     PropertyItem *getProp(const ConstString& key, bool create = true) {
-        PLATFORM_MAP_ITERATOR(ConstString,PropertyItem,entry);
-        int result = PLATFORM_MAP_FIND(data,key,entry);
+        PLATFORM_MAP_ITERATOR(ConstString, PropertyItem, entry);
+        int result = PLATFORM_MAP_FIND(data, key, entry);
         if (result==-1) {
             if (!create) {
                 return YARP_NULLPTR;
             }
-            PLATFORM_MAP_SET(data,key,PropertyItem());
-            result = PLATFORM_MAP_FIND(data,key,entry);
+            PLATFORM_MAP_SET(data, key, PropertyItem());
+            result = PLATFORM_MAP_FIND(data, key, entry);
         }
         yAssert(result!=-1);
         //yAssert(entry!=YARP_NULLPTR);
@@ -103,7 +98,7 @@ public:
     }
 
     void put(const ConstString& key, const ConstString& val) {
-        PropertyItem *p = getProp(key,true);
+        PropertyItem *p = getProp(key, true);
         p->singleton = true;
         p->clear();
         p->bot.clear();
@@ -112,7 +107,7 @@ public:
     }
 
     void put(const ConstString& key, const Value& bit) {
-        PropertyItem *p = getProp(key,true);
+        PropertyItem *p = getProp(key, true);
         p->singleton = true;
         p->clear();
         p->bot.clear();
@@ -121,7 +116,7 @@ public:
     }
 
     void put(const ConstString& key, Value *bit) {
-        PropertyItem *p = getProp(key,true);
+        PropertyItem *p = getProp(key, true);
         p->singleton = true;
         p->clear();
         p->bot.clear();
@@ -130,7 +125,7 @@ public:
     }
 
     Property& addGroup(const ConstString& key) {
-        PropertyItem *p = getProp(key,true);
+        PropertyItem *p = getProp(key, true);
         p->singleton = true;
         p->clear();
         p->bot.clear();
@@ -147,7 +142,7 @@ public:
     }
 
     void unput(const ConstString& key) {
-        PLATFORM_MAP_UNSET(data,ConstString(key));
+        PLATFORM_MAP_UNSET(data, ConstString(key));
     }
 
     bool check(const ConstString& key) const {
@@ -188,13 +183,13 @@ public:
             Bottle b;
             b.add(val.get(0));
             b.append(val.tail().tail());
-            return putBottle(key,b);
+            return putBottle(key, b);
         }
-        return putBottle(key,val);
+        return putBottle(key, val);
     }
 
     Bottle& putBottle(const char *key, const Bottle& val) {
-        PropertyItem *p = getProp(key,true);
+        PropertyItem *p = getProp(key, true);
         p->singleton = false;
         p->clear();
         // inefficient! copy not implemented yet...
@@ -204,7 +199,7 @@ public:
 
 
     Bottle& putBottle(const char *key) {
-        PropertyItem *p = getProp(key,true);
+        PropertyItem *p = getProp(key, true);
         p->singleton = false;
         p->clear();
         p->bot.clear();
@@ -225,13 +220,13 @@ public:
         PLATFORM_MAP_CLEAR(data);
     }
 
-    void fromString(const ConstString& txt,bool wipe=true) {
+    void fromString(const ConstString& txt, bool wipe=true) {
         Bottle bot;
         bot.fromString(txt);
-        fromBottle(bot,wipe);
+        fromBottle(bot, wipe);
     }
 
-    void fromCommand(int argc, char *argv[],bool wipe=true) {
+    void fromCommand(int argc, char *argv[], bool wipe=true) {
         ConstString tag = "";
         Bottle accum;
         Bottle total;
@@ -241,7 +236,7 @@ public:
             bool isTag = false;
             if (work.length()>=2) {
                 if (work[0]=='-'&&work[1]=='-') {
-                    work = work.substr(2,work.length()-2);
+                    work = work.substr(2, work.length()-2);
                     isTag = true;
                     if (work.find("::")!=ConstString::npos) {
                         qualified = true;
@@ -275,7 +270,7 @@ public:
             total.addList().copy(accum);
         }
         if (!qualified) {
-            fromBottle(total,wipe);
+            fromBottle(total, wipe);
             return;
         }
         if (wipe) {
@@ -292,7 +287,7 @@ public:
                 int at = key.find("::");
                 base = key;
                 if (at>=0) {
-                    base = key.substr(0,at);
+                    base = key.substr(0, at);
                     key = key.substr(at+2);
                 } else {
                     key = "";
@@ -316,15 +311,15 @@ public:
         }
     }
 
-    bool readDir(const ConstString& dirname, ACE_DIR *&dir, ConstString& result, const ConstString& section=ConstString()) {
+    bool readDir(const ConstString& dirname, yarp::os::impl::DIR *&dir, ConstString& result, const ConstString& section=ConstString()) {
         bool ok = true;
         YARP_DEBUG(Logger::get(),
                    ConstString("reading directory ") + dirname);
 
-        struct YARP_DIRENT **namelist;
-        YARP_closedir(dir);
+        yarp::os::impl::dirent **namelist;
+        yarp::os::impl::closedir(dir);
         dir = YARP_NULLPTR;
-        int n = YARP_scandir(dirname.c_str(),&namelist,YARP_NULLPTR,YARP_alphasort);
+        int n = yarp::os::impl::scandir(dirname.c_str(), &namelist, YARP_NULLPTR, yarp::os::impl::alphasort);
         if (n<0) {
             return false;
         }
@@ -337,7 +332,7 @@ public:
             ConstString fname = ConstString(dirname) + "/" + name;
             std::replace(fname.begin(), fname.end(), '\\', '/');
             if (section.empty()) {
-                ok = ok && readFile(fname,result,false);
+                ok = ok && readFile(fname, result, false);
                 result += "\n[]\n";  // reset any nested sections
             } else {
                 result += "[include " + section + " \"" + fname + "\" \"" + fname + "\"]\n";
@@ -349,13 +344,15 @@ public:
 
     bool readFile(const ConstString& fname, ConstString& result, bool allowDir) {
         if (allowDir) {
-            ACE_DIR *dir = ACE_OS::opendir(fname.c_str());
-            if (dir) return readDir(fname,dir,result);
+            yarp::os::impl::DIR *dir = yarp::os::impl::opendir(fname.c_str());
+            if (dir) return readDir(fname, dir, result);
         }
         YARP_DEBUG(Logger::get(),
                    ConstString("reading file ") + fname);
-        FILE *fin = fopen(fname.c_str(),"r");
-        if (fin==YARP_NULLPTR) return false;
+        FILE *fin = fopen(fname.c_str(), "r");
+        if (!fin) {
+            return false;
+        }
         char buf[25600];
         while(fgets(buf, sizeof(buf)-1, fin) != YARP_NULLPTR) {
             result += buf;
@@ -379,9 +376,9 @@ public:
         ConstString txt;
 
         bool ok = true;
-        if (!readFile(fname,txt,true)) {
+        if (!readFile(fname, txt, true)) {
             ok = false;
-            SplitString ss(searchPath.c_str(),';');
+            SplitString ss(searchPath.c_str(), ';');
             for (int i=0; i<ss.size(); i++) {
                 ConstString trial = ss.get(i);
                 trial += '/';
@@ -392,7 +389,7 @@ public:
                            trial.c_str());
 
                 txt = "";
-                if (readFile(trial.c_str(),txt,true)) {
+                if (readFile(trial.c_str(), txt, true)) {
                     ok = true;
                     pathPrefix = ss.get(i);
                     pathPrefix += '/';
@@ -407,11 +404,11 @@ public:
             index = fname.rfind('\\');
         }
         if (index!=ConstString::npos) {
-            path = fname.substr(0,index);
+            path = fname.substr(0, index);
         }
 
         if (!ok) {
-            YARP_ERROR(Logger::get(),ConstString("cannot read from ") +
+            YARP_ERROR(Logger::get(), ConstString("cannot read from ") +
                        fname);
             return false;
         }
@@ -424,10 +421,10 @@ public:
             }
             searchPath += pathPrefix;
             searchPath += path;
-            envExtended.put("CONFIG_PATH",searchPath.c_str());
+            envExtended.put("CONFIG_PATH", searchPath.c_str());
         }
 
-        fromConfig(txt.c_str(),envExtended,wipe);
+        fromConfig(txt.c_str(), envExtended, wipe);
         return true;
     }
 
@@ -439,7 +436,7 @@ public:
 
         YARP_DEBUG(Logger::get(), ConstString("looking for ") + dirname.c_str());
 
-        ACE_DIR *dir = ACE_OS::opendir(dirname.c_str());
+        yarp::os::impl::DIR *dir = yarp::os::impl::opendir(dirname.c_str());
         if (!dir) {
             YARP_ERROR(Logger::get(), ConstString("cannot read from ") + dirname);
             return false;
@@ -455,7 +452,7 @@ public:
         return true;
     }
 
-    void fromConfig(const char *txt,Searchable& env, bool wipe=true) {
+    void fromConfig(const char *txt, Searchable& env, bool wipe=true) {
         StringInputStream sis;
         sis.add(txt);
         sis.add("\n");
@@ -470,9 +467,9 @@ public:
             bool including = false;
             ConstString buf;
             bool good = true;
-            buf = sis.readLine('\n',&good);
+            buf = sis.readLine('\n', &good);
             while (good && !BottleImpl::isComplete(buf.c_str())) {
-                buf += sis.readLine('\n',&good);
+                buf += sis.readLine('\n', &good);
             }
             if (!good) {
                 done = true;
@@ -491,7 +488,7 @@ public:
                             if (ch=='/') {
                                 comment++;
                                 if (comment==2) {
-                                    buf = buf.substr(0,i-1);
+                                    buf = buf.substr(0, i-1);
                                     break;
                                 }
                             } else {
@@ -500,7 +497,7 @@ public:
                                     if (i==0) {
                                         buf = "";
                                     } else {
-                                        buf = buf.substr(0,i-1);
+                                        buf = buf.substr(0, i-1);
                                     }
                                     break;
                                 }
@@ -514,12 +511,12 @@ public:
                 }
 
                 // expand any environment references
-                buf = expand(buf.c_str(),env,owner).c_str();
+                buf = expand(buf.c_str(), env, owner).c_str();
 
                 if (buf.length()>0 && buf[0]=='[') {
                     size_t stop = buf.find(']');
                     if (stop!=ConstString::npos) {
-                        buf = buf.substr(1,stop-1);
+                        buf = buf.substr(1, stop-1);
                         size_t space = buf.find(' ');
                         if (space!=ConstString::npos) {
                             Bottle bot(buf.c_str());
@@ -614,7 +611,7 @@ public:
                                     Bottle init;
                                     init.addString(key.c_str());
                                     init.addString(buf.c_str());
-                                    putBottleCompat(key.c_str(),init);
+                                    putBottleCompat(key.c_str(), init);
                                 } else {
                                     target->addString(buf.c_str());
                                 }
@@ -632,7 +629,7 @@ public:
                 bot.fromString(buf.c_str());
                 if (bot.size()>=1) {
                     if (tag=="") {
-                        putBottleCompat(bot.get(0).toString().c_str(),bot);
+                        putBottleCompat(bot.get(0).toString().c_str(), bot);
                     } else {
                         if (bot.get(1).asString()=="=") {
                             Bottle& b = accum.addList();
@@ -650,7 +647,7 @@ public:
             if (isTag||done) {
                 if (tag!="") {
                     if (accum.size()>=1) {
-                        putBottleCompat(tag.c_str(),accum);
+                        putBottleCompat(tag.c_str(), accum);
                     }
                     tag = "";
                 }
@@ -677,14 +674,14 @@ public:
             Value& bb = bot.get(i);
             if (bb.isList()) {
                 Bottle *sub = bb.asList();
-                putBottle(bb.asList()->get(0).toString().c_str(),*sub);
+                putBottle(bb.asList()->get(0).toString().c_str(), *sub);
             }
         }
     }
 
     ConstString toString() {
         Bottle bot;
-        for (PLATFORM_MAP(ConstString,PropertyItem)::iterator
+        for (PLATFORM_MAP(ConstString, PropertyItem)::iterator
                  it = data.begin(); it!=data.end(); it++) {
             PropertyItem& rec = PLATFORM_MAP_ITERATOR_SECOND(it);
             Bottle& sub = bot.addList();
@@ -734,7 +731,7 @@ public:
             }
 
             if (inVar) {
-                if (ACE_OS::ace_isalnum(ch)||(ch=='_')) {
+                if (isalnum(ch)||(ch=='_')) {
                     var += ch;
                     continue;
                 } else {
@@ -805,11 +802,11 @@ public:
         szarg[nargs]=YARP_NULLPTR;
         fromCommand(nargs, szarg, wipe);
         // clear allocated memory for arguments
-        if(szcmd) {
+        if (szcmd) {
             delete [] szcmd;
             szcmd = YARP_NULLPTR;
         }
-        if(szarg) {
+        if (szarg) {
             delete [] szarg;
             szarg = YARP_NULLPTR;
         }
@@ -852,7 +849,7 @@ public:
         for(j = 0; j < *argc; j++) {
             len = strlen(argv[j]);
             for(i = 0; i < len; i++) {
-                if('\1' == argv[j][i]) {
+                if ('\1' == argv[j][i]) {
                     argv[j][i] = ' ';
                 }
             }
@@ -890,7 +887,7 @@ Property::Property(int hash_size) {
 
 Property::Property(const char *str) {
     hash_size = 0;
-    implementation = new PropertyHelper(*this,0);
+    implementation = new PropertyHelper(*this, 0);
     yAssert(implementation!=YARP_NULLPTR);
     fromString(str);
 }
@@ -898,7 +895,7 @@ Property::Property(const char *str) {
 
 Property::Property(const Property& prop) : Searchable(), Portable() {
     hash_size = 0;
-    implementation = new PropertyHelper(*this,0);
+    implementation = new PropertyHelper(*this, 0);
     yAssert(implementation!=YARP_NULLPTR);
     fromString(prop.toString());
 }
@@ -906,7 +903,7 @@ Property::Property(const Property& prop) : Searchable(), Portable() {
 
 void Property::summon() {
     if (check()) return;
-    implementation = new PropertyHelper(*this,hash_size);
+    implementation = new PropertyHelper(*this, hash_size);
     yAssert(implementation!=YARP_NULLPTR);
 }
 
@@ -933,28 +930,28 @@ const Property& Property::operator = (const Property& prop) {
 
 void Property::put(const ConstString& key, const ConstString& value) {
     summon();
-    HELPER(implementation).put(key,value);
+    HELPER(implementation).put(key, value);
 }
 
 void Property::put(const ConstString& key, const Value& value) {
     summon();
-    HELPER(implementation).put(key,value);
+    HELPER(implementation).put(key, value);
 }
 
 
 void Property::put(const ConstString& key, Value *value) {
     summon();
-    HELPER(implementation).put(key,value);
+    HELPER(implementation).put(key, value);
 }
 
 void Property::put(const ConstString& key, int value) {
     summon();
-    put(key,Value::makeInt(value));
+    put(key, Value::makeInt(value));
 }
 
 void Property::put(const ConstString& key, double value) {
     summon();
-    put(key,Value::makeDouble(value));
+    put(key, Value::makeDouble(value));
 }
 
 bool Property::check(const ConstString& key) const {
@@ -981,9 +978,9 @@ void Property::clear() {
 }
 
 
-void Property::fromString(const ConstString& txt,bool wipe) {
+void Property::fromString(const ConstString& txt, bool wipe) {
     summon();
-    HELPER(implementation).fromString(txt,wipe);
+    HELPER(implementation).fromString(txt, wipe);
 }
 
 
@@ -999,12 +996,12 @@ void Property::fromCommand(int argc, char *argv[], bool skipFirst,
         argc--;
         argv++;
     }
-    HELPER(implementation).fromCommand(argc,argv,wipe);
+    HELPER(implementation).fromCommand(argc, argv, wipe);
 }
 
 void Property::fromCommand(int argc, const char *argv[], bool skipFirst, bool wipe) {
     summon();
-    fromCommand(argc,(char **)argv,skipFirst,wipe);
+    fromCommand(argc, (char **)argv, skipFirst, wipe);
 }
 
 void Property::fromArguments(const char *arguments, bool wipe) {
@@ -1020,24 +1017,24 @@ bool Property::fromConfigDir(const ConstString& dirname, const ConstString& sect
 bool Property::fromConfigFile(const ConstString& fname, bool wipe) {
     summon();
     Property p;
-    return fromConfigFile(fname,p,wipe);
+    return fromConfigFile(fname, p, wipe);
 }
 
 
-bool Property::fromConfigFile(const ConstString& fname,Searchable& env,bool wipe) {
+bool Property::fromConfigFile(const ConstString& fname, Searchable& env, bool wipe) {
     summon();
-    return HELPER(implementation).fromConfigFile(fname,env,wipe);
+    return HELPER(implementation).fromConfigFile(fname, env, wipe);
 }
 
 void Property::fromConfig(const char *txt, bool wipe) {
     summon();
     Property p;
-    fromConfig(txt,p,wipe);
+    fromConfig(txt, p, wipe);
 }
 
-void Property::fromConfig(const char *txt,Searchable& env,bool wipe) {
+void Property::fromConfig(const char *txt, Searchable& env, bool wipe) {
     summon();
-    HELPER(implementation).fromConfig(txt,env,wipe);
+    HELPER(implementation).fromConfig(txt, env, wipe);
 }
 
 
@@ -1110,7 +1107,7 @@ void Property::fromQuery(const char *url, bool wipe) {
             val = buf;
             buf = "";
             if (key!="" && val!="") {
-                put(key.c_str(),val.c_str());
+                put(key.c_str(), val.c_str());
             }
             key = "";
         } else if (ch=='?') {

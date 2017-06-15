@@ -26,12 +26,14 @@
 
 // General files
 #include <yarp/os/impl/TcpConnector.h>
-#include <yarp/os/Log.h>
 
-#include <sys/socket.h>
-#include <netdb.h>
+#include <yarp/os/Log.h>
+#include <yarp/os/impl/PlatformNetdb.h>
+
 #include <iostream>
 #include <cstdio>
+
+#include <sys/socket.h>
 
 using namespace yarp::os::impl;
 using namespace yarp::os;
@@ -70,25 +72,21 @@ int TcpConnector::connect(TcpStream &new_stream, const Contact& address) {
     servAddr.sin_port = htons(address.getPort());
     memset(servAddr.sin_zero, '\0', sizeof servAddr.sin_zero);
 
-    struct hostent *hostInfo = gethostbyname(address.getHost().c_str());
+    struct hostent *hostInfo = yarp::os::impl::gethostbyname(address.getHost().c_str());
     if (hostInfo) {
-        bcopy(hostInfo->h_addr,(char *)(&servAddr.sin_addr),hostInfo->h_length);
+        bcopy(hostInfo->h_addr, (char *)(&servAddr.sin_addr), hostInfo->h_length);
     } else {
-        inet_aton(address.getHost().c_str(), &servAddr.sin_addr);
+        inet_pton(AF_INET, address.getHost().c_str(), &servAddr.sin_addr);
     }
-
-//     Address servAddress,
-//     servAddress = Address(inet_ntoa(servAddr.sin_addr),servAddr.sin_port);
 
     yAssert(new_stream.get_handle() != -1);
 
     int result = ::connect(new_stream.get_handle(), (sockaddr*) &servAddr, sizeof(servAddr));
 
-//    std::cout << "Connect [handle=" << new_stream.get_handle() << "] at " << inet_ntoa(servAddr.sin_addr) << ":" << servAddr.sin_port << std::endl;
-
     if (result < 0) {
         perror("TcpConnector::connect fail");
-        std::cerr << "Connect [handle=" << new_stream.get_handle() << "] at " << inet_ntoa(servAddr.sin_addr) << ":" << servAddr.sin_port << std::endl;
+        char buf[INET_ADDRSTRLEN];
+        std::cerr << "Connect [handle=" << new_stream.get_handle() << "] at " << inet_ntop(AF_INET, &servAddr.sin_addr, buf, INET_ADDRSTRLEN) << ":" << servAddr.sin_port << std::endl;
     }
     return result;
 }

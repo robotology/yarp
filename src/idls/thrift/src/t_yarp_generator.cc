@@ -24,7 +24,7 @@
 #include <map>
 #include <set>
 
-#include <stdlib.h>
+#include <cstdlib>
 #include <sys/stat.h>
 #include <sstream>
 #include "t_generator.h"
@@ -99,7 +99,7 @@ class t_yarp_generator : public t_oop_generator {
 
   }
 
-  void generate_program();
+  void generate_program() override;
   void generate_program_toc();
   void generate_program_toc_row(t_program* tprog);
   void generate_program_toc_rows(t_program* tprog,
@@ -155,12 +155,12 @@ void getNeededType(t_type* curType, std::set<string>& neededTypes)
 
 }
 
-  void generate_typedef (t_typedef*  ttypedef);
-  void generate_enum    (t_enum*     tenum);
-  void generate_const   (t_const*    tconst);
-  void generate_struct  (t_struct*   tstruct);
-  void generate_service (t_service*  tservice);
-  void generate_xception(t_struct*   txception);
+  void generate_typedef (t_typedef*  ttypedef) override;
+  void generate_enum    (t_enum*     tenum) override;
+  void generate_const   (t_const*    tconst) override;
+  void generate_struct  (t_struct*   tstruct) override;
+  void generate_service (t_service*  tservice) override;
+  void generate_xception(t_struct*   txception) override;
 
   void print_doc        (std::ofstream& out, t_doc* tdoc);
   void quote_doc       (std::vector<std::string>& doxyPar, t_doc* tdoc);
@@ -1064,8 +1064,8 @@ void t_yarp_generator::generate_enum(t_enum* tenum) {
   f_types_ << "class " << namespace_decorate(ns,enum_name) << "Vocab : public yarp::os::idl::WireVocab {" << endl;
   f_types_ << "public:" << endl;
   indent_up();
-  indent(f_types_) << "virtual int fromString(const std::string& input);" << endl;
-  indent(f_types_) << "virtual std::string toString(int input);" << endl;
+  indent(f_types_) << "virtual int fromString(const std::string& input) YARP_OVERRIDE;" << endl;
+  indent(f_types_) << "virtual std::string toString(int input) YARP_OVERRIDE;" << endl;
   indent_down();
   f_types_ << "};" << endl;
   f_types_ << endl;
@@ -1354,16 +1354,16 @@ void t_yarp_generator::generate_struct(t_struct* tstruct) {
 
   out << endl;
   indent(out) << "// read and write structure on a connection" << endl;
-  indent(out) << "bool read(yarp::os::idl::WireReader& reader);"
+  indent(out) << "bool read(yarp::os::idl::WireReader& reader) YARP_OVERRIDE;"
               << endl;
 
-  indent(out) << "bool read(yarp::os::ConnectionReader& connection);"
+  indent(out) << "bool read(yarp::os::ConnectionReader& connection) YARP_OVERRIDE;"
               << endl;
 
 
-  indent(out) << "bool write(yarp::os::idl::WireWriter& writer);"
+  indent(out) << "bool write(yarp::os::idl::WireWriter& writer) YARP_OVERRIDE;"
               << endl;
-  indent(out) << "bool write(yarp::os::ConnectionWriter& connection);"
+  indent(out) << "bool write(yarp::os::ConnectionWriter& connection) YARP_OVERRIDE;"
               << endl;
 
   out << endl;
@@ -1517,8 +1517,8 @@ void t_yarp_generator::generate_struct(t_struct* tstruct) {
 
 
   // serialize
-  indent(out) << "bool read(yarp::os::ConnectionReader& connection);" << endl;
-  indent(out) << "bool write(yarp::os::ConnectionWriter& connection);" << endl;
+  indent(out) << "bool read(yarp::os::ConnectionReader& connection) YARP_OVERRIDE;" << endl;
+  indent(out) << "bool write(yarp::os::ConnectionWriter& connection) YARP_OVERRIDE;" << endl;
 
 
   indent_down();
@@ -2000,10 +2000,10 @@ void t_yarp_generator::generate_service(t_service* tservice) {
         if (!returntype->is_void()) {
           indent(f_curr_) << declare_field(&returnfield) << endl;
         }
-        
+
         indent(f_curr_) << function_prototype(*fn_iter,false,NULL,"init") << ";" << endl;
-        indent(f_curr_) << "virtual bool write(yarp::os::ConnectionWriter& connection);" << endl;
-        indent(f_curr_) << "virtual bool read(yarp::os::ConnectionReader& connection);" << endl;
+        indent(f_curr_) << "virtual bool write(yarp::os::ConnectionWriter& connection) YARP_OVERRIDE;" << endl;
+        indent(f_curr_) << "virtual bool read(yarp::os::ConnectionReader& connection) YARP_OVERRIDE;" << endl;
 
         indent_down();
         f_curr_ << "};" << endl;
@@ -2019,7 +2019,7 @@ void t_yarp_generator::generate_service(t_service* tservice) {
         //        << " : public yarp::os::Portable {"
         //        << endl;
         //indent(f_curr_) << "public:" << endl;
-        
+
         vector<t_field*> args = (*fn_iter)->get_arglist()->get_members();
         vector<t_field*>::iterator arg_iter;
         t_type* returntype = (*fn_iter)->get_returntype();
@@ -2044,7 +2044,7 @@ void t_yarp_generator::generate_service(t_service* tservice) {
         indent_down();
         indent(f_curr_) << "}" << endl;
         f_curr_ << endl;
-        
+
         indent(f_curr_) << "bool " << service_name_ << "_" << fname << "::read(yarp::os::ConnectionReader& connection) {" << endl;
         indent_up();
         if (!(*fn_iter)->is_oneway()) {
@@ -2176,7 +2176,7 @@ void t_yarp_generator::generate_service(t_service* tservice) {
     }
 
 
-    indent(f_srv_) << "virtual bool read(yarp::os::ConnectionReader& connection);"
+    indent(f_srv_) << "virtual bool read(yarp::os::ConnectionReader& connection) YARP_OVERRIDE;"
                    << endl;
     indent(f_srv_) << "virtual std::vector<std::string> help(const std::string& functionName=\"--all\");"
                    << endl;

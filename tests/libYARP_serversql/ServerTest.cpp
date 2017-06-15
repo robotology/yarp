@@ -5,8 +5,8 @@
  *
  */
 
-#include <stdio.h>
-#include <stdlib.h>
+#include <cstdio>
+#include <cstdlib>
 
 #include <yarp/os/all.h>
 #include <yarp/os/impl/NameClient.h>
@@ -23,7 +23,7 @@ using namespace yarp::os::impl;
  */
 class ServerTest : public UnitTest {
 public:
-    virtual ConstString getName() { return "ServerTest"; }
+    virtual ConstString getName() override { return "ServerTest"; }
 
     void checkRegisterFree() {
         report(0,"checking free register command...");
@@ -106,7 +106,7 @@ public:
         checkTrue(result.find(target)!=ConstString::npos,"answer found");
     }
 
-    virtual void runTests() {
+    virtual void runTests() override {
         NetworkBase::setLocalMode(true);
 
         checkRegisterFree();

@@ -41,13 +41,18 @@ set(YARP_serversql_IMPL_HDRS include/yarp/serversql/impl/TripleSourceCreator.h
 add_library(YARP_serversql STATIC ${YARP_serversql_SRCS}
                                   ${YARP_serversql_HDRS}
                                   ${YARP_serversql_IMPL_HDRS})
+add_library(YARP::YARP_serversql ALIAS YARP_serversql)
 
-target_link_libraries(YARP_serversql LINK_PRIVATE YARP_OS
-                                                  YARP_init
-                                                  YARP_name)
-target_link_libraries(YARP_serversql LINK_PRIVATE ${SQLite_LIBRARIES})
+target_include_directories(YARP_serversql PUBLIC $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>
+                                                 $<INSTALL_INTERFACE:${CMAKE_INSTALL_INCLUDEDIR}>)
+
+target_link_libraries(YARP_serversql PUBLIC YARP::YARP_conf
+                                            YARP::YARP_OS
+                                     INTERFACE YARP::YARP_init
+                                     PRIVATE YARP::YARP_name
+                                             ${SQLite_LIBRARIES})
 if(UNIX)
-  target_link_libraries(YARP_serversql LINK_PRIVATE ${CMAKE_DL_LIBS})
+  target_link_libraries(YARP_serversql PRIVATE ${CMAKE_DL_LIBS})
 endif()
 
 
@@ -66,3 +71,4 @@ install(TARGETS YARP_serversql
 set_property(GLOBAL APPEND PROPERTY YARP_LIBS YARP_serversql)
 set_property(TARGET YARP_serversql PROPERTY INCLUDE_DIRS ${CMAKE_CURRENT_SOURCE_DIR}/include
                                                          ${YARP_OS_INCLUDE_DIRS})
+set_property(TARGET YARP_serversql PROPERTY FOLDER "Libraries/Private")

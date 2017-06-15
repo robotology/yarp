@@ -76,9 +76,9 @@ public:
         pushedIntFlag = false;
     }
 
-    virtual bool setSize(size_t len)
+    virtual bool setSize(size_t len) override
     {
-        reset(*in,str,route,len,textMode,bareMode);
+        reset(*in, str, route, len, textMode, bareMode);
         return true;
     }
 
@@ -109,7 +109,7 @@ public:
         return false;
     }
 
-    virtual bool pushInt(int x)
+    virtual bool pushInt(int x) override
     {
         if (pushedIntFlag) {
             return false;
@@ -119,7 +119,7 @@ public:
         return true;
     }
 
-    virtual int expectInt()
+    virtual int expectInt() override
     {
         if (pushedIntFlag) {
             pushedIntFlag = false;
@@ -129,7 +129,7 @@ public:
             return 0;
         }
         NetInt32 x = 0;
-        yarp::os::Bytes b((char*)(&x),sizeof(x));
+        yarp::os::Bytes b((char*)(&x), sizeof(x));
         yAssert(in!=YARP_NULLPTR);
         YARP_SSIZE_T r = in->read(b);
         if (r<0 || (size_t)r<b.length()) {
@@ -140,13 +140,13 @@ public:
         return x;
     }
 
-    virtual YARP_INT64 expectInt64()
+    virtual YARP_INT64 expectInt64() override
     {
         if (!isGood()) {
             return 0;
         }
         NetInt64 x = 0;
-        yarp::os::Bytes b((char*)(&x),sizeof(x));
+        yarp::os::Bytes b((char*)(&x), sizeof(x));
         yAssert(in!=YARP_NULLPTR);
         YARP_SSIZE_T r = in->read(b);
         if (r<0 || (size_t)r<b.length()) {
@@ -157,13 +157,13 @@ public:
         return x;
     }
 
-    virtual double expectDouble()
+    virtual double expectDouble() override
     {
         if (!isGood()) {
             return 0;
         }
         NetFloat64 x = 0;
-        yarp::os::Bytes b((char*)(&x),sizeof(x));
+        yarp::os::Bytes b((char*)(&x), sizeof(x));
         yAssert(in!=YARP_NULLPTR);
         YARP_SSIZE_T r = in->read(b);
         if (r<0 || (size_t)r<b.length()) {
@@ -180,7 +180,7 @@ public:
             return "";
         }
         char *buf = new char[len];
-        yarp::os::Bytes b(buf,len);
+        yarp::os::Bytes b(buf, len);
         yAssert(in!=YARP_NULLPTR);
         YARP_SSIZE_T r = in->read(b);
         if (r<0 || (size_t)r<b.length()) {
@@ -201,7 +201,7 @@ public:
         }
         yAssert(in!=YARP_NULLPTR);
         bool success = false;
-        ConstString result = in->readLine('\n',&success);
+        ConstString result = in->readLine('\n', &success);
         if (!success) {
             err = true;
             return "";
@@ -210,25 +210,25 @@ public:
         return result;
     }
 
-    virtual bool isTextMode()
+    virtual bool isTextMode() override
     {
         return textMode;
     }
 
-    virtual bool isBareMode()
+    virtual bool isBareMode() override
     {
         return bareMode;
     }
 
-    virtual bool convertTextMode();
+    virtual bool convertTextMode() override;
 
-    virtual size_t getSize()
+    virtual size_t getSize() override
     {
         return messageLen + (pushedIntFlag?sizeof(yarp::os::NetInt32):0);
     }
 
     /*
-    virtual OutputStream *getReplyStream()
+    virtual OutputStream *getReplyStream() override
     {
         if (str==YARP_NULLPTR) {
             return YARP_NULLPTR;
@@ -237,7 +237,7 @@ public:
     }
     */
 
-    virtual yarp::os::ConnectionWriter *getWriter();
+    virtual yarp::os::ConnectionWriter *getWriter() override;
 
     void suppressReply()
     {
@@ -246,12 +246,12 @@ public:
 
     virtual void flushWriter();
 
-    // virtual TwoWayStream *getStreams()
+    // virtual TwoWayStream *getStreams() override
     // {
     // return str;
     // }
 
-    virtual yarp::os::Contact getRemoteContact()
+    virtual yarp::os::Contact getRemoteContact() override
     {
         if (str!=YARP_NULLPTR) {
             Contact remote = str->getRemoteAddress();
@@ -262,7 +262,7 @@ public:
         return remote;
     }
 
-    virtual yarp::os::Contact getLocalContact()
+    virtual yarp::os::Contact getLocalContact() override
     {
         if (str!=YARP_NULLPTR) {
             Contact local = str->getLocalAddress();
@@ -274,31 +274,31 @@ public:
 
 
 
-    virtual bool expectBlock(const char *data, size_t len)
+    virtual bool expectBlock(const char *data, size_t len) override
     {
-        return expectBlock(yarp::os::Bytes((char*)data,len));
+        return expectBlock(yarp::os::Bytes((char*)data, len));
     }
 
-    virtual ::yarp::os::ConstString expectText(int terminatingChar)
+    virtual ::yarp::os::ConstString expectText(int terminatingChar) override
     {
         if (!isGood()) {
             return "";
         }
         yAssert(in!=YARP_NULLPTR);
         bool lsuccess = false;
-        ConstString result = in->readLine(terminatingChar,&lsuccess);
+        ConstString result = in->readLine(terminatingChar, &lsuccess);
         if (lsuccess) {
             messageLen -= result.length()+1;
         }
         return ::yarp::os::ConstString(result.c_str());
     }
 
-    virtual bool isValid()
+    virtual bool isValid() override
     {
         return valid;
     }
 
-    virtual bool isError()
+    virtual bool isError() override
     {
         if (err) {
             return true;
@@ -306,7 +306,7 @@ public:
         return !isActive();
     }
 
-    virtual bool isActive()
+    virtual bool isActive() override
     {
         if (shouldDrop) {
             return false;
@@ -322,7 +322,7 @@ public:
         return false;
     }
 
-    virtual yarp::os::Portable *getReference()
+    virtual yarp::os::Portable *getReference() override
     {
         return ref;
     }
@@ -332,9 +332,9 @@ public:
         ref = obj;
     }
 
-    virtual yarp::os::Bytes readEnvelope();
+    virtual yarp::os::Bytes readEnvelope() override;
 
-    virtual void requestDrop()
+    virtual void requestDrop() override
     {
         shouldDrop = true;
     }
@@ -344,9 +344,9 @@ public:
         return shouldDrop;
     }
 
-    virtual yarp::os::Searchable& getConnectionModifiers();
+    virtual yarp::os::Searchable& getConnectionModifiers() override;
 
-    virtual void setParentConnectionReader(ConnectionReader *parentConnectionReader)
+    virtual void setParentConnectionReader(ConnectionReader *parentConnectionReader) override
     {
         this->parentConnectionReader = parentConnectionReader;
     }

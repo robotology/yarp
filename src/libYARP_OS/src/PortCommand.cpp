@@ -12,11 +12,11 @@ using namespace yarp::os::impl;
 using namespace yarp::os;
 
 bool PortCommand::read(ConnectionReader& reader) {
-    //ACE_DEBUG((LM_DEBUG,"PortCommand::readBlock"));
+    //ACE_DEBUG((LM_DEBUG, "PortCommand::readBlock"));
     ch = '\0';
     str = "";
     if (!reader.isTextMode()) {
-        bool ok = reader.expectBlock(header.get(),header.length());
+        bool ok = reader.expectBlock(header.get(), header.length());
         if (!ok) return false;
         char *base = header.get();
         if (base[4] == '~') {
@@ -43,8 +43,8 @@ bool PortCommand::read(ConnectionReader& reader) {
 }
 
 bool PortCommand::write(ConnectionWriter& writer) {
-    //ACE_DEBUG((LM_DEBUG,"PortCommand::writeBlock"));
-    //ACE_OS::printf("Writing port command, text mode %d\n", writer.isTextMode());
+    //ACE_DEBUG((LM_DEBUG, "PortCommand::writeBlock"));
+    //printf("Writing port command, text mode %d\n", writer.isTextMode());
     if (!writer.isTextMode()) {
         int len = 0;
         if (ch=='\0') {
@@ -52,23 +52,23 @@ bool PortCommand::write(ConnectionWriter& writer) {
         }
         yAssert(header.length()==8);
         char *base = header.get();
-        Bytes b(base,4);
-        NetType::netInt(len,b);
+        Bytes b(base, 4);
+        NetType::netInt(len, b);
         base[4] = '~';
         base[5] = ch;
         base[6] = 0;
         base[7] = 1;
-        writer.appendBlock(header.bytes().get(),header.bytes().length());
+        writer.appendBlock(header.bytes().get(), header.bytes().length());
         if (ch=='\0') {
-            writer.appendBlock(str.c_str(),str.length()+1);
+            writer.appendBlock(str.c_str(), str.length()+1);
         }
     } else {
         if (ch!='\0') {
             char buf[] = "X";
             buf[0] = ch;
-            writer.appendString(ConstString(buf).c_str(),'\n');
+            writer.appendString(ConstString(buf).c_str(), '\n');
         } else {
-            writer.appendString(str.c_str(),'\n');
+            writer.appendString(str.c_str(), '\n');
         }
     }
     return !writer.isError();

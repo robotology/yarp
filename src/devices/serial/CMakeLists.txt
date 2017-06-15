@@ -18,16 +18,12 @@ yarp_prepare_plugin(serialport
 
 if(NOT SKIP_serial OR NOT SKIP_serialport)
   set(CMAKE_INCLUDE_CURRENT_DIR ON)
-  get_property(YARP_OS_INCLUDE_DIRS TARGET YARP_OS PROPERTY INCLUDE_DIRS)
-  get_property(YARP_dev_INCLUDE_DIRS TARGET YARP_dev PROPERTY INCLUDE_DIRS)
-  include_directories(${YARP_OS_INCLUDE_DIRS}
-                      ${YARP_dev_INCLUDE_DIRS})
   include_directories(SYSTEM ${ACE_INCLUDE_DIRS})
 
   yarp_add_plugin(yarp_serial SerialDeviceDriver.cpp
                               SerialDeviceDriver.h)
-  target_link_libraries(yarp_serial YARP_OS
-                                    YARP_dev
+  target_link_libraries(yarp_serial YARP::YARP_OS
+                                    YARP::YARP_dev
                                     ${ACE_LIBRARIES})
   yarp_install(TARGETS yarp_serial
                EXPORT YARP
@@ -37,4 +33,6 @@ if(NOT SKIP_serial OR NOT SKIP_serialport)
   yarp_install(FILES serial.ini
                COMPONENT runtime
                DESTINATION ${YARP_PLUGIN_MANIFESTS_INSTALL_DIR})
+
+  set_property(TARGET yarp_serial PROPERTY FOLDER "Plugins/Device")
 endif()

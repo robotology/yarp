@@ -17,7 +17,7 @@ ConnectionReader::~ConnectionReader()
 
 Bytes ConnectionReader::readEnvelope()
 {
-    return Bytes(YARP_NULLPTR,0);
+    return Bytes(YARP_NULLPTR, 0);
 }
 
 void ConnectionReader::setParentConnectionReader(ConnectionReader* parentConnectionReader)

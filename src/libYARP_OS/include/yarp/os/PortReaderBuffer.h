@@ -245,7 +245,7 @@ public:
 
     int check();
 
-    virtual bool read(yarp::os::ConnectionReader& connection);
+    virtual bool read(yarp::os::ConnectionReader& connection) YARP_OVERRIDE;
 
     yarp::os::PortReader *readBase(bool& missed, bool cleanup);
 
@@ -305,7 +305,7 @@ public:
         start(); // automatically starts running
     }
 
-    virtual void run() {
+    virtual void run() YARP_OVERRIDE {
         if (reader != YARP_NULLPTR && callback != YARP_NULLPTR) {
             while (!isStopping()&&!reader->isClosed()) {
                 if (reader->read()) {
@@ -316,7 +316,7 @@ public:
         }
     }
 
-    virtual void onStop() {
+    virtual void onStop() YARP_OVERRIDE {
         if (reader != YARP_NULLPTR) {
             reader->interrupt();
         }
@@ -378,7 +378,7 @@ public:
     }
 
     // documented in TypedReader
-    virtual void setStrict(bool strict = true) {
+    virtual void setStrict(bool strict = true) YARP_OVERRIDE {
         autoDiscard = !strict;
         // do discard at earliest time possible
         implementation.setPrune(autoDiscard);
@@ -393,13 +393,13 @@ public:
         return implementation.check()>0;
     }
 
-    virtual int getPendingReads() {
+    virtual int getPendingReads() YARP_OVERRIDE {
         return implementation.check();
     }
 
 
     // documented in TypedReader
-    T *read(bool shouldWait=true) {
+    T *read(bool shouldWait=true) YARP_OVERRIDE {
         if (!shouldWait) {
             if (!check()) {
                 last = YARP_NULLPTR;
@@ -408,14 +408,14 @@ public:
         }
         bool missed = false;
         T *prev = last;
-        last = (T *)implementation.readBase(missed,false);
+        last = (T *)implementation.readBase(missed, false);
         if (last != YARP_NULLPTR) {
             if (autoDiscard) {
                 // go up to date
                 while (check()) {
                     //printf("Dropping something\n");
                     bool tmp;
-                    last = (T *)implementation.readBase(tmp,true);
+                    last = (T *)implementation.readBase(tmp, true);
                 }
             }
         }
@@ -433,12 +433,12 @@ public:
     }
 
     // documented in TypedReader
-    void interrupt() {
+    void interrupt() YARP_OVERRIDE {
         implementation.interrupt();
     }
 
     // documented in TypedReader
-    T *lastRead() {
+    T *lastRead() YARP_OVERRIDE {
         return last;
     }
 
@@ -452,16 +452,16 @@ public:
         implementation.attachBase(port);
     }
 
-    void useCallback(TypedReaderCallback<T>& callback) {
+    void useCallback(TypedReaderCallback<T>& callback)  YARP_OVERRIDE{
         if (reader != YARP_NULLPTR) {
             reader->stop();
             delete reader;
             reader = YARP_NULLPTR;
         }
-        reader = new TypedReaderThread<T>(*this,callback);
+        reader = new TypedReaderThread<T>(*this, callback);
     }
 
-    void disableCallback() {
+    void disableCallback() YARP_OVERRIDE {
         if (reader != YARP_NULLPTR) {
             reader->stop();
             delete reader;
@@ -493,11 +493,11 @@ public:
      *
      * @return new instance of the templated type.
      */
-    virtual PortReader *create() {
+    virtual PortReader *create() YARP_OVERRIDE {
         return new T;
     }
 
-    void setReplier(PortReader& reader) {
+    void setReplier(PortReader& reader) YARP_OVERRIDE {
         implementation.setReplier(reader);
     }
 
@@ -505,35 +505,35 @@ public:
         return implementation.getEnvelope(envelope);
     }
 
-    bool isClosed() {
+    bool isClosed() YARP_OVERRIDE {
         return implementation.isClosed();
     }
 
-    virtual ConstString getName() const {
+    virtual ConstString getName() const YARP_OVERRIDE {
         return implementation.getName();
     }
 
 
     virtual bool acceptObject(T *obj,
-                              PortWriter *wrapper) {
-        return implementation.acceptObjectBase(obj,wrapper);
+                              PortWriter *wrapper) YARP_OVERRIDE {
+        return implementation.acceptObjectBase(obj, wrapper);
     }
 
     virtual bool forgetObject(T *obj,
-                              yarp::os::PortWriter *wrapper) {
-        return implementation.forgetObjectBase(obj,wrapper);
+                              yarp::os::PortWriter *wrapper) YARP_OVERRIDE {
+        return implementation.forgetObjectBase(obj, wrapper);
     }
 
 
-    virtual void *acquire() {
+    virtual void *acquire() YARP_OVERRIDE {
         return implementation.acquire();
     }
 
-    virtual void release(void *handle) {
+    virtual void release(void *handle) YARP_OVERRIDE {
         implementation.release(handle);
     }
 
-    virtual void setTargetPeriod(double period) {
+    virtual void setTargetPeriod(double period) YARP_OVERRIDE {
         implementation.setTargetPeriod(period);
     }
 

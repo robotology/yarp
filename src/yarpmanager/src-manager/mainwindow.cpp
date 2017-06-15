@@ -36,16 +36,19 @@
 
 
 
-#if defined(WIN32)
-    #pragma warning (disable : 4250)
-    #pragma warning (disable : 4520)
+#if defined(_WIN32)
+# pragma warning (disable : 4250)
+# pragma warning (disable : 4520)
 #else
-    #include <unistd.h>
-    #include <sys/types.h>
-    #include <sys/wait.h>
-    #include <errno.h>
-    #include <sys/types.h>
-    #include <signal.h>
+# include <unistd.h>
+# include <cerrno>
+# include <csignal>
+# if defined(YARP_HAS_SYS_TYPES_H)
+#  include <sys/types.h>
+# endif
+# if defined(YARP_HAS_SYS_WAIT_H)
+#  include <sys/wait.h>
+# endif
 #endif
 
 #ifndef APP_NAME
@@ -283,7 +286,7 @@ void MainWindow::init(yarp::os::Property config)
         ext_editor = config.find("external_editor").asString();
         ((EntitiesTreeWidget*)ui->entitiesTree)->setExtEditor(ext_editor);
     }else{
-#if defined(WIN32)
+#if defined(_WIN32)
         ext_editor = "notepad.exe";
 #else
         ext_editor = "xdg-open";

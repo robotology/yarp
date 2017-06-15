@@ -50,7 +50,24 @@ public:
   sensor_msgs_JointState() {
   }
 
-  bool readBare(yarp::os::ConnectionReader& connection) {
+  void clear() {
+    // *** header ***
+    header.clear();
+
+    // *** name ***
+    name.clear();
+
+    // *** position ***
+    position.clear();
+
+    // *** velocity ***
+    velocity.clear();
+
+    // *** effort ***
+    effort.clear();
+  }
+
+  bool readBare(yarp::os::ConnectionReader& connection) YARP_OVERRIDE {
     // *** header ***
     if (!header.read(connection)) return false;
 
@@ -66,21 +83,21 @@ public:
     // *** position ***
     len = connection.expectInt();
     position.resize(len);
-    if (!connection.expectBlock((char*)&position[0],sizeof(yarp::os::NetFloat64)*len)) return false;
+    if (len > 0 && !connection.expectBlock((char*)&position[0],sizeof(yarp::os::NetFloat64)*len)) return false;
 
     // *** velocity ***
     len = connection.expectInt();
     velocity.resize(len);
-    if (!connection.expectBlock((char*)&velocity[0],sizeof(yarp::os::NetFloat64)*len)) return false;
+    if (len > 0 && !connection.expectBlock((char*)&velocity[0],sizeof(yarp::os::NetFloat64)*len)) return false;
 
     // *** effort ***
     len = connection.expectInt();
     effort.resize(len);
-    if (!connection.expectBlock((char*)&effort[0],sizeof(yarp::os::NetFloat64)*len)) return false;
+    if (len > 0 && !connection.expectBlock((char*)&effort[0],sizeof(yarp::os::NetFloat64)*len)) return false;
     return !connection.isError();
   }
 
-  bool readBottle(yarp::os::ConnectionReader& connection) {
+  bool readBottle(yarp::os::ConnectionReader& connection) YARP_OVERRIDE {
     connection.convertTextMode();
     yarp::os::idl::WireReader reader(connection);
     if (!reader.readListHeader(5)) return false;
@@ -125,12 +142,12 @@ public:
   }
 
   using yarp::os::idl::WirePortable::read;
-  bool read(yarp::os::ConnectionReader& connection) {
+  bool read(yarp::os::ConnectionReader& connection) YARP_OVERRIDE {
     if (connection.isBareMode()) return readBare(connection);
     return readBottle(connection);
   }
 
-  bool writeBare(yarp::os::ConnectionWriter& connection) {
+  bool writeBare(yarp::os::ConnectionWriter& connection) YARP_OVERRIDE {
     // *** header ***
     if (!header.write(connection)) return false;
 
@@ -143,19 +160,19 @@ public:
 
     // *** position ***
     connection.appendInt(position.size());
-    connection.appendExternalBlock((char*)&position[0],sizeof(yarp::os::NetFloat64)*position.size());
+    if (position.size()>0) {connection.appendExternalBlock((char*)&position[0],sizeof(yarp::os::NetFloat64)*position.size());}
 
     // *** velocity ***
     connection.appendInt(velocity.size());
-    connection.appendExternalBlock((char*)&velocity[0],sizeof(yarp::os::NetFloat64)*velocity.size());
+    if (velocity.size()>0) {connection.appendExternalBlock((char*)&velocity[0],sizeof(yarp::os::NetFloat64)*velocity.size());}
 
     // *** effort ***
     connection.appendInt(effort.size());
-    connection.appendExternalBlock((char*)&effort[0],sizeof(yarp::os::NetFloat64)*effort.size());
+    if (effort.size()>0) {connection.appendExternalBlock((char*)&effort[0],sizeof(yarp::os::NetFloat64)*effort.size());}
     return !connection.isError();
   }
 
-  bool writeBottle(yarp::os::ConnectionWriter& connection) {
+  bool writeBottle(yarp::os::ConnectionWriter& connection) YARP_OVERRIDE {
     connection.appendInt(BOTTLE_TAG_LIST);
     connection.appendInt(5);
 
@@ -195,7 +212,7 @@ public:
   }
 
   using yarp::os::idl::WirePortable::write;
-  bool write(yarp::os::ConnectionWriter& connection) {
+  bool write(yarp::os::ConnectionWriter& connection) YARP_OVERRIDE {
     if (connection.isBareMode()) return writeBare(connection);
     return writeBottle(connection);
   }
@@ -253,7 +270,7 @@ string frame_id";
   }
 
   // Name the class, ROS will need this
-  yarp::os::Type getType() {
+  yarp::os::Type getType() YARP_OVERRIDE {
     yarp::os::Type typ = yarp::os::Type::byName("sensor_msgs/JointState","sensor_msgs/JointState");
     typ.addProperty("md5sum",yarp::os::Value("3066dcd76a6cfaef579bd0f34173e9fd"));
     typ.addProperty("message_definition",yarp::os::Value(getTypeText()));

@@ -6,8 +6,6 @@
 # Packing stuff
 #
 
-include(YarpVersion)
-
 set(CPACK_PACKAGE_NAME "YARP")
 set(CPACK_PACKAGE_VENDOR "iCub Facility, Istituto Italiano di Tecnologia (IIT)")
 set(CPACK_PACKAGE_DESCRIPTION_SUMMARY "YARP: A thin middleware for humanoid robots and more")

@@ -16,7 +16,7 @@ using namespace yarp::os::impl;
 
 class StringTest : public UnitTest {
 public:
-    virtual ConstString getName() {
+    virtual ConstString getName() override {
         return "StringTest";
     }
   
@@ -48,7 +48,7 @@ public:
         checkEqual((s + ":" + s).c_str(),"hello there:hello there","concat");
     }
 
-    virtual void runTests() {
+    virtual void runTests() override {
         testNulls();
         testBasics();
     }

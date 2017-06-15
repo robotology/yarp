@@ -40,7 +40,7 @@ public:
         PORTINFO_CONNECTION = VOCAB4(99/*c*/, 'o', 'n', 'n'),
 
         /// Unspecified information.
-        PORTINFO_MISC = VOCAB4('m','i','s','c')
+        PORTINFO_MISC = VOCAB4('m', 'i', 's', 'c')
     };
 
     /// Type of information. PORTINFO_CONNECTION for information

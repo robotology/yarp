@@ -165,15 +165,24 @@ set(YARP_OS_IMPL_HDRS include/yarp/os/impl/ACELockImpl.h
                       include/yarp/os/impl/NameConfig.h
                       include/yarp/os/impl/NameserCarrier.h
                       include/yarp/os/impl/NameServer.h
+                      include/yarp/os/impl/PlatformDirent.h
+                      include/yarp/os/impl/PlatformDlfcn.h
+                      include/yarp/os/impl/PlatformIfaddrs.h
+                      include/yarp/os/impl/PlatformLimits.h
                       include/yarp/os/impl/PlatformList.h
                       include/yarp/os/impl/PlatformMap.h
+                      include/yarp/os/impl/PlatformNetdb.h
                       include/yarp/os/impl/PlatformSet.h
                       include/yarp/os/impl/PlatformSignal.h
                       include/yarp/os/impl/PlatformSize.h
                       include/yarp/os/impl/PlatformStdio.h
                       include/yarp/os/impl/PlatformStdlib.h
+                      include/yarp/os/impl/PlatformSysPrctl.h
+                      include/yarp/os/impl/PlatformSysStat.h
+                      include/yarp/os/impl/PlatformSysWait.h
                       include/yarp/os/impl/PlatformThread.h
                       include/yarp/os/impl/PlatformTime.h
+                      include/yarp/os/impl/PlatformUnistd.h
                       include/yarp/os/impl/PlatformVector.h
                       include/yarp/os/impl/PortCommand.h
                       include/yarp/os/impl/PortCore.h
@@ -245,6 +254,7 @@ set(YARP_OS_SRCS src/AbstractCarrier.cpp
                  src/Logger.cpp
                  src/LogForwarder.cpp
                  src/ManagedBytes.cpp
+                 src/McastCarrier.cpp
                  src/MessageStack.cpp
                  src/ModifyingCarrier.cpp
                  src/MultiNameSpace.cpp
@@ -275,6 +285,7 @@ set(YARP_OS_SRCS src/AbstractCarrier.cpp
                  src/NullConnectionWriter.cpp
                  src/Os.cpp
                  src/Ping.cpp
+                 src/PlatformTime.cpp
                  src/Portable.cpp
                  src/PortablePair.cpp
                  src/PortCommand.cpp
@@ -299,6 +310,7 @@ set(YARP_OS_SRCS src/AbstractCarrier.cpp
                  src/ResourceFinderOptions.cpp
                  src/RFModule.cpp
                  src/RosNameSpace.cpp
+                 src/Route.cpp
                  src/RpcClient.cpp
                  src/RpcServer.cpp
                  src/RunCheckpoints.cpp
@@ -366,17 +378,20 @@ endif()
 
 
 if(NOT SKIP_ACE)
-  # these carriers have not yet been implemented without ACE
+  # this carrier have not yet been implemented without ACE
   set(YARP_OS_SRCS ${YARP_OS_SRCS}
-                   src/McastCarrier.cpp
                    src/ShmemCarrier.cpp)
 endif()
 
-source_group("Source Files" FILES ${YARP_OS_SRCS})
-source_group("Header Files" FILES ${YARP_OS_HDRS})
-source_group("IDL Header Files" FILES ${YARP_OS_IDL_HDRS})
-source_group("Implementation Header Files" FILES ${YARP_OS_IMPL_HDRS}
-                                                 ${YARP_OS_IMPL_HMAC_HDRS})
+source_group(TREE "${CMAKE_CURRENT_SOURCE_DIR}"
+             PREFIX "Source Files"
+             FILES ${YARP_OS_SRCS})
+source_group(TREE "${CMAKE_CURRENT_SOURCE_DIR}"
+             PREFIX "Header Files"
+             FILES ${YARP_OS_HDRS}
+                   ${YARP_OS_IDL_HDRS}
+                   ${YARP_OS_IMPL_HDRS}
+                   ${YARP_OS_IMPL_HMAC_HDRS})
 
 option(ENABLE_YARPRUN_LOG "Enable yarprun log file in temp dir" OFF)
 if (ENABLE_YARPRUN_LOG)
@@ -396,19 +411,25 @@ add_library(YARP_OS ${YARP_OS_SRCS}
                     ${YARP_OS_IDL_HDRS}
                     ${YARP_OS_IMPL_HDRS}
                     ${YARP_OS_IMPL_HMAC_HDRS})
-target_link_libraries(YARP_OS LINK_PRIVATE ${ACE_LIBRARIES})
+add_library(YARP::YARP_OS ALIAS YARP_OS)
+
+target_include_directories(YARP_OS PUBLIC $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>
+                                          $<INSTALL_INTERFACE:${CMAKE_INSTALL_INCLUDEDIR}>)
+
+target_link_libraries(YARP_OS PRIVATE ${ACE_LIBRARIES}
+                              PUBLIC YARP::YARP_conf)
 
 set_property(TARGET YARP_OS PROPERTY PUBLIC_HEADER ${YARP_OS_HDRS})
 set_property(TARGET YARP_OS PROPERTY PRIVATE_HEADER ${YARP_OS_IMPL_HDRS})
 
 if(CMAKE_SYSTEM_NAME STREQUAL "Linux")
-    target_link_libraries(YARP_OS LINK_PRIVATE pthread)
+    target_link_libraries(YARP_OS PRIVATE pthread)
 endif()
 
 if(YARP_HAS_LIBEDIT)
     add_definitions(-DWITH_LIBEDIT)
     include_directories(${Libedit_INCLUDE_DIRS})
-    target_link_libraries(YARP_OS LINK_PRIVATE ${Libedit_LIBRARIES})
+    target_link_libraries(YARP_OS PRIVATE ${Libedit_LIBRARIES})
 endif()
 
 option(YARP_TEST_HEAP "Replace new/delete operators with test harness (may be incompatible with ACE)" FALSE)
@@ -434,3 +455,4 @@ install(FILES ${YARP_OS_IMPL_HMAC_HDRS}
 
 set_property(GLOBAL APPEND PROPERTY YARP_LIBS YARP_OS)
 set_property(TARGET YARP_OS PROPERTY INCLUDE_DIRS ${YARP_TREE_INCLUDE_DIRS})
+set_property(TARGET YARP_OS PROPERTY FOLDER "Libraries")

@@ -62,6 +62,10 @@ int find_name_server(int verbose) {
 #else
     const char *sep = "/";
 #endif
+    // =================================================================
+    // WARNING: This code is deprecated and will no longer work,
+    //          see ResourceFinder documentation for paths searched
+    //          by YARP
     if (getenv("YARP_CONF")!=NULL) {
         safe_printf(path,sizeof(path),"%s",getenv("YARP_CONF"));
     } else if (getenv("HOMEDIR")!=NULL) {
@@ -77,6 +81,8 @@ int find_name_server(int verbose) {
         }
         return -1;
     }
+    // =================================================================
+
     if (verbose) {
         fprintf(stderr,"YARP config file should be present in %s\n", path);
     }

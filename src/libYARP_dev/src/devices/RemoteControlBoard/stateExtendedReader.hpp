@@ -8,7 +8,7 @@
 #define YARP_DEV_REMOTECONTROLBOARD_STATEEXTENDEDREADER_H
 
 
-#include <string.h>
+#include <cstring>
 
 #include <yarp/os/PortablePair.h>
 #include <yarp/os/BufferedPort.h>
@@ -56,11 +56,11 @@ public:
 
     StateExtendedInputPort();
 
-    inline void resetStat();
+    void resetStat();
     void init(int numberOfJoints);
 
     using yarp::os::BufferedPort<jointData>::onRead;
-    virtual void onRead(jointData &v);
+    virtual void onRead(jointData &v) override;
 
     // use vocab to identify the data to be read
     // get a value for a single joint

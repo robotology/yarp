@@ -27,7 +27,15 @@ public:
   geometry_msgs_Transform() {
   }
 
-  bool readBare(yarp::os::ConnectionReader& connection) {
+  void clear() {
+    // *** translation ***
+    translation.clear();
+
+    // *** rotation ***
+    rotation.clear();
+  }
+
+  bool readBare(yarp::os::ConnectionReader& connection) YARP_OVERRIDE {
     // *** translation ***
     if (!translation.read(connection)) return false;
 
@@ -36,7 +44,7 @@ public:
     return !connection.isError();
   }
 
-  bool readBottle(yarp::os::ConnectionReader& connection) {
+  bool readBottle(yarp::os::ConnectionReader& connection) YARP_OVERRIDE {
     connection.convertTextMode();
     yarp::os::idl::WireReader reader(connection);
     if (!reader.readListHeader(2)) return false;
@@ -50,12 +58,12 @@ public:
   }
 
   using yarp::os::idl::WirePortable::read;
-  bool read(yarp::os::ConnectionReader& connection) {
+  bool read(yarp::os::ConnectionReader& connection) YARP_OVERRIDE {
     if (connection.isBareMode()) return readBare(connection);
     return readBottle(connection);
   }
 
-  bool writeBare(yarp::os::ConnectionWriter& connection) {
+  bool writeBare(yarp::os::ConnectionWriter& connection) YARP_OVERRIDE {
     // *** translation ***
     if (!translation.write(connection)) return false;
 
@@ -64,7 +72,7 @@ public:
     return !connection.isError();
   }
 
-  bool writeBottle(yarp::os::ConnectionWriter& connection) {
+  bool writeBottle(yarp::os::ConnectionWriter& connection) YARP_OVERRIDE {
     connection.appendInt(BOTTLE_TAG_LIST);
     connection.appendInt(2);
 
@@ -78,7 +86,7 @@ public:
   }
 
   using yarp::os::idl::WirePortable::write;
-  bool write(yarp::os::ConnectionWriter& connection) {
+  bool write(yarp::os::ConnectionWriter& connection) YARP_OVERRIDE {
     if (connection.isBareMode()) return writeBare(connection);
     return writeBottle(connection);
   }
@@ -95,10 +103,14 @@ public:
 Vector3 translation\n\
 Quaternion rotation\n================================================================================\n\
 MSG: geometry_msgs/Vector3\n\
+# This represents a vector in free space.\n\
+\n\
 float64 x\n\
 float64 y\n\
 float64 z\n================================================================================\n\
 MSG: geometry_msgs/Quaternion\n\
+# This represents an orientation in free space in quaternion form.\n\
+\n\
 float64 x\n\
 float64 y\n\
 float64 z\n\
@@ -106,7 +118,7 @@ float64 w";
   }
 
   // Name the class, ROS will need this
-  yarp::os::Type getType() {
+  yarp::os::Type getType() YARP_OVERRIDE {
     yarp::os::Type typ = yarp::os::Type::byName("geometry_msgs/Transform","geometry_msgs/Transform");
     typ.addProperty("md5sum",yarp::os::Value("ac9eff44abf714214112b05d54a3cf9b"));
     typ.addProperty("message_definition",yarp::os::Value(getTypeText()));

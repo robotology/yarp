@@ -22,7 +22,7 @@ public:
         return Network::getDefaultPortRange()+100;
     }
 
-    virtual ConstString getName() { return "NameServerTest"; }
+    virtual ConstString getName() override { return "NameServerTest"; }
 
     void checkRegister() {
         report(0,"checking register...");
@@ -64,7 +64,7 @@ public:
         NetworkBase::setLocalMode(false);
     }
 
-    virtual void runTests() {
+    virtual void runTests() override {
         checkRegister();
         checkClientInterface();
         checkCompanion(true);

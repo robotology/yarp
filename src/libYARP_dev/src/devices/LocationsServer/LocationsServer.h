@@ -65,9 +65,9 @@ private:
 
 public:
     /* DeviceDriver methods */
-    bool         open(yarp::os::Searchable& config);
-    bool         close();
-    virtual bool read(yarp::os::ConnectionReader& connection);
+    bool         open(yarp::os::Searchable& config) override;
+    bool         close() override;
+    virtual bool read(yarp::os::ConnectionReader& connection) override;
     bool         updateVizMarkers();
     bool         load_locations(yarp::os::ConstString locations_file);
     bool         save_locations(yarp::os::ConstString locations_file);

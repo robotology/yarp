@@ -32,9 +32,6 @@ class yarp::dev::IPositionControl2Raw: public IPositionControlRaw
 public:
     //     IPositionControlRaw interface
     using IPositionControlRaw::getAxes;
-#ifndef YARP_NO_DEPRECATED // since YARP 2.3.65
-    using IPositionControlRaw::setPositionModeRaw;
-#endif // YARP_NO_DEPRECATED
     using IPositionControlRaw::positionMoveRaw;
     using IPositionControlRaw::relativeMoveRaw;
     using IPositionControlRaw::checkMotionDoneRaw;
@@ -159,9 +156,6 @@ public:
 
     //     IPositionControl interface
     using IPositionControl::getAxes;
-#ifndef YARP_NO_DEPRECATED // since YARP 2.3.65
-    using IPositionControl::setPositionMode;
-#endif // YARP_NO_DEPRECATED
     using IPositionControl::positionMove;
     using IPositionControl::relativeMove;
     using IPositionControl::checkMotionDone;

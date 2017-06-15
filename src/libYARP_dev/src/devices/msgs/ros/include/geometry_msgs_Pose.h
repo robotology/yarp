@@ -1,8 +1,8 @@
 // This is an automatically generated file.
 // Generated from this geometry_msgs_Pose.msg definition:
+//   # A representation of pose in free space, composed of postion and orientation. 
 //   geometry_msgs/Point position
-//   geometry_msgs/Quaternion orientation
-// Instances of this class can be read and written with YARP ports,
+//   geometry_msgs/Quaternion orientation// Instances of this class can be read and written with YARP ports,
 // using a ROS-compatible format.
 
 #ifndef YARPMSG_TYPE_geometry_msgs_Pose
@@ -25,7 +25,15 @@ public:
   geometry_msgs_Pose() {
   }
 
-  bool readBare(yarp::os::ConnectionReader& connection) {
+  void clear() {
+    // *** position ***
+    position.clear();
+
+    // *** orientation ***
+    orientation.clear();
+  }
+
+  bool readBare(yarp::os::ConnectionReader& connection) YARP_OVERRIDE {
     // *** position ***
     if (!position.read(connection)) return false;
 
@@ -34,7 +42,7 @@ public:
     return !connection.isError();
   }
 
-  bool readBottle(yarp::os::ConnectionReader& connection) {
+  bool readBottle(yarp::os::ConnectionReader& connection) YARP_OVERRIDE {
     connection.convertTextMode();
     yarp::os::idl::WireReader reader(connection);
     if (!reader.readListHeader(2)) return false;
@@ -48,12 +56,12 @@ public:
   }
 
   using yarp::os::idl::WirePortable::read;
-  bool read(yarp::os::ConnectionReader& connection) {
+  bool read(yarp::os::ConnectionReader& connection) YARP_OVERRIDE {
     if (connection.isBareMode()) return readBare(connection);
     return readBottle(connection);
   }
 
-  bool writeBare(yarp::os::ConnectionWriter& connection) {
+  bool writeBare(yarp::os::ConnectionWriter& connection) YARP_OVERRIDE {
     // *** position ***
     if (!position.write(connection)) return false;
 
@@ -62,7 +70,7 @@ public:
     return !connection.isError();
   }
 
-  bool writeBottle(yarp::os::ConnectionWriter& connection) {
+  bool writeBottle(yarp::os::ConnectionWriter& connection) YARP_OVERRIDE {
     connection.appendInt(BOTTLE_TAG_LIST);
     connection.appendInt(2);
 
@@ -76,7 +84,7 @@ public:
   }
 
   using yarp::os::idl::WirePortable::write;
-  bool write(yarp::os::ConnectionWriter& connection) {
+  bool write(yarp::os::ConnectionWriter& connection) YARP_OVERRIDE {
     if (connection.isBareMode()) return writeBare(connection);
     return writeBottle(connection);
   }
@@ -88,13 +96,17 @@ public:
 
   // Give source text for class, ROS will need this
   yarp::os::ConstString getTypeText() {
-    return "geometry_msgs/Point position\n\
+    return "# A representation of pose in free space, composed of postion and orientation. \n\
+geometry_msgs/Point position\n\
 geometry_msgs/Quaternion orientation\n================================================================================\n\
 MSG: geometry_msgs/Point\n\
+# This contains the position of a point in free space\n\
 float64 x\n\
 float64 y\n\
 float64 z\n================================================================================\n\
 MSG: geometry_msgs/Quaternion\n\
+# This represents an orientation in free space in quaternion form.\n\
+\n\
 float64 x\n\
 float64 y\n\
 float64 z\n\
@@ -102,7 +114,7 @@ float64 w";
   }
 
   // Name the class, ROS will need this
-  yarp::os::Type getType() {
+  yarp::os::Type getType() YARP_OVERRIDE {
     yarp::os::Type typ = yarp::os::Type::byName("geometry_msgs/Pose","geometry_msgs/Pose");
     typ.addProperty("md5sum",yarp::os::Value("e45d45a5a1ce597b249e23fb30fc871f"));
     typ.addProperty("message_definition",yarp::os::Value(getTypeText()));

@@ -14,7 +14,7 @@ THIS SOFTWARE IS PROVIDED BY THE AUTHOR ``AS IS'' AND ANY EXPRESS OR IMPLIED WAR
 ============================================ */
 //---------------------------------------------------------------------------
 
-#include <stdio.h>
+#include <cstdio>
 
 #include "sio_util.h"
 #include "nmccom.h"
@@ -643,7 +643,7 @@ for (i=0; i<poffset; i++)
 
 ServoClearBits(addr);  //Clear any position errors
 
-for (i=127; i<=maxpwm; i++)    
+for (i=127; i<=maxpwm; i++)
   {
   ServoLoadTraj(addr, 0x88, 0, 0, 0, (byte)i);  //ramp up PWM to 255
   if ( (NmcGetStat(addr) & POS_ERR) )     //check if power still there

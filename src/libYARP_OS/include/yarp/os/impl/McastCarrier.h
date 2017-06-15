@@ -16,7 +16,7 @@
 #include <yarp/os/impl/SplitString.h>
 #include <yarp/os/impl/PlatformSize.h>
 
-#include <stdio.h>
+#include <cstdio>
 
 namespace yarp {
     namespace os {
@@ -45,22 +45,22 @@ public:
 
     virtual ~McastCarrier();
 
-    virtual Carrier *create();
-    virtual ConstString getName();
+    virtual Carrier *create() override;
+    virtual ConstString getName() override;
 
-    virtual int getSpecifierCode();
-    virtual bool sendHeader(ConnectionState& proto);
-    virtual bool expectExtraHeader(ConnectionState& proto);
+    virtual int getSpecifierCode() override;
+    virtual bool sendHeader(ConnectionState& proto) override;
+    virtual bool expectExtraHeader(ConnectionState& proto) override;
     virtual bool becomeMcast(ConnectionState& proto, bool sender);
-    virtual bool respondToHeader(ConnectionState& proto);
-    virtual bool expectReplyToHeader(ConnectionState& proto);
+    virtual bool respondToHeader(ConnectionState& proto) override;
+    virtual bool expectReplyToHeader(ConnectionState& proto) override;
 
     void addSender(const ConstString& key);
     void addRemove(const ConstString& key);
     bool isElect();
 
-    virtual bool isActive();
-    virtual bool isBroadcast();
+    virtual bool isActive() override;
+    virtual bool isBroadcast() override;
 };
 
 #endif // YARP_OS_IMPL_MCASTCARRIER_H

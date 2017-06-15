@@ -26,19 +26,19 @@ public:
 
     TcpCarrier(bool requireAckFlag = true);
 
-    virtual Carrier *create();
+    virtual Carrier *create() override;
 
-    virtual ConstString getName();
+    virtual ConstString getName() override;
 
     virtual int getSpecifierCode();
 
-    virtual bool checkHeader(const yarp::os::Bytes& header);
-    virtual void getHeader(const yarp::os::Bytes& header);
-    virtual void setParameters(const yarp::os::Bytes& header);
-    virtual bool requireAck();
-    virtual bool isConnectionless();
-    virtual bool respondToHeader(yarp::os::ConnectionState& proto);
-    virtual bool expectReplyToHeader(yarp::os::ConnectionState& proto);
+    virtual bool checkHeader(const yarp::os::Bytes& header) override;
+    virtual void getHeader(const yarp::os::Bytes& header) override;
+    virtual void setParameters(const yarp::os::Bytes& header) override;
+    virtual bool requireAck() override;
+    virtual bool isConnectionless() override;
+    virtual bool respondToHeader(yarp::os::ConnectionState& proto) override;
+    virtual bool expectReplyToHeader(yarp::os::ConnectionState& proto) override;
 
 private:
     bool requireAckFlag;

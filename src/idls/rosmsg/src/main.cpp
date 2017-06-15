@@ -5,7 +5,7 @@
  *
  */
 
-#include <stdio.h>
+#include <cstdio>
 
 #include <string>
 
@@ -14,23 +14,11 @@
 
 #include <yarp/os/all.h>
 #include <yarp/os/NetType.h>
+#include <yarp/os/impl/PlatformSysStat.h>
+#include <yarp/os/impl/PlatformSysWait.h>
+#include <yarp/os/impl/PlatformUnistd.h>
 
-#include <sys/stat.h>
-
-#ifdef YARP_PRESENT
-#  include <yarp/conf/system.h>
-#endif
-#ifdef YARP_HAS_ACE
-#  include <ace/OS_NS_unistd.h>
-#  include <ace/OS_NS_sys_wait.h>
-#else
-#  include <unistd.h>
-#  include <sys/wait.h>
-#  ifndef ACE_OS
-#    define ACE_OS
-#  endif
-#endif
-#include <stdlib.h>
+#include <cstdlib>
 
 using namespace yarp::os;
 using namespace std;
@@ -188,6 +176,17 @@ int main(int argc, char *argv[])
 
     Property p;
     p.fromCommand(argc,argv);
+    bool verbose = p.check("verbose");
+
+    if (verbose)
+    {
+        printf("Command line: ");
+        for (int c = 0; c < argc; c++)
+        {
+            printf("%s ", argv[c]);
+        }
+        printf("\n");
+    }
 
     if (!(p.check("name")||p.check("cmd"))) {
         return generate_cpp(argc,argv);
@@ -200,7 +199,6 @@ int main(int argc, char *argv[])
     }
 
     bool has_cmd = p.check("cmd");
-    bool verbose = p.check("verbose");
 
     RosTypeSearch env;
     configure_search(env,p);

@@ -35,7 +35,7 @@ public:
 
 class NodeTest : public UnitTest {
 public:
-    virtual ConstString getName() { return "NodeTest"; }
+    virtual ConstString getName() override { return "NodeTest"; }
 
     void parseNameTest();
     void basicNodeTest();
@@ -48,9 +48,17 @@ public:
     void singleNameTest();
     void typePropTest();
 
-    virtual void runTests();
+    virtual void runTests() override;
 
 private:
+
+    void wrongNamePort()
+    {
+        report(0, "trying to open a port without '/' after Node creation.");
+        Node n("/mynode");
+        BufferedPort<Bottle> p;
+        checkFalse(p.open("nameWithoutSlash+"), "open port with wrong name should fail");
+    }
 
     void parseName(const ConstString& arg,
                    const ConstString& node,
@@ -257,6 +265,11 @@ void NodeTest::typePropTest() {
 
 void NodeTest::runTests() {
     NetworkBase::setLocalMode(true);
+
+#ifdef BROKEN_TEST
+    wrongNamePort();
+#endif
+
     parseNameTest();
     basicNodeTest();
     basicNodesTest();

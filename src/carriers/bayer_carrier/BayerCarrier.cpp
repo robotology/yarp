@@ -8,8 +8,8 @@
 #include "BayerCarrier.h"
 
 #include <yarp/sig/ImageDraw.h>
-#include <string.h>
-#include <stdlib.h>
+#include <cstring>
+#include <cstdlib>
 
 #ifndef USE_LIBDC1394
 extern "C" {
@@ -23,7 +23,7 @@ using namespace yarp::os;
 using namespace yarp::sig;
 
 // can't seem to do ipl/opencv/yarp style end-of-row padding
-void setDcImage(yarp::sig::Image& yimg, dc1394video_frame_t *dc, 
+void setDcImage(yarp::sig::Image& yimg, dc1394video_frame_t *dc,
                 int filter) {
     if (!dc) return;
     dc->image = (unsigned char *) yimg.getRawImage();

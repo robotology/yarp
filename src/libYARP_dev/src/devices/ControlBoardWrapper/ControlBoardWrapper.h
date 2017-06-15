@@ -1,6 +1,6 @@
 /*
  * Copyright (C) 2013 iCub Facility - Istituto Italiano di Tecnologia
- * Author: Lorenzo Natale
+ * Author: Lorenzo Natale, Alberto Cardellino
  * CopyPolicy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
  */
 
@@ -52,8 +52,8 @@
 #endif
 
 #define PROTOCOL_VERSION_MAJOR 1
-#define PROTOCOL_VERSION_MINOR 5
-#define PROTOCOL_VERSION_TWEAK 1
+#define PROTOCOL_VERSION_MINOR 9
+#define PROTOCOL_VERSION_TWEAK 0
 
 /*
  * To optimize memory allocation, for group of joints we can have one mem reserver for rpc port
@@ -153,7 +153,7 @@ public:
 
 
 #if defined(_MSC_VER) && !defined(YARP_NO_DEPRECATED) // since YARP 2.3.65
-// A class implementing setXxxxxMode() causes a warning on MSVC
+// A class implementing setXxxxxMode(int) causes a warning on MSVC
 YARP_WARNING_PUSH
 YARP_DISABLE_DEPRECATED_WARNING
 #endif
@@ -272,7 +272,6 @@ class yarp::dev::ControlBoardWrapper:   public yarp::dev::DeviceDriver,
                                         public yarp::dev::IRemoteCalibrator,
                                         public yarp::dev::IControlCalibration,
                                         public yarp::dev::IControlCalibration2,
-                                        public yarp::dev::IOpenLoopControl,
                                         public yarp::dev::ITorqueControl,
                                         public yarp::dev::IImpedanceControl,
                                         public yarp::dev::IControlMode2,
@@ -280,7 +279,9 @@ class yarp::dev::ControlBoardWrapper:   public yarp::dev::DeviceDriver,
                                         public yarp::dev::IAxisInfo,
                                         public yarp::dev::IPreciselyTimed,
                                         public yarp::dev::IInteractionMode,
-                                        public yarp::dev::IRemoteVariables
+                                        public yarp::dev::IRemoteVariables,
+                                        public yarp::dev::IPWMControl,
+                                        public yarp::dev::ICurrentControl
 {
 private:
 
@@ -362,6 +363,9 @@ public:
     */
     bool verbose() const { return _verb; }
 
+    /* Return id of this device */
+    yarp::os::ConstString getId() { return partName; };
+
     /**
     * Default open() method.
     * @return always false since initialization requires parameters.
@@ -372,7 +376,7 @@ public:
     * Close the device driver by deallocating all resources and closing ports.
     * @return true if successful or false otherwise.
     */
-    virtual bool close();
+    virtual bool close() override;
 
 
     /**
@@ -385,149 +389,40 @@ public:
     *             called, otherwise openDeferredAttach is called.
     * and all parameters required by the wrapper.
     */
-    virtual bool open(yarp::os::Searchable& prop);
+    virtual bool open(yarp::os::Searchable& prop) override;
 
-    virtual bool detachAll();
+    virtual bool detachAll() override;
 
-    virtual bool attachAll(const yarp::dev::PolyDriverList &l);
+    virtual bool attachAll(const yarp::dev::PolyDriverList &l) override;
 
     /**
     * The thread main loop deals with writing on ports here.
     */
-    virtual void run();
+    virtual void run() override;
 
-    /* IPidControl */
-    /** Set new pid value for a joint axis.
-    * @param j joint number
-    * @param p new pid value
-    * @return true/false on success/failure
-    */
-    virtual bool setPid(int j, const Pid &p);
-
-    /** Set new pid value on multiple axes.
-    * @param ps pointer to a vector of pids
-    * @return true/false upon success/failure
-    */
-    virtual bool setPids(const Pid *ps);
-
-    /** Set the controller reference point for a given axis.
-    * Warning this method can result in very large torques
-    * and should be used carefully. If you do not understand
-    * this warning you should avoid using this method.
-    * Have a look at other interfaces (e.g. position control).
-    * @param j joint number
-    * @param ref new reference point
-    * @return true/false upon success/failure
-    */
-    virtual bool setReference(int j, double ref);
-
-    /** Set the controller reference points, multiple axes.
-    * Warning this method can result in very large torques
-    * and should be used carefully. If you do not understand
-    * this warning you should avoid using this method.
-    * Have a look at other interfaces (e.g. position control).
-    * @param refs pointer to the vector that contains the new reference points.
-    * @return true/false upon success/failure
-    */
-    virtual bool setReferences(const double *refs);
-
-    /** Set the error limit for the controller on a specifi joint
-    * @param j joint number
-    * @param limit limit value
-    * @return true/false on success/failure
-    */
-    virtual bool setErrorLimit(int j, double limit);
-
-    /** Get the error limit for the controller on all joints.
-    * @param limits pointer to the vector with the new limits
-    * @return true/false on success/failure
-    */
-    virtual bool setErrorLimits(const double *limits);
-
-    /** Get the current error for a joint.
-    * @param j joint number
-    * @param err pointer to the storage for the return value
-    * @return true/false on success failure
-    */
-    virtual bool getError(int j, double *err);
-
-    /** Get the error of all joints.
-    * @param errs pointer to the vector that will store the errors.
-    * @return true/false on success/failure.
-    */
-    virtual bool getErrors(double *errs);
-
-    /** Get the output of the controller (e.g. pwm value)
-    * @param j joint number
-    * @param out pointer to storage for return value
-    * @return success/failure
-    */
-    virtual bool getOutput(int j, double *out);
-
-    /** Get the output of the controllers (e.g. pwm value)
-    * @param outs pinter to the vector that will store the output values
-    */
-    virtual bool getOutputs(double *outs);
-
-    virtual bool setOffset(int j, double v);
-
-    /** Get current pid value for a specific joint.
-    * @param j joint number
-    * @param p pointer to storage for the return value.
-    * @return success/failure
-    */
-    virtual bool getPid(int j, Pid *p);
-
-    /** Get current pid value for a specific joint.
-    * @param pids vector that will store the values of the pids.
-    * @return success/failure
-    */
-    virtual bool getPids(Pid *pids);
-
-    /** Get the current reference position of the controller for a specific joint.
-    * @param j joint number
-    * @param ref pointer to storage for return value
-    * @return reference value
-    */
-    virtual bool getReference(int j, double *ref);
-
-    /** Get the current reference position of all controllers.
-    * @param refs vector that will store the output.
-    */
-    virtual bool getReferences(double *refs);
-
-    /** Get the error limit for the controller on a specific joint
-    * @param j joint number
-    * @param limit pointer to storage
-    * @return success/failure
-    */
-    virtual bool getErrorLimit(int j, double *limit);
-    /** Get the error limit for all controllers
-    * @param limits pointer to the array that will store the output
-    * @return success or failure
-    */
-    virtual bool getErrorLimits(double *limits);
-
-    /** Reset the controller of a given joint, usually sets the
-    * current position of the joint as the reference value for the PID, and resets
-    * the integrator.
-    * @param j joint number
-    * @return true on success, false on failure.
-    */
-    virtual bool resetPid(int j);
-    /**
-    * Disable the pid computation for a joint
-    * @param j is the axis number
-    * @return true if successful, false on failure
-    **/
-    virtual bool disablePid(int j);
-
-    /**
-    * Enable the pid computation for a joint
-    * @param j is the axis number
-    * @return true/false on success/failure
-    */
-    virtual bool enablePid(int j);
+    /* IPidControl 
+    These methods are documented by Doxygen in IPidControl.h*/
+    virtual bool setPid(const PidControlTypeEnum& pidtype, int j, const Pid &p) override;
+    virtual bool setPids(const PidControlTypeEnum& pidtype, const Pid *ps) override;
+    virtual bool setPidReference(const PidControlTypeEnum& pidtype, int j, double ref) override;
+    virtual bool setPidReferences(const PidControlTypeEnum& pidtype, const double *refs) override;
+    virtual bool setPidErrorLimit(const PidControlTypeEnum& pidtype, int j, double limit) override;
+    virtual bool setPidErrorLimits(const PidControlTypeEnum& pidtype, const double *limits) override;
+    virtual bool getPidError(const PidControlTypeEnum& pidtype, int j, double *err) override;
+    virtual bool getPidErrors(const PidControlTypeEnum& pidtype, double *errs) override;
+    virtual bool getPidOutput(const PidControlTypeEnum& pidtype, int j, double *out) override;
+    virtual bool getPidOutputs(const PidControlTypeEnum& pidtype, double *outs) override;
+    virtual bool setPidOffset(const PidControlTypeEnum& pidtype, int j, double v) override;
+    virtual bool getPid(const PidControlTypeEnum& pidtype, int j, Pid *p) override;
+    virtual bool getPids(const PidControlTypeEnum& pidtype, Pid *pids) override;
+    virtual bool getPidReference(const PidControlTypeEnum& pidtype, int j, double *ref) override;
+    virtual bool getPidReferences(const PidControlTypeEnum& pidtype, double *refs) override;
+    virtual bool getPidErrorLimit(const PidControlTypeEnum& pidtype, int j, double *limit) override;
+    virtual bool getPidErrorLimits(const PidControlTypeEnum& pidtype, double *limits) override;
+    virtual bool resetPid(const PidControlTypeEnum& pidtype, int j) override;
+    virtual bool disablePid(const PidControlTypeEnum& pidtype, int j) override;
+    virtual bool enablePid(const PidControlTypeEnum& pidtype, int j) override;
+    virtual bool isPidEnabled(const PidControlTypeEnum& pidtype, int j, bool* enabled) override;
 
     /* IPositionControl */
 
@@ -537,7 +432,7 @@ public:
     * @param ax pointer to storage
     * @return true/false.
     */
-    virtual bool getAxes(int *ax);
+    virtual bool getAxes(int *ax) override;
 
     /**
     * Set new reference point for a single axis.
@@ -545,20 +440,20 @@ public:
     * @param ref specifies the new ref point
     * @return true/false on success/failure
     */
-    virtual bool positionMove(int j, double ref);
+    virtual bool positionMove(int j, double ref) override;
 
     /** Set new reference point for all axes.
     * @param refs array, new reference points.
     * @return true/false on success/failure
     */
-    virtual bool positionMove(const double *refs);
+    virtual bool positionMove(const double *refs) override;
 
     /** Set new reference point for a subset of axis.
      * @param joints pointer to the array of joint numbers
      * @param refs   pointer to the array specifing the new reference points
      * @return true/false on success/failure
      */
-    virtual bool positionMove(const int n_joints, const int *joints, const double *refs);
+    virtual bool positionMove(const int n_joints, const int *joints, const double *refs) override;
 
 /** Get the last position reference for the specified axis.
      *  This is the dual of PositionMove and shall return only values sent using
@@ -569,7 +464,7 @@ public:
      * @param ref last reference sent using PositionMove functions
      * @return true/false on success/failure
      */
-    virtual bool getTargetPosition(const int joint, double *ref);
+    virtual bool getTargetPosition(const int joint, double *ref) override;
 
     /** Get the last position reference for all axes.
      *  This is the dual of PositionMove and shall return only values sent using
@@ -580,7 +475,7 @@ public:
      * @param ref last reference sent using PositionMove functions
      * @return true/false on success/failure
      */
-    virtual bool getTargetPositions(double *refs);
+    virtual bool getTargetPositions(double *refs) override;
 
     /** Get the last position reference for the specified group of axes.
      *  This is the dual of PositionMove and shall return only values sent using
@@ -591,7 +486,7 @@ public:
      * @param ref last reference sent using PositionMove functions
      * @return true/false on success/failure
      */
-    virtual bool getTargetPositions(const int n_joint, const int *joints, double *refs);
+    virtual bool getTargetPositions(const int n_joint, const int *joints, double *refs) override;
 
     /** Set relative position. The command is relative to the
     * current position of the axis.
@@ -599,20 +494,20 @@ public:
     * @param delta relative command
     * @return true/false on success/failure
     */
-    virtual bool relativeMove(int j, double delta);
+    virtual bool relativeMove(int j, double delta) override;
 
     /** Set relative position, all joints.
     * @param deltas pointer to the relative commands
     * @return true/false on success/failure
     */
-    virtual bool relativeMove(const double *deltas);
+    virtual bool relativeMove(const double *deltas) override;
 
     /** Set relative position for a subset of joints.
      * @param joints pointer to the array of joint numbers
      * @param deltas pointer to the array of relative commands
      * @return true/false on success/failure
      */
-    virtual bool relativeMove(const int n_joints, const int *joints, const double *deltas);
+    virtual bool relativeMove(const int n_joints, const int *joints, const double *deltas) override;
 
     /**
     * Check if the current trajectory is terminated. Non blocking.
@@ -620,14 +515,14 @@ public:
     * @param flag true if the trajectory is terminated, false otherwise
     * @return false on failure
     */
-    virtual bool checkMotionDone(int j, bool *flag);
+    virtual bool checkMotionDone(int j, bool *flag) override;
     /**
     * Check if the current trajectory is terminated. Non blocking.
     * @param flag true if the trajectory is terminated, false otherwise
     *        (a single value which is the 'and' of all joints')
     * @return false on failure
     */
-    virtual bool checkMotionDone(bool *flag);
+    virtual bool checkMotionDone(bool *flag) override;
 
     /** Check if the current trajectory is terminated. Non blocking.
      * @param joints pointer to the array of joint numbers
@@ -635,7 +530,7 @@ public:
      *        (a single value which is the 'and' of all joints')
      * @return true/false if network communication went well.
      */
-    virtual bool checkMotionDone(const int n_joints, const int *joints, bool *flags);
+    virtual bool checkMotionDone(const int n_joints, const int *joints, bool *flags) override;
 
     /** Set reference speed for a joint, this is the speed used during the
     * interpolation of the trajectory.
@@ -643,14 +538,14 @@ public:
     * @param sp speed value
     * @return true/false upon success/failure
     */
-    virtual bool setRefSpeed(int j, double sp);
+    virtual bool setRefSpeed(int j, double sp) override;
 
     /** Set reference speed on all joints. These values are used during the
     * interpolation of the trajectory.
     * @param spds pointer to the array of speed values.
     * @return true/false upon success/failure
     */
-    virtual bool setRefSpeeds(const double *spds);
+    virtual bool setRefSpeeds(const double *spds) override;
 
     /** Set reference speed on all joints. These values are used during the
      * interpolation of the trajectory.
@@ -658,7 +553,7 @@ public:
      * @param spds   pointer to the array with speed values.
      * @return true/false upon success/failure
      */
-    virtual bool setRefSpeeds(const int n_joints, const int *joints, const double *spds);
+    virtual bool setRefSpeeds(const int n_joints, const int *joints, const double *spds) override;
 
     /** Set reference acceleration for a joint. This value is used during the
     * trajectory generation.
@@ -666,14 +561,14 @@ public:
     * @param acc acceleration value
     * @return true/false upon success/failure
     */
-    virtual bool setRefAcceleration(int j, double acc);
+    virtual bool setRefAcceleration(int j, double acc) override;
 
     /** Set reference acceleration on all joints. This is the valure that is
     * used during the generation of the trajectory.
     * @param accs pointer to the array of acceleration values
     * @return true/false upon success/failure
     */
-    virtual bool setRefAccelerations(const double *accs);
+    virtual bool setRefAccelerations(const double *accs) override;
 
     /** Set reference acceleration on all joints. This is the valure that is
      * used during the generation of the trajectory.
@@ -681,7 +576,7 @@ public:
      * @param accs   pointer to the array with acceleration values
      * @return true/false upon success/failure
      */
-    virtual bool setRefAccelerations(const int n_joints, const int *joints, const double *accs);
+    virtual bool setRefAccelerations(const int n_joints, const int *joints, const double *accs) override;
 
     /** Get reference speed for a joint. Returns the speed used to
      * generate the trajectory profile.
@@ -689,14 +584,14 @@ public:
      * @param ref pointer to storage for the return value
      * @return true/false on success or failure
      */
-    virtual bool getRefSpeed(int j, double *ref);
+    virtual bool getRefSpeed(int j, double *ref) override;
 
     /** Get reference speed of all joints. These are the  values used during the
     * interpolation of the trajectory.
     * @param spds pointer to the array that will store the speed values.
     * @return true/false on success/failure.
     */
-    virtual bool getRefSpeeds(double *spds);
+    virtual bool getRefSpeeds(double *spds) override;
 
     /** Get reference speed of all joints. These are the  values used during the
      * interpolation of the trajectory.
@@ -704,7 +599,7 @@ public:
      * @param spds   pointer to the array that will store the speed values.
      * @return true/false upon success/failure
      */
-    virtual bool getRefSpeeds(const int n_joints, const int *joints, double *spds);
+    virtual bool getRefSpeeds(const int n_joints, const int *joints, double *spds) override;
 
     /** Get reference acceleration for a joint. Returns the acceleration used to
     * generate the trajectory profile.
@@ -712,14 +607,14 @@ public:
     * @param acc pointer to storage for the return value
     * @return true/false on success/failure
     */
-    virtual bool getRefAcceleration(int j, double *acc);
+    virtual bool getRefAcceleration(int j, double *acc) override;
 
     /** Get reference acceleration of all joints. These are the values used during the
     * interpolation of the trajectory.
     * @param accs pointer to the array that will store the acceleration values.
     * @return true/false on success or failure
     */
-    virtual bool getRefAccelerations(double *accs);
+    virtual bool getRefAccelerations(double *accs) override;
 
     /** Get reference acceleration for a joint. Returns the acceleration used to
      * generate the trajectory profile.
@@ -727,26 +622,26 @@ public:
      * @param accs   pointer to the array that will store the acceleration values
      * @return true/false on success/failure
      */
-    virtual bool getRefAccelerations(const int n_joints, const int *joints, double *accs);
+    virtual bool getRefAccelerations(const int n_joints, const int *joints, double *accs) override;
 
     /** Stop motion, single joint
     * @param j joint number
     * @return true/false on success/failure
     */
-    virtual bool stop(int j);
+    virtual bool stop(int j) override;
 
     /**
     * Stop motion, multiple joints
     * @return true/false on success/failure
     */
-    virtual bool stop();
+    virtual bool stop() override;
 
 
     /** Stop motion for subset of joints
      * @param joints pointer to the array of joint numbers
      * @return true/false on success/failure
      */
-    virtual bool stop(const int n_joints, const int *joints);
+    virtual bool stop(const int n_joints, const int *joints) override;
 
     /* IVelocityControl */
 
@@ -756,14 +651,14 @@ public:
     * @param v specifies the new ref speed
     * @return true/false on success/failure
     */
-    virtual bool velocityMove(int j, double v);
+    virtual bool velocityMove(int j, double v) override;
 
     /**
     * Set a new reference speed for all axes.
     * @param v is a vector of double representing the requested speed.
     * @return true/false on success/failure.
     */
-    virtual bool velocityMove(const double *v);
+    virtual bool velocityMove(const double *v) override;
 
     /* IEncoders */
 
@@ -772,13 +667,13 @@ public:
     * @param j is the axis number
     * @return true/false on success/failure
     */
-    virtual bool resetEncoder(int j);
+    virtual bool resetEncoder(int j) override;
 
     /**
     * Reset encoders. Set the encoder values to zero for all axes
     * @return true/false
     */
-    virtual bool resetEncoders();
+    virtual bool resetEncoders() override;
 
     /**
     * Set the value of the encoder for a given joint.
@@ -786,14 +681,14 @@ public:
     * @param val new value
     * @return true/false
     */
-    virtual bool setEncoder(int j, double val);
+    virtual bool setEncoder(int j, double val) override;
 
     /**
     * Set the value of all encoders.
     * @param vals pointer to the new values
     * @return true/false
     */
-    virtual bool setEncoders(const double *vals);
+    virtual bool setEncoders(const double *vals) override;
 
     /**
     * Read the value of an encoder.
@@ -801,18 +696,18 @@ public:
     * @param v pointer to storage for the return value
     * @return true/false, upon success/failure (you knew it, uh?)
     */
-    virtual bool getEncoder(int j, double *v);
+    virtual bool getEncoder(int j, double *v) override;
 
     /**
     * Read the position of all axes.
     * @param encs pointer to the array that will contain the output
     * @return true/false on success/failure
     */
-    virtual bool getEncoders(double *encs);
+    virtual bool getEncoders(double *encs) override;
 
-    virtual bool getEncodersTimed(double *encs, double *t);
+    virtual bool getEncodersTimed(double *encs, double *t) override;
 
-    virtual bool getEncoderTimed(int j, double *v, double *t);
+    virtual bool getEncoderTimed(int j, double *v, double *t) override;
 
     /**
     * Read the istantaneous speed of an axis.
@@ -820,27 +715,27 @@ public:
     * @param sp pointer to storage for the output
     * @return true if successful, false ... otherwise.
     */
-    virtual bool getEncoderSpeed(int j, double *sp);
+    virtual bool getEncoderSpeed(int j, double *sp) override;
 
     /**
     * Read the instantaneous speed of all axes.
     * @param spds pointer to storage for the output values
     * @return guess what? (true/false on success or failure).
     */
-    virtual bool getEncoderSpeeds(double *spds);
+    virtual bool getEncoderSpeeds(double *spds) override;
 
     /**
     * Read the instantaneous acceleration of an axis.
     * @param j axis number
     * @param acc pointer to the array that will contain the output
     */
-    virtual bool getEncoderAcceleration(int j, double *acc);
+    virtual bool getEncoderAcceleration(int j, double *acc) override;
     /**
     * Read the istantaneous acceleration of all axes.
     * @param accs pointer to the array that will contain the output
     * @return true if all goes well, false if anything bad happens.
     */
-    virtual bool getEncoderAccelerations(double *accs);
+    virtual bool getEncoderAccelerations(double *accs) override;
 
     /* IMotorEncoders */
 
@@ -849,20 +744,20 @@ public:
      * @param m pointer to a value representing the number of available motor encoders.
      * @return true/false
      */
-    virtual bool getNumberOfMotorEncoders(int *num);
+    virtual bool getNumberOfMotorEncoders(int *num) override;
 
     /**
     * Reset encoder, single joint. Set the encoder value to zero
     * @param j is the axis number
     * @return true/false on success/failure
     */
-    virtual bool resetMotorEncoder(int m);
+    virtual bool resetMotorEncoder(int m) override;
 
     /**
     * Reset encoders. Set the encoder values to zero for all axes
     * @return true/false
     */
-    virtual bool resetMotorEncoders();
+    virtual bool resetMotorEncoders() override;
 
     /**
      * Sets number of counts per revolution for motor encoder m.
@@ -870,7 +765,7 @@ public:
      * @param cpr new parameter
      * @return true/false
      */
-    virtual bool setMotorEncoderCountsPerRevolution(int m, const double cpr);
+    virtual bool setMotorEncoderCountsPerRevolution(int m, const double cpr) override;
 
     /**
      * gets number of counts per revolution for motor encoder m.
@@ -878,7 +773,7 @@ public:
      * @param cpr pointer to storage for the return value
      * @return true/false
      */
-    virtual bool getMotorEncoderCountsPerRevolution(int m, double *cpr);
+    virtual bool getMotorEncoderCountsPerRevolution(int m, double *cpr) override;
 
     /**
     * Set the value of the encoder for a given joint.
@@ -886,14 +781,14 @@ public:
     * @param val new value
     * @return true/false
     */
-    virtual bool setMotorEncoder(int m, const double val);
+    virtual bool setMotorEncoder(int m, const double val) override;
 
     /**
     * Set the value of all encoders.
     * @param vals pointer to the new values
     * @return true/false
     */
-    virtual bool setMotorEncoders(const double *vals);
+    virtual bool setMotorEncoders(const double *vals) override;
 
     /**
     * Read the value of an encoder.
@@ -901,18 +796,18 @@ public:
     * @param v pointer to storage for the return value
     * @return true/false, upon success/failure (you knew it, uh?)
     */
-    virtual bool getMotorEncoder(int m, double *v);
+    virtual bool getMotorEncoder(int m, double *v) override;
 
     /**
     * Read the position of all axes.
     * @param encs pointer to the array that will contain the output
     * @return true/false on success/failure
     */
-    virtual bool getMotorEncoders(double *encs);
+    virtual bool getMotorEncoders(double *encs) override;
 
-    virtual bool getMotorEncodersTimed(double *encs, double *t);
+    virtual bool getMotorEncodersTimed(double *encs, double *t) override;
 
-    virtual bool getMotorEncoderTimed(int m, double *v, double *t);
+    virtual bool getMotorEncoderTimed(int m, double *v, double *t) override;
 
     /**
     * Read the istantaneous speed of an axis.
@@ -920,27 +815,27 @@ public:
     * @param sp pointer to storage for the output
     * @return true if successful, false ... otherwise.
     */
-    virtual bool getMotorEncoderSpeed(int m, double *sp);
+    virtual bool getMotorEncoderSpeed(int m, double *sp) override;
 
     /**
     * Read the instantaneous speed of all axes.
     * @param spds pointer to storage for the output values
     * @return guess what? (true/false on success or failure).
     */
-    virtual bool getMotorEncoderSpeeds(double *spds);
+    virtual bool getMotorEncoderSpeeds(double *spds) override;
 
     /**
     * Read the instantaneous acceleration of an axis.
     * @param j axis number
     * @param acc pointer to the array that will contain the output
     */
-    virtual bool getMotorEncoderAcceleration(int m, double *acc);
+    virtual bool getMotorEncoderAcceleration(int m, double *acc) override;
     /**
     * Read the istantaneous acceleration of all axes.
     * @param accs pointer to the array that will contain the output
     * @return true if all goes well, false if anything bad happens.
     */
-    virtual bool getMotorEncoderAccelerations(double *accs);
+    virtual bool getMotorEncoderAccelerations(double *accs) override;
 
     /* IAmplifierControl */
 
@@ -950,14 +845,14 @@ public:
     * generating abrupt movements.
     * @return true/false on success/failure
     */
-    virtual bool enableAmp(int j);
+    virtual bool enableAmp(int j) override;
 
     /**
     * Disable the amplifier on a specific joint. All computations within the board
     * will be carried out normally, but the output will be disabled.
     * @return true/false on success/failure
     */
-    virtual bool disableAmp(int j);
+    virtual bool disableAmp(int j) override;
 
     /**
     * Get the status of the amplifiers, coded in a 32 bits integer for
@@ -966,16 +861,16 @@ public:
     * @param st pointer to storage
     * @return true in good luck, false otherwise.
     */
-    virtual bool getAmpStatus(int *st);
+    virtual bool getAmpStatus(int *st) override;
 
-    virtual bool getAmpStatus(int j, int *v);
+    virtual bool getAmpStatus(int j, int *v) override;
 
     /**
     * Read the electric current going to all motors.
     * @param vals pointer to storage for the output values
     * @return hopefully true, false in bad luck.
     */
-    virtual bool getCurrents(double *vals);
+    virtual bool getCurrents(double *vals) override;
 
     /**
     * Read the electric current going to a given motor.
@@ -983,7 +878,7 @@ public:
     * @param val pointer to storage for the output value
     * @return probably true, might return false in bad times
     */
-    virtual bool getCurrent(int j, double *val);
+    virtual bool getCurrent(int j, double *val) override;
 
     /**
     * Set the maximum electric current going to a given motor. The behavior
@@ -993,7 +888,7 @@ public:
     * @param v the new value
     * @return probably true, might return false in bad times
     */
-    virtual bool setMaxCurrent(int j, double v);
+    virtual bool setMaxCurrent(int j, double v) override;
 
     /**
     * Returns the maximum electric current allowed for a given motor. The behavior
@@ -1003,7 +898,7 @@ public:
     * @param v the return value
     * @return probably true, might return false in bad times
     */
-    virtual bool getMaxCurrent(int j, double *v);
+    virtual bool getMaxCurrent(int j, double *v) override;
 
     /* Get the the nominal current which can be kept for an indefinite amount of time
      * without harming the motor. This value is specific for each motor and it is typically
@@ -1014,7 +909,7 @@ public:
      * @param val storage for return value. [Ampere]
      * @return true/false success failure.
      */
-    virtual bool getNominalCurrent(int m, double *val);
+    virtual bool getNominalCurrent(int m, double *val) override;
 
     /* Get the the peak current which causes damage to the motor if maintained
      * for a long amount of time.
@@ -1025,7 +920,7 @@ public:
      * @param val storage for return value. [Ampere]
      * @return true/false success failure.
      */
-    virtual bool getPeakCurrent(int m, double *val);
+    virtual bool getPeakCurrent(int m, double *val) override;
 
     /* Set the the peak current. This value  which causes damage to the motor if maintained
      * for a long amount of time.
@@ -1036,7 +931,7 @@ public:
      * @param val storage for return value. [Ampere]
      * @return true/false success failure.
      */
-    virtual bool setPeakCurrent(int m, const double val);
+    virtual bool setPeakCurrent(int m, const double val) override;
 
     /* Get the the current PWM value used to control the motor.
      * The units are firmware dependent, either machine units or percentage.
@@ -1044,7 +939,7 @@ public:
      * @param val filled with PWM value.
      * @return true/false success failure.
      */
-    virtual bool getPWM(int m, double* val);
+    virtual bool getPWM(int m, double* val) override;
 
     /* Get the PWM limit fot the given motor.
      * The units are firmware dependent, either machine units or percentage.
@@ -1052,7 +947,7 @@ public:
      * @param val filled with PWM limit value.
      * @return true/false success failure.
      */
-    virtual bool getPWMLimit(int m, double* val);
+    virtual bool getPWMLimit(int m, double* val) override;
 
     /* Set the PWM limit fot the given motor.
      * The units are firmware dependent, either machine units or percentage.
@@ -1060,14 +955,14 @@ public:
      * @param val new value for the PWM limit.
      * @return true/false success failure.
      */
-    virtual bool setPWMLimit(int m, const double val);
+    virtual bool setPWMLimit(int m, const double val) override;
 
     /* Get the power source voltage for the given motor in Volt.
      * @param m motor number
      * @param val filled with return value.
      * @return true/false success failure.
      */
-    virtual bool getPowerSupplyVoltage(int m, double* val);
+    virtual bool getPowerSupplyVoltage(int m, double* val) override;
 
     /* IControlLimits */
 
@@ -1079,7 +974,7 @@ public:
     * @param max the value of the upper limit
     * @return true or false on success or failure
     */
-    virtual bool setLimits(int j, double min, double max);
+    virtual bool setLimits(int j, double min, double max) override;
 
     /**
     * Get the software limits for a particular axis.
@@ -1088,7 +983,7 @@ public:
     * @param max pointer to store the value of the upper limit
     * @return true if everything goes fine, false if something bad happens (yes, sometimes life is tough)
     */
-    virtual bool getLimits(int j, double *min, double *max);
+    virtual bool getLimits(int j, double *min, double *max) override;
 
     /**
     * Set the software velocity limits for a particular axis, the behavior of the
@@ -1098,7 +993,7 @@ public:
     * @param max the value of the upper limit
     * @return true or false on success or failure
     */
-    virtual bool setVelLimits(int j, double min, double max);
+    virtual bool setVelLimits(int j, double min, double max) override;
 
     /**
     * Get the software velocity limits for a particular axis.
@@ -1107,75 +1002,75 @@ public:
     * @param max pointer to store the value of the upper limit
     * @return true if everything goes fine, false if something bad happens
     */
-    virtual bool getVelLimits(int j, double *min, double *max);
+    virtual bool getVelLimits(int j, double *min, double *max) override;
 
     /* IRemoteVariables */
 
-    virtual bool getRemoteVariable(yarp::os::ConstString key, yarp::os::Bottle& val);
+    virtual bool getRemoteVariable(yarp::os::ConstString key, yarp::os::Bottle& val) override;
 
-    virtual bool setRemoteVariable(yarp::os::ConstString key, const yarp::os::Bottle& val);
+    virtual bool setRemoteVariable(yarp::os::ConstString key, const yarp::os::Bottle& val) override;
 
-    virtual bool getRemoteVariablesList(yarp::os::Bottle* listOfKeys);
+    virtual bool getRemoteVariablesList(yarp::os::Bottle* listOfKeys) override;
 
     /* IRemoteCalibrator */
 
-    bool isCalibratorDevicePresent(bool *isCalib);
+    bool isCalibratorDevicePresent(bool *isCalib) override;
 
     /**
      * @brief getCalibratorDevice: return the pointer stored with the setCalibratorDevice
      * @return yarp::dev::IRemotizableCalibrator pointer or NULL if not valid
      */
-    virtual yarp::dev::IRemoteCalibrator *getCalibratorDevice();
+    virtual yarp::dev::IRemoteCalibrator *getCalibratorDevice() override;
 
     /**
      * @brief calibrateSingleJoint: call the calibration procedure for the single joint
      * @param j: joint to be calibrated
      * @return true if calibration was successful
      */
-    virtual bool calibrateSingleJoint(int j);
+    virtual bool calibrateSingleJoint(int j) override;
 
     /**
      * @brief calibrateWholePart: call the procedure for calibrating the whole device
      * @return true if calibration was successful
      */
-    virtual bool calibrateWholePart();
+    virtual bool calibrateWholePart() override;
 
     /**
      * @brief homingSingleJoint: call the homing procedure for a single joint
      * @param j: joint to be calibrated
      * @return true if homing was succesful, false otherwise
      */
-    virtual bool homingSingleJoint(int j);
+    virtual bool homingSingleJoint(int j) override;
 
     /**
      * @brief homingWholePart: call the homing procedure for a the whole part/device
      * @return true if homing was succesful, false otherwise
      */
-    virtual bool homingWholePart();
+    virtual bool homingWholePart() override;
 
     /**
      * @brief parkSingleJoint(): start the parking procedure for the single joint
      * @return true if succesful
      */
-    virtual bool parkSingleJoint(int j, bool _wait=true);
+    virtual bool parkSingleJoint(int j, bool _wait=true) override;
 
     /**
      * @brief parkWholePart: start the parking procedure for the whole part
      * @return true if succesful
      */
-    virtual bool parkWholePart();
+    virtual bool parkWholePart() override;
 
     /**
      * @brief quitCalibrate: interrupt the calibration procedure
      * @return true if succesful
      */
-    virtual bool quitCalibrate();
+    virtual bool quitCalibrate() override;
 
     /**
      * @brief quitPark: interrupt the park procedure
      * @return true if succesful
      */
-    virtual bool quitPark();
+    virtual bool quitPark() override;
 
     /* IControlCalibration */
 
@@ -1189,152 +1084,102 @@ public:
     * @param p is a double value that is passed to the calibration procedure.
     * @return true/false on success/failure.
     */
-    virtual bool calibrate(int j, double p);
+    virtual bool calibrate(int j, double p) override;
 
-    virtual bool calibrate2(int j, unsigned int ui, double v1, double v2, double v3);
+    virtual bool calibrate2(int j, unsigned int ui, double v1, double v2, double v3) override;
 
-    virtual bool setCalibrationParameters(int j, const CalibrationParameters& params);
+    virtual bool setCalibrationParameters(int j, const CalibrationParameters& params) override;
 
     /**
     * Check whether the calibration has been completed.
     * @param j is the joint that has started a calibration procedure.
     * @return true/false on success/failure.
     */
-    virtual bool done(int j);
+    virtual bool done(int j) override;
 
-    virtual bool abortPark();
+    virtual bool abortPark() override;
 
-    virtual bool abortCalibration();
+    virtual bool abortCalibration() override;
 
     /* IMotor */
-    virtual bool getNumberOfMotors   (int *num);
+    virtual bool getNumberOfMotors   (int *num) override;
 
-    virtual bool getTemperature      (int m, double* val);
+    virtual bool getTemperature      (int m, double* val) override;
 
-    virtual bool getTemperatures     (double *vals);
+    virtual bool getTemperatures     (double *vals) override;
 
-    virtual bool getTemperatureLimit (int m, double* val);
+    virtual bool getTemperatureLimit (int m, double* val) override;
 
-    virtual bool setTemperatureLimit (int m, const double val);
+    virtual bool setTemperatureLimit (int m, const double val) override;
 
-    virtual bool getGearboxRatio(int m, double* val);
+    virtual bool getGearboxRatio(int m, double* val) override;
 
-    virtual bool setGearboxRatio(int m, const double val);
+    virtual bool setGearboxRatio(int m, const double val) override;
 
     /* IAxisInfo */
-    virtual bool getAxisName(int j, yarp::os::ConstString& name);
+    virtual bool getAxisName(int j, yarp::os::ConstString& name) override;
 
-    virtual bool getJointType(int j, yarp::dev::JointTypeEnum& type);
+    virtual bool getJointType(int j, yarp::dev::JointTypeEnum& type) override;
 
-    virtual bool getRefTorques(double *refs);
+    virtual bool getRefTorques(double *refs) override;
 
-    virtual bool getRefTorque(int j, double *t);
+    virtual bool getRefTorque(int j, double *t) override;
 
-    virtual bool setRefTorques(const double *t);
+    virtual bool setRefTorques(const double *t) override;
 
-    virtual bool setRefTorque(int j, double t);
+    virtual bool setRefTorque(int j, double t) override;
 
-    virtual bool setRefTorques(const int n_joint, const int *joints, const double *t);
+    virtual bool setRefTorques(const int n_joint, const int *joints, const double *t) override;
 
-    virtual bool getBemfParam(int j, double *t);
+    virtual bool getBemfParam(int j, double *t) override;
 
-    virtual bool setBemfParam(int j, double t);
+    virtual bool setBemfParam(int j, double t) override;
 
-    virtual bool getMotorTorqueParams(int j,  yarp::dev::MotorTorqueParameters *params);
+    virtual bool getMotorTorqueParams(int j,  yarp::dev::MotorTorqueParameters *params) override;
 
-    virtual bool setMotorTorqueParams(int j,  const yarp::dev::MotorTorqueParameters params);
+    virtual bool setMotorTorqueParams(int j,  const yarp::dev::MotorTorqueParameters params) override;
 
-    virtual bool setTorquePid(int j, const Pid &pid);
+     virtual bool setImpedance(int j, double stiff, double damp) override;
 
-    virtual bool setImpedance(int j, double stiff, double damp);
+    virtual bool setImpedanceOffset(int j, double offset) override;
 
-    virtual bool setImpedanceOffset(int j, double offset);
+    virtual bool getTorque(int j, double *t) override;
 
-    virtual bool getTorque(int j, double *t);
+    virtual bool getTorques(double *t) override;
 
-    virtual bool getTorques(double *t);
+    virtual bool getTorqueRange(int j, double *min, double *max) override;
 
-    virtual bool getTorqueRange(int j, double *min, double *max);
+    virtual bool getTorqueRanges(double *min, double *max) override;
 
-    virtual bool getTorqueRanges(double *min, double *max);
+    virtual bool getImpedance(int j, double* stiff, double* damp) override;
 
-    virtual bool setTorquePids(const Pid *pids);
+    virtual bool getImpedanceOffset(int j, double* offset) override;
 
-    virtual bool setTorqueErrorLimit(int j, double limit);
+    virtual bool getCurrentImpedanceLimit(int j, double *min_stiff, double *max_stiff, double *min_damp, double *max_damp) override;
 
-    virtual bool setTorqueErrorLimits(const double *limits);
+    virtual bool getControlMode(int j, int *mode) override;
 
-    virtual bool getTorqueError(int j, double *err);
-
-    virtual bool getTorqueErrors(double *errs);
-
-    virtual bool getTorquePidOutput(int j, double *out);
-
-    virtual bool getTorquePidOutputs(double *outs);
-
-    virtual bool getTorquePid(int j, Pid *pid);
-
-    virtual bool getImpedance(int j, double* stiff, double* damp);
-
-    virtual bool getImpedanceOffset(int j, double* offset);
-
-    virtual bool getCurrentImpedanceLimit(int j, double *min_stiff, double *max_stiff, double *min_damp, double *max_damp);
-
-    virtual bool getTorquePids(Pid *pids);
-
-    virtual bool getTorqueErrorLimit(int j, double *limit);
-
-    virtual bool getTorqueErrorLimits(double *limits);
-
-    virtual bool resetTorquePid(int j);
-
-    virtual bool disableTorquePid(int j);
-
-    virtual bool enableTorquePid(int j);
-
-    virtual bool setTorqueOffset(int j, double v);
-
-    virtual bool setPositionMode(int j);
-
-    virtual bool setTorqueMode(int j);
-
-    virtual bool setImpedancePositionMode(int j);
-
-    virtual bool setImpedanceVelocityMode(int j);
-
-    virtual bool setVelocityMode(int j);
-
-    virtual bool setOpenLoopMode(int j);
-
-    virtual bool getControlMode(int j, int *mode);
-
-    virtual bool getControlModes(int *modes);
+    virtual bool getControlModes(int *modes) override;
 
     // iControlMode2
-    virtual bool getControlModes(const int n_joint, const int *joints, int *modes);
+    virtual bool getControlModes(const int n_joint, const int *joints, int *modes) override;
 
-    bool legacySetControlMode(const int j, const int mode);
+    virtual bool setControlMode(const int j, const int mode) override;
 
-    virtual bool setControlMode(const int j, const int mode);
+    virtual bool setControlModes(const int n_joints, const int *joints, int *modes) override;
 
-    virtual bool setControlModes(const int n_joints, const int *joints, int *modes);
-
-    virtual bool setControlModes(int *modes);
-
-    virtual bool setRefOutput(int j, double v);
-
-    virtual bool setRefOutputs(const double *outs);
+    virtual bool setControlModes(int *modes) override;
 
     // IPositionDirect
 
-    virtual bool setPosition(int j, double ref);
+    virtual bool setPosition(int j, double ref) override;
 
-    virtual bool setPositions(const int n_joints, const int *joints, double *dpos);
+    virtual bool setPositions(const int n_joints, const int *joints, double *dpos) override;
 
-    virtual bool setPositions(const double *refs);
+    virtual bool setPositions(const double *refs) override;
 
         /** Get the last position reference for the specified axis.
-     *  This is the dual of setPositionsRaw and shall return only values sent using
+     *  This is the dual of setPositions and shall return only values sent using
      *  IPositionDirect interface.
      *  If other interfaces like IPositionControl are implemented by the device, this call
      *  must ignore their values, i.e. this call must never return a reference sent using
@@ -1342,10 +1187,10 @@ public:
      * @param ref last reference sent using setPosition(s) functions
      * @return true/false on success/failure
      */
-    virtual bool getRefPosition(const int joint, double *ref);
+    virtual bool getRefPosition(const int joint, double *ref) override;
 
     /** Get the last position reference for all axes.
-     *  This is the dual of setPositionsRaw and shall return only values sent using
+     *  This is the dual of setPositions and shall return only values sent using
      *  IPositionDirect interface.
      *  If other interfaces like IPositionControl are implemented by the device, this call
      *  must ignore their values, i.e. this call must never return a reference sent using
@@ -1353,10 +1198,10 @@ public:
      * @param ref array containing last reference sent using setPosition(s) functions
      * @return true/false on success/failure
      */
-    virtual bool getRefPositions(double *refs);
+    virtual bool getRefPositions(double *refs) override;
 
     /** Get the last position reference for the specified group of axes.
-     *  This is the dual of setPositionsRaw and shall return only values sent using
+     *  This is the dual of setPositions and shall return only values sent using
      *  IPositionDirect interface.
      *  If other interfaces like IPositionControl are implemented by the device, this call
      *  must ignore their values, i.e. this call must never return a reference sent using
@@ -1364,62 +1209,58 @@ public:
      * @param ref array containing last reference sent using setPosition(s) functions
      * @return true/false on success/failure
      */
-    virtual bool getRefPositions(const int n_joint, const int *joints, double *refs);
+    virtual bool getRefPositions(const int n_joint, const int *joints, double *refs) override;
 
-    virtual yarp::os::Stamp getLastInputStamp();
+    virtual yarp::os::Stamp getLastInputStamp() override;
 
     //
     // IVelocityControl2 Interface
     //
-    virtual bool velocityMove(const int n_joints, const int *joints, const double *spds);
+    virtual bool velocityMove(const int n_joints, const int *joints, const double *spds) override;
 
-    virtual bool getRefVelocity(const int joint, double* vel);
+    virtual bool getRefVelocity(const int joint, double* vel) override;
 
-    virtual bool getRefVelocities(double* vels);
+    virtual bool getRefVelocities(double* vels) override;
 
-    virtual bool getRefVelocities(const int n_joint, const int* joints, double* vels);
+    virtual bool getRefVelocities(const int n_joint, const int* joints, double* vels) override;
 
-    virtual bool setVelPid(int j, const Pid &pid);
+    virtual bool getInteractionMode(int j, yarp::dev::InteractionModeEnum* mode) override;
 
-    virtual bool setVelPids(const Pid *pids);
+    virtual bool getInteractionModes(int n_joints, int *joints, yarp::dev::InteractionModeEnum* modes) override;
 
-    virtual bool getVelPid(int j, Pid *pid);
+    virtual bool getInteractionModes(yarp::dev::InteractionModeEnum* modes) override;
 
-    virtual bool getVelPids(Pid *pids);
+    virtual bool setInteractionMode(int j, yarp::dev::InteractionModeEnum mode) override;
 
-    virtual bool getInteractionMode(int j, yarp::dev::InteractionModeEnum* mode);
+    virtual bool setInteractionModes(int n_joints, int *joints, yarp::dev::InteractionModeEnum* modes) override;
 
-    virtual bool getInteractionModes(int n_joints, int *joints, yarp::dev::InteractionModeEnum* modes);
+    virtual bool setInteractionModes(yarp::dev::InteractionModeEnum* modes) override;
 
-    virtual bool getInteractionModes(yarp::dev::InteractionModeEnum* modes);
+    //
+    // IPWMControl Interface
+    //
 
-    virtual bool setInteractionMode(int j, yarp::dev::InteractionModeEnum mode);
+    virtual bool setRefDutyCycle(int j, double v) override;
+    virtual bool setRefDutyCycles(const double *v) override;
+    virtual bool getRefDutyCycle(int j, double *v) override;
+    virtual bool getRefDutyCycles(double *v) override;
+    virtual bool getDutyCycle(int j, double *v) override;
+    virtual bool getDutyCycles(double *v) override;
 
-    virtual bool setInteractionModes(int n_joints, int *joints, yarp::dev::InteractionModeEnum* modes);
+    //
+    // ICurrentControl Interface
+    //
 
-    virtual bool setInteractionModes(yarp::dev::InteractionModeEnum* modes);
-
-    /**
-     * Get the last reference sent using the setOutput function
-     * @param outs pointer to the vector that will store the output values
-     * @return true/false on success/failure
-     */
-    virtual bool getRefOutput(int j, double *out);
-
-    /**
-     * Get the last reference sent using the setOutputs function
-     * @param outs pointer to the vector that will store the output values
-     * @return true/false on success/failure
-     */
-    virtual bool getRefOutputs(double *outs);
-
-#ifndef YARP_NO_DEPRECATED // since YARP 2.3.65
-    YARP_DEPRECATED virtual bool setPositionMode();
-    YARP_DEPRECATED virtual bool setOpenLoopMode();
-    YARP_DEPRECATED virtual bool setVelocityMode();
-    YARP_DEPRECATED virtual bool setTorqueMode();
-    YARP_DEPRECATED virtual bool setPositionDirectMode();
-#endif // YARP_NO_DEPRECATED
+    //virtual bool getAxes(int *ax) override;
+    //virtual bool getCurrent(int j, double *t) override;
+    //virtual bool getCurrents(double *t) override;
+    virtual bool getCurrentRange(int j, double *min, double *max) override;
+    virtual bool getCurrentRanges(double *min, double *max) override;
+    virtual bool setRefCurrents(const double *t) override;
+    virtual bool setRefCurrent(int j, double t) override;
+    virtual bool setRefCurrents(const int n_joint, const int *joints, const double *t) override;
+    virtual bool getRefCurrents(double *t) override;
+    virtual bool getRefCurrent(int j, double *t) override;
 };
 
 #if defined(_MSC_VER) && !defined(YARP_NO_DEPRECATED) // since YARP 2.3.65

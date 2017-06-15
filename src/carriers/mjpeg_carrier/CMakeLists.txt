@@ -16,12 +16,6 @@ if(NOT SKIP_mjpeg)
   endif()
 
   set(CMAKE_INCLUDE_CURRENT_DIR ON)
-  get_property(YARP_OS_INCLUDE_DIRS TARGET YARP_OS PROPERTY INCLUDE_DIRS)
-  get_property(YARP_sig_INCLUDE_DIRS TARGET YARP_sig PROPERTY INCLUDE_DIRS)
-  get_property(YARP_wire_rep_utils_INCLUDE_DIRS TARGET YARP_wire_rep_utils PROPERTY INCLUDE_DIRS)
-  include_directories(${YARP_OS_INCLUDE_DIRS}
-                      ${YARP_sig_INCLUDE_DIRS}
-                      ${YARP_wire_rep_utils_INCLUDE_DIRS})
 
   include_directories(SYSTEM ${JPEG_INCLUDE_DIR})
 
@@ -32,9 +26,9 @@ if(NOT SKIP_mjpeg)
                   MjpegStream.cpp
                   MjpegDecompression.h
                   MjpegDecompression.cpp)
-  target_link_libraries(yarp_mjpeg YARP_OS
-                                   YARP_sig
-                                   YARP_wire_rep_utils
+  target_link_libraries(yarp_mjpeg YARP::YARP_OS
+                                   YARP::YARP_sig
+                                   YARP::YARP_wire_rep_utils
                                    ${JPEG_LIBRARY})
 
   yarp_install(TARGETS yarp_mjpeg
@@ -46,11 +40,5 @@ if(NOT SKIP_mjpeg)
                COMPONENT runtime
                DESTINATION ${YARP_PLUGIN_MANIFESTS_INSTALL_DIR})
 
-  if(YARP_COMPILE_TESTS)
-    add_executable(test_mjpeg test_mjpeg.cpp
-                              MjpegDecompression.cpp)
-    target_link_libraries(test_mjpeg YARP_OS YARP_sig YARP_init)
-    target_link_libraries(test_mjpeg ${JPEG_LIBRARY})
-  endif()
-
+  set_property(TARGET yarp_mjpeg PROPERTY FOLDER "Plugins/Carrier")
 endif()

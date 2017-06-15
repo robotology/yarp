@@ -5,7 +5,7 @@
  *
  */
 
-#include <stdio.h>
+#include <cstdio>
 
 #include "yarp.h"
 
@@ -55,7 +55,7 @@ int main(int argc, char *argv[]) {
     yarpPortable writer, reader;
     yarpPortableInit(&writer,&wcallbacks);
     yarpPortableInit(&reader,&rcallbacks);
-    
+
     printf("Writing (in background)...\n");
 
     result = yarpPortWrite(port1,&writer);

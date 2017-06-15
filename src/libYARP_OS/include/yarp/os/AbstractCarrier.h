@@ -24,46 +24,46 @@ namespace yarp {
 class YARP_OS_API yarp::os::AbstractCarrier : public Carrier {
 public:
 
-    virtual Carrier *create() = 0;
+    virtual Carrier *create() YARP_OVERRIDE = 0;
 
-    virtual ConstString getName() = 0;
+    virtual ConstString getName() YARP_OVERRIDE = 0;
 
-    virtual bool checkHeader(const yarp::os::Bytes& header) = 0;
+    virtual bool checkHeader(const yarp::os::Bytes& header) YARP_OVERRIDE = 0;
 
-    virtual void setParameters(const yarp::os::Bytes& header);
+    virtual void setParameters(const yarp::os::Bytes& header) YARP_OVERRIDE;
 
-    virtual void getHeader(const yarp::os::Bytes& header) = 0;
+    virtual void getHeader(const yarp::os::Bytes& header) YARP_OVERRIDE = 0;
 
 
-    virtual bool isConnectionless();
-    virtual bool supportReply();
-    virtual bool canAccept();
-    virtual bool canOffer();
-    virtual bool isTextMode();
-    virtual bool requireAck();
-    virtual bool canEscape();
-    virtual bool isLocal();
-    virtual ConstString toString();
+    virtual bool isConnectionless() YARP_OVERRIDE;
+    virtual bool supportReply() YARP_OVERRIDE;
+    virtual bool canAccept() YARP_OVERRIDE;
+    virtual bool canOffer() YARP_OVERRIDE;
+    virtual bool isTextMode() YARP_OVERRIDE;
+    virtual bool requireAck() YARP_OVERRIDE;
+    virtual bool canEscape() YARP_OVERRIDE;
+    virtual bool isLocal() YARP_OVERRIDE;
+    virtual ConstString toString() YARP_OVERRIDE;
 
     // sender
-    virtual bool prepareSend(ConnectionState& proto);
-    virtual bool sendHeader(ConnectionState& proto);
-    virtual bool expectReplyToHeader(ConnectionState& proto);
+    virtual bool prepareSend(ConnectionState& proto) YARP_OVERRIDE;
+    virtual bool sendHeader(ConnectionState& proto) YARP_OVERRIDE;
+    virtual bool expectReplyToHeader(ConnectionState& proto) YARP_OVERRIDE;
 
     virtual bool sendIndex(ConnectionState& proto, SizedWriter& writer);
 
     // receiver
-    virtual bool expectExtraHeader(ConnectionState& proto);
-    virtual bool respondToHeader(ConnectionState& proto) = 0; // left abstract, no good default
-    virtual bool expectIndex(ConnectionState& proto);
-    virtual bool expectSenderSpecifier(ConnectionState& proto);
-    virtual bool sendAck(ConnectionState& proto);
-    virtual bool expectAck(ConnectionState& proto);
+    virtual bool expectExtraHeader(ConnectionState& proto) YARP_OVERRIDE;
+    virtual bool respondToHeader(ConnectionState& proto) YARP_OVERRIDE = 0; // left abstract, no good default
+    virtual bool expectIndex(ConnectionState& proto) YARP_OVERRIDE;
+    virtual bool expectSenderSpecifier(ConnectionState& proto) YARP_OVERRIDE;
+    virtual bool sendAck(ConnectionState& proto) YARP_OVERRIDE;
+    virtual bool expectAck(ConnectionState& proto) YARP_OVERRIDE;
 
-    virtual bool isActive();
+    virtual bool isActive() YARP_OVERRIDE;
 
-    virtual void setCarrierParams(const yarp::os::Property& params);
-    virtual void getCarrierParams(yarp::os::Property& params);
+    virtual void setCarrierParams(const yarp::os::Property& params) YARP_OVERRIDE;
+    virtual void getCarrierParams(yarp::os::Property& params) YARP_OVERRIDE;
 
     // some default implementations of protocol phases used by
     // certain YARP carriers
@@ -79,8 +79,8 @@ public:
 
 protected:
     int getSpecifier(const Bytes& b);
-    void createStandardHeader(int specifier,const yarp::os::Bytes& header);
-    virtual bool write(ConnectionState& proto, SizedWriter& writer);
+    void createStandardHeader(int specifier, const yarp::os::Bytes& header);
+    virtual bool write(ConnectionState& proto, SizedWriter& writer) YARP_OVERRIDE;
     bool sendConnectionStateSpecifier(ConnectionState& proto);
     bool sendSenderSpecifier(ConnectionState& proto);
 
@@ -89,7 +89,7 @@ protected:
             char *base = b.get();
             if (base[0]=='Y' && base[1]=='A' &&
                 base[6]=='R' && base[7]=='P') {
-                yarp::os::Bytes b2(b.get()+2,4);
+                yarp::os::Bytes b2(b.get()+2, 4);
                 int x = NetType::netInt(b2);
                 return x;
             }
@@ -97,7 +97,7 @@ protected:
         return -1;
     }
 
-    static void createYarpNumber(int x,const yarp::os::Bytes& header) {
+    static void createYarpNumber(int x, const yarp::os::Bytes& header) {
         if (header.length()!=8) {
             return;
         }
@@ -106,8 +106,8 @@ protected:
         base[1] = 'A';
         base[6] = 'R';
         base[7] = 'P';
-        yarp::os::Bytes code(base+2,4);
-        NetType::netInt(x,code);
+        yarp::os::Bytes code(base+2, 4);
+        NetType::netInt(x, code);
     }
 };
 

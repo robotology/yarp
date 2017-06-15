@@ -4,7 +4,10 @@
  * CopyPolicy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
  */
 
+#define _USE_MATH_DEFINES
+
 #include "Rangefinder2DClient.h"
+
 #include <yarp/os/Log.h>
 #include <yarp/os/LogStream.h>
 #include <yarp/dev/IFrameTransform.h>
@@ -12,8 +15,7 @@
 #include <yarp/math/FrameTransform.h>
 
 #include <limits>
-#define _USE_MATH_DEFINES
-#include <math.h>
+#include <cmath>
 
 /*! \file Rangefinder2DClient.cpp */
 

@@ -78,11 +78,11 @@
 
 #define WIN32_LEAN_AND_MEAN
 #include <windows.h>
-#include <string.h>
-#include <stdlib.h>
+#include <cstring>
+#include <cstdlib>
 #include <sys/types.h>
 #include <sys/stat.h>
-#include <errno.h>
+#include <cerrno>
 
 /* Entries missing from MSVC 6.0 */
 #if !defined(FILE_ATTRIBUTE_DEVICE)

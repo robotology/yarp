@@ -8,33 +8,20 @@
 #include "RosType.h"
 #include "md5.h"
 
-#include <stdlib.h>
-#include <stdio.h>
-#include <string.h>
-#include <sys/stat.h>
-#include <string>
-#include <sstream>
-#include <vector>
 #include <yarp/os/Network.h>
 #include <yarp/os/Port.h>
 #include <yarp/os/Bottle.h>
 #include <yarp/os/Os.h>
+#include <yarp/os/impl/PlatformSysStat.h>
+#include <yarp/os/impl/PlatformSysWait.h>
+#include <yarp/os/impl/PlatformUnistd.h>
 
-#ifdef YARP_PRESENT
-// this code used to be compilable without yarp, I have let this rust but
-// it would be straightforward to make it do so again
-#  include <yarp/conf/system.h>
-#endif
-#ifdef YARP_HAS_ACE
-#  include <ace/OS_NS_unistd.h>
-#  include <ace/OS_NS_sys_wait.h>
-#else
-#  include <unistd.h>
-#  include <sys/wait.h>
-#  ifndef ACE_OS
-#    define ACE_OS
-#  endif
-#endif
+#include <cstdlib>
+#include <cstdio>
+#include <cstring>
+#include <string>
+#include <sstream>
+#include <vector>
 
 
 std::vector<std::string> normalizedMessage(const std::string& line) {
@@ -82,7 +69,7 @@ RosType::RosTypes::RosTypes() {
     system_resource = new std::vector<RosType>();
     if (!system_resource) {
         fprintf(stderr,"Failed to allocated storage for ros types\n");
-        exit(1);
+        std::exit(1);
     }
 }
 
@@ -95,7 +82,7 @@ RosType::RosTypes::RosTypes(const RosTypes& alt) {
     system_resource = new std::vector<RosType>();
     if (!system_resource) {
         fprintf(stderr,"Failed to allocated storage for ros types\n");
-        exit(1);
+        std::exit(1);
     }
     HELPER(system_resource) = HELPER(alt.system_resource);
 }
@@ -221,7 +208,7 @@ bool RosType::read(const char *tname, RosTypeSearch& env, RosTypeCodeGen& gen,
     }
     if (!fin) {
         fprintf(stderr, "[type] FAILED to open %s\n", path.c_str());
-        exit(1);
+        std::exit(1);
     }
 
     if (verbose) {
@@ -340,11 +327,11 @@ bool RosType::cache(const char *tname, RosTypeSearch& env,
     }
     if (!fin) {
         fprintf(stderr, "[type] FAILED to open %s\n", tname);
-        exit(1);
+        std::exit(1);
     }
     if (!fout) {
         fprintf(stderr, "[type] FAILED to open %s\n", rosType.c_str());
-        exit(1);
+        std::exit(1);
     }
 
     do {
@@ -468,6 +455,12 @@ bool RosType::emitType(RosTypeCodeGen& gen,
     }
     if (!gen.endConstruct()) return false;
 
+    if (!gen.beginClear()) return false;
+    for (int i = 0; i<(int)subRosType.size(); i++) {
+        if (!gen.clearField(subRosType[i])) return false;
+    }
+    if (!gen.endClear()) return false;
+
     if (!gen.beginRead(true,(int)subRosType.size())) return false;
     for (int i=0; i<(int)subRosType.size(); i++) {
         if (!gen.readField(true,subRosType[i])) return false;
@@ -531,17 +524,17 @@ bool RosTypeSearch::fetchFromRos(const std::string& target_file,
     if (verbose) {
         fprintf(stderr,"[ros]  %s\n", cmd.c_str());
     }
-    pid_t p = ACE_OS::fork();
+    pid_t p = yarp::os::fork();
     if (p==0) {
 #ifdef __linux__
         // This was ACE_OS::execlp, but that fails
         ::execlp("sh","sh","-c",cmd.c_str(),(char *)NULL);
 #else
-        ACE_OS::execlp("sh","sh","-c",cmd.c_str(),(char *)NULL);
+        yarp::os::impl::execlp("sh","sh","-c",cmd.c_str(),(char *)NULL);
 #endif
-        exit(0);
+        std::exit(0);
     } else {
-        ACE_OS::wait(NULL);
+        yarp::os::impl::wait(NULL);
     }
 
     bool success = true;
@@ -556,7 +549,7 @@ bool RosTypeSearch::fetchFromRos(const std::string& target_file,
         fclose(fin);
         if (result==NULL) {
             fprintf(stderr, "[type] File is blank: %s\n", target_file.c_str());
-            ACE_OS::unlink(target_file.c_str());
+            yarp::os::impl::unlink(target_file.c_str());
             success = false;
         }
     }
@@ -641,7 +634,8 @@ std::string RosTypeSearch::findFile(const char *tname) {
     std::string target = std::string(tname);
 
     // If this is a path to a file, return the path, if the file exists.
-    if (stat(tname, &dummy) == 0) {
+    if (stat(tname, &dummy) == 0)
+    {
         if (source_dir.empty() && package_name.empty()) {
             size_t at = target.rfind("/");
             if (at != std::string::npos) {
@@ -661,33 +655,70 @@ std::string RosTypeSearch::findFile(const char *tname) {
     if (!source_dir.empty()) {
         // Search in source directory
         std::string source_full = source_dir + "/" + target + (find_service? ".srv" : ".msg");
+        if (verbose)
+        {
+            printf("searching definition: %s... (source directory: %s)\n", source_full.c_str(), source_dir.c_str());
+        }
         if (stat(source_full.c_str(), &dummy)==0) {
             return source_full;
         }
 
         // Search for current package in source directory
         source_full = source_dir + "/" + package_name + "/" + target + (find_service? ".srv" : ".msg");
+        if (verbose)
+        {
+            printf("searching definition: %s... (package name: %s)\n", source_full.c_str(), package_name.c_str());
+        }
         if (stat(source_full.c_str(), &dummy)==0) {
             return source_full;
         }
 
         // Search for std_msgs package in source directory
         source_full = source_dir + "/std_msgs/" + target + (find_service? ".srv" : ".msg");
+        if (verbose)
+        {
+            printf("searching definition: %s...\n", source_full.c_str());
+        }
         if (stat(source_full.c_str(), &dummy)==0) {
             return source_full;
         }
 
+        // Search in current directory
+        source_full = "./" + target + (find_service ? ".srv" : ".msg");
+        if (verbose)
+        {
+            printf("searching definition: %s...\n", source_full.c_str());
+        }
+        if (stat(source_full.c_str(), &dummy) == 0) {
+            return source_full;
+        }
+    }
+    else
+    {
+        if (verbose)
+        {
+            printf("source dir is empty");
+        }
     }
 
     // Search in target directory (already fetched from ROS/web, no need to
     // fetch it again)
     std::string target_full = target_dir + "/" + target + (find_service? ".srv" : ".msg");
+    if (verbose)
+    {
+        printf("searching definition in target directory %s...\n", target_full.c_str());
+    }
     if (stat(target_full.c_str(), &dummy)==0) {
         return target_full;
     }
 
     // If not in sources, try to fetch it from ROS
-    if (allow_ros) {
+    if (allow_ros)
+    {
+        if (verbose)
+        {
+            printf("searching definition from ros...\n");
+        }
         bool success = fetchFromRos(target_full, tname, find_service);
         if (success) {
             return target_full;
@@ -695,7 +726,12 @@ std::string RosTypeSearch::findFile(const char *tname) {
     }
 
     // try to fetch it from the web
-    if (allow_web) {
+    if (allow_web)
+    {
+        if (verbose)
+        {
+            printf("searching definition from the web...\n");
+        }
         bool success = fetchFromWeb(target_full, tname, find_service);
         if (success) {
             return target_full;
@@ -703,7 +739,12 @@ std::string RosTypeSearch::findFile(const char *tname) {
     }
 
     // support Header natively, for the sake of tests
-    if (target == "std_msgs/Header") {
+    if (target == "std_msgs/Header")
+    {
+        if (verbose)
+        {
+            printf("using internal std_msgs/Header support\n");
+        }
         yarp::os::mkdir_p(target_full.c_str(),1);
         FILE *fout = fopen(target_full.c_str(),"w");
         if (fout) {
@@ -718,7 +759,7 @@ std::string RosTypeSearch::findFile(const char *tname) {
     // File not found. abort if needed
     if (abort_on_error) {
         fprintf(stderr, "[type] %s not found. Aborting\n", tname);
-        exit(1);
+        std::exit(1);
     } else {
         fprintf(stderr, "[type] %s not found. Continuing\n", tname);
     }

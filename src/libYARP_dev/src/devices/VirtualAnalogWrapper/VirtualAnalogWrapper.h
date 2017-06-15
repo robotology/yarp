@@ -29,8 +29,7 @@
 
 #include <string>
 #include <vector>
-
-#include <stdarg.h>
+#include <cstdarg>
 
 #ifdef MSVC
     #pragma warning(disable:4355)
@@ -85,17 +84,17 @@ public:
     }
 
     // DeviceDriver //////////////////////////////////////////////////////////
-    virtual bool open(yarp::os::Searchable& config);
-    virtual bool close();
+    virtual bool open(yarp::os::Searchable& config) override;
+    virtual bool close() override;
     //////////////////////////////////////////////////////////////////////////
 
     // Thread ////////////////////////////////////////////////////////////////
-    virtual void run();
+    virtual void run() override;
     //////////////////////////////////////////////////////////////////////////
 
     // IMultipleWrapper //////////////////////////////////////////////////////
-    virtual bool attachAll(const yarp::dev::PolyDriverList &p);
-    virtual bool detachAll();
+    virtual bool attachAll(const yarp::dev::PolyDriverList &p) override;
+    virtual bool detachAll() override;
     //////////////////////////////////////////////////////////////////////////
 
     // Utility

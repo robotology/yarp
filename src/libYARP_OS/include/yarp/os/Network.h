@@ -77,7 +77,7 @@ public:
     static bool connect(const char *src, const char *dest,
                         const char *carrier,
                         bool quiet = true) {
-        return connect(ConstString(src),ConstString(dest),ConstString((carrier==YARP_NULLPTR)?"":carrier),quiet);
+        return connect(ConstString(src), ConstString(dest), ConstString((carrier==YARP_NULLPTR)?"":carrier), quiet);
     }
 
     /**
@@ -458,7 +458,7 @@ public:
      * @param val the target value
      *
      */
-    static void setEnvironment(const ConstString& key,const ConstString& val);
+    static void setEnvironment(const ConstString& key, const ConstString& val);
 
     /**
      *
@@ -492,7 +492,7 @@ public:
      * @return true if carrier was registered
      *
      */
-    static bool registerCarrier(const char *name,const char *dll);
+    static bool registerCarrier(const char *name, const char *dll);
 
     /**
      * Call wait() on a global mutual-exclusion semaphore allocated by YARP.

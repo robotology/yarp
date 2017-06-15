@@ -33,7 +33,7 @@ private:
 
     class ThreadImmediateReturn: public Thread {
     public:
-        virtual void run() {
+        virtual void run() override {
         }
     };
 
@@ -52,7 +52,7 @@ private:
         {
         }
 
-        virtual void run() {
+        virtual void run() override {
             bool h;
             do {
                 Time::delay(delay);
@@ -66,7 +66,7 @@ private:
 
     class Thread0: public Thread {
     public:
-        virtual void run() {
+        virtual void run() override {
             Time::delay(0.01);
         }
     };
@@ -77,9 +77,9 @@ private:
 
         Thread1(ThreadTest& owner) : owner(owner) {}
 
-        virtual void run() {
+        virtual void run() override {
             for (int i=0; i<5; i++) {
-                //ACE_OS::printf("tick %d\n", i);
+                //printf("tick %d\n", i);
                 owner.state.wait();
                 owner.expectCount++;
                 owner.state.post();
@@ -96,7 +96,7 @@ private:
 
         Thread2(ThreadTest& owner) : owner(owner), mutex(1), finished(false) {}
 
-        virtual void run() {
+        virtual void run() override {
             bool done = false;
             while (!done) {
                 owner.sema.wait();
@@ -104,7 +104,7 @@ private:
                 done = finished;
                 mutex.post();
                 owner.state.wait();
-                //ACE_OS::printf("burp\n");
+                //printf("burp\n");
                 owner.gotCount++;
                 owner.state.post();
             }
@@ -113,10 +113,10 @@ private:
                 owner.gotCount++;
                 owner.state.post();
             }
-            //ACE_OS::printf("done\n");
+            //printf("done\n");
         }
 
-        virtual void close() {
+        virtual void close() override {
             mutex.wait();
             finished = true;
             owner.state.wait();
@@ -138,22 +138,22 @@ private:
 
         bool onStopCalled;
         int state;
-        virtual bool threadInit()
+        virtual bool threadInit() override
         {
             onStopCalled=false;
             state=0;
             return true;
         }
 
-        virtual void run() {
+        virtual void run() override {
             Time::delay(0.5);
             state++;
         }
 
-        virtual void threadRelease()
+        virtual void threadRelease() override
         {state++;}
 
-        virtual void onStop()
+        virtual void onStop() override
         { onStopCalled=true;}
     };
 
@@ -163,7 +163,7 @@ private:
 
         int state;
         bool fail;
-        virtual bool threadInit()
+        virtual bool threadInit() override
         {
             state=0;
             return !fail;
@@ -174,18 +174,18 @@ private:
             fail=f;
         }
 
-        void afterStart(bool s)
+        void afterStart(bool s) override
         {
             if (!s)
             {state=-1;}
         }
 
-        virtual void run() {
+        virtual void run() override {
             Time::delay(1);
             state++;
         }
 
-        virtual void threadRelease()
+        virtual void threadRelease() override
         {state++;}
     };
 
@@ -204,7 +204,7 @@ private:
             mutex.post();
         }
 
-        virtual bool threadInit()
+        virtual bool threadInit() override
         {
             Time::delay(0.5);
             mutex.wait();
@@ -213,7 +213,7 @@ private:
             return !fail;
         }
 
-        virtual void afterStart(bool s)
+        virtual void afterStart(bool s) override
         {
             mutex.wait();
             if(!s)
@@ -221,10 +221,10 @@ private:
             mutex.post();
         }
 
-        virtual void run()
+        virtual void run() override
         {}
 
-        virtual void threadRelease()
+        virtual void threadRelease() override
         {
             Time::delay(0.5);
             mutex.wait();
@@ -241,7 +241,7 @@ private:
 
         ThreadIdentity() : dynamicId(-1), staticId(-1) { }
 
-        virtual void run() {
+        virtual void run() override {
             dynamicId = getKey();
             staticId = Thread::getKeyOfCaller();
         }
@@ -261,22 +261,22 @@ private:
         bool executed;
         bool onStopCalled;
 
-        virtual bool threadInit()
+        virtual bool threadInit() override
         {
             initCalled=true;
             onStopCalled=false;
             return true;
         }
 
-        void afterStart(bool s)
+        void afterStart(bool s) override
         {   notified=true;}
 
-        virtual void run() {
+        virtual void run() override {
             Time::delay(0.5);
             executed=true;
         }
 
-        virtual void threadRelease()
+        virtual void threadRelease() override
         {releaseCalled=true;}
     };
 
@@ -286,7 +286,7 @@ public:
         gotCount = 0;
     }
 
-    virtual ConstString getName() { return "ThreadTest"; }
+    virtual ConstString getName() override { return "ThreadTest"; }
 
     void testIsRunning()
     {
@@ -472,7 +472,7 @@ public:
         t.hold = false;
     }
 
-    virtual void runTests() {
+    virtual void runTests() override {
         testMin();
         testSync();
         testIsRunning();

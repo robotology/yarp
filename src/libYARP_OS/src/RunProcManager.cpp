@@ -4,28 +4,31 @@
 * CopyPolicy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
 */
 
-#include <yarp/os/Time.h>
-#include <yarp/os/RpcClient.h>
-#include <yarp/os/Network.h>
-#include <yarp/os/Semaphore.h>
 #include <yarp/os/impl/RunProcManager.h>
 
-#include <string.h>
+#include <yarp/os/Network.h>
+#include <yarp/os/RpcClient.h>
+#include <yarp/os/Semaphore.h>
+#include <yarp/os/Time.h>
+
+#include <yarp/os/impl/PlatformSysWait.h>
 #include <yarp/os/impl/RunCheckpoints.h>
+
+#include <cstring>
 
 #define WAIT() { RUNLOG("<<<mutex.wait()") mutex.wait(); RUNLOG(">>>mutex.wait()") }
 #define POST() { RUNLOG("<<<mutex.post()") mutex.post(); RUNLOG(">>>mutex.post()") }
 
-#if defined(WIN32)
+#if defined(_WIN32)
     #include <process.h>
 
     #define SIGKILL 9
     static bool KILL(HANDLE handle)
     {
-        BOOL bRet=TerminateProcess(handle,0);
+        BOOL bRet=TerminateProcess(handle, 0);
 
         CloseHandle(handle);
-        fprintf(stderr,"brutally terminated by TerminateProcess\n");
+        fprintf(stderr, "brutally terminated by TerminateProcess\n");
 
         return bRet?true:false;
     }
@@ -43,11 +46,11 @@
         {
             DWORD nCount=0;
             HANDLE* aHandlesVector = YARP_NULLPTR;
-            pProcessVector->GetHandles(aHandlesVector,nCount);
+            pProcessVector->GetHandles(aHandlesVector, nCount);
 
             if (nCount)
             {
-                WaitForMultipleObjects(nCount,aHandlesVector,FALSE,INFINITE);
+                WaitForMultipleObjects(nCount, aHandlesVector, FALSE, INFINITE);
                 delete [] aHandlesVector;
             }
             else
@@ -70,14 +73,14 @@
         return ret;
     }
 
-    int SIGNAL(int pid,int signum)
+    int SIGNAL(int pid, int signum)
     {
-        int ret=!kill(pid,signum);
+        int ret=!yarp::os::impl::kill(pid, signum);
         return ret;
     }
 #endif // LINUX
 
-YarpRunProcInfo::YarpRunProcInfo(yarp::os::ConstString& alias,yarp::os::ConstString& on,PID pidCmd,HANDLE handleCmd,bool hold)
+YarpRunProcInfo::YarpRunProcInfo(yarp::os::ConstString& alias, yarp::os::ConstString& on, PID pidCmd, HANDLE handleCmd, bool hold)
 {
     mAlias=alias;
     mOn=on;
@@ -89,7 +92,7 @@ YarpRunProcInfo::YarpRunProcInfo(yarp::os::ConstString& alias,yarp::os::ConstStr
 
 bool YarpRunProcInfo::Signal(int signum)
 {
-#if defined(WIN32)
+#if defined(_WIN32)
     if (signum==SIGKILL)
     {
         if (mHandleCmd)
@@ -109,7 +112,7 @@ bool YarpRunProcInfo::Signal(int signum)
 #else
     if (mPidCmd && !mHold)
     {
-        bool ret=SIGNAL(mPidCmd,signum);
+        bool ret=SIGNAL(mPidCmd, signum);
         return ret;
     }
 #endif
@@ -123,24 +126,24 @@ bool YarpRunProcInfo::IsActive()
     {
         return false;
     }
-#if defined(WIN32)
+#if defined(_WIN32)
     DWORD status;
-    RUNLOG("<<<GetExitCodeProcess(mHandleCmd,&status)")
-    bool ret=(::GetExitCodeProcess(mHandleCmd,&status) && status==STILL_ACTIVE);
-    RUNLOG(">>>GetExitCodeProcess(mHandleCmd,&status)")
+    RUNLOG("<<<GetExitCodeProcess(mHandleCmd, &status)")
+    bool ret=(::GetExitCodeProcess(mHandleCmd, &status) && status==STILL_ACTIVE);
+    RUNLOG(">>>GetExitCodeProcess(mHandleCmd, &status)")
     return ret;
 #else
-    bool ret=!kill(mPidCmd,0);
+    bool ret=!yarp::os::impl::kill(mPidCmd, 0);
     return ret;
 #endif
 }
 
 bool YarpRunProcInfo::Clean()
 {
-#if !defined(WIN32)
-    if (!mCleanCmd && waitpid(mPidCmd, YARP_NULLPTR, WNOHANG) == mPidCmd)
+#if !defined(_WIN32)
+    if (!mCleanCmd && yarp::os::impl::waitpid(mPidCmd, YARP_NULLPTR, WNOHANG) == mPidCmd)
     {
-        fprintf(stderr,"CLEANUP cmd %d\n",mPidCmd);
+        fprintf(stderr, "CLEANUP cmd %d\n", mPidCmd);
         mCleanCmd=true;
     }
 
@@ -173,12 +176,12 @@ YarpRunInfoVector::~YarpRunInfoVector()
         }
     }
 
-#if defined(WIN32)
+#if defined(_WIN32)
     if (hZombieHunter)
     {
         HANDLE hkill=hZombieHunter;
         hZombieHunter = YARP_NULLPTR;
-        TerminateThread(hkill,0);
+        TerminateThread(hkill, 0);
     }
 #endif
 
@@ -191,31 +194,31 @@ bool YarpRunInfoVector::Add(YarpRunProcInfo *process)
 
     if (m_nProcesses>=MAX_PROCESSES)
     {
-        fprintf(stderr,"ERROR: maximum process limit reached\n");
+        fprintf(stderr, "ERROR: maximum process limit reached\n");
         POST()
         return false;
     }
 
-#if defined(WIN32)
+#if defined(_WIN32)
     if (hZombieHunter)
     {
         HANDLE hkill=hZombieHunter;
         hZombieHunter = YARP_NULLPTR;
-        TerminateThread(hkill,0);
+        TerminateThread(hkill, 0);
     }
 #endif
 
     m_apList[m_nProcesses++]=process;
 
-#if defined(WIN32)
-    hZombieHunter=CreateThread(0,0,ZombieHunter,this,0,0);
+#if defined(_WIN32)
+    hZombieHunter=CreateThread(0, 0, ZombieHunter, this, 0, 0);
 #endif
 
     POST()
     return true;
 }
 
-int YarpRunInfoVector::Signal(yarp::os::ConstString& alias,int signum)
+int YarpRunInfoVector::Signal(yarp::os::ConstString& alias, int signum)
 {
     WAIT()
 
@@ -234,7 +237,7 @@ int YarpRunInfoVector::Signal(yarp::os::ConstString& alias,int signum)
 
     for (int k=0; k<nKill; ++k)
     {
-        fprintf(stderr,"SIGNAL %s (%d)\n",aKill[k]->mAlias.c_str(),aKill[k]->mPidCmd);
+        fprintf(stderr, "SIGNAL %s (%d)\n", aKill[k]->mAlias.c_str(), aKill[k]->mPidCmd);
         aKill[k]->Signal(signum);
     }
 
@@ -262,7 +265,7 @@ int YarpRunInfoVector::Killall(int signum)
 
     for (int k=0; k<nKill; ++k)
     {
-        fprintf(stderr,"SIGNAL %s (%d)\n",aKill[k]->mAlias.c_str(),aKill[k]->mPidCmd);
+        fprintf(stderr, "SIGNAL %s (%d)\n", aKill[k]->mAlias.c_str(), aKill[k]->mPidCmd);
         aKill[k]->Signal(signum);
     }
 
@@ -271,8 +274,8 @@ int YarpRunInfoVector::Killall(int signum)
     return nKill;
 }
 
-#if defined(WIN32)
-void YarpRunInfoVector::GetHandles(HANDLE* &lpHandles,DWORD &nCount)
+#if defined(_WIN32)
+void YarpRunInfoVector::GetHandles(HANDLE* &lpHandles, DWORD &nCount)
 {
     WAIT()
 
@@ -284,7 +287,7 @@ void YarpRunInfoVector::GetHandles(HANDLE* &lpHandles,DWORD &nCount)
     {
         if (!m_apList[i]->IsActive())
         {
-            fprintf(stderr,"CLEANUP %s (%d)\n",m_apList[i]->mAlias.c_str(),m_apList[i]->mPidCmd);
+            fprintf(stderr, "CLEANUP %s (%d)\n", m_apList[i]->mAlias.c_str(), m_apList[i]->mPidCmd);
             fflush(stderr);
 
             m_apList[i]->Clean();
@@ -317,7 +320,7 @@ bool YarpRunInfoVector::CleanZombie(int zombie)
 
     for (int i=0; i<m_nProcesses; ++i)
     {
-        if (m_apList[i] && m_apList[i]->Clean(zombie,pZombie))
+        if (m_apList[i] && m_apList[i]->Clean(zombie, pZombie))
         {
             bFound=true;
             if (pZombie) m_apList[i] = YARP_NULLPTR;
@@ -343,7 +346,7 @@ yarp::os::Bottle YarpRunInfoVector::PS()
 {
     WAIT()
 
-    yarp::os::Bottle ps,line,grp;
+    yarp::os::Bottle ps, line, grp;
 
     for (int i=0; i<m_nProcesses; ++i) if (m_apList[i])
     {
@@ -438,7 +441,7 @@ YarpRunCmdWithStdioInfo::YarpRunCmdWithStdioInfo(yarp::os::ConstString& alias,
                                                  HANDLE handleCmd,
                                                  bool hold)
                                                  :
-YarpRunProcInfo(alias,on,pidCmd,handleCmd,hold)
+YarpRunProcInfo(alias, on, pidCmd, handleCmd, hold)
 {
     mPidStdin=0;
     mPidStdout=pidStdout;
@@ -475,7 +478,7 @@ YarpRunCmdWithStdioInfo::YarpRunCmdWithStdioInfo(yarp::os::ConstString& alias,
                                                  HANDLE handleCmd,
                                                  bool hold)
                                                  :
-YarpRunProcInfo(alias,on,pidCmd,handleCmd,hold)
+YarpRunProcInfo(alias, on, pidCmd, handleCmd, hold)
 {
     mPidStdin=pidStdin;
     mPidStdout=pidStdout;
@@ -500,7 +503,7 @@ YarpRunProcInfo(alias,on,pidCmd,handleCmd,hold)
 
 bool YarpRunCmdWithStdioInfo::Clean()
 {
-#if defined(WIN32)
+#if defined(_WIN32)
     if (mPidCmd)
     {
         mPidCmd=0;
@@ -526,21 +529,21 @@ bool YarpRunCmdWithStdioInfo::Clean()
 
 #else
 
-    if (!mCleanCmd && waitpid(mPidCmd, YARP_NULLPTR, WNOHANG) == mPidCmd)
+    if (!mCleanCmd && yarp::os::impl::waitpid(mPidCmd, YARP_NULLPTR, WNOHANG) == mPidCmd)
     {
-        fprintf(stderr,"CLEANUP cmd %d\n",mPidCmd);
+        fprintf(stderr, "CLEANUP cmd %d\n", mPidCmd);
         mCleanCmd=true;
     }
 
-    if (!mCleanStdin && waitpid(mPidStdin, YARP_NULLPTR, WNOHANG) == mPidStdin)
+    if (!mCleanStdin && yarp::os::impl::waitpid(mPidStdin, YARP_NULLPTR, WNOHANG) == mPidStdin)
     {
-        fprintf(stderr,"CLEANUP stdin %d\n",mPidStdin);
+        fprintf(stderr, "CLEANUP stdin %d\n", mPidStdin);
         mCleanStdin=true;
     }
 
-    if (!mCleanStdout && waitpid(mPidStdout, YARP_NULLPTR, WNOHANG) == mPidStdout)
+    if (!mCleanStdout && yarp::os::impl::waitpid(mPidStdout, YARP_NULLPTR, WNOHANG) == mPidStdout)
     {
-        fprintf(stderr,"CLEANUP stdout %d\n",mPidStdout);
+        fprintf(stderr, "CLEANUP stdout %d\n", mPidStdout);
         mCleanStdout=true;
     }
 
@@ -566,19 +569,19 @@ bool YarpRunCmdWithStdioInfo::Clean()
 
     if (!mCleanCmd && !mKillingCmd)
     {
-        kill(mPidCmd,SIGTERM);
+        yarp::os::impl::kill(mPidCmd, SIGTERM);
         mKillingCmd=true;
     }
 
     if (!mCleanStdin && !mKillingStdin)
     {
-        kill(mPidStdin,SIGTERM);
+        yarp::os::impl::kill(mPidStdin, SIGTERM);
         mKillingStdin=true;
     }
 
     if (!mCleanStdout && !mKillingStdout)
     {
-        kill(mPidStdout,SIGTERM);
+        yarp::os::impl::kill(mPidStdout, SIGTERM);
         mKillingStdout=true;
     }
 
@@ -597,13 +600,13 @@ void YarpRunCmdWithStdioInfo::TerminateStdio()
 
     if (mOn==mStdio)
     {
-        mStdioVector->Signal(mAlias,SIGTERM);
+        mStdioVector->Signal(mAlias, SIGTERM);
     }
     else
     {
         yarp::os::Bottle msg;
         msg.fromString((yarp::os::ConstString("(killstdio ")+mAlias+")").c_str());
-        yarp::os::Run::sendMsg(msg,mStdio);
+        yarp::os::Run::sendMsg(msg, mStdio);
     }
 }
 
@@ -611,7 +614,7 @@ void YarpRunCmdWithStdioInfo::TerminateStdio()
 ////////////////////////////////////
 ////////////////////////////////////
 
-#if defined(WIN32)
+#if defined(_WIN32)
 
 #define TA_FAILED        0
 #define TA_SUCCESS_CLEAN 1
@@ -632,17 +635,17 @@ public:
     DWORD dwID;
 };
 
-BOOL CALLBACK TerminateAppEnum(HWND hwnd,LPARAM lParam)
+BOOL CALLBACK TerminateAppEnum(HWND hwnd, LPARAM lParam)
 {
     TerminateParams* params=(TerminateParams*)lParam;
 
     DWORD dwID;
-    GetWindowThreadProcessId(hwnd,&dwID) ;
+    GetWindowThreadProcessId(hwnd, &dwID) ;
 
     if (dwID==params->dwID)
     {
         params->nWin++;
-        PostMessage(hwnd,WM_CLOSE,0,0);
+        PostMessage(hwnd, WM_CLOSE, 0, 0);
     }
 
     return TRUE;
@@ -662,7 +665,7 @@ bool TERMINATE(PID dwPID)
 
     // If we can't open the process with PROCESS_TERMINATE rights,
     // then we give up immediately.
-    hProc=OpenProcess(SYNCHRONIZE|PROCESS_TERMINATE,FALSE,dwPID);
+    hProc=OpenProcess(SYNCHRONIZE|PROCESS_TERMINATE, FALSE, dwPID);
 
     if (hProc == YARP_NULLPTR)
     {
@@ -674,21 +677,21 @@ bool TERMINATE(PID dwPID)
 
     TerminateParams params(dwPID);
 
-    EnumWindows((WNDENUMPROC)TerminateAppEnum,(LPARAM)&params);
+    EnumWindows((WNDENUMPROC)TerminateAppEnum, (LPARAM)&params);
 
     if (params.nWin)
     {
-        fprintf(stderr,"%d terminated by WM_CLOSE (sending anyway CTRL_C_EVENT/CTRL_BREAK_EVENT)\n",dwPID);
+        fprintf(stderr, "%d terminated by WM_CLOSE (sending anyway CTRL_C_EVENT/CTRL_BREAK_EVENT)\n", dwPID);
     }
     else
     {
-        //GenerateConsoleCtrlEvent(CTRL_C_EVENT,dwPID);
-        //GenerateConsoleCtrlEvent(CTRL_BREAK_EVENT,dwPID);
-        fprintf(stderr,"%d terminated by CTRL_C_EVENT/CTRL_BREAK_EVENT\n",dwPID);
+        //GenerateConsoleCtrlEvent(CTRL_C_EVENT, dwPID);
+        //GenerateConsoleCtrlEvent(CTRL_BREAK_EVENT, dwPID);
+        fprintf(stderr, "%d terminated by CTRL_C_EVENT/CTRL_BREAK_EVENT\n", dwPID);
     }
 
-    GenerateConsoleCtrlEvent(CTRL_C_EVENT,dwPID);
-    GenerateConsoleCtrlEvent(CTRL_BREAK_EVENT,dwPID);
+    GenerateConsoleCtrlEvent(CTRL_C_EVENT, dwPID);
+    GenerateConsoleCtrlEvent(CTRL_BREAK_EVENT, dwPID);
 
     CloseHandle(hProc);
 

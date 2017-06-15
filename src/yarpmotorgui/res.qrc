@@ -14,6 +14,8 @@
         <file alias="warning.svg">../../data/icons/512x512/actions-warning.svg</file>
         <file alias="folder-new.svg">../../data/icons/512x512/folder-new.svg</file>
         <file alias="logo.svg">../../data/icons/512x512/home.svg</file>
+        <file alias="action1.svg">../../data/icons/512x512/action1.svg</file>
+        <file alias="action2.svg">../../data/icons/512x512/action2.svg</file>
         <file>images/downArrow.png</file>
         <file>images/goAll.png</file>
         <file>images/calibrate.png</file>

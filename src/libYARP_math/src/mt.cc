@@ -50,7 +50,7 @@
 #include <iostream>
 #include <cassert>
 
-#include "yarp/impl/mt.h"
+#include "yarp/math/impl/mt.h"
 
 /**
  * Constructor

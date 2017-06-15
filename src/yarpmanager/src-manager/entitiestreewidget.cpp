@@ -76,7 +76,7 @@ EntitiesTreeWidget::EntitiesTreeWidget(QWidget *parent) : QTreeWidget(parent)
     connect(remove,SIGNAL(triggered()),this,SLOT(onRemove()));
     connect(reopen,SIGNAL(triggered()),this,SLOT(onReopen()));
 
-    #if defined(WIN32)
+    #if defined(_WIN32)
         ext_editor = "notepad.exe";
     #else
         ext_editor = "xdg-open";

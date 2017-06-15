@@ -14,6 +14,7 @@
 #include <yarp/manager/utility.h>
 #include <yarp/manager/resource.h>
 #include <yarp/manager/logicresource.h>
+#include <yarp/conf/api.h>
 
 using namespace std;
 
@@ -31,8 +32,8 @@ public:
     Memory(const char* szName);
     Memory(const Memory &res);
     virtual ~Memory();
-    virtual Node* clone(void);
-    virtual bool satisfy(GenericResource* resource);
+    virtual Node* clone(void) YARP_OVERRIDE;
+    virtual bool satisfy(GenericResource* resource) YARP_OVERRIDE;
 
     void setTotalSpace(Capacity c) { totalSpace = c; }
     Capacity getTotalSpace(void) { return totalSpace; }
@@ -57,8 +58,8 @@ public:
     Storage(const char* szName);
     Storage(const Storage &res);
     virtual ~Storage();
-    virtual Node* clone(void);
-    virtual bool satisfy(GenericResource* resource);
+    virtual Node* clone(void) YARP_OVERRIDE;
+    virtual bool satisfy(GenericResource* resource) YARP_OVERRIDE;
 
     void setTotalSpace(Capacity c) { totalSpace = c; }
     Capacity getTotalSpace(void) { return totalSpace; }
@@ -82,8 +83,8 @@ public:
     Network(const char* szName);
     Network(const Network &res);
     virtual ~Network();
-    virtual Node* clone(void);
-    virtual bool satisfy(GenericResource* resource);
+    virtual Node* clone(void) YARP_OVERRIDE;
+    virtual bool satisfy(GenericResource* resource) YARP_OVERRIDE;
 
     void setIP4(const char* ip) { if(ip) strIP4 = ip; }
     void setIP6(const char* ip) { if(ip) strIP6 = ip; }
@@ -118,8 +119,8 @@ public:
     Processor(const char* szName);
     Processor(const Processor &res);
     virtual ~Processor();
-    virtual Node* clone(void);
-    virtual bool satisfy(GenericResource* resource);
+    virtual Node* clone(void) YARP_OVERRIDE;
+    virtual bool satisfy(GenericResource* resource) YARP_OVERRIDE;
 
     void setArchitecture(const char* arch) {if(arch) strArchitecure = arch; }
     void setModel(const char* model) {if(model) strModel = model; }
@@ -164,8 +165,8 @@ public:
     Computer(const Computer& rhs);
     virtual ~Computer();
     Computer& operator=(const Computer& rhs);
-    virtual Node* clone(void);
-    virtual bool satisfy(GenericResource* resource);
+    virtual Node* clone(void) YARP_OVERRIDE;
+    virtual bool satisfy(GenericResource* resource) YARP_OVERRIDE;
 
     void setMemory(Memory& mem) { memory = mem; }
     void setStorage(Storage& stg) { storage = stg; }

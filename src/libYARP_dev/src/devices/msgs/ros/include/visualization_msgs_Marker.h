@@ -1,5 +1,7 @@
 // This is an automatically generated file.
 // Generated from this visualization_msgs_Marker.msg definition:
+//   # See http://www.ros.org/wiki/rviz/DisplayTypes/Marker and http://www.ros.org/wiki/rviz/Tutorials/Markers%3A%20Basic%20Shapes for more information on using this message with rviz
+//   
 //   uint8 ARROW=0
 //   uint8 CUBE=1
 //   uint8 SPHERE=2
@@ -12,23 +14,34 @@
 //   uint8 TEXT_VIEW_FACING=9
 //   uint8 MESH_RESOURCE=10
 //   uint8 TRIANGLE_LIST=11
+//   
 //   uint8 ADD=0
 //   uint8 MODIFY=0
 //   uint8 DELETE=2
 //   uint8 DELETEALL=3
-//   std_msgs/Header header
-//   string ns
-//   int32 id
-//   int32 type
-//   int32 action
-//   geometry_msgs/Pose pose
-//   geometry_msgs/Vector3 scale
-//   std_msgs/ColorRGBA color
-//   duration lifetime
-//   bool frame_locked
+//   
+//   Header header                        # header for time/frame information
+//   string ns                            # Namespace to place this object in... used in conjunction with id to create a unique name for the object
+//   int32 id                           # object ID useful in conjunction with the namespace for manipulating and deleting the object later
+//   int32 type                         # Type of object
+//   int32 action                         # 0 add/modify an object, 1 (deprecated), 2 deletes an object, 3 deletes all objects
+//   geometry_msgs/Pose pose                 # Pose of the object
+//   geometry_msgs/Vector3 scale             # Scale of the object 1,1,1 means default (usually 1 meter square)
+//   std_msgs/ColorRGBA color             # Color [0.0-1.0]
+//   duration lifetime                    # How long the object should last before being automatically deleted.  0 means forever
+//   bool frame_locked                    # If this marker should be frame-locked, i.e. retransformed into its frame every timestep
+//   
+//   #Only used if the type specified has some use for them (eg. POINTS, LINE_STRIP, ...)
 //   geometry_msgs/Point[] points
+//   #Only used if the type specified has some use for them (eg. POINTS, LINE_STRIP, ...)
+//   #number of colors must either be 0 or equal to the number of points
+//   #NOTE: alpha is not yet used
 //   std_msgs/ColorRGBA[] colors
+//   
+//   # NOTE: only used for text markers
 //   string text
+//   
+//   # NOTE: only used for MESH_RESOURCE markers
 //   string mesh_resource
 //   bool mesh_use_embedded_materials
 // Instances of this class can be read and written with YARP ports,
@@ -87,7 +100,86 @@ public:
   visualization_msgs_Marker() {
   }
 
-  bool readBare(yarp::os::ConnectionReader& connection) {
+  void clear() {
+    // *** ARROW ***
+
+    // *** CUBE ***
+
+    // *** SPHERE ***
+
+    // *** CYLINDER ***
+
+    // *** LINE_STRIP ***
+
+    // *** LINE_LIST ***
+
+    // *** CUBE_LIST ***
+
+    // *** SPHERE_LIST ***
+
+    // *** POINTS ***
+
+    // *** TEXT_VIEW_FACING ***
+
+    // *** MESH_RESOURCE ***
+
+    // *** TRIANGLE_LIST ***
+
+    // *** ADD ***
+
+    // *** MODIFY ***
+
+    // *** DELETE ***
+
+    // *** DELETEALL ***
+
+    // *** header ***
+    header.clear();
+
+    // *** ns ***
+    ns = "";
+
+    // *** id ***
+    id = 0;
+
+    // *** type ***
+    type = 0;
+
+    // *** action ***
+    action = 0;
+
+    // *** pose ***
+    pose.clear();
+
+    // *** scale ***
+    scale.clear();
+
+    // *** color ***
+    color.clear();
+
+    // *** lifetime ***
+    lifetime.clear();
+
+    // *** frame_locked ***
+    frame_locked = false;
+
+    // *** points ***
+    points.clear();
+
+    // *** colors ***
+    colors.clear();
+
+    // *** text ***
+    text = "";
+
+    // *** mesh_resource ***
+    mesh_resource = "";
+
+    // *** mesh_use_embedded_materials ***
+    mesh_use_embedded_materials = false;
+  }
+
+  bool readBare(yarp::os::ConnectionReader& connection) YARP_OVERRIDE {
     // *** header ***
     if (!header.read(connection)) return false;
 
@@ -149,7 +241,7 @@ public:
     return !connection.isError();
   }
 
-  bool readBottle(yarp::os::ConnectionReader& connection) {
+  bool readBottle(yarp::os::ConnectionReader& connection) YARP_OVERRIDE {
     connection.convertTextMode();
     yarp::os::idl::WireReader reader(connection);
     if (!reader.readListHeader(31)) return false;
@@ -212,12 +304,12 @@ public:
   }
 
   using yarp::os::idl::WirePortable::read;
-  bool read(yarp::os::ConnectionReader& connection) {
+  bool read(yarp::os::ConnectionReader& connection) YARP_OVERRIDE {
     if (connection.isBareMode()) return readBare(connection);
     return readBottle(connection);
   }
 
-  bool writeBare(yarp::os::ConnectionWriter& connection) {
+  bool writeBare(yarp::os::ConnectionWriter& connection) YARP_OVERRIDE {
     // *** header ***
     if (!header.write(connection)) return false;
 
@@ -274,7 +366,7 @@ public:
     return !connection.isError();
   }
 
-  bool writeBottle(yarp::os::ConnectionWriter& connection) {
+  bool writeBottle(yarp::os::ConnectionWriter& connection) YARP_OVERRIDE {
     connection.appendInt(BOTTLE_TAG_LIST);
     connection.appendInt(31);
 
@@ -346,7 +438,7 @@ public:
   }
 
   using yarp::os::idl::WirePortable::write;
-  bool write(yarp::os::ConnectionWriter& connection) {
+  bool write(yarp::os::ConnectionWriter& connection) YARP_OVERRIDE {
     if (connection.isBareMode()) return writeBare(connection);
     return writeBottle(connection);
   }
@@ -358,7 +450,9 @@ public:
 
   // Give source text for class, ROS will need this
   yarp::os::ConstString getTypeText() {
-    return "uint8 ARROW=0\n\
+    return "# See http://www.ros.org/wiki/rviz/DisplayTypes/Marker and http://www.ros.org/wiki/rviz/Tutorials/Markers%3A%20Basic%20Shapes for more information on using this message with rviz\n\
+\n\
+uint8 ARROW=0\n\
 uint8 CUBE=1\n\
 uint8 SPHERE=2\n\
 uint8 CYLINDER=3\n\
@@ -370,42 +464,72 @@ uint8 POINTS=8\n\
 uint8 TEXT_VIEW_FACING=9\n\
 uint8 MESH_RESOURCE=10\n\
 uint8 TRIANGLE_LIST=11\n\
+\n\
 uint8 ADD=0\n\
 uint8 MODIFY=0\n\
 uint8 DELETE=2\n\
 uint8 DELETEALL=3\n\
-std_msgs/Header header\n\
-string ns\n\
-int32 id\n\
-int32 type\n\
-int32 action\n\
-geometry_msgs/Pose pose\n\
-geometry_msgs/Vector3 scale\n\
-std_msgs/ColorRGBA color\n\
-duration lifetime\n\
-bool frame_locked\n\
+\n\
+Header header                        # header for time/frame information\n\
+string ns                            # Namespace to place this object in... used in conjunction with id to create a unique name for the object\n\
+int32 id                           # object ID useful in conjunction with the namespace for manipulating and deleting the object later\n\
+int32 type                         # Type of object\n\
+int32 action                         # 0 add/modify an object, 1 (deprecated), 2 deletes an object, 3 deletes all objects\n\
+geometry_msgs/Pose pose                 # Pose of the object\n\
+geometry_msgs/Vector3 scale             # Scale of the object 1,1,1 means default (usually 1 meter square)\n\
+std_msgs/ColorRGBA color             # Color [0.0-1.0]\n\
+duration lifetime                    # How long the object should last before being automatically deleted.  0 means forever\n\
+bool frame_locked                    # If this marker should be frame-locked, i.e. retransformed into its frame every timestep\n\
+\n\
+#Only used if the type specified has some use for them (eg. POINTS, LINE_STRIP, ...)\n\
 geometry_msgs/Point[] points\n\
+#Only used if the type specified has some use for them (eg. POINTS, LINE_STRIP, ...)\n\
+#number of colors must either be 0 or equal to the number of points\n\
+#NOTE: alpha is not yet used\n\
 std_msgs/ColorRGBA[] colors\n\
+\n\
+# NOTE: only used for text markers\n\
 string text\n\
+\n\
+# NOTE: only used for MESH_RESOURCE markers\n\
 string mesh_resource\n\
 bool mesh_use_embedded_materials\n================================================================================\n\
 MSG: std_msgs/Header\n\
+[std_msgs/Header]:\n\
+# Standard metadata for higher-level stamped data types.\n\
+# This is generally used to communicate timestamped data\n\
+# in a particular coordinate frame.\n\
+#\n\
+# sequence ID: consecutively increasing ID\n\
 uint32 seq\n\
+#Two-integer timestamp that is expressed as:\n\
+# * stamp.sec: seconds (stamp_secs) since epoch (in Python the variable is called 'secs')\n\
+# * stamp.nsec: nanoseconds since stamp_secs (in Python the variable is called 'nsecs')\n\
+# time-handling sugar is provided by the client library\n\
 time stamp\n\
+#Frame this data is associated with\n\
+# 0: no frame\n\
+# 1: global frame\n\
 string frame_id\n================================================================================\n\
 MSG: geometry_msgs/Pose\n\
+# A representation of pose in free space, composed of postion and orientation. \n\
 geometry_msgs/Point position\n\
 geometry_msgs/Quaternion orientation\n================================================================================\n\
 MSG: geometry_msgs/Point\n\
+# This contains the position of a point in free space\n\
 float64 x\n\
 float64 y\n\
 float64 z\n================================================================================\n\
 MSG: geometry_msgs/Quaternion\n\
+# This represents an orientation in free space in quaternion form.\n\
+\n\
 float64 x\n\
 float64 y\n\
 float64 z\n\
 float64 w\n================================================================================\n\
 MSG: geometry_msgs/Vector3\n\
+# This represents a vector in free space.\n\
+\n\
 float64 x\n\
 float64 y\n\
 float64 z\n================================================================================\n\
@@ -417,7 +541,7 @@ float32 a";
   }
 
   // Name the class, ROS will need this
-  yarp::os::Type getType() {
+  yarp::os::Type getType() YARP_OVERRIDE {
     yarp::os::Type typ = yarp::os::Type::byName("visualization_msgs/Marker","visualization_msgs/Marker");
     typ.addProperty("md5sum",yarp::os::Value("4048c9de2a16f4ae8e0538085ebf1b97"));
     typ.addProperty("message_definition",yarp::os::Value(getTypeText()));

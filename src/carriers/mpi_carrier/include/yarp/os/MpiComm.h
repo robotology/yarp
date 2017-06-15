@@ -34,11 +34,11 @@ public:
     MpiControlThread() : terminate(false) {}
     void finalize() {
         terminate = true;}
-    bool threadInit();
-    void run() {
+    bool threadInit() override;
+    void run() override {
         while (!terminate) {Time::delay(1);}
     }
-    void threadRelease();
+    void threadRelease() override;
 };
 
 extern yarp::os::MpiControlThread *MpiControl;

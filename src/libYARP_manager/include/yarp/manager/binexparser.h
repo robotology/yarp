@@ -16,7 +16,7 @@
 #include <yarp/manager/ymm-types.h>
 #include <yarp/manager/utility.h>
 #include <yarp/manager/graph.h>
-
+#include <yarp/conf/api.h>
 
 namespace yarp {
 namespace manager {
@@ -57,7 +57,7 @@ public:
 
     virtual ~BinaryNode() { }
 
-    virtual Node* clone(void) {
+    virtual Node* clone(void) YARP_OVERRIDE {
         BinaryNode* binode = new BinaryNode(*this);
         return binode;
     }

@@ -15,9 +15,13 @@ set(YARP_logger_IMPL_HDRS )
 
 set(YARP_logger_SRCS src/YarpLogger.cpp)
 
-source_group("Source Files" FILES ${YARP_logger_SRCS})
-source_group("Header Files" FILES ${YARP_logger_HDRS})
-source_group("Implementation Header Files" FILES ${YARP_logger_impl_HDRS})
+source_group(TREE "${CMAKE_CURRENT_SOURCE_DIR}"
+             PREFIX "Source Files"
+             FILES ${YARP_logger_SRCS})
+source_group(TREE "${CMAKE_CURRENT_SOURCE_DIR}"
+             PREFIX "Header Files"
+             FILES ${YARP_logger_HDRS}
+                   ${YARP_logger_IMPL_HDRS})
 
 set_property(GLOBAL APPEND PROPERTY YARP_TREE_INCLUDE_DIRS "${PROJECT_SOURCE_DIR}/include")
 get_property(YARP_TREE_INCLUDE_DIRS GLOBAL PROPERTY YARP_TREE_INCLUDE_DIRS)
@@ -35,11 +39,16 @@ endif()
 add_library(YARP_logger STATIC ${YARP_logger_SRCS}
                                 ${YARP_logger_HDRS}
                                 ${YARP_logger_IMPL_HDRS})
+add_library(YARP::YARP_logger ALIAS YARP_logger)
 
-target_link_libraries(YARP_logger LINK_PRIVATE YARP_sig YARP_OS)
+target_include_directories(YARP_logger PUBLIC $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>
+                                              $<INSTALL_INTERFACE:${CMAKE_INSTALL_INCLUDEDIR}>)
+
+target_link_libraries(YARP_logger PRIVATE YARP::YARP_OS
+                                          YARP::YARP_sig)
 
 if(CREATE_LIB_MATH)
-  target_link_libraries(YARP_logger LINK_PRIVATE YARP_math)
+  target_link_libraries(YARP_logger PRIVATE YARP::YARP_math)
 endif()
 
 set_property(TARGET YARP_logger PROPERTY PUBLIC_HEADER ${YARP_logger_HDRS})
@@ -56,3 +65,4 @@ install(TARGETS YARP_logger
 
 set_property(GLOBAL APPEND PROPERTY YARP_LIBS YARP_logger)
 set_property(TARGET YARP_logger PROPERTY INCLUDE_DIRS ${PROJECT_SOURCE_DIR}/include)
+set_property(TARGET YARP_logger PROPERTY FOLDER "Libraries/Private")

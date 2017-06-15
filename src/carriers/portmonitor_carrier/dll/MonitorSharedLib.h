@@ -23,32 +23,32 @@ class MonitorSharedLib : public MonitorBinding
 public:
     MonitorSharedLib(void);
     virtual ~MonitorSharedLib();
-    
-    bool load(const yarp::os::Property &options);
-    bool setParams(const yarp::os::Property& params);
-    bool getParams(yarp::os::Property& params);
 
-    bool acceptData(yarp::os::Things &thing);
-    yarp::os::Things& updateData(yarp::os::Things &thing);
-    yarp::os::Things& updateReply(yarp::os::Things &thing);
+    bool load(const yarp::os::Property &options) override;
+    bool setParams(const yarp::os::Property& params) override;
+    bool getParams(yarp::os::Property& params) override;
 
-    bool peerTrigged(void);
-    bool canAccept(void);
+    bool acceptData(yarp::os::Things &thing) override;
+    yarp::os::Things& updateData(yarp::os::Things &thing) override;
+    yarp::os::Things& updateReply(yarp::os::Things &thing) override;
 
-    bool setAcceptConstraint(const char* constraint) {
+    bool peerTrigged(void) override;
+    bool canAccept(void) override;
+
+    bool setAcceptConstraint(const char* constraint) override {
         if(!constraint)
-            return false;        
+            return false;
         MonitorSharedLib::constraint = constraint;
         return true;
     }
 
-    const char* getAcceptConstraint(void) {
+    const char* getAcceptConstraint(void) override {
         return constraint.c_str();
     }
 
-    bool hasAccept() { return true; }
-    bool hasUpdate() { return true; } 
-    bool hasUpdateReply() { return true; }
+    bool hasAccept() override { return true; }
+    bool hasUpdate() override { return true; }
+    bool hasUpdateReply() override { return true; }
 
 private:
     std::string constraint;

@@ -2,17 +2,15 @@
 # Authors: Lorenzo Natale
 # CopyPolicy:  Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
 
-cmake_minimum_required(VERSION 2.8.9)
+cmake_minimum_required(VERSION 3.0)
 
 #find YARP
 find_package(YARP REQUIRED)
 
-include_directories(${CMAKE_CURRENT_SOURCE_DIR} ${YARP_INCLUDE_DIRS})
+include_directories(${CMAKE_CURRENT_SOURCE_DIR})
 
 add_executable(sender sender.cpp SharedData.cpp)
-TARGET_LINK_LIBRARIES(sender ${YARP_LIBRARIES})
+target_link_libraries(sender ${YARP_LIBRARIES})
 
 add_executable(receiver receiver.cpp SharedData.cpp)
-TARGET_LINK_LIBRARIES(receiver ${YARP_LIBRARIES})
-
-
+target_link_libraries(receiver ${YARP_LIBRARIES})

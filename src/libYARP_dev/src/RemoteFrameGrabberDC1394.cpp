@@ -5,7 +5,6 @@
  */
 
 
-#include <yarp/dev/TestFrameGrabber.h>
 #include <yarp/dev/ServerFrameGrabber.h>
 #include <yarp/dev/RemoteFrameGrabberDC1394.h>
 #include <yarp/dev/PolyDriver.h>

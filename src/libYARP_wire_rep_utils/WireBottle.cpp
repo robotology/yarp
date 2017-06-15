@@ -5,7 +5,7 @@
  *
  */
 
-#include <stdio.h>
+#include <cstdio>
 #include "WireBottle.h"
 
 #include <yarp/os/NetInt32.h>

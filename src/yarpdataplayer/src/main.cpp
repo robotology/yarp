@@ -1,7 +1,7 @@
 #include "include/mainwindow.h"
 #include <QApplication>
 
-#if defined(WIN32)
+#if defined(_WIN32)
     #pragma warning (disable : 4099)
     #pragma warning (disable : 4250)
     #pragma warning (disable : 4520)
@@ -10,13 +10,14 @@
 #include <iostream>
 #include <yarp/os/ResourceFinder.h>
 #include <yarp/os/Network.h>
+#include <QtGlobal>
 
-#if defined(WIN32)
+#if defined(_WIN32)
     #include <windows.h>
 #else
-    #include <errno.h>
+    #include <cerrno>
     #include <sys/types.h>
-    #include <signal.h>
+    #include <csignal>
 #endif
 
 using namespace std;
@@ -24,7 +25,11 @@ using namespace yarp::os;
 
 int main(int argc, char *argv[])
 {
+#if QT_VERSION >= QT_VERSION_CHECK(5, 6, 0)
+    QCoreApplication::setAttribute(Qt::AA_EnableHighDpiScaling);
+#else
     qputenv("QT_DEVICE_PIXEL_RATIO", QByteArray("auto"));
+#endif
     QApplication a(argc, argv);
 
     Network yarp;

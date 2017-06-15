@@ -2,7 +2,7 @@
 # Authors: Paul Fitzpatrick, Arjan Gijsberts, Lorenzo Natale, Fabien Benureau, Stephane Lallee, Ali Paikan
 # CopyPolicy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
 
-cmake_minimum_required(VERSION 2.8.9)
+cmake_minimum_required(VERSION 3.0)
 
 include(CMakeDependentOption)
 include(CheckCXXCompilerFlag)
@@ -116,6 +116,17 @@ if(NOT YARP_NO_DEPRECATED)
     if(CXX_HAS_WNO_DEPRECATED_DECLARATIONS)
       add_definitions(-Wno-deprecated-declarations)
     endif()
+  endif()
+endif()
+
+
+#############################################################################
+## Disable suggest-override warnings
+
+if(NOT MSVC)
+  check_cxx_compiler_flag("-Wno-suggest-override" CXX_HAS_WNO_SUGGEST_OVERRIDE)
+  if(CXX_HAS_WNO_SUGGEST_OVERRIDE)
+    add_definitions(-Wno-suggest-override)
   endif()
 endif()
 

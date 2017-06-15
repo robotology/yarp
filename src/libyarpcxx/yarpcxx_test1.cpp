@@ -5,7 +5,7 @@
  *
  */
 
-#include <stdio.h>
+#include <cstdio>
 
 #include <yarp/os/all.h>
 using namespace yarp::os;

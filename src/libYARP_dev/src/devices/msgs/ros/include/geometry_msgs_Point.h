@@ -1,9 +1,9 @@
 // This is an automatically generated file.
 // Generated from this geometry_msgs_Point.msg definition:
+//   # This contains the position of a point in free space
 //   float64 x
 //   float64 y
-//   float64 z
-// Instances of this class can be read and written with YARP ports,
+//   float64 z// Instances of this class can be read and written with YARP ports,
 // using a ROS-compatible format.
 
 #ifndef YARPMSG_TYPE_geometry_msgs_Point
@@ -25,7 +25,18 @@ public:
   geometry_msgs_Point() {
   }
 
-  bool readBare(yarp::os::ConnectionReader& connection) {
+  void clear() {
+    // *** x ***
+    x = 0.0;
+
+    // *** y ***
+    y = 0.0;
+
+    // *** z ***
+    z = 0.0;
+  }
+
+  bool readBare(yarp::os::ConnectionReader& connection) YARP_OVERRIDE {
     // *** x ***
     x = connection.expectDouble();
 
@@ -37,7 +48,7 @@ public:
     return !connection.isError();
   }
 
-  bool readBottle(yarp::os::ConnectionReader& connection) {
+  bool readBottle(yarp::os::ConnectionReader& connection) YARP_OVERRIDE {
     connection.convertTextMode();
     yarp::os::idl::WireReader reader(connection);
     if (!reader.readListHeader(3)) return false;
@@ -54,12 +65,12 @@ public:
   }
 
   using yarp::os::idl::WirePortable::read;
-  bool read(yarp::os::ConnectionReader& connection) {
+  bool read(yarp::os::ConnectionReader& connection) YARP_OVERRIDE {
     if (connection.isBareMode()) return readBare(connection);
     return readBottle(connection);
   }
 
-  bool writeBare(yarp::os::ConnectionWriter& connection) {
+  bool writeBare(yarp::os::ConnectionWriter& connection) YARP_OVERRIDE {
     // *** x ***
     connection.appendDouble(x);
 
@@ -71,7 +82,7 @@ public:
     return !connection.isError();
   }
 
-  bool writeBottle(yarp::os::ConnectionWriter& connection) {
+  bool writeBottle(yarp::os::ConnectionWriter& connection) YARP_OVERRIDE {
     connection.appendInt(BOTTLE_TAG_LIST);
     connection.appendInt(3);
 
@@ -91,7 +102,7 @@ public:
   }
 
   using yarp::os::idl::WirePortable::write;
-  bool write(yarp::os::ConnectionWriter& connection) {
+  bool write(yarp::os::ConnectionWriter& connection) YARP_OVERRIDE {
     if (connection.isBareMode()) return writeBare(connection);
     return writeBottle(connection);
   }
@@ -103,13 +114,14 @@ public:
 
   // Give source text for class, ROS will need this
   yarp::os::ConstString getTypeText() {
-    return "float64 x\n\
+    return "# This contains the position of a point in free space\n\
+float64 x\n\
 float64 y\n\
 float64 z";
   }
 
   // Name the class, ROS will need this
-  yarp::os::Type getType() {
+  yarp::os::Type getType() YARP_OVERRIDE {
     yarp::os::Type typ = yarp::os::Type::byName("geometry_msgs/Point","geometry_msgs/Point");
     typ.addProperty("md5sum",yarp::os::Value("4a842b65f413084dc2b10fb484ea7f17"));
     typ.addProperty("message_definition",yarp::os::Value(getTypeText()));

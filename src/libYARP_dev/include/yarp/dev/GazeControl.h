@@ -13,7 +13,7 @@
 #include <yarp/sig/Vector.h>
 
 /*!
- * \file GazeControl.h defines control board standard interfaces
+ * \file GazeControl.h defines gaze control interfaces
  */
 
 namespace yarp {
@@ -293,6 +293,96 @@ public:
      */
     virtual bool lookAtStereoPixels(const yarp::sig::Vector &pxl,
                                     const yarp::sig::Vector &pxr) = 0;
+
+    /*!
+     * Move the gaze to a specified fixation point in cartesian
+     * space. [wait for reply]
+     * \param fp a 3-d vector which contains the desired fixation
+     *         point where to look at x,y,z.
+     * \return true/false on success/failure.
+     */
+    virtual bool lookAtFixationPointSync(const yarp::sig::Vector &fp) = 0;
+
+    /*!
+     * Move the gaze to a specified gazing angles configuration given
+     * in the absolute reference frame. [wait for reply]
+     * \param ang a 3-d vector which contains the desired gazing
+     *         angles (azimuth/elevation/vergence) expressed in the
+     *         absolute reference frame (degrees).
+     * \return true/false on success/failure.
+     *
+     * \note The absolute reference frame for the azimuth/elevation
+     *       couple is head-centered with the robot in rest
+     *       configuration (i.e. torso and head angles zeroed).
+     */
+    virtual bool lookAtAbsAnglesSync(const yarp::sig::Vector &ang) = 0;
+
+    /*!
+     * Move the gaze to a specified gazing angles configuration given
+     * in the relative reference frame. [wait for reply]
+     * \param ang a 3-d vector which contains the desired gazing
+     *         angles (azimuth/elevation/vergence) expressed in the
+     *         relative reference frame (degrees).
+     * \return true/false on success/failure.
+     *
+     * \note The relative reference frame for the azimuth/elevation
+     *       couple is head-centered; the center of this frame is
+     *       located in the middle of the baseline that connects the
+     *       two eyes.
+     */
+    virtual bool lookAtRelAnglesSync(const yarp::sig::Vector &ang) = 0;
+
+    /*!
+     * Move the gaze to a location specified by a pixel within the
+     * image plane. [wait for reply]
+     * \param camSel selects the image plane: 0 for the left, 1 for
+     *              the right.
+     * \param px a 2-d vector which contains the (u,v) coordinates of
+     *           the pixel within the image plane.
+     * \param z the z-component of the point in the eye's reference
+     *         frame [m]. A default value of 1.0 is assumed.
+     * \return true/false on success/failure.
+     *
+     * \note The component z can be seen also as the distance [m]
+     *       from the proper image plane once thought to extend
+     *       towards infinity.
+     */
+    virtual bool lookAtMonoPixelSync(const int camSel,
+                                     const yarp::sig::Vector &px,
+                                     const double z = 1.0) = 0;
+
+    /*!
+     * Move the gaze to a location specified by a pixel within the
+     * image plane using the vergence. [wait for reply]
+     * \param camSel selects the image plane: 0 for the left, 1 for
+     *              the right.
+     * \param px a 2-d vector which contains the (u,v) coordinates of
+     *           the pixel within the image plane.
+     * \param ver the vergence angle given in degrees.
+     * \return true/false on success/failure.
+     */
+    virtual bool lookAtMonoPixelWithVergenceSync(const int camSel,
+                                                 const yarp::sig::Vector &px,
+                                                 const double ver) = 0;
+
+    /*!
+     * Move the gaze to a location specified by two pixels
+     * representing the same 3-d point as seen from within both image
+     * planes. [wait for reply]
+     * \param pxl a 2-d vector which contains the (u,v) coordinates
+     *           of the pixel within the left image plane.
+     * \param pxr a 2-d vector which contains the (u,v) coordinates
+     *           of the pixel within the right image plane.
+     * \return true/false on success/failure.
+     *
+     * \note This strategy employs the monocular approach coupled
+     *       with a pid that varies the distance z incrementally
+     *       according to the actual error: to achieve the target it
+     *       is thus required to provide the visual feedback
+     *       continuously.
+     */
+    virtual bool lookAtStereoPixelsSync(const yarp::sig::Vector &pxl,
+                                        const yarp::sig::Vector &pxr) = 0;
 
     /*!
      * Get the current trajectory duration for the neck actuators.

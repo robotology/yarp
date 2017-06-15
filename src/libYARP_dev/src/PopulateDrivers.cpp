@@ -14,13 +14,12 @@
 #include <yarp/dev/Drivers.h>
 #include <yarp/os/impl/Logger.h>
 #include <yarp/os/Bottle.h>
-#include <yarp/os/impl/PlatformStdio.h>
-#include <yarp/os/impl/PlatformStdlib.h>
+#include <cstdio>
+#include <cstdlib>
 #include <yarp/dev/RemoteFrameGrabber.h>
 #include <yarp/dev/ServerFrameGrabber.h>
 #include <yarp/dev/DevicePipe.h>
 #include <yarp/dev/DeviceGroup.h>
-#include <yarp/dev/TestFrameGrabber.h>
 #include <yarp/dev/ServerSoundGrabber.h>
 #include <yarp/dev/TestMotor.h>
 
@@ -40,25 +39,24 @@ extern DriverCreator *createRGBDSensorWrapper();
 extern DriverCreator *createRGBDSensorClient();
 extern DriverCreator *createControlBoardRemapper();
 extern DriverCreator *createRemoteControlBoardRemapper();
-extern DriverCreator *createNavigation2DClient();
+extern DriverCreator *createRobotDescriptionServer();
+extern DriverCreator *createRobotDescriptionClient();
+extern DriverCreator *createServerGrabber();
+extern DriverCreator *createJoypadControlClient();
+extern DriverCreator *createJoypadControlServer();
 
 #ifdef WITH_YARPMATH
 extern DriverCreator *createFrameTransformServer();
 extern DriverCreator *createFrameTransformClient();
 extern DriverCreator *createLocationsServer();
 extern DriverCreator *createRangefinder2DClient();
+extern DriverCreator *createNavigation2DClient();
+extern DriverCreator *createLocalization2DClient();
+extern DriverCreator *createMap2DClient();
+extern DriverCreator *createMap2DServer();
 #endif
 
-#ifndef YARP_NO_DEPRECATED
-extern DriverCreator *createServerControlBoard();
-extern DriverCreator *createClientControlBoard();
-#endif // YARP_NO_DEPRECATED
-
 void Drivers::init() {
-
-    add(new DriverCreatorOf<yarp::dev::TestFrameGrabber>("test_grabber",
-                                                         "grabber",
-                                                         "yarp::dev::TestFrameGrabber"));
 
     add(new DriverCreatorOf<yarp::dev::TestMotor>("test_motor",
                                                   "controlboard",
@@ -100,17 +98,20 @@ void Drivers::init() {
     add(createRGBDSensorClient());
     add(createControlBoardRemapper());
     add(createRemoteControlBoardRemapper());
-    add(createNavigation2DClient());
-
+    add(createRobotDescriptionServer());
+    add(createRobotDescriptionClient());
+    add(createServerGrabber());
+    add(createJoypadControlServer());
+    add(createJoypadControlClient());
 #ifdef WITH_YARPMATH
     add(createFrameTransformServer());
     add(createFrameTransformClient());
     add(createLocationsServer());
     add(createRangefinder2DClient());
+	add(createNavigation2DClient());
+	add(createLocalization2DClient());
+	add(createMap2DClient());
+	add(createMap2DServer());
 #endif
 
-#ifndef YARP_NO_DEPRECATED
-    add(createClientControlBoard());
-    add(createServerControlBoard());
-#endif // YARP_NO_DEPRECATED
 }

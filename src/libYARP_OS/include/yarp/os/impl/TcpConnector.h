@@ -27,15 +27,7 @@
 
 #include <yarp/os/Contact.h>
 #include <yarp/os/impl/TcpStream.h>
-// General files
-//#include <sys/types.h>
-//#include <sys/socket.h>
-//#include <netinet/in.h>
-//#include <arpa/inet.h>
-//#include <sys/wait.h>
-//#include <signal.h>
-//#include <string.h>
-//#include <unistd.h>
+
 
 namespace yarp {
     namespace os {

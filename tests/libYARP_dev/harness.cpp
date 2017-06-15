@@ -21,7 +21,7 @@
 
 #include "YarpBuildLocation.h"
 
-#include <stdio.h>
+#include <cstdio>
 
 using namespace yarp::os::impl;
 using namespace yarp::os;
@@ -62,28 +62,6 @@ int harness_main(int argc, char *argv[]) {
 
         if (ConstString(argv[1])==ConstString("regression")) {
             done = true;
-
-            // To make sure that the dev test are able to find all the devices
-            // compile by YARP, also the one compiled as dynamic plugins
-            // we add the build directory to the YARP_DATA_DIRS enviromental variable
-            // CMAKE_CURRENT_DIR is the define by the CMakeLists.txt tests file
-            ConstString dirs = CMAKE_BINARY_DIR;
-#ifdef WIN32
-            dirs += "\\share\\yarp";
-#else
-            dirs += "/share/yarp";
-#endif
-            Network::getEnvironment("YARP_DATA_DIRS");
-            if (!Network::getEnvironment("YARP_DATA_DIRS").empty()) {
-#ifdef WIN32
-                dirs += ";";
-#else
-                dirs += ":";
-#endif
-                dirs += Network::getEnvironment("YARP_DATA_DIRS");
-            }
-            Network::setEnvironment("YARP_DATA_DIRS", dirs);
-            printf("YARP_DATA_DIRS=\"%s\"\n", Network::getEnvironment("YARP_DATA_DIRS").c_str());
 
             // Start the testing system
             UnitTest::startTestSystem();
@@ -164,6 +142,32 @@ int main(int argc, char *argv[]) {
     Property p;
     p.fromCommand(argc,argv);
 
+    // To make sure that the dev test are able to find all the devices
+    // compile by YARP, also the one compiled as dynamic plugins
+    // we add the build directory to the YARP_DATA_DIRS enviromental variable
+    // CMAKE_CURRENT_DIR is the define by the CMakeLists.txt tests file
+    ConstString dirs = CMAKE_BINARY_DIR +
+                       yarp::os::Network::getDirectorySeparator() +
+                       "share" +
+                       yarp::os::Network::getDirectorySeparator() +
+                       "yarp";
+
+    // Add TEST_DATA_DIR to YARP_DATA_DIRS in order to find the contexts used
+    // by the tests
+    dirs += yarp::os::Network::getPathSeparator() +
+            TEST_DATA_DIR;
+
+    // If set, append user YARP_DATA_DIRS
+    // FIXME check if this can be removed
+    Network::getEnvironment("YARP_DATA_DIRS");
+    if (!Network::getEnvironment("YARP_DATA_DIRS").empty()) {
+        dirs += yarp::os::Network::getPathSeparator() +
+                Network::getEnvironment("YARP_DATA_DIRS");
+    }
+
+    Network::setEnvironment("YARP_DATA_DIRS", dirs);
+    printf("YARP_DATA_DIRS=\"%s\"\n", Network::getEnvironment("YARP_DATA_DIRS").c_str());
+
     // check where to put description of device
     ConstString dest = "";
     dest = p.check("doc",Value("")).toString();
@@ -239,7 +243,7 @@ int main(int argc, char *argv[]) {
         FILE *fout = fopen(dest2.c_str(),"w");
         if (fout==NULL) {
             printf("Problem writing to %s\n", dest2.c_str());
-            yarp::os::exit(1);
+            std::exit(1);
         }
         fprintf(fout,"/**\n");
         fprintf(fout," * \\ingroup dev_examples\n");

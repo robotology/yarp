@@ -15,13 +15,13 @@
  * Public License for more details
 */
 
-#if defined(WIN32)
+#if defined(_WIN32)
     #pragma warning (disable : 4099)
     #pragma warning (disable : 4250)
     #pragma warning (disable : 4520)
 #endif
 
-#if defined(WIN32)
+#if defined(_WIN32)
     #include "include/msvc/dirent.h"
     #undef max                  /*conflict with pango lib coverage.h*/
     #include <direct.h>
@@ -35,7 +35,7 @@
 #endif
 
 #include <yarp/os/Time.h>
-#include <stdio.h>              /* defines FILENAME_MAX */
+#include <cstdio>              /* defines FILENAME_MAX */
 #include "include/utils.h"
 
 #include <iostream>
@@ -226,7 +226,7 @@ bool Utilities::checkLogValidity(const char *filename)
         int itr = 0;
         while( getline( str, line ) && itr < 3){
             Bottle b( line.c_str() );
-            if (itr >= 0){ 
+            if (itr >= 0){
                 if ( b.size() < 1){
                     check = false;
                 } else {
@@ -410,7 +410,7 @@ void Utilities::stopAtEnd()
     for (int i=0; i < totalThreads; i++){
         partDetails[i].currFrame = (int)initialFrame[i];
     }
-    
+
     //TODO SIGNAL
     //masterThread->wnd->resetButtonOnStop();
     pause();

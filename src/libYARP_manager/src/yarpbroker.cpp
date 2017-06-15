@@ -25,7 +25,7 @@
 #define KILL_TIMEOUT            10.0
 #define EVENT_THREAD_PERIOD     500
 
-#if defined(WIN32)
+#if defined(_WIN32)
     #define SIGKILL 9
 #endif
 
@@ -895,10 +895,10 @@ int YarpBroker::requestServer(Property& config)
     //
     if (config.check("cmd") && config.check("stdio"))
     {
-        if (config.find("stdio")=="") {return YARPRUN_UNDEF; }
-        if (config.find("cmd")=="")   {return YARPRUN_UNDEF; }
-        if (!config.check("as") || config.find("as")=="") { return YARPRUN_UNDEF; }
-        if (!config.check("on") || config.find("on")=="") { return YARPRUN_UNDEF; }
+        if (config.find("stdio").asString()=="") {return YARPRUN_UNDEF; }
+        if (config.find("cmd").asString()=="")   {return YARPRUN_UNDEF; }
+        if (!config.check("as") || config.find("as").asString()=="") { return YARPRUN_UNDEF; }
+        if (!config.check("on") || config.find("on").asString()=="") { return YARPRUN_UNDEF; }
 
         msg.addList()=config.findGroup("stdio");
         msg.addList()=config.findGroup("cmd");

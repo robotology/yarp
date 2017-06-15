@@ -48,7 +48,7 @@ public:
         }
     }
 
-    virtual YARP_SSIZE_T read(const Bytes& b) {
+    virtual YARP_SSIZE_T read(const Bytes& b) YARP_OVERRIDE {
         char *base = b.get();
         size_t space = b.length();
         YARP_SSIZE_T ct = 0;
@@ -62,14 +62,14 @@ public:
         return ct;
     }
 
-    virtual void close() {
+    virtual void close() YARP_OVERRIDE {
     }
 
     virtual ConstString toString() {
         return data;
     }
 
-    virtual bool isOk() {
+    virtual bool isOk() YARP_OVERRIDE {
         return true;
     }
 

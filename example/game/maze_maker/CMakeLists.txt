@@ -2,18 +2,15 @@
 # Author: Paul Fitzpatrick
 # CopyPolicy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
 
-cmake_minimum_required(VERSION 2.8.9)
+cmake_minimum_required(VERSION 3.0)
+project(maze_maker)
 
-FIND_PACKAGE(YARP REQUIRED)
-INCLUDE_DIRECTORIES(${YARP_INCLUDE_DIRS})
-LINK_LIBRARIES(${YARP_LIBRARIES})
-
-PROJECT(maze_maker)
+find_package(YARP REQUIRED)
 
 # using ACE
-ADD_DEFINITIONS(-D_REENTRANT)
+add_definitions(-D_REENTRANT)
 
-INCLUDE_DIRECTORIES($(CMAKE_SOURCE_DIR))
+include_directories($(CMAKE_SOURCE_DIR))
 
-ADD_EXECUTABLE(maze_maker main.cpp)
-
+add_executable(maze_maker main.cpp)
+target_link_libraries(${YARP_LIBRARIES})

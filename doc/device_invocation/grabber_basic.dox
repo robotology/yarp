@@ -34,11 +34,25 @@ Here is a list of properties checked when starting up a device based on this con
 <tr><td>subdevice</td><td>name (or nested configuration) of device to wrap</td><td></td></tr>
 <tr><td>test_grabber.device</td><td></td><td></td></tr>
 <tr><td>test_grabber.wrapped</td><td></td><td></td></tr>
-<tr><td>test_grabber.width</td><td>desired width of test image</td><td>128</td></tr>
-<tr><td>test_grabber.height</td><td>desired height of test image</td><td>128</td></tr>
+<tr><td>test_grabber.width</td><td>desired width of test image</td><td>320</td></tr>
+<tr><td>test_grabber.height</td><td>desired height of test image</td><td>240</td></tr>
+<tr><td>test_grabber.horizontalFov</td><td>desired horizontal fov of test image</td><td>1.0</td></tr>
+<tr><td>test_grabber.verticalFov</td><td>desired vertical fov of test image</td><td>2.0</td></tr>
+<tr><td>test_grabber.mirror</td><td>mirroring disabled by default</td><td>0</td></tr>
+<tr><td>test_grabber.focalLengthX</td><td>Horizontal component of the focal lenght of the test_grabber</td><td>4.0</td></tr>
+<tr><td>test_grabber.focalLengthY</td><td>Vertical component of the focal lenght of the test_grabber</td><td>5.0</td></tr>
+<tr><td>test_grabber.principalPointX</td><td>X coordinate of the principal point of the test_grabber</td><td>6.0</td></tr>
+<tr><td>test_grabber.principalPointY</td><td>Y coordinate of the principal point of the test_grabber</td><td>7.0</td></tr>
+<tr><td>test_grabber.retificationMatrix</td><td>Matrix that describes the lens' distortion(fake)</td><td>1.0 0.0 0.0 0.0 1.0 0.0 0.0 0.0 1.0</td></tr>
+<tr><td>test_grabber.distortionModel</td><td>Reference to group of parameters describing the distortion model of the camera</td><td>FishEye</td></tr>
+<tr><td>test_grabber.k1</td><td>Radial distortion coefficient of the lens(fake)</td><td>8.0</td></tr>
+<tr><td>test_grabber.k2</td><td>Radial distortion coefficient of the lens(fake)</td><td>9.0</td></tr>
+<tr><td>test_grabber.k3</td><td>Radial distortion coefficient of the lens(fake)</td><td>10.0</td></tr>
+<tr><td>test_grabber.t1</td><td>Tangential distortion of the lens(fake)</td><td>11.0</td></tr>
+<tr><td>test_grabber.t2</td><td>Tangential distortion of the lens(fake)</td><td>12.0</td></tr>
 <tr><td>test_grabber.freq</td><td>rate of test images in Hz</td><td></td></tr>
 <tr><td>test_grabber.period</td><td>period of test images in seconds</td><td></td></tr>
-<tr><td>test_grabber.mode</td><td>bouncy [ball], scrolly [line], grid [grid], random [rand], none [none]</td><td>line</td></tr>
+<tr><td>test_grabber.mode</td><td>bouncy [ball], scrolly [line], grid [grid], grid multisize [size], random [rand], none [none]</td><td>line</td></tr>
 <tr><td>test_grabber.src</td><td></td><td></td></tr>
 <tr><td>test_grabber.bayer</td><td>should emit bayer test image?</td><td></td></tr>
 <tr><td>test_grabber.mono</td><td>should emit a monochrome image?</td><td></td></tr>

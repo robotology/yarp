@@ -48,18 +48,18 @@ public:
      * @param config parameters for the device driver
      * @return returns true on success, false on failure.
      */
-    virtual bool open(yarp::os::Searchable& config);
+    virtual bool open(yarp::os::Searchable& config) override;
 
     /**
      * Closes the device driver.
      * @return returns true/false on success/failure.
      */
-    virtual bool close(void);
+    virtual bool close(void) override;
 
-    virtual bool getSound(yarp::sig::Sound& sound);
+    virtual bool getSound(yarp::sig::Sound& sound) override;
 
-    virtual bool startRecording();
-    virtual bool stopRecording();
+    virtual bool startRecording() override;
+    virtual bool stopRecording() override;
 
 protected:
     void *system_resources;

@@ -39,24 +39,24 @@ public:
 
     // documented in UnbufferedContactable
     virtual bool write(PortWriter& writer,
-                       PortWriter *callback = YARP_NULLPTR) const;
+                       PortWriter *callback = YARP_NULLPTR) const YARP_OVERRIDE;
 
     // documented in UnbufferedContactable
     virtual bool write(PortWriter& writer, PortReader& reader,
-                       PortWriter *callback = YARP_NULLPTR) const;
+                       PortWriter *callback = YARP_NULLPTR) const YARP_OVERRIDE;
 
     // documented in UnbufferedContactable
-    virtual bool read(PortReader& reader, bool willReply = true);
+    virtual bool read(PortReader& reader, bool willReply = true) YARP_OVERRIDE;
 
-    virtual void setInputMode(bool expectInput);
-    virtual void setOutputMode(bool expectOutput);
-    virtual void setRpcMode(bool expectRpc);
+    virtual void setInputMode(bool expectInput) YARP_OVERRIDE;
+    virtual void setOutputMode(bool expectOutput) YARP_OVERRIDE;
+    virtual void setRpcMode(bool expectRpc) YARP_OVERRIDE;
 
-    virtual Port& asPort() {
+    virtual Port& asPort() YARP_OVERRIDE {
         return port;
     }
 
-    virtual const Port& asPort() const {
+    virtual const Port& asPort() const YARP_OVERRIDE {
         return port;
     }
 

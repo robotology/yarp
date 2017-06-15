@@ -120,8 +120,7 @@ function(YARP_IDL_TO_DIR yarpidl_file_base output_dir)
     execute_process(COMMAND ${YARPIDL_${family}_LOCATION} --out ${dir} --gen yarp:include_prefix --I ${CMAKE_CURRENT_SOURCE_DIR} ${yarpidl_file}
                     WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}
                     RESULT_VARIABLE res
-                    OUTPUT_QUIET
-                    ERROR_QUIET)
+                    OUTPUT_QUIET)
     # Failure is bad news, let user know.
     if(NOT "${res}" STREQUAL "0")
       message(FATAL_ERROR "yarpidl_${family} (${YARPIDL_${family}_LOCATION}) failed, aborting.")
@@ -153,6 +152,13 @@ function(YARP_IDL_TO_DIR yarpidl_file_base output_dir)
                        COMMAND ${CMAKE_COMMAND} -P ${dir}/place${yarpidlName}.cmake
                        DEPENDS ${yarpidl_file} ${YARPIDL_LOCATION})
     add_custom_target(${yarpidl_target_name} DEPENDS ${output_dir}/${yarpidl_target_name}.cmake)
+
+    # Put the target in the right folder if defined
+    get_property(autogen_source_group_set GLOBAL PROPERTY AUTOGEN_TARGETS_FOLDER SET)
+    if(autogen_source_group_set)
+      get_property(autogen_targets_folder GLOBAL PROPERTY AUTOGEN_TARGETS_FOLDER)
+      set_property(TARGET ${yarpidl_target_name} PROPERTY FOLDER "${autogen_targets_folder}")
+    endif()
   else()
     if(files_missing)
       message(FATAL_ERROR "Generated IDL files for ${yarpidl_file} not found and cannot make them because ALLOW_IDL_GENERATION=${ALLOW_IDL_GENERATION} (maybe this should be turned on?)")
@@ -283,17 +289,7 @@ function(YARP_ADD_IDL var first_file)
         message(FATAL_ERROR "Unknown extension ${ext}. Supported extensiona are .thrift, .msg, and .srv")
     endif()
 
-
-    # Choose target depending on family and on whether we are building
-    # or using YARP
-    # FIXME CMake 2.8.12 Use ALIAS and always YARP::yarpidl_${family}
-    if(TARGET YARP::yarpidl_${family})
-        # Outside YARP
-        set(YARPIDL_${family}_COMMAND YARP::yarpidl_${family})
-    else()
-        # Building YARP
-        set(YARPIDL_${family}_COMMAND yarpidl_${family})
-    endif()
+    set(YARPIDL_${family}_COMMAND YARP::yarpidl_${family})
 
     # Set intermediate output directory, remove extra '/' and ensure that
     # the directory exists.
@@ -356,7 +352,13 @@ function(YARP_ADD_IDL var first_file)
       list(APPEND ${var} ${output})
 
       # Mark the generated files as generated
-      set_source_files_properties("${output}" PROPERTIES GENERATED TRUE)
+      set_source_files_properties(${output} PROPERTIES GENERATED TRUE)
+      # Put the files in the right source group if defined
+      get_property(autogen_source_group_set GLOBAL PROPERTY AUTOGEN_SOURCE_GROUP SET)
+      if(autogen_source_group_set)
+        get_property(autogen_source_group GLOBAL PROPERTY AUTOGEN_SOURCE_GROUP)
+        source_group("${autogen_source_group}" FILES ${output})
+      endif()
     endif()
 
     # Force CMake to run again if the file is modified.

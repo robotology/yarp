@@ -46,21 +46,21 @@ public yarp::dev::DeviceDriver {
 public:
     OpenNI2DeviceDriverClient();
     // DeviceDriver
-    virtual bool open(yarp::os::Searchable& config);
-    virtual bool close();
+    virtual bool open(yarp::os::Searchable& config) override;
+    virtual bool close() override;
     // TypedReaderCallback
     using TypedReaderCallback<ImageOf<PixelRgb> >::onRead;
     using TypedReaderCallback<ImageOf<PixelMono16> >::onRead;
     using TypedReaderCallback<Bottle>::onRead;
-    virtual void onRead(Bottle& b);
-    virtual void onRead(ImageOf<PixelRgb>& img);
-    virtual void onRead(ImageOf<PixelMono16>& img);
+    virtual void onRead(Bottle& b) override;
+    virtual void onRead(ImageOf<PixelRgb>& img) override;
+    virtual void onRead(ImageOf<PixelMono16>& img) override;
     // IOpenNI2DeviceDriver
-    virtual bool getSkeletonOrientation(Vector *vectorArray, float *confidence,  int userID);
-    virtual bool getSkeletonPosition(Vector *vectorArray, float *confidence,  int userID);
-    virtual nite::SkeletonState getSkeletonState(int userID);
-    virtual ImageOf<PixelRgb> getImageFrame();
-    virtual ImageOf<PixelMono16> getDepthFrame();
+    virtual bool getSkeletonOrientation(Vector *vectorArray, float *confidence,  int userID) override;
+    virtual bool getSkeletonPosition(Vector *vectorArray, float *confidence,  int userID) override;
+    virtual nite::SkeletonState getSkeletonState(int userID) override;
+    virtual ImageOf<PixelRgb> getImageFrame() override;
+    virtual ImageOf<PixelMono16> getDepthFrame() override;
 private:
     BufferedPort<Bottle> *outPort;
     BufferedPort<Bottle> *inUserSkeletonPort;

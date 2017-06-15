@@ -4,7 +4,7 @@
  * CopyPolicy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
  */
 
-#include <yarp/os/impl/PlatformStdlib.h>
+#include <cstdlib>
 #include <yarp/os/impl/ShmemCarrier.h>
 #include <yarp/os/ConstString.h>
 // removing old shmem version
@@ -69,10 +69,10 @@ bool yarp::os::impl::ShmemCarrier::becomeShmemVersionHybridStream(ConnectionStat
         ACE_INET_Addr anywhere((u_short)0, (ACE_UINT32)INADDR_ANY);
         base = Contact(anywhere.get_host_addr(),
                        anywhere.get_port_number());
-        bool ok = stream->open(base,sender)==0;
+        bool ok = stream->open(base, sender)==0;
         if (ok) {
             int myPort = stream->getLocalAddress().getPort();
-            writeYarpInt(myPort,proto);
+            writeYarpInt(myPort, proto);
             stream->accept();
             proto.takeStreams(YARP_NULLPTR);
             proto.takeStreams(stream);
@@ -81,8 +81,8 @@ bool yarp::os::impl::ShmemCarrier::becomeShmemVersionHybridStream(ConnectionStat
         int altPort = readYarpInt(proto);
         ConstString myName = proto.getStreams().getLocalAddress().getHost();
         proto.takeStreams(YARP_NULLPTR);
-        base = Contact(myName,altPort);
-        ok = stream->open(base,sender)==0;
+        base = Contact(myName, altPort);
+        ok = stream->open(base, sender)==0;
         if (ok) {
             proto.takeStreams(stream);
         }
@@ -101,25 +101,25 @@ bool yarp::os::impl::ShmemCarrier::becomeShmemVersionHybridStream(ConnectionStat
 bool yarp::os::impl::ShmemCarrier::becomeShmem(ConnectionState& proto, bool sender) {
     if (version==1) {
         // "classic" shmem
-        //becomeShmemVersion<ShmemTwoWayStream>(proto,sender);
-        //becomeShmemVersionTwoWayStream(proto,sender);
-        ACE_OS::printf("Classic shmem no longer exists\n");
-        ACE_OS::exit(1);
+        //becomeShmemVersion<ShmemTwoWayStream>(proto, sender);
+        //becomeShmemVersionTwoWayStream(proto, sender);
+        printf("Classic shmem no longer exists\n");
+        std::exit(1);
         return false;
     } else {
         // experimental shmem
-        //becomeShmemVersion<ShmemHybridStream>(proto,sender);
-        return becomeShmemVersionHybridStream(proto,sender);
+        //becomeShmemVersion<ShmemHybridStream>(proto, sender);
+        return becomeShmemVersionHybridStream(proto, sender);
     }
 }
 
 bool yarp::os::impl::ShmemCarrier::respondToHeader(ConnectionState& proto) {
     // i am the receiver
-    return becomeShmem(proto,false);
+    return becomeShmem(proto, false);
 }
 
 
 bool yarp::os::impl::ShmemCarrier::expectReplyToHeader(ConnectionState& proto) {
     // i am the sender
-    return becomeShmem(proto,true);
+    return becomeShmem(proto, true);
 }

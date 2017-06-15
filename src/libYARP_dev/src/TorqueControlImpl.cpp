@@ -7,7 +7,7 @@
 #include "yarp/dev/ControlBoardInterfacesImpl.h"
 #include <yarp/dev/ControlBoardHelper.h>
 
-#include <stdio.h>
+#include <cstdio>
 using namespace yarp::dev;
 #define JOINTIDCHECK if (j >= castToMapper(helper)->axes()){yError("joint id out of bound"); return false;}
 #define MJOINTIDCHECK(i) if (joints[i] >= castToMapper(helper)->axes()){yError("joint id out of bound"); return false;}
@@ -18,6 +18,7 @@ ImplementTorqueControl::ImplementTorqueControl(ITorqueControlRaw *tq)
     iTorqueRaw = tq;
     helper=0;
     temp=0;
+//     fake =0;
     temp2=0;
     temp_int=0;
     tmpPids=0;
@@ -66,16 +67,6 @@ bool ImplementTorqueControl::getAxes(int *axes)
 {
     return iTorqueRaw->getAxes(axes);
 }
-
-#ifndef YARP_NO_DEPRECATED // since YARP 2.3.65
-bool ImplementTorqueControl::setTorqueMode()
-{
-YARP_WARNING_PUSH
-YARP_DISABLE_DEPRECATED_WARNING
-    return iTorqueRaw->setTorqueModeRaw();
-YARP_WARNING_POP
-}
-#endif // YARP_NO_DEPRECATED
 
 bool ImplementTorqueControl::getRefTorque(int j, double *r)
 {
@@ -186,139 +177,4 @@ bool ImplementTorqueControl::getTorqueRange(int j, double *min, double *max)
     int k;
     k=castToMapper(helper)->toHw(j);
     return iTorqueRaw->getTorqueRangeRaw(k, min, max);
-}
-
-bool ImplementTorqueControl::setTorquePid(int j, const Pid &pid)
-{
-    JOINTIDCHECK
-    int k;
-    k=castToMapper(helper)->toHw(j);
-    return iTorqueRaw->setTorquePidRaw(k, pid);
-}
-
-bool ImplementTorqueControl::setTorquePids(const Pid *pids)
-{
-    int tmp=0;
-    int nj=castToMapper(helper)->axes();
-
-    for(int j=0;j<nj;j++)
-    {
-        tmp=castToMapper(helper)->toHw(j);
-        tmpPids[tmp]=pids[j];
-    }
-
-    return iTorqueRaw->setTorquePidsRaw(tmpPids);
-}
-
-bool ImplementTorqueControl::setTorqueErrorLimit(int j, double limit)
-{
-    JOINTIDCHECK
-    int k;
-    k=castToMapper(helper)->toHw(j);
-    return iTorqueRaw->setTorqueErrorLimitRaw(k, limit);
-}
-
-bool ImplementTorqueControl::getTorqueErrorLimit(int j, double *limit)
-{
-    JOINTIDCHECK
-    int k;
-    k=castToMapper(helper)->toHw(j);
-    return iTorqueRaw->getTorqueErrorLimitRaw(k, limit);
-}
-
-bool ImplementTorqueControl::setTorqueErrorLimits(const double *limits)
-{
-    castToMapper(helper)->toHw(limits, temp);
-    return iTorqueRaw->setTorqueErrorLimitsRaw(temp);
-}
-
-bool ImplementTorqueControl::getTorqueError(int j, double *err)
-{
-    JOINTIDCHECK
-    int k;
-    bool ret;
-    double temp;
-    k=castToMapper(helper)->toHw(j);
-    ret = iTorqueRaw->getTorqueErrorRaw(k, &temp);
-    *err=castToMapper(helper)->trqS2N(temp, k);
-    return ret;
-}
-
-bool ImplementTorqueControl::getTorqueErrors(double *errs)
-{
-    bool ret;
-    ret = iTorqueRaw->getTorqueErrorsRaw(temp);
-    castToMapper(helper)->trqS2N(temp, errs);
-    return ret;
-}
-
-bool ImplementTorqueControl::getTorquePidOutput(int j, double *out)
-{
-    JOINTIDCHECK
-    int k=castToMapper(helper)->toHw(j);
-    return iTorqueRaw->getTorquePidOutputRaw(k, out);
-}
-
-bool ImplementTorqueControl::getTorquePidOutputs(double *outs)
-{
-    bool ret=iTorqueRaw->getTorquePidOutputsRaw(temp);
-    castToMapper(helper)->toUser(temp, outs);
-    return ret;
-}
-
-bool ImplementTorqueControl::getTorquePid(int j, Pid *pid)
-{
-    JOINTIDCHECK
-  int k=castToMapper(helper)->toHw(j);
-  return iTorqueRaw->getTorquePidRaw(k, pid);
-}
-
-bool ImplementTorqueControl::getTorquePids(Pid *pids)
-{
-    bool ret=iTorqueRaw->getTorquePidsRaw(tmpPids);
-
-    int tmp=0;
-    int nj=castToMapper(helper)->axes();
-
-    for(int j=0;j<nj;j++)
-    {
-        tmp=castToMapper(helper)->toUser(j);
-        pids[tmp]=tmpPids[j];
-    }
-
-    return ret;
-}
-
-bool ImplementTorqueControl::getTorqueErrorLimits(double *limits)
-{
-    bool ret=iTorqueRaw->getTorqueErrorLimitsRaw(temp);
-    castToMapper(helper)->toUser(temp, limits);
-    return ret;
-}
-
-bool ImplementTorqueControl::resetTorquePid(int j)
-{
-    JOINTIDCHECK
-    int k=castToMapper(helper)->toHw(j);
-    return iTorqueRaw->resetTorquePidRaw(k);
-}
-
-bool ImplementTorqueControl::disableTorquePid(int j)
-{
-    JOINTIDCHECK
-    int k=castToMapper(helper)->toHw(j);
-    return iTorqueRaw->disableTorquePidRaw(k);
-}
-
-bool ImplementTorqueControl::enableTorquePid(int j)
-{
-    JOINTIDCHECK
-    int k=castToMapper(helper)->toHw(j);
-    return iTorqueRaw->enableTorquePidRaw(k);
-}
-bool ImplementTorqueControl::setTorqueOffset(int j, double v)
-{
-    JOINTIDCHECK
-    int k=castToMapper(helper)->toHw(j);
-    return iTorqueRaw->setTorqueOffsetRaw(k, v);
 }

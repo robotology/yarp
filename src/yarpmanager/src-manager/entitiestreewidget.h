@@ -40,8 +40,8 @@ public:
     void setExtEditor(string editor);
 
 protected:
-    void mousePressEvent(QMouseEvent *event);
-    void mouseMoveEvent(QMouseEvent *event);
+    void mousePressEvent(QMouseEvent *event) override;
+    void mouseMoveEvent(QMouseEvent *event) override;
 
 private:
     QTreeWidgetItem *applicationNode;

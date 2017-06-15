@@ -2,13 +2,10 @@
 # Authors: Lorenzo Natale, Paul Fitzpatrick
 # CopyPolicy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
 
-cmake_minimum_required(VERSION 2.8.9)
+cmake_minimum_required(VERSION 3.0)
+project(MotorExample)
 
-PROJECT (MotorExample)
+find_package(YARP REQUIRED)
 
-FIND_PACKAGE(YARP REQUIRED)
-INCLUDE_DIRECTORIES(${YARP_INCLUDE_DIRS})
-
-ADD_EXECUTABLE(motorcontrol main.cpp)
-TARGET_LINK_LIBRARIES(motorcontrol ${YARP_LIBRARIES})
-
+add_executable(motorcontrol main.cpp)
+target_link_libraries(motorcontrol ${YARP_LIBRARIES})

@@ -11,17 +11,11 @@ yarp_prepare_plugin(fakeMotionControl
 
 if(NOT SKIP_fakeMotionControl)
   set(CMAKE_INCLUDE_CURRENT_DIR ON)
-  get_property(YARP_OS_INCLUDE_DIRS TARGET YARP_OS PROPERTY INCLUDE_DIRS)
-  get_property(YARP_sig_INCLUDE_DIRS TARGET YARP_sig PROPERTY INCLUDE_DIRS)
-  get_property(YARP_dev_INCLUDE_DIRS TARGET YARP_dev PROPERTY INCLUDE_DIRS)
-  include_directories(${YARP_OS_INCLUDE_DIRS}
-                      ${YARP_sig_INCLUDE_DIRS}
-                      ${YARP_dev_INCLUDE_DIRS})
   yarp_add_plugin(yarp_fakeMotionControl fakeMotionControl.cpp
                                          fakeMotionControl.h)
-  target_link_libraries(yarp_fakeMotionControl YARP_OS
-                                               YARP_sig
-                                               YARP_dev)
+  target_link_libraries(yarp_fakeMotionControl YARP::YARP_OS
+                                               YARP::YARP_sig
+                                               YARP::YARP_dev)
   yarp_install(TARGETS yarp_fakeMotionControl
                EXPORT YARP
                COMPONENT runtime
@@ -30,5 +24,7 @@ if(NOT SKIP_fakeMotionControl)
   yarp_install(FILES fakeMotionControl.ini
                COMPONENT runtime
                DESTINATION ${YARP_PLUGIN_MANIFESTS_INSTALL_DIR})
+
+  set_property(TARGET yarp_fakeMotionControl PROPERTY FOLDER "Plugins/Device/Fake")
 endif()
 

@@ -86,7 +86,7 @@ public:
      */
     bool attachAsClient(yarp::os::UnbufferedContactable& port) {
         yarp::os::ContactStyle style;
-        attach(port,style);
+        attach(port, style);
         can_write = true;
         can_read = false;
         return true;
@@ -117,7 +117,7 @@ public:
      */
     bool attachAsServer(yarp::os::UnbufferedContactable& port) {
         yarp::os::ContactStyle style;
-        attach(port,style);
+        attach(port, style);
         port.setReader(*owner);
         can_write = false;
         can_read = true;
@@ -171,7 +171,7 @@ public:
         }
         if (!isValid()) return false;
         if (!replies) { port->write(writer); return false; }
-        return port->write(writer,reader);
+        return port->write(writer, reader);
     }
 
 
@@ -187,7 +187,7 @@ public:
      */
     bool callback(PortWriter& writer, PortReader& reader, const ConstString& tag = "") {
         stack.attach(reader);
-        stack.stack(writer,tag);
+        stack.stack(writer, tag);
         return true;
     }
 

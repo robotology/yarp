@@ -63,21 +63,21 @@ public:
     // GenericYarpDriver
     virtual bool updateInterface();
     // DeviceDriver
-    virtual bool open(yarp::os::Searchable& config);
-    virtual bool close();
+    virtual bool open(yarp::os::Searchable& config) override;
+    virtual bool close() override;
     // IService
-    virtual bool startService();
-    virtual bool updateService();
-    virtual bool stopService();
+    virtual bool startService() override;
+    virtual bool updateService() override;
+    virtual bool stopService() override;
     // IOpenNI2DeviceServer
-    virtual bool getSkeletonOrientation(Vector *vectorArray, float *confidence,  int userID);
-    virtual bool getSkeletonPosition(Vector *vectorArray, float *confidence,  int userID);
+    virtual bool getSkeletonOrientation(Vector *vectorArray, float *confidence,  int userID) override;
+    virtual bool getSkeletonPosition(Vector *vectorArray, float *confidence,  int userID) override;
 
 // #ifdef OPENNI2_DRIVER_USES_NITE2
-    virtual nite::SkeletonState getSkeletonState(int userID);
+    virtual nite::SkeletonState getSkeletonState(int userID) override;
 // #endif
-    virtual ImageOf<PixelRgb> getImageFrame();
-    virtual ImageOf<PixelMono16> getDepthFrame();
+    virtual ImageOf<PixelRgb> getImageFrame() override;
+    virtual ImageOf<PixelMono16> getDepthFrame() override;
 private:
     BufferedPort<Bottle> *skeletonPort;
     BufferedPort<Bottle> *receivingPort;

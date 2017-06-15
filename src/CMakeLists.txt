@@ -8,6 +8,7 @@ include(YarpDeprecatedOption)
 yarp_configure_external_installation(yarp WITH_PLUGINS)
 
 # public libraries
+add_subdirectory(libYARP_conf)
 add_subdirectory(libYARP_OS)
 add_subdirectory(libYARP_sig)
 add_subdirectory(libYARP_eigen)
@@ -57,6 +58,11 @@ if(YARP_COMPILE_EXECUTABLES)
     add_subdirectory(yarplaserscannergui)
 endif()
 
+# Robot Testing Framework addons
+if(YARP_COMPILE_RTF_ADDONS)
+  add_subdirectory(libYARP_rtf)
+  add_subdirectory(rtf-plugins)
+endif()
 
 # unmaintained stuff
 add_subdirectory(libyarpc)

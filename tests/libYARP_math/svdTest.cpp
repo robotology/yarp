@@ -9,14 +9,14 @@
  * \infile Tests for SVD.
  */
 
-#include <yarp/os/impl/PlatformStdio.h>
+#include <cstdio>
 #include <yarp/os/impl/UnitTest.h>
 
 #include <yarp/math/Math.h>
 #include <yarp/sig/Vector.h>
 #include <yarp/math/SVD.h>
 #include <yarp/math/Rand.h>
-#include <math.h>
+#include <cmath>
 #include <string>
 
 using namespace yarp::os;
@@ -29,7 +29,7 @@ const double TOL = 1e-8;
 
 class SVDTest : public UnitTest {
 public:
-    virtual ConstString getName() { return "SVDTest"; }
+    virtual ConstString getName() override { return "SVDTest"; }
 
     // Assert that 2 matrices are equal
     void assertEqual(const Matrix &A, const Matrix &B, string testName, bool verbose=false)
@@ -198,7 +198,7 @@ public:
 
         m=5;
         n=6;
-        U.resize(m,m); 
+        U.resize(m,m);
         V.resize(m,n);
         s.resize(m);
         for(int i=0; i<nTest; i++)
@@ -274,7 +274,7 @@ public:
         }
     }
 
-    virtual void runTests() 
+    virtual void runTests() override
     {
         svd();
         svdCheckResizeOfOutputMatrices();

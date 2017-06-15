@@ -2,8 +2,7 @@
 # Authors: Elena Ceseracciu
 # CopyPolicy:  Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
 
-SET(THRIFT_FILES_LIST firstInterface/PointD.thrift secondInterface/demo.thrift)
-include(YarpIDL)
+set(THRIFT_FILES_LIST firstInterface/PointD.thrift secondInterface/demo.thrift)
 
 set(generated_libs_dir "${CMAKE_CURRENT_SOURCE_DIR}/../generated")
 foreach(thrift_file ${THRIFT_FILES_LIST})

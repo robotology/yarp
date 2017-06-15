@@ -55,62 +55,62 @@ public:
     {
     }
 
-    virtual Carrier *create()
+    virtual Carrier *create() override
     {
         return new XmlRpcCarrier();
     }
 
-    virtual ConstString getName()
+    virtual ConstString getName() override
     {
         return "xmlrpc";
     }
 
-    virtual bool isConnectionless()
+    virtual bool isConnectionless() override
     {
         return false;
     }
 
-    virtual bool canAccept()
+    virtual bool canAccept() override
     {
         return true;
     }
 
-    virtual bool canOffer()
+    virtual bool canOffer() override
     {
         return true;
     }
 
-    virtual bool isTextMode()
+    virtual bool isTextMode() override
     {
         return true;
     }
 
-    virtual bool canEscape()
+    virtual bool canEscape() override
     {
         return true;
     }
 
-    virtual bool requireAck()
+    virtual bool requireAck() override
     {
         return false;
     }
 
-    virtual bool supportReply()
+    virtual bool supportReply() override
     {
         return true;
     }
 
-    virtual bool isLocal()
+    virtual bool isLocal() override
     {
         return false;
     }
 
-    virtual ConstString toString()
+    virtual ConstString toString() override
     {
         return "xmlrpc_carrier";
     }
 
-    virtual void getHeader(const Bytes& header)
+    virtual void getHeader(const Bytes& header) override
     {
         const char *target = "POST /RP";
         for (size_t i=0; i<8 && i<header.length(); i++) {
@@ -118,7 +118,7 @@ public:
         }
     }
 
-    virtual bool checkHeader(const Bytes& header)
+    virtual bool checkHeader(const Bytes& header) override
     {
         if (header.length()!=8) {
             return false;
@@ -132,7 +132,7 @@ public:
         return true;
     }
 
-    virtual void setParameters(const Bytes& header)
+    virtual void setParameters(const Bytes& header) override
     {
         // no parameters - no carrier variants
     }
@@ -140,25 +140,25 @@ public:
 
     // Now, the initial hand-shaking
 
-    virtual bool prepareSend(ConnectionState& proto)
+    virtual bool prepareSend(ConnectionState& proto) override
     {
         // nothing special to do
         return true;
     }
 
-    virtual bool sendHeader(ConnectionState& proto);
+    virtual bool sendHeader(ConnectionState& proto) override;
 
-    virtual bool expectSenderSpecifier(ConnectionState& proto);
+    virtual bool expectSenderSpecifier(ConnectionState& proto) override;
 
-    virtual bool expectExtraHeader(ConnectionState& proto)
+    virtual bool expectExtraHeader(ConnectionState& proto) override
     {
         // interpret any extra header information sent - optional
         return true;
     }
 
-    bool respondToHeader(ConnectionState& proto);
+    bool respondToHeader(ConnectionState& proto) override;
 
-    virtual bool expectReplyToHeader(ConnectionState& proto)
+    virtual bool expectReplyToHeader(ConnectionState& proto) override
     {
         sender = true;
         XmlRpcStream *stream = new XmlRpcStream(proto.giveStreams(),sender,
@@ -170,7 +170,7 @@ public:
         return true;
     }
 
-    virtual bool isActive()
+    virtual bool isActive() override
     {
         return true;
     }
@@ -178,31 +178,31 @@ public:
 
     // Payload time!
 
-    virtual bool write(ConnectionState& proto, SizedWriter& writer);
+    virtual bool write(ConnectionState& proto, SizedWriter& writer) override;
 
-    virtual bool reply(ConnectionState& proto, SizedWriter& writer);
+    virtual bool reply(ConnectionState& proto, SizedWriter& writer) override;
 
     virtual bool sendIndex(ConnectionState& proto, SizedWriter& writer)
     {
         return true;
     }
 
-    virtual bool expectIndex(ConnectionState& proto)
+    virtual bool expectIndex(ConnectionState& proto) override
     {
         return true;
     }
 
-    virtual bool sendAck(ConnectionState& proto)
+    virtual bool sendAck(ConnectionState& proto) override
     {
         return true;
     }
 
-    virtual bool expectAck(ConnectionState& proto)
+    virtual bool expectAck(ConnectionState& proto) override
     {
         return true;
     }
 
-    virtual ConstString getBootstrapCarrierName()
+    virtual ConstString getBootstrapCarrierName() override
     {
         return "";
     }

@@ -35,6 +35,7 @@ foreach(lib ${YARP_LIBS})
   if(NOT "${lib}" MATCHES "carrier$" AND
      NOT "${lib}" MATCHES "^yarp_" AND
      NOT "${lib}" MATCHES "^YARP_priv" AND
+     NOT "${lib}" MATCHES "rtf_fixturemanager_" AND
      NOT "${lib}" STREQUAL "yarpcar" AND
      NOT "${lib}" STREQUAL "yarpmod" AND
      NOT "${lib}" STREQUAL "YARP_wire_rep_utils" AND
@@ -42,7 +43,8 @@ foreach(lib ${YARP_LIBS})
      NOT "${lib}" STREQUAL "YARP_logger" AND
      NOT "${lib}" STREQUAL "YARP_serversql" AND
      NOT "${lib}" STREQUAL "YARP_gsl" AND
-     NOT "${lib}" STREQUAL "YARP_eigen")
+     NOT "${lib}" STREQUAL "YARP_eigen" AND
+     NOT "${lib}" STREQUAL "YARP_rtf")
     list(APPEND YARP_LIBRARIES YARP::${lib})
   endif()
 endforeach()
@@ -154,16 +156,9 @@ install(EXPORT YARP
         FILE YARPTargets.cmake)
 
 foreach(lib ${YARP_LIBS})
+  get_target_property(type ${lib} TYPE)
+  if("${type}" STREQUAL "SHARED_LIBRARY")
     set_target_properties(${lib} PROPERTIES VERSION ${YARP_VERSION_SHORT}
                                             SOVERSION ${YARP_GENERIC_SOVERSION})
-
-    # Compile libraries using -fPIC to produce position independent code
-    # For CMAKE_VERSION >= 2.8.10 this is handled in YarpOptions.cmake
-    # using the CMAKE_POSITION_INDEPENDENT_CODE flag
-    if(${CMAKE_MINIMUM_REQUIRED_VERSION} VERSION_GREATER 2.8.9)
-        message(AUTHOR_WARNING "CMAKE_MINIMUM_REQUIRED_VERSION is now ${CMAKE_MINIMUM_REQUIRED_VERSION}. This check can be removed.")
-    endif()
-    if(CMAKE_VERSION VERSION_EQUAL "2.8.9")
-        set_target_properties(${lib} PROPERTIES POSITION_INDEPENDENT_CODE TRUE)
-    endif()
+  endif()
 endforeach(lib)

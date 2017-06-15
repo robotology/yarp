@@ -12,14 +12,10 @@ yarp_prepare_plugin(meiMotionControl
 
 if(NOT SKIP_meiMotionControl)
   set(CMAKE_INCLUDE_CURRENT_DIR ON)
-  get_property(YARP_OS_INCLUDE_DIRS TARGET YARP_OS PROPERTY INCLUDE_DIRS)
-  get_property(YARP_dev_INCLUDE_DIRS TARGET YARP_dev PROPERTY INCLUDE_DIRS)
-  include_directories(${YARP_OS_INCLUDE_DIRS}
-                      ${YARP_dev_INCLUDE_DIRS})
   yarp_add_plugin(yarp_meiMotionControl MEIMotionControl.cpp
                                         MEIMotionControl.h)
-  target_link_libraries(yarp_meiMotionControl YARP_OS
-                                              YARP_dev)
+  target_link_libraries(yarp_meiMotionControl YARP::YARP_OS
+                                              YARP::YARP_dev)
   yarp_install(TARGETS yarp_meiMotionControl
                EXPORT YARP
                COMPONENT runtime
@@ -28,4 +24,6 @@ if(NOT SKIP_meiMotionControl)
   yarp_install(FILES meimotioncontrol.ini
                COMPONENT runtime
                DESTINATION ${YARP_PLUGIN_MANIFESTS_INSTALL_DIR})
+
+  set_property(TARGET yarp_meiMotionControl PROPERTY FOLDER "Unsupported")
 endif(NOT SKIP_meiMotionControl)

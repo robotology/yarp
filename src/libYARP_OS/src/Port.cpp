@@ -52,7 +52,7 @@ bool Port::open(const ConstString& name) {
 }
 
 bool Port::open(const Contact& contact, bool registerName) {
-    return open(contact,registerName,YARP_NULLPTR);
+    return open(contact, registerName, YARP_NULLPTR);
 }
 
 bool Port::open(const Contact& contact, bool registerName,
@@ -96,7 +96,7 @@ bool Port::open(const Contact& contact, bool registerName,
     PortCoreAdapter *currentCore = &(IMPL());
     if (currentCore!=YARP_NULLPTR) {
         currentCore->active = false;
-        if (n!="" && (n[0]!='/'||currentCore->includeNode) && n[0]!='=' && n!="..." && n.substr(0,3)!="...") {
+        if (n!="" && (n[0]!='/'||currentCore->includeNode) && n[0]!='=' && n!="..." && n.substr(0, 3)!="...") {
             if (fakeName==YARP_NULLPTR) {
                 Nodes& nodes = NameClient::getNameClient().getNodes();
                 ConstString node_name = nodes.getActiveName();
@@ -106,15 +106,15 @@ bool Port::open(const Contact& contact, bool registerName,
             }
         }
     }
-    if (n!="" && n[0]!='/'  && n[0]!='=' && n!="..." && n.substr(0,3)!="...") {
+    if (n!="" && n[0]!='/'  && n[0]!='=' && n!="..." && n.substr(0, 3)!="...") {
         if (fakeName==YARP_NULLPTR) {
-            YARP_SPRINTF1(Logger::get(),error,
+            YARP_SPRINTF1(Logger::get(), error,
                           "Port name '%s' needs to start with a '/' character",
                           n.c_str());
             return false;
         }
     }
-    if (n!="" && n!="..." && n[0]!='=' && n.substr(0,3)!="...") {
+    if (n!="" && n!="..." && n[0]!='=' && n.substr(0, 3)!="...") {
         if (fakeName==YARP_NULLPTR) {
             ConstString prefix = NetworkBase::getEnvironment("YARP_PORT_PREFIX");
             if (prefix!="") {
@@ -144,20 +144,20 @@ bool Port::open(const Contact& contact, bool registerName,
                                      "@" +
                                      nc.getNodeName());
                 } else {
-                    YARP_SPRINTF1(Logger::get(),error,
+                    YARP_SPRINTF1(Logger::get(), error,
                                   "Error: Port '%s' is not committed to being either an input or output port.",
                                   n.c_str());
-                    YARP_SPRINTF0(Logger::get(),error,
+                    YARP_SPRINTF0(Logger::get(), error,
                                   "YARP does not mind, but we are trying to register with a name server that does.");
-                    YARP_SPRINTF0(Logger::get(),error,
+                    YARP_SPRINTF0(Logger::get(), error,
                                   "You can call Port::setWriteOnly() or Port::setReadOnly(), OR rename the port.");
                     NestedContact nc2 = nc;
                     nc2.setCategoryWrite();
-                    YARP_SPRINTF1(Logger::get(),error,
+                    YARP_SPRINTF1(Logger::get(), error,
                                   "For an output port, call it: %s (+ adds data)",
                                   nc2.toString().c_str());
                     nc2.setCategoryRead();
-                    YARP_SPRINTF1(Logger::get(),error,
+                    YARP_SPRINTF1(Logger::get(), error,
                                   "For an input port, call it: %s (- takes data)",
                                   nc2.toString().c_str());
                     return false;
@@ -199,7 +199,7 @@ bool Port::open(const Contact& contact, bool registerName,
     core.openable();
 
     if (NetworkBase::localNetworkAllocation()&&contact2.getPort()<=0) {
-        YARP_DEBUG(Logger::get(),"local network allocation needed");
+        YARP_DEBUG(Logger::get(), "local network allocation needed");
         local = true;
     }
 
@@ -260,7 +260,7 @@ bool Port::open(const Contact& contact, bool registerName,
 
     ConstString blame = "invalid address";
     if (success) {
-        success = core.listen(address,registerName);
+        success = core.listen(address, registerName);
         blame = "address conflict";
         if (success) {
             success = core.start();
@@ -409,7 +409,7 @@ bool Port::write(PortWriter& writer, PortWriter *callback) const {
     core.alertOnWrite();
     bool result = false;
     //WritableAdapter adapter(writer);
-    result = core.send(writer,YARP_NULLPTR,callback);
+    result = core.send(writer, YARP_NULLPTR, callback);
     //writer.onCompletion();
     if (!result) {
         //YARP_DEBUG(Logger::get(), e.toString() + " <<<< Port::write saw this");
@@ -430,7 +430,7 @@ bool Port::write(PortWriter& writer, PortReader& reader,
     core.alertOnRpc();
     core.alertOnWrite();
     bool result = false;
-    result = core.send(writer,&reader,callback);
+    result = core.send(writer, &reader, callback);
     if (!result) {
         //YARP_DEBUG(Logger::get(), e.toString() + " <<<< Port::write saw this");
         if (callback!=YARP_NULLPTR) {
@@ -444,24 +444,24 @@ bool Port::write(PortWriter& writer, PortReader& reader,
 }
 
 bool Port::read(PortReader& reader, bool willReply) {
-    if(!isOpen()) return false;
+    if (!isOpen()) return false;
     PortCoreAdapter& core = IMPL();
     if (willReply) core.alertOnRpc();
     core.alertOnRead();
     if (core.isInterrupted()) return false;
-    return core.read(reader,willReply);
+    return core.read(reader, willReply);
 }
 
 
 
 bool Port::reply(PortWriter& writer) {
     PortCoreAdapter& core = IMPL();
-    return core.reply(writer,false,core.isInterrupted());
+    return core.reply(writer, false, core.isInterrupted());
 }
 
 bool Port::replyAndDrop(PortWriter& writer) {
     PortCoreAdapter& core = IMPL();
-    return core.reply(writer,true,core.isInterrupted());
+    return core.reply(writer, true, core.isInterrupted());
 }
 
 
@@ -549,7 +549,7 @@ void Port::setAdminMode(bool adminMode) {
 }
 
 
-#define SET_FLAG(implementation,mask,val) \
+#define SET_FLAG(implementation, mask, val) \
   IMPL().setFlags((IMPL().getFlags() & \
   (~mask)) + (val?mask:0))
 
@@ -557,21 +557,21 @@ void Port::setInputMode(bool expectInput) {
     if (expectInput==false) {
         IMPL().setWriteOnly();
     }
-    SET_FLAG(implementation,PORTCORE_IS_INPUT,expectInput);
+    SET_FLAG(implementation, PORTCORE_IS_INPUT, expectInput);
 }
 
 void Port::setOutputMode(bool expectOutput) {
     if (expectOutput==false) {
         IMPL().setReadOnly();
     }
-    SET_FLAG(implementation,PORTCORE_IS_OUTPUT,expectOutput);
+    SET_FLAG(implementation, PORTCORE_IS_OUTPUT, expectOutput);
 }
 
 void Port::setRpcMode(bool expectRpc) {
     if (expectRpc==true) {
         IMPL().setRpc();
     }
-    SET_FLAG(implementation,PORTCORE_IS_RPC,expectRpc);
+    SET_FLAG(implementation, PORTCORE_IS_RPC, expectRpc);
 }
 
 bool Port::setTimeout(float timeout) {
@@ -630,7 +630,7 @@ bool Port::removeCallbackLock() {
 
 bool Port::lockCallback() {
     if (!IMPL().lockCallback()) {
-        fprintf(stderr,"Cannot do lockCallback() without setCallbackLock() before opening port\n");
+        fprintf(stderr, "Cannot do lockCallback() without setCallbackLock() before opening port\n");
     }
     return true;
 }

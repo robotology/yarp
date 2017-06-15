@@ -38,14 +38,14 @@ public:
      * @param connection a ConnectionReader
      * @return true/false upon success or failure
      */
-    virtual bool read(yarp::os::ConnectionReader& connection);
+    virtual bool read(yarp::os::ConnectionReader& connection) YARP_OVERRIDE;
 
     /**
      * @brief write the SystemInfo structs using a ConnectionWriter.
      * @param connection a ConnectionWriter
      * @return true/false upon success or failure
      */
-    virtual bool write(yarp::os::ConnectionWriter& connection);
+    virtual bool write(yarp::os::ConnectionWriter& connection) YARP_OVERRIDE;
 
 public:
     /**

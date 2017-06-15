@@ -7,7 +7,7 @@
 #include <yarp/os/YarpNameSpace.h>
 #include <yarp/os/DummyConnector.h>
 #include <yarp/os/impl/NameClient.h>
-#include <yarp/os/impl/PlatformStdio.h>
+#include <cstdio>
 #include <yarp/os/impl/Logger.h>
 #include <yarp/os/impl/NameConfig.h>
 
@@ -57,11 +57,11 @@ Contact YarpNameSpace::registerContact(const Contact& contact) {
             Contact c2(ConstString("topic:/") + nc.getNestedName());
             if (subscribe) {
                 style.persistenceType = ContactStyle::END_WITH_TO_PORT;
-                connectPortToTopic(c2,c1,style);
+                connectPortToTopic(c2, c1, style);
             }
             if (publish) {
                 style.persistenceType = ContactStyle::END_WITH_FROM_PORT;
-                connectPortToTopic(c1,c2,style);
+                connectPortToTopic(c1, c2, style);
             }
         }
     }
@@ -80,10 +80,10 @@ Contact YarpNameSpace::unregisterName(const ConstString& name) {
         Contact c1(nc.getFullName());
         Contact c2(ConstString("topic:/") + nc.getNestedName());
         if (subscribe) {
-            disconnectPortFromTopic(c2,c1,style);
+            disconnectPortFromTopic(c2, c1, style);
         }
         if (publish) {
-            disconnectPortFromTopic(c1,c2,style);
+            disconnectPortFromTopic(c1, c2, style);
         }
     }
     NameClient& nic = HELPER(this);
@@ -106,7 +106,7 @@ bool YarpNameSpace::setProperty(const ConstString& name, const ConstString& key,
     command.add(value);
     Bottle reply;
     NameClient& nic = HELPER(this);
-    nic.send(command,reply);
+    nic.send(command, reply);
     return reply.size()>0;
 }
 
@@ -118,7 +118,7 @@ Value *YarpNameSpace::getProperty(const ConstString& name, const ConstString& ke
     command.addString(key);
     Bottle reply;
     NameClient& nic = HELPER(this);
-    nic.send(command,reply);
+    nic.send(command, reply);
     return Value::makeValue(reply.toString());
 }
 
@@ -133,7 +133,7 @@ Contact YarpNameSpace::detectNameServer(bool useDetectedServer,
     if (useDetectedServer) {
         nic.setSave();
     }
-    nic.send("ping",false);
+    nic.send("ping", false);
     scanNeeded = nic.didScan();
     serverUsed = nic.didSave();
 
@@ -142,7 +142,7 @@ Contact YarpNameSpace::detectNameServer(bool useDetectedServer,
     //Contact c = nic.getAddress().toContact();
     //    if (scanNeeded) {
     //        Address addr = nic.getAddress();
-    //        c.setSocket("tcp",addr.getName().c_str(),addr.getPort());
+    //        c.setSocket("tcp", addr.getName().c_str(), addr.getPort());
     ////}
     //c.setName(nc.getNamespace().c_str());
     return c;

@@ -3,8 +3,7 @@
 //   float32 r
 //   float32 g
 //   float32 b
-//   float32 a
-// Instances of this class can be read and written with YARP ports,
+//   float32 a// Instances of this class can be read and written with YARP ports,
 // using a ROS-compatible format.
 
 #ifndef YARPMSG_TYPE_std_msgs_ColorRGBA
@@ -31,7 +30,21 @@ public:
   std_msgs_ColorRGBA() {
   }
 
-  bool readBare(yarp::os::ConnectionReader& connection) {
+  void clear() {
+    // *** r ***
+    r = 0.0;
+
+    // *** g ***
+    g = 0.0;
+
+    // *** b ***
+    b = 0.0;
+
+    // *** a ***
+    a = 0.0;
+  }
+
+  bool readBare(yarp::os::ConnectionReader& connection) YARP_OVERRIDE {
     // *** r ***
     if (!connection.expectBlock((char*)&r,4)) return false;
 
@@ -46,7 +59,7 @@ public:
     return !connection.isError();
   }
 
-  bool readBottle(yarp::os::ConnectionReader& connection) {
+  bool readBottle(yarp::os::ConnectionReader& connection) YARP_OVERRIDE {
     connection.convertTextMode();
     yarp::os::idl::WireReader reader(connection);
     if (!reader.readListHeader(4)) return false;
@@ -66,12 +79,12 @@ public:
   }
 
   using yarp::os::idl::WirePortable::read;
-  bool read(yarp::os::ConnectionReader& connection) {
+  bool read(yarp::os::ConnectionReader& connection) YARP_OVERRIDE {
     if (connection.isBareMode()) return readBare(connection);
     return readBottle(connection);
   }
 
-  bool writeBare(yarp::os::ConnectionWriter& connection) {
+  bool writeBare(yarp::os::ConnectionWriter& connection) YARP_OVERRIDE {
     // *** r ***
     connection.appendBlock((char*)&r,4);
 
@@ -86,7 +99,7 @@ public:
     return !connection.isError();
   }
 
-  bool writeBottle(yarp::os::ConnectionWriter& connection) {
+  bool writeBottle(yarp::os::ConnectionWriter& connection) YARP_OVERRIDE {
     connection.appendInt(BOTTLE_TAG_LIST);
     connection.appendInt(4);
 
@@ -110,7 +123,7 @@ public:
   }
 
   using yarp::os::idl::WirePortable::write;
-  bool write(yarp::os::ConnectionWriter& connection) {
+  bool write(yarp::os::ConnectionWriter& connection) YARP_OVERRIDE {
     if (connection.isBareMode()) return writeBare(connection);
     return writeBottle(connection);
   }
@@ -129,7 +142,7 @@ float32 a";
   }
 
   // Name the class, ROS will need this
-  yarp::os::Type getType() {
+  yarp::os::Type getType() YARP_OVERRIDE {
     yarp::os::Type typ = yarp::os::Type::byName("std_msgs/ColorRGBA","std_msgs/ColorRGBA");
     typ.addProperty("md5sum",yarp::os::Value("a29a96539573343b1310c73607334b00"));
     typ.addProperty("message_definition",yarp::os::Value(getTypeText()));

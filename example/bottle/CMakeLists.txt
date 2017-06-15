@@ -2,12 +2,10 @@
 # Author: Paul Fitzpatrick
 # CopyPolicy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
 
-cmake_minimum_required(VERSION 2.8.9)
+cmake_minimum_required(VERSION 3.0)
+project(bottle)
 
-FIND_PACKAGE(YARP REQUIRED)
-INCLUDE_DIRECTORIES(${YARP_INCLUDE_DIRS})
+find_package(YARP REQUIRED)
 
-PROJECT(bottle)
-
-ADD_EXECUTABLE(bottle main.cpp)
-TARGET_LINK_LIBRARIES(bottle ${YARP_LIBRARIES})
+add_executable(bottle main.cpp)
+target_link_libraries(bottle ${YARP_LIBRARIES})

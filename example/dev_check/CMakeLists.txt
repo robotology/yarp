@@ -2,13 +2,11 @@
 # Author: Paul Fitzpatrick
 # CopyPolicy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
 
-cmake_minimum_required(VERSION 2.8.9)
+cmake_minimum_required(VERSION 3.0)
+project(dev_check)
 
 # make sure YARP_DIR environment variable is set
-FIND_PACKAGE(YARP REQUIRED)
-INCLUDE_DIRECTORIES(${YARP_INCLUDE_DIRS})
+find_package(YARP REQUIRED)
 
-PROJECT(dev_check)
-
-ADD_EXECUTABLE(dev_check main.cpp)
-TARGET_LINK_LIBRARIES(dev_check ${YARP_LIBRARIES})
+add_executable(dev_check main.cpp)
+target_link_libraries(dev_check ${YARP_LIBRARIES})

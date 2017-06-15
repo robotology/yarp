@@ -17,7 +17,7 @@ using namespace yarp::os;
 
 class SoundTest : public UnitTest {
 public:
-    virtual ConstString getName() { return "SoundTest"; }
+    virtual ConstString getName() override { return "SoundTest"; }
 
     void checkSetGet() {
         report(0,"check set/get sample...");
@@ -82,7 +82,7 @@ public:
         input.close();
     }
     
-    virtual void runTests() {
+    virtual void runTests() override {
         Network::setLocalMode(true);
         checkSetGet();
         checkTransmit();

@@ -55,7 +55,33 @@ public:
     linear_acceleration_covariance.resize(9,0.0);
   }
 
-  bool readBare(yarp::os::ConnectionReader& connection) {
+  void clear() {
+    // *** header ***
+    header.clear();
+
+    // *** orientation ***
+    orientation.clear();
+
+    // *** orientation_covariance ***
+    orientation_covariance.clear();
+    orientation_covariance.resize(9,0.0);
+
+    // *** angular_velocity ***
+    angular_velocity.clear();
+
+    // *** angular_velocity_covariance ***
+    angular_velocity_covariance.clear();
+    angular_velocity_covariance.resize(9,0.0);
+
+    // *** linear_acceleration ***
+    linear_acceleration.clear();
+
+    // *** linear_acceleration_covariance ***
+    linear_acceleration_covariance.clear();
+    linear_acceleration_covariance.resize(9,0.0);
+  }
+
+  bool readBare(yarp::os::ConnectionReader& connection) YARP_OVERRIDE {
     // *** header ***
     if (!header.read(connection)) return false;
 
@@ -65,7 +91,7 @@ public:
     // *** orientation_covariance ***
     int len = 9;
     orientation_covariance.resize(len);
-    if (!connection.expectBlock((char*)&orientation_covariance[0],sizeof(yarp::os::NetFloat64)*len)) return false;
+    if (len > 0 && !connection.expectBlock((char*)&orientation_covariance[0],sizeof(yarp::os::NetFloat64)*len)) return false;
 
     // *** angular_velocity ***
     if (!angular_velocity.read(connection)) return false;
@@ -73,7 +99,7 @@ public:
     // *** angular_velocity_covariance ***
     len = 9;
     angular_velocity_covariance.resize(len);
-    if (!connection.expectBlock((char*)&angular_velocity_covariance[0],sizeof(yarp::os::NetFloat64)*len)) return false;
+    if (len > 0 && !connection.expectBlock((char*)&angular_velocity_covariance[0],sizeof(yarp::os::NetFloat64)*len)) return false;
 
     // *** linear_acceleration ***
     if (!linear_acceleration.read(connection)) return false;
@@ -81,11 +107,11 @@ public:
     // *** linear_acceleration_covariance ***
     len = 9;
     linear_acceleration_covariance.resize(len);
-    if (!connection.expectBlock((char*)&linear_acceleration_covariance[0],sizeof(yarp::os::NetFloat64)*len)) return false;
+    if (len > 0 && !connection.expectBlock((char*)&linear_acceleration_covariance[0],sizeof(yarp::os::NetFloat64)*len)) return false;
     return !connection.isError();
   }
 
-  bool readBottle(yarp::os::ConnectionReader& connection) {
+  bool readBottle(yarp::os::ConnectionReader& connection) YARP_OVERRIDE {
     connection.convertTextMode();
     yarp::os::idl::WireReader reader(connection);
     if (!reader.readListHeader(7)) return false;
@@ -129,12 +155,12 @@ public:
   }
 
   using yarp::os::idl::WirePortable::read;
-  bool read(yarp::os::ConnectionReader& connection) {
+  bool read(yarp::os::ConnectionReader& connection) YARP_OVERRIDE {
     if (connection.isBareMode()) return readBare(connection);
     return readBottle(connection);
   }
 
-  bool writeBare(yarp::os::ConnectionWriter& connection) {
+  bool writeBare(yarp::os::ConnectionWriter& connection) YARP_OVERRIDE {
     // *** header ***
     if (!header.write(connection)) return false;
 
@@ -142,23 +168,23 @@ public:
     if (!orientation.write(connection)) return false;
 
     // *** orientation_covariance ***
-    connection.appendExternalBlock((char*)&orientation_covariance[0],sizeof(yarp::os::NetFloat64)*orientation_covariance.size());
+    if (orientation_covariance.size()>0) {connection.appendExternalBlock((char*)&orientation_covariance[0],sizeof(yarp::os::NetFloat64)*orientation_covariance.size());}
 
     // *** angular_velocity ***
     if (!angular_velocity.write(connection)) return false;
 
     // *** angular_velocity_covariance ***
-    connection.appendExternalBlock((char*)&angular_velocity_covariance[0],sizeof(yarp::os::NetFloat64)*angular_velocity_covariance.size());
+    if (angular_velocity_covariance.size()>0) {connection.appendExternalBlock((char*)&angular_velocity_covariance[0],sizeof(yarp::os::NetFloat64)*angular_velocity_covariance.size());}
 
     // *** linear_acceleration ***
     if (!linear_acceleration.write(connection)) return false;
 
     // *** linear_acceleration_covariance ***
-    connection.appendExternalBlock((char*)&linear_acceleration_covariance[0],sizeof(yarp::os::NetFloat64)*linear_acceleration_covariance.size());
+    if (linear_acceleration_covariance.size()>0) {connection.appendExternalBlock((char*)&linear_acceleration_covariance[0],sizeof(yarp::os::NetFloat64)*linear_acceleration_covariance.size());}
     return !connection.isError();
   }
 
-  bool writeBottle(yarp::os::ConnectionWriter& connection) {
+  bool writeBottle(yarp::os::ConnectionWriter& connection) YARP_OVERRIDE {
     connection.appendInt(BOTTLE_TAG_LIST);
     connection.appendInt(7);
 
@@ -199,7 +225,7 @@ public:
   }
 
   using yarp::os::idl::WirePortable::write;
-  bool write(yarp::os::ConnectionWriter& connection) {
+  bool write(yarp::os::ConnectionWriter& connection) YARP_OVERRIDE {
     if (connection.isBareMode()) return writeBare(connection);
     return writeBottle(connection);
   }
@@ -268,7 +294,7 @@ float64 z";
   }
 
   // Name the class, ROS will need this
-  yarp::os::Type getType() {
+  yarp::os::Type getType() YARP_OVERRIDE {
     yarp::os::Type typ = yarp::os::Type::byName("sensor_msgs/Imu","sensor_msgs/Imu");
     typ.addProperty("md5sum",yarp::os::Value("6a62c6daae103f4ff57a132d6f95cec2"));
     typ.addProperty("message_definition",yarp::os::Value(getTypeText()));

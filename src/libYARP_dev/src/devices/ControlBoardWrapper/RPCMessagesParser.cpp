@@ -255,8 +255,13 @@ void RPCMessagesParser::handleControlModeMsg(const yarp::os::Bottle& cmd,
                         case VOCAB_CM_POSITION:
                             if(rpc_iCtrlMode2)
                                 *ok = rpc_iCtrlMode2->setControlMode(axis, VOCAB_CM_POSITION);
+#ifndef YARP_NO_DEPRECATED // since YARP 2.3.70
                             else
+YARP_WARNING_PUSH
+YARP_DISABLE_DEPRECATED_WARNING
                                 *ok = rpc_iCtrlMode->setPositionMode(axis);
+YARP_WARNING_POP
+#endif // YARP_NO_DEPRECATED
                         break;
 
                         case VOCAB_CM_POSITION_DIRECT:
@@ -268,37 +273,60 @@ void RPCMessagesParser::handleControlModeMsg(const yarp::os::Bottle& cmd,
                         case VOCAB_CM_VELOCITY:
                             if(rpc_iCtrlMode2)
                                 *ok = rpc_iCtrlMode2->setControlMode(axis, VOCAB_CM_VELOCITY);
+#ifndef YARP_NO_DEPRECATED // since YARP 2.3.70
                             else
+YARP_WARNING_PUSH
+YARP_DISABLE_DEPRECATED_WARNING
                                 *ok = rpc_iCtrlMode->setVelocityMode(axis);
+YARP_WARNING_POP
+#endif // YARP_NO_DEPRECATED
                         break;
 
                         case VOCAB_CM_TORQUE:
                             if(rpc_iCtrlMode2)
                                 *ok = rpc_iCtrlMode2->setControlMode(axis, VOCAB_CM_TORQUE);
+#ifndef YARP_NO_DEPRECATED // since YARP 2.3.70
                             else
+YARP_WARNING_PUSH
+YARP_DISABLE_DEPRECATED_WARNING
                                 *ok = rpc_iCtrlMode->setTorqueMode(axis);
+YARP_WARNING_POP
+#endif // YARP_NO_DEPRECATED
                         break;
 
                         case VOCAB_CM_IMPEDANCE_POS:
                             yError() << "The 'impedancePosition' control mode is deprecated. \nUse setInteractionMode(axis, VOCAB_IM_COMPLIANT) + setControlMode(axis, VOCAB_CM_POSITION) instead";
 
                             //                      Let´s propagate the legacy version as is until it will be removed
+#ifndef YARP_NO_DEPRECATED // since YARP 2.3.70
+YARP_WARNING_PUSH
+YARP_DISABLE_DEPRECATED_WARNING
                             *ok = rpc_iCtrlMode->setImpedancePositionMode(axis);
+YARP_WARNING_POP
+#endif // YARP_NO_DEPRECATED
                         break;
 
                         case VOCAB_CM_IMPEDANCE_VEL:
                             yError() << "The 'impedanceVelocity' control mode is deprecated. \nUse setInteractionMode(axis, VOCAB_IM_COMPLIANT) + setControlMode(axis, VOCAB_CM_VELOCITY) instead";
 
                             //                      Let´s propagate the legacy version as is until it will be removed
+#ifndef YARP_NO_DEPRECATED // since YARP 2.3.70
+YARP_WARNING_PUSH
+YARP_DISABLE_DEPRECATED_WARNING
                             *ok = rpc_iCtrlMode->setImpedanceVelocityMode(axis);
+YARP_WARNING_POP
+#endif // YARP_NO_DEPRECATED
                         break;
 
-                        case VOCAB_CM_OPENLOOP:
-                            if(rpc_iCtrlMode2)
-                                *ok = rpc_iCtrlMode2->setControlMode(axis, VOCAB_CM_OPENLOOP);
-                            else
-                                *ok = rpc_iCtrlMode->setOpenLoopMode(axis);
-                        break;
+                        case VOCAB_CM_PWM:
+                            if (rpc_iCtrlMode2)
+                                *ok = rpc_iCtrlMode2->setControlMode(axis, VOCAB_CM_PWM);
+                            break;
+
+                        case VOCAB_CM_CURRENT:
+                            if (rpc_iCtrlMode2)
+                                *ok = rpc_iCtrlMode2->setControlMode(axis, VOCAB_CM_CURRENT);
+                            break;
 
                         case VOCAB_CM_MIXED:
                             if(rpc_iCtrlMode2)
@@ -497,115 +525,6 @@ void RPCMessagesParser::handleTorqueMsg(const yarp::os::Bottle& cmd,
                 }
                 break;
 
-                case VOCAB_LIM:
-                {
-                    *ok = rpc_ITorque->setTorqueErrorLimit (cmd.get(3).asInt(), cmd.get(4).asDouble());
-                }
-                break;
-
-                case VOCAB_LIMS:
-                {
-                    Bottle *b = cmd.get(3).asList();
-                    if (b==NULL)
-                        break;
-                    int i;
-                    const int njs = b->size();
-                    if (njs==controlledJoints)
-                    {
-                        double *p = new double[njs];    // LATER: optimize to avoid allocation.
-                        for (i = 0; i < njs; i++)
-                            p[i] = b->get(i).asDouble();
-                        *ok = rpc_ITorque->setTorqueErrorLimits (p);
-                        delete[] p;
-                    }
-                }
-                break;
-
-                case VOCAB_PID:
-                {
-                    Pid p;
-                    int j = cmd.get(3).asInt();
-                    Bottle *b = cmd.get(4).asList();
-
-                    if (b==NULL)
-                        break;
-
-                    p.kp = b->get(0).asDouble();
-                    p.kd = b->get(1).asDouble();
-                    p.ki = b->get(2).asDouble();
-                    p.max_int = b->get(3).asDouble();
-                    p.max_output = b->get(4).asDouble();
-                    p.offset = b->get(5).asDouble();
-                    p.scale = b->get(6).asDouble();
-                    p.stiction_up_val = b->get(7).asDouble();
-                    p.stiction_down_val = b->get(8).asDouble();
-                    p.kff = b->get(9).asDouble();
-                    *ok = rpc_ITorque->setTorquePid(j, p);
-                }
-                break;
-
-                case VOCAB_PIDS:
-                {
-                    Bottle *b = cmd.get(3).asList();
-                    if (b==NULL)
-                        break;
-
-                    int i;
-                    const int njs = b->size();
-                    if (njs==controlledJoints)
-                    {
-                        bool allOK=true;
-
-                        Pid *p = new Pid[njs];
-                        for (i = 0; i < njs; i++)
-                        {
-                            Bottle *c = b->get(i).asList();
-                            if (c!=NULL)
-                            {
-                                p[i].kp = c->get(0).asDouble();
-                                p[i].kd = c->get(1).asDouble();
-                                p[i].ki = c->get(2).asDouble();
-                                p[i].max_int = c->get(3).asDouble();
-                                p[i].max_output = c->get(4).asDouble();
-                                p[i].offset = c->get(5).asDouble();
-                                p[i].scale = c->get(6).asDouble();
-                                p[i].stiction_up_val = c->get(7).asDouble();
-                                p[i].stiction_down_val = c->get(8).asDouble();
-                                p[i].kff = c->get(9).asDouble();
-                            }
-                            else
-                            {
-                                allOK=false;
-                            }
-                        }
-                        if (allOK)
-                            *ok = rpc_ITorque->setTorquePids(p);
-                        else
-                            *ok=false;
-
-                        delete[] p;
-                    }
-                }
-                break;
-
-                case VOCAB_RESET:
-                {
-                    *ok = rpc_ITorque->resetTorquePid (cmd.get(3).asInt());
-                }
-                break;
-
-                case VOCAB_DISABLE:
-                {
-                    *ok = rpc_ITorque->disableTorquePid (cmd.get(3).asInt());
-                }
-                break;
-
-                case VOCAB_ENABLE:
-                {
-                    *ok = rpc_ITorque->enableTorquePid (cmd.get(3).asInt());
-                }
-                break;
-
                 case VOCAB_TORQUE_MODE:
                 {
                     if(rpc_iCtrlMode2)
@@ -617,14 +536,9 @@ void RPCMessagesParser::handleTorqueMsg(const yarp::os::Bottle& cmd,
                         delete [] modes;
                     }
                     else
-#ifndef YARP_NO_DEPRECATED // since YARP 2.3.65
-YARP_WARNING_PUSH
-YARP_DISABLE_DEPRECATED_WARNING
-                        *ok = rpc_ITorque->setTorqueMode();
-YARP_WARNING_POP
-#else
+                    {
                         *ok = false;
-#endif // YARP_NO_DEPRECATED
+                    }
                 }
                 break;
 
@@ -719,87 +633,7 @@ YARP_WARNING_POP
                     delete[] p2;
                 }
                 break;
-
-                case VOCAB_ERR:
-                {
-                    *ok = rpc_ITorque->getTorqueError(cmd.get(3).asInt(), &dtmp);
-                    response.addDouble(dtmp);
-                }
-                break;
-
-                case VOCAB_ERRS:
-                {
-                    double *p = new double[controlledJoints];
-                    *ok = rpc_ITorque->getTorqueErrors(p);
-                    Bottle& b = response.addList();
-                    int i;
-                    for (i = 0; i < controlledJoints; i++)
-                        b.addDouble(p[i]);
-                    delete[] p;
-                }
-                break;
-
-                case VOCAB_OUTPUT:
-                {
-                    *ok = rpc_ITorque->getTorquePidOutput(cmd.get(3).asInt(), &dtmp);
-                    response.addDouble(dtmp);
-                }
-                break;
-
-                case VOCAB_OUTPUTS:
-                {
-                    double *p = new double[controlledJoints];
-                    *ok = rpc_ITorque->getTorquePidOutputs(p);
-                    Bottle& b = response.addList();
-                    int i;
-                    for (i = 0; i < controlledJoints; i++)
-                        b.addDouble(p[i]);
-                    delete[] p;
-                }
-                break;
-
-                case VOCAB_PID:
-                {
-                    Pid p;
-                    *ok = rpc_ITorque->getTorquePid(cmd.get(3).asInt(), &p);
-                    Bottle& b = response.addList();
-                    b.addDouble(p.kp);
-                    b.addDouble(p.kd);
-                    b.addDouble(p.ki);
-                    b.addDouble(p.max_int);
-                    b.addDouble(p.max_output);
-                    b.addDouble(p.offset);
-                    b.addDouble(p.scale);
-                    b.addDouble(p.stiction_up_val);
-                    b.addDouble(p.stiction_down_val);
-                    b.addDouble(p.kff);
-                }
-                break;
-
-                case VOCAB_PIDS:
-                {
-                    Pid *p = new Pid[controlledJoints];
-                    *ok = rpc_ITorque->getTorquePids(p);
-                    Bottle& b = response.addList();
-                    int i;
-                    for (i = 0; i < controlledJoints; i++)
-                    {
-                        Bottle& c = b.addList();
-                        c.addDouble(p[i].kp);
-                        c.addDouble(p[i].kd);
-                        c.addDouble(p[i].ki);
-                        c.addDouble(p[i].max_int);
-                        c.addDouble(p[i].max_output);
-                        c.addDouble(p[i].offset);
-                        c.addDouble(p[i].scale);
-                        c.addDouble(p[i].stiction_up_val);
-                        c.addDouble(p[i].stiction_down_val);
-                        c.addDouble(p[i].kff);
-                    }
-                    delete[] p;
-                }
-                break;
-
+                
                 case VOCAB_REFERENCE:
                 {
                     *ok = rpc_ITorque->getRefTorque(cmd.get(3).asInt(), &dtmp);
@@ -818,26 +652,6 @@ YARP_WARNING_POP
                     delete[] p;
                 }
                 break;
-
-                case VOCAB_LIM:
-                {
-                    *ok = rpc_ITorque->getTorqueErrorLimit(cmd.get(3).asInt(), &dtmp);
-                    response.addDouble(dtmp);
-                }
-                break;
-
-                case VOCAB_LIMS:
-                {
-                    double *p = new double[controlledJoints];
-                    *ok = rpc_ITorque->getTorqueErrorLimits(p);
-                    Bottle& b = response.addList();
-                    int i;
-                    for (i = 0; i < controlledJoints; i++)
-                        b.addDouble(p[i]);
-                    delete[] p;
-                }
-                break;
-
             }
         }
             lastRpcStamp.update();
@@ -1030,91 +844,584 @@ void RPCMessagesParser::handleInteractionModeMsg(const yarp::os::Bottle& cmd,
     }
 }
 
-
-void RPCMessagesParser::handleOpenLoopMsg(const yarp::os::Bottle& cmd, yarp::os::Bottle& response, bool *rec, bool *ok)
+void RPCMessagesParser::handleCurrentMsg(const yarp::os::Bottle& cmd, yarp::os::Bottle& response, bool *rec, bool *ok)
 {
-    if (!rpc_IOpenLoop)
+    if (ControlBoardWrapper_p->verbose())
+        yDebug("Handling ICurrentControl message\n");
+
+    if (!rpc_ICurrent)
     {
-        yError("Error I do not have a valid OpenLoopInterface interface");
-        *ok=false;
+        yError("controlBoardWrapper: I do not have a valid ICurrentControl interface");
+        *ok = false;
         return;
     }
 
-    if (ControlBoardWrapper_p->verbose())
+    int code = cmd.get(0).asVocab();
+    int action = cmd.get(2).asVocab();
+
+    *ok = false;
+    *rec = true;
+    switch (code)
     {
-        yDebug("Handling OpenLoopInterface message: received command: %s\n",  cmd.toString().c_str());
+    case VOCAB_SET:
+    {
+        switch (action)
+        {
+            case VOCAB_CURRENT_REF:
+            {
+                yError("VOCAB_CURRENT_REF methods is implemented as streaming");
+                *ok = false;
+            }
+            break;
+
+            case VOCAB_CURRENT_REFS:
+            {
+                yError("VOCAB_CURRENT_REFS methods is implemented as streaming");
+                *ok = false;
+            }
+            break;
+
+            case VOCAB_CURRENT_REF_GROUP:
+            {
+                yError("VOCAB_CURRENT_REF_GROUP methods is implemented as streaming");
+                *ok = false;
+            }
+            break;
+
+            default:
+            {
+                yError() << "Unknown handleCurrentMsg message received";
+                *rec = false;
+                *ok = false;
+            }
+            break;
+        }
+    }
+    break;
+
+    case VOCAB_GET:
+    {
+        *rec = true;
+        if (ControlBoardWrapper_p->verbose())
+            yDebug("get command received\n");
+        double dtmp = 0.0;
+        double dtmp2 = 0.0;
+        response.addVocab(VOCAB_IS);
+        response.add(cmd.get(1));
+
+        switch (action)
+        {
+            case VOCAB_CURRENT_REF:
+            {
+                *ok = rpc_ICurrent->getRefCurrent(cmd.get(3).asInt(), &dtmp);
+                response.addDouble(dtmp);
+            }
+            break;
+
+            case VOCAB_CURRENT_REFS:
+            {
+                double *p = new double[controlledJoints];
+                *ok = rpc_ICurrent->getRefCurrents(p);
+                Bottle& b = response.addList();
+                int i;
+                for (i = 0; i < controlledJoints; i++)
+                    b.addDouble(p[i]);
+                delete[] p;
+            }
+            break;
+
+            case VOCAB_CURRENT_RANGE:
+            {
+                
+                *ok = rpc_ICurrent->getCurrentRange(cmd.get(3).asInt(), &dtmp, &dtmp2);
+                response.addDouble(dtmp);
+                response.addDouble(dtmp2);
+            }
+            break;
+
+            case VOCAB_CURRENT_RANGES:
+            {
+                double *p1 = new double[controlledJoints];
+                double *p2 = new double[controlledJoints];
+                *ok = rpc_ICurrent->getCurrentRanges(p1,p2);
+                Bottle& b1 = response.addList();
+                Bottle& b2 = response.addList();
+                int i;
+                for (i = 0; i < controlledJoints; i++)
+                {
+                    b1.addDouble(p1[i]);
+                }
+                for (i = 0; i < controlledJoints; i++)
+                {
+                    b2.addDouble(p2[i]);
+                }
+                delete[] p1;
+                delete[] p2;
+            }
+            break;
+
+            default:
+            {
+                yError() << "Unknown handleCurrentMsg message received";
+                *rec = false;
+                *ok = false;
+            }
+            break;
+        }
+    }
+    break;
+
+    default:
+    {
+        yError() << "Unknown handleCurrentMsg message received";
+        *rec = false;
+        *ok = false;
+    }
+    break;
+    }
+}
+
+void RPCMessagesParser::handlePidMsg(const yarp::os::Bottle& cmd, yarp::os::Bottle& response, bool *rec, bool *ok)
+{
+    if (ControlBoardWrapper_p->verbose())
+        yDebug("Handling IPidControl message\n");
+
+    if (!rpc_IPid)
+    {
+        yError("controlBoardWrapper: I do not have a valid IPidControl interface");
+        *ok = false;
+        return;
     }
 
-    int action = cmd.get(0).asVocab();
+    int code = cmd.get(0).asVocab();
+    int action = cmd.get(2).asVocab();
+    yarp::dev::PidControlTypeEnum pidtype = static_cast<yarp::dev::PidControlTypeEnum>(cmd.get(3).asVocab());
 
-    switch(action)
+    *ok = false;
+    *rec = true;
+    switch (code)
     {
         case VOCAB_SET:
         {
-            yError() << "ControlBoardWrapper2 received a set command in the OpenLoopInterface on rpc port "
-                     << "This is wrong, no SET command should use rpc for this interface, but they should use the sreaming port!" ;
-            *rec = false;
+            *rec = true;
+            if (ControlBoardWrapper_p->verbose())
+                yDebug("set command received\n");
+
+            switch(action)
+            {
+                case VOCAB_OFFSET:
+                {
+                    double v;
+                    int j = cmd.get(4).asInt();
+                    v=cmd.get(5).asDouble();
+                    *ok = rpc_IPid->setPidOffset(pidtype, j, v);
+                }
+                break;
+
+                case VOCAB_PID:
+                {
+                    Pid p;
+                    int j = cmd.get(4).asInt();
+                    Bottle *b = cmd.get(5).asList();
+
+                    if (b==NULL)
+                        break;
+
+                    p.kp = b->get(0).asDouble();
+                    p.kd = b->get(1).asDouble();
+                    p.ki = b->get(2).asDouble();
+                    p.max_int = b->get(3).asDouble();
+                    p.max_output = b->get(4).asDouble();
+                    p.offset = b->get(5).asDouble();
+                    p.scale = b->get(6).asDouble();
+                    p.stiction_up_val = b->get(7).asDouble();
+                    p.stiction_down_val = b->get(8).asDouble();
+                    p.kff = b->get(9).asDouble();
+                    *ok = rpc_IPid->setPid(pidtype, j, p);
+                }
+                break;
+
+                case VOCAB_PIDS:
+                {
+                    Bottle *b = cmd.get(4).asList();
+
+                    if (b==NULL)
+                        break;
+
+                    int i;
+                    const int njs = b->size();
+                    if (njs==controlledJoints)
+                    {
+                        Pid *p = new Pid[njs];
+
+                        bool allOK=true;
+
+                        for (i = 0; i < njs; i++)
+                        {
+                            Bottle *c = b->get(i).asList();
+                            if (c!=NULL)
+                            {
+                                p[i].kp = c->get(0).asDouble();
+                                p[i].kd = c->get(1).asDouble();
+                                p[i].ki = c->get(2).asDouble();
+                                p[i].max_int = c->get(3).asDouble();
+                                p[i].max_output = c->get(4).asDouble();
+                                p[i].offset = c->get(5).asDouble();
+                                p[i].scale = c->get(6).asDouble();
+                                p[i].stiction_up_val = c->get(7).asDouble();
+                                p[i].stiction_down_val = c->get(8).asDouble();
+                                p[i].kff = c->get(9).asDouble();
+                            }
+                            else
+                            {
+                                allOK=false;
+                            }
+                        }
+                        if (allOK)
+                            *ok = rpc_IPid->setPids(pidtype, p);
+                        else
+                            *ok=false;
+
+                        delete[] p;
+                    }
+                }
+                break;
+
+                case VOCAB_REF:
+                {
+                    *ok = rpc_IPid->setPidReference (pidtype, cmd.get(4).asInt(), cmd.get(5).asDouble());
+                }
+                break;
+
+                case VOCAB_REFS:
+                {
+                    Bottle *b = cmd.get(4).asList();
+
+                    if (b==NULL)
+                        break;
+
+                    int i;
+                    const int njs = b->size();
+                    if (njs==controlledJoints)
+                    {
+                        double *p = new double[njs];    // LATER: optimize to avoid allocation.
+                        for (i = 0; i < njs; i++)
+                            p[i] = b->get(i).asDouble();
+                        *ok = rpc_IPid->setPidReferences (pidtype, p);
+                        delete[] p;
+                    }
+                }
+                break;
+
+                case VOCAB_LIM:
+                {
+                    *ok = rpc_IPid->setPidErrorLimit (pidtype, cmd.get(4).asInt(), cmd.get(5).asDouble());
+                }
+                break;
+
+                case VOCAB_LIMS:
+                {
+                    Bottle *b = cmd.get(4).asList();
+                    int i;
+
+                    if (b==NULL)
+                        break;
+
+                    const int njs = b->size();
+                    if (njs==controlledJoints)
+                    {
+                        double *p = new double[njs];    // LATER: optimize to avoid allocation.
+                        for (i = 0; i < njs; i++)
+                            p[i] = b->get(i).asDouble();
+                        *ok = rpc_IPid->setPidErrorLimits (pidtype, p);
+                        delete[] p;
+                    }
+                }
+                break;
+
+                case VOCAB_RESET:
+                {
+                    *ok = rpc_IPid->resetPid (pidtype, cmd.get(4).asInt());
+                }
+                break;
+
+                case VOCAB_DISABLE:
+                {
+                    *ok = rpc_IPid->disablePid (pidtype, cmd.get(4).asInt());
+                }
+                break;
+
+                case VOCAB_ENABLE:
+                {
+                    *ok = rpc_IPid->enablePid (pidtype, cmd.get(4).asInt());
+                }
+                break;
+            }
         }
         break;
 
         case VOCAB_GET:
         {
-            response.clear();
+            *rec = true;
+            if (ControlBoardWrapper_p->verbose())
+                yDebug("get command received\n");
+            double dtmp = 0.0;
+            double dtmp2 = 0.0;
             response.addVocab(VOCAB_IS);
             response.add(cmd.get(1));
-            switch (cmd.get(2).asVocab())
+
+            switch (action)
             {
-                case VOCAB_OPENLOOP_REF_OUTPUT:
-                {
-                    double tmp;
-                    *rec = true;
-                    *ok = rpc_IOpenLoop->getRefOutput(cmd.get(3).asInt(), &tmp);
-                    response.addDouble(tmp);
-                }
-                break;
-
-                case VOCAB_OPENLOOP_REF_OUTPUTS:
+                case VOCAB_LIMS:
                 {
                     double *p = new double[controlledJoints];
-                    *rec = true;
-                    *ok = rpc_IOpenLoop->getRefOutputs(p);
+                    *ok = rpc_IPid->getPidErrorLimits(pidtype, p);
                     Bottle& b = response.addList();
-
-                    for (int i = 0; i < controlledJoints; i++)
+                    int i;
+                    for (i = 0; i < controlledJoints; i++)
                         b.addDouble(p[i]);
                     delete[] p;
                 }
                 break;
 
-                case VOCAB_OPENLOOP_PWM_OUTPUT:
+                case VOCAB_ENABLE:
                 {
-                    double tmp;
-                    *rec = true;
-                    *ok = rpc_IOpenLoop->getRefOutput(cmd.get(3).asInt(), &tmp);
-                    response.addDouble(tmp);
+                    bool booltmp=false;
+                    *ok = rpc_IPid->isPidEnabled(pidtype, cmd.get(4).asInt(), &booltmp);
+                    response.addInt(booltmp);
                 }
                 break;
 
-                case VOCAB_OPENLOOP_PWM_OUTPUTS:
+                case VOCAB_ERR:
+                {
+                    *ok = rpc_IPid->getPidError(pidtype, cmd.get(4).asInt(), &dtmp);
+                    response.addDouble(dtmp);
+                }
+                break;
+
+                case VOCAB_ERRS:
                 {
                     double *p = new double[controlledJoints];
-                    *rec = true;
-                    *ok = rpc_IOpenLoop->getRefOutputs(p);
+                    *ok = rpc_IPid->getPidErrors(pidtype, p);
                     Bottle& b = response.addList();
-
-                    for (int i = 0; i < controlledJoints; i++)
+                    int i;
+                    for (i = 0; i < controlledJoints; i++)
                         b.addDouble(p[i]);
                     delete[] p;
+                }
+                break;
+
+                case VOCAB_OUTPUT:
+                {
+                    *ok = rpc_IPid->getPidOutput(pidtype, cmd.get(4).asInt(), &dtmp);
+                    response.addDouble(dtmp);
+                }
+                break;
+
+                case VOCAB_OUTPUTS:
+                {
+                    double *p = new double[controlledJoints];
+                    *ok = rpc_IPid->getPidOutputs(pidtype, p);
+                    Bottle& b = response.addList();
+                    int i;
+                    for (i = 0; i < controlledJoints; i++)
+                        b.addDouble(p[i]);
+                    delete[] p;
+                }
+                break;
+
+                case VOCAB_PID:
+                {
+                    Pid p;
+                    *ok = rpc_IPid->getPid(pidtype, cmd.get(4).asInt(), &p);
+                    Bottle& b = response.addList();
+                    b.addDouble(p.kp);
+                    b.addDouble(p.kd);
+                    b.addDouble(p.ki);
+                    b.addDouble(p.max_int);
+                    b.addDouble(p.max_output);
+                    b.addDouble(p.offset);
+                    b.addDouble(p.scale);
+                    b.addDouble(p.stiction_up_val);
+                    b.addDouble(p.stiction_down_val);
+                    b.addDouble(p.kff);
+                }
+                break;
+
+                case VOCAB_PIDS:
+                {
+                    Pid *p = new Pid[controlledJoints];
+                    *ok = rpc_IPid->getPids(pidtype, p);
+                    Bottle& b = response.addList();
+                    int i;
+                    for (i = 0; i < controlledJoints; i++)
+                    {
+                        Bottle& c = b.addList();
+                        c.addDouble(p[i].kp);
+                        c.addDouble(p[i].kd);
+                        c.addDouble(p[i].ki);
+                        c.addDouble(p[i].max_int);
+                        c.addDouble(p[i].max_output);
+                        c.addDouble(p[i].offset);
+                        c.addDouble(p[i].scale);
+                        c.addDouble(p[i].stiction_up_val);
+                        c.addDouble(p[i].stiction_down_val);
+                        c.addDouble(p[i].kff);
+                    }
+                    delete[] p;
+                }
+                break;
+
+                case VOCAB_REFERENCE:
+                {
+                    *ok = rpc_IPid->getPidReference(pidtype, cmd.get(4).asInt(), &dtmp);
+                    response.addDouble(dtmp);
+                }
+                break;
+
+                case VOCAB_REFERENCES:
+                {
+                    double *p = new double[controlledJoints];
+                    *ok = rpc_IPid->getPidReferences(pidtype, p);
+                    Bottle& b = response.addList();
+                    int i;
+                    for (i = 0; i < controlledJoints; i++)
+                        b.addDouble(p[i]);
+                    delete[] p;
+                }
+                break;
+
+                case VOCAB_LIM:
+                {
+                    *ok = rpc_IPid->getPidErrorLimit(pidtype, cmd.get(4).asInt(), &dtmp);
+                    response.addDouble(dtmp);
                 }
                 break;
             }
         }
-            lastRpcStamp.update();
-            appendTimeStamp(response, lastRpcStamp);
-
         break;
+
         default:
+        {
+            yError() << "Unknown handlePWMMsg message received";
             *rec = false;
+            *ok = false;
+        }
+        break;
+    }
+}
+
+void RPCMessagesParser::handlePWMMsg(const yarp::os::Bottle& cmd, yarp::os::Bottle& response, bool *rec, bool *ok)
+{
+    if (ControlBoardWrapper_p->verbose())
+        yDebug("Handling IPWMControl message\n");
+
+    if (!rpc_IPWM)
+    {
+        yError("controlBoardWrapper: I do not have a valid IPWMControl interface");
+        *ok = false;
+        return;
+    }
+
+    int code = cmd.get(0).asVocab();
+    int action = cmd.get(2).asVocab();
+
+    *ok = false;
+    *rec = true;
+    switch (code)
+    {
+        case VOCAB_SET:
+        {
+            *rec = true;
+            if (ControlBoardWrapper_p->verbose())
+                yDebug("set command received\n");
+
+            switch (action)
+            {
+                case VOCAB_PWMCONTROL_REF_PWM:
+                {
+                    //handled as streaming!
+                    yError() << "VOCAB_PWMCONTROL_REF_PWM handled as straming";
+                    *ok = false;
+                }
+                break;
+
+                default:
+                {
+                    yError() << "Unknown handlePWMMsg message received";
+                    *ok = false;
+                }
+                break;
+            }
+        }
+        break;
+
+        case VOCAB_GET:
+        {
+            *rec = true;
+            if (ControlBoardWrapper_p->verbose())
+                yDebug("get command received\n");
+            double dtmp = 0.0;
+            double dtmp2 = 0.0;
+            response.addVocab(VOCAB_IS);
+            response.add(cmd.get(1));
+
+            switch (action)
+            {
+                case VOCAB_PWMCONTROL_REF_PWM:
+                {
+                    *ok = rpc_IPWM->getRefDutyCycle(cmd.get(3).asInt(), &dtmp);
+                    response.addDouble(dtmp);
+                }
+                break;
+
+                case VOCAB_PWMCONTROL_REF_PWMS:
+                {
+                    double *p = new double[controlledJoints];
+                    *ok = rpc_IPWM->getRefDutyCycles(p);
+                    Bottle& b = response.addList();
+                    int i;
+                    for (i = 0; i < controlledJoints; i++)
+                        b.addDouble(p[i]);
+                    delete[] p;
+                }
+                break;
+
+                case VOCAB_PWMCONTROL_PWM_OUTPUT:
+                {
+                    *ok = rpc_IPWM->getDutyCycle(cmd.get(3).asInt(), &dtmp);
+                    response.addDouble(dtmp);
+                }
+                break;
+
+                case VOCAB_PWMCONTROL_PWM_OUTPUTS:
+                {
+                    double *p = new double[controlledJoints];
+                    *ok = rpc_IPWM->getRefDutyCycles(p);
+                    Bottle& b = response.addList();
+                    int i;
+                    for (i = 0; i < controlledJoints; i++)
+                        b.addDouble(p[i]);
+                    delete[] p;
+                }
+                break;
+
+                default:
+                {
+                    yError() << "Unknown handlePWMMsg message received";
+                    *ok = false;
+                }
+                break;
+            }
+        }
+        break;
+
+        default:
+        {
+            yError() << "Unknown handlePWMMsg message received";
+            *rec = false;
+            *ok = false;
+        }
         break;
     }
 }
@@ -1321,6 +1628,10 @@ bool RPCMessagesParser::respond(const yarp::os::Bottle& cmd, yarp::os::Bottle& r
     {
         switch (cmd.get(1).asVocab())
         {
+            case VOCAB_PID:
+                handlePidMsg(cmd, response, &rec, &ok);
+            break;
+
             case VOCAB_TORQUE:
                 handleTorqueMsg(cmd, response, &rec, &ok);
             break;
@@ -1337,10 +1648,6 @@ bool RPCMessagesParser::respond(const yarp::os::Bottle& cmd, yarp::os::Bottle& r
                 handleInteractionModeMsg(cmd, response, &rec, &ok);
             break;
 
-            case VOCAB_OPENLOOP_INTERFACE:
-                handleOpenLoopMsg(cmd, response, &rec, &ok);
-            break;
-
             case VOCAB_PROTOCOL_VERSION:
                 handleProtocolVersionRequest(cmd, response, &rec, &ok);
             break;
@@ -1352,6 +1659,14 @@ bool RPCMessagesParser::respond(const yarp::os::Bottle& cmd, yarp::os::Bottle& r
             case VOCAB_REMOTE_VARIABILE_INTERFACE:
                 handleRemoteVariablesMsg(cmd, response, &rec, &ok);
             break;
+
+            case VOCAB_CURRENTCONTROL_INTERFACE:
+                handleCurrentMsg(cmd, response, &rec, &ok);
+            break;
+
+            case VOCAB_PWMCONTROL_INTERFACE:
+                handlePWMMsg(cmd, response, &rec, &ok);
+                break;
 
             default:
                 // fallback for old interfaces with no specific name
@@ -1436,286 +1751,6 @@ bool RPCMessagesParser::respond(const yarp::os::Bottle& cmd, yarp::os::Bottle& r
 
                         switch(cmd.get(1).asVocab())
                         {
-                            case VOCAB_OUTPUT:
-                            {
-                            yWarning() << "DEPRECATED setOutput (should be in streaming!) Check you are using the updated RemoteControlBoard class";
-                            yWarning() << "Correct message should be [" << Vocab::decode(VOCAB_OPENLOOP_INTERFACE) << "] [" << Vocab::decode(VOCAB_OPENLOOP_REF_OUTPUT) << "] joint value";
-                                ok = false;
-                            }
-                            break;
-
-                            case VOCAB_OUTPUTS:
-                            {
-                            yWarning() << "DEPRECATED setOutpus (should be in streaming!) Check you are using the updated RemoteControlBoard class";
-                            yWarning() << "Correct message should be [" << Vocab::decode(VOCAB_OPENLOOP_INTERFACE) << "] [" << Vocab::decode(VOCAB_OPENLOOP_REF_OUTPUTS) << "] joint value";
-                                ok = false;
-                            }
-                            break;
-
-                            case VOCAB_OFFSET:
-                            {
-                                double v;
-                                int j = cmd.get(2).asInt();
-                                v=cmd.get(3).asDouble();
-                                ok = rpc_IPid->setOffset(j, v);
-                            }
-                            break;
-
-                            case VOCAB_PID:
-                            {
-                                Pid p;
-                                int j = cmd.get(2).asInt();
-                                Bottle *b = cmd.get(3).asList();
-
-                                if (b==NULL)
-                                    break;
-
-                                p.kp = b->get(0).asDouble();
-                                p.kd = b->get(1).asDouble();
-                                p.ki = b->get(2).asDouble();
-                                p.max_int = b->get(3).asDouble();
-                                p.max_output = b->get(4).asDouble();
-                                p.offset = b->get(5).asDouble();
-                                p.scale = b->get(6).asDouble();
-                                p.stiction_up_val = b->get(7).asDouble();
-                                p.stiction_down_val = b->get(8).asDouble();
-                                p.kff = b->get(9).asDouble();
-                                ok = rpc_IPid->setPid(j, p);
-                            }
-                            break;
-
-                            case VOCAB_PIDS:
-                            {
-                                Bottle *b = cmd.get(2).asList();
-
-                                if (b==NULL)
-                                    break;
-
-                                int i;
-                                const int njs = b->size();
-                                if (njs==controlledJoints)
-                                {
-                                    Pid *p = new Pid[njs];
-
-                                    bool allOK=true;
-
-                                    for (i = 0; i < njs; i++)
-                                    {
-                                        Bottle *c = b->get(i).asList();
-
-                                        if (c!=NULL)
-                                        {
-                                            p[i].kp = c->get(0).asDouble();
-                                            p[i].kd = c->get(1).asDouble();
-                                            p[i].ki = c->get(2).asDouble();
-                                            p[i].max_int = c->get(3).asDouble();
-                                            p[i].max_output = c->get(4).asDouble();
-                                            p[i].offset = c->get(5).asDouble();
-                                            p[i].scale = c->get(6).asDouble();
-                                            p[i].stiction_up_val = c->get(7).asDouble();
-                                            p[i].stiction_down_val = c->get(8).asDouble();
-                                            p[i].kff = c->get(9).asDouble();
-                                        }
-                                        else
-                                        {
-                                            allOK=false;
-                                        }
-                                    }
-                                    if (allOK)
-                                        ok = rpc_IPid->setPids(p);
-                                    else
-                                        ok=false;
-
-                                    delete[] p;
-                                }
-                            }
-                            break;
-
-                            case VOCAB_VEL_PID:
-                            {
-                                Pid p;
-                                int j = cmd.get(2).asInt();
-                                Bottle *b = cmd.get(3).asList();
-
-                                if (b==NULL)
-                                    break;
-
-                                p.kp = b->get(0).asDouble();
-                                p.kd = b->get(1).asDouble();
-                                p.ki = b->get(2).asDouble();
-                                p.max_int = b->get(3).asDouble();
-                                p.max_output = b->get(4).asDouble();
-                                p.offset = b->get(5).asDouble();
-                                p.scale = b->get(6).asDouble();
-                                p.stiction_up_val = b->get(7).asDouble();
-                                p.stiction_down_val = b->get(8).asDouble();
-                                p.kff = b->get(9).asDouble();
-                                ok = rpc_IVelCtrl2->setVelPid(j, p);
-                            }
-
-                            case VOCAB_VEL_PIDS:
-                            {
-                                Bottle *b = cmd.get(2).asList();
-
-                                if (b==NULL)
-                                    break;
-
-                                int i;
-                                const int njs = b->size();
-                                if (njs==controlledJoints)
-                                {
-                                    Pid *p = new Pid[njs];
-
-                                    bool allOK=true;
-
-                                    for (i = 0; i < njs; i++)
-                                    {
-                                        Bottle *c = b->get(i).asList();
-
-                                        if (c!=NULL)
-                                        {
-                                            p[i].kp = c->get(0).asDouble();
-                                            p[i].kd = c->get(1).asDouble();
-                                            p[i].ki = c->get(2).asDouble();
-                                            p[i].max_int = c->get(3).asDouble();
-                                            p[i].max_output = c->get(4).asDouble();
-                                            p[i].offset = c->get(5).asDouble();
-                                            p[i].scale = c->get(6).asDouble();
-                                            p[i].stiction_up_val = c->get(7).asDouble();
-                                            p[i].stiction_down_val = c->get(8).asDouble();
-                                            p[i].kff = c->get(9).asDouble();
-                                        }
-                                        else
-                                        {
-                                            allOK=false;
-                                        }
-                                    }
-                                    if (allOK)
-                                        ok = rpc_IVelCtrl2->setVelPids(p);
-                                    else
-                                        ok=false;
-
-                                    delete[] p;
-                                }
-                            }
-
-                            case VOCAB_REF:
-                            {
-                                ok = rpc_IPid->setReference (cmd.get(2).asInt(), cmd.get(3).asDouble());
-                            }
-                            break;
-
-                            case VOCAB_REFS:
-                            {
-                                Bottle *b = cmd.get(2).asList();
-
-                                if (b==NULL)
-                                    break;
-
-                                int i;
-                                const int njs = b->size();
-                                if (njs==controlledJoints)
-                                {
-                                    double *p = new double[njs];    // LATER: optimize to avoid allocation.
-                                    for (i = 0; i < njs; i++)
-                                        p[i] = b->get(i).asDouble();
-                                    ok = rpc_IPid->setReferences (p);
-                                    delete[] p;
-                                }
-                            }
-                            break;
-
-                            case VOCAB_LIM:
-                            {
-                                ok = rpc_IPid->setErrorLimit (cmd.get(2).asInt(), cmd.get(3).asDouble());
-                            }
-                            break;
-
-                            case VOCAB_LIMS:
-                            {
-                                Bottle *b = cmd.get(2).asList();
-                                int i;
-
-                                if (b==NULL)
-                                    break;
-
-                                const int njs = b->size();
-                                if (njs==controlledJoints)
-                                {
-                                    double *p = new double[njs];    // LATER: optimize to avoid allocation.
-                                    for (i = 0; i < njs; i++)
-                                        p[i] = b->get(i).asDouble();
-                                    ok = rpc_IPid->setErrorLimits (p);
-                                    delete[] p;
-                                }
-                            }
-                            break;
-
-                            case VOCAB_RESET:
-                            {
-                                ok = rpc_IPid->resetPid (cmd.get(2).asInt());
-                            }
-                            break;
-
-                            case VOCAB_DISABLE:
-                            {
-                                ok = rpc_IPid->disablePid (cmd.get(2).asInt());
-                            }
-                            break;
-
-                            case VOCAB_ENABLE:
-                            {
-                                ok = rpc_IPid->enablePid (cmd.get(2).asInt());
-                            }
-                            break;
-
-#ifndef YARP_NO_DEPRECATED // since YARP 2.3.65
-                            case VOCAB_TORQUE_MODE:
-                            {
-YARP_WARNING_PUSH
-YARP_DISABLE_DEPRECATED_WARNING
-                                ok = rpc_ITorque->setTorqueMode();
-YARP_WARNING_POP
-                            }
-                            break;
-
-                            case VOCAB_VELOCITY_MODE:
-                            {
-YARP_WARNING_PUSH
-YARP_DISABLE_DEPRECATED_WARNING
-                                ok = rpc_IVelCtrl->setVelocityMode();
-YARP_WARNING_POP
-                            }
-                            break;
-
-                            case VOCAB_POSITION_MODE:
-                            {
-YARP_WARNING_PUSH
-YARP_DISABLE_DEPRECATED_WARNING
-                                ok = rpc_IPosCtrl->setPositionMode();
-YARP_WARNING_POP
-                            }
-                            break;
-
-                            case VOCAB_POSITION_DIRECT:
-                            {
-YARP_WARNING_PUSH
-YARP_DISABLE_DEPRECATED_WARNING
-                                ok = rpc_IPosDirect->setPositionDirectMode();
-YARP_WARNING_POP
-                            }
-                            break;
-
-                            case VOCAB_OPENLOOP_MODE:
-                            {
-YARP_WARNING_PUSH
-YARP_DISABLE_DEPRECATED_WARNING
-                                ok = rpc_IOpenLoop->setOpenLoopMode();
-YARP_WARNING_POP
-                            }
-                            break;
-#endif // YARP_NO_DEPRECATED
-
                             case VOCAB_POSITION_MOVE:
                             {
                                 ok = rpc_IPosCtrl->positionMove(cmd.get(2).asInt(), cmd.get(3).asDouble());
@@ -2139,24 +2174,6 @@ YARP_WARNING_POP
 
                         switch(cmd.get(1).asVocab())
                         {
-                            case VOCAB_ERR:
-                            {
-                                ok = rpc_IPid->getError(cmd.get(2).asInt(), &dtmp);
-                                response.addDouble(dtmp);
-                            }
-                            break;
-
-                            case VOCAB_ERRS:
-                            {
-                                double *p = new double[controlledJoints];
-                                ok = rpc_IPid->getErrors(p);
-                                Bottle& b = response.addList();
-                                int i;
-                                for (i = 0; i < controlledJoints; i++)
-                                    b.addDouble(p[i]);
-                                delete[] p;
-                            }
-                            break;
 
                             case VOCAB_TEMPERATURE_LIMIT:
                             {
@@ -2195,126 +2212,6 @@ YARP_WARNING_POP
                             {
                                 ok = rcp_IAmp->getMaxCurrent(cmd.get(2).asInt(), &dtmp);
                                 response.addDouble(dtmp);
-                            }
-                            break;
-
-                            case VOCAB_OUTPUT:
-                            {
-                                ok = rpc_IPid->getOutput(cmd.get(2).asInt(), &dtmp);
-                                response.addDouble(dtmp);
-                            }
-                            break;
-
-                            case VOCAB_OUTPUTS:
-                            {
-                                double *p = new double[controlledJoints];
-                                ok = rpc_IPid->getOutputs(p);
-                                Bottle& b = response.addList();
-                                int i;
-                                for (i = 0; i < controlledJoints; i++)
-                                    b.addDouble(p[i]);
-                                delete[] p;
-                            }
-                            break;
-
-                            case VOCAB_PID:
-                            {
-                                Pid p;
-                                ok = rpc_IPid->getPid(cmd.get(2).asInt(), &p);
-                                Bottle& b = response.addList();
-                                b.addDouble(p.kp);
-                                b.addDouble(p.kd);
-                                b.addDouble(p.ki);
-                                b.addDouble(p.max_int);
-                                b.addDouble(p.max_output);
-                                b.addDouble(p.offset);
-                                b.addDouble(p.scale);
-                                b.addDouble(p.stiction_up_val);
-                                b.addDouble(p.stiction_down_val);
-                                b.addDouble(p.kff);
-                            }
-                            break;
-
-                            case VOCAB_PIDS:
-                            {
-                                Pid *p = new Pid[controlledJoints];
-                                ok = rpc_IPid->getPids(p);
-                                Bottle& b = response.addList();
-                                int i;
-                                for (i = 0; i < controlledJoints; i++)
-                                {
-                                    Bottle& c = b.addList();
-                                    c.addDouble(p[i].kp);
-                                    c.addDouble(p[i].kd);
-                                    c.addDouble(p[i].ki);
-                                    c.addDouble(p[i].max_int);
-                                    c.addDouble(p[i].max_output);
-                                    c.addDouble(p[i].offset);
-                                    c.addDouble(p[i].scale);
-                                    c.addDouble(p[i].stiction_up_val);
-                                    c.addDouble(p[i].stiction_down_val);
-                                    c.addDouble(p[i].kff);
-                                }
-                                delete[] p;
-                            }
-                            break;
-
-                            case VOCAB_VEL_PID:
-                            {
-                                Pid p;
-                                ok = rpc_IVelCtrl2->getVelPid(cmd.get(2).asInt(), &p);
-                                Bottle& b = response.addList();
-                                b.addDouble(p.kp);
-                                b.addDouble(p.kd);
-                                b.addDouble(p.ki);
-                                b.addDouble(p.max_int);
-                                b.addDouble(p.max_output);
-                                b.addDouble(p.offset);
-                                b.addDouble(p.scale);
-                                b.addDouble(p.stiction_up_val);
-                                b.addDouble(p.stiction_down_val);
-                                b.addDouble(p.kff);
-                            }
-
-                            case VOCAB_VEL_PIDS:
-                            {
-                                Pid *p = new Pid[controlledJoints];
-                                ok = rpc_IVelCtrl2->getVelPids(p);
-                                Bottle& b = response.addList();
-                                int i;
-                                for (i = 0; i < controlledJoints; i++)
-                                {
-                                    Bottle& c = b.addList();
-                                    c.addDouble(p[i].kp);
-                                    c.addDouble(p[i].kd);
-                                    c.addDouble(p[i].ki);
-                                    c.addDouble(p[i].max_int);
-                                    c.addDouble(p[i].max_output);
-                                    c.addDouble(p[i].offset);
-                                    c.addDouble(p[i].scale);
-                                    c.addDouble(p[i].stiction_up_val);
-                                    c.addDouble(p[i].stiction_down_val);
-                                    c.addDouble(p[i].kff);
-                                }
-                                delete[] p;
-                            }
-
-                            case VOCAB_REFERENCE:
-                            {
-                                ok = rpc_IPid->getReference(cmd.get(2).asInt(), &dtmp);
-                                response.addDouble(dtmp);
-                            }
-                            break;
-
-                            case VOCAB_REFERENCES:
-                            {
-                                double *p = new double[controlledJoints];
-                                ok = rpc_IPid->getReferences(p);
-                                Bottle& b = response.addList();
-                                int i;
-                                for (i = 0; i < controlledJoints; i++)
-                                    b.addDouble(p[i]);
-                                delete[] p;
                             }
                             break;
 
@@ -2410,13 +2307,6 @@ YARP_WARNING_POP
                             }
                             break;
 
-                            case VOCAB_LIM:
-                            {
-                                ok = rpc_IPid->getErrorLimit(cmd.get(2).asInt(), &dtmp);
-                                response.addDouble(dtmp);
-                            }
-                            break;
-
                             case VOCAB_VELOCITY_MOVE:
                             {
                                 if (ControlBoardWrapper_p->verbose())
@@ -2469,15 +2359,11 @@ YARP_WARNING_POP
                             }
                             break;
 
-                            case VOCAB_LIMS:
+                            case VOCAB_MOTORS_NUMBER:
                             {
-                                double *p = new double[controlledJoints];
-                                ok = rpc_IPid->getErrorLimits(p);
-                                Bottle& b = response.addList();
-                                int i;
-                                for (i = 0; i < controlledJoints; i++)
-                                    b.addDouble(p[i]);
-                                delete[] p;
+                                int tmp;
+                                ok = rpc_IMotor->getNumberOfMotors(&tmp);
+                                response.addInt(tmp);
                             }
                             break;
 
@@ -2943,11 +2829,12 @@ void RPCMessagesParser::init(ControlBoardWrapper *x)
     rpc_AxisInfo          = dynamic_cast<yarp::dev::IAxisInfo *>            (ControlBoardWrapper_p);
     rpc_IRemoteCalibrator = dynamic_cast<yarp::dev::IRemoteCalibrator *>    (ControlBoardWrapper_p);
     rpc_Icalib2           = dynamic_cast<yarp::dev::IControlCalibration2 *> (ControlBoardWrapper_p);
-    rpc_IOpenLoop         = dynamic_cast<yarp::dev::IOpenLoopControl *>     (ControlBoardWrapper_p);
     rpc_IImpedance        = dynamic_cast<yarp::dev::IImpedanceControl *>    (ControlBoardWrapper_p);
     rpc_ITorque           = dynamic_cast<yarp::dev::ITorqueControl *>       (ControlBoardWrapper_p);
     rpc_iCtrlMode         = dynamic_cast<yarp::dev::IControlMode *>         (ControlBoardWrapper_p);
     rpc_iCtrlMode2        = dynamic_cast<yarp::dev::IControlMode2 *>        (ControlBoardWrapper_p);
     rpc_IInteract         = dynamic_cast<yarp::dev::IInteractionMode *>     (ControlBoardWrapper_p);
+    rpc_ICurrent          = dynamic_cast<yarp::dev::ICurrentControl *>      (ControlBoardWrapper_p);
+    rpc_IPWM              = dynamic_cast<yarp::dev::IPWMControl *>          (ControlBoardWrapper_p);
     controlledJoints      = 0;
 }

@@ -26,7 +26,7 @@ NetInt32 Vocab::encode(const ConstString& str) {
             }
         }
     }
-    return VOCAB(a,b,c,d);
+    return VOCAB(a, b, c, d);
 }
 
 

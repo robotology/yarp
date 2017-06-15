@@ -9,9 +9,9 @@
 #include <QKeyEvent>
 #include <QPainter>
 #include <QStyle>
-#include <math.h>
+#include <cmath>
 
-//just because old VS2010 does not implement round() function in math.h
+//just because old VS2010 does not implement round() function in cmath
 double my_round(double number)
 {
     return number < 0.0 ? ceil(number - 0.5) : floor(number + 0.5);

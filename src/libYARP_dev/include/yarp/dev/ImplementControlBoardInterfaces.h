@@ -14,24 +14,17 @@ namespace yarp{
     namespace dev {
         template <class DERIVED, class IMPLEMENT> class ImplementPositionControl;
         template <class DERIVED, class IMPLEMENT> class ImplementVelocityControl;
-        template <class DERIVED, class IMPLEMENT> class ImplementPidControl;
         template <class DERIVED, class IMPLEMENT> class ImplementEncoders;
         template <class DERIVED, class IMPLEMENT> class ImplementAmplifierControl;
         template <class DERIVED, class IMPLEMENT> class ImplementControlCalibration;
         template <class DERIVED, class IMPLEMENT> class ImplementControlLimits;
         template <class DERIVED, class IMPLEMENT> class ImplementControlCalibration2;
-        class StubImplPidControlRaw;
         class StubImplPositionControlRaw;
         class StubImplEncodersRaw;
     }
 }
 
 
-#if defined(_MSC_VER) && !defined(YARP_NO_DEPRECATED) // since YARP 2.3.65
-// A class implementing setPositionMode() or setVelocityMode() causes a warning on MSVC
-YARP_WARNING_PUSH
-YARP_DISABLE_DEPRECATED_WARNING
-#endif
 /**
  * Default implementation of the IPositionControl interface. This template class can
  * be used to easily provide an implementation of IPositionControl. It takes two
@@ -42,7 +35,7 @@ YARP_DISABLE_DEPRECATED_WARNING
  *
  * Important: these templates are here for backward compatibility, newer implementations
  * are done with normal classes. If you need to implement something similar have a look
- * at implementations of other interfaes (e.g ITorqueControl or IOpenLoopControl).
+ * at implementations of other interfaes (e.g ITorqueControl).
  */
 template <class DERIVED, class IMPLEMENT>
 class yarp::dev::ImplementPositionControl : public IMPLEMENT
@@ -87,28 +80,24 @@ public:
      * axes for the current physical interface.
      * @return the number of controlled axes.
      */
-    virtual bool getAxes(int *axis);
+    virtual bool getAxes(int *axis) YARP_OVERRIDE;
 
-    virtual bool positionMove(int j, double ref);
-    virtual bool positionMove(const double *refs);
-    virtual bool relativeMove(int j, double delta);
-    virtual bool relativeMove(const double *deltas);
-    virtual bool checkMotionDone(bool *flag);
-    virtual bool checkMotionDone(int j, bool *flag);
-    virtual bool setRefSpeed(int j, double sp);
-    virtual bool setRefSpeeds(const double *spds);
-    virtual bool setRefAcceleration(int j, double acc);
-    virtual bool setRefAccelerations(const double *accs);
-    virtual bool getRefSpeed(int j, double *ref);
-    virtual bool getRefSpeeds(double *spds);
-    virtual bool getRefAcceleration(int j, double *acc);
-    virtual bool getRefAccelerations(double *accs);
-    virtual bool stop(int j);
-    virtual bool stop();
-
-#ifndef YARP_NO_DEPRECATED // since YARP 2.3.65
-    YARP_DEPRECATED virtual bool setPositionMode();
-#endif // YARP_NO_DEPRECATED
+    virtual bool positionMove(int j, double ref) YARP_OVERRIDE;
+    virtual bool positionMove(const double *refs) YARP_OVERRIDE;
+    virtual bool relativeMove(int j, double delta) YARP_OVERRIDE;
+    virtual bool relativeMove(const double *deltas) YARP_OVERRIDE;
+    virtual bool checkMotionDone(bool *flag) YARP_OVERRIDE;
+    virtual bool checkMotionDone(int j, bool *flag) YARP_OVERRIDE;
+    virtual bool setRefSpeed(int j, double sp) YARP_OVERRIDE;
+    virtual bool setRefSpeeds(const double *spds) YARP_OVERRIDE;
+    virtual bool setRefAcceleration(int j, double acc) YARP_OVERRIDE;
+    virtual bool setRefAccelerations(const double *accs) YARP_OVERRIDE;
+    virtual bool getRefSpeed(int j, double *ref) YARP_OVERRIDE;
+    virtual bool getRefSpeeds(double *spds) YARP_OVERRIDE;
+    virtual bool getRefAcceleration(int j, double *acc) YARP_OVERRIDE;
+    virtual bool getRefAccelerations(double *accs) YARP_OVERRIDE;
+    virtual bool stop(int j) YARP_OVERRIDE;
+    virtual bool stop() YARP_OVERRIDE;
 };
 
 /**
@@ -156,189 +145,16 @@ public:
      */
     virtual ~ImplementVelocityControl();
 
-    virtual bool getAxes(int *axes);
+    virtual bool getAxes(int *axes) YARP_OVERRIDE;
 
-    virtual bool velocityMove(int j, double v);
-    virtual bool velocityMove(const double *v);
-    virtual bool setRefAcceleration(int j, double acc);
-    virtual bool setRefAccelerations(const double *accs);
-    virtual bool getRefAcceleration(int j, double *acc);
-    virtual bool getRefAccelerations(double *accs);
-    virtual bool stop(int j);
-    virtual bool stop();
-
-#ifndef YARP_NO_DEPRECATED // since YARP 2.3.65
-    YARP_DEPRECATED virtual bool setVelocityMode();
-#endif // YARP_NO_DEPRECATED
-};
-
-#if defined(_MSC_VER) && !defined(YARP_NO_DEPRECATED) // since YARP 2.3.65
-YARP_WARNING_POP
-#endif
-
-template <class DERIVED, class IMPLEMENT>
-class yarp::dev::ImplementPidControl : public IMPLEMENT
-{
-protected:
-    IPidControlRaw *iPid;
-    Pid *tmpPids;
-    void *helper;
-    double *temp;
-
-    /**
-     * Initialize the internal data and alloc memory.
-     * @param size is the number of controlled axes the driver deals with.
-     * @param amap is a lookup table mapping axes onto physical drivers.
-     * @param enc is an array containing the encoder to angles conversion factors.
-     * @param zos is an array containing the zeros of the encoders.
-     * @return true if initialized succeeded, false if it wasn't executed, or assert.
-     */
-    bool initialize (int size, const int *amap, const double *enc, const double *zos);
-
-    /**
-     * Clean up internal data and memory.
-     * @return true if uninitialization is executed, false otherwise.
-     */
-    bool uninitialize ();
-
-public:
-    /**
-     * Constructor.
-     * @param y is the pointer to the class instance inheriting from this
-     *  implementation.
-     */
-    ImplementPidControl(DERIVED *y);
-
-    /**
-     * Destructor. Perform uninitialize if needed.
-     */
-    virtual ~ImplementPidControl();
-
-    /** Set new pid value for a joint axis.
-     * @param j joint number
-     * @param pid new pid value
-     * @return true/false on success/failure
-     */
-    virtual bool setPid(int j, const Pid &pid);
-
-    /** Set new pid value on multiple axes.
-     * @param pids pointer to a vector of pids
-     * @return true/false upon success/failure
-     */
-    virtual bool setPids(const Pid *pids);
-
-    /** Set the controller reference point for a given axis.
-     * Warning this method can result in very large torques
-     * and should be used carefully. If you do not understand
-     * this warning you should avoid using this method.
-     * Have a look at other interfaces (e.g. position control).
-     * @param j joint number
-     * @param ref new reference point
-     * @return true/false upon success/failure
-     */
-    virtual bool setReference(int j, double ref);
-
-    /** Set the controller reference points, multiple axes.
-     * Warning this method can result in very large torques
-     * and should be used carefully. If you do not understand
-     * this warning you should avoid using this method.
-     * Have a look at other interfaces (e.g. position control).
-     * @param refs pointer to the vector that contains the new reference points.
-     * @return true/false upon success/failure
-     */
-    virtual bool setReferences(const double *refs);
-
-    /** Set the error limit for the controller on a specifi joint
-     * @param j joint number
-     * @param limit limit value
-     * @return true/false on success/failure
-     */
-    virtual bool setErrorLimit(int j, double limit);
-
-    /** Get the error limit for the controller on all joints.
-     * @param limits pointer to the vector with the new limits
-     * @return true/false on success/failure
-     */
-    virtual bool setErrorLimits(const double *limits);
-
-    /** Get the current error for a joint.
-     * @param j joint number
-     * @param err pointer to the storage for the return value
-     * @return true/false on success failure
-     */
-    virtual bool getError(int j, double *err);
-
-    /** Get the error of all joints.
-     * @param errs pointer to the vector that will store the errors
-     */
-    virtual bool getErrors(double *errs);
-
-    /** Get the output of the controller (e.g. pwm value)
-     * @param j joint number
-     * @param out pointer to storage for return value
-     * @return success/failure
-     */
-    virtual bool getOutput(int j, double *out);
-
-    /** Get the output of the controllers (e.g. pwm value)
-     * @param outs pinter to the vector that will store the output values
-     */
-    virtual bool getOutputs(double *outs);
-
-    /** Get current pid value for a specific joint.
-     * @param j joint number
-     * @param pid pointer to storage for the return value.
-     * @return success/failure
-     */
-    virtual bool getPid(int j, Pid *pid);
-
-    /** Get current pid value for a specific joint.
-     * @param pids vector that will store the values of the pids.
-     * @return success/failure
-     */
-    virtual bool getPids(Pid *pids);
-
-    /** Get the current reference position of the controller for a specific joint.
-     * @param j joint number
-     * @param ref pointer to storage for return value
-     * @return reference value
-     */
-    virtual bool getReference(int j, double *ref);
-
-    /** Get the current reference position of all controllers.
-     * @param refs vector that will store the output.
-     */
-    virtual bool getReferences(double *refs);
-
-    /** Get the error limit for the controller on a specific joint
-     * @param j joint number
-     * @param limit pointer to storage
-     * @return success/failure
-     */
-    virtual bool getErrorLimit(int j, double *limit);
-
-    /** Get the error limit for all controllers
-     * @param limits pointer to the array that will store the output
-     * @return success or failure
-     */
-    virtual bool getErrorLimits(double *limits);
-
-    /** Reset the controller of a given joint, usually sets the
-     * current position of the joint as the reference value for the PID, and resets
-     * the integrator.
-     * @param j joint number
-     * @return true on success, false on failure.
-     */
-    virtual bool resetPid(int j);
-
-    /** Disable the pid computation for a joint*/
-    virtual bool disablePid(int j);
-
-    /** Enable the pid computation for a joint*/
-    virtual bool enablePid(int j);
-
-    /** Enable the pid computation for a joint*/
-    virtual bool setOffset(int j, double v);
+    virtual bool velocityMove(int j, double v) YARP_OVERRIDE;
+    virtual bool velocityMove(const double *v) YARP_OVERRIDE;
+    virtual bool setRefAcceleration(int j, double acc) YARP_OVERRIDE;
+    virtual bool setRefAccelerations(const double *accs) YARP_OVERRIDE;
+    virtual bool getRefAcceleration(int j, double *acc) YARP_OVERRIDE;
+    virtual bool getRefAccelerations(double *accs) YARP_OVERRIDE;
+    virtual bool stop(int j) YARP_OVERRIDE;
+    virtual bool stop() YARP_OVERRIDE;
 };
 
 template <class DERIVED, class IMPLEMENT>
@@ -383,20 +199,20 @@ public:
      * axes for the current physical interface.
      * @return the number of controlled axes.
      */
-    virtual bool getAxes(int *ax);
+    virtual bool getAxes(int *ax) YARP_OVERRIDE;
 
     /**
      * Reset encoder, single joint. Set the encoder value to zero
      * @param j encoder number
      * @return true/false
      */
-    virtual bool resetEncoder(int j);
+    virtual bool resetEncoder(int j) YARP_OVERRIDE;
 
     /**
      * Reset encoders. Set the encoders value to zero
      * @return true/false
      */
-    virtual bool resetEncoders();
+    virtual bool resetEncoders() YARP_OVERRIDE;
 
     /**
      * Set the value of the encoder for a given joint.
@@ -404,14 +220,14 @@ public:
      * @param val new value
      * @return true/false
      */
-    virtual bool setEncoder(int j, double val);
+    virtual bool setEncoder(int j, double val) YARP_OVERRIDE;
 
     /**
      * Set the value of all encoders.
      * @param vals pointer to the new values
      * @return true/false
      */
-    virtual bool setEncoders(const double *vals);
+    virtual bool setEncoders(const double *vals) YARP_OVERRIDE;
 
     /**
      * Read the value of an encoder.
@@ -419,14 +235,14 @@ public:
      * @param v pointer to storage for the return value
      * @return true/false, upon success/failure (you knew it, uh?)
      */
-    virtual bool getEncoder(int j, double *v);
+    virtual bool getEncoder(int j, double *v) YARP_OVERRIDE;
 
     /**
      * Read the position of all axes.
      * @param encs pointer to the array that will contain the output
      * @return true/false on success/failure
      */
-    virtual bool getEncoders(double *encs);
+    virtual bool getEncoders(double *encs) YARP_OVERRIDE;
 
     /**
      * Read the instantaneous speed of an axis.
@@ -434,28 +250,28 @@ public:
      * @param spds pointer to storage for the output
      * @return true if successful, false ... otherwise.
      */
-    virtual bool getEncoderSpeed(int j, double *spds);
+    virtual bool getEncoderSpeed(int j, double *spds) YARP_OVERRIDE;
 
     /**
      * Read the instantaneous speed of all axes.
      * @param spds pointer to storage for the output values
      * @return guess what? (true/false on success or failure).
      */
-    virtual bool getEncoderSpeeds(double *spds);
+    virtual bool getEncoderSpeeds(double *spds) YARP_OVERRIDE;
 
     /**
      * Read the instantaneous acceleration of an axis.
      * @param j axis number
      * @param spds pointer to the array that will contain the output
      */
-    virtual bool getEncoderAcceleration(int j, double *spds);
+    virtual bool getEncoderAcceleration(int j, double *spds) YARP_OVERRIDE;
 
     /**
      * Read the instantaneous acceleration of all axes.
      * @param accs pointer to the array that will contain the output
      * @return true if all goes well, false if anything bad happens.
      */
-    virtual bool getEncoderAccelerations(double *accs);
+    virtual bool getEncoderAccelerations(double *accs) YARP_OVERRIDE;
 };
 
 template <class DERIVED, class IMPLEMENT>
@@ -494,9 +310,9 @@ public:
      */
     virtual ~ImplementControlCalibration();
 
-    virtual bool calibrate(int j, double p);
+    virtual bool calibrate(int j, double p) YARP_OVERRIDE;
 
-    virtual bool done(int j);
+    virtual bool done(int j) YARP_OVERRIDE;
 };
 
 template <class DERIVED, class IMPLEMENT>
@@ -542,7 +358,7 @@ public:
      * @param max the value of the upper limit
      * @return true or false on success or failure
      */
-    virtual bool setLimits(int axis, double min, double max);
+    virtual bool setLimits(int axis, double min, double max) YARP_OVERRIDE;
 
     /* Get the software limits for a particular axis.
      * @param axis joint number
@@ -550,7 +366,7 @@ public:
      * @param pointer to store the value of the upper limit
      * @return true if everything goes fine, false if something bad happens (yes, sometimes life is tough)
      */
-    virtual bool getLimits(int axis, double *min, double *max);
+    virtual bool getLimits(int axis, double *min, double *max) YARP_OVERRIDE;
 };
 
 
@@ -596,13 +412,13 @@ public:
      * generating abrupt movements.
      * @return true/false on success/failure
      */
-    virtual bool enableAmp(int j);
+    virtual bool enableAmp(int j) YARP_OVERRIDE;
 
     /** Disable the amplifier on a specific joint. All computations within the board
      * will be carried out normally, but the output will be disabled.
      * @return true/false on success/failure
      */
-    virtual bool disableAmp(int j);
+    virtual bool disableAmp(int j) YARP_OVERRIDE;
 
     /* Get the status of the amplifiers, coded in a 32 bits integer for
      * each amplifier (at the moment contains only the fault, it will be
@@ -610,22 +426,22 @@ public:
      * @param st pointer to storage
      * @return true in good luck, false otherwise.
      */
-    virtual bool getAmpStatus(int *st);
+    virtual bool getAmpStatus(int *st) YARP_OVERRIDE;
 
-    virtual bool getAmpStatus(int j, int *st);
+    virtual bool getAmpStatus(int j, int *st) YARP_OVERRIDE;
 
     /* Read the electric current going to all motors.
      * @param vals pointer to storage for the output values
      * @return hopefully true, false in bad luck.
      */
-    virtual bool getCurrents(double *vals);
+    virtual bool getCurrents(double *vals) YARP_OVERRIDE;
 
     /* Read the electric current going to a given motor.
      * @param j motor number
      * @param val pointer to storage for the output value
      * @return probably true, might return false in bad times
      */
-    virtual bool getCurrent(int j, double *val);
+    virtual bool getCurrent(int j, double *val) YARP_OVERRIDE;
 
     /* Set the maximum electric current going to a given motor. The behavior
      * of the board/amplifier when this limit is reached depends on the
@@ -634,7 +450,7 @@ public:
      * @param v the new value
      * @return probably true, might return false in bad times
      */
-    virtual bool setMaxCurrent(int j, double v);
+    virtual bool setMaxCurrent(int j, double v) YARP_OVERRIDE;
 
     /**
     * Returns the maximum electric current allowed for a given motor. The behavior
@@ -644,7 +460,7 @@ public:
     * @param v the return value
     * @return probably true, might return false in bad times
     */
-    virtual bool getMaxCurrent(int j, double *v);
+    virtual bool getMaxCurrent(int j, double *v) YARP_OVERRIDE;
 
     /* Get the the nominal current which can be kept for an indefinite amount of time
      * without harming the motor. This value is specific for each motor and it is typically
@@ -655,7 +471,7 @@ public:
      * @param val storage for return value. [Ampere]
      * @return true/false success failure.
      */
-    virtual bool getNominalCurrent(int m, double *val);
+    virtual bool getNominalCurrent(int m, double *val) YARP_OVERRIDE;
 
     /* Get the the peak current which causes damage to the motor if maintained
      * for a long amount of time.
@@ -666,7 +482,7 @@ public:
      * @param val storage for return value. [Ampere]
      * @return true/false success failure.
      */
-    virtual bool getPeakCurrent(int m, double *val);
+    virtual bool getPeakCurrent(int m, double *val) YARP_OVERRIDE;
 
     /* Set the the peak current. This value  which causes damage to the motor if maintained
      * for a long amount of time.
@@ -677,7 +493,7 @@ public:
      * @param val storage for return value. [Ampere]
      * @return true/false success failure.
      */
-    virtual bool setPeakCurrent(int m, const double val);
+    virtual bool setPeakCurrent(int m, const double val) YARP_OVERRIDE;
 
     /* Get the the current PWM value used to control the motor.
      * The units are firmware dependent, either machine units or percentage.
@@ -685,7 +501,7 @@ public:
      * @param val filled with PWM value.
      * @return true/false success failure.
      */
-    virtual bool getPWM(int j, double* val);
+    virtual bool getPWM(int j, double* val) YARP_OVERRIDE;
 
     /* Get the PWM limit fot the given motor.
      * The units are firmware dependent, either machine units or percentage.
@@ -693,7 +509,7 @@ public:
      * @param val filled with PWM limit value.
      * @return true/false success failure.
      */
-    virtual bool getPWMLimit(int j, double* val);
+    virtual bool getPWMLimit(int j, double* val) YARP_OVERRIDE;
 
     /* Set the PWM limit fot the given motor.
      * The units are firmware dependent, either machine units or percentage.
@@ -701,14 +517,14 @@ public:
      * @param val new value for the PWM limit.
      * @return true/false success failure.
      */
-    virtual bool setPWMLimit(int j, const double val);
+    virtual bool setPWMLimit(int j, const double val) YARP_OVERRIDE;
 
     /* Get the power source voltage for the given motor in Volt.
      * @param j joint number
      * @param val filled with return value.
      * @return true/false success failure.
      */
-    virtual bool getPowerSupplyVoltage(int j, double* val);
+    virtual bool getPowerSupplyVoltage(int j, double* val) YARP_OVERRIDE;
 };
 
 template <class DERIVED, class IMPLEMENT>
@@ -747,99 +563,11 @@ public:
      */
     virtual ~ImplementControlCalibration2();
 
-    virtual bool calibrate2(int axis, unsigned int type, double p1, double p2, double p3);
+    virtual bool calibrate2(int axis, unsigned int type, double p1, double p2, double p3) YARP_OVERRIDE;
 
-    virtual bool setCalibrationParameters(int axis, const CalibrationParameters& params);
+    virtual bool setCalibrationParameters(int axis, const CalibrationParameters& params) YARP_OVERRIDE;
 
-    virtual bool done(int j);
-};
-
-/**
- * Stub implementation of IPidControlRaw interface.
- * Inherit from this class if you want a stub implementation
- * of methods in IPositionControlRaw. This class allows to
- * gradually implement an interface; you just have to implement
- * functions that are useful for the underlying device.
- * Another way to see this class is as a means to convert
- * compile time errors in runtime errors.
- *
- * If you use this class please be aware that the device
- * you are wrapping might not function properly because you
- * missed to implement useful functionalities.
- *
- */
-class YARP_dev_API yarp::dev::StubImplPidControlRaw: public IPidControlRaw
-{
-private:
-    /**
-     * Helper for printing error message, see below.
-     * Implemented in ControlBoardInterfacesImpl.cpp.
-     */
-    bool NOT_YET_IMPLEMENTED(const char *func=0);
-
-
-public:
-    virtual ~StubImplPidControlRaw(){}
-
-    virtual bool setPidRaw(int j, const Pid &pid)
-    { return NOT_YET_IMPLEMENTED("setPidRaw");}
-
-    virtual bool setPidsRaw(const Pid *pids)
-    { return NOT_YET_IMPLEMENTED("setPidsRaw");}
-
-    virtual bool setReferenceRaw(int j, double ref)
-    { return NOT_YET_IMPLEMENTED("setReferenceRaw");}
-
-    virtual bool setReferencesRaw(const double *refs)
-    { return NOT_YET_IMPLEMENTED("setReferencesRaw");}
-
-    virtual bool setErrorLimitRaw(int j, double limit)
-    { return NOT_YET_IMPLEMENTED("setErrorLimitRaw");}
-
-    virtual bool setErrorLimitsRaw(const double *limits)
-    { return NOT_YET_IMPLEMENTED("setErrorLimitsRaw");}
-
-    virtual bool getErrorRaw(int j, double *err)
-    { return NOT_YET_IMPLEMENTED("getErrorRaw");}
-
-    virtual bool getErrorsRaw(double *errs)
-    { return NOT_YET_IMPLEMENTED("getErrorsRaw");}
-
-    virtual bool getOutputRaw(int j, double *out)
-    { return NOT_YET_IMPLEMENTED("getOutputRaw");}
-
-    virtual bool getOutputsRaw(double *outs)
-    { return NOT_YET_IMPLEMENTED("getOutputsRaw");}
-
-    virtual bool getPidRaw(int j, Pid *pid)
-    { return NOT_YET_IMPLEMENTED("getPidRaw");}
-
-    virtual bool getPidsRaw(Pid *pids)
-    { return NOT_YET_IMPLEMENTED("getPidsRaw");}
-
-    virtual bool getReferenceRaw(int j, double *ref)
-    { return NOT_YET_IMPLEMENTED("getReferenceRaw");}
-
-    virtual bool getReferencesRaw(double *refs)
-    { return NOT_YET_IMPLEMENTED("getReferencesRaw");}
-
-    virtual bool getErrorLimitRaw(int j, double *limit)
-    { return NOT_YET_IMPLEMENTED("getErrorLimitRaw");}
-
-    virtual bool getErrorLimitsRaw(double *limits)
-    { return NOT_YET_IMPLEMENTED("getErrorLimitsRaw");}
-
-    virtual bool resetPidRaw(int j)
-    {return NOT_YET_IMPLEMENTED("resetPidRaw");}
-
-    virtual bool disablePidRaw(int j)
-    {return NOT_YET_IMPLEMENTED("disablePidRaw");}
-
-    virtual bool enablePidRaw(int j)
-    {return NOT_YET_IMPLEMENTED("enablePidRaw");}
-
-    virtual bool setOffsetRaw(int j, double v)
-    {return NOT_YET_IMPLEMENTED("setOffsetRaw");}
+    virtual bool done(int j) YARP_OVERRIDE;
 };
 
 /**
@@ -868,55 +596,55 @@ private:
 public:
     virtual ~StubImplPositionControlRaw(){}
 
-    virtual bool getAxes(int *ax)
+    virtual bool getAxes(int *ax) YARP_OVERRIDE
     {return NOT_YET_IMPLEMENTED("getAxes");}
 
-    virtual bool positionMoveRaw(int j, double ref)
+    virtual bool positionMoveRaw(int j, double ref) YARP_OVERRIDE
     {return NOT_YET_IMPLEMENTED("positionMoveRaw");}
 
-    virtual bool positionMoveRaw(const double *refs)
+    virtual bool positionMoveRaw(const double *refs) YARP_OVERRIDE
     {return NOT_YET_IMPLEMENTED("positionMoveRaw");}
 
-    virtual bool relativeMoveRaw(int j, double delta)
+    virtual bool relativeMoveRaw(int j, double delta) YARP_OVERRIDE
     {return NOT_YET_IMPLEMENTED("relativeMoveRaw");}
 
-    virtual bool relativeMoveRaw(const double *deltas)
+    virtual bool relativeMoveRaw(const double *deltas) YARP_OVERRIDE
     {return NOT_YET_IMPLEMENTED("relativeMoveRaw");}
 
-    virtual bool checkMotionDoneRaw(int j, bool *flag)
+    virtual bool checkMotionDoneRaw(int j, bool *flag) YARP_OVERRIDE
     {return NOT_YET_IMPLEMENTED("checkMotionDoneRaw");}
 
-    virtual bool checkMotionDoneRaw(bool *flag)
+    virtual bool checkMotionDoneRaw(bool *flag) YARP_OVERRIDE
     {return NOT_YET_IMPLEMENTED("checkMotionDoneRaw");}
 
-    virtual bool setRefSpeedRaw(int j, double sp)
+    virtual bool setRefSpeedRaw(int j, double sp) YARP_OVERRIDE
     {return NOT_YET_IMPLEMENTED("setRefSpeedRaw");}
 
-    virtual bool setRefSpeedsRaw(const double *spds)
+    virtual bool setRefSpeedsRaw(const double *spds) YARP_OVERRIDE
     {return NOT_YET_IMPLEMENTED("setRefSpeedsRaw");}
 
-    virtual bool setRefAccelerationRaw(int j, double acc)
+    virtual bool setRefAccelerationRaw(int j, double acc) YARP_OVERRIDE
     {return NOT_YET_IMPLEMENTED("setRefAccelerationRaw");}
 
-    virtual bool setRefAccelerationsRaw(const double *accs)
+    virtual bool setRefAccelerationsRaw(const double *accs) YARP_OVERRIDE
     {return NOT_YET_IMPLEMENTED("setRefAccelerationsRaw");}
 
-    virtual bool getRefSpeedRaw(int j, double *ref)
+    virtual bool getRefSpeedRaw(int j, double *ref) YARP_OVERRIDE
     {return NOT_YET_IMPLEMENTED("getRefSpeedRaw");}
 
-    virtual bool getRefSpeedsRaw(double *spds)
+    virtual bool getRefSpeedsRaw(double *spds) YARP_OVERRIDE
     {return NOT_YET_IMPLEMENTED("getRefSpeesdRaw");}
 
-    virtual bool getRefAccelerationRaw(int j, double *acc)
+    virtual bool getRefAccelerationRaw(int j, double *acc) YARP_OVERRIDE
     {return NOT_YET_IMPLEMENTED("getRefAccelerationRaw");}
 
-    virtual bool getRefAccelerationsRaw(double *accs)
+    virtual bool getRefAccelerationsRaw(double *accs) YARP_OVERRIDE
     {return NOT_YET_IMPLEMENTED("getRefAccelerationsRaw");}
 
-    virtual bool stopRaw(int j)
+    virtual bool stopRaw(int j) YARP_OVERRIDE
     {return NOT_YET_IMPLEMENTED("stopRaw");}
 
-    virtual bool stopRaw()
+    virtual bool stopRaw() YARP_OVERRIDE
     {return NOT_YET_IMPLEMENTED("stopRaw");}
 };
 
@@ -946,37 +674,37 @@ private:
 public:
     virtual ~StubImplEncodersRaw(){}
 
-    virtual bool getAxes(int *ax)
+    virtual bool getAxes(int *ax) YARP_OVERRIDE
     {return NOT_YET_IMPLEMENTED("getAxes");}
 
-    virtual bool resetEncoderRaw(int j)
+    virtual bool resetEncoderRaw(int j) YARP_OVERRIDE
     {return NOT_YET_IMPLEMENTED("resetEncoderRaw");}
 
-    virtual bool resetEncodersRaw()
+    virtual bool resetEncodersRaw() YARP_OVERRIDE
     {return NOT_YET_IMPLEMENTED("resetEncodersRaw");}
 
-    virtual bool setEncoderRaw(int j, double val)
+    virtual bool setEncoderRaw(int j, double val) YARP_OVERRIDE
     {return NOT_YET_IMPLEMENTED("setEncoderRaw");}
 
-    virtual bool setEncodersRaw(const double *vals)
+    virtual bool setEncodersRaw(const double *vals) YARP_OVERRIDE
     {return NOT_YET_IMPLEMENTED("setEncodersRaw");}
 
-    virtual bool getEncoderRaw(int j, double *v)
+    virtual bool getEncoderRaw(int j, double *v) YARP_OVERRIDE
     {return NOT_YET_IMPLEMENTED("getEncoderRaw");}
 
-    virtual bool getEncodersRaw(double *encs)
+    virtual bool getEncodersRaw(double *encs) YARP_OVERRIDE
     {return NOT_YET_IMPLEMENTED("getEncodersRaw");}
 
-    virtual bool getEncoderSpeedRaw(int j, double *sp)
+    virtual bool getEncoderSpeedRaw(int j, double *sp) YARP_OVERRIDE
     {return NOT_YET_IMPLEMENTED("getEncoderSpeedRaw");}
 
-    virtual bool getEncoderSpeedsRaw(double *spds)
+    virtual bool getEncoderSpeedsRaw(double *spds) YARP_OVERRIDE
     {return NOT_YET_IMPLEMENTED("getEncoderSpeedsRaw");}
 
-    virtual bool getEncoderAccelerationRaw(int j, double *spds)
+    virtual bool getEncoderAccelerationRaw(int j, double *spds) YARP_OVERRIDE
     {return NOT_YET_IMPLEMENTED("getEncoderAccelerationRaw");}
 
-    virtual bool getEncoderAccelerationsRaw(double *accs)
+    virtual bool getEncoderAccelerationsRaw(double *accs) YARP_OVERRIDE
     {return NOT_YET_IMPLEMENTED("getEncoderAccelerationsRaw");}
 };
 

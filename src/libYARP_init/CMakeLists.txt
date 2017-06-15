@@ -12,27 +12,34 @@ set(YARP_init_HDRS)
 set(YARP_init_IMPL_HDRS)
 set(YARP_init_SRCS src/CustomInit.cpp)
 
-source_group("Source Files" FILES ${YARP_init_SRCS})
-source_group("Header Files" FILES ${YARP_init_HDRS})
-source_group("Implementation Header Files" FILES ${YARP_init_IMPL_HDRS})
+source_group(TREE "${CMAKE_CURRENT_SOURCE_DIR}"
+             PREFIX "Source Files"
+             FILES ${YARP_init_SRCS})
+source_group(TREE "${CMAKE_CURRENT_SOURCE_DIR}"
+             PREFIX "Header Files"
+             FILES ${YARP_init_HDRS}
+                   ${YARP_init_IMPL_HDRS})
 
 add_library(YARP_init ${YARP_init_SRCS} ${YARP_init_HDRS})
-target_link_libraries(YARP_init LINK_PRIVATE YARP_OS)
+add_library(YARP::YARP_init ALIAS YARP_init)
+
+target_link_libraries(YARP_init PRIVATE YARP::YARP_conf
+                                        YARP::YARP_OS)
 
 if(YARP_LINK_PLUGINS)
     if(CREATE_OPTIONAL_CARRIERS)
         set_property(SOURCE src/CustomInit.cpp
                      APPEND PROPERTY COMPILE_DEFINITIONS
                      PLUGIN_INIT_FUNCTION=add_yarpcar_plugins)
-        target_link_libraries(YARP_init LINK_PRIVATE yarpcar)
+        target_link_libraries(YARP_init PRIVATE YARP::yarpcar)
     endif()
 
     if(CREATE_DEVICE_LIBRARY_MODULES)
         set_property(SOURCE src/CustomInit.cpp
                      APPEND PROPERTY COMPILE_DEFINITIONS
                      PLUGIN_INIT_FUNCTION2=add_yarpmod_plugins)
-        target_link_libraries(YARP_init LINK_PRIVATE yarpmod)
-        target_link_libraries(YARP_init LINK_PRIVATE YARP_dev)
+        target_link_libraries(YARP_init PRIVATE YARP::yarpmod)
+        target_link_libraries(YARP_init PRIVATE YARP::YARP_dev)
     endif()
 endif()
 
@@ -45,3 +52,4 @@ install(TARGETS YARP_init
 
 set_property(GLOBAL APPEND PROPERTY YARP_LIBS YARP_init)
 set_property(TARGET YARP_init PROPERTY INCLUDE_DIRS ${YARP_TREE_INCLUDE_DIRS})
+set_property(TARGET YARP_init PROPERTY FOLDER "Libraries")

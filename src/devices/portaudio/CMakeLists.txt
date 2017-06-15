@@ -11,21 +11,15 @@ yarp_prepare_plugin(portaudio
 
 if(NOT SKIP_portaudio)
   set(CMAKE_INCLUDE_CURRENT_DIR ON)
-  get_property(YARP_OS_INCLUDE_DIRS TARGET YARP_OS PROPERTY INCLUDE_DIRS)
-  get_property(YARP_sig_INCLUDE_DIRS TARGET YARP_sig PROPERTY INCLUDE_DIRS)
-  get_property(YARP_dev_INCLUDE_DIRS TARGET YARP_dev PROPERTY INCLUDE_DIRS)
-  include_directories(${YARP_OS_INCLUDE_DIRS}
-                      ${YARP_sig_INCLUDE_DIRS}
-                      ${YARP_dev_INCLUDE_DIRS})
   include_directories(SYSTEM ${PortAudio_INCLUDE_DIR})
 
   yarp_add_plugin(yarp_portaudio PortAudioBuffer.cpp
                                  PortAudioBuffer.h
                                  PortAudioDeviceDriver.cpp
                                  PortAudioDeviceDriver.h)
-  target_link_libraries(yarp_portaudio YARP_OS
-                                       YARP_sig
-                                       YARP_dev
+  target_link_libraries(yarp_portaudio YARP::YARP_OS
+                                       YARP::YARP_sig
+                                       YARP::YARP_dev
                                        ${PortAudio_LIBRARIES})
   yarp_install(TARGETS yarp_portaudio
                EXPORT YARP
@@ -37,4 +31,6 @@ if(NOT SKIP_portaudio)
                DESTINATION ${YARP_PLUGIN_MANIFESTS_INSTALL_DIR})
   yarp_install(FILES portaudio.xml
                DESTINATION ${YARP_MODULES_INSTALL_DIR})
+
+  set_property(TARGET yarp_portaudio PROPERTY FOLDER "Plugins/Device")
 endif()

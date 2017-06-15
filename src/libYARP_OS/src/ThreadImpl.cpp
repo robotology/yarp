@@ -5,14 +5,14 @@
  */
 
 #include <yarp/os/impl/ThreadImpl.h>
-#include <yarp/os/impl/SemaphoreImpl.h>
-#include <yarp/os/impl/Logger.h>
 #include <yarp/os/NetType.h>
-#include <yarp/os/impl/PlatformThread.h>
-#include <yarp/os/impl/PlatformSignal.h>
-#include <yarp/os/impl/PlatformStdlib.h>
 
-#include <stdlib.h>
+#include <yarp/os/impl/Logger.h>
+#include <yarp/os/impl/PlatformSignal.h>
+#include <yarp/os/impl/PlatformThread.h>
+#include <yarp/os/impl/SemaphoreImpl.h>
+
+#include <cstdlib>
 
 #if defined(YARP_HAS_CXX11)
 #  if defined(YARP_HAS_ACE)
@@ -54,14 +54,11 @@ void ThreadImpl::fini()
     }
 }
 
-#ifdef __WIN32__
-static unsigned __stdcall theExecutiveBranch (void *args)
-#else
+
 PLATFORM_THREAD_RETURN theExecutiveBranch (void *args)
-#endif
 {
     // just for now -- rather deal with broken pipes through normal procedures
-    ACE_OS::signal(SIGPIPE, SIG_IGN);
+    yarp::os::impl::signal(SIGPIPE, SIG_IGN);
 
 
     /*
@@ -79,7 +76,7 @@ PLATFORM_THREAD_RETURN theExecutiveBranch (void *args)
 
     ThreadImpl *thread = (ThreadImpl *)args;
 
-    YARP_DEBUG(Logger::get(),"Thread starting up");
+    YARP_DEBUG(Logger::get(), "Thread starting up");
 
     bool success=thread->threadInit();
     thread->notify(success);
@@ -106,11 +103,11 @@ PLATFORM_THREAD_RETURN theExecutiveBranch (void *args)
     }
 
 
-    //YARP_ERROR(Logger::get(),ConstString("uncaught exception in thread: ") +
+    //YARP_ERROR(Logger::get(), ConstString("uncaught exception in thread: ") +
     //             e.toString());
 
     ThreadImpl::changeCount(-1);
-    YARP_DEBUG(Logger::get(),"Thread shutting down");
+    YARP_DEBUG(Logger::get(), "Thread shutting down");
     //ACE_Thread::exit();
 
     thread->notify(false);
@@ -151,7 +148,7 @@ ThreadImpl::ThreadImpl(Runnable *target) :
 
 ThreadImpl::~ThreadImpl()
 {
-    YARP_DEBUG(Logger::get(),"Thread being deleted");
+    YARP_DEBUG(Logger::get(), "Thread being deleted");
     join();
 }
 
@@ -182,7 +179,7 @@ int ThreadImpl::join(double seconds)
         if (seconds>0) {
             if (!initWasSuccessful) {
                 // join called before start completed
-                YARP_ERROR(Logger::get(),ConstString("Tried to join a thread before starting it"));
+                YARP_ERROR(Logger::get(), ConstString("Tried to join a thread before starting it"));
                 return -1;
             }
             synchro.waitWithTimeout(seconds);
@@ -306,11 +303,11 @@ bool ThreadImpl::start()
         initWasSuccessful = true;
         if (opened) {
             ThreadImpl::changeCount(1);
-            YARP_DEBUG(Logger::get(),"Child thread initialized ok");
+            YARP_DEBUG(Logger::get(), "Child thread initialized ok");
             afterStart(true);
             return true;
         } else {
-            YARP_DEBUG(Logger::get(),"Child thread did not initialize ok");
+            YARP_DEBUG(Logger::get(), "Child thread did not initialize ok");
             //wait for the thread to really exit
             ThreadImpl::join(-1);
         }
@@ -318,7 +315,7 @@ bool ThreadImpl::start()
     //the thread did not start, call afterStart() to warn the user
     char tmp[80];
     sprintf(tmp, "%d", result);
-    YARP_ERROR(Logger::get(),ConstString("A thread failed to start with error code: ")+ConstString(tmp));
+    YARP_ERROR(Logger::get(), ConstString("A thread failed to start with error code: ")+ConstString(tmp));
     afterStart(false);
     return false;
 }
@@ -387,7 +384,7 @@ int ThreadImpl::setPriority(int priority, int policy)
         if (std::is_same<std::thread::native_handle_type, ACE_hthread_t>::value) {
             return ACE_Thread::setprio(hid.native_handle(), priority, policy);
         } else {
-            YARP_ERROR(Logger::get(),"Cannot set priority without ACE");
+            YARP_ERROR(Logger::get(), "Cannot set priority without ACE");
         }
 #  elif defined(__unix__)
         if (std::is_same<std::thread::native_handle_type, pthread_t>::value) {
@@ -396,10 +393,10 @@ int ThreadImpl::setPriority(int priority, int policy)
             int ret = pthread_setschedparam(hid.native_handle(), policy, &thread_param);
             return (ret != 0) ? -1 : 0;
         } else {
-            YARP_ERROR(Logger::get(),"Cannot set priority without ACE");
+            YARP_ERROR(Logger::get(), "Cannot set priority without ACE");
         }
 #  else
-        YARP_ERROR(Logger::get(),"Cannot set priority without ACE");
+        YARP_ERROR(Logger::get(), "Cannot set priority without ACE");
 #  endif
 #elif defined(YARP_HAS_ACE) // Use ACE API
         return ACE_Thread::setprio(hid, priority, policy);
@@ -409,7 +406,7 @@ int ThreadImpl::setPriority(int priority, int policy)
         int ret = pthread_setschedparam(hid, policy, &thread_param);
         return (ret != 0) ? -1 : 0;
 #else
-        YARP_ERROR(Logger::get(),"Cannot set priority without ACE");
+        YARP_ERROR(Logger::get(), "Cannot set priority without ACE");
 #endif
     }
     return 0;
@@ -424,31 +421,31 @@ int ThreadImpl::getPriority()
         if (std::is_same<std::thread::native_handle_type, ACE_hthread_t>::value) {
             ACE_Thread::getprio(hid.native_handle(), prio);
         } else {
-            YARP_ERROR(Logger::get(),"Cannot get priority without ACE");
+            YARP_ERROR(Logger::get(), "Cannot get priority without ACE");
         }
 #  elif defined(__unix__)
         if (std::is_same<std::thread::native_handle_type, pthread_t>::value) {
             struct sched_param thread_param;
             int policy;
-            if(pthread_getschedparam(hid.native_handle(), &policy, &thread_param) == 0) {
+            if (pthread_getschedparam(hid.native_handle(), &policy, &thread_param) == 0) {
                 prio = thread_param.sched_priority;
             }
         } else {
-            YARP_ERROR(Logger::get(),"Cannot get priority without ACE");
+            YARP_ERROR(Logger::get(), "Cannot get priority without ACE");
         }
 #  else
-        YARP_ERROR(Logger::get(),"Cannot get priority without ACE");
+        YARP_ERROR(Logger::get(), "Cannot get priority without ACE");
 #  endif
 #elif defined(YARP_HAS_ACE) // Use ACE API
         ACE_Thread::getprio(hid, prio);
 #elif defined(__unix__) // Use the POSIX syscalls
         struct sched_param thread_param;
         int policy;
-        if(pthread_getschedparam(hid, &policy, &thread_param) == 0) {
+        if (pthread_getschedparam(hid, &policy, &thread_param) == 0) {
             prio = thread_param.sched_priority;
         }
 #else
-        YARP_ERROR(Logger::get(),"Cannot read priority without ACE");
+        YARP_ERROR(Logger::get(), "Cannot read priority without ACE");
 #endif
     }
     return prio;
@@ -464,30 +461,30 @@ int ThreadImpl::getPolicy()
             int prio;
             ACE_Thread::getprio(hid.native_handle(), prio, policy);
         } else {
-            YARP_ERROR(Logger::get(),"Cannot get scheduling policy without ACE");
+            YARP_ERROR(Logger::get(), "Cannot get scheduling policy without ACE");
         }
 #  elif defined(__unix__)
         if (std::is_same<std::thread::native_handle_type, pthread_t>::value) {
             struct sched_param thread_param;
-            if(pthread_getschedparam(hid.native_handle(), &policy, &thread_param) != 0) {
+            if (pthread_getschedparam(hid.native_handle(), &policy, &thread_param) != 0) {
                 policy = defaultPolicy;
             }
         } else {
-            YARP_ERROR(Logger::get(),"Cannot get scheduling policy without ACE");
+            YARP_ERROR(Logger::get(), "Cannot get scheduling policy without ACE");
         }
 #  else
-        YARP_ERROR(Logger::get(),"Cannot get scheduling policy without ACE");
+        YARP_ERROR(Logger::get(), "Cannot get scheduling policy without ACE");
 #  endif
 #elif defined(YARP_HAS_ACE) // Use ACE API
         int prio;
         ACE_Thread::getprio(hid, prio, policy);
 #elif defined(__unix__) // Use the POSIX syscalls
         struct sched_param thread_param;
-        if(pthread_getschedparam(hid, &policy, &thread_param) != 0) {
+        if (pthread_getschedparam(hid, &policy, &thread_param) != 0) {
             policy = defaultPolicy;
         }
 #else
-        YARP_ERROR(Logger::get(),"Cannot read scheduling policy without ACE");
+        YARP_ERROR(Logger::get(), "Cannot read scheduling policy without ACE");
 #endif
     }
     return policy;
@@ -513,6 +510,6 @@ void ThreadImpl::yield()
 #elif defined(__unix__) // Use the POSIX syscalls
     pthread_yield();
 #else
-    YARP_ERROR(Logger::get(),"Cannot yield thread without ACE");
+    YARP_ERROR(Logger::get(), "Cannot yield thread without ACE");
 #endif
 }

@@ -7,7 +7,7 @@
 #include <yarp/dev/ImplementControlBoardInterfaces.h>
 #include <yarp/dev/ControlBoardHelper.h>
 
-#include <math.h>
+#include <cmath>
 
 // Be careful: this file contains template implementations and is included by translation
 // units that use the template (e.g. .cpp files). Avoid putting here non-template functions to
@@ -37,19 +37,6 @@ bool ImplementPositionControl<DERIVED, IMPLEMENT>::positionMove(int j, double v)
     castToMapper(helper)->posA2E(v, j, enc, k);
     return iPosition->positionMoveRaw(k, enc);
 }
-
-#ifndef YARP_NO_DEPRECATED // since YARP 2.3.65
-template <class DERIVED, class IMPLEMENT>
-YARP_DEPRECATED bool ImplementPositionControl<DERIVED, IMPLEMENT>::setPositionMode()
-{
-    if (helper==0) return false;
-YARP_WARNING_PUSH
-YARP_DISABLE_DEPRECATED_WARNING
-    iPosition->setPositionModeRaw();
-YARP_WARNING_POP
-    return true;
-}
-#endif // YARP_NO_DEPRECATED
 
 template <class DERIVED, class IMPLEMENT>
 bool ImplementPositionControl<DERIVED, IMPLEMENT>::positionMove(const double *refs)
@@ -278,17 +265,6 @@ bool ImplementVelocityControl<DERIVED, IMPLEMENT>::getAxes(int *axes)
     return true;
 }
 
-#ifndef YARP_NO_DEPRECATED // since YARP 2.3.65
-template <class DERIVED, class IMPLEMENT>
-YARP_DEPRECATED bool ImplementVelocityControl<DERIVED, IMPLEMENT>::setVelocityMode()
-{
-YARP_WARNING_PUSH
-YARP_DISABLE_DEPRECATED_WARNING
-    return iVelocity->setVelocityModeRaw();
-YARP_WARNING_POP
-}
-#endif // YARP_NO_DEPRECATED
-
 template <class DERIVED, class IMPLEMENT>
 bool ImplementVelocityControl<DERIVED, IMPLEMENT>::velocityMove(int j, double sp)
 {
@@ -357,270 +333,6 @@ template <class DERIVED, class IMPLEMENT>
 bool ImplementVelocityControl<DERIVED, IMPLEMENT>::stop()
 {
     return iVelocity->stopRaw();
-}
-/////////////////////////////////////////////////////////////////
-
-//////////////////// Implement PidControl interface
-template <class DERIVED, class IMPLEMENT> ImplementPidControl<DERIVED, IMPLEMENT>::
-ImplementPidControl(DERIVED *y)
-{
-    iPid= dynamic_cast<IPidControlRaw *> (y);
-    helper = 0;
-    temp=0;
-    tmpPids=0;
-}
-
-template <class DERIVED, class IMPLEMENT> ImplementPidControl<DERIVED, IMPLEMENT>::
-~ImplementPidControl()
-{
-    uninitialize();
-}
-
-template <class DERIVED, class IMPLEMENT>
-bool ImplementPidControl<DERIVED, IMPLEMENT>:: initialize (int size, const int *amap, const double *enc, const double *zos)
-{
-    if (helper!=0)
-        return false;
-
-    helper=(void *)(new ControlBoardHelper(size, amap, enc, zos,0));
-    yAssert (helper != 0);
-    temp=new double [size];
-    yAssert (temp != 0);
-    tmpPids=new Pid[size];
-    yAssert (tmpPids != 0);
-
-    return true;
-}
-
-/**
-* Clean up internal data and memory.
-* @return true if uninitialization is executed, false otherwise.
-*/
-template <class DERIVED, class IMPLEMENT>
-bool ImplementPidControl<DERIVED, IMPLEMENT>::uninitialize ()
-{
-    if (helper!=0)
-        delete castToMapper(helper);
-    helper=0;
-
-    checkAndDestroy(tmpPids);
-    checkAndDestroy(temp);
-
-    return true;
-}
-
-template<class DERIVED, class IMPLEMENT>
-bool ImplementPidControl<DERIVED, IMPLEMENT>::setPid(int j, const Pid &pid)
-{
-    int k=castToMapper(helper)->toHw(j);
-    return iPid->setPidRaw(k,pid);
-}
-
-template<class DERIVED, class IMPLEMENT>
-bool ImplementPidControl<DERIVED, IMPLEMENT>::setPids(const Pid *pids)
-{
-    int tmp=0;
-    int nj=castToMapper(helper)->axes();
-
-    for(int j=0;j<nj;j++)
-    {
-        tmp=castToMapper(helper)->toHw(j);
-        tmpPids[tmp]=pids[j];
-    }
-
-    return iPid->setPidsRaw(tmpPids);
-}
-
-template<class DERIVED, class IMPLEMENT>
-bool ImplementPidControl<DERIVED, IMPLEMENT>::setReference(int j, double ref)
-{
-    int k=0;
-    double enc;
-    castToMapper(helper)->posA2E(ref, j, enc, k);
-
-    return iPid->setReferenceRaw(k, enc);
-}
-
-template<class DERIVED, class IMPLEMENT>
-bool ImplementPidControl<DERIVED, IMPLEMENT>::setReferences(const double *refs)
-{
-    castToMapper(helper)->posA2E(refs, temp);
-
-    return iPid->setReferencesRaw(temp);
-}
-
-template<class DERIVED, class IMPLEMENT>
-bool ImplementPidControl<DERIVED, IMPLEMENT>::setErrorLimit(int j, double limit)
-{
-    int k;
-    double enc;
-    castToMapper(helper)->posA2E(limit, j, enc, k);
-
-    return iPid->setErrorLimitRaw(k, enc);
-}
-
-template<class DERIVED, class IMPLEMENT>
-bool ImplementPidControl<DERIVED, IMPLEMENT>::setErrorLimits(const double *limits)
-{
-    castToMapper(helper)->posA2E(limits, temp);
-
-    return iPid->setErrorLimitsRaw(temp);
-}
-
-
-template<class DERIVED, class IMPLEMENT>
-bool ImplementPidControl<DERIVED, IMPLEMENT>::getError(int j, double *err)
-{
-    int k;
-    double enc;
-    k=castToMapper(helper)->toHw(j);
-
-    bool ret=iPid->getErrorRaw(k, &enc);
-
-    *err=castToMapper(helper)->velE2A(enc, k);
-
-    return ret;
-}
-
-template<class DERIVED, class IMPLEMENT>
-bool ImplementPidControl<DERIVED, IMPLEMENT>::getErrors(double *errs)
-{
-    bool ret;
-    ret=iPid->getErrorsRaw(temp);
-
-    castToMapper(helper)->velE2A(temp, errs);
-
-    return ret;
-}
-
-template<class DERIVED, class IMPLEMENT>
-bool ImplementPidControl<DERIVED, IMPLEMENT>::getOutput(int j, double *out)
-{
-    int k;
-
-    k=castToMapper(helper)->toHw(j);
-
-    bool ret=iPid->getOutputRaw(k, out);
-
-    return ret;
-}
-
-template<class DERIVED, class IMPLEMENT>
-bool ImplementPidControl<DERIVED, IMPLEMENT>::getOutputs(double *outs)
-{
-    bool ret=iPid->getOutputsRaw(temp);
-
-    castToMapper(helper)->toUser(temp, outs);
-
-    return ret;
-}
-
-template<class DERIVED, class IMPLEMENT>
-bool ImplementPidControl<DERIVED, IMPLEMENT>::getPid(int j, Pid *pid)
-{
-    int k;
-    k=castToMapper(helper)->toHw(j);
-
-    return iPid->getPidRaw(k, pid);
-}
-
-template<class DERIVED, class IMPLEMENT>
-bool ImplementPidControl<DERIVED, IMPLEMENT>::getPids(Pid *pids)
-{
-    bool ret=iPid->getPidsRaw(tmpPids);
-    int nj=castToMapper(helper)->axes();
-
-    for(int j=0;j<nj;j++)
-        pids[castToMapper(helper)->toUser(j)]=tmpPids[j];
-
-    return ret;
-}
-
-template<class DERIVED, class IMPLEMENT>
-bool ImplementPidControl<DERIVED, IMPLEMENT>::getReference(int j, double *ref)
-{
-    bool ret;
-    int k;
-    double enc;
-
-    k=castToMapper(helper)->toHw(j);
-
-    ret=iPid->getReferenceRaw(k, &enc);
-
-    *ref=castToMapper(helper)->posE2A(enc, k);
-    return ret;
-}
-
-template<class DERIVED, class IMPLEMENT>
-bool ImplementPidControl<DERIVED, IMPLEMENT>::getReferences(double *refs)
-{
-    bool ret;
-    ret=iPid->getReferencesRaw(temp);
-
-    castToMapper(helper)->posE2A(temp, refs);
-    return ret;
-}
-
-template<class DERIVED, class IMPLEMENT>
-bool ImplementPidControl<DERIVED, IMPLEMENT>::getErrorLimit(int j, double *ref)
-{
-    bool ret;
-    int k;
-    double enc;
-
-    k=castToMapper(helper)->toHw(j);
-
-    ret=iPid->getErrorLimitRaw(k, &enc);
-
-    *ref=castToMapper(helper)->posE2A(enc, k);
-    return ret;
-}
-
-template<class DERIVED, class IMPLEMENT>
-bool ImplementPidControl<DERIVED, IMPLEMENT>::getErrorLimits(double *refs)
-{
-    bool ret;
-    ret=iPid->getErrorLimitsRaw(temp);
-
-    castToMapper(helper)->posE2A(temp, refs);
-    return ret;
-}
-
-
-template<class DERIVED, class IMPLEMENT>
-bool ImplementPidControl<DERIVED, IMPLEMENT>::resetPid(int j)
-{
-    int k=0;
-    k=castToMapper(helper)->toHw(j);
-
-    return iPid->resetPidRaw(k);
-}
-
-template<class DERIVED, class IMPLEMENT>
-bool ImplementPidControl<DERIVED, IMPLEMENT>::enablePid(int j)
-{
-    int k=0;
-    k=castToMapper(helper)->toHw(j);
-
-    return iPid->enablePidRaw(k);
-}
-
-template<class DERIVED, class IMPLEMENT>
-bool ImplementPidControl<DERIVED, IMPLEMENT>::disablePid(int j)
-{
-    int k=0;
-    k=castToMapper(helper)->toHw(j);
-
-    return iPid->disablePidRaw(k);
-}
-
-template<class DERIVED, class IMPLEMENT>
-bool ImplementPidControl<DERIVED, IMPLEMENT>::setOffset(int j, double v)
-{
-    int k=0;
-    k=castToMapper(helper)->toHw(j);
-
-    return iPid->setOffsetRaw(k, v);
 }
 
 ////////////////////////
@@ -1095,19 +807,17 @@ template <class DERIVED, class IMPLEMENT>
 bool ImplementAmplifierControl<DERIVED, IMPLEMENT>::getCurrents(double *currs)
 {
     bool ret=iAmplifier->getCurrentsRaw(dTemp);
-
-    castToMapper(helper)->toUser(dTemp, currs);
-
+    castToMapper(helper)->ampereS2A(dTemp, currs);
     return ret;
 }
 
 template <class DERIVED, class IMPLEMENT>
 bool ImplementAmplifierControl<DERIVED, IMPLEMENT>::getCurrent(int j, double *c)
 {
-    int k=castToMapper(helper)->toHw(j);
-
-    bool ret=iAmplifier->getCurrentRaw(k, c);
-
+    double temp = 0;
+    int k = castToMapper(helper)->toHw(j);
+    bool ret = iAmplifier->getCurrentRaw(k, &temp);
+    castToMapper(helper)->ampereS2A(temp, k, *c, j);
     return ret;
 }
 

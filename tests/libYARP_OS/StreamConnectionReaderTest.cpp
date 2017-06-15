@@ -16,7 +16,7 @@ using namespace yarp::os::impl;
 
 class StreamConnectionReaderTest : public UnitTest {
 public:
-    virtual ConstString getName() { return "StreamConnectionReaderTest"; }
+    virtual ConstString getName() override { return "StreamConnectionReaderTest"; }
 
     void testRead() {
         report(0,"testing reading...");
@@ -30,7 +30,7 @@ public:
         checkEqual(line,"Hello","one line");
     }
 
-    virtual void runTests() {
+    virtual void runTests() override {
         testRead();
     }
 };

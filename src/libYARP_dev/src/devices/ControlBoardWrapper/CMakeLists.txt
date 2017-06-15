@@ -15,7 +15,6 @@ set(cbw2_core_hrds      src/devices/ControlBoardWrapper/ControlBoardWrapper.h
                         src/devices/ControlBoardWrapper/RPCMessagesParser.h
                         src/devices/ControlBoardWrapper/StreamingMessagesParser.h
                         src/devices/ControlBoardWrapper/SubDevice.h
-                        src/devices/ControlBoardWrapper/yarpRosHelper.h
                         PARENT_SCOPE)
 
 

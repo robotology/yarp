@@ -13,9 +13,11 @@
 #include <yarp/manager/ymm-types.h>
 #include <yarp/manager/manifestloader.h>
 
+
+
 namespace yarp {
 namespace manager {
-
+class TextParser;
 
 /**
  * Class XmlAppLoader
@@ -26,20 +28,22 @@ public:
     XmlAppLoader(const char* szFileName);
     XmlAppLoader(const char* szPath, const char* szAppName);
     virtual ~XmlAppLoader();
-    bool init(void);
-    void fini(void);
-    void reset(void);
-    Application* getNextApplication(void);
+
+    bool         init(void) YARP_OVERRIDE;
+    void         fini(void) YARP_OVERRIDE;
+    void         reset(void) YARP_OVERRIDE;
+    Application* getNextApplication(void) YARP_OVERRIDE;
 
 protected:
 
 private:
-    string strAppName;
-    string strPath;
-    string strFileName;
+    string         strAppName;
+    string         strPath;
+    string         strFileName;
     vector<string> fileNames;
-    Application app;
-    Application* parsXml(const char* szFile);
+    Application    app;
+    TextParser*    parser;
+    Application*   parsXml(const char* szFile);
 };
 
 } // namespace yarp

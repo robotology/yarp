@@ -7,8 +7,8 @@
 
 #include <RosTypeCodeGenYarp.h>
 
-#include <stdio.h>
-#include <stdlib.h>
+#include <cstdio>
+#include <cstdlib>
 
 #include <yarp/os/Os.h>
 #include <iostream>
@@ -118,7 +118,7 @@ bool RosTypeCodeGenYarp::beginType(const std::string& tname,
         if (!out) {
             fprintf(stderr,"Failed to open %s for writing\n",
                     alt_fname.c_str());
-            exit(1);
+            std::exit(1);
         }
         if (verbose) {
             printf("Generating %s\n", alt_fname.c_str());
@@ -137,7 +137,7 @@ bool RosTypeCodeGenYarp::beginType(const std::string& tname,
     out = fopen(fname.c_str(),"w");
     if (!out) {
         fprintf(stderr,"Failed to open %s for writing\n", fname.c_str());
-        exit(1);
+        std::exit(1);
     }
     fprintf(out,"// This is an automatically generated file.\n");
     fprintf(out,"// Generated from this %s.msg definition:\n", safe_tname.c_str());
@@ -209,8 +209,41 @@ bool RosTypeCodeGenYarp::endConstruct() {
     return true;
 }
 
+
+bool RosTypeCodeGenYarp::beginClear() {
+    fprintf(out, "  void clear() {\n");
+    first = true;
+    return true;
+}
+
+bool RosTypeCodeGenYarp::clearField(const RosField& field) {
+    if (!first) {
+        fprintf(out, "\n");
+    }
+    first = false;
+    fprintf(out, "    // *** %s ***\n", field.rosName.c_str());
+
+    if (!field.isConst()) {
+        if (field.isArray || !field.isPrimitive) {
+            fprintf(out, "    %s.clear();\n", field.rosName.c_str());
+        } else {
+            RosYarpType t = mapPrimitive(field);
+            fprintf(out, "    %s = %s;\n", field.rosName.c_str(), t.yarpDefaultValue.c_str());
+        }
+    }
+    constructField(field);
+    return true;
+}
+
+bool RosTypeCodeGenYarp::endClear() {
+    fprintf(out, "  }\n\n");
+    return true;
+}
+
+
+
 bool RosTypeCodeGenYarp::beginRead(bool bare, int len) {
-    fprintf(out,"  bool read%s(yarp::os::ConnectionReader& connection) {\n",
+    fprintf(out,"  bool read%s(yarp::os::ConnectionReader& connection) YARP_OVERRIDE {\n",
             bare?"Bare":"Bottle");
     if (!bare) {
         fprintf(out,"    connection.convertTextMode();\n");
@@ -367,7 +400,7 @@ bool RosTypeCodeGenYarp::endRead(bool bare) {
     fprintf(out,"  }\n\n");
     if (!bare) {
         fprintf(out,"  using yarp::os::idl::WirePortable::read;\n");
-        fprintf(out,"  bool read(yarp::os::ConnectionReader& connection) {\n");
+        fprintf(out,"  bool read(yarp::os::ConnectionReader& connection) YARP_OVERRIDE {\n");
         fprintf(out,"    if (connection.isBareMode()) return readBare(connection);\n");
         fprintf(out,"    return readBottle(connection);\n");
         fprintf(out,"  }\n\n");
@@ -376,7 +409,7 @@ bool RosTypeCodeGenYarp::endRead(bool bare) {
 }
 
 bool RosTypeCodeGenYarp::beginWrite(bool bare, int len) {
-    fprintf(out,"  bool write%s(yarp::os::ConnectionWriter& connection) {\n",
+    fprintf(out,"  bool write%s(yarp::os::ConnectionWriter& connection) YARP_OVERRIDE {\n",
             bare?"Bare":"Bottle");
     if (!bare) {
         fprintf(out,"    connection.appendInt(BOTTLE_TAG_LIST);\n");
@@ -450,7 +483,7 @@ bool RosTypeCodeGenYarp::writeField(bool bare, const RosField& field) {
                             field.rosName.c_str());
                 }
                 fprintf(out,"    if (%s.size()>0) {connection.appendExternalBlock((char*)&%s[0],sizeof(%s)*%s.size());}\n",
-                        field.rosName.c_str(), 
+                        field.rosName.c_str(),
                         field.rosName.c_str(),
                         t.yarpType.c_str(),
                         field.rosName.c_str());
@@ -507,7 +540,7 @@ bool RosTypeCodeGenYarp::endWrite(bool bare) {
     fprintf(out,"  }\n\n");
     if (!bare) {
         fprintf(out,"  using yarp::os::idl::WirePortable::write;\n");
-        fprintf(out,"  bool write(yarp::os::ConnectionWriter& connection) {\n");
+        fprintf(out,"  bool write(yarp::os::ConnectionWriter& connection) YARP_OVERRIDE {\n");
         fprintf(out,"    if (connection.isBareMode()) return writeBare(connection);\n");
         fprintf(out,"    return writeBottle(connection);\n");
         fprintf(out,"  }\n\n");
@@ -576,7 +609,7 @@ bool RosTypeCodeGenYarp::endType(const std::string& tname,
     fprintf(out,"\n");
 
     fprintf(out,"  // Name the class, ROS will need this\n");
-    fprintf(out,"  yarp::os::Type getType() {\n");
+    fprintf(out,"  yarp::os::Type getType() YARP_OVERRIDE {\n");
     fprintf(out,"    yarp::os::Type typ = yarp::os::Type::byName(\"%s\",\"%s\");\n", dbl_name.c_str(), dbl_name.c_str());
     fprintf(out,"    typ.addProperty(\"md5sum\",yarp::os::Value(\"%s\"));\n", field.checksum.c_str());
     fprintf(out,"    typ.addProperty(\"message_definition\",yarp::os::Value(getTypeText()));\n");
@@ -672,11 +705,11 @@ RosYarpType RosTypeCodeGenYarp::mapPrimitive(const RosField& field) {
         ry.reader = "expectDouble";
         flavor = "double";
     } else if (name=="string") {
-        // ignore
+        ry.yarpDefaultValue = "\"\"";
     } else {
         fprintf(stderr, "Please translate %s in RosTypeCodeGenYarp.cpp\n",
                 name.c_str());
-        exit(1);
+        std::exit(1);
     }
     if (flavor=="int") {
         ry.yarpWriter = "appendInt";

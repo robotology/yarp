@@ -11,7 +11,7 @@
 #ifndef LASERHOKUYO_THREAD_H
 #define LASERHOKUYO_THREAD_H
 
-//#include <stdio.h>
+//#include <cstdio>
 #include <string>
 
 #include <yarp/os/RateThread.h>
@@ -30,7 +30,7 @@ class laserHokuyo : public RateThread, public yarp::dev::IRangefinder2D, public 
 protected:
     PolyDriver driver;
     ISerialDevice *pSerial;
-   
+
     yarp::os::Semaphore mutex;
 
     int cardId;
@@ -59,7 +59,7 @@ protected:
 
     Laser_mode_type laser_mode;
 
-    struct sensor_property_struct 
+    struct sensor_property_struct
     {
         std::string MODL;
         int DMIN;
@@ -76,32 +76,32 @@ protected:
 public:
     laserHokuyo(int period=20) : RateThread(period),mutex(1)
     {}
-    
+
 
     ~laserHokuyo()
     {
     }
 
-    virtual bool open(yarp::os::Searchable& config);
-    virtual bool close();
-    virtual bool threadInit();
-    virtual void threadRelease();
-    virtual void run();
+    virtual bool open(yarp::os::Searchable& config) override;
+    virtual bool close() override;
+    virtual bool threadInit() override;
+    virtual void threadRelease() override;
+    virtual void run() override;
 
 public:
     //IRangefinder2D interface
-    virtual bool getRawData(yarp::sig::Vector &data);
-    virtual bool getLaserMeasurement(std::vector<LaserMeasurementData> &data);
-    virtual bool getDeviceStatus     (Device_status &status);
-    virtual bool getDeviceInfo       (yarp::os::ConstString &device_info);
-    virtual bool getDistanceRange    (double& min, double& max);
-    virtual bool setDistanceRange    (double min, double max);
-    virtual bool getScanLimits        (double& min, double& max);
-    virtual bool setScanLimits        (double min, double max);
-    virtual bool getHorizontalResolution      (double& step);
-    virtual bool setHorizontalResolution      (double step);
-    virtual bool getScanRate         (double& rate);
-    virtual bool setScanRate         (double rate);
+    virtual bool getRawData(yarp::sig::Vector &data) override;
+    virtual bool getLaserMeasurement(std::vector<LaserMeasurementData> &data) override;
+    virtual bool getDeviceStatus     (Device_status &status) override;
+    virtual bool getDeviceInfo       (yarp::os::ConstString &device_info) override;
+    virtual bool getDistanceRange    (double& min, double& max) override;
+    virtual bool setDistanceRange    (double min, double max) override;
+    virtual bool getScanLimits        (double& min, double& max) override;
+    virtual bool setScanLimits        (double min, double max) override;
+    virtual bool getHorizontalResolution      (double& step) override;
+    virtual bool setHorizontalResolution      (double step) override;
+    virtual bool getScanRate         (double& rate) override;
+    virtual bool setScanRate         (double rate) override;
 
 private:
     //laser methods

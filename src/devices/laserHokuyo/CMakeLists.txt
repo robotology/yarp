@@ -9,18 +9,11 @@ yarp_prepare_plugin(laserHokuyo
 
 if(NOT SKIP_laserHokuyo)
   set(CMAKE_INCLUDE_CURRENT_DIR ON)
-  get_property(YARP_OS_INCLUDE_DIRS TARGET YARP_OS PROPERTY INCLUDE_DIRS)
-  get_property(YARP_sig_INCLUDE_DIRS TARGET YARP_sig PROPERTY INCLUDE_DIRS)
-  get_property(YARP_dev_INCLUDE_DIRS TARGET YARP_dev PROPERTY INCLUDE_DIRS)
-  include_directories(${YARP_OS_INCLUDE_DIRS}
-                      ${YARP_sig_INCLUDE_DIRS}
-                      ${YARP_dev_INCLUDE_DIRS})
-
   yarp_add_plugin(laserHokuyo laserHokuyo.h
                               laserHokuyo.cpp)
-  target_link_libraries(laserHokuyo YARP_OS
-                                    YARP_sig
-                                    YARP_dev)
+  target_link_libraries(laserHokuyo YARP::YARP_OS
+                                    YARP::YARP_sig
+                                    YARP::YARP_dev)
   yarp_install(TARGETS laserHokuyo
                EXPORT YARP
                COMPONENT runtime
@@ -29,4 +22,6 @@ if(NOT SKIP_laserHokuyo)
   yarp_install(FILES laserHokuyo.ini
                COMPONENT runtime
                DESTINATION ${YARP_PLUGIN_MANIFESTS_INSTALL_DIR})
+
+  set_property(TARGET laserHokuyo PROPERTY FOLDER "Plugins/Device")
 endif()

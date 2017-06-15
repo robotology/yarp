@@ -18,7 +18,7 @@
 namespace yarp {
 namespace manager {
 
-
+class TextParser;
 /**
  * Class XmlModLoader
  */
@@ -28,10 +28,10 @@ public:
     XmlModLoader(const char* szFileName);
     XmlModLoader(const char* szPath, const char* szModuleName);
     virtual ~XmlModLoader();
-    bool init(void);
-    void reset(void);
-    void fini(void);
-    Module* getNextModule(void);
+    bool init(void) YARP_OVERRIDE;
+    void reset(void) YARP_OVERRIDE;
+    void fini(void) YARP_OVERRIDE;
+    Module* getNextModule(void) YARP_OVERRIDE;
 
 protected:
 
@@ -40,6 +40,7 @@ private:
     string strPath;
     string strFileName;
     vector<string> fileNames;
+    TextParser*    parser;
     Module module;
     Module* parsXml(const char* szFile);
 };

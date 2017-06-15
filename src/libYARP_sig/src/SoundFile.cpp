@@ -15,8 +15,8 @@
 
 #include <yarp/sig/Sound.h>
 
-#include <stdio.h>
-#include <string.h>
+#include <cstdio>
+#include <cstring>
 
 using namespace yarp::os;
 using namespace yarp::sig;

@@ -27,19 +27,19 @@ class yarp::os::impl::UdpCarrier : public AbstractCarrier
 public:
     UdpCarrier();
 
-    virtual Carrier *create();
+    virtual Carrier *create() override;
 
-    virtual ConstString getName();
+    virtual ConstString getName() override;
 
     virtual int getSpecifierCode();
 
-    virtual bool checkHeader(const Bytes& header);
-    virtual void getHeader(const Bytes& header);
-    virtual void setParameters(const Bytes& header);
-    virtual bool requireAck();
-    virtual bool isConnectionless();
-    virtual bool respondToHeader(ConnectionState& proto);
-    virtual bool expectReplyToHeader(ConnectionState& proto);
+    virtual bool checkHeader(const Bytes& header) override;
+    virtual void getHeader(const Bytes& header) override;
+    virtual void setParameters(const Bytes& header) override;
+    virtual bool requireAck() override;
+    virtual bool isConnectionless() override;
+    virtual bool respondToHeader(ConnectionState& proto) override;
+    virtual bool expectReplyToHeader(ConnectionState& proto) override;
 };
 
 #endif // YARP_OS_IMPL_UDPCARRIER_H

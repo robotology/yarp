@@ -14,17 +14,11 @@ yarp_prepare_plugin(fakeAnalogSensor
 
 if(ENABLE_fakeAnalogSensor)
   set(CMAKE_INCLUDE_CURRENT_DIR ON)
-  get_property(YARP_OS_INCLUDE_DIRS TARGET YARP_OS PROPERTY INCLUDE_DIRS)
-  get_property(YARP_sig_INCLUDE_DIRS TARGET YARP_sig PROPERTY INCLUDE_DIRS)
-  get_property(YARP_dev_INCLUDE_DIRS TARGET YARP_dev PROPERTY INCLUDE_DIRS)
-  include_directories(${YARP_OS_INCLUDE_DIRS}
-                      ${YARP_sig_INCLUDE_DIRS}
-                      ${YARP_dev_INCLUDE_DIRS})
   yarp_add_plugin(yarp_fakeAnalogSensor fakeAnalogSensor.cpp
                                         fakeAnalogSensor.h)
-  target_link_libraries(yarp_fakeAnalogSensor YARP_OS
-                                              YARP_sig
-                                              YARP_dev)
+  target_link_libraries(yarp_fakeAnalogSensor YARP::YARP_OS
+                                              YARP::YARP_sig
+                                              YARP::YARP_dev)
   yarp_install(TARGETS yarp_fakeAnalogSensor
                EXPORT YARP
                COMPONENT runtime
@@ -33,4 +27,6 @@ if(ENABLE_fakeAnalogSensor)
   yarp_install(FILES fakeAnalogSensor.ini
                COMPONENT runtime
                DESTINATION ${YARP_PLUGIN_MANIFESTS_INSTALL_DIR})
+
+  set_property(TARGET yarp_fakeAnalogSensor PROPERTY FOLDER "Plugins/Device/Fake")
 endif()

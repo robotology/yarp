@@ -5,7 +5,7 @@
  *
  */
 
-#include <stdio.h>
+#include <cstdio>
 
 #include "yarp.h"
 #include "yarpimpl.h"
@@ -13,7 +13,7 @@
 static yarpNetworkPtr __yarp_network;
 
     /**
-     * Create a network.  There should typically be one of 
+     * Create a network.  There should typically be one of
      * these in a program using YARP.  You need one of these in order
      * to create ports.
      */
@@ -65,7 +65,7 @@ YARP_DEFINE(int) yarpNetworkSetLocalMode(yarpNetworkPtr network,
      * If the carrier is NULL, the connection will be of type tcp.
      *
      */
-YARP_DEFINE(int) yarpNetworkConnect(yarpNetworkPtr network, 
+YARP_DEFINE(int) yarpNetworkConnect(yarpNetworkPtr network,
                                     const char *src,
                                     const char *dest,
                                     const char *carrier) {
@@ -79,7 +79,7 @@ YARP_DEFINE(int) yarpNetworkConnect(yarpNetworkPtr network,
      * Disconnect two ports from each other.
      *
      */
-YARP_DEFINE(int) yarpNetworkDisconnect(yarpNetworkPtr network, 
+YARP_DEFINE(int) yarpNetworkDisconnect(yarpNetworkPtr network,
                                     const char *src,
                                     const char *dest) {
     YARP_NETWORK(network).disconnect(src,dest);

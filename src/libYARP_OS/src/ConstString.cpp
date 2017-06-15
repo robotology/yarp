@@ -185,7 +185,7 @@ size_t ConstString::find(const char *needle, size_t start, size_t len) const {
 }
 
 size_t ConstString::find(char needle, size_t start) const {
-    return HELPER(implementation).find(needle,start);
+    return HELPER(implementation).find(needle, start);
 }
 
 size_t ConstString::rfind(const ConstString& needle, size_t start) const {
@@ -201,12 +201,12 @@ size_t ConstString::rfind(const char *needle, size_t start, size_t len) const {
 }
 
 size_t ConstString::rfind(char needle, size_t start) const {
-    return HELPER(implementation).rfind(needle,start);
+    return HELPER(implementation).rfind(needle, start);
 }
 
 ConstString ConstString::substr(size_t start, size_t n) const {
-    std::string result = HELPER(implementation).substr(start,n);
-    return ConstString(result.c_str(),result.length());
+    std::string result = HELPER(implementation).substr(start, n);
+    return ConstString(result.c_str(), result.length());
 }
 
 void ConstString::clear() {
@@ -266,7 +266,7 @@ const char& ConstString::at(size_t pos) const {
 }
 
 ConstString& ConstString::assign(const char *s, size_t n) {
-    HELPER(implementation).assign(s,n);
+    HELPER(implementation).assign(s, n);
     return *this;
 }
 

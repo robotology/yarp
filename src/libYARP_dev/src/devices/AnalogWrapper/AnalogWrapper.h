@@ -174,16 +174,30 @@ public:
     // Constructor used by yarp factory
     AnalogWrapper();
 
+#ifndef YARP_NO_DEPRECATED // since YARP 2.3.70
     // Constructor used when there is only one output port  -- obsolete, here for backward compatibility with skinwrapper
+    /** @deprecated since YARP 2.3.70 */
+#if !defined(_MSC_VER) || _MSC_VER != 1900
+    // For some unknown reason, Visual studio 2015 fails with this error:
+    // "C2416 attribute 'deprecated' cannot be applied in this context"
+    YARP_DEPRECATED
+#endif
     AnalogWrapper(const char* name, int rate=20);
 
     // Contructor used when one or more output ports are specified  -- obsolete, here for backward compatibility with skinwrapper
+    /** @deprecated since YARP 2.3.70 */
+#if !defined(_MSC_VER) || _MSC_VER != 1900
+    // For some unknown reason, Visual studio 2015 fails with this error:
+    // "C2416 attribute 'deprecated' cannot be applied in this context"
+    YARP_DEPRECATED
+#endif
     AnalogWrapper(const std::vector<yarp::dev::impl::AnalogPortEntry>& _analogPorts, int rate=20);
+#endif // YARP_NO_DEPRECATED
 
     ~AnalogWrapper();
 
-    bool open(yarp::os::Searchable &params);
-    bool close();
+    bool open(yarp::os::Searchable &params) override;
+    bool close() override;
     yarp::os::Bottle getOptions();
 
     void setId(const std::string &id);
@@ -192,15 +206,15 @@ public:
     /**
       * Specify which analog sensor this thread has to read from.
       */
-    bool attachAll(const PolyDriverList &p);
-    bool detachAll();
+    bool attachAll(const PolyDriverList &p) override;
+    bool detachAll() override;
 
     void attach(yarp::dev::IAnalogSensor *s);
     void detach();
 
-    bool threadInit();
-    void threadRelease();
-    void run();
+    bool threadInit() override;
+    void threadRelease() override;
+    void run() override;
 
 private:
 #ifndef DOXYGEN_SHOULD_SKIP_THIS
@@ -276,7 +290,7 @@ public:
 
     bool _handleIAnalog(yarp::os::Bottle &cmd, yarp::os::Bottle &reply);
 
-    virtual bool read(yarp::os::ConnectionReader& connection);
+    virtual bool read(yarp::os::ConnectionReader& connection) override;
 };
 
 

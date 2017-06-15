@@ -63,9 +63,12 @@ if(CREATE_YARPDATAPLAYER)
 
   include_directories(${yarpdataplayer_THRIFT_INCLUDE_DIRS})
 
-
-  source_group("Source Files" FILES ${yarpdataplayer_SRCS})
-  source_group("Header Files" FILES ${yarpdataplayer_HDRS})
+  source_group(TREE "${CMAKE_CURRENT_SOURCE_DIR}"
+               PREFIX "Source Files"
+               FILES ${yarpdataplayer_SRCS})
+  source_group(TREE "${CMAKE_CURRENT_SOURCE_DIR}"
+               PREFIX "Header Files"
+               FILES ${yarpdataplayer_HDRS})
   source_group("Resources Files" FILES ${yarpdataplayer_QRC_FILES}
                                        ${yarpdataplayer_RC_FILES})
   source_group("UI Files" FILES ${yarpdataplayer_UI_FILES})
@@ -77,7 +80,9 @@ if(CREATE_YARPDATAPLAYER)
 
   add_executable(yarpdataplayer WIN32 ${yarpdataplayer_SRCS}
                                       ${yarpdataplayer_HDRS}
+                                      ${yarpdataplayer_QRC_FILES}
                                       ${yarpdataplayer_QRC_GEN_SRCS}
+                                      ${yarpdataplayer_UI_FILES}
                                       ${yarpdataplayer_UI_GEN_SRCS}
                                       ${yarpdataplayer_THRIFT_GEN_SRCS}
                                       ${yarpdataplayer_THRIFT_GEN_HDRS}
@@ -86,18 +91,16 @@ if(CREATE_YARPDATAPLAYER)
 
   target_link_libraries(yarpdataplayer YARP_OS
                                        YARP_init
-                                       YARP_sig)
-  qtyarp_use_modules(yarpdataplayer Widgets)
-  qtyarp_deprecate_with_cmake_version(2.8.11)
-  if(WIN32 AND CMAKE_VERSION VERSION_LESS 2.8.11)
-    target_link_libraries(yarpdataplayer Qt5::WinMain)
-  endif()
+                                       YARP_sig
+                                       Qt5::Widgets)
 
   if(YARP_HAS_OPENCV)
     target_link_libraries(yarpdataplayer ${OpenCV_LIBRARIES})
   endif()
 
   install(TARGETS yarpdataplayer COMPONENT utilities DESTINATION ${CMAKE_INSTALL_BINDIR})
+
+  set_property(TARGET yarpdataplayer PROPERTY FOLDER "Graphical User Interfaces")
 
   yarp_osx_duplicate_and_add_bundle(TARGET yarpdataplayer
                                     INSTALL_COMPONENT utilities

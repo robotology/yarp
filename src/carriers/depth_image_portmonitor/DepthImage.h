@@ -29,14 +29,14 @@
 class DepthImageConverter : public yarp::os::MonitorObject
 {
 public:
-    bool create(const yarp::os::Property& options);
-    void destroy(void);
+    bool create(const yarp::os::Property& options) override;
+    void destroy(void) override;
 
-    bool setparam(const yarp::os::Property& params);
-    bool getparam(yarp::os::Property& params);
+    bool setparam(const yarp::os::Property& params) override;
+    bool getparam(yarp::os::Property& params) override;
 
-    bool accept(yarp::os::Things& thing);
-    yarp::os::Things& update(yarp::os::Things& thing);
+    bool accept(yarp::os::Things& thing) override;
+    yarp::os::Things& update(yarp::os::Things& thing) override;
 
 private:
 

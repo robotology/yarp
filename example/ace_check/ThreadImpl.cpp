@@ -18,7 +18,7 @@ static unsigned __stdcall theExecutiveBranch (void *args)
     unsigned theExecutiveBranch (void *args)
 #endif
 {
-    ACE_OS::signal(SIGPIPE, SIG_IGN);
+    signal(SIGPIPE, SIG_IGN);
 
     ThreadImpl *thread = (ThreadImpl *)args;
     thread->run();

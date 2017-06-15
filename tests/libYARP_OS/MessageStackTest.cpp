@@ -23,7 +23,7 @@ public:
     MessageStackWorker() : go(0), gone(0), mutex(1) {
     }
 
-    virtual bool read(ConnectionReader& reader) {
+    virtual bool read(ConnectionReader& reader) override {
         go.wait();
         mutex.wait();
         bool ok = last.read(reader);
@@ -62,11 +62,11 @@ public:
         checkEqual(worker.last.toString(),"the world","got a prefixed message");
     }
 
-    virtual void runTests() {
+    virtual void runTests() override {
         checkBasic();
     }
 
-    virtual ConstString getName() {
+    virtual ConstString getName() override {
         return "MessageStackTest";
     }
 };

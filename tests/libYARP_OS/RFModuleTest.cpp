@@ -20,7 +20,7 @@ using namespace yarp::os;
 class MyModule : public RFModule
 {
 public:
-    virtual bool respond(const Bottle& command, Bottle& reply)
+    virtual bool respond(const Bottle& command, Bottle& reply) override
     {
         if (command.get(0).isInt())
         {
@@ -30,17 +30,17 @@ public:
         return RFModule::respond(command,reply);
     }
 
-    virtual bool configure(yarp::os::ResourceFinder &rf)
+    virtual bool configure(yarp::os::ResourceFinder &rf) override
     {
         return true;
     }
 
-    virtual double getPeriod()
+    virtual double getPeriod() override
     {
         return 1.0;
     }
 
-    virtual bool updateModule()
+    virtual bool updateModule() override
     {
         return true;
     }
@@ -50,7 +50,7 @@ public:
 class RFModuleTest : public UnitTest
 {
 public:
-    virtual ConstString getName() { return "RFModuleTest"; }
+    virtual ConstString getName() override { return "RFModuleTest"; }
 
 
     void testPort()
@@ -89,7 +89,7 @@ public:
         checkEqual(mm.joinModule(),        true, "[Test] Module threaded finished");
     }
 
-    virtual void runTests()
+    virtual void runTests() override
     {
         Network::setLocalMode(true);
 

@@ -60,7 +60,7 @@ bool yarp::os::impl::UdpCarrier::respondToHeader(ConnectionState& proto) {
     }
 
     int myPort = stream->getLocalAddress().getPort();
-    writeYarpInt(myPort,proto);
+    writeYarpInt(myPort, proto);
     proto.takeStreams(stream);
 
     return true;
@@ -83,7 +83,7 @@ bool yarp::os::impl::UdpCarrier::expectReplyToHeader(ConnectionState& proto) {
 
     proto.takeStreams(YARP_NULLPTR); // free up port from tcp
     bool ok =
-        stream->open(Contact(myName,myPort),Contact(altName,altPort));
+        stream->open(Contact(myName, myPort), Contact(altName, altPort));
     if (!ok) {
         delete stream;
         return false;

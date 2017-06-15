@@ -2,14 +2,12 @@
 # Author: Paul Fitzpatrick
 # CopyPolicy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
 
-cmake_minimum_required(VERSION 2.8.9)
+cmake_minimum_required(VERSION 3.0)
 
 find_package(YARP REQUIRED)
 
-include_directories(${YARP_INCLUDE_DIRS})
-
-link_libraries(${YARP_LIBRARIES})
-
 add_executable(stress_name_server_topics stress_name_server_topics.cpp)
+target_link_libraries(stress_name_server_topics ${YARP_LIBRARIES})
 
 add_executable(stress_name_server_reg stress_name_server_reg.cpp)
+target_link_libraries(stress_name_server_reg ${YARP_LIBRARIES})

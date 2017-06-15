@@ -51,7 +51,7 @@ public:
     BatteryInputPortProcessor();
 
     using yarp::os::BufferedPort<yarp::os::Bottle>::onRead;
-    virtual void onRead(yarp::os::Bottle &v);
+    virtual void onRead(yarp::os::Bottle &v) override;
 
     inline int getLast(yarp::os::Bottle &data, yarp::os::Stamp &stmp);
 
@@ -93,8 +93,8 @@ protected:
 public:
 
     /* DevideDriver methods */
-    bool open(yarp::os::Searchable& config);
-    bool close();
+    bool open(yarp::os::Searchable& config) override;
+    bool close() override;
 
 
     /* IPreciselyTimed methods */
@@ -102,49 +102,49 @@ public:
     * Get the time stamp for the last read data
     * @return last time stamp.
     */
-    yarp::os::Stamp getLastInputStamp();
+    yarp::os::Stamp getLastInputStamp() override;
 
     /**
     * Get the instantaneous voltage measurement
     * @param voltage the voltage measurement
     * @return true/false.
     */
-    bool getBatteryVoltage(double &voltage);
+    bool getBatteryVoltage(double &voltage) override;
 
     /**
     * Get the instantaneous current measurement
     * @param current the current measurement
     * @return true/false.
     */
-    bool getBatteryCurrent(double &current);
+    bool getBatteryCurrent(double &current) override;
 
     /**
     * get the battery status of charge
     * @param charge the charge measurement (0-100%)
     * @return true/false.
     */
-    bool getBatteryCharge(double &charge);
+    bool getBatteryCharge(double &charge) override;
 
     /**
     * get the battery status
     * @param status the battery status
     * @return true/false.
     */
-    bool getBatteryStatus(int &status);
+    bool getBatteryStatus(int &status) override;
 
     /**
     * get the battery hardware charactestics (e.g. max voltage etc)
     * @param a string containing the battery infos
     * @return true/false.
     */
-    bool getBatteryInfo(yarp::os::ConstString &battery_info);
+    bool getBatteryInfo(yarp::os::ConstString &battery_info) override;
 
     /**
     * get the battery temperature
     * @param temprature the battery temperature
     * @return true/false.
     */
-    bool getBatteryTemperature(double &temperature);
+    bool getBatteryTemperature(double &temperature) override;
 };
 
 #endif // YARP_DEV_BATTERYCLIENT_BATTERYCLIENT_H

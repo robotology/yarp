@@ -33,21 +33,21 @@ private:
 public:
     FrameGrabberControls2_Sender(yarp::os::Port &port);
     virtual ~FrameGrabberControls2_Sender() {};
-    virtual bool getCameraDescription(CameraDescriptor *camera);
-    virtual bool hasFeature(int feature, bool *hasFeature);
-    virtual bool setFeature(int feature, double value);
-    virtual bool getFeature(int feature, double *value);
-    virtual bool setFeature(int feature, double value1, double value2);
-    virtual bool getFeature(int feature, double *value1, double *value2);
-    virtual bool hasOnOff(int feature, bool *HasOnOff);
-    virtual bool setActive(int feature, bool onoff);
-    virtual bool getActive(int feature, bool *isActive);
-    virtual bool hasAuto(int feature, bool *hasAuto);
-    virtual bool hasManual(int feature, bool *hasManual);
-    virtual bool hasOnePush(int feature, bool *hasOnePush);
-    virtual bool setMode(int feature, FeatureMode mode);
-    virtual bool getMode(int feature, FeatureMode *mode);
-    virtual bool setOnePush(int feature);
+    virtual bool getCameraDescription(CameraDescriptor *camera) YARP_OVERRIDE;
+    virtual bool hasFeature(int feature, bool *hasFeature) YARP_OVERRIDE;
+    virtual bool setFeature(int feature, double value) YARP_OVERRIDE;
+    virtual bool getFeature(int feature, double *value) YARP_OVERRIDE;
+    virtual bool setFeature(int feature, double value1, double value2) YARP_OVERRIDE;
+    virtual bool getFeature(int feature, double *value1, double *value2) YARP_OVERRIDE;
+    virtual bool hasOnOff(int feature, bool *HasOnOff) YARP_OVERRIDE;
+    virtual bool setActive(int feature, bool onoff) YARP_OVERRIDE;
+    virtual bool getActive(int feature, bool *isActive) YARP_OVERRIDE;
+    virtual bool hasAuto(int feature, bool *hasAuto) YARP_OVERRIDE;
+    virtual bool hasManual(int feature, bool *hasManual) YARP_OVERRIDE;
+    virtual bool hasOnePush(int feature, bool *hasOnePush) YARP_OVERRIDE;
+    virtual bool setMode(int feature, FeatureMode mode) YARP_OVERRIDE;
+    virtual bool getMode(int feature, FeatureMode *mode) YARP_OVERRIDE;
+    virtual bool setOnePush(int feature) YARP_OVERRIDE;
 };
 
 
@@ -61,7 +61,7 @@ public:
     virtual ~FrameGrabberControls2_Parser() {};
 
     bool configure(IFrameGrabberControls2 *interface);
-    virtual bool respond(const yarp::os::Bottle& cmd, yarp::os::Bottle& response);
+    virtual bool respond(const yarp::os::Bottle& cmd, yarp::os::Bottle& response) YARP_OVERRIDE;
 };
 
 

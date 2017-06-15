@@ -7,7 +7,7 @@
 #ifndef YARP_SIG_IMAGEDRAW_H
 #define YARP_SIG_IMAGEDRAW_H
 
-#include <math.h>
+#include <cmath>
 
 #include <yarp/sig/Image.h>
 

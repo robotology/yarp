@@ -7,8 +7,8 @@
 #ifndef YARP_DEV_SERVERSERIAL_H
 #define YARP_DEV_SERVERSERIAL_H
 
-#include <stdio.h>
-#include <stdlib.h>
+#include <cstdio>
+#include <cstdlib>
 
 #include <yarp/os/BufferedPort.h>
 #include <yarp/dev/PolyDriver.h>
@@ -54,7 +54,7 @@ public:
      * Callback function.
      * @param b is the Bottle being received.
      */
-    virtual void onRead(Bottle& b);
+    virtual void onRead(Bottle& b) YARP_OVERRIDE;
 };
 
 
@@ -106,14 +106,14 @@ public:
 
     virtual ~ServerSerial();
 
-    virtual bool send(const Bottle& msg);
-    virtual bool send(char *msg, size_t size);
-    virtual bool receive(Bottle& msg);
-    virtual int receiveChar(char& c);
-    virtual int flush ();
-    virtual int receiveLine(char* line, const int MaxLineLength);
-    virtual int receiveBytes(unsigned char* bytes, const int size);
-    virtual bool setDTR(bool enable);
+    virtual bool send(const Bottle& msg) YARP_OVERRIDE;
+    virtual bool send(char *msg, size_t size) YARP_OVERRIDE;
+    virtual bool receive(Bottle& msg) YARP_OVERRIDE;
+    virtual int receiveChar(char& c) YARP_OVERRIDE;
+    virtual int flush () YARP_OVERRIDE;
+    virtual int receiveLine(char* line, const int MaxLineLength) YARP_OVERRIDE;
+    virtual int receiveBytes(unsigned char* bytes, const int size) YARP_OVERRIDE;
+    virtual bool setDTR(bool enable) YARP_OVERRIDE;
 
     /**
     * Default open() method.
@@ -125,7 +125,7 @@ public:
     * Close the device driver by deallocating all resources and closing ports.
     * @return true if successful or false otherwise.
     */
-    virtual bool close();
+    virtual bool close() YARP_OVERRIDE;
 
     /**
      * Open the device driver.
@@ -137,12 +137,12 @@ public:
      * and all parameters requied by the wrapped device driver.
      * @return true iff the object could be configured.
      */
-    virtual bool open(Searchable& prop);
+    virtual bool open(Searchable& prop) YARP_OVERRIDE;
 
     /**
      * The thread main loop deals with writing on ports here.
      */
-    virtual void run();
+    virtual void run() YARP_OVERRIDE;
 };
 
 #endif // YARP_DEV_SERVERSERIAL_H

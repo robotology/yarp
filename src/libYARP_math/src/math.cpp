@@ -9,9 +9,17 @@
 #include <yarp/math/SVD.h>
 #include <yarp/math/Quaternion.h>
 
-#include <cmath>
+#include <yarp/eigen/Eigen.h>
 
+#include <Eigen/Eigenvalues>
+
+#include <cmath>
+#include <cassert>
+
+using namespace yarp::eigen;
 using namespace yarp::sig;
+using namespace yarp::math;
+
 
 Vector yarp::math::operator+(const Vector &a, const double &s)
 {
@@ -49,7 +57,7 @@ Vector& yarp::math::operator+=(Vector &a, const Vector &b)
 
 Matrix yarp::math::operator+(const Matrix &a, const Matrix &b)
 {
-    Matrix ret(a);    
+    Matrix ret(a);
     return ret+=b;
 }
 
@@ -120,6 +128,11 @@ Matrix& yarp::math::operator-=(Matrix &a, const Matrix &b)
     return a;
 }
 
+Vector yarp::math::operator*(double k, const Vector &b)
+{
+    return operator*(b,k);
+}
+
 Vector yarp::math::operator*(const Vector &a, double k)
 {
     Vector ret(a);
@@ -134,9 +147,56 @@ Vector& yarp::math::operator*=(Vector &a, double k)
     return a;
 }
 
-Vector yarp::math::operator*(double k, const Vector &b)
+Vector yarp::math::operator*(const Vector &a, const Matrix &m)
 {
-    return operator*(b,k);
+    yAssert(a.size()==(size_t)m.rows());
+    Vector ret((size_t)m.cols());
+
+    toEigen(ret) = toEigen(m).transpose()*toEigen(a);
+
+    return ret;
+}
+
+Vector& yarp::math::operator*=(Vector &a, const Matrix &m)
+{
+    yAssert(a.size()==(size_t)m.rows());
+    Vector a2(a);
+    a.resize(m.cols());
+
+    toEigen(a) = toEigen(m).transpose()*toEigen(a2);
+
+    return a;
+}
+
+Vector yarp::math::operator*(const Matrix &m, const Vector &a)
+{
+    yAssert((size_t)m.cols()==a.size());
+    Vector ret((size_t)m.rows(),0.0);
+
+    toEigen(ret) = toEigen(m)*toEigen(a);
+
+    return ret;
+}
+
+Matrix yarp::math::operator*(const Matrix &a, const Matrix &b)
+{
+    yAssert(a.cols()==b.rows());
+    Matrix c(a.rows(), b.cols());
+
+    toEigen(c) = toEigen(a)*toEigen(b);
+
+    return c;
+}
+
+Matrix& yarp::math::operator*=(Matrix &a, const Matrix &b)
+{
+    yAssert(a.cols()==b.rows());
+    Matrix a2(a);   // a copy of a
+    a.resize(a.rows(), b.cols());
+
+    toEigen(a) = toEigen(a2)*toEigen(b);
+
+    return a;
 }
 
 Matrix yarp::math::operator*(const double k, const Matrix &M)
@@ -171,6 +231,14 @@ Vector& yarp::math::operator*=(Vector &a, const Vector &b)
     for (size_t i=0; i<n; i++)
         a[i]*=b[i];
     return a;
+}
+
+Quaternion yarp::math::operator*(const Quaternion& a, const Quaternion& b)
+{
+    return Quaternion(a.w()*b.x() + a.x()*b.w() + a.y()*b.z() - a.z()*b.y(),
+                      a.w()*b.y() + a.y()*b.w() + a.z()*b.x() - a.x()*b.z(),
+                      a.w()*b.z() + a.z()*b.w() + a.x()*b.y() - a.y()*b.x(),
+                      a.w()*b.w() - a.x()*b.x() - a.y()*b.y() - a.z()*b.z());
 }
 
 Vector yarp::math::operator/(const Vector &a, const Vector &b)
@@ -220,35 +288,130 @@ Matrix& yarp::math::operator/=(Matrix &M, const double k)
     return M;
 }
 
-Matrix yarp::math::eye(int r, int c)
+Matrix yarp::math::pile(const Matrix &m1, const Matrix &m2)
 {
-    Matrix ret;
-    ret.resize(r,c);
-    ret.eye();
-    return ret;
+    int c = m1.cols();
+    yAssert(c==m2.cols());
+    int r1 = m1.rows();
+    int r2 = m2.rows();
+    Matrix res(r1+r2, c);
+
+    toEigen(res).block(0,0,r1,c) = toEigen(m1);
+    toEigen(res).block(r1,0,r2,c) = toEigen(m2);
+
+    return res;
 }
 
-Matrix yarp::math::eye(int n)
+Matrix yarp::math::pile(const Matrix &m, const Vector &v)
 {
-    return eye(n,n);
+    int c = m.cols();
+    yAssert((size_t)c==v.size());
+    int r = m.rows();
+    Matrix res(r+1, c);
+
+    toEigen(res).block(0,0,r,c) = toEigen(m);
+    toEigen(res).block(r,0,1,c) = toEigen(v).transpose();
+
+    return res;
 }
 
-Matrix yarp::math::zeros(int r, int c)
+Matrix yarp::math::pile(const Vector &v, const Matrix &m)
 {
-    Matrix ret;
-    ret.resize(r,c);
-    ret.zero();
-    return ret;
+    int c = m.cols();
+    yAssert((size_t)c==v.size());
+    int r = m.rows();
+    Matrix res(r+1, c);
+
+    toEigen(res).block(0,0,1,c) = toEigen(v).transpose();
+    toEigen(res).block(1,0,r,c) = toEigen(m);
+
+    return res;
 }
 
-Vector yarp::math::zeros(int s)
+Matrix yarp::math::pile(const Vector &v1, const Vector &v2)
 {
-    return Vector(s, 0.0);
+    size_t n = v1.size();
+    yAssert(n==v2.size());
+    Matrix res(2, (int)n);
+
+    toEigen(res).block(0,0,1,n) = toEigen(v1);
+    toEigen(res).block(1,0,1,n) = toEigen(v2);
+
+    return res;
 }
 
-Vector yarp::math::ones(int s)
+Matrix yarp::math::cat(const Matrix &m1, const Matrix &m2)
 {
-    return Vector(s, 1.0);
+    int r = m1.rows();
+    yAssert(r==m2.rows());
+    int c1 = m1.cols();
+    int c2 = m2.cols();
+    Matrix res(r, c1+c2);
+
+    toEigen(res).block(0,0,r,c1)  = toEigen(m1);
+    toEigen(res).block(0,c1,r,c2) = toEigen(m2);
+
+    return res;
+}
+
+Matrix yarp::math::cat(const Matrix &m, const Vector &v)
+{
+    int r = m.rows();
+    yAssert((size_t)r==v.size());
+    int c = m.cols();
+    Matrix res(r, c+1);
+
+    toEigen(res).block(0,0,r,c)  = toEigen(m);
+    toEigen(res).block(0,c,r,1) = toEigen(v);
+
+    return res;
+}
+
+Matrix yarp::math::cat(const Vector &v, const Matrix &m)
+{
+    int r = m.rows();
+    yAssert((size_t)r==v.size());
+    int c = m.cols();
+    Matrix res(r, c+1);
+
+    toEigen(res).block(0,0,r,1) = toEigen(v);
+    toEigen(res).block(0,1,r,c) = toEigen(m);
+
+    return res;
+}
+
+Vector yarp::math::cat(const Vector &v1, const Vector &v2)
+{
+    int n1 = v1.size();
+    int n2 = v2.size();
+    Vector res(n1+n2);
+
+    toEigen(res).segment(0,n1) = toEigen(v1);
+    toEigen(res).segment(n1,n2) = toEigen(v2);
+
+    return res;
+}
+
+Vector yarp::math::cat(const Vector &v, double s)
+{
+    int n = v.size();
+    Vector res(n+1);
+
+    toEigen(res).segment(0,n) = toEigen(v);
+    res(n) = s;
+
+    return res;
+}
+
+Vector yarp::math::cat(double s, const Vector &v)
+{
+    int n = v.size();
+    Vector res(n+1);
+
+    res(0) = s;
+    toEigen(res).segment(1,n) = toEigen(v);
+
+    return res;
 }
 
 Vector yarp::math::cat(double s1, double s2)
@@ -289,6 +452,14 @@ Vector yarp::math::cat(double s1, double s2, double s3, double s4, double s5)
     return res;
 }
 
+double yarp::math::dot(const Vector &a, const Vector &b)
+{
+    yAssert(a.size()==b.size());
+
+    return toEigen(a).dot(toEigen(b));
+}
+
+
 Matrix yarp::math::outerProduct(const Vector &a, const Vector &b)
 {
     size_t s = a.size();
@@ -315,11 +486,11 @@ Matrix yarp::math::crossProductMatrix(const Vector &v)
 {
     yAssert(v.size()==3);
     Matrix res = zeros(3,3);
-    res(1,0) = v(2); 
-    res(0,1) = -v(2); 
-    res(2,0) = -v(1); 
+    res(1,0) = v(2);
+    res(0,1) = -v(2);
+    res(2,0) = -v(1);
     res(0,2) = v(1);
-    res(2,1) = v(0); 
+    res(2,1) = v(0);
     res(1,2) = -v(0);
     return res;
 }
@@ -331,13 +502,18 @@ bool yarp::math::crossProductMatrix(const Vector &v, Matrix &res)
     if(res.cols()!=3 || res.rows()!=3)
         res.resize(3,3);
     res(0,0) = res(1,1) = res(2,2) = 0.0;
-    res(1,0) = v(2); 
-    res(0,1) = -v(2); 
-    res(2,0) = -v(1); 
+    res(1,0) = v(2);
+    res(0,1) = -v(2);
+    res(2,0) = -v(1);
     res(0,2) = v(1);
-    res(2,1) = v(0); 
+    res(2,1) = v(0);
     res(1,2) = -v(0);
     return true;
+}
+
+double yarp::math::norm(const Vector &v)
+{
+    return toEigen(v).norm();
 }
 
 double yarp::math::norm2(const Vector &v)
@@ -359,7 +535,7 @@ double yarp::math::findMax(const Vector &v)
 double yarp::math::findMin(const Vector &v)
 {
     if (v.length()<=0)
-        return 0.0;    
+        return 0.0;
     double ret=v[0];
     for (size_t i=1; i<v.length(); i++)
         if (v[i]<ret)
@@ -367,19 +543,81 @@ double yarp::math::findMin(const Vector &v)
     return ret;
 }
 
-#ifndef YARP_NO_DEPRECATED
-bool yarp::math::eingenValues(const Matrix& in, Vector &real, Vector &img) {
-    return eigenValues(in, real, img);
+Vector yarp::math::zeros(int s)
+{
+    return Vector(s, 0.0);
 }
-#endif // YARP_NO_DEPRECATED
 
-/* depends on GSL 1.12, put back in when verified that 1.12 is standard
-Matrix yarp::math::chinv(const Matrix& in) 
+Vector yarp::math::ones(int s)
+{
+    return Vector(s, 1.0);
+}
+
+Matrix yarp::math::eye(int r, int c)
+{
+    Matrix ret;
+    ret.resize(r,c);
+    ret.eye();
+    return ret;
+}
+
+Matrix yarp::math::eye(int n)
+{
+    return eye(n,n);
+}
+
+Matrix yarp::math::zeros(int r, int c)
+{
+    Matrix ret;
+    ret.resize(r,c);
+    ret.zero();
+    return ret;
+}
+
+double yarp::math::det(const Matrix& in)
+{
+    return toEigen(in).determinant();
+}
+
+Matrix yarp::math::luinv(const Matrix& in)
+{
+    int m = in.rows();
+    int n = in.cols();
+
+    Matrix ret(m, n);
+
+    toEigen(ret) = toEigen(in).inverse();
+
+    return ret;
+}
+
+bool yarp::math::eigenValues(const Matrix& in, Vector &real, Vector &img)
+{
+    // return error for non-square matrix
+    if(in.cols() != in.rows())
+        return false;
+
+    int n = in.cols();
+    real.resize(n);
+    img.resize(n);
+
+    // Get eigenvalues
+    Eigen::EigenSolver< Eigen::Matrix<double,Eigen::Dynamic,Eigen::Dynamic,Eigen::RowMajor> > es(toEigen(in));
+
+    for(int i=0; i < n; i++)
+    {
+        std::complex<double> lambda = es.eigenvalues()[i];
+        real(i) = lambda.real();
+        img(i)  = lambda.imag();
+    }
+
+    return true;
+}
+
+/*
+Matrix yarp::math::chinv(const Matrix& in)
 {
     Matrix ret(in);
-
-    gsl_linalg_cholesky_decomp((gsl_matrix *) GslMartix(ret).getGslMatrix());
-    gsl_linalg_cholesky_invert((gsl_matrix *) GslMartix(ret).getGslMatrix());
 
     return ret;
 }
@@ -414,7 +652,7 @@ Vector yarp::math::dcm2axis(const Matrix &R)
 
     if (r<1e-9)
     {
-        // if we enter here, then 
+        // if we enter here, then
         // R is symmetric; this can
         // happen only if the rotation
         // angle is 0 (R=I) or 180 degrees
@@ -465,7 +703,7 @@ Matrix yarp::math::axis2dcm(const Vector &v)
     double xyC=v[0]*yC;
     double yzC=v[1]*zC;
     double zxC=v[2]*xC;
-    
+
     R(0,0)=v[0]*xC+c;
     R(0,1)=xyC-zs;
     R(0,2)=zxC+ys;
@@ -525,7 +763,7 @@ Matrix yarp::math::euler2dcm(const Vector &v)
     double alpha=v[0];   double ca=cos(alpha); double sa=sin(alpha);
     double beta=v[1];    double cb=cos(beta);  double sb=sin(beta);
     double gamma=v[2];   double cg=cos(gamma); double sg=sin(gamma);
-    
+
     Rza(0,0)=ca; Rza(1,1)=ca; Rza(1,0)= sa; Rza(0,1)=-sa;
     Rzg(0,0)=cg; Rzg(1,1)=cg; Rzg(1,0)= sg; Rzg(0,1)=-sg;
     Ryb(0,0)=cb; Ryb(2,2)=cb; Ryb(2,0)=-sb; Ryb(0,2)= sb;
@@ -577,12 +815,61 @@ Matrix yarp::math::rpy2dcm(const Vector &v)
     double roll=v[0];   double cr=cos(roll);  double sr=sin(roll);
     double pitch=v[1];  double cp=cos(pitch); double sp=sin(pitch);
     double yaw=v[2];    double cy=cos(yaw);   double sy=sin(yaw);
-    
+
     Rz(0,0)=cy; Rz(1,1)=cy; Rz(0,1)=-sy; Rz(1,0)= sy;   // z-rotation with yaw
     Ry(0,0)=cp; Ry(2,2)=cp; Ry(0,2)= sp; Ry(2,0)=-sp;   // y-rotation with pitch
     Rx(1,1)=cr; Rx(2,2)=cr; Rx(1,2)=-sr; Rx(2,1)= sr;   // x-rotation with roll
 
     return Rz*Ry*Rx;
+}
+
+Vector yarp::math::dcm2ypr(const yarp::sig::Matrix &R)
+{
+    yAssert((R.rows() >= 3) && (R.cols() >= 3));
+
+    Vector v(3); // yaw pitch roll
+
+    if (R(0, 2)<1.0)
+    {
+        if (R(0, 2)>-1.0)
+        {
+            v[0] = atan2(-R(0, 1), R(0, 0));
+            v[1] = asin(R(0, 2));
+            v[2] = atan2(-R(1, 2), R(2, 2));
+        }
+        else // == -1
+        {
+            // Not a unique solution: psi-phi=atan2(-R12,R11)
+            v[0] = 0.0;
+            v[1] = -M_PI / 2.0;
+            v[2] = -atan2(R(1, 0), R(1, 1));
+        }
+    }
+    else // == +1
+    {
+        // Not a unique solution: psi+phi=atan2(-R12,R11)
+        v[0] = 0.0;
+        v[1] = M_PI / 2.0;
+        v[2] = atan2(R(1, 0), R(1, 1));
+    }
+
+    return v;
+}
+
+Matrix yarp::math::ypr2dcm(const Vector &v)
+{
+    yAssert(v.length() >= 3);
+
+    Matrix Rz = eye(4, 4); Matrix Ry = eye(4, 4);   Matrix Rx = eye(4, 4);
+    double roll = v[2];   double cr = cos(roll);  double sr = sin(roll);
+    double pitch = v[1];  double cp = cos(pitch); double sp = sin(pitch);
+    double yaw = v[0];    double cy = cos(yaw);   double sy = sin(yaw);
+
+    Rz(0, 0) = cy; Rz(1, 1) = cy; Rz(0, 1) = -sy; Rz(1, 0) = sy;   // z-rotation with yaw
+    Ry(0, 0) = cp; Ry(2, 2) = cp; Ry(0, 2) = sp; Ry(2, 0) = -sp;   // y-rotation with pitch
+    Rx(1, 1) = cr; Rx(2, 2) = cr; Rx(1, 2) = -sr; Rx(2, 1) = sr;   // x-rotation with roll
+
+    return Rx*Ry*Rz;
 }
 
 Matrix yarp::math::SE3inv(const Matrix &H)
@@ -597,7 +884,7 @@ Matrix yarp::math::SE3inv(const Matrix &H)
 
     Matrix invH=H.transposed();
     p=invH*p;
-        
+
     invH(0,3)=-p[0];
     invH(1,3)=-p[1];
     invH(2,3)=-p[2];
@@ -661,4 +948,3 @@ Matrix yarp::math::adjointInv(const Matrix &H)
 
     return A;
 }
-

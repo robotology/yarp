@@ -27,7 +27,7 @@ private:
 };
 
 #ifdef YARPRUN_LOG
-# define RUNLOG(msg) YarprunCheckpoints::instance().checkpoint(msg,__FILE__,__FUNCTION__,__LINE__);
+# define RUNLOG(msg) YarprunCheckpoints::instance().checkpoint(msg, __FILE__, __FUNCTION__, __LINE__);
 #else
 # define RUNLOG(msg)
 #endif

@@ -69,10 +69,10 @@ bool yarp::os::impl::TextCarrier::supportReply() {
 
 bool yarp::os::impl::TextCarrier::sendHeader(ConnectionState& proto) {
     yarp::os::ConstString target = getSpecifierName();
-    yarp::os::Bytes b((char*)target.c_str(),8);
+    yarp::os::Bytes b((char*)target.c_str(), 8);
     proto.os().write(b);
     yarp::os::ConstString from = proto.getSenderSpecifier();
-    yarp::os::Bytes b2((char*)from.c_str(),from.length());
+    yarp::os::Bytes b2((char*)from.c_str(), from.length());
     proto.os().write(b2);
     proto.os().write('\r');
     proto.os().write('\n');
@@ -89,8 +89,10 @@ bool yarp::os::impl::TextCarrier::expectReplyToHeader(ConnectionState& proto) {
 }
 
 bool yarp::os::impl::TextCarrier::expectSenderSpecifier(ConnectionState& proto) {
-    YARP_SPRINTF0(Logger::get(),debug,"TextCarrier::expectSenderSpecifier");
-    proto.setRoute(proto.getRoute().addFromName(proto.is().readLine()));
+    YARP_SPRINTF0(Logger::get(), debug, "TextCarrier::expectSenderSpecifier");
+    Route route = proto.getRoute();
+    route.setFromName(proto.is().readLine());
+    proto.setRoute(route);
     return true;
 }
 
@@ -105,7 +107,7 @@ bool yarp::os::impl::TextCarrier::expectIndex(ConnectionState& proto) {
 bool yarp::os::impl::TextCarrier::sendAck(ConnectionState& proto) {
     if (ackVariant) {
         ConstString from = "<ACK>\r\n";
-        Bytes b2((char*)from.c_str(),from.length());
+        Bytes b2((char*)from.c_str(), from.length());
         proto.os().write(b2);
         proto.os().flush();
     }
@@ -124,7 +126,7 @@ bool yarp::os::impl::TextCarrier::respondToHeader(ConnectionState& proto) {
     yarp::os::ConstString from = "Welcome ";
     from += proto.getRoute().getFromName();
     from += "\r\n";
-    yarp::os::Bytes b2((char*)from.c_str(),from.length());
+    yarp::os::Bytes b2((char*)from.c_str(), from.length());
     proto.os().write(b2);
     proto.os().flush();
     return proto.os().isOk();

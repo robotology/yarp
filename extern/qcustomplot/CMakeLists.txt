@@ -14,9 +14,9 @@ set(qcustomplot_HDRS qcustomplot/qcustomplot.h)
 
 add_library(YARP_priv_qcustomplot STATIC ${qcustomplot_SRCS})
 
-qtyarp_use_modules(YARP_priv_qcustomplot Widgets)
+target_link_libraries(YARP_priv_qcustomplot Qt5::Widgets)
 
-set_property(TARGET YARP_priv_qcustomplot PROPERTY FOLDER "External Libraries")
+set_property(TARGET YARP_priv_qcustomplot PROPERTY FOLDER "Libraries/External")
 
 set(QCustomPlot_INCLUDE_DIRS ${CMAKE_CURRENT_SOURCE_DIR}/qcustomplot PARENT_SCOPE)
 set(QCustomPlot_LIBRARIES "YARP_priv_qcustomplot" PARENT_SCOPE)

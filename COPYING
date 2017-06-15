@@ -987,7 +987,7 @@ src/yarplaserscannergui/main.cpp
   Authors: Marco Randazzo
   CopyPolicy: GPLv2 or later
 
-src/libYARP_math/include/yarp/impl/mt.h
+src/libYARP_math/include/yarp/math/impl/mt.h
   Copyright: unknown
   CopyPolicy: unknown
 

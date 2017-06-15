@@ -104,6 +104,7 @@ The best way to learn how to use YARP is to read the tutorials and documentation
 \li \subpage yarp_with_ros
 \li \subpage yarp_swig
 \li \subpage portmonitor
+\li \subpage yarp_env_variables
 
 \section yarp_more_info More information
 \li \subpage what_is_yarp

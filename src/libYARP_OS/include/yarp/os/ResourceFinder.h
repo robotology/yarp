@@ -121,19 +121,46 @@ public:
      */
     bool configure(int argc, char *argv[], bool skipFirstArgument = true);
 
+    /**
+     * Sets the context for the current ResourceFinder object.
+     *
+     * A context is a folder collecting configuration files and data that may be
+     * used to configure modules at runtime.
+     * When the resource finder is configured with a specific contextName,
+     * contexts/<context-name> is added to the search path in which the
+     * initial configuration file and any additional files are sought.
+     *
+     * @param contextName The name of the context
+     * @return true on success, false otherwise
+     */
     bool setDefaultContext(const char *contextName) {
         clearContext();
         return addContext(contextName);
     }
 
     /**
+     * Sets the context for the current ResourceFinder object.
+     *
+     * @param contextName The name of the context
+     * @return true on success, false otherwise
+     *
+     * @see setDefaultContext(const char *contextName)
+     */
+    bool setDefaultContext(const yarp::os::ConstString& contextName) {
+        return setDefaultContext(contextName.c_str());
+    }
+
+#ifndef YARP_NO_DEPRECATED // since YARP 2.3.70
+    /**
      *
      * Deprecated name for setDefaultContext
      *
+     * @deprecated since YARP 2.3.70
      */
-    bool setContext(const char *contextName) {
+    YARP_DEPRECATED bool setContext(const char *contextName) {
         return setDefaultContext(contextName);
     }
+#endif // YARP_NO_DEPRECATED
 
     /**
      *
@@ -157,7 +184,7 @@ public:
      *
      */
     bool setDefaultConfigFile(const char *fname) {
-        return setDefault("from",fname);
+        return setDefault("from", fname);
     }
 
     /**
@@ -210,7 +237,7 @@ public:
      * Like findPath(key), but continues on to find all
      * instances of the path.
      *
-     * so findPaths("app") would return ["/foo/app","/bar/app",...]
+     * so findPaths("app") would return ["/foo/app", "/bar/app", ...]
      * depending on the search path in effect.
      * The first path is the list comes from the highest-priority
      * location, and would be the path returned by findPath("app")
@@ -258,11 +285,11 @@ public:
     yarp::os::Bottle getContexts();
 
     // Searchable interface
-    virtual bool check(const ConstString& key) const;
-    virtual Value& find(const ConstString& key) const;
-    virtual Bottle& findGroup(const ConstString& key) const;
-    virtual bool isNull() const;
-    virtual ConstString toString() const;
+    virtual bool check(const ConstString& key) const YARP_OVERRIDE;
+    virtual Value& find(const ConstString& key) const YARP_OVERRIDE;
+    virtual Bottle& findGroup(const ConstString& key) const YARP_OVERRIDE;
+    virtual bool isNull() const YARP_OVERRIDE;
+    virtual ConstString toString() const YARP_OVERRIDE;
 
 
     /**
@@ -442,7 +469,7 @@ private:
 
     static ConstString getDataHomeWithPossibleCreation(bool mayCreate);
     static ConstString getConfigHomeWithPossibleCreation(bool mayCreate);
-    static ConstString createIfAbsent(bool mayCreate,const ConstString& path);
+    static ConstString createIfAbsent(bool mayCreate, const ConstString& path);
 };
 
 

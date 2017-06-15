@@ -24,10 +24,10 @@ add_definitions(-DSQLITE_OMIT_LOAD_EXTENSION)
 
 add_library(YARP_priv_sqlite STATIC ${sqlite_SRCS})
 
-set_property(TARGET YARP_priv_sqlite PROPERTY FOLDER "External Libraries")
+set_property(TARGET YARP_priv_sqlite PROPERTY FOLDER "Libraries/External")
 
 if(UNIX)
-    target_link_libraries(YARP_priv_sqlite LINK_PRIVATE pthread)
+    target_link_libraries(YARP_priv_sqlite PRIVATE pthread)
 endif(UNIX)
 
 set(SQLite_INCLUDE_DIRS ${CMAKE_CURRENT_SOURCE_DIR}/sqlite PARENT_SCOPE)

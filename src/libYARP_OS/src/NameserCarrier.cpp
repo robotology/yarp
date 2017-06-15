@@ -70,15 +70,15 @@ YARP_SSIZE_T yarp::os::impl::NameserTwoWayStream::read(const Bytes& b) {
     if (b.length()<=0) {
         return 0;
     }
-    Bytes tmp(b.get(),1);
+    Bytes tmp(b.get(), 1);
     while (swallowRead.length()>0) {
         YARP_SSIZE_T r = delegate->getInputStream().read(tmp);
         if (r<=0) { return r; }
-        swallowRead = swallowRead.substr(1,swallowRead.length()-1);
+        swallowRead = swallowRead.substr(1, swallowRead.length()-1);
     }
     if (pendingRead.length()>0) {
         b.get()[0] = pendingRead[0];
-        pendingRead = pendingRead.substr(1,pendingRead.length()-1);
+        pendingRead = pendingRead.substr(1, pendingRead.length()-1);
         return 1;
     }
     YARP_SSIZE_T r = delegate->getInputStream().read(tmp);
@@ -148,14 +148,16 @@ bool yarp::os::impl::NameserCarrier::canEscape() {
 
 bool yarp::os::impl::NameserCarrier::sendHeader(ConnectionState& proto) {
     yarp::os::ConstString target = getSpecifierName();
-    yarp::os::Bytes b((char*)target.c_str(),8);
+    yarp::os::Bytes b((char*)target.c_str(), 8);
     proto.os().write(b);
     proto.os().flush();
     return proto.os().isOk();
 }
 
 bool yarp::os::impl::NameserCarrier::expectSenderSpecifier(ConnectionState& proto) {
-    proto.setRoute(proto.getRoute().addFromName("anon"));
+    Route route = proto.getRoute();
+    route.setFromName("anon");
+    proto.setRoute(route);
     return true;
 }
 
@@ -186,7 +188,7 @@ bool yarp::os::impl::NameserCarrier::expectReplyToHeader(ConnectionState& proto)
 
 bool yarp::os::impl::NameserCarrier::write(ConnectionState& proto, SizedWriter& writer) {
     ConstString target = firstSend?"VER ":"NAME_SERVER ";
-    Bytes b((char*)target.c_str(),target.length());
+    Bytes b((char*)target.c_str(), target.length());
     proto.os().write(b);
     ConstString txt;
     // ancient nameserver can't deal with quotes
@@ -198,7 +200,7 @@ bool yarp::os::impl::NameserCarrier::write(ConnectionState& proto, SizedWriter& 
             }
         }
     }
-    Bytes b2((char*)txt.c_str(),txt.length());
+    Bytes b2((char*)txt.c_str(), txt.length());
     proto.os().write(b2);
     proto.os().flush();
     firstSend = false;

@@ -29,7 +29,7 @@ public:
     virtual bool apply(yarp::os::Bottle& cmd,
                        yarp::os::Bottle& reply,
                        yarp::os::Bottle& event,
-                       const yarp::os::Contact& remote);
+                       const yarp::os::Contact& remote) override;
 private:
     yarp::os::Property options;
     yarp::os::Property content;

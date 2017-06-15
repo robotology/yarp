@@ -6,7 +6,8 @@
 
 #include <yarp/os/impl/SplitString.h>
 
-#include <yarp/os/impl/PlatformStdlib.h>
+#include <cstdlib>
+#include <cstring>
 
 
 using yarp::os::impl::SplitString;
@@ -18,7 +19,7 @@ SplitString::SplitString() :
 
 SplitString::SplitString(const char *command, const char splitter)
 {
-    apply(command,splitter);
+    apply(command, splitter);
 }
 
 int SplitString::size()
@@ -29,7 +30,7 @@ int SplitString::size()
 void SplitString::set(int index, const char *txt)
 {
     if (index>=0&&index<size()) {
-        ACE_OS::strncpy(buf[index],(char*)txt,MAX_ARG_LEN);
+        strncpy(buf[index], (char*)txt, MAX_ARG_LEN);
     }
 }
 
@@ -69,7 +70,7 @@ void SplitString::apply(const char *command, char splitter)
                     at++;
                 }
                 sub_at = 0;
-            } 
+            }
         }
     }
     for (i=0; i<MAX_ARG_CT; i++) {

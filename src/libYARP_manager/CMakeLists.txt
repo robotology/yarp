@@ -43,7 +43,7 @@ if(CREATE_LIB_MANAGER)
                         include/yarp/manager/ymm-dir.h
                         include/yarp/manager/ymm-types.h)
 
-  set(YARP_manager_IMPL_HDRS )
+  set(YARP_manager_IMPL_HDRS include/yarp/manager/impl/textparser.h)
 
   set(YARP_manager_SRCS src/application.cpp
                         src/arbitrator.cpp
@@ -72,9 +72,13 @@ if(CREATE_LIB_MANAGER)
                         src/xmltemploader.cpp
                         src/yarpbroker.cpp)
 
-  source_group("Source Files" FILES ${YARP_manager_SRCS})
-  source_group("Header Files" FILES ${YARP_manager_HDRS})
-  source_group("Implementation Header Files" FILES ${YARP_manager_IMPL_HDRS})
+  source_group(TREE "${CMAKE_CURRENT_SOURCE_DIR}"
+               PREFIX "Source Files"
+               FILES ${YARP_manager_SRCS})
+  source_group(TREE "${CMAKE_CURRENT_SOURCE_DIR}"
+               PREFIX "Header Files"
+               FILES ${YARP_manager_HDRS}
+                     ${YARP_manager_IMPL_HDRS})
 
   set_property(GLOBAL APPEND PROPERTY YARP_TREE_INCLUDE_DIRS "${PROJECT_SOURCE_DIR}/include")
   get_property(YARP_TREE_INCLUDE_DIRS GLOBAL PROPERTY YARP_TREE_INCLUDE_DIRS)
@@ -93,12 +97,17 @@ if(CREATE_LIB_MANAGER)
   add_library(YARP_manager STATIC ${YARP_manager_SRCS}
                                   ${YARP_manager_HDRS}
                                   ${YARP_manager_IMPL_HDRS})
+  add_library(YARP::YARP_manager ALIAS YARP_manager)
 
-  target_link_libraries(YARP_manager LINK_PRIVATE YARP_sig YARP_OS)
-  target_link_libraries(YARP_manager LINK_PRIVATE ${TinyXML_LIBRARIES})
+  target_include_directories(YARP_manager PUBLIC $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>
+                                                 $<INSTALL_INTERFACE:${CMAKE_INSTALL_INCLUDEDIR}>)
+
+  target_link_libraries(YARP_manager PUBLIC YARP::YARP_OS
+                                     PRIVATE YARP::YARP_sig
+                                             ${TinyXML_LIBRARIES})
 
   if(CREATE_LIB_MATH)
-    target_link_libraries(YARP_manager LINK_PRIVATE YARP_math)
+    target_link_libraries(YARP_manager PRIVATE YARP::YARP_math)
   endif()
 
   set_property(TARGET YARP_manager PROPERTY PUBLIC_HEADER ${YARP_manager_HDRS})
@@ -115,4 +124,5 @@ if(CREATE_LIB_MANAGER)
 
   set_property(GLOBAL APPEND PROPERTY YARP_LIBS YARP_manager)
   set_property(TARGET YARP_manager PROPERTY INCLUDE_DIRS ${PROJECT_SOURCE_DIR}/include)
+  set_property(TARGET YARP_manager PROPERTY FOLDER "Libraries/Private")
 endif()

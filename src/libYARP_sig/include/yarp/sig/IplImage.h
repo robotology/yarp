@@ -73,8 +73,8 @@
 
 //#include <yarp/YARPConfig.h>
 
-#include <assert.h>
-#include <stdlib.h>
+#include <cassert>
+#include <cstdlib>
 
 #if defined _MSC_VER || defined __BORLANDC__
 typedef __int64 int64;
@@ -229,9 +229,9 @@ int _iplCalcPadding (int lineSize, int align);
 #define IPLAPIIMPL(type,name,arg) extern type name arg
 
 
-IPLAPIIMPL(IplConvKernel*, 
+IPLAPIIMPL(IplConvKernel*,
            iplCreateConvKernel,(int nCols, int nRows,
-                                int anchorX, int anchorY, 
+                                int anchorX, int anchorY,
                                 int* values, int nShiftR));
 
 IPLAPIIMPL(IplConvKernelFP*,

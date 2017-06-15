@@ -74,12 +74,12 @@ public:
         yAssert(packet!=YARP_NULLPTR);
         if (packet->getContent()==YARP_NULLPTR) {
             YARP_DEBUG(Logger::get(), "creating a writer buffer");
-            //packet->setContent(owner.create(*this,packet),true);
+            //packet->setContent(owner.create(*this, packet), true);
             yarp::os::PortWriterWrapper *wrapper =
-                owner.create(*this,packet);
-            //packet->setContent(wrapper,true);
+                owner.create(*this, packet);
+            //packet->setContent(wrapper, true);
             packet->setContent(wrapper->getInternal(), false,
-                             wrapper,true);
+                             wrapper, true);
         }
         stateSema.post();
 
@@ -103,10 +103,10 @@ public:
         return cback!=YARP_NULLPTR;
     }
 
-    virtual void onCompletion(void *tracker) {
+    virtual void onCompletion(void *tracker) override {
         stateSema.wait();
         YARP_DEBUG(Logger::get(), "freeing up a writer buffer");
-        packets.freePacket((PortCorePacket*)tracker,false);
+        packets.freePacket((PortCorePacket*)tracker, false);
         outCt--;
         bool sig = finishing;
         finishing = false;
@@ -142,7 +142,7 @@ public:
             stateSema.wait();
             outCt++;
             stateSema.post();
-            port->write(*active,cback);
+            port->write(*active, cback);
         }
     }
 

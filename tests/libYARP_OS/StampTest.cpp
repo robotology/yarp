@@ -5,7 +5,7 @@
  *
  */
 
-#include <math.h>
+#include <cmath>
 
 #include <yarp/os/Stamp.h>
 #include <yarp/os/all.h>
@@ -21,7 +21,7 @@ using namespace yarp::os;
 
 class StampTest : public UnitTest {
 public:
-    virtual ConstString getName() { return "StampTest"; }
+    virtual ConstString getName() override { return "StampTest"; }
 
     void checkFormat() {
         report(0, "checking Stamp can serialize ok...");
@@ -105,7 +105,7 @@ public:
         }
     }
 
-    virtual void runTests() {
+    virtual void runTests() override {
         // add tests here
         Network::setLocalMode(true);
         checkFormat();

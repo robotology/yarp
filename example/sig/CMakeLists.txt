@@ -2,10 +2,9 @@
 # Authors: Paul Fitzpatrick
 # CopyPolicy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
 
-cmake_minimum_required(VERSION 2.8.9)
+cmake_minimum_required(VERSION 3.0)
 
-FIND_PACKAGE(YARP REQUIRED)
-LINK_LIBRARIES(${YARP_LIBRARIES})
-INCLUDE_DIRECTORIES(${YARP_INCLUDE_DIRS})
+find_package(YARP REQUIRED)
 
-ADD_EXECUTABLE(wav_test wav_test.cpp)
+add_executable(wav_test wav_test.cpp)
+target_link_libraries(wav_test ${YARP_LIBRARIES})

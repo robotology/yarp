@@ -121,20 +121,20 @@ public:
      * Default open() method.
      * @return always false since initialization requires parameters.
      */
-    virtual bool open() { return false; }
+    virtual bool open() override { return false; }
 
    /**
      * Open the device driver.
      * @param prop is a Searchable object which contains the parameters.
      * Allowed parameters are described in the class documentation.
      */
-    virtual bool open(yarp::os::Searchable &prop);
+    virtual bool open(yarp::os::Searchable &prop) override;
 
     /**
      * Close the device driver by deallocating all resources and closing ports.
      * @return true if successful or false otherwise.
      */
-    virtual bool close();
+    virtual bool close() override;
 };
 
 }

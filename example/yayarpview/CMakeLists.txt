@@ -4,29 +4,26 @@
 # Copyright: (C) 2010 Renaud Detry
 # CopyPolicy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
 
-cmake_minimum_required(VERSION 2.8.9)
-
-PROJECT (yayarpview)
+cmake_minimum_required(VERSION 3.0)
+project(yayarpview)
 
 # replace with the path to your YARP binaries if needed
-SET(YARP_DIR "${CMAKE_SOURCE_DIR}/../.." CACHE LOCATION "where is yarp?")
+set(YARP_DIR "${CMAKE_SOURCE_DIR}/../.." CACHE LOCATION "where is yarp?")
 
-FIND_PACKAGE(YARP REQUIRED)
-ADD_DEFINITIONS(${YARP_DEFINES})
+find_package(YARP REQUIRED)
 
-FIND_PACKAGE(X11)
+find_package(X11)
+include_directories(${X11_INCLUDE_DIR})
 
-INCLUDE_DIRECTORIES(${X11_INCLUDE_DIR})
-LINK_LIBRARIES(${X11_LIBRARIES})
+# add_definitions("-Dcimg_use_png -Dcimg_use_jpeg")
 
-INCLUDE_DIRECTORIES(${YARP_INCLUDE_DIRS})
+file(GLOB HEADERS *.h)
+file(GLOB CODE *.cpp)
 
-# LINK_LIBRARIES("-ljpeg -lpng -lpthread -lm")
-# ADD_DEFINITIONS("-Dcimg_use_png -Dcimg_use_jpeg")
-LINK_LIBRARIES("-lpthread -lm")
+add_executable(yayarpview ${HEADERS} ${CODE})
 
-FILE(GLOB HEADERS *.h)
-FILE(GLOB CODE *.cpp)
-
-ADD_EXECUTABLE(yayarpview ${HEADERS} ${CODE})
-TARGET_LINK_LIBRARIES(yayarpview ${YARP_LIBRARIES})
+target_link_libraries(yayarpview ${YARP_LIBRARIES}
+                                 ${X11_LIBRARIES}
+                                 -lpthread
+                                 -lm)
+# target_link_libraries("yayarpview -ljpeg -lpng -lpthread -lm")

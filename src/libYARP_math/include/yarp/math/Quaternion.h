@@ -47,6 +47,8 @@ public:
     */
     double abs();
 
+    void normalize();
+
     /**
     * Computes the argument or phase of the quaternion in radians.
     */
@@ -116,15 +118,15 @@ public:
     * Read vector from a connection.
     * return true iff a vector was read correctly
     */
-    virtual bool read(yarp::os::ConnectionReader& connection);
+    virtual bool read(yarp::os::ConnectionReader& connection) YARP_OVERRIDE;
 
     /**
     * Write vector to a connection.
     * return true iff a vector was written correctly
     */
-    virtual bool write(yarp::os::ConnectionWriter& connection);
+    virtual bool write(yarp::os::ConnectionWriter& connection) YARP_OVERRIDE;
 
-    virtual yarp::os::Type getType()
+    virtual yarp::os::Type getType() YARP_OVERRIDE
     {
         return yarp::os::Type::byName("yarp/quaternion");
     }

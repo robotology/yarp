@@ -56,7 +56,7 @@ bool yarp::os::impl::TcpCarrier::isConnectionless() {
 
 bool yarp::os::impl::TcpCarrier::respondToHeader(ConnectionState& proto) {
     int cport = proto.getStreams().getLocalAddress().getPort();
-    writeYarpInt(cport,proto);
+    writeYarpInt(cport, proto);
     return proto.checkStreams();
 }
 

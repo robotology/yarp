@@ -78,35 +78,35 @@ public:
     /**
      * function that that handles an IDL message - step
      */
-    bool step();
+    bool step() override;
     /**
      * function that handles an IDL message - setFrame
      */
-    bool setFrame(const std::string &name, const int frameNum);
+    bool setFrame(const std::string &name, const int frameNum) override;
     /**
      * function that handles an IDL message - getFrame
      */
-    int  getFrame(const std::string &name);
+    int  getFrame(const std::string &name) override;
     /**
      * function that handles an IDL message - load
      */
-    bool load(const std::string &path);
+    bool load(const std::string &path) override;
     /**
      * function that handles an IDL message - play
      */
-    bool play();
+    bool play() override;
     /**
      * function that handles an IDL message - pause
      */
-    bool pause();
+    bool pause() override;
     /**
      * function that handles an IDL message - stop
      */
-    bool stop();
+    bool stop() override;
     /**
      * function that handles an IDL message - quit
      */
-    bool quit();
+    bool quit() override;
 
 
 private:
@@ -159,7 +159,7 @@ protected:
      */
     void stepFromCommand(yarp::os::Bottle &reply);
 
-    void closeEvent(QCloseEvent *event);
+    void closeEvent(QCloseEvent *event) override;
 
 private:
     Ui::MainWindow              *ui;
@@ -260,7 +260,7 @@ public:
                QObject *parent = 0);
 
 protected:
-    void run();
+    void run() override;
 
 private:
     Utilities *utilities;

@@ -1,4 +1,4 @@
-/* 
+/*
  * Copyright (C)2014  iCub Facility - Istituto Italiano di Tecnologia
  * Author: Marco Randazzo
  * email:  marco.randazzo@iit.it
@@ -21,6 +21,7 @@
 #include <yarp/logger/YarpLogger.h>
 #include <yarp/os/Os.h>
 #include <cstdio>
+#include <csignal>
 
 static void sighandler (int signal)
 {
@@ -47,8 +48,8 @@ int main(int argc, char *argv[])
     bool cannot_close = rf.check("no_stop");
     if (cannot_close)
     {
-        yarp::os::signal(yarp::os::YARP_SIGINT, sighandler);
-        yarp::os::signal(yarp::os::YARP_SIGTERM, sighandler);
+        std::signal(SIGINT, sighandler);
+        std::signal(SIGTERM, sighandler);
     }
 
     MainWindow w(rf);

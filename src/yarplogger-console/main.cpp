@@ -1,4 +1,4 @@
-/* 
+/*
  * Copyright (C)2014  iCub Facility - Istituto Italiano di Tecnologia
  * Author: Marco Randazzo
  * email:  marco.randazzo@iit.it
@@ -25,7 +25,7 @@
 #include <yarp/logger/YarpLogger.h>
 
 #include <string>
-#include <stdio.h>
+#include <cstdio>
 
 using namespace yarp::os;
 using namespace yarp::yarpLogger;
@@ -37,7 +37,7 @@ class logger_module : public yarp::os::RFModule
     protected:
     yarp::os::Port rpcPort;
 
-    virtual bool configure(yarp::os::ResourceFinder &rf)
+    virtual bool configure(yarp::os::ResourceFinder &rf) override
     {
         the_logger = new LoggerEngine ("/logger");
 
@@ -49,13 +49,13 @@ class logger_module : public yarp::os::RFModule
         return true;
     }
 
-    virtual bool interruptModule()
+    virtual bool interruptModule() override
     {
         rpcPort.interrupt();
         return true;
     }
 
-    virtual bool close()
+    virtual bool close() override
     {
         rpcPort.interrupt();
         rpcPort.close();
@@ -68,18 +68,18 @@ class logger_module : public yarp::os::RFModule
         return true;
     }
 
-    virtual double getPeriod()
+    virtual double getPeriod() override
     {
-        return 10.0; 
-    }
-    
-    virtual bool updateModule()
-    {
-        printf("logger running, listening to %d ports\n",the_logger->get_num_of_processes());
-        return true; 
+        return 10.0;
     }
 
-    virtual bool respond(const yarp::os::Bottle& command,yarp::os::Bottle& reply) 
+    virtual bool updateModule() override
+    {
+        printf("logger running, listening to %d ports\n",the_logger->get_num_of_processes());
+        return true;
+    }
+
+    virtual bool respond(const yarp::os::Bottle& command,yarp::os::Bottle& reply) override
     {
         reply.clear();
         if (command.get(0).asString()=="quit")
@@ -170,7 +170,7 @@ class logger_module : public yarp::os::RFModule
     }
 };
 
-int main(int argc, char *argv[]) 
+int main(int argc, char *argv[])
 {
     yarp::os::Network yarp;
     if (!yarp.checkNetwork())

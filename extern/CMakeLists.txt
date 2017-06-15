@@ -7,6 +7,9 @@ if(YARP_EXPERIMENTAL_WARNINGS)
   string(REPLACE "${EXPERIMENTAL_WARNING_FLAGS} " CMAKE_CXX_FLAGS ${CMAKE_CXX_FLAGS})
 endif()
 
+# Do not build with -Wno-suggest-override
+string(REPLACE "-Wsuggest-override" "" CMAKE_CXX_FLAGS ${CMAKE_CXX_FLAGS})
+
 # TinyXML
 if(YARP_BUILD_TINYXML)
   add_subdirectory(tinyxml)

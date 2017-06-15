@@ -22,12 +22,12 @@ class PortCoreTest : public UnitTest, public PortReader {
 public:
     int safePort() { return Network::getDefaultPortRange()+100; }
 
-    virtual ConstString getName() { return "PortCoreTest"; }
+    virtual ConstString getName() override { return "PortCoreTest"; }
 
     ConstString expectation;
     int receives;
 
-    bool read(ConnectionReader& reader) {
+    bool read(ConnectionReader& reader) override {
         if (!reader.isValid()) {
             return false;
         }
@@ -172,7 +172,7 @@ public:
     }
 
 
-    virtual void runTests() {
+    virtual void runTests() override {
         Network::setLocalMode(true);
         testStartStop();
         testBottle();

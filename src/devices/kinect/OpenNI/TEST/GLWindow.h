@@ -8,7 +8,7 @@
 
 #pragma once
 
-#include <stdio.h>
+#include <cstdio>
 #include <yarp/sig/Matrix.h>
 #include <yarp/sig/Vector.h>
 #include <GL/glut.h>

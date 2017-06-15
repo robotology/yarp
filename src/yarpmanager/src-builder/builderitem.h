@@ -35,9 +35,9 @@ public:
         offset = QPointF(0,0);
         nestedInApp = false;
     }
-    virtual QRectF boundingRect() const = 0;
+    virtual QRectF boundingRect() const override = 0;
     virtual QPointF connectionPoint() = 0;
-    virtual int type() const  = 0;
+    virtual int type() const override = 0;
 
     QString getItemName();
     QPointF getStartingPoint();

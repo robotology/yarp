@@ -28,7 +28,7 @@ public:
      using yarp::manager::LocalBroker::init;
      bool init(const char* szcmd, const char* szparam,
             const char* szhost, const char* szstdio,
-            const char* szworkdir, const char* szenv ) {
+            const char* szworkdir, const char* szenv) YARP_OVERRIDE {
 
             OSTRINGSTREAM strDevParam;
             std::string strParam;
@@ -51,7 +51,7 @@ public:
      using yarp::manager::YarpBroker::init;
      bool init(const char* szcmd, const char* szparam,
             const char* szhost, const char* szstdio,
-            const char* szworkdir, const char* szenv ) {
+            const char* szworkdir, const char* szenv) YARP_OVERRIDE {
 
             OSTRINGSTREAM strDevParam;
             std::string strParam;

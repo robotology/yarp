@@ -20,8 +20,33 @@ using namespace yarp::sig;
 using namespace yarp::dev;
 
 
-class DeviceDriverTest : public DeviceDriver
+class DeviceDriverTest : public DeviceDriver,
+                         public IFrameGrabberImage
 {
+public:
+    virtual bool open(yarp::os::Searchable& config) override
+    {
+        w = config.check("width",yarp::os::Value(128),
+                         "desired width of test image").asInt();
+        h = config.check("height",yarp::os::Value(128),
+                         "desired height of test image").asInt();
+        return true;
+
+    }
+
+    virtual bool getImage(yarp::sig::ImageOf<yarp::sig::PixelRgb>& image) override
+    {
+        image.resize(w, h);
+        image.zero();
+        return true;
+    }
+
+    virtual int height() const override { return h; }
+
+    virtual int width() const override { return w; }
+
+private:
+    int w, h;
 };
 
 class DeprecatedDeviceDriverTest : public DeprecatedDeviceDriver
@@ -30,7 +55,7 @@ class DeprecatedDeviceDriverTest : public DeprecatedDeviceDriver
 
 class PolyDriverTest : public UnitTest {
 public:
-    virtual ConstString getName() { return "PolyDriverTest"; }
+    virtual ConstString getName() override { return "PolyDriverTest"; }
 
     void testDeprecated() {
         report(0,"deprecated device test");
@@ -58,7 +83,7 @@ public:
         report(0,"a very basic driver instantiation test");
         PolyDriver dd;
         Property p;
-        p.put("device","test_grabber");
+        p.put("device","devicedrivertest");
         bool result;
         result = dd.open(p);
         checkTrue(result,"open reported successful");
@@ -76,7 +101,7 @@ public:
         report(0,"test monitoring");
         Property p;
         p.put("device","grabber");
-        p.put("subdevice","test_grabber");
+        p.put("subdevice","devicedrivertest");
         p.put("verbose",1);
         p.put("wrapped",1);
         PolyDriver dd(p);
@@ -91,7 +116,7 @@ public:
         report(0,"test Property bug reported by Martin Peniak");
         Property p;
         p.put("device","grabber");
-        p.put("subdevice","test_grabber");
+        p.put("subdevice","devicedrivertest");
         p.put("verbose",1);
         p.put("wrapped",1);
         for (int i=0; i<5; i++) {
@@ -113,9 +138,6 @@ device group\n\
 device test_motor\n\
 axes 10\n\
 \n\
-[part mycam]\n\
-device test_grabber\n\
-\n\
 [part broadcast]\n\
 device controlboardwrapper2\n\
 subdevice mymotor\n\
@@ -127,73 +149,6 @@ name /mymotor\n\
         Network::write(Contact("/mymotor/rpc:i"), cmd, reply);
         checkEqual(reply.get(2).asInt(),10,"axis count is correct");
     }
-
-    void testGrabber() {
-        report(0,"test the grabber wrapper");
-        PolyDriver dd;
-        Property p;
-        p.put("device","grabber");
-        p.put("subdevice","test_grabber");
-        p.put("name","/grabber");
-        bool result;
-        result = dd.open(p);
-        checkTrue(result,"server open reported successful");
-
-        PolyDriver dd2;
-        Property p2;
-        p2.put("device","remote_grabber");
-        p2.put("remote","/grabber");
-        p2.put("local","/grabber/client");
-        result = dd2.open(p2);
-        checkTrue(result,"client open reported successful");
-
-        IFrameGrabberImage *grabber = NULL;
-        result = dd2.view(grabber);
-        checkTrue(result,"interface reported");
-        ImageOf<PixelRgb> img;
-        grabber->getImage(img);
-        checkTrue(img.width()>0,"interface seems functional");
-        result = dd.close() && dd2.close();
-        checkTrue(result,"close reported successful");
-    }
-
-#ifndef YARP_NO_DEPRECATED
-    void testControlBoard() {
-        report(0,"test the controlboard wrapper");
-        PolyDriver dd;
-        Property p;
-        p.put("device","controlboard");
-        p.put("subdevice","test_motor");
-        p.put("name","/motor");
-        p.put("axes",16);
-        p.put("allow-deprecated-devices", "1");
-        bool result;
-        result = dd.open(p);
-        checkTrue(result,"server open reported successful");
-
-        PolyDriver dd2;
-        Property p2;
-        p2.put("device","clientcontrolboard");
-        p2.put("remote","/motor");
-        p2.put("local","/motor/client");
-        p2.put("carrier","tcp");
-        p2.put("ignoreProtocolCheck","true");
-        p2.put("allow-deprecated-devices", "1");
-        result = dd2.open(p2);
-        checkTrue(result,"client open reported successful");
-
-        if(!result)   return;  // cannot go on if the device was not opened
-
-        IPositionControl *pos = NULL;
-        result = dd2.view(pos);
-        checkTrue(result,"interface reported");
-        int axes = 0;
-        pos->getAxes(&axes);
-        checkEqual(axes,16,"interface seems functional");
-        result = dd.close() && dd2.close();
-        checkTrue(result,"close reported successful");
-    }
-#endif // YARP_NO_DEPRECATED
 
     void testControlBoard2() {
         report(0,"\ntest the controlboard wrapper 2");
@@ -235,7 +190,7 @@ name /mymotor\n\
         checkTrue(result,"close reported successful");
     }
 
-    virtual void runTests() {
+    virtual void runTests() override {
         Network::setLocalMode(true);
         Drivers::factory().add(new DriverCreatorOf<DeviceDriverTest>("devicedrivertest",
                                                                      "devicedrivertest",
@@ -248,9 +203,8 @@ name /mymotor\n\
         testMonitor();
         testPropertyBug();
         testGroup();
-        testGrabber();
 #ifndef YARP_NO_DEPRECATED
-        testControlBoard();
+        //put here your deprecated stuff
 #endif // YARP_NO_DEPRECATED
         testControlBoard2();
         Network::setLocalMode(false);

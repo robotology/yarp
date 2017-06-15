@@ -27,7 +27,6 @@
 //   uint8 is_bigendian    # is this data bigendian?
 //   uint32 step           # Full row length in bytes
 //   uint8[] data          # actual matrix data, size is (step * rows)
-//   
 // Instances of this class can be read and written with YARP ports,
 // using a ROS-compatible format.
 
@@ -54,7 +53,30 @@ public:
   sensor_msgs_Image() {
   }
 
-  bool readBare(yarp::os::ConnectionReader& connection) {
+  void clear() {
+    // *** header ***
+    header.clear();
+
+    // *** height ***
+    height = 0;
+
+    // *** width ***
+    width = 0;
+
+    // *** encoding ***
+    encoding = "";
+
+    // *** is_bigendian ***
+    is_bigendian = 0;
+
+    // *** step ***
+    step = 0;
+
+    // *** data ***
+    data.clear();
+  }
+
+  bool readBare(yarp::os::ConnectionReader& connection) YARP_OVERRIDE {
     // *** header ***
     if (!header.read(connection)) return false;
 
@@ -78,11 +100,11 @@ public:
     // *** data ***
     len = connection.expectInt();
     data.resize(len);
-    if (!connection.expectBlock((char*)&data[0],sizeof(unsigned char)*len)) return false;
+    if (len > 0 && !connection.expectBlock((char*)&data[0],sizeof(unsigned char)*len)) return false;
     return !connection.isError();
   }
 
-  bool readBottle(yarp::os::ConnectionReader& connection) {
+  bool readBottle(yarp::os::ConnectionReader& connection) YARP_OVERRIDE {
     connection.convertTextMode();
     yarp::os::idl::WireReader reader(connection);
     if (!reader.readListHeader(7)) return false;
@@ -116,12 +138,12 @@ public:
   }
 
   using yarp::os::idl::WirePortable::read;
-  bool read(yarp::os::ConnectionReader& connection) {
+  bool read(yarp::os::ConnectionReader& connection) YARP_OVERRIDE {
     if (connection.isBareMode()) return readBare(connection);
     return readBottle(connection);
   }
 
-  bool writeBare(yarp::os::ConnectionWriter& connection) {
+  bool writeBare(yarp::os::ConnectionWriter& connection) YARP_OVERRIDE {
     // *** header ***
     if (!header.write(connection)) return false;
 
@@ -143,11 +165,11 @@ public:
 
     // *** data ***
     connection.appendInt(data.size());
-    connection.appendExternalBlock((char*)&data[0],sizeof(unsigned char)*data.size());
+    if (data.size()>0) {connection.appendExternalBlock((char*)&data[0],sizeof(unsigned char)*data.size());}
     return !connection.isError();
   }
 
-  bool writeBottle(yarp::os::ConnectionWriter& connection) {
+  bool writeBottle(yarp::os::ConnectionWriter& connection) YARP_OVERRIDE {
     connection.appendInt(BOTTLE_TAG_LIST);
     connection.appendInt(7);
 
@@ -186,7 +208,7 @@ public:
   }
 
   using yarp::os::idl::WirePortable::write;
-  bool write(yarp::os::ConnectionWriter& connection) {
+  bool write(yarp::os::ConnectionWriter& connection) YARP_OVERRIDE {
     if (connection.isBareMode()) return writeBare(connection);
     return writeBottle(connection);
   }
@@ -224,14 +246,14 @@ string encoding       # Encoding of pixels -- channel meaning, ordering, size\n\
 \n\
 uint8 is_bigendian    # is this data bigendian?\n\
 uint32 step           # Full row length in bytes\n\
-uint8[] data          # actual matrix data, size is (step * rows)\n\
-\n================================================================================\n\
+uint8[] data          # actual matrix data, size is (step * rows)\n================================================================================\n\
 MSG: std_msgs/Header\n\
+[std_msgs/Header]:\n\
 # Standard metadata for higher-level stamped data types.\n\
-# This is generally used to communicate timestamped data \n\
+# This is generally used to communicate timestamped data\n\
 # in a particular coordinate frame.\n\
-# \n\
-# sequence ID: consecutively increasing ID \n\
+#\n\
+# sequence ID: consecutively increasing ID\n\
 uint32 seq\n\
 #Two-integer timestamp that is expressed as:\n\
 # * stamp.sec: seconds (stamp_secs) since epoch (in Python the variable is called 'secs')\n\
@@ -241,12 +263,11 @@ time stamp\n\
 #Frame this data is associated with\n\
 # 0: no frame\n\
 # 1: global frame\n\
-string frame_id\n\
-";
+string frame_id";
   }
 
   // Name the class, ROS will need this
-  yarp::os::Type getType() {
+  yarp::os::Type getType() YARP_OVERRIDE {
     yarp::os::Type typ = yarp::os::Type::byName("sensor_msgs/Image","sensor_msgs/Image");
     typ.addProperty("md5sum",yarp::os::Value("060021388200f6f0f447d0fcd9c64743"));
     typ.addProperty("message_definition",yarp::os::Value(getTypeText()));

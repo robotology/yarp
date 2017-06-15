@@ -31,13 +31,13 @@ public:
         portOut=p;
     }
 
-    bool threadInit()
+    bool threadInit() override
     {
         success=false;
         return true;
     }
 
-    void run()
+    void run() override
     {
         Vector v;
 
@@ -75,13 +75,13 @@ public:
         portIn=p;
     }
 
-    bool threadInit()
+    bool threadInit() override
     {
         success=false;
         return true;
     }
 
-    void run()
+    void run() override
     {
         Vector v;
 
@@ -143,7 +143,7 @@ class VectorTest : public UnitTest {
     }
 
 public:
-    virtual ConstString getName() { return "VectorTest"; }
+    virtual ConstString getName() override { return "VectorTest"; }
 
     void checkGsl()
     {
@@ -348,7 +348,7 @@ public:
         checkTrue(v.data()!=NULL, "size 2 => non-null data()");
     }
 
-    virtual void runTests() {
+    virtual void runTests() override {
         Network::setLocalMode(true);
         checkFormat();
         checkCopyCtor();

@@ -14,113 +14,14 @@
 #include <yarp/os/Time.h>
 #include <yarp/os/Vocab.h>
 
-//#include <ace/OS.h>
-#include <yarp/os/impl/PlatformStdio.h>
-#include <yarp/os/impl/PlatformStdlib.h>
-#include <yarp/os/impl/PlatformSignal.h>
 #include <yarp/os/impl/PlatformTime.h>
+#include <yarp/os/impl/PlatformSignal.h>
+
+#include <cstdio>
+#include <cstdlib>
 
 using namespace yarp::os;
 using namespace yarp::os::impl;
-
-
-
-//time helper functions
-
-void yarp::os::impl::getTime(ACE_Time_Value& now) {
-    if (Time::isSystemClock()) {
-#ifdef YARP_HAS_ACE
-#  ifdef ACE_WIN32
-        // now = ACE_High_Res_Timer::gettimeofday_hr();
-        // Fixing, caused problems with new ACE versions and/or Windows 7.
-        now = ACE_OS::gettimeofday();
-#  else
-        now = ACE_OS::gettimeofday ();
-#  endif
-#else
-        struct timezone *tz = YARP_NULLPTR;
-        gettimeofday(&now, tz);
-#endif
-    } else {
-#ifdef YARP_HAS_ACE
-        now.set(Time::now());
-#else
-        double t = Time::now();
-        now.tv_sec = static_cast<int>(t);
-        now.tv_usec = static_cast<int>((t-now.tv_sec)*1e6);
-#endif
-    }
-}
-
-
-void yarp::os::impl::sleepThread(ACE_Time_Value& sleep_period) {
-    if (Time::isSystemClock()) {
-#ifdef YARP_HAS_ACE
-        if (sleep_period.usec() < 0 || sleep_period.sec() < 0)
-            sleep_period.set(0,0);
-        ACE_OS::sleep(sleep_period);
-#else
-        if (sleep_period.tv_usec < 0 || sleep_period.tv_sec < 0) {
-            sleep_period.tv_usec = 0;
-            sleep_period.tv_sec = 0;
-        }
-        usleep(sleep_period.tv_sec * 1000000 + sleep_period.tv_usec );
-#endif
-    } else {
-        Time::delay(toDouble(sleep_period));
-    }
-}
-
-
-void yarp::os::impl::addTime(ACE_Time_Value& val, const ACE_Time_Value & add) {
-#ifdef YARP_HAS_ACE
-    val += add;
-#else
-    val.tv_usec += add.tv_usec;
-    int over = val.tv_usec % 1000000;
-    if (over != val.tv_usec) {
-        val.tv_usec = over;
-        val.tv_sec++;
-    }
-    val.tv_sec += add.tv_sec;
-#endif
-}
-
-
-void yarp::os::impl::subtractTime(ACE_Time_Value & val, const ACE_Time_Value & subtract) {
-#ifdef YARP_HAS_ACE
-    val -= subtract;
-#else
-    if (val.tv_usec > subtract.tv_usec) {
-        val.tv_usec -= subtract.tv_usec;
-        val.tv_sec -= subtract.tv_sec;
-        return;
-    }
-    int over = 1000000 + val.tv_usec - subtract.tv_usec;
-    val.tv_usec = over;
-    val.tv_sec--;
-    val.tv_sec -= subtract.tv_sec;
-#endif
-}
-
-
-double yarp::os::impl::toDouble(const ACE_Time_Value &v) {
-#ifdef YARP_HAS_ACE
-    return double(v.sec()) + v.usec() * 1e-6;
-#else
-    return double(v.tv_sec) + v.tv_usec * 1e-6;
-#endif
-}
-
-
-void yarp::os::impl::fromDouble(ACE_Time_Value &v, double x,int unit) {
-#ifdef YARP_HAS_ACE
-        v.msec(static_cast<int>(x*1000/unit+0.5));
-#else
-        v.tv_usec = static_cast<int>(x*1000000/unit+0.5) % 1000000;
-        v.tv_sec = static_cast<int>(x/unit);
-#endif
-}
 
 
 class RFModuleRespondHandler : public yarp::os::PortReader, public Thread {
@@ -136,13 +37,13 @@ public:
      * @param connection a network connection to a port
      * @return true if the message was read successfully
      */
-    virtual bool read(yarp::os::ConnectionReader& connection);
+    virtual bool read(yarp::os::ConnectionReader& connection) override;
 
 
     RFModuleRespondHandler(RFModule& owner) : owner(owner), attachedToPort(false), attachedTerminal(false) {}
 
 
-    virtual void run() {
+    virtual void run() override {
         yInfo("Listening to terminal (type \"quit\" to stop module).");
         bool isEof = false;
         while (!(isEof || isStopping() || owner.isStopping())) {
@@ -150,7 +51,7 @@ public:
             if (!isEof) {
                 Bottle cmd(str.c_str());
                 Bottle reply;
-                bool ok = owner.safeRespond(cmd,reply);
+                bool ok = owner.safeRespond(cmd, reply);
                 if (ok) {
                     //printf("ALL: %s\n", reply.toString().c_str());
                     //printf("ITEM 1: %s\n", reply.get(0).toString().c_str());
@@ -212,7 +113,7 @@ bool RFModuleRespondHandler::read(ConnectionReader& connection) {
     if (!cmd.read(connection)) { return false; }
     //printf("command received: %s\n", cmd.toString().c_str());
 
-    bool result = owner.safeRespond(cmd,response);
+    bool result = owner.safeRespond(cmd, response);
     if (response.size() >= 1) {
         ConnectionWriter *writer = connection.getWriter();
         if (writer!=YARP_NULLPTR) {
@@ -244,7 +145,7 @@ private:
 public:
     RFModuleThreadedHandler(RFModule& owner) : owner(owner) {};
 
-    void run() { owner.runModule(); }
+    void run() override { owner.runModule(); }
 };
 
 
@@ -305,7 +206,7 @@ static void handler (int sig) {
     ct++;
     if (ct > 3) {
         yInfo("Aborting (calling abort())...");
-        yarp::os::abort();
+        std::abort();
     }
     yInfo("[try %d of 3] Trying to shut down.", ct);
 
@@ -316,12 +217,12 @@ static void handler (int sig) {
 //    if (module!=YARP_NULLPTR) {
 //        Bottle cmd, reply;
 //        cmd.fromString("quit");
-//        module->safeRespond(cmd,reply);
+//        module->safeRespond(cmd, reply);
 //        printf("sent %s, got %s\n", cmd.toString().c_str(),
 //             reply.toString().c_str());
 //    }
 
-#if defined(WIN32)
+#if defined(_WIN32)
     // on windows we need to reset the handler after beeing called, otherwise it
     // will not be called anymore.
     // see http://www.geeksforgeeks.org/write-a-c-program-that-doesnt-terminate-when-ctrlc-is-pressed/
@@ -333,7 +234,7 @@ static void handler (int sig) {
     // There are few reasons and most important is that the original Unix
     // implementation would reset the signal handler to it's default value after
     // signal is received.
-    ACE_OS::signal(SIGINT, (ACE_SignalHandler)handler);
+    ::signal(SIGINT, handler);
 #endif
 }
 
@@ -342,9 +243,9 @@ static void handler (int sig) {
 // of 5 seconds.  This wait is required otherwise windows shuts down the process
 // after we return from the signal handler.  We could not find better way to
 // handle clean remote shutdown of processes in windows.
-#if defined(WIN32)
+#if defined(_WIN32)
 static void handler_sigbreak(int sig) {
-    raise(SIGINT);
+    yarp::os::impl::raise(SIGINT);
 }
 #endif
 
@@ -362,12 +263,12 @@ RFModule::RFModule() {
         yInfo("RFModule::RFModule() signal handling currently only good for one module.");
     }
 
-#if defined(WIN32)
-    ACE_OS::signal(SIGBREAK, (ACE_SignalHandler) handler_sigbreak);
+#if defined(_WIN32)
+    yarp::os::impl::signal(SIGBREAK, handler_sigbreak);
 #endif
 
-    ACE_OS::signal(SIGINT, (ACE_SignalHandler) handler);
-    ACE_OS::signal(SIGTERM, (ACE_SignalHandler) handler);
+    yarp::os::impl::signal(SIGINT, handler);
+    yarp::os::impl::signal(SIGTERM, handler);
 }
 
 
@@ -392,10 +293,10 @@ int RFModule::runModule() {
 
     // Setting up main loop
 
-    ACE_Time_Value currentRunTV;
-    ACE_Time_Value elapsedTV;
-    ACE_Time_Value sleepPeriodTV;
-    ACE_Time_Value oneSecTV;
+    YARP_timeval currentRunTV;
+    YARP_timeval elapsedTV;
+    YARP_timeval sleepPeriodTV;
+    YARP_timeval oneSecTV;
 
     fromDouble(oneSecTV, 1.0);
 
@@ -403,7 +304,7 @@ int RFModule::runModule() {
         getTime(currentRunTV);
 
         // If updateModule() returns false we exit the main loop.
-        if(!updateModule()) {
+        if (!updateModule()) {
             break;
         }
 
@@ -412,7 +313,7 @@ int RFModule::runModule() {
         // the module stopping, and eventually we exit the main loop.
         do {
             getTime(elapsedTV);
-            fromDouble(sleepPeriodTV,getPeriod());
+            fromDouble(sleepPeriodTV, getPeriod());
             addTime(sleepPeriodTV, currentRunTV);
             subtractTime(sleepPeriodTV, elapsedTV);
             if (toDouble(sleepPeriodTV) > 1) {
@@ -439,7 +340,7 @@ int RFModule::runModule() {
         // One day this will hopefully go away, now only way to stop
         // remove both:
         close();
-        ACE_OS::exit(1);
+        std::exit(1);
         /////////////////////////////////////////////////////////////
         detachTerminal();
     }
@@ -496,7 +397,7 @@ bool RFModule::configure(yarp::os::ResourceFinder &rf) {
 
 
 bool RFModule::respond(const Bottle& command, Bottle& reply) {
-    return basicRespond(command,reply);
+    return basicRespond(command, reply);
 }
 
 
@@ -610,9 +511,9 @@ bool RFModule::safeRespond(const Bottle& command, Bottle& reply) {
 
 bool RFModule::basicRespond(const Bottle& command, Bottle& reply) {
     switch (command.get(0).asVocab()) {
-    case VOCAB4('q','u','i','t'):
-    case VOCAB4('e','x','i','t'):
-    case VOCAB3('b','y','e'):
+    case VOCAB4('q', 'u', 'i', 't'):
+    case VOCAB4('e', 'x', 'i', 't'):
+    case VOCAB3('b', 'y', 'e'):
         reply.addVocab(Vocab::encode("bye"));
         stopModule(false); //calls interruptModule()
    //     interruptModule();

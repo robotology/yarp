@@ -172,11 +172,11 @@ public:
     virtual ~WireTwiddlerReader() {}
 
     using yarp::os::InputStream::read;
-    virtual YARP_SSIZE_T read(const yarp::os::Bytes& b);
+    virtual YARP_SSIZE_T read(const yarp::os::Bytes& b) YARP_OVERRIDE;
 
-    virtual void close() { is.close(); }
+    virtual void close() YARP_OVERRIDE { is.close(); }
 
-    virtual bool isOk() { return is.isOk(); }
+    virtual bool isOk() YARP_OVERRIDE { return is.isOk(); }
 
     YARP_SSIZE_T readMapped(yarp::os::InputStream& is,
                             const yarp::os::Bytes& b,
@@ -250,28 +250,28 @@ public:
 
     bool update();
 
-    virtual size_t length() {
+    virtual size_t length() YARP_OVERRIDE {
         return srcs.size();
     }
 
-    virtual size_t headerLength() {
+    virtual size_t headerLength() YARP_OVERRIDE {
         return 0;
     }
 
-    virtual size_t length(size_t index)  {
+    virtual size_t length(size_t index) YARP_OVERRIDE {
         return srcs[index].len;
     }
 
-    virtual const char *data(size_t index) {
+    virtual const char *data(size_t index) YARP_OVERRIDE {
         if (srcs[index].offset<0) return srcs[index].src;
         return scratch.get()+srcs[index].offset;
     }
 
-    virtual yarp::os::PortReader *getReplyHandler() {
+    virtual yarp::os::PortReader *getReplyHandler() YARP_OVERRIDE {
         return parent->getReplyHandler();
     }
 
-    virtual yarp::os::Portable *getReference() {
+    virtual yarp::os::Portable *getReference() YARP_OVERRIDE {
         return parent->getReference();
     }
 
@@ -293,15 +293,15 @@ public:
     int readLength();
 
     //virtual void write(OutputStream& os);
-    virtual bool dropRequested() {
+    virtual bool dropRequested() YARP_OVERRIDE {
         return false;
     }
 
-    virtual void startWrite() {
+    virtual void startWrite() YARP_OVERRIDE {
         parent->startWrite();
     }
 
-    virtual void stopWrite() {
+    virtual void stopWrite() YARP_OVERRIDE {
         parent->stopWrite();
     }
 };

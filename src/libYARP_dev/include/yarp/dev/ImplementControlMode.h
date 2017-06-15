@@ -16,6 +16,12 @@ namespace yarp {
     }
 }
 
+#if defined(_MSC_VER) && !defined(YARP_NO_DEPRECATED) // since YARP 2.3.70
+// A class implementing setXxxxxMode(int) causes a warning on MSVC
+YARP_WARNING_PUSH
+YARP_DISABLE_DEPRECATED_WARNING
+#endif
+
 class YARP_dev_API yarp::dev::ImplementControlMode: public IControlMode
 {
     void *helper;
@@ -25,14 +31,19 @@ public:
     bool uninitialize();
     ImplementControlMode(IControlModeRaw *v);
     ~ImplementControlMode();
-    bool setTorqueMode(int j);
-    bool setImpedancePositionMode(int j);
-    bool setImpedanceVelocityMode(int j);
-    bool setOpenLoopMode(int j);
-    bool setPositionMode(int j);
-    bool setVelocityMode(int j);
-    bool getControlMode(int j, int *f);
-    bool getControlModes(int *modes);
+#ifndef YARP_NO_DEPRECATED // since YARP 2.3.70
+    YARP_DEPRECATED bool setTorqueMode(int j) YARP_OVERRIDE;
+    YARP_DEPRECATED bool setImpedancePositionMode(int j) YARP_OVERRIDE;
+    YARP_DEPRECATED bool setImpedanceVelocityMode(int j) YARP_OVERRIDE;
+    YARP_DEPRECATED bool setPositionMode(int j) YARP_OVERRIDE;
+    YARP_DEPRECATED bool setVelocityMode(int j) YARP_OVERRIDE;
+#endif // YARP_NO_DEPRECATED
+    bool getControlMode(int j, int *f) YARP_OVERRIDE;
+    bool getControlModes(int *modes) YARP_OVERRIDE;
 };
+
+#if defined(_MSC_VER) && !defined(YARP_NO_DEPRECATED) // since YARP 2.3.70
+YARP_WARNING_POP
+#endif
 
 #endif // YARP_DEV_IMPLEMENTCONTROLMODE_H

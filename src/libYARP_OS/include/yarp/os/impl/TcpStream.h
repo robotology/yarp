@@ -30,10 +30,12 @@
 #include <sys/socket.h>
 #include <netinet/in.h>
 #include <arpa/inet.h>
-#include <sys/wait.h>
-#include <signal.h>
-#include <string.h>
-#include <unistd.h>
+
+#include <cstring>
+
+#include <yarp/os/impl/PlatformSignal.h>
+#include <yarp/os/impl/PlatformUnistd.h>
+#include <yarp/os/impl/PlatformSysWait.h>
 
 namespace yarp {
     namespace os {
@@ -100,14 +102,14 @@ public:
     void close_reader()
     {
         if (sd!=-1) {
-            ::shutdown(sd,SHUT_RD);
+            ::shutdown(sd, SHUT_RD);
         }
     }
 
     void close_writer()
     {
         if (sd!=-1) {
-            ::shutdown(sd,SHUT_WR);
+            ::shutdown(sd, SHUT_WR);
         }
     }
 

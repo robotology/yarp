@@ -6,7 +6,7 @@
  */
 
 
-#include <stdio.h>
+#include <cstdio>
 
 
 /*
@@ -14,7 +14,7 @@
   unconditionally defining INT32 to be "long".  This needs to
   be worked around.  Work around begins...
  */
-#ifdef WIN32
+#if defined(_WIN32)
 #define INT32 long  // jpeg's definition
 #define QGLOBAL_H 1
 #endif
@@ -32,7 +32,7 @@ extern "C" {
 #pragma warning (pop)
 #endif
 
-#ifdef WIN32
+#if defined(_WIN32)
 #undef INT32
 #undef QGLOBAL_H
 #endif

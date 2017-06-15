@@ -1,9 +1,23 @@
 // This is an automatically generated file.
 // Generated from this sensor_msgs_RegionOfInterest.msg definition:
-//   uint32 x_offset
-//   uint32 y_offset
-//   uint32 height
-//   uint32 width
+//   # This message is used to specify a region of interest within an image.
+//   #
+//   # When used to specify the ROI setting of the camera when the image was
+//   # taken, the height and width fields should either match the height and
+//   # width fields for the associated image; or height = width = 0
+//   # indicates that the full resolution image was captured.
+//   
+//   uint32 x_offset  # Leftmost pixel of the ROI
+//                    # (0 if the ROI includes the left edge of the image)
+//   uint32 y_offset  # Topmost pixel of the ROI
+//                    # (0 if the ROI includes the top edge of the image)
+//   uint32 height    # Height of ROI
+//   uint32 width     # Width of ROI
+//   
+//   # True if a distinct rectified ROI should be calculated from the "raw"
+//   # ROI in this message. Typically this should be False if the full image
+//   # is captured (ROI not used), and True if a subwindow is captured (ROI
+//   # used).
 //   bool do_rectify
 // Instances of this class can be read and written with YARP ports,
 // using a ROS-compatible format.
@@ -29,7 +43,24 @@ public:
   sensor_msgs_RegionOfInterest() {
   }
 
-  bool readBare(yarp::os::ConnectionReader& connection) {
+  void clear() {
+    // *** x_offset ***
+    x_offset = 0;
+
+    // *** y_offset ***
+    y_offset = 0;
+
+    // *** height ***
+    height = 0;
+
+    // *** width ***
+    width = 0;
+
+    // *** do_rectify ***
+    do_rectify = false;
+  }
+
+  bool readBare(yarp::os::ConnectionReader& connection) YARP_OVERRIDE {
     // *** x_offset ***
     x_offset = connection.expectInt();
 
@@ -47,7 +78,7 @@ public:
     return !connection.isError();
   }
 
-  bool readBottle(yarp::os::ConnectionReader& connection) {
+  bool readBottle(yarp::os::ConnectionReader& connection) YARP_OVERRIDE {
     connection.convertTextMode();
     yarp::os::idl::WireReader reader(connection);
     if (!reader.readListHeader(5)) return false;
@@ -70,12 +101,12 @@ public:
   }
 
   using yarp::os::idl::WirePortable::read;
-  bool read(yarp::os::ConnectionReader& connection) {
+  bool read(yarp::os::ConnectionReader& connection) YARP_OVERRIDE {
     if (connection.isBareMode()) return readBare(connection);
     return readBottle(connection);
   }
 
-  bool writeBare(yarp::os::ConnectionWriter& connection) {
+  bool writeBare(yarp::os::ConnectionWriter& connection) YARP_OVERRIDE {
     // *** x_offset ***
     connection.appendInt(x_offset);
 
@@ -93,7 +124,7 @@ public:
     return !connection.isError();
   }
 
-  bool writeBottle(yarp::os::ConnectionWriter& connection) {
+  bool writeBottle(yarp::os::ConnectionWriter& connection) YARP_OVERRIDE {
     connection.appendInt(BOTTLE_TAG_LIST);
     connection.appendInt(5);
 
@@ -121,7 +152,7 @@ public:
   }
 
   using yarp::os::idl::WirePortable::write;
-  bool write(yarp::os::ConnectionWriter& connection) {
+  bool write(yarp::os::ConnectionWriter& connection) YARP_OVERRIDE {
     if (connection.isBareMode()) return writeBare(connection);
     return writeBottle(connection);
   }
@@ -133,15 +164,29 @@ public:
 
   // Give source text for class, ROS will need this
   yarp::os::ConstString getTypeText() {
-    return "uint32 x_offset\n\
-uint32 y_offset\n\
-uint32 height\n\
-uint32 width\n\
+    return "# This message is used to specify a region of interest within an image.\n\
+#\n\
+# When used to specify the ROI setting of the camera when the image was\n\
+# taken, the height and width fields should either match the height and\n\
+# width fields for the associated image; or height = width = 0\n\
+# indicates that the full resolution image was captured.\n\
+\n\
+uint32 x_offset  # Leftmost pixel of the ROI\n\
+                 # (0 if the ROI includes the left edge of the image)\n\
+uint32 y_offset  # Topmost pixel of the ROI\n\
+                 # (0 if the ROI includes the top edge of the image)\n\
+uint32 height    # Height of ROI\n\
+uint32 width     # Width of ROI\n\
+\n\
+# True if a distinct rectified ROI should be calculated from the \"raw\"\n\
+# ROI in this message. Typically this should be False if the full image\n\
+# is captured (ROI not used), and True if a subwindow is captured (ROI\n\
+# used).\n\
 bool do_rectify";
   }
 
   // Name the class, ROS will need this
-  yarp::os::Type getType() {
+  yarp::os::Type getType() YARP_OVERRIDE {
     yarp::os::Type typ = yarp::os::Type::byName("sensor_msgs/RegionOfInterest","sensor_msgs/RegionOfInterest");
     typ.addProperty("md5sum",yarp::os::Value("bdb633039d588fcccb441a4d43ccfe09"));
     typ.addProperty("message_definition",yarp::os::Value(getTypeText()));

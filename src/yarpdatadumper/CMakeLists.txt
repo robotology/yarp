@@ -19,22 +19,21 @@ if(CREATE_YARPDATADUMPER)
 
   set(yarpdatadumper_SRCS main.cpp)
 
-  source_group("Source Files" FILES ${yarpdatadumper_SRCS})
-
-
   add_executable(yarpdatadumper ${yarpdatadumper_SRCS})
 
   if(YARP_HAS_OPENCV)
     target_link_libraries(yarpdatadumper ${OpenCV_LIBRARIES})
   endif()
 
-  target_link_libraries(yarpdatadumper YARP_OS
-                                       YARP_init
-                                       YARP_sig)
+  target_link_libraries(yarpdatadumper YARP::YARP_OS
+                                       YARP::YARP_init
+                                       YARP::YARP_sig)
 
   install(TARGETS yarpdatadumper
           COMPONENT utilities
           DESTINATION "${CMAKE_INSTALL_BINDIR}")
+
+  set_property(TARGET yarpdatadumper PROPERTY FOLDER "Command Line Tools")
 
   if(CMAKE_HOST_WIN32)
     # install the yarpdatadumperAppGenerator.py helper script

@@ -7,7 +7,7 @@
 export ACE_ROOT=/home/icub/Code/ACE_wrappers
 export YARP_DIR=/home/icub/Code/yarp2
 export YARP_ROOT=$YARP_DIR
-export YARP_CONF=$YARP_DIR/conf
+export YARP_CONFIG_DIR=$YARP_DIR/conf
 export ICUB_DIR=/home/icub/Code/iCub
 export ICUB_ROOT=$ICUB_DIR
 export ICUB_CONF=$ICUB_DIR/conf

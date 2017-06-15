@@ -5,10 +5,9 @@
 # Make sure that YARP_DIR is set in your environment to wherever you 
 # compiled YARP.
 
-cmake_minimum_required(VERSION 2.8.9)
+cmake_minimum_required(VERSION 3.0)
 
-FIND_PACKAGE(YARP REQUIRED)
-INCLUDE_DIRECTORIES(${YARP_INCLUDE_DIRS})
+find_package(YARP REQUIRED)
 
-ADD_EXECUTABLE(web_test web_test.cpp)
-TARGET_LINK_LIBRARIES(web_test ${YARP_LIBRARIES})
+add_executable(web_test web_test.cpp)
+target_link_libraries(web_test ${YARP_LIBRARIES})

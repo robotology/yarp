@@ -52,7 +52,7 @@ public:
     InputPortProcessor();
 
     using yarp::os::BufferedPort<yarp::sig::Vector>::onRead;
-    virtual void onRead(yarp::sig::Vector &v);
+    virtual void onRead(yarp::sig::Vector &v) override;
 
     inline int getLast(yarp::sig::Vector &data, yarp::os::Stamp &stmp);
 
@@ -114,54 +114,54 @@ protected:
 
 public:
 
-    /* DevideDriver methods */
-    bool open(yarp::os::Searchable& config);
-    bool close();
+    /* DeviceDriver methods */
+    bool open(yarp::os::Searchable& config) override;
+    bool close() override;
 
     /* IAnalogSensor methods*/
-    int read(yarp::sig::Vector &out);
+    int read(yarp::sig::Vector &out) override;
 
     /* Check the state value of a given channel.
     * @param ch: channel number.
     * @return status.
     */
-    int getState(int ch);
+    int getState(int ch) override;
 
     /* Get the number of channels of the sensor.
      * @return number of channels (0 in case of errors).
      */
-    int getChannels();
+    int getChannels() override;
 
     /* Calibrates the whole sensor.
      * @return status.
      */
-    int calibrateSensor();
+    int calibrateSensor() override;
 
     /* Calibrates the whole sensor, using a vector of calibration values.
      * @param value: a vector of calibration values.
      * @return status.
      */
-    int calibrateSensor(const yarp::sig::Vector& value);
+    int calibrateSensor(const yarp::sig::Vector& value) override;
 
     /* Calibrates one single channel.
      * @param ch: channel number.
      * @return status.
      */
-    int calibrateChannel(int ch);
+    int calibrateChannel(int ch) override;
 
     /* Calibrates one single channel.
      * @param ch: channel number.
      * @param value: calibration value.
      * @return status.
      */
-    int calibrateChannel(int ch, double value);
+    int calibrateChannel(int ch, double value) override;
 
     /* IPreciselyTimed methods */
     /**
     * Get the time stamp for the last read data
     * @return last time stamp.
     */
-    yarp::os::Stamp getLastInputStamp();
+    yarp::os::Stamp getLastInputStamp() override;
 };
 
 #endif // YARP_DEV_ANALOGSENSORCLIENT_ANALOGSENSORCLIENT_H

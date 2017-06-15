@@ -8,7 +8,7 @@
 #define YARP_OS_IMPL_POSIXSEMAPHOREIMPL_H
 
 #include <semaphore.h>
-#include <time.h>
+#include <ctime>
 
 #include <yarp/os/api.h>
 
@@ -17,7 +17,7 @@ class YARP_OS_impl_API yarp::os::impl::SemaphoreImpl
 public:
     SemaphoreImpl(unsigned int initialCount = 1)
     {
-        sem_init(&sema,0,initialCount);
+        sem_init(&sema, 0, initialCount);
     }
 
     virtual ~SemaphoreImpl()

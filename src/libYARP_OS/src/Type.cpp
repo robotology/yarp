@@ -60,6 +60,6 @@ Property& Type::writeProperties() {
 
 Type& Type::addProperty(const char *key, const Value& val) {
     writeProperties();
-    prop->put(key,val);
+    prop->put(key, val);
     return *this;
 }

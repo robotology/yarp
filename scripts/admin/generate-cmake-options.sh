@@ -33,8 +33,7 @@ CMAKE_OPTIONS="\
 -DENABLE_yarpmod_fakeLaser=TRUE \
 -DENABLE_yarpmod_rpLidar=TRUE \
 -DENABLE_yarpmod_laserHokuyo=TRUE \
--DTEST_yarpidl_rosmsg:BOOL=TRUE \
--DTEST_yarpidl_thrift:BOOL=TRUE \
+-DENABLE_yarpmod_test_grabber=TRUE \
 "
 OS_TYPE=""
 echo "$2" | grep -iq "Debian\|Ubuntu"

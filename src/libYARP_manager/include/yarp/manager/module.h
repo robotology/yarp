@@ -16,6 +16,7 @@
 #include <yarp/manager/data.h>
 #include <yarp/manager/utility.h>
 #include <yarp/manager/resource.h>
+#include <yarp/conf/api.h>
 
 using namespace std;
 
@@ -109,7 +110,7 @@ public:
     Module(const char* szName);
     Module(const Module &mod);
     virtual ~Module();
-    virtual Node* clone(void);
+    virtual Node* clone(void) YARP_OVERRIDE;
     Module& operator=(const Module& rhs);
 
     void setName(const char* szName) { if(szName) strName = szName; }
@@ -172,8 +173,11 @@ public:
     bool addResource(GenericResource& res);
     bool removeResource(GenericResource& res);
 
-    void setPostExecWait(double t) { wait = t; }
-    double getPostExecWait() { return wait; }
+    void setPostExecWait(double t) { waitStart = t; }
+    double getPostExecWait() { return waitStart; }
+    void setPostStopWait(double t) { waitStop = t; }
+    double getPostStopWait() { return waitStop; }
+
 
     void clearInputs(void) { inputs.clear(); }
     void clearOutputs(void) { outputs.clear(); }
@@ -217,7 +221,8 @@ private:
     string strPrefix;
     string strEnvironment;
     string strBasePrefix;
-    double wait;
+    double waitStart;
+    double waitStop;
     string strDisplay;
     GraphicModel modelBase;
 

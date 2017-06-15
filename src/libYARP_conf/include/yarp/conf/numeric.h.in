@@ -1,0 +1,33 @@
+/*
+ * Copyright: (C) 2013 iCub Facility
+ * Author: Paul Fitzpatrick
+ * CopyPolicy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
+ */
+
+#ifndef YARP_CONFIG_NUMERIC_H
+#define YARP_CONFIG_NUMERIC_H
+
+#cmakedefine YARP_HAS_SYS_TYPES_H
+
+#if defined(YARP_HAS_SYS_TYPES_H)
+# include <sys/types.h>
+#endif
+
+#include <cstddef>
+
+#define YARP_INT8 signed char
+#define YARP_INT16 @YARP_INT16@
+#define YARP_INT32 @YARP_INT32@
+#define YARP_INT64 @YARP_INT64@
+#define YARP_FLOAT32 @YARP_FLOAT32@
+#define YARP_FLOAT64 @YARP_FLOAT64@
+
+#define YARP_INT32_FMT "@YARP_INT32_FMT@"
+#define YARP_INT64_FMT "@YARP_INT64_FMT@"
+
+#cmakedefine YARP_BIG_ENDIAN
+#cmakedefine YARP_LITTLE_ENDIAN
+
+#define YARP_SSIZE_T @YARP_SSIZE_T@
+
+#endif

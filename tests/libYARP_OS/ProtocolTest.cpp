@@ -8,7 +8,7 @@
 #include <yarp/os/impl/FakeTwoWayStream.h>
 #include <yarp/os/impl/Protocol.h>
 #include <yarp/os/impl/BufferedConnectionWriter.h>
-#include <yarp/os/impl/PlatformStdio.h>
+#include <cstdio>
 #include <yarp/os/impl/UnitTest.h>
 
 using namespace yarp::os;
@@ -16,17 +16,17 @@ using namespace yarp::os::impl;
 
 class ProtocolTest : public UnitTest {
 public:
-    virtual ConstString getName() { return "ProtocolTest"; }
+    virtual ConstString getName() override { return "ProtocolTest"; }
 
     ConstString simplify(ConstString x) {
         return humanize(x);
     }
 
     void show(FakeTwoWayStream *fake1, FakeTwoWayStream *fake2) {
-        ACE_OS::printf("fake1  //  in: [%s]  //  out: [%s]\n",
+        printf("fake1  //  in: [%s]  //  out: [%s]\n",
                        simplify(fake1->getInputText()).c_str(),
                        simplify(fake1->getOutputText()).c_str());
-        ACE_OS::printf("fake2  //  in: [%s]  //  out: [%s]\n\n",
+        printf("fake2  //  in: [%s]  //  out: [%s]\n\n",
                        simplify(fake2->getInputText()).c_str(),
                        simplify(fake2->getOutputText()).c_str());
     }
@@ -74,7 +74,7 @@ public:
         checkEqual(str2,ConstString(expect2),"bottle representation");
     }
 
-    virtual void runTests() {
+    virtual void runTests() override {
         testBottle();
     }
 };

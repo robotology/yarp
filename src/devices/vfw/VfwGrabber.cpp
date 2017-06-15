@@ -55,7 +55,7 @@
 #include <VfwGrabber.h>
 using namespace yarp::dev;
 
-#include <stdio.h>
+#include <cstdio>
 
 #include <vfw.h>
 
@@ -85,8 +85,8 @@ typedef struct CvCaptureCAM_VFW
 }
 CvCaptureCAM_VFW;
 
-static LRESULT PASCAL FrameCallbackProc( HWND hWnd, VIDEOHDR* hdr ) 
-{ 
+static LRESULT PASCAL FrameCallbackProc( HWND hWnd, VIDEOHDR* hdr )
+{
     CvCaptureCAM_VFW* capture = 0;
 
     if (!hWnd) return FALSE;
@@ -99,8 +99,8 @@ static LRESULT PASCAL FrameCallbackProc( HWND hWnd, VIDEOHDR* hdr )
     //hdr->lpData;
     //hdr->dwBytesUsed;
 
-    return (LRESULT)TRUE; 
-} 
+    return (LRESULT)TRUE;
+}
 
 
 // Initialize camera input
@@ -109,18 +109,18 @@ static int icvOpenCAM_VFW( CvCaptureCAM_VFW* capture, int wIndex )
     char szDeviceName[80];
     char szDeviceVersion[80];
     HWND hWndC = 0;
-    
+
     if( (unsigned)wIndex >= 10 )
         wIndex = 0;
 
-    for( ; wIndex < 10; wIndex++ ) 
+    for( ; wIndex < 10; wIndex++ )
         {
-            if( capGetDriverDescription( wIndex, szDeviceName, 
-                                         sizeof (szDeviceName), szDeviceVersion, 
-                                         sizeof (szDeviceVersion))) 
+            if( capGetDriverDescription( wIndex, szDeviceName,
+                                         sizeof (szDeviceName), szDeviceVersion,
+                                         sizeof (szDeviceVersion)))
                 {
                     printf("Possible input: %s\n", szDeviceName);
-                    hWndC = capCreateCaptureWindow ( "My Own Capture Window", 
+                    hWndC = capCreateCaptureWindow ( "My Own Capture Window",
                                                      WS_POPUP | WS_CHILD, 0, 0, 320, 240, 0, 0);
                     if( capDriverConnect (hWndC, wIndex))
                         break;
@@ -128,7 +128,7 @@ static int icvOpenCAM_VFW( CvCaptureCAM_VFW* capture, int wIndex )
                     hWndC = 0;
                 }
         }
-    
+
     capture->capWnd = 0;
     if( hWndC )
         {
@@ -137,12 +137,12 @@ static int icvOpenCAM_VFW( CvCaptureCAM_VFW* capture, int wIndex )
             capture->hdr = 0;
             capture->hic = 0;
             capture->fourcc = (DWORD)-1;
-        
+
             memset( &capture->caps, 0, sizeof(capture->caps));
             capDriverGetCaps( hWndC, &capture->caps, sizeof(&capture->caps));
             ::MoveWindow( hWndC, 0, 0, 320, 240, TRUE );
             capSetUserData( hWndC, (size_t)capture );
-            capSetCallbackOnFrame( hWndC, FrameCallbackProc ); 
+            capSetCallbackOnFrame( hWndC, FrameCallbackProc );
             CAPTUREPARMS p;
             capCaptureGetSetup(hWndC,&p,sizeof(CAPTUREPARMS));
             p.dwRequestMicroSecPerFrame = 66667/2;
@@ -158,7 +158,7 @@ static  void icvCloseCAM_VFW( CvCaptureCAM_VFW* capture )
 {
     if( capture && capture->capWnd )
         {
-            capSetCallbackOnFrame( capture->capWnd, NULL ); 
+            capSetCallbackOnFrame( capture->capWnd, NULL );
             capDriverDisconnect( capture->capWnd );
             DestroyWindow( capture->capWnd );
             if( capture->hic )
@@ -251,7 +251,7 @@ static Image* icvRetrieveFrameCAM_VFW( CvCaptureCAM_VFW* capture )
                                         }
                                 }
                         }
-        
+
                     if( code == ICERR_OK )
                         {
                             if (!done) {

@@ -73,34 +73,34 @@ public:
     }
 
     // documentation provided in Contactable
-    virtual bool open(const ConstString& name) {
+    virtual bool open(const ConstString& name) YARP_OVERRIDE {
         clear();
         return port.open(name);
     }
 
     // documentation provided in Contactable
-    virtual bool open(const Contact& contact, bool registerName = true) {
+    virtual bool open(const Contact& contact, bool registerName = true) YARP_OVERRIDE {
         clear();
-        return port.open(contact,registerName);
+        return port.open(contact, registerName);
     }
 
     // documentation provided in Contactable
-    virtual void close() {
+    virtual void close() YARP_OVERRIDE {
         active().close();
     }
 
     // documentation provided in Contactable
-    virtual void interrupt() {
+    virtual void interrupt() YARP_OVERRIDE {
         active().interrupt();
     }
 
     // documentation provided in Contactable
-    virtual void resume() {
+    virtual void resume() YARP_OVERRIDE {
         active().resume();
     }
 
     // documented in Contactable
-    void setReader(PortReader& reader) {
+    void setReader(PortReader& reader) YARP_OVERRIDE {
         active().setReader(reader);
     }
 
@@ -154,11 +154,11 @@ public:
         return 0;
     }
 
-    virtual Port& asPort() {
+    virtual Port& asPort() YARP_OVERRIDE {
         return port;
     }
 
-    virtual const Port& asPort() const {
+    virtual const Port& asPort() const YARP_OVERRIDE {
         return port;
     }
 

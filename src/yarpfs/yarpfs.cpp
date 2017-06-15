@@ -9,16 +9,16 @@
 
 #include <fuse/fuse.h>
 //#include <fuse/fuse_lowlevel.h>
-#include <stdio.h>
-#include <string.h>
-#include <errno.h>
+#include <cstdio>
+#include <cstring>
+#include <cerrno>
 //#include <fcntl.h>
 
 #include <yarp/os/all.h>
 #include <yarp/os/impl/NameConfig.h>
 
 #include <string>
-#include <signal.h>
+#include <csignal>
 
 #include <ace/Containers_T.h>
 
@@ -39,7 +39,7 @@ int yarp_getattr(const char *path, struct stat *stbuf)
     YPath ypath(path);
 
     memset(stbuf, 0, sizeof(struct stat));
-    printf("Checking attr // port %d, stem %d, act %d, sym %d\n", 
+    printf("Checking attr // port %d, stem %d, act %d, sym %d\n",
            ypath.isPort(),
            ypath.isStem(),
            ypath.isAct(),

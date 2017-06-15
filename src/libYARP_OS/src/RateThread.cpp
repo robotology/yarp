@@ -13,14 +13,14 @@
 
 #include <yarp/os/Time.h>
 
-#include <math.h> //sqrt
+#include <cmath> //sqrt
 
 //added threadRelease/threadInit methods and synchronization -nat
 
 using namespace yarp::os::impl;
 using namespace yarp::os;
 
-//const ACE_Time_Value _timeout_value(20,0);    // (20 sec) timeout value for the release (20 sec)
+//const YARP_timeval _timeout_value(20, 0);    // (20 sec) timeout value for the release (20 sec)
 
 class RateThreadCallbackAdapter: public ThreadImpl
 {
@@ -29,11 +29,11 @@ private:
     double adaptedPeriod;
     RateThread& owner;
     Semaphore mutex;
-    ACE_Time_Value now;
-    ACE_Time_Value currentRunTV;
-    ACE_Time_Value previousRunTV;
-    ACE_Time_Value sleep;
-    ACE_Time_Value sleepPeriodTV;
+    YARP_timeval now;
+    YARP_timeval currentRunTV;
+    YARP_timeval previousRunTV;
+    YARP_timeval sleep;
+    YARP_timeval sleepPeriodTV;
     //ACE_High_Res_Timer thread_timer; // timer to estimate thread time
 
     bool suspended;
@@ -163,7 +163,7 @@ public:
         count++;
         lock();
 
-        ACE_Time_Value elapsedTV;
+        YARP_timeval elapsedTV;
         getTime(elapsedTV);
         double elapsed=toDouble(elapsedTV)-currentRun;
 
@@ -173,25 +173,25 @@ public:
         unlock();
 
         //compute sleep time
-        fromDouble(sleepPeriodTV,adaptedPeriod,1000);
-        addTime(sleepPeriodTV,currentRunTV);
-        subtractTime(sleepPeriodTV,elapsedTV);
+        fromDouble(sleepPeriodTV, adaptedPeriod, 1000);
+        addTime(sleepPeriodTV, currentRunTV);
+        subtractTime(sleepPeriodTV, elapsedTV);
         // Time::delay(sleep_period/1000.0);
         sleepThread(sleepPeriodTV);
     }
 
-    void run() {
+    void run() override {
         adaptedPeriod=period;
         while(!isClosing()) {
             singleStep();
         }
     }
 
-    bool threadInit() {
+    bool threadInit() override {
         return owner.threadInit();
     }
 
-    void threadRelease() {
+    void threadRelease() override {
         owner.threadRelease();
     }
 
@@ -217,11 +217,11 @@ public:
         suspended=false;
     }
 
-    void afterStart(bool s) {
+    void afterStart(bool s) override {
         owner.afterStart(s);
     }
 
-    void beforeStart() {
+    void beforeStart() override {
         owner.beforeStart();
     }
 
@@ -329,7 +329,7 @@ void RateThread::getEstPeriod(double &av, double &std)
 
 void RateThread::getEstUsed(double &av, double &std)
 {
-    ((RateThreadCallbackAdapter*)implementation)->getEstUsed(av,std);
+    ((RateThreadCallbackAdapter*)implementation)->getEstUsed(av, std);
 }
 
 void RateThread::resetStat()
@@ -415,11 +415,11 @@ bool RateThreadWrapper::open(double framerate, bool polling) {
     int period = 0;
     if (framerate>0) {
         period=(int) (0.5+1000.0/framerate);
-        YARP_SPRINTF2(Logger::get(),info,
+        YARP_SPRINTF2(Logger::get(), info,
                       "Setting framerate to: %.0lf[Hz] (thread period %d[ms])\n",
                       framerate, period);
     } else {
-        YARP_SPRINTF0(Logger::get(),info,
+        YARP_SPRINTF0(Logger::get(), info,
                       "No framerate specified, polling the device");
         period=0; //continuous
     }

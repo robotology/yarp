@@ -5,7 +5,7 @@
  *
  */
 
-#include <stdio.h>
+#include <cstdio>
 
 #include "yarp.h"
 #include "yarpimpl.h"

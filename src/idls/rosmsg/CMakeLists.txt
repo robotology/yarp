@@ -21,8 +21,11 @@ set(yarpidl_rosmsg_HDRS src/RosType.h
 
 add_executable(yarpidl_rosmsg ${yarpidl_rosmsg_SRCS}
                               ${yarpidl_rosmsg_HDRS})
+add_executable(YARP::yarpidl_rosmsg ALIAS yarpidl_rosmsg)
 
-target_link_libraries(yarpidl_rosmsg YARP_init YARP_OS ${ACE_LIBRARIES})
+target_link_libraries(yarpidl_rosmsg YARP::YARP_init
+                                     YARP::YARP_OS
+                                     ${ACE_LIBRARIES})
 install(TARGETS yarpidl_rosmsg
         EXPORT YARP
         COMPONENT utilities
@@ -30,10 +33,4 @@ install(TARGETS yarpidl_rosmsg
 
 set_property(GLOBAL APPEND PROPERTY YARP_TOOLS yarpidl_rosmsg)
 
-include (CMakeDependentOption)
-cmake_dependent_option(TEST_yarpidl_rosmsg "Test ROS msg based IDL" OFF
-                       YARP_COMPILE_TESTS OFF)
-mark_as_advanced(TEST_yarpidl_rosmsg)
-if (TEST_yarpidl_rosmsg)
-  add_subdirectory(tests)
-endif ()
+set_property(TARGET yarpidl_rosmsg PROPERTY FOLDER "Command Line Tools")

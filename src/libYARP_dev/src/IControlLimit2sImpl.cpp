@@ -5,7 +5,7 @@
  */
 
 
-#include <stdio.h>
+#include <cstdio>
 
 #include <yarp/dev/ControlBoardInterfacesImpl.h>
 #include <yarp/dev/ControlBoardHelper.h>

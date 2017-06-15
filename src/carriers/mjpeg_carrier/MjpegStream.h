@@ -69,49 +69,49 @@ public:
         }
     }
 
-    virtual InputStream& getInputStream() { return *this; }
-    virtual OutputStream& getOutputStream() { return *this; }
+    virtual InputStream& getInputStream() override { return *this; }
+    virtual OutputStream& getOutputStream() override { return *this; }
 
 
-    virtual const Contact& getLocalAddress() {
+    virtual const Contact& getLocalAddress() override {
         return delegate->getLocalAddress();
     }
 
-    virtual const Contact& getRemoteAddress() {
+    virtual const Contact& getRemoteAddress() override {
         return delegate->getRemoteAddress();
     }
 
-    virtual bool isOk() {
+    virtual bool isOk() override {
         return delegate->isOk();
     }
 
-    virtual void reset() {
+    virtual void reset() override {
         delegate->reset();
     }
 
-    virtual void close() {
+    virtual void close() override {
         delegate->close();
     }
 
-    virtual void beginPacket() {
+    virtual void beginPacket() override {
         delegate->beginPacket();
     }
 
-    virtual void endPacket() {
+    virtual void endPacket() override {
         delegate->endPacket();
     }
 
     using yarp::os::OutputStream::write;
-    virtual void write(const Bytes& b);
+    virtual void write(const Bytes& b) override;
 
     using yarp::os::InputStream::read;
-    virtual YARP_SSIZE_T read(const Bytes& b);
+    virtual YARP_SSIZE_T read(const Bytes& b) override;
 
-    virtual void interrupt() {
+    virtual void interrupt() override {
         delegate->getInputStream().interrupt();
     }
 
-    virtual bool setReadEnvelopeCallback(InputStream::readEnvelopeCallbackType callback, void* data) {
+    virtual bool setReadEnvelopeCallback(InputStream::readEnvelopeCallbackType callback, void* data) override {
         if (!autocompress) {
             return false;
         }

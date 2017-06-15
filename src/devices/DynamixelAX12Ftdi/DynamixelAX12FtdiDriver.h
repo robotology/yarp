@@ -3,7 +3,7 @@
  * CopyPolicy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
  *
  */
- 
+
  /*
  * Yarp Driver for Dynamixel AX-12, controlled using USB to Dynamixel Adapter
  * The default IDs for the motors are for Kaspar robot. As different robots would have different settings,
@@ -12,10 +12,10 @@
  * SENSORINDEX 16 101 116 132 102 117 133 103 118 134 107 119 135 106 104 105 108
  * This needs to be done by running configure(), before opening the device
  *
- * As it is using libftdi library, it is not possible to identify a device by specifying the serial port number, such as 
+ * As it is using libftdi library, it is not possible to identify a device by specifying the serial port number, such as
  * /dev/ttyUSB0
- * Instead, this driver requires precise information of the ftdi device, such as the dynamixel usb manufacture id, serial number, etc. See class FtdiDeviceSettings for details. 
- * 
+ * Instead, this driver requires precise information of the ftdi device, such as the dynamixel usb manufacture id, serial number, etc. See class FtdiDeviceSettings for details.
+ *
  * The motor does not support Torque control, but provide torque feedback. Therefore, several functions
  * have been implemented for such purpose, though not very rigorous.
  *
@@ -32,20 +32,18 @@
 #include <yarp/dev/DeviceDriver.h>
 #include <yarp/dev/ControlBoardInterfaces.h>
 
-#include <ace/OS_NS_stdio.h>
 #include <ace/Vector_T.h>
 
-#include <stdio.h> 
-#include <stdlib.h>
+#include <cstdio>
+#include <cstdlib>
 #include <cmath>
-#include <string.h>
+#include <cstring>
 #include <ftdi.h>
 //#include <libftdi/ftdi.h>
 #include <usb.h>
 #include <iostream>
 #include <ace/DEV_Connector.h>
 #include <ace/TTY_IO.h>
-#include <ace/OS_NS_stdio.h>
 #include <yarp/os/Time.h>
 
 #include <yarp/os/Semaphore.h>
@@ -172,7 +170,7 @@ public:
 
     /** Open device
         Opens and configures the device.
-      
+
         @param config Config file containing string pairs for parameters
         @return true on success
      */
@@ -180,14 +178,14 @@ public:
 
     /** Close device
         Closes the device and shuts down connection.
-      
+
         @return true on success
      */
     virtual bool close(void);
 
     /** Configure device online
         Configures parts of the device that can be configures online.
-      
+
         @param config Config file containing string pairs for parameters
         @return true on success
      */
@@ -197,7 +195,7 @@ public:
         Send an instruction to a device of given ID. The instruction has to be a byte arry containing
         the AX12 instruction code beginning with the instruction, the address and the parameters.
         Header and checksum are written automatically.
-      
+
         @param id The hex id of the device to be contacted
         @param inst Byte array containing the instruction body (instruction, address, parameters)
         @return The content of the return packet of the device
@@ -206,7 +204,7 @@ public:
 
     /** Read parameter from motor
         Requests the value of a parameter from motor.
-      
+
         @param id The id of the device to be contacted
         @param param encodes address in control table and size of parameter (2 Bytes => address + 100, 1 byte => address)
         @return value if read successful or -1

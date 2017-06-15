@@ -8,8 +8,8 @@
 #ifndef YARP_SIG_VECTOR_H
 #define YARP_SIG_VECTOR_H
 
-//#include <stdlib.h> //defines size_t
-#include <stddef.h> //defines size_t
+//#include <cstdlib> //defines size_t
+#include <cstddef> //defines size_t
 #include <yarp/os/Portable.h>
 #include <yarp/os/ConstString.h>
 #include <yarp/os/ManagedBytes.h>
@@ -51,13 +51,13 @@ public:
     * Read vector from a connection.
     * return true iff a vector was read correctly
     */
-    virtual bool read(yarp::os::ConnectionReader& connection);
+    virtual bool read(yarp::os::ConnectionReader& connection) YARP_OVERRIDE;
 
     /**
     * Write vector to a connection.
     * return true iff a vector was written correctly
     */
-    virtual bool write(yarp::os::ConnectionWriter& connection);
+    virtual bool write(yarp::os::ConnectionWriter& connection) YARP_OVERRIDE;
 };
 
 /*
@@ -139,20 +139,20 @@ public:
         return *this;
     }
 
-    virtual int getElementSize() const {
+    virtual int getElementSize() const YARP_OVERRIDE {
         return sizeof(T);
     }
 
-    virtual int getBottleTag() const {
+    virtual int getBottleTag() const YARP_OVERRIDE {
         return BottleTagMap <T>();
     }
 
-    virtual size_t getListSize() const
+    virtual size_t getListSize() const YARP_OVERRIDE
     {
         return len;
     }
 
-    virtual const char *getMemoryBlock() const
+    virtual const char *getMemoryBlock() const YARP_OVERRIDE
     {
         return (char *) bytes.get();
     }
@@ -167,7 +167,7 @@ public:
         return first;
     }
 
-    virtual void resize(size_t size)
+    virtual void resize(size_t size) YARP_OVERRIDE
     {
         size_t prev_len = len;
         bytes.allocateOnNeed(size*sizeof(T),size*sizeof(T));
@@ -473,15 +473,15 @@ public:
     * Read vector from a connection.
     * return true iff a vector was read correctly
     */
-    virtual bool read(yarp::os::ConnectionReader& connection);
+    virtual bool read(yarp::os::ConnectionReader& connection) YARP_OVERRIDE;
 
     /**
     * Write vector to a connection.
     * return true iff a vector was written correctly
     */
-    virtual bool write(yarp::os::ConnectionWriter& connection);
+    virtual bool write(yarp::os::ConnectionWriter& connection) YARP_OVERRIDE;
 
-    virtual yarp::os::Type getType() {
+    virtual yarp::os::Type getType() YARP_OVERRIDE {
         return yarp::os::Type::byName("yarp/vector");
     }
 };

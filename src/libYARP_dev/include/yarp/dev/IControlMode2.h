@@ -27,12 +27,13 @@ class YARP_dev_API yarp::dev::IControlMode2 : public yarp::dev::IControlMode
 public:
     virtual ~IControlMode2(){}
 
+#ifndef YARP_NO_DEPRECATED // since YARP 2.3.70
     using IControlMode::setPositionMode;
     using IControlMode::setVelocityMode;
     using IControlMode::setTorqueMode;
     using IControlMode::setImpedancePositionMode;
     using IControlMode::setImpedanceVelocityMode;
-    using IControlMode::setOpenLoopMode;
+#endif // YARP_NO_DEPRECATED
     using IControlMode::getControlMode;
     using IControlMode::getControlModes;
 
@@ -97,12 +98,13 @@ class yarp::dev::IControlMode2Raw: public IControlModeRaw
 public:
     virtual ~IControlMode2Raw(){}
 
+#ifndef YARP_NO_DEPRECATED // since YARP 2.3.70
     using IControlModeRaw::setPositionModeRaw;
     using IControlModeRaw::setVelocityModeRaw;
     using IControlModeRaw::setTorqueModeRaw;
     using IControlModeRaw::setImpedancePositionModeRaw;
     using IControlModeRaw::setImpedanceVelocityModeRaw;
-    using IControlModeRaw::setOpenLoopModeRaw;
+#endif // YARP_NO_DEPRECATED
     using IControlModeRaw::getControlModeRaw;
     using IControlModeRaw::getControlModesRaw;
 
@@ -143,7 +145,6 @@ public:
 
 
 #define VOCAB_CM_UNKNOWN        VOCAB4('c','m','u','k')
-#define VOCAB_CM_OPENLOOP       VOCAB4('c','m','o','l')
 #define VOCAB_CM_IMPEDANCE_POS  VOCAB4('c','m','i','p')
 #define VOCAB_CM_IMPEDANCE_VEL  VOCAB4('c','m','i','v')
 

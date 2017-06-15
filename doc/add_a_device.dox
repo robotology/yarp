@@ -59,7 +59,6 @@ So you want to add a device to YARP?
 \code{.cmake}
   find_package(YARP REQUIRED)
   # ... find and use other needed libraries ...
-  include_directories(${YARP_INCLUDE_DIRS})
   add_library(foodev FooDriver.cpp FooDriver.h)
   target_link_libraries(foodev ${YARP_LIBRARIES})
   add_executable(example FooExample.cpp)
@@ -73,7 +72,6 @@ So you want to add a device to YARP?
 \code{.cmake}
   find_package(YARP REQUIRED)
   # ... find and use other needed libraries ...
-  include_directories(${YARP_INCLUDE_DIRS})
   add_library(foodev FooDriver.cpp FooDriver.h)
   target_link_libraries(foodev ${YARP_LIBRARIES})
   if(NOT COMPILE_DEVICE_LIBRARY)
@@ -105,9 +103,8 @@ So you want to add a device to YARP?
   endif()
   if(NOT SKIP_foo)
     find_package(YARP REQUIRED)
-    include_directories(${YARP_INCLUDE_DIRS})
     # ... find and use other needed libraries ...
-    add_library(foodev FooDriver.cpp FooDriver.h)
+    yarp_add_plugin(foodev FooDriver.cpp FooDriver.h)
     target_link_libraries(foodev ${YARP_LIBRARIES})
     if(NOT COMPILE_DEVICE_LIBRARY)
       add_executable(example FooExample.cpp)

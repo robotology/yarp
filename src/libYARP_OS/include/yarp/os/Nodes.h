@@ -22,11 +22,11 @@ public:
     Nodes();
     virtual ~Nodes();
 
-    virtual void add(Contactable& contactable);
-    virtual void remove(Contactable& contactable);
+    virtual void add(Contactable& contactable) YARP_OVERRIDE;
+    virtual void remove(Contactable& contactable) YARP_OVERRIDE;
 
     virtual Contact query(const ConstString& name,
-                          const ConstString& category = "");
+                          const ConstString& category = "") YARP_OVERRIDE;
 
     virtual Contact getParent(const ConstString& name);
 

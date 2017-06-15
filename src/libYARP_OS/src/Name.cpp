@@ -26,7 +26,7 @@ bool Name::isRooted() const {
 Contact Name::toAddress() const {
     size_t mid = txt.find(":/");
     if (mid!=ConstString::npos && mid>0) {
-        ConstString first = txt.substr(0,mid);
+        ConstString first = txt.substr(0, mid);
         ConstString second = txt.substr(mid+2);
         if (first.length()>=2) {
             if (first[0]=='/') {
@@ -44,14 +44,14 @@ ConstString Name::getCarrierModifier(const char *mod, bool *hasModifier) {
     ConstString work = txt;
     size_t mid = work.find(":/");
     if (mid!=ConstString::npos && mid>0) {
-        work = work.substr(0,mid);
+        work = work.substr(0, mid);
         ConstString target = ConstString("+")+mod+".";
         size_t modLoc = work.find(target);
         if (modLoc!=ConstString::npos) {
-            work = work.substr(modLoc+target.length(),work.length());
+            work = work.substr(modLoc+target.length(), work.length());
             size_t endLoc = work.find('+');
             if (endLoc!=ConstString::npos) {
-                work = work.substr(0,endLoc);
+                work = work.substr(0, endLoc);
             }
             ok = true;
         }
