@@ -23,7 +23,7 @@ See full instructions at http://www.yarp.it/install.html
 
 On macOS:
 
-    brew install robotology/cask/yarp
+    brew install robotology/formulae/yarp
 
 On Linux:
 
