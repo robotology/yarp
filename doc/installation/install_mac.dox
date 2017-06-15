@@ -61,10 +61,9 @@ In any case, you have to update and upgrade your Homebrew version.
  brew upgrade
  \endcode
 
- Also, you will need to add the homebrew-x11 and homebrew-science taps:
+ Also, you will need to add the homebrew-science tap:
 
  \code
- brew tap robotology/cask
  brew tap homebrew/science
  \endcode
 
@@ -73,7 +72,7 @@ In any case, you have to update and upgrade your Homebrew version.
 Run on your terminal:
 
 \code
- brew install yarp
+ brew install robotology/formulae/yarp
 \endcode
 
 The following options are also available:
@@ -104,7 +103,7 @@ If the options above are not enough and you want to install YARP with additional
  In order to install the YARP dependencies enter the following command in a terminal:
 
  \code
- brew install yarp --only-dependencies
+ brew install robotology/formulae/yarp --only-dependencies
  \endcode
 
 
