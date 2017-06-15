@@ -41,6 +41,9 @@ namespace impl {
     using ::raise;
 # endif
 #else
+#if defined(__APPLE__) && defined(sigfillset)
+#undef sigfillset
+#endif
     using ::sigemptyset;
     using ::sigfillset;
     using ::sigaction;

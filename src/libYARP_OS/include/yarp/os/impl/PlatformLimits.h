@@ -11,6 +11,10 @@
 # include <ace/os_include/os_limits.h>
 #else
 # include <climits>
+#if !defined(HOST_NAME_MAX) && defined(__APPLE__)
+# define HOST_NAME_MAX _POSIX_HOST_NAME_MAX
 #endif
+#endif
+
 
 #endif // YARP_OS_IMPL_PLATFORMLIMITS_H
