@@ -33,68 +33,68 @@ if(NOT YARP_NO_DEPRECATED) # since YARP 2.3.68
           DESTINATION share/yarp/cmake/deprecated)
 
   if(NOT YCM_FOUND)
-    set(YCM_CMAKE_find_modules_FILES ycm-0.3.1/find-modules/FindACE.cmake
-                                     ycm-0.3.1/find-modules/FindFFMPEG.cmake
-                                     ycm-0.3.1/find-modules/FindFreenect.cmake
-                                     ycm-0.3.1/find-modules/FindFTDI.cmake
-                                     ycm-0.3.1/find-modules/FindGLFW3.cmake
-                                     ycm-0.3.1/find-modules/FindLibedit.cmake
-                                     ycm-0.3.1/find-modules/FindLibOVR.cmake
-                                     ycm-0.3.1/find-modules/FindLibdc1394.cmake
-                                     ycm-0.3.1/find-modules/FindLibusb1.cmake
-                                     ycm-0.3.1/find-modules/FindNVIDIACg.cmake
-                                     ycm-0.3.1/find-modules/FindOpenCV.cmake
-                                     ycm-0.3.1/find-modules/FindOpenNI.cmake
-                                     ycm-0.3.1/find-modules/FindOpenNI2.cmake
-                                     ycm-0.3.1/find-modules/FindPortAudio.cmake
-                                     ycm-0.3.1/find-modules/FindSQLite.cmake
-                                     ycm-0.3.1/find-modules/FindStage.cmake
-                                     ycm-0.3.1/find-modules/FindTinyXML.cmake
-                                     ycm-0.3.1/find-modules/FindZFP.cmake)
-    set(YCM_CMAKE_modules_FILES ycm-0.3.1/modules/AddInstallRPATHSupport.cmake
-                                ycm-0.3.1/modules/ExtractVersion.cmake
-                                ycm-0.3.1/modules/GetAllCMakeProperties.cmake
-                                ycm-0.3.1/modules/GitInfo.cmake
-                                ycm-0.3.1/modules/ReplaceImportedTargets.cmake
-                                ycm-0.3.1/modules/StandardFindModule.cmake)
-    set(YCM_CMAKE_3rdparty_FILES ycm-0.3.1/3rdparty/FindEigen3.cmake
-                                 ycm-0.3.1/3rdparty/FindOctave.cmake
-                                 ycm-0.3.1/3rdparty/FindQCustomPlot.cmake)
-    set(YCM_CMAKE_cmake_3_1_FILES ycm-0.3.1/cmake-3.1/Modules/CMakeFindDependencyMacro.cmake # 3.0
-                                  ycm-0.3.1/cmake-3.1/Modules/CMakePackageConfigHelpers.cmake
-                                  ycm-0.3.1/cmake-3.1/Modules/CMakeParseArguments.cmake
-                                  ycm-0.3.1/cmake-3.1/Modules/FeatureSummary.cmake
-                                  ycm-0.3.1/cmake-3.1/Modules/FindLua.cmake # 3.0
-                                  ycm-0.3.1/cmake-3.1/Modules/FindPackageHandleStandardArgs.cmake
-                                  ycm-0.3.1/cmake-3.1/Modules/FindPackageMessage.cmake
-                                  ycm-0.3.1/cmake-3.1/Modules/GNUInstallDirs.cmake)
-    set(YCM_CMAKE_cmake_next_FILES ycm-0.3.1/cmake-next/Modules/FindSWIG.cmake
-                                   ycm-0.3.1/cmake-next/Modules/UseSWIG.cmake)
-    set(YCM_CMAKE_cmake_proposed_FILES ycm-0.3.1/cmake-proposed/Modules/FindGLEW.cmake)
+    set(YCM_CMAKE_find_modules_FILES ycm-${YCM_REQUIRED_VERSION}/find-modules/FindACE.cmake
+                                     ycm-${YCM_REQUIRED_VERSION}/find-modules/FindFFMPEG.cmake
+                                     ycm-${YCM_REQUIRED_VERSION}/find-modules/FindFreenect.cmake
+                                     ycm-${YCM_REQUIRED_VERSION}/find-modules/FindFTDI.cmake
+                                     ycm-${YCM_REQUIRED_VERSION}/find-modules/FindGLFW3.cmake
+                                     ycm-${YCM_REQUIRED_VERSION}/find-modules/FindLibedit.cmake
+                                     ycm-${YCM_REQUIRED_VERSION}/find-modules/FindLibOVR.cmake
+                                     ycm-${YCM_REQUIRED_VERSION}/find-modules/FindLibdc1394.cmake
+                                     ycm-${YCM_REQUIRED_VERSION}/find-modules/FindLibusb1.cmake
+                                     ycm-${YCM_REQUIRED_VERSION}/find-modules/FindNVIDIACg.cmake
+                                     ycm-${YCM_REQUIRED_VERSION}/find-modules/FindOpenCV.cmake
+                                     ycm-${YCM_REQUIRED_VERSION}/find-modules/FindOpenNI.cmake
+                                     ycm-${YCM_REQUIRED_VERSION}/find-modules/FindOpenNI2.cmake
+                                     ycm-${YCM_REQUIRED_VERSION}/find-modules/FindPortAudio.cmake
+                                     ycm-${YCM_REQUIRED_VERSION}/find-modules/FindSQLite.cmake
+                                     ycm-${YCM_REQUIRED_VERSION}/find-modules/FindStage.cmake
+                                     ycm-${YCM_REQUIRED_VERSION}/find-modules/FindTinyXML.cmake
+                                     ycm-${YCM_REQUIRED_VERSION}/find-modules/FindZFP.cmake)
+    set(YCM_CMAKE_modules_FILES ycm-${YCM_REQUIRED_VERSION}/modules/AddInstallRPATHSupport.cmake
+                                ycm-${YCM_REQUIRED_VERSION}/modules/ExtractVersion.cmake
+                                ycm-${YCM_REQUIRED_VERSION}/modules/GetAllCMakeProperties.cmake
+                                ycm-${YCM_REQUIRED_VERSION}/modules/GitInfo.cmake
+                                ycm-${YCM_REQUIRED_VERSION}/modules/ReplaceImportedTargets.cmake
+                                ycm-${YCM_REQUIRED_VERSION}/modules/StandardFindModule.cmake)
+    set(YCM_CMAKE_3rdparty_FILES ycm-${YCM_REQUIRED_VERSION}/3rdparty/FindEigen3.cmake
+                                 ycm-${YCM_REQUIRED_VERSION}/3rdparty/FindOctave.cmake
+                                 ycm-${YCM_REQUIRED_VERSION}/3rdparty/FindQCustomPlot.cmake)
+    set(YCM_CMAKE_cmake_3_1_FILES ycm-${YCM_REQUIRED_VERSION}/cmake-3.1/Modules/CMakeFindDependencyMacro.cmake # 3.0
+                                  ycm-${YCM_REQUIRED_VERSION}/cmake-3.1/Modules/CMakePackageConfigHelpers.cmake
+                                  ycm-${YCM_REQUIRED_VERSION}/cmake-3.1/Modules/CMakeParseArguments.cmake
+                                  ycm-${YCM_REQUIRED_VERSION}/cmake-3.1/Modules/FeatureSummary.cmake
+                                  ycm-${YCM_REQUIRED_VERSION}/cmake-3.1/Modules/FindLua.cmake # 3.0
+                                  ycm-${YCM_REQUIRED_VERSION}/cmake-3.1/Modules/FindPackageHandleStandardArgs.cmake
+                                  ycm-${YCM_REQUIRED_VERSION}/cmake-3.1/Modules/FindPackageMessage.cmake
+                                  ycm-${YCM_REQUIRED_VERSION}/cmake-3.1/Modules/GNUInstallDirs.cmake)
+    set(YCM_CMAKE_cmake_next_FILES ycm-${YCM_REQUIRED_VERSION}/cmake-next/Modules/FindSWIG.cmake
+                                   ycm-${YCM_REQUIRED_VERSION}/cmake-next/Modules/UseSWIG.cmake)
+    set(YCM_CMAKE_cmake_proposed_FILES ycm-${YCM_REQUIRED_VERSION}/cmake-proposed/Modules/FindGLEW.cmake)
 
     install(FILES ${YCM_CMAKE_find_modules_FILES}
             COMPONENT scripts
-            DESTINATION share/yarp/cmake/ycm-0.3.1/find-modules)
+            DESTINATION share/yarp/cmake/ycm-${YCM_REQUIRED_VERSION}/find-modules)
     install(FILES ${YCM_CMAKE_modules_FILES}
             COMPONENT scripts
-            DESTINATION share/yarp/cmake/ycm-0.3.1/modules)
+            DESTINATION share/yarp/cmake/ycm-${YCM_REQUIRED_VERSION}/modules)
     install(FILES ${YCM_CMAKE_3rdparty_FILES}
             COMPONENT scripts
-            DESTINATION share/yarp/cmake/ycm-0.3.1/3rdparty)
+            DESTINATION share/yarp/cmake/ycm-${YCM_REQUIRED_VERSION}/3rdparty)
     install(FILES ${YCM_CMAKE_cmake_proposed_FILES}
             COMPONENT scripts
-            DESTINATION share/yarp/cmake/ycm-0.3.1/cmake-proposed/Modules)
+            DESTINATION share/yarp/cmake/ycm-${YCM_REQUIRED_VERSION}/cmake-proposed/Modules)
     if(${CMAKE_VERSION} VERSION_LESS 3.1)
       # Files from CMake 3.1, available only if cmake is newer
       install(FILES ${YCM_CMAKE_cmake_3_1_FILES}
               COMPONENT scripts
-              DESTINATION share/yarp/cmake/ycm-0.3.1/cmake-3.1/Modules)
+              DESTINATION share/yarp/cmake/ycm-${YCM_REQUIRED_VERSION}/cmake-3.1/Modules)
     endif()
     if(${CMAKE_VERSION} VERSION_LESS 3.8)
       # Files from CMake next (3.8), available only if cmake is newer
       install(FILES ${YCM_CMAKE_cmake_next_FILES}
               COMPONENT scripts
-              DESTINATION share/yarp/cmake/ycm-0.3.1/cmake-next/Modules)
+              DESTINATION share/yarp/cmake/ycm-${YCM_REQUIRED_VERSION}/cmake-next/Modules)
     endif()
   endif()
 endif()
@@ -167,7 +167,8 @@ endforeach()
 # Remove no longer used directory from installation (since YARP 2.3.68)
 foreach(_d cmake-3.1/  # since YARP 2.3.68
            cmake-3.5/
-           ycm-0.2/)   # since YARP 2.3.70
+           ycm-0.2/    # since YARP 2.3.70
+           ycm-0.3.1)
   install(CODE
  "if(EXISTS \"\$ENV{DESTDIR}${CMAKE_INSTALL_PREFIX}/share/yarp/cmake/${_d}\")
     message(STATUS \"Deleted: \\\"\$ENV{DESTDIR}${CMAKE_INSTALL_PREFIX}/share/yarp/cmake/${_d}\\\"\")
