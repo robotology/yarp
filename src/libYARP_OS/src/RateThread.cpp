@@ -25,15 +25,15 @@ using namespace yarp::os;
 class RateThreadCallbackAdapter: public ThreadImpl
 {
 private:
-    unsigned int period;
+    float period_ms;
     double adaptedPeriod;
     RateThread& owner;
     Semaphore mutex;
-    YARP_timeval now;
-    YARP_timeval currentRunTV;
-    YARP_timeval previousRunTV;
-    YARP_timeval sleep;
-    YARP_timeval sleepPeriodTV;
+
+
+    double  elapsed;
+    double  sleepPeriod;
+
     //ACE_High_Res_Timer thread_timer; // timer to estimate thread time
 
     bool suspended;
@@ -54,13 +54,15 @@ private:
         totalT=0;
         sumUsedSq=0;
         sumTSq=0;
+        elapsed=0;
         scheduleReset=false;
     }
 
 public:
 
     RateThreadCallbackAdapter(RateThread& owner, int p) : owner(owner) {
-        period=p;
+        period_ms=p;
+        elapsed=0;
         suspended = false;
         _resetStat();
     }
@@ -75,7 +77,7 @@ public:
         if (estPIt==0)
             ret=0;
         else
-            ret=totalT/estPIt;
+            ret=(totalT/estPIt) *1000;
         unlock();
         return ret;
     }
@@ -88,10 +90,11 @@ public:
         } else {
             av=totalT/estPIt;
             if (estPIt>1) {
-                std=sqrt(((1.0/(estPIt-1))*(sumTSq-estPIt*av*av)));
+                std=sqrt(((1.0/(estPIt-1))*(sumTSq-estPIt*av*av))) *1000;  // av is computed in [secs], while user expects data in [ms]
             } else {
                 std=0;
             }
+            av*=1000;    // av is computed in [secs], while user expects data in [ms]
         }
         unlock();
     }
@@ -109,7 +112,7 @@ public:
         if (count<1)
             ret=0.0;
         else
-            ret=totalUsed/count;
+            ret=totalUsed/count*1000;
         unlock();
         return ret;
     }
@@ -122,10 +125,11 @@ public:
         } else {
             av=totalUsed/count;
             if (count>1) {
-                std=sqrt((1.0/(count-1))*(sumUsedSq-count*av*av));
+                std=sqrt((1.0/(count-1))*(sumUsedSq-count*av*av)) *1000;
             } else {
                 std=0;
             }
+            av*=1000;
         }
         unlock();
     }
@@ -133,19 +137,15 @@ public:
 
     void singleStep() {
         lock();
-        getTime(currentRunTV);
-        currentRun=toDouble(currentRunTV);
+        currentRun = Time::now();
 
         if (scheduleReset)
             _resetStat();
 
         if (count>0) {
-            //double saved=adaptedPeriod;
-            double dT=(currentRun-previousRun)*1000;
+            double dT=(currentRun-previousRun);
             sumTSq+=dT*dT;
             totalT+=dT;
-            //double error=(static_cast<double>(period)-dT);
-            //adaptedPeriod+=0.0*error; //not available
             if (adaptedPeriod<0)
                 adaptedPeriod=0;
 
@@ -163,25 +163,20 @@ public:
         count++;
         lock();
 
-        YARP_timeval elapsedTV;
-        getTime(elapsedTV);
-        double elapsed=toDouble(elapsedTV)-currentRun;
+        double elapsed = yarp::os::Time::now() - currentRun;
 
         //save last
-        totalUsed+=elapsed*1000;
-        sumUsedSq+=elapsed*1000*elapsed*1000;
+        totalUsed+=elapsed;
+        sumUsedSq+=elapsed*elapsed;
         unlock();
 
-        //compute sleep time
-        fromDouble(sleepPeriodTV, adaptedPeriod, 1000);
-        addTime(sleepPeriodTV, currentRunTV);
-        subtractTime(sleepPeriodTV, elapsedTV);
-        // Time::delay(sleep_period/1000.0);
-        sleepThread(sleepPeriodTV);
+        sleepPeriod= adaptedPeriod - elapsed; // everything is in [seconds] except period, for it is used in the interface as [ms]
+        // Check if sleepPeriod is negative here or inside the delay (or both?)
+        yarp::os::Time::delay(sleepPeriod);
     }
 
     void run() override {
-        adaptedPeriod=period;
+        adaptedPeriod = period_ms/1000.0;   //  divide by 1000 because user's period is [ms] while all the rest is [secs]
         while(!isClosing()) {
             singleStep();
         }
@@ -196,13 +191,13 @@ public:
     }
 
     bool setRate(int p) {
-        period=p;
-        adaptedPeriod=period;
+        period_ms=p;
+        adaptedPeriod = period_ms/1000.0;   //  divide by 1000 because user's period is [ms] while all the rest is [secs]
         return true;
     }
 
     double getRate() {
-        return period;
+        return period_ms;
     }
 
     bool isSuspended() {
