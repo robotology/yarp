@@ -200,16 +200,20 @@ private:
         }
     };
 
-    class UgoThread : public RateThread {
+    class AskForStopThread : public RateThread {
     public:
         bool done;
 
-        UgoThread() : RateThread(100) {
+        AskForStopThread() : RateThread(100) {
             done = false;
         }
 
         void run() override {
             if (done) askToStop();
+        }
+
+        void threadRelease() override {
+            done =false;
         }
     };
 
@@ -392,11 +396,12 @@ public:
         clock.done = true;
         thread.stop();
         Time::useSystemClock();
+        checkTrue(Time::isSystemClock(), "test is using system clock");
     }
 
     void testStartAskForStopStart() {
         report(0,"testing start() askForStop() start() sequence...");
-        UgoThread test;
+        AskForStopThread test;
         int ct = 0;
         while (ct<10) {
             if (!test.isRunning()) {
