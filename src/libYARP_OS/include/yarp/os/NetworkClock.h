@@ -26,7 +26,7 @@ public:
     NetworkClock();
     virtual ~NetworkClock();
 
-    bool open(const ConstString& name);
+    bool open(const ConstString& clockSourcePortName, ConstString localPortName="");
 
     virtual double now() YARP_OVERRIDE;
     virtual void delay(double seconds) YARP_OVERRIDE;
@@ -34,6 +34,8 @@ public:
 
     virtual bool read(ConnectionReader& reader) YARP_OVERRIDE;
 private:
+
+    ConstString clockName;
     void *pwaiters;
     Port port;
 
@@ -42,8 +44,9 @@ private:
 
     YARP_INT32 sec;
     YARP_INT32 nsec;
-    double t;
+    double _time;
     bool closing;
+    bool initted;
 };
 
 #endif // YARP_OS_NETWORKCLOCK_H
