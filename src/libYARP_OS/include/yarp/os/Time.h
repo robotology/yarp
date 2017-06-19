@@ -9,10 +9,20 @@
 
 #include <yarp/os/ConstString.h>
 #include <yarp/os/Clock.h>
+#include <yarp/os/SystemClock.h>
+#include <yarp/os/NetworkClock.h>
 
 namespace yarp {
     namespace os {
         class Time;
+
+        typedef enum {
+            YARP_CLOCK_UNINITIALIZED=-1,
+            YARP_CLOCK_DEFAULT,
+            YARP_CLOCK_SYSTEM,
+            YARP_CLOCK_NETWORK,
+            YARP_CLOCK_CUSTOM
+        } yarpClockType;
     }
 }
 
@@ -56,7 +66,7 @@ public:
      * Configure YARP to use system time (this is the default).
      *
      */
-    static void useSystemClock();
+    static bool useSystemClock();
 
     /**
      *
@@ -70,14 +80,14 @@ public:
      * \see yarp::os::NetworkClock
      *
      */
-    static void useNetworkClock(const ConstString& clock);
+    static bool useNetworkClock(const ConstString& clock, ConstString localPortName="");
 
     /**
      *
      * Provide a custom time source.
      *
      */
-    static void useCustomClock(Clock *clock);
+    static bool useCustomClock(Clock *clock);
 
     /**
      *
@@ -88,12 +98,42 @@ public:
 
     /**
      *
+     * Check if YARP is providing network time.
+     *
+     */
+    static bool isNetworkClock();
+
+    /**
+     *
+     * Check if YARP is using a user-defined custom time.
+     *
+     */
+    static bool isCustomClock();
+
+    /**
+     * \return enum type with the current clock type used
+     */
+    static yarpClockType getClockType();
+
+    /**
+     *
+     * Converts clock type enum into string.
+     * @type Convert specified enum into string. If missing uses the current clock
+     */
+     static yarp::os::ConstString clockTypeToString(yarpClockType type);
+
+    /**
+     *
      * Check if time is valid (non-zero).  If a network clock is
      * in use and no timestamp has yet been received, this
      * method will return false.
      *
      */
     static bool isValid();
+
+private:
+    static yarpClockType yarp_clock_type;
+
 };
 
 #endif // YARP_OS_TIME_H
