@@ -13,6 +13,7 @@ namespace yarp {
     namespace os {
         class RateThread;
         class RateThreadWrapper;
+        class SystemRateThread;
     }
 }
 
@@ -202,8 +203,25 @@ private:
     bool join(double seconds = -1);
 
     void *implementation;
+
+    void initWithSystemClock();
+
+friend class SystemRateThread;
 };
 
+
+class YARP_OS_API yarp::os::SystemRateThread : public yarp::os::RateThread
+{
+private:
+    using RateThread::step;
+
+public:
+    SystemRateThread(int period);
+
+    virtual ~SystemRateThread();
+
+    bool stepSystem();
+};
 
 
 /**
