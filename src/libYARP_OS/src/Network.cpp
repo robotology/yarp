@@ -637,12 +637,7 @@ void NetworkBase::initMinimum() {
             YARP_SPRINTF1(Logger::get(), info,
                           "YARP_STACK_SIZE set to %d", sz);
         }
-        ConstString clock = getEnvironment("YARP_CLOCK");
-        if (clock!="") {
-            Time::useNetworkClock(clock);
-        } else {
-            Time::useSystemClock();
-        }
+
         Logger::get().setPid();
         // make sure system is actually able to do things fast
         Time::turboBoost();
@@ -668,6 +663,53 @@ void NetworkBase::finiMinimum() {
 #endif
     }
     if (__yarp_is_initialized>0) __yarp_is_initialized--;
+}
+
+bool yarp::os::Network::yarpClockInit(yarp::os::yarpClockType clockType, Clock *custom)
+{
+    bool success = false;
+    yarp::os::ConstString clock="";
+    if(clockType == YARP_CLOCK_DEFAULT)
+    {
+        clock = yarp::os::Network::getEnvironment("YARP_CLOCK");
+        if(clock!="")
+            clockType = YARP_CLOCK_NETWORK;
+        else
+            clockType = YARP_CLOCK_SYSTEM;
+    }
+
+    switch(clockType)
+    {
+        case YARP_CLOCK_SYSTEM:
+            YARP_INFO(Logger::get(), "Using SYSTEM clock");
+            success = yarp::os::Time::useSystemClock();
+        break;
+
+        case YARP_CLOCK_NETWORK:
+            YARP_INFO(Logger::get(), "Using NETWORK clock");
+            success = yarp::os::Time::useNetworkClock(clock);
+        break;
+
+        case YARP_CLOCK_CUSTOM:
+        {
+            YARP_INFO(Logger::get(), "Using CUSTOM clock");
+            // check of valid parameter is done inside the call
+            success = yarp::os::Time::useCustomClock(custom);
+        }
+        break;
+
+        default:
+            YARP_ERROR(Logger::get(), "yarpClockInit called with unknown clock type. Quitting");
+            success = false;
+            yAssert(0);
+        break;
+    }
+    if(!success)
+    {
+        YARP_ERROR(Logger::get(), "Cannot initialize the requested clock... falling back to system clock.");
+        yarp::os::Time::useSystemClock();
+    }
+    return success;
 }
 
 Contact NetworkBase::queryName(const ConstString& name) {

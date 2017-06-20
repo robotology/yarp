@@ -102,8 +102,11 @@ private:
     void periodToFreq(double avT, double mT, double MT, double &avH, double &mH, double &MH);
 
 private:
-    SignalHandler sigHandler;
     VideoProducer videoProducer;
+
+    // This Network yarp must be placed before any other yarp dependant member
+    yarp::os::Network yarp;
+    SignalHandler sigHandler;
 #ifdef YARP_LITTLE_ENDIAN
     yarp::os::BufferedPort<yarp::sig::ImageOf<yarp::sig::PixelBgra> > *ptr_inputPort;
 #else
@@ -112,7 +115,6 @@ private:
     yarp::os::BufferedPort<yarp::os::Bottle> *_pOutPort;
     InputCallback *ptr_portCallback;
     pgmOptions _options;
-    yarp::os::Network yarp;
 
 signals:
     void refreshIntervalChanged();

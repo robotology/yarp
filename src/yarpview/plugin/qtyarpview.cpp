@@ -13,7 +13,7 @@
 using namespace yarp::os;
 
 QtYARPView::QtYARPView(QQuickItem *parent):
-    QQuickItem(parent),sigHandler(this)
+    QQuickItem(parent), yarp(yarp::os::YARP_CLOCK_SYSTEM), sigHandler(this)
 {
     ptr_portCallback = NULL;
     setOptionsToDefault();

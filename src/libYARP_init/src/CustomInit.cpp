@@ -5,6 +5,7 @@
  */
 
 #include <cstdio>
+#include <yarp/os/Time.h>
 #include <yarp/os/Network.h>
 
 static int __custom_yarp_is_initialized = 0;
@@ -37,8 +38,13 @@ extern "C" void yarpCustomFini()
     yarp::os::LogForwarder::clearInstance();
 }
 
+
 yarp::os::Network::Network() {
     Network::init();
+}
+
+yarp::os::Network::Network(yarp::os::yarpClockType clockType, yarp::os::Clock *custom) {
+    init(clockType, custom);
 }
 
 yarp::os::Network::~Network() {
@@ -46,9 +52,18 @@ yarp::os::Network::~Network() {
 }
 
 void yarp::os::Network::init() {
+    init(yarp::os::YARP_CLOCK_DEFAULT);
+}
+
+
+void yarp::os::Network::init(yarp::os::yarpClockType clockType, yarp::os::Clock *custom) {
     if (__custom_yarp_is_initialized==0) {
         initMinimum();
+        // If we init the clock inside the initMinum, it will loop into itself twice
+        // calling again the initMinimun, ending with __yarp_is_initialized counter 
+        // increased twice.
         yarpCustomInit();
+        Network::yarpClockInit(clockType, custom);
     }
     __custom_yarp_is_initialized++;
 }

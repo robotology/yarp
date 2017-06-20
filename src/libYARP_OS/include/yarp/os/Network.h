@@ -14,6 +14,7 @@
 #include <yarp/os/Property.h>
 #include <yarp/os/NameStore.h>
 #include <yarp/os/QosStyle.h>
+#include <yarp/os/Time.h>
 
 //protects against some dangerous ACE macros
 #ifdef main
@@ -601,6 +602,20 @@ public:
     Network();
 
     /**
+     * Initialize the YARP network using the specified clock.
+     * This function will take precedence with respect to the environment
+     * variable YARP_CLOCK because it is explixitly required by the user.
+     *
+     * Calling this function with UNDEFINED_CLOCK is equivalent to use the
+     * classic yarp::Network() method and the environment variable will be
+     * used.
+     *
+     * In case CUSTOM_CLOCK is used, the Clock pointer must point to a valid
+     * Clock object already initialized.
+     */
+     Network(yarp::os::yarpClockType clockType, yarp::os::Clock *custom=YARP_NULLPTR);
+
+    /**
      * Destructor.  Disconnects from the YARP network.
      */
     virtual ~Network();
@@ -613,15 +628,37 @@ public:
      */
     static void init();
 
+    /**
+     * Initialization.  Same as init(), but let the user configure which
+     * clock shall be used right from the initialization phase.
+     */
+    static void init(yarp::os::yarpClockType clockType, Clock *custom=YARP_NULLPTR);
 
     /**
      * Deinitialization.  On some operating systems, there are certain
      * shut-down tasks that need to be performed, and this method does
-     * them.  It is a good idea to call Netork::init near the start of
+     * them.  It is a good idea to call Network::init near the start of
      * your program, and to call this method towards the end.
      */
     static void fini();
 
+    /**
+     * This function specifically initialize the clock
+     * In case clockType is one of the valid cases, the corersponding clock
+     * will be initialized.
+     *
+     * In case the clockType is UNINITIALIZED_CLOCK, the environment variable
+     * YARP_CLOCK will be used to choose between system or network clock.
+     *
+     * See description of useNetworkClock() for more details about the
+     * network clock.
+     *
+     * This function is called by Network constructor and by Network::init(),
+     * but it is NOT called by Network::initMinimum(). In this case it is
+     * required to call yarpClockInit() or one of the following useSystemClock(),
+     * useNetworkClock() or useCustomClock() depending on the use case.
+     **/
+    static bool yarpClockInit(yarp::os::yarpClockType clockType, Clock *custom=YARP_NULLPTR);
 };
 
 #endif // YARP_OS_NETWORK_H
