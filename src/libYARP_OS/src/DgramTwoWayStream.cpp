@@ -644,12 +644,22 @@ bool DgramTwoWayStream::join(const Contact& group, bool sender,
     addr.sin_port=htons(group.getPort());
 
     // allow multiple sockets to use the same PORT number
-    if (setsockopt(s,SOL_SOCKET,SO_REUSEADDR,&yes,sizeof(yes)) < 0)
+    if (setsockopt(s,SOL_SOCKET,SO_REUSEADDR,&yes,sizeof(u_int)) < 0)
+    {
+        YARP_ERROR(Logger::get(), "could not allow sockets use the same ADDRESS\n");
+        happy = false;
+        return false;
+    }
+
+#if defined (__APPLE__)
+    if (setsockopt(s,SOL_SOCKET,SO_REUSEPORT,&yes,sizeof(u_int)) < 0)
     {
         YARP_ERROR(Logger::get(), "could not allow sockets use the same PORT number\n");
         happy = false;
         return false;
     }
+#endif
+
     // bind to receive address
     if (bind(s, (struct sockaddr *)&addr, sizeof(addr))==-1)
     {
