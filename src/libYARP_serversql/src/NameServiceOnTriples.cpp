@@ -12,6 +12,7 @@
 #include <yarp/os/NestedContact.h>
 #include <yarp/os/Network.h>
 #include <yarp/os/Time.h>
+#include <yarp/os/SystemClock.h>
 #include <yarp/serversql/impl/NameServiceOnTriples.h>
 #include <yarp/serversql/impl/ParseName.h>
 
@@ -186,6 +187,7 @@ bool NameServiceOnTriples::cmdRegister(NameTripleState& act) {
     t.setNameValue("port",port.c_str());
     int result = act.mem.find(t, YARP_NULLPTR);
     unlock();
+
     if (result!=-1) {
         // Hmm, we already have a registration.
         // This could be fine - maybe program crashed or was abruptly
@@ -200,9 +202,9 @@ bool NameServiceOnTriples::cmdRegister(NameTripleState& act) {
                 printf(" ? checking prior registration, to avoid accidental collision\n");
                 Bottle cmd("[ver]"), reply;
                 double timeout = 3.0;
-                double pre = Time::now();
+                double pre = SystemClock::nowSystem();
                 bool ok = Network::write(c,cmd,reply,true,true,timeout);
-                double post = Time::now();
+                double post = SystemClock::nowSystem();
                 if (post-pre>timeout-1) {
                     ok = false;
                 }

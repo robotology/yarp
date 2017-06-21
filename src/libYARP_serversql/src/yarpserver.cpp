@@ -291,7 +291,7 @@ yarpserversql_API int yarpserver_main(int argc, char *argv[]) {
     printf("\nOk.  Ready!\n");
 
     while (true) {
-        Time::delay(600);
+        SystemClock::delaySystem(600);
         printf("Name server running happily\n");
     }
     server.close();
