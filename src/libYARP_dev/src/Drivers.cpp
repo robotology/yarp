@@ -489,6 +489,18 @@ int Drivers::yarpdev(int argc, char *argv[]) {
         return -1;
     }
 
+    //
+    // yarpdev initializes the clock only before starting to do real thing.
+    // This way yarpdev --lish/help will not be affected by network clock.
+    //
+    // Shall other devices be affected by network clock ??
+    // Hereafter the device may need to use the SystemClock or the NetworkClock
+    // depending by the device, a real or a fake / simulated one.
+    // Using the YARP_CLOCK_DEFAULT the behaviour will be determined by the
+    // environment variable.
+    //
+    yarp::os::Network::yarpClockInit(yarp::os::YARP_CLOCK_DEFAULT);
+
     PolyDriver dd(options);
     if (verbose) {
         toDox(dd,stdout);
@@ -581,7 +593,7 @@ int Drivers::yarpdev(int argc, char *argv[]) {
         } else {
             // we don't need to do anything
             yInfo("device active in background...");
-            Time::delay(dnow);
+            SystemClock::delaySystem(dnow);
         }
     }
 

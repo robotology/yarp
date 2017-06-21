@@ -34,7 +34,7 @@ inline void  Rangefinder2DInputPortProcessor::resetStat()
     deltaT=0;
     deltaTMax=0;
     deltaTMin=1e22;
-    now=Time::now();
+    now=SystemClock::nowSystem();
     prev=now;
     mutex.post();
 }
@@ -47,7 +47,7 @@ Rangefinder2DInputPortProcessor::Rangefinder2DInputPortProcessor()
 
 void Rangefinder2DInputPortProcessor::onRead(yarp::os::Bottle &b)
 {
-    now=Time::now();
+    now=SystemClock::nowSystem();
     mutex.wait();
 
     if (count>0)
