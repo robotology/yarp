@@ -188,7 +188,7 @@ class yarp::yarpLogger::LogEntry
 class yarp::yarpLogger::LoggerEngine
 {
     //private class
-    class logger_thread : public yarp::os::RateThread
+    class logger_thread : public yarp::os::SystemRateThread
     {
         public:
         logger_thread (std::string _portname, int _rate=10, int _log_list_max_size=100);

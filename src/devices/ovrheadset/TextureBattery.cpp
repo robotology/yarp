@@ -25,7 +25,7 @@
 #include "img-battery-charging-low.h"
 
 TextureBattery::TextureBattery(ovrSession session, bool enabled) :
-        RateThread(5000),
+        SystemRateThread(5000),
         session(session),
         currentTexture(nullptr),
         currentStatus(BatteryStatusMissing),
