@@ -312,28 +312,44 @@ public:
         report(0,"testing rate thread precision");
         report(0,"setting high res scheduler (this affects only windows)");
 
+        bool success = false;
+        double acceptedThreshold = 0.30;
+
         Time::turboBoost();
         char message[255];
 
         //try plausible rates
-        double p;
-        sprintf(message, "Thread1 requested period: %d[ms]", 15);
+        double desiredPeriod, actualPeriod;
+        desiredPeriod = 15;
+        sprintf(message, "Thread1 requested period: %d[ms]", (int)desiredPeriod);
         report(0, message);
-        p=test(15, 1);
-        sprintf(message, "Thread1 estimated: %.2lf[ms]", p);
+        actualPeriod = test(15, 1);
+        if( (actualPeriod > acceptedThreshold*(1-desiredPeriod)) && (actualPeriod < desiredPeriod * (1+acceptedThreshold)) )
+            success = true;
+        sprintf(message, "Thread1 estimated period: %.2lf[ms]", actualPeriod);
         report(0, message);
+        sprintf(message, "Period within range of %d %%", (int)(acceptedThreshold*100));
+        checkTrue(success, message);
 
         sprintf(message, "Thread2 requested period: %d[ms]", 10);
         report(0, message);
-        p=test(10, 1);
-        sprintf(message, "Thread2 estimated period: %.2lf[ms]", p);
+        actualPeriod = test(10, 1);
+        if( (actualPeriod > acceptedThreshold*(1-desiredPeriod)) && (actualPeriod < desiredPeriod * (1+acceptedThreshold)) )
+            success = true;
+        sprintf(message, "Thread2 estimated period: %.2lf[ms]", actualPeriod);
         report(0, message);
+        sprintf(message, "Period within range of %d %%", (int)(acceptedThreshold*100));
+        checkTrue(success, message);
 
         sprintf(message, "Thread3 requested period: %d[ms]", 1);
         report(0, message);
-        p=test(1, 1);
-        sprintf(message, "Thread3 estimated period: %.2lf[ms]", p);
+        actualPeriod = test(1, 1);
+        if( (actualPeriod > acceptedThreshold*(1-desiredPeriod)) && (actualPeriod < desiredPeriod * (1+acceptedThreshold)) )
+            success = true;
+        sprintf(message, "Thread3 estimated period: %.2lf[ms]", actualPeriod);
         report(0, message);
+        sprintf(message, "Period within range of %d %%", (int)(acceptedThreshold*100));
+        checkTrue(success, message);
 
         report(0, "successful");
 
@@ -379,6 +395,8 @@ public:
         report(0, "Testing simulated time");
         MyClock clock;
         Time::useCustomClock(&clock);
+        checkTrue(Time::isCustomClock(), "isCustomClock is true");
+        checkTrue(Time::getClockType() == YARP_CLOCK_CUSTOM, "getClockType is YARP_CLOCK_CUSTOM");
         RateThread5 thread(100*1000); // 100 secs
         thread.start();
         SystemClock clk;
@@ -397,6 +415,7 @@ public:
         thread.stop();
         Time::useSystemClock();
         checkTrue(Time::isSystemClock(), "test is using system clock");
+        checkTrue(Time::getClockType() == YARP_CLOCK_SYSTEM, "getClockType is YARP_CLOCK_SYSTEM");
     }
 
     void testStartAskForStopStart() {
