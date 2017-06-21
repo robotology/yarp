@@ -145,6 +145,7 @@ static ConstString companion_unregister_name;
 static Port *companion_active_port = YARP_NULLPTR;
 
 static void companion_sigint_handler(int sig) {
+    Time::useSystemClock();
     double now = SystemClock::nowSystem();
     static double firstCall = now;
     static bool showedMessage = false;

@@ -78,6 +78,7 @@ static RunTerminator *pTerminator = YARP_NULLPTR;
 void sigstdio_handler(int sig)
 {
     char msg[16];
+    yarp::os::Time::useSystemClock();
     sprintf(msg, "SIGNAL %d", sig);
     RUNLOG(msg);
 

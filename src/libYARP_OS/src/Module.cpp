@@ -314,6 +314,7 @@ bool Module::safeRespond(const Bottle& command, Bottle& reply) {
 static Module *module = YARP_NULLPTR;
 static bool terminated = false;
 static void handler (int) {
+    Time::useSystemClock();
     static int ct = 0;
     ct++;
     if (ct>3) {

@@ -346,6 +346,7 @@ static void toDox(PolyDriver& dd, FILE *os) {
 static ConstString terminatorKey = "";
 static bool terminated = false;
 static void handler (int) {
+    Time::useSystemClock();
     static double handleTime = -100;
     static int ct = 0;
     double now = Time::now();
