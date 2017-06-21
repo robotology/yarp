@@ -9,309 +9,205 @@
 
 \section yarp_connection_protocol The connection protocol
 
-This is the protocol used for a single connection from
-an output port to an input port.  We discuss how this
-process gets initiated in the next section.
-At the point of creation of a connection, the
-following information is needed:
+This is the protocol used for a single connection from an output port to an
+input port.
+We discuss how this process gets initiated in the next section.
+At the point of creation of a connection, the following information is needed:
 
-- An address -- the machine name and socket-port at which
-the input port is listening.
+- An address -- the machine name and socket-port at which the input port is
+  listening.
 
 - The name of the input port.
 
-- The name of the output port associated with the
-connection.  This name
-needs to be retained for proper disconnection in some cases.
-If the connection is not actually associated with a port,
-but is initiated by an external entity, then the name is
-not important and should be set to ``external'' (or any
-name without a leading slash characher).
+- The name of the output port associated with the connection.
+  This name needs to be retained for proper disconnection in some cases.
+  If the connection is not actually associated with a port, but is initiated by
+  an external entity, then the name is not important and should be set to
+  "external" (or any name without a leading slash characher).
 
 
 \subsection connection_phases Connection phases
 
-The connection protocol has several phases -- header,
-index, and body.
+The connection protocol has several phases -- header, index, and body.
 
-<ul>
+- **Initiation phase**
 
-<li> Initiation phase
-  <ul>
-  <li> We begin once the sender has
-    successfully opened a tcp socket connection to the receiver
-    (assuming that is the carrier it is registered with).
-  </ul>
+  - We begin once the sender has successfully opened a tcp socket connection to
+    the receiver (assuming that is the carrier it is registered with).
 
-<li> Header phase
-  <ul>
-  <li> This phase follows immediately after the initiation phase.
-  <li> Transmission of protocol specifier
-    <ul>
-      <li> Sender transmits 8 bytes that identify the carrier
-	that will be used.  The header may be used to pass a
-	few flags also.
-      <li> Receiver expects 8 bytes, and attempts to find a
-	carrier that is consistent with them.
-    </ul>
-  <li> Transmission of sender name
-    <ul>
-      <li> Sender transmits the name of the output port
-	it is associated with, in a carrier specific way.
-      <li> Receiver expects the name of the output port,
-	transmitted in a carrier specific way.
-    </ul>
-  <li> Transmission of extra header material
-    <ul>
-      <li> Sender may transmit extra information, depending on
-      the carrier.
-      <li> Receiver may expect extra information, depending on
-      the carrier.
-    </ul>
-  </ul>
+- **Header phase**
 
-<li> Header reply phase
+  - This phase follows immediately after the initiation phase.
+  - Transmission of protocol specifier
+    - Sender transmits 8 bytes that identify the carrier that will be used.
+      The header may be used to pass a few flags also.
+    - Receiver expects 8 bytes, and attempts to find a carrier that is
+      consistent with them.
+  -  Transmission of sender name
+     - Sender transmits the name of the output port it is associated with, in a
+       carrier specific way.
+     - Receiver expects the name of the output port, transmitted in a carrier
+       specific way.
+  - Transmission of extra header material
+    - Sender may transmit extra information, depending on the carrier.
+    - Receiver may expect extra information, depending on the carrier.
 
-  <ul>
+- **Header reply phase**
 
-  <li> This phase follows immediately after the header phase, and
-    concludes the preamble to actual data transmission.  After this
-    phase, the two ports are considered connected.
+  - This phase follows immediately after the header phase, and concludes the
+    preamble to actual data transmission.
+    After this phase, the two ports are considered connected.
+  - Receiver may transmit some data, depending on the carrier.
+    Receiver then may switch from the initial network protocol used to something
+    else (udp, mcast, etc), again depending on the carrier.
+  - Sender may expect some data, depending on the carrier.
+    Sender then may switch from the initial network protocol used to something
+    else (udp, mcast, etc), again depending on the carrier.
 
-  <li> Receiver may transmit some data, depending on the carrier.
-    Receiver then may switch from the initial network
-    protocol used to something else (udp, mcast, etc), again
-    depending on the carrier.
+- **Index phase**
 
-  <li> Sender may expect some data, depending on the carrier.
-    Sender then may switch from the initial network
-    protocol used to something else (udp, mcast, etc), again
-    depending on the carrier.
+  - Sender sends carrier-dependent data describing properties of the payload
+    data to come.
+  - Receiver expects carrier-dependent data describing properties of the payload
+    data to come.
 
-  </ul>
+- **Payload data phase**
 
-<li> Index phase
+  - Sender sends carrier-dependent expression of user data (maybe none).
+  - Receiver expects carrier-dependent expression of user data.
 
-  <ul>
+- **Acknowledgement phase**
 
-  <li> Sender sends carrier-dependent data describing properties of
-    the payload data to come.
-
-  <li> Receiver expects carrier-dependent data describing properties
-    of the payload data to come.
-
-  </ul>
-
-<li> Payload data phase
-
-  <ul>
-
-  <li> Sender sends carrier-dependent expression of user data (maybe none).
-
-  <li> Receiver expects carrier-dependent expression of user data.
-
-  </ul>
-
-<li> Acknowledgement phase
-
-  <ul>
-
-  <li> Receiver sends carrier-dependent acknowledgement of receipt of
-    payload data (maybe none).
-
-  <li> Sender expects carrier-dependent acknowledgement of receipt of
-    payload data (maybe none).
-
-  </ul>
-
-</ul>
+  - Receiver sends carrier-dependent acknowledgement of receipt of payload data
+    (maybe none).
+  - Sender expects carrier-dependent acknowledgement of receipt of payload data
+    (maybe none).
 
 This is the basic pattern of YARP communication between ports.
 Clearly different carriers have a lot of freedom in how they operate.
 
 
-\subsection carrier_tcp The ``tcp'' carrier
+\subsection carrier_tcp The "tcp" carrier
 
 
-<ul>
+- **Header and header reply**
 
-<li> Header and header reply
+  - The 8-byte protocol specifier for tcp is:
+    {`Y` `A` `0xE4` `0x1E` `0x00` `0x00` `R` `P`}.
+    Another possible variant is:
+    {`Y` `A` `0x64` `0x1E` `0x00` `0x00` `R` `P`}.
+    The first version identifies a connection that sends acknowledgements;
+    the second is for connections that omit acknowledgements.
 
-  <ul>
+  - The sender name is transmitted and expected to be in the following format:
+    a 4 byte integer (little endian) giving the length of port, followed by the
+    port name in characters, followed by the null character.
 
-  <li> The 8-byte protocol specifier for tcp is:
-    {'Y' 'A' 0xE4
-    0x1E 0 0 'R' 'P'}.  Another possible variant is: {'Y' 'A'
-    0x64 0x1E 0 0 'R' 'P'}.  The first version identifies a connection
-    that sends acknowledgements; the second is for connections that
-    omit acknowledgements.
+  - There is no extra header material for this carrier.
 
-  <li> The sender name is transmitted and expected to be in the
-    following format: a 4 byte integer (little endian) giving the length
-    of port, followed by the port name in characters, followed by the null
-    character.
-
-  <li> There is no extra header material for this carrier.
-
-  <li> The header reply is as 8 bytes long: {'Y' 'A' B1 B2 0 0
-    'R' 'P'}, where (B1,B2) is a (little-endian) two-byte integer
+  - The header reply is as 8 bytes long:
+    {`Y` `A` `B1` `B2` `0x00` `0x00` `R` `P`},
+    where (`B1`,`B2`) is a (little-endian) two-byte integer
     specifying a socket-port number (unused).
 
-  <li> After the header reply, there is no switch in network protocol
-    -- the initial tcp connection continues to be used.
+  - After the header reply, there is no switch in network protocol, the initial
+    tcp connection continues to be used.
 
-    </ul>
+- **Index, payload, and acknowledgement**
 
-<li> Index, payload, and acknowledgement
+  - The sender transmits 8 bytes:
+    {`Y` `A` `0x0A` `0x00` `0x00` `0x00` `R` `P`}.
+    This identifies the length of the "index header" as 10 (`0x0A`).
 
-  <ul>
+  - The sender transmits 10 bytes:
+    {`LEN` `0x01` `0xFF` `0xFF` `0xFF` `0xFF` `0xFF` `0xFF` `0xFF` `0xFF`}.
+    `LEN` is the number of blocks of user data need to be sent.
+    This byte-sequence says there are `LEN` send blocks, 1 reply block expected,
+    and that the sizes will be listed individually next (this odd format is for
+    backward compatability with older YARP versions).
 
-  <li> The sender transmits 8 bytes: {'Y' 'A' 10 0 0 0 'R' 'P'}.
-    This identifies the length of the ``index header'' as 10.
+  - The sender transmits `LEN` 4-byte little-endian integers, one for each of
+    the `LEN` blocks of user data, giving the length of each block.
 
-  <li> The sender transmits 10 bytes: {LEN 1 255 255 255 255
-    255 255 255 255}.  LEN is the number of blocks of user data need
-    to be sent.  This byte-sequence says there are LEN send blocks, 1
-    reply block expected, and that the sizes will be listed
-    individually next (this odd format is for backward compatability
-    with older YARP versions).
+  - The sender transmits 4 bytes:
+    {`0x00` `0x00` `0x00` `0x00`}.
+    This asks for a reply length of 0.
 
-  <li> The sender transmits LEN 4-byte little-endian integers, one
-    for each of the LEN blocks of user data, giving the length of each
-    block.
+  - If this is the variant of the tcp carrier that requires acknowledgments,
+    then the receiver sends 8 bytes:
+    {`Y` `A` `B1` `B2` `B3` `B4` `R` `P`}, where (`B1`,`B2`,`B3`,`B4`) is a
+    little-endian integer giving a length (could be 0).
+    It then sends that number of extra bytes.
 
-  <li> The sender transmits 4 bytes: {0 0 0 0}. This asks for
-    a reply length of 0.
+\subsection carrier_udp The "udp" carrier
 
-  <li> If this is the variant of the tcp carrier that requires
-  acknowledgments, then the receiver sends 8 bytes: {'Y' 'A' B1
-  B2 B3 B4 'R' 'P'}, where B1-4 is a little-endian integer giving a
-  length (could be 0).  It then sends that number of extra bytes.
 
-  </ul>
+- **Header and header reply**
 
-</ul>
+  - The 8-byte protocol specifier for udp is:
+    {`Y` `A` `0x61` `0x1E` `0x00` `0x00` `R` `P`}.
+    The following variant of this should also be accepted:
+    {`Y` `A` `0xE1` `0x1E` `0x00` `0x00` `R` `P`}
+    (it is the same thing).
+  - Otherwise header and header reply are identical to the tcp case.
+  - After the header reply, both sides switch to a udp connection to the
+    socket-port specified in the header reply.
 
+- **Index, payload, and acknowledgement**
 
-\subsection carrier_udp The ``udp'' carrier
+  - Identical to tcp.
+    Data is split arbitrarily to fit into datagrams.
+    Datagrams have sequence numbers and checksums so that if part of message is
+    lost or corrupted the entire message can be dropped cleanly.
 
+  - Acknowledgments are not a possibility.
 
-<ul>
+\subsection carrier_mcast The "mcast" carrier
 
-<li> Header and header reply
+- **Header and header reply**
 
-  <ul>
+  - The 8-byte protocol specifier for mcast is:
+    {`Y` `A` `0x62` `0x1E` `0x00` `0x00` `R` `P`}.
+    The following variant of this should also be accepted:
+    {`Y` `A` `0xE2` `0x1E` `0x00` `0x00` `R` `P`}
+    (it is the same thing).
+  - The sender name is sent as for tcp.
+  - Extra header material is send (6 bytes).
+    The first 4 bytes specify a multicast IP address.
+    Next 2 bytes are a (bigendian) integer giving a socket-port number.
+    Note that producing these numbers can be helped by side communication with
+    the name server.
+  - There is no header reply for mcast.
+  - Both sides switch to a multi-cast group on the specified IP and socket-port.
 
-  <li> The 8-byte protocol specifier for udp is: {'Y' 'A' 0x61
-    0x1E 0 0 'R' 'P'}.  The following variant of this should also be
-    accepted: {'Y' 'A' 0xE1 0x1E 0 0 'R' 'P'} (it is the same
-    thing).
+- **Index, payload, and acknowledgement**
 
-  <li> Otherwise header and header reply are identical to the tcp case.
-  <li> After the header reply, both sides switch to a udp connection
-    to the socket-port specified in the header reply.
+  - Identical to udp.
+  - But at most one connection from a given port with an mcast carrier should
+    actually write to the multi-cast group.
 
-  </ul>
+\subsection carrier_text The "text" carrier
 
-<li> Index, payload, and acknowledgement
+- This carrier is carefully designed to make it easy to type into a terminal.
 
-  <ul>
+- **Header and header reply**
 
-  <li> Identical to tcp.  Data is split arbitrarily to fit into
-    datagrams.  Datagrams have sequence numbers and checksums
-	so that if part of message is lost or corrupted the
-	entire message can be dropped cleanly.
+  - The 8-byte protocol specifier for text is:
+    {`C` `O` `N` `N` `E` `C` `T` ` `}.
+  - The sender name is sent as plain text followed by the newline character
+    `\n`.
+  - There is no extra material.
+  - There is no header reply expected for text.
+  - There is no network protocol switch.
 
-  <li> Acknowledgments are not a possibility.
+- **Index, payload, and acknowledgement**
 
-  </ul>
+  - There is no index.
+  - The payload is expected to be a series of lines of text terminated by the
+    newline character `\n`.
+  - There is no acknowledgement expected for text.
 
-</ul>
-
-
-\subsection carrier_mcast The ``mcast'' carrier
-
-<ul>
-
-<li> Header and header reply
-
-  <ul>
-
-  <li> The 8-byte protocol specifier for mcast is: {'Y' 'A' 0x62
-    0x1E 0 0 'R' 'P'}.  The following variant of this should also be
-    accepted: {'Y' 'A' 0xE2 0x1E 0 0 'R' 'P'} (it is the same
-    thing).
-
-  <li> The sender name is sent as for tcp.
-
-  <li> Extra header material is send -- 6 bytes.  The first 4 bytes
-  specify a multicast IP address.  Next 2 bytes are a (bigendian)
-  integer giving a socket-port number.  Note that producing these
-  numbers can be helped by side communication with the name server.
-
-  <li> There is no header reply for mcast.
-
-  <li> Both sides switch to a multi-cast group on the specified IP
-  and socket-port.
-
-  </ul>
-
-<li> Index, payload, and acknowledgement
-
-  <ul>
-
-  <li> Identical to udp.
-
-  <li> But at most one connection from a given port with an mcast carrier
-    should actually write to the multi-cast group.
-
-  </ul>
-
-</ul>
-
-
-
-\subsection carrier_text The ``text'' carrier
-
-<ul>
-
-<li> This carrier is carefully designed to make it easy to type into
-  a terminal.
-
-<li> Header and header reply
-
-  <ul>
-
-  <li> The 8-byte protocol specifier for text is: {'C' 'O' 'N' 'N' 'E' 'C' 'T' ' '}.
-
-  <li> The sender name is sent as plain text followed by the newline
-  character `\\n'.
-
-  <li> There is no extra material
-
-  <li> There is no header reply expected for text.
-
-  <li> There is no network protocol switch.
-
-  </ul>
-
-<li> Index, payload, and acknowledgement
-
-  <ul>
-
-  <li> There is no index.
-
-  <li> The payload is expected to be a series of lines of text
-    terminated by the newline character `\\n'.
-
-  <li> There is no acknowledgement expected for text.
-
-  </ul>
-
-</ul>
-
-
-\subsection proto_shmem The ``shmem'' carrier
+\subsection proto_shmem The "shmem" carrier
 
 This is essentially the same as the tcp carrier, except that there is no
 header reply, and there is a shift in protocol after header transmission
@@ -324,35 +220,34 @@ send messages between processes on a single machine.  Of course, it
 doesn't work for processes on different machines.
 
 
-\subsection carrier_local The ``local'' carrier
+\subsection carrier_local The "local" carrier
 
-This is a new carrier designed specifically for communication between
-threads in a single process.  Giving a specification for the protocol
-it uses has low priority, since two such threads are unlikely to be
-using different YARP implementations.
+This carrier is designed specifically for communication between threads in a
+single process.
+Giving a specification for the protocol it uses has low priority, since two such
+threads are unlikely to be using different YARP implementations.
 
 
 \subsection carrier_known Known protocol specifiers
 
 Here are the currently known protocol specifiers.
-The ``shmem'' carrier is not yet documented, but is
+The "shmem" carrier is not yet documented, but is
 implemented in the C++ version of YARP.
 
-<table>
-<tr><td>8-byte magic number</td><td>protocol</td><td>variant</td></tr>
-<tr><td>`Y` `A` `0x61` `0x1E` `0` `0` `R` `P`</td><td>udp</td><td></td></tr>
-<tr><td>`Y` `A` `0xE1` `0x1E` `0` `0` `R` `P`</td><td>udp</td><td></td></tr>
-<tr><td>`Y` `A` `0x62` `0x1E` `0` `0` `R` `P`</td><td>mcast</td><td></td></tr>
-<tr><td>`Y` `A` `0xE2` `0x1E` `0` `0` `R` `P`</td><td>mcast</td><td></td></tr>
-<tr><td>`Y` `A` `0x63` `0x1E` `0` `0` `R` `P`</td><td>shmem</td><td></td></tr>
-<tr><td>`Y` `A` `0xE3` `0x1E` `0` `0` `R` `P`</td><td>shmem</td><td></td></tr>
-<tr><td>`Y` `A` `0x64` `0x1E` `0` `0` `R` `P`</td><td>tcp</td><td>without acks</td></tr>
-<tr><td>`Y` `A` `0xE4` `0x1E` `0` `0` `R` `P`</td><td>tcp</td><td>with acks</td></tr>
-<tr><td>`C` `O` `N`    `N`    `E` `C` `T` ` `</td><td>text</td><td>without acks</td></tr>
-<tr><td>`C` `O` `N`    `N`    `A` `C` `K` ` `</td><td>text</td><td>with acks</td></tr>
-<tr><td>`L` `O` `C`    `A`    `L` `I` `T` `Y`</td><td>local</td><td></td></tr>
-</table>
 
+| 8-byte magic number                       | protocol | variant    |
+|-------------------------------------------|----------|------------|
+|`Y` `A` `0x61` `0x1E` `0x00` `0x00` `R` `P`| udp      |            |
+|`Y` `A` `0xE1` `0x1E` `0x00` `0x00` `R` `P`| udp      |            |
+|`Y` `A` `0x62` `0x1E` `0x00` `0x00` `R` `P`| mcast    |            |
+|`Y` `A` `0xE2` `0x1E` `0x00` `0x00` `R` `P`| mcast    |            |
+|`Y` `A` `0x63` `0x1E` `0x00` `0x00` `R` `P`| shmem    |            |
+|`Y` `A` `0xE3` `0x1E` `0x00` `0x00` `R` `P`| shmem    |            |
+|`Y` `A` `0x64` `0x1E` `0x00` `0x00` `R` `P`| tcp      |without acks|
+|`Y` `A` `0xE4` `0x1E` `0x00` `0x00` `R` `P`| tcp      |with acks   |
+|`C` `O` `N`    `N`    `E` `C` `T` ` `      | text     |without acks|
+|`C` `O` `N`    `N`    `A` `C` `K` ` `      | text     |with acks   |
+|`L` `O` `C`    `A`    `L` `I` `T` `Y`      | local    |            |
 
 
 \section yarp_protocol_port Port commands
@@ -363,96 +258,94 @@ old connections be removed, to inquire after status, etc.
 %
 The protocol used for communicating with a port is layered on top of the
 protocol described in the previous section.  Any carrier can be used.
-The ``payload data'' is as follows:
+The "payload data" is as follows:
 
 
-- We send an 8 byte header {0,0,0,0, ~, CHAR, 0, 1}.
+- We send an 8 byte header {`0x00`,`0x00`,`0x00`,`0x00`,`~`,`CHAR`,`0x00`,`0x01`}.
 
-- CHAR is a character that identifies what the message is about.
+- `CHAR` is a character that identifies what the message is about.
 
-- CHAR = `d': this header is used to signal that user data is
-  arriving next, as opposed to a port command
+- `CHAR` = `d`: this header is used to signal that user data is arriving next,
+    as opposed to a port command
 
-- CHAR = anything else: this signals that a port command
+- `CHAR` = anything else: this signals that a port command
     follows.
 
 
-for the port command case (CHAR = 0) the remainder of the message
-is interpreted as a string S.
+for the port command case (`CHAR` = `0x00`) the remainder of the message
+is interpreted as a string `S`.
 
-- S begins with `/', e.g. `/read': this is a request to add a
+- `S` begins with `/`, e.g. `/read`: this is a request to add a
    Connection to the named InputPort.
 
-- S begins with `!', e.g. `!/read': this is a request to remove
+- `S` begins with `!`, e.g. `!/read`: this is a request to remove
    a Connection to the named InputPort.
 
-- S begins with `~, e.g. `~/read': this is a
+- `S` begins with `~, e.g. `~/read`: this is a
    request to remove a Connection from the named OutputPort.
 
-- S is `*': this is a request for the port to dump information
+- `S` is `*`: this is a request for the port to dump information
      about what it is connected to.
 
-- S is `q': the specific connection that the command is received on
+- `S` is `q`: the specific connection that the command is received on
    should now shut down.
 
-- S is `a': this is like `d', signalling that data should be expected,
+- `S` is `a`: this is like `d`, signalling that data should be expected,
   but the data will not be passed on to the client of the port.
   Instead it will be processed internally according to \ref port_admin.
   This is a more user-friendly interface for communicating with a port.
 
 
-Alternatively, with the ``text'' carrier, we send a string terminated
-in `\\n'.  This is the string S.  The first letter is copied
-to be CHAR.
+Alternatively, with the "text" carrier, we send a string terminated
+in `\n`.  This is the string `S`.  The first letter is copied
+to be `CHAR`.
 
 
 
 \section yarp_uri YARP URIs
 
 Port names in YARP can contain multiple special elements.
-We've seen names such as ``/write''.  We can also have
-names such as ``udp://write'' which means ``connect
-to the port named /write using the udp carrier''.
+We've seen names such as `/write`.
+We can also have names such as `udp://write` which means "connect to the port
+named `/write` using the udp carrier".
 
-We can also prepend a network selector of the form
-``/net=NETNAME/''.  For example, a name such as
-``udp://net=196/write'' means ``connect to the
-port named /write using the udp carrier, and make the
-connection on the network with ip addresses beginning with
-196''.
-This is useful in scenarios with multiple networks, where it may be
-desirable to route connections through particular networks (for
-example, to devote a network to time-critical traffic).  This
-functionality is supported primarily with the help of the name server.
-The ip it reports for a machine is usually a reasonable default, but
-the user can choose using ``net='' to request a name on a particular
-network.
+We can also prepend a network selector of the form `/net=NETNAME/`.
+For example, a name such as `udp://net=196/write` means "connect to the port
+named `/write` using the udp carrier, and make the connection on the network
+with ip addresses beginning with `196`".
+This is useful in scenarios with multiple networks, where it may be desirable to
+route connections through particular networks (for example, to devote a network
+to time-critical traffic).
+This functionality is supported primarily with the help of the name server.
+The ip it reports for a machine is usually a reasonable default, but the user
+can choose using "net=" to request a name on a particular network.
 
-Symbolic network names can be configured.  This process is not yet
-specified.  You can do it right now by setting properties of a fake
-port called ``networks'' (no leading slash), where the properties are
-symbolic names and their values are the numeric network IP prefix.
+Symbolic network names can be configured.
+This process is not yet specified.
+You can do it right now by setting properties of a fake port called `networks`
+(no leading slash), where the properties are symbolic names and their values are
+the numeric network IP prefix.
 But this process will change.
 
 
 \section yarp_carriers Carriers supported
 
-An implementation of YARP2 must support at least the ``tcp'' carrier.
-Other carriers that may be supported:
-``text'', ``udp'', ``mcast'', ``shmem'', ``qnx'', ``local''.
+An implementation of YARP2 must support at least the "tcp" carrier.
+Other carriers that may be supported: "text", "udp", "mcast", "shmem", "local".
 
-As a place to start an implementation, the ``text'' carrier is very
-simple to implement, and can masquerade as ``tcp'' for the purposes
-of initial handshaking.
+As a place to start an implementation, the "text" carrier is very simple to
+implement, and can masquerade as "tcp" for the purposes of initial handshaking.
 
-To see this, get the ``netcat'' program (available as debian package
-of the same name).  In one terminal, run:
+To see this, get the "netcat" program (available as debian package of the same
+name).
+In one terminal, run:
 \verbatim
 nc -l -p 9000
 \endverbatim
-This starts a tcp listener on socket-port 9000, and prints out
-any data that arrives there.  Then tell the name server to
-create an entry for this listener, and tag it as accepting text:
+This starts a tcp listener on socket-port 9000, and prints out any data that
+arrives there.
+Then tell the name server to create an entry for this listener, and tag it as
+accepting text:
 \verbatim
 yarp name register /nc tcp ... 9000
 yarp name set /nc accepts text
@@ -462,15 +355,15 @@ Now lets write some data to that port.
 yarp write /write text://nc
 \endverbatim
 
-Type something in, such as ``hello world'', and hit return.
+Type something in, such as "hello world", and hit return.
 On the terminal running netcat you should see:
 \verbatim
 CONNECT /write
 d
 0 "hello world"
 \endverbatim
-This is what text mode looks like, for the particular
-data type used by yarp read and write (``bottles'').
+This is what text mode looks like, for the particular data type used by yarp
+read and write ("bottles").
 As we saw in an earlier section, we can also write to ports in text mode.
 And if we were to restart nc and then try the following:
 \verbatim
@@ -481,16 +374,17 @@ You should see:
 CONNECT external
 /foo
 \endverbatim
-This is what a command to connect looks like in YARP2.  If we omit the
-``text:/'' then the tcp carrier may be used, which is compatible with YARP1
-but is a bit less trivial to work with.  Once our YARP implementations
-are up to date, the default command carrier will be switched to text.
+This is what a command to connect looks like in YARP2.
+If we omit the `text:/` then the tcp carrier may be used, which is compatible
+with YARP1 but is a bit less trivial to work with.
+Once our YARP implementations are up to date, the default command carrier will
+be switched to text.
 
 
 \section note_manually Manually interacting with ports
 
-Suppose we have created ports as follows by typing the
-following in different terminals:
+Suppose we have created ports as follows by typing the following in different
+terminals:
 \verbatim
   yarp server
   yarp write /write
@@ -498,8 +392,8 @@ following in different terminals:
   yarp read /read2
 \endverbatim
 
-We could connect and disconnect ports using the YARP companion
-utility, but here's how we could do the same thing ``manually'':
+We could connect and disconnect ports using the YARP companion utility, but
+here's how we could do the same thing "manually":
 
 \verbatim
 command:  yarp where
