@@ -169,8 +169,8 @@ bool Ready::checkResources(bool silent)
 
 bool Ready::timeout(double base, double timeout)
 {
-    yarp::os::Time::delay(1.0);
-    if((yarp::os::Time::now()-base) > timeout)
+    yarp::os::SystemClock::delaySystem(1.0);
+    if((yarp::os::SystemClock::nowSystem()-base) > timeout)
         return true;
     return false;
 }
@@ -186,7 +186,7 @@ void Ready::startModule(void)
         bAborted = false;
         while(!checkPriorityPorts())
         {
-            yarp::os::Time::delay(1.0);
+            yarp::os::SystemClock::delaySystem(1.0);
             if(bAborted) return;
         }
     }
@@ -202,7 +202,7 @@ void Ready::startModule(void)
     }
 
     // waiting for resources
-    double base = yarp::os::Time::now();
+    double base = yarp::os::SystemClock::nowSystem();
     while(!checkResources()) {
         if(bAborted) return;
 
@@ -234,7 +234,7 @@ void Ready::startModule(void)
     }
     else
     {
-        yarp::os::Time::delay(executable->getPostExecWait());
+        yarp::os::SystemClock::delaySystem(executable->getPostExecWait());
         castEvent(EventFactory::startModuleEventOk);
         executable->getEvent()->onExecutableStart(executable);
     }
@@ -288,7 +288,7 @@ void Connecting::connectAllPorts(void)
         bAborted = false;
         while(!checkNormalPorts())
         {
-            yarp::os::Time::delay(1.0);
+            yarp::os::SystemClock::delaySystem(1.0);
             if(bAborted) return;
         }
 
@@ -408,7 +408,7 @@ Dying::~Dying()
 void Dying::stopModule(void)
 {
     ErrorLogger* logger = ErrorLogger::Instance();
-    yarp::os::Time::delay(executable->getPostStopWait());
+    yarp::os::SystemClock::delaySystem(executable->getPostStopWait());
     if(!executable->getBroker()->stop())
     {
         OSTRINGSTREAM msg;

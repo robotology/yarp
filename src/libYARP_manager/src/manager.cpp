@@ -711,7 +711,7 @@ bool Manager::run(unsigned int id, bool async)
     runnables[id]->disableAutoConnect();
     runnables[id]->start();
     if(bWithWatchDog) {
-        yarp::os::Time::delay(1.0);
+        yarp::os::SystemClock::delaySystem(1.0);
         runnables[id]->startWatchDog();
     }
     if(async)
@@ -749,12 +749,12 @@ bool Manager::run(void)
         else
             (*itr)->disableAutoConnect();
         (*itr)->start();
-        yarp::os::Time::delay(0.2);
+        yarp::os::SystemClock::delaySystem(0.2);
         wait = (wait > (*itr)->getPostExecWait()) ? wait : (*itr)->getPostExecWait();
     }
 
     // waiting for running
-    double base = yarp::os::Time::now();
+    double base = yarp::os::SystemClock::nowSystem();
     while(!timeout(base, wait + RUN_TIMEOUT))
         if(allRunning()) break;
 
@@ -830,10 +830,10 @@ bool Manager::stop(void)
     for(itr=runnables.begin(); itr!=runnables.end(); itr++)
     {
         (*itr)->stop();
-        yarp::os::Time::delay(0.2);
+        yarp::os::SystemClock::delaySystem(0.2);
     }
 
-    double base = yarp::os::Time::now();
+    double base = yarp::os::SystemClock::nowSystem();
     while(!timeout(base, STOP_TIMEOUT))
         if(allStopped()) break;
 
@@ -888,10 +888,10 @@ bool Manager::kill(void)
     for(itr=runnables.begin(); itr!=runnables.end(); itr++)
     {
         (*itr)->kill();
-        yarp::os::Time::delay(0.2);
+        yarp::os::SystemClock::delaySystem(0.2);
     }
 
-    double base = yarp::os::Time::now();
+    double base = yarp::os::SystemClock::nowSystem();
     while(!timeout(base, KILL_TIMEOUT))
         if(allStopped()) break;
 
@@ -1101,7 +1101,7 @@ bool Manager::connectExtraPorts(void)
     //YarpBroker connector;
     //connector.init();
 
-    double base = yarp::os::Time::now();
+    double base = yarp::os::SystemClock::nowSystem();
     while(!timeout(base, 10.0))
         if(checkPortsAvailable(&connector))
             break;
@@ -1217,8 +1217,8 @@ bool Manager::detachStdout(unsigned int id)
 
 bool Manager::timeout(double base, double t)
 {
-    yarp::os::Time::delay(1.0);
-    if((yarp::os::Time::now()-base) > t)
+    yarp::os::SystemClock::delaySystem(1.0);
+    if((yarp::os::SystemClock::nowSystem()-base) > t)
         return true;
     return false;
 }
