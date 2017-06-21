@@ -138,7 +138,7 @@ void Route::setCarrierName(const ConstString& carrierName)
 
 void Route::swapNames()
 {
-    std::swap(mPriv->fromName, mPriv->toName);
+    mPriv->fromName.swap(mPriv->toName);
 }
 
 ConstString Route::toString() const
