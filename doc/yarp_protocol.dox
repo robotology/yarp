@@ -340,17 +340,17 @@ implemented in the C++ version of YARP.
 
 <table>
 <tr><td>8-byte magic number</td><td>protocol</td><td>variant</td></tr>
-<tr><td>`Y' `A' 0x61 0x1E 0 0 `R' `P'</td><td>udp</td><td></td></tr>
-<tr><td>`Y' `A' 0xE1 0x1E 0 0 `R' `P'</td><td>udp</td><td></td></tr>
-<tr><td>`Y' `A' 0x62 0x1E 0 0 `R' `P'</td><td>mcast</td><td></td></tr>
-<tr><td>`Y' `A' 0xE2 0x1E 0 0 `R' `P'</td><td>mcast</td><td></td></tr>
-<tr><td>`Y' `A' 0x63 0x1E 0 0 `R' `P'</td><td>shmem</td><td></td></tr>
-<tr><td>`Y' `A' 0xE3 0x1E 0 0 `R' `P'</td><td>shmem</td><td></td></tr>
-<tr><td>`Y' `A' 0x64 0x1E 0 0 `R' `P'</td><td>tcp</td><td>without acks</td></tr>
-<tr><td>`Y' `A' 0xE4 0x1E 0 0 `R' `P'</td><td>tcp</td><td>with acks</td></tr>
-<tr><td>`C' `O' `N' `N' `E' `C' `T' ` ' </td><td>text</td><td>without acks</td></tr>
-<tr><td>`C' `O' `N' `N' `A' `C' `K' ` ' </td><td>text</td><td>with acks</td></tr>
-<tr><td>`L' `O' `C' `A' `L' `I' `T' `Y'</td><td>local</td><td></td></tr>
+<tr><td>`Y` `A` `0x61` `0x1E` `0` `0` `R` `P`</td><td>udp</td><td></td></tr>
+<tr><td>`Y` `A` `0xE1` `0x1E` `0` `0` `R` `P`</td><td>udp</td><td></td></tr>
+<tr><td>`Y` `A` `0x62` `0x1E` `0` `0` `R` `P`</td><td>mcast</td><td></td></tr>
+<tr><td>`Y` `A` `0xE2` `0x1E` `0` `0` `R` `P`</td><td>mcast</td><td></td></tr>
+<tr><td>`Y` `A` `0x63` `0x1E` `0` `0` `R` `P`</td><td>shmem</td><td></td></tr>
+<tr><td>`Y` `A` `0xE3` `0x1E` `0` `0` `R` `P`</td><td>shmem</td><td></td></tr>
+<tr><td>`Y` `A` `0x64` `0x1E` `0` `0` `R` `P`</td><td>tcp</td><td>without acks</td></tr>
+<tr><td>`Y` `A` `0xE4` `0x1E` `0` `0` `R` `P`</td><td>tcp</td><td>with acks</td></tr>
+<tr><td>`C` `O` `N`    `N`    `E` `C` `T` ` `</td><td>text</td><td>without acks</td></tr>
+<tr><td>`C` `O` `N`    `N`    `A` `C` `K` ` `</td><td>text</td><td>with acks</td></tr>
+<tr><td>`L` `O` `C`    `A`    `L` `I` `T` `Y`</td><td>local</td><td></td></tr>
 </table>
 
 
