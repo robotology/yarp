@@ -26,9 +26,9 @@ using namespace yarp::os;
 
 void Ping::connect() {
     lastConnect.clear();
-    double start = Time::now();
+    double start = SystemClock::nowSystem();
     Contact c = NetworkBase::queryName(target);
-    double afterQuery = Time::now();
+    double afterQuery = SystemClock::nowSystem();
     if (!c.isValid()) {
         yError("Port not found during ping");
     }
@@ -41,7 +41,7 @@ void Ping::connect() {
     if (!ok) {
         yError("Port did not respond as expected");
     }
-    double stop = Time::now();
+    double stop = SystemClock::nowSystem();
     lastConnect.totalTime.add(stop-start);
     lastConnect.targetTime.add(stop-afterQuery);
     accumConnect.add(lastConnect);
@@ -102,7 +102,7 @@ public:
     PingSampler() : mutex(1) { ct = 0; lastTime = 0; }
 
     virtual bool read(ConnectionReader& connection) override {
-        double now = Time::now();
+        double now = SystemClock::nowSystem();
         Bottle b;
         bool ok = b.read(connection);
         if (ok) {
@@ -130,7 +130,7 @@ void Ping::sample() {
     p.open("...");
     printf("Pausing for 5 seconds...\n");
     NetworkBase::connect(target, p.getName());
-    Time::delay(5);
+    SystemClock::delaySystem(5);
     p.close();
     printf("Period is %g +/- %g (%d)\n",
            sampler.period.mean(),

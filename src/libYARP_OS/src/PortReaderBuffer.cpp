@@ -366,7 +366,7 @@ PortReader *PortReaderBufferBase::readBase(bool& missed, bool cleanup) {
         HELPER(implementation).contentSema.wait();
     } else {
         bool ok = false;
-        double now = Time::now();
+        double now = SystemClock::nowSystem();
         double target = now+period;
         if (last_recv>0) {
             target = last_recv+period;
@@ -385,13 +385,13 @@ PortReader *PortReaderBufferBase::readBase(bool& missed, bool cleanup) {
             }
             return YARP_NULLPTR;
         }
-        now = Time::now();
+        now = SystemClock::nowSystem();
         if (last_recv<0) {
             last_recv = now;
         } else {
             diff = target - now;
             if (diff>0) {
-                Time::delay(diff);
+                SystemClock::delaySystem(diff);
             }
             last_recv = target;
         }

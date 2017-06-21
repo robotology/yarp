@@ -77,7 +77,7 @@ Contact FallbackNameClient::seek() {
                   NetType::toString(tries));
 
         seeker.start();
-        Time::delay(0.25);
+        SystemClock::delaySystem(0.25);
         if (seeker.getAddress().isValid()) {
             return seeker.getAddress();
         }
@@ -88,7 +88,7 @@ Contact FallbackNameClient::seek() {
         fprintf(stderr, "\n");
 
         for (int i=0; i<len; i++) {
-            Time::delay(0.025);
+            SystemClock::delaySystem(0.025);
             fprintf(stderr, "++");
             if (seeker.getAddress().isValid()) {
                 fprintf(stderr, "\n");

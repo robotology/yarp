@@ -11,7 +11,7 @@
 #include <yarp/os/impl/NameClient.h>
 #include <yarp/os/Property.h>
 #include <yarp/os/ResourceFinder.h>
-#include <yarp/os/SystemClock.h>
+#include <yarp/os/Time.h>
 #include <yarp/os/Network.h>
 
 #include <cstdio>
@@ -161,7 +161,7 @@ void YarpPluginSelector::scan() {
     // If it was scanned in the last 5 seconds, there is no need to scan again
     bool need_scan = true;
     if (config.check("last_update_time")) {
-        if (SystemClock::nowSystem() - config.find("last_update_time").asDouble() < 5) {
+        if (SystemClock::nowSystem()-config.find("last_update_time").asDouble() < 5) {
             need_scan = false;
         }
     }

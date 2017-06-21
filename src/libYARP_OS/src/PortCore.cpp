@@ -2422,7 +2422,7 @@ bool PortCore::adminBlock(ConnectionReader& reader, void *id,
      */
     ConstString nonsense_delay = NetworkBase::getEnvironment("NONSENSE_ADMIN_DELAY");
     if (nonsense_delay.size())
-        yarp::os::Time::delay(atof(nonsense_delay.c_str()));
+        yarp::os::SystemClock::delaySystem(atof(nonsense_delay.c_str()));
 
     return true;
 }
