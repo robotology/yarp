@@ -216,7 +216,7 @@ bool BoschIMU::sendReadCommand(unsigned char register_add, int len, unsigned cha
         else if(!checkReadResponse(buf))
         {
             success = false;
-            yarp::os::Time::delay(0.002);
+            yarp::os::SystemClock::delaySystem(0.002);
         }
         else
         {
@@ -314,7 +314,7 @@ void BoschIMU::readSysError()
         return;
 
     checkError = true;
-    yarp::os::Time::delay(0.002);
+    yarp::os::SystemClock::delaySystem(0.002);
     if(!sendReadCommand(REG_SYS_STATUS, 1, response, "Read SYS_STATUS register") )
     {
         yError()  << "@ line " << __LINE__;
@@ -344,7 +344,7 @@ bool BoschIMU::sendAndVerifyCommand(unsigned char register_add, int len, unsigne
 bool BoschIMU::threadInit()
 {
     unsigned char msg;
-    timeLastReport = yarp::os::Time::now();
+    timeLastReport = yarp::os::SystemClock::nowSystem();
 
     msg = 0x00;
     if(!sendAndVerifyCommand(REG_PAGE_ID, 1, &msg, "PAGE_ID") )
@@ -353,7 +353,7 @@ bool BoschIMU::threadInit()
         return(false);
     }
 
-    yarp::os::Time::delay(SWITCHING_TIME);
+    yarp::os::SystemClock::delaySystem(SWITCHING_TIME);
 
 //Removed because useless
     ///////////////////////////////////////
@@ -368,7 +368,7 @@ bool BoschIMU::threadInit()
 //          return(false);
 //     }
 //
-//     yarp::os::Time::delay(SWITCHING_TIME);
+//     yarp::os::SystemClock::delaySystem(SWITCHING_TIME);
 
 
     ///////////////////////////////////////
@@ -384,7 +384,7 @@ bool BoschIMU::threadInit()
         return(false);
     }
 
-    yarp::os::Time::delay(SWITCHING_TIME);
+    yarp::os::SystemClock::delaySystem(SWITCHING_TIME);
 
 
     ///////////////////////////////////////
@@ -399,7 +399,7 @@ bool BoschIMU::threadInit()
         yError()  << "BoschIMU: set external clock failed";
         return(false);
     }
-    yarp::os::Time::delay(SWITCHING_TIME);
+    yarp::os::SystemClock::delaySystem(SWITCHING_TIME);
 
     ///////////////////////////////////////
     //
@@ -423,14 +423,14 @@ bool BoschIMU::threadInit()
         yError()  << "BoschIMU: set config NDOF_MODE failed";
     }
 
-    yarp::os::Time::delay(SWITCHING_TIME);
+    yarp::os::SystemClock::delaySystem(SWITCHING_TIME);
 
     return true;
 }
 
 void BoschIMU::run()
 {
-    timeStamp = yarp::os::Time::now();
+    timeStamp = yarp::os::SystemClock::nowSystem();
 
     int16_t raw_data[4];
 //     void *tmp = (void*) &response[2];
@@ -546,7 +546,7 @@ void BoschIMU::run()
     }
 
     // If 100ms have passed since the last received message
-    if (timeStamp+0.1 < yarp::os::Time::now())
+    if (timeStamp+0.1 < yarp::os::SystemClock::nowSystem())
     {
 //         status=TIMEOUT;
     }

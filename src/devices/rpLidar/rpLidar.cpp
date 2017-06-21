@@ -325,7 +325,7 @@ bool RpLidar::HW_getInfo(string& s_info)
     cmd_arr[1] = 0x50;
     pSerial->send((char *)cmd_arr, 2);
 
-    yarp::os::Time::delay(0.010);
+    yarp::os::SystemClock::delaySystem(0.010);
 
     unsigned char s[255];
     r = pSerial->receiveBytes(s, 7);
@@ -367,7 +367,7 @@ bool RpLidar::HW_getHealth()
     cmd_arr[1] = 0x52;
     pSerial->send((char *)cmd_arr, 2);
 
-    yarp::os::Time::delay(0.010);
+    yarp::os::SystemClock::delaySystem(0.010);
 
     unsigned char s[255];
     memset(s, 0, 255);
@@ -421,7 +421,7 @@ bool RpLidar::HW_reset()
     cmd_arr[1] = 0x40;
     pSerial->send((char *)cmd_arr, 2);
 
-    yarp::os::Time::delay(0.010);
+    yarp::os::SystemClock::delaySystem(0.010);
     return true;
 }
 
@@ -440,7 +440,7 @@ bool RpLidar::HW_start()
 #endif
     pSerial->send((char *)cmd_arr,2);
 
-    yarp::os::Time::delay(0.010);
+    yarp::os::SystemClock::delaySystem(0.010);
 
     unsigned char s[255];
     memset(s, 0, 255);
@@ -470,7 +470,7 @@ bool RpLidar::HW_stop()
     cmd_arr[1] = 0x25;
     pSerial->send((char*)cmd_arr,2);
 
-    yarp::os::Time::delay(0.010);
+    yarp::os::SystemClock::delaySystem(0.010);
     return true;
 }
 

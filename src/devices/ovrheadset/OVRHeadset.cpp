@@ -23,6 +23,7 @@
 #include <yarp/sig/Image.h>
 #include <yarp/os/LockGuard.h>
 #include <yarp/os/Property.h>
+#include <yarp/os/SystemClock.h>
 #include <yarp/math/FrameTransform.h>
 
 #include <cmath>
@@ -865,7 +866,7 @@ bool yarp::dev::OVRHeadset::updateService()
 
     resetStat();
 
-    yarp::os::Time::delay(delay);
+    yarp::os::SystemClock::delaySystem(delay);
     return !closed;
 }
 
@@ -1004,7 +1005,7 @@ void yarp::dev::OVRHeadset::run()
     } else {
         // Do not warn more than once every 5 seconds
         static double lastOrientWarnTime = 0;
-        double now = yarp::os::Time::now();
+        double now = yarp::os::SystemClock::nowSystem();
         if (now >= lastOrientWarnTime + 5) {
             yDebug() << "Orientation not tracked";
             lastOrientWarnTime = now;
@@ -1020,7 +1021,7 @@ void yarp::dev::OVRHeadset::run()
     } else {
         // Do not warn more than once every 5 seconds
         static double lastPosWarnTime = 0;
-        double now = yarp::os::Time::now();
+        double now = yarp::os::SystemClock::nowSystem();
         if (now >= lastPosWarnTime + 5) {
             yDebug() << "Position not tracked";
             lastPosWarnTime = now;
@@ -1049,7 +1050,7 @@ void yarp::dev::OVRHeadset::run()
     } else {
         // Do not warn more than once every 5 seconds
         static double lastPredOrientWarnTime = 0;
-        double now = yarp::os::Time::now();
+        double now = yarp::os::SystemClock::nowSystem();
         if (now >= lastPredOrientWarnTime + 5) {
             yDebug() << "Predicted orientation not tracked";
             lastPredOrientWarnTime = now;
@@ -1066,7 +1067,7 @@ void yarp::dev::OVRHeadset::run()
     } else {
         // Do not warn more than once every 5 seconds
         static double lastPredPosWarnTime = 0;
-        double now = yarp::os::Time::now();
+        double now = yarp::os::SystemClock::nowSystem();
         if (now >= lastPredPosWarnTime + 5) {
             yDebug() << "Position not tracked";
             lastPredPosWarnTime = now;
@@ -1194,7 +1195,7 @@ void yarp::dev::OVRHeadset::run()
     } else {
         // Do not warn more than once every 5 seconds
         static double lastImgWarnTime = 0;
-        double now = yarp::os::Time::now();
+        double now = yarp::os::SystemClock::nowSystem();
         if (now >= lastImgWarnTime + 5) {
             yDebug() << "No image received";
             lastImgWarnTime = now;

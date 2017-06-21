@@ -25,7 +25,7 @@ void spin(KinectDeviceDriver & h, Searchable & s) {
     if(h.open(s) == true) {
       while(true) {
         if(!h.hasDepth() || !h.hasRgb()) {
-          Time::delay(0.01);
+          SystemClock::delaySystem(0.01);
           continue;
         }
 
