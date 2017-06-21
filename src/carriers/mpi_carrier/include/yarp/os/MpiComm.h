@@ -36,7 +36,7 @@ public:
         terminate = true;}
     bool threadInit() override;
     void run() override {
-        while (!terminate) {Time::delay(1);}
+        while (!terminate) {SystemClock::delaySystem(1);}
     }
     void threadRelease() override;
 };

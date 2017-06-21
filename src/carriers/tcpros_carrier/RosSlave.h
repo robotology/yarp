@@ -38,7 +38,8 @@ public:
                 worked = false;
                 break;
             }
-            yarp::os::Time::delay(delay);
+            // Using SystemClock since yarp version 2.3.70 as part of global clock refactoring & bugFixing
+            yarp::os::SystemClock::delaySystem(delay);
             delay *= 2;
         }
         if (delay<=1) {
