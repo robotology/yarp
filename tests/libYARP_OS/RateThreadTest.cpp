@@ -63,7 +63,6 @@ private:
 
         virtual bool threadInit() override
         {
-            printf("-->Starting rate thread: %.2lf[ms]...", getRate());
             n=0;
             t1=0;
             t2=0;
@@ -82,8 +81,6 @@ private:
             }
             n++;
             t1=t2;
-
-            // printf(".");
         }
 
         virtual void threadRelease() override
@@ -92,8 +89,6 @@ private:
                 period=1000*average/(n-1);
             else
                 period=0;
-
-            printf("thread quit\n");
         }
 
     };
