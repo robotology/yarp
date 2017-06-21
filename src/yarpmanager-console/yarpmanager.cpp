@@ -8,11 +8,11 @@
 
 
 #include "ymanager.h"
-
+#include <yarp/os/Time.h>
 
 int main(int argc, char* argv[])
 {
-    yarp::os::Network yarp;
+    yarp::os::Network yarp(yarp::os::YARP_CLOCK_SYSTEM);
     yarp.setVerbosity(-1);
 
     YConsoleManager ymanager(argc, argv);

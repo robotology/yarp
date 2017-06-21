@@ -58,8 +58,7 @@ int main(int argc, char *argv[])
     qputenv("QT_DEVICE_PIXEL_RATIO", QByteArray("auto"));
 #endif
 
-
-    Network yarp;
+    yarp::os::Network yarp(yarp::os::YARP_CLOCK_SYSTEM);
     if (!yarp.checkNetwork())
     {
         LOG_ERROR("Error initializing yarp network (is yarpserver running?)\n");
