@@ -80,6 +80,9 @@ public:
     bool detachStdout(unsigned int id);
     bool updateResources(void);
     bool updateResource(const char* szName);
+    bool waitingModuleRun(unsigned int id);
+    bool waitingModuleStop(unsigned int id);
+    bool waitingModuleKill(unsigned int id);
     bool loadBalance(void);
 
     void setDefaultBroker(const char* szBroker) { if(szBroker) strDefBroker = szBroker; }

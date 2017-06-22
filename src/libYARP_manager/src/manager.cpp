@@ -591,6 +591,54 @@ bool Manager::updateResource(GenericResource* resource)
     return true;
 }
 
+bool Manager::waitingModuleRun(unsigned int id)
+{
+    double base = yarp::os::Time::now();
+    double wait = runnables[id]->getPostExecWait() + RUN_TIMEOUT;
+    while(!timeout(base, wait))
+        if(running(id)) return true;
+
+    OSTRINGSTREAM msg;
+    msg<<"Failed to run "<<runnables[id]->getCommand();
+    msg<<" on "<<runnables[id]->getHost();
+    msg<<". (State: "<<runnables[id]->state();
+    msg<<", parameter: "<<runnables[id]->getParam()<<")";
+    logger->addError(msg);
+    return false;
+
+}
+
+bool Manager::waitingModuleStop(unsigned int id)
+{
+    double base = yarp::os::Time::now();
+    while(!timeout(base, STOP_TIMEOUT))
+        if(!running(id)) return true;
+
+    OSTRINGSTREAM msg;
+    msg<<"Failed to stop "<<runnables[id]->getCommand();
+    msg<<" on "<<runnables[id]->getHost();
+    msg<<". (State: "<<runnables[id]->state();
+    msg<<", paramete: "<<runnables[id]->getParam()<<")";
+    logger->addError(msg);
+    return false;
+}
+
+bool Manager::waitingModuleKill(unsigned int id)
+{
+    double base = yarp::os::Time::now();
+    while(!timeout(base, KILL_TIMEOUT))
+        if(!running(id)) return true;
+
+    OSTRINGSTREAM msg;
+    msg<<"Failed to kill "<<runnables[id]->getCommand();
+    msg<<" on "<<runnables[id]->getHost();
+    msg<<". (State: "<<runnables[id]->state();
+    msg<<", paramete: "<<runnables[id]->getParam()<<")";
+    logger->addError(msg);
+    return false;
+
+}
+
 
 bool Manager::existPortFrom(unsigned int id)
 {
@@ -669,18 +717,7 @@ bool Manager::run(unsigned int id, bool async)
         return true;
 
     // waiting for running
-    double base = yarp::os::Time::now();
-    double wait = runnables[id]->getPostExecWait() + RUN_TIMEOUT;
-    while(!timeout(base, wait))
-        if(running(id)) return true;
-
-    OSTRINGSTREAM msg;
-    msg<<"Failed to run "<<runnables[id]->getCommand();
-    msg<<" on "<<runnables[id]->getHost();
-    msg<<". (State: "<<runnables[id]->state();
-    msg<<", parameter: "<<runnables[id]->getParam()<<")";
-    logger->addError(msg);
-    return false;
+    return waitingModuleRun(id);
 }
 
 bool Manager::run(void)
@@ -779,17 +816,7 @@ bool Manager::stop(unsigned int id, bool async)
         return true;
 
     // waiting for stop
-    double base = yarp::os::Time::now();
-    while(!timeout(base, STOP_TIMEOUT))
-        if(!running(id)) return true;
-
-    OSTRINGSTREAM msg;
-    msg<<"Failed to stop "<<runnables[id]->getCommand();
-    msg<<" on "<<runnables[id]->getHost();
-    msg<<". (State: "<<runnables[id]->state();
-    msg<<", paramete: "<<runnables[id]->getParam()<<")";
-    logger->addError(msg);
-    return false;
+    return waitingModuleStop(id);
 }
 
 
@@ -847,18 +874,7 @@ bool Manager::kill(unsigned int id, bool async)
 
     if(async)
         return true;
-
-    double base = yarp::os::Time::now();
-    while(!timeout(base, KILL_TIMEOUT))
-        if(!running(id)) return true;
-
-    OSTRINGSTREAM msg;
-    msg<<"Failed to kill "<<runnables[id]->getCommand();
-    msg<<" on "<<runnables[id]->getHost();
-    msg<<". (State: "<<runnables[id]->state();
-    msg<<", paramete: "<<runnables[id]->getParam()<<")";
-    logger->addError(msg);
-    return false;
+    return waitingModuleKill(id);
 }
 
 

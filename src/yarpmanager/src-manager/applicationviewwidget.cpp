@@ -981,6 +981,8 @@ void ApplicationViewWidget::attachStdOutNestedApplication(QTreeWidgetItem *it,st
 /*! \brief Called when the Run button has been pressed */
 bool ApplicationViewWidget::onRun()
 {
+    selectAllConnections(true);
+    selectAllResources(true);
     if (safeManager.busy() ) {
         return false;
     }
@@ -1013,9 +1015,41 @@ bool ApplicationViewWidget::onRun()
         }
     }
 
-    safeManager.safeRun(MIDs);
+    std::vector<int> CIDs;
+    for(int i=0;i<ui->connectionList->topLevelItemCount();i++) {
+        QTreeWidgetItem *it = ui->connectionList->topLevelItem(i);
+
+        if (it->isSelected()) {
+            CIDs.push_back(it->text(1).toInt());
+            safeManager.updateConnection(it->text(1).toInt(),
+                                     it->text(3).toLatin1().data(),
+                                     it->text(4).toLatin1().data(),
+                                     it->text(5).toLatin1().data());
+
+            it->setText(2,"waiting");
+            it->setIcon(0,QIcon(":/refresh.svg"));
+            it->setTextColor(2,QColor("#000000"));
+        }
+
+    }
+
+    std::vector<int> RIDs;
+    for(int i=0;i<ui->resourcesList->topLevelItemCount();i++) {
+        QTreeWidgetItem *it = ui->resourcesList->topLevelItem(i);
+        if (it->isSelected()) {
+            RIDs.push_back(it->text(1).toInt());
+            it->setText(3,"waiting");
+            it->setIcon(0,QIcon(":/refresh22.svg"));
+            it->setTextColor(3,QColor("#000000"));
+        }
+    }
+
+
+    safeManager.safeRun(MIDs,CIDs,RIDs);
     yarp::os::Time::delay(0.1);
     selectAllModule(false);
+    selectAllConnections(false);
+    selectAllResources(false);
     return true;
 }
 
@@ -1050,6 +1084,8 @@ void ApplicationViewWidget::runNestedApplication(QTreeWidgetItem *it,std::vector
 /*! \brief Called when the Stop button has been pressed */
 bool ApplicationViewWidget::onStop()
 {
+    selectAllConnections(true);
+    selectAllResources(true);
     if (safeManager.busy()) {
         return false;
     }
@@ -1080,10 +1116,41 @@ bool ApplicationViewWidget::onStop()
 
     }
 
+    std::vector<int> CIDs;
+    for(int i=0;i<ui->connectionList->topLevelItemCount();i++) {
+        QTreeWidgetItem *it = ui->connectionList->topLevelItem(i);
 
-    safeManager.safeStop(MIDs);
+        if (it->isSelected()) {
+            CIDs.push_back(it->text(1).toInt());
+            safeManager.updateConnection(it->text(1).toInt(),
+                                     it->text(3).toLatin1().data(),
+                                     it->text(4).toLatin1().data(),
+                                     it->text(5).toLatin1().data());
+
+            it->setText(2,"waiting");
+            it->setIcon(0,QIcon(":/refresh.svg"));
+            it->setTextColor(2,QColor("#000000"));
+        }
+
+    }
+
+    std::vector<int> RIDs;
+    for(int i=0;i<ui->resourcesList->topLevelItemCount();i++) {
+        QTreeWidgetItem *it = ui->resourcesList->topLevelItem(i);
+        if (it->isSelected()) {
+            RIDs.push_back(it->text(1).toInt());
+            it->setText(3,"waiting");
+            it->setIcon(0,QIcon(":/refresh22.svg"));
+            it->setTextColor(3,QColor("#000000"));
+        }
+    }
+
+
+    safeManager.safeStop(MIDs,CIDs,RIDs);
     yarp::os::Time::delay(0.1);
     selectAllModule(false);
+    selectAllConnections(false);
+    selectAllResources(false);
     return true;
 }
 
@@ -1117,6 +1184,8 @@ void ApplicationViewWidget::stopNestedApplication(QTreeWidgetItem *it,std::vecto
 /*! \brief Called when the Kill button has been pressed */
 bool ApplicationViewWidget::onKill()
 {
+    selectAllConnections(true);
+    selectAllResources(true);
     if (safeManager.busy()) {
         return false;
     }
@@ -1150,10 +1219,41 @@ bool ApplicationViewWidget::onKill()
 
     }
 
+    std::vector<int> CIDs;
+    for(int i=0;i<ui->connectionList->topLevelItemCount();i++) {
+        QTreeWidgetItem *it = ui->connectionList->topLevelItem(i);
 
-    safeManager.safeKill(MIDs);
+        if (it->isSelected()) {
+            CIDs.push_back(it->text(1).toInt());
+            safeManager.updateConnection(it->text(1).toInt(),
+                                     it->text(3).toLatin1().data(),
+                                     it->text(4).toLatin1().data(),
+                                     it->text(5).toLatin1().data());
+
+            it->setText(2,"waiting");
+            it->setIcon(0,QIcon(":/refresh.svg"));
+            it->setTextColor(2,QColor("#000000"));
+        }
+
+    }
+
+    std::vector<int> RIDs;
+    for(int i=0;i<ui->resourcesList->topLevelItemCount();i++) {
+        QTreeWidgetItem *it = ui->resourcesList->topLevelItem(i);
+        if (it->isSelected()) {
+            RIDs.push_back(it->text(1).toInt());
+            it->setText(3,"waiting");
+            it->setIcon(0,QIcon(":/refresh22.svg"));
+            it->setTextColor(3,QColor("#000000"));
+        }
+    }
+
+
+    safeManager.safeKill(MIDs, CIDs, RIDs);
     yarp::os::Time::delay(0.1);
     selectAllModule(false);
+    selectAllConnections(false);
+    selectAllResources(false);
     return true;
 }
 
