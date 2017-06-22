@@ -36,7 +36,7 @@ Steps for building a YARP stable release
 
 * Ensure that the release file is linked in `doc/releases.dox`
 
-* Update the file `doc/installation/installation_downloads.dox`
+* Update the file `doc/installation/download.dox`
 
 * Commit:
 
@@ -44,7 +44,7 @@ Steps for building a YARP stable release
 git add cmake/YarpVersion.cmake
 git add doc/release/v2_3_68_1.md
 git add doc/releases.dox
-git add doc/installation/installation_downloads.dox
+git add doc/installation/download.dox
 git commit -m "YARP 2.3.68.1"
 ```
 
@@ -158,7 +158,7 @@ Steps for building a YARP feature release
 
 * Ensure that the release file is linked in `doc/releases.dox`
 
-* Update the file `doc/installation/installation_downloads.dox`
+* Update the file `doc/installation/download.dox`
 
 * Commit:
 

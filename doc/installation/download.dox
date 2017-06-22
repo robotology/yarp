@@ -1,17 +1,17 @@
 /*
  * Copyright (C) 2015 iCub Facility, Istituto Italiano di Tecnologia
  * CopyPolicy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
- *
  */
 
 /**
-* @page installation_downloads Downloads
+
+@page download Download YARP
 
 \tableofcontents
 
 Latest YARP release is:
 
- + 2017-06-15: YARP 2.3.70
+ + YARP 2.3.70 (2017-06-15)
 
 \section download_source_code Source Code
 
@@ -26,16 +26,22 @@ Latest release can be downloaded from here:
 
 \remark Important: to develop code using precompiled binaries packages have to
         match the compiler you use, make sure you download and install the
-        correct version (i.e. MSVC12 for Visual Studio 2013, etc..).
+        correct version (i.e. MSVC 12 for Visual Studio 2013, etc..).
         If in doubt about the version number of your copy of Visual Studio, find
         the internal version number shown for it in this
         [version history table](http://en.wikipedia.org/wiki/Microsoft_Visual_Studio#History).
 
 __Installers__:
 
- + [MSVC10 x86] (https://github.com/robotology/yarp/releases/download/v2.3.68/yarp_2.3.68_v10_x86_1.exe)
- + [MSVC11 x86] (https://github.com/robotology/yarp/releases/download/v2.3.68/yarp_2.3.68_v11_x86_1.exe), [MSVC11 amd64] (https://github.com/robotology/yarp/releases/download/v2.3.68/yarp_2.3.68_v11_x86_amd64_1.exe)
- + [MSVC12 x86] (https://github.com/robotology/yarp/releases/download/v2.3.68/yarp_2.3.68_v12_x86_1.exe), [MSVC12 amd64] (https://github.com/robotology/yarp/releases/download/v2.3.68/yarp_2.3.68_v12_x86_amd64_1.exe)
+|       |            MSVC 12 2013           |            MSVC 14 2015           |
+|-------|:---------------------------------:|:---------------------------------:|
+| Win32 | [yarp_2.3.70_v12_x86_1.exe]       | [yarp_2.3.70_v14_x86_1.exe]       |
+| x64   | [yarp_2.3.70_v12_x86_amd64_1.exe] | [yarp_2.3.70_v14_x86_amd64_1.exe] |
+
+[yarp_2.3.70_v12_x86_1.exe]: https://github.com/robotology/yarp/releases/download/v2.3.70/yarp_2.3.70_v12_x86_1.exe
+[yarp_2.3.70_v14_x86_1.exe]: https://github.com/robotology/yarp/releases/download/v2.3.70/yarp_2.3.70_v14_x86_1.exe
+[yarp_2.3.70_v12_x86_amd64_1.exe]: https://github.com/robotology/yarp/releases/download/v2.3.70/yarp_2.3.70_v12_x86_amd64_1.exe
+[yarp_2.3.70_v14_x86_amd64_1.exe]: https://github.com/robotology/yarp/releases/download/v2.3.70/yarp_2.3.70_v14_x86_amd64_1.exe
 
 
 \subsection download_linux Linux (Debian/Ubuntu)
@@ -61,22 +67,27 @@ Previous versions are hosted on
 
 __Previous releases version and dates__:
 
- + 2017-06-15: YARP 2.3.68.1
- + 2016-11-28: YARP 2.3.68
- + 2016-11-28: YARP 2.3.66.2
- + 2016-10-20: YARP 2.3.66.1
- + 2016-06-01: YARP 2.3.66
- + 2016-05-13: YARP 2.3.65
- + 2015-06-15: YARP 2.3.64
- + 2014-07-14: YARP 2.3.63
- + 2014-02-19: YARP 2.3.62
- + 2014-01-31: YARP 2.3.61
- + 2014-01-29: YARP 2.3.60
- + 2013-07-26: YARP 2.3.22
- + 2013-07-08: YARP 2.3.21
- + 2012-12-19: YARP 2.3.20.1
- + 2012-11-23: YARP 2.3.20
- + 2012-07-05: YARP 2.3.19
+ + YARP 2.3.68.1 (2017-06-15)
+ + YARP 2.3.68 (2016-11-28)
+ + YARP 2.3.66.2 (2016-11-28)
+ + YARP 2.3.66.1 (2016-10-20)
+ + YARP 2.3.66 (2016-06-01)
+ + YARP 2.3.65 (2016-05-13)
+ + YARP 2.3.64 (2015-06-15)
+ + YARP 2.3.63 (2014-07-14)
+ + YARP 2.3.62 (2014-02-19)
+ + YARP 2.3.61 (2014-01-31)
+ + YARP 2.3.60 (2014-01-29)
+ + YARP 2.3.22 (2013-07-26)
+ + YARP 2.3.21 (2013-07-08)
+ + YARP 2.3.20.1 (2012-12-19)
+ + YARP 2.3.20 (2012-11-23)
+ + YARP 2.3.19 (2012-07-05)
+*/
 
 
+/* Old download page, remove after some time */
+/**
+@page installation_downloads
+This page was moved: @ref download
 */
