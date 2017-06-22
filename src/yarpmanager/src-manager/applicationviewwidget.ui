@@ -178,6 +178,11 @@ background-color: rgb(255, 255, 255);*/
             <string>Carrier</string>
            </property>
           </column>
+          <column>
+           <property name="text">
+            <string>Modifiers</string>
+           </property>
+          </column>
          </widget>
          <widget class="CustomTreeWidget" name="resourcesList">
           <property name="sizePolicy">

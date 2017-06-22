@@ -654,10 +654,18 @@ void ApplicationViewWidget::updateApplicationWindow()
         QString to = QString("%1").arg((*cnnitr).to());
         QString carrier = QString("%1").arg((*cnnitr).carrier());
         QString status = "disconnected";
+        QString modifier="";
+        size_t pos = carrier.toStdString().find("+");
+        if(pos != std::string::npos)
+        {
+            modifier = carrier.mid(pos);
+            QStringList myStringList = carrier.split('+');
+            carrier = myStringList.first();
+        }
 
 
         QStringList l;
-        l << type << sId << status << from << to << carrier;
+        l << type << sId << status << from << to << carrier << modifier;
         CustomTreeWidgetItem *it = new CustomTreeWidgetItem(ui->connectionList,l);
         ui->moduleList->addTopLevelItem(it);
 
@@ -753,7 +761,7 @@ bool ApplicationViewWidget::isEditable(QTreeWidgetItem *it,int col)
         break;
     }
     case yarp::manager::INOUTD:{
-           if (col == 3 || col == 4 || col == 5 ) {
+           if (col == 3 || col == 4 || col == 5 || col == 6) {
                if (it->text(2) == "disconnected") {
                     return true;
                }
@@ -1307,12 +1315,14 @@ bool ApplicationViewWidget::onConnect()
             {
                 carrier=it->text(5);
             }
-            scanAvailableCarriers(carrier);
+            if(!scanAvailableCarriers(carrier))
+                continue;
+            carrier = carrier + it->text(6); //adding modifier.
             MIDs.push_back(it->text(1).toInt());
             safeManager.updateConnection(it->text(1).toInt(),
                                      it->text(3).toLatin1().data(),
                                      it->text(4).toLatin1().data(),
-                                     it->text(5).toLatin1().data());
+                                     carrier.toLatin1().data());
 
             it->setText(2,"waiting");
             it->setIcon(0,QIcon(":/refresh22.svg"));
