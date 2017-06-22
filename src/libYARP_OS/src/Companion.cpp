@@ -40,6 +40,7 @@
 #include <yarp/os/impl/StreamConnectionReader.h>
 
 #include <algorithm>
+#include <cmath>
 #include <cstdio>
 #include <cstdlib>
 
@@ -324,6 +325,8 @@ Companion::Companion() {
         "terminate a yarp-terminate-aware process by name");
     add("time", &Companion::cmdTime,
         "show the time");
+    add("clock", &Companion::cmdClock,
+        "creates a server publishing the system time");
     add("topic",  &Companion::cmdTopic,
         "set a topic name");
     add("version",    &Companion::cmdVersion,
@@ -2705,6 +2708,99 @@ int Companion::cmdTime(int argc, char *argv[]) {
         }
         fflush(stdout);
         clk.delay(0.1);
+    }
+    return 0;
+}
+
+int Companion::cmdClock(int argc, char *argv[])
+{
+    double init, offset;
+    Property config;
+    SystemClock clock;
+    ConstString portName;
+    yarp::os::BufferedPort<yarp::os::Bottle> streamPort;
+
+    config.fromCommand(argc, argv, false, true);
+    double period = config.check("period", Value(30), "update period, default 30ms").asDouble() /1000.0;
+    double timeFactor = config.check("rtf", Value(1), "real time factor. Upscale or downscale the clock frequency by a multiplier factor. Default 1").asDouble();
+    bool system = config.check("systemTime", "Publish system clock. If false time starts from zero. Default false");
+    bool help = config.check("help");
+
+    if(help)
+    {
+        printf("This command publishes a clock time through a YARP port\n\n");
+        printf("Accepted parameters are:\n");
+        printf("period:     update period [ms]. Default 30\n");
+        printf("name:       name of yarp port to be opened. Default: check YARP_CLOCK environment variable; if missing use '/clock'\n");
+        printf("rtf:        realt time factor. Elapsed time will be multiplied by this factor to simulate faster or slower then real time clock frequency. Default 1 (real time)\n");
+        printf("systemTime: If present the published time will start at the same value as system clock. If if not present (default) the published time will start from 0. \n");
+        printf("help:       print this help\n");
+        printf("\n");
+        return 1;
+    }
+
+    /* Determine clock port name.
+     *
+     * If the user specify a name, use it.
+     * If not, we check the environment variable.
+     * If no env variable is present, use the '/clock' as fallback.
+     */
+    portName = Network::getEnvironment("YARP_CLOCK");
+    if(portName == "")
+        portName = "/clock";
+    portName = config.check("name", Value(portName), "name of port broadcasting the time").asString();
+
+    printf("Clock configuration is the following:\n");
+    printf("period %.3f msec\n", period*1000);                  std::fflush(stdout);
+    printf("name   %s\n", portName.c_str());                    std::fflush(stdout);
+    printf("rtf    %.3f\n", timeFactor);                        std::fflush(stdout);
+    printf("system %s\n", system?"true":"false");               std::fflush(stdout);
+
+    if(!streamPort.open(portName) )
+    {
+        printf("yarp clock error: Cannot open '/clock' port");
+        return 1;
+    }
+
+    printf("\n\n");                                             std::fflush(stdout);
+    double sec, nsec, elapsed;
+    double time = clock.now();
+
+    if(system)
+    {
+        init = 0;
+        offset = time;
+    }
+    else
+    {
+        init = time;
+        offset = 0;
+    }
+
+    bool done = false;
+    while (true)
+    {
+        elapsed = clock.now() - init;
+        time = elapsed * timeFactor + offset;
+        Bottle &tick = streamPort.prepare();
+        // convert time to sec, nsec
+        nsec = std::modf(time, &sec) *1e9;
+
+        tick.clear();
+        tick.addInt((int)sec);
+        tick.addInt((int)nsec);
+        streamPort.write();
+
+        if( (((int) elapsed %5) == 0))
+        {
+            if(!done)
+                printf("yarp clock running happily...\n");  std::fflush(stdout);
+            done = true;
+        }
+        else
+            done = false;
+
+        clock.delay(period);
     }
     return 0;
 }

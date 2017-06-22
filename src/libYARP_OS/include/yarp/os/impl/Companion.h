@@ -204,6 +204,8 @@ public:
 
     int cmdTime(int argc, char *argv[]);
 
+    int cmdClock(int argc, char *argv[]);
+
 private:
 
     Companion();
