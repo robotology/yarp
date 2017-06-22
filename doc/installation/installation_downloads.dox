@@ -33,9 +33,15 @@ Latest release can be downloaded from here:
 
 __Installers__:
 
- + [MSVC10 x86] (https://github.com/robotology/yarp/releases/download/v2.3.68/yarp_2.3.68_v10_x86_1.exe)
- + [MSVC11 x86] (https://github.com/robotology/yarp/releases/download/v2.3.68/yarp_2.3.68_v11_x86_1.exe), [MSVC11 amd64] (https://github.com/robotology/yarp/releases/download/v2.3.68/yarp_2.3.68_v11_x86_amd64_1.exe)
- + [MSVC12 x86] (https://github.com/robotology/yarp/releases/download/v2.3.68/yarp_2.3.68_v12_x86_1.exe), [MSVC12 amd64] (https://github.com/robotology/yarp/releases/download/v2.3.68/yarp_2.3.68_v12_x86_amd64_1.exe)
+|       |            MSVC 12 2013           |            MSVC 14 2015           |
+|-------|:---------------------------------:|:---------------------------------:|
+| Win32 | [yarp_2.3.70_v12_x86_1.exe]       | [yarp_2.3.70_v14_x86_1.exe]       |
+| x64   | [yarp_2.3.70_v12_x86_amd64_1.exe] | [yarp_2.3.70_v14_x86_amd64_1.exe] |
+
+[yarp_2.3.70_v12_x86_1.exe]: https://github.com/robotology/yarp/releases/download/v2.3.70/yarp_2.3.70_v12_x86_1.exe
+[yarp_2.3.70_v14_x86_1.exe]: https://github.com/robotology/yarp/releases/download/v2.3.70/yarp_2.3.70_v14_x86_1.exe
+[yarp_2.3.70_v12_x86_amd64_1.exe]: https://github.com/robotology/yarp/releases/download/v2.3.70/yarp_2.3.70_v12_x86_amd64_1.exe
+[yarp_2.3.70_v14_x86_amd64_1.exe]: https://github.com/robotology/yarp/releases/download/v2.3.70/yarp_2.3.70_v14_x86_amd64_1.exe
 
 
 \subsection download_linux Linux (Debian/Ubuntu)
