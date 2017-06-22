@@ -13,7 +13,7 @@
 
 \subsection install_windows_from_binaries Install from binaries
 
-We provide precompiled binaries for Visual Studio compilers. Download and execute the installer from this page \ref installation_downloads.
+We provide precompiled binaries for Visual Studio compilers. Download and execute the installer from this page \ref download.
 
 You are now ready to check you installation, see \ref check_your_installation.
 
@@ -23,7 +23,7 @@ Instructions in this page allows you to build YARP from sources. This allows get
 
 \subsubsection getting_dependencies_windows Getting dependencies
 
-We recommend you follow the procedure described below, which will install precompiled binaries for almost all the required dependencies. Download the YARP installer according to the compiler you use from this page (\ref installation_downloads). Execute the YARP installer. Disable the YARP tick and proceed with the installation.
+We recommend you follow the procedure described below, which will install precompiled binaries for almost all the required dependencies. Download the YARP installer according to the compiler you use from this page (\ref download). Execute the YARP installer. Disable the YARP tick and proceed with the installation.
 At the moment the YARP installer is not including the <a href="http://eigen.tuxfamily.org">Eigen</a> matrix header-only library, required by YARP since version 2.3.67.3 .
 To install Eigen, as Eigen is an header only library, you can just unzip the archive in a directory,
 and point the `EIGEN3_ROOT` environment variable to the directory in which
