@@ -17,6 +17,9 @@
 #include <yarp/manager/xmlresloader.h>
 #include <yarp/manager/xmlappsaver.h>
 #include <yarp/manager/singleapploader.h>
+#include <yarp/os/LogStream.h>
+
+#include <yarp/os/impl/NameClient.h>
 
 
 #define RUN_TIMEOUT             10      // Run timeout in seconds
@@ -431,7 +434,41 @@ bool Manager::exist(unsigned int id)
             string strPort = res->getName();
             if(strPort[0] != '/')
                 strPort = string("/") + strPort;
-            res->setAvailability(connector.exists(strPort.c_str()));
+            if(dynamic_cast<ResYarpPort*>(res))
+            {
+                res->setAvailability(connector.exists(strPort.c_str()));
+            }
+            else //if it is a computer I have to be sure that the port has been opened through yarp runner
+            {
+                yarp::os::Bottle cmd, reply;
+                cmd.addString("get");
+                cmd.addString(strPort);
+                cmd.addString("yarprun");
+                bool ret = yarp::os::impl::NameClient::getNameClient().send(cmd, reply);
+                if(!ret)
+                {
+                    yError()<<"Manager::Cannot contact the NameClient";
+                    return false;
+                }
+                if(reply.size()==6)
+                {
+                    if(reply.get(5).asBool())
+                    {
+                        res->setAvailability(true);
+                    }
+                    else
+                    {
+                        res->setAvailability(false);
+                    }
+
+                }
+                else
+                {
+                    res->setAvailability(false);
+                }
+
+            }
+
         }
     }
     return res->getAvailability();
