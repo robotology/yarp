@@ -195,6 +195,25 @@ private:
         }
     };
 
+    /*
+     * This thread is intended to have the run() function which
+     * takes more time to execute then the thread period.
+     * The delay will be a negative number.
+     * Check that thread does not hangs forever.
+     */
+    class BusyThread: public RateThread
+    {
+    public:
+        int count;
+
+        BusyThread(int r): RateThread(r),count(0){}
+
+        virtual void run() override {
+            printf("BusyThread running ...\n");
+            SystemClock::delaySystem(1);
+        }
+    };
+
     class AskForStopThread : public RateThread {
     public:
         bool done;
