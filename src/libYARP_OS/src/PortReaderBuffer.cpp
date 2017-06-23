@@ -571,10 +571,7 @@ bool PortReaderBufferBase::acceptObjectBase(PortReader *obj,
         if (HELPER(implementation).ct>0&&prune) {
             PortReaderPacket *readerPacket =
                 HELPER(implementation).dropContent();
-            //PortReader *reader = YARP_NULLPTR;
             pruned = (readerPacket!=YARP_NULLPTR);
-            //reader = readerPacket->getReader();
-            //pruned = (reader!=YARP_NULLPTR);
         }
         //HELPER(implementation).configure(reader, false, true);
         HELPER(implementation).pool.addActivePacket(reader);
