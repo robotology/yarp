@@ -24,7 +24,8 @@
 #include <yarp/os/Property.h>
 
 #include <yarp/os/impl/PlatformMap.h>
-#include <yarp/os/impl/PlatformSet.h>
+
+#include <set>
 
 using namespace yarp::os::impl;
 using namespace yarp::os;
@@ -508,26 +509,16 @@ ConstString NameServer::cmdCheck(int argc, char *argv[]) {
 ConstString NameServer::cmdList(int argc, char *argv[]) {
     ConstString response = "";
 
-    PlatformMultiSet<ConstString> lines;
+    std::multiset<ConstString> lines;
     for (PLATFORM_MAP(ConstString, NameRecord)::iterator it = nameMap.begin(); it!=nameMap.end(); it++) {
         NameRecord& rec = PLATFORM_MAP_ITERATOR_SECOND(it);
         lines.insert(textify(rec.getAddress()));
     }
 
     // return result in alphabetical order
-#ifndef YARP_USE_STL
-    PLATFORM_MULTISET_ITERATOR(ConstString) iter(lines);
-    iter.first();
-    while (!iter.done()) {
-        response += *iter;
-        iter.advance();
+    for (const auto& line : lines) {
+        response += line;
     }
-#else
-    PLATFORM_MULTISET_ITERATOR(ConstString) iter;
-    for (iter=lines.begin(); iter!=lines.end(); iter++) {
-        response += *iter;
-    }
-#endif
 
     return terminate(response);
 }
