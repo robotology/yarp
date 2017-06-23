@@ -113,6 +113,9 @@ private:
     ovrSession session;
     ovrHmdDesc hmdDesc;
     GLFWwindow* window;
+    ovrTrackingState ts;
+    ovrPoseStatef headpose;
+
     yarp::os::Mutex                  inputStateMutex;
     ovrInputState                    inputState;
     bool                             inputStateError;
