@@ -60,10 +60,9 @@ private:
 
 public:
 
-    RateThreadCallbackAdapter(RateThread& owner, int p) : owner(owner), useSystemClock(false) {
-        period_ms=p;
-        elapsed=0;
-        suspended = false;
+    RateThreadCallbackAdapter(RateThread& owner, int p) :   period_ms(p), adaptedPeriod(period_ms/1000.0), owner(owner), useSystemClock(false),
+                                                            elapsed(0), suspended(false)
+    {
         _resetStat();
     }
 
