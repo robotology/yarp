@@ -835,25 +835,18 @@ void yarp::dev::OVRHeadset::run()
     ovrPoseStatef predicted_headpose = predicted_ts.HeadPose;
     yarp::os::Stamp predicted_stamp(distortionFrameIndex, predicted_ts.HeadPose.TimeInSeconds);
 
-    yarp::math::FrameTransform lFrame, rFrame;
+    //send hands frames
+    yarp::sig::Matrix T_Conv(4, 4), T_Head(4, 4), T_LHand(4, 4), T_RHand(4, 4);
+    ovrVector3f& leftH  = ts.HandPoses[ovrHand_Left].ThePose.Position;
+    ovrVector3f& rightH = ts.HandPoses[ovrHand_Right].ThePose.Position;
 
-    lFrame.translation.tX = ts.HandPoses[ovrHand_Left].ThePose.Position.x;
-    lFrame.translation.tY = ts.HandPoses[ovrHand_Left].ThePose.Position.y;
-    lFrame.translation.tZ = ts.HandPoses[ovrHand_Left].ThePose.Position.z;
-    lFrame.rotation.w()   = ts.HandPoses[ovrHand_Left].ThePose.Orientation.w;
-    lFrame.rotation.x()   = ts.HandPoses[ovrHand_Left].ThePose.Orientation.x;
-    lFrame.rotation.y()   = ts.HandPoses[ovrHand_Left].ThePose.Orientation.y;
-    lFrame.rotation.z()   = ts.HandPoses[ovrHand_Left].ThePose.Orientation.z;
+    T_RHand = ovr2matrix(vecSubtract(rightH, headpose.ThePose.Position), ts.HandPoses[ovrHand_Right].ThePose.Orientation);
+    T_LHand = ovr2matrix(vecSubtract(leftH, headpose.ThePose.Position), ts.HandPoses[ovrHand_Left].ThePose.Orientation);
+    T_Head  = ovr2matrix(headpose.ThePose.Position, headpose.ThePose.Orientation);
 
-    rFrame.translation.tX = ts.HandPoses[ovrHand_Right].ThePose.Position.x;
-    rFrame.translation.tY = ts.HandPoses[ovrHand_Right].ThePose.Position.y;
-    rFrame.translation.tZ = ts.HandPoses[ovrHand_Right].ThePose.Position.z;
-    rFrame.rotation.w()   = ts.HandPoses[ovrHand_Right].ThePose.Orientation.w;
-    rFrame.rotation.x()   = ts.HandPoses[ovrHand_Right].ThePose.Orientation.x;
-    rFrame.rotation.y()   = ts.HandPoses[ovrHand_Right].ThePose.Orientation.y;
-    rFrame.rotation.z()   = ts.HandPoses[ovrHand_Right].ThePose.Orientation.z;
-    tfPublisher->setTransform(left_frame,  root_frame, lFrame.toMatrix());
-    tfPublisher->setTransform(right_frame, root_frame, rFrame.toMatrix());
+    tfPublisher->setTransform(left_frame,    root_frame, yarp::math::operator*(T_Head.transposed(), T_LHand));
+    tfPublisher->setTransform(right_frame,   root_frame, yarp::math::operator*(T_Head.transposed(), T_RHand));
+
     // Get Input State
     inputStateMutex.lock();
     result = ovr_GetInputState(session, ovrControllerType_Active, &inputState);
