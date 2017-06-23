@@ -8,11 +8,11 @@
 #define YARP_OS_IMPL_PORTCOREPACKETS_H
 
 #include <yarp/os/impl/PortCorePacket.h>
-#include <yarp/os/impl/PlatformList.h>
 #ifdef YARP_HAS_ACE
 #  include <ace/config.h>
 #  include <ace/String_Base.h>
 #endif
+#include <list>
 #include <cstdio>
 
 namespace yarp {
@@ -33,14 +33,20 @@ namespace yarp {
 class yarp::os::impl::PortCorePackets
 {
 private:
-    PLATFORM_LIST(PortCorePacket) inactive; // unused packets we may reuse
-    PLATFORM_LIST(PortCorePacket) active;   // a list of packets being sent
+    std::list<PortCorePacket*> inactive; // unused packets we may reuse
+    std::list<PortCorePacket*> active;   // a list of packets being sent
 public:
 
     virtual ~PortCorePackets()
     {
-        PLATFORM_LIST_CLEAR(inactive);
-        PLATFORM_LIST_CLEAR(active);
+        while (!inactive.empty()) {
+            delete inactive.back();
+            inactive.pop_back();
+        }
+        while (!active.empty()) {
+            delete active.back();
+            active.pop_back();
+        }
     }
 
     /**
@@ -60,7 +66,7 @@ public:
      */
     PortCorePacket *getFreePacket()
     {
-        if (PLATFORM_LIST_EMPTY(inactive)) {
+        if (inactive.empty()) {
             PortCorePacket *obj = YARP_NULLPTR;
 #if defined(YARP_HAS_ACE) && !defined(YARP_HAS_CXX11)
             size_t obj_size = sizeof (PortCorePacket);
@@ -72,11 +78,10 @@ public:
             obj = new PortCorePacket();
 #endif
             yAssert(obj!=YARP_NULLPTR);
-            PLATFORM_LIST_PUSH_BACK(inactive, obj);
+            inactive.push_back(obj);
         }
-        PortCorePacket *next = YARP_NULLPTR;
-        PLATFORM_LIST_GET(inactive, next);
-        if (next==YARP_NULLPTR) {
+        PortCorePacket *next = inactive.front();
+        if (next == YARP_NULLPTR) {
             fprintf(stderr, "*** YARP consistency check failed.\n");
             fprintf(stderr, "*** There has been a low-level failure in \"PortCorePackets\".\n");
             fprintf(stderr, "*** This typically occurs when ports are accessed in a non-threadsafe way.\n");
@@ -85,7 +90,7 @@ public:
         }
         yAssert(next!=YARP_NULLPTR);
         inactive.remove(next);
-        PLATFORM_LIST_PUSH_BACK(active, next);
+        active.push_back(next);
         return next;
     }
 
@@ -103,7 +108,7 @@ public:
             }
             packet->completed = true;
             active.remove(packet);
-            PLATFORM_LIST_PUSH_BACK(inactive, packet);
+            inactive.push_back(packet);
         }
     }
 

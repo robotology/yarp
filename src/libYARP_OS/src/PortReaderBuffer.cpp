@@ -17,12 +17,13 @@
 #include <yarp/os/impl/StreamConnectionReader.h>
 
 #include <yarp/os/impl/PlatformVector.h>
-#include <yarp/os/impl/PlatformList.h>
 #include <yarp/os/impl/PortCorePacket.h>
 
 #ifdef YARP_HAS_ACE
 #include <ace/Malloc_Allocator.h>
 #endif
+
+#include <list>
 
 using namespace yarp::os::impl;
 using namespace yarp::os;
@@ -102,7 +103,8 @@ public:
 
 class PortReaderPool {
 private:
-    PLATFORM_LIST(PortReaderPacket) inactive, active;
+    std::list<PortReaderPacket*> inactive;
+    std::list<PortReaderPacket*> active;
 
 public:
 
@@ -115,7 +117,7 @@ public:
     }
 
     PortReaderPacket *getInactivePacket() {
-        if (PLATFORM_LIST_EMPTY(inactive)) {
+        if (inactive.empty()) {
             PortReaderPacket *obj = YARP_NULLPTR;
 #if defined(YARP_HAS_ACE) && !defined(YARP_HAS_CXX11)
             size_t obj_size = sizeof (PortReaderPacket);
@@ -126,21 +128,18 @@ public:
 #else
             obj = new PortReaderPacket();
 #endif
-            PLATFORM_LIST_PUSH_BACK(inactive, obj);
+            inactive.push_back(obj);
         }
-        PortReaderPacket *next = YARP_NULLPTR;
-        PLATFORM_LIST_GET(inactive, next);
+        PortReaderPacket *next = inactive.front();
         yAssert(next!=YARP_NULLPTR);
         inactive.remove(next);
-        //active.insert_tail(next);
         return next;
     }
 
     PortReaderPacket *getActivePacket() {
         PortReaderPacket *next = YARP_NULLPTR;
         if (getCount()>=1) {
-            PLATFORM_LIST_GET(active, next);
-            //active.get(next);
+            next = active.front();
             yAssert(next!=YARP_NULLPTR);
             active.remove(next);
         }
@@ -149,23 +148,25 @@ public:
 
     void addActivePacket(PortReaderPacket *packet) {
         if (packet!=YARP_NULLPTR) {
-            PLATFORM_LIST_PUSH_BACK(active, packet);
-            //active.insert_tail(packet);
+            active.push_back(packet);
         }
     }
 
     void addInactivePacket(PortReaderPacket *packet) {
         if (packet!=YARP_NULLPTR) {
-            PLATFORM_LIST_PUSH_BACK(inactive, packet);
-            //inactive.insert_tail(packet);
+            inactive.push_back(packet);
         }
     }
 
     void reset() {
-        PLATFORM_LIST_CLEAR(active);
-        PLATFORM_LIST_CLEAR(inactive);
-        //active.reset();
-        //inactive.reset();
+        while (!active.empty()) {
+            delete active.back();
+            active.pop_back();
+        }
+        while (!inactive.empty()) {
+            delete inactive.back();
+            inactive.pop_back();
+        }
     }
 };
 

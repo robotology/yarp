@@ -23,7 +23,6 @@
 #include <yarp/os/Network.h>
 #include <yarp/os/Property.h>
 
-#include <yarp/os/impl/PlatformList.h>
 #include <yarp/os/impl/PlatformMap.h>
 #include <yarp/os/impl/PlatformSet.h>
 
