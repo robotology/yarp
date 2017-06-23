@@ -24,10 +24,11 @@
 #include <yarp/os/impl/Logger.h>
 #include <yarp/os/impl/Protocol.h>
 #include <yarp/os/YarpPlugin.h>
-#include <yarp/os/impl/PlatformVector.h>
 
 #include <yarp/os/LockGuard.h>
 #include <yarp/os/Mutex.h>
+
+#include <vector>
 
 using namespace yarp::os::impl;
 using namespace yarp::os;
@@ -40,7 +41,7 @@ public:
     static Carriers* yarp_carriers_instance;
     static yarp::os::Mutex mutex;
 
-    PlatformVector<Carrier*> delegates;
+    std::vector<Carrier*> delegates;
 
     Carrier* chooseCarrier(const ConstString* name,
                            const Bytes* header,
@@ -230,7 +231,7 @@ Carriers::~Carriers()
 
 void Carriers::clear()
 {
-    PlatformVector<Carrier*>& lst = mPriv->delegates;
+    std::vector<Carrier*>& lst = mPriv->delegates;
     for (unsigned int i=0; i<lst.size(); i++) {
         delete lst[i];
     }
@@ -323,7 +324,7 @@ Bottle Carriers::listCarriers()
     Bottle lst;
     Property done;
 
-    PlatformVector<Carrier*>& delegates = instance.mPriv->delegates;
+    std::vector<Carrier*>& delegates = instance.mPriv->delegates;
     for (size_t i = 0; i < delegates.size(); i++) {
         Carrier& c = *delegates[i];
         lst.addString(c.getName());

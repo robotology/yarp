@@ -10,10 +10,10 @@
 #include <yarp/os/ConstString.h>
 
 #include <yarp/os/impl/PlatformMap.h>
-#include <yarp/os/impl/PlatformVector.h>
-#include <cstdio>
 #include <yarp/os/impl/Logger.h>
 
+#include <vector>
+#include <cstdio>
 
 namespace yarp {
     namespace os {
@@ -48,7 +48,7 @@ private:
     };
 
     PLATFORM_MAP(ConstString, Entry) action;
-    PlatformVector<ConstString> names;
+    std::vector<ConstString> names;
 
 public:
     void add(const char *name, RET (T::*fn)(int argc, char *argv[]))
@@ -72,7 +72,7 @@ public:
         return RET();
     }
 
-    PlatformVector<ConstString> getNames()
+    std::vector<ConstString> getNames()
     {
         return names;
     }

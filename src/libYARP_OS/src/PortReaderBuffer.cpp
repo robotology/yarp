@@ -16,7 +16,6 @@
 #include <yarp/os/StringInputStream.h>
 #include <yarp/os/impl/StreamConnectionReader.h>
 
-#include <yarp/os/impl/PlatformVector.h>
 #include <yarp/os/impl/PortCorePacket.h>
 
 #ifdef YARP_HAS_ACE

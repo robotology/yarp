@@ -13,7 +13,8 @@
 #include <yarp/os/Contactable.h>
 
 #include <yarp/os/impl/PlatformMap.h>
-#include <yarp/os/impl/PlatformVector.h>
+
+#include <vector>
 #include <cstdio>
 
 // ACE headers may fiddle with main
@@ -229,8 +230,8 @@ private:
     };
 
     PLATFORM_MAP(ConstString, Entry) action;
-    PlatformVector<ConstString> names;
-    PlatformVector<ConstString> tips;
+    std::vector<ConstString> names;
+    std::vector<ConstString> tips;
     bool adminMode;
     yarp::os::ConstString argType;
     bool waitConnect;

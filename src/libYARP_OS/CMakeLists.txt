@@ -182,7 +182,6 @@ set(YARP_OS_IMPL_HDRS include/yarp/os/impl/ACELockImpl.h
                       include/yarp/os/impl/PlatformThread.h
                       include/yarp/os/impl/PlatformTime.h
                       include/yarp/os/impl/PlatformUnistd.h
-                      include/yarp/os/impl/PlatformVector.h
                       include/yarp/os/impl/PortCommand.h
                       include/yarp/os/impl/PortCore.h
                       include/yarp/os/impl/PortCoreAdapter.h

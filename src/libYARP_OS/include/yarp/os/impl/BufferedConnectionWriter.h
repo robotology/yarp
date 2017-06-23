@@ -18,7 +18,7 @@
 #include <yarp/os/Bottle.h>
 #include <yarp/os/NetInt64.h>
 
-#include <yarp/os/impl/PlatformVector.h>
+#include <vector>
 #include <cstdlib>
 
 namespace yarp {
@@ -451,9 +451,9 @@ private:
     bool applyConvertTextMode();
 
 
-    PlatformVector<yarp::os::ManagedBytes *> lst;    ///< buffers in payload
-    PlatformVector<yarp::os::ManagedBytes *> header; ///< buffers in header
-    PlatformVector<yarp::os::ManagedBytes *> *target;///< points to header or payload
+    std::vector<yarp::os::ManagedBytes *> lst;    ///< buffers in payload
+    std::vector<yarp::os::ManagedBytes *> header; ///< buffers in header
+    std::vector<yarp::os::ManagedBytes *> *target;///< points to header or payload
     yarp::os::ManagedBytes *pool; ///< the pool buffer (in lst or header)
     size_t poolIndex;  ///< current offset into pool buffer
     size_t poolCount;  ///< number of pool buffers allocated

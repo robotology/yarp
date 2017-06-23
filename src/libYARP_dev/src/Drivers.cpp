@@ -18,7 +18,6 @@
 
 #include <yarp/dev/Drivers.h>
 
-#include <yarp/os/impl/PlatformVector.h>
 #include <yarp/os/impl/PlatformSignal.h>
 #include <yarp/os/impl/Logger.h>
 
@@ -35,7 +34,7 @@ Drivers Drivers::instance;
 
 class DriversHelper : public YarpPluginSelector {
 public:
-    PlatformVector<DriverCreator *> delegates;
+    std::vector<DriverCreator *> delegates;
 
     ~DriversHelper() {
         for (unsigned int i=0; i<delegates.size(); i++) {

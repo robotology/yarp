@@ -18,7 +18,8 @@
 #include <yarp/os/Bottle.h>
 
 #include <yarp/os/impl/PlatformMap.h>
-#include <yarp/os/impl/PlatformVector.h>
+
+#include <vector>
 
 // ACE headers may fiddle with main
 #ifdef main
@@ -120,7 +121,7 @@ private:
     class ReusableRecord
     {
     private:
-        PlatformVector<T> reuse;
+        std::vector<T> reuse;
     public:
         virtual ~ReusableRecord() {}
 
@@ -280,7 +281,7 @@ private:
     class PropertyRecord
     {
     private:
-        PlatformVector<ConstString> prop;
+        std::vector<ConstString> prop;
     public:
         PropertyRecord()
         {

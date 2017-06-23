@@ -17,7 +17,8 @@
 #include <yarp/os/Vocab.h>
 
 #include <yarp/os/impl/Logger.h>
-#include <yarp/os/impl/PlatformVector.h>
+
+#include <vector>
 
 namespace yarp {
     namespace os {
@@ -554,8 +555,8 @@ public:
 private:
     static StoreNull* storeNull;
 
-    PlatformVector<Storable*> content;
-    PlatformVector<char> data;
+    std::vector<Storable*> content;
+    std::vector<char> data;
     int speciality;
     bool nested;
     bool dirty;
