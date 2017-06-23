@@ -1024,21 +1024,9 @@ bool ApplicationViewWidget::onRun()
     }
 
     std::vector<int> CIDs;
-    for(int i=0;i<ui->connectionList->topLevelItemCount();i++) {
-        QTreeWidgetItem *it = ui->connectionList->topLevelItem(i);
-
-        if (it->isSelected()) {
-            CIDs.push_back(it->text(1).toInt());
-            safeManager.updateConnection(it->text(1).toInt(),
-                                     it->text(3).toLatin1().data(),
-                                     it->text(4).toLatin1().data(),
-                                     it->text(5).toLatin1().data());
-
-            it->setText(2,"waiting");
-            it->setIcon(0,QIcon(":/refresh.svg"));
-            it->setTextColor(2,QColor("#000000"));
-        }
-
+    for(int i=0;i<ui->connectionList->topLevelItemCount();i++)
+    {
+        updateConnection(i, CIDs);
     }
 
     std::vector<int> RIDs;
@@ -1125,21 +1113,9 @@ bool ApplicationViewWidget::onStop()
     }
 
     std::vector<int> CIDs;
-    for(int i=0;i<ui->connectionList->topLevelItemCount();i++) {
-        QTreeWidgetItem *it = ui->connectionList->topLevelItem(i);
-
-        if (it->isSelected()) {
-            CIDs.push_back(it->text(1).toInt());
-            safeManager.updateConnection(it->text(1).toInt(),
-                                     it->text(3).toLatin1().data(),
-                                     it->text(4).toLatin1().data(),
-                                     it->text(5).toLatin1().data());
-
-            it->setText(2,"waiting");
-            it->setIcon(0,QIcon(":/refresh.svg"));
-            it->setTextColor(2,QColor("#000000"));
-        }
-
+    for(int i=0;i<ui->connectionList->topLevelItemCount();i++)
+    {
+        updateConnection(i, CIDs);
     }
 
     std::vector<int> RIDs;
@@ -1228,20 +1204,9 @@ bool ApplicationViewWidget::onKill()
     }
 
     std::vector<int> CIDs;
-    for(int i=0;i<ui->connectionList->topLevelItemCount();i++) {
-        QTreeWidgetItem *it = ui->connectionList->topLevelItem(i);
-
-        if (it->isSelected()) {
-            CIDs.push_back(it->text(1).toInt());
-            safeManager.updateConnection(it->text(1).toInt(),
-                                     it->text(3).toLatin1().data(),
-                                     it->text(4).toLatin1().data(),
-                                     it->text(5).toLatin1().data());
-
-            it->setText(2,"waiting");
-            it->setIcon(0,QIcon(":/refresh.svg"));
-            it->setTextColor(2,QColor("#000000"));
-        }
+    for(int i=0;i<ui->connectionList->topLevelItemCount();i++)
+    {
+        updateConnection(i, CIDs);
 
     }
 
@@ -1300,38 +1265,14 @@ bool ApplicationViewWidget::onConnect()
     }
 
 
-    std::vector<int> MIDs;
-    for(int i=0;i<ui->connectionList->topLevelItemCount();i++) {
-        QTreeWidgetItem *it = ui->connectionList->topLevelItem(i);
-        if (it->isSelected()) {
-            QComboBox* box = qobject_cast<QComboBox*>(ui->connectionList->itemWidget((QTreeWidgetItem *)it, 5));
-            QString carrier;
-            if (box)
-            {
-                carrier = box->currentText();
-
-            }
-            else
-            {
-                carrier=it->text(5);
-            }
-            if(!scanAvailableCarriers(carrier))
-                continue;
-            carrier = carrier + it->text(6); //adding modifier.
-            MIDs.push_back(it->text(1).toInt());
-            safeManager.updateConnection(it->text(1).toInt(),
-                                     it->text(3).toLatin1().data(),
-                                     it->text(4).toLatin1().data(),
-                                     carrier.toLatin1().data());
-
-            it->setText(2,"waiting");
-            it->setIcon(0,QIcon(":/refresh22.svg"));
-            it->setTextColor(2,QColor("#000000"));
-        }
+    std::vector<int> CIDs;
+    for(int i=0;i<ui->connectionList->topLevelItemCount();i++)
+    {
+        updateConnection(i,CIDs);
     }
 
 
-    safeManager.safeConnect(MIDs);
+    safeManager.safeConnect(CIDs);
     yarp::os::Time::delay(0.1);
     selectAllConnections(false);
     return true;
@@ -1345,37 +1286,14 @@ bool ApplicationViewWidget::onDisconnect()
     }
 
 
-    std::vector<int> MIDs;
-    for(int i=0;i<ui->connectionList->topLevelItemCount();i++) {
-        QTreeWidgetItem *it = ui->connectionList->topLevelItem(i);
-        if (it->isSelected()) {
-            QComboBox* box = qobject_cast<QComboBox*>(ui->connectionList->itemWidget((QTreeWidgetItem *)it, 5));
-            QString carrier;
-            if (box)
-            {
-                carrier = box->currentText();
-
-            }
-            else
-            {
-                carrier=it->text(5);
-            }
-            scanAvailableCarriers(carrier, false);
-            MIDs.push_back(it->text(1).toInt());
-            safeManager.updateConnection(it->text(1).toInt(),
-                                     it->text(3).toLatin1().data(),
-                                     it->text(4).toLatin1().data(),
-                                     it->text(5).toLatin1().data());
-
-            it->setText(2,"waiting");
-            it->setIcon(0,QIcon(":/refresh22.svg"));
-            it->setTextColor(2,QColor("#000000"));
-
-        }
+    std::vector<int> CIDs;
+    for(int i=0;i<ui->connectionList->topLevelItemCount();i++)
+    {
+        updateConnection(i, CIDs);
     }
 
 
-    safeManager.safeDisconnect(MIDs);
+    safeManager.safeDisconnect(CIDs);
     yarp::os::Time::delay(0.1);
     selectAllConnections(false);
     return true;
@@ -1415,13 +1333,7 @@ bool ApplicationViewWidget::onRefresh()
     }
 
     for(int i=0;i<ui->connectionList->topLevelItemCount();i++) {
-        QTreeWidgetItem *it = ui->connectionList->topLevelItem(i);
-        if (it->isSelected()) {
-            connectionsIDs.push_back(it->text(1).toInt());
-            it->setText(2,"waiting");
-            it->setIcon(0,QIcon(":/refresh22.svg"));
-            it->setTextColor(2,QColor("#000000"));
-        }
+        updateConnection(i,connectionsIDs);
     }
 
     for(int i=0;i<ui->resourcesList->topLevelItemCount();i++) {
@@ -1587,10 +1499,55 @@ bool ApplicationViewWidget::scanAvailableCarriers(QString carrier, bool isConnec
     }
     if (!res && isConnection)
     {
-        string msg = "Unable to find '"+ carrier.toStdString() + "' among the available carriers ";
-        logger->addError(msg.c_str());
+        string msg = "Unable to find '"+ carrier.toStdString() +
+                "' among the available carriers in this machine, the connection could fail.";
+        logger->addWarning(msg.c_str());
     }
     return res;
+}
+
+void ApplicationViewWidget::updateConnection(int index, std::vector<int>& CIDs)
+{
+    QTreeWidgetItem *it = ui->connectionList->topLevelItem(index);
+    if (it->isSelected()) {
+        QComboBox* box = qobject_cast<QComboBox*>(ui->connectionList->itemWidget((QTreeWidgetItem *)it, 5));
+        QString carrier, modifier;
+        if (box)
+        {
+            carrier = box->currentText();
+
+        }
+        else
+        {
+            carrier=it->text(5);
+        }
+
+        //checking if in the carrier has been added a modifier
+
+        size_t pos = carrier.toStdString().find("+");
+        if(pos != std::string::npos)
+        {
+            modifier = carrier.mid(pos);
+            QStringList myStringList = carrier.split('+');
+            carrier = myStringList.first();
+            box->setCurrentText(carrier);
+            it->setText(6,modifier);
+        }
+
+        // scan the available carriers in the system where yarpmanager is launched.
+        scanAvailableCarriers(carrier);
+        carrier = carrier + it->text(6); //adding modifier.
+        CIDs.push_back(it->text(1).toInt());
+        safeManager.updateConnection(it->text(1).toInt(),
+                                 it->text(3).toLatin1().data(),
+                                 it->text(4).toLatin1().data(),
+                                 carrier.toLatin1().data());
+
+        it->setText(2,"waiting");
+        it->setIcon(0,QIcon(":/refresh22.svg"));
+        it->setTextColor(2,QColor("#000000"));
+    }
+
 }
 
 /*! \brief Select/deselect all connections
