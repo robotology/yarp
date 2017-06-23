@@ -385,6 +385,16 @@ public:
         checkTrue(!thread.isRunning(), "thread terminated correctly");
         //join thread
         thread.stop();
+
+        SystemClock::delaySystem(-2);
+        Time::delay(-2);
+        checkTrue(true, "Negative Time::delay() and delaySystem() is safe.");
+
+        BusyThread  busy(10);
+        busy.start();
+        SystemClock::delaySystem(2);
+        busy.stop();
+        checkTrue(true, "Negative delay on reteThread is safe.");
     }
 
     void testRunnable()
