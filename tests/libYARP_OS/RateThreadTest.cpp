@@ -308,7 +308,7 @@ public:
         report(0,"setting high res scheduler (this affects only windows)");
 
         bool success = false;
-        double acceptedThreshold = 0.30;
+        double acceptedThreshold = 0.40;
 
         Time::turboBoost();
         char message[255];
@@ -318,32 +318,34 @@ public:
         desiredPeriod = 15;
         sprintf(message, "Thread1 requested period: %d[ms]", (int)desiredPeriod);
         report(0, message);
-        actualPeriod = test(15, 1);
-        if( (actualPeriod > acceptedThreshold*(1-desiredPeriod)) && (actualPeriod < desiredPeriod * (1+acceptedThreshold)) )
+        actualPeriod = test(desiredPeriod, 1);
+        if( (actualPeriod > (desiredPeriod*(1-acceptedThreshold))) && (actualPeriod < (desiredPeriod * (1+acceptedThreshold))) )
             success = true;
         sprintf(message, "Thread1 estimated period: %.2lf[ms]", actualPeriod);
         report(0, message);
-        sprintf(message, "Period within range of %d %%", (int)(acceptedThreshold*100));
+        sprintf(message, "Period within range of %d%%", (int)(acceptedThreshold*100));
         checkTrue(success, message);
 
-        sprintf(message, "Thread2 requested period: %d[ms]", 10);
+        desiredPeriod = 10;
+        sprintf(message, "Thread2 requested period: %d[ms]", (int)desiredPeriod);
         report(0, message);
-        actualPeriod = test(10, 1);
-        if( (actualPeriod > acceptedThreshold*(1-desiredPeriod)) && (actualPeriod < desiredPeriod * (1+acceptedThreshold)) )
+        actualPeriod = test(desiredPeriod, 1);
+        if( (actualPeriod > (desiredPeriod*(1-acceptedThreshold))) && (actualPeriod < (desiredPeriod * (1+acceptedThreshold))) )
             success = true;
         sprintf(message, "Thread2 estimated period: %.2lf[ms]", actualPeriod);
         report(0, message);
-        sprintf(message, "Period within range of %d %%", (int)(acceptedThreshold*100));
+        sprintf(message, "Period within range of %d%%", (int)(acceptedThreshold*100));
         checkTrue(success, message);
 
-        sprintf(message, "Thread3 requested period: %d[ms]", 1);
+        desiredPeriod = 1;
+        sprintf(message, "Thread3 requested period: %d[ms]", (int)desiredPeriod);
         report(0, message);
-        actualPeriod = test(1, 1);
-        if( (actualPeriod > acceptedThreshold*(1-desiredPeriod)) && (actualPeriod < desiredPeriod * (1+acceptedThreshold)) )
+        actualPeriod = test(desiredPeriod, 1);
+        if( (actualPeriod > (desiredPeriod*(1-acceptedThreshold))) && (actualPeriod < (desiredPeriod * (1+acceptedThreshold))) )
             success = true;
         sprintf(message, "Thread3 estimated period: %.2lf[ms]", actualPeriod);
         report(0, message);
-        sprintf(message, "Period within range of %d %%", (int)(acceptedThreshold*100));
+        sprintf(message, "Period within range of %d%%", (int)(acceptedThreshold*100));
         checkTrue(success, message);
 
         report(0, "successful");
