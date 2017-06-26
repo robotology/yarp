@@ -499,6 +499,14 @@ int yarp::os::Run::server()
         yError() << "Yarprun failed to open port: " << mPortName.c_str();
         return YARPRUN_ERROR;
     }
+
+    yarp::os::Bottle cmd, reply;
+    cmd.addString("set");
+    cmd.addString(port.getName());
+    cmd.addString("yarprun");
+    cmd.addString("true");
+    yarp::os::impl::NameClient::getNameClient().send(cmd, reply);
+
     yInfo() << "Yarprun succesfully started on port: " << mPortName.c_str();
 
     pServerPort=&port;
