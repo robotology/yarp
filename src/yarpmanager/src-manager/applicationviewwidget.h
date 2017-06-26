@@ -111,6 +111,7 @@ private:
     void modStdOutNestedApplication(QTreeWidgetItem *it, int id,QString s);
     void selectAllNestedApplicationModule(QTreeWidgetItem *it, bool check);
     bool scanAvailableCarriers(QString carrier, bool isConnection = true);
+    void updateConnection(int index, std::vector<int> &CIDs);
 
 
 
