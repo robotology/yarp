@@ -42,7 +42,8 @@ namespace yarp {
          * @deprecated Since YARP 2.3.70. Use std::exit().
          */
         YARP_OS_DEPRECATED_API_MSG("Use std::exit()")
-        void exit(int exit_code); // FIXME noreturn
+
+        void exit YARP_NORETURN (int exit_code);
 #endif // YARP_NO_DEPRECATED
 
 #ifndef YARP_NO_DEPRECATED // Since YARP 2.3.70
@@ -52,7 +53,8 @@ namespace yarp {
          * @deprecated Since YARP 2.3.70. Use std::abort().
          */
         YARP_OS_DEPRECATED_API_MSG("Use std::abort()")
-        void abort(bool verbose = false);
+
+        void abort YARP_NORETURN (bool verbose = false);
 #endif // YARP_NO_DEPRECATED
 
         /**
