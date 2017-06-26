@@ -375,12 +375,10 @@ int Companion::dispatch(const char *name, int argc, char *argv[]) {
     }
     argc_copy = at;
 
-    ConstString sname(name);
-    Entry e;
-    int result = PLATFORM_MAP_FIND_RAW(action, sname, e);
     int v = -1;
-    if (result!=-1) {
-        v = (this->*(e.fn))(argc_copy, argv_copy);
+    auto it = action.find(ConstString(name));
+    if (it != action.end()) {
+        v = (this->*(it->second.fn))(argc_copy, argv_copy);
     } else {
         YARP_SPRINTF1(Logger::get(),
                       error,

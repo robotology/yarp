@@ -17,15 +17,9 @@
 #cmakedefine YARP_HAS_ACE
 #cmakedefine YARP_HAS_CXX11
 
-// Use STL if C++11 is active, or if ACE is not available
-#if defined(YARP_HAS_CXX11) || !defined(YARP_HAS_ACE)
-# define YARP_USE_STL 1
-#endif
-
 // ACE information
 #if defined(YARP_HAS_ACE)
 #cmakedefine ACE_ADDR_HAS_LOOPBACK_METHOD
-#cmakedefine ACE_HAS_STRING_HASH
 #endif
 
 // System headers

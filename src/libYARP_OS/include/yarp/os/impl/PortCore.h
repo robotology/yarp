@@ -23,8 +23,9 @@
 #include <yarp/os/Mutex.h>
 
 #include <yarp/os/ModifyingCarrier.h>
-#include <yarp/os/impl/PlatformVector.h>
 #include <yarp/os/impl/BufferedConnectionWriter.h>
+
+#include <vector>
 
 namespace yarp {
     namespace os {
@@ -589,7 +590,7 @@ public:
 private:
 
     // main internal PortCore state and operations
-    PlatformVector<PortCoreUnit *> units;  ///< list of connections
+    std::vector<PortCoreUnit *> units;  ///< list of connections
     SemaphoreImpl stateMutex;       ///< control access to essential port state
     SemaphoreImpl packetMutex;      ///< control access to message cache
     SemaphoreImpl connectionChange; ///< signal changes in connections

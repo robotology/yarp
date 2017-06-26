@@ -55,7 +55,7 @@ extern char **environ;
 
 #include <yarp/os/RateThread.h>
 #include <yarp/os/Semaphore.h>
-//#include <yarp/os/impl/PlatformVector.h>
+
 #include <vector>
 
 static void enableCpuLoadCollector(void);

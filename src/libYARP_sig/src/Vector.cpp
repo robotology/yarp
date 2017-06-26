@@ -12,18 +12,16 @@
 #include <yarp/os/ManagedBytes.h>
 #include <yarp/os/NetFloat64.h>
 
-#include <yarp/os/impl/PlatformVector.h>
-#include <cstdio>
-#include <cstdlib>
 #include <yarp/os/impl/Logger.h>
 
 #include <yarp/sig/Matrix.h>
 
+#include <vector>
+#include <cstdio>
+#include <cstdlib>
+
 using namespace yarp::sig;
 using namespace yarp::os;
-
-#define RES(v) ((PlatformVector<T> *)v)
-#define RES_ITERATOR(v) ((PLATFORM_VECTOR_ITERATOR(double) *)v)
 
 /// network stuff
 #include <yarp/os/NetInt32.h>
