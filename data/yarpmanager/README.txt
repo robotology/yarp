@@ -19,7 +19,7 @@ each of these concepts.
 
 Configuration
 =============
-An example of (g)yarpmanager configuration file can be found in
+An example of yarpmanager configuration file can be found in
 ./tests/ymanager.ini.
 
 'apppath', 'modpath', 'respath' respectively point to the folder where

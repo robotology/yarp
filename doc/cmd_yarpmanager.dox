@@ -17,7 +17,7 @@ The command-line utility "yarpmanager-console" and its graphical
 companions "yarpmanager"  are tools for running and managing multiple
 programs on a set of machines.
 
-\image html ymgui.png "yarpmanager-console and (g)yarpmanager"
+\image html ymgui.png "yarpmanager-console and yarpmanager"
 
 \section Contents
 \li \ref features
@@ -56,7 +56,7 @@ programs on a set of machines.
 See \ref application, \ref module and \ref resource for more information on how to use XML model to describe each of these concepts.
 
 \section configuration Configuration
-Default configuration file known as "ymanager.ini" can be automatically loaded by (g)yarpmanager from the same folder running the manager; or it can be indicated by parameter "--from" and "--context", following Yarp Resource Finder policies (see \ref yarp_resource_finder_basic). Using the configuration files, one can explicitly indicates the paths where (g)yarpmanager should search for applications, resources or modules. If the configuration file is not provided, then (g)yarpmanager will search for the corresponding XML files in the Yarp data directories (see \ref yarp_data_dirs).
+Default configuration file known as "ymanager.ini" can be automatically loaded by yarpmanager from the same folder running the manager; or it can be indicated by parameter "--from" and "--context", following Yarp Resource Finder policies (see \ref yarp_resource_finder_basic). Using the configuration files, one can explicitly indicates the paths where yarpmanager should search for applications, resources or modules. If the configuration file is not provided, then yarpmanager will search for the corresponding XML files in the Yarp data directories (see \ref yarp_data_dirs).
 
 \verbatim
 $ yarpmanager --from <path to my_config_file>
@@ -127,7 +127,7 @@ $ yarpmanager-console
 >> exit
 \endverbatim
 
-\subsection example_g Using (g)yarpmanager
+\subsection example_g Using yarpmanager
 Open another terminal and try this:
 \verbatim
 $ cd <path to yarp local repository>/data/yarpmanager/tests
@@ -235,7 +235,7 @@ Here is an example of application description file in XML format:
  - \<prefix\> refers to port name's prefix. It will be added to the names of all ports that the module opens. For example, if a module open "/Port1" and \<prefix\>/MyPrefix\</prefix\>, after launching the module, the real port name will be "/Myprefix/Port1".
  - Other applications can be integrated by indicating their names. Setting \<prefix\> for an included application, port prefix will be applied to all modules and connections which are not set as external.
  - Persistent connection can be created by setting "persist" property of the corresponding connection tags. They are created by using YARP topics as described in \ref persistent_connections and will be removed when the application is unloaded from manager (i.e. closing the application window in yarpmanager).
- - The \<port\> tags inside \<dependencies\> indicate that the execution of the current module should be postponed until the ports become available. (g)yarpmanager waits for the ports and continuously checks their availability. If one of the required ports is not available within the time indicated by the "timeout" property, the module will not be launched.
+ - The \<port\> tags inside \<dependencies\> indicate that the execution of the current module should be postponed until the ports become available. yarpmanager waits for the ports and continuously checks their availability. If one of the required ports is not available within the time indicated by the "timeout" property, the module will not be launched.
  - It is also possible to send a specific RPC request to a port to get status about the internal state of a module. This is useful when launching a module should be postponed until other modules get launched and ready. This can be done by specifying the request using "request" property and the expected reply using "reply" property in a \<port\> tag. The manager sends the request to the relevant port and check if the received reply matches the one indicated in the "reply" property before launching the module. If the reply does not match the expected one, the corresponding module will not launched.
  - The \<ensure>\> and \<wait\> tags can be used to enforce an arbitrary wait after launching a module. In this case, the manager waits for that specific time to consider the module successfully launched.
  - The \<display\> tag specifies the visibility of the process window:
@@ -288,7 +288,7 @@ Here is an example of resource description file in XML format:
 \endcode
 
 \subsection res_notes Notes
- - Platform, Memory, Storage and Processor specification will be discovered automatically by (g)yarpmanager; but, peripherals such as GPU should to be specifically introduced.
+ - Platform, Memory, Storage and Processor specification will be discovered automatically by yarpmanager; but, peripherals such as GPU should to be specifically introduced.
 
 
 \section module Module description file
@@ -418,7 +418,7 @@ yarpmanager allows for creating new application, module and resource description
 - Open it using yarpmanager.
 
 \subsection create_notes Notes
-- (g)yarpmanager allows for identical application names (they will be listed as MyApp(1), MyApp(2), ...). But it is strongly recommended to have unique proper name for each application. Notice that, duplicate names for modules and resources are not allowed and will be ignored by (g)yarpmanager.
+- yarpmanager allows for identical application names (they will be listed as MyApp(1), MyApp(2), ...). But it is strongly recommended to have unique proper name for each application. Notice that, duplicate names for modules and resources are not allowed and will be ignored by yarpmanager.
 - If you modify the XML description file, you need to "reopen" it. Identically, you can "remove" and "open" it from GUI.
 
 \section export Generate application dependency graph
