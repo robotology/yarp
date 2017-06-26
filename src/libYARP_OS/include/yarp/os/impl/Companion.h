@@ -12,8 +12,7 @@
 #include <yarp/os/ContactStyle.h>
 #include <yarp/os/Contactable.h>
 
-#include <yarp/os/impl/PlatformMap.h>
-
+#include <map>
 #include <vector>
 #include <cstdio>
 
@@ -229,7 +228,7 @@ private:
         }
     };
 
-    PLATFORM_MAP(ConstString, Entry) action;
+    std::map<ConstString, Entry> action;
     std::vector<ConstString> names;
     std::vector<ConstString> tips;
     bool adminMode;
@@ -239,7 +238,7 @@ private:
     void add(const char *name, int (Companion::*fn)(int argc, char *argv[]),
              const char *tip = YARP_NULLPTR) {
         Entry e(name, fn);
-        PLATFORM_MAP_SET(action, ConstString(name), e);
+        action[ConstString(name)] = e;
         // maintain a record of order of keys
         names.push_back(ConstString(name));
         if (tip!=YARP_NULLPTR) {

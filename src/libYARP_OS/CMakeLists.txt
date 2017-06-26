@@ -169,7 +169,6 @@ set(YARP_OS_IMPL_HDRS include/yarp/os/impl/ACELockImpl.h
                       include/yarp/os/impl/PlatformDlfcn.h
                       include/yarp/os/impl/PlatformIfaddrs.h
                       include/yarp/os/impl/PlatformLimits.h
-                      include/yarp/os/impl/PlatformMap.h
                       include/yarp/os/impl/PlatformNetdb.h
                       include/yarp/os/impl/PlatformSignal.h
                       include/yarp/os/impl/PlatformSize.h

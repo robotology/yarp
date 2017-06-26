@@ -23,8 +23,7 @@
 #include <yarp/os/Network.h>
 #include <yarp/os/Property.h>
 
-#include <yarp/os/impl/PlatformMap.h>
-
+#include <map>
 #include <set>
 
 using namespace yarp::os::impl;
@@ -187,37 +186,32 @@ Contact NameServer::queryName(const ConstString& name) {
 
 NameServer::NameRecord *NameServer::getNameRecord(const ConstString& name,
                                                   bool create) {
-    PLATFORM_MAP_ITERATOR(ConstString, NameRecord, entry);
-    int result = PLATFORM_MAP_FIND(nameMap, name, entry);
-    if (result==-1) {
+    std::map<ConstString, NameRecord>::iterator entry = nameMap.find(name);
+    if (entry == nameMap.end()) {
         if (!create) {
             return YARP_NULLPTR;
         }
-        PLATFORM_MAP_SET(nameMap, name, NameRecord());
-        result = PLATFORM_MAP_FIND(nameMap, name, entry);
+        nameMap[name] = NameRecord();
+        entry = nameMap.find(name);
     }
-    yAssert(result!=-1);
-    //yAssert(entry!=YARP_NULLPTR);
-    return &(PLATFORM_MAP_ITERATOR_SECOND(entry));
+    yAssert(entry != nameMap.end());
+    return &(entry->second);
 }
 
 
 NameServer::HostRecord *NameServer::getHostRecord(const ConstString& name,
                                                   bool create) {
-    PLATFORM_MAP_ITERATOR(ConstString, HostRecord, entry);
-    int result = PLATFORM_MAP_FIND(hostMap, name, entry);
-    if (result==-1) {
+    std::map<ConstString, HostRecord>::iterator entry = hostMap.find(name);
+    if (entry == hostMap.end()) {
         if (!create) {
             return YARP_NULLPTR;
         }
-        PLATFORM_MAP_SET(hostMap, name, HostRecord());
-        result = PLATFORM_MAP_FIND(hostMap, name, entry);
-        //yAssert(entry!=YARP_NULLPTR);
-        PLATFORM_MAP_ITERATOR_SECOND(entry).setBase(basePort);
+        hostMap[name] = HostRecord();
+        entry = hostMap.find(name);
+        entry->second.setBase(basePort);
     }
-    yAssert(result!=-1);
-    //yAssert(entry!=YARP_NULLPTR);
-    return &(PLATFORM_MAP_ITERATOR_SECOND(entry));
+    yAssert(entry != hostMap.end());
+    return &(entry->second);
 }
 
 
@@ -510,8 +504,8 @@ ConstString NameServer::cmdList(int argc, char *argv[]) {
     ConstString response = "";
 
     std::multiset<ConstString> lines;
-    for (PLATFORM_MAP(ConstString, NameRecord)::iterator it = nameMap.begin(); it!=nameMap.end(); it++) {
-        NameRecord& rec = PLATFORM_MAP_ITERATOR_SECOND(it);
+    for (auto it = nameMap.begin(); it!=nameMap.end(); ++it) {
+        NameRecord& rec = it->second;
         lines.insert(textify(rec.getAddress()));
     }
 
@@ -549,8 +543,8 @@ Bottle NameServer::ncmdList(int argc, char *argv[]) {
     }
 
     response.addString("ports");
-    for (PLATFORM_MAP(ConstString, NameRecord)::iterator it = nameMap.begin(); it!=nameMap.end(); it++) {
-        NameRecord& rec = PLATFORM_MAP_ITERATOR_SECOND(it);
+    for (auto it = nameMap.begin(); it!=nameMap.end(); ++it) {
+        NameRecord& rec = it->second;
         ConstString iname = rec.getAddress().getRegName();
         if (iname.find(prefix)==0) {
             if (iname==prefix || iname[prefix.length()]=='/' ||

@@ -17,8 +17,7 @@
 #include <yarp/os/Semaphore.h>
 #include <yarp/os/Bottle.h>
 
-#include <yarp/os/impl/PlatformMap.h>
-
+#include <map>
 #include <vector>
 
 // ACE headers may fiddle with main
@@ -55,10 +54,6 @@ class YARP_OS_impl_API yarp::os::impl::NameServer : public NameServerStub
 public:
 
     NameServer() :
-#ifndef YARP_USE_STL
-            nameMap(17),
-            hostMap(17),
-#endif
             mutex(1)
     {
         setup();
@@ -339,13 +334,10 @@ private:
     private:
         bool reusablePort;
         bool reusableIp;
-        PLATFORM_MAP(ConstString, PropertyRecord) propMap;
+        std::map<ConstString, PropertyRecord> propMap;
         Contact address;
     public:
         NameRecord() :
-#ifndef YARP_USE_STL
-                propMap(5),
-#endif
                 address()
         {
             reusableIp = false;
@@ -353,9 +345,6 @@ private:
         }
 
         NameRecord(const NameRecord& alt) :
-#ifndef YARP_USE_STL
-                propMap(5),
-#endif
                 address()
         {
             reusableIp = false;
@@ -374,7 +363,7 @@ private:
 
         void clear()
         {
-            PLATFORM_MAP_CLEAR(propMap);
+            propMap.clear();
             address = Contact();
             reusableIp = false;
             reusablePort = false;
@@ -397,18 +386,16 @@ private:
 
         PropertyRecord *getPR(const ConstString& key, bool create = true)
         {
-            PLATFORM_MAP_ITERATOR(ConstString, PropertyRecord, entry);
-            int result = PLATFORM_MAP_FIND(propMap, key, entry);
-            if (result==-1 && create) {
-                PropertyRecord blank;
-                PLATFORM_MAP_SET(propMap, key, blank);
-                result = PLATFORM_MAP_FIND(propMap, key, entry);
-                yAssert(result!=-1);
+            std::map<ConstString, PropertyRecord>::iterator entry = propMap.find(key);
+            if (entry == propMap.end()) {
+                if (!create) {
+                    return YARP_NULLPTR;
+                }
+                propMap[key] = PropertyRecord();
+                entry = propMap.find(key);
             }
-            if (result==-1) {
-                return YARP_NULLPTR;
-            }
-            return &(PLATFORM_MAP_ITERATOR_SECOND(entry));
+            yAssert(entry != propMap.end());
+            return &(entry->second);
         }
 
         void clearProp(const ConstString& key)
@@ -472,8 +459,8 @@ private:
     yarp::os::Bottle ncmdSet(int argc, char *argv[]);
     yarp::os::Bottle ncmdGet(int argc, char *argv[]);
 
-    PLATFORM_MAP(ConstString, NameRecord) nameMap;
-    PLATFORM_MAP(ConstString, HostRecord) hostMap;
+    std::map<ConstString, NameRecord> nameMap;
+    std::map<ConstString, HostRecord> hostMap;
 
     McastRecord mcastRecord;
     DisposableNameRecord tmpNames;
