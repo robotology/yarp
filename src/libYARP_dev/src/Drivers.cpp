@@ -25,6 +25,7 @@
 
 #include <vector>
 #include <sstream>
+#include <iterator>
 
 using namespace yarp::os;
 using namespace yarp::dev;
