@@ -20,7 +20,6 @@
 // ACE information
 #if defined(YARP_HAS_ACE)
 #cmakedefine ACE_ADDR_HAS_LOOPBACK_METHOD
-#cmakedefine ACE_HAS_STRING_HASH
 #endif
 
 // System headers
