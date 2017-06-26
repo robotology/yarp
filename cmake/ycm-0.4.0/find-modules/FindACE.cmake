@@ -18,7 +18,6 @@
 #   ACE_COMPILES_WITHOUT_INLINE_RELEASE
 #   ACE_COMPILES_WITHOUT_INLINE_DEBUG
 #   ACE_ADDR_HAS_LOOPBACK_METHOD
-#   ACE_HAS_STRING_HASH
 
 #=============================================================================
 # Copyright 2009 RobotCub Consortium
@@ -214,22 +213,6 @@ int main(int argc, char *argv[]) {
     else()
         set(ACE_ADDR_HAS_LOOPBACK_METHOD 1)
     endif()
-
-
-    # Check if std::string can be used with ACE hash map
-    set(_ACE_HAS_STRING_HASH_CPP "
-#include <string>
-#include <ace/Hash_Map_Manager.h>
-#include <ace/Null_Mutex.h>
-#include <ace/Functor_String.h>
-int main(int argc, char *argv[]) {
-    ACE_Hash_Map_Manager<std::string,std::string,ACE_Null_Mutex> my_map;
-    ACE_Hash_Map_Entry<std::string,std::string> *it = NULL;
-    my_map.find(\"hello\",it);
-    return 0;
-}
-")
-    check_cxx_source_compiles("${_ACE_HAS_STRING_HASH_CPP}" ACE_HAS_STRING_HASH)
 
 
     # Reset variables to their original values
