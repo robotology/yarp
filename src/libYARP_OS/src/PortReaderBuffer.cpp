@@ -18,10 +18,6 @@
 
 #include <yarp/os/impl/PortCorePacket.h>
 
-#ifdef YARP_HAS_ACE
-#include <ace/Malloc_Allocator.h>
-#endif
-
 #include <list>
 
 using namespace yarp::os::impl;
@@ -118,15 +114,7 @@ public:
     PortReaderPacket *getInactivePacket() {
         if (inactive.empty()) {
             PortReaderPacket *obj = YARP_NULLPTR;
-#if defined(YARP_HAS_ACE) && !defined(YARP_HAS_CXX11)
-            size_t obj_size = sizeof (PortReaderPacket);
-            ACE_NEW_MALLOC_RETURN (obj,
-                                   (PortReaderPacket *)
-                                   ACE_Allocator::instance()->malloc(obj_size),
-                                   PortReaderPacket(), YARP_NULLPTR);
-#else
             obj = new PortReaderPacket();
-#endif
             inactive.push_back(obj);
         }
         PortReaderPacket *next = inactive.front();

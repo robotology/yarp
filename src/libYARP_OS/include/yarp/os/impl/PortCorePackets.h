@@ -68,15 +68,7 @@ public:
     {
         if (inactive.empty()) {
             PortCorePacket *obj = YARP_NULLPTR;
-#if defined(YARP_HAS_ACE) && !defined(YARP_HAS_CXX11)
-            size_t obj_size = sizeof (PortCorePacket);
-            ACE_NEW_MALLOC_RETURN (obj,
-                                   (PortCorePacket *)
-                                   ACE_Allocator::instance()->malloc(obj_size),
-                                   PortCorePacket(), YARP_NULLPTR);
-#else
             obj = new PortCorePacket();
-#endif
             yAssert(obj!=YARP_NULLPTR);
             inactive.push_back(obj);
         }
