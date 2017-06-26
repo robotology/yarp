@@ -118,7 +118,7 @@ bool JoypadControlClient::open(yarp::os::Searchable& config)
 
     if(!yarp::os::NetworkBase::connect(m_local + "/rpc:o", m_remote + "/rpc:i"))
     {
-        yError() << "handshake failed.. unable to connect to remote port..";
+        yError() << "handshake failed.. unable to connect to remote port" << m_remote + "/rpc:i";
         return false;
     }
 
