@@ -361,7 +361,7 @@ yarp::sig::Vector Vector3(const double& x, const double& y)
 
 bool SDLJoypad::getRawStick(unsigned int stick_id, yarp::sig::Vector& value, JoypadCtrl_coordinateMode coordinate_mode)
 {
-    if(stick_id > m_stickCount - 1){yError() << "SDLJoypad: stick id out of bound!"; return false;}
+    if (stick_id > m_stickCount - 1){yError() << "SDLJoypad: stick id out of bound!"; return false;}
     value.clear();
     updateJoypad();
     stick& stk = m_sticks[stick_id];
@@ -373,9 +373,9 @@ bool SDLJoypad::getRawStick(unsigned int stick_id, yarp::sig::Vector& value, Joy
         value.push_back(val * stk.direction[i] * (fabs(val) > stk.deadZone));
     }
 
-    if(coordinate_mode == JypCtrlcoord_POLAR)
+    if (coordinate_mode == JypCtrlcoord_POLAR)
     {
-        if(stk.axes_ids.size() > 2)
+        if (stk.axes_ids.size() > 2)
         {
             yError() << "polar coordinate system is supported only for bidimensional stick at the moment";
             return false;
