@@ -46,6 +46,13 @@ public:
     */
     virtual ~IJoypadController(){}
 
+    /**
+      Activate event Driven mode
+     * @brief eventDriven
+     * @param enable a bool to turn on or off the eventDriven mode
+     * * @param event a pointer to a valid yarp::dev::IJoypadEvent object whom action() method will be called on event detection
+     * @return true if succeded. false otherwise
+     */
     virtual bool eventDriven(bool enable, yarp::dev::IJoypadEvent* event = YARP_NULLPTR){return false;}
     virtual bool isEventDriven(){return false;}
 
@@ -251,6 +258,7 @@ public:
     virtual void run() YARP_OVERRIDE;
 
     virtual bool eventDriven(bool enable, yarp::dev::IJoypadEvent* event = YARP_NULLPTR) YARP_OVERRIDE;
+    virtual bool isEventDriven() YARP_OVERRIDE { return EventDrivenEnabled;}
 };
 
 
