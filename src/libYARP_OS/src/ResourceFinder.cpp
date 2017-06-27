@@ -76,6 +76,9 @@ static ConstString getPwd() {
 
 
 static Bottle parsePaths(const ConstString& txt) {
+    if (txt.empty()) {
+        return Bottle();
+    }
     char slash = NetworkBase::getDirectorySeparator()[0];
     char sep = NetworkBase::getPathSeparator()[0];
     Bottle result;
