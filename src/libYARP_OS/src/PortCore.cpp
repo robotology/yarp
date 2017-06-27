@@ -1331,7 +1331,8 @@ bool PortCore::sendHelper(PortWriter& writer,
             YMSG(("------- -- presend\n"));
             bool gotReplyOne = false;
             // Send the message off on this connection.
-            void *out = unit->send(writer, reader,
+            void *out = unit->send(writer,
+                                   reader,
                                    (callback!=YARP_NULLPTR)?callback:(&writer),
                                    (void *)packet,
                                    envelopeString,
@@ -1339,7 +1340,7 @@ bool PortCore::sendHelper(PortWriter& writer,
                                    &gotReplyOne);
             gotReply = gotReply||gotReplyOne;
             YMSG(("------- -- send\n"));
-            if (out!=YARP_NULLPTR) {
+            if (out != YARP_NULLPTR) {
                 // We got back a report of a message already sent.
                 packetMutex.wait();
                 ((PortCorePacket *)out)->dec();  // Message on one
