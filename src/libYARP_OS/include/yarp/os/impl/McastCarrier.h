@@ -56,7 +56,7 @@ public:
     virtual bool expectReplyToHeader(ConnectionState& proto) override;
 
     void addSender(const ConstString& key);
-    void addRemove(const ConstString& key);
+    void removeSender(const ConstString& key);
     bool isElect();
 
     virtual bool isActive() override;
