@@ -326,7 +326,7 @@ void *PortCoreOutputUnit::send(yarp::os::PortWriter& writer,
 
     if (op != YARP_NULLPTR) {
         if (!op->getConnection().isActive()) {
-            return YARP_NULLPTR;
+            return tracker;
         }
     }
 

@@ -38,7 +38,7 @@ yarp::os::impl::McastCarrier::McastCarrier() {
 yarp::os::impl::McastCarrier::~McastCarrier() {
     if (key!="") {
         bool elect = isElect();
-        addRemove(key);
+        removeSender(key);
         if (elect) {
             McastCarrier *peer = getCaster().getElect(key);
             if (peer==YARP_NULLPTR) {
@@ -222,7 +222,7 @@ void yarp::os::impl::McastCarrier::addSender(const ConstString& key) {
     getCaster().add(key, this);
 }
 
-void yarp::os::impl::McastCarrier::addRemove(const ConstString& key) {
+void yarp::os::impl::McastCarrier::removeSender(const ConstString& key) {
     getCaster().remove(key, this);
 }
 
