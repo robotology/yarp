@@ -51,7 +51,6 @@ static void removeClock()
     if (old_pclock) {
         if (old_clock_owned) {
             delete old_pclock;          // This will wake up all sleeping threads
-            old_clock_owned = false;
         }
         old_pclock = YARP_NULLPTR;
     }

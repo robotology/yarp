@@ -55,20 +55,19 @@ YARP_END_PACK
 
 bool PcmWavHeader::parse_from_file(FILE *fp)
 {
-    size_t result;
-    result = fread(&wavHeader,sizeof(wavHeader),1,fp);
-    result = fread(&wavLength,sizeof(wavLength),1,fp);
-    result = fread(&formatHeader1,sizeof(formatHeader1),1,fp);
+    fread(&wavHeader,sizeof(wavHeader),1,fp);
+    fread(&wavLength,sizeof(wavLength),1,fp);
+    fread(&formatHeader1,sizeof(formatHeader1),1,fp);
 
-    result = fread(&formatHeader2,sizeof(formatHeader2),1,fp);
-    result = fread(&formatLength,sizeof(formatLength),1,fp);
+    fread(&formatHeader2,sizeof(formatHeader2),1,fp);
+    fread(&formatLength,sizeof(formatLength),1,fp);
 
-    result = fread(&pcm.pcmFormatTag,sizeof(pcm.pcmFormatTag),1,fp);
-    result = fread(&pcm.pcmChannels,sizeof(pcm.pcmChannels),1,fp);
-    result = fread(&pcm.pcmSamplesPerSecond,sizeof(pcm.pcmSamplesPerSecond),1,fp);
-    result = fread(&pcm.pcmBytesPerSecond,sizeof(pcm.pcmBytesPerSecond),1,fp);
-    result = fread(&pcm.pcmBlockAlign,sizeof(pcm.pcmBlockAlign),1,fp);
-    result = fread(&pcm.pcmBitsPerSample,sizeof(pcm.pcmBitsPerSample),1,fp);
+    fread(&pcm.pcmFormatTag,sizeof(pcm.pcmFormatTag),1,fp);
+    fread(&pcm.pcmChannels,sizeof(pcm.pcmChannels),1,fp);
+    fread(&pcm.pcmSamplesPerSecond,sizeof(pcm.pcmSamplesPerSecond),1,fp);
+    fread(&pcm.pcmBytesPerSecond,sizeof(pcm.pcmBytesPerSecond),1,fp);
+    fread(&pcm.pcmBlockAlign,sizeof(pcm.pcmBlockAlign),1,fp);
+    fread(&pcm.pcmBitsPerSample,sizeof(pcm.pcmBitsPerSample),1,fp);
     if (pcm.pcmBitsPerSample!=16)
     {
         printf("sorry, lousy wav read code only does 16-bit ints\n");
@@ -78,24 +77,23 @@ bool PcmWavHeader::parse_from_file(FILE *fp)
     //extra bytes in pcm chuck
     int extra_size = formatLength-sizeof(pcm);
     pcmExtraData.allocate(extra_size);
-    result = fread(&pcmExtraData,extra_size,1,fp);
+    fread(&pcmExtraData,extra_size,1,fp);
 
     //extra chuncks
-    result = fread(&dummyHeader,sizeof(dummyHeader),1,fp);
+    fread(&dummyHeader,sizeof(dummyHeader),1,fp);
 
     while (dummyHeader!=VOCAB4('d','a','t','a'))
     {
-        result = fread(&dummyLength,sizeof(dummyLength),1,fp);
+        fread(&dummyLength,sizeof(dummyLength),1,fp);
         dummyData.clear();
         dummyData.allocate(dummyLength);
-        result = fread(&dummyData,dummyLength,1,fp);
-        result = fread(&dummyHeader,sizeof(dummyHeader),1,fp);
+        fread(&dummyData,dummyLength,1,fp);
+        fread(&dummyHeader,sizeof(dummyHeader),1,fp);
     }
 
     dataHeader=dummyHeader;
-    result = fread(&dataLength,sizeof(dataLength),1,fp);
+    fread(&dataLength,sizeof(dataLength),1,fp);
 
-    YARP_UNUSED(result);
     return true;
 }
 
@@ -122,25 +120,24 @@ void PcmWavHeader::setup_to_write(const Sound& src, FILE *fp)
     dataHeader = VOCAB4('d','a','t','a');
     dataLength = bytes;
 
-    size_t result;
-    result = fwrite(&wavHeader,sizeof(wavHeader),1,fp);
-    result = fwrite(&wavLength,sizeof(wavLength),1,fp);
-    result = fwrite(&formatHeader1,sizeof(formatHeader1),1,fp);
 
-    result = fwrite(&formatHeader2,sizeof(formatHeader2),1,fp);
-    result = fwrite(&formatLength,sizeof(formatLength),1,fp);
+    fwrite(&wavHeader,sizeof(wavHeader),1,fp);
+    fwrite(&wavLength,sizeof(wavLength),1,fp);
+    fwrite(&formatHeader1,sizeof(formatHeader1),1,fp);
 
-    result = fwrite(&pcm.pcmFormatTag,sizeof(pcm.pcmFormatTag),1,fp);
-    result = fwrite(&pcm.pcmChannels,sizeof(pcm.pcmChannels),1,fp);
-    result = fwrite(&pcm.pcmSamplesPerSecond,sizeof(pcm.pcmSamplesPerSecond),1,fp);
-    result = fwrite(&pcm.pcmBytesPerSecond,sizeof(pcm.pcmBytesPerSecond),1,fp);
-    result = fwrite(&pcm.pcmBlockAlign,sizeof(pcm.pcmBlockAlign),1,fp);
-    result = fwrite(&pcm.pcmBitsPerSample,sizeof(pcm.pcmBitsPerSample),1,fp);
+    fwrite(&formatHeader2,sizeof(formatHeader2),1,fp);
+    fwrite(&formatLength,sizeof(formatLength),1,fp);
 
-    result = fwrite(&dataHeader,sizeof(dataHeader),1,fp);
-    result = fwrite(&dataLength,sizeof(dataLength),1,fp);
+    fwrite(&pcm.pcmFormatTag,sizeof(pcm.pcmFormatTag),1,fp);
+    fwrite(&pcm.pcmChannels,sizeof(pcm.pcmChannels),1,fp);
+    fwrite(&pcm.pcmSamplesPerSecond,sizeof(pcm.pcmSamplesPerSecond),1,fp);
+    fwrite(&pcm.pcmBytesPerSecond,sizeof(pcm.pcmBytesPerSecond),1,fp);
+    fwrite(&pcm.pcmBlockAlign,sizeof(pcm.pcmBlockAlign),1,fp);
+    fwrite(&pcm.pcmBitsPerSample,sizeof(pcm.pcmBitsPerSample),1,fp);
 
-    YARP_UNUSED(result);
+    fwrite(&dataHeader,sizeof(dataHeader),1,fp);
+    fwrite(&dataLength,sizeof(dataLength),1,fp);
+
 }
 
 bool yarp::sig::file::read(Sound& dest, const char *src)

@@ -220,7 +220,6 @@ ConstString NameClient::send(const ConstString& cmd, bool multi) {
             ConstString line = "";
             line = ip->getInputStream().readLine();
             if (!(ip->isOk())) {
-                more = false;
                 //YARP_DEBUG(Logger::get(), e.toString() + " <<< exception from name server");
                 retry = true;
                 break;

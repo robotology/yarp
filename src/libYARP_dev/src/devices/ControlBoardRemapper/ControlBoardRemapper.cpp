@@ -938,7 +938,7 @@ bool ControlBoardRemapper::resetPid(const PidControlTypeEnum& pidtype, int j)
 
 bool ControlBoardRemapper::disablePid(const PidControlTypeEnum& pidtype, int j)
 {
-    int off=(int)remappedControlBoards.lut[j].axisIndexInSubControlBoard;
+    (int)remappedControlBoards.lut[j].axisIndexInSubControlBoard;
     size_t subIndex=remappedControlBoards.lut[j].subControlBoardIndex;
 
     yarp::dev::RemappedSubControlBoard *p=remappedControlBoards.getSubControlBoard(subIndex);
