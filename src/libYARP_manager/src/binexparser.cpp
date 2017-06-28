@@ -8,7 +8,7 @@
 
 
 #include <yarp/manager/binexparser.h>
-
+#include <yarp/os/Log.h>
 #include <cstdio>
 #include <cstring>
 #include <iostream>
@@ -16,12 +16,17 @@
 #include <string>
 #include <algorithm>
 #include <cmath>
+#include <inttypes.h>
+#include <limits.h>
+#include <stddef.h>
 
 
 #define EXPNOT     '~'
 #define EXPAND     '&'
 #define EXPOR      '|'
 #define IMPLY      ':'
+
+#define PRECISION(max_value) sizeof(max_value) * 8
 
 
 using namespace std;
@@ -345,12 +350,15 @@ std::string BinaryExpParser::popNextOperand(std::string &strexp) {
 
 void BinaryExpParser::createTruthTable(const int n)
 {
+    yAssert((n-1) > 0);
+    yAssert((n-1) < PRECISION(INT_MAX));
+    yAssert(1 <= (INT_MAX >> (n-1)));
+
     truthTable.clear();
     // n input + one output
     truthTable.resize(n+1);
     for(int i=0; i<n+1; i++)
         truthTable[i].resize(1 << n);
-
     int num_to_fill = 1 << (n - 1);
     for(int col = 0; col < n; ++col, num_to_fill >>= 1)
     {
@@ -364,6 +372,11 @@ void BinaryExpParser::createTruthTable(const int n)
 void BinaryExpParser::printTruthTable(std::string lopr)
 {
     int n = truthTable.size();
+
+    yAssert((n-1) > 0);
+    yAssert((n-1) < PRECISION(INT_MAX));
+    yAssert(1 <= (INT_MAX >> (n-1)));
+
     map<string, bool>::iterator itr;
     for(itr=operands.begin(); itr!=operands.end(); itr++)
        cout<<(*itr).first<<"\t";
