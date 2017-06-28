@@ -343,6 +343,10 @@ bool JointItem::eventFilter(QObject *obj, QEvent *event)
                     onSliderVelocityReleased();
                 }
             }
+
+            if(slider == YARP_NULLPTR)
+                return false;
+
             
             if(keyEvent->type() == QEvent::KeyPress){
                 if(key == Qt::Key_Left || key == Qt::Key_Down){
