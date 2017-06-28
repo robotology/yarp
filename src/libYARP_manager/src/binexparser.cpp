@@ -262,7 +262,7 @@ bool BinaryExpParser::checkExpression(std::string& strexp)
 void BinaryExpParser::parseExpression(std::string &strexp, BinaryNodePtr& node)
 {
     string op;
-    BinaryNodePtr rightNode;
+    BinaryNodePtr rightNode = YARP_NULLPTR;
     parseNot(strexp, node);
     while(!strexp.empty() &&
           ((*strexp.begin() == EXPAND) ||

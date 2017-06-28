@@ -71,7 +71,8 @@ double RandnScalar::get(double u, double sigma)
 
 inline void RandnScalar::boxMuller()
 {
-    double x1, x2;
+    double x1 = 0.0;
+    double x2 = 0.0;
     double w = 2.0;
 
     while (w >= 1.0)

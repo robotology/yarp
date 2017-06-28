@@ -46,6 +46,25 @@ public:
     yarp::os::NetInt32 paramBlobTag;
     yarp::os::NetInt32 paramBlobLen;
 
+    ImageNetworkHeader()
+    {
+        listTag      = 0;
+        listLen      = 0;
+        paramNameTag = 0;
+        paramName    = 0;
+        paramIdTag   = 0;
+        id           = 0;
+        paramListTag = 0;
+        paramListLen = 0;
+        depth        = 0;
+        imgSize      = 0;
+        quantum      = 0;
+        width        = 0;
+        height       = 0;
+        paramBlobTag = 0;
+        paramBlobLen = 0;
+    }
+
     void setFromImage(const Image& image) {
         listTag = BOTTLE_TAG_LIST;
         listLen = 4;

@@ -38,7 +38,7 @@ public:
 
         std::string ret, startKeyword, endKeyword;
         size_t s, e;
-        bool   badSymbol;
+        bool   badSymbol = false;
 
         ret = "";
 
