@@ -525,7 +525,6 @@ bool DgramTwoWayStream::openMcast(const Contact& group,
     // set up destination address
     memset((char *) &dgram_sin, 0, sizeof(dgram_sin));
     dgram_sin.sin_family = AF_INET;
-    dgram_sin.sin_addr.s_addr = inet_addr(group.getHost().c_str());
     dgram_sin.sin_port = htons(group.getPort());
 
 
@@ -669,7 +668,12 @@ bool DgramTwoWayStream::join(const Contact& group, bool sender,
     }
 
     // use setsockopt() to request that the kernel join a multicast group
-    mreq.imr_multiaddr.s_addr=inet_addr(group.getHost().c_str());
+    if(inet_pton(AF_INET, group.getHost().c_str(), &mreq.imr_multiaddr)==0)
+    {
+        YARP_ERROR(Logger::get(), "Could not set up the mcast server");
+        std::exit(1);
+
+    }
     mreq.imr_interface.s_addr=htonl(INADDR_ANY);
     if (setsockopt(s,IPPROTO_IP,IP_ADD_MEMBERSHIP,&mreq,sizeof(mreq)) < 0)
     {
