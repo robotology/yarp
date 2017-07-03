@@ -270,10 +270,10 @@ void yarp::dev::OVRHeadset::fillAxisStorage()
 
     if (getStickAsAxis)
     {
-        axisIdToValue.push_back(&inputState.Thumbstick[0].x);
-        axisIdToValue.push_back(&inputState.Thumbstick[0].y);
-        axisIdToValue.push_back(&inputState.Thumbstick[1].x);
-        axisIdToValue.push_back(&inputState.Thumbstick[1].y);
+        axisIdToValue.push_back(&inputState.Thumbstick[ovrHand_Left].x);
+        axisIdToValue.push_back(&inputState.Thumbstick[ovrHand_Left].y);
+        axisIdToValue.push_back(&inputState.Thumbstick[ovrHand_Right].x);
+        axisIdToValue.push_back(&inputState.Thumbstick[ovrHand_Right].y);
     }
 
 }
@@ -840,8 +840,8 @@ void yarp::dev::OVRHeadset::run()
     ovrVector3f& leftH  = ts.HandPoses[ovrHand_Left].ThePose.Position;
     ovrVector3f& rightH = ts.HandPoses[ovrHand_Right].ThePose.Position;
 
-    T_RHand = ovr2matrix(vecSubtract(rightH, headpose.ThePose.Position), ts.HandPoses[ovrHand_Right].ThePose.Orientation);
-    T_LHand = ovr2matrix(vecSubtract(leftH, headpose.ThePose.Position), ts.HandPoses[ovrHand_Left].ThePose.Orientation);
+    T_RHand = ovr2matrix(vecSubtract(rightH, headpose.ThePose.Position), OVR::Quatf(ts.HandPoses[ovrHand_Right].ThePose.Orientation) * OVR::Quatf(OVR::Vector3f(0, 0, 1), M_PI/2));
+    T_LHand = ovr2matrix(vecSubtract(leftH, headpose.ThePose.Position), OVR::Quatf(ts.HandPoses[ovrHand_Left].ThePose.Orientation)   * OVR::Quatf(OVR::Vector3f(0, 0, 1), M_PI / 2));
     T_Head  = ovr2matrix(headpose.ThePose.Position, headpose.ThePose.Orientation);
 
     tfPublisher->setTransform(left_frame,    root_frame, yarp::math::operator*(T_Head.transposed(), T_LHand));
