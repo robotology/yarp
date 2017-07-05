@@ -126,6 +126,7 @@ private:
     std::map<ovrResult, std::string> error_messages;
 
     IFrameTransform* tfPublisher;
+    bool             relative;
     std::string      left_frame;
     std::string      right_frame;
     std::string      root_frame;

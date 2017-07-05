@@ -33,7 +33,7 @@
 #include <dxgi.h> // for GetDefaultAdapterLuid
 #pragma comment(lib, "dxgi.lib")
 #endif
-
+#define M_PI 3.141
 YARP_CONSTEXPR unsigned int AXIS_COUNT   = 8;
 YARP_CONSTEXPR unsigned int STICK_COUNT  = 2;
 YARP_CONSTEXPR unsigned int BUTTON_COUNT = 13;
@@ -254,6 +254,7 @@ yarp::dev::OVRHeadset::OVRHeadset() :
         inputStateError(false),
         tfPublisher(YARP_NULLPTR)
 {
+    relative = false;
     yTrace();
 }
 yarp::dev::OVRHeadset::~OVRHeadset()
@@ -836,16 +837,39 @@ void yarp::dev::OVRHeadset::run()
     yarp::os::Stamp predicted_stamp(distortionFrameIndex, predicted_ts.HeadPose.TimeInSeconds);
 
     //send hands frames
-    yarp::sig::Matrix T_Conv(4, 4), T_Head(4, 4), T_LHand(4, 4), T_RHand(4, 4);
-    ovrVector3f& leftH  = ts.HandPoses[ovrHand_Left].ThePose.Position;
-    ovrVector3f& rightH = ts.HandPoses[ovrHand_Right].ThePose.Position;
+    if(relative)
+    {
+        yarp::sig::Matrix T_Conv(4, 4), T_Head(4, 4), T_LHand(4, 4), T_RHand(4, 4), T_robotHead(4, 4);
+        yarp::sig::Vector rpyHead, rpyRobot;
 
-    T_RHand = ovr2matrix(vecSubtract(rightH, headpose.ThePose.Position), OVR::Quatf(ts.HandPoses[ovrHand_Right].ThePose.Orientation) * OVR::Quatf(OVR::Vector3f(0, 0, 1), M_PI/2));
-    T_LHand = ovr2matrix(vecSubtract(leftH, headpose.ThePose.Position), OVR::Quatf(ts.HandPoses[ovrHand_Left].ThePose.Orientation)   * OVR::Quatf(OVR::Vector3f(0, 0, 1), M_PI / 2));
-    T_Head  = ovr2matrix(headpose.ThePose.Position, headpose.ThePose.Orientation);
+        tfPublisher->getTransform("head_link", "mobile_base_body_link", T_robotHead);
+        ovrVector3f& leftH  = ts.HandPoses[ovrHand_Left].ThePose.Position;
+        ovrVector3f& rightH = ts.HandPoses[ovrHand_Right].ThePose.Position;
 
-    tfPublisher->setTransform(left_frame,    root_frame, yarp::math::operator*(T_Head.transposed(), T_LHand));
-    tfPublisher->setTransform(right_frame,   root_frame, yarp::math::operator*(T_Head.transposed(), T_RHand));
+        T_RHand    = ovr2matrix(vecSubtract(rightH, headpose.ThePose.Position), OVR::Quatf(ts.HandPoses[ovrHand_Right].ThePose.Orientation) * OVR::Quatf(OVR::Vector3f(0, 0, 1), M_PI/2));
+        T_LHand    = ovr2matrix(vecSubtract(leftH, headpose.ThePose.Position), OVR::Quatf(ts.HandPoses[ovrHand_Left].ThePose.Orientation)   * OVR::Quatf(OVR::Vector3f(0, 0, 1), M_PI / 2));
+        T_Head     = ovr2matrix(headpose.ThePose.Position, headpose.ThePose.Orientation);
+        
+        {
+            rpyHead = yarp::math::dcm2rpy(T_Head);
+            rpyRobot = yarp::math::dcm2rpy(T_robotHead);
+            rpyHead[0] = 0;
+            rpyHead[1] = rpyRobot[1];
+            rpyHead[2] = rpyRobot[2];
+            T_Head = yarp::math::rpy2dcm(rpyHead);
+        }
+
+        tfPublisher->setTransform(left_frame,    root_frame, yarp::math::operator*(T_Head.transposed(), T_LHand));
+        tfPublisher->setTransform(right_frame,   root_frame, yarp::math::operator*(T_Head.transposed(), T_RHand));
+    }
+    else
+    {
+        OVR::Quatf lRot = OVR::Quatf(ts.HandPoses[ovrHand_Left].ThePose.Orientation)  * OVR::Quatf(OVR::Vector3f(0, 0, 1), M_PI / 2);
+        OVR::Quatf rRot = OVR::Quatf(ts.HandPoses[ovrHand_Right].ThePose.Orientation) * OVR::Quatf(OVR::Vector3f(0, 0, 1), M_PI / 2);
+        tfPublisher->setTransform(left_frame, "mobile_base_body_link", ovr2matrix(ts.HandPoses[ovrHand_Left].ThePose.Position,   lRot));
+        tfPublisher->setTransform(right_frame, "mobile_base_body_link", ovr2matrix(ts.HandPoses[ovrHand_Right].ThePose.Position, rRot));
+    }
+
 
     // Get Input State
     inputStateMutex.lock();
