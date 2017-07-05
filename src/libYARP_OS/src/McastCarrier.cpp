@@ -13,6 +13,7 @@
 using namespace yarp::os::impl;
 using namespace yarp::os;
 
+
 ElectionOf<PeerRecord<McastCarrier> > *McastCarrier::caster = YARP_NULLPTR;
 
 ElectionOf<PeerRecord<McastCarrier> >& McastCarrier::getCaster() {
@@ -32,11 +33,12 @@ ElectionOf<PeerRecord<McastCarrier> >& McastCarrier::getCaster() {
 
 
 yarp::os::impl::McastCarrier::McastCarrier() {
+    stream = YARP_NULLPTR;
     key = "";
 }
 
 yarp::os::impl::McastCarrier::~McastCarrier() {
-    if (key!="") {
+    if (key != "") {
         bool elect = isElect();
         removeSender(key);
         if (elect) {
@@ -45,6 +47,12 @@ yarp::os::impl::McastCarrier::~McastCarrier() {
                 // time to remove registration
                 NetworkBase::unregisterName(mcastName.c_str());
             }
+            else
+            {
+                if(!peer->takeElection())
+                    YARP_ERROR(Logger::get(), "Something went wrong during the shift of the election...");
+            }
+
         }
     }
 }
@@ -157,20 +165,11 @@ bool yarp::os::impl::McastCarrier::expectExtraHeader(ConnectionState& proto) {
 
 
 bool yarp::os::impl::McastCarrier::becomeMcast(ConnectionState& proto, bool sender) {
-    DgramTwoWayStream *stream = new DgramTwoWayStream();
+    stream = new DgramTwoWayStream();
     yAssert(stream!=YARP_NULLPTR);
     Contact remote = proto.getStreams().getRemoteAddress();
-    Contact local;
     local = proto.getStreams().getLocalAddress();
-    bool test = true;
     //(yarp::NameConfig::getEnv("YARP_MCAST_TEST")!="");
-    /*
-    if (test) {
-        printf("  MULTICAST is being extended; some temporary status messages added\n");
-        printf("  Local: %s\n", local.toString().c_str());
-        printf("  Remote: %s\n", remote.toString().c_str());
-    }
-    */
     proto.takeStreams(YARP_NULLPTR); // free up port from tcp
 
     if (sender) {
@@ -183,22 +182,18 @@ bool yarp::os::impl::McastCarrier::becomeMcast(ConnectionState& proto, bool send
             the author doesn't know, so is being cautious.
         */
         key = proto.getRoute().getFromName();
-        if (test) {
-            key += "/net=";
-            key += local.getHost();
-        }
+        key += "/net=";
+        key += local.getHost();
+
         YARP_DEBUG(Logger::get(),
                     ConstString("multicast key: ") + key);
         addSender(key);
     }
 
     bool ok = true;
-    if (isElect()||!sender) {
-        if (test) {
-            ok = stream->join(mcastAddress, sender, local);
-        } else {
-            ok = stream->join(mcastAddress, sender);
-        }
+    if (isElect()||!sender)
+    {
+        ok = stream->join(mcastAddress, sender, local);
     }
 
     if (!ok) {
@@ -230,6 +225,13 @@ bool yarp::os::impl::McastCarrier::isElect() {
     void *elect = getCaster().getElect(key);
     //void *elect = caster.getElect(mcastAddress.toString());
     return elect==this || elect==YARP_NULLPTR;
+}
+
+bool yarp::os::impl::McastCarrier::takeElection()
+{
+    if(stream)
+        return stream->join(mcastAddress, true, local);
+    return false;
 }
 
 
