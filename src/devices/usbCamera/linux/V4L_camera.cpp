@@ -253,7 +253,7 @@ bool V4L_camera::open(yarp::os::Searchable& config)
 
     // Initting video device
     deviceInit();
-    enumerate_controls();
+    if(verbose)     enumerate_controls();
     if(!check_V4L2_control(V4L2_CID_EXPOSURE) )
     {
         use_exposure_absolute = check_V4L2_control(V4L2_CID_EXPOSURE_ABSOLUTE);
@@ -348,6 +348,9 @@ bool V4L_camera::setRgbMirroring(bool mirror){
 
 bool V4L_camera::fromConfig(yarp::os::Searchable& config)
 {
+    if(config.check("verbose"))
+        verbose = true;
+
     if(!config.check("width") )
     {
         yDebug() << "width parameter not found, using default value of " << DEFAULT_WIDTH;
@@ -614,7 +617,7 @@ bool V4L_camera::deviceInit()
         return false;
     }
 
-    list_cap_v4l2(param.fd);
+    if(verbose)  list_cap_v4l2(param.fd);
 
     if (!(cap.capabilities & V4L2_CAP_VIDEO_CAPTURE))
     {
@@ -852,7 +855,7 @@ bool V4L_camera::deviceInit()
             break;
     }
 
-    query_current_image_fmt_v4l2(param.fd);
+    if(verbose) query_current_image_fmt_v4l2(param.fd);
     configured =true;
 
     return true;
