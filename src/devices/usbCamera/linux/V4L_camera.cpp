@@ -660,23 +660,10 @@ bool V4L_camera::deviceInit()
         crop.type = V4L2_BUF_TYPE_VIDEO_CAPTURE;
         crop.c = cropcap.defrect; /* reset to default */
 
-        if (-1 == xioctl(param.fd, VIDIOC_S_CROP, &crop))
-        {
-            yError() << "xioctl error VIDIOC_S_CROP" << strerror(errno);
-            switch (errno)
-            {
-                case EINVAL:
-                    /* Cropping not supported. */
-                    break;
-                default:
-                    /* Errors ignored. */
-                    break;
-            }
-        }
-    }
-    else
-    {
-        /* Errors ignored. */
+        /* Reset cropping to default if possible.
+         * Don't care about errors
+         */
+        xioctl(param.fd, VIDIOC_S_CROP, &crop);
     }
 
     CLEAR(param.src_fmt);
@@ -773,33 +760,11 @@ bool V4L_camera::deviceInit()
         param.resizeOffset_y = 0;
         param.resizeHeight = param.user_height;
     }
-    printf("param.width = %d; src.width = %d\n", param.width, param.src_fmt.fmt.pix.width);
-
-    // dst is tmp, just to convert camera pixel type (YUYV) into user pixel type (RGB)
-    param.dst_fmt = param.src_fmt;
-    param.dst_fmt.fmt.pix.pixelformat = param.pixelType;
 
     if (-1 == xioctl(param.fd, VIDIOC_S_FMT, &param.src_fmt)){
         yError() << "xioctl error VIDIOC_S_FMT" << strerror(errno);
         return false;
     }
-
-
-    /* Note VIDIOC_S_FMT may change width and height. */
-//     if (param.width != param.src_fmt.fmt.pix.width)
-//     {
-//         param.width = param.src_fmt.fmt.pix.width;
-//         std::cout << "Image width set to " << param.width << " by device " << param.deviceId << std::endl;
-//     }
-//
-//     if (param.height != param.src_fmt.fmt.pix.height)
-//     {
-//         param.height = param.src_fmt.fmt.pix.height;
-//         std::cout << "Image height set to " << param.height << " by device " << param.deviceId << std::endl;
-//     }
-
-//     if(param.width/param.height  != param.src_fmt.fmt.pix.width/param.src_fmt.fmt.pix.height)
-//         doCropping == true;
 
     /* If the user has set the fps to -1, don't try to set the frame interval */
     if (param.fps != -1)
@@ -1464,7 +1429,6 @@ void V4L_camera::captureStart()
             if (-1 == xioctl(param.fd, VIDIOC_STREAMON, &type))
                 errno_exit("VIDIOC_STREAMON");
 
-//             param.raw_image = param.buffers[0].start;
             break;
 
         case IO_METHOD_USERPTR:
@@ -1558,8 +1522,6 @@ bool V4L_camera::mmapInit()
 
     struct v4l2_buffer buf;
 
-    printf("n buff is %d\n", param.req.count);
-
     for (param.n_buffers = 0; param.n_buffers < param.req.count; param.n_buffers++)
     {
         CLEAR(buf);
@@ -1582,7 +1544,6 @@ bool V4L_camera::mmapInit()
 
 bool V4L_camera::userptrInit(unsigned int buffer_size)
 {
-//     struct v4l2_requestbuffers req;
     unsigned int page_size;
 
     page_size = getpagesize();
@@ -1876,7 +1837,7 @@ bool V4L_camera::setSharpness(double v)
 bool V4L_camera::setShutter(double v)
 {
 //     return set_V4L2_control(V4L2_CID_BRIGHTNESS, v);
-    printf("No known function on V4L2 for shutter :-&\n");
+    yWarning("Cannot set shutter option on Linux (V4l2 driver)");
     return false;
 }
 
