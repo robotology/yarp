@@ -87,24 +87,47 @@ struct buffer {
 
 typedef struct
 {
-    std::string     deviceId;
     int             fd;
-    __u32           width;
-    __u32           height;
+    std::string     deviceId;
+
+    bool            addictionalResize;
+    int             resizeOffset_x, resizeOffset_y;
+    int             resizeWidth, resizeHeight;
+
+    __u32           user_width;
+    __u32           user_height;
+
     double          horizontalFov;
     double          verticalFov;
     yarp::os::Property intrinsic;
+    bool            dual;
+
     io_method       io;
     int             fps;
-    unsigned int    image_size;
-    unsigned int    rgb_src_image_size;
-    unsigned int    dst_image_size;
-    unsigned char   *dst_image;
-    unsigned char   *tmp_image;
-    unsigned char   *tmp_image2;
-    void            *raw_image;
-    cv::Mat         outMat;
-    cv::Mat         img;
+
+    // Temporary step required for leopard python camera only
+    // The image has to be converted into standard bayer format
+    // in order to be correctly converted into rgb
+    unsigned char  *raw_image;
+    unsigned int    raw_image_size;
+
+    // this is a helper pointer set either to raw_image or src_image,
+    // depending if the source is custom or standard
+    unsigned char  *read_image;
+
+    // src image: standard image type read from the camera sensor
+    // used as input for color conversion
+    unsigned char  *src_image;
+    unsigned int    src_image_size;
+
+    // RGB image after color conversion. The size may not be the one
+    // requested by the user and a rescaling may be required afterwards
+    unsigned char  *dst_image_rgb;
+    unsigned int    dst_image_size_rgb;
+
+    // OpenCV object to perform the final rescaling of the image
+    cv::Mat         outMat;     // OpenCV output
+
     yarp::sig::VectorOf<yarp::dev::CameraConfig> configurations;
     bool            flip;
 
@@ -114,7 +137,7 @@ typedef struct
     struct v4l2_format dst_fmt;
     struct v4l2_requestbuffers req;
     int pixelType;
-    supported_cams  camModel;    // better is it is pixel format (YUV ...);  it happened that the only 2 cameras I have to test has custom tpyes, not standard ones.
+    supported_cams  camModel;  // In case some camera requires custom procedure
 } Video_params;
 
 
@@ -215,6 +238,7 @@ public:
 
 private:
 
+    bool verbose;
     v4lconvert_data *_v4lconvert_data;
     bool use_exposure_absolute;
 
@@ -227,7 +251,6 @@ private:
     bool configIntrins;
     bool configured;
     bool doCropping;
-    bool dual;
     bool isActive_vector[YARP_FEATURE_NUMBER_OF];
     double timeStart, timeTot, timeNow, timeElapsed;
     int myCounter;
@@ -241,7 +264,7 @@ private:
 
     int convertV4L_to_YARP_format(int format);
 
-
+    double checkDouble(yarp::os::Searchable& config,const char* key);
 
     // initialize device
     bool deviceInit();
@@ -275,11 +298,23 @@ private:
     /**
     *    read single frame
     */
-    void* frameRead();
+    bool frameRead();
 
-    void* full_FrameRead(void);
+    bool full_FrameRead(void);
 
-    void imageProcess(void* p, bool raw=false);
+    /*
+    * This function is intended to perform custom code to adapt
+    * non standard pixel types to a standard one, in order to
+    * use standard conversion libraries afterward.
+    */
+    void imagePreProcess();
+
+    /*
+    * This function is intended to perform all the required conversions
+    * from the camera pixel type to the RGB one and eventually rescaling
+    * to size requested by the user.
+    */
+    void imageProcess();
 
     int getfd();
 

@@ -72,25 +72,39 @@ int V4L_camera::convertYARP_to_V4L(int feature)
     return NOT_PRESENT;
 }
 
-V4L_camera::V4L_camera() : RateThread(1000/DEFAULT_FRAMERATE), doCropping(false), dual(false), toEpochOffset(getEpochTimeShift())
+V4L_camera::V4L_camera() : RateThread(1000/DEFAULT_FRAMERATE), doCropping(false), toEpochOffset(getEpochTimeShift())
 {
-    param.width  = DEFAULT_WIDTH;
-    param.height = DEFAULT_HEIGHT;
+    verbose = false;
     param.fps = DEFAULT_FRAMERATE;
     param.io = IO_METHOD_MMAP;
     param.deviceId = "/dev/video0";
     param.fd  = -1;
-    param.image_size = 0;
     param.n_buffers = 0;
-    param.dst_image = NULL;
     param.buffers = NULL;
     param.camModel = STANDARD_UVC;
-    _v4lconvert_data = NULL;
-    param.tmp_image= NULL;
-    param.tmp_image2 = NULL;
-    param.raw_image = NULL;
+    param.dual = false;
+
+    param.addictionalResize = false;
+    param.resizeOffset_x = 0;
+    param.resizeOffset_y = 0;
+    param.resizeWidth = 0;
+    param.resizeHeight = 0;
+
+    _v4lconvert_data = YARP_NULLPTR;
     myCounter = 0;
     timeTot = 0;
+
+    param.user_width  = DEFAULT_WIDTH;
+    param.user_height = DEFAULT_HEIGHT;
+    param.raw_image = YARP_NULLPTR;
+    param.raw_image_size = 0;
+    param.read_image = YARP_NULLPTR;
+
+    param.src_image = YARP_NULLPTR;
+    param.src_image_size = 0;
+
+    param.dst_image_rgb = YARP_NULLPTR;
+    param.dst_image_size_rgb = 0;
 
     use_exposure_absolute = false;
     camMap["default"]           = STANDARD_UVC;
@@ -216,7 +230,7 @@ bool V4L_camera::open(yarp::os::Searchable& config)
     deviceUninit();
     v4l2_close(param.fd);
 
-    yarp::os::Time::delay(0.5);
+    yarp::os::Time::delay(1);
     // re-open device
     param.fd = v4l2_open(param.deviceId.c_str(), O_RDWR /* required */ | O_NONBLOCK, 0);
 
@@ -256,8 +270,8 @@ bool V4L_camera::getRgbSupportedConfigurations(yarp::sig::VectorOf<CameraConfig>
     return true;
 }
 bool V4L_camera::getRgbResolution(int &width, int &height){
-    width=param.width;
-    height=param.height;
+    width=param.user_width;
+    height=param.user_height;
     return true;
 }
 
@@ -265,8 +279,8 @@ bool V4L_camera::setRgbResolution(int width, int height){
     mutex.wait();
     captureStop();
     deviceUninit();
-    param.width=width;
-    param.height=height;
+    param.user_width=width;
+    param.user_height=height;
     bool res=deviceInit();
     captureStart();
     mutex.post();
@@ -310,18 +324,18 @@ bool V4L_camera::fromConfig(yarp::os::Searchable& config)
     if(!config.check("width") )
     {
         yDebug() << "width parameter not found, using default value of " << DEFAULT_WIDTH;
-        param.width = DEFAULT_WIDTH;
+        param.user_width = DEFAULT_WIDTH;
     }
     else
-        param.width = config.find("width").asInt();
+        param.user_width = config.find("width").asInt();
 
     if(!config.check("height") )
     {
         yDebug() << "height parameter not found, using default value of " << DEFAULT_HEIGHT;
-        param.height = DEFAULT_HEIGHT;
+        param.user_height = DEFAULT_HEIGHT;
     }
     else
-        param.height = config.find("height").asInt();
+        param.user_height = config.find("height").asInt();
 
     if(!config.check("framerate") )
     {
@@ -414,11 +428,11 @@ bool V4L_camera::fromConfig(yarp::os::Searchable& config)
 
     if(config.check("dual") )
     {
-        dual = true;
+        param.dual = true;
         yInfo("Using dual input camera.");
     }
     else
-        dual = false;
+        param.dual = false;
 
     int type = 0;
     if(!config.check("pixelType") )
@@ -432,13 +446,13 @@ bool V4L_camera::fromConfig(yarp::os::Searchable& config)
     switch(type)
     {
         case VOCAB_PIXEL_MONO:
-            param.pixelType = V4L2_PIX_FMT_GREY;
-            param.dst_image_size = param.width * param.height;
+            // Pixel type raw is the native one from the camera
+            param.pixelType = convertV4L_to_YARP_format(param.src_fmt.fmt.pix.pixelformat);
             break;
 
         case VOCAB_PIXEL_RGB:
+            // is variable param.pixelType really required??
             param.pixelType = V4L2_PIX_FMT_RGB24;
-            param.dst_image_size = param.width * param.height * 3;
             break;
 
         default:
@@ -512,7 +526,7 @@ bool V4L_camera::fromConfig(yarp::os::Searchable& config)
     }
     delete retM;
 
-    yDebug() << "using following device " << param.deviceId << "with the configuration: " << param.width << "x" << param.height << "; camModel is " << param.camModel;
+    yDebug() << "using following device " << param.deviceId << "with the configuration: " << param.user_width << "x" << param.user_height << "; camModel is " << param.camModel;
     return true;
 }
 
@@ -526,7 +540,6 @@ bool V4L_camera::threadInit()
     yTrace();
 
     timeStart = timeNow = timeElapsed = yarp::os::Time::now();
-
     frameCounter = 0;
     return true;
 }
@@ -586,7 +599,6 @@ bool V4L_camera::deviceInit()
 
     switch (param.io)
     {
-
         case IO_METHOD_READ:
         {
             if (!(cap.capabilities & V4L2_CAP_READWRITE)) {
@@ -610,9 +622,7 @@ bool V4L_camera::deviceInit()
             break;
     }
 
-    /* Select video input, video standard and tune here. */
     CLEAR(cropcap);
-
     cropcap.type = V4L2_BUF_TYPE_VIDEO_CAPTURE;
 
     if (0 == xioctl(param.fd, VIDIOC_CROPCAP, &cropcap))
@@ -644,18 +654,27 @@ bool V4L_camera::deviceInit()
 
     _v4lconvert_data = v4lconvert_create(param.fd);
     if (_v4lconvert_data == NULL)
-        printf("\nERROR: v4lconvert_create\n");
-    else
-        printf("\nDONE: v4lconvert_create\n");
+        yError() << " Failed to initialize v4lconvert. Conversion to required format may not work";
 
-    /* Here we set the pixel format we want to have to display, for getImage
-    // set the desired format after conversion and ask v4l which input format I should
-    // ask to the camera
-    */
+    /*
+     * dst_fmt is the image format the user require.
+     * With try_format, V4l does an handshake with the camera and the best match from
+     * the available formats provided by the camera is selected.
+     * src_fmt will contain the source format, i.e. the configuration to be sent to the
+     * camera to optimize the conversion which will be done afterwards.
+     *
+     * VERY IMPORTANT NOTE:
+     *
+     * In case no match is found for the user input provided in dst_fmt, than dst_fmt
+     * itself may be changed to provide the best conversion possible similar to user
+     * input. In particular, pixel format conversion together with rescaling may not
+     * be possible to achieve. In this case only pixel format conversion will be done
+     * and we need to take care of the rescaling.
+     */
 
     param.dst_fmt.type                = V4L2_BUF_TYPE_VIDEO_CAPTURE;
-    param.dst_fmt.fmt.pix.width       = param.width;
-    param.dst_fmt.fmt.pix.height      = param.height;
+    param.dst_fmt.fmt.pix.width       = param.user_width;
+    param.dst_fmt.fmt.pix.height      = param.user_height;
     param.dst_fmt.fmt.pix.field       = V4L2_FIELD_NONE;
     param.dst_fmt.fmt.pix.pixelformat = param.pixelType;
 
@@ -664,10 +683,65 @@ bool V4L_camera::deviceInit()
         printf("ERROR: v4lconvert_try_format\n\nError is: %s", v4lconvert_get_error_message(_v4lconvert_data));
         return false;
     }
+
+    // Check if dst_fmt has been changed by the v4lconvert_try_format
+    if(param.dst_fmt.fmt.pix.width  != param.user_width  ||
+       param.dst_fmt.fmt.pix.height != param.user_height ||
+       param.dst_fmt.fmt.pix.pixelformat != param.pixelType)
+    {
+        yWarning() <<  "Conversion from HW supported configuration into user requested format will require addictional step.\n" <<
+                       "Performance issue may arise.";
+
+        param.addictionalResize = true;
+
+        // Compute offsets for cropping image in case the source image and the one
+        // required by the user have different form factors, i.e 16/9 vs 4/3
+        double inputFF  = (double) param.dst_fmt.fmt.pix.width / (double) param.dst_fmt.fmt.pix.height;
+        double outputFF = (double) param.user_width / (double) param.user_height;
+
+        if(outputFF < inputFF)
+        {
+            // Use all vertical pixels, crop lateral pixels to get the central portion of the image
+            param.resizeOffset_y = 0;
+            param.resizeHeight = param.dst_fmt.fmt.pix.height;
+
+            if(!param.dual)
+            {
+                param.resizeOffset_x = (param.dst_fmt.fmt.pix.width - (param.dst_fmt.fmt.pix.height * outputFF))/2;
+                param.resizeWidth = param.dst_fmt.fmt.pix.width- param.resizeOffset_x*2;
+            }
+            else
+            {
+                param.resizeOffset_x = (param.dst_fmt.fmt.pix.width - (param.dst_fmt.fmt.pix.height * outputFF))/4;  //  "/4" is  "/2"  2 times because there are 2 images
+                param.resizeWidth = param.dst_fmt.fmt.pix.width/2- param.resizeOffset_x*2;
+            }
+        }
+        else
+        {
+            // Use all horizontal pixels, crop top/bottom pixels to get the central portion of the image
+            param.resizeOffset_x = 0;
+
+            if(!param.dual)
+            {
+                param.resizeWidth = param.dst_fmt.fmt.pix.width;
+                param.resizeOffset_y = (param.dst_fmt.fmt.pix.height - (param.dst_fmt.fmt.pix.width / outputFF))/2;
+                param.resizeHeight = param.dst_fmt.fmt.pix.height - param.resizeOffset_y*2;
+            }
+            else
+            {
+                param.resizeWidth = param.dst_fmt.fmt.pix.width/2;
+                param.resizeOffset_y = (param.dst_fmt.fmt.pix.height - (param.dst_fmt.fmt.pix.width / outputFF))/2;
+                param.resizeHeight = param.dst_fmt.fmt.pix.height - param.resizeOffset_y*2;
+            }
+        }
+    }
     else
     {
-        printf("DONE: v4lconvert_try_format\n\t");
-        printf("Message is: %s", v4lconvert_get_error_message(_v4lconvert_data));
+        param.addictionalResize = false;
+        param.resizeOffset_x = 0;
+        param.resizeWidth = param.user_width/2;
+        param.resizeOffset_y = 0;
+        param.resizeHeight = param.user_height;
     }
     printf("param.width = %d; src.width = %d\n", param.width, param.src_fmt.fmt.pix.width);
 
@@ -710,25 +784,31 @@ bool V4L_camera::deviceInit()
             fprintf(stderr,"Unable to set frame interval.\n");
     }
 
-    /* Buggy driver paranoia. */
-    min = param.src_fmt.fmt.pix.width * 2;
-    if (param.src_fmt.fmt.pix.bytesperline < min)
-    {
-        printf("bytesperline bugged!!\n");
-        param.src_fmt.fmt.pix.bytesperline = min;
-    }
-    min = param.src_fmt.fmt.pix.bytesperline * param.src_fmt.fmt.pix.height;
-    if (param.src_fmt.fmt.pix.sizeimage < min)
-    {
-        printf("sizeimage bugged!!\n");
-        param.src_fmt.fmt.pix.sizeimage = min;
-    }
+    param.src_image_size = param.src_fmt.fmt.pix.sizeimage;
+    param.src_image = new unsigned char[param.src_image_size];
 
-    param.image_size = param.src_fmt.fmt.pix.sizeimage;
-    param.rgb_src_image_size = param.src_fmt.fmt.pix.width * param.src_fmt.fmt.pix.height * 3;
-    param.dst_image  = (unsigned char*) malloc(param.width * param.height * 3);
-    param.tmp_image  = new unsigned char[param.rgb_src_image_size];
-    param.tmp_image2 = new unsigned char[param.rgb_src_image_size];
+    param.dst_image_size_rgb = param.dst_fmt.fmt.pix.width * param.dst_fmt.fmt.pix.height * 3;
+    param.dst_image_rgb = new unsigned char[param.dst_image_size_rgb];
+
+    // raw image is for non-standard type only, for example leopard_python
+    if(param.camModel == LEOPARD_PYTHON)
+    {
+        // This is a dual camera, set dual to true by default
+        param.dual = true;
+
+        /* This camera sends bayer 10bit over 2bytes for each piece of information,
+         * therefore the total size of the image is 2 times the number of pixels.
+         */
+        param.raw_image_size = param.src_fmt.fmt.pix.width * param.src_fmt.fmt.pix.height * 2;
+        param.raw_image = new unsigned char[param.raw_image_size];
+        param.read_image = param.raw_image;     // store the image read in the raw_image buffer
+    }
+    else    // This buffer should not be used for STANDARD_UVC cameras
+    {
+        param.read_image = param.src_image;     // store the image read in the src_image buffer
+        param.raw_image_size = 0;
+        param.raw_image = YARP_NULLPTR;
+    }
 
     switch (param.io)
     {
@@ -795,36 +875,30 @@ bool V4L_camera::deviceUninit()
     if(param.buffers != 0)
         free(param.buffers);
 
-    if(param.dst_image != NULL)
+    if(param.raw_image != YARP_NULLPTR)
     {
-        free (param.dst_image);
-        param.dst_image=NULL;
+        delete[] param.raw_image;
+        param.raw_image = YARP_NULLPTR;
     }
 
-    if(_v4lconvert_data != NULL)
+    if(param.src_image != YARP_NULLPTR)
+    {
+        delete[] param.src_image;
+        param.src_image = YARP_NULLPTR;
+    }
+
+    if(param.dst_image_rgb != YARP_NULLPTR)
+    {
+        delete[] param.dst_image_rgb;
+        param.dst_image_rgb=YARP_NULLPTR;
+    }
+
+    if(_v4lconvert_data != YARP_NULLPTR)
     {
         v4lconvert_destroy(_v4lconvert_data);
-        _v4lconvert_data=NULL;
+        _v4lconvert_data=YARP_NULLPTR;
     }
 
-    if(param.tmp_image != NULL)
-    {
-        delete[] param.tmp_image;
-        param.tmp_image=NULL;
-    }
-
-    if(param.tmp_image2 != NULL)
-    {
-        delete[] param.tmp_image2;
-        param.tmp_image2=NULL;
-    }
-
-    if(param.raw_image != NULL)
-    {
-        free (param.raw_image);
-        param.raw_image=NULL;
-
-    }
     return ret;
 }
 
@@ -856,17 +930,17 @@ bool V4L_camera::getRgbBuffer(unsigned char *buffer)
 {
     bool res=false;
     mutex.wait();
-    if(configured){
-        imageProcess(param.raw_image);
-    //     memcpy(buffer, param.dst_image, param.rgb_src_image_size*12/16);
-    //     memcpy(buffer, param.tmp_image2, param.rgb_src_image_size*12/16);
-    //     memcpy(buffer, param.outMat.data, param.src_fmt.fmt.pix.width * param.src_fmt.fmt.pix.height * 3);
+    if(configured)
+    {
+        imagePreProcess();
+        imageProcess();
 
-    //     memcpy(buffer, param.img.data, param.src_fmt.fmt.pix.width*12/16 * param.src_fmt.fmt.pix.height * 3);
-    //     std::cout << "dst_image_size"<< param.dst_image_size << "; compute " << param.src_fmt.fmt.pix.width * param.src_fmt.fmt.pix.height * 3 *12 /16  << std::endl;
-    //     memcpy(buffer, param.outMat.data, param.src_fmt.fmt.pix.width * param.src_fmt.fmt.pix.height * 3 *12 /16 );
-    //     int __size = param.outMat.total();
-        memcpy(buffer, param.outMat.data, param.outMat.total()*3);
+        if(!param.addictionalResize)
+        {
+            memcpy(buffer, param.dst_image_rgb, param.dst_image_size_rgb);
+        }
+        else
+            memcpy(buffer, param.outMat.data, param.outMat.total()*3);
         mutex.post();
         res=true;
     }
@@ -886,22 +960,8 @@ bool V4L_camera::getRawBuffer(unsigned char *buffer)
     mutex.wait();
     if(configured)
     {
-        imageProcess(param.raw_image);
-        switch(param.camModel)
-        {
-            case LEOPARD_PYTHON:
-            {
-                memcpy(buffer, param.tmp_image, param.dst_image_size);
-            }
-            break;
-
-            case STANDARD_UVC:
-            default:
-            {
-                memcpy(buffer, param.raw_image, param.width * param.height);
-            }
-            break;
-        }
+        imagePreProcess();
+        memcpy(buffer, param.src_image, param.src_image_size);
         res=true;
     }
     else
@@ -915,7 +975,7 @@ bool V4L_camera::getRawBuffer(unsigned char *buffer)
 
 int V4L_camera::getRawBufferSize()
 {
-    return 0;
+    return param.src_image_size;
 }
 
 /**
@@ -924,11 +984,11 @@ int V4L_camera::getRawBufferSize()
  */
 int V4L_camera::height() const
 {
-//     yTrace() << ": height is " << param.height;
-//     return param.src_fmt.fmt.pix.height /** 0.5*/;
-//     return param.src_fmt.fmt.pix.height *0.5;
-//     return param.outMat.rows;
-    return param.height;
+    /*
+     * return user setting because at the end of the day, this is what
+     * the image must look like
+     */
+    return param.user_height;
 }
 
 /**
@@ -937,13 +997,12 @@ int V4L_camera::height() const
  */
 int V4L_camera::width() const
 {
-//     yTrace() << ": width is " << param.width;
-//     return param.src_fmt.fmt.pix.width*12/16 *0.5;
-//     return param.outMat.cols;
-    return param.width;
+    /*
+     * return user setting because at the end of the day, this is what
+     * the image must look like
+     */
+    return param.user_width;
 }
-
-
 
 /**
  *    Do ioctl and retry if error was EINTR ("A signal was caught during the ioctl() operation."). Parameters are the same as on ioctl.
@@ -1043,7 +1102,7 @@ bool V4L_camera::enumerate_controls()
 /**
  *   mainloop: read frames and process them
  */
-void* V4L_camera::full_FrameRead(void)
+bool V4L_camera::full_FrameRead(void)
 {
     bool got_it = false;
     void *image_ret = NULL;
@@ -1086,9 +1145,9 @@ void* V4L_camera::full_FrameRead(void)
         }
         else if ((r > 0) && (FD_ISSET(param.fd, &fds)))
         {
-            if( (image_ret=frameRead()) != NULL)
+            if(frameRead())
             {
-        //             printf("got an image\n");
+                // printf("got an image\n");
                 got_it = true;
                 break;
             }
@@ -1102,267 +1161,198 @@ void* V4L_camera::full_FrameRead(void)
 
         /* EAGAIN - continue select loop. */
     }
-    if(!got_it)
-        printf("NO GOOD image got \n");
-
-    return image_ret; //param.dst_image;
+    return got_it;
 }
 
 /**
  *    read single frame
  */
-void* V4L_camera::frameRead()
+bool V4L_camera::frameRead()
 {
-    struct v4l2_buffer buf;
+    bool ret=false;
     unsigned int i;
+    struct v4l2_buffer buf;
     mutex.wait();
 
     switch (param.io)
     {
         case IO_METHOD_READ:
+        {
             printf("IO_METHOD_READ\n");
             if (-1 == v4l2_read(param.fd, param.buffers[0].start, param.buffers[0].length))
             {
-                switch (errno)
-                {
-                    case EAGAIN:
-                        mutex.post();
-                        return NULL;
-
-                    case EIO:
-                        // Could ignore EIO, see spec.
-                        // fall through
-
-                    default:
-                        errno_exit("read");
-                        mutex.post();
-                        return NULL;
-                }
-                timeStamp.update(toEpochOffset + buf.timestamp.tv_sec + buf.timestamp.tv_usec/1000000.0);
+                mutex.post();
+                return false;
             }
 
-//             memcpy(param.raw_image, param.buffers[0].start, param.image_size);
+            timeStamp.update(toEpochOffset + buf.timestamp.tv_sec + buf.timestamp.tv_usec/1000000.0);
 //             imageProcess(param.buffers[0].start);
-            break;
+        }
+        break;
 
 
-            case IO_METHOD_MMAP:
-            {
+        case IO_METHOD_MMAP:
+        {
 //                 printf("IO_METHOD_MMAP\n");
 
-                CLEAR(buf);
+            CLEAR(buf);
 
-                buf.type = V4L2_BUF_TYPE_VIDEO_CAPTURE;
-                buf.memory = V4L2_MEMORY_MMAP;
+            buf.type = V4L2_BUF_TYPE_VIDEO_CAPTURE;
+            buf.memory = V4L2_MEMORY_MMAP;
 
-                if (-1 == xioctl(param.fd, VIDIOC_DQBUF, &buf))
-                {
-                    switch (errno)
-                    {
-                        default:
-                            printf("\n ERROR: VIDIOC_DQBUF\n");
-                            mutex.post();
-                            return NULL;
-                    }
-                }
+            if (-1 == xioctl(param.fd, VIDIOC_DQBUF, &buf))
+            {
+                printf("\n ERROR: VIDIOC_DQBUF\n");
+                mutex.post();
+                return false;
+            }
 
-                if( !(buf.index < param.n_buffers) )
+            if( !(buf.index < param.n_buffers) )
+            {
+                yError() << "at line " << __LINE__;
+                mutex.post();
+                return false;
+            }
+
+            memcpy(param.read_image, param.buffers[buf.index].start, param.buffers[0].length);
+//                 imageProcess(param.raw_image);
+            timeStamp.update(toEpochOffset + buf.timestamp.tv_sec + buf.timestamp.tv_usec/1000000.0);
+
+            if (-1 == xioctl(param.fd, VIDIOC_QBUF, &buf))
+            {
+                errno_exit("VIDIOC_QBUF");
+                mutex.post();
+                return false;
+            }
+
+        } break;
+
+        case IO_METHOD_USERPTR:
+        {
+            printf("IO_METHOD_USERPTR\n");
+
+            CLEAR (buf);
+
+            buf.type = V4L2_BUF_TYPE_VIDEO_CAPTURE;
+            buf.memory = V4L2_MEMORY_USERPTR;
+
+            if (-1 == xioctl(param.fd, VIDIOC_DQBUF, &buf))
+            {
+                printf("\n ERROR: VIDIOC_DQBUF\n");
+                mutex.post();
+                return false;
+            }
+
+            for (i = 0; i < param.n_buffers; ++i)
+                if (buf.m.userptr == (unsigned long)param.buffers[i].start && buf.length == param.buffers[i].length)
+                    break;
+
+                if(! (i < param.n_buffers) )
                 {
                     yError() << "at line " << __LINE__;
                     mutex.post();
-                    return NULL;
+                    return false;
                 }
 
-
-                memcpy(param.raw_image, param.buffers[buf.index].start, param.buffers[0].length); //param.image_size);
-//                 param.raw_image = param.buffers[buf.index].start;
-//                 imageProcess(param.raw_image);
-                timeStamp.update(toEpochOffset + buf.timestamp.tv_sec + buf.timestamp.tv_usec/1000000.0);
-
-                if (-1 == xioctl(param.fd, VIDIOC_QBUF, &buf))
-                {
-                    errno_exit("VIDIOC_QBUF");
-                    mutex.post();
-                    return NULL;
-                }
-
-            } break;
-
-            case IO_METHOD_USERPTR:
-            {
-                printf("IO_METHOD_USERPTR\n");
-
-                CLEAR (buf);
-
-                buf.type = V4L2_BUF_TYPE_VIDEO_CAPTURE;
-                buf.memory = V4L2_MEMORY_USERPTR;
-
-                if (-1 == xioctl(param.fd, VIDIOC_DQBUF, &buf))
-                {
-                    switch (errno)
-                    {
-                        case EAGAIN:
-                            return 0;
-
-                        case EIO:
-                            // Could ignore EIO, see spec.
-                            // fall through
-
-                        default:
-                            errno_exit("VIDIOC_DQBUF");
-                    }
-                }
-
-                for (i = 0; i < param.n_buffers; ++i)
-                    if (buf.m.userptr == (unsigned long)param.buffers[i].start && buf.length == param.buffers[i].length)
-                        break;
-
-                    if(! (i < param.n_buffers) )
-                    {
-                        yError() << "at line " << __LINE__;
-                        mutex.post();
-                        return NULL;
-                    }
-
-                memcpy(param.raw_image, param.buffers[buf.index].start, param.image_size);
-//                 param.raw_image = (void*) buf.m.userptr;
-                timeStamp.update(toEpochOffset + buf.timestamp.tv_sec + buf.timestamp.tv_usec/1000000.0);
+            memcpy(param.read_image, param.buffers[buf.index].start, param.buffers[0].length);
+            timeStamp.update(toEpochOffset + buf.timestamp.tv_sec + buf.timestamp.tv_usec/1000000.0);
 
 
-                if (-1 == xioctl(param.fd, VIDIOC_QBUF, &buf))
-                    errno_exit("VIDIOC_QBUF");
-            }  break;
+            if (-1 == xioctl(param.fd, VIDIOC_QBUF, &buf))
+                errno_exit("VIDIOC_QBUF");
+        }  break;
 
         default:
         {
             printf("frameRead, default case\n");
-//             param.raw_image = NULL;
         }
     }
     mutex.post();
-    return (void*) param.raw_image; //param.dst_image;
+    return true;
+}
+
+/*
+ * This function is intended to perform custom code to adapt
+ * non standard pixel types to a standard one, in order to
+ * use standard conversion libraries afterward.
+ */
+void V4L_camera::imagePreProcess()
+{
+    switch(param.camModel)
+    {
+        case LEOPARD_PYTHON:
+        {
+            // Here we are resizing the byte information from 10 to 8 bits.
+            // Width and Height are not modified by this operation.
+            const uint _pixelNum = param.src_fmt.fmt.pix.width * param.src_fmt.fmt.pix.height;
+
+            uint16_t *raw_p = (uint16_t*) param.raw_image;
+            for(uint i=0; i<_pixelNum; i++)
+            {
+                param.src_image[i] =  (unsigned char) ( raw_p[i] >> bit_shift);
+            }
+
+            // Set the correct pixel type fot the v4l_convert to work on.
+            param.src_fmt.fmt.pix.bytesperline   = param.src_fmt.fmt.pix.width;
+            param.src_fmt.fmt.pix.pixelformat    = pixel_fmt_leo;
+        } break;
+
+        case STANDARD_UVC:
+        default:
+        {
+            // Nothing to do here
+        }break;
+    }
 }
 
 /**
  *   process image read
  */
-void V4L_camera::imageProcess(void* p, bool useRawData)
+void V4L_camera::imageProcess()
 {
     static bool initted = false;
     static int err=0;
 
     timeStart = yarp::os::Time::now();
 
-    switch(param.camModel)
+    // imagePreProcess() should already be called before entering here!!
+    // src_fmt and dst_fmt must be alredy fixed up if needed!!
+
+    // Convert from src type to RGB
+    if( v4lconvert_convert((v4lconvert_data*) _v4lconvert_data,
+                           &param.src_fmt,      &param.dst_fmt,
+                            param.src_image,     param.src_image_size,
+                            param.dst_image_rgb, param.dst_image_size_rgb)  <0 )
     {
-        case LEOPARD_PYTHON:
+        if((err %20) == 0)
         {
-            uint16_t *raw_p = (uint16_t*) p;
-            for(int i=0; i<param.dst_fmt.fmt.pix.height; i++)
-            {
-                for(int j=0; j<param.dst_fmt.fmt.pix.width; j++)
-                {
-                    param.tmp_image[i*param.width + j] =  (unsigned char) ( raw_p[i*param.width + j] >> bit_shift);
-                }
-            }
-
-            if(useRawData)
-                break;
-
-            param.src_fmt.fmt.pix.width             = param.width;
-            param.src_fmt.fmt.pix.height            = param.height;
-            // real bayer image size is 1 byte per pixel, this camera is 2bytes per pixel because it uses int16 instead of int8.
-            // The shift in the for loop is to reduce pixel size to 1 byte in order to use standard convertion algorithms.
-            // The 4 LSB are ignored.
-            param.src_fmt.fmt.pix.bytesperline      = param.width;
-            param.src_fmt.fmt.pix.sizeimage         = param.width * param.height;
-
-            param.dst_fmt.fmt.pix.width             = param.width;
-            param.dst_fmt.fmt.pix.height            = param.height;
-            param.dst_fmt.fmt.pix.bytesperline      = param.width * 3;  // 3 for rgb
-            param.dst_fmt.fmt.pix.sizeimage         = param.width * param.height * 3;  // 3 for rgb
-
-            // workaround for buggy camera info
-            param.src_fmt.fmt.pix.pixelformat = pixel_fmt_leo;
-            param.dst_fmt.fmt.pix.pixelformat = V4L2_PIX_FMT_RGB24;
-
-            if( v4lconvert_convert((v4lconvert_data*) _v4lconvert_data,  &param.src_fmt,   &param.dst_fmt,
-                (unsigned char *)param.tmp_image,  param.width * param.height, param.tmp_image2, param.width * param.height * 3)  <0 )
-            {
-                if((err %20) == 0)
-                {
-                    printf("error converting \n"); fflush(stdout);
-                    printf("Message is: %s", v4lconvert_get_error_message(_v4lconvert_data));
-                    err=0;
-                }
-                err++;
-                return;
-            }
-
-            // Resize
-            cv::Mat img(cv::Size(param.src_fmt.fmt.pix.width, param.src_fmt.fmt.pix.height), CV_8UC3, param.tmp_image2);
-            param.img=img;
-            cv::resize(img, param.outMat, cvSize(param.width, param.height), 0, 0, cv::INTER_CUBIC);
-
-//            param.outMat = cv::Mat(cv::Size(param.src_fmt.fmt.pix.width, param.src_fmt.fmt.pix.height), CV_8UC3, param.tmp_image2);
+            printf("error converting \n"); fflush(stdout);
+            printf("Message is: %s", v4lconvert_get_error_message(_v4lconvert_data));
+            err=0;
         }
-        break;
+        err++;
+        return;
+    }
 
-        case STANDARD_UVC:
+    if(param.addictionalResize)
+    {
+        if(!param.dual)
         {
-
-            if( v4lconvert_convert((v4lconvert_data*) _v4lconvert_data,  &param.src_fmt,   &param.dst_fmt,
-                                                      (unsigned char *)p, param.image_size, param.tmp_image, param.rgb_src_image_size)  <0 )
-            {
-                if((err %20) == 0)
-                {
-                    printf("error converting \n"); fflush(stdout);
-                    printf("Message is: %s", v4lconvert_get_error_message(_v4lconvert_data));
-                    err=0;
-                }
-                err++;
-                return;
-            }
-
-            if(doCropping)
-            {
-                int tmp1_rowSize = param.dst_fmt.fmt.pix.width * 3;
-                int tmp2_rowSize = tmp1_rowSize *12/16;
-
-                if(dual)
-                {
-                    for(int h=0; h<param.dst_fmt.fmt.pix.height; h++)
-                    {
-                        memcpy((void *) &param.tmp_image2[h*tmp2_rowSize],                 (void *)&param.tmp_image[h*tmp1_rowSize],                tmp2_rowSize/2);
-                        memcpy((void *) &param.tmp_image2[h*tmp2_rowSize+tmp2_rowSize/2],  (void *)&param.tmp_image[h*tmp1_rowSize+tmp1_rowSize/2], tmp2_rowSize/2);
-                    }
-// 666
-                    cv::Mat img(cv::Size(param.src_fmt.fmt.pix.width*12/16, param.src_fmt.fmt.pix.height), CV_8UC3, param.tmp_image2);
-                    param.img=img;
-                    cv::resize(img, param.outMat, cvSize(param.width, param.height), 0, 0, cv::INTER_CUBIC);
-
-                }
-                else
-                {
-                    for(int h=0; h<param.dst_fmt.fmt.pix.height; h++)
-                    {
-                        memcpy((void *) &param.tmp_image2[h*tmp2_rowSize], (void *)&param.tmp_image[h*tmp1_rowSize], tmp2_rowSize);
-                    }
-                }
-            }
-            else
-            {
-                cv::Mat img(cv::Size(param.src_fmt.fmt.pix.width, param.src_fmt.fmt.pix.height), CV_8UC3, param.tmp_image);
-                param.img=img;
-                cv::resize(img, param.outMat, cvSize(param.width, param.height), 0, 0, cv::INTER_CUBIC);
-            }
-            break;
+            cv::Mat img(cv::Size(param.dst_fmt.fmt.pix.width, param.dst_fmt.fmt.pix.height), CV_8UC3, param.dst_image_rgb);
+            cv::Rect crop(param.resizeOffset_x, param.resizeOffset_y, param.resizeWidth, param.resizeHeight);
+            cv::resize(img(crop), param.outMat, cvSize(param.user_width, param.user_height), 0, 0, cv::INTER_CUBIC);
         }
-
-        default:
+        else
         {
-            yError() << "Unsupported camera, don't know how to do color reconstruction to RGB";
-            break;
+            // Load whole image in a cv::Mat
+            cv::Mat img(cv::Size(param.dst_fmt.fmt.pix.width, param.dst_fmt.fmt.pix.height), CV_8UC3, param.dst_image_rgb);
+            cv::Mat img_right;
+            cv::Rect crop(param.resizeOffset_x, param.resizeOffset_y, param.resizeWidth, param.resizeHeight);
+
+            cv::resize(img(crop), param.outMat, cvSize(param.user_width/2, param.user_height), 0, 0, cv::INTER_CUBIC);
+            cv::Rect crop2(param.resizeWidth+param.resizeOffset_x*2, param.resizeOffset_y, param.resizeWidth, param.resizeHeight);
+            cv::resize(img(crop2), img_right, cvSize(param.user_width/2, param.user_height), 0, 0, cv::INTER_CUBIC);
+            cv::hconcat(param.outMat, img_right, param.outMat);
         }
     }
 
@@ -1384,7 +1374,6 @@ void V4L_camera::imageProcess(void* p, bool useRawData)
             initted  = true;
         }
     }
-
 }
 
 /**
@@ -1552,17 +1541,12 @@ bool V4L_camera::mmapInit()
         if (-1 == xioctl(param.fd, VIDIOC_QUERYBUF, &buf))
             errno_exit("VIDIOC_QUERYBUF");
 
-        printf("image size is %d - buf.len is %d, offset is %d - new offset is %d\n", param.image_size, buf.length, buf.m.offset, param.image_size*param.n_buffers);
         param.buffers[param.n_buffers].length = buf.length;
         param.buffers[param.n_buffers].start = v4l2_mmap(NULL, buf.length, PROT_READ | PROT_WRITE, MAP_SHARED, param.fd, buf.m.offset);
 
         if (MAP_FAILED == param.buffers[param.n_buffers].start)
             errno_exit("mmap");
     }
-
-    param.raw_image = malloc(param.image_size);
-    yInfo() << "size is " << buf.length << " or " << param.image_size << param.raw_image;
-
     return true;
 }
 
@@ -1618,7 +1602,9 @@ bool V4L_camera::userptrInit(unsigned int buffer_size)
 
 bool V4L_camera::set_V4L2_control(uint32_t id, double value, bool verbatim)
 {
-//     yTrace();
+    if(value < 0)
+        return false;
+
     struct v4l2_queryctrl queryctrl;
     struct v4l2_control control;
 
@@ -1670,7 +1656,7 @@ bool V4L_camera::set_V4L2_control(uint32_t id, double value, bool verbatim)
             }
             return false;
         }
-        printf("set control %s to %d done!\n", queryctrl.name, control.value);
+        if(verbose) yInfo("set control %s to %d done!\n", queryctrl.name, control.value);
     }
     return true;
 }
@@ -2066,8 +2052,6 @@ bool V4L_camera::setActive(int feature, bool onoff)
 
 bool V4L_camera::getActive(int feature, bool *_isActive)
 {
-    // I can't find any meaning of setting a feature to off on V4l ... what it is supposed to do????
-
     switch(feature)
     {
         case YARP_FEATURE_WHITE_BALANCE:
