@@ -40,6 +40,16 @@ static double getEpochTimeShift()
 }
 
 
+double V4L_camera::checkDouble(yarp::os::Searchable& config,const char* key)
+{
+    if (config.check(key))
+    {
+        return config.find(key).asDouble();
+    }
+
+    return -1.0;
+}
+
 #define NOT_PRESENT -1
 int V4L_camera::convertYARP_to_V4L(int feature)
 {
@@ -253,6 +263,23 @@ bool V4L_camera::open(yarp::os::Searchable& config)
     start();
 
     populateConfigurations();
+
+    // Configure the device settings from input file
+    setGain(checkDouble(config,"gain"));
+    setExposure(checkDouble(config,"exposure"));
+    setBrightness(checkDouble(config,"brightness"));
+    setSharpness(checkDouble(config,"sharpness"));
+    yarp::os::Bottle& white_balance=config.findGroup("white_balance");
+    if (!white_balance.isNull())
+    {
+        setWhiteBalance(white_balance.get(2).asDouble(),white_balance.get(1).asDouble());
+    }
+    setHue(checkDouble(config,"hue"));
+    setSaturation(checkDouble(config,"saturation"));
+    setGamma(checkDouble(config,"gamma"));
+    setShutter(checkDouble(config,"shutter"));
+    setIris(checkDouble(config,"iris"));
+
     return true;
 }
 
