@@ -12,7 +12,3 @@ To do so, you have to:
 
 4. Close the PS terminal and open a new one: your profile, with Yarp tab-expansion features, is automatically loaded at startup. Enjoy! :)
 
-
-##### TIPS & TRICKS
-
-To manage multiple shells, you can download and install [`ConsoleZ`](https://github.com/cbucher/console/wiki/Downloads), then configure it so that, in the `settings/tabs` configuration tab, the "shell" field points to `%SystemRoot%\SysWOW64\WindowsPowerShell\v1.0\powershell.exe` (or wherever the Powershell executable is on your machine).
