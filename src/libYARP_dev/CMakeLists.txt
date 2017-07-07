@@ -79,6 +79,7 @@ set(YARP_dev_HDRS include/yarp/dev/all.h
                   include/yarp/dev/IVisualParams.h
                   include/yarp/dev/IVisualParamsImpl.h
                   include/yarp/dev/LaserMeasurementData.h
+                  include/yarp/dev/IVisualServoing.h
                   include/yarp/dev/PolyDriverDescriptor.h
                   include/yarp/dev/PolyDriver.h
                   include/yarp/dev/PolyDriverList.h
