@@ -386,7 +386,6 @@ bool V4L_camera::fromConfig(yarp::os::Searchable& config)
     param.flip=config.check("flip",Value("false")).asBool();
 
 
-
     if(!config.check("camModel") )
     {
         yInfo() << "No 'camModel' was specified, working with 'standard' uvc";
@@ -1349,11 +1348,17 @@ void V4L_camera::imageProcess()
             cv::resize(img(crop2), img_right, cvSize(param.user_width/2, param.user_height), 0, 0, cv::INTER_CUBIC);
             cv::hconcat(param.outMat, img_right, param.outMat);
         }
+        if(param.flip)
+            cv::flip(param.outMat, param.outMat, 1);
     }
-
-    if(param.outMat.data && param.flip){
-        // Flipping around y-axis
-        cv::flip(param.outMat, param.outMat, 1);
+    else
+    {
+        if(param.flip)
+        {
+             cv::Mat img(cv::Size(param.dst_fmt.fmt.pix.width, param.dst_fmt.fmt.pix.height), CV_8UC3, param.dst_image_rgb);
+             param.outMat=img;
+             cv::flip(param.outMat, param.outMat, 1);
+        }
     }
 
     timeElapsed = yarp::os::Time::now() - timeStart;
