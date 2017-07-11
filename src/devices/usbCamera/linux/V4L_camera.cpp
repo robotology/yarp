@@ -455,7 +455,9 @@ bool V4L_camera::fromConfig(yarp::os::Searchable& config)
     else
         doCropping = false;
 
-    if(config.check("dual") )
+    Value isDual = config.check("dual", Value(false), "Is this a dual camera? Two cameras merged into a single frame");
+
+    if(config.find("dual").asBool())
     {
         param.dual = true;
         yInfo("Using dual input camera.");
@@ -787,9 +789,6 @@ bool V4L_camera::deviceInit()
     // raw image is for non-standard type only, for example leopard_python
     if(param.camModel == LEOPARD_PYTHON)
     {
-        // This is a dual camera, set dual to true by default
-        param.dual = true;
-
         /* This camera sends bayer 10bit over 2bytes for each piece of information,
          * therefore the total size of the image is 2 times the number of pixels.
          */
