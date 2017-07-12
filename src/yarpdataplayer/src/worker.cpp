@@ -29,6 +29,7 @@
 using namespace yarp::sig;
 using namespace yarp::sig::file;
 using namespace yarp::os;
+using namespace std;
 
 #ifdef HAS_OPENCV
   using namespace cv;

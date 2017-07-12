@@ -37,6 +37,8 @@
 #endif
 
 using namespace std;
+using namespace yarp::os;
+
 void sighandler(int sig)
 {
     LOG("\n\nCaught ctrl-c, please quit within gui for clean exit\n\n");
