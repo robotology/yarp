@@ -200,12 +200,12 @@ function(YARP_CONFIGURE_EXTERNAL_INSTALLATION _name)
                ROBOTS
                STATIC_PLUGINS
                DYNAMIC_PLUGINS)
-    set(${_NAME}_${_dir}_INSTALL_DIR_FULL "${CMAKE_INSTALL_PREFIX}/${${_NAME}_${_dir}_INSTALL_DIR}" CACHE INTERNAL "${_dir} installation directory for ${_name} (absolute)")
+    set(${_NAME}_${_dir}_INSTALL_DIR_FULL "${CMAKE_INSTALL_PREFIX}/${${_NAME}_${_dir}_INSTALL_DIR}" PARENT_SCOPE)
   endforeach()
 
   # QML2 Import directory
   set(${_NAME}_QML2_IMPORT_DIR ${CMAKE_INSTALL_QMLDIR} CACHE INTERNAL "QML2 import directory for ${_name} (relative to build/installation dir)")
-  set(${_NAME}_QML2_IMPORT_DIR_FULL "${CMAKE_INSTALL_PREFIX}/${${_NAME}_QML2_IMPORT_DIR}" CACHE INTERNAL "QML2 import directory for ${_name} (absolute)")
+  set(${_NAME}_QML2_IMPORT_DIR_FULL "${CMAKE_INSTALL_PREFIX}/${${_NAME}_QML2_IMPORT_DIR}" PARENT_SCOPE)
 
 
   # Create and install the path.d file when required
