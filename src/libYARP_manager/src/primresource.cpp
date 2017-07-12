@@ -12,6 +12,7 @@
 #include <cstring>
 
 using namespace yarp::manager;
+using namespace std;
 
 
 /**

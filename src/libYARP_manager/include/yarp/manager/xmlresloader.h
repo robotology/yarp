@@ -36,10 +36,10 @@ public:
 protected:
 
 private:
-    string strName;
-    string strPath;
-    string strFileName;
-    vector<string> fileNames;
+    std::string strName;
+    std::string strPath;
+    std::string strFileName;
+    std::vector<std::string> fileNames;
     TextParser*    parser;
     ComputerContainer computers;
     Computer dummyComputer;

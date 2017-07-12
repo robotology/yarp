@@ -23,8 +23,6 @@
 #include <yarp/manager/application.h>
 #include <yarp/manager/execstate.h>
 
-//using namespace yarp::os;
-using namespace std;
 
 namespace yarp {
 namespace manager {
@@ -119,12 +117,12 @@ public: // from BrokerEventSink
 
 private:
     bool bAutoConnect;
-    string strCommand;
-    string strParam;
-    string strHost;
-    string strStdio;
-    string strWorkdir;
-    string strEnv;
+    std::string strCommand;
+    std::string strParam;
+    std::string strHost;
+    std::string strStdio;
+    std::string strWorkdir;
+    std::string strEnv;
     int theID;
     double waitStart;
     double waitStop;
@@ -151,8 +149,8 @@ private:
 };
 
 
-typedef vector<Executable*> ExecutablePContainer;
-typedef vector<Executable*>::iterator ExecutablePIterator;
+typedef std::vector<Executable*> ExecutablePContainer;
+typedef std::vector<Executable*>::iterator ExecutablePIterator;
 typedef void (Executable::*ExecutableFuncPtr)(void);
 
 class ConcurentWrapper : public yarp::os::Thread

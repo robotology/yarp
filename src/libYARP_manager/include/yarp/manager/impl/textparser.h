@@ -35,10 +35,8 @@ public:
 
     std::string    parseText(const char *element)
     {
-        using namespace yarp::os;
-        using namespace std;
 
-        string ret, startKeyword, endKeyword;
+        std::string ret, startKeyword, endKeyword;
         size_t s, e;
         bool   badSymbol;
 
@@ -49,16 +47,16 @@ public:
             ret          = element;
             startKeyword = "$ENV{";
             endKeyword   = "}";
-            badSymbol    = ret.find("$") != string::npos;
+            badSymbol    = ret.find("$") != std::string::npos;
             s            = ret.find(startKeyword);
             e            = ret.find(endKeyword, s);
 
-            if(s != string::npos && e != string::npos)
+            if(s != std::string::npos && e != std::string::npos)
             {
-                string envName, envValue;
+                std::string envName, envValue;
 
                 envName   = ret.substr(s + startKeyword.size(), e - s -startKeyword.size());
-                envValue  = NetworkBase::getEnvironment(envName.c_str());
+                envValue  = yarp::os::NetworkBase::getEnvironment(envName.c_str());
                 ret       = ret.substr(0, s)+ envValue + ret.substr(e + endKeyword.size(), ret.size() - endKeyword.size());
                 badSymbol = false;
                 return parseText(ret.c_str());
@@ -70,9 +68,9 @@ public:
             s            = ret.find(startKeyword);
             e            = ret.find(endKeyword, s);
 
-            if(s != string::npos && e != string::npos)
+            if(s != std::string::npos && e != std::string::npos)
             {
-                string envName, envValue;
+                std::string envName, envValue;
 
                 envName   = ret.substr(s + startKeyword.size(), e - s -startKeyword.size());
                 envValue  = variables[envName];

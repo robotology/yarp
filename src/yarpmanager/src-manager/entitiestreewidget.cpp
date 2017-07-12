@@ -20,6 +20,8 @@
 #include <QDragEnterEvent>
 #include <QPainter>
 
+using namespace std;
+
 EntitiesTreeWidget::EntitiesTreeWidget(QWidget *parent) : QTreeWidget(parent)
 {
 

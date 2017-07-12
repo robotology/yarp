@@ -16,8 +16,6 @@
 #include <yarp/manager/logicresource.h>
 #include <yarp/conf/api.h>
 
-using namespace std;
-
 namespace yarp {
 namespace manager {
 
@@ -96,9 +94,9 @@ public:
 protected:
 
 private:
-    string strIP4;
-    string strIP6;
-    string strMAC;
+    std::string strIP4;
+    std::string strIP6;
+    std::string strMAC;
 };
 
 
@@ -138,8 +136,8 @@ public:
 protected:
 
 private:
-    string strArchitecure;
-    string strModel;
+    std::string strArchitecure;
+    std::string strModel;
     size_t cores;
     size_t siblings;
     double frequency;
@@ -151,12 +149,12 @@ private:
  * Class Computer
  */
 typedef struct _Process {
-    string command;
+    std::string command;
     int pid;
 } Process;
 
-typedef vector<Process> ProcessContainer;
-typedef vector<Process>::iterator ProcessIterator;
+typedef std::vector<Process> ProcessContainer;
+typedef std::vector<Process>::iterator ProcessIterator;
 
 class Computer : public GenericResource {
 public:
@@ -209,8 +207,8 @@ private:
 
 };
 
-typedef vector<Computer> ComputerContainer;
-typedef vector<Computer>::iterator ComputerIterator;
+typedef std::vector<Computer> ComputerContainer;
+typedef std::vector<Computer>::iterator ComputerIterator;
 
 } // namespace yarp
 } // namespace manager

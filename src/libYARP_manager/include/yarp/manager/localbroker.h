@@ -81,15 +81,15 @@ public: // for rate thread
 protected:
 
 private:
-    string strCmd;
-    string strParam;
-    string strHost;
-    string strStdio;
-    string strWorkdir;
-    string strTag;
-    string strEnv;
+    std::string strCmd;
+    std::string strParam;
+    std::string strHost;
+    std::string strStdio;
+    std::string strWorkdir;
+    std::string strTag;
+    std::string strEnv;
     int ID;
-    string strError;
+    std::string strError;
     bool bOnlyConnector;
     bool bInitialized;
     int  pipe_to_stdout[2];
@@ -105,7 +105,7 @@ private:
 #if defined(_WIN32)
     HANDLE read_from_pipe_cmd_to_stdout;
     HANDLE write_to_pipe_cmd_to_stdout;
-    string lastError2String();
+    std::string lastError2String();
 #else
     int waitPipe(int pipe_fd);
     int waitPipeSignal(int pipe_fd);

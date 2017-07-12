@@ -20,9 +20,6 @@
 
 #include <yarp/manager/ymm-types.h>
 
-
-using namespace std;
-
 namespace yarp {
 namespace manager {
 
@@ -66,10 +63,10 @@ public:
     static ErrorLogger* Instance(void);
 
     void addWarning(const char* szWarning);
-    void addWarning(const string &str);
+    void addWarning(const std::string &str);
     void addWarning(OSTRINGSTREAM &stream);
     void addError(const char* szError);
-    void addError(const string &str);
+    void addError(const std::string &str);
     void addError(OSTRINGSTREAM &stream);
     const char* getLastError(void);
     const char* getLastWarning(void);
@@ -83,13 +80,13 @@ private:
     ErrorLogger(){};
     ErrorLogger(ErrorLogger const&){};
     static ErrorLogger* pInstance;
-    vector<string> errors;
-    vector<string> warnings;
+    std::vector<std::string> errors;
+    std::vector<std::string> warnings;
 };
 
 
 bool compareString(const char* szFirst, const char* szSecond);
-void trimString(string& str);
+void trimString(std::string& str);
 OS strToOS(const char* szOS);
 
 class Graph;

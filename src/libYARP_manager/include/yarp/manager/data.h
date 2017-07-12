@@ -15,7 +15,6 @@
 #include <yarp/manager/utility.h>
 #include <yarp/conf/api.h>
 
-using namespace std;
 
 namespace yarp {
 namespace manager {
@@ -60,10 +59,10 @@ public:
 protected:
 
 private:
-    string strName;
-    string strPort;
-    string carrier;
-    string strDescription;
+    std::string strName;
+    std::string strPort;
+    std::string carrier;
+    std::string strDescription;
     bool bWithPriority;
     bool bRequired;
     Node*  modOwner;
@@ -105,10 +104,10 @@ public:
 protected:
 
 private:
-    string strName;
-    string strPort;
-    string carrier;
-    string strDescription;
+    std::string strName;
+    std::string strPort;
+    std::string carrier;
+    std::string strDescription;
     Node*  modOwner;
     NodeType portType;
 };

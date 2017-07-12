@@ -160,7 +160,7 @@ RSTATE Executable::state(void)
     if(compareString(strState, "DYING"))
         return DYING;
 
-    std::cerr<<"Unknown state!"<<endl;
+    std::cerr<<"Unknown state!"<<std::endl;
     return STUNKNOWN;
 }
 

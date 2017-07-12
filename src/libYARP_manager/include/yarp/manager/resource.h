@@ -14,8 +14,6 @@
 #include <yarp/manager/utility.h>
 #include <yarp/conf/api.h>
 
-using namespace std;
-
 namespace yarp {
 namespace manager {
 
@@ -54,16 +52,16 @@ protected:
 private:
     bool bAvailable;
     bool bDisabled;
-    string strName;
-    string strTypeName;
-    string strDescription;
+    std::string strName;
+    std::string strTypeName;
+    std::string strDescription;
     Node*  modOwner;
-    string strXmlFile;
+    std::string strXmlFile;
 
 };
 
-typedef vector<GenericResource*> ResourcePContainer;
-typedef vector<GenericResource*>::iterator ResourcePIterator;
+typedef std::vector<GenericResource*> ResourcePContainer;
+typedef std::vector<GenericResource*>::iterator ResourcePIterator;
 
 
 

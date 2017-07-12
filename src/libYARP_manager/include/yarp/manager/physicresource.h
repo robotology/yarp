@@ -15,8 +15,6 @@
 #include <yarp/manager/primresource.h>
 #include <yarp/manager/resource.h>
 
-using namespace std;
-
 namespace yarp {
 namespace manager {
 
@@ -56,7 +54,7 @@ protected:
 private:
     size_t cores;
     double frequency;
-    string compCompatibility;
+    std::string compCompatibility;
     Capacity globalMemory;
     Capacity sharedMemory;
     Capacity constantMemory;
