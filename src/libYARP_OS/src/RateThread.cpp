@@ -61,7 +61,8 @@ private:
 public:
 
     RateThreadCallbackAdapter(RateThread& owner, int p) :   period_ms(p), adaptedPeriod(period_ms/1000.0), owner(owner), useSystemClock(false),
-                                                            elapsed(0), suspended(false)
+                                                            elapsed(0), sleepPeriod(adaptedPeriod), suspended(false), totalUsed(0), count(0),
+                                                            estPIt(0), sumTSq(0), sumUsedSq(0), previousRun(0), currentRun(0), scheduleReset(true)
     {
         _resetStat();
     }
