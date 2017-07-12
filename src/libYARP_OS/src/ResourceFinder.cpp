@@ -1009,7 +1009,7 @@ YARP_WARNING_POP
 ResourceFinder::ResourceFinder()
 {
     // We need some pieces of YARP to be initialized.
-    NetworkBase::autoInitMinimum();
+    NetworkBase::autoInitMinimum(yarp::os::YARP_CLOCK_SYSTEM);
     implementation = new ResourceFinderHelper();
     yAssert(implementation!=YARP_NULLPTR);
     owned = true;
@@ -1020,6 +1020,7 @@ ResourceFinder::ResourceFinder()
 ResourceFinder::ResourceFinder(const ResourceFinder& alt) :
         Searchable(alt)
 {
+    NetworkBase::autoInitMinimum(yarp::os::YARP_CLOCK_SYSTEM);
     implementation = new ResourceFinderHelper();
     yAssert(implementation!=YARP_NULLPTR);
     owned = true;
@@ -1030,6 +1031,7 @@ ResourceFinder::ResourceFinder(const ResourceFinder& alt) :
 
 ResourceFinder::ResourceFinder(Searchable& data, void *implementation)
 {
+    NetworkBase::autoInitMinimum(yarp::os::YARP_CLOCK_SYSTEM);
     this->implementation = implementation;
     if (!data.isNull()) {
         config.fromString(data.toString());

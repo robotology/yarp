@@ -10,7 +10,7 @@
 #include <yarp/os/SystemClock.h>
 #include <yarp/os/NetworkClock.h>
 #include <yarp/os/Network.h>
-#include <yarp/os/Log.h>
+#include <yarp/os/impl/Logger.h>
 #include <yarp/os/LogStream.h>
 #include <yarp/os/impl/ThreadImpl.h>
 
@@ -20,6 +20,7 @@
 #endif
 
 using namespace yarp::os;
+using namespace yarp::os::impl;
 
 static Clock *pclock = YARP_NULLPTR;
 static bool clock_owned = false;
@@ -51,7 +52,7 @@ static Clock *getClock()
          *   instantiate the good one, leaving space for another possible race condition.
          * 2: use the system clock only for this call
          */
-        yWarning() << "Clock pointer is null: This should never happen";
+        YARP_WARN(Logger::get(), "Clock pointer is null: This should never happen");
         Time::useSystemClock();   // This function sets a new pclock
     }
     return pclock;

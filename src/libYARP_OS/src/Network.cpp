@@ -599,13 +599,22 @@ int NetworkBase::main(int argc, char *argv[]) {
 }
 
 void NetworkBase::autoInitMinimum() {
+    autoInitMinimum(YARP_CLOCK_DEFAULT);
+}
+
+void NetworkBase::autoInitMinimum(yarp::os::yarpClockType clockType, yarp::os::Clock *custom) {
     if (!(__yarp_auto_init_active||__yarp_is_initialized)) {
         __yarp_auto_init_active = true;
-        initMinimum();
+        initMinimum(clockType);
     }
 }
 
+
 void NetworkBase::initMinimum() {
+    initMinimum(YARP_CLOCK_DEFAULT);
+}
+
+void NetworkBase::initMinimum(yarp::os::yarpClockType clockType, yarp::os::Clock *custom) {
     if (__yarp_is_initialized==0) {
         // Broken pipes need to be dealt with through other means
         yarp::os::impl::signal(SIGPIPE, SIG_IGN);
@@ -644,8 +653,12 @@ void NetworkBase::initMinimum() {
 
         // prepare carriers
         Carriers::getInstance();
+        __yarp_is_initialized++;
+        if(yarp::os::Time::getClockType() == YARP_CLOCK_UNINITIALIZED)
+            Network::yarpClockInit(clockType, YARP_NULLPTR);
     }
-    __yarp_is_initialized++;
+    else
+        __yarp_is_initialized++;
 }
 
 void NetworkBase::finiMinimum() {
@@ -665,9 +678,8 @@ void NetworkBase::finiMinimum() {
     if (__yarp_is_initialized>0) __yarp_is_initialized--;
 }
 
-bool yarp::os::Network::yarpClockInit(yarp::os::yarpClockType clockType, Clock *custom)
+void yarp::os::Network::yarpClockInit(yarp::os::yarpClockType clockType, Clock *custom)
 {
-    bool success = false;
     yarp::os::ConstString clock="";
     if(clockType == YARP_CLOCK_DEFAULT)
     {
@@ -681,35 +693,29 @@ bool yarp::os::Network::yarpClockInit(yarp::os::yarpClockType clockType, Clock *
     switch(clockType)
     {
         case YARP_CLOCK_SYSTEM:
-            YARP_INFO(Logger::get(), "Using SYSTEM clock");
-            success = yarp::os::Time::useSystemClock();
+            YARP_DEBUG(Logger::get(), "Using SYSTEM clock");
+            yarp::os::Time::useSystemClock();
         break;
 
         case YARP_CLOCK_NETWORK:
-            YARP_INFO(Logger::get(), "Using NETWORK clock");
-            success = yarp::os::Time::useNetworkClock(clock);
+            YARP_DEBUG(Logger::get(), "Using NETWORK clock");
+            // check of valid parameter is done inside the call, throws YARP_FAIL in case of error
+            yarp::os::Time::useNetworkClock(clock);
         break;
 
         case YARP_CLOCK_CUSTOM:
         {
-            YARP_INFO(Logger::get(), "Using CUSTOM clock");
-            // check of valid parameter is done inside the call
-            success = yarp::os::Time::useCustomClock(custom);
+            YARP_DEBUG(Logger::get(), "Using CUSTOM clock");
+            // check of valid parameter is done inside the call, throws YARP_FAIL in case of error
+            yarp::os::Time::useCustomClock(custom);
         }
         break;
 
         default:
-            YARP_ERROR(Logger::get(), "yarpClockInit called with unknown clock type. Quitting");
-            success = false;
-            yAssert(0);
+            YARP_FAIL(Logger::get(), "yarpClockInit called with unknown clock type. Quitting");
         break;
     }
-    if(!success)
-    {
-        YARP_ERROR(Logger::get(), "Cannot initialize the requested clock... falling back to system clock.");
-        yarp::os::Time::useSystemClock();
-    }
-    return success;
+    return;
 }
 
 Contact NetworkBase::queryName(const ConstString& name) {

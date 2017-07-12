@@ -50,12 +50,26 @@ public:
     static void initMinimum();
 
     /**
+     * Basic system initialization, not including plugins,
+     * The clock to be initialized can be specified.
+     * Must eventually make a matching call to finiMinimum().
+     */
+    static void initMinimum(yarp::os::yarpClockType clockType, yarp::os::Clock *custom=YARP_NULLPTR);
+
+    /**
      * Basic system initialization, not including plugins.
      * A matching finiMinimum() will be called automatically
      * on program termination.
      */
     static void autoInitMinimum();
 
+    /**
+     * Basic system initialization, not including plugins.
+     * The clock to be initialized can be specified.
+     * A matching finiMinimum() will be called automatically
+     * on program termination.
+     */
+    static void autoInitMinimum(yarp::os::yarpClockType clockType, yarp::os::Clock *custom=YARP_NULLPTR);
 
     /**
      * Deinitialization, excluding plugins.
@@ -654,11 +668,11 @@ public:
      * network clock.
      *
      * This function is called by Network constructor and by Network::init(),
-     * but it is NOT called by Network::initMinimum(). In this case it is
-     * required to call yarpClockInit() or one of the following useSystemClock(),
-     * useNetworkClock() or useCustomClock() depending on the use case.
+     * and Network::initMinimum().
+     *
+     * In case of failure throws YARP_FAIL assert.
      **/
-    static bool yarpClockInit(yarp::os::yarpClockType clockType, Clock *custom=YARP_NULLPTR);
+    static void yarpClockInit(yarp::os::yarpClockType clockType, Clock *custom=YARP_NULLPTR);
 };
 
 #endif // YARP_OS_NETWORK_H

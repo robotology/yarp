@@ -8,14 +8,17 @@
 #include <yarp/os/NetworkClock.h>
 #include <yarp/os/SystemClock.h>
 #include <yarp/os/NestedContact.h>
+#include <yarp/os/Os.h>
+#include <yarp/os/impl/Logger.h>
 #include <yarp/os/Network.h>
-#include <yarp/os/LogStream.h>
 #include <yarp/conf/system.h>
 #include <list>
 #include <utility>
 #include <string.h>
 
+
 using namespace yarp::os;
+using namespace yarp::os::impl;
 
 typedef std::list<std::pair<double, Semaphore*> > Waiters;
 
@@ -27,7 +30,8 @@ NetworkClock::NetworkClock()
 }
 
 NetworkClock::~NetworkClock() {
-    yWarning() << "Destroying network clock";
+    YARP_WARN(Logger::get(), "Destroying network clock");
+
     listMutex.lock();
     closing = true;
     port.interrupt();
@@ -150,7 +154,7 @@ bool NetworkClock::read(ConnectionReader& reader) {
 
     if (!ok && !closing)
     {
-        yError() << "Error reading clock port";
+        YARP_ERROR(Logger::get(), "Error reading clock port");
         return false;
     }
 

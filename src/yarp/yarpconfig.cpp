@@ -9,6 +9,7 @@
 #include <yarp/os/Property.h>
 #include <yarp/os/Network.h>
 #include <yarp/conf/version.h>
+#include <yarp/os/Time.h>
 #include <yarp/os/impl/NameConfig.h>
 #include "yarpcontext.h"
 #include "yarprobot.h"
@@ -29,8 +30,7 @@ void show_help() {
 
 int main(int argc, char *argv[]) {
     // Configure system clock
-    yarp::os::Network::initMinimum();
-    yarp::os::Network::yarpClockInit(yarp::os::YARP_CLOCK_SYSTEM);
+    yarp::os::Network::initMinimum(yarp::os::YARP_CLOCK_SYSTEM);
 
     yarp::os::Property options;
     options.fromCommand(argc,argv);
