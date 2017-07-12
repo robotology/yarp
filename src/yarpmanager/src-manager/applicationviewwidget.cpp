@@ -1024,13 +1024,13 @@ bool ApplicationViewWidget::onRun()
     }
 
     std::vector<int> CIDs;
-    for(int i=0;i<ui->connectionList->topLevelItemCount();i++)
+    /*for(int i=0;i<ui->connectionList->topLevelItemCount();i++)
     {
         updateConnection(i, CIDs);
-    }
+    }*/
 
     std::vector<int> RIDs;
-    for(int i=0;i<ui->resourcesList->topLevelItemCount();i++) {
+    /*for(int i=0;i<ui->resourcesList->topLevelItemCount();i++) {
         QTreeWidgetItem *it = ui->resourcesList->topLevelItem(i);
         if (it->isSelected()) {
             RIDs.push_back(it->text(1).toInt());
@@ -1038,7 +1038,7 @@ bool ApplicationViewWidget::onRun()
             it->setIcon(0,QIcon(":/refresh22.svg"));
             it->setTextColor(3,QColor("#000000"));
         }
-    }
+    }*/
 
 
     safeManager.safeRun(MIDs,CIDs,RIDs);
@@ -1113,13 +1113,13 @@ bool ApplicationViewWidget::onStop()
     }
 
     std::vector<int> CIDs;
-    for(int i=0;i<ui->connectionList->topLevelItemCount();i++)
+    /*for(int i=0;i<ui->connectionList->topLevelItemCount();i++)
     {
         updateConnection(i, CIDs);
-    }
+    }*/
 
     std::vector<int> RIDs;
-    for(int i=0;i<ui->resourcesList->topLevelItemCount();i++) {
+    /*for(int i=0;i<ui->resourcesList->topLevelItemCount();i++) {
         QTreeWidgetItem *it = ui->resourcesList->topLevelItem(i);
         if (it->isSelected()) {
             RIDs.push_back(it->text(1).toInt());
@@ -1127,7 +1127,7 @@ bool ApplicationViewWidget::onStop()
             it->setIcon(0,QIcon(":/refresh22.svg"));
             it->setTextColor(3,QColor("#000000"));
         }
-    }
+    }*/
 
 
     safeManager.safeStop(MIDs,CIDs,RIDs);
@@ -1204,14 +1204,14 @@ bool ApplicationViewWidget::onKill()
     }
 
     std::vector<int> CIDs;
-    for(int i=0;i<ui->connectionList->topLevelItemCount();i++)
+    /*for(int i=0;i<ui->connectionList->topLevelItemCount();i++)
     {
         updateConnection(i, CIDs);
 
-    }
+    }*/
 
     std::vector<int> RIDs;
-    for(int i=0;i<ui->resourcesList->topLevelItemCount();i++) {
+    /*for(int i=0;i<ui->resourcesList->topLevelItemCount();i++) {
         QTreeWidgetItem *it = ui->resourcesList->topLevelItem(i);
         if (it->isSelected()) {
             RIDs.push_back(it->text(1).toInt());
@@ -1219,7 +1219,7 @@ bool ApplicationViewWidget::onKill()
             it->setIcon(0,QIcon(":/refresh22.svg"));
             it->setTextColor(3,QColor("#000000"));
         }
-    }
+    }*/
 
 
     safeManager.safeKill(MIDs, CIDs, RIDs);

@@ -101,6 +101,7 @@ void SafeManager::run()
             for(unsigned int i=0; i<local_modIds.size(); i++)
                 Manager::run(local_modIds[i], true);
 
+            /*
             for(unsigned int i=0; i<local_modIds.size(); i++)
                 Manager::waitingModuleRun(local_modIds[i]);
 
@@ -126,13 +127,13 @@ void SafeManager::run()
                 {
                     if(eventReceiver) eventReceiver->onResUnAvailable(local_resIds[i]);
                 }
-            }
+            }*/
             break;
         }
     case MSTOP:{
             for(unsigned int i=0; i<local_modIds.size(); i++)
                 Manager::stop(local_modIds[i], true);
-            for(unsigned int i=0; i<local_modIds.size(); i++)
+            /*for(unsigned int i=0; i<local_modIds.size(); i++)
                 Manager::waitingModuleStop(local_modIds[i]);
 
             for(unsigned int i=0; i<local_conIds.size(); i++)
@@ -157,13 +158,13 @@ void SafeManager::run()
                 {
                     if(eventReceiver) eventReceiver->onResUnAvailable(local_resIds[i]);
                 }
-            }
+            }*/
             break;
         }
     case MKILL:{
             for(unsigned int i=0; i<local_modIds.size(); i++)
                 Manager::kill(local_modIds[i], true);
-            for(unsigned int i=0; i<local_modIds.size(); i++)
+            /*for(unsigned int i=0; i<local_modIds.size(); i++)
                 Manager::waitingModuleKill(local_modIds[i]);
 
             for(unsigned int i=0; i<local_conIds.size(); i++)
@@ -188,7 +189,7 @@ void SafeManager::run()
                 {
                     if(eventReceiver) eventReceiver->onResUnAvailable(local_resIds[i]);
                 }
-            }
+            }*/
             break;
         }
     case MCONNECT:{
