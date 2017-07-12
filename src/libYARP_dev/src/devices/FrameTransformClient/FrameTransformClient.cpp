@@ -239,6 +239,7 @@ bool yarp::dev::FrameTransformClient::read(yarp::os::ConnectionReader& connectio
     }
     else if (request == "publish_transform")
     {
+        out.addVocab(Vocab::encode("many"));
         std::string src  = in.get(1).asString();
         std::string dst  = in.get(2).asString();
         std::string port_name = in.get(3).asString();
@@ -256,6 +257,16 @@ bool yarp::dev::FrameTransformClient::read(yarp::os::ConnectionReader& connectio
                 break;
             }
         }
+        if (this->frameExists(src)==false)
+        {
+            out.addString("Requested src frame " + src + " does not exists.");
+            yWarning("Requested src frame " + src + " does not exists.");
+        }
+        if (this->frameExists(dst)==false)
+        {
+            out.addString("Requested dst frame " + dst + " does not exists.");
+            yWarning("Requested fst frame " + dst + " does not exists.");
+        }
         if (ret == true)
         {
             broadcast_port_t* b = new broadcast_port_t;
@@ -265,16 +276,14 @@ bool yarp::dev::FrameTransformClient::read(yarp::os::ConnectionReader& connectio
             bool pret = b->port.open(full_port_name);
             if (pret)
             {
-                std::string s;
-                s="Port " + full_port_name + "opened";
-                out.addString("Operation complete");
+                out.addString("Operation complete. Port " + full_port_name + " opened.");
                 m_array_of_ports.push_back(b);
                 if (m_array_of_ports.size()==1) this->start();
             }
             else
             {
                 delete b;
-                out.addString("operation failed");
+                out.addString("Operation failed. Unable to open port " + full_port_name + ".");
             }
         }
         else
@@ -292,7 +301,7 @@ bool yarp::dev::FrameTransformClient::read(yarp::os::ConnectionReader& connectio
         }
         m_array_of_ports.clear();
         if (m_array_of_ports.size()==0) this->askToStop();
-        out.addString("operation complete");
+        out.addString("Operation complete");
     }
     else if (request == "unpublish_transform")
     {
@@ -314,11 +323,11 @@ bool yarp::dev::FrameTransformClient::read(yarp::os::ConnectionReader& connectio
         }
         if (ret)
         {
-            out.addString("port " + full_port_name + " has been closed");
+            out.addString("Port " + full_port_name + " has been closed.");
         }
         else
         {
-            out.addString("port " + full_port_name + " was not found");
+            out.addString("Port " + full_port_name + " was not found.");
         }
         if (m_array_of_ports.size()==0) this->askToStop();
     }
@@ -327,6 +336,7 @@ bool yarp::dev::FrameTransformClient::read(yarp::os::ConnectionReader& connectio
         yError("Invalid vocab received in FrameTransformClient");
         out.clear();
         out.addVocab(VOCAB_ERR);
+        out.addString("Invalid command name");
     }
 
     yarp::os::ConnectionWriter *returnToSender = connection.getWriter();
@@ -637,7 +647,7 @@ bool yarp::dev::FrameTransformClient::getTransform(const std::string& target_fra
         return true;
     }
 
-    yError() << "FrameTransformClient::getTransform() frames not connected";
+    yError() << "FrameTransformClient::getTransform() frames " << source_frame_id << " and " << target_frame_id << " are not connected";
     return false;
 }
 
