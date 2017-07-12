@@ -26,7 +26,10 @@ NetworkClock::NetworkClock()
     : clockName(""), pwaiters(YARP_NULLPTR), sec(0), nsec(0), _time(0), closing(false), initted(false)
 {
     pwaiters = new Waiters();
-    yAssert(pwaiters!=YARP_NULLPTR);
+    if(pwaiters==YARP_NULLPTR)
+    {
+        YARP_FAIL(Logger::get(), "NetworkClock: new Waiters() failed");
+    }
 }
 
 NetworkClock::~NetworkClock() {

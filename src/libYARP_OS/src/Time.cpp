@@ -93,7 +93,8 @@ void Time::yield() {
 }
 
 
-bool Time::useSystemClock() {
+void Time::useSystemClock()
+{
     if(!isSystemClock())
     {
         lock();
@@ -111,7 +112,6 @@ bool Time::useSystemClock() {
 
         unlock();
     }
-    return true;
 }
 
 /* Creation of network clock may fail for different causes:
@@ -133,19 +133,21 @@ bool Time::useSystemClock() {
  * As soon as the clock starts beeing published, the networkClock has to acknowledge it and 'attach' to it. Clock will
  * then be valid.
  */
-bool Time::useNetworkClock(const ConstString& clock, ConstString localPortName)
+void Time::useNetworkClock(const ConstString& clock, ConstString localPortName)
 {
     // re-create the clock also in case we already use a network clock, because
     // the input clock port may be different or the clock producer may be changed (different
     // clock source publishing on the same port/topic), so we may need to reconnect.
     lock();
-    bool success = false;
+
     Clock *old_pclock = pclock;   // store current clock pointer to delete it afterward
     bool old_clock_owned = clock_owned;
     NetworkClock *_networkClock = new NetworkClock();
-    yAssert(_networkClock);
-
-    if (_networkClock)
+    if(_networkClock == YARP_NULLPTR)
+    {
+        YARP_FAIL(Logger::get(), "failed creating NetworkClock client");
+    }
+    else
     {
         if (_networkClock->open(clock, localPortName))
         {
@@ -155,50 +157,36 @@ bool Time::useNetworkClock(const ConstString& clock, ConstString localPortName)
             pclock = _networkClock;
             clock_owned = true;
             yarp_clock_type = YARP_CLOCK_NETWORK;
-            success = true;
         }
-        else {
-            success = false;
+        else
+        {
+            YARP_FAIL(Logger::get(), "failed creating NetworkClock client, cannot open input port");
         }
-    }
-    else {
-        success = false;
     }
 
-    if(success)
-    {
-        if(old_clock_owned && old_pclock)
-            delete old_pclock;
-        unlock();
-    }
-    else
-    {
-        yError() << "Failed creating network clock... fallback to system clock";
-        unlock();
-        useSystemClock();
-        if(_networkClock)
-            delete _networkClock;
-    }
+    if(old_clock_owned && old_pclock)
+        delete old_pclock;
+    unlock();
 
+    int i=-1;
     while(pclock && !pclock->isValid() )
+    {
+        i++;
+        if((i%50) == 0)
+        {
+            YARP_INFO(Logger::get(), "Waiting for clock server to start broadcasting data ...");
+            i=0;
+        }
         SystemClock::delaySystem(0.1);
-
-    return success;
+    }
 }
 
-bool Time::useCustomClock(Clock *clock) {
+void Time::useCustomClock(Clock *clock) {
     if(clock == NULL)
-    {
-        yError("useCustomClock called with NULL clock, cannot proceed.");
-        yAssert(clock);
-        return false;
-    }
+        YARP_FAIL(Logger::get(), "failed configuring CustomClock client");
 
     if(!clock->isValid())
-    {
-        yError("useCustomClock called with invalid clock, cannot proceed.");
-        return false;
-    }
+        YARP_FAIL(Logger::get(), "Error: CustomClock is not valid");
 
     lock();
 
@@ -215,7 +203,6 @@ bool Time::useCustomClock(Clock *clock) {
         delete old_pclock;
 
     unlock();
-    return true;
 }
 
 bool Time::isSystemClock() {

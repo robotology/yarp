@@ -64,9 +64,8 @@ public:
     /**
      *
      * Configure YARP to use system time (this is the default).
-     *
      */
-    static bool useSystemClock();
+    static void useSystemClock();
 
     /**
      *
@@ -79,15 +78,25 @@ public:
      *
      * \see yarp::os::NetworkClock
      *
+     * return true on success, false on failure. Possible causes of
+     * failure are invalid port name or address conflict.
+     *
+     * Throws assert in case of failure
      */
-    static bool useNetworkClock(const ConstString& clock, ConstString localPortName="");
+    static void useNetworkClock(const ConstString& clock, ConstString localPortName="");
 
     /**
      *
-     * Provide a custom time source.
+     * Configure YARP clients to use a custom clock source provided by the
+     * user. The Clock source must implement the yarp::os::Clock interface.
+     * This function check clock->isValid() to verify the source is working
+     * properly.
      *
+     * Possible causes of failure are: clock pointer invalid or isValid() false.
+     *
+     * Throws assert in case of failure
      */
-    static bool useCustomClock(Clock *clock);
+    static void useCustomClock(Clock *clock);
 
     /**
      *
@@ -118,7 +127,9 @@ public:
     /**
      *
      * Converts clock type enum into string.
-     * @type Convert specified enum into string. If missing uses the current clock
+     * @type Convert specified enum into string.
+     *
+     * clockTypeToString
      */
      static yarp::os::ConstString clockTypeToString(yarpClockType type);
 
