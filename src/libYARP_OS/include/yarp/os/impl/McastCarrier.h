@@ -34,6 +34,8 @@ protected:
     Contact mcastAddress;
     ConstString mcastName;
     ConstString key;
+    DgramTwoWayStream *stream;
+    Contact local;
 
     static ElectionOf<PeerRecord<McastCarrier> > *caster;
 
@@ -58,6 +60,12 @@ public:
     void addSender(const ConstString& key);
     void removeSender(const ConstString& key);
     bool isElect();
+    /**
+     * @brief takeElection, this function is called when the elect mcast
+     * carrier dies and pass the write buffers to another one.
+     * @return true if the join of mcast is successful false otherwise.
+     */
+    bool takeElection();
 
     virtual bool isActive() override;
     virtual bool isBroadcast() override;
