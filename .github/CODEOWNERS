@@ -1,0 +1,56 @@
+*                                       @drdanz
+bindings/*                              @drdanz @traversaro
+cmake/*                                 @drdanz
+src/*                                   @drdanz
+src/carriers/*                          @drdanz
+src/carriers/depth_image_portmonitor/*  @barbalberto
+src/carriers/mjpeg_carrier/*            @drdanz
+src/carriers/tcpros_carrier/*           @drdanz
+src/carriers/zfp_portmonitor/*          @Nicogene
+src/devices/*                           @randaz81 @barbalberto @traversaro
+src/devices/depthCamera/*               @barbalberto
+src/devices/fakeAnalogSensor/*          @barbalberto
+src/devices/fakeDepthCamera/*           @barbalberto
+src/devices/fakeIMU/*                   @barbalberto
+src/devices/fakeLaser/*                 @randaz81
+src/devices/fakeMotionControl/*         @barbalberto
+src/devices/imuBosch_BNO055/*           @barbalberto
+src/devices/laserFromDepth/*            @randaz81
+src/devices/laserHokuyo/*               @randaz81
+src/devices/ovrheadset/*                @drdanz @aerydna
+src/devices/rpLidar/*                   @randaz81
+src/devices/rpLidar2/*                  @randaz81
+src/devices/SDLJoypad/*                 @aerydna
+src/idls/rosmsg/*                       @drdanz
+src/idls/thrift/*                       @drdanz
+src/libYARP_conf/*                      @drdanz
+src/libYARP_dev/*                       @barbalberto @randaz81
+src/libYARP_eigen/*                     @traversaro
+src/libYARP_gsl/*                       @traversaro
+src/libYARP_init/*                      @drdanz
+src/libYARP_logger/*                    @randaz81
+src/libYARP_manager/*                   @Nicogene
+src/libYARP_math/*                      @traversaro
+src/libYARP_name/*                      @drdanz
+src/libYARP_OS/*                        @drdanz
+src/libYARP_rtf/*                       @drdanz @Nicogene
+src/libYARP_serversql/*                 @drdanz
+src/libYARP_sig/                        @drdanz
+src/libYARP_wire_rep_utils/*            @drdanz
+src/rtf-plugins/*                       @drdanz @Nicogene
+src/yarp/*                              @drdanz
+src/yarpbatterygui/*                    @randaz81
+src/yarpdatadumper/*                    @pattacini
+src/yarpdataplayer/*                    @vtikha
+src/yarpdev/*                           @drdanz
+src/yarplaserscannergui/*               @randaz81
+src/yarplogger/*                        @randaz81
+src/yarplogger-console/*                @randaz81
+src/yarpmanager/*                       @Nicogene
+src/yarpmanager-console/*               @Nicogene
+src/yarpmotorgui/*                      @randaz81
+src/yarprobotinterface/*                @drdanz
+src/yarprun/*                           @drdanz
+src/yarpserver/*                        @drdanz
+CMakeLists.txt                          @drdanz
+*.cmake                                 @drdanz
