@@ -37,7 +37,7 @@ public:
 
     QTreeWidgetItem * getWidgetItemByFilename(const QString xmlFile);
 
-    void setExtEditor(string editor);
+    void setExtEditor(std::string editor);
 
 protected:
     void mousePressEvent(QMouseEvent *event) override;

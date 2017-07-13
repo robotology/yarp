@@ -1,6 +1,8 @@
 #include "propertiestable.h"
 #include <QDebug>
 
+using namespace std;
+
 PropertiesTable::PropertiesTable(Manager *manager,QWidget *parent) : QWidget(parent)
 {
     QHBoxLayout *lay = new QHBoxLayout(this);

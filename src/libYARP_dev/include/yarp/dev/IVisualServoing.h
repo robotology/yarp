@@ -46,9 +46,29 @@ public:
     * \param vec_px_r a collection of four 2D vectors which contains the (u,v)
     *                 coordinates of the pixels within the right image plane.
     *
+    * \note By invoking this method, the visual servoing goal will be reached in
+    *       orientation first, then in position. This is because there may not
+    *       be a feasible position solution for every possible orientation.
+    *
     * \return true/false on success/failure.
     */
     virtual bool goToGoal(const std::vector<yarp::sig::Vector>& vec_px_l, const std::vector<yarp::sig::Vector>& vec_px_r) = 0;
+
+    /*!
+    * Set the goal point (3D for the position + 4D axis-angle for
+    * the orientation) and start visual servoing.
+    *
+    * \param vec_x a 3D vector which contains the (x, y, z) Cartesian
+    *              coordinates of the goal.
+    * \param vec_o a 4D vector which contains the (x, y, z) axis and theta angle
+    *              of rotation of the goal.
+    *
+    * \note By invoking this method, the visual servoing goal will be reached in
+    *       position and orientation together with two parallel tasks.
+    *
+    * \return true/false on success/failure.
+    */
+    virtual bool goToGoal(const yarp::sig::Vector& vec_x, const yarp::sig::Vector& vec_o) = 0;
 
     /*!
      *  Set visual servoing operating mode between:
@@ -90,7 +110,7 @@ public:
      *
      * \param tol the tolerance in pixel.
      */
-    virtual bool setGoToGoalTolerance(const double tol) = 0;
+    virtual bool setGoToGoalTolerance(const double tol = 10.0) = 0;
 
     /*!
      * Check once whether the visual servoing controller is running or not.

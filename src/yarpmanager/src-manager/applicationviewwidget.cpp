@@ -1499,7 +1499,7 @@ bool ApplicationViewWidget::scanAvailableCarriers(QString carrier, bool isConnec
     }
     if (!res && isConnection)
     {
-        string msg = "Unable to find '"+ carrier.toStdString() +
+        std::string msg = "Unable to find '"+ carrier.toStdString() +
                 "' among the available carriers in this machine, the connection could fail.";
         logger->addWarning(msg.c_str());
     }

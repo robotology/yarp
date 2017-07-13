@@ -18,6 +18,7 @@
 
 using namespace yarp::os;
 using namespace yarp::manager;
+using namespace std;
 
 static char slash = NetworkBase::getDirectorySeparator()[0];
 

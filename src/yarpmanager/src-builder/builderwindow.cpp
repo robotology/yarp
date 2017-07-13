@@ -3,7 +3,7 @@
 #include <QHBoxLayout>
 #include <QSplitter>
 
-
+using namespace std;
 
 BuilderWindow::BuilderWindow(Application *app, Manager *lazyManager, SafeManager *safeManager, bool editingMode, QWidget *parent) :
     QWidget(parent)/*,

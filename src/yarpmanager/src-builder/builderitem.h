@@ -12,8 +12,6 @@
 
 #include "commons.h"
 
-
-using namespace std;
 using namespace yarp::manager;
 
 class PortItem;

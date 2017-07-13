@@ -175,18 +175,18 @@ function(YARP_CONFIGURE_EXTERNAL_INSTALLATION _name)
 
 
   # Generate and set variables
-  set(${_NAME}_DATA_INSTALL_DIR "${CMAKE_INSTALL_DATADIR}/${_name}" CACHE INTERNAL "general data installation directory for ${_name} (relative to build/installation dir")
-  set(${_NAME}_CONFIG_INSTALL_DIR "${${_NAME}_DATA_INSTALL_DIR}/config" CACHE INTERNAL "configuration files installation directory for ${_name} (relative to build/installation dir")
-  set(${_NAME}_PLUGIN_MANIFESTS_INSTALL_DIR "${${_NAME}_DATA_INSTALL_DIR}/plugins" CACHE INTERNAL "plugin manifests installation directory for ${_name} (relative to build/installation dir")
-  set(${_NAME}_MODULES_INSTALL_DIR "${${_NAME}_DATA_INSTALL_DIR}/modules" CACHE INTERNAL "modules' XML descriptions installation directory for ${_name} (relative to build/installation dir")
-  set(${_NAME}_APPLICATIONS_INSTALL_DIR "${${_NAME}_DATA_INSTALL_DIR}/applications" CACHE INTERNAL "applications' XML descriptions installation directory for ${_name} (relative to build/installation dir")
-  set(${_NAME}_TEMPLATES_INSTALL_DIR "${${_NAME}_DATA_INSTALL_DIR}/templates" CACHE INTERNAL "general templates installation directory for ${_name} (relative to build/installation dir")
-  set(${_NAME}_CONTEXTS_INSTALL_DIR "${${_NAME}_DATA_INSTALL_DIR}/contexts" CACHE INTERNAL "contexts installation directory for ${_name} (relative to build/installation dir")
-  set(${_NAME}_APPLICATIONS_TEMPLATES_INSTALL_DIR "${${_NAME}_DATA_INSTALL_DIR}/templates/applications" CACHE INTERNAL "application templates' installation directory for ${_name} (relative to build/installation dir")
-  set(${_NAME}_MODULES_TEMPLATES_INSTALL_DIR "${${_NAME}_DATA_INSTALL_DIR}/templates/modules" CACHE INTERNAL "module templates' installation directory for ${_name} (relative to build/installation dir")
-  set(${_NAME}_ROBOTS_INSTALL_DIR "${${_NAME}_DATA_INSTALL_DIR}/robots" CACHE INTERNAL "robot-specific configurations installation directory for ${_name} (relative to build/installation dir")
-  set(${_NAME}_STATIC_PLUGINS_INSTALL_DIR "${CMAKE_INSTALL_LIBDIR}" CACHE INTERNAL "static plugins installation directory for ${_name} (relative to build/installation dir")
-  set(${_NAME}_DYNAMIC_PLUGINS_INSTALL_DIR "${CMAKE_INSTALL_LIBDIR}/${_name}" CACHE INTERNAL "dynamic plugins installation directory for ${_name} (relative to build/installation dir")
+  set(${_NAME}_DATA_INSTALL_DIR "${CMAKE_INSTALL_DATADIR}/${_name}" CACHE INTERNAL "general data installation directory for ${_name} (relative to build/installation dir)")
+  set(${_NAME}_CONFIG_INSTALL_DIR "${${_NAME}_DATA_INSTALL_DIR}/config" CACHE INTERNAL "configuration files installation directory for ${_name} (relative to build/installation dir)")
+  set(${_NAME}_PLUGIN_MANIFESTS_INSTALL_DIR "${${_NAME}_DATA_INSTALL_DIR}/plugins" CACHE INTERNAL "plugin manifests installation directory for ${_name} (relative to build/installation dir)")
+  set(${_NAME}_MODULES_INSTALL_DIR "${${_NAME}_DATA_INSTALL_DIR}/modules" CACHE INTERNAL "modules' XML descriptions installation directory for ${_name} (relative to build/installation dir)")
+  set(${_NAME}_APPLICATIONS_INSTALL_DIR "${${_NAME}_DATA_INSTALL_DIR}/applications" CACHE INTERNAL "applications' XML descriptions installation directory for ${_name} (relative to build/installation dir)")
+  set(${_NAME}_TEMPLATES_INSTALL_DIR "${${_NAME}_DATA_INSTALL_DIR}/templates" CACHE INTERNAL "general templates installation directory for ${_name} (relative to build/installation dir)")
+  set(${_NAME}_CONTEXTS_INSTALL_DIR "${${_NAME}_DATA_INSTALL_DIR}/contexts" CACHE INTERNAL "contexts installation directory for ${_name} (relative to build/installation dir)")
+  set(${_NAME}_APPLICATIONS_TEMPLATES_INSTALL_DIR "${${_NAME}_DATA_INSTALL_DIR}/templates/applications" CACHE INTERNAL "application templates' installation directory for ${_name} (relative to build/installation dir)")
+  set(${_NAME}_MODULES_TEMPLATES_INSTALL_DIR "${${_NAME}_DATA_INSTALL_DIR}/templates/modules" CACHE INTERNAL "module templates' installation directory for ${_name} (relative to build/installation dir)")
+  set(${_NAME}_ROBOTS_INSTALL_DIR "${${_NAME}_DATA_INSTALL_DIR}/robots" CACHE INTERNAL "robot-specific configurations installation directory for ${_name} (relative to build/installation dir)")
+  set(${_NAME}_STATIC_PLUGINS_INSTALL_DIR "${CMAKE_INSTALL_LIBDIR}" CACHE INTERNAL "static plugins installation directory for ${_name} (relative to build/installation dir)")
+  set(${_NAME}_DYNAMIC_PLUGINS_INSTALL_DIR "${CMAKE_INSTALL_LIBDIR}/${_name}" CACHE INTERNAL "dynamic plugins installation directory for ${_name} (relative to build/installation dir)")
 
   foreach(_dir DATA
                CONFIG
@@ -200,12 +200,12 @@ function(YARP_CONFIGURE_EXTERNAL_INSTALLATION _name)
                ROBOTS
                STATIC_PLUGINS
                DYNAMIC_PLUGINS)
-    set(${_NAME}_${_dir}_INSTALL_DIR_FULL "${CMAKE_INSTALL_PREFIX}/${${_NAME}_${_dir}_INSTALL_DIR}")
+    set(${_NAME}_${_dir}_INSTALL_DIR_FULL "${CMAKE_INSTALL_PREFIX}/${${_NAME}_${_dir}_INSTALL_DIR}" PARENT_SCOPE)
   endforeach()
 
   # QML2 Import directory
-  set(${_NAME}_QML2_IMPORT_DIR ${CMAKE_INSTALL_QMLDIR} CACHE INTERNAL "QML2 import directory for ${_name} (relative to build/installation dir")
-  set(${_NAME}_QML2_IMPORT_DIR_FULL "${CMAKE_INSTALL_PREFIX}/${${_NAME}_QML2_IMPORT_DIR}")
+  set(${_NAME}_QML2_IMPORT_DIR ${CMAKE_INSTALL_QMLDIR} CACHE INTERNAL "QML2 import directory for ${_name} (relative to build/installation dir)")
+  set(${_NAME}_QML2_IMPORT_DIR_FULL "${CMAKE_INSTALL_PREFIX}/${${_NAME}_QML2_IMPORT_DIR}" PARENT_SCOPE)
 
 
   # Create and install the path.d file when required

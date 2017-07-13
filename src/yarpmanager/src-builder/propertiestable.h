@@ -11,8 +11,6 @@
 #include <yarp/manager/manager.h>
 #include "moduleitem.h"
 
-
-using namespace std;
 using namespace yarp::manager;
 
 #include <QComboBox>

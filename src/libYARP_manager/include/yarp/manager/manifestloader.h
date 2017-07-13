@@ -97,8 +97,8 @@ private:
  */
 
 struct AppTemplate {
-    string name;
-    string tmpFileName;
+    std::string name;
+    std::string tmpFileName;
 };
 
 
