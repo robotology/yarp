@@ -16,8 +16,6 @@
 #include <yarp/manager/executable.h>
 #include <yarp/manager/yarpbroker.h>
 
-using namespace std;
-
 namespace yarp {
 namespace manager {
 
@@ -52,7 +50,7 @@ public:
     bool updateConnection(unsigned int id, const char* from,
                 const char* to, const char* carrier);
 
-    Node* getNode(string appName);
+    Node* getNode(std::string appName);
 
     bool run(void);
     bool run(unsigned int id, bool async=false);
@@ -126,10 +124,10 @@ private:
     bool bAutoConnect;
     bool bRestricted;
     ErrorLogger* logger;
-    string strAppName;
-    string strDefBroker;
+    std::string strAppName;
+    std::string strDefBroker;
     YarpBroker connector;
-    vector<string> listOfXml;
+    std::vector<std::string> listOfXml;
 
     KnowledgeBase knowledge;
     ExecutablePContainer runnables;

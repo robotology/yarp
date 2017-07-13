@@ -25,6 +25,7 @@
 
 using namespace yarp::os;
 using namespace yarp::manager;
+using namespace std;
 
 #if defined(_WIN32)
 # define HEADER      ""
@@ -46,13 +47,13 @@ using namespace yarp::manager;
 # if defined(YARP_HAS_SYS_PRCTL_H)
 #  include <sys/prctl.h>
 # endif
-    string HEADER = "";
-    string OKBLUE = "";
-    string OKGREEN = "";
-    string WARNING = "";
-    string FAIL = "";
-    string INFO = "";
-    string ENDC = "";
+    std::string HEADER = "";
+    std::string OKBLUE = "";
+    std::string OKGREEN = "";
+    std::string WARNING = "";
+    std::string FAIL = "";
+    std::string INFO = "";
+    std::string ENDC = "";
 #endif
 
 
@@ -67,7 +68,7 @@ using namespace yarp::manager;
     char* command_generator (const char* text, int state);
     char* appname_generator (const char* text, int state);
     char ** my_completion (const char* text, int start, int end);
-    vector<string> appnames;
+    std::vector<std::string> appnames;
 #endif
 
 #define DEF_CONFIG_FILE     "ymanager.ini"

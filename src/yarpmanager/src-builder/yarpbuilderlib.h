@@ -6,7 +6,6 @@
 #include <yarp/manager/manager.h>
 #include "safe_manager.h"
 
-using namespace std;
 using namespace yarp::manager;
 
 class YARPBUILDERLIBSHARED_EXPORT YarpBuilderLib

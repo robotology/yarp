@@ -22,9 +22,6 @@
 #include "yarpdataplayer_IDL.h"
 #include "include/loadingwidget.h"
 
-using namespace std;
-using namespace yarp::os;
-
 class InitThread;
 
 namespace Ui {
@@ -207,7 +204,7 @@ signals:
     void internalPlay();
     void internalPause();
     void internalStop();
-    void internalStep(Bottle *reply);
+    void internalStep(yarp::os::Bottle *reply);
     void internalSetFrame(const std::string &name, const int frameNum);
     void internalGetFrame(const std::string &name, int *frame);
 
@@ -240,7 +237,7 @@ private slots:
     void onInternalPlay();
     void onInternalPause();
     void onInternalStop();
-    void onInternalStep(Bottle *reply);
+    void onInternalStep(yarp::os::Bottle *reply);
     void onInternalSetFrame(const std::string &name, const int frameNum);
     void onInternalGetFrame(const std::string &name, int *frame);
 

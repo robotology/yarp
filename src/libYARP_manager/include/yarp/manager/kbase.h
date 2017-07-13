@@ -20,9 +20,6 @@
 #include <yarp/manager/logicresource.h>
 #include <yarp/manager/primresource.h>
 
-
-using namespace std;
-
 namespace yarp {
 namespace manager {
 
@@ -30,8 +27,8 @@ namespace manager {
 #define NODELINK_SUPERFICIAL    1
 #define NODELINK_DEEP           2
 
-typedef vector<Node*> NodePVector;
-typedef vector<Node*>::iterator NodePVIterator;
+typedef std::vector<Node*> NodePVector;
+typedef std::vector<Node*>::iterator NodePVIterator;
 
 
 /**
@@ -64,7 +61,7 @@ public:
                             bool bAutoDependancy=false, bool bSilent=false);
     bool checkConsistency(void);
 
-    Node* getNode(string appName);
+    Node* getNode(std::string appName);
 
     const ModulePContainer& getSelModules(void) { return selmodules; }
     const CnnContainer& getSelConnection(void) { return selconnections; }
@@ -110,7 +107,7 @@ public:
     bool setApplicationPrefix(Application* app, const char* szPrefix, bool updateBasePref=true);
     bool saveApplication(AppSaver* appSaver, Application* application);
 
-    const string getUniqueAppID(Application* parent, const char* szAppName);
+    const std::string getUniqueAppID(Application* parent, const char* szAppName);
 
     bool exportAppGraph(const char* szFileName) {
             return exportDotGraph(tmpGraph, szFileName); }
@@ -141,7 +138,7 @@ private:
     CnnContainer selconnections;
     ResourcePContainer selresources;
 
-    map<string, int> appList;
+    std::map<std::string, int> appList;
 
     bool moduleCompleteness(Module* module);
     void updateNodesLink(Graph& graph, int level);
@@ -194,8 +191,8 @@ class sortApplication
 public:
      bool operator()(Application *f, Application *s)
      {
-        string strFirst((*f).getName());
-        string strSecond((*s).getName());
+        std::string strFirst((*f).getName());
+        std::string strSecond((*s).getName());
         transform(strFirst.begin(), strFirst.end(), strFirst.begin(),
                   (int(*)(int))toupper);
         transform(strSecond.begin(), strSecond.end(), strSecond.begin(),
@@ -210,8 +207,8 @@ class sortModules
 public:
      bool operator()(Module *f, Module *s)
      {
-        string strFirst((*f).getName());
-        string strSecond((*s).getName());
+        std::string strFirst((*f).getName());
+        std::string strSecond((*s).getName());
         transform(strFirst.begin(), strFirst.end(), strFirst.begin(),
                   (int(*)(int))toupper);
         transform(strSecond.begin(), strSecond.end(), strSecond.begin(),
@@ -226,8 +223,8 @@ class sortResources
 public:
      bool operator()(GenericResource *f, GenericResource *s)
      {
-        string strFirst(f->getName());
-        string strSecond(s->getName());
+        std::string strFirst(f->getName());
+        std::string strSecond(s->getName());
         transform(strFirst.begin(), strFirst.end(), strFirst.begin(),
                   (int(*)(int))toupper);
         transform(strSecond.begin(), strSecond.end(), strSecond.begin(),

@@ -14,7 +14,6 @@
 #include <yarp/manager/utility.h>
 #include <yarp/manager/resource.h>
 #include <yarp/conf/api.h>
-using namespace std;
 
 namespace yarp {
 namespace manager {
@@ -38,8 +37,8 @@ public:
 protected:
 
 private:
-    string strDistrib;
-    string strRelease;
+    std::string strDistrib;
+    std::string strRelease;
     bool satisfy_platform(Platform* os);
 
 };
@@ -66,9 +65,9 @@ public:
 protected:
 
 private:
-    string strPort;
-    string strRequest;
-    string strReply;
+    std::string strPort;
+    std::string strRequest;
+    std::string strReply;
     double timeout;
 };
 

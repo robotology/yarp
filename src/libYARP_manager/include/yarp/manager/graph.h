@@ -17,13 +17,12 @@
 #include <yarp/manager/ymm-types.h>
 #include <yarp/manager/node.h>
 
-using namespace std;
 
 namespace yarp {
 namespace manager {
 
-typedef map<string, Node*> NodePContainer;
-typedef map<string, Node*>::iterator NodePIterator;
+typedef std::map<std::string, Node*> NodePContainer;
+typedef std::map<std::string, Node*>::iterator NodePIterator;
 
 class GraphIterator;
 
@@ -68,7 +67,7 @@ private:
 /**
  *  Class GraphIterator
  */
-class GraphIterator: public iterator<input_iterator_tag, Node*>
+class GraphIterator: public std::iterator<std::input_iterator_tag, Node*>
 {
 public:
     GraphIterator(void){}

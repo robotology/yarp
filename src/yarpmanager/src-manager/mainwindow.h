@@ -45,7 +45,7 @@ private:
     void syncApplicationList(QString selectNodeForEditing = "", bool open = false);
     bool loadRecursiveTemplates(const char* szPath);
     bool loadRecursiveApplications(const char* szPath);
-    bool initializeFile(string _class);
+    bool initializeFile(std::string _class);
 
 private:
     Ui::MainWindow *ui;
@@ -60,7 +60,7 @@ private:
     QToolBar *builderToolBar;
     GenericViewWidget *prevWidget;
 
-    string ext_editor;
+    std::string ext_editor;
 
 protected:
     void closeEvent(QCloseEvent *) override;
