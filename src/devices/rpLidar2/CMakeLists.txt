@@ -27,7 +27,16 @@ if(NOT SKIP_rpLidar2)
                        ${RPLIDAR_SDK_ROOT}/src/arch/${RPLIDAR_ARCH_DIR}/timer.cpp
                        ${RPLIDAR_SDK_ROOT}/src/hal/thread.cpp)
 
-  set_source_files_properties(${RPLIDAR_SDK_SRCS} PROPERTIES COMPILE_FLAGS "-Wno-suggest-override -Wno-type-limits")
+  if(NOT MSVC)
+    check_cxx_compiler_flag("-Wno-suggest-override" CXX_HAS_WNO_SUGGEST_OVERRIDE)
+    if(CXX_HAS_WNO_SUGGEST_OVERRIDE)
+      set_property(SOURCE ${RPLIDAR_SDK_SRCS} APPEND_STRING PROPERTY COMPILE_FLAGS " -Wno-suggest-override")
+    endif()
+    check_cxx_compiler_flag("-Wno-type-limits" CXX_HAS_WNO_TYPE_LIMITS)
+    if(CXX_HAS_WNO_TYPE_LIMITS)
+      set_property(SOURCE ${RPLIDAR_SDK_SRCS} APPEND_STRING PROPERTY COMPILE_FLAGS " -Wno-type-limits")
+    endif()
+  endif()
 
   add_definitions(-D_USE_MATH_DEFINES)
   yarp_add_plugin(rpLidar2 rpLidar2.h
