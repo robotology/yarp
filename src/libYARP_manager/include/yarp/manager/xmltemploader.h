@@ -35,10 +35,10 @@ public:
 protected:
 
 private:
-    string strAppName;
-    string strPath;
-    string strFileName;
-    vector<string> fileNames;
+    std::string strAppName;
+    std::string strPath;
+    std::string strFileName;
+    std::vector<std::string> fileNames;
     TextParser     parser;
     AppTemplate app;
     AppTemplate* parsXml(const char* szFile);

@@ -41,6 +41,7 @@
 
 using namespace yarp::os;
 using namespace yarp::manager;
+using namespace std;
 
 
 #if defined(_WIN32)

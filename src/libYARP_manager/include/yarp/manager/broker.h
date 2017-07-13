@@ -15,7 +15,6 @@
 
 #include <yarp/manager/ymm-types.h>
 
-using namespace std;
 
 namespace yarp {
 namespace manager {
@@ -73,7 +72,7 @@ protected:
     unsigned int UNIQUEID;
     BrokerEventSink* eventSink;
     bool bWithWatchDog;
-    string strDisplay;
+    std::string strDisplay;
     
 private:
 

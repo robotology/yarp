@@ -7,6 +7,8 @@
 #include <QGraphicsDropShadowEffect>
 #include <QDebug>
 
+using namespace std;
+
 ApplicationItem::ApplicationItem(Application* application, Manager *manager,  QList <int> *usedIds,bool isInApp,
                                  bool editingMode,
                                  int *connectionsId,

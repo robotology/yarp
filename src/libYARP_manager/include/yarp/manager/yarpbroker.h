@@ -28,9 +28,6 @@
 #include <yarp/manager/broker.h>
 #include <yarp/manager/primresource.h>
 
-using namespace std;
-//using namespace yarp::os;
-
 namespace yarp {
 namespace manager {
 
@@ -68,7 +65,7 @@ public:
                         yarp::os::SystemInfoSerializer& info);
      bool getAllProcesses(const char* server,
                         ProcessContainer &processes);
-     bool getAllPorts(vector<std::string> &stingList);
+     bool getAllPorts(std::vector<std::string> &stingList);
 
      bool setQos(const char* from, const char* to,
                  const char* qosFrom, const char* qosTo);
@@ -81,21 +78,21 @@ public: // for rate thread
 protected:
 
 private:
-    string strCmd;
-    string strParam;
-    string strHost;
-    string strStdio;
-    string strWorkdir;
-    string strTag;
-    string strEnv;
+    std::string strCmd;
+    std::string strParam;
+    std::string strHost;
+    std::string strStdio;
+    std::string strWorkdir;
+    std::string strTag;
+    std::string strEnv;
     unsigned int ID;
     yarp::os::Property command;
-    string strError;
+    std::string strError;
     bool bOnlyConnector;
     bool bInitialized;
     yarp::os::Semaphore semParam;
-    string strStdioUUID;
-    string __trace_message;
+    std::string strStdioUUID;
+    std::string __trace_message;
 
     yarp::os::BufferedPort<yarp::os::Bottle> stdioPort;
     //yarp::os::Port port;

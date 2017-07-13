@@ -18,8 +18,6 @@
 #include <yarp/manager/resource.h>
 #include <yarp/conf/api.h>
 
-using namespace std;
-
 namespace yarp {
 namespace manager {
 
@@ -43,8 +41,8 @@ public:
     }
 
 private:
-    string strName;
-    string strEmail;
+    std::string strName;
+    std::string strEmail;
 };
 
 /**
@@ -80,23 +78,23 @@ public:
 protected:
 
 private:
-    string strParam;
-    string strDesc;
-    string strDefault;
-    string strValue;
+    std::string strParam;
+    std::string strDesc;
+    std::string strDefault;
+    std::string strValue;
     bool bRequired;
     bool bSwitch;
 };
 
 
-typedef vector<InputData> InputContainer;
-typedef vector<OutputData> OutputContainer;
-typedef vector<InputData>::iterator InputIterator;
-typedef vector<OutputData>::iterator OutputIterator;
-typedef vector<Author> AuthorContainer;
-typedef vector<Author>::iterator AuthorIterator;
-typedef vector<Argument> ArgumentContainer;
-typedef vector<Argument>::iterator ArgumentIterator;
+typedef std::vector<InputData> InputContainer;
+typedef std::vector<OutputData> OutputContainer;
+typedef std::vector<InputData>::iterator InputIterator;
+typedef std::vector<OutputData>::iterator OutputIterator;
+typedef std::vector<Author> AuthorContainer;
+typedef std::vector<Author>::iterator AuthorIterator;
+typedef std::vector<Argument> ArgumentContainer;
+typedef std::vector<Argument>::iterator ArgumentIterator;
 
 
 
@@ -200,10 +198,10 @@ protected:
 
 private:
     Node* modOwner;
-    string strName;
-    string strVersion;
-    string strDescription;
-    string strHost;
+    std::string strName;
+    std::string strVersion;
+    std::string strDescription;
+    std::string strHost;
     bool bForced;
     int iRank;
     ArgumentContainer arguments;
@@ -212,18 +210,18 @@ private:
     InputContainer inputs;
     ResourcePContainer resources;
 
-    string strParam;
-    string strXmlFile;
-    string strWorkDir;
-    string strStdio;
-    string strBroker;
+    std::string strParam;
+    std::string strXmlFile;
+    std::string strWorkDir;
+    std::string strStdio;
+    std::string strBroker;
     bool bNeedDeployer;
-    string strPrefix;
-    string strEnvironment;
-    string strBasePrefix;
+    std::string strPrefix;
+    std::string strEnvironment;
+    std::string strBasePrefix;
     double waitStart;
     double waitStop;
-    string strDisplay;
+    std::string strDisplay;
     GraphicModel modelBase;
 
     ArgumentIterator findArgument(Argument& argument);
@@ -234,8 +232,8 @@ private:
     bool getParamValue(const char* key, bool bSwitch, std::string &param);
 };
 
-typedef vector<Module*> ModulePContainer;
-typedef vector<Module*>::iterator ModulePIterator;
+typedef std::vector<Module*> ModulePContainer;
+typedef std::vector<Module*>::iterator ModulePIterator;
 
 
 #define PRINT_MODULE(m)\

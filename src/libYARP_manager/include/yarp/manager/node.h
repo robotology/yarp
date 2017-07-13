@@ -16,7 +16,6 @@
 
 #include <yarp/manager/ymm-types.h>
 
-using namespace std;
 
 namespace yarp {
 namespace manager {
@@ -24,15 +23,15 @@ namespace manager {
 class Node;
 class Link;
 
-typedef vector<Link> LinkContainer;
-typedef vector<Link>::iterator LinkIterator;
+typedef std::vector<Link> LinkContainer;
+typedef std::vector<Link>::iterator LinkIterator;
 
 class GraphicModel {
 
 public:
     GraphicModel(void) {}
     virtual ~GraphicModel() {}
-    vector<GyPoint> points;
+    std::vector<GyPoint> points;
 };
 
 
@@ -119,12 +118,12 @@ private:
     bool bSatisfied;
     bool bVisited;
     NodeType type;
-    string label;
+    std::string label;
     GraphicModel* model;
 };
 
-typedef vector<Node*> NodePVector;
-typedef vector<Node*>::iterator NodePVIterator;
+typedef std::vector<Node*> NodePVector;
+typedef std::vector<Node*>::iterator NodePVIterator;
 
 } // namespace yarp
 } // namespace manager

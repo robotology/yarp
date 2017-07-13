@@ -18,8 +18,6 @@
 #include <yarp/os/Property.h>
 #include <yarp/os/ConstString.h>
 
-using namespace std;
-
 //namespace ymm {
 
 typedef enum _ColorTheme {
@@ -54,14 +52,14 @@ private:
 
     void help(void);
     void myMain(void);
-    bool process(const vector<string> &cmdList);
+    bool process(const std::vector<std::string> &cmdList);
     bool exit(void);
     void reportErrors(void);
     void which(void);
     void checkStates(void);
     void checkConnections(void);
     bool loadRecursiveApplications(const char* szPath);
-    void updateAppNames(vector<string>* apps);
+    void updateAppNames(std::vector<std::string>* apps);
     void setColorTheme(ColorTheme theme);
     static void onSignal(int signum);
 };

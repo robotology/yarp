@@ -51,7 +51,7 @@ public:
         return NULL;
     }
 
-    map<std::string, std::string>& getRuleMap(void) { return rules; }
+    std::map<std::string, std::string>& getRuleMap(void) { return rules; }
     int ruleCount(void) { return rules.size(); }
 
     GraphicModel* getModel(void) { return model;}

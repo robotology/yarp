@@ -20,7 +20,6 @@
 #include <yarp/manager/primresource.h>
 #include <yarp/manager/arbitrator.h>
 
-using namespace std;
 
 namespace yarp {
 namespace manager {
@@ -46,12 +45,12 @@ public:
 protected:
 
 private:
-    string strOld;
-    string strNew;
+    std::string strOld;
+    std::string strNew;
 };
 
-typedef vector<Portmap> PortmapContainer;
-typedef vector<Portmap>::iterator PortmapIterator;
+typedef std::vector<Portmap> PortmapContainer;
+typedef std::vector<Portmap>::iterator PortmapIterator;
 
 
 
@@ -125,14 +124,14 @@ public:
 protected:
 
 private:
-    string strFrom;
-    string strTo;
-    string strId;
+    std::string strFrom;
+    std::string strTo;
+    std::string strId;
     bool bExternalTo;
     bool bExternalFrom;
-    string strCarrier;
-    string strQosFrom;
-    string strQosTo;
+    std::string strCarrier;
+    std::string strQosFrom;
+    std::string strQosTo;
     bool bPersist;
     Node* appOwner;
     bool bWithPriority;
@@ -144,11 +143,11 @@ private:
 };
 
 
-typedef vector<Connection> CnnContainer;
-typedef vector<Connection>::iterator CnnIterator;
+typedef std::vector<Connection> CnnContainer;
+typedef std::vector<Connection>::iterator CnnIterator;
 
-typedef vector<ResYarpPort> ResourceContainer;
-typedef vector<ResYarpPort>::iterator ResourceIterator;
+typedef std::vector<ResYarpPort> ResourceContainer;
+typedef std::vector<ResYarpPort>::iterator ResourceIterator;
 
 
 
@@ -220,28 +219,28 @@ public:
 protected:
 
 private:
-    string strName;
-    string strHost;
-    string strParam;
-    string strWorkDir;
-    string strStdio;
-    string strBroker;
-    string strPrefix;
-    string strEnvironment;
-    string strDisplay;
+    std::string strName;
+    std::string strHost;
+    std::string strParam;
+    std::string strWorkDir;
+    std::string strStdio;
+    std::string strBroker;
+    std::string strPrefix;
+    std::string strEnvironment;
+    std::string strDisplay;
     int iRank;
     ResourceContainer resources;
     double waitStart;
     double waitStop;
     PortmapContainer portmaps;
     PortmapIterator findPortmap(Portmap& portmap);
-    string strTag;
+    std::string strTag;
     GraphicModel modelBase;
 };
 
 
-typedef vector<ModuleInterface> IModuleContainer;
-typedef vector<ModuleInterface>::iterator IModuleIterator;
+typedef std::vector<ModuleInterface> IModuleContainer;
+typedef std::vector<ModuleInterface>::iterator IModuleIterator;
 
 
 /**
@@ -271,14 +270,14 @@ public:
 protected:
 
 private:
-    string strName;
-    string strPrefix;
+    std::string strName;
+    std::string strPrefix;
     GraphicModel modelBase;
 };
 
 
-typedef vector<ApplicationInterface> IApplicationContainer;
-typedef vector<ApplicationInterface>::iterator IApplicationIterator;
+typedef std::vector<ApplicationInterface> IApplicationContainer;
+typedef std::vector<ApplicationInterface>::iterator IApplicationIterator;
 
 /**
  * Class Application
@@ -370,23 +369,23 @@ public:
     GraphicModel& getModelBase(void) { return modelBase;}
     void setModelBase(GraphicModel& mdl) { modelBase = mdl; };
 
-    map<string, int> modList;
+    std::map<std::string, int> modList;
 
 protected:
 
 private:
-    string strName;
-    string strVersion;
-    string strDescription;
+    std::string strName;
+    std::string strVersion;
+    std::string strDescription;
     AuthorContainer authors;
     IModuleContainer Imodules;
     IApplicationContainer Iapplications;
     ResourceContainer resources;
     CnnContainer connections;
     ArbContainer arbitrators;
-    string strPrefix;
-    string strBasePrefix;
-    string strXmlFile;
+    std::string strPrefix;
+    std::string strBasePrefix;
+    std::string strXmlFile;
     Node* appOwner;
 
     GraphicModel modelBase;
@@ -399,8 +398,8 @@ private:
 
 };
 
-typedef vector<Application*> ApplicaitonPContainer;
-typedef vector<Application*>::iterator ApplicationPIterator;
+typedef std::vector<Application*> ApplicaitonPContainer;
+typedef std::vector<Application*>::iterator ApplicationPIterator;
 
 } // namespace yarp
 } // namespace manager

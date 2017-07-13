@@ -30,6 +30,7 @@
 
 
 using namespace yarp::manager;
+using namespace std;
 
 
 /**

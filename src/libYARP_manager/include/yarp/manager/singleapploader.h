@@ -32,8 +32,8 @@ protected:
 
 private:
     Application app;
-    string strModule;
-    string strHost;
+    std::string strModule;
+    std::string strHost;
 };
 
 } // namespace yarp
