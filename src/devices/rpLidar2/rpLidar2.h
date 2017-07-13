@@ -41,22 +41,23 @@ class RpLidar2 : public RateThread, public yarp::dev::IRangefinder2D, public Dev
     void                  handleError(u_result error);
     yarp::os::ConstString deviceinfo();
 protected:
-    yarp::os::Mutex       mutex;
-    int                   sensorsNum;
-    int                   buffer_life;
-    double                min_angle;
-    double                max_angle;
-    double                min_distance;
-    double                max_distance;
-    double                resolution;
-    bool                  clip_max_enable;
-    bool                  clip_min_enable;
-    bool                  do_not_clip_infinity_enable;
-    std::vector <Range_t> range_skip_vector;
-    yarp::os::ConstString info;
-    Device_status         device_status;
-    yarp::sig::Vector     laser_data;
-    rplidardrv*           drv;
+    yarp::os::Mutex       m_mutex;
+    int                   m_sensorsNum;
+    int                   m_buffer_life;
+    double                m_min_angle;
+    double                m_max_angle;
+    double                m_min_distance;
+    double                m_max_distance;
+    double                m_resolution;
+    bool                  m_clip_max_enable;
+    bool                  m_clip_min_enable;
+    bool                  m_do_not_clip_infinity_enable;
+    int                   m_pwm_val;
+    std::vector <Range_t> m_range_skip_vector;
+    yarp::os::ConstString m_info;
+    Device_status         m_device_status;
+    yarp::sig::Vector     m_laser_data;
+    rplidardrv*           m_drv;
 
 public:
     RpLidar2(int period = 10) : RateThread(period)
