@@ -40,17 +40,17 @@ bool RpLidar2::open(yarp::os::Searchable& config)
     int      baudrate;
     u_result result;
 
-    device_status = DEVICE_OK_STANBY;
-    min_distance  = 0.1; //m
-    max_distance  = 2.5;  //m
+    m_device_status = DEVICE_OK_STANBY;
+    m_min_distance  = 0.1; //m
+    m_max_distance  = 2.5;  //m
     bool br       = config.check("GENERAL");
     if (br != false)
     {
         yarp::os::Searchable& general_config = config.findGroup("GENERAL");
-        clip_max_enable = general_config.check("clip_max");
-        clip_min_enable = general_config.check("clip_min");
-        if (clip_max_enable)                                      { max_distance = general_config.find("clip_max").asDouble(); }
-        if (clip_min_enable)                                      { min_distance = general_config.find("clip_min").asDouble(); }
+        m_clip_max_enable = general_config.check("clip_max");
+        m_clip_min_enable = general_config.check("clip_min");
+        if (m_clip_max_enable)                                    { m_max_distance = general_config.find("clip_max").asDouble(); }
+        if (m_clip_min_enable)                                    { m_min_distance = general_config.find("clip_min").asDouble(); }
         if (general_config.check("max_angle")   == false)         { yError()  << "Missing max_angle param in GENERAL group"; return false;    }
         if (general_config.check("min_angle")   == false)         { yError()  << "Missing min_angle param in GENERAL group"; return false;    }
         if (general_config.check("resolution")  == false)         { yError()  << "Missing resolution param in GENERAL group"; return false;  }
@@ -60,12 +60,20 @@ bool RpLidar2::open(yarp::os::Searchable& config)
 
         baudrate    = general_config.find("serial_baudrate").asInt();
         serial      = general_config.find("serial_port").asString();
-        max_angle   = general_config.find("max_angle").asDouble();
-        min_angle   = general_config.find("min_angle").asDouble();
-        resolution  = general_config.find("resolution").asDouble();
-        buffer_life = general_config.find("sample_buffer_life").asInt();
-
-        do_not_clip_infinity_enable = (general_config.find("allow_infinity").asInt()!=0);
+        m_max_angle   = general_config.find("max_angle").asDouble();
+        m_min_angle   = general_config.find("min_angle").asDouble();
+        m_resolution  = general_config.find("resolution").asDouble();
+        m_buffer_life = general_config.find("sample_buffer_life").asInt();
+        m_do_not_clip_infinity_enable = (general_config.find("allow_infinity").asInt()!=0);
+        if (general_config.check("motor_pwm"))
+        {
+            m_pwm_val     = general_config.find("motor_pwm").asInt();
+        }
+        if (general_config.check("thread_period"))
+        {
+            int   thread_period = general_config.find("thread_period").asInt();
+            this->setRate(thread_period);
+        }
     }
     else
     {
@@ -94,7 +102,7 @@ bool RpLidar2::open(yarp::os::Searchable& config)
                     range.min >= 0 && range.min <= 360 &&
                     range.max > range.min)
                 {
-                    range_skip_vector.push_back(range);
+                    m_range_skip_vector.push_back(range);
                 }
                 else
                 {
@@ -106,39 +114,74 @@ bool RpLidar2::open(yarp::os::Searchable& config)
 
     }
 
-    if (max_angle <= min_angle)            { yError() << "max_angle should be > min_angle";  return false; }
-    double fov = (max_angle - min_angle);
+    if (m_max_angle <= m_min_angle)            { yError() << "max_angle should be > min_angle";  return false; }
+    double fov = (m_max_angle - m_min_angle);
     if (fov >360)                          { yError() << "max_angle - min_angle <= 360";  return false; }
-    sensorsNum = (int)(fov/resolution);
-    laser_data.resize(sensorsNum, 0.0);
+    m_sensorsNum = (int)(fov/m_resolution);
+    m_laser_data.resize(m_sensorsNum, 0.0);
 
-    drv = RPlidarDriver::CreateDriver(RPlidarDriver::DRIVER_TYPE_SERIALPORT);
-    if (!drv)
+    m_drv = RPlidarDriver::CreateDriver(RPlidarDriver::DRIVER_TYPE_SERIALPORT);
+    if (!m_drv)
     {
             yError() << "Create Driver fail, exit\n";
             return false;
     }
 
-
-
-    if (IS_FAIL(drv->connect(serial.c_str(), (_u32)baudrate)))
+    if (IS_FAIL(m_drv->connect(serial.c_str(), (_u32)baudrate)))
     {
         yError() << "Error, cannot bind to the specified serial port:", serial.c_str();
-        RPlidarDriver::DisposeDriver(drv);
+        RPlidarDriver::DisposeDriver(m_drv);
         return false;
     }
 
-    info = deviceinfo();
-    yInfo("max_dist %f, min_dist %f",   max_distance, min_distance);
+    m_info = deviceinfo();
+    yInfo("max_dist %f, min_dist %f",   m_max_distance, m_min_distance);
+ 
+    bool m_inExpressMode=false;
+    result = m_drv->checkExpressScanSupported(m_inExpressMode);
+    if (result == RESULT_OK && m_inExpressMode==true)
+    {
+        yInfo() << "Express scan mode is supported";
+    }
+    else
+    {
+        yWarning() << "Device does not supports express scan mode";
+    }
 
-    result = drv->startMotor();
+    result = m_drv->startMotor();
     if (result != RESULT_OK)
     {
         handleError(result);
         return false;
     }
     yInfo() << "Motor started succesfully";
-    result = drv->startScan();
+
+    if (m_pwm_val!=0)
+    {
+        if (m_pwm_val>0 && m_pwm_val<1023)
+        {
+            result = m_drv->setMotorPWM(m_pwm_val);
+            if (result != RESULT_OK)
+            {
+                handleError(result);
+                return false;
+            }
+            yInfo() << "Motor pwm set to "<< m_pwm_val;
+        }
+        else
+        {
+            yError() << "Invalid motor pwm request " << m_pwm_val <<". It should be a value between 0 and 1023.";
+            return false;
+        }
+    }
+    else
+    {
+        yInfo() << "Motor pwm set to default value (600?)";
+    }
+
+    bool forceScan =false;
+    result = m_drv->startScan(forceScan,m_inExpressMode);
+
     if (result != RESULT_OK)
     {
         handleError(result);
@@ -146,10 +189,10 @@ bool RpLidar2::open(yarp::os::Searchable& config)
     }
     yInfo() << "Scan started succesfully";
 
-    yInfo() << "Device info:" << info;
-    yInfo("max_angle %f, min_angle %f", max_angle, min_angle);
-    yInfo("resolution %f",              resolution);
-    yInfo("sensors %d",                 sensorsNum);
+    yInfo() << "Device info:" << m_info;
+    yInfo("max_angle %f, min_angle %f", m_max_angle, m_min_angle);
+    yInfo("resolution %f",              m_resolution);
+    yInfo("sensors %d",                 m_sensorsNum);
     Time::turboBoost();
     RateThread::start();
     return true;
@@ -157,8 +200,8 @@ bool RpLidar2::open(yarp::os::Searchable& config)
 
 bool RpLidar2::close()
 {
-    drv->stopMotor();
-    RPlidarDriver::DisposeDriver(drv);
+    m_drv->stopMotor();
+    RPlidarDriver::DisposeDriver(m_drv);
     RateThread::stop();
     yInfo() << "rpLidar closed";
     return true;
@@ -166,60 +209,60 @@ bool RpLidar2::close()
 
 bool RpLidar2::getDistanceRange(double& min, double& max)
 {
-    LockGuard guard(mutex);
-    min = min_distance;
-    max = max_distance;
+    LockGuard guard(m_mutex);
+    min = m_min_distance;
+    max = m_max_distance;
     return true;
 }
 
 bool RpLidar2::setDistanceRange(double min, double max)
 {
-    LockGuard guard(mutex);
-    min_distance = min;
-    max_distance = max;
+    LockGuard guard(m_mutex);
+    m_min_distance = min;
+    m_max_distance = max;
     return true;
 }
 
 bool RpLidar2::getScanLimits(double& min, double& max)
 {
-    LockGuard guard(mutex);
-    min = min_angle;
-    max = max_angle;
+    LockGuard guard(m_mutex);
+    min = m_min_angle;
+    max = m_max_angle;
     return true;
 }
 
 bool RpLidar2::setScanLimits(double min, double max)
 {
-    LockGuard guard(mutex);
-    min_angle = min;
-    max_angle = max;
+    LockGuard guard(m_mutex);
+    m_min_angle = min;
+    m_max_angle = max;
     return true;
 }
 
 bool RpLidar2::getHorizontalResolution(double& step)
 {
-    LockGuard guard(mutex);
-    step = resolution;
+    LockGuard guard(m_mutex);
+    step = m_resolution;
     return true;
 }
 
 bool RpLidar2::setHorizontalResolution(double step)
 {
-    LockGuard guard(mutex);
-    resolution = step;
+    LockGuard guard(m_mutex);
+    m_resolution = step;
     return true;
 }
 
 bool RpLidar2::getScanRate(double& rate)
 {
-    LockGuard guard(mutex);
+    LockGuard guard(m_mutex);
     yWarning("getScanRate not yet implemented");
     return true;
 }
 
 bool RpLidar2::setScanRate(double rate)
 {
-    LockGuard guard(mutex);
+    LockGuard guard(m_mutex);
     yWarning("setScanRate not yet implemented");
     return false;
 }
@@ -227,35 +270,35 @@ bool RpLidar2::setScanRate(double rate)
 
 bool RpLidar2::getRawData(yarp::sig::Vector &out)
 {
-    LockGuard guard(mutex);
-    out           = laser_data;
-    device_status = yarp::dev::IRangefinder2D::DEVICE_OK_IN_USE;
+    LockGuard guard(m_mutex);
+    out           = m_laser_data;
+    m_device_status = yarp::dev::IRangefinder2D::DEVICE_OK_IN_USE;
     return true;
 }
 
 bool RpLidar2::getLaserMeasurement(std::vector<LaserMeasurementData> &data)
 {
-    LockGuard guard(mutex);
-    size_t size = laser_data.size();
+    LockGuard guard(m_mutex);
+    size_t size = m_laser_data.size();
     data.resize(size);
 
-    if (max_angle < min_angle) { yError() << "getLaserMeasurement failed"; return false; }
+    if (m_max_angle < m_min_angle) { yError() << "getLaserMeasurement failed"; return false; }
 
-    double laser_angle_of_view = max_angle - min_angle;
+    double laser_angle_of_view = m_max_angle - m_min_angle;
 
     for (size_t i = 0; i < size; i++)
     {
-        double angle = (i / double(size)*laser_angle_of_view + min_angle)* DEG2RAD;
-        data[i].set_polar(laser_data[i], angle);
+        double angle = (i / double(size)*laser_angle_of_view + m_min_angle)* DEG2RAD;
+        data[i].set_polar(m_laser_data[i], angle);
     }
-    device_status = yarp::dev::IRangefinder2D::DEVICE_OK_IN_USE;
+    m_device_status = yarp::dev::IRangefinder2D::DEVICE_OK_IN_USE;
 
     return true;
 }
 bool RpLidar2::getDeviceStatus(Device_status &status)
 {
-    LockGuard guard(mutex);
-    status = device_status;
+    LockGuard guard(m_mutex);
+    status = m_device_status;
     return true;
 }
 
@@ -273,17 +316,27 @@ bool RpLidar2::threadInit()
 void RpLidar2::run()
 {
     u_result                            op_result;
-    rplidar_response_measurement_node_t nodes[360*2];
+    rplidar_response_measurement_node_t nodes[2048];
     size_t                              count = _countof(nodes);
     static int                          life = 0;
-    op_result = drv->grabScanData(nodes, count);
+    op_result = m_drv->grabScanData(nodes, count);
     if (op_result != RESULT_OK)
     {
         yError() << "grabbing scan data failed";
         handleError(op_result);
         return;
     }
-    drv->ascendScanData(nodes, count);
+
+    float frequency=0;
+    bool is4kmode=false;
+    op_result = m_drv->getFrequency(m_inExpressMode, count, frequency, is4kmode);
+    if (op_result != RESULT_OK)
+    {
+        yError() << "getFrequency failed";
+    }
+
+    m_drv->ascendScanData(nodes, count);
+
     if (op_result != RESULT_OK)
     {
         yError() << "ascending scan data failed\n";
@@ -291,9 +344,13 @@ void RpLidar2::run()
         return;
     }
 
-    if (buffer_life && life%buffer_life == 0)
+    if (m_buffer_life && life%m_buffer_life == 0)
     {
-        laser_data.zero();
+        for (size_t i=0 ;i<m_laser_data.size(); i++)
+        {
+            //m_laser_data[i]=0; //0 is a terribly unsafe value and should be avoided.
+            m_laser_data[i]=std::numeric_limits<double>::infinity();
+        }
     }
 
     for (size_t i = 0; i < count; ++i)
@@ -319,42 +376,42 @@ void RpLidar2::run()
             yWarning() << "Invalid angle";
         }
 
-        if (clip_min_enable)
+        if (m_clip_min_enable)
         {
-            if (distance < min_distance)
+            if (distance < m_min_distance)
             {
                 //laser angular measurements not read by the device are now set to infinity and not to zero
                 distance = std::numeric_limits<double>::infinity(); 
             }
         }
-        if (clip_max_enable)
+        if (m_clip_max_enable)
         {
-            if (distance > max_distance)
+            if (distance > m_max_distance)
             {
-                if (!do_not_clip_infinity_enable && distance <= std::numeric_limits<double>::infinity())
+                if (!m_do_not_clip_infinity_enable && distance <= std::numeric_limits<double>::infinity())
                 {
-                    distance = max_distance;
+                    distance = m_max_distance;
                 }
             }
         }
 
-        for (size_t i = 0; i < range_skip_vector.size(); i++)
+        for (size_t i = 0; i < m_range_skip_vector.size(); i++)
         {
-            if (angle>range_skip_vector[i].min && angle < range_skip_vector[i].max)
+            if (angle>m_range_skip_vector[i].min && angle < m_range_skip_vector[i].max)
             {
                 distance = std::numeric_limits<double>::infinity();
             }
         }
 
-        int elem = (int)(angle / resolution);
+        int elem = (int)(angle / m_resolution);
 
-        if (elem >= 0 && elem < (int)laser_data.size())
+        if (elem >= 0 && elem < (int)m_laser_data.size())
         {
-            laser_data[elem] = distance;
+            m_laser_data[elem] = distance;
         }
         else
         {
-            yDebug() << "RpLidar::run() invalid angle: elem" << elem << ">" << "laser_data.size()" << laser_data.size();
+            yDebug() << "RpLidar::run() invalid angle: elem" << elem << ">" << "laser_data.size()" << m_laser_data.size();
         }
     }
 
@@ -408,13 +465,13 @@ void RpLidar2::handleError(u_result error)
 
 ConstString RpLidar2::deviceinfo()
 {
-    if (drv)
+    if (m_drv)
     {
         u_result                       result;
         rplidar_response_device_info_t info;
         string                         serialNumber;
 
-        result = drv->getDeviceInfo(info);
+        result = m_drv->getDeviceInfo(info);
         if (result != RESULT_OK)
         {
             handleError(result);
@@ -436,7 +493,7 @@ ConstString RpLidar2::deviceinfo()
 
 bool RpLidar2::getDeviceInfo(yarp::os::ConstString &device_info)
 {
-    LockGuard guard(mutex);
-    device_info = info;
+    LockGuard guard(m_mutex);
+    device_info = m_info;
     return true;
 }
