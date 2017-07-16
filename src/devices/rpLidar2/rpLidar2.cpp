@@ -309,7 +309,7 @@ void RpLidar2::run()
             angle -= 360;
         }
 
-        if (quality == 0)
+        if (quality == 0 || distance == 0)
         {
             distance = std::numeric_limits<double>::infinity();
         }
@@ -323,7 +323,8 @@ void RpLidar2::run()
         {
             if (distance < min_distance)
             {
-                distance = max_distance;
+                //laser angular measurements not read by the device are now set to infinity and not to zero
+                distance = std::numeric_limits<double>::infinity(); 
             }
         }
         if (clip_max_enable)
