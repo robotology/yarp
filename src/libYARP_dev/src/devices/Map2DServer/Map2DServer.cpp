@@ -278,18 +278,29 @@ bool Map2DServer::open(yarp::os::Searchable &config)
     Property params;
     params.fromString(config.toString().c_str());
 
-    if (config.check("mapCollection"))
+    string collection_file_name="maps_collection.ini";
+    if (config.check("mapCollectionFile"))
     {
-        string collection_name= config.find("mapCollection").asString();
-        m_rf_mapCollection.setDefaultContext(collection_name.c_str());
-        string collection_file = m_rf_mapCollection.findFile("maps_collection.ini");
-        if (loadMaps(collection_file))
+        collection_file_name= config.find("mapCollectionFile").asString();
+    }
+
+    if (config.check("mapCollectionContext"))
+    {
+        string collection_context_name= config.find("mapCollectionContext").asString();
+        m_rf_mapCollection.setDefaultContext(collection_context_name.c_str());
+        string collection_file_with_path = m_rf_mapCollection.findFile(collection_file_name);
+        if (collection_file_with_path=="")
         {
-            yInfo() << "Map collection:" << collection_file << "succesfully loaded";
+            yError() << "Unable to find file "<< collection_file_name << " within the specified context: " << collection_context_name;
+            return false;
+        }
+        if (loadMaps(collection_file_with_path))
+        {
+            yInfo() << "Map collection file:" << collection_file_with_path << "succesfully loaded";
         }
         else
         {
-            yError() << "Unable to load map collection file:" << collection_file;
+            yError() << "Unable to load map collection file:" << collection_file_with_path;
             return false;
         }
     }
