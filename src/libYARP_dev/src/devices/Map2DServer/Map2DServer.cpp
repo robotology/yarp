@@ -236,6 +236,7 @@ bool Map2DServer::loadMaps(std::string mapsfile)
         std::getline(file, buffer);
         std::istringstream iss(buffer);
         iss >> dummy;
+        if (dummy == "") break;
         if (dummy == "mapfile:")
         {
             string mapfilename;
