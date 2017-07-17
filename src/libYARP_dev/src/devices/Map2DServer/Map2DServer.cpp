@@ -271,6 +271,7 @@ bool Map2DServer::loadMaps(std::string mapsfile)
         }
     }
     file.close();
+
     return true;
 }
 
@@ -297,7 +298,12 @@ bool Map2DServer::open(yarp::os::Searchable &config)
         }
         if (loadMaps(collection_file_with_path))
         {
-            yInfo() << "Map collection file:" << collection_file_with_path << "succesfully loaded";
+            yInfo() << "Map collection file:" << collection_file_with_path << "succesfully loaded.";
+            yInfo() << "Available maps are:";
+            for (auto it = m_maps_storage.begin(); it != m_maps_storage.end(); it++)
+            {
+                yInfo() << it->first;
+            }
         }
         else
         {
