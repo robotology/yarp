@@ -52,6 +52,7 @@ protected:
     bool                  m_clip_max_enable;
     bool                  m_clip_min_enable;
     bool                  m_do_not_clip_infinity_enable;
+    bool                  m_inExpressMode;
     int                   m_pwm_val;
     std::vector <Range_t> m_range_skip_vector;
     yarp::os::ConstString m_info;

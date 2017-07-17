@@ -43,22 +43,20 @@ bool RpLidar2::open(yarp::os::Searchable& config)
     m_device_status = DEVICE_OK_STANBY;
     m_min_distance  = 0.1; //m
     m_max_distance  = 2.5;  //m
-    m_pwm_val = 0;
     bool br       = config.check("GENERAL");
     if (br != false)
     {
         yarp::os::Searchable& general_config = config.findGroup("GENERAL");
         m_clip_max_enable = general_config.check("clip_max");
         m_clip_min_enable = general_config.check("clip_min");
-        if (m_clip_max_enable)                                      { m_max_distance = general_config.find("clip_max").asDouble(); }
-        if (m_clip_min_enable)                                      { m_min_distance = general_config.find("clip_min").asDouble(); }
+        if (m_clip_max_enable)                                    { m_max_distance = general_config.find("clip_max").asDouble(); }
+        if (m_clip_min_enable)                                    { m_min_distance = general_config.find("clip_min").asDouble(); }
         if (general_config.check("max_angle")   == false)         { yError()  << "Missing max_angle param in GENERAL group"; return false;    }
         if (general_config.check("min_angle")   == false)         { yError()  << "Missing min_angle param in GENERAL group"; return false;    }
         if (general_config.check("resolution")  == false)         { yError()  << "Missing resolution param in GENERAL group"; return false;  }
         if (general_config.check("serial_port") == false)         { yError()  << "Missing serial_port param in GENERAL group"; return false; }
         if (general_config.check("serial_baudrate") == false)     { yError()  << "Missing serial_baudrate param in GENERAL group"; return false; }
         if (general_config.check("sample_buffer_life") == false)  { yError()  << "Missing sample_buffer_life param in GENERAL group"; return false; }
-        //if (general_config.check("motor_pwm") == false)           { yError()  << "Missing motor_pwm param in GENERAL group"; return false; }
 
         baudrate    = general_config.find("serial_baudrate").asInt();
         serial      = general_config.find("serial_port").asString();
@@ -66,11 +64,16 @@ bool RpLidar2::open(yarp::os::Searchable& config)
         m_min_angle   = general_config.find("min_angle").asDouble();
         m_resolution  = general_config.find("resolution").asDouble();
         m_buffer_life = general_config.find("sample_buffer_life").asInt();
+        m_do_not_clip_infinity_enable = (general_config.find("allow_infinity").asInt()!=0);
         if (general_config.check("motor_pwm"))
         {
             m_pwm_val     = general_config.find("motor_pwm").asInt();
         }
-        m_do_not_clip_infinity_enable = (general_config.find("allow_infinity").asInt()!=0);
+        if (general_config.check("thread_period"))
+        {
+            int   thread_period = general_config.find("thread_period").asInt();
+            this->setRate(thread_period);
+        }
     }
     else
     {
@@ -124,8 +127,6 @@ bool RpLidar2::open(yarp::os::Searchable& config)
             return false;
     }
 
-
-
     if (IS_FAIL(m_drv->connect(serial.c_str(), (_u32)baudrate)))
     {
         yError() << "Error, cannot bind to the specified serial port:", serial.c_str();
@@ -135,6 +136,17 @@ bool RpLidar2::open(yarp::os::Searchable& config)
 
     m_info = deviceinfo();
     yInfo("max_dist %f, min_dist %f",   m_max_distance, m_min_distance);
+ 
+    bool m_inExpressMode=false;
+    result = m_drv->checkExpressScanSupported(m_inExpressMode);
+    if (result == RESULT_OK && m_inExpressMode==true)
+    {
+        yInfo() << "Express scan mode is supported";
+    }
+    else
+    {
+        yWarning() << "Device does not supports express scan mode";
+    }
 
     result = m_drv->startMotor();
     if (result != RESULT_OK)
@@ -167,7 +179,9 @@ bool RpLidar2::open(yarp::os::Searchable& config)
         yInfo() << "Motor pwm set to default value (600?)";
     }
 
-    result = m_drv->startScan();
+    bool forceScan =false;
+    result = m_drv->startScan(forceScan,m_inExpressMode);
+
     if (result != RESULT_OK)
     {
         handleError(result);
@@ -302,7 +316,7 @@ bool RpLidar2::threadInit()
 void RpLidar2::run()
 {
     u_result                            op_result;
-    rplidar_response_measurement_node_t nodes[360*2];
+    rplidar_response_measurement_node_t nodes[2048];
     size_t                              count = _countof(nodes);
     static int                          life = 0;
     op_result = m_drv->grabScanData(nodes, count);
@@ -312,7 +326,17 @@ void RpLidar2::run()
         handleError(op_result);
         return;
     }
+
+    float frequency=0;
+    bool is4kmode=false;
+    op_result = m_drv->getFrequency(m_inExpressMode, count, frequency, is4kmode);
+    if (op_result != RESULT_OK)
+    {
+        yError() << "getFrequency failed";
+    }
+
     m_drv->ascendScanData(nodes, count);
+
     if (op_result != RESULT_OK)
     {
         yError() << "ascending scan data failed\n";
@@ -322,7 +346,11 @@ void RpLidar2::run()
 
     if (m_buffer_life && life%m_buffer_life == 0)
     {
-        m_laser_data.zero();
+        for (size_t i=0 ;i<m_laser_data.size(); i++)
+        {
+            //m_laser_data[i]=0; //0 is a terribly unsafe value and should be avoided.
+            m_laser_data[i]=std::numeric_limits<double>::infinity();
+        }
     }
 
     for (size_t i = 0; i < count; ++i)
@@ -338,7 +366,7 @@ void RpLidar2::run()
             angle -= 360;
         }
 
-        if (quality == 0)
+        if (quality == 0 || distance == 0)
         {
             distance = std::numeric_limits<double>::infinity();
         }
@@ -352,7 +380,8 @@ void RpLidar2::run()
         {
             if (distance < m_min_distance)
             {
-                distance = m_max_distance;
+                //laser angular measurements not read by the device are now set to infinity and not to zero
+                distance = std::numeric_limits<double>::infinity(); 
             }
         }
         if (m_clip_max_enable)
