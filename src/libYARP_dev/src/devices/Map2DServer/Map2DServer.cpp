@@ -241,6 +241,8 @@ bool Map2DServer::loadMaps(std::string mapsfile)
         {
             string mapfilename;
             iss >> mapfilename;
+            string option;
+            iss >> option;
             string mapfilenameWithPath = m_rf_mapCollection.findFile(mapfilename.c_str());
             yarp::dev::MapGrid2D map;
             bool r = map.loadFromFile(mapfilenameWithPath);
@@ -250,6 +252,8 @@ bool Map2DServer::loadMaps(std::string mapsfile)
                 auto p = m_maps_storage.find(map_name);
                 if (p == m_maps_storage.end())
                 {
+                    if (option == "crop")
+                        map.crop(-1,-1,-1,-1);
                     m_maps_storage[map_name] = map;
                 }
                 else

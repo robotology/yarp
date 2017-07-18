@@ -566,6 +566,98 @@ yarp::sig::PixelRgb MapGrid2D::CellDataToPixel(const MapGrid2D::CellData& pixin)
     return pixout_flg;
 }
 
+bool  MapGrid2D::crop (int left, int top, int right, int bottom)
+{
+    if (top < 0)
+    {
+        for (size_t j=0;j<height();j++){
+            for (size_t i=0;i<width();i++){
+                yarp::sig::PixelMono pix = m_map_occupancy.safePixel(i,j);
+                if ( pix != 255)
+                {
+                 top = j; 
+                    goto topFound;
+                }
+            }
+        }
+    }
+    topFound:
+    
+    if (bottom < 0)
+    {
+        for (int j=height()-1; j>0; j--){
+            for (int i=width()-1; i>0 ;i--){
+                yarp::sig::PixelMono pix = m_map_occupancy.safePixel(i,j);
+                if ( pix != 255)
+                {
+                    bottom = j+1; 
+                    goto bottomFound;
+                }
+            }
+        }
+    }
+    bottomFound:
+    
+    if (left<0)
+    {
+        for (size_t i=0;i<width();i++){
+            for (size_t j=0;j<height();j++){    
+                yarp::sig::PixelMono pix = m_map_occupancy.safePixel(i,j);
+                if ( pix != 255)
+                {
+                    left = i; 
+                    goto leftFound;
+                }
+           }
+        }
+    }
+    leftFound:
+    
+    if (right<0)
+    {
+        for (size_t i=width()-1;i>0;i--){
+            for (size_t j=0;j<height();j++){    
+                yarp::sig::PixelMono pix = m_map_occupancy.safePixel(i,j);
+                if ( pix != 255)
+                {
+                    right = i; 
+                    goto rightFound;
+                } 
+           }
+        }
+    }
+    rightFound:
+
+    if (left   > (int)this->width()) return false;
+    if (right  > (int)this->width()) return false;
+    if (top    > (int)this->height()) return false;
+    if (bottom > (int)this->height()) return false;
+
+    int i=0; int x =0;
+    int j=0; int y=0;
+    yarp::sig::ImageOf<CellData> new_map_occupancy;
+    yarp::sig::ImageOf<CellData> new_map_flags;
+
+    new_map_occupancy.setQuantum(1);
+    new_map_flags.setQuantum(1);
+    new_map_occupancy.resize(right-left,bottom-top);
+    new_map_flags.resize(right-left,bottom-top);
+    
+    for (int j=top, y=0; j<bottom; j++, y++)
+        for (int i=left, x=0; i<right; i++, x++)
+        {
+            new_map_occupancy.safePixel(x,y) = m_map_occupancy.safePixel(i,j);
+            new_map_flags.safePixel(x,y)     = m_map_flags.safePixel(i,j);
+        }
+    m_map_occupancy.copy(new_map_occupancy);
+    m_map_flags.copy(new_map_flags);
+    this->m_width=m_map_occupancy.width();
+    this->m_height=m_map_occupancy.height();
+    m_origin.x = m_origin.x+(left*m_resolution);
+    m_origin.y = m_origin.y+(top*m_resolution);
+    return true;
+}
+
 bool  MapGrid2D::saveToFile(std::string yaml_filename) const
 {
     std::string pgm_occ_filename;
@@ -690,22 +782,6 @@ MapGrid2D::XYWorld MapGrid2D::cell2World(MapGrid2D::XYCell cell) const
 {
     //convert a cell (from the upper-left corner) to the map reference frame (located in m_origin, measured in meters)
     //beware: the location of m_origin is referred to the lower-left corner (ROS convention)
-    /*
-    int crop_x = 0;
-    int crop_y = 0;
-    cell.x += crop_x;
-    cell.y += crop_y;
-    MapGrid2D::XYWorld v;
-    v.x = double(cell.x)*this->m_resolution;
-    v.y = double(cell.y)*this->m_resolution;
-    v.x = v.x + this->m_origin.x;
-    v.y = -(v.y + this->m_origin.y);
-    return v;
-    */
-    int crop_x = 0;
-    int crop_y = 0;
-    cell.x += crop_x;
-    cell.y += crop_y;
     MapGrid2D::XYWorld v;
     v.x = double(cell.x)*this->m_resolution;
     v.y = double(cell.y)*this->m_resolution;
@@ -719,23 +795,9 @@ MapGrid2D::XYCell MapGrid2D::world2Cell(MapGrid2D::XYWorld world) const
 {
     //convert a world location (wrt the map reference frame located in m_origin, measured in meters), to a cell from the upper-left corner.
     //beware: the location of m_origin is referred to the lower-left corner (ROS convention)
-    /*
-    int crop_x = 0;
-    int crop_y = 0;
-    MapGrid2D::XYCell c;
-    c.x = int((world.x - this->m_origin.x) / this->m_resolution);
-    c.y = int((-world.y - this->m_origin.y) / this->m_resolution);
-    c.x -= crop_x;
-    c.y -= crop_y;
-    return c;
-    */
-    int crop_x = 0;
-    int crop_y = 0;
     MapGrid2D::XYCell c;
     c.x = int((+world.x - this->m_origin.x) / this->m_resolution) + 0;
     c.y = int((-world.y + this->m_origin.y) / this->m_resolution) + m_height - 1;
-    c.x -= crop_x;
-    c.y -= crop_y;
     return c;
 }
 

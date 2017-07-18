@@ -202,6 +202,13 @@ namespace yarp
                 XYCell world2Cell(XYWorld world) const;
 
                 /**
+                * Modifies the map, cropping pixels at the boundaries.
+                * @param left, top, right, bottom: the corners of the map area to keep (expressed in pixel coordinates). If the value is negative, all unknown pixels are removed until a significative pixel is found.
+                * @return true if the operation is performed succesfully (the input parameters are valid), false otherwise.
+                */
+                bool   crop (int left, int top, int right, int bottom);
+
+                /**
                 * Checks if a cell is inside the map.
                 * @param cell is the cell location, referred to the top-left corner of the map.
                 * @return true if cell is inside the map, false otherwise.
