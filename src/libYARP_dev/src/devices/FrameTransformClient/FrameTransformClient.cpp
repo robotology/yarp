@@ -260,12 +260,12 @@ bool yarp::dev::FrameTransformClient::read(yarp::os::ConnectionReader& connectio
         if (this->frameExists(src)==false)
         {
             out.addString("Requested src frame " + src + " does not exists.");
-            yWarning("Requested src frame " + src + " does not exists.");
+            yWarning("Requested src frame %s does not exists.", src.c_str());
         }
         if (this->frameExists(dst)==false)
         {
             out.addString("Requested dst frame " + dst + " does not exists.");
-            yWarning("Requested fst frame " + dst + " does not exists.");
+            yWarning("Requested fst frame %s does not exists.", dst.c_str());
         }
         if (ret == true)
         {
