@@ -342,9 +342,17 @@ bool MapGrid2D::loadMapYarpAndRos(string yarp_filename, string ros_yaml_filename
             for (size_t x = 0; x < m_width; x++)
             {
                 yarp::sig::PixelRgb pix_occ = ros_img.safePixel(x, y);
-                double color_avg = (pix_occ.r + pix_occ.g + pix_occ.b) / 3;
-                unsigned char occ = (unsigned char)((255 - color_avg) / 255.0);
-                m_map_occupancy.safePixel(x, y) = occ * 100;
+                if (pix_occ.r == 205 && pix_occ.g == 205 && pix_occ.b == 205)
+                {
+                    //m_map_occupancy.safePixel(x, y) = -1;
+                    m_map_occupancy.safePixel(x, y) = 255;
+                }
+                else
+                {
+                   double color_avg = (pix_occ.r + pix_occ.g + pix_occ.b) / 3;
+                   unsigned char occ = (unsigned char)((254 - color_avg) / 254.0);
+                   m_map_occupancy.safePixel(x, y) = occ * 100;
+                }
             }
         }
     }
@@ -391,9 +399,17 @@ bool MapGrid2D::loadMapROSOnly(string ros_yaml_filename)
         for (size_t x = 0; x < m_width; x++)
         {
             yarp::sig::PixelRgb pix_occ = ros_img.safePixel(x, y);
-            double color_avg = (pix_occ.r + pix_occ.g + pix_occ.b) / 3;
-            unsigned char occ = (unsigned char)((255 - color_avg) / 255.0);
-            m_map_occupancy.safePixel(x, y) = occ * 100;
+            if (pix_occ.r == 205 && pix_occ.g == 205 && pix_occ.b == 205)
+            {
+                //m_map_occupancy.safePixel(x, y) = -1;
+                m_map_occupancy.safePixel(x, y) = 255;
+            }
+            else
+            {
+               double color_avg = (pix_occ.r + pix_occ.g + pix_occ.b) / 3;
+               unsigned char occ = (unsigned char)((254 - color_avg) / 254.0);
+               m_map_occupancy.safePixel(x, y) = occ * 100;
+            }
         }
     }
 
@@ -872,7 +888,7 @@ bool MapGrid2D::setOccupancyData(XYCell cell, double occupancy)
         yError() << "Invalid cell requested " << cell.x << " " << cell.y;
         return false;
     }
-    m_map_occupancy.safePixel(cell.x, cell.y) = (yarp::sig::PixelMono)(occupancy*255/100);
+    m_map_occupancy.safePixel(cell.x, cell.y) = (yarp::sig::PixelMono)(occupancy);
     return true;
 }
 
@@ -883,7 +899,16 @@ bool MapGrid2D::getOccupancyData(XYCell cell, double& occupancy) const
         yError() << "Invalid cell requested " << cell.x << " " << cell.y;
         return false;
     }
-    occupancy = m_map_occupancy.safePixel(cell.x, cell.y) * 100.0 / 255.0;
+    if (m_map_occupancy.safePixel(cell.x, cell.y)==-1 ||
+        m_map_occupancy.safePixel(cell.x, cell.y)==255
+    )
+    { 
+      occupancy =-1;
+    }
+    else
+    {
+      occupancy = m_map_occupancy.safePixel(cell.x, cell.y);
+    }
     return true;
 }
 
