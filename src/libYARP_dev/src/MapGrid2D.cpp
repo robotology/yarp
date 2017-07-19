@@ -643,6 +643,9 @@ bool  MapGrid2D::crop (int left, int top, int right, int bottom)
     new_map_occupancy.resize(right-left,bottom-top);
     new_map_flags.resize(right-left,bottom-top);
     
+    size_t original_width = m_map_occupancy.width();
+    size_t original_height = m_map_occupancy.height();
+    
     for (int j=top, y=0; j<bottom; j++, y++)
         for (int i=left, x=0; i<right; i++, x++)
         {
@@ -653,8 +656,9 @@ bool  MapGrid2D::crop (int left, int top, int right, int bottom)
     m_map_flags.copy(new_map_flags);
     this->m_width=m_map_occupancy.width();
     this->m_height=m_map_occupancy.height();
+    yDebug() << m_origin.x << m_origin.y;
     m_origin.x = m_origin.x+(left*m_resolution);
-    m_origin.y = m_origin.y+(top*m_resolution);
+    m_origin.y = m_origin.y+(double(original_height)-double(bottom))*m_resolution;
     return true;
 }
 
