@@ -229,7 +229,7 @@ namespace yarp
                 bool   isIdenticalTo(const MapGrid2D& otherMap) const;
 
                 /**
-                * Performs the obstacle enlargement operation. It's useful to set size to a value equal or larger to the robot bounding box.
+                * Performs the obstacle enlargement operation. It's useful to set size to a value equal or larger to the radius of the robot bounding box.
                 * In this way a navigation algorithm can easly check obstacle collision by comparing the location of the center of the robot with cell value (free/occupied etc)
                 * @param size the size of the enlargment, in meters. If size>0 the requested enlargement is performed. If the function is called multipled times, the enlargement sums up.
                 If size <= 0 the enlargement stored in the map is cleaned up.

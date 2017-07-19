@@ -185,8 +185,7 @@ bool MapGrid2D::enlargeObstacles(double size)
         }
         return true;
     }
-
-    size_t repeat_num = (size_t)(std::ceil(size*m_resolution));
+    size_t repeat_num = (size_t)(std::ceil(size/m_resolution));
     for (size_t repeat = 0; repeat < repeat_num; repeat++)
     {
         //contains the cells to be enlarged;
