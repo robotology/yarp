@@ -21,27 +21,28 @@ yarp::dev::IJoypadEventDriven::IJoypadEventDriven(int rate) : RateThread(rate)
     m_event = YARP_NULLPTR;
 }
 
-bool isEqual(const float& a, const float& b, const float& tollerance)
+bool isEqual(const float& a, const float& b, const float& tolerance)
 {
-    return fabs(a - b) < tollerance;
+    return fabs(a - b) < tolerance;
 }
 
-bool isEqual(const double& a, const double& b, const double& tollerance)
+bool isEqual(const double& a, const double& b, const double& tolerance)
 {
-    return fabs(a - b) < tollerance;
+    return fabs(a - b) < tolerance;
 }
 
-bool isEqual(const yarp::sig::Vector& a, const yarp::sig::Vector& b, const double& tollerance)
+bool isEqual(const yarp::sig::Vector& a, const yarp::sig::Vector& b, const double& tolerance)
 {
     if (a.size() != b.size()) return false;
 
-    bool ret = true;
-
     for (size_t i = 0; i < a.size(); i++)
     {
-        if (ret &= fabs(a[i] - b[i]) < tollerance);
+        if (fabs(a[i] - b[i]) > tolerance)
+        {
+            return false;
+        }
     }
-    return ret;
+    return true;
 }
 
 bool yarp::dev::IJoypadEventDriven::threadInit()
