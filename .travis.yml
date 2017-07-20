@@ -179,6 +179,7 @@ addons:
       - libqcustomplot-dev
       - libopencv-dev
       - libeigen3-dev
+      - libgraphviz-dev
 
 notifications:
   irc:
@@ -258,9 +259,9 @@ install:
   # Install GPL dependencies (qcustomplot)
   - if [ "$TRAVIS_OS_NAME" == "osx" ]; then brew install readline; fi
 
-  # Install other dependencies (opencv, eigen)
+  # Install other dependencies (opencv, eigen, graphviz)
   - if [ "$TRAVIS_OS_NAME" == "osx" ]; then /usr/bin/yes | pip uninstall numpy || true; fi
-  - if [ "$TRAVIS_OS_NAME" == "osx" ]; then brew install opencv eigen; fi
+  - if [ "$TRAVIS_OS_NAME" == "osx" ]; then brew install opencv eigen graphviz; fi
 
   # Install swig stuff
   - if [ "$TRAVIS_OS_NAME" == "linux" ]; then if $TRAVIS_WITH_INTEGRATION_TESTS; then sudo apt-get -y install liblua5.1-0-dev lua5.1 tcl-dev tk-dev mono-mcs; fi; fi
