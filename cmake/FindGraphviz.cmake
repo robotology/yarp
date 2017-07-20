@@ -5,25 +5,25 @@
 #  Graphviz_LIBRARIES
 #  Graphviz_INCLUDE_DIRS
 
-if(EXISTS "$ENV{GRAPHVIZ_ROOT}")
+if(EXISTS "$ENV{Graphviz_ROOT}")
     set(Graphviz_POSSIBLE_INCDIRS
-        "$ENV{GRAPHVIZ_ROOT}/include"
-        "$ENV{GRAPHVIZ_ROOT}/include/graphviz")
+        "$ENV{Graphviz_ROOT}/include"
+        "$ENV{Graphviz_ROOT}/include/graphviz")
 
     set(Graphviz_POSSIBLE_LIBRARY_PATHS
-        "$ENV{GRAPHVIZ_ROOT}/lib/release/dll"
-        "$ENV{GRAPHVIZ_ROOT}/lib/release/lib")
+        "$ENV{Graphviz_ROOT}/lib/release/dll"
+        "$ENV{Graphviz_ROOT}/lib/release/lib")
 endif()
 
 ##### check Graphviz_DIR
 if(EXISTS "$ENV{Graphviz_DIR}")
     set(Graphviz_POSSIBLE_INCDIRS
-        "$ENV{GRAPHVIZ_DIR}/include"
-        "$ENV{GRAPHVIZ_DIR}/include/graphviz")
+        "$ENV{Graphviz_DIR}/include"
+        "$ENV{Graphviz_DIR}/include/graphviz")
 
     set(Graphviz_POSSIBLE_LIBRARY_PATHS
-        "$ENV{GRAPHVIZ_DIR}/lib/release/dll"
-        "$ENV{GRAPHVIZ_DIR}/lib/release/lib")
+        "$ENV{Graphviz_DIR}/lib/release/dll"
+        "$ENV{Graphviz_DIR}/lib/release/lib")
 endif()
 
 if(Graphviz_DIR)
