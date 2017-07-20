@@ -43,7 +43,7 @@ if(NOT MSVC)
   endif()
 endif()
 
-include_directories(${GRAPHVIZ_INCLUDE_DIR}
+include_directories(${Graphviz_INCLUDE_DIR}
                     ${CMAKE_CURRENT_SOURCE_DIR}/QGVCore
                     ${CMAKE_CURRENT_SOURCE_DIR}/QGVCore/private
                     ${CMAKE_CURRENT_BINARY_DIR})
