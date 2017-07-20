@@ -45,9 +45,9 @@ endif()
 # in the FIND_PATH() and FIND_LIBRARY() calls
 if(NOT WIN32)
   find_package(PkgConfig)
-  pkg_check_modules(Graphviz_GVC_PKG gvc)
-  pkg_check_modules(Graphviz_CGRAPH_PKG cgraph)
-  pkg_check_modules(Graphviz_CDT_PKG cdt)
+  pkg_check_modules(Graphviz_GVC_PKG gvc QUIET)
+  pkg_check_modules(Graphviz_CGRAPH_PKG cgraph QUIET)
+  pkg_check_modules(Graphviz_CDT_PKG cdt QUIET)
 endif()
 
 find_library(Graphviz_GVC_LIBRARY
