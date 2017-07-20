@@ -3,6 +3,7 @@
  * Author: Daniele E. Domenichelli <daniele.domenichelli@iit.it>
  * CopyPolicy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
  */
+#define _USE_MATH_DEFINES
 
 #include "OVRHeadset.h"
 #include "InputCallback.h"
@@ -33,7 +34,6 @@
 #include <dxgi.h> // for GetDefaultAdapterLuid
 #pragma comment(lib, "dxgi.lib")
 #endif
-#define M_PI 3.141
 YARP_CONSTEXPR unsigned int AXIS_COUNT   = 8;
 YARP_CONSTEXPR unsigned int STICK_COUNT  = 2;
 YARP_CONSTEXPR unsigned int BUTTON_COUNT = 13;
@@ -109,36 +109,22 @@ inline ovrVector3f vecSubtract(const ovrVector3f& a, const ovrVector3f& b)
     return ret;
 }
 
+static inline void debugTangent(std::string message, float tangent1, float tangent2)
+{
+    yDebug((message + "    %10f (%5f[rad] = %5f[deg])        %10f (%5f[rad] = %5f[deg])\n").c_str(),
+        tangent1,
+        atan(tangent1),
+        OVR::RadToDegree(atan(tangent1)),
+        tangent2,
+        atan(tangent2),
+        OVR::RadToDegree(atan(tangent2)));
+}
 static void debugFov(const ovrFovPort fov[2]) {
     yDebug("             Left Eye                                           Right Eye\n");
-    yDebug("LeftTan    %10f (%5f[rad] = %5f[deg])        %10f (%5f[rad] = %5f[deg])\n",
-           fov[0].LeftTan,
-           atan(fov[0].LeftTan),
-           OVR::RadToDegree(atan(fov[0].LeftTan)),
-           fov[1].LeftTan,
-           atan(fov[1].LeftTan),
-           OVR::RadToDegree(atan(fov[1].LeftTan)));
-    yDebug("RightTan   %10f (%5f[rad] = %5f[deg])        %10f (%5f[rad] = %5f[deg])\n",
-           fov[0].RightTan,
-           atan(fov[0].RightTan),
-           OVR::RadToDegree(atan(fov[0].RightTan)),
-           fov[1].RightTan,
-           atan(fov[1].RightTan),
-           OVR::RadToDegree(atan(fov[1].RightTan)));
-    yDebug("UpTan      %10f (%5f[rad] = %5f[deg])        %10f (%5f[rad] = %5f[deg])\n",
-           fov[0].UpTan,
-           atan(fov[0].UpTan),
-           OVR::RadToDegree(atan(fov[0].UpTan)),
-           fov[1].UpTan,
-           atan(fov[1].UpTan),
-           OVR::RadToDegree(atan(fov[1].UpTan)));
-    yDebug("DownTan    %10f (%5f[rad] = %5f[deg])        %10f (%5f[rad] = %5f[deg])\n",
-           fov[0].DownTan,
-           atan(fov[0].DownTan),
-           OVR::RadToDegree(atan(fov[0].DownTan)),
-           fov[1].DownTan,
-           atan(fov[0].DownTan),
-           OVR::RadToDegree(atan(fov[0].DownTan)));
+    debugTangent("LeftTan",  fov[0].LeftTan , fov[0].LeftTan);
+    debugTangent("RightTan", fov[0].RightTan, fov[0].RightTan);
+    debugTangent("UpTan",    fov[0].UpTan   , fov[0].UpTan   );
+    debugTangent("DownTan",  fov[0].DownTan , fov[0].DownTan );
     yDebug("\n\n\n");
 }
 
@@ -252,9 +238,9 @@ yarp::dev::OVRHeadset::OVRHeadset() :
         crosshairsEnabled(true),
         batteryEnabled(true),
         inputStateError(false),
-        tfPublisher(YARP_NULLPTR)
+        tfPublisher(YARP_NULLPTR),
+        relative(false)
 {
-    relative = false;
     yTrace();
 }
 yarp::dev::OVRHeadset::~OVRHeadset()
@@ -267,7 +253,7 @@ void yarp::dev::OVRHeadset::fillAxisStorage()
     axisIdToValue.push_back(inputState.IndexTrigger);
     axisIdToValue.push_back(inputState.IndexTrigger + 1);
     axisIdToValue.push_back(inputState.HandTrigger);
-    axisIdToValue.push_back(inputState.HandTrigger + 1);
+    axisIdToValue.push_back(inputState.HandTrigger + 1 );
 
     if (getStickAsAxis)
     {
@@ -387,6 +373,7 @@ bool yarp::dev::OVRHeadset::open(yarp::os::Searchable& cfg)
         err_msgs[BOOL]        = "a boolean type";
         isFunctionMap[STRING] = &yarp::os::Value::isString;
         isFunctionMap[BOOL]   = &yarp::os::Value::isBool;
+        isFunctionMap[INT]    = &yarp::os::Value::isInt;
 
         paramParser.push_back(std::make_pair("tfDevice",            STRING));
         paramParser.push_back(std::make_pair("tfLocal",             STRING));
@@ -790,18 +777,35 @@ bool yarp::dev::OVRHeadset::stopService()
     return this->close();
 }
 
+void yarp::dev::OVRHeadset::resetInput()
+{
+    inputStateMutex.lock();
+    inputState.Buttons = 0;
+    inputState.HandTrigger[0] = 0;
+    inputState.HandTrigger[1] = 0;
+    inputState.IndexTrigger[0] = 0;
+    inputState.IndexTrigger[1] = 0;
+    inputState.Thumbstick[0].x = 0;
+    inputState.Thumbstick[0].y = 0;
+    inputState.Thumbstick[1].x = 0;
+    inputState.Thumbstick[1].y = 0;
+    inputStateMutex.unlock();
+}
+
 void yarp::dev::OVRHeadset::run()
 {
     ovrResult        result = ovrError_InvalidSession;
     ovrSessionStatus sessionStatus;
 
     if (glfwWindowShouldClose(window)) {
+        resetInput();
         close();
         return;
     }
 
     ovr_GetSessionStatus(session, &sessionStatus);
     if (sessionStatus.ShouldQuit) {
+        resetInput();
         close();
         return;
     }
@@ -813,6 +817,7 @@ void yarp::dev::OVRHeadset::run()
     glfwPollEvents();
 
     if (!sessionStatus.IsVisible) {
+        resetInput();
         return;
     }
 
