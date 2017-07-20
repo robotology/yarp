@@ -187,4 +187,6 @@ public:
 #define VOCAB_NAV_SUSPEND           VOCAB4('s','u','s','p')
 #define VOCAB_NAV_RESUME            VOCAB4('r','e','s','m')
 
+#define VOCAB_OK                    VOCAB2('o','k')
+
 #endif // YARP_DEV_INAVIGATION2D_H

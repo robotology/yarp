@@ -10,6 +10,7 @@
 #include <yarp/os/Vocab.h>
 #include <yarp/sig/Image.h>
 #include <yarp/dev/MapGrid2D.h>
+#include <yarp/dev/Map2DLocation.h>
 #include <vector>
 #include <string>
 
@@ -63,6 +64,42 @@ public:
     * @return true/false
     */
     virtual bool     remove_map(std::string map_name) = 0;
+
+    /**
+    * Store a location specified by the user in the world reference frame
+    * @param location_name the name of the location
+    * @param loc the location of the robot
+    * @return true/false
+    */
+    virtual bool storeLocation(yarp::os::ConstString location_name, Map2DLocation loc) = 0;
+
+    /**
+    * Retrieves a location specified by the user in the world reference frame
+    * @param location_name the name of the location
+    * @param loc the location of the robot
+    * @return true/false
+    */
+    virtual bool getLocation(yarp::os::ConstString location_name, Map2DLocation& loc) = 0;
+
+    /**
+    * Get a list of all stored locations
+    * @param the returned list of locations
+    * @return true/false
+    */
+    virtual bool getLocationsList(std::vector<yarp::os::ConstString>& locations) = 0;
+
+    /**
+    * Delete a location
+    * @param location_name the name of the location
+    * @return true/false
+    */
+    virtual bool deleteLocation(yarp::os::ConstString location_name) = 0;
+
+    /**
+    * Delete all stored locations
+    * @return true/false
+    */
+    virtual bool clearAllLocations() = 0;
 };
 
 #define VOCAB_IMAP                    VOCAB4('i','m','a','p')

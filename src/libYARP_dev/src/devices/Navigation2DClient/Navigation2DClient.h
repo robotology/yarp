@@ -67,12 +67,13 @@ public:
 
     bool   getCurrentPosition(Map2DLocation &loc) override;
     bool   setInitialPose(yarp::dev::Map2DLocation& loc) override;
-    bool   storeCurrentPosition(yarp::os::ConstString location_name) override;
 
+    bool   storeCurrentPosition(yarp::os::ConstString location_name) override;
     bool   storeLocation(yarp::os::ConstString location_name, Map2DLocation loc) override;
     bool   getLocation(yarp::os::ConstString location_name, Map2DLocation& loc) override;
     bool   deleteLocation(yarp::os::ConstString location_name) override;
     bool   getLocationsList(std::vector<yarp::os::ConstString>& locations) override;
+
     bool   getNavigationStatus(NavigationStatusEnum& status) override;
     bool   clearAllLocations() override;
     bool   stopNavigation() override;
