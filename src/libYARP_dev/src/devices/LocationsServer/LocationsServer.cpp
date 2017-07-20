@@ -225,12 +225,13 @@ bool yarp::dev::LocationsServer::read(yarp::os::ConnectionReader& connection)
             {
                 l.addString(it->first);
             }
-
+            yInfo() << "The following locations are currently stored in the server: "<<l.toString();
             ret = true;
         }
         else if (cmd == VOCAB_NAV_CLEAR)
         {
             m_locations.clear();
+            yInfo() << "All locations deleted ";
             out.addVocab(VOCAB_OK);
             ret = true;
         }
@@ -242,6 +243,7 @@ bool yarp::dev::LocationsServer::read(yarp::os::ConnectionReader& connection)
             it = m_locations.find(name);
             if (it != m_locations.end())
             {
+                yInfo() << "Deleted location " << name;
                 m_locations.erase(it);
                 out.addVocab(VOCAB_OK);
             }
@@ -263,6 +265,7 @@ bool yarp::dev::LocationsServer::read(yarp::os::ConnectionReader& connection)
             {
                 out.addVocab(VOCAB_OK);
                 Map2DLocation loc = it->second;
+                yInfo() << "Retrieved location " << name << "at " << loc.toString();
                 out.addString(loc.map_id);
                 out.addDouble(loc.x);
                 out.addDouble(loc.y);
@@ -287,6 +290,7 @@ bool yarp::dev::LocationsServer::read(yarp::os::ConnectionReader& connection)
             location.theta  = in.get(6).asDouble();
 
             m_locations.insert(std::pair<std::string, Map2DLocation>(name, location));
+            yInfo() << "Added location " << name << "at " << location.toString();
             out.addVocab(VOCAB_OK);
             ret = true;
         }
