@@ -6,7 +6,7 @@
 
 
 /*
- * Welcome to the "PopulateDrivers" source file, where factories
+ * Welcome to the "PopulateDrivers" source file, where factoriesf
  * are created for YARP device drivers.
  */
 
@@ -48,7 +48,6 @@ extern DriverCreator *createJoypadControlServer();
 #ifdef WITH_YARPMATH
 extern DriverCreator *createFrameTransformServer();
 extern DriverCreator *createFrameTransformClient();
-extern DriverCreator *createLocationsServer();
 extern DriverCreator *createRangefinder2DClient();
 extern DriverCreator *createNavigation2DClient();
 extern DriverCreator *createLocalization2DClient();
@@ -106,12 +105,11 @@ void Drivers::init() {
 #ifdef WITH_YARPMATH
     add(createFrameTransformServer());
     add(createFrameTransformClient());
-    add(createLocationsServer());
     add(createRangefinder2DClient());
-	add(createNavigation2DClient());
-	add(createLocalization2DClient());
-	add(createMap2DClient());
-	add(createMap2DServer());
+    add(createNavigation2DClient());
+    add(createLocalization2DClient());
+    add(createMap2DClient());
+    add(createMap2DServer());
 #endif
 
 }
