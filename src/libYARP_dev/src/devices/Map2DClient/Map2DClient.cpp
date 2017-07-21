@@ -21,47 +21,31 @@ using namespace yarp::sig;
 bool yarp::dev::Map2DClient::open(yarp::os::Searchable &config)
 {
     m_local_name.clear();
-    m_locations_server.clear();
     m_map_server.clear();
 
     m_local_name       = config.find("local").asString().c_str();
-    m_locations_server = config.find("locations_server").asString().c_str();
-    m_map_server       = config.find("map_server").asString().c_str();
+    m_map_server       = config.find("remote").asString().c_str();
 
     if (m_local_name == "")
     {
         yError("Map2DClient::open() error you have to provide valid local name");
         return false;
     }
-    if (m_locations_server == "")
-    {
-        yError("Map2DClient::open() error you have to provide valid locations_server name");
-        return false;
-    }
     if (m_map_server == "")
     {
-        yError("Map2DClient::open() error you have to provide valid m_map_server name");
+        yError("Map2DClient::open() error you have to provide valid remote name");
         return false;
     }
 
     ConstString local_rpc1 = m_local_name;
-    local_rpc1 += "/map/rpc";
-    ConstString local_rpc2 = m_local_name;
-    local_rpc2 += "/locations/rpc";
+    local_rpc1 += "/mapClient_rpc";
 
     ConstString remote_rpc1 = m_map_server;
     remote_rpc1 += "/rpc";
-    ConstString remote_rpc2 = m_locations_server;
-    remote_rpc2 += "/rpc";
 
     if (!m_rpcPort_to_Map2DServer.open(local_rpc1.c_str()))
     {
         yError("Map2DClient::open() error could not open rpc port %s, check network", local_rpc1.c_str());
-        return false;
-    }
-    if (!m_rpcPort_to_LocationsServer.open(local_rpc2.c_str()))
-    {
-        yError("Map2DClient::open() error could not open rpc port %s, check network", local_rpc2.c_str());
         return false;
     }
 
@@ -70,12 +54,6 @@ bool yarp::dev::Map2DClient::open(yarp::os::Searchable &config)
     if (!ok)
     {
         yError("Map2DClient::open() error could not connect to %s", remote_rpc1.c_str());
-        return false;
-    }
-    ok=Network::connect(local_rpc2.c_str(), remote_rpc2.c_str());
-    if (!ok)
-    {
-        yError("Map2DClient::open() error could not connect to %s", remote_rpc2.c_str());
         return false;
     }
 
@@ -250,7 +228,7 @@ bool yarp::dev::Map2DClient::storeLocation(yarp::os::ConstString location_name, 
     b.addDouble(loc.y);
     b.addDouble(loc.theta);
 
-    bool ret = m_rpcPort_to_LocationsServer.write(b, resp);
+    bool ret = m_rpcPort_to_Map2DServer.write(b, resp);
     if (ret)
     {
         if (resp.get(0).asVocab() != VOCAB_OK)
@@ -275,7 +253,7 @@ bool   yarp::dev::Map2DClient::getLocationsList(std::vector<yarp::os::ConstStrin
     b.addVocab(VOCAB_INAVIGATION);
     b.addVocab(VOCAB_NAV_GET_LOCATION_LIST);
 
-    bool ret = m_rpcPort_to_LocationsServer.write(b, resp);
+    bool ret = m_rpcPort_to_Map2DServer.write(b, resp);
     if (ret)
     {
         if (resp.get(0).asVocab() != VOCAB_OK)
@@ -319,7 +297,7 @@ bool   yarp::dev::Map2DClient::getLocation(yarp::os::ConstString location_name, 
     b.addVocab(VOCAB_NAV_GET_LOCATION);
     b.addString(location_name);
 
-    bool ret = m_rpcPort_to_LocationsServer.write(b, resp);
+    bool ret = m_rpcPort_to_Map2DServer.write(b, resp);
     if (ret)
     {
         if (resp.get(0).asVocab() != VOCAB_OK)
@@ -352,7 +330,7 @@ bool   yarp::dev::Map2DClient::deleteLocation(yarp::os::ConstString location_nam
     b.addVocab(VOCAB_NAV_DELETE);
     b.addString(location_name);
 
-    bool ret = m_rpcPort_to_LocationsServer.write(b, resp);
+    bool ret = m_rpcPort_to_Map2DServer.write(b, resp);
     if (ret)
     {
         if (resp.get(0).asVocab() != VOCAB_OK)
@@ -377,7 +355,7 @@ bool   yarp::dev::Map2DClient::clearAllLocations()
     b.addVocab(VOCAB_INAVIGATION);
     b.addVocab(VOCAB_NAV_CLEAR);
 
-    bool ret = m_rpcPort_to_LocationsServer.write(b, resp);
+    bool ret = m_rpcPort_to_Map2DServer.write(b, resp);
     if (ret)
     {
         if (resp.get(0).asVocab() != VOCAB_OK)

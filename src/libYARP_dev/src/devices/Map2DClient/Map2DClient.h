@@ -55,9 +55,7 @@ class yarp::dev::Map2DClient : public DeviceDriver,
 protected:
 
     yarp::os::Port                m_rpcPort_to_Map2DServer;
-    yarp::os::Port                m_rpcPort_to_LocationsServer;
     yarp::os::ConstString         m_local_name;
-    yarp::os::ConstString         m_locations_server;
     yarp::os::ConstString         m_map_server;
 
 #endif /*DOXYGEN_SHOULD_SKIP_THIS*/
