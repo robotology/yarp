@@ -96,6 +96,12 @@ namespace yarp
                 */
                 bool   isKeepOut        (XYCell cell) const;
                 /**
+                * Get the flag of a specific cell of the map.
+                * @param cell is the cell location, referred to the top-left corner of the map.
+                * @return true if cell is valid cell inside the map, false otherwise.
+                */
+                bool   getMapFlag       (XYCell cell, map_flags& flag) const;
+                /**
                 * Set the flag of a specific cell of the map.
                 * @param cell is the cell location, referred to the top-left corner of the map.
                 * @return true if cell is valid cell inside the map, false otherwise.
