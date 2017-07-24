@@ -3,6 +3,7 @@
  * Author: Daniele E. Domenichelli <daniele.domenichelli@iit.it>
  * CopyPolicy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
  */
+#define _USE_MATH_DEFINES
 
 #include "OVRHeadset.h"
 #include "InputCallback.h"
@@ -33,7 +34,6 @@
 #include <dxgi.h> // for GetDefaultAdapterLuid
 #pragma comment(lib, "dxgi.lib")
 #endif
-
 YARP_CONSTEXPR unsigned int AXIS_COUNT   = 8;
 YARP_CONSTEXPR unsigned int STICK_COUNT  = 2;
 YARP_CONSTEXPR unsigned int BUTTON_COUNT = 13;
@@ -109,36 +109,22 @@ inline ovrVector3f vecSubtract(const ovrVector3f& a, const ovrVector3f& b)
     return ret;
 }
 
+static inline void debugTangent(std::string message, float tangent1, float tangent2)
+{
+    yDebug((message + "    %10f (%5f[rad] = %5f[deg])        %10f (%5f[rad] = %5f[deg])\n").c_str(),
+        tangent1,
+        atan(tangent1),
+        OVR::RadToDegree(atan(tangent1)),
+        tangent2,
+        atan(tangent2),
+        OVR::RadToDegree(atan(tangent2)));
+}
 static void debugFov(const ovrFovPort fov[2]) {
     yDebug("             Left Eye                                           Right Eye\n");
-    yDebug("LeftTan    %10f (%5f[rad] = %5f[deg])        %10f (%5f[rad] = %5f[deg])\n",
-           fov[0].LeftTan,
-           atan(fov[0].LeftTan),
-           OVR::RadToDegree(atan(fov[0].LeftTan)),
-           fov[1].LeftTan,
-           atan(fov[1].LeftTan),
-           OVR::RadToDegree(atan(fov[1].LeftTan)));
-    yDebug("RightTan   %10f (%5f[rad] = %5f[deg])        %10f (%5f[rad] = %5f[deg])\n",
-           fov[0].RightTan,
-           atan(fov[0].RightTan),
-           OVR::RadToDegree(atan(fov[0].RightTan)),
-           fov[1].RightTan,
-           atan(fov[1].RightTan),
-           OVR::RadToDegree(atan(fov[1].RightTan)));
-    yDebug("UpTan      %10f (%5f[rad] = %5f[deg])        %10f (%5f[rad] = %5f[deg])\n",
-           fov[0].UpTan,
-           atan(fov[0].UpTan),
-           OVR::RadToDegree(atan(fov[0].UpTan)),
-           fov[1].UpTan,
-           atan(fov[1].UpTan),
-           OVR::RadToDegree(atan(fov[1].UpTan)));
-    yDebug("DownTan    %10f (%5f[rad] = %5f[deg])        %10f (%5f[rad] = %5f[deg])\n",
-           fov[0].DownTan,
-           atan(fov[0].DownTan),
-           OVR::RadToDegree(atan(fov[0].DownTan)),
-           fov[1].DownTan,
-           atan(fov[0].DownTan),
-           OVR::RadToDegree(atan(fov[0].DownTan)));
+    debugTangent("LeftTan",  fov[0].LeftTan , fov[0].LeftTan);
+    debugTangent("RightTan", fov[0].RightTan, fov[0].RightTan);
+    debugTangent("UpTan",    fov[0].UpTan   , fov[0].UpTan   );
+    debugTangent("DownTan",  fov[0].DownTan , fov[0].DownTan );
     yDebug("\n\n\n");
 }
 
@@ -252,7 +238,8 @@ yarp::dev::OVRHeadset::OVRHeadset() :
         crosshairsEnabled(true),
         batteryEnabled(true),
         inputStateError(false),
-        tfPublisher(YARP_NULLPTR)
+        tfPublisher(YARP_NULLPTR),
+        relative(false)
 {
     yTrace();
 }
@@ -266,14 +253,14 @@ void yarp::dev::OVRHeadset::fillAxisStorage()
     axisIdToValue.push_back(inputState.IndexTrigger);
     axisIdToValue.push_back(inputState.IndexTrigger + 1);
     axisIdToValue.push_back(inputState.HandTrigger);
-    axisIdToValue.push_back(inputState.HandTrigger + 1);
+    axisIdToValue.push_back(inputState.HandTrigger + 1 );
 
     if (getStickAsAxis)
     {
-        axisIdToValue.push_back(&inputState.Thumbstick[0].x);
-        axisIdToValue.push_back(&inputState.Thumbstick[0].y);
-        axisIdToValue.push_back(&inputState.Thumbstick[1].x);
-        axisIdToValue.push_back(&inputState.Thumbstick[1].y);
+        axisIdToValue.push_back(&inputState.Thumbstick[ovrHand_Left].x);
+        axisIdToValue.push_back(&inputState.Thumbstick[ovrHand_Left].y);
+        axisIdToValue.push_back(&inputState.Thumbstick[ovrHand_Right].x);
+        axisIdToValue.push_back(&inputState.Thumbstick[ovrHand_Right].y);
     }
 
 }
@@ -386,6 +373,7 @@ bool yarp::dev::OVRHeadset::open(yarp::os::Searchable& cfg)
         err_msgs[BOOL]        = "a boolean type";
         isFunctionMap[STRING] = &yarp::os::Value::isString;
         isFunctionMap[BOOL]   = &yarp::os::Value::isBool;
+        isFunctionMap[INT]    = &yarp::os::Value::isInt;
 
         paramParser.push_back(std::make_pair("tfDevice",            STRING));
         paramParser.push_back(std::make_pair("tfLocal",             STRING));
@@ -789,18 +777,35 @@ bool yarp::dev::OVRHeadset::stopService()
     return this->close();
 }
 
+void yarp::dev::OVRHeadset::resetInput()
+{
+    inputStateMutex.lock();
+    inputState.Buttons = 0;
+    inputState.HandTrigger[0] = 0;
+    inputState.HandTrigger[1] = 0;
+    inputState.IndexTrigger[0] = 0;
+    inputState.IndexTrigger[1] = 0;
+    inputState.Thumbstick[0].x = 0;
+    inputState.Thumbstick[0].y = 0;
+    inputState.Thumbstick[1].x = 0;
+    inputState.Thumbstick[1].y = 0;
+    inputStateMutex.unlock();
+}
+
 void yarp::dev::OVRHeadset::run()
 {
     ovrResult        result = ovrError_InvalidSession;
     ovrSessionStatus sessionStatus;
 
     if (glfwWindowShouldClose(window)) {
+        resetInput();
         close();
         return;
     }
 
     ovr_GetSessionStatus(session, &sessionStatus);
     if (sessionStatus.ShouldQuit) {
+        resetInput();
         close();
         return;
     }
@@ -812,6 +817,7 @@ void yarp::dev::OVRHeadset::run()
     glfwPollEvents();
 
     if (!sessionStatus.IsVisible) {
+        resetInput();
         return;
     }
 
@@ -836,16 +842,39 @@ void yarp::dev::OVRHeadset::run()
     yarp::os::Stamp predicted_stamp(distortionFrameIndex, predicted_ts.HeadPose.TimeInSeconds);
 
     //send hands frames
-    yarp::sig::Matrix T_Conv(4, 4), T_Head(4, 4), T_LHand(4, 4), T_RHand(4, 4);
-    ovrVector3f& leftH  = ts.HandPoses[ovrHand_Left].ThePose.Position;
-    ovrVector3f& rightH = ts.HandPoses[ovrHand_Right].ThePose.Position;
+    if(relative)
+    {
+        yarp::sig::Matrix T_Conv(4, 4), T_Head(4, 4), T_LHand(4, 4), T_RHand(4, 4), T_robotHead(4, 4);
+        yarp::sig::Vector rpyHead, rpyRobot;
 
-    T_RHand = ovr2matrix(vecSubtract(rightH, headpose.ThePose.Position), ts.HandPoses[ovrHand_Right].ThePose.Orientation);
-    T_LHand = ovr2matrix(vecSubtract(leftH, headpose.ThePose.Position), ts.HandPoses[ovrHand_Left].ThePose.Orientation);
-    T_Head  = ovr2matrix(headpose.ThePose.Position, headpose.ThePose.Orientation);
+        tfPublisher->getTransform("head_link", "mobile_base_body_link", T_robotHead);
+        ovrVector3f& leftH  = ts.HandPoses[ovrHand_Left].ThePose.Position;
+        ovrVector3f& rightH = ts.HandPoses[ovrHand_Right].ThePose.Position;
 
-    tfPublisher->setTransform(left_frame,    root_frame, yarp::math::operator*(T_Head.transposed(), T_LHand));
-    tfPublisher->setTransform(right_frame,   root_frame, yarp::math::operator*(T_Head.transposed(), T_RHand));
+        T_RHand    = ovr2matrix(vecSubtract(rightH, headpose.ThePose.Position), OVR::Quatf(ts.HandPoses[ovrHand_Right].ThePose.Orientation) * OVR::Quatf(OVR::Vector3f(0, 0, 1), M_PI/2));
+        T_LHand    = ovr2matrix(vecSubtract(leftH, headpose.ThePose.Position), OVR::Quatf(ts.HandPoses[ovrHand_Left].ThePose.Orientation)   * OVR::Quatf(OVR::Vector3f(0, 0, 1), M_PI / 2));
+        T_Head     = ovr2matrix(headpose.ThePose.Position, headpose.ThePose.Orientation);
+        
+        {
+            rpyHead = yarp::math::dcm2rpy(T_Head);
+            rpyRobot = yarp::math::dcm2rpy(T_robotHead);
+            rpyHead[0] = 0;
+            rpyHead[1] = rpyRobot[1];
+            rpyHead[2] = rpyRobot[2];
+            T_Head = yarp::math::rpy2dcm(rpyHead);
+        }
+
+        tfPublisher->setTransform(left_frame,    root_frame, yarp::math::operator*(T_Head.transposed(), T_LHand));
+        tfPublisher->setTransform(right_frame,   root_frame, yarp::math::operator*(T_Head.transposed(), T_RHand));
+    }
+    else
+    {
+        OVR::Quatf lRot = OVR::Quatf(ts.HandPoses[ovrHand_Left].ThePose.Orientation)  * OVR::Quatf(OVR::Vector3f(0, 0, 1), M_PI / 2);
+        OVR::Quatf rRot = OVR::Quatf(ts.HandPoses[ovrHand_Right].ThePose.Orientation) * OVR::Quatf(OVR::Vector3f(0, 0, 1), M_PI / 2);
+        tfPublisher->setTransform(left_frame, "mobile_base_body_link", ovr2matrix(ts.HandPoses[ovrHand_Left].ThePose.Position,   lRot));
+        tfPublisher->setTransform(right_frame, "mobile_base_body_link", ovr2matrix(ts.HandPoses[ovrHand_Right].ThePose.Position, rRot));
+    }
+
 
     // Get Input State
     inputStateMutex.lock();

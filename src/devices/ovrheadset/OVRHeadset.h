@@ -35,7 +35,6 @@ class TextureBattery;
 namespace yarp {
 namespace dev {
 
-
 class OVRHeadset : public yarp::dev::DeviceDriver,
                    public yarp::os::RateThread,
                    public yarp::dev::IService,
@@ -89,6 +88,7 @@ private:
     void fillErrorStorage();
     void fillButtonStorage();
     void fillHatStorage();
+    void resetInput();
 
 
     yarp::os::BufferedPort<yarp::os::Bottle>* orientationPort;
@@ -126,6 +126,7 @@ private:
     std::map<ovrResult, std::string> error_messages;
 
     IFrameTransform* tfPublisher;
+    bool             relative;
     std::string      left_frame;
     std::string      right_frame;
     std::string      root_frame;
