@@ -41,12 +41,12 @@ protected:
 
     yarp::os::Mutex               m_mutex;
     yarp::os::Port                m_rpc_port_navigation_server;
-    yarp::os::Port                m_rpc_port_locations_server;
+    yarp::os::Port                m_rpc_port_map_locations_server;
     yarp::os::Port                m_rpc_port_localization_server;
-    yarp::os::ConstString         m_local_name;
-    yarp::os::ConstString         m_navigation_server_name;
-    yarp::os::ConstString         m_locations_server_name;
-    yarp::os::ConstString         m_localization_server_name;
+    std::string                   m_local_name;
+    std::string                   m_navigation_server_name;
+    std::string                   m_map_locations_server_name;
+    std::string                   m_localization_server_name;
     int                           m_period;
 
 #endif /*DOXYGEN_SHOULD_SKIP_THIS*/

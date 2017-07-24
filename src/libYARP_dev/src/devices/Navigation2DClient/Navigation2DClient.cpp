@@ -23,12 +23,12 @@ bool yarp::dev::Navigation2DClient::open(yarp::os::Searchable &config)
 {
     m_local_name.clear();
     m_navigation_server_name.clear();
-    m_locations_server_name.clear();
+    m_map_locations_server_name.clear();
     m_localization_server_name.clear();
 
     m_local_name           = config.find("local").asString().c_str();
     m_navigation_server_name = config.find("navigation_server").asString().c_str();
-    m_locations_server_name = config.find("locations_server").asString().c_str();
+    m_map_locations_server_name = config.find("map_locations_server").asString().c_str();
     m_localization_server_name = config.find("localization_server").asString().c_str();
 
     if (m_local_name == "")
@@ -43,9 +43,9 @@ bool yarp::dev::Navigation2DClient::open(yarp::os::Searchable &config)
         return false;
     }
 
-    if (m_locations_server_name == "")
+    if (m_map_locations_server_name == "")
     {
-        yError("Navigation2DClient::open() error you have to provide valid 'locations_server' param");
+        yError("Navigation2DClient::open() error you have to provide valid 'map_locations_server' param");
         return false;
     }
 
@@ -79,7 +79,7 @@ bool yarp::dev::Navigation2DClient::open(yarp::os::Searchable &config)
     local_rpc_2           = m_local_name           + "/locations/rpc";
     local_rpc_3           = m_local_name           + "/localization/rpc";
     remote_rpc_1          = m_navigation_server_name + "/rpc";
-    remote_rpc_2          = m_locations_server_name + "/rpc";
+    remote_rpc_2          = m_map_locations_server_name + "/rpc";
     remote_rpc_3          = m_localization_server_name + "/rpc";
     remote_streaming_name = m_localization_server_name + "/stream:o";
     local_streaming_name  = m_local_name           + "/stream:i";
@@ -90,7 +90,7 @@ bool yarp::dev::Navigation2DClient::open(yarp::os::Searchable &config)
         return false;
     }
 
-    if (!m_rpc_port_locations_server.open(local_rpc_2.c_str()))
+    if (!m_rpc_port_map_locations_server.open(local_rpc_2.c_str()))
     {
         yError("Navigation2DClient::open() error could not open rpc port %s, check network", local_rpc_2.c_str());
         return false;
@@ -140,7 +140,7 @@ bool yarp::dev::Navigation2DClient::open(yarp::os::Searchable &config)
 bool yarp::dev::Navigation2DClient::close()
 {
     m_rpc_port_navigation_server.close();
-    m_rpc_port_locations_server.close();
+    m_rpc_port_map_locations_server.close();
     m_rpc_port_localization_server.close();
     return true;
 }
@@ -215,7 +215,7 @@ bool yarp::dev::Navigation2DClient::gotoTargetByLocationName(yarp::os::ConstStri
     b_loc.addString(location_name);
 
     bool ret = true;
-    ret =  m_rpc_port_locations_server.write(b_loc, resp_loc);
+    ret =  m_rpc_port_map_locations_server.write(b_loc, resp_loc);
     if (ret)
     {
         if (resp_loc.get(0).asVocab() != VOCAB_OK || resp_loc.size() != 5)
@@ -510,7 +510,7 @@ bool yarp::dev::Navigation2DClient::storeCurrentPosition(yarp::os::ConstString l
     b_loc.addDouble(loc.y);
     b_loc.addDouble(loc.theta);
 
-    bool ret_loc = m_rpc_port_locations_server.write(b_loc, resp_loc);
+    bool ret_loc = m_rpc_port_map_locations_server.write(b_loc, resp_loc);
     if (ret_loc)
     {
         if (resp_loc.get(0).asVocab() != VOCAB_OK)
@@ -540,7 +540,7 @@ bool yarp::dev::Navigation2DClient::storeLocation(yarp::os::ConstString location
     b.addDouble(loc.y);
     b.addDouble(loc.theta);
 
-    bool ret = m_rpc_port_locations_server.write(b, resp);
+    bool ret = m_rpc_port_map_locations_server.write(b, resp);
     if (ret)
     {
         if (resp.get(0).asVocab() != VOCAB_OK)
@@ -565,7 +565,7 @@ bool yarp::dev::Navigation2DClient::getLocationsList(std::vector<yarp::os::Const
     b.addVocab(VOCAB_INAVIGATION);
     b.addVocab(VOCAB_NAV_GET_LOCATION_LIST);
 
-    bool ret = m_rpc_port_locations_server.write(b, resp);
+    bool ret = m_rpc_port_map_locations_server.write(b, resp);
     if (ret)
     {
         if (resp.get(0).asVocab() != VOCAB_OK)
@@ -609,7 +609,7 @@ bool yarp::dev::Navigation2DClient::getLocation(yarp::os::ConstString location_n
     b.addVocab(VOCAB_NAV_GET_LOCATION);
     b.addString(location_name);
 
-    bool ret = m_rpc_port_locations_server.write(b, resp);
+    bool ret = m_rpc_port_map_locations_server.write(b, resp);
     if (ret)
     {
         if (resp.get(0).asVocab() != VOCAB_OK)
@@ -642,7 +642,7 @@ bool yarp::dev::Navigation2DClient::deleteLocation(yarp::os::ConstString locatio
     b.addVocab(VOCAB_NAV_DELETE);
     b.addString(location_name);
 
-    bool ret = m_rpc_port_locations_server.write(b, resp);
+    bool ret = m_rpc_port_map_locations_server.write(b, resp);
     if (ret)
     {
         if (resp.get(0).asVocab() != VOCAB_OK)
@@ -667,7 +667,7 @@ bool yarp::dev::Navigation2DClient::clearAllLocations()
     b.addVocab(VOCAB_INAVIGATION);
     b.addVocab(VOCAB_NAV_CLEAR);
 
-    bool ret = m_rpc_port_locations_server.write(b, resp);
+    bool ret = m_rpc_port_map_locations_server.write(b, resp);
     if (ret)
     {
         if (resp.get(0).asVocab() != VOCAB_OK)
