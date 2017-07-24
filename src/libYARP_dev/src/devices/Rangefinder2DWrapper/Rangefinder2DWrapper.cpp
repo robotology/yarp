@@ -536,17 +536,17 @@ bool Rangefinder2DWrapper::initialize_YARP(yarp::os::Searchable &params)
 {
     if(useROS != ROS_only)
     {
-	    if (!streamingPort.open(streamingPortName.c_str()))
+        if (!streamingPort.open(streamingPortName.c_str()))
             {
                 yError("Rangefinder2DWrapper: failed to open port %s", streamingPortName.c_str());
                 return false;
             }
-	    if (!rpcPort.open(rpcPortName.c_str()))
+        if (!rpcPort.open(rpcPortName.c_str()))
             {
                 yError("Rangefinder2DWrapper: failed to open port %s", rpcPortName.c_str());
                 return false;
             }
-	    rpcPort.setReader(*this);
+        rpcPort.setReader(*this);
     }
     return true;
 }
