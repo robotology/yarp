@@ -65,7 +65,19 @@ YARP_CONSTEXPR unsigned int BUTTON_COUNT = 13;
 #endif
 
 typedef bool(yarp::os::Value::*valueIsType)(void) const;
-
+typedef yarp::os::BufferedPort<yarp::sig::FlexImage> FlexImagePort;
+struct guiParam
+{
+    double         resizeW;
+    double         resizeH;
+    double         x;
+    double         y;
+    double         z;
+    double         alpha;
+    FlexImagePort* port;
+    ovrLayerQuad   layer;
+    TextureBuffer  texture;
+};
 //----------------[utilities]
 //WARNING it makes a conversion of the coordinate system
 inline yarp::sig::Vector ovrVec3ToYarp(const ovrVector3f& v)
@@ -202,6 +214,26 @@ inline void setHeadLockedLayer(ovrLayerQuad& layer, TextureStatic* tex,
     layer.QuadPoseCenter.Orientation.w = rw;
     layer.QuadSize.x                   = sizeX;
     layer.QuadSize.y                   = sizeY;
+}
+
+inline void setHeadLockedLayer(ovrLayerQuad& layer, TextureBuffer* tex,
+    const float x, const float y, const float z, //position
+    const float rx, const float ry, const float rz, float rw, //rotation
+    const float sizeX, const float sizeY)//scale
+{
+    layer.Header.Type = ovrLayerType_Quad;
+    layer.Header.Flags = ovrLayerFlag_HeadLocked;
+    layer.ColorTexture = tex->textureSwapChain;
+    layer.QuadPoseCenter.Position.x = x;
+    layer.QuadPoseCenter.Position.y = y;
+    layer.QuadPoseCenter.Position.z = z;
+    layer.QuadPoseCenter.Orientation.x = rx;
+    layer.QuadPoseCenter.Orientation.y = ry;
+    layer.QuadPoseCenter.Orientation.z = rz;
+    layer.QuadPoseCenter.Orientation.w = rw;
+    layer.QuadSize.x = sizeX;
+    layer.QuadSize.y = sizeY;
+
     layer.Viewport = OVR::Recti(0, 0, tex->width, tex->height);
 }
 
@@ -239,7 +271,8 @@ yarp::dev::OVRHeadset::OVRHeadset() :
         batteryEnabled(true),
         inputStateError(false),
         tfPublisher(YARP_NULLPTR),
-        relative(false)
+        relative(false),
+        enableGui(true)
 {
     yTrace();
 }
@@ -359,11 +392,16 @@ bool yarp::dev::OVRHeadset::open(yarp::os::Searchable& cfg)
     yarp::os::Property tfClientCfg;
     port_params        ports;
     optionalParamType  optionalParams;
+    std::string        standardPortPrefix;
+
+    standardPortPrefix = "/oculus";
 
     //checking all the parameter in the configuration file..
     {
         constexpr unsigned int STRING = 0;
         constexpr unsigned int BOOL   = 1;
+        constexpr unsigned int INT    = 2;
+        constexpr unsigned int DOUBLE = 3;
 
         std::map<int, std::string>                err_msgs;
         std::map<int, valueIsType>                isFunctionMap;
@@ -371,9 +409,14 @@ bool yarp::dev::OVRHeadset::open(yarp::os::Searchable& cfg)
 
         err_msgs[STRING]      = "a string";
         err_msgs[BOOL]        = "a boolean type";
+        err_msgs[INT]         = "an integer type";
+        err_msgs[DOUBLE]      = "a real type";
         isFunctionMap[STRING] = &yarp::os::Value::isString;
         isFunctionMap[BOOL]   = &yarp::os::Value::isBool;
+        isFunctionMap[INT]    = &yarp::os::Value::isInt;
+        isFunctionMap[DOUBLE] = &yarp::os::Value::isDouble;
 
+        //to add a parameter check, simply add a line below here and let the magic happens
         paramParser.push_back(std::make_pair("tfDevice",            STRING));
         paramParser.push_back(std::make_pair("tfLocal",             STRING));
         paramParser.push_back(std::make_pair("tfRemote",            STRING));
@@ -381,8 +424,9 @@ bool yarp::dev::OVRHeadset::open(yarp::os::Searchable& cfg)
         paramParser.push_back(std::make_pair("tf_right_hand_frame", STRING));
         paramParser.push_back(std::make_pair("tf_root_frame",       STRING));
         paramParser.push_back(std::make_pair("stick_as_axis",       BOOL));
+        paramParser.push_back(std::make_pair("gui_elements",        INT));
 
-        for (auto p : paramParser)
+        for (auto& p : paramParser)
         {
             if (!cfg.check(p.first) || !(cfg.find(p.first).*isFunctionMap[p.second])())
             {
@@ -391,12 +435,61 @@ bool yarp::dev::OVRHeadset::open(yarp::os::Searchable& cfg)
                 return false;
             }
         }
+        guiCount = cfg.find("gui_elements").asInt();
+        paramParser.clear();
+        if (guiCount)
+        {
+            paramParser.push_back(std::make_pair("width",  DOUBLE));
+            paramParser.push_back(std::make_pair("height", DOUBLE));
+            paramParser.push_back(std::make_pair("x",      DOUBLE));
+            paramParser.push_back(std::make_pair("y",      DOUBLE));
+            paramParser.push_back(std::make_pair("z",      DOUBLE));
+            paramParser.push_back(std::make_pair("alpha",  DOUBLE));
+
+            for (unsigned int i = 0; i < guiCount; ++i)
+            {
+                std::string       groupName  = "GUI_" + std::to_string(i);
+                yarp::os::Bottle& guip       = cfg.findGroup(groupName);
+                guiParam          hud;
+                
+                if (guip.isNull())
+                {
+                    yError() << "group:" << groupName << "not found in configuration file..";
+                    return false;
+                }
+                
+                for (auto& p : paramParser)
+                {
+                    if (!guip.check(p.first) || !(guip.find(p.first).*isFunctionMap[p.second])())
+                    {
+                        std::string err_type = err_msgs.find(p.second) == err_msgs.end() ? "[unknow type]" : err_msgs[p.second];
+                        yError() << "ovrHeadset: parameter" << p.first << "not found or not" << err_type << "in" << groupName << "group in configuration file";
+                        return false;
+                    }
+                }
+
+                hud.resizeW = guip.find("width").asDouble();
+                hud.resizeH = guip.find("height").asDouble();
+                hud.x       = guip.find("x").asDouble();
+                hud.y       = guip.find("y").asDouble();
+                hud.z       = guip.find("z").asDouble();
+                hud.alpha   = guip.find("alpha").asDouble();
+                hud.port    = new FlexImagePort;
+                std::transform(groupName.begin(), groupName.end(), groupName.begin(), ::tolower);
+                hud.port->open(standardPortPrefix + "/" + groupName);
+
+                huds.push_back(hud);
+            }
+        }
+        
     }
 
     getStickAsAxis = cfg.find("stick_as_axis").asBool();
     left_frame     = cfg.find("tf_left_hand_frame").asString();
     right_frame    = cfg.find("tf_right_hand_frame").asString();
     root_frame     = cfg.find("tf_root_frame").asString();
+
+    //getting gui information from cfg
 
     fillAxisStorage();
     fillButtonStorage();
@@ -442,7 +535,7 @@ bool yarp::dev::OVRHeadset::open(yarp::os::Searchable& cfg)
 
         *port.first = new yarp::os::BufferedPort<yarp::os::Bottle>;
         predicted   = port.second.find("predicted") != std::string::npos;
-        prefix      = predicted ? "/oculus/predicted" : "/oculus";
+        prefix      = predicted ? standardPortPrefix+"/predicted" : standardPortPrefix;
         name        = prefix + "/headpose/" + port.second + ":o";
 
         if (!(*port.first)->open(name))
@@ -686,30 +779,34 @@ void yarp::dev::OVRHeadset::threadRelease()
         session = 0;
         ovr_Shutdown();
     }
+    std::vector<yarp::os::Contactable*> ports;
 
-    std::vector<yarp::os::BufferedPort<yarp::os::Bottle>** > ports;
-
-    ports.push_back(&orientationPort);
-    ports.push_back(&positionPort);
-    ports.push_back(&angularVelocityPort);
-    ports.push_back(&linearVelocityPort);
-    ports.push_back(&angularAccelerationPort);
-    ports.push_back(&linearAccelerationPort);
-    ports.push_back(&predictedOrientationPort);
-    ports.push_back(&predictedPositionPort);
-    ports.push_back(&predictedAngularVelocityPort);
-    ports.push_back(&predictedLinearVelocityPort);
-    ports.push_back(&predictedAngularAccelerationPort);
-    ports.push_back(&predictedLinearAccelerationPort);
-
-    for (auto p : ports)
+    ports.push_back(orientationPort);
+    ports.push_back(positionPort);
+    ports.push_back(angularVelocityPort);
+    ports.push_back(linearVelocityPort);
+    ports.push_back(angularAccelerationPort);
+    ports.push_back(linearAccelerationPort);
+    ports.push_back(predictedOrientationPort);
+    ports.push_back(predictedPositionPort);
+    ports.push_back(predictedAngularVelocityPort);
+    ports.push_back(predictedLinearVelocityPort);
+    ports.push_back(predictedAngularAccelerationPort);
+    ports.push_back(predictedLinearAccelerationPort);
+    
+    for (auto& hud : huds)
     {
-        if ((*p) != nullptr)
+        ports.push_back(hud.port);
+    }
+
+    for (auto& p : ports)
+    {
+        if (p != nullptr)
         {
-            (*p)->interrupt();
-            (*p)->close();
-            delete *p;
-            *p = nullptr;
+            p->interrupt();
+            p->close();
+            delete p;
+            p = nullptr;
         }
     }
 
@@ -850,30 +947,28 @@ void yarp::dev::OVRHeadset::run()
         ovrVector3f& leftH  = ts.HandPoses[ovrHand_Left].ThePose.Position;
         ovrVector3f& rightH = ts.HandPoses[ovrHand_Right].ThePose.Position;
 
-        T_RHand    = ovr2matrix(vecSubtract(rightH, headpose.ThePose.Position), OVR::Quatf(ts.HandPoses[ovrHand_Right].ThePose.Orientation) * OVR::Quatf(OVR::Vector3f(0, 0, 1), M_PI/2));
-        T_LHand    = ovr2matrix(vecSubtract(leftH, headpose.ThePose.Position), OVR::Quatf(ts.HandPoses[ovrHand_Left].ThePose.Orientation)   * OVR::Quatf(OVR::Vector3f(0, 0, 1), M_PI / 2));
+        T_RHand    = ovr2matrix(vecSubtract(rightH, headpose.ThePose.Position), OVR::Quatf(ts.HandPoses[ovrHand_Right].ThePose.Orientation) * OVR::Quatf(OVR::Vector3f(0, 0, 1), M_PI_2));
+        T_LHand    = ovr2matrix(vecSubtract(leftH, headpose.ThePose.Position), OVR::Quatf(ts.HandPoses[ovrHand_Left].ThePose.Orientation)   * OVR::Quatf(OVR::Vector3f(0, 0, 1), M_PI_2));
         T_Head     = ovr2matrix(headpose.ThePose.Position, headpose.ThePose.Orientation);
-        
-        {
-            rpyHead = yarp::math::dcm2rpy(T_Head);
-            rpyRobot = yarp::math::dcm2rpy(T_robotHead);
-            rpyHead[0] = 0;
-            rpyHead[1] = rpyRobot[1];
-            rpyHead[2] = rpyRobot[2];
-            T_Head = yarp::math::rpy2dcm(rpyHead);
-        }
+        rpyHead    = yarp::math::dcm2rpy(T_Head);
+        rpyRobot   = yarp::math::dcm2rpy(T_robotHead);
+        rpyHead[0] = 0;
+        rpyHead[1] = rpyRobot[1];
+        rpyHead[2] = rpyRobot[2];
+        T_Head     = yarp::math::rpy2dcm(rpyHead);
 
         tfPublisher->setTransform(left_frame,    root_frame, yarp::math::operator*(T_Head.transposed(), T_LHand));
         tfPublisher->setTransform(right_frame,   root_frame, yarp::math::operator*(T_Head.transposed(), T_RHand));
     }
     else
     {
-        OVR::Quatf lRot = OVR::Quatf(ts.HandPoses[ovrHand_Left].ThePose.Orientation)  * OVR::Quatf(OVR::Vector3f(0, 0, 1), M_PI / 2);
-        OVR::Quatf rRot = OVR::Quatf(ts.HandPoses[ovrHand_Right].ThePose.Orientation) * OVR::Quatf(OVR::Vector3f(0, 0, 1), M_PI / 2);
+        OVR::Quatf lRot = OVR::Quatf(ts.HandPoses[ovrHand_Left].ThePose.Orientation)  * OVR::Quatf(OVR::Vector3f(0, 0, 1), M_PI_2);
+        OVR::Quatf rRot = OVR::Quatf(ts.HandPoses[ovrHand_Right].ThePose.Orientation) * OVR::Quatf(OVR::Vector3f(0, 0, 1), M_PI_2);
         tfPublisher->setTransform(left_frame, "mobile_base_body_link", ovr2matrix(ts.HandPoses[ovrHand_Left].ThePose.Position,   lRot));
         tfPublisher->setTransform(right_frame, "mobile_base_body_link", ovr2matrix(ts.HandPoses[ovrHand_Right].ThePose.Position, rRot));
     }
 
+    //tfPublisher->setTransform(right_frame,   root_frame, yarp::math::operator*(T_Head.transposed(), T_RHand));
 
     // Get Input State
     inputStateMutex.lock();
@@ -1035,22 +1130,43 @@ void yarp::dev::OVRHeadset::run()
         }
         layerList.push_back(&eyeLayer.Header);
 
-        ovrLayerQuad logoLayer;
         if (logoEnabled) {
             setHeadLockedLayer(logoLayer, textureLogo, 0.2, -0.2, -0.5, 0, 0, 0, 1, 0.05, 0.05);
             layerList.push_back(&logoLayer.Header);
         }
 
-        ovrLayerQuad crosshairsLayer;
         if (crosshairsEnabled) {
             setHeadLockedLayer(crosshairsLayer, textureCrosshairs, 0, 0, -5, 0, 0, 0, 1, 0.08, 0.08);
             layerList.push_back(&crosshairsLayer.Header);
         }
 
-        ovrLayerQuad batteryLayer;
         if (batteryEnabled) {
             setHeadLockedLayer(batteryLayer, textureBattery->currentTexture, 0.25, 0.25, -0.50, 0, 0, 0, 1, 0.05, 0.05);
             layerList.push_back(&batteryLayer.Header);
+        }
+
+        //setting up dynamic hud
+        if (enableGui)
+        {
+            for (auto& hud : huds)
+            {
+                if (!hud.port->getInputCount())
+                {
+                    continue;
+                }
+
+                yarp::sig::FlexImage* image = hud.port->read(false);
+
+                if (!image)
+                {
+                    layerList.push_back(&hud.layer.Header);
+                    continue;
+                }
+
+                hud.texture.fromImage(session, *image, hud.alpha);
+                setHeadLockedLayer(hud.layer, &(hud.texture), hud.x, hud.y, hud.z, 0, 0, 0, 1, hud.resizeW, hud.resizeH);
+                layerList.push_back(&hud.layer.Header);
+            }
         }
 
         ovrLayerHeader** layers = new ovrLayerHeader*[layerList.size()];
@@ -1272,6 +1388,11 @@ void yarp::dev::OVRHeadset::onKey(int key, int scancode, int action, int mods)
             ovr_SetInt(session, OVR_PERF_HUD_MODE, PerfHudMode);
         }
         break;
+    case GLFW_KEY_G:
+    {
+        enableGui = !enableGui;
+    }
+    break;
     default:
         break;
     }
