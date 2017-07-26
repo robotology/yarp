@@ -18,20 +18,8 @@
     <normaloff>:/logo.svg</normaloff>:/logo.svg</iconset>
   </property>
   <widget class="QWidget" name="centralWidget">
-   <layout class="QGridLayout" name="gridLayout_4">
-    <property name="leftMargin">
-     <number>0</number>
-    </property>
-    <property name="topMargin">
-     <number>0</number>
-    </property>
-    <property name="rightMargin">
-     <number>0</number>
-    </property>
-    <property name="bottomMargin">
-     <number>0</number>
-    </property>
-    <item row="0" column="0">
+   <layout class="QVBoxLayout" name="verticalLayout">
+    <item>
      <widget class="QSplitter" name="splitter">
       <property name="orientation">
        <enum>Qt::Vertical</enum>
@@ -44,38 +32,53 @@
         </sizepolicy>
        </property>
        <layout class="QHBoxLayout" name="horizontalLayout">
-        <property name="leftMargin">
-         <number>0</number>
-        </property>
-        <property name="topMargin">
-         <number>0</number>
-        </property>
-        <property name="rightMargin">
-         <number>0</number>
-        </property>
-        <property name="bottomMargin">
-         <number>0</number>
-        </property>
         <item>
          <widget class="QSplitter" name="splitter_2">
           <property name="orientation">
            <enum>Qt::Horizontal</enum>
           </property>
-          <widget class="EntitiesTreeWidget" name="entitiesTree">
-           <property name="sizePolicy">
-            <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
-             <horstretch>0</horstretch>
-             <verstretch>0</verstretch>
-            </sizepolicy>
+          <widget class="QTabWidget" name="tabWidget_2">
+           <property name="tabPosition">
+            <enum>QTabWidget::West</enum>
            </property>
-           <property name="frameShape">
-            <enum>QFrame::NoFrame</enum>
+           <property name="currentIndex">
+            <number>1</number>
            </property>
-           <column>
-            <property name="text">
+           <widget class="QWidget" name="tab_2">
+            <attribute name="title">
+             <string>Cluster</string>
+            </attribute>
+            <layout class="QHBoxLayout" name="horizontalLayout_8">
+             <item>
+              <widget class="ClusterWidget" name="clusterWidget" native="true"/>
+             </item>
+            </layout>
+           </widget>
+           <widget class="QWidget" name="tab">
+            <attribute name="title">
              <string>Entities</string>
-            </property>
-           </column>
+            </attribute>
+            <layout class="QVBoxLayout" name="verticalLayout_2">
+             <item>
+              <widget class="EntitiesTreeWidget" name="entitiesTree">
+               <property name="sizePolicy">
+                <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
+                 <horstretch>0</horstretch>
+                 <verstretch>0</verstretch>
+                </sizepolicy>
+               </property>
+               <property name="frameShape">
+                <enum>QFrame::NoFrame</enum>
+               </property>
+               <column>
+                <property name="text">
+                 <string>Entities</string>
+                </property>
+               </column>
+              </widget>
+             </item>
+            </layout>
+           </widget>
           </widget>
           <widget class="QTabWidget" name="mainTabs">
            <property name="sizePolicy">
@@ -389,7 +392,7 @@
   </action>
   <action name="actionOpen_File">
    <property name="icon">
-    <iconset resource="../res.qrc">
+    <iconset resource="../../yarpmotorgui/res.qrc">
      <normaloff>:/file-new.svg</normaloff>:/file-new.svg</iconset>
    </property>
    <property name="text">
@@ -416,7 +419,7 @@
     <bool>false</bool>
    </property>
    <property name="icon">
-    <iconset resource="../res.qrc">
+    <iconset resource="../../yarpmotorgui/res.qrc">
      <normaloff>:/file-save.svg</normaloff>:/file-save.svg</iconset>
    </property>
    <property name="text">
@@ -431,7 +434,7 @@
     <bool>false</bool>
    </property>
    <property name="icon">
-    <iconset resource="../res.qrc">
+    <iconset resource="../../yarpmotorgui/res.qrc">
      <normaloff>:/file-save.svg</normaloff>:/file-save.svg</iconset>
    </property>
    <property name="text">
@@ -659,10 +662,17 @@
    <extends>QListWidget</extends>
    <header>logwidget.h</header>
   </customwidget>
+  <customwidget>
+   <class>ClusterWidget</class>
+   <extends>QWidget</extends>
+   <header>clusterWidget.h</header>
+   <container>1</container>
+  </customwidget>
  </customwidgets>
  <resources>
   <include location="../../yarpdataplayer/src/RC/res.qrc"/>
   <include location="../../yarplogger/res.qrc"/>
+  <include location="../../yarpmotorgui/res.qrc"/>
   <include location="../res.qrc"/>
  </resources>
  <connections/>

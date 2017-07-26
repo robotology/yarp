@@ -19,6 +19,7 @@
 #include "entitiestreewidget.h"
 #include "genericviewwidget.h"
 #include "newapplicationwizard.h"
+#include "clusterWidget.h"
 //#include "message_list.h"
 //#include "application_list.h"
 
