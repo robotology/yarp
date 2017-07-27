@@ -946,6 +946,17 @@ bool MapGrid2D::setMapFlag(XYCell cell, map_flags flag)
     return true;
 }
 
+bool MapGrid2D::getMapFlag(XYCell cell, map_flags& flag) const
+{
+    if (isInsideMap(cell) == false)
+    {
+        yError() << "Invalid cell requested " << cell.x << " " << cell.y;
+        return false;
+    }
+    flag = (MapGrid2D::map_flags) m_map_flags.safePixel(cell.x, cell.y);
+    return true;
+}
+
 bool MapGrid2D::setOccupancyData(XYCell cell, double occupancy)
 {
     if (isInsideMap(cell) == false)
