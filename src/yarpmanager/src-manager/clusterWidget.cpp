@@ -32,6 +32,9 @@ ClusterWidget::ClusterWidget(QWidget *parent) :
     confFile = "";
     ui->setupUi(this);
 
+    ui->checkNs->setAttribute(Qt::WA_TransparentForMouseEvents);
+    ui->checkNs->setFocusPolicy(Qt::NoFocus);
+
     ui->gridLayout->addWidget(new QLabel("Name"), 0, 0);
     ui->gridLayout->addWidget(new QLabel("Display"), 0, 1);
     ui->gridLayout->addWidget(new QLabel("User"), 0, 2);
@@ -46,6 +49,7 @@ ClusterWidget::ClusterWidget(QWidget *parent) :
 
     confFile = rf.findFileByName("cluster-config.xml");
 
+
     if(confFile.empty())
     {
         yError()<<"Unable to find cluster-config.xml in context iCubCluster";
@@ -55,7 +59,10 @@ ClusterWidget::ClusterWidget(QWidget *parent) :
 
     //Connections to slots
     connect(ui->checkAllBtn,SIGNAL(clicked(bool)),this,SLOT(onCheckAll()));
-
+    connect(ui->checkServerBtn,SIGNAL(clicked(bool)),this,SLOT(onCheckServer()));
+    connect(ui->runServerBtn,SIGNAL(clicked(bool)),this,SLOT(onRunServer()));
+    connect(ui->runServerBtn,SIGNAL(clicked(bool)),this,SLOT(onRunServer()));
+    connect(ui->stopServerBtn,SIGNAL(clicked(bool)),this,SLOT(onStopServer()));
 
     //Parsing config file
     if(!parseConfigFile())
@@ -71,7 +78,8 @@ ClusterWidget::ClusterWidget(QWidget *parent) :
 
     //check if yarpserver is running
 
-    checkNameserver();
+    onCheckServer();
+
     //Adding nodes
 
     for(size_t i = 0; i<cluster.nodes.size(); i++)
@@ -87,10 +95,61 @@ void ClusterWidget::onCheckAll()
     for(size_t i = 0; i<cluster.nodes.size(); i++)
     {
         ClusNode node = cluster.nodes[i];
-        yDebug()<<"Checking"<<node.name<<"node";
         qobject_cast<QCheckBox*>(ui->gridLayout->itemAtPosition(i+1,3)->widget())
                 ->setChecked(checkNode(node.name));
     }
+
+}
+
+void ClusterWidget::onCheckServer()
+{
+    ui->checkNs->setChecked(checkNameserver());
+}
+
+void ClusterWidget::onRunServer()
+{
+    string cmdRunServer = getSSHCmd(cluster.user, cluster.nsNode, cluster.ssh_options);
+    if(ui->checkRos->isChecked())
+        cmdRunServer = cmdRunServer + " yarpserver --portdb :memory: --subdb :memory: --ros >/dev/null 2>&1 &";
+    else
+        cmdRunServer = cmdRunServer + " yarpserver --portdb :memory: --subdb :memory: >/dev/null 2>&1 &";
+    if(system(cmdRunServer.c_str()) != 0)
+        yError()<<"ClusterWidget: faild to run the server on"<< cluster.nsNode;
+
+
+    yDebug()<<cmdRunServer;
+    onCheckServer();
+
+}
+
+void ClusterWidget::onStopServer()
+{
+    string cmdStopServer = getSSHCmd(cluster.user, cluster.nsNode, cluster.ssh_options);
+
+    cmdStopServer = cmdStopServer + " killall yarpserver";
+
+    if(system(cmdStopServer.c_str()) != 0)
+        yError()<<"ClusterWidget: faild to stop the server on"<< cluster.nsNode;
+
+
+    yDebug()<<cmdStopServer;
+    onCheckServer();
+    // if it fails to stop, kill it
+    if(ui->checkNs->isChecked())
+        onKillServer();
+}
+
+void ClusterWidget::onKillServer()
+{
+    string cmdKillServer = getSSHCmd(cluster.user, cluster.nsNode, cluster.ssh_options);
+
+    cmdKillServer = cmdKillServer + " killall -9 yarpserver";
+
+    if(system(cmdKillServer.c_str()) != 0)
+        yError()<<"ClusterWidget: faild to stop the server on"<< cluster.nsNode;
+
+
+    yDebug()<<cmdKillServer;
 
 }
 
@@ -121,7 +180,17 @@ void ClusterWidget::addRow(string name, string display, string user,
 
 std::string ClusterWidget::getSSHCmd(std::string user, std::string host, std::string ssh_options)
 {
-    return "";
+    string cmd;
+    cmd = "ssh";
+    if(!ssh_options.empty())
+        cmd = cmd + " " + ssh_options;
+
+    if(user.empty())
+        cmd = cmd + " " + host;
+    else
+        cmd = cmd + " " + user + "@" +host;
+
+    return cmd;
 }
 
 bool ClusterWidget::parseConfigFile()
@@ -213,23 +282,54 @@ bool ClusterWidget::parseConfigFile()
 
 
     }
-
-
-
     return true;
 
 }
 
-void ClusterWidget::checkNameserver()
+bool ClusterWidget::checkNameserver()
 {
+    string name = ui->lineEditNs->text().toStdString();
 
-    return;
+    if(name.empty())
+        return false;
+
+    if(name.find("/") == std::string::npos)
+        name = "/" + name;
+
+
+    yarp::os::Bottle cmd, reply;
+    cmd.addString("get");
+    cmd.addString(name);
+    cmd.addString("nameserver");
+    bool ret = yarp::os::impl::NameClient::getNameClient().send(cmd, reply);
+    if(!ret)
+    {
+        yError()<<"Manager::Cannot contact the NameClient";
+        return false;
+    }
+    if(reply.size()==6)
+    {
+        if(reply.get(5).asBool())
+        {
+            return true;
+        }
+        else
+        {
+            return false;
+        }
+
+    }
+    else
+    {
+        return false;
+    }
 }
 
 bool ClusterWidget::checkNode(std::string name)
 {
-    if(name.find("/") != std::string::npos)
+    if(name.find("/") == std::string::npos)
         name = "/" + name;
+
     yarp::os::Bottle cmd, reply;
     cmd.addString("get");
     cmd.addString(name);
