@@ -209,36 +209,37 @@ bool JoypadControlClient::getCount(const int& vocab_toget, unsigned int& value)
     }
 }
 
-bool JoypadControlClient::getButtonCount(unsigned int& button_count)
+bool JoypadControlClient::getRawButtonCount(unsigned int& button_count)
 {
     return getCount(VOCAB_BUTTON, button_count);
 }
 
-bool JoypadControlClient::getAxisCount(unsigned int& axis_count)
+bool JoypadControlClient::getRawAxisCount(unsigned int& axis_count)
 {
     return getCount(VOCAB_AXIS, axis_count);
 }
 
-bool JoypadControlClient::getTrackballCount(unsigned int& Trackball_count)
+bool JoypadControlClient::getRawTrackballCount(unsigned int& Trackball_count)
 {
     return getCount(VOCAB_TRACKBALL, Trackball_count);
 }
 
-bool JoypadControlClient::getHatCount(unsigned int& Hat_count)
+bool JoypadControlClient::getRawHatCount(unsigned int& Hat_count)
 {
     return getCount(VOCAB_HAT, Hat_count);
 }
 
-bool JoypadControlClient::getTouchSurfaceCount(unsigned int& touch_count)
+bool JoypadControlClient::getRawTouchSurfaceCount(unsigned int& touch_count)
 {
     return getCount(VOCAB_TOUCH, touch_count);
 }
 
-bool JoypadControlClient::getStickCount(unsigned int& stick_count)
+bool JoypadControlClient::getRawStickCount(unsigned int& stick_count)
 {
     return getCount(VOCAB_STICK, stick_count);
 }
-bool JoypadControlClient::getStickDoF(unsigned int stick_id, unsigned int& DoF)
+
+bool JoypadControlClient::getRawStickDoF(unsigned int stick_id, unsigned int& DoF)
 {
     Bottle cmd, response;
     cmd.addVocab(VOCAB_IJOYPADCTRL);
@@ -258,7 +259,7 @@ bool JoypadControlClient::getStickDoF(unsigned int stick_id, unsigned int& DoF)
     }
 }
 
-bool JoypadControlClient::getButton(unsigned int button_id, float& value)
+bool JoypadControlClient::getRawButton(unsigned int button_id, float& value)
 {
     if(m_rpc_only)
     {
@@ -297,7 +298,7 @@ bool JoypadControlClient::getButton(unsigned int button_id, float& value)
     }
 }
 
-bool JoypadControlClient::getTrackball(unsigned int trackball_id, yarp::sig::Vector& value)
+bool JoypadControlClient::getRawTrackball(unsigned int trackball_id, yarp::sig::Vector& value)
 {
     value.clear();
     if(m_rpc_only)
@@ -337,7 +338,7 @@ bool JoypadControlClient::getTrackball(unsigned int trackball_id, yarp::sig::Vec
     }
 }
 
-bool JoypadControlClient::getHat(unsigned int hat_id, unsigned char& value)
+bool JoypadControlClient::getRawHat(unsigned int hat_id, unsigned char& value)
 {
     if(m_rpc_only)
     {
@@ -374,7 +375,7 @@ bool JoypadControlClient::getHat(unsigned int hat_id, unsigned char& value)
     }
 }
 
-bool JoypadControlClient::getAxis(unsigned int axis_id, double& value)
+bool JoypadControlClient::getRawAxis(unsigned int axis_id, double& value)
 {
     if(m_rpc_only)
     {
@@ -413,7 +414,7 @@ bool JoypadControlClient::getAxis(unsigned int axis_id, double& value)
     }
 }
 
-bool JoypadControlClient::getStick(unsigned int stick_id, yarp::sig::Vector& value, JoypadCtrl_coordinateMode coordinate_mode)
+bool JoypadControlClient::getRawStick(unsigned int stick_id, yarp::sig::Vector& value, JoypadCtrl_coordinateMode coordinate_mode)
 {
     value.clear();
     if(m_rpc_only || coordinate_mode == IJoypadController::JypCtrlcoord_POLAR)
@@ -483,7 +484,7 @@ bool JoypadControlClient::getStick(unsigned int stick_id, yarp::sig::Vector& val
     }
 }
 
-bool JoypadControlClient::getTouch(unsigned int touch_id, yarp::sig::Vector& value)
+bool JoypadControlClient::getRawTouch(unsigned int touch_id, yarp::sig::Vector& value)
 {
     value.clear();
     if(m_rpc_only)
