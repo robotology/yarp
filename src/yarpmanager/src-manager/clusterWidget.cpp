@@ -15,6 +15,8 @@
 #include <yarp/os/ResourceFinder.h>
 #include <yarp/os/LogStream.h>
 
+#include <yarp/os/impl/NameClient.h>
+
 using namespace std;
 using namespace yarp::os;
 
@@ -51,6 +53,10 @@ ClusterWidget::ClusterWidget(QWidget *parent) :
         return;
     }
 
+    //Connections to slots
+    connect(ui->checkAllBtn,SIGNAL(clicked(bool)),this,SLOT(onCheckAll()));
+
+
     //Parsing config file
     if(!parseConfigFile())
     {
@@ -65,14 +71,25 @@ ClusterWidget::ClusterWidget(QWidget *parent) :
 
     //check if yarpserver is running
 
-    //check if yarprun is running
-
+    checkNameserver();
     //Adding nodes
 
     for(size_t i = 0; i<cluster.nodes.size(); i++)
     {
         ClusNode node = cluster.nodes[i];
         addRow(node.name, node.displayValue, node.user, node.onOff, node.log);
+    }
+
+}
+
+void ClusterWidget::onCheckAll()
+{
+    for(size_t i = 0; i<cluster.nodes.size(); i++)
+    {
+        ClusNode node = cluster.nodes[i];
+        yDebug()<<"Checking"<<node.name<<"node";
+        qobject_cast<QCheckBox*>(ui->gridLayout->itemAtPosition(i+1,3)->widget())
+                ->setChecked(checkNode(node.name));
     }
 
 }
@@ -189,13 +206,56 @@ bool ClusterWidget::parseConfigFile()
 
         if(node->Attribute("ssh-options"))
             c_node.ssh_options = node->Attribute("ssh-options");
+        //checking if yarprun is running
+        c_node.onOff = checkNode(c_node.name);
+
         cluster.nodes.push_back(c_node);
+
 
     }
 
 
 
     return true;
+
+}
+
+void ClusterWidget::checkNameserver()
+{
+
+    return;
+}
+
+bool ClusterWidget::checkNode(std::string name)
+{
+    if(name.find("/") != std::string::npos)
+        name = "/" + name;
+    yarp::os::Bottle cmd, reply;
+    cmd.addString("get");
+    cmd.addString(name);
+    cmd.addString("yarprun");
+    bool ret = yarp::os::impl::NameClient::getNameClient().send(cmd, reply);
+    if(!ret)
+    {
+        yError()<<"Manager::Cannot contact the NameClient";
+        return false;
+    }
+    if(reply.size()==6)
+    {
+        if(reply.get(5).asBool())
+        {
+            return true;
+        }
+        else
+        {
+            return false;
+        }
+
+    }
+    else
+    {
+        return false;
+    }
 
 }
 

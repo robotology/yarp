@@ -40,8 +40,7 @@ class ClusterWidget : public QWidget
 {
     Q_OBJECT
 private slots:
-//    void onBrowseFile();
-//    void onFileNameEditChanged(QString text);
+    void onCheckAll();
 public:
     explicit ClusterWidget(QWidget *parent = 0);
     ~ClusterWidget();
@@ -51,6 +50,8 @@ private:
                                bool onOff=false, bool log=true, bool select=true);
     std::string getSSHCmd(std::string user, std::string host, std::string ssh_options);
     bool parseConfigFile();
+    void checkNameserver();
+    bool checkNode(std::string name);
 private:
     Ui::ClusterWidget *ui;
     std::string confFile;
