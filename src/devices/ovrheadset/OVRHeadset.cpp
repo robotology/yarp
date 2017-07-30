@@ -373,7 +373,6 @@ bool yarp::dev::OVRHeadset::open(yarp::os::Searchable& cfg)
         err_msgs[BOOL]        = "a boolean type";
         isFunctionMap[STRING] = &yarp::os::Value::isString;
         isFunctionMap[BOOL]   = &yarp::os::Value::isBool;
-        isFunctionMap[INT]    = &yarp::os::Value::isInt;
 
         paramParser.push_back(std::make_pair("tfDevice",            STRING));
         paramParser.push_back(std::make_pair("tfLocal",             STRING));
