@@ -284,8 +284,21 @@ Rectangle {
                 if (pressing)
                 {
                     pressing = false;
-                    lastclickX=mouse.x;
-                    lastclickY=mouse.y;
+                    var x = mouse.x
+                    var y = mouse.y
+                  
+                    var frameW = yarpViewCore.videoProducer.frameWidth;
+                    var frameH = yarpViewCore.videoProducer.frameHeight
+
+                    var w = mainVideoOutput.width
+                    var h = mainVideoOutput.height
+
+                    var ratioW = w/frameW
+                    var ratioH = h/frameH
+                
+                    lastclickX=mouse.x/ratioW
+                    lastclickY=mouse.y/ratioH
+
                     yarpViewCore.clickCoords_4(clickX,clickY,lastclickX,lastclickY)
                 }
                 canvasOverlay.requestPaint()
