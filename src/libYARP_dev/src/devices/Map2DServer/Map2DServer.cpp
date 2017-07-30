@@ -270,21 +270,21 @@ void Map2DServer::parse_vocab_command(yarp::os::Bottle& in, yarp::os::Bottle& ou
 
 void Map2DServer::parse_string_command(yarp::os::Bottle& in, yarp::os::Bottle& out)
 {
-    if (in.get(0).asString() == "save" && in.get(1).isString())
+    if (in.get(0).asString() == "save_locations" && in.get(1).isString())
     {
         if(save_locations(in.get(1).asString()))
         {
             out.addString(in.get(1).asString() + " successfully saved");
         }
     }
-    else if (in.get(0).asString() == "load" && in.get(1).isString())
+    else if (in.get(0).asString() == "load_locations" && in.get(1).isString())
     {
         if(load_locations(in.get(1).asString()))
         {
             out.addString(in.get(1).asString() + " successfully loaded");
         }
     }
-    else if(in.get(0).asString() == "list")
+    else if(in.get(0).asString() == "list_locations")
     {
         std::map<std::string, Map2DLocation>::iterator it;
         for (it = m_locations.begin(); it != m_locations.end(); ++it)
@@ -294,9 +294,13 @@ void Map2DServer::parse_string_command(yarp::os::Bottle& in, yarp::os::Bottle& o
     }
     else if(in.get(0).asString() == "help")
     {
-        out.addString("'save <full path filename>' to save locations on a file");
-        out.addString("'load <full path filename>' to load locations from a file");
-        out.addString("'list' to view locations stored");
+        out.addString("'save_locations <full path filename>' to save locations on a file");
+        out.addString("'load_locations <full path filename>' to load locations from a file");
+        out.addString("'list_locations' to view a list of all stored locations");
+        out.addString("'save_maps <full path>' to save maps on in a folder");
+        out.addString("'load_maps <full path>' to load maps from a folder");
+        out.addString("'list_maps' to view a list of all stored maps");
+
     }
     else
     {
