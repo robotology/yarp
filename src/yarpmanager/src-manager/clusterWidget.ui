@@ -336,7 +336,12 @@
          <item>
           <layout class="QHBoxLayout" name="horizontalLayout_12">
            <item>
-            <widget class="QTreeWidget" name="nodestreeWidget">
+            <widget class="CustomTreeWidget" name="nodestreeWidget">
+             <column>
+              <property name="text">
+               <string>Status</string>
+              </property>
+             </column>
              <column>
               <property name="text">
                <string>Name</string>
@@ -355,11 +360,6 @@
              <column>
               <property name="text">
                <string>Log</string>
-              </property>
-             </column>
-             <column>
-              <property name="text">
-               <string>Select</string>
               </property>
              </column>
             </widget>
@@ -464,6 +464,13 @@
    </item>
   </layout>
  </widget>
+ <customwidgets>
+  <customwidget>
+   <class>CustomTreeWidget</class>
+   <extends>QTreeWidget</extends>
+   <header>customtreewidget.h</header>
+  </customwidget>
+ </customwidgets>
  <resources/>
  <connections/>
 </ui>

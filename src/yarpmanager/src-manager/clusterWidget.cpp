@@ -60,9 +60,9 @@ void ClusterWidget::setConfigFile(string _confFile)
 void ClusterWidget::init()
 {
     clusLoader = new XmlClusterLoader(confFile);
-    if(clusLoader)
+    if (clusLoader)
     {
-        if(!clusLoader->parseXmlFile(cluster))
+        if (!clusLoader->parseXmlFile(cluster))
         {
             yError()<<"ClusterWidget:Unable parse cluster-config.xml in context iCubCluster";
             this->setDisabled(true);
@@ -80,32 +80,35 @@ void ClusterWidget::init()
 
     //Adding nodes
 
-    for(size_t i = 0; i<cluster.nodes.size(); i++)
+    for (size_t i = 0; i<cluster.nodes.size(); i++)
     {
         ClusNode node = cluster.nodes[i];
-        addRow(node.name, node.displayValue, node.user, node.onOff, node.log);
+        addRow(node.name, node.displayValue, node.user, node.onOff, node.log, i);
     }
 
     //check if all the nodes are up
     onCheckAll();
 
+    ui->nodestreeWidget->header()->resizeSection(0, 50);
+
 }
 
 void ClusterWidget::onCheckAll()
 {
-    for(size_t i = 0; i<cluster.nodes.size(); i++)
+    for (int i = 0; i<ui->nodestreeWidget->topLevelItemCount(); i++)
     {
         QTreeWidgetItem *it = ui->nodestreeWidget->topLevelItem(i);
-        ClusNode node = cluster.nodes[i];
-        if(checkNode(node.name))
+        int itr = it->text(5).toInt();
+        ClusNode node = cluster.nodes[itr];
+        if (checkNode(node.name))
         {
-            cluster.nodes[i].onOff=true;
-            it->setIcon(0,QIcon(":/apply.svg"));
+            cluster.nodes[itr].onOff=true;
+            it->setIcon(0, QIcon(":/apply.svg"));
         }
         else
         {
-            cluster.nodes[i].onOff=false;
-            it->setIcon(0,QIcon(":/close.svg"));
+            cluster.nodes[itr].onOff=false;
+            it->setIcon(0, QIcon(":/close.svg"));
         }
     }
 
@@ -184,10 +187,11 @@ void ClusterWidget::onKillServer()
 
 void ClusterWidget::onRunSelected()
 {
-    for(size_t i=0; i<cluster.nodes.size(); i++)
+    QList<QTreeWidgetItem*> selectedItems = ui->nodestreeWidget->selectedItems();
+    foreach (QTreeWidgetItem *it, selectedItems)
     {
-        ClusNode node = cluster.nodes[i];
-
+        int itr = it->text(5).toInt();
+        ClusNode node = cluster.nodes[itr];
         string portName = node.name;
 
         if (portName.find("/") == std::string::npos)
@@ -200,37 +204,32 @@ void ClusterWidget::onRunSelected()
             continue;
         }
 
-        QTreeWidgetItem *it = ui->nodestreeWidget->topLevelItem(i);
+        string cmdRunYarprun = getSSHCmd(node.user, node.name, node.ssh_options);
+        if (node.display)
+        {
+            cmdRunYarprun = cmdRunYarprun + " 'export DISPLAY=" + node.displayValue + " && ";
 
+        }
         if (qobject_cast<QCheckBox*>(ui->nodestreeWidget->itemWidget((QTreeWidgetItem *)it, 4))->isChecked())
         {
-            string cmdRunYarprun = getSSHCmd(node.user, node.name, node.ssh_options);
-            if (node.display)
-            {
-                cmdRunYarprun = cmdRunYarprun + " 'export DISPLAY=" + node.displayValue + " && ";
-
-            }
-            if (qobject_cast<QCheckBox*>(ui->nodestreeWidget->itemWidget((QTreeWidgetItem *)it, 3))->isChecked())
-            {
-                cmdRunYarprun = cmdRunYarprun + " yarprun --server "+ portName  + " --log 2>&1 2>/tmp/yarprunserver.log";
-            }
-            else
-            {
-                cmdRunYarprun = cmdRunYarprun + " yarprun --server "+ portName  + " 2>&1 2>/tmp/yarprunserver.log";
-            }
-
-            if (node.display)
-            {
-                cmdRunYarprun = cmdRunYarprun + "'";
-            }
-            if (system(cmdRunYarprun.c_str()) != 0)
-            {
-                yError()<<"ClusterWidget: faild to run yarprun on"<< node.name;
-            }
-            yDebug()<<cmdRunYarprun;
+            cmdRunYarprun = cmdRunYarprun + " yarprun --server "+ portName  + " --log 2>&1 2>/tmp/yarprunserver.log";
+        }
+        else
+        {
+            cmdRunYarprun = cmdRunYarprun + " yarprun --server "+ portName  + " 2>&1 2>/tmp/yarprunserver.log";
         }
 
+        if (node.display)
+        {
+            cmdRunYarprun = cmdRunYarprun + "'";
+        }
+        if (system(cmdRunYarprun.c_str()) != 0)
+        {
+            yError()<<"ClusterWidget: faild to run yarprun on"<< node.name;
+        }
+        yDebug()<<cmdRunYarprun;
     }
+
     yarp::os::Time::delay(2.0);
     onCheckAll();
 }
@@ -238,10 +237,11 @@ void ClusterWidget::onRunSelected()
 
 void ClusterWidget::onStopSelected()
 {
-    for(size_t i=0; i<cluster.nodes.size(); i++)
+    QList<QTreeWidgetItem*> selectedItems = ui->nodestreeWidget->selectedItems();
+    foreach (QTreeWidgetItem *it, selectedItems)
     {
-        ClusNode node = cluster.nodes[i];
-        QTreeWidgetItem *it = ui->nodestreeWidget->topLevelItem(i);
+        int itr = it->text(5).toInt();
+        ClusNode node = cluster.nodes[itr];
         if (!node.onOff)
         {
             continue;
@@ -251,51 +251,43 @@ void ClusterWidget::onStopSelected()
         {
             portName = "/" + portName;
         }
-        if (qobject_cast<QCheckBox*>(ui->nodestreeWidget->itemWidget((QTreeWidgetItem *)it, 4))->isChecked())
+
+        string cmdStopYarprun = getSSHCmd(node.user, node.name, node.ssh_options);
+
+        cmdStopYarprun = cmdStopYarprun + " yarprun --exit --on "+ portName;
+
+        if (system(cmdStopYarprun.c_str()) != 0)
         {
-            string cmdStopYarprun = getSSHCmd(node.user, node.name, node.ssh_options);
-
-            cmdStopYarprun = cmdStopYarprun + " yarprun --exit --on "+ portName;
-
-            if (system(cmdStopYarprun.c_str()) != 0)
-            {
-                yError()<<"ClusterWidget: faild to stop yarprun on"<< node.name;
-            }
-            yDebug()<<cmdStopYarprun;
+            yError()<<"ClusterWidget: faild to stop yarprun on"<< node.name;
         }
+        yDebug()<<cmdStopYarprun;
     }
+
     yarp::os::Time::delay(2.0);
     onCheckAll();
 }
 
 void ClusterWidget::onKillSelected()
 {
-    for(size_t i=0; i<cluster.nodes.size(); i++)
+    QList<QTreeWidgetItem*> selectedItems = ui->nodestreeWidget->selectedItems();
+    foreach (QTreeWidgetItem *it, selectedItems)
     {
-        ClusNode node = cluster.nodes[i];
-        QTreeWidgetItem *it = ui->nodestreeWidget->topLevelItem(i);
+        int itr = it->text(5).toInt();
+        ClusNode node = cluster.nodes[itr];
         if (!node.onOff)
         {
             continue;
         }
-        string portName = node.name;
-        if (portName.find("/") == std::string::npos)
+
+        string cmdKillYarprun = getSSHCmd(node.user, node.name, node.ssh_options);
+
+        cmdKillYarprun = cmdKillYarprun + " killall -9 yarprun";
+
+        if (system(cmdKillYarprun.c_str()) != 0)
         {
-            portName = "/" + portName;
+            yError()<<"ClusterWidget: faild to kill yarprun on"<< node.name;
         }
-        if (qobject_cast<QCheckBox*>(ui->nodestreeWidget->itemWidget((QTreeWidgetItem *)it, 4))->isChecked())
-        {
-            string cmdKillYarprun = getSSHCmd(node.user, node.name, node.ssh_options);
-
-            cmdKillYarprun = cmdKillYarprun + " killall -9 yarprun";
-
-            if (system(cmdKillYarprun.c_str()) != 0)
-            {
-                yError()<<"ClusterWidget: faild to kill yarprun on"<< node.name;
-            }
-            yDebug()<<cmdKillYarprun;
-        }
-
+        yDebug()<<cmdKillYarprun;
     }
     yarp::os::Time::delay(2.0);
     onCheckAll();
@@ -304,27 +296,25 @@ void ClusterWidget::onKillSelected()
 
 
 void ClusterWidget::addRow(string name, string display, string user,
-                           bool onOff, bool log, bool select)
+                           bool onOff, bool log, int id)
 {
-    QStringList l;
-    l << QString(name.c_str()) << QString(display.c_str()) << QString(user.c_str());
-    QTreeWidgetItem* it = new QTreeWidgetItem(l);
+    QStringList stringList;
+    stringList <<""<< QString(name.c_str()) << QString(display.c_str()) << QString(user.c_str())<< "" <<QString(std::to_string(id).c_str());
+    QTreeWidgetItem* it = new QTreeWidgetItem(stringList);
     ui->nodestreeWidget->addTopLevelItem(it);
-    ui->nodestreeWidget->setItemWidget((QTreeWidgetItem *) it, 3, new QCheckBox(this));
     ui->nodestreeWidget->setItemWidget((QTreeWidgetItem *) it, 4, new QCheckBox(this));
 
     //initialize checkboxes
-    qobject_cast<QCheckBox*>(ui->nodestreeWidget->itemWidget((QTreeWidgetItem *)it, 3))->setChecked(log);
-    qobject_cast<QCheckBox*>(ui->nodestreeWidget->itemWidget((QTreeWidgetItem *)it, 4))->setChecked(select);
+    qobject_cast<QCheckBox*>(ui->nodestreeWidget->itemWidget((QTreeWidgetItem *)it, 4))->setChecked(log);
 
     //initialize icon
     if (onOff)
     {
-        it->setIcon(0,QIcon(":/apply.svg"));
+        it->setIcon(0, QIcon(":/apply.svg"));
     }
     else
     {
-        it->setIcon(0,QIcon(":/close.svg"));
+        it->setIcon(0, QIcon(":/close.svg"));
     }
 
 }
@@ -430,5 +420,10 @@ bool ClusterWidget::checkNode(std::string name)
 
 ClusterWidget::~ClusterWidget()
 {
+    if (clusLoader)
+    {
+        delete clusLoader;
+        clusLoader = YARP_NULLPTR;
+    }
     delete ui;
 }

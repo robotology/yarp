@@ -9,8 +9,8 @@
 
 #include <QWidget>
 #include <vector>
-#include <customtreewidget.h>
 #include <yarp/manager/xmlclusterloader.h>
+#include <customtreewidget.h>
 
 namespace Ui {
 class ClusterWidget;
@@ -36,7 +36,7 @@ public:
 
 private:
     void addRow(std::string name="", std::string display="none", std::string user="",
-                               bool onOff=false, bool log=true, bool select=true);
+                               bool onOff=false, bool log=true, int id=0);
     std::string getSSHCmd(std::string user, std::string host, std::string ssh_options);
     bool checkNameserver();
     bool checkNode(std::string name);
