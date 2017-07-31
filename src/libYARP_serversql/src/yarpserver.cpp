@@ -26,6 +26,8 @@
 #include <yarp/serversql/impl/ComposedNameService.h>
 #include <yarp/serversql/impl/ParseName.h>
 
+#include <yarp/os/impl/NameClient.h>
+
 using namespace yarp::os;
 using namespace yarp::name;
 using namespace yarp::serversql::impl;
@@ -274,6 +276,16 @@ yarpserversql_API int yarpserver_main(int argc, char *argv[]) {
         nc.preregister(alt);
     }
     nc.goPublic();
+
+    //Setting nameserver property
+    yarp::os::Bottle cmd, reply;
+    cmd.addString("set");
+    cmd.addString(server.getName());
+    cmd.addString("nameserver");
+    cmd.addString("true");
+
+    yarp::os::impl::NameClient::getNameClient().send(cmd, reply);
+
     printf("Name server can be browsed at http://%s:%d/\n",
            nc.where().getHost().c_str(), nc.where().getPort());
     printf("\nOk.  Ready!\n");
