@@ -76,7 +76,7 @@ struct guiParam
     double         alpha;
     FlexImagePort* port;
     ovrLayerQuad   layer;
-    TextureBuffer  texture;
+    TextureBuffer*  texture;
 };
 //----------------[utilities]
 //WARNING it makes a conversion of the coordinate system
@@ -475,6 +475,7 @@ bool yarp::dev::OVRHeadset::open(yarp::os::Searchable& cfg)
                 hud.z       = guip.find("z").asDouble();
                 hud.alpha   = guip.find("alpha").asDouble();
                 hud.port    = new FlexImagePort;
+                hud.texture = new TextureBuffer();
                 std::transform(groupName.begin(), groupName.end(), groupName.begin(), ::tolower);
                 hud.port->open(standardPortPrefix + "/" + groupName);
 
@@ -796,6 +797,7 @@ void yarp::dev::OVRHeadset::threadRelease()
     
     for (auto& hud : huds)
     {
+        delete hud.texture;
         ports.push_back(hud.port);
     }
 
@@ -1163,8 +1165,8 @@ void yarp::dev::OVRHeadset::run()
                     continue;
                 }
 
-                hud.texture.fromImage(session, *image, hud.alpha);
-                setHeadLockedLayer(hud.layer, &(hud.texture), hud.x, hud.y, hud.z, 0, 0, 0, 1, hud.resizeW, hud.resizeH);
+                hud.texture->fromImage(session, *image, hud.alpha);
+                setHeadLockedLayer(hud.layer, hud.texture, hud.x, hud.y, hud.z, 0, 0, 0, 1, hud.resizeW, hud.resizeH);
                 layerList.push_back(&hud.layer.Header);
             }
         }
