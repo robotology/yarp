@@ -38,6 +38,52 @@ public:
     virtual ~IVisualServoing() { }
 
     /*!
+     * Initialize support classes, modules and connections to perform visual
+     * servoing. This method must be called before any other visual servoing
+     * methods. Returns upon successful or failure setup.
+     *
+     * \param use_direct_kin instruct the visual servoing control to either use
+     *                       direct kinematic or an estimated/refined pose of
+     *                       the end-effector.
+     *
+     * \note Default value: false. There usually is an error in the robot
+     *       direct kinematics that should be compensated to perform precise
+     *       visual servoing. To this end, a recursive Bayesian estimation
+     *       filter is used to compensate for this error. Such filter is
+     *       initialized during initialization execution.
+     *
+     * \return true/false on success/failure.
+     */
+    virtual bool initFacilities(bool use_direct_kin) = 0;
+
+    /*!
+     * Reset support classes, modules and connections to perform visual
+     * servoing. Returns upon successful or failure setup.
+     *
+     * \note This method also resets the recursive Bayesian estimation filter.
+     *       It may happen that the recursive Bayesian filter does not provide
+     *       satisfactory pose estimation or diverges. Thus this method can be
+     *       used to reset the filter.
+     *
+     * \return true/false on success/failure.
+     */
+    virtual bool resetFacilities() = 0;
+
+    /*!
+     * Deallocate support classes, stop modules and disconnect connections used
+     * for visual servoing. This method must be called when visual servoing is
+     * no longer needed or a new visual servoing instance is needed.
+     *
+     * \note This method also stops the recursive Bayesian estimation filter.
+     *       Thus it is suggested to call this method every time visual servoing
+     *       has been completed/interrupted to have the filter stopped and
+     *       initialized again during the next init call.
+     *
+     * \return true/false on success/failure.
+     */
+    virtual bool stopFacilities() = 0;
+
+    /*!
      * Set the goal points on both left and right camera image plane and start
      * visual servoing.
      *
