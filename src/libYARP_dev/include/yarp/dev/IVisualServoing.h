@@ -216,7 +216,7 @@ public:
     virtual std::vector<yarp::sig::Vector> getPixelPositionGoalFrom3DPose(const yarp::sig::Vector& x, const yarp::sig::Vector& o, const CamSel& cam) = 0;
 
 
-    /* EXPERIMENTAL */
+    /* TO BE DEPRECATED */
     /*!
      * Initialize the robot to an initial position.
      * The initial positions are stored on an external file and are referenced
