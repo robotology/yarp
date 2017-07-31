@@ -12,7 +12,6 @@
 #include <QLabel>
 #include <QRadioButton>
 #include <QStringList>
-#include <tinyxml.h>
 
 #include <yarp/os/LogStream.h>
 #include <yarp/os/Time.h>
@@ -21,10 +20,11 @@
 
 using namespace std;
 using namespace yarp::os;
+using namespace yarp::manager;
 
 ClusterWidget::ClusterWidget(QWidget *parent) :
     QWidget(parent),
-    ui(new Ui::ClusterWidget), confFile("")
+    ui(new Ui::ClusterWidget), confFile(""), clusLoader(YARP_NULLPTR)
 {
 
 #ifdef WIN32
@@ -59,12 +59,15 @@ void ClusterWidget::setConfigFile(string _confFile)
 
 void ClusterWidget::init()
 {
-    //Parsing config file
-    if (!parseConfigFile())
+    clusLoader = new XmlClusterLoader(confFile);
+    if(clusLoader)
     {
-        yError()<<"Unable parse cluster-config.xml in context iCubCluster";
-        this->setDisabled(true);
-        return;
+        if(!clusLoader->parseXmlFile(cluster))
+        {
+            yError()<<"ClusterWidget:Unable parse cluster-config.xml in context iCubCluster";
+            this->setDisabled(true);
+            return;
+        }
     }
 
     ui->lineEditUser->setText(cluster.user.c_str());
@@ -82,6 +85,9 @@ void ClusterWidget::init()
         ClusNode node = cluster.nodes[i];
         addRow(node.name, node.displayValue, node.user, node.onOff, node.log);
     }
+
+    //check if all the nodes are up
+    onCheckAll();
 
 }
 
@@ -341,105 +347,6 @@ std::string ClusterWidget::getSSHCmd(std::string user, std::string host, std::st
     }
 
     return cmd;
-}
-
-bool ClusterWidget::parseConfigFile()
-{
-    TiXmlDocument doc(confFile);
-    if (!doc.LoadFile())
-    {
-        yError()<<"XmlParser: unable to load"<<confFile;
-        return false;
-    }
-
-    /* retrieving root element */
-    TiXmlElement *root = doc.RootElement();
-    if (!root)
-    {
-        yError()<<"XmlParser: unable to find root element";
-        return false;
-    }
-
-    if (root->ValueStr() != "cluster")
-    {
-        yError()<<"No tag cluster found in"<<confFile;
-        return false;
-    }
-
-    if (root->Attribute("name"))
-    {
-        cluster.name = root->Attribute("name");
-    }
-
-    if (root->Attribute("user"))
-    {
-        cluster.user = root->Attribute("user");
-    }
-
-    TiXmlElement *nameserver = root->FirstChildElement("nameserver");
-    if (!nameserver)
-    {
-        yError()<<"No tag nameserver found in"<<confFile;
-        return false;
-    }
-
-    if (nameserver->Attribute("namespace"))
-    {
-        cluster.nameSpace = nameserver->Attribute("namespace");
-
-    }
-
-    if (nameserver->Attribute("node"))
-    {
-        cluster.nsNode = nameserver->Attribute("node");
-
-    }
-
-    if (nameserver->Attribute("ssh-options"))
-    {
-        cluster.ssh_options = nameserver->Attribute("ssh-options");
-
-    }
-
-
-
-    for(TiXmlElement* node = root->FirstChildElement("node");
-        node != NULL; node = node->NextSiblingElement("node"))
-    {
-        ClusNode c_node;
-        if (node->GetText())
-        {
-           c_node.name = node->GetText();
-        }
-
-        if (node->Attribute("display"))
-        {
-            c_node.display = true;
-            c_node.displayValue = node->Attribute("display");
-        }
-
-        if (node->Attribute("user"))
-        {
-            c_node.user = node->Attribute("user");
-        }
-        else
-        {
-            c_node.user = cluster.user;
-        }
-
-        if (node->Attribute("ssh-options"))
-        {
-            c_node.ssh_options = node->Attribute("ssh-options");
-        }
-        //checking if yarprun is running
-        c_node.onOff = checkNode(c_node.name);
-
-        cluster.nodes.push_back(c_node);
-
-
-    }
-    return true;
-
 }
 
 bool ClusterWidget::checkNameserver()

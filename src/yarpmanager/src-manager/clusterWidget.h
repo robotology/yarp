@@ -10,31 +10,11 @@
 #include <QWidget>
 #include <vector>
 #include <customtreewidget.h>
+#include <yarp/manager/xmlclusterloader.h>
 
 namespace Ui {
 class ClusterWidget;
 }
-
-struct ClusNode
-{
-    std::string name = "";
-    bool display = false;
-    std::string displayValue = "none";
-    std::string user = "";
-    std::string ssh_options = "";
-    bool onOff = false;
-    bool log = true;
-};
-
-struct Cluster
-{
-    std::string name = "";
-    std::string user = "";
-    std::string nameSpace = "";
-    std::string nsNode = "";
-    std::string ssh_options = "";
-    std::vector<ClusNode> nodes;
-};
 
 class ClusterWidget : public QWidget
 {
@@ -58,13 +38,13 @@ private:
     void addRow(std::string name="", std::string display="none", std::string user="",
                                bool onOff=false, bool log=true, bool select=true);
     std::string getSSHCmd(std::string user, std::string host, std::string ssh_options);
-    bool parseConfigFile();
     bool checkNameserver();
     bool checkNode(std::string name);
 private:
     Ui::ClusterWidget *ui;
     std::string confFile;
-    Cluster cluster;
+    yarp::manager::Cluster cluster;
+    yarp::manager::XmlClusterLoader* clusLoader;
 };
 
 #endif // CLUSTERWIDGET_H
