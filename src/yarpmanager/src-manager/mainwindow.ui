@@ -37,7 +37,7 @@
           <property name="orientation">
            <enum>Qt::Horizontal</enum>
           </property>
-          <widget class="QTabWidget" name="tabWidget_2">
+          <widget class="QTabWidget" name="tabWidgetLeft">
            <property name="tabPosition">
             <enum>QTabWidget::West</enum>
            </property>
@@ -392,7 +392,7 @@
   </action>
   <action name="actionOpen_File">
    <property name="icon">
-    <iconset resource="../../yarpmotorgui/res.qrc">
+    <iconset resource="../res.qrc">
      <normaloff>:/file-new.svg</normaloff>:/file-new.svg</iconset>
    </property>
    <property name="text">
@@ -419,7 +419,7 @@
     <bool>false</bool>
    </property>
    <property name="icon">
-    <iconset resource="../../yarpmotorgui/res.qrc">
+    <iconset resource="../res.qrc">
      <normaloff>:/file-save.svg</normaloff>:/file-save.svg</iconset>
    </property>
    <property name="text">
@@ -434,7 +434,7 @@
     <bool>false</bool>
    </property>
    <property name="icon">
-    <iconset resource="../../yarpmotorgui/res.qrc">
+    <iconset resource="../res.qrc">
      <normaloff>:/file-save.svg</normaloff>:/file-save.svg</iconset>
    </property>
    <property name="text">
@@ -672,7 +672,6 @@
  <resources>
   <include location="../../yarpdataplayer/src/RC/res.qrc"/>
   <include location="../../yarplogger/res.qrc"/>
-  <include location="../../yarpmotorgui/res.qrc"/>
   <include location="../res.qrc"/>
  </resources>
  <connections/>

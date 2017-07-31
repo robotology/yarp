@@ -8,7 +8,6 @@
 #define CLUSTERWIDGET_H
 
 #include <QWidget>
-#include <tinyxml.h>
 #include <vector>
 
 namespace Ui {
@@ -51,6 +50,8 @@ private slots:
 public:
     explicit ClusterWidget(QWidget *parent = 0);
     ~ClusterWidget();
+    void setConfigFile(std::string _confFile);
+    void init();
 
 private:
     void addRow(std::string name="", std::string display="none", std::string user="",
