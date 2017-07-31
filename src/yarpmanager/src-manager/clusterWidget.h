@@ -9,6 +9,7 @@
 
 #include <QWidget>
 #include <vector>
+#include <customtreewidget.h>
 
 namespace Ui {
 class ClusterWidget;

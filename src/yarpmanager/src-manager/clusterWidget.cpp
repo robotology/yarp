@@ -11,6 +11,7 @@
 #include <QCheckBox>
 #include <QLabel>
 #include <QRadioButton>
+#include <QStringList>
 #include <tinyxml.h>
 
 #include <yarp/os/LogStream.h>
@@ -34,13 +35,6 @@ ClusterWidget::ClusterWidget(QWidget *parent) :
 
     ui->checkNs->setAttribute(Qt::WA_TransparentForMouseEvents);
     ui->checkNs->setFocusPolicy(Qt::NoFocus);
-
-    ui->gridLayout->addWidget(new QLabel("Name"), 0, 0);
-    ui->gridLayout->addWidget(new QLabel("Display"), 0, 1);
-    ui->gridLayout->addWidget(new QLabel("User"), 0, 2);
-    ui->gridLayout->addWidget(new QLabel("On/off"), 0, 3);
-    ui->gridLayout->addWidget(new QLabel("Log"), 0, 4);
-    ui->gridLayout->addWidget(new QLabel("Select"), 0, 5);
 
     ui->checkNs->setStyleSheet("QCheckBox { color: green }");
 
@@ -95,9 +89,18 @@ void ClusterWidget::onCheckAll()
 {
     for(size_t i = 0; i<cluster.nodes.size(); i++)
     {
+        QTreeWidgetItem *it = ui->nodestreeWidget->topLevelItem(i);
         ClusNode node = cluster.nodes[i];
-        qobject_cast<QCheckBox*>(ui->gridLayout->itemAtPosition(i+1, 3)->widget())
-                ->setChecked(checkNode(node.name));
+        if(checkNode(node.name))
+        {
+            cluster.nodes[i].onOff=true;
+            it->setIcon(0,QIcon(":/apply.svg"));
+        }
+        else
+        {
+            cluster.nodes[i].onOff=false;
+            it->setIcon(0,QIcon(":/close.svg"));
+        }
     }
 
 }
@@ -177,17 +180,23 @@ void ClusterWidget::onRunSelected()
 {
     for(size_t i=0; i<cluster.nodes.size(); i++)
     {
-        if (qobject_cast<QCheckBox*>(ui->gridLayout->itemAtPosition(i+1, 3)->widget())->isChecked())
-        {
-            continue;
-        }
         ClusNode node = cluster.nodes[i];
+
         string portName = node.name;
+
         if (portName.find("/") == std::string::npos)
         {
             portName = "/" + portName;
         }
-        if (qobject_cast<QCheckBox*>(ui->gridLayout->itemAtPosition(i+1, 5)->widget())->isChecked())
+
+        if (node.onOff)
+        {
+            continue;
+        }
+
+        QTreeWidgetItem *it = ui->nodestreeWidget->topLevelItem(i);
+
+        if (qobject_cast<QCheckBox*>(ui->nodestreeWidget->itemWidget((QTreeWidgetItem *)it, 4))->isChecked())
         {
             string cmdRunYarprun = getSSHCmd(node.user, node.name, node.ssh_options);
             if (node.display)
@@ -195,7 +204,7 @@ void ClusterWidget::onRunSelected()
                 cmdRunYarprun = cmdRunYarprun + " 'export DISPLAY=" + node.displayValue + " && ";
 
             }
-            if (qobject_cast<QCheckBox*>(ui->gridLayout->itemAtPosition(i+1, 4)->widget())->isChecked())
+            if (qobject_cast<QCheckBox*>(ui->nodestreeWidget->itemWidget((QTreeWidgetItem *)it, 3))->isChecked())
             {
                 cmdRunYarprun = cmdRunYarprun + " yarprun --server "+ portName  + " --log 2>&1 2>/tmp/yarprunserver.log";
             }
@@ -226,7 +235,8 @@ void ClusterWidget::onStopSelected()
     for(size_t i=0; i<cluster.nodes.size(); i++)
     {
         ClusNode node = cluster.nodes[i];
-        if (!qobject_cast<QCheckBox*>(ui->gridLayout->itemAtPosition(i+1, 3)->widget())->isChecked())
+        QTreeWidgetItem *it = ui->nodestreeWidget->topLevelItem(i);
+        if (!node.onOff)
         {
             continue;
         }
@@ -235,7 +245,7 @@ void ClusterWidget::onStopSelected()
         {
             portName = "/" + portName;
         }
-        if (qobject_cast<QCheckBox*>(ui->gridLayout->itemAtPosition(i+1, 5)->widget())->isChecked())
+        if (qobject_cast<QCheckBox*>(ui->nodestreeWidget->itemWidget((QTreeWidgetItem *)it, 4))->isChecked())
         {
             string cmdStopYarprun = getSSHCmd(node.user, node.name, node.ssh_options);
 
@@ -256,17 +266,18 @@ void ClusterWidget::onKillSelected()
 {
     for(size_t i=0; i<cluster.nodes.size(); i++)
     {
-        if (!qobject_cast<QCheckBox*>(ui->gridLayout->itemAtPosition(i+1, 3)->widget())->isChecked())
+        ClusNode node = cluster.nodes[i];
+        QTreeWidgetItem *it = ui->nodestreeWidget->topLevelItem(i);
+        if (!node.onOff)
         {
             continue;
         }
-        ClusNode node = cluster.nodes[i];
         string portName = node.name;
         if (portName.find("/") == std::string::npos)
         {
             portName = "/" + portName;
         }
-        if (qobject_cast<QCheckBox*>(ui->gridLayout->itemAtPosition(i+1, 5)->widget())->isChecked())
+        if (qobject_cast<QCheckBox*>(ui->nodestreeWidget->itemWidget((QTreeWidgetItem *)it, 4))->isChecked())
         {
             string cmdKillYarprun = getSSHCmd(node.user, node.name, node.ssh_options);
 
@@ -289,26 +300,26 @@ void ClusterWidget::onKillSelected()
 void ClusterWidget::addRow(string name, string display, string user,
                            bool onOff, bool log, bool select)
 {
-    int rowCount = ui->gridLayout->rowCount();
-    ui->gridLayout->addWidget(new QLineEdit(name.c_str()), rowCount, 0);
-    ui->gridLayout->addWidget(new QLineEdit(display.c_str()), rowCount, 1);
-    ui->gridLayout->addWidget(new QLineEdit(user.c_str()), rowCount, 2);
-    ui->gridLayout->addWidget(new QCheckBox(), rowCount, 3);
-    ui->gridLayout->addWidget(new QCheckBox(), rowCount, 4);
-    ui->gridLayout->addWidget(new QCheckBox(), rowCount, 5);
+    QStringList l;
+    l << QString(name.c_str()) << QString(display.c_str()) << QString(user.c_str());
+    QTreeWidgetItem* it = new QTreeWidgetItem(l);
+    ui->nodestreeWidget->addTopLevelItem(it);
+    ui->nodestreeWidget->setItemWidget((QTreeWidgetItem *) it, 3, new QCheckBox(this));
+    ui->nodestreeWidget->setItemWidget((QTreeWidgetItem *) it, 4, new QCheckBox(this));
 
     //initialize checkboxes
-    qobject_cast<QCheckBox*>(ui->gridLayout->itemAtPosition(rowCount, 3)->widget())->setChecked(onOff);
-    qobject_cast<QCheckBox*>(ui->gridLayout->itemAtPosition(rowCount, 3)->widget())->setStyleSheet("QCheckBox { color: green }");
-    qobject_cast<QCheckBox*>(ui->gridLayout->itemAtPosition(rowCount, 4)->widget())->setChecked(log);
-    qobject_cast<QCheckBox*>(ui->gridLayout->itemAtPosition(rowCount, 5)->widget())->setChecked(select);
+    qobject_cast<QCheckBox*>(ui->nodestreeWidget->itemWidget((QTreeWidgetItem *)it, 3))->setChecked(log);
+    qobject_cast<QCheckBox*>(ui->nodestreeWidget->itemWidget((QTreeWidgetItem *)it, 4))->setChecked(select);
 
-    //read only
-    qobject_cast<QLineEdit*>(ui->gridLayout->itemAtPosition(rowCount, 0)->widget())->setReadOnly(true);
-    qobject_cast<QLineEdit*>(ui->gridLayout->itemAtPosition(rowCount, 1)->widget())->setReadOnly(true);
-    qobject_cast<QLineEdit*>(ui->gridLayout->itemAtPosition(rowCount, 2)->widget())->setReadOnly(true);
-    qobject_cast<QCheckBox*>(ui->gridLayout->itemAtPosition(rowCount, 3)->widget())->setAttribute(Qt::WA_TransparentForMouseEvents);
-    qobject_cast<QCheckBox*>(ui->gridLayout->itemAtPosition(rowCount, 3)->widget())->setFocusPolicy(Qt::NoFocus);
+    //initialize icon
+    if (onOff)
+    {
+        it->setIcon(0,QIcon(":/apply.svg"));
+    }
+    else
+    {
+        it->setIcon(0,QIcon(":/close.svg"));
+    }
 
 }
 
