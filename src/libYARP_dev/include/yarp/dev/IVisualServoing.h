@@ -38,36 +38,36 @@ public:
     virtual ~IVisualServoing() { }
 
     /*!
-    * Set the goal points on both left and right camera image plane and start
-    * visual servoing.
-    *
-    * \param vec_px_l a collection of four 2D vectors which contains the (u,v)
-    *                 coordinates of the pixels within the left image plane.
-    * \param vec_px_r a collection of four 2D vectors which contains the (u,v)
-    *                 coordinates of the pixels within the right image plane.
-    *
-    * \note By invoking this method, the visual servoing goal will be reached in
-    *       orientation first, then in position. This is because there may not
-    *       be a feasible position solution for every possible orientation.
-    *
-    * \return true/false on success/failure.
-    */
+     * Set the goal points on both left and right camera image plane and start
+     * visual servoing.
+     *
+     * \param vec_px_l a collection of four 2D vectors which contains the (u,v)
+     *                 coordinates of the pixels within the left image plane.
+     * \param vec_px_r a collection of four 2D vectors which contains the (u,v)
+     *                 coordinates of the pixels within the right image plane.
+     *
+     * \note By invoking this method, the visual servoing goal will be reached in
+     *       orientation first, then in position. This is because there may not
+     *       be a feasible position solution for every possible orientation.
+     *
+     * \return true/false on success/failure.
+     */
     virtual bool goToGoal(const std::vector<yarp::sig::Vector>& vec_px_l, const std::vector<yarp::sig::Vector>& vec_px_r) = 0;
 
     /*!
-    * Set the goal point (3D for the position + 4D axis-angle for
-    * the orientation) and start visual servoing.
-    *
-    * \param vec_x a 3D vector which contains the (x, y, z) Cartesian
-    *              coordinates of the goal.
-    * \param vec_o a 4D vector which contains the (x, y, z) axis and theta angle
-    *              of rotation of the goal.
-    *
-    * \note By invoking this method, the visual servoing goal will be reached in
-    *       position and orientation together with two parallel tasks.
-    *
-    * \return true/false on success/failure.
-    */
+     * Set the goal point (3D for the position + 4D axis-angle for
+     * the orientation) and start visual servoing.
+     *
+     * \param vec_x a 3D vector which contains the (x, y, z) Cartesian
+     *              coordinates of the goal.
+     * \param vec_o a 4D vector which contains the (x, y, z) axis and theta angle
+     *              of rotation of the goal.
+     *
+     * \note By invoking this method, the visual servoing goal will be reached in
+     *       position and orientation together with two parallel tasks.
+     *
+     * \return true/false on success/failure.
+     */
     virtual bool goToGoal(const yarp::sig::Vector& vec_x, const yarp::sig::Vector& vec_o) = 0;
 
     /*!
