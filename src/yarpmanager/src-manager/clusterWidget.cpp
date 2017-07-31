@@ -14,6 +14,7 @@
 
 #include <yarp/os/ResourceFinder.h>
 #include <yarp/os/LogStream.h>
+#include <yarp/os/Time.h>
 
 #include <yarp/os/impl/NameClient.h>
 
@@ -57,12 +58,19 @@ ClusterWidget::ClusterWidget(QWidget *parent) :
         return;
     }
 
+    ui->checkNs->setStyleSheet("QCheckBox { color: green }");
+
     //Connections to slots
-    connect(ui->checkAllBtn,SIGNAL(clicked(bool)),this,SLOT(onCheckAll()));
+
+    //nameserver
     connect(ui->checkServerBtn,SIGNAL(clicked(bool)),this,SLOT(onCheckServer()));
     connect(ui->runServerBtn,SIGNAL(clicked(bool)),this,SLOT(onRunServer()));
-    connect(ui->runServerBtn,SIGNAL(clicked(bool)),this,SLOT(onRunServer()));
     connect(ui->stopServerBtn,SIGNAL(clicked(bool)),this,SLOT(onStopServer()));
+    //yarprun
+    connect(ui->checkAllBtn,SIGNAL(clicked(bool)),this,SLOT(onCheckAll()));
+    connect(ui->runSelBtn,SIGNAL(clicked(bool)),this,SLOT(onRunSelected()));
+    connect(ui->stopSelBtn,SIGNAL(clicked(bool)),this,SLOT(onStopSelected()));
+    connect(ui->killSelBtn,SIGNAL(clicked(bool)),this,SLOT(onKillSelected()));
 
     //Parsing config file
     if(!parseConfigFile())
@@ -115,10 +123,14 @@ void ClusterWidget::onRunServer()
         cmdRunServer = cmdRunServer + " yarpserver --portdb :memory: --subdb :memory: >/dev/null 2>&1 &";
     if(system(cmdRunServer.c_str()) != 0)
         yError()<<"ClusterWidget: faild to run the server on"<< cluster.nsNode;
+    else
+    {
+        yarp::os::Time::delay(1.0);
+        onCheckServer();
+    }
 
 
     yDebug()<<cmdRunServer;
-    onCheckServer();
 
 }
 
@@ -130,10 +142,13 @@ void ClusterWidget::onStopServer()
 
     if(system(cmdStopServer.c_str()) != 0)
         yError()<<"ClusterWidget: faild to stop the server on"<< cluster.nsNode;
-
+    else
+    {
+        yarp::os::Time::delay(1.0);
+        onCheckServer();
+    }
 
     yDebug()<<cmdStopServer;
-    onCheckServer();
     // if it fails to stop, kill it
     if(ui->checkNs->isChecked())
         onKillServer();
@@ -153,6 +168,101 @@ void ClusterWidget::onKillServer()
 
 }
 
+void ClusterWidget::onRunSelected()
+{
+    for(size_t i=0; i<cluster.nodes.size(); i++)
+    {
+        if(qobject_cast<QCheckBox*>(ui->gridLayout->itemAtPosition(i+1,3)->widget())->isChecked())
+            continue;
+        ClusNode node = cluster.nodes[i];
+        string portName = node.name;
+        if(portName.find("/") == std::string::npos)
+            portName = "/" + portName;
+        if(qobject_cast<QCheckBox*>(ui->gridLayout->itemAtPosition(i+1,5)->widget())->isChecked())
+        {
+            string cmdRunYarprun = getSSHCmd(node.user, node.name, node.ssh_options);
+            if(node.display)
+            {
+                cmdRunYarprun = cmdRunYarprun + " 'export DISPLAY=" + node.displayValue + " && ";
+
+            }
+            if(qobject_cast<QCheckBox*>(ui->gridLayout->itemAtPosition(i+1,4)->widget())->isChecked())
+            {
+                cmdRunYarprun = cmdRunYarprun + " yarprun --server "+ portName  + " --log 2>&1 2>/tmp/yarprunserver.log";
+            }
+            else
+            {
+                cmdRunYarprun = cmdRunYarprun + " yarprun --server "+ portName  + " 2>&1 2>/tmp/yarprunserver.log";
+            }
+
+            if(node.display)
+                cmdRunYarprun = cmdRunYarprun + "'";
+            if(system(cmdRunYarprun.c_str()) != 0)
+                yError()<<"ClusterWidget: faild to run yarprun on"<< node.name;
+            yDebug()<<cmdRunYarprun;
+        }
+
+    }
+    yarp::os::Time::delay(2.0);
+    onCheckAll();
+}
+
+
+void ClusterWidget::onStopSelected()
+{
+    for(size_t i=0; i<cluster.nodes.size(); i++)
+    {
+        if(!qobject_cast<QCheckBox*>(ui->gridLayout->itemAtPosition(i+1,3)->widget())->isChecked())
+            continue;
+        ClusNode node = cluster.nodes[i];
+        if(!qobject_cast<QCheckBox*>(ui->gridLayout->itemAtPosition(i+1,3)->widget())->isChecked())
+            continue;
+        string portName = node.name;
+        if(portName.find("/") == std::string::npos)
+            portName = "/" + portName;
+        if(qobject_cast<QCheckBox*>(ui->gridLayout->itemAtPosition(i+1,5)->widget())->isChecked())
+        {
+            string cmdStopYarprun = getSSHCmd(node.user, node.name, node.ssh_options);
+
+            cmdStopYarprun = cmdStopYarprun + " yarprun --exit --on "+ portName;
+
+            if(system(cmdStopYarprun.c_str()) != 0)
+                yError()<<"ClusterWidget: faild to stop yarprun on"<< node.name;
+            yDebug()<<cmdStopYarprun;
+        }
+    }
+    yarp::os::Time::delay(2.0);
+    onCheckAll();
+}
+
+void ClusterWidget::onKillSelected()
+{
+    for(size_t i=0; i<cluster.nodes.size(); i++)
+    {
+        if(!qobject_cast<QCheckBox*>(ui->gridLayout->itemAtPosition(i+1,3)->widget())->isChecked())
+            continue;
+        ClusNode node = cluster.nodes[i];
+        string portName = node.name;
+        if(portName.find("/") == std::string::npos)
+            portName = "/" + portName;
+        if(qobject_cast<QCheckBox*>(ui->gridLayout->itemAtPosition(i+1,5)->widget())->isChecked())
+        {
+            string cmdKillYarprun = getSSHCmd(node.user, node.name, node.ssh_options);
+
+            cmdKillYarprun = cmdKillYarprun + " killall -9 yarprun";
+
+            if(system(cmdKillYarprun.c_str()) != 0)
+                yError()<<"ClusterWidget: faild to kill yarprun on"<< node.name;
+            yDebug()<<cmdKillYarprun;
+        }
+
+    }
+    yarp::os::Time::delay(2.0);
+    onCheckAll();
+}
+
+
+
 void ClusterWidget::addRow(string name, string display, string user,
                            bool onOff, bool log, bool select)
 {
@@ -166,6 +276,7 @@ void ClusterWidget::addRow(string name, string display, string user,
 
     //initialize checkboxes
     qobject_cast<QCheckBox*>(ui->gridLayout->itemAtPosition(rowCount,3)->widget())->setChecked(onOff);
+    qobject_cast<QCheckBox*>(ui->gridLayout->itemAtPosition(rowCount,3)->widget())->setStyleSheet("QCheckBox { color: green }");
     qobject_cast<QCheckBox*>(ui->gridLayout->itemAtPosition(rowCount,4)->widget())->setChecked(log);
     qobject_cast<QCheckBox*>(ui->gridLayout->itemAtPosition(rowCount,5)->widget())->setChecked(select);
 
@@ -181,7 +292,7 @@ void ClusterWidget::addRow(string name, string display, string user,
 std::string ClusterWidget::getSSHCmd(std::string user, std::string host, std::string ssh_options)
 {
     string cmd;
-    cmd = "ssh";
+    cmd = "ssh -f";
     if(!ssh_options.empty())
         cmd = cmd + " " + ssh_options;
 

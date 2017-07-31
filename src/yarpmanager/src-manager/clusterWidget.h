@@ -45,6 +45,9 @@ private slots:
     void onRunServer();
     void onStopServer();
     void onKillServer();
+    void onRunSelected();
+    void onStopSelected();
+    void onKillSelected();
 public:
     explicit ClusterWidget(QWidget *parent = 0);
     ~ClusterWidget();
