@@ -5,8 +5,8 @@
  */
 
 
-#ifndef YARP_MANAGER_XMLCLUSTERLOADER
-#define YARP_MANAGER_XMLCLUSTERLOADER
+#ifndef YARP_MANAGER_XMLCLUSTERLOADER_H
+#define YARP_MANAGER_XMLCLUSTERLOADER_H
 
 #include <yarp/manager/ymm-types.h>
 #include <yarp/manager/manifestloader.h>
@@ -16,7 +16,7 @@
 namespace yarp {
 namespace manager {
 
-struct ClusNode
+struct ClusterNode
 {
     std::string name = "";
     bool display = false;
@@ -34,7 +34,7 @@ struct Cluster
     std::string nameSpace = "";
     std::string nsNode = "";
     std::string ssh_options = "";
-    std::vector<ClusNode> nodes;
+    std::vector<ClusterNode> nodes;
 };
 
 /**
@@ -43,7 +43,7 @@ struct Cluster
 class XmlClusterLoader {
 
 public:
-    XmlClusterLoader(std::string szFileName);
+    XmlClusterLoader(const std::string& szFileName);
     virtual ~XmlClusterLoader();
     bool parseXmlFile(Cluster& _cluster);
 
@@ -54,8 +54,8 @@ private:
     Cluster     cluster;
 };
 
-} // namespace yarp
 } // namespace manager
+} // namespace yarp
 
 
-#endif // __YARP_MANAGER_XMLCLUSTERLOADER_
+#endif // YARP_MANAGER_XMLCLUSTERLOADER_H

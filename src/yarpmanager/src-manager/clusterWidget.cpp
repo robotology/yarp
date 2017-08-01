@@ -18,6 +18,8 @@
 
 #include <yarp/os/impl/NameClient.h>
 
+#include <mainwindow.h>
+
 using namespace std;
 using namespace yarp::os;
 using namespace yarp::manager;
@@ -52,9 +54,11 @@ ClusterWidget::ClusterWidget(QWidget *parent) :
     //execute
     connect(ui->executeBtn, SIGNAL(clicked(bool)), this, SLOT(onExecute()));
 
+    connect(ui->nodestreeWidget, SIGNAL(itemSelectionChanged()), this, SLOT(onNodeSelectionChanged()));
+
 }
 
-void ClusterWidget::setConfigFile(string _confFile)
+void ClusterWidget::setConfigFile(const string &_confFile)
 {
     confFile = _confFile;
 }
@@ -84,14 +88,19 @@ void ClusterWidget::init()
 
     for (size_t i = 0; i<cluster.nodes.size(); i++)
     {
-        ClusNode node = cluster.nodes[i];
+        ClusterNode node = cluster.nodes[i];
         addRow(node.name, node.displayValue, node.user, node.onOff, node.log, i);
     }
 
     //check if all the nodes are up
-    onCheckAll();
+    if (ui->checkNs->isChecked())
+    {
+        onCheckAll();
+    }
 
     ui->nodestreeWidget->header()->resizeSection(0, 50);
+
+    onNodeSelectionChanged();
 
 }
 
@@ -101,16 +110,16 @@ void ClusterWidget::onCheckAll()
     {
         QTreeWidgetItem *it = ui->nodestreeWidget->topLevelItem(i);
         int itr = it->text(5).toInt();
-        ClusNode node = cluster.nodes[itr];
+        ClusterNode node = cluster.nodes[itr];
         if (checkNode(node.name))
         {
             cluster.nodes[itr].onOff=true;
-            it->setIcon(0, QIcon(":/apply.svg"));
+            it->setIcon(0, QIcon(":/computer-available22.svg"));
         }
         else
         {
             cluster.nodes[itr].onOff=false;
-            it->setIcon(0, QIcon(":/close.svg"));
+            it->setIcon(0, QIcon(":/computer-unavailable22.svg"));
         }
     }
 
@@ -134,16 +143,14 @@ void ClusterWidget::onRunServer()
     }
     if (system(cmdRunServer.c_str()) != 0)
     {
-        yError()<<"ClusterWidget: faild to run the server on"<< cluster.nsNode;
+        std::string err = "ClusterWidget: failed to run the server on" + cluster.nsNode;
+        logError(QString(err.c_str()));
     }
     else
     {
         yarp::os::Time::delay(1.0);
         onCheckServer();
     }
-
-
-    yDebug()<<cmdRunServer;
 
 }
 
@@ -155,7 +162,8 @@ void ClusterWidget::onStopServer()
 
     if (system(cmdStopServer.c_str()) != 0)
     {
-        yError()<<"ClusterWidget: faild to stop the server on"<< cluster.nsNode;
+        std::string err = "ClusterWidget: failed to stop the server on" + cluster.nsNode;
+        logError(QString(err.c_str()));
     }
     else
     {
@@ -163,7 +171,6 @@ void ClusterWidget::onStopServer()
         onCheckServer();
     }
 
-    yDebug()<<cmdStopServer;
     // if it fails to stop, kill it
     if (ui->checkNs->isChecked())
     {
@@ -179,11 +186,10 @@ void ClusterWidget::onKillServer()
 
     if (system(cmdKillServer.c_str()) != 0)
     {
-        yError()<<"ClusterWidget: faild to stop the server on"<< cluster.nsNode;
+        std::string err = "ClusterWidget: failed to kill the server on" + cluster.nsNode;
+        logError(QString(err.c_str()));
     }
 
-
-    yDebug()<<cmdKillServer;
 
 }
 
@@ -193,7 +199,7 @@ void ClusterWidget::onRunSelected()
     foreach (QTreeWidgetItem *it, selectedItems)
     {
         int itr = it->text(5).toInt();
-        ClusNode node = cluster.nodes[itr];
+        ClusterNode node = cluster.nodes[itr];
         string portName = node.name;
 
         if (portName.find("/") == std::string::npos)
@@ -227,9 +233,9 @@ void ClusterWidget::onRunSelected()
         }
         if (system(cmdRunYarprun.c_str()) != 0)
         {
-            yError()<<"ClusterWidget: faild to run yarprun on"<< node.name;
+            std::string err = "ClusterWidget: failed to run yarprun on" + node.name;
+            logError(QString(err.c_str()));
         }
-        yDebug()<<cmdRunYarprun;
     }
 
     yarp::os::Time::delay(2.0);
@@ -243,7 +249,7 @@ void ClusterWidget::onStopSelected()
     foreach (QTreeWidgetItem *it, selectedItems)
     {
         int itr = it->text(5).toInt();
-        ClusNode node = cluster.nodes[itr];
+        ClusterNode node = cluster.nodes[itr];
         if (!node.onOff)
         {
             continue;
@@ -260,9 +266,9 @@ void ClusterWidget::onStopSelected()
 
         if (system(cmdStopYarprun.c_str()) != 0)
         {
-            yError()<<"ClusterWidget: faild to stop yarprun on"<< node.name;
+            std::string err = "ClusterWidget: failed to stop yarprun on" + node.name;
+            logError(QString(err.c_str()));
         }
-        yDebug()<<cmdStopYarprun;
     }
 
     yarp::os::Time::delay(2.0);
@@ -275,7 +281,7 @@ void ClusterWidget::onKillSelected()
     foreach (QTreeWidgetItem *it, selectedItems)
     {
         int itr = it->text(5).toInt();
-        ClusNode node = cluster.nodes[itr];
+        ClusterNode node = cluster.nodes[itr];
         if (!node.onOff)
         {
             continue;
@@ -287,9 +293,9 @@ void ClusterWidget::onKillSelected()
 
         if (system(cmdKillYarprun.c_str()) != 0)
         {
-            yError()<<"ClusterWidget: faild to kill yarprun on"<< node.name;
+            std::string err = "ClusterWidget: failed to kill yarprun on" + node.name;
+            logError(QString(err.c_str()));
         }
-        yDebug()<<cmdKillYarprun;
     }
     yarp::os::Time::delay(2.0);
     onCheckAll();
@@ -306,7 +312,7 @@ void ClusterWidget::onExecute()
     foreach (QTreeWidgetItem *it, selectedItems)
     {
         int itr = it->text(5).toInt();
-        ClusNode node = cluster.nodes[itr];
+        ClusterNode node = cluster.nodes[itr];
 
         string cmdExecute = getSSHCmd(node.user, node.name, node.ssh_options);
 
@@ -314,16 +320,34 @@ void ClusterWidget::onExecute()
 
         if (system(cmdExecute.c_str()) != 0)
         {
-            yError()<<"ClusterWidget: faild to run"<<ui->lineEditExecute->text().toStdString()<<"on"<<node.name;
+            std::string err = "ClusterWidget: failed to run "+ ui->lineEditExecute->text().toStdString() + " on " + node.name;
+            logError(QString(err.c_str()));
         }
-        yDebug()<<cmdExecute;
+    }
+}
+
+void ClusterWidget::onNodeSelectionChanged()
+{
+    if(ui->nodestreeWidget->selectedItems().isEmpty())
+    {
+        ui->runSelBtn->setDisabled(true);
+        ui->stopSelBtn->setDisabled(true);
+        ui->killSelBtn->setDisabled(true);
+        ui->executeBtn->setDisabled(true);
+    }
+    else
+    {
+        ui->runSelBtn->setDisabled(false);
+        ui->stopSelBtn->setDisabled(false);
+        ui->killSelBtn->setDisabled(false);
+        ui->executeBtn->setDisabled(false);
     }
 }
 
 
 
-void ClusterWidget::addRow(string name, string display, string user,
-                           bool onOff, bool log, int id)
+void ClusterWidget::addRow(const std::string& name,const std::string& display,
+                           const std::string& user, bool onOff, bool log, int id)
 {
     QStringList stringList;
     stringList <<""<< QString(name.c_str()) << QString(display.c_str()) << QString(user.c_str())<< "" <<QString(std::to_string(id).c_str());
@@ -337,16 +361,16 @@ void ClusterWidget::addRow(string name, string display, string user,
     //initialize icon
     if (onOff)
     {
-        it->setIcon(0, QIcon(":/apply.svg"));
+        it->setIcon(0, QIcon(":/computer-available22.svg"));
     }
     else
     {
-        it->setIcon(0, QIcon(":/close.svg"));
+        it->setIcon(0, QIcon(":/computer-unavailable22.svg"));
     }
 
 }
 
-std::string ClusterWidget::getSSHCmd(std::string user, std::string host, std::string ssh_options)
+std::string ClusterWidget::getSSHCmd(const string &user, const string &host, const string &ssh_options)
 {
     string cmd;
     cmd = "ssh -f";
@@ -409,16 +433,17 @@ bool ClusterWidget::checkNameserver()
     }
 }
 
-bool ClusterWidget::checkNode(std::string name)
+bool ClusterWidget::checkNode(const string &name)
 {
-    if (name.find("/") == std::string::npos)
+    string portname = name;
+    if (portname.find("/") == std::string::npos)
     {
-        name = "/" + name;
+        portname = "/" + portname;
     }
 
     yarp::os::Bottle cmd, reply;
     cmd.addString("get");
-    cmd.addString(name);
+    cmd.addString(portname);
     cmd.addString("yarprun");
     bool ret = yarp::os::impl::NameClient::getNameClient().send(cmd, reply);
     if (!ret)

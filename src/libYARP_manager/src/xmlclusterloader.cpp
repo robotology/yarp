@@ -10,16 +10,12 @@
 #include <yarp/manager/ymm-dir.h>
 #include <tinyxml.h>
 #include <yarp/os/Value.h>
-#ifdef WITH_GEOMETRY
-#include <yarp/os/Property.h> // for parsing geometry information
-#endif
 
 #include <algorithm>
 #include <cctype>
 #include <string>
 #include <fstream>
 #include <yarp/os/Network.h>
-#include <yarp/manager/impl/textparser.h>
 
 
 
@@ -29,7 +25,7 @@ using namespace yarp::manager;
 /**
  * load only one application indicated by its xml file name
  */
-XmlClusterLoader::XmlClusterLoader(std::string szFileName):confFile(szFileName)
+XmlClusterLoader::XmlClusterLoader(const string &szFileName):confFile(szFileName)
 {
 }
 
@@ -109,7 +105,7 @@ bool XmlClusterLoader::parseXmlFile(Cluster &_cluster)
     for (TiXmlElement* node = root->FirstChildElement("node");
         node != NULL; node = node->NextSiblingElement("node"))
     {
-        ClusNode c_node;
+        ClusterNode c_node;
         if (node->GetText())
         {
            c_node.name = node->GetText();
