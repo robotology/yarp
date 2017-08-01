@@ -153,8 +153,7 @@ MainWindow::MainWindow(QWidget *parent) :
 #ifdef WIN32
     ui->tabWidgetLeft->tabBar()->hide();
 #else
-    yarp::os::ResourceFinder rf;
-    rf.setDefaultContext("iCubCluster");
+    yarp::os::ResourceFinder& rf = yarp::os::ResourceFinder::getResourceFinderSingleton();
 
     std::string confFile = rf.findFileByName("cluster-config.xml");
     if (!confFile.empty())
