@@ -49,6 +49,8 @@ ClusterWidget::ClusterWidget(QWidget *parent) :
     connect(ui->runSelBtn, SIGNAL(clicked(bool)), this, SLOT(onRunSelected()));
     connect(ui->stopSelBtn, SIGNAL(clicked(bool)), this, SLOT(onStopSelected()));
     connect(ui->killSelBtn, SIGNAL(clicked(bool)), this, SLOT(onKillSelected()));
+    //execute
+    connect(ui->executeBtn, SIGNAL(clicked(bool)), this, SLOT(onExecute()));
 
 }
 
@@ -291,6 +293,31 @@ void ClusterWidget::onKillSelected()
     }
     yarp::os::Time::delay(2.0);
     onCheckAll();
+}
+
+void ClusterWidget::onExecute()
+{
+    if (ui->lineEditExecute->text().trimmed().size() == 0)
+    {
+        return;
+    }
+
+    QList<QTreeWidgetItem*> selectedItems = ui->nodestreeWidget->selectedItems();
+    foreach (QTreeWidgetItem *it, selectedItems)
+    {
+        int itr = it->text(5).toInt();
+        ClusNode node = cluster.nodes[itr];
+
+        string cmdExecute = getSSHCmd(node.user, node.name, node.ssh_options);
+
+        cmdExecute = cmdExecute + " "+ ui->lineEditExecute->text().toStdString();
+
+        if (system(cmdExecute.c_str()) != 0)
+        {
+            yError()<<"ClusterWidget: faild to run"<<ui->lineEditExecute->text().toStdString()<<"on"<<node.name;
+        }
+        yDebug()<<cmdExecute;
+    }
 }
 
 

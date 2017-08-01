@@ -28,6 +28,7 @@ private slots:
     void onRunSelected();
     void onStopSelected();
     void onKillSelected();
+    void onExecute();
 public:
     explicit ClusterWidget(QWidget *parent = 0);
     ~ClusterWidget();
