@@ -68,7 +68,7 @@ class yarp::dev::Map2DServer : public yarp::dev::DeviceDriver, public yarp::os::
 {
 private:
     std::map<std::string, yarp::dev::MapGrid2D>     m_maps_storage;
-    std::map<std::string, yarp::dev::Map2DLocation> m_locations;
+    std::map<std::string, yarp::dev::Map2DLocation> m_locations_storage;
 
 public:
     Map2DServer();

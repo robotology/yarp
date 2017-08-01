@@ -182,7 +182,7 @@ void Map2DServer::parse_vocab_command(yarp::os::Bottle& in, yarp::os::Bottle& ou
             Bottle& l = out.addList();
 
             std::map<std::string, Map2DLocation>::iterator it;
-            for (it = m_locations.begin(); it != m_locations.end(); ++it)
+            for (it = m_locations_storage.begin(); it != m_locations_storage.end(); ++it)
             {
                 l.addString(it->first);
             }
@@ -191,7 +191,7 @@ void Map2DServer::parse_vocab_command(yarp::os::Bottle& in, yarp::os::Bottle& ou
         }
         else if (cmd == VOCAB_NAV_CLEAR)
         {
-            m_locations.clear();
+            m_locations_storage.clear();
             yInfo() << "All locations deleted ";
             out.addVocab(VOCAB_OK);
             ret = true;
@@ -201,11 +201,11 @@ void Map2DServer::parse_vocab_command(yarp::os::Bottle& in, yarp::os::Bottle& ou
             std::string name = in.get(2).asString();
 
             std::map<std::string, Map2DLocation>::iterator it;
-            it = m_locations.find(name);
-            if (it != m_locations.end())
+            it = m_locations_storage.find(name);
+            if (it != m_locations_storage.end())
             {
                 yInfo() << "Deleted location " << name;
-                m_locations.erase(it);
+                m_locations_storage.erase(it);
                 out.addVocab(VOCAB_OK);
             }
             else
@@ -221,8 +221,8 @@ void Map2DServer::parse_vocab_command(yarp::os::Bottle& in, yarp::os::Bottle& ou
             std::string name = in.get(2).asString();
 
             std::map<std::string, Map2DLocation>::iterator it;
-            it = m_locations.find(name);
-            if (it != m_locations.end())
+            it = m_locations_storage.find(name);
+            if (it != m_locations_storage.end())
             {
                 out.addVocab(VOCAB_OK);
                 Map2DLocation loc = it->second;
@@ -250,7 +250,7 @@ void Map2DServer::parse_vocab_command(yarp::os::Bottle& in, yarp::os::Bottle& ou
             location.y      = in.get(5).asDouble();
             location.theta  = in.get(6).asDouble();
 
-            m_locations.insert(std::pair<std::string, Map2DLocation>(name, location));
+            m_locations_storage.insert(std::pair<std::string, Map2DLocation>(name, location));
             yInfo() << "Added location " << name << "at " << location.toString();
             out.addVocab(VOCAB_OK);
             ret = true;
@@ -287,20 +287,32 @@ void Map2DServer::parse_string_command(yarp::os::Bottle& in, yarp::os::Bottle& o
     else if(in.get(0).asString() == "list_locations")
     {
         std::map<std::string, Map2DLocation>::iterator it;
-        for (it = m_locations.begin(); it != m_locations.end(); ++it)
+        for (it = m_locations_storage.begin(); it != m_locations_storage.end(); ++it)
         {
             out.addString(it->first);
         }
     }
+    else if(in.get(0).asString() == "clear_all_locations")
+    {
+        m_locations_storage.clear();
+        out.addString("all locations cleared");
+    }
+    else if(in.get(0).asString() == "clear_all_maps")
+    {
+        m_maps_storage.clear();
+        out.addString("all maps cleared");
+    }
     else if(in.get(0).asString() == "help")
     {
+        out.addVocab(Vocab::encode("many"));
         out.addString("'save_locations <full path filename>' to save locations on a file");
         out.addString("'load_locations <full path filename>' to load locations from a file");
         out.addString("'list_locations' to view a list of all stored locations");
+        out.addString("'clear_all_locations' to clear all stored locations");
         out.addString("'save_maps <full path>' to save maps on in a folder");
         out.addString("'load_maps <full path>' to load maps from a folder");
         out.addString("'list_maps' to view a list of all stored maps");
-
+        out.addString("'clear_all_maps' to clear all stored maps");
     }
     else
     {
@@ -560,7 +572,7 @@ bool Map2DServer::load_locations(std::string locations_file)
         location.x       = std::atof(xpos.c_str());
         location.y       = std::atof(ypos.c_str());
         location.theta   = std::atof(theta.c_str());
-        m_locations[name] = location;
+        m_locations_storage[name] = location;
     }
 
     file.close();
@@ -584,7 +596,7 @@ bool Map2DServer::save_locations(std::string locations_file)
     s = " ";
 
     std::map<std::string, Map2DLocation>::iterator it;
-    for (it = m_locations.begin(); it != m_locations.end(); ++it)
+    for (it = m_locations_storage.begin(); it != m_locations_storage.end(); ++it)
     {
         l = it->second;
         file << it->first + s + l.map_id + s << l.x << s << l.y << s << l.theta << "\n";
@@ -622,7 +634,7 @@ bool Map2DServer::updateVizMarkers()
 
     std::map<std::string, Map2DLocation>::iterator it;
     int count = 1;
-    for (it = m_locations.begin(); it != m_locations.end(); ++it, ++count)
+    for (it = m_locations_storage.begin(); it != m_locations_storage.end(); ++it, ++count)
     {
         rpy[0] = 0; //x
         rpy[1] = 0; //y
