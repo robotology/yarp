@@ -901,8 +901,8 @@ bool MapGrid2D::setSize_in_meters(double x, double y)
         yError() << "MapGrid2D::setSize() invalid map resolution.";
         return false;
     }
-    size_t w = (size_t)(x*m_resolution);
-    size_t h = (size_t)(y*m_resolution);
+    size_t w = (size_t)(x/m_resolution);
+    size_t h = (size_t)(y/m_resolution);
     setSize_in_cells(w,h);
     return true;
 }
