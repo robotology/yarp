@@ -20,6 +20,7 @@ if(CREATE_YARPMANAGER)
   # Manager files
   set(yarpmanager_manager_SRCS src-manager/aboutdlg.cpp
                                src-manager/applicationviewwidget.cpp
+                               src-manager/clusterWidget.cpp
                                src-manager/customtreewidget.cpp
                                src-manager/entitiestreewidget.cpp
                                src-manager/genericinfodlg.cpp
@@ -36,6 +37,7 @@ if(CREATE_YARPMANAGER)
 
   set(yarpmanager_manager_HDRS src-manager/aboutdlg.h
                                src-manager/applicationviewwidget.h
+                               src-manager/clusterWidget.h
                                src-manager/customtreewidget.h
                                src-manager/entitiestreewidget.h
                                src-manager/genericinfodlg.h
@@ -52,6 +54,7 @@ if(CREATE_YARPMANAGER)
 
   set(yarpmanager_manager_UI_FILES src-manager/aboutdlg.ui
                                    src-manager/applicationviewwidget.ui
+                                   src-manager/clusterWidget.ui
                                    src-manager/genericinfodlg.ui
                                    src-manager/mainwindow.ui
                                    src-manager/moduleviewwidget.ui

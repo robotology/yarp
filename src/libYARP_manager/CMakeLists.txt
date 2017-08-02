@@ -34,6 +34,7 @@ if(CREATE_LIB_MANAGER)
                         include/yarp/manager/singleapploader.h
                         include/yarp/manager/utility.h
                         include/yarp/manager/xmlapploader.h
+                        include/yarp/manager/xmlclusterloader.h
                         include/yarp/manager/xmlappsaver.h
                         include/yarp/manager/xmlmodloader.h
                         include/yarp/manager/xmlresloader.h
@@ -66,6 +67,7 @@ if(CREATE_LIB_MANAGER)
                         src/singleapploader.cpp
                         src/utility.cpp
                         src/xmlapploader.cpp
+                        src/xmlclusterloader.cpp
                         src/xmlappsaver.cpp
                         src/xmlmodloader.cpp
                         src/xmlresloader.cpp

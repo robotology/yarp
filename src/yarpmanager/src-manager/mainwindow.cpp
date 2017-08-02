@@ -12,6 +12,7 @@
 #include "ui_mainwindow.h"
 
 #include <yarp/os/Log.h>
+#include <yarp/os/ResourceFinder.h>
 #include <yarp/manager/ymm-dir.h>
 #include <yarp/manager/xmlapploader.h>
 #include <yarp/manager/xmltemploader.h>
@@ -149,6 +150,23 @@ MainWindow::MainWindow(QWidget *parent) :
     ui->actionKill->setEnabled(false);
 
     ui->action_Manager_Window->setChecked(true);
+#ifdef WIN32
+    ui->tabWidgetLeft->tabBar()->hide();
+#else
+    yarp::os::ResourceFinder& rf = yarp::os::ResourceFinder::getResourceFinderSingleton();
+
+    std::string confFile = rf.findFileByName("cluster-config.xml");
+    if (!confFile.empty())
+    {
+        ui->clusterWidget->setConfigFile(confFile);
+        ui->clusterWidget->init();
+        connect(ui->clusterWidget, SIGNAL(logError(QString)), this, SLOT(onLogError(QString)));
+    }
+    else
+    {
+        ui->tabWidgetLeft->tabBar()->hide();
+    }
+#endif
 
 }
 
