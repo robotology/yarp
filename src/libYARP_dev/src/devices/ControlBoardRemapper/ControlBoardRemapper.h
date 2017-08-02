@@ -74,6 +74,8 @@ class ControlBoardRemapper : public yarp::dev::DeviceDriver,
                              public yarp::dev::IPositionControl2,
                              public yarp::dev::IPositionDirect,
                              public yarp::dev::IVelocityControl2,
+                             public yarp::dev::IPWMControl,
+                             public yarp::dev::ICurrentControl,
                              public yarp::dev::IEncodersTimed,
                              public yarp::dev::IMotor,
                              public yarp::dev::IMotorEncoders,
@@ -379,10 +381,6 @@ public:
 
     virtual bool getAmpStatus(int j, int *v) override;
 
-    virtual bool getCurrents(double *vals) override;
-
-    virtual bool getCurrent(int j, double *val) override;
-
     virtual bool setMaxCurrent(int j, double v) override;
 
     virtual bool getMaxCurrent(int j, double *v) override;
@@ -563,6 +561,37 @@ public:
 
     virtual bool setInteractionModes(yarp::dev::InteractionModeEnum *modes) override;
 
+    // IPWMControl
+    virtual bool setRefDutyCycle(int m, double ref) override;
+
+    virtual bool setRefDutyCycles(const double *refs) override;
+
+    virtual bool getRefDutyCycle(int m, double *ref) override;
+
+    virtual bool getRefDutyCycles(double *refs) override;
+
+    virtual bool getDutyCycle(int m, double *val) override;
+
+    virtual bool getDutyCycles(double *vals) override;
+
+    // ICurrentControl
+    virtual bool getCurrent(int m, double *curr) override;
+
+    virtual bool getCurrents(double *currs) override;
+
+    virtual bool getCurrentRange(int m, double *min, double *max) override;
+
+    virtual bool getCurrentRanges(double *min, double *max) override;
+
+    virtual bool setRefCurrents(const double *currs) override;
+
+    virtual bool setRefCurrent(int m, double curr) override;
+
+    virtual bool setRefCurrents(const int n_motor, const int *motors, const double *currs) override;
+
+    virtual bool getRefCurrents(double *currs) override;
+
+    virtual bool getRefCurrent(int m, double *curr) override;
 };
 
 }

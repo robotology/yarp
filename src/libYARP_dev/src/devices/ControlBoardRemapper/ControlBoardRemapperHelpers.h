@@ -71,6 +71,8 @@ public:
     yarp::dev::IInteractionMode      *iInteract;
     yarp::dev::IMotor                *imotor;
     yarp::dev::IRemoteVariables      *iVar;
+    yarp::dev::IPWMControl           *iPwm;
+    yarp::dev::ICurrentControl       *iCurr;
 
     RemappedSubControlBoard();
 
