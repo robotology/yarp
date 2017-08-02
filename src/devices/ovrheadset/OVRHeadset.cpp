@@ -652,7 +652,7 @@ bool yarp::dev::OVRHeadset::threadInit()
     // Initialize the GLFW system for creating and positioning windows
     // GLFW must be initialized after LibOVR
     // see http://www.glfw.org/docs/latest/rift.html
-    if( !glfwInit() ) {
+    if ( !glfwInit() ) {
         yError() << "Failed to initialize GLFW";
         this->close();
         return false;
@@ -672,7 +672,7 @@ bool yarp::dev::OVRHeadset::threadInit()
     // GLEW must be initialized after creating the window
     glewExperimental = GL_TRUE;
     GLenum err = glewInit();
-    if(err != GLEW_OK) {
+    if (err != GLEW_OK) {
         yError() << "glewInit failed, aborting.";
         this->close();
         return false;
@@ -940,7 +940,7 @@ void yarp::dev::OVRHeadset::run()
     yarp::os::Stamp predicted_stamp(distortionFrameIndex, predicted_ts.HeadPose.TimeInSeconds);
 
     //send hands frames
-    if(relative)
+    if (relative)
     {
         yarp::sig::Matrix T_Conv(4, 4), T_Head(4, 4), T_LHand(4, 4), T_RHand(4, 4), T_robotHead(4, 4);
         yarp::sig::Vector rpyHead, rpyRobot;
@@ -1005,7 +1005,7 @@ void yarp::dev::OVRHeadset::run()
         // Do not warn more than once every 5 seconds
         static double lastOrientWarnTime = 0;
         double now = yarp::os::Time::now();
-        if(now >= lastOrientWarnTime + 5) {
+        if (now >= lastOrientWarnTime + 5) {
             yDebug() << "Orientation not tracked";
             lastOrientWarnTime = now;
         }
@@ -1021,7 +1021,7 @@ void yarp::dev::OVRHeadset::run()
         // Do not warn more than once every 5 seconds
         static double lastPosWarnTime = 0;
         double now = yarp::os::Time::now();
-        if(now >= lastPosWarnTime + 5) {
+        if (now >= lastPosWarnTime + 5) {
             yDebug() << "Position not tracked";
             lastPosWarnTime = now;
         }
@@ -1050,7 +1050,7 @@ void yarp::dev::OVRHeadset::run()
         // Do not warn more than once every 5 seconds
         static double lastPredOrientWarnTime = 0;
         double now = yarp::os::Time::now();
-        if(now >= lastPredOrientWarnTime + 5) {
+        if (now >= lastPredOrientWarnTime + 5) {
             yDebug() << "Predicted orientation not tracked";
             lastPredOrientWarnTime = now;
         }
@@ -1067,14 +1067,14 @@ void yarp::dev::OVRHeadset::run()
         // Do not warn more than once every 5 seconds
         static double lastPredPosWarnTime = 0;
         double now = yarp::os::Time::now();
-        if(now >= lastPredPosWarnTime + 5) {
+        if (now >= lastPredPosWarnTime + 5) {
             yDebug() << "Position not tracked";
             lastPredPosWarnTime = now;
         }
     }
 
 
-    if(displayPorts[0]->eyeRenderTexture && displayPorts[1]->eyeRenderTexture) {
+    if (displayPorts[0]->eyeRenderTexture && displayPorts[1]->eyeRenderTexture) {
         // Do distortion rendering, Present and flush/sync
 
         // Update the textures
@@ -1195,7 +1195,7 @@ void yarp::dev::OVRHeadset::run()
         // Do not warn more than once every 5 seconds
         static double lastImgWarnTime = 0;
         double now = yarp::os::Time::now();
-        if(now >= lastImgWarnTime + 5) {
+        if (now >= lastImgWarnTime + 5) {
             yDebug() << "No image received";
             lastImgWarnTime = now;
         }

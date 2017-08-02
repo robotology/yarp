@@ -78,7 +78,8 @@ TextureBuffer::TextureBuffer() :
     imageWidth(0),
     imageHeight(0),
     initialized(false),
-    singleThread(true)
+    singleThread(true),
+    width(0)
 {
 }
 
@@ -304,7 +305,6 @@ void TextureBuffer::deleteTextureAndBuffers()
         ptr = nullptr;
     }
 
-    
     if(pboIds)
     {
         glDeleteBuffers(textureSwapChainSize, pboIds);
