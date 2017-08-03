@@ -16,6 +16,7 @@
 #include <yarp/dev/IJoypadController.h>
 #include <yarp/dev/IFrameTransform.h>
 #include <yarp/dev/PolyDriver.h>
+#include <yarp/sig/Image.h>
 
 #include <GL/glew.h>
 #include <OVR_CAPI.h>
@@ -31,6 +32,7 @@ struct GLFWwindow;
 class InputCallback;
 class TextureStatic;
 class TextureBattery;
+struct guiParam;
 
 namespace yarp {
 namespace dev {
@@ -74,6 +76,9 @@ public:
     virtual bool getTouch(unsigned int touch_id, yarp::sig::Vector& value) YARP_OVERRIDE;
 
 private:
+
+    typedef yarp::os::BufferedPort<yarp::sig::FlexImage> FlexImagePort;
+
     bool createWindow(int w, int h);
     void onKey(int key, int scancode, int action, int mods);
     void reconfigureRendering();
@@ -103,11 +108,17 @@ private:
     yarp::os::BufferedPort<yarp::os::Bottle>* predictedLinearVelocityPort;
     yarp::os::BufferedPort<yarp::os::Bottle>* predictedAngularAccelerationPort;
     yarp::os::BufferedPort<yarp::os::Bottle>* predictedLinearAccelerationPort;
+    FlexImagePort*                            gui_ports;
+    
+    std::vector<guiParam> huds;
     InputCallback* displayPorts[2];
     ovrEyeRenderDesc EyeRenderDesc[2];
     TextureStatic* textureLogo;
+    ovrLayerQuad logoLayer;
     TextureStatic* textureCrosshairs;
+    ovrLayerQuad crosshairsLayer;
     TextureBattery* textureBattery;
+    ovrLayerQuad batteryLayer;
     ovrMirrorTexture mirrorTexture;
     GLuint mirrorFBO;
     ovrSession session;
@@ -115,6 +126,8 @@ private:
     GLFWwindow* window;
     ovrTrackingState ts;
     ovrPoseStatef headpose;
+    unsigned int guiCount;
+    bool         enableGui;
 
     yarp::os::Mutex                  inputStateMutex;
     ovrInputState                    inputState;
