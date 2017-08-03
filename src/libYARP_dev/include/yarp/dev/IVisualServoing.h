@@ -214,14 +214,15 @@ public:
     virtual bool setMaxTranslationVelocity(const float max_x_dot) = 0;
 
     /*!
-     * Set the orientation gain of the visual servoing control algorithm.
+     * Set the tolerance, in pixels, at which the translation control law
+     * swithces its gain value.
      *
      * \return true/false on success/failure.
      *
-     * \note Warning: higher values of the gain corresponds to higher
-             translatinal velocities.
+     * \note Default value: K_x_tol = 30.0 [pixel].
      */
-    virtual bool setOrientationGain(const float k_o) = 0;
+    virtual bool setTranslationGainSwitchTolerance(const double K_x_tol = 30.0) = 0;
+
 
     /*!
      * Set the maximum angular velocity of the axis-angle velocity vector of the
@@ -232,6 +233,16 @@ public:
      * \return true/false on success/failure.
      */
     virtual bool setMaxOrientationVelocity(const float max_o_dot) = 0;
+
+    /**
+     * Set the tolerance, in pixels, at which the orientation control law
+     * swithces its gain value.
+     *
+     * \return true/false on success/failure.
+     *
+     * \note Default value: K_o_tol = 30.0 [pixel].
+     */
+    virtual bool setOrientationGainSwitchTolerance(const double K_o_tol = 30.0) = 0;
 
     /*!
      * Helper function: extract four Cartesian points lying on the plane defined
