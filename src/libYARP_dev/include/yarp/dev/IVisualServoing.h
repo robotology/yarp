@@ -276,7 +276,7 @@ public:
      * \return a collection of four Cartesian points (position only) extracted
      *         by the plane defined by x and o.
      */
-    virtual std::vector<yarp::sig::Vector> get3DPositionGoalFrom3DPose(const yarp::sig::Vector& x, const yarp::sig::Vector& o) = 0;
+    virtual std::vector<yarp::sig::Vector> get3DGoalPositionsFrom3DPose(const yarp::sig::Vector& x, const yarp::sig::Vector& o) = 0;
 
     /*!
      * Helper function: extract four 2D pixel points lying on the plane defined
@@ -291,7 +291,7 @@ public:
      * \return a collection of three Cartesian points (position only) extracted
      *         by the plane defined by x and o.
      */
-    virtual std::vector<yarp::sig::Vector> getPixelPositionGoalFrom3DPose(const yarp::sig::Vector& x, const yarp::sig::Vector& o, const CamSel& cam) = 0;
+    virtual std::vector<yarp::sig::Vector> getGoalPixelsFrom3DPose(const yarp::sig::Vector& x, const yarp::sig::Vector& o, const CamSel& cam) = 0;
 
 
     /* TO BE DEPRECATED */
