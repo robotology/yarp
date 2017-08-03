@@ -283,6 +283,13 @@ bool MapGrid2D::loadROSParams(string ros_yaml_filename, string& pgm_occ_filename
         orig_y = b->get(1).asDouble();
         orig_t = b->get(2).asDouble();
     }
+
+    if (bbb.check("occupied_thresh:"))
+    {m_occupied_thresh = bbb.find("occupied_thresh:").asDouble();}
+
+    if (bbb.check("free_thresh:"))
+    {m_free_thresh = bbb.find("free_thresh:").asDouble();}
+
     return true;
 }
 
@@ -462,13 +469,13 @@ bool MapGrid2D::loadMapYarpOnly(string yarp_filename)
             else if (pix_flg == MAP_CELL_KEEP_OUT) m_map_occupancy.safePixel(x, y) = 0;//@@@SET HERE
             else if (pix_flg == MAP_CELL_TEMPORARY_OBSTACLE) m_map_occupancy.safePixel(x, y) = 0;//@@@SET HERE
             else if (pix_flg == MAP_CELL_ENLARGED_OBSTACLE) m_map_occupancy.safePixel(x, y) = 0;//@@@SET HERE
-            else if (pix_flg == MAP_CELL_WALL) m_map_occupancy.safePixel(x, y) = 0;//@@@SET HERE
-            else if (pix_flg == MAP_CELL_UNKNOWN) m_map_occupancy.safePixel(x, y) = 0;//@@@SET HERE
-            else m_map_occupancy.safePixel(x, y) = 0;//@@@SET HERE
+            else if (pix_flg == MAP_CELL_WALL) m_map_occupancy.safePixel(x, y) = 100;//@@@SET HERE
+            else if (pix_flg == MAP_CELL_UNKNOWN) m_map_occupancy.safePixel(x, y) = 255;//@@@SET HERE
+            else m_map_occupancy.safePixel(x, y) = 255;//@@@SET HERE
         }
     }
-    m_occupied_thresh = 0; //@@@SET HERE
-    m_free_thresh = 0;//@@@SET HERE
+    m_occupied_thresh = 0.80; //@@@SET HERE
+    m_free_thresh = 0.20;//@@@SET HERE
     return true;
 }
 
@@ -661,38 +668,59 @@ bool  MapGrid2D::crop (int left, int top, int right, int bottom)
     return true;
 }
 
-bool  MapGrid2D::saveToFile(std::string yaml_filename) const
+bool  MapGrid2D::saveToFile(std::string map_file_with_path) const
 {
-    std::string pgm_occ_filename;
-    std::string ppm_flg_filename;
-    std::ofstream file;
-    file.open(yaml_filename.c_str());
-    if (!file.is_open())
+    std::string yarp_filename = this->getMapName() + "_yarpflags.ppm";
+    std::string yaml_filename = this->getMapName() + "_grid.yaml";
+    std::string pgm_occ_filename = this->getMapName() + "_grid.pgm";
+
+    std::ofstream map_file;
+    map_file.open(map_file_with_path.c_str());
+    if (!map_file.is_open())
     {
         return false;
     }
-    file << "image: " << pgm_occ_filename << endl;
-    file << "resolution: " << m_resolution << endl;
-    file << "origin: [ " << m_origin.x << " " << m_origin.y << "" << m_origin.theta << " ]"<< endl;
-    file << "name:" << m_map_name << endl;
-    file.close();
+    map_file << "MapName: "<< this->getMapName() << endl;
+    map_file << "YarpMapData: "<< yarp_filename << endl;
+    map_file << "RosMapData: "<< yaml_filename << endl;
+    map_file.close();
+
+    std::ofstream yaml_file;
+    yaml_file.open(yaml_filename.c_str());
+    if (!yaml_file.is_open())
+    {
+        return false;
+    }
+    yaml_file << "image: " << pgm_occ_filename << endl;
+    yaml_file << "resolution: " << m_resolution << endl;
+    yaml_file << "origin: [ " << m_origin.x << " " << m_origin.y << " " << m_origin.theta << " ]"<< endl;
+    yaml_file << "negate: 0" << endl;
+    yaml_file << "occupied_thresh: " << m_occupied_thresh << endl;
+    yaml_file << "free_thresh: " << m_free_thresh << endl;
+
+    yaml_file.close();
 
     yarp::sig::ImageOf<yarp::sig::PixelRgb> img_flg;
-    yarp::sig::ImageOf<yarp::sig::PixelRgb> img_occ;
+    yarp::sig::ImageOf<yarp::sig::PixelMono> img_occ;
 
     img_flg.resize(m_width, m_height);
+    img_occ.resize(m_width, m_height);
     for (size_t y = 0; y < m_height; y++)
     {
         for (size_t x = 0; x < m_width; x++)
         {
             yarp::sig::PixelMono pix = m_map_flags.safePixel(x, y);
-            yarp::sig::PixelRgb pix_occ;
+            yarp::sig::PixelMono pix_occ = m_map_occupancy.safePixel(x,y);
+            yarp::sig::PixelMono pix_occ_out;
+            if    (pix_occ == 255) pix_occ_out = 205;
+            else  pix_occ_out = 254-(pix_occ*254/100);
             img_flg.safePixel(x, y) =  CellDataToPixel(pix);
-            img_occ.safePixel(x, y) = pix_occ;
+            img_occ.safePixel(x, y) = pix_occ_out;
         }
     }
 
-    ppm_flg_filename = (pgm_occ_filename.substr(0, pgm_occ_filename.size() - 4)) + "_yarpflags" + ".ppm";
+    //std::string ppm_flg_filename = (pgm_occ_filename.substr(0, pgm_occ_filename.size() - 4)) + "_yarpflags" + ".ppm";
+    std::string ppm_flg_filename = yarp_filename;
     bool ret = true;
     ret &= yarp::sig::file::write(img_occ, pgm_occ_filename.c_str());
     ret &= yarp::sig::file::write(img_flg, ppm_flg_filename.c_str());

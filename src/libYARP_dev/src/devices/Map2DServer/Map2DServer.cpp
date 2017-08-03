@@ -276,6 +276,10 @@ void Map2DServer::parse_string_command(yarp::os::Bottle& in, yarp::os::Bottle& o
         {
             out.addString(in.get(1).asString() + " successfully saved");
         }
+        else
+        {
+            out.addString("save_locations failed");
+        }
     }
     else if (in.get(0).asString() == "load_locations" && in.get(1).isString())
     {
@@ -283,11 +287,45 @@ void Map2DServer::parse_string_command(yarp::os::Bottle& in, yarp::os::Bottle& o
         {
             out.addString(in.get(1).asString() + " successfully loaded");
         }
+        else
+        {
+            out.addString("load_locations failed");
+        }
     }
     else if(in.get(0).asString() == "list_locations")
     {
         std::map<std::string, Map2DLocation>::iterator it;
         for (it = m_locations_storage.begin(); it != m_locations_storage.end(); ++it)
+        {
+            out.addString(it->first);
+        }
+    }
+    else if (in.get(0).asString() == "save_maps" && in.get(1).isString())
+    {
+        if(saveMaps(in.get(1).asString()))
+        {
+            out.addString(in.get(1).asString() + " successfully saved");
+        }
+        else
+        {
+            out.addString("save_maps failed");
+        }
+    }
+    else if (in.get(0).asString() == "load_maps" && in.get(1).isString())
+    {
+        if(loadMaps(in.get(1).asString()))
+        {
+            out.addString(in.get(1).asString() + " successfully loaded");
+        }
+        else
+        {
+            out.addString("load_maps failed");
+        }
+    }
+    else if(in.get(0).asString() == "list_maps")
+    {
+        std::map<std::string, MapGrid2D>::iterator it;
+        for (it = m_maps_storage.begin(); it != m_maps_storage.end(); ++it)
         {
             out.addString(it->first);
         }
@@ -309,8 +347,8 @@ void Map2DServer::parse_string_command(yarp::os::Bottle& in, yarp::os::Bottle& o
         out.addString("'load_locations <full path filename>' to load locations from a file");
         out.addString("'list_locations' to view a list of all stored locations");
         out.addString("'clear_all_locations' to clear all stored locations");
-        out.addString("'save_maps <full path>' to save maps on in a folder");
-        out.addString("'load_maps <full path>' to load maps from a folder");
+        out.addString("'save_maps <full path>' to save a map collection to a folder");
+        out.addString("'load_maps <full path>' to load a map collection from a folder");
         out.addString("'list_maps' to view a list of all stored maps");
         out.addString("'clear_all_maps' to clear all stored maps");
     }
@@ -370,11 +408,13 @@ bool Map2DServer::saveMaps(std::string mapsfile)
     bool ret = true;
     for (auto it = m_maps_storage.begin(); it != m_maps_storage.end(); ++it)
     {
-        string map_filename = it->first + ".yaml";
+        string map_filename = it->first + ".map";
         file << "mapfile: ";
-        file << it->first + ".yaml";
+        file << map_filename;
+        file << endl;
         ret &= it->second.saveToFile(map_filename);
     }
+    file.close();
     return ret;
 }
 
