@@ -7,6 +7,7 @@
 
 #include <yarp/os/impl/LocalCarrier.h>
 #include <yarp/os/Portable.h>
+#include <yarp/os/impl/Logger.h>
 
 using namespace yarp::os;
 
@@ -56,12 +57,61 @@ void yarp::os::impl::LocalCarrierStream::attach(LocalCarrier *owner, bool sender
     done = false;
 }
 
+InputStream& yarp::os::impl::LocalCarrierStream::getInputStream()
+{
+    return *this;
+}
+
+OutputStream& yarp::os::impl::LocalCarrierStream::getOutputStream()
+{
+    return *this;
+}
+
+const Contact& yarp::os::impl::LocalCarrierStream::getLocalAddress()
+{
+    return localAddress;
+}
+
+const Contact& yarp::os::impl::LocalCarrierStream::getRemoteAddress()
+{
+    return remoteAddress;
+}
+
+bool yarp::os::impl::LocalCarrierStream::setTypeOfService(int tos)
+{
+    YARP_UNUSED(tos);
+    return true;
+}
+
+YARP_SSIZE_T yarp::os::impl::LocalCarrierStream::read(const yarp::os::Bytes& b)
+{
+    yAssert(false);
+    return b.length();
+}
+
+void yarp::os::impl::LocalCarrierStream::write(const yarp::os::Bytes& b)
+{
+    YARP_UNUSED(b);
+    yAssert(false);
+}
+
+void yarp::os::impl::LocalCarrierStream::reset()
+{
+}
+
+void yarp::os::impl::LocalCarrierStream::beginPacket()
+{
+}
+
+void yarp::os::impl::LocalCarrierStream::endPacket()
+{
+}
+
 void yarp::os::impl::LocalCarrierStream::interrupt() {
     done = true;
 }
 
 void yarp::os::impl::LocalCarrierStream::close() {
-    SocketTwoWayStream::close();
     if (owner != YARP_NULLPTR) {
         LocalCarrier *owned = owner;
         owner = YARP_NULLPTR;
