@@ -411,6 +411,7 @@ MAKE_COMMS(Bottle)
 %include <yarp/dev/CalibratorInterfaces.h>
 %include <yarp/dev/ControlBoardPid.h>
 %include <yarp/dev/IControlMode.h>
+%include <yarp/dev/IControlMode2.h>
 %include <yarp/dev/IEncoders.h>
 %include <yarp/dev/ITorqueControl.h>
 %include <yarp/dev/IImpedanceControl.h>
@@ -423,7 +424,10 @@ MAKE_COMMS(Bottle)
   %template(DVector) std::vector<double>;
   %template(BVector) std::vector<bool>;
   %template(SVector) std::vector<std::string>;
+  // Extend IVector for handling conversion of vectors from and to Matlab
+  %include "IVector_fromTo_matlab.i"
   %template(IVector) std::vector<int>;
+
   #if defined(SWIGCSHARP)
       SWIG_STD_VECTOR_SPECIALIZE_MINIMUM(Pid,yarp::dev::Pid)
   #endif
@@ -450,6 +454,7 @@ MAKE_COMMS(Bottle)
         return self->toString().c_str();
     }
 }
+
 
 
 //////////////////////////////////////////////////////////////////////////
@@ -756,6 +761,12 @@ typedef yarp::os::BufferedPort<ImageRgbFloat> BufferedPortImageRgbFloat;
         return result;
     }
 
+    yarp::dev::IControlMode2 *viewIControlMode2() {
+        yarp::dev::IControlMode2 *result;
+        self->view(result);
+        return result;
+    }
+
     yarp::dev::IPWMControl *viewIPWMControl() {
             yarp::dev::IPWMControl *result;
         self->view(result);
@@ -1020,6 +1031,20 @@ typedef yarp::os::BufferedPort<ImageRgbFloat> BufferedPortImageRgbFloat;
 
     bool getControlModes(std::vector<int>& data) {
         return self->getControlModes(&data[0]);
+    }
+}
+
+%extend yarp::dev::IControlMode2 {
+    bool getControlModes(int n_joint, std::vector<int>& joints, std::vector<int>& data) {
+        return self->getControlModes(n_joint, &joints[0], &data[0]);
+    }
+
+    bool setControlModes(std::vector<int>& data) {
+        return self->setControlModes(&data[0]);
+    }
+
+    bool setControlModes(int n_joint, std::vector<int>& joints, std::vector<int>& data) {
+        return self->setControlModes(n_joint, &joints[0], &data[0]);
     }
 }
 
