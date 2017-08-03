@@ -8,7 +8,6 @@
 #define YARP_OS_IMPL_LOCALCARRIER_H
 
 #include <yarp/os/AbstractCarrier.h>
-#include <yarp/os/impl/SocketTwoWayStream.h>
 #include <yarp/os/Semaphore.h>
 
 
@@ -44,16 +43,34 @@ private:
 /**
  * A stream for communicating locally within a process.
  */
-class yarp::os::impl::LocalCarrierStream : public SocketTwoWayStream
+class yarp::os::impl::LocalCarrierStream : public TwoWayStream,
+                                           public InputStream,
+                                           public OutputStream
 {
 public:
     void attach(LocalCarrier *owner, bool sender);
 
+    virtual InputStream& getInputStream() override;
+    virtual OutputStream& getOutputStream() override;
+    virtual const Contact& getLocalAddress() override;
+    virtual const Contact& getRemoteAddress() override;
+    virtual bool setTypeOfService(int tos) override;
+
+    using yarp::os::InputStream::read;
+    virtual YARP_SSIZE_T read(const yarp::os::Bytes& b) override;
+
+    using yarp::os::OutputStream::write;
+    virtual void write(const yarp::os::Bytes& b) override;
+
+    virtual void reset() override;
+    virtual void beginPacket() override;
+    virtual void endPacket() override;
     virtual void interrupt() override;
     virtual void close() override;
     virtual bool isOk() override;
 
 private:
+    Contact localAddress, remoteAddress;
     LocalCarrier *owner;
     bool sender;
     bool done;
