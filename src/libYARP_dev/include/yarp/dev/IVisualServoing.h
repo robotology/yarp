@@ -155,8 +155,12 @@ public:
      * Set visual servoing goal tolerance.
      *
      * \param tol the tolerance in pixel.
+     *
+     * \return true/false on success/failure.
+     *
+     * \note Default value: 15.0 [pixel].
      */
-    virtual bool setGoToGoalTolerance(const double tol = 10.0) = 0;
+    virtual bool setGoToGoalTolerance(const double tol = 15.0) = 0;
 
     /*!
      * Check once whether the visual servoing controller is running or not.
