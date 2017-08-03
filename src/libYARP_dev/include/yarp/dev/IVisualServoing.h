@@ -193,14 +193,18 @@ public:
     virtual bool stopController() = 0;
 
     /*!
-     * Set the translation gain of the visual servoing control algorithm.
+     * Set the translation gains of the visual servoing control algorithm. The
+     * two values are used, respectively, when the end-effector is far away from
+     * and close to the goal.
      *
      * \return true/false on success/failure.
      *
      * \note Warning: higher values of the gain corresponds to higher
-     *       translatinal velocities.
+     *       translation velocities and oscillation about the goal.
+     *
+     * \note Default values: K_x_1 = 1.0, K_x_2 = 0.25.
      */
-    virtual bool setTranslationGain(const float k_x = 0.5) = 0;
+    virtual bool setTranslationGain(const float K_x_1 = 1.0, const float K_x_2 = 0.25) = 0;
 
     /*!
      * Set the maximum translation velocity of the visual servoing control
@@ -223,6 +227,19 @@ public:
      */
     virtual bool setTranslationGainSwitchTolerance(const double K_x_tol = 30.0) = 0;
 
+    /*!
+     * Set the orientation gains of the visual servoing control algorithm. The
+     * two values are used, respectively, when the end-effector is far away from
+     * and close to the goal.
+     *
+     * @return true/false on success/failure.
+     *
+     * @note Warning: higher values of the gain corresponds to higher
+     *       translation velocities and oscillation about the goal.
+     *
+     * @note Default values: K_o_1 = 1.5, K_o_2 = 0.375.
+     */
+    virtual bool setOrientationGain(const float K_o_1 = 1.5, const float K_o_2 = 0.375) = 0;
 
     /*!
      * Set the maximum angular velocity of the axis-angle velocity vector of the
