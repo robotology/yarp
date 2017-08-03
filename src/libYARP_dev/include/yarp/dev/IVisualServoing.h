@@ -208,7 +208,7 @@ public:
      *
      * \note Default values: K_x_1 = 1.0, K_x_2 = 0.25.
      */
-    virtual bool setTranslationGain(const float K_x_1 = 1.0, const float K_x_2 = 0.25) = 0;
+    virtual bool setTranslationGain(const double K_x_1 = 1.0, const double K_x_2 = 0.25) = 0;
 
     /*!
      * Set the maximum translation velocity of the visual servoing control
@@ -219,7 +219,7 @@ public:
      *
      * \return true/false on success/failure.
      */
-    virtual bool setMaxTranslationVelocity(const float max_x_dot) = 0;
+    virtual bool setMaxTranslationVelocity(const double max_x_dot) = 0;
 
     /*!
      * Set the tolerance, in pixels, at which the translation control law
@@ -243,7 +243,7 @@ public:
      *
      * @note Default values: K_o_1 = 1.5, K_o_2 = 0.375.
      */
-    virtual bool setOrientationGain(const float K_o_1 = 1.5, const float K_o_2 = 0.375) = 0;
+    virtual bool setOrientationGain(const double K_o_1 = 1.5, const double K_o_2 = 0.375) = 0;
 
     /*!
      * Set the maximum angular velocity of the axis-angle velocity vector of the
@@ -253,7 +253,7 @@ public:
      *
      * \return true/false on success/failure.
      */
-    virtual bool setMaxOrientationVelocity(const float max_o_dot) = 0;
+    virtual bool setMaxOrientationVelocity(const double max_o_dot) = 0;
 
     /**
      * Set the tolerance, in pixels, at which the orientation control law
