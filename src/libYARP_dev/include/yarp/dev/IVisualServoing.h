@@ -38,36 +38,82 @@ public:
     virtual ~IVisualServoing() { }
 
     /*!
-    * Set the goal points on both left and right camera image plane and start
-    * visual servoing.
-    *
-    * \param vec_px_l a collection of four 2D vectors which contains the (u,v)
-    *                 coordinates of the pixels within the left image plane.
-    * \param vec_px_r a collection of four 2D vectors which contains the (u,v)
-    *                 coordinates of the pixels within the right image plane.
-    *
-    * \note By invoking this method, the visual servoing goal will be reached in
-    *       orientation first, then in position. This is because there may not
-    *       be a feasible position solution for every possible orientation.
-    *
-    * \return true/false on success/failure.
-    */
+     * Initialize support classes, modules and connections to perform visual
+     * servoing. This method must be called before any other visual servoing
+     * methods. Returns upon successful or failure setup.
+     *
+     * \param use_direct_kin instruct the visual servoing control to either use
+     *                       direct kinematic or an estimated/refined pose of
+     *                       the end-effector.
+     *
+     * \note Default value: false. There usually is an error in the robot
+     *       direct kinematics that should be compensated to perform precise
+     *       visual servoing. To this end, a recursive Bayesian estimation
+     *       filter is used to compensate for this error. Such filter is
+     *       initialized during initialization execution.
+     *
+     * \return true/false on success/failure.
+     */
+    virtual bool initFacilities(bool use_direct_kin) = 0;
+
+    /*!
+     * Reset support classes, modules and connections to perform visual
+     * servoing. Returns upon successful or failure setup.
+     *
+     * \note This method also resets the recursive Bayesian estimation filter.
+     *       It may happen that the recursive Bayesian filter does not provide
+     *       satisfactory pose estimation or diverges. Thus this method can be
+     *       used to reset the filter.
+     *
+     * \return true/false on success/failure.
+     */
+    virtual bool resetFacilities() = 0;
+
+    /*!
+     * Deallocate support classes, stop modules and disconnect connections used
+     * for visual servoing. This method must be called when visual servoing is
+     * no longer needed or a new visual servoing instance is needed.
+     *
+     * \note This method also stops the recursive Bayesian estimation filter.
+     *       Thus it is suggested to call this method every time visual servoing
+     *       has been completed/interrupted to have the filter stopped and
+     *       initialized again during the next init call.
+     *
+     * \return true/false on success/failure.
+     */
+    virtual bool stopFacilities() = 0;
+
+    /*!
+     * Set the goal points on both left and right camera image plane and start
+     * visual servoing.
+     *
+     * \param vec_px_l a collection of four 2D vectors which contains the (u,v)
+     *                 coordinates of the pixels within the left image plane.
+     * \param vec_px_r a collection of four 2D vectors which contains the (u,v)
+     *                 coordinates of the pixels within the right image plane.
+     *
+     * \note By invoking this method, the visual servoing goal will be reached in
+     *       orientation first, then in position. This is because there may not
+     *       be a feasible position solution for every possible orientation.
+     *
+     * \return true/false on success/failure.
+     */
     virtual bool goToGoal(const std::vector<yarp::sig::Vector>& vec_px_l, const std::vector<yarp::sig::Vector>& vec_px_r) = 0;
 
     /*!
-    * Set the goal point (3D for the position + 4D axis-angle for
-    * the orientation) and start visual servoing.
-    *
-    * \param vec_x a 3D vector which contains the (x, y, z) Cartesian
-    *              coordinates of the goal.
-    * \param vec_o a 4D vector which contains the (x, y, z) axis and theta angle
-    *              of rotation of the goal.
-    *
-    * \note By invoking this method, the visual servoing goal will be reached in
-    *       position and orientation together with two parallel tasks.
-    *
-    * \return true/false on success/failure.
-    */
+     * Set the goal point (3D for the position + 4D axis-angle for
+     * the orientation) and start visual servoing.
+     *
+     * \param vec_x a 3D vector which contains the (x, y, z) Cartesian
+     *              coordinates of the goal.
+     * \param vec_o a 4D vector which contains the (x, y, z) axis and theta angle
+     *              of rotation of the goal.
+     *
+     * \note By invoking this method, the visual servoing goal will be reached in
+     *       position and orientation together with two parallel tasks.
+     *
+     * \return true/false on success/failure.
+     */
     virtual bool goToGoal(const yarp::sig::Vector& vec_x, const yarp::sig::Vector& vec_o) = 0;
 
     /*!
@@ -109,8 +155,12 @@ public:
      * Set visual servoing goal tolerance.
      *
      * \param tol the tolerance in pixel.
+     *
+     * \return true/false on success/failure.
+     *
+     * \note Default value: 15.0 [pixel].
      */
-    virtual bool setGoToGoalTolerance(const double tol = 10.0) = 0;
+    virtual bool setGoToGoalTolerance(const double tol = 15.0) = 0;
 
     /*!
      * Check once whether the visual servoing controller is running or not.
@@ -147,14 +197,18 @@ public:
     virtual bool stopController() = 0;
 
     /*!
-     * Set the translation gain of the visual servoing control algorithm.
+     * Set the translation gains of the visual servoing control algorithm. The
+     * two values are used, respectively, when the end-effector is far away from
+     * and close to the goal.
      *
      * \return true/false on success/failure.
      *
      * \note Warning: higher values of the gain corresponds to higher
-     *       translatinal velocities.
+     *       translation velocities and oscillation about the goal.
+     *
+     * \note Default values: K_x_1 = 1.0, K_x_2 = 0.25.
      */
-    virtual bool setTranslationGain(const float k_x = 0.5) = 0;
+    virtual bool setTranslationGain(const double K_x_1 = 1.0, const double K_x_2 = 0.25) = 0;
 
     /*!
      * Set the maximum translation velocity of the visual servoing control
@@ -165,17 +219,31 @@ public:
      *
      * \return true/false on success/failure.
      */
-    virtual bool setMaxTranslationVelocity(const float max_x_dot) = 0;
+    virtual bool setMaxTranslationVelocity(const double max_x_dot) = 0;
 
     /*!
-     * Set the orientation gain of the visual servoing control algorithm.
+     * Set the tolerance, in pixels, at which the translation control law
+     * swithces its gain value.
      *
      * \return true/false on success/failure.
      *
-     * \note Warning: higher values of the gain corresponds to higher
-             translatinal velocities.
+     * \note Default value: K_x_tol = 30.0 [pixel].
      */
-    virtual bool setOrientationGain(const float k_o) = 0;
+    virtual bool setTranslationGainSwitchTolerance(const double K_x_tol = 30.0) = 0;
+
+    /*!
+     * Set the orientation gains of the visual servoing control algorithm. The
+     * two values are used, respectively, when the end-effector is far away from
+     * and close to the goal.
+     *
+     * @return true/false on success/failure.
+     *
+     * @note Warning: higher values of the gain corresponds to higher
+     *       translation velocities and oscillation about the goal.
+     *
+     * @note Default values: K_o_1 = 1.5, K_o_2 = 0.375.
+     */
+    virtual bool setOrientationGain(const double K_o_1 = 1.5, const double K_o_2 = 0.375) = 0;
 
     /*!
      * Set the maximum angular velocity of the axis-angle velocity vector of the
@@ -185,7 +253,17 @@ public:
      *
      * \return true/false on success/failure.
      */
-    virtual bool setMaxOrientationVelocity(const float max_o_dot) = 0;
+    virtual bool setMaxOrientationVelocity(const double max_o_dot) = 0;
+
+    /**
+     * Set the tolerance, in pixels, at which the orientation control law
+     * swithces its gain value.
+     *
+     * \return true/false on success/failure.
+     *
+     * \note Default value: K_o_tol = 30.0 [pixel].
+     */
+    virtual bool setOrientationGainSwitchTolerance(const double K_o_tol = 30.0) = 0;
 
     /*!
      * Helper function: extract four Cartesian points lying on the plane defined
@@ -195,10 +273,14 @@ public:
      * \param o a 4D vector which is filled with the actual orientation using
      *          axis-angle representation xa, ya, za, theta [rad].
      *
-     * \return a collection of four Cartesian points (position only) extracted
-     *         by the plane defined by x and o.
+     * \return on success: a collection of four Cartesian points (position only)
+     *         extracted from the plane defined by x and o;
+     *         on failure: an empty list.
+     *
+     * \note It is always suggested to check whether the returned list is empty
+     *       or not and to take proper counter actions.
      */
-    virtual std::vector<yarp::sig::Vector> get3DPositionGoalFrom3DPose(const yarp::sig::Vector& x, const yarp::sig::Vector& o) = 0;
+    virtual std::vector<yarp::sig::Vector> get3DGoalPositionsFrom3DPose(const yarp::sig::Vector& x, const yarp::sig::Vector& o) = 0;
 
     /*!
      * Helper function: extract four 2D pixel points lying on the plane defined
@@ -207,16 +289,19 @@ public:
      * \param x a 3D vector which is filled with the actual position x,y,z [m].
      * \param o a 4D vector which is filled with the actual orientation using
      *          axis-angle representation xa, ya, za, theta [m]/[rad].
-     * \param cam either CamSel::left or CamSel::right to select left or right
-     *            camera.
+     * \param cam either "left" or "right" to select left or right camera.
      *
-     * \return a collection of three Cartesian points (position only) extracted
-     *         by the plane defined by x and o.
+     * \return on success: a collection of three (u, v) pixel points
+     *         extracted from the plane defined by x and o;
+     *         on failure: an empty list.
+     *
+     * \note It is always suggested to check whether the returned list is empty
+     *       or not and to take proper counter actions.
      */
-    virtual std::vector<yarp::sig::Vector> getPixelPositionGoalFrom3DPose(const yarp::sig::Vector& x, const yarp::sig::Vector& o, const CamSel& cam) = 0;
+    virtual std::vector<yarp::sig::Vector> getGoalPixelsFrom3DPose(const yarp::sig::Vector& x, const yarp::sig::Vector& o, const CamSel& cam) = 0;
 
 
-    /* EXPERIMENTAL */
+    /* TO BE DEPRECATED */
     /*!
      * Initialize the robot to an initial position.
      * The initial positions are stored on an external file and are referenced
