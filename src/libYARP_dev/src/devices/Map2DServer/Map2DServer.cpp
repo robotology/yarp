@@ -322,6 +322,51 @@ void Map2DServer::parse_string_command(yarp::os::Bottle& in, yarp::os::Bottle& o
             out.addString("load_maps failed");
         }
     }
+    else if (in.get(0).asString() == "save_map" && in.get(1).isString() && in.get(2).isString())
+    {
+        std::string map_name = in.get(1).asString();
+        std::string map_file = in.get(2).asString() + ".map";
+        auto p = m_maps_storage.find(map_name);
+        if (p == m_maps_storage.end())
+        {
+            out.addString("save_map failed: map " + map_name + " not found");
+        }
+        else
+        {
+            bool b = p->second.saveToFile(map_file);
+            if (b)
+            {
+                out.addString(map_file + " successfully saved");
+            }
+            else
+            {
+                out.addString("save_map failed: unable to save " + map_name + " to "+ map_file);
+            }
+        }
+    }
+    else if (in.get(0).asString() == "load_map" && in.get(1).isString())
+    {
+        yarp::dev::MapGrid2D map;
+        bool r = map.loadFromFile(in.get(1).asString());
+        if(r)
+        {
+            string map_name= map.getMapName();
+            auto p = m_maps_storage.find(map_name);
+            if (p == m_maps_storage.end())
+            {
+                m_maps_storage[map_name] = map;
+                out.addString(in.get(1).asString() + " successfully loaded.");
+            }
+            else
+            {
+                out.addString(in.get(1).asString() + " already exists, skipping.");
+            }
+        }
+        else
+        {
+            out.addString("load_map failed. Unable to load " + in.get(1).asString());
+        }
+    }
     else if(in.get(0).asString() == "list_maps")
     {
         std::map<std::string, MapGrid2D>::iterator it;
@@ -349,6 +394,8 @@ void Map2DServer::parse_string_command(yarp::os::Bottle& in, yarp::os::Bottle& o
         out.addString("'clear_all_locations' to clear all stored locations");
         out.addString("'save_maps <full path>' to save a map collection to a folder");
         out.addString("'load_maps <full path>' to load a map collection from a folder");
+        out.addString("'save_map <map_name> <full path>' to save a single map");
+        out.addString("'load_map <full path>' to load a single map");
         out.addString("'list_maps' to view a list of all stored maps");
         out.addString("'clear_all_maps' to clear all stored maps");
     }
