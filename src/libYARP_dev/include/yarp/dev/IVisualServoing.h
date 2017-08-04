@@ -273,8 +273,12 @@ public:
      * \param o a 4D vector which is filled with the actual orientation using
      *          axis-angle representation xa, ya, za, theta [rad].
      *
-     * \return a collection of four Cartesian points (position only) extracted
-     *         by the plane defined by x and o.
+     * \return on success: a collection of four Cartesian points (position only)
+     *         extracted from the plane defined by x and o;
+     *         on failure: an empty list.
+     *
+     * \note It is always suggested to check whether the returned list is empty
+     *       or not and to take proper counter actions.
      */
     virtual std::vector<yarp::sig::Vector> get3DGoalPositionsFrom3DPose(const yarp::sig::Vector& x, const yarp::sig::Vector& o) = 0;
 
@@ -285,11 +289,14 @@ public:
      * \param x a 3D vector which is filled with the actual position x,y,z [m].
      * \param o a 4D vector which is filled with the actual orientation using
      *          axis-angle representation xa, ya, za, theta [m]/[rad].
-     * \param cam either CamSel::left or CamSel::right to select left or right
-     *            camera.
+     * \param cam either "left" or "right" to select left or right camera.
      *
-     * \return a collection of three Cartesian points (position only) extracted
-     *         by the plane defined by x and o.
+     * \return on success: a collection of three (u, v) pixel points
+     *         extracted from the plane defined by x and o;
+     *         on failure: an empty list.
+     *
+     * \note It is always suggested to check whether the returned list is empty
+     *       or not and to take proper counter actions.
      */
     virtual std::vector<yarp::sig::Vector> getGoalPixelsFrom3DPose(const yarp::sig::Vector& x, const yarp::sig::Vector& o, const CamSel& cam) = 0;
 
