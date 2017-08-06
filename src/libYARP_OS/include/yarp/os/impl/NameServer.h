@@ -82,8 +82,6 @@ public:
 
     Contact unregisterName(const ConstString& name);
 
-    static int main(int argc, char *argv[]);
-
     virtual ConstString apply(const ConstString& txt, const Contact& remote) override;
 
     bool apply(const yarp::os::Bottle& cmd, yarp::os::Bottle& result,
