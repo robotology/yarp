@@ -11,10 +11,10 @@ public:
     static PortReader *instance();
 
     void acquireData(const QString &remotePortName,
-                         int index,
-                         const QString &localPortName,
-                         const QString &carrier,
-                         bool persistent);
+                     int index,
+                     const QString &localPortName,
+                     const QString &carrier,
+                     bool persistent);
 
 private:
     static PortReader *self;

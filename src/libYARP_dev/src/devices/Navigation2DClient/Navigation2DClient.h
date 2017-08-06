@@ -41,12 +41,12 @@ protected:
 
     yarp::os::Mutex               m_mutex;
     yarp::os::Port                m_rpc_port_navigation_server;
-    yarp::os::Port                m_rpc_port_locations_server;
+    yarp::os::Port                m_rpc_port_map_locations_server;
     yarp::os::Port                m_rpc_port_localization_server;
-    yarp::os::ConstString         m_local_name;
-    yarp::os::ConstString         m_navigation_server_name;
-    yarp::os::ConstString         m_locations_server_name;
-    yarp::os::ConstString         m_localization_server_name;
+    std::string                   m_local_name;
+    std::string                   m_navigation_server_name;
+    std::string                   m_map_locations_server_name;
+    std::string                   m_localization_server_name;
     int                           m_period;
 
 #endif /*DOXYGEN_SHOULD_SKIP_THIS*/
@@ -67,12 +67,13 @@ public:
 
     bool   getCurrentPosition(Map2DLocation &loc) override;
     bool   setInitialPose(yarp::dev::Map2DLocation& loc) override;
-    bool   storeCurrentPosition(yarp::os::ConstString location_name) override;
 
+    bool   storeCurrentPosition(yarp::os::ConstString location_name) override;
     bool   storeLocation(yarp::os::ConstString location_name, Map2DLocation loc) override;
     bool   getLocation(yarp::os::ConstString location_name, Map2DLocation& loc) override;
     bool   deleteLocation(yarp::os::ConstString location_name) override;
     bool   getLocationsList(std::vector<yarp::os::ConstString>& locations) override;
+
     bool   getNavigationStatus(NavigationStatusEnum& status) override;
     bool   clearAllLocations() override;
     bool   stopNavigation() override;

@@ -122,7 +122,9 @@ void BufferedConnectionWriter::push(const Bytes& data, bool copy) {
         if (bytes->isOwner()!=copy||bytes->length()<data.length()) {
             delete bytes;
             bytes = new yarp::os::ManagedBytes(data, false);
-            if (copy) bytes->copy();
+            if (copy) {
+                bytes->copy();
+            }
             (*target_used)++;
             return;
         }

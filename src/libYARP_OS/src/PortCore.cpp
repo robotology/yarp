@@ -22,7 +22,9 @@
 #include <yarp/os/SystemInfo.h>
 #include <yarp/os/DummyConnector.h>
 
+#include <vector>
 #include <cstdio>
+
 #ifdef YARP_HAS_ACE
 #  include <ace/INET_Addr.h>
 #  include <ace/Sched_Params.h>
@@ -745,7 +747,7 @@ bool PortCore::removeUnit(const Route& route, bool synch, bool *except) {
 
     // Scan for units that match the given route, and collect their IDs.
     // Mark them as "doomed".
-    PlatformVector<int> removals;
+    std::vector<int> removals;
     stateMutex.wait();
     bool needReap = false;
     if (!finished) {

@@ -23,9 +23,8 @@
 #include <yarp/os/Network.h>
 #include <yarp/os/Property.h>
 
-#include <yarp/os/impl/PlatformList.h>
-#include <yarp/os/impl/PlatformMap.h>
-#include <yarp/os/impl/PlatformSet.h>
+#include <map>
+#include <set>
 
 using namespace yarp::os::impl;
 using namespace yarp::os;
@@ -187,37 +186,32 @@ Contact NameServer::queryName(const ConstString& name) {
 
 NameServer::NameRecord *NameServer::getNameRecord(const ConstString& name,
                                                   bool create) {
-    PLATFORM_MAP_ITERATOR(ConstString, NameRecord, entry);
-    int result = PLATFORM_MAP_FIND(nameMap, name, entry);
-    if (result==-1) {
+    std::map<ConstString, NameRecord>::iterator entry = nameMap.find(name);
+    if (entry == nameMap.end()) {
         if (!create) {
             return YARP_NULLPTR;
         }
-        PLATFORM_MAP_SET(nameMap, name, NameRecord());
-        result = PLATFORM_MAP_FIND(nameMap, name, entry);
+        nameMap[name] = NameRecord();
+        entry = nameMap.find(name);
     }
-    yAssert(result!=-1);
-    //yAssert(entry!=YARP_NULLPTR);
-    return &(PLATFORM_MAP_ITERATOR_SECOND(entry));
+    yAssert(entry != nameMap.end());
+    return &(entry->second);
 }
 
 
 NameServer::HostRecord *NameServer::getHostRecord(const ConstString& name,
                                                   bool create) {
-    PLATFORM_MAP_ITERATOR(ConstString, HostRecord, entry);
-    int result = PLATFORM_MAP_FIND(hostMap, name, entry);
-    if (result==-1) {
+    std::map<ConstString, HostRecord>::iterator entry = hostMap.find(name);
+    if (entry == hostMap.end()) {
         if (!create) {
             return YARP_NULLPTR;
         }
-        PLATFORM_MAP_SET(hostMap, name, HostRecord());
-        result = PLATFORM_MAP_FIND(hostMap, name, entry);
-        //yAssert(entry!=YARP_NULLPTR);
-        PLATFORM_MAP_ITERATOR_SECOND(entry).setBase(basePort);
+        hostMap[name] = HostRecord();
+        entry = hostMap.find(name);
+        entry->second.setBase(basePort);
     }
-    yAssert(result!=-1);
-    //yAssert(entry!=YARP_NULLPTR);
-    return &(PLATFORM_MAP_ITERATOR_SECOND(entry));
+    yAssert(entry != hostMap.end());
+    return &(entry->second);
 }
 
 
@@ -509,26 +503,16 @@ ConstString NameServer::cmdCheck(int argc, char *argv[]) {
 ConstString NameServer::cmdList(int argc, char *argv[]) {
     ConstString response = "";
 
-    PlatformMultiSet<ConstString> lines;
-    for (PLATFORM_MAP(ConstString, NameRecord)::iterator it = nameMap.begin(); it!=nameMap.end(); it++) {
-        NameRecord& rec = PLATFORM_MAP_ITERATOR_SECOND(it);
+    std::multiset<ConstString> lines;
+    for (auto it = nameMap.begin(); it!=nameMap.end(); ++it) {
+        NameRecord& rec = it->second;
         lines.insert(textify(rec.getAddress()));
     }
 
     // return result in alphabetical order
-#ifndef YARP_USE_STL
-    PLATFORM_MULTISET_ITERATOR(ConstString) iter(lines);
-    iter.first();
-    while (!iter.done()) {
-        response += *iter;
-        iter.advance();
+    for (const auto& line : lines) {
+        response += line;
     }
-#else
-    PLATFORM_MULTISET_ITERATOR(ConstString) iter;
-    for (iter=lines.begin(); iter!=lines.end(); iter++) {
-        response += *iter;
-    }
-#endif
 
     return terminate(response);
 }
@@ -559,8 +543,8 @@ Bottle NameServer::ncmdList(int argc, char *argv[]) {
     }
 
     response.addString("ports");
-    for (PLATFORM_MAP(ConstString, NameRecord)::iterator it = nameMap.begin(); it!=nameMap.end(); it++) {
-        NameRecord& rec = PLATFORM_MAP_ITERATOR_SECOND(it);
+    for (auto it = nameMap.begin(); it!=nameMap.end(); ++it) {
+        NameRecord& rec = it->second;
         ConstString iname = rec.getAddress().getRegName();
         if (iname.find(prefix)==0) {
             if (iname==prefix || iname[prefix.length()]=='/' ||
@@ -845,133 +829,3 @@ public:
 
 
 #endif /* DOXYGEN_SHOULD_SKIP_THIS */
-
-
-
-int NameServer::main(int argc, char *argv[]) {
-    //Network yarp;
-
-    // pick an address
-    Contact suggest("...", 0); // suggestion is initially empty
-
-    ConstString nameSpace = "";
-
-    if (argc>=1) {
-        if (argv[0][0]=='/') {
-            nameSpace = argv[0];
-            // BUT: not used yet
-            argv++;
-            argc--;
-        }
-        if (argc>=2) {
-            suggest = Contact(argv[0], NetType::toInt(argv[1]));
-        } else if (argc>=1) {
-            suggest = Contact("...", NetType::toInt(argv[0]));
-        }
-    }
-
-    Property config;
-    config.fromCommand(argc, argv, false);
-
-    bool bNoAuto=config.check("noauto");
-
-    // see what address is lying around
-    Contact prev;
-    NameConfig conf;
-    if (nameSpace!="") {
-        conf.setNamespace(nameSpace.c_str());
-    }
-    if (conf.fromFile()) {
-        prev = conf.getAddress();
-    }
-    else if (bNoAuto)
-    {
-        YARP_ERROR(Logger::get(), ConstString("Could not find configuration file ") +
-        conf.getConfigFileName());
-
-        return 1;
-    }
-
-    // merge
-    if (prev.isValid()) {
-        if (suggest.getHost()=="...") {
-            suggest = Contact(prev.getHost(), suggest.getPort());
-        }
-        if (suggest.getPort()==0) {
-            suggest = Contact(suggest.getHost(), prev.getPort());
-        }
-    }
-
-    // still something not set?
-    if (suggest.getPort()==0) {
-        suggest = Contact(suggest.getHost(), NetworkBase::getDefaultPortRange());
-    }
-    if (suggest.getHost()=="...") {
-        // should get my IP
-        suggest = Contact(conf.getHostName(), suggest.getPort());
-    }
-
-    // finally, should make sure IP is local, and if not, correct it
-    if (!conf.isLocalName(suggest.getHost())) {
-        YARP_INFO(Logger::get(), "Overriding non-local address for name server");
-        suggest = Contact(conf.getHostName(), suggest.getPort());
-    }
-
-    // and save
-    conf.setAddress(suggest);
-    if (!conf.toFile()) {
-        YARP_ERROR(Logger::get(), ConstString("Could not save configuration file ") +
-                   conf.getConfigFileName());
-    }
-
-    MainNameServer name(suggest.getPort() + 2);
-    // register root for documentation purposes
-    name.registerName(conf.getNamespace(), suggest);
-
-    Port server;
-    name.setPort(server);
-    server.setReaderCreator(name);
-    suggest.setName(conf.getNamespace());
-    bool ok = server.open(suggest, false);
-    if (ok) {
-        YARP_DEBUG(Logger::get(), ConstString("Name server listening at ") +
-                   suggest.toURI());
-
-        YARP_SPRINTF2(Logger::get(), info,
-                      "Name server can be browsed at http://%s:%d/",
-                      suggest.getHost().c_str(), suggest.getPort());
-
-#ifdef YARP_HAS_ACE
-        FallbackNameServer fallback(name);
-        fallback.start();
-
-        // register fallback root for documentation purposes
-        name.registerName("fallback", FallbackNameServer::getAddress());
-        YARP_INFO(Logger::get(), ConstString("Bootstrap server listening at ") +
-                  FallbackNameServer::getAddress().toURI());
-#endif
-
-        while (true) {
-            YARP_DEBUG(Logger::get(), "name server running happily");
-            Time::delay(60);
-        }
-        server.close();
-#ifdef YARP_HAS_ACE
-        fallback.close();
-        fallback.join();
-#endif
-    }
-
-    if (!ok) {
-        YARP_ERROR(Logger::get(), "Name server failed to start");
-        //YARP_ERROR(Logger::get(), ConstString("   reason for failure is \"") +
-        //e.toString() + "\"");
-        YARP_ERROR(Logger::get(), "Maybe it is already be running?");
-        if (suggest.getPort()>0) {
-            YARP_ERROR(Logger::get(), ConstString("Or perhaps another service may already be running on port ") + NetType::toString(suggest.getPort()) + "?");
-        }
-        return 1;
-    }
-
-    return 0;
-}

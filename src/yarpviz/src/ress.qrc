@@ -1,0 +1,20 @@
+<RCC>
+    <qresource prefix="/icons">
+        <file>resources/profiling.png</file>
+        <file>resources/module.svg</file>
+        <file>resources/port.svg</file>
+        <file>resources/Gnome-System-Run-64.png</file>
+        <file>resources/port_hide.svg</file>
+        <file>resources/chain.png</file>
+        <file>resources/Linux-icon.png</file>
+        <file>resources/Mac-icon.png</file>
+        <file>resources/Windows-icon.png</file>
+        <file>resources/qos.png</file>
+        <file>resources/arrow_down.png</file>
+        <file>resources/arrow_up.png</file>
+        <file>resources/profile_rate.png</file>
+        <file>resources/computer_B.svg</file>
+        <file>resources/debugMode.svg</file>
+        <file>resources/atooma.svg</file>
+    </qresource>
+</RCC>

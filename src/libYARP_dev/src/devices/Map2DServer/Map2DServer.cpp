@@ -8,11 +8,16 @@
 #include <limits>
 #include "Map2DServer.h"
 #include <yarp/dev/IMap2D.h>
+#include <yarp/dev/INavigation2D.h>
+#include <yarp/math/Math.h>
 #include <yarp/os/Log.h>
 #include <yarp/os/LogStream.h>
 #include <yarp/os/LockGuard.h>
 #include <stdlib.h>
 #include <fstream>
+#include <yarp/os/Publisher.h>
+#include <yarp/os/Subscriber.h>
+#include <yarp/os/Node.h>
 
 using namespace yarp::sig;
 using namespace yarp::dev;
@@ -42,17 +47,8 @@ Map2DServer::~Map2DServer()
 
 }
 
-bool Map2DServer::read(yarp::os::ConnectionReader& connection)
+void Map2DServer::parse_vocab_command(yarp::os::Bottle& in, yarp::os::Bottle& out)
 {
-    LockGuard lock(m_mutex);
-    yarp::os::Bottle in;
-    yarp::os::Bottle out;
-    bool ok = in.read(connection);
-    if (!ok) return false;
-
-    string request = in.get(0).asString();
-
-    // parse in, prepare out
     int code = in.get(0).asVocab();
     bool ret = false;
     if (code == VOCAB_IMAP)
@@ -111,7 +107,7 @@ bool Map2DServer::read(yarp::os::ConnectionReader& connection)
             out.clear();
             out.addVocab(VOCAB_IMAP_OK);
 
-            for (auto it = m_maps_storage.begin(); it != m_maps_storage.end(); it++)
+            for (auto it = m_maps_storage.begin(); it != m_maps_storage.end(); ++it)
             {
                 out.addString(it->first);
             }
@@ -175,11 +171,259 @@ bool Map2DServer::read(yarp::os::ConnectionReader& connection)
             out.addVocab(VOCAB_IMAP_ERROR);
         }
     }
+    else if (code == VOCAB_INAVIGATION)
+    {
+        int cmd = in.get(1).asVocab();
+        if (cmd == VOCAB_NAV_GET_LOCATION_LIST)
+        {
+            yarp::os::ConstString info;
+
+            out.addVocab(VOCAB_OK);
+            Bottle& l = out.addList();
+
+            std::map<std::string, Map2DLocation>::iterator it;
+            for (it = m_locations_storage.begin(); it != m_locations_storage.end(); ++it)
+            {
+                l.addString(it->first);
+            }
+            yInfo() << "The following locations are currently stored in the server: "<<l.toString();
+            ret = true;
+        }
+        else if (cmd == VOCAB_NAV_CLEAR)
+        {
+            m_locations_storage.clear();
+            yInfo() << "All locations deleted ";
+            out.addVocab(VOCAB_OK);
+            ret = true;
+        }
+        else if (cmd == VOCAB_NAV_DELETE)
+        {
+            std::string name = in.get(2).asString();
+
+            std::map<std::string, Map2DLocation>::iterator it;
+            it = m_locations_storage.find(name);
+            if (it != m_locations_storage.end())
+            {
+                yInfo() << "Deleted location " << name;
+                m_locations_storage.erase(it);
+                out.addVocab(VOCAB_OK);
+            }
+            else
+            {
+                yError("User requested an invalid location name");
+                out.addVocab(VOCAB_ERR);
+            }
+
+            ret = true;
+        }
+        else if (cmd == VOCAB_NAV_GET_LOCATION)
+        {
+            std::string name = in.get(2).asString();
+
+            std::map<std::string, Map2DLocation>::iterator it;
+            it = m_locations_storage.find(name);
+            if (it != m_locations_storage.end())
+            {
+                out.addVocab(VOCAB_OK);
+                Map2DLocation loc = it->second;
+                yInfo() << "Retrieved location " << name << "at " << loc.toString();
+                out.addString(loc.map_id);
+                out.addDouble(loc.x);
+                out.addDouble(loc.y);
+                out.addDouble(loc.theta);
+            }
+            else
+            {
+                out.addVocab(VOCAB_ERR);
+                yError("User requested an invalid location name");
+            }
+
+            ret = true;
+        }
+        else if (cmd == VOCAB_NAV_STORE_ABS)
+        {
+            Map2DLocation         location;
+            yarp::os::ConstString name = in.get(2).asString();
+
+            location.map_id = in.get(3).asString();
+            location.x      = in.get(4).asDouble();
+            location.y      = in.get(5).asDouble();
+            location.theta  = in.get(6).asDouble();
+
+            m_locations_storage.insert(std::pair<std::string, Map2DLocation>(name, location));
+            yInfo() << "Added location " << name << "at " << location.toString();
+            out.addVocab(VOCAB_OK);
+            ret = true;
+        }
+        else
+        {
+            yError("Invalid vocab received in LocationsServer");
+        }
+    }
     else
     {
         yError("Invalid vocab received in Map2DServer");
         out.clear();
         out.addVocab(VOCAB_IMAP_ERROR);
+    }
+}
+
+void Map2DServer::parse_string_command(yarp::os::Bottle& in, yarp::os::Bottle& out)
+{
+    if (in.get(0).asString() == "save_locations" && in.get(1).isString())
+    {
+        if(save_locations(in.get(1).asString()))
+        {
+            out.addString(in.get(1).asString() + " successfully saved");
+        }
+        else
+        {
+            out.addString("save_locations failed");
+        }
+    }
+    else if (in.get(0).asString() == "load_locations" && in.get(1).isString())
+    {
+        if(load_locations(in.get(1).asString()))
+        {
+            out.addString(in.get(1).asString() + " successfully loaded");
+        }
+        else
+        {
+            out.addString("load_locations failed");
+        }
+    }
+    else if(in.get(0).asString() == "list_locations")
+    {
+        std::map<std::string, Map2DLocation>::iterator it;
+        for (it = m_locations_storage.begin(); it != m_locations_storage.end(); ++it)
+        {
+            out.addString(it->first);
+        }
+    }
+    else if (in.get(0).asString() == "save_maps" && in.get(1).isString())
+    {
+        if(saveMaps(in.get(1).asString()))
+        {
+            out.addString(in.get(1).asString() + " successfully saved");
+        }
+        else
+        {
+            out.addString("save_maps failed");
+        }
+    }
+    else if (in.get(0).asString() == "load_maps" && in.get(1).isString())
+    {
+        if(loadMaps(in.get(1).asString()))
+        {
+            out.addString(in.get(1).asString() + " successfully loaded");
+        }
+        else
+        {
+            out.addString("load_maps failed");
+        }
+    }
+    else if (in.get(0).asString() == "save_map" && in.get(1).isString() && in.get(2).isString())
+    {
+        std::string map_name = in.get(1).asString();
+        std::string map_file = in.get(2).asString() + ".map";
+        auto p = m_maps_storage.find(map_name);
+        if (p == m_maps_storage.end())
+        {
+            out.addString("save_map failed: map " + map_name + " not found");
+        }
+        else
+        {
+            bool b = p->second.saveToFile(map_file);
+            if (b)
+            {
+                out.addString(map_file + " successfully saved");
+            }
+            else
+            {
+                out.addString("save_map failed: unable to save " + map_name + " to "+ map_file);
+            }
+        }
+    }
+    else if (in.get(0).asString() == "load_map" && in.get(1).isString())
+    {
+        yarp::dev::MapGrid2D map;
+        bool r = map.loadFromFile(in.get(1).asString());
+        if(r)
+        {
+            string map_name= map.getMapName();
+            auto p = m_maps_storage.find(map_name);
+            if (p == m_maps_storage.end())
+            {
+                m_maps_storage[map_name] = map;
+                out.addString(in.get(1).asString() + " successfully loaded.");
+            }
+            else
+            {
+                out.addString(in.get(1).asString() + " already exists, skipping.");
+            }
+        }
+        else
+        {
+            out.addString("load_map failed. Unable to load " + in.get(1).asString());
+        }
+    }
+    else if(in.get(0).asString() == "list_maps")
+    {
+        std::map<std::string, MapGrid2D>::iterator it;
+        for (it = m_maps_storage.begin(); it != m_maps_storage.end(); ++it)
+        {
+            out.addString(it->first);
+        }
+    }
+    else if(in.get(0).asString() == "clear_all_locations")
+    {
+        m_locations_storage.clear();
+        out.addString("all locations cleared");
+    }
+    else if(in.get(0).asString() == "clear_all_maps")
+    {
+        m_maps_storage.clear();
+        out.addString("all maps cleared");
+    }
+    else if(in.get(0).asString() == "help")
+    {
+        out.addVocab(Vocab::encode("many"));
+        out.addString("'save_locations <full path filename>' to save locations on a file");
+        out.addString("'load_locations <full path filename>' to load locations from a file");
+        out.addString("'list_locations' to view a list of all stored locations");
+        out.addString("'clear_all_locations' to clear all stored locations");
+        out.addString("'save_maps <full path>' to save a map collection to a folder");
+        out.addString("'load_maps <full path>' to load a map collection from a folder");
+        out.addString("'save_map <map_name> <full path>' to save a single map");
+        out.addString("'load_map <full path>' to load a single map");
+        out.addString("'list_maps' to view a list of all stored maps");
+        out.addString("'clear_all_maps' to clear all stored maps");
+    }
+    else
+    {
+        out.addString("request not undestood, call 'help' to see a list of avaiable commands");
+    }
+
+    //updateVizMarkers();
+}
+
+bool Map2DServer::read(yarp::os::ConnectionReader& connection)
+{
+    LockGuard lock(m_mutex);
+    yarp::os::Bottle in;
+    yarp::os::Bottle out;
+    bool ok = in.read(connection);
+    if (!ok) return false;
+
+    //parse string command
+    if(in.get(0).isString())
+    {
+        parse_string_command(in, out);
+    }
+    // parse vocab command
+    else if(in.get(0).isVocab())
+    {
+        parse_vocab_command(in, out);
     }
 
     yarp::os::ConnectionWriter *returnToSender = connection.getWriter();
@@ -189,7 +433,7 @@ bool Map2DServer::read(yarp::os::ConnectionReader& connection)
     }
     else
     {
-        yError() << "FrameTransformServer: invalid return to sender";
+        yError() << "Map2DServer: invalid return to sender";
     }
     return true;
 }
@@ -209,13 +453,15 @@ bool Map2DServer::saveMaps(std::string mapsfile)
         return false;
     }
     bool ret = true;
-    for (auto it = m_maps_storage.begin(); it != m_maps_storage.end(); it++)
+    for (auto it = m_maps_storage.begin(); it != m_maps_storage.end(); ++it)
     {
-        string map_filename = it->first + ".yaml";
+        string map_filename = it->first + ".map";
         file << "mapfile: ";
-        file << it->first + ".yaml";
+        file << map_filename;
+        file << endl;
         ret &= it->second.saveToFile(map_filename);
     }
+    file.close();
     return ret;
 }
 
@@ -236,10 +482,13 @@ bool Map2DServer::loadMaps(std::string mapsfile)
         std::getline(file, buffer);
         std::istringstream iss(buffer);
         iss >> dummy;
+        if (dummy == "") break;
         if (dummy == "mapfile:")
         {
             string mapfilename;
             iss >> mapfilename;
+            string option;
+            iss >> option;
             string mapfilenameWithPath = m_rf_mapCollection.findFile(mapfilename.c_str());
             yarp::dev::MapGrid2D map;
             bool r = map.loadFromFile(mapfilenameWithPath);
@@ -249,6 +498,8 @@ bool Map2DServer::loadMaps(std::string mapsfile)
                 auto p = m_maps_storage.find(map_name);
                 if (p == m_maps_storage.end())
                 {
+                    if (option == "crop")
+                        map.crop(-1,-1,-1,-1);
                     m_maps_storage[map_name] = map;
                 }
                 else
@@ -270,6 +521,7 @@ bool Map2DServer::loadMaps(std::string mapsfile)
         }
     }
     file.close();
+
     return true;
 }
 
@@ -278,18 +530,48 @@ bool Map2DServer::open(yarp::os::Searchable &config)
     Property params;
     params.fromString(config.toString().c_str());
 
-    if (config.check("mapCollection"))
+    string collection_file_name="maps_collection.ini";
+    string locations_file_name="locations.ini";
+    if (config.check("mapCollectionFile"))
     {
-        string collection_name= config.find("mapCollection").asString();
-        m_rf_mapCollection.setDefaultContext(collection_name.c_str());
-        string collection_file = m_rf_mapCollection.findFile("maps_collection.ini");
-        if (loadMaps(collection_file))
+        collection_file_name= config.find("mapCollectionFile").asString();
+    }
+
+    if (config.check("mapCollectionContext"))
+    {
+        string collection_context_name= config.find("mapCollectionContext").asString();
+        m_rf_mapCollection.setDefaultContext(collection_context_name.c_str());
+        string collection_file_with_path = m_rf_mapCollection.findFile(collection_file_name);
+        string locations_file_with_path = m_rf_mapCollection.findFile(locations_file_name);
+        
+        if (collection_file_with_path=="")
         {
-            yInfo() << "Map collection:" << collection_file << "succesfully loaded";
+            yInfo() << "No locations loaded";
         }
         else
         {
-            yError() << "Unable to load map collection file:" << collection_file;
+            bool ret  = load_locations(locations_file_with_path);
+            if (ret) { yInfo() << "Location file" << locations_file_with_path << "successfully loaded."; }
+            else { yError() << "Problems opening file" << locations_file_with_path; }
+        }
+
+        if (collection_file_with_path=="")
+        {
+            yError() << "Unable to find file "<< collection_file_name << " within the specified context: " << collection_context_name;
+            return false;
+        }
+        if (loadMaps(collection_file_with_path))
+        {
+            yInfo() << "Map collection file:" << collection_file_with_path << "succesfully loaded.";
+            yInfo() << "Available maps are:";
+            for (auto it = m_maps_storage.begin(); it != m_maps_storage.end(); ++it)
+            {
+                yInfo() << it->first;
+            }
+        }
+        else
+        {
+            yError() << "Unable to load map collection file:" << collection_file_with_path;
             return false;
         }
     }
@@ -339,6 +621,8 @@ bool Map2DServer::open(yarp::os::Searchable &config)
         m_enable_subscribe_ros_tf = true;
         yInfo() << "Map2DServer: Enabled ROS subscriber";
     }
+
+    m_rosPublisherPort_markers.topic("/locationServerMarkers");
 #endif
 
     return true;
@@ -347,5 +631,131 @@ bool Map2DServer::open(yarp::os::Searchable &config)
 bool Map2DServer::close()
 {
     yTrace("Map2DServer::Close");
+    return true;
+}
+
+bool Map2DServer::load_locations(std::string locations_file)
+{
+    std::ifstream file;
+    file.open (locations_file.c_str());
+
+    if(!file.is_open())
+    {
+        yError() << "Unable to open" << locations_file << "locations file.";
+        return false;
+    }
+
+    std::string     buffer, name, mapId, xpos, ypos, theta;
+    Map2DLocation   location;
+
+    while(!file.eof())
+    {
+        std::getline(file, buffer);
+        std::istringstream iss(buffer);
+
+        iss >> name >> mapId >> xpos >> ypos >> theta;
+
+        location.map_id  = mapId;
+        location.x       = std::atof(xpos.c_str());
+        location.y       = std::atof(ypos.c_str());
+        location.theta   = std::atof(theta.c_str());
+        m_locations_storage[name] = location;
+    }
+
+    file.close();
+    yDebug() << "Locations file" << locations_file << "loaded.";
+    return true;
+}
+
+bool Map2DServer::save_locations(std::string locations_file)
+{
+    std::ofstream file;
+    file.open (locations_file.c_str());
+
+    if(!file.is_open())
+    {
+        yError() << "Unable to open" << locations_file << "locations file.";
+        return false;
+    }
+
+    std::string     s;
+    Map2DLocation   l;
+    s = " ";
+
+    std::map<std::string, Map2DLocation>::iterator it;
+    for (it = m_locations_storage.begin(); it != m_locations_storage.end(); ++it)
+    {
+        l = it->second;
+        file << it->first + s + l.map_id + s << l.x << s << l.y << s << l.theta << "\n";
+    }
+
+    file.close();
+    yDebug() << "Locations file" << locations_file << "saved.";
+    return true;
+}
+
+bool Map2DServer::updateVizMarkers()
+{
+    TickDuration dur; dur.sec = 0xFFFFFFFF;
+    double yarpTimeStamp = yarp::os::Time::now();
+    uint64_t time;
+    uint64_t nsec_part;
+    uint64_t sec_part;
+    TickTime ret;
+    time = (uint64_t)(yarpTimeStamp * 1000000000UL);
+    nsec_part = (time % 1000000000UL);
+    sec_part = (time / 1000000000UL);
+    if (sec_part > std::numeric_limits<unsigned int>::max())
+    {
+        yWarning() << "Timestamp exceeded the 64 bit representation, resetting it to 0";
+        sec_part = 0;
+    }
+
+    visualization_msgs_Marker marker;
+    TickTime                  tt;
+    yarp::sig::Vector         rpy(3);
+    yarp::math::Quaternion    q;
+
+    visualization_msgs_MarkerArray& markers = m_rosPublisherPort_markers.prepare();
+    markers.markers.clear();
+
+    std::map<std::string, Map2DLocation>::iterator it;
+    int count = 1;
+    for (it = m_locations_storage.begin(); it != m_locations_storage.end(); ++it, ++count)
+    {
+        rpy[0] = 0; //x
+        rpy[1] = 0; //y
+        rpy[2] = it->second.theta / 180 * 3.14159265359; //z
+        yarp::sig::Matrix m = yarp::math::rpy2dcm(rpy);
+        q.fromRotationMatrix(m);
+
+        marker.header.frame_id    = "map";
+        tt.sec                    = (yarp::os::NetUint32) sec_part;;
+        tt.nsec                   = (yarp::os::NetUint32) nsec_part;;
+        marker.header.stamp       = tt;
+        marker.ns                 = "my_namespace";
+        marker.id                 = count;
+        marker.type               = visualization_msgs_Marker::ARROW;
+        marker.action             = visualization_msgs_Marker::ADD;
+        marker.pose.position.x    = it->second.x;
+        marker.pose.position.y    = it->second.y;
+        marker.pose.position.z    = 0;
+        marker.pose.orientation.x = q.x();
+        marker.pose.orientation.y = q.y();
+        marker.pose.orientation.z = q.z();
+        marker.pose.orientation.w = q.w();
+        marker.scale.x            = 1;
+        marker.scale.y            = 0.1;
+        marker.scale.z            = 0.1;
+        marker.color.a            = 1.0;
+        marker.color.r            = 0.0;
+        marker.color.g            = 1.0;
+        marker.color.b            = 0.0;
+        marker.lifetime           = dur;
+        marker.text               = it->first;
+        markers.markers.push_back(marker);
+    }
+
+    m_rosPublisherPort_markers.write();
     return true;
 }

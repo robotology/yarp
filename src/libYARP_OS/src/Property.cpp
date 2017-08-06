@@ -13,13 +13,13 @@
 #include <yarp/os/NetType.h>
 #include <yarp/os/impl/SplitString.h>
 
-#include <yarp/os/impl/PlatformMap.h>
 #include <yarp/os/impl/PlatformDirent.h>
 
+#include <algorithm>
+#include <map>
 #include <cctype>
 #include <cstdio>
 #include <cstring>
-#include <algorithm>
 
 using namespace yarp::os::impl;
 using namespace yarp::os;
@@ -62,39 +62,31 @@ public:
 
 class PropertyHelper {
 public:
-    PLATFORM_MAP(ConstString, PropertyItem) data;
+    std::map<ConstString, PropertyItem> data;
     Property& owner;
 
     PropertyHelper(Property& owner, int hash_size) :
-#ifndef YARP_USE_STL
-        data((hash_size==0)?ACE_DEFAULT_MAP_SIZE:hash_size),
-#endif
         owner(owner) {}
 
     PropertyItem *getPropNoCreate(const ConstString& key) const {
-        PLATFORM_MAP_ITERATOR(ConstString, PropertyItem, entry);
-        int result = PLATFORM_MAP_FIND((*((PLATFORM_MAP(ConstString, PropertyItem) *)&data)), key, entry);
-        if (result==-1) {
+        auto it = data.find(key);
+        if (it==data.end()) {
             return YARP_NULLPTR;
         }
-        yAssert(result!=-1);
-        //yAssert(entry!=YARP_NULLPTR);
-        return &(PLATFORM_MAP_ITERATOR_SECOND(entry));
+        return const_cast<PropertyItem*>(&(it->second));
     }
 
     PropertyItem *getProp(const ConstString& key, bool create = true) {
-        PLATFORM_MAP_ITERATOR(ConstString, PropertyItem, entry);
-        int result = PLATFORM_MAP_FIND(data, key, entry);
-        if (result==-1) {
+        std::map<ConstString, PropertyItem>::iterator entry = data.find(key);
+        if (entry == data.end()) {
             if (!create) {
                 return YARP_NULLPTR;
             }
-            PLATFORM_MAP_SET(data, key, PropertyItem());
-            result = PLATFORM_MAP_FIND(data, key, entry);
+            data[key] = PropertyItem();
+            entry = data.find(key);
         }
-        yAssert(result!=-1);
-        //yAssert(entry!=YARP_NULLPTR);
-        return &(PLATFORM_MAP_ITERATOR_SECOND(entry));
+        yAssert(entry != data.end());
+        return &(entry->second);
     }
 
     void put(const ConstString& key, const ConstString& val) {
@@ -142,7 +134,7 @@ public:
     }
 
     void unput(const ConstString& key) {
-        PLATFORM_MAP_UNSET(data, ConstString(key));
+        data.erase(key);
     }
 
     bool check(const ConstString& key) const {
@@ -217,7 +209,7 @@ public:
     }
 
     void clear() {
-        PLATFORM_MAP_CLEAR(data);
+        data.clear();
     }
 
     void fromString(const ConstString& txt, bool wipe=true) {
@@ -681,9 +673,8 @@ public:
 
     ConstString toString() {
         Bottle bot;
-        for (PLATFORM_MAP(ConstString, PropertyItem)::iterator
-                 it = data.begin(); it!=data.end(); it++) {
-            PropertyItem& rec = PLATFORM_MAP_ITERATOR_SECOND(it);
+        for (std::map<ConstString, PropertyItem>::iterator it = data.begin(); it != data.end(); ++it) {
+            PropertyItem& rec = it->second;
             Bottle& sub = bot.addList();
             rec.flush();
             sub.copy(rec.bot);

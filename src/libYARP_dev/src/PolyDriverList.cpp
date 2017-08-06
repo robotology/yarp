@@ -6,50 +6,50 @@
 
 #include <yarp/dev/PolyDriverList.h>
 
-#include <yarp/os/impl/PlatformVector.h>
+#include <vector>
 
 
-#define RES(v) ((PlatformVector<PolyDriverDescriptor> *)v)
+#define RES(v) ((std::vector<PolyDriverDescriptor> *)v)
 
 using namespace yarp::dev;
 
 PolyDriverList::PolyDriverList()
 {
-    aceVector=new PlatformVector<PolyDriverDescriptor>;
+    descriptors=new std::vector<PolyDriverDescriptor>;
 }
 
 PolyDriverList::~PolyDriverList()
 {
-    delete RES(aceVector);
+    delete RES(descriptors);
 }
 
 PolyDriverDescriptor *PolyDriverList::operator[](int k)
 {
-    return &(*RES(aceVector))[k];
+    return &(*RES(descriptors))[k];
 }
 
 const PolyDriverDescriptor *PolyDriverList::operator[] (int k) const
 {
-    return &(*RES(aceVector))[k];
+    return &(*RES(descriptors))[k];
 }
 
 int PolyDriverList::size() const
 {
-    return (int)RES(aceVector)->size();
+    return (int)RES(descriptors)->size();
 }
 
 void PolyDriverList::push(PolyDriver *p, const char *k)
 {
-    RES(aceVector)->push_back(PolyDriverDescriptor(p, k));
+    RES(descriptors)->push_back(PolyDriverDescriptor(p, k));
 }
 
 void PolyDriverList::push(PolyDriverDescriptor &v)
 {
-    RES(aceVector)->push_back(v);
+    RES(descriptors)->push_back(v);
 }
 
 const PolyDriverList &PolyDriverList::operator=(const PolyDriverList &l)
 {
-  *RES(aceVector)=*RES(l.aceVector);
-  return *this;
+    *RES(descriptors)=*RES(l.descriptors);
+    return *this;
 }

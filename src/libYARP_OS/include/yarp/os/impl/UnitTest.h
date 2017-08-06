@@ -10,7 +10,7 @@
 #include <yarp/os/ConstString.h>
 #include <yarp/os/Bottle.h>
 
-#include <yarp/os/impl/PlatformVector.h>
+#include <vector>
 
 namespace yarp {
     namespace os {
@@ -21,7 +21,7 @@ namespace yarp {
 }
 
 // Explicit instantiation
-template class YARP_OS_impl_API PlatformVector<yarp::os::impl::UnitTest *>;
+template class YARP_OS_impl_API std::vector<yarp::os::impl::UnitTest *>;
 
 /**
  * Simple unit testing framework.  There are libraries out there for
@@ -139,7 +139,7 @@ public:
 
 private:
     UnitTest *parent;
-    PlatformVector<UnitTest *> subTests;
+    std::vector<UnitTest *> subTests;
     bool hasProblem;
     yarp::os::Bottle env;
     static UnitTest *theRoot;

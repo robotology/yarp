@@ -319,8 +319,6 @@ Companion::Companion() {
         "start and stop processes");
     add("sample", &Companion::cmdSample,
         "drop or duplicate messages to achieve a constant frame-rate");
-    add("server",     &Companion::cmdServer,
-        "run yarp name server");
     add("terminate",  &Companion::cmdTerminate,
         "terminate a yarp-terminate-aware process by name");
     add("time", &Companion::cmdTime,
@@ -375,12 +373,10 @@ int Companion::dispatch(const char *name, int argc, char *argv[]) {
     }
     argc_copy = at;
 
-    ConstString sname(name);
-    Entry e;
-    int result = PLATFORM_MAP_FIND_RAW(action, sname, e);
     int v = -1;
-    if (result!=-1) {
-        v = (this->*(e.fn))(argc_copy, argv_copy);
+    auto it = action.find(ConstString(name));
+    if (it != action.end()) {
+        v = (this->*(it->second.fn))(argc_copy, argv_copy);
     } else {
         YARP_SPRINTF1(Logger::get(),
                       error,
@@ -1257,15 +1253,6 @@ int Companion::cmdRegression(int argc, char *argv[]) {
     fprintf(stderr, "no regression tests linked in this version\n");
     return 1;
 }
-
-
-int Companion::cmdServer(int argc, char *argv[]) {
-    // Note: if YARP is compiled with a "persistent name server",
-    // then the command "yarp server" will be intercepted here:
-    //   [YARP root]/src/yarp/yarp.cpp
-    return NameServer::main(argc, argv);
-}
-
 
 #ifndef DOXYGEN_SHOULD_SKIP_THIS
 

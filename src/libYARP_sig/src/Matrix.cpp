@@ -14,15 +14,15 @@
 #include <yarp/os/NetFloat64.h>
 #include <yarp/os/NetInt32.h>
 
-#include <yarp/os/impl/PlatformVector.h>
-#include <cstdio>
 #include <yarp/os/impl/Logger.h>
+
+#include <vector>
+#include <cstdio>
 
 using namespace yarp::sig;
 using namespace yarp::os;
 
-#define RES(v) ((PlatformVector<T> *)v)
-#define RES_ITERATOR(v) ((PLATFORM_VECTOR_ITERATOR(double) *)v)
+#define RES(v) ((std::vector<T> *)v)
 
 YARP_BEGIN_PACK
 class MatrixPortContentHeader

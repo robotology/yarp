@@ -10,9 +10,78 @@
 
 #include <yarp/os/LogStream.h>
 #include <yarp/os/Time.h>
+#include <yarp/os/LockGuard.h>
 
 #include <OVR_CAPI_GL.h>
 
+
+inline void rgb2rgba(unsigned char* rgba, const yarp::sig::Image& img, unsigned char alpha)
+{
+    int wdt = img.width();
+    int hgt = img.height();
+    for (int h = 0; h < hgt; h++)
+    {
+        for (int w = 0; w < wdt; w++)
+        {
+            rgba[(wdt * h + w) * 4]     = img.getPixelAddress(w, h)[0];
+            rgba[(wdt * h + w) * 4 + 1] = img.getPixelAddress(w, h)[1];
+            rgba[(wdt * h + w) * 4 + 2] = img.getPixelAddress(w, h)[2];
+            rgba[(wdt * h + w) * 4 + 3] = alpha;
+        }
+        
+    }
+}
+
+void TextureBuffer::fromImage(ovrSession inSession, const yarp::sig::Image& img, double inalpha)
+{
+    int pc;
+    pc = img.getPixelCode();
+    if (pc != VOCAB_PIXEL_RGBA && pc != VOCAB_PIXEL_RGB)
+    {
+        yError() << "wrong texture format.. must be VOCAB_PIXEL_RGBA or VOCAB_PIXEL_RGB";
+        return;
+    }
+    alpha = inalpha;
+    if (initialized)
+    {
+        if (width != img.width() || height != img.height())
+        {
+            resize(img.width(), img.height());
+        }
+        dataReady = true;
+        update(img);
+        return;
+    }
+
+    session     = inSession;
+    width       = img.width();
+    height      = img.height();
+    components  = 3;
+    padding     = (4 - (width * components) % 4) % 4;
+    rowSize     = width * components + padding;
+    bufferSize  = rowSize * height;
+    ptr         = nullptr;
+    pboIds      = nullptr;
+    dataReady   = true;
+    createTextureAndBuffers();
+    initialized = true;
+    update(img);
+}
+
+TextureBuffer::TextureBuffer() :
+    textureSwapChain(nullptr),
+    textureSwapChainSize(0),
+    pboIds(nullptr),
+    ptr(nullptr),
+    dataReady(false),
+    missingFrames(0),
+    imageWidth(0),
+    imageHeight(0),
+    initialized(false),
+    singleThread(true),
+    width(0)
+{
+}
 
 TextureBuffer::TextureBuffer(int w, int h, int eye, ovrSession session) :
         session(session),
@@ -31,7 +100,9 @@ TextureBuffer::TextureBuffer(int w, int h, int eye, ovrSession session) :
         missingFrames(0),
         imageWidth(0),
         imageHeight(0),
-        eye(eye)
+        eye(eye),
+        initialized(true),
+        singleThread(false)
 {
     YARP_UNUSED(eye);
     yTrace();
@@ -49,11 +120,8 @@ TextureBuffer::~TextureBuffer()
 void TextureBuffer::resize(int w, int h)
 {
     yTrace();
-
-    mutex.lock();
-
     deleteTextureAndBuffers();
-
+    lock();
     width = w;
     height = h;
     padding = (4 - (w * components) % 4) % 4,
@@ -61,11 +129,45 @@ void TextureBuffer::resize(int w, int h)
     bufferSize = rowSize * h,
 
     createTextureAndBuffers();
+    unlock();
+}
+
+void TextureBuffer::update(const yarp::sig::Image& img)
+{
+    update();
+    if (img.getPixelCode() == VOCAB_PIXEL_RGBA)
+    {
+        memcpy(ptr, img.getRawImage(), img.getRawImageSize());
+    }
+    else
+    {
+        memcpy(ptr, img.getRawImage(), img.getRawImageSize());
+    }
+}
+
+void TextureBuffer::lock()
+{
+    if (singleThread)
+    {
+        return;
+    }
+
+    mutex.lock();
+}
+
+void TextureBuffer::unlock()
+{
+    if (singleThread)
+    {
+        return;
+    }
+
+    mutex.unlock();
 }
 
 void TextureBuffer::update()
 {
-    mutex.lock();
+    lock();
 
     if (dataReady) {
         dataReady = false;
@@ -124,8 +226,8 @@ void TextureBuffer::update()
     } else {
         ++missingFrames;
     }
+    unlock();
 
-    mutex.unlock();
 }
 
 void TextureBuffer::createTextureAndBuffers()
@@ -196,17 +298,20 @@ void TextureBuffer::deleteTextureAndBuffers()
 {
     yTrace();
 
-    mutex.lock();
+    lock();
 
     if (ptr) {
         glUnmapBuffer(GL_PIXEL_UNPACK_BUFFER);
         ptr = nullptr;
     }
 
-    glDeleteBuffers(textureSwapChainSize, pboIds);
-    delete pboIds;
+    if(pboIds)
+    {
+        glDeleteBuffers(textureSwapChainSize, pboIds);
+        delete pboIds;
+    }
+    
 
     ovr_DestroyTextureSwapChain(session, textureSwapChain);
-
-    mutex.unlock();
+    unlock();
 }

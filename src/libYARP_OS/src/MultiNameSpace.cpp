@@ -9,14 +9,15 @@
 #include <yarp/os/YarpNameSpace.h>
 #include <yarp/os/RosNameSpace.h>
 #include <yarp/os/Time.h>
-#include <yarp/os/impl/PlatformVector.h>
 #include <yarp/os/impl/NameConfig.h>
 #include <yarp/os/impl/Logger.h>
+
+#include <vector>
 
 using namespace yarp::os;
 using namespace yarp::os::impl;
 
-typedef PlatformVector<NameSpace *> SpaceList;
+typedef std::vector<NameSpace *> SpaceList;
 
 // private implementation of a namespace container
 class MultiNameSpaceHelper {

@@ -12,8 +12,8 @@
 #include <yarp/os/ContactStyle.h>
 #include <yarp/os/Contactable.h>
 
-#include <yarp/os/impl/PlatformMap.h>
-#include <yarp/os/impl/PlatformVector.h>
+#include <map>
+#include <vector>
 #include <cstdio>
 
 // ACE headers may fiddle with main
@@ -164,8 +164,6 @@ public:
 
     int cmdRegression(int argc, char *argv[]);
 
-    int cmdServer(int argc, char *argv[]);
-
     int cmdCheck(int argc, char *argv[]);
 
     int cmdPing(int argc, char *argv[]);
@@ -228,9 +226,9 @@ private:
         }
     };
 
-    PLATFORM_MAP(ConstString, Entry) action;
-    PlatformVector<ConstString> names;
-    PlatformVector<ConstString> tips;
+    std::map<ConstString, Entry> action;
+    std::vector<ConstString> names;
+    std::vector<ConstString> tips;
     bool adminMode;
     yarp::os::ConstString argType;
     bool waitConnect;
@@ -238,7 +236,7 @@ private:
     void add(const char *name, int (Companion::*fn)(int argc, char *argv[]),
              const char *tip = YARP_NULLPTR) {
         Entry e(name, fn);
-        PLATFORM_MAP_SET(action, ConstString(name), e);
+        action[ConstString(name)] = e;
         // maintain a record of order of keys
         names.push_back(ConstString(name));
         if (tip!=YARP_NULLPTR) {

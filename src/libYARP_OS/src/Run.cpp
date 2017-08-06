@@ -14,6 +14,7 @@
 #include <yarp/os/SystemInfoSerializer.h>
 #include <yarp/os/Time.h>
 
+#include <yarp/os/impl/NameClient.h>
 #include <yarp/os/impl/Logger.h>
 #include <yarp/os/impl/SplitString.h>
 #include <yarp/os/impl/PlatformSysPrctl.h>
@@ -498,6 +499,14 @@ int yarp::os::Run::server()
         yError() << "Yarprun failed to open port: " << mPortName.c_str();
         return YARPRUN_ERROR;
     }
+
+    yarp::os::Bottle cmd, reply;
+    cmd.addString("set");
+    cmd.addString(port.getName());
+    cmd.addString("yarprun");
+    cmd.addString("true");
+    yarp::os::impl::NameClient::getNameClient().send(cmd, reply);
+
     yInfo() << "Yarprun succesfully started on port: " << mPortName.c_str();
 
     pServerPort=&port;
@@ -878,6 +887,14 @@ int yarp::os::Run::server()
             if (mPortName[0]!='/') yError("Invalid port name '%s', it should start with '/'\n", mPortName.c_str());
             return YARPRUN_ERROR;
         }
+        yarp::os::Bottle cmd, reply;
+        cmd.addString("set");
+        cmd.addString(port.getName());
+        cmd.addString("yarprun");
+        cmd.addString("true");
+
+        yarp::os::impl::NameClient::getNameClient().send(cmd, reply);
+
         yInfo() << "Yarprun succesfully started on port: " << mPortName.c_str();
 
         pServerPort=&port;

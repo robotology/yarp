@@ -79,6 +79,7 @@ set(YARP_dev_HDRS include/yarp/dev/all.h
                   include/yarp/dev/IVisualParams.h
                   include/yarp/dev/IVisualParamsImpl.h
                   include/yarp/dev/LaserMeasurementData.h
+                  include/yarp/dev/IVisualServoing.h
                   include/yarp/dev/PolyDriverDescriptor.h
                   include/yarp/dev/PolyDriver.h
                   include/yarp/dev/PolyDriverList.h
@@ -165,7 +166,6 @@ if (CREATE_LIB_MATH)
   list(APPEND YARP_devices_SRCS src/devices/FrameTransformClient/FrameTransformClient.cpp
                                 src/devices/FrameTransformServer/FrameTransformServer.cpp
                                 src/devices/Localization2DClient/Localization2DClient.cpp
-                                src/devices/LocationsServer/LocationsServer.cpp
                                 src/devices/Map2DClient/Map2DClient.cpp
                                 src/devices/Map2DServer/Map2DServer.cpp
                                 src/devices/Navigation2DClient/Navigation2DClient.cpp
@@ -191,7 +191,6 @@ if (CREATE_LIB_MATH)
   list(APPEND YARP_devices_HDRS src/devices/FrameTransformClient/FrameTransformClient.h
                                 src/devices/FrameTransformServer/FrameTransformServer.h
                                 src/devices/Localization2DClient/Localization2DClient.h
-                                src/devices/LocationsServer/LocationsServer.h
                                 src/devices/Map2DClient/Map2DClient.h
                                 src/devices/Map2DServer/Map2DServer.h
                                 src/devices/Navigation2DClient/Navigation2DClient.h
