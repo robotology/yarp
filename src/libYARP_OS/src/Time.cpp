@@ -51,9 +51,13 @@ static Clock *getClock()
          *   clock really wanted by the user, i.e. this system clock may be destroyed again to
          *   instantiate the good one, leaving space for another possible race condition.
          * 2: use the system clock only for this call
+         *
+         * 3: thrown an assert:
+         *   This is better because it shows initialization problems right from the start and help user
+         * to fix the code, which may otherwise lead to undefined behaviour.
          */
-        YARP_WARN(Logger::get(), "Clock pointer is null: This should never happen");
-        Time::useSystemClock();   // This function sets a new pclock
+        YARP_ERROR(Logger::get(), "Clock pointer is null: This should never happen. Is the object yarp::os::Network been initialized?");
+        ::exit(-1);
     }
     return pclock;
 }
@@ -243,11 +247,11 @@ yarp::os::ConstString Time::clockTypeToString(yarpClockType type)
             break;
 
         case YARP_CLOCK_UNINITIALIZED:
-            clockTypeString = "Clock has not been initialized yet (this should never happen)";
+            clockTypeString = "Clock has not been initialized yet: This should never happen. Is the object yarp::os::Network been initialized?";
             break;
 
         default:
-            clockTypeString = "Unknown clock (this should never happen)";
+            clockTypeString = "Unknown clock: This should never happen. Is the object yarp::os::Network been initialized?";
             break;
     }
     return clockTypeString;
