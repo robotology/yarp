@@ -164,8 +164,6 @@ public:
 
     int cmdRegression(int argc, char *argv[]);
 
-    int cmdServer(int argc, char *argv[]);
-
     int cmdCheck(int argc, char *argv[]);
 
     int cmdPing(int argc, char *argv[]);

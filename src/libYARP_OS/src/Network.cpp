@@ -598,15 +598,6 @@ int NetworkBase::main(int argc, char *argv[]) {
     return Companion::main(argc, argv);
 }
 
-int NetworkBase::runNameServer(int argc, char *argv[]) {
-    // call the yarp standard companion name server
-    argc--;
-    argv++;
-    int result = Companion::getInstance().cmdServer(argc, argv);
-    return result;
-}
-
-
 void NetworkBase::autoInitMinimum() {
     if (!(__yarp_auto_init_active||__yarp_is_initialized)) {
         __yarp_auto_init_active = true;
