@@ -37,8 +37,13 @@ RemappedSubControlBoard::RemappedSubControlBoard()
     iImpedance=0;
     iMode2=0;
     iInteract=0;
+    imotor=0;
+    iVar = 0;
+    iPwm = 0;
+    iCurr = 0;
 
     subdevice=0;
+
 
     attachedF=false;
     _subDevVerbose = false;
@@ -65,7 +70,11 @@ void RemappedSubControlBoard::detach()
     iMode2=0;
     iTimed=0;
     iInteract=0;
+    imotor=0;
     iVar = 0;
+    iPwm = 0;
+    iCurr = 0;
+
     attachedF=false;
 }
 
@@ -106,6 +115,8 @@ bool RemappedSubControlBoard::attach(yarp::dev::PolyDriver *d, const std::string
         subdevice->view(iInteract);
         subdevice->view(imotor);
         subdevice->view(iVar);
+        subdevice->view(iPwm);
+        subdevice->view(iCurr);
     }
     else
     {
@@ -146,6 +157,16 @@ bool RemappedSubControlBoard::attach(yarp::dev::PolyDriver *d, const std::string
     if ((info == 0) && (_subDevVerbose))
     {
         yWarning() << "ControlBoardRemapper:  Warning IAxisInfo not valid interface";
+    }
+
+    if ((iPwm == 0) && (_subDevVerbose))
+    {
+        yWarning() << "ControlBoardRemapper:  Warning IPWMControl not valid interface";
+    }
+
+    if ((iCurr == 0) && (_subDevVerbose))
+    {
+        yWarning() << "ControlBoardRemapper:  Warning ICurrentControl not valid interface";
     }
 
 
