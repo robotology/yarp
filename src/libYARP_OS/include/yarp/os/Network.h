@@ -167,16 +167,6 @@ public:
     static int main(int argc, char *argv[]);
 
     /**
-     * Run a basic YARP name server.
-     *
-     * @param argc argument count
-     * @param argv command line arguments
-     * @return 0 on success, non-zero on failure
-     *
-     */
-    static int runNameServer(int argc, char *argv[]);
-
-    /**
      * An assertion.  Should be true.  If false, this will be
      * reported, and YARP will shut down.  In general, this is an
      * OS-specific process.
