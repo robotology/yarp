@@ -69,14 +69,14 @@ class MainWindow;
 class MainWindow : public QMainWindow, public NetworkProfiler::ProgressCallback
 {
     Q_OBJECT
-    
+
 public:
     explicit MainWindow(QWidget *parent = 0);
     ~MainWindow();
     void drawGraph(yarp::graph::Graph &graph);
 
 public:
-    virtual void onProgress(unsigned int percentage);
+    virtual void onProgress(unsigned int percentage) override;
 
 private:
     void initScene();

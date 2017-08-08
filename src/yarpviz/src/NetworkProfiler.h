@@ -18,7 +18,8 @@
 #include<yarp/os/Bottle.h>
 
 
-class YarpvizVertex : public yarp::graph::Vertex {
+class YarpvizVertex : public yarp::graph::Vertex
+{
 public:
         YarpvizVertex(const yarp::os::Property &prop) : yarp::graph::Vertex(prop){
             graphicItem = NULL;
@@ -31,7 +32,8 @@ private:
 };
 
 
-class PortVertex : public YarpvizVertex {
+class PortVertex : public YarpvizVertex
+{
 public:
         PortVertex(const std::string name) : YarpvizVertex("(type port)") , owner(NULL) {
             property.put("name", name);
@@ -40,14 +42,15 @@ public:
         void setOwner(yarp::graph::Vertex* owner) { PortVertex::owner = owner; }
         yarp::graph::Vertex* getOwner() { return owner; }
 
-        virtual bool operator == (const yarp::graph::Vertex &v1) const {
+        virtual bool operator == (const yarp::graph::Vertex &v1) const override {
             return property.find("name").asString() == v1.property.find("name").asString();
         }
 private:
     yarp::graph::Vertex* owner;
 };
 
-class ProcessVertex : public YarpvizVertex{
+class ProcessVertex : public YarpvizVertex
+{
 public:
         ProcessVertex(int pid, const std::string hostname) : YarpvizVertex("(type process)"), owner(NULL) {
             property.put("hostname", hostname);
@@ -56,7 +59,7 @@ public:
         void setOwner(yarp::graph::Vertex* owner) { ProcessVertex::owner = owner; }
         yarp::graph::Vertex* getOwner() { return owner; }
 
-        virtual bool operator == (const yarp::graph::Vertex &v1) const {
+        virtual bool operator == (const yarp::graph::Vertex &v1) const override {
             return property.find("hostname").asString() == v1.property.find("hostname").asString() &&
                    property.find("pid").asInt() == v1.property.find("pid").asInt();
         }
@@ -65,39 +68,48 @@ private:
         yarp::graph::Vertex* owner;
 };
 
-class MachineVertex : public YarpvizVertex{
+class MachineVertex : public YarpvizVertex
+{
 public:
         MachineVertex(std::string os, const std::string hostname) : YarpvizVertex("(type machine)") {
             property.put("hostname", hostname);
             property.put("os", os);
         }
 
-        virtual bool operator == (const yarp::graph::Vertex &v1) const {
+        virtual bool operator == (const yarp::graph::Vertex &v1) const override {
             return property.find("hostname").asString() == v1.property.find("hostname").asString() &&
                    property.find("os").asString() == v1.property.find("os").asString() &&
                    property.find("type").asString() == v1.property.find("type").asString() ;
         }
 };
 
-class NetworkProfiler {
+class NetworkProfiler
+{
 
 public:
 
-    class ProgressCallback {
+    class ProgressCallback
+    {
     public:
+        virtual ~ProgressCallback() { }
         virtual void onProgress(unsigned int percentage) { }
     };
 
-    struct ConnectionInfo {
+    struct ConnectionInfo
+    {
         std::string name;
         std::string carrier;
     };
-    struct MachineInfo {
+
+    struct MachineInfo
+    {
         std::string os;
         std::string hostname;
 
     };
-    struct ProcessInfo {
+
+    struct ProcessInfo
+    {
         std::string name;
         std::string arguments;
         std::string os;
@@ -108,7 +120,9 @@ public:
         int policy;
         ProcessInfo() { pid = priority = policy = -1; }
     };
-    struct PortDetails {
+
+    struct PortDetails
+    {
         std::string name;
         std::vector<ConnectionInfo> outputs;
         std::vector<ConnectionInfo> inputs;

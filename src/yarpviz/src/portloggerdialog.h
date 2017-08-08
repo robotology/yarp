@@ -29,9 +29,9 @@ private slots:
 private:
     bool saveLog(std::string filename, yarp::os::Bottle* samples);
 private:
+    Ui::PortLoggerDialog *ui;
     bool isStarted;
     yarp::graph::Graph *graph;
-    Ui::PortLoggerDialog *ui;
     QTimer *timer;
     QTime logTime;
 };

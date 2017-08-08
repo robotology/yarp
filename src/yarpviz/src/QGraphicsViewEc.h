@@ -20,7 +20,7 @@ public:
     QGraphicsViewEc(QWidget *parent = 0);
 
 protected:
-    virtual void wheelEvent(QWheelEvent* event);
+    virtual void wheelEvent(QWheelEvent* event) override;
 };
 
 #endif // QGRAPHICSVIEWEC_H

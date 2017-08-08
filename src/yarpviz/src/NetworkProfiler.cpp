@@ -192,7 +192,7 @@ bool NetworkProfiler::creatNetworkGraph(ports_detail_set details, yarp::graph::G
         // find the current port vertex in the graph
         pvertex_iterator vi1 = graph.find(PortVertex(info.name));
         yAssert(vi1 != graph.vertices().end());
-        for(int i=0; i<info.outputs.size(); i++) {
+        for(size_t i=0; i<info.outputs.size(); i++) {
             ConnectionInfo cnn = info.outputs[i];
             pvertex_iterator vi2 = graph.find(PortVertex(cnn.name));
             if(vi2 != graph.vertices().end()) {
@@ -329,7 +329,7 @@ bool NetworkProfiler::updateConnectionQosStatus(yarp::graph::Graph& graph) {
 
     for(itr = vertices.begin(); itr!=vertices.end(); itr++) {
         const Vertex &v1 = (**itr);
-        for(int i=0; i<v1.outEdges().size(); i++) {
+        for(size_t i=0; i<v1.outEdges().size(); i++) {
             Edge& edge = (Edge&) v1.outEdges()[i];
             const Vertex &v2 = edge.second();
             if(!v1.property.check("hidden") && !v2.property.check("hidden")) {

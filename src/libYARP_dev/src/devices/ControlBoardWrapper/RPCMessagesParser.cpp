@@ -1166,7 +1166,6 @@ void RPCMessagesParser::handlePidMsg(const yarp::os::Bottle& cmd, yarp::os::Bott
             if (ControlBoardWrapper_p->verbose())
                 yDebug("get command received\n");
             double dtmp = 0.0;
-            double dtmp2 = 0.0;
             response.addVocab(VOCAB_IS);
             response.add(cmd.get(1));
 
@@ -1362,7 +1361,6 @@ void RPCMessagesParser::handlePWMMsg(const yarp::os::Bottle& cmd, yarp::os::Bott
             if (ControlBoardWrapper_p->verbose())
                 yDebug("get command received\n");
             double dtmp = 0.0;
-            double dtmp2 = 0.0;
             response.addVocab(VOCAB_IS);
             response.add(cmd.get(1));
 

@@ -37,8 +37,11 @@ using namespace yarp::graph;
 
 
 MainWindow::MainWindow(QWidget *parent) :
-    QMainWindow(parent),
-    ui(new Ui::MainWindow), scene(NULL), currentGraph(NULL), progressDlg(NULL)
+        QMainWindow(parent),
+        ui(new Ui::MainWindow),
+        scene(NULL),
+        progressDlg(NULL),
+        currentGraph(NULL)
 {
     ui->setupUi(this);
     stringModel.setStringList(messages);
@@ -341,7 +344,7 @@ void MainWindow::drawGraph(Graph &graph)
 
     for(itr = vertices.begin(); itr!=vertices.end(); itr++) {
         const Vertex &v1 = (**itr);
-        for(int i=0; i<v1.outEdges().size(); i++) {
+        for(size_t i=0; i<v1.outEdges().size(); i++) {
             const Edge& edge = v1.outEdges()[i];
             const Vertex &v2 = edge.second();
             string targetName = v2.property.find("name").asString();
@@ -542,7 +545,7 @@ void MainWindow::onProfileYarpNetwork() {
     progressDlg->setValue(0);
     progressDlg->setWindowModality(Qt::WindowModal);
     progressDlg->show();
-    for(int i=0; i<ports.size(); i++) {
+    for(size_t i=0; i<ports.size(); i++) {
         NetworkProfiler::PortDetails info;
         std::string portname = ports[i].find("name").asString();
         std::string msg = string("Cheking ") + portname + "...";
@@ -595,10 +598,10 @@ void MainWindow::onHighlightLoops() {
         graph_subset scc;
         Algorithm::calcSCC(*currentGraph, scc);
 
-        for(int i=0; i<scc.size(); i++) {
+        for(size_t i=0; i<scc.size(); i++) {
             pvertex_set &vset = scc[i];
             QColor color(Random::uniform(128,255), Random::uniform(0,128), Random::uniform(128,255));
-            for(int j=0; j<vset.size(); j++)
+            for(size_t j=0; j<vset.size(); j++)
                 vset[j]->property.put("color", color.name().toStdString().c_str());
         }
     }
@@ -805,7 +808,7 @@ void MainWindow::onExportConList() {
     const pvertex_set& vertices = currentGraph->vertices();
     for(itr = vertices.begin(); itr!=vertices.end(); itr++) {
         const Vertex &v1 = (**itr);
-        for(int i=0; i<v1.outEdges().size(); i++) {
+        for(size_t i=0; i<v1.outEdges().size(); i++) {
             Edge& edge = (Edge&) v1.outEdges()[i];
             const Vertex &v2 = edge.second();
             if(!v1.property.find("hidden").asBool() && !v2.property.find("hidden").asBool()) {
