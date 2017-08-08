@@ -269,10 +269,6 @@ public:
     // user gives back an object
     void release(void *key);
 
-#ifndef YARP_NO_DEPRECATED
-    YARP_DEPRECATED void setAutoRelease(bool flag = true);
-#endif // YARP_NO_DEPRECATED
-
 protected:
     void init();
 

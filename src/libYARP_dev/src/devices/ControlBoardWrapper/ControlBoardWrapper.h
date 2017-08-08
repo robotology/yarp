@@ -152,13 +152,6 @@ public:
 
 
 
-#if defined(_MSC_VER) && !defined(YARP_NO_DEPRECATED) // since YARP 2.3.65
-// A class implementing setXxxxxMode(int) causes a warning on MSVC
-YARP_WARNING_PUSH
-YARP_DISABLE_DEPRECATED_WARNING
-#endif
-
-
 /**
  *  @ingroup dev_impl_wrapper
  *
@@ -1262,10 +1255,6 @@ public:
     virtual bool getRefCurrents(double *t) override;
     virtual bool getRefCurrent(int j, double *t) override;
 };
-
-#if defined(_MSC_VER) && !defined(YARP_NO_DEPRECATED) // since YARP 2.3.65
-YARP_WARNING_POP
-#endif
 
 
 #endif // YARP_DEV_CONTROLBOARDWRAPPER_CONTROLBOARDWRAPPER_H

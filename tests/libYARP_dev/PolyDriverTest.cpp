@@ -203,9 +203,6 @@ name /mymotor\n\
         testMonitor();
         testPropertyBug();
         testGroup();
-#ifndef YARP_NO_DEPRECATED
-        //put here your deprecated stuff
-#endif // YARP_NO_DEPRECATED
         testControlBoard2();
         Network::setLocalMode(false);
     }

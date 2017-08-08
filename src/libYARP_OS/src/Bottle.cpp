@@ -385,11 +385,3 @@ void Bottle::setReadOnly(bool readOnly)
 {
     implementation->ro = readOnly;
 }
-
-
-#ifndef YARP_NO_DEPRECATED // since YARP 2.3.65
-void Bottle::add(const char* txt)
-{
-    addString(txt);
-}
-#endif

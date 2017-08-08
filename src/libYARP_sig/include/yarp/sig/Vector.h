@@ -310,19 +310,6 @@ public:
     */
     const Vector &operator=(const Vector &r);
 
-#ifndef YARP_NO_DEPRECATED // since YARP 2.3.65
-    /**
-    * Resize the vector, (warning: deprecated, use resize) here
-    * to maintain compatibility with the old Vector class.
-    * @param s the new size
-    * @deprecated since YARP 2.3.65
-    */
-    YARP_DEPRECATED void size(size_t s)
-    {
-        Vector::resize(s);
-    }
-#endif
-
     /**
     * Resize the vector.
     * @param s the new size

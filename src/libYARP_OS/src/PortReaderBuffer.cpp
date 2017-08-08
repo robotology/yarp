@@ -518,17 +518,6 @@ void PortReaderBufferBase::attachBase(Port& port) {
     HELPER(implementation).attach(port);
 }
 
-#ifndef YARP_NO_DEPRECATED
-void PortReaderBufferBase::setAutoRelease(bool flag) {
-    //HELPER(implementation).stateSema.wait();
-    //HELPER(implementation).setAutoRelease(flag);
-    //HELPER(implementation).stateSema.post();
-    printf("setAutoRelease not implemented anymore; not needed\n");
-    std::exit(1);
-}
-#endif // YARP_NO_DEPRECATED
-
-
 
 /////////////////////
 ///
