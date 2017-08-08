@@ -25,7 +25,9 @@ namespace yarp {
  */
 class YARP_OS_API yarp::os::RpcServer : public AbstractContactable {
 public:
+#ifndef YARP_NO_DEPRECATED // since YARP 2.3.72
     using AbstractContactable::open;
+#endif // YARP_NO_DEPRECATED
 
     /**
      * Constructor.

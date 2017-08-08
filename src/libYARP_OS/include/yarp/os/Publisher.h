@@ -27,7 +27,10 @@ namespace yarp {
 template <class T>
 class yarp::os::Publisher : public AbstractContactable {
 public:
+#ifndef YARP_NO_DEPRECATED // since YARP 2.3.72
     using Contactable::open;
+#endif // YARP_NO_DEPRECATED
+
     using AbstractContactable::write;
 
     /**

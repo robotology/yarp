@@ -1230,7 +1230,7 @@ int Companion::cmdRpc2(int argc, char *argv[]) {
     if (argc>1) {
         ok = p.open(src);
     } else {
-        ok = p.open();
+        ok = p.open("...");
     }
     if (ok) {
         if (ConstString(dest)!="--client") {

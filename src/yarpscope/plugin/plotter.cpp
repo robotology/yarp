@@ -394,7 +394,7 @@ Connection::Connection(QString remotePortName,  QString localPortName, QObject *
 
     // Open the local port
     if (localPortName.isEmpty()) {
-        localPort->open();
+        localPort->open("...");
     } else {
         localPort->open(localPortName.toLatin1().data());
     }
