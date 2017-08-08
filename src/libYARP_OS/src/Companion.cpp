@@ -2793,8 +2793,10 @@ int Companion::cmdClock(int argc, char *argv[])
 
         if( (((int) elapsed %5) == 0))
         {
-            if(!done)
-                printf("yarp clock running happily...\n");  std::fflush(stdout);
+            if(!done) {
+                printf("yarp clock running happily...\n");
+                std::fflush(stdout);
+            }
             done = true;
         }
         else
