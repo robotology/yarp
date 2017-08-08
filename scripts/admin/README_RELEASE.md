@@ -14,9 +14,9 @@ Steps for building a YARP stable release
   git status
 ```
 
-* Check git tags to get the current version, say `v2.3.68`.
-  Next stable release will be `v2.3.68.1`.
-  Let's release `v2.3.68.1`.
+* Check git tags to get the current version, say `v2.3.70`.
+  Next stable release will be `v2.3.70.1`.
+  Let's release `v2.3.70.1`.
 
 * Check regression tests
 
@@ -26,12 +26,12 @@ Steps for building a YARP stable release
   create.
 
 * Ensure that the release file for the release exists in `doc/release/`
-  (`doc/release/v2_3_68_1.md` for `v2.3.68.1`).
+  (`doc/release/v2_3_70_1.md` for `v2.3.70.1`).
   * Update the date for the release in this file.
   * Update the list of contributors by running
 
 ```
-  git shortlog -ens --no-merges v2.3.68..master
+  git shortlog -ens --no-merges v2.3.70..master
 ```
 
 * Ensure that the release file is linked in `doc/releases.dox`
@@ -42,16 +42,16 @@ Steps for building a YARP stable release
 
 ```
 git add cmake/YarpVersion.cmake
-git add doc/release/v2_3_68_1.md
+git add doc/release/v2_3_70_1.md
 git add doc/releases.dox
 git add doc/installation/download.dox
-git commit -m "YARP 2.3.68.1"
+git commit -m "YARP 2.3.70.1"
 ```
 
 * Tag:
 
 ```
-  git tag -a -m "YARP 2.3.68.1" v2.3.68.1 HEAD
+  git tag -a -m "YARP 2.3.70.1" v2.3.70.1 HEAD
 ```
 
 * Further checks before pushing:
@@ -61,19 +61,21 @@ git commit -m "YARP 2.3.68.1"
 ```
 
   (Check that the only commit is something like
-  `* xxxxxxx (tag: v2.3.68.1, HEAD -> master) YARP 2.3.68.1`)
+  `* xxxxxxx (tag: v2.3.70.1, HEAD -> master) YARP 2.3.70.1`)
 
-* Prepare for the next stable release by adding the relative file in
-  `doc/release/` (in this example `v2_3_68_2.md`) and add the releative file in
+
+* (Skip this and the next steps if this is the latest release for this series)
+  Prepare for the next stable release by adding the relative file in
+  `doc/release/` (in this example `v2_3_70_2.md`) and add the releative file in
   `doc/releases.dox` in the same "Series" above the one for the file just
   released.
 
 * Commit
 
 ```
-git add doc/release/v2_3_68_2.md
+git add doc/release/v2_3_70_2.md
 git add doc/releases.dox
-git commit -m "Prepare for next stable release (2.3.68.2)"
+git commit -m "Prepare for next stable release (2.3.70.2)"
 ```
 
 * Merge the changes into the `devel` branch
@@ -90,19 +92,20 @@ git commit -m "Prepare for next stable release (2.3.68.2)"
 
 ```
   git push origin master
-  git push origin v2.3.68.1
+  git push origin v2.3.70.1
   git push origin devel
 ```
 
 * Open https://github.com/robotology/yarp/settings/branches/master, restore tick
   in `Include administrators` and save changes.
 
-* Create 3 labels on github (in https://github.com/robotology/yarp/labels)
+* Create the following labels on github
+  (in https://github.com/robotology/yarp/labels)
   * For the current release:
-    * `Affects: YARP v2.3.68.1` using `#006b75` as color.
-  * For the next release:
-    * `Fixed in: YARP v2.3.68.2` using `#fbca04` as color.
-    * `Target: YARP v2.3.68.2` using `#d93f0b` as color.
+    * `Affects: YARP v2.3.70.1` using `#006b75` as color.
+  * For the next stable release (if any):
+    * `Fixed in: YARP v2.3.70.2` using `#fbca04` as color.
+    * `Target: YARP v2.3.70.2` using `#d93f0b` as color.
 
 
 Steps for building a YARP feature release
@@ -127,9 +130,9 @@ Steps for building a YARP feature release
   git merge --no-ff devel
 ```
 
-* Check git tags to get the current version, say `v2.3.68`.
-  Next feature release will be `v2.3.70`.
-  Let's release `v2.3.70`.
+* Check git tags to get the current version, say `v2.3.70`.
+  Next feature release will be `v2.3.72`.
+  Let's release `v2.3.72`.
 
 * Check regression tests
 
@@ -148,12 +151,12 @@ Steps for building a YARP feature release
 ```
 
 * Ensure that the release file for the release exists in `doc/release/`
-  (`doc/release/v2_3_70.md` for `v2.3.70`).
+  (`doc/release/v2_3_72.md` for `v2.3.72`).
   * Update the date for the release in this file.
   * Update the list of contributors by running
 
 ```
-  git shortlog -ens --no-merges v2.3.68..master
+  git shortlog -ens --no-merges v2.3.70..master
 ```
 
 * Ensure that the release file is linked in `doc/releases.dox`
@@ -163,13 +166,13 @@ Steps for building a YARP feature release
 * Commit:
 
 ```
-  git commit -a -m "YARP 2.3.70"
+  git commit -a -m "YARP 2.3.72"
 ```
 
 * Tag:
 
 ```
-  git tag -a -m "YARP 2.3.70" v2.3.70 HEAD
+  git tag -a -m "YARP 2.3.72" v2.3.72 HEAD
 ```
 
 * Further checks before pushing:
@@ -179,20 +182,20 @@ Steps for building a YARP feature release
 ```
 
   (Check that the last commit is something like
-  `* xxxxxxx (tag: v2.3.70, HEAD -> master) YARP 2.3.70` and that the previous
+  `* xxxxxxx (tag: v2.3.72, HEAD -> master) YARP 2.3.72` and that the previous
   commit is something like `*   xxxxxxx Merge branch 'devel'`)
 
 * Prepare for the next stable release by adding the relative file in
-  `doc/release/` (in this example `v2_3_70_1.md`) and add the releative file in
+  `doc/release/` (in this example `v2_3_72_1.md`) and add the releative file in
   `doc/releases.dox` in the same "Series" above the one for the file just
   released.
 
 * Commit
 
 ```
-git add doc/release/v2_3_70_1.md
+git add doc/release/v2_3_72_1.md
 git add doc/releases.dox
-git commit -m "Prepare for next stable release (2.3.70.1)"
+git commit -m "Prepare for next stable release (2.3.72.1)"
 ```
 
 * Merge the changes into the `devel` branch
@@ -206,16 +209,16 @@ git commit -m "Prepare for next stable release (2.3.70.1)"
   odd number, in this example `71`).
 
 * Prepare for the next feature release by adding the relative file in
- `doc/release/` (in this example `v2_3_72.md`)
+ `doc/release/` (in this example `v2_3_74.md`)
   and add the releative file in `doc/releases.dox` in a new same "Series" on top.
 
 * Commit
 
 ```
 git add cmake/YarpVersion.cmake
-git add doc/release/v2_3_72.md
+git add doc/release/v2_3_74.md
 git add doc/releases.dox
-git commit -m "Prepare for next feature release (2.3.72)"
+git commit -m "Prepare for next feature release (2.3.74)"
 ```
 
 * Open https://github.com/robotology/yarp/settings/branches/master, remove tick
@@ -225,18 +228,23 @@ git commit -m "Prepare for next feature release (2.3.72)"
 
 ```
   git push origin master
-  git push origin v2.3.70
+  git push origin v2.3.72
   git push origin devel
 ```
 
 * Open https://github.com/robotology/yarp/settings/branches/master, restore tick
   in `Include administrators` and save changes.
 
-* Create 4 labels on github (in https://github.com/robotology/yarp/labels)
-  * `Fixed in: YARP 2.3.70.1` using `#fbca04` as color.
-  * `Target: YARP v2.3.70.1` using `#d93f0b` as color.
-  * `Fixed in: YARP 2.3.72` using `#fbca04` as color.
-  * `Target: YARP v2.3.72` using `#d93f0b` as color.
+* Create the following labels on github
+  (in https://github.com/robotology/yarp/labels)
+  * For the current release:
+    * `Affects: YARP v2.3.72` using `#006b75` as color.
+  * For the next stable release:
+    * `Fixed in: YARP 2.3.72.1` using `#fbca04` as color.
+    * `Target: YARP v2.3.72.1` using `#d93f0b` as color.
+  * For the next feature release:
+    * `Fixed in: YARP 2.3.74` using `#fbca04` as color.
+    * `Target: YARP v2.3.74` using `#d93f0b` as color.
 
 
 
@@ -248,7 +256,8 @@ Actions after any YARP release
 
 * Create and upload the binary packages.
 
-* Create an issue in https://github.com/robotology/homebrew-cask/issues titled ** Update YARP formula to [versionnum] **
+* Create an issue in https://github.com/robotology/homebrew-formulae/issues
+  titled ** Update YARP formula to [versionnum] **
 
 * Publish the release by posting an announcement in
   [`robotology/QA`](https://github.com/robotology/QA) and in the
