@@ -1,5 +1,5 @@
 /* 
- * Copyright (C) 2012 Robotics Brain and Cognitive Sciences, Istituto Italiano di Tecnologia
+ * Copyright (C) 2012 Istituto Italiano di Tecnologia (IIT)
  * Author: Elena Ceseracciu
  * email:  elena.ceseracciu@iit.it
  * CopyPolicy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT

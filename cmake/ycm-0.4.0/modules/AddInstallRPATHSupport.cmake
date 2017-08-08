@@ -65,7 +65,7 @@
 #    RPATH, for example ``FOO; NOT BAR``.
 
 #=======================================================================
-# Copyright 2014 RBCS, Istituto Italiano di Tecnologia
+# Copyright 2014 Istituto Italiano di Tecnologia (IIT)
 # @author Francesco Romano <francesco.romano@iit.it>
 #
 # Distributed under the OSI-approved BSD License (the "License");

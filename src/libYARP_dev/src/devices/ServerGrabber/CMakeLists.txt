@@ -1,5 +1,5 @@
-# Copyright (C) 2017 iCub Facility - Istituto Italiano di Tecnologia
-# Author: Nicolo' Genesio <nicolo.genesio@iit.it>
+# Copyright (C) 2017 Istituto Italiano di Tecnologia (IIT)
+# Author: Nicolò Genesio <nicolo.genesio@iit.it>
 # CopyPolicy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
 
 

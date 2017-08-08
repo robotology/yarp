@@ -364,7 +364,7 @@ add_install_rpath_support(LIB_DIRS "${CMAKE_INSTALL_FULL_LIBDIR}"       # Librar
 
 #########################################################################
 # Specify yarp version and copyright into macOS bundles
-set(MACOSX_BUNDLE_COPYRIGHT "© Istituto Italiano di Tecnologia and RobotCub Consortium. YARP is released under the terms of the LGPL v2.1 or later.")
+set(MACOSX_BUNDLE_COPYRIGHT "© Istituto Italiano di Tecnologia (IIT) and RobotCub Consortium. YARP is released under the terms of the LGPL v2.1 or later.")
 set(MACOSX_BUNDLE_SHORT_VERSION_STRING "${YARP_VERSION_SHORT}")
 
 

@@ -710,7 +710,7 @@ void MainWindow::onErrorMessage(QString msg)
 /**********************************************************/
 void MainWindow::onMenuHelpAbout()
 {
-    QString copyright = "2014 (C) iCub Facility \nIstituto Italiano di Tecnologia";
+    QString copyright = "2014 (C) Istituto Italiano di Tecnologia (IIT)";
     QString name = APP_NAME;
     QString version = APP_VERSION;
     AboutDlg dlg(name,version,copyright,"http://www.icub.org/");

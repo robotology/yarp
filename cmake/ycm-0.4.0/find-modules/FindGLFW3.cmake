@@ -27,7 +27,7 @@
 
 
 #=============================================================================
-# Copyright 2015  iCub Facility, Istituto Italiano di Tecnologia
+# Copyright 2015 Istituto Italiano di Tecnologia (IIT)
 #   Authors: Daniele E. Domenichelli <daniele.domenichelli@iit.it>
 #
 # Distributed under the OSI-approved BSD License (the "License");

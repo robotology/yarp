@@ -1,8 +1,8 @@
 /*
  *  Yarp Modules Manager
  *  Copyright: (C) 2013 Istituto Italiano di Tecnologia (IIT)
- *  Authors: Ali Paikan <ali.paikan@iit.it>, Elena Ceseracciu <elena.ceseracciu@iit.it>
- *
+ *  Authors: Ali Paikan <ali.paikan@iit.it>,
+ *           Elena Ceseracciu <elena.ceseracciu@iit.it>
  *  Copy Policy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
  */
 

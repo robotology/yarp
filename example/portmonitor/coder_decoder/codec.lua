@@ -1,5 +1,5 @@
 --
--- Copyright (C) 2012 IITRBCS
+-- Copyright (C) 2012 Istituto Italiano di Tecnologia (IIT)
 -- Authors: Ali Paikan
 -- CopyPolicy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
 -- Using Lua 5.1+ base64 v3.0 (c) 2009 by Alex Kloss <alexthkloss@web.de>

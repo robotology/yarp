@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2017 iCub Facility, Istituto Italiano di Tecnologia
+ * Copyright (C) 2017 Istituto Italiano di Tecnologia (IIT)
  * Authors: Claudio Fantacci
  * CopyPolicy: Released under the terms of the 3-clause BSD.
  */

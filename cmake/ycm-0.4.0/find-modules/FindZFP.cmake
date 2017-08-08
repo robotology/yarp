@@ -15,8 +15,8 @@
 #   ZFP_PATCH_VERSION   - ZFP release version
 
 #=============================================================================
-# Copyright 2016 iCub Facility, Istituto Italiano di Tecnologia
-#   Authors: Nicolo' Genesio <nicolo.genesio@iit.it>
+# Copyright 2016 Istituto Italiano di Tecnologia (IIT)
+#   Authors: Nicolò Genesio <nicolo.genesio@iit.it>
 #
 # Distributed under the OSI-approved BSD License (the "License");
 # see accompanying file Copyright.txt for details.

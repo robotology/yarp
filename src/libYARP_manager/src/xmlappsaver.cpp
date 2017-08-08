@@ -1,8 +1,8 @@
 /*
  *  Yarp Modules Manager
- *  Copyright: (C) 2012 Robotics, Brain and Cognitive Sciences - Italian Institute of Technology (IIT)
- *  Authors: Elena Ceseracciu, Ali Paikan <ali.paikan@iit.it>
- *
+ *  Copyright: (C) 2012 Istituto Italiano di Tecnologia (IIT)
+ *  Authors: Elena Ceseracciu <elena.ceseracciu@iit.it>
+ *           Ali Paikan <ali.paikan@iit.it>
  *  Copy Policy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
  */
 

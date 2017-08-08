@@ -2,7 +2,7 @@
 // a summary of the licence statement below, added by paulfitz
 // CopyPolicy: GPL
 
-// Copyright (C)2004 Dimax ( http://www.xdimax.com )
+// Copyright (C) 2004 Dimax ( http://www.xdimax.com )
 //
 // This program is free software; you can redistribute it and/or
 // modify it under the terms of the GNU General Public License

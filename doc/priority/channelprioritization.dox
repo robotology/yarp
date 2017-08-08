@@ -1,12 +1,12 @@
 /*
- * Copyright: (C) 2015-2016 iCub Facility, Istituto Italiano di Tecnologia
+ * Copyright: (C) 2015-2016 Istituto Italiano di Tecnologia (IIT)
  * Copy Policy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
  */
 
 /**
  * @page channelprioritization Channel Prioritization
 
-\author Lorenzo Natale, Ali Paikan, Daniele Domenichelli
+\author Lorenzo Natale, Ali Paikan, Daniele E. Domenichelli
 
 \section content Contents
 \li \ref why

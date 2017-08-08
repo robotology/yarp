@@ -1,6 +1,6 @@
 /*
  * Author: Lorenzo Natale
- * Copyright (C) 2015  Istituto Italiano di Tecnologia, iCub Facility
+ * Copyright (C) 2015 Istituto Italiano di Tecnologia (IIT)
  * CopyPolicy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
  */
 

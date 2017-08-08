@@ -26,7 +26,7 @@
 #  Libedit_LIBRARY_DEBUG - NetBSD Editline library  (debug)
 
 #=============================================================================
-# Copyright 2016 iCub Facility, Istituto Italiano di Tecnologia
+# Copyright 2016 Istituto Italiano di Tecnologia (IIT)
 #   Author: Daniele E. Domenichelli <daniele.domenichelli@iit.it>
 #
 # Distributed under the OSI-approved BSD License (the "License");

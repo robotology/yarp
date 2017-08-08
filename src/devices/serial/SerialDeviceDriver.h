@@ -1,7 +1,6 @@
 /*
- * Copyright (C) 2007 Alex Bernardino, Carlos Beltran-Gonzalez, Francesco Giovannini (francesco.giovannini@iit.it)
+ * Copyright (C) 2007 Alex Bernardino, Carlos Beltran-Gonzalez, Francesco Giovannini
  * CopyPolicy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
- *
  */
 
 #ifndef SerialDeviceDriverh

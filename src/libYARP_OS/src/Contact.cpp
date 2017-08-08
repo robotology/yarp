@@ -1,6 +1,6 @@
 /*
- * Copyright (C) 2006, 2011 Department of Robotics Brain and Cognitive Sciences - Istituto Italiano di Tecnologia, Anne van Rossum
- * Copyright (C) 2016 iCub Facility, Istituto Italiano di Tecnologia
+ * Copyright (C) 2006, 2011 Istituto Italiano di Tecnologia (IIT), Anne van Rossum
+ * Copyright (C) 2016 Istituto Italiano di Tecnologia (IIT)
  * Authors: Paul Fitzpatrick <paulfitz@alum.mit.edu>
  *          Anne van Rossum <anne@almende.com>
  *          Daniele E. Domenichelli <daniele.domenichelli@iit.it>

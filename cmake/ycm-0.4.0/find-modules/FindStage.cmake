@@ -23,7 +23,7 @@
 
 #=============================================================================
 # Copyright 2009 RobotCub Consortium
-# Copyright 2014 iCub Facility, Istituto Italiano di Tecnologia
+# Copyright 2014 Istituto Italiano di Tecnologia (IIT)
 #   Authors: Paul Fitzpatrick <paulfitz@alum.mit.edu>
 #            Daniele E. Domenichelli <daniele.domenichelli@iit.it>
 #

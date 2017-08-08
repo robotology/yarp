@@ -1,5 +1,5 @@
-# Copyright: (C) 2013, 2015 Istituto Italiano di Tecnologia
-# Authors: Elena Ceseracciu, Daniele Domenichelli
+# Copyright: (C) 2013, 2015 Istituto Italiano di Tecnologia (IIT)
+# Authors: Elena Ceseracciu, Daniele E. Domenichelli
 # CopyPolicy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
 
 

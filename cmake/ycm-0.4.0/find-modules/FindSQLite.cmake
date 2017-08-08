@@ -16,7 +16,7 @@
 #  SQLite_TWEAK_VERSION - SQLite tweak version
 
 #=============================================================================
-# Copyright 2012-2013  iCub Facility, Istituto Italiano di Tecnologia
+# Copyright 2012-2013 Istituto Italiano di Tecnologia (IIT)
 #   Authors: Daniele E. Domenichelli <daniele.domenichelli@iit.it>
 #
 # Distributed under the OSI-approved BSD License (the "License");

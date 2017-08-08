@@ -7,7 +7,7 @@
 #
 
 set(CPACK_PACKAGE_NAME "YARP")
-set(CPACK_PACKAGE_VENDOR "iCub Facility, Istituto Italiano di Tecnologia (IIT)")
+set(CPACK_PACKAGE_VENDOR "Istituto Italiano di Tecnologia (IIT)")
 set(CPACK_PACKAGE_DESCRIPTION_SUMMARY "YARP: A thin middleware for humanoid robots and more")
 set(CPACK_PACKAGE_DESCRIPTION_FILE "${CMAKE_CURRENT_SOURCE_DIR}/README.md")
 set(CPACK_RESOURCE_FILE_LICENSE "${CMAKE_CURRENT_SOURCE_DIR}/COPYING")

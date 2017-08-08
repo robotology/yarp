@@ -1,6 +1,6 @@
 /*
 * Author: Marco Randazzo
-* Copyright (C) 2017 iCubFacility - Istituto Italiano di Tecnologia
+* Copyright (C) 2017 Istituto Italiano di Tecnologia (IIT)
 * CopyPolicy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
 */
 

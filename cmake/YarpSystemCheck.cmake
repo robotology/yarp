@@ -1,5 +1,9 @@
 # Copyright: (C) 2009 RobotCub Consortium
-# Authors: Paul Fitzpatrick, Giorgio Metta, Lorenzo Natale, Alessandro Scalzo, Daniele E. Domenichelli
+# Authors: Paul Fitzpatrick <paulfitz@alum.mit.edu>
+#          Giorgio Metta <giorgio.metta@iit.it>
+#          Lorenzo Natale <lorenzo.natale@iit.it>
+#          Alessandro Scalzo <alessandro.scalzo@iit.it>
+#          Daniele E. Domenichelli <daniele.domenichelli@iit.it>
 # CopyPolicy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
 
 

@@ -1,5 +1,5 @@
 #  Yarp Logger
-#  Copyright: (C) 2014 iCub Facility - Istituto Italiano di Tecnologia (IIT)
+#  Copyright: (C) 2014 Istituto Italiano di Tecnologia (IIT)
 #  Authors: Marco Randazzo <marco.randazzo@iit.it>
 #
 #  Copy Policy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
