@@ -25,6 +25,39 @@
 using namespace yarp::os::impl;
 using namespace yarp::os;
 
+PortCoreInputUnit::PortCoreInputUnit(PortCore& owner,
+                                     int index,
+                                     InputProtocol *ip,
+                                     bool reversed) :
+        PortCoreUnit(owner, index),
+        ip(ip),
+        phase(1),
+        access(1),
+        closing(false),
+        finished(false),
+        running(false),
+        name(owner.getName()),
+        localReader(YARP_NULLPTR),
+        reversed(reversed)
+{
+    yAssert(ip!=YARP_NULLPTR);
+
+    yarp::os::PortReaderCreator *creator = owner.getReadCreator();
+    if (creator != YARP_NULLPTR) {
+        localReader = creator->create();
+    }
+}
+
+PortCoreInputUnit::~PortCoreInputUnit()
+{
+    closeMain();
+    if (localReader!=YARP_NULLPTR) {
+        delete localReader;
+        localReader = YARP_NULLPTR;
+    }
+}
+
+
 bool PortCoreInputUnit::start() {
 
 
@@ -434,6 +467,25 @@ void PortCoreInputUnit::run() {
     // thread within and from themselves
 }
 
+bool PortCoreInputUnit::isInput()
+{
+    return true;
+}
+
+void PortCoreInputUnit::close()
+{
+    closeMain();
+}
+
+bool PortCoreInputUnit::isFinished()
+{
+    return finished;
+}
+
+const ConstString& PortCoreInputUnit::getName()
+{
+    return name;
+}
 
 bool PortCoreInputUnit::interrupt() {
     // give a kick (unfortunately unavoidable)
@@ -446,6 +498,26 @@ bool PortCoreInputUnit::interrupt() {
     }
     access.post();
     return true;
+}
+
+void PortCoreInputUnit::setCarrierParams(const yarp::os::Property& params)
+{
+    if (ip) {
+        ip->getReceiver().setCarrierParams(params);
+    }
+}
+
+void PortCoreInputUnit::getCarrierParams(yarp::os::Property& params)
+{
+    if (ip) {
+        ip->getReceiver().getCarrierParams(params);
+    }
+}
+
+// return the protocol object
+InputProtocol* PortCoreInputUnit::getInPutProtocol()
+{
+    return ip;
 }
 
 void PortCoreInputUnit::closeMain() {
