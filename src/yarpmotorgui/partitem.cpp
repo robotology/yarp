@@ -145,12 +145,12 @@ PartItem::PartItem(QString robotName, int id, QString partName, ResourceFinder& 
         m_interactionModes = new yarp::dev::InteractionModeEnum[number_of_joints];
 
         bool ret = false;
-        Time::delay(0.050);
+        SystemClock::delaySystem(0.050);
         do {
             ret = m_iencs->getEncoders(m_positions);
             if (!ret) {
                 yError("%s iencs->getEncoders() failed, retrying...\n", partName.toLatin1().data());
-                Time::delay(0.050);
+                SystemClock::delaySystem(0.050);
             }
         } while (!ret);
 
@@ -188,7 +188,7 @@ PartItem::PartItem(QString robotName, int id, QString partName, ResourceFinder& 
             yarp::dev::JointTypeEnum jtype = yarp::dev::VOCAB_JOINTTYPE_REVOLUTE;
 
             Pid myPid(0,0,0,0,0,0);
-            yarp::os::Time::delay(0.005);
+            yarp::os::SystemClock::delaySystem(0.005);
             m_iPid->getPid(VOCAB_PIDTYPE_POSITION, k, &myPid);
             
             JointItem *joint = new JointItem(k);
@@ -573,9 +573,9 @@ void PartItem::onSendPWM(int jointIndex, double pwmVal)
 
     m_iPWM->setRefDutyCycle(jointIndex, pwmVal);
 
-    yarp::os::Time::delay(0.010);
+    yarp::os::SystemClock::delaySystem(0.010);
     m_iPWM->getRefDutyCycle(jointIndex, &pwm_reference);  //This is the reference reference
-    yarp::os::Time::delay(0.010);
+    yarp::os::SystemClock::delaySystem(0.010);
     m_iPWM->getDutyCycle(jointIndex, &current_pwm);  //This is the reak PWM output
 
     if (m_currentPidDlg){
@@ -592,7 +592,7 @@ void PartItem::onSendStiffness(int jointIdex,double stiff,double damp,double for
 
     m_iImp->setImpedance(jointIdex, stiff, damp);
     //imp->setImpedanceOffset(jointIdex, force);
-    yarp::os::Time::delay(0.005);
+    yarp::os::SystemClock::delaySystem(0.005);
     m_iImp->getImpedance(jointIdex, &stiff_val, &damp_val);
     m_iImp->getImpedanceOffset(jointIdex, &offset_val);
 
@@ -623,7 +623,7 @@ void PartItem::onSendTorquePid(int jointIndex,Pid newPid,MotorTorqueParameters n
     m_iPid->setPid(VOCAB_PIDTYPE_TORQUE, jointIndex, newPid);
 
     m_iTrq->setMotorTorqueParams(jointIndex, newTrqParam);
-    yarp::os::Time::delay(0.005);
+    yarp::os::SystemClock::delaySystem(0.005);
     m_iPid->getPid(VOCAB_PIDTYPE_TORQUE,jointIndex, &myTrqPid);
     m_iTrq->getMotorTorqueParams(jointIndex, &TrqParam);
 
@@ -636,7 +636,7 @@ void PartItem::onSendPositionPid(int jointIndex,Pid newPid)
 {
     Pid myPosPid(0,0,0,0,0,0);
     m_iPid->setPid(VOCAB_PIDTYPE_POSITION, jointIndex, newPid);
-    yarp::os::Time::delay(0.005);
+    yarp::os::SystemClock::delaySystem(0.005);
     m_iPid->getPid(VOCAB_PIDTYPE_POSITION, jointIndex, &myPosPid);
 
     if (m_currentPidDlg){
@@ -648,7 +648,7 @@ void PartItem::onSendVelocityPid(int jointIndex, Pid newPid)
 {
     Pid myVelPid(0, 0, 0, 0, 0, 0);
     m_iPid->setPid(VOCAB_PIDTYPE_VELOCITY, jointIndex, newPid);
-    yarp::os::Time::delay(0.005);
+    yarp::os::SystemClock::delaySystem(0.005);
     m_iPid->getPid(VOCAB_PIDTYPE_VELOCITY, jointIndex, &myVelPid);
 
     if (m_currentPidDlg){
@@ -680,28 +680,28 @@ void PartItem::onRefreshPids(int jointIndex)
 
     // Position
     m_iPid->getPid(VOCAB_PIDTYPE_POSITION, jointIndex, &myPosPid);
-    yarp::os::Time::delay(0.005);
+    yarp::os::SystemClock::delaySystem(0.005);
 
     // Velocity
     m_iPid->getPid(VOCAB_PIDTYPE_VELOCITY, jointIndex, &myVelPid);
-    yarp::os::Time::delay(0.005);
+    yarp::os::SystemClock::delaySystem(0.005);
 
     // Current
     if (m_iCur)
     {
         m_iPid->getPid(VOCAB_PIDTYPE_CURRENT, jointIndex, &myCurPid);
-        yarp::os::Time::delay(0.005);
+        yarp::os::SystemClock::delaySystem(0.005);
     }
 
     // Torque
     m_iPid->getPid(VOCAB_PIDTYPE_TORQUE, jointIndex, &myTrqPid);
     m_iTrq->getMotorTorqueParams(jointIndex, &motorTorqueParams);
-    yarp::os::Time::delay(0.005);
+    yarp::os::SystemClock::delaySystem(0.005);
 
     //Stiff
     m_iImp->getImpedance(jointIndex, &stiff_val, &damp_val);
     m_iImp->getImpedanceOffset(jointIndex, &impedance_offset_val);
-    yarp::os::Time::delay(0.005);
+    yarp::os::SystemClock::delaySystem(0.005);
 
     // PWM
     m_iPWM->getRefDutyCycle(jointIndex, &pwm_reference);
@@ -728,7 +728,7 @@ void PartItem::onSendCurrentPid(int jointIndex, Pid newPid)
     }
     Pid myCurPid(0, 0, 0, 0, 0, 0);
     m_iPid->setPid(VOCAB_PIDTYPE_CURRENT, jointIndex, newPid);
-    yarp::os::Time::delay(0.005);
+    yarp::os::SystemClock::delaySystem(0.005);
     m_iPid->getPid(VOCAB_PIDTYPE_CURRENT, jointIndex, &myCurPid);
 
     if (m_currentPidDlg){
@@ -739,7 +739,7 @@ void PartItem::onSendCurrentPid(int jointIndex, Pid newPid)
 void PartItem::onSendSingleRemoteVariable(std::string key, yarp::os::Bottle val)
 {
     m_iVar->setRemoteVariable(key, val);
-    yarp::os::Time::delay(0.005);
+    yarp::os::SystemClock::delaySystem(0.005);
 }
 
 void PartItem::onUpdateAllRemoteVariables()
@@ -801,7 +801,7 @@ void PartItem::onRunClicked(JointItem *joint)
     const int jointIndex = joint->getJointIndex();
     double posJoint;
     while (!m_iencs->getEncoder(jointIndex, &posJoint)){
-        Time::delay(0.001);
+        SystemClock::delaySystem(0.001);
     }
 
     m_ictrlmode2->setControlMode(jointIndex, VOCAB_CM_POSITION);
@@ -1704,7 +1704,7 @@ void PartItem::fixedTimeMove(SequenceItem sequence)
     double cmdTime = sequence.getTiming();
 
     while (!m_iencs->getEncoders(startPositions)){
-        Time::delay(0.001);
+        SystemClock::delaySystem(0.001);
     }
 
 
@@ -2056,7 +2056,7 @@ bool PartItem::updatePart()
     if (number_of_joints == 0)
     {
         LOG_ERROR("Lost connection with the robot. You should save and restart.\n" );
-        Time::delay(0.1);
+        SystemClock::delaySystem(0.1);
 
         for (int i = 0; i<m_layout->count(); i++){
             JointItem *joint = (JointItem*)m_layout->itemAt(i)->widget();

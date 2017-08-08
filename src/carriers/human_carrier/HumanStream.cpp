@@ -35,6 +35,6 @@ void HumanStream::write(const Bytes& b) {
         show.append(outputCache.c_str(),idx);
         std::cout << "*** TYPE THIS ON THE OTHER TERMINAL: " << show << std::endl;
         outputCache = outputCache.substr(idx+1);
-        Time::delay(1);
+        SystemClock::delaySystem(1);
     }
 }

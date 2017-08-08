@@ -9,7 +9,6 @@
 
 #include <yarp/os/Network.h>
 #include <yarp/os/RFModule.h>
-#include <yarp/os/RateThread.h>
 #include <yarp/os/Bottle.h>
 #include <yarp/os/BufferedPort.h>
 #include <yarp/os/ResourceFinder.h>
@@ -38,7 +37,8 @@ int main(int argc, char *argv[])
 {
     QApplication a(argc, argv);
 
-    Network yarp;
+    // Guis shall run always on system clock. No need to have it in synch with network clock
+    yarp::os::Network yarp(yarp::os::YARP_CLOCK_SYSTEM);
 
     if (!yarp.checkNetwork())
     {

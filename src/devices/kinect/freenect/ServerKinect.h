@@ -177,15 +177,15 @@ public:
     printf("Kinect server starting\n");
     // double before, now; // XXX could add this to an envelope, aka ServerInertial.h
     while (!isStopping()) {
-      // before = Time::now();
+      // before = SystemClock::nowSystem();
       PortablePair<ImageOf<PixelMono16>, ImageOf<PixelRgb> > & l = writer.get();
       getImagePair(l); // XXX shouldn't we check for true/false return? But ServerSerial.h says that this can create memory leak (if write is not called for obtained object?!). XXX BETTER ERROR CHECKING (check other Yarp wrapper implementations for ideas)
       stamp.update();
       p.setEnvelope(stamp);
       writer.write();
-      // now = Time::now();
+      // now = SystemClock::nowSystem();
       // give other threads the chance to run
-      Time::delay(0.010);
+      SystemClock::delaySystem(0.010);
     }
     printf("Kinect server stopping\n");
   }

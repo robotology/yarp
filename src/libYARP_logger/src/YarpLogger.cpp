@@ -24,6 +24,7 @@
 #include <fstream>
 #include <iterator>
 #include <yarp/os/RpcClient.h>
+#include <yarp/os/SystemClock.h>
 #include <yarp/logger/YarpLogger.h>
 
 using namespace yarp::os;
@@ -210,7 +211,7 @@ std::string LoggerEngine::logger_thread::getPortName()
     return logger_portName;
 }
 
-LoggerEngine::logger_thread::logger_thread (std::string _portname, int _rate,  int _log_list_max_size) : RateThread(_rate)
+LoggerEngine::logger_thread::logger_thread (std::string _portname, int _rate,  int _log_list_max_size) : SystemRateThread(_rate)
 {
         logger_portName              = _portname;
         log_list_max_size            = _log_list_max_size;
@@ -233,7 +234,7 @@ void LoggerEngine::logger_thread::run()
         //yarp::os::Network::
     }
 
-    //yarp::os::Time::delay(0.001);
+    //yarp::os::SystemClock::delaySystem(0.001);
     //if (logger_port.getInputCount()>0)
     {
         int bufferport_size = logger_port.getPendingReads();
@@ -243,8 +244,8 @@ void LoggerEngine::logger_thread::run()
             std::time_t machine_current_time = std::time(NULL);
             char machine_current_time_c [50];
             //strftime(machine_current_time_s, 20, "%Y-%m-%d %H:%M:%S", localtime(&machine_current_time));
-            static double d_time_i = yarp::os::Time::now();
-            double d_time = yarp::os::Time::now() - d_time_i;
+            static double d_time_i = yarp::os::SystemClock::nowSystem();
+            double d_time = yarp::os::SystemClock::nowSystem() - d_time_i;
             sprintf(machine_current_time_c,"%f",d_time);
             string machine_current_time_s = string(machine_current_time_c);
 

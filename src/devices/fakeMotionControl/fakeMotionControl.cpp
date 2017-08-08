@@ -27,7 +27,7 @@ using namespace yarp::os::impl;
 
 void FakeMotionControl::run() {
     if (lifetime>=0) {
-        Time::delay(lifetime);
+        Time::delay(lifetime);   // fake device shall run on mutable clock
         std::exit(0);
     }
 }

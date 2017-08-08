@@ -12,13 +12,14 @@
 #include <yarp/os/ResourceFinder.h>
 #include "simpleloader.h"
 #include "xmlloader.h"
+#include <yarp/os/Time.h>
 
 #define PADDING         25
 #define GRIDSPACING     25
 #define SCALEWIDTH      25
 
 QtYARPScope::QtYARPScope(QQuickItem *parent):
-    QQuickPaintedItem(parent)
+    QQuickPaintedItem(parent), yarp(yarp::os::YARP_CLOCK_SYSTEM)
 {
 
     setFlag(ItemHasContents, true);

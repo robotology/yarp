@@ -22,7 +22,7 @@ int main(int argc, char *argv[]) {
     }
 
     // call the yarp standard companion
-    Network yarp;
+    Network yarp(yarp::os::YARP_CLOCK_SYSTEM);
     return Network::main(argc,argv);
 }
 

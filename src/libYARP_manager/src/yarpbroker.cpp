@@ -198,7 +198,7 @@ bool YarpBroker::start()
         return false;
     }
 
-    double base = Time::now();
+    double base = SystemClock::nowSystem();
     while(!timeout(base, RUN_TIMEOUT))
     {
         if(running() == 1)
@@ -249,7 +249,7 @@ bool YarpBroker::stop()
         return false;
     }
 
-    double base = Time::now();
+    double base = SystemClock::nowSystem();
     while(!timeout(base, STOP_TIMEOUT))
     {
         if(running() == 0)
@@ -297,7 +297,7 @@ bool YarpBroker::kill()
         return false;
     }
 
-    double base = Time::now();
+    double base = SystemClock::nowSystem();
     while(!timeout(base, KILL_TIMEOUT))
     {
         if(running() == 0)
@@ -535,7 +535,7 @@ const char* YarpBroker::requestRpc(const char* szport, const char* request, doub
     for(int i=0; i<10; i++) {
         ret = NetworkBase::connect(port.getName().c_str(), szport, style);
         if(ret) break;
-        Time::delay(1.0);
+        SystemClock::delaySystem(1.0);
     }
 
     if(!ret) {
@@ -779,8 +779,8 @@ const char* YarpBroker::error(void)
 
 bool YarpBroker::timeout(double base, double timeout)
 {
-    Time::delay(1.0);
-    if((Time::now()-base) > timeout)
+    SystemClock::delaySystem(1.0);
+    if((SystemClock::nowSystem()-base) > timeout)
         return true;
     return false;
 }
@@ -793,7 +793,7 @@ bool YarpBroker::threadInit()
     string strStdioPort = strStdioUUID + "/stdout";
     stdioPort.open("...");
 
-    double base = Time::now();
+    double base = SystemClock::nowSystem();
     ContactStyle style;
     style.quiet = true;
     style.timeout = CONNECTION_TIMEOUT;
@@ -856,7 +856,7 @@ int YarpBroker::SendMsg(Bottle& msg, ConstString target, Bottle& response, float
     {
         ret = NetworkBase::connect(port.getName().c_str(), target.c_str(), style);
         if(ret) break;
-        Time::delay(1.0);
+        SystemClock::delaySystem(1.0);
     }
 
     if(!ret)

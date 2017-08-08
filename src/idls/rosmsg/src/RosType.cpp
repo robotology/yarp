@@ -12,6 +12,7 @@
 #include <yarp/os/Port.h>
 #include <yarp/os/Bottle.h>
 #include <yarp/os/Os.h>
+#include <yarp/os/Time.h>
 #include <yarp/os/impl/PlatformSysStat.h>
 #include <yarp/os/impl/PlatformSysWait.h>
 #include <yarp/os/impl/PlatformUnistd.h>
@@ -577,7 +578,7 @@ bool RosTypeSearch::fetchFromWeb(const std::string& target_file,
         if (verbose) {
             fprintf(stderr, "Trying the web: %s\n", url.c_str());
         }
-        yarp::os::Network yarp;
+        yarp::os::Network yarp(yarp::os::YARP_CLOCK_SYSTEM);
         yarp::os::Port port;
         port.openFake("base");
         port.addOutput(url);

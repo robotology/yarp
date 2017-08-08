@@ -103,7 +103,7 @@ public:
         // read namespace list from config file
         NameConfig conf;
         if (!conf.fromFile()) {
-            double now = Time::now();
+            double now = SystemClock::nowSystem();
             static double last_shown = now-10;
             if (now-last_shown>3) {
                 last_shown = now;

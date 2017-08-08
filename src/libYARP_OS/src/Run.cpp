@@ -78,6 +78,7 @@ static RunTerminator *pTerminator = YARP_NULLPTR;
 void sigstdio_handler(int sig)
 {
     char msg[16];
+    yarp::os::Time::useSystemClock();
     sprintf(msg, "SIGNAL %d", sig);
     RUNLOG(msg);
 
@@ -344,7 +345,7 @@ int yarp::os::Run::main(int argc, char *argv[])
 
         while (mStresstest)
         {
-            yarp::os::Time::delay(0.001*(rand() % max_interval_ms));
+            yarp::os::SystemClock::delaySystem(0.001*(rand() % max_interval_ms));
 
             Property stresser=config;
 
@@ -428,14 +429,14 @@ yarp::os::Bottle yarp::os::Run::sendMsg(Bottle& msg, yarp::os::ConstString targe
 
         if (!port.open("..."))
         {
-            yarp::os::Time::delay(DELAY);
+            yarp::os::SystemClock::delaySystem(DELAY);
             continue;
         }
 
         if (!yarp::os::Network::connect(port.getName(), target))
         {
             port.close();
-            yarp::os::Time::delay(DELAY);
+            yarp::os::SystemClock::delaySystem(DELAY);
             continue;
         }
 
@@ -443,7 +444,7 @@ yarp::os::Bottle yarp::os::Run::sendMsg(Bottle& msg, yarp::os::ConstString targe
         if (!port.write(msg, response))
         {
             port.close();
-            yarp::os::Time::delay(DELAY);
+            yarp::os::SystemClock::delaySystem(DELAY);
             continue;
         }
         RUNLOG(">>>port.write(msg, response)")
@@ -2833,7 +2834,7 @@ int yarp::os::Run::executeCmdAndStdio(yarp::os::Bottle& msg, yarp::os::Bottle& r
 
                 mProcessVector->Add(pInf);
 
-                yarp::os::Time::delay(0.01);
+                yarp::os::SystemClock::delaySystem(0.01);
 
                 FILE* in_from_child=fdopen(pipe_child_to_parent[READ_FROM_PIPE], "r");
                 int flags=fcntl(pipe_child_to_parent[READ_FROM_PIPE], F_GETFL, 0);
@@ -3181,7 +3182,7 @@ int yarp::os::Run::executeCmdStdout(yarp::os::Bottle& msg, yarp::os::Bottle& res
 
                 mProcessVector->Add(pInf);
 
-                yarp::os::Time::delay(0.01);
+                yarp::os::SystemClock::delaySystem(0.01);
 
                 FILE* in_from_child=fdopen(pipe_child_to_parent[READ_FROM_PIPE], "r");
                 int flags=fcntl(pipe_child_to_parent[READ_FROM_PIPE], F_GETFL, 0);
@@ -3367,7 +3368,7 @@ int yarp::os::Run::userStdio(yarp::os::Bottle& msg, yarp::os::Bottle& result)
 
         cmdclean(command);
 
-        yarp::os::Time::delay(0.01);
+        yarp::os::SystemClock::delaySystem(0.01);
 
         FILE* in_from_child=fdopen(pipe_child_to_parent[READ_FROM_PIPE], "r");
         int flags=fcntl(pipe_child_to_parent[READ_FROM_PIPE], F_GETFL, 0);
@@ -3590,7 +3591,7 @@ int yarp::os::Run::executeCmd(yarp::os::Bottle& msg, yarp::os::Bottle& result)
         char pidstr[16];
         sprintf(pidstr, "%d", pid_cmd);
 
-        yarp::os::Time::delay(0.01);
+        yarp::os::SystemClock::delaySystem(0.01);
 
         FILE* in_from_child=fdopen(pipe_child_to_parent[READ_FROM_PIPE], "r");
         int flags=fcntl(pipe_child_to_parent[READ_FROM_PIPE], F_GETFL, 0);

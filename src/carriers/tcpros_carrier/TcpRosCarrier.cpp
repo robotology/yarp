@@ -367,7 +367,7 @@ bool TcpRosCarrier::write(ConnectionState& proto, SizedWriter& writer) {
                 fprintf(stderr, "TCPROS Expected an image, but did not get one.\n");
                 return false;
             }
-            ri.update(img,seq,Time::now());
+            ri.update(img,seq,Time::now());  // Time here is the timestamp of the ROS message, so Time::now(), the mutable one is correct.
             seq++;
             flex_writer = &ri;
         }

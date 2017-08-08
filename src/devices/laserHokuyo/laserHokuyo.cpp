@@ -132,7 +132,7 @@ bool laserHokuyo::open(yarp::os::Searchable& config)
     // *** Check if the URG device is present ***
     b.addString("SCIP2.0\n");
     pSerial->send(b);
-    yarp::os::Time::delay(0.040);
+    yarp::os::SystemClock::delaySystem(0.040);
     pSerial->receive(b_ans);
     if (b_ans.size()>0)
     {
@@ -150,7 +150,7 @@ bool laserHokuyo::open(yarp::os::Searchable& config)
     // *** Change the baud rate to 115200 ***
     /*b.addString("SS01152001\n");
     pSerial->send(b);
-    yarp::os::Time::delay(0.040);
+    yarp::os::SystemClock::delaySystem(0.040);
     pSerial->receive(b_ans);
     ans = b_ans.get(0).asString();
     yDebug("%s\n",ans.c_str());
@@ -160,7 +160,7 @@ bool laserHokuyo::open(yarp::os::Searchable& config)
     // *** Read the firmware version parameters ***
     b.addString("VV\n");
     pSerial->send(b);
-    yarp::os::Time::delay(0.040);
+    yarp::os::SystemClock::delaySystem(0.040);
     pSerial->receive(b_ans);
     ans = b_ans.get(0).asString();
     yDebug("%s\n",ans.c_str());
@@ -170,7 +170,7 @@ bool laserHokuyo::open(yarp::os::Searchable& config)
     // *** Read the sensor specifications ***
     b.addString("II\n");
     pSerial->send(b);
-    yarp::os::Time::delay(0.040);
+    yarp::os::SystemClock::delaySystem(0.040);
     pSerial->receive(b_ans);
     ans = b_ans.get(0).asString();
     yDebug("%s\n", ans.c_str());
@@ -180,7 +180,7 @@ bool laserHokuyo::open(yarp::os::Searchable& config)
     // *** Read the URG configuration parameters ***
     b.addString("PP\n");
     pSerial->send(b);
-    yarp::os::Time::delay(0.040);
+    yarp::os::SystemClock::delaySystem(0.040);
     pSerial->receive(b_ans);
     /*
     syntax of the answer:
@@ -219,7 +219,7 @@ bool laserHokuyo::open(yarp::os::Searchable& config)
     // *** Turns on the Laser ***
     b.addString("BM\n");
     pSerial->send(b);
-    yarp::os::Time::delay(0.040);
+    yarp::os::SystemClock::delaySystem(0.040);
     pSerial->receive(b_ans);
     // @@@TODO: Check the answer
     b.clear();
@@ -526,7 +526,7 @@ void laserHokuyo::run()
     yarp::sig::Vector data_vector;
 
     string data_text;
-    double t1 = yarp::os::Time::now();
+    double t1 = yarp::os::SystemClock::nowSystem();
     double t2 = 0;
     bool timeout = false;
     bool rx_completed = false;
@@ -550,7 +550,7 @@ void laserHokuyo::run()
         {
             rx_completed = true;
         }
-        t2 = yarp::os::Time::now();
+        t2 = yarp::os::SystemClock::nowSystem();
         if (t2-t1>maxtime) timeout = true;
     }
     while (rx_completed == false && timeout == false && error == false);
@@ -581,7 +581,7 @@ void laserHokuyo::run()
         pSerial->send(b);
     }
 
-    //Time::delay (0.100);
+    //SystemClock::delaySystem (0.100);
     mutex.post();
 }
 

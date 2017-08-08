@@ -694,7 +694,7 @@ bool FfmpegGrabber::getAudioVisual(yarp::sig::ImageOf<yarp::sig::PixelRgb>& imag
         bool gotAudio = false;
         bool gotVideo = false;
         if (startTime<0.5) {
-            startTime = Time::now();
+            startTime = SystemClock::nowSystem();
         }
         double time_target = 0;
         while(av_read_frame(pFormatCtx, &packet)>=0) {
@@ -735,11 +735,11 @@ bool FfmpegGrabber::getAudioVisual(yarp::sig::ImageOf<yarp::sig::PixelRgb>& imag
                     image.resize(0,0);
                 }
                 if (needRateControl) {
-                    double now = (Time::now()-startTime)*pace;
+                    double now = (SystemClock::nowSystem()-startTime)*pace;
                     double delay = time_target-now;
                     if (delay>0) {
                         DBG printf("DELAY %g ", delay);
-                        Time::delay(delay);
+                        SystemClock::delaySystem(delay);
                     } else {
                         DBG printf("NODELAY %g ", delay);
                     }
@@ -760,7 +760,7 @@ bool FfmpegGrabber::getAudioVisual(yarp::sig::ImageOf<yarp::sig::PixelRgb>& imag
                 return false;
             }
             av_seek_frame(pFormatCtx,-1,0,AVSEEK_FLAG_BACKWARD);
-            startTime = Time::now();
+            startTime = SystemClock::nowSystem();
         }
     } while (tryAgain);
 

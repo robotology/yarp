@@ -204,6 +204,7 @@ static RFModule *module = YARP_NULLPTR;
 static void handler (int sig) {
     static int ct = 0;
     ct++;
+    yarp::os::Time::useSystemClock();
     if (ct > 3) {
         yInfo("Aborting (calling abort())...");
         std::abort();
@@ -292,17 +293,14 @@ int RFModule::runModule() {
     HELPER(implementation).setSingletonRunModule();
 
     // Setting up main loop
+    // Use yarp::os::Time
+    double currentRun;
+    double elapsed;
+    double sleepPeriod;
 
-    YARP_timeval currentRunTV;
-    YARP_timeval elapsedTV;
-    YARP_timeval sleepPeriodTV;
-    YARP_timeval oneSecTV;
-
-    fromDouble(oneSecTV, 1.0);
-
-    while (!isStopping()) {
-        getTime(currentRunTV);
-
+    while (!isStopping())
+    {
+        currentRun = yarp::os::Time::now();
         // If updateModule() returns false we exit the main loop.
         if (!updateModule()) {
             break;
@@ -311,15 +309,17 @@ int RFModule::runModule() {
         // The module is stopped for getPeriod() seconds.
         // If getPeriod() returns a time > 1 second, we check every second if
         // the module stopping, and eventually we exit the main loop.
-        do {
-            getTime(elapsedTV);
-            fromDouble(sleepPeriodTV, getPeriod());
-            addTime(sleepPeriodTV, currentRunTV);
-            subtractTime(sleepPeriodTV, elapsedTV);
-            if (toDouble(sleepPeriodTV) > 1) {
-                sleepThread(oneSecTV);
-            } else {
-                sleepThread(sleepPeriodTV);
+        do
+        {
+            elapsed = yarp::os::Time::now() - currentRun;
+            sleepPeriod = getPeriod() - elapsed;
+            if(sleepPeriod > 1)
+            {
+                Time::delay(1.0);
+            }
+            else
+            {
+                Time::delay(sleepPeriod);
                 break;
             }
         } while (!isStopping());

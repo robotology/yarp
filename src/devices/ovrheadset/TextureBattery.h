@@ -19,7 +19,7 @@ class TextureStatic;
 namespace yarp { namespace dev { class PolyDriver; } }
 namespace yarp { namespace dev { class IBattery; } }
 
-class TextureBattery : public yarp::os::RateThread
+class TextureBattery : public yarp::os::SystemRateThread
 {
 public:
     enum BatteryStatus {

@@ -118,7 +118,7 @@ void StageControl::run() {
     mutex.post();
     printf("Tick...\n");
     if (result!=0) break;
-    Time::delay(0.05);
+    SystemClock::delaySystem(0.05);
   }
   mutex.wait();
   if (world!=NULL) {

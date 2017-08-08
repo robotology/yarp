@@ -63,7 +63,6 @@ private:
 
         virtual bool threadInit() override
         {
-            printf("-->Starting rate thread: %.2lf[ms]...", getRate());
             n=0;
             t1=0;
             t2=0;
@@ -82,8 +81,6 @@ private:
             }
             n++;
             t1=t2;
-
-            // printf(".");
         }
 
         virtual void threadRelease() override
@@ -92,8 +89,6 @@ private:
                 period=1000*average/(n-1);
             else
                 period=0;
-
-            printf("thread quit\n");
         }
 
     };
@@ -200,16 +195,39 @@ private:
         }
     };
 
-    class UgoThread : public RateThread {
+    /*
+     * This thread is intended to have the run() function which
+     * takes more time to execute then the thread period.
+     * The delay will be a negative number.
+     * Check that thread does not hangs forever.
+     */
+    class BusyThread: public RateThread
+    {
+    public:
+        int count;
+
+        BusyThread(int r): RateThread(r),count(0){}
+
+        virtual void run() override {
+            printf("BusyThread running ...\n");
+            SystemClock::delaySystem(1);
+        }
+    };
+
+    class AskForStopThread : public RateThread {
     public:
         bool done;
 
-        UgoThread() : RateThread(100) {
+        AskForStopThread() : RateThread(100) {
             done = false;
         }
 
         void run() override {
             if (done) askToStop();
+        }
+
+        void threadRelease() override {
+            done =false;
         }
     };
 
@@ -308,28 +326,46 @@ public:
         report(0,"testing rate thread precision");
         report(0,"setting high res scheduler (this affects only windows)");
 
+        bool success = false;
+        double acceptedThreshold = 0.10;
+
         Time::turboBoost();
         char message[255];
 
         //try plausible rates
-        double p;
-        sprintf(message, "Thread1 requested period: %d[ms]", 15);
+        double desiredPeriod, actualPeriod;
+        desiredPeriod = 15;
+        sprintf(message, "Thread1 requested period: %d[ms]", (int)desiredPeriod);
         report(0, message);
-        p=test(15, 1);
-        sprintf(message, "Thread1 estimated: %.2lf[ms]", p);
+        actualPeriod = test(desiredPeriod, 1);
+        if( (actualPeriod > (desiredPeriod*(1-acceptedThreshold))) && (actualPeriod < (desiredPeriod * (1+acceptedThreshold))) )
+            success = true;
+        sprintf(message, "Thread1 estimated period: %.2lf[ms]", actualPeriod);
         report(0, message);
+        sprintf(message, "Period NOT within range of %d%%", (int)(acceptedThreshold*100));
+        if(!success)  YARP_WARN(Logger::get(), message);
 
-        sprintf(message, "Thread2 requested period: %d[ms]", 10);
+        desiredPeriod = 10;
+        sprintf(message, "Thread2 requested period: %d[ms]", (int)desiredPeriod);
         report(0, message);
-        p=test(10, 1);
-        sprintf(message, "Thread2 estimated period: %.2lf[ms]", p);
+        actualPeriod = test(desiredPeriod, 1);
+        if( (actualPeriod > (desiredPeriod*(1-acceptedThreshold))) && (actualPeriod < (desiredPeriod * (1+acceptedThreshold))) )
+            success = true;
+        sprintf(message, "Thread2 estimated period: %.2lf[ms]", actualPeriod);
         report(0, message);
+        sprintf(message, "Period NOT within range of %d%%", (int)(acceptedThreshold*100));
+        if(!success)  YARP_WARN(Logger::get(), message);
 
-        sprintf(message, "Thread3 requested period: %d[ms]", 1);
+        desiredPeriod = 1;
+        sprintf(message, "Thread3 requested period: %d[ms]", (int)desiredPeriod);
         report(0, message);
-        p=test(1, 1);
-        sprintf(message, "Thread3 estimated period: %.2lf[ms]", p);
+        actualPeriod = test(desiredPeriod, 1);
+        if( (actualPeriod > (desiredPeriod*(1-acceptedThreshold))) && (actualPeriod < (desiredPeriod * (1+acceptedThreshold))) )
+            success = true;
+        sprintf(message, "Thread3 estimated period: %.2lf[ms]", actualPeriod);
         report(0, message);
+        sprintf(message, "Period NOT within range of %d%%", (int)(acceptedThreshold*100));
+        if(!success)  YARP_WARN(Logger::get(), message);
 
         report(0, "successful");
 
@@ -349,6 +385,16 @@ public:
         checkTrue(!thread.isRunning(), "thread terminated correctly");
         //join thread
         thread.stop();
+
+        SystemClock::delaySystem(-2);
+        Time::delay(-2);
+        checkTrue(true, "Negative Time::delay() and delaySystem() is safe.");
+
+        BusyThread  busy(10);
+        busy.start();
+        SystemClock::delaySystem(2);
+        busy.stop();
+        checkTrue(true, "Negative delay on reteThread is safe.");
     }
 
     void testRunnable()
@@ -375,6 +421,8 @@ public:
         report(0, "Testing simulated time");
         MyClock clock;
         Time::useCustomClock(&clock);
+        checkTrue(Time::isCustomClock(), "isCustomClock is true");
+        checkTrue(Time::getClockType() == YARP_CLOCK_CUSTOM, "getClockType is YARP_CLOCK_CUSTOM");
         RateThread5 thread(100*1000); // 100 secs
         thread.start();
         SystemClock clk;
@@ -392,11 +440,13 @@ public:
         clock.done = true;
         thread.stop();
         Time::useSystemClock();
+        checkTrue(Time::isSystemClock(), "test is using system clock");
+        checkTrue(Time::getClockType() == YARP_CLOCK_SYSTEM, "getClockType is YARP_CLOCK_SYSTEM");
     }
 
     void testStartAskForStopStart() {
         report(0,"testing start() askForStop() start() sequence...");
-        UgoThread test;
+        AskForStopThread test;
         int ct = 0;
         while (ct<10) {
             if (!test.isRunning()) {

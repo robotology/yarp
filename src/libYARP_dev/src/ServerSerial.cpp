@@ -172,15 +172,15 @@ void ServerSerial::run() {
     yInfo("Server Serial starting\n");
     //double before, now;
     while (!isStopping()) {
-        //before = Time::now();
+        //before = SystemClock::nowSystem();
         Bottle& b = reply_buffer.get();
         b.clear();
         receive( b );
         /*if(b.size() > 0)*/ /* this line was creating a memory leak !! */
         reply_buffer.write();
-        //now = Time::now();
+        //now = SystemClock::nowSystem();
         // give other threads the chance to run
-        yarp::os::Time::delay(0.010);
+        yarp::os::SystemClock::delaySystem(0.010);
     }
     yInfo("Server Serial stopping\n");
 }

@@ -277,7 +277,7 @@ public:
         rPort.interrupt();
 
 #if defined(_WIN32)
-        for (int t=0; t<10; ++t) yarp::os::Time::delay(1.0);
+        for (int t=0; t<10; ++t) yarp::os::SystemClock::delaySystem(1.0);
 #endif
         RUNLOG(">>>exit()")
     }

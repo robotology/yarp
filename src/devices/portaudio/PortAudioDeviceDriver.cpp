@@ -329,7 +329,7 @@ bool PortAudioDeviceDriver::getSound(yarp::sig::Sound& sound)
     {
          buff_size = dataBuffers.recData->size();
          if (buff_size == 0 && buff_size_wdt++ == 100) break;
-         yarp::os::Time::delay(SLEEP_TIME);
+         yarp::os::SystemClock::delaySystem(SLEEP_TIME);
     }
     buff_size_wdt = 0;
 
@@ -387,7 +387,7 @@ void streamThread::run()
             if( err != paNoError ) {handleError(); return;}
 
             while( ( err = Pa_IsStreamActive( stream ) ) == 1 )
-                {yarp::os::Time::delay(SLEEP_TIME);}
+                {yarp::os::SystemClock::delaySystem(SLEEP_TIME);}
             if( err < 0 ) {handleError(); return;}
 
             err = Pa_StopStream( stream );
@@ -399,7 +399,7 @@ void streamThread::run()
         if (something_to_record)
         {
             while( ( err = Pa_IsStreamActive( stream ) ) == 1 )
-                {yarp::os::Time::delay(SLEEP_TIME);}
+                {yarp::os::SystemClock::delaySystem(SLEEP_TIME);}
             if( err < 0 ) {handleError(); return;}
         }
 

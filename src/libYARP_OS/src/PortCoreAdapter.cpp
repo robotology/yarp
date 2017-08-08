@@ -93,12 +93,12 @@ void yarp::os::impl::PortCoreAdapter::finishReading()
 void yarp::os::impl::PortCoreAdapter::finishWriting()
 {
     if (isWriting()) {
-        double start = Time::now();
+        double start = SystemClock::nowSystem();
         double pause = 0.01;
         do {
-            Time::delay(pause);
+            SystemClock::delaySystem(pause);
             pause *= 2;
-        } while (isWriting() && (Time::now()-start<3));
+        } while (isWriting() && (SystemClock::nowSystem()-start<3));
         if (isWriting()) {
             YARP_ERROR(Logger::get(), "Closing port that was sending data (slowly)");
         }

@@ -44,7 +44,7 @@ void InputCallback::onRead(ImageType &img)
 {
     int delaycnt = 0;
     while (eyeRenderTexture->dataReady && delaycnt <= 3) {
-        yarp::os::Time::delay(0.001);
+        yarp::os::SystemClock::delaySystem(0.001);
         ++delaycnt;
     }
 

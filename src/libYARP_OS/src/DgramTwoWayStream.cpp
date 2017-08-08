@@ -750,7 +750,7 @@ void DgramTwoWayStream::interrupt() {
                 tmp.flush();
                 tmp.close();
                 if (happy) {
-                    yarp::os::Time::delay(0.25);
+                    yarp::os::SystemClock::delaySystem(0.25);
                 }
             }
             YARP_DEBUG(Logger::get(), "dgram interrupt done");
@@ -764,7 +764,7 @@ void DgramTwoWayStream::interrupt() {
             while (interrupting) {
                 YARP_DEBUG(Logger::get(),
                            "waiting for dgram interrupt to be finished...");
-                yarp::os::Time::delay(0.1);
+                yarp::os::SystemClock::delaySystem(0.1);
             }
         }
     }
@@ -782,7 +782,7 @@ void DgramTwoWayStream::closeMain() {
         mutex.post();
         while (interrupting) {
             happy = false;
-            yarp::os::Time::delay(0.1);
+            yarp::os::SystemClock::delaySystem(0.1);
         }
         mutex.wait();
         if (dgram != YARP_NULLPTR) {
@@ -908,7 +908,7 @@ YARP_SSIZE_T DgramTwoWayStream::read(const Bytes& b) {
                         bufferAlerted = true;
                     } else {
                         errCount++;
-                        double now = Time::now();
+                        double now = SystemClock::nowSystem();
                         if (now-lastReportTime>1) {
                             YARP_ERROR(Logger::get(),
                                        ConstString("*** ") + NetType::toString(errCount) + " datagram packet(s) dropped - checksum error ***");
@@ -1034,13 +1034,13 @@ void DgramTwoWayStream::flush() {
             // there's an implementation below, but commented out -
             // better solution was to increase recv buffer size
 
-            double first = yarp::os::Time::now();
+            double first = yarp::os::SystemClock::nowSystem();
             double now = first;
             int ct = 0;
             do {
                 //printf("Busy wait... %d\n", ct);
-                yarp::os::Time::delay(0);
-                now = yarp::os::Time::now();
+                yarp::os::SystemClock::delaySystem(0);
+                now = yarp::os::SystemClock::nowSystem();
                 ct++;
             } while (now-first<0.001);
         }

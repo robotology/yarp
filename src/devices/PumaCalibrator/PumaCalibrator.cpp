@@ -178,7 +178,7 @@ bool PumaCalibrator::park(DeviceDriver *dd, bool wait)
         {
             iPosition->checkMotionDone(&done);
             fprintf(stderr, ".");
-            Time::delay(0.5);
+            SystemClock::delaySystem(0.5);
             timeout++;
         }
         if(!done)

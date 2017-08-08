@@ -237,7 +237,7 @@ yarpserversql_API int yarpserver_main(int argc, char *argv[]) {
         printf("Options can be set on command line or in %s\n", configFilename.c_str());
     } */
 
-    Network yarp;
+    Network yarp(yarp::os::YARP_CLOCK_SYSTEM);
 
     NameServerContainer nc;
     nc.setSilent(false);
@@ -291,7 +291,7 @@ yarpserversql_API int yarpserver_main(int argc, char *argv[]) {
     printf("\nOk.  Ready!\n");
 
     while (true) {
-        Time::delay(600);
+        SystemClock::delaySystem(600);
         printf("Name server running happily\n");
     }
     server.close();

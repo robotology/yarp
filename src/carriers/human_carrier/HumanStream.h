@@ -41,7 +41,7 @@ public:
         while (needInterrupt) {
             std::cout << "*** INTERRUPT: Please hit enter ***" << std::endl;
             for (int i=0; i<10 && needInterrupt; i++) {
-                Time::delay(0.1);
+                SystemClock::delaySystem(0.1);
             }
         }
     }

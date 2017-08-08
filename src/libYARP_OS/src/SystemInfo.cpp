@@ -110,10 +110,10 @@ bool getCpuEntry(const char* tag, const char *buff, yarp::os::ConstString& value
 
 
 #if defined(_WIN32)
-class CpuLoadCollector: public yarp::os::RateThread
+class CpuLoadCollector: public yarp::os::SystemRateThread
 {
 public:
-    CpuLoadCollector():RateThread(5000)
+    CpuLoadCollector():SystemRateThread(5000)
     {
        firstRun = true;
        load.cpuLoad1 = 0.0;
