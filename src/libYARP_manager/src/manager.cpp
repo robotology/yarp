@@ -29,7 +29,6 @@
 #define BROKER_LOCAL            "local"
 #define BROKER_YARPRUN          "yarprun"
 #define BROKER_YARPDEV          "yarpdev"
-#define BROKER_ICUBMIODDEV      "icubmoddev"
 
 
 using namespace yarp::manager;

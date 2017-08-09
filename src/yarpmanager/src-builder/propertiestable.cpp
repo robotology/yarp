@@ -134,8 +134,6 @@ void PropertiesTable::showModuleTab(ModuleItem *mod)
 
     if(compareString(mod->getInnerModule()->getBroker(),"yarpdev")){
         deployerCombo->addItem("yarpdev");
-    }else if(compareString(mod->getInnerModule()->getBroker(),"icubmoddev")){
-        deployerCombo->addItem("icubmoddev");
     }else{
         deployerCombo->addItem("local");
         deployerCombo->addItem("yarprun");
