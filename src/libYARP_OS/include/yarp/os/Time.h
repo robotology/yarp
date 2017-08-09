@@ -141,10 +141,6 @@ public:
      *
      */
     static bool isValid();
-
-private:
-    static yarpClockType yarp_clock_type;
-
 };
 
 #endif // YARP_OS_TIME_H

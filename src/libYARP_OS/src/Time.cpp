@@ -13,6 +13,8 @@
 #include <yarp/os/impl/Logger.h>
 #include <yarp/os/LogStream.h>
 #include <yarp/os/impl/ThreadImpl.h>
+#include <yarp/os/impl/TimeImpl.h>
+
 
 #ifdef ACE_WIN32
 // for WIN32 MM functions
@@ -22,10 +24,8 @@
 using namespace yarp::os;
 using namespace yarp::os::impl;
 
-static Clock *pclock = YARP_NULLPTR;
 static bool clock_owned = false;
 static bool network_clock_ok = false;
-yarpClockType yarp::os::Time::yarp_clock_type  = YARP_CLOCK_UNINITIALIZED;
 
 
 static void lock() {
