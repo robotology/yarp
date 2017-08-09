@@ -36,13 +36,22 @@ static void unlock() {
     yarp::os::impl::ThreadImpl::timeMutex->post();
 }
 
+void printNoClock_ErrorMessage()
+{
+    YARP_ERROR(Logger::get(), "\n Warning an issue has been found, please update the code.\n \
+    Clock is not been initialized: This means YARP framework has not been properly initialized. \n \
+    The clock can be initialized with one of the following methods:\n \
+    - Create yarp::os::Network object or calling yarp::os::Network::init()\n \
+    - Call useSystemClock()\n \
+    otherwise use yarp::os::SystemClock::nowSystem() and yarp::os::SystemClock::delaySystem() instead of Time::now() and Time::delay()\n");
+}
 
 static Clock *getClock()
 {
     // if no clock was ever set, fallback to System Clock
     if(pclock == NULL)
     {
-        /* WIP
+        /*
          * Assuming this should never happen, if we do get here, what shall be done??
          *
          * 1: create system clock
@@ -50,14 +59,21 @@ static Clock *getClock()
          *   so creating a system clock may not be what we want to do, and this may interfere with the
          *   clock really wanted by the user, i.e. this system clock may be destroyed again to
          *   instantiate the good one, leaving space for another possible race condition.
+         *
          * 2: use the system clock only for this call
          *
-         * 3: thrown an assert:
+         * 3: exit now and ask user to correctly initialize the framework
          *   This is better because it shows initialization problems right from the start and help user
-         * to fix the code, which may otherwise lead to undefined behaviour.
+         *   to fix the code, which may otherwise lead to undefined behaviour.
+         *
+         * So now initialize a system clock and go forward for backward compatibility, if YARP_NO_DEPRECATED
+         * is true, exit now! This is gonna be the default in the next release.
          */
-        YARP_ERROR(Logger::get(), "Clock pointer is null: This should never happen. Is the object yarp::os::Network been initialized?");
+        printNoClock_ErrorMessage();
+
+#ifdef YARP_NO_DEPRECATED  // for back compatibility
         ::exit(-1);
+#endif
     }
     return pclock;
 }
@@ -132,7 +148,7 @@ void Time::useSystemClock()
  * In this situation
  * - isSystemClock()    will be false
  * - isNetworkClock()   will be true
- * - isValid()          will be false (until the first clock package is received)
+ * - isValid()          will be false until the first clock mesage is received, then it'll be true
  *
  * As soon as the clock starts beeing published, the networkClock has to acknowledge it and 'attach' to it. Clock will
  * then be valid.
@@ -210,7 +226,16 @@ void Time::useCustomClock(Clock *clock) {
 }
 
 bool Time::isSystemClock() {
+#ifdef YARP_NO_DEPRECATED
     return (yarp_clock_type==YARP_CLOCK_SYSTEM);
+#else
+    if(yarp_clock_type==YARP_CLOCK_UNINITIALIZED)
+    {
+        printNoClock_ErrorMessage();
+        yarp_clock_type=YARP_CLOCK_SYSTEM;
+    }
+    return (yarp_clock_type==YARP_CLOCK_SYSTEM);
+#endif
 }
 
 bool Time::isNetworkClock() {
@@ -260,7 +285,11 @@ yarp::os::ConstString Time::clockTypeToString(yarpClockType type)
 
 bool Time::isValid()
 {
-    // The clock should never be NULL here because getClock creates a new one if NULL...
-    // possible race condition between getClock and removeClock??
+#ifndef YARP_NO_DEPRECATED
+    if( (yarp_clock_type == YARP_CLOCK_SYSTEM) || (yarp_clock_type==YARP_CLOCK_UNINITIALIZED) )
+        return true;
+    else
+#endif
+    // The clock must never be NULL here (when YARP_NO_DEPRECATED is true)
     return getClock()->isValid();
 }
