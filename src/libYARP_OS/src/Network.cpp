@@ -33,6 +33,7 @@
 #include <yarp/os/impl/PortCommand.h>
 #include <yarp/os/impl/StreamConnectionReader.h>
 #include <yarp/os/impl/ThreadImpl.h>
+#include <yarp/os/impl/TimeImpl.h>
 
 #ifdef YARP_HAS_ACE
 # include <ace/config.h>
@@ -671,6 +672,7 @@ void NetworkBase::finiMinimum() {
         Bottle::fini();
         BottleImpl::fini();
         ThreadImpl::fini();
+        yarp::os::impl::removeClock();
 #ifdef YARP_HAS_ACE
         ACE::fini();
 #endif

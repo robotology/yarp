@@ -658,19 +658,22 @@ public:
 
     /**
      * This function specifically initialize the clock
-     * In case clockType is one of the valid cases, the corersponding clock
-     * will be initialized.
+     * In case clockType is one of the valid cases:
+     *      YARP_CLOCK_SYSTEM,
+     *      YARP_CLOCK_NETWORK,
+     *      YARP_CLOCK_CUSTOM
+     * (see yarp::os::Time for more), the corresponding clock will be initialized.
      *
-     * In case the clockType is UNINITIALIZED_CLOCK, the environment variable
+     * In case the clockType is YARP_CLOCK_DEFAULT, the environment variable
      * YARP_CLOCK will be used to choose between system or network clock.
      *
-     * See description of useNetworkClock() for more details about the
+     * See description of yarp::os::Time::useNetworkClock() for more details about the
      * network clock.
      *
      * This function is called by Network constructor and by Network::init(),
      * and Network::initMinimum().
      *
-     * In case of failure throws YARP_FAIL assert.
+     * In case of failure calls YARP_FAIL assert.
      **/
     static void yarpClockInit(yarp::os::yarpClockType clockType, Clock *custom=YARP_NULLPTR);
 };
