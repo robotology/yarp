@@ -335,16 +335,15 @@ bool laserHokuyo::getRawData(yarp::sig::Vector &out)
 {
     if (internal_status != HOKUYO_STATUS_NOT_READY)
     {
-        mutex.wait();
+        mutex.lock();
 #ifdef LASER_DEBUG
         //yDebug("data: %s\n", laser_data.toString().c_str());
 #endif
         out = laser_data;
-        mutex.post();
+        mutex.unlock();
         device_status = yarp::dev::IRangefinder2D::DEVICE_OK_IN_USE;
         return true;
     }
-
     device_status = yarp::dev::IRangefinder2D::DEVICE_GENERAL_ERROR;
     return false;
 }
@@ -353,7 +352,7 @@ bool laserHokuyo::getLaserMeasurement(std::vector<LaserMeasurementData> &data)
 {
     if (internal_status != HOKUYO_STATUS_NOT_READY)
     {
-        mutex.wait();
+        mutex.lock();
 #ifdef LASER_DEBUG
         //yDebug("data: %s\n", laser_data.toString().c_str());
 #endif
@@ -366,7 +365,7 @@ bool laserHokuyo::getLaserMeasurement(std::vector<LaserMeasurementData> &data)
             double angle = (i / double(size)*laser_angle_of_view + min_angle)* DEG2RAD;
             data[i].set_polar(laser_data[i], angle);
         }
-        mutex.post();
+        mutex.unlock();
         device_status = yarp::dev::IRangefinder2D::DEVICE_OK_IN_USE;
         return true;
     }
@@ -376,9 +375,9 @@ bool laserHokuyo::getLaserMeasurement(std::vector<LaserMeasurementData> &data)
 }
 bool laserHokuyo::getDeviceStatus(Device_status &status)
 {
-    mutex.wait();
+    mutex.lock();
     status = device_status;
-    mutex.post();
+    mutex.unlock();
     return true;
 }
 
@@ -512,8 +511,6 @@ int laserHokuyo::readData(const Laser_mode_type laser_mode, const char* text_dat
 
 void laserHokuyo::run()
 {
-    mutex.wait();
-
     //send the GD command: get one single measurement, D precision
     Bottle b;
     Bottle b_ans;
@@ -535,7 +532,6 @@ void laserHokuyo::run()
     double maxtime=1;
     do
     {
-        //yDebug ("1status: %d!\n",internal_status);
         int answer_len = pSerial->receiveLine(answer, buffer_size);
         internal_status = readData(laser_mode, answer,answer_len,current_line,data_vector);
         if (internal_status <  0 && internal_status != HOKUYO_STATUS_ERROR_NOTHING_RECEIVED)
@@ -563,16 +559,20 @@ void laserHokuyo::run()
     {
         yError("laserHokuyo Communication Error, internal status=%d",internal_status);
     }
-
     #ifdef LASER_DEBUG
     yDebug ("time: %.3f %.3f\n",t2-t1, t2-old);
     old = t2;
     #endif
+    
+    mutex.lock();
 
     if (rx_completed)
     {
         laser_data=data_vector;
+        // static int countt=0;
+        // yDebug() << countt++ << getEstPeriod() << getEstUsed();
     }
+    mutex.unlock();
 
     if (laser_mode==GD_MODE)
     {
@@ -582,7 +582,7 @@ void laserHokuyo::run()
     }
 
     //SystemClock::delaySystem (0.100);
-    mutex.post();
+    mutex.unlock();
 }
 
 void laserHokuyo::threadRelease()
@@ -595,8 +595,8 @@ void laserHokuyo::threadRelease()
 
 bool laserHokuyo::getDeviceInfo(yarp::os::ConstString &device_info)
 {
-    this->mutex.wait();
+    this->mutex.lock();
     device_info = info;
-    this->mutex.post();
+    this->mutex.unlock();
     return true;
 }

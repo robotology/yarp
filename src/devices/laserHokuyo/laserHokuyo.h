@@ -15,7 +15,7 @@
 #include <string>
 
 #include <yarp/os/RateThread.h>
-#include <yarp/os/Semaphore.h>
+#include <yarp/os/Mutex.h>
 #include <yarp/dev/ControlBoardInterfaces.h>
 #include <yarp/dev/IRangefinder2D.h>
 #include <yarp/dev/PolyDriver.h>
@@ -31,7 +31,7 @@ protected:
     PolyDriver driver;
     ISerialDevice *pSerial;
 
-    yarp::os::Semaphore mutex;
+    yarp::os::Mutex mutex;
 
     int cardId;
     int period;
@@ -44,7 +44,7 @@ protected:
     int internal_status;
     std::string info;
     Device_status device_status;
-
+    
     enum Laser_mode_type {FAKE_MODE=2, GD_MODE=1, MD_MODE=0};
     enum Error_code
     {
@@ -74,7 +74,7 @@ protected:
     yarp::sig::Vector laser_data;
 
 public:
-    laserHokuyo(int period=20) : RateThread(period),mutex(1)
+    laserHokuyo(int period=20) : RateThread(period)
     {}
 
 
