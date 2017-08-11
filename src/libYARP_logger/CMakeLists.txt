@@ -51,6 +51,8 @@ if(CREATE_LIB_MATH)
   target_link_libraries(YARP_logger PRIVATE YARP::YARP_math)
 endif()
 
+target_compile_features(YARP_logger PUBLIC cxx_override)
+
 set_property(TARGET YARP_logger PROPERTY PUBLIC_HEADER ${YARP_logger_HDRS})
 set_property(TARGET YARP_logger PROPERTY PRIVATE_HEADER ${YARP_logger_IMPL_HDRS})
 

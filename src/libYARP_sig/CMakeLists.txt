@@ -56,6 +56,8 @@ target_link_libraries(YARP_sig PRIVATE ${ACE_LIBRARIES}
                                PUBLIC YARP::YARP_conf
                                       YARP::YARP_OS)
 
+target_compile_features(YARP_sig PUBLIC cxx_override)
+
 set_property(TARGET YARP_sig PROPERTY PUBLIC_HEADER ${YARP_sig_HDRS})
 set_property(TARGET YARP_sig PROPERTY PRIVATE_HEADER ${YARP_sig_IMPL_HDRS})
 

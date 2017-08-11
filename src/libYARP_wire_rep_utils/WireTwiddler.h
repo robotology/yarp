@@ -172,11 +172,11 @@ public:
     virtual ~WireTwiddlerReader() {}
 
     using yarp::os::InputStream::read;
-    virtual YARP_SSIZE_T read(const yarp::os::Bytes& b) YARP_OVERRIDE;
+    virtual YARP_SSIZE_T read(const yarp::os::Bytes& b) override;
 
-    virtual void close() YARP_OVERRIDE { is.close(); }
+    virtual void close() override { is.close(); }
 
-    virtual bool isOk() YARP_OVERRIDE { return is.isOk(); }
+    virtual bool isOk() override { return is.isOk(); }
 
     YARP_SSIZE_T readMapped(yarp::os::InputStream& is,
                             const yarp::os::Bytes& b,
@@ -250,28 +250,28 @@ public:
 
     bool update();
 
-    virtual size_t length() YARP_OVERRIDE {
+    virtual size_t length() override {
         return srcs.size();
     }
 
-    virtual size_t headerLength() YARP_OVERRIDE {
+    virtual size_t headerLength() override {
         return 0;
     }
 
-    virtual size_t length(size_t index) YARP_OVERRIDE {
+    virtual size_t length(size_t index) override {
         return srcs[index].len;
     }
 
-    virtual const char *data(size_t index) YARP_OVERRIDE {
+    virtual const char *data(size_t index) override {
         if (srcs[index].offset<0) return srcs[index].src;
         return scratch.get()+srcs[index].offset;
     }
 
-    virtual yarp::os::PortReader *getReplyHandler() YARP_OVERRIDE {
+    virtual yarp::os::PortReader *getReplyHandler() override {
         return parent->getReplyHandler();
     }
 
-    virtual yarp::os::Portable *getReference() YARP_OVERRIDE {
+    virtual yarp::os::Portable *getReference() override {
         return parent->getReference();
     }
 
@@ -293,15 +293,15 @@ public:
     int readLength();
 
     //virtual void write(OutputStream& os);
-    virtual bool dropRequested() YARP_OVERRIDE {
+    virtual bool dropRequested() override {
         return false;
     }
 
-    virtual void startWrite() YARP_OVERRIDE {
+    virtual void startWrite() override {
         parent->startWrite();
     }
 
-    virtual void stopWrite() YARP_OVERRIDE {
+    virtual void stopWrite() override {
         parent->stopWrite();
     }
 };

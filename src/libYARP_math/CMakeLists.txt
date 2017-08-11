@@ -68,6 +68,8 @@ if (YARP_HAS_MATH_LIB)
                                          YARP::YARP_sig
                                   PRIVATE YARP::YARP_eigen)
 
+  target_compile_features(YARP_math PUBLIC cxx_override)
+
   set_property(TARGET YARP_math PROPERTY PUBLIC_HEADER ${YARP_math_HDRS})
   set_property(TARGET YARP_math PROPERTY PRIVATE_HEADER ${YARP_math_IMPL_HDRS})
 

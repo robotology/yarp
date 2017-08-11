@@ -25,7 +25,7 @@ class XmlAppSaver : public AppSaver
 
 public:
     XmlAppSaver(const char* szFileName=NULL);
-    virtual bool save(Application* application) YARP_OVERRIDE;
+    virtual bool save(Application* application) override;
     virtual ~XmlAppSaver();
 
 protected:

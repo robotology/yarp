@@ -28,10 +28,10 @@ public:
     XmlModLoader(const char* szFileName);
     XmlModLoader(const char* szPath, const char* szModuleName);
     virtual ~XmlModLoader();
-    bool init(void) YARP_OVERRIDE;
-    void reset(void) YARP_OVERRIDE;
-    void fini(void) YARP_OVERRIDE;
-    Module* getNextModule(void) YARP_OVERRIDE;
+    bool init(void) override;
+    void reset(void) override;
+    void fini(void) override;
+    Module* getNextModule(void) override;
 
 protected:
 

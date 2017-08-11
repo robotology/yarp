@@ -41,6 +41,8 @@ target_include_directories(YARP_name PUBLIC $<BUILD_INTERFACE:${CMAKE_CURRENT_SO
 target_link_libraries(YARP_name PRIVATE YARP::YARP_OS
                                         ${ACE_LIBRARIES})
 
+target_compile_features(YARP_name PUBLIC cxx_override)
+
 set_property(TARGET YARP_name PROPERTY PUBLIC_HEADER ${YARP_name_HDRS})
 set_property(TARGET YARP_name PROPERTY PRIVATE_HEADER ${YARP_name_IMPL_HDRS})
 

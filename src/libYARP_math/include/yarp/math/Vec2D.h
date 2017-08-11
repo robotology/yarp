@@ -60,15 +60,15 @@ public:
     * Read vector from a connection.
     * return true if a Vec2D was read correctly
     */
-    virtual bool read(yarp::os::ConnectionReader& connection) YARP_OVERRIDE;
+    virtual bool read(yarp::os::ConnectionReader& connection) override;
 
     /**
     * Write vector to a connection.
     * return true if a Vec2D was written correctly
     */
-    virtual bool write(yarp::os::ConnectionWriter& connection) YARP_OVERRIDE;
+    virtual bool write(yarp::os::ConnectionWriter& connection) override;
 
-    virtual yarp::os::Type getType() YARP_OVERRIDE
+    virtual yarp::os::Type getType() override
     {
         return yarp::os::Type::byName("yarp/vec2D");
     }

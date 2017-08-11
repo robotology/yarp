@@ -27,10 +27,10 @@ public:
     XmlTempLoader(const char* szFileName);
     XmlTempLoader(const char* szPath, const char* szAppName);
     virtual ~XmlTempLoader();
-    bool init(void) YARP_OVERRIDE;
-    void fini(void) YARP_OVERRIDE;
-    void reset(void) YARP_OVERRIDE;
-    AppTemplate* getNextAppTemplate(void) YARP_OVERRIDE;
+    bool init(void) override;
+    void fini(void) override;
+    void reset(void) override;
+    AppTemplate* getNextAppTemplate(void) override;
 
 protected:
 

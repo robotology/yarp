@@ -27,13 +27,13 @@ public:
     bool uninitialize();
     ImplementPWMControl(IPWMControlRaw *v);
     ~ImplementPWMControl();
-    bool getNumberOfMotors(int *ax) YARP_OVERRIDE;
-    bool setRefDutyCycle(int j, double v) YARP_OVERRIDE;
-    bool setRefDutyCycles(const double *v) YARP_OVERRIDE;
-    bool getRefDutyCycle(int j, double *v) YARP_OVERRIDE;
-    bool getRefDutyCycles(double *v) YARP_OVERRIDE;
-    bool getDutyCycle(int j, double *v) YARP_OVERRIDE;
-    bool getDutyCycles(double *v) YARP_OVERRIDE;
+    bool getNumberOfMotors(int *ax) override;
+    bool setRefDutyCycle(int j, double v) override;
+    bool setRefDutyCycles(const double *v) override;
+    bool getRefDutyCycle(int j, double *v) override;
+    bool getRefDutyCycles(double *v) override;
+    bool getDutyCycle(int j, double *v) override;
+    bool getDutyCycles(double *v) override;
 
 };
 

@@ -112,6 +112,8 @@ if(CREATE_LIB_MANAGER)
     target_link_libraries(YARP_manager PRIVATE YARP::YARP_math)
   endif()
 
+  target_compile_features(YARP_manager PUBLIC cxx_override)
+
   set_property(TARGET YARP_manager PROPERTY PUBLIC_HEADER ${YARP_manager_HDRS})
   set_property(TARGET YARP_manager PROPERTY PRIVATE_HEADER ${YARP_manager_IMPL_HDRS})
 

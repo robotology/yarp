@@ -24,6 +24,9 @@ if(CREATE_OPTIONAL_CARRIERS)
                                                     YARP::YARP_sig
                                                     ${ACE_LIBRARIES})
 
+  target_compile_features(YARP_wire_rep_utils PUBLIC cxx_nullptr
+                                                     cxx_override)
+
   set_property(TARGET YARP_wire_rep_utils PROPERTY INCLUDE_DIRS ${CMAKE_CURRENT_SOURCE_DIR})
   set_property(GLOBAL APPEND PROPERTY YARP_LIBS YARP_wire_rep_utils)
   install(TARGETS YARP_wire_rep_utils

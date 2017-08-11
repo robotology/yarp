@@ -59,25 +59,25 @@ public:
      */
     virtual ~ImplementVelocityControl2();
 
-    virtual bool getAxes(int *axes) YARP_OVERRIDE;
-    virtual bool velocityMove(int j, double sp) YARP_OVERRIDE;
-    virtual bool velocityMove(const double *sp) YARP_OVERRIDE;
-    virtual bool setRefAcceleration(int j, double acc) YARP_OVERRIDE;
-    virtual bool setRefAccelerations(const double *accs) YARP_OVERRIDE;
-    virtual bool getRefAcceleration(int j, double *acc) YARP_OVERRIDE;
-    virtual bool getRefAccelerations(double *accs) YARP_OVERRIDE;
-    virtual bool stop(int j) YARP_OVERRIDE;
-    virtual bool stop() YARP_OVERRIDE;
+    virtual bool getAxes(int *axes) override;
+    virtual bool velocityMove(int j, double sp) override;
+    virtual bool velocityMove(const double *sp) override;
+    virtual bool setRefAcceleration(int j, double acc) override;
+    virtual bool setRefAccelerations(const double *accs) override;
+    virtual bool getRefAcceleration(int j, double *acc) override;
+    virtual bool getRefAccelerations(double *accs) override;
+    virtual bool stop(int j) override;
+    virtual bool stop() override;
 
 
     // specific of IVelocityControl2
-    virtual bool velocityMove(const int n_joint, const int *joints, const double *spds) YARP_OVERRIDE;
-    virtual bool getRefVelocity(const int joint, double *vel) YARP_OVERRIDE;
-    virtual bool getRefVelocities(double *vels) YARP_OVERRIDE;
-    virtual bool getRefVelocities(const int n_joint, const int *joints, double *vels) YARP_OVERRIDE;
-    virtual bool setRefAccelerations(const int n_joint, const int *joints, const double *accs) YARP_OVERRIDE;
-    virtual bool getRefAccelerations(const int n_joint, const int *joints, double *accs) YARP_OVERRIDE;
-    virtual bool stop(const int n_joint, const int *joints) YARP_OVERRIDE;
+    virtual bool velocityMove(const int n_joint, const int *joints, const double *spds) override;
+    virtual bool getRefVelocity(const int joint, double *vel) override;
+    virtual bool getRefVelocities(double *vels) override;
+    virtual bool getRefVelocities(const int n_joint, const int *joints, double *vels) override;
+    virtual bool setRefAccelerations(const int n_joint, const int *joints, const double *accs) override;
+    virtual bool getRefAccelerations(const int n_joint, const int *joints, double *accs) override;
+    virtual bool stop(const int n_joint, const int *joints) override;
 };
 
 
@@ -113,54 +113,54 @@ private:
     }
 
 public:
-    virtual bool getAxes(int *axes) YARP_OVERRIDE
+    virtual bool getAxes(int *axes) override
     {return NOT_YET_IMPLEMENTED("getAxesRaw");}
 
-    virtual bool velocityMoveRaw(int j, double sp) YARP_OVERRIDE
+    virtual bool velocityMoveRaw(int j, double sp) override
     {return NOT_YET_IMPLEMENTED("velocityMoveRaw");}
 
-    virtual bool velocityMoveRaw(const double *sp) YARP_OVERRIDE
+    virtual bool velocityMoveRaw(const double *sp) override
     {return NOT_YET_IMPLEMENTED("velocityMoveRaw");}
 
-    virtual bool setRefAccelerationRaw(int j, double acc) YARP_OVERRIDE
+    virtual bool setRefAccelerationRaw(int j, double acc) override
     {return NOT_YET_IMPLEMENTED("setRefAccelerationRaw");}
 
-    virtual bool setRefAccelerationsRaw(const double *accs) YARP_OVERRIDE
+    virtual bool setRefAccelerationsRaw(const double *accs) override
     {return NOT_YET_IMPLEMENTED("setRefAccelerationsRaw");}
 
-    virtual bool getRefAccelerationRaw(int j, double *acc) YARP_OVERRIDE
+    virtual bool getRefAccelerationRaw(int j, double *acc) override
     {return NOT_YET_IMPLEMENTED("getRefAccelerationRaw");}
 
-    virtual bool getRefAccelerationsRaw(double *accs) YARP_OVERRIDE
+    virtual bool getRefAccelerationsRaw(double *accs) override
     {return NOT_YET_IMPLEMENTED("getRefAccelerationsRaw");}
 
-    virtual bool stopRaw(int j) YARP_OVERRIDE
+    virtual bool stopRaw(int j) override
     {return NOT_YET_IMPLEMENTED("stopRaw");}
 
-    virtual bool stopRaw() YARP_OVERRIDE
+    virtual bool stopRaw() override
     {return NOT_YET_IMPLEMENTED("stopRaw");}
 
 
     // specific of IVelocityControl2
-    virtual bool velocityMoveRaw(const int n_joint, const int *joints, const double *spds) YARP_OVERRIDE
+    virtual bool velocityMoveRaw(const int n_joint, const int *joints, const double *spds) override
     {return NOT_YET_IMPLEMENTED("velocityMoveRaw");}
 
-    virtual bool getRefVelocityRaw(const int joint, double *vel) YARP_OVERRIDE
+    virtual bool getRefVelocityRaw(const int joint, double *vel) override
     {return NOT_YET_IMPLEMENTED("getRefVelocityRaw");}
 
-    virtual bool getRefVelocitiesRaw(double *vels) YARP_OVERRIDE
+    virtual bool getRefVelocitiesRaw(double *vels) override
     {return NOT_YET_IMPLEMENTED("getRefVelocitiesRaw");}
 
-    virtual bool getRefVelocitiesRaw(const int n_joint, const int *joints, double *vels) YARP_OVERRIDE
+    virtual bool getRefVelocitiesRaw(const int n_joint, const int *joints, double *vels) override
     {return NOT_YET_IMPLEMENTED("getRefVelocitiesRaw");}
 
-    virtual bool setRefAccelerationsRaw(const int n_joint, const int *joints, const double *accs) YARP_OVERRIDE
+    virtual bool setRefAccelerationsRaw(const int n_joint, const int *joints, const double *accs) override
     {return NOT_YET_IMPLEMENTED("setRefAccelerationsRaw");}
 
-    virtual bool getRefAccelerationsRaw(const int n_joint, const int *joints, double *accs) YARP_OVERRIDE
+    virtual bool getRefAccelerationsRaw(const int n_joint, const int *joints, double *accs) override
     {return NOT_YET_IMPLEMENTED("getRefAccelerationsRaw");}
 
-    virtual bool stopRaw(const int n_joint, const int *joints) YARP_OVERRIDE
+    virtual bool stopRaw(const int n_joint, const int *joints) override
     {return NOT_YET_IMPLEMENTED("stopRaw");}
 
 };

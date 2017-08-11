@@ -243,7 +243,7 @@ bool RosTypeCodeGenYarp::endClear() {
 
 
 bool RosTypeCodeGenYarp::beginRead(bool bare, int len) {
-    fprintf(out,"  bool read%s(yarp::os::ConnectionReader& connection) YARP_OVERRIDE {\n",
+    fprintf(out,"  bool read%s(yarp::os::ConnectionReader& connection) override {\n",
             bare?"Bare":"Bottle");
     if (!bare) {
         fprintf(out,"    connection.convertTextMode();\n");
@@ -400,7 +400,7 @@ bool RosTypeCodeGenYarp::endRead(bool bare) {
     fprintf(out,"  }\n\n");
     if (!bare) {
         fprintf(out,"  using yarp::os::idl::WirePortable::read;\n");
-        fprintf(out,"  bool read(yarp::os::ConnectionReader& connection) YARP_OVERRIDE {\n");
+        fprintf(out,"  bool read(yarp::os::ConnectionReader& connection) override {\n");
         fprintf(out,"    if (connection.isBareMode()) return readBare(connection);\n");
         fprintf(out,"    return readBottle(connection);\n");
         fprintf(out,"  }\n\n");
@@ -409,7 +409,7 @@ bool RosTypeCodeGenYarp::endRead(bool bare) {
 }
 
 bool RosTypeCodeGenYarp::beginWrite(bool bare, int len) {
-    fprintf(out,"  bool write%s(yarp::os::ConnectionWriter& connection) YARP_OVERRIDE {\n",
+    fprintf(out,"  bool write%s(yarp::os::ConnectionWriter& connection) override {\n",
             bare?"Bare":"Bottle");
     if (!bare) {
         fprintf(out,"    connection.appendInt(BOTTLE_TAG_LIST);\n");
@@ -540,7 +540,7 @@ bool RosTypeCodeGenYarp::endWrite(bool bare) {
     fprintf(out,"  }\n\n");
     if (!bare) {
         fprintf(out,"  using yarp::os::idl::WirePortable::write;\n");
-        fprintf(out,"  bool write(yarp::os::ConnectionWriter& connection) YARP_OVERRIDE {\n");
+        fprintf(out,"  bool write(yarp::os::ConnectionWriter& connection) override {\n");
         fprintf(out,"    if (connection.isBareMode()) return writeBare(connection);\n");
         fprintf(out,"    return writeBottle(connection);\n");
         fprintf(out,"  }\n\n");
@@ -609,7 +609,7 @@ bool RosTypeCodeGenYarp::endType(const std::string& tname,
     fprintf(out,"\n");
 
     fprintf(out,"  // Name the class, ROS will need this\n");
-    fprintf(out,"  yarp::os::Type getType() YARP_OVERRIDE {\n");
+    fprintf(out,"  yarp::os::Type getType() override {\n");
     fprintf(out,"    yarp::os::Type typ = yarp::os::Type::byName(\"%s\",\"%s\");\n", dbl_name.c_str(), dbl_name.c_str());
     fprintf(out,"    typ.addProperty(\"md5sum\",yarp::os::Value(\"%s\"));\n", field.checksum.c_str());
     fprintf(out,"    typ.addProperty(\"message_definition\",yarp::os::Value(getTypeText()));\n");

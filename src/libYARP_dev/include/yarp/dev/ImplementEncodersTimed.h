@@ -50,20 +50,20 @@ public:
 
     virtual ~ImplementEncodersTimed();
 
-    virtual bool getAxes(int *ax) YARP_OVERRIDE;
+    virtual bool getAxes(int *ax) override;
 
-    virtual bool resetEncoder(int j) YARP_OVERRIDE;
-    virtual bool resetEncoders() YARP_OVERRIDE;
-    virtual bool setEncoder(int j, double val) YARP_OVERRIDE;
-    virtual bool setEncoders(const double *vals) YARP_OVERRIDE;
-    virtual bool getEncoder(int j, double *v) YARP_OVERRIDE;
-    virtual bool getEncodersTimed(double *encs, double *time) YARP_OVERRIDE;
-    virtual bool getEncoderTimed(int j, double *v, double *t) YARP_OVERRIDE;
-    virtual bool getEncoders(double *encs) YARP_OVERRIDE;
-    virtual bool getEncoderSpeed(int j, double *spds) YARP_OVERRIDE;
-    virtual bool getEncoderSpeeds(double *spds) YARP_OVERRIDE;
-    virtual bool getEncoderAcceleration(int j, double *spds) YARP_OVERRIDE;
-    virtual bool getEncoderAccelerations(double *accs) YARP_OVERRIDE;
+    virtual bool resetEncoder(int j) override;
+    virtual bool resetEncoders() override;
+    virtual bool setEncoder(int j, double val) override;
+    virtual bool setEncoders(const double *vals) override;
+    virtual bool getEncoder(int j, double *v) override;
+    virtual bool getEncodersTimed(double *encs, double *time) override;
+    virtual bool getEncoderTimed(int j, double *v, double *t) override;
+    virtual bool getEncoders(double *encs) override;
+    virtual bool getEncoderSpeed(int j, double *spds) override;
+    virtual bool getEncoderSpeeds(double *spds) override;
+    virtual bool getEncoderAcceleration(int j, double *spds) override;
+    virtual bool getEncoderAccelerations(double *accs) override;
 };
 
 #endif // YARP_DEV_IMPLEMENTENCODERSTIMED_H

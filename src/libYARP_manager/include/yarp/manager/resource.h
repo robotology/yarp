@@ -76,8 +76,8 @@ public:
     MultiResource(const MultiResource& rhs);
     MultiResource& operator=(const MultiResource& rhs);
     virtual ~MultiResource();
-    virtual Node* clone(void) YARP_OVERRIDE;
-    virtual bool satisfy(GenericResource* resource) YARP_OVERRIDE;
+    virtual Node* clone(void) override;
+    virtual bool satisfy(GenericResource* resource) override;
 
     int resourceCount(void) const { return resources.size(); }
     GenericResource& getResourceAt(int index) const { return *(resources[index]); }

@@ -26,8 +26,8 @@ public:
     Platform(const char* szName);
     Platform(const Platform &res);
     virtual ~Platform();
-    virtual Node* clone(void) YARP_OVERRIDE;
-    virtual bool satisfy(GenericResource* resource) YARP_OVERRIDE;
+    virtual Node* clone(void) override;
+    virtual bool satisfy(GenericResource* resource) override;
 
     void setDistribution(const char* str) { if(str) strDistrib = str; }
     void setRelease(const char* str) { if(str) strRelease = str; }
@@ -59,8 +59,8 @@ public:
     const char* getReply(void) { return strReply.c_str(); }
     void setTimeout(double t) { timeout = t; }
     double getTimeout(void) { return timeout; }
-    virtual Node* clone(void) YARP_OVERRIDE;
-    virtual bool satisfy(GenericResource* resource) YARP_OVERRIDE;
+    virtual Node* clone(void) override;
+    virtual bool satisfy(GenericResource* resource) override;
 
 protected:
 

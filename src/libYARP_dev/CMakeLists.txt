@@ -309,7 +309,8 @@ if (CREATE_LIB_MATH)
   target_link_libraries(YARP_dev PRIVATE YARP::YARP_math)
 endif()
 
-target_compile_features(YARP_dev PUBLIC cxx_nullptr)
+target_compile_features(YARP_dev PUBLIC cxx_nullptr
+                                        cxx_override)
 
 set_property(TARGET YARP_dev PROPERTY PUBLIC_HEADER ${YARP_dev_HDRS})
 set_property(TARGET YARP_dev PROPERTY PRIVATE_HEADER ${YARP_dev_IMPL_HDRS})

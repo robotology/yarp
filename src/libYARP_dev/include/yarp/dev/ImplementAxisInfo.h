@@ -47,8 +47,8 @@ public:
 
     virtual ~ImplementAxisInfo();
 
-    virtual bool getAxisName(int axis, yarp::os::ConstString& name) YARP_OVERRIDE;
-    virtual bool getJointType(int axis, yarp::dev::JointTypeEnum& type) YARP_OVERRIDE;
+    virtual bool getAxisName(int axis, yarp::os::ConstString& name) override;
+    virtual bool getJointType(int axis, yarp::dev::JointTypeEnum& type) override;
 };
 
 #endif // YARP_DEV_IMPLEMENTAXISINFO_H

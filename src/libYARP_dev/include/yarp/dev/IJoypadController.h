@@ -231,19 +231,19 @@ protected:
 
 public:
 
-    virtual bool getAxisCount(unsigned int& axis_count) YARP_OVERRIDE YARP_FINAL;
-    virtual bool getButtonCount(unsigned int& button_count) YARP_OVERRIDE YARP_FINAL;
-    virtual bool getTrackballCount(unsigned int& Trackball_count) YARP_OVERRIDE YARP_FINAL;
-    virtual bool getHatCount(unsigned int& Hat_count) YARP_OVERRIDE YARP_FINAL;
-    virtual bool getTouchSurfaceCount(unsigned int& touch_count) YARP_OVERRIDE YARP_FINAL;
-    virtual bool getStickCount(unsigned int& stick_count) YARP_OVERRIDE YARP_FINAL;
-    virtual bool getStickDoF(unsigned int stick_id, unsigned int& DoF) YARP_OVERRIDE YARP_FINAL;
-    virtual bool getButton(unsigned int button_id, float& value) YARP_OVERRIDE YARP_FINAL;
-    virtual bool getTrackball(unsigned int trackball_id, yarp::sig::Vector& value) YARP_OVERRIDE YARP_FINAL;
-    virtual bool getHat(unsigned int hat_id, unsigned char& value) YARP_OVERRIDE YARP_FINAL;
-    virtual bool getAxis(unsigned int axis_id, double& value) YARP_OVERRIDE YARP_FINAL;
-    virtual bool getStick(unsigned int stick_id, yarp::sig::Vector& value, JoypadCtrl_coordinateMode coordinate_mode) YARP_OVERRIDE YARP_FINAL;
-    virtual bool getTouch(unsigned int touch_id, yarp::sig::Vector& value) YARP_OVERRIDE YARP_FINAL;
+    virtual bool getAxisCount(unsigned int& axis_count) override YARP_FINAL;
+    virtual bool getButtonCount(unsigned int& button_count) override YARP_FINAL;
+    virtual bool getTrackballCount(unsigned int& Trackball_count) override YARP_FINAL;
+    virtual bool getHatCount(unsigned int& Hat_count) override YARP_FINAL;
+    virtual bool getTouchSurfaceCount(unsigned int& touch_count) override YARP_FINAL;
+    virtual bool getStickCount(unsigned int& stick_count) override YARP_FINAL;
+    virtual bool getStickDoF(unsigned int stick_id, unsigned int& DoF) override YARP_FINAL;
+    virtual bool getButton(unsigned int button_id, float& value) override YARP_FINAL;
+    virtual bool getTrackball(unsigned int trackball_id, yarp::sig::Vector& value) override YARP_FINAL;
+    virtual bool getHat(unsigned int hat_id, unsigned char& value) override YARP_FINAL;
+    virtual bool getAxis(unsigned int axis_id, double& value) override YARP_FINAL;
+    virtual bool getStick(unsigned int stick_id, yarp::sig::Vector& value, JoypadCtrl_coordinateMode coordinate_mode) override YARP_FINAL;
+    virtual bool getTouch(unsigned int touch_id, yarp::sig::Vector& value) override YARP_FINAL;
     using IJoypadController::JoypadCtrl_coordinateMode;
     using IJoypadController::JypCtrlcoord_CARTESIAN;
     using IJoypadController::JypCtrlcoord_POLAR;
@@ -254,11 +254,11 @@ public:
 
     IJoypadEventDriven(int rate);
 
-    virtual bool threadInit() YARP_OVERRIDE YARP_FINAL;
-    virtual void run() YARP_OVERRIDE YARP_FINAL;
+    virtual bool threadInit() override YARP_FINAL;
+    virtual void run() override YARP_FINAL;
 
-    virtual bool eventDriven(bool enable, yarp::dev::IJoypadEvent* event = nullptr) YARP_OVERRIDE;
-    virtual bool isEventDriven() YARP_OVERRIDE { return EventDrivenEnabled;}
+    virtual bool eventDriven(bool enable, yarp::dev::IJoypadEvent* event = nullptr) override;
+    virtual bool isEventDriven() override { return EventDrivenEnabled;}
 };
 
 

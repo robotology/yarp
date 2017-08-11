@@ -1064,8 +1064,8 @@ void t_yarp_generator::generate_enum(t_enum* tenum) {
   f_types_ << "class " << namespace_decorate(ns,enum_name) << "Vocab : public yarp::os::idl::WireVocab {" << endl;
   f_types_ << "public:" << endl;
   indent_up();
-  indent(f_types_) << "virtual int fromString(const std::string& input) YARP_OVERRIDE;" << endl;
-  indent(f_types_) << "virtual std::string toString(int input) YARP_OVERRIDE;" << endl;
+  indent(f_types_) << "virtual int fromString(const std::string& input) override;" << endl;
+  indent(f_types_) << "virtual std::string toString(int input) override;" << endl;
   indent_down();
   f_types_ << "};" << endl;
   f_types_ << endl;
@@ -1354,16 +1354,16 @@ void t_yarp_generator::generate_struct(t_struct* tstruct) {
 
   out << endl;
   indent(out) << "// read and write structure on a connection" << endl;
-  indent(out) << "bool read(yarp::os::idl::WireReader& reader) YARP_OVERRIDE;"
+  indent(out) << "bool read(yarp::os::idl::WireReader& reader) override;"
               << endl;
 
-  indent(out) << "bool read(yarp::os::ConnectionReader& connection) YARP_OVERRIDE;"
+  indent(out) << "bool read(yarp::os::ConnectionReader& connection) override;"
               << endl;
 
 
-  indent(out) << "bool write(yarp::os::idl::WireWriter& writer) YARP_OVERRIDE;"
+  indent(out) << "bool write(yarp::os::idl::WireWriter& writer) override;"
               << endl;
-  indent(out) << "bool write(yarp::os::ConnectionWriter& connection) YARP_OVERRIDE;"
+  indent(out) << "bool write(yarp::os::ConnectionWriter& connection) override;"
               << endl;
 
   out << endl;
@@ -1517,8 +1517,8 @@ void t_yarp_generator::generate_struct(t_struct* tstruct) {
 
 
   // serialize
-  indent(out) << "bool read(yarp::os::ConnectionReader& connection) YARP_OVERRIDE;" << endl;
-  indent(out) << "bool write(yarp::os::ConnectionWriter& connection) YARP_OVERRIDE;" << endl;
+  indent(out) << "bool read(yarp::os::ConnectionReader& connection) override;" << endl;
+  indent(out) << "bool write(yarp::os::ConnectionWriter& connection) override;" << endl;
 
 
   indent_down();
@@ -2002,8 +2002,8 @@ void t_yarp_generator::generate_service(t_service* tservice) {
         }
 
         indent(f_curr_) << function_prototype(*fn_iter,false,nullptr,"init") << ";" << endl;
-        indent(f_curr_) << "virtual bool write(yarp::os::ConnectionWriter& connection) YARP_OVERRIDE;" << endl;
-        indent(f_curr_) << "virtual bool read(yarp::os::ConnectionReader& connection) YARP_OVERRIDE;" << endl;
+        indent(f_curr_) << "virtual bool write(yarp::os::ConnectionWriter& connection) override;" << endl;
+        indent(f_curr_) << "virtual bool read(yarp::os::ConnectionReader& connection) override;" << endl;
 
         indent_down();
         f_curr_ << "};" << endl;
@@ -2176,7 +2176,7 @@ void t_yarp_generator::generate_service(t_service* tservice) {
     }
 
 
-    indent(f_srv_) << "virtual bool read(yarp::os::ConnectionReader& connection) YARP_OVERRIDE;"
+    indent(f_srv_) << "virtual bool read(yarp::os::ConnectionReader& connection) override;"
                    << endl;
     indent(f_srv_) << "virtual std::vector<std::string> help(const std::string& functionName=\"--all\");"
                    << endl;

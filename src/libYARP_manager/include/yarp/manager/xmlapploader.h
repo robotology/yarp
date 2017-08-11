@@ -29,10 +29,10 @@ public:
     XmlAppLoader(const char* szPath, const char* szAppName);
     virtual ~XmlAppLoader();
 
-    bool         init(void) YARP_OVERRIDE;
-    void         fini(void) YARP_OVERRIDE;
-    void         reset(void) YARP_OVERRIDE;
-    Application* getNextApplication(void) YARP_OVERRIDE;
+    bool         init(void) override;
+    void         fini(void) override;
+    void         reset(void) override;
+    Application* getNextApplication(void) override;
 
 protected:
 

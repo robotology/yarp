@@ -40,7 +40,8 @@ target_link_libraries(YARP_rtf PUBLIC RTF::RTF
                                        YARP::YARP_init
                                        YARP::YARP_dev)
 
-target_compile_features(YARP_rtf PUBLIC cxx_nullptr)
+target_compile_features(YARP_rtf PUBLIC cxx_nullptr
+                                        cxx_override)
 
 set_property(TARGET YARP_rtf PROPERTY PUBLIC_HEADER ${YARP_rtf_HDRS})
 

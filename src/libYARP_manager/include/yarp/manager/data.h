@@ -30,7 +30,7 @@ public:
     InputData(const char* szName);
     InputData(const InputData &input);
     virtual ~InputData();
-    virtual Node* clone(void) YARP_OVERRIDE;
+    virtual Node* clone(void) override;
     void setName(const char* szName) {
         if(szName){
             strName = szName;
@@ -77,7 +77,7 @@ public:
     OutputData(const char* szName);
     OutputData(const OutputData &input);
     virtual ~OutputData();
-    virtual Node* clone(void) YARP_OVERRIDE;
+    virtual Node* clone(void) override;
     void setName(const char* szName) {
         if(szName){
             strName = szName;
