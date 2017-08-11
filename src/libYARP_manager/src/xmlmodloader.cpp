@@ -66,7 +66,7 @@ XmlModLoader::~XmlModLoader()
 }
 
 
-bool XmlModLoader::init(void)
+bool XmlModLoader::init()
 {
     module.clear();
     fileNames.clear();
@@ -123,21 +123,21 @@ bool XmlModLoader::init(void)
 }
 
 
-void XmlModLoader::reset(void)
+void XmlModLoader::reset()
 {
     fini();
     init();
 }
 
 
-void XmlModLoader::fini(void)
+void XmlModLoader::fini()
 {
     fileNames.clear();
     module.clear();
 }
 
 
-Module* XmlModLoader::getNextModule(void)
+Module* XmlModLoader::getNextModule()
 {
     if(strName.empty())
     {

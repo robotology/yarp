@@ -1576,7 +1576,7 @@ int KnowledgeBase::getProducerRank(Graph& graph, OutputData* output)
 }
 
 
-bool KnowledgeBase::checkConsistency(void)
+bool KnowledgeBase::checkConsistency()
 {
     //ErrorLogger* logger  = ErrorLogger::Instance();
 

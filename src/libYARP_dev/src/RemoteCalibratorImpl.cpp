@@ -41,7 +41,7 @@ bool IRemoteCalibrator::isCalibratorDevicePresent(bool *isCalib)
     return true;
 }
 
-void IRemoteCalibrator::releaseCalibratorDevice(void)
+void IRemoteCalibrator::releaseCalibratorDevice()
 {
     _remoteCalibrator = nullptr;
 }

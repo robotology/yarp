@@ -121,7 +121,7 @@ bool AnalogServerHandler::read(yarp::os::ConnectionReader& connection)
   * on the port, i.e. an offset and a length.
   */
 
-AnalogPortEntry::AnalogPortEntry(void) { }
+AnalogPortEntry::AnalogPortEntry() { }
 
 AnalogPortEntry::AnalogPortEntry(const AnalogPortEntry &alt)
 {

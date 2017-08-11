@@ -55,14 +55,14 @@ YarpBroker::~YarpBroker()
     fini();
 }
 
-void YarpBroker::fini(void)
+void YarpBroker::fini()
 {
     if(RateThread::isRunning())
         RateThread::stop();
     //port.close();
 }
 
-bool YarpBroker::init(void)
+bool YarpBroker::init()
 {
     //if(bInitialized)
     //  return true;
@@ -316,7 +316,7 @@ bool YarpBroker::kill()
 }
 
 
-int YarpBroker::running(void)
+int YarpBroker::running()
 {
     if(!bInitialized) return -1;
     if(bOnlyConnector) return -1;
@@ -350,17 +350,17 @@ int YarpBroker::running(void)
 }
 
 
-bool YarpBroker::attachStdout(void)
+bool YarpBroker::attachStdout()
 {
     return true;
 }
 
-void YarpBroker::detachStdout(void)
+void YarpBroker::detachStdout()
 {
 }
 
 
-Property& YarpBroker::runProperty(void)
+Property& YarpBroker::runProperty()
 {
     command.clear();
     string cmd = strCmd + string(" ") + strParam;
@@ -771,7 +771,7 @@ bool YarpBroker::getQosFromString(const char* qos, yarp::os::QosStyle& style) {
     return true;
 }
 
-const char* YarpBroker::error(void)
+const char* YarpBroker::error()
 {
     return strError.c_str();
 }

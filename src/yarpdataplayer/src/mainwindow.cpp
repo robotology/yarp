@@ -324,7 +324,7 @@ void MainWindow::stepFromCommand(Bottle &reply)
 }
 
 /**********************************************************/
-bool MainWindow::cmdSafeExit(void)
+bool MainWindow::cmdSafeExit()
 {
     quitFromCmd = true;
     if(utilities){
@@ -357,7 +357,7 @@ bool MainWindow::cmdSafeExit(void)
 }
 
 /**********************************************************/
-bool MainWindow::safeExit(void)
+bool MainWindow::safeExit()
 {
     if(utilities){
         LOG( "asking the threads to stop...\n");

@@ -19,7 +19,7 @@ using namespace std;
 /**
  * Class Platform
  */
-Platform::Platform(void) : GenericResource("Platform")
+Platform::Platform() : GenericResource("Platform")
 {
 }
 
@@ -34,7 +34,7 @@ Platform::Platform(const Platform &resource) : GenericResource(resource)
     strRelease = resource.strRelease;    
 }
 
-Node* Platform::clone(void)
+Node* Platform::clone()
 {
     Platform* resource = new Platform(*this);
     return resource;
@@ -67,7 +67,7 @@ Platform::~Platform() { }
 /**
  * Class ResYarpPort
  */
-ResYarpPort::ResYarpPort(void) : GenericResource("ResYarpPort")
+ResYarpPort::ResYarpPort() : GenericResource("ResYarpPort")
 {
     timeout = 0;
     strRequest = strReply = "";
@@ -87,7 +87,7 @@ ResYarpPort::ResYarpPort(const ResYarpPort &resource) : GenericResource(resource
     strReply = resource.strReply;
 }
 
-Node* ResYarpPort::clone(void)
+Node* ResYarpPort::clone()
 {
     ResYarpPort* resource = new ResYarpPort(*this);
     return resource;

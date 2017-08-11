@@ -22,7 +22,7 @@ class yarp::rtf::jointsPosMotion::Private
 public:
     void init(yarp::dev::PolyDriver *polydriver);
     size_t getIndexOfJoint(int j);
-    void readJointsLimits(void);
+    void readJointsLimits();
 
     yarp::sig::Vector jointsList;
     yarp::sig::Vector encoders;
@@ -73,7 +73,7 @@ size_t yarp::rtf::jointsPosMotion::Private::getIndexOfJoint(int j)
 }
 
 
-void yarp::rtf::jointsPosMotion::Private::readJointsLimits(void)
+void yarp::rtf::jointsPosMotion::Private::readJointsLimits()
 {
     max_lims.resize(n_joints);
     min_lims.resize(n_joints);

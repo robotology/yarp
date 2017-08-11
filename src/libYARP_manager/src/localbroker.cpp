@@ -156,13 +156,13 @@ LocalBroker::~LocalBroker()
     fini();
 }
 
-void LocalBroker::fini(void)
+void LocalBroker::fini()
 {
     if(Thread::isRunning())
         Thread::stop();
 }
 
-bool LocalBroker::init(void)
+bool LocalBroker::init()
 {
     /*
     if(!NetworkBase::checkNetwork(5.0))
@@ -323,7 +323,7 @@ bool LocalBroker::kill()
 }
 
 
-int LocalBroker::running(void)
+int LocalBroker::running()
 {
     if(!bInitialized) return 0;
     if(bOnlyConnector) return 0;
@@ -474,12 +474,12 @@ bool LocalBroker::connected(const char* from, const char* to, const char* carrie
 }
 
 
-const char* LocalBroker::error(void)
+const char* LocalBroker::error()
 {
     return strError.c_str();
 }
 
-bool LocalBroker::attachStdout(void)
+bool LocalBroker::attachStdout()
 {
     if(Thread::isRunning())
         return true;
@@ -491,7 +491,7 @@ bool LocalBroker::attachStdout(void)
     return startStdout();
 }
 
-void LocalBroker::detachStdout(void)
+void LocalBroker::detachStdout()
 {
    stopStdout();
 }
@@ -827,7 +827,7 @@ int LocalBroker::waitPipeSignal(int pipe_fd)
 }
 
 
-bool LocalBroker::startStdout(void)
+bool LocalBroker::startStdout()
 {
     fd_stdout = fdopen(pipe_to_stdout[READ_FROM_PIPE], "r");
     if(!fd_stdout)
@@ -844,7 +844,7 @@ bool LocalBroker::startStdout(void)
     return true;
 }
 
-void LocalBroker::stopStdout(void)
+void LocalBroker::stopStdout()
 {
     Thread::stop();
     if(fd_stdout)
@@ -854,7 +854,7 @@ void LocalBroker::stopStdout(void)
 
 
 
-int LocalBroker::ExecuteCmd(void)
+int LocalBroker::ExecuteCmd()
 {
     int  pipe_child_to_parent[2];
     int ret = pipe(pipe_child_to_parent);

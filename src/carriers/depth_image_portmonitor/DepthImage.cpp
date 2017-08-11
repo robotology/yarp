@@ -26,7 +26,7 @@ bool DepthImageConverter::create(const yarp::os::Property& options)
     return true;
 }
 
-void DepthImageConverter::destroy(void)
+void DepthImageConverter::destroy()
 {
 }
 

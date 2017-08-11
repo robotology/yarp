@@ -14,7 +14,7 @@ using namespace yarp::manager;
 /**
  * Class InputData
  */
-InputData::InputData(void) : Node(INPUTD)
+InputData::InputData() : Node(INPUTD)
 {
     bRequired = false;
     bWithPriority = false;
@@ -47,7 +47,7 @@ InputData::InputData(const InputData &input) : Node(input)
 InputData::~InputData() { }
 
 
-Node* InputData::clone(void)
+Node* InputData::clone()
 {
     InputData* input = new InputData(*this);
     return input;
@@ -59,7 +59,7 @@ Node* InputData::clone(void)
 /**
  * Class OutputData
  */
-OutputData::OutputData(void) : Node(OUTPUTD)
+OutputData::OutputData() : Node(OUTPUTD)
 {
     modOwner = nullptr;
     portType = STREAM_PORT;
@@ -88,7 +88,7 @@ OutputData::OutputData(const OutputData &output) : Node(output)
 OutputData::~OutputData() { }
 
 
-Node* OutputData::clone(void)
+Node* OutputData::clone()
 {
     OutputData* output = new OutputData(*this);
     return output;

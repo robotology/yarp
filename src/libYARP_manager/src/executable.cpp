@@ -48,7 +48,7 @@ Executable::~Executable()
 }
 
 
-bool Executable::initialize(void)
+bool Executable::initialize()
 {
     __CHECK_NULLPTR(broker);
     __CHECK_NULLPTR(event);
@@ -75,7 +75,7 @@ bool Executable::initialize(void)
 }
 
 
-bool Executable::start(void)
+bool Executable::start()
 {
     if(!initialize()) {
       event->onExecutableDied(this);
@@ -98,7 +98,7 @@ void Executable::startImplement()
 }
 
 
-void Executable::stop(void)
+void Executable::stop()
 {
     if(!broker->initialized())
         initialize();
@@ -109,7 +109,7 @@ void Executable::stop(void)
     }
 }
 
-void Executable::stopImplement(void)
+void Executable::stopImplement()
 {
     execMachine->stop();
     execMachine->disconnectAllPorts();
@@ -118,7 +118,7 @@ void Executable::stopImplement(void)
 }
 
 
-void Executable::kill(void)
+void Executable::kill()
 {
     if(!broker->initialized())
         initialize();
@@ -128,14 +128,14 @@ void Executable::kill(void)
     killWrapper->start();
 }
 
-void Executable::killImplement(void)
+void Executable::killImplement()
 {
     execMachine->kill();
     execMachine->killModule();
 }
 
 
-RSTATE Executable::state(void)
+RSTATE Executable::state()
 {
 
     if(!broker->initialized())
@@ -183,7 +183,7 @@ void Executable::onBrokerStdout(const char* msg)
 }
 
 
-void Executable::watchdogImplement(void)
+void Executable::watchdogImplement()
 {
     if(!broker->running())
             execMachine->moduleFailed();

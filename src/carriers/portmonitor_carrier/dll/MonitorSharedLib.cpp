@@ -26,7 +26,7 @@ class MonitorSelector : public YarpPluginSelector {
 /**
  * Class MonitorSharedLib
  */
-MonitorSharedLib::MonitorSharedLib(void)
+MonitorSharedLib::MonitorSharedLib()
 {
     settings.setVerboseMode(true);
 }
@@ -93,13 +93,13 @@ yarp::os::Things& MonitorSharedLib::updateReply(Things &thing)
 }
 
 
-bool MonitorSharedLib::peerTrigged(void)
+bool MonitorSharedLib::peerTrigged()
 {
     monitor->trig();
     return true;
 }
 
-bool MonitorSharedLib::canAccept(void)
+bool MonitorSharedLib::canAccept()
 {
     if(constraint == "")
         return true;

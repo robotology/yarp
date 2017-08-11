@@ -27,7 +27,7 @@ SingleAppLoader::~SingleAppLoader()
 }
 
 
-bool SingleAppLoader::init(void)
+bool SingleAppLoader::init()
 {
     ErrorLogger* logger  = ErrorLogger::Instance();
     app.clear();
@@ -45,13 +45,13 @@ bool SingleAppLoader::init(void)
 }
 
 
-void SingleAppLoader::fini(void)
+void SingleAppLoader::fini()
 {
     app.clear();
 }
 
 
-Application* SingleAppLoader::getNextApplication(void)
+Application* SingleAppLoader::getNextApplication()
 {
     return &app;
 }

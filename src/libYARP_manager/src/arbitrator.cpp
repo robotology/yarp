@@ -116,7 +116,7 @@ bool Arbitrator::trainWeights(const char* opnd)
     return true;
 }
 
-bool Arbitrator::trainWeights(void)
+bool Arbitrator::trainWeights()
 {
     biases.clear();
     alphas.clear();
@@ -128,7 +128,7 @@ bool Arbitrator::trainWeights(void)
     return bAllOk;
 }
 
-bool Arbitrator::validate(void)
+bool Arbitrator::validate()
 {
     ErrorLogger* logger  = ErrorLogger::Instance();
 

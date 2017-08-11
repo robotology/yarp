@@ -86,11 +86,11 @@ protected:
     // memory is allocated in a single chunk. Row ptrs are then
     // made to point appropriately. This is compatible with IPL and
     // SOMEONE says it's more efficient on NT.
-    void _alloc (void);
+    void _alloc ();
     void _alloc_extern (const void *buf);
-    void _alloc_data (void);
-    void _free (void);
-    void _free_data (void);
+    void _alloc_data ();
+    void _free ();
+    void _free_data ();
 
     void _make_independent();
     void _set_ipl_header(int x, int y, int pixel_type, int quantum,
@@ -155,7 +155,7 @@ void ImageStorage::resize(int x, int y, int pixel_type,
 
 
 // allocates an empty image.
-void ImageStorage::_alloc (void) {
+void ImageStorage::_alloc () {
     yAssert(pImage != nullptr);
 
     if (pImage != nullptr)
@@ -189,7 +189,7 @@ void ImageStorage::_alloc_extern (const void *buf)
 }
 
 // allocates the Data pointer.
-void ImageStorage::_alloc_data (void)
+void ImageStorage::_alloc_data ()
 {
     DBGPF1 printf("alloc_data1\n"), fflush(stdout);
     yAssert(pImage != nullptr);
@@ -220,7 +220,7 @@ void ImageStorage::_alloc_data (void)
     DBGPF1 printf("alloc_data4\n");
 }
 
-void ImageStorage::_free (void)
+void ImageStorage::_free ()
 {
     if (pImage != nullptr)
         if (pImage->imageData != nullptr)
@@ -247,7 +247,7 @@ void ImageStorage::_free (void)
             }
 }
 
-void ImageStorage::_free_data (void)
+void ImageStorage::_free_data ()
 {
     yAssert(Data==nullptr); // Now always free Data at same time
 }

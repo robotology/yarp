@@ -1390,7 +1390,7 @@ bool FakeMotionControl::close()
     return true;
 }
 
-void FakeMotionControl::cleanup(void)
+void FakeMotionControl::cleanup()
 {
 
 }

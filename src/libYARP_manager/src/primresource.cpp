@@ -18,7 +18,7 @@ using namespace std;
 /**
  * Class Memory
  */
-Memory::Memory(void) : GenericResource("Memory")
+Memory::Memory() : GenericResource("Memory")
 {
     totalSpace = (Capacity)0;
     freeSpace = (Capacity)0;
@@ -51,7 +51,7 @@ bool Memory::satisfy(GenericResource* resource)
              (totalSpace >= mem->getTotalSpace()) );
 }
 
-Node* Memory::clone(void)
+Node* Memory::clone()
 {
     Memory* resource = new Memory(*this);
     return resource;
@@ -65,7 +65,7 @@ Memory::~Memory() { }
 /**
  * Class Storage
  */
-Storage::Storage(void) : GenericResource("Storage")
+Storage::Storage() : GenericResource("Storage")
 {
     totalSpace = (Capacity)0;
     freeSpace = (Capacity)0;
@@ -98,7 +98,7 @@ bool Storage::satisfy(GenericResource* resource)
              (totalSpace >= mem->getTotalSpace()) );
 }
 
-Node* Storage::clone(void)
+Node* Storage::clone()
 {
     Storage* resource = new Storage(*this);
     return resource;
@@ -112,7 +112,7 @@ Storage::~Storage() { }
 /**
  * Class Network
  */
-Network::Network(void) : GenericResource("Network")
+Network::Network() : GenericResource("Network")
 {
 }
 
@@ -144,7 +144,7 @@ bool Network::satisfy(GenericResource* resource)
     return ret;
 }
 
-Node* Network::clone(void)
+Node* Network::clone()
 {
     Network* resource = new Network(*this);
     return resource;
@@ -158,7 +158,7 @@ Network::~Network() { }
 /**
  * Class Processor
  */
-Processor::Processor(void) : GenericResource("Processor")
+Processor::Processor() : GenericResource("Processor")
 {
     cores = (size_t)0;
     frequency = (double)0.0;
@@ -208,7 +208,7 @@ bool Processor::satisfy(GenericResource* resource)
 }
 
 
-Node* Processor::clone(void)
+Node* Processor::clone()
 {
     Processor* resource = new Processor(*this);
     return resource;
@@ -223,7 +223,7 @@ Processor::~Processor() { }
  * Class Computer
  */
 
-Computer::Computer(void) : GenericResource("Computer")
+Computer::Computer() : GenericResource("Computer")
 {
 }
 
@@ -319,7 +319,7 @@ bool Computer::satisfyComputerResource(GenericResource* resource)
     return false;
 }
 
-Node* Computer::clone(void)
+Node* Computer::clone()
 {
     Computer* resource = new Computer(*this);
     return resource;
@@ -339,7 +339,7 @@ void Computer::swap(const Computer &comp)
         addPeripheral(comp.getPeripheralAt(i));
 }
 
-void Computer::clear(void)
+void Computer::clear()
 {
     for(unsigned int i=0; i<peripheralResources.size(); i++)
     {

@@ -409,7 +409,7 @@ void YConsoleManager::onSignal(int signum)
 }
 
 
-void YConsoleManager::myMain(void)
+void YConsoleManager::myMain()
 {
 
 
@@ -477,7 +477,7 @@ void YConsoleManager::myMain(void)
 
 }
 
-bool YConsoleManager::exit(void)
+bool YConsoleManager::exit()
 {
     if(!bShouldRun)
         return true;
@@ -977,7 +977,7 @@ bool YConsoleManager::process(const vector<string> &cmdList)
 }
 
 
-void YConsoleManager::help(void)
+void YConsoleManager::help()
 {
     cout<<"Here is a list of Yarp manager keywords.\n"<<endl;
     cout<<OKGREEN<<"help"<<INFO<<"                    : show help."<<ENDC<<endl;
@@ -1011,7 +1011,7 @@ void YConsoleManager::help(void)
 }
 
 
-void YConsoleManager::which(void)
+void YConsoleManager::which()
 {
     ExecutablePContainer modules = getExecutables();
     CnnContainer connections  = getConnections();
@@ -1051,7 +1051,7 @@ void YConsoleManager::which(void)
     cout<<endl;
 }
 
-void YConsoleManager::checkStates(void)
+void YConsoleManager::checkStates()
 {
     ExecutablePContainer modules = getExecutables();
     ExecutablePIterator moditr;
@@ -1073,7 +1073,7 @@ void YConsoleManager::checkStates(void)
     }
 }
 
-void YConsoleManager::checkConnections(void)
+void YConsoleManager::checkConnections()
 {
     CnnContainer connections  = getConnections();
     CnnIterator cnnitr;
@@ -1092,7 +1092,7 @@ void YConsoleManager::checkConnections(void)
     }
 }
 
-void YConsoleManager::reportErrors(void)
+void YConsoleManager::reportErrors()
 {
     ErrorLogger* logger  = ErrorLogger::Instance();
     if(logger->errorCount() || logger->warningCount())

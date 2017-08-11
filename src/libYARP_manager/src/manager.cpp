@@ -256,7 +256,7 @@ bool Manager::saveApplication(const char* szAppName, const char* fileName)
 }
 
 
-bool Manager::loadBalance(void)
+bool Manager::loadBalance()
 {
     updateResources();
     bool ret = prepare(false);
@@ -475,7 +475,7 @@ bool Manager::exist(unsigned int id)
 }
 
 
-bool Manager::updateResources(void)
+bool Manager::updateResources()
 {
     YarpBroker broker;
     broker.init();
@@ -668,7 +668,7 @@ bool Manager::existPortTo(unsigned int id)
 }
 
 
-bool Manager::checkDependency(void)
+bool Manager::checkDependency()
 {
     /**
      * checking for port resources availability
@@ -720,7 +720,7 @@ bool Manager::run(unsigned int id, bool async)
     return waitingModuleRun(id);
 }
 
-bool Manager::run(void)
+bool Manager::run()
 {
     if(runnables.empty())
     {
@@ -820,7 +820,7 @@ bool Manager::stop(unsigned int id, bool async)
 }
 
 
-bool Manager::stop(void)
+bool Manager::stop()
 {
     if(runnables.empty())
         return true;
@@ -878,7 +878,7 @@ bool Manager::kill(unsigned int id, bool async)
 }
 
 
-bool Manager::kill(void)
+bool Manager::kill()
 {
     if(runnables.empty())
         return true;
@@ -915,7 +915,7 @@ bool Manager::kill(void)
 }
 
 
-void Manager::clearExecutables(void)
+void Manager::clearExecutables()
 {
     ExecutablePIterator itr;
     for(itr=runnables.begin(); itr!=runnables.end(); itr++)
@@ -955,7 +955,7 @@ bool Manager::connect(unsigned int id)
                      connections[id].qosTo());
 }
 
-bool Manager::connect(void)
+bool Manager::connect()
 {
     //YarpBroker connector;
     //connector.init();
@@ -1003,7 +1003,7 @@ bool Manager::disconnect(unsigned int id)
     return true;
 }
 
-bool Manager::disconnect(void)
+bool Manager::disconnect()
 {
     //YarpBroker connector;
     //connector.init();
@@ -1038,7 +1038,7 @@ bool Manager::rmconnect(unsigned int id)
 }
 
 
-bool Manager::rmconnect(void)
+bool Manager::rmconnect()
 {
     CnnIterator cnn;
     for(cnn=connections.begin(); cnn!=connections.end(); cnn++)
@@ -1067,7 +1067,7 @@ bool Manager::connected(unsigned int id)
 }
 
 
-bool Manager::connected(void)
+bool Manager::connected()
 {
     //YarpBroker connector;
     //connector.init();
@@ -1095,7 +1095,7 @@ bool Manager::checkPortsAvailable(Broker* broker)
 }
 
 
-bool Manager::connectExtraPorts(void)
+bool Manager::connectExtraPorts()
 {
     //YarpBroker connector;
     //connector.init();
@@ -1137,7 +1137,7 @@ bool Manager::running(unsigned int id)
 }
 
 
-bool Manager::allRunning(void)
+bool Manager::allRunning()
 {
     if(!runnables.size())
         return false;
@@ -1166,7 +1166,7 @@ bool Manager::suspended(unsigned int id)
 }
 
 
-bool Manager::allStopped(void)
+bool Manager::allStopped()
 {
     if(!runnables.size())
         return true;

@@ -11,7 +11,7 @@
 
 using namespace yarp::manager;
 
-Graph::Graph(void) { }
+Graph::Graph() { }
 
 Graph::~Graph()
 {
@@ -54,7 +54,7 @@ bool Graph::removeNode(const char* szLabel)
     return true;
 }
 
-void Graph::clear(void)
+void Graph::clear()
 {
     NodePIterator itr;
     for(itr=nodes.begin(); itr!=nodes.end(); itr++)
@@ -155,14 +155,14 @@ Node* Graph::getNodeAt(int index)
 }
 
 
-GraphIterator Graph::begin(void)
+GraphIterator Graph::begin()
 {
     GraphIterator itr;
     itr.itr = nodes.begin();
     return itr;
 }
 
-GraphIterator Graph::end(void)
+GraphIterator Graph::end()
 {
     GraphIterator itr;
     itr.itr = nodes.end();

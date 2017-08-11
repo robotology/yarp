@@ -61,7 +61,7 @@ XmlResLoader::~XmlResLoader()
 }
 
 
-bool XmlResLoader::init(void)
+bool XmlResLoader::init()
 {
     fileNames.clear();
     ErrorLogger* logger  = ErrorLogger::Instance();
@@ -117,20 +117,20 @@ bool XmlResLoader::init(void)
 }
 
 
-void XmlResLoader::reset(void)
+void XmlResLoader::reset()
 {
     fini();
     init();
 }
 
 
-void XmlResLoader::fini(void)
+void XmlResLoader::fini()
 {
     fileNames.clear();
 }
 
 
-GenericResource* XmlResLoader::getNextResource(void)
+GenericResource* XmlResLoader::getNextResource()
 {
     if(strName.empty())
     {

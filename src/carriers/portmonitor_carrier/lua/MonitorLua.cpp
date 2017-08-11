@@ -17,10 +17,10 @@ using namespace std;
 /**
  * Class MonitorLua
  */
-MonitorLua::MonitorLua(void) : bHasAcceptCallback(false),
-                               bHasUpdateCallback(false),
-                               bHasUpdateReplyCallback(false),
-                               trigger(nullptr)
+MonitorLua::MonitorLua() : bHasAcceptCallback(false),
+                           bHasUpdateCallback(false),
+                           bHasUpdateReplyCallback(false),
+                           trigger(nullptr)
 {
     L = luaL_newstate();
     luaL_openlibs(L);
@@ -352,7 +352,7 @@ bool MonitorLua::getParams(yarp::os::Property& params)
     return true;
 }
 
-bool MonitorLua::peerTrigged(void)
+bool MonitorLua::peerTrigged()
 {
     luaMutex.lock();
     if(getLocalFunction("trig"))
@@ -382,7 +382,7 @@ bool MonitorLua::getLocalFunction(const char *name)
 }
 
 
-bool MonitorLua::registerExtraFunctions(void)
+bool MonitorLua::registerExtraFunctions()
 {
 #if LUA_VERSION_NUM > 501
     lua_newtable(L);
@@ -398,7 +398,7 @@ bool MonitorLua::registerExtraFunctions(void)
 }
 
 
-bool MonitorLua::canAccept(void)
+bool MonitorLua::canAccept()
 {
     if(constraint == "")
         return true;

@@ -2206,21 +2206,21 @@ void ApplicationViewWidget::onConUnAvailable(int from, int to)
 /*! \brief Called when an error occurred
 
 */
-void ApplicationViewWidget::onError(void)
+void ApplicationViewWidget::onError()
 {
     reportErrors();
 }
 
 /*! \brief Refresh all and reports errors
 */
-void ApplicationViewWidget::onLoadBalance(void)
+void ApplicationViewWidget::onLoadBalance()
 {
     selfSafeLoadBolance();
 }
 
 
 
-void ApplicationViewWidget::onDetachStdout(void)
+void ApplicationViewWidget::onDetachStdout()
 {
 
 }

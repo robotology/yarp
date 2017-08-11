@@ -19,7 +19,7 @@ using namespace std;
 /**
  * Class GPU
  */
-GPU::GPU(void) : GenericResource("GPU")
+GPU::GPU() : GenericResource("GPU")
 {
     cores = (size_t)0;
     frequency = (double)0.0;
@@ -60,7 +60,7 @@ GPU::GPU(const GPU &resource) : GenericResource(resource)
 }
 
 
-Node* GPU::clone(void)
+Node* GPU::clone()
 {
     GPU* resource = new GPU(*this);
     return resource;

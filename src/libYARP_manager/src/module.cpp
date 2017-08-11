@@ -17,7 +17,7 @@ using namespace std;
 using namespace yarp::manager;
 
 
-Module::Module(void) : Node(MODULE) { clear();}
+Module::Module() : Node(MODULE) { clear();}
 
 
 Module::Module(const char* szName) : Node(MODULE)
@@ -76,7 +76,7 @@ void Module::swap(const Module &mod)
 Module::~Module() { }
 
 
-Node* Module::clone(void)
+Node* Module::clone()
 {
     Module* mod = new Module(*this);
     return mod;
@@ -210,7 +210,7 @@ ResourcePIterator Module::findResource(GenericResource& res)
     return resources.end();
 }
 
-void Module::clear(void)
+void Module::clear()
 {
     modOwner = nullptr;
     iRank = 1;

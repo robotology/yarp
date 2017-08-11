@@ -23,7 +23,7 @@ using namespace std;
 
 //#if defined(_MSC_VER) && (_MSC_VER == 1600)
 
-StrStream::StrStream(void) { }
+StrStream::StrStream() { }
 
 StrStream::StrStream(const std::string str) {
     dummyStr = str;
@@ -31,7 +31,7 @@ StrStream::StrStream(const std::string str) {
 
 StrStream::~StrStream() { }
 
-std::string StrStream::str(void) {
+std::string StrStream::str() {
     return dummyStr;
 }
 
@@ -103,7 +103,7 @@ std::ostream& operator << (std::ostream &os , StrStream& sstr)
 // Global static pointer used to ensure a single instance of the class.
 ErrorLogger* ErrorLogger::pInstance = nullptr;
 
-ErrorLogger* ErrorLogger::Instance(void)
+ErrorLogger* ErrorLogger::Instance()
 {
     if (!pInstance)
       pInstance = new ErrorLogger;
@@ -136,7 +136,7 @@ void ErrorLogger::addError(OSTRINGSTREAM &stream) {
     addError(stream.str());
 }
 
-const char* ErrorLogger::getLastError(void) {
+const char* ErrorLogger::getLastError() {
     if(errors.empty())
         return nullptr;
     static string msg;
@@ -153,7 +153,7 @@ const char* ErrorLogger::getFormatedErrorString() {
     return msgs.c_str();
 }
 
-const char* ErrorLogger::getLastWarning(void) {
+const char* ErrorLogger::getLastWarning() {
     if(warnings.empty())
         return nullptr;
     static string msg;
@@ -171,15 +171,15 @@ const char* ErrorLogger::getFormatedWarningString() {
 }
 
 
-void ErrorLogger::clear(void) {
+void ErrorLogger::clear() {
     errors.clear(); warnings.clear();
 }
 
-int ErrorLogger::errorCount(void) {
+int ErrorLogger::errorCount() {
     return errors.size();
 }
 
-int ErrorLogger::warningCount(void) {
+int ErrorLogger::warningCount() {
 
     return warnings.size();
 }

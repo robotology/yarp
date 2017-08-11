@@ -135,7 +135,7 @@ char* yarp::os::getcwd(char *buf, size_t size)
     return yarp::os::impl::getcwd(buf, size);
 }
 
-int yarp::os::fork(void)
+int yarp::os::fork()
 {
     pid_t pid = yarp::os::impl::fork();
     return pid;

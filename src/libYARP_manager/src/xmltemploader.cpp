@@ -57,7 +57,7 @@ XmlTempLoader::~XmlTempLoader()
 }
 
 
-bool XmlTempLoader::init(void)
+bool XmlTempLoader::init()
 {
     fileNames.clear();
     ErrorLogger* logger  = ErrorLogger::Instance();
@@ -102,20 +102,20 @@ bool XmlTempLoader::init(void)
     return true;
 }
 
-void XmlTempLoader::reset(void)
+void XmlTempLoader::reset()
 {
     fini();
     init();
 }
 
 
-void XmlTempLoader::fini(void)
+void XmlTempLoader::fini()
 {
     fileNames.clear();
 }
 
 
-AppTemplate* XmlTempLoader::getNextAppTemplate(void)
+AppTemplate* XmlTempLoader::getNextAppTemplate()
 {
     if(strAppName.empty())
     {

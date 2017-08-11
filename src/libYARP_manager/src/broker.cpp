@@ -29,7 +29,7 @@ void Broker::setEventSink(BrokerEventSink* pEventSink)
     eventSink = pEventSink;
 }
 
-unsigned int Broker::generateID(void)
+unsigned int Broker::generateID()
 {
     return UNIQUEID++;
 }

@@ -50,7 +50,7 @@ bool Node::removeSuc(Node* node)
 }
 
 
-void Node::removeAllSuc(void)
+void Node::removeAllSuc()
 {
     sucessors.clear();
 }

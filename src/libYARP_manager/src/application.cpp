@@ -70,7 +70,7 @@ PortmapIterator ModuleInterface::findPortmap(Portmap& portmap)
 /**
  * Class Application
  */
-Application::Application(void) : Node(APPLICATION)
+Application::Application() : Node(APPLICATION)
 {
     clear();
 }
@@ -103,7 +103,7 @@ Application::Application(const Application &app) : Node(app)
 Application::~Application() { }
 
 
-Node* Application::clone(void)
+Node* Application::clone()
 {
     Application* app = new Application(*this);
     return app;

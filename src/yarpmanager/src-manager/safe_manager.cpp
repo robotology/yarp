@@ -79,7 +79,7 @@ void SafeManager::threadRelease()
 {
 }
 
-bool SafeManager::busy(void) {
+bool SafeManager::busy() {
     bool ret;
     WAIT_SEMAPHOR();
     ret =  busyAction;
@@ -420,7 +420,7 @@ void SafeManager::safeDetachStdout(std::vector<int>& MIDs)
         yarp::os::Thread::start();
 }
 
-void SafeManager::safeLoadBalance(void)
+void SafeManager::safeLoadBalance()
 {
    if(busy()) return;
 

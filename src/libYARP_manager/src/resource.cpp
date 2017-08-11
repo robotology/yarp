@@ -45,7 +45,7 @@ GenericResource::~GenericResource() { }
  * Class MultiResource
  */
 
-MultiResource::MultiResource(void) : GenericResource("MultipleResource")
+MultiResource::MultiResource() : GenericResource("MultipleResource")
 {
 }
 
@@ -86,7 +86,7 @@ bool MultiResource::satisfy(GenericResource* resource)
 }
 
 
-Node* MultiResource::clone(void)
+Node* MultiResource::clone()
 {
     MultiResource* resource = new MultiResource(*this);
     return resource;
@@ -100,7 +100,7 @@ void MultiResource::swap(const MultiResource &res)
         addResource(res.getResourceAt(i));
 }
 
-void MultiResource::clear(void)
+void MultiResource::clear()
 {
     for(unsigned int i=0; i<resources.size(); i++)
     {

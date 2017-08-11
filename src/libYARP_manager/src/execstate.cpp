@@ -54,27 +54,27 @@ Suspended::~Suspended()
 {
 }
 
-void Suspended::start(void)
+void Suspended::start()
 {
     castEvent(EventFactory::startEvent);
 }
 
-void Suspended::stop(void)
+void Suspended::stop()
 {
     executable->getEvent()->onExecutableStop(executable);
 }
 
-void Suspended::kill(void)
+void Suspended::kill()
 {
     castEvent(EventFactory::killEvent);
 }
 
-void Suspended::moduleFailed(void) { /* do nothing*/ }
+void Suspended::moduleFailed() { /* do nothing*/ }
 
 
 // refresh() from Suspended can be used for recovering from
 // unexptected termination of manager.
-void Suspended::refresh(void)
+void Suspended::refresh()
 {
     ErrorLogger* logger = ErrorLogger::Instance();
     int ret = executable->getBroker()->running();
@@ -103,7 +103,7 @@ Ready::~Ready()
 {
 }
 
-bool Ready::checkPriorityPorts(void)
+bool Ready::checkPriorityPorts()
 {
     CnnIterator itr;
     for(itr=executable->getConnections().begin();
@@ -175,7 +175,7 @@ bool Ready::timeout(double base, double timeout)
     return false;
 }
 
-void Ready::startModule(void)
+void Ready::startModule()
 {
 
     ErrorLogger* logger = ErrorLogger::Instance();
@@ -241,13 +241,13 @@ void Ready::startModule(void)
 }
 
 
-void Ready::kill(void)
+void Ready::kill()
 {
     bAborted = true;
     castEvent(EventFactory::killEvent);
 }
 
-void Ready::moduleFailed(void) { /* do nothing */ }
+void Ready::moduleFailed() { /* do nothing */ }
 
 
 /**
@@ -263,7 +263,7 @@ Connecting::~Connecting()
 {
 }
 
-bool Connecting::checkNormalPorts(void)
+bool Connecting::checkNormalPorts()
 {
     CnnIterator itr;
     for(itr=executable->getConnections().begin();
@@ -277,7 +277,7 @@ bool Connecting::checkNormalPorts(void)
 }
 
 
-void Connecting::connectAllPorts(void)
+void Connecting::connectAllPorts()
 {
     ErrorLogger* logger = ErrorLogger::Instance();
     if(executable->autoConnect())
@@ -313,7 +313,7 @@ void Connecting::connectAllPorts(void)
     castEvent(EventFactory::connectAllPortsEventOk);
 }
 
-void Connecting::refresh(void)
+void Connecting::refresh()
 {
     ErrorLogger* logger = ErrorLogger::Instance();
     int ret = executable->getBroker()->running();
@@ -323,13 +323,13 @@ void Connecting::refresh(void)
         logger->addError(executable->getBroker()->error());
 }
 
-void Connecting::kill(void)
+void Connecting::kill()
 {
     bAborted = true;
     castEvent(EventFactory::killEvent);
 }
 
-void Connecting::moduleFailed(void)
+void Connecting::moduleFailed()
 {
     bAborted = true;
     castEvent(EventFactory::failedEvent);
@@ -351,7 +351,7 @@ Running::~Running()
 {
 }
 
-void Running::refresh(void)
+void Running::refresh()
 {
     ErrorLogger* logger = ErrorLogger::Instance();
     int ret = executable->getBroker()->running();
@@ -362,23 +362,23 @@ void Running::refresh(void)
 
 }
 
-void Running::start(void)
+void Running::start()
 {
     executable->getEvent()->onExecutableStart(executable);
 }
 
 
-void Running::stop(void)
+void Running::stop()
 {
     castEvent(EventFactory::stopEvent);
 }
 
-void Running::kill(void)
+void Running::kill()
 {
     castEvent(EventFactory::killEvent);
 }
 
-void Running::moduleFailed(void)
+void Running::moduleFailed()
 {
     castEvent(EventFactory::failedEvent);
     executable->getEvent()->onExecutableFailed(executable);
@@ -405,7 +405,7 @@ Dying::~Dying()
 }
 
 
-void Dying::stopModule(void)
+void Dying::stopModule()
 {
     ErrorLogger* logger = ErrorLogger::Instance();
     yarp::os::SystemClock::delaySystem(executable->getPostStopWait());
@@ -426,7 +426,7 @@ void Dying::stopModule(void)
     }
 }
 
-void Dying::killModule(void)
+void Dying::killModule()
 {
     ErrorLogger* logger = ErrorLogger::Instance();
     if(!executable->getBroker()->kill())
@@ -447,7 +447,7 @@ void Dying::killModule(void)
 }
 
 
-void Dying::disconnectAllPorts(void)
+void Dying::disconnectAllPorts()
 {
     ErrorLogger* logger = ErrorLogger::Instance();
     if(executable->autoConnect())
@@ -471,7 +471,7 @@ void Dying::disconnectAllPorts(void)
     // We do not need to handle event disconnectAllPortsEventOk
 }
 
-void Dying::refresh(void)
+void Dying::refresh()
 {
     ErrorLogger* logger = ErrorLogger::Instance();
     int ret = executable->getBroker()->running();
@@ -482,9 +482,9 @@ void Dying::refresh(void)
 
 }
 
-void Dying::kill(void) { /* do nothing */ }
+void Dying::kill() { /* do nothing */ }
 
-void Dying::moduleFailed(void)
+void Dying::moduleFailed()
 {
     // Notice that we should not call onExecutableFailed
     // in DYING state!
@@ -509,25 +509,25 @@ Dead::~Dead()
 {
 }
 
-void Dead::start(void)
+void Dead::start()
 {
     castEvent(EventFactory::startEvent);
 }
 
-void Dead::stop(void)
+void Dead::stop()
 {
     executable->getEvent()->onExecutableStop(executable);
 }
 
 
-void Dead::kill(void)
+void Dead::kill()
 {
     castEvent(EventFactory::killEvent);
 }
 
 // refresh() from Dead can be used for recovering from
 // unexpect termination of manager.
-void Dead::refresh(void)
+void Dead::refresh()
 {
     ErrorLogger* logger = ErrorLogger::Instance();
     int ret = executable->getBroker()->running();
@@ -541,7 +541,7 @@ void Dead::refresh(void)
 }
 
 
-void Dead::moduleFailed(void) { /* do nothing*/ }
+void Dead::moduleFailed() { /* do nothing*/ }
 
 
 
@@ -620,52 +620,52 @@ ExecMachine::~ExecMachine()
     delete dead;
 }
 
-void ExecMachine::refresh(void)
+void ExecMachine::refresh()
 {
     dynamic_cast<ITransition*>(currentState())->refresh();
 }
 
-void ExecMachine::start(void)
+void ExecMachine::start()
 {
     dynamic_cast<ITransition*>(currentState())->start();
 }
 
-void ExecMachine::stop(void)
+void ExecMachine::stop()
 {
     dynamic_cast<ITransition*>(currentState())->stop();
 }
 
-void ExecMachine::kill(void)
+void ExecMachine::kill()
 {
     dynamic_cast<ITransition*>(currentState())->kill();
 }
 
-void ExecMachine::startModule(void)
+void ExecMachine::startModule()
 {
     dynamic_cast<ITransition*>(currentState())->startModule();
 }
 
-void ExecMachine::stopModule(void)
+void ExecMachine::stopModule()
 {
     dynamic_cast<ITransition*>(currentState())->stopModule();
 }
 
-void ExecMachine::killModule(void)
+void ExecMachine::killModule()
 {
     dynamic_cast<ITransition*>(currentState())->killModule();
 }
 
-void ExecMachine::connectAllPorts(void)
+void ExecMachine::connectAllPorts()
 {
     dynamic_cast<ITransition*>(currentState())->connectAllPorts();
 }
 
-void ExecMachine::disconnectAllPorts(void)
+void ExecMachine::disconnectAllPorts()
 {
     dynamic_cast<ITransition*>(currentState())->disconnectAllPorts();
 }
 
-void ExecMachine::moduleFailed(void)
+void ExecMachine::moduleFailed()
 {
     dynamic_cast<ITransition*>(currentState())->moduleFailed();
 }

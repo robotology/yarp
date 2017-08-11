@@ -71,7 +71,7 @@ XmlAppLoader::~XmlAppLoader()
 }
 
 
-bool XmlAppLoader::init(void)
+bool XmlAppLoader::init()
 {
     app.clear();
     fileNames.clear();
@@ -126,21 +126,21 @@ bool XmlAppLoader::init(void)
     return true;
 }
 
-void XmlAppLoader::reset(void)
+void XmlAppLoader::reset()
 {
     fini();
     init();
 }
 
 
-void XmlAppLoader::fini(void)
+void XmlAppLoader::fini()
 {
     fileNames.clear();
     app.clear();
 }
 
 
-Application* XmlAppLoader::getNextApplication(void)
+Application* XmlAppLoader::getNextApplication()
 {
     if(strAppName.empty())
     {
