@@ -20,7 +20,7 @@ using namespace yarp::os::impl;
 using namespace yarp::os;
 
 bool Terminator::terminateByName(const char *name) {
-    if (name == YARP_NULLPTR)
+    if (name == nullptr)
         return false;
 
     ConstString s(name);
@@ -59,7 +59,7 @@ bool Terminator::terminateByName(const char *name) {
 
 Terminee::Terminee(const char *name) {
     ok = false;
-    if (name == YARP_NULLPTR) {
+    if (name == nullptr) {
         quit = true;
         printf("Terminator: Please supply a proper port name\n");
         return;
@@ -73,7 +73,7 @@ Terminee::Terminee(const char *name) {
     }
 
     implementation = new TermineeHelper();
-    yAssert(implementation!=YARP_NULLPTR);
+    yAssert(implementation!=nullptr);
     TermineeHelper& helper = HELPER(implementation);
     ok = helper.open(s.c_str());
     if (!ok) {
@@ -100,7 +100,7 @@ Terminee::~Terminee() {
 
     stop();
 
-    if (implementation!=YARP_NULLPTR) {
+    if (implementation!=nullptr) {
         delete &HELPER(implementation);
     }
 }

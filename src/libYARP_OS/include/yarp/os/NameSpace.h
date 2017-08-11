@@ -141,7 +141,7 @@ public:
      *
      * Get the value of a named key from a named port.
      *
-     * @return YARP_NULLPTR if no value was set for the named key.
+     * @return nullptr if no value was set for the named key.
      *
      */
     virtual Value *getProperty(const ConstString& name, 

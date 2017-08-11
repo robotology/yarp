@@ -18,15 +18,15 @@ using namespace yarp::os::impl;
 
 YarpNameSpace::YarpNameSpace(const Contact& contact) {
     system_resource = NameClient::create();
-    yAssert(system_resource!=YARP_NULLPTR);
+    yAssert(system_resource!=nullptr);
     HELPER(this).setContact(contact);
     this->contact = contact;
 }
 
 YarpNameSpace::~YarpNameSpace() {
-    if (system_resource!=YARP_NULLPTR) {
+    if (system_resource!=nullptr) {
         delete &HELPER(this);
-        system_resource = YARP_NULLPTR;
+        system_resource = nullptr;
     }
 }
 

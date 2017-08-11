@@ -14,7 +14,7 @@ WireState::WireState() :
         len(-1),
         code(-1),
         need_ok(false),
-        parent(YARP_NULLPTR)
+        parent(nullptr)
 {
 }
 

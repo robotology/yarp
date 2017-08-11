@@ -8,7 +8,7 @@
 
 
 yarp::os::Bytes::Bytes() :
-        data(YARP_NULLPTR),
+        data(nullptr),
         len(0)
 {
 }

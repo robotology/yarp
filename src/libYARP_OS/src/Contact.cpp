@@ -355,7 +355,7 @@ ConstString Contact::convertHostToIp(const char *name)
         std::exit(1);
     }
 
-    for(p = res; p != YARP_NULLPTR; p = p->ai_next) {
+    for(p = res; p != nullptr; p = p->ai_next) {
         void *addr;
 
         if (p->ai_family == AF_INET) { // IPv4

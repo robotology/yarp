@@ -40,15 +40,15 @@ size_t yarp::os::NullConnectionReader::getSize() {
 }
 
 yarp::os::ConnectionWriter *yarp::os::NullConnectionReader::getWriter() {
-    return YARP_NULLPTR;
+    return nullptr;
 }
 
 yarp::os::Bytes yarp::os::NullConnectionReader::readEnvelope() {
-    return Bytes(YARP_NULLPTR, 0);
+    return Bytes(nullptr, 0);
 }
 
 yarp::os::Portable *yarp::os::NullConnectionReader::getReference() {
-    return YARP_NULLPTR;
+    return nullptr;
 }
 
 yarp::os::Contact yarp::os::NullConnectionReader::getRemoteContact() {

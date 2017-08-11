@@ -28,11 +28,11 @@ public:
 
     bool open(const ConstString& clockSourcePortName, ConstString localPortName="");
 
-    virtual double now() YARP_OVERRIDE;
-    virtual void delay(double seconds) YARP_OVERRIDE;
-    virtual bool isValid() const YARP_OVERRIDE;
+    virtual double now() override;
+    virtual void delay(double seconds) override;
+    virtual bool isValid() const override;
 
-    virtual bool read(ConnectionReader& reader) YARP_OVERRIDE;
+    virtual bool read(ConnectionReader& reader) override;
 private:
 
     ConstString clockName;

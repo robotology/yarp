@@ -14,7 +14,7 @@ using namespace yarp::os;
 
 ManagedBytes::ManagedBytes() :
         Portable(),
-        b(Bytes(YARP_NULLPTR, 0)),
+        b(Bytes(nullptr, 0)),
         owned(false),
         use(0),
         use_set(false) {
@@ -78,7 +78,7 @@ void ManagedBytes::allocate(size_t len) {
 bool ManagedBytes::allocateOnNeed(size_t neededLen, size_t allocateLen) {
     if (length()<neededLen && allocateLen>=neededLen) {
         char *buf = new char[allocateLen];
-        yarp::os::NetworkBase::assertion(buf!=YARP_NULLPTR);
+        yarp::os::NetworkBase::assertion(buf!=nullptr);
         memcpy(buf, get(), length());
         if (owned) {
             delete[] get();
@@ -95,7 +95,7 @@ void ManagedBytes::copy() {
     if (!owned) {
         YARP_SSIZE_T len = length();
         char *buf = new char[len];
-        yarp::os::NetworkBase::assertion(buf!=YARP_NULLPTR);
+        yarp::os::NetworkBase::assertion(buf!=nullptr);
         memcpy(buf, get(), len);
         b = Bytes(buf, len);
         owned = true;
@@ -116,12 +116,12 @@ char *ManagedBytes::get() const {
 
 void ManagedBytes::clear() {
     if (owned) {
-        if (get()!=YARP_NULLPTR) {
+        if (get()!=nullptr) {
             delete[] get();
         }
         owned = 0;
     }
-    b = Bytes(YARP_NULLPTR, 0);
+    b = Bytes(nullptr, 0);
     use = 0;
     use_set = false;
 }
@@ -162,7 +162,7 @@ bool ManagedBytes::read(ConnectionReader& reader) {
         return false;
     }
     allocate(blobLen);
-    if (get()==YARP_NULLPTR) {
+    if (get()==nullptr) {
         return false;
     }
     return reader.expectBlock(get(), length());

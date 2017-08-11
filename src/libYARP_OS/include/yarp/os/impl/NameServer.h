@@ -387,7 +387,7 @@ private:
             std::map<ConstString, PropertyRecord>::iterator entry = propMap.find(key);
             if (entry == propMap.end()) {
                 if (!create) {
-                    return YARP_NULLPTR;
+                    return nullptr;
                 }
                 propMap[key] = PropertyRecord();
                 entry = propMap.find(key);
@@ -409,7 +409,7 @@ private:
         ConstString getProp(const ConstString& key)
         {
             PropertyRecord *rec = getPR(key, false);
-            if (rec!=YARP_NULLPTR) {
+            if (rec!=nullptr) {
                 return rec->toString();
             }
             return "";
@@ -418,7 +418,7 @@ private:
         bool checkProp(const ConstString& key, const ConstString& val)
         {
             PropertyRecord *rec = getPR(key, false);
-            if (rec!=YARP_NULLPTR) {
+            if (rec!=nullptr) {
                 return rec->check(val);
             }
             return false;
@@ -427,7 +427,7 @@ private:
         ConstString matchProp(const ConstString& key, const ConstString& val)
         {
             PropertyRecord *rec = getPR(key, false);
-            if (rec!=YARP_NULLPTR) {
+            if (rec!=nullptr) {
                 return rec->match(val);
             }
             return "";
@@ -468,7 +468,7 @@ private:
     NameRecord &getNameRecord(const ConstString& name)
     {
         NameRecord *result = getNameRecord(name, true);
-        yAssert(result!=YARP_NULLPTR);
+        yAssert(result!=nullptr);
         return *result;
     }
 
@@ -477,7 +477,7 @@ private:
     HostRecord &getHostRecord(const ConstString& name)
     {
         HostRecord *result = getHostRecord(name, true);
-        yAssert(result!=YARP_NULLPTR);
+        yAssert(result!=nullptr);
         return *result;
     }
 

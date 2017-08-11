@@ -71,9 +71,9 @@ void PortCoreOutputUnit::run() {
                     sendHelper();
                     YARP_DEBUG(log, "wrote something in background");
                     trackerMutex.wait();
-                    if (cachedTracker != YARP_NULLPTR) {
+                    if (cachedTracker != nullptr) {
                         void *t = cachedTracker;
-                        cachedTracker = YARP_NULLPTR;
+                        cachedTracker = nullptr;
                         sending = false;
                         getOwner().notifyCompletion(t);
                     } else {
@@ -94,7 +94,7 @@ void PortCoreOutputUnit::run() {
 
 void PortCoreOutputUnit::runSingleThreaded() {
 
-    if (op != YARP_NULLPTR) {
+    if (op != nullptr) {
         Route route = op->getRoute();
         setMode();
         getOwner().reportUnit(this, true);
@@ -129,7 +129,7 @@ void PortCoreOutputUnit::runSingleThreaded() {
 
 void PortCoreOutputUnit::closeBasic() {
     bool waitForOther = false;
-    if (op != YARP_NULLPTR) {
+    if (op != nullptr) {
         op->getConnection().prepareDisconnect();
         Route route = op->getRoute();
         if (op->getConnection().isConnectionless()||
@@ -177,7 +177,7 @@ void PortCoreOutputUnit::closeBasic() {
     }
 
 
-    if (op != YARP_NULLPTR) {
+    if (op != nullptr) {
         if (waitForOther) {
             // quit is only acknowledged in certain conditions
             if (op->getConnection().isTextMode()&&
@@ -189,7 +189,7 @@ void PortCoreOutputUnit::closeBasic() {
         }
         op->close();
         delete op;
-        op = YARP_NULLPTR;
+        op = nullptr;
     }
 }
 
@@ -201,7 +201,7 @@ void PortCoreOutputUnit::closeMain() {
     if (running) {
         // give a kick (unfortunately unavoidable)
 
-        if (op != YARP_NULLPTR) {
+        if (op != nullptr) {
             op->interrupt();
         }
 
@@ -223,7 +223,7 @@ void PortCoreOutputUnit::closeMain() {
 
 
 Route PortCoreOutputUnit::getRoute() {
-    if (op != YARP_NULLPTR) {
+    if (op != nullptr) {
         Route r = op->getRoute();
         op->beginWrite();
         return r;
@@ -233,11 +233,11 @@ Route PortCoreOutputUnit::getRoute() {
 
 bool PortCoreOutputUnit::sendHelper() {
     bool replied = false;
-    if (op != YARP_NULLPTR) {
+    if (op != nullptr) {
         bool done = false;
         BufferedConnectionWriter buf(op->getConnection().isTextMode(),
                                      op->getConnection().isBareMode());
-        if (cachedReader != YARP_NULLPTR) {
+        if (cachedReader != nullptr) {
             buf.setReplyHandler(*cachedReader);
         }
 
@@ -255,13 +255,13 @@ bool PortCoreOutputUnit::sendHelper() {
         } else {
 
 
-            yAssert(cachedWriter != YARP_NULLPTR);
+            yAssert(cachedWriter != nullptr);
             bool ok = cachedWriter->write(buf);
             if (!ok) {
                 done = true;
             }
 
-            bool suppressReply = (buf.getReplyHandler() == YARP_NULLPTR);
+            bool suppressReply = (buf.getReplyHandler() == nullptr);
 
             if (!done) {
                 if (!op->getConnection().canEscape()) {
@@ -324,7 +324,7 @@ void *PortCoreOutputUnit::send(yarp::os::PortWriter& writer,
                                bool *gotReply) {
     bool replied = false;
 
-    if (op != YARP_NULLPTR) {
+    if (op != nullptr) {
         if (!op->getConnection().isActive()) {
             return tracker;
         }
@@ -367,7 +367,7 @@ void *PortCoreOutputUnit::send(yarp::os::PortWriter& writer,
     }
 
     if (waitAfter) {
-        if (gotReply != YARP_NULLPTR) {
+        if (gotReply != nullptr) {
             *gotReply = replied;
         }
     }
@@ -378,11 +378,11 @@ void *PortCoreOutputUnit::send(yarp::os::PortWriter& writer,
 
 
 void *PortCoreOutputUnit::takeTracker() {
-    void *tracker = YARP_NULLPTR;
+    void *tracker = nullptr;
     trackerMutex.wait();
     if (!sending) {
         tracker = cachedTracker;
-        cachedTracker = YARP_NULLPTR;
+        cachedTracker = nullptr;
     }
     trackerMutex.post();
     return tracker;

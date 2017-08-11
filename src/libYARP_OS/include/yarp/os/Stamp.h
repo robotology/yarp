@@ -82,10 +82,10 @@ public:
     void update(double time);
 
     // Documented in Portable
-    virtual bool read(ConnectionReader& connection) YARP_OVERRIDE;
+    virtual bool read(ConnectionReader& connection) override;
 
     // Documented in Portable
-    virtual bool write(ConnectionWriter& connection) YARP_OVERRIDE;
+    virtual bool write(ConnectionWriter& connection) override;
 };
 
 

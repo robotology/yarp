@@ -24,12 +24,12 @@ public:
     Node(const ConstString& name);
     virtual ~Node();
 
-    virtual void add(Contactable& contactable) YARP_OVERRIDE;
+    virtual void add(Contactable& contactable) override;
     virtual void update(Contactable& contactable);
-    virtual void remove(Contactable& contactable) YARP_OVERRIDE;
+    virtual void remove(Contactable& contactable) override;
 
     virtual Contact query(const ConstString& name,
-                          const ConstString& category = "") YARP_OVERRIDE;
+                          const ConstString& category = "") override;
 
     virtual Contact where();
 

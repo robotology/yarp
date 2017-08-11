@@ -38,10 +38,10 @@ public:
      * Constructor.
      */
     PortCorePacket() :
-            prev_(YARP_NULLPTR),
-            next_(YARP_NULLPTR),
-            content(YARP_NULLPTR),
-            callback(YARP_NULLPTR),
+            prev_(nullptr),
+            next_(nullptr),
+            content(nullptr),
+            callback(nullptr),
             ct(0),
             owned(false),
             ownedCallback(false),
@@ -96,7 +96,7 @@ public:
      */
     yarp::os::PortWriter *getCallback()
     {
-        return (callback != YARP_NULLPTR) ? callback : content;
+        return (callback != nullptr) ? callback : content;
     }
 
     /**
@@ -108,7 +108,7 @@ public:
      * @param ownedCallback should we memory-manage `callback`
      */
     void setContent(yarp::os::PortWriter *writable, bool owned = false,
-                    yarp::os::PortWriter *callback = YARP_NULLPTR,
+                    yarp::os::PortWriter *callback = nullptr,
                     bool ownedCallback = false)
     {
         content = writable;
@@ -130,8 +130,8 @@ public:
         if (ownedCallback) {
             delete callback;
         }
-        content = YARP_NULLPTR;
-        callback = YARP_NULLPTR;
+        content = nullptr;
+        callback = nullptr;
         ct = 0;
         owned = false;
         ownedCallback = false;
@@ -145,7 +145,7 @@ public:
     void complete()
     {
         if (!completed) {
-            if (getContent()!=YARP_NULLPTR) {
+            if (getContent()!=nullptr) {
                 getCallback()->onCompletion();
                 completed = true;
             }

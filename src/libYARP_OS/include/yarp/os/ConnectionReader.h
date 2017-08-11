@@ -103,7 +103,7 @@ public:
 
     /**
      * Gets a way to reply to the message, if possible.
-     * @return An object that permits replies, or YARP_NULLPTR if this cannot be
+     * @return An object that permits replies, or nullptr if this cannot be
      *         done.
      */
     virtual ConnectionWriter *getWriter() = 0;
@@ -119,8 +119,8 @@ public:
      * Get a direct pointer to the object being sent, if possible.
      * This only makes sense in local operation, when sender and
      * receiver are in the same process; in all other situations
-     * this returns YARP_NULLPTR.
-     * @return The message object, or YARP_NULLPTR if not available
+     * this returns nullptr.
+     * @return The message object, or nullptr if not available
      */
     virtual Portable *getReference() = 0;
 

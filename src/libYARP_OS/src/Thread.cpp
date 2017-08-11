@@ -54,15 +54,15 @@ Thread::Thread() :
         implementation(new ThreadCallbackAdapter(*this)),
         stopping(false)
 {
-    yAssert(implementation!=YARP_NULLPTR);
+    yAssert(implementation!=nullptr);
 }
 
 
 Thread::~Thread() {
     ((ThreadImpl*)implementation)->close();
-    if (implementation!=YARP_NULLPTR) {
+    if (implementation!=nullptr) {
         delete ((ThreadImpl*)implementation);
-        implementation = YARP_NULLPTR;
+        implementation = nullptr;
     }
 }
 

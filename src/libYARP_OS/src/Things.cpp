@@ -10,14 +10,14 @@
 using namespace yarp::os;
 
 Things::Things() {
-    conReader = YARP_NULLPTR;
-    writer = YARP_NULLPTR;
-    reader = YARP_NULLPTR;
-    portable = YARP_NULLPTR;
+    conReader = nullptr;
+    writer = nullptr;
+    reader = nullptr;
+    portable = nullptr;
     beenRead = false;
 }
 
 Things::~Things() {
     if (portable) delete portable;
-    portable = YARP_NULLPTR;
+    portable = nullptr;
 }

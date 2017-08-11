@@ -26,54 +26,54 @@ public:
 
     bool activate(bool force = false);
 
-    virtual Contact getNameServerContact() const YARP_OVERRIDE;
+    virtual Contact getNameServerContact() const override;
 
-    virtual Contact queryName(const ConstString& name) YARP_OVERRIDE;
+    virtual Contact queryName(const ConstString& name) override;
 
-    virtual Contact registerName(const ConstString& name) YARP_OVERRIDE;
+    virtual Contact registerName(const ConstString& name) override;
 
-    virtual Contact registerContact(const Contact& contact) YARP_OVERRIDE;
+    virtual Contact registerContact(const Contact& contact) override;
 
-    virtual Contact unregisterName(const ConstString& name) YARP_OVERRIDE;
+    virtual Contact unregisterName(const ConstString& name) override;
 
-    virtual Contact unregisterContact(const Contact& contact) YARP_OVERRIDE;
+    virtual Contact unregisterContact(const Contact& contact) override;
 
     virtual bool setProperty(const ConstString& name, const ConstString& key,
-                             const Value& value) YARP_OVERRIDE;
+                             const Value& value) override;
 
-    virtual Value *getProperty(const ConstString& name, const ConstString& key) YARP_OVERRIDE;
+    virtual Value *getProperty(const ConstString& name, const ConstString& key) override;
 
     virtual bool connectPortToTopic(const Contact& src,
                                     const Contact& dest,
-                                    ContactStyle style) YARP_OVERRIDE;
+                                    ContactStyle style) override;
 
     virtual bool connectTopicToPort(const Contact& src,
                                     const Contact& dest,
-                                    ContactStyle style) YARP_OVERRIDE;
+                                    ContactStyle style) override;
 
     virtual bool disconnectPortFromTopic(const Contact& src,
                                          const Contact& dest,
-                                         ContactStyle style) YARP_OVERRIDE;
+                                         ContactStyle style) override;
 
     virtual bool disconnectTopicFromPort(const Contact& src,
                                          const Contact& dest,
-                                         ContactStyle style) YARP_OVERRIDE;
+                                         ContactStyle style) override;
 
     virtual bool connectPortToPortPersistently(const Contact& src,
                                                const Contact& dest,
-                                               ContactStyle style) YARP_OVERRIDE;
+                                               ContactStyle style) override;
 
     virtual bool disconnectPortToPortPersistently(const Contact& src,
                                                   const Contact& dest,
-                                                  ContactStyle style) YARP_OVERRIDE;
+                                                  ContactStyle style) override;
 
-    virtual bool localOnly() const YARP_OVERRIDE;
+    virtual bool localOnly() const override;
 
-    virtual bool usesCentralServer() const YARP_OVERRIDE;
+    virtual bool usesCentralServer() const override;
 
-    virtual bool serverAllocatesPortNumbers() const YARP_OVERRIDE;
+    virtual bool serverAllocatesPortNumbers() const override;
 
-    virtual bool connectionHasNameOfEndpoints() const YARP_OVERRIDE;
+    virtual bool connectionHasNameOfEndpoints() const override;
 
     /**
      *
@@ -94,11 +94,11 @@ public:
 
     virtual Contact detectNameServer(bool useDetectedServer,
                                      bool& scanNeeded,
-                                     bool& serverUsed) YARP_OVERRIDE;
+                                     bool& serverUsed) override;
 
     virtual bool writeToNameServer(PortWriter& cmd,
                                    PortReader& reply,
-                                   const ContactStyle& style) YARP_OVERRIDE;
+                                   const ContactStyle& style) override;
 
 private:
     void *system_resource;

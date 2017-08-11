@@ -66,7 +66,7 @@ public:
     virtual ~Terminee();
 
 
-    virtual void run() YARP_OVERRIDE;
+    virtual void run() override;
 
     /**
      * Call this method to wait for a quit message.
@@ -92,7 +92,7 @@ public:
      */
     bool isOk() const { return ok; }
 
-    void onStop() YARP_OVERRIDE;
+    void onStop() override;
 };
 
 

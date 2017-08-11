@@ -58,7 +58,7 @@ public:
      * @param fn_name name of factory method, a symbol within the shared library.
      */
     SharedLibraryFactory(const char *dll_name,
-                         const char *fn_name = YARP_NULLPTR);
+                         const char *fn_name = nullptr);
 
     /**
      * Destructor
@@ -72,7 +72,7 @@ public:
      * @param fn_name name of factory method, a symbol within the shared library.
      * @return true on success.
      */
-    bool open(const char *dll_name, const char *fn_name = YARP_NULLPTR);
+    bool open(const char *dll_name, const char *fn_name = nullptr);
 
     /**
      * Check if factory is configured and present.

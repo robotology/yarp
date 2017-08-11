@@ -70,11 +70,11 @@ public:
         }
         return asList();
     }
-    virtual yarp::os::Bottle* asList() const override { return YARP_NULLPTR; }
-    virtual yarp::os::Property* asDict() const override { return YARP_NULLPTR; }
+    virtual yarp::os::Bottle* asList() const override { return nullptr; }
+    virtual yarp::os::Property* asDict() const override { return nullptr; }
     virtual const char* asBlob() const override
     {
-        return static_cast<const char*>(YARP_NULLPTR);
+        return static_cast<const char*>(nullptr);
     }
     virtual size_t asBlobLength() const override { return 0; }
     virtual bool read(ConnectionReader& connection) override;
@@ -128,7 +128,7 @@ public:
     virtual Storable* cloneStorable() const
     {
         Storable* item = createStorable();
-        yAssert(item != YARP_NULLPTR);
+        yAssert(item != nullptr);
         item->copy(*this);
         return item;
     }
@@ -540,7 +540,7 @@ public:
     {
         if (storeNull) {
             delete storeNull;
-            storeNull = YARP_NULLPTR;
+            storeNull = nullptr;
         }
     }
 

@@ -14,14 +14,14 @@
 
 namespace yarp {
     namespace os {
-        static Clock *pclock = YARP_NULLPTR;
+        static Clock *pclock = nullptr;
         static yarpClockType yarp_clock_type  = YARP_CLOCK_UNINITIALIZED;
 
         namespace impl {
 
             static void removeClock()
             {
-                if(yarp::os::pclock != YARP_NULLPTR)
+                if(yarp::os::pclock != nullptr)
                     delete yarp::os::pclock;
                 yarp_clock_type = YARP_CLOCK_UNINITIALIZED;
             }

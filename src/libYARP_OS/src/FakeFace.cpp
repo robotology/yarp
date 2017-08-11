@@ -23,7 +23,7 @@ void FakeFace::close() {
 
 InputProtocol *FakeFace::read() {
     fprintf(stderr, "not implemented\n");
-    return YARP_NULLPTR;
+    return nullptr;
 }
 
 OutputProtocol *FakeFace::write(const Contact& address) {

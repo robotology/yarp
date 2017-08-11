@@ -23,10 +23,10 @@ using namespace yarp::os::impl;
 typedef std::list<std::pair<double, Semaphore*> > Waiters;
 
 NetworkClock::NetworkClock()
-    : clockName(""), pwaiters(YARP_NULLPTR), sec(0), nsec(0), _time(0), closing(false), initted(false)
+    : clockName(""), pwaiters(nullptr), sec(0), nsec(0), _time(0), closing(false), initted(false)
 {
     pwaiters = new Waiters();
-    if(pwaiters==YARP_NULLPTR)
+    if(pwaiters==nullptr)
     {
         YARP_FAIL(Logger::get(), "NetworkClock: new Waiters() failed");
     }
@@ -52,7 +52,7 @@ NetworkClock::~NetworkClock() {
         }
 
         delete waiters;
-        pwaiters = YARP_NULLPTR;
+        pwaiters = nullptr;
     }
 
     listMutex.unlock();
@@ -137,7 +137,7 @@ void NetworkClock::delay(double seconds) {
     waiter.second->wait();
     if (waiter.second) {
         delete waiter.second;
-        waiter.second = YARP_NULLPTR;
+        waiter.second = nullptr;
     }
 }
 

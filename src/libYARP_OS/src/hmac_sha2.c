@@ -462,8 +462,8 @@ int main()
     {
         "Hi There",
         "what do ya want for nothing?",
-        YARP_NULLPTR,
-        YARP_NULLPTR,
+        nullptr,
+        nullptr,
         "Test With Truncation",
         "Test Using Larger Than Block-Size Key - Hash Key First",
         "This is a test using a larger than block-size key "
@@ -480,7 +480,7 @@ int main()
 
     for (i = 0; i < 7; i++) {
         keys[i] = malloc(keys_len[i]);
-        if (keys[i] == YARP_NULLPTR) {
+        if (keys[i] == nullptr) {
             fprintf(stderr, "Can't allocate memory\n");
             return 1;
         }
@@ -498,7 +498,7 @@ int main()
     messages[2] = malloc(messages2and3_len + 1);
     messages[3] = malloc(messages2and3_len + 1);
 
-    if (messages[2] == YARP_NULLPTR || messages[3] == YARP_NULLPTR) {
+    if (messages[2] == nullptr || messages[3] == nullptr) {
         fprintf(stderr, "Can't allocate memory\n");
         return 1;
     }

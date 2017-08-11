@@ -31,7 +31,7 @@ yarp::os::YarpSignalHandler yarp::os::signal(int signum, yarp::os::YarpSignalHan
         case yarp::os::YARP_SIGTERM:
             return yarp::os::impl::signal(SIGTERM, sighandler);
         default:
-            return YARP_NULLPTR; //signal not implemented yet
+            return nullptr; //signal not implemented yet
     }
 }
 #endif // YARP_NO_DEPRECATED

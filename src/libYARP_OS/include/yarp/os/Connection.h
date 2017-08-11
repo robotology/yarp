@@ -266,77 +266,77 @@ public:
 class YARP_OS_API yarp::os::NullConnection : public Connection
 {
 public:
-    virtual bool isValid() YARP_OVERRIDE { return false; }
-    virtual bool isTextMode() YARP_OVERRIDE { return true; }
-    virtual bool canEscape() YARP_OVERRIDE { return true; }
-    virtual void handleEnvelope(const yarp::os::ConstString& envelope) YARP_OVERRIDE { YARP_UNUSED(envelope); }
-    virtual bool requireAck() YARP_OVERRIDE { return false; }
-    virtual bool supportReply() YARP_OVERRIDE { return false; }
-    virtual bool isLocal() YARP_OVERRIDE { return false; }
-    virtual bool isPush() YARP_OVERRIDE { return true; }
-    virtual bool isConnectionless() YARP_OVERRIDE { return false; }
-    virtual bool isBroadcast() YARP_OVERRIDE { return false; }
-    virtual bool isActive() YARP_OVERRIDE { return false; }
+    virtual bool isValid() override { return false; }
+    virtual bool isTextMode() override { return true; }
+    virtual bool canEscape() override { return true; }
+    virtual void handleEnvelope(const yarp::os::ConstString& envelope) override { YARP_UNUSED(envelope); }
+    virtual bool requireAck() override { return false; }
+    virtual bool supportReply() override { return false; }
+    virtual bool isLocal() override { return false; }
+    virtual bool isPush() override { return true; }
+    virtual bool isConnectionless() override { return false; }
+    virtual bool isBroadcast() override { return false; }
+    virtual bool isActive() override { return false; }
 
-    virtual bool modifiesIncomingData() YARP_OVERRIDE { return false; }
+    virtual bool modifiesIncomingData() override { return false; }
 
-    virtual yarp::os::ConnectionReader& modifyIncomingData(yarp::os::ConnectionReader& reader) YARP_OVERRIDE
+    virtual yarp::os::ConnectionReader& modifyIncomingData(yarp::os::ConnectionReader& reader) override
     {
         return reader;
     }
 
-    virtual bool acceptIncomingData(yarp::os::ConnectionReader& reader) YARP_OVERRIDE
+    virtual bool acceptIncomingData(yarp::os::ConnectionReader& reader) override
     {
         YARP_UNUSED(reader);
         return true;
     }
 
-    virtual bool modifiesOutgoingData() YARP_OVERRIDE
+    virtual bool modifiesOutgoingData() override
     {
         return false;
     }
 
-    virtual PortWriter& modifyOutgoingData(PortWriter& writer) YARP_OVERRIDE
+    virtual PortWriter& modifyOutgoingData(PortWriter& writer) override
     {
         return writer;
     }
 
-    virtual bool acceptOutgoingData(PortWriter& writer) YARP_OVERRIDE
+    virtual bool acceptOutgoingData(PortWriter& writer) override
     {
         YARP_UNUSED(writer);
         return true;
     }
 
-    virtual bool modifiesReply() YARP_OVERRIDE
+    virtual bool modifiesReply() override
     {
         return false;
     }
 
-    virtual PortReader& modifyReply(PortReader& reader) YARP_OVERRIDE
+    virtual PortReader& modifyReply(PortReader& reader) override
     {
         return reader;
     }
 
-    virtual void setCarrierParams(const yarp::os::Property& params) YARP_OVERRIDE
+    virtual void setCarrierParams(const yarp::os::Property& params) override
     {
         YARP_UNUSED(params);
     }
 
-    virtual void getCarrierParams(yarp::os::Property& params) YARP_OVERRIDE
+    virtual void getCarrierParams(yarp::os::Property& params) override
     {
         YARP_UNUSED(params);
     }
 
-    virtual void getHeader(const yarp::os::Bytes& header) YARP_OVERRIDE
+    virtual void getHeader(const yarp::os::Bytes& header) override
     {
         for (size_t i=0; i<header.length(); i++) {
             header.get()[i] = '\0';
         }
     }
 
-    virtual void prepareDisconnect() YARP_OVERRIDE {}
+    virtual void prepareDisconnect() override {}
 
-    virtual yarp::os::ConstString getName() YARP_OVERRIDE
+    virtual yarp::os::ConstString getName() override
     {
         return "null";
     }

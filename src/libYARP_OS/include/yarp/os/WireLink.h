@@ -43,15 +43,15 @@ private:
     }
 
     void reset() {
-        reader = YARP_NULLPTR;
-        port = YARP_NULLPTR;
+        reader = nullptr;
+        port = nullptr;
         replies = true;
         can_write = false;
         can_read = false;
     }
 
 public:
-    WireLink() { owner = YARP_NULLPTR; reset(); }
+    WireLink() { owner = nullptr; reset(); }
 
     /**
      *
@@ -61,7 +61,7 @@ public:
      * @return True iff there is an association.
      *
      */
-    bool isValid() const { return port != YARP_NULLPTR || reader != YARP_NULLPTR; }
+    bool isValid() const { return port != nullptr || reader != nullptr; }
 
     /**
      *

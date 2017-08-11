@@ -54,7 +54,7 @@ public:
      * The clock to be initialized can be specified.
      * Must eventually make a matching call to finiMinimum().
      */
-    static void initMinimum(yarp::os::yarpClockType clockType, yarp::os::Clock *custom=YARP_NULLPTR);
+    static void initMinimum(yarp::os::yarpClockType clockType, yarp::os::Clock *custom=nullptr);
 
     /**
      * Basic system initialization, not including plugins.
@@ -69,7 +69,7 @@ public:
      * A matching finiMinimum() will be called automatically
      * on program termination.
      */
-    static void autoInitMinimum(yarp::os::yarpClockType clockType, yarp::os::Clock *custom=YARP_NULLPTR);
+    static void autoInitMinimum(yarp::os::yarpClockType clockType, yarp::os::Clock *custom=nullptr);
 
     /**
      * Deinitialization, excluding plugins.
@@ -88,11 +88,11 @@ public:
                         const ConstString& carrier = "",
                         bool quiet = true);
 
-    // Catch old uses of YARP_NULLPTR for carrier
+    // Catch old uses of nullptr for carrier
     static bool connect(const char *src, const char *dest,
                         const char *carrier,
                         bool quiet = true) {
-        return connect(ConstString(src), ConstString(dest), ConstString((carrier==YARP_NULLPTR)?"":carrier), quiet);
+        return connect(ConstString(src), ConstString(dest), ConstString((carrier==nullptr)?"":carrier), quiet);
     }
 
     /**
@@ -321,7 +321,7 @@ public:
      * @return A string from standard input, without newline or
      * linefeed characters.
      */
-    static ConstString readString(bool *eof = YARP_NULLPTR);
+    static ConstString readString(bool *eof = nullptr);
 
 
     /**
@@ -453,7 +453,7 @@ public:
      *
      */
     static ConstString getEnvironment(const char *key,
-                                      bool *found = YARP_NULLPTR);
+                                      bool *found = nullptr);
 
     /**
      *
@@ -627,7 +627,7 @@ public:
      * In case CUSTOM_CLOCK is used, the Clock pointer must point to a valid
      * Clock object already initialized.
      */
-     Network(yarp::os::yarpClockType clockType, yarp::os::Clock *custom=YARP_NULLPTR);
+     Network(yarp::os::yarpClockType clockType, yarp::os::Clock *custom=nullptr);
 
     /**
      * Destructor.  Disconnects from the YARP network.
@@ -646,7 +646,7 @@ public:
      * Initialization.  Same as init(), but let the user configure which
      * clock shall be used right from the initialization phase.
      */
-    static void init(yarp::os::yarpClockType clockType, Clock *custom=YARP_NULLPTR);
+    static void init(yarp::os::yarpClockType clockType, Clock *custom=nullptr);
 
     /**
      * Deinitialization.  On some operating systems, there are certain
@@ -675,7 +675,7 @@ public:
      *
      * In case of failure calls YARP_FAIL assert.
      **/
-    static void yarpClockInit(yarp::os::yarpClockType clockType, Clock *custom=YARP_NULLPTR);
+    static void yarpClockInit(yarp::os::yarpClockType clockType, Clock *custom=nullptr);
 };
 
 #endif // YARP_OS_NETWORK_H

@@ -18,15 +18,15 @@ namespace yarp {
 
 class YARP_OS_API yarp::os::SystemClock : public Clock {
 public:
-    virtual double now() YARP_OVERRIDE {
+    virtual double now() override {
         return nowSystem();
     }
 
-    virtual void delay(double seconds) YARP_OVERRIDE {
+    virtual void delay(double seconds) override {
         delaySystem(seconds);
     }
 
-    virtual bool isValid() const YARP_OVERRIDE { return true; }
+    virtual bool isValid() const override { return true; }
 
     static double nowSystem();
     static void delaySystem(double seconds);

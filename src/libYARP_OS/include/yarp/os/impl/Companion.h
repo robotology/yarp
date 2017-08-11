@@ -72,7 +72,7 @@ public:
     static int poll(const char *target, bool silent = false);
 
     static int wait(const char *target, bool silent = false,
-                    const char *target2 = YARP_NULLPTR);
+                    const char *target2 = nullptr);
 
     static int exists(const char *target, bool silent = false) {
         ContactStyle style;
@@ -93,7 +93,7 @@ public:
      * shown
      * @return 0 on success, non-zero on failure
      */
-    int read(const char *name, const char *src = YARP_NULLPTR,
+    int read(const char *name, const char *src = nullptr,
              bool showEnvelope = false);
 
     int write(const char *name, int ntargets, char *targets[]);
@@ -114,7 +114,7 @@ public:
     /**
      * Read a line of arbitrary length from standard input.
      */
-    static ConstString readString(bool *eof=YARP_NULLPTR);
+    static ConstString readString(bool *eof=nullptr);
 
 
     static int sendMessage(const ConstString& port, yarp::os::PortWriter& writable,
@@ -196,7 +196,7 @@ public:
 
     int subscribe(const char *src,
                   const char *dest,
-                  const char *mode = YARP_NULLPTR);
+                  const char *mode = nullptr);
 
     int unsubscribe(const char *src, const char *dest);
 
@@ -236,12 +236,12 @@ private:
     bool waitConnect;
 
     void add(const char *name, int (Companion::*fn)(int argc, char *argv[]),
-             const char *tip = YARP_NULLPTR) {
+             const char *tip = nullptr) {
         Entry e(name, fn);
         action[ConstString(name)] = e;
         // maintain a record of order of keys
         names.push_back(ConstString(name));
-        if (tip!=YARP_NULLPTR) {
+        if (tip!=nullptr) {
             tips.push_back(ConstString(tip));
         } else {
             tips.push_back(ConstString(""));

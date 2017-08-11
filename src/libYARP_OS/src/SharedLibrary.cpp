@@ -27,7 +27,7 @@ using yarp::os::impl::SharedLibraryImpl;
 class yarp::os::impl::SharedLibraryImpl
 {
 public:
-    SharedLibraryImpl() : dll(YARP_NULLPTR), error(ConstString()) {}
+    SharedLibraryImpl() : dll(nullptr), error(ConstString()) {}
 
     inline char* getError()
     {
@@ -50,19 +50,19 @@ public:
 SharedLibrary::SharedLibrary() :
     implementation(new SharedLibraryImpl())
 {
-    yAssert(implementation != YARP_NULLPTR);
+    yAssert(implementation != nullptr);
 }
 
 SharedLibrary::SharedLibrary(const char *filename) :
     implementation(new SharedLibraryImpl())
 {
-    yAssert(implementation != YARP_NULLPTR);
+    yAssert(implementation != nullptr);
     open(filename);
 }
 
 SharedLibrary::~SharedLibrary()
 {
-    yAssert(implementation != YARP_NULLPTR);
+    yAssert(implementation != nullptr);
     close();
     delete implementation;
 }
@@ -95,14 +95,14 @@ bool SharedLibrary::open(const char *filename)
 bool SharedLibrary::close()
 {
     int result = 0;
-    if (implementation->dll != YARP_NULLPTR) {
+    if (implementation->dll != nullptr) {
 #ifdef YARP_HAS_ACE
         result = implementation->dll->close();
         delete implementation->dll;
 #else
         result = yarp::os::impl::dlclose(implementation->dll);
 #endif
-        implementation->dll = YARP_NULLPTR;
+        implementation->dll = nullptr;
     }
 
     if (result != 0) {
@@ -121,7 +121,7 @@ void *SharedLibrary::getSymbol(const char *symbolName)
 {
     if (!implementation->dll) {
         implementation->error = "Library is not open";
-        return YARP_NULLPTR;
+        return nullptr;
     }
 
 #ifdef YARP_HAS_ACE
@@ -138,5 +138,5 @@ void *SharedLibrary::getSymbol(const char *symbolName)
 
 bool SharedLibrary::isValid() const
 {
-    return implementation->dll != YARP_NULLPTR;
+    return implementation->dll != nullptr;
 }

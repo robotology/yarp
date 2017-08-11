@@ -35,7 +35,7 @@ public:
      *
      */
     YarpPlugin() {
-        factory = YARP_NULLPTR;
+        factory = nullptr;
     }
 
     /**
@@ -84,7 +84,7 @@ public:
         factory->removeRef();
         if (factory->getReferenceCount()<=0) {
             delete factory;
-            factory = YARP_NULLPTR;
+            factory = nullptr;
         }
         return true;
     }
@@ -95,20 +95,20 @@ public:
      *
      */
     bool isValid() const {
-        return (factory != YARP_NULLPTR);
+        return (factory != nullptr);
     }
 
     /**
      *
      * Create an object using the plugin.
      *
-     * @return an object of the type the plugin creates (YARP_NULLPTR on
+     * @return an object of the type the plugin creates (nullptr on
      *         failure)
      *
      */
     T *create() {
         if (!factory) {
-            return YARP_NULLPTR;
+            return nullptr;
         }
         return factory->create();
     }
