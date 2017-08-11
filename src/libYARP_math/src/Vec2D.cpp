@@ -10,7 +10,7 @@
 #include <cmath>
 #include <cstdio>
 
-/// network stuff
+// network stuff
 #include <yarp/os/NetInt32.h>
 
 using namespace yarp::math;

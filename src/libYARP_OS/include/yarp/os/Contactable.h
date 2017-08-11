@@ -12,13 +12,7 @@
 #include <yarp/os/PortReport.h>
 #include <yarp/os/Mutex.h>
 
-/**
- * The main, catch-all namespace for YARP.
- */
 namespace yarp {
-    /**
-     * An interface to the operating system, including Port based communication.
-     */
     namespace os {
         class Contactable;
         class Property;

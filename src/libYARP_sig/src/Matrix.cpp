@@ -39,7 +39,7 @@ public:
 };
 YARP_END_PACK
 
-/// network stuff
+// network stuff
 #include <yarp/os/NetInt32.h>
 
 bool yarp::sig::removeCols(const Matrix &in, Matrix &out, int first_col, int how_many)

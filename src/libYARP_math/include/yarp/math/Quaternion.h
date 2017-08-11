@@ -12,7 +12,7 @@
 #include <yarp/sig/Matrix.h>
 #include <yarp/os/Portable.h>
 
-/// network stuff
+// network stuff
 #include <yarp/os/NetInt32.h>
 
 namespace yarp {

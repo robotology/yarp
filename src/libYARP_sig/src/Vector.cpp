@@ -23,7 +23,7 @@
 using namespace yarp::sig;
 using namespace yarp::os;
 
-/// network stuff
+// network stuff
 #include <yarp/os/NetInt32.h>
 
 ///////////////////

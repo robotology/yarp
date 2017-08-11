@@ -29,15 +29,6 @@
 
 namespace yarp {
     namespace os {
-        /**
-         *
-         * The components from which ports and connections are built.
-         * These classes are not intended for regular users, but rather
-         * for those extending YARP to new situations.
-         * Unlike the classes in yarp::os, yarp::sig, and yarp::dev,
-         * there are dependencies on the ACE library here.
-         *
-         */
         namespace impl {
             class PortCore;
             class PortCoreUnit;
