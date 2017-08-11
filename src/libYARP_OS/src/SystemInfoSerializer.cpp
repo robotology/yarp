@@ -6,20 +6,18 @@
 
 #include <yarp/os/SystemInfo.h>
 #include <yarp/os/SystemInfoSerializer.h>
+#include <yarp/os/ConnectionReader.h>
+
 using namespace yarp::os;
 
 
-/**
- * Class SystemInfoSerializer
- */
-SystemInfoSerializer::SystemInfoSerializer() {
-
+SystemInfoSerializer::SystemInfoSerializer()
+{
 }
 
-SystemInfoSerializer::~SystemInfoSerializer() {
-
+SystemInfoSerializer::~SystemInfoSerializer()
+{
 }
-
 
 bool SystemInfoSerializer::read(yarp::os::ConnectionReader& connection)
 {

@@ -6,6 +6,7 @@
 
 #include <yarp/os/impl/UnitTest.h>
 #include <yarp/os/Route.h>
+#include <yarp/os/Contact.h>
 
 using namespace yarp::os::impl;
 using namespace yarp::os;
