@@ -94,7 +94,7 @@ bool XmlAppLoader::init(void)
 
     DIR *dir;
     struct dirent *entry;
-    if ((dir = opendir(strPath.c_str())) == NULL)
+    if ((dir = opendir(strPath.c_str())) == nullptr)
     {
         OSTRINGSTREAM err;
         err<<"Cannot access "<<strPath;
@@ -144,11 +144,11 @@ Application* XmlAppLoader::getNextApplication(void)
 {
     if(strAppName.empty())
     {
-        Application* app = NULL;
+        Application* app = nullptr;
         while(!app)
         {
             if(fileNames.empty())
-                return NULL;
+                return nullptr;
             string fname = fileNames.back();
             fileNames.pop_back();
             app = parsXml(fname.c_str());
@@ -165,7 +165,7 @@ Application* XmlAppLoader::getNextApplication(void)
             return app;
         }
     }
- return NULL;
+ return nullptr;
 }
 
 Application* XmlAppLoader::parsXml(const char* szFile)
@@ -182,7 +182,7 @@ Application* XmlAppLoader::parsXml(const char* szFile)
            <<doc.ErrorRow()<<": ";
         err<<doc.ErrorDesc();
         logger->addError(err);
-        return NULL;
+        return nullptr;
     }
 
     /* retrieving root element */
@@ -193,7 +193,7 @@ Application* XmlAppLoader::parsXml(const char* szFile)
         err<<"Syntax error while loading "<<szFile<<" . ";
         err<<"No root element.";
         logger->addError(err);
-        return NULL;
+        return nullptr;
     }
 
     if(!compareString(root->Value(), "application"))
@@ -201,7 +201,7 @@ Application* XmlAppLoader::parsXml(const char* szFile)
         //OSTRINGSTREAM err;
         //err<<"File "<<szFile<<" has no tag <application>.";
         //logger->addError(err);
-        return NULL;
+        return nullptr;
     }
 
     /* retrieving name */
@@ -327,7 +327,7 @@ Application* XmlAppLoader::parsXml(const char* szFile)
                 const char*                        text;
 
 
-                text = NULL;
+                text = nullptr;
                 if(element->GetText())
                 {
                     elemText = parser->parseText(element->GetText());
@@ -340,7 +340,7 @@ Application* XmlAppLoader::parsXml(const char* szFile)
                 {
                     if((element = (TiXmlElement*) mod->FirstChild(modList[i].first)))
                     {
-                        text = NULL;
+                        text = nullptr;
                         if(element->GetText())
                         {
                             elemText = parser->parseText(element->GetText());

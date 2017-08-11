@@ -103,7 +103,7 @@ bool XmlClusterLoader::parseXmlFile(Cluster &_cluster)
 
 
     for (TiXmlElement* node = root->FirstChildElement("node");
-        node != NULL; node = node->NextSiblingElement("node"))
+        node != nullptr; node = node->NextSiblingElement("node"))
     {
         ClusterNode c_node;
         if (node->GetText())

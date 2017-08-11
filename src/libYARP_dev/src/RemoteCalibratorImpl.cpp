@@ -21,7 +21,7 @@ using namespace yarp::dev;
 
 IRemoteCalibrator::IRemoteCalibrator()
 {
-    _remoteCalibrator = NULL;
+    _remoteCalibrator = nullptr;
 }
 
 bool IRemoteCalibrator::setCalibratorDevice(yarp::dev::IRemoteCalibrator *dev)
@@ -37,11 +37,11 @@ IRemoteCalibrator *IRemoteCalibrator::getCalibratorDevice()
 
 bool IRemoteCalibrator::isCalibratorDevicePresent(bool *isCalib)
 {
-    _remoteCalibrator == NULL ? *isCalib = false : *isCalib = true;
+    _remoteCalibrator == nullptr ? *isCalib = false : *isCalib = true;
     return true;
 }
 
 void IRemoteCalibrator::releaseCalibratorDevice(void)
 {
-    _remoteCalibrator = NULL;
+    _remoteCalibrator = nullptr;
 }

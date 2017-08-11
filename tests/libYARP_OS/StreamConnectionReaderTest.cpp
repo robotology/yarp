@@ -25,7 +25,7 @@ public:
         sis.add("Hello\ngood evening and welcome");
         StreamConnectionReader sbr;
         Route route;
-        sbr.reset(sis,NULL,route,10,true);
+        sbr.reset(sis,nullptr,route,10,true);
         ConstString line = sbr.expectLine();
         checkEqual(line,"Hello","one line");
     }

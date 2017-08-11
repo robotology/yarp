@@ -175,7 +175,7 @@ bool Implement_RgbVisualParams_Sender::setRgbMirroring(bool mirror)
 }
 
 // RGB Parser
-Implement_RgbVisualParams_Parser::Implement_RgbVisualParams_Parser() : iRgbVisual(YARP_NULLPTR) {}
+Implement_RgbVisualParams_Parser::Implement_RgbVisualParams_Parser() : iRgbVisual(nullptr) {}
 
 // Implement_RgbVisualParams_Parser::~Implement_RgbVisualParams_Parser() { }
 
@@ -189,7 +189,7 @@ bool Implement_RgbVisualParams_Parser::configure(IRgbVisualParams *interface)
     }
     else
     {
-        iRgbVisual = YARP_NULLPTR;
+        iRgbVisual = nullptr;
         ret = false;
     }
     return ret;
@@ -557,7 +557,7 @@ bool Implement_DepthVisualParams_Sender::setDepthMirroring(bool mirror)
     return response.get(2).asBool();
 }
 
-Implement_DepthVisualParams_Parser::Implement_DepthVisualParams_Parser() : iDepthVisual(YARP_NULLPTR) { }
+Implement_DepthVisualParams_Parser::Implement_DepthVisualParams_Parser() : iDepthVisual(nullptr) { }
 // Implement_DepthVisualParams_Parser::~Implement_DepthVisualParams_Parser() { }
 
 bool Implement_DepthVisualParams_Parser::configure(IDepthVisualParams *interface)
@@ -570,7 +570,7 @@ bool Implement_DepthVisualParams_Parser::configure(IDepthVisualParams *interface
     }
     else
     {
-        iDepthVisual = YARP_NULLPTR;
+        iDepthVisual = nullptr;
         ret = false;
     }
     return ret;

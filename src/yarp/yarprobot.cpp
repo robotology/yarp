@@ -113,7 +113,7 @@ int yarp_robot_main(int argc, char *argv[]) {
     if(options.check("current"))
     {
         const char *result = yarp::os::getenv("YARP_ROBOT_NAME");
-        if (result != NULL)
+        if (result != nullptr)
             printf("Current robot is %s, identified by the environment variable YARP_ROBOT_NAME\n", result);
         else
             printf("No robot is set; please set the YARP_ROBOT_NAME environment variable.\n");

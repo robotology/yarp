@@ -30,12 +30,12 @@ using namespace yarp::os;
  * Class PriorityCarrier
  */
 
-ElectionOf<PriorityGroup> *PriorityCarrier::peers = NULL;
+ElectionOf<PriorityGroup> *PriorityCarrier::peers = nullptr;
 
 // Make a singleton manager for finding peer carriers.
 ElectionOf<PriorityGroup>& PriorityCarrier::getPeers() {
     NetworkBase::lock();
-    if (peers==NULL) {
+    if (peers==nullptr) {
         peers = new ElectionOf<PriorityGroup>;
         NetworkBase::unlock();
         yAssert(peers);
@@ -313,7 +313,7 @@ bool PriorityGroup::acceptIncomingData(yarp::os::ConnectionReader& reader,
         return false;
 
     int row = 0;
-    PriorityCarrier *maxPeer = NULL;
+    PriorityCarrier *maxPeer = nullptr;
     double maxStimuli = 0.0;
     for(PriorityGroup::iterator it=peerSet.begin(); it!=peerSet.end(); it++)
     {

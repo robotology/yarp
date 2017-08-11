@@ -249,7 +249,7 @@ void LaserFromDepth::run()
     LockGuard guard(mutex);
 
     iRGBD->getDepthImage(m_depth_image);
-    if (m_depth_image.getRawImage()==0)
+    if (m_depth_image.getRawImage()==nullptr)
     {
         yDebug()<<"invalid image received";
         return;

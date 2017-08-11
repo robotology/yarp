@@ -91,7 +91,7 @@ bool RosTypeCodeGenYarp::beginType(const std::string& tname,
         string iname = target + "/" + getPartName(tname) + "_indexALL.txt";
         yarp::os::mkdir_p(iname.c_str(),1);
         FILE *index = fopen(iname.c_str(),"w");
-        if (index!=NULL) {
+        if (index!=nullptr) {
             fprintf(index,"%s\n",fname.c_str());
             if (pack!="") {
                 fprintf(index,"%s/%s.h\n", pack.c_str(), part.c_str());
@@ -103,7 +103,7 @@ bool RosTypeCodeGenYarp::beginType(const std::string& tname,
                 }
             }
             fclose(index);
-            index = NULL;
+            index = nullptr;
         }
         fname = root + fname;
     }
@@ -618,7 +618,7 @@ bool RosTypeCodeGenYarp::endType(const std::string& tname,
     fprintf(out,"};\n\n");
     fprintf(out,"#endif\n");
     fclose(out);
-    out = NULL;
+    out = nullptr;
     return true;
 }
 

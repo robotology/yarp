@@ -120,7 +120,7 @@ bool SDLJoypad::open(yarp::os::Searchable& rf)
 
     for(size_t i = 0; i < m_device.size(); ++i)
     {
-        if ( m_device[i] == YARP_NULLPTR )
+        if ( m_device[i] == nullptr )
         {
             yError () << "SDLJoypad: Could not open joystick with id" << i;
             return false;

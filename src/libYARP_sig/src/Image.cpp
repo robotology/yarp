@@ -46,7 +46,7 @@ inline bool readFromConnection(Image &dest, ImageNetworkHeader &header, Connecti
     dest.resize(header.width, header.height);
     unsigned char *mem = dest.getRawImage();
     int allocatedBytes = dest.getRawImageSize();
-    yAssert(mem != NULL);
+    yAssert(mem != nullptr);
     //this check is redundant with assertion, I would remove it
     if (dest.getRawImageSize() != header.imgSize) {
         printf("There is a problem reading an image\n");
@@ -112,8 +112,8 @@ protected:
 public:
     ImageStorage(Image& owner) : owner(owner) {
         type_id = 0;
-        pImage = NULL;
-        Data = NULL;
+        pImage = nullptr;
+        Data = nullptr;
         is_owner = 1;
         quantum = 0;
         topIsLow = true;
@@ -156,10 +156,10 @@ void ImageStorage::resize(int x, int y, int pixel_type,
 
 // allocates an empty image.
 void ImageStorage::_alloc (void) {
-    yAssert(pImage != NULL);
+    yAssert(pImage != nullptr);
 
-    if (pImage != NULL)
-        if (pImage->imageData != NULL)
+    if (pImage != nullptr)
+        if (pImage->imageData != nullptr)
             _free(); // was iplDeallocateImage(pImage); but that won't work with refs
 
     if ( (type_id == VOCAB_PIXEL_MONO_FLOAT) || (type_id == VOCAB_PIXEL_RGB_FLOAT) ||
@@ -174,11 +174,11 @@ void ImageStorage::_alloc (void) {
 // installs an external buffer as the image data
 void ImageStorage::_alloc_extern (const void *buf)
 {
-    yAssert(pImage != NULL);
-    yAssert(Data==NULL);
+    yAssert(pImage != nullptr);
+    yAssert(Data==nullptr);
 
-    if (pImage != NULL)
-        if (pImage->imageData != NULL)
+    if (pImage != nullptr)
+        if (pImage->imageData != nullptr)
             iplDeallocateImage (pImage);
 
     //iplAllocateImage (pImage, 0, 0);
@@ -192,17 +192,17 @@ void ImageStorage::_alloc_extern (const void *buf)
 void ImageStorage::_alloc_data (void)
 {
     DBGPF1 printf("alloc_data1\n"), fflush(stdout);
-    yAssert(pImage != NULL);
+    yAssert(pImage != nullptr);
 
-    yAssert(Data==NULL);
+    yAssert(Data==nullptr);
 
     char **ptr = new char *[pImage->height];
 
     Data = ptr;
 
-    yAssert(Data != NULL);
+    yAssert(Data != nullptr);
 
-    yAssert(pImage->imageData != NULL);
+    yAssert(pImage->imageData != nullptr);
 
     int height = pImage->height;
 
@@ -222,34 +222,34 @@ void ImageStorage::_alloc_data (void)
 
 void ImageStorage::_free (void)
 {
-    if (pImage != NULL)
-        if (pImage->imageData != NULL)
+    if (pImage != nullptr)
+        if (pImage->imageData != nullptr)
             {
                 if (is_owner)
                     {
                         iplDeallocateImage (pImage);
-                        if (Data!=NULL)
+                        if (Data!=nullptr)
                             {
                                 delete[] Data;
                             }
                     }
                 else
                     {
-                        if (Data!=NULL)
+                        if (Data!=nullptr)
                             {
                                 delete[] Data;
                             }
                     }
 
                 is_owner = 1;
-                Data = NULL;
-                pImage->imageData = NULL;
+                Data = nullptr;
+                pImage->imageData = nullptr;
             }
 }
 
 void ImageStorage::_free_data (void)
 {
-    yAssert(Data==NULL); // Now always free Data at same time
+    yAssert(Data==nullptr); // Now always free Data at same time
 }
 
 
@@ -263,11 +263,11 @@ void ImageStorage::_free_complete()
 
 void ImageStorage::_free_ipl_header()
 {
-    if (pImage!=NULL)
+    if (pImage!=nullptr)
         {
             iplDeallocate (pImage, IPL_IMAGE_HEADER);
         }
-    pImage = NULL;
+    pImage = nullptr;
 }
 
 
@@ -312,10 +312,10 @@ void ImageStorage::_set_ipl_header(int x, int y, int pixel_type, int quantum,
                                           quantum,
                                           x,
                                           y,
-                                          NULL,
-                                          NULL,
-                                          NULL,
-                                          NULL);
+                                          nullptr,
+                                          nullptr,
+                                          nullptr,
+                                          nullptr);
             DBGPF1 printf("Set pImage to %ld\n", (long int) pImage);
             DBGPF1 printf("Set init h to %ld\n", (long int) pImage->height);
             break;
@@ -332,10 +332,10 @@ void ImageStorage::_set_ipl_header(int x, int y, int pixel_type, int quantum,
                                           quantum,
                                           x,
                                           y,
-                                          NULL,
-                                          NULL,
-                                          NULL,
-                                          NULL);
+                                          nullptr,
+                                          nullptr,
+                                          nullptr,
+                                          nullptr);
             break;
 
         case VOCAB_PIXEL_RGB:
@@ -350,10 +350,10 @@ void ImageStorage::_set_ipl_header(int x, int y, int pixel_type, int quantum,
                                           quantum,
                                           x,
                                           y,
-                                          NULL,
-                                          NULL,
-                                          NULL,
-                                          NULL);
+                                          nullptr,
+                                          nullptr,
+                                          nullptr,
+                                          nullptr);
             break;
 
         case VOCAB_PIXEL_RGBA:
@@ -368,10 +368,10 @@ void ImageStorage::_set_ipl_header(int x, int y, int pixel_type, int quantum,
                                           quantum,
                                           x,
                                           y,
-                                          NULL,
-                                          NULL,
-                                          NULL,
-                                          NULL);
+                                          nullptr,
+                                          nullptr,
+                                          nullptr,
+                                          nullptr);
             break;
 
         case VOCAB_PIXEL_BGRA:
@@ -386,10 +386,10 @@ void ImageStorage::_set_ipl_header(int x, int y, int pixel_type, int quantum,
                                           quantum,
                                           x,
                                           y,
-                                          NULL,
-                                          NULL,
-                                          NULL,
-                                          NULL);
+                                          nullptr,
+                                          nullptr,
+                                          nullptr,
+                                          nullptr);
             break;
 
         case VOCAB_PIXEL_RGB_INT:
@@ -404,10 +404,10 @@ void ImageStorage::_set_ipl_header(int x, int y, int pixel_type, int quantum,
                                           quantum,
                                           x,
                                           y,
-                                          NULL,
-                                          NULL,
-                                          NULL,
-                                          NULL);
+                                          nullptr,
+                                          nullptr,
+                                          nullptr,
+                                          nullptr);
             break;
 
         case VOCAB_PIXEL_HSV:
@@ -422,10 +422,10 @@ void ImageStorage::_set_ipl_header(int x, int y, int pixel_type, int quantum,
                                           quantum,
                                           x,
                                           y,
-                                          NULL,
-                                          NULL,
-                                          NULL,
-                                          NULL);
+                                          nullptr,
+                                          nullptr,
+                                          nullptr,
+                                          nullptr);
             break;
 
         case VOCAB_PIXEL_BGR:
@@ -440,10 +440,10 @@ void ImageStorage::_set_ipl_header(int x, int y, int pixel_type, int quantum,
                                           quantum,
                                           x,
                                           y,
-                                          NULL,
-                                          NULL,
-                                          NULL,
-                                          NULL);
+                                          nullptr,
+                                          nullptr,
+                                          nullptr,
+                                          nullptr);
             break;
 
         case VOCAB_PIXEL_MONO_SIGNED:
@@ -458,10 +458,10 @@ void ImageStorage::_set_ipl_header(int x, int y, int pixel_type, int quantum,
                                           quantum,
                                           x,
                                           y,
-                                          NULL,
-                                          NULL,
-                                          NULL,
-                                          NULL);
+                                          nullptr,
+                                          nullptr,
+                                          nullptr,
+                                          nullptr);
             break;
 
         case VOCAB_PIXEL_RGB_SIGNED:
@@ -480,10 +480,10 @@ void ImageStorage::_set_ipl_header(int x, int y, int pixel_type, int quantum,
                                           quantum,
                                           x,
                                           y,
-                                          NULL,
-                                          NULL,
-                                          NULL,
-                                          NULL);
+                                          nullptr,
+                                          nullptr,
+                                          nullptr,
+                                          nullptr);
             break;
 
         case VOCAB_PIXEL_RGB_FLOAT:
@@ -498,10 +498,10 @@ void ImageStorage::_set_ipl_header(int x, int y, int pixel_type, int quantum,
                                           quantum,
                                           x,
                                           y,
-                                          NULL,
-                                          NULL,
-                                          NULL,
-                                          NULL);
+                                          nullptr,
+                                          nullptr,
+                                          nullptr,
+                                          nullptr);
             //yAssert(implemented_yet == 0);
             break;
 
@@ -521,10 +521,10 @@ void ImageStorage::_set_ipl_header(int x, int y, int pixel_type, int quantum,
                                           quantum,
                                           x,
                                           y,
-                                          NULL,
-                                          NULL,
-                                          NULL,
-                                          NULL);
+                                          nullptr,
+                                          nullptr,
+                                          nullptr,
+                                          nullptr);
             break;
 
         case VOCAB_PIXEL_INVALID:
@@ -545,10 +545,10 @@ void ImageStorage::_set_ipl_header(int x, int y, int pixel_type, int quantum,
                                           quantum,
                                           x,
                                           y,
-                                          NULL,
-                                          NULL,
-                                          NULL,
-                                          NULL);
+                                          nullptr,
+                                          nullptr,
+                                          nullptr,
+                                          nullptr);
             break;
 
         case -4:
@@ -563,10 +563,10 @@ void ImageStorage::_set_ipl_header(int x, int y, int pixel_type, int quantum,
                                           quantum,
                                           x,
                                           y,
-                                          NULL,
-                                          NULL,
-                                          NULL,
-                                          NULL);
+                                          nullptr,
+                                          nullptr,
+                                          nullptr,
+                                          nullptr);
             break;
 
         default:
@@ -591,7 +591,7 @@ void ImageStorage::_alloc_complete_extern(const void *buf, int x, int y, int pix
     _make_independent();
     _free_complete();
     _set_ipl_header(x, y, pixel_type, quantum, topIsLow);
-    Data = NULL;
+    Data = nullptr;
     _alloc_extern (buf);
     _alloc_data ();
     is_owner = 0;
@@ -616,22 +616,22 @@ Image::Image() {
 }
 
 void Image::initialize() {
-    implementation = NULL;
-    data = NULL;
+    implementation = nullptr;
+    data = nullptr;
     imgWidth = imgHeight = 0;
     imgPixelSize = imgRowSize = 0;
     imgPixelCode = 0;
     imgQuantum = 0;
     topIsLow = true;
     implementation = new ImageStorage(*this);
-    yAssert(implementation!=NULL);
+    yAssert(implementation!=nullptr);
 }
 
 
 Image::~Image() {
-    if (implementation!=NULL) {
+    if (implementation!=nullptr) {
         delete (ImageStorage*)implementation;
-        implementation = NULL;
+        implementation = nullptr;
     }
 }
 
@@ -647,7 +647,7 @@ int Image::getPixelCode() const {
 
 
 void Image::zero() {
-    if (getRawImage()!=NULL) {
+    if (getRawImage()!=nullptr) {
         memset(getRawImage(),0,getRawImageSize());
     }
 }
@@ -706,15 +706,15 @@ void Image::setQuantum(int imgQuantum) {
 
 void Image::synchronize() {
     ImageStorage *impl = (ImageStorage*)implementation;
-    yAssert(impl!=NULL);
-    if (impl->pImage!=NULL) {
+    yAssert(impl!=nullptr);
+    if (impl->pImage!=nullptr) {
         imgWidth = impl->pImage->width;
         imgHeight = impl->pImage->height;
         data = impl->Data;
         imgQuantum = impl->quantum;
         imgRowSize = impl->pImage->widthStep;
     } else {
-        data = NULL;
+        data = nullptr;
         imgWidth = imgHeight = 0;
     }
     imgPixelSize = getPixelSize();
@@ -724,17 +724,17 @@ void Image::synchronize() {
 
 unsigned char *Image::getRawImage() const {
     ImageStorage *impl = (ImageStorage*)implementation;
-    yAssert(impl!=NULL);
-    if (impl->pImage!=NULL) {
+    yAssert(impl!=nullptr);
+    if (impl->pImage!=nullptr) {
         return (unsigned char *)impl->pImage->imageData;
     }
-    return NULL;
+    return nullptr;
 }
 
 int Image::getRawImageSize() const {
     ImageStorage *impl = (ImageStorage*)implementation;
-    yAssert(impl!=NULL);
-    if (impl->pImage!=NULL) {
+    yAssert(impl!=nullptr);
+    if (impl->pImage!=nullptr) {
         return impl->pImage->imageSize;
     }
     return 0;
@@ -749,7 +749,7 @@ const void *Image::getIplImage() const {
 }
 
 void Image::wrapIplImage(void *iplImage) {
-    yAssert(iplImage!=NULL);
+    yAssert(iplImage!=nullptr);
     IplImage *p = (IplImage *)iplImage;
     ConstString str = p->colorModel;
     int code = -1;
@@ -976,7 +976,7 @@ bool Image::write(yarp::os::ConnectionWriter& connection) {
     connection.appendBlock((char*)&header,sizeof(header));
     unsigned char *mem = getRawImage();
     if (header.width!=0&&header.height!=0) {
-        yAssert(mem!=NULL);
+        yAssert(mem!=nullptr);
 
         // Note use of external block.
         // Implies care needed about ownership.

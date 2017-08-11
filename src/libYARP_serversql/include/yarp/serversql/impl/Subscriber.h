@@ -34,9 +34,9 @@ private:
     yarp::os::NameSpace *delegate;
 public:
     Subscriber() :
-            store(YARP_NULLPTR),
+            store(nullptr),
             silent(false),
-            delegate(YARP_NULLPTR) {
+            delegate(nullptr) {
     }
 
     void setStore(yarp::os::NameStore& store) { this->store = &store; }

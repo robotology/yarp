@@ -112,7 +112,7 @@ RobotInterface::Device* RobotInterface::Robot::Private::findDevice(const std::st
         }
     }
     yFatal() << "Cannot find device" << name;
-    return NULL;
+    return nullptr;
 }
 
 bool RobotInterface::Robot::Private::openDevices()

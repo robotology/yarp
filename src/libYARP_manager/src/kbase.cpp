@@ -100,7 +100,7 @@ bool KnowledgeBase::addApplication(Application* app, char** szAppName_, bool mod
         if (*szAppName_)
         {
             delete [] *szAppName_;
-            *szAppName_ = NULL;
+            *szAppName_ = nullptr;
         }
         size_t len = app->getNameLenght();
         *szAppName_ = new char[len + 1];
@@ -646,7 +646,7 @@ Application* KnowledgeBase::addIApplicationToApplication(Application* applicatio
 {
     __CHECK_NULLPTR(application);
 
-    Application* repapp = NULL;
+    Application* repapp = nullptr;
 
     ErrorLogger* logger  = ErrorLogger::Instance();
     if(string(interfaceApp.getName()) == string(application->getName()))
@@ -833,7 +833,7 @@ GenericResource* KnowledgeBase::findResByName(Graph& graph, const char* szName)
             if(string(res->getName()) == string(szName))
                 return res;
     }
-    return NULL;
+    return nullptr;
 }
 
 
@@ -848,7 +848,7 @@ InputData* KnowledgeBase::findInputByPort(Graph& graph, const char* szPort)
                 return input;
         }
     }
-    return NULL;
+    return nullptr;
 }
 
 
@@ -863,7 +863,7 @@ OutputData* KnowledgeBase::findOutputByPort(Graph& graph, const char* szPort)
                 return output;
         }
     }
-    return NULL;
+    return nullptr;
 }
 
 bool KnowledgeBase::reasolveDependency(const char* szAppName,
@@ -876,7 +876,7 @@ bool KnowledgeBase::reasolveDependency(const char* szAppName,
         OSTRINGSTREAM msg;
         msg<<"Application "<<string(szAppName)<<" not found.";
         logger->addError(msg.str().c_str());
-        mainApplication = NULL;
+        mainApplication = nullptr;
         return false;
     }
 
@@ -893,7 +893,7 @@ bool KnowledgeBase::reasolveDependency(Application* app,
         OSTRINGSTREAM msg;
         msg<<"Application "<<app->getName()<<" not found.";
         logger->addError(msg.str().c_str());
-        mainApplication = NULL;
+        mainApplication = nullptr;
         return false;
     }
 
@@ -908,7 +908,7 @@ bool KnowledgeBase::reasolveDependency(Application* app,
     // extend application to its child applications and modules
     if(!makeupApplication(mainApplication))
     {
-        mainApplication = NULL;
+        mainApplication = nullptr;
         return false;
     }
 
@@ -1145,7 +1145,7 @@ Module* KnowledgeBase::replicateModule(Graph& graph,
     if(!addModuleToGraph(graph, newmod))
     {
         delete newmod;
-        return NULL;
+        return nullptr;
     }
 
     delete newmod;
@@ -1193,11 +1193,11 @@ Module* KnowledgeBase::addModuleToGraph(Graph& graph, Module* module)
     ErrorLogger* logger  = ErrorLogger::Instance();
 
     if(!moduleCompleteness(module))
-        return NULL;
+        return nullptr;
 
     /*Adding module to the graph */
     if(!(module = (Module*)graph.addNode(module)))
-        return NULL;
+        return nullptr;
 
     /* Adding inputs nodes to the graph*/
     for(int i=0; i<module->inputCount(); i++)
@@ -1405,7 +1405,7 @@ Module* KnowledgeBase::findOwner(Graph& graph, InputData* input)
             }
         }
     }
-    return NULL;
+    return nullptr;
 }
 
 
@@ -1700,7 +1700,7 @@ bool KnowledgeBase::reason(Graph* graph, Node* initial,
     initial->setVisited(true);
     bool bPathFound = false;
 
-    Link* candidateLink = NULL;
+    Link* candidateLink = nullptr;
     float weight = -1.0;
 
     for(int i=0; i<initial->sucCount(); i++)

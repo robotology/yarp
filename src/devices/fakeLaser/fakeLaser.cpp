@@ -111,7 +111,7 @@ bool FakeLaser::open(yarp::os::Searchable& config)
                 return false;
             }
             m_pLoc->view(m_iLoc);
-            if (m_iLoc == 0)
+            if (m_iLoc == nullptr)
             {
                 yError() << "Unable to open localization interface";
                 return false;

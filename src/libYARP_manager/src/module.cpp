@@ -212,7 +212,7 @@ ResourcePIterator Module::findResource(GenericResource& res)
 
 void Module::clear(void)
 {
-    modOwner = NULL;
+    modOwner = nullptr;
     iRank = 1;
     strName.clear();
     arguments.clear();
@@ -237,7 +237,7 @@ void Module::clear(void)
         itr != resources.end(); itr++)
     {
         delete (*itr);
-        *itr = NULL;
+        *itr = nullptr;
     }
     resources.clear();
     waitStart = waitStop = 0.0;

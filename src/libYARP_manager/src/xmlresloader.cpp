@@ -83,7 +83,7 @@ bool XmlResLoader::init(void)
 
     DIR *dir;
     struct dirent *entry;
-    if ((dir = opendir(strPath.c_str())) == NULL)
+    if ((dir = opendir(strPath.c_str())) == nullptr)
     {
         OSTRINGSTREAM err;
         err<<"Cannot access "<<strPath;
@@ -146,7 +146,7 @@ GenericResource* XmlResLoader::getNextResource(void)
             do
             {
                 if(fileNames.empty())
-                    return NULL;
+                    return nullptr;
 
                 string fname = fileNames.back();
                 fileNames.pop_back();
@@ -174,7 +174,7 @@ GenericResource* XmlResLoader::getNextResource(void)
              }
          }
     }
-    return NULL;
+    return nullptr;
 }
 
 

@@ -49,9 +49,9 @@ static Bottle parsePaths(const ConstString& txt) {
 }
 
 static bool fileExists(const char *fname) {
-        FILE *fp=NULL;
+        FILE *fp=nullptr;
         fp = fopen(fname,"r");
-        if(fp == NULL)
+        if(fp == nullptr)
             return false;
         else
         {

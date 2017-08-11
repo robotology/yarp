@@ -18,7 +18,7 @@ InputData::InputData(void) : Node(INPUTD)
 {
     bRequired = false;
     bWithPriority = false;
-    modOwner = NULL;
+    modOwner = nullptr;
     portType = STREAM_PORT;
 }
 
@@ -26,7 +26,7 @@ InputData::InputData(const char* szName) : Node(INPUTD)
 {
     bRequired = false;
     bWithPriority = false;
-    modOwner = NULL;
+    modOwner = nullptr;
     setName(szName);
     portType = STREAM_PORT;
 }
@@ -61,14 +61,14 @@ Node* InputData::clone(void)
  */
 OutputData::OutputData(void) : Node(OUTPUTD)
 {
-    modOwner = NULL;
+    modOwner = nullptr;
     portType = STREAM_PORT;
 }
 
 
 OutputData::OutputData(const char* szName) : Node(OUTPUTD)
 {
-    modOwner = NULL;
+    modOwner = nullptr;
     setName(szName);
     portType = STREAM_PORT;
 }

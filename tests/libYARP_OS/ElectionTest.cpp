@@ -27,9 +27,9 @@ public:
         elector.add("france",&c3);
         ConstString *e1 = elector.getElect("italy");
         ConstString *e2 = elector.getElect("france");
-        checkTrue(e1!=NULL,"elected entity exists (1)");
-        checkTrue(e2!=NULL,"elected entity exists (2)");
-        if (e1!=NULL && e2!=NULL) {
+        checkTrue(e1!=nullptr,"elected entity exists (1)");
+        checkTrue(e2!=nullptr,"elected entity exists (2)");
+        if (e1!=nullptr && e2!=nullptr) {
             checkTrue((*e1==c1 || *e1==c2),"elected entity is accurate (1)");
             checkTrue(*e2==c3,"elected entity is accurate (2)");
         }
@@ -37,9 +37,9 @@ public:
         elector.remove("france",&c3);
         e1 = elector.getElect("italy");
         e2 = elector.getElect("france");
-        checkTrue(e1!=NULL,"elected entity exists (1)");
-        checkTrue(e2==NULL,"elected entity does not exist (2)");
-        if (e1!=NULL) {
+        checkTrue(e1!=nullptr,"elected entity exists (1)");
+        checkTrue(e2==nullptr,"elected entity does not exist (2)");
+        if (e1!=nullptr) {
             checkTrue(*e1==c1,"elected entity is accurate (1)");
         }
     }

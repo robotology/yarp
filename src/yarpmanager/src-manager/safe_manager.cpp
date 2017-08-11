@@ -17,7 +17,7 @@ using namespace yarp::manager;
 
 
 SafeManager::SafeManager()
-    :action(MNOTHING), eventReceiver(NULL), busyAction(false)
+    :action(MNOTHING), eventReceiver(nullptr), busyAction(false)
 { }
 
 SafeManager::~SafeManager() { }
@@ -25,7 +25,7 @@ SafeManager::~SafeManager() { }
 void SafeManager::close() {
     yarp::os::Thread::stop();
     WAIT_SEMAPHOR();
-    eventReceiver = NULL;
+    eventReceiver = nullptr;
     POST_SEMAPHOR();
 }
 

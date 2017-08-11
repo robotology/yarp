@@ -281,7 +281,7 @@ void BinaryExpParser::parseNot(std::string &strexp, BinaryNodePtr& node) {
         op = *strexp.begin();
         strexp.erase(strexp.begin());
         parseFactor(strexp, rightNode);
-        BinaryNode tmpNode(op.c_str(), rightNode, NULL);
+        BinaryNode tmpNode(op.c_str(), rightNode, nullptr);
         node = (BinaryNodePtr) binTree.addNode(&tmpNode);
     }
 }

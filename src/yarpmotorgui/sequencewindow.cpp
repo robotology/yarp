@@ -204,7 +204,7 @@ void SequenceWindow::onReceiveValues(int sequenceNum, QList<double> values,QList
 
 bool SequenceWindow::checkAndGo()
 {
-    if(ui->treePositions->currentItem() == NULL){
+    if(ui->treePositions->currentItem() == nullptr){
         return false;
     }
     int index = ui->treePositions->currentIndex().row();
@@ -224,7 +224,7 @@ void SequenceWindow::onGo()
 
     SequenceItem sequenceItem;
 
-    if(ui->treePositions->currentItem() != NULL){
+    if(ui->treePositions->currentItem() != nullptr){
         int index = ui->treePositions->currentIndex().row();
         timing = ui->treePositions->topLevelItem(index)->text(1).toDouble();
 

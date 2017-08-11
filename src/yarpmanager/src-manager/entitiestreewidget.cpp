@@ -437,7 +437,7 @@ QTreeWidgetItem * EntitiesTreeWidget::getWidgetItemByFilename(const QString xmlF
     QList<QTreeWidgetItem*> clist = this->findItems(xmlFile, Qt::MatchContains|Qt::MatchRecursive, 0);
     if (clist.size())
         return clist.at(0)->parent();
-    return YARP_NULLPTR;
+    return nullptr;
 }
 
 /*! \brief Called when a context menu has been requested

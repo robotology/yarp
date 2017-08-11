@@ -266,7 +266,7 @@ bool JointItem::eventFilter(QObject *obj, QEvent *event)
            key == Qt::Key_Down || key == Qt::Key_PageUp || key == Qt::Key_PageDown){
 
             //SliderWithTarget *slider=0;
-            QSlider* slider = 0;
+            QSlider* slider = nullptr;
 
             if(obj == ui->sliderTrajectoryPosition){
                 slider = ui->sliderTrajectoryPosition;

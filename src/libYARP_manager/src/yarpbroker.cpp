@@ -516,17 +516,17 @@ bool YarpBroker::exists(const char* szport)
 
 const char* YarpBroker::requestRpc(const char* szport, const char* request, double timeout)
 {
-    if((szport==NULL) || (request==NULL))
-        return NULL;
+    if((szport==nullptr) || (request==nullptr))
+        return nullptr;
 
     if(!exists(szport))
-        return NULL;
+        return nullptr;
 
     // opening the port
     yarp::os::Port port;
     port.setTimeout((float)((timeout>0.0) ? timeout : CONNECTION_TIMEOUT));
     if(!port.open("..."))
-        return NULL;
+        return nullptr;
 
     ContactStyle style;
     style.quiet = true;
@@ -540,7 +540,7 @@ const char* YarpBroker::requestRpc(const char* szport, const char* request, doub
 
     if(!ret) {
         port.close();
-        return NULL;
+        return nullptr;
     }
 
     Bottle msg, response;
@@ -549,7 +549,7 @@ const char* YarpBroker::requestRpc(const char* szport, const char* request, doub
     NetworkBase::disconnect(port.getName().c_str(), szport);
     if(!response.size() || !ret) {
         port.close();
-        return NULL;
+        return nullptr;
     }
 
     port.close();
@@ -722,13 +722,13 @@ bool YarpBroker::setQos(const char* from, const char *to,
 
     QosStyle styleFrom;
     QosStyle styleTo;
-    if(qosFrom != NULL && strlen(qosFrom)) {
+    if(qosFrom != nullptr && strlen(qosFrom)) {
         if(!getQosFromString(qosFrom, styleFrom)) {            
             strError = "Error in parsing Qos properties of " + string(from);
             return false;
         }
     }
-    if(qosTo != NULL && strlen(qosTo))
+    if(qosTo != nullptr && strlen(qosTo))
         if(!getQosFromString(qosTo, styleTo)) {
             strError = "Error in parsing Qos properties of " + string(to);
             return false;

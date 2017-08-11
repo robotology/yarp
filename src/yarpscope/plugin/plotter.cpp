@@ -81,7 +81,7 @@ Plotter::~Plotter()
         Graph *idx = (Graph*)graphList.at(i);
         if (idx) {
             delete idx;
-            idx = NULL;
+            idx = nullptr;
         }
     }
     graphList.clear();
@@ -112,7 +112,7 @@ void Plotter::setPaintGeometry(QRectF r)
 */
 Graph * Plotter::addGraph(QString remotePort,QString localPort,int index, QString title, QString color, QString type, int size, double graph_y_scale)
 {
-    Graph *graph = NULL;
+    Graph *graph = nullptr;
     graph = new Graph(index,title,color,type,size,graph_y_scale,this->size);
 
 
@@ -236,7 +236,7 @@ void Plotter::clear()
 /***********************************************************/
 Graph::Graph(int index, QString title, QString color, QString type, int size, double graph_y_scale, int buffer_size, QObject *parent) : QObject(parent)
 {
-    curr_connection = NULL;
+    curr_connection = nullptr;
     this->index = index;
     this->type = type;
     this->color = color;
@@ -251,7 +251,7 @@ Graph::Graph(int index, QString title, QString color, QString type, int size, do
     lineSize = size;
     numberAcquiredData = 0;
 
-    curr_connection = NULL;
+    curr_connection = nullptr;
     deleteConnection = true;
 
 }
@@ -281,7 +281,7 @@ Graph::~Graph()
 {
     if(curr_connection && deleteConnection){
         delete curr_connection;
-        curr_connection = NULL;
+        curr_connection = nullptr;
     }
     clearData();
 }

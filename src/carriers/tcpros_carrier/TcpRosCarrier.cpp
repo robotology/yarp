@@ -214,7 +214,7 @@ bool TcpRosCarrier::expectReplyToHeader(ConnectionState& proto) {
                                             sender,
                                             isService,raw,rosname.c_str());
 
-    if (stream==NULL) { return false; }
+    if (stream==nullptr) { return false; }
 
     dbg_printf("Getting ready to hand off streams...\n");
 
@@ -320,7 +320,7 @@ bool TcpRosCarrier::expectSenderSpecifier(ConnectionState& proto) {
                                                 false,
                                                 isService,raw,rosname.c_str());
         
-        if (stream==NULL) { return false; }
+        if (stream==nullptr) { return false; }
         proto.takeStreams(stream);
         return proto.is().isOk();
     }
@@ -337,7 +337,7 @@ bool TcpRosCarrier::write(ConnectionState& proto, SizedWriter& writer) {
         // needed.
         if (translate==TCPROS_TRANSLATE_UNKNOWN) {
             dbg_printf("* TCPROS_TRANSLATE_UNKNOWN\n");
-            FlexImage *img = NULL;
+            FlexImage *img = nullptr;
             if (user_type=="yarp/image"||user_type=="yarp/bottle") {
                 img = wi.checkForImage(writer);
             }
@@ -363,7 +363,7 @@ bool TcpRosCarrier::write(ConnectionState& proto, SizedWriter& writer) {
         {
             dbg_printf("* TCPROS_TRANSLATE_IMAGE\n");
             FlexImage *img = wi.checkForImage(writer);
-            if (img==NULL) {
+            if (img==nullptr) {
                 fprintf(stderr, "TCPROS Expected an image, but did not get one.\n");
                 return false;
             }
@@ -389,7 +389,7 @@ bool TcpRosCarrier::write(ConnectionState& proto, SizedWriter& writer) {
             if (twiddler_output.update()) {
                 flex_writer = &twiddler_output;
             } else {
-                flex_writer = NULL;
+                flex_writer = nullptr;
             }
         }
         break;
@@ -401,7 +401,7 @@ bool TcpRosCarrier::write(ConnectionState& proto, SizedWriter& writer) {
         break;
     }
 
-    if (flex_writer == NULL) {
+    if (flex_writer == nullptr) {
         return false;
     }
 

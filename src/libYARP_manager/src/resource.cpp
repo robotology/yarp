@@ -18,7 +18,7 @@ using namespace yarp::manager;
 
 GenericResource::GenericResource(const char* szTypeName) : Node(RESOURCE)
 {
-    modOwner = NULL;
+    modOwner = nullptr;
     bAvailable = true;
     bDisabled = false;
     if(szTypeName)
@@ -105,7 +105,7 @@ void MultiResource::clear(void)
     for(unsigned int i=0; i<resources.size(); i++)
     {
         delete resources[i];
-        resources[i] = NULL;
+        resources[i] = nullptr;
     }
     resources.clear();
 }

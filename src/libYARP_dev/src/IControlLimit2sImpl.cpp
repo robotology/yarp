@@ -15,10 +15,10 @@ using namespace yarp::dev;
 
 ImplementControlLimits2::ImplementControlLimits2(yarp::dev::IControlLimits2Raw *y) :
     iLimits2(y),
-    helper(NULL),
-    temp_int(NULL),
-    temp_max(NULL),
-    temp_min(NULL)
+    helper(nullptr),
+    temp_int(nullptr),
+    temp_max(nullptr),
+    temp_min(nullptr)
 {
 
 }
@@ -35,10 +35,10 @@ ImplementControlLimits2::~ImplementControlLimits2()
  */
 bool ImplementControlLimits2::uninitialize()
 {
-    if(helper != NULL)
+    if(helper != nullptr)
     {
         delete castToMapper(helper);
-        helper = NULL;
+        helper = nullptr;
     }
     checkAndDestroy(temp_int);
     checkAndDestroy(temp_min);
@@ -49,17 +49,17 @@ bool ImplementControlLimits2::uninitialize()
 
 bool ImplementControlLimits2::initialize(int size, const int *amap, const double *enc, const double *zos)
 {
-    if(helper != NULL)
+    if(helper != nullptr)
         return false;
 
-    helper=(void *)(new ControlBoardHelper(size, amap, enc, zos,0));
-    yAssert(helper != NULL);
+    helper=(void *)(new ControlBoardHelper(size, amap, enc, zos,nullptr));
+    yAssert(helper != nullptr);
     temp_max=new double [size];
-    yAssert(temp_max != NULL);
+    yAssert(temp_max != nullptr);
     temp_min=new double [size];
-    yAssert(temp_min != NULL);
+    yAssert(temp_min != nullptr);
     temp_int=new int [size];
-    yAssert(temp_int != NULL);
+    yAssert(temp_int != nullptr);
     return true;
 }
 

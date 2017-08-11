@@ -73,7 +73,7 @@ int main(int argc, char *argv[]) {
         Network::main(argc,argv);
     }
 
-    yarp.queryBypass(NULL);
+    yarp.queryBypass(nullptr);
     if (store) delete store;
 
     return result;

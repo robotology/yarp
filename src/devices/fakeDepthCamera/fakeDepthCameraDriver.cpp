@@ -30,7 +30,7 @@ fakeDepthCameraDriver::fakeDepthCameraDriver() :
     dep_Hfov(50),
     dep_near(0.4),
     dep_far(6),
-    image(YARP_NULLPTR)
+    image(nullptr)
 {}
 
 fakeDepthCameraDriver::~fakeDepthCameraDriver()

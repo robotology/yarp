@@ -128,7 +128,7 @@ public:
         s = bbw.toString();
         sis.add(s);
         Route route;
-        sbr.reset(sis,NULL,route,s.length(),true);
+        sbr.reset(sis,nullptr,route,s.length(),true);
 
         BottleImpl bot2;
         bot2.read(sbr);
@@ -219,8 +219,8 @@ public:
         checkTrue(bot.get(0).isInt(),"type check");
         checkTrue(bot.get(1).isString(),"type check");
         checkTrue(bot.get(2).isList(),"type check");
-        checkTrue(bot.get(2).asList()!=NULL,"can get sublist");
-        if (bot.get(2).asList()!=NULL) {
+        checkTrue(bot.get(2).asList()!=nullptr,"can get sublist");
+        if (bot.get(2).asList()!=nullptr) {
             checkTrue(bot.get(2).asList()->get(0).isInt(),"type check");
             checkTrue(bot.get(2).asList()->get(1).isString(),"type check");
         }
@@ -340,7 +340,7 @@ public:
             StringInputStream sis;
             sis.add(writer.toString());
             StreamConnectionReader br;
-            br.reset(sis,NULL,Route(),sis.toString().length(),false);
+            br.reset(sis,nullptr,Route(),sis.toString().length(),false);
             bot2.read(br);
             //printf("bot is %s\n", bot.toString().c_str());
             //printf("bot2 is %s\n", bot2.toString().c_str());
@@ -356,7 +356,7 @@ public:
             StringInputStream sis;
             sis.add(writer.toString());
             StreamConnectionReader br;
-            br.reset(sis,NULL,Route(),sis.toString().length(),false);
+            br.reset(sis,nullptr,Route(),sis.toString().length(),false);
             bot2.read(br);
             checkEqual(bot.size(),bot2.size(),"length check");
             checkTrue(bot2.get(2).isDouble(),"type check");
@@ -510,8 +510,8 @@ public:
         Bottle b2 = b;
         checkEqual(b2.size(),3,"copy ok level 1");
         Bottle *sub = b2.get(2).asList();
-        checkTrue(sub!=NULL,"list where list expected");
-        if (sub!=NULL) {
+        checkTrue(sub!=nullptr,"list where list expected");
+        if (sub!=nullptr) {
             checkEqual(sub->size(),16,"copy ok level 2");
         }
 
@@ -522,8 +522,8 @@ public:
         b3.read(con.getReader());
         checkEqual(b3.size(),b.size(),"binary read/write ok");
         sub = b3.get(2).asList();
-        checkTrue(sub!=NULL,"list where list expected");
-        if (sub!=NULL) {
+        checkTrue(sub!=nullptr,"list where list expected");
+        if (sub!=nullptr) {
             checkEqual(sub->size(),16,"copy ok level 2");
         }
     }

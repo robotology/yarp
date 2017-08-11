@@ -29,7 +29,7 @@ yarp::dev::DriverCreator *createRGBDSensorWrapper() {
     return new DriverCreatorOf<yarp::dev::RGBDSensorWrapper>("RGBDSensorWrapper", "RGBDSensorWrapper", "yarp::dev::RGBDSensorWrapper");
 }
 
-RGBDSensorParser::RGBDSensorParser() : iRGBDSensor(YARP_NULLPTR) {};
+RGBDSensorParser::RGBDSensorParser() : iRGBDSensor(nullptr) {};
 
 bool RGBDSensorParser::configure(IRGBDSensor *interface)
 {
@@ -158,11 +158,11 @@ bool RGBDSensorParser::respond(const Bottle& cmd, Bottle& response)
 RGBDSensorWrapper::RGBDSensorWrapper(): RateThread(DEFAULT_THREAD_PERIOD),
                                         rate(DEFAULT_THREAD_PERIOD)
 {
-    sensor_p         = YARP_NULLPTR;
+    sensor_p         = nullptr;
     use_YARP         = true;
     use_ROS          = false;
-    subDeviceOwned   = YARP_NULLPTR;
-    rosNode          = YARP_NULLPTR;
+    subDeviceOwned   = nullptr;
+    rosNode          = nullptr;
     isSubdeviceOwned = false;
     verbose          = 4;
     sensorStatus     = IRGBDSensor::RGBD_SENSOR_NOT_READY;
@@ -172,7 +172,7 @@ RGBDSensorWrapper::RGBDSensorWrapper(): RateThread(DEFAULT_THREAD_PERIOD),
 RGBDSensorWrapper::~RGBDSensorWrapper()
 {
     close();
-    sensor_p = NULL;
+    sensor_p = nullptr;
 }
 
 /** Device driver interface */
@@ -391,9 +391,9 @@ bool RGBDSensorWrapper::close()
         if(subDeviceOwned)
         {
             delete subDeviceOwned;
-            subDeviceOwned=NULL;
+            subDeviceOwned=nullptr;
         }
-        sensor_p = NULL;
+        sensor_p = nullptr;
         isSubdeviceOwned = false;
     }
 
@@ -409,11 +409,11 @@ bool RGBDSensorWrapper::close()
         depthFrame_StreamingPort.close();
     }
 
-    if(rosNode!=NULL)
+    if(rosNode!=nullptr)
     {
         rosNode->interrupt();
         delete rosNode;
-        rosNode = NULL;
+        rosNode = nullptr;
     }
 
     // Closing ROS topic
@@ -539,13 +539,13 @@ bool RGBDSensorWrapper::detachAll()
     if (isSubdeviceOwned)
         return false;
 
-    sensor_p = NULL;
+    sensor_p = nullptr;
     return true;
 }
 
 bool RGBDSensorWrapper::attach(yarp::dev::IRGBDSensor *s)
 {
-    if(s == NULL)
+    if(s == nullptr)
     {
         yError() << "RGBDSensorWrapper: attached device has no valid IRGBDSensor interface.";
         return false;
@@ -560,7 +560,7 @@ bool RGBDSensorWrapper::attach(PolyDriver* poly)
     if(poly)
         poly->view(sensor_p);
 
-    if(sensor_p == NULL)
+    if(sensor_p == nullptr)
     {
         yError() << "RGBDSensorWrapper: attached device has no valid IRGBDSensor interface.";
         return false;
@@ -572,7 +572,7 @@ bool RGBDSensorWrapper::attach(PolyDriver* poly)
 
 bool RGBDSensorWrapper::detach()
 {
-    sensor_p = NULL;
+    sensor_p = nullptr;
     return true;
 }
 
@@ -878,7 +878,7 @@ bool RGBDSensorWrapper::writeData()
 
 void RGBDSensorWrapper::run()
 {
-    if (sensor_p!=0)
+    if (sensor_p!=nullptr)
     {
         static int i = 0;
         sensorStatus = sensor_p->getSensorStatus();

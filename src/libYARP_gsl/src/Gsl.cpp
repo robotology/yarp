@@ -43,13 +43,13 @@ GslMatrix::~GslMatrix()
 {
     gsl_matrix *tmp = (gsl_matrix *)(gslData);
 
-    if (tmp != 0)
+    if (tmp != nullptr)
     {
         delete tmp->block;
         delete tmp;
     }
 
-    gslData = 0;
+    gslData = nullptr;
 }
 
 void *GslMatrix::getGslMatrix()
@@ -90,13 +90,13 @@ GslVector::~GslVector()
 {
     gsl_vector *tmp = (gsl_vector *)(gslData);
 
-    if (tmp != 0)
+    if (tmp != nullptr)
     {
         delete tmp->block;
         delete tmp;
     }
 
-    gslData = 0;
+    gslData = nullptr;
 }
 
 void *GslVector::getGslVector()

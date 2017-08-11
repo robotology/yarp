@@ -40,13 +40,13 @@ MainWindow::MainWindow(QWidget *parent) :
     m_ui->setupUi(this);
 
     QLocale::setDefault(QLocale::C);
-    m_tabPanel = NULL;
+    m_tabPanel = nullptr;
     m_sequenceActiveCount = 0;
 
     setWindowTitle("Qt Robot Motor GUI V2.0");
     setMinimumWidth(MAX_WIDTH_JOINT + 60);
 
-    m_sliderOpt = 0;
+    m_sliderOpt = nullptr;
 
     QString globalLabel("Global Joints Commands ");
     m_globalToolBar = new QToolBar("Global Joints Commands", this);
@@ -327,7 +327,7 @@ MainWindow::~MainWindow()
             }
         }
         delete m_tabPanel;
-        m_tabPanel = NULL;
+        m_tabPanel = nullptr;
     }
 
     delete m_ui;
@@ -431,7 +431,7 @@ void MainWindow::onSliderOptionsClicked()
     m_sliderOpt->exec();
 
     delete m_sliderOpt;
-    m_sliderOpt = NULL;
+    m_sliderOpt = nullptr;
 }
 
 void MainWindow::onViewSpeeds(bool val)
@@ -491,7 +491,7 @@ void MainWindow::closeEvent(QCloseEvent *event)
             }
         }
         delete m_tabPanel;
-        m_tabPanel = NULL;
+        m_tabPanel = nullptr;
     }
 
     m_mutex.unlock();
@@ -517,8 +517,8 @@ bool MainWindow::init(QStringList enabledParts,
     }
 
     int errorCount = 0;
-    QScrollArea *scroll = NULL;
-    PartItem *part = NULL;
+    QScrollArea *scroll = nullptr;
+    PartItem *part = nullptr;
     m_finder = finder;
     //m_finder.setVerbose(true);
     m_user_script1 = m_finder.find("script1").asString();
@@ -554,7 +554,7 @@ bool MainWindow::init(QStringList enabledParts,
             robot_type r;
             r.robot_name_without_slash = cur_robot_name;
             if (r.robot_name_without_slash[0]=='/') r.robot_name_without_slash.erase(0, 1);
-            r.tree_pointer = 0;
+            r.tree_pointer = nullptr;
             robots[cur_robot_name]=r;
         }
         part_type p;
@@ -629,12 +629,12 @@ bool MainWindow::init(QStringList enabledParts,
             if(part)
             {
                 delete part;
-                part = 0;
+                part = nullptr;
             }
             if(scroll)
             {
                 delete scroll;
-                scroll = 0;
+                scroll = nullptr;
             }
             errorCount++;
         }
@@ -712,7 +712,7 @@ void MainWindow::onExecuteScript1()
 
     if (QMessageBox::question(this, "Question", QString("Do you really want to execute user script1?")) == QMessageBox::Yes)
     {
-        if (system(NULL))
+        if (system(nullptr))
         {
             std::string script1_file = this->m_finder.findFileByName(m_user_script1);
             if (script1_file != "")
@@ -742,7 +742,7 @@ void MainWindow::onExecuteScript2()
 
     if (QMessageBox::question(this, "Question", QString("Do you really want to execute user script2?")) == QMessageBox::Yes)
     {
-        if (system(NULL))
+        if (system(nullptr))
         {
             std::string script2_file = this->m_finder.findFileByName(m_user_script2);
             if (script2_file != "")

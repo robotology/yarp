@@ -32,7 +32,7 @@ Executable::Executable(Broker* _broker, MEvent* _event, Module *module,
     if(bWatchDog)
         watchdogWrapper = new ConcurentRateWrapper(this, &Executable::watchdogImplement);
     else
-        watchdogWrapper = NULL;
+        watchdogWrapper = nullptr;
 }
 
 Executable::~Executable()
@@ -165,7 +165,7 @@ RSTATE Executable::state(void)
 }
 
 bool Executable::startWatchDog() {
-    if(watchdogWrapper == NULL)
+    if(watchdogWrapper == nullptr)
         return false;
     if(!watchdogWrapper->isRunning())
         watchdogWrapper->start();

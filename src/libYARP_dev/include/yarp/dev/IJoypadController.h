@@ -34,7 +34,7 @@ public:
 protected:
     std::map<int, std::string> m_actions;
 
-    virtual bool parseActions(const yarp::os::Searchable& cfg, int *count = YARP_NULLPTR);
+    virtual bool parseActions(const yarp::os::Searchable& cfg, int *count = nullptr);
     virtual bool executeAction(int action_id);
 
 public:
@@ -53,7 +53,7 @@ public:
      * * @param event a pointer to a valid yarp::dev::IJoypadEvent object whom action() method will be called on event detection
      * @return true if succeded. false otherwise
      */
-    virtual bool eventDriven(bool enable, yarp::dev::IJoypadEvent* event = YARP_NULLPTR){return false;}
+    virtual bool eventDriven(bool enable, yarp::dev::IJoypadEvent* event = nullptr){return false;}
     virtual bool isEventDriven(){return false;}
 
     /**
@@ -257,7 +257,7 @@ public:
     virtual bool threadInit() YARP_OVERRIDE YARP_FINAL;
     virtual void run() YARP_OVERRIDE YARP_FINAL;
 
-    virtual bool eventDriven(bool enable, yarp::dev::IJoypadEvent* event = YARP_NULLPTR) YARP_OVERRIDE;
+    virtual bool eventDriven(bool enable, yarp::dev::IJoypadEvent* event = nullptr) YARP_OVERRIDE;
     virtual bool isEventDriven() YARP_OVERRIDE { return EventDrivenEnabled;}
 };
 

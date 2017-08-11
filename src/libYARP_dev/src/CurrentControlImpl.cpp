@@ -16,12 +16,12 @@ using namespace yarp::dev;
 ImplementCurrentControl::ImplementCurrentControl(ICurrentControlRaw *tq)
 {
     iCurrentRaw = tq;
-    helper=0;
-    temp=0;
+    helper=nullptr;
+    temp=nullptr;
 //     fake =0;
-    temp2=0;
-    temp_int=0;
-    tmpPids=0;
+    temp2=nullptr;
+    temp_int=nullptr;
+    tmpPids=nullptr;
 }
 
 ImplementCurrentControl::~ImplementCurrentControl()
@@ -31,29 +31,29 @@ ImplementCurrentControl::~ImplementCurrentControl()
 
 bool ImplementCurrentControl::initialize(int size, const int *amap, const double* ampsToSens)
 {
-    if (helper!=0)
+    if (helper!=nullptr)
         return false;
 
-    helper = (void *)(new ControlBoardHelper(size, amap, 0, 0, 0, ampsToSens, 0, 0));
-    yAssert (helper != 0);
+    helper = (void *)(new ControlBoardHelper(size, amap, nullptr, 0, 0, ampsToSens, nullptr, 0));
+    yAssert (helper != nullptr);
     temp=new double [size];
-    yAssert (temp != 0);
+    yAssert (temp != nullptr);
     temp2=new double [size];
-    yAssert (temp2 != 0);
+    yAssert (temp2 != nullptr);
     temp_int=new int [size];
-    yAssert (temp_int != 0);
+    yAssert (temp_int != nullptr);
     tmpPids=new Pid[size];
-    yAssert (tmpPids!=0);
+    yAssert (tmpPids!=nullptr);
 
     return true;
 }
 
 bool ImplementCurrentControl::uninitialize()
 {
-    if (helper!=0)
+    if (helper!=nullptr)
     {
         delete castToMapper(helper);
-        helper=0;
+        helper=nullptr;
     }
     checkAndDestroy(temp);
     checkAndDestroy(temp2);

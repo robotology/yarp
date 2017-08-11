@@ -17,7 +17,7 @@ double my_round(double number)
     return number < 0.0 ? ceil(number - 0.5) : floor(number + 0.5);
 }
 
-SliderWithTarget::SliderWithTarget(QWidget * parent, bool _hasTargetOption) : QSlider(Qt::Horizontal, 0)
+SliderWithTarget::SliderWithTarget(QWidget * parent, bool _hasTargetOption) : QSlider(Qt::Horizontal, nullptr)
 {
     sliderLabel = new QLabel(this);
     sliderLabel->setObjectName(QStringLiteral("sliderLabel"));

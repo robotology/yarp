@@ -63,7 +63,7 @@ class logger_module : public yarp::os::RFModule
         if (the_logger)
         {
             delete the_logger;
-            the_logger=NULL;
+            the_logger=nullptr;
         }
         return true;
     }

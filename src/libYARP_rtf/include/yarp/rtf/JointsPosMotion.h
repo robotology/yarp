@@ -85,7 +85,7 @@ public:
      */
     bool goToSingle(int j,
                     double pos,
-                    double *reached_pos = YARP_NULLPTR);
+                    double *reached_pos = nullptr);
 
     /**
      * @brief Moves joints in corrisponding positions specified by
@@ -98,7 +98,7 @@ public:
      * @return: true if each joint has reached its target, false otherwise.
      */
     bool goTo(yarp::sig::Vector positions,
-              yarp::sig::Vector *reached_pos = YARP_NULLPTR);
+              yarp::sig::Vector *reached_pos = nullptr);
 
     /**
      * @brief Checks if joint @a j has reached its limit within tollerance

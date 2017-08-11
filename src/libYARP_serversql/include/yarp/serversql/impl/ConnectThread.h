@@ -90,7 +90,7 @@ public:
     void clear() {
         for (std::list<ConnectThread *>::iterator it = con.begin();
              it != con.end(); it++) {
-            if ((*it) != YARP_NULLPTR) {
+            if ((*it) != nullptr) {
                 delete (*it);
             }
         }
@@ -107,14 +107,14 @@ public:
                  const yarp::os::ConstString& dest,
                  bool positive = true) {
         //printf("  ??? %s %s\n", src, dest);
-        ConnectThread *t = YARP_NULLPTR;
+        ConnectThread *t = nullptr;
         //printf("***** %d threads\n", con.size());
         std::list<ConnectThread *>::iterator it = con.begin();
         bool already = false;
         while (it != con.end()) {
-            if ((*it) != YARP_NULLPTR) {
+            if ((*it) != nullptr) {
                 if (!(*it)->needed) {
-                    if (t == YARP_NULLPTR) {
+                    if (t == nullptr) {
                         //printf("***** reusing a thread\n");
                         t = (*it);
                         t->stop();
@@ -144,7 +144,7 @@ public:
             it++;
         }
         if (!already) {
-            if (t == YARP_NULLPTR) {
+            if (t == nullptr) {
                 t = new ConnectThread(mutex);
                 con.push_back(t);
             }

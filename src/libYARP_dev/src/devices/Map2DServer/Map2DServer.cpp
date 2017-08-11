@@ -39,7 +39,7 @@ Map2DServer::Map2DServer()
 {
     m_enable_publish_ros_tf = false;
     m_enable_subscribe_ros_tf = false;
-    m_rosNode = 0;
+    m_rosNode = nullptr;
 }
 
 Map2DServer::~Map2DServer()
@@ -427,7 +427,7 @@ bool Map2DServer::read(yarp::os::ConnectionReader& connection)
     }
 
     yarp::os::ConnectionWriter *returnToSender = connection.getWriter();
-    if (returnToSender != NULL)
+    if (returnToSender != nullptr)
     {
         out.write(*returnToSender);
     }

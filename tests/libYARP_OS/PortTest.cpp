@@ -60,7 +60,7 @@ public:
     /**
      * Constructor.
      */
-    BrokenDevice():RateThread(30), img(YARP_NULLPTR){}
+    BrokenDevice():RateThread(30), img(nullptr){}
 
     virtual bool close() override
     {
@@ -145,7 +145,7 @@ public:
         receive.read(connection);
         receive.addInt(5);
         ConnectionWriter *writer = connection.getWriter();
-        if (writer!=NULL) {
+        if (writer!=nullptr) {
             receive.write(*writer);
         }
         return true;
@@ -422,8 +422,8 @@ public:
             if (j!=0) {
                 result = buf.read();
             }
-            checkTrue(result!=NULL,"got something check");
-            if (result!=NULL) {
+            checkTrue(result!=nullptr,"got something check");
+            if (result!=nullptr) {
                 checkEqual(bot1.size(),result->size(),"size check");
                 YARP_INFO(Logger::get(),ConstString("size is in fact ") +
                           NetType::toString(result->size()));
@@ -462,8 +462,8 @@ public:
         while (buf.check()) {
             ct++;
             Bottle *result = buf.read();
-            checkTrue(result!=NULL,"got something check");
-            if (result!=NULL) {
+            checkTrue(result!=nullptr,"got something check");
+            if (result!=nullptr) {
                 checkEqual(bot1.size(),result->size(),"size check");
                 YARP_INFO(Logger::get(),ConstString("size is in fact ") +
                           NetType::toString(result->size()));
@@ -510,8 +510,8 @@ public:
         while (buf.check()) {
             ct++;
             Bottle *result = buf.read();
-            checkTrue(result!=NULL,"got something check");
-            if (result!=NULL) {
+            checkTrue(result!=nullptr,"got something check");
+            if (result!=nullptr) {
                 checkEqual(bot1.size(),result->size(),"size check");
                 YARP_INFO(Logger::get(),ConstString("size is in fact ") +
                           NetType::toString(result->size()));
@@ -552,7 +552,7 @@ public:
         report(0,"reading...");
         PortablePair<Bottle,Bottle> *result = buf.read();
 
-        checkTrue(result!=NULL,"got something check");
+        checkTrue(result!=nullptr,"got something check");
         checkEqual(bot1.head.size(),result->head.size(),"head size check");
         checkEqual(bot1.body.size(),result->body.size(),"body size check");
 
@@ -836,14 +836,14 @@ public:
         out.write(true);
 
         Bottle *inBot1 = in.read();
-        checkTrue(inBot1!=NULL,"got 1 of 2 items");
-        if (inBot1!=NULL) {
+        checkTrue(inBot1!=nullptr,"got 1 of 2 items");
+        if (inBot1!=nullptr) {
             printf("Bottle 1 is: %s\n", inBot1->toString().c_str());
             checkEqual(inBot1->size(),2,"match for item 1");
         }
         Bottle *inBot2 = in.read();
-        checkTrue(inBot2!=NULL,"got 2 of 2 items");
-        if (inBot2!=NULL) {
+        checkTrue(inBot2!=nullptr,"got 2 of 2 items");
+        if (inBot2!=nullptr) {
             printf("Bottle 2 is: %s\n", inBot2->toString().c_str());
             checkEqual(inBot2->size(),5,"match for item 1");
         }
@@ -873,8 +873,8 @@ public:
         Time::delay(0.25);
 
         Bottle *inBot2 = in.read();
-        checkTrue(inBot2!=NULL,"got 2 of 2 items");
-        if (inBot2!=NULL) {
+        checkTrue(inBot2!=nullptr,"got 2 of 2 items");
+        if (inBot2!=nullptr) {
             printf("Bottle 2 is: %s\n", inBot2->toString().c_str());
             checkEqual(inBot2->size(),5,"match for item 1");
         }
@@ -1139,8 +1139,8 @@ public:
         out.write(true);
 
         Bottle *bot = in.read();
-        checkTrue(bot!=NULL,"Inserted message received");
-        if (bot!=NULL) {
+        checkTrue(bot!=nullptr,"Inserted message received");
+        if (bot!=nullptr) {
             checkEqual(bot->size(),1,"right length");
         }
 
@@ -1149,8 +1149,8 @@ public:
 
         void *key = in.acquire();
         Bottle *bot2 = in.read();
-        checkTrue(bot2!=NULL,"Inserted message received");
-        if (bot2!=NULL) {
+        checkTrue(bot2!=nullptr,"Inserted message received");
+        if (bot2!=nullptr) {
             checkEqual(bot2->size(),2,"right length");
         }
 
@@ -1159,14 +1159,14 @@ public:
 
         void *key2 = in.acquire();
         Bottle *bot3 = in.read();
-        checkTrue(bot3!=NULL,"Inserted message received");
-        if (bot3!=NULL) {
+        checkTrue(bot3!=nullptr,"Inserted message received");
+        if (bot3!=nullptr) {
             checkEqual(bot3->size(),3,"right length");
         }
-        if (bot2!=NULL) {
+        if (bot2!=nullptr) {
             checkEqual(bot2->size(),2,"original (2) still ok");
         }
-        if (bot!=NULL) {
+        if (bot!=nullptr) {
             checkEqual(bot->size(),1,"original (1) still ok");
         }
 
@@ -1404,7 +1404,7 @@ public:
         checkFalse(port.isClosed(),"port tagged as open");
 
         Bottle *bot = port.read(false);
-        checkTrue(bot==NULL,"reader correctly reset");
+        checkTrue(bot==nullptr,"reader correctly reset");
 
         Network::connect("/test2", "/test");
         Network::sync("/test");
@@ -1413,7 +1413,7 @@ public:
         port2.write();
 
         bot = port.read();
-        checkFalse(bot==NULL,"reader working");
+        checkFalse(bot==nullptr,"reader working");
         if (bot) {
             checkEqual(bot->get(0).asInt(),2,"reader read correct message");
         }

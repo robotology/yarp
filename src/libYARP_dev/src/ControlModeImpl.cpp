@@ -16,12 +16,12 @@ using namespace yarp::dev;
 ImplementControlMode::ImplementControlMode(IControlModeRaw *r)
 {
     raw=r;
-    helper=0;
+    helper=nullptr;
 }
 
 bool ImplementControlMode::initialize(int size, const int *amap)
 {
-    if (helper!=0)
+    if (helper!=nullptr)
         return false;
 
     double *dummy=new double [size];
@@ -29,7 +29,7 @@ bool ImplementControlMode::initialize(int size, const int *amap)
         dummy[k]=0;
 
     helper=(void *)(new ControlBoardHelper(size, amap, dummy, dummy, dummy));
-    yAssert (helper != 0);
+    yAssert (helper != nullptr);
 
     delete [] dummy;
     return true;
@@ -42,10 +42,10 @@ ImplementControlMode::~ImplementControlMode()
 
 bool ImplementControlMode::uninitialize ()
 {
-    if (helper!=0)
+    if (helper!=nullptr)
     {
         delete castToMapper(helper);
-        helper=0;
+        helper=nullptr;
     }
 
     return true;

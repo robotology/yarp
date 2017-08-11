@@ -195,7 +195,7 @@ bool yarp::rtf::jointsPosMotion::goToSingle(int j, double pos, double *reached_p
         yarp::os::Time::delay(0.2);
     }
 
-    if(reached_pos != YARP_NULLPTR) {
+    if(reached_pos != nullptr) {
         *reached_pos = tmp;
     }
     return(ret);
@@ -229,7 +229,7 @@ bool yarp::rtf::jointsPosMotion::goTo(yarp::sig::Vector positions, yarp::sig::Ve
         yarp::os::Time::delay(0.2);
     }
 
-    if(reached_pos != YARP_NULLPTR) {
+    if(reached_pos != nullptr) {
         reached_pos->resize(mPriv->n_joints);
         *reached_pos = tmp;
     }

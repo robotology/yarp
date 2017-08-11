@@ -360,8 +360,8 @@ MainWindow::MainWindow(yarp::os::ResourceFinder rf, QWidget *parent) :
 MainWindow::~MainWindow()
 {
     this->theLogger->stop_logging();
-    if (mainTimer) {delete mainTimer; mainTimer=0;}
-    if (ui)        {delete ui; ui=0;}
+    if (mainTimer) {delete mainTimer; mainTimer=nullptr;}
+    if (ui)        {delete ui; ui=nullptr;}
 }
 
 void MainWindow::loadTextFile()

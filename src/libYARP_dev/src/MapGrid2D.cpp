@@ -755,7 +755,7 @@ bool MapGrid2D::read(yarp::os::ConnectionReader& connection)
     m_map_occupancy.resize(m_width, m_height);
     m_map_flags.resize(m_width, m_height);
     bool ok = true;
-    unsigned char *mem = 0;
+    unsigned char *mem = nullptr;
     int            memsize = 0;
     connection.expectInt();
     memsize = connection.expectInt();
@@ -792,7 +792,7 @@ bool MapGrid2D::write(yarp::os::ConnectionWriter& connection)
     connection.appendInt(BOTTLE_TAG_STRING);
     connection.appendRawString(m_map_name.c_str());
 
-    unsigned char *mem = 0;
+    unsigned char *mem = nullptr;
     int            memsize = 0;
     mem     = m_map_occupancy.getRawImage();
     memsize = m_map_occupancy.getRawImageSize();

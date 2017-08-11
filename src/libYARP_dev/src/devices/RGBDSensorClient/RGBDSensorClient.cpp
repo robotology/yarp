@@ -27,7 +27,7 @@ yarp::dev::DriverCreator *createRGBDSensorClient()
 
 RGBDSensorClient::RGBDSensorClient() : FrameGrabberControls2_Sender(rpcPort)
 {
-    sensor_p       = NULL;
+    sensor_p       = nullptr;
     use_ROS        = false;
     verbose        = 2;
     sensorStatus   = IRGBDSensor::RGBD_SENSOR_NOT_READY;

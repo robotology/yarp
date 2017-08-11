@@ -139,7 +139,7 @@ bool Ready::checkResources(bool silent)
             const char* reply = executable->getBroker()->requestRpc((*itr).getPort(),
                                                                     (*itr).getRequest(),
                                                                     (*itr).getTimeout());
-            if(reply == NULL) {
+            if(reply == nullptr) {
                 allOK = false;
                 OSTRINGSTREAM msg;
                 msg<<"cannot request resource "<<(*itr).getPort()<<" for "<<(*itr).getRequest();

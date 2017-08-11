@@ -15,9 +15,9 @@ using namespace yarp::os;
 QtYARPView::QtYARPView(QQuickItem *parent):
     QQuickItem(parent), yarp(yarp::os::YARP_CLOCK_SYSTEM), sigHandler(this)
 {
-    ptr_portCallback = NULL;
+    ptr_portCallback = nullptr;
     setOptionsToDefault();
-    _pOutPort = NULL;
+    _pOutPort = nullptr;
 
     connect(&sigHandler,SIGNAL(sendFrame(QVideoFrame*)),&videoProducer,
             SLOT(onNewVideoContentReceived(QVideoFrame*)),Qt::DirectConnection);
@@ -206,9 +206,9 @@ void QtYARPView::createObjects() {
 
 /*! \brief Deletes the input port and the port callback.*/
 void QtYARPView::deleteObjects() {
-    if (ptr_inputPort!=0)
+    if (ptr_inputPort!=nullptr)
         delete ptr_inputPort;
-    if (ptr_portCallback!=0)
+    if (ptr_portCallback!=nullptr)
         delete ptr_portCallback;
 }
 
@@ -389,7 +389,7 @@ bool QtYARPView::openPorts()
             qDebug("Port registration succeed!");
         }
         else{
-            _pOutPort = NULL;
+            _pOutPort = nullptr;
             qDebug("ERROR: Port registration failed.\nQuitting, sorry.");
             return false;
         }
@@ -412,7 +412,7 @@ void QtYARPView::closePorts()
         else
             qDebug("ERROR: Port %s unregistration failed.\n", _options.m_outPortName);
         delete _pOutPort;
-        _pOutPort = NULL;
+        _pOutPort = nullptr;
     }
 }
 
@@ -454,7 +454,7 @@ void QtYARPView::clickCoords_4(int start_x, int start_y, int end_x, int end_y)
 
     if ((imageWidth != 0) && (imageHeight != 0)) {
         qDebug("Transmitting click information...");
-        if (_pOutPort != NULL) {
+        if (_pOutPort != nullptr) {
             yarp::os::Bottle& bot = _pOutPort->prepare();
             bot.clear();
             bot.addInt(start_x);
@@ -480,7 +480,7 @@ void QtYARPView::clickCoords_2(int x,int y)
 
     if ( (imageWidth != 0) && (imageHeight != 0) ) {
         qDebug("Transmitting click information...");
-        if (_pOutPort!=NULL) {
+        if (_pOutPort!=nullptr) {
             yarp::os::Bottle& bot = _pOutPort->prepare();
             bot.clear();
             bot.addInt(x);

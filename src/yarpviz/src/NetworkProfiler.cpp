@@ -20,7 +20,7 @@ using namespace yarp::os;
 using namespace yarp::graph;
 
 
-NetworkProfiler::ProgressCallback* NetworkProfiler::progCallback = NULL;
+NetworkProfiler::ProgressCallback* NetworkProfiler::progCallback = nullptr;
 
 bool NetworkProfiler::yarpNameList(ports_name_set &ports) {
     ports.clear();
@@ -44,7 +44,7 @@ bool NetworkProfiler::yarpNameList(ports_name_set &ports) {
 
     for (int i=1; i<reply.size(); i++) {
         Bottle *entry = reply.get(i).asList();
-        if(entry != NULL) {
+        if(entry != nullptr) {
             ConstString portname = entry->check("name", Value("")).asString();
             if (portname != "" && portname != "fallback" && portname != nameserver) {
                 Contact c = Contact::fromConfig(*entry);

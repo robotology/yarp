@@ -20,7 +20,7 @@ using namespace std;
 MonitorLua::MonitorLua(void) : bHasAcceptCallback(false),
                                bHasUpdateCallback(false),
                                bHasUpdateReplyCallback(false),
-                               trigger(NULL)
+                               trigger(nullptr)
 {
     L = luaL_newstate();
     luaL_openlibs(L);
@@ -43,7 +43,7 @@ MonitorLua::~MonitorLua()
         if(trigger) {
             trigger->stop();
             delete trigger;
-            trigger = NULL;
+            trigger = nullptr;
         }
         //  call PortMonitor.destroy if exists
         if(getLocalFunction("destroy"))
@@ -65,7 +65,7 @@ bool MonitorLua::load(const Property &options)
         yError("%s", lua_tostring(L, -1));
         lua_pop(L,1);
         lua_close(L);
-        L = NULL;
+        L = nullptr;
         return false;
     }
 
@@ -75,7 +75,7 @@ bool MonitorLua::load(const Property &options)
         yError("%s", lua_tostring(L, -1));
         lua_pop(L,1);
         lua_close(L);
-        L = NULL;
+        L = nullptr;
         return false;
     }
 
@@ -91,7 +91,7 @@ bool MonitorLua::load(const Property &options)
         yError("The script file does not contain any valid \'PortMonitor\' object.");
         lua_pop(L, 1);
         lua_close(L);
-        L = NULL;
+        L = nullptr;
         return false;
     }
 
@@ -116,7 +116,7 @@ bool MonitorLua::load(const Property &options)
             yError("%s", lua_tostring(L, -1));
             lua_pop(L, 1);
             lua_close(L);
-            L = NULL;
+            L = nullptr;
             luaMutex.unlock();
             return false;
         }
@@ -618,7 +618,7 @@ int MonitorLua::setTrigInterval(lua_State* L)
     yAssert(owner);
 
     // start the trigger thread (MonitorTrigger) if it is not running
-    if(owner->trigger == NULL) {
+    if(owner->trigger == nullptr) {
         owner->trigger = new MonitorTrigger(owner, (int)(period*1000));
         owner->trigger->start();
     }
@@ -636,7 +636,7 @@ const struct luaL_reg MonitorLua::portMonitorLib [] = {
     {"setEvent", MonitorLua::setEvent},
     {"unsetEvent", MonitorLua::unsetEvent},
     {"setTrigInterval", MonitorLua::setTrigInterval},
-    {NULL, NULL}
+    {nullptr, nullptr}
 };
 
 

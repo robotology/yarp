@@ -26,7 +26,7 @@ using namespace yarp::manager;
 
 ClusterWidget::ClusterWidget(QWidget *parent) :
     QWidget(parent),
-    ui(new Ui::ClusterWidget), confFile(""), clusLoader(YARP_NULLPTR)
+    ui(new Ui::ClusterWidget), confFile(""), clusLoader(nullptr)
 {
 
 #ifdef WIN32
@@ -475,7 +475,7 @@ ClusterWidget::~ClusterWidget()
     if (clusLoader)
     {
         delete clusLoader;
-        clusLoader = YARP_NULLPTR;
+        clusLoader = nullptr;
     }
     delete ui;
 }

@@ -46,7 +46,7 @@ Manager::Manager(bool withWatchDog) : MEvent()
     bAutoDependancy = false;
     bRestricted = false;
     strDefBroker = BROKER_YARPRUN;
-    knowledge.createFrom(NULL, NULL, NULL);
+    knowledge.createFrom(nullptr, nullptr, nullptr);
     connector.init();
 }
 
@@ -59,20 +59,20 @@ Manager::Manager(const char* szModPath, const char* szAppPath,
     bRestricted = false;
     strDefBroker = BROKER_YARPRUN;
 
-    XmlModLoader modload(szModPath, NULL);
+    XmlModLoader modload(szModPath, nullptr);
     XmlModLoader* pModLoad = &modload;
     if(!modload.init())
-        pModLoad = NULL;
+        pModLoad = nullptr;
 
-    XmlAppLoader appload(szAppPath, NULL);
+    XmlAppLoader appload(szAppPath, nullptr);
     XmlAppLoader* pAppLoad = &appload;
     if(!appload.init())
-        pAppLoad = NULL;
+        pAppLoad = nullptr;
 
-    XmlResLoader resload(szResPath, NULL);
+    XmlResLoader resload(szResPath, nullptr);
     XmlResLoader* pResLoad = &resload;
     if(!resload.init())
-        pResLoad = NULL;
+        pResLoad = nullptr;
 
     knowledge.createFrom(pModLoad, pAppLoad, pResLoad);
     connector.init();
@@ -105,7 +105,7 @@ bool Manager::addApplication(const char* szFileName, char** szAppName_, bool mod
 
 bool Manager::addApplications(const char* szPath)
 {
-    XmlAppLoader appload(szPath, NULL);
+    XmlAppLoader appload(szPath, nullptr);
     if(!appload.init())
         return false;
     Application* application;
@@ -133,7 +133,7 @@ bool Manager::addModule(const char* szFileName)
 
 bool Manager::addModules(const char* szPath)
 {
-    XmlModLoader modload(szPath, NULL);
+    XmlModLoader modload(szPath, nullptr);
     if(!modload.init())
         return false;
     Module* module;
@@ -158,7 +158,7 @@ bool Manager::addResource(const char* szFileName)
 
 bool Manager::addResources(const char* szPath)
 {
-    XmlResLoader resload(szPath, NULL);
+    XmlResLoader resload(szPath, nullptr);
     if(!resload.init())
         return false;
     GenericResource* resource;

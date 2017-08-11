@@ -58,7 +58,7 @@ double RandScalar::get(double min, double max)
 void RandScalar::init()
 {
     // initialize with time
-    int t=(int)time(0);
+    int t=(int)time(nullptr);
     RandScalar::init(t);
 }
 

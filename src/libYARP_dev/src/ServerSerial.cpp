@@ -9,7 +9,7 @@
 
 ServerSerial::ServerSerial() :
         verb(false),
-        serial(NULL),
+        serial(nullptr),
         callback_impl(this)
 {
 }
@@ -24,7 +24,7 @@ bool ServerSerial::send(const Bottle& msg)
 {
     if(verb)
         yDebug("ConstString to send : %s\n", msg.toString().c_str());
-    if(serial != NULL) {
+    if(serial != nullptr) {
         serial->send(msg);
         return true;
     }
@@ -36,7 +36,7 @@ bool ServerSerial::send(char *msg, size_t size)
 {
     if(verb)
         yDebug("ConstString to send : %s\n", msg);
-    if(serial != NULL) {
+    if(serial != nullptr) {
         serial->send(msg, size);
         return true;
     }
@@ -46,7 +46,7 @@ bool ServerSerial::send(char *msg, size_t size)
 
 bool ServerSerial::receive(Bottle& msg)
 {
-    if(serial != NULL) {
+    if(serial != nullptr) {
         serial->receive(msg);
         return true;
     }
@@ -56,7 +56,7 @@ bool ServerSerial::receive(Bottle& msg)
 
 int ServerSerial::receiveChar(char& c)
 {
-    if(serial != NULL) {
+    if(serial != nullptr) {
         return serial->receiveChar(c);
     }
     else
@@ -65,7 +65,7 @@ int ServerSerial::receiveChar(char& c)
 
 int ServerSerial::flush()
 {
-    if(serial != NULL) {
+    if(serial != nullptr) {
         return serial->flush();
     }
     else
@@ -74,7 +74,7 @@ int ServerSerial::flush()
 
 bool ServerSerial::setDTR(bool enable)
 {
-    if (serial != NULL) {
+    if (serial != nullptr) {
         return serial->setDTR(enable);
     }
     else
@@ -83,7 +83,7 @@ bool ServerSerial::setDTR(bool enable)
 
 int ServerSerial::receiveLine(char* line, const int MaxLineLength)
 {
-    if(serial != NULL) {
+    if(serial != nullptr) {
         return serial->receiveLine(line, MaxLineLength);
     }
     else
@@ -92,7 +92,7 @@ int ServerSerial::receiveLine(char* line, const int MaxLineLength)
 
 int ServerSerial::receiveBytes(unsigned char* bytes, const int size)
 {
-    if (serial != NULL) {
+    if (serial != nullptr) {
         return serial->receiveBytes(bytes, size);
     }
     else
@@ -157,7 +157,7 @@ bool ServerSerial::open(Searchable& prop)
     if (poly.isValid())
         poly.view(serial);
 
-    if(serial != NULL) {
+    if(serial != nullptr) {
         start();
         return true;
     }
@@ -192,7 +192,7 @@ void ServerSerial::run() {
 yarp::dev::ImplementCallbackHelper2::ImplementCallbackHelper2(yarp::dev::ServerSerial *x) {
     ser = dynamic_cast<yarp::dev::ISerialDevice *> (x);
     //ACE_ASSERT (ser != 0);
-    if (ser==0) {
+    if (ser==nullptr) {
         yError("Could not get serial device\n");
         std::exit(1);
     }

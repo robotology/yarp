@@ -95,7 +95,7 @@ PidDlg::~PidDlg()
     for (size_t cc = 0; cc < buttons.size(); cc++)
     {
         delete buttons[cc];
-        buttons[cc] = 0;
+        buttons[cc] = nullptr;
     }
     buttons.clear();
     delete ui;
@@ -251,7 +251,7 @@ void PidDlg::initRemoteVariables(IRemoteVariables* iVar)
             for (size_t cc = 0; cc < buttons.size(); cc++)
             {
                 delete buttons[cc];
-                buttons[cc] = 0;
+                buttons[cc] = nullptr;
             }
             buttons.clear();
             buttons.resize(keys_size);

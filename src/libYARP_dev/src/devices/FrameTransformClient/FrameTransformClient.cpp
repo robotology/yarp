@@ -74,7 +74,7 @@ void Transforms_client_storage::onRead(yarp::os::Bottle &b)
         {
             //this includes: timed yarp transforms, static yarp transforms, ros transforms
             Bottle* bt = b.get(i).asList();
-            if (bt != 0)
+            if (bt != nullptr)
             {
                 FrameTransform t;
                 t.src_frame_id = bt->get(0).asString();
@@ -297,7 +297,7 @@ bool yarp::dev::FrameTransformClient::read(yarp::os::ConnectionReader& connectio
         {
             (*it)->port.close();
             delete (*it);
-            (*it)=0;
+            (*it)=nullptr;
         }
         m_array_of_ports.clear();
         if (m_array_of_ports.size()==0) this->askToStop();
@@ -315,7 +315,7 @@ bool yarp::dev::FrameTransformClient::read(yarp::os::ConnectionReader& connectio
             {
                 (*it)->port.close();
                 delete (*it);
-                (*it)=0;
+                (*it)=nullptr;
                  m_array_of_ports.erase(it);
                  ret = true;
                  break;
@@ -340,7 +340,7 @@ bool yarp::dev::FrameTransformClient::read(yarp::os::ConnectionReader& connectio
     }
 
     yarp::os::ConnectionWriter *returnToSender = connection.getWriter();
-    if (returnToSender != NULL)
+    if (returnToSender != nullptr)
     {
         out.write(*returnToSender);
     }
@@ -427,10 +427,10 @@ bool yarp::dev::FrameTransformClient::close()
 {
     m_rpc_InterfaceToServer.close();
     m_rpc_InterfaceToUser.close();
-    if (m_transform_storage != 0)
+    if (m_transform_storage != nullptr)
     {
         delete m_transform_storage;
-        m_transform_storage = 0;
+        m_transform_storage = nullptr;
     }
     return true;
 }
@@ -444,7 +444,7 @@ bool yarp::dev::FrameTransformClient::allFramesAsString(std::string &all_frames)
     return true;
 }
 
-yarp::dev::FrameTransformClient::ConnectionType yarp::dev::FrameTransformClient::getConnectionType(const std::string &target_frame, const std::string &source_frame, std::string* commonAncestor = NULL)
+yarp::dev::FrameTransformClient::ConnectionType yarp::dev::FrameTransformClient::getConnectionType(const std::string &target_frame, const std::string &source_frame, std::string* commonAncestor = nullptr)
 {
     Transforms_client_storage& tfVec = *m_transform_storage;
     size_t                     i, j;
@@ -857,7 +857,7 @@ bool yarp::dev::FrameTransformClient::waitForTransform(const std::string &target
 
 FrameTransformClient::FrameTransformClient() : RateThread(10)
 {
-    m_transform_storage = 0;
+    m_transform_storage = nullptr;
 }
 
 FrameTransformClient::~FrameTransformClient()

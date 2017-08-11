@@ -34,27 +34,27 @@ PartItem::PartItem(QString robotName, int id, QString partName, ResourceFinder& 
     m_slow_k = 0;
 
     m_partId = id;
-    m_finder = NULL;
-    m_node = NULL;
-    m_currentPidDlg = NULL;
-    m_sequenceWindow = NULL;
+    m_finder = nullptr;
+    m_node = nullptr;
+    m_currentPidDlg = nullptr;
+    m_sequenceWindow = nullptr;
     m_finder = &_finder;
     m_mixedEnabled = false;
     m_positionDirectEnabled = false;
     m_pwmEnabled = false;
     m_currentEnabled = false;
 
-    m_controlModes = 0;
-    m_refTrajectorySpeeds = 0;
-    m_refTrajectoryPositions = 0;
-    m_refTorques = 0;
-    m_refVelocitySpeeds = 0;
-    m_torques = 0;
-    m_positions = 0;
-    m_speeds = 0;
-    m_motorPositions = 0;
-    m_done = 0;
-    m_interactionModes = 0;
+    m_controlModes = nullptr;
+    m_refTrajectorySpeeds = nullptr;
+    m_refTrajectoryPositions = nullptr;
+    m_refTorques = nullptr;
+    m_refVelocitySpeeds = nullptr;
+    m_torques = nullptr;
+    m_positions = nullptr;
+    m_speeds = nullptr;
+    m_motorPositions = nullptr;
+    m_done = nullptr;
+    m_interactionModes = nullptr;
     m_part_motorPositionVisible = false;
     m_part_speedVisible = false;
 
@@ -110,7 +110,7 @@ PartItem::PartItem(QString robotName, int id, QString partName, ResourceFinder& 
     if (m_interfaceError == true)
     {
         yError("Opening PolyDriver for part %s failed...", m_robotPartPort.toLatin1().data());
-        QMessageBox::critical(0, "Error opening a device", QString("Error while opening device for part ").append(m_robotPartPort.toLatin1().data()));
+        QMessageBox::critical(nullptr, "Error opening a device", QString("Error while opening device for part ").append(m_robotPartPort.toLatin1().data()));
     }
 
     /*********************************************************************/
@@ -298,16 +298,16 @@ PartItem::~PartItem()
         m_partsdd->close();
     }
 
-    if (m_controlModes) { delete[] m_controlModes; m_controlModes = 0; }
-    if (m_refTrajectorySpeeds) { delete[] m_refTrajectorySpeeds; m_refTrajectorySpeeds = 0; }
-    if (m_refTrajectoryPositions) { delete[] m_refTrajectoryPositions; m_refTrajectoryPositions = 0; }
-    if (m_refTorques) { delete[] m_refTorques; m_refTorques = 0; }
-    if (m_refVelocitySpeeds) { delete[] m_refVelocitySpeeds; m_refVelocitySpeeds = 0; }
-    if (m_torques) { delete[] m_torques; m_torques = 0; }
-    if (m_positions) { delete[] m_positions; m_positions = 0; }
-    if (m_speeds) { delete[] m_speeds; m_speeds = 0; }
-    if (m_motorPositions) { delete[] m_motorPositions; m_motorPositions = 0; }
-    if (m_done) { delete[] m_done; m_done = 0; }
+    if (m_controlModes) { delete[] m_controlModes; m_controlModes = nullptr; }
+    if (m_refTrajectorySpeeds) { delete[] m_refTrajectorySpeeds; m_refTrajectorySpeeds = nullptr; }
+    if (m_refTrajectoryPositions) { delete[] m_refTrajectoryPositions; m_refTrajectoryPositions = nullptr; }
+    if (m_refTorques) { delete[] m_refTorques; m_refTorques = nullptr; }
+    if (m_refVelocitySpeeds) { delete[] m_refVelocitySpeeds; m_refVelocitySpeeds = nullptr; }
+    if (m_torques) { delete[] m_torques; m_torques = nullptr; }
+    if (m_positions) { delete[] m_positions; m_positions = nullptr; }
+    if (m_speeds) { delete[] m_speeds; m_speeds = nullptr; }
+    if (m_motorPositions) { delete[] m_motorPositions; m_motorPositions = nullptr; }
+    if (m_done) { delete[] m_done; m_done = nullptr; }
 }
 
 bool PartItem::openPolyDrivers()
@@ -335,22 +335,22 @@ void PartItem::initInterfaces()
 {
     yDebug("Initializing interfaces...");
     //default value for unopened interfaces
-    m_iPos = NULL;
-    m_iVel = NULL;
-    m_iVar = NULL;
-    m_iDir = NULL;
-    m_iencs = NULL;
-    m_iAmp = NULL;
-    m_iPid = NULL;
-    m_iCur = NULL;
-    m_iPWM = NULL;
-    m_iTrq = NULL;
-    m_iImp = NULL;
-    m_iLim = NULL;
-    m_ical = NULL;
-    m_ictrlmode2 = NULL;
-    m_iinteract = NULL;
-    m_iremCalib = NULL;
+    m_iPos = nullptr;
+    m_iVel = nullptr;
+    m_iVar = nullptr;
+    m_iDir = nullptr;
+    m_iencs = nullptr;
+    m_iAmp = nullptr;
+    m_iPid = nullptr;
+    m_iCur = nullptr;
+    m_iPWM = nullptr;
+    m_iTrq = nullptr;
+    m_iImp = nullptr;
+    m_iLim = nullptr;
+    m_ical = nullptr;
+    m_ictrlmode2 = nullptr;
+    m_iinteract = nullptr;
+    m_iremCalib = nullptr;
 }
 
 bool PartItem::openInterfaces()
@@ -440,7 +440,7 @@ bool PartItem::openInterfaces()
 
         if (!ok) {
             yError("Error while acquiring interfaces!");
-            QMessageBox::critical(0,"Problems acquiring interfaces.","Check if interface is running");
+            QMessageBox::critical(nullptr,"Problems acquiring interfaces.","Check if interface is running");
             m_interfaceError = true;
         }
     }
@@ -721,7 +721,7 @@ void PartItem::onRefreshPids(int jointIndex)
 
 void PartItem::onSendCurrentPid(int jointIndex, Pid newPid)
 {
-    if (m_iCur == 0)
+    if (m_iCur == nullptr)
     {
         yError() << "iCurrent interface not opened";
         return;
@@ -793,7 +793,7 @@ void PartItem::onPidClicked(JointItem *joint)
     m_currentPidDlg->exec();
 
     delete m_currentPidDlg;
-    m_currentPidDlg = NULL;
+    m_currentPidDlg = nullptr;
 }
 
 void PartItem::onRunClicked(JointItem *joint)

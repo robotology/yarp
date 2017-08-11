@@ -17,9 +17,9 @@ using namespace yarp::dev;
 
 ImplementInteractionMode::ImplementInteractionMode(yarp::dev::IInteractionModeRaw *class_p) :
     iInteraction(class_p),
-    helper(NULL),
-    temp_int(NULL),
-    temp_modes(NULL)
+    helper(nullptr),
+    temp_int(nullptr),
+    temp_modes(nullptr)
 {
 
 }
@@ -38,22 +38,22 @@ ImplementInteractionMode::~ImplementInteractionMode()
  */
 bool ImplementInteractionMode::initialize(int size, const int *amap)
 {
-    return initialize(size, amap, 0, 0);
+    return initialize(size, amap, nullptr, nullptr);
 }
 
 bool ImplementInteractionMode::initialize(int size, const int *amap, const double *enc, const double *zos)
 {
-    if(helper != NULL)
+    if(helper != nullptr)
         return false;
 
-    helper=(void *)(new ControlBoardHelper(size, amap, enc, zos,0));
-    yAssert(helper != NULL);
+    helper=(void *)(new ControlBoardHelper(size, amap, enc, zos,nullptr));
+    yAssert(helper != nullptr);
 
     temp_int=new int [size];
-    yAssert(temp_int != NULL);
+    yAssert(temp_int != nullptr);
 
     temp_modes=new yarp::dev::InteractionModeEnum [size];
-    yAssert(temp_modes != NULL);
+    yAssert(temp_modes != nullptr);
     return true;
 }
 
@@ -63,10 +63,10 @@ bool ImplementInteractionMode::initialize(int size, const int *amap, const doubl
  */
 bool ImplementInteractionMode::uninitialize()
 {
-    if(helper != NULL)
+    if(helper != nullptr)
     {
         delete castToMapper(helper);
-        helper = NULL;
+        helper = nullptr;
     }
 
     checkAndDestroy(temp_int);

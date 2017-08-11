@@ -79,7 +79,7 @@ bool XmlTempLoader::init(void)
 
     DIR *dir;
     struct dirent *entry;
-    if ((dir = opendir(strPath.c_str())) == NULL)
+    if ((dir = opendir(strPath.c_str())) == nullptr)
     {
         OSTRINGSTREAM err;
         err<<"Cannot access "<<strPath;
@@ -119,11 +119,11 @@ AppTemplate* XmlTempLoader::getNextAppTemplate(void)
 {
     if(strAppName.empty())
     {
-        AppTemplate* app = NULL;
+        AppTemplate* app = nullptr;
         while(!app)
         {
             if(fileNames.empty())
-                return NULL;
+                return nullptr;
             string fname = fileNames.back();
             fileNames.pop_back();
             app = parsXml(fname.c_str());
@@ -140,7 +140,7 @@ AppTemplate* XmlTempLoader::getNextAppTemplate(void)
             return app;
         }
     }
- return NULL;
+ return nullptr;
 }
 
 
@@ -160,7 +160,7 @@ AppTemplate* XmlTempLoader::parsXml(const char* szFile)
            <<doc.ErrorRow()<<": ";
         err<<doc.ErrorDesc();
         logger->addError(err);
-        return NULL;
+        return nullptr;
     }
 
     /* retrieving root element */
@@ -171,12 +171,12 @@ AppTemplate* XmlTempLoader::parsXml(const char* szFile)
         err<<"Syntax error while loading "<<szFile<<" . ";
         err<<"No root element.";
         logger->addError(err);
-        return NULL;
+        return nullptr;
     }
 
     if(!compareString(root->Value(), "application"))
     {
-        return NULL;
+        return nullptr;
     }
 
     app.tmpFileName = szFile;

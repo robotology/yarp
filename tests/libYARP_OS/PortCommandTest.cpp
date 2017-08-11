@@ -41,7 +41,7 @@ public:
         StreamConnectionReader br;
         sis.add("d\r\n");
         Route route;
-        br.reset(sis,NULL,route,sis.toString().length(),true);
+        br.reset(sis,nullptr,route,sis.toString().length(),true);
         cmd.read(br);
         checkEqual('d',cmd.getKey(),"basic data command");
     }

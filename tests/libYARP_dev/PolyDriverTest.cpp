@@ -87,7 +87,7 @@ public:
         bool result;
         result = dd.open(p);
         checkTrue(result,"open reported successful");
-        IFrameGrabberImage *grabber = NULL;
+        IFrameGrabberImage *grabber = nullptr;
         result = dd.view(grabber);
         checkTrue(result,"interface reported");
         ImageOf<PixelRgb> img;
@@ -163,10 +163,10 @@ name /mymotor\n\
         checkTrue(result,"controlboardwrapper open reported successful");
 
         // Check if IMultipleWrapper interface is correctly found
-        yarp::dev::IMultipleWrapper * i_mwrapper=0;
+        yarp::dev::IMultipleWrapper * i_mwrapper=nullptr;
         result = dd.view(i_mwrapper);
         checkTrue(result,"IMultipleWrapper view reported successful");
-        checkTrue(i_mwrapper!=0,"IMultipleWrapper pointer not null");
+        checkTrue(i_mwrapper!=nullptr,"IMultipleWrapper pointer not null");
 
         PolyDriver dd2;
         Property p2;
@@ -180,7 +180,7 @@ name /mymotor\n\
 
         if(!result)   return;  // cannot go on if the device was not opened
 
-        IPositionControl *pos = NULL;
+        IPositionControl *pos = nullptr;
         result = dd2.view(pos);
         checkTrue(result,"interface reported");
         int axes = 0;

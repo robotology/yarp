@@ -344,7 +344,7 @@ void Computer::clear(void)
     for(unsigned int i=0; i<peripheralResources.size(); i++)
     {
         delete peripheralResources[i];
-        peripheralResources[i] = NULL;
+        peripheralResources[i] = nullptr;
     }
     peripheralResources.clear();
     processes.clear();

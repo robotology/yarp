@@ -229,7 +229,7 @@ bool yarp::dev::RobotDescriptionServer::read(yarp::os::ConnectionReader& connect
 
     yarp::os::ConnectionWriter *returnToSender = connection.getWriter();
 
-    if (returnToSender != NULL)
+    if (returnToSender != nullptr)
     {
         out.write(*returnToSender);
     }

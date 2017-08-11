@@ -101,7 +101,7 @@ std::ostream& operator << (std::ostream &os , StrStream& sstr)
  */
 
 // Global static pointer used to ensure a single instance of the class.
-ErrorLogger* ErrorLogger::pInstance = NULL;
+ErrorLogger* ErrorLogger::pInstance = nullptr;
 
 ErrorLogger* ErrorLogger::Instance(void)
 {
@@ -138,7 +138,7 @@ void ErrorLogger::addError(OSTRINGSTREAM &stream) {
 
 const char* ErrorLogger::getLastError(void) {
     if(errors.empty())
-        return NULL;
+        return nullptr;
     static string msg;
     msg = errors.back();
     errors.pop_back();
@@ -148,14 +148,14 @@ const char* ErrorLogger::getLastError(void) {
 const char* ErrorLogger::getFormatedErrorString() {
     static string msgs;
     char* err;
-    while((err=(char*)getLastError()) != NULL)
+    while((err=(char*)getLastError()) != nullptr)
         msgs += string(err) + " ";
     return msgs.c_str();
 }
 
 const char* ErrorLogger::getLastWarning(void) {
     if(warnings.empty())
-        return NULL;
+        return nullptr;
     static string msg;
     msg = warnings.back();
     warnings.pop_back();
@@ -165,7 +165,7 @@ const char* ErrorLogger::getLastWarning(void) {
 const char* ErrorLogger::getFormatedWarningString() {
     static string msgs;
     char* err;
-    while((err=(char*)getLastWarning()) != NULL)
+    while((err=(char*)getLastWarning()) != nullptr)
         msgs += string(err) + " ";
     return msgs.c_str();
 }

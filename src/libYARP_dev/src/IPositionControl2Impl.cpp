@@ -18,9 +18,9 @@ using namespace yarp::dev;
 
 ImplementPositionControl2::ImplementPositionControl2(IPositionControl2Raw *y) :
     iPosition2(y),
-    helper(NULL),
-    temp_int(NULL),
-    temp_double(NULL)
+    helper(nullptr),
+    temp_int(nullptr),
+    temp_double(nullptr)
 {
 
 }
@@ -41,16 +41,16 @@ ImplementPositionControl2::~ImplementPositionControl2()
  */
 bool ImplementPositionControl2::initialize(int size, const int *amap, const double *enc, const double *zos)
 {
-    if(helper != NULL)
+    if(helper != nullptr)
         return false;
 
-    helper=(void *)(new ControlBoardHelper(size, amap, enc, zos,0));
-    yAssert(helper != NULL);
+    helper=(void *)(new ControlBoardHelper(size, amap, enc, zos,nullptr));
+    yAssert(helper != nullptr);
     temp_double=new double [size];
-    yAssert(temp_double != NULL);
+    yAssert(temp_double != nullptr);
 
     temp_int=new int [size];
-    yAssert(temp_int != NULL);
+    yAssert(temp_int != nullptr);
     return true;
 }
 
@@ -60,10 +60,10 @@ bool ImplementPositionControl2::initialize(int size, const int *amap, const doub
  */
 bool ImplementPositionControl2::uninitialize()
 {
-    if(helper != NULL)
+    if(helper != nullptr)
     {
         delete castToMapper(helper);
-        helper = NULL;
+        helper = nullptr;
     }
     checkAndDestroy(temp_double);
     checkAndDestroy(temp_int);

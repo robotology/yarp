@@ -55,7 +55,7 @@ public:
         for (int i=0; i<tct; i++) {
             Time::delay(0.01*(i%4));
             OutputProtocol *op = Carriers::connect(address);
-            if (op!=NULL) {
+            if (op!=nullptr) {
                 op->getOutputStream().write('h');
                 op->close();
                 delete op;

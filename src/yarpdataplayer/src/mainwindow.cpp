@@ -52,9 +52,9 @@ MainWindow::MainWindow(yarp::os::ResourceFinder &rf, QWidget *parent) :
 {
     ui->setupUi(this);
     setWindowTitle(APP_NAME);
-    utilities = NULL;
+    utilities = nullptr;
     pressed = false;
-    initThread = NULL;
+    initThread = nullptr;
 
     moduleName =  QString("%1").arg(rf.check("name", Value("yarpdataplayer"), "module name (string)").asString().c_str());
 
@@ -77,7 +77,7 @@ MainWindow::MainWindow(yarp::os::ResourceFinder &rf, QWidget *parent) :
     createUtilities();
 
     subDirCnt = 0;
-    utilities = NULL;
+    utilities = nullptr;
     setWindowTitle(moduleName);
     setupActions();
     setupSignals();
@@ -403,14 +403,14 @@ void MainWindow::clearUtilities()
 {
     if(utilities){
         delete utilities;
-        utilities = NULL;
+        utilities = nullptr;
     }
 }
 
 /**********************************************************/
 bool MainWindow::getPartActivation(const char* szName)
 {
-    QTreeWidgetItem *row = NULL;
+    QTreeWidgetItem *row = nullptr;
     row = getRowByPart(QString("%1").arg(szName));
 
 
@@ -601,7 +601,7 @@ void MainWindow::addPart(const char* szName, const char* type, int frames, const
 /**********************************************************/
 bool MainWindow::setInitialPartProgress(const char* szName, int percentage)
 {
-    QTreeWidgetItem *row = NULL;
+    QTreeWidgetItem *row = nullptr;
     row = getRowByPart(QString("%1").arg(szName));
 
 
@@ -619,7 +619,7 @@ bool MainWindow::setInitialPartProgress(const char* szName, int percentage)
 /**********************************************************/
 bool MainWindow::setPartProgress(const char* szName, int percentage)
 {
-    QTreeWidgetItem *row = NULL;
+    QTreeWidgetItem *row = nullptr;
     row = getRowByPart(QString("%1").arg(szName));
     if(row){
         QProgressBar *progress = ((QProgressBar*)ui->mainWidget->itemWidget(row,PERCENT));
@@ -640,7 +640,7 @@ QTreeWidgetItem * MainWindow::getRowByPart(QString szName )
             return ui->mainWidget->topLevelItem(i);
         }
     }
-    return NULL;
+    return nullptr;
 }
 
 /**********************************************************/
@@ -915,7 +915,7 @@ void MainWindow::onSliderReleased()
 /**********************************************************/
 bool MainWindow::getPartPort(const char* szName, QString *dest)
 {
-    QTreeWidgetItem *row = NULL;
+    QTreeWidgetItem *row = nullptr;
     row = getRowByPart(QString("%1").arg(szName));
     if(row){
         *dest = row->text(PORT);
@@ -929,7 +929,7 @@ bool MainWindow::getPartPort(const char* szName, QString *dest)
 /**********************************************************/
 bool MainWindow::setFrameRate(const char* szName, int frameRate)
 {
-    QTreeWidgetItem *row = NULL;
+    QTreeWidgetItem *row = nullptr;
     row = getRowByPart(QString("%1").arg(szName));
     if(row){
         row->setText(SAMPLERATE,QString("%1 ms").arg(frameRate));
@@ -942,7 +942,7 @@ bool MainWindow::setFrameRate(const char* szName, int frameRate)
 /**********************************************************/
 bool MainWindow::setTimeTaken(const char* szName, double time)
 {
-    QTreeWidgetItem *row = NULL;
+    QTreeWidgetItem *row = nullptr;
     row = getRowByPart(QString("%1").arg(szName));
     if(row){
         row->setText(TIMETAKEN,QString("%1 s").arg(time, 0, 'f', 3));

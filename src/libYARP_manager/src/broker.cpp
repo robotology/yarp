@@ -16,7 +16,7 @@ using namespace yarp::manager;
 Broker::Broker()
 {
     UNIQUEID = 0;
-    eventSink = NULL;
+    eventSink = nullptr;
     bWithWatchDog = false;
 }
 

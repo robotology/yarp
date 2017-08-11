@@ -24,8 +24,8 @@ QtYARPScope::QtYARPScope(QQuickItem *parent):
 
     setFlag(ItemHasContents, true);
 
-    currentSelectedPlotter = NULL;
-    loader = NULL;
+    currentSelectedPlotter = nullptr;
+    loader = nullptr;
     plotManager = PlotManager::instance();
 
     setAcceptedMouseButtons(Qt::AllButtons);
@@ -395,7 +395,7 @@ void QtYARPScope::routeMouseEvents( QWheelEvent* event )
 void QtYARPScope::updateCustomPlotSize()
 {
 
-    if(loader == NULL){
+    if(loader == nullptr){
         return;
     }
     int w = width();

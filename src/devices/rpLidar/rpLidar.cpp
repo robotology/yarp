@@ -144,7 +144,7 @@ bool RpLidar::open(yarp::os::Searchable& config)
         return false;
     }
 
-    pSerial = 0;
+    pSerial = nullptr;
     driver.open(prop);
     if (!driver.isValid())
     {

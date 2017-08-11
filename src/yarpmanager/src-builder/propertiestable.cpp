@@ -10,8 +10,8 @@ PropertiesTable::PropertiesTable(Manager *manager,QWidget *parent) : QWidget(par
     appProperties = new QTreeWidget(this);
     moduleProperties = new QTreeWidget(this);
     moduleDescription = new QTreeWidget(this);
-    currentApplication = NULL;
-    currentModule = NULL;
+    currentApplication = nullptr;
+    currentModule = nullptr;
     this->manager = manager;
 
     paramsSignalMapper = new QSignalMapper(this);
@@ -25,13 +25,13 @@ PropertiesTable::PropertiesTable(Manager *manager,QWidget *parent) : QWidget(par
     setLayout(lay);
     lay->setMargin(0);
 
-    appName = NULL;
-    appDescr = NULL;
-    appPrefix = NULL;
-    appVersion = NULL;
-    appAuthors = NULL;
-    nodeCombo = NULL;
-    deployerCombo = NULL;
+    appName = nullptr;
+    appDescr = nullptr;
+    appPrefix = nullptr;
+    appVersion = nullptr;
+    appAuthors = nullptr;
+    nodeCombo = nullptr;
+    deployerCombo = nullptr;
 
     propertiesTab->addTab(appProperties,"Application Properties");
 
@@ -42,7 +42,7 @@ void PropertiesTable::showApplicationTab(Application *application)
     if(!propertiesTab){
         return;
     }
-    currentModule = NULL;
+    currentModule = nullptr;
     currentApplication = application;
     disconnect(appProperties,SIGNAL(itemChanged(QTreeWidgetItem*,int)),this,SLOT(onAppItemChanged(QTreeWidgetItem*,int)));
     disconnect(appProperties,SIGNAL(itemDoubleClicked(QTreeWidgetItem*,int)),this,SLOT(onAppItemDoubleClicked(QTreeWidgetItem*,int)));
@@ -83,7 +83,7 @@ void PropertiesTable::showModuleTab(ModuleItem *mod)
     disconnect(moduleProperties,SIGNAL(itemChanged(QTreeWidgetItem*,int)),this,SLOT(onModItemChanged(QTreeWidgetItem*,int)));
     disconnect(moduleProperties,SIGNAL(itemDoubleClicked(QTreeWidgetItem*,int)),this,SLOT(onModItemDoubleClicked(QTreeWidgetItem*,int)));
 
-    currentApplication = NULL;
+    currentApplication = nullptr;
     currentModule = mod;
     propertiesTab->clear();
     propertiesTab->addTab(moduleProperties,"Module Properties");
@@ -119,12 +119,12 @@ void PropertiesTable::showModuleTab(ModuleItem *mod)
 
     if(deployerCombo){
         delete deployerCombo;
-        deployerCombo = NULL;
+        deployerCombo = nullptr;
     }
 
     if(nodeCombo){
         delete nodeCombo;
-        nodeCombo = NULL;
+        nodeCombo = nullptr;
     }
     deployerCombo = new QComboBox();
     nodeCombo = new QComboBox();

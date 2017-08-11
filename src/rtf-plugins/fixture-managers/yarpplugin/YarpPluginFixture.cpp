@@ -69,7 +69,7 @@ bool YarpPluginFixture::setup(int argc, char** argv) {
         resDev=true;
         for(int i=1;i<devices.size();i++)
         {
-            if(Drivers::factory().find(devices.get(i).asString().c_str())==NULL)
+            if(Drivers::factory().find(devices.get(i).asString().c_str())==nullptr)
             {
                 RTF_ASSERT_ERROR("YarpPluginFixture: Unable to find "+ devices.get(i).asString() +" among the available devices");
             }

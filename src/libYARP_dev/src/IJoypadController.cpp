@@ -18,7 +18,7 @@ yarp::dev::IJoypadEventDriven::IJoypadEventDriven() : IJoypadEventDriven(10){}
 yarp::dev::IJoypadEventDriven::IJoypadEventDriven(int rate) : RateThread(rate)
 {
     EventDrivenEnabled = false;
-    m_event = YARP_NULLPTR;
+    m_event = nullptr;
 }
 
 bool isEqual(const float& a, const float& b, const float& tolerance)

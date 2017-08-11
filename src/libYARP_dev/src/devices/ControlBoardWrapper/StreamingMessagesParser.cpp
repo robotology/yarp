@@ -57,7 +57,7 @@ void StreamingMessagesParser::onRead(CommandMessage& v)
         yError("Received command vector with number of elements bigger than axis controlled by this wrapper (cmd: %s requested jnts: %d received jnts: %d)\n",str.c_str(),stream_nJoints,(int)cmdVector.size());
         return;
     }
-    if (cmdVector.data()==0)
+    if (cmdVector.data()==nullptr)
     {
          yError("Received null command vector");
          return;

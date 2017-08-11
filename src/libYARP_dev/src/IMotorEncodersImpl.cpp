@@ -16,9 +16,9 @@ using namespace yarp::dev;
 ImplementMotorEncoders::ImplementMotorEncoders(IMotorEncodersRaw *y)
 {
     iMotorEncoders=y;
-    helper = 0;
-    temp=0;
-    temp2=0;
+    helper = nullptr;
+    temp=nullptr;
+    temp2=nullptr;
 }
 
 ImplementMotorEncoders::~ImplementMotorEncoders()
@@ -28,15 +28,15 @@ ImplementMotorEncoders::~ImplementMotorEncoders()
 
 bool ImplementMotorEncoders:: initialize (int size, const int *amap, const double *enc, const double *zos)
 {
-    if (helper!=0)
+    if (helper!=nullptr)
         return false;
 
-    helper=(void *)(new ControlBoardHelper(size, amap, enc, zos,0));
-    yAssert (helper != 0);
+    helper=(void *)(new ControlBoardHelper(size, amap, enc, zos,nullptr));
+    yAssert (helper != nullptr);
     temp=new double [size];
-    yAssert (temp != 0);
+    yAssert (temp != nullptr);
     temp2=new double [size];
-    yAssert (temp2 != 0);
+    yAssert (temp2 != nullptr);
     return true;
 }
 
@@ -46,10 +46,10 @@ bool ImplementMotorEncoders:: initialize (int size, const int *amap, const doubl
 */
 bool ImplementMotorEncoders::uninitialize ()
 {
-    if (helper!=0)
+    if (helper!=nullptr)
     {
         delete castToMapper(helper);
-        helper=0;
+        helper=nullptr;
     }
 
     checkAndDestroy(temp);

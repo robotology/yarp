@@ -89,7 +89,7 @@ bool XmlModLoader::init(void)
 
     DIR *dir;
     struct dirent *entry;
-    if ((dir = opendir(strPath.c_str())) == NULL)
+    if ((dir = opendir(strPath.c_str())) == nullptr)
     {
         OSTRINGSTREAM err;
         err<<"Cannot access "<<strPath;
@@ -141,11 +141,11 @@ Module* XmlModLoader::getNextModule(void)
 {
     if(strName.empty())
     {
-        Module* mod = NULL;
+        Module* mod = nullptr;
         while(!mod)
         {
             if(fileNames.empty())
-                return NULL;
+                return nullptr;
 
             string fname = fileNames.back();
             fileNames.pop_back();
@@ -166,7 +166,7 @@ Module* XmlModLoader::getNextModule(void)
                 return mod;
          }
     }
-    return NULL;
+    return nullptr;
 }
 
 
@@ -184,7 +184,7 @@ Module* XmlModLoader::parsXml(const char* szFile)
            <<doc.ErrorRow()<<": ";
         err<<doc.ErrorDesc();
         logger->addError(err);
-        return NULL;
+        return nullptr;
     }
 
     /* retrieving root module */
@@ -195,7 +195,7 @@ Module* XmlModLoader::parsXml(const char* szFile)
         err<<"Syntax error while loading "<<szFile<<" . ";
         err<<"No root element.";
         logger->addError(err);
-        return NULL;
+        return nullptr;
     }
 
     if(!compareString(root->Value(), "module"))
@@ -205,7 +205,7 @@ Module* XmlModLoader::parsXml(const char* szFile)
         msg<<szFile<<" is not a module descriptor file.";
         logger->addWarning(msg);
         */
-        return NULL;
+        return nullptr;
     }
 
     /* retrieving name */

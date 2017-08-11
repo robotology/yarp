@@ -21,7 +21,7 @@ DeviceResponder::DeviceResponder() {
 
 void DeviceResponder::addUsage(const char *txt, const char *explain) {
     examples.addString(txt); //Value::makeList(txt));
-    explains.addString((explain!=NULL)?explain:"");
+    explains.addString((explain!=nullptr)?explain:"");
     details.add(Value::makeList(txt));
     ConstString more = ConstString("   ") + explain;
     details.addString(more.c_str());
@@ -63,7 +63,7 @@ bool DeviceResponder::read(ConnectionReader& connection) {
     respond(cmd,response);
     if (response.size()>=1) {
         ConnectionWriter *writer = connection.getWriter();
-        if (writer!=NULL) {
+        if (writer!=nullptr) {
             if (response.get(0).toString()=="many"&&writer->isTextMode()) {
                 for (int i=1; i<response.size(); i++) {
                     Value& v = response.get(i);
@@ -83,7 +83,7 @@ bool DeviceResponder::read(ConnectionReader& connection) {
         }
     } else {
         ConnectionWriter *writer = connection.getWriter();
-        if (writer!=NULL) {
+        if (writer!=nullptr) {
             response.clear();
             response.addVocab(Vocab::encode("nak"));
             response.write(*writer);

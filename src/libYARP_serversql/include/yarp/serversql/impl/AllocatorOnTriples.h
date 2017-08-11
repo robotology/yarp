@@ -26,7 +26,7 @@ public:
         regid = -1;
         tmpid = -1;
         mcastCursor = -1;
-        db = YARP_NULLPTR;
+        db = nullptr;
     }
 
     void open(TripleSource *db, const AllocatorConfig& config) {

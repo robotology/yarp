@@ -35,7 +35,7 @@ using namespace yarp::serversql::impl;
 using namespace std;
 
 bool SubscriberOnSql::open(const ConstString& filename, bool fresh) {
-    sqlite3 *db = YARP_NULLPTR;
+    sqlite3 *db = nullptr;
     if (fresh) {
         int result = access(filename.c_str(),F_OK);
         if (result==0) {
@@ -48,10 +48,10 @@ bool SubscriberOnSql::open(const ConstString& filename, bool fresh) {
     int result = sqlite3_open_v2(filename.c_str(),
                                  &db,
                                  SQLITE_OPEN_READWRITE|SQLITE_OPEN_CREATE|SQLITE_OPEN_NOMUTEX,
-                                 YARP_NULLPTR);
+                                 nullptr);
     if (result!=SQLITE_OK) {
         fprintf(stderr,"Failed to open database %s\n", filename.c_str());
-        if (db != YARP_NULLPTR) {
+        if (db != nullptr) {
             sqlite3_close(db);
         }
         return false;
@@ -65,7 +65,7 @@ bool SubscriberOnSql::open(const ConstString& filename, bool fresh) {
     destFull TEXT,\n\
     mode TEXT);";
 
-    result = sqlite3_exec(db, create_subscribe_table, YARP_NULLPTR, YARP_NULLPTR, YARP_NULLPTR);
+    result = sqlite3_exec(db, create_subscribe_table, nullptr, nullptr, nullptr);
     if (result!=SQLITE_OK) {
         sqlite3_close(db);
         fprintf(stderr,"Failed to set up subscriptions table\n");
@@ -74,8 +74,8 @@ bool SubscriberOnSql::open(const ConstString& filename, bool fresh) {
 
     const char *check_subscriptions_size = "PRAGMA table_info(subscriptions)";
 
-    sqlite3_stmt *statement = YARP_NULLPTR;
-    result = sqlite3_prepare_v2(db, check_subscriptions_size, -1, &statement, YARP_NULLPTR);
+    sqlite3_stmt *statement = nullptr;
+    result = sqlite3_prepare_v2(db, check_subscriptions_size, -1, &statement, nullptr);
     if (result!=SQLITE_OK) {
         fprintf(stderr,"Failed to set up subscriptions table\n");
         std::exit(1);
@@ -89,7 +89,7 @@ bool SubscriberOnSql::open(const ConstString& filename, bool fresh) {
 
     if (count==5) {
         const char *add_structure = "ALTER TABLE subscriptions ADD COLUMN mode";
-        result = sqlite3_exec(db, add_structure, YARP_NULLPTR, YARP_NULLPTR, YARP_NULLPTR);
+        result = sqlite3_exec(db, add_structure, nullptr, nullptr, nullptr);
         if (result!=SQLITE_OK) {
             sqlite3_close(db);
             fprintf(stderr,"Failed to set up subscriptions table\n");
@@ -102,7 +102,7 @@ bool SubscriberOnSql::open(const ConstString& filename, bool fresh) {
     topic TEXT,\n\
     structure TEXT);";
 
-    result = sqlite3_exec(db, create_topic_table, YARP_NULLPTR, YARP_NULLPTR, YARP_NULLPTR);
+    result = sqlite3_exec(db, create_topic_table, nullptr, nullptr, nullptr);
     if (result!=SQLITE_OK) {
         sqlite3_close(db);
         fprintf(stderr,"Failed to set up topics table\n");
@@ -111,8 +111,8 @@ bool SubscriberOnSql::open(const ConstString& filename, bool fresh) {
 
     const char *check_topic_size = "PRAGMA table_info(topics)";
 
-    statement = YARP_NULLPTR;
-    result = sqlite3_prepare_v2(db, check_topic_size, -1, &statement, YARP_NULLPTR);
+    statement = nullptr;
+    result = sqlite3_prepare_v2(db, check_topic_size, -1, &statement, nullptr);
     if (result!=SQLITE_OK) {
         fprintf(stderr,"Failed to set up topics table\n");
         std::exit(1);
@@ -127,7 +127,7 @@ bool SubscriberOnSql::open(const ConstString& filename, bool fresh) {
 
     if (count==2) {
         const char *add_structure = "ALTER TABLE topics ADD COLUMN structure";
-        result = sqlite3_exec(db, add_structure, YARP_NULLPTR, YARP_NULLPTR, YARP_NULLPTR);
+        result = sqlite3_exec(db, add_structure, nullptr, nullptr, nullptr);
         if (result!=SQLITE_OK) {
             sqlite3_close(db);
             fprintf(stderr,"Failed to set up topics table\n");
@@ -140,7 +140,7 @@ bool SubscriberOnSql::open(const ConstString& filename, bool fresh) {
     name TEXT UNIQUE,\n\
     stamp DATETIME);";
 
-    result = sqlite3_exec(db, create_live_table, YARP_NULLPTR, YARP_NULLPTR, YARP_NULLPTR);
+    result = sqlite3_exec(db, create_live_table, nullptr, nullptr, nullptr);
     if (result!=SQLITE_OK) {
         sqlite3_close(db);
         fprintf(stderr,"Failed to set up live table\n");
@@ -151,7 +151,7 @@ bool SubscriberOnSql::open(const ConstString& filename, bool fresh) {
     name TEXT PRIMARY KEY,\n\
     yarp TEXT);";
 
-    result = sqlite3_exec(db, create_struct_table, YARP_NULLPTR, YARP_NULLPTR, YARP_NULLPTR);
+    result = sqlite3_exec(db, create_struct_table, nullptr, nullptr, nullptr);
     if (result!=SQLITE_OK) {
         sqlite3_close(db);
         fprintf(stderr,"Failed to set up structures table\n");
@@ -164,10 +164,10 @@ bool SubscriberOnSql::open(const ConstString& filename, bool fresh) {
 
 
 bool SubscriberOnSql::close() {
-    if (implementation != YARP_NULLPTR) {
+    if (implementation != nullptr) {
         sqlite3 *db = (sqlite3 *)implementation;
         sqlite3_close(db);
-        implementation = YARP_NULLPTR;
+        implementation = nullptr;
     }
     return true;
 }
@@ -185,9 +185,9 @@ bool SubscriberOnSql::addSubscription(const ConstString& src,
     if (pdest.getCarrier()=="topic") {
         setTopic(pdest.getPortName(),"",true);
     }
-    char *msg = YARP_NULLPTR;
+    char *msg = nullptr;
     const char *zmode = mode.c_str();
-    if (mode == "") zmode = YARP_NULLPTR;
+    if (mode == "") zmode = nullptr;
     char *query = sqlite3_mprintf("INSERT INTO subscriptions (src,dest,srcFull,destFull,mode) VALUES(%Q,%Q,%Q,%Q,%Q)",
                                   psrc.getPortName().c_str(),
                                   pdest.getPortName().c_str(),
@@ -198,10 +198,10 @@ bool SubscriberOnSql::addSubscription(const ConstString& src,
         printf("Query: %s\n", query);
     }
     bool ok = true;
-    int result = sqlite3_exec(SQLDB(implementation), query, YARP_NULLPTR, YARP_NULLPTR, &msg);
+    int result = sqlite3_exec(SQLDB(implementation), query, nullptr, nullptr, &msg);
     if (result!=SQLITE_OK) {
         ok = false;
-        if (msg != YARP_NULLPTR) {
+        if (msg != nullptr) {
             fprintf(stderr,"Error: %s\n", msg);
             sqlite3_free(msg);
         }
@@ -238,7 +238,7 @@ bool SubscriberOnSql::removeSubscription(const ConstString& src,
     if (verbose) {
         printf("Query: %s\n", query);
     }
-    int result = sqlite3_exec(SQLDB(implementation), query, YARP_NULLPTR, YARP_NULLPTR, YARP_NULLPTR);
+    int result = sqlite3_exec(SQLDB(implementation), query, nullptr, nullptr, nullptr);
     bool ok = true;
     if (result!=SQLITE_OK) {
         printf("Error in query\n");
@@ -258,7 +258,7 @@ bool SubscriberOnSql::welcome(const ConstString& port, int activity) {
         NestedContact nc(port);
         if (nc.getNestedName().size()>0) {
             NameStore *store = getStore();
-            if (store != YARP_NULLPTR) {
+            if (store != nullptr) {
                 Contact node = store->query(nc.getNodeName());
                 Contact me = store->query(port);
                 if (node.isValid() && me.isValid()) {
@@ -272,7 +272,7 @@ bool SubscriberOnSql::welcome(const ConstString& port, int activity) {
         }
     }
 
-    char *msg = YARP_NULLPTR;
+    char *msg = nullptr;
     char *query;
     if (activity>0) {
         query = sqlite3_mprintf("INSERT OR IGNORE INTO live (name,stamp) VALUES(%Q,DATETIME('now'))",
@@ -292,10 +292,10 @@ bool SubscriberOnSql::welcome(const ConstString& port, int activity) {
         printf("Query: %s\n", query);
     }
     bool ok = true;
-    int result = sqlite3_exec(SQLDB(implementation), query, YARP_NULLPTR, YARP_NULLPTR, &msg);
+    int result = sqlite3_exec(SQLDB(implementation), query, nullptr, nullptr, &msg);
     if (result!=SQLITE_OK) {
         ok = false;
-        if (msg != YARP_NULLPTR) {
+        if (msg != nullptr) {
             fprintf(stderr,"Error: %s\n", msg);
             sqlite3_free(msg);
         }
@@ -319,18 +319,18 @@ bool SubscriberOnSql::hookup(const ConstString& port) {
         }
     }
     mutex.wait();
-    sqlite3_stmt *statement = YARP_NULLPTR;
-    char *query = YARP_NULLPTR;
+    sqlite3_stmt *statement = nullptr;
+    char *query = nullptr;
     //query = sqlite3_mprintf("SELECT * FROM subscriptions WHERE src = %Q OR dest= %Q",port, port);
     query = sqlite3_mprintf("SELECT src,dest,srcFull,destFull FROM subscriptions WHERE (src = %Q OR dest= %Q) AND EXISTS (SELECT NULL FROM live WHERE name=src) AND EXISTS (SELECT NULL FROM live WHERE name=dest) UNION SELECT s1.src, s2.dest, s1.srcFull, s2.destFull FROM subscriptions s1, subscriptions s2, topics t WHERE (s1.dest = t.topic AND s2.src = t.topic) AND (s1.src = %Q OR s2.dest = %Q) AND EXISTS (SELECT NULL FROM live WHERE name=s1.src) AND EXISTS (SELECT NULL FROM live WHERE name=s2.dest)",port.c_str(), port.c_str(), port.c_str(), port.c_str());
     //
     if (verbose) {
         printf("Query: %s\n", query);
     }
-    int result = sqlite3_prepare_v2(SQLDB(implementation), query, -1, &statement, YARP_NULLPTR);
+    int result = sqlite3_prepare_v2(SQLDB(implementation), query, -1, &statement, nullptr);
     if (result!=SQLITE_OK) {
         const char *msg = sqlite3_errmsg(SQLDB(implementation));
-        if (msg != YARP_NULLPTR) {
+        if (msg != nullptr) {
             fprintf(stderr,"Error: %s\n", msg);
         }
     }
@@ -358,17 +358,17 @@ bool SubscriberOnSql::breakdown(const ConstString& port) {
         }
     }
     mutex.wait();
-    sqlite3_stmt *statement = YARP_NULLPTR;
-    char *query = YARP_NULLPTR;
+    sqlite3_stmt *statement = nullptr;
+    char *query = nullptr;
     // query = sqlite3_mprintf("SELECT src,dest,srcFull,destFull,mode FROM subscriptions WHERE ((src = %Q AND EXISTS (SELECT NULL FROM live WHERE name=dest)) OR (dest = %Q AND EXISTS (SELECT NULL FROM live WHERE name=src))) UNION SELECT s1.src, s2.dest, s1.srcFull, s2.destFull, NULL FROM subscriptions s1, subscriptions s2, topics t WHERE (s1.dest = t.topic AND s2.src = t.topic AND ((s1.src = %Q AND EXISTS (SELECT NULL FROM live WHERE name=s2.dest)) OR (s2.dest = %Q AND EXISTS (SELECT NULL FROM live WHERE name=s1.src))))",port, port, port, port);
     query = sqlite3_mprintf("SELECT src,dest,srcFull,destFull,mode FROM subscriptions WHERE ((src = %Q AND (mode IS NOT NULL OR EXISTS (SELECT NULL FROM live WHERE name=dest))) OR (dest = %Q AND (mode IS NOT NULL OR EXISTS (SELECT NULL FROM live WHERE name=src)))) UNION SELECT s1.src, s2.dest, s1.srcFull, s2.destFull, NULL FROM subscriptions s1, subscriptions s2, topics t WHERE (s1.dest = t.topic AND s2.src = t.topic AND ((s1.src = %Q AND EXISTS (SELECT NULL FROM live WHERE name=s2.dest)) OR (s2.dest = %Q AND EXISTS (SELECT NULL FROM live WHERE name=s1.src))))",port.c_str(), port.c_str(), port.c_str(), port.c_str());
     if (verbose) {
         printf("Query: %s\n", query);
     }
-    int result = sqlite3_prepare_v2(SQLDB(implementation), query, -1, &statement, YARP_NULLPTR);
+    int result = sqlite3_prepare_v2(SQLDB(implementation), query, -1, &statement, nullptr);
     if (result!=SQLITE_OK) {
         const char *msg = sqlite3_errmsg(SQLDB(implementation));
-        if (msg != YARP_NULLPTR) {
+        if (msg != nullptr) {
             fprintf(stderr,"Error: %s\n", msg);
         }
     }
@@ -406,7 +406,7 @@ bool SubscriberOnSql::checkSubscription(const ConstString& src,const ConstString
                src.c_str(), dest.c_str(), srcFull.c_str(), destFull.c_str());
     }
     NameStore *store = getStore();
-    if (store != YARP_NULLPTR) {
+    if (store != nullptr) {
         Contact csrc = store->query(src);
         Contact cdest = store->query(dest);
         if (csrc.isValid()&&cdest.isValid()) {
@@ -454,7 +454,7 @@ bool SubscriberOnSql::breakSubscription(const ConstString& dropper,
                src.c_str(), dest.c_str(), srcFull.c_str(), destFull.c_str());
     }
     NameStore *store = getStore();
-    if (store != YARP_NULLPTR) {
+    if (store != nullptr) {
         bool srcDrop = ConstString(dropper) == src;
         Contact contact;
         if (srcDrop) {
@@ -488,8 +488,8 @@ bool SubscriberOnSql::breakSubscription(const ConstString& dropper,
 bool SubscriberOnSql::listSubscriptions(const ConstString& port,
                                         yarp::os::Bottle& reply) {
     mutex.wait();
-    sqlite3_stmt *statement = YARP_NULLPTR;
-    char *query = YARP_NULLPTR;
+    sqlite3_stmt *statement = nullptr;
+    char *query = nullptr;
     if (ConstString(port)!="") {
         query = sqlite3_mprintf("SELECT s.srcFull, s.DestFull, EXISTS(SELECT topic FROM topics WHERE topic = s.src), EXISTS(SELECT topic FROM topics WHERE topic = s.dest), s.mode FROM subscriptions s WHERE s.src = %Q OR s.dest= %Q ORDER BY s.src, s.dest",port.c_str(),port.c_str());
     } else {
@@ -498,10 +498,10 @@ bool SubscriberOnSql::listSubscriptions(const ConstString& port,
     if (verbose) {
         printf("Query: %s\n", query);
     }
-    int result = sqlite3_prepare_v2(SQLDB(implementation), query, -1, &statement, YARP_NULLPTR);
+    int result = sqlite3_prepare_v2(SQLDB(implementation), query, -1, &statement, nullptr);
    if (result!=SQLITE_OK) {
         const char *msg = sqlite3_errmsg(SQLDB(implementation));
-        if (msg != YARP_NULLPTR) {
+        if (msg != nullptr) {
             fprintf(stderr,"Error: %s\n", msg);
         }
     }
@@ -522,7 +522,7 @@ bool SubscriberOnSql::listSubscriptions(const ConstString& port,
         bdest.addString(dest);
         b.addList() = bsrc;
         b.addList() = bdest;
-        if (mode != YARP_NULLPTR) {
+        if (mode != nullptr) {
             if (mode[0]!='\0') {
                 Bottle bmode;
                 bmode.addString("mode");
@@ -555,7 +555,7 @@ bool SubscriberOnSql::setTopic(const ConstString& port, const ConstString& struc
         if (verbose) {
             printf("Query: %s\n", query);
         }
-        int result = sqlite3_exec(SQLDB(implementation), query, YARP_NULLPTR, YARP_NULLPTR, YARP_NULLPTR);
+        int result = sqlite3_exec(SQLDB(implementation), query, nullptr, nullptr, nullptr);
         bool ok = true;
         if (result!=SQLITE_OK) {
             printf("Error in query\n");
@@ -570,14 +570,14 @@ bool SubscriberOnSql::setTopic(const ConstString& port, const ConstString& struc
     bool have_topic = false;
     if (structure=="") {
         mutex.wait();
-        sqlite3_stmt *statement = YARP_NULLPTR;
-        char *query = YARP_NULLPTR;
+        sqlite3_stmt *statement = nullptr;
+        char *query = nullptr;
         query = sqlite3_mprintf("SELECT topic FROM topics WHERE topic = %Q",
                                 port.c_str());
         if (verbose) {
             printf("Query: %s\n", query);
         }
-        int result = sqlite3_prepare_v2(SQLDB(implementation), query, -1, &statement, YARP_NULLPTR);
+        int result = sqlite3_prepare_v2(SQLDB(implementation), query, -1, &statement, nullptr);
         if (result!=SQLITE_OK) {
             printf("Error in query\n");
         }
@@ -591,19 +591,19 @@ bool SubscriberOnSql::setTopic(const ConstString& port, const ConstString& struc
 
     if (structure!="" || !have_topic) {
         mutex.wait();
-        char *msg = YARP_NULLPTR;
+        char *msg = nullptr;
         const char *pstructure = structure.c_str();
-        if (structure=="") pstructure = YARP_NULLPTR;
+        if (structure=="") pstructure = nullptr;
         char *query = sqlite3_mprintf("INSERT INTO topics (topic,structure) VALUES(%Q,%Q)",
                                       port.c_str(),pstructure);
         if (verbose) {
             printf("Query: %s\n", query);
         }
         bool ok = true;
-        int result = sqlite3_exec(SQLDB(implementation), query, YARP_NULLPTR, YARP_NULLPTR, &msg);
+        int result = sqlite3_exec(SQLDB(implementation), query, nullptr, nullptr, &msg);
         if (result!=SQLITE_OK) {
             ok = false;
-            if (msg != YARP_NULLPTR) {
+            if (msg != nullptr) {
                 fprintf(stderr,"Error: %s\n", msg);
                 sqlite3_free(msg);
             }
@@ -617,15 +617,15 @@ bool SubscriberOnSql::setTopic(const ConstString& port, const ConstString& struc
 
     // go ahead and connect anything needed
     mutex.wait();
-    sqlite3_stmt *statement = YARP_NULLPTR;
+    sqlite3_stmt *statement = nullptr;
     char *query = sqlite3_mprintf("SELECT s1.src, s2.dest, s1.srcFull, s2.destFull FROM subscriptions s1, subscriptions s2, topics t WHERE (t.topic = %Q AND s1.dest = t.topic AND s2.src = t.topic)", port.c_str());
     if (verbose) {
         printf("Query: %s\n", query);
     }
-    int result = sqlite3_prepare_v2(SQLDB(implementation), query, -1, &statement, YARP_NULLPTR);
+    int result = sqlite3_prepare_v2(SQLDB(implementation), query, -1, &statement, nullptr);
     if (result!=SQLITE_OK) {
         const char *msg = sqlite3_errmsg(SQLDB(implementation));
-        if (msg != YARP_NULLPTR) {
+        if (msg != nullptr) {
             fprintf(stderr,"Error: %s\n", msg);
         }
     }
@@ -659,13 +659,13 @@ bool SubscriberOnSql::setTopic(const ConstString& port, const ConstString& struc
 
 bool SubscriberOnSql::listTopics(yarp::os::Bottle& topics) {
     mutex.wait();
-    sqlite3_stmt *statement = YARP_NULLPTR;
-    char *query = YARP_NULLPTR;
+    sqlite3_stmt *statement = nullptr;
+    char *query = nullptr;
     query = sqlite3_mprintf("SELECT topic FROM topics");
     if (verbose) {
         printf("Query: %s\n", query);
     }
-    int result = sqlite3_prepare_v2(SQLDB(implementation), query, -1, &statement, YARP_NULLPTR);
+    int result = sqlite3_prepare_v2(SQLDB(implementation), query, -1, &statement, nullptr);
     if (result!=SQLITE_OK) {
         printf("Error in query\n");
     }
@@ -685,19 +685,19 @@ bool SubscriberOnSql::setType(const ConstString& family,
                               const ConstString& structure,
                               const ConstString& value) {
     mutex.wait();
-    char *msg = YARP_NULLPTR;
+    char *msg = nullptr;
     char *query = sqlite3_mprintf("INSERT OR REPLACE INTO structures (name,%Q) VALUES(%Q,%Q)",
                                   family.c_str(),
-                                  (structure=="") ? YARP_NULLPTR : structure.c_str(),
+                                  (structure=="") ? nullptr : structure.c_str(),
                                   value.c_str());
     if (verbose) {
         printf("Query: %s\n", query);
     }
     bool ok = true;
-    int result = sqlite3_exec(SQLDB(implementation), query, YARP_NULLPTR, YARP_NULLPTR, &msg);
+    int result = sqlite3_exec(SQLDB(implementation), query, nullptr, nullptr, &msg);
     if (result!=SQLITE_OK) {
         ok = false;
-        if (msg != YARP_NULLPTR) {
+        if (msg != nullptr) {
             fprintf(stderr,"Error: %s\n", msg);
             sqlite3_free(msg);
         }
@@ -710,14 +710,14 @@ bool SubscriberOnSql::setType(const ConstString& family,
 ConstString SubscriberOnSql::getType(const ConstString& family,
                                      const ConstString& structure) {
     mutex.wait();
-    sqlite3_stmt *statement = YARP_NULLPTR;
-    char *query = YARP_NULLPTR;
+    sqlite3_stmt *statement = nullptr;
+    char *query = nullptr;
     query = sqlite3_mprintf("SELECT %s FROM structures WHERE name = %Q",
                             family.c_str(), structure.c_str());
     if (verbose) {
         printf("Query: %s\n", query);
     }
-    int result = sqlite3_prepare_v2(SQLDB(implementation), query, -1, &statement, YARP_NULLPTR);
+    int result = sqlite3_prepare_v2(SQLDB(implementation), query, -1, &statement, nullptr);
     ConstString sresult;
     if (result!=SQLITE_OK) {
         printf("Error in query\n");

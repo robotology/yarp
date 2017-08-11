@@ -22,9 +22,9 @@ Node* Graph::addNode(Node* _node)
 {
     //__CHECK_NULLPTR(_node);
     if(!_node)
-        return NULL;
+        return nullptr;
     if(hasNode(_node))
-        return NULL;
+        return nullptr;
 
     Node* node = _node->clone();
     nodes[node->getLabel()] = node;
@@ -81,7 +81,7 @@ Node* Graph::getNode( const char* szLabel)
     NodePIterator itr = nodes.find(szLabel);
     if(itr != nodes.end())
         return (*itr).second;
-    return NULL;
+    return nullptr;
 }
 
 bool Graph::addLink(Node* first, Node* second,

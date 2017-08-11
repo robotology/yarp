@@ -17,9 +17,9 @@ using namespace yarp::dev;
 ImplementMotor::ImplementMotor(IMotorRaw *y)
 {
     imotor=y;
-    helper = 0;
-    temp1=0;
-    temp2=0;
+    helper = nullptr;
+    temp1=nullptr;
+    temp2=nullptr;
 }
 
 ImplementMotor::~ImplementMotor()
@@ -29,15 +29,15 @@ ImplementMotor::~ImplementMotor()
 
 bool ImplementMotor:: initialize (int size, const int *amap)
 {
-    if (helper!=0)
+    if (helper!=nullptr)
         return false;
 
-    helper=(void *)(new ControlBoardHelper(size, amap, 0, 0, 0));
-    yAssert (helper != 0);
+    helper=(void *)(new ControlBoardHelper(size, amap, nullptr, 0, 0));
+    yAssert (helper != nullptr);
     temp1=new double [size];
-    yAssert (temp1 != 0);
+    yAssert (temp1 != nullptr);
     temp2=new double [size];
-    yAssert (temp2 != 0);
+    yAssert (temp2 != nullptr);
     return true;
 }
 
@@ -47,10 +47,10 @@ bool ImplementMotor:: initialize (int size, const int *amap)
 */
 bool ImplementMotor::uninitialize ()
 {
-    if (helper!=0)
+    if (helper!=nullptr)
     {
         delete castToMapper(helper);
-        helper=0;
+        helper=nullptr;
     }
 
     checkAndDestroy(temp1);

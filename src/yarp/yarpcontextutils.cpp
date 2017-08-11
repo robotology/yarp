@@ -92,7 +92,7 @@ bool fileCopy(yarp::os::ConstString srcFileName, yarp::os::ConstString destFileN
     char buf[BUFSIZ];
     size_t size;
     FILE* source = fopen(srcFileName.c_str(), "rb");
-    if (source == NULL)
+    if (source == nullptr)
     {
         if (verbose)
             printf("Could not open source file %s\n", srcFileName.c_str());
@@ -113,7 +113,7 @@ bool fileCopy(yarp::os::ConstString srcFileName, yarp::os::ConstString destFileN
         }
     }
     FILE* dest = fopen(destFileName.c_str(), "wb");
-    if (dest == NULL)
+    if (dest == nullptr)
     {
         if (verbose)
             printf("Could not open target file %s\n", destFileName.c_str());
@@ -154,7 +154,7 @@ int recursiveCopy(ConstString srcDirName, ConstString destDirName, bool force, b
     else if ((statbuf.st_mode & S_IFMT) == S_IFDIR)
     {
         yarp::os::impl::dirent **namelist;
-        int n = yarp::os::impl::scandir(srcDirName.c_str(), &namelist, NULL, yarp::os::impl::alphasort);
+        int n = yarp::os::impl::scandir(srcDirName.c_str(), &namelist, nullptr, yarp::os::impl::alphasort);
         if (n<0)
         {
             if (verbose)
@@ -222,7 +222,7 @@ int recursiveRemove(ConstString dirName, bool verbose)
     else if ((statbuf.st_mode & S_IFMT) == S_IFDIR)
     {
         yarp::os::impl::dirent **namelist;
-        int n = yarp::os::impl::scandir(dirName.c_str(), &namelist, NULL, yarp::os::impl::alphasort);
+        int n = yarp::os::impl::scandir(dirName.c_str(), &namelist, nullptr, yarp::os::impl::alphasort);
         if (n<0)
         {
             if (verbose)
@@ -252,7 +252,7 @@ std::vector<yarp::os::ConstString> listContentDirs(const ConstString &curPath)
 {
     std::vector<yarp::os::ConstString> dirsList;
     yarp::os::impl::dirent **namelist;
-    int n = yarp::os::impl::scandir(curPath.c_str(), &namelist, NULL, yarp::os::impl::alphasort);
+    int n = yarp::os::impl::scandir(curPath.c_str(), &namelist, nullptr, yarp::os::impl::alphasort);
     if (n<0) {
         return dirsList;
     }
@@ -279,7 +279,7 @@ std::vector<yarp::os::ConstString> listContentFiles(const ConstString &curPath)
 {
     std::vector<yarp::os::ConstString> fileList;
     yarp::os::impl::dirent **namelist;
-    int n = yarp::os::impl::scandir(curPath.c_str(), &namelist, NULL, yarp::os::impl::alphasort);
+    int n = yarp::os::impl::scandir(curPath.c_str(), &namelist, nullptr, yarp::os::impl::alphasort);
     if (n<0) {
         return fileList;
     }
@@ -368,20 +368,20 @@ void printInstalledFolders(yarp::os::ResourceFinder &rf, folderType ftype)
 void prepareHomeFolder(yarp::os::ResourceFinder &rf, folderType ftype)
 {
     yarp::os::impl::DIR* dir = yarp::os::impl::opendir((rf.getDataHome()).c_str());
-    if (dir != NULL) {
+    if (dir != nullptr) {
         yarp::os::impl::closedir(dir);
     } else {
         yarp::os::mkdir((rf.getDataHome()).c_str());
     }
 
     dir = yarp::os::impl::opendir((rf.getDataHome() + PATH_SEPARATOR + getFolderStringName(ftype)).c_str());
-    if (dir != NULL) {
+    if (dir != nullptr) {
         yarp::os::impl::closedir(dir);
     } else {
         yarp::os::mkdir((rf.getDataHome() + PATH_SEPARATOR + getFolderStringName(ftype)).c_str());
     }
     dir = yarp::os::impl::opendir((rf.getDataHome() + PATH_SEPARATOR + getFolderStringNameHidden(ftype)).c_str());
-    if (dir != NULL) {
+    if (dir != nullptr) {
         yarp::os::impl::closedir(dir);
     } else {
         ConstString hiddenPath = (rf.getDataHome() + PATH_SEPARATOR + getFolderStringNameHidden(ftype));
@@ -425,7 +425,7 @@ bool recursiveFileList(const char* basePath, const char* suffix, std::set<std::s
     strPath += mySuffix;
 
     yarp::os::impl::dirent **namelist;
-    int n = yarp::os::impl::scandir(strPath.c_str(), &namelist, NULL, yarp::os::impl::alphasort);
+    int n = yarp::os::impl::scandir(strPath.c_str(), &namelist, nullptr, yarp::os::impl::alphasort);
     if (n<0)
     {
         std::cerr << "Could not read from  directory " << strPath << std::endl;
@@ -681,7 +681,7 @@ int importAll(folderType fType, bool verbose)
         ConstString curPath = contextPaths.get(curPathId).toString();
 
         yarp::os::impl::dirent **namelist;
-        int n = yarp::os::impl::scandir(curPath.c_str(), &namelist, NULL, yarp::os::impl::alphasort);
+        int n = yarp::os::impl::scandir(curPath.c_str(), &namelist, nullptr, yarp::os::impl::alphasort);
         if (n<0) {
             continue;
         }
@@ -852,7 +852,7 @@ int diffList(folderType fType, bool verbose)
         std::vector<yarp::os::ConstString> subDirs = listContentDirs(installedPath);
         for (std::vector<yarp::os::ConstString>::iterator subDirIt = subDirs.begin(); subDirIt != subDirs.end(); ++subDirIt)
         {
-            ostream tmp(0);
+            ostream tmp(nullptr);
             opts.searchLocations = ResourceFinderOptions::User;
             rf.setQuiet();
             ConstString userPath = rf.findPath((getFolderStringName(fType) + PATH_SEPARATOR + (*subDirIt)).c_str(), opts);

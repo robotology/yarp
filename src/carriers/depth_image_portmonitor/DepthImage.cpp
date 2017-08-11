@@ -20,8 +20,8 @@ bool DepthImageConverter::create(const yarp::os::Property& options)
 {
     min = 0.2;
     max = 10.0;
-    inMatrix = NULL;
-    outMatrix = NULL;
+    inMatrix = nullptr;
+    outMatrix = nullptr;
     outImg.setPixelCode(VOCAB_PIXEL_MONO);
     return true;
 }
@@ -43,7 +43,7 @@ bool DepthImageConverter::getparam(yarp::os::Property& params)
 bool DepthImageConverter::accept(yarp::os::Things& thing)
 {
     Image* img = thing.cast_as< Image >();
-    if(img == NULL) {
+    if(img == nullptr) {
         printf("DepthImageConverter: expected type FlexImage but got wrong data type!\n");
         return false;
     }

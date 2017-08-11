@@ -58,7 +58,7 @@ public:
         return ret;
     }
 
-    void *getPtr() override { return NULL; }
+    void *getPtr() override { return nullptr; }
 };
 
 
@@ -480,11 +480,11 @@ private:
     DumpThread *thread;
 
 public:
-    DumpReporter() : thread(NULL) { }
+    DumpReporter() : thread(nullptr) { }
     void setThread(DumpThread *thread) { this->thread=thread; }
     void report(const PortInfo &info) override
     {
-        if ((thread!=NULL) && info.incoming)
+        if ((thread!=nullptr) && info.incoming)
             thread->writeSource(info.sourceName.c_str(),info.created);
     }
 };

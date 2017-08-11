@@ -39,7 +39,7 @@ using namespace std;
 WorkerClass::WorkerClass(int part, int numThreads)
 {
     this->part = part;
-    utilities = NULL;
+    utilities = nullptr;
     this->numThreads = numThreads;
     initTime = 0.0;
     frameRate = 0.0;
@@ -176,7 +176,7 @@ int WorkerClass::sendImages(int part, int frame)
     tmpPath = tmpPath + tmpName;
 
 #ifdef HAS_OPENCV
-    IplImage* img = NULL;
+    IplImage* img = nullptr;
 #else
     Image* img;
 
@@ -207,8 +207,8 @@ int WorkerClass::sendImages(int part, int frame)
     } else {
         Image &temp = utilities->partDetails[part].imagePort.prepare();
 
-        static IplImage *test = NULL;
-        if (test !=NULL)
+        static IplImage *test = nullptr;
+        if (test !=nullptr)
             cvReleaseImage(&test);
 
         test = cvCloneImage(img);

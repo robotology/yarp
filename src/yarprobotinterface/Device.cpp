@@ -72,7 +72,7 @@ public:
             }
 
             delete driver;
-            driver = NULL;
+            driver = nullptr;
         }
     }
 

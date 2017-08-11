@@ -63,11 +63,11 @@ string addPart(string t, string name, int code, Value *val, string orig, string 
 string showFormat(Bottle& b, string root) {
     string r;
     int code = b.getSpecialization();
-    r += addPart("int32",root + "_tag",BOTTLE_TAG_LIST+code,NULL,"BOTTLE_TAG_LIST+code");
+    r += addPart("int32",root + "_tag",BOTTLE_TAG_LIST+code,nullptr,"BOTTLE_TAG_LIST+code");
     r += "\n";
     bool specialized = (code>0);
     if (code==BOTTLE_TAG_INT) {
-        r += addPart("int32[]",root,b.size(),NULL,"length","length");
+        r += addPart("int32[]",root,b.size(),nullptr,"length","length");
         r += "\n";
         if (b.size()<50) {
             r += " # integers seen: ";
@@ -81,7 +81,7 @@ string showFormat(Bottle& b, string root) {
         return r;
     }
     if (code==BOTTLE_TAG_DOUBLE) {
-        r += addPart("float64[]",root,b.size(),NULL,"length","length");
+        r += addPart("float64[]",root,b.size(),nullptr,"length","length");
         r += "\n";
         if (b.size()<50) {
             r += " # floats seen: ";
@@ -94,7 +94,7 @@ string showFormat(Bottle& b, string root) {
         }
         return r;
     }
-    r += addPart("int32",root + "_len",b.size(),NULL,"elements in list");
+    r += addPart("int32",root + "_len",b.size(),nullptr,"elements in list");
     r += "\n";
     for (int i=0; i<b.size(); i++) {
         Value& v = b.get(i);
@@ -104,15 +104,15 @@ string showFormat(Bottle& b, string root) {
         sprintf(val_name,"%s%d", root.c_str(), i);
         if (v.isVocab()) {
             if (!specialized) {
-                r += addPart("int32",tag_name,BOTTLE_TAG_VOCAB,NULL,
+                r += addPart("int32",tag_name,BOTTLE_TAG_VOCAB,nullptr,
                              "BOTTLE_TAG_VOCAB");
                 r += "\n";
             }
-            r += addPart("int32",val_name,v.asInt(),NULL,v.toString().c_str(),"vocab");
+            r += addPart("int32",val_name,v.asInt(),nullptr,v.toString().c_str(),"vocab");
             r += "\n";
         } else if (v.isInt()) {
             if (!specialized) {
-                r += addPart("int32",tag_name,BOTTLE_TAG_INT,NULL,
+                r += addPart("int32",tag_name,BOTTLE_TAG_INT,nullptr,
                              "BOTTLE_TAG_INT");
                 r += "\n";
             }
@@ -120,7 +120,7 @@ string showFormat(Bottle& b, string root) {
             r += "\n";
         } else if (v.isDouble()) {
             if (!specialized) {
-                r += addPart("int32",tag_name,BOTTLE_TAG_DOUBLE,NULL,
+                r += addPart("int32",tag_name,BOTTLE_TAG_DOUBLE,nullptr,
                              "BOTTLE_TAG_DOUBLE");
                 r += "\n";
             }
@@ -130,18 +130,18 @@ string showFormat(Bottle& b, string root) {
             r += showFormat(*v.asList(), val_name);
         } else if (v.isBlob()) {
             if (!specialized) {
-                r += addPart("int32",tag_name,BOTTLE_TAG_BLOB,NULL,
+                r += addPart("int32",tag_name,BOTTLE_TAG_BLOB,nullptr,
                              "BOTTLE_TAG_BLOB");
                 r += "\n";
             }
-            r += addPart("int8[]",val_name,v.asBlobLength(),NULL,"length","length");
+            r += addPart("int8[]",val_name,v.asBlobLength(),nullptr,"length","length");
         } else if (v.isString()) {
             if (!specialized) {
-                r += addPart("int32",tag_name,BOTTLE_TAG_STRING,NULL,
+                r += addPart("int32",tag_name,BOTTLE_TAG_STRING,nullptr,
                              "BOTTLE_TAG_STRING");
                 r += "\n";
             }
-            r += addPart("string",val_name,0,NULL,v.asString().c_str(),"string");
+            r += addPart("string",val_name,0,nullptr,v.asString().c_str(),"string");
             r += "\n";
         } else {
             r += "IGNORED ";
@@ -154,14 +154,14 @@ string showFormat(Bottle& b, string root) {
 
 void usage(const char *action,
            const char *msg,
-           const char *example = NULL,
-           const char *explanation = NULL) {
+           const char *example = nullptr,
+           const char *explanation = nullptr) {
     printf("\n  yarpros %s\n", action);
     printf("     %s\n", msg);
-    if (example!=NULL) {
+    if (example!=nullptr) {
         printf("       $ yarpros %s\n", example);
     }
-    if (explanation!=NULL) {
+    if (explanation!=nullptr) {
         printf("       # %s\n", explanation);
     }
 }
@@ -171,7 +171,7 @@ void show_usage() {
     usage("sniff out <port>","suggest .msg for output from <port> ","sniff out /grabber");
     usage("sniff in <port>","suggest .msg for input to <port> ","sniff in /grabber");
     usage("type <name>","(MOVED to yarpidl_rosmsg) generate YARP header files from <name>.msg","type PointCloud2");
-    usage("help","show this help",NULL);
+    usage("help","show this help",nullptr);
 
     printf("\nYARP clients can use the ROS name server. If you'd prefer to stick\n");
     printf("with the native YARP name server, the following commands are useful:\n");
@@ -185,7 +185,7 @@ void show_usage() {
     usage("node <name>","register a ROS node name with YARP","node /talker");
 
     printf("\nHere are some general options:\n");
-    usage("--verbose","give verbose output for debugging",NULL);
+    usage("--verbose","give verbose output for debugging",nullptr);
 }
 
 bool announce_port(const char *name,

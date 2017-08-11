@@ -39,9 +39,9 @@ using namespace yarp::graph;
 MainWindow::MainWindow(QWidget *parent) :
         QMainWindow(parent),
         ui(new Ui::MainWindow),
-        scene(NULL),
-        progressDlg(NULL),
-        currentGraph(NULL)
+        scene(nullptr),
+        progressDlg(nullptr),
+        currentGraph(nullptr)
 {
     ui->setupUi(this);
     stringModel.setStringList(messages);
@@ -163,7 +163,7 @@ void MainWindow::drawGraph(Graph &graph)
     const pvertex_set& vertices = graph.vertices();
     int countChild =0;
     for(itr = vertices.begin(); itr!=vertices.end(); itr++) {
-        dynamic_cast<YarpvizVertex*>(*itr)->setGraphicItem(NULL);
+        dynamic_cast<YarpvizVertex*>(*itr)->setGraphicItem(nullptr);
         const Property& prop = (*itr)->property;
         QGVSubGraph *sgraph;
         if(dynamic_cast<MachineVertex*>(*itr))
@@ -172,7 +172,7 @@ void MainWindow::drawGraph(Graph &graph)
             if(layoutSubgraph) {
                 std::stringstream key;
                 key<<hostname;
-                if(sceneSubGraphMap[key.str()] == NULL)
+                if(sceneSubGraphMap[key.str()] == nullptr)
                 {
                     sgraph = scene->addSubGraph(prop.toString().c_str());
                     sceneSubGraphMap[key.str()] = sgraph;
@@ -210,7 +210,7 @@ void MainWindow::drawGraph(Graph &graph)
     // adding all process subgraphs
 
     for(itr = vertices.begin(); itr!=vertices.end(); itr++) {
-        dynamic_cast<YarpvizVertex*>(*itr)->setGraphicItem(NULL);
+        dynamic_cast<YarpvizVertex*>(*itr)->setGraphicItem(nullptr);
         const Property& prop = (*itr)->property;
         QGVSubGraph *sgraph;
         if(dynamic_cast<ProcessVertex*>(*itr) && !prop.find("hidden").asBool())
@@ -225,7 +225,7 @@ void MainWindow::drawGraph(Graph &graph)
                 std::stringstream key;
                 key<<prop.find("hostname").asString();
                 QGVSubGraph *sgraphParent = sceneSubGraphMap[key.str()];
-                if(sgraphParent == NULL || (!ui->actionDebugMode->isChecked() && name.find("yarplogger") != string::npos))
+                if(sgraphParent == nullptr || (!ui->actionDebugMode->isChecked() && name.find("yarplogger") != string::npos))
                 {
                     continue;
                 }
@@ -406,7 +406,7 @@ void MainWindow::drawGraph(Graph &graph)
 
 void MainWindow::edgeContextMenu(QGVEdge* edge) {
     const Edge* e  = (const Edge*)edge->getEdge();
-    if(e == NULL)
+    if(e == nullptr)
         return;
 
     //yInfo()<<"edge clicked!";
@@ -417,7 +417,7 @@ void MainWindow::edgeContextMenu(QGVEdge* edge) {
     menu.addAction(tr("Configure Qos..."));
     //menu.addAction(tr("Hide"));
     QAction *action = menu.exec(QCursor::pos());
-    if(action == 0)
+    if(action == nullptr)
         return;
     if(action->text().toStdString() == "Information...") {
         InformationDialog dialog;
@@ -435,7 +435,7 @@ void MainWindow::edgeContextMenu(QGVEdge* edge) {
 void MainWindow::nodeContextMenu(QGVNode *node)
 {
     YarpvizVertex* v = (YarpvizVertex*) node->getVertex();
-    yAssert(v != 0);
+    yAssert(v != nullptr);
     if(v->property.find("type").asString() == "port")
         onNodeContextMenuPort(node, v);
     else
@@ -455,7 +455,7 @@ void MainWindow::onSubGraphContextMenuProcess(QGVSubGraph *sgraph) {
     menu.addAction(tr("Information..."));
     menu.addAction(tr("Hide"));
     QAction *action = menu.exec(QCursor::pos());
-    if(action == 0)
+    if(action == nullptr)
         return;
     if(action->text().toStdString() == "Information...") {
         InformationDialog dialog;
@@ -482,7 +482,7 @@ void MainWindow::onNodeContextMenuPort(QGVNode *node, YarpvizVertex* vertex) {
     menu.addAction(tr("Information..."));
     menu.addAction(tr("Hide"));
     QAction *action = menu.exec(QCursor::pos());
-    if(action == 0)
+    if(action == nullptr)
         return;
     if(action->text().toStdString() == "Information...") {
         InformationDialog dialog;
@@ -519,7 +519,7 @@ void MainWindow::onProfileYarpNetwork() {
 
     bool ok=false;
 
-    float timeout =  inputDialog->getDouble(NULL ,"Profiling: yarp clean",
+    float timeout =  inputDialog->getDouble(nullptr ,"Profiling: yarp clean",
                                           "Do you want to run yarp clean before profiling?\n\n"
                                           "Be aware that yarp clean with a little timetout could\n"
                                           "unregister ports that are actually open.\n\n"
@@ -567,7 +567,7 @@ void MainWindow::onProfileYarpNetwork() {
     NetworkProfiler::creatNetworkGraph(portsInfo, mainGraph);
     progressDlg->close();
     delete progressDlg;
-    progressDlg = NULL;
+    progressDlg = nullptr;
 
 
     // update QoS
@@ -618,26 +618,26 @@ void MainWindow::onHighlightLoops() {
 
 void MainWindow::updateNodeWidgetItems() {
 
-    NodeWidgetItem* item= NULL;
+    NodeWidgetItem* item= nullptr;
     for (int i= moduleParentItem->childCount()-1; i>-1; i--) {
         item = (NodeWidgetItem*) moduleParentItem->child(i);
-        yAssert(item != NULL);
+        yAssert(item != nullptr);
         item->check(!item->getVertex()->property.find("hidden").asBool());
     }
     for (int i= portParentItem->childCount()-1; i>-1; i--) {
         item = (NodeWidgetItem*) portParentItem->child(i);
-        yAssert(item != NULL);
+        yAssert(item != nullptr);
         item->check(!item->getVertex()->property.find("hidden").asBool());
     }
     for (int i= machinesParentItem->childCount()-1; i>-1; i--) {
         item = (NodeWidgetItem*) machinesParentItem->child(i);
-        yAssert(item != NULL);
+        yAssert(item != nullptr);
         item->check(!item->getVertex()->property.find("hidden").asBool());
     }
 }
 
 void MainWindow::populateTreeWidget(){
-    QTreeWidgetItem* item= NULL;
+    QTreeWidgetItem* item= nullptr;
     for (int i= moduleParentItem->childCount()-1; i>-1; i--) {
         item = moduleParentItem->child(i);
         delete item;
@@ -775,7 +775,7 @@ void MainWindow::onUpdateQosStatus() {
 }
 
 void MainWindow::onProfilePortsRate() {
-    yAssert(currentGraph!=NULL);
+    yAssert(currentGraph!=nullptr);
     PortLoggerDialog dialog(currentGraph);
     dialog.setModal(false);
     dialog.exec();
@@ -790,7 +790,7 @@ void MainWindow::onConfigureConsQos() {
 void MainWindow::onExportConList() {
     QString filters("Text files (*.txt);;All files (*.*)");
     QString defaultFilter("Image file (*.txt)");
-    QString filename = QFileDialog::getSaveFileName(0, "Export connections list",
+    QString filename = QFileDialog::getSaveFileName(nullptr, "Export connections list",
                                                     QDir::homePath(),
                                                     filters, &defaultFilter);
     if(filename.size() == 0)
@@ -799,7 +799,7 @@ void MainWindow::onExportConList() {
     ofstream file;
     file.open(filename.toStdString().c_str());
     if(!file.is_open()) {
-        QMessageBox::critical(NULL, QObject::tr("Error"), QObject::tr("Cannot open the file for saving"));
+        QMessageBox::critical(nullptr, QObject::tr("Error"), QObject::tr("Cannot open the file for saving"));
         return;
     }
 
@@ -830,7 +830,7 @@ void MainWindow::onExportConList() {
 void MainWindow::onExportScene() {
     QString filters("Image files (*.png);;All files (*.*)");
     QString defaultFilter("Image file (*.png)");
-    QString filename = QFileDialog::getSaveFileName(0, "Export scene",
+    QString filename = QFileDialog::getSaveFileName(nullptr, "Export scene",
                                                     QDir::homePath(),
                                                     filters, &defaultFilter);
     if(filename.size() == 0)

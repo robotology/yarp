@@ -271,7 +271,7 @@ yarp::dev::OVRHeadset::OVRHeadset() :
         crosshairsEnabled(true),
         batteryEnabled(true),
         inputStateError(false),
-        tfPublisher(YARP_NULLPTR),
+        tfPublisher(nullptr),
         relative(false),
         enableGui(true)
 {
@@ -509,7 +509,7 @@ bool yarp::dev::OVRHeadset::open(yarp::os::Searchable& cfg)
         return false;
     }
 
-    if (!driver.view(tfPublisher) || tfPublisher == YARP_NULLPTR)
+    if (!driver.view(tfPublisher) || tfPublisher == nullptr)
     {
         yError() << "unable to dynamic cast device to IFrameTransform interface";
         return false;
