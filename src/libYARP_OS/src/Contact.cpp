@@ -94,12 +94,10 @@ Contact::Contact(const Contact& rhs) :
 {
 }
 
-#if defined(YARP_HAS_CXX11) && YARP_COMPILER_CXX_RVALUE_REFERENCES
 Contact::Contact(Contact&& rhs) :
         mPriv(new Private(std::move(*(rhs.mPriv))))
 {
 }
-#endif
 
 Contact::~Contact()
 {
@@ -114,7 +112,6 @@ Contact& Contact::operator=(const Contact& rhs)
     return *this;
 }
 
-#if defined(YARP_HAS_CXX11) && YARP_COMPILER_CXX_RVALUE_REFERENCES
 Contact& Contact::operator=(Contact&& rhs)
 {
     if (&rhs != this) {
@@ -122,7 +119,6 @@ Contact& Contact::operator=(Contact&& rhs)
     }
     return *this;
 }
-#endif
 
 Contact Contact::fromConfig(const Searchable& config)
 {

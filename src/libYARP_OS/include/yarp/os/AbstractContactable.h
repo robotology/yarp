@@ -7,15 +7,16 @@
 #ifndef YARP_OS_ABSTRACTCONTACTABLE_H
 #define YARP_OS_ABSTRACTCONTACTABLE_H
 
-#include <yarp/os/Contactable.h>
 #include <yarp/os/UnbufferedContactable.h>
 #include <yarp/os/Port.h>
 
+
+// Defined in this file:
+namespace yarp { namespace os { class AbstractContactable; }}
+
+
 namespace yarp {
-    namespace os {
-        class AbstractContactable;
-    }
-}
+namespace os {
 
 /**
  * A default implementation of an abstract port. The class hierarchy
@@ -26,7 +27,8 @@ namespace yarp {
  * interfaces, so this can be simplified a lot at that point.
  *
  */
-class YARP_OS_API yarp::os::AbstractContactable : public UnbufferedContactable {
+class YARP_OS_API AbstractContactable : public UnbufferedContactable
+{
 
 public:
 #ifndef YARP_NO_DEPRECATED // since YARP 2.3.72
@@ -34,172 +36,134 @@ public:
 #endif // YARP_NO_DEPRECATED
 
     /**
-     *
-     * get the concrete Port being used for communication
-     *
+     * Get the concrete Port being used for communication.
      */
     virtual Port& asPort() = 0;
 
     /**
-     *
-     * get the concrete Port being used for communication, constant version
-     *
+     * Get the concrete Port being used for communication, const version.
      */
     virtual const Port& asPort() const = 0;
 
-    virtual bool open(const ConstString& name) YARP_OVERRIDE {
-        return asPort().open(name);
-    }
+    // Documented in Contactable
+    virtual bool open(const ConstString& name) override;
 
-    virtual bool open(const Contact& contact, bool registerName = true) YARP_OVERRIDE {
-        return asPort().open(contact, registerName);
-    }
+    // Documented in Contactable
+    virtual bool open(const Contact& contact, bool registerName = true) override;
 
-    virtual bool addOutput(const ConstString& name) YARP_OVERRIDE {
-        return asPort().addOutput(name);
-    }
+    // Documented in Contactable
+    virtual bool addOutput(const ConstString& name) override;
 
-    virtual bool addOutput(const ConstString& name, const ConstString& carrier) YARP_OVERRIDE {
-        return asPort().addOutput(name, carrier);
-    }
+    // Documented in Contactable
+    virtual bool addOutput(const ConstString& name, const ConstString& carrier) override;
 
-    virtual bool addOutput(const Contact& contact) YARP_OVERRIDE {
-        return asPort().addOutput(contact);
-    }
+    // Documented in Contactable
+    virtual bool addOutput(const Contact& contact) override;
 
-    virtual void close() YARP_OVERRIDE {
-        asPort().close();
-    }
+    // Documented in Contactable
+    virtual void close() override;
 
-    virtual void interrupt() YARP_OVERRIDE {
-        asPort().interrupt();
-    }
+    // Documented in Contactable
+    virtual void interrupt() override;
 
-    virtual void resume() YARP_OVERRIDE {
-        asPort().resume();
-    }
+    // Documented in Contactable
+    virtual void resume() override;
 
-    virtual Contact where() const YARP_OVERRIDE {
-        return asPort().where();
-    }
+    // Documented in Contactable
+    virtual Contact where() const override;
 
-    virtual ConstString getName() const YARP_OVERRIDE {
-        return asPort().getName();
-    }
+    // Documented in Contactable
+    virtual ConstString getName() const override;
 
-    virtual bool setEnvelope(PortWriter& envelope) YARP_OVERRIDE {
-        return asPort().setEnvelope(envelope);
-    }
+    // Documented in Contactable
+    virtual bool setEnvelope(PortWriter& envelope) override;
 
-    virtual bool getEnvelope(PortReader& envelope) YARP_OVERRIDE {
-        return asPort().getEnvelope(envelope);
-    }
+    // Documented in Contactable
+    virtual bool getEnvelope(PortReader& envelope) override;
 
-    virtual int getInputCount() YARP_OVERRIDE {
-        return asPort().getInputCount();
-    }
+    // Documented in Contactable
+    virtual int getInputCount() override;
 
-    virtual int getOutputCount() YARP_OVERRIDE {
-        return asPort().getOutputCount();
-    }
+    // Documented in Contactable
+    virtual int getOutputCount() override;
 
-    virtual void getReport(PortReport& reporter) YARP_OVERRIDE {
-        return asPort().getReport(reporter);
-    }
+    // Documented in Contactable
+    virtual void getReport(PortReport& reporter) override;
 
-    virtual void setReporter(PortReport& reporter) YARP_OVERRIDE {
-        return asPort().setReporter(reporter);
-    }
+    // Documented in Contactable
+    virtual void setReporter(PortReport& reporter) override;
 
-    virtual void resetReporter() YARP_OVERRIDE {
-        return asPort().resetReporter();
-    }
+    // Documented in Contactable
+    virtual void resetReporter() override;
 
-    virtual bool isWriting() YARP_OVERRIDE {
-        return asPort().isWriting();
-    }
+    // Documented in Contactable
+    virtual bool isWriting() override;
 
-    virtual void setReader(PortReader& reader) YARP_OVERRIDE {
-        asPort().setReader(reader);
-    }
+    // Documented in Contactable
+    virtual void setReader(PortReader& reader) override;
 
-    virtual void setAdminReader(PortReader& reader) YARP_OVERRIDE {
-        asPort().setAdminReader(reader);
-    }
+    // Documented in Contactable
+    virtual void setAdminReader(PortReader& reader) override;
 
-    virtual void setInputMode(bool expectInput) YARP_OVERRIDE {
-        asPort().setInputMode(expectInput);
-    }
+    // Documented in Contactable
+    virtual void setInputMode(bool expectInput) override;
 
-    virtual void setOutputMode(bool expectOutput) YARP_OVERRIDE {
-        asPort().setOutputMode(expectOutput);
-    }
+    // Documented in Contactable
+    virtual void setOutputMode(bool expectOutput) override;
 
-    virtual void setRpcMode(bool expectRpc) YARP_OVERRIDE {
-        asPort().setRpcMode(expectRpc);
-    }
+    // Documented in Contactable
+    virtual void setRpcMode(bool expectRpc) override;
 
-    virtual Type getType() YARP_OVERRIDE {
-        return asPort().getType();
-    }
+    // Documented in Contactable
+    virtual Type getType() override;
 
-    virtual void promiseType(const Type& typ) YARP_OVERRIDE {
-        asPort().promiseType(typ);
-    }
+    // Documented in Contactable
+    virtual void promiseType(const Type& typ) override;
 
-    virtual Property *acquireProperties(bool readOnly) YARP_OVERRIDE {
-        return asPort().acquireProperties(readOnly);
-    }
+    // Documented in Contactable
+    virtual Property* acquireProperties(bool readOnly) override;
 
-    virtual void releaseProperties(Property *prop) YARP_OVERRIDE {
-        asPort().releaseProperties(prop);
-    }
+    // Documented in Contactable
+    virtual void releaseProperties(Property* prop) override;
 
+    // Documented in UnbufferedContactable
     virtual bool write(PortWriter& writer,
-                       PortWriter *callback = YARP_NULLPTR) const YARP_OVERRIDE {
-        return asPort().write(writer, callback);
-    }
+                       PortWriter* callback = nullptr) const override;
 
-    virtual bool write(PortWriter& writer, PortReader& reader,
-                       PortWriter *callback = YARP_NULLPTR) const YARP_OVERRIDE {
-        return asPort().write(writer, reader, callback);
-    }
+    // Documented in UnbufferedContactable
+    virtual bool write(PortWriter& writer,
+                       PortReader& reader,
+                       PortWriter* callback = nullptr) const override;
 
-    virtual bool read(PortReader& reader, bool willReply = false) YARP_OVERRIDE {
-        return asPort().read(reader, willReply);
-    }
+    // Documented in UnbufferedContactable
+    virtual bool read(PortReader& reader, bool willReply = false) override;
 
-    virtual bool reply(PortWriter& writer) YARP_OVERRIDE {
-        return asPort().reply(writer);
-    }
+    // Documented in UnbufferedContactable
+    virtual bool reply(PortWriter& writer) override;
 
-    virtual bool replyAndDrop(PortWriter& writer) YARP_OVERRIDE {
-        return asPort().replyAndDrop(writer);
-    }
+    // Documented in UnbufferedContactable
+    virtual bool replyAndDrop(PortWriter& writer) override;
 
-    virtual void includeNodeInName(bool flag) YARP_OVERRIDE {
-        return asPort().includeNodeInName(flag);
-    }
+    // Documented in Contactable
+    virtual void includeNodeInName(bool flag) override;
 
-    virtual bool setCallbackLock(yarp::os::Mutex *mutex = YARP_NULLPTR) YARP_OVERRIDE {
-        return asPort().setCallbackLock(mutex);
-    }
+    // Documented in Contactable
+    virtual bool setCallbackLock(yarp::os::Mutex *mutex = nullptr) override;
 
-    virtual bool removeCallbackLock() YARP_OVERRIDE {
-        return asPort().removeCallbackLock();
-    }
+    // Documented in Contactable
+    virtual bool removeCallbackLock() override;
 
-    virtual bool lockCallback() YARP_OVERRIDE {
-        return asPort().lockCallback();
-    }
+    // Documented in Contactable
+    virtual bool lockCallback() override;
 
-    virtual bool tryLockCallback() YARP_OVERRIDE {
-        return asPort().tryLockCallback();
-    }
+    // Documented in Contactable
+    virtual bool tryLockCallback() override;
 
-    virtual void unlockCallback() YARP_OVERRIDE {
-        return asPort().unlockCallback();
-    }
+    // Documented in Contactable
+    virtual void unlockCallback() override;
 };
+
+} // namespace os
+} // namespace yarp
 
 #endif // YARP_OS_ABSTRACTCONTACTABLE_H

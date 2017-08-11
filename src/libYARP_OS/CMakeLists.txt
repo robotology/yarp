@@ -9,8 +9,10 @@ set(YARP_OS_HDRS include/yarp/os/AbstractCarrier.h
                  include/yarp/os/all.h
                  include/yarp/os/api.h
                  include/yarp/os/BinPortable.h
+                 include/yarp/os/BinPortable-inl.h
                  include/yarp/os/Bottle.h
                  include/yarp/os/BufferedPort.h
+                 include/yarp/os/BufferedPort-inl.h
                  include/yarp/os/Bytes.h
                  include/yarp/os/Carrier.h
                  include/yarp/os/Carriers.h
@@ -69,6 +71,9 @@ set(YARP_OS_HDRS include/yarp/os/AbstractCarrier.h
                  include/yarp/os/Port.h
                  include/yarp/os/PortInfo.h
                  include/yarp/os/PortReaderBuffer.h
+                 include/yarp/os/PortReaderBuffer-inl.h
+                 include/yarp/os/PortReaderBufferBase.h
+                 include/yarp/os/PortReaderBufferBaseCreator.h
                  include/yarp/os/PortReaderCreator.h
                  include/yarp/os/PortReader.h
                  include/yarp/os/PortReport.h
@@ -108,6 +113,11 @@ set(YARP_OS_HDRS include/yarp/os/AbstractCarrier.h
                  include/yarp/os/Time.h
                  include/yarp/os/TwoWayStream.h
                  include/yarp/os/Type.h
+                 include/yarp/os/TypedReader.h
+                 include/yarp/os/TypedReaderCallback.h
+                 include/yarp/os/TypedReaderCallback-inl.h
+                 include/yarp/os/TypedReaderThread.h
+                 include/yarp/os/TypedReaderThread-inl.h
                  include/yarp/os/UnbufferedContactable.h
                  include/yarp/os/Value.h
                  include/yarp/os/Vocab.h
@@ -215,6 +225,7 @@ set(YARP_OS_IMPL_HMAC_HDRS include/yarp/os/impl/hmac/hmac_sha2.h
                            include/yarp/os/impl/hmac/sha2.h)
 
 set(YARP_OS_SRCS src/AbstractCarrier.cpp
+                 src/AbstractContactable.cpp
                  src/AuthHMAC.cpp
                  src/Bottle.cpp
                  src/BottleImpl.cpp
@@ -392,6 +403,10 @@ target_include_directories(YARP_OS PUBLIC $<BUILD_INTERFACE:${CMAKE_CURRENT_SOUR
 
 target_link_libraries(YARP_OS PRIVATE ${ACE_LIBRARIES}
                               PUBLIC YARP::YARP_conf)
+
+target_compile_features(YARP_OS PUBLIC cxx_nullptr
+                                       cxx_override
+                                       cxx_rvalue_references)
 
 set_property(TARGET YARP_OS PROPERTY PUBLIC_HEADER ${YARP_OS_HDRS})
 set_property(TARGET YARP_OS PROPERTY PRIVATE_HEADER ${YARP_OS_IMPL_HDRS})

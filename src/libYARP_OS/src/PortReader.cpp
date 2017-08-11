@@ -7,5 +7,11 @@
 #include <yarp/os/PortReader.h>
 
 
-yarp::os::PortReader::~PortReader() {
+yarp::os::PortReader::~PortReader()
+{
+}
+
+yarp::os::Type yarp::os::PortReader::getReadType()
+{
+    return Type::anon();
 }

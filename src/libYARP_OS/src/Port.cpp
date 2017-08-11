@@ -26,11 +26,14 @@ using namespace yarp::os;
 
 
 
-void *Port::needImplementation() const {
-    if (implementation) return implementation;
-    Port *self = (Port *)this;
+void *Port::needImplementation() const
+{
+    if (implementation) {
+        return implementation;
+    }
+    Port *self = const_cast<Port*>(this);
     self->implementation = new yarp::os::impl::PortCoreAdapter(*self);
-    yAssert(self->implementation!=YARP_NULLPTR);
+    yAssert(self->implementation!=nullptr);
     self->owned = true;
     return self->implementation;
 }
@@ -38,25 +41,53 @@ void *Port::needImplementation() const {
 // implementation is a PortCoreAdapter
 #define IMPL() (*((yarp::os::impl::PortCoreAdapter*)(needImplementation())))
 
-Port::Port() {
-    implementation = YARP_NULLPTR;
+Port::Port()
+{
+    implementation = nullptr;
     owned = false;
 }
 
-bool Port::openFake(const ConstString& name) {
+Port::~Port()
+{
+    if (implementation!=nullptr) {
+        close();
+        if (owned) {
+            delete ((PortCoreAdapter*)implementation);
+        }
+        implementation = nullptr;
+        owned = false;
+    }
+}
+
+bool Port::sharedOpen(Port& port)
+{
+    close();
+    if (owned) {
+        delete ((PortCoreAdapter*)implementation);
+    }
+    implementation = port.implementation;
+    owned = false;
+    return true;
+}
+
+bool Port::openFake(const ConstString& name)
+{
     return open(Contact(name), false, name.c_str());
 }
 
-bool Port::open(const ConstString& name) {
+bool Port::open(const ConstString& name)
+{
     return open(Contact(name));
 }
 
-bool Port::open(const Contact& contact, bool registerName) {
-    return open(contact, registerName, YARP_NULLPTR);
+bool Port::open(const Contact& contact, bool registerName)
+{
+    return open(contact, registerName, nullptr);
 }
 
 bool Port::open(const Contact& contact, bool registerName,
-                const char *fakeName) {
+                const char *fakeName)
+{
     Contact contact2 = contact;
 
     if (!NetworkBase::initialized()) {
@@ -94,10 +125,10 @@ bool Port::open(const Contact& contact, bool registerName,
     }
 
     PortCoreAdapter *currentCore = &(IMPL());
-    if (currentCore!=YARP_NULLPTR) {
+    if (currentCore!=nullptr) {
         currentCore->active = false;
         if (n!="" && (n[0]!='/'||currentCore->includeNode) && n[0]!='=' && n!="..." && n.substr(0, 3)!="...") {
-            if (fakeName==YARP_NULLPTR) {
+            if (fakeName==nullptr) {
                 Nodes& nodes = NameClient::getNameClient().getNodes();
                 ConstString node_name = nodes.getActiveName();
                 if (node_name!="") {
@@ -107,7 +138,7 @@ bool Port::open(const Contact& contact, bool registerName,
         }
     }
     if (n!="" && n[0]!='/'  && n[0]!='=' && n!="..." && n.substr(0, 3)!="...") {
-        if (fakeName==YARP_NULLPTR) {
+        if (fakeName==nullptr) {
             YARP_SPRINTF1(Logger::get(), error,
                           "Port name '%s' needs to start with a '/' character",
                           n.c_str());
@@ -115,7 +146,7 @@ bool Port::open(const Contact& contact, bool registerName,
         }
     }
     if (n!="" && n!="..." && n[0]!='=' && n.substr(0, 3)!="...") {
-        if (fakeName==YARP_NULLPTR) {
+        if (fakeName==nullptr) {
             ConstString prefix = NetworkBase::getEnvironment("YARP_PORT_PREFIX");
             if (prefix!="") {
                 n = prefix + n;
@@ -123,7 +154,7 @@ bool Port::open(const Contact& contact, bool registerName,
             }
         }
     }
-    if (currentCore!=YARP_NULLPTR) {
+    if (currentCore!=nullptr) {
         NestedContact nc;
         nc.fromString(n);
         if (nc.getNestedName()!="") {
@@ -169,15 +200,15 @@ bool Port::open(const Contact& contact, bool registerName,
     // Allow for open() to be called safely many times on the same Port
     if (currentCore->isOpened()) {
         PortCoreAdapter *newCore = new PortCoreAdapter(*this);
-        yAssert(newCore!=YARP_NULLPTR);
+        yAssert(newCore!=nullptr);
         // copy state that should survive in a new open()
-        if (currentCore->checkPortReader()!=YARP_NULLPTR) {
+        if (currentCore->checkPortReader()!=nullptr) {
             newCore->configReader(*(currentCore->checkPortReader()));
         }
-        if (currentCore->checkAdminPortReader()!=YARP_NULLPTR) {
+        if (currentCore->checkAdminPortReader()!=nullptr) {
             newCore->configAdminReader(*(currentCore->checkAdminPortReader()));
         }
-        if (currentCore->checkReadCreator()!=YARP_NULLPTR) {
+        if (currentCore->checkReadCreator()!=nullptr) {
             newCore->configReadCreator(*(currentCore->checkReadCreator()));
         }
         if (currentCore->checkWaitAfterSend()>=0) {
@@ -239,7 +270,7 @@ bool Port::open(const Contact& contact, bool registerName,
     }
 
     core.setControlRegistration(registerName);
-    success = (address.isValid()||local)&&(fakeName==YARP_NULLPTR);
+    success = (address.isValid()||local)&&(fakeName==nullptr);
 
     if (success) {
         // create a node if needed
@@ -297,7 +328,7 @@ bool Port::open(const Contact& contact, bool registerName,
         }
     }
 
-    if (fakeName!=YARP_NULLPTR) {
+    if (fakeName!=nullptr) {
         success = core.manualStart(fakeName);
         blame = "unmanaged port failed to start";
     }
@@ -320,19 +351,22 @@ bool Port::open(const Contact& contact, bool registerName,
         nodes.add(*this);
     }
 
-    if (success && currentCore!=YARP_NULLPTR) currentCore->active = true;
+    if (success && currentCore!=nullptr) currentCore->active = true;
     return success;
 }
 
-bool Port::addOutput(const ConstString& name) {
+bool Port::addOutput(const ConstString& name)
+{
     return addOutput(Contact(name));
 }
 
-bool Port::addOutput(const ConstString& name, const ConstString& carrier) {
+bool Port::addOutput(const ConstString& name, const ConstString& carrier)
+{
     return addOutput(Contact(name, carrier));
 }
 
-void Port::close() {
+void Port::close()
+{
     if (!owned) return;
     if (!NameClient::isClosed()) {
         Nodes& nodes = NameClient::getNameClient().getNodes();
@@ -350,7 +384,8 @@ void Port::close() {
     // core.setOpened(false);
 }
 
-void Port::interrupt() {
+void Port::interrupt()
+{
     Nodes& nodes = NameClient::getNameClient().getNodes();
     nodes.remove(*this);
 
@@ -358,7 +393,8 @@ void Port::interrupt() {
     core.interrupt();
 }
 
-void Port::resume() {
+void Port::resume()
+{
     PortCoreAdapter& core = IMPL();
     core.resumeFull();
     Nodes& nodes = NameClient::getNameClient().getNodes();
@@ -367,23 +403,16 @@ void Port::resume() {
 
 
 
-Port::~Port() {
-    if (implementation!=YARP_NULLPTR) {
-        close();
-        if (owned) delete ((PortCoreAdapter*)implementation);
-        implementation = YARP_NULLPTR;
-        owned = false;
-    }
-}
 
-
-Contact Port::where() const {
+Contact Port::where() const
+{
     PortCoreAdapter& core = IMPL();
     return core.getAddress();
 }
 
 
-bool Port::addOutput(const Contact& contact) {
+bool Port::addOutput(const Contact& contact)
+{
     PortCoreAdapter& core = IMPL();
     if (core.commitToRead) return false;
     if (core.isInterrupted()) return false;
@@ -395,7 +424,7 @@ bool Port::addOutput(const Contact& contact) {
         name = contact.toURI();
     }
     if (!core.isListening()) {
-        return core.addOutput(name.c_str(), YARP_NULLPTR, YARP_NULLPTR, true);
+        return core.addOutput(name.c_str(), nullptr, nullptr, true);
     }
     Contact me = where();
     return NetworkBase::connect(me.getName().c_str(),
@@ -403,17 +432,18 @@ bool Port::addOutput(const Contact& contact) {
 }
 
 
-bool Port::write(PortWriter& writer, PortWriter *callback) const {
+bool Port::write(PortWriter& writer, PortWriter *callback) const
+{
     PortCoreAdapter& core = IMPL();
     if (core.isInterrupted()) return false;
     core.alertOnWrite();
     bool result = false;
     //WritableAdapter adapter(writer);
-    result = core.send(writer, YARP_NULLPTR, callback);
+    result = core.send(writer, nullptr, callback);
     //writer.onCompletion();
     if (!result) {
         //YARP_DEBUG(Logger::get(), e.toString() + " <<<< Port::write saw this");
-        if (callback!=YARP_NULLPTR) {
+        if (callback!=nullptr) {
             callback->onCompletion();
         } else {
             writer.onCompletion();
@@ -423,8 +453,10 @@ bool Port::write(PortWriter& writer, PortWriter *callback) const {
     return result;
 }
 
-bool Port::write(PortWriter& writer, PortReader& reader,
-                 PortWriter *callback) const {
+bool Port::write(PortWriter& writer,
+                 PortReader& reader,
+                 PortWriter *callback) const
+{
     PortCoreAdapter& core = IMPL();
     if (core.isInterrupted()) return false;
     core.alertOnRpc();
@@ -433,7 +465,7 @@ bool Port::write(PortWriter& writer, PortReader& reader,
     result = core.send(writer, &reader, callback);
     if (!result) {
         //YARP_DEBUG(Logger::get(), e.toString() + " <<<< Port::write saw this");
-        if (callback!=YARP_NULLPTR) {
+        if (callback!=nullptr) {
             callback->onCompletion();
         } else {
             writer.onCompletion();
@@ -443,7 +475,8 @@ bool Port::write(PortWriter& writer, PortReader& reader,
     return result;
 }
 
-bool Port::read(PortReader& reader, bool willReply) {
+bool Port::read(PortReader& reader, bool willReply)
+{
     if (!isOpen()) return false;
     PortCoreAdapter& core = IMPL();
     if (willReply) core.alertOnRpc();
@@ -454,91 +487,106 @@ bool Port::read(PortReader& reader, bool willReply) {
 
 
 
-bool Port::reply(PortWriter& writer) {
+bool Port::reply(PortWriter& writer)
+{
     PortCoreAdapter& core = IMPL();
     return core.reply(writer, false, core.isInterrupted());
 }
 
-bool Port::replyAndDrop(PortWriter& writer) {
+bool Port::replyAndDrop(PortWriter& writer)
+{
     PortCoreAdapter& core = IMPL();
     return core.reply(writer, true, core.isInterrupted());
 }
 
 
-void Port::setReader(PortReader& reader) {
+void Port::setReader(PortReader& reader)
+{
     PortCoreAdapter& core = IMPL();
     core.alertOnRead();
     core.configReader(reader);
 }
 
-void Port::setAdminReader(PortReader& reader) {
+void Port::setAdminReader(PortReader& reader)
+{
     PortCoreAdapter& core = IMPL();
     core.configAdminReader(reader);
 }
 
 
-void Port::setReaderCreator(PortReaderCreator& creator) {
+void Port::setReaderCreator(PortReaderCreator& creator)
+{
     PortCoreAdapter& core = IMPL();
     core.alertOnRead();
     core.configReadCreator(creator);
 }
 
 
-void Port::enableBackgroundWrite(bool backgroundFlag) {
+void Port::enableBackgroundWrite(bool backgroundFlag)
+{
     PortCoreAdapter& core = IMPL();
     core.configWaitAfterSend(!backgroundFlag);
 }
 
 
-bool Port::isWriting() {
+bool Port::isWriting()
+{
     PortCoreAdapter& core = IMPL();
     return core.isWriting();
 }
 
 
 
-bool Port::setEnvelope(PortWriter& envelope) {
+bool Port::setEnvelope(PortWriter& envelope)
+{
     PortCoreAdapter& core = IMPL();
     return core.setEnvelope(envelope);
 }
 
 
-bool Port::getEnvelope(PortReader& envelope) {
+bool Port::getEnvelope(PortReader& envelope)
+{
     PortCoreAdapter& core = IMPL();
     return core.getEnvelope(envelope);
 }
 
-int Port::getInputCount() {
+int Port::getInputCount()
+{
     PortCoreAdapter& core = IMPL();
     core.alertOnRead();
     return core.getInputCount();
 }
 
-int Port::getOutputCount() {
+int Port::getOutputCount()
+{
     PortCoreAdapter& core = IMPL();
     core.alertOnWrite();
     return core.getOutputCount();
 }
 
-void Port::getReport(PortReport& reporter) {
+void Port::getReport(PortReport& reporter)
+{
     PortCoreAdapter& core = IMPL();
     core.describe(reporter);
 }
 
 
-void Port::setReporter(PortReport& reporter) {
+void Port::setReporter(PortReport& reporter)
+{
     PortCoreAdapter& core = IMPL();
     core.setReportCallback(&reporter);
 }
 
 
-void Port::resetReporter() {
+void Port::resetReporter()
+{
     PortCoreAdapter& core = IMPL();
     core.resetReportCallback();
 }
 
 
-void Port::setAdminMode(bool adminMode) {
+void Port::setAdminMode(bool adminMode)
+{
     if (adminMode) {
         Bottle b("__ADMIN");
         setEnvelope(b);
@@ -553,92 +601,103 @@ void Port::setAdminMode(bool adminMode) {
   IMPL().setFlags((IMPL().getFlags() & \
   (~mask)) + (val?mask:0))
 
-void Port::setInputMode(bool expectInput) {
+void Port::setInputMode(bool expectInput)
+{
     if (expectInput==false) {
         IMPL().setWriteOnly();
     }
     SET_FLAG(implementation, PORTCORE_IS_INPUT, expectInput);
 }
 
-void Port::setOutputMode(bool expectOutput) {
+void Port::setOutputMode(bool expectOutput)
+{
     if (expectOutput==false) {
         IMPL().setReadOnly();
     }
     SET_FLAG(implementation, PORTCORE_IS_OUTPUT, expectOutput);
 }
 
-void Port::setRpcMode(bool expectRpc) {
+void Port::setRpcMode(bool expectRpc)
+{
     if (expectRpc==true) {
         IMPL().setRpc();
     }
     SET_FLAG(implementation, PORTCORE_IS_RPC, expectRpc);
 }
 
-bool Port::setTimeout(float timeout) {
+bool Port::setTimeout(float timeout)
+{
     IMPL().setTimeout(timeout);
     return true;
 }
 
-void Port::setVerbosity(int level) {
+void Port::setVerbosity(int level)
+{
     IMPL().setVerbosity(level);
 }
 
-int Port::getVerbosity() {
+int Port::getVerbosity()
+{
     return IMPL().getVerbosity();
 }
 
-Type Port::getType() {
+Type Port::getType()
+{
     return IMPL().getType();
 }
 
-void Port::promiseType(const Type& typ) {
+void Port::promiseType(const Type& typ)
+{
     IMPL().promiseType(typ);
 }
 
-Property *Port::acquireProperties(bool readOnly) {
+Property *Port::acquireProperties(bool readOnly)
+{
     return IMPL().acquireProperties(readOnly);
 }
 
-void Port::releaseProperties(Property *prop) {
+void Port::releaseProperties(Property *prop)
+{
     IMPL().releaseProperties(prop);
 }
 
-void Port::includeNodeInName(bool flag) {
+void Port::includeNodeInName(bool flag)
+{
     IMPL().includeNodeInName(flag);
 }
 
-bool Port::sharedOpen(Port& port) {
-    close();
-    if (owned) delete ((PortCoreAdapter*)implementation);
-    implementation = port.implementation;
-    owned = false;
-    return true;
-}
-
-bool Port::isOpen() const {
-    if (!implementation) return false;
+bool Port::isOpen() const
+{
+    if (!implementation) {
+        return false;
+    }
     return IMPL().active;
 }
 
-bool Port::setCallbackLock(yarp::os::Mutex *mutex) {
+bool Port::setCallbackLock(yarp::os::Mutex *mutex)
+{
     return IMPL().configCallbackLock(mutex);
 }
 
-bool Port::removeCallbackLock() {
+bool Port::removeCallbackLock()
+{
     return IMPL().unconfigCallbackLock();
 }
 
-bool Port::lockCallback() {
+bool Port::lockCallback()
+{
     if (!IMPL().lockCallback()) {
         fprintf(stderr, "Cannot do lockCallback() without setCallbackLock() before opening port\n");
     }
     return true;
 }
 
-bool Port::tryLockCallback() {
+bool Port::tryLockCallback()
+{
     return IMPL().tryLockCallback();
 }
 
-void Port::unlockCallback() {
+void Port::unlockCallback()
+{
     return IMPL().unlockCallback();
 }

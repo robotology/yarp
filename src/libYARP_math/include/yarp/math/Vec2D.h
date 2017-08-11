@@ -4,8 +4,8 @@
 * CopyPolicy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
 */
 
-#ifndef YARP_VEC2D
-#define YARP_VEC2D
+#ifndef YARP_MATH_VEC2D_H
+#define YARP_MATH_VEC2D_H
 
 #include <yarp/math/api.h>
 #include <yarp/sig/Vector.h>
@@ -91,4 +91,4 @@ yarp::math::Vec2D<T> YARP_math_API operator - (yarp::math::Vec2D<T> lhs, const y
 template <typename T>
 yarp::math::Vec2D<T> YARP_math_API operator * (const yarp::sig::Matrix& lhs, yarp::math::Vec2D<T> rhs);
 
-#endif //#ifndef YARP_VEC2D
+#endif // YARP_MATH_VEC2D_H

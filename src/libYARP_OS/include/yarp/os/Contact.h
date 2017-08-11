@@ -75,14 +75,12 @@ public:
      */
     Contact(const Contact& rhs);
 
-#if defined(YARP_HAS_CXX11) && YARP_COMPILER_CXX_RVALUE_REFERENCES
     /**
      * @brief Move constructor.
      *
      * @param rhs the Contact to be moved
      */
     Contact(Contact&& rhs);
-#endif
 
     /**
      * @brief Destructor.
@@ -97,7 +95,6 @@ public:
      */
     Contact& operator=(const Contact& rhs);
 
-#if defined(YARP_HAS_CXX11) && YARP_COMPILER_CXX_RVALUE_REFERENCES
     /**
      * @brief Move assignment operator.
      *
@@ -105,7 +102,6 @@ public:
      * @return this object
      */
     Contact& operator=(Contact&& rhs);
-#endif
 
 /** @} */
 /** @{ */
