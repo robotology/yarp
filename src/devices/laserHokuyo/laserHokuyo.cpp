@@ -86,29 +86,19 @@ bool laserHokuyo::open(yarp::os::Searchable& config)
         laser_mode = GD_MODE;
         yError("Laser_mode not found. Using GD mode (single acquisition)");
     }
-
-    bool ok = general_config.check("Serial_Configuration");
-    if (!ok)
-    {
-        yError("Cannot find configuration file for serial port communication!");
-        return false;
-    }
-    yarp::os::ConstString serial_filename = general_config.find("Serial_Configuration").asString();
-
-    //string st = config.toString();
     setRate(period);
 
-    Property prop;
-
-    prop.put("device", "serialport");
-    ok = prop.fromConfigFile(serial_filename.c_str(),config,false);
-    if (!ok)
+    bool br2 = config.check("SERIAL_PORT_CONFIGURATION");
+    if (br2 == false)
     {
-        yError("Unable to read from serial port configuration file");
+        yError("cannot read 'SERIAL_PORT_CONFIGURATION' section");
         return false;
     }
-
-    pSerial=0;
+    yarp::os::Searchable& serial_config = config.findGroup("SERIAL_PORT_CONFIGURATION");
+    string ss = serial_config.toString();
+    Property prop;
+    prop.fromString(ss);
+    prop.put("device", "serialport");
 
     driver.open(prop);
     if (!driver.isValid())
@@ -117,6 +107,7 @@ bool laserHokuyo::open(yarp::os::Searchable& config)
         return false;
     }
 
+    pSerial=0;
     driver.view(pSerial);
 
     if (!pSerial)
