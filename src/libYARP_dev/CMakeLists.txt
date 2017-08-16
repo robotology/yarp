@@ -318,7 +318,8 @@ if(CMAKE_VERSION VERSION_LESS 3.1)
   endif()
 else()
   target_compile_features(YARP_dev PUBLIC cxx_nullptr
-                                          cxx_override)
+                                          cxx_override
+                                          cxx_final)
 endif()
 
 set_property(TARGET YARP_dev PROPERTY PUBLIC_HEADER ${YARP_dev_HDRS})
