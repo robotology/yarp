@@ -254,8 +254,8 @@ public:
 
     IJoypadEventDriven(int rate);
 
-    virtual bool threadInit() YARP_OVERRIDE;
-    virtual void run() YARP_OVERRIDE;
+    virtual bool threadInit() YARP_OVERRIDE YARP_FINAL;
+    virtual void run() YARP_OVERRIDE YARP_FINAL;
 
     virtual bool eventDriven(bool enable, yarp::dev::IJoypadEvent* event = YARP_NULLPTR) YARP_OVERRIDE;
     virtual bool isEventDriven() YARP_OVERRIDE { return EventDrivenEnabled;}

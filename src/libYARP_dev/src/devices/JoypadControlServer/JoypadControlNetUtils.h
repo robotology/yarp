@@ -6,6 +6,7 @@
 #include <yarp/os/BufferedPort.h>
 #include <yarp/sig/Vector.h>
 #include <yarp/os/LogStream.h>
+#include <yarp/os/Time.h>
 //-----Openable and JoyPort are for confortable loop managing of ports
 namespace yarp
 {
@@ -75,6 +76,8 @@ struct yarp::dev::JoypadControl::LoopablePort
 
     virtual void useCallback() = 0;
 
+    virtual void onTimeout(double sec) = 0;
+
     yarp::os::Contactable* contactable;
 };
 
@@ -84,19 +87,34 @@ struct yarp::dev::JoypadControl::JoyPort : public  yarp::dev::JoypadControl::Loo
 {
     typedef yarp::os::BufferedPort<T> bufferedPort;
 
+    double          now;
     T               storage;
     yarp::os::Mutex mutex;
 
-    JoyPort() {contactable = this;}
+    JoyPort() : now(yarp::os::Time::now())
+    {
+        contactable = this;
+    }
     using bufferedPort::useCallback;
     virtual void useCallback() YARP_OVERRIDE {bufferedPort::useCallback();}
 
     using yarp::os::TypedReaderCallback<T>::onRead;
     virtual void onRead(T& datum) YARP_OVERRIDE
     {
+        now = yarp::os::Time::now();
         mutex.lock();
         storage = datum;
         mutex.unlock();
+    }
+
+    virtual void onTimeout(double sec) YARP_OVERRIDE
+    {
+        if((yarp::os::Time::now() - now) > sec)
+        {
+            mutex.lock();
+            storage = T(count);
+            mutex.unlock();
+        }
     }
 };
 

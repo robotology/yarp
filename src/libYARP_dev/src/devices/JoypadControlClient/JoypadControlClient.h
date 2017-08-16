@@ -9,6 +9,7 @@
 #include <yarp/os/RateThread.h>
 #include <vector>
 #include <JoypadControlNetUtils.h>
+#include <yarp/os/RateThread.h>
 
 #define DEFAULT_THREAD_PERIOD 10
 namespace yarp
@@ -16,8 +17,21 @@ namespace yarp
     namespace dev
     {
         class JoypadControlClient;
+        class JoypadControlWatchdog;
     }
 }
+
+class yarp::dev::JoypadControlWatchdog : public yarp::os::RateThread
+{
+public:
+    JoypadControlWatchdog() : RateThread(250) {};
+    virtual ~JoypadControlWatchdog() = default;
+
+
+    std::vector<JoypadControl::LoopablePort*> m_ports;
+    virtual void run() YARP_OVERRIDE;
+
+};
 
 class yarp::dev::JoypadControlClient : public yarp::dev::IJoypadEventDriven,
                                        public yarp::dev::DeviceDriver
@@ -41,12 +55,16 @@ private:
     yarp::os::ConstString m_local;
     yarp::os::ConstString m_remote;
 
+    yarp::dev::JoypadControlWatchdog          watchdog;
+    std::vector<JoypadControl::LoopablePort*> m_ports;
+
     //--------------method
     bool getCount(const int& vocab_toget, unsigned int& value);
     bool getJoypadInfo();
 
 public:
     JoypadControlClient();
+    virtual ~JoypadControlClient() {};
 
     //rateThread
 

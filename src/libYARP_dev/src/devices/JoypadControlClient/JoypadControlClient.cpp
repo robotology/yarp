@@ -20,14 +20,24 @@ yarp::dev::DriverCreator* createJoypadControlClient()
     return new DriverCreatorOf<yarp::dev::JoypadControlClient>("JoypadControlClient", "JoypadControlClient", "yarp::dev::JoypadControlClient");
 }
 
-JoypadControlClient::JoypadControlClient() : m_rpc_only(false)
+JoypadControlClient::JoypadControlClient() :  m_rpc_only(false)
 {
-
+    m_ports.push_back(&m_buttonsPort  );
+    m_ports.push_back(&m_axisPort     );
+    m_ports.push_back(&m_stickPort    );
+    m_ports.push_back(&m_trackballPort);
+    m_ports.push_back(&m_touchPort    );
+    m_ports.push_back(&m_hatsPort     );
+    watchdog.m_ports = m_ports;
 }
 
 bool JoypadControlClient::getJoypadInfo()
 {
     unsigned int count;
+    bool         temp;
+
+    temp       = m_rpc_only;
+    m_rpc_only = true;
     vector<tuple<int, JoypadControl::LoopablePort*, string> > vocabs_ports;
     vocabs_ports.push_back(make_tuple(VOCAB_BUTTON,    &m_buttonsPort,   "/buttons"));
     vocabs_ports.push_back(make_tuple(VOCAB_AXIS,      &m_axisPort,      "/axis"));
@@ -80,7 +90,7 @@ bool JoypadControlClient::getJoypadInfo()
             get<1>(vocab_port)->useCallback();
         }
     }
-
+    m_rpc_only = temp;
     return true;
 }
 
@@ -130,7 +140,20 @@ bool JoypadControlClient::open(yarp::os::Searchable& config)
         return false;
     }
 
+    watchdog.start();
+
     return true;
+}
+
+void JoypadControlWatchdog::run()
+{
+    for (auto port : m_ports)
+    {
+        if (port->count)
+        {
+            port->onTimeout(0.5);
+        }
+    }
 }
 
 bool JoypadControlClient::getCount(const int& vocab_toget, unsigned int& value)
@@ -140,52 +163,32 @@ bool JoypadControlClient::getCount(const int& vocab_toget, unsigned int& value)
         switch(vocab_toget)
         {
         case VOCAB_BUTTON:
-            if(m_buttonsPort.valid)
-            {
-                value = m_buttonsPort.count;
-                return true;
-            }
-            break;
+            value = m_buttonsPort.count;
+            return true;
 
         case VOCAB_AXIS:
-            if(m_axisPort.valid)
-            {
-                value = m_axisPort.count;
-                return true;
-            }
-            break;
+
+            value = m_axisPort.count;
+            return true;
 
         case VOCAB_TRACKBALL:
-            if(m_trackballPort.valid)
-            {
-                value = m_trackballPort.count;
-                return true;
-            }
-            break;
+            value = m_trackballPort.count;
+            return true;
 
         case VOCAB_TOUCH:
-            if(m_touchPort.valid)
-            {
-                value = m_touchPort.count;
-                return true;
-            }
-            break;
+
+            value = m_touchPort.count;
+            return true;
 
         case VOCAB_STICK:
-            if(m_stickPort.valid)
-            {
-                value = m_stickPort.count;
-                return true;
-            }
-            break;
+
+            value = m_stickPort.count;
+            return true;
 
         case VOCAB_HAT:
-            if(m_hatsPort.valid)
-            {
-                value = m_hatsPort.count;
-                return true;
-            }
-            break;
+
+            value = m_hatsPort.count;
+            return true;
 
         default:
             break;
@@ -470,6 +473,12 @@ bool JoypadControlClient::getRawStick(unsigned int stick_id, yarp::sig::Vector& 
         LockGuard l(m_stickPort.mutex);
         int offset = 0;
 
+        unsigned int i;
+        if(getStickCount(i), stick_id >= i)
+        {
+            yError() << "JoypadControlCLient: GetStick() error.. Stick_id out of bound";
+            return false;
+        }
         for(size_t j = 0; j < stick_id; j++)
         {
             offset += m_stickDof[j];
@@ -477,6 +486,7 @@ bool JoypadControlClient::getRawStick(unsigned int stick_id, yarp::sig::Vector& 
 
         for(size_t i = 0; i < m_stickDof[stick_id]; ++i)
         {
+            if(m_stickPort.storage[offset + i])
             value.push_back(m_stickPort.storage[offset + i]);
         }
 
