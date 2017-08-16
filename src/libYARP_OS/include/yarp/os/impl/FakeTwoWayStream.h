@@ -26,7 +26,7 @@ namespace yarp {
 class yarp::os::impl::FakeTwoWayStream : public TwoWayStream
 {
 public:
-    FakeTwoWayStream(StringInputStream *target = YARP_NULLPTR) :
+    FakeTwoWayStream(StringInputStream *target = nullptr) :
             TwoWayStream()
     {
         this->out.owner = this;
@@ -71,7 +71,7 @@ public:
 
     virtual void apply(const Bytes& b)
     {
-        if (target!=YARP_NULLPTR) {
+        if (target!=nullptr) {
             target->add(b);
         }
     }
@@ -110,7 +110,7 @@ private:
     {
     public:
         ActiveStringOutputStream() :
-                owner(YARP_NULLPTR)
+                owner(nullptr)
         {
         }
 

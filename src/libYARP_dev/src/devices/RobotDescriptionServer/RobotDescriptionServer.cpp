@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2016 iCub Facility - Istituto Italiano di Tecnologia
+ * Copyright (C) 2016 Istituto Italiano di Tecnologia (IIT)
  * Author: Marco Randazzo <marco.randazzo@iit.it>
  * CopyPolicy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
  */
@@ -229,7 +229,7 @@ bool yarp::dev::RobotDescriptionServer::read(yarp::os::ConnectionReader& connect
 
     yarp::os::ConnectionWriter *returnToSender = connection.getWriter();
 
-    if (returnToSender != NULL)
+    if (returnToSender != nullptr)
     {
         out.write(*returnToSender);
     }

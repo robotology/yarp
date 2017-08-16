@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2011 Robotics Brain and Cognitive Sciences Department, Istituto Italiano di Tecnologia
+ * Copyright (C) 2011 Istituto Italiano di Tecnologia (IIT)
  * Authors: Marco Randazzo
  * CopyPolicy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
  */
@@ -16,12 +16,12 @@ using namespace yarp::dev;
 ImplementTorqueControl::ImplementTorqueControl(ITorqueControlRaw *tq)
 {
     iTorqueRaw = tq;
-    helper=0;
-    temp=0;
+    helper=nullptr;
+    temp=nullptr;
 //     fake =0;
-    temp2=0;
-    temp_int=0;
-    tmpPids=0;
+    temp2=nullptr;
+    temp_int=nullptr;
+    tmpPids=nullptr;
 }
 
 ImplementTorqueControl::~ImplementTorqueControl()
@@ -31,29 +31,29 @@ ImplementTorqueControl::~ImplementTorqueControl()
 
 bool ImplementTorqueControl::initialize(int size, const int *amap, const double *enc, const double *zos, const double *nw)
 {
-    if (helper!=0)
+    if (helper!=nullptr)
         return false;
 
     helper=(void *)(new ControlBoardHelper(size, amap, enc, zos, nw));
-    yAssert (helper != 0);
+    yAssert (helper != nullptr);
     temp=new double [size];
-    yAssert (temp != 0);
+    yAssert (temp != nullptr);
     temp2=new double [size];
-    yAssert (temp2 != 0);
+    yAssert (temp2 != nullptr);
     temp_int=new int [size];
-    yAssert (temp_int != 0);
+    yAssert (temp_int != nullptr);
     tmpPids=new Pid[size];
-    yAssert (tmpPids!=0);
+    yAssert (tmpPids!=nullptr);
 
     return true;
 }
 
 bool ImplementTorqueControl::uninitialize ()
 {
-    if (helper!=0)
+    if (helper!=nullptr)
     {
         delete castToMapper(helper);
-        helper=0;
+        helper=nullptr;
     }
     checkAndDestroy(temp);
     checkAndDestroy(temp2);

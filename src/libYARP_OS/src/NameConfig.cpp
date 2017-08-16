@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2006, 2011 Department of Robotics Brain and Cognitive Sciences - Istituto Italiano di Tecnologia, Anne van Rossum
+ * Copyright (C) 2006, 2011 Istituto Italiano di Tecnologia (IIT), Anne van Rossum
  * Authors: Paul Fitzpatrick, Anne van Rossum
  * CopyPolicy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
  */
@@ -109,8 +109,8 @@ ConstString NameConfig::getSafeString(const ConstString& txt) {
 }
 
 ConstString NameConfig::getConfigFileName(const char *stem, const char *ns) {
-    ConstString fname = (stem!=YARP_NULLPTR)?stem:CONF_FILENAME;
-    if (stem==YARP_NULLPTR) {
+    ConstString fname = (stem!=nullptr)?stem:CONF_FILENAME;
+    if (stem==nullptr) {
         ConstString space;
         if (ns) {
             space = ns;
@@ -161,17 +161,17 @@ ConstString NameConfig::readConfig(const ConstString& fileName) {
         return "";
     }
     ConstString result = "";
-    while(fgets(buf, sizeof(buf)-1, fin) != YARP_NULLPTR) {
+    while(fgets(buf, sizeof(buf)-1, fin) != nullptr) {
         result += buf;
     }
     fclose(fin);
-    fin = YARP_NULLPTR;
+    fin = nullptr;
     return result;
 }
 
 
 bool NameConfig::fromFile(const char *ns) {
-    ConstString fname = getConfigFileName(YARP_NULLPTR, ns);
+    ConstString fname = getConfigFileName(nullptr, ns);
     if (fname!="") {
         ConstString txt = readConfig(fname);
         if (txt!="") {
@@ -211,7 +211,7 @@ bool NameConfig::writeConfig(const ConstString& fileName, const ConstString& tex
     }
     fprintf(fout, "%s", text.c_str());
     fclose(fout);
-    fout = YARP_NULLPTR;
+    fout = nullptr;
     return true;
 }
 
@@ -228,7 +228,7 @@ ConstString NameConfig::getHostName(bool prefer_loopback, const ConstString& see
     // Prefer non-local addresses, then seed, then shorter addresses.
     // Avoid IPv6.
 #ifdef YARP_HAS_ACE
-    ACE_INET_Addr *ips = YARP_NULLPTR;
+    ACE_INET_Addr *ips = nullptr;
     size_t count = 0;
     char hostAddress[256];
     if (ACE::get_ip_interfaces(count, ips)>=0) {
@@ -243,8 +243,8 @@ ConstString NameConfig::getHostName(bool prefer_loopback, const ConstString& see
         perror("getifaddrs in getIps");
         std::exit(EXIT_FAILURE);
     }
-    for (ifa = ifaddr; ifa != YARP_NULLPTR; ifa = ifa->ifa_next) {
-        if (ifa->ifa_addr == YARP_NULLPTR) continue;
+    for (ifa = ifaddr; ifa != nullptr; ifa = ifa->ifa_next) {
+        if (ifa->ifa_addr == nullptr) continue;
         family = ifa->ifa_addr->sa_family;
         if (family == AF_INET || family == AF_INET6) {
             s = yarp::os::impl::getnameinfo(ifa->ifa_addr,
@@ -253,7 +253,7 @@ ConstString NameConfig::getHostName(bool prefer_loopback, const ConstString& see
                                 sizeof(struct sockaddr_in6),
                             hostname,
                             NI_MAXHOST,
-                            YARP_NULLPTR,
+                            nullptr,
                             0,
                             NI_NUMERICHOST);
             if (s != 0) {
@@ -330,7 +330,7 @@ bool NameConfig::isLocalName(const ConstString& name) {
     bool result = false;
 
 #ifdef YARP_HAS_ACE
-    ACE_INET_Addr *ips = YARP_NULLPTR;
+    ACE_INET_Addr *ips = nullptr;
     size_t count = 0;
     if (ACE::get_ip_interfaces(count, ips)>=0) {
         for (size_t i=0; i<count; i++) {
@@ -373,7 +373,7 @@ yarp::os::Bottle NameConfig::getIpsAsBottle() {
     yarp::os::Bottle result;
 
 #if defined(YARP_HAS_ACE)
-    ACE_INET_Addr *ips = YARP_NULLPTR;
+    ACE_INET_Addr *ips = nullptr;
     size_t count = 0;
     if (ACE::get_ip_interfaces(count, ips)>=0) {
         for (size_t i=0; i<count; i++) {
@@ -390,8 +390,8 @@ yarp::os::Bottle NameConfig::getIpsAsBottle() {
         perror("getifaddrs in getIpsAsBottle");
         std::exit(EXIT_FAILURE);
     }
-    for (ifa = ifaddr; ifa != YARP_NULLPTR; ifa = ifa->ifa_next) {
-        if (ifa->ifa_addr == YARP_NULLPTR) continue;
+    for (ifa = ifaddr; ifa != nullptr; ifa = ifa->ifa_next) {
+        if (ifa->ifa_addr == nullptr) continue;
         family = ifa->ifa_addr->sa_family;
         if (family == AF_INET || family == AF_INET6) {
             s = yarp::os::impl::getnameinfo(ifa->ifa_addr,
@@ -400,7 +400,7 @@ yarp::os::Bottle NameConfig::getIpsAsBottle() {
                                                 sizeof(struct sockaddr_in6),
                                             host,
                                             NI_MAXHOST,
-                                            YARP_NULLPTR,
+                                            nullptr,
                                             0,
                                             NI_NUMERICHOST);
             if (s != 0) {

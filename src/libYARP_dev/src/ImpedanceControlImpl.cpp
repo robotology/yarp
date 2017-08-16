@@ -18,16 +18,16 @@ using namespace yarp::dev;
 ImplementImpedanceControl::ImplementImpedanceControl(IImpedanceControlRaw *r)
 {
     iImpedanceRaw=r;
-    helper=0;
+    helper=nullptr;
 }
 
 bool ImplementImpedanceControl::initialize(int size, const int *amap, const double *enc, const double *zos, const double *nw)
 {
-    if (helper!=0)
+    if (helper!=nullptr)
         return false;
 
     helper=(void *)(new ControlBoardHelper(size, amap, enc, zos, nw));
-    yAssert (helper != 0);
+    yAssert (helper != nullptr);
 
     return true;
 }
@@ -39,10 +39,10 @@ ImplementImpedanceControl::~ImplementImpedanceControl()
 
 bool ImplementImpedanceControl::uninitialize ()
 {
-    if (helper!=0)
+    if (helper!=nullptr)
     {
         delete castToMapper(helper);
-        helper=0;
+        helper=nullptr;
     }
 
     return true;

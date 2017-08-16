@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2011 Department of Robotics Brain and Cognitive Sciences - Istituto Italiano di Tecnologia
+ * Copyright (C) 2011 Istituto Italiano di Tecnologia (IIT)
  * Authors: Paul Fitzpatrick
  * CopyPolicy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
  */
@@ -84,7 +84,7 @@ Contact RosNameSpace::registerName(const ConstString& name) {
 }
 
 Contact RosNameSpace::registerContact(const Contact& contact) {
-    return registerAdvanced(contact, YARP_NULLPTR);
+    return registerAdvanced(contact, nullptr);
 }
 
 Contact RosNameSpace::registerAdvanced(const Contact& contact, NameStore *store) {
@@ -235,7 +235,7 @@ Contact RosNameSpace::registerAdvanced(const Contact& contact, NameStore *store)
 }
 
 Contact RosNameSpace::unregisterName(const ConstString& name) {
-    return unregisterAdvanced(name, YARP_NULLPTR);
+    return unregisterAdvanced(name, nullptr);
 }
 
 Contact RosNameSpace::unregisterAdvanced(const ConstString& name, NameStore *store) {
@@ -345,7 +345,7 @@ bool RosNameSpace::setProperty(const ConstString& name,
 
 Value *RosNameSpace::getProperty(const ConstString& name,
                                  const ConstString& key) {
-        return YARP_NULLPTR;
+        return nullptr;
 }
 
 bool RosNameSpace::connectPortToTopic(const Contact& src,
@@ -441,7 +441,7 @@ bool RosNameSpace::connectTopic(Bottle& cmd,
         if (activeRegistration) {
             Bottle *lst = reply.get(2).asList();
             Bottle cmd2;
-            if (lst!=YARP_NULLPTR) {
+            if (lst!=nullptr) {
                 cmd2.addString("publisherUpdate");
                 cmd2.addString("/yarp");
                 cmd2.addString(dynamicSrc.getName());

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2016 iCub Facility - Istituto Italiano di Tecnologia
+ * Copyright (C) 2016 Istituto Italiano di Tecnologia (IIT)
  * Author: Alberto Cardellino <alberto.cardellino@iit.it>
  * CopyPolicy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
  */
@@ -210,7 +210,7 @@ bool FrameGrabberControls2_Sender::setOnePush(int feature)
 //  Parser
 //
 
-FrameGrabberControls2_Parser::FrameGrabberControls2_Parser() : fgCtrl2(YARP_NULLPTR) { }
+FrameGrabberControls2_Parser::FrameGrabberControls2_Parser() : fgCtrl2(nullptr) { }
 
 bool FrameGrabberControls2_Parser::configure(IFrameGrabberControls2* interface)
 {
@@ -222,7 +222,7 @@ bool FrameGrabberControls2_Parser::configure(IFrameGrabberControls2* interface)
     }
     else
     {
-        fgCtrl2 = YARP_NULLPTR;
+        fgCtrl2 = nullptr;
         ret = false;
     }
     return ret;

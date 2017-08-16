@@ -14,7 +14,7 @@
 using namespace yarp::os::impl;
 using namespace yarp::os;
 
-Logger *Logger::root = YARP_NULLPTR;
+Logger *Logger::root = nullptr;
 
 Logger& Logger::get() {
     if (!root) root = new Logger("yarp");
@@ -23,7 +23,7 @@ Logger& Logger::get() {
 
 void Logger::fini() {
     if (root) delete root;
-    root = YARP_NULLPTR;
+    root = nullptr;
 }
 
 
@@ -36,13 +36,13 @@ void Logger::show(unsigned YARP_INT32 level, const ConstString& txt) {
     if (verbose<0) {
         level = 0;
     }
-    if (stream == YARP_NULLPTR) {
+    if (stream == nullptr) {
         stream = stderr;
         if (NetworkBase::getEnvironment("YARP_LOGGER_STREAM") == "stdout") {
             stream = stdout;
         }
     }
-    if (parent == YARP_NULLPTR) {
+    if (parent == nullptr) {
         if (level>=low) {
             if (inLevel<=LM_DEBUG) {
                 fprintf(stream, "%s(%04x): %s\n",

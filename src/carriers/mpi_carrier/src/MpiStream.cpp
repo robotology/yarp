@@ -1,8 +1,7 @@
 /*
- * Author: Daniel Krieg krieg@fias.uni-frankfurt.de
  * Copyright (C) 2010 Daniel Krieg
+ * Author: Daniel Krieg <krieg@fias.uni-frankfurt.de>
  * CopyPolicy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
- *
  */
 
 #include <yarp/os/MpiStream.h>

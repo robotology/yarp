@@ -25,12 +25,12 @@ namespace impl {
 class TripleSourceCreator {
 public:
     TripleSourceCreator() :
-            implementation(YARP_NULLPTR),
-            accessor(YARP_NULLPTR) {
+            implementation(nullptr),
+            accessor(nullptr) {
     }
 
     virtual ~TripleSourceCreator() {
-        if (implementation != YARP_NULLPTR) {
+        if (implementation != nullptr) {
             close();
         }
     }

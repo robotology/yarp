@@ -68,4 +68,25 @@
 #include <yarp/os/LogStream.h>
 #include <yarp/os/MessageStack.h>
 
+/**
+ * @namespace yarp
+ * The main, catch-all namespace for YARP.
+ */
+
+/**
+ * @namespace yarp::os
+ * An interface to the operating system, including Port based communication.
+ */
+
+/**
+ * @namespace yarp::os::impl
+ * The components from which ports and connections are built.
+ *
+ * These classes are not intended for regular users, but rather
+ * for those extending YARP to new situations.
+ *
+ * Unlike the classes in yarp::os, yarp::sig, and yarp::dev,
+ * there are dependencies on the ACE library here.
+ */
+
 #endif // YARP_OS_ALL_H

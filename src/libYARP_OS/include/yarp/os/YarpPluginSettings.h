@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2013 iCub Facility, Istituto Italiano di Tecnologia
+ * Copyright (C) 2013 Istituto Italiano di Tecnologia (IIT)
  * Authors: Paul Fitzpatrick <paulfitz@alum.mit.edu>
  * CopyPolicy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
  */
@@ -33,7 +33,7 @@ public:
      */
     YarpPluginSettings() : wrapper_name("unknown") {
         verbose = false;
-        selector = YARP_NULLPTR;
+        selector = nullptr;
     }
 
     /**

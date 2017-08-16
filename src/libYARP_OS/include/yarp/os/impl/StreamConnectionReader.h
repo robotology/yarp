@@ -40,10 +40,10 @@ class YARP_OS_impl_API yarp::os::impl::StreamConnectionReader : public Connectio
 public:
     StreamConnectionReader() :
         ConnectionReader(),
-        writer(YARP_NULLPTR),
-        in(YARP_NULLPTR),
-        str(YARP_NULLPTR),
-        protocol(YARP_NULLPTR),
+        writer(nullptr),
+        in(nullptr),
+        str(nullptr),
+        protocol(nullptr),
         messageLen(0),
         textMode(false),
         bareMode(false),
@@ -51,10 +51,10 @@ public:
         err(false),
         shouldDrop(false),
         writePending(false),
-        ref(YARP_NULLPTR),
+        ref(nullptr),
         convertedTextMode(false),
         pushedIntFlag(false),
-        parentConnectionReader(YARP_NULLPTR)
+        parentConnectionReader(nullptr)
     {
     }
 
@@ -70,7 +70,7 @@ public:
         this->textMode = textMode;
         this->bareMode = bareMode;
         this->valid = true;
-        ref = YARP_NULLPTR;
+        ref = nullptr;
         err = false;
         convertedTextMode = false;
         pushedIntFlag = false;
@@ -92,7 +92,7 @@ public:
         if (!isGood()) {
             return false;
         }
-        yAssert(in!=YARP_NULLPTR);
+        yAssert(in!=nullptr);
         size_t len = b.length();
         if (len==0) {
             return true;
@@ -130,7 +130,7 @@ public:
         }
         NetInt32 x = 0;
         yarp::os::Bytes b((char*)(&x), sizeof(x));
-        yAssert(in!=YARP_NULLPTR);
+        yAssert(in!=nullptr);
         YARP_SSIZE_T r = in->read(b);
         if (r<0 || (size_t)r<b.length()) {
             err = true;
@@ -147,7 +147,7 @@ public:
         }
         NetInt64 x = 0;
         yarp::os::Bytes b((char*)(&x), sizeof(x));
-        yAssert(in!=YARP_NULLPTR);
+        yAssert(in!=nullptr);
         YARP_SSIZE_T r = in->read(b);
         if (r<0 || (size_t)r<b.length()) {
             err = true;
@@ -164,7 +164,7 @@ public:
         }
         NetFloat64 x = 0;
         yarp::os::Bytes b((char*)(&x), sizeof(x));
-        yAssert(in!=YARP_NULLPTR);
+        yAssert(in!=nullptr);
         YARP_SSIZE_T r = in->read(b);
         if (r<0 || (size_t)r<b.length()) {
             err = true;
@@ -181,7 +181,7 @@ public:
         }
         char *buf = new char[len];
         yarp::os::Bytes b(buf, len);
-        yAssert(in!=YARP_NULLPTR);
+        yAssert(in!=nullptr);
         YARP_SSIZE_T r = in->read(b);
         if (r<0 || (size_t)r<b.length()) {
             err = true;
@@ -199,7 +199,7 @@ public:
         if (!isGood()) {
             return "";
         }
-        yAssert(in!=YARP_NULLPTR);
+        yAssert(in!=nullptr);
         bool success = false;
         ConstString result = in->readLine('\n', &success);
         if (!success) {
@@ -230,8 +230,8 @@ public:
     /*
     virtual OutputStream *getReplyStream() override
     {
-        if (str==YARP_NULLPTR) {
-            return YARP_NULLPTR;
+        if (str==nullptr) {
+            return nullptr;
         }
         return &(str->getOutputStream());
     }
@@ -241,7 +241,7 @@ public:
 
     void suppressReply()
     {
-        str = YARP_NULLPTR;
+        str = nullptr;
     }
 
     virtual void flushWriter();
@@ -253,7 +253,7 @@ public:
 
     virtual yarp::os::Contact getRemoteContact() override
     {
-        if (str!=YARP_NULLPTR) {
+        if (str!=nullptr) {
             Contact remote = str->getRemoteAddress();
             remote.setName(route.getFromName());
             return remote;
@@ -264,7 +264,7 @@ public:
 
     virtual yarp::os::Contact getLocalContact() override
     {
-        if (str!=YARP_NULLPTR) {
+        if (str!=nullptr) {
             Contact local = str->getLocalAddress();
             local.setName(route.getToName());
             return local;
@@ -284,7 +284,7 @@ public:
         if (!isGood()) {
             return "";
         }
-        yAssert(in!=YARP_NULLPTR);
+        yAssert(in!=nullptr);
         bool lsuccess = false;
         ConstString result = in->readLine(terminatingChar, &lsuccess);
         if (lsuccess) {
@@ -314,7 +314,7 @@ public:
         if (!isValid()) {
             return false;
         }
-        if (in!=YARP_NULLPTR) {
+        if (in!=nullptr) {
             if (in->isOk()) {
                 return true;
             }

@@ -36,7 +36,7 @@ public:
      * Constructor.
      */
     PortManager() :
-            os(YARP_NULLPTR),
+            os(nullptr),
             name("null")
     {
     }
@@ -201,12 +201,12 @@ public:
 protected:
     bool hasOutput()
     {
-        return os!=YARP_NULLPTR;
+        return os!=nullptr;
     }
 
     yarp::os::OutputStream& getOutputStream()
     {
-        yAssert(os!=YARP_NULLPTR);
+        yAssert(os!=nullptr);
         return *os;
     }
 

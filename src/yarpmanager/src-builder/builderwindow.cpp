@@ -403,17 +403,17 @@ void BuilderWindow::load(bool refresh)
 //                continue;
 //            }
             GraphicModel model = baseCon.getModelBase();
-            InputData* input = NULL;
-            OutputData* output = NULL;
-            BuilderItem *source = NULL;
-            BuilderItem *dest = NULL;
+            InputData* input = nullptr;
+            OutputData* output = nullptr;
+            BuilderItem *source = nullptr;
+            BuilderItem *dest = nullptr;
             QString inModulePrefix,outModulePrefix;
             findInputOutputData((*citr), allModules, input, output,&inModulePrefix,&outModulePrefix);
             if(output){
                 source = findModelFromOutput(output,outModulePrefix);
             }else{
                 bool bExist = false;
-                SourcePortItem *sourcePort = NULL;
+                SourcePortItem *sourcePort = nullptr;
                 for(int i=0;i<scene->items().count() && !bExist;i++){
                     if(scene->items().at(i)->type() == (QGraphicsItem::UserType + SourcePortItemType)){
                         SourcePortItem *auxSourceport = (SourcePortItem*)scene->items().at(i);
@@ -515,7 +515,7 @@ QRectF BuilderWindow::itemsBoundingRect()
 {
     QRectF rr;
     foreach(QGraphicsItem *it, scene->items()){
-        if(it->parentItem() != NULL && it->parentItem()->type() != QGraphicsItem::UserType + ConnectionItemType){
+        if(it->parentItem() != nullptr && it->parentItem()->type() != QGraphicsItem::UserType + ConnectionItemType){
             continue;
         }
         if(it->type() == QGraphicsItem::UserType + ModuleItemType ||
@@ -558,7 +558,7 @@ BuilderItem *BuilderWindow::onAddNewConnection(void *startItem ,void *endItem, i
 {
     Manager *manager = !editingMode ? safeManager : &this->manager;
 
-    Application* mainApplication = NULL;
+    Application* mainApplication = nullptr;
     mainApplication = manager->getKnowledgeBase()->getApplication();
     Connection connection;
     BuilderItem *myStartItem = (BuilderItem*)startItem;
@@ -570,8 +570,8 @@ BuilderItem *BuilderWindow::onAddNewConnection(void *startItem ,void *endItem, i
     bool bExternTo = false;
     bool bExternFrom = false;
 
-    InputData* input = NULL;
-    OutputData* output = NULL;
+    InputData* input = nullptr;
+    OutputData* output = nullptr;
 
     string strFrom,strTo ;
 
@@ -692,7 +692,7 @@ BuilderItem * BuilderWindow::addConnection(void *startItem ,void *endItem, int c
 
 BuilderItem * BuilderWindow::addDestinantionPort(QString name, bool editOnStart)
 {
-    Application *mainApplication = NULL;
+    Application *mainApplication = nullptr;
     if(!editingMode){
         mainApplication = safeManager->getKnowledgeBase()->getApplication();
     }else{
@@ -710,7 +710,7 @@ BuilderItem * BuilderWindow::addDestinantionPort(QString name, bool editOnStart)
 void BuilderWindow::onMoved()
 {
     foreach(QGraphicsItem *it, scene->selectedItems()){
-        if(it->parentItem() != NULL && it->parentItem()->type() != QGraphicsItem::UserType + ConnectionItemType){
+        if(it->parentItem() != nullptr && it->parentItem()->type() != QGraphicsItem::UserType + ConnectionItemType){
             continue;
         }
         if(it->type() == QGraphicsItem::UserType + ModuleItemType){
@@ -744,7 +744,7 @@ void BuilderWindow::onModified()
 
 BuilderItem * BuilderWindow::addSourcePort(QString name, bool editOnStart)
 {
-    Application *mainApplication = NULL;
+    Application *mainApplication = nullptr;
     if(!editingMode){
         mainApplication = safeManager->getKnowledgeBase()->getApplication();
     }else{
@@ -850,7 +850,7 @@ void BuilderWindow::onAddedApplication(void *app,QPointF pos)
 BuilderItem *BuilderWindow::onAddModule(void *mod,QPointF pos)
 {
 
-    BuilderItem *modIt = NULL;
+    BuilderItem *modIt = nullptr;
     if(!editingMode){
         return modIt;
     }
@@ -905,7 +905,7 @@ void BuilderWindow::setSelectedConnections(QList<int>selectedIds)
         return;
     }
     foreach (QGraphicsItem *it, scene->items()) {
-        if(it->parentItem() != NULL){
+        if(it->parentItem() != nullptr){
             continue;
         }
         if(it->type() == QGraphicsItem::UserType + ConnectionItemType){
@@ -929,7 +929,7 @@ void BuilderWindow::setSelectedModules(QList<int>selectedIds)
         return;
     }
     foreach (QGraphicsItem *it, scene->items()) {
-        if(it->parentItem() != NULL){
+        if(it->parentItem() != nullptr){
             continue;
         }
         if(it->type() == QGraphicsItem::UserType + ModuleItemType){
@@ -1122,8 +1122,8 @@ void BuilderWindow::onShowGrid(bool checked)
 void BuilderWindow::findInputOutputData(Connection& cnn,  ModulePContainer &modules,
                                             InputData* &input_, OutputData* &output_, QString *inModulePrefix,QString *outModulePrefix)
 {
-    input_ = NULL;
-    output_ = NULL;
+    input_ = nullptr;
+    output_ = nullptr;
     string strTo = cnn.to();
     string strFrom = cnn.from();
     qDebug() << "CONNECTION FROM " << strFrom.data() << " TO " << strTo.data();
@@ -1195,7 +1195,7 @@ PortItem* BuilderWindow::findModelFromOutput(OutputData* output,QString modulePr
     }
 
 
-    return NULL;
+    return nullptr;
 }
 
 PortItem*  BuilderWindow::findModelFromInput(InputData* input,QString modulePrefix)
@@ -1236,7 +1236,7 @@ PortItem*  BuilderWindow::findModelFromInput(InputData* input,QString modulePref
     }
 
 
-    return NULL;
+    return nullptr;
 }
 
 
@@ -1318,7 +1318,7 @@ CustomView::CustomView(BuilderWindow *builder,QGraphicsView *parent) : QGraphics
     setInteractive(true);
     mousepressed = false;
     m_rubberBandActive = false;
-    rubberBand = NULL;
+    rubberBand = nullptr;
     this->builder = builder;
 
 //    QGLWidget *viewport = new QGLWidget(QGLFormat(QGL::SampleBuffers));
@@ -1399,7 +1399,7 @@ void CustomView::mousePressEvent(QMouseEvent* event)
             QGraphicsView::mousePressEvent(event);
             return;
         }else{
-            if(itemAt(event->pos()) == NULL){
+            if(itemAt(event->pos()) == nullptr){
                 setDragMode(QGraphicsView::RubberBandDrag);
                 pressedNullItem();
                 QGraphicsView::mousePressEvent(event);
@@ -1422,9 +1422,9 @@ void CustomView::contextMenuEvent(QContextMenuEvent *event)
 
     QMenu menu(this);
     QGraphicsItem *it = itemAt(event->pos());
-    QAction *copyAction = NULL;
-    QAction *pasteAction = NULL;
-    QAction *deleteAction = NULL;
+    QAction *copyAction = nullptr;
+    QAction *pasteAction = nullptr;
+    QAction *deleteAction = nullptr;
 
     if(editingMode){
         if(!it){
@@ -1541,7 +1541,7 @@ void CustomView::deleteAllItems(){
         if(item->type() != QGraphicsItem::UserType + (int)ModulePortItemType &&
                 item->type() != QGraphicsItem::UserType + (int)ArrowLabelItemType &&
                 item->type() != QGraphicsItem::UserType + (int)HandleItemType &&
-                item->parentItem() == NULL){
+                item->parentItem() == nullptr){
             selectedItems.append(item);
         }
     }
@@ -1588,7 +1588,7 @@ void CustomView::deleteSelectedItems(QGraphicsItem *it){
                 item->type() != QGraphicsItem::UserType + (int)ModulePortItemType &&
                 item->type() != QGraphicsItem::UserType + (int)ArrowLabelItemType &&
                 item->type() != QGraphicsItem::UserType + (int)HandleItemType &&
-                item->parentItem() == NULL){
+                item->parentItem() == nullptr){
             selectedItems.append(item);
         }
     }
@@ -1668,11 +1668,11 @@ void CustomView::pasteSelectedItems(QPoint pos){
             BuilderItem *startItem = arrow->startItem();
             BuilderItem *endItem = arrow->endItem();
 
-            BuilderItem *copiedStartItem = NULL;
-            BuilderItem *copiedEndItem = NULL;
+            BuilderItem *copiedStartItem = nullptr;
+            BuilderItem *copiedEndItem = nullptr;
 
-            PortItem *startPort = NULL;
-            PortItem *endPort = NULL;
+            PortItem *startPort = nullptr;
+            PortItem *endPort = nullptr;
 
             if(startItem->type() == QGraphicsItem::UserType + (int)ModulePortItemType){
                 startPort = (PortItem*)startItem;
@@ -1708,8 +1708,8 @@ void CustomView::pasteSelectedItems(QPoint pos){
 
             if(startContained && endContained){
 
-                BuilderItem *startConnection = NULL;
-                BuilderItem *endConnection = NULL;
+                BuilderItem *startConnection = nullptr;
+                BuilderItem *endConnection = nullptr;
 
                 if(startItem->type() == QGraphicsItem::UserType + (int)ModuleItemType){
                     // Start is a Port Module
@@ -1792,10 +1792,10 @@ void CustomView::pasteSelectedItems(QPoint pos){
 
 BuilderItem *CustomView::pasteItem(QGraphicsItem *item, QSize *offset, bool *firstAdded,QPoint pos)
 {
-    BuilderItem *ret = NULL;
-    ModuleItem *mod = NULL;
-    SourcePortItem *sPort = NULL;
-    DestinationPortItem *dPort = NULL;
+    BuilderItem *ret = nullptr;
+    ModuleItem *mod = nullptr;
+    SourcePortItem *sPort = nullptr;
+    DestinationPortItem *dPort = nullptr;
     switch (item->type()) {
     case QGraphicsItem::UserType + (int)SourcePortItemType:
         sPort = ((SourcePortItem*)item);

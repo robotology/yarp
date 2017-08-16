@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2012 IITRBCS
+ * Copyright (C) 2012 Istituto Italiano di Tecnologia (IIT)
  * Authors: Ali Paikan and Paul Fitzpatrick
  * CopyPolicy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
  */
@@ -59,7 +59,7 @@ public:
         conReader = &reader;
         if (portable)
             delete portable;
-        portable = YARP_NULLPTR;
+        portable = nullptr;
         return true;
     }
 
@@ -77,10 +77,10 @@ public:
     void reset() {
         if (portable)
             delete portable;
-        conReader = YARP_NULLPTR;
-        writer = YARP_NULLPTR;
-        reader = YARP_NULLPTR;
-        portable = YARP_NULLPTR;
+        conReader = nullptr;
+        writer = nullptr;
+        reader = nullptr;
+        portable = nullptr;
         beenRead = false;
     }
 
@@ -96,13 +96,13 @@ public:
         if (!this->portable)
         {
             if (!this->conReader)
-                return YARP_NULLPTR;
+                return nullptr;
             this->portable = new T();
             if (!this->portable->read(*this->conReader))
             {
                 delete this->portable;
-                this->portable = YARP_NULLPTR;
-                return YARP_NULLPTR;
+                this->portable = nullptr;
+                return nullptr;
             }
             beenRead = true;
         }

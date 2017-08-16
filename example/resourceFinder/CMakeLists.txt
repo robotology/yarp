@@ -1,4 +1,4 @@
-# Copyright: 2012 iCub Facility, Istituto Italiano di Tecnologia
+# Copyright: 2012 Istituto Italiano di Tecnologia (IIT)
 # Author: Lorenzo Natale
 # CopyPolicy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
 

@@ -17,16 +17,16 @@ using namespace yarp::os::impl;
 using namespace yarp::os;
 
 yarp::os::ConnectionWriter *StreamConnectionReader::getWriter() {
-    if (str==YARP_NULLPTR) {
-        return YARP_NULLPTR;
+    if (str==nullptr) {
+        return nullptr;
     }
-    if (writer==YARP_NULLPTR) {
+    if (writer==nullptr) {
         writer = new BufferedConnectionWriter(isTextMode(), isBareMode());
-        yAssert(writer!=YARP_NULLPTR);
+        yAssert(writer!=nullptr);
     }
     writer->clear();
     writePending = true;
-    if (protocol!=YARP_NULLPTR) {
+    if (protocol!=nullptr) {
         protocol->willReply();
     }
     return writer;
@@ -34,10 +34,10 @@ yarp::os::ConnectionWriter *StreamConnectionReader::getWriter() {
 
 
 void StreamConnectionReader::flushWriter() {
-    if (writer!=YARP_NULLPTR) {
+    if (writer!=nullptr) {
         if (writePending) {
-            if (str!=YARP_NULLPTR) {
-                if (protocol!=YARP_NULLPTR) {
+            if (str!=nullptr) {
+                if (protocol!=nullptr) {
                     protocol->reply(*writer);
                 } else {
                     writer->write(str->getOutputStream());
@@ -51,9 +51,9 @@ void StreamConnectionReader::flushWriter() {
 
 
 StreamConnectionReader::~StreamConnectionReader() {
-    if (writer!=YARP_NULLPTR) {
+    if (writer!=nullptr) {
         delete writer;
-        writer = YARP_NULLPTR;
+        writer = nullptr;
     }
 }
 
@@ -77,14 +77,14 @@ bool StreamConnectionReader::convertTextMode() {
 
 
 Bytes StreamConnectionReader::readEnvelope() {
-    if (protocol != YARP_NULLPTR) {
+    if (protocol != nullptr) {
         const ConstString& env = protocol->getEnvelope();
         return Bytes((char*)env.c_str(), env.length());
     }
-    if (parentConnectionReader != YARP_NULLPTR) {
+    if (parentConnectionReader != nullptr) {
         return parentConnectionReader->readEnvelope();
     }
-    return Bytes(YARP_NULLPTR, 0);
+    return Bytes(nullptr, 0);
 }
 
 

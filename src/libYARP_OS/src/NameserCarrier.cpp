@@ -22,9 +22,9 @@ yarp::os::impl::NameserTwoWayStream::NameserTwoWayStream(TwoWayStream *delegate)
 }
 
 yarp::os::impl::NameserTwoWayStream::~NameserTwoWayStream() {
-    if (delegate!=YARP_NULLPTR) {
+    if (delegate!=nullptr) {
         delete delegate;
-        delegate = YARP_NULLPTR;
+        delegate = nullptr;
     }
 }
 

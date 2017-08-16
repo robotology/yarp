@@ -1,6 +1,6 @@
 #include "portreader.h"
 
-PortReader *PortReader::self = NULL;
+PortReader *PortReader::self = nullptr;
 
 PortReader::PortReader(QObject *parent) :
     QObject(parent)
@@ -10,7 +10,7 @@ PortReader::PortReader(QObject *parent) :
 
 PortReader * PortReader::instance()
 {
-    if(self == NULL){
+    if(self == nullptr){
         return  new PortReader();
     }
     return self;

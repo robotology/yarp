@@ -82,14 +82,14 @@ public:
 
     DecoderState() {
         index = -1;
-        pCodec = NULL;
-        pCodecCtx = NULL;
-        pFrame = NULL;
-        pFrameRGB = NULL;
-        pAudio = NULL;
-        buffer = NULL;
-        audioBuffer = NULL;
-        audioBufferAt = NULL;
+        pCodec = nullptr;
+        pCodecCtx = nullptr;
+        pFrame = nullptr;
+        pFrameRGB = nullptr;
+        pAudio = nullptr;
+        buffer = nullptr;
+        audioBuffer = nullptr;
+        audioBufferAt = nullptr;
         audioBufferLen = 0;
         frameFinished = 0;
     }
@@ -103,22 +103,22 @@ public:
     }
 
     virtual ~DecoderState() {
-        if (pCodecCtx!=NULL) {
+        if (pCodecCtx!=nullptr) {
             avcodec_close(pCodecCtx);
         }
-        if (audioBuffer!=NULL) {
+        if (audioBuffer!=nullptr) {
             delete [] audioBuffer;
         }
-        if (buffer!=NULL) {
+        if (buffer!=nullptr) {
             delete [] buffer;
         }
-        if (pFrameRGB!=NULL) {
+        if (pFrameRGB!=nullptr) {
             av_free(pFrameRGB);
         }
-        if (pFrame!=NULL) {
+        if (pFrame!=nullptr) {
             av_free(pFrame);
         }
-        if (pAudio!=NULL) {
+        if (pAudio!=nullptr) {
             av_free(pAudio);
         }
     }
@@ -148,13 +148,13 @@ public:
 
         // Find the decoder for the video stream
         pCodec=avcodec_find_decoder(pCodecCtx->codec_id);
-        if(pCodec==NULL) {
+        if(pCodec==nullptr) {
             printf("Codec not found\n");
             return false; // Codec not found
         }
 
         // Open codec
-        if (avcodec_open2(pCodecCtx, pCodec, NULL) < 0) {
+        if (avcodec_open2(pCodecCtx, pCodec, nullptr) < 0) {
             printf("Could not open codec\n");
             return false; // Could not open codec
         }
@@ -169,7 +169,7 @@ public:
 
         // Allocate an AVFrame structure
         pFrameRGB=YARP_avcodec_alloc_frame();
-        if(pFrameRGB==NULL) {
+        if(pFrameRGB==nullptr) {
             printf("Could not allocate a frame\n");
             return false;
         }
@@ -235,7 +235,7 @@ public:
             int r = avcodec_decode_audio4(pCodecCtx, pAudio, &gotFrame, &packet);
             ct = 0;
             if (gotFrame) {
-                ct = av_samples_get_buffer_size(NULL, pCodecCtx->channels,
+                ct = av_samples_get_buffer_size(nullptr, pCodecCtx->channels,
                                                 pFrame->nb_samples,
                                                 pCodecCtx->sample_fmt,
                                                 1);
@@ -300,17 +300,17 @@ public:
             // Convert the image from its native format to RGB
             int w = pCodecCtx->width;
             int h = pCodecCtx->height;
-            static struct SwsContext *img_convert_ctx = NULL;
-            if (img_convert_ctx==NULL) {
+            static struct SwsContext *img_convert_ctx = nullptr;
+            if (img_convert_ctx==nullptr) {
                 img_convert_ctx = sws_getContext(w,h,
                                                  pCodecCtx->pix_fmt,
                                                  w, h, AV_PIX_FMT_RGB24,
                                                  //0,
                                                  //SWS_BILINEAR,
                                                  SWS_BICUBIC,
-                                                 NULL, NULL, NULL);
+                                                 nullptr, nullptr, nullptr);
             }
-            if (img_convert_ctx!=NULL) {
+            if (img_convert_ctx!=nullptr) {
                 sws_scale(img_convert_ctx, ((AVPicture*)pFrame)->data,
                           ((AVPicture*)pFrame)->linesize, 0,
                           pCodecCtx->height,
@@ -355,14 +355,14 @@ public:
 
 
 const char *xstrdup(const char *str) {
-    if (str[0]=='-') return NULL;
+    if (str[0]=='-') return nullptr;
     return strdup(str);
 }
 
 bool FfmpegGrabber::openV4L(yarp::os::Searchable & config,
                             AVFormatContext **ppFormatCtx,
                             AVFormatContext **ppFormatCtx2) {
-    bool audio = (ppFormatCtx==NULL);
+    bool audio = (ppFormatCtx==nullptr);
     AVDictionary*& formatParams =
         *(audio?(&formatParamsAudio):(&formatParamsVideo));
 
@@ -453,10 +453,10 @@ bool FfmpegGrabber::openV4L(yarp::os::Searchable & config,
     }
 
     if (ok) {
-        if (ppFormatCtx!=NULL) {
+        if (ppFormatCtx!=nullptr) {
             if (config.check("audio",
                              "optional audio device")) {
-                ok = openV4L(config,NULL,ppFormatCtx2);
+                ok = openV4L(config,nullptr,ppFormatCtx2);
             }
         }
     }
@@ -477,14 +477,14 @@ bool FfmpegGrabber::openFirewire(yarp::os::Searchable & config,
 
     m_uri = devname;
 
-    return avformat_open_input(ppFormatCtx, strdup(devname.c_str()), iformat, 0) == 0;
+    return avformat_open_input(ppFormatCtx, strdup(devname.c_str()), iformat, nullptr) == 0;
 }
 
 
 bool FfmpegGrabber::openFile(AVFormatContext **ppFormatCtx,
                              const char *fname) {
     m_uri = fname;
-    return avformat_open_input(ppFormatCtx, fname, NULL, 0) == 0;
+    return avformat_open_input(ppFormatCtx, fname, nullptr, nullptr) == 0;
 }
 
 
@@ -552,7 +552,7 @@ bool FfmpegGrabber::open(yarp::os::Searchable & config) {
     // Dump information about file onto standard error
     YARP_dump_format(pFormatCtx, 0, m_uri.c_str(), false);
 
-    if (pFormatCtx2!=NULL) {
+    if (pFormatCtx2!=nullptr) {
 
         if(YARP_av_find_stream_info(pFormatCtx2)<0) {
             printf("Could not find stream information in %s\n", m_uri.c_str());
@@ -564,15 +564,15 @@ bool FfmpegGrabber::open(yarp::os::Searchable & config) {
     }
 
 
-    if (pFormatCtx2!=NULL) {
+    if (pFormatCtx2!=nullptr) {
         pAudioFormatCtx = pFormatCtx2;
     } else {
         pAudioFormatCtx = pFormatCtx;
     }
 
-    yAssert(system_resource==NULL);
+    yAssert(system_resource==nullptr);
     system_resource = new FfmpegHelper;
-    yAssert(system_resource!=NULL);
+    yAssert(system_resource!=nullptr);
     FfmpegHelper& helper = HELPER(system_resource);
     DecoderState& videoDecoder = helper.videoDecoder;
     DecoderState& audioDecoder = helper.audioDecoder;
@@ -634,11 +634,11 @@ bool FfmpegGrabber::open(yarp::os::Searchable & config) {
 bool FfmpegGrabber::close() {
     if (formatParamsVideo) {
         av_dict_free(&formatParamsVideo);
-        formatParamsVideo = NULL;
+        formatParamsVideo = nullptr;
     }
     if (formatParamsAudio) {
         av_dict_free(&formatParamsAudio);
-        formatParamsAudio = NULL;
+        formatParamsAudio = nullptr;
     }
 
     if (!active) {
@@ -646,15 +646,15 @@ bool FfmpegGrabber::close() {
     }
 
     // Close the video file
-    if (pFormatCtx!=NULL) {
+    if (pFormatCtx!=nullptr) {
         YARP_av_close_input_file(pFormatCtx);
     }
-    if (pFormatCtx2!=NULL) {
+    if (pFormatCtx2!=nullptr) {
         YARP_av_close_input_file(pFormatCtx2);
     }
-    if (system_resource!=NULL) {
+    if (system_resource!=nullptr) {
         delete &HELPER(system_resource);
-        system_resource = NULL;
+        system_resource = nullptr;
     }
 
     active = false;

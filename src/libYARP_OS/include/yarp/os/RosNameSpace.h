@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2011 Department of Robotics Brain and Cognitive Sciences - Istituto Italiano di Tecnologia
+ * Copyright (C) 2011 Istituto Italiano di Tecnologia (IIT)
  * Authors: Paul Fitzpatrick
  * CopyPolicy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
  */
@@ -27,43 +27,43 @@ public:
 
     virtual ~RosNameSpace();
 
-    virtual Contact getNameServerContact() const YARP_OVERRIDE;
+    virtual Contact getNameServerContact() const override;
 
-    virtual Contact queryName(const ConstString& name) YARP_OVERRIDE;
-    virtual Contact registerName(const ConstString& name) YARP_OVERRIDE;
-    virtual Contact registerContact(const Contact& contact) YARP_OVERRIDE;
-    virtual Contact unregisterName(const ConstString& name) YARP_OVERRIDE;
-    virtual Contact unregisterContact(const Contact& contact) YARP_OVERRIDE;
+    virtual Contact queryName(const ConstString& name) override;
+    virtual Contact registerName(const ConstString& name) override;
+    virtual Contact registerContact(const Contact& contact) override;
+    virtual Contact unregisterName(const ConstString& name) override;
+    virtual Contact unregisterContact(const Contact& contact) override;
     virtual Contact registerAdvanced(const Contact& contact,
-                                     NameStore *store) YARP_OVERRIDE;
+                                     NameStore *store) override;
     virtual Contact unregisterAdvanced(const ConstString& name,
-                                       NameStore *store) YARP_OVERRIDE;
+                                       NameStore *store) override;
 
     virtual bool setProperty(const ConstString& name,
                              const ConstString& key,
-                             const Value& value) YARP_OVERRIDE;
+                             const Value& value) override;
 
     virtual Value *getProperty(const ConstString& name,
-                               const ConstString& key) YARP_OVERRIDE;
+                               const ConstString& key) override;
 
     virtual bool connectPortToTopic(const Contact& src,
                                     const Contact& dest,
-                                    ContactStyle style) YARP_OVERRIDE;
+                                    ContactStyle style) override;
     virtual bool connectTopicToPort(const Contact& src,
                                     const Contact& dest,
-                                    ContactStyle style) YARP_OVERRIDE;
+                                    ContactStyle style) override;
     virtual bool disconnectPortFromTopic(const Contact& src,
                                          const Contact& dest,
-                                         ContactStyle style) YARP_OVERRIDE;
+                                         ContactStyle style) override;
     virtual bool disconnectTopicFromPort(const Contact& src,
                                          const Contact& dest,
-                                         ContactStyle style) YARP_OVERRIDE;
+                                         ContactStyle style) override;
     virtual bool connectPortToPortPersistently(const Contact& src,
                                                const Contact& dest,
-                                               ContactStyle style) YARP_OVERRIDE;
+                                               ContactStyle style) override;
     virtual bool disconnectPortToPortPersistently(const Contact& src,
                                                   const Contact& dest,
-                                                  ContactStyle style) YARP_OVERRIDE;
+                                                  ContactStyle style) override;
     virtual bool connectTopic(Bottle& cmd,
                               bool srcIsTopic,
                               const Contact& src,
@@ -71,17 +71,17 @@ public:
                               ContactStyle style,
                               bool activeRegistration);
 
-    virtual bool localOnly() const YARP_OVERRIDE;
-    virtual bool usesCentralServer() const YARP_OVERRIDE;
-    virtual bool serverAllocatesPortNumbers() const YARP_OVERRIDE;
-    virtual bool connectionHasNameOfEndpoints() const YARP_OVERRIDE;
+    virtual bool localOnly() const override;
+    virtual bool usesCentralServer() const override;
+    virtual bool serverAllocatesPortNumbers() const override;
+    virtual bool connectionHasNameOfEndpoints() const override;
 
     virtual Contact detectNameServer(bool useDetectedServer,
                                      bool& scanNeeded,
-                                     bool& serverUsed) YARP_OVERRIDE;
+                                     bool& serverUsed) override;
     virtual bool writeToNameServer(PortWriter& cmd,
                                    PortReader& reply,
-                                   const ContactStyle& style) YARP_OVERRIDE;
+                                   const ContactStyle& style) override;
 
 
     /**
@@ -96,7 +96,7 @@ public:
     static ConstString fromRosNodeName(const ConstString& name);
     static Contact rosify(const Contact& contact);
 
-    virtual void run() YARP_OVERRIDE;
+    virtual void run() override;
 
 private:
     Contact contact;

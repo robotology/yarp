@@ -1,6 +1,6 @@
 /*
  *  Yarp Modules Manager
- *  Copyright: (C) 2011 Robotics, Brain and Cognitive Sciences - Italian Institute of Technology (IIT)
+ *  Copyright: (C) 2011 Istituto Italiano di Tecnologia (IIT)
  *  Authors: Ali Paikan <ali.paikan@iit.it>
  *
  *  Copy Policy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
@@ -55,14 +55,14 @@ YarpBroker::~YarpBroker()
     fini();
 }
 
-void YarpBroker::fini(void)
+void YarpBroker::fini()
 {
     if(RateThread::isRunning())
         RateThread::stop();
     //port.close();
 }
 
-bool YarpBroker::init(void)
+bool YarpBroker::init()
 {
     //if(bInitialized)
     //  return true;
@@ -316,7 +316,7 @@ bool YarpBroker::kill()
 }
 
 
-int YarpBroker::running(void)
+int YarpBroker::running()
 {
     if(!bInitialized) return -1;
     if(bOnlyConnector) return -1;
@@ -350,17 +350,17 @@ int YarpBroker::running(void)
 }
 
 
-bool YarpBroker::attachStdout(void)
+bool YarpBroker::attachStdout()
 {
     return true;
 }
 
-void YarpBroker::detachStdout(void)
+void YarpBroker::detachStdout()
 {
 }
 
 
-Property& YarpBroker::runProperty(void)
+Property& YarpBroker::runProperty()
 {
     command.clear();
     string cmd = strCmd + string(" ") + strParam;
@@ -516,17 +516,17 @@ bool YarpBroker::exists(const char* szport)
 
 const char* YarpBroker::requestRpc(const char* szport, const char* request, double timeout)
 {
-    if((szport==NULL) || (request==NULL))
-        return NULL;
+    if((szport==nullptr) || (request==nullptr))
+        return nullptr;
 
     if(!exists(szport))
-        return NULL;
+        return nullptr;
 
     // opening the port
     yarp::os::Port port;
     port.setTimeout((float)((timeout>0.0) ? timeout : CONNECTION_TIMEOUT));
     if(!port.open("..."))
-        return NULL;
+        return nullptr;
 
     ContactStyle style;
     style.quiet = true;
@@ -540,7 +540,7 @@ const char* YarpBroker::requestRpc(const char* szport, const char* request, doub
 
     if(!ret) {
         port.close();
-        return NULL;
+        return nullptr;
     }
 
     Bottle msg, response;
@@ -549,7 +549,7 @@ const char* YarpBroker::requestRpc(const char* szport, const char* request, doub
     NetworkBase::disconnect(port.getName().c_str(), szport);
     if(!response.size() || !ret) {
         port.close();
-        return NULL;
+        return nullptr;
     }
 
     port.close();
@@ -722,13 +722,13 @@ bool YarpBroker::setQos(const char* from, const char *to,
 
     QosStyle styleFrom;
     QosStyle styleTo;
-    if(qosFrom != NULL && strlen(qosFrom)) {
+    if(qosFrom != nullptr && strlen(qosFrom)) {
         if(!getQosFromString(qosFrom, styleFrom)) {            
             strError = "Error in parsing Qos properties of " + string(from);
             return false;
         }
     }
-    if(qosTo != NULL && strlen(qosTo))
+    if(qosTo != nullptr && strlen(qosTo))
         if(!getQosFromString(qosTo, styleTo)) {
             strError = "Error in parsing Qos properties of " + string(to);
             return false;
@@ -771,7 +771,7 @@ bool YarpBroker::getQosFromString(const char* qos, yarp::os::QosStyle& style) {
     return true;
 }
 
-const char* YarpBroker::error(void)
+const char* YarpBroker::error()
 {
     return strError.c_str();
 }

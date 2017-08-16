@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2015 Istituto Italiano di Tecnologia, iCub Facility
+ * Copyright (C) 2015 Istituto Italiano di Tecnologia (IIT)
  * Authors: Lorenzo Natale
  * CopyPolicy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
  */

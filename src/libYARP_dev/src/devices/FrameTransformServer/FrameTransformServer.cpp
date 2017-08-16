@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2013 iCub Facility - Istituto Italiano di Tecnologia
+ * Copyright (C) 2013 Istituto Italiano di Tecnologia (IIT)
  * Authors: Marco Randazzo <marco.randazzo@iit.it>
  * CopyPolicy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
  */
@@ -131,11 +131,11 @@ FrameTransformServer::FrameTransformServer() : RateThread(DEFAULT_THREAD_PERIOD)
     m_period = DEFAULT_THREAD_PERIOD;
     m_enable_publish_ros_tf = false;
     m_enable_subscribe_ros_tf = false;
-    m_yarp_static_transform_storage = 0;
-    m_yarp_timed_transform_storage = 0;
-    m_ros_static_transform_storage = 0;
-    m_ros_timed_transform_storage = 0;
-    m_rosNode = 0;
+    m_yarp_static_transform_storage = nullptr;
+    m_yarp_timed_transform_storage = nullptr;
+    m_ros_static_transform_storage = nullptr;
+    m_ros_timed_transform_storage = nullptr;
+    m_rosNode = nullptr;
     m_FrameTransformTimeout = 0.200; //ms
 }
 
@@ -145,22 +145,22 @@ FrameTransformServer::~FrameTransformServer()
     if (m_yarp_static_transform_storage)
     {
         delete m_yarp_static_transform_storage;
-        m_yarp_static_transform_storage = 0;
+        m_yarp_static_transform_storage = nullptr;
     }
     if (m_yarp_timed_transform_storage)
     {
         delete m_yarp_timed_transform_storage;
-        m_yarp_timed_transform_storage = 0;
+        m_yarp_timed_transform_storage = nullptr;
     }
     if (m_ros_timed_transform_storage)
     {
         delete m_ros_timed_transform_storage;
-        m_ros_timed_transform_storage = 0;
+        m_ros_timed_transform_storage = nullptr;
     }
     if (m_ros_static_transform_storage)
     {
         delete m_ros_static_transform_storage;
-        m_ros_static_transform_storage = 0;
+        m_ros_static_transform_storage = nullptr;
     }
 }
 
@@ -354,7 +354,7 @@ bool FrameTransformServer::read(yarp::os::ConnectionReader& connection)
     }
 
     yarp::os::ConnectionWriter *returnToSender = connection.getWriter();
-    if (returnToSender != NULL)
+    if (returnToSender != nullptr)
     {
         out.write(*returnToSender);
     }
@@ -385,7 +385,7 @@ bool FrameTransformServer::threadInit()
     //open ros publisher (if requested)
     if (m_enable_publish_ros_tf)
     {
-        if (m_rosNode == 0)
+        if (m_rosNode == nullptr)
         {
             m_rosNode = new yarp::os::Node(ROSNODENAME);
         }
@@ -404,7 +404,7 @@ bool FrameTransformServer::threadInit()
     //open ros subscriber(if requested)
     if (m_enable_subscribe_ros_tf)
     {
-        if (m_rosNode == 0)
+        if (m_rosNode == nullptr)
         {
             m_rosNode = new yarp::os::Node(ROSNODENAME);
         }
@@ -618,7 +618,7 @@ void FrameTransformServer::threadRelease()
     {
         m_rosNode->interrupt();
         delete  m_rosNode;
-        m_rosNode = 0;
+        m_rosNode = nullptr;
     }
 }
 
@@ -666,11 +666,11 @@ void FrameTransformServer::run()
         //ros subscriber
         if (m_enable_subscribe_ros_tf)
         {
-            tf2_msgs_TFMessage*   rosInData_timed = 0;
+            tf2_msgs_TFMessage*   rosInData_timed = nullptr;
             do
             {
                 rosInData_timed = m_rosSubscriberPort_tf_timed.read(false);
-                if (rosInData_timed != 0)
+                if (rosInData_timed != nullptr)
                 {
                     std::vector <geometry_msgs_TransformStamped> tfs = rosInData_timed->transforms;
                     size_t tfs_size = tfs.size();
@@ -692,13 +692,13 @@ void FrameTransformServer::run()
                         (*m_ros_timed_transform_storage).set_transform(t);
                     }
                 }
-            } while (rosInData_timed != 0);
+            } while (rosInData_timed != nullptr);
 
-            tf2_msgs_TFMessage*   rosInData_static = 0;
+            tf2_msgs_TFMessage*   rosInData_static = nullptr;
             do
             {
                 rosInData_static = m_rosSubscriberPort_tf_static.read(false);
-                if (rosInData_static != 0)
+                if (rosInData_static != nullptr)
                 {
                     std::vector <geometry_msgs_TransformStamped> tfs = rosInData_static->transforms;
                     size_t tfs_size = tfs.size();
@@ -720,7 +720,7 @@ void FrameTransformServer::run()
                         (*m_ros_static_transform_storage).set_transform(t);
                     }
                 }
-            } while (rosInData_static != 0);
+            } while (rosInData_static != nullptr);
         }
 
         //yarp streaming port

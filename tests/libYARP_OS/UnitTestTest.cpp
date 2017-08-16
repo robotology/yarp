@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2015 iCub Facility
+ * Copyright (C) 2015 Istituto Italiano di Tecnologia (IIT)
  * Author: Paul Fitzpatrick
  * CopyPolicy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
  */
@@ -37,7 +37,7 @@ public:
 
         // check that when we promise no heap use, but it happens, then
         // we get an error
-        UnitTest isolatedTest(NULL);
+        UnitTest isolatedTest(nullptr);
         report(0, "DO NOT PANIC about heap operation assertions below this line, it is part of the test");
         isolatedTest.heapMonitorBegin(false); // assert no memory allocation
         Bottle b3("1 2 3");                   // we lied!

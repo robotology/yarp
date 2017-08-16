@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2012  iCub Facility, Istituto Italiano di Tecnologia
+ * Copyright (C) 2012 Istituto Italiano di Tecnologia (IIT)
  * Author: Daniele E. Domenichelli <daniele.domenichelli@iit.it>
  *
  * CopyPolicy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
@@ -331,7 +331,7 @@ RobotInterface::Robot& RobotInterface::XMLReader::Private::readRobotTag(TiXmlEle
 
     // yDebug() << "Found robot [" << robot.name() << "] build [" << robot.build() << "] portprefix [" << robot.portprefix() << "]";
 
-    for (TiXmlElement* childElem = robotElem->FirstChildElement(); childElem != 0; childElem = childElem->NextSiblingElement()) {
+    for (TiXmlElement* childElem = robotElem->FirstChildElement(); childElem != nullptr; childElem = childElem->NextSiblingElement()) {
         if (childElem->ValueStr().compare("device") == 0 || childElem->ValueStr().compare("devices") == 0) {
             DeviceList childDevices = readDevices(childElem);
             for (DeviceList::const_iterator it = childDevices.begin(); it != childDevices.end(); ++it) {
@@ -392,7 +392,7 @@ RobotInterface::Device RobotInterface::XMLReader::Private::readDeviceTag(TiXmlEl
 
     device.params().push_back(Param("robotName", robot.portprefix().c_str()));
 
-    for (TiXmlElement* childElem = deviceElem->FirstChildElement(); childElem != 0; childElem = childElem->NextSiblingElement()) {
+    for (TiXmlElement* childElem = deviceElem->FirstChildElement(); childElem != nullptr; childElem = childElem->NextSiblingElement()) {
         if (childElem->ValueStr().compare("action") == 0 ||
             childElem->ValueStr().compare("actions") == 0) {
             ActionList childActions = readActions(childElem);
@@ -459,7 +459,7 @@ RobotInterface::DeviceList RobotInterface::XMLReader::Private::readDevicesTag(Ti
     }
 
     DeviceList devices;
-    for (TiXmlElement* childElem = devicesElem->FirstChildElement(); childElem != 0; childElem = childElem->NextSiblingElement()) {
+    for (TiXmlElement* childElem = devicesElem->FirstChildElement(); childElem != nullptr; childElem = childElem->NextSiblingElement()) {
         DeviceList childDevices = readDevices(childElem);
         for (DeviceList::const_iterator it = childDevices.begin(); it != childDevices.end(); ++it) {
             devices.push_back(*it);
@@ -589,7 +589,7 @@ RobotInterface::Param RobotInterface::XMLReader::Private::readGroupTag(TiXmlElem
     // yDebug() << "Found group [" << group.name() << "]";
 
     ParamList params;
-    for (TiXmlElement* childElem = groupElem->FirstChildElement(); childElem != 0; childElem = childElem->NextSiblingElement()) {
+    for (TiXmlElement* childElem = groupElem->FirstChildElement(); childElem != nullptr; childElem = childElem->NextSiblingElement()) {
         ParamList childParams = readParams(childElem);
         for (ParamList::const_iterator it = childParams.begin(); it != childParams.end(); ++it) {
             params.push_back(*it);
@@ -629,7 +629,7 @@ RobotInterface::ParamList RobotInterface::XMLReader::Private::readParamListTag(T
 
     // yDebug() << "Found paramlist [" << params.at(0).name() << "]";
 
-    for (TiXmlElement* childElem = paramListElem->FirstChildElement(); childElem != 0; childElem = childElem->NextSiblingElement()) {
+    for (TiXmlElement* childElem = paramListElem->FirstChildElement(); childElem != nullptr; childElem = childElem->NextSiblingElement()) {
         if (childElem->ValueStr().compare("elem") != 0) {
             SYNTAX_ERROR(childElem->Row()) << "Expected \"elem\". Found" << childElem->ValueStr();
         }
@@ -691,7 +691,7 @@ RobotInterface::ParamList RobotInterface::XMLReader::Private::readSubDeviceTag(T
 
     // yDebug() << "Found subdevice [" << params.at(0).value() << "]";
 
-    for (TiXmlElement* childElem = subDeviceElem->FirstChildElement(); childElem != 0; childElem = childElem->NextSiblingElement()) {
+    for (TiXmlElement* childElem = subDeviceElem->FirstChildElement(); childElem != nullptr; childElem = childElem->NextSiblingElement()) {
         ParamList childParams = readParams(childElem);
         for (ParamList::const_iterator it = childParams.begin(); it != childParams.end(); ++it) {
             params.push_back(Param(it->name(), it->value()));
@@ -750,7 +750,7 @@ RobotInterface::ParamList RobotInterface::XMLReader::Private::readParamsTag(TiXm
     }
 
     ParamList params;
-    for (TiXmlElement* childElem = paramsElem->FirstChildElement(); childElem != 0; childElem = childElem->NextSiblingElement()) {
+    for (TiXmlElement* childElem = paramsElem->FirstChildElement(); childElem != nullptr; childElem = childElem->NextSiblingElement()) {
         ParamList childParams = readParams(childElem);
         for (ParamList::const_iterator it = childParams.begin(); it != childParams.end(); ++it) {
             params.push_back(*it);
@@ -857,7 +857,7 @@ RobotInterface::Action RobotInterface::XMLReader::Private::readActionTag(TiXmlEl
     action.level() = (unsigned)tmp;
 #endif
 
-    for (TiXmlElement* childElem = actionElem->FirstChildElement(); childElem != 0; childElem = childElem->NextSiblingElement()) {
+    for (TiXmlElement* childElem = actionElem->FirstChildElement(); childElem != nullptr; childElem = childElem->NextSiblingElement()) {
         ParamList childParams = readParams(childElem);
         for (ParamList::const_iterator it = childParams.begin(); it != childParams.end(); ++it) {
             action.params().push_back(*it);
@@ -916,7 +916,7 @@ RobotInterface::ActionList RobotInterface::XMLReader::Private::readActionsTag(Ti
     }
 
     ActionList actions;
-    for (TiXmlElement* childElem = actionsElem->FirstChildElement(); childElem != 0; childElem = childElem->NextSiblingElement()) {
+    for (TiXmlElement* childElem = actionsElem->FirstChildElement(); childElem != nullptr; childElem = childElem->NextSiblingElement()) {
         ActionList childActions = readActions(childElem);
         for (ActionList::const_iterator it = childActions.begin(); it != childActions.end(); ++it) {
             actions.push_back(*it);

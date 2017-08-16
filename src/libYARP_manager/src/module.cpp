@@ -1,6 +1,6 @@
 /*
  *  Yarp Modules Manager
- *  Copyright: (C) 2011 Robotics, Brain and Cognitive Sciences - Italian Institute of Technology (IIT)
+ *  Copyright: (C) 2011 Istituto Italiano di Tecnologia (IIT)
  *  Authors: Ali Paikan <ali.paikan@iit.it>
  *
  *  Copy Policy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
@@ -17,7 +17,7 @@ using namespace std;
 using namespace yarp::manager;
 
 
-Module::Module(void) : Node(MODULE) { clear();}
+Module::Module() : Node(MODULE) { clear();}
 
 
 Module::Module(const char* szName) : Node(MODULE)
@@ -76,7 +76,7 @@ void Module::swap(const Module &mod)
 Module::~Module() { }
 
 
-Node* Module::clone(void)
+Node* Module::clone()
 {
     Module* mod = new Module(*this);
     return mod;
@@ -210,9 +210,9 @@ ResourcePIterator Module::findResource(GenericResource& res)
     return resources.end();
 }
 
-void Module::clear(void)
+void Module::clear()
 {
-    modOwner = NULL;
+    modOwner = nullptr;
     iRank = 1;
     strName.clear();
     arguments.clear();
@@ -237,7 +237,7 @@ void Module::clear(void)
         itr != resources.end(); itr++)
     {
         delete (*itr);
-        *itr = NULL;
+        *itr = nullptr;
     }
     resources.clear();
     waitStart = waitStop = 0.0;

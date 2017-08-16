@@ -33,8 +33,8 @@ public:
 
     ConstString getSafeString(const ConstString& txt);
 
-    ConstString getConfigFileName(const char *stem = YARP_NULLPTR,
-                                  const char *ns = YARP_NULLPTR);
+    ConstString getConfigFileName(const char *stem = nullptr,
+                                  const char *ns = nullptr);
 
     static bool createPath(const ConstString& fileName, int ignoreLevel = 1);
 
@@ -42,7 +42,7 @@ public:
 
     bool writeConfig(const ConstString& fileName, const ConstString& text);
 
-    bool fromFile(const char *ns = YARP_NULLPTR);
+    bool fromFile(const char *ns = nullptr);
 
     bool toFile(bool clean = false);
 

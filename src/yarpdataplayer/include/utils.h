@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2011 Department of Robotics Brain and Cognitive Sciences - Istituto Italiano di Tecnologia
+ * Copyright (C) 2011 Istituto Italiano di Tecnologia (IIT)
  * Author: Vadim Tikhanoff
  * email:  vadim.tikhanoff@iit.it
  * Permission is granted to copy, distribute, and/or modify this program

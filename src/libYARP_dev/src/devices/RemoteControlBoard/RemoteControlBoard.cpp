@@ -76,7 +76,7 @@ class DiagnosticThread: public RateThread
 
 public:
     DiagnosticThread(int r): RateThread(r)
-    { owner=0; }
+    { owner=nullptr; }
 
     void setOwner(StateExtendedInputPort *o)
     {
@@ -86,7 +86,7 @@ public:
 
     void run() override
     {
-        if (owner!=0)
+        if (owner!=nullptr)
         {
             if (owner->getIterations()>100)
             {
@@ -534,7 +534,7 @@ protected:
         {
             int i;
             Bottle* lp = response.get(2).asList();
-            if (lp == 0)
+            if (lp == nullptr)
                 return false;
             Bottle& l = *lp;
             int njs = l.size();
@@ -765,7 +765,7 @@ protected:
         if (CHECK_FAIL(ok, response)) {
             int i;
             Bottle* lp = response.get(2).asList();
-            if (lp == 0)
+            if (lp == nullptr)
                 return false;
             Bottle& l = *lp;
 
@@ -796,7 +796,7 @@ protected:
         if (CHECK_FAIL(ok, response)) {
             int i;
             Bottle* lp = response.get(2).asList();
-            if (lp == 0)
+            if (lp == nullptr)
                 return false;
             Bottle& l = *lp;
 
@@ -828,7 +828,7 @@ protected:
         if (CHECK_FAIL(ok, response)) {
             int i;
             Bottle* lp = response.get(2).asList();
-            if (lp == 0)
+            if (lp == nullptr)
                 return false;
             Bottle& l = *lp;
 
@@ -861,7 +861,7 @@ protected:
         if (CHECK_FAIL(ok, response)) {
             int i;
             Bottle* lp = response.get(2).asList();
-            if (lp == 0)
+            if (lp == nullptr)
                 return false;
             Bottle& l = *lp;
 
@@ -886,11 +886,11 @@ protected:
         if (CHECK_FAIL(ok, response)) {
             int i;
             Bottle* lp1 = response.get(2).asList();
-            if (lp1 == 0)
+            if (lp1 == nullptr)
                 return false;
             Bottle& l1 = *lp1;
             Bottle* lp2 = response.get(3).asList();
-            if (lp2 == 0)
+            if (lp2 == nullptr)
                 return false;
             Bottle& l2 = *lp2;
 
@@ -943,7 +943,7 @@ protected:
         if (CHECK_FAIL(ok, response)) {
             int i;
             Bottle* lp2 = response.get(2).asList();
-            if (lp2 == 0)
+            if (lp2 == nullptr)
                 return false;
             Bottle& l2 = *lp2;
 
@@ -1159,7 +1159,7 @@ public:
             diagnosticThread->start();
         }
         else
-            diagnosticThread=0;
+            diagnosticThread=nullptr;
 
         // allocate memory for helper struct
         // single joint
@@ -1196,7 +1196,7 @@ public:
      */
     virtual bool close() override {
 
-        if (diagnosticThread!=0)
+        if (diagnosticThread!=nullptr)
         {
             diagnosticThread->stop();
             delete diagnosticThread;
@@ -1292,7 +1292,7 @@ public:
         bool ok = rpc_p.write(cmd, response);
         if (CHECK_FAIL(ok, response)) {
             Bottle* lp = response.get(2).asList();
-            if (lp == 0)
+            if (lp == nullptr)
                 return false;
             Bottle& l = *lp;
             pid->kp = l.get(0).asDouble();
@@ -1322,14 +1322,14 @@ public:
         {
             int i;
             Bottle* lp = response.get(2).asList();
-            if (lp == 0)
+            if (lp == nullptr)
                 return false;
             const int njs = lp->size();
             yAssert (njs == nj);
             for (i = 0; i < nj; i++)
             {
                 Bottle* mp = lp->get(i).asList();
-                if (mp == 0)
+                if (mp == nullptr)
                     return false;
                 pids[i].kp = mp->get(0).asDouble();
                 pids[i].kd = mp->get(1).asDouble();
@@ -2606,7 +2606,7 @@ public:
         bool ok = rpc_p.write(cmd, response);
         if (CHECK_FAIL(ok, response)) {
             Bottle* lp = response.get(2).asList();
-            if (lp == 0)
+            if (lp == nullptr)
                 return false;
             Bottle& l = *lp;
             if (l.size() != 4)
@@ -2657,7 +2657,7 @@ public:
         bool ok = rpc_p.write(cmd, response);
         if (CHECK_FAIL(ok, response)) {
             Bottle* lp = response.get(2).asList();
-            if (lp == 0)
+            if (lp == nullptr)
                 return false;
             Bottle& l = *lp;
             *stiffness = l.get(0).asDouble();
@@ -2677,7 +2677,7 @@ public:
         bool ok = rpc_p.write(cmd, response);
         if (CHECK_FAIL(ok, response)) {
             Bottle* lp = response.get(2).asList();
-            if (lp == 0)
+            if (lp == nullptr)
                 return false;
             Bottle& l = *lp;
             *offset    = l.get(0).asDouble();
@@ -2727,7 +2727,7 @@ public:
         bool ok = rpc_p.write(cmd, response);
         if (CHECK_FAIL(ok, response)) {
             Bottle* lp = response.get(2).asList();
-            if (lp == 0)
+            if (lp == nullptr)
                 return false;
             Bottle& l = *lp;
             *min_stiff    = l.get(0).asDouble();

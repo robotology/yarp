@@ -61,7 +61,7 @@ bool MicrophoneDeviceDriver::open(yarp::os::Searchable& config) {
     return true;
 }
 
-bool MicrophoneDeviceDriver::close(void) {
+bool MicrophoneDeviceDriver::close() {
     if (dsp!=-1) {
         ::close( dsp );
         dsp = -1;

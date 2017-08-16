@@ -101,23 +101,23 @@ public:
     {
     }
 
-    virtual yarp::os::ConstString toString() YARP_OVERRIDE {
+    virtual yarp::os::ConstString toString() override {
         return desc;
     }
 
-    virtual yarp::os::ConstString getName() YARP_OVERRIDE {
+    virtual yarp::os::ConstString getName() override {
         return desc;
     }
 
-    virtual yarp::os::ConstString getWrapper() YARP_OVERRIDE {
+    virtual yarp::os::ConstString getWrapper() override {
         return wrap;
     }
 
-    virtual yarp::os::ConstString getCode() YARP_OVERRIDE {
+    virtual yarp::os::ConstString getCode() override {
         return code;
     }
 
-    virtual DeviceDriver *create() YARP_OVERRIDE {
+    virtual DeviceDriver *create() override {
         return new T;
     }
 };
@@ -137,23 +137,23 @@ public:
     {
     }
 
-    virtual yarp::os::ConstString toString() YARP_OVERRIDE {
+    virtual yarp::os::ConstString toString() override {
         return desc;
     }
 
-    virtual yarp::os::ConstString getName() YARP_OVERRIDE {
+    virtual yarp::os::ConstString getName() override {
         return desc;
     }
 
-    virtual yarp::os::ConstString getWrapper() YARP_OVERRIDE {
+    virtual yarp::os::ConstString getWrapper() override {
         return wrap;
     }
 
-    virtual yarp::os::ConstString getCode() YARP_OVERRIDE {
+    virtual yarp::os::ConstString getCode() override {
         return code;
     }
 
-    virtual DeviceDriver *create() YARP_OVERRIDE;
+    virtual DeviceDriver *create() override;
 };
 
 

@@ -60,7 +60,7 @@ bool yarp::os::impl::ShmemCarrier::becomeShmemVersionHybridStream(ConnectionStat
     return false;
 #else
     ShmemHybridStream *stream = new ShmemHybridStream();
-    yAssert(stream!=YARP_NULLPTR);
+    yAssert(stream!=nullptr);
     Contact base;
 
     bool ok = true;
@@ -74,13 +74,13 @@ bool yarp::os::impl::ShmemCarrier::becomeShmemVersionHybridStream(ConnectionStat
             int myPort = stream->getLocalAddress().getPort();
             writeYarpInt(myPort, proto);
             stream->accept();
-            proto.takeStreams(YARP_NULLPTR);
+            proto.takeStreams(nullptr);
             proto.takeStreams(stream);
         }
     } else {
         int altPort = readYarpInt(proto);
         ConstString myName = proto.getStreams().getLocalAddress().getHost();
-        proto.takeStreams(YARP_NULLPTR);
+        proto.takeStreams(nullptr);
         base = Contact(myName, altPort);
         ok = stream->open(base, sender)==0;
         if (ok) {
@@ -90,7 +90,7 @@ bool yarp::os::impl::ShmemCarrier::becomeShmemVersionHybridStream(ConnectionStat
 
     if (!ok) {
         delete stream;
-        stream = YARP_NULLPTR;
+        stream = nullptr;
         return false;
     }
 

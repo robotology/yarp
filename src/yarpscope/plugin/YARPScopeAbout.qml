@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2014 iCub Facility - Istituto Italiano di Tecnologia
+ * Copyright (C) 2014 Istituto Italiano di Tecnologia (IIT)
  * Author: Davide Perrone
  * Date: Feb 2014
  * email:   dperrone@aitek.it
@@ -134,7 +134,7 @@ Window {
                 anchors.bottomMargin: 10
                 textFormat: Text.RichText
 
-                text: "Copyright (C) 2012  iCub Facility, Istituto Italiano di Tecnologia "+
+                text: "Copyright (C) 2012 Istituto Italiano di Tecnologia (IIT) "+
                 "<br><br> " +
                 "This program is free software: you can redistribute it and/or modify "+
                 "it under the terms of the GNU General Public License as published by "+

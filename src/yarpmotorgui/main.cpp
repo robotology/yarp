@@ -1,6 +1,6 @@
 /*
  * Copyright (C) 2010 RobotCub Consortium, European Commission FP6 Project IST-004370
- * Copyright (C) 2015 iCub Facility - Istituto Italiano di Tecnologia
+ * Copyright (C) 2015 Istituto Italiano di Tecnologia (IIT)
  * Author: Marco Randazzo <marco.randazzo@iit.it>
  *         Francesco Nori <francesco.nori@iit.it>
  *         Davide Perrone <dperrone@aitek.it>
@@ -34,7 +34,7 @@ using namespace std;
 
 
 QStringList partsName;
-MainWindow* mainW = NULL;
+MainWindow* mainW = nullptr;
 
 bool debug_param_enabled     = false;
 bool speedview_param_enabled = false;
@@ -62,7 +62,7 @@ int main(int argc, char *argv[])
     if (!yarp.checkNetwork())
     {
         LOG_ERROR("Error initializing yarp network (is yarpserver running?)\n");
-        QMessageBox::critical(0, "Error", "Error initializing yarp network (is yarpserver running?)");
+        QMessageBox::critical(nullptr, "Error", "Error initializing yarp network (is yarpserver running?)");
         return 1;
     }
 
@@ -133,7 +133,7 @@ int main(int argc, char *argv[])
 
         if (yarp::os::Network::exists("/robotDescription/rpc"))
         {
-            PolyDriver* desc_driver = 0;
+            PolyDriver* desc_driver = nullptr;
             desc_driver = new PolyDriver;
             std::vector<DeviceDescription> cbw2_list;
             Property desc_driver_options;
@@ -143,7 +143,7 @@ int main(int argc, char *argv[])
             desc_driver->open(desc_driver_options);
             if (desc_driver && desc_driver->isValid())
             {
-                IRobotDescription* idesc = 0;
+                IRobotDescription* idesc = nullptr;
                 desc_driver->view(idesc);
                 if (idesc)
                 {
@@ -170,21 +170,21 @@ int main(int argc, char *argv[])
     Bottle* b_part = finder.find("parts").asList();
     Bottle* b_name = finder.find("names").asList();    if (pParts.size() == 0)
     {
-        if (robotName != "" && b_name != 0)
+        if (robotName != "" && b_name != nullptr)
         {
             LOG_ERROR("You cannot use both --robot and --names options simultaneously\n");
-            QMessageBox::critical(0, "Error", "You cannot use both --robot and --names options simultaneously");
+            QMessageBox::critical(nullptr, "Error", "You cannot use both --robot and --names options simultaneously");
             return 1;
         }
 
-        if (b_name != 0 && b_part != 0)
+        if (b_name != nullptr && b_part != nullptr)
         {
             LOG_ERROR("You cannot use both --parts and --names options simultaneously\n");
-            QMessageBox::critical(0, "Error", "You cannot use both --parts and --names options simultaneously");
+            QMessageBox::critical(nullptr, "Error", "You cannot use both --parts and --names options simultaneously");
             return 1;
         }
 
-        if (b_name != 0 && b_part == 0)
+        if (b_name != nullptr && b_part == nullptr)
         {
             //check port names from config file
             for (int i = 0; i < b_name->size(); i++)
@@ -192,7 +192,7 @@ int main(int argc, char *argv[])
                 pParts.addString(b_name->get(i).asString());
             }
         }
-        else if (robotName != "" && b_part != 0)
+        else if (robotName != "" && b_part != nullptr)
         {
             //check parts from config file
             for (int i = 0; i < b_part->size(); i++)
@@ -205,13 +205,13 @@ int main(int argc, char *argv[])
                 else
                 {
                     LOG_ERROR("Option --parts should not contain /, please remove it\n");
-                    QMessageBox::critical(0, "Error", "Option --parts should not contain /, please remove it");
+                    QMessageBox::critical(nullptr, "Error", "Option --parts should not contain /, please remove it");
                     return 1;
                 }
                 pParts.addString(ss);
             }
         }
-        else if (robotName != "" && b_part == 0)
+        else if (robotName != "" && b_part == nullptr)
         {
             pParts.addString("/" + robotName + "/head");
             pParts.addString("/" + robotName + "/torso");

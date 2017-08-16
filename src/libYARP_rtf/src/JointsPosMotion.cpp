@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2015 iCub Facility, Istituto Italiano di Tecnologia
+ * Copyright (C) 2015 Istituto Italiano di Tecnologia (IIT)
  * Authors: Valentina Gaggero <valentina.gaggero@iit.it>
  * CopyPolicy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
  */
@@ -22,7 +22,7 @@ class yarp::rtf::jointsPosMotion::Private
 public:
     void init(yarp::dev::PolyDriver *polydriver);
     size_t getIndexOfJoint(int j);
-    void readJointsLimits(void);
+    void readJointsLimits();
 
     yarp::sig::Vector jointsList;
     yarp::sig::Vector encoders;
@@ -73,7 +73,7 @@ size_t yarp::rtf::jointsPosMotion::Private::getIndexOfJoint(int j)
 }
 
 
-void yarp::rtf::jointsPosMotion::Private::readJointsLimits(void)
+void yarp::rtf::jointsPosMotion::Private::readJointsLimits()
 {
     max_lims.resize(n_joints);
     min_lims.resize(n_joints);
@@ -195,7 +195,7 @@ bool yarp::rtf::jointsPosMotion::goToSingle(int j, double pos, double *reached_p
         yarp::os::Time::delay(0.2);
     }
 
-    if(reached_pos != YARP_NULLPTR) {
+    if(reached_pos != nullptr) {
         *reached_pos = tmp;
     }
     return(ret);
@@ -229,7 +229,7 @@ bool yarp::rtf::jointsPosMotion::goTo(yarp::sig::Vector positions, yarp::sig::Ve
         yarp::os::Time::delay(0.2);
     }
 
-    if(reached_pos != YARP_NULLPTR) {
+    if(reached_pos != nullptr) {
         reached_pos->resize(mPriv->n_joints);
         *reached_pos = tmp;
     }

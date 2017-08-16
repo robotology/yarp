@@ -1,8 +1,8 @@
 /*
  *  Yarp Modules Manager
  *  Copyright: (C) 2013 Istituto Italiano di Tecnologia (IIT)
- *  Authors: Ali Paikan <ali.paikan@iit.it>, Elena Ceseracciu <elena.ceseracciu@iit.it>
- *
+ *  Authors: Ali Paikan <ali.paikan@iit.it>
+ *           Elena Ceseracciu <elena.ceseracciu@iit.it>
  *  Copy Policy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
  */
 
@@ -49,9 +49,9 @@ static Bottle parsePaths(const ConstString& txt) {
 }
 
 static bool fileExists(const char *fname) {
-        FILE *fp=NULL;
+        FILE *fp=nullptr;
         fp = fopen(fname,"r");
-        if(fp == NULL)
+        if(fp == nullptr)
             return false;
         else
         {

@@ -64,7 +64,7 @@ public:
         sis.reset();
         sis.add(s);
         Route r;
-        reader.reset(sis, YARP_NULLPTR, r, s.length(), textMode);
+        reader.reset(sis, nullptr, r, s.length(), textMode);
         return reader;
     }
 
@@ -84,9 +84,9 @@ DummyConnector::DummyConnector() {
 
 
 DummyConnector::~DummyConnector() {
-    if (implementation != YARP_NULLPTR) {
+    if (implementation != nullptr) {
         delete &HELPER(implementation);
-        implementation = YARP_NULLPTR;
+        implementation = nullptr;
     }
 }
 

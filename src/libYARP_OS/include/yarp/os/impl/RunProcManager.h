@@ -72,12 +72,12 @@ public:
             while (true)
             {
                 //check exit status of the child
-                PID zombie = yarp::os::impl::wait(YARP_NULLPTR);
+                PID zombie = yarp::os::impl::wait(nullptr);
                 //PID can be:
                 // - Child stopped or terminated => PID of child
                 // - Error => -1
 
-                //PID zombie=waitpid(-1, YARP_NULLPTR, WNOHANG);
+                //PID zombie=waitpid(-1, nullptr, WNOHANG);
 
                 if (zombie > 0)
                 {
@@ -126,7 +126,7 @@ public:
             return true;
         }
 
-        pRef = YARP_NULLPTR;
+        pRef = nullptr;
         return false;
     }
 #endif
@@ -231,7 +231,7 @@ public:
 #if !defined(_WIN32)
     virtual bool Clean(PID pid, YarpRunProcInfo* &pRef) override
     {
-        pRef = YARP_NULLPTR;
+        pRef = nullptr;
 
         if (mPidCmd==pid)
         {

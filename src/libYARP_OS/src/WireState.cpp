@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2013 iCub Facility
+ * Copyright (C) 2013 Istituto Italiano di Tecnologia (IIT)
  * Authors: Paul Fitzpatrick
  * CopyPolicy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
  */
@@ -14,7 +14,7 @@ WireState::WireState() :
         len(-1),
         code(-1),
         need_ok(false),
-        parent(YARP_NULLPTR)
+        parent(nullptr)
 {
 }
 

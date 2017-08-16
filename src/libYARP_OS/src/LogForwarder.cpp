@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2014  iCub Facility, Istituto Italiano di Tecnologia
+ * Copyright (C) 2014 Istituto Italiano di Tecnologia (IIT)
  * Author: Marco Randazzo <marco.randazzo@iit.it>
  * CopyPolicy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
  */
@@ -10,8 +10,8 @@
 #include <yarp/os/Time.h>
 #include <yarp/os/Log.h>
 
-yarp::os::LogForwarder* yarp::os::LogForwarder::instance = YARP_NULLPTR;
-yarp::os::Semaphore *yarp::os::LogForwarder::sem = YARP_NULLPTR;
+yarp::os::LogForwarder* yarp::os::LogForwarder::instance = nullptr;
+yarp::os::Semaphore *yarp::os::LogForwarder::sem = nullptr;
 
 yarp::os::LogForwarder* yarp::os::LogForwarder::getInstance()
 {
@@ -54,7 +54,7 @@ yarp::os::LogForwarder::LogForwarder()
 //     yarp::os::NetworkBase::initMinimum();
     sem = new yarp::os::Semaphore(1);
     yAssert(sem);
-    outputPort =YARP_NULLPTR;
+    outputPort =nullptr;
     outputPort = new yarp::os::BufferedPort<yarp::os::Bottle>;
     char host_name [MAX_STRING_SIZE]; //unsafe
     yarp::os::gethostname(host_name, MAX_STRING_SIZE);
@@ -88,10 +88,10 @@ yarp::os::LogForwarder::~LogForwarder()
         //outputPort->interrupt();
         outputPort->close();
         delete outputPort;
-        outputPort=YARP_NULLPTR;
+        outputPort=nullptr;
     }
     sem->post();
     delete sem;
-    sem = YARP_NULLPTR;
+    sem = nullptr;
 //     yarp::os::NetworkBase::finiMinimum();
 };

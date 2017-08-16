@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2016 iCub Facility, Istituto Italiano di Tecnologia
+ * Copyright (C) 2016 Istituto Italiano di Tecnologia (IIT)
  * Authors: Andrea Ruzzenenti <andrea.ruzzenenti@iit.it>
  * CopyPolicy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
  */
@@ -34,7 +34,7 @@ public:
 protected:
     std::map<int, std::string> m_actions;
 
-    virtual bool parseActions(const yarp::os::Searchable& cfg, int *count = YARP_NULLPTR);
+    virtual bool parseActions(const yarp::os::Searchable& cfg, int *count = nullptr);
     virtual bool executeAction(int action_id);
 
 public:
@@ -53,7 +53,7 @@ public:
      * * @param event a pointer to a valid yarp::dev::IJoypadEvent object whom action() method will be called on event detection
      * @return true if succeded. false otherwise
      */
-    virtual bool eventDriven(bool enable, yarp::dev::IJoypadEvent* event = YARP_NULLPTR){return false;}
+    virtual bool eventDriven(bool enable, yarp::dev::IJoypadEvent* event = nullptr){return false;}
     virtual bool isEventDriven(){return false;}
 
     /**
@@ -231,19 +231,19 @@ protected:
 
 public:
 
-    virtual bool getAxisCount(unsigned int& axis_count) YARP_OVERRIDE YARP_FINAL;
-    virtual bool getButtonCount(unsigned int& button_count) YARP_OVERRIDE YARP_FINAL;
-    virtual bool getTrackballCount(unsigned int& Trackball_count) YARP_OVERRIDE YARP_FINAL;
-    virtual bool getHatCount(unsigned int& Hat_count) YARP_OVERRIDE YARP_FINAL;
-    virtual bool getTouchSurfaceCount(unsigned int& touch_count) YARP_OVERRIDE YARP_FINAL;
-    virtual bool getStickCount(unsigned int& stick_count) YARP_OVERRIDE YARP_FINAL;
-    virtual bool getStickDoF(unsigned int stick_id, unsigned int& DoF) YARP_OVERRIDE YARP_FINAL;
-    virtual bool getButton(unsigned int button_id, float& value) YARP_OVERRIDE YARP_FINAL;
-    virtual bool getTrackball(unsigned int trackball_id, yarp::sig::Vector& value) YARP_OVERRIDE YARP_FINAL;
-    virtual bool getHat(unsigned int hat_id, unsigned char& value) YARP_OVERRIDE YARP_FINAL;
-    virtual bool getAxis(unsigned int axis_id, double& value) YARP_OVERRIDE YARP_FINAL;
-    virtual bool getStick(unsigned int stick_id, yarp::sig::Vector& value, JoypadCtrl_coordinateMode coordinate_mode) YARP_OVERRIDE YARP_FINAL;
-    virtual bool getTouch(unsigned int touch_id, yarp::sig::Vector& value) YARP_OVERRIDE YARP_FINAL;
+    virtual bool getAxisCount(unsigned int& axis_count) override final;
+    virtual bool getButtonCount(unsigned int& button_count) override final;
+    virtual bool getTrackballCount(unsigned int& Trackball_count) override final;
+    virtual bool getHatCount(unsigned int& Hat_count) override final;
+    virtual bool getTouchSurfaceCount(unsigned int& touch_count) override final;
+    virtual bool getStickCount(unsigned int& stick_count) override final;
+    virtual bool getStickDoF(unsigned int stick_id, unsigned int& DoF) override final;
+    virtual bool getButton(unsigned int button_id, float& value) override final;
+    virtual bool getTrackball(unsigned int trackball_id, yarp::sig::Vector& value) override final;
+    virtual bool getHat(unsigned int hat_id, unsigned char& value) override final;
+    virtual bool getAxis(unsigned int axis_id, double& value) override final;
+    virtual bool getStick(unsigned int stick_id, yarp::sig::Vector& value, JoypadCtrl_coordinateMode coordinate_mode) override final;
+    virtual bool getTouch(unsigned int touch_id, yarp::sig::Vector& value) override final;
     using IJoypadController::JoypadCtrl_coordinateMode;
     using IJoypadController::JypCtrlcoord_CARTESIAN;
     using IJoypadController::JypCtrlcoord_POLAR;
@@ -254,11 +254,11 @@ public:
 
     IJoypadEventDriven(int rate);
 
-    virtual bool threadInit() YARP_OVERRIDE YARP_FINAL;
-    virtual void run() YARP_OVERRIDE YARP_FINAL;
+    virtual bool threadInit() override final;
+    virtual void run() override final;
 
-    virtual bool eventDriven(bool enable, yarp::dev::IJoypadEvent* event = YARP_NULLPTR) YARP_OVERRIDE;
-    virtual bool isEventDriven() YARP_OVERRIDE { return EventDrivenEnabled;}
+    virtual bool eventDriven(bool enable, yarp::dev::IJoypadEvent* event = nullptr) override;
+    virtual bool isEventDriven() override { return EventDrivenEnabled;}
 };
 
 

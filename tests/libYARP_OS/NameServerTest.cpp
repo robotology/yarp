@@ -54,12 +54,12 @@ public:
         NetworkBase::setLocalMode(fake);
         Contact address("/foo2", "tcp", "127.0.0.1", safePort());
         NetworkBase::registerContact(address);
-        NetworkBase::connect("/junk","/junk2",NULL,true);
-        NetworkBase::connect("/foo2","/junk2",NULL,true);
+        NetworkBase::connect("/junk","/junk2",nullptr,true);
+        NetworkBase::connect("/foo2","/junk2",nullptr,true);
         for (int i=0; i<5; i++) {
             char buf[100];
             sprintf(buf,"/many/foo/%d", i);
-            NetworkBase::connect(buf,"/junk2",NULL,true);
+            NetworkBase::connect(buf,"/junk2",nullptr,true);
         }
         NetworkBase::setLocalMode(false);
     }

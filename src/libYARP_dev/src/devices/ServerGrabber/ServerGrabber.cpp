@@ -1,6 +1,6 @@
 /*
- * Copyright (C) 2017 iCub Facility
- * Authors: Nicolo' Genesio
+ * Copyright (C) 2017 Istituto Italiano di Tecnologia (IIT)
+ * Authors: Nicolò Genesio
  * CopyPolicy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
  */
 
@@ -23,7 +23,7 @@ yarp::dev::DriverCreator *createServerGrabber()
             ("grabberDual", "grabberDual", "yarp::dev::ServerGrabber");
 }
 
-yarp::dev::DC1394::DC1394Parser::DC1394Parser() : fgCtrl_DC1394(YARP_NULLPTR) {};
+yarp::dev::DC1394::DC1394Parser::DC1394Parser() : fgCtrl_DC1394(nullptr) {};
 
 bool yarp::dev::DC1394::DC1394Parser::configure(IFrameGrabberControlsDC1394 *interface)
 {
@@ -221,26 +221,26 @@ bool yarp::dev::impl::ServerGrabberResponder::respond(const os::Bottle &command,
 // **********ServerGrabber**********
 
 ServerGrabber::ServerGrabber():RateThread(DEFAULT_THREAD_PERIOD), period(DEFAULT_THREAD_PERIOD) {
-    responder = YARP_NULLPTR;
-    responder2 =YARP_NULLPTR;
-    rgbVis_p = YARP_NULLPTR;
-    rgbVis_p2 = YARP_NULLPTR;
-    fgImage = YARP_NULLPTR;
-    fgImage2 = YARP_NULLPTR;
-    fgImageRaw = YARP_NULLPTR;
-    fgImageRaw2 = YARP_NULLPTR;
-    fgCtrl_DC1394 = YARP_NULLPTR;
-    fgCtrl2_DC1394 = YARP_NULLPTR;
-//    fgAv = YARP_NULLPTR;
-    fgCtrl = YARP_NULLPTR;
-    fgCtrl2 = YARP_NULLPTR;
-    fgTimed = YARP_NULLPTR;
-    poly = YARP_NULLPTR;
-    poly2 = YARP_NULLPTR;
-    img=YARP_NULLPTR;
-    img2=YARP_NULLPTR;
-    img_Raw=YARP_NULLPTR;
-    img2_Raw=YARP_NULLPTR;
+    responder = nullptr;
+    responder2 =nullptr;
+    rgbVis_p = nullptr;
+    rgbVis_p2 = nullptr;
+    fgImage = nullptr;
+    fgImage2 = nullptr;
+    fgImageRaw = nullptr;
+    fgImageRaw2 = nullptr;
+    fgCtrl_DC1394 = nullptr;
+    fgCtrl2_DC1394 = nullptr;
+//    fgAv = nullptr;
+    fgCtrl = nullptr;
+    fgCtrl2 = nullptr;
+    fgTimed = nullptr;
+    poly = nullptr;
+    poly2 = nullptr;
+    img=nullptr;
+    img2=nullptr;
+    img_Raw=nullptr;
+    img2_Raw=nullptr;
     param.spoke = false;
     param.canDrop = true;
     param.addStamp = false;
@@ -252,7 +252,7 @@ ServerGrabber::ServerGrabber():RateThread(DEFAULT_THREAD_PERIOD), period(DEFAULT
     param.split = false;
 //    param.cap=AV;
     param.cap=COLOR;
-    p2 = YARP_NULLPTR;
+    p2 = nullptr;
     isSubdeviceOwned=false;
     count = 0;
     count2 = 0;
@@ -278,7 +278,7 @@ bool ServerGrabber::close() {
     rpcPort.close();
     if(responder){
         delete responder;
-        responder=YARP_NULLPTR;
+        responder=nullptr;
     }
     if(param.twoCameras && param.split)
     {
@@ -296,26 +296,26 @@ bool ServerGrabber::close() {
     {
         poly->close();
         delete poly;
-        poly=YARP_NULLPTR;
+        poly=nullptr;
     }
     if(param.twoCameras)
     {
         if(responder2)
         {
             delete responder2;
-            responder=YARP_NULLPTR;
+            responder=nullptr;
         }
         if(isSubdeviceOwned && poly2)
         {
             poly2->close();
             delete poly2;
-            poly2=YARP_NULLPTR;
+            poly2=nullptr;
         }
     }
     isSubdeviceOwned=false;
-    if (p2!=YARP_NULLPTR) {
+    if (p2!=nullptr) {
         delete p2;
-        p2 =YARP_NULLPTR;
+        p2 =nullptr;
     }
     return true;
 }
@@ -696,7 +696,7 @@ bool ServerGrabber::attachAll(const PolyDriverList &device2attach)
         {
             case COLOR :
             {
-                if((fgImage==YARP_NULLPTR) || (fgImage2==YARP_NULLPTR))
+                if((fgImage==nullptr) || (fgImage2==nullptr))
                 {
                     yError()<<"ServerGrabber: capability required not supported";
                     return false;
@@ -705,19 +705,19 @@ bool ServerGrabber::attachAll(const PolyDriverList &device2attach)
             break;
             case RAW :
             {
-                if((fgImageRaw==YARP_NULLPTR) || (fgImageRaw2==YARP_NULLPTR))
+                if((fgImageRaw==nullptr) || (fgImageRaw2==nullptr))
                 {
                     yError()<<"ServerGrabber: capability required not supported";
                     return false;
                 }
             }
         }
-        if((rgbVis_p == YARP_NULLPTR) || (rgbVis_p2 == YARP_NULLPTR))
+        if((rgbVis_p == nullptr) || (rgbVis_p2 == nullptr))
         {
             yWarning()<<"ServerGrabber: Targets has not IVisualParamInterface, some features cannot be available";
         }
         //Configuring parsers
-        if(rgbVis_p != YARP_NULLPTR && rgbVis_p2 != YARP_NULLPTR)
+        if(rgbVis_p != nullptr && rgbVis_p2 != nullptr)
         {
             if(!(rgbParser.configure(rgbVis_p)) || !(rgbParser2.configure(rgbVis_p2)))
             {
@@ -725,7 +725,7 @@ bool ServerGrabber::attachAll(const PolyDriverList &device2attach)
                 return false;
             }
         }
-        if(fgCtrl != YARP_NULLPTR && fgCtrl2 != YARP_NULLPTR)
+        if(fgCtrl != nullptr && fgCtrl2 != nullptr)
         {
             if(!(ifgCtrl_Parser.configure(fgCtrl)) || !(ifgCtrl2_Parser.configure(fgCtrl2)))
             {
@@ -733,7 +733,7 @@ bool ServerGrabber::attachAll(const PolyDriverList &device2attach)
                 return false;
             }
         }
-        if(fgCtrl_DC1394 != YARP_NULLPTR && fgCtrl2_DC1394 != YARP_NULLPTR)
+        if(fgCtrl_DC1394 != nullptr && fgCtrl2_DC1394 != nullptr)
         {
             if(!(ifgCtrl_DC1394_Parser.configure(fgCtrl_DC1394)) || !(ifgCtrl2_DC1394_Parser.configure(fgCtrl2_DC1394)))
             {
@@ -757,7 +757,7 @@ bool ServerGrabber::attachAll(const PolyDriverList &device2attach)
         switch(param.cap){
             case COLOR :
             {
-                if(fgImage==YARP_NULLPTR)
+                if(fgImage==nullptr)
                 {
                     yError()<<"ServerGrabber: capability required not supported";
                     return false;
@@ -766,7 +766,7 @@ bool ServerGrabber::attachAll(const PolyDriverList &device2attach)
             break;
             case RAW :
             {
-                if(fgImageRaw==YARP_NULLPTR)
+                if(fgImageRaw==nullptr)
                 {
                     yError()<<"ServerGrabber: capability required not supported";
                     return false;
@@ -780,13 +780,13 @@ bool ServerGrabber::attachAll(const PolyDriverList &device2attach)
             return false;
         }
 
-        if(rgbVis_p == YARP_NULLPTR)
+        if(rgbVis_p == nullptr)
         {
             yWarning()<<"ServerGrabber: Targets has not IVisualParamInterface, some features cannot be available";
         }
 
         //Configuring parsers
-        if(rgbVis_p != YARP_NULLPTR)
+        if(rgbVis_p != nullptr)
         {
             if(!(rgbParser.configure(rgbVis_p)))
             {
@@ -794,7 +794,7 @@ bool ServerGrabber::attachAll(const PolyDriverList &device2attach)
                 return false;
             }
         }
-        if(fgCtrl != YARP_NULLPTR)
+        if(fgCtrl != nullptr)
         {
             if(!(ifgCtrl_Parser.configure(fgCtrl)))
             {
@@ -803,7 +803,7 @@ bool ServerGrabber::attachAll(const PolyDriverList &device2attach)
             }
         }
 
-        if(fgCtrl_DC1394 != YARP_NULLPTR)
+        if(fgCtrl_DC1394 != nullptr)
         {
             if(!(ifgCtrl_DC1394_Parser.configure(fgCtrl_DC1394)))
             {
@@ -832,16 +832,16 @@ void ServerGrabber::stopThread()
     if (yarp::os::RateThread::isRunning())
         yarp::os::RateThread::stop();
 
-    rgbVis_p       = YARP_NULLPTR;
-    rgbVis_p2      = YARP_NULLPTR;
-    fgImage        = YARP_NULLPTR;
-    fgImage2       = YARP_NULLPTR;
-    fgImageRaw     = YARP_NULLPTR;
-    fgImageRaw2    = YARP_NULLPTR;
-    fgCtrl         = YARP_NULLPTR;
-    fgCtrl2        = YARP_NULLPTR;
-    fgCtrl_DC1394  = YARP_NULLPTR;
-    fgCtrl2_DC1394 = YARP_NULLPTR;
+    rgbVis_p       = nullptr;
+    rgbVis_p2      = nullptr;
+    fgImage        = nullptr;
+    fgImage2       = nullptr;
+    fgImageRaw     = nullptr;
+    fgImageRaw2    = nullptr;
+    fgCtrl         = nullptr;
+    fgCtrl2        = nullptr;
+    fgCtrl_DC1394  = nullptr;
+    fgCtrl2_DC1394 = nullptr;
 }
 
 void ServerGrabber::split(const yarp::sig::Image& inputImage, yarp::sig::Image& _img, yarp::sig::Image& _img2)
@@ -1090,7 +1090,7 @@ void ServerGrabber::run()
             FlexImage& flex_i2=pImg2.prepare();
             if(param.cap==COLOR)
             {
-                if(fgImage!=YARP_NULLPTR && fgImage2 !=YARP_NULLPTR)
+                if(fgImage!=nullptr && fgImage2 !=nullptr)
                 {
                     fgImage->getImage(*img);
                     setupFlexImage(*img,flex_i);
@@ -1103,7 +1103,7 @@ void ServerGrabber::run()
             }
             if(param.cap==RAW)
             {
-                if(fgImageRaw!=YARP_NULLPTR && fgImageRaw2 !=YARP_NULLPTR)
+                if(fgImageRaw!=nullptr && fgImageRaw2 !=nullptr)
                 {
                     fgImageRaw->getImage(*img_Raw);
                     setupFlexImage(*img_Raw,flex_i);
@@ -1131,7 +1131,7 @@ void ServerGrabber::run()
             FlexImage& flex_i=pImg.prepare();
             if(param.cap==COLOR)
             {
-                if(fgImage!=YARP_NULLPTR && fgImage2 !=YARP_NULLPTR)
+                if(fgImage!=nullptr && fgImage2 !=nullptr)
                 {
                     flex_i.setPixelCode(VOCAB_PIXEL_RGB);
                     flex_i.resize(fgImage->width()*2,fgImage->height());
@@ -1145,7 +1145,7 @@ void ServerGrabber::run()
             }
             if(param.cap==RAW)
             {
-                if(fgImageRaw!=YARP_NULLPTR && fgImageRaw2 !=YARP_NULLPTR)
+                if(fgImageRaw!=nullptr && fgImageRaw2 !=nullptr)
                 {
                     flex_i.setPixelCode(VOCAB_PIXEL_MONO);
                     flex_i.resize(fgImageRaw->width()*2,fgImageRaw->height());
@@ -1174,7 +1174,7 @@ void ServerGrabber::run()
 
             if(param.cap==COLOR)
             {
-                if(fgImage!=YARP_NULLPTR)
+                if(fgImage!=nullptr)
                 {
                     yarp::sig::ImageOf<yarp::sig::PixelRgb> inputImage;
                     fgImage->getImage(inputImage);
@@ -1189,7 +1189,7 @@ void ServerGrabber::run()
             }
             if(param.cap==RAW)
             {
-                if(fgImageRaw!=YARP_NULLPTR)
+                if(fgImageRaw!=nullptr)
                 {
                     yarp::sig::ImageOf<yarp::sig::PixelMono> inputImage;
                     fgImageRaw->getImage(inputImage);
@@ -1220,7 +1220,7 @@ void ServerGrabber::run()
 
             if(param.cap==COLOR)
             {
-                if(fgImage!=YARP_NULLPTR)
+                if(fgImage!=nullptr)
                 {
                     fgImage->getImage(*img);
                     setupFlexImage(*img,flex_i);
@@ -1230,7 +1230,7 @@ void ServerGrabber::run()
             }
             if(param.cap==RAW)
             {
-                if(fgImageRaw!=YARP_NULLPTR)
+                if(fgImageRaw!=nullptr)
                 {
                     fgImageRaw->getImage(*img_Raw);
                     setupFlexImage(*img_Raw,flex_i);
@@ -1258,28 +1258,28 @@ void ServerGrabber::cleanUp()
 {
     if(param.cap==COLOR)
     {
-        if(img!=YARP_NULLPTR)
+        if(img!=nullptr)
         {
             delete img;
-            img=YARP_NULLPTR;
+            img=nullptr;
         }
-        if(img2!=YARP_NULLPTR)
+        if(img2!=nullptr)
         {
             delete img2;
-            img2=YARP_NULLPTR;
+            img2=nullptr;
         }
     }
     else
     {
-        if(img_Raw!=YARP_NULLPTR)
+        if(img_Raw!=nullptr)
         {
             delete img_Raw;
-            img_Raw=YARP_NULLPTR;
+            img_Raw=nullptr;
         }
-        if(img2_Raw!=YARP_NULLPTR)
+        if(img2_Raw!=nullptr)
         {
             delete img2_Raw;
-            img2_Raw=YARP_NULLPTR;
+            img2_Raw=nullptr;
         }
     }
 }

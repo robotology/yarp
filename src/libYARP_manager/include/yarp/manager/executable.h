@@ -1,6 +1,6 @@
 /*
  *  Yarp Modules Manager
- *  Copyright: (C) 2011 Robotics, Brain and Cognitive Sciences - Italian Institute of Technology (IIT)
+ *  Copyright: (C) 2011 Istituto Italiano di Tecnologia (IIT)
  *  Authors: Ali Paikan <ali.paikan@iit.it>
  *
  *  Copy Policy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
@@ -113,7 +113,7 @@ public:
     void stopWatchDog();
 
 public: // from BrokerEventSink
-    void onBrokerStdout(const char* msg) YARP_OVERRIDE;
+    void onBrokerStdout(const char* msg) override;
 
 private:
     bool bAutoConnect;
@@ -162,7 +162,7 @@ public:
     virtual ~ConcurentWrapper() { if(isRunning()) stop(); }
 
 
-    void run() YARP_OVERRIDE {
+    void run() override {
         if(labor && executable)
             (executable->*labor)();
     }
@@ -186,7 +186,7 @@ public:
     virtual ~ConcurentRateWrapper() { if(isRunning()) stop(); }
 
 
-    void run() YARP_OVERRIDE {
+    void run() override {
         if(labor && executable)
             (executable->*labor)();
     }

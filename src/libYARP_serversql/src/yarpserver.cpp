@@ -50,13 +50,13 @@ public:
 
     NameServerContainer() {
         silent = false;
-        space = YARP_NULLPTR;
+        space = nullptr;
     }
 
     virtual ~NameServerContainer() {
         subscriber.clear();
         if (space) delete space;
-        space = YARP_NULLPTR;
+        space = nullptr;
     }
 
     void setSilent(bool silent) {
@@ -117,7 +117,7 @@ public:
         }
 
         TripleSource *pmem = db.open(dbFilename.c_str(),cautious,reset);
-        if (pmem == YARP_NULLPTR) {
+        if (pmem == nullptr) {
             fprintf(stderr,"Aborting, ports database failed to open.\n");
             return false;
         }
@@ -176,11 +176,11 @@ public:
 
 yarpserversql_API yarp::os::NameStore *yarpserver_create(yarp::os::Searchable& options) {
     NameServerContainer *nc = new NameServerContainer;
-    if (!nc) return YARP_NULLPTR;
+    if (!nc) return nullptr;
     nc->setSilent(true);
     if (!nc->open(options)) {
         delete nc;
-        return YARP_NULLPTR;
+        return nullptr;
     }
     nc->goPublic();
     return nc;

@@ -1,5 +1,5 @@
 /*
-* Copyright (C) 2015 iCub Facility - Istituto Italiano di Tecnologia
+* Copyright (C) 2015 Istituto Italiano di Tecnologia (IIT)
 * Author: Marco Randazzo <marco.randazzo@iit.it>
 * CopyPolicy: Released under the terms of the GPLv2 or later, see GPL.TXT
 */
@@ -111,7 +111,7 @@ bool FakeLaser::open(yarp::os::Searchable& config)
                 return false;
             }
             m_pLoc->view(m_iLoc);
-            if (m_iLoc == 0)
+            if (m_iLoc == nullptr)
             {
                 yError() << "Unable to open localization interface";
                 return false;

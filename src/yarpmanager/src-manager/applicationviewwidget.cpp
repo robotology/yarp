@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2014 iCub Facility - Istituto Italiano di Tecnologia
+ * Copyright (C) 2014 Istituto Italiano di Tecnologia (IIT)
  * Author: Davide Perrone
  * Date: Feb 2014
  * email:   dperrone@aitek.it
@@ -103,7 +103,7 @@ ApplicationViewWidget::ApplicationViewWidget(yarp::manager::Application *app,
     l->setMargin(0);
 
 
-    builderWindowContainer = new QMainWindow(NULL,Qt::Widget);
+    builderWindowContainer = new QMainWindow(nullptr,Qt::Widget);
     builderWindowContainer->setDockNestingEnabled(true);
     l->addWidget(builderWindowContainer);
 
@@ -475,7 +475,7 @@ void ApplicationViewWidget::onModuleItemSelectionChanged()
 /*! \brief Called when an item of the resources tree has been selected. */
 void ApplicationViewWidget::onResourceItemSelectionChanged()
 {
-    if (ui->resourcesList->currentItem() == NULL) {
+    if (ui->resourcesList->currentItem() == nullptr) {
         resRefreshAction->setEnabled(false);
     } else {
         resRefreshAction->setEnabled(true);
@@ -585,7 +585,7 @@ void ApplicationViewWidget::updateApplicationWindow()
     {
 
         Module *mod = (*moditr)->getModule();
-        CustomTreeWidgetItem *appNode = NULL;
+        CustomTreeWidgetItem *appNode = nullptr;
         QString modLabel = mod->owner()->getLabel();
         QString appLabel = app->getLabel();
         if (modLabel != appLabel) {
@@ -1711,7 +1711,7 @@ void ApplicationViewWidget::onYARPView()
             to += "/yarpview/img:i";
 
             yarp::manager::LocalBroker launcher;
-            if (launcher.init("yarpview", NULL, NULL, NULL, NULL, env.toLatin1().data()))
+            if (launcher.init("yarpview", nullptr, nullptr, nullptr, nullptr, env.toLatin1().data()))
             {
                 if (!launcher.start() && strlen(launcher.error()))
                 {
@@ -1772,7 +1772,7 @@ void ApplicationViewWidget::onYARPHear()
 
             yarp::manager::LocalBroker launcher;
             launcher.setWindowMode(yarp::manager::LocalBroker::WINDOW_VISIBLE);
-            if (launcher.init(cmd.toLatin1().data(), param.toLatin1().data(), NULL, NULL, NULL, NULL))
+            if (launcher.init(cmd.toLatin1().data(), param.toLatin1().data(), nullptr, nullptr, nullptr, nullptr))
             {
                 if (!launcher.start() && strlen(launcher.error()))
                 {
@@ -1841,7 +1841,7 @@ void ApplicationViewWidget::onYARPRead()
 
             yarp::manager::LocalBroker launcher;
             launcher.setWindowMode(yarp::manager::LocalBroker::WINDOW_VISIBLE);
-            if (launcher.init(cmd.toLatin1().data(), param.toLatin1().data(), NULL, NULL, NULL, NULL))
+            if (launcher.init(cmd.toLatin1().data(), param.toLatin1().data(), nullptr, nullptr, nullptr, nullptr))
             {
                 if (!launcher.start() && strlen(launcher.error()))
                 {
@@ -1907,7 +1907,7 @@ void ApplicationViewWidget::onYARPScope()
 
 
             yarp::manager::LocalBroker launcher;
-            if (launcher.init("yarpscope", param.toLatin1().data(), NULL, NULL, NULL, env.toLatin1().data())) {
+            if (launcher.init("yarpscope", param.toLatin1().data(), nullptr, nullptr, nullptr, env.toLatin1().data())) {
                 if (!launcher.start() && strlen(launcher.error())) {
                     QString msg;
                     msg = QString("Error while launching yarpscope. %1").arg(launcher.error());
@@ -2206,21 +2206,21 @@ void ApplicationViewWidget::onConUnAvailable(int from, int to)
 /*! \brief Called when an error occurred
 
 */
-void ApplicationViewWidget::onError(void)
+void ApplicationViewWidget::onError()
 {
     reportErrors();
 }
 
 /*! \brief Refresh all and reports errors
 */
-void ApplicationViewWidget::onLoadBalance(void)
+void ApplicationViewWidget::onLoadBalance()
 {
     selfSafeLoadBolance();
 }
 
 
 
-void ApplicationViewWidget::onDetachStdout(void)
+void ApplicationViewWidget::onDetachStdout()
 {
 
 }
@@ -2247,7 +2247,7 @@ bool ApplicationViewWidget::getConRowByID(int id, int *row)
 */
 QTreeWidgetItem* ApplicationViewWidget::getModRowByID(int id, QTreeWidgetItem *parent)
 {
-    QTreeWidgetItem *ret = NULL;
+    QTreeWidgetItem *ret = nullptr;
     if (!parent) {
         for(int i=0;i< ui->moduleList->topLevelItemCount();i++) {
             QTreeWidgetItem *it = ui->moduleList->topLevelItem(i);

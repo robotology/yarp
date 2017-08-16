@@ -46,12 +46,12 @@ public:
             phase(1),
             activate(0),
             trackerMutex(1),
-            cachedWriter(YARP_NULLPTR),
-            cachedReader(YARP_NULLPTR),
-            cachedCallback(YARP_NULLPTR),
-            cachedTracker(YARP_NULLPTR)
+            cachedWriter(nullptr),
+            cachedReader(nullptr),
+            cachedCallback(nullptr),
+            cachedTracker(nullptr)
     {
-        yAssert(op!=YARP_NULLPTR);
+        yAssert(op!=nullptr);
     }
 
     /**

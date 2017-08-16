@@ -41,7 +41,7 @@ void BatchQosConfDialog::openCons()
 {
     QString filters("Text files (*.txt);;All files (*.*)");
     QString defaultFilter("Connections list file (*.txt)");
-    QString filename = QFileDialog::getOpenFileName(0, "Load connections list",
+    QString filename = QFileDialog::getOpenFileName(nullptr, "Load connections list",
                                                     QDir::homePath(),
                                                     filters, &defaultFilter);
     if(filename.size() == 0)
@@ -50,7 +50,7 @@ void BatchQosConfDialog::openCons()
     fstream file;
     file.open(filename.toStdString().c_str());
     if (!file.is_open()) {
-        QMessageBox::critical(NULL, QObject::tr("Error"), QObject::tr("Cannot open the file for loading"));
+        QMessageBox::critical(nullptr, QObject::tr("Error"), QObject::tr("Cannot open the file for loading"));
         return;
     }
 
@@ -84,7 +84,7 @@ void BatchQosConfDialog::openCons()
     }
     else {
         QMessageBox messageBox;
-        messageBox.critical(0,"Error","Could not load any connections! \n Please check the file format.");
+        messageBox.critical(nullptr,"Error","Could not load any connections! \n Please check the file format.");
         messageBox.setFixedSize(500,200);
     }
 
@@ -141,7 +141,7 @@ void BatchQosConfDialog::updateQos()
 
 void BatchQosConfDialog::configureQos() {
     yarp::os::QosStyle fromStyle, toStyle;
-    QosConfigDialog dialog(NULL);
+    QosConfigDialog dialog(nullptr);
     dialog.setModal(true);
     if(dialog.exec() != QDialog::Accepted )
         return;

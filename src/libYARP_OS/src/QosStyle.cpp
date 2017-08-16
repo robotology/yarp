@@ -1,6 +1,6 @@
 /*
- * Copyright (C) 2015 iCub Facility
- * Authors: Ali Paikan and Daniele Domenichelli
+ * Copyright (C) 2015 Istituto Italiano di Tecnologia (IIT)
+ * Authors: Ali Paikan and Daniele E. Domenichelli
  * CopyPolicy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
  */
 
@@ -61,7 +61,7 @@ bool yarp::os::QosStyle::setPacketPriority(const ConstString& priority) {
     } else if (key == "TOS") {
         char* p;
         int tos = strtol(value.c_str(), &p, 10);
-        if (p == YARP_NULLPTR && tos >= 0) {
+        if (p == nullptr && tos >= 0) {
             setPacketPrioritybyTOS(tos);
             return true;
         }

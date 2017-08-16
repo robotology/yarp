@@ -27,7 +27,7 @@ public:
     /**
      * Constructor.
      */
-    ShiftStream() : stream(YARP_NULLPTR)
+    ShiftStream() : stream(nullptr)
     {
     }
 
@@ -44,39 +44,39 @@ public:
     virtual void check() {
     }
 
-    virtual InputStream& getInputStream() YARP_OVERRIDE {
+    virtual InputStream& getInputStream() override {
         check();
-        if (stream == YARP_NULLPTR) {
+        if (stream == nullptr) {
             return nullStream;
         }
         return stream->getInputStream();
     }
 
-    virtual OutputStream& getOutputStream() YARP_OVERRIDE {
+    virtual OutputStream& getOutputStream() override {
         check();
-        if (stream == YARP_NULLPTR) {
+        if (stream == nullptr) {
             return nullStream;
         }
         return stream->getOutputStream();
     }
 
-    virtual const Contact& getLocalAddress() YARP_OVERRIDE {
+    virtual const Contact& getLocalAddress() override {
         check();
-        return (stream == YARP_NULLPTR) ? nullStream.getLocalAddress()
+        return (stream == nullptr) ? nullStream.getLocalAddress()
                                         : (stream->getLocalAddress());
     }
 
-    virtual const Contact& getRemoteAddress() YARP_OVERRIDE {
+    virtual const Contact& getRemoteAddress() override {
         check();
-        return (stream == YARP_NULLPTR) ? nullStream.getRemoteAddress()
+        return (stream == nullptr) ? nullStream.getRemoteAddress()
                                         : (stream->getRemoteAddress());
     }
 
-    virtual void close() YARP_OVERRIDE {
-        if (stream != YARP_NULLPTR) {
+    virtual void close() override {
+        if (stream != nullptr) {
             stream->close();
             delete stream;
-            stream = YARP_NULLPTR;
+            stream = nullptr;
         }
     }
 
@@ -98,7 +98,7 @@ public:
      */
     virtual TwoWayStream *giveStream() {
         TwoWayStream *result = stream;
-        stream = YARP_NULLPTR;
+        stream = nullptr;
         return result;
     }
 
@@ -114,30 +114,30 @@ public:
      * @return true if there is no wrapped stream.
      */
     virtual bool isEmpty() {
-        return stream == YARP_NULLPTR;
+        return stream == nullptr;
     }
 
-    virtual bool isOk() YARP_OVERRIDE {
-        if (stream != YARP_NULLPTR) {
+    virtual bool isOk() override {
+        if (stream != nullptr) {
             return stream->isOk();
         }
         return false;
     }
 
-    virtual void reset() YARP_OVERRIDE {
-        if (stream != YARP_NULLPTR) {
+    virtual void reset() override {
+        if (stream != nullptr) {
             stream->reset();
         }
     }
 
-    virtual void beginPacket() YARP_OVERRIDE {
-        if (stream != YARP_NULLPTR) {
+    virtual void beginPacket() override {
+        if (stream != nullptr) {
             stream->beginPacket();
         }
     }
 
-    virtual void endPacket() YARP_OVERRIDE {
-        if (stream != YARP_NULLPTR) {
+    virtual void endPacket() override {
+        if (stream != nullptr) {
             stream->endPacket();
         }
     }

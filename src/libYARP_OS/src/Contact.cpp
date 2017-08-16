@@ -1,6 +1,6 @@
 /*
- * Copyright (C) 2006, 2011 Department of Robotics Brain and Cognitive Sciences - Istituto Italiano di Tecnologia, Anne van Rossum
- * Copyright (C) 2016 iCub Facility, Istituto Italiano di Tecnologia
+ * Copyright (C) 2006, 2011 Istituto Italiano di Tecnologia (IIT), Anne van Rossum
+ * Copyright (C) 2016 Istituto Italiano di Tecnologia (IIT)
  * Authors: Paul Fitzpatrick <paulfitz@alum.mit.edu>
  *          Anne van Rossum <anne@almende.com>
  *          Daniele E. Domenichelli <daniele.domenichelli@iit.it>
@@ -94,12 +94,10 @@ Contact::Contact(const Contact& rhs) :
 {
 }
 
-#if defined(YARP_HAS_CXX11) && YARP_COMPILER_CXX_RVALUE_REFERENCES
 Contact::Contact(Contact&& rhs) :
         mPriv(new Private(std::move(*(rhs.mPriv))))
 {
 }
-#endif
 
 Contact::~Contact()
 {
@@ -114,7 +112,6 @@ Contact& Contact::operator=(const Contact& rhs)
     return *this;
 }
 
-#if defined(YARP_HAS_CXX11) && YARP_COMPILER_CXX_RVALUE_REFERENCES
 Contact& Contact::operator=(Contact&& rhs)
 {
     if (&rhs != this) {
@@ -122,7 +119,6 @@ Contact& Contact::operator=(Contact&& rhs)
     }
     return *this;
 }
-#endif
 
 Contact Contact::fromConfig(const Searchable& config)
 {
@@ -359,7 +355,7 @@ ConstString Contact::convertHostToIp(const char *name)
         std::exit(1);
     }
 
-    for(p = res; p != YARP_NULLPTR; p = p->ai_next) {
+    for(p = res; p != nullptr; p = p->ai_next) {
         void *addr;
 
         if (p->ai_family == AF_INET) { // IPv4

@@ -40,7 +40,7 @@ YARP_SSIZE_T TcpRosStream::read(const Bytes& b) {
                 cursor = scan.get();
                 remaining = scan.length();
             } else {
-                cursor = NULL;
+                cursor = nullptr;
                 remaining = header.blobLen;
             }
         } else {
@@ -97,11 +97,11 @@ YARP_SSIZE_T TcpRosStream::read(const Bytes& b) {
                 cursor = scan.get();
                 remaining = scan.length();
             } else {
-                cursor = NULL;
+                cursor = nullptr;
                 remaining = header.blobLen;
             }
         } else if (raw==2) {
-            cursor = NULL;
+            cursor = nullptr;
             remaining = header.blobLen;
             phase = 2;
         } else {
@@ -112,7 +112,7 @@ YARP_SSIZE_T TcpRosStream::read(const Bytes& b) {
     }
     dbg_printf("phase %d remaining %d\n", phase, remaining);
     if (remaining>0) {
-        if (cursor!=NULL) {
+        if (cursor!=nullptr) {
             int allow = remaining;
             if ((int)b.length()<allow) {
                 allow = b.length();

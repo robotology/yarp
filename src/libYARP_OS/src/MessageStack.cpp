@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2014 iCub Facility
+ * Copyright (C) 2014 Istituto Italiano di Tecnologia (IIT)
  * Authors: Paul Fitzpatrick
  * CopyPolicy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
  */
@@ -54,7 +54,7 @@ public:
         for (std::list<MessageStackThread *>::iterator it = threads.begin(); it != threads.end(); ++it) {
             (*it)->stop();
             delete (*it);
-            *it = YARP_NULLPTR;
+            *it = nullptr;
         }
         threads.clear();
         msgs.clear();
@@ -117,21 +117,21 @@ void MessageStackThread::run() {
 
 MessageStack::MessageStack(int max_threads) {
     this->max_threads = max_threads;
-    implementation = YARP_NULLPTR;
+    implementation = nullptr;
 }
 
 MessageStack::~MessageStack() {
     if (!implementation) return;
     HELPER(implementation).clear();
     delete &HELPER(implementation);
-    implementation = YARP_NULLPTR;
+    implementation = nullptr;
 }
 
 void MessageStack::attach(PortReader& owner) {
     if (implementation) {
         if (HELPER(implementation).isOwner(owner)) return;
         delete &HELPER(implementation);
-        implementation = YARP_NULLPTR;
+        implementation = nullptr;
     }
     implementation = new MessageStackHelper(max_threads, owner);
     yAssert(implementation);

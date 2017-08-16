@@ -1,10 +1,10 @@
 /*
 * Author: Lorenzo Natale.
-* Copyright (C) 2016 iCub Facility, Istituto Italiano di Tecnologia
+* Copyright (C) 2016 Istituto Italiano di Tecnologia (IIT)
 * CopyPolicy: Released under the terms of the GPL 2.0 license or later.
 */
 
-/**
+/*
  * This library provides functions for compatibility with GSL.
  * @warning Including/linking GSL forces this library to be GPL.
  */
@@ -43,13 +43,13 @@ GslMatrix::~GslMatrix()
 {
     gsl_matrix *tmp = (gsl_matrix *)(gslData);
 
-    if (tmp != 0)
+    if (tmp != nullptr)
     {
         delete tmp->block;
         delete tmp;
     }
 
-    gslData = 0;
+    gslData = nullptr;
 }
 
 void *GslMatrix::getGslMatrix()
@@ -90,13 +90,13 @@ GslVector::~GslVector()
 {
     gsl_vector *tmp = (gsl_vector *)(gslData);
 
-    if (tmp != 0)
+    if (tmp != nullptr)
     {
         delete tmp->block;
         delete tmp;
     }
 
-    gslData = 0;
+    gslData = nullptr;
 }
 
 void *GslVector::getGslVector()

@@ -1,5 +1,5 @@
 /*
-* Copyright (C) 2016 iCub Facility - Istituto Italiano di Tecnologia
+* Copyright (C) 2016 Istituto Italiano di Tecnologia (IIT)
 * Author: Marco Randazzo <marco.randazzo@iit.it>
 * CopyPolicy: Released under the terms of the GPLv2 or later, see GPL.TXT
 */
@@ -144,7 +144,7 @@ bool RpLidar::open(yarp::os::Searchable& config)
         return false;
     }
 
-    pSerial = 0;
+    pSerial = nullptr;
     driver.open(prop);
     if (!driver.isValid())
     {

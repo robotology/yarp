@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2014 iCub Facility, Istituto Italiano di Tecnologia
+ * Copyright (C) 2014 Istituto Italiano di Tecnologia (IIT)
  * Authors: Alberto Cardellino
  * CopyPolicy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
  */
@@ -13,16 +13,16 @@ using namespace yarp::dev;
 #define MJOINTIDCHECK if (joints[idx] >= castToMapper(helper)->axes()){yError("joint id out of bound"); return false;}
 
 ImplementControlMode2::ImplementControlMode2(IControlMode2Raw *r):
-temp_int(NULL),
-temp_mode(NULL)
+temp_int(nullptr),
+temp_mode(nullptr)
 {
     raw=r;
-    helper=0;
+    helper=nullptr;
 }
 
 bool ImplementControlMode2::initialize(int size, const int *amap)
 {
-    if (helper!=0)
+    if (helper!=nullptr)
         return false;
 
     double *dummy=new double [size];
@@ -30,13 +30,13 @@ bool ImplementControlMode2::initialize(int size, const int *amap)
         dummy[k]=0;
 
     helper=(void *)(new ControlBoardHelper(size, amap, dummy, dummy, dummy));
-    yAssert (helper != 0);
+    yAssert (helper != nullptr);
 
     temp_int=new int [size];
-    yAssert(temp_int != NULL);
+    yAssert(temp_int != nullptr);
 
     temp_mode=new int [size];
-    yAssert(temp_mode != NULL);
+    yAssert(temp_mode != nullptr);
 
     delete [] dummy;
     return true;
@@ -49,10 +49,10 @@ ImplementControlMode2::~ImplementControlMode2()
 
 bool ImplementControlMode2::uninitialize ()
 {
-    if (helper!=0)
+    if (helper!=nullptr)
     {
         delete castToMapper(helper);
-        helper=0;
+        helper=nullptr;
     }
 
     checkAndDestroy(temp_int);

@@ -30,7 +30,7 @@ Contact NameServiceOnTriples::query(const yarp::os::ConstString& portName,
     if (!nested) lock();
     Triple t;
     t.setNameValue("port",portName.c_str());
-    int result = act.mem.find(t, YARP_NULLPTR);
+    int result = act.mem.find(t, nullptr);
     TripleContext context;
     context.setRid(result);
     if (result!=-1) {
@@ -185,7 +185,7 @@ bool NameServiceOnTriples::cmdRegister(NameTripleState& act) {
     lock();
     Triple t;
     t.setNameValue("port",port.c_str());
-    int result = act.mem.find(t, YARP_NULLPTR);
+    int result = act.mem.find(t, nullptr);
     unlock();
 
     if (result!=-1) {
@@ -283,9 +283,9 @@ bool NameServiceOnTriples::cmdRegister(NameTripleState& act) {
         }
     }
     t.setNameValue("port",port.c_str());
-    act.mem.remove_query(t, YARP_NULLPTR);
-    act.mem.insert(t, YARP_NULLPTR);
-    result = act.mem.find(t, YARP_NULLPTR);
+    act.mem.remove_query(t, nullptr);
+    act.mem.insert(t, nullptr);
+    result = act.mem.find(t, nullptr);
     TripleContext context;
     context.setRid(result);
     t.setNameValue("carrier",carrier.c_str());
@@ -322,7 +322,7 @@ bool NameServiceOnTriples::cmdRegister(NameTripleState& act) {
 
 
 bool NameServiceOnTriples::announce(const ConstString& name, int activity) {
-    if (subscriber != YARP_NULLPTR && gonePublic) {
+    if (subscriber != nullptr && gonePublic) {
         subscriber->welcome(name,activity);
     }
     return true;
@@ -338,7 +338,7 @@ bool NameServiceOnTriples::cmdUnregister(NameTripleState& act) {
     act.reply.addString("old");
     Triple t;
     t.setNameValue("port",port.c_str());
-    int result = act.mem.find(t, YARP_NULLPTR);
+    int result = act.mem.find(t, nullptr);
     TripleContext context;
     context.setRid(result);
     if (result!=-1) {
@@ -356,7 +356,7 @@ bool NameServiceOnTriples::cmdUnregister(NameTripleState& act) {
         act.mem.remove_query(t,&context);
 
         t.setNameValue("port",port.c_str());
-        act.mem.remove_query(t, YARP_NULLPTR);
+        act.mem.remove_query(t, nullptr);
         // now, query to report that there is nothing there
 
         if (contact.getCarrier()!="mcast") {
@@ -386,7 +386,7 @@ bool NameServiceOnTriples::cmdList(NameTripleState& act) {
     if (act.cmd.size()>1) {
         prefix = act.cmd.get(1).asString();
     }
-    list<Triple> lst = act.mem.query(t, YARP_NULLPTR);
+    list<Triple> lst = act.mem.query(t, nullptr);
     act.nestedMode = true;
     for (list<Triple>::iterator it=lst.begin(); it!=lst.end(); it++) {
         if (prefix=="") {
@@ -425,7 +425,7 @@ bool NameServiceOnTriples::cmdSet(NameTripleState& act) {
     int n = act.cmd.size()-at;
     Triple t;
     t.setNameValue("port", port.c_str());
-    int result = act.mem.find(t, YARP_NULLPTR);
+    int result = act.mem.find(t, nullptr);
     if (result==-1) {
         unlock();
         return false;
@@ -460,7 +460,7 @@ bool NameServiceOnTriples::cmdGet(NameTripleState& act) {
     ConstString key = act.cmd.get(2).toString();
     Triple t;
     t.setNameValue("port",port.c_str());
-    int result = act.mem.find(t, YARP_NULLPTR);
+    int result = act.mem.find(t, nullptr);
     if (result==-1) {
         unlock();
         return false;
@@ -501,7 +501,7 @@ bool NameServiceOnTriples::cmdCheck(NameTripleState& act) {
     ConstString val = act.cmd.get(3).toString();
     Triple t;
     t.setNameValue("port",port.c_str());
-    int result = act.mem.find(t, YARP_NULLPTR);
+    int result = act.mem.find(t, nullptr);
     if (result==-1) {
         unlock();
         return false;
@@ -655,11 +655,11 @@ bool NameServiceOnTriples::apply(yarp::os::Bottle& cmd,
 
 void NameServiceOnTriples::lock() {
     mutex.wait();
-    db->begin(YARP_NULLPTR);
+    db->begin(nullptr);
 }
 
 void NameServiceOnTriples::unlock() {
-    db->end(YARP_NULLPTR);
+    db->end(nullptr);
     mutex.post();
 }
 

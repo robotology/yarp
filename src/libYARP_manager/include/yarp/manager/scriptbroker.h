@@ -1,8 +1,8 @@
 /*
  *  Yarp Modules Manager
  *  Copyright: (C) 2013 Istituto Italiano di Tecnologia (IIT)
- *  Authors: Ali Paikan <ali.paikan@iit.it>, Elena Ceseracciu <elena.ceseracciu@iit.it>
- *
+ *  Authors: Ali Paikan <ali.paikan@iit.it>,
+ *           Elena Ceseracciu <elena.ceseracciu@iit.it>
  *  Copy Policy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
  */
 
@@ -32,7 +32,7 @@ public:
      using LocalBroker::init;
      bool init(const char* szcmd, const char* szparam,
             const char* szhost, const char* szstdio,
-            const char* szworkdir, const char* szenv) YARP_OVERRIDE;
+            const char* szworkdir, const char* szenv) override;
 private:
     std::string script;
 };
@@ -50,7 +50,7 @@ public:
      using YarpBroker::init;
      bool init(const char* szcmd, const char* szparam,
             const char* szhost, const char* szstdio,
-            const char* szworkdir, const char* szenv) YARP_OVERRIDE;
+            const char* szworkdir, const char* szenv) override;
 private:
     bool whichFile(const char* server, const char* filename, std::string& filenameWithPath);
     std::string script;

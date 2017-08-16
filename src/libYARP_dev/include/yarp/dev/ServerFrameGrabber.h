@@ -117,7 +117,7 @@ public:
      */
     ServerFrameGrabber();
 
-    virtual bool close() YARP_OVERRIDE;
+    virtual bool close() override;
     /**
      * Configure with a set of options. These are:
      * <TABLE>
@@ -128,89 +128,89 @@ public:
      * @param config The options to use
      * @return true iff the object could be configured.
      */
-    virtual bool open(yarp::os::Searchable& config) YARP_OVERRIDE;
+    virtual bool open(yarp::os::Searchable& config) override;
 
-    //virtual bool read(ConnectionReader& connection) YARP_OVERRIDE;
+    //virtual bool read(ConnectionReader& connection) override;
 
     virtual bool respond(const yarp::os::Bottle& command,
-                         yarp::os::Bottle& reply) YARP_OVERRIDE;
+                         yarp::os::Bottle& reply) override;
 
-    bool getDatum(yarp::sig::ImageOf<yarp::sig::PixelRgb>& image) YARP_OVERRIDE;
+    bool getDatum(yarp::sig::ImageOf<yarp::sig::PixelRgb>& image) override;
 
-    bool getDatum(yarp::sig::ImageOf<yarp::sig::PixelMono>& image) YARP_OVERRIDE;
+    bool getDatum(yarp::sig::ImageOf<yarp::sig::PixelMono>& image) override;
 
-    virtual bool getDatum(yarp::sig::Sound& sound) YARP_OVERRIDE;
+    virtual bool getDatum(yarp::sig::Sound& sound) override;
 
-    virtual bool getDatum(ImageRgbSound& imageSound) YARP_OVERRIDE;
+    virtual bool getDatum(ImageRgbSound& imageSound) override;
 
     virtual bool getDatum(yarp::sig::ImageOf<yarp::sig::PixelRgb>& image,
-                          yarp::sig::Sound& sound) YARP_OVERRIDE;
+                          yarp::sig::Sound& sound) override;
 
-    virtual bool getImage(yarp::sig::ImageOf<yarp::sig::PixelRgb>& image) YARP_OVERRIDE;
+    virtual bool getImage(yarp::sig::ImageOf<yarp::sig::PixelRgb>& image) override;
 
     virtual bool getImage(yarp::sig::ImageOf<yarp::sig::PixelMono>& image);
 
-    virtual bool getSound(yarp::sig::Sound& sound) YARP_OVERRIDE;
+    virtual bool getSound(yarp::sig::Sound& sound) override;
 
-    virtual bool startRecording() YARP_OVERRIDE;
+    virtual bool startRecording() override;
 
-    virtual bool stopRecording() YARP_OVERRIDE;
+    virtual bool stopRecording() override;
 
     virtual bool getAudioVisual(yarp::sig::ImageOf<yarp::sig::PixelRgb>& image,
-                                yarp::sig::Sound& sound) YARP_OVERRIDE;
+                                yarp::sig::Sound& sound) override;
 
-    virtual int height() const YARP_OVERRIDE;
+    virtual int height() const override;
 
-    virtual int width() const YARP_OVERRIDE;
+    virtual int width() const override;
 
 // set
-    virtual bool setBrightness(double v) YARP_OVERRIDE;
+    virtual bool setBrightness(double v) override;
 
-    virtual bool setExposure(double v) YARP_OVERRIDE;
+    virtual bool setExposure(double v) override;
 
-    virtual bool setSharpness(double v) YARP_OVERRIDE;
+    virtual bool setSharpness(double v) override;
 
-    virtual bool setWhiteBalance(double blue, double red) YARP_OVERRIDE;
+    virtual bool setWhiteBalance(double blue, double red) override;
 
-    virtual bool setHue(double v) YARP_OVERRIDE;
+    virtual bool setHue(double v) override;
 
-    virtual bool setSaturation(double v) YARP_OVERRIDE;
+    virtual bool setSaturation(double v) override;
 
-    virtual bool setGamma(double v) YARP_OVERRIDE;
+    virtual bool setGamma(double v) override;
 
-    virtual bool setShutter(double v) YARP_OVERRIDE;
+    virtual bool setShutter(double v) override;
 
-    virtual bool setGain(double v) YARP_OVERRIDE;
+    virtual bool setGain(double v) override;
 
-    virtual bool setIris(double v) YARP_OVERRIDE;
+    virtual bool setIris(double v) override;
 
 // get
 
-    virtual double getBrightness() YARP_OVERRIDE;
+    virtual double getBrightness() override;
 
-    virtual double getExposure() YARP_OVERRIDE;
+    virtual double getExposure() override;
 
-    virtual double getSharpness() YARP_OVERRIDE;
+    virtual double getSharpness() override;
 
-    virtual bool getWhiteBalance(double &blue, double &red) YARP_OVERRIDE;
+    virtual bool getWhiteBalance(double &blue, double &red) override;
 
-    virtual double getHue() YARP_OVERRIDE;
+    virtual double getHue() override;
 
-    virtual double getSaturation() YARP_OVERRIDE;
+    virtual double getSaturation() override;
 
-    virtual double getGamma() YARP_OVERRIDE;
+    virtual double getGamma() override;
 
-    virtual double getShutter() YARP_OVERRIDE;
+    virtual double getShutter() override;
 
-    virtual double getGain() YARP_OVERRIDE;
+    virtual double getGain() override;
 
-    virtual double getIris() YARP_OVERRIDE;
+    virtual double getIris() override;
 
-    virtual bool startService() YARP_OVERRIDE;
+    virtual bool startService() override;
 
-    virtual bool stopService() YARP_OVERRIDE;
+    virtual bool stopService() override;
 
-    virtual bool updateService() YARP_OVERRIDE;
+    virtual bool updateService() override;
 };
 
 #endif // YARP_DEV_SERVERFRAMEGRABBER_H

@@ -128,7 +128,7 @@ Sound Sound::subSound(int first_sample, int last_sample)
 
 void Sound::init(int bytesPerSample) {
     implementation = new FlexImage();
-    yAssert(implementation!=NULL);
+    yAssert(implementation!=nullptr);
 
     yAssert(bytesPerSample==2); // that's all thats implemented right now
     HELPER(implementation).setPixelSize(sizeof(PixelMono16));
@@ -141,9 +141,9 @@ void Sound::init(int bytesPerSample) {
 }
 
 Sound::~Sound() {
-    if (implementation!=NULL) {
+    if (implementation!=nullptr) {
         delete &HELPER(implementation);
-        implementation = NULL;
+        implementation = nullptr;
     }
 }
 

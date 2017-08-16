@@ -68,6 +68,17 @@ if (YARP_HAS_MATH_LIB)
                                          YARP::YARP_sig
                                   PRIVATE YARP::YARP_eigen)
 
+  if(NOT CMAKE_MINIMUM_REQUIRED_VERSION VERSION_LESS 3.1)
+    message(AUTHOR_WARNING "CMAKE_MINIMUM_REQUIRED_VERSION is now ${CMAKE_MINIMUM_REQUIRED_VERSION}. This check can be removed.")
+  endif()
+  if(CMAKE_VERSION VERSION_LESS 3.1)
+    if(DEFINED CXX11_FLAGS)
+      target_compile_options(YARP_math PUBLIC ${CXX11_FLAGS})
+    endif()
+  else()
+    target_compile_features(YARP_math PUBLIC cxx_override)
+  endif()
+
   set_property(TARGET YARP_math PROPERTY PUBLIC_HEADER ${YARP_math_HDRS})
   set_property(TARGET YARP_math PROPERTY PRIVATE_HEADER ${YARP_math_IMPL_HDRS})
 

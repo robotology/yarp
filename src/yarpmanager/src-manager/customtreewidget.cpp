@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2014 iCub Facility - Istituto Italiano di Tecnologia
+ * Copyright (C) 2014 Istituto Italiano di Tecnologia (IIT)
  * Author: Davide Perrone
  * Date: Feb 2014
  * email:   dperrone@aitek.it
@@ -20,7 +20,7 @@ CustomTreeWidget::CustomTreeWidget(QWidget *parent) : QTreeWidget(parent)
     sortByColumn(1,sort);
     setContextMenuPolicy(Qt::ActionsContextMenu);
     setSelectionMode(QAbstractItemView::ExtendedSelection);
-    contextMenu = NULL;
+    contextMenu = nullptr;
 }
 
 /*! \brief the mouse press event
@@ -31,10 +31,10 @@ void CustomTreeWidget::mousePressEvent(QMouseEvent *e)
 
 
     if(e->button() == Qt::RightButton){
-        if(itemAt(e->pos()) == NULL){
-            setCurrentItem(NULL);
+        if(itemAt(e->pos()) == nullptr){
+            setCurrentItem(nullptr);
         }
-        if(currentItem() == NULL){
+        if(currentItem() == nullptr){
             itemSelectionChanged();
         }
     }

@@ -1,5 +1,5 @@
 /*
- * Copyright: 2013 iCub Facility - Istituto Italiano di Tecnologia
+ * Copyright: (C) 2013 Istituto Italiano di Tecnologia (IIT)
  * Authors: Alberto Cardellino <alberto.cardellino@iit.it>
  * CopyPolicy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
  */
@@ -61,13 +61,13 @@ public:
      */
     virtual ~ImplementPositionDirect();
 
-    virtual bool getAxes(int *axes) YARP_OVERRIDE;
-    virtual bool setPosition(int j, double ref) YARP_OVERRIDE;
-    virtual bool setPositions(const int n_joint, const int *joints, double *refs) YARP_OVERRIDE;
-    virtual bool setPositions(const double *refs) YARP_OVERRIDE;
-    virtual bool getRefPosition(const int joint, double *ref) YARP_OVERRIDE;
-    virtual bool getRefPositions(double *refs) YARP_OVERRIDE;
-    virtual bool getRefPositions(const int n_joint, const int *joints, double *refs) YARP_OVERRIDE;
+    virtual bool getAxes(int *axes) override;
+    virtual bool setPosition(int j, double ref) override;
+    virtual bool setPositions(const int n_joint, const int *joints, double *refs) override;
+    virtual bool setPositions(const double *refs) override;
+    virtual bool getRefPosition(const int joint, double *ref) override;
+    virtual bool getRefPositions(double *refs) override;
+    virtual bool getRefPositions(const int n_joint, const int *joints, double *refs) override;
 };
 
 
@@ -97,16 +97,16 @@ private:
 public:
     virtual ~StubImplPositionDirectRaw(){}
 
-    virtual bool getAxes(int *axis) YARP_OVERRIDE
+    virtual bool getAxes(int *axis) override
     {return NOT_YET_IMPLEMENTED("getAxes");}
 
-    virtual bool setPosition(int j, double ref) YARP_OVERRIDE
+    virtual bool setPosition(int j, double ref) override
     {return NOT_YET_IMPLEMENTED("setPosition");}
 
-    virtual bool setPositions(const int n_joint, const int *joints, double *refs) YARP_OVERRIDE
+    virtual bool setPositions(const int n_joint, const int *joints, double *refs) override
     {return NOT_YET_IMPLEMENTED("setPositions");}
 
-    virtual bool setPositions(const double *refs) YARP_OVERRIDE
+    virtual bool setPositions(const double *refs) override
     {return NOT_YET_IMPLEMENTED("setPositions");}
 };
 

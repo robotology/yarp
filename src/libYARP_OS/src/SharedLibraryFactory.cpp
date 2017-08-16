@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2013 iCub Facility, Istituto Italiano di Tecnologia
+ * Copyright (C) 2013 Istituto Italiano di Tecnologia (IIT)
  * Authors: Paul Fitzpatrick <paulfitz@alum.mit.edu>
  * CopyPolicy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
  */
@@ -46,8 +46,8 @@ bool yarp::os::SharedLibraryFactory::open(const char *dll_name, const char *fn_n
         error = lib.error();
         return false;
     }
-    void *fn = lib.getSymbol((fn_name != YARP_NULLPTR) ? fn_name : YARP_DEFAULT_FACTORY_NAME);
-    if (fn == YARP_NULLPTR) {
+    void *fn = lib.getSymbol((fn_name != nullptr) ? fn_name : YARP_DEFAULT_FACTORY_NAME);
+    if (fn == nullptr) {
         status = STATUS_FACTORY_NOT_FOUND;
         error = lib.error();
         lib.close();
@@ -141,7 +141,7 @@ yarp::os::ConstString yarp::os::SharedLibraryFactory::getBaseClassName() const
 bool yarp::os::SharedLibraryFactory::useFactoryFunction(void *factory)
 {
     api.startCheck = 0;
-    if (factory == YARP_NULLPTR) {
+    if (factory == nullptr) {
         return false;
     }
     returnValue =

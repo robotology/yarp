@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2011 Department of Robotics Brain and Cognitive Sciences - Istituto Italiano di Tecnologia
+ * Copyright (C) 2011 Istituto Italiano di Tecnologia (IIT)
  * Author: Vadim Tikhanoff
  * email:  vadim.tikhanoff@iit.it
  * Permission is granted to copy, distribute, and/or modify this program
@@ -52,7 +52,7 @@ Utilities::~Utilities()
     if(masterThread){
         //masterThread->stop();
         delete masterThread;
-        masterThread = NULL;
+        masterThread = nullptr;
     }
 
     if(partDetails){
@@ -67,8 +67,8 @@ Utilities::~Utilities()
 Utilities::Utilities(string name, bool _add_prefix, QObject *parent) : QObject(parent)
 {
     this->speed = 1.0;
-    masterThread = NULL;
-    partDetails = NULL;
+    masterThread = nullptr;
+    partDetails = nullptr;
     this->moduleName = name;
     add_prefix=_add_prefix;
     dir_count = 0;
@@ -102,8 +102,8 @@ int Utilities::getRecSubDirList(string dir, vector<string> &names, vector<string
                                 vector<string> &logs, vector<string> &paths, int recursive)
 {
 
-    struct dirent *direntp = NULL;
-    DIR *dirp = NULL;
+    struct dirent *direntp = nullptr;
+    DIR *dirp = nullptr;
     size_t path_len;
     const char *path = dir.c_str();
 
@@ -118,12 +118,12 @@ int Utilities::getRecSubDirList(string dir, vector<string> &names, vector<string
         return errno;
     }
     /* Check if file is opened */
-    if((dirp  = opendir(path)) == NULL){
+    if((dirp  = opendir(path)) == nullptr){
         LOG("Error( %d opening %s\n",errno, dir.c_str());
         return errno;
     }
     /* read through */
-    while ((direntp = readdir(dirp)) != NULL){
+    while ((direntp = readdir(dirp)) != nullptr){
         struct stat fstat;
         char full_name[FILENAME_MAX + 1];
 

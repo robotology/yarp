@@ -39,7 +39,7 @@ private:
 public:
     XmlRpcStream(TwoWayStream *delegate, bool sender, bool interpretRos) :
             client("notset", 0),
-            server(0, YARP_NULLPTR),
+            server(0, nullptr),
             sender(sender),
             interpretRos(interpretRos)
     {
@@ -51,9 +51,9 @@ public:
 
     virtual ~XmlRpcStream()
     {
-        if (delegate != YARP_NULLPTR) {
+        if (delegate != nullptr) {
             delete delegate;
-            delegate = YARP_NULLPTR;
+            delegate = nullptr;
         }
     }
 

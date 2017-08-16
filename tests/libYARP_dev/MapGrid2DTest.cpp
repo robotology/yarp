@@ -115,7 +115,7 @@ public:
         bool ok_server = ddmapserver.open(pmapserver_cfg);
         checkTrue(ok_server, "ddmapserver open reported successfull");
 
-        IMap2D* imap = 0;
+        IMap2D* imap = nullptr;
         PolyDriver ddmapclient;
         Property pmapclient_cfg;
         pmapclient_cfg.put("device", "map2DClient");

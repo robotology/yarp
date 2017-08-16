@@ -157,7 +157,7 @@ ModuleItem::~ModuleItem()
     if(manager && editingMode){
         Application* mainApplication = manager->getKnowledgeBase()->getApplication();
         manager->getKnowledgeBase()->removeIModuleFromApplication(mainApplication,module->getLabel());
-        module = NULL;
+        module = nullptr;
     }
 
 }
@@ -485,7 +485,7 @@ PortItem::PortItem(InputData *node, BuilderItem *parent) : BuilderItem(parent)
     this->nestedInApp = parent->nestedInApp;
     portType = INPUT_PORT;
 
-    sigHandler = NULL;
+    sigHandler = nullptr;
     pressed = false;
     moved = false;
     hovered =false;
@@ -533,7 +533,7 @@ PortItem::PortItem(OutputData* node, BuilderItem *parent) : BuilderItem(parent)
     this->nestedInApp = parent->nestedInApp;
     portType = OUTPUT_PORT;
 
-    sigHandler = NULL;
+    sigHandler = nullptr;
     pressed = false;
     moved = false;
     hovered =false;

@@ -57,14 +57,12 @@ public:
      */
     Route(const Route& rhs);
 
-#if defined(YARP_HAS_CXX11) && YARP_COMPILER_CXX_RVALUE_REFERENCES
     /**
      * @brief Move constructor.
      *
      * @param rhs the Route to be moved
      */
     Route(Route&& rhs);
-#endif
 
     /**
      * @brief Destructor.
@@ -79,7 +77,6 @@ public:
      */
     Route& operator=(const Route& rhs);
 
-#if defined(YARP_HAS_CXX11) && YARP_COMPILER_CXX_RVALUE_REFERENCES
     /**
      * @brief Move assignment operator.
      *
@@ -87,7 +84,6 @@ public:
      * @return this object
      */
     Route& operator=(Route&& rhs);
-#endif
 
 /** @} */
 /** @{ */
@@ -226,8 +222,6 @@ public:
     Route addCarrierName(const ConstString& carrierName) const;
 #endif // YARP_NO_DEPRECATED
 
-
-private:
 #ifndef DOXYGEN_SHOULD_SKIP_THIS
 private:
     class Private;

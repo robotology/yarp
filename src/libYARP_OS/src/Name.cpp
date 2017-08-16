@@ -56,7 +56,7 @@ ConstString Name::getCarrierModifier(const char *mod, bool *hasModifier) {
             ok = true;
         }
     }
-    if (hasModifier!=YARP_NULLPTR) {
+    if (hasModifier!=nullptr) {
         *hasModifier = ok;
     }
     return ok?work:"";

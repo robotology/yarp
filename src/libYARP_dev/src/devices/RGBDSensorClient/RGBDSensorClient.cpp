@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2016 iCub Facility - Istituto Italiano di Tecnologia
+ * Copyright (C) 2016 Istituto Italiano di Tecnologia (IIT)
  * Author: Alberto Cardellino <alberto.cardellino@iit.it>
  * CopyPolicy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
  */
@@ -27,7 +27,7 @@ yarp::dev::DriverCreator *createRGBDSensorClient()
 
 RGBDSensorClient::RGBDSensorClient() : FrameGrabberControls2_Sender(rpcPort)
 {
-    sensor_p       = NULL;
+    sensor_p       = nullptr;
     use_ROS        = false;
     verbose        = 2;
     sensorStatus   = IRGBDSensor::RGBD_SENSOR_NOT_READY;

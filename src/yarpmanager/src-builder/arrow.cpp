@@ -152,7 +152,7 @@ void Arrow::updateCarrier(QString carrier)
     if(!editingMode){
         return;
     }
-    Application* mainApplication = NULL;
+    Application* mainApplication = nullptr;
     mainApplication = manager->getKnowledgeBase()->getApplication();
     manager->getKnowledgeBase()->removeConnectionFromApplication(mainApplication, connection);
 
@@ -167,7 +167,7 @@ void Arrow::updateConnectionFrom(QString from)
     if(!editingMode){
         return;
     }
-    Application* mainApplication = NULL;
+    Application* mainApplication = nullptr;
     mainApplication = manager->getKnowledgeBase()->getApplication();
     Connection updatedCon = connection;
     updatedCon.setFrom(from.toLatin1().data());
@@ -187,7 +187,7 @@ void Arrow::updateConnectionTo(QString to)
     if(!editingMode){
         return;
     }
-    Application* mainApplication = NULL;
+    Application* mainApplication = nullptr;
     mainApplication = manager->getKnowledgeBase()->getApplication();
     Connection updatedCon = connection;
     updatedCon.setTo(to.toLatin1().data());
@@ -220,7 +220,7 @@ void Arrow::updateGraphicModel()
     endPoint.x = (myEndItem->pos()).x();
     endPoint.y = (myEndItem->pos()).y();
 
-    Application* mainApplication = NULL;
+    Application* mainApplication = nullptr;
     mainApplication = manager->getKnowledgeBase()->getApplication();
     manager->getKnowledgeBase()->removeConnectionFromApplication(mainApplication, connection);
 
@@ -517,7 +517,7 @@ LineHandle *Arrow::getLineHandle(int index)
     if(index >= 0 && index <= handleList.count() - 1){
         return handleList.at(index);
     }
-    return NULL;
+    return nullptr;
 }
 
 /******************************************************************/
@@ -705,7 +705,7 @@ void LineHandle::paint(QPainter *painter, const QStyleOptionGraphicsItem *,
 Label::Label(QString label, QGraphicsItem *parent) : QGraphicsTextItem(label,parent)
 {
 
-    sigHandler = new ItemSignalHandler((QGraphicsItem*)this,ArrowLabelItemType,NULL);
+    sigHandler = new ItemSignalHandler((QGraphicsItem*)this,ArrowLabelItemType,nullptr);
     comboWidget = new QGraphicsProxyWidget(this);
     QComboBox *combo = new QComboBox();
     combo->setEditable(true);

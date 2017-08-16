@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2012 IITRBCS
+ * Copyright (C) 2012 Istituto Italiano di Tecnologia (IIT)
  * Authors: Paul Fitzpatrick
  * CopyPolicy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
  *
@@ -42,7 +42,7 @@ void setDcImage(yarp::sig::Image& yimg, dc1394video_frame_t *dc,
     dc->total_bytes = dc->image_bytes;
     dc->timestamp = 0;
     dc->frames_behind = 0;
-    dc->camera = NULL;
+    dc->camera = nullptr;
     dc->id = 0;
     dc->allocated_image_bytes = dc->image_bytes;
 #ifdef YARP_LITTLE_ENDIAN

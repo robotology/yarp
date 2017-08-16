@@ -1,6 +1,6 @@
 /*
  *  YARP Modules Manager
- *  Copyright: (C) 2014 iCub Facility - Italian Institute of Technology (IIT)
+ *  Copyright: (C) 2014 Istituto Italiano di Tecnologia (IIT)
  *  Authors: Ali Paikan <ali.paikan@iit.it>
  *
  *  Copy Policy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
@@ -17,7 +17,7 @@ using namespace yarp::manager;
 
 
 SafeManager::SafeManager()
-    :action(MNOTHING), eventReceiver(NULL), busyAction(false)
+    :action(MNOTHING), eventReceiver(nullptr), busyAction(false)
 { }
 
 SafeManager::~SafeManager() { }
@@ -25,7 +25,7 @@ SafeManager::~SafeManager() { }
 void SafeManager::close() {
     yarp::os::Thread::stop();
     WAIT_SEMAPHOR();
-    eventReceiver = NULL;
+    eventReceiver = nullptr;
     POST_SEMAPHOR();
 }
 
@@ -79,7 +79,7 @@ void SafeManager::threadRelease()
 {
 }
 
-bool SafeManager::busy(void) {
+bool SafeManager::busy() {
     bool ret;
     WAIT_SEMAPHOR();
     ret =  busyAction;
@@ -420,7 +420,7 @@ void SafeManager::safeDetachStdout(std::vector<int>& MIDs)
         yarp::os::Thread::start();
 }
 
-void SafeManager::safeLoadBalance(void)
+void SafeManager::safeLoadBalance()
 {
    if(busy()) return;
 

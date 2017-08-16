@@ -240,7 +240,7 @@ public:
      * @return pointer to a buffer holding the binary representation of
      *         the bottle.
      */
-    const char* toBinary(size_t* size = YARP_NULLPTR);
+    const char* toBinary(size_t* size = nullptr);
 
     /**
      * Gives a human-readable textual representation of the bottle.
@@ -250,7 +250,7 @@ public:
      *
      * @return a textual representation of the bottle.
      */
-    ConstString toString() const YARP_OVERRIDE;
+    ConstString toString() const override;
 
     /**
      * Output a representation of the bottle to a network connection.
@@ -258,7 +258,7 @@ public:
      * @param writer the interface to the network connection for writing
      * @result true iff the representation was written successfully.
      */
-    bool write(ConnectionWriter& writer) YARP_OVERRIDE;
+    bool write(ConnectionWriter& writer) override;
 
     /**
      * Set the bottle's value based on input from a network connection.
@@ -266,7 +266,7 @@ public:
      * @param reader the interface to the network connection for reading
      * @return true iff the bottle was read successfully.
      */
-    bool read(ConnectionReader& reader) YARP_OVERRIDE;
+    bool read(ConnectionReader& reader) override;
 
     /**
      * Copy the bottle's value to a object that can read a
@@ -291,15 +291,15 @@ public:
      */
     bool read(PortWriter& writer, bool textMode = false);
 
-    void onCommencement() YARP_OVERRIDE;
+    void onCommencement() override;
 
-    virtual bool check(const ConstString& key) const YARP_OVERRIDE;
+    virtual bool check(const ConstString& key) const override;
 
-    virtual Value& find(const ConstString& key) const YARP_OVERRIDE;
+    virtual Value& find(const ConstString& key) const override;
 
-    Bottle& findGroup(const ConstString& key) const YARP_OVERRIDE;
+    Bottle& findGroup(const ConstString& key) const override;
 
-    virtual bool isNull() const YARP_OVERRIDE;
+    virtual bool isNull() const override;
 
     /**
      * Copy all or part of another Bottle.

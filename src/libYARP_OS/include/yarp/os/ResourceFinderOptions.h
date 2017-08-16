@@ -1,6 +1,6 @@
 /*
- * Copyright (C) 2013 iCub Facility
- * Authors: Paul Fitzpatrick, Daniele Domenichelli
+ * Copyright (C) 2013 Istituto Italiano di Tecnologia (IIT)
+ * Authors: Paul Fitzpatrick, Daniele E. Domenichelli
  * CopyPolicy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
  */
 

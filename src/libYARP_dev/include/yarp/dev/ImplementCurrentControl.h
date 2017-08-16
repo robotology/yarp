@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2016 Robotics Brain and Cognitive Sciences Department, Istituto Italiano di Tecnologia
+ * Copyright (C) 2016 Istituto Italiano di Tecnologia (IIT)
  * Authors: Marco Randazzo
  * CopyPolicy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
  */
@@ -52,16 +52,16 @@ public:
      */
     virtual ~ImplementCurrentControl();
 
-    virtual bool getNumberOfMotors(int *ax) YARP_OVERRIDE;
-    virtual bool getRefCurrent(int j, double *) YARP_OVERRIDE;
-    virtual bool getRefCurrents(double *t) YARP_OVERRIDE;
-    virtual bool setRefCurrents(const double *t) YARP_OVERRIDE;
-    virtual bool setRefCurrent(int j, double t) YARP_OVERRIDE;
-    virtual bool setRefCurrents(const int n_joint, const int *joints, const double *t) YARP_OVERRIDE;
-    virtual bool getCurrents(double *t) YARP_OVERRIDE;
-    virtual bool getCurrent(int j, double *t) YARP_OVERRIDE;
-    virtual bool getCurrentRange(int j, double *min, double *max) YARP_OVERRIDE;
-    virtual bool getCurrentRanges(double *min, double *max) YARP_OVERRIDE;
+    virtual bool getNumberOfMotors(int *ax) override;
+    virtual bool getRefCurrent(int j, double *) override;
+    virtual bool getRefCurrents(double *t) override;
+    virtual bool setRefCurrents(const double *t) override;
+    virtual bool setRefCurrent(int j, double t) override;
+    virtual bool setRefCurrents(const int n_joint, const int *joints, const double *t) override;
+    virtual bool getCurrents(double *t) override;
+    virtual bool getCurrent(int j, double *t) override;
+    virtual bool getCurrentRange(int j, double *min, double *max) override;
+    virtual bool getCurrentRanges(double *min, double *max) override;
 };
 
 #endif // YARP_DEV_IMPLEMENTCURRENTCONTROL_H

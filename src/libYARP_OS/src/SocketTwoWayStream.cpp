@@ -35,7 +35,7 @@ int SocketTwoWayStream::open(const Contact& address) {
     }
     ACE_INET_Addr addr(address.getPort(), host.c_str());
     YARP_timeval openTimeout;
-    YARP_timeval *timeout = YARP_NULLPTR;
+    YARP_timeval *timeout = nullptr;
     if (address.hasTimeout()) {
         openTimeout.set(address.getTimeout());
         timeout = &openTimeout;
@@ -95,7 +95,7 @@ void SocketTwoWayStream::updateAddresses() {
     if (local.sa_family == AF_INET || local.sa_family == AF_INET6) {
         char* localHostAddress = new char[local.sa_family == AF_INET ? INET_ADDRSTRLEN : INET6_ADDRSTRLEN];
         char* remoteHostAddress = new char[remote.sa_family == AF_INET ? INET_ADDRSTRLEN : INET6_ADDRSTRLEN];
-        const char* ret = YARP_NULLPTR;
+        const char* ret = nullptr;
         ret = inet_ntop(local.sa_family,
                         (local.sa_family == AF_INET ? reinterpret_cast<void*>(&reinterpret_cast<struct sockaddr_in*>(&local)->sin_addr):
                                                       reinterpret_cast<void*>(&reinterpret_cast<struct sockaddr_in6*>(&local)->sin6_addr)),

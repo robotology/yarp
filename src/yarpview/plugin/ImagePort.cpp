@@ -25,7 +25,7 @@ using namespace yarp::os;
 
 InputCallback::InputCallback()
 {
-    sigHandler = NULL;
+    sigHandler = nullptr;
     counter = 0;
 }
 

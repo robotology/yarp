@@ -40,8 +40,8 @@ public:
         closed = false;
         reader = false;
         writer = false;
-        dgram = YARP_NULLPTR;
-        mgram = YARP_NULLPTR;
+        dgram = nullptr;
+        mgram = nullptr;
         happy = true;
         bufferAlerted = bufferAlertNeeded = false;
         multiMode = false;

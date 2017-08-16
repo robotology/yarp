@@ -1,5 +1,5 @@
 /*
- * Copyright: (C) 2016 iCub Facility - Istituto Italiano di Tecnologia
+ * Copyright: (C) 2016 Istituto Italiano di Tecnologia (IIT)
  * Authors: Nicolò Genesio <nicolo.genesio@iit.it>
  * Copy Policy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
  */
@@ -69,7 +69,7 @@ bool YarpPluginFixture::setup(int argc, char** argv) {
         resDev=true;
         for(int i=1;i<devices.size();i++)
         {
-            if(Drivers::factory().find(devices.get(i).asString().c_str())==NULL)
+            if(Drivers::factory().find(devices.get(i).asString().c_str())==nullptr)
             {
                 RTF_ASSERT_ERROR("YarpPluginFixture: Unable to find "+ devices.get(i).asString() +" among the available devices");
             }

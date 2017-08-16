@@ -1,6 +1,6 @@
 /*
  * Copyright (C) 2010 RobotCub Consortium, European Commission FP6 Project IST-004370
- * Copyright (C) 2015 iCub Facility - Istituto Italiano di Tecnologia
+ * Copyright (C) 2015 Istituto Italiano di Tecnologia (IIT)
  * Author: Marco Randazzo <marco.randazzo@iit.it>
  *         Francesco Nori <francesco.nori@iit.it>
  *         Davide Perrone <dperrone@aitek.it>
@@ -266,7 +266,7 @@ bool JointItem::eventFilter(QObject *obj, QEvent *event)
            key == Qt::Key_Down || key == Qt::Key_PageUp || key == Qt::Key_PageDown){
 
             //SliderWithTarget *slider=0;
-            QSlider* slider = 0;
+            QSlider* slider = nullptr;
 
             if(obj == ui->sliderTrajectoryPosition){
                 slider = ui->sliderTrajectoryPosition;

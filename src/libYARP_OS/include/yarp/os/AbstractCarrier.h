@@ -24,46 +24,46 @@ namespace yarp {
 class YARP_OS_API yarp::os::AbstractCarrier : public Carrier {
 public:
 
-    virtual Carrier *create() YARP_OVERRIDE = 0;
+    virtual Carrier *create() override = 0;
 
-    virtual ConstString getName() YARP_OVERRIDE = 0;
+    virtual ConstString getName() override = 0;
 
-    virtual bool checkHeader(const yarp::os::Bytes& header) YARP_OVERRIDE = 0;
+    virtual bool checkHeader(const yarp::os::Bytes& header) override = 0;
 
-    virtual void setParameters(const yarp::os::Bytes& header) YARP_OVERRIDE;
+    virtual void setParameters(const yarp::os::Bytes& header) override;
 
-    virtual void getHeader(const yarp::os::Bytes& header) YARP_OVERRIDE = 0;
+    virtual void getHeader(const yarp::os::Bytes& header) override = 0;
 
 
-    virtual bool isConnectionless() YARP_OVERRIDE;
-    virtual bool supportReply() YARP_OVERRIDE;
-    virtual bool canAccept() YARP_OVERRIDE;
-    virtual bool canOffer() YARP_OVERRIDE;
-    virtual bool isTextMode() YARP_OVERRIDE;
-    virtual bool requireAck() YARP_OVERRIDE;
-    virtual bool canEscape() YARP_OVERRIDE;
-    virtual bool isLocal() YARP_OVERRIDE;
-    virtual ConstString toString() YARP_OVERRIDE;
+    virtual bool isConnectionless() override;
+    virtual bool supportReply() override;
+    virtual bool canAccept() override;
+    virtual bool canOffer() override;
+    virtual bool isTextMode() override;
+    virtual bool requireAck() override;
+    virtual bool canEscape() override;
+    virtual bool isLocal() override;
+    virtual ConstString toString() override;
 
     // sender
-    virtual bool prepareSend(ConnectionState& proto) YARP_OVERRIDE;
-    virtual bool sendHeader(ConnectionState& proto) YARP_OVERRIDE;
-    virtual bool expectReplyToHeader(ConnectionState& proto) YARP_OVERRIDE;
+    virtual bool prepareSend(ConnectionState& proto) override;
+    virtual bool sendHeader(ConnectionState& proto) override;
+    virtual bool expectReplyToHeader(ConnectionState& proto) override;
 
     virtual bool sendIndex(ConnectionState& proto, SizedWriter& writer);
 
     // receiver
-    virtual bool expectExtraHeader(ConnectionState& proto) YARP_OVERRIDE;
-    virtual bool respondToHeader(ConnectionState& proto) YARP_OVERRIDE = 0; // left abstract, no good default
-    virtual bool expectIndex(ConnectionState& proto) YARP_OVERRIDE;
-    virtual bool expectSenderSpecifier(ConnectionState& proto) YARP_OVERRIDE;
-    virtual bool sendAck(ConnectionState& proto) YARP_OVERRIDE;
-    virtual bool expectAck(ConnectionState& proto) YARP_OVERRIDE;
+    virtual bool expectExtraHeader(ConnectionState& proto) override;
+    virtual bool respondToHeader(ConnectionState& proto) override = 0; // left abstract, no good default
+    virtual bool expectIndex(ConnectionState& proto) override;
+    virtual bool expectSenderSpecifier(ConnectionState& proto) override;
+    virtual bool sendAck(ConnectionState& proto) override;
+    virtual bool expectAck(ConnectionState& proto) override;
 
-    virtual bool isActive() YARP_OVERRIDE;
+    virtual bool isActive() override;
 
-    virtual void setCarrierParams(const yarp::os::Property& params) YARP_OVERRIDE;
-    virtual void getCarrierParams(yarp::os::Property& params) YARP_OVERRIDE;
+    virtual void setCarrierParams(const yarp::os::Property& params) override;
+    virtual void getCarrierParams(yarp::os::Property& params) override;
 
     // some default implementations of protocol phases used by
     // certain YARP carriers
@@ -80,7 +80,7 @@ public:
 protected:
     int getSpecifier(const Bytes& b);
     void createStandardHeader(int specifier, const yarp::os::Bytes& header);
-    virtual bool write(ConnectionState& proto, SizedWriter& writer) YARP_OVERRIDE;
+    virtual bool write(ConnectionState& proto, SizedWriter& writer) override;
     bool sendConnectionStateSpecifier(ConnectionState& proto);
     bool sendSenderSpecifier(ConnectionState& proto);
 

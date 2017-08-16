@@ -36,15 +36,15 @@ private:
 public:
     BootstrapServerAdapter(NameService& owner) : handler(&owner) {
         fallback = new FallbackNameServer(*this);
-        if (fallback==NULL) {
+        if (fallback==nullptr) {
             fprintf(stderr,"Cannot allocate ServerAdapter\n");
             ::exit(1);
         }
     }
 
     virtual ~BootstrapServerAdapter() {
-        if (fallback!=NULL) delete fallback;
-        fallback = NULL;
+        if (fallback!=nullptr) delete fallback;
+        fallback = nullptr;
     }
 
     virtual ConstString apply(const ConstString& txt, const Contact& remote) override {
@@ -75,7 +75,7 @@ public:
 BootstrapServer::BootstrapServer(NameService& owner) {
 #ifdef YARP_HAS_ACE
     implementation = new BootstrapServerAdapter(owner);
-    if (implementation==NULL) {
+    if (implementation==nullptr) {
         fprintf(stderr,"Cannot allocate ServerAdapter\n");
         ::exit(1);
     }
@@ -87,16 +87,16 @@ BootstrapServer::BootstrapServer(NameService& owner) {
 
 BootstrapServer::~BootstrapServer() {
 #ifdef YARP_HAS_ACE
-    if (implementation!=NULL) {
+    if (implementation!=nullptr) {
         delete ((BootstrapServerAdapter*)implementation);
-        implementation = NULL;
+        implementation = nullptr;
     }
 #endif
 }
 
 bool BootstrapServer::start() {
 #ifdef YARP_HAS_ACE
-    if (implementation!=NULL) {
+    if (implementation!=nullptr) {
         return ((BootstrapServerAdapter*)implementation)->start();
     }
 #endif
@@ -105,7 +105,7 @@ bool BootstrapServer::start() {
 
 bool BootstrapServer::stop() {
 #ifdef YARP_HAS_ACE
-    if (implementation!=NULL) {
+    if (implementation!=nullptr) {
         return ((BootstrapServerAdapter*)implementation)->stop();
     }
 #endif

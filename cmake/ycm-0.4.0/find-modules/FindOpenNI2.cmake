@@ -15,7 +15,7 @@
 #  OpenNI2_PATCH_VERSION - OpenNI2 patch version
 
 #=============================================================================
-# Copyright 2012-2016 iCub Facility, Istituto Italiano di Tecnologia
+# Copyright 2012-2016 Istituto Italiano di Tecnologia (IIT)
 #   Authors: Giulia Vezzani <giulia.vezzani@iit.it>
 #
 # Distributed under the OSI-approved BSD License (the "License");

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2017 iCub Facility - Istituto Italiano di Tecnologia
+ * Copyright (C) 2017 Istituto Italiano di Tecnologia (IIT)
  * Author: Andrea Ruzzenenti <andrea.ruzzenenti@iit.it>
  * CopyPolicy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
  */
@@ -96,10 +96,10 @@ struct yarp::dev::JoypadControl::JoyPort : public  yarp::dev::JoypadControl::Loo
         contactable = this;
     }
     using bufferedPort::useCallback;
-    virtual void useCallback() YARP_OVERRIDE {bufferedPort::useCallback();}
+    virtual void useCallback() override {bufferedPort::useCallback();}
 
     using yarp::os::TypedReaderCallback<T>::onRead;
-    virtual void onRead(T& datum) YARP_OVERRIDE
+    virtual void onRead(T& datum) override
     {
         now = yarp::os::Time::now();
         mutex.lock();

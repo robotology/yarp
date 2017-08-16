@@ -38,29 +38,29 @@ public:
 
         {
             FILE *fout = fopen(fname0,"w");
-            yAssert(fout!=NULL);
+            yAssert(fout!=nullptr);
             fprintf(fout,"style capability\n");
             fprintf(fout,"capability_directory \".\"\n");
             fprintf(fout,"default_capability \".\"\n");
             fclose(fout);
-            fout = NULL;
+            fout = nullptr;
 
             fout = fopen(fname1,"w");
-            yAssert(fout!=NULL);
+            yAssert(fout!=nullptr);
             fprintf(fout,"alt %s\n", fname2);
             fclose(fout);
-            fout = NULL;
+            fout = nullptr;
 
             fout = fopen(fname2,"w");
             fprintf(fout,"x 14\n");
             fclose(fout);
-            fout = NULL;
+            fout = nullptr;
 
             const char *argv[] = { "ignore",
                                    "--_yarp_regression_test", ".",
                                    "--from", fname1,
                                    "--verbose", "0",
-                                   NULL };
+                                   nullptr };
             int argc = 7;
 
             rf.configure(argc,(char **)argv);
@@ -96,23 +96,23 @@ public:
 
         {
             FILE *fout = fopen(fname0,"w");
-            yAssert(fout!=NULL);
+            yAssert(fout!=nullptr);
             fprintf(fout,"style capability\n");
             fprintf(fout,"capability_directory \".\"\n");
             fprintf(fout,"default_capability \".\"\n");
             fclose(fout);
-            fout = NULL;
+            fout = nullptr;
 
             fout = fopen(fname1,"w");
             fprintf(fout,"x 14\n");
             fclose(fout);
-            fout = NULL;
+            fout = nullptr;
 
             const char *argv[] = { "ignore",
                                    "--_yarp_regression_test", ".",
                                    "--from", fname1,
                                    "--verbose", "0",
-                                   NULL };
+                                   nullptr };
             int argc = 7;
 
             ResourceFinder rf1;
@@ -125,7 +125,7 @@ public:
                                     "--verbose", "0",
                                     "--x", "20",
                                     "--y", "30",
-                                    NULL };
+                                    nullptr };
             int argc2 = 11;
 
             ResourceFinder rf2;
@@ -144,7 +144,7 @@ public:
                                "--_yarp_regression_test", ".",
                                "--context", "zig",
                                "--verbose", "0",
-                               NULL };
+                               nullptr };
         int argc = 7;
         rf.configure(argc,(char **)argv);
         checkEqual(rf.getContext().c_str(),"zig","recovered context");
@@ -157,34 +157,34 @@ public:
         const char *fname2 = "_yarp_regression_subgroup_test_rf2.txt";
         {
             FILE *fout = fopen(fname0,"w");
-            yAssert(fout!=NULL);
+            yAssert(fout!=nullptr);
             fprintf(fout,"[section1]\n");
             fprintf(fout,"fname \"_yarp_regression_subgroup_test_rf1.txt\"\n");
             fprintf(fout,"[section2]\n");
             fprintf(fout,"fname \"_yarp_regression_subgroup_test_rf2.txt\"\n");
             fclose(fout);
-            fout = NULL;
+            fout = nullptr;
         }
         {
             FILE *fout = fopen(fname1,"w");
-            yAssert(fout!=NULL);
+            yAssert(fout!=nullptr);
             fprintf(fout,"x 1\n");
             fclose(fout);
-            fout = NULL;
+            fout = nullptr;
         }
         {
             FILE *fout = fopen(fname2,"w");
-            yAssert(fout!=NULL);
+            yAssert(fout!=nullptr);
             fprintf(fout,"x 2\n");
             fclose(fout);
-            fout = NULL;
+            fout = nullptr;
         }
         ResourceFinder rf;
         const char *argv[] = { "ignore",
                                "--_yarp_regression_test", ".",
                                "--from", fname0,
                                "--verbose", "0",
-                               NULL };
+                               nullptr };
         int argc = 7;
         rf.configure(argc,(char **)argv);
         ResourceFinder rf1 = rf.findNestedResourceFinder("section1");
@@ -203,7 +203,7 @@ public:
         double defDouble=42.42;
         ConstString defString="fortytwo";
         Bottle defList("(answers (42 24))");
-        const char *argv[] = { NULL };
+        const char *argv[] = { nullptr };
         int argc = 1;
         ResourceFinder rf;
         rf.setDefault("int", defInt);
@@ -217,7 +217,7 @@ public:
         checkEqual(rf.find("string").asString(), defString, "default string set correctly");
         checkEqual(rf.find("constchar").asString(), defString, "default string (passed as const char*) set correctly");
         Bottle *foundList=rf.find("list").asList();
-        if(foundList!=NULL)
+        if(foundList!=nullptr)
             checkEqual(rf.find("list").asList()->get(0).asString(), "answers", "default list set correctly");
         else
             report(1, "RF could not find default list");
@@ -356,7 +356,7 @@ public:
         char buf[1000];
         char *result = yarp::os::getcwd(buf,sizeof(buf));
         if (!result) {
-            checkTrue(result!=NULL,"cwd/pwd not too long");
+            checkTrue(result!=nullptr,"cwd/pwd not too long");
             std::exit(1);
         }
         ConstString slash = Network::getDirectorySeparator();
@@ -501,18 +501,18 @@ public:
         path_project2.addString(pathify(project2));
 
         fout = fopen((pathify(pathd)+slash+"project1.ini").c_str(),"w");
-        yAssert(fout!=NULL);
+        yAssert(fout!=nullptr);
         fprintf(fout,"[search project1]\n");
         fprintf(fout,"%s\n", path_project1.toString().c_str());
         fclose(fout);
-        fout = NULL;
+        fout = nullptr;
 
         fout = fopen((pathify(pathd)+slash+"project2.ini").c_str(),"w");
-        yAssert(fout!=NULL);
+        yAssert(fout!=nullptr);
         fprintf(fout,"[search project2]\n");
         fprintf(fout,"%s\n", path_project2.toString().c_str());
         fclose(fout);
-        fout = NULL;
+        fout = nullptr;
 
         saveEnvironment("YARP_DATA_HOME");
         saveEnvironment("YARP_CONFIG_HOME");
@@ -531,72 +531,72 @@ public:
 
 
         fout = fopen((pathify(yarp_data_home)+slash+"data.ini").c_str(),"w");
-        yAssert(fout!=NULL);
+        yAssert(fout!=nullptr);
         fprintf(fout,"magic_number = 42\n");
         fprintf(fout,"[data_home]\n");
         fprintf(fout,"x = 2\n");
         fclose(fout);
-        fout = NULL;
+        fout = nullptr;
 
         fout = fopen((pathify(yarp_data_dir0)+slash+"data.ini").c_str(),"w");
-        yAssert(fout!=NULL);
+        yAssert(fout!=nullptr);
         fprintf(fout,"magic_number = 22\n");
         fprintf(fout,"[data_dir0]\n");
         fprintf(fout,"x = 3\n");
         fclose(fout);
-        fout = NULL;
+        fout = nullptr;
 
         fout = fopen((pathify(project1)+slash+"data.ini").c_str(),"w");
-        yAssert(fout!=NULL);
+        yAssert(fout!=nullptr);
         fprintf(fout,"magic_number = 101\n");
         fprintf(fout,"[project1]\n");
         fprintf(fout,"x = 3\n");
         fclose(fout);
-        fout = NULL;
+        fout = nullptr;
 
         fout = fopen((pathify(yarp_context_dir)+slash+"my_app.ini").c_str(),"w");
-        yAssert(fout!=NULL);
+        yAssert(fout!=nullptr);
         fprintf(fout,"magic_number = 1000\n");
         fclose(fout);
-        fout = NULL;
+        fout = nullptr;
 
         fout = fopen((pathify(yarp_context_dir2)+slash+"shadow.ini").c_str(),"w");
-        yAssert(fout!=NULL);
+        yAssert(fout!=nullptr);
         fprintf(fout,"magic_number = 5000\n");
         fclose(fout);
-        fout = NULL;
+        fout = nullptr;
 
         fout = fopen((pathify(yarp_data_home_shadow)+slash+"shadow.ini").c_str(),"w");
-        yAssert(fout!=NULL);
+        yAssert(fout!=nullptr);
         fprintf(fout,"magic_number = 5001\n");
         fclose(fout);
-        fout = NULL;
+        fout = nullptr;
 
         fout = fopen((pathify(yarp_context_dir2)+slash+"noshadow.ini").c_str(),"w");
-        yAssert(fout!=NULL);
+        yAssert(fout!=nullptr);
         fprintf(fout,"magic_number = 5002\n");
         fclose(fout);
-        fout = NULL;
+        fout = nullptr;
 
         fout = fopen((pathify(yarp_config_home_plugins)+slash+"fakedev1.ini").c_str(),"w");
-        yAssert(fout!=NULL);
+        yAssert(fout!=nullptr);
         fprintf(fout,"[plugin fakedev1]\n");
         fprintf(fout,"type device\n");
         fprintf(fout,"name fakedev1\n");
         fprintf(fout,"library yarp_fakedev1\n");
         fprintf(fout,"part fakedev1\n");
         fclose(fout);
-        fout = NULL;
+        fout = nullptr;
 
         fout = fopen((pathify(yarp_data_dir0_plugins)+slash+"fakedev2.ini").c_str(),"w");
-        yAssert(fout!=NULL);
+        yAssert(fout!=nullptr);
         fprintf(fout,"[plugin fakedev2]\n");
         fprintf(fout,"type device\n");
         fprintf(fout,"name fakedev2\n");
         fprintf(fout,"library yarp_fakedev2\n");
         fprintf(fout,"part fakedev2\n");
         fclose(fout);
-        fout = NULL;
+        fout = nullptr;
     }
 
     void breakDownTestArea() {
@@ -655,7 +655,7 @@ public:
             ResourceFinder rf;
             rf.setDefaultContext("my_app");
             rf.setDefaultConfigFile("my_app.ini");
-            rf.configure(0,NULL);
+            rf.configure(0,nullptr);
             checkEqual(rf.find("magic_number").asInt(),1000,"my_app.ini found as default config file");
         }
 
@@ -664,7 +664,7 @@ public:
             ConstString contextName = "my_app";
             rf.setDefaultContext(contextName);
             rf.setDefaultConfigFile("my_app.ini");
-            rf.configure(0,NULL);
+            rf.configure(0,nullptr);
             checkEqual(rf.find("magic_number").asInt(),1000,"my_app.ini found as default config file");
         }
 
@@ -673,7 +673,7 @@ public:
             ConstString contextName = "my_app";
             rf.setDefaultContext(contextName.c_str());
             rf.setDefaultConfigFile("my_app.ini");
-            rf.configure(0,NULL);
+            rf.configure(0,nullptr);
             checkEqual(rf.find("magic_number").asInt(),1000,"my_app.ini found as default config file");
         }
 
@@ -681,7 +681,7 @@ public:
             ResourceFinder rf;
             rf.setDefaultContext("shadowtest");
             rf.setDefaultConfigFile("shadow.ini");
-            rf.configure(0,NULL);
+            rf.configure(0,nullptr);
             checkEqual(rf.find("magic_number").asInt(),5001,"shadow.ini found as correct location");
         }
 
@@ -689,7 +689,7 @@ public:
             ResourceFinder rf;
             rf.setDefaultContext("shadowtest");
             rf.setDefaultConfigFile("noshadow.ini");
-            rf.configure(0,NULL);
+            rf.configure(0,nullptr);
             checkEqual(rf.find("magic_number").asInt(),5002,"noshadow.ini found as correct location");
         }
 
@@ -697,7 +697,7 @@ public:
             ResourceFinder rf;
             rf.setDefaultContext("shadowtest");
             rf.setDefaultConfigFile("noshadow.ini");
-            rf.configure(0,NULL);
+            rf.configure(0,nullptr);
             checkEqual(rf.find("magic_number").asInt(),5002,"noshadow.ini found as correct location");
             Property p;
             ResourceFinderOptions opts;
@@ -712,7 +712,7 @@ public:
         report(0,"test context version 2");
         ResourceFinder rf1;
         rf1.setDefault("testNumber", "fortytwo");
-        rf1.configure(0, NULL);
+        rf1.configure(0, nullptr);
         checkEqual(rf1.find("testNumber").asString(), "fortytwo", "Original RF finds the default value");
         ResourceFinder rf2(rf1);
         checkEqual(rf2.find("testNumber").asString(), "fortytwo", "Copied RF finds the default passed to the original one");
@@ -733,7 +733,7 @@ public:
             const char *fname1 = "_yarp_regression_test_rf1.txt";
             rf.setDefaultContext("my_app");
             rf.setDefaultConfigFile(fname1); // should be in pwd
-            rf.configure(0,NULL);
+            rf.configure(0,nullptr);
 
             char buf[1000];
             char *result = yarp::os::getcwd(buf,sizeof(buf));
@@ -745,7 +745,7 @@ public:
             ResourceFinder rf;
             rf.setDefaultContext("my_app");
             rf.setDefaultConfigFile("my_app.ini");
-            rf.configure(0,NULL);
+            rf.configure(0,nullptr);
 
             bool found;
             ConstString robot = NetworkBase::getEnvironment("YARP_ROBOT_NAME",
@@ -779,7 +779,7 @@ public:
             ResourceFinder rf;
             rf.setDefaultContext("my_app");
             rf.setDefaultConfigFile("my_app.ini");
-            bool configures = rf.configure(0,NULL);
+            bool configures = rf.configure(0,nullptr);
             checkTrue(configures,"ok with default file that exists");
         }
 
@@ -788,7 +788,7 @@ public:
             rf.setDefaultContext("my_app");
             const char *argv[] = { "ignore",
                                    "--from", "my_app.ini",
-                                   NULL };
+                                   nullptr };
             int argc = 3;
             bool configures = rf.configure(argc,(char **)argv);
             checkTrue(configures,"ok with from file that exists");
@@ -798,7 +798,7 @@ public:
             ResourceFinder rf;
             rf.setDefaultContext("my_app");
             rf.setDefaultConfigFile("my_app_not_there.ini");
-            bool configures = rf.configure(0,NULL);
+            bool configures = rf.configure(0,nullptr);
             checkTrue(configures,"ok with default file that does not exist");
         }
 
@@ -807,7 +807,7 @@ public:
             rf.setDefaultContext("my_app");
             const char *argv[] = { "ignore",
                                    "--from", "my_app_not_there.ini",
-                                   NULL };
+                                   nullptr };
             int argc = 3;
             bool configures = rf.configure(argc,(char **)argv);
             checkFalse(configures,"fails with from file that is missing");

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2015 iCub Facility, Istituto Italiano di Tecnologia
+ * Copyright (C) 2015 Istituto Italiano di Tecnologia (IIT)
  * Authors: Marco Randazzo <marco.randazzo@iit.it>
  * CopyPolicy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
  */
@@ -47,8 +47,8 @@ public:
 
     virtual ~ImplementAxisInfo();
 
-    virtual bool getAxisName(int axis, yarp::os::ConstString& name) YARP_OVERRIDE;
-    virtual bool getJointType(int axis, yarp::dev::JointTypeEnum& type) YARP_OVERRIDE;
+    virtual bool getAxisName(int axis, yarp::os::ConstString& name) override;
+    virtual bool getJointType(int axis, yarp::dev::JointTypeEnum& type) override;
 };
 
 #endif // YARP_DEV_IMPLEMENTAXISINFO_H

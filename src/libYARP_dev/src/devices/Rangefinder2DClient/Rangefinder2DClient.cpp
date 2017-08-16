@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2015 iCub Facility - Istituto Italiano di Tecnologia
+ * Copyright (C) 2015 Istituto Italiano di Tecnologia (IIT)
  * Author: Marco Randazzo <marco.randazzo@iit.it>
  * CopyPolicy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
  */
@@ -246,9 +246,9 @@ bool yarp::dev::Rangefinder2DClient::open(yarp::os::Searchable &config)
 
     if (b_canOpenTransformClient)
     {
-        yarp::dev::IFrameTransform* iTrf = 0;
+        yarp::dev::IFrameTransform* iTrf = nullptr;
         drv->view(iTrf);
-        if (iTrf != 0)
+        if (iTrf != nullptr)
         {
             yError() << "A Problem occurred while trying to view the IFrameTransform interface";
             drv->close();

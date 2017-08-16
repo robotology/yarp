@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2012 IITRBCS
+ * Copyright (C) 2012 Istituto Italiano di Tecnologia (IIT)
  * Authors: Paul Fitzpatrick
  * CopyPolicy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
  */
@@ -80,14 +80,14 @@ public:
         return x;
     }
 
-    bool readString(yarp::os::ConstString& str, bool *is_vocab = YARP_NULLPTR);
+    bool readString(yarp::os::ConstString& str, bool *is_vocab = nullptr);
 
     bool readBinary(yarp::os::ConstString& str);
 
 #ifndef YARP_CONSTSTRING_IS_STD_STRING
     // we need to do the WIN32 dance to read an std::string without
     // running into DLL linkage trouble
-    inline bool readString(std::string& str, bool *is_vocab = YARP_NULLPTR) {
+    inline bool readString(std::string& str, bool *is_vocab = nullptr) {
         yarp::os::ConstString tmp;
         bool ok = readString(tmp, is_vocab);
         str = tmp;

@@ -52,13 +52,13 @@ public:
      * yarp developers to add documentation for your device).
      * @return true/false upon success/failure
      */
-    virtual bool open(yarp::os::Searchable& config) YARP_OVERRIDE { return true; }
+    virtual bool open(yarp::os::Searchable& config) override { return true; }
 
     /**
      * Close the DeviceDriver.
      * @return true/false on success/failure.
      */
-    virtual bool close() YARP_OVERRIDE { return true; }
+    virtual bool close() override { return true; }
 
 
     /**
@@ -172,7 +172,7 @@ public:
      * @param connection a network connection to a port
      * @return true if the message was read successfully
      */
-    virtual bool read(yarp::os::ConnectionReader& connection) YARP_OVERRIDE;
+    virtual bool read(yarp::os::ConnectionReader& connection) override;
 
     using yarp::os::TypedReaderCallback<yarp::os::Bottle>::onRead;
     /**
@@ -181,7 +181,7 @@ public:
      * if this handler is used.
      * @param v the message
      */
-    virtual void onRead(yarp::os::Bottle& v) YARP_OVERRIDE {
+    virtual void onRead(yarp::os::Bottle& v) override {
         yarp::os::Bottle reply;
         respond(v,reply);
     }

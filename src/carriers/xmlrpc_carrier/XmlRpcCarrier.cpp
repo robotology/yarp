@@ -118,7 +118,7 @@ bool XmlRpcCarrier::write(ConnectionState& proto, SizedWriter& writer)
         c.generateRequest(methodName.c_str(),args);
         req = c.getRequest();
     } else {
-        XmlRpcServerConnection c(0, YARP_NULLPTR);
+        XmlRpcServerConnection c(0, nullptr);
         c.generateResponse(args.toXml());
         req = c.getResponse();
     }
@@ -216,7 +216,7 @@ bool XmlRpcCarrier::respondToHeader(ConnectionState& proto)
     XmlRpcStream *stream = new XmlRpcStream(proto.giveStreams(),
                                             sender,
                                             interpretRos);
-    if (stream == YARP_NULLPTR) {
+    if (stream == nullptr) {
         return false;
     }
     proto.takeStreams(stream);

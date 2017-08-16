@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2013 iCub Facility
+ * Copyright (C) 2013 Istituto Italiano di Tecnologia (IIT)
  * Authors: Paul Fitzpatrick, Tobias Fischer
  * CopyPolicy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
  */
@@ -182,7 +182,7 @@ public:
     bool has_prev_name;
 
     Helper() :
-            owner(YARP_NULLPTR),
+            owner(nullptr),
             prev_name(""),
             has_prev_name(false)
     {
@@ -542,14 +542,14 @@ bool yarp::os::Node::Helper::read(ConnectionReader& reader)
 Node::Node() :
         mPriv(new Helper)
 {
-    yAssert(mPriv != YARP_NULLPTR);
+    yAssert(mPriv != nullptr);
     mPriv->owner = this;
 }
 
 Node::Node(const ConstString& name) :
         mPriv(new Helper)
 {
-    yAssert(mPriv != YARP_NULLPTR);
+    yAssert(mPriv != nullptr);
     mPriv->owner = this;
     Nodes& nodes = NameClient::getNameClient().getNodes();
     mPriv->prev_name = nodes.getActiveName();

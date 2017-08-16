@@ -122,7 +122,7 @@ static void open_audio(AVFormatContext *oc, AVStream *st)
     }
 
     /* open it */
-    if (avcodec_open2(c, codec, NULL) < 0) {
+    if (avcodec_open2(c, codec, nullptr) < 0) {
         fprintf(stderr, "could not open codec\n");
         ::exit(1);
     }
@@ -193,7 +193,7 @@ static void make_audio_frame(AVCodecContext *c, AVFrame * &frame,
     frame->nb_samples     = c->frame_size;
     frame->format         = c->sample_fmt;
     frame->channel_layout = c->channel_layout;
-    int buffer_size = av_samples_get_buffer_size(NULL, c->channels,
+    int buffer_size = av_samples_get_buffer_size(nullptr, c->channels,
                                                  c->frame_size,
                                                  c->sample_fmt, 0);
     if (buffer_size < 0) {
@@ -417,12 +417,12 @@ static AVFrame *alloc_picture(int pix_fmt, int width, int height)
 
     picture = YARP_avcodec_alloc_frame();
     if (!picture)
-        return NULL;
+        return nullptr;
     size = avpicture_get_size((AVPixelFormat)pix_fmt, width, height);
     picture_buf = (uint8_t*)av_malloc(size);
     if (!picture_buf) {
         av_free(picture);
-        return NULL;
+        return nullptr;
     }
     avpicture_fill((AVPicture *)picture, picture_buf,
                    (AVPixelFormat)pix_fmt, width, height);
@@ -445,12 +445,12 @@ void FfmpegWriter::open_video(AVFormatContext *oc, AVStream *st)
     }
 
     /* open the codec */
-    if (avcodec_open2(c, codec, NULL) < 0) {
+    if (avcodec_open2(c, codec, nullptr) < 0) {
         fprintf(stderr, "could not open codec\n");
         ::exit(1);
     }
 
-    video_outbuf = NULL;
+    video_outbuf = nullptr;
     if (!(oc->oformat->flags & AVFMT_RAWPICTURE)) {
         /* allocate output buffer */
         /* XXX: API change will be done */
@@ -472,7 +472,7 @@ void FfmpegWriter::open_video(AVFormatContext *oc, AVStream *st)
     /* if the output format is not YUV420P, then a temporary YUV420P
        picture is needed too. It is then converted to the required
        output format */
-    tmp_picture = NULL;
+    tmp_picture = nullptr;
     if (c->pix_fmt != AV_PIX_FMT_RGB24) {
         tmp_picture = alloc_picture(AV_PIX_FMT_RGB24, c->width, c->height);
         if (!tmp_picture) {
@@ -660,10 +660,10 @@ bool FfmpegWriter::delayedOpen(yarp::os::Searchable & config) {
 
     /* auto detect the output format from the name. default is
        mpeg. */
-    fmt = guess_format(NULL, filename.c_str(), NULL);
+    fmt = guess_format(nullptr, filename.c_str(), nullptr);
     if (!fmt) {
         printf("Could not deduce output format from file extension: using MPEG.\n");
-        fmt = guess_format("mpeg", NULL, NULL);
+        fmt = guess_format("mpeg", nullptr, nullptr);
     }
     if (!fmt) {
         fprintf(stderr, "Could not find suitable output format\n");
@@ -681,8 +681,8 @@ bool FfmpegWriter::delayedOpen(yarp::os::Searchable & config) {
 
     /* add the audio and video streams using the default format codecs
        and initialize the codecs */
-    video_st = NULL;
-    audio_st = NULL;
+    video_st = nullptr;
+    audio_st = nullptr;
     if (fmt->video_codec != CODEC_ID_NONE) {
         video_st = add_video_stream(oc, fmt->video_codec, w, h, framerate);
     }
@@ -692,7 +692,7 @@ bool FfmpegWriter::delayedOpen(yarp::os::Searchable & config) {
         printf("Adding audio %dx%d\n", sample_rate, channels);
         if (fmt->audio_codec != CODEC_ID_NONE) {
             audio_st = add_audio_stream(oc, fmt->audio_codec);
-            if (audio_st!=NULL) {
+            if (audio_st!=nullptr) {
                 AVCodecContext *c = audio_st->codec;
                 c->sample_rate = sample_rate;
                 c->channels = channels;

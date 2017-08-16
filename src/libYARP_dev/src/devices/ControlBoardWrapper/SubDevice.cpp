@@ -21,33 +21,33 @@ using namespace std;
 
 SubDevice::SubDevice()
 {
-    pid = 0;
-    pos = 0;
-    pos2 = 0;
-    posDir = 0;
-    vel = 0;
-    vel2 = 0;
-    iJntEnc = 0;
-    iMotEnc = 0;
-    amp = 0;
-    lim2 = 0;
-    calib = 0;
-    calib2 = 0;
-    iTimed= 0;
-    info = 0;
-    iTorque=0;
-    iImpedance=0;
-    iMode=0;
-    iMode2=0;
-    iInteract=0;
-    iCurr = 0;
-    iPWM = 0;
+    pid = nullptr;
+    pos = nullptr;
+    pos2 = nullptr;
+    posDir = nullptr;
+    vel = nullptr;
+    vel2 = nullptr;
+    iJntEnc = nullptr;
+    iMotEnc = nullptr;
+    amp = nullptr;
+    lim2 = nullptr;
+    calib = nullptr;
+    calib2 = nullptr;
+    iTimed= nullptr;
+    info = nullptr;
+    iTorque=nullptr;
+    iImpedance=nullptr;
+    iMode=nullptr;
+    iMode2=nullptr;
+    iInteract=nullptr;
+    iCurr = nullptr;
+    iPWM = nullptr;
 
     base=-1;
     top=-1;
     axes=0;
 
-    subdevice=0;
+    subdevice=nullptr;
 
     configuredF=false;
     attachedF=false;
@@ -93,28 +93,28 @@ bool SubDevice::configure(int b, int t, int n, const std::string &key, yarp::dev
 
 void SubDevice::detach()
 {
-    subdevice=0;
+    subdevice=nullptr;
 
-    pid=0;
-    pos=0;
-    pos2=0;
-    posDir=0;
-    vel=0;
-    vel2=0;
-    amp = 0;
-    iJntEnc=0;
-    iMotEnc=0;
-    lim2=0;
-    calib=0;
-    calib2=0;
-    info=0;
-    iTorque=0;
-    iImpedance=0;
-    iMode=0;
-    iMode2=0;
-    iTimed=0;
-    iInteract=0;
-    iVar = 0;
+    pid=nullptr;
+    pos=nullptr;
+    pos2=nullptr;
+    posDir=nullptr;
+    vel=nullptr;
+    vel2=nullptr;
+    amp = nullptr;
+    iJntEnc=nullptr;
+    iMotEnc=nullptr;
+    lim2=nullptr;
+    calib=nullptr;
+    calib2=nullptr;
+    info=nullptr;
+    iTorque=nullptr;
+    iImpedance=nullptr;
+    iMode=nullptr;
+    iMode2=nullptr;
+    iTimed=nullptr;
+    iInteract=nullptr;
+    iVar = nullptr;
     configuredF=false;
     attachedF=false;
 }
@@ -142,7 +142,7 @@ bool SubDevice::attach(yarp::dev::PolyDriver *d, const std::string &k)
             return false;
         }
 
-    if (d==0)
+    if (d==nullptr)
         {
             yError("ControlBoardWrapper for part <%s>: Invalid device (null pointer)", parentName.c_str());
             return false;
@@ -182,34 +182,34 @@ bool SubDevice::attach(yarp::dev::PolyDriver *d, const std::string &k)
             return false;
         }
 
-    if ( ((iMode==0) || (iMode2==0)) && (_subDevVerbose ))
+    if ( ((iMode==nullptr) || (iMode2==nullptr)) && (_subDevVerbose ))
         yWarning("ControlBoardWrapper for part <%s>:  Warning iMode not valid interface.", parentName.c_str());
 
-    if ((iTorque==0) && (_subDevVerbose))
+    if ((iTorque==nullptr) && (_subDevVerbose))
         yWarning("ControlBoardWrapper for part <%s>:  Warning iTorque not valid interface.", parentName.c_str());
 
-    if ((iCurr == 0) && (_subDevVerbose))
+    if ((iCurr == nullptr) && (_subDevVerbose))
         yWarning("ControlBoardWrapper for part <%s>:  Warning iCurr not valid interface.", parentName.c_str());
 
-    if ((iPWM == 0) && (_subDevVerbose))
+    if ((iPWM == nullptr) && (_subDevVerbose))
         yWarning("ControlBoardWrapper for part <%s>:  Warning iPWM not valid interface.", parentName.c_str());
 
-    if ((iImpedance==0) && (_subDevVerbose))
+    if ((iImpedance==nullptr) && (_subDevVerbose))
         yWarning("ControlBoardWrapper for part <%s>:  Warning iImpedance not valid interface.", parentName.c_str());
 
-    if ((iInteract==0) && (_subDevVerbose))
+    if ((iInteract==nullptr) && (_subDevVerbose))
         yWarning("ControlBoardWrapper for part <%s>:  Warning iInteractionMode not valid interface.", parentName.c_str());
 
-    if ((iMotEnc==0) && (_subDevVerbose))
+    if ((iMotEnc==nullptr) && (_subDevVerbose))
         yWarning("ControlBoardWrapper for part <%s>:  Warning iMotorEncoder not valid interface.", parentName.c_str());
 
-    if ((imotor==0) && (_subDevVerbose))
+    if ((imotor==nullptr) && (_subDevVerbose))
         yWarning("ControlBoardWrapper for part <%s>:  Warning iMotor not valid interface.", parentName.c_str());
 
-    if ((iVar == 0) && (_subDevVerbose))
+    if ((iVar == nullptr) && (_subDevVerbose))
         yWarning("ControlBoardWrapper for part <%s>:  Warning iRemoteVariable not valid interface.", parentName.c_str());
 
-    if ((info == 0) && (_subDevVerbose))
+    if ((info == nullptr) && (_subDevVerbose))
         yWarning("ControlBoardWrapper for part <%s>:  Warning iAxisInfo not valid interface.", parentName.c_str());
 
     int deviceJoints=0;
@@ -239,7 +239,7 @@ bool SubDevice::attach(yarp::dev::PolyDriver *d, const std::string &k)
         return false;
     }
 
-    if (pos!=0)
+    if (pos!=nullptr)
     {
         if (!pos->getAxes(&deviceJoints))
         {

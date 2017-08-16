@@ -1,5 +1,5 @@
 #  Yarp Logger
-#  Copyright: (C) 2014 iCub Facility - Istituto Italiano di Tecnologia (IIT)
+#  Copyright: (C) 2014 Istituto Italiano di Tecnologia (IIT)
 #  Authors: Marco Randazzo <marco.randazzo@iit.it>
 #
 #  Copy Policy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
@@ -49,6 +49,17 @@ target_link_libraries(YARP_logger PRIVATE YARP::YARP_OS
 
 if(CREATE_LIB_MATH)
   target_link_libraries(YARP_logger PRIVATE YARP::YARP_math)
+endif()
+
+if(NOT CMAKE_MINIMUM_REQUIRED_VERSION VERSION_LESS 3.1)
+  message(AUTHOR_WARNING "CMAKE_MINIMUM_REQUIRED_VERSION is now ${CMAKE_MINIMUM_REQUIRED_VERSION}. This check can be removed.")
+endif()
+if(CMAKE_VERSION VERSION_LESS 3.1)
+  if(DEFINED CXX11_FLAGS)
+    target_compile_options(YARP_logger PUBLIC ${CXX11_FLAGS})
+  endif()
+else()
+  target_compile_features(YARP_logger PUBLIC cxx_override)
 endif()
 
 set_property(TARGET YARP_logger PROPERTY PUBLIC_HEADER ${YARP_logger_HDRS})

@@ -74,7 +74,7 @@ static unsigned long crc_table[256];
 static int crc_table_computed = 0;
 
 /* Make the table for a fast CRC. */
-static void make_crc_table(void) {
+static void make_crc_table() {
     unsigned long c;
     int n, k;
 

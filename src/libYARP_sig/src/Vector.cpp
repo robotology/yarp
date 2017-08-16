@@ -23,7 +23,7 @@
 using namespace yarp::sig;
 using namespace yarp::os;
 
-/// network stuff
+// network stuff
 #include <yarp/os/NetInt32.h>
 
 ///////////////////
@@ -49,7 +49,7 @@ bool VectorBase::read(yarp::os::ConnectionReader& connection) {
         if ((size_t)getListSize() != (size_t)(header.listLen))
             resize(header.listLen);
         const char *ptr = getMemoryBlock();
-        yAssert(ptr != 0);
+        yAssert(ptr != nullptr);
         int elemSize=getElementSize();
         ok = connection.expectBlock(ptr, elemSize*header.listLen);
         if (!ok) return false;
@@ -70,7 +70,7 @@ bool VectorBase::write(yarp::os::ConnectionWriter& connection) {
     connection.appendBlock((char*)&header, sizeof(header));
     const char *ptr = getMemoryBlock();
     int elemSize=getElementSize();
-    yAssert(ptr != NULL);
+    yAssert(ptr != nullptr);
 
     connection.appendExternalBlock(ptr, elemSize*header.listLen);
 

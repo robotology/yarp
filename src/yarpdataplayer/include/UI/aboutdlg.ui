@@ -72,8 +72,7 @@
    <item>
     <widget class="QLabel" name="copyright">
      <property name="text">
-      <string>2014 (C) Robotics, Brain and Cognitive Sciences
-Istituto Italiano di Tecnologia</string>
+      <string>2014 (C) Istituto Italiano di Tecnologia (IIT)</string>
      </property>
      <property name="alignment">
       <set>Qt::AlignCenter</set>

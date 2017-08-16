@@ -1,6 +1,6 @@
 /*
  * Copyright (C) 2010 RobotCub Consortium, European Commission FP6 Project IST-004370
- * Copyright (C) 2015 iCub Facility - Istituto Italiano di Tecnologia
+ * Copyright (C) 2015 Istituto Italiano di Tecnologia (IIT)
  * Author: Marco Randazzo <marco.randazzo@iit.it>
  * CopyPolicy: Released under the terms of the GPLv2 or later, see GPL.TXT
  */
@@ -125,9 +125,9 @@ sliderOptions::~sliderOptions()
     emit sig_setPosSliderOptionSO(val_pos_choice, val_pos_custom_step);
     emit sig_setVelSliderOptionSO(val_vel_choice, val_vel_custom_step);
     emit sig_setTrqSliderOptionSO(val_trq_choice, val_trq_custom_step);
-    disconnect(this, SIGNAL(sig_setPosSliderOptionSO(int, double)), 0, 0);
-    disconnect(this, SIGNAL(sig_setVelSliderOptionSO(int, double)), 0, 0);
-    disconnect(this, SIGNAL(sig_setTrqSliderOptionSO(int, double)), 0, 0);
+    disconnect(this, SIGNAL(sig_setPosSliderOptionSO(int, double)), nullptr, nullptr);
+    disconnect(this, SIGNAL(sig_setVelSliderOptionSO(int, double)), nullptr, nullptr);
+    disconnect(this, SIGNAL(sig_setTrqSliderOptionSO(int, double)), nullptr, nullptr);
 
     delete pos_step_validator;
     delete vel_step_validator;

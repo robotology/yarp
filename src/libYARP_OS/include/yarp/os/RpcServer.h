@@ -41,24 +41,24 @@ public:
 
     // documented in UnbufferedContactable
     virtual bool write(PortWriter& writer,
-                       PortWriter *callback = YARP_NULLPTR) const YARP_OVERRIDE;
+                       PortWriter *callback = nullptr) const override;
 
     // documented in UnbufferedContactable
     virtual bool write(PortWriter& writer, PortReader& reader,
-                       PortWriter *callback = YARP_NULLPTR) const YARP_OVERRIDE;
+                       PortWriter *callback = nullptr) const override;
 
     // documented in UnbufferedContactable
-    virtual bool read(PortReader& reader, bool willReply = true) YARP_OVERRIDE;
+    virtual bool read(PortReader& reader, bool willReply = true) override;
 
-    virtual void setInputMode(bool expectInput) YARP_OVERRIDE;
-    virtual void setOutputMode(bool expectOutput) YARP_OVERRIDE;
-    virtual void setRpcMode(bool expectRpc) YARP_OVERRIDE;
+    virtual void setInputMode(bool expectInput) override;
+    virtual void setOutputMode(bool expectOutput) override;
+    virtual void setRpcMode(bool expectRpc) override;
 
-    virtual Port& asPort() YARP_OVERRIDE {
+    virtual Port& asPort() override {
         return port;
     }
 
-    virtual const Port& asPort() const YARP_OVERRIDE {
+    virtual const Port& asPort() const override {
         return port;
     }
 

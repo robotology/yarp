@@ -1,5 +1,5 @@
 /*
- * Copyright (C)2014  iCub Facility - Istituto Italiano di Tecnologia
+ * Copyright (C) 2014 Istituto Italiano di Tecnologia (IIT)
  * Author: Marco Randazzo
  * email:  marco.randazzo@iit.it
  * website: www.robotcub.org
@@ -63,7 +63,7 @@ class logger_module : public yarp::os::RFModule
         if (the_logger)
         {
             delete the_logger;
-            the_logger=NULL;
+            the_logger=nullptr;
         }
         return true;
     }

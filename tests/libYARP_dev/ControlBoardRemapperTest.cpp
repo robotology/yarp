@@ -70,7 +70,7 @@ public:
 
     void checkRemapper(yarp::dev::PolyDriver & ddRemapper, int rand, size_t nrOfRemappedAxes)
     {
-        IPositionControl2 *pos = NULL;
+        IPositionControl2 *pos = nullptr;
         bool ok = ddRemapper.view(pos);
         checkTrue(ok, "interface position correctly opened");
         int axes = 0;
@@ -78,15 +78,15 @@ public:
         checkTrue(ok, "getAxes returned correctly");
         checkEqual(axes, nrOfRemappedAxes, "remapper seems functional");
 
-        IPositionDirect *posdir = 0;
+        IPositionDirect *posdir = nullptr;
         ok = ddRemapper.view(posdir);
         checkTrue(ok, "direct position interface correctly opened");
 
-        IEncoders * encs = 0;
+        IEncoders * encs = nullptr;
         ok = ddRemapper.view(encs);
         checkTrue(ok, "encoders interface correctly opened");
 
-        IControlMode2 *ctrlmode = NULL;
+        IControlMode2 *ctrlmode = nullptr;
         ok = ddRemapper.view(ctrlmode);
         checkTrue(ok, "control mode interface correctly opened");
 
@@ -208,7 +208,7 @@ public:
 
             if(result)
             {
-                IPositionControl *pos = NULL;
+                IPositionControl *pos = nullptr;
                 result = fmcbs[i]->view(pos);
                 checkTrue(result, "interface position correctly opened");
                 int axes = 0;
@@ -226,7 +226,7 @@ public:
             result = wrappers[i]->open(p);
             checkTrue(result, "controlboardwrapper2 open reported successful");
 
-            yarp::dev::IMultipleWrapper *iwrap = 0;
+            yarp::dev::IMultipleWrapper *iwrap = nullptr;
             result = wrappers[i]->view(iwrap);
             checkTrue(result, "interface for multiple wrapper correctly opened for the controlboardwrapper2");
 
@@ -264,7 +264,7 @@ public:
         bool ok = ddRemapperWN.open(pRemapperWN);
         checkTrue(ok,"controlboardremapper with wrong names open reported successful");
 
-        yarp::dev::IMultipleWrapper *imultwrapWN = 0;
+        yarp::dev::IMultipleWrapper *imultwrapWN = nullptr;
         ok = ddRemapperWN.view(imultwrapWN);
         checkTrue(ok, "interface for multiple wrapper with wrong names correctly opened");
 
@@ -294,7 +294,7 @@ public:
         ok = ddRemapper.open(pRemapper);
         checkTrue(ok,"controlboardremapper open reported successful");
 
-        yarp::dev::IMultipleWrapper *imultwrap = 0;
+        yarp::dev::IMultipleWrapper *imultwrap = nullptr;
         ok = ddRemapper.view(imultwrap);
         checkTrue(ok, "interface for multiple wrapper correctly opened");
 
@@ -345,10 +345,10 @@ public:
         {
             wrappers[i]->close();
             delete wrappers[i];
-            wrappers[i] = 0;
+            wrappers[i] = nullptr;
             fmcbs[i]->close();
             delete fmcbs[i];
-            fmcbs[i] = 0;
+            fmcbs[i] = nullptr;
         }
     }
 

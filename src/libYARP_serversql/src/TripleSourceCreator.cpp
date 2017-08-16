@@ -28,10 +28,10 @@ using namespace std;
 
 static bool sql_enact(sqlite3 *db, const char *cmd) {
     //printf("ISSUE %s\n", cmd);
-    int result = sqlite3_exec(db, cmd, YARP_NULLPTR, YARP_NULLPTR, YARP_NULLPTR);
+    int result = sqlite3_exec(db, cmd, nullptr, nullptr, nullptr);
     if (result!=SQLITE_OK) {
         const char *msg = sqlite3_errmsg(db);
-        if (msg != YARP_NULLPTR) {
+        if (msg != nullptr) {
             fprintf(stderr,"Database error: %s\n", msg);
         }
         sqlite3_close(db);
@@ -45,26 +45,26 @@ static bool sql_enact(sqlite3 *db, const char *cmd) {
 TripleSource *TripleSourceCreator::open(const char *filename,
                                         bool cautious,
                                         bool fresh) {
-    sqlite3 *db = YARP_NULLPTR;
+    sqlite3 *db = nullptr;
     if (fresh) {
         int result = access(filename,F_OK);
         if (result==0) {
             fprintf(stderr,"Database needs to be recreated.\n");
             fprintf(stderr,"Please move %s out of the way.\n", filename);
-            return YARP_NULLPTR;
+            return nullptr;
         }
 
     }
     int result = sqlite3_open_v2(filename,
                                  &db,
                                  SQLITE_OPEN_READWRITE|SQLITE_OPEN_CREATE|SQLITE_OPEN_NOMUTEX,
-                                 YARP_NULLPTR);
+                                 nullptr);
     if (result!=SQLITE_OK) {
         fprintf(stderr,"Failed to open database %s\n", filename);
-        if (db != YARP_NULLPTR) {
+        if (db != nullptr) {
             sqlite3_close(db);
         }
-        return YARP_NULLPTR;
+        return nullptr;
     }
 
 
@@ -75,10 +75,10 @@ TripleSource *TripleSourceCreator::open(const char *filename,
     name TEXT,\n\
     value TEXT);";
 
-    result = sqlite3_exec(db, create_main_table.c_str(), YARP_NULLPTR, YARP_NULLPTR, YARP_NULLPTR);
+    result = sqlite3_exec(db, create_main_table.c_str(), nullptr, nullptr, nullptr);
     if (result!=SQLITE_OK) {
         const char *msg = sqlite3_errmsg(db);
-        if (msg != YARP_NULLPTR) {
+        if (msg != nullptr) {
             fprintf(stderr,"Error in %s: %s\n", filename, msg);
         }
         sqlite3_close(db);
@@ -98,14 +98,14 @@ TripleSource *TripleSourceCreator::open(const char *filename,
 
 
 bool TripleSourceCreator::close() {
-    if (accessor != YARP_NULLPTR) {
+    if (accessor != nullptr) {
         delete accessor;
-        accessor = YARP_NULLPTR;
+        accessor = nullptr;
     }
-    if (implementation != YARP_NULLPTR) {
+    if (implementation != nullptr) {
         sqlite3 *db = (sqlite3 *)implementation;
         sqlite3_close(db);
-        implementation = YARP_NULLPTR;
+        implementation = nullptr;
     }
     return true;
 }

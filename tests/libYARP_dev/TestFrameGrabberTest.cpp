@@ -1,6 +1,6 @@
 /*
- * Copyright (C) 2017 iCub Facility - Istituto Italiano di Tecnologia
- * Authors: Nicolo' Genesio <nicolo.genesio@iit.it>
+ * Copyright (C) 2017 Istituto Italiano di Tecnologia (IIT)
+ * Authors: Nicolò Genesio <nicolo.genesio@iit.it>
  * CopyPolicy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
  */
 
@@ -41,7 +41,7 @@ public:
             bool result;
             result = dd.open(p);
             checkTrue(result,"open reported successful");
-            IFrameGrabberImage *grabber = NULL;
+            IFrameGrabberImage *grabber = nullptr;
             result = dd.view(grabber);
             checkTrue(result,"interface reported");
             ImageOf<PixelRgb> img;
@@ -68,7 +68,7 @@ public:
             result = dd.open(p);
             checkTrue(result,"client open reported successful");
 
-            IFrameGrabberImage *grabber = NULL;
+            IFrameGrabberImage *grabber = nullptr;
             result = dd.view(grabber);
             checkTrue(result,"interface reported");
             ImageOf<PixelRgb> img;
@@ -87,7 +87,7 @@ public:
             report(0,"test the IRgbVisualParams interface");
             PolyDriver dd, dd2;
             Property p, p2, intrinsics;
-            Bottle* retM=0;
+            Bottle* retM=nullptr;
             p.put("device","remote_grabber");
             p.put("remote","/grabber");
             p.put("local","/grabber/client");
@@ -97,7 +97,7 @@ public:
             result = dd2.open(p2);
             result &= dd.open(p);
             checkTrue(result,"open reported successful");
-            IRgbVisualParams* rgbParams=NULL;
+            IRgbVisualParams* rgbParams=nullptr;
             result= dd.view(rgbParams);
             checkTrue(result,"interface rgb params reported");
             // check the default parameter
@@ -180,7 +180,7 @@ public:
             report(0,"test the IRgbVisualParams interface");
             PolyDriver dd, dd2;
             Property p, p2, intrinsics;
-            Bottle* retM=0;
+            Bottle* retM=nullptr;
             p.put("device","remote_grabber");
             p.put("remote","/grabber/left/rpc");
             p.put("local","/grabber/client");
@@ -192,7 +192,7 @@ public:
             result = dd2.open(p2);
             result &= dd.open(p);
             checkTrue(result,"open reported successful");
-            IRgbVisualParams* rgbParams=NULL;
+            IRgbVisualParams* rgbParams=nullptr;
             result= dd.view(rgbParams);
             checkTrue(result,"interface rgb params reported");
             // I check the default parameters
@@ -285,7 +285,7 @@ public:
             p.put("remote","/grabber/right/rpc");
             result = dd.open(p);
             checkTrue(result, "checking opening client");
-            rgbParams=NULL;
+            rgbParams=nullptr;
             result= dd.view(rgbParams);
             checkTrue(result,"interface rgb params reported");
             // I check the default parameters
@@ -355,7 +355,7 @@ public:
             result = dd.open(p);
             checkTrue(result,"client open reported successful");
 
-            IFrameGrabberImage *grabber = NULL;
+            IFrameGrabberImage *grabber = nullptr;
             result = dd.view(grabber);
             checkTrue(result,"interface reported");
             ImageOf<PixelRgb> img;

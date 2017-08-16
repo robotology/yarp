@@ -55,7 +55,7 @@ public:
     virtual bool select(Searchable& options) override;
 };
 
-Carriers* Carriers::Private::yarp_carriers_instance = YARP_NULLPTR;
+Carriers* Carriers::Private::yarp_carriers_instance = nullptr;
 yarp::os::Mutex Carriers::Private::mutex = yarp::os::Mutex();
 
 
@@ -65,7 +65,7 @@ Carrier* Carriers::Private::chooseCarrier(const ConstString *name,
                                           bool return_template)
 {
     ConstString s;
-    if (name != YARP_NULLPTR) {
+    if (name != nullptr) {
         s = *name;
         size_t i = s.find('+');
         if (i!=ConstString::npos) {
@@ -77,12 +77,12 @@ Carrier* Carriers::Private::chooseCarrier(const ConstString *name,
     for (size_t i = 0; i < delegates.size(); i++) {
         Carrier& c = *delegates[i];
         bool match = false;
-        if (name != YARP_NULLPTR) {
+        if (name != nullptr) {
             if ((*name) == c.getName()) {
                 match = true;
             }
         }
-        if (header != YARP_NULLPTR) {
+        if (header != nullptr) {
             if (c.checkHeader(*header)) {
                 match = true;
             }
@@ -95,10 +95,10 @@ Carrier* Carriers::Private::chooseCarrier(const ConstString *name,
         }
     }
     if (load_if_needed) {
-        if (name != YARP_NULLPTR) {
+        if (name != nullptr) {
             // ok, we didn't find a carrier, but we have a name.
             // let's try to register it, and see if a dll is found.
-            if (NetworkBase::registerCarrier(name->c_str(), YARP_NULLPTR)) {
+            if (NetworkBase::registerCarrier(name->c_str(), nullptr)) {
                 // We made progress, let's try again...
                 return Carriers::Private::chooseCarrier(name, header, false);
             }
@@ -109,7 +109,7 @@ Carrier* Carriers::Private::chooseCarrier(const ConstString *name,
             }
         }
     }
-    if (name == YARP_NULLPTR) {
+    if (name == nullptr) {
         ConstString txt;
         for (int i=0; i<(int)header->length(); i++) {
             txt += NetType::toString(header->get()[i]);
@@ -134,9 +134,9 @@ Carrier* Carriers::Private::chooseCarrier(const ConstString *name,
         YARP_SPRINTF1(Logger::get(),
                       error,
                       "Could not find carrier \"%s\"",
-                      (name != YARP_NULLPTR) ? name->c_str() : "[bytes]");;
+                      (name != nullptr) ? name->c_str() : "[bytes]");;
     }
-    return YARP_NULLPTR;
+    return nullptr;
 }
 
 
@@ -176,7 +176,7 @@ bool Carriers::Private::checkForCarrier(const Bytes *header, Searchable& group)
     if (code.size()==0) return false;
     if (matchCarrier(header, code)) {
         ConstString name = group.find("name").asString();
-        if (NetworkBase::registerCarrier(name.c_str(), YARP_NULLPTR)) {
+        if (NetworkBase::registerCarrier(name.c_str(), nullptr)) {
             return true;
         }
     }
@@ -240,18 +240,18 @@ void Carriers::clear()
 
 Carrier *Carriers::chooseCarrier(const ConstString& name)
 {
-    return getInstance().mPriv->chooseCarrier(&name, YARP_NULLPTR);
+    return getInstance().mPriv->chooseCarrier(&name, nullptr);
 }
 
 Carrier *Carriers::getCarrierTemplate(const ConstString& name)
 {
-    return getInstance().mPriv->chooseCarrier(&name, YARP_NULLPTR, true, true);
+    return getInstance().mPriv->chooseCarrier(&name, nullptr, true, true);
 }
 
 
 Carrier *Carriers::chooseCarrier(const Bytes& bytes)
 {
-    return getInstance().mPriv->chooseCarrier(YARP_NULLPTR, &bytes);
+    return getInstance().mPriv->chooseCarrier(nullptr, &bytes);
 }
 
 
@@ -259,17 +259,17 @@ Face *Carriers::listen(const Contact& address)
 {
     // for now, only TcpFace exists - otherwise would need to manage
     // multiple possibilities
-    Face *face = YARP_NULLPTR;
+    Face *face = nullptr;
     if (address.getCarrier() == "fake") {
         face = new FakeFace();
     }
-    if (face == YARP_NULLPTR) {
+    if (face == nullptr) {
         face = new TcpFace();
     }
     bool ok = face->open(address);
     if (!ok) {
         delete face;
-        face = YARP_NULLPTR;
+        face = nullptr;
     }
     return face;
 }
@@ -298,9 +298,9 @@ bool Carrier::reply(ConnectionState& proto, SizedWriter& writer)
 Carriers& Carriers::getInstance()
 {
     yarp::os::LockGuard guard(Private::mutex);
-    if (Private::yarp_carriers_instance == YARP_NULLPTR) {
+    if (Private::yarp_carriers_instance == nullptr) {
         Private::yarp_carriers_instance = new Carriers();
-        yAssert(Private::yarp_carriers_instance != YARP_NULLPTR);
+        yAssert(Private::yarp_carriers_instance != nullptr);
     }
     return *Private::yarp_carriers_instance;
 }
@@ -309,9 +309,9 @@ Carriers& Carriers::getInstance()
 void Carriers::removeInstance()
 {
     yarp::os::LockGuard guard(Private::mutex);
-    if (Private::yarp_carriers_instance != YARP_NULLPTR) {
+    if (Private::yarp_carriers_instance != nullptr) {
         delete Private::yarp_carriers_instance;
-        Private::yarp_carriers_instance = YARP_NULLPTR;
+        Private::yarp_carriers_instance = nullptr;
     }
 }
 

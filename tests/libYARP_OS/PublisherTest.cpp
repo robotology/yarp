@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2014 iCub Facility
+ * Copyright (C) 2014 Istituto Italiano di Tecnologia (IIT)
  * Authors: Paul Fitzpatrick
  * CopyPolicy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
  *
@@ -55,7 +55,7 @@ public:
             p.waitForWrite();
 
             Bottle *bin = pin.read();
-            checkTrue(bin!=NULL,"message arrived");
+            checkTrue(bin!=nullptr,"message arrived");
             if (!bin) return;
             checkEqual(bin->get(0).asInt(),42,"message is correct");
         }
@@ -83,7 +83,7 @@ public:
             pout.waitForWrite();
 
             Bottle *bin = pin.read();
-            checkTrue(bin!=NULL,"message arrived");
+            checkTrue(bin!=nullptr,"message arrived");
             if (!bin) return;
             checkEqual(bin->get(0).asInt(),42,"message is correct");
         }
@@ -110,7 +110,7 @@ public:
             pout.waitForWrite();
 
             Bottle *bin = pin.read();
-            checkTrue(bin!=NULL,"message arrived");
+            checkTrue(bin!=nullptr,"message arrived");
             if (!bin) return;
             checkEqual(bin->get(0).asInt(),42,"message is correct");
         }
@@ -136,7 +136,7 @@ public:
             p.write(b);
 
             Bottle *bin = pin.read();
-            checkTrue(bin!=NULL,"message arrived");
+            checkTrue(bin!=nullptr,"message arrived");
             if (!bin) return;
             checkEqual(bin->get(0).asInt(),42,"message is correct");
         }

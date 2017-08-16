@@ -67,20 +67,20 @@ public:
     PortCorePacket *getFreePacket()
     {
         if (inactive.empty()) {
-            PortCorePacket *obj = YARP_NULLPTR;
+            PortCorePacket *obj = nullptr;
             obj = new PortCorePacket();
-            yAssert(obj!=YARP_NULLPTR);
+            yAssert(obj!=nullptr);
             inactive.push_back(obj);
         }
         PortCorePacket *next = inactive.front();
-        if (next == YARP_NULLPTR) {
+        if (next == nullptr) {
             fprintf(stderr, "*** YARP consistency check failed.\n");
             fprintf(stderr, "*** There has been a low-level failure in \"PortCorePackets\".\n");
             fprintf(stderr, "*** This typically occurs when ports are accessed in a non-threadsafe way.\n");
             fprintf(stderr, "*** For help: https://github.com/robotology/yarp/issues/new\n");
             yAssert(1==0);
         }
-        yAssert(next!=YARP_NULLPTR);
+        yAssert(next!=nullptr);
         inactive.remove(next);
         active.push_back(next);
         return next;
@@ -94,7 +94,7 @@ public:
      */
     void freePacket(PortCorePacket *packet, bool clear=true)
     {
-        if (packet!=YARP_NULLPTR) {
+        if (packet!=nullptr) {
             if (clear) {
                 packet->reset();
             }
@@ -112,7 +112,7 @@ public:
      */
     bool completePacket(PortCorePacket *packet)
     {
-        if (packet!=YARP_NULLPTR) {
+        if (packet!=nullptr) {
             if (packet->getCount()<=0) {
                 packet->complete();
                 return true;
@@ -129,7 +129,7 @@ public:
      */
     bool checkPacket(PortCorePacket *packet)
     {
-        if (packet!=YARP_NULLPTR) {
+        if (packet!=nullptr) {
             if (packet->getCount()<=0) {
                 packet->complete();
                 freePacket(packet);

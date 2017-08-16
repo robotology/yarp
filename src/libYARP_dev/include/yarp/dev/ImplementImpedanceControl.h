@@ -1,6 +1,7 @@
 /*
- * Copyright (C) 2011 Robotics Brain and Cognitive Sciences Department, Istituto Italiano di Tecnologia
- * Authors: Marco Randazzo and Lorenzo Natale
+ * Copyright (C) 2011 Istituto Italiano di Tecnologia (IIT)
+ * Authors: Marco Randazzo <marco.randazzo@iit.it>
+ *          Lorenzo Natale <lorenzo.natale@iit.it>
  * CopyPolicy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
  */
 
@@ -48,12 +49,12 @@ public:
      */
     virtual ~ImplementImpedanceControl();
 
-    virtual bool getAxes(int *ax) YARP_OVERRIDE;
-    virtual bool getImpedance(int j, double *stiffness, double *damping) YARP_OVERRIDE;
-    virtual bool setImpedance(int j, double  stiffness, double  damping) YARP_OVERRIDE;
-    virtual bool setImpedanceOffset(int j, double offset) YARP_OVERRIDE;
-    virtual bool getImpedanceOffset(int j, double* offset) YARP_OVERRIDE;
-    virtual bool getCurrentImpedanceLimit(int j, double *min_stiff, double *max_stiff, double *min_damp, double *max_damp) YARP_OVERRIDE;
+    virtual bool getAxes(int *ax) override;
+    virtual bool getImpedance(int j, double *stiffness, double *damping) override;
+    virtual bool setImpedance(int j, double  stiffness, double  damping) override;
+    virtual bool setImpedanceOffset(int j, double offset) override;
+    virtual bool getImpedanceOffset(int j, double* offset) override;
+    virtual bool getCurrentImpedanceLimit(int j, double *min_stiff, double *max_stiff, double *min_damp, double *max_damp) override;
 
 };
 

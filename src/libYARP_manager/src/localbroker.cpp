@@ -1,6 +1,6 @@
 /*
  *  Yarp Modules Manager
- *  Copyright: (C) 2011 Robotics, Brain and Cognitive Sciences - Italian Institute of Technology (IIT)
+ *  Copyright: (C) 2011 Istituto Italiano di Tecnologia (IIT)
  *  Authors: Ali Paikan <ali.paikan@iit.it>
  *
  *  Copy Policy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
@@ -146,7 +146,7 @@ LocalBroker::LocalBroker()
 {
     bOnlyConnector = bInitialized = false;
     ID = 0;
-    fd_stdout = NULL;
+    fd_stdout = nullptr;
     setWindowMode(WINDOW_HIDDEN);
 }
 
@@ -156,13 +156,13 @@ LocalBroker::~LocalBroker()
     fini();
 }
 
-void LocalBroker::fini(void)
+void LocalBroker::fini()
 {
     if(Thread::isRunning())
         Thread::stop();
 }
 
-bool LocalBroker::init(void)
+bool LocalBroker::init()
 {
     /*
     if(!NetworkBase::checkNetwork(5.0))
@@ -237,7 +237,7 @@ bool LocalBroker::init(const char* szcmd, const char* szparam,
     new_action.sa_handler = SIG_IGN;
     sigemptyset (&new_action.sa_mask);
     new_action.sa_flags = 0;
-    sigaction (SIGCHLD, &new_action, NULL);
+    sigaction (SIGCHLD, &new_action, nullptr);
     bInitialized = true;
     return true;
 #endif
@@ -323,7 +323,7 @@ bool LocalBroker::kill()
 }
 
 
-int LocalBroker::running(void)
+int LocalBroker::running()
 {
     if(!bInitialized) return 0;
     if(bOnlyConnector) return 0;
@@ -426,17 +426,17 @@ bool LocalBroker::exists(const char* port)
 
 const char* LocalBroker::requestRpc(const char* szport, const char* request, double timeout)
 {
-    if((szport==NULL) || (request==NULL))
-        return NULL;
+    if((szport==nullptr) || (request==nullptr))
+        return nullptr;
 
     if(!exists(szport))
-        return NULL;
+        return nullptr;
 
     // opening the port
     yarp::os::Port port;
     port.setTimeout((float)((timeout>0.0) ? timeout : CONNECTION_TIMEOUT));
     if(!port.open("..."))
-        return NULL;
+        return nullptr;
 
     ContactStyle style;
     style.quiet = true;
@@ -450,7 +450,7 @@ const char* LocalBroker::requestRpc(const char* szport, const char* request, dou
 
     if(!ret) {
         port.close();
-        return NULL;
+        return nullptr;
     }
 
     Bottle msg, response;
@@ -459,7 +459,7 @@ const char* LocalBroker::requestRpc(const char* szport, const char* request, dou
     NetworkBase::disconnect(port.getName().c_str(), szport);
     if(!response.size() || !ret) {
         port.close();
-        return NULL;
+        return nullptr;
     }
 
     port.close();
@@ -474,12 +474,12 @@ bool LocalBroker::connected(const char* from, const char* to, const char* carrie
 }
 
 
-const char* LocalBroker::error(void)
+const char* LocalBroker::error()
 {
     return strError.c_str();
 }
 
-bool LocalBroker::attachStdout(void)
+bool LocalBroker::attachStdout()
 {
     if(Thread::isRunning())
         return true;
@@ -491,7 +491,7 @@ bool LocalBroker::attachStdout(void)
     return startStdout();
 }
 
-void LocalBroker::detachStdout(void)
+void LocalBroker::detachStdout()
 {
    stopStdout();
 }
@@ -791,7 +791,7 @@ int LocalBroker::waitPipe(int pipe_fd)
 
     FD_ZERO(&fd);
     FD_SET(pipe_fd, &fd);
-    rc = select(pipe_fd + 1, &fd, NULL, NULL, &timeout);
+    rc = select(pipe_fd + 1, &fd, nullptr, nullptr, &timeout);
     return rc;
 }
 
@@ -821,13 +821,13 @@ int LocalBroker::waitPipeSignal(int pipe_fd)
         return PIPE_EVENT;
 #endif
 */
-    if(pselect(pipe_fd + 1, &fd, NULL, NULL, &timeout, NULL))
+    if(pselect(pipe_fd + 1, &fd, nullptr, nullptr, &timeout, nullptr))
         return PIPE_EVENT;
     return PIPE_TIMEOUT;
 }
 
 
-bool LocalBroker::startStdout(void)
+bool LocalBroker::startStdout()
 {
     fd_stdout = fdopen(pipe_to_stdout[READ_FROM_PIPE], "r");
     if(!fd_stdout)
@@ -844,17 +844,17 @@ bool LocalBroker::startStdout(void)
     return true;
 }
 
-void LocalBroker::stopStdout(void)
+void LocalBroker::stopStdout()
 {
     Thread::stop();
     if(fd_stdout)
         fclose(fd_stdout);
-    fd_stdout = NULL;
+    fd_stdout = nullptr;
 }
 
 
 
-int LocalBroker::ExecuteCmd(void)
+int LocalBroker::ExecuteCmd()
 {
     int  pipe_child_to_parent[2];
     int ret = pipe(pipe_child_to_parent);
@@ -897,7 +897,7 @@ int LocalBroker::ExecuteCmd(void)
         int nargs = 0;
         char **szarg = new char*[C_MAXARGS + 1];
         parseArguments(szcmd, &nargs, szarg);
-        szarg[nargs]=0;
+        szarg[nargs]=nullptr;
         if(strEnv.size())
         {
             yarp::os::impl::SplitString ss(strEnv.c_str(), ';');
@@ -934,7 +934,7 @@ int LocalBroker::ExecuteCmd(void)
         {
             char **cwd_szarg=new char*[nargs+1];
             for (int i=1; i<nargs; ++i) cwd_szarg[i]=szarg[i];
-            cwd_szarg[nargs]=0;
+            cwd_szarg[nargs]=nullptr;
             cwd_szarg[0]=new char[strlen(currWorkDir)+strlen(szarg[0])+16];
 
             strcpy(cwd_szarg[0],currWorkDir);
@@ -1007,7 +1007,7 @@ void LocalBroker::splitLine(char *pLine, char **pArgs)
             pTmp++;
         }
         if (*pTmp == '\0') {
-            pTmp = NULL;
+            pTmp = nullptr;
         }
     }
     *pArgs = pTmp;
@@ -1044,11 +1044,11 @@ void LocalBroker::parseArguments(char *io_pLine, int *o_pArgc, char **o_pArgv)
     *o_pArgc = 1;
     o_pArgv[0] = io_pLine;
 
-    while ((NULL != pNext) && (*o_pArgc < C_MAXARGS)) {
+    while ((nullptr != pNext) && (*o_pArgc < C_MAXARGS)) {
         splitLine(pNext, &(o_pArgv[*o_pArgc]));
         pNext = o_pArgv[*o_pArgc];
 
-        if (NULL != o_pArgv[*o_pArgc]) {
+        if (nullptr != o_pArgv[*o_pArgc]) {
             *o_pArgc += 1;
         }
     }

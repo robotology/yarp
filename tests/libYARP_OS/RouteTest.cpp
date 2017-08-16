@@ -1,11 +1,12 @@
 /*
- * Copyright (C) 2017 iCub Facility, Istituto Italiano di Tecnologia
+ * Copyright (C) 2017 Istituto Italiano di Tecnologia (IIT)
  * Authors: Daniele E. Domenichelli <daniele.domenichelli@iit.it>
  * CopyPolicy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
  */
 
 #include <yarp/os/impl/UnitTest.h>
 #include <yarp/os/Route.h>
+#include <yarp/os/Contact.h>
 
 using namespace yarp::os::impl;
 using namespace yarp::os;
@@ -73,13 +74,7 @@ public:
         {
             report(0, "checking move constructor");
             Route r1("/foo", "/bar", "baz");
-
-#if defined(YARP_HAS_CXX11) && YARP_COMPILER_CXX_RVALUE_REFERENCES
             Route r2 = std::move(r1);
-#else
-            // On most compilers uses RVO => move constructor is not called
-            Route r2 = Route("/foo", "/bar", "baz");
-#endif
             checkEqual(r2.getFromName().c_str(), "/foo", "from name is set");
             checkEqual(r2.getToName().c_str(), "/bar", "to name is set");
             checkEqual(r2.getCarrierName().c_str(), "baz", "carrier name is set");

@@ -56,6 +56,17 @@ target_link_libraries(YARP_sig PRIVATE ${ACE_LIBRARIES}
                                PUBLIC YARP::YARP_conf
                                       YARP::YARP_OS)
 
+if(NOT CMAKE_MINIMUM_REQUIRED_VERSION VERSION_LESS 3.1)
+  message(AUTHOR_WARNING "CMAKE_MINIMUM_REQUIRED_VERSION is now ${CMAKE_MINIMUM_REQUIRED_VERSION}. This check can be removed.")
+endif()
+if(CMAKE_VERSION VERSION_LESS 3.1)
+  if(DEFINED CXX11_FLAGS)
+    target_compile_options(YARP_sig PUBLIC ${CXX11_FLAGS})
+  endif()
+else()
+  target_compile_features(YARP_sig PUBLIC cxx_override)
+endif()
+
 set_property(TARGET YARP_sig PROPERTY PUBLIC_HEADER ${YARP_sig_HDRS})
 set_property(TARGET YARP_sig PROPERTY PRIVATE_HEADER ${YARP_sig_IMPL_HDRS})
 

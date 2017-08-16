@@ -1,6 +1,6 @@
 /*
  *  Yarp Modules Manager
- *  Copyright: (C) 2011 Robotics, Brain and Cognitive Sciences - Italian Institute of Technology (IIT)
+ *  Copyright: (C) 2011 Istituto Italiano di Tecnologia (IIT)
  *  Authors: Ali Paikan <ali.paikan@iit.it>
  *
  *  Copy Policy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
@@ -14,11 +14,11 @@ using namespace yarp::manager;
 /**
  * Class InputData
  */
-InputData::InputData(void) : Node(INPUTD)
+InputData::InputData() : Node(INPUTD)
 {
     bRequired = false;
     bWithPriority = false;
-    modOwner = NULL;
+    modOwner = nullptr;
     portType = STREAM_PORT;
 }
 
@@ -26,7 +26,7 @@ InputData::InputData(const char* szName) : Node(INPUTD)
 {
     bRequired = false;
     bWithPriority = false;
-    modOwner = NULL;
+    modOwner = nullptr;
     setName(szName);
     portType = STREAM_PORT;
 }
@@ -47,7 +47,7 @@ InputData::InputData(const InputData &input) : Node(input)
 InputData::~InputData() { }
 
 
-Node* InputData::clone(void)
+Node* InputData::clone()
 {
     InputData* input = new InputData(*this);
     return input;
@@ -59,16 +59,16 @@ Node* InputData::clone(void)
 /**
  * Class OutputData
  */
-OutputData::OutputData(void) : Node(OUTPUTD)
+OutputData::OutputData() : Node(OUTPUTD)
 {
-    modOwner = NULL;
+    modOwner = nullptr;
     portType = STREAM_PORT;
 }
 
 
 OutputData::OutputData(const char* szName) : Node(OUTPUTD)
 {
-    modOwner = NULL;
+    modOwner = nullptr;
     setName(szName);
     portType = STREAM_PORT;
 }
@@ -88,7 +88,7 @@ OutputData::OutputData(const OutputData &output) : Node(output)
 OutputData::~OutputData() { }
 
 
-Node* OutputData::clone(void)
+Node* OutputData::clone()
 {
     OutputData* output = new OutputData(*this);
     return output;

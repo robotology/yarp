@@ -50,17 +50,17 @@ public:
 
     virtual void goPublic() {}
 
-    virtual yarp::os::Contact query(const yarp::os::ConstString& name) YARP_OVERRIDE {
+    virtual yarp::os::Contact query(const yarp::os::ConstString& name) override {
         return yarp::os::Contact();
     }
 
-    virtual bool announce(const yarp::os::ConstString& name, int activity) YARP_OVERRIDE {
+    virtual bool announce(const yarp::os::ConstString& name, int activity) override {
         return false;
     }
 
     virtual bool process(yarp::os::PortWriter& in,
                          yarp::os::PortReader& out,
-                         const yarp::os::Contact& remote) YARP_OVERRIDE;
+                         const yarp::os::Contact& remote) override;
 };
 
 

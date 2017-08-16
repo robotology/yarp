@@ -15,7 +15,7 @@
 #  Libusb1_PATCH_VERSION - libusb-1 patch version
 
 #=============================================================================
-# Copyright 2012-2014 iCub Facility, Istituto Italiano di Tecnologia
+# Copyright 2012-2014 Istituto Italiano di Tecnologia (IIT)
 #   Authors: Daniele E. Domenichelli <daniele.domenichelli@iit.it>
 #
 # Distributed under the OSI-approved BSD License (the "License");

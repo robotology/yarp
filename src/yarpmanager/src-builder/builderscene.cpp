@@ -12,8 +12,8 @@
 BuilderScene::BuilderScene(QObject *parent) :
     QGraphicsScene(parent)
 {
-    currentLine = NULL;
-    startConnectionItem = NULL;
+    currentLine = nullptr;
+    startConnectionItem = nullptr;
     //connect(this,SIGNAL(changed(QList<QRectF>)),this,SLOT(onSceneChanged(QList<QRectF>)));
     snap = false;
     setStickyFocus(true);
@@ -76,7 +76,7 @@ void BuilderScene::mousePressEvent(QGraphicsSceneMouseEvent *event)
     if(currentLine && !it){
         removeItem(currentLine);
         delete currentLine;
-        currentLine = NULL;
+        currentLine = nullptr;
     }
 
     QGraphicsScene::mousePressEvent(event);
@@ -119,7 +119,7 @@ void BuilderScene::mouseMoveEvent(QGraphicsSceneMouseEvent *event)
 void BuilderScene::onNewConnectionRequested(QPointF p,QGraphicsItem *item)
 {
 
-    startConnectionItem = NULL;
+    startConnectionItem = nullptr;
     if(!editingMode || !((BuilderItem*)item)->allowOutputConnections()){
         return;
     }
@@ -132,7 +132,7 @@ void BuilderScene::onNewConnectionRequested(QPointF p,QGraphicsItem *item)
     }else{
         removeItem(currentLine);
         delete currentLine;
-        currentLine = NULL;
+        currentLine = nullptr;
     }
 
 
@@ -149,7 +149,7 @@ void BuilderScene::onNewConnectionAdded(QPointF p,QGraphicsItem *item)
         if(currentLine){
             removeItem(currentLine);
             delete currentLine;
-            currentLine = NULL;
+            currentLine = nullptr;
         }
 
             BuilderItem *startItem = (BuilderItem*)startConnectionItem;
@@ -200,7 +200,7 @@ void BuilderScene::onNewConnectionAdded(QPointF p,QGraphicsItem *item)
                }
            }
 
-        startConnectionItem = NULL;
+        startConnectionItem = nullptr;
     }
 
 }

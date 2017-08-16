@@ -17,13 +17,13 @@ using namespace yarp::os::impl;
 Value::Value() :
         Portable(),
         Searchable(),
-        proxy(YARP_NULLPTR) {
+        proxy(nullptr) {
 }
 
 Value::Value(int x, bool isVocab) :
         Portable(),
         Searchable(),
-        proxy(YARP_NULLPTR)
+        proxy(nullptr)
 {
     if (!isVocab) {
         setProxy(static_cast<Storable*>(makeInt(x)));
@@ -35,7 +35,7 @@ Value::Value(int x, bool isVocab) :
 Value::Value(double x) :
         Portable(),
         Searchable(),
-        proxy(YARP_NULLPTR)
+        proxy(nullptr)
 {
     setProxy(static_cast<Storable*>(makeDouble(x)));
 }
@@ -43,7 +43,7 @@ Value::Value(double x) :
 Value::Value(const ConstString& str, bool isVocab) :
         Portable(),
         Searchable(),
-        proxy(YARP_NULLPTR)
+        proxy(nullptr)
 {
     if (!isVocab) {
         setProxy(static_cast<Storable*>(makeString(str)));
@@ -55,7 +55,7 @@ Value::Value(const ConstString& str, bool isVocab) :
 Value::Value(void *data, int length) :
         Portable(),
         Searchable(),
-        proxy(YARP_NULLPTR)
+        proxy(nullptr)
 {
     setProxy(static_cast<Storable*>(makeBlob(data, length)));
 }
@@ -63,7 +63,7 @@ Value::Value(void *data, int length) :
 Value::Value(const Value& alt) :
         Portable(),
         Searchable(),
-        proxy(YARP_NULLPTR)
+        proxy(nullptr)
 {
     setProxy(static_cast<Storable*>(alt.clone()));
 }
@@ -72,7 +72,7 @@ Value::Value(const Value& alt) :
 const Value& Value::operator=(const Value& alt)
 {
     if (&alt != this) {
-        if (proxy == YARP_NULLPTR) {
+        if (proxy == nullptr) {
             if (isLeaf() && alt.proxy) {
                 // we are guaranteed to be a Storable
                 ((Storable*)this)->copy(*((Storable*)alt.proxy));
@@ -90,7 +90,7 @@ const Value& Value::operator=(const Value& alt)
             } else {
                 if (proxy) {
                     delete proxy;
-                    proxy = YARP_NULLPTR;
+                    proxy = nullptr;
                 }
                 if (alt.isLeaf()) {
                     setProxy(static_cast<Storable*>(alt.clone()));
@@ -103,9 +103,9 @@ const Value& Value::operator=(const Value& alt)
 
 Value::~Value()
 {
-    if (proxy != YARP_NULLPTR) {
+    if (proxy != nullptr) {
         delete proxy;
-        proxy = YARP_NULLPTR;
+        proxy = nullptr;
     }
 }
 
@@ -234,7 +234,7 @@ bool Value::read(ConnectionReader& connection)
 {
     if (proxy) {
         delete proxy;
-        proxy = YARP_NULLPTR;
+        proxy = nullptr;
     }
     int x = connection.expectInt();
     if ((x&0xffff) != x) return false;
@@ -381,7 +381,7 @@ Value *Value::makeList()
 Value *Value::makeList(const char *txt)
 {
     Value *v = makeList();
-    if (v!=YARP_NULLPTR) {
+    if (v!=nullptr) {
         v->asList()->fromString(txt);
     }
     return v;
@@ -406,9 +406,9 @@ Value& Value::getNullValue()
 
 void Value::setProxy(Storable *proxy)
 {
-    if (this->proxy!=YARP_NULLPTR) {
+    if (this->proxy!=nullptr) {
         delete this->proxy;
-        this->proxy = YARP_NULLPTR;
+        this->proxy = nullptr;
     }
     this->proxy = proxy;
 }
@@ -417,7 +417,7 @@ void Value::setProxy(Storable *proxy)
 void Value::ok() const
 {
     const Value *op = this;
-    if (proxy==YARP_NULLPTR) {
+    if (proxy==nullptr) {
         ((Value*)op)->setProxy(static_cast<Storable*>(makeList()));
     }
 }

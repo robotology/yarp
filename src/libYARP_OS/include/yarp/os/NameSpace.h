@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2011 Department of Robotics Brain and Cognitive Sciences - Istituto Italiano di Tecnologia
+ * Copyright (C) 2011 Istituto Italiano di Tecnologia (IIT)
  * Authors: Paul Fitzpatrick
  * CopyPolicy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
  */
@@ -141,7 +141,7 @@ public:
      *
      * Get the value of a named key from a named port.
      *
-     * @return YARP_NULLPTR if no value was set for the named key.
+     * @return nullptr if no value was set for the named key.
      *
      */
     virtual Value *getProperty(const ConstString& name, 

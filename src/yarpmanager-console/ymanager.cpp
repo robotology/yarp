@@ -1,6 +1,6 @@
 /*
  *  Yarp Modules Manager
- *  Copyright: (C) 2011 Robotics, Brain and Cognitive Sciences - Italian Institute of Technology (IIT)
+ *  Copyright: (C) 2011 Istituto Italiano di Tecnologia (IIT)
  *  Authors: Ali Paikan <ali.paikan@iit.it>
  *
  *  Copy Policy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
@@ -303,15 +303,15 @@ YConsoleManager::YConsoleManager(int argc, char* argv[]) : Manager()
     sigemptyset (&new_action.sa_mask);
     new_action.sa_flags = 0;
 
-    sigaction (SIGINT, NULL, &old_action);
+    sigaction (SIGINT, nullptr, &old_action);
     if (old_action.sa_handler != SIG_IGN)
-        sigaction (SIGINT, &new_action, NULL);
-    sigaction (SIGHUP, NULL, &old_action);
+        sigaction (SIGINT, &new_action, nullptr);
+    sigaction (SIGHUP, nullptr, &old_action);
     if (old_action.sa_handler != SIG_IGN)
-        sigaction (SIGHUP, &new_action, NULL);
-    sigaction (SIGTERM, NULL, &old_action);
+        sigaction (SIGHUP, &new_action, nullptr);
+    sigaction (SIGTERM, nullptr, &old_action);
     if (old_action.sa_handler != SIG_IGN)
-        sigaction (SIGTERM, &new_action, NULL);
+        sigaction (SIGTERM, &new_action, nullptr);
 #endif
 
     if(config.check("application"))
@@ -409,7 +409,7 @@ void YConsoleManager::onSignal(int signum)
 }
 
 
-void YConsoleManager::myMain(void)
+void YConsoleManager::myMain()
 {
 
 
@@ -422,11 +422,11 @@ void YConsoleManager::myMain(void)
         string temp;
 
 #ifdef WITH_LIBEDIT
-        static char* szLine = (char*)NULL;
+        static char* szLine = (char*)nullptr;
         if(szLine)
         {
             free(szLine);
-            szLine = (char*)NULL;
+            szLine = (char*)nullptr;
         }
 
         szLine = readline(">>");
@@ -477,7 +477,7 @@ void YConsoleManager::myMain(void)
 
 }
 
-bool YConsoleManager::exit(void)
+bool YConsoleManager::exit()
 {
     if(!bShouldRun)
         return true;
@@ -977,7 +977,7 @@ bool YConsoleManager::process(const vector<string> &cmdList)
 }
 
 
-void YConsoleManager::help(void)
+void YConsoleManager::help()
 {
     cout<<"Here is a list of Yarp manager keywords.\n"<<endl;
     cout<<OKGREEN<<"help"<<INFO<<"                    : show help."<<ENDC<<endl;
@@ -1011,7 +1011,7 @@ void YConsoleManager::help(void)
 }
 
 
-void YConsoleManager::which(void)
+void YConsoleManager::which()
 {
     ExecutablePContainer modules = getExecutables();
     CnnContainer connections  = getConnections();
@@ -1051,7 +1051,7 @@ void YConsoleManager::which(void)
     cout<<endl;
 }
 
-void YConsoleManager::checkStates(void)
+void YConsoleManager::checkStates()
 {
     ExecutablePContainer modules = getExecutables();
     ExecutablePIterator moditr;
@@ -1073,7 +1073,7 @@ void YConsoleManager::checkStates(void)
     }
 }
 
-void YConsoleManager::checkConnections(void)
+void YConsoleManager::checkConnections()
 {
     CnnContainer connections  = getConnections();
     CnnIterator cnnitr;
@@ -1092,7 +1092,7 @@ void YConsoleManager::checkConnections(void)
     }
 }
 
-void YConsoleManager::reportErrors(void)
+void YConsoleManager::reportErrors()
 {
     ErrorLogger* logger  = ErrorLogger::Instance();
     if(logger->errorCount() || logger->warningCount())
@@ -1163,7 +1163,7 @@ bool YConsoleManager::loadRecursiveApplications(const char* szPath)
 
     DIR *dir;
     struct dirent *entry;
-    if ((dir = opendir(strPath.c_str())) == NULL)
+    if ((dir = opendir(strPath.c_str())) == nullptr)
         return false;
 
     addApplications(strPath.c_str());
@@ -1256,7 +1256,7 @@ char ** my_completion (const char* text, int start, int end)
 {
     char **matches;
 
-    matches = (char **)NULL;
+    matches = (char **)nullptr;
 
   /* If this word is at the start of the line, then it is a command
      to complete.  Otherwise it is the name of a file in the current
@@ -1297,7 +1297,7 @@ char* command_generator (const char* text, int state)
     }
 
   /* if no names matched, then return null. */
-  return ((char *)NULL);
+  return ((char *)nullptr);
 }
 
 
@@ -1320,7 +1320,7 @@ char* appname_generator (const char* text, int state)
         return (dupstr(name));
     }
 
-  return ((char *)NULL);
+  return ((char *)nullptr);
 }
 
 #endif

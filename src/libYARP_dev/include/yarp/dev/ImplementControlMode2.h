@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2014 iCub Facility, Istituto Italiano di Tecnologia
+ * Copyright (C) 2014 Istituto Italiano di Tecnologia (IIT)
  * Authors: Alberto Cardellino
  * CopyPolicy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
  *
@@ -42,19 +42,19 @@ public:
 
     // Control mode
 #ifndef YARP_NO_DEPRECATED // since YARP 2.3.70
-    YARP_DEPRECATED bool setTorqueMode(int j) YARP_OVERRIDE;
-    YARP_DEPRECATED bool setImpedancePositionMode(int j) YARP_OVERRIDE;
-    YARP_DEPRECATED bool setImpedanceVelocityMode(int j) YARP_OVERRIDE;
-    YARP_DEPRECATED bool setPositionMode(int j) YARP_OVERRIDE;
-    YARP_DEPRECATED bool setVelocityMode(int j) YARP_OVERRIDE;
+    YARP_DEPRECATED bool setTorqueMode(int j) override;
+    YARP_DEPRECATED bool setImpedancePositionMode(int j) override;
+    YARP_DEPRECATED bool setImpedanceVelocityMode(int j) override;
+    YARP_DEPRECATED bool setPositionMode(int j) override;
+    YARP_DEPRECATED bool setVelocityMode(int j) override;
 #endif // YARP_NO_DEPRECATED
-    bool getControlMode(int j, int *f) YARP_OVERRIDE;
-    bool getControlModes(int *modes) YARP_OVERRIDE;
+    bool getControlMode(int j, int *f) override;
+    bool getControlModes(int *modes) override;
     // Control Mode 2
-    bool getControlModes(const int n_joint, const int *joints, int *modes) YARP_OVERRIDE;
-    bool setControlMode(const int j, const int mode) YARP_OVERRIDE;
-    bool setControlModes(const int n_joint, const int *joints, int *modes) YARP_OVERRIDE;
-    bool setControlModes(int *modes) YARP_OVERRIDE;
+    bool getControlModes(const int n_joint, const int *joints, int *modes) override;
+    bool setControlMode(const int j, const int mode) override;
+    bool setControlModes(const int n_joint, const int *joints, int *modes) override;
+    bool setControlModes(int *modes) override;
 };
 
 #if defined(_MSC_VER) && !defined(YARP_NO_DEPRECATED) // since YARP 2.3.70

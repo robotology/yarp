@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2014 iCub Facility
+ * Copyright (C) 2014 Istituto Italiano di Tecnologia (IIT)
  * Authors: Ali Paikan
  * CopyPolicy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
  *
@@ -42,7 +42,7 @@ bool PortMonitor::configure(yarp::os::ConnectionState& proto)
 
 bool PortMonitor::configureFromProperty(yarp::os::Property& options) {
     if(binder) delete binder;
-    binder = NULL;
+    binder = nullptr;
 
     ConstString script = options.check("type", Value("lua")).asString();
     ConstString filename = options.check("file", Value("modifier")).asString();
@@ -51,7 +51,7 @@ bool PortMonitor::configureFromProperty(yarp::os::Property& options) {
     ConstString context = options.check("context", Value("")).asString();
 
     // check which monitor should be used
-    if((binder = MonitorBinding::create(script.c_str())) == NULL)
+    if((binder = MonitorBinding::create(script.c_str())) == nullptr)
     {
          yError("Currently only \'lua\' script and \'dll\' object is supported by portmonitor");
          return false;
@@ -66,7 +66,7 @@ bool PortMonitor::configureFromProperty(yarp::os::Property& options) {
     {
         yarp::os::ResourceFinder rf;
         rf.setDefaultContext(context.c_str());
-        rf.configure(0, NULL);
+        rf.configure(0, nullptr);
         strFile = rf.findFile(filename.c_str());
         if(strFile == "")
             strFile = rf.findFile(filename+".lua");
@@ -164,7 +164,7 @@ bool PortMonitor::acceptIncomingData(yarp::os::ConnectionReader& reader)
         }
     }
 
-    if(group!=NULL) {
+    if(group!=nullptr) {
         getPeers().lock();
         result = group->acceptIncomingData(this);
         getPeers().unlock();
@@ -225,12 +225,12 @@ yarp::os::PortReader& PortMonitor::modifyReply(yarp::os::PortReader& reader) {
  * Class PortMonitorGroup
  */
 
-ElectionOf<PortMonitorGroup> *PortMonitor::peers = NULL;
+ElectionOf<PortMonitorGroup> *PortMonitor::peers = nullptr;
 
 // Make a singleton manager for finding peer carriers.
 ElectionOf<PortMonitorGroup>& PortMonitor::getPeers() {
     NetworkBase::lock();
-    if (peers==NULL) {
+    if (peers==nullptr) {
         peers = new ElectionOf<PortMonitorGroup>;
         NetworkBase::unlock();
         yAssert(peers);

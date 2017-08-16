@@ -32,7 +32,7 @@ public:
 
     PropertyItem() {
         singleton = false;
-        backing = YARP_NULLPTR;
+        backing = nullptr;
     }
 
     ~PropertyItem() {
@@ -42,7 +42,7 @@ public:
     void clear() {
         if (backing) {
             delete backing;
-            backing = YARP_NULLPTR;
+            backing = nullptr;
         }
     }
 
@@ -71,7 +71,7 @@ public:
     PropertyItem *getPropNoCreate(const ConstString& key) const {
         auto it = data.find(key);
         if (it==data.end()) {
-            return YARP_NULLPTR;
+            return nullptr;
         }
         return const_cast<PropertyItem*>(&(it->second));
     }
@@ -80,7 +80,7 @@ public:
         std::map<ConstString, PropertyItem>::iterator entry = data.find(key);
         if (entry == data.end()) {
             if (!create) {
-                return YARP_NULLPTR;
+                return nullptr;
             }
             data[key] = PropertyItem();
             entry = data.find(key);
@@ -130,7 +130,7 @@ public:
     bool check(const ConstString& key, Value *&output) const {
         PropertyItem *p = getPropNoCreate(key);
 
-        return p!=YARP_NULLPTR;
+        return p!=nullptr;
     }
 
     void unput(const ConstString& key) {
@@ -139,21 +139,21 @@ public:
 
     bool check(const ConstString& key) const {
         PropertyItem *p = getPropNoCreate(key);
-        if (owner.getMonitor()!=YARP_NULLPTR) {
+        if (owner.getMonitor()!=nullptr) {
             SearchReport report;
             report.key = key;
-            report.isFound = (p!=YARP_NULLPTR);
+            report.isFound = (p!=nullptr);
             owner.reportToMonitor(report);
         }
-        return p!=YARP_NULLPTR;
+        return p!=nullptr;
     }
 
     Value& get(const ConstString& key) const {
         ConstString out;
         PropertyItem *p = getPropNoCreate(key);
-        if (p!=YARP_NULLPTR) {
+        if (p!=nullptr) {
             p->flush();
-            if (owner.getMonitor()!=YARP_NULLPTR) {
+            if (owner.getMonitor()!=nullptr) {
                 SearchReport report;
                 report.key = key;
                 report.isFound = true;
@@ -162,7 +162,7 @@ public:
             }
             return p->bot.get(1);
         }
-        if (owner.getMonitor()!=YARP_NULLPTR) {
+        if (owner.getMonitor()!=nullptr) {
             SearchReport report;
             report.key = key;
             owner.reportToMonitor(report);
@@ -201,11 +201,11 @@ public:
 
     Bottle *getBottle(const ConstString& key) const {
         PropertyItem *p = getPropNoCreate(key);
-        if (p!=YARP_NULLPTR) {
+        if (p!=nullptr) {
             p->flush();
             return &(p->bot);
         }
-        return YARP_NULLPTR;
+        return nullptr;
     }
 
     void clear() {
@@ -268,9 +268,9 @@ public:
         if (wipe) {
             clear();
         }
-        Bottle *cursor = YARP_NULLPTR;
+        Bottle *cursor = nullptr;
         for (int i=0; i<total.size(); i++) {
-            cursor = YARP_NULLPTR;
+            cursor = nullptr;
             Bottle *term = total.get(i).asList();
             if (!term) continue;
             ConstString key = term->get(0).asString();
@@ -284,7 +284,7 @@ public:
                 } else {
                     key = "";
                 }
-                Bottle& result = (cursor!=YARP_NULLPTR)? (cursor->findGroup(base.c_str())) : owner.findGroup(base.c_str());
+                Bottle& result = (cursor!=nullptr)? (cursor->findGroup(base.c_str())) : owner.findGroup(base.c_str());
                 if (result.isNull()) {
                     if (!cursor) {
                         cursor = &putBottle((base).c_str());
@@ -310,8 +310,8 @@ public:
 
         yarp::os::impl::dirent **namelist;
         yarp::os::impl::closedir(dir);
-        dir = YARP_NULLPTR;
-        int n = yarp::os::impl::scandir(dirname.c_str(), &namelist, YARP_NULLPTR, yarp::os::impl::alphasort);
+        dir = nullptr;
+        int n = yarp::os::impl::scandir(dirname.c_str(), &namelist, nullptr, yarp::os::impl::alphasort);
         if (n<0) {
             return false;
         }
@@ -346,11 +346,11 @@ public:
             return false;
         }
         char buf[25600];
-        while(fgets(buf, sizeof(buf)-1, fin) != YARP_NULLPTR) {
+        while(fgets(buf, sizeof(buf)-1, fin) != nullptr) {
             result += buf;
         }
         fclose(fin);
-        fin = YARP_NULLPTR;
+        fin = nullptr;
         return true;
     }
 
@@ -542,7 +542,7 @@ public:
                                             fname = bot.get(3).toString();
                                             Bottle *target =
                                                 getBottle(key.c_str());
-                                            if (target==YARP_NULLPTR) {
+                                            if (target==nullptr) {
                                                 Bottle init;
                                                 init.addString(key.c_str());
                                                 init.addString(subName.c_str());
@@ -559,7 +559,7 @@ public:
 
 
                                         Property p;
-                                        if (getBottle(subName)!=YARP_NULLPTR) {
+                                        if (getBottle(subName)!=nullptr) {
                                             p.fromString(getBottle(subName)->tail().toString());
                                             //printf(">>> prior p %s\n",
                                             //     p.toString().c_str());
@@ -599,7 +599,7 @@ public:
                                 buf = bot.get(1).toString().c_str();
                                 ConstString key = bot.get(0).toString().c_str();
                                 Bottle *target = getBottle(key.c_str());
-                                if (target==YARP_NULLPTR) {
+                                if (target==nullptr) {
                                     Bottle init;
                                     init.addString(key.c_str());
                                     init.addString(buf.c_str());
@@ -647,7 +647,7 @@ public:
                 accum.clear();
                 accum.addString(tag.c_str());
                 if (tag!="") {
-                    if (getBottle(tag.c_str())!=YARP_NULLPTR) {
+                    if (getBottle(tag.c_str())!=nullptr) {
                         // merge data
                         accum.append(getBottle(tag.c_str())->tail());
                         //printf("MERGE %s, got %s\n", tag.c_str(),
@@ -790,16 +790,16 @@ public:
         strcpy(szcmd, command);
         int nargs = 0;
         parseArguments(szcmd, &nargs, szarg, 128);
-        szarg[nargs]=YARP_NULLPTR;
+        szarg[nargs]=nullptr;
         fromCommand(nargs, szarg, wipe);
         // clear allocated memory for arguments
         if (szcmd) {
             delete [] szcmd;
-            szcmd = YARP_NULLPTR;
+            szcmd = nullptr;
         }
         if (szarg) {
             delete [] szarg;
-            szarg = YARP_NULLPTR;
+            szarg = nullptr;
         }
     }
 
@@ -828,11 +828,11 @@ public:
         *argc = 1;
         argv[0] = azParam ;
 
-        while ((YARP_NULLPTR != pNext) && (*argc < max_arg)) {
+        while ((nullptr != pNext) && (*argc < max_arg)) {
             splitArguments(pNext, &(argv[*argc]));
             pNext = argv[*argc];
 
-            if (YARP_NULLPTR != argv[*argc]) {
+            if (nullptr != argv[*argc]) {
                 *argc += 1;
             }
         }
@@ -856,7 +856,7 @@ public:
                pTmp++;
            }
            if (*pTmp == '\0') {
-               pTmp = YARP_NULLPTR;
+               pTmp = nullptr;
            }
         }
         *args = pTmp;
@@ -872,14 +872,14 @@ public:
 
 Property::Property(int hash_size) {
     this->hash_size = hash_size;
-    implementation = YARP_NULLPTR;
+    implementation = nullptr;
 }
 
 
 Property::Property(const char *str) {
     hash_size = 0;
     implementation = new PropertyHelper(*this, 0);
-    yAssert(implementation!=YARP_NULLPTR);
+    yAssert(implementation!=nullptr);
     fromString(str);
 }
 
@@ -887,7 +887,7 @@ Property::Property(const char *str) {
 Property::Property(const Property& prop) : Searchable(), Portable() {
     hash_size = 0;
     implementation = new PropertyHelper(*this, 0);
-    yAssert(implementation!=YARP_NULLPTR);
+    yAssert(implementation!=nullptr);
     fromString(prop.toString());
 }
 
@@ -895,19 +895,19 @@ Property::Property(const Property& prop) : Searchable(), Portable() {
 void Property::summon() {
     if (check()) return;
     implementation = new PropertyHelper(*this, hash_size);
-    yAssert(implementation!=YARP_NULLPTR);
+    yAssert(implementation!=nullptr);
 }
 
 
 bool Property::check() const {
-    return implementation!=YARP_NULLPTR;
+    return implementation!=nullptr;
 }
 
 
 Property::~Property() {
-    if (implementation!=YARP_NULLPTR) {
+    if (implementation!=nullptr) {
         delete &HELPER(implementation);
-        implementation = YARP_NULLPTR;
+        implementation = nullptr;
     }
 }
 
@@ -1050,16 +1050,16 @@ bool Property::write(ConnectionWriter& writer) {
 Bottle& Property::findGroup(const ConstString& key) const {
     if (!check()) return Bottle::getNullBottle();
     Bottle *result = HELPER(implementation).getBottle(key);
-    if (getMonitor()!=YARP_NULLPTR) {
+    if (getMonitor()!=nullptr) {
         SearchReport report;
         report.key = key;
         report.isGroup = true;
-        if (result != YARP_NULLPTR) {
+        if (result != nullptr) {
             report.isFound = true;
             report.value = result->toString();
         }
         reportToMonitor(report);
-        if (result != YARP_NULLPTR) {
+        if (result != nullptr) {
             ConstString context = getMonitorContext();
             context += ".";
             context += key;
@@ -1068,7 +1068,7 @@ Bottle& Property::findGroup(const ConstString& key) const {
         }
     }
 
-    if (result!=((Bottle*)YARP_NULLPTR)) { return *result; }
+    if (result!=((Bottle*)nullptr)) { return *result; }
     return Bottle::getNullBottle();
 }
 

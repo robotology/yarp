@@ -17,7 +17,7 @@
 #   <name>_VERSION_COUNT - number of version components, 0 to 4
 
 #=============================================================================
-# Copyright 2013 iCub Facility, Istituto Italiano di Tecnologia
+# Copyright 2013 Istituto Italiano di Tecnologia (IIT)
 #   Authors: Daniele E. Domenichelli <daniele.domenichelli@iit.it>
 #
 # Distributed under the OSI-approved BSD License (the "License");

@@ -35,9 +35,9 @@ using namespace yarp::os::impl;
 static ConstString getPwd() {
     ConstString result;
     int len = 5;
-    char *buf = YARP_NULLPTR;
+    char *buf = nullptr;
     while (true) {
-        if (buf!=YARP_NULLPTR) delete[] buf;
+        if (buf!=nullptr) delete[] buf;
         buf = new char[len];
         if (!buf) break;
         char *dir = yarp::os::getcwd(buf, len);
@@ -48,8 +48,8 @@ static ConstString getPwd() {
         if (errno!=ERANGE) break;
         len *= 2;
     }
-    if (buf!=YARP_NULLPTR) delete[] buf;
-    buf = YARP_NULLPTR;
+    if (buf!=nullptr) delete[] buf;
+    buf = nullptr;
     return result;
 }
 
@@ -159,7 +159,7 @@ public:
 
     bool configure(Property& config, int argc, char *argv[], bool skip) {
         if (argc>0) {
-            if (argv[0]!=YARP_NULLPTR) {
+            if (argv[0]!=nullptr) {
                 yarp::os::setprogname(argv[0]);
             }
         }
@@ -198,7 +198,7 @@ public:
                         from.c_str());
             }
             mainActive = true;
-            ConstString corrected = findFile(config, from.c_str(), YARP_NULLPTR);
+            ConstString corrected = findFile(config, from.c_str(), nullptr);
             mainActive = false;
             if (corrected!="") {
                 from = corrected;
@@ -294,7 +294,7 @@ public:
 
         // check cache first
         Bottle *prev = cache.find(s).asList();
-        if (prev!=YARP_NULLPTR) {
+        if (prev!=nullptr) {
             double t = prev->get(0).asDouble();
             int flag = prev->get(1).asInt();
             if (SystemClock::nowSystem()-t<RESOURCE_FINDER_CACHE_TIME) {
@@ -355,7 +355,7 @@ public:
     }
 
     yarp::os::ConstString findPath(Property& config) {
-        ConstString result = findFileBase(config, "", true, YARP_NULLPTR);
+        ConstString result = findFileBase(config, "", true, nullptr);
 		if (result=="") result = getPwd();
         return result;
     }
@@ -378,7 +378,7 @@ public:
                                        const ResourceFinderOptions *externalOptions) {
         Bottle output;
         ResourceFinderOptions opts;
-        if (externalOptions==YARP_NULLPTR) externalOptions = &opts;
+        if (externalOptions==nullptr) externalOptions = &opts;
         findFileBase(config, name, isDir, output, *externalOptions);
         return output.get(0).asString();
     }
@@ -396,7 +396,7 @@ public:
                       Bottle& output, const ResourceFinderOptions& opts) {
         Bottle doc;
         int prelen = output.size();
-        findFileBaseInner(config, name, isDir, true, output, opts, doc, YARP_NULLPTR);
+        findFileBaseInner(config, name, isDir, true, output, opts, doc, nullptr);
         if (output.size()!=prelen) return;
         bool justTop = (opts.duplicateFilesPolicy==ResourceFinderOptions::First);
         if (justTop) {
@@ -632,9 +632,9 @@ public:
         // and causes a lot of problems.
         /*
         YARP_DIR *dir = ACE_OS::opendir(fname);
-        if (dir!=YARP_NULLPTR) {
+        if (dir!=nullptr) {
             ACE_OS::closedir(dir);
-            dir = YARP_NULLPTR;
+            dir = nullptr;
             return true;
         }
         return false;
@@ -710,7 +710,7 @@ ResourceFinder::ResourceFinder()
     // We need some pieces of YARP to be initialized.
     NetworkBase::autoInitMinimum(yarp::os::YARP_CLOCK_SYSTEM);
     implementation = new ResourceFinderHelper();
-    yAssert(implementation!=YARP_NULLPTR);
+    yAssert(implementation!=nullptr);
     owned = true;
     nullConfig = false;
     isConfiguredFlag = false;
@@ -721,7 +721,7 @@ ResourceFinder::ResourceFinder(const ResourceFinder& alt) :
 {
     NetworkBase::autoInitMinimum(yarp::os::YARP_CLOCK_SYSTEM);
     implementation = new ResourceFinderHelper();
-    yAssert(implementation!=YARP_NULLPTR);
+    yAssert(implementation!=nullptr);
     owned = true;
     nullConfig = false;
     isConfiguredFlag = false;
@@ -742,11 +742,11 @@ ResourceFinder::ResourceFinder(Searchable& data, void *implementation)
 
 ResourceFinder::~ResourceFinder()
 {
-    if (implementation!=YARP_NULLPTR) {
+    if (implementation!=nullptr) {
         if (owned) {
             delete &HELPER(implementation);
         }
-        implementation = YARP_NULLPTR;
+        implementation = nullptr;
     }
 }
 
@@ -802,7 +802,7 @@ yarp::os::ConstString ResourceFinder::findFile(const ConstString& name)
     if (HELPER(implementation).isVerbose()) {
         fprintf(RTARGET, "||| finding file [%s]\n", name.c_str());
     }
-    return HELPER(implementation).findFile(config, name, YARP_NULLPTR);
+    return HELPER(implementation).findFile(config, name, nullptr);
 }
 
 yarp::os::ConstString ResourceFinder::findFile(const ConstString& name,
@@ -819,7 +819,7 @@ yarp::os::ConstString ResourceFinder::findFileByName(const ConstString& name)
     if (HELPER(implementation).isVerbose()) {
         fprintf(RTARGET, "||| finding file %s\n", name.c_str());
     }
-    return HELPER(implementation).findFileByName(config, name, YARP_NULLPTR);
+    return HELPER(implementation).findFileByName(config, name, nullptr);
 }
 
 yarp::os::ConstString ResourceFinder::findFileByName(const ConstString& name,
@@ -837,7 +837,7 @@ yarp::os::ConstString ResourceFinder::findPath(const ConstString& name)
     if (HELPER(implementation).isVerbose()) {
         fprintf(RTARGET, "||| finding path [%s]\n", name.c_str());
     }
-    return HELPER(implementation).findPath(config, name, YARP_NULLPTR);
+    return HELPER(implementation).findPath(config, name, nullptr);
 }
 
 yarp::os::ConstString ResourceFinder::findPath(const ConstString& name,
@@ -854,7 +854,7 @@ yarp::os::Bottle ResourceFinder::findPaths(const ConstString& name)
     if (HELPER(implementation).isVerbose()) {
         fprintf(RTARGET, "||| finding paths [%s]\n", name.c_str());
     }
-    return HELPER(implementation).findPaths(config, name, YARP_NULLPTR);
+    return HELPER(implementation).findPaths(config, name, nullptr);
 }
 
 yarp::os::Bottle ResourceFinder::findPaths(const ConstString& name,

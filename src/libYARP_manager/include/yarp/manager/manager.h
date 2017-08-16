@@ -1,6 +1,6 @@
 /*
  *  Yarp Modules Manager
- *  Copyright: (C) 2011 Robotics, Brain and Cognitive Sciences - Italian Institute of Technology (IIT)
+ *  Copyright: (C) 2011 Istituto Italiano di Tecnologia (IIT)
  *  Authors: Ali Paikan <ali.paikan@iit.it>
  *
  *  Copy Policy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
@@ -108,14 +108,14 @@ public:
     ErrorLogger* getLogger(void) { return logger;}
 
 protected:
-    virtual void onExecutableStart(void* which) YARP_OVERRIDE;
-    virtual void onExecutableStop(void* which) YARP_OVERRIDE;
-    virtual void onExecutableDied(void* which) YARP_OVERRIDE;
-    virtual void onExecutableFailed(void* which) YARP_OVERRIDE;
-    virtual void onCnnStablished(void* which) YARP_OVERRIDE;
-    virtual void onCnnFailed(void* which) YARP_OVERRIDE;
-    virtual void onError(void* which) YARP_OVERRIDE;
-    virtual void onExecutableStdout(void* which, const char* msg) YARP_OVERRIDE;
+    virtual void onExecutableStart(void* which) override;
+    virtual void onExecutableStop(void* which) override;
+    virtual void onExecutableDied(void* which) override;
+    virtual void onExecutableFailed(void* which) override;
+    virtual void onCnnStablished(void* which) override;
+    virtual void onCnnFailed(void* which) override;
+    virtual void onError(void* which) override;
+    virtual void onExecutableStdout(void* which, const char* msg) override;
 
 
 private:

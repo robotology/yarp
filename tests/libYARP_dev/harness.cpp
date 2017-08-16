@@ -86,13 +86,13 @@ int harness_main(int argc, char *argv[]) {
 static ConstString getFile(const char *fname) {
     char buf[25600];
     FILE *fin = fopen(fname,"r");
-    if (fin==NULL) return "";
+    if (fin==nullptr) return "";
     ConstString result = "";
-    while(fgets(buf, sizeof(buf)-1, fin) != NULL) {
+    while(fgets(buf, sizeof(buf)-1, fin) != nullptr) {
         result += buf;
     }
     fclose(fin);
-    fin = NULL;
+    fin = nullptr;
     return result;
 
     /*
@@ -229,7 +229,7 @@ int main(int argc, char *argv[]) {
 
     DriverCreator *creator =
         Drivers::factory().find(deviceName.c_str());
-    if (creator!=NULL) {
+    if (creator!=nullptr) {
         wrapperName = creator->getWrapper();
         codeName = creator->getCode();
     }
@@ -241,7 +241,7 @@ int main(int argc, char *argv[]) {
             dest2 += ".fail";
         }
         FILE *fout = fopen(dest2.c_str(),"w");
-        if (fout==NULL) {
+        if (fout==nullptr) {
             printf("Problem writing to %s\n", dest2.c_str());
             std::exit(1);
         }
@@ -276,7 +276,7 @@ int main(int argc, char *argv[]) {
                 codeName.c_str());
         fprintf(fout, " */\n");
         fclose(fout);
-        fout = NULL;
+        fout = nullptr;
     }
 
     if (ok) {

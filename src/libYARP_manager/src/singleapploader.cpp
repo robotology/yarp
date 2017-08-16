@@ -1,6 +1,6 @@
 /*
  *  Yarp Modules Manager
- *  Copyright: (C) 2011 Robotics, Brain and Cognitive Sciences - Italian Institute of Technology (IIT)
+ *  Copyright: (C) 2011 Istituto Italiano di Tecnologia (IIT)
  *  Authors: Ali Paikan <ali.paikan@iit.it>
  *
  *  Copy Policy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
@@ -27,7 +27,7 @@ SingleAppLoader::~SingleAppLoader()
 }
 
 
-bool SingleAppLoader::init(void)
+bool SingleAppLoader::init()
 {
     ErrorLogger* logger  = ErrorLogger::Instance();
     app.clear();
@@ -45,13 +45,13 @@ bool SingleAppLoader::init(void)
 }
 
 
-void SingleAppLoader::fini(void)
+void SingleAppLoader::fini()
 {
     app.clear();
 }
 
 
-Application* SingleAppLoader::getNextApplication(void)
+Application* SingleAppLoader::getNextApplication()
 {
     return &app;
 }

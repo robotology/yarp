@@ -1,6 +1,6 @@
 /*
  *  Yarp Modules Manager
- *  Copyright: (C) 2011 Robotics, Brain and Cognitive Sciences - Italian Institute of Technology (IIT)
+ *  Copyright: (C) 2011 Istituto Italiano di Tecnologia (IIT)
  *  Authors: Ali Paikan <ali.paikan@iit.it>
  *
  *  Copy Policy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
@@ -29,7 +29,6 @@
 #define BROKER_LOCAL            "local"
 #define BROKER_YARPRUN          "yarprun"
 #define BROKER_YARPDEV          "yarpdev"
-#define BROKER_ICUBMIODDEV      "icubmoddev"
 
 
 using namespace yarp::manager;
@@ -47,7 +46,7 @@ Manager::Manager(bool withWatchDog) : MEvent()
     bAutoDependancy = false;
     bRestricted = false;
     strDefBroker = BROKER_YARPRUN;
-    knowledge.createFrom(NULL, NULL, NULL);
+    knowledge.createFrom(nullptr, nullptr, nullptr);
     connector.init();
 }
 
@@ -60,20 +59,20 @@ Manager::Manager(const char* szModPath, const char* szAppPath,
     bRestricted = false;
     strDefBroker = BROKER_YARPRUN;
 
-    XmlModLoader modload(szModPath, NULL);
+    XmlModLoader modload(szModPath, nullptr);
     XmlModLoader* pModLoad = &modload;
     if(!modload.init())
-        pModLoad = NULL;
+        pModLoad = nullptr;
 
-    XmlAppLoader appload(szAppPath, NULL);
+    XmlAppLoader appload(szAppPath, nullptr);
     XmlAppLoader* pAppLoad = &appload;
     if(!appload.init())
-        pAppLoad = NULL;
+        pAppLoad = nullptr;
 
-    XmlResLoader resload(szResPath, NULL);
+    XmlResLoader resload(szResPath, nullptr);
     XmlResLoader* pResLoad = &resload;
     if(!resload.init())
-        pResLoad = NULL;
+        pResLoad = nullptr;
 
     knowledge.createFrom(pModLoad, pAppLoad, pResLoad);
     connector.init();
@@ -106,7 +105,7 @@ bool Manager::addApplication(const char* szFileName, char** szAppName_, bool mod
 
 bool Manager::addApplications(const char* szPath)
 {
-    XmlAppLoader appload(szPath, NULL);
+    XmlAppLoader appload(szPath, nullptr);
     if(!appload.init())
         return false;
     Application* application;
@@ -134,7 +133,7 @@ bool Manager::addModule(const char* szFileName)
 
 bool Manager::addModules(const char* szPath)
 {
-    XmlModLoader modload(szPath, NULL);
+    XmlModLoader modload(szPath, nullptr);
     if(!modload.init())
         return false;
     Module* module;
@@ -159,7 +158,7 @@ bool Manager::addResource(const char* szFileName)
 
 bool Manager::addResources(const char* szPath)
 {
-    XmlResLoader resload(szPath, NULL);
+    XmlResLoader resload(szPath, nullptr);
     if(!resload.init())
         return false;
     GenericResource* resource;
@@ -257,7 +256,7 @@ bool Manager::saveApplication(const char* szAppName, const char* fileName)
 }
 
 
-bool Manager::loadBalance(void)
+bool Manager::loadBalance()
 {
     updateResources();
     bool ret = prepare(false);
@@ -476,7 +475,7 @@ bool Manager::exist(unsigned int id)
 }
 
 
-bool Manager::updateResources(void)
+bool Manager::updateResources()
 {
     YarpBroker broker;
     broker.init();
@@ -669,7 +668,7 @@ bool Manager::existPortTo(unsigned int id)
 }
 
 
-bool Manager::checkDependency(void)
+bool Manager::checkDependency()
 {
     /**
      * checking for port resources availability
@@ -721,7 +720,7 @@ bool Manager::run(unsigned int id, bool async)
     return waitingModuleRun(id);
 }
 
-bool Manager::run(void)
+bool Manager::run()
 {
     if(runnables.empty())
     {
@@ -821,7 +820,7 @@ bool Manager::stop(unsigned int id, bool async)
 }
 
 
-bool Manager::stop(void)
+bool Manager::stop()
 {
     if(runnables.empty())
         return true;
@@ -879,7 +878,7 @@ bool Manager::kill(unsigned int id, bool async)
 }
 
 
-bool Manager::kill(void)
+bool Manager::kill()
 {
     if(runnables.empty())
         return true;
@@ -916,7 +915,7 @@ bool Manager::kill(void)
 }
 
 
-void Manager::clearExecutables(void)
+void Manager::clearExecutables()
 {
     ExecutablePIterator itr;
     for(itr=runnables.begin(); itr!=runnables.end(); itr++)
@@ -956,7 +955,7 @@ bool Manager::connect(unsigned int id)
                      connections[id].qosTo());
 }
 
-bool Manager::connect(void)
+bool Manager::connect()
 {
     //YarpBroker connector;
     //connector.init();
@@ -1004,7 +1003,7 @@ bool Manager::disconnect(unsigned int id)
     return true;
 }
 
-bool Manager::disconnect(void)
+bool Manager::disconnect()
 {
     //YarpBroker connector;
     //connector.init();
@@ -1039,7 +1038,7 @@ bool Manager::rmconnect(unsigned int id)
 }
 
 
-bool Manager::rmconnect(void)
+bool Manager::rmconnect()
 {
     CnnIterator cnn;
     for(cnn=connections.begin(); cnn!=connections.end(); cnn++)
@@ -1068,7 +1067,7 @@ bool Manager::connected(unsigned int id)
 }
 
 
-bool Manager::connected(void)
+bool Manager::connected()
 {
     //YarpBroker connector;
     //connector.init();
@@ -1096,7 +1095,7 @@ bool Manager::checkPortsAvailable(Broker* broker)
 }
 
 
-bool Manager::connectExtraPorts(void)
+bool Manager::connectExtraPorts()
 {
     //YarpBroker connector;
     //connector.init();
@@ -1138,7 +1137,7 @@ bool Manager::running(unsigned int id)
 }
 
 
-bool Manager::allRunning(void)
+bool Manager::allRunning()
 {
     if(!runnables.size())
         return false;
@@ -1167,7 +1166,7 @@ bool Manager::suspended(unsigned int id)
 }
 
 
-bool Manager::allStopped(void)
+bool Manager::allStopped()
 {
     if(!runnables.size())
         return true;

@@ -1,6 +1,6 @@
 /*
 * Author: Marco Randazzo, Silvio Traversaro
-* Copyright (C) 2016 iCubFacility - Istituto Italiano di Tecnologia
+* Copyright (C) 2016 Istituto Italiano di Tecnologia (IIT)
 * CopyPolicy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
 */
 
@@ -12,7 +12,7 @@
 #include <yarp/sig/Matrix.h>
 #include <yarp/os/Portable.h>
 
-/// network stuff
+// network stuff
 #include <yarp/os/NetInt32.h>
 
 namespace yarp {
@@ -118,15 +118,15 @@ public:
     * Read vector from a connection.
     * return true iff a vector was read correctly
     */
-    virtual bool read(yarp::os::ConnectionReader& connection) YARP_OVERRIDE;
+    virtual bool read(yarp::os::ConnectionReader& connection) override;
 
     /**
     * Write vector to a connection.
     * return true iff a vector was written correctly
     */
-    virtual bool write(yarp::os::ConnectionWriter& connection) YARP_OVERRIDE;
+    virtual bool write(yarp::os::ConnectionWriter& connection) override;
 
-    virtual yarp::os::Type getType() YARP_OVERRIDE
+    virtual yarp::os::Type getType() override
     {
         return yarp::os::Type::byName("yarp/quaternion");
     }

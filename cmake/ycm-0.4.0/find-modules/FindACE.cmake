@@ -21,7 +21,7 @@
 
 #=============================================================================
 # Copyright 2009 RobotCub Consortium
-# Copyright 2013-2014 iCub Facility, Istituto Italiano di Tecnologia
+# Copyright 2013-2014 Istituto Italiano di Tecnologia (IIT)
 #   Authors: Alexandre Bernardino <alex@isr.ist.utl.pt>
 #            Paul Fitzpatrick <paulfitz@alum.mit.edu>
 #            Lorenzo Natale <lorenzo.natale@iit.it>

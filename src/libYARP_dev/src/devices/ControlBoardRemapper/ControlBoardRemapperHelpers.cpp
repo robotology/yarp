@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2016 iCub Facility - Istituto Italiano di Tecnologia
+ * Copyright (C) 2016 Istituto Italiano di Tecnologia (IIT)
  * Author: Lorenzo Natale, Silvio Traversaro
  * CopyPolicy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
  */
@@ -21,28 +21,28 @@ RemappedSubControlBoard::RemappedSubControlBoard()
 {
     id = "";
 
-    pid = 0;
-    pos2 = 0;
-    posDir = 0;
-    vel2 = 0;
-    iJntEnc = 0;
-    iMotEnc = 0;
-    amp = 0;
-    lim2 = 0;
-    calib = 0;
-    calib2 = 0;
-    iTimed= 0;
-    info = 0;
-    iTorque=0;
-    iImpedance=0;
-    iMode2=0;
-    iInteract=0;
-    imotor=0;
-    iVar = 0;
-    iPwm = 0;
-    iCurr = 0;
+    pid = nullptr;
+    pos2 = nullptr;
+    posDir = nullptr;
+    vel2 = nullptr;
+    iJntEnc = nullptr;
+    iMotEnc = nullptr;
+    amp = nullptr;
+    lim2 = nullptr;
+    calib = nullptr;
+    calib2 = nullptr;
+    iTimed= nullptr;
+    info = nullptr;
+    iTorque=nullptr;
+    iImpedance=nullptr;
+    iMode2=nullptr;
+    iInteract=nullptr;
+    imotor=nullptr;
+    iVar = nullptr;
+    iPwm = nullptr;
+    iCurr = nullptr;
 
-    subdevice=0;
+    subdevice=nullptr;
 
 
     attachedF=false;
@@ -52,28 +52,28 @@ RemappedSubControlBoard::RemappedSubControlBoard()
 
 void RemappedSubControlBoard::detach()
 {
-    subdevice=0;
+    subdevice=nullptr;
 
-    pid=0;
-    pos2=0;
-    posDir=0;
-    vel2=0;
-    amp = 0;
-    iJntEnc=0;
-    iMotEnc=0;
-    lim2=0;
-    calib=0;
-    calib2=0;
-    info=0;
-    iTorque=0;
-    iImpedance=0;
-    iMode2=0;
-    iTimed=0;
-    iInteract=0;
-    imotor=0;
-    iVar = 0;
-    iPwm = 0;
-    iCurr = 0;
+    pid=nullptr;
+    pos2=nullptr;
+    posDir=nullptr;
+    vel2=nullptr;
+    amp = nullptr;
+    iJntEnc=nullptr;
+    iMotEnc=nullptr;
+    lim2=nullptr;
+    calib=nullptr;
+    calib2=nullptr;
+    info=nullptr;
+    iTorque=nullptr;
+    iImpedance=nullptr;
+    iMode2=nullptr;
+    iTimed=nullptr;
+    iInteract=nullptr;
+    imotor=nullptr;
+    iVar = nullptr;
+    iPwm = nullptr;
+    iCurr = nullptr;
 
     attachedF=false;
 }
@@ -86,7 +86,7 @@ bool RemappedSubControlBoard::attach(yarp::dev::PolyDriver *d, const std::string
         return false;
     }
 
-    if (d==0)
+    if (d==nullptr)
     {
         yError()<<"ControlBoardRemapper: Invalid device (null pointer)";
         return false;
@@ -124,47 +124,47 @@ bool RemappedSubControlBoard::attach(yarp::dev::PolyDriver *d, const std::string
         return false;
     }
 
-    if ((iTorque==0) && (_subDevVerbose))
+    if ((iTorque==nullptr) && (_subDevVerbose))
     {
         yWarning() << "ControlBoardRemapper:  Warning iTorque not valid interface";
     }
 
-    if ((iImpedance==0) && (_subDevVerbose))
+    if ((iImpedance==nullptr) && (_subDevVerbose))
     {
         yWarning() << "ControlBoardRemapper:  Warning iImpedance not valid interface";
     }
 
-    if ((iInteract==0) && (_subDevVerbose))
+    if ((iInteract==nullptr) && (_subDevVerbose))
     {
         yWarning() << "ControlBoardRemapper:  Warning iInteractionMode not valid interface";
     }
 
-    if ((iMotEnc==0) && (_subDevVerbose))
+    if ((iMotEnc==nullptr) && (_subDevVerbose))
     {
         yWarning() << "ControlBoardRemapper:  Warning IMotorEncoders not valid interface";
     }
 
-    if ((imotor==0) && (_subDevVerbose))
+    if ((imotor==nullptr) && (_subDevVerbose))
     {
         yWarning() << "ControlBoardRemapper:  Warning IMotor not valid interface";
     }
 
-    if ((iVar == 0) && (_subDevVerbose))
+    if ((iVar == nullptr) && (_subDevVerbose))
     {
         yWarning() << "ControlBoardRemapper:  Warning IRemoveVariables not valid interface";
     }
 
-    if ((info == 0) && (_subDevVerbose))
+    if ((info == nullptr) && (_subDevVerbose))
     {
         yWarning() << "ControlBoardRemapper:  Warning IAxisInfo not valid interface";
     }
 
-    if ((iPwm == 0) && (_subDevVerbose))
+    if ((iPwm == nullptr) && (_subDevVerbose))
     {
         yWarning() << "ControlBoardRemapper:  Warning IPWMControl not valid interface";
     }
 
-    if ((iCurr == 0) && (_subDevVerbose))
+    if ((iCurr == nullptr) && (_subDevVerbose))
     {
         yWarning() << "ControlBoardRemapper:  Warning ICurrentControl not valid interface";
     }
@@ -196,7 +196,7 @@ bool RemappedSubControlBoard::attach(yarp::dev::PolyDriver *d, const std::string
     }
 
     int deviceJoints=0;
-    if (pos2!=0)
+    if (pos2!=nullptr)
     {
         if (!pos2->getAxes(&deviceJoints))
         {

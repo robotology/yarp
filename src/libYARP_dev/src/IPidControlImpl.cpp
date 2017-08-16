@@ -1,6 +1,7 @@
 /*
- * Copyright (C) 2017 iCub Facility - Istituto Italiano di Tecnologia
- * Authors: Lorenzo Natale <lorenzo.natale@iit.it>, Marco Randazzo <marco.randazzo@iit.it>
+ * Copyright (C) 2017 Istituto Italiano di Tecnologia (IIT)
+ * Authors: Lorenzo Natale <lorenzo.natale@iit.it>
+ *          Marco Randazzo <marco.randazzo@iit.it>
  * CopyPolicy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
  */
 
@@ -103,9 +104,9 @@ void ImplementPidControl::convert_units_to_user(const yarp::dev::PidControlTypeE
 ImplementPidControl::ImplementPidControl(IPidControlRaw *y)
 {
     iPid= dynamic_cast<IPidControlRaw *> (y);
-    helper = 0;
-    temp=0;
-    tmpPids=0;
+    helper = nullptr;
+    temp=nullptr;
+    tmpPids=nullptr;
 }
 
 ImplementPidControl::~ImplementPidControl()
@@ -115,15 +116,15 @@ ImplementPidControl::~ImplementPidControl()
 
 bool ImplementPidControl:: initialize (int size, const int *amap, const double *enc, const double *zos, const double* newtons, const double* amps)
 {
-    if (helper!=0)
+    if (helper!=nullptr)
         return false;
 
     helper=(void *)(new ControlBoardHelper(size, amap, enc, zos,newtons,amps));
-    yAssert (helper != 0);
+    yAssert (helper != nullptr);
     temp=new double [size];
-    yAssert (temp != 0);
+    yAssert (temp != nullptr);
     tmpPids=new Pid[size];
-    yAssert (tmpPids != 0);
+    yAssert (tmpPids != nullptr);
 
     return true;
 }
@@ -134,9 +135,9 @@ bool ImplementPidControl:: initialize (int size, const int *amap, const double *
 */
 bool ImplementPidControl::uninitialize ()
 {
-    if (helper!=0)
+    if (helper!=nullptr)
         delete castToMapper(helper);
-    helper=0;
+    helper=nullptr;
 
     checkAndDestroy(tmpPids);
     checkAndDestroy(temp);

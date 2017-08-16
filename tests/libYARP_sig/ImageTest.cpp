@@ -238,8 +238,8 @@ public:
         report(0,"reading...");
         ImageOf<PixelRgb> *result = buf.read();
 
-        checkTrue(result!=NULL,"got something check");
-        if (result!=NULL) {
+        checkTrue(result!=nullptr,"got something check");
+        if (result!=nullptr) {
             checkEqual(img1.width(),result->width(),"width check");
             checkEqual(img1.height(),result->height(),"height check");
             if (img1.width()==result->width() &&

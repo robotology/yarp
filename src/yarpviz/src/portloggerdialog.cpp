@@ -16,7 +16,7 @@ using namespace yarp::graph;
 
 PortLoggerDialog::PortLoggerDialog(yarp::graph::Graph *graph, QWidget *parent) :
     QDialog(parent),
-    ui(new Ui::PortLoggerDialog), isStarted(false), timer(NULL)
+    ui(new Ui::PortLoggerDialog), isStarted(false), timer(nullptr)
 {
     yAssert(graph);
     ui->setupUi(this);
@@ -72,7 +72,7 @@ void PortLoggerDialog::openCons()
 {
     QString filters("Text files (*.txt);;All files (*.*)");
     QString defaultFilter("Connections list file (*.txt)");
-    QString filename = QFileDialog::getOpenFileName(0, "Load connections list",
+    QString filename = QFileDialog::getOpenFileName(nullptr, "Load connections list",
                                                     QDir::homePath(),
                                                     filters, &defaultFilter);
     if(filename.size() == 0)
@@ -81,7 +81,7 @@ void PortLoggerDialog::openCons()
     fstream file;
     file.open(filename.toStdString().c_str());
     if (!file.is_open()) {
-        QMessageBox::critical(NULL, QObject::tr("Error"), QObject::tr("Cannot open the file for loading"));
+        QMessageBox::critical(nullptr, QObject::tr("Error"), QObject::tr("Cannot open the file for loading"));
         return;
     }
 
@@ -174,7 +174,7 @@ void PortLoggerDialog::startStopLoggers() {
         {
             // something went wrong
             QMessageBox messageBox;
-            messageBox.critical(0,"Error","An error has occured while starting the portrate plugin for some ports ! \n Please check if the LUA portmonitor carrier is enabled in YARP and portrate plugin can be found by the portmonitor.");
+            messageBox.critical(nullptr,"Error","An error has occured while starting the portrate plugin for some ports ! \n Please check if the LUA portmonitor carrier is enabled in YARP and portrate plugin can be found by the portmonitor.");
             messageBox.setFixedSize(500,200);
         }
     }
@@ -226,7 +226,7 @@ void PortLoggerDialog::startStopLoggers() {
         if(timer) {
             timer->stop();
             delete timer;
-            timer = NULL;
+            timer = nullptr;
         }
         isStarted = false;
         ui->pushButtonStart->setText("&Start");
@@ -262,7 +262,7 @@ bool PortLoggerDialog::saveLog(std::string filename, yarp::os::Bottle* samples) 
 void PortLoggerDialog::setLogPath() {
     //QString filters("Log files (*.log);;Text files (*.txt);;All files (*.*)");
     //QString defaultFilter("Log file (*.log)");
-    QString filename = QFileDialog::getExistingDirectory(0, "Set the log files path",
+    QString filename = QFileDialog::getExistingDirectory(nullptr, "Set the log files path",
                                                     QDir::homePath(),QFileDialog::ShowDirsOnly | QFileDialog::DontResolveSymlinks);
     if(filename.size() == 0)
         return;

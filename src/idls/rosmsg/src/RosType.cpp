@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2011 Department of Robotics Brain and Cognitive Sciences - Istituto Italiano di Tecnologia
+ * Copyright (C) 2011 Istituto Italiano di Tecnologia (IIT)
  * Authors: Paul Fitzpatrick
  * CopyPolicy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
  *
@@ -76,7 +76,7 @@ RosType::RosTypes::RosTypes() {
 
 RosType::RosTypes::~RosTypes() {
     delete &HELPER(system_resource);
-    system_resource = NULL;
+    system_resource = nullptr;
 }
 
 RosType::RosTypes::RosTypes(const RosTypes& alt) {
@@ -215,7 +215,7 @@ bool RosType::read(const char *tname, RosTypeSearch& env, RosTypeCodeGen& gen,
     if (verbose) {
         fprintf(stderr,"[type]%s BEGIN %s\n", indent.c_str(), path.c_str());
     }
-    char *result = NULL;
+    char *result = nullptr;
     txt = "";
     source = "";
 
@@ -223,7 +223,7 @@ bool RosType::read(const char *tname, RosTypeSearch& env, RosTypeCodeGen& gen,
     do {
         char buf[2048];
         result = fgets(buf,sizeof(buf),fin);
-        if (result==NULL) break;
+        if (result==nullptr) break;
         txt += "//   ";
         txt += result;
         source += result;
@@ -293,7 +293,7 @@ bool RosType::read(const char *tname, RosTypeSearch& env, RosTypeCodeGen& gen,
         }
         sub.initializer = const_txt;
         cursor->subRosType.push_back(sub);
-    } while (result!=NULL);
+    } while (result!=nullptr);
     if (verbose) {
         fprintf(stderr,"[type]%s END %s\n", indent.c_str(), path.c_str());
     }
@@ -338,7 +338,7 @@ bool RosType::cache(const char *tname, RosTypeSearch& env,
     do {
         char buf[2048];
         char *result = fgets(buf,sizeof(buf),fin);
-        if (result==NULL) break;
+        if (result==nullptr) break;
         fputs(result,fout);
     } while (true);
     fclose(fout);
@@ -431,7 +431,7 @@ bool RosType::emitType(RosTypeCodeGen& gen,
     }
     checksum = (char *)hex_output;
 
-    if (reply!=NULL) {
+    if (reply!=nullptr) {
         if (!reply->emitType(gen,state)) return false;
     }
 
@@ -508,13 +508,13 @@ static std::vector<std::string> &split(const std::string &s, char delim, std::ve
 std::string RosTypeSearch::readFile(const char *fname) {
     char buf[25600];
     FILE *fin = fopen(fname,"r");
-    if (fin==NULL) return "";
+    if (fin==nullptr) return "";
     std::string result = "";
-    while(fgets(buf, sizeof(buf)-1, fin) != NULL) {
+    while(fgets(buf, sizeof(buf)-1, fin) != nullptr) {
         result += buf;
     }
     fclose(fin);
-    fin = NULL;
+    fin = nullptr;
     return result;
 }
 
@@ -529,13 +529,13 @@ bool RosTypeSearch::fetchFromRos(const std::string& target_file,
     if (p==0) {
 #ifdef __linux__
         // This was ACE_OS::execlp, but that fails
-        ::execlp("sh","sh","-c",cmd.c_str(),(char *)NULL);
+        ::execlp("sh","sh","-c",cmd.c_str(),(char *)nullptr);
 #else
         yarp::os::impl::execlp("sh","sh","-c",cmd.c_str(),(char *)NULL);
 #endif
         std::exit(0);
     } else {
-        yarp::os::impl::wait(NULL);
+        yarp::os::impl::wait(nullptr);
     }
 
     bool success = true;
@@ -548,7 +548,7 @@ bool RosTypeSearch::fetchFromRos(const std::string& target_file,
         char buf[10];
         char *result = fgets(buf,sizeof(buf),fin);
         fclose(fin);
-        if (result==NULL) {
+        if (result==nullptr) {
             fprintf(stderr, "[type] File is blank: %s\n", target_file.c_str());
             yarp::os::impl::unlink(target_file.c_str());
             success = false;

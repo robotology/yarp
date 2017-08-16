@@ -250,11 +250,11 @@ public:
     void close();
     void stop();
 
-    virtual void run() YARP_OVERRIDE;
-    virtual bool threadInit() YARP_OVERRIDE;
-    virtual void threadRelease() YARP_OVERRIDE;
-    virtual void afterStart(bool success) YARP_OVERRIDE;
-    virtual void beforeStart() YARP_OVERRIDE;
+    virtual void run() override;
+    virtual bool threadInit() override;
+    virtual void threadRelease() override;
+    virtual void afterStart(bool success) override;
+    virtual void beforeStart() override;
 
     Runnable *getAttachment() const;
 };

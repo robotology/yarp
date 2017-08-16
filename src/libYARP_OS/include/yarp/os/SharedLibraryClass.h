@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2011 Department of Robotics Brain and Cognitive Sciences - Istituto Italiano di Tecnologia
+ * Copyright (C) 2011 Istituto Italiano di Tecnologia (IIT)
  * Authors: Paul Fitzpatrick
  * CopyPolicy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
  */
@@ -34,8 +34,8 @@ public:
      * Constructor for empty instance.
      */
     SharedLibraryClass() :
-            content(YARP_NULLPTR),
-            pfactory(YARP_NULLPTR) {
+            content(nullptr),
+            pfactory(nullptr) {
     }
 
     /**
@@ -45,8 +45,8 @@ public:
      * destroy) the instance.
      */
     SharedLibraryClass(SharedLibraryClassFactory<T>& factory) :
-            content(YARP_NULLPTR),
-            pfactory(YARP_NULLPTR) {
+            content(nullptr),
+            pfactory(nullptr) {
         open(factory);
     }
 
@@ -64,7 +64,7 @@ public:
         pfactory = &factory;
         factory.addRef();
 
-        return content != YARP_NULLPTR;
+        return content != nullptr;
     }
 
     /**
@@ -73,7 +73,7 @@ public:
      * @return true on success
      */
     virtual bool close() {
-        if (content != YARP_NULLPTR) {
+        if (content != nullptr) {
             pfactory->destroy(content);
             NetworkBase::lock();
             if (pfactory->removeRef() == 0) {
@@ -82,8 +82,8 @@ public:
             NetworkBase::unlock();
         }
 
-        content = YARP_NULLPTR;
-        pfactory = YARP_NULLPTR;
+        content = nullptr;
+        pfactory = nullptr;
 
         return true;
     }
@@ -112,7 +112,7 @@ public:
      * @return true iff a valid instance has been created
      */
     bool isValid() const {
-        return content != YARP_NULLPTR;
+        return content != nullptr;
     }
 
     /**
@@ -127,7 +127,7 @@ public:
     /**
      * A pointer version of SharedLibraryClass::getContent
      *
-     * @return a pointer to the created instance, or YARP_NULLPTR if there is
+     * @return a pointer to the created instance, or nullptr if there is
      *         none
      */
     T *operator->() {

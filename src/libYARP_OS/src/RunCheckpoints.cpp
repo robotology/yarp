@@ -22,12 +22,12 @@ YarprunCheckpoints::YarprunCheckpoints()
     char path[256];
 
 #if defined(_WIN32)
-    time_t now=time(YARP_NULLPTR);
+    time_t now=time(nullptr);
     srand((unsigned)now);
     sprintf(path, "C:/Users/user/Documents/yarprun_log/yarprun_log_%d_%s_%u.txt", GetCurrentProcessId(), ctime(&now), (unsigned)rand());
 #else
     timeval now;
-    gettimeofday(&now, YARP_NULLPTR);
+    gettimeofday(&now, nullptr);
     sprintf(path, "/tmp/yarprun_log_%d_%s_%06d.txt", getpid(), ctime(&(now.tv_sec)), (int)now.tv_usec);
 #endif
 

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2011 Department of Robotics Brain and Cognitive Sciences - Istituto Italiano di Tecnologia
+ * Copyright (C) 2011 Istituto Italiano di Tecnologia (IIT)
  * Authors: Paul Fitzpatrick
  * CopyPolicy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
  *
@@ -94,7 +94,7 @@ void term_net_source (j_decompress_ptr cinfo) {
 
 void jpeg_net_src (j_decompress_ptr cinfo, char *buf, int buflen) {
     net_src_ptr src;
-    if (cinfo->src == NULL) {	/* first time for this JPEG object? */
+    if (cinfo->src == nullptr) {	/* first time for this JPEG object? */
         cinfo->src = (struct jpeg_source_mgr *)
             (*cinfo->mem->alloc_small) ((j_common_ptr) cinfo, JPOOL_PERMANENT,
                                         sizeof(jpeg_source_mgr));
@@ -123,8 +123,8 @@ public:
 
     MjpegDecompressionHelper() :
             active(false),
-            readEnvelopeCallback(NULL),
-            readEnvelopeCallbackData(NULL) {
+            readEnvelopeCallback(nullptr),
+            readEnvelopeCallbackData(nullptr) {
     }
 
     bool setReadEnvelopeCallback(yarp::os::InputStream::readEnvelopeCallbackType callback,
@@ -196,13 +196,13 @@ public:
 
 MjpegDecompression::MjpegDecompression() {
     system_resource = new MjpegDecompressionHelper;
-    yAssert(system_resource!=NULL);
+    yAssert(system_resource!=nullptr);
 }
 
 MjpegDecompression::~MjpegDecompression() {
-    if (system_resource!=NULL) {
+    if (system_resource!=nullptr) {
         delete &HELPER(system_resource);
-        system_resource = NULL;
+        system_resource = nullptr;
     }
 }
 

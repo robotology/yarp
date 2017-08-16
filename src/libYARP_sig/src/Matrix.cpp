@@ -39,7 +39,7 @@ public:
 };
 YARP_END_PACK
 
-/// network stuff
+// network stuff
 #include <yarp/os/NetInt32.h>
 
 bool yarp::sig::removeCols(const Matrix &in, Matrix &out, int first_col, int how_many)
@@ -197,7 +197,7 @@ ConstString Matrix::toString(int precision, int width, const char* endRowStr) co
 
 void Matrix::updatePointers()
 {
-    if (matrix!=0)
+    if (matrix!=nullptr)
         delete [] matrix;
 
     int r=0;
@@ -246,10 +246,10 @@ const Matrix &Matrix::operator=(double v)
 
 Matrix::~Matrix()
 {
-    if (matrix!=0)
+    if (matrix!=nullptr)
         delete [] matrix;
 
-    if (storage!=0)
+    if (storage!=nullptr)
         delete [] storage;
 }
 
@@ -264,7 +264,7 @@ void Matrix::resize(int new_r, int new_c)
     const int copy_c=(new_c<ncols) ? new_c:ncols;
     //copy_r = (new_r<nrows) ? new_r:nrows;
 
-    if (storage!=0)
+    if (storage!=nullptr)
     {
         double *tmp_new=new_storage;
         double *tmp_current=storage;
@@ -534,8 +534,8 @@ bool Matrix::setSubcol(const Vector &v, int r, int c)
 }
 
 Matrix::Matrix(int r, int c):
-    storage(0),
-    matrix(0),
+    storage(nullptr),
+    matrix(nullptr),
     nrows(r),
     ncols(c)
 {
@@ -545,13 +545,13 @@ Matrix::Matrix(int r, int c):
 }
 
 Matrix::Matrix(const Matrix &m): yarp::os::Portable(),
-    storage(0),
-    matrix(0)
+    storage(nullptr),
+    matrix(nullptr)
 {
     nrows=m.nrows;
     ncols=m.ncols;
 
-    if (m.storage!=0)
+    if (m.storage!=nullptr)
     {
         storage=new double [nrows*ncols];
         memcpy(storage, m.storage, nrows*ncols*sizeof(double));

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2013 iCub Facility - Istituto Italiano di Tecnologia
+ * Copyright (C) 2013 Istituto Italiano di Tecnologia (IIT)
  * Authors: Marco Randazzo <marco.randazzo@iit.it>
  * CopyPolicy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
  */
@@ -39,7 +39,7 @@ Map2DServer::Map2DServer()
 {
     m_enable_publish_ros_tf = false;
     m_enable_subscribe_ros_tf = false;
-    m_rosNode = 0;
+    m_rosNode = nullptr;
 }
 
 Map2DServer::~Map2DServer()
@@ -427,7 +427,7 @@ bool Map2DServer::read(yarp::os::ConnectionReader& connection)
     }
 
     yarp::os::ConnectionWriter *returnToSender = connection.getWriter();
-    if (returnToSender != NULL)
+    if (returnToSender != nullptr)
     {
         out.write(*returnToSender);
     }

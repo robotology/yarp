@@ -163,7 +163,7 @@ public:
         sender = true;
         XmlRpcStream *stream = new XmlRpcStream(proto.giveStreams(),sender,
                                                 interpretRos);
-        if (stream == YARP_NULLPTR) {
+        if (stream == nullptr) {
             return false;
         }
         proto.takeStreams(stream);

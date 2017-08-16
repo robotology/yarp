@@ -29,8 +29,8 @@ using namespace yarp::os::impl;
 
 int ThreadImpl::threadCount = 0;
 int ThreadImpl::defaultStackSize = 0;
-SemaphoreImpl *ThreadImpl::threadMutex = YARP_NULLPTR;
-SemaphoreImpl *ThreadImpl::timeMutex = YARP_NULLPTR;
+SemaphoreImpl *ThreadImpl::threadMutex = nullptr;
+SemaphoreImpl *ThreadImpl::timeMutex = nullptr;
 
 void ThreadImpl::init()
 {
@@ -46,11 +46,11 @@ void ThreadImpl::fini()
 {
     if (threadMutex) {
         delete threadMutex;
-        threadMutex = YARP_NULLPTR;
+        threadMutex = nullptr;
     }
     if (timeMutex) {
         delete timeMutex;
-        timeMutex = YARP_NULLPTR;
+        timeMutex = nullptr;
     }
 }
 
@@ -70,7 +70,7 @@ PLATFORM_THREAD_RETURN theExecutiveBranch (void *args)
     sigaddset(&set, SIGTERM);
     sigaddset(&set, SIGUSR1);
     sigaddset(&set, SIGCHLD);
-    ACE_OS::thr_sigsetmask(SIG_BLOCK, &set, YARP_NULLPTR);
+    ACE_OS::thr_sigsetmask(SIG_BLOCK, &set, nullptr);
     fprintf(stderr, "Blocking signals\n");
     */
 
@@ -124,7 +124,7 @@ ThreadImpl::ThreadImpl() :
         active(false),
         closing(false),
         needJoin(false),
-        delegate(YARP_NULLPTR),
+        delegate(nullptr),
         synchro(0),
         initWasSuccessful(false)
 {
@@ -198,7 +198,7 @@ int ThreadImpl::join(double seconds)
 
 void ThreadImpl::run()
 {
-    if (delegate!=YARP_NULLPTR) {
+    if (delegate!=nullptr) {
         delegate->run();
     }
 }
@@ -206,7 +206,7 @@ void ThreadImpl::run()
 void ThreadImpl::close()
 {
     closing = true;
-    if (delegate!=YARP_NULLPTR) {
+    if (delegate!=nullptr) {
         delegate->close();
     }
     join(-1);
@@ -216,28 +216,28 @@ void ThreadImpl::close()
 void ThreadImpl::askToClose()
 {
     closing = true;
-    if (delegate!=YARP_NULLPTR) {
+    if (delegate!=nullptr) {
         delegate->close();
     }
 }
 
 void ThreadImpl::beforeStart()
 {
-    if (delegate!=YARP_NULLPTR) {
+    if (delegate!=nullptr) {
         delegate->beforeStart();
     }
 }
 
 void ThreadImpl::afterStart(bool success)
 {
-    if (delegate!=YARP_NULLPTR) {
+    if (delegate!=nullptr) {
         delegate->afterStart(success);
     }
 }
 
 bool ThreadImpl::threadInit()
 {
-    if (delegate!=YARP_NULLPTR) {
+    if (delegate!=nullptr) {
         return delegate->threadInit();
     }
     else
@@ -246,7 +246,7 @@ bool ThreadImpl::threadInit()
 
 void ThreadImpl::threadRelease()
 {
-    if (delegate!=YARP_NULLPTR){
+    if (delegate!=nullptr){
         delegate->threadRelease();
     }
 }
@@ -276,7 +276,7 @@ bool ThreadImpl::start()
                                    &dummy_id,
                                    &hid,
                                    ACE_DEFAULT_THREAD_PRIORITY,
-                                   YARP_NULLPTR,
+                                   nullptr,
                                    s);
 #else
     pthread_attr_t attr;

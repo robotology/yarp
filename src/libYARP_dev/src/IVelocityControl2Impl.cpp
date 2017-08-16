@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2013 iCub Facility - Istituto Italiano di Tecnologia
+ * Copyright (C) 2013 Istituto Italiano di Tecnologia (IIT)
  * Authors: Alberto Cardellino <alberto.cardellino@iit.it>
  * CopyPolicy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
  */
@@ -17,9 +17,9 @@ using namespace yarp::dev;
 
 ImplementVelocityControl2::ImplementVelocityControl2(IVelocityControl2Raw *y) :
     iVelocity2(y),
-    helper(NULL),
-    temp_int(NULL),
-    temp_double(NULL),
+    helper(nullptr),
+    temp_int(nullptr),
+    temp_double(nullptr),
     tempPids()
 {
 
@@ -32,27 +32,27 @@ ImplementVelocityControl2::~ImplementVelocityControl2()
 
 bool ImplementVelocityControl2::initialize(int size, const int *axis_map, const double *enc, const double *zeros)
 {
-    if (helper != NULL)
+    if (helper != nullptr)
         return false;
 
-    helper=(void *)(new ControlBoardHelper(size, axis_map, enc, zeros,0));
-    yAssert (helper != NULL);
+    helper=(void *)(new ControlBoardHelper(size, axis_map, enc, zeros,nullptr));
+    yAssert (helper != nullptr);
     temp_double = new double [size];
-    yAssert (temp_double != NULL);
+    yAssert (temp_double != nullptr);
     temp_int = new int [size];
-    yAssert (temp_int != NULL);
+    yAssert (temp_int != nullptr);
     tempPids = new Pid [size];
-    yAssert (tempPids != NULL);
+    yAssert (tempPids != nullptr);
 
     return true;
 }
 
 bool ImplementVelocityControl2::uninitialize()
 {
-    if(helper != NULL)
+    if(helper != nullptr)
     {
         delete castToMapper(helper);
-        helper = NULL;
+        helper = nullptr;
     }
     checkAndDestroy(temp_double);
     checkAndDestroy(temp_int);

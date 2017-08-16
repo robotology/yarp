@@ -1,5 +1,5 @@
 /*
-* Copyright (C) 2014 iCub Facility - Istituto Italiano di Tecnologia
+* Copyright (C) 2014 Istituto Italiano di Tecnologia (IIT)
 * Author: Marco Randazzo
 * Date: June 2015
 * email:   marco.randazzo@iit.it

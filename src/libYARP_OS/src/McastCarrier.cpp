@@ -14,14 +14,14 @@ using namespace yarp::os::impl;
 using namespace yarp::os;
 
 
-ElectionOf<PeerRecord<McastCarrier> > *McastCarrier::caster = YARP_NULLPTR;
+ElectionOf<PeerRecord<McastCarrier> > *McastCarrier::caster = nullptr;
 
 ElectionOf<PeerRecord<McastCarrier> >& McastCarrier::getCaster() {
     NetworkBase::lock();
-    if (caster==YARP_NULLPTR) {
+    if (caster==nullptr) {
         caster = new ElectionOf<PeerRecord<McastCarrier> >;
         NetworkBase::unlock();
-        if (caster==YARP_NULLPTR) {
+        if (caster==nullptr) {
             YARP_ERROR(Logger::get(), "No memory for McastCarrier::caster");
             std::exit(1);
         }
@@ -33,7 +33,7 @@ ElectionOf<PeerRecord<McastCarrier> >& McastCarrier::getCaster() {
 
 
 yarp::os::impl::McastCarrier::McastCarrier() {
-    stream = YARP_NULLPTR;
+    stream = nullptr;
     key = "";
 }
 
@@ -43,7 +43,7 @@ yarp::os::impl::McastCarrier::~McastCarrier() {
         removeSender(key);
         if (elect) {
             McastCarrier *peer = getCaster().getElect(key);
-            if (peer==YARP_NULLPTR) {
+            if (peer==nullptr) {
                 // time to remove registration
                 NetworkBase::unregisterName(mcastName.c_str());
             }
@@ -84,7 +84,7 @@ bool yarp::os::impl::McastCarrier::sendHeader(ConnectionState& proto) {
         proto.getRoute().getFromName() +
         "/net=" + alt.getHost();
     McastCarrier *elect = getCaster().getElect(altKey);
-    if (elect!=YARP_NULLPTR) {
+    if (elect!=nullptr) {
         YARP_DEBUG(Logger::get(), "picking up peer mcast name");
         addr = elect->mcastAddress;
         mcastName = elect->mcastName;
@@ -166,11 +166,11 @@ bool yarp::os::impl::McastCarrier::expectExtraHeader(ConnectionState& proto) {
 
 bool yarp::os::impl::McastCarrier::becomeMcast(ConnectionState& proto, bool sender) {
     stream = new DgramTwoWayStream();
-    yAssert(stream!=YARP_NULLPTR);
+    yAssert(stream!=nullptr);
     Contact remote = proto.getStreams().getRemoteAddress();
     local = proto.getStreams().getLocalAddress();
     //(yarp::NameConfig::getEnv("YARP_MCAST_TEST")!="");
-    proto.takeStreams(YARP_NULLPTR); // free up port from tcp
+    proto.takeStreams(nullptr); // free up port from tcp
 
     if (sender) {
         /*
@@ -224,7 +224,7 @@ void yarp::os::impl::McastCarrier::removeSender(const ConstString& key) {
 bool yarp::os::impl::McastCarrier::isElect() {
     void *elect = getCaster().getElect(key);
     //void *elect = caster.getElect(mcastAddress.toString());
-    return elect==this || elect==YARP_NULLPTR;
+    return elect==this || elect==nullptr;
 }
 
 bool yarp::os::impl::McastCarrier::takeElection()

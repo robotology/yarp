@@ -1,7 +1,7 @@
 // -*- mode:C++ { } tab-width:4 { } c-basic-offset:4 { } indent-tabs-mode:nil -*-
 
 /*
- * Copyright (C) 2015 iCub Facility
+ * Copyright (C) 2015 Istituto Italiano di Tecnologia (IIT)
  * Authors: Ali Paikan
  * CopyPolicy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
  *
@@ -61,7 +61,7 @@ bool YarpFixManager::setup(int argc, char** argv) {
         enableRestrictedMode();
 
         // load the fixture (application xml)
-        char* szAppName = YARP_NULLPTR;
+        char* szAppName = nullptr;
         ret = addApplication(appfile.c_str(), &szAppName, true);
         RTF_ASSERT_ERROR_IF(ret,
                             "yarpmanager (addApplication) cannot setup the fixture because " +
@@ -75,7 +75,7 @@ bool YarpFixManager::setup(int argc, char** argv) {
         if (szAppName)
         {
             delete [] szAppName;
-            szAppName = YARP_NULLPTR;
+            szAppName = nullptr;
         }
     }
 
@@ -101,7 +101,7 @@ void YarpFixManager::tearDown() {
 
 void YarpFixManager::onExecutableFailed(void* which) {
     Executable* exe = (Executable*) which;
-    RTF_ASSERT_ERROR_IF(exe!=NULL, "Executable is null!");
+    RTF_ASSERT_ERROR_IF(exe!=nullptr, "Executable is null!");
     TestMessage msg(Asserter::format("Fixture %s collapsed", fixtureName.c_str()),
                     Asserter::format("Module %s is failed!", exe->getCommand()),
                     RTF_SOURCEFILE(), RTF_SOURCELINE());
@@ -110,7 +110,7 @@ void YarpFixManager::onExecutableFailed(void* which) {
 
 void YarpFixManager::onCnnFailed(void* which) {
     Connection* cnn = (Connection*) which;
-    RTF_ASSERT_ERROR_IF(cnn!=NULL, "Connection is null!");
+    RTF_ASSERT_ERROR_IF(cnn!=nullptr, "Connection is null!");
     TestMessage msg(Asserter::format("Fixture %s collapsed", fixtureName.c_str()),
                     Asserter::format("Connection %s - %s is failed!",
                                      cnn->from(), cnn->to()),

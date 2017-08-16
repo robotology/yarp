@@ -1,6 +1,9 @@
 # Copyright: (C) 2009, 2010 RobotCub Consortium
-#                2016, 2017 iCub Facility, Istituto Italiano di Tecnologia
-# Authors: Paul Fitzpatrick, Giorgio Metta, Lorenzo Natale, Daniele E. Domenichelli
+#                2016, 2017 Istituto Italiano di Tecnologia (IIT)
+# Authors: Paul Fitzpatrick <paulfitz@alum.mit.edu>
+#          Giorgio Metta <giorgio.metta@iit.it>
+#          Lorenzo Natale <lorenzo.natale@iit.it>
+#          Daniele E. Domenichelli <daniele.domenichelli@iit.it>
 # CopyPolicy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
 
 

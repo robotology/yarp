@@ -1,4 +1,4 @@
-// Copyright: (C) 2016 iCub Facility
+// Copyright: (C) 2016 Istituto Italiano di Tecnologia (IIT)
 // Authors: Alberto Cardellino <alberto.cardellino@iit.it>
 // CopyPolicy: Released under the terms of the GNU GPL v2.0.
 

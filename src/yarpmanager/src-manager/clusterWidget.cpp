@@ -1,6 +1,6 @@
 /*
- * Copyright (C) 2017 iCub Facility
- * Authors: Nicolo' Genesio <nicolo.genesio@iit.it>
+ * Copyright (C) 2017 Istituto Italiano di Tecnologia (IIT)
+ * Authors: Nicolò Genesio <nicolo.genesio@iit.it>
  * CopyPolicy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
  */
 
@@ -26,7 +26,7 @@ using namespace yarp::manager;
 
 ClusterWidget::ClusterWidget(QWidget *parent) :
     QWidget(parent),
-    ui(new Ui::ClusterWidget), confFile(""), clusLoader(YARP_NULLPTR)
+    ui(new Ui::ClusterWidget), confFile(""), clusLoader(nullptr)
 {
 
 #ifdef WIN32
@@ -475,7 +475,7 @@ ClusterWidget::~ClusterWidget()
     if (clusLoader)
     {
         delete clusLoader;
-        clusLoader = YARP_NULLPTR;
+        clusLoader = nullptr;
     }
     delete ui;
 }

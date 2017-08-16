@@ -41,6 +41,17 @@ target_include_directories(YARP_name PUBLIC $<BUILD_INTERFACE:${CMAKE_CURRENT_SO
 target_link_libraries(YARP_name PRIVATE YARP::YARP_OS
                                         ${ACE_LIBRARIES})
 
+if(NOT CMAKE_MINIMUM_REQUIRED_VERSION VERSION_LESS 3.1)
+  message(AUTHOR_WARNING "CMAKE_MINIMUM_REQUIRED_VERSION is now ${CMAKE_MINIMUM_REQUIRED_VERSION}. This check can be removed.")
+endif()
+if(CMAKE_VERSION VERSION_LESS 3.1)
+  if(DEFINED CXX11_FLAGS)
+    target_compile_options(YARP_name PUBLIC ${CXX11_FLAGS})
+  endif()
+else()
+  target_compile_features(YARP_name PUBLIC cxx_override)
+endif()
+
 set_property(TARGET YARP_name PROPERTY PUBLIC_HEADER ${YARP_name_HDRS})
 set_property(TARGET YARP_name PROPERTY PRIVATE_HEADER ${YARP_name_IMPL_HDRS})
 

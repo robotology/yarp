@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2013 iCub Facility - Istituto Italiano di Tecnologia
+ * Copyright (C) 2013 Istituto Italiano di Tecnologia (IIT)
  * Authors: Alberto Cardellino <alberto.cardellino@iit.it>
  * CopyPolicy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
  */
@@ -18,9 +18,9 @@ using namespace yarp::dev;
 
 ImplementPositionDirect::ImplementPositionDirect(IPositionDirectRaw *y) :
     iPDirect(y),
-    helper(NULL),
-    temp_int(NULL),
-    temp_double(NULL)
+    helper(nullptr),
+    temp_int(nullptr),
+    temp_double(nullptr)
 {
 }
 
@@ -31,26 +31,26 @@ ImplementPositionDirect::~ImplementPositionDirect()
 
 bool ImplementPositionDirect::initialize(int size, const int *amap, const double *enc, const double *zos)
 {
-    if(helper != NULL)
+    if(helper != nullptr)
         return false;
 
-    helper=(void *)(new ControlBoardHelper(size, amap, enc, zos,0));
-    yAssert(helper != NULL);
+    helper=(void *)(new ControlBoardHelper(size, amap, enc, zos,nullptr));
+    yAssert(helper != nullptr);
 
     temp_double=new double [size];
-    yAssert(temp_double != NULL);
+    yAssert(temp_double != nullptr);
 
     temp_int=new int [size];
-    yAssert(temp_int != NULL);
+    yAssert(temp_int != nullptr);
     return true;
 }
 
 bool ImplementPositionDirect::uninitialize()
 {
-    if(helper!=0)
+    if(helper!=nullptr)
     {
         delete castToMapper(helper);
-        helper=0;
+        helper=nullptr;
     }
 
     checkAndDestroy(temp_double);

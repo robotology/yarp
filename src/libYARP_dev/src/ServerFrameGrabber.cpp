@@ -17,20 +17,20 @@ using namespace yarp::sig;
 
 
 ServerFrameGrabber::ServerFrameGrabber() {
-    rgbVis_p = NULL;
-    fgImage = NULL;
-    fgImageRaw = NULL;
-    fgSound = NULL;
-    fgAv = NULL;
-    fgCtrl = NULL;
-    fgCtrl2 = NULL;
-    fgTimed = NULL;
+    rgbVis_p = nullptr;
+    fgImage = nullptr;
+    fgImageRaw = nullptr;
+    fgSound = nullptr;
+    fgAv = nullptr;
+    fgCtrl = nullptr;
+    fgCtrl2 = nullptr;
+    fgTimed = nullptr;
     spoke = false;
     canDrop = true;
     addStamp = false;
     active = false;
     singleThreaded = false;
-    p2 = NULL;
+    p2 = nullptr;
 }
 
 bool ServerFrameGrabber::close() {
@@ -39,9 +39,9 @@ bool ServerFrameGrabber::close() {
     }
     active = false;
     thread.stop();
-    if (p2!=NULL) {
+    if (p2!=nullptr) {
         delete p2;
-        p2 = NULL;
+        p2 = nullptr;
     }
     return true;
 }
@@ -87,7 +87,7 @@ bool ServerFrameGrabber::open(yarp::os::Searchable& config) {
         bool a = true;
         bool v = true;
         bool vraw = true;
-        if (str!=NULL) {
+        if (str!=nullptr) {
             a = str->hasAudio();
             v = str->hasVideo();
             vraw = str->hasRawVideo();
@@ -139,26 +139,26 @@ bool ServerFrameGrabber::open(yarp::os::Searchable& config) {
         !config.check("shared-ports",
                       "If present, send audio and images on same port")) {
         separatePorts = true;
-        yAssert(p2==NULL);
+        yAssert(p2==nullptr);
         p2 = new Port;
-        yAssert(p2!=NULL);
+        yAssert(p2!=nullptr);
         p2->open(config.check("name2",Value("/grabber2"),
                               "Name of second port to send data on, when audio and images sent separately").asString());
     }
 
-    if (fgAv!=NULL) {
+    if (fgAv!=nullptr) {
         if (separatePorts) {
-            yAssert(p2!=NULL);
+            yAssert(p2!=nullptr);
             thread.attach(new DataWriter2<yarp::sig::ImageOf<yarp::sig::PixelRgb>, yarp::sig::Sound>(p,*p2,*this,canDrop,addStamp));
         } else {
             thread.attach(new DataWriter<ImageRgbSound>(p,*this,canDrop,
                                                         addStamp));
         }
-    } else if (fgImage!=NULL) {
+    } else if (fgImage!=nullptr) {
         thread.attach(new DataWriter<yarp::sig::ImageOf<yarp::sig::PixelRgb> >(p,*this,canDrop,addStamp,fgTimed));
-    } else if (fgImageRaw!=NULL) {
+    } else if (fgImageRaw!=nullptr) {
         thread.attach(new DataWriter<yarp::sig::ImageOf<yarp::sig::PixelMono> >(p,*this,canDrop,addStamp,fgTimed));
-    } else if (fgSound!=NULL) {
+    } else if (fgSound!=nullptr) {
         thread.attach(new DataWriter<yarp::sig::Sound>(p,*this,canDrop));
     } else {
         yError("subdevice <%s> doesn't look like a framegrabber\n",
@@ -627,33 +627,33 @@ bool ServerFrameGrabber::getDatum(yarp::sig::ImageOf<yarp::sig::PixelRgb>& image
 }
 
 bool ServerFrameGrabber::getImage(yarp::sig::ImageOf<yarp::sig::PixelRgb>& image) {
-    if (fgImage==NULL) { return false; }
+    if (fgImage==nullptr) { return false; }
     return fgImage->getImage(image);
 }
 
 bool ServerFrameGrabber::getImage(yarp::sig::ImageOf<yarp::sig::PixelMono>& image) {
-    if (fgImageRaw==NULL) { return false; }
+    if (fgImageRaw==nullptr) { return false; }
     return fgImageRaw->getImage(image);
 }
 
 bool ServerFrameGrabber::getSound(yarp::sig::Sound& sound) {
-    if (fgSound==NULL) { return false; }
+    if (fgSound==nullptr) { return false; }
     return fgSound->getSound(sound);
 }
 
 bool ServerFrameGrabber::startRecording() {
-    if (fgSound==NULL) { return false; }
+    if (fgSound==nullptr) { return false; }
     return fgSound->startRecording();
 }
 
 bool ServerFrameGrabber::stopRecording() {
-    if (fgSound==NULL) { return false; }
+    if (fgSound==nullptr) { return false; }
     return fgSound->stopRecording();
 }
 
 bool ServerFrameGrabber::getAudioVisual(yarp::sig::ImageOf<yarp::sig::PixelRgb>& image,
                             yarp::sig::Sound& sound) {
-    if (fgAv==NULL) { return false; }
+    if (fgAv==nullptr) { return false; }
     return fgAv->getAudioVisual(image,sound);
 }
 
@@ -671,44 +671,44 @@ int ServerFrameGrabber::width() const {
 
 // set
 bool ServerFrameGrabber::setBrightness(double v) {
-    if (fgCtrl==NULL) { return false; }
+    if (fgCtrl==nullptr) { return false; }
     return fgCtrl->setBrightness(v);
 }
 bool ServerFrameGrabber::setExposure(double v)
 {
-    if (fgCtrl==NULL) { return false; }
+    if (fgCtrl==nullptr) { return false; }
     return fgCtrl->setExposure(v);
 }
 bool ServerFrameGrabber::setSharpness(double v) {
-    if (fgCtrl==NULL) { return false; }
+    if (fgCtrl==nullptr) { return false; }
     return fgCtrl->setSharpness(v);
 }
 bool ServerFrameGrabber::setWhiteBalance(double blue, double red) {
-    if (fgCtrl==NULL) { return false; }
+    if (fgCtrl==nullptr) { return false; }
     return fgCtrl->setWhiteBalance(blue,red);
 }
 bool ServerFrameGrabber::setHue(double v) {
-    if (fgCtrl==NULL) { return false; }
+    if (fgCtrl==nullptr) { return false; }
     return fgCtrl->setHue(v);
 }
 bool ServerFrameGrabber::setSaturation(double v) {
-    if (fgCtrl==NULL) { return false; }
+    if (fgCtrl==nullptr) { return false; }
     return fgCtrl->setSaturation(v);
 }
 bool ServerFrameGrabber::setGamma(double v) {
-    if (fgCtrl==NULL) { return false; }
+    if (fgCtrl==nullptr) { return false; }
     return fgCtrl->setGamma(v);
 }
 bool ServerFrameGrabber::setShutter(double v) {
-    if (fgCtrl==NULL) { return false; }
+    if (fgCtrl==nullptr) { return false; }
     return fgCtrl->setShutter(v);
 }
 bool ServerFrameGrabber::setGain(double v) {
-    if (fgCtrl==NULL) { return false; }
+    if (fgCtrl==nullptr) { return false; }
     return fgCtrl->setGain(v);
 }
 bool ServerFrameGrabber::setIris(double v) {
-    if (fgCtrl==NULL) { return false; }
+    if (fgCtrl==nullptr) { return false; }
     return fgCtrl->setIris(v);
 }
 
@@ -734,43 +734,43 @@ virtual bool setCaptureQuality(double v) {
 // get
 
 double ServerFrameGrabber::getBrightness() {
-    if (fgCtrl==NULL) { return 0.0; }
+    if (fgCtrl==nullptr) { return 0.0; }
     return fgCtrl->getBrightness();
 }
 double ServerFrameGrabber::getExposure() {
-    if (fgCtrl==NULL) { return false; }
+    if (fgCtrl==nullptr) { return false; }
     return fgCtrl->getExposure();
 }
 double ServerFrameGrabber::getSharpness() {
-    if (fgCtrl==NULL) { return 0.0; }
+    if (fgCtrl==nullptr) { return 0.0; }
     return fgCtrl->getSharpness();
 }
 bool ServerFrameGrabber::getWhiteBalance(double &blue, double &red) {
-    if (fgCtrl==NULL) { return false; }
+    if (fgCtrl==nullptr) { return false; }
     return fgCtrl->getWhiteBalance(blue,red);
 }
 double ServerFrameGrabber::getHue() {
-    if (fgCtrl==NULL) { return 0.0; }
+    if (fgCtrl==nullptr) { return 0.0; }
     return fgCtrl->getHue();
 }
 double ServerFrameGrabber::getSaturation() {
-    if (fgCtrl==NULL) { return 0.0; }
+    if (fgCtrl==nullptr) { return 0.0; }
     return fgCtrl->getSaturation();
 }
 double ServerFrameGrabber::getGamma() {
-    if (fgCtrl==NULL) { return 0.0; }
+    if (fgCtrl==nullptr) { return 0.0; }
     return fgCtrl->getGamma();
 }
 double ServerFrameGrabber::getShutter() {
-    if (fgCtrl==NULL) { return 0.0; }
+    if (fgCtrl==nullptr) { return 0.0; }
     return fgCtrl->getShutter();
 }
 double ServerFrameGrabber::getGain() {
-    if (fgCtrl==NULL) { return 0.0; }
+    if (fgCtrl==nullptr) { return 0.0; }
     return fgCtrl->getGain();
 }
 double ServerFrameGrabber::getIris() {
-    if (fgCtrl==NULL) { return 0.0; }
+    if (fgCtrl==nullptr) { return 0.0; }
     return fgCtrl->getIris();
 }
 

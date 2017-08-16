@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2014 iCub Facility - Istituto Italiano di Tecnologia
+ * Copyright (C) 2014 Istituto Italiano di Tecnologia (IIT)
  * Author: Davide Perrone
  * Date: Feb 2014
  * email:   dperrone@aitek.it
@@ -85,8 +85,8 @@ MainWindow::MainWindow(QWidget *parent) :
     qRegisterMetaType< QVector<int> >("QVector<int>");
     ui->mainToolBar->setContextMenuPolicy(Qt::PreventContextMenu);
     ui->menuBar->setContextMenuPolicy(Qt::PreventContextMenu);
-    builderToolBar = NULL;
-    prevWidget = NULL;
+    builderToolBar = nullptr;
+    prevWidget = nullptr;
 
 
 
@@ -411,12 +411,12 @@ bool MainWindow::loadRecursiveTemplates(const char* szPath)
 
     DIR *dir;
     struct dirent *entry;
-    if ((dir = opendir(strPath.c_str())) == NULL)
+    if ((dir = opendir(strPath.c_str())) == nullptr)
         return false;
 
     // loading from current folder
     yarp::manager::AppTemplate* tmp;
-    yarp::manager::XmlTempLoader tempload(strPath.c_str(), NULL);
+    yarp::manager::XmlTempLoader tempload(strPath.c_str(), nullptr);
     if(tempload.init())
     {
         while((tmp = tempload.getNextAppTemplate())){
@@ -451,7 +451,7 @@ bool MainWindow::loadRecursiveApplications(const char* szPath)
 
     DIR *dir;
     struct dirent *entry;
-    if ((dir = opendir(strPath.c_str())) == NULL)
+    if ((dir = opendir(strPath.c_str())) == nullptr)
         return false;
 
     lazyManager.addApplications(strPath.c_str());
@@ -938,7 +938,7 @@ void MainWindow::onTabChangeItem(int index)
             prevWidget = w;
         }else{
             ui->actionRefresh_Status->setEnabled(false);
-            prevWidget = NULL;
+            prevWidget = nullptr;
         }
         ui->actionSelect_All->setEnabled(false);
         ui->actionExport_Graph->setEnabled(false);
@@ -997,7 +997,7 @@ void MainWindow::onNewApplication()
                 if(appName)
                 {
                     delete [] appName;
-                    appName = YARP_NULLPTR;
+                    appName = nullptr;
                 }
                 return;
             }
@@ -1019,7 +1019,7 @@ void MainWindow::onNewApplication()
         if(appName)
         {
             delete [] appName;
-            appName = YARP_NULLPTR;
+            appName = nullptr;
         }
         delete newApplicationWizard;
         QFile f(fileName);
@@ -1048,7 +1048,7 @@ void MainWindow::onNewResource()
     }
 
     yarp::manager::LocalBroker launcher;
-    if(launcher.init(ext_editor.c_str(), fileName.toLatin1().data(), NULL, NULL, NULL, NULL)){
+    if(launcher.init(ext_editor.c_str(), fileName.toLatin1().data(), nullptr, nullptr, nullptr, nullptr)){
         if(!launcher.start() && strlen(launcher.error())){
             QString msg = QString("Error while launching %1. %2").arg(ext_editor.c_str()).arg(launcher.error());
             logger->addError(msg.toLatin1().data());
@@ -1075,7 +1075,7 @@ void MainWindow::onNewModule()
     }
 
     yarp::manager::LocalBroker launcher;
-    if(launcher.init(ext_editor.c_str(), fileName.toLatin1().data(), NULL, NULL, NULL, NULL)){
+    if(launcher.init(ext_editor.c_str(), fileName.toLatin1().data(), nullptr, nullptr, nullptr, nullptr)){
         if(!launcher.start() && strlen(launcher.error())){
             QString msg = QString("Error while launching %1. %2").arg(ext_editor.c_str()).arg(launcher.error());
             logger->addError(msg.toLatin1().data());
@@ -1182,7 +1182,7 @@ void MainWindow::onSaveAs()
         return;
     }
     if(fileName.trimmed().size() == 0 || fileName.contains(" ")){
-        QMessageBox::critical(NULL, QObject::tr("Error"), QObject::tr(string("Invalid file name " + fileName.toStdString()).c_str()));
+        QMessageBox::critical(nullptr, QObject::tr("Error"), QObject::tr(string("Invalid file name " + fileName.toStdString()).c_str()));
         return;
     }
 
@@ -1240,7 +1240,7 @@ void MainWindow::onOpen()
         return;
     }
 
-    char* name = YARP_NULLPTR;
+    char* name = nullptr;
 
     if(lazyManager.addApplication(fileName.toLatin1().data(), &name, true)){
         QString appName(name);
@@ -1249,7 +1249,7 @@ void MainWindow::onOpen()
     if(name)
     {
         delete [] name;
-        name = YARP_NULLPTR;
+        name = nullptr;
     }
 
     if(lazyManager.addResource(fileName.toLatin1().data())){
@@ -1264,7 +1264,7 @@ void MainWindow::onOpen()
 /*! \brief Opens the About Dialog */
 void MainWindow::onAbout()
 {
-    QString copyright = "2014 (C) iCub Facility\nIstituto Italiano di Tecnologia";
+    QString copyright = "2014 (C) Istituto Italiano di Tecnologia (IIT)";
     QString name = APP_NAME;
     QString version = APP_VERSION;
     AboutDlg dlg(name,version,copyright,"http://www.icub.org/");

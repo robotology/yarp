@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2017 iCub Facility, Istituto Italiano di Tecnologia
+ * Copyright (C) 2017 Istituto Italiano di Tecnologia (IIT)
  * Authors: Andrea Ruzzenenti <andrea.ruzzenenti@iit.it>
  * CopyPolicy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
  */
@@ -58,35 +58,35 @@ public:
     SDLJoypad();
     virtual ~SDLJoypad();
     //DeviceDriver
-    virtual bool open(yarp::os::Searchable& config) YARP_OVERRIDE;
-    virtual bool close() YARP_OVERRIDE;
+    virtual bool open(yarp::os::Searchable& config) override;
+    virtual bool close() override;
 
     //IJoypadController
-    virtual bool getRawAxisCount(unsigned int& axis_count) YARP_OVERRIDE;
+    virtual bool getRawAxisCount(unsigned int& axis_count) override;
 
-    virtual bool getRawButtonCount(unsigned int& button_count) YARP_OVERRIDE;
+    virtual bool getRawButtonCount(unsigned int& button_count) override;
 
-    virtual bool getRawHatCount(unsigned int& hat_count) YARP_OVERRIDE;
+    virtual bool getRawHatCount(unsigned int& hat_count) override;
 
-    virtual bool getRawTrackballCount(unsigned int& trackball_count) YARP_OVERRIDE;
+    virtual bool getRawTrackballCount(unsigned int& trackball_count) override;
 
-    virtual bool getRawTouchSurfaceCount(unsigned int& touch_count) YARP_OVERRIDE;
+    virtual bool getRawTouchSurfaceCount(unsigned int& touch_count) override;
 
-    virtual bool getRawStickCount(unsigned int& stick_count) YARP_OVERRIDE;
+    virtual bool getRawStickCount(unsigned int& stick_count) override;
 
-    virtual bool getRawStickDoF(unsigned int  stick_id, unsigned int& DoF) YARP_OVERRIDE;
+    virtual bool getRawStickDoF(unsigned int  stick_id, unsigned int& DoF) override;
 
-    virtual bool getRawButton(unsigned int  button_id, float& value) YARP_OVERRIDE;
+    virtual bool getRawButton(unsigned int  button_id, float& value) override;
 
-    virtual bool getRawTrackball(unsigned int  trackball_id, yarp::sig::Vector& value) YARP_OVERRIDE;
+    virtual bool getRawTrackball(unsigned int  trackball_id, yarp::sig::Vector& value) override;
 
-    virtual bool getRawHat(unsigned int  hat_id, unsigned char& value) YARP_OVERRIDE;
+    virtual bool getRawHat(unsigned int  hat_id, unsigned char& value) override;
 
-    virtual bool getRawAxis(unsigned int  axis_id, double& value) YARP_OVERRIDE;
+    virtual bool getRawAxis(unsigned int  axis_id, double& value) override;
 
-    virtual bool getRawStick(unsigned int  stick_id, yarp::sig::Vector& value, JoypadCtrl_coordinateMode coordinate_mode) YARP_OVERRIDE;
+    virtual bool getRawStick(unsigned int  stick_id, yarp::sig::Vector& value, JoypadCtrl_coordinateMode coordinate_mode) override;
 
-    virtual bool getRawTouch(unsigned int  touch_id, yarp::sig::Vector& value) YARP_OVERRIDE;
+    virtual bool getRawTouch(unsigned int  touch_id, yarp::sig::Vector& value) override;
 };
 
 

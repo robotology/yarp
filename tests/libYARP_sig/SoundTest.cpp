@@ -63,8 +63,8 @@ public:
         report(0,"reading...");
         Sound *result = buf.read();
 
-        checkTrue(result!=NULL,"got something check");
-        if (result!=NULL) {
+        checkTrue(result!=nullptr,"got something check");
+        if (result!=nullptr) {
             checkEqual(snd1.getSamples(),result->getSamples(),
                        "sample ct check");
             checkEqual(snd1.getFrequency(),result->getFrequency(),

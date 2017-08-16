@@ -40,14 +40,14 @@ private:
 
 public:
     Echo() : mutex(1) {
-        put = NULL;
+        put = nullptr;
         port.useCallback(*this);
         port.setStrict();
         muted = false;
         saving = false;
         samples = 0;
         channels = 0;
-        put = NULL;
+        put = nullptr;
     }
 
     bool open(Searchable& p) {
@@ -65,7 +65,7 @@ public:
             if (!p.check("mute")) {
                 // Make sure we can write sound
                 poly.view(put);
-                if (put==NULL) {
+                if (put==nullptr) {
                     yError("cannot open interface\n");
                     return false;
                 }
@@ -116,7 +116,7 @@ public:
           }
         */
         if (!muted) {
-            if (put!=NULL) {
+            if (put!=nullptr) {
                 put->renderSound(sound);
             }
         }

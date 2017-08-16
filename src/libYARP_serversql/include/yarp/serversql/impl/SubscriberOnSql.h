@@ -25,12 +25,12 @@ namespace impl {
 class SubscriberOnSql : public Subscriber {
 public:
     SubscriberOnSql() : mutex(1) {
-        implementation = YARP_NULLPTR;
+        implementation = nullptr;
         verbose = false;
     }
 
     virtual ~SubscriberOnSql() {
-        if (implementation != YARP_NULLPTR) {
+        if (implementation != nullptr) {
             close();
         }
     }

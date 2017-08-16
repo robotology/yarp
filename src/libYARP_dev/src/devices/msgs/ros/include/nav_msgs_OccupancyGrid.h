@@ -48,7 +48,7 @@ public:
     data.clear();
   }
 
-  bool readBare(yarp::os::ConnectionReader& connection) YARP_OVERRIDE {
+  bool readBare(yarp::os::ConnectionReader& connection) override {
     // *** header ***
     if (!header.read(connection)) return false;
 
@@ -62,7 +62,7 @@ public:
     return !connection.isError();
   }
 
-  bool readBottle(yarp::os::ConnectionReader& connection) YARP_OVERRIDE {
+  bool readBottle(yarp::os::ConnectionReader& connection) override {
     connection.convertTextMode();
     yarp::os::idl::WireReader reader(connection);
     if (!reader.readListHeader(3)) return false;
@@ -84,12 +84,12 @@ public:
   }
 
   using yarp::os::idl::WirePortable::read;
-  bool read(yarp::os::ConnectionReader& connection) YARP_OVERRIDE {
+  bool read(yarp::os::ConnectionReader& connection) override {
     if (connection.isBareMode()) return readBare(connection);
     return readBottle(connection);
   }
 
-  bool writeBare(yarp::os::ConnectionWriter& connection) YARP_OVERRIDE {
+  bool writeBare(yarp::os::ConnectionWriter& connection) override {
     // *** header ***
     if (!header.write(connection)) return false;
 
@@ -102,7 +102,7 @@ public:
     return !connection.isError();
   }
 
-  bool writeBottle(yarp::os::ConnectionWriter& connection) YARP_OVERRIDE {
+  bool writeBottle(yarp::os::ConnectionWriter& connection) override {
     connection.appendInt(BOTTLE_TAG_LIST);
     connection.appendInt(3);
 
@@ -123,7 +123,7 @@ public:
   }
 
   using yarp::os::idl::WirePortable::write;
-  bool write(yarp::os::ConnectionWriter& connection) YARP_OVERRIDE {
+  bool write(yarp::os::ConnectionWriter& connection) override {
     if (connection.isBareMode()) return writeBare(connection);
     return writeBottle(connection);
   }
@@ -196,7 +196,7 @@ float64 w";
   }
 
   // Name the class, ROS will need this
-  yarp::os::Type getType() YARP_OVERRIDE {
+  yarp::os::Type getType() override {
     yarp::os::Type typ = yarp::os::Type::byName("nav_msgs/OccupancyGrid","nav_msgs/OccupancyGrid");
     typ.addProperty("md5sum",yarp::os::Value("3381f2d731d4076ec5c71b0759edbe4e"));
     typ.addProperty("message_definition",yarp::os::Value(getTypeText()));

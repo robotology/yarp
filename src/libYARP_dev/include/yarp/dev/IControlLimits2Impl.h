@@ -1,5 +1,5 @@
 /*
- * Copyright: 2013 iCub Facility - Istituto Italiano di Tecnologia
+ * Copyright: (C) 2013 Istituto Italiano di Tecnologia (IIT)
  * Authors: Alberto Cardellino <alberto.cardellino@iit.it>
  * CopyPolicy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
  */
@@ -65,10 +65,10 @@ public:
      * Destructor. Perform uninitialize if needed.
      */
     virtual ~ImplementControlLimits2();
-    virtual bool setLimits(int axis, double min, double max) YARP_OVERRIDE;
-    virtual bool getLimits(int axis, double *min, double *max) YARP_OVERRIDE;
-    virtual bool setVelLimits(int axis, double min, double max) YARP_OVERRIDE;
-    virtual bool getVelLimits(int axis, double *min, double *max) YARP_OVERRIDE;
+    virtual bool setLimits(int axis, double min, double max) override;
+    virtual bool getLimits(int axis, double *min, double *max) override;
+    virtual bool setVelLimits(int axis, double min, double max) override;
+    virtual bool getVelLimits(int axis, double *min, double *max) override;
 };
 
 
@@ -110,22 +110,22 @@ public:
      */
     virtual ~StubImplControlLimits2Raw() {};
 
-    virtual bool setLimitsRaw(int axis, double min, double max) YARP_OVERRIDE
+    virtual bool setLimitsRaw(int axis, double min, double max) override
     {
         return NOT_YET_IMPLEMENTED("setLimitsRaw");
     }
 
-    virtual bool getLimitsRaw(int axis, double *min, double *max) YARP_OVERRIDE
+    virtual bool getLimitsRaw(int axis, double *min, double *max) override
     {
         return NOT_YET_IMPLEMENTED("getLimitsRaw");
     }
 
-    virtual bool setVelLimitsRaw(int axis, double min, double max) YARP_OVERRIDE
+    virtual bool setVelLimitsRaw(int axis, double min, double max) override
     {
         return NOT_YET_IMPLEMENTED("setVelLimitsRaw");
     }
 
-    virtual bool getVelLimitsRaw(int axis, double *min, double *max) YARP_OVERRIDE
+    virtual bool getVelLimitsRaw(int axis, double *min, double *max) override
     {
         return NOT_YET_IMPLEMENTED("getVelLimitsRaw");
     }

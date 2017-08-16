@@ -16,7 +16,7 @@ void yarp::os::impl::getTime(YARP_timeval& now) {
 #ifdef YARP_HAS_ACE
         now = ACE_OS::gettimeofday();
 #else
-        struct timezone *tz = YARP_NULLPTR;
+        struct timezone *tz = nullptr;
         gettimeofday(&now, tz);
 #endif
     } else {

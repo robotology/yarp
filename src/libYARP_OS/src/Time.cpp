@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2006, 2011 Department of Robotics Brain and Cognitive Sciences - Istituto Italiano di Tecnologia, Anne van Rossum
+ * Copyright (C) 2006, 2011 Istituto Italiano di Tecnologia (IIT), Anne van Rossum
  * Authors: Paul Fitzpatrick, Anne van Rossum, Alberto Cardellino
  * CopyPolicy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
  */
@@ -49,7 +49,7 @@ void printNoClock_ErrorMessage()
 static Clock *getClock()
 {
     // if no clock was ever set, fallback to System Clock
-    if(pclock == NULL)
+    if(pclock == nullptr)
     {
         /*
          * Assuming this should never happen, if we do get here, what shall be done??
@@ -166,7 +166,7 @@ void Time::useNetworkClock(const ConstString& clock, ConstString localPortName)
     Clock *old_pclock = pclock;   // store current clock pointer to delete it afterward
     bool old_clock_owned = clock_owned;
     NetworkClock *_networkClock = new NetworkClock();
-    if(_networkClock == YARP_NULLPTR)
+    if(_networkClock == nullptr)
     {
         YARP_FAIL(Logger::get(), "failed creating NetworkClock client");
     }
@@ -205,7 +205,7 @@ void Time::useNetworkClock(const ConstString& clock, ConstString localPortName)
 }
 
 void Time::useCustomClock(Clock *clock) {
-    if(clock == NULL)
+    if(clock == nullptr)
         YARP_FAIL(Logger::get(), "failed configuring CustomClock client");
 
     if(!clock->isValid())

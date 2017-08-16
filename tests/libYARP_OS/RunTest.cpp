@@ -31,7 +31,7 @@ public:
     YarpRun()
     {
         _argc=0;
-        _argv=0;
+        _argv=nullptr;
     }
     ~YarpRun()
     {
@@ -42,7 +42,7 @@ public:
 
         if (_argv)
             delete [] _argv;
-        _argv=0;
+        _argv=nullptr;
     }
 
     void start(int argc, char **argv)

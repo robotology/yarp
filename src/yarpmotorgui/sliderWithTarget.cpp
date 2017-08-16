@@ -1,6 +1,6 @@
 /*
  * Copyright (C) 2010 RobotCub Consortium, European Commission FP6 Project IST-004370
- * Copyright (C) 2015 iCub Facility - Istituto Italiano di Tecnologia
+ * Copyright (C) 2015 Istituto Italiano di Tecnologia (IIT)
  * Author: Marco Randazzo <marco.randazzo@iit.it>
  * CopyPolicy: Released under the terms of the GPLv2 or later, see GPL.TXT
  */
@@ -17,7 +17,7 @@ double my_round(double number)
     return number < 0.0 ? ceil(number - 0.5) : floor(number + 0.5);
 }
 
-SliderWithTarget::SliderWithTarget(QWidget * parent, bool _hasTargetOption) : QSlider(Qt::Horizontal, 0)
+SliderWithTarget::SliderWithTarget(QWidget * parent, bool _hasTargetOption) : QSlider(Qt::Horizontal, nullptr)
 {
     sliderLabel = new QLabel(this);
     sliderLabel->setObjectName(QStringLiteral("sliderLabel"));

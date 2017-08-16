@@ -45,7 +45,7 @@ public:
      */
     Contact toAddress() const;
 
-    ConstString getCarrierModifier(const char *mod, bool *hasModifier = YARP_NULLPTR);
+    ConstString getCarrierModifier(const char *mod, bool *hasModifier = nullptr);
 
 private:
     ConstString txt;

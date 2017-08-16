@@ -1,5 +1,5 @@
 /*
- * Copyright: 2014 iCub Facility - Istituto Italiano di Tecnologia
+ * Copyright: (C) 2014 Istituto Italiano di Tecnologia (IIT)
  * Authors: Alberto Cardellino <alberto.cardellino@iit.it>
  * CopyPolicy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
  */
@@ -74,13 +74,13 @@ public:
     virtual ~ImplementInteractionMode();
 
     // Methods are documented in the <yarp/dev/IInteractionMode.h> file
-    virtual bool getInteractionMode(int axis, yarp::dev::InteractionModeEnum* mode) YARP_OVERRIDE;
-    virtual bool getInteractionModes(int n_joints, int *joints, yarp::dev::InteractionModeEnum* modes) YARP_OVERRIDE;
-    virtual bool getInteractionModes(yarp::dev::InteractionModeEnum* modes) YARP_OVERRIDE;
+    virtual bool getInteractionMode(int axis, yarp::dev::InteractionModeEnum* mode) override;
+    virtual bool getInteractionModes(int n_joints, int *joints, yarp::dev::InteractionModeEnum* modes) override;
+    virtual bool getInteractionModes(yarp::dev::InteractionModeEnum* modes) override;
 
-    virtual bool setInteractionMode(int axis, yarp::dev::InteractionModeEnum mode) YARP_OVERRIDE;
-    virtual bool setInteractionModes(int n_joints, int *joints, yarp::dev::InteractionModeEnum* modes) YARP_OVERRIDE;
-    virtual bool setInteractionModes(yarp::dev::InteractionModeEnum* modes) YARP_OVERRIDE;
+    virtual bool setInteractionMode(int axis, yarp::dev::InteractionModeEnum mode) override;
+    virtual bool setInteractionModes(int n_joints, int *joints, yarp::dev::InteractionModeEnum* modes) override;
+    virtual bool setInteractionModes(yarp::dev::InteractionModeEnum* modes) override;
 };
 
 
@@ -122,32 +122,32 @@ public:
      */
     virtual ~StubImplInteractionModeRaw() {}
 
-    virtual bool getInteractionModeRaw(int axis, yarp::dev::InteractionModeEnum* mode) YARP_OVERRIDE
+    virtual bool getInteractionModeRaw(int axis, yarp::dev::InteractionModeEnum* mode) override
     {
         return NOT_YET_IMPLEMENTED("getInteractionModeRaw");
     }
 
-    virtual bool getInteractionModesRaw(int n_joints, int *joints, yarp::dev::InteractionModeEnum* modes) YARP_OVERRIDE
+    virtual bool getInteractionModesRaw(int n_joints, int *joints, yarp::dev::InteractionModeEnum* modes) override
     {
         return NOT_YET_IMPLEMENTED("getInteractionModesRaw");
     }
 
-    virtual bool getInteractionModesRaw(yarp::dev::InteractionModeEnum* modes) YARP_OVERRIDE
+    virtual bool getInteractionModesRaw(yarp::dev::InteractionModeEnum* modes) override
     {
         return NOT_YET_IMPLEMENTED("getInteractionModesRaw");
     }
 
-    virtual bool setInteractionModeRaw(int axis, yarp::dev::InteractionModeEnum mode) YARP_OVERRIDE
+    virtual bool setInteractionModeRaw(int axis, yarp::dev::InteractionModeEnum mode) override
     {
         return NOT_YET_IMPLEMENTED("setInteractionModeRaw");
     }
 
-    virtual bool setInteractionModesRaw(int n_joints, int *joints, yarp::dev::InteractionModeEnum* modes) YARP_OVERRIDE
+    virtual bool setInteractionModesRaw(int n_joints, int *joints, yarp::dev::InteractionModeEnum* modes) override
     {
         return NOT_YET_IMPLEMENTED("setInteractionModesRaw");
     }
 
-    virtual bool setInteractionModesRaw(yarp::dev::InteractionModeEnum* modes) YARP_OVERRIDE
+    virtual bool setInteractionModesRaw(yarp::dev::InteractionModeEnum* modes) override
     {
         return NOT_YET_IMPLEMENTED("setInteractionModesRaw");
     }

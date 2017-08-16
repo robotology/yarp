@@ -168,7 +168,7 @@ Contact NameServer::queryName(const ConstString& name) {
     }
 
     NameRecord *rec = getNameRecord(base, false);
-    if (rec!=YARP_NULLPTR) {
+    if (rec!=nullptr) {
         if (pat!="") {
             ConstString ip = rec->matchProp("ips", pat);
             if (ip!="") {
@@ -189,7 +189,7 @@ NameServer::NameRecord *NameServer::getNameRecord(const ConstString& name,
     std::map<ConstString, NameRecord>::iterator entry = nameMap.find(name);
     if (entry == nameMap.end()) {
         if (!create) {
-            return YARP_NULLPTR;
+            return nullptr;
         }
         nameMap[name] = NameRecord();
         entry = nameMap.find(name);
@@ -204,7 +204,7 @@ NameServer::HostRecord *NameServer::getHostRecord(const ConstString& name,
     std::map<ConstString, HostRecord>::iterator entry = hostMap.find(name);
     if (entry == hostMap.end()) {
         if (!create) {
-            return YARP_NULLPTR;
+            return nullptr;
         }
         hostMap[name] = HostRecord();
         entry = hostMap.find(name);
@@ -761,7 +761,7 @@ public:
                            ConstString("name server request is ") + msg);
                 ConstString result = server->apply(msg, remote);
                 ConnectionWriter *os = reader.getWriter();
-                if (os!=YARP_NULLPTR) {
+                if (os!=nullptr) {
                     if (result=="") {
                         result = ns_terminate(ConstString("unknown command ") +
                                               msg + "\n");
@@ -790,7 +790,7 @@ public:
                 YARP_INFO(Logger::get(),
                           ConstString("Name server ignoring unknown command: ")+msg);
                 ConnectionWriter *os = reader.getWriter();
-                if (os!=YARP_NULLPTR) {
+                if (os!=nullptr) {
                     // this result is necessary for YARP1 support
                     os->appendString("???????????????????????????????????????", '\n');
                     //os->flush();
@@ -808,7 +808,7 @@ class MainNameServer : public NameServer, public PortReaderCreator {
 private:
     Port *port;
 public:
-    MainNameServer(int basePort, Port *port = YARP_NULLPTR) : port(port) {
+    MainNameServer(int basePort, Port *port = nullptr) : port(port) {
         setBasePort(basePort);
     }
 
@@ -817,7 +817,7 @@ public:
     }
 
     virtual void onEvent(Bottle& event) override {
-        if (port!=YARP_NULLPTR) {
+        if (port!=nullptr) {
             port->write(event);
         }
     }

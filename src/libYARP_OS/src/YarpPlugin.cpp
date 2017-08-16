@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2012 Robotics Brain and Cognitive Sciences, Istituto Italiano di Tecnologia
+ * Copyright (C) 2012 Istituto Italiano di Tecnologia (IIT)
  * Authors: Paul Fitzpatrick <paulfitz@alum.mit.edu>
  * CopyPolicy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
  */
@@ -49,7 +49,7 @@ bool YarpPluginSettings::subopen(SharedLibraryFactory& factory,
 bool YarpPluginSettings::open(SharedLibraryFactory& factory) {
     YARP_SPRINTF3(impl::Logger::get(), debug, "Plugin [name: %s] [dll: %s] [fn: %s]",
                   name.c_str(), dll_name.c_str(), fn_name.c_str());
-    if (selector!=YARP_NULLPTR && name != "") {
+    if (selector!=nullptr && name != "") {
         // we may have a YARP-specific search path available,
         // and a proper name for the DLL
         Bottle paths = selector->getSearchPath();
@@ -176,7 +176,7 @@ void YarpPluginSelector::scan() {
     // Search plugins directories
     ResourceFinder& rf = ResourceFinder::getResourceFinderSingleton();
     if (!rf.isConfigured()) {
-        rf.configure(0, YARP_NULLPTR);
+        rf.configure(0, nullptr);
     }
     rf.setQuiet(true);
     Bottle plugin_paths = rf.findPaths("plugins");

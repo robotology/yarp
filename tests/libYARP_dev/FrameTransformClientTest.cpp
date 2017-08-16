@@ -102,7 +102,7 @@ public:
         bool ok_server = ddtransformserver.open(pTransformserver_cfg);
         checkTrue(ok_server, "ddtransformserver open reported successful");
 
-        IFrameTransform* itf = 0;
+        IFrameTransform* itf = nullptr;
         PolyDriver ddtransformclient;
         Property pTransformclient_cfg;
         pTransformclient_cfg.put("device", "transformClient");
@@ -112,7 +112,7 @@ public:
         checkTrue(ok_client, "ddtransformclient open reported successful");
 
         bool ok_view = ddtransformclient.view(itf);
-        checkTrue(ok_view && itf!=0, "iTransform interface open reported successful");
+        checkTrue(ok_view && itf!=nullptr, "iTransform interface open reported successful");
         if(!ok_view)
         {
             return;

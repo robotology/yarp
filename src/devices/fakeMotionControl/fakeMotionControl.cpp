@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2016 iCub Facility - Istituto Italiano di Tecnologia
+ * Copyright (C) 2016 Istituto Italiano di Tecnologia (IIT)
  * Author: Alberto Cardellino
  * email:   alberto.cardellino@iit.it
  * CopyPolicy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
@@ -314,89 +314,89 @@ FakeMotionControl::FakeMotionControl() :
 
     resizeBuffers();
 
-    _controlModes = NULL;
-    _interactMode = NULL;
+    _controlModes = nullptr;
+    _interactMode = nullptr;
 
     lifetime = -1;
     init();
 
-    _gearbox       = 0;
+    _gearbox       = nullptr;
 //     opened        = 0;
-    _ppids         = NULL;
-    _tpids        = NULL;
-    _cpids        = NULL;
-    _vpids        = NULL;
-    _ppids_ena         = NULL;
-    _tpids_ena        = NULL;
-    _cpids_ena        = NULL;
-    _vpids_ena        = NULL;
-    _ppids_lim         = NULL;
-    _tpids_lim        = NULL;
-    _cpids_lim        = NULL;
-    _vpids_lim        = NULL;
-    _ppids_ref         = NULL;
-    _tpids_ref        = NULL;
-    _cpids_ref        = NULL;
-    _vpids_ref        = NULL;
+    _ppids         = nullptr;
+    _tpids        = nullptr;
+    _cpids        = nullptr;
+    _vpids        = nullptr;
+    _ppids_ena         = nullptr;
+    _tpids_ena        = nullptr;
+    _cpids_ena        = nullptr;
+    _vpids_ena        = nullptr;
+    _ppids_lim         = nullptr;
+    _tpids_lim        = nullptr;
+    _cpids_lim        = nullptr;
+    _vpids_lim        = nullptr;
+    _ppids_ref         = nullptr;
+    _tpids_ref        = nullptr;
+    _cpids_ref        = nullptr;
+    _vpids_ref        = nullptr;
     _njoints      = 0;
-    _axisMap      = NULL;
-    _encodersStamp = NULL;
-    _DEPRECATED_encoderconversionfactor = NULL;
-    _DEPRECATED_encoderconversionoffset = NULL;
-    _angleToEncoder = NULL;
-    _dutycycleToPWM = NULL;
-    _ampsToSensor = NULL;
-    _hasHallSensor = NULL;
-    _hasTempSensor = NULL;
-    _hasRotorEncoder = NULL;
-    _hasRotorEncoderIndex = NULL;
-    _rotorIndexOffset = NULL;
-    _motorPoles       = NULL;
+    _axisMap      = nullptr;
+    _encodersStamp = nullptr;
+    _DEPRECATED_encoderconversionfactor = nullptr;
+    _DEPRECATED_encoderconversionoffset = nullptr;
+    _angleToEncoder = nullptr;
+    _dutycycleToPWM = nullptr;
+    _ampsToSensor = nullptr;
+    _hasHallSensor = nullptr;
+    _hasTempSensor = nullptr;
+    _hasRotorEncoder = nullptr;
+    _hasRotorEncoderIndex = nullptr;
+    _rotorIndexOffset = nullptr;
+    _motorPoles       = nullptr;
 //     _impedance_params = NULL;
 //     _impedance_limits = NULL;
-    _rotorlimits_max  = NULL;
-    _rotorlimits_min  = NULL;
+    _rotorlimits_max  = nullptr;
+    _rotorlimits_min  = nullptr;
 
-    _axisName         = NULL;
-    _jointType         = NULL;
-    _limitsMin        = NULL;
-    _limitsMax        = NULL;
+    _axisName         = nullptr;
+    _jointType         = nullptr;
+    _limitsMin        = nullptr;
+    _limitsMax        = nullptr;
 //     _currentLimits    = NULL;
-    _motorPwmLimits   = NULL;
-    _velocityShifts   = NULL;
-    _velocityTimeout  = NULL;
-    _torqueSensorId   = NULL;
-    _torqueSensorChan = NULL;
-    _maxTorque        = NULL;
-    _maxJntCmdVelocity= NULL;
-    _maxMotorVelocity = NULL;
-    _newtonsToSensor  = NULL;
-    _jointEncoderRes  = NULL;
+    _motorPwmLimits   = nullptr;
+    _velocityShifts   = nullptr;
+    _velocityTimeout  = nullptr;
+    _torqueSensorId   = nullptr;
+    _torqueSensorChan = nullptr;
+    _maxTorque        = nullptr;
+    _maxJntCmdVelocity= nullptr;
+    _maxMotorVelocity = nullptr;
+    _newtonsToSensor  = nullptr;
+    _jointEncoderRes  = nullptr;
 //     _jointEncoderType = NULL;
-    _rotorEncoderRes  = NULL;
+    _rotorEncoderRes  = nullptr;
 //     _rotorEncoderType = NULL;
-    _ref_accs         = NULL;
-    _command_speeds   = NULL;
-    _posCtrl_references    = NULL;
-    _posDir_references    = NULL;
-    _ref_speeds       = NULL;
-    _ref_torques      = NULL;
-    _ref_currents     = NULL;
-    _kinematic_mj     = NULL;
-    _kbemf            = NULL;
-    _ktau             = NULL;
-    _filterType       = NULL;
+    _ref_accs         = nullptr;
+    _command_speeds   = nullptr;
+    _posCtrl_references    = nullptr;
+    _posDir_references    = nullptr;
+    _ref_speeds       = nullptr;
+    _ref_torques      = nullptr;
+    _ref_currents     = nullptr;
+    _kinematic_mj     = nullptr;
+    _kbemf            = nullptr;
+    _ktau             = nullptr;
+    _filterType       = nullptr;
     _positionControlUnits = P_MACHINE_UNITS;
     _torqueControlUnits = T_MACHINE_UNITS;
     _torqueControlEnabled = false;
 
-    checking_motiondone = NULL;
+    checking_motiondone = nullptr;
 
     // Check status of joints
-    _enabledPid       = NULL;
-    _enabledAmp       = NULL;
-    _calibrated       = NULL;
-    _last_position_move_time = NULL;
+    _enabledPid       = nullptr;
+    _enabledAmp       = nullptr;
+    _calibrated       = nullptr;
+    _last_position_move_time = nullptr;
     // NV stuff
 
     useRawEncoderData = false;
@@ -485,20 +485,20 @@ bool FakeMotionControl::open(yarp::os::Searchable &config)
     yarp::sig::Vector tmpZeros; tmpZeros.resize (_njoints, 0.0);
     yarp::sig::Vector tmpOnes;  tmpOnes.resize  (_njoints, 1.0);
 
-    ImplementControlCalibration2<FakeMotionControl, IControlCalibration2>::initialize(_njoints, _axisMap, _angleToEncoder, NULL);
-    ImplementAmplifierControl<FakeMotionControl, IAmplifierControl>::initialize(_njoints, _axisMap, _angleToEncoder, NULL);
-    ImplementEncodersTimed::initialize(_njoints, _axisMap, _angleToEncoder, NULL);
-    ImplementMotorEncoders::initialize(_njoints, _axisMap, _angleToEncoder, NULL);
-    ImplementPositionControl2::initialize(_njoints, _axisMap, _angleToEncoder, NULL);
-    ImplementPidControl::initialize(_njoints, _axisMap, _angleToEncoder, NULL, _newtonsToSensor, _ampsToSensor);
+    ImplementControlCalibration2<FakeMotionControl, IControlCalibration2>::initialize(_njoints, _axisMap, _angleToEncoder, nullptr);
+    ImplementAmplifierControl<FakeMotionControl, IAmplifierControl>::initialize(_njoints, _axisMap, _angleToEncoder, nullptr);
+    ImplementEncodersTimed::initialize(_njoints, _axisMap, _angleToEncoder, nullptr);
+    ImplementMotorEncoders::initialize(_njoints, _axisMap, _angleToEncoder, nullptr);
+    ImplementPositionControl2::initialize(_njoints, _axisMap, _angleToEncoder, nullptr);
+    ImplementPidControl::initialize(_njoints, _axisMap, _angleToEncoder, nullptr, _newtonsToSensor, _ampsToSensor);
     ImplementControlMode2::initialize(_njoints, _axisMap);
-    ImplementVelocityControl<FakeMotionControl, IVelocityControl>::initialize(_njoints, _axisMap, _angleToEncoder, NULL);
-    ImplementVelocityControl2::initialize(_njoints, _axisMap, _angleToEncoder, NULL);
-    ImplementControlLimits2::initialize(_njoints, _axisMap, _angleToEncoder, NULL);
-    ImplementImpedanceControl::initialize(_njoints, _axisMap, _angleToEncoder, NULL, _newtonsToSensor);
-    ImplementTorqueControl::initialize(_njoints, _axisMap, _angleToEncoder, NULL, _newtonsToSensor);
-    ImplementPositionDirect::initialize(_njoints, _axisMap, _angleToEncoder, NULL);
-    ImplementInteractionMode::initialize(_njoints, _axisMap, _angleToEncoder, NULL);
+    ImplementVelocityControl<FakeMotionControl, IVelocityControl>::initialize(_njoints, _axisMap, _angleToEncoder, nullptr);
+    ImplementVelocityControl2::initialize(_njoints, _axisMap, _angleToEncoder, nullptr);
+    ImplementControlLimits2::initialize(_njoints, _axisMap, _angleToEncoder, nullptr);
+    ImplementImpedanceControl::initialize(_njoints, _axisMap, _angleToEncoder, nullptr, _newtonsToSensor);
+    ImplementTorqueControl::initialize(_njoints, _axisMap, _angleToEncoder, nullptr, _newtonsToSensor);
+    ImplementPositionDirect::initialize(_njoints, _axisMap, _angleToEncoder, nullptr);
+    ImplementInteractionMode::initialize(_njoints, _axisMap, _angleToEncoder, nullptr);
     ImplementMotor::initialize(_njoints, _axisMap);
     ImplementAxisInfo::initialize(_njoints, _axisMap);
     ImplementPWMControl::initialize(_njoints, _axisMap, _dutycycleToPWM);
@@ -1390,7 +1390,7 @@ bool FakeMotionControl::close()
     return true;
 }
 
-void FakeMotionControl::cleanup(void)
+void FakeMotionControl::cleanup()
 {
 
 }

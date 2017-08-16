@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2014 iCub Facility
+ * Copyright (C) 2014 Istituto Italiano di Tecnologia (IIT)
  * Authors: Paul Fitzpatrick
  * CopyPolicy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
  */
@@ -42,7 +42,7 @@ public:
      *
      */
     Subscriber(const ConstString& name = "") {
-        buffered_port = YARP_NULLPTR;
+        buffered_port = nullptr;
         T example;
         port.promiseType(example.getType());
         port.setInputMode(true);
@@ -78,60 +78,60 @@ public:
     }
 
     // documentation provided in Contactable
-    virtual bool open(const ConstString& name) YARP_OVERRIDE {
+    virtual bool open(const ConstString& name) override {
         clear();
         return port.open(name);
     }
 
     // documentation provided in Contactable
-    virtual bool open(const Contact& contact, bool registerName = true) YARP_OVERRIDE {
+    virtual bool open(const Contact& contact, bool registerName = true) override {
         clear();
         return port.open(contact, registerName);
     }
 
     // documentation provided in Contactable
-    virtual void close() YARP_OVERRIDE {
+    virtual void close() override {
         active().close();
     }
 
     // documentation provided in Contactable
-    virtual void interrupt() YARP_OVERRIDE {
+    virtual void interrupt() override {
         active().interrupt();
     }
 
     // documentation provided in Contactable
-    virtual void resume() YARP_OVERRIDE {
+    virtual void resume() override {
         active().resume();
     }
 
     // documented in Contactable
-    void setReader(PortReader& reader) YARP_OVERRIDE {
+    void setReader(PortReader& reader) override {
         active().setReader(reader);
     }
 
     /**
      *
      * Read a message from the port.  Waits by default.
-     * May return YARP_NULLPTR if the port status has changed.
+     * May return nullptr if the port status has changed.
      *
      * @param shouldWait false if the call should return immediately if no message is available
-     * @return a message, or YARP_NULLPTR
+     * @return a message, or nullptr
      *
      */
     T *read(bool shouldWait = true) {
         return buffer().read(shouldWait);
     }
 
-    virtual Port& asPort() YARP_OVERRIDE {
+    virtual Port& asPort() override {
         return port;
     }
 
-    virtual const Port& asPort() const YARP_OVERRIDE {
+    virtual const Port& asPort() const override {
         return port;
     }
 
     using TypedReaderCallback<T>::onRead;
-    virtual void onRead (T &datum) YARP_OVERRIDE {
+    virtual void onRead (T &datum) override {
          YARP_UNUSED(datum);
          // override this to do something
     }
@@ -177,7 +177,7 @@ private:
     void clear() {
         if (!buffered_port) return;
         delete buffered_port;
-        buffered_port = YARP_NULLPTR;
+        buffered_port = nullptr;
     }
 };
 

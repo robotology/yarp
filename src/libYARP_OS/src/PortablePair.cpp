@@ -5,11 +5,13 @@
  */
 
 #include <yarp/os/PortablePair.h>
+#include <yarp/os/ConnectionReader.h>
 
 
 bool yarp::os::PortablePairBase::readPair(ConnectionReader& connection,
-                                      Portable& head,
-                                      Portable& body) {
+                                          Portable& head,
+                                          Portable& body)
+{
     // if someone connects in text mode, use standard
     // text-to-binary mapping
     connection.convertTextMode();
@@ -28,7 +30,8 @@ bool yarp::os::PortablePairBase::readPair(ConnectionReader& connection,
 
 bool yarp::os::PortablePairBase::writePair(ConnectionWriter& connection,
                                            Portable& head,
-                                           Portable& body) {
+                                           Portable& body)
+{
     connection.appendInt(BOTTLE_TAG_LIST); // nested structure
     connection.appendInt(2);               // with two elements
     bool ok = head.write(connection);
