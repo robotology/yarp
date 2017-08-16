@@ -40,8 +40,17 @@ target_link_libraries(YARP_rtf PUBLIC RTF::RTF
                                        YARP::YARP_init
                                        YARP::YARP_dev)
 
-target_compile_features(YARP_rtf PUBLIC cxx_nullptr
-                                        cxx_override)
+if(NOT CMAKE_MINIMUM_REQUIRED_VERSION VERSION_LESS 3.1)
+  message(AUTHOR_WARNING "CMAKE_MINIMUM_REQUIRED_VERSION is now ${CMAKE_MINIMUM_REQUIRED_VERSION}. This check can be removed.")
+endif()
+if(CMAKE_VERSION VERSION_LESS 3.1)
+  if(DEFINED CXX11_FLAGS)
+    target_compile_options(YARP_rtf PUBLIC ${CXX11_FLAGS})
+  endif()
+else()
+  target_compile_features(YARP_rtf PUBLIC cxx_nullptr
+                                         cxx_override)
+endif()
 
 set_property(TARGET YARP_rtf PROPERTY PUBLIC_HEADER ${YARP_rtf_HDRS})
 

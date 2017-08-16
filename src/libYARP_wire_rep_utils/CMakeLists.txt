@@ -24,8 +24,17 @@ if(CREATE_OPTIONAL_CARRIERS)
                                                     YARP::YARP_sig
                                                     ${ACE_LIBRARIES})
 
-  target_compile_features(YARP_wire_rep_utils PUBLIC cxx_nullptr
-                                                     cxx_override)
+  if(NOT CMAKE_MINIMUM_REQUIRED_VERSION VERSION_LESS 3.1)
+    message(AUTHOR_WARNING "CMAKE_MINIMUM_REQUIRED_VERSION is now ${CMAKE_MINIMUM_REQUIRED_VERSION}. This check can be removed.")
+  endif()
+  if(CMAKE_VERSION VERSION_LESS 3.1)
+    if(DEFINED CXX11_FLAGS)
+      target_compile_options(YARP_wire_rep_utils PUBLIC ${CXX11_FLAGS})
+    endif()
+  else()
+    target_compile_features(YARP_wire_rep_utils PUBLIC cxx_nullptr
+                                                       cxx_override)
+  endif()
 
   set_property(TARGET YARP_wire_rep_utils PROPERTY INCLUDE_DIRS ${CMAKE_CURRENT_SOURCE_DIR})
   set_property(GLOBAL APPEND PROPERTY YARP_LIBS YARP_wire_rep_utils)
