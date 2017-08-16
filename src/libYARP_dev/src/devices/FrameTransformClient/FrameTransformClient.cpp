@@ -855,7 +855,7 @@ bool yarp::dev::FrameTransformClient::waitForTransform(const std::string &target
     return true;
 }
 
-FrameTransformClient::FrameTransformClient() : RateThread(0.010)
+FrameTransformClient::FrameTransformClient() : RateThread(10)
 {
     m_transform_storage = 0;
 }
