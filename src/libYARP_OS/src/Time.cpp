@@ -39,9 +39,9 @@ static void unlock() {
 void printNoClock_ErrorMessage()
 {
     YARP_ERROR(Logger::get(), "\n Warning an issue has been found, please update the code.\n \
-    Clock is not been initialized: This means YARP framework has not been properly initialized. \n \
+    Clock is not initialized: This means YARP framework has not been properly initialized. \n \
     The clock can be initialized with one of the following methods:\n \
-    - Create yarp::os::Network object or calling yarp::os::Network::init()\n \
+    - Create yarp::os::Network object or call yarp::os::Network::init()\n \
     - Call useSystemClock()\n \
     otherwise use yarp::os::SystemClock::nowSystem() and yarp::os::SystemClock::delaySystem() instead of Time::now() and Time::delay()\n");
 }
@@ -115,7 +115,9 @@ void Time::yield() {
 
 void Time::useSystemClock()
 {
+#ifdef YARP_NO_DEPRECATED
     if(!isSystemClock())
+#endif
     {
         lock();
 
@@ -132,6 +134,7 @@ void Time::useSystemClock()
 
         unlock();
     }
+
 }
 
 /* Creation of network clock may fail for different causes:
