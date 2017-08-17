@@ -357,3 +357,33 @@ void AbstractCarrier::writeYarpInt(int n, ConnectionState& proto)
     createYarpNumber(n, header);
     proto.os().write(header);
 }
+
+int AbstractCarrier::interpretYarpNumber(const yarp::os::Bytes& b)
+{
+    if (b.length()==8) {
+        char *base = b.get();
+        if (base[0]=='Y' &&
+            base[1]=='A' &&
+            base[6]=='R' &&
+            base[7]=='P') {
+            yarp::os::Bytes b2(b.get()+2, 4);
+            int x = NetType::netInt(b2);
+            return x;
+        }
+    }
+    return -1;
+}
+
+void AbstractCarrier::createYarpNumber(int x, const yarp::os::Bytes& header)
+{
+    if (header.length()!=8) {
+        return;
+    }
+    char *base = header.get();
+    base[0] = 'Y';
+    base[1] = 'A';
+    base[6] = 'R';
+    base[7] = 'P';
+    yarp::os::Bytes code(base+2, 4);
+    NetType::netInt(x, code);
+}
