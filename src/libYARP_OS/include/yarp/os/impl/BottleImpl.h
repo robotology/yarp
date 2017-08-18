@@ -433,7 +433,7 @@ public:
  * Handy to use until you work out how to make your own more
  * efficient formats for transmission.
  */
-class YARP_OS_impl_API yarp::os::impl::BottleImpl : public yarp::os::Portable
+class YARP_OS_impl_API yarp::os::impl::BottleImpl
 {
 public:
     BottleImpl();
@@ -476,10 +476,10 @@ public:
     ConstString toString();
     size_t size() const;
 
-    virtual bool read(ConnectionReader& reader) override;
-    virtual bool write(ConnectionWriter& writer) override;
+    bool read(ConnectionReader& reader);
+    bool write(ConnectionWriter& writer);
 
-    virtual void onCommencement() override;
+    void onCommencement();
 
     const char* getBytes();
     size_t byteCount();
