@@ -359,8 +359,8 @@ yarp_deprecated_option(INSTALL_WITH_RPATH)
 add_install_rpath_support(LIB_DIRS "${CMAKE_INSTALL_FULL_LIBDIR}"       # Libraries
                           BIN_DIRS "${CMAKE_INSTALL_FULL_BINDIR}"       # Binaries
                                    "${CMAKE_INSTALL_FULL_LIBDIR}/yarp"  # Plugins
+                          INSTALL_NAME_DIR "${CMAKE_INSTALL_FULL_LIBDIR}"
                           USE_LINK_PATH)
-
 
 #########################################################################
 # Specify yarp version and copyright into macOS bundles
