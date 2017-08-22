@@ -385,7 +385,10 @@ bool MapGrid2D::loadMapROSOnly(string ros_yaml_filename)
         yError() << "Unable to ros params from" << ros_yaml_filename;
         return false;
     }
-    bool b3 = yarp::sig::file::read(ros_img, pgm_occ_filename);
+    string path = extractPathFromFile(ros_yaml_filename);
+    string extension = extractExtensionFromFile(pgm_occ_filename);
+    string pgm_occ_filename_with_path = path + pgm_occ_filename;
+    bool b3 = yarp::sig::file::read(ros_img, pgm_occ_filename_with_path);
     if (b3 == false)
     {
         yError() << "Unable to load occupancy grid file:" << pgm_occ_filename;
@@ -482,7 +485,7 @@ bool MapGrid2D::loadMapYarpOnly(string yarp_filename)
 bool  MapGrid2D::loadFromFile(std::string map_file_with_path)
 {
     Property mapfile;
-    string path = extractPathFromFile(map_file_with_path);
+    string mapfile_path = extractPathFromFile(map_file_with_path);
     if (mapfile.fromConfigFile(map_file_with_path) == false)
     {
         yError() << "Unable to open .map description file:" << map_file_with_path;
@@ -524,8 +527,8 @@ bool  MapGrid2D::loadFromFile(std::string map_file_with_path)
 
     m_width = -1;
     m_height = -1;
-    string ppm_flg_filename_with_path = path + ppm_flg_filename;
-    string yaml_filename_with_path = path + yaml_filename;
+    string ppm_flg_filename_with_path = mapfile_path + ppm_flg_filename;
+    string yaml_filename_with_path = mapfile_path + yaml_filename;
     if (YarpMapDataFound && RosMapDataFound)
     {
         return this->loadMapYarpAndRos(ppm_flg_filename_with_path, yaml_filename_with_path);
