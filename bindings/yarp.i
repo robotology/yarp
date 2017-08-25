@@ -388,6 +388,9 @@ namespace yarp {
 %include <yarp/os/PortReaderCreator.h>
 %include <yarp/os/Property.h>
 %include <yarp/os/Bottle.h>
+%include <yarp/os/TypedReader.h>
+%include <yarp/os/TypedReaderCallback.h>
+%include <yarp/os/TypedReaderThread.h>
 %include <yarp/os/PortReaderBuffer.h>
 %include <yarp/os/PortWriterBuffer.h>
 %include <yarp/os/Random.h>
