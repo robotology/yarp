@@ -108,14 +108,14 @@ public:
      * @return true iff timeout is supported.
      *
      */
-    virtual bool setWriteTimeout(double timeout) { return false; }
+    virtual bool setWriteTimeout(double timeout) { YARP_UNUSED(timeout); return false; }
 
     /*
      *
      * Set the Type Of Service field of all outgoing packets.
      * @return true iff the TOS is set.
      */
-    virtual bool setTypeOfService(int tos) { return false; }
+    virtual bool setTypeOfService(int tos) { YARP_UNUSED(tos); return false; }
 
     /*
      *

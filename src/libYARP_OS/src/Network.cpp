@@ -604,6 +604,7 @@ void NetworkBase::autoInitMinimum() {
 }
 
 void NetworkBase::autoInitMinimum(yarp::os::yarpClockType clockType, yarp::os::Clock *custom) {
+    YARP_UNUSED(custom);
     if (!(__yarp_auto_init_active||__yarp_is_initialized)) {
         __yarp_auto_init_active = true;
         initMinimum(clockType);
@@ -616,6 +617,7 @@ void NetworkBase::initMinimum() {
 }
 
 void NetworkBase::initMinimum(yarp::os::yarpClockType clockType, yarp::os::Clock *custom) {
+    YARP_UNUSED(custom);
     if (__yarp_is_initialized==0) {
         // Broken pipes need to be dealt with through other means
         yarp::os::impl::signal(SIGPIPE, SIG_IGN);

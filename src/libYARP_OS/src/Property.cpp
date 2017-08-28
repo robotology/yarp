@@ -128,6 +128,7 @@ public:
     }
 
     bool check(const ConstString& key, Value *&output) const {
+        YARP_UNUSED(output);
         PropertyItem *p = getPropNoCreate(key);
 
         return p!=nullptr;

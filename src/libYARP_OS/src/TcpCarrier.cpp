@@ -41,6 +41,7 @@ void yarp::os::impl::TcpCarrier::getHeader(const yarp::os::Bytes& header) {
 }
 
 void yarp::os::impl::TcpCarrier::setParameters(const yarp::os::Bytes& header) {
+    YARP_UNUSED(header);
     //int specifier = getSpecifier(header);
     //requireAckFlag = (specifier&128)!=0;
     // Now prefilter by ack flag

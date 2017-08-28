@@ -340,6 +340,7 @@ yarp::os::PortReader *PortReaderBufferBase::create() {
 }
 
 void PortReaderBufferBase::release(PortReader *completed) {
+    YARP_UNUSED(completed);
     //HELPER(implementation).stateSema.wait();
     //HELPER(implementation).configure(completed, true, false);
     //HELPER(implementation).stateSema.post();
@@ -576,6 +577,8 @@ bool PortReaderBufferBase::acceptObjectBase(PortReader *obj,
 
 bool PortReaderBufferBase::forgetObjectBase(PortReader *obj,
                                             yarp::os::PortWriter *wrapper) {
+    YARP_UNUSED(obj);
+    YARP_UNUSED(wrapper);
     printf("Sorry, forgetting not implemented yet\n");
     return false;
 }

@@ -34,6 +34,7 @@ void yarp::os::impl::UdpCarrier::getHeader(const Bytes& header) {
 }
 
 void yarp::os::impl::UdpCarrier::setParameters(const Bytes& header) {
+    YARP_UNUSED(header);
 }
 
 bool yarp::os::impl::UdpCarrier::requireAck() {

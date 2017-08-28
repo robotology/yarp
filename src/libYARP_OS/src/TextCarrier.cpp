@@ -97,10 +97,13 @@ bool yarp::os::impl::TextCarrier::expectSenderSpecifier(ConnectionState& proto) 
 }
 
 bool yarp::os::impl::TextCarrier::sendIndex(ConnectionState& proto, SizedWriter& writer) {
+    YARP_UNUSED(proto);
+    YARP_UNUSED(writer);
     return true;
 }
 
 bool yarp::os::impl::TextCarrier::expectIndex(ConnectionState& proto) {
+    YARP_UNUSED(proto);
     return true;
 }
 

@@ -47,13 +47,15 @@ using namespace yarp::os::impl;
 using namespace yarp::os;
 using namespace yarp;
 
-PortCore::~PortCore() {
+PortCore::~PortCore()
+{
     close();
     removeCallbackLock();
 }
 
 
-bool PortCore::listen(const Contact& address, bool shouldAnnounce) {
+bool PortCore::listen(const Contact& address, bool shouldAnnounce)
+{
     // If we're using ACE, we really need to have it initialized before
     // this point.
     if (!NetworkBase::initialized()) {
@@ -123,21 +125,24 @@ bool PortCore::listen(const Contact& address, bool shouldAnnounce) {
 }
 
 
-void PortCore::setReadHandler(PortReader& reader) {
+void PortCore::setReadHandler(PortReader& reader)
+{
     // Don't even try to do this when the port is hot, it'll burn you
     yAssert(running==false);
     yAssert(this->reader==nullptr);
     this->reader = &reader;
 }
 
-void PortCore::setAdminReadHandler(PortReader& reader) {
+void PortCore::setAdminReadHandler(PortReader& reader)
+{
     // Don't even try to do this when the port is hot, it'll burn you
     yAssert(running==false);
     yAssert(this->adminReader==nullptr);
     this->adminReader = &reader;
 }
 
-void PortCore::setReadCreator(PortReaderCreator& creator) {
+void PortCore::setReadCreator(PortReaderCreator& creator)
+{
     // Don't even try to do this when the port is hot, it'll burn you
     yAssert(running==false);
     yAssert(this->readableCreator==nullptr);
@@ -146,7 +151,8 @@ void PortCore::setReadCreator(PortReaderCreator& creator) {
 
 
 
-void PortCore::run() {
+void PortCore::run()
+{
     YTRACE("PortCore::run");
 
     // This is the server thread for the port.  We listen on
@@ -248,7 +254,8 @@ void PortCore::run() {
 }
 
 
-void PortCore::close() {
+void PortCore::close()
+{
     closeMain();
 
     if (prop) {
@@ -260,7 +267,8 @@ void PortCore::close() {
 }
 
 
-bool PortCore::start() {
+bool PortCore::start()
+{
     YTRACE("PortCore::start");
 
     // This wait will, on success, be matched by a post in run()
@@ -291,7 +299,8 @@ bool PortCore::start() {
 }
 
 
-bool PortCore::manualStart(const char *sourceName) {
+bool PortCore::manualStart(const char *sourceName)
+{
     // This variant of start() does not create a server thread.
     // That is appropriate if we never expect to receive incoming
     // connections for any reason.  No incoming data, no requests
@@ -305,12 +314,14 @@ bool PortCore::manualStart(const char *sourceName) {
 }
 
 
-void PortCore::resume() {
+void PortCore::resume()
+{
     // We are no longer interrupted.
     interrupted = false;
 }
 
-void PortCore::interrupt() {
+void PortCore::interrupt()
+{
     // This is a no-op if there is no server thread.
     if (!listening) return;
 
@@ -338,7 +349,8 @@ void PortCore::interrupt() {
 }
 
 
-void PortCore::closeMain() {
+void PortCore::closeMain()
+{
     YTRACE("PortCore::closeMain");
 
     stateMutex.wait();
@@ -515,7 +527,8 @@ void PortCore::closeMain() {
 }
 
 
-int PortCore::getEventCount() {
+int PortCore::getEventCount()
+{
     // How many times has the server thread spun off a connection.
     stateMutex.wait();
     int ct = events;
@@ -524,7 +537,8 @@ int PortCore::getEventCount() {
 }
 
 
-void PortCore::closeUnits() {
+void PortCore::closeUnits()
+{
     // Empty the PortCore#units list. This is only possible when
     // the server thread is finished.
     stateMutex.wait();
@@ -550,7 +564,8 @@ void PortCore::closeUnits() {
     units.clear();
 }
 
-void PortCore::reapUnits() {
+void PortCore::reapUnits()
+{
     // Connections that should be shut down get tagged as "doomed"
     // but aren't otherwise touched until it is safe to do so.
     stateMutex.wait();
@@ -576,7 +591,8 @@ void PortCore::reapUnits() {
     cleanUnits();
 }
 
-void PortCore::cleanUnits(bool blocking) {
+void PortCore::cleanUnits(bool blocking)
+{
     // We will remove any connections that have finished operating from
     // the PortCore#units list.
 
@@ -659,7 +675,8 @@ void PortCore::cleanUnits(bool blocking) {
 }
 
 
-void PortCore::addInput(InputProtocol *ip) {
+void PortCore::addInput(InputProtocol *ip)
+{
     // This method is only called by the server thread in its running phase.
     // It wraps up a network connection as a unit and adds it to
     // PortCore#units.  The unit will have its own thread associated
@@ -679,7 +696,8 @@ void PortCore::addInput(InputProtocol *ip) {
 }
 
 
-void PortCore::addOutput(OutputProtocol *op) {
+void PortCore::addOutput(OutputProtocol *op)
+{
     // This method is called from threads associated with input
     // connections.
     // It wraps up a network connection as a unit and adds it to
@@ -699,7 +717,8 @@ void PortCore::addOutput(OutputProtocol *op) {
 }
 
 
-bool PortCore::isUnit(const Route& route, int index) {
+bool PortCore::isUnit(const Route& route, int index)
+{
     // Check if a connection with a specified route (and optional ID) is present
     bool needReap = false;
     if (!finished) {
@@ -734,7 +753,8 @@ bool PortCore::isUnit(const Route& route, int index) {
 }
 
 
-bool PortCore::removeUnit(const Route& route, bool synch, bool *except) {
+bool PortCore::removeUnit(const Route& route, bool synch, bool *except)
+{
     // This is a request to remove a connection.  It could arise from any
     // input thread.
 
@@ -830,8 +850,12 @@ bool PortCore::removeUnit(const Route& route, bool synch, bool *except) {
 }
 
 
-bool PortCore::addOutput(const ConstString& dest, void *id, OutputStream *os,
-                         bool onlyIfNeeded) {
+bool PortCore::addOutput(const ConstString& dest,
+                         void *id,
+                         OutputStream *os,
+                         bool onlyIfNeeded)
+{
+    YARP_UNUSED(id);
     YARP_DEBUG(log, ConstString("asked to add output to ")+dest);
 
     // Buffer to store text describing outcome (successful connection,
@@ -989,7 +1013,9 @@ bool PortCore::addOutput(const ConstString& dest, void *id, OutputStream *os,
 }
 
 
-void PortCore::removeOutput(const ConstString& dest, void *id, OutputStream *os) {
+void PortCore::removeOutput(const ConstString& dest, void *id, OutputStream *os)
+{
+    YARP_UNUSED(id);
     // All the real work done by removeUnit().
     BufferedConnectionWriter bw(true);
     if (removeUnit(Route("*", dest, "*"), true)) {
@@ -1005,7 +1031,9 @@ void PortCore::removeOutput(const ConstString& dest, void *id, OutputStream *os)
     cleanUnits();
 }
 
-void PortCore::removeInput(const ConstString& dest, void *id, OutputStream *os) {
+void PortCore::removeInput(const ConstString& dest, void *id, OutputStream *os)
+{
+    YARP_UNUSED(id);
     // All the real work done by removeUnit().
     BufferedConnectionWriter bw(true);
     if (removeUnit(Route(dest, "*", "*"), true)) {
@@ -1021,7 +1049,9 @@ void PortCore::removeInput(const ConstString& dest, void *id, OutputStream *os) 
     cleanUnits();
 }
 
-void PortCore::describe(void *id, OutputStream *os) {
+void PortCore::describe(void *id, OutputStream *os)
+{
+    YARP_UNUSED(id);
     cleanUnits();
 
     // Buffer to store a human-readable description of the port's
@@ -1089,7 +1119,8 @@ void PortCore::describe(void *id, OutputStream *os) {
 }
 
 
-void PortCore::describe(PortReport& reporter) {
+void PortCore::describe(PortReport& reporter)
+{
     cleanUnits();
 
     stateMutex.wait();
@@ -1168,7 +1199,8 @@ void PortCore::describe(PortReport& reporter) {
 }
 
 
-void PortCore::setReportCallback(yarp::os::PortReport *reporter) {
+void PortCore::setReportCallback(yarp::os::PortReport *reporter)
+{
    stateMutex.wait();
    if (reporter!=nullptr) {
        eventReporter = reporter;
@@ -1176,13 +1208,15 @@ void PortCore::setReportCallback(yarp::os::PortReport *reporter) {
    stateMutex.post();
 }
 
-void PortCore::resetReportCallback() {
+void PortCore::resetReportCallback()
+{
     stateMutex.wait();
     eventReporter = nullptr;
     stateMutex.post();
 }
 
-void PortCore::report(const PortInfo& info) {
+void PortCore::report(const PortInfo& info)
+{
     // We are in the context of one of the input or output threads,
     // so our contact with the PortCore must be absolutely minimal.
     //
@@ -1197,7 +1231,10 @@ void PortCore::report(const PortInfo& info) {
 
 
 
-bool PortCore::readBlock(ConnectionReader& reader, void *id, OutputStream *os) {
+bool PortCore::readBlock(ConnectionReader& reader, void *id, OutputStream *os)
+{
+    YARP_UNUSED(id);
+    YARP_UNUSED(os);
     bool result = true;
 
     // We are in the context of one of the input threads,
@@ -1245,8 +1282,10 @@ bool PortCore::readBlock(ConnectionReader& reader, void *id, OutputStream *os) {
 }
 
 
-bool PortCore::send(PortWriter& writer, PortReader *reader,
-                    PortWriter *callback) {
+bool PortCore::send(PortWriter& writer,
+                    PortReader *reader,
+                    PortWriter *callback)
+{
     // check if there is any modifier
     // we need to protect this part while the modifier
     // plugin is loading or unloading!
@@ -1268,7 +1307,10 @@ bool PortCore::send(PortWriter& writer, PortReader *reader,
 }
 
 bool PortCore::sendHelper(PortWriter& writer,
-                          int mode, PortReader *reader, PortWriter *callback) {
+                          int mode,
+                          PortReader *reader,
+                          PortWriter *callback)
+{
     if (interrupted||finishing) return false;
 
     bool all_ok = true;
@@ -1386,7 +1428,8 @@ bool PortCore::sendHelper(PortWriter& writer,
 
 
 
-bool PortCore::isWriting() {
+bool PortCore::isWriting()
+{
     bool writing = false;
 
     stateMutex.wait();
@@ -1412,7 +1455,8 @@ bool PortCore::isWriting() {
 }
 
 
-int PortCore::getInputCount() {
+int PortCore::getInputCount()
+{
     cleanUnits(false);
     packetMutex.wait();
     int result = inputCount;
@@ -1420,7 +1464,8 @@ int PortCore::getInputCount() {
     return result;
 }
 
-int PortCore::getOutputCount() {
+int PortCore::getOutputCount()
+{
     cleanUnits(false);
     packetMutex.wait();
     int result = outputCount;
@@ -1430,7 +1475,8 @@ int PortCore::getOutputCount() {
 
 
 
-void PortCore::notifyCompletion(void *tracker) {
+void PortCore::notifyCompletion(void *tracker)
+{
     YMSG(("starting notifyCompletion\n"));
     packetMutex.wait();
     if (tracker!=nullptr) {
@@ -1442,7 +1488,8 @@ void PortCore::notifyCompletion(void *tracker) {
 }
 
 
-bool PortCore::setEnvelope(PortWriter& envelope) {
+bool PortCore::setEnvelope(PortWriter& envelope)
+{
     envelopeWriter.restart();
     bool ok = envelope.write(envelopeWriter);
     if (ok) {
@@ -1452,7 +1499,8 @@ bool PortCore::setEnvelope(PortWriter& envelope) {
 }
 
 
-void PortCore::setEnvelope(const ConstString& envelope) {
+void PortCore::setEnvelope(const ConstString& envelope)
+{
     this->envelope = envelope;
     for (unsigned int i=0; i<this->envelope.length(); i++) {
         // It looks like envelopes are constrained to be printable ASCII?
@@ -1465,11 +1513,13 @@ void PortCore::setEnvelope(const ConstString& envelope) {
     YARP_DEBUG(log, ConstString("set envelope to ") + this->envelope);
 }
 
-ConstString PortCore::getEnvelope() {
+ConstString PortCore::getEnvelope()
+{
     return envelope;
 }
 
-bool PortCore::getEnvelope(PortReader& envelope) {
+bool PortCore::getEnvelope(PortReader& envelope)
+{
     StringInputStream sis;
     sis.add(this->envelope.c_str());
     sis.add("\r\n");
@@ -1491,7 +1541,8 @@ static bool __pc_rpc(const Contact& c,
                      const char *carrier,
                      Bottle& writer,
                      Bottle& reader,
-                     bool verbose) {
+                     bool verbose)
+{
     ContactStyle style;
     style.quiet = !verbose;
     style.timeout = 4;
@@ -1502,7 +1553,8 @@ static bool __pc_rpc(const Contact& c,
 
 // ACE is sometimes confused by localhost aliases, in a ROS-incompatible
 // way.  This method does a quick sanity check if we are using ROS.
-static bool __tcp_check(const Contact& c) {
+static bool __tcp_check(const Contact& c)
+{
 #ifdef YARP_HAS_ACE
     ACE_INET_Addr addr;
     int result = addr.set(c.getPort(), c.getHost().c_str());
@@ -1524,8 +1576,11 @@ static bool __tcp_check(const Contact& c) {
     return true;
 }
 
-bool PortCore::adminBlock(ConnectionReader& reader, void *id,
-                          OutputStream *os) {
+bool PortCore::adminBlock(ConnectionReader& reader,
+                          void *id,
+                          OutputStream *os)
+{
+    YARP_UNUSED(os);
     Bottle cmd, result;
 
     // We've received a message to the port that is marked as administrative.
@@ -2428,7 +2483,8 @@ bool PortCore::adminBlock(ConnectionReader& reader, void *id,
 }
 
 
-bool PortCore::setTypeOfService(PortCoreUnit *unit, int tos) {
+bool PortCore::setTypeOfService(PortCoreUnit *unit, int tos)
+{
     if (unit->isOutput()) {
         OutputProtocol* op = dynamic_cast<PortCoreOutputUnit*>(unit)->getOutPutProtocol();
         if (op)
@@ -2447,7 +2503,8 @@ bool PortCore::setTypeOfService(PortCoreUnit *unit, int tos) {
     return true;
 }
 
-int PortCore::getTypeOfService(PortCoreUnit *unit) {
+int PortCore::getTypeOfService(PortCoreUnit *unit)
+{
     if (unit->isOutput()) {
         OutputProtocol* op = dynamic_cast<PortCoreOutputUnit*>(unit)->getOutPutProtocol();
         if (op)
@@ -2466,7 +2523,8 @@ int PortCore::getTypeOfService(PortCoreUnit *unit) {
 }
 
 // attach a portmonitor plugin to the port or to a specific connection
-bool PortCore::attachPortMonitor(yarp::os::Property& prop, bool isOutput, ConstString &errMsg) {
+bool PortCore::attachPortMonitor(yarp::os::Property& prop, bool isOutput, ConstString &errMsg)
+{
     // attach to the current port
     Carrier *portmonitor = Carriers::chooseCarrier("portmonitor");
     if (!portmonitor) {
@@ -2512,7 +2570,8 @@ bool PortCore::attachPortMonitor(yarp::os::Property& prop, bool isOutput, ConstS
 }
 
 // detach the portmonitor from the port or specific connection
-bool PortCore::dettachPortMonitor(bool isOutput) {
+bool PortCore::dettachPortMonitor(bool isOutput)
+{
     if (isOutput) {
         modifier.outputMutex.lock();
         modifier.releaseOutModifier();
@@ -2527,7 +2586,9 @@ bool PortCore::dettachPortMonitor(bool isOutput) {
 }
 
 bool PortCore::setParamPortMonitor(yarp::os::Property& param,
-                                   bool isOutput, yarp::os::ConstString &errMsg) {
+                                   bool isOutput,
+                                   yarp::os::ConstString &errMsg)
+{
     if (isOutput) {
         modifier.outputMutex.lock();
         if (modifier.outputModifier == nullptr) {
@@ -2552,7 +2613,9 @@ bool PortCore::setParamPortMonitor(yarp::os::Property& param,
 }
 
 bool PortCore::getParamPortMonitor(yarp::os::Property& param,
-                                   bool isOutput, yarp::os::ConstString &errMsg) {
+                                   bool isOutput,
+                                   yarp::os::ConstString &errMsg)
+{
     if (isOutput) {
         modifier.outputMutex.lock();
         if (modifier.outputModifier == nullptr) {
@@ -2576,7 +2639,9 @@ bool PortCore::getParamPortMonitor(yarp::os::Property& param,
     return true;
 }
 
-void PortCore::reportUnit(PortCoreUnit *unit, bool active) {
+void PortCore::reportUnit(PortCoreUnit *unit, bool active)
+{
+    YARP_UNUSED(active);
     if (unit!=nullptr) {
         bool isLog = (unit->getMode()!="");
         if (isLog) {
@@ -2585,7 +2650,8 @@ void PortCore::reportUnit(PortCoreUnit *unit, bool active) {
     }
 }
 
-bool PortCore::setProcessSchedulingParam(int priority, int policy) {
+bool PortCore::setProcessSchedulingParam(int priority, int policy)
+{
 #if defined(__linux__)
     // set the sched properties of all threads within the process
     struct sched_param sch_param;
@@ -2628,7 +2694,8 @@ bool PortCore::setProcessSchedulingParam(int priority, int policy) {
 #endif
 }
 
-int PortCore::getPid() {
+int PortCore::getPid()
+{
 #if defined(YARP_HAS_ACE)
     return ACE_OS::getpid();
 #elif defined(__linux__)
@@ -2639,7 +2706,8 @@ int PortCore::getPid() {
     return -1;
 }
 
-Property *PortCore::acquireProperties(bool readOnly) {
+Property *PortCore::acquireProperties(bool readOnly)
+{
     stateMutex.wait();
     if (!readOnly) {
         if (!prop) {
@@ -2649,6 +2717,8 @@ Property *PortCore::acquireProperties(bool readOnly) {
     return prop;
 }
 
-void PortCore::releaseProperties(Property *prop) {
+void PortCore::releaseProperties(Property *prop)
+{
+    YARP_UNUSED(prop);
     stateMutex.post();
 }

@@ -501,6 +501,8 @@ ConstString NameServer::cmdCheck(int argc, char *argv[]) {
 
 
 ConstString NameServer::cmdList(int argc, char *argv[]) {
+    YARP_UNUSED(argc);
+    YARP_UNUSED(argv);
     ConstString response = "";
 
     std::multiset<ConstString> lines;
@@ -572,6 +574,8 @@ yarp::os::Bottle NameServer::ncmdQuery(int argc, char *argv[]) {
 
 
 yarp::os::Bottle NameServer::ncmdVersion(int argc, char *argv[]) {
+    YARP_UNUSED(argc);
+    YARP_UNUSED(argv);
     Bottle response;
     response.addString("version");
     response.addString(Companion::version().c_str());
@@ -609,6 +613,8 @@ yarp::os::Bottle NameServer::ncmdGet(int argc, char *argv[]) {
 
 
 ConstString NameServer::cmdGarbageCollect(int argc, char *argv[]) {
+    YARP_UNUSED(argc);
+    YARP_UNUSED(argv);
     ConstString response = "";
 
     response = "No cleaning done.\n";

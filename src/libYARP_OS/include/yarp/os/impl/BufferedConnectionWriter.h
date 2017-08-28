@@ -344,6 +344,8 @@ public:
 
     // defined by yarp::os::ConnectionWriter
     virtual void declareSizes(int argc, int *argv) override {
+        YARP_UNUSED(argc);
+        YARP_UNUSED(argv);
         // this method is never called yet, so no point using it yet.
     }
 

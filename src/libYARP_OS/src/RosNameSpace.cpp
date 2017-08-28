@@ -76,6 +76,7 @@ Contact RosNameSpace::queryName(const ConstString& name) {
 }
 
 Contact RosNameSpace::registerName(const ConstString& name) {
+    YARP_UNUSED(name);
     fprintf(stderr, "ROS name server does not do 'raw' registrations.\n");
     fprintf(stderr, "Use [Buffered]Port::open to get complete registrations.\n");
     std::exit(1);
@@ -340,12 +341,17 @@ Contact RosNameSpace::unregisterContact(const Contact& contact) {
 bool RosNameSpace::setProperty(const ConstString& name,
                                const ConstString& key,
                                const Value& value) {
+    YARP_UNUSED(name);
+    YARP_UNUSED(key);
+    YARP_UNUSED(value);
     return false;
 }
 
 Value *RosNameSpace::getProperty(const ConstString& name,
                                  const ConstString& key) {
-        return nullptr;
+    YARP_UNUSED(name);
+    YARP_UNUSED(key);
+    return nullptr;
 }
 
 bool RosNameSpace::connectPortToTopic(const Contact& src,
@@ -399,12 +405,18 @@ bool RosNameSpace::disconnectTopicFromPort(const Contact& src,
 bool RosNameSpace::connectPortToPortPersistently(const Contact& src,
                                                  const Contact& dest,
                                                  ContactStyle style) {
+    YARP_UNUSED(src);
+    YARP_UNUSED(dest);
+    YARP_UNUSED(style);
     return false;
 }
 
 bool RosNameSpace::disconnectPortToPortPersistently(const Contact& src,
                                                     const Contact& dest,
                                                     ContactStyle style) {
+    YARP_UNUSED(src);
+    YARP_UNUSED(dest);
+    YARP_UNUSED(style);
     return false;
 }
 
@@ -475,6 +487,7 @@ bool RosNameSpace::connectionHasNameOfEndpoints() const {
 Contact RosNameSpace::detectNameServer(bool useDetectedServer,
                                        bool& scanNeeded,
                                        bool& serverUsed) {
+    YARP_UNUSED(useDetectedServer);
     NameConfig nc;
     nc.fromFile();
     Contact c = nc.getAddress();

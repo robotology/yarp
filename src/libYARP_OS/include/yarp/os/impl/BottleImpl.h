@@ -155,13 +155,13 @@ class YARP_OS_impl_API yarp::os::impl::StoreNull : public Storable
 public:
     StoreNull() {}
     virtual ConstString toString() const override { return ""; }
-    virtual void fromString(const ConstString& src) override {}
+    virtual void fromString(const ConstString& src) override { YARP_UNUSED(src); }
     virtual int getCode() const override { return -1; }
-    virtual bool readRaw(ConnectionReader& connection) override { return false; }
-    virtual bool writeRaw(ConnectionWriter& connection) override { return false; }
+    virtual bool readRaw(ConnectionReader& connection) override { YARP_UNUSED(connection); return false; }
+    virtual bool writeRaw(ConnectionWriter& connection) override { YARP_UNUSED(connection); return false; }
     virtual Storable* createStorable() const override { return new StoreNull(); }
     virtual bool isNull() const override { return true; }
-    virtual void copy(const Storable& alt) override {}
+    virtual void copy(const Storable& alt) override { YARP_UNUSED(alt); }
 };
 
 

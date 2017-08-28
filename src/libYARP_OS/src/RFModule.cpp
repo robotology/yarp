@@ -202,6 +202,7 @@ static RFModule *module = nullptr;
 
 
 static void handler (int sig) {
+    YARP_UNUSED(sig);
     static int ct = 0;
     ct++;
     yarp::os::Time::useSystemClock();
@@ -392,6 +393,7 @@ int RFModule::runModuleThreaded(ResourceFinder &rf) {
 
 
 bool RFModule::configure(yarp::os::ResourceFinder &rf) {
+    YARP_UNUSED(rf);
     return true;
 }
 

@@ -133,7 +133,7 @@ public:
      * @return true iff timeout is supported.
      *
      */
-    virtual bool setReadTimeout(double timeout) { return false; }
+    virtual bool setReadTimeout(double timeout) { YARP_UNUSED(timeout); return false; }
 
     /**
      *
@@ -175,7 +175,7 @@ public:
      * @return true iff the \c callback was installed.
      *
      */
-    virtual bool setReadEnvelopeCallback(readEnvelopeCallbackType callback, void* data) { return false; }
+    virtual bool setReadEnvelopeCallback(readEnvelopeCallbackType callback, void* data) { YARP_UNUSED(callback); YARP_UNUSED(data); return false; }
 };
 
 #endif // YARP_OS_INPUTSTREAM_H

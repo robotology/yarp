@@ -53,6 +53,7 @@ void yarp::os::impl::ShmemCarrier::getHeader(const Bytes& header) {
 }
 
 void yarp::os::impl::ShmemCarrier::setParameters(const Bytes& header) {
+    YARP_UNUSED(header);
 }
 
 bool yarp::os::impl::ShmemCarrier::becomeShmemVersionHybridStream(ConnectionState& proto, bool sender) {

@@ -104,6 +104,7 @@ bool WireWriter::isError() {
 }
 
 bool WireWriter::writeTag(const char *tag, int split, int len) {
+    YARP_UNUSED(len);
     if (!split) {
         return writeString(tag);
     }
@@ -162,6 +163,7 @@ bool WireWriter::writeListHeader(int len) {
 
 
 bool WireWriter::writeListBegin(int tag, unsigned YARP_INT32 len) {
+    YARP_UNUSED(tag);
     // this should be optimized for double/int/etc
     writer.appendInt(BOTTLE_TAG_LIST);
     writer.appendInt((int)len);
@@ -173,6 +175,8 @@ bool WireWriter::writeSetBegin(int tag, unsigned YARP_INT32 len) {
 }
 
 bool WireWriter::writeMapBegin(int tag, int tag2, unsigned YARP_INT32 len) {
+    YARP_UNUSED(tag);
+    YARP_UNUSED(tag2);
     writer.appendInt(BOTTLE_TAG_LIST);
     writer.appendInt((int)len);
     return !writer.isError();

@@ -473,6 +473,7 @@ yarp::os::Bottle yarp::os::Run::sendMsg(Bottle& msg, yarp::os::ConstString targe
 
 void sigint_handler(int sig)
 {
+    YARP_UNUSED(sig);
     yarp::os::Run::mStresstest=false;
 
     if (yarp::os::Run::pServerPort)
@@ -825,6 +826,7 @@ int yarp::os::Run::readFromPipe(int fd, char* &data, int& buffsize)
 
 static void sigchld_handler(int sig)
 {
+    YARP_UNUSED(sig);
     if (yarp::os::Run::mBraveZombieHunter)
     {
         yarp::os::Run::mBraveZombieHunter->sigchldHandler();

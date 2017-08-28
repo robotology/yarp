@@ -26,6 +26,13 @@ set(xmlrpcpp_HDRS xmlrpcpp/src/base64.h
                   xmlrpcpp/src/XmlRpcUtil.h
                   xmlrpcpp/src/XmlRpcValue.h)
 
+if(NOT MSVC)
+  check_cxx_compiler_flag("-Wno-unused-parameter" CXX_HAS_WNO_UNUSED_PARAMETER)
+  if(CXX_HAS_WNO_UNUSED_PARAMETER)
+    set_property(SOURCE ${xmlrpcpp_SRCS} APPEND_STRING PROPERTY COMPILE_FLAGS " -Wno-unused-parameter")
+  endif()
+endif()
+
 add_library(YARP_priv_xmlrpcpp STATIC ${xmlrpcpp_SRCS})
 
 set_property(TARGET YARP_priv_xmlrpcpp PROPERTY FOLDER "Libraries/External")

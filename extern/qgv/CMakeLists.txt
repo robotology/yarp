@@ -41,6 +41,10 @@ if(NOT MSVC)
   if(CXX_HAS_WNO_REORDER)
     set_property(SOURCE ${qgvcore_SRCS} APPEND_STRING PROPERTY COMPILE_FLAGS " -Wno-reorder")
   endif()
+  check_cxx_compiler_flag("-Wno-unused-parameter" CXX_HAS_WNO_UNUSED_PARAMETER)
+  if(CXX_HAS_WNO_UNUSED_PARAMETER)
+    set_property(SOURCE ${qgvcore_SRCS} APPEND_STRING PROPERTY COMPILE_FLAGS " -Wno-unused-parameter")
+  endif()
 endif()
 
 include_directories(${Graphviz_INCLUDE_DIR}

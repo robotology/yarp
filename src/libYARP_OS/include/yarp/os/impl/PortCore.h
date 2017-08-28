@@ -278,6 +278,7 @@ public:
     virtual bool read(yarp::os::ConnectionReader& reader) override
     {
         // does nothing by default
+        YARP_UNUSED(reader);
         return true;
     }
 
@@ -544,6 +545,7 @@ public:
 
     void take(PortCore *alt)
     {
+        YARP_UNUSED(alt);
     }
 
     yarp::os::impl::PortDataModifier& getPortModifier()

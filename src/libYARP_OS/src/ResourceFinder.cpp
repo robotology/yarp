@@ -653,6 +653,7 @@ public:
 
     ConstString getHomeContextPath(Property& config, const ConstString& context )
     {
+        YARP_UNUSED(config);
         if (useNearMain)
             return configFilePath;
         else

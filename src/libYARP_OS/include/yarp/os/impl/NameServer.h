@@ -94,6 +94,7 @@ public:
 
     virtual void onEvent(yarp::os::Bottle& event)
     {
+        YARP_UNUSED(event);
     }
 
     static ConstString textify(const Contact& address);
@@ -345,6 +346,7 @@ private:
         NameRecord(const NameRecord& alt) :
                 address()
         {
+            YARP_UNUSED(alt);
             reusableIp = false;
             reusablePort = false;
         }

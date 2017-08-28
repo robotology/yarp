@@ -749,21 +749,26 @@ bool yarp::os::impl::HttpCarrier::expectReplyToHeader(ConnectionState& proto) {
 
 
 bool yarp::os::impl::HttpCarrier::sendIndex(ConnectionState& proto, SizedWriter& writer) {
+    YARP_UNUSED(proto);
+    YARP_UNUSED(writer);
     // no index
     return true;
 }
 
 bool yarp::os::impl::HttpCarrier::expectIndex(ConnectionState& proto) {
+    YARP_UNUSED(proto);
     // no index
     return true;
 }
 
 bool yarp::os::impl::HttpCarrier::sendAck(ConnectionState& proto) {
+    YARP_UNUSED(proto);
     // no acknowledgement
     return true;
 }
 
 bool yarp::os::impl::HttpCarrier::expectAck(ConnectionState& proto) {
+    YARP_UNUSED(proto);
     // no acknowledgement
     return true;
 }

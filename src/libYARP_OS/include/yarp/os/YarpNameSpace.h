@@ -18,13 +18,15 @@ namespace yarp {
     }
 }
 
-class YARP_OS_API yarp::os::YarpNameSpace : public NameSpace {
+class YARP_OS_API yarp::os::YarpNameSpace : public NameSpace
+{
 public:
     YarpNameSpace(const Contact& contact);
 
     virtual ~YarpNameSpace();
 
-    virtual Contact getNameServerContact() const override {
+    virtual Contact getNameServerContact() const override
+    {
         return contact;
     }
 
@@ -45,37 +47,43 @@ public:
 
     virtual bool connectPortToTopic(const Contact& src,
                                     const Contact& dest,
-                                    ContactStyle style)  override {
+                                    ContactStyle style)  override
+    {
         return connectTopic("subscribe", false, true, src, dest, style);
     }
 
     virtual bool connectTopicToPort(const Contact& src,
                                     const Contact& dest,
-                                    ContactStyle style) override {
+                                    ContactStyle style) override
+    {
         return connectTopic("subscribe", true, false, src, dest, style);
     }
 
     virtual bool disconnectPortFromTopic(const Contact& src,
                                          const Contact& dest,
-                                         ContactStyle style) override {
+                                         ContactStyle style) override
+    {
         return connectTopic("unsubscribe", false, true, src, dest, style);
     }
 
     virtual bool disconnectTopicFromPort(const Contact& src,
                                          const Contact& dest,
-                                         ContactStyle style) override {
+                                         ContactStyle style) override
+    {
         return connectTopic("unsubscribe", true, false, src, dest, style);
     }
 
     virtual bool connectPortToPortPersistently(const Contact& src,
                                                const Contact& dest,
-                                               ContactStyle style) override {
+                                               ContactStyle style) override
+    {
         return connectTopic("subscribe", false, false, src, dest, style);
     }
 
     virtual bool disconnectPortToPortPersistently(const Contact& src,
                                                   const Contact& dest,
-                                                  ContactStyle style) override {
+                                                  ContactStyle style) override
+    {
         return connectTopic("unsubscribe", false, false, src, dest, style);
     }
 
@@ -84,7 +92,9 @@ public:
                               bool destIsTopic,
                               const Contact& src,
                               const Contact& dest,
-                              ContactStyle style) {
+                              ContactStyle style)
+    {
+        YARP_UNUSED(srcIsTopic);
         Contact dynamicSrc = src;
         Contact dynamicDest = dest;
         Bottle cmd, reply;
@@ -130,19 +140,23 @@ public:
         return !fail;
     }
 
-    virtual bool localOnly() const override {
+    virtual bool localOnly() const override
+    {
         return false;
     }
 
-    virtual bool usesCentralServer() const override {
+    virtual bool usesCentralServer() const override
+    {
         return true;
     }
 
-    virtual bool serverAllocatesPortNumbers() const override {
+    virtual bool serverAllocatesPortNumbers() const override
+    {
         return true;
     }
 
-    virtual bool connectionHasNameOfEndpoints() const override {
+    virtual bool connectionHasNameOfEndpoints() const override
+    {
         return true;
     }
 
@@ -159,15 +173,20 @@ private:
     Contact contact;
 };
 
-class yarp::os::YarpDummyNameSpace : public YarpNameSpace {
+class yarp::os::YarpDummyNameSpace : public YarpNameSpace
+{
 public:
-    YarpDummyNameSpace() : YarpNameSpace(Contact()) {}
+    YarpDummyNameSpace() : YarpNameSpace(Contact())
+    {
+    }
 
-    virtual bool localOnly() const override {
+    virtual bool localOnly() const override
+    {
         return true;
     }
 
-    virtual Contact getNameServerContact() const override {
+    virtual Contact getNameServerContact() const override
+    {
         return Contact("/root");
     }
  };

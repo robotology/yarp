@@ -136,6 +136,13 @@ public:
                        bool *gotReply = nullptr)
     {
         // do nothing
+        YARP_UNUSED(writer);
+        YARP_UNUSED(reader);
+        YARP_UNUSED(callback);
+        YARP_UNUSED(envelope);
+        YARP_UNUSED(waitAfter);
+        YARP_UNUSED(waitBefore);
+        YARP_UNUSED(gotReply);
         return tracker;
     }
 
@@ -250,12 +257,18 @@ public:
      * Set arbitrary parameters for this connection.
      * @param params the parameters to set
      */
-    virtual void setCarrierParams(const yarp::os::Property& params) { }
+    virtual void setCarrierParams(const yarp::os::Property& params)
+    {
+        YARP_UNUSED(params);
+    }
 
     /**
      * @param [out]params parameters set by setCarrierParams()
      */
-    virtual void getCarrierParams(yarp::os::Property& params) { }
+    virtual void getCarrierParams(yarp::os::Property& params)
+    {
+        YARP_UNUSED(params);
+    }
 
 
 protected:

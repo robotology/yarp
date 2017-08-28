@@ -47,7 +47,7 @@ public:
      * @return true if plugin is of interest.  By default, always returns true.
      *
      */
-    virtual bool select(Searchable& options) { return true; }
+    virtual bool select(Searchable& options) { YARP_UNUSED(options); return true; }
 
 
     /**

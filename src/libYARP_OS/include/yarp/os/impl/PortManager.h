@@ -67,10 +67,14 @@ public:
      * is already a connection to the named target
      * @return true on success
      */
-    virtual bool addOutput(const ConstString& dest, void *id,
+    virtual bool addOutput(const ConstString& dest,
+                           void *id,
                            yarp::os::OutputStream *os,
                            bool onlyIfNeeded = false)
     {
+        YARP_UNUSED(id);
+        YARP_UNUSED(os);
+        YARP_UNUSED(onlyIfNeeded);
         YARP_SPRINTF2(Logger::get(),
                       error,
                       "PortManager for [%s] asked to addOutput [%s]\n",
@@ -86,9 +90,12 @@ public:
      * @param id an opaque tracker for the connection
      * @param os the output stream for messages about this operation
      */
-    virtual void removeInput(const ConstString& src, void *id,
+    virtual void removeInput(const ConstString& src,
+                             void *id,
                              yarp::os::OutputStream *os)
     {
+        YARP_UNUSED(id);
+        YARP_UNUSED(os);
         YARP_SPRINTF2(Logger::get(),
                       error,
                       "PortManager for [%s] asked to removeInput [%s]\n",
@@ -102,9 +109,12 @@ public:
      * @param id an opaque tracker for the connection
      * @param os the output stream for messages about this operation
      */
-    virtual void removeOutput(const ConstString& dest, void *id,
+    virtual void removeOutput(const ConstString& dest,
+                              void *id,
                               yarp::os::OutputStream *os)
     {
+        YARP_UNUSED(id);
+        YARP_UNUSED(os);
         YARP_SPRINTF2(Logger::get(),
                       error,
                       "PortManager for [%s] asked to removeOutput [%s]\n",
@@ -120,6 +130,8 @@ public:
      */
     virtual bool removeIO(const Route& route, bool synch = false)
     {
+        YARP_UNUSED(route);
+        YARP_UNUSED(synch);
         return false;
     }
 
@@ -130,6 +142,8 @@ public:
      */
     virtual void describe(void *id, yarp::os::OutputStream *os)
     {
+        YARP_UNUSED(id);
+        YARP_UNUSED(os);
         YARP_SPRINTF1(Logger::get(),
                       error,
                       "PortManager for [%s] asked to describe itself\n",
@@ -142,9 +156,13 @@ public:
      * @param id opaque identifier of connection providing data
      * @param os stream to write error messages on
      */
-    virtual bool readBlock(ConnectionReader& reader, void *id,
+    virtual bool readBlock(ConnectionReader& reader,
+                           void *id,
                            yarp::os::OutputStream *os)
     {
+        YARP_UNUSED(reader);
+        YARP_UNUSED(id);
+        YARP_UNUSED(os);
         YARP_SPRINTF1(Logger::get(),
                       error,
                       "PortManager for [%s] asked to deal with data\n",
@@ -158,9 +176,13 @@ public:
      * @param id opaque identifier of connection providing data
      * @param os stream to write error messages on
      */
-    virtual bool adminBlock(ConnectionReader& reader, void *id,
+    virtual bool adminBlock(ConnectionReader& reader,
+                            void *id,
                             yarp::os::OutputStream *os)
     {
+        YARP_UNUSED(reader);
+        YARP_UNUSED(id);
+        YARP_UNUSED(os);
         YARP_SPRINTF1(Logger::get(),
                       error,
                       "PortManager for [%s] asked to deal with admin\n",

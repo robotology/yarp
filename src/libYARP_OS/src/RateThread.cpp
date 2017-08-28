@@ -402,7 +402,9 @@ void RateThread::beforeStart()
 {}
 
 void RateThread::afterStart(bool success)
-{}
+{
+    YARP_UNUSED(success);
+}
 
 int RateThread::setPriority(int priority, int policy)
 {

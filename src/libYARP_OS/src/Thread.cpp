@@ -100,6 +100,7 @@ void Thread::beforeStart() {
 }
 
 void Thread::afterStart(bool success) {
+    YARP_UNUSED(success);
 }
 
 

@@ -11,40 +11,52 @@ using namespace yarp::os;
 using namespace yarp::os::impl;
 
 
-RpcClient::RpcClient() {
+RpcClient::RpcClient()
+{
     port.setInputMode(false);
     port.setOutputMode(true);
     port.setRpcMode(true);
 }
 
-RpcClient::~RpcClient() {
+RpcClient::~RpcClient()
+{
     port.close();
 }
 
-bool RpcClient::read(PortReader& reader, bool willReply) {
+bool RpcClient::read(PortReader& reader, bool willReply)
+{
+    YARP_UNUSED(reader);
+    YARP_UNUSED(willReply);
     YARP_SPRINTF1(Logger::get(), error, "cannot read from RpcClient %s, please use a regular Port for that", port.getName().c_str());
     return false;
 }
 
-bool RpcClient::reply(PortWriter& writer) {
+bool RpcClient::reply(PortWriter& writer)
+{
+    YARP_UNUSED(writer);
     return false;
 }
 
-bool RpcClient::replyAndDrop(PortWriter& writer) {
+bool RpcClient::replyAndDrop(PortWriter& writer)
+{
+    YARP_UNUSED(writer);
     return false;
 }
 
-void RpcClient::setInputMode(bool expectInput) {
+void RpcClient::setInputMode(bool expectInput)
+{
     yAssert(!expectInput);
 }
 
 
-void RpcClient::setOutputMode(bool expectOutput) {
+void RpcClient::setOutputMode(bool expectOutput)
+{
     yAssert(expectOutput);
 }
 
 
-void RpcClient::setRpcMode(bool expectRpc) {
+void RpcClient::setRpcMode(bool expectRpc)
+{
     yAssert(expectRpc);
 }
 

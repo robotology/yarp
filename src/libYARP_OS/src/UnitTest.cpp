@@ -300,6 +300,8 @@ void UnitTest::heapMonitorBegin(bool expectAllocations) {
     heap_count_mutex = new Mutex();
     heap_expect_ops = expectAllocations;
     heap_count_active = true;
+#else
+    YARP_UNUSED(expectAllocations);
 #endif
 }
 

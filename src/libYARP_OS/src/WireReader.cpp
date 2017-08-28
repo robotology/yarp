@@ -510,6 +510,7 @@ void WireReader::readMapBegin(WireState& nstate,
                               WireState& nstate2,
                               unsigned YARP_INT32& len)
 {
+    YARP_UNUSED(nstate2);
     readListBegin(nstate, len);
 }
 

@@ -152,6 +152,7 @@ Contact YarpNameSpace::detectNameServer(bool useDetectedServer,
 bool YarpNameSpace::writeToNameServer(PortWriter& cmd,
                                       PortReader& reply,
                                       const ContactStyle& style) {
+    YARP_UNUSED(style);
     Contact srv = getNameServerContact();
     ConstString cmd0 = "NAME_SERVER";
 

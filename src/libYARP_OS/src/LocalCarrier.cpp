@@ -208,6 +208,7 @@ void yarp::os::impl::LocalCarrier::getHeader(const Bytes& header) {
 }
 
 void yarp::os::impl::LocalCarrier::setParameters(const Bytes& header) {
+    YARP_UNUSED(header);
 }
 
 bool yarp::os::impl::LocalCarrier::sendHeader(ConnectionState& proto) {
@@ -254,7 +255,7 @@ bool yarp::os::impl::LocalCarrier::becomeLocal(ConnectionState& proto, bool send
 }
 
 bool yarp::os::impl::LocalCarrier::write(ConnectionState& proto, SizedWriter& writer) {
-
+    YARP_UNUSED(proto);
     yarp::os::Portable *ref = writer.getReference();
     if (ref != nullptr) {
         peerMutex.wait();

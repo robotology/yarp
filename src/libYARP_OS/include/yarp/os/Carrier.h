@@ -42,7 +42,8 @@ namespace yarp {
  * To understand the protocol phases involved, see see
  * \ref yarp_protocol.
  */
-class YARP_OS_API yarp::os::Carrier : public Connection {
+class YARP_OS_API yarp::os::Carrier : public Connection
+{
 public:
 
 
@@ -111,7 +112,8 @@ public:
      *
      * @return true if carrier uses a broadcast mechanism.
      */
-    virtual bool isBroadcast() override {
+    virtual bool isBroadcast() override
+    {
         return false;
     }
 
@@ -155,7 +157,8 @@ public:
      *
      * @param envelope the envelope to transmit bundled with data.
      */
-    virtual void handleEnvelope(const yarp::os::ConstString& envelope) override {
+    virtual void handleEnvelope(const yarp::os::ConstString& envelope) override
+    {
         YARP_UNUSED(envelope);
     }
 
@@ -197,7 +200,8 @@ public:
      *
      * @return true if carrier is "push" style, false if "pull" style
      */
-    virtual bool isPush() override {
+    virtual bool isPush() override
+    {
         return true;
     }
 
@@ -299,7 +303,9 @@ public:
      * Do cleanup and preparation for the coming disconnect, if
      * necessary.
      */
-    virtual void prepareDisconnect() override {}
+    virtual void prepareDisconnect() override
+    {
+    }
 
 
     /**
@@ -312,13 +318,15 @@ public:
     /**
      * Close the carrier.
      */
-    virtual void close() {
+    virtual void close()
+    {
     }
 
     /**
      * Destructor.
      */
-    virtual ~Carrier() {
+    virtual ~Carrier()
+    {
     }
 
     /**
@@ -335,7 +343,10 @@ public:
      *
      * @return the name of the bootstrap carrier.
      */
-    virtual ConstString getBootstrapCarrierName() { return "tcp"; }
+    virtual ConstString getBootstrapCarrierName()
+    {
+        return "tcp";
+    }
 
     /**
      * Some carrier types may require special connection logic.
@@ -355,7 +366,13 @@ public:
                         const Contact& dest,
                         const ContactStyle& style,
                         int mode,
-                        bool reversed) {
+                        bool reversed)
+    {
+        YARP_UNUSED(src);
+        YARP_UNUSED(dest);
+        YARP_UNUSED(style);
+        YARP_UNUSED(mode);
+        YARP_UNUSED(reversed);
         return -1;
     }
 
@@ -366,7 +383,8 @@ public:
      *
      * @return true if carrier wants Carrier::modifyIncomingData called.
      */
-    virtual bool modifiesIncomingData() override {
+    virtual bool modifiesIncomingData() override
+    {
         return false;
     }
 
@@ -384,7 +402,8 @@ public:
      *       input, the setParentConnectionReader(&reader) should be called for
      *       the new one, or the envelope will not be handled correctly.
      */
-    virtual ConnectionReader& modifyIncomingData(ConnectionReader& reader) override {
+    virtual ConnectionReader& modifyIncomingData(ConnectionReader& reader) override
+    {
         return reader;
     }
 
@@ -395,7 +414,9 @@ public:
      * @return true if data should be accepted, false if it should be
      *         discarded.
      */
-    virtual bool acceptIncomingData(ConnectionReader& reader) override {
+    virtual bool acceptIncomingData(ConnectionReader& reader) override
+    {
+        YARP_UNUSED(reader);
         return true;
     }
 
@@ -405,7 +426,8 @@ public:
      *
      * @return true if carrier wants Carrier::modifyOutgoingData called.
      */
-    virtual bool modifiesOutgoingData() override {
+    virtual bool modifiesOutgoingData() override
+    {
         return false;
     }
 
@@ -419,7 +441,8 @@ public:
      * @param writer for outgoing data.
      * @return writer for modified version of outgoing data.
      */
-    virtual PortWriter& modifyOutgoingData(PortWriter& writer) override {
+    virtual PortWriter& modifyOutgoingData(PortWriter& writer) override
+    {
         return writer;
     }
 
@@ -429,7 +452,8 @@ public:
      *
      * @return true if carrier wants Carrier::modifyReply called.
      */
-    virtual bool modifiesReply() override {
+    virtual bool modifiesReply() override
+    {
         return false;
     }
 
@@ -439,7 +463,8 @@ public:
      * @param reader for the replied message.
      * @return reader for modified version of the replied message.
      */
-    virtual PortReader& modifyReply(PortReader& reader) override {
+    virtual PortReader& modifyReply(PortReader& reader) override
+    {
         return reader;
     }
 
@@ -450,7 +475,9 @@ public:
      * @return true if data should be accepted, false if it should be
      *         discarded.
      */
-    virtual bool acceptOutgoingData(PortWriter& writer) override {
+    virtual bool acceptOutgoingData(PortWriter& writer) override
+    {
+        YARP_UNUSED(writer);
         return true;
     }
 
@@ -460,11 +487,15 @@ public:
      *
      * @return true if the carrier was correctly configured.
      */
-    virtual bool configure(ConnectionState& proto) {
+    virtual bool configure(ConnectionState& proto)
+    {
+        YARP_UNUSED(proto);
         return true;
     }
 
-    virtual bool configureFromProperty(yarp::os::Property& options) {
+    virtual bool configureFromProperty(yarp::os::Property& options)
+    {
+        YARP_UNUSED(options);
         return true;
     }
 
@@ -473,7 +504,10 @@ public:
      *
      * @param params properties
      */
-    virtual void setCarrierParams(const Property& params) override { }
+    virtual void setCarrierParams(const Property& params) override
+    {
+        YARP_UNUSED(params);
+    }
 
     /**
      * Get carrier configuration and deliver it by port administrative
@@ -481,7 +515,10 @@ public:
      *
      * @param params properties
      */
-    virtual void getCarrierParams(Property& params) override { }
+    virtual void getCarrierParams(Property& params) override
+    {
+        YARP_UNUSED(params);
+    }
 
 };
 

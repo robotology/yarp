@@ -52,6 +52,8 @@ void yarp::os::abort(bool verbose)
         _set_abort_behavior(0, _WRITE_ABORT_MSG);
         _set_abort_behavior(0, _CALL_REPORTFAULT);
     }
+#else
+    YARP_UNUSED(verbose);
 #endif
     std::abort();   // exit is not recommended in processes with multi thread, see http://www.cplusplus.com/reference/cstdlib/exit/ and http://www.cplusplus.com/reference/cstdlib/abort/
 }

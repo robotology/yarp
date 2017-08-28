@@ -414,6 +414,8 @@ void yarp::os::Log::setLogCallback(yarp::os::Log::LogCallback cb)
 
 void yarp_print_trace(FILE *out, const char *file, int line) {
 #ifdef YARP_HAS_ACE
+    YARP_UNUSED(file);
+    YARP_UNUSED(line);
     ACE_Stack_Trace st(-1);
     // TODO demangle symbols using <cxxabi.h> and abi::__cxa_demangle
     //      when available.
