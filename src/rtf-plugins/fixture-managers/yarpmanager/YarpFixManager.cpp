@@ -53,7 +53,7 @@ bool YarpFixManager::setup(int argc, char** argv) {
         std::string appfile = rf.findFileByName(std::string("fixtures/"+fixtureName).c_str());
         if (!appfile.size())
         {
-            yInfo("trying to load from absolute path");
+            yInfo("yarpmanager: trying to load fixture file from absolute path");
             appfile = rf.findFileByName(std::string(fixtureName).c_str());
         }
 
