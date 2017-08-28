@@ -12,6 +12,7 @@
 #include <yarp/os/Network.h>
 #include <yarp/os/Property.h>
 #include <yarp/os/ResourceFinder.h>
+#include <yarp/os/Log.h>
 
 #include "YarpFixManager.h"
 
@@ -50,8 +51,14 @@ bool YarpFixManager::setup(int argc, char** argv) {
 
         fixtureName = rf.find("fixture").asString();
         std::string appfile = rf.findFileByName(std::string("fixtures/"+fixtureName).c_str());
+        if (!appfile.size())
+        {
+            yInfo("trying to load from absolute path");
+            appfile = rf.findFileByName(std::string(fixtureName).c_str());
+        }
+
         RTF_ASSERT_ERROR_IF(appfile.size(),
-                            RTF::Asserter::format("yarpmanager cannot find apllication file %s. Is it in the 'fixtures' folder?",
+                            RTF::Asserter::format("yarpmanager cannot find application file %s. Is it in the 'fixtures' folder?",
                                                   fixtureName.c_str()));
 
         // enable restricted mode to ensure all the modules
