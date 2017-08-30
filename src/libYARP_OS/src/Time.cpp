@@ -26,7 +26,8 @@ using namespace yarp::os::impl;
 
 static bool clock_owned = false;
 static bool network_clock_ok = false;
-
+static Clock *pclock = nullptr;
+static yarpClockType yarp_clock_type  = YARP_CLOCK_UNINITIALIZED;
 
 static void lock() {
     yarp::os::impl::ThreadImpl::timeMutex->wait();
@@ -76,6 +77,13 @@ static Clock *getClock()
 #endif
     }
     return pclock;
+}
+
+void yarp::os::impl::removeClock()
+{
+    if(pclock != nullptr)
+        delete pclock;
+    yarp_clock_type = YARP_CLOCK_UNINITIALIZED;
 }
 
 void Time::delay(double seconds) {

@@ -1,10 +1,8 @@
 /*
- * Copyright (C) 2017 iCub Facility - Istituto Italiano di Tecnologia
- * Author:  Alberto Cardellino
- * email:   alberto.cardellino@iit.it
+ * Copyright (C) 2017 Istituto Italiano di Tecnologia
+ * Author: Alberto Cardellino <alberto.cardellino@iit.it>
  * CopyPolicy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
  */
-
 
 
 #ifndef YARP_OS_IMPL_TIMEIMPL_H
@@ -13,20 +11,11 @@
 #include <yarp/os/Time.h>
 
 namespace yarp {
-    namespace os {
-        static Clock *pclock = nullptr;
-        static yarpClockType yarp_clock_type  = YARP_CLOCK_UNINITIALIZED;
-
-        namespace impl {
-
-            static void removeClock()
-            {
-                if(yarp::os::pclock != nullptr)
-                    delete yarp::os::pclock;
-                yarp_clock_type = YARP_CLOCK_UNINITIALIZED;
-            }
-        }
-    }
-}
+namespace os {
+namespace impl {
+    void removeClock();
+} // namespace impl
+} // namespace os
+} // namespace yarp
 
 #endif // YARP_OS_IMPL_TIMEIMPL_H
