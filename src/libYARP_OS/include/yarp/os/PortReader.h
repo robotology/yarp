@@ -7,13 +7,11 @@
 #ifndef YARP_OS_PORTREADER_H
 #define YARP_OS_PORTREADER_H
 
+#include <yarp/os/ConnectionReader.h>
 #include <yarp/os/Type.h>
 
 // Defined in this file:
 namespace yarp { namespace os { class PortReader; }}
-
-// Other forward declarations:
-namespace yarp { namespace os { class ConnectionReader; }}
 
 
 namespace yarp {
