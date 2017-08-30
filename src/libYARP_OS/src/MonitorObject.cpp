@@ -5,7 +5,8 @@
  */
 
 #include <yarp/os/MonitorObject.h>
-
+#include <yarp/os/Property.h>
+#include <yarp/os/Things.h>
 
 yarp::os::MonitorObject::~MonitorObject()
 {

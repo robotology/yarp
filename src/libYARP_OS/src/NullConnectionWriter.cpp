@@ -5,7 +5,7 @@
  */
 
 #include <yarp/os/NullConnectionWriter.h>
-
+#include <yarp/os/PortReader.h>
 
 void yarp::os::NullConnectionWriter::appendBlock(const char *data, size_t len)
 {
