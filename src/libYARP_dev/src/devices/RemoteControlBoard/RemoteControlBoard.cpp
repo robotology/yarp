@@ -1115,8 +1115,8 @@ public:
             }
             else
             {
-                yError("*** Extended port %s was not found on the controlBoardWrapper I'm connecting to. Falling back to compatibility behaviour\n", s1.c_str());
-                yWarning("Updating to newer yarp and the usage of controlBoardWrapper2 is suggested***\n");
+                yError("Problem connecting to %s, is the remote device available?\n", s1.c_str());
+                connectionProblem = true;
             }
         }
 
