@@ -1202,6 +1202,10 @@ public:
             delete diagnosticThread;
         }
 
+        rpc_p.interrupt();
+        command_p.interrupt();
+        extendedIntputStatePort.interrupt();
+
         rpc_p.close();
         command_p.close();
         extendedIntputStatePort.close();
