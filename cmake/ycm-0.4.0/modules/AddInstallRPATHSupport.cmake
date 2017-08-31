@@ -6,6 +6,7 @@
 #
 #   add_install_rpath_support([BIN_DIRS dir [dir]]
 #                             [LIB_DIRS dir [dir]]
+#                             [INSTALL_NAME_DIR] [dir]]
 #                             [DEPENDS condition [condition]]
 #                             [USE_LINK_PATH])
 #
@@ -61,8 +62,15 @@
 #  - ``LIB_DIRS`` list of directories to be added to the RPATH. These
 #    directories will be added "relative" w.r.t. the ``BIN_DIRS`` and
 #    ``LIB_DIRS``.
-#  - ``DEPENDS`` list of conditions that should be TRUE to enable
+#  - ``INSTALL_NAME_DIR`` directory where the libraries will be installed.
+#    This variable will be used only if ``CMAKE_SKIP_RPATH`` or
+#    ``CMAKE_SKIP_INSTALL_RPATH`` is set to ``TRUE`` as it will set the 
+#    ``INSTALL_NAME_DIR`` on all targets
+#  - ``DEPENDS`` list of conditions that should be ``TRUE`` to enable
 #    RPATH, for example ``FOO; NOT BAR``.
+#
+# Note: see https://gitlab.kitware.com/cmake/cmake/issues/16589 for further
+# details.
 
 #=======================================================================
 # Copyright 2014 Istituto Italiano di Tecnologia (IIT)
@@ -84,13 +92,8 @@ include(CMakeParseArguments)
 
 function(ADD_INSTALL_RPATH_SUPPORT)
 
-  # If RPATH is disabled in CMake, it is useless to proceed.
-  if(CMAKE_SKIP_RPATH OR (CMAKE_SKIP_INSTALL_RPATH AND CMAKE_SKIP_BUILD_RPATH))
-    return()
-  endif()
-
   set(_options USE_LINK_PATH)
-  set(_oneValueArgs )
+  set(_oneValueArgs INSTALL_NAME_DIR)
   set(_multiValueArgs BIN_DIRS
                       LIB_DIRS
                       DEPENDS)
@@ -99,6 +102,19 @@ function(ADD_INSTALL_RPATH_SUPPORT)
                              "${_oneValueArgs}"
                              "${_multiValueArgs}"
                              "${ARGN}")
+
+  # if either RPATH or INSTALL_RPATH is disabled
+  # and the INSTALL_NAME_DIR variable is set, then hardcode the install name
+  if(CMAKE_SKIP_RPATH OR CMAKE_SKIP_INSTALL_RPATH)
+    if(DEFINED _ARS_INSTALL_NAME_DIR)
+      set(CMAKE_INSTALL_NAME_DIR ${_ARS_INSTALL_NAME_DIR} PARENT_SCOPE)
+    endif()
+  endif()
+
+  if (CMAKE_SKIP_RPATH OR (CMAKE_SKIP_INSTALL_RPATH AND CMAKE_SKIP_BUILD_RPATH))
+    return()
+  endif()
+
 
   set(_rpath_available 1)
   if(DEFINED _ARS_DEPENDS)
@@ -114,12 +130,6 @@ function(ADD_INSTALL_RPATH_SUPPORT)
 
     # Enable RPATH on OSX.
     set(CMAKE_MACOSX_RPATH TRUE PARENT_SCOPE)
-
-    # If install RPATH is disabled in CMake, it is useless to evaluate and set
-    # CMAKE_INSTALL_RPATH and CMAKE_INSTALL_RPATH_USE_LINK_PATH
-    if(CMAKE_SKIP_INSTALL_RPATH)
-      return()
-    endif()
 
     # Find system implicit lib directories
     set(_system_lib_dirs ${CMAKE_PLATFORM_IMPLICIT_LINK_DIRECTORIES})

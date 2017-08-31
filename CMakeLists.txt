@@ -4,6 +4,11 @@
 
 cmake_minimum_required(VERSION 3.0)
 
+# RPATH cmake policy set to NEW
+if(NOT ${CMAKE_VERSION} VERSION_LESS 3.9)
+  cmake_policy(SET CMP0068 NEW)
+endif()
+
 # Pick up our CMake scripts - they are all in the cmake subdirectory.
 set(YARP_MODULE_DIR "${CMAKE_SOURCE_DIR}/cmake")
 set(YARP_MODULE_PATH "${YARP_MODULE_DIR}")
