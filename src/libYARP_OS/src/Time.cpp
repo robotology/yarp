@@ -81,8 +81,10 @@ static Clock *getClock()
 
 void yarp::os::impl::removeClock()
 {
-    if(pclock != nullptr)
+    if(pclock) {
         delete pclock;
+        pclock = nullptr;
+    }
     yarp_clock_type = YARP_CLOCK_UNINITIALIZED;
 }
 
@@ -213,11 +215,15 @@ void Time::useNetworkClock(const ConstString& clock, ConstString localPortName)
 }
 
 void Time::useCustomClock(Clock *clock) {
-    if(clock == nullptr)
+    if(clock == nullptr) {
         YARP_FAIL(Logger::get(), "failed configuring CustomClock client");
+        return;
+    }
 
-    if(!clock->isValid())
+    if(!clock->isValid()) {
         YARP_FAIL(Logger::get(), "Error: CustomClock is not valid");
+        return;
+    }
 
     lock();
 

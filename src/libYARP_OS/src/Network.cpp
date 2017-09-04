@@ -688,7 +688,7 @@ void yarp::os::Network::yarpClockInit(yarp::os::yarpClockType clockType, Clock *
     if(clockType == YARP_CLOCK_DEFAULT)
     {
         clock = yarp::os::Network::getEnvironment("YARP_CLOCK");
-        if(clock!="")
+        if(!clock.empty())
             clockType = YARP_CLOCK_NETWORK;
         else
             clockType = YARP_CLOCK_SYSTEM;
