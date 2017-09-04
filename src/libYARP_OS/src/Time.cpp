@@ -179,6 +179,7 @@ void Time::useNetworkClock(const ConstString& clock, ConstString localPortName)
     if(_networkClock == nullptr)
     {
         YARP_FAIL(Logger::get(), "failed creating NetworkClock client");
+        return;
     }
     else
     {
@@ -194,6 +195,7 @@ void Time::useNetworkClock(const ConstString& clock, ConstString localPortName)
         else
         {
             YARP_FAIL(Logger::get(), "failed creating NetworkClock client, cannot open input port");
+            return;
         }
     }
 
