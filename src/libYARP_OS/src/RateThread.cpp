@@ -10,6 +10,7 @@
 #include <yarp/os/impl/Logger.h>
 #include <yarp/os/impl/PlatformTime.h>
 #include <yarp/os/Semaphore.h>
+#include <yarp/os/LogStream.h>
 
 #include <yarp/os/Time.h>
 #include <yarp/os/SystemClock.h>
@@ -21,7 +22,7 @@
 using namespace yarp::os::impl;
 using namespace yarp::os;
 
-//const YARP_timeval _timeout_value(20, 0);    // (20 sec) timeout value for the release (20 sec)
+#define RATETHREAD_NOTIFY_INTERVAL  10.0
 
 class RateThreadCallbackAdapter: public ThreadImpl
 {
@@ -58,11 +59,29 @@ private:
         scheduleReset=false;
     }
 
+    long int delayCounter;
+    double lastNotifyTime;      // time when last error was notified to the user (to avoid overflooding of error printouts)
+    void verifyPeriod()         // diagnostic detecting if requested period has been exceeded by user's run() function
+    {
+        if(sleepPeriod <= 0)
+        {
+            delayCounter++;
+            if(currentRun - lastNotifyTime > RATETHREAD_NOTIFY_INTERVAL)
+            {
+                lastNotifyTime = currentRun;
+                yWarning() <<   " RateThread `run()` function is taking too long to execute and period time has been exceeded" << delayCounter << "times.\n" <<
+                                "   Requested period is " << period_ms << "ms while elapsed period is " << elapsed*1000 << "ms\n" <<
+                                "   If mutex are used inside the 'run()' function, this may cause unexpected slowdowns or starvation.";
+            }
+        }
+    }
+
 public:
 
     RateThreadCallbackAdapter(RateThread& owner, int p) :   period_ms(p), adaptedPeriod(period_ms/1000.0), owner(owner), useSystemClock(false),
                                                             elapsed(0), sleepPeriod(adaptedPeriod), suspended(false), totalUsed(0), count(0),
-                                                            estPIt(0), sumTSq(0), sumUsedSq(0), previousRun(0), currentRun(0), scheduleReset(true)
+                                                            estPIt(0), sumTSq(0), sumUsedSq(0), previousRun(0), currentRun(0), scheduleReset(true),
+                                                            delayCounter(0), lastNotifyTime(-1.0)
     {
         _resetStat();
     }
@@ -168,7 +187,7 @@ public:
         count++;
         lock();
 
-        double elapsed = yarp::os::Time::now() - currentRun;
+        elapsed = yarp::os::Time::now() - currentRun;
 
         //save last
         totalUsed+=elapsed;
@@ -176,7 +195,8 @@ public:
         unlock();
 
         sleepPeriod= adaptedPeriod - elapsed; // everything is in [seconds] except period, for it is used in the interface as [ms]
-        // Check if sleepPeriod is negative here or inside the delay (or both?)
+        // Check if sleepPeriod is negative or zero
+        verifyPeriod();
         yarp::os::Time::delay(sleepPeriod);
     }
 
@@ -223,7 +243,7 @@ public:
         count++;
         lock();
 
-        double elapsed = SystemClock::nowSystem() - currentRun;
+        elapsed = SystemClock::nowSystem() - currentRun;
 
         //save last
         totalUsed+=elapsed;
@@ -231,7 +251,8 @@ public:
         unlock();
 
         sleepPeriod= adaptedPeriod - elapsed;  //  all time computatio are done in [sec]
-        // Check if sleepPeriod is negative here or inside the delay (or both?)
+        // Check if sleepPeriod is negative or zero
+        verifyPeriod();
         SystemClock::delaySystem(sleepPeriod);
     }
 
@@ -286,7 +307,7 @@ public:
 
 RateThread::RateThread(int period)
 {
-    // use period
+    checkRequiredPeriod(period);
     implementation = new RateThreadCallbackAdapter(*this, period);
     yAssert(implementation!=nullptr);
 }
@@ -299,6 +320,35 @@ RateThread::~RateThread()
     }
 }
 
+bool RateThread::checkRequiredPeriod(int &period)
+{
+#ifndef YARP_NO_DEPRECATED // since YARP 2.3.72
+    if(period < 0)
+    {
+        yError() << "RateThread cannot have negative period.";
+        yAssert(false);  // condition already checked
+    }
+
+    if(period == 0)
+    {
+        // go ahead for now ...
+        yWarning() << "RateThread period cannot be 0 ms!\n" <<
+                      "  This setting may cause slowdowns in multithread environment, expecially when mutex are involved.\n" <<
+                      "  This usage is deprecated and it will not be allowed in future versions of YARP.\n" <<
+                      "  If no specific period is required, use yarp::os::Thread instead or set a valid period.";
+    }
+
+#else
+
+    if(period <= 0)
+    {
+        yError() << "RateThread period must be positive value.";
+        yAssert(false);  // condition already checked
+    }
+#endif
+    return true;
+}
+
 void RateThread::initWithSystemClock()
 {
     ((RateThreadCallbackAdapter*)implementation)->initWithSystemClock();
@@ -306,7 +356,9 @@ void RateThread::initWithSystemClock()
 
 bool RateThread::setRate(int period)
 {
-    return ((RateThreadCallbackAdapter*)implementation)->setRate(period);
+    bool ret = checkRequiredPeriod(period);
+    // `&& ret` has to be placed after `setRate`. The function must be called regardless of `ret` value.
+    return ((RateThreadCallbackAdapter*)implementation)->setRate(period) && ret;
 }
 
 double RateThread::getRate()

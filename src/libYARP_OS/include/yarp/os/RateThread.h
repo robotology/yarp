@@ -206,6 +206,8 @@ private:
 
     void initWithSystemClock();
 
+    bool checkRequiredPeriod(int &period);
+
 friend class SystemRateThread;
 };
 
