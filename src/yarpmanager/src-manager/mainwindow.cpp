@@ -249,6 +249,7 @@ void MainWindow::init(yarp::os::Property config)
                     logger->addError("Cannot load the applications from  " + strPath);
                 }
                 loadRecursiveTemplates(strPath.c_str());
+                ui->entitiesTree->header()->setSortIndicator(0,Qt::SortOrder::AscendingOrder);
             }
             else{
                 lazyManager.addApplications(strPath.c_str());
