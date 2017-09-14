@@ -205,6 +205,7 @@ yarpserversql_API int yarpserver_main(int argc, char *argv[]) {
 
     if (options.check("help")) {
         printf("Welcome to the YARP name server.\n");
+        printf("  --write                  Write IP address and socket on the configuration file.\n");
         printf("  --config filename.conf   Load options from a file.\n");
         printf("  --portdb ports.db        Store port information in named database.\n");
         printf("                           Must not be on an NFS file system.\n");
