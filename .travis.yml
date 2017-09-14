@@ -14,6 +14,10 @@ compiler:
   - gcc
   - clang
 
+branches:
+  except:
+    - /^.*appveyor.*$/
+
 env:
   global:
     - TRAVIS_CMAKE_GENERATOR="Unix Makefiles"
@@ -26,6 +30,55 @@ env:
     - TRAVIS_WITH_VALGRIND=false
     - TRAVIS_NO_DEPRECATED=false
     - TRAVIS_WITH_BROKEN_TESTS=false
+# ROS-related env variables. Used only by integration tests
+    - ROS_HOSTNAME=localhost
+    - ROS_MASTER_URI=http://localhost:11311
+    - ROBOT=sim
+
+addons:
+  apt:
+    sources:
+      - ubuntu-toolchain-r-test
+#      - llvm-toolchain-precise-3.6
+#      - llvm-toolchain-precise-3.7
+#      - llvm-toolchain-precise-3.8
+#      - llvm-toolchain-trusty-3.9
+#      - llvm-toolchain-trusty-4.0
+      - llvm-toolchain-trusty-5.0
+    packages:
+      # gcc
+#      - gcc-5
+#      - g++-5
+#      - gcc-6
+#      - g++-6
+      - gcc-7
+      - g++-7
+      # clang
+#      - clang-3.6
+#      - clang-3.7
+#      - clang-3.8
+#      - clang-3.9
+#      - clang-4.0
+      - clang-5.0
+      - libc++-dev
+      # build tools
+      - ninja-build
+      - lcov
+      - valgrind
+      - ccache
+      # libraries
+      - libace-dev
+      - libsqlite3-dev
+      - libtinyxml-dev
+      - libedit-dev
+      - qtbase5-dev
+      - qtdeclarative5-dev
+      - qtmultimedia5-dev
+      - libqt5opengl5-dev
+      - libqcustomplot-dev
+      - libopencv-dev
+      - libeigen3-dev
+      - libgraphviz-dev
 
 matrix:
   exclude:
@@ -139,47 +192,40 @@ matrix:
 #    - os: linux
 #      compiler: gcc
 #      env: TRAVIS_WITH_INTEGRATION_TESTS=true
+#      addons:
+#         apt:
+#           sources:
+#             - sourceline: 'deb http://packages.ros.org/ros/ubuntu trusty main'
+#               key_url: 'http://packages.ros.org/ros.key'
+#           packages:
+#             - liblua5.1-0-dev
+#             - lua5.1
+#             - tcl-dev
+#             - tk-dev
+#             - mono-mcs
+#             - ros-jade-desktop-full
 
     # Normal build with integration tests (linux, clang)
 #    - os: linux
 #      compiler: clang
 #      env: TRAVIS_WITH_INTEGRATION_TESTS=true
+#      addons:
+#         apt:
+#           sources:
+#             - sourceline: 'deb http://packages.ros.org/ros/ubuntu trusty main'
+#               key_url: 'http://packages.ros.org/ros.key'
+#           packages:
+#             - liblua5.1-0-dev
+#             - lua5.1
+#             - tcl-dev
+#             - tk-dev
+#             - mono-mcs
+#             - ros-jade-desktop-full
 
   allow_failures:
     # Broken tests are supposed to fail
     - env: TRAVIS_WITH_VALGRIND=true TRAVIS_WITH_BROKEN_TESTS=true
 
-
-branches:
-  except:
-    - /^.*appveyor.*$/
-
-addons:
-  apt:
-    sources:
-      - sourceline: 'ppa:ubuntu-toolchain-r/test'
-      - sourceline: 'deb http://packages.ros.org/ros/ubuntu trusty main'
-        key_url: 'http://packages.ros.org/ros.key'
-    packages:
-      - gcc-5
-      - g++-5
-      - clang-3.6
-      - libc++-dev
-      - ninja-build
-      - lcov
-      - valgrind
-      - ccache
-      - libace-dev
-      - libsqlite3-dev
-      - libtinyxml-dev
-      - libedit-dev
-      - qtbase5-dev
-      - qtdeclarative5-dev
-      - qtmultimedia5-dev
-      - libqt5opengl5-dev
-      - libqcustomplot-dev
-      - libopencv-dev
-      - libeigen3-dev
 
 notifications:
   irc:
@@ -192,27 +238,31 @@ notifications:
   slack:
     secure: PFCRF5GqjLKAghKHz+Dl2yOlRM5Ud8uI8s4AvshsHVmW4VNDhJfLzi3cGqWGjptZ2CBSMSrd5noANQCfeKObqwpeW3na8vrEO/l0RrgqV0idpiDOMotSRbCTB6I7DNKL31ZsQ4qm7eOroWlauNSiC+CBLmwShE9+N2zWC25JXSo=
 
-before_install:
-  # Prepare ros environment variables
-  - if [ "$TRAVIS_OS_NAME" == "linux" ]; then if $TRAVIS_WITH_INTEGRATION_TESTS; then export ROS_CI_DESKTOP=`lsb_release -cs`; fi; fi
-  - if [ "$TRAVIS_OS_NAME" == "linux" ]; then if $TRAVIS_WITH_INTEGRATION_TESTS; then export ROS_CI_VERSION=jade; fi; fi
-  - if [ "$TRAVIS_OS_NAME" == "linux" ]; then if $TRAVIS_WITH_INTEGRATION_TESTS; then export ROS_CI_PREFIX=ros-${ROS_CI_VERSION}-; fi; fi
-  - if [ "$TRAVIS_OS_NAME" == "linux" ]; then if $TRAVIS_WITH_INTEGRATION_TESTS; then export ROS_HOSTNAME=localhost; fi; fi
-  - if [ "$TRAVIS_OS_NAME" == "linux" ]; then if $TRAVIS_WITH_INTEGRATION_TESTS; then export ROS_MASTER_URI=http://localhost:11311; fi; fi
-  - if [ "$TRAVIS_OS_NAME" == "linux" ]; then if $TRAVIS_WITH_INTEGRATION_TESTS; then export ROBOT=sim; fi; fi
 
+before_install:
   # Update repositories (macOS)
   - if [ "$TRAVIS_OS_NAME" == "osx" ]; then brew update; fi
 
   # Add additional repositories
   - if [ "$TRAVIS_OS_NAME" == "osx" ]; then brew tap homebrew/science; fi
 
-  # Install gcc-5 on trusty from ubuntu-toolchain-r PPA
-  - if [ "$TRAVIS_OS_NAME" == "linux" ]; then sudo update-alternatives --install /usr/bin/gcc gcc /usr/bin/gcc-5 60 --slave /usr/bin/g++ g++ /usr/bin/g++-5; fi
+  # Install gcc alternatives
   - if [ "$TRAVIS_OS_NAME" == "linux" ]; then sudo update-alternatives --install /usr/bin/gcc gcc /usr/bin/gcc-4.8 40 --slave /usr/bin/g++ g++ /usr/bin/g++-4.8; fi
+#  - if [ "$TRAVIS_OS_NAME" == "linux" ]; then sudo update-alternatives --install /usr/bin/gcc gcc /usr/bin/gcc-5 60 --slave /usr/bin/g++ g++ /usr/bin/g++-5; fi
+#  - if [ "$TRAVIS_OS_NAME" == "linux" ]; then sudo update-alternatives --install /usr/bin/gcc gcc /usr/bin/gcc-6 60 --slave /usr/bin/g++ g++ /usr/bin/g++-6; fi
+  - if [ "$TRAVIS_OS_NAME" == "linux" ]; then sudo update-alternatives --install /usr/bin/gcc gcc /usr/bin/gcc-7 60 --slave /usr/bin/g++ g++ /usr/bin/g++-7; fi
+
+  # Remove default clang from path
   - if [ "$TRAVIS_OS_NAME" == "linux" ]; then export PATH=`echo $PATH | sed -e 's/\/usr\/local\/clang-3.5.0\/bin://'`; fi
-  - if [ "$TRAVIS_OS_NAME" == "linux" ]; then sudo update-alternatives --install /usr/bin/clang clang /usr/lib/llvm-3.6/bin/clang 60 --slave /usr/bin/clang++ clang++ /usr/lib/llvm-3.6/bin/clang++; fi
+
+  # Install clang alternatives
   - if [ "$TRAVIS_OS_NAME" == "linux" ]; then sudo update-alternatives --install /usr/bin/clang clang /usr/local/clang-3.5.0/bin/clang 40 --slave /usr/bin/clang++ clang++ /usr/local/clang-3.5.0/bin/clang++; fi
+#  - if [ "$TRAVIS_OS_NAME" == "linux" ]; then sudo update-alternatives --install /usr/bin/clang clang /usr/lib/llvm-3.6/bin/clang 60 --slave /usr/bin/clang++ clang++ /usr/lib/llvm-3.6/bin/clang++; fi
+#  - if [ "$TRAVIS_OS_NAME" == "linux" ]; then sudo update-alternatives --install /usr/bin/clang clang /usr/lib/llvm-3.7/bin/clang 60 --slave /usr/bin/clang++ clang++ /usr/lib/llvm-3.7/bin/clang++; fi
+#  - if [ "$TRAVIS_OS_NAME" == "linux" ]; then sudo update-alternatives --install /usr/bin/clang clang /usr/lib/llvm-3.8/bin/clang 60 --slave /usr/bin/clang++ clang++ /usr/lib/llvm-3.8/bin/clang++; fi
+#  - if [ "$TRAVIS_OS_NAME" == "linux" ]; then sudo update-alternatives --install /usr/bin/clang clang /usr/lib/llvm-3.9/bin/clang 60 --slave /usr/bin/clang++ clang++ /usr/lib/llvm-3.9/bin/clang++; fi
+#  - if [ "$TRAVIS_OS_NAME" == "linux" ]; then sudo update-alternatives --install /usr/bin/clang clang /usr/lib/llvm-4.0/bin/clang 60 --slave /usr/bin/clang++ clang++ /usr/lib/llvm-4.0/bin/clang++; fi
+  - if [ "$TRAVIS_OS_NAME" == "linux" ]; then sudo update-alternatives --install /usr/bin/clang clang /usr/lib/llvm-5.0/bin/clang 60 --slave /usr/bin/clang++ clang++ /usr/lib/llvm-5.0/bin/clang++; fi
 
   # Clang on ubuntu trusty requires libc++-dev
   - if [ "$TRAVIS_OS_NAME" == "linux" ]; then if [ "$CXX" == "clang++" ]; then export CXXFLGAS="$CXXFLAGS -stdlib=libc++"; fi; fi
@@ -222,9 +272,12 @@ before_install:
   - if [ "$TRAVIS_OS_NAME" == "osx" ]; then export PATH="/usr/local/opt/ccache/libexec:$PATH"; fi
 
   # Use ccache also for clang and clang++ on linux
-  - if [ "$TRAVIS_OS_NAME" == "linux" ]; then if [ "$CC" == "clang" ]; then sudo ln -s ../../bin/ccache /usr/lib/ccache/clang; fi; fi
+  - if [ "$TRAVIS_OS_NAME" == "linux" ]; then sudo ln -s ../../bin/ccache /usr/lib/ccache/clang; fi
+  - if [ "$TRAVIS_OS_NAME" == "linux" ]; then sudo ln -s ../../bin/ccache /usr/lib/ccache/clang++; fi
+
+  # These can be removed for ccache 3.2 (at the moment Ubunty trusty has 3.1.9)
+  # see https://bugzilla.samba.org/show_bug.cgi?id=8118
   - if [ "$TRAVIS_OS_NAME" == "linux" ]; then if [ "$CC" == "clang" ]; then export CFLAGS="$CFLAGS -Qunused-arguments"; fi; fi
-  - if [ "$TRAVIS_OS_NAME" == "linux" ]; then if [ "$CXX" == "clang++" ]; then sudo ln -s ../../bin/ccache /usr/lib/ccache/clang++; fi; fi
   - if [ "$TRAVIS_OS_NAME" == "linux" ]; then if [ "$CXX" == "clang++" ]; then export CXXFLAGS="$CXXFLAGS -Qunused-arguments"; fi; fi
 
   # Print some more system information after installing all build tools
@@ -233,6 +286,8 @@ before_install:
   - if [ "$TRAVIS_OS_NAME" == "linux" ]; then lsb_release -a; fi
   - if [ "$TRAVIS_OS_NAME" == "osx" ]; then system_profiler SPSoftwareDataType; fi
   - env
+  - if [ "$TRAVIS_OS_NAME" == "linux" ]; then cat /etc/apt/sources.list; fi
+  - if [ "$TRAVIS_OS_NAME" == "linux" ]; then ls /etc/apt/sources.list.d; fi
   - which cmake
   - cmake --version
   - which $CC
@@ -262,19 +317,16 @@ install:
   # Install GPL dependencies (qcustomplot)
   - if [ "$TRAVIS_OS_NAME" == "osx" ]; then brew install readline; fi
 
-  # Install other dependencies (opencv, eigen)
+  # Install other dependencies (opencv, eigen, graphviz)
   - if [ "$TRAVIS_OS_NAME" == "osx" ]; then /usr/bin/yes | pip uninstall numpy || true; fi
-  - if [ "$TRAVIS_OS_NAME" == "osx" ]; then brew install opencv eigen; fi
+  - if [ "$TRAVIS_OS_NAME" == "osx" ]; then brew install opencv eigen graphviz; fi
 
   # Install swig stuff
-  - if [ "$TRAVIS_OS_NAME" == "linux" ]; then if $TRAVIS_WITH_INTEGRATION_TESTS; then sudo apt-get -y install liblua5.1-0-dev lua5.1 tcl-dev tk-dev mono-mcs; fi; fi
   - if [ "$TRAVIS_OS_NAME" == "linux" ]; then if $TRAVIS_WITH_INTEGRATION_TESTS; then wget https://github.com/robotology-dependencies/swigs/releases/download/v0.0.5/swigs.zip; fi; fi
   - if [ "$TRAVIS_OS_NAME" == "linux" ]; then if $TRAVIS_WITH_INTEGRATION_TESTS; then unzip -q swigs.zip; mkdir -p cache; mv swigs cache/swig; fi; fi
 
-  # Install ros stuff
-  - if [ "$TRAVIS_OS_NAME" == "linux" ]; then if $TRAVIS_WITH_INTEGRATION_TESTS; then sudo apt-get -y install ${ROS_CI_PREFIX}desktop-full; fi; fi
-  - if [ "$TRAVIS_OS_NAME" == "linux" ]; then if $TRAVIS_WITH_INTEGRATION_TESTS; then sudo rosdep init && rosdep update; fi; fi
-  - if [ "$TRAVIS_OS_NAME" == "linux" ]; then if $TRAVIS_WITH_INTEGRATION_TESTS; then source /opt/ros/${ROS_CI_VERSION}/setup.bash; fi; fi
+  # Init ROS
+  - if [ "$TRAVIS_OS_NAME" == "linux" ]; then if $TRAVIS_WITH_INTEGRATION_TESTS; then source /opt/ros/jade/setup.bash; fi; fi
 
 
 before_script:
