@@ -70,6 +70,9 @@
                <property name="frameShape">
                 <enum>QFrame::NoFrame</enum>
                </property>
+               <property name="sortingEnabled">
+                <bool>true</bool>
+               </property>
                <column>
                 <property name="text">
                  <string>Entities</string>
