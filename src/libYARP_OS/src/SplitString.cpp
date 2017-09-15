@@ -30,7 +30,8 @@ int SplitString::size()
 void SplitString::set(int index, const char *txt)
 {
     if (index>=0&&index<size()) {
-        strncpy(buf[index], (char*)txt, MAX_ARG_LEN);
+        strncpy(buf[index], (char*)txt, MAX_ARG_LEN-1);
+        buf[index][MAX_ARG_LEN-1] = '\0';
     }
 }
 
