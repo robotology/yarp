@@ -34,6 +34,8 @@ env:
     - ROS_HOSTNAME=localhost
     - ROS_MASTER_URI=http://localhost:11311
     - ROBOT=sim
+# Force ccache to build the original cpp file instead of the pre-processed file
+    - CCACHE_CPP2=yes
 
 addons:
   apt:
