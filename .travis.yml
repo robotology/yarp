@@ -79,6 +79,20 @@ addons:
       - libopencv-dev
       - libeigen3-dev
       - libgraphviz-dev
+      # Bindings
+      - swig3.0
+      # C# bindings
+      - mono-mcs
+      # Lua bindings
+      - liblua5.1-0-dev
+      - lua5.1
+      # TCL/TK bindings
+      - tcl-dev
+      - tk-dev
+      # Python bindings
+      - python3-dev
+      # Octave bindings
+      - liboctave-dev
 
 matrix:
   exclude:
@@ -198,11 +212,6 @@ matrix:
 #             - sourceline: 'deb http://packages.ros.org/ros/ubuntu trusty main'
 #               key_url: 'http://packages.ros.org/ros.key'
 #           packages:
-#             - liblua5.1-0-dev
-#             - lua5.1
-#             - tcl-dev
-#             - tk-dev
-#             - mono-mcs
 #             - ros-jade-desktop-full
 
     # Normal build with integration tests (linux, clang)
@@ -215,11 +224,6 @@ matrix:
 #             - sourceline: 'deb http://packages.ros.org/ros/ubuntu trusty main'
 #               key_url: 'http://packages.ros.org/ros.key'
 #           packages:
-#             - liblua5.1-0-dev
-#             - lua5.1
-#             - tcl-dev
-#             - tk-dev
-#             - mono-mcs
 #             - ros-jade-desktop-full
 
   allow_failures:
@@ -297,6 +301,8 @@ before_install:
   - which ccache
   - ccache --version
   - ccache -s
+  - if [ "$TRAVIS_OS_NAME" == "linux" ]; then which swig3.0; fi
+  - if [ "$TRAVIS_OS_NAME" == "linux" ]; then swig3.0 -version; fi
   - echo "--------------------  END SYSTEM INFORMATION  --------------------"
 
 
@@ -336,7 +342,8 @@ before_script:
 
   # Prepare cmake options
   - . scripts/admin/generate-cmake-options.sh $(hostname) $(lsb_release -cs) continuous
-  - export YARP_CMAKE_OPTIONS=" $CMAKE_OPTIONS -DYARP_EXPERIMENTAL_CXX11=ON"
+  - export YARP_CMAKE_OPTIONS="${CMAKE_OPTIONS} -DYARP_EXPERIMENTAL_CXX11=ON"
+  - if [ "$TRAVIS_OS_NAME" == "linux" ]; then export YARP_CMAKE_OPTIONS="${YARP_CMAKE_OPTIONS} -DYARP_COMPILE_BINDINGS=ON -DCREATE_CSHARP=ON -DCREATE_LUA=ON -DCREATE_PYTHON=ON -DCREATE_TCL=ON"; fi
   - if ! $TRAVIS_WITH_ACE; then export YARP_CMAKE_OPTIONS="${YARP_CMAKE_OPTIONS} -DSKIP_ACE=ON -DYARP_TEST_HEAP=ON"; fi
   - if ! $TRAVIS_WITH_MATH; then export YARP_CMAKE_OPTIONS="${YARP_CMAKE_OPTIONS} -DCREATE_LIB_MATH:BOOL=OFF -DENABLE_yarpmod_fakeIMU:BOOL=OFF -DENABLE_yarpmod_fakeLaser:BOOL=OFF"; fi
   - if $TRAVIS_WITH_INTEGRATION_TESTS; then export YARP_CMAKE_OPTIONS="${YARP_CMAKE_OPTIONS} -DYARP_TEST_INTEGRATION=ON"; fi
