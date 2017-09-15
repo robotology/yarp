@@ -12,6 +12,8 @@
 #include "qtquick2applicationviewer.h"
 #include "config.h"
 
+#include <csignal>
+
 #include <QQmlApplicationEngine>
 #include <QQuickWindow>
 #include <QtWidgets/QApplication>
@@ -19,6 +21,12 @@
 #include <QVariant>
 #include <QDir>
 #include <QtGlobal>
+
+void catchSignals(int sig) {
+    // blocking and not aysnc-signal-safe func are valid
+    printf("\nYarpview killed by signal(%d).\n", sig);
+    QCoreApplication::quit();
+}
 
 /*! \brief Main method for the YARPView container.
  *
@@ -58,6 +66,15 @@ int main(int argc, char *argv[])
     qputenv("QT_DEVICE_PIXEL_RATIO", QByteArray("auto"));
 #endif
     QApplication app(argc, argv);
+    // add SIGINT and SIGTERM handler
+    std::signal(SIGINT, catchSignals);
+    std::signal(SIGTERM, catchSignals);
+
+#if !defined(_WIN32)
+    std::signal(SIGQUIT, catchSignals);
+    std::signal(SIGHUP, catchSignals);
+#endif
+
     QVariant retVal;
 
     // De-comment this to trace all imports
