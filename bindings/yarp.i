@@ -14,11 +14,6 @@
 
 %module(directors="1") yarp
 
-%{
-// missing in some old versions of swig
-#include <stddef.h>
-%}
-
 %import "yarp/conf/api.h"
 
 #if !defined (SWIGMATLAB)
@@ -43,46 +38,12 @@
 #endif
 
 // Try to make yarp::os::ConstString act like std::string
-#if !defined(SWIGJAVA) && !defined(SWIGLUA) && !defined(SWIGCSHARP)
-  // Try to translate std::string and std::vector to native equivalents
-  %include "std_string.i"
-  %typemaps_std_string(yarp::os::ConstString, char, SWIG_AsCharPtrAndSize,
-               SWIG_FromCharPtrAndSize, %checkcode(STDSTRING));
-  %define YARP_WRAP_STL_STRING %enddef
-  %ignore yarp::os::ConstString;
-#else
-  #if (SWIG_VERSION >=0x020007)
-    // Try to translate std::string and std::vector to native equivalents
-    %include "std_string.i"
-//    %define _YARP2_CONSTSTRING_ %enddef
-//    namespace yarp {
-//      namespace os {
-//        typedef std::string ConstString;
-//      }
-//    }
-  #else
-    #if defined (SWIGLUA)
-      %include "std_string_lua.i"
-    #endif
-    #if defined (SWIGJAVA)
-      %include "std_string_java.i"
-    #endif
-    #if defined (SWIGCSHARP)
-      %include "std_string_csharp.i"
-    #endif
-
-  #endif
-%apply std::string {yarp::os::ConstString};
-#endif
-
-#if defined (SWIGPYTHON)
-%{
-    // add a stray definition missing in SWIG version 2.0.7
-#ifndef PyInt_FromSize_t
-#define PyInt_FromSize_t(x) PyLong_FromSize_t(x)
-#endif
-%}
-#endif
+// Try to translate std::string and std::vector to native equivalents
+%include "std_string.i"
+%typemaps_std_string(yarp::os::ConstString, char, SWIG_AsCharPtrAndSize,
+             SWIG_FromCharPtrAndSize, %checkcode(STDSTRING));
+%define YARP_WRAP_STL_STRING %enddef
+%ignore yarp::os::ConstString;
 
 #if defined(SWIGCSHARP)
     // Get .NET pointers instead of swig generated types (useful when dealing with images)
