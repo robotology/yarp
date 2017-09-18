@@ -37,7 +37,7 @@ public:
     /**
      *
      * Check if name space is available.
-     *
+     * @return true if the namespace is available, false otherwise 
      */
     virtual bool checkNetwork();
 
@@ -47,6 +47,8 @@ public:
      * network operations needed. If the timeout occurs, we 
      * assume the name space is not available.
      *
+     * @param[in] timeout timeout period in seconds
+     * @return true if the namespace is available, false otherwise 
      */
     virtual bool checkNetwork(double timeout);
 
