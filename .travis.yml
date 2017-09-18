@@ -95,6 +95,10 @@ addons:
       - python3-dev
       # Octave bindings
       - liboctave-dev
+      # Java bindings
+      - default-jdk
+      # Ruby bindings
+      - ruby-dev
 
 matrix:
   exclude:
@@ -330,11 +334,11 @@ install:
   - if [ "$TRAVIS_OS_NAME" == "osx" ]; then brew install opencv eigen graphviz; fi
 
   # Install swig stuff
-  - if [ "$TRAVIS_OS_NAME" == "linux" ]; then if $TRAVIS_WITH_INTEGRATION_TESTS; then wget https://github.com/robotology-dependencies/swigs/releases/download/v0.0.5/swigs.zip; fi; fi
-  - if [ "$TRAVIS_OS_NAME" == "linux" ]; then if $TRAVIS_WITH_INTEGRATION_TESTS; then unzip -q swigs.zip; mkdir -p cache; mv swigs cache/swig; fi; fi
+  - if $TRAVIS_WITH_INTEGRATION_TESTS; then wget https://github.com/robotology-dependencies/swigs/releases/download/v0.0.5/swigs.zip; fi
+  - if $TRAVIS_WITH_INTEGRATION_TESTS; then unzip -q swigs.zip; mkdir -p cache; mv swigs cache/swig; fi
 
   # Init ROS
-  - if [ "$TRAVIS_OS_NAME" == "linux" ]; then if $TRAVIS_WITH_INTEGRATION_TESTS; then source /opt/ros/jade/setup.bash; fi; fi
+  - if $TRAVIS_WITH_INTEGRATION_TESTS; then source /opt/ros/jade/setup.bash; fi
 
 
 before_script:
@@ -345,15 +349,15 @@ before_script:
   # Prepare cmake options
   - . scripts/admin/generate-cmake-options.sh $(hostname) $(lsb_release -cs) continuous
   - export YARP_CMAKE_OPTIONS="${CMAKE_OPTIONS} -DYARP_EXPERIMENTAL_CXX11=ON"
-  - if [ "$TRAVIS_OS_NAME" == "linux" ]; then export YARP_CMAKE_OPTIONS="${YARP_CMAKE_OPTIONS} -DYARP_COMPILE_BINDINGS=ON -DCREATE_LUA=ON -DCREATE_PYTHON=ON -DCREATE_TCL=ON"; fi
   - if ! $TRAVIS_WITH_ACE; then export YARP_CMAKE_OPTIONS="${YARP_CMAKE_OPTIONS} -DSKIP_ACE=ON -DYARP_TEST_HEAP=ON"; fi
   - if ! $TRAVIS_WITH_MATH; then export YARP_CMAKE_OPTIONS="${YARP_CMAKE_OPTIONS} -DCREATE_LIB_MATH:BOOL=OFF -DENABLE_yarpmod_fakeIMU:BOOL=OFF -DENABLE_yarpmod_fakeLaser:BOOL=OFF"; fi
-  - if $TRAVIS_WITH_INTEGRATION_TESTS; then export YARP_CMAKE_OPTIONS="${YARP_CMAKE_OPTIONS} -DYARP_TEST_INTEGRATION=ON"; fi
+  - if [ "$TRAVIS_OS_NAME" == "linux" ]; then export YARP_CMAKE_OPTIONS="${YARP_CMAKE_OPTIONS} -DYARP_COMPILE_BINDINGS=ON -DCREATE_LUA=ON -DCREATE_PYTHON=ON -DCREATE_TCL=ON"; fi
   - if $TRAVIS_STATIC; then export YARP_CMAKE_OPTIONS="${YARP_CMAKE_OPTIONS} -DCREATE_SHARED_LIBRARY=OFF"; fi
   - if $TRAVIS_CLEAN_API; then export YARP_CMAKE_OPTIONS="${YARP_CMAKE_OPTIONS} -DYARP_CLEAN_API=ON -DYARP_COMPILE_TESTS=OFF"; fi
   - if $TRAVIS_WITH_VALGRIND; then export YARP_CMAKE_OPTIONS="${YARP_CMAKE_OPTIONS} -DYARP_VALGRIND_TESTS=ON -DYARP_VALGRIND_DRD_TESTS=OFF -DYARP_VALGRIND_HELGRIND_TESTS=OFF YARP_VALGRIND_MEMCHECK_TESTS=ON YARP_VALGRIND_SGCHECK_TESTS=OFF"; fi
   - if $TRAVIS_NO_DEPRECATED; then export YARP_CMAKE_OPTIONS="${YARP_CMAKE_OPTIONS} -DYARP_NO_DEPRECATED=ON"; fi
   - if $TRAVIS_WITH_BROKEN_TESTS; then export YARP_CMAKE_OPTIONS="${YARP_CMAKE_OPTIONS} -DYARP_ENABLE_BROKEN_TESTS=ON"; fi
+  - if $TRAVIS_WITH_INTEGRATION_TESTS; then export YARP_CMAKE_OPTIONS="${YARP_CMAKE_OPTIONS} -DYARP_TEST_INTEGRATION=ON"; fi
 
   # TinyXML on trusty is built with C++98 ABI and clang fails.
   - if [ "$TRAVIS_OS_NAME" == "linux" ]; then if [ "$CC" == "clang" ]; then export YARP_CMAKE_OPTIONS="${YARP_CMAKE_OPTIONS} -DYARP_USE_SYSTEM_TINYXML=OFF"; fi; fi
