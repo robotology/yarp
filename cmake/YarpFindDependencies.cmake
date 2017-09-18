@@ -372,7 +372,7 @@ if(CREATE_YARPVIZ)
 endif()
 
 if(YARP_COMPILE_BINDINGS)
-  set(SWIG_REQUIRED_VERSION 1.3.29)
+  set(SWIG_REQUIRED_VERSION 3.0)
   find_package(SWIG ${SWIG_REQUIRED_VERSION} QUIET)
   checkandset_dependency(SWIG)
 endif()
