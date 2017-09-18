@@ -1,5 +1,5 @@
 // Copyright: (C) 2010 RobotCub Consortium
-// Author: Paul Fitzpatrick, Stephane Lallee, Arnaud Degroote, Leo Pape, Juan G Victores, Marek Rucinski, Fabien Benureau
+// Author: Paul Fitzpatrick, Stephane Lallee, Arnaud Degroote, Leo Pape, Juan G Victores, Marek Rucinski, Fabien Benureau, Ali Paikan
 // CopyPolicy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
 
 //////////////////////////////////////////////////////////////////////////
@@ -1263,5 +1263,42 @@ public static short[] getRawImg(Image img) {
 /*
  * Extending yarp::os::Things.h
  */
-%include "things.i"
+%extend yarp::os::Things  {
+public:
 
+    yarp::os::Value* asValue() {
+        return self->cast_as<yarp::os::Value>();
+    }
+
+    yarp::os::Bottle* asBottle() {
+        return self->cast_as<yarp::os::Bottle>();
+    }
+
+    yarp::os::Property* asProperty() {
+        return self->cast_as<yarp::os::Property>();
+    }
+
+    yarp::sig::Vector* asVector() {
+        return self->cast_as<yarp::sig::Vector>();
+    }
+
+    yarp::sig::Matrix* asMatrix() {
+        return self->cast_as<yarp::sig::Matrix>();
+    }
+
+    yarp::sig::Image* asImage() {
+        return self->cast_as<yarp::sig::Image>();
+    }
+
+    yarp::sig::ImageOf<yarp::sig::PixelRgb>* asImageOfPixelRgb() {
+        return self->cast_as<yarp::sig::ImageOf<yarp::sig::PixelRgb> >();
+    }
+
+    yarp::sig::ImageOf<yarp::sig::PixelBgr>* asImageOfPixelBgr() {
+        return self->cast_as<yarp::sig::ImageOf<yarp::sig::PixelBgr> >();
+    }
+
+    yarp::sig::ImageOf<yarp::sig::PixelMono>* asImageOfPixelMono() {
+        return self->cast_as<yarp::sig::ImageOf<yarp::sig::PixelMono> >();
+    }
+}
