@@ -45,6 +45,10 @@ if(NOT MSVC)
   if(CXX_HAS_WNO_UNUSED_PARAMETER)
     set_property(SOURCE ${qgvcore_SRCS} APPEND_STRING PROPERTY COMPILE_FLAGS " -Wno-unused-parameter")
   endif()
+  check_cxx_compiler_flag("-Wno-redundant-decls" CXX_HAS_WNO_REDUNDANT_DECLS)
+  if(CXX_HAS_WNO_REDUNDANT_DECLS)
+    set_property(SOURCE ${qgvcore_SRCS} APPEND_STRING PROPERTY COMPILE_FLAGS " -Wno-redundant-decls")
+  endif()
 endif()
 
 include_directories(${Graphviz_INCLUDE_DIR}
