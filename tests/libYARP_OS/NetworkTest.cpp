@@ -102,7 +102,9 @@ public:
         Network::sync("/p1");
         Network::sync("/p2");
         checkTrue(Network::connect("/p1","/p2"),"good connect");
-        checkFalse(Network::connect("/p1","/p3"),"bad connect");
+        checkFalse(Network::connect("/p1","/p3"),"bad connect, not existing destination");
+        checkFalse(Network::connect("/p1","/p2 /p3"),"bad connect, invalid destination");
+        checkFalse(Network::connect("/p1 /p2","/p2"),"bad connect, invalid source");
         p2.close();
         p1.close();
     }
