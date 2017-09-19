@@ -62,7 +62,6 @@ addons:
 #      - clang-3.9
 #      - clang-4.0
       - clang-5.0
-      - libc++-dev
       # build tools
       - ninja-build
       - lcov
@@ -273,9 +272,6 @@ before_install:
 #  - if [ "$TRAVIS_OS_NAME" == "linux" ]; then sudo update-alternatives --install /usr/bin/clang clang /usr/lib/llvm-3.9/bin/clang 60 --slave /usr/bin/clang++ clang++ /usr/lib/llvm-3.9/bin/clang++; fi
 #  - if [ "$TRAVIS_OS_NAME" == "linux" ]; then sudo update-alternatives --install /usr/bin/clang clang /usr/lib/llvm-4.0/bin/clang 60 --slave /usr/bin/clang++ clang++ /usr/lib/llvm-4.0/bin/clang++; fi
   - if [ "$TRAVIS_OS_NAME" == "linux" ]; then sudo update-alternatives --install /usr/bin/clang clang /usr/lib/llvm-5.0/bin/clang 60 --slave /usr/bin/clang++ clang++ /usr/lib/llvm-5.0/bin/clang++; fi
-
-  # Clang on ubuntu trusty requires libc++-dev
-  - if [ "$TRAVIS_OS_NAME" == "linux" ]; then if [ "$CXX" == "clang++" ]; then export CXXFLGAS="$CXXFLAGS -stdlib=libc++"; fi; fi
 
   # Install ccache on osx
   - if [ "$TRAVIS_OS_NAME" == "osx" ]; then brew install ccache; fi
