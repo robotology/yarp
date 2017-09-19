@@ -324,7 +324,8 @@ before_script:
 
   # Prepare cmake options
   - . scripts/admin/generate-cmake-options.sh $(hostname) $(lsb_release -cs) continuous
-  - export YARP_CMAKE_OPTIONS="${CMAKE_OPTIONS} -DYARP_EXPERIMENTAL_CXX11=ON"
+  - export YARP_INSTALL_PREFIX="${PWD}/install"
+  - export YARP_CMAKE_OPTIONS="${CMAKE_OPTIONS} -DCMAKE_INSTALL_PREFIX=${YARP_INSTALL_PREFIX} -DYARP_EXPERIMENTAL_CXX11=ON"
   - if ! $TRAVIS_WITH_ACE; then export YARP_CMAKE_OPTIONS="${YARP_CMAKE_OPTIONS} -DSKIP_ACE=ON -DYARP_TEST_HEAP=ON"; fi
   - if ! $TRAVIS_WITH_MATH; then export YARP_CMAKE_OPTIONS="${YARP_CMAKE_OPTIONS} -DCREATE_LIB_MATH:BOOL=OFF -DENABLE_yarpmod_fakeIMU:BOOL=OFF -DENABLE_yarpmod_fakeLaser:BOOL=OFF"; fi
   - if [ "$TRAVIS_OS_NAME" == "linux" ]; then export YARP_CMAKE_OPTIONS="${YARP_CMAKE_OPTIONS} -DYARP_COMPILE_BINDINGS=ON -DCREATE_LUA=ON -DCREATE_PYTHON=ON -DCREATE_TCL=ON"; fi
@@ -369,11 +370,11 @@ script:
   - if ! $TRAVIS_CLEAN_API; then (cd build; travis_wait 50 ctest --output-on-failure --build . -C ${TRAVIS_BUILD_TYPE}); fi
 
   # Test installation
-  - (cd build; sudo cmake --build . --config ${TRAVIS_BUILD_TYPE} --target install)
+  - (cd build; cmake --build . --config ${TRAVIS_BUILD_TYPE} --target install)
 
   # Build also the os examples
   - mkdir example/os/build
-  - (cd example/os/build; cmake -G"${TRAVIS_CMAKE_GENERATOR}" -DCMAKE_BUILD_TYPE=${TRAVIS_BUILD_TYPE} ..)
+  - (cd example/os/build; cmake -G"${TRAVIS_CMAKE_GENERATOR}" -DCMAKE_BUILD_TYPE=${TRAVIS_BUILD_TYPE} -DYARP_DIR=${YARP_INSTALL_PREFIX}/lib/YARP ..)
   - (cd example/os/build; cmake --build . --config ${TRAVIS_BUILD_TYPE})
 
 
