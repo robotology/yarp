@@ -37,16 +37,19 @@ public:
 
     /**
      *
-     * Check if name space is available.
+     * Check if a name space is available.
+     * @return true if the name space is available, false otherwise.
      *
      */
     virtual bool checkNetwork();
 
     /**
-     *
-     * Check if name space is available, with a timeout on any
+     * Check if a name space is available, with a timeout on any
      * network operations needed. If the timeout occurs, we
      * assume the name space is not available.
+     *
+     * @param[in] timeout time in seconds to wait for a response in any network operation needed.
+     * @return true if the name server is available in the specified time, false otherwise.
      *
      */
     virtual bool checkNetwork(double timeout);

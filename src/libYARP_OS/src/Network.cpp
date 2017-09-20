@@ -286,7 +286,12 @@ static int metaConnect(const ConstString& src,
                   dest.c_str(),
                   (mode==YARP_ENACT_CONNECT)?"connect":((mode==YARP_ENACT_DISCONNECT)?"disconnect":"check")
                   );
-
+    // check if source name and destination name contain spaces
+    if(dest.find(" ") != std::string::npos || src.find(" ") != std::string::npos)
+    {
+        fprintf(stderr, "Failure: no way to make connection %s->%s,\n", src.c_str(), dest.c_str());
+        return 1;
+    }
     // get the expressed contacts, without name server input
     Contact dynamicSrc = Contact::fromString(src);
     Contact dynamicDest = Contact::fromString(dest);
