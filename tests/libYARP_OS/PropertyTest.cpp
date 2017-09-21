@@ -54,6 +54,31 @@ public:
         p.unput("ten");
         checkTrue(p.find("ten").isNull(),"unput");
     }
+    void checkAsDoublePrec()
+    {
+        Property p;
+        report(0,"checking that issue https://github.com/robotology/yarp/issues/1057 is properly solved");
+        double val = 1e-5;
+        p.fromString("(dbl 0.00001)");
+        checkTrue(fabs(p.find("dbl").asDouble() - val) < 1e-12, "checking 1e-5");
+        p.unput("dbl");
+        val = 1e-6;
+        p.fromString("(dbl 0.000001)");
+        checkTrue(fabs(p.find("dbl").asDouble() - val) < 1e-12, "checking 1e-6");
+        p.unput("dbl");
+        val = 1e-7;
+        p.fromString("(dbl 0.0000001)");
+        checkTrue(fabs(p.find("dbl").asDouble() - val) < 1e-12, "checking 1e-7");
+        p.unput("dbl");
+        val = 1e-8;
+        p.fromString("(dbl 0.00000001)");
+        checkTrue(fabs(p.find("dbl").asDouble() - val) < 1e-12, "checking 1e-8");
+        p.unput("dbl");
+        val = 1e-9;
+        p.fromString("(dbl 0.000000001)");
+        checkTrue(fabs(p.find("dbl").asDouble() - val) < 1e-12, "checking 1e-9");
+
+    }
 
 
     void checkNegative() {
@@ -617,6 +642,7 @@ check $x $y\n\
         checkPutGet();
         checkExternal();
         checkTypes();
+        checkAsDoublePrec();
         checkNegative();
         checkCopy();
         checkExpansion();
