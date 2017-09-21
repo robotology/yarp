@@ -114,15 +114,12 @@ bool AbstractCarrier::expectSenderSpecifier(ConnectionState& proto)
     if (len<1) {
         len = 1;
     }
-    // expect a string -- these days null terminated, but not in YARP1
     ManagedBytes b(len+1);
     r = proto.is().readFull(Bytes(b.get(), len));
     if ((int)r!=len) {
         YARP_DEBUG(Logger::get(), "did not get sender name");
         return false;
     }
-    // add null termination for YARP1
-    b.get()[len] = '\0';
     ConstString s = b.get();
     Route route = proto.getRoute();
     route.setFromName(s);

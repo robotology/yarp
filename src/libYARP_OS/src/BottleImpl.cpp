@@ -48,16 +48,6 @@ using yarp::os::Value;
 #define YMSG(x)
 #define YTRACE(x)
 
-// YARP1 compatible codes
-// const int StoreInt::code = 1;
-// const int StoreString::code = 5;
-// const int StoreDouble::code = 2;
-// const int StoreList::code = 16;
-// const int StoreVocab::code = 32;
-// const int StoreBlob::code = 33;
-//#define USE_YARP1_PREFIX
-
-// new YARP2 codes
 const int StoreInt::code = BOTTLE_TAG_INT;
 const int StoreVocab::code = BOTTLE_TAG_VOCAB;
 const int StoreDouble::code = BOTTLE_TAG_DOUBLE;
@@ -514,13 +504,6 @@ bool BottleImpl::write(ConnectionWriter& writer)
         // writer.appendLine(toString());
         writer.appendString(toString().c_str(), '\n');
     } else {
-#ifdef USE_YARP1_PREFIX
-        if (!nested) {
-            ConstString name = "YARP2";
-            writer.appendInt(name.length() + 1);
-            writer.appendString(name.c_str(), '\0');
-        }
-#endif
         synch();
         /*
           if (!nested) {
@@ -570,21 +553,6 @@ bool BottleImpl::read(ConnectionReader& reader)
         fromString(str);
         result = true;
     } else {
-#ifdef USE_YARP1_PREFIX
-        if (!nested) {
-            int len = reader.expectInt();
-            if (reader.isError()) {
-                return false;
-            }
-            // ConstString name = reader.expectString(len);
-            ConstString buf(YARP_STRINIT(len));
-            reader.expectBlock((const char*)buf.c_str(), len);
-            if (reader.isError()) {
-                return false;
-            }
-            ConstString name = buf.c_str();
-        }
-#endif
         if (!nested) {
             // no byte length any more to facilitate nesting
             // reader.expectInt(); // the bottle byte ct; ignored
