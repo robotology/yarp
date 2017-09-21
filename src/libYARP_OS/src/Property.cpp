@@ -192,8 +192,7 @@ public:
         PropertyItem *p = getProp(key, true);
         p->singleton = false;
         p->clear();
-        // inefficient! copy not implemented yet...
-        p->bot.fromString(val.toString().c_str());
+        p->bot = val;
         return p->bot;
     }
 
