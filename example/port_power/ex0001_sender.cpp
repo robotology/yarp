@@ -17,9 +17,9 @@ int main() {
     while (true) {
         Bottle b;        // Make a place to store things.
         b.clear();
-        b.add("hello");
-        b.add("world");
-        b.add(ct);
+        b.addString("hello");
+        b.addString("world");
+        b.addInt(ct);
         ct++;
         p.write(b);      // Send the data.
         printf("Sent %s\n", b.toString().c_str());

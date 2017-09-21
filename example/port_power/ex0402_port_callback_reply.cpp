@@ -15,7 +15,7 @@ class DataProcessor : public PortReader {
         // process data "in", prepare "out"
         printf("Got %s\n", in.toString().c_str());  
         out.clear();
-        out.add("acknowledge");
+        out.addString("acknowledge");
         out.append(in);
         ConnectionWriter *returnToSender = connection.getWriter();
         if (returnToSender!=NULL) {

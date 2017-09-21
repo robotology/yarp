@@ -18,9 +18,9 @@ int main() {
         Bottle in,out;   // Make places to store things.
         // prepare command "out".
         out.clear();
-        out.add("hello");
-        out.add("world");
-        out.add(ct);
+        out.addString("hello");
+        out.addString("world");
+        out.addInt(ct);
         ct++;
         p.write(out,in); // send command, wait for reply.
         // process response "in".
