@@ -520,6 +520,10 @@ if(CREATE_LUA)
   install(TARGETS ${target_name}
           DESTINATION ${CMAKE_INSTALL_LUADIR})
 
+  if(YARP_COMPILE_TESTS)
+    add_subdirectory(tests/lua)
+  endif()
+
 endif(CREATE_LUA)
 
 #############################################################################
