@@ -13,7 +13,7 @@ endif()
 set(YARP_MODULE_DIR "${CMAKE_SOURCE_DIR}/cmake")
 set(YARP_MODULE_PATH "${YARP_MODULE_DIR}")
 
-set(YCM_REQUIRED_VERSION 0.4.0) # Used also by YarpFindDependencies
+set(YCM_REQUIRED_VERSION 0.5.1) # Used also by YarpFindDependencies
 find_package(YCM ${YCM_REQUIRED_VERSION} QUIET)
 if(NOT YCM_FOUND)
   list(APPEND YARP_MODULE_PATH "${YARP_MODULE_DIR}/ycm-${YCM_REQUIRED_VERSION}/find-modules"

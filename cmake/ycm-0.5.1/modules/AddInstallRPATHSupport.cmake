@@ -64,7 +64,7 @@
 #    ``LIB_DIRS``.
 #  - ``INSTALL_NAME_DIR`` directory where the libraries will be installed.
 #    This variable will be used only if ``CMAKE_SKIP_RPATH`` or
-#    ``CMAKE_SKIP_INSTALL_RPATH`` is set to ``TRUE`` as it will set the 
+#    ``CMAKE_SKIP_INSTALL_RPATH`` is set to ``TRUE`` as it will set the
 #    ``INSTALL_NAME_DIR`` on all targets
 #  - ``DEPENDS`` list of conditions that should be ``TRUE`` to enable
 #    RPATH, for example ``FOO; NOT BAR``.

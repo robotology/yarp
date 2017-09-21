@@ -168,7 +168,8 @@ endforeach()
 foreach(_d cmake-3.1/  # since YARP 2.3.68
            cmake-3.5/
            ycm-0.2/    # since YARP 2.3.70
-           ycm-0.3.1)
+           ycm-0.3.1
+           ycm-0.4.0)  # since YARP 2.3.72
   install(CODE
  "if(EXISTS \"\$ENV{DESTDIR}${CMAKE_INSTALL_PREFIX}/share/yarp/cmake/${_d}\")
     message(STATUS \"Deleted: \\\"\$ENV{DESTDIR}${CMAKE_INSTALL_PREFIX}/share/yarp/cmake/${_d}\\\"\")
