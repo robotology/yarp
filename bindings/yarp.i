@@ -38,12 +38,16 @@
 #endif
 
 // Try to make yarp::os::ConstString act like std::string
-// Try to translate std::string and std::vector to native equivalents
+// Try to translate std::string to native equivalents
 %include "std_string.i"
 %typemaps_std_string(yarp::os::ConstString, char, SWIG_AsCharPtrAndSize,
              SWIG_FromCharPtrAndSize, %checkcode(STDSTRING));
-%define YARP_WRAP_STL_STRING %enddef
-%ignore yarp::os::ConstString;
+#if !defined(SWIGJAVA) && !defined(SWIGLUA) && !defined(SWIGCSHARP)
+  %define YARP_WRAP_STL_STRING %enddef
+  %ignore yarp::os::ConstString;
+#else
+  %apply std::string {yarp::os::ConstString};
+#endif
 
 #if defined(SWIGCSHARP)
     // Get .NET pointers instead of swig generated types (useful when dealing with images)
