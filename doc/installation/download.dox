@@ -11,14 +11,14 @@
 
 Latest YARP release is:
 
- + YARP 2.3.70 (2017-06-15)
+ + YARP 2.3.70.1 (2017-09-21)
 
 \section download_source_code Source Code
 
 Latest release can be downloaded from here:
 
- + https://github.com/robotology/yarp/archive/v2.3.70.tar.gz
- + https://github.com/robotology/yarp/archive/v2.3.70.zip
+ + https://github.com/robotology/yarp/archive/v2.3.70.1.tar.gz
+ + https://github.com/robotology/yarp/archive/v2.3.70.1.zip
 
 \section download_binary Binary releases
 
@@ -67,6 +67,7 @@ Previous versions are hosted on
 
 __Previous releases version and dates__:
 
+ + YARP 2.3.70 (2017-06-15)
  + YARP 2.3.68.1 (2017-06-15)
  + YARP 2.3.68 (2016-11-28)
  + YARP 2.3.66.2 (2016-11-28)
