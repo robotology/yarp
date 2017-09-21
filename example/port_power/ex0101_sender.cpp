@@ -17,9 +17,9 @@ int main() {
     while (true) {
         Bottle& b = p.prepare(); // Get a place to store things.
         b.clear();  // clear is important - b might be a reused object
-        b.add("hello");
-        b.add("world");
-        b.add(ct);
+        b.addString("hello");
+        b.addString("world");
+        b.addInt(ct);
         ct++;
         printf("Sending %s\n", b.toString().c_str());
         p.write();            // Send the data.
