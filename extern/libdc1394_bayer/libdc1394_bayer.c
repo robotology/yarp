@@ -509,7 +509,7 @@ dc1394error_t
 dc1394_bayer_Downsample(const uint8_t *restrict bayer, uint8_t *restrict rgb, int sx, int sy, int tile)
 {
     uint8_t *outR, *outG, *outB;
-    register int i, j;
+    int i, j;
     int tmp;
 
     switch (tile) {
@@ -1057,7 +1057,7 @@ dc1394error_t
 dc1394_bayer_Downsample_uint16(const uint16_t *restrict bayer, uint16_t *restrict rgb, int sx, int sy, int tile, int bits)
 {
     uint16_t *outR, *outG, *outB;
-    register int i, j;
+    int i, j;
     int tmp;
 
     switch (tile) {
@@ -1117,7 +1117,7 @@ dc1394error_t
 dc1394_bayer_Simple_uint16(const uint16_t *restrict bayer, uint16_t *restrict rgb, int sx, int sy, int tile, int bits)
 {
     uint16_t *outR, *outG, *outB;
-    register int i, j;
+    int i, j;
     int tmp, base;
 
     // sx and sy should be even
