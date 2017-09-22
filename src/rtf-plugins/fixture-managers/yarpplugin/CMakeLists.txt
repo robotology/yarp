@@ -2,16 +2,10 @@
 # Authors: Daniele E. Domenichelli <daniele.domenichelli@iit.it>
 # Copy Policy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
 
+
 project(rtf_fixturemanager_yarpplugin)
 
-get_property(YARP_OS_INCLUDE_DIRS TARGET YARP_OS PROPERTY INCLUDE_DIRS)
-get_property(YARP_dev_INCLUDE_DIRS TARGET YARP_dev PROPERTY INCLUDE_DIRS)
-get_property(YARP_dev_INCLUDE_DIRS TARGET YARP_rtf PROPERTY INCLUDE_DIRS)
-
 include_directories(SYSTEM ${RTF_INCLUDE_DIRS})
-include_directories(${YARP_OS_INCLUDE_DIRS}
-                    ${YARP_dev_INCLUDE_DIRS}
-                    ${YARP_rtf_INCLUDE_DIRS})
 
 add_definitions(-DSHLIBPP_FILTER_API)
 
