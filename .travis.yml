@@ -49,6 +49,7 @@ addons:
       # clang
       - clang-5.0
       # build tools
+      - cmake3
       - ninja-build
       - lcov
       - valgrind
