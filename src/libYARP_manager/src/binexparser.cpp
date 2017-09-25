@@ -46,8 +46,15 @@ bool BinaryExpParser::parse(string _exp)
 
     binTree.clear();
     operands.clear();
-    BinaryNodePtr root;
+    BinaryNodePtr root = YARP_NULLPTR;
     parseExpression(strexp, root);
+    if(root == YARP_NULLPTR)
+    {
+        ErrorLogger* logger = ErrorLogger::Instance();
+        string msg = "BinaryExpParser: failed to parse the expression";
+        logger->addError(msg);
+        return false;
+    }
     if(invalidOperands.size())
     {
         ErrorLogger* logger = ErrorLogger::Instance();
