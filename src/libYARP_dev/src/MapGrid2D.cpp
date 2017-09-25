@@ -284,7 +284,7 @@ bool MapGrid2D::loadROSParams(string ros_yaml_filename, string& pgm_occ_filename
         orig_y = b->get(1).asDouble();
         orig_t = b->get(2).asDouble();
     }
-    return true;
+    return ret;
 }
 
 bool MapGrid2D::loadMapYarpAndRos(string yarp_filename, string ros_yaml_filename)
