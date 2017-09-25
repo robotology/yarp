@@ -610,7 +610,6 @@ bool DgramTwoWayStream::join(const Contact& group, bool sender,
 
     int result = -1;
     if (ipLocal.isValid()) {
-        result = 0;
         result = dmcast->join(addr, 1);
 
         if (result==0) {
@@ -1035,7 +1034,7 @@ void DgramTwoWayStream::flush() {
             // better solution was to increase recv buffer size
 
             double first = yarp::os::Time::now();
-            double now = first;
+            double now;
             int ct = 0;
             do {
                 //printf("Busy wait... %d\n", ct);
