@@ -300,12 +300,11 @@ bool WireReader::readBinary(ConstString& str)
     if (state->len<=0) {
         return false;
     }
-    int tag = state->code;
     if (state->code<0) {
         if (noMore()) {
             return false;
         }
-        tag = reader.expectInt();
+        int tag = reader.expectInt();
         if (tag!=BOTTLE_TAG_BLOB) {
             return false;
         }
