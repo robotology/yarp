@@ -21,6 +21,11 @@ class Vec2DPortContentHeader
 public:
     yarp::os::NetInt32 listTag;
     yarp::os::NetInt32 listLen;
+    Vec2DPortContentHeader()
+    {
+        listTag = 0;
+        listLen = 0;
+    }
 };
 YARP_END_PACK
 

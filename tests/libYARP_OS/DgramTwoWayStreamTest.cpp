@@ -216,7 +216,6 @@ public:
                 break;
             };
 
-            mismatch = false;
             bool goodRead[4];
             int length[4];
             for (int k=0; k<4; k++) {

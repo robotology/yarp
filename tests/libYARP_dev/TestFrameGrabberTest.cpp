@@ -281,6 +281,7 @@ public:
             }
             checkTrue(result,"checking the retificationMatrix");
             result = dd.close();
+            checkTrue(result, "checking closure");
             p.unput("remote");
             p.put("remote","/grabber/right/rpc");
             result = dd.open(p);

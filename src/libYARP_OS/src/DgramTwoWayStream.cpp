@@ -610,7 +610,6 @@ bool DgramTwoWayStream::join(const Contact& group, bool sender,
 
     int result = -1;
     if (ipLocal.isValid()) {
-        result = 0;
         result = dmcast->join(addr, 1);
 
         if (result==0) {
@@ -824,7 +823,7 @@ YARP_SSIZE_T DgramTwoWayStream::read(const Bytes& b) {
             //YARP_DEBUG(Logger::get(), "DGRAM Waiting for something!");
             YARP_SSIZE_T result = -1;
 #if defined(YARP_HAS_ACE)
-            if (mgram && restrictInterfaceIp.isValid()) {
+            if (dgram && restrictInterfaceIp.isValid()) {
                 /*
                 printf("Consider remote mcast\n");
                 printf("What we know:\n");
@@ -1035,7 +1034,7 @@ void DgramTwoWayStream::flush() {
             // better solution was to increase recv buffer size
 
             double first = yarp::os::Time::now();
-            double now = first;
+            double now;
             int ct = 0;
             do {
                 //printf("Busy wait... %d\n", ct);
@@ -1050,7 +1049,6 @@ void DgramTwoWayStream::flush() {
             YARP_DEBUG(Logger::get(), "DGRAM failed to send message with error: " + ConstString(strerror(errno)));
             return;
         }
-        writeAt += len;
         writeAvail -= len;
 
         if (writeAvail!=0) {

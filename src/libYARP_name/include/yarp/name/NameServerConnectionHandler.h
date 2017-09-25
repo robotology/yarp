@@ -55,7 +55,7 @@ public:
         yarp::os::Contact remote;
         remote = reader.getRemoteContact();
         if (lock) service->lock();
-        ok = service->apply(cmd,reply,event,remote);
+        service->apply(cmd,reply,event,remote);
         for (int i=0; i<event.size(); i++) {
             yarp::os::Bottle *e = event.get(i).asList();
             if (e!=0/*NULL*/) {

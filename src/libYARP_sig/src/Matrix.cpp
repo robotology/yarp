@@ -36,6 +36,19 @@ public:
     yarp::os::NetInt32 cols;
     yarp::os::NetInt32 listTag;
     yarp::os::NetInt32 listLen;
+
+    MatrixPortContentHeader()
+    {
+        outerListTag = 0;
+        outerListLen = 0;
+        rowsTag      = 0;
+        rows         = 0;
+        colsTag      = 0;
+        cols         = 0;
+        listTag      = 0;
+        listLen      = 0;
+
+    }
 };
 YARP_END_PACK
 
@@ -87,6 +100,9 @@ bool yarp::sig::submatrix(const Matrix &in, Matrix &out, int r1, int r2, int c1,
     double *t=out.data();
     const double *i=in.data()+in.cols()*r1+c1;
     const int offset=in.cols()-(c2-c1+1);
+
+    if(i == YARP_NULLPTR || t == YARP_NULLPTR)
+        return false;
 
     for(int r=0;r<=(r2-r1);r++)
     {
@@ -467,6 +483,9 @@ bool Matrix::operator==(const yarp::sig::Matrix &r) const
 
     const double *tmp1=data();
     const double *tmp2=r.data();
+
+    if(tmp1 == YARP_NULLPTR || tmp2 == YARP_NULLPTR)
+        return false;
 
     int c=rows()*cols();
     while(c--)

@@ -164,12 +164,12 @@ void PortCoreInputUnit::run() {
             //printf("HAVE A REFERENCE\n");
             if (localReader!=YARP_NULLPTR) {
                 bool ok = localReader->read(br);
-                if (!br.isActive()) { done = true; break; }
+                if (!br.isActive()) { break; }
                 if (!ok) continue;
             } else {
                 PortManager& man = getOwner();
                 bool ok = man.readBlock(br, id, YARP_NULLPTR);
-                if (!br.isActive()) { done = true; break; }
+                if (!br.isActive()) { break; }
                 if (!ok) continue;
             }
             //printf("DONE WITH A REFERENCE\n");
@@ -181,15 +181,14 @@ void PortCoreInputUnit::run() {
 
         if (ip->getConnection().canEscape()) {
             bool ok = cmd.read(br);
-            if (!br.isActive()) { done = true; break; }
+            if (!br.isActive()) { break; }
             if (!ok) continue;
         } else {
             cmd = PortCommand('d', "");
-            if (!ip->isOk()) { done = true; break; }
+            if (!ip->isOk()) { break; }
         }
 
         if (closing||isDoomed()) {
-            done = true;
             break;
         }
         char key = cmd.getKey();
@@ -372,11 +371,9 @@ void PortCoreInputUnit::run() {
             ip->endRead();
         }
         if (ip==YARP_NULLPTR) {
-            done = true;
             break;
         }
         if (closing||isDoomed()||(!ip->isOk())) {
-            done = true;
             break;
         }
     }
