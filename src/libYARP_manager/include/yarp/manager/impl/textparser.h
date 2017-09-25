@@ -38,7 +38,6 @@ public:
 
         std::string ret, startKeyword, endKeyword;
         size_t s, e;
-        bool   badSymbol;
 
         ret = "";
 
@@ -47,7 +46,7 @@ public:
             ret          = element;
             startKeyword = "$ENV{";
             endKeyword   = "}";
-            badSymbol    = ret.find("$") != std::string::npos;
+            bool badSymbol    = ret.find("$") != std::string::npos;
             s            = ret.find(startKeyword);
             e            = ret.find(endKeyword, s);
 
