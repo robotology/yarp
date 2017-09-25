@@ -100,7 +100,6 @@ bool WireBottle::extractBlobFromBottle(yarp::os::SizedWriter& src,
     bool has_header = false;
     int payload_index = 0;
     int payload_offset = 0;
-    int remaining = total_len;
     if (src.length(0)>=12) {
         // could this be a Bottle compatible blob?
         char *base = (char*)src.data(0);
@@ -119,7 +118,6 @@ bool WireBottle::extractBlobFromBottle(yarp::os::SizedWriter& src,
                     has_header = true;
                     payload_index = 0;
                     payload_offset = 12;
-                    remaining -= payload_offset;
                 }
             }
         }
