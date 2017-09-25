@@ -290,7 +290,7 @@ bool PortCoreOutputUnit::sendHelper() {
         if (!done) {
             if (op->getConnection().isActive()) {
                 replied = op->write(buf);
-                if (replied && op->getSender().modifiesReply()) {
+                if (replied && op->getSender().modifiesReply() && cachedReader != YARP_NULLPTR) {
                     cachedReader = &op->getSender().modifyReply(*cachedReader);
                 }
             }
