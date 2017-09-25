@@ -823,7 +823,7 @@ YARP_SSIZE_T DgramTwoWayStream::read(const Bytes& b) {
             //YARP_DEBUG(Logger::get(), "DGRAM Waiting for something!");
             YARP_SSIZE_T result = -1;
 #if defined(YARP_HAS_ACE)
-            if (mgram && restrictInterfaceIp.isValid()) {
+            if (dgram && restrictInterfaceIp.isValid()) {
                 /*
                 printf("Consider remote mcast\n");
                 printf("What we know:\n");
