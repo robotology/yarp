@@ -270,7 +270,7 @@ bool Map2DServer::loadMaps(std::string mapsfile)
         }
     }
     file.close();
-    return true;
+    return ret;
 }
 
 bool Map2DServer::open(yarp::os::Searchable &config)
