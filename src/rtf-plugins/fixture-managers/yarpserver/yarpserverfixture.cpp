@@ -16,9 +16,18 @@ using namespace RTF;
 
 class YarpServerThread : public yarp::os::Thread
 {
+public:
+    void configure(int inArgc, char** inArgv)
+    {
+        argc = inArgc;
+        argv = inArgv;
+    }
+private:
+    int    argc;
+    char** argv;
     virtual void run() override
     {
-        int ret = yarpserver_main(0, 0);
+        int ret = yarpserver_main(argc, argv);
         YARP_UNUSED(ret);
     }
 };
@@ -31,6 +40,7 @@ public:
     YarpServerThread yServer;
     virtual bool setup(int argc, char** argv) override
     {
+        yServer.configure(argc, argv);
         yServer.start();
         return true;
     }
