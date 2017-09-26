@@ -7,9 +7,11 @@
 #include <iostream>
 #include <stdio.h>
 #include <yarp/os/Thread.h>
+#include <yarp/os/Network.h>
 #include <rtf/FixtureManager.h>
 #include <rtf/dll/Plugin.h>
 #include <yarp/serversql/yarpserversql.h>
+#include <yarp/os/LogStream.h>
 
 using namespace yarp::os;
 using namespace RTF;
@@ -35,14 +37,22 @@ private:
 class YarpNameServer : public FixtureManager
 {
 public:
+    yarp::os::Network net;
     YarpNameServer() {};
     virtual ~YarpNameServer() {};
     YarpServerThread yServer;
+
     virtual bool setup(int argc, char** argv) override
     {
         yServer.configure(argc, argv);
         yServer.start();
-        return true;
+        for (int i = 0; i < 10; i++)
+        {
+            if(net.checkNetwork()) return true;
+            yarp::os::Time::delay(0.2);
+        }
+        yError() << "name server is taking too long to start.. aborting";
+        return false;
     }
 
     virtual void tearDown() override
