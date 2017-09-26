@@ -359,37 +359,7 @@ endif(CREATE_TCL)
 ## Create C# bindings
 
 if(CREATE_CSHARP)
-
-  # outdir does not seem to work?
-  set(target_name yarp)
-  if(YARP_COLLISION_AVOIDANCE)
-    set(target_name yarp_cs)
-  endif()
-
-  set(CMAKE_SWIG_FLAGS "-Wall;${SWIG_COMMON_FLAGS}")
-
-  if(WIN32 AND NOT CYGWIN)
-    option(PREPARE_CLASS_FILES "Prepare NET library" ON)
-    swig_add_library(${target_name}
-                     LANGUAGE csharp
-                     SOURCES yarp.i)
-    if(PREPARE_CLASS_FILES)
-      add_custom_command(TARGET ${target_name}
-                         POST_BUILD
-                         COMMAND IF NOT EXIST .\\generated_src mkdir generated_src
-                         WORKING_DIRECTORY ${YARP_BASE_DIR})
-
-      add_custom_command(TARGET ${target_name}
-                         POST_BUILD
-                         COMMAND move *.cs ${YARP_BASE_DIR}/generated_src
-                         WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR})
-    endif()
-  else(WIN32 AND NOT CYGWIN)
-    swig_add_library(${target_name}
-                     LANGUAGE csharp
-                     SOURCES yarp.i)
-  endif(WIN32 AND NOT CYGWIN)
-  set(YARP_COLLISION_AVOIDANCE TRUE)
+  add_subdirectory(csharp)
 endif(CREATE_CSHARP)
 
 
