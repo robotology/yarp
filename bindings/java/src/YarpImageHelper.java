@@ -3,6 +3,7 @@
  * Author: Lorenzo Natale
  * CopyPolicy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
  */
+package yarp.matlab;
 
 import yarp.PixelRgb;
 import yarp.ImageRgb;

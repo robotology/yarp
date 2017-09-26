@@ -3,6 +3,7 @@
  * Author: Lorenzo Natale, Paul Fitzpatrick
  * CopyPolicy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
  */
+package yarp.matlab;
 
 import yarp.Network;
 
@@ -15,7 +16,7 @@ class LoadYarp {
 
     public LoadYarp() {
         if (yarpInitialized == 0) {
-            System.loadLibrary("jyarp");
+            System.loadLibrary("yarp_java");
             Network.init();
             System.out.println("Yarp library loaded and initialized");
             System.out.flush();

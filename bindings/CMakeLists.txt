@@ -101,7 +101,8 @@ endif()
 include_directories(${YARP_INCLUDE_DIRS})
 link_libraries(${YARP_LIBRARIES})
 
-set_source_files_properties(yarp.i PROPERTIES CPLUSPLUS ON)
+set(SWIG_BINDINGS_SOURCE_FILE "${CMAKE_CURRENT_SOURCE_DIR}/yarp.i")
+set_source_files_properties(${SWIG_BINDINGS_SOURCE_FILE} PROPERTIES CPLUSPLUS ON)
 
 
 #############################################################################
@@ -131,65 +132,12 @@ if(NOT MSVC)
 endif()
 
 
+
 #############################################################################
 ## Create Java bindings
 
 if(CREATE_JAVA)
-  find_package(JNI REQUIRED)
-  find_program(JAVA_JAVAC_EXECUTABLE NAMES javac)
-
-  option(PREPARE_CLASS_FILES "Prepare class files" OFF)
-  set(JAVA_TARGET_VERSION 1.6 CACHE STRING "Java target version")
-  set(CMAKE_SWIG_OUTDIR_SAVE ${CMAKE_SWIG_OUTDIR})
-  set(CMAKE_SWIG_OUTDIR "${YARP_BASE_DIR}/generated_src/java")
-  set(CMAKE_SWIG_FLAGS "-package;yarp;-Wall;-module;yarp;${SWIG_COMMON_FLAGS}")
-  set(TARGET_DIR generated_src/java)
-  file(MAKE_DIRECTORY "${YARP_BASE_DIR}/${TARGET_DIR}")
-  if(NOT BINDINGS_SRC_DIR)
-    set(BINDINGS_SRC_DIR ${CMAKE_CURRENT_SOURCE_DIR}/src)
-  endif()
-  set(JAVA_SRCS LoadYarp.java
-                YarpImageHelper.java
-                Example1.java)
-  include_directories(SYSTEM ${JAVA_INCLUDE_PATH} ${JAVA_INCLUDE_PATH2})
-  set(target_name jyarp)
-  swig_add_library(${target_name}
-                   LANGUAGE java
-                   SOURCES yarp.i)
-  if(PREPARE_CLASS_FILES)
-    set(CLASS_FILES)
-    foreach(java_file ${JAVA_SRCS})
-      string(REPLACE ".java" ".class" class_file ${java_file})
-      list(APPEND JAVA_FILES "${BINDINGS_SRC_DIR}/${java_file}")
-      list(APPEND CLASS_FILES "${YARP_BASE_DIR}/${class_file}")
-    endforeach()
-    add_custom_command(OUTPUT ${CLASS_FILES}
-                       COMMAND ${JAVA_JAVAC_EXECUTABLE} -source ${JAVA_TARGET_VERSION}
-                                                        -target ${JAVA_TARGET_VERSION}
-                                                        -d "${YARP_BASE_DIR}"
-                                                        "${YARP_BASE_DIR}/${TARGET_DIR}/*.java"
-                       COMMAND ${JAVA_JAVAC_EXECUTABLE} -source ${JAVA_TARGET_VERSION}
-                                                        -target ${JAVA_TARGET_VERSION}
-                                                        -d "${YARP_BASE_DIR}/"
-                                                        "${BINDINGS_SRC_DIR}/*.java"
-                       WORKING_DIRECTORY ${YARP_BASE_DIR}
-                       DEPENDS ${JAVA_FILES} ${target_name})
-    add_custom_target(${target_name}_classes ALL DEPENDS ${CLASS_FILES})
-  endif()
-
-  # issue on MINGW where C++ name-mangling prevents java finding methods
-  if(MINGW)
-    message(STATUS "untested MINGW patch - see CMakeLists.txt")
-    set_target_properties(${target_name} PROPERTIES
-      LINK_FLAGS "--add-stdcall-alias")
-  endif(MINGW)
-  ## the following is based on:
-  ## http://www.cmake.org/pipermail/cmake/2007-September/016343.html
-  if(APPLE)
-    set_target_properties(${target_name} PROPERTIES SUFFIX ".jnilib")
-  endif(APPLE)
-  set(YARP_COLLISION_AVOIDANCE TRUE)
-  set(CMAKE_SWIG_OUTDIR ${CMAKE_SWIG_OUTDIR_SAVE})
+  add_subdirectory(java)
 endif(CREATE_JAVA)
 
 

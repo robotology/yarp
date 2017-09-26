@@ -48,6 +48,8 @@ If you install, you end up with a shared library called `yarp_java` in
 and a `yarp.jar` file (actually it is a symbolic link to a versioned `.jar` in the same folder)
 in `${CMAKE_INSTALL_PREFIX}/share/yarp/java`
 where `${CMAKE_INSTALL_PREFIX}` is the path to your YARP installation.
+An additional library, called `yarp_matlab_java.jar` is created, containing utilities to load YARP 
+classes inside MATLAB.
 
 You should add `${CMAKE_INSTALL_PREFIX}/share/yarp/java` to your Java ClassPath and
 `${CMAKE_INSTALL_PREFIX}/lib/jni` to the `java.library.path` Java setting.

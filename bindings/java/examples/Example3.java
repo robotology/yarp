@@ -15,7 +15,7 @@ import yarp.IFrameGrabberImage;
 class Example3 {
 
     public static void main(String[] args) {
-	System.loadLibrary("jyarp");
+	System.loadLibrary("yarp_java");
 	Network.init();
 
 	// set up a description of the device we want 

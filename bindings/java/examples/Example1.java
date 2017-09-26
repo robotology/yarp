@@ -12,7 +12,7 @@ import yarp.Port;
 class Example1 {
 
     public static void main(String[] args) {
-	System.loadLibrary("jyarp");
+	System.loadLibrary("yarp_java");
 	Network.init();
 	Port p = new Port();
 	p.open("/foo");

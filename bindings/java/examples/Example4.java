@@ -15,7 +15,7 @@ import yarp.DVector;
 class Example4 {
 
     public static void main(String[] args) {
-	System.loadLibrary("jyarp");
+	System.loadLibrary("yarp_java");
 	Network yarp = new Network();
 
 	// set up a description of the device we want 

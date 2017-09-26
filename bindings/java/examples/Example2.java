@@ -13,7 +13,7 @@ import yarp.BufferedPortImageRgb;
 class Example2 {
 
     public static void main(String[] args) {
-	System.loadLibrary("jyarp");
+	System.loadLibrary("yarp_java");
 	Network.init();
 	Network.connect("/image","/view");
 	BufferedPortImageRgb p = new BufferedPortImageRgb();
