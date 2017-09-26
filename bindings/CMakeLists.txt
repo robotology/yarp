@@ -368,20 +368,7 @@ endif(CREATE_CSHARP)
 ## Create Ruby bindings
 
 if(CREATE_RUBY)
-  find_package(Ruby)
-  set(CMAKE_SWIG_FLAGS "-Wall;-module;yarp;${SWIG_COMMON_FLAGS}")
-  include_directories(SYSTEM ${RUBY_INCLUDE_PATH})
-  set(target_name yarp)
-  if(YARP_COLLISION_AVOIDANCE)
-    set(target_name yarp_ruby)
-  endif()
-  swig_add_library(${target_name}
-                   LANGUAGE ruby
-                   SOURCES yarp.i)
-  swig_link_libraries(${target_name} ${RUBY_LIBRARY})
-  set_target_properties(${target_name} PROPERTIES PREFIX "")
-  set_target_properties(${target_name} PROPERTIES OUTPUT_NAME "yarp")
-  set(YARP_COLLISION_AVOIDANCE TRUE)
+  add_subdirectory(ruby)
 endif(CREATE_RUBY)
 
 
