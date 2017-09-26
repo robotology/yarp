@@ -36,6 +36,9 @@ class YARP_OS_impl_API yarp::os::impl::DgramTwoWayStream : public TwoWayStream, 
 public:
     DgramTwoWayStream() : mutex(1)
     {
+#ifndef YARP_HAS_ACE
+        dgram_sockfd = -1;
+#endif
         interrupting = false;
         closed = false;
         reader = false;
