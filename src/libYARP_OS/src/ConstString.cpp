@@ -265,6 +265,21 @@ const char& ConstString::at(size_t pos) const {
     return HELPER(implementation).at(pos);
 }
 
+ConstString& ConstString::assign (const ConstString& str) {
+    HELPER(implementation).assign(str);
+    return *this;
+}
+
+ConstString& ConstString::assign (const ConstString& str, size_t subpos, size_t sublen) {
+    HELPER(implementation).assign(str, subpos, sublen);
+    return *this;
+}
+
+ConstString& ConstString::assign (const char* s) {
+    HELPER(implementation).assign(s);
+    return *this;
+}
+
 ConstString& ConstString::assign(const char *s, size_t n) {
     HELPER(implementation).assign(s, n);
     return *this;

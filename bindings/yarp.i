@@ -1,5 +1,5 @@
 // Copyright: (C) 2010 RobotCub Consortium
-// Author: Paul Fitzpatrick, Stephane Lallee, Arnaud Degroote, Leo Pape, Juan G Victores, Marek Rucinski, Fabien Benureau
+// Author: Paul Fitzpatrick, Stephane Lallee, Arnaud Degroote, Leo Pape, Juan G Victores, Marek Rucinski, Fabien Benureau, Ali Paikan
 // CopyPolicy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
 
 //////////////////////////////////////////////////////////////////////////
@@ -13,11 +13,6 @@
 //  + use of templates
 
 %module(directors="1") yarp
-
-%{
-// missing in some old versions of swig
-#include <stddef.h>
-%}
 
 %import "yarp/conf/api.h"
 
@@ -43,46 +38,10 @@
 #endif
 
 // Try to make yarp::os::ConstString act like std::string
-#if !defined(SWIGJAVA) && !defined(SWIGLUA) && !defined(SWIGCSHARP)
-  // Try to translate std::string and std::vector to native equivalents
-  %include "std_string.i"
-  %typemaps_std_string(yarp::os::ConstString, char, SWIG_AsCharPtrAndSize,
-               SWIG_FromCharPtrAndSize, %checkcode(STDSTRING));
-  %define YARP_WRAP_STL_STRING %enddef
-  %ignore yarp::os::ConstString;
-#else
-  #if (SWIG_VERSION >=0x020007)
-    // Try to translate std::string and std::vector to native equivalents
-    %include "std_string.i"
-//    %define _YARP2_CONSTSTRING_ %enddef
-//    namespace yarp {
-//      namespace os {
-//        typedef std::string ConstString;
-//      }
-//    }
-  #else
-    #if defined (SWIGLUA)
-      %include "std_string_lua.i"
-    #endif
-    #if defined (SWIGJAVA)
-      %include "std_string_java.i"
-    #endif
-    #if defined (SWIGCSHARP)
-      %include "std_string_csharp.i"
-    #endif
-
-  #endif
-%apply std::string {yarp::os::ConstString};
-#endif
-
-#if defined (SWIGPYTHON)
-%{
-    // add a stray definition missing in SWIG version 2.0.7
-#ifndef PyInt_FromSize_t
-#define PyInt_FromSize_t(x) PyLong_FromSize_t(x)
-#endif
-%}
-#endif
+// Try to translate std::string to native equivalents
+%include "std_string.i"
+%typemaps_std_string(yarp::os::ConstString, char, SWIG_AsCharPtrAndSize,
+             SWIG_FromCharPtrAndSize, %checkcode(STDSTRING));
 
 #if defined(SWIGCSHARP)
     // Get .NET pointers instead of swig generated types (useful when dealing with images)
@@ -1302,5 +1261,42 @@ public static short[] getRawImg(Image img) {
 /*
  * Extending yarp::os::Things.h
  */
-%include "things.i"
+%extend yarp::os::Things  {
+public:
 
+    yarp::os::Value* asValue() {
+        return self->cast_as<yarp::os::Value>();
+    }
+
+    yarp::os::Bottle* asBottle() {
+        return self->cast_as<yarp::os::Bottle>();
+    }
+
+    yarp::os::Property* asProperty() {
+        return self->cast_as<yarp::os::Property>();
+    }
+
+    yarp::sig::Vector* asVector() {
+        return self->cast_as<yarp::sig::Vector>();
+    }
+
+    yarp::sig::Matrix* asMatrix() {
+        return self->cast_as<yarp::sig::Matrix>();
+    }
+
+    yarp::sig::Image* asImage() {
+        return self->cast_as<yarp::sig::Image>();
+    }
+
+    yarp::sig::ImageOf<yarp::sig::PixelRgb>* asImageOfPixelRgb() {
+        return self->cast_as<yarp::sig::ImageOf<yarp::sig::PixelRgb> >();
+    }
+
+    yarp::sig::ImageOf<yarp::sig::PixelBgr>* asImageOfPixelBgr() {
+        return self->cast_as<yarp::sig::ImageOf<yarp::sig::PixelBgr> >();
+    }
+
+    yarp::sig::ImageOf<yarp::sig::PixelMono>* asImageOfPixelMono() {
+        return self->cast_as<yarp::sig::ImageOf<yarp::sig::PixelMono> >();
+    }
+}

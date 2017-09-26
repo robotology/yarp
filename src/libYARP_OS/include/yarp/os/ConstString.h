@@ -207,6 +207,9 @@ public:
 
     void push_back (char c);
 
+    ConstString& assign (const ConstString& str);
+    ConstString& assign (const ConstString& str, size_t subpos, size_t sublen);
+    ConstString& assign (const char* s);
     ConstString& assign(const char *s, size_t n);
 
     ConstString& erase(size_t pos = 0, size_t len = npos);
@@ -306,6 +309,22 @@ private:
     inline size_t copy(char* str, size_t len, size_t pos = 0) const { return s.copy(str, len, pos); }
 
     inline void push_back (char c) { s.push_back(c); }
+
+
+    inline ConstString& assign (const ConstString& str) {
+        this->s.assign(str);
+        return *this;
+    }
+
+    inline ConstString& assign (const ConstString& str, size_t subpos, size_t sublen) {
+        this->s.assign(str, subpos, sublen);
+        return *this;
+    }
+
+    inline ConstString& assign (const char* s) {
+        this->s.assign(s);
+        return *this;
+    }
 
     inline ConstString& assign(const char *s, size_t n) {
         this->s.assign(s, n);
