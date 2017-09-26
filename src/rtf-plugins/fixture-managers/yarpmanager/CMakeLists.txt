@@ -5,12 +5,7 @@
 
 project(rtf_fixturemanager_yarpmanager)
 
-get_property(YARP_OS_INCLUDE_DIRS TARGET YARP_OS PROPERTY INCLUDE_DIRS)
-get_property(YARP_manager_INCLUDE_DIRS TARGET YARP_manager PROPERTY INCLUDE_DIRS)
-
 include_directories(SYSTEM ${RTF_INCLUDE_DIRS})
-include_directories(${YARP_OS_INCLUDE_DIRS}
-                    ${YARP_manager_INCLUDE_DIRS})
 
 add_definitions(-DSHLIBPP_FILTER_API)
 
