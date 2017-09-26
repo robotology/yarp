@@ -391,57 +391,7 @@ endif(CREATE_RUBY)
 ## Create Lua bindings
 
 if(CREATE_LUA)
-  set(CMAKE_SWIG_FLAGS "-Wall;-module;yarp;${SWIG_COMMON_FLAGS}")
-  find_package(Lua REQUIRED)
-  set(target_name yarp_lua)
-  include_directories(SYSTEM ${LUA_INCLUDE_DIR})
-  swig_add_library(${target_name}
-                   LANGUAGE lua
-                   SOURCES yarp.i)
-  swig_link_libraries(${target_name} ${LUA_LIBRARY})
-
-  if(NOT MSVC)
-    check_cxx_compiler_flag("-Wno-maybe-uninitialized" CXX_HAS_WNO_MAYBE_UNINITIALIZED)
-    if(CXX_HAS_WNO_MAYBE_UNINITIALIZED)
-      target_compile_options(${target_name} PRIVATE "-Wno-maybe-uninitialized")
-    endif()
-  endif()
-
-  set_target_properties(${target_name} PROPERTIES PREFIX "")
-  set_target_properties(${target_name} PROPERTIES OUTPUT_NAME "yarp")
-  if(YARP_COLLISION_AVOIDANCE)
-    set_target_properties(${target_name} PROPERTIES LIBRARY_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/lib/lua)
-  endif()
-  set(YARP_COLLISION_AVOIDANCE TRUE)
-
-  set(_CMAKE_INSTALL_LUADIR "lib/lua/${LUA_VERSION_MAJOR}.${LUA_VERSION_MINOR}")
-  set(CMAKE_INSTALL_LUADIR ${_CMAKE_INSTALL_LUADIR} CACHE PATH "lua bindings (${_CMAKE_INSTALL_LUADIR})")
-  mark_as_advanced(CMAKE_INSTALL_LUADIR)
-  if(NOT IS_ABSOLUTE ${CMAKE_INSTALL_LUADIR})
-    set(CMAKE_INSTALL_FULL_LUADIR "${CMAKE_INSTALL_PREFIX}/${CMAKE_INSTALL_LUADIR}")
-  else()
-    set(CMAKE_INSTALL_FULL_LUADIR "${CMAKE_INSTALL_LUADIR}")
-  endif()
-
-  # Update RPATH
-  if(NOT CMAKE_SKIP_RPATH AND NOT CMAKE_SKIP_INSTALL_RPATH)
-    file(RELATIVE_PATH _rel_path "${CMAKE_INSTALL_FULL_LUADIR}" "${CMAKE_INSTALL_FULL_LIBDIR}")
-    get_target_property(_current_rpath "${target_name}" INSTALL_RPATH)
-    if (${CMAKE_SYSTEM_NAME} MATCHES "Darwin")
-      list(APPEND _current_rpath "@loader_path/${_rel_path}")
-    else()
-      list(APPEND _current_rpath "\$ORIGIN/${_rel_path}")
-    endif()
-    set_target_properties("${target_name}" PROPERTIES INSTALL_RPATH "${_current_rpath}")
-  endif()
-
-  install(TARGETS ${target_name}
-          DESTINATION ${CMAKE_INSTALL_LUADIR})
-
-  if(YARP_COMPILE_TESTS)
-    add_subdirectory(tests/lua)
-  endif()
-
+  add_subdirectory(lua)
 endif(CREATE_LUA)
 
 #############################################################################

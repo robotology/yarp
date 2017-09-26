@@ -28,7 +28,7 @@
   %include <argcargv.i>
   %apply (int ARGC, char **ARGV) { (int argc, char *argv[]) }
 #elif defined (SWIGLUA)
-  %include "swiglib/lua/argcargv.i"
+  %include "lua/argcargv.i"
   %apply (int ARGC, char **ARGV) { (int argc, char *argv[]) }
 #endif
 
