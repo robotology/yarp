@@ -34,6 +34,7 @@ class VectorPortContentHeader
 public:
     yarp::os::NetInt32 listTag;
     yarp::os::NetInt32 listLen;
+    VectorPortContentHeader() : listTag(0), listLen(0) {}
 };
 YARP_END_PACK
 

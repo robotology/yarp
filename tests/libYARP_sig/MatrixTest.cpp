@@ -460,7 +460,7 @@ public:
         Bottle *bot1 = bot.get(0).asList();
         Bottle *bot2 = bot.get(1).asList();
         checkTrue(bot1!=nullptr&&bot2!=nullptr,"got head/body");
-        if (bot1==nullptr&&bot2==nullptr) return;
+        if (bot1==nullptr || bot2==nullptr) return;
         checkEqual(bot1->get(0).asInt(),rr,"row count matches");
         checkEqual(bot1->get(1).asInt(),cc,"column count matches");
         Bottle *lst = bot1->get(2).asList();
