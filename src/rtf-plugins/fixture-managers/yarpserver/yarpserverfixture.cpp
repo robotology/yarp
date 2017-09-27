@@ -26,7 +26,7 @@ public:
     }
 private:
     int    argc;
-    char** argv;
+    char** argv{0};
     virtual void run() override
     {
         int ret = yarpserver_main(argc, argv);
