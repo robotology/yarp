@@ -301,7 +301,7 @@ namespace yarp {
 %enddef
 
 #if defined( SWIGALLEGROCL )
-  %include "compat.h"
+  %include "allegro/compat.h"
 #endif
 
 // Define typemaps for Matrix before including it
