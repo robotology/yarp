@@ -134,7 +134,7 @@ bool PolyDriver::closeMain() {
             delete &HELPER(system_resource);
             system_resource = nullptr;
             if (dd!=nullptr) {
-                result = dd->close();
+                dd->close();
                 delete dd;
                 dd = nullptr;
             }

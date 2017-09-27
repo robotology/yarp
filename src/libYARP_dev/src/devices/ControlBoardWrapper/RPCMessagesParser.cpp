@@ -301,7 +301,8 @@ YARP_WARNING_POP
 #ifndef YARP_NO_DEPRECATED // since YARP 2.3.70
 YARP_WARNING_PUSH
 YARP_DISABLE_DEPRECATED_WARNING
-                            *ok = rpc_iCtrlMode->setImpedancePositionMode(axis);
+                            if(rpc_iCtrlMode)
+                                *ok = rpc_iCtrlMode->setImpedancePositionMode(axis);
 YARP_WARNING_POP
 #endif // YARP_NO_DEPRECATED
                         break;
@@ -313,7 +314,8 @@ YARP_WARNING_POP
 #ifndef YARP_NO_DEPRECATED // since YARP 2.3.70
 YARP_WARNING_PUSH
 YARP_DISABLE_DEPRECATED_WARNING
-                            *ok = rpc_iCtrlMode->setImpedanceVelocityMode(axis);
+                            if(rpc_iCtrlMode)
+                                *ok = rpc_iCtrlMode->setImpedanceVelocityMode(axis);
 YARP_WARNING_POP
 #endif // YARP_NO_DEPRECATED
                         break;
@@ -365,7 +367,8 @@ YARP_WARNING_POP
                     if (ControlBoardWrapper_p->verbose())
                         yDebug("getControlModes\n");
                     int *p = new int[controlledJoints];
-                    *ok = rpc_iCtrlMode->getControlModes(p);
+                    if(rpc_iCtrlMode)
+                        *ok = rpc_iCtrlMode->getControlModes(p);
 
                     response.addVocab(VOCAB_IS);
                     response.addVocab(VOCAB_CM_CONTROL_MODES);
@@ -387,7 +390,8 @@ YARP_WARNING_POP
 
                     int p=-1;
                     int axis = cmd.get(3).asInt();
-                    *ok = rpc_iCtrlMode->getControlMode(axis, &p);
+                    if(rpc_iCtrlMode)
+                        *ok = rpc_iCtrlMode->getControlMode(axis, &p);
 
                     response.addVocab(VOCAB_IS);
                     response.addInt(axis);

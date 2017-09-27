@@ -28,7 +28,6 @@ inline void cat(Vector& a, const Vector& b)
 bool JoypadCtrlParser::configure(yarp::dev::IJoypadController* interface)
 {
     bool ret;
-    ret = false;
     if(interface)
     {
         device = interface;

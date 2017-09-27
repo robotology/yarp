@@ -290,7 +290,7 @@ bool MapGrid2D::loadROSParams(string ros_yaml_filename, string& pgm_occ_filename
     if (bbb.check("free_thresh:"))
     {m_free_thresh = bbb.find("free_thresh:").asDouble();}
 
-    return true;
+    return ret;
 }
 
 bool MapGrid2D::loadMapYarpAndRos(string yarp_filename, string ros_yaml_filename)
