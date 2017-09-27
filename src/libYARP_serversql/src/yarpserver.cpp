@@ -245,9 +245,8 @@ yarpserversql_API int yarpserver_main(int argc, char *argv[]) {
     }
 
     NameServerManager name(nc);
-#ifdef YARP_HAS_ACE
     BootstrapServer fallback(name);
-#endif
+
 
     Port server;
     name.setPort(server);
@@ -258,18 +257,15 @@ yarpserversql_API int yarpserver_main(int argc, char *argv[]) {
         return 1;
     }
     printf("\n");
-
-#ifdef YARP_HAS_ACE
     fallback.start();
-#endif
+
 
     // Repeat registrations for the server and fallback server -
     // these registrations are more complete.
     printf("Registering name server with itself:\n");
     nc.preregister(nc.where());
-#ifdef YARP_HAS_ACE
     nc.preregister(fallback.where());
-#endif
+
     Contact alt = nc.whereDelegate();
     if (alt.isValid()) {
         nc.preregister(alt);
