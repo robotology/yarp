@@ -165,11 +165,7 @@ endif(CREATE_PERL)
 ## Create Chicken bindings
 
 if(CREATE_CHICKEN)
-  set(CMAKE_SWIG_FLAGS "-Wall;-module;cyarp;${SWIG_COMMON_FLAGS}")
-  swig_add_library(libcyarp
-                   LANGUAGE chicken
-                   SOURCES yarp.i)
-  set(YARP_COLLISION_AVOIDANCE TRUE)
+  add_subdirectory(chicken)
 endif(CREATE_CHICKEN)
 
 
@@ -207,14 +203,7 @@ if(CREATE_ALLEGRO)
 endif()
 
 if(CREATE_TCL)
-  set(CMAKE_SWIG_FLAGS "-Wall;-module;yarp;${SWIG_COMMON_FLAGS}")
-  find_package(TCL REQUIRED)
-  include_directories(SYSTEM ${TCL_INCLUDE_PATH})
-  link_libraries(${TCL_LIBRARY})
-  swig_add_library(libtclyarp
-                   LANGUAGE tcl
-                   SOURCES yarp.i)
-  set(YARP_COLLISION_AVOIDANCE TRUE)
+  add_subdirectory(tcl)
 endif(CREATE_TCL)
 
 
