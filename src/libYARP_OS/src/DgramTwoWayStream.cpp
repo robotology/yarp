@@ -38,7 +38,7 @@ using namespace yarp::os::impl;
 using namespace yarp::os;
 
 #define CRC_SIZE 8
-#define UDP_MAX_DATAGRAM_SIZE 64000
+#define UDP_MAX_DATAGRAM_SIZE 65507 - CRC_SIZE
 
 
 static bool checkCrc(char *buf, YARP_SSIZE_T length, YARP_SSIZE_T crcLength, int pct,
@@ -178,44 +178,6 @@ void DgramTwoWayStream::allocate(int readSize, int writeSize) {
     int _read_size = -1;
     int _write_size = -1;
 
-    int socketSendBufferSize = -1;
-    int socketRecvBufferSize = -1;
-
-#if defined(YARP_HAS_ACE)
-    //Defaults to socket size
-    if (dgram) {
-        int len = sizeof(_read_size);
-        int result = dgram->get_option(SOL_SOCKET, SO_SNDBUF, &_write_size, &len);
-        if (result < 0) {
-            YARP_ERROR(Logger::get(), ConstString("Failed to read buffer size from SNDBUF socket with error: ") +
-                       ConstString(strerror(errno)));
-        }
-        socketSendBufferSize = _write_size;
-
-        result = dgram->get_option(SOL_SOCKET, SO_RCVBUF, &_read_size, &len);
-        if (result < 0) {
-            YARP_ERROR(Logger::get(), ConstString("Failed to read buffer size from RCVBUF socket with error: ") +
-                       ConstString(strerror(errno)));
-        }
-        socketRecvBufferSize = _read_size;
-    }
-#else
-    socklen_t len = sizeof(_read_size);
-    int result = getsockopt(dgram_sockfd, SOL_SOCKET, SO_SNDBUF, &_write_size, &len);
-    if (result < 0) {
-        YARP_ERROR(Logger::get(), ConstString("Failed to read buffer size from SNDBUF socket with error: ") +
-                   ConstString(strerror(errno)));
-    }
-    socketSendBufferSize = _write_size;
-
-    result = getsockopt(dgram_sockfd, SOL_SOCKET, SO_RCVBUF, &_read_size, &len);
-    if (result < 0) {
-        YARP_ERROR(Logger::get(), ConstString("Failed to read buffer size from RCVBUF socket with error: ") +
-                   ConstString(strerror(errno)));
-    }
-    socketRecvBufferSize = _read_size;
-#endif
-
     ConstString _env_dgram = NetworkBase::getEnvironment("YARP_DGRAM_SIZE");
     ConstString _env_mode = "";
     if (multiMode) {
@@ -246,9 +208,32 @@ void DgramTwoWayStream::allocate(int readSize, int writeSize) {
     }
 
     // force the size of the write buffer to be under the max size of a udp datagram.
-    if (_write_size > UDP_MAX_DATAGRAM_SIZE)
+    if (_write_size > UDP_MAX_DATAGRAM_SIZE || _write_size < 0)
     {
         _write_size = UDP_MAX_DATAGRAM_SIZE;
+    }
+
+    if (_read_size < 0)
+    {
+        #if defined(YARP_HAS_ACE)
+            //Defaults to socket size
+            if (dgram) {
+                int len = sizeof(_read_size);
+                int result = dgram->get_option(SOL_SOCKET, SO_RCVBUF, &_read_size, &len);
+                if (result < 0) {
+                    YARP_ERROR(Logger::get(), ConstString("Failed to read buffer size from RCVBUF socket with error: ") +
+                               ConstString(strerror(errno)));
+                }
+            }
+        #else
+            socklen_t len = sizeof(_read_size);
+
+            int result = getsockopt(dgram_sockfd, SOL_SOCKET, SO_RCVBUF, &_read_size, &len);
+            if (result < 0) {
+                YARP_ERROR(Logger::get(), ConstString("Failed to read buffer size from RCVBUF socket with error: ") +
+                           ConstString(strerror(errno)));
+            }
+        #endif
     }
 
     readBuffer.allocate(_read_size);
@@ -258,18 +243,11 @@ void DgramTwoWayStream::allocate(int readSize, int writeSize) {
     writeAvail = CRC_SIZE;
     //happy = true;
     pct = 0;
-
-    if (_read_size < socketRecvBufferSize && socketRecvBufferSize != -1) {
-        YARP_WARN(Logger::get(), "RECV buffer size smaller than socket RECV size. Errors can occur during reading");
-    }
-    if (_write_size > socketSendBufferSize && socketSendBufferSize != -1) {
-        YARP_WARN(Logger::get(), "SND buffer size bigger than socket SND size. Errors can occur during writing");
-    }
 }
 
 
 void DgramTwoWayStream::configureSystemBuffers() {
-    //By default use system buffer size.
+    //By default the buffers are forced to the datagram size limit.
     //These can be overwritten by environment variables
     //Generic variable
     ConstString socketBufferSize = NetworkBase::getEnvironment("YARP_DGRAM_BUFFER_SIZE");
@@ -291,6 +269,16 @@ void DgramTwoWayStream::configureSystemBuffers() {
     } else if (socketBufferSize != "") {
         writeBufferSize = NetType::toInt(socketBufferSize);
     }
+    // The writeBufferSize can't be set greater than udp datagram
+    // maximum size
+    if (writeBufferSize < 0 || writeBufferSize > UDP_MAX_DATAGRAM_SIZE)
+    {
+        if (writeBufferSize > UDP_MAX_DATAGRAM_SIZE)
+        {
+            YARP_WARN(Logger::get(), "The desired SND buffer size is too big. It is set to the max datagram size : " + NetType::toString(UDP_MAX_DATAGRAM_SIZE));
+        }
+        writeBufferSize = UDP_MAX_DATAGRAM_SIZE;
+    }
 
     if (readBufferSize > 0) {
         int actualReadSize = -1;
@@ -308,6 +296,11 @@ void DgramTwoWayStream::configureSystemBuffers() {
                                    (void*)&readBufferSize, intSize);
         int getResult = getsockopt(dgram_sockfd, SOL_SOCKET, SO_RCVBUF,
                                    (void *) &actualReadSize, &intSize);
+#endif
+        // in linux the value returned by getsockopt is "doubled"
+        // for some unknown reasons (see https://linux.die.net/man/7/socket)
+#if defined(__linux__)
+        actualReadSize /= 2;
 #endif
         if (setResult < 0 || getResult < 0 || readBufferSize != actualReadSize) {
             bufferAlertNeeded = true;
@@ -329,6 +322,11 @@ void DgramTwoWayStream::configureSystemBuffers() {
                                    (void*)&writeBufferSize, intSize);
         int getResult = getsockopt(dgram_sockfd, SOL_SOCKET, SO_SNDBUF,
                                    (void *) &actualWriteSize, &intSize);
+#endif
+        // in linux the value returned by getsockopt is "doubled"
+        // for some unknown reasons (see https://linux.die.net/man/7/socket)
+#if defined(__linux__)
+        actualWriteSize /= 2;
 #endif
         if (setResult < 0 || getResult < 0 || writeBufferSize != actualWriteSize) {
             bufferAlertNeeded = true;
