@@ -213,22 +213,7 @@ endif(CREATE_LUA)
 ## Create Octave bindings
 
 if(CREATE_OCTAVE)
-  set(CMAKE_SWIG_FLAGS "-Wall;-module;yarp;${SWIG_COMMON_FLAGS}")
-  find_package(Octave REQUIRED)
-  set(target_name yarp_octave)
-  get_filename_component(OCTAVE_INCLUDE_TOP ${OCTAVE_INCLUDE_DIR} DIRECTORY)
-  include_directories(SYSTEM ${OCTAVE_INCLUDE_DIRS} ${OCTAVE_INCLUDE_TOP})
-  swig_add_library(${target_name}
-                   LANGUAGE octave
-                   SOURCES yarp.i)
-  swig_link_libraries(${target_name} ${OCTAVE_LIBRARIES})
-  set_target_properties(${target_name} PROPERTIES PREFIX "")
-  set_target_properties(${target_name} PROPERTIES OUTPUT_NAME "yarp")
-  set_target_properties(${target_name} PROPERTIES SUFFIX ".oct")
-  if(YARP_COLLISION_AVOIDANCE)
-    set_target_properties(${target_name} PROPERTIES LIBRARY_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/lib/octave)
-  endif()
-  set(YARP_COLLISION_AVOIDANCE TRUE)
+  add_subdirectory(octave)
 endif(CREATE_OCTAVE)
 
 endif()
