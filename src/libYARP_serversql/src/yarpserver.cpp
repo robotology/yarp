@@ -189,21 +189,24 @@ yarpserversql_API yarp::os::NameStore *yarpserver_create(yarp::os::Searchable& o
 yarpserversql_API int yarpserver_main(int argc, char *argv[]) {
     // check if YARP version is sufficiently up to date - there was
     // an important bug fix
+    bool silent(false);
     Bottle b("ip 10.0.0.10");
     if (b.get(1).asString()!="10.0.0.10") {
         fprintf(stderr, "Sorry, please update YARP version");
         ::exit(1);
     }
 
-    printf("    __  __ ___  ____   ____\n\
+    Property options;
+    options.fromCommand(argc, argv, false);
+    silent = options.check("silent");
+
+    FILE* out = silent ? tmpfile() : stdout;
+    fprintf(out, "    __  __ ___  ____   ____\n\
     \\ \\/ //   ||  _ \\ |  _ \\\n\
      \\  // /| || |/ / | |/ /\n\
      / // ___ ||  _ \\ |  _/\n\
     /_//_/  |_||_| \\_\\|_|\n\
     ========================\n\n");
-
-    Property options;
-    options.fromCommand(argc,argv);
 
     if (options.check("help")) {
         printf("Welcome to the YARP name server.\n");
@@ -220,9 +223,10 @@ yarpserversql_API int yarpserver_main(int argc, char *argv[]) {
         printf("  --web dir                Serve web resources from given directory.\n");
         printf("  --no-web-cache           Reload pages from file for each request.\n");
         printf("  --ros                    Delegate pub/sub to ROS name server.\n");
+        printf("  --silent                 Start in silent mode.\n");
         return 0;
     } else {
-        printf("Call with --help for information on available options\n");
+        fprintf(out, "Call with --help for information on available options\n");
     }
 
     /*
@@ -241,7 +245,7 @@ yarpserversql_API int yarpserver_main(int argc, char *argv[]) {
     Network yarp(yarp::os::YARP_CLOCK_SYSTEM);
 
     NameServerContainer nc;
-    nc.setSilent(false);
+    nc.setSilent(silent);
     if (!nc.open(options)) {
         return 1;
     }
@@ -259,12 +263,12 @@ yarpserversql_API int yarpserver_main(int argc, char *argv[]) {
         return 1;
     }
     printf("\n");
-    fallback.start();
 
+    fallback.start();
 
     // Repeat registrations for the server and fallback server -
     // these registrations are more complete.
-    printf("Registering name server with itself:\n");
+    fprintf(out, "Registering name server with itself:\n");
     nc.preregister(nc.where());
     nc.preregister(fallback.where());
 
@@ -283,13 +287,13 @@ yarpserversql_API int yarpserver_main(int argc, char *argv[]) {
 
     yarp::os::impl::NameClient::getNameClient().send(cmd, reply);
 
-    printf("Name server can be browsed at http://%s:%d/\n",
+    fprintf(out, "Name server can be browsed at http://%s:%d/\n",
            nc.where().getHost().c_str(), nc.where().getPort());
-    printf("\nOk.  Ready!\n");
+    fprintf(out, "\nOk.  Ready!\n");
 
     while (true) {
         SystemClock::delaySystem(600);
-        printf("Name server running happily\n");
+        fprintf(out, "Name server running happily\n");
     }
     server.close();
 
