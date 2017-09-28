@@ -32,7 +32,10 @@ public:
     inline char* getError()
     {
 #ifdef YARP_HAS_ACE
-        return dll->error();
+        if(dll != YARP_NULLPTR)
+            return dll->error();
+        else
+            return const_cast<char*>("Unknown error");
 #else
         return yarp::os::impl::dlerror();
 #endif

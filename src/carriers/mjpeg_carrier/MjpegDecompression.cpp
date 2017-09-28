@@ -98,7 +98,6 @@ void jpeg_net_src (j_decompress_ptr cinfo, char *buf, int buflen) {
         cinfo->src = (struct jpeg_source_mgr *)
             (*cinfo->mem->alloc_small) ((j_common_ptr) cinfo, JPOOL_PERMANENT,
                                         sizeof(jpeg_source_mgr));
-        src = (net_src_ptr) cinfo->src;
     }
 
     src = (net_src_ptr) cinfo->src;

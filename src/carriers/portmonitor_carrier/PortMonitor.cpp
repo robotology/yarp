@@ -137,7 +137,7 @@ bool PortMonitor::acceptIncomingData(yarp::os::ConnectionReader& reader)
 {
     if(!bReady) return false;
 
-    bool result;
+    bool result = false;
     localReader = &reader;
     // If no accept callback avoid calling the binder
     if(binder->hasAccept())
