@@ -17,6 +17,7 @@ WireReader::WireReader(ConnectionReader& reader) : reader(reader)
     get_mode = false;
     support_get_mode = false;
     expecting = false;
+    get_is_vocab = false;
 }
 
 WireReader::~WireReader()
