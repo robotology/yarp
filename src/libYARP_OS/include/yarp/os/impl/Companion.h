@@ -224,8 +224,9 @@ private:
             fn(fn)
         {}
 
-        Entry() {
-        }
+        Entry() : 
+            fn(YARP_NULLPTR)
+        {}
     };
 
     PLATFORM_MAP(ConstString, Entry) action;
