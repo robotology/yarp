@@ -203,6 +203,7 @@ void PropertiesTable::showModuleTab(ModuleItem *mod)
     for(int i=0;i<mod->getInnerModule()->argumentCount();i++){
         Argument a = mod->getInnerModule()->getArgumentAt(i);
         QTreeWidgetItem *it = new QTreeWidgetItem(parametersItem,QStringList() << a.getParam() << a.getDescription());
+        Q_UNUSED(it);
 
     }
 
@@ -210,6 +211,7 @@ void PropertiesTable::showModuleTab(ModuleItem *mod)
     for(int i=0;i<mod->getInnerModule()->authorCount();i++){
         Author a = mod->getInnerModule()->getAuthorAt(i);
         QTreeWidgetItem *it = new QTreeWidgetItem(authorsItem,QStringList() << a.getName() << a.getEmail());
+        Q_UNUSED(it);
     }
 
     QTreeWidgetItem *inputsItem = new QTreeWidgetItem(moduleDescription,QStringList() << "Inputs" );
@@ -358,13 +360,12 @@ void PropertiesTable::onModItemChanged(QTreeWidgetItem *it,int col)
             manager->getKnowledgeBase()->setModulePrefix(currentModule->getInnerModule(), strPrefix.c_str(), false);
         }
 
-    }
-
-    for(int i=0;i<modules.count();i++){
-        Module *module = modules.at(i)->getInnerModule();
-        if(!strcmp(module->getName(),currentModule->getInnerModule()->getName())){
-             module->setStdio(currentModule->getInnerModule()->getStdio());
-             module->setWorkDir(currentModule->getInnerModule()->getWorkDir());
+        for(int i=0;i<modules.count();i++){
+            Module *module = modules.at(i)->getInnerModule();
+            if(!strcmp(module->getName(),currentModule->getInnerModule()->getName())){
+                 module->setStdio(currentModule->getInnerModule()->getStdio());
+                 module->setWorkDir(currentModule->getInnerModule()->getWorkDir());
+            }
         }
     }
     modified();
@@ -412,14 +413,13 @@ void PropertiesTable::onComboChanged(QWidget *combo)
     modParams->setText(1,params);
     if(currentModule){
         currentModule->getInnerModule()->setParam(params.toLatin1().data());
-    }
-
-    for(int i=0;i<modules.count();i++){
-        Module *module = modules.at(i)->getInnerModule();
-        if(!strcmp(module->getName(),currentModule->getInnerModule()->getName())){
-             module->setParam(currentModule->getInnerModule()->getParam());
-             module->setHost(currentModule->getInnerModule()->getHost());
-             module->setBroker(currentModule->getInnerModule()->getBroker());
+        for(int i=0;i<modules.count();i++){
+            Module *module = modules.at(i)->getInnerModule();
+            if(!strcmp(module->getName(),currentModule->getInnerModule()->getName())){
+                 module->setParam(currentModule->getInnerModule()->getParam());
+                 module->setHost(currentModule->getInnerModule()->getHost());
+                 module->setBroker(currentModule->getInnerModule()->getBroker());
+            }
         }
     }
     modified();

@@ -38,7 +38,6 @@ public:
 
         std::string ret, startKeyword, endKeyword;
         size_t s, e;
-        bool   badSymbol;
 
         ret = "";
 
@@ -47,7 +46,7 @@ public:
             ret          = element;
             startKeyword = "$ENV{";
             endKeyword   = "}";
-            badSymbol    = ret.find("$") != std::string::npos;
+            bool badSymbol    = ret.find("$") != std::string::npos;
             s            = ret.find(startKeyword);
             e            = ret.find(endKeyword, s);
 
@@ -58,7 +57,6 @@ public:
                 envName   = ret.substr(s + startKeyword.size(), e - s -startKeyword.size());
                 envValue  = yarp::os::NetworkBase::getEnvironment(envName.c_str());
                 ret       = ret.substr(0, s)+ envValue + ret.substr(e + endKeyword.size(), ret.size() - endKeyword.size());
-                badSymbol = false;
                 return parseText(ret.c_str());
             }
 
@@ -75,7 +73,6 @@ public:
                 envName   = ret.substr(s + startKeyword.size(), e - s -startKeyword.size());
                 envValue  = variables[envName];
                 ret       = ret.substr(0, s)+ envValue + ret.substr(e + endKeyword.size(), ret.size() - endKeyword.size());
-                badSymbol = false;
                 return parseText(ret.c_str());
             }
 

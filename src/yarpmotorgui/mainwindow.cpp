@@ -800,7 +800,7 @@ void MainWindow::onHomeAllParts()
             continue;
         }
 
-        bool done = part->homePart();
+        part->homePart();
     }
 }
 
