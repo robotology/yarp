@@ -161,6 +161,7 @@ MainWindow::MainWindow(QWidget *parent) :
         ui->clusterWidget->setConfigFile(confFile);
         ui->clusterWidget->init();
         connect(ui->clusterWidget, SIGNAL(logError(QString)), this, SLOT(onLogError(QString)));
+        connect(ui->clusterWidget, SIGNAL(logMessage(QString)), this, SLOT(onLogMessage(QString)));
     }
     else
     {
