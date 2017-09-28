@@ -332,7 +332,7 @@ public:
             appendStringBase(str);
         } else {
             ConstString s = str;
-            str += terminate;
+            s += terminate;
             appendBlockCopy(yarp::os::Bytes((char*)(s.c_str()), s.length()));
         }
     }

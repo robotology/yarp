@@ -130,6 +130,11 @@ public:
         out.write(true);
         Bottle *datum = in.read();
         checkTrue(datum!=nullptr, "got message #2");
+        if(datum == nullptr)
+        {
+            report(1, "Message #2 is null..");
+            return;
+        }
         checkEqual(datum->size(),4,"message is ok");
         in.useCallback();
         in.count = 0;

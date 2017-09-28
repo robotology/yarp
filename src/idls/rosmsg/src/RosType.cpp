@@ -59,7 +59,6 @@ std::vector<std::string> normalizedMessage(const std::string& line) {
     if (pending&&result!="") {
         if (result[0]=='#'&&can_quote) return all;
         all.push_back(result);
-        pending = false;
     }
     return all;
 }

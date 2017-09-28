@@ -79,6 +79,9 @@ public:
         BinPortable<BinPortableTarget> t1, t2;
         t1.content().x = 10;
         t1.content().y = 20;
+
+        t2.content().x = 0;
+        t2.content().y = 0;
         
         t1.write(con.getWriter());
         t2.read(con.getReader());

@@ -553,6 +553,11 @@ public:
         PortablePair<Bottle,Bottle> *result = buf.read();
 
         checkTrue(result!=nullptr,"got something check");
+        if(result == nullptr)
+        {
+            report(1, "PortReadBuffer gave nothing..");
+            return;
+        }
         checkEqual(bot1.head.size(),result->head.size(),"head size check");
         checkEqual(bot1.body.size(),result->body.size(),"body size check");
 

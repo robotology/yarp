@@ -233,7 +233,6 @@ static int enactConnection(const Contact& src,
         noteDud(src);
         return 1;
     }
-    ok = false;
     ConstString msg = "";
     if (reply.get(0).isInt()) {
         ok = (reply.get(0).asInt()==0);
