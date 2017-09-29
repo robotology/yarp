@@ -792,7 +792,7 @@ SystemInfo::ProcessInfo SystemInfo::getProcessInfo(int pid) {
             // split the cmdline to find the arguments
             info.name = cmdline;
             size_t index = info.name.find(' ');
-            if (index != info.name.npos) {
+            if (index != ConstString::npos) {
                 info.name = info.name.substr(0, index);
                 info.arguments = cmdline;
                 info.arguments = info.arguments.substr(index+1);
