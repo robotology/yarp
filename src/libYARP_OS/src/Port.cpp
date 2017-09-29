@@ -167,20 +167,20 @@ bool Port::open(const Contact& contact, bool registerName,
     }
 
     // Allow for open() to be called safely many times on the same Port
-    if (currentCore->isOpened()) {
+    if (currentCore && currentCore->isOpened()) {
         PortCoreAdapter *newCore = new PortCoreAdapter(*this);
-        yAssert(newCore!=YARP_NULLPTR);
+        yAssert(newCore != YARP_NULLPTR);
         // copy state that should survive in a new open()
-        if (currentCore->checkPortReader()!=YARP_NULLPTR) {
+        if (currentCore->checkPortReader() != YARP_NULLPTR) {
             newCore->configReader(*(currentCore->checkPortReader()));
         }
-        if (currentCore->checkAdminPortReader()!=YARP_NULLPTR) {
+        if (currentCore->checkAdminPortReader() != YARP_NULLPTR) {
             newCore->configAdminReader(*(currentCore->checkAdminPortReader()));
         }
-        if (currentCore->checkReadCreator()!=YARP_NULLPTR) {
+        if (currentCore->checkReadCreator() != YARP_NULLPTR) {
             newCore->configReadCreator(*(currentCore->checkReadCreator()));
         }
-        if (currentCore->checkWaitAfterSend()>=0) {
+        if (currentCore->checkWaitAfterSend() >= 0) {
             newCore->configWaitAfterSend(currentCore->checkWaitAfterSend());
         }
         if (currentCore->haveCallbackLock) {
