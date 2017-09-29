@@ -36,7 +36,7 @@ void yarp::os::QosStyle::setPacketPriorityByLevel(PacketPriorityLevel level) {
 
 bool yarp::os::QosStyle::setPacketPriority(const ConstString& priority) {
     size_t p = priority.find(':');
-    if (p == priority.npos) {
+    if (p == ConstString::npos) {
         return false;
     }
 
