@@ -179,14 +179,12 @@ private:
     {
     private:
         int base;
-        int legacyStep; // this is for YARP1 compatibility
 
     public:
         HostRecord()
         {
             //YARP_DEBUG(Logger::get(), "FIXME: HostRecord has hardcoded base");
             base = 0;
-            legacyStep = 10;
         }
 
         void setBase(int base)
@@ -204,8 +202,7 @@ private:
 
         virtual int fresh() override
         {
-            int result = base;
-            base += legacyStep;
+            int result = base++;
             return result;
         }
     };

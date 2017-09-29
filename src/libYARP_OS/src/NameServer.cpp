@@ -796,12 +796,6 @@ public:
                 YARP_INFO(Logger::get(),
                           ConstString("Name server ignoring unknown command: ")+msg);
                 ConnectionWriter *os = reader.getWriter();
-                if (os!=nullptr) {
-                    // this result is necessary for YARP1 support
-                    os->appendString("???????????????????????????????????????", '\n');
-                    //os->flush();
-                    //os->close();
-                }
             }
         }
         YTRACE("NameServer::read stop");

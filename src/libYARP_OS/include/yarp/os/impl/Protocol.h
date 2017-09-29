@@ -296,7 +296,7 @@ private:
     /**
      *
      * Default implementation for reading what protocol we should
-     * be using.  These defaults go way back to YARP1, maybe a decade ago?
+     * be using.
      *
      */
     bool expectProtocolSpecifier();
