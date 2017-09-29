@@ -444,8 +444,14 @@ bool FrameTransformServer::parseStartingTf(yarp::os::Searchable &config)
             string         tfName;
             FrameTransform t;
             Bottle         b;
+            Bottle*        list = group.get(i).asList();
+            if(!list)
+            {
+                yError() << "no entries in USER_TF group";
+                return false;
+            }
 
-            tfName   = group.get(i).asList()->get(0).asString();
+            tfName   = list->get(0).asString();
             b        = group.findGroup(tfName).tail();
             string s = b.toString();
 
