@@ -577,10 +577,10 @@ static void CopyPixels(const T1 *osrc, int q1, T2 *odest, int q2,
 }
 
 
-#define HASH(id1,id2) ((int)(((int)(id1%65537))*11+((long int)(id2))))
-#define HANDLE_CASE(len,x1,T1,q1,o1,x2,T2,q2,o2) CopyPixels((T1*)x1,q1,(T2*)x2,q2,w,h,o1!=o2);
-#define MAKE_CASE(id1,id2) case HASH(id1,id2): HANDLE_CASE(len,src,Def_##id1,quantum1,topIsLow1,dest,Def_##id2,quantum2,topIsLow2); break;
-#define MAKE_2CASE(id1,id2) MAKE_CASE(id1,id2); MAKE_CASE(id2,id1);
+#define HASH(id1, id2) ((int)(((int)(id1%65537))*11 + ((long int)(id2))))
+#define HANDLE_CASE(len, x1, T1, q1, o1, x2, T2, q2, o2) CopyPixels(reinterpret_cast<const T1*>(x1), q1, reinterpret_cast<T2*>(x2), q2, w, h, o1!=o2);
+#define MAKE_CASE(id1, id2) case HASH(id1, id2): HANDLE_CASE(len, src, Def_##id1, quantum1, topIsLow1, dest, Def_##id2, quantum2, topIsLow2); break;
+#define MAKE_2CASE(id1, id2) MAKE_CASE(id1, id2); MAKE_CASE(id2, id1);
 
 // More elegant ways to do this, but needs to be efficient at pixel level
 void Image::copyPixels(const unsigned char *src, int id1,
@@ -599,6 +599,18 @@ void Image::copyPixels(const unsigned char *src, int id1,
     switch(HASH(id1,id2))
         {
             // Macros rely on len, x1, x2 variable names
+
+            // Each MAKE_2CASE line here expands to something like this:
+            // case HASH(VOCAB_PIXEL_MONO, VOCAB_PIXEL_RGB):
+            //     CopyPixels(reinterpret_cast<const Def_VOCAB_PIXEL_MONO*>(src), quantum1,
+            //                reinterpret_cast<Def_VOCAB_PIXEL_RGB*>(dest), quantum2,
+            //                w, h, topIsLow1!=topIsLow2);
+            //     break;
+            // case HASH(VOCAB_PIXEL_RGB, VOCAB_PIXEL_MONO):
+            //     CopyPixels(reinterpret_cast<const Def_VOCAB_PIXEL_RGB*>(src), quantum1,
+            //                reinterpret_cast<Def_VOCAB_PIXEL_MONO*>(dest), quantum2,
+            //                w, h, topIsLow1!=topIsLow2);
+            //     break;
 
             MAKE_CASE(VOCAB_PIXEL_MONO,VOCAB_PIXEL_MONO);
             MAKE_2CASE(VOCAB_PIXEL_MONO,VOCAB_PIXEL_RGB);
