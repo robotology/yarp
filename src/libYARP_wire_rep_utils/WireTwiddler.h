@@ -167,6 +167,7 @@ public:
         pending_string_length = 0;
         pending_string_data = 0;
         override_length = -1;
+        lengthBuffer = 0;
     }
 
     virtual ~WireTwiddlerReader() {}
@@ -229,15 +230,57 @@ private:
                                int evidence);
 public:
     WireTwiddlerWriter(yarp::os::SizedWriter& parent,
-                       WireTwiddler& twiddler) : parent(&parent),
-                                                 twiddler(&twiddler) {
+                       WireTwiddler& twiddler) : 
+        parent(&parent),
+        twiddler(&twiddler),
+        srcs(),
+        block(0),
+        lastBlock(0),
+        offset(0),
+        blockPtr(YARP_NULLPTR),
+        blockLen(0),
+        lengthBuffer(0),
+        lengthBytes(),
+        zeros(0),
+        scratch(0),
+        accumOffset(0),
+        activeEmit(YARP_NULLPTR),
+        activeGap(YARP_NULLPTR),
+        activeEmitLength(0),
+        activeEmitOffset(0),
+        activeCheck(YARP_NULLPTR),
+        errorState(false),
+        scratchOffset(0),
+        codeExpected(),
+        codeReceived()
+    {
         update();
     }
 
     WireTwiddlerWriter() :
         parent(YARP_NULLPTR),
-        twiddler(YARP_NULLPTR) {
-    }
+        twiddler(YARP_NULLPTR),
+        srcs(),
+        block(0),
+        lastBlock(0),
+        offset(0),
+        blockPtr(YARP_NULLPTR),
+        blockLen(0),
+        lengthBuffer(0),
+        lengthBytes(),
+        zeros(0),
+        scratch(0),
+        accumOffset(0),
+        activeEmit(YARP_NULLPTR),
+        activeGap(YARP_NULLPTR),
+        activeEmitLength(0),
+        activeEmitOffset(0),
+        activeCheck(YARP_NULLPTR),
+        errorState(false),
+        scratchOffset(0),
+        codeExpected(),
+        codeReceived() 
+    {}
 
     virtual ~WireTwiddlerWriter();
 
