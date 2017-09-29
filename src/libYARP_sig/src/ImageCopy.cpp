@@ -115,17 +115,17 @@ static inline void CopyPixel(const PixelMono* src, PixelFloat* dest)
 
 static inline void CopyPixel(const PixelRgb* src, PixelMono* dest)
 {
-    *dest = (unsigned char)((src->r + src->g + src->b)/3);
+    *dest = static_cast<unsigned char>((src->r + src->g + src->b)/3);
 }
 
 static inline void CopyPixel(const PixelRgb* src, PixelMono16* dest)
 {
-    *dest = (yarp::sig::PixelMono16)((src->r + src->g + src->b)/3);
+    *dest = static_cast<yarp::sig::PixelMono16>((src->r + src->g + src->b)/3);
 }
 
 static inline void CopyPixel(const PixelRgb* src, PixelInt* dest)
 {
-    *dest = (unsigned char)((src->r + src->g + src->b)/3);
+    *dest = static_cast<unsigned char>((src->r + src->g + src->b)/3);
 }
 
 static inline void CopyPixel(const PixelRgb* src, PixelHsv* dest)
@@ -135,7 +135,7 @@ static inline void CopyPixel(const PixelRgb* src, PixelHsv* dest)
 
 static inline void CopyPixel(const PixelRgb* src, PixelMonoSigned* dest)
 {
-    *dest = (char)((src->r + src->g + src->b)/3);
+    *dest = static_cast<char>((src->r + src->g + src->b)/3);
 }
 
 static inline void CopyPixel(const PixelRgb* src, PixelRgbSigned* dest)
@@ -263,17 +263,17 @@ static inline void CopyPixel(const PixelHsv* src, PixelInt* dest)
 
 static inline void CopyPixel(const PixelBgr* src, PixelMono* dest)
 {
-    *dest = (unsigned char)((src->r + src->g + src->b)/3);
+    *dest = static_cast<unsigned char>((src->r + src->g + src->b)/3);
 }
 
 static inline void CopyPixel(const PixelBgr* src, PixelMono16* dest)
 {
-    *dest = (yarp::sig::PixelMono16)((src->r + src->g + src->b)/3);
+    *dest = static_cast<yarp::sig::PixelMono16>((src->r + src->g + src->b)/3);
 }
 
 static inline void CopyPixel(const PixelBgr* src, PixelInt* dest)
 {
-    *dest = (unsigned char)((src->r + src->g + src->b)/3);
+    *dest = static_cast<unsigned char>((src->r + src->g + src->b)/3);
 }
 
 static inline void CopyPixel(const PixelBgr* src, PixelHsv* dest)
@@ -283,7 +283,7 @@ static inline void CopyPixel(const PixelBgr* src, PixelHsv* dest)
 
 static inline void CopyPixel(const PixelBgr* src, PixelMonoSigned* dest)
 {
-    *dest = (char)((src->r + src->g + src->b)/3);
+    *dest = static_cast<char>((src->r + src->g + src->b)/3);
 }
 
 static inline void CopyPixel(const PixelBgr* src, PixelRgbSigned* dest)
@@ -344,17 +344,17 @@ static inline void CopyPixel(const PixelBgr* src, PixelHsvFloat* dest)
 
 static inline void CopyPixel(const PixelRgba* src, PixelMono* dest)
 {
-    *dest = (unsigned char)((src->r + src->g + src->b)/3);
+    *dest = static_cast<unsigned char>((src->r + src->g + src->b)/3);
 }
 
 static inline void CopyPixel(const PixelRgba* src, PixelMono16* dest)
 {
-    *dest = (yarp::sig::PixelMono16)((src->r + src->g + src->b)/3);
+    *dest = static_cast<yarp::sig::PixelMono16>((src->r + src->g + src->b)/3);
 }
 
 static inline void CopyPixel(const PixelRgba* src, PixelInt* dest)
 {
-    *dest = (unsigned char)((src->r + src->g + src->b)/3);
+    *dest = static_cast<unsigned char>((src->r + src->g + src->b)/3);
 }
 
 static inline void CopyPixel(const PixelRgba* src, PixelHsv* dest)
@@ -364,7 +364,7 @@ static inline void CopyPixel(const PixelRgba* src, PixelHsv* dest)
 
 static inline void CopyPixel(const PixelRgba* src, PixelMonoSigned* dest)
 {
-    *dest = (char)((src->r + src->g + src->b)/3);
+    *dest = static_cast<char>((src->r + src->g + src->b)/3);
 }
 
 static inline void CopyPixel(const PixelRgba* src, PixelRgbSigned* dest)
@@ -424,17 +424,17 @@ static inline void CopyPixel(const PixelRgba* src, PixelHsvFloat* dest)
 
 static inline void CopyPixel(const PixelBgra* src, PixelMono* dest)
 {
-    *dest = (unsigned char)((src->r + src->g + src->b)/3);
+    *dest = static_cast<unsigned char>((src->r + src->g + src->b)/3);
 }
 
 static inline void CopyPixel(const PixelBgra* src, PixelMono16* dest)
 {
-    *dest = (yarp::sig::PixelMono16)((src->r + src->g + src->b)/3);
+    *dest = static_cast<yarp::sig::PixelMono16>((src->r + src->g + src->b)/3);
 }
 
 static inline void CopyPixel(const PixelBgra* src, PixelInt* dest)
 {
-    *dest = (unsigned char)((src->r + src->g + src->b)/3);
+    *dest = static_cast<unsigned char>((src->r + src->g + src->b)/3);
 }
 
 static inline void CopyPixel(const PixelBgra* src, PixelHsv* dest)
@@ -444,7 +444,7 @@ static inline void CopyPixel(const PixelBgra* src, PixelHsv* dest)
 
 static inline void CopyPixel(const PixelBgra* src, PixelMonoSigned* dest)
 {
-    *dest = (char)((src->r + src->g + src->b)/3);
+    *dest = static_cast<char>((src->r + src->g + src->b)/3);
 }
 
 static inline void CopyPixel(const PixelBgra* src, PixelRgbSigned* dest)
@@ -504,17 +504,17 @@ static inline void CopyPixel(const PixelBgra* src, PixelHsvFloat* dest)
 
 static inline void CopyPixel(const PixelRgbInt* src, PixelMono* dest)
 {
-    *dest = (unsigned char)((src->r + src->g + src->b)/3);
+    *dest = static_cast<unsigned char>((src->r + src->g + src->b)/3);
 }
 
 static inline void CopyPixel(const PixelRgbInt* src, PixelMono16* dest)
 {
-    *dest = (yarp::sig::PixelMono16)((src->r + src->g + src->b)/3);
+    *dest = static_cast<yarp::sig::PixelMono16>((src->r + src->g + src->b)/3);
 }
 
 static inline void CopyPixel(const PixelRgbInt* src, PixelInt* dest)
 {
-    *dest = (unsigned char)((src->r + src->g + src->b)/3);
+    *dest = static_cast<unsigned char>((src->r + src->g + src->b)/3);
 }
 
 static inline void CopyPixel(const PixelRgbInt* src, PixelHsv* dest)
@@ -524,14 +524,14 @@ static inline void CopyPixel(const PixelRgbInt* src, PixelHsv* dest)
 
 static inline void CopyPixel(const PixelRgbInt* src, PixelMonoSigned* dest)
 {
-    *dest = (char)((src->r + src->g + src->b)/3);
+    *dest = static_cast<char>((src->r + src->g + src->b)/3);
 }
 
 static inline void CopyPixel(const PixelRgbInt* src, PixelRgbSigned* dest)
 {
-    dest->r = (char)src->r;
-    dest->g = (char)src->g;
-    dest->b = (char)src->b;
+    dest->r = static_cast<char>(src->r);
+    dest->g = static_cast<char>(src->g);
+    dest->b = static_cast<char>(src->b);
 }
 
 static inline void CopyPixel(const PixelRgbInt* src, PixelFloat* dest)
@@ -541,38 +541,38 @@ static inline void CopyPixel(const PixelRgbInt* src, PixelFloat* dest)
 
 static inline void CopyPixel(const PixelRgbInt* src, PixelRgbFloat* dest)
 {
-    dest->r = (float)((int) src->r);
-    dest->g = (float)((int) src->g);
-    dest->b = (float)((int) src->b);
+    dest->r = static_cast<float>(static_cast<int>(src->r));
+    dest->g = static_cast<float>(static_cast<int>(src->g));
+    dest->b = static_cast<float>(static_cast<int>(src->b));
 }
 
 static inline void CopyPixel(const PixelRgbInt* src, PixelRgb* dest)
 {
-    dest->r = (unsigned char)src->r;
-    dest->g = (unsigned char)src->g;
-    dest->b = (unsigned char)src->b;
+    dest->r = static_cast<unsigned char>(src->r);
+    dest->g = static_cast<unsigned char>(src->g);
+    dest->b = static_cast<unsigned char>(src->b);
 }
 
 static inline void CopyPixel(const PixelRgbInt* src, PixelBgr* dest)
 {
-    dest->r = (unsigned char)src->r;
-    dest->g = (unsigned char)src->g;
-    dest->b = (unsigned char)src->b;
+    dest->r = static_cast<unsigned char>(src->r);
+    dest->g = static_cast<unsigned char>(src->g);
+    dest->b = static_cast<unsigned char>(src->b);
 }
 
 static inline void CopyPixel(const PixelRgbInt* src, PixelRgba* dest)
 {
-    dest->r = (unsigned char)src->r;
-    dest->g = (unsigned char)src->g;
-    dest->b = (unsigned char)src->b;
+    dest->r = static_cast<unsigned char>(src->r);
+    dest->g = static_cast<unsigned char>(src->g);
+    dest->b = static_cast<unsigned char>(src->b);
     dest->a = 255;
 }
 
 static inline void CopyPixel(const PixelRgbInt* src, PixelBgra* dest)
 {
-    dest->r = (unsigned char)src->r;
-    dest->g = (unsigned char)src->g;
-    dest->b = (unsigned char)src->b;
+    dest->r = static_cast<unsigned char>(src->r);
+    dest->g = static_cast<unsigned char>(src->g);
+    dest->b = static_cast<unsigned char>(src->b);
     dest->a = 255;
 }
 
@@ -660,24 +660,24 @@ static inline void CopyPixel(const PixelMonoSigned* src, PixelInt* dest)
 
 static inline void CopyPixel(const PixelMonoSigned* src, PixelMono16* dest)
 {
-    *dest = (yarp::sig::PixelMono16)(*src);
+    *dest = static_cast<yarp::sig::PixelMono16>(*src);
 }
 
 /******************************************************************************/
 
 static inline void CopyPixel(const PixelRgbSigned* src, PixelMono* dest)
 {
-    *dest = (unsigned char)((src->r + src->g + src->b)/3);
+    *dest = static_cast<unsigned char>((src->r + src->g + src->b)/3);
 }
 
 static inline void CopyPixel(const PixelRgbSigned* src, PixelMono16* dest)
 {
-    *dest = (PixelMono16)((src->r + src->g + src->b)/3);
+    *dest = static_cast<PixelMono16>((src->r + src->g + src->b)/3);
 }
 
 static inline void CopyPixel(const PixelRgbSigned* src, PixelInt* dest)
 {
-    *dest = (int)((src->r + src->g + src->b)/3);
+    *dest = static_cast<int>((src->r + src->g + src->b)/3);
 }
 
 static inline void CopyPixel(const PixelRgbSigned* src, PixelHsv* dest)
@@ -687,7 +687,7 @@ static inline void CopyPixel(const PixelRgbSigned* src, PixelHsv* dest)
 
 static inline void CopyPixel(const PixelRgbSigned* src, PixelMonoSigned* dest)
 {
-    *dest = (char)((src->r + src->g + src->b)/3);
+    *dest = static_cast<char>((src->r + src->g + src->b)/3);
 }
 
 static inline void CopyPixel(const PixelRgbSigned* src, PixelRgb* dest)
@@ -748,73 +748,73 @@ static inline void CopyPixel(const PixelRgbSigned* src, PixelHsvFloat* dest)
 
 static inline void CopyPixel(const PixelFloat* src, PixelMono* dest)
 {
-    *dest = (unsigned char)*src;
+    *dest = static_cast<unsigned char>(*src);
 }
 
 static inline void CopyPixel(const PixelFloat* src, PixelMono16* dest)
 {
-    *dest = (yarp::sig::PixelMono16)*src;
+    *dest = static_cast<yarp::sig::PixelMono16>(*src);
 }
 
 static inline void CopyPixel(const PixelFloat* src, PixelInt* dest)
 {
-    *dest = (unsigned char)*src;
+    *dest = static_cast<unsigned char>(*src);
 }
 
 static inline void CopyPixel(const PixelFloat* src, PixelMonoSigned* dest)
 {
-    *dest = (char)*src;
+    *dest = static_cast<char>(*src);
 }
 
 static inline void CopyPixel(const PixelFloat* src, PixelRgb* dest)
 {
-    dest->r = (unsigned char)(*src);
-    dest->g = (unsigned char)(*src);
-    dest->b = (unsigned char)(*src);
+    dest->r = static_cast<unsigned char>(*src);
+    dest->g = static_cast<unsigned char>(*src);
+    dest->b = static_cast<unsigned char>(*src);
 }
 
 static inline void CopyPixel(const PixelFloat* src, PixelRgba* dest)
 {
-    dest->r = (unsigned char)(*src);
-    dest->g = (unsigned char)(*src);
-    dest->b = (unsigned char)(*src);
+    dest->r = static_cast<unsigned char>(*src);
+    dest->g = static_cast<unsigned char>(*src);
+    dest->b = static_cast<unsigned char>(*src);
     dest->a = 255;
 }
 
 static inline void CopyPixel(const PixelFloat* src, PixelBgra* dest)
 {
-    dest->r = (unsigned char)(*src);
-    dest->g = (unsigned char)(*src);
-    dest->b = (unsigned char)(*src);
+    dest->r = static_cast<unsigned char>(*src);
+    dest->g = static_cast<unsigned char>(*src);
+    dest->b = static_cast<unsigned char>(*src);
     dest->a = 255;
 }
 
 static inline void CopyPixel(const PixelFloat* src, PixelRgbInt* dest)
 {
-    dest->r = (int)(*src);
-    dest->g = (int)(*src);
-    dest->b = (int)(*src);
+    dest->r = static_cast<int>(*src);
+    dest->g = static_cast<int>(*src);
+    dest->b = static_cast<int>(*src);
 }
 
 static inline void CopyPixel(const PixelFloat* src, PixelBgr* dest)
 {
-    dest->r = (unsigned char)(*src);
-    dest->g = (unsigned char)(*src);
-    dest->b = (unsigned char)(*src);
+    dest->r = static_cast<unsigned char>(*src);
+    dest->g = static_cast<unsigned char>(*src);
+    dest->b = static_cast<unsigned char>(*src);
 }
 
 static inline void CopyPixel(const PixelFloat* src, PixelHsv* dest)
 {
-    dest->v = (unsigned char)*src;
+    dest->v = static_cast<unsigned char>(*src);
     dest->h = 0;
     dest->s = 0;
 }
 
 static inline void CopyPixel(const PixelFloat* src, PixelRgbSigned* dest)
 {
-    dest->r = (signed char)(*src);
-    dest->g = (signed char)(*src);
-    dest->b = (signed char)(*src);
+    dest->r = static_cast<signed char>(*src);
+    dest->g = static_cast<signed char>(*src);
+    dest->b = static_cast<signed char>(*src);
 }
 
 static inline void CopyPixel(const PixelFloat* src, PixelRgbFloat* dest)
@@ -835,17 +835,17 @@ static inline void CopyPixel(const PixelFloat* src, PixelHsvFloat* dest)
 
 static inline void CopyPixel(const PixelRgbFloat* src, PixelMono* dest)
 {
-    *dest = (unsigned char)((src->r + src->g + src->b)/3);
+    *dest = static_cast<unsigned char>((src->r + src->g + src->b)/3);
 }
 
 static inline void CopyPixel(const PixelRgbFloat* src, PixelInt* dest)
 {
-    *dest = (unsigned char)((src->r + src->g + src->b)/3);
+    *dest = static_cast<unsigned char>((src->r + src->g + src->b)/3);
 }
 
 static inline void CopyPixel(const PixelRgbFloat* src, PixelMono16* dest)
 {
-    *dest = (yarp::sig::PixelMono16)((src->r + src->g + src->b)/3);
+    *dest = static_cast<yarp::sig::PixelMono16>((src->r + src->g + src->b)/3);
 }
 
 static inline void CopyPixel(const PixelRgbFloat* src, PixelHsv* dest)
@@ -855,44 +855,44 @@ static inline void CopyPixel(const PixelRgbFloat* src, PixelHsv* dest)
 
 static inline void CopyPixel(const PixelRgbFloat* src, PixelMonoSigned* dest)
 {
-    *dest = (char)((src->r + src->g + src->b)/3);
+    *dest = static_cast<char>((src->r + src->g + src->b)/3);
 }
 
 static inline void CopyPixel(const PixelRgbFloat* src, PixelRgb* dest)
 {
-    dest->r = (unsigned char) src->r;
-    dest->g = (unsigned char) src->g;
-    dest->b = (unsigned char) src->b;
+    dest->r = static_cast<unsigned char>(src->r);
+    dest->g = static_cast<unsigned char>(src->g);
+    dest->b = static_cast<unsigned char>(src->b);
 }
 
 static inline void CopyPixel(const PixelRgbFloat* src, PixelRgba* dest)
 {
-    dest->r = (unsigned char) src->r;
-    dest->g = (unsigned char) src->g;
-    dest->b = (unsigned char) src->b;
+    dest->r = static_cast<unsigned char>(src->r);
+    dest->g = static_cast<unsigned char>(src->g);
+    dest->b = static_cast<unsigned char>(src->b);
     dest->a = 255;
 }
 
 static inline void CopyPixel(const PixelRgbFloat* src, PixelBgra* dest)
 {
-    dest->r = (unsigned char) src->r;
-    dest->g = (unsigned char) src->g;
-    dest->b = (unsigned char) src->b;
+    dest->r = static_cast<unsigned char>(src->r);
+    dest->g = static_cast<unsigned char>(src->g);
+    dest->b = static_cast<unsigned char>(src->b);
     dest->a = 255;
 }
 
 static inline void CopyPixel(const PixelRgbFloat* src, PixelRgbInt* dest)
 {
-    dest->r = (int) src->r;
-    dest->g = (int) src->g;
-    dest->b = (int) src->b;
+    dest->r = static_cast<int>(src->r);
+    dest->g = static_cast<int>(src->g);
+    dest->b = static_cast<int>(src->b);
 }
 
 static inline void CopyPixel(const PixelRgbFloat* src, PixelBgr* dest)
 {
-    dest->r = (unsigned char) src->r;
-    dest->g = (unsigned char) src->g;
-    dest->b = (unsigned char) src->b;
+    dest->r = static_cast<unsigned char>(src->r);
+    dest->g = static_cast<unsigned char>(src->g);
+    dest->b = static_cast<unsigned char>(src->b);
 }
 
 static inline void CopyPixel(const PixelRgbFloat* src, PixelFloat* dest)
@@ -902,9 +902,9 @@ static inline void CopyPixel(const PixelRgbFloat* src, PixelFloat* dest)
 
 static inline void CopyPixel(const PixelRgbFloat* src, PixelRgbSigned* dest)
 {
-    dest->r = (signed char) src->r;
-    dest->g = (signed char) src->g;
-    dest->b = (signed char) src->b;
+    dest->r = static_cast<signed char>(src->r);
+    dest->g = static_cast<signed char>(src->g);
+    dest->b = static_cast<signed char>(src->b);
 }
 
 static inline void CopyPixel(const PixelRgbFloat* src, PixelHsvFloat* dest)
@@ -983,24 +983,24 @@ static inline void CopyPixel(const PixelHsvFloat* src, PixelInt* dest)
 
 static inline void CopyPixel(const PixelInt* src, PixelRgb* dest)
 {
-    dest->r = (char)*src;
-    dest->g = (char)*src;
-    dest->b = (char)*src;
+    dest->r = static_cast<char>(*src);
+    dest->g = static_cast<char>(*src);
+    dest->b = static_cast<char>(*src);
 }
 
 static inline void CopyPixel(const PixelInt* src, PixelRgba* dest)
 {
-    dest->r = (char)*src;
-    dest->g = (char)*src;
-    dest->b = (char)*src;
+    dest->r = static_cast<char>(*src);
+    dest->g = static_cast<char>(*src);
+    dest->b = static_cast<char>(*src);
     dest->a = 255;
 }
 
 static inline void CopyPixel(const PixelInt* src, PixelBgra* dest)
 {
-    dest->r = (char)*src;
-    dest->g = (char)*src;
-    dest->b = (char)*src;
+    dest->r = static_cast<char>(*src);
+    dest->g = static_cast<char>(*src);
+    dest->b = static_cast<char>(*src);
     dest->a = 255;
 }
 
@@ -1013,34 +1013,34 @@ static inline void CopyPixel(const PixelInt* src, PixelRgbInt* dest)
 
 static inline void CopyPixel(const PixelInt* src, PixelBgr* dest)
 {
-    dest->r = (char)*src;
-    dest->g = (char)*src;
-    dest->b = (char)*src;
+    dest->r = static_cast<char>(*src);
+    dest->g = static_cast<char>(*src);
+    dest->b = static_cast<char>(*src);
 }
 
 static inline void CopyPixel(const PixelInt* src, PixelHsv* dest)
 {
-    dest->v = (yarp::sig::PixelMono)(*src);
+    dest->v = static_cast<yarp::sig::PixelMono>(*src);
     dest->h = dest->s = 0;
 }
 
 static inline void CopyPixel(const PixelInt* src, PixelRgbSigned* dest)
 {
-    dest->r = (yarp::sig::PixelMono)(*src);
-    dest->g = (yarp::sig::PixelMono)(*src);
-    dest->b = (yarp::sig::PixelMono)(*src);
+    dest->r = static_cast<yarp::sig::PixelMono>(*src);
+    dest->g = static_cast<yarp::sig::PixelMono>(*src);
+    dest->b = static_cast<yarp::sig::PixelMono>(*src);
 }
 
 static inline void CopyPixel(const PixelInt* src, PixelFloat* dest)
 {
-    *dest = (float)(*src);
+    *dest = static_cast<float>(*src);
 }
 
 static inline void CopyPixel(const PixelInt* src, PixelRgbFloat* dest)
 {
-    dest->r = (float)(*src);
-    dest->g = (float)(*src);
-    dest->b = (float)(*src);
+    dest->r = static_cast<float>(*src);
+    dest->g = static_cast<float>(*src);
+    dest->b = static_cast<float>(*src);
 }
 
 static inline void CopyPixel(const PixelInt* src, PixelHsvFloat* dest)
@@ -1052,104 +1052,104 @@ static inline void CopyPixel(const PixelInt* src, PixelHsvFloat* dest)
 
 static inline void CopyPixel(const PixelInt* src, PixelMonoSigned* dest)
 {
-    *dest = (char)(*src >> 1);
+    *dest = static_cast<char>(*src >> 1);
 }
 
 static inline void CopyPixel(const PixelInt* src, PixelMono* dest)
 {
-    *dest = (yarp::sig::PixelMono)(*src);
+    *dest = static_cast<yarp::sig::PixelMono>(*src);
 }
 
 static inline void CopyPixel(const PixelInt* src, PixelMono16* dest)
 {
-    *dest = (yarp::sig::PixelMono16)(*src);
+    *dest = static_cast<yarp::sig::PixelMono16>(*src);
 }
 
 /******************************************************************************/
 
 static inline void CopyPixel(const PixelMono16* src, PixelRgb* dest)
 {
-    dest->r = (char)*src;
-    dest->g = (char)*src;
-    dest->b = (char)*src;
+    dest->r = static_cast<char>(*src);
+    dest->g = static_cast<char>(*src);
+    dest->b = static_cast<char>(*src);
 }
 
 static inline void CopyPixel(const PixelMono16* src, PixelRgba* dest)
 {
-    dest->r = (char)*src;
-    dest->g = (char)*src;
-    dest->b = (char)*src;
+    dest->r = static_cast<char>(*src);
+    dest->g = static_cast<char>(*src);
+    dest->b = static_cast<char>(*src);
     dest->a = 255;
 }
 
 static inline void CopyPixel(const PixelMono16* src, PixelBgra* dest)
 {
-    dest->r = (char)*src;
-    dest->g = (char)*src;
-    dest->b = (char)*src;
+    dest->r = static_cast<char>(*src);
+    dest->g = static_cast<char>(*src);
+    dest->b = static_cast<char>(*src);
     dest->a = 255;
 }
 
 static inline void CopyPixel(const PixelMono16* src, PixelRgbInt* dest)
 {
-    dest->r = (int)((unsigned) *src);
-    dest->g = (int)((unsigned) *src);
-    dest->b = (int)((unsigned) *src);
+    dest->r = static_cast<int>(static_cast<unsigned>(*src));
+    dest->g = static_cast<int>(static_cast<unsigned>(*src));
+    dest->b = static_cast<int>(static_cast<unsigned>(*src));
 }
 
 static inline void CopyPixel(const PixelMono16* src, PixelInt* dest)
 {
-  *dest = (int)((unsigned) *src);
+  *dest = static_cast<int>(static_cast<unsigned>(*src));
 }
 
 static inline void CopyPixel(const PixelMono16* src, PixelBgr* dest)
 {
-    dest->r = (char)*src;
-    dest->g = (char)*src;
-    dest->b = (char)*src;
+    dest->r = static_cast<char>(*src);
+    dest->g = static_cast<char>(*src);
+    dest->b = static_cast<char>(*src);
 }
 
 static inline void CopyPixel(const PixelMono16* src, PixelHsv* dest)
 {
-    dest->v = (yarp::sig::PixelMono)(*src);
+    dest->v = static_cast<yarp::sig::PixelMono>(*src);
     dest->h = 0;
     dest->s = 0;
 }
 
 static inline void CopyPixel(const PixelMono16* src, PixelRgbSigned* dest)
 {
-    dest->r = (yarp::sig::PixelMono)(*src);
-    dest->g = (yarp::sig::PixelMono)(*src);
-    dest->b = (yarp::sig::PixelMono)(*src);
+    dest->r = static_cast<yarp::sig::PixelMono>(*src);
+    dest->g = static_cast<yarp::sig::PixelMono>(*src);
+    dest->b = static_cast<yarp::sig::PixelMono>(*src);
 }
 
 static inline void CopyPixel(const PixelMono16* src, PixelFloat* dest)
 {
-    *dest = (float)(*src);
+    *dest = static_cast<float>(*src);
 }
 
 static inline void CopyPixel(const PixelMono16* src, PixelRgbFloat* dest)
 {
-    dest->r = (float)(*src);
-    dest->g = (float)(*src);
-    dest->b = (float)(*src);
+    dest->r = static_cast<float>(*src);
+    dest->g = static_cast<float>(*src);
+    dest->b = static_cast<float>(*src);
 }
 
 static inline void CopyPixel(const PixelMono16* src, PixelHsvFloat* dest)
 {
-    dest->v = float(*src);
+    dest->v = static_cast<float>(*src);
     dest->h = 0;
     dest->s = 0;
 }
 
 static inline void CopyPixel(const PixelMono16* src, PixelMonoSigned* dest)
 {
-    *dest = (char)(*src >> 1);
+    *dest = static_cast<char>(*src >> 1);
 }
 
 static inline void CopyPixel(const PixelMono16* src, PixelMono* dest)
 {
-    *dest = (yarp::sig::PixelMono)(*src);
+    *dest = static_cast<yarp::sig::PixelMono>(*src);
 }
 
 static inline void CopyPixel(const PixelInt* src, PixelInt* dest)
