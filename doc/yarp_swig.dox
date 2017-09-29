@@ -22,7 +22,7 @@ the $YARP_ROOT/bindings/CMakeLists.txt file to add your language.
 
 @section yarp_swig_install Overview of steps needed
 
-First, install SWIG.
+First, install SWIG, at least version 3.0 .
 \li \ref yarp_swig_linux
 \li \ref yarp_swig_osx
 \li \ref yarp_swig_windows
@@ -71,11 +71,13 @@ compile the YARP language bindings.
 @section yarp_swig_linux Installing SWIG on Linux
 
 Just about every distribution of Linux has a "swig" package.  To install
-from the command line:
+from the command line in Debian or Ubuntu: 
 
 \verbatim
 sudo apt-get install swig
 \endverbatim
+
+If you are using Debian Jessie, you need to install swig3.0 to get a sufficiently recent version of swig.
 
 Done? Now follow the language-specific steps in \ref yarp_swig_install.
 
