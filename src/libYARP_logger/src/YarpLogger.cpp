@@ -690,7 +690,6 @@ void LoggerEngine::set_listen_option               (std::string   option, bool e
 
 bool LoggerEngine::get_listen_option               (std::string   option)
 {
-    if (log_updater == NULL) return false;
     return false;
 }
 
