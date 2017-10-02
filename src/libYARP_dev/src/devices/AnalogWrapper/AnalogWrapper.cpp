@@ -121,7 +121,10 @@ bool AnalogServerHandler::read(yarp::os::ConnectionReader& connection)
   * on the port, i.e. an offset and a length.
   */
 
-AnalogPortEntry::AnalogPortEntry(void) { }
+AnalogPortEntry::AnalogPortEntry(void) :
+    offset(0),
+    length(0)
+{}
 
 AnalogPortEntry::AnalogPortEntry(const AnalogPortEntry &alt)
 {
@@ -161,6 +164,7 @@ AnalogWrapper::AnalogWrapper(const char* name, int rate): RateThread(rate)
     ownDevices      = false;
     subDeviceOwned  = YARP_NULLPTR;
     sensorId = "AnalogServer";
+    _rate = rate;
     createPort(name, rate);
 }
 #endif // YARP_NO_DEPRECATED
