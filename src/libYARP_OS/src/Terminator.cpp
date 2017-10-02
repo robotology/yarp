@@ -59,6 +59,7 @@ bool Terminator::terminateByName(const char *name) {
 
 Terminee::Terminee(const char *name) {
     ok = false;
+    implementation = nullptr;
     if (name == nullptr) {
         quit = true;
         printf("Terminator: Please supply a proper port name\n");

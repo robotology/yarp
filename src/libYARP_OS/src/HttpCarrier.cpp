@@ -159,6 +159,9 @@ yarp::os::impl::HttpTwoWayStream::HttpTwoWayStream(TwoWayStream *delegate, const
                                                    bool writer) :
         delegate(delegate) {
     this->isWriter = writer;
+    data = false;
+    filterData = false;
+    chunked = false;
     if (writer) {
         Bottle b;
         b.addString(txt);
@@ -166,9 +169,6 @@ yarp::os::impl::HttpTwoWayStream::HttpTwoWayStream(TwoWayStream *delegate, const
         sis.add("\n");
         return;
     }
-    data = false;
-    filterData = false;
-    chunked = false;
     ConstString s(txt);
     ConstString sData = "";
     Property& p = prop;

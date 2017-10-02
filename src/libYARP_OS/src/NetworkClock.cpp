@@ -135,10 +135,8 @@ void NetworkClock::delay(double seconds) {
     listMutex.unlock();
 
     waiter.second->wait();
-    if (waiter.second) {
-        delete waiter.second;
-        waiter.second = nullptr;
-    }
+    delete waiter.second;
+    waiter.second = nullptr;
 }
 
 bool NetworkClock::isValid() const {

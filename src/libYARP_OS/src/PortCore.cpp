@@ -1921,7 +1921,7 @@ bool PortCore::adminBlock(ConnectionReader& reader,
                                     unit->setCarrierParams(property);
                                     result.addInt(0);
                                     ConstString msg = "Configured connection to ";
-                                    msg += route.getFromName().c_str();
+                                    msg += route.getToName().c_str();
                                     msg += "\r\n";
                                     result.addString(msg.c_str());
                                     break;

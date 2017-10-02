@@ -48,6 +48,8 @@ public:
         m_pData=nullptr;
         m_pHeader=nullptr;
         m_ResizeNum=0;
+        m_Port = -1;
+        m_pSock = YARP_NULLPTR;
     }
 
     ~ShmemInputStreamImpl()

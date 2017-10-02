@@ -48,12 +48,6 @@ ConstString InputStream::readLine(int terminal, bool *success) {
                 esc = 0;
             }
         }
-        if (v<0) {
-            if (success != nullptr) {
-                *success = false;
-            }
-            return "";
-        }
     }
     return buf;
 }

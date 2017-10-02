@@ -59,8 +59,8 @@ Thread::Thread() :
 
 
 Thread::~Thread() {
-    ((ThreadImpl*)implementation)->close();
-    if (implementation!=nullptr) {
+    if (implementation) {
+        ((ThreadImpl*)implementation)->close();
         delete ((ThreadImpl*)implementation);
         implementation = nullptr;
     }

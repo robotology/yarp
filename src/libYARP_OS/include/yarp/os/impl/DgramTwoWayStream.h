@@ -47,6 +47,9 @@ public:
         multiMode = false;
         errCount = 0;
         lastReportTime = 0;
+        readAt = 0;
+        readAvail = 0;
+        writeAvail = 0;
     }
 
     virtual bool openMonitor(int readSize=0, int writeSize=0)

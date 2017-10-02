@@ -490,6 +490,7 @@ private:
 public:
     ConnectionRecorder() {
         reader = nullptr;
+        writer = nullptr;
         writing = false;
         wrote = false;
         skipNextInt = false;

@@ -793,14 +793,10 @@ public:
         szarg[nargs]=nullptr;
         fromCommand(nargs, szarg, wipe);
         // clear allocated memory for arguments
-        if (szcmd) {
-            delete [] szcmd;
-            szcmd = nullptr;
-        }
-        if (szarg) {
-            delete [] szarg;
-            szarg = nullptr;
-        }
+        delete [] szcmd;
+        szcmd = nullptr;
+        delete [] szarg;
+        szarg = nullptr;
     }
 
     void parseArguments(char *azParam, int *argc, char **argv, int max_arg) {

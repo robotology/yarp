@@ -70,6 +70,8 @@ BottleImpl::BottleImpl() : parent(nullptr)
     dirty = true;
     nested = false;
     speciality = 0;
+    invalid = false;
+    ro = false;
 }
 
 BottleImpl::BottleImpl(Searchable* parent) : parent(parent)
@@ -77,6 +79,8 @@ BottleImpl::BottleImpl(Searchable* parent) : parent(parent)
     dirty = true;
     nested = false;
     speciality = 0;
+    invalid = false;
+    ro = false;
 }
 
 

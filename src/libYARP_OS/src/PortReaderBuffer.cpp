@@ -432,11 +432,12 @@ bool PortReaderBufferBase::read(ConnectionReader& connection) {
     while (reader==nullptr) {
         HELPER(implementation).stateSema.wait();
         reader = HELPER(implementation).get();
-        if (reader->getReader()==nullptr) {
+        if (reader && reader->getReader() == nullptr) {
             PortReader *next = create();
-            yAssert(next!=nullptr);
+            yAssert(next != nullptr);
             reader->setReader(next);
         }
+
         HELPER(implementation).stateSema.post();
         if (reader==nullptr) {
             HELPER(implementation).consumeSema.wait();
