@@ -777,8 +777,8 @@ void RPCMessagesParser::handleInteractionModeMsg(const yarp::os::Bottle& cmd,
                     modeList  = cmd.get(3).asList();
                     if(modeList->size() != controlledJoints)
                     {
-                    if (ControlBoardWrapper_p->verbose())
-                        yError("Received an invalid setInteractionMode message. Size of vector doesn´t match the number of controlled joints\n");
+                        if (ControlBoardWrapper_p->verbose())
+                            yError("Received an invalid setInteractionMode message. Size of vector doesn´t match the number of controlled joints\n");
                         *ok = false;
                         break;
                     }
@@ -794,8 +794,8 @@ void RPCMessagesParser::handleInteractionModeMsg(const yarp::os::Bottle& cmd,
 
                 default:
                 {
-                if (ControlBoardWrapper_p->verbose())
-                    yError("Error while Handling IInteractionMode message, SET command not understood %s\n", cmd.get(2).asString().c_str());
+                    if (ControlBoardWrapper_p->verbose())
+                        yError("Error while Handling IInteractionMode message, SET command not understood %s\n", cmd.get(2).asString().c_str());
                     *ok = false;
                 }
                 break;
