@@ -119,9 +119,16 @@ PLATFORM_THREAD_RETURN theExecutiveBranch (void *args)
 
 ThreadImpl::ThreadImpl() :
         tid(-1),
+        id(-1),
+#if defined(YARP_HAS_CXX11)
+        hid(std::thread()),
+#else
+        hid(0),
+#endif
         defaultPriority(-1),
         defaultPolicy(-1),
         active(false),
+        opened(false),
         closing(false),
         needJoin(false),
         delegate(YARP_NULLPTR),
@@ -134,13 +141,21 @@ ThreadImpl::ThreadImpl() :
 
 ThreadImpl::ThreadImpl(Runnable *target) :
         tid(-1),
+        id(-1),
         defaultPriority(-1),
         defaultPolicy(-1),
+#if defined(YARP_HAS_CXX11)
+        hid(std::thread()),
+#else
+        hid(0),
+#endif
         active(false),
+        opened(false),
         closing(false),
         needJoin(false),
         delegate(target),
-        synchro(0)
+        synchro(0),
+        initWasSuccessful(false)
 {
     setOptions();
 }

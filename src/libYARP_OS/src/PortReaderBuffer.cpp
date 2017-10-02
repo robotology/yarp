@@ -443,11 +443,12 @@ bool PortReaderBufferBase::read(ConnectionReader& connection) {
     while (reader==YARP_NULLPTR) {
         HELPER(implementation).stateSema.wait();
         reader = HELPER(implementation).get();
-        if (reader->getReader()==YARP_NULLPTR) {
+        if (reader && reader->getReader() == YARP_NULLPTR) {
             PortReader *next = create();
-            yAssert(next!=YARP_NULLPTR);
+            yAssert(next != YARP_NULLPTR);
             reader->setReader(next);
         }
+
         HELPER(implementation).stateSema.post();
         if (reader==YARP_NULLPTR) {
             HELPER(implementation).consumeSema.wait();

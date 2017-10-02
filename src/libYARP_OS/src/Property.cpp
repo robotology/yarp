@@ -801,14 +801,10 @@ public:
         szarg[nargs]=YARP_NULLPTR;
         fromCommand(nargs, szarg, wipe);
         // clear allocated memory for arguments
-        if (szcmd) {
-            delete [] szcmd;
-            szcmd = YARP_NULLPTR;
-        }
-        if (szarg) {
-            delete [] szarg;
-            szarg = YARP_NULLPTR;
-        }
+        delete [] szcmd;
+        szcmd = YARP_NULLPTR;
+        delete [] szarg;
+        szarg = YARP_NULLPTR;
     }
 
     void parseArguments(char *azParam, int *argc, char **argv, int max_arg) {

@@ -42,7 +42,8 @@ private:
         {
         }
 
-        Entry()
+        Entry() :
+            fn(YARP_NULLPTR)
         {
         }
     };

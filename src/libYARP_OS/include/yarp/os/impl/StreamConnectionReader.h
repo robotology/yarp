@@ -54,6 +54,7 @@ public:
         ref(YARP_NULLPTR),
         convertedTextMode(false),
         pushedIntFlag(false),
+        pushedInt(-1),
         parentConnectionReader(YARP_NULLPTR)
     {
     }

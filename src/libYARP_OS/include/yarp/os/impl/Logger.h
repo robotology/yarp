@@ -61,6 +61,7 @@ public:
         verbose = 0;
         low = DEFAULT_WARN;
         stream = YARP_NULLPTR;
+        pid = -1;
 #ifdef YARP_HAS_ACE
         if (this==root) {
             ACE_Log_Msg *acer = ACE_Log_Msg::instance();
@@ -77,6 +78,7 @@ public:
         verbose = 0;
         stream = YARP_NULLPTR;
         low = DEFAULT_WARN;
+        pid = -1;
     }
 
     static Logger& get();

@@ -53,6 +53,10 @@ private:
 public:
     Params() {
         argc = 0;
+        for (int i = 0; i < MAX_ARG_CT; i++) 
+        {
+            argv[i] = YARP_NULLPTR;
+        }
     }
 
     Params(const char *command) {

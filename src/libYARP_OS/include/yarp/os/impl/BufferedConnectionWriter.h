@@ -526,6 +526,7 @@ private:
 public:
     ConnectionRecorder() {
         reader = YARP_NULLPTR;
+        writer = YARP_NULLPTR;
         writing = false;
         wrote = false;
         skipNextInt = false;

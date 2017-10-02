@@ -59,6 +59,7 @@ bool Terminator::terminateByName(const char *name) {
 
 Terminee::Terminee(const char *name) {
     ok = false;
+    implementation = YARP_NULLPTR;
     if (name == YARP_NULLPTR) {
         quit = true;
         printf("Terminator: Please supply a proper port name\n");
