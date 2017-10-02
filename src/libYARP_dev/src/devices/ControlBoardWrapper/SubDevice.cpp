@@ -274,7 +274,7 @@ bool SubDevice::attach(yarp::dev::PolyDriver *d, const std::string &k)
     }
 
     int subdevAxes;
-    if(!pos->getAxes(&subdevAxes))
+    if(!pos || !pos->getAxes(&subdevAxes))
     {
 
         yError() << "ControlBoardWrapper for device <" << parentName << "> attached to subdevice " << k.c_str() << " but it was not ready yet. \n" \
