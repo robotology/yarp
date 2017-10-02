@@ -23,7 +23,7 @@ yarp::dev::DriverCreator *createVirtualAnalogWrapper() {
 }
 
 
-AnalogSubDevice::AnalogSubDevice()
+AnalogSubDevice::AnalogSubDevice() : lastRecvMsg(0)
 {
     detach();
 }
