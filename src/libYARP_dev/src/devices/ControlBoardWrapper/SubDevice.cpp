@@ -19,40 +19,39 @@ using namespace yarp::sig;
 using namespace std;
 
 
-SubDevice::SubDevice()
-{
-    pid = 0;
-    pos = 0;
-    pos2 = 0;
-    posDir = 0;
-    vel = 0;
-    vel2 = 0;
-    iJntEnc = 0;
-    iMotEnc = 0;
-    amp = 0;
-    lim2 = 0;
-    calib = 0;
-    calib2 = 0;
-    iTimed= 0;
-    info = 0;
-    iTorque=0;
-    iImpedance=0;
-    iMode=0;
-    iMode2=0;
-    iInteract=0;
-    iCurr = 0;
-    iPWM = 0;
-
-    base=-1;
-    top=-1;
-    axes=0;
-
-    subdevice=0;
-
-    configuredF=false;
-    attachedF=false;
-    _subDevVerbose = false;
-}
+SubDevice::SubDevice() : 
+    base(-1),
+    top(-1),
+    axes(0),
+    configuredF(false),
+    parent(0),
+    subdevice(0),
+    pid(0),
+    pos(0),
+    pos2(0),
+    vel(0),
+    vel2(0),
+    iJntEnc(0),
+    iMotEnc(0),
+    amp(0),
+    lim2(0),
+    calib(0),
+    calib2(0),
+    iTimed(0),
+    iTorque(0),
+    iImpedance(0),
+    iMode(0),
+    iMode2(0),
+    info(0),
+    posDir(0),
+    iInteract(0),
+    imotor(0),
+    iVar(0),
+    iPWM(0),
+    iCurr(0),
+    _subDevVerbose(false),
+    attachedF(false)
+{}
 
 bool SubDevice::configure(int b, int t, int n, const std::string &key, yarp::dev::ControlBoardWrapper *_parent)
 {
