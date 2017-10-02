@@ -875,10 +875,9 @@ void RPCMessagesParser::handleInteractionModeMsg(const yarp::os::Bottle& cmd,
                     delete [] modes;
                 }
                 break;
-
-                    lastRpcStamp.update();
-                    appendTimeStamp(response, lastRpcStamp);
             }
+            lastRpcStamp.update();
+            appendTimeStamp(response, lastRpcStamp);
         }
         break; // case VOCAB_GET
 
