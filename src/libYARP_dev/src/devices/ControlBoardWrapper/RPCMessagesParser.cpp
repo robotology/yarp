@@ -211,8 +211,13 @@ void RPCMessagesParser::handleControlModeMsg(const yarp::os::Bottle& cmd,
                     {
                         modes[i] = modeList.get(i).asVocab();
                     }
-                    *ok = rpc_iCtrlMode2->setControlModes(n_joints, js, modes);
-
+                    if(rpc_iCtrlMode2)
+                        *ok = rpc_iCtrlMode2->setControlModes(n_joints, js, modes);
+                    else
+                    {
+                        *rec = false;
+                        *ok = false;
+                    }
                     delete [] js;
                     delete [] modes;
                 }
@@ -234,7 +239,13 @@ void RPCMessagesParser::handleControlModeMsg(const yarp::os::Bottle& cmd,
                     {
                         modes[i] = modeList->get(i).asVocab();
                     }
-                    *ok = rpc_iCtrlMode2->setControlModes(modes);
+                    if(rpc_iCtrlMode2)
+                        *ok = rpc_iCtrlMode2->setControlModes(modes);
+                    else
+                    {
+                        *rec = false;
+                        *ok = false;
+                    }
                     delete [] modes;
                 }
                 break;
@@ -267,6 +278,11 @@ YARP_WARNING_POP
                         case VOCAB_CM_POSITION_DIRECT:
                             if(rpc_iCtrlMode2)
                                 *ok = rpc_iCtrlMode2->setControlMode(axis, VOCAB_CM_POSITION_DIRECT);
+                            else
+                            {
+                                *rec = false;
+                                *ok = false;
+                            }
                         break;
 
 
@@ -323,21 +339,41 @@ YARP_WARNING_POP
                         case VOCAB_CM_PWM:
                             if (rpc_iCtrlMode2)
                                 *ok = rpc_iCtrlMode2->setControlMode(axis, VOCAB_CM_PWM);
+                            else
+                            {
+                                *rec = false;
+                                *ok = false;
+                            }
                             break;
 
                         case VOCAB_CM_CURRENT:
                             if (rpc_iCtrlMode2)
                                 *ok = rpc_iCtrlMode2->setControlMode(axis, VOCAB_CM_CURRENT);
+                            else
+                            {
+                                *rec = false;
+                                *ok = false;
+                            }
                             break;
 
                         case VOCAB_CM_MIXED:
                             if(rpc_iCtrlMode2)
                                 *ok = rpc_iCtrlMode2->setControlMode(axis, VOCAB_CM_MIXED);
+                            else
+                            {
+                                *rec = false;
+                                *ok = false;
+                            }
                         break;
 
                         case VOCAB_CM_FORCE_IDLE:
                             if(rpc_iCtrlMode2)
                                 *ok = rpc_iCtrlMode2->setControlMode(axis, VOCAB_CM_FORCE_IDLE);
+                            else
+                            {
+                                *rec = false;
+                                *ok = false;
+                            }
                         break;
 
                         default:
@@ -416,7 +452,13 @@ YARP_WARNING_POP
                     {
                         js[i] = lIn.get(i).asInt();
                     }
-                    *ok = rpc_iCtrlMode2->getControlModes(n_joints, js, modes);
+                    if(rpc_iCtrlMode2)
+                        *ok = rpc_iCtrlMode2->getControlModes(n_joints, js, modes);
+                    else
+                    {
+                        *rec = false;
+                        *ok = false;
+                    }
 
                     response.addVocab(VOCAB_IS);
                     response.addVocab(VOCAB_CM_CONTROL_MODE_GROUP);
