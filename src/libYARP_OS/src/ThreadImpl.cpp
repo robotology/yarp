@@ -120,13 +120,13 @@ PLATFORM_THREAD_RETURN theExecutiveBranch (void *args)
 ThreadImpl::ThreadImpl() :
         tid(-1),
         id(-1),
+        defaultPriority(-1),
+        defaultPolicy(-1),
 #if defined(YARP_HAS_CXX11)
         hid(std::thread()),
 #else
         hid(0),
 #endif
-        defaultPriority(-1),
-        defaultPolicy(-1),
         active(false),
         opened(false),
         closing(false),
