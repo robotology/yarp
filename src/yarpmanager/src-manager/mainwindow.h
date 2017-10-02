@@ -12,6 +12,7 @@
 #define MAINWINDOW_H
 
 #include <QMainWindow>
+#include <QFileSystemWatcher>
 #include <yarp/os/Network.h>
 #include <yarp/os/Property.h>
 #include <yarp/os/ConstString.h>
@@ -47,6 +48,8 @@ private:
     bool loadRecursiveTemplates(const char* szPath);
     bool loadRecursiveApplications(const char* szPath);
     bool initializeFile(std::string _class);
+    int  getAppTabIndex(QString appName);
+    QString getAppNameFromXml(QString fileName);
 
 private:
     Ui::MainWindow *ui;
@@ -56,6 +59,9 @@ private:
     QString currentAppName;
     QString currentAppDescription;
     QString currentAppVersion;
+    QStringList listOfAppFiles;
+
+    QFileSystemWatcher* watcher;
 
     EntitiesTreeWidget *entitiesTree;
     QToolBar *builderToolBar;
@@ -100,6 +106,7 @@ private slots:
     void onViewBuilderWindows();
 
     void onModified(bool);
+    void onFileChanged(const QString & path);
 
 public slots:
     void onTabChangeItem(int);

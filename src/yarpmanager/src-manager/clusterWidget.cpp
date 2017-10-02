@@ -132,6 +132,8 @@ void ClusterWidget::onCheckServer()
 
 void ClusterWidget::onRunServer()
 {
+    updateServerEntries();
+
     string cmdRunServer = getSSHCmd(cluster.user, cluster.nsNode, cluster.ssh_options);
     if (ui->checkRos->isChecked())
     {
@@ -143,7 +145,7 @@ void ClusterWidget::onRunServer()
     }
     if (system(cmdRunServer.c_str()) != 0)
     {
-        std::string err = "ClusterWidget: failed to run the server on" + cluster.nsNode;
+        std::string err = "ClusterWidget: failed to run the server on " + cluster.nsNode;
         logError(QString(err.c_str()));
     }
     else
@@ -151,18 +153,19 @@ void ClusterWidget::onRunServer()
         yarp::os::Time::delay(1.0);
         onCheckServer();
     }
-
 }
 
 void ClusterWidget::onStopServer()
 {
+    updateServerEntries();
+
     string cmdStopServer = getSSHCmd(cluster.user, cluster.nsNode, cluster.ssh_options);
 
-    cmdStopServer = cmdStopServer + " killall yarpserver";
+    cmdStopServer = cmdStopServer + " killall yarpserver &";
 
     if (system(cmdStopServer.c_str()) != 0)
     {
-        std::string err = "ClusterWidget: failed to stop the server on" + cluster.nsNode;
+        std::string err = "ClusterWidget: failed to stop the server on " + cluster.nsNode;
         logError(QString(err.c_str()));
     }
     else
@@ -176,18 +179,30 @@ void ClusterWidget::onStopServer()
     {
         onKillServer();
     }
+    else
+    {
+        std::string info = "ClusterWidget: yarpserver successfully stopped on "+ cluster.nsNode;
+        logMessage(QString(info.c_str()));
+    }
 }
 
 void ClusterWidget::onKillServer()
 {
+    updateServerEntries();
+
     string cmdKillServer = getSSHCmd(cluster.user, cluster.nsNode, cluster.ssh_options);
 
-    cmdKillServer = cmdKillServer + " killall -9 yarpserver";
+    cmdKillServer = cmdKillServer + " killall -9 yarpserver &";
 
     if (system(cmdKillServer.c_str()) != 0)
     {
-        std::string err = "ClusterWidget: failed to kill the server on" + cluster.nsNode;
+        std::string err = "ClusterWidget: failed to kill the server on " + cluster.nsNode;
         logError(QString(err.c_str()));
+    }
+    else
+    {
+        std::string info = "ClusterWidget: yarpserver successfully killed on "+ cluster.nsNode;
+        logMessage(QString(info.c_str()));
     }
 
 
@@ -233,8 +248,13 @@ void ClusterWidget::onRunSelected()
         }
         if (system(cmdRunYarprun.c_str()) != 0)
         {
-            std::string err = "ClusterWidget: failed to run yarprun on" + node.name;
+            std::string err = "ClusterWidget: failed to run yarprun on " + node.name;
             logError(QString(err.c_str()));
+        }
+        else
+        {
+            std::string info = "ClusterWidget: yarprun successfully executed on "+ node.name;
+            logMessage(QString(info.c_str()));
         }
     }
 
@@ -262,12 +282,17 @@ void ClusterWidget::onStopSelected()
 
         string cmdStopYarprun = getSSHCmd(node.user, node.name, node.ssh_options);
 
-        cmdStopYarprun = cmdStopYarprun + " yarprun --exit --on "+ portName;
+        cmdStopYarprun = cmdStopYarprun + " yarprun --exit --on "+ portName + " &";
 
         if (system(cmdStopYarprun.c_str()) != 0)
         {
-            std::string err = "ClusterWidget: failed to stop yarprun on" + node.name;
+            std::string err = "ClusterWidget: failed to stop yarprun on " + node.name;
             logError(QString(err.c_str()));
+        }
+        else
+        {
+            std::string info = "ClusterWidget: yarprun successfully stopped on "+ node.name;
+            logMessage(QString(info.c_str()));
         }
     }
 
@@ -289,12 +314,17 @@ void ClusterWidget::onKillSelected()
 
         string cmdKillYarprun = getSSHCmd(node.user, node.name, node.ssh_options);
 
-        cmdKillYarprun = cmdKillYarprun + " killall -9 yarprun";
+        cmdKillYarprun = cmdKillYarprun + " killall -9 yarprun &";
 
         if (system(cmdKillYarprun.c_str()) != 0)
         {
-            std::string err = "ClusterWidget: failed to kill yarprun on" + node.name;
+            std::string err = "ClusterWidget: failed to kill yarprun on " + node.name;
             logError(QString(err.c_str()));
+        }
+        else
+        {
+            std::string info = "ClusterWidget: yarprun successfully killed on "+ node.name;
+            logMessage(QString(info.c_str()));
         }
     }
     yarp::os::Time::delay(2.0);
@@ -323,7 +353,13 @@ void ClusterWidget::onExecute()
             std::string err = "ClusterWidget: failed to run "+ ui->lineEditExecute->text().toStdString() + " on " + node.name;
             logError(QString(err.c_str()));
         }
+        else
+        {
+            std::string info = "ClusterWidget: command "+ ui->lineEditExecute->text().toStdString() + " successfully executed on " + node.name;
+            logMessage(QString(info.c_str()));
+        }
     }
+    ui->lineEditExecute->clear();
 }
 
 void ClusterWidget::onNodeSelectionChanged()
@@ -468,6 +504,13 @@ bool ClusterWidget::checkNode(const string &name)
         return false;
     }
 
+}
+
+void ClusterWidget::updateServerEntries()
+{
+    // remove all the whitespaces
+    cluster.user   = ui->lineEditUser->text().simplified().replace( " ", "" ).toStdString();
+    cluster.nsNode = ui->lineEditNsNode->text().simplified().replace( " ", "" ).toStdString();
 }
 
 ClusterWidget::~ClusterWidget()

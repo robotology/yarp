@@ -32,6 +32,7 @@ private slots:
     void onNodeSelectionChanged();
 signals:
     void logError(QString);
+    void logMessage(QString);
 public:
     explicit ClusterWidget(QWidget *parent = 0);
     ~ClusterWidget();
@@ -44,6 +45,7 @@ private:
     std::string getSSHCmd(const std::string& user, const std::string& host, const std::string& ssh_options);
     bool checkNameserver();
     bool checkNode(const std::string& name);
+    void updateServerEntries();
 private:
     Ui::ClusterWidget *ui;
     std::string confFile;

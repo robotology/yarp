@@ -88,6 +88,8 @@ MainWindow::MainWindow(QWidget *parent) :
     builderToolBar = nullptr;
     prevWidget = nullptr;
 
+    watcher = new QFileSystemWatcher(this);
+
 
 
     connect(ui->entitiesTree,SIGNAL(viewResource(yarp::manager::Computer*)),this,SLOT(viewResource(yarp::manager::Computer*)));
@@ -135,6 +137,8 @@ MainWindow::MainWindow(QWidget *parent) :
 
     connect(this,SIGNAL(selectItem(QString, bool)),ui->entitiesTree,SLOT(onSelectItem(QString, bool)));
 
+    connect(watcher, SIGNAL(fileChanged(const QString &)), this, SLOT(onFileChanged(const QString &)));
+
     //Adding actions for making the window listen key events(shortcuts)
     this->addAction(ui->actionQuit);
     this->addAction(ui->actionSave);
@@ -161,6 +165,7 @@ MainWindow::MainWindow(QWidget *parent) :
         ui->clusterWidget->setConfigFile(confFile);
         ui->clusterWidget->init();
         connect(ui->clusterWidget, SIGNAL(logError(QString)), this, SLOT(onLogError(QString)));
+        connect(ui->clusterWidget, SIGNAL(logMessage(QString)), this, SLOT(onLogMessage(QString)));
     }
     else
     {
@@ -354,6 +359,8 @@ void MainWindow::reportErrors()
  */
 void MainWindow::syncApplicationList(QString selectNodeForEditing, bool open)
 {
+    watcher->removePaths(listOfAppFiles);
+    listOfAppFiles.clear();
     ui->entitiesTree->clearApplications();
     ui->entitiesTree->clearModules();
     ui->entitiesTree->clearResources();
@@ -369,9 +376,11 @@ void MainWindow::syncApplicationList(QString selectNodeForEditing, bool open)
             if(strcmp(selectNodeForEditing.toLatin1().data(),app->getName())==0){
                 selectItem(selectNodeForEditing, open);
             }
-
+            listOfAppFiles.push_back(app->getXmlFile());
         }
     }
+
+    watcher->addPaths(listOfAppFiles);
 
     yarp::manager::ResourcePContainer resources = kb->getResources();
     for(yarp::manager::ResourcePIterator itr=resources.begin(); itr!=resources.end(); itr++){
@@ -502,6 +511,35 @@ bool MainWindow::initializeFile(string _class)
     }
 }
 
+int MainWindow::getAppTabIndex(QString appName)
+{
+    for (int i=0; i<ui->mainTabs->count(); i++){
+        if (ui->mainTabs->tabText(i) == appName){
+            return i;
+        }
+    }
+    return -1;
+}
+
+QString MainWindow::getAppNameFromXml(QString fileName)
+{
+    QString appName("");
+    yarp::manager::KnowledgeBase* kb = lazyManager.getKnowledgeBase();
+    yarp::manager::ApplicaitonPContainer apps =  kb->getApplications();
+    for(yarp::manager::ApplicationPIterator itr=apps.begin(); itr!=apps.end(); itr++)
+    {
+        yarp::manager::Application *app = dynamic_cast<yarp::manager::Application*>(*itr);
+        if(app)
+        {
+            if(app->getXmlFile() == fileName.toStdString())
+            {
+                return app->getName();
+            }
+        }
+    }
+    return appName;
+}
+
 /*! \brief Load the Resource on the MainWindow
     \param res the resource
  */
@@ -543,6 +581,7 @@ void MainWindow::viewModule(yarp::manager::Module *module)
  */
 void MainWindow::viewApplication(yarp::manager::Application *app,bool editingMode)
 {
+
     for (int i=0; i<ui->mainTabs->count(); i++){
         if (ui->mainTabs->tabText(i) == app->getName()){
             ui->mainTabs->setCurrentIndex(i);
@@ -763,11 +802,23 @@ bool MainWindow::onTabClose(int index)
         }
 
         if(aw && aw->isRunning()){
-            if( QMessageBox::warning(this,
-                                     QString("Closing %1").arg(ui->mainTabs->tabText(index)),
-                                     "You have some running module. After closing the application window you might not be able to recover them. Are you sure?",
-                                     QMessageBox::Yes,QMessageBox::No) == QMessageBox::No){
+            QMessageBox msgBox;
+            msgBox.setIcon(QMessageBox::Icon::Warning);
+            msgBox.setWindowTitle(QString("Closing %1").arg(ui->mainTabs->tabText(index)));
+            msgBox.setText(tr("You have some running module. After closing the application window you might not be able to recover them. Are you sure?"));
+            QPushButton* noButton = msgBox.addButton(tr("No"), QMessageBox::NoRole);
+            QPushButton* pstopAndClose = msgBox.addButton(tr("Yes and Stop"), QMessageBox::YesRole);
+            msgBox.addButton(tr("Yes"), QMessageBox::YesRole);
+            msgBox.setDefaultButton(noButton);
+            msgBox.exec();
+
+            if (msgBox.clickedButton() == noButton)
+            {
                 return false;
+            }
+            else if(msgBox.clickedButton() == pstopAndClose)
+            {
+                onStop();
             }
         }
 
@@ -1140,15 +1191,53 @@ void MainWindow::onModified(bool mod)
             ui->mainTabs->setTabText(index,w->getAppName());
         }
     }
+}
 
+void MainWindow::onFileChanged(const QString &path)
+{
+    watcher->addPaths(listOfAppFiles);
 
+    // get the app name from the file name
+    QString appName = getAppNameFromXml(path);
 
+    QMessageBox::StandardButton reply;
+    reply = QMessageBox::question(this, "File changed", "Xml file '" + path +
+                                  "' changed.\nDo you want to reload the application? If open, the respective tab will be closed",
+                                  QMessageBox::Yes|QMessageBox::No);
+    if (reply == QMessageBox::No)
+        return;
 
-
-//    if(mod){
-//        int index = ui->mainTabs->currentIndex();
-//        ui->mainTabs->setTabText(index,QString("%1*").arg(ui->mainTabs->tabText(index).toLatin1().data()));
-//    }
+    Application* app = (Application*) lazyManager.getNode(appName.toStdString());
+    if (app)
+    {
+        int index = getAppTabIndex(appName);
+        if (index >= 0)
+        {
+            if (!onTabClose(index))
+            {
+                return;
+            }
+            else
+            {
+                // refresh it in the application list
+                onReopenApplication(appName, path);
+                // the reference has been changed reopening the application
+                app = (Application*) lazyManager.getNode(appName.toStdString());
+                // is it already open in the tab? if so close it and reopen it after the refresh
+                if (app)
+                {
+                    viewApplication(app, false);
+                }
+                return;            }
+        }
+        else
+        {
+            // refresh it in the application list
+            onReopenApplication(appName, path);
+            return;
+        }
+    }
+    return;
 }
 
 void MainWindow::onSave()
