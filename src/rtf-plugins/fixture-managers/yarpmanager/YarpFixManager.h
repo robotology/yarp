@@ -10,20 +10,20 @@
 #include <yarp/os/Network.h>
 #include <yarp/manager/manager.h>
 #include <rtf/FixtureManager.h>
-#include <rtf/TestSuit.h>
+#include <rtf/TestSuite.h>
 #include <rtf/TestAssert.h>
 
 // define a helper macro for fixture message reporting
 #define RTF_FIXTURE_REPORT(message)\
     if(dynamic_cast<RTF::FixtureManager*>(this) == 0) {\
         RTF_ASSERT_ERROR("RTF_FIXTURE_REPORT is called outside a FixtureManager!"); }\
-    if(dynamic_cast<RTF::TestSuit*>(getDispatcher()) == 0) {\
+    if(dynamic_cast<RTF::TestSuite*>(getDispatcher()) == 0) {\
         RTF_ASSERT_ERROR("RTF_FIXTURE_REPORT cannot get any TestSuit instance from dispacher!"); }\
     RTF::Asserter::report(RTF::TestMessage("reports",\
                                             message,\
                                             RTF_SOURCEFILE(),\
                                             RTF_SOURCELINE()),\
-                                            dynamic_cast<RTF::TestSuit*>(getDispatcher()))
+                                            dynamic_cast<RTF::TestSuite*>(getDispatcher()))
 
 class YarpFixManager : public RTF::FixtureManager,
         yarp::manager::Manager {
