@@ -23,8 +23,8 @@ namespace rtf {
  * paramter to the test case and loads it into a yarp::os::Property object.
  *
  * If any environment property is given using "testrunner -e" or using
- * \<environment> \</environment> tag within suit XML file, that will be used to
- * updated the properties from the main config file.
+ * \<environment> \</environment> tag within suite XML file, that will be used
+ * to updated the properties from the main config file.
  *
  * Please see RTF example folder for how to develop a simple test plugin for
  * YARP.

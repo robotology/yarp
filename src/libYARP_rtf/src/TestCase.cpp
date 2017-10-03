@@ -47,13 +47,13 @@ bool yarp::rtf::TestCase::setup(int argc, char** argv)
     std::string strEnv = getEnvironment();
     yarp::os::Property envprop;
     envprop.fromArguments(strEnv.c_str());
-    bool useSuitContext = envprop.check("context");
+    bool useSuiteContext = envprop.check("context");
 
     // load the config file and update the environment if available
     // E.g., "--from mytest.ini"
     yarp::os::ResourceFinder rf;
     rf.setVerbose(false);
-    if(useSuitContext) {
+    if(useSuiteContext) {
         rf.setDefaultContext(envprop.find("context").asString().c_str());
     } else {
         rf.setDefaultContext("RobotTesting");
@@ -74,7 +74,7 @@ bool yarp::rtf::TestCase::setup(int argc, char** argv)
 
         // if the config file cannot be found from default context or
         // there is not any context, use the robotname environment as context
-        if(!useSuitContext && !useTestContext && !cfgfile.size() && envprop.check("robotname")) {
+        if(!useSuiteContext && !useTestContext && !cfgfile.size() && envprop.check("robotname")) {
             rf.setDefaultContext(envprop.find("robotname").asString().c_str());
             cfgfile = rf.findFileByName(cfgname.c_str());
         }
