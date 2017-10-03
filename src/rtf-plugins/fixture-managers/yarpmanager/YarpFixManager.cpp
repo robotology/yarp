@@ -31,7 +31,7 @@ YarpFixManager::~YarpFixManager() {
 
 
 bool YarpFixManager::setup(int argc, char** argv) {
-    RTF_FIXTURE_REPORT("yarpmanager is setuping the fixture...");
+    RTF_FIXTURE_REPORT("yarpmanager is setting up the fixture...");
     bool ret;
     if(!initialized) {
         // check yarp network
