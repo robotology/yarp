@@ -40,7 +40,10 @@ yarp::sig::ImageOf<yarp::sig::PixelFloat> FloatImageReader_Impl::getImage()
 
 
 // Streaming handler
-RGBDSensor_StreamingMsgParser::RGBDSensor_StreamingMsgParser() { }
+RGBDSensor_StreamingMsgParser::RGBDSensor_StreamingMsgParser() :
+    port_rgb(YARP_NULLPTR),
+    port_depth(YARP_NULLPTR)
+{}
 
 bool RGBDSensor_StreamingMsgParser::readRgb(yarp::sig::FlexImage &data, yarp::os::Stamp *timeStamp)
 {
