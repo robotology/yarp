@@ -31,7 +31,7 @@
 #include <yarp/os/Semaphore.h>
 
 #include <list>
-#include <vector>
+#include <deque>
 #include <string>
 #include <ctime>
 
@@ -77,11 +77,11 @@ namespace yarp
             {
                 e_level = level;
             }
-            int toInt()
+            int toInt() const
             {
                 return e_level;
             }
-            std::string toString()
+            std::string toString() const
             {
                 if (e_level == 0) { return "<UNDEFINED>"; }
                 if (e_level == 1) { return "<TRACE>"; }
@@ -92,19 +92,19 @@ namespace yarp
                 if (e_level == 6) { return "<FATAL>"; }
                 else { return "<UNDEFINED>"; }
             }
-            void operator = (loglLevelEnum level)
+            void operator=(loglLevelEnum level)
             {
                 e_level = level;
             }
-            bool operator == (const LogLevel& other)
+            bool operator==(const LogLevel& other) const
             {
                 return this->e_level == other.e_level;
             }
-            bool operator == (const loglLevelEnum& other)
+            bool operator==(const loglLevelEnum& other) const
             {
                 return this->e_level == other;
             }
-            bool operator > (const LogLevel& other)
+            bool operator>(const LogLevel& other)
             {
                 return this->e_level > other.e_level;
             }
@@ -162,34 +162,30 @@ class yarp::yarpLogger::LogEntryInfo
 
 class yarp::yarpLogger::LogEntry
 {
-    private:
+private:
+
     unsigned int                  entry_list_max_size;
     bool                          entry_list_max_size_enabled;
 
-    public:
+public:
     bool                          logging_enabled;
-    std::vector<MessageEntry>     entry_list;
+    std::deque<MessageEntry>      entry_list;
     int                           last_read_message;
-    void                          clear_logEntries();
-    bool                          append_logEntry(MessageEntry entry);
 
-    public:
-    LogEntry(int _entry_list_max_size=10000) :
-        logging_enabled(true),
-        entry_list_max_size(_entry_list_max_size),
-        last_read_message(-1),
-        entry_list_max_size_enabled(true)
-    {
-        entry_list.reserve(entry_list_max_size);
-    }
-
-    int  getLogEntryMaxSize        ()          {return entry_list_max_size;}
-    bool getLogEntryMaxSizeEnabled ()          {return entry_list_max_size_enabled;}
-    void setLogEntryMaxSize        (int  size);
-    void setLogEntryMaxSizeEnabled (bool enable);
-
-    public:
     yarp::yarpLogger::LogEntryInfo logInfo;
+
+public:
+
+    void clear_logEntries();
+    bool append_logEntry(const MessageEntry& entry);
+
+    LogEntry(int _entry_list_max_size=10000);
+
+    inline int getLogEntryMaxSize() const { return entry_list_max_size; }
+    bool getLogEntryMaxSizeEnabled() const { return entry_list_max_size_enabled; }
+    void setLogEntryMaxSize(int size);
+    void setLogEntryMaxSizeEnabled(bool enable);
+
 };
 
 class yarp::yarpLogger::LoggerEngine

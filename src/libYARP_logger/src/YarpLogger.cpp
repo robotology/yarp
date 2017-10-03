@@ -40,6 +40,15 @@ const std::string CLEAR  ="\033[00m";
 const std::string RED_ERROR      = RED+"ERROR"+CLEAR;
 const std::string YELLOW_WARNING = YELLOW+"WARNING"+CLEAR;
 */
+
+LogEntry::LogEntry(int _entry_list_max_size)
+: entry_list_max_size(_entry_list_max_size)
+, logging_enabled(true)
+, last_read_message(-1)
+, entry_list_max_size_enabled(true)
+{
+}
+
 void LogEntry::clear_logEntries()
 {
     entry_list.clear();
@@ -50,7 +59,6 @@ void LogEntry::clear_logEntries()
 void LogEntry::setLogEntryMaxSize(int size)
 {
     entry_list_max_size = size;
-    entry_list.reserve(entry_list_max_size);
     clear_logEntries();
 }
 
@@ -59,21 +67,21 @@ void LogEntry::setLogEntryMaxSizeEnabled (bool enable)
     entry_list_max_size_enabled=enable;
 }
 
-bool LogEntry::append_logEntry(MessageEntry entry)
+bool LogEntry::append_logEntry(const MessageEntry& entry)
 {
-    if (logInfo.logsize >= entry_list_max_size && entry_list_max_size_enabled)
+    if (entry_list.size() >= entry_list_max_size && entry_list_max_size_enabled)
     {
         //printf("WARNING: exceeded entry_list_max_size=%d\n",entry_list_max_size);
-        return false;
+        entry_list.pop_front();
     }
     entry_list.push_back(entry);
-    logInfo.logsize++;
+    logInfo.logsize = entry_list.size();
     return true;
 }
 
 void LogEntryInfo::clear()
 {
-    logsize=0;
+    logsize = 0;
     number_of_traces=0;
     number_of_debugs=0;
     number_of_infos=0;
@@ -725,8 +733,8 @@ bool LoggerEngine::export_log_to_text_file   (std::string  filename, std::string
             ofstream file1;
             file1.open(filename.c_str());
             if (file1.is_open() == false) {log_updater->mutex.post(); return false;}
-            std::vector<MessageEntry>::iterator it1;
-            for (it1 = it->entry_list.begin(); it1 != it->entry_list.end(); it1++)
+            for (std::deque<MessageEntry>::const_iterator it1(it->entry_list.begin());
+                 it1 != it->entry_list.end(); ++it1)
             {
                 file1 << it1->yarprun_timestamp << " " << it1->local_timestamp << " " << it1->level.toString() << " " << it1->text << " " << std::endl;
             }
@@ -770,10 +778,9 @@ bool LoggerEngine::save_all_logs_to_file   (std::string  filename)
         file1 << it->logInfo.get_number_of_warnings() << std::endl;
         file1 << it->logInfo.get_number_of_errors() << std::endl;
         file1 << it->logInfo.get_number_of_fatals() << std::endl;
-        file1 << it->logInfo.logsize << std::endl;
         file1 << it->entry_list.size() << std::endl;
-        std::vector<MessageEntry>::iterator it1;
-        for (it1 = it->entry_list.begin(); it1 != it->entry_list.end(); it1++)
+        for (std::deque<MessageEntry>::const_iterator it1(it->entry_list.begin());
+             it1 != it->entry_list.end(); ++it1)
         {
             file1 << it1->yarprun_timestamp << std::endl;
             file1 << it1->local_timestamp << std::endl;
@@ -851,7 +858,6 @@ bool LoggerEngine::load_all_logs_from_file   (std::string  filename)
             file1 >> dummy; //l_tmp.logInfo.number_of_warning;
             file1 >> dummy; //l_tmp.logInfo.number_of_errors;
             file1 >> dummy; //l_tmp.logInfo.number_of_fatals;
-            file1 >> l_tmp.logInfo.logsize;
             int size_entry_list;
             file1 >> size_entry_list;
             for (int j=0; j< size_entry_list; j++)
