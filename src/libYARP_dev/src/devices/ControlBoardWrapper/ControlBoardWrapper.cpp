@@ -1843,7 +1843,7 @@ bool ControlBoardWrapper::setRefSpeeds(const double *spds)
                 joints[j_dev] = p->base + j_dev;
             }
 
-            p->pos2->setRefSpeeds(wrapped_joints, joints, &spds[j_wrap]);
+            ret = ret && p->pos2->setRefSpeeds(wrapped_joints, joints, &spds[j_wrap]);
             j_wrap += wrapped_joints;
         }
         else   // Classic Position Control
@@ -1975,7 +1975,7 @@ bool ControlBoardWrapper::setRefAccelerations(const double *accs)
                 joints[j_dev] = p->base + j_dev;
             }
 
-            p->pos2->setRefAccelerations(wrapped_joints, joints, &accs[j_wrap]);
+            ret = ret && p->pos2->setRefAccelerations(wrapped_joints, joints, &accs[j_wrap]);
             j_wrap += wrapped_joints;
         }
         else        // Classic Position Control
