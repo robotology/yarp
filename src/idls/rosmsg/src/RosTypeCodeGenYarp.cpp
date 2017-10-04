@@ -185,8 +185,33 @@ bool RosTypeCodeGenYarp::endDeclare() {
 }
 
 bool RosTypeCodeGenYarp::beginConstruct() {
-    fprintf(out,"  %s() {\n", className.c_str());
+    fprintf(out,"  %s() :\n", className.c_str());
     return true;
+}
+
+bool RosTypeCodeGenYarp::initField(const RosField& field) {
+
+    if (!field.isConst()) {
+        if (field.isArray || !field.isPrimitive) {
+            fprintf(out, "    %s()", field.rosName.c_str());
+        } else {
+            RosYarpType t = mapPrimitive(field);
+            fprintf(out, "    %s(%s)", field.rosName.c_str(), t.yarpDefaultValue.c_str());
+        }
+    }
+    return true;
+}
+
+bool RosTypeCodeGenYarp::nextInitConstruct(const RosField& field) {
+    if (!field.isConst()) {
+        fprintf(out,",\n");
+    }
+    return true;
+}
+
+bool RosTypeCodeGenYarp::endInitConstruct() {
+   fprintf(out,"\n  {\n");
+   return true;
 }
 
 bool RosTypeCodeGenYarp::constructField(const RosField& field) {

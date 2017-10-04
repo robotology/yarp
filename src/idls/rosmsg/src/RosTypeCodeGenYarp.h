@@ -54,6 +54,9 @@ public:
     virtual bool endDeclare() override;
 
     virtual bool beginConstruct() override;
+    virtual bool initField(const RosField& field) override;
+    virtual bool nextInitConstruct(const RosField& field) override;
+    virtual bool endInitConstruct() override;
     virtual bool constructField(const RosField& field) override;
     virtual bool endConstruct() override;
 
