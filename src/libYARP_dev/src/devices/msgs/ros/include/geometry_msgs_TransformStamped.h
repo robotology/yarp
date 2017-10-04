@@ -32,7 +32,11 @@ public:
   std::string child_frame_id;
   geometry_msgs_Transform transform;
 
-  geometry_msgs_TransformStamped() {
+  geometry_msgs_TransformStamped() :
+    header(),
+    child_frame_id(""),
+    transform()
+  {
   }
 
   void clear() {

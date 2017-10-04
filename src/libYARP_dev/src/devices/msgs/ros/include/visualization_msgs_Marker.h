@@ -97,7 +97,23 @@ public:
   std::string mesh_resource;
   bool mesh_use_embedded_materials;
 
-  visualization_msgs_Marker() {
+  visualization_msgs_Marker() :
+    header(),
+    ns(""),
+    id(0),
+    type(0),
+    action(0),
+    pose(),
+    scale(),
+    color(),
+    lifetime(),
+    frame_locked(false),
+    points(),
+    colors(),
+    text(""),
+    mesh_resource(""),
+    mesh_use_embedded_materials(false)
+  {
   }
 
   void clear() {

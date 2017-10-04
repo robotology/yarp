@@ -22,7 +22,11 @@ public:
   yarp::os::NetFloat64 y;
   yarp::os::NetFloat64 z;
 
-  geometry_msgs_Point() {
+  geometry_msgs_Point() :
+    x(0.0),
+    y(0.0),
+    z(0.0)
+  {
   }
 
   void clear() {

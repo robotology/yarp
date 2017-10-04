@@ -22,7 +22,9 @@ class tf_tfMessage : public yarp::os::idl::WirePortable {
 public:
   std::vector<geometry_msgs_TransformStamped> transforms;
 
-  tf_tfMessage() {
+  tf_tfMessage() :
+    transforms()
+  {
   }
 
   void clear() {

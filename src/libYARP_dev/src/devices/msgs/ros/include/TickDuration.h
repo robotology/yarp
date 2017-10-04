@@ -23,7 +23,10 @@ public:
   yarp::os::NetUint32 sec;
   yarp::os::NetUint32 nsec;
 
-  TickDuration() {
+  TickDuration() :
+    sec(0),
+    nsec(0)
+  {
   }
 
   void clear() {

@@ -27,7 +27,12 @@ public:
   yarp::os::NetFloat32 b;
   yarp::os::NetFloat32 a;
 
-  std_msgs_ColorRGBA() {
+  std_msgs_ColorRGBA() :
+    r(0.0),
+    g(0.0),
+    b(0.0),
+    a(0.0)
+  {
   }
 
   void clear() {
