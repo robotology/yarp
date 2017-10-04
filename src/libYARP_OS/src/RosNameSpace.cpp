@@ -530,7 +530,7 @@ bool RosNameSpace::writeToNameServer(PortWriter& cmd,
     }
     bool ok = NetworkBase::write(getNameServerContact(),
                                  cmd2,
-                                 *(use_cache?&cache:&reply),
+                                 cache,
                                  style);
     if (!ok) {
         fprintf(stderr, "Failed to contact ROS server\n");
