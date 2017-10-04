@@ -116,7 +116,6 @@ bool ImplementEncodersTimed::getEncoder(int j, double *v)
 bool ImplementEncodersTimed::getEncoders(double *v)
 {
     bool ret;
-    castToMapper(helper)->axes();
 
     ret=iEncoders->getEncodersRaw(temp);
 
