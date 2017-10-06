@@ -191,6 +191,7 @@ void PortCoreInputUnit::run() {
     }
 
     while (!done) {
+        if(!ip) break;
         ConnectionReader& br = ip->beginRead();
 
         if (br.getReference()!=nullptr) {

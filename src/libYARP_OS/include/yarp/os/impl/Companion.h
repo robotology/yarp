@@ -225,7 +225,7 @@ private:
         {}
 
         Entry() : 
-            fn(YARP_NULLPTR)
+            fn(nullptr)
         {}
     };
 

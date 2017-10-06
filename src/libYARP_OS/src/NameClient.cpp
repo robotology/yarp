@@ -55,7 +55,7 @@ public:
         argc = 0;
         for (int i = 0; i < MAX_ARG_CT; i++) 
         {
-            argv[i] = YARP_NULLPTR;
+            argv[i] = nullptr;
         }
     }
 

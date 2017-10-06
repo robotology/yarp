@@ -156,7 +156,7 @@ bool YarpRunProcInfo::Clean()
 YarpRunInfoVector::YarpRunInfoVector()
 {
     m_nProcesses=0;
-    m_pStdioMate = YARP_NULLPTR;
+    m_pStdioMate = nullptr;
     for (int i=0; i<MAX_PROCESSES; ++i)
     {
         m_apList[i] = nullptr;

@@ -50,6 +50,7 @@ public:
         readAt = 0;
         readAvail = 0;
         writeAvail = 0;
+        pct = 0;
     }
 
     virtual bool openMonitor(int readSize=0, int writeSize=0)
