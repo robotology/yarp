@@ -39,9 +39,10 @@ namespace yarp
 {
     namespace yarpLogger
     {
-        class  LoggerEngine;
-        class  LogEntry;
-        class  LogEntryInfo;
+        class LogEntryObserver;
+        class LoggerEngine;
+        class LogEntry;
+        class LogEntryInfo;
         struct MessageEntry;
 
         enum loglLevelEnum
@@ -55,7 +56,7 @@ namespace yarp
             LOGLEVEL_FATAL = 6
         };
 
-        class  LogLevel
+        class LogLevel
         {
             private:
             int e_level;
@@ -108,8 +109,36 @@ namespace yarp
             {
                 return this->e_level > other.e_level;
             }
+            operator loglLevelEnum() const
+            {
+                switch (e_level) {
+                    case 1: return LOGLEVEL_TRACE;
+                    case 2: return LOGLEVEL_DEBUG;
+                    case 3: return LOGLEVEL_INFO;
+                    case 4: return LOGLEVEL_WARNING;
+                    case 5: return LOGLEVEL_ERROR;
+                    case 6: return LOGLEVEL_FATAL;
+                    case 0:
+                    default:
+                        return LOGLEVEL_UNDEFINED;
+                }
+            }
+
+            operator std::string() const {
+                switch (e_level) {
+                    case 1: return "TRACE";
+                    case 2: return "DEBUG";
+                    case 3: return "INFO";
+                    case 4: return "WARNING";
+                    case 5: return "ERROR";
+                    case 6: return "FATAL";
+                    case 0:
+                    default:
+                        return "UNDEFINED";
+                }
+            }
         };
-        enum   LogSystemEnum
+        enum LogSystemEnum
         {
             LOGSYSTEM_YARP    = 0,
             LOGSYSTEM_YARPRUN = 1
@@ -166,6 +195,7 @@ private:
 
     unsigned int                  entry_list_max_size;
     bool                          entry_list_max_size_enabled;
+    std::list<yarp::yarpLogger::LogEntryObserver*> observers;
 
 public:
     bool                          logging_enabled;
@@ -186,6 +216,18 @@ public:
     void setLogEntryMaxSize(int size);
     void setLogEntryMaxSizeEnabled(bool enable);
 
+
+    void addObserver(yarp::yarpLogger::LogEntryObserver& observer);
+    void removeObserver(yarp::yarpLogger::LogEntryObserver& observer);
+
+};
+
+class yarp::yarpLogger::LogEntryObserver {
+
+public:
+    virtual ~LogEntryObserver();
+    virtual void logEntryDidAddRows(yarp::yarpLogger::LogEntry& entry, const std::pair<size_t, size_t> &addedRows) = 0;
+    virtual void logEntryDidRemoveRows(yarp::yarpLogger::LogEntry& entry, const std::pair<size_t, size_t> &removedRows) = 0;
 };
 
 class yarp::yarpLogger::LoggerEngine
@@ -246,9 +288,12 @@ class yarp::yarpLogger::LoggerEngine
     void get_infos                       (std::list<LogEntryInfo>&   infos);
     void get_messages                    (std::list<MessageEntry>& messages);
     void get_messages_by_port_prefix     (std::string  port,    std::list<MessageEntry>& messages, bool from_beginning = false);
-    void get_messages_by_port_complete   (std::string  port,    std::list<MessageEntry>& messages, bool from_beginning = false);
+    void get_messages_by_port_complete   (std::string  port,    std::list<MessageEntry>& messages, bool from_beginning = false) const;
     void get_messages_by_process         (std::string  process, std::list<MessageEntry>& messages, bool from_beginning = false);
     void get_messages_by_pid             (std::string  pid,     std::list<MessageEntry>& messages, bool from_beginning = false);
+
+    bool getLogEntryByPortComplete(const std::string& port, LogEntry*&);
+
     void clear_messages_by_port_complete (std::string  port);
     void set_log_enable_by_port_complete (std::string  port, bool enable);
     bool get_log_enable_by_port_complete (std::string  port);

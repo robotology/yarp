@@ -382,14 +382,8 @@ void MainWindow::loadTextFile()
 
 void MainWindow::on_lineEdit_2_textChanged(const QString &arg1)
 {
-    QString filter = "*";
-    filter.append(arg1);
-    filter.append("*");
-    QRegExp regExp(filter, Qt::CaseInsensitive, QRegExp::Wildcard);
-
     LogTab* logtab = ui->logtabs->currentWidget()->findChild<LogTab*>("logtab");
-
-    if (logtab) logtab->proxyModelSearch->setFilterRegExp(regExp);
+    if (logtab) logtab->filterByMessage(arg1);
 }
 
 void MainWindow::on_logtabs_tabCloseRequested(int index)
@@ -450,7 +444,7 @@ QString MainWindow::recomputeFilters()
     if (e_info)    {if (f>0) filter=filter +"|"; filter = filter + "^INFO$";    f++;}
     if (e_warning) {if (f>0) filter=filter +"|"; filter = filter + "^WARNING$"; f++;}
     if (e_error)   {if (f>0) filter=filter +"|"; filter = filter + "^ERROR$";   f++;}
-    if (e_all)     {if (f>0) filter=filter +"|"; filter = filter + "^$";        f++;}
+    if (e_all)     {if (f>0) filter=filter +"|"; filter = filter + "^$|^UNDEFINED$";        f++;}
     if (true)      {if (f>0) filter=filter +"|"; filter = filter + "^FATAL$";   f++;}
     std::string debug = filter.toStdString();
     return filter;
@@ -458,14 +452,12 @@ QString MainWindow::recomputeFilters()
 
 void MainWindow::apply_button_filters()
 {
-    QRegExp regExp ("*", Qt::CaseInsensitive, QRegExp::RegExp);
-    regExp.setPattern(recomputeFilters());
+    QString levelPattern = recomputeFilters();
     for (int i=0; i<ui->logtabs->count(); i++)
     {
         LogTab* logtab = ui->logtabs->widget(i)->findChild<LogTab*>("logtab");
         if (logtab) {
-            logtab->proxyModelButtons->setFilterRegExp(regExp);
-            logtab->proxyModelButtons->setFilterKeyColumn(2);
+            logtab->filterByLevel(levelPattern);
         }
     }
 }

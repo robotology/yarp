@@ -16,6 +16,10 @@
  * Public License for more details
 */
 
+#include <yarp/os/RpcClient.h>
+#include <yarp/os/SystemClock.h>
+#include <yarp/logger/YarpLogger.h>
+
 #include <iostream>
 #include <cstring>
 #include <string>
@@ -23,9 +27,7 @@
 #include <cstdio>
 #include <fstream>
 #include <iterator>
-#include <yarp/os/RpcClient.h>
-#include <yarp/os/SystemClock.h>
-#include <yarp/logger/YarpLogger.h>
+#include <algorithm>
 
 using namespace yarp::os;
 using namespace yarp::yarpLogger;
@@ -73,9 +75,15 @@ bool LogEntry::append_logEntry(const MessageEntry& entry)
     {
         //printf("WARNING: exceeded entry_list_max_size=%d\n",entry_list_max_size);
         entry_list.pop_front();
+        for (auto& observer : observers) {
+            observer->logEntryDidRemoveRows(*this, std::make_pair(0, 1));
+        }
     }
     entry_list.push_back(entry);
     logInfo.logsize = entry_list.size();
+    for (auto& observer : observers) {
+        observer->logEntryDidAddRows(*this, std::make_pair(entry_list.size() - 1, 1));
+    }
     return true;
 }
 
@@ -556,7 +564,7 @@ void LoggerEngine::clear_messages_by_port_complete    (std::string  port)
     log_updater->mutex.post();
 }
 
-void LoggerEngine::get_messages_by_port_complete    (std::string  port,  std::list<MessageEntry>& messages,  bool from_beginning)
+void LoggerEngine::get_messages_by_port_complete    (std::string  port,  std::list<MessageEntry>& messages,  bool from_beginning) const
 {
     if (log_updater == nullptr) return;
 
@@ -586,6 +594,25 @@ void LoggerEngine::get_messages_by_port_complete    (std::string  port,  std::li
         }
     }
     log_updater->mutex.post();
+}
+
+bool LoggerEngine::getLogEntryByPortComplete(const std::string& port, LogEntry*& entry)
+{
+    if (log_updater == nullptr) return false;
+
+    log_updater->mutex.wait();
+    for (std::list<LogEntry>::iterator it(log_updater->log_list.begin());
+         it != log_updater->log_list.end(); ++it)
+    {
+        if (it->logInfo.port_complete == port)
+        {
+            entry = &(*it);
+            log_updater->mutex.post();
+            return true;
+        }
+    }
+    log_updater->mutex.post();
+    return false;
 }
 
 void LoggerEngine::get_messages_by_process (std::string  process,  std::list<MessageEntry>& messages,  bool from_beginning)
@@ -985,3 +1012,20 @@ bool  LoggerEngine::get_log_enable_by_port_complete (std::string  port)
     log_updater->mutex.post();
     return enabled;
 }
+
+void yarp::yarpLogger::LogEntry::addObserver(yarp::yarpLogger::LogEntryObserver& observer)
+{
+    observers.push_back(&observer);
+}
+
+void yarp::yarpLogger::LogEntry::removeObserver(yarp::yarpLogger::LogEntryObserver& observer)
+{
+    auto found = std::find(observers.begin(), observers.end(), &observer);
+
+    if (found != observers.end()) {
+        observers.erase(found);
+    }
+}
+
+LogEntryObserver::~LogEntryObserver() {}
+
