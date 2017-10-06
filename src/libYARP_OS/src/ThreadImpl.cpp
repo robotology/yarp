@@ -119,7 +119,7 @@ PLATFORM_THREAD_RETURN theExecutiveBranch (void *args)
 
 ThreadImpl::ThreadImpl() :
         tid(-1),
-        id(-1),
+        id(0),
         defaultPriority(-1),
         defaultPolicy(-1),
 #if defined(YARP_HAS_CXX11)
@@ -141,7 +141,7 @@ ThreadImpl::ThreadImpl() :
 
 ThreadImpl::ThreadImpl(Runnable *target) :
         tid(-1),
-        id(-1),
+        id(0),
         defaultPriority(-1),
         defaultPolicy(-1),
 #if defined(YARP_HAS_CXX11)
