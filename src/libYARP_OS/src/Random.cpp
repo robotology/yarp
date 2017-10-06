@@ -1,6 +1,6 @@
 /*
- * Copyright: (C) 1994 Everett F. Carter Jr.
- * CopyPolicy: Preserve copyright notice
+ * Copyright (C) 2017 Istituto Italiano di Tecnologia (IIT)
+ * CopyPolicy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
  */
 
 #include <yarp/os/Random.h>
