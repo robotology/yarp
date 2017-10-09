@@ -47,7 +47,13 @@ public:
   std::vector<yarp::os::NetFloat64> velocity;
   std::vector<yarp::os::NetFloat64> effort;
 
-  sensor_msgs_JointState() {
+  sensor_msgs_JointState() :
+    header(),
+    name(),
+    position(),
+    velocity(),
+    effort()
+  {
   }
 
   void clear() {

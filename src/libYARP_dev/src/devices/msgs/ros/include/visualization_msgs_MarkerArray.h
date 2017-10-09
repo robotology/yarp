@@ -24,7 +24,9 @@ class visualization_msgs_MarkerArray : public yarp::os::idl::WirePortable {
 public:
   std::vector<visualization_msgs_Marker> markers;
 
-  visualization_msgs_MarkerArray() {
+  visualization_msgs_MarkerArray() :
+    markers()
+  {
   }
 
   void clear() {

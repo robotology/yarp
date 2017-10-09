@@ -34,7 +34,11 @@ public:
   TickTime stamp;
   std::string frame_id;
 
-  std_msgs_Header() {
+  std_msgs_Header() :
+    seq(0),
+    stamp(),
+    frame_id("")
+  {
   }
 
   void clear() {

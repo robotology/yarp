@@ -27,7 +27,12 @@ public:
   yarp::os::NetFloat64 z;
   yarp::os::NetFloat64 w;
 
-  geometry_msgs_Quaternion() {
+  geometry_msgs_Quaternion() :
+    x(0.0),
+    y(0.0),
+    z(0.0),
+    w(0.0)
+  {
   }
 
   void clear() {

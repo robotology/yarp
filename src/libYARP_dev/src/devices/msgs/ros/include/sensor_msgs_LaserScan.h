@@ -54,7 +54,18 @@ public:
   std::vector<yarp::os::NetFloat32> ranges;
   std::vector<yarp::os::NetFloat32> intensities;
 
-  sensor_msgs_LaserScan() {
+  sensor_msgs_LaserScan() :
+    header(),
+    angle_min(0.0),
+    angle_max(0.0),
+    angle_increment(0.0),
+    time_increment(0.0),
+    scan_time(0.0),
+    range_min(0.0),
+    range_max(0.0),
+    ranges(),
+    intensities()
+  {
   }
 
   void clear() {

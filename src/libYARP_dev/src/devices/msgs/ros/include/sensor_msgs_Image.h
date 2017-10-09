@@ -50,7 +50,15 @@ public:
   yarp::os::NetUint32 step;
   std::vector<unsigned char> data;
 
-  sensor_msgs_Image() {
+  sensor_msgs_Image() :
+    header(),
+    height(0),
+    width(0),
+    encoding(""),
+    is_bigendian(0),
+    step(0),
+    data()
+  {
   }
 
   void clear() {
