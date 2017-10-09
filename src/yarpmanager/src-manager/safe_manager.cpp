@@ -199,6 +199,7 @@ void SafeManager::run()
                 }
                 refreshPortStatus(local_conIds[i]);
             }
+            break;
         }
 
     case MATTACHSTDOUT:{
