@@ -34,23 +34,18 @@ class YARP_OS_impl_API yarp::os::impl::DgramTwoWayStream : public TwoWayStream, 
 {
 
 public:
-    DgramTwoWayStream() : mutex(1)
+    DgramTwoWayStream() :
+                          closed(false), interrupting(false), reader(false),
+#ifndef YARP_HAS_ACE
+                          dgram_sockfd(-1),
+#endif
+                          dgram(YARP_NULLPTR), mgram(YARP_NULLPTR),
+                          mutex(1), readAt(0), readAvail(0),
+                          writeAvail(0), pct(0), happy(true),
+                          bufferAlertNeeded(false), bufferAlerted(false),
+                          multiMode(false), errCount(0), lastReportTime(0)
     {
-        interrupting = false;
-        closed = false;
-        reader = false;
-        writer = false;
-        dgram = YARP_NULLPTR;
-        mgram = YARP_NULLPTR;
-        happy = true;
-        bufferAlerted = bufferAlertNeeded = false;
-        multiMode = false;
-        errCount = 0;
-        lastReportTime = 0;
-        readAt = 0;
-        readAvail = 0;
-        writeAvail = 0;
-        pct = 0;
+
     }
 
     virtual bool openMonitor(int readSize=0, int writeSize=0)
@@ -148,7 +143,7 @@ public:
 
 private:
     yarp::os::ManagedBytes monitor;
-    bool closed, interrupting, reader, writer;
+    bool closed, interrupting, reader;
 #ifdef YARP_HAS_ACE
     ACE_SOCK_Dgram *dgram;
     ACE_SOCK_Dgram_Mcast *mgram;
