@@ -34,7 +34,7 @@ StdoutWindow::~StdoutWindow()
 void StdoutWindow::addMessage(QString text)
 {
     // ui->plainTextEdit->appendPlainText(text);
-    internalAddMessage(text);
+    emit internalAddMessage(text);
 }
 
 int StdoutWindow::getId()
@@ -45,7 +45,7 @@ int StdoutWindow::getId()
 void StdoutWindow::closeEvent(QCloseEvent * event)
 {
     Q_UNUSED(event);
-    closeStdOut(id);
+    emit closeStdOut(id);
 }
 
 void StdoutWindow::onInternalAddMessage(QString msg)

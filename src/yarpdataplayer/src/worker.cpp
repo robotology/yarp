@@ -363,7 +363,7 @@ void MasterThread::runNormally()
         if ( utilities->partDetails[i].currFrame <= utilities->partDetails[i].maxFrame ){
             if ( virtualTime >= utilities->partDetails[i].timestamp[ utilities->partDetails[i].currFrame ] ){
                 if ( initTime > 300){
-                    utilities->updateGuiThread();
+                    emit utilities->updateGuiThread();
                     initTime = 0;
                 }
                 if (!utilities->partDetails[i].hasNotified){
@@ -390,7 +390,7 @@ void MasterThread::runNormally()
                     if (stopAll == numPart){
                         LOG("All parts have Finished!\n");
                         if (utilities->partDetails[i].currFrame > 1)
-                            utilities->updateGuiThread();
+                            emit utilities->updateGuiThread();
                         utilities->stopAtEnd();
                     }
                 }

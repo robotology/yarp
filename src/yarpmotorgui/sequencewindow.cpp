@@ -162,7 +162,7 @@ void SequenceWindow::onDoubleClickPositions(QTreeWidgetItem *item,int column)
     }
 
 
-    itemDoubleClicked(item->text(0).toInt());
+    emit itemDoubleClicked(item->text(0).toInt());
 
     if(item != ui->treePositions->topLevelItem(ui->treePositions->topLevelItemCount()-1)){
         return;
@@ -241,12 +241,12 @@ void SequenceWindow::onGo()
         }
     }
 
-    goToPosition(sequenceItem);
+    emit goToPosition(sequenceItem);
 }
 
 void SequenceWindow::onRunTime()
 {
-    runTime(getValuesFromList());
+    emit runTime(getValuesFromList());
 }
 
 bool SequenceWindow::checkAndCycleTimeSeq()
@@ -268,7 +268,7 @@ bool SequenceWindow::checkAndCycleTimeSeq()
     if(count <= 1){
         return false;
     }
-    cycleTime(seq);
+    emit cycleTime(seq);
     return true;
 }
 
@@ -291,7 +291,7 @@ bool SequenceWindow::checkAndCycleSeq()
     if(count <= 1){
         return false;
     }
-    cycle(seq);
+    emit cycle(seq);
     return true;
 }
 
@@ -314,7 +314,7 @@ bool SequenceWindow::checkAndRun()
     if(count <= 1){
         return false;
     }
-    run(seq);
+    emit run(seq);
     return true;
 
 }
@@ -338,34 +338,34 @@ bool SequenceWindow::checkAndRunTime()
     if(count <= 1){
         return false;
     }
-    runTime(seq);
+    emit runTime(seq);
     return true;
 
 }
 
 void SequenceWindow::onCycle()
 {
-    cycle(getValuesFromList());
+    emit cycle(getValuesFromList());
 }
 
 void SequenceWindow::onStopSequence()
 {
-    stopSequence();
+    emit stopSequence();
 }
 
 void SequenceWindow::onCycleTime()
 {
-    cycleTime(getValuesFromList());
+    emit cycleTime(getValuesFromList());
 }
 
 void SequenceWindow::onOpen()
 {
-    openSequence();
+    emit openSequence();
 }
 
 void SequenceWindow::save(QString global_filename)
 {
-    saveSequence(getValuesFromList(),global_filename);
+    emit saveSequence(getValuesFromList(),global_filename);
 }
 
 
@@ -547,7 +547,7 @@ void SequenceTreeWidget::dropEvent(QDropEvent *event)
 
     insertTopLevelItem(index ,it);
 
-    moveItem(index,dragIndex);
+    emit moveItem(index,dragIndex);
 
 
     // Re-Assign sequential id
@@ -615,7 +615,7 @@ void SequenceTreeWidget::onContextMenuRequested(QPoint point)
         int index = indexOfTopLevelItem(deleteItems.at(0));
         delete takeTopLevelItem(index);
 
-        deletedItem(index);
+        emit deletedItem(index);
         // Re-Assign sequential id
         for(int i=0;i<topLevelItemCount();i++){
             topLevelItem(i)->setText(0,QString("%1").arg(i));

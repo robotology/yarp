@@ -337,7 +337,7 @@ MainWindow::~MainWindow()
 
 void MainWindow::term()
 {
-    sig_internalClose();
+    emit sig_internalClose();
     this->close();
 }
 
@@ -401,27 +401,27 @@ void MainWindow::onViewPartToolbar(bool val)
 
 void MainWindow::onEnableControlVelocity(bool val)
 {
-    sig_enableControlVelocity(val);
+    emit sig_enableControlVelocity(val);
 }
 
 void MainWindow::onEnableControlMixed(bool val)
 {
-    sig_enableControlMixed(val);
+    emit sig_enableControlMixed(val);
 }
 
 void MainWindow::onEnableControlPositionDirect(bool val)
 {
-    sig_enableControlPositionDirect(val);
+    emit sig_enableControlPositionDirect(val);
 }
 
 void MainWindow::onEnableControlPWM(bool val)
 {
-    sig_enableControlPWM(val);
+    emit sig_enableControlPWM(val);
 }
 
 void MainWindow::onEnableControlCurrent(bool val)
 {
-    sig_enableControlCurrent(val);
+    emit sig_enableControlCurrent(val);
 }
 
 void MainWindow::onSliderOptionsClicked()
@@ -439,7 +439,7 @@ void MainWindow::onViewSpeeds(bool val)
     QSettings settings("YARP","yarpmotorgui");
     settings.setValue("SpeedValuesVisible",val);
 
-    sig_viewSpeedValues(val);
+    emit sig_viewSpeedValues(val);
 }
 
 void MainWindow::onViewMotorPositions(bool val)
@@ -447,7 +447,7 @@ void MainWindow::onViewMotorPositions(bool val)
     QSettings settings("YARP", "yarpmotorgui");
     settings.setValue("MotorPositionVisible", val);
 
-    sig_viewMotorPositions(val);
+    emit sig_viewMotorPositions(val);
 }
 
 void MainWindow::onViewPositionTarget(bool val)
@@ -455,20 +455,20 @@ void MainWindow::onViewPositionTarget(bool val)
     QSettings settings("YARP", "yarpmotorgui");
     settings.setValue("ViewPositionTarget", val);
 
-    sig_viewPositionTarget(val);
+    emit sig_viewPositionTarget(val);
 }
 
 void MainWindow::onSetPosSliderOptionMW(int choice, double val)
 {
-    sig_setPosSliderOptionMW(choice, val);
+    emit sig_setPosSliderOptionMW(choice, val);
 }
 void MainWindow::onSetVelSliderOptionMW(int choice, double val)
 {
-    sig_setVelSliderOptionMW(choice, val);
+    emit sig_setVelSliderOptionMW(choice, val);
 }
 void MainWindow::onSetTrqSliderOptionMW(int choice, double val)
 {
-    sig_setTrqSliderOptionMW(choice, val);
+    emit sig_setTrqSliderOptionMW(choice, val);
 }
 
 void MainWindow::closeEvent(QCloseEvent *event)

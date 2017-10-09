@@ -35,6 +35,6 @@ void GenericViewWidget::setModified(bool mod)
 void GenericViewWidget::onModified(bool mod)
 {
     this->m_modified = mod;
-    modified(m_modified);
+    emit modified(m_modified);
 
 }

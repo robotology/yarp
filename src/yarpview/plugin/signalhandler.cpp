@@ -84,12 +84,12 @@ void SignalHandler::sendVideoFrame(QVideoFrame f)
 
     if(b_synchRateMode){
         displayFps.update();
-        internalSendFrame(f);
+        emit internalSendFrame(f);
     }else{
         mutex.lock();
         frame = f;
         if(!timer.isActive()){
-            selfStartTimer();
+            emit selfStartTimer();
         }
         mutex.unlock();
 
@@ -122,7 +122,7 @@ void SignalHandler::sendVideoFrame(QVideoFrame f)
 void SignalHandler::internalReceiveFrame(QVideoFrame f)
 {
     if(!b_freezeMode){
-        sendFrame(&f);
+        emit sendFrame(&f);
     }
 }
 
@@ -319,5 +319,5 @@ void SignalHandler::onFpsTimer()
     displayFps.getStats(dAvg,dMin,dMax);
     displayFps.reset();
 
-    sendFps(pAvg,pMin,pMax,dAvg,dMin,dMax);
+    emit sendFps(pAvg,pMin,pMax,dAvg,dMin,dMax);
 }
