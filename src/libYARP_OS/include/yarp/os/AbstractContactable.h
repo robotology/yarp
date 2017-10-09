@@ -102,15 +102,15 @@ public:
     }
 
     virtual void getReport(PortReport& reporter) YARP_OVERRIDE {
-        return asPort().getReport(reporter);
+        asPort().getReport(reporter);
     }
 
     virtual void setReporter(PortReport& reporter) YARP_OVERRIDE {
-        return asPort().setReporter(reporter);
+        asPort().setReporter(reporter);
     }
 
     virtual void resetReporter() YARP_OVERRIDE {
-        return asPort().resetReporter();
+        asPort().resetReporter();
     }
 
     virtual bool isWriting() YARP_OVERRIDE {
@@ -176,7 +176,7 @@ public:
     }
 
     virtual void includeNodeInName(bool flag) YARP_OVERRIDE {
-        return asPort().includeNodeInName(flag);
+        asPort().includeNodeInName(flag);
     }
 
     virtual bool setCallbackLock(yarp::os::Mutex *mutex = YARP_NULLPTR) YARP_OVERRIDE {
@@ -196,7 +196,7 @@ public:
     }
 
     virtual void unlockCallback() YARP_OVERRIDE {
-        return asPort().unlockCallback();
+        asPort().unlockCallback();
     }
 };
 
