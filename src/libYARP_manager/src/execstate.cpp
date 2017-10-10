@@ -254,10 +254,10 @@ void Ready::moduleFailed(void) { /* do nothing */ }
  * Class Connecting
  */
 Connecting::Connecting(Executable* pExecutable, FSM::IEventSink* pEventSink)
-                    : StateBase(pEventSink, "CONNECTING")
-{
-    executable = pExecutable;
-}
+                    : StateBase(pEventSink, "CONNECTING"),
+                      executable(pExecutable),
+                      bAborted(false)
+{}
 
 Connecting::~Connecting()
 {
