@@ -39,6 +39,7 @@ public:
         sprintf(str, "%s%d", opd, node_id++);
         setLabel(str);
         strName = opd;
+        value = false;
     }
 
     BinaryNode(const char* opt,
@@ -49,6 +50,7 @@ public:
         sprintf(str, "%s%d", opt, node_id++);
         setLabel(str);
         strName = opt;
+        value = false;
         if(left)
             addSuc(left, 0);
         if(right)
@@ -141,10 +143,11 @@ private:
 class LinkTrainer
 {
 public:
-    LinkTrainer(int max_itr=1000, double train_rate=1.0) {
-        maxIteration = max_itr;
-        trainRate = train_rate;
-    }
+    LinkTrainer(int max_itr=1000, double train_rate=1.0) :
+        maxIteration(max_itr),
+        trainRate(train_rate),
+        bias(0.0)
+    {}
 
     virtual ~LinkTrainer() {}
 
