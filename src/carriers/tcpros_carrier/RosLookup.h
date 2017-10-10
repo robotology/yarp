@@ -18,9 +18,11 @@ public:
     yarp::os::ConstString protocol;
     bool verbose;
 
-    RosLookup(bool verbose) : verbose(verbose) {
-        valid = false;
-    }
+    RosLookup(bool verbose) :
+        valid(false),
+        portnum(-1),
+        verbose(verbose)
+    {}
 
     bool lookupCore(const yarp::os::ConstString& name);
 
