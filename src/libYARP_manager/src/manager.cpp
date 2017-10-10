@@ -42,6 +42,7 @@ Manager::Manager(bool withWatchDog) : MEvent()
     logger  = ErrorLogger::Instance();
     bWithWatchDog = withWatchDog;
     bAutoDependancy = false;
+    bAutoConnect = false;
     bRestricted = false;
     strDefBroker = BROKER_YARPRUN;
     knowledge.createFrom(NULL, NULL, NULL);
@@ -54,6 +55,7 @@ Manager::Manager(const char* szModPath, const char* szAppPath,
     logger  = ErrorLogger::Instance();
     bWithWatchDog = withWatchDog;
     bAutoDependancy = false;
+    bAutoConnect = false;
     bRestricted = false;
     strDefBroker = BROKER_YARPRUN;
 
