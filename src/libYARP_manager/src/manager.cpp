@@ -454,7 +454,7 @@ bool Manager::updateResources(void)
     for(unsigned int i=0; i<allresources.size(); i++)
     {
         Computer* comp = dynamic_cast<Computer*>(allresources[i]);
-        if(updateResource(comp))
+        if(comp && updateResource(comp))
         {
             //set all as unavailable
             for(int i=0; i<comp->peripheralCount(); i++)
