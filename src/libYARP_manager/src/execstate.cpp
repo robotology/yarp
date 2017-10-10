@@ -622,57 +622,90 @@ ExecMachine::~ExecMachine()
 
 void ExecMachine::refresh(void)
 {
-    dynamic_cast<ITransition*>(currentState())->refresh();
+    ITransition* tr = dynamic_cast<ITransition*>(currentState());
+    if (tr) {
+        tr->refresh();
+    }
 }
 
 void ExecMachine::start(void)
 {
-    dynamic_cast<ITransition*>(currentState())->start();
+    ITransition* tr = dynamic_cast<ITransition*>(currentState());
+    if (tr) {
+        tr->start();
+    }
 }
 
 void ExecMachine::stop(void)
 {
-    dynamic_cast<ITransition*>(currentState())->stop();
+    ITransition* tr = dynamic_cast<ITransition*>(currentState());
+    if (tr) {
+        tr->stop();
+    }
 }
 
 void ExecMachine::kill(void)
 {
-    dynamic_cast<ITransition*>(currentState())->kill();
+    ITransition* tr = dynamic_cast<ITransition*>(currentState());
+    if (tr) {
+        tr->kill();
+    }
 }
 
 void ExecMachine::startModule(void)
 {
-    dynamic_cast<ITransition*>(currentState())->startModule();
+    ITransition* tr = dynamic_cast<ITransition*>(currentState());
+    if (tr) {
+        tr->startModule();
+    }
 }
 
 void ExecMachine::stopModule(void)
 {
-    dynamic_cast<ITransition*>(currentState())->stopModule();
+    ITransition* tr = dynamic_cast<ITransition*>(currentState());
+    if (tr) {
+        tr->stopModule();
+    }
 }
 
 void ExecMachine::killModule(void)
 {
-    dynamic_cast<ITransition*>(currentState())->killModule();
+    ITransition* tr = dynamic_cast<ITransition*>(currentState());
+    if (tr) {
+        tr->killModule();
+    }
 }
 
 void ExecMachine::connectAllPorts(void)
 {
-    dynamic_cast<ITransition*>(currentState())->connectAllPorts();
+    ITransition* tr = dynamic_cast<ITransition*>(currentState());
+    if (tr) {
+        tr->connectAllPorts();
+    }
 }
 
 void ExecMachine::disconnectAllPorts(void)
 {
-    dynamic_cast<ITransition*>(currentState())->disconnectAllPorts();
+    ITransition* tr = dynamic_cast<ITransition*>(currentState());
+    if (tr) {
+        tr->disconnectAllPorts();
+    }
 }
 
 void ExecMachine::moduleFailed(void)
 {
-    dynamic_cast<ITransition*>(currentState())->moduleFailed();
+    ITransition* tr = dynamic_cast<ITransition*>(currentState());
+    if (tr) {
+        tr->moduleFailed();
+    }
 }
 
 void ExecMachine::connectionFailed(void* which)
 {
-    dynamic_cast<ITransition*>(currentState())->connectionFailed(which);
+    ITransition* tr = dynamic_cast<ITransition*>(currentState());
+    if (tr) {
+        tr->connectionFailed(which);
+    }
 }
 
 // For debuging
