@@ -16,6 +16,7 @@
 #include <cmath>
 #include <cstdlib>
 #include <cstdio>
+#include <cfloat>
 
 using namespace yarp::os::impl;
 using namespace yarp::os;
