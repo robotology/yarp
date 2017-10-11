@@ -9,11 +9,11 @@ include_directories(SYSTEM ${RTF_INCLUDE_DIRS})
 
 add_definitions(-DSHLIBPP_FILTER_API)
 
-add_library(rtf_fixturemanager_yarpserver MODULE yarpserverfixture.cpp)
-set_property(TARGET rtf_fixturemanager_yarpserver PROPERTY PREFIX "")
-set_property(TARGET rtf_fixturemanager_yarpserver PROPERTY OUTPUT_NAME yarpserver)
+rtf_add_plugin(rtf_fixturemanager_yarpserver OUTPUT_NAME yarpserver
+                                             SOURCES     yarpserverfixture.cpp)
 
 target_link_libraries(rtf_fixturemanager_yarpserver PRIVATE RTF::RTF
+                                                            RTF::RTF_dll
                                                             YARP::YARP_OS
                                                             YARP::YARP_init
                                                             YARP::YARP_serversql)
