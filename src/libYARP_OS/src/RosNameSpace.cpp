@@ -523,7 +523,6 @@ bool RosNameSpace::writeToNameServer(PortWriter& cmd,
     ConstString arg1 = in.get(1).asString();
 
     Bottle cmd2, cache;
-    bool use_cache = false;
     if (key=="query") {
         Contact c = queryName(arg1.c_str());
         c.setName("");
@@ -537,20 +536,12 @@ bool RosNameSpace::writeToNameServer(PortWriter& cmd,
     } else if (key=="list") {
         cmd2.addString("getSystemState");
         cmd2.addString("dummy_id");
-        use_cache = true;
-    } else {
-        return false;
-    }
-    bool ok = NetworkBase::write(getNameServerContact(),
-                                 cmd2,
-                                 cache,
-                                 style);
-    if (!ok) {
-        fprintf(stderr, "Failed to contact ROS server\n");
-        return false;
-    }
 
-    if (key=="list") {
+        if (!NetworkBase::write(getNameServerContact(), cmd2, cache, style)) {
+            fprintf(stderr, "Failed to contact ROS server\n");
+            return false;
+        }
+
         Bottle out;
         out.addVocab(Vocab::encode("many"));
         Bottle *parts = cache.get(2).asList();
@@ -591,10 +582,10 @@ bool RosNameSpace::writeToNameServer(PortWriter& cmd,
             }
         }
         out.write(reply);
+        return true;
+    } else {
+        return false;
     }
-
-
-    return ok;
 
 }
 
