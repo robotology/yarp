@@ -21,6 +21,7 @@
 #include <cstdio>
 #include <cstring>
 #include <cstdlib>
+#include <cfloat>
 
 using yarp::os::impl::StoreInt;
 using yarp::os::impl::StoreVocab;
