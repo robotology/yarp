@@ -72,8 +72,8 @@ Plotter * PlotManager::addPlot(const QString &title,
 {
     Plotter *plotter = new Plotter(title,gridx,gridy,hspan,vspan,minval,maxval,size,bgcolor,autorescale,this);
     plotterList.append(plotter);
-    plottersChanged();
-    plotter->plotSampleSizeChanged();
+    emit plottersChanged();
+    emit plotter->plotSampleSizeChanged();
 
     return plotter;
 
@@ -98,7 +98,7 @@ void PlotManager::onTimeout()
     for(int i=0;i<c;i++){
         ((Plotter*)plotterList.at(i))->onTimeout();
     }
-    requestRepaint();
+    emit requestRepaint();
 }
 
 /*! \brief Sets the play or pause state

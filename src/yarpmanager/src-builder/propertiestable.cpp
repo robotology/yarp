@@ -267,7 +267,7 @@ void PropertiesTable::onAppItemChanged(QTreeWidgetItem *it,int col)
 
 
 
-    modified();
+    emit modified();
 }
 
 /*! \brief Called when an item has been double clicked */
@@ -368,7 +368,7 @@ void PropertiesTable::onModItemChanged(QTreeWidgetItem *it,int col)
             }
         }
     }
-    modified();
+    emit modified();
 }
 
 /*! \brief Called when an item has been double clicked */
@@ -389,7 +389,7 @@ void PropertiesTable::onComboChanged(QWidget *combo)
         if(currentModule){
             currentModule->getInnerModule()->setBroker(((QComboBox*)combo)->currentText().toLatin1().data());
         }
-        modified();
+        emit modified();
         return;
     }
     if(combo == nodeCombo){
@@ -397,7 +397,7 @@ void PropertiesTable::onComboChanged(QWidget *combo)
         if(currentModule){
             currentModule->getInnerModule()->setHost(((QComboBox*)combo)->currentText().toLatin1().data());
         }
-        modified();
+        emit modified();
         return;
     }
 
@@ -422,7 +422,7 @@ void PropertiesTable::onComboChanged(QWidget *combo)
             }
         }
     }
-    modified();
+    emit modified();
 }
 
 void PropertiesTable::addModules(ModuleItem *mod)

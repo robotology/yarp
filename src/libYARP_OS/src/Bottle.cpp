@@ -190,7 +190,7 @@ int Bottle::size() const
 
 void Bottle::hasChanged()
 {
-    return implementation->hasChanged();
+    implementation->hasChanged();
 }
 
 int Bottle::getSpecialization()

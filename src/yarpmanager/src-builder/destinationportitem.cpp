@@ -161,7 +161,7 @@ void DestinationPortItem::editingFinished()
     geo.setWidth(textWidth);
     lineEditWidget->setGeometry(geo);
     lineEditWidget->setPos(-textWidth/2,-lineEditWidget->geometry().height()/2);
-    signalHandler()->modified();
+    emit signalHandler()->modified();
 
     updateConnections();
     updateConnectionsTo(this->itemName);
@@ -221,7 +221,7 @@ QPointF DestinationPortItem::connectionPoint()
 void DestinationPortItem::mouseReleaseEvent(QGraphicsSceneMouseEvent *event)
 {
     if(moved && !nestedInApp){
-        sigHandler->modified();
+        emit sigHandler->modified();
         foreach (Arrow *arrow, arrows) {
             arrow->updateModel();
         }

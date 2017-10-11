@@ -91,7 +91,7 @@ int main(int argc, char *argv[])
     {
         yError("Problems instantiating the device driver");
         delete drv;
-        return false;
+        return 1;
     }
 
     drv->view(ibat);
@@ -100,7 +100,7 @@ int main(int argc, char *argv[])
         yError("Problems viewing the battery interface");
         drv->close();
         delete drv;
-        return false;
+        return 2;
     }
 
     MainWindow w(rf, ibat, NULL);

@@ -349,7 +349,7 @@ void MainWindow::syncApplicationList(QString selectNodeForEditing, bool open)
         if(app){
             ui->entitiesTree->addApplication(app);
             if(strcmp(selectNodeForEditing.toLatin1().data(),app->getName())==0){
-                selectItem(selectNodeForEditing, open);
+                emit selectItem(selectNodeForEditing, open);
             }
 
         }

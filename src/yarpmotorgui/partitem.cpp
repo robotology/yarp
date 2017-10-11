@@ -1263,7 +1263,7 @@ void PartItem::stopSequence()
     m_runTimer.stop();
     m_runTimeTimer.stop();
     m_cycleTimeTimer.stop();
-    stoppedSequence();
+    emit stoppedSequence();
 }
 
 void PartItem::onStopSequence()
@@ -1497,10 +1497,10 @@ void PartItem::onSequenceCycleTime(QList<SequenceItem> values)
     {
         vals = m_cycleTimeValues.takeFirst();
         m_cycleTimeValues.append(vals);
-        setCurrentIndex(vals.getSequenceNumber());
+        emit setCurrentIndex(vals.getSequenceNumber());
         fixedTimeMove(vals);
         m_cycleTimeTimer.start(vals.getTiming() * 1000);
-        cycleTimeSequence();
+        emit cycleTimeSequence();
     }
 }
 
@@ -1510,7 +1510,7 @@ void PartItem::onCycleTimeTimerTimeout()
     {
         SequenceItem vals = m_cycleTimeValues.takeFirst();
         m_cycleTimeValues.append(vals);
-        setCurrentIndex(vals.getSequenceNumber());
+        emit setCurrentIndex(vals.getSequenceNumber());
         fixedTimeMove(vals);
         m_cycleTimeTimer.start(vals.getTiming() * 1000);
     }
@@ -1546,13 +1546,13 @@ void PartItem::onSequenceCycle(QList<SequenceItem> values)
             //qDebug() << "vals.getSpeeds().at(i)" << vals.getSpeeds().at(i);
         }
 
-        setCurrentIndex(vals.getSequenceNumber());
+        emit setCurrentIndex(vals.getSequenceNumber());
         //fixedTimeMove(vals.getPositions());
         m_iPos->setRefSpeeds(cmdVelocities);
         m_iPos->positionMove(cmdPositions);
         m_cycleTimer.start(vals.getTiming() * 1000);
 
-        cycleSequence();
+        emit cycleSequence();
     }
 }
 
@@ -1571,7 +1571,7 @@ void PartItem::onCycleTimerTimeout()
             cmdVelocities[i] = vals.getSpeeds().at(i);
         }
 
-        setCurrentIndex(vals.getSequenceNumber());
+        emit setCurrentIndex(vals.getSequenceNumber());
         //fixedTimeMove(vals.getPositions());
         m_iPos->setRefSpeeds(cmdVelocities);
         m_iPos->positionMove(cmdPositions);
@@ -1610,13 +1610,13 @@ void PartItem::onSequenceRun(QList<SequenceItem> values)
             //qDebug() << "vals.getSpeeds().at(i)" << vals.getSpeeds().at(i);
         }
 
-        setCurrentIndex(vals.getSequenceNumber());
+        emit setCurrentIndex(vals.getSequenceNumber());
         //fixedTimeMove(vals.getPositions());
         m_iPos->setRefSpeeds(cmdVelocities);
         m_iPos->positionMove(cmdPositions);
         m_runTimer.start(vals.getTiming() * 1000);
 
-        runSequence();
+        emit runSequence();
     }
 }
 void PartItem::onRunTimeout()
@@ -1624,7 +1624,7 @@ void PartItem::onRunTimeout()
     if (m_runValues.count() > 0){
         SequenceItem vals = m_runValues.takeFirst();
         if(vals.getTiming() < 0){
-            stoppedSequence();
+            emit stoppedSequence();
             return;
         }
         double *cmdPositions = new double[vals.getPositions().count()];
@@ -1636,7 +1636,7 @@ void PartItem::onRunTimeout()
             //qDebug() << "vals.getSpeeds().at(i)" << vals.getSpeeds().at(i);
         }
 
-        setCurrentIndex(vals.getSequenceNumber());
+        emit setCurrentIndex(vals.getSequenceNumber());
         //fixedTimeMove(vals.getPositions());
         m_iPos->setRefSpeeds(cmdVelocities);
         m_iPos->positionMove(cmdPositions);
@@ -1644,7 +1644,7 @@ void PartItem::onRunTimeout()
 
         m_runTimer.start(vals.getTiming() * 1000);
     }else{
-        stoppedSequence();
+        emit stoppedSequence();
     }
 }
 
@@ -1669,11 +1669,11 @@ void PartItem::onSequenceRunTime(QList<SequenceItem> values)
     if (m_runTimeValues.count() > 0){
         vals = m_runTimeValues.takeFirst();
 
-        setCurrentIndex(vals.getSequenceNumber());
+        emit setCurrentIndex(vals.getSequenceNumber());
         fixedTimeMove(vals);
         m_runTimeTimer.start(vals.getTiming() * 1000);
 
-        runTimeSequence();
+        emit runTimeSequence();
     }
 
 }
@@ -1683,14 +1683,14 @@ void PartItem::onRunTimerTimeout()
     if (m_runTimeValues.count() > 0){
         SequenceItem vals = m_runTimeValues.takeFirst();
         if(vals.getTiming() < 0){
-            stoppedSequence();
+            emit stoppedSequence();
             return;
         }
-        setCurrentIndex(vals.getSequenceNumber());
+        emit setCurrentIndex(vals.getSequenceNumber());
         fixedTimeMove(vals);
         m_runTimeTimer.start(vals.getTiming() * 1000);
     }else{
-        stoppedSequence();
+        emit stoppedSequence();
     }
 }
 
@@ -1760,7 +1760,7 @@ void PartItem::onSequenceActivated()
         }
     }
 
-    sequenceActivated();
+    emit sequenceActivated();
 
 }
 
@@ -1773,7 +1773,7 @@ void PartItem::onSequenceStopped()
             joint->sequenceStopped();
         }
     }
-    sequenceStopped();
+    emit sequenceStopped();
 }
 
 void PartItem::onSequenceWindowDoubleClicked(int sequenceNum)
@@ -1787,7 +1787,7 @@ void PartItem::onSequenceWindowDoubleClicked(int sequenceNum)
         speeds.append(joint->getTrajectoryVelocityValue());
     }
 
-    sendPartJointsValues(sequenceNum,values,speeds);
+    emit sendPartJointsValues(sequenceNum,values,speeds);
 }
 
 void PartItem::onEnableControlVelocity(bool control)

@@ -932,13 +932,13 @@ void JointItem::onModeChanged(int index)
     }
     Q_UNUSED(index);
     int mode = ui->comboMode->currentData(Qt::UserRole).toInt();
-    changeMode(mode,this);
+    emit changeMode(mode,this);
 }
 
 
 void JointItem::onInteractionChanged(int index)
 {
-    changeInteraction(index,this);
+    emit changeInteraction(index,this);
 }
 
 void JointItem::setJointName(QString name)
@@ -974,11 +974,11 @@ void JointItem::onSliderMixedVelocityReleased()
     if (ui->sliderMixedVelocity->getIsDouble())
     {
         double val = ui->sliderMixedVelocity->value();
-        sliderMixedVelocityCommand(val / ui->sliderMixedVelocity->getSliderStep(), jointIndex);
+        emit sliderMixedVelocityCommand(val / ui->sliderMixedVelocity->getSliderStep(), jointIndex);
     }
     else
     {
-        sliderMixedVelocityCommand(ui->sliderMixedVelocity->value(), jointIndex);
+        emit sliderMixedVelocityCommand(ui->sliderMixedVelocity->value(), jointIndex);
     }
 
     sliderMixedVelocityPressed = false;
@@ -989,7 +989,7 @@ void JointItem::onVelocityTimer()
 {
     if(velocityModeEnabled)
     {
-        sliderVelocityCommand(lastVelocity,jointIndex);
+        emit sliderVelocityCommand(lastVelocity,jointIndex);
     }
 }
 
@@ -1003,13 +1003,13 @@ void JointItem::onSliderTrajectoryPositionReleased()
     if (ui->sliderTrajectoryPosition->getIsDouble())
     {
         double val = ui->sliderTrajectoryPosition->value();
-        sliderTrajectoryPositionCommand(val / ui->sliderTrajectoryPosition->getSliderStep(), jointIndex);
+        emit sliderTrajectoryPositionCommand(val / ui->sliderTrajectoryPosition->getSliderStep(), jointIndex);
         updateTrajectoryPositionTarget(val / ui->sliderTrajectoryPosition->getSliderStep());
     }
     else
     {
         double val = ui->sliderTrajectoryPosition->value();
-        sliderTrajectoryPositionCommand(val, jointIndex);
+        emit sliderTrajectoryPositionCommand(val, jointIndex);
         updateTrajectoryPositionTarget(val);
     }
     sliderTrajectoryPositionPressed = false;
@@ -1026,13 +1026,13 @@ void JointItem::onSliderMixedPositionReleased()
     if (ui->sliderMixedPosition->getIsDouble())
     {
         double val = ui->sliderMixedPosition->value();
-        sliderMixedPositionCommand(val / ui->sliderMixedPosition->getSliderStep(), jointIndex);
+        emit sliderMixedPositionCommand(val / ui->sliderMixedPosition->getSliderStep(), jointIndex);
         updateMixedPositionTarget(val / ui->sliderMixedPosition->getSliderStep());
     }
     else
     {
         double val = ui->sliderMixedPosition->value();
-        sliderMixedPositionCommand(val, jointIndex);
+        emit sliderMixedPositionCommand(val, jointIndex);
         updateMixedPositionTarget(val);
     }
 
@@ -1048,7 +1048,7 @@ void JointItem::onSliderDirectPositionPressed()
 void JointItem::onSliderDirectPositionReleased()
 {
     double ref_direct_position = (double)ui->sliderDirectPosition->value() / ui->sliderDirectPosition->getSliderStep();
-    sliderDirectPositionCommand(ref_direct_position, jointIndex);
+    emit sliderDirectPositionCommand(ref_direct_position, jointIndex);
     sliderDirectPositionPressed = false;
     motionDone = false;
 }
@@ -1061,7 +1061,7 @@ void JointItem::onSliderTrajectoryVelocityPressed()
 void JointItem::onSliderTrajectoryVelocityReleased()
 {
     ref_trajectory_velocity = (double)ui->sliderTrajectoryVelocity->value() / ui->sliderTrajectoryVelocity->getSliderStep();
-    sliderTrajectoryVelocityCommand(ref_trajectory_velocity, jointIndex);
+    emit sliderTrajectoryVelocityCommand(ref_trajectory_velocity, jointIndex);
     sliderTrajectoryVelocityPressed = false;
 }
 
@@ -1073,7 +1073,7 @@ void JointItem::onSliderPWMPressed()
 void JointItem::onSliderPWMReleased()
 {
     ref_pwm = (double)ui->sliderPWMOutput->value() / ui->sliderPWMOutput->getSliderStep();
-    sliderPWMCommand(ref_pwm, jointIndex);
+    emit sliderPWMCommand(ref_pwm, jointIndex);
     sliderPWMPressed = false;
 }
 
@@ -1085,7 +1085,7 @@ void JointItem::onSliderCurrentPressed()
 void JointItem::onSliderCurrentReleased()
 {
     ref_current = (double)ui->sliderCurrentOutput->value() / ui->sliderCurrentOutput->getSliderStep();
-    sliderCurrentCommand(ref_current, jointIndex);
+    emit sliderCurrentCommand(ref_current, jointIndex);
     sliderCurrentPressed = false;
 }
 
@@ -1097,7 +1097,7 @@ void JointItem::onSliderTorquePressed()
 void JointItem::onSliderTorqueReleased()
 {
     ref_torque = (double)ui->sliderTorqueTorque->value() / ui->sliderTorqueTorque->getSliderStep();
-    sliderTorqueCommand(ref_torque, jointIndex);
+    emit sliderTorqueCommand(ref_torque, jointIndex);
     sliderTorquePressed = false;
 }
 
@@ -1766,7 +1766,7 @@ void JointItem::onCalibClicked()
     {
        velocityTimer.stop();
     }
-    calibClicked(this);
+    emit calibClicked(this);
 }
 
 void JointItem::onHomeClicked()
@@ -1775,7 +1775,7 @@ void JointItem::onHomeClicked()
     {
        velocityTimer.stop();
     }
-    homeClicked(this);
+    emit homeClicked(this);
 }
 
 void JointItem::onIdleClicked()
@@ -1784,7 +1784,7 @@ void JointItem::onIdleClicked()
     {
        velocityTimer.stop();
     }
-    idleClicked(this);
+    emit idleClicked(this);
 }
 
 void JointItem::onRunClicked()
@@ -1793,12 +1793,12 @@ void JointItem::onRunClicked()
     {
        velocityTimer.stop();
     }
-    runClicked(this);
+    emit runClicked(this);
 }
 
 void JointItem::onPidClicked()
 {
-    pidClicked(this);
+    emit pidClicked(this);
 }
 
 void JointItem::sequenceActivated()
