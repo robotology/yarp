@@ -795,7 +795,6 @@ public:
             } else {
                 YARP_INFO(Logger::get(),
                           ConstString("Name server ignoring unknown command: ")+msg);
-                ConnectionWriter *os = reader.getWriter();
             }
         }
         YTRACE("NameServer::read stop");
