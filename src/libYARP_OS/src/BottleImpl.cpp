@@ -805,7 +805,7 @@ bool StoreVocab::writeRaw(ConnectionWriter& writer)
 ConstString StoreDouble::toString() const
 {
     char buf[512];
-    sprintf(buf, "%g", x);
+    sprintf(buf, "%.*g", DBL_DIG, x);
     ConstString str(buf);
 
     // YARP Bug 2526259: Locale settings influence YARP behavior
