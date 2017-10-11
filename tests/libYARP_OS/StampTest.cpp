@@ -37,21 +37,23 @@ public:
             }
             con.setTextMode(textMode);
 
-            Stamp stamp(55,1.0);
-            stamp.write(con.getWriter());
+            Stamp stampToWrite(55, 1.0);
+            Stamp stampRead;
+
+            stampToWrite.write(con.getWriter());
             Bottle bot;
             bot.read(con.getReader());
-            checkEqual(bot.get(0).asInt(),55,"sequence number write");
-            checkTrue(fabs(bot.get(1).asDouble()-1)<0.0001,"time stamp write");
 
-            stamp.write(con.getCleanWriter());
-            Stamp outStamp;
-            outStamp.read(con.getReader());
+            checkEqual(bot.get(0).asInt(), 55, "sequence number write");
+            checkTrue (fabs(bot.get(1).asDouble()-1)<0.0001, "time stamp write");
 
-            checkEqual(outStamp.getCount(),55,"sequence number read");
-            checkTrue(fabs(outStamp.getTime()-1)<0.0001,"time stamp read");
+
+            stampToWrite.write(con.getCleanWriter());
+            stampRead.read(con.getReader());
+
+            checkEqual(stampRead.getCount(),55,"sequence number read");
+            checkTrue(fabs(stampRead.getTime()-1)<0.0001,"time stamp read");
         }
-
     }
 
     void checkEnvelope(const char *mode) {
