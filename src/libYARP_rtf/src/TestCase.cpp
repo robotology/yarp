@@ -39,7 +39,7 @@ bool yarp::rtf::TestCase::setup(int argc, char** argv)
 {
     // check yarp network
     mPriv->yarp.setVerbosity(-1);
-    RTF_ASSERT_ERROR_IF(mPriv->yarp.checkNetwork(),
+    RTF_ASSERT_ERROR_IF_FALSE(mPriv->yarp.checkNetwork(),
                         "YARP network does not seem to be available, is the yarp server accessible?");
 
     // loading environment properties by parsing the string value
@@ -64,7 +64,7 @@ bool yarp::rtf::TestCase::setup(int argc, char** argv)
     if(rf.check("from")) {
 
         std::string cfgname = rf.find("from").asString();
-        RTF_ASSERT_ERROR_IF(cfgname.size(),
+        RTF_ASSERT_ERROR_IF_FALSE(cfgname.size(),
                             "Empty value was set for the '--from' property");
 
         // loading configuration file indicated by --from
@@ -78,7 +78,7 @@ bool yarp::rtf::TestCase::setup(int argc, char** argv)
             rf.setDefaultContext(envprop.find("robotname").asString().c_str());
             cfgfile = rf.findFileByName(cfgname.c_str());
         }
-        RTF_ASSERT_ERROR_IF(cfgfile.size(),
+        RTF_ASSERT_ERROR_IF_FALSE(cfgfile.size(),
                             RTF::Asserter::format("Cannot find configuration file %s", cfgfile.c_str()));
         RTF_TEST_REPORT(RTF::Asserter::format("Loading configuration from %s", cfgfile.c_str()));
         // update the properties with environment
