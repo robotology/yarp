@@ -51,11 +51,11 @@ void BuilderScene::dropEvent(QGraphicsSceneDragDropEvent *event)
 
     if(itemType == "module" ){
         Module *mod = (yarp::manager::Module*)pointer;
-        addedModule((void*)mod,event->scenePos());
+        emit addedModule((void*)mod,event->scenePos());
     }
     if(itemType == "application" ){
         Application *app = (yarp::manager::Application*)pointer;
-        addedApplication((void*)app,event->scenePos());
+        emit addedApplication((void*)app,event->scenePos());
     }
 
 }
@@ -195,8 +195,7 @@ void BuilderScene::onNewConnectionAdded(QPointF p,QGraphicsItem *item)
            if (startItem->allowOutputConnections() &&
                endItem->allowInputConnections()) {
                if(!startItem->arrowAlreadyPresent(endItem)){
-                   addNewConnection(startItem,endItem);
-
+                   emit addNewConnection(startItem,endItem);
                }
            }
 

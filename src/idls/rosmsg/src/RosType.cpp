@@ -451,6 +451,14 @@ bool RosType::emitType(RosTypeCodeGen& gen,
 
     if (!gen.beginConstruct()) return false;
     for (int i=0; i<(int)subRosType.size(); i++) {
+        if (!gen.initField(subRosType[i])) return false;
+        if (i != (int)subRosType.size() -1) {
+            if (!gen.nextInitConstruct(subRosType[i])) return false;
+        } else {
+            if (!gen.endInitConstruct()) return false;
+        }
+    }
+    for (int i=0; i<(int)subRosType.size(); i++) {
         if (!gen.constructField(subRosType[i])) return false;
     }
     if (!gen.endConstruct()) return false;

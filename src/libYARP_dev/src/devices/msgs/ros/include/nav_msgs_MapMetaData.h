@@ -36,7 +36,13 @@ public:
   yarp::os::NetUint32 height;
   geometry_msgs_Pose origin;
 
-  nav_msgs_MapMetaData() {
+  nav_msgs_MapMetaData() :
+    map_load_time(),
+    resolution(0.0),
+    width(0),
+    height(0),
+    origin()
+  {
   }
 
   void clear() {

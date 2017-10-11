@@ -36,7 +36,7 @@ yarp::dev::DriverCreator *createFrameTransformServer() {
 bool Transforms_server_storage::delete_transform(int id)
 {
     LockGuard lock(m_mutex);
-    if ((size_t)id >= 0 && (size_t)id < m_transforms.size())
+    if (id >= 0 && (size_t)id < m_transforms.size())
     {
         m_transforms.erase(m_transforms.begin() + id);
         return true;

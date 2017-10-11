@@ -1269,11 +1269,11 @@ public:
     }
 
     virtual void setCarrierParams(const Property& params) override {
-        return getContent().setCarrierParams(params);
+        getContent().setCarrierParams(params);
     }
 
     virtual void getCarrierParams(Property& params) override {
-        return getContent().getCarrierParams(params);
+        getContent().getCarrierParams(params);
     }
 
     virtual void getHeader(const yarp::os::Bytes& header) override {
@@ -1356,7 +1356,7 @@ public:
     }
 
     virtual void close() override {
-        return getContent().close();
+        getContent().close();
     }
 
     virtual ConstString getBootstrapCarrierName() override {

@@ -333,8 +333,8 @@ void ModuleItem::mouseReleaseEvent(QGraphicsSceneMouseEvent *event)
 
     if(moved && editingMode && !nestedInApp){
         //updateGraphicModel();
-        signalHandler()->modified();
-        signalHandler()->moved();
+        emit signalHandler()->modified();
+        emit signalHandler()->moved();
     }
     pressed = false;
     moved = false;
@@ -371,7 +371,7 @@ QVariant ModuleItem::itemChange(GraphicsItemChange change, const QVariant &value
     if (change == QGraphicsItem::ItemSelectedHasChanged) {
         //bool selected = value.toBool();
         if(!externalSelection){
-            sigHandler->moduleSelected(this);
+            emit sigHandler->moduleSelected(this);
         }
         externalSelection = false;
     }

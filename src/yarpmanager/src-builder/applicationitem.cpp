@@ -569,7 +569,7 @@ void ApplicationItem::mousePressEvent(QGraphicsSceneMouseEvent *event)
 {
     pressed = true;
     //setZValue(zValue() + 10);
-    sigHandler->applicationSelected(this);
+    emit sigHandler->applicationSelected(this);
     QGraphicsItem::mousePressEvent(event);
 }
 
@@ -588,8 +588,8 @@ void ApplicationItem::mouseReleaseEvent(QGraphicsSceneMouseEvent *event)
 
     if(moved && editingMode && !nestedInApp){
         //updateGraphicModel();
-        signalHandler()->modified();
-        signalHandler()->moved();
+        emit signalHandler()->modified();
+        emit signalHandler()->moved();
     }
     pressed = false;
     moved = false;

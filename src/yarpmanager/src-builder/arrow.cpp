@@ -159,7 +159,7 @@ void Arrow::updateCarrier(QString carrier)
     connection.setCarrier(carrier.toLatin1().data());
 
     connection = manager->getKnowledgeBase()->addConnectionToApplication(mainApplication, connection);
-    sigHandler->modified();
+    emit sigHandler->modified();
 }
 
 void Arrow::updateConnectionFrom(QString from)
@@ -179,7 +179,7 @@ void Arrow::updateConnectionFrom(QString from)
 //    connection.setFrom(from.toLatin1().data());
 
 //    connection = manager->getKnowledgeBase()->addConnectionToApplication(mainApplication, connection);
-    sigHandler->modified();
+    emit sigHandler->modified();
 }
 
 void Arrow::updateConnectionTo(QString to)
@@ -198,7 +198,7 @@ void Arrow::updateConnectionTo(QString to)
 
 //    connection.setTo(to.toLatin1().data());
 //    connection = manager->getKnowledgeBase()->addConnectionToApplication(mainApplication, connection);
-    sigHandler->modified();
+    emit sigHandler->modified();
 }
 
 void Arrow::updateGraphicModel()
@@ -252,8 +252,8 @@ void Arrow::updateModel()
     updateGraphicModel();
     updatePosition();
 
-    sigHandler->modified();
-    signalHandler()->moved();
+    emit sigHandler->modified();
+    emit signalHandler()->moved();
 }
 
 void Arrow::setConnectionSelected(bool selected)
@@ -492,7 +492,7 @@ QVariant Arrow::itemChange(GraphicsItemChange change, const QVariant &value)
     }
     if (change == QGraphicsItem::ItemSelectedHasChanged) {
         if(!externalSelection){
-            sigHandler->connectctionSelected(this);
+            emit sigHandler->connectctionSelected(this);
         }
         externalSelection = false;
     }

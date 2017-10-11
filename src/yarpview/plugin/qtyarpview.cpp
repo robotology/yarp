@@ -174,11 +174,11 @@ void QtYARPView::onSendFps(double portAvg, double portMin, double portMax,
     periodToFreq(dispAvg,dispMin,dispMax,dAvg,dMin,dMax);
 
 
-    sendPortFps(QString::number(pAvg,'f',1),
+    emit sendPortFps(QString::number(pAvg,'f',1),
             QString::number(pMin,'f',1),
             QString::number(pMax,'f',1));
 
-    sendDisplayFps(QString::number(dAvg,'f',1),
+    emit sendDisplayFps(QString::number(dAvg,'f',1),
             QString::number(dMin,'f',1),
             QString::number(dMax,'f',1));
 
@@ -276,23 +276,23 @@ void QtYARPView::setOptions(yarp::os::Searchable& options) {
     if (options.check("RefreshTime",val)||options.check("p",val)) {
         _options.m_refreshTime = val->asInt();
         sigHandler.changeRefreshInterval(_options.m_refreshTime);
-        refreshIntervalChanged();
+        emit refreshIntervalChanged();
     }
     if (options.check("PosX",val)||options.check("x",val)) {
         _options.m_posX = val->asInt();
-        posXChanged();
+        emit posXChanged();
     }
     if (options.check("PosY",val)||options.check("y",val)) {
         _options.m_posY = val->asInt();
-        posYChanged();
+        emit posYChanged();
     }
     if (options.check("Width",val)||options.check("w",val)) {
         _options.m_windWidth = val->asInt();
-        widthChanged();
+        emit widthChanged();
     }
     if (options.check("Height",val)||options.check("h",val)) {
         _options.m_windHeight = val->asInt();
-        heightChanged();
+        emit heightChanged();
     }
     if (options.check("OutputEnabled",val)) {
         _options.m_outputEnabled = val->asInt();
@@ -307,13 +307,13 @@ void QtYARPView::setOptions(yarp::os::Searchable& options) {
     {
         _options.m_synchRate=true;
         synchDisplayPeriod(true);
-        synchRate(true);
+        emit synchRate(true);
     }
     if (options.check("autosize"))
     {
         _options.m_autosize = true;
         synchDisplaySize(true);
-        autosize(true);
+        emit autosize(true);
     }
 }
 
@@ -355,13 +355,13 @@ void QtYARPView::setOptionsToDefault()
     qsnprintf(_options.m_fileName, 256, "%s","yarpview.conf");
     _options.m_saveOnExit = 0;
 
-    posXChanged();
-    posYChanged();
-    widthChanged();
-    heightChanged();
+    emit posXChanged();
+    emit posYChanged();
+    emit widthChanged();
+    emit heightChanged();
 
     sigHandler.changeRefreshInterval(_options.m_refreshTime);
-    refreshIntervalChanged();
+    emit refreshIntervalChanged();
 }
 
 
@@ -374,7 +374,7 @@ bool QtYARPView::openPorts()
 
     ptr_inputPort->setReadOnly();
     ret= ptr_inputPort->open(_options.m_portName);
-    setName(ptr_inputPort->getName().c_str());
+    emit setName(ptr_inputPort->getName().c_str());
 
     if (!ret){
         qDebug("Error: port failed to open, quitting.");

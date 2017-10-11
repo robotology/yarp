@@ -222,8 +222,8 @@ void PidDlg::onSendRemoteVariable()
     std::string key = ui->tableVariables->item(i, 0)->text().toStdString();
     std::string val = ui->tableVariables->item(i, 1)->text().toStdString();
     yarp::os::Bottle valb(val);
-    sendSingleRemoteVariable(key, valb);
-    updateAllRemoteVariables();
+    emit sendSingleRemoteVariable(key, valb);
+    emit updateAllRemoteVariables();
 }
 
 void PidDlg::initRemoteVariables(IRemoteVariables* iVar)
@@ -347,7 +347,7 @@ void PidDlg::initCurrent(Pid myPid)
 
 void PidDlg::onRefresh()
 {
-    refreshPids(jointIndex);
+    emit refreshPids(jointIndex);
 }
 
 void PidDlg::onSend()
@@ -366,7 +366,7 @@ void PidDlg::onSend()
         newPid.max_output = ui->tablePosition->item(POSITION_MAXOUTPUT,1)->text().toDouble();
         newPid.stiction_down_val = ui->tablePosition->item(POSITION_STICTIONDW,1)->text().toDouble();
         newPid.max_int = ui->tablePosition->item(POSITION_MAXINT,1)->text().toDouble();
-        sendPositionPid(jointIndex,newPid);
+        emit sendPositionPid(jointIndex,newPid);
         break;
     case TAB_VELOCITY:
         newPid.kp = ui->tableVelocity->item(VELOCITY_KP, 1)->text().toDouble();
@@ -378,7 +378,7 @@ void PidDlg::onSend()
         newPid.max_output = ui->tableVelocity->item(VELOCITY_MAXOUTPUT, 1)->text().toDouble();
         newPid.stiction_down_val = ui->tableVelocity->item(VELOCITY_STICTIONDW, 1)->text().toDouble();
         newPid.max_int = ui->tableVelocity->item(VELOCITY_MAXINT, 1)->text().toDouble();
-        sendVelocityPid(jointIndex, newPid);
+        emit sendVelocityPid(jointIndex, newPid);
         break;
     case TAB_TORQUE:
         newPid.kp = ui->tableTorque->item(TORQUE_KP,1)->text().toDouble();
@@ -395,18 +395,18 @@ void PidDlg::onSend()
         newPid.max_output = ui->tableTorque->item(TORQUE_MAXOUTPUT,1)->text().toDouble();
         newPid.stiction_down_val = ui->tableTorque->item(TORQUE_STICTIONDW,1)->text().toDouble();
         newPid.max_int = ui->tableTorque->item(TORQUE_MAXINT,1)->text().toDouble();
-        sendTorquePid(jointIndex,newPid,newMotorTorqueParams);
+        emit sendTorquePid(jointIndex,newPid,newMotorTorqueParams);
         break;
     case TAB_STIFF:{
         double desiredStiff = ui->tableStiffness->item(0,3)->text().toDouble();
         double desiredDamp = ui->tableStiffness->item(1,3)->text().toDouble();
         double desiredForce = ui->tableStiffness->item(2,3)->text().toDouble();
-        sendStiffness(jointIndex,desiredStiff,desiredDamp,desiredForce);
+        emit sendStiffness(jointIndex,desiredStiff,desiredDamp,desiredForce);
         break;
     }
     case TAB_PWM:{
         int desiredDuty = ui->tablePWM->item(0,1)->text().toDouble();
-        sendPWM(jointIndex,desiredDuty);
+        emit sendPWM(jointIndex,desiredDuty);
         break;
     }
     case TAB_CURRENT:{
@@ -417,7 +417,7 @@ void PidDlg::onSend()
         newPid.offset = ui->tableCurrent->item(CURRENT_OFFSET, 1)->text().toDouble();
         newPid.max_output = ui->tableCurrent->item(CURRENT_MAXOUTPUT, 1)->text().toDouble();
         newPid.max_int = ui->tableCurrent->item(CURRENT_MAXINT, 1)->text().toDouble();
-        sendCurrentPid(jointIndex, newPid);
+        emit sendCurrentPid(jointIndex, newPid);
         break;
     }
     case TAB_VARIABLES:{
@@ -428,9 +428,9 @@ void PidDlg::onSend()
             std::string key = ui->tableVariables->item(i, 0)->text().toStdString();
             std::string val = ui->tableVariables->item(i, 1)->text().toStdString();
             yarp::os::Bottle valb(val);
-            sendSingleRemoteVariable(key, valb);
+            emit sendSingleRemoteVariable(key, valb);
         }
-        updateAllRemoteVariables();
+        emit updateAllRemoteVariables();
         break;
     }
     default:

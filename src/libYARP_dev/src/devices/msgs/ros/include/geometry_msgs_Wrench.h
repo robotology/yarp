@@ -23,7 +23,10 @@ public:
   geometry_msgs_Vector3 force;
   geometry_msgs_Vector3 torque;
 
-  geometry_msgs_Wrench() {
+  geometry_msgs_Wrench() :
+    force(),
+    torque()
+  {
   }
 
   void clear() {

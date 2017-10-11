@@ -49,7 +49,15 @@ public:
   geometry_msgs_Vector3 linear_acceleration;
   std::vector<yarp::os::NetFloat64> linear_acceleration_covariance;
 
-  sensor_msgs_Imu() {
+  sensor_msgs_Imu() :
+    header(),
+    orientation(),
+    orientation_covariance(),
+    angular_velocity(),
+    angular_velocity_covariance(),
+    linear_acceleration(),
+    linear_acceleration_covariance()
+  {
     orientation_covariance.resize(9,0.0);
     angular_velocity_covariance.resize(9,0.0);
     linear_acceleration_covariance.resize(9,0.0);

@@ -27,7 +27,11 @@ public:
   yarp::os::NetFloat64 y;
   yarp::os::NetFloat64 z;
 
-  geometry_msgs_Vector3() {
+  geometry_msgs_Vector3() :
+    x(0.0),
+    y(0.0),
+    z(0.0)
+  {
   }
 
   void clear() {

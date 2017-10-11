@@ -142,7 +142,7 @@ bool MainWindow::attach(RpcServer &source)
 bool MainWindow::step()
 {
     Bottle reply;
-    internalStep(&reply);
+    emit internalStep(&reply);
     if (reply.toString() == "error"){
         return false;
     }
@@ -161,7 +161,7 @@ void MainWindow::onInternalStep(Bottle *reply)
 /**********************************************************/
 bool MainWindow::setFrame(const string &name, const int frameNum)
 {
-    internalSetFrame(name,frameNum);
+    emit internalSetFrame(name,frameNum);
     return true;
 }
 
@@ -175,7 +175,7 @@ void MainWindow::onInternalSetFrame(const string &name, const int frameNum)
 int MainWindow::getFrame(const string &name)
 {
     int frame = 0;
-    internalGetFrame(name,&frame);
+    emit internalGetFrame(name,&frame);
     if (frame < 1){
         return -1;
     } else {
@@ -200,8 +200,8 @@ bool MainWindow::load(const string &path)
     if (slashErr == string::npos){
         LOG_ERROR("Error, please make sure you are using forward slashes '/' in path.\n");
         return false;
-    }else{
-        internalLoad(sPath);
+    } else {
+        emit internalLoad(sPath);
     }
 
     waitMutex.lock();
@@ -229,7 +229,7 @@ void  MainWindow::onInternalLoad(QString sPath)
 /**********************************************************/
 bool MainWindow::play()
 {
-    internalPlay();
+    emit internalPlay();
     return true;
 }
 
@@ -242,7 +242,7 @@ void MainWindow::onInternalPlay()
 /**********************************************************/
 bool MainWindow::pause()
 {
-    internalPause();
+    emit internalPause();
     return true;
 }
 
@@ -255,7 +255,7 @@ void MainWindow::onInternalPause()
 /**********************************************************/
 bool MainWindow::stop()
 {
-    internalStop();
+    emit internalStop();
     return true;
 }
 
@@ -269,7 +269,7 @@ void MainWindow::onInternalStop()
 bool MainWindow::quit()
 {
     quitFromCmd = true;
-    internalQuit();
+    emit internalQuit();
     return true;
 }
 
@@ -1084,5 +1084,5 @@ void InitThread::run()
     //connect(utilities->masterThread,SIGNAL(updateGuiRateThread()),this,SLOT(onUpdateGuiRateThread()),Qt::QueuedConnection);
     utilities->masterThread->stepfromCmd = false;
 
-    initDone(subDirCnt);
+    emit initDone(subDirCnt);
 }

@@ -23,7 +23,10 @@ public:
   std_msgs_Header header;
   geometry_msgs_Wrench wrench;
 
-  geometry_msgs_WrenchStamped() {
+  geometry_msgs_WrenchStamped() :
+    header(),
+    wrench()
+  {
   }
 
   void clear() {

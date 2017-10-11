@@ -34,7 +34,11 @@ public:
   nav_msgs_MapMetaData info;
   std::vector<char> data;
 
-  nav_msgs_OccupancyGrid() {
+  nav_msgs_OccupancyGrid() :
+    header(),
+    info(),
+    data()
+  {
   }
 
   void clear() {

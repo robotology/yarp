@@ -443,7 +443,7 @@ int Drivers::yarpdev(int argc, char *argv[]) {
         if (options.check("list"))
         {
             yInfo("Here are devices listed for your system:");
-            for (auto s : split(Drivers::factory().toString(), '\n')) {
+            for (auto& s : split(Drivers::factory().toString(), '\n')) {
                 yInfo("%s", s.c_str());
             }
         }

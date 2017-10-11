@@ -24,7 +24,10 @@ public:
   geometry_msgs_Vector3 translation;
   geometry_msgs_Quaternion rotation;
 
-  geometry_msgs_Transform() {
+  geometry_msgs_Transform() :
+    translation(),
+    rotation()
+  {
   }
 
   void clear() {

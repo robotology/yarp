@@ -85,7 +85,7 @@ void BuilderWindow::init()
 
 
     m_modified = false;
-    modified(false);
+    emit modified(false);
 
     //onRestoreZoom();
 
@@ -114,7 +114,7 @@ bool BuilderWindow::save()
     }
 
     m_modified = !manager.saveApplication(application->getName());
-    modified(m_modified);
+    emit modified(m_modified);
     return !m_modified;
 }
 
@@ -662,7 +662,7 @@ BuilderItem *BuilderWindow::onAddNewConnection(void *startItem ,void *endItem, i
 //    scene->items().append(arrow);
 
     m_modified = true;
-    modified(true);
+    emit modified(true);
     return arrow;
 
 
@@ -739,7 +739,7 @@ void BuilderWindow::onMoved()
 void BuilderWindow::onModified()
 {
     m_modified = true;
-    modified(true);
+    emit modified(true);
 }
 
 BuilderItem * BuilderWindow::addSourcePort(QString name, bool editOnStart)
@@ -844,7 +844,7 @@ void BuilderWindow::onAddedApplication(void *app,QPointF pos)
 
     }
     m_modified = true;
-    modified(true);
+    emit modified(true);
 }
 
 BuilderItem *BuilderWindow::onAddModule(void *mod,QPointF pos)
@@ -894,7 +894,7 @@ BuilderItem *BuilderWindow::onAddModule(void *mod,QPointF pos)
         //load(true);
     }
     m_modified = true;
-    modified(true);
+    emit modified(true);
     return modIt;
 
 }
@@ -963,7 +963,7 @@ void BuilderWindow::onConnectionSelected(QGraphicsItem *it)
             selectedModules.append(arrow->getId());
         }
     }
-    setConnectionSelected(selectedModules);
+    emit setConnectionSelected(selectedModules);
 }
 
 void BuilderWindow::onModuleSelected(QGraphicsItem *it)
@@ -988,7 +988,7 @@ void BuilderWindow::onModuleSelected(QGraphicsItem *it)
             selectedModules.append(mod->getId());
         }
     }
-    setModuleSelected(selectedModules);
+    emit setModuleSelected(selectedModules);
 }
 
 void BuilderWindow::onApplicationSelected(QGraphicsItem* it)
@@ -1401,7 +1401,7 @@ void CustomView::mousePressEvent(QMouseEvent* event)
         }else{
             if(itemAt(event->pos()) == nullptr){
                 setDragMode(QGraphicsView::RubberBandDrag);
-                pressedNullItem();
+                emit pressedNullItem();
                 QGraphicsView::mousePressEvent(event);
                 return;
             }else{
@@ -1442,10 +1442,10 @@ void CustomView::contextMenuEvent(QContextMenuEvent *event)
 
             QAction *act = menu.exec(event->globalPos());
             if(act == addSourcePortAction){
-                addSourcePort("Source",mapToScene(event->pos()));
+                emit addSourcePort("Source",mapToScene(event->pos()));
             }
             if(act == addDestinationPortAction){
-                addDestinationPort("Destination",mapToScene(event->pos()));
+                emit addDestinationPort("Destination",mapToScene(event->pos()));
             }
             if(act == pasteAction){
                 pasteSelectedItems(event->pos());
@@ -1567,7 +1567,7 @@ void CustomView::deleteAllItems(){
             }
         }
     }
-    modified();
+    emit modified();
 }
 
 
@@ -1632,7 +1632,7 @@ void CustomView::deleteSelectedItems(QGraphicsItem *it){
         }
 
     }
-    modified();
+    emit modified();
 }
 
 void CustomView::copySelectedItems(){

@@ -191,7 +191,7 @@ void EntitiesTreeWidget::onSelectItem(QString name, bool open)
     for(int i=0;applicationNode->childCount();i++) {
         if (applicationNode->child(i)->text(0) == name) {
             yarp::manager::Application *app = (yarp::manager::Application*)applicationNode->child(i)->data(0,Qt::UserRole + 1).toLongLong();
-            viewApplication(app, !open);
+            emit viewApplication(app, !open);
             return;
         }
     }
@@ -231,7 +231,7 @@ void EntitiesTreeWidget::onItemDoubleClicked(QTreeWidgetItem *item,int column)
                 onRemove();
                 return;
             }
-            viewApplication(app);
+            emit viewApplication(app);
         }
     }
 
@@ -246,7 +246,7 @@ void EntitiesTreeWidget::onItemDoubleClicked(QTreeWidgetItem *item,int column)
                 onRemove();
                 return;
             }
-            viewModule(mod);
+            emit viewModule(mod);
         }
     }
 
@@ -260,7 +260,7 @@ void EntitiesTreeWidget::onItemDoubleClicked(QTreeWidgetItem *item,int column)
             onRemove();
             return;
         }
-        viewResource(res);
+        emit viewResource(res);
     }
 
     if (item->data(0,Qt::UserRole).toInt()  == (int)yarp::manager::NODE_APPTEMPLATE) {
@@ -490,7 +490,7 @@ void EntitiesTreeWidget::onEditApplication()
                     onRemove();
                     return;
                 }
-                viewApplication(app,true);
+                emit viewApplication(app,true);
             }
         }
     }
@@ -511,17 +511,17 @@ void EntitiesTreeWidget::onLoadFile()
     if (it->parent() == applicationNode) {
         if (it->data(0,Qt::UserRole)  == yarp::manager::APPLICATION) {
             yarp::manager::Application *app = (yarp::manager::Application*)it->data(0,Qt::UserRole + 1).toLongLong();
-            viewApplication(app);
+            emit viewApplication(app);
         }
     } else if (it->parent() == resourcesNode) {
         if (it->data(0,Qt::UserRole)  == yarp::manager::RESOURCE) {
             yarp::manager::Computer *res = (yarp::manager::Computer*)it->data(0,Qt::UserRole + 1).toLongLong();
-            viewResource(res);
+            emit viewResource(res);
         }
     } else if (it->parent() == modulesNode) {
         if (it->data(0,Qt::UserRole)  == yarp::manager::MODULE) {
             yarp::manager::Module *mod = (yarp::manager::Module*)it->data(0,Qt::UserRole + 1).toLongLong();
-            viewModule(mod);
+            emit viewModule(mod);
         }
     }
 
@@ -583,7 +583,7 @@ void EntitiesTreeWidget::onReopen()
                     return;
                 }
 
-                reopenApplication(appName,fileName);
+                emit reopenApplication(appName,fileName);
             }
 
         }
@@ -599,7 +599,7 @@ void EntitiesTreeWidget::onReopen()
                     onRemove();
                 }
 
-                reopenResource(resName,fileName);
+                emit reopenResource(resName,fileName);
             }
         }
     } else if (it->parent() == modulesNode) {
@@ -614,7 +614,7 @@ void EntitiesTreeWidget::onReopen()
                     onRemove();
                 }
 
-                reopenModule(modName,fileName);
+                emit reopenModule(modName,fileName);
             }
         }
     }
@@ -644,7 +644,7 @@ void EntitiesTreeWidget::onRemove()
                 if (app) {
                     QString appName = item->text(0);
                     QString xmlFile = app->getXmlFile();
-                    removeApplication(xmlFile,appName);
+                    emit removeApplication(xmlFile,appName);
                 }
 
             }
@@ -653,7 +653,7 @@ void EntitiesTreeWidget::onRemove()
                 yarp::manager::Computer *res = (yarp::manager::Computer*)item->data(0,Qt::UserRole + 1).toLongLong();
                 if (res) {
                     QString resName = item->text(0);
-                    removeResource(resName);
+                    emit removeResource(resName);
                 }
             }
         } else if (item->parent() == modulesNode) {
@@ -661,7 +661,7 @@ void EntitiesTreeWidget::onRemove()
                 yarp::manager::Module *mod = (yarp::manager::Module*)item->data(0,Qt::UserRole + 1).toLongLong();
                 if (mod) {
                     QString modName = item->text(0);
-                    removeModule(modName);
+                    emit removeModule(modName);
                 }
             }
         }

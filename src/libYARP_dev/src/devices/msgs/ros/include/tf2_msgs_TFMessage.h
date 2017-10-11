@@ -21,7 +21,9 @@ class tf2_msgs_TFMessage : public yarp::os::idl::WirePortable {
 public:
   std::vector<geometry_msgs_TransformStamped> transforms;
 
-  tf2_msgs_TFMessage() {
+  tf2_msgs_TFMessage() :
+    transforms()
+  {
   }
 
   void clear() {

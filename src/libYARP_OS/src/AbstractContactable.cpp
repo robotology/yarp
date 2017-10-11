@@ -80,17 +80,17 @@ int yarp::os::AbstractContactable::getOutputCount()
 
 void yarp::os::AbstractContactable::getReport(PortReport& reporter)
 {
-    return asPort().getReport(reporter);
+    asPort().getReport(reporter);
 }
 
 void yarp::os::AbstractContactable::setReporter(PortReport& reporter)
 {
-    return asPort().setReporter(reporter);
+    asPort().setReporter(reporter);
 }
 
 void yarp::os::AbstractContactable::resetReporter()
 {
-    return asPort().resetReporter();
+    asPort().resetReporter();
 }
 
 bool yarp::os::AbstractContactable::isWriting()
@@ -174,7 +174,7 @@ bool yarp::os::AbstractContactable::replyAndDrop(PortWriter& writer)
 
 void yarp::os::AbstractContactable::includeNodeInName(bool flag)
 {
-    return asPort().includeNodeInName(flag);
+    asPort().includeNodeInName(flag);
 }
 
 bool yarp::os::AbstractContactable::setCallbackLock(yarp::os::Mutex *mutex)
@@ -199,5 +199,5 @@ bool yarp::os::AbstractContactable::tryLockCallback()
 
 void yarp::os::AbstractContactable::unlockCallback()
 {
-    return asPort().unlockCallback();
+    asPort().unlockCallback();
 }

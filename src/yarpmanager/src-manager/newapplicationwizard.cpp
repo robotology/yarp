@@ -217,7 +217,7 @@ void NewApplicationWizard::onBrowse( )
     if(!dir.isEmpty()){
         folderCombo->addItem(dir);
         folderCombo->setCurrentText(dir);
-        folderCombo->activated(folderCombo->count());
+        emit folderCombo->activated(folderCombo->count());
     }
 
 }

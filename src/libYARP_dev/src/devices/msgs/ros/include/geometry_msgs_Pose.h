@@ -22,7 +22,10 @@ public:
   geometry_msgs_Point position;
   geometry_msgs_Quaternion orientation;
 
-  geometry_msgs_Pose() {
+  geometry_msgs_Pose() :
+    position(),
+    orientation()
+  {
   }
 
   void clear() {

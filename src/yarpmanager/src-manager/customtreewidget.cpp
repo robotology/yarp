@@ -35,7 +35,7 @@ void CustomTreeWidget::mousePressEvent(QMouseEvent *e)
             setCurrentItem(nullptr);
         }
         if(currentItem() == nullptr){
-            itemSelectionChanged();
+            emit itemSelectionChanged();
         }
     }
     QTreeWidget::mousePressEvent(e);

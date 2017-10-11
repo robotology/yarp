@@ -159,7 +159,19 @@ public:
   yarp::os::NetUint32 binning_y;
   sensor_msgs_RegionOfInterest roi;
 
-  sensor_msgs_CameraInfo() {
+  sensor_msgs_CameraInfo() :
+    header(),
+    height(0),
+    width(0),
+    distortion_model(""),
+    D(),
+    K(),
+    R(),
+    P(),
+    binning_x(0),
+    binning_y(0),
+    roi()
+  {
     K.resize(9,0.0);
     R.resize(9,0.0);
     P.resize(12,0.0);

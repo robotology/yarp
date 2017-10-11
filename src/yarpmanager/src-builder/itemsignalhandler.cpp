@@ -16,27 +16,27 @@ ItemSignalHandler::ItemSignalHandler(QGraphicsItem *it,ItemType type,QObject *pa
 
 void ItemSignalHandler::newConnectionRequested(QPointF p, QGraphicsItem *it)
 {
-    requestNewConnection(p,it);
+    emit requestNewConnection(p,it);
 }
 
 void ItemSignalHandler::newConnectionAdded(QPointF p, QGraphicsItem *it)
 {
-    addNewConnection(p,it);
+    emit addNewConnection(p,it);
 }
 
 void ItemSignalHandler::onConnectionSelected(QGraphicsItem *it)
 {
-    connectctionSelected(it);
+    emit connectctionSelected(it);
 }
 
 void ItemSignalHandler::onModuleSelected(QGraphicsItem *it)
 {
-    moduleSelected(it);
+    emit moduleSelected(it);
 }
 
 void ItemSignalHandler::onApplicationSelected(QGraphicsItem *it)
 {
-    applicationSelected(it);
+    emit applicationSelected(it);
 }
 
 

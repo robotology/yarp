@@ -40,7 +40,13 @@ public:
   yarp::os::NetUint32 width;
   bool do_rectify;
 
-  sensor_msgs_RegionOfInterest() {
+  sensor_msgs_RegionOfInterest() :
+    x_offset(0),
+    y_offset(0),
+    height(0),
+    width(0),
+    do_rectify(false)
+  {
   }
 
   void clear() {

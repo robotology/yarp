@@ -165,7 +165,7 @@ void SourcePortItem::editingFinished()
     geo.setWidth(textWidth);
     lineEditWidget->setGeometry(geo);
     lineEditWidget->setPos(-textWidth/2,-lineEditWidget->geometry().height()/2);
-    signalHandler()->modified();
+    emit signalHandler()->modified();
 
     update();
     updateConnections();
@@ -211,7 +211,7 @@ QPointF SourcePortItem::connectionPoint()
 void SourcePortItem::mouseReleaseEvent(QGraphicsSceneMouseEvent *event)
 {
     if(moved && !nestedInApp){
-        sigHandler->modified();
+        emit sigHandler->modified();
         foreach (Arrow *arrow, arrows) {
             arrow->updateModel();
         }

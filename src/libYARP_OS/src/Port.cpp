@@ -699,5 +699,5 @@ bool Port::tryLockCallback()
 
 void Port::unlockCallback()
 {
-    return IMPL().unlockCallback();
+    IMPL().unlockCallback();
 }

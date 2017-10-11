@@ -21,12 +21,12 @@ using namespace yarp::eigen;
 
 void yarp::math::SVD(const Matrix &in, Matrix &U, Vector &S, Matrix &V)
 {
-    return SVDJacobi(in,U,S,V);
+    SVDJacobi(in,U,S,V);
 }
 
 void yarp::math::SVDMod(const Matrix &in, Matrix &U, Vector &S, Matrix &V)
 {
-    return SVDJacobi(in,U,S,V);
+    SVDJacobi(in,U,S,V);
 }
 
 void yarp::math::SVDJacobi(const Matrix &in, Matrix &U, Vector &S, Matrix &V)
@@ -41,8 +41,6 @@ void yarp::math::SVDJacobi(const Matrix &in, Matrix &U, Vector &S, Matrix &V)
 
     V.resize(svd.matrixV().rows(),svd.matrixV().cols());
     toEigen(V) = svd.matrixV();
-
-    return;
 }
 
 Matrix yarp::math::pinv(const Matrix &in, double tol)

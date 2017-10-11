@@ -121,15 +121,15 @@ bool QtYARPScope::parseParameters(QStringList params)
     int interval;
     // title
     if (rf.find("title").isString()) {
-        setWindowTitle(QString("%1").arg(rf.find("title").asString().data()));
+        emit setWindowTitle(QString("%1").arg(rf.find("title").asString().data()));
     }
     // position
     if (rf.find("x").isInt() && rf.find("y").isInt()) {
-        setWindowPosition(rf.find("x").asInt(), rf.find("y").asInt());
+        emit setWindowPosition(rf.find("x").asInt(), rf.find("y").asInt());
     }
     // size
     if (rf.find("dx").isInt() && rf.find("dy").isInt()) {
-        setWindowSize(rf.find("dx").asInt(), rf.find("dy").asInt());
+        emit setWindowSize(rf.find("dx").asInt(), rf.find("dy").asInt());
     }
     // interval
     if (rf.find("interval").isInt()) {
@@ -156,7 +156,7 @@ bool QtYARPScope::parseParameters(QStringList params)
         }
     }
     plotManager->setInterval(interval);
-    intervalLoaded(interval);
+    emit intervalLoaded(interval);
 
 
     updateCustomPlotSize();

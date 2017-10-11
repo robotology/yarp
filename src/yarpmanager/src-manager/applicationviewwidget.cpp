@@ -1665,13 +1665,13 @@ void ApplicationViewWidget::reportErrors()
         while((err=logger->getLastError()))
         {
             QString msg = QString("(%1) %2").arg(app->getName()).arg(err);
-            logError(msg);
+            emit logError(msg);
         }
 
         while((err=logger->getLastWarning()))
         {
             QString msg = QString("(%1) %2").arg(app->getName()).arg(err);
-            logWarning(msg);
+            emit logWarning(msg);
         }
     }
 }
@@ -2075,7 +2075,7 @@ void ApplicationViewWidget::onSelfStop(int which)
 */
 void ApplicationViewWidget::onModStart(int which)
 {
-    selfStart(which);
+    emit selfStart(which);
 }
 
 /*! \brief Called when a modlue has been stopped
@@ -2083,7 +2083,7 @@ void ApplicationViewWidget::onModStart(int which)
 */
 void ApplicationViewWidget::onModStop(int which)
 {
-    selfStop(which);
+    emit selfStop(which);
 }
 /*! \brief Called when a modlue has writes on stdout
     \param which
@@ -2128,8 +2128,7 @@ void ApplicationViewWidget::modStdOutNestedApplication(QTreeWidgetItem *it, int 
 */
 void ApplicationViewWidget::onConConnect(int which)
 {
-   selfConnect(which);
-
+   emit selfConnect(which);
 }
 
 /*! \brief Called when a disconnection has been performed
@@ -2137,7 +2136,7 @@ void ApplicationViewWidget::onConConnect(int which)
 */
 void ApplicationViewWidget::onConDisconnect(int which)
 {
-    selfDisconnect(which);
+    emit selfDisconnect(which);
 }
 
 /*! \brief Called when a resource became avaible
@@ -2145,8 +2144,7 @@ void ApplicationViewWidget::onConDisconnect(int which)
 */
 void ApplicationViewWidget::onResAvailable(int which)
 {
-
-    selfResAvailable(which);
+    emit selfResAvailable(which);
 }
 
 /*! \brief Called when a resource become unavaible
@@ -2154,7 +2152,7 @@ void ApplicationViewWidget::onResAvailable(int which)
 */
 void ApplicationViewWidget::onResUnAvailable(int which)
 {
-    selfResUnavailable(which);
+    emit selfResUnavailable(which);
 }
 
 /*! \brief Called when a connection become avaible
@@ -2215,7 +2213,7 @@ void ApplicationViewWidget::onError()
 */
 void ApplicationViewWidget::onLoadBalance()
 {
-    selfSafeLoadBolance();
+    emit selfSafeLoadBolance();
 }
 
 
