@@ -309,7 +309,7 @@ bool yarp::dev::IJoypadEventDriven::getStickDoF(unsigned int stick_id, unsigned 
         yError() << "EventDriven is enable.. you can't poll the joypad state";
         return false;
     }
-    return getStickDoF(stick_id, DoF);
+    return getRawStickDoF(stick_id, DoF);
 }
 
 bool yarp::dev::IJoypadEventDriven::getButton(unsigned int button_id, float& value)
