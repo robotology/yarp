@@ -14,7 +14,6 @@
 #include <yarp/os/impl/StreamConnectionReader.h>
 
 #include <yarp/os/impl/UnitTest.h>
-//#include "TestList.h"
 
 using namespace yarp::os::impl;
 using namespace yarp::os;
@@ -53,6 +52,42 @@ public:
 
             checkEqual(stampRead.getCount(),55,"sequence number read");
             checkTrue(fabs(stampRead.getTime()-1)<0.0001,"time stamp read");
+
+            // Test extreme numbers as timestamp
+            double exp = -DBL_DIG;
+            double smallest = pow( 10.0, exp);
+
+            // Create a number like 0.123456789012345... using the maximum number of digits
+            // the platform can support.
+
+            double timeValue = smallest;
+            std::cout << timeValue << std::endl;
+            for(int i=2; i<DBL_DIG+1; i++)
+            {
+                timeValue = timeValue*10 + (i%10)*smallest;
+            }
+            stampToWrite.update(timeValue);
+
+            stampToWrite.write(con.getCleanWriter());
+            stampRead.read(con.getReader());
+
+            // Check sequence number is updated automatically
+            checkEqual(stampRead.getCount(),56, "sequence number read");
+            // Check the number is read back with error smaller than machine epsilon
+            checkTrue(fabs(stampRead.getTime() - timeValue) <= DBL_EPSILON, "time stamp read");
+
+            // Create a realistic timestamp with tenth of millisecond as granularity,
+            // like 1234567890.12345
+            timeValue = 1234567890.12345;
+            stampToWrite.update(timeValue);
+
+            stampToWrite.write(con.getCleanWriter());
+            stampRead.read(con.getReader());
+
+            // Check sequence number is updated automatically
+            checkEqual(stampRead.getCount(), 57, "sequence number read");
+            // Check the number is read back with error smaller than machine epsilon
+            checkTrue(fabs(stampRead.getTime() - timeValue) <= DBL_EPSILON, "time stamp read");
         }
     }
 
