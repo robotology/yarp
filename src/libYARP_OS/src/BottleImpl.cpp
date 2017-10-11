@@ -817,21 +817,6 @@ ConstString StoreDouble::toString() const
     } else {
         str += ".0";
     }
-
-    int ct = 0;
-    for (size_t i = str.length(); i >= 1; i--) {
-        if (str[i - 1] != '0') {
-            if (str[i - 1] == '.') {
-                ct--;
-                i++;
-            }
-            if (ct >= 1) {
-                str = str.substr(0, i);
-            }
-            break;
-        }
-        ct++;
-    }
     return str;
 }
 
