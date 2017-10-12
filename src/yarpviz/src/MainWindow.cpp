@@ -219,7 +219,7 @@ void MainWindow::drawGraph(Graph &graph)
             stringstream hexStream;
             hexStream<<std::hex<< randNum;
             string hexRandNum ="#" + hexStream.str();
-            string name =  prop.find("name").asString() + countChild;
+            string name =  std::string(prop.find("name").asString().c_str()) + std::to_string(countChild);
             if(layoutSubgraph)
             {
                 std::stringstream key;

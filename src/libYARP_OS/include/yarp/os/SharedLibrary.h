@@ -9,16 +9,23 @@
 #define YARP_OS_SHAREDLIBRARY_H
 
 #include <yarp/os/api.h>
+#include <yarp/conf/system.h>
 
 namespace yarp {
     namespace os {
         class SharedLibrary;
-        class ConstString;
         namespace impl {
             class SharedLibraryImpl;
         }
     }
 }
+
+#ifndef YARP_WRAP_STL_STRING
+# include <string>
+namespace yarp { namespace os { typedef std::string ConstString; }}
+#else
+namespace yarp { namespace os { class ConstString; }}
+#endif
 
 /**
  * Low-level wrapper for loading shared libraries (DLLs) and accessing

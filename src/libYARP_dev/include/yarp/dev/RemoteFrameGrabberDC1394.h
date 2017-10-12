@@ -10,6 +10,7 @@
 
 #include <yarp/dev/ServerFrameGrabber.h>
 #include <yarp/os/Network.h>
+#include <yarp/os/LogStream.h>
 
 namespace yarp{
     namespace dev {
@@ -47,7 +48,7 @@ public:
 
         if (remote!="")
         {
-            std::cout << "\nconnecting 1394 "  << local << " to " << remote << std::endl;
+            yInfo() << "connecting 1394 "  << local << " to " << remote;
             yarp::os::Network::connect(local,remote);
         }
 

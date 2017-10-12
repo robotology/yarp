@@ -15,7 +15,12 @@
 namespace yarp { namespace os { class Route; }}
 
 // Other forward declarations:
+#ifndef YARP_WRAP_STL_STRING
+# include <string>
+namespace yarp { namespace os { typedef std::string ConstString; }}
+#else
 namespace yarp { namespace os { class ConstString; }}
+#endif
 namespace yarp { namespace os { class Contact; }}
 
 

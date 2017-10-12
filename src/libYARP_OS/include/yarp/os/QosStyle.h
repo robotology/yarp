@@ -8,13 +8,20 @@
 #define YARP_OS_QOSSTYLE_H
 
 #include <yarp/os/api.h>
+#include <yarp/conf/system.h>
 
 namespace yarp {
     namespace os {
         class QosStyle;
-        class ConstString;
     }
 }
+
+#ifndef YARP_WRAP_STL_STRING
+# include <string>
+namespace yarp { namespace os { typedef std::string ConstString; }}
+#else
+namespace yarp { namespace os { class ConstString; }}
+#endif
 
 /**
  * \ingroup comm_class

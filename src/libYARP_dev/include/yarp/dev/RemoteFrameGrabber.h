@@ -640,7 +640,7 @@ public:
                          "carrier to use for streaming").asString();
         port.open(local);
         if (remote!="") {
-            std::cout << "\nconnecting "  << local << " to " << remote << std::endl;
+            yInfo() << "connecting "  << local << " to " << remote;
 
             if(!yarp::os::Network::connect(remote,local,carrier))
                 yError() << "cannot connect "  << local << " to " << remote;

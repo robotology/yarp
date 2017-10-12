@@ -9,6 +9,7 @@
 #include <yarp/os/LogStream.h>
 #include <cmath>
 #include <yarp/os/Time.h>
+#include <iostream>
 
 using namespace yarp::dev;
 using namespace yarp::dev::SDLJoypadImpl;
