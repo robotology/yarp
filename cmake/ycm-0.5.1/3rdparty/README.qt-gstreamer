@@ -1,0 +1,7 @@
+Some of the files in this folder and its subfolder come from the qt-gstreamer
+git repository (ref ea0d273008316e875a2f6496c0f5f3fa1fcfb6b8):
+
+  https://github.com/GStreamer/qt-gstreamer
+
+Redistribution and use is allowed according to the terms of the 3-clause
+BSD license. See accompanying file COPYING.qt-gstreamer for details.
