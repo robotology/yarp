@@ -325,8 +325,11 @@ endif()
 # yarp::os::ConstString could now be set to std::string, if YARP
 # ever decides to accept STL as a dependency.
 
-
-option(YARP_WRAP_STL_STRING "Do you want the yarp string classes to wrap std::string? (as opposed to being exactly std::string)" ON)
+set(YARP_WRAP_STL_STRING_DEFAULT OFF)
+if(MSVC)
+  set(YARP_WRAP_STL_STRING_DEFAULT ON)
+endif()
+option(YARP_WRAP_STL_STRING "Do you want the yarp string classes to wrap std::string? (as opposed to being exactly std::string)" ${YARP_WRAP_STL_STRING_DEFAULT})
 mark_as_advanced(YARP_WRAP_STL_STRING)
 set(YARP_WRAP_STL_STRING_INLINE_DEFAULT ON)
 if(MSVC)
