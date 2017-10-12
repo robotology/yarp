@@ -231,6 +231,7 @@ set(YARP_OS_SRCS src/AbstractCarrier.cpp
                  src/BottleImpl.cpp
                  src/BufferedConnectionWriter.cpp
                  src/Bytes.cpp
+                 src/Carrier.cpp
                  src/Carriers.cpp
                  src/Companion.cpp
                  src/ConnectionReader.cpp
