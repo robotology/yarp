@@ -219,8 +219,7 @@ public:
     virtual bool endDeclare() { return true; }
 
     virtual bool beginConstruct() { return true; }
-    virtual bool initField(const RosField& field) { return true; }
-    virtual bool nextInitConstruct(const RosField& field) { return true; }
+    virtual bool initField(const RosField& field, bool &isFirstToInit) { return true; }
     virtual bool endInitConstruct() { return true; }
     virtual bool constructField(const RosField& field) { return true; }
     virtual bool endConstruct() { return true; }
