@@ -11,7 +11,6 @@
 #include <yarp/os/ConnectionReader.h>
 #include <yarp/os/SizedWriter.h>
 #include <yarp/os/ManagedBytes.h>
-#include <yarp/os/impl/Logger.h>
 #include <yarp/os/NetType.h>
 #include <yarp/os/StringOutputStream.h>
 #include <yarp/os/Vocab.h>
