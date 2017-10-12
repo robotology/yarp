@@ -12,7 +12,7 @@
 #include <yarp/os/api.h>
 
 // Defined in this file:
-namespace yarp { namespace os { class ConstString; }}
+namespace yarp { namespace os { class Route; }}
 
 // Other forward declarations:
 namespace yarp { namespace os { class ConstString; }}
