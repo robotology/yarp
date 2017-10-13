@@ -31,7 +31,8 @@ RandScalar::RandScalar()
     init();
 }
 
-RandScalar::RandScalar(int seed)
+RandScalar::RandScalar(int s) :
+    seed(s)
 {
     impl = new MersenneTwister;
     implementation(impl)->init_genrand(seed);

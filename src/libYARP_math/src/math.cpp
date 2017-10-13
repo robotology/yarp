@@ -788,6 +788,7 @@ Vector yarp::math::dcm2rpy(const Matrix &R)
         else
         {
             // Not a unique solution: psi-phi=atan2(-R12,R11)
+            singularity = true;
             v[0]=0.0;
             v[1]=M_PI/2.0;
             v[2]=-atan2(-R(1,2),R(1,1));
@@ -796,6 +797,7 @@ Vector yarp::math::dcm2rpy(const Matrix &R)
     else
     {
         // Not a unique solution: psi+phi=atan2(-R12,R11)
+        singularity = true;
         v[0]=0.0;
         v[1]=-M_PI/2.0;
         v[2]=atan2(-R(1,2),R(1,1));

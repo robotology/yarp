@@ -59,8 +59,10 @@ private:
     yarp::os::ManagedBytes ros_const_header;
     const yarp::sig::FlexImage *image;
 public:
-    RosWireImage() {
-    }
+    RosWireImage() :
+        ros_seq_stamp({0,0,0}),
+        image(nullptr)
+    {}
 
     void init(const yarp::sig::FlexImage& img,
               const yarp::os::ConstString& frame) {
