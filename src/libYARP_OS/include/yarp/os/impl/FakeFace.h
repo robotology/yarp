@@ -20,7 +20,7 @@ namespace yarp {
 /**
  * A dummy Face for testing purposes.
  */
-class yarp::os::impl::FakeFace : public yarp::os::Face
+class YARP_OS_impl_API yarp::os::impl::FakeFace : public yarp::os::Face
 {
 public:
     virtual bool open(const Contact& address) override;

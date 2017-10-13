@@ -20,6 +20,7 @@
 #include <yarp/os/Thread.h>
 #include <yarp/os/Vocab.h>
 #include <yarp/os/YarpPlugin.h>
+#include <yarp/os/Face.h>
 
 #include <yarp/os/impl/BottleImpl.h>
 #include <yarp/os/impl/BufferedConnectionWriter.h>
@@ -1376,6 +1377,10 @@ public:
     }
     virtual bool configureFromProperty(yarp::os::Property& options) override {
         return getContent().configureFromProperty(options);
+    }
+
+    virtual yarp::os::Face* createFace(void) override {
+        return getContent().createFace();
     }
 };
 

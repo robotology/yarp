@@ -454,6 +454,16 @@ checkandset_dependency(OpenNI2)
 find_package(Doxygen)
 checkandset_dependency(Doxygen)
 
+find_package(GLIB2 QUIET)
+checkandset_dependency(GLIB2)
+
+set(GStreamer_REQUIRED_VERSION 1.4)
+find_package(GStreamer ${GStreamer_REQUIRED_VERSION} QUIET)
+checkandset_dependency(GStreamer)
+
+set(GStreamerPluginsBase_REQUIRED_VERSION 1.4)
+find_package(GStreamerPluginsBase ${GStreamerPluginsBase_REQUIRED_VERSION} COMPONENTS app QUIET)
+checkandset_dependency(GStreamerPluginsBase)
 
 # PRINT DEPENDENCIES STATUS:
 
@@ -490,6 +500,9 @@ print_dependency(Libusb1)
 print_dependency(Stage)
 print_dependency(ZFP)
 print_dependency(OpenNI2)
+print_dependency(GLIB2)
+print_dependency(GStreamer)
+print_dependency(GStreamerPluginsBase)
 
 
 # CHECK DEPENDENCIES:
