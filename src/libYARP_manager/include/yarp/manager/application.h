@@ -364,6 +364,7 @@ public:
         strXmlFile.clear();
         Iapplications.clear();
         resources.clear();
+        appOwner=nullptr;
     }
 
     GraphicModel& getModelBase(void) { return modelBase;}

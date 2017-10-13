@@ -27,7 +27,7 @@ Executable::Executable(Broker* _broker, MEvent* _event, Module *module,
     startWrapper = new ConcurentWrapper(this, &Executable::startImplement);
     stopWrapper = new ConcurentWrapper(this, &Executable::stopImplement);
     killWrapper = new ConcurentWrapper(this, &Executable::killImplement);
-
+    theID = -1;
 
     if(bWatchDog)
         watchdogWrapper = new ConcurentRateWrapper(this, &Executable::watchdogImplement);

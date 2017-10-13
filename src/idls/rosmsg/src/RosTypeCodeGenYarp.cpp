@@ -185,13 +185,20 @@ bool RosTypeCodeGenYarp::endDeclare() {
 }
 
 bool RosTypeCodeGenYarp::beginConstruct() {
-    fprintf(out,"  %s() :\n", className.c_str());
+    fprintf(out,"  %s()", className.c_str());
     return true;
 }
 
-bool RosTypeCodeGenYarp::initField(const RosField& field) {
+bool RosTypeCodeGenYarp::initField(const RosField& field, bool &isFirstToInit) {
 
     if (!field.isConst()) {
+        if (isFirstToInit) {
+            fprintf(out, " :\n");
+            isFirstToInit = false;
+        } else {
+            fprintf(out, ",\n");
+        }
+
         if (field.isArray || !field.isPrimitive) {
             fprintf(out, "    %s()", field.rosName.c_str());
         } else {
@@ -202,12 +209,6 @@ bool RosTypeCodeGenYarp::initField(const RosField& field) {
     return true;
 }
 
-bool RosTypeCodeGenYarp::nextInitConstruct(const RosField& field) {
-    if (!field.isConst()) {
-        fprintf(out,",\n");
-    }
-    return true;
-}
 
 bool RosTypeCodeGenYarp::endInitConstruct() {
    fprintf(out,"\n  {\n");

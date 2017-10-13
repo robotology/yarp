@@ -94,7 +94,6 @@ private:
     bool bInitialized;
     int  pipe_to_stdout[2];
     FILE* fd_stdout;
-    bool bShowConsole;
     WindowMode windowMode;
 
     bool timeout(double base, double timeout);

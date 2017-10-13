@@ -44,6 +44,7 @@ Manager::Manager(bool withWatchDog) : MEvent()
     logger  = ErrorLogger::Instance();
     bWithWatchDog = withWatchDog;
     bAutoDependancy = false;
+    bAutoConnect = false;
     bRestricted = false;
     strDefBroker = BROKER_YARPRUN;
     knowledge.createFrom(nullptr, nullptr, nullptr);
@@ -56,6 +57,7 @@ Manager::Manager(const char* szModPath, const char* szAppPath,
     logger  = ErrorLogger::Instance();
     bWithWatchDog = withWatchDog;
     bAutoDependancy = false;
+    bAutoConnect = false;
     bRestricted = false;
     strDefBroker = BROKER_YARPRUN;
 
@@ -488,7 +490,7 @@ bool Manager::updateResources()
     for(unsigned int i=0; i<allresources.size(); i++)
     {
         Computer* comp = dynamic_cast<Computer*>(allresources[i]);
-        if(updateResource(comp))
+        if(comp && updateResource(comp))
         {
             //set all as unavailable
             for(int i=0; i<comp->peripheralCount(); i++)

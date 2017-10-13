@@ -838,8 +838,12 @@ bool LocalBroker::startStdout()
     }
 
     int oflags = fcntl(pipe_to_stdout[READ_FROM_PIPE], F_GETFL);
-    fcntl(pipe_to_stdout[READ_FROM_PIPE], F_SETFL, oflags|O_NONBLOCK);
-
+    if(fcntl(pipe_to_stdout[READ_FROM_PIPE], F_SETFL, oflags|O_NONBLOCK) == -1)
+    {
+        strError = "cannot set flag on pipe: " + string(strerror(errno));
+        //close(pipe_to_stdout[READ_FROM_PIPE]);
+        return false;
+    }
     Thread::start();
     return true;
 }
@@ -885,8 +889,14 @@ int LocalBroker::ExecuteCmd()
         //int saved_stderr = dup(STDERR_FILENO);
         dup2(pipe_to_stdout[WRITE_TO_PIPE], STDOUT_FILENO);
         dup2(pipe_to_stdout[WRITE_TO_PIPE], STDERR_FILENO);
-        fcntl(STDOUT_FILENO, F_SETFL, fcntl(STDOUT_FILENO, F_GETFL) | O_NONBLOCK);
-        fcntl(STDERR_FILENO, F_SETFL, fcntl(STDERR_FILENO, F_GETFL) | O_NONBLOCK);
+        if (fcntl(STDOUT_FILENO, F_SETFL, fcntl(STDOUT_FILENO, F_GETFL) | O_NONBLOCK) == -1) {
+            strError = string("Can't set flag on stdout: ") + string(strerror(errno));
+            return 0;
+        }
+        if (fcntl(STDERR_FILENO, F_SETFL, fcntl(STDERR_FILENO, F_GETFL) | O_NONBLOCK) == -1) {
+            strError = string("Can't set flag on stderr: ") + string(strerror(errno));
+            return 0;
+        }
 
         close(pipe_to_stdout[WRITE_TO_PIPE]);
         close(pipe_to_stdout[READ_FROM_PIPE]);

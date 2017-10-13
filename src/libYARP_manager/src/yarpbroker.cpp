@@ -717,7 +717,8 @@ bool YarpBroker::rmconnect(const char* from, const char* to)
 bool YarpBroker::setQos(const char* from, const char *to,
                         const char *qosFrom, const char *qosTo) {
     strError.clear();
-    if(!strlen(qosFrom) && !strlen(qosTo))
+
+    if(qosFrom && qosTo && !strlen(qosFrom) && !strlen(qosTo))
         return true;
 
     QosStyle styleFrom;
