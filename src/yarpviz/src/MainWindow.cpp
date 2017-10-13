@@ -22,8 +22,7 @@
 #include <yarp/os/Random.h>
 #include <yarp/os/Time.h>
 #include <yarp/os/LogStream.h>
-#include "NetworkProfiler.h"
-#include "ggraph.h"
+#include <yarp/profiler/NetworkProfiler.h>
 
 #include "informationdialog.h"
 #include "qosconfigdialog.h"
@@ -33,7 +32,8 @@
 
 using namespace std;
 using namespace yarp::os;
-using namespace yarp::graph;
+using namespace yarp::profiler;
+using namespace yarp::profiler::graph;
 
 
 MainWindow::MainWindow(QWidget *parent) :
@@ -163,7 +163,7 @@ void MainWindow::drawGraph(Graph &graph)
     const pvertex_set& vertices = graph.vertices();
     int countChild =0;
     for(itr = vertices.begin(); itr!=vertices.end(); itr++) {
-        dynamic_cast<YarpvizVertex*>(*itr)->setGraphicItem(nullptr);
+        dynamic_cast<GraphicVertex*>(*itr)->setGraphicItem(nullptr);
         const Property& prop = (*itr)->property;
         QGVSubGraph *sgraph;
         if(dynamic_cast<MachineVertex*>(*itr))
@@ -176,7 +176,7 @@ void MainWindow::drawGraph(Graph &graph)
                 {
                     sgraph = scene->addSubGraph(prop.toString().c_str());
                     sceneSubGraphMap[key.str()] = sgraph;
-                    dynamic_cast<YarpvizVertex*>(*itr)->setGraphicItem(sgraph);
+                    dynamic_cast<GraphicVertex*>(*itr)->setGraphicItem(sgraph);
                     sgraph->setVertex(*itr);
                     //sgraph->setAttribute("label", prop.find("name").asString().c_str());
                     sgraph->setAttribute("color", "#FFFFFF");
@@ -210,7 +210,7 @@ void MainWindow::drawGraph(Graph &graph)
     // adding all process subgraphs
 
     for(itr = vertices.begin(); itr!=vertices.end(); itr++) {
-        dynamic_cast<YarpvizVertex*>(*itr)->setGraphicItem(nullptr);
+        dynamic_cast<GraphicVertex*>(*itr)->setGraphicItem(nullptr);
         const Property& prop = (*itr)->property;
         QGVSubGraph *sgraph;
         if(dynamic_cast<ProcessVertex*>(*itr) && !prop.find("hidden").asBool())
@@ -251,7 +251,7 @@ void MainWindow::drawGraph(Graph &graph)
             }
             sgraph->setAttribute("colorOfTheProcess", hexRandNum.c_str());
             //nodeSet[*itr] = node;
-            dynamic_cast<YarpvizVertex*>(*itr)->setGraphicItem(sgraph);
+            dynamic_cast<GraphicVertex*>(*itr)->setGraphicItem(sgraph);
             sgraph->setVertex(*itr);
             std::stringstream keyProcess;
             keyProcess<<prop.find("hostname").asString()<<prop.find("pid").asInt();
@@ -330,7 +330,7 @@ void MainWindow::drawGraph(Graph &graph)
                 node->setAttribute("color", "#edad56");
             }
             //nodeSet[*itr] = node;
-            dynamic_cast<YarpvizVertex*>(*itr)->setGraphicItem(node);
+            dynamic_cast<GraphicVertex*>(*itr)->setGraphicItem(node);
             node->setVertex(*itr);
             portCounts++;
         }
@@ -364,8 +364,8 @@ void MainWindow::drawGraph(Graph &graph)
                     string lable="";
                     if(!ui->actionHideConnectionsLable->isChecked())
                         lable = edge.property.find("carrier").asString();
-                    QGVEdge* gve = scene->addEdge((QGVNode*)((YarpvizVertex*)&v1)->getGraphicItem(),
-                                                  (QGVNode*)((YarpvizVertex*)&v2)->getGraphicItem(),
+                    QGVEdge* gve = scene->addEdge((QGVNode*)((GraphicVertex*)&v1)->getGraphicItem(),
+                                                  (QGVNode*)((GraphicVertex*)&v2)->getGraphicItem(),
                                                    lable.c_str());
                     QosStyle::PacketPriorityLevel level=
                             (QosStyle::PacketPriorityLevel)edge.property.find("FromPacketPriority").asInt();
@@ -434,7 +434,7 @@ void MainWindow::edgeContextMenu(QGVEdge* edge) {
 
 void MainWindow::nodeContextMenu(QGVNode *node)
 {
-    YarpvizVertex* v = (YarpvizVertex*) node->getVertex();
+    GraphicVertex* v = (GraphicVertex*) node->getVertex();
     yAssert(v != nullptr);
     if(v->property.find("type").asString() == "port")
         onNodeContextMenuPort(node, v);
@@ -443,8 +443,8 @@ void MainWindow::nodeContextMenu(QGVNode *node)
 }
 
 void MainWindow::onSubGraphContextMenuProcess(QGVSubGraph *sgraph) {
-    YarpvizVertex* vertex;
-    vertex = (YarpvizVertex*) sgraph->getVertex();
+    GraphicVertex* vertex;
+    vertex = (GraphicVertex*) sgraph->getVertex();
 
     if(!vertex || vertex->property.find("type").asString() != "process")
         return;
@@ -475,7 +475,7 @@ void MainWindow::onAbout() {
                        "A graphical tool for a graphical tool for profiling and visualizing Yarp network!\n\nAuthors:\n\t-Ali Paikan <ali.paikan@iit.it>\n\t-Nicolò Genesio <nicolo.genesio@iit.it>");
 }
 
-void MainWindow::onNodeContextMenuPort(QGVNode *node, YarpvizVertex* vertex) {
+void MainWindow::onNodeContextMenuPort(QGVNode *node, GraphicVertex* vertex) {
     //Context menu exemple
     QMenu menu(node->label());
     menu.addSeparator();
@@ -751,7 +751,7 @@ void MainWindow::onNodesTreeItemClicked(QTreeWidgetItem *item, int column){
     QList<QGraphicsItem *> items = scene->selectedItems();
     foreach( QGraphicsItem *item, items )
         item->setSelected(false);
-    YarpvizVertex* yv = (YarpvizVertex*)((NodeWidgetItem*)(item))->getVertex();
+    GraphicVertex* yv = (GraphicVertex*)((NodeWidgetItem*)(item))->getVertex();
     QGraphicsItem* graphicItem = (QGraphicsItem*) yv->getGraphicItem();
     if(graphicItem) {
         graphicItem->setSelected(true);

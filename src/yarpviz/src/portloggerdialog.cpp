@@ -7,14 +7,15 @@
 #include <yarp/os/Time.h>
 #include "portloggerdialog.h"
 #include "ui_portloggerdialog.h"
-#include "NetworkProfiler.h"
+#include <yarp/profiler/NetworkProfiler.h>
 #include <QMessageBox>
 
 using namespace std;
 using namespace yarp::os;
-using namespace yarp::graph;
+using namespace yarp::profiler;
+using namespace yarp::profiler::graph;
 
-PortLoggerDialog::PortLoggerDialog(yarp::graph::Graph *graph, QWidget *parent) :
+PortLoggerDialog::PortLoggerDialog(Graph *graph, QWidget *parent) :
     QDialog(parent),
     ui(new Ui::PortLoggerDialog), isStarted(false), timer(nullptr)
 {

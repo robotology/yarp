@@ -2,7 +2,7 @@
 #define PORTLOGGERDIALOG_H
 
 #include <QDialog>
-#include <ggraph.h>
+#include <yarp/profiler/NetworkProfiler.h>
 #include <QTimer>
 #include <QTime>
 
@@ -15,7 +15,7 @@ class PortLoggerDialog : public QDialog
     Q_OBJECT
 
 public:
-    explicit PortLoggerDialog(yarp::graph::Graph *graph, QWidget *parent = 0);
+    explicit PortLoggerDialog(yarp::profiler::graph::Graph *graph, QWidget *parent = 0);
     ~PortLoggerDialog();
 
 private slots:
@@ -31,7 +31,7 @@ private:
 private:
     Ui::PortLoggerDialog *ui;
     bool isStarted;
-    yarp::graph::Graph *graph;
+    yarp::profiler::graph::Graph *graph;
     QTimer *timer;
     QTime logTime;
 };

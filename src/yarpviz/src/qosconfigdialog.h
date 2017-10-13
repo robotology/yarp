@@ -2,8 +2,8 @@
 #define QOSCONFIGDIALOG_H
 
 #include <QDialog>
-#include <NetworkProfiler.h>
-#include <ggraph.h>
+#include <yarp/profiler/NetworkProfiler.h>
+#include <yarp/profiler/Graph.h>
 #include <qcombobox.h>
 #include <qlineedit.h>
 
@@ -16,7 +16,7 @@ class QosConfigDialog : public QDialog
     Q_OBJECT
 
 public:
-    explicit QosConfigDialog(yarp::graph::Edge *edge, QWidget *parent = 0);    
+    explicit QosConfigDialog(yarp::profiler::graph::Edge *edge, QWidget *parent = 0);
     ~QosConfigDialog();
     bool getUserQosStyles(yarp::os::QosStyle& srcStyle, yarp::os::QosStyle& dstStyle);
 
@@ -28,7 +28,7 @@ private:
     void createGui();
 
 private:
-    yarp::graph::Edge *edge;
+    yarp::profiler::graph::Edge *edge;
     Ui::QosConfigDialog *ui;
     QComboBox* srcPacketProCombo;
     QLineEdit* srcThreadPro;

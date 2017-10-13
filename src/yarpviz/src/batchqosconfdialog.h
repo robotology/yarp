@@ -2,7 +2,7 @@
 #define BATCHQOSCONFDIALOG_H
 
 #include <QDialog>
-#include "NetworkProfiler.h"
+#include <yarp/profiler/NetworkProfiler.h>
 
 namespace Ui {
 class BatchQosConfDialog;
@@ -23,7 +23,7 @@ private slots:
 
 private:
     Ui::BatchQosConfDialog *ui;
-    yarp::graph::Graph* graph;
+    yarp::profiler::graph::Graph* graph;
 };
 
 #endif // BATCHQOSCONFDIALOG_H

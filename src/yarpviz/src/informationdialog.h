@@ -2,8 +2,8 @@
 #define INFORMATIONDIALOG_H
 
 #include <QDialog>
-#include <NetworkProfiler.h>
-#include <ggraph.h>
+#include <yarp/profiler/NetworkProfiler.h>
+#include <yarp/profiler/Graph.h>
 
 namespace Ui {
 class InformationDialog;
@@ -18,9 +18,9 @@ public:
     ~InformationDialog();
     Ui::InformationDialog* getUi();
 
-    void setProcessVertexInfo(ProcessVertex* vertex);
-    void setPortVertexInfo(PortVertex* vertex);
-    void setEdgeInfo(yarp::graph::Edge *edge);
+    void setProcessVertexInfo(yarp::profiler::graph::ProcessVertex* vertex);
+    void setPortVertexInfo(yarp::profiler::graph::PortVertex* vertex);
+    void setEdgeInfo(yarp::profiler::graph::Edge *edge);
 
 private:
     Ui::InformationDialog *ui;

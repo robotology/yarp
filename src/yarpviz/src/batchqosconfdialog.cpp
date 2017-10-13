@@ -12,6 +12,7 @@
 
 using namespace std;
 using namespace yarp::os;
+using namespace yarp::profiler;
 
 BatchQosConfDialog::BatchQosConfDialog(QWidget *parent) :
     QDialog(parent),

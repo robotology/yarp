@@ -1,21 +1,17 @@
 set(CMAKE_INCLUDE_CURRENT_DIR ON)
 
-include_directories(SYSTEM ${QGVCore_INCLUDE_DIRS})
+include_directories(SYSTEM ${QGVCore_INCLUDE_DIRS} ${YARP_profiler_INCLUDE_DIRS})
 
-set(yarpviz_qt_SRCS ggraph.cpp
-                    main.cpp
+set(yarpviz_qt_SRCS main.cpp
                     MainWindow.cpp
                     QGraphicsViewEc.cpp
-                    NetworkProfiler.cpp
                     informationdialog.cpp
                     qosconfigdialog.cpp
                     portloggerdialog.cpp
                     batchqosconfdialog.cpp)
 
-set(yarpviz_qt_HDRS ggraph.h
-                    MainWindow.h
+set(yarpviz_qt_HDRS MainWindow.h
                     QGraphicsViewEc.h
-                    NetworkProfiler.h
                     informationdialog.h
                     qosconfigdialog.h
                     portloggerdialog.h
@@ -51,6 +47,7 @@ add_executable(yarpviz WIN32 ${yarpviz_qt_SRCS}
 
 target_link_libraries(yarpviz YARP::YARP_OS
                               YARP::YARP_init
+                              YARP::YARP_profiler
                               ${QGVCore_LIBRARIES}
                               Qt5::Widgets
                               Qt5::Gui)
