@@ -6,6 +6,7 @@
 
 
 #include <yarp/os/impl/BottleImpl.h>
+#include <yarp/conf/numeric.h>
 
 #include <yarp/os/ConstString.h>
 #include <yarp/os/NetFloat64.h>
@@ -42,6 +43,22 @@ using yarp::os::Searchable;
 using yarp::os::Value;
 
 #define YARP_STRINIT(len) ((size_t)(len)), 0
+
+/*
+ * The maximum string length for a 'double' printed as a string using ("%.*g", DBL_DIG) will be:
+ *  Initial +/- sign                        1 char
+ *  First digit for exponential notation    1 char
+ * '.' decimal separator char               1 char
+ *  DBL_DIG digits for the mantissa         DBL_DIG chars
+ * 'e+/-'                                   2 chars
+ * YARP_DBL_EXP_DIG  for the exponential    YARP_DBL_EXP_DIG chars
+ * string terminator                        1 char
+ * FILLER                                   10 chars  (you know, for safety)
+ * -----------------------------------------------------
+ * TOTAL is                                 16 + DBL_DIG + YARP_DBL_EXP_DIG
+ */
+#define YARP_DOUBLE_TO_STRING_MAX_LENGTH    16 + DBL_DIG + YARP_DBL_EXP_DIG
+
 
 //#define YMSG(x) printf x;
 //#define YTRACE(x) YMSG(("at %s\n", x))
@@ -805,8 +822,8 @@ bool StoreVocab::writeRaw(ConnectionWriter& writer)
 
 ConstString StoreDouble::toString() const
 {
-    char buf[512];
-    sprintf(buf, "%.*g", DBL_DIG, x);
+    char buf[YARP_DOUBLE_TO_STRING_MAX_LENGTH];    // -> see comment at the top of the file
+    snprintf(buf, YARP_DOUBLE_TO_STRING_MAX_LENGTH, "%.*g", DBL_DIG, x);
     ConstString str(buf);
 
     // YARP Bug 2526259: Locale settings influence YARP behavior
