@@ -19,7 +19,7 @@ class TextParser
     ErrorLogger*  logger;
     OSTRINGSTREAM war;
 public:
-    TextParser(){logger = logger->Instance();}
+    TextParser(){logger = ErrorLogger::Instance();}
 
     bool addVariable(const std::string& key, const std::string& value)
     {

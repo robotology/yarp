@@ -166,6 +166,7 @@ Processor::Processor(void) : GenericResource("Processor")
     cpuload.loadAverage1 = (double)0.0;
     cpuload.loadAverage5 = (double)0.0;
     cpuload.loadAverage15 = (double)0.0;
+    cpuload.loadAverageInstant = (double)0.0;
 }
 
 
@@ -174,9 +175,11 @@ Processor::Processor(const char* szName) : GenericResource("Processor")
     setName(szName);
     cores = (size_t)0;
     frequency = (double)0.0;
+    siblings = (size_t)0;
     cpuload.loadAverage1 = (double)0.0;
     cpuload.loadAverage5 = (double)0.0;
     cpuload.loadAverage15 = (double)0.0;
+    cpuload.loadAverageInstant = (double)0.0;
 }
 
 
