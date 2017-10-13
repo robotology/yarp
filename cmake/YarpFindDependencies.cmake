@@ -289,6 +289,12 @@ else()
   unset(CREATE_LIB_MANAGER CACHE)
 endif()
 
+if(CREATE_YARPVIZ OR CREATE_YARPMANAGER)
+  set(CREATE_LIB_PROFILER ON CACHE INTERNAL "Create profiler library libYARP_profiler?")
+else()
+  unset(CREATE_LIB_PROFILER CACHE)
+endif()
+
 
 message(STATUS "Detecting required libraries")
 message(STATUS "CMake modules directory: ${CMAKE_MODULE_PATH}")
