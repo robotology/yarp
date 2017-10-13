@@ -214,6 +214,7 @@ LoggerEngine::logger_thread::logger_thread (std::string _portname, int _rate,  i
 {
         logger_portName              = _portname;
         log_list_max_size            = _log_list_max_size;
+        log_list_max_size_enabled    = true;
         listen_to_LOGLEVEL_UNDEFINED = true;
         listen_to_LOGLEVEL_TRACE     = true;
         listen_to_LOGLEVEL_DEBUG     = true;
@@ -689,7 +690,6 @@ void LoggerEngine::set_listen_option               (std::string   option, bool e
 
 bool LoggerEngine::get_listen_option               (std::string   option)
 {
-    if (log_updater == NULL) return false;
     return false;
 }
 
