@@ -124,7 +124,7 @@ bool OpenCVGrabber::open(Searchable & config) {
     if (config.check("height","if present, specifies desired image height")) {
         m_h = config.check("height", Value(-1)).asInt();
         if (!fromFile && m_h>0) {
-            m_cap.set(CV_CAP_PROP_FRAME_HEIGHT, m_w);
+            m_cap.set(CV_CAP_PROP_FRAME_HEIGHT, m_h);
         }
     } else {
         m_w = (int)m_cap.get(CV_CAP_PROP_FRAME_HEIGHT);
