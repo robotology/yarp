@@ -24,7 +24,7 @@ using namespace yarp::profiler::graph;
 
 NetworkProfiler::ProgressCallback* NetworkProfiler::progCallback = nullptr;
 
-bool NetworkProfiler::yarpNameList(ports_name_set &ports) {
+bool NetworkProfiler::yarpNameList(ports_name_set &ports, bool complete) {
     ports.clear();
 
     ContactStyle style;
@@ -47,8 +47,17 @@ bool NetworkProfiler::yarpNameList(ports_name_set &ports) {
     for (int i=1; i<reply.size(); i++) {
         Bottle *entry = reply.get(i).asList();
         if(entry != nullptr) {
+            bool shouldTake = false;
             ConstString portname = entry->check("name", Value("")).asString();
-            if (portname != "" && portname != "fallback" && portname != nameserver) {
+            if(complete)
+            {
+                shouldTake = portname != "";
+            }
+            else
+            {
+                shouldTake = portname != "" && portname != "fallback" && portname != nameserver;
+            }
+            if (shouldTake) {
                 Contact c = Contact::fromConfig(*entry);
                 if(c.getCarrier() != "mcast")
                     ports.push_back(*entry);

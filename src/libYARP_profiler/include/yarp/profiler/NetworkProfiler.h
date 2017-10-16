@@ -107,7 +107,7 @@ public:
      * @param ports
      * @return
      */
-    static bool yarpNameList(ports_name_set& ports);
+    static bool yarpNameList(ports_name_set& ports, bool complete=false);
 
     /**
      * @brief creatNetworkGraph
