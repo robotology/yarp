@@ -29,11 +29,13 @@ public:
     void addComputer(yarp::manager::Computer* comp);
     void addModule(yarp::manager::Module* mod);
     void addAppTemplate(yarp::manager::AppTemplate* tmp);
+    void addPort(QString portName);
 
     void clearApplications();
     void clearModules();
     void clearResources();
     void clearTemplates();
+    void clearPorts();
 
     QTreeWidgetItem * getWidgetItemByFilename(const QString xmlFile);
 
@@ -48,6 +50,7 @@ private:
     QTreeWidgetItem *modulesNode;
     QTreeWidgetItem *resourcesNode;
     QTreeWidgetItem *templatesNode;
+    QTreeWidgetItem *portsNode;
 
     QMenu topLevelMenu;
     QMenu secondLevelMenu;
