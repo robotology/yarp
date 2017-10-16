@@ -15,7 +15,7 @@
 #include <QStringListModel>
 #include <QTreeWidgetItem>
 
-#include "NetworkProfiler.h"
+#include <yarp/profiler/NetworkProfiler.h>
 
 enum NodeItemType { UNKNOWN = 0,
                     MODULE = 1,
@@ -25,16 +25,16 @@ enum NodeItemType { UNKNOWN = 0,
 
 class NodeWidgetItem : public QTreeWidgetItem {
 public:
-    NodeWidgetItem(QTreeWidgetItem* parent, yarp::graph::Vertex* vertex, int type)
+    NodeWidgetItem(QTreeWidgetItem* parent, yarp::profiler::graph::Vertex* vertex, int type)
         : QTreeWidgetItem(parent, QStringList(vertex->property.find("name").asString().c_str()), type)
     {
-        if(dynamic_cast<ProcessVertex*>(vertex)) {
+        if(dynamic_cast<yarp::profiler::graph::ProcessVertex*>(vertex)) {
             std::stringstream lable;
             lable << vertex->property.find("name").asString().c_str()
                   << " (" << vertex->property.find("pid").asInt() << ")";
             setText(0, lable.str().c_str());
         }
-        else if(dynamic_cast<MachineVertex*> (vertex))
+        else if(dynamic_cast<yarp::profiler::graph::MachineVertex*> (vertex))
         {
             std::stringstream lable;
             lable << vertex->property.find("hostname").asString().c_str()
@@ -55,32 +55,32 @@ public:
     }
 
     bool checked() { return checkFlag; }
-    yarp::graph::Vertex* getVertex() { return vertex; }
+    yarp::profiler::graph::Vertex* getVertex() { return vertex; }
 
 public:
     bool checkFlag;
-    yarp::graph::Vertex* vertex;
+    yarp::profiler::graph::Vertex* vertex;
 };
 
 namespace Ui {
 class MainWindow;
 }
 
-class MainWindow : public QMainWindow, public NetworkProfiler::ProgressCallback
+class MainWindow : public QMainWindow, public  yarp::profiler::NetworkProfiler::ProgressCallback
 {
     Q_OBJECT
 
 public:
     explicit MainWindow(QWidget *parent = 0);
     ~MainWindow();
-    void drawGraph(yarp::graph::Graph &graph);
+    void drawGraph(yarp::profiler::graph::Graph &graph);
 
 public:
     virtual void onProgress(unsigned int percentage) override;
 
 private:
     void initScene();
-    void onNodeContextMenuPort(QGVNode *node, YarpvizVertex* vertex);
+    void onNodeContextMenuPort(QGVNode *node,  yarp::profiler::graph::GraphicVertex* vertex);
     void updateNodeWidgetItems();
     void populateTreeWidget();
 
@@ -112,9 +112,9 @@ private:
     QProgressDialog* progressDlg;
     QStringList messages;
     QStringListModel stringModel;
-    yarp::graph::Graph mainGraph;
-    yarp::graph::Graph simpleGraph;
-    yarp::graph::Graph* currentGraph;
+    yarp::profiler::graph::Graph mainGraph;
+    yarp::profiler::graph::Graph simpleGraph;
+    yarp::profiler::graph::Graph* currentGraph;
     std::string layoutStyle;
     bool layoutSubgraph;
     QTreeWidgetItem *moduleParentItem;

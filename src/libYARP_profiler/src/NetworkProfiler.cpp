@@ -5,7 +5,7 @@
  *
  */
 
-#include "NetworkProfiler.h"
+#include <yarp/profiler/NetworkProfiler.h>
 
 #include <yarp/os/Network.h>
 #include <yarp/os/LogStream.h>
@@ -17,7 +17,9 @@
 
 using namespace std;
 using namespace yarp::os;
-using namespace yarp::graph;
+using namespace yarp::profiler;
+using namespace yarp::profiler::graph;
+
 
 
 NetworkProfiler::ProgressCallback* NetworkProfiler::progCallback = nullptr;
@@ -136,7 +138,7 @@ bool NetworkProfiler::getPortDetails(const string& portName, PortDetails& info) 
 }
 
 
-bool NetworkProfiler::creatNetworkGraph(ports_detail_set details, yarp::graph::Graph& graph) {
+bool NetworkProfiler::creatNetworkGraph(ports_detail_set details, yarp::profiler::graph::Graph& graph) {
 
     // adding the ports and processor nodes
     if(NetworkProfiler::progCallback)
@@ -228,7 +230,7 @@ bool NetworkProfiler::yarpClean(float timeout) {
     return true;
 }
 
-bool NetworkProfiler::creatSimpleModuleGraph(yarp::graph::Graph& graph, yarp::graph::Graph& subgraph) {
+bool NetworkProfiler::creatSimpleModuleGraph(yarp::profiler::graph::Graph& graph, yarp::profiler::graph::Graph& subgraph) {
     subgraph.clear();
     pvertex_const_iterator itr;
     const pvertex_set& vertices = graph.vertices();
@@ -322,7 +324,7 @@ yarp::os::QosStyle::PacketPriorityLevel NetworkProfiler::packetStringToPrio(std:
     return yarp::os::QosStyle::PacketPriorityInvalid;
 }
 
-bool NetworkProfiler::updateConnectionQosStatus(yarp::graph::Graph& graph) {
+bool NetworkProfiler::updateConnectionQosStatus(yarp::profiler::graph::Graph& graph) {
     // adding all process nodes and subgraphs
     pvertex_const_iterator itr;
     const pvertex_set& vertices = graph.vertices();

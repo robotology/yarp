@@ -4,84 +4,22 @@
  * CopyPolicy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
  *
  */
-#ifndef NETWORK_PROFILER
-#define NETWORK_PROFILER
+#ifndef YARP_PROFILER_NETWORK_PROFILER_H
+#define YARP_PROFILER_NETWORK_PROFILER_H
 
 #include <string>
 #include <sstream>
 #include <iostream>
 #include <vector>
 
-#include<ggraph.h>
+#include <yarp/profiler/Graph.h>
 #include <yarp/os/Network.h>
-#include<yarp/os/LogStream.h>
-#include<yarp/os/Bottle.h>
+#include <yarp/os/LogStream.h>
+#include <yarp/os/Bottle.h>
 
 
-class YarpvizVertex : public yarp::graph::Vertex
-{
-public:
-        YarpvizVertex(const yarp::os::Property &prop) : yarp::graph::Vertex(prop){
-            graphicItem = NULL;
-        }
-        void setGraphicItem(void* item) { graphicItem= item; }
-        void* getGraphicItem() { return graphicItem; }
-
-private:
-    void* graphicItem;
-};
-
-
-class PortVertex : public YarpvizVertex
-{
-public:
-        PortVertex(const std::string name) : YarpvizVertex("(type port)") , owner(NULL) {
-            property.put("name", name);
-        }
-
-        void setOwner(yarp::graph::Vertex* owner) { PortVertex::owner = owner; }
-        yarp::graph::Vertex* getOwner() { return owner; }
-
-        virtual bool operator == (const yarp::graph::Vertex &v1) const override {
-            return property.find("name").asString() == v1.property.find("name").asString();
-        }
-private:
-    yarp::graph::Vertex* owner;
-};
-
-class ProcessVertex : public YarpvizVertex
-{
-public:
-        ProcessVertex(int pid, const std::string hostname) : YarpvizVertex("(type process)"), owner(NULL) {
-            property.put("hostname", hostname);
-            property.put("pid", pid);
-        }
-        void setOwner(yarp::graph::Vertex* owner) { ProcessVertex::owner = owner; }
-        yarp::graph::Vertex* getOwner() { return owner; }
-
-        virtual bool operator == (const yarp::graph::Vertex &v1) const override {
-            return property.find("hostname").asString() == v1.property.find("hostname").asString() &&
-                   property.find("pid").asInt() == v1.property.find("pid").asInt();
-        }
-
-private:
-        yarp::graph::Vertex* owner;
-};
-
-class MachineVertex : public YarpvizVertex
-{
-public:
-        MachineVertex(std::string os, const std::string hostname) : YarpvizVertex("(type machine)") {
-            property.put("hostname", hostname);
-            property.put("os", os);
-        }
-
-        virtual bool operator == (const yarp::graph::Vertex &v1) const override {
-            return property.find("hostname").asString() == v1.property.find("hostname").asString() &&
-                   property.find("os").asString() == v1.property.find("os").asString() &&
-                   property.find("type").asString() == v1.property.find("type").asString() ;
-        }
-};
+namespace yarp {
+    namespace profiler {
 
 class NetworkProfiler
 {
@@ -177,9 +115,9 @@ public:
      * @param graph
      * @return
      */
-    static bool creatNetworkGraph(ports_detail_set details, yarp::graph::Graph& graph);
+    static bool creatNetworkGraph(ports_detail_set details, yarp::profiler::graph::Graph& graph);
 
-    static bool creatSimpleModuleGraph(yarp::graph::Graph& graph, yarp::graph::Graph& subgraph);
+    static bool creatSimpleModuleGraph(yarp::profiler::graph::Graph& graph, yarp::profiler::graph::Graph& subgraph);
 
     /**
      * @brief NetworkProfiler::yarpClean
@@ -192,7 +130,7 @@ public:
         progCallback = callback;
     }
 
-    static bool updateConnectionQosStatus(yarp::graph::Graph& graph);
+    static bool updateConnectionQosStatus(yarp::profiler::graph::Graph& graph);
 
     static std::string packetPrioToString(yarp::os::QosStyle::PacketPriorityLevel level);
     static yarp::os::QosStyle::PacketPriorityLevel packetStringToPrio(std::string level);
@@ -207,5 +145,8 @@ private:
 
 };
 
+    }
+}
 
-#endif // NETWORK_PROFILER
+
+#endif //YARP_PROFILER_NETWORK_PROFILER_H

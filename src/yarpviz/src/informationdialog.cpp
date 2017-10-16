@@ -1,6 +1,6 @@
 #include "informationdialog.h"
 #include "ui_informationdialog.h"
-#include <NetworkProfiler.h>
+#include <yarp/profiler/NetworkProfiler.h>
 
 InformationDialog::InformationDialog(QWidget *parent) :
     QDialog(parent),
@@ -20,7 +20,7 @@ Ui::InformationDialog* InformationDialog::getUi() {
     return ui;
 }
 
-void InformationDialog::setProcessVertexInfo(ProcessVertex* vertex) {
+void InformationDialog::setProcessVertexInfo(yarp::profiler::graph::ProcessVertex* vertex) {
     QTreeWidgetItem* item;
     QStringList prop;
     prop.clear();
@@ -60,7 +60,7 @@ void InformationDialog::setProcessVertexInfo(ProcessVertex* vertex) {
 }
 
 
-void InformationDialog::setPortVertexInfo(PortVertex* vertex) {
+void InformationDialog::setPortVertexInfo(yarp::profiler::graph::PortVertex* vertex) {
      QTreeWidgetItem* item;
      QStringList prop;
      prop.clear();
@@ -74,7 +74,7 @@ void InformationDialog::setPortVertexInfo(PortVertex* vertex) {
      item = new QTreeWidgetItem( ui->treeWidgetProperty, prop);
 }
 
-void InformationDialog::setEdgeInfo(yarp::graph::Edge* edge) {
+void InformationDialog::setEdgeInfo(yarp::profiler::graph::Edge* edge) {
     QTreeWidgetItem* item;
     std::string from  = edge->first().property.find("name").asString();
     std::string to  = edge->second().property.find("name").asString();
@@ -101,7 +101,7 @@ void InformationDialog::setEdgeInfo(yarp::graph::Edge* edge) {
                 (yarp::os::QosStyle::PacketPriorityLevel)edge->property.find("FromPacketPriority").asInt();
         prop.clear();
         prop.append("Source packet priority");
-        prop.append(NetworkProfiler::packetPrioToString(level).c_str());
+        prop.append(yarp::profiler::NetworkProfiler::packetPrioToString(level).c_str());
         item = new QTreeWidgetItem( ui->treeWidgetProperty, prop);
         prop.clear();
         prop.append("Source thread priority");
@@ -117,7 +117,7 @@ void InformationDialog::setEdgeInfo(yarp::graph::Edge* edge) {
         level = (yarp::os::QosStyle::PacketPriorityLevel)edge->property.find("ToPacketPriority").asInt();
         prop.clear();
         prop.append("Destination packet priority");
-        prop.append(NetworkProfiler::packetPrioToString(level).c_str());
+        prop.append(yarp::profiler::NetworkProfiler::packetPrioToString(level).c_str());
         item = new QTreeWidgetItem( ui->treeWidgetProperty, prop);
         prop.clear();
         prop.append("Destination thread priority");

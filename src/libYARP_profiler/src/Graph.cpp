@@ -5,26 +5,24 @@
  *
  */
 
-#include<yarp/os/Log.h>
-#include<yarp/os/LogStream.h>
-#include <ggraph.h>
+#include <yarp/os/Log.h>
+#include <yarp/os/LogStream.h>
+#include <yarp/profiler/Graph.h>
 #include <algorithm>
 #include <stack>
 
 //#include <sstream>
 //#include <iostream>
-using namespace yarp::graph;
+using namespace yarp::profiler::graph;
 using namespace yarp::os;
-
-#define myDebug yDebug
 
 
 /**
- * yarp::graph::Edge
+ * yarp::profiler::graph::Edge
  */
 
-Edge::Edge(const yarp::graph::Vertex& firstV,
-           const yarp::graph::Vertex& secondV,
+Edge::Edge(const yarp::profiler::graph::Vertex& firstV,
+           const yarp::profiler::graph::Vertex& secondV,
            yarp::os::Property property)
 {
     firstVertex = &firstV;
@@ -50,7 +48,7 @@ const Vertex& Edge::second() const {
 }
 
 
-bool Edge::operator == (const yarp::graph::Edge &edge) const {
+bool Edge::operator == (const yarp::profiler::graph::Edge &edge) const {
     return (firstVertex == edge.firstVertex &&
             secondVertex == edge.secondVertex &&
             property.toString() == edge.property.toString());
@@ -58,7 +56,7 @@ bool Edge::operator == (const yarp::graph::Edge &edge) const {
 
 
 /**
- * yarp::graph::Vertex
+ * yarp::profiler::graph::Vertex
  */
 Vertex::Vertex(const yarp::os::Property &prop) : property(prop) { }
 
@@ -70,18 +68,18 @@ Vertex::Vertex(const Vertex &vertex)
 
 Vertex::~Vertex() { }
 
-void Vertex::insertOuts(const yarp::graph::Edge& edge) {
+void Vertex::insertOuts(const yarp::profiler::graph::Edge& edge) {
     if( find(outs.begin(), outs.end(), edge) != outs.end()) return;
     outs.push_back(edge);
 }
 
-void Vertex::insertIns(const yarp::graph::Edge& edge) {
+void Vertex::insertIns(const yarp::profiler::graph::Edge& edge) {
     if( find(ins.begin(), ins.end(), edge) != ins.end()) return;
     ins.push_back(edge);
 }
 
 /*
-bool Vertex::operator == (const yarp::graph::Vertex &v1) const {
+bool Vertex::operator == (const yarp::profiler::graph::Vertex &v1) const {
     return property.toString() == v1.property.toString();
 }
 */
@@ -92,7 +90,7 @@ bool Vertex::operator<(const Vertex &v1) const {
 
 
 /**
- *   yarp::graph::Graph
+ *   yarp::profiler::graph::Graph
  *
  */
 
@@ -100,7 +98,7 @@ Graph::Graph() {
 }
 
 /*
-Graph::Graph(yarp::graph::Graph& graph) {
+Graph::Graph(yarp::profiler::graph::Graph& graph) {
     mVertices == graph.mVertices;
 }
 */
@@ -182,7 +180,6 @@ size_t Graph::nodesCount() {
 
 void Graph::clear() {
     pvertex_iterator itr = mVertices.begin();
-    size_t count = 0;
     for(; itr!=mVertices.end(); itr++)
         delete *itr;
     mVertices.clear();
@@ -244,7 +241,7 @@ void strongConnect(Vertex* v,
 }
 
 
-bool Algorithm::calcSCC(yarp::graph::Graph& graph, graph_subset &scc) {
+bool Algorithm::calcSCC(yarp::profiler::graph::Graph& graph, graph_subset &scc) {
     scc.clear();
 
     // clear corresponding nodes propperties

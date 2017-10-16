@@ -30,6 +30,7 @@
 /src/libYARP_init/**                        @drdanz
 /src/libYARP_logger/**                      @randaz81
 /src/libYARP_manager/**                     @Nicogene
+/src/libYARP_profiler/**                    @Nicogene
 /src/libYARP_math/**                        @traversaro
 /src/libYARP_name/**                        @drdanz
 /src/libYARP_OS/**                          @drdanz
@@ -52,5 +53,6 @@
 /src/yarprobotinterface/**                  @drdanz
 /src/yarprun/**                             @drdanz
 /src/yarpserver/**                          @drdanz
+/src/yarpviz/**                             @Nicogene
 CMakeLists.txt                              @drdanz
 *.cmake                                     @drdanz

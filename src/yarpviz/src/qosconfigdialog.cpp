@@ -2,7 +2,7 @@
 #include "ui_qosconfigdialog.h"
 #include <qmessagebox.h>
 
-QosConfigDialog::QosConfigDialog(yarp::graph::Edge *edge, QWidget *parent) :
+QosConfigDialog::QosConfigDialog(yarp::profiler::graph::Edge *edge, QWidget *parent) :
     QDialog(parent),
     ui(new Ui::QosConfigDialog)
 {
