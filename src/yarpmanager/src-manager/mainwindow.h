@@ -107,6 +107,7 @@ private slots:
 
     void onModified(bool);
     void onFileChanged(const QString & path);
+    void onYarpClean();
 
 public slots:
     void onTabChangeItem(int);

@@ -17,6 +17,7 @@
 #include <yarp/manager/xmlapploader.h>
 #include <yarp/manager/xmltemploader.h>
 #include <yarp/manager/localbroker.h>
+#include <yarp/profiler/NetworkProfiler.h>
 
 #include "moduleviewwidget.h"
 #include "applicationviewwidget.h"
@@ -30,6 +31,7 @@
 #include <QMessageBox>
 #include <QFileDialog>
 #include <QDesktopServices>
+#include <QInputDialog>
 
 #include <QWizardPage>
 #include <QLabel>
@@ -134,6 +136,7 @@ MainWindow::MainWindow(QWidget *parent) :
     connect(ui->actionAbout,SIGNAL(triggered()),this,SLOT(onAbout()));
     connect(ui->action_Builder_Window, SIGNAL(triggered()),this, SLOT(onViewBuilderWindows()));
     connect(ui->action_Manager_Window, SIGNAL(triggered()),this, SLOT(onViewBuilderWindows()));
+    connect(ui->actionYarpClean, SIGNAL(triggered()),this, SLOT(onYarpClean()));
 
     connect(this,SIGNAL(selectItem(QString, bool)),ui->entitiesTree,SLOT(onSelectItem(QString, bool)));
 
@@ -1238,6 +1241,25 @@ void MainWindow::onFileChanged(const QString &path)
         }
     }
     return;
+}
+
+void MainWindow::onYarpClean()
+{
+    QInputDialog* inputDialog = new QInputDialog(this);
+    inputDialog->setOptions(QInputDialog::NoButtons);
+
+    bool ok=false;
+
+    float timeout =  inputDialog->getDouble(nullptr ,"Running yarp clean",
+                                          "Be aware that yarp clean with a little timetout could\n"
+                                          "unregister ports that are actually open.\n\n"
+                                           "Timeout(seconds):", 0.3, 0, 2147483647, 1, &ok);
+    if (ok)
+    {
+        onLogMessage(QString("Yarp clean: cleaning death ports..."));
+        yarp::profiler::NetworkProfiler::yarpClean(timeout);
+    }
+
 }
 
 void MainWindow::onSave()

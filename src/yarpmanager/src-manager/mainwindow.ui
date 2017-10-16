@@ -227,7 +227,7 @@
      <x>0</x>
      <y>0</y>
      <width>1200</width>
-     <height>22</height>
+     <height>19</height>
     </rect>
    </property>
    <property name="nativeMenuBar">
@@ -365,6 +365,8 @@
    <addaction name="separator"/>
    <addaction name="actionConnect"/>
    <addaction name="actionDisconnect"/>
+   <addaction name="separator"/>
+   <addaction name="actionYarpClean"/>
   </widget>
   <action name="actionNew_Application">
    <property name="icon">
@@ -650,6 +652,18 @@
    </property>
    <property name="toolTip">
     <string>Kill selected</string>
+   </property>
+  </action>
+  <action name="actionYarpClean">
+   <property name="icon">
+    <iconset resource="../res.qrc">
+     <normaloff>:/yarpClean.svg</normaloff>:/yarpClean.svg</iconset>
+   </property>
+   <property name="text">
+    <string>YarpClean</string>
+   </property>
+   <property name="toolTip">
+    <string>Run yarp clean</string>
    </property>
   </action>
  </widget>

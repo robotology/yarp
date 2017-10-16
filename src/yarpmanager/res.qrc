@@ -6,6 +6,7 @@
 				<file alias="play_all.svg">../../data/icons/512x512/action_play_all.svg</file>
 				<file alias="connect_all.svg">../../data/icons/512x512/action_connect_all.svg</file>
 				<file alias="disconnect_all.svg">../../data/icons/512x512/action_disconnect_all.svg</file>
+				<file alias="yarpClean.svg">../../data/icons/512x512/action-yarpClean.svg</file>
         <file alias="folder-new.svg">../../data/icons/512x512/folder-new.svg</file>
         <file alias="folder.svg">../../data/icons/512x512/folder-sand.svg</file>
         <file alias="folder-app.svg">../../data/icons/512x512/folder-sand.svg</file>
