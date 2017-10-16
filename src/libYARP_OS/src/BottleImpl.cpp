@@ -823,7 +823,13 @@ bool StoreVocab::writeRaw(ConnectionWriter& writer)
 ConstString StoreDouble::toString() const
 {
     char buf[YARP_DOUBLE_TO_STRING_MAX_LENGTH];    // -> see comment at the top of the file
-    snprintf(buf, YARP_DOUBLE_TO_STRING_MAX_LENGTH, "%.*g", DBL_DIG, x);
+#if defined(_MSC_VER) && (_MSC_VER <= 1800)
+    // Visual Studio 2013 does not support std::snprintf
+    _snprintf(buf, YARP_DOUBLE_TO_STRING_MAX_LENGTH - 1, "%.*g", DBL_DIG, x);
+    buf[YARP_DOUBLE_TO_STRING_MAX_LENGTH -1] = '\0';
+#else
+    std::snprintf(buf, YARP_DOUBLE_TO_STRING_MAX_LENGTH, "%.*g", DBL_DIG, x);
+#endif
     ConstString str(buf);
 
     // YARP Bug 2526259: Locale settings influence YARP behavior
