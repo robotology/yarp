@@ -78,7 +78,7 @@ extern "C" {
         if (!bn) delete cn; \
         return static_cast<void *>(bn); \
     } \
-    YARP_SHARED_CLASS_FN void factoryname ## _destroy (void *obj) { delete dynamic_cast<classname *>(static_cast<basename *>(obj)); } \
+    YARP_SHARED_CLASS_FN void factoryname ## _destroy (void *obj) { classname *cn = dynamic_cast<classname *>(static_cast<basename *>(obj)); if(cn) delete cn; } \
     YARP_SHARED_CLASS_FN int factoryname ## _getVersion (char *ver, int len) { return 0; } \
     YARP_SHARED_CLASS_FN int factoryname ## _getAbi (char *abi, int len) { return 0; } \
     YARP_SHARED_CLASS_FN int factoryname ## _getClassName (char *name, int len) { char cname[] = # classname; strncpy(name, cname, len); return strlen(cname)+1; } \
