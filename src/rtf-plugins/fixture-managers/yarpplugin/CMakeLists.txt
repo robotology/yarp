@@ -9,15 +9,15 @@ include_directories(SYSTEM ${RTF_INCLUDE_DIRS})
 
 add_definitions(-DSHLIBPP_FILTER_API)
 
-add_library(rtf_fixturemanager_yarpplugin MODULE YarpPluginFixture.h
-                                                 YarpPluginFixture.cpp)
-set_property(TARGET rtf_fixturemanager_yarpplugin PROPERTY PREFIX "")
-set_property(TARGET rtf_fixturemanager_yarpplugin PROPERTY OUTPUT_NAME yarpplugin)
+rtf_add_plugin(rtf_fixturemanager_yarpplugin OUTPUT_NAME yarpplugin
+                                             SOURCES     YarpPluginFixture.cpp
+                                             HEADERS     YarpPluginFixture.h)
 
-target_link_libraries(rtf_fixturemanager_yarpplugin RTF::RTF
-                                                    YARP::YARP_OS
-                                                    YARP::YARP_init
-                                                    YARP::YARP_dev)
+target_link_libraries(rtf_fixturemanager_yarpplugin PRIVATE RTF::RTF
+                                                            RTF::RTF_dll
+                                                            YARP::YARP_OS
+                                                            YARP::YARP_init
+                                                            YARP::YARP_dev)
 
 yarp_install(TARGETS rtf_fixturemanager_yarpplugin
              EXPORT YARP

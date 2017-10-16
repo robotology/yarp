@@ -36,7 +36,7 @@ bool YarpFixManager::setup(int argc, char** argv) {
     if(!initialized) {
         // check yarp network
         yarp.setVerbosity(-1);
-        RTF_ASSERT_ERROR_IF(yarp.checkNetwork(),
+        RTF_ASSERT_ERROR_IF_FALSE(yarp.checkNetwork(),
                             "YARP network does not seem to be available, is the yarp server accessible?");
 
         // load the config file and update the environment if available
@@ -46,7 +46,7 @@ bool YarpFixManager::setup(int argc, char** argv) {
         rf.setDefaultContext("RobotTesting");
         rf.configure(argc, argv, false);
 
-        RTF_ASSERT_ERROR_IF(rf.check("fixture"),
+        RTF_ASSERT_ERROR_IF_FALSE(rf.check("fixture"),
                             "No application xml file is set (add --fixture yourfixture.xml)");
 
         fixtureName = rf.find("fixture").asString();
@@ -57,7 +57,7 @@ bool YarpFixManager::setup(int argc, char** argv) {
             appfile = rf.findFileByName(std::string(fixtureName).c_str());
         }
 
-        RTF_ASSERT_ERROR_IF(!appfile.empty(),
+        RTF_ASSERT_ERROR_IF_FALSE(!appfile.empty(),
                             RTF::Asserter::format("yarpmanager cannot find application file %s. Is it in the 'fixtures' folder?",
                                                   fixtureName.c_str()));
 
@@ -70,12 +70,12 @@ bool YarpFixManager::setup(int argc, char** argv) {
         // load the fixture (application xml)
         char* szAppName = nullptr;
         ret = addApplication(appfile.c_str(), &szAppName, true);
-        RTF_ASSERT_ERROR_IF(ret,
+        RTF_ASSERT_ERROR_IF_FALSE(ret,
                             "yarpmanager (addApplication) cannot setup the fixture because " +
                             std::string(getLogger()->getFormatedErrorString()));
 
         ret = loadApplication(szAppName);
-        RTF_ASSERT_ERROR_IF(ret,
+        RTF_ASSERT_ERROR_IF_FALSE(ret,
                             "yarpmanager (loadApplication) cannot setup the fixture because " +
                             std::string(getLogger()->getFormatedErrorString()));
         initialized = true;
@@ -88,7 +88,7 @@ bool YarpFixManager::setup(int argc, char** argv) {
 
     //run the modules and connect
     ret = run();
-    RTF_ASSERT_ERROR_IF(ret,
+    RTF_ASSERT_ERROR_IF_FALSE(ret,
                         "yarpmanager (run) cannot setup the fixture because " +
                         std::string(getLogger()->getFormatedErrorString()));
     return true;
@@ -100,7 +100,7 @@ void YarpFixManager::tearDown() {
     if(!ret)
         ret = kill();
     const char* szerror = getLogger()->getLastError();
-    RTF_ASSERT_ERROR_IF(ret,
+    RTF_ASSERT_ERROR_IF_FALSE(ret,
                         "yarpmanager cannot teardown the fixture because " +
                         std::string((szerror) ? szerror : ""));
 }
@@ -108,7 +108,7 @@ void YarpFixManager::tearDown() {
 
 void YarpFixManager::onExecutableFailed(void* which) {
     Executable* exe = (Executable*) which;
-    RTF_ASSERT_ERROR_IF(exe!=nullptr, "Executable is null!");
+    RTF_ASSERT_ERROR_IF_FALSE(exe!=nullptr, "Executable is null!");
     TestMessage msg(Asserter::format("Fixture %s collapsed", fixtureName.c_str()),
                     Asserter::format("Module %s is failed!", exe->getCommand()),
                     RTF_SOURCEFILE(), RTF_SOURCELINE());
@@ -117,7 +117,7 @@ void YarpFixManager::onExecutableFailed(void* which) {
 
 void YarpFixManager::onCnnFailed(void* which) {
     Connection* cnn = (Connection*) which;
-    RTF_ASSERT_ERROR_IF(cnn!=nullptr, "Connection is null!");
+    RTF_ASSERT_ERROR_IF_FALSE(cnn!=nullptr, "Connection is null!");
     TestMessage msg(Asserter::format("Fixture %s collapsed", fixtureName.c_str()),
                     Asserter::format("Connection %s - %s is failed!",
                                      cnn->from(), cnn->to()),
