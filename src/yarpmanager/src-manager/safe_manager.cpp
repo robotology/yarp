@@ -98,8 +98,31 @@ void SafeManager::run()
 
     switch(local_action){
     case MRUN:{
-            for(unsigned int i=0; i<local_modIds.size(); i++)
+            double minWait=0.0;
+            for (unsigned int i=0; i<local_modIds.size(); i++)
+            {
+                Executable * exec = Manager::getExecutableById(i);
+                if (exec)
+                {
+                    if (exec->getPostExecWait() < minWait)
+                    {
+                        minWait = exec->getPostExecWait();
+                    }
+                }
+            }
+            for (unsigned int i=0; i<local_modIds.size(); i++)
+            {
+                Executable * exec = Manager::getExecutableById(i);
+                if (exec)
+                {
+                    exec->setPostExecWait(exec->getPostExecWait() - minWait);
+                }
                 Manager::run(local_modIds[i], true);
+                if (exec)
+                {
+                    exec->setPostExecWait(exec->getPostExecWait() + minWait);
+                }
+            }
 
             /*
             for(unsigned int i=0; i<local_modIds.size(); i++)
@@ -131,8 +154,31 @@ void SafeManager::run()
             break;
         }
     case MSTOP:{
-            for(unsigned int i=0; i<local_modIds.size(); i++)
+            double minWait=0.0;
+            for (unsigned int i=0; i<local_modIds.size(); i++)
+            {
+                Executable * exec = Manager::getExecutableById(i);
+                if (exec)
+                {
+                    if (exec->getPostStopWait() < minWait)
+                    {
+                        minWait = exec->getPostStopWait();
+                    }
+                }
+            }
+            for (unsigned int i=0; i<local_modIds.size(); i++)
+            {
+                Executable * exec = Manager::getExecutableById(i);
+                if (exec)
+                {
+                    exec->setPostStopWait(exec->getPostStopWait() - minWait);
+                }
                 Manager::stop(local_modIds[i], true);
+                if (exec)
+                {
+                    exec->setPostStopWait(exec->getPostStopWait() + minWait);
+                }
+            }
             /*for(unsigned int i=0; i<local_modIds.size(); i++)
                 Manager::waitingModuleStop(local_modIds[i]);
 

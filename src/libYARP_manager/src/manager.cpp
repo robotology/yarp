@@ -265,6 +265,18 @@ bool Manager::loadBalance()
     return ret;
 }
 
+Executable* Manager::getExecutableById(size_t id)
+{
+    if (id < runnables.size())
+    {
+       return runnables[id];
+    }
+    else
+    {
+        return nullptr;
+    }
+}
+
 
 bool Manager::prepare(bool silent)
 {

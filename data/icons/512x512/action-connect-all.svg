@@ -15,7 +15,7 @@
    id="svg2"
    version="1.1"
    inkscape:version="0.91 r13725"
-   sodipodi:docname="action_connect_all.svg"
+   sodipodi:docname="action-connect-all.svg"
    inkscape:export-filename="/home/alecive/Scrivania/firefoxTest1.png"
    inkscape:export-xdpi="100"
    inkscape:export-ydpi="100">
@@ -27,7 +27,7 @@
      inkscape:pageopacity="0.0"
      inkscape:pageshadow="2"
      inkscape:zoom="0.93805729"
-     inkscape:cx="561.57589"
+     inkscape:cx="360.09566"
      inkscape:cy="175.3743"
      inkscape:document-units="px"
      inkscape:current-layer="svg2"
@@ -356,6 +356,38 @@
          style="stop-color:#f0f0f0;stop-opacity:1"
          id="stop4085-9" />
     </linearGradient>
+    <filter
+       style="color-interpolation-filters:sRGB;"
+       inkscape:label="Drop Shadow"
+       id="filter4344">
+      <feFlood
+         flood-opacity="0.498039"
+         flood-color="rgb(0,0,0)"
+         result="flood"
+         id="feFlood4346" />
+      <feComposite
+         in="flood"
+         in2="SourceGraphic"
+         operator="out"
+         result="composite1"
+         id="feComposite4348" />
+      <feGaussianBlur
+         in="composite1"
+         stdDeviation="5"
+         result="blur"
+         id="feGaussianBlur4350" />
+      <feOffset
+         dx="10"
+         dy="10"
+         result="offset"
+         id="feOffset4352" />
+      <feComposite
+         in="offset"
+         in2="SourceGraphic"
+         operator="atop"
+         result="composite2"
+         id="feComposite4354" />
+    </filter>
   </defs>
   <metadata
      id="metadata7">
@@ -365,7 +397,7 @@
         <dc:format>image/svg+xml</dc:format>
         <dc:type
            rdf:resource="http://purl.org/dc/dcmitype/StillImage" />
-        <dc:title></dc:title>
+        <dc:title />
       </cc:Work>
     </rdf:RDF>
   </metadata>
@@ -470,7 +502,8 @@
   </g>
   <g
      id="g4233"
-     transform="translate(3.945016,-0.02021341)">
+     transform="translate(3.945016,-0.02021341)"
+     style="filter:url(#filter4344)">
     <path
        d="m 458.37527,109.69722 c -1.71631,-1.73175 -4.00493,-2.74656 -6.45095,-2.73168 L 360.0314,106.55396 339.20828,85.54347 c -1.69942,-1.74497 -4.13223,-2.83692 -6.56794,-2.84971 L 271.7701,82.42113 c -4.89165,-0.0737 -9.47279,4.46663 -9.44291,9.3587 l -0.33369,74.50142 c -0.0101,2.486 0.99895,4.86994 2.79077,6.5932 1.69453,1.67952 4.06511,2.71919 6.45095,2.73168 l 61.10527,0.27369 c 2.43571,0.009 4.75888,-0.94541 6.47516,-2.6738 l 21.12852,-20.94009 91.65791,0.41052 c 4.8916,0.0737 9.47274,-4.46659 9.44291,-9.3587 l 0.12105,-27.02733 c 0.0368,-2.44579 -1.0745,-4.86148 -2.79077,-6.5932 z M 239.32572,84.86108 c -1.69456,-1.67955 -4.18318,-2.60216 -6.56898,-2.61469 L 171.7695,81.85572 c -2.43574,-0.009 -4.87692,1.06239 -6.59319,2.79078 l -21.01049,20.82311 -91.775937,-0.29354 c -4.891647,-0.0737 -9.354743,4.34965 -9.324879,9.24172 l -0.121056,27.02733 c -0.07365,4.89165 4.349618,9.35471 9.241721,9.32488 l 91.774901,0.52856 20.82312,21.01049 c 1.69942,1.74497 4.13218,2.83697 6.56793,2.84972 l 60.98828,0.15565 c 4.89161,0.0737 9.35471,-4.34961 9.32487,-9.24172 l 0.33369,-74.50143 c 0.0101,-2.48596 -0.88095,-4.98689 -2.67274,-6.71019 z"
        inkscape:connector-curvature="0"

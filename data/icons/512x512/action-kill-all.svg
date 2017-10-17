@@ -13,7 +13,7 @@
    inkscape:export-ydpi="100"
    inkscape:export-xdpi="100"
    inkscape:export-filename="/home/alecive/Scrivania/firefoxTest1.png"
-   sodipodi:docname="action_kill_all.svg"
+   sodipodi:docname="action-kill-all.svg"
    inkscape:version="0.91 r13725"
    version="1.1"
    id="svg2"
@@ -28,7 +28,7 @@
      inkscape:pageopacity="0.0"
      inkscape:pageshadow="2"
      inkscape:zoom="0.86791657"
-     inkscape:cx="-131.71008"
+     inkscape:cx="-349.47295"
      inkscape:cy="249.47816"
      inkscape:document-units="px"
      inkscape:current-layer="svg2"
@@ -169,6 +169,38 @@
          style="stop-color:#ffffff;stop-opacity:0.2"
          id="stop4050-73" />
     </linearGradient>
+    <filter
+       style="color-interpolation-filters:sRGB;"
+       inkscape:label="Drop Shadow"
+       id="filter4175">
+      <feFlood
+         flood-opacity="0.498039"
+         flood-color="rgb(0,0,0)"
+         result="flood"
+         id="feFlood4177" />
+      <feComposite
+         in="flood"
+         in2="SourceGraphic"
+         operator="out"
+         result="composite1"
+         id="feComposite4179" />
+      <feGaussianBlur
+         in="composite1"
+         stdDeviation="5"
+         result="blur"
+         id="feGaussianBlur4181" />
+      <feOffset
+         dx="10"
+         dy="10"
+         result="offset"
+         id="feOffset4183" />
+      <feComposite
+         in="offset"
+         in2="SourceGraphic"
+         operator="atop"
+         result="composite2"
+         id="feComposite4185" />
+    </filter>
   </defs>
   <metadata
      id="metadata7">
@@ -178,7 +210,7 @@
         <dc:format>image/svg+xml</dc:format>
         <dc:type
            rdf:resource="http://purl.org/dc/dcmitype/StillImage" />
-        <dc:title></dc:title>
+        <dc:title />
       </cc:Work>
     </rdf:RDF>
   </metadata>
@@ -277,7 +309,8 @@
   </g>
   <g
      id="g4252"
-     transform="translate(14.519589,2.5629222)">
+     transform="translate(14.519589,2.5629222)"
+     style="filter:url(#filter4175)">
     <path
        inkscape:connector-curvature="0"
        style="fill:#ffffff;fill-opacity:1;stroke-width:0.99999994"
