@@ -7,6 +7,7 @@
 
 #include <cmath>
 #include <cfloat>
+#include <iostream>
 
 #include <yarp/os/Stamp.h>
 #include <yarp/os/all.h>
