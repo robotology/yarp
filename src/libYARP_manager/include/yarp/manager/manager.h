@@ -86,6 +86,7 @@ public:
     void setDefaultBroker(const char* szBroker) { if(szBroker) strDefBroker = szBroker; }
     const char* defaultBroker(void) { return strDefBroker.c_str(); }
     ExecutablePContainer& getExecutables(void) { return runnables; }
+    Executable* getExecutableById(size_t id);
     CnnContainer& getConnections(void) { return connections;}
     ResourcePContainer& getResources(void) { return resources; }
     const char* getApplicationName(void) { return strAppName.c_str(); }
