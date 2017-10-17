@@ -61,10 +61,21 @@ protected:
     yarp::sig::Vector m_laser_data;
 
 public:
-    LaserFromDepth(int period = 10) : RateThread(period)
-    {
-        iRGBD = 0;
-    }
+    LaserFromDepth(int period = 10) : RateThread(period),
+        iRGBD(YARP_NULLPTR),
+        m_depth_width(0),
+        m_depth_height(0),
+        m_sensorsNum(0),
+        m_min_angle(0.0),
+        m_max_angle(0.0),
+        m_min_distance(0.0),
+        m_max_distance(0.0),
+        m_resolution(0.0),
+        m_clip_max_enable(false),
+        m_clip_min_enable(false),
+        m_do_not_clip_infinity_enable(false),
+        m_device_status(Device_status::DEVICE_OK_STANBY)
+    {}
 
     ~LaserFromDepth()
     {
