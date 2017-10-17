@@ -80,19 +80,21 @@ public:
     int16_t         *audioBufferAt;
     int audioBufferLen;
 
-    DecoderState() {
-        index = -1;
-        pCodec = NULL;
-        pCodecCtx = NULL;
-        pFrame = NULL;
-        pFrameRGB = NULL;
-        pAudio = NULL;
-        buffer = NULL;
-        audioBuffer = NULL;
-        audioBufferAt = NULL;
-        audioBufferLen = 0;
-        frameFinished = 0;
-    }
+    DecoderState() :
+        bytesRemaining(0),
+        bytesDecoded(0),
+        frameFinished(0),
+        index(-1),
+        pCodecCtx(YARP_NULLPTR),
+        pCodec(YARP_NULLPTR),
+        pFrame(YARP_NULLPTR),
+        pFrameRGB(YARP_NULLPTR),
+        pAudio(YARP_NULLPTR),
+        buffer(YARP_NULLPTR),
+        audioBuffer(YARP_NULLPTR),
+        audioBufferAt(YARP_NULLPTR),
+        audioBufferLen(0)
+{}
 
     bool isFinished() {
         return frameFinished!=0;
