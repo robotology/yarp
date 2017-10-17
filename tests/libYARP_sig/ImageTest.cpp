@@ -52,7 +52,7 @@ public:
         return true;
     }
 
-    virtual void threadRelease()
+    virtual void threadRelease() override
     {
         p.close();
     }
