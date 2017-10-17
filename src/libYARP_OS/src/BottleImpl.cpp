@@ -6,6 +6,7 @@
 
 
 #include <yarp/os/impl/BottleImpl.h>
+#include <yarp/conf/numeric.h>
 
 #include <yarp/os/ConstString.h>
 #include <yarp/os/NetFloat64.h>
@@ -21,6 +22,7 @@
 #include <cstdio>
 #include <cstring>
 #include <cstdlib>
+#include <cfloat>
 
 using yarp::os::impl::StoreInt;
 using yarp::os::impl::StoreVocab;
@@ -41,6 +43,22 @@ using yarp::os::Searchable;
 using yarp::os::Value;
 
 #define YARP_STRINIT(len) ((size_t)(len)), 0
+
+/*
+ * The maximum string length for a 'double' printed as a string using ("%.*g", DBL_DIG) will be:
+ *  Initial +/- sign                        1 char
+ *  First digit for exponential notation    1 char
+ * '.' decimal separator char               1 char
+ *  DBL_DIG digits for the mantissa         DBL_DIG chars
+ * 'e+/-'                                   2 chars
+ * YARP_DBL_EXP_DIG  for the exponential    YARP_DBL_EXP_DIG chars
+ * string terminator                        1 char
+ * FILLER                                   10 chars  (you know, for safety)
+ * -----------------------------------------------------
+ * TOTAL is                                 16 + DBL_DIG + YARP_DBL_EXP_DIG
+ */
+#define YARP_DOUBLE_TO_STRING_MAX_LENGTH    16 + DBL_DIG + YARP_DBL_EXP_DIG
+
 
 //#define YMSG(x) printf x;
 //#define YTRACE(x) YMSG(("at %s\n", x))
@@ -772,8 +790,14 @@ bool StoreVocab::writeRaw(ConnectionWriter& writer)
 
 ConstString StoreDouble::toString() const
 {
-    char buf[512];
-    sprintf(buf, "%g", x);
+    char buf[YARP_DOUBLE_TO_STRING_MAX_LENGTH];    // -> see comment at the top of the file
+#if defined(_MSC_VER) && (_MSC_VER <= 1800)
+    // Visual Studio 2013 does not support std::snprintf
+    _snprintf(buf, YARP_DOUBLE_TO_STRING_MAX_LENGTH - 1, "%.*g", DBL_DIG, x);
+    buf[YARP_DOUBLE_TO_STRING_MAX_LENGTH -1] = '\0';
+#else
+    std::snprintf(buf, YARP_DOUBLE_TO_STRING_MAX_LENGTH, "%.*g", DBL_DIG, x);
+#endif
     ConstString str(buf);
 
     // YARP Bug 2526259: Locale settings influence YARP behavior
@@ -784,21 +808,6 @@ ConstString StoreDouble::toString() const
         str[offset] = '.';
     } else {
         str += ".0";
-    }
-
-    int ct = 0;
-    for (size_t i = str.length(); i >= 1; i--) {
-        if (str[i - 1] != '0') {
-            if (str[i - 1] == '.') {
-                ct--;
-                i++;
-            }
-            if (ct >= 1) {
-                str = str.substr(0, i);
-            }
-            break;
-        }
-        ct++;
     }
     return str;
 }

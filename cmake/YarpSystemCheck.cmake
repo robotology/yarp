@@ -133,6 +133,31 @@ endif()
 
 
 #########################################################################
+# Check the maximum number of digits for the exponent for floating point types
+
+macro(CHECK_FLOATING_POINT_EXPONENT_DIGITS _type)
+  file(WRITE "${CMAKE_BINARY_DIR}${CMAKE_FILES_DIRECTORY}/${_type}-exp-dig.cpp"
+"#include <algorithm>
+#include <cfloat>
+#include <cmath>
+int main()
+{
+    return std::max (
+        static_cast<int>(std::floor(std::log10(${_type}_MAX_EXP))) + 1,
+        static_cast<int>(std::floor(std::log10(${_type}_MIN_EXP))) + 1);
+}
+")
+  try_run(YARP_${_type}_EXP_DIG
+          _unused
+          "${CMAKE_BINARY_DIR}${CMAKE_FILES_DIRECTORY}"
+          "${CMAKE_BINARY_DIR}${CMAKE_FILES_DIRECTORY}/${_type}-exp-dig.cpp")
+endmacro()
+
+check_floating_point_exponent_digits(FLT)
+check_floating_point_exponent_digits(DBL)
+check_floating_point_exponent_digits(LDBL)
+
+#########################################################################
 # Set up compile flags
 
 add_definitions(-DYARP_PRESENT)
