@@ -23,6 +23,7 @@
 #include <yarp/os/Time.h>
 #include <yarp/os/Log.h>
 #include <yarp/os/impl/Logger.h>
+#include <yarp/os/RateThread.h>
 
 #include "TestList.h"
 
@@ -30,6 +31,38 @@ using namespace yarp::os::impl;
 using namespace yarp::sig;
 using namespace yarp::sig::draw;
 using namespace yarp::os;
+
+class readWriteTest : public yarp::os::RateThread
+{
+    yarp::os::Port p;
+    yarp::sig::ImageOf<yarp::sig::PixelRgb> image;
+public:
+    readWriteTest() : RateThread(10) {}
+
+    yarp::sig::ImageOf<yarp::sig::PixelRgb> getImage()
+    {
+        return image;
+    }
+
+    virtual bool threadInit() override
+    {
+        p.open("/readWriteTest_writer");
+        image.resize(100, 100);
+        image.zero();
+        return true;
+    }
+
+    virtual void threadRelease()
+    {
+        p.close();
+    }
+
+    virtual void run() override
+    {
+        p.write(image);
+        yarp::os::Time::delay(1);
+    }
+};
 
 class ImageTest : public UnitTest {
 public:
@@ -557,8 +590,34 @@ public:
         checkEqual(img.height(),EXT_HEIGHT*2,"height check");
     }
 
+    void readWrite()
+    {
+        yarp::os::Network net;
+        net.setLocalMode(true);
+        yarp::os::Port p;
+        readWriteTest writer;
+        writer.start();
+        p.open("/readWriteTest_reader");
+        yarp::os::Network::connect("/readWriteTest_writer", "/readWriteTest_reader");
+        yarp::sig::FlexImage im;
+        p.read(im);
+        yarp::sig::ImageOf<yarp::sig::PixelRgb> gtImage = writer.getImage();
+        checkEqual(im.getPixelSize(), gtImage.getPixelSize(), "checking flex image pixelsize after read");
+        checkEqual(im.getPadding(), gtImage.getPadding(), "checking flex image padding after read");
+        checkEqual(im.getPixelCode(), gtImage.getPixelCode(), "checking flex image pixel code after read");
+        checkEqual(im.getQuantum(), gtImage.getQuantum(), "checking flex image quantum after read");
+        yarp::os::Network::disconnect("/readWriteTest_writer", "/readWriteTest_reader");
+        writer.stop();
+        p.close();
+        
+    }
+
 
     virtual void runTests() override {
+#ifdef BROKEN_TEST
+        readWrite();
+#endif // BROKEN
+
         testCreate();
         bool netMode = Network::setLocalMode(true);
         testTransmit();
