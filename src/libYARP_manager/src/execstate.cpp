@@ -9,7 +9,6 @@
 
 #include <yarp/manager/execstate.h>
 #include <yarp/manager/executable.h>
-
 #include <yarp/os/Time.h>
 
 #include <iostream>
@@ -225,6 +224,7 @@ void Ready::startModule()
     {
         yarp::os::SystemClock::delaySystem(executable->getPostExecWait());
     }
+    executable->restoreOriginalPostExecWait();
     if(!executable->getBroker()->start())
     {
         OSTRINGSTREAM msg;
@@ -407,7 +407,6 @@ Dying::~Dying()
 {
 }
 
-
 void Dying::stopModule()
 {
     ErrorLogger* logger = ErrorLogger::Instance();
@@ -415,6 +414,7 @@ void Dying::stopModule()
     {
         yarp::os::SystemClock::delaySystem(executable->getPostStopWait());
     }
+    executable->restoreOriginalPostStopWait();
     if(!executable->getBroker()->stop())
     {
         OSTRINGSTREAM msg;
