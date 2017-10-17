@@ -34,6 +34,15 @@ include(GNUInstallDirs)
 
 
 #########################################################################
+# C++11 is required
+# These variables are used by try_compile, so they must be set here
+
+set(CMAKE_CXX_EXTENSIONS OFF)
+set(CMAKE_CXX_STANDARD 11)
+set(CMAKE_CXX_STANDARD_REQUIRED ON)
+
+
+#########################################################################
 # Check whether system is big- or little- endian
 
 test_big_endian(IS_BIG_ENDIAN)

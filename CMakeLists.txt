@@ -4,6 +4,10 @@
 
 cmake_minimum_required(VERSION 3.0)
 
+if(NOT ${CMAKE_VERSION} VERSION_LESS 3.8)
+  cmake_policy(SET CMP0067 NEW)
+endif()
+
 # RPATH cmake policy set to NEW
 if(NOT ${CMAKE_VERSION} VERSION_LESS 3.9)
   cmake_policy(SET CMP0068 NEW)
