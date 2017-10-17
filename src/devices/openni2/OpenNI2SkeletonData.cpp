@@ -14,6 +14,7 @@ OpenNI2SkeletonData::OpenNI2SkeletonData()
 
 OpenNI2SkeletonData::~OpenNI2SkeletonData()
 {
+    delete[] userSkeleton;
 }
 
 void OpenNI2SkeletonData::initUserSkeletons(){
