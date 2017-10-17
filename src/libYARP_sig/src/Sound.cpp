@@ -157,7 +157,7 @@ int Sound::get(int location, int channel) const {
     FlexImage& img = HELPER(implementation);
     unsigned char *addr = img.getPixelAddress(location,channel);
     if (bytesPerSample==2) {
-        return *((NetUint16 *)addr);
+        return *(reinterpret_cast<NetUint16*>(addr));
     }
     yInfo("sound only implemented for 16 bit samples");
     return 0;
@@ -174,7 +174,7 @@ void Sound::set(int value, int location, int channel) {
     FlexImage& img = HELPER(implementation);
     unsigned char *addr = img.getPixelAddress(location,channel);
     if (bytesPerSample==2) {
-        *((NetUint16 *)addr) = value;
+        *(reinterpret_cast<NetUint16*>(addr)) = value;
         return;
     }
     yInfo("sound only implemented for 16 bit samples");

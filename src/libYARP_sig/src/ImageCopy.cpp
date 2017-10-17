@@ -1182,24 +1182,22 @@ static void CopyPixels(const T1 *osrc, int q1, T2 *odest, int q2,
     DBG printf("q1 %d q2 %d (%dx%d) inc %d %d\n", q1, q2, w, h, p1, p2);
 
     if (flip) {
-        odest = (T2*)(((char *)odest) + step2*(h-1));
+        odest = reinterpret_cast<T2*>(((char *)odest) + step2*(h-1));
         dest = odest;
     }
 
-    for (int i=0; i<h; i++)
-        {
-            DBG printf("x,y = %d,%d\n", 0,i);
-            for (int j = 0; j < w; j++)
-                {
-                    CopyPixel(src,dest);
-                    src++;
-                    dest++;
-                }
-
-            src = (const T1*)(((char *)src) + p1);
-            odest = (T2*)(((char *)odest) + step2*(flip?-1:1));
-            dest = odest;
+    for (int i=0; i<h; i++) {
+        DBG printf("x,y = %d,%d\n", 0,i);
+        for (int j = 0; j < w; j++) {
+            CopyPixel(src,dest);
+            src++;
+            dest++;
         }
+
+        src = reinterpret_cast<const T1*>(((char *)src) + p1);
+        odest = reinterpret_cast<T2*>(((char *)odest) + step2*(flip?-1:1));
+        dest = odest;
+    }
 }
 
 

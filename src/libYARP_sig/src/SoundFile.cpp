@@ -170,7 +170,7 @@ bool yarp::sig::file::read(Sound& dest, const char *src)
     result = fread(bytes.get(),bytes.length(),1,fp);
     YARP_UNUSED(result);
 
-    NetInt16 *data = (NetInt16*)bytes.get();
+    NetInt16 *data = reinterpret_cast<NetInt16*>(bytes.get());
     int ct = 0;
     for (int i=0; i<samples; i++) {
         for (int j=0; j<channels; j++) {
@@ -196,7 +196,7 @@ bool yarp::sig::file::write(const Sound& src, const char *dest)
     header.setup_to_write(src, fp);
 
     ManagedBytes bytes(header.dataLength);
-    NetInt16 *data = (NetInt16*)bytes.get();
+    NetInt16 *data = reinterpret_cast<NetInt16*>(bytes.get());
     int ct = 0;
     int samples = src.getSamples();
     int channels = src.getChannels();

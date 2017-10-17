@@ -41,7 +41,7 @@ T* AllocAligned (int size)
 
     char *p = ((char *)ptr) + addbytes;
     *(p - 1) = addbytes;
-    return (T*)p;
+    return reinterpret_cast<T*>(p);
 }
 
 template <class T>
@@ -50,7 +50,7 @@ void FreeAligned (T* ptr)
     if (ptr == nullptr) return;
 
     const char addbytes = *(((char *)ptr) - 1);
-    delete[] (T *)(((char *)ptr) - addbytes);
+    delete[] reinterpret_cast<T*>(((char *)ptr) - addbytes);
 }
 
 ///
@@ -340,8 +340,8 @@ IPLAPIIMPL(void, iplConvolve2DFP,(IplImage* srcImage, IplImage* dstImage,
     if (srcImage != dstImage)
         {
             float tmp;
-            float *source = (float *)srcImage->imageData;
-            float *dest = (float *)dstImage->imageData;
+            float *source = reinterpret_cast<float*>(srcImage->imageData);
+            float *dest = reinterpret_cast<float*>(dstImage->imageData);
             for (int i = bordery; i <  h - bordery; i++)
                 {
                     for (int j = borderx; j < w - borderx; j++)
@@ -361,8 +361,8 @@ IPLAPIIMPL(void, iplConvolve2DFP,(IplImage* srcImage, IplImage* dstImage,
         {
             // inplace.
             float tmp;
-            float *source = (float *)srcImage->imageData;
-            //float *dest = (float *)dstImage->imageData;
+            float *source = reinterpret_cast<float*>(srcImage->imageData);
+            //float *dest = reinterpret_cast<float*>(dstImage->imageData);
             for (int i = bordery; i <  h - bordery; i++)
                 {
                     for (int j = borderx; j < w - borderx; j++)
@@ -441,8 +441,8 @@ IPLAPIIMPL(void, iplConvolveSep2DFP,(IplImage* srcImage,
         }
 
     // inplace.
-    float *src = (float *)srcImage->imageData;
-    float *dst = (float *)dstImage->imageData;
+    float *src = reinterpret_cast<float*>(srcImage->imageData);
+    float *dst = reinterpret_cast<float*>(dstImage->imageData);
     if (xKernel != nullptr)
         {
             // apply x kernel.
@@ -718,7 +718,7 @@ IPLAPIIMPL(void, iplAllocateImageFP,(IplImage* image, int doFill, float fillValu
                     yAssert(PAD_BYTES (image->widthStep, YARP_IMAGE_ALIGN) == 0);
 
                     // time consuming
-                    float *tmp = (float *)image->imageData;
+                    float *tmp = reinterpret_cast<float*>(image->imageData);
                     const int limit = image->imageSize / sizeof(float);
                     for (int i = 0; i < limit; i++)
                         {
@@ -943,7 +943,7 @@ IPLAPIIMPL(void, iplSetFP, (IplImage* image, float fillValue))
     yAssert(image->depth == IPL_DEPTH_32F);
 
     const int size = image->imageSize / sizeof(float);
-    float *tmp = (float *)image->imageData;
+    float *tmp = reinterpret_cast<float*>(image->imageData);
     for (int i = 0; i < size; i++)
         *tmp++ = fillValue;
 }
@@ -1062,9 +1062,9 @@ IPLAPIIMPL(void, iplAdd,(IplImage* srcImageA, IplImage* srcImageB,
         case IPL_DEPTH_32F:
             {
                 const int size = srcImageA->imageSize / sizeof(float);
-                float * src1 = (float *)srcImageA->imageData;
-                float * src2 = (float *)srcImageB->imageData;
-                float * dst = (float *)dstImage->imageData;
+                float * src1 = reinterpret_cast<float*>(srcImageA->imageData);
+                float * src2 = reinterpret_cast<float*>(srcImageB->imageData);
+                float * dst = reinterpret_cast<float*>(dstImage->imageData);
 
                 for (int i = 0; i < size; i++)
                     {
@@ -1135,9 +1135,9 @@ IPLAPIIMPL(void, iplSubtract,(IplImage* srcImageA, IplImage* srcImageB,
         case IPL_DEPTH_32F:
             {
                 const int size = srcImageA->imageSize / sizeof(float);
-                float * src1 = (float *)srcImageA->imageData;
-                float * src2 = (float *)srcImageB->imageData;
-                float * dst = (float *)dstImage->imageData;
+                float * src1 = reinterpret_cast<float*>(srcImageA->imageData);
+                float * src2 = reinterpret_cast<float*>(srcImageB->imageData);
+                float * dst = reinterpret_cast<float*>(dstImage->imageData);
 
                 for (int i = 0; i < size; i++)
                     {
@@ -1223,8 +1223,8 @@ IPLAPIIMPL(void, iplMultiplySFP,(IplImage* srcImage, IplImage* dstImage,
     yAssert(srcImage->depth == IPL_DEPTH_32F);
 
     const int size = srcImage->imageSize / sizeof(float);
-    float * src1 = (float *)srcImage->imageData;
-    float * dst = (float *)dstImage->imageData;
+    float * src1 = reinterpret_cast<float*>(srcImage->imageData);
+    float * dst = reinterpret_cast<float*>(dstImage->imageData);
 
     for (int i = 0; i < size; i++)
         {
