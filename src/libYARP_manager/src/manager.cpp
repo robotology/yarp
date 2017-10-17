@@ -313,6 +313,8 @@ bool Manager::prepare(bool silent)
         exe->setWorkDir((*itr)->getWorkDir());
         exe->setPostExecWait((*itr)->getPostExecWait());
         exe->setPostStopWait((*itr)->getPostStopWait());
+        exe->setOriginalPostExecWait((*itr)->getPostExecWait());
+        exe->setOriginalPostStopWait((*itr)->getPostStopWait());
         string env;
         if ((*itr)->getPrefix() && strlen((*itr)->getPrefix()))
             env = string("YARP_PORT_PREFIX=") + string((*itr)->getPrefix());
