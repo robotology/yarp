@@ -109,7 +109,7 @@ private:
     inline void _updatePointers() {
         len = bytes.used()/sizeof(T);
         if (len==0) {
-            first = 0/*NULL*/;
+            first = nullptr;
         } else {
             first = (T *) bytes.get();
         }
@@ -119,7 +119,7 @@ public:
     VectorOf() {
         bytes.allocate(16*sizeof(T)); // preallocate space for 16 elements
         bytes.setUsed(0);
-        first = 0/*NULL*/;
+        first = nullptr;
         len = 0;
     }
 
@@ -253,7 +253,7 @@ public:
         bytes.clear();
         bytes.setUsed(0);
         len = 0;
-        first = 0 /*NULL*/;
+        first = nullptr;
     }
 };
 
@@ -382,7 +382,7 @@ public:
 
     /**
     * Return a pointer to the first element of the vector.
-    * @return a pointer to double (or NULL if the vector is of zero length)
+    * @return a pointer to double (or nullptr if the vector is of zero length)
     */
     inline double *data()
     { return storage.getFirst(); }
@@ -390,7 +390,7 @@ public:
     /**
     * Return a pointer to the first element of the vector,
     * const version
-    * @return a (const) pointer to double (or NULL if the vector is of zero length)
+    * @return a (const) pointer to double (or nullptr if the vector is of zero length)
     */
     inline const double *data() const
     { return storage.getFirst();}
