@@ -81,7 +81,7 @@ public:
     void setHost(const char* val) { if(val) strHost = val; }
     void setStdio(const char* val) { if(val) strStdio = val; }
     void setWorkDir(const char* val) { if(val) strWorkdir = val; }
-    void setEnv(const char* val) {if(val) strEnv = val; }    
+    void setEnv(const char* val) {if(val) strEnv = val; }
 
     void addConnection(Connection &cnn) { connections.push_back(cnn); }
     CnnContainer& getConnections(void) { return connections;}
@@ -105,6 +105,11 @@ public:
     void setPostStopWait(double t) { waitStop = t; }
     double getPostStopWait() { return waitStop; }
 
+    void setOriginalPostExecWait(double t){ originalWaitStart = t; }
+    void restoreOriginalPostExecWait(){ waitStart = originalWaitStart; }
+    void setOriginalPostStopWait(double t){ originalWaitStop = t; }
+    void restoreOriginalPostStopWait(){ waitStop = originalWaitStop; }
+
     void enableAutoConnect(void) { bAutoConnect = true; }
     void disableAutoConnect(void) { bAutoConnect = false; }
     bool autoConnect(void) { return bAutoConnect; }
@@ -126,6 +131,8 @@ private:
     int theID;
     double waitStart;
     double waitStop;
+    double originalWaitStart;
+    double originalWaitStop;
     bool bWatchDog;
     Broker* broker;
     MEvent* event;

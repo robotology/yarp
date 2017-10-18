@@ -20,6 +20,8 @@ Executable::Executable(Broker* _broker, MEvent* _event, Module *module,
     bWatchDog = _bWatchDog;
     waitStart = 0.0;
     waitStop = 0.0;
+    originalWaitStart = 0.0;
+    originalWaitStop  = 0.0;
     Executable::module = module;
     logger  = ErrorLogger::Instance();
     broker->setEventSink(dynamic_cast<BrokerEventSink*>(this));

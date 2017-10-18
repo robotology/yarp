@@ -10,8 +10,10 @@ if(CREATE_YARPMANAGER)
 
   get_property(YARP_OS_INCLUDE_DIRS TARGET YARP_OS PROPERTY INCLUDE_DIRS)
   get_property(YARP_manager_INCLUDE_DIRS TARGET YARP_manager PROPERTY INCLUDE_DIRS)
+  get_property(YARP_profiler_INCLUDE_DIRS TARGET YARP_profiler PROPERTY INCLUDE_DIRS)
   include_directories(${YARP_OS_INCLUDE_DIRS}
                       ${YARP_manager_INCLUDE_DIRS}
+                      ${YARP_profiler_INCLUDE_DIRS}
                       ./src-builder
                       ./src-manager)
 
@@ -139,6 +141,7 @@ if(CREATE_YARPMANAGER)
   target_link_libraries(yarpmanager YARP::YARP_OS
                                     YARP::YARP_init
                                     YARP::YARP_manager
+                                    YARP::YARP_profiler
                                     Qt5::Widgets
                                     Qt5::Gui)
 

@@ -17,6 +17,7 @@
 #include <yarp/manager/xmlapploader.h>
 #include <yarp/manager/xmltemploader.h>
 #include <yarp/manager/localbroker.h>
+#include <yarp/profiler/NetworkProfiler.h>
 
 #include "moduleviewwidget.h"
 #include "applicationviewwidget.h"
@@ -30,6 +31,7 @@
 #include <QMessageBox>
 #include <QFileDialog>
 #include <QDesktopServices>
+#include <QInputDialog>
 
 #include <QWizardPage>
 #include <QLabel>
@@ -134,6 +136,8 @@ MainWindow::MainWindow(QWidget *parent) :
     connect(ui->actionAbout,SIGNAL(triggered()),this,SLOT(onAbout()));
     connect(ui->action_Builder_Window, SIGNAL(triggered()),this, SLOT(onViewBuilderWindows()));
     connect(ui->action_Manager_Window, SIGNAL(triggered()),this, SLOT(onViewBuilderWindows()));
+    connect(ui->actionYarpClean, SIGNAL(triggered()),this, SLOT(onYarpClean()));
+    connect(ui->actionYarpNameList, SIGNAL(triggered()),this, SLOT(onYarpNameList()));
 
     connect(this,SIGNAL(selectItem(QString, bool)),ui->entitiesTree,SLOT(onSelectItem(QString, bool)));
 
@@ -337,6 +341,7 @@ void MainWindow::init(yarp::os::Property config)
         }
         //manageApplication(application->getName());
     }
+        onYarpNameList();
 }
 
 /*! \brief Reports tge error on the log window.
@@ -1238,6 +1243,48 @@ void MainWindow::onFileChanged(const QString &path)
         }
     }
     return;
+}
+
+void MainWindow::onYarpClean()
+{
+    if(!yarp::os::Network::checkNetwork())
+    {
+        onLogWarning(QString::fromLatin1("yarpserver is not running"));
+        return;
+    }
+    QInputDialog* inputDialog = new QInputDialog(this);
+    inputDialog->setOptions(QInputDialog::NoButtons);
+
+    bool ok=false;
+
+    float timeout =  inputDialog->getDouble(nullptr ,"Running yarp clean",
+                                          "Be aware that yarp clean with a little timetout could\n"
+                                          "unregister ports that are actually open.\n\n"
+                                           "Timeout(seconds):", 0.3, 0, 2147483647, 1, &ok);
+    if (ok)
+    {
+        onLogMessage(QString("Yarp clean: cleaning death ports..."));
+        yarp::profiler::NetworkProfiler::yarpClean(timeout);
+        onYarpNameList();
+    }
+
+}
+
+void MainWindow::onYarpNameList()
+{
+    if(!yarp::os::Network::checkNetwork())
+    {
+        onLogWarning(QString::fromLatin1("yarpserver is not running"));
+        return;
+    }
+    ui->entitiesTree->clearPorts();
+    yarp::profiler::NetworkProfiler::ports_name_set ports;
+    yarp::profiler::NetworkProfiler::yarpNameList(ports, true);
+    for(size_t i = 0; i<ports.size(); i++)
+    {
+        ui->entitiesTree->addPort(QString(ports[i].find("name").asString().c_str()));
+    }
+    onLogMessage(QString::fromLatin1("Running yarp name list...found %1 ports").arg(ports.size()));
 }
 
 void MainWindow::onSave()
