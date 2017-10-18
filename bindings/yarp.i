@@ -424,8 +424,10 @@ MAKE_COMMS(Bottle)
   %template(DVector) std::vector<double>;
   %template(BVector) std::vector<bool>;
   %template(SVector) std::vector<std::string>;
+#ifdef SWIGMATLAB
   // Extend IVector for handling conversion of vectors from and to Matlab
   %include "IVector_fromTo_matlab.i"
+#endif
   %template(IVector) std::vector<int>;
 
   #if defined(SWIGCSHARP)
