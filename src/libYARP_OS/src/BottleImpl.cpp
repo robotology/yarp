@@ -800,14 +800,19 @@ ConstString StoreDouble::toString() const
 #endif
     ConstString str(buf);
 
-    // YARP Bug 2526259: Locale settings influence YARP behavior
-    // Need to deal with alternate versions of the decimal point.
+    // If locale is set, the locale version of the decimal point is used.
+    // In this case we change it to the standard "."
+    // If there is no decimal point, and it is not being used the exponential
+    // notation (i.e. the number is in integer form, for example 100000 and not
+    // 1e5) we add ".0" to ensure that it will be interpreted as a double.
     struct lconv* lc = localeconv();
     size_t offset = str.find(lc->decimal_point);
     if (offset != ConstString::npos) {
         str[offset] = '.';
     } else {
-        str += ".0";
+        if (str.find('e') == ConstString::npos) {
+            str += ".0";
+        }
     }
     return str;
 }
