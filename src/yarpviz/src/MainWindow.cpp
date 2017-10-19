@@ -19,7 +19,6 @@
 #include <QtPrintSupport/QPrinter>
 #include <QInputDialog>
 
-#include <yarp/os/Random.h>
 #include <yarp/os/Time.h>
 #include <yarp/os/LogStream.h>
 #include <yarp/profiler/NetworkProfiler.h>
@@ -29,6 +28,7 @@
 #include "portloggerdialog.h"
 #include "batchqosconfdialog.h"
 #include <iomanip>
+#include <random>
 
 using namespace std;
 using namespace yarp::os;
@@ -598,9 +598,13 @@ void MainWindow::onHighlightLoops() {
         graph_subset scc;
         Algorithm::calcSCC(*currentGraph, scc);
 
+        std::default_random_engine randengine;
+        std::uniform_int_distribution<int> udistH(128, 255);
+        std::uniform_int_distribution<int> udistL(0, 128);
+
         for(size_t i=0; i<scc.size(); i++) {
             pvertex_set &vset = scc[i];
-            QColor color(Random::uniform(128,255), Random::uniform(0,128), Random::uniform(128,255));
+            QColor color(udistH(randengine), udistL(randengine), udistH(randengine));
             for(size_t j=0; j<vset.size(); j++)
                 vset[j]->property.put("color", color.name().toStdString().c_str());
         }

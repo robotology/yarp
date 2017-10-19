@@ -8,11 +8,11 @@
 #include <time.h>
 #include <stdlib.h>
 #include <string.h>
+#include <random>
 
 #include <yarp/os/all.h>
 
 #include <yarp/os/RateThread.h>
-#include <yarp/os/Random.h>
 #include <yarp/os/Semaphore.h>
 
 #include <yarp/os/Time.h>
@@ -31,6 +31,8 @@ const char GO[]="go";
 class MyPlayer: public RateThread
 {
 public:
+    std::default_random_engine randengine;
+
     MyPlayer(const char *n, int rate):RateThread(rate)
     {
         myX=0;
@@ -57,7 +59,7 @@ public:
 
         myLife=6;
 
-        Random::seed(time(0));
+        randengine.seed(0);
     
         mutex.post();
     }
@@ -137,7 +139,8 @@ public:
 
     const char* randomDirection()
     {
-        double rnd=Random::uniform();
+        std::uniform_real_distribution<double> udist(0.0,1.0);
+        double rnd=udist(randengine);
 
         if (rnd<1/4.0)
             return RIGHT;
