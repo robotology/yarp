@@ -168,23 +168,29 @@ QVariant LoggerViewModel::headerData(int section, Qt::Orientation orientation, i
     return QVariant();
 }
 
-
-void LoggerViewModel::logEntryDidAddRows(yarp::yarpLogger::LogEntry& entry, const std::pair<size_t, size_t> &addedRows)
+void LoggerViewModel::logEntryWillAddRows(yarp::yarpLogger::LogEntry& entry, const std::pair<size_t, size_t> &addedRows)
 {
     // Faking the view that we are adding new data.
     // Actually when this method is called, the new data has already been
     // added. Anyway, it seems to work
     this->beginInsertRows(QModelIndex(), addedRows.first, addedRows.first + addedRows.second - 1);
+}
+
+void LoggerViewModel::logEntryDidAddRows(yarp::yarpLogger::LogEntry& entry, const std::pair<size_t, size_t> &addedRows)
+{
     this->endInsertRows();
 }
 
-void LoggerViewModel::logEntryDidRemoveRows(yarp::yarpLogger::LogEntry& entry, const std::pair<size_t, size_t> &removedRows)
+void LoggerViewModel::logEntryWillRemoveRows(yarp::yarpLogger::LogEntry& entry, const std::pair<size_t, size_t> &removedRows)
 {
     // Faking the view that we are removing old data.
     // Actually when this method is called, the old data has already been
     // removed. Anyway, it seems to work
     this->beginRemoveRows(QModelIndex(), removedRows.first, removedRows.first + removedRows.second - 1);
-    this->endRemoveRows();
+}
 
+void LoggerViewModel::logEntryDidRemoveRows(yarp::yarpLogger::LogEntry& entry, const std::pair<size_t, size_t> &removedRows)
+{
+    this->endRemoveRows();
 }
 

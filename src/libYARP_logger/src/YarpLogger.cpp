@@ -74,10 +74,16 @@ bool LogEntry::append_logEntry(const MessageEntry& entry)
     if (entry_list.size() >= entry_list_max_size && entry_list_max_size_enabled)
     {
         //printf("WARNING: exceeded entry_list_max_size=%d\n",entry_list_max_size);
+        for (auto& observer : observers) {
+            observer->logEntryWillRemoveRows(*this, std::make_pair(0, 1));
+        }
         entry_list.pop_front();
         for (auto& observer : observers) {
             observer->logEntryDidRemoveRows(*this, std::make_pair(0, 1));
         }
+    }
+    for (auto& observer : observers) {
+        observer->logEntryWillAddRows(*this, std::make_pair(entry_list.size() - 1, 1));
     }
     entry_list.push_back(entry);
     logInfo.logsize = entry_list.size();
@@ -1028,4 +1034,8 @@ void yarp::yarpLogger::LogEntry::removeObserver(yarp::yarpLogger::LogEntryObserv
 }
 
 LogEntryObserver::~LogEntryObserver() {}
+void LogEntryObserver::logEntryWillAddRows(yarp::yarpLogger::LogEntry& entry, const std::pair<size_t, size_t> &addedRows) {}
+void LogEntryObserver::logEntryDidAddRows(yarp::yarpLogger::LogEntry& entry, const std::pair<size_t, size_t> &addedRows) {}
+void LogEntryObserver::logEntryWillRemoveRows(yarp::yarpLogger::LogEntry& entry, const std::pair<size_t, size_t> &removedRows) {}
+void LogEntryObserver::logEntryDidRemoveRows(yarp::yarpLogger::LogEntry& entry, const std::pair<size_t, size_t> &removedRows) {}
 

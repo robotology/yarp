@@ -226,8 +226,10 @@ class yarp::yarpLogger::LogEntryObserver {
 
 public:
     virtual ~LogEntryObserver();
-    virtual void logEntryDidAddRows(yarp::yarpLogger::LogEntry& entry, const std::pair<size_t, size_t> &addedRows) = 0;
-    virtual void logEntryDidRemoveRows(yarp::yarpLogger::LogEntry& entry, const std::pair<size_t, size_t> &removedRows) = 0;
+    virtual void logEntryWillAddRows(yarp::yarpLogger::LogEntry& entry, const std::pair<size_t, size_t> &addedRows);
+    virtual void logEntryDidAddRows(yarp::yarpLogger::LogEntry& entry, const std::pair<size_t, size_t> &addedRows);
+    virtual void logEntryWillRemoveRows(yarp::yarpLogger::LogEntry& entry, const std::pair<size_t, size_t> &removedRows);
+    virtual void logEntryDidRemoveRows(yarp::yarpLogger::LogEntry& entry, const std::pair<size_t, size_t> &removedRows);
 };
 
 class yarp::yarpLogger::LoggerEngine
