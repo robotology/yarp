@@ -19,15 +19,14 @@
 #ifndef LOGTAB_H
 #define LOGTAB_H
 
+#include "LoggerViewModel.h"
+
 #include <QMutex>
 #include <QFrame>
-#include <QStandardItemModel>
 #include <QTimer>
-#include <QSortFilterProxyModel>
 #include <QClipboard>
 #include <yarp/logger/YarpLogger.h>
 #include "messageWidget.h"
-#include "logtabSorting.h"
 
 const std::string TRACE_STRING   = "TRACE";
 const std::string DEBUG_STRING   = "DEBUG";
@@ -35,6 +34,9 @@ const std::string INFO_STRING    = "INFO";
 const std::string WARNING_STRING = "WARNING";
 const std::string ERROR_STRING   = "ERROR";
 const std::string FATAL_STRING   = "FATAL";
+
+class QSortFilterProxyModel;
+class QIdentityProxyModel;
 
 namespace Ui {
 class LogTab;
@@ -51,7 +53,7 @@ public:
 private:
     Ui::LogTab *ui;
     std::string                            portName;
-    yarp::yarpLogger::LoggerEngine* theLogger;
+    yarp::yarpLogger::LoggerEngine*        theLogger;
     MessageWidget*                         system_message;
     QMutex                                 mutex;
     bool                                   displayYarprunTimestamp_enabled;
@@ -62,16 +64,11 @@ private:
     bool                                   toggleLineExpansion;
 
 private slots:
-    void updateLog(bool from_beginning=false);
     void ctxMenu(const QPoint &pos);
     void expandLines();
     void on_copy_to_clipboard_action();
 
 public:
-    QTimer                  *logTimer;
-    QStandardItemModel      *model_logs;
-    LogSortFilterProxyModel *proxyModelButtons;
-    LogSortFilterProxyModel *proxyModelSearch;
     QClipboard              *clipboard;
     void                    displayYarprunTimestamp  (bool enabled);
     void                    displayLocalTimestamp    (bool enabled);
@@ -79,6 +76,16 @@ public:
     void                    displayColors     (bool enabled);
     void                    displayGrid       (bool enabled);
     void                    clear_model_logs();
+
+
+    void filterByLevel(QString levelString);
+    void filterByMessage(QString message);
+
+private:
+    LoggerViewModel *logViewModel;
+    QSortFilterProxyModel *logLevelFilterModelProxy;
+    QSortFilterProxyModel *messageFilterModelProxy;
+
 };
 
 #endif // LOGTAB_H

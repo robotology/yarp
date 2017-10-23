@@ -16,6 +16,10 @@
  * Public License for more details
 */
 
+#include <yarp/os/RpcClient.h>
+#include <yarp/os/SystemClock.h>
+#include <yarp/logger/YarpLogger.h>
+
 #include <iostream>
 #include <cstring>
 #include <string>
@@ -23,9 +27,7 @@
 #include <cstdio>
 #include <fstream>
 #include <iterator>
-#include <yarp/os/RpcClient.h>
-#include <yarp/os/SystemClock.h>
-#include <yarp/logger/YarpLogger.h>
+#include <algorithm>
 
 using namespace yarp::os;
 using namespace yarp::yarpLogger;
@@ -40,6 +42,15 @@ const std::string CLEAR  ="\033[00m";
 const std::string RED_ERROR      = RED+"ERROR"+CLEAR;
 const std::string YELLOW_WARNING = YELLOW+"WARNING"+CLEAR;
 */
+
+LogEntry::LogEntry(int _entry_list_max_size)
+: entry_list_max_size(_entry_list_max_size)
+, logging_enabled(true)
+, last_read_message(-1)
+, entry_list_max_size_enabled(true)
+{
+}
+
 void LogEntry::clear_logEntries()
 {
     entry_list.clear();
@@ -50,7 +61,6 @@ void LogEntry::clear_logEntries()
 void LogEntry::setLogEntryMaxSize(int size)
 {
     entry_list_max_size = size;
-    entry_list.reserve(entry_list_max_size);
     clear_logEntries();
 }
 
@@ -59,21 +69,35 @@ void LogEntry::setLogEntryMaxSizeEnabled (bool enable)
     entry_list_max_size_enabled=enable;
 }
 
-bool LogEntry::append_logEntry(MessageEntry entry)
+bool LogEntry::append_logEntry(const MessageEntry& entry)
 {
-    if (logInfo.logsize >= entry_list_max_size && entry_list_max_size_enabled)
+    if (entry_list.size() >= entry_list_max_size && entry_list_max_size_enabled)
     {
         //printf("WARNING: exceeded entry_list_max_size=%d\n",entry_list_max_size);
-        return false;
+        std::pair<size_t, size_t> removedRows = std::make_pair(0, 1);
+        for (auto& observer : observers) {
+            observer->logEntryWillRemoveRows(*this, removedRows);
+        }
+        entry_list.pop_front();
+        for (auto& observer : observers) {
+            observer->logEntryDidRemoveRows(*this, removedRows);
+        }
+    }
+    std::pair<size_t, size_t> addedRows = std::make_pair(entry_list.size(), 1);
+    for (auto& observer : observers) {
+        observer->logEntryWillAddRows(*this, addedRows);
     }
     entry_list.push_back(entry);
-    logInfo.logsize++;
+    logInfo.logsize = entry_list.size();
+    for (auto& observer : observers) {
+        observer->logEntryDidAddRows(*this, addedRows);
+    }
     return true;
 }
 
 void LogEntryInfo::clear()
 {
-    logsize=0;
+    logsize = 0;
     number_of_traces=0;
     number_of_debugs=0;
     number_of_infos=0;
@@ -548,7 +572,7 @@ void LoggerEngine::clear_messages_by_port_complete    (std::string  port)
     log_updater->mutex.post();
 }
 
-void LoggerEngine::get_messages_by_port_complete    (std::string  port,  std::list<MessageEntry>& messages,  bool from_beginning)
+void LoggerEngine::get_messages_by_port_complete    (std::string  port,  std::list<MessageEntry>& messages,  bool from_beginning) const
 {
     if (log_updater == nullptr) return;
 
@@ -578,6 +602,25 @@ void LoggerEngine::get_messages_by_port_complete    (std::string  port,  std::li
         }
     }
     log_updater->mutex.post();
+}
+
+bool LoggerEngine::getLogEntryByPortComplete(const std::string& port, LogEntry*& entry)
+{
+    if (log_updater == nullptr) return false;
+
+    log_updater->mutex.wait();
+    for (std::list<LogEntry>::iterator it(log_updater->log_list.begin());
+         it != log_updater->log_list.end(); ++it)
+    {
+        if (it->logInfo.port_complete == port)
+        {
+            entry = &(*it);
+            log_updater->mutex.post();
+            return true;
+        }
+    }
+    log_updater->mutex.post();
+    return false;
 }
 
 void LoggerEngine::get_messages_by_process (std::string  process,  std::list<MessageEntry>& messages,  bool from_beginning)
@@ -725,8 +768,8 @@ bool LoggerEngine::export_log_to_text_file   (std::string  filename, std::string
             ofstream file1;
             file1.open(filename.c_str());
             if (file1.is_open() == false) {log_updater->mutex.post(); return false;}
-            std::vector<MessageEntry>::iterator it1;
-            for (it1 = it->entry_list.begin(); it1 != it->entry_list.end(); it1++)
+            for (std::deque<MessageEntry>::const_iterator it1(it->entry_list.begin());
+                 it1 != it->entry_list.end(); ++it1)
             {
                 file1 << it1->yarprun_timestamp << " " << it1->local_timestamp << " " << it1->level.toString() << " " << it1->text << " " << std::endl;
             }
@@ -770,10 +813,9 @@ bool LoggerEngine::save_all_logs_to_file   (std::string  filename)
         file1 << it->logInfo.get_number_of_warnings() << std::endl;
         file1 << it->logInfo.get_number_of_errors() << std::endl;
         file1 << it->logInfo.get_number_of_fatals() << std::endl;
-        file1 << it->logInfo.logsize << std::endl;
         file1 << it->entry_list.size() << std::endl;
-        std::vector<MessageEntry>::iterator it1;
-        for (it1 = it->entry_list.begin(); it1 != it->entry_list.end(); it1++)
+        for (std::deque<MessageEntry>::const_iterator it1(it->entry_list.begin());
+             it1 != it->entry_list.end(); ++it1)
         {
             file1 << it1->yarprun_timestamp << std::endl;
             file1 << it1->local_timestamp << std::endl;
@@ -851,7 +893,6 @@ bool LoggerEngine::load_all_logs_from_file   (std::string  filename)
             file1 >> dummy; //l_tmp.logInfo.number_of_warning;
             file1 >> dummy; //l_tmp.logInfo.number_of_errors;
             file1 >> dummy; //l_tmp.logInfo.number_of_fatals;
-            file1 >> l_tmp.logInfo.logsize;
             int size_entry_list;
             file1 >> size_entry_list;
             for (int j=0; j< size_entry_list; j++)
@@ -979,3 +1020,24 @@ bool  LoggerEngine::get_log_enable_by_port_complete (std::string  port)
     log_updater->mutex.post();
     return enabled;
 }
+
+void yarp::yarpLogger::LogEntry::addObserver(yarp::yarpLogger::LogEntryObserver& observer)
+{
+    observers.push_back(&observer);
+}
+
+void yarp::yarpLogger::LogEntry::removeObserver(yarp::yarpLogger::LogEntryObserver& observer)
+{
+    auto found = std::find(observers.begin(), observers.end(), &observer);
+
+    if (found != observers.end()) {
+        observers.erase(found);
+    }
+}
+
+LogEntryObserver::~LogEntryObserver() {}
+void LogEntryObserver::logEntryWillAddRows(yarp::yarpLogger::LogEntry& entry, const std::pair<size_t, size_t> &addedRows) {}
+void LogEntryObserver::logEntryDidAddRows(yarp::yarpLogger::LogEntry& entry, const std::pair<size_t, size_t> &addedRows) {}
+void LogEntryObserver::logEntryWillRemoveRows(yarp::yarpLogger::LogEntry& entry, const std::pair<size_t, size_t> &removedRows) {}
+void LogEntryObserver::logEntryDidRemoveRows(yarp::yarpLogger::LogEntry& entry, const std::pair<size_t, size_t> &removedRows) {}
+
