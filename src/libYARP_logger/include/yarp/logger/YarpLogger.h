@@ -175,10 +175,10 @@ class yarp::yarpLogger::LogEntry
 
     public:
     LogEntry(int _entry_list_max_size=10000) :
-        logging_enabled(true),
         entry_list_max_size(_entry_list_max_size),
-        last_read_message(-1),
-        entry_list_max_size_enabled(true)
+        entry_list_max_size_enabled(true),
+        logging_enabled(true),
+        last_read_message(-1)
     {
         entry_list.reserve(entry_list_max_size);
     }
