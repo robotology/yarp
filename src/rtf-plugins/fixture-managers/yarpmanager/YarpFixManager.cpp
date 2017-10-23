@@ -26,7 +26,6 @@ YarpFixManager::YarpFixManager()
     : initialized(false) { }
 
 YarpFixManager::~YarpFixManager() {
-        tearDown();
 }
 
 
