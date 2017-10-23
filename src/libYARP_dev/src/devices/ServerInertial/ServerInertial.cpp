@@ -91,84 +91,80 @@ bool ServerInertial::checkROSParams(yarp::os::Searchable &config)
         yInfo()  << "No ROS group found in config file ... skipping ROS initialization.";
         return true;
     }
-    else
+
+    yInfo()  << "ROS group was FOUND in config file.";
+
+    Bottle &rosGroup = config.findGroup("ROS");
+    if(rosGroup.isNull())
     {
-        yInfo()  << "ROS group was FOUND in config file.";
+        yError() << partName << "ROS group params is not a valid group or empty";
+        useROS = ROS_config_error;
+        return false;
+    }
 
-        Bottle &rosGroup = config.findGroup("ROS");
-        if(rosGroup.isNull())
-        {
-            yError() << partName << "ROS group params is not a valid group or empty";
-            useROS = ROS_config_error;
-            return false;
-        }
-
-        // check for useROS parameter
-        if(!rosGroup.check("useROS"))
-        {
-            yError() << partName << " cannot find useROS parameter, mandatory when using ROS message. \n \
-                        Allowed values are true, false, ROS_only";
-            useROS = ROS_config_error;
-            return false;
-        }
-        yarp::os::ConstString ros_use_type = rosGroup.find("useROS").asString();
-        if(ros_use_type == "false")
-        {
-            yInfo() << partName << "useROS topic if set to 'false'";
-            useROS = ROS_disabled;
-            return true;
-        }
-        else if(ros_use_type == "true")
-        {
-            yInfo() << partName << "useROS topic if set to 'true'";
-            useROS = ROS_enabled;
-        }
-        else if(ros_use_type == "only")
-        {
-            yInfo() << partName << "useROS topic if set to 'only";
-            useROS = ROS_only;
-        }
-        else
-        {
-            yInfo() << partName << "useROS parameter is seet to unvalid value ('" << ros_use_type << "'), supported values are 'true', 'false', 'only'";
-            useROS = ROS_config_error;
-            return false;
-        }
-
-        // check for ROS_nodeName parameter
-        if(!rosGroup.check("ROS_nodeName"))
-        {
-            yError() << partName << " cannot find ROS_nodeName parameter, mandatory when using ROS message";
-            useROS = ROS_config_error;
-            return false;
-        }
-        rosNodeName = rosGroup.find("ROS_nodeName").asString();  // TODO: check name is correct
-        yInfo() << partName << "rosNodeName is " << rosNodeName;
-
-        // check for ROS_topicName parameter
-        if(!rosGroup.check("ROS_topicName"))
-        {
-            yError() << partName << " cannot find ROS_topicName parameter, mandatory when using ROS message";
-            useROS = ROS_config_error;
-            return false;
-        }
-        rosTopicName = rosGroup.find("ROS_topicName").asString();
-        yInfo() << partName << "ROS_topicName is " << rosTopicName;
-
-        // check for frame_id parameter
-        if(!rosGroup.check("frame_id"))
-        {
-            yError() << partName << " cannot find frame_id parameter, mandatory when using ROS message";
-            useROS = ROS_config_error;
-            return false;
-        }
-        frame_id = rosGroup.find("frame_id").asString();
-        yInfo() << partName << "frame_id is " << frame_id;
-
+    // check for useROS parameter
+    if(!rosGroup.check("useROS"))
+    {
+        yError() << partName << " cannot find useROS parameter, mandatory when using ROS message. \n \
+                    Allowed values are true, false, ROS_only";
+        useROS = ROS_config_error;
+        return false;
+    }
+    yarp::os::ConstString ros_use_type = rosGroup.find("useROS").asString();
+    if(ros_use_type == "false")
+    {
+        yInfo() << partName << "useROS topic if set to 'false'";
+        useROS = ROS_disabled;
         return true;
     }
-    yError() << partName << "should never get here!" << __LINE__;
-    return false;  // should never get here
+    else if(ros_use_type == "true")
+    {
+        yInfo() << partName << "useROS topic if set to 'true'";
+        useROS = ROS_enabled;
+    }
+    else if(ros_use_type == "only")
+    {
+        yInfo() << partName << "useROS topic if set to 'only";
+        useROS = ROS_only;
+    }
+    else
+    {
+        yInfo() << partName << "useROS parameter is seet to unvalid value ('" << ros_use_type << "'), supported values are 'true', 'false', 'only'";
+        useROS = ROS_config_error;
+        return false;
+    }
+
+    // check for ROS_nodeName parameter
+    if(!rosGroup.check("ROS_nodeName"))
+    {
+        yError() << partName << " cannot find ROS_nodeName parameter, mandatory when using ROS message";
+        useROS = ROS_config_error;
+        return false;
+    }
+    rosNodeName = rosGroup.find("ROS_nodeName").asString();  // TODO: check name is correct
+    yInfo() << partName << "rosNodeName is " << rosNodeName;
+
+    // check for ROS_topicName parameter
+    if(!rosGroup.check("ROS_topicName"))
+    {
+        yError() << partName << " cannot find ROS_topicName parameter, mandatory when using ROS message";
+        useROS = ROS_config_error;
+        return false;
+    }
+    rosTopicName = rosGroup.find("ROS_topicName").asString();
+    yInfo() << partName << "ROS_topicName is " << rosTopicName;
+
+    // check for frame_id parameter
+    if(!rosGroup.check("frame_id"))
+    {
+        yError() << partName << " cannot find frame_id parameter, mandatory when using ROS message";
+        useROS = ROS_config_error;
+        return false;
+    }
+    frame_id = rosGroup.find("frame_id").asString();
+    yInfo() << partName << "frame_id is " << frame_id;
+
+    return true;
 }
 
 bool ServerInertial::initialize_ROS()

@@ -359,7 +359,7 @@ int main(int argc, char *argv[]) {
         bool ok = lookup.lookupCore(ros_port.c_str());
         if (!ok) return 1;
         if (verbose) printf("  * found ros node %s\n", ros_port.c_str());
-        register_port(yarp_port.c_str(),
+        ok = register_port(yarp_port.c_str(),
                       (string("tcpros+role.sub+topic.")+topic.c_str()).c_str(),
                       lookup.hostname.c_str(),
                       lookup.portnum,

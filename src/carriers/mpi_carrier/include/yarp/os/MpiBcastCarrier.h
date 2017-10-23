@@ -67,7 +67,9 @@ public:
 
     virtual bool expectReplyToHeader(ConnectionState&  proto) override {
         bool ok = MpiCarrier::expectReplyToHeader(proto);
-        dynamic_cast<MpiBcastStream*> (stream)->post();
+        MpiBcastStream *mpiStream = dynamic_cast<MpiBcastStream*> (stream);
+        if(mpiStream)
+            mpiStream->post();
         return ok;
     }
 

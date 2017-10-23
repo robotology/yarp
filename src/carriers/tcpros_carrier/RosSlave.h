@@ -19,9 +19,12 @@ private:
     bool verbose;
     bool worked;
 public:
-    RosSlave(bool verbose) : done(0), verbose(verbose) { 
-        worked = false;
-    }
+    RosSlave(bool verbose) :
+        portnum(-1),
+        done(0),
+        verbose(verbose),
+        worked(false)
+    {}
 
     void start(const char *hostname, int portnum) {
         this->hostname = hostname;

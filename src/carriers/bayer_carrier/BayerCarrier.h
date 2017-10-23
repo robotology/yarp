@@ -65,20 +65,22 @@ public:
     // ModifyingCarrier methods
 
 
-    BayerCarrier() {
-        need_reset = true;
-        have_result = false;
-        image_data_len = 0;
-        half = false;
-        warned = false;
-        goff = 0;
-        roff = 1;
-        bayer_method = -1;
-        bayer_method_set = false;
-        dcformat = -1;
-        local = yarp::os::ConnectionReader::createConnectionReader(*this);
-        happy = (local!=0);
-    }
+    BayerCarrier() :
+        image_data_len(0),
+        consumed(0),
+        local(yarp::os::ConnectionReader::createConnectionReader(*this)),
+        parent(nullptr),
+        need_reset(true),
+        have_result(false),
+        happy(local!=0),
+        half(false),
+        warned(false),
+        bayer_method_set(false),
+        bayer_method(-1),
+        goff(0),
+        roff(1),
+        dcformat(-1)
+    {}
 
     ~BayerCarrier() {
         if (local) delete local;

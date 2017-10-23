@@ -163,104 +163,100 @@ bool ControlBoardWrapper::checkROSParams(Searchable &config)
         useROS = ROS_disabled;
         return true;
     }
-    else
+
+    yInfo()  << "ROS group was FOUND in config file.";
+
+    Bottle &rosGroup = config.findGroup("ROS");
+    if(rosGroup.isNull())
     {
-        yInfo()  << "ROS group was FOUND in config file.";
+        yError() << partName << "ROS group params is not a valid group or empty";
+        useROS = ROS_config_error;
+        return false;
+    }
 
-        Bottle &rosGroup = config.findGroup("ROS");
-        if(rosGroup.isNull())
-        {
-            yError() << partName << "ROS group params is not a valid group or empty";
-            useROS = ROS_config_error;
-            return false;
-        }
-
-        // check for useROS parameter
-        if(!rosGroup.check("useROS"))
-        {
-            yError() << partName << " cannot find useROS parameter, mandatory when using ROS message. \n \
-                        Allowed values are true, false, ROS_only";
-            useROS = ROS_config_error;
-            return false;
-        }
-        yarp::os::ConstString ros_use_type = rosGroup.find("useROS").asString();
-        if(ros_use_type == "false")
-        {
-            yInfo() << partName << "useROS topic if set to 'false'";
-            useROS = ROS_disabled;
-            return true;
-        }
-        else if(ros_use_type == "true")
-        {
-            yInfo() << partName << "useROS topic if set to 'true'";
-            useROS = ROS_enabled;
-        }
-        else if(ros_use_type == "only")
-        {
-            yInfo() << partName << "useROS topic if set to 'only";
-            useROS = ROS_only;
-        }
-        else
-        {
-            yInfo() << partName << "useROS parameter is seet to unvalid value ('" << ros_use_type << "'), supported values are 'true', 'false', 'only'";
-            useROS = ROS_config_error;
-            return false;
-        }
-
-        // check for ROS_nodeName parameter
-        if(!rosGroup.check("ROS_nodeName"))
-        {
-            yError() << partName << " cannot find ROS_nodeName parameter, mandatory when using ROS message";
-            useROS = ROS_config_error;
-            return false;
-        }
-        rosNodeName = rosGroup.find("ROS_nodeName").asString();  // TODO: check name is correct
-        yInfo() << partName << "rosNodeName is " << rosNodeName;
-
-        // check for ROS_topicName parameter
-        if(!rosGroup.check("ROS_topicName"))
-        {
-            yError() << partName << " cannot find rosTopicName parameter, mandatory when using ROS message";
-            useROS = ROS_config_error;
-            return false;
-        }
-        rosTopicName = rosGroup.find("ROS_topicName").asString();
-        yInfo() << partName << "rosTopicName is " << rosTopicName;
-
-        // check for rosNodeName parameter
-        // UPDATE: joint names are got from MotionControl subdevice now.
-        // An error should be thrown later on in case we fail geting names from device
-        if(!rosGroup.check("jointNames"))
-        {
-            yInfo() << partName << "ROS topic has been required, jointNames will be got from motionControl subdevice.";
-        }
-        else  // if names are there, store them. They will be used for back compatibility if old policy is used.
-        {
-            Bottle nameList = rosGroup.findGroup("jointNames").tail();
-            if (nameList.isNull())
-            {
-                yError() << partName << " jointNames not found\n";
-                useROS = ROS_config_error;
-                return false;
-            }
-
-            if(nameList.size() != controlledJoints)
-            {
-                yError() << partName << " jointNames incorrect number of entries. \n jointNames is " << nameList.toString() << "while expected length is " << controlledJoints;
-                useROS = ROS_config_error;
-                return false;
-            }
-
-            jointNames.clear();
-            for(int i=0; i<controlledJoints; i++)
-            {
-                jointNames.push_back(nameList.get(i).toString());
-            }
-        }
+    // check for useROS parameter
+    if(!rosGroup.check("useROS"))
+    {
+        yError() << partName << " cannot find useROS parameter, mandatory when using ROS message. \n \
+                    Allowed values are true, false, ROS_only";
+        useROS = ROS_config_error;
+        return false;
+    }
+    yarp::os::ConstString ros_use_type = rosGroup.find("useROS").asString();
+    if(ros_use_type == "false")
+    {
+        yInfo() << partName << "useROS topic if set to 'false'";
+        useROS = ROS_disabled;
         return true;
     }
-    yError() << partName << "should never get here!" << __LINE__;
-    return false;  // should never get here
+    else if(ros_use_type == "true")
+    {
+        yInfo() << partName << "useROS topic if set to 'true'";
+        useROS = ROS_enabled;
+    }
+    else if(ros_use_type == "only")
+    {
+        yInfo() << partName << "useROS topic if set to 'only";
+        useROS = ROS_only;
+    }
+    else
+    {
+        yInfo() << partName << "useROS parameter is seet to unvalid value ('" << ros_use_type << "'), supported values are 'true', 'false', 'only'";
+        useROS = ROS_config_error;
+        return false;
+    }
+
+    // check for ROS_nodeName parameter
+    if(!rosGroup.check("ROS_nodeName"))
+    {
+        yError() << partName << " cannot find ROS_nodeName parameter, mandatory when using ROS message";
+        useROS = ROS_config_error;
+        return false;
+    }
+    rosNodeName = rosGroup.find("ROS_nodeName").asString();  // TODO: check name is correct
+    yInfo() << partName << "rosNodeName is " << rosNodeName;
+
+    // check for ROS_topicName parameter
+    if(!rosGroup.check("ROS_topicName"))
+    {
+        yError() << partName << " cannot find rosTopicName parameter, mandatory when using ROS message";
+        useROS = ROS_config_error;
+        return false;
+    }
+    rosTopicName = rosGroup.find("ROS_topicName").asString();
+    yInfo() << partName << "rosTopicName is " << rosTopicName;
+
+    // check for rosNodeName parameter
+    // UPDATE: joint names are got from MotionControl subdevice now.
+    // An error should be thrown later on in case we fail geting names from device
+    if(!rosGroup.check("jointNames"))
+    {
+        yInfo() << partName << "ROS topic has been required, jointNames will be got from motionControl subdevice.";
+    }
+    else  // if names are there, store them. They will be used for back compatibility if old policy is used.
+    {
+        Bottle nameList = rosGroup.findGroup("jointNames").tail();
+        if (nameList.isNull())
+        {
+            yError() << partName << " jointNames not found\n";
+            useROS = ROS_config_error;
+            return false;
+        }
+
+        if(nameList.size() != controlledJoints)
+        {
+            yError() << partName << " jointNames incorrect number of entries. \n jointNames is " << nameList.toString() << "while expected length is " << controlledJoints;
+            useROS = ROS_config_error;
+            return false;
+        }
+
+        jointNames.clear();
+        for(int i=0; i<controlledJoints; i++)
+        {
+            jointNames.push_back(nameList.get(i).toString());
+        }
+    }
+    return true;
 }
 
 bool ControlBoardWrapper::initialize_ROS()
