@@ -99,6 +99,7 @@ public:
         timeConstant = timeArrival = 0;
         timeResting = 0;
         stimulation = 0;
+        temporalStimulation = 0;
         isVirtual = false;
         isActive = false;
         baias = 0;

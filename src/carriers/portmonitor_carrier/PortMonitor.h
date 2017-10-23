@@ -123,7 +123,6 @@ private:
 
 
 private:
-    bool happy;
     bool bReady;
     yarp::os::DummyConnector con;
     yarp::os::ConnectionReader* localReader;
