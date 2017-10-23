@@ -25,8 +25,27 @@
                                             RTF_SOURCELINE()),\
                                             dynamic_cast<RTF::TestSuite*>(getDispatcher()))
 
-class YarpFixManager : public RTF::FixtureManager,
-        yarp::manager::Manager {
+class YarpManagerPlugin : public yarp::manager::Manager
+{
+public:
+
+    std::string fixtureName;
+    YarpManagerPlugin(RTF::FixtureEvents* disp) : dispatcher(disp)
+    {
+        enableWatchDog();
+        enableAutoConnect();
+        enableRestrictedMode();
+    }
+
+protected:
+    virtual void onExecutableFailed(void* which) override;
+    virtual void onCnnFailed(void* which) override;
+private:
+    RTF::FixtureEvents* dispatcher;
+
+};
+
+class YarpFixManager : public RTF::FixtureManager {
 public:
 
     YarpFixManager();
@@ -36,18 +55,11 @@ public:
 
     virtual void tearDown() override;
 
-protected:
-    //virtual void onExecutableStart(void* which) override;
-    //virtual void onExecutableStop(void* which) override;
-    //virtual void onExecutableDied(void* which) override;
-    //virtual void onCnnStablished(void* which) override;
-    virtual void onExecutableFailed(void* which) override;
-    virtual void onCnnFailed(void* which) override;
-
 private:
     bool initialized;
     yarp::os::Network yarp;
-    std::string fixtureName;
+    YarpManagerPlugin* manager {nullptr};
+
 };
 
 #endif // YARP_RTF_PLUGINS_YARPMANAGER_YARPFIXMANAGER_H
