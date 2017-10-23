@@ -74,21 +74,23 @@ bool LogEntry::append_logEntry(const MessageEntry& entry)
     if (entry_list.size() >= entry_list_max_size && entry_list_max_size_enabled)
     {
         //printf("WARNING: exceeded entry_list_max_size=%d\n",entry_list_max_size);
+        std::pair<size_t, size_t> removedRows = std::make_pair(0, 1);
         for (auto& observer : observers) {
-            observer->logEntryWillRemoveRows(*this, std::make_pair(0, 1));
+            observer->logEntryWillRemoveRows(*this, removedRows);
         }
         entry_list.pop_front();
         for (auto& observer : observers) {
-            observer->logEntryDidRemoveRows(*this, std::make_pair(0, 1));
+            observer->logEntryDidRemoveRows(*this, removedRows);
         }
     }
+    std::pair<size_t, size_t> addedRows = std::make_pair(entry_list.size(), 1);
     for (auto& observer : observers) {
-        observer->logEntryWillAddRows(*this, std::make_pair(entry_list.size() - 1, 1));
+        observer->logEntryWillAddRows(*this, addedRows);
     }
     entry_list.push_back(entry);
     logInfo.logsize = entry_list.size();
     for (auto& observer : observers) {
-        observer->logEntryDidAddRows(*this, std::make_pair(entry_list.size() - 1, 1));
+        observer->logEntryDidAddRows(*this, addedRows);
     }
     return true;
 }

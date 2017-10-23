@@ -3,6 +3,21 @@
 #include <QSize>
 #include <QColor>
 
+// Code for callback on differen threads
+#include <QEvent>
+#include <QCoreApplication>
+template <typename F>
+static void postToThread(F && fun, QObject * obj = qApp) {
+    struct Event : public QEvent {
+        using Fun = typename std::decay<F>::type;
+        Fun fun;
+        Event(Fun && fun) : QEvent(QEvent::None), fun(std::move(fun)) {}
+        Event(const Fun & fun) : QEvent(QEvent::None), fun(fun) {}
+        virtual ~Event() { fun(); }
+    };
+    QCoreApplication::postEvent(obj, new Event(std::forward<F>(fun)));
+}
+
 const size_t LoggerViewModel::YarpRunTimeColumnIndex = 0;
 const size_t LoggerViewModel::LocalTimeColumnIndex = 1;
 const size_t LoggerViewModel::LogLevlColumnIndex = 2;
@@ -14,10 +29,9 @@ LoggerViewModel::LoggerViewModel(yarp::yarpLogger::LoggerEngine& loggerEngine,
 , m_portName(portName)
 , m_observedEntry(nullptr)
 {
-    //for now mantain a full copy of the log, and update this through notifications
-    //We may want to obtain a reference only to the log, but then how do we
-    //fire the notifications to the GUI?
-    m_loggerEngine.get_messages_by_port_complete(m_portName, m_logMessages, true);
+    //Alternative2: it may be useful for thread access: mantain a full copy of the log, and update this through notifications
+//    m_loggerEngine.get_messages_by_port_complete(m_portName, m_logMessages, true);
+    // Obtaining reference to log entry
     m_loggerEngine.getLogEntryByPortComplete(m_portName, m_observedEntry);
     m_observedEntry->addObserver(*this);
 }
@@ -170,27 +184,34 @@ QVariant LoggerViewModel::headerData(int section, Qt::Orientation orientation, i
 
 void LoggerViewModel::logEntryWillAddRows(yarp::yarpLogger::LogEntry& entry, const std::pair<size_t, size_t> &addedRows)
 {
+    if (&entry != m_observedEntry) return;
     // Faking the view that we are adding new data.
     // Actually when this method is called, the new data has already been
     // added. Anyway, it seems to work
-    this->beginInsertRows(QModelIndex(), addedRows.first, addedRows.first + addedRows.second - 1);
+    postToThread([&]{this->beginInsertRows(QModelIndex(), addedRows.first, addedRows.first + addedRows.second - 1);});
 }
 
 void LoggerViewModel::logEntryDidAddRows(yarp::yarpLogger::LogEntry& entry, const std::pair<size_t, size_t> &addedRows)
 {
-    this->endInsertRows();
+    if (&entry != m_observedEntry) return;
+    postToThread([this]{this->endInsertRows();});
 }
 
 void LoggerViewModel::logEntryWillRemoveRows(yarp::yarpLogger::LogEntry& entry, const std::pair<size_t, size_t> &removedRows)
 {
+    if (&entry != m_observedEntry) return;
     // Faking the view that we are removing old data.
     // Actually when this method is called, the old data has already been
     // removed. Anyway, it seems to work
-    this->beginRemoveRows(QModelIndex(), removedRows.first, removedRows.first + removedRows.second - 1);
+    postToThread([&]{
+        this->beginRemoveRows(QModelIndex(), removedRows.first, removedRows.first + removedRows.second - 1);
+
+    });
 }
 
 void LoggerViewModel::logEntryDidRemoveRows(yarp::yarpLogger::LogEntry& entry, const std::pair<size_t, size_t> &removedRows)
 {
-    this->endRemoveRows();
+    if (&entry != m_observedEntry) return;
+    postToThread([this]{this->endRemoveRows();});
 }
 

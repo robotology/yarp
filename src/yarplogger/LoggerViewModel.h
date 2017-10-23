@@ -35,7 +35,6 @@ public:
 private:
     yarp::yarpLogger::LoggerEngine& m_loggerEngine;
     std::string m_portName;
-    std::list<yarp::yarpLogger::MessageEntry> m_logMessages;
     yarp::yarpLogger::LogEntry* m_observedEntry;
 
 public:
