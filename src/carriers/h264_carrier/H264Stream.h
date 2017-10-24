@@ -37,6 +37,7 @@ private:
     int remotePort;
 public:
     H264Stream( int remotePort) :
+            delegate(NULL),
             phase(0),
             cursor(NULL),
             remaining(0),
