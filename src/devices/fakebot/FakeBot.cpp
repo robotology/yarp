@@ -10,7 +10,7 @@
 #include <yarp/sig/all.h>
 #include <yarp/sig/ImageFile.h>
 #include <yarp/os/all.h>
-
+#include <random>
 
 using namespace yarp::os;
 using namespace yarp::sig;
@@ -26,6 +26,8 @@ int rnds[MAXRND];
 void FakeBot::init() {
     int m_w = 640;
     int m_h = 480;
+    int rr = 30;
+
     back.resize(m_w,m_h);
     PixelRgb w(255,255,255);
     PixelRgb r(128,128,255);
@@ -37,19 +39,25 @@ void FakeBot::init() {
         }
     }
     for (int i=0; i<=m_w; i+=m_w/10) {
-        addCircle(back,b,i,int(m_h*0.77),30);
+        addCircle(back,b,i,int(m_h*0.77),rr);
     }
+
+    std::default_random_engine randengine;
+    std::uniform_real_distribution<double> udist1(-m_w/4,m_w/4);
+    std::uniform_real_distribution<double> udist2(-int(m_h*0.2),rr);
     for (int j=0; j<40; j++) {
-        int rr = 30;
-        int xx = m_w/2 + Random::uniform(-m_w/4,m_w/4);
-        int yy = int(m_h*0.2) - Random::uniform(-int(m_h*0.2),rr);
+        int xx = m_w/2 + udist1(randengine);
+        int yy = int(m_h*0.2) - udist2(randengine);
         addCircle(back,w,xx,yy,rr);
     }
+
     m_x = (back.width()-this->m_w)/2;
     m_y = (back.height()-this->m_h)/2;
     m_dx = m_dy = 0;
+
+    std::normal_distribution<double> ndist(0,255);
     for (int k=0; k<MAXRND; k++) {
-        rnds[k] = int(Random::normal(0,255));
+        rnds[k] = int(ndist(randengine));
     }
 
     fore.resize(64,64);
