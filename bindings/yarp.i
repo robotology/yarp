@@ -422,6 +422,7 @@ MAKE_COMMS(Bottle)
 %include <yarp/dev/IPWMControl.h>
 %include <yarp/dev/ICurrentControl.h>
 %include <yarp/dev/IAnalogSensor.h>
+%include <yarp/dev/IRemoteVariables.h>
 %include <yarp/dev/FrameGrabberControl2.h>
 %include <yarp/dev/IPidControl.h>
 %include <yarp/dev/IPositionDirect.h>
@@ -809,6 +810,18 @@ typedef yarp::os::BufferedPort<ImageRgbFloat> BufferedPortImageRgbFloat;
         return result;
     }
 
+    yarp::dev::IRemoteVariables *viewIRemoteVariables() {
+        yarp::dev::IRemoteVariables *result;
+        self->view(result);
+        return result;
+    }
+
+    yarp::dev::IAxisInfo *viewIAxisInfo() {
+        yarp::dev::IAxisInfo *result;
+        self->view(result);
+        return result;
+    }
+
     // you'll need to add an entry for every interface you wish
     // to use
 }
@@ -1085,6 +1098,15 @@ typedef yarp::os::BufferedPort<ImageRgbFloat> BufferedPortImageRgbFloat;
 
     bool setPositions(std::vector<double>& data) {
         return self->setPositions(&data[0]);
+    }
+}
+
+%extend yarp::dev::IAxisInfo {
+    std::string getAxisName(int axis) {
+        yarp::os::ConstString name;
+        bool ok = self->getAxisName(axis, name);
+        if (!ok) return "unknown";
+        return name;
     }
 }
 
