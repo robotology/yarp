@@ -136,8 +136,6 @@ bool ImplementMotorEncoders::getMotorEncoder(int m, double *v)
 bool ImplementMotorEncoders::getMotorEncoders(double *v)
 {
     bool ret;
-    castToMapper(helper)->axes();
-
     ret=iMotorEncoders->getMotorEncodersRaw(temp);
 
     castToMapper(helper)->posE2A(temp, v);

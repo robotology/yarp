@@ -248,7 +248,7 @@ bool yarp::dev::Rangefinder2DClient::open(yarp::os::Searchable &config)
     {
         yarp::dev::IFrameTransform* iTrf = nullptr;
         drv->view(iTrf);
-        if (iTrf != nullptr)
+        if (!iTrf)
         {
             yError() << "A Problem occurred while trying to view the IFrameTransform interface";
             drv->close();

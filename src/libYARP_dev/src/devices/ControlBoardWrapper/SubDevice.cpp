@@ -19,40 +19,39 @@ using namespace yarp::sig;
 using namespace std;
 
 
-SubDevice::SubDevice()
-{
-    pid = nullptr;
-    pos = nullptr;
-    pos2 = nullptr;
-    posDir = nullptr;
-    vel = nullptr;
-    vel2 = nullptr;
-    iJntEnc = nullptr;
-    iMotEnc = nullptr;
-    amp = nullptr;
-    lim2 = nullptr;
-    calib = nullptr;
-    calib2 = nullptr;
-    iTimed= nullptr;
-    info = nullptr;
-    iTorque=nullptr;
-    iImpedance=nullptr;
-    iMode=nullptr;
-    iMode2=nullptr;
-    iInteract=nullptr;
-    iCurr = nullptr;
-    iPWM = nullptr;
-
-    base=-1;
-    top=-1;
-    axes=0;
-
-    subdevice=nullptr;
-
-    configuredF=false;
-    attachedF=false;
-    _subDevVerbose = false;
-}
+SubDevice::SubDevice() :
+    base(-1),
+    top(-1),
+    axes(0),
+    configuredF(false),
+    parent(nullptr),
+    subdevice(nullptr),
+    pid(nullptr),
+    pos(nullptr),
+    pos2(nullptr),
+    vel(nullptr),
+    vel2(nullptr),
+    iJntEnc(nullptr),
+    iMotEnc(nullptr),
+    amp(nullptr),
+    lim2(nullptr),
+    calib(nullptr),
+    calib2(nullptr),
+    iTimed(nullptr),
+    iTorque(nullptr),
+    iImpedance(nullptr),
+    iMode(nullptr),
+    iMode2(nullptr),
+    info(nullptr),
+    posDir(nullptr),
+    iInteract(nullptr),
+    imotor(nullptr),
+    iVar(nullptr),
+    iPWM(nullptr),
+    iCurr(nullptr),
+    _subDevVerbose(false),
+    attachedF(false)
+{}
 
 bool SubDevice::configure(int b, int t, int n, const std::string &key, yarp::dev::ControlBoardWrapper *_parent)
 {
@@ -274,14 +273,11 @@ bool SubDevice::attach(yarp::dev::PolyDriver *d, const std::string &k)
     }
 
     int subdevAxes;
-    if(!pos->getAxes(&subdevAxes))
+    if(!pos || !pos->getAxes(&subdevAxes))
     {
-
         yError() << "ControlBoardWrapper for device <" << parentName << "> attached to subdevice " << k.c_str() << " but it was not ready yet. \n" \
                  << "Please check the device has been correctly created and all required initialization actions has been performed.";
                  return false;
-        attachedF=false;
-
     }
 
     attachedF=true;

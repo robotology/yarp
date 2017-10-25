@@ -33,7 +33,10 @@ yarp::dev::DriverCreator *createServerInertial()
 /**
  * Constructor.
  */
-yarp::dev::ServerInertial::ServerInertial() : ownDevices(false), subDeviceOwned(nullptr)
+yarp::dev::ServerInertial::ServerInertial() :
+        IMU_polydriver(nullptr),
+        ownDevices(false),
+        subDeviceOwned(NULL)
 {
     IMU = nullptr;
     spoke = false;

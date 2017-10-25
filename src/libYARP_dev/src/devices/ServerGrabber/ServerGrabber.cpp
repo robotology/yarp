@@ -200,9 +200,11 @@ bool yarp::dev::DC1394::DC1394Parser::respond(const Bottle& cmd, Bottle& respons
 // **********ServerGrabberResponder**********
 
 
-yarp::dev::impl::ServerGrabberResponder::ServerGrabberResponder(bool _left){
-    left=_left;
-}
+yarp::dev::impl::ServerGrabberResponder::ServerGrabberResponder(bool _left) :
+    left(_left),
+    server(nullptr)
+{}
+
 yarp::dev::impl::ServerGrabberResponder::~ServerGrabberResponder(){}
 bool yarp::dev::impl::ServerGrabberResponder::configure(yarp::dev::ServerGrabber* _server)
 {

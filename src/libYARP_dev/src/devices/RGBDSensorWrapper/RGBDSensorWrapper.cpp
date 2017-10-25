@@ -155,19 +155,20 @@ bool RGBDSensorParser::respond(const Bottle& cmd, Bottle& response)
 }
 
 
-RGBDSensorWrapper::RGBDSensorWrapper(): RateThread(DEFAULT_THREAD_PERIOD),
-                                        rate(DEFAULT_THREAD_PERIOD)
-{
-    sensor_p         = nullptr;
-    use_YARP         = true;
-    use_ROS          = false;
-    subDeviceOwned   = nullptr;
-    rosNode          = nullptr;
-    isSubdeviceOwned = false;
-    verbose          = 4;
-    sensorStatus     = IRGBDSensor::RGBD_SENSOR_NOT_READY;
-    forceInfoSync    = true;
-}
+RGBDSensorWrapper::RGBDSensorWrapper() :
+    RateThread(DEFAULT_THREAD_PERIOD),
+    rosNode(nullptr),
+    nodeSeq(0),
+    rate(DEFAULT_THREAD_PERIOD),
+    sensor_p(nullptr),
+    sensorStatus(IRGBDSensor::RGBD_SENSOR_NOT_READY),
+    verbose(4),
+    use_YARP(true),
+    use_ROS(false),
+    forceInfoSync(true),
+    isSubdeviceOwned(false),
+    subDeviceOwned(nullptr)
+{}
 
 RGBDSensorWrapper::~RGBDSensorWrapper()
 {

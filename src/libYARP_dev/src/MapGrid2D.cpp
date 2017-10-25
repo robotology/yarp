@@ -355,9 +355,9 @@ bool MapGrid2D::loadMapYarpAndRos(string yarp_filename, string ros_yaml_filename
                 }
                 else
                 {
-                   double color_avg = (pix_occ.r + pix_occ.g + pix_occ.b) / 3;
-                   unsigned char occ = (unsigned char)((254 - color_avg) / 254.0);
-                   m_map_occupancy.safePixel(x, y) = occ * 100;
+                    int color_avg = (pix_occ.r + pix_occ.g + pix_occ.b) / 3;
+                    unsigned char occ = (unsigned char)((254 - color_avg) / 254.0);
+                    m_map_occupancy.safePixel(x, y) = occ * 100;
                 }
             }
         }
@@ -415,9 +415,9 @@ bool MapGrid2D::loadMapROSOnly(string ros_yaml_filename)
             }
             else
             {
-               double color_avg = (pix_occ.r + pix_occ.g + pix_occ.b) / 3;
-               unsigned char occ = (unsigned char)((254 - color_avg) / 254.0);
-               m_map_occupancy.safePixel(x, y) = occ * 100;
+                int color_avg = (pix_occ.r + pix_occ.g + pix_occ.b) / 3;
+                unsigned char occ = (unsigned char)((254 - color_avg) / 254.0);
+                m_map_occupancy.safePixel(x, y) = occ * 100;
             }
         }
     }

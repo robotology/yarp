@@ -134,11 +134,12 @@ bool PolyDriver::closeMain() {
             delete &HELPER(system_resource);
             system_resource = nullptr;
             if (dd!=nullptr) {
-                dd->close();
+                result = dd->close();
                 delete dd;
                 dd = nullptr;
+            } else {
+                result = true;
             }
-            result = true;
         }
         dd = nullptr;
         system_resource = nullptr;
@@ -256,6 +257,7 @@ bool PolyDriver::coreOpen(yarp::os::Searchable& prop) {
     } else {
         // FIXME do not use yarpdev here
         printf("yarpdev: ***ERROR*** could not find device <%s>\n", str.c_str());
+        return false;
     }
 
     if (driver!=nullptr) {
@@ -286,15 +288,13 @@ bool PolyDriver::coreOpen(yarp::os::Searchable& prop) {
                     return false;
                 }
             }
-            if (creator!=nullptr) {
-                ConstString name = creator->getName();
-                ConstString wrapper = creator->getWrapper();
-                ConstString code = creator->getCode();
-                yInfo("created %s <%s>. See C++ class %s for documentation.",
-                      ((name==wrapper)?"wrapper":"device"),
-                      name.c_str(),
-                      code.c_str());
-            }
+            ConstString name = creator->getName();
+            ConstString wrapper = creator->getWrapper();
+            ConstString code = creator->getCode();
+            yInfo("created %s <%s>. See C++ class %s for documentation.",
+                  ((name==wrapper)?"wrapper":"device"),
+                  name.c_str(),
+                  code.c_str());
         }
         dd = driver;
         return true;

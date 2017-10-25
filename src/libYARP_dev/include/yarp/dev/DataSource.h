@@ -60,14 +60,19 @@ public:
                bool canDrop=true,
                bool addStamp=false,
                IPreciselyTimed *pt=NULL) :
-        port(port), dater(dater), pPrecTime(pt), canDrop(canDrop), addStamp(addStamp)
+        port(port),
+        dater(dater), 
+        pPrecTime(pt), 
+        canDrop(canDrop), 
+        addStamp(addStamp), 
+        counter(0),
+        timePrevious(0.0),
+        cumulativeT(0.0),
+        minT(1e10),
+        maxT(0.0),
+        lastSpoke(yarp::os::Time::now())
     {
         writer.attach(port);
-        cumulativeT=0.0;
-        maxT=0.0;
-        minT=1e10;
-        lastSpoke=yarp::os::Time::now();
-        counter=0;
     }
 
     virtual void run() override {

@@ -39,6 +39,9 @@ RGBDSensorClient::RGBDSensorClient() : FrameGrabberControls2_Sender(rpcPort)
 RGBDSensorClient::~RGBDSensorClient()
 {
     close();
+    delete RgbMsgSender;
+    delete DepthMsgSender;
+    delete streamingReader;
 }
 
 bool RGBDSensorClient::open(yarp::os::Searchable& config)
