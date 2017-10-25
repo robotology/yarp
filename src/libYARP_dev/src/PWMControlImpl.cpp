@@ -14,11 +14,11 @@ using namespace yarp::dev;
 #define PJOINTIDCHECK(j) if (j >= castToMapper(helper)->axes()){yError("joint id out of bound"); return false;}
 
 /////////////// implement ImplemenPWMControl
-ImplementPWMControl::ImplementPWMControl(IPWMControlRaw *r)
-{
-    raw = r;
-    helper = 0;
-}
+ImplementPWMControl::ImplementPWMControl(IPWMControlRaw *r) :
+    helper(0),
+    raw(r),
+    dummy(YARP_NULLPTR)
+{}
 
 bool ImplementPWMControl::initialize(int size, const int *amap, const double* dutyToPWM)
 {

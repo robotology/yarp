@@ -565,7 +565,7 @@ bool ControlBoardWrapper::openDeferredAttach(Property& prop)
         }
 
         SubDevice *tmpDevice=device.getSubdevice(k);
-        tmpDevice->setVerbose(_verb);
+        if (tmpDevice) tmpDevice->setVerbose(_verb);
 
         int axes=top-base+1;
         if (!tmpDevice->configure(base, top, axes, nets->get(k).asString().c_str(), this))
@@ -822,8 +822,11 @@ bool ControlBoardWrapper::detachAll()
             yarp::os::RateThread::stop();
 
         int devices=device.subdevices.size();
-        for(int k=0;k<devices;k++)
-            device.getSubdevice(k)->detach();
+
+        for(int k=0;k<devices;k++) {
+            SubDevice* sub = device.getSubdevice(k);
+            if (sub) sub->detach();
+        }
 
         IRemoteCalibrator::releaseCalibratorDevice();
         return true;
@@ -1840,7 +1843,7 @@ bool ControlBoardWrapper::setRefSpeeds(const double *spds)
                 joints[j_dev] = p->base + j_dev;
             }
 
-            p->pos2->setRefSpeeds(wrapped_joints, joints, &spds[j_wrap]);
+            ret = ret && p->pos2->setRefSpeeds(wrapped_joints, joints, &spds[j_wrap]);
             j_wrap += wrapped_joints;
         }
         else   // Classic Position Control
@@ -1972,7 +1975,7 @@ bool ControlBoardWrapper::setRefAccelerations(const double *accs)
                 joints[j_dev] = p->base + j_dev;
             }
 
-            p->pos2->setRefAccelerations(wrapped_joints, joints, &accs[j_wrap]);
+            ret = ret && p->pos2->setRefAccelerations(wrapped_joints, joints, &accs[j_wrap]);
             j_wrap += wrapped_joints;
         }
         else        // Classic Position Control
@@ -3188,7 +3191,7 @@ bool ControlBoardWrapper::getAmpStatus(int *st)
         int subIndex=device.lut[l].deviceEntry;
 
         yarp::dev::impl::SubDevice *p=device.getSubdevice(subIndex);
-        if (p->amp)
+        if (p && p->amp)
             {
 
                 st[l]=0;
@@ -3209,7 +3212,7 @@ bool ControlBoardWrapper::getAmpStatus(int j, int *v)
     int subIndex=device.lut[j].deviceEntry;
 
     yarp::dev::impl::SubDevice *p=device.getSubdevice(subIndex);
-    if (p->amp)
+    if (p && p->amp)
         {
             return p->amp->getAmpStatus(off+p->base,v);
         }

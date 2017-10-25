@@ -122,10 +122,5 @@ bool ImplementMotor::setGearboxRatio(int m, const double value)
 
 bool ImplementMotor::getTemperatures(double *v)
 {
-    bool ret;
-    castToMapper(helper)->axes();
-
-    ret=imotor->getTemperaturesRaw(v);
-
-    return ret;
+    return imotor->getTemperaturesRaw(v);
 }

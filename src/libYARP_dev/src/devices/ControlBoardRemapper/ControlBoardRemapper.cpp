@@ -28,11 +28,12 @@ DriverCreator *createControlBoardRemapper()
             ("controlboardremapper", "controlboardwrapper2", "yarp::dev::ControlBoardRemapper");
 }
 
-ControlBoardRemapper::ControlBoardRemapper()
+ControlBoardRemapper::ControlBoardRemapper() :
+    controlledJoints(0),
+    _verb(false),
+    usingAxesNamesForAttachAll(false),
+    usingNetworksForAttachAll(false)
 {
-    controlledJoints = 0;
-    _verb = false;
-
     axesNames.clear();
 }
 

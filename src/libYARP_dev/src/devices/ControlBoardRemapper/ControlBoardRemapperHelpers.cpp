@@ -31,6 +31,7 @@ RemappedSubControlBoard::RemappedSubControlBoard()
     lim2 = 0;
     calib = 0;
     calib2 = 0;
+    remcalib = 0;
     iTimed= 0;
     info = 0;
     iTorque=0;

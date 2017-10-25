@@ -219,10 +219,11 @@ JoypadControlServer::JoypadControlServer() : RateThread(DEFAULT_THREAD_PERIOD),
                                              m_rate(DEFAULT_THREAD_PERIOD),
                                              m_device(YARP_NULLPTR),
                                              m_subDeviceOwned(YARP_NULLPTR),
-                                             m_separatePorts(false)
-{
-
-}
+                                             m_isSubdeviceOwned(false),
+                                             m_separatePorts(false),
+                                             m_profile(false),
+                                             m_coordsMode(yarp::dev::IJoypadController::JoypadCtrl_coordinateMode::JypCtrlcoord_POLAR)
+{}
 
 JoypadControlServer::~JoypadControlServer()
 {

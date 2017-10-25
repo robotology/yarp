@@ -30,7 +30,7 @@ yarp::dev::DriverCreator *createAnalogWrapper() {
   * Manage the calibration command received on the rpc port.
   **/
 
-AnalogServerHandler::AnalogServerHandler(const char* n)
+AnalogServerHandler::AnalogServerHandler(const char* n) : is(YARP_NULLPTR)
 {
     rpcPort.open(n);
     rpcPort.setReader(*this);
@@ -121,7 +121,10 @@ bool AnalogServerHandler::read(yarp::os::ConnectionReader& connection)
   * on the port, i.e. an offset and a length.
   */
 
-AnalogPortEntry::AnalogPortEntry(void) { }
+AnalogPortEntry::AnalogPortEntry(void) :
+    offset(0),
+    length(0)
+{}
 
 AnalogPortEntry::AnalogPortEntry(const AnalogPortEntry &alt)
 {
@@ -161,6 +164,7 @@ AnalogWrapper::AnalogWrapper(const char* name, int rate): RateThread(rate)
     ownDevices      = false;
     subDeviceOwned  = YARP_NULLPTR;
     sensorId = "AnalogServer";
+    _rate = rate;
     createPort(name, rate);
 }
 #endif // YARP_NO_DEPRECATED
@@ -179,17 +183,19 @@ bool AnalogWrapper::createPort(const char* name, int rate)
 
 #ifndef YARP_NO_DEPRECATED // since YARP 2.3.70
 // Contructor used when one or more output ports are specified
-AnalogWrapper::AnalogWrapper(const std::vector<AnalogPortEntry>& _analogPorts, int rate): RateThread(rate)
+AnalogWrapper::AnalogWrapper(const std::vector<AnalogPortEntry>& _analogPorts, int rate):
+    RateThread(rate),
+    _rate(rate),
+    sensorId("AnalogServer"),
+    useROS(ROS_disabled),
+    frame_id(""),
+    rosNodeName(""),
+    rosTopicName(""),
+    rosNode(YARP_NULLPTR),
+    rosMsgCounter(0),
+    ownDevices(false),
+    subDeviceOwned(YARP_NULLPTR)
 {
-    // init ROS struct
-    useROS          = ROS_disabled;
-    frame_id        = "";
-    rosNodeName     = "";
-    rosTopicName    = "";
-    rosNode         = YARP_NULLPTR;
-    rosMsgCounter   = 0;
-
-    sensorId = "AnalogServer";
     createPorts(_analogPorts, rate);
 }
 #endif // YARP_NO_DEPRECATED
