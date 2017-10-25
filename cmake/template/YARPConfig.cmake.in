@@ -114,6 +114,12 @@ if(NOT TARGET YARP::YARP_OS)
   include(${CMAKE_CURRENT_LIST_DIR}/YARPTargets.cmake)
 endif()
 
+# Find dependencies required by targets 
+if(TARGET YARP::YARP_rtf)
+  find_package(RTF QUIET)
+endif()
+
+
 # Export variables for available targets
 set(YARP_OS_LIBRARY YARP::YARP_OS)
 set(YARP_SIG_LIBRARY YARP::YARP_sig)
