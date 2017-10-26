@@ -486,7 +486,6 @@ bool JoypadControlClient::getRawStick(unsigned int stick_id, yarp::sig::Vector& 
 
         for(size_t i = 0; i < m_stickDof[stick_id]; ++i)
         {
-            if(m_stickPort.storage[offset + i])
             value.push_back(m_stickPort.storage[offset + i]);
         }
 
