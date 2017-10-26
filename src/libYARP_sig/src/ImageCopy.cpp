@@ -22,516 +22,1143 @@ static inline void CopyPixel(const T1 *src, T2 *dest)
     *dest = *src;
 }
 
-typedef PixelMono Def_VOCAB_PIXEL_MONO;
-typedef PixelMono16 Def_VOCAB_PIXEL_MONO16;
-typedef PixelRgb Def_VOCAB_PIXEL_RGB;
-typedef PixelRgba Def_VOCAB_PIXEL_RGBA;
-typedef PixelBgra Def_VOCAB_PIXEL_BGRA;
-typedef PixelHsv Def_VOCAB_PIXEL_HSV;
-typedef PixelBgr Def_VOCAB_PIXEL_BGR;
-typedef PixelMonoSigned Def_VOCAB_PIXEL_MONO_SIGNED;
-typedef PixelRgbSigned Def_VOCAB_PIXEL_RGB_SIGNED;
-typedef PixelFloat Def_VOCAB_PIXEL_MONO_FLOAT;
-typedef PixelRgbFloat Def_VOCAB_PIXEL_RGB_FLOAT;
-typedef PixelHsvFloat Def_VOCAB_PIXEL_HSV_FLOAT;
-typedef PixelInt Def_VOCAB_PIXEL_INT;
-typedef PixelRgbInt Def_VOCAB_PIXEL_RGB_INT;
+static const int implemented_yet = 1;
 
-#define VALID_PIXEL(x) ((x>255)?255:((x<0)?0:x))
-#define SPECIAL_COPY_BEGIN static void YARPDummyCopyPixel() {
-#define SPECIAL_COPY(id1,id2) } static inline void CopyPixel(const Def_##id1 *src, Def_##id2 *dest) {
-#define SPECIAL_COPY_END }
+/******************************************************************************/
 
-static int implemented_yet = 1;
+static inline void CopyPixel(const PixelMono* src, PixelRgb* dest)
+{
+    dest->r = *src;
+    dest->g = *src;
+    dest->b = *src;
+}
 
-SPECIAL_COPY_BEGIN
-
-SPECIAL_COPY(VOCAB_PIXEL_MONO,VOCAB_PIXEL_RGB)
-    dest->r = dest->g = dest->b = *src;
-SPECIAL_COPY(VOCAB_PIXEL_MONO,VOCAB_PIXEL_RGBA)
-    dest->r = dest->g = dest->b = *src;
+static inline void CopyPixel(const PixelMono* src, PixelRgba* dest)
+{
+    dest->r = *src;
+    dest->g = *src;
+    dest->b = *src;
     dest->a = 255;
-SPECIAL_COPY(VOCAB_PIXEL_MONO,VOCAB_PIXEL_BGRA)
-    dest->r = dest->g = dest->b = *src;
+}
+
+static inline void CopyPixel(const PixelMono* src, PixelBgra* dest)
+{
+    dest->r = *src;
+    dest->g = *src;
+    dest->b = *src;
     dest->a = 255;
-SPECIAL_COPY(VOCAB_PIXEL_MONO,VOCAB_PIXEL_RGB_INT)
-    dest->r = dest->g = dest->b = *src;
-SPECIAL_COPY(VOCAB_PIXEL_MONO,VOCAB_PIXEL_BGR)
-    dest->r = dest->g = dest->b = *src;
-SPECIAL_COPY(VOCAB_PIXEL_MONO,VOCAB_PIXEL_HSV)
+}
+
+static inline void CopyPixel(const PixelMono* src, PixelRgbInt* dest)
+{
+    dest->r = *src;
+    dest->g = *src;
+    dest->b = *src;
+}
+
+static inline void CopyPixel(const PixelMono* src, PixelBgr* dest)
+{
+    dest->r = *src;
+    dest->g = *src;
+    dest->b = *src;
+}
+
+static inline void CopyPixel(const PixelMono* src, PixelHsv* dest)
+{
     dest->v = *src;
-dest->h = dest->s = 0;
-SPECIAL_COPY(VOCAB_PIXEL_MONO,VOCAB_PIXEL_RGB_SIGNED)
-    dest->r = dest->g = dest->b = *src;
-SPECIAL_COPY(VOCAB_PIXEL_MONO,VOCAB_PIXEL_RGB_FLOAT)
-    dest->r = dest->g = dest->b = *src;
-SPECIAL_COPY(VOCAB_PIXEL_MONO,VOCAB_PIXEL_HSV_FLOAT)
+    dest->h = 0;
+    dest->s = 0;
+}
+
+static inline void CopyPixel(const PixelMono* src, PixelRgbSigned* dest)
+{
+    dest->r = *src;
+    dest->g = *src;
+    dest->b = *src;
+}
+
+static inline void CopyPixel(const PixelMono* src, PixelRgbFloat* dest)
+{
+    dest->r = *src;
+    dest->g = *src;
+    dest->b = *src;
+}
+
+static inline void CopyPixel(const PixelMono* src, PixelHsvFloat* dest)
+{
     dest->v = *src;
-dest->h = dest->s = 0;
-SPECIAL_COPY(VOCAB_PIXEL_MONO,VOCAB_PIXEL_MONO_SIGNED)
+    dest->h = 0;
+    dest->s = 0;
+}
+
+static inline void CopyPixel(const PixelMono* src, PixelMonoSigned* dest)
+{
     *dest = *src >> 1;
-SPECIAL_COPY(VOCAB_PIXEL_MONO,VOCAB_PIXEL_INT)
+}
+
+static inline void CopyPixel(const PixelMono* src, PixelInt* dest)
+{
     *dest = *src;
-SPECIAL_COPY(VOCAB_PIXEL_MONO,VOCAB_PIXEL_MONO16)
+}
+
+static inline void CopyPixel(const PixelMono* src, PixelMono16* dest)
+{
     *dest = *src;
-SPECIAL_COPY(VOCAB_PIXEL_MONO,VOCAB_PIXEL_MONO_FLOAT)
+}
+
+static inline void CopyPixel(const PixelMono* src, PixelFloat* dest)
+{
     *dest = *src;
+}
 
-SPECIAL_COPY(VOCAB_PIXEL_RGB,VOCAB_PIXEL_MONO)
-    *dest = (unsigned char)((src->r + src->g + src->b)/3);
-SPECIAL_COPY(VOCAB_PIXEL_RGB,VOCAB_PIXEL_MONO16)
-    *dest = (yarp::sig::PixelMono16)((src->r + src->g + src->b)/3);
-SPECIAL_COPY(VOCAB_PIXEL_RGB,VOCAB_PIXEL_INT)
-    *dest = (unsigned char)((src->r + src->g + src->b)/3);
-SPECIAL_COPY(VOCAB_PIXEL_RGB,VOCAB_PIXEL_HSV)
+/******************************************************************************/
+
+static inline void CopyPixel(const PixelRgb* src, PixelMono* dest)
+{
+    *dest = static_cast<unsigned char>((src->r + src->g + src->b)/3);
+}
+
+static inline void CopyPixel(const PixelRgb* src, PixelMono16* dest)
+{
+    *dest = static_cast<yarp::sig::PixelMono16>((src->r + src->g + src->b)/3);
+}
+
+static inline void CopyPixel(const PixelRgb* src, PixelInt* dest)
+{
+    *dest = static_cast<unsigned char>((src->r + src->g + src->b)/3);
+}
+
+static inline void CopyPixel(const PixelRgb* src, PixelHsv* dest)
+{
     yAssert(implemented_yet == 0);
-SPECIAL_COPY(VOCAB_PIXEL_RGB,VOCAB_PIXEL_MONO_SIGNED)
-    *dest = (char)((src->r + src->g + src->b)/3);
-SPECIAL_COPY(VOCAB_PIXEL_RGB,VOCAB_PIXEL_RGB_SIGNED)
-    dest->r = src->r; dest->g = src->g; dest->b = src->b;
-SPECIAL_COPY(VOCAB_PIXEL_RGB,VOCAB_PIXEL_RGBA)
-    dest->r = src->r; dest->g = src->g; dest->b = src->b;
-dest->a = 255;
-SPECIAL_COPY(VOCAB_PIXEL_RGB,VOCAB_PIXEL_BGRA)
-    dest->r = src->r; dest->g = src->g; dest->b = src->b;
-dest->a = 255;
-SPECIAL_COPY(VOCAB_PIXEL_RGB,VOCAB_PIXEL_RGB_INT)
-    dest->r = src->r; dest->g = src->g; dest->b = src->b;
-SPECIAL_COPY(VOCAB_PIXEL_RGB,VOCAB_PIXEL_MONO_FLOAT)
+}
+
+static inline void CopyPixel(const PixelRgb* src, PixelMonoSigned* dest)
+{
+    *dest = static_cast<char>((src->r + src->g + src->b)/3);
+}
+
+static inline void CopyPixel(const PixelRgb* src, PixelRgbSigned* dest)
+{
+    dest->r = src->r;
+    dest->g = src->g;
+    dest->b = src->b;
+}
+
+static inline void CopyPixel(const PixelRgb* src, PixelRgba* dest)
+{
+    dest->r = src->r;
+    dest->g = src->g;
+    dest->b = src->b;
+    dest->a = 255;
+}
+
+static inline void CopyPixel(const PixelRgb* src, PixelBgra* dest)
+{
+    dest->r = src->r;
+    dest->g = src->g;
+    dest->b = src->b;
+    dest->a = 255;
+}
+
+static inline void CopyPixel(const PixelRgb* src, PixelRgbInt* dest)
+{
+    dest->r = src->r;
+    dest->g = src->g;
+    dest->b = src->b;
+}
+
+static inline void CopyPixel(const PixelRgb* src, PixelFloat* dest)
+{
     *dest = ((src->r + src->g + src->b)/3.0f);
-SPECIAL_COPY(VOCAB_PIXEL_RGB,VOCAB_PIXEL_RGB_FLOAT)
+}
+
+static inline void CopyPixel(const PixelRgb* src, PixelRgbFloat* dest)
+{
     dest->r = src->r;
-dest->g = src->g;
-dest->b = src->b;
-SPECIAL_COPY(VOCAB_PIXEL_RGB,VOCAB_PIXEL_BGR)
+    dest->g = src->g;
+    dest->b = src->b;
+}
+
+static inline void CopyPixel(const PixelRgb* src, PixelBgr* dest)
+{
     dest->r = src->r;
-dest->g = src->g;
-dest->b = src->b;
-SPECIAL_COPY(VOCAB_PIXEL_RGB,VOCAB_PIXEL_HSV_FLOAT)
-    yAssert(implemented_yet == 0);
+    dest->g = src->g;
+    dest->b = src->b;
+}
 
+static inline void CopyPixel(const PixelRgb* src, PixelHsvFloat* dest)
+{
+    yAssert(implemented_yet == 0);
+}
 
-SPECIAL_COPY(VOCAB_PIXEL_HSV,VOCAB_PIXEL_MONO)
-    yAssert(implemented_yet == 0);
-SPECIAL_COPY(VOCAB_PIXEL_HSV,VOCAB_PIXEL_MONO16)
-    yAssert(implemented_yet == 0);
-SPECIAL_COPY(VOCAB_PIXEL_HSV,VOCAB_PIXEL_RGB)
-    yAssert(implemented_yet == 0);
-SPECIAL_COPY(VOCAB_PIXEL_HSV,VOCAB_PIXEL_RGBA)
-    yAssert(implemented_yet == 0);
-SPECIAL_COPY(VOCAB_PIXEL_HSV,VOCAB_PIXEL_BGRA)
-    yAssert(implemented_yet == 0);
-SPECIAL_COPY(VOCAB_PIXEL_HSV,VOCAB_PIXEL_RGB_INT)
-    yAssert(implemented_yet == 0);
-SPECIAL_COPY(VOCAB_PIXEL_HSV,VOCAB_PIXEL_BGR)
-    yAssert(implemented_yet == 0);
-SPECIAL_COPY(VOCAB_PIXEL_HSV,VOCAB_PIXEL_MONO_SIGNED)
-    yAssert(implemented_yet == 0);
-SPECIAL_COPY(VOCAB_PIXEL_HSV,VOCAB_PIXEL_RGB_SIGNED)
-    yAssert(implemented_yet == 0);
-SPECIAL_COPY(VOCAB_PIXEL_HSV,VOCAB_PIXEL_MONO_FLOAT)
-    yAssert(implemented_yet == 0);
-SPECIAL_COPY(VOCAB_PIXEL_HSV,VOCAB_PIXEL_RGB_FLOAT)
-    yAssert(implemented_yet == 0);
-SPECIAL_COPY(VOCAB_PIXEL_HSV,VOCAB_PIXEL_HSV_FLOAT)
-    yAssert(implemented_yet == 0);
-SPECIAL_COPY(VOCAB_PIXEL_HSV,VOCAB_PIXEL_INT)
-    yAssert(implemented_yet == 0);
+/******************************************************************************/
 
-
-SPECIAL_COPY(VOCAB_PIXEL_BGR,VOCAB_PIXEL_MONO)
-    *dest = (unsigned char)((src->r + src->g + src->b)/3);
-SPECIAL_COPY(VOCAB_PIXEL_BGR,VOCAB_PIXEL_MONO16)
-    *dest = (yarp::sig::PixelMono16)((src->r + src->g + src->b)/3);
-SPECIAL_COPY(VOCAB_PIXEL_BGR,VOCAB_PIXEL_INT)
-    *dest = (unsigned char)((src->r + src->g + src->b)/3);
-SPECIAL_COPY(VOCAB_PIXEL_BGR,VOCAB_PIXEL_HSV)
+static inline void CopyPixel(const PixelHsv* src, PixelMono* dest)
+{
     yAssert(implemented_yet == 0);
-SPECIAL_COPY(VOCAB_PIXEL_BGR,VOCAB_PIXEL_MONO_SIGNED)
-    *dest = (char)((src->r + src->g + src->b)/3);
-SPECIAL_COPY(VOCAB_PIXEL_BGR,VOCAB_PIXEL_RGB_SIGNED)
-    dest->r = src->r; dest->g = src->g; dest->b = src->b;
-SPECIAL_COPY(VOCAB_PIXEL_BGR,VOCAB_PIXEL_MONO_FLOAT)
+}
+
+static inline void CopyPixel(const PixelHsv* src, PixelMono16* dest)
+{
+    yAssert(implemented_yet == 0);
+}
+
+static inline void CopyPixel(const PixelHsv* src, PixelRgb* dest)
+{
+    yAssert(implemented_yet == 0);
+}
+
+static inline void CopyPixel(const PixelHsv* src, PixelRgba* dest)
+{
+    yAssert(implemented_yet == 0);
+}
+
+static inline void CopyPixel(const PixelHsv* src, PixelBgra* dest)
+{
+    yAssert(implemented_yet == 0);
+}
+
+static inline void CopyPixel(const PixelHsv* src, PixelRgbInt* dest)
+{
+    yAssert(implemented_yet == 0);
+}
+
+static inline void CopyPixel(const PixelHsv* src, PixelBgr* dest)
+{
+    yAssert(implemented_yet == 0);
+}
+
+static inline void CopyPixel(const PixelHsv* src, PixelMonoSigned* dest)
+{
+    yAssert(implemented_yet == 0);
+}
+
+static inline void CopyPixel(const PixelHsv* src, PixelRgbSigned* dest)
+{
+    yAssert(implemented_yet == 0);
+}
+
+static inline void CopyPixel(const PixelHsv* src, PixelFloat* dest)
+{
+    yAssert(implemented_yet == 0);
+}
+
+static inline void CopyPixel(const PixelHsv* src, PixelRgbFloat* dest)
+{
+    yAssert(implemented_yet == 0);
+}
+
+static inline void CopyPixel(const PixelHsv* src, PixelHsvFloat* dest)
+{
+    yAssert(implemented_yet == 0);
+}
+
+static inline void CopyPixel(const PixelHsv* src, PixelInt* dest)
+{
+    yAssert(implemented_yet == 0);
+}
+
+/******************************************************************************/
+
+static inline void CopyPixel(const PixelBgr* src, PixelMono* dest)
+{
+    *dest = static_cast<unsigned char>((src->r + src->g + src->b)/3);
+}
+
+static inline void CopyPixel(const PixelBgr* src, PixelMono16* dest)
+{
+    *dest = static_cast<yarp::sig::PixelMono16>((src->r + src->g + src->b)/3);
+}
+
+static inline void CopyPixel(const PixelBgr* src, PixelInt* dest)
+{
+    *dest = static_cast<unsigned char>((src->r + src->g + src->b)/3);
+}
+
+static inline void CopyPixel(const PixelBgr* src, PixelHsv* dest)
+{
+    yAssert(implemented_yet == 0);
+}
+
+static inline void CopyPixel(const PixelBgr* src, PixelMonoSigned* dest)
+{
+    *dest = static_cast<char>((src->r + src->g + src->b)/3);
+}
+
+static inline void CopyPixel(const PixelBgr* src, PixelRgbSigned* dest)
+{
+    dest->r = src->r;
+    dest->g = src->g;
+    dest->b = src->b;
+}
+
+static inline void CopyPixel(const PixelBgr* src, PixelFloat* dest)
+{
     *dest = ((src->r + src->g + src->b)/3.0f);
-SPECIAL_COPY(VOCAB_PIXEL_BGR,VOCAB_PIXEL_RGB_FLOAT)
+}
+
+static inline void CopyPixel(const PixelBgr* src, PixelRgbFloat* dest)
+{
     dest->r = src->r;
-dest->g = src->g;
-dest->b = src->b;
-SPECIAL_COPY(VOCAB_PIXEL_BGR,VOCAB_PIXEL_RGB)
+    dest->g = src->g;
+    dest->b = src->b;
+}
+
+static inline void CopyPixel(const PixelBgr* src, PixelRgb* dest)
+{
     dest->r = src->r;
-dest->g = src->g;
-dest->b = src->b;
-SPECIAL_COPY(VOCAB_PIXEL_BGR,VOCAB_PIXEL_RGBA)
+    dest->g = src->g;
+    dest->b = src->b;
+}
+
+static inline void CopyPixel(const PixelBgr* src, PixelRgba* dest)
+{
     dest->r = src->r;
-dest->g = src->g;
-dest->b = src->b;
-dest->a = 255;
-SPECIAL_COPY(VOCAB_PIXEL_BGR,VOCAB_PIXEL_BGRA)
+    dest->g = src->g;
+    dest->b = src->b;
+    dest->a = 255;
+}
+
+static inline void CopyPixel(const PixelBgr* src, PixelBgra* dest)
+{
     dest->r = src->r;
-dest->g = src->g;
-dest->b = src->b;
-dest->a = 255;
-SPECIAL_COPY(VOCAB_PIXEL_BGR,VOCAB_PIXEL_RGB_INT)
+    dest->g = src->g;
+    dest->b = src->b;
+    dest->a = 255;
+}
+
+static inline void CopyPixel(const PixelBgr* src, PixelRgbInt* dest)
+{
     dest->r = src->r;
-dest->g = src->g;
-dest->b = src->b;
-SPECIAL_COPY(VOCAB_PIXEL_BGR,VOCAB_PIXEL_HSV_FLOAT)
+    dest->g = src->g;
+    dest->b = src->b;
+}
+
+static inline void CopyPixel(const PixelBgr* src, PixelHsvFloat* dest)
+{
     yAssert(implemented_yet == 0);
+}
 
+/******************************************************************************/
 
+static inline void CopyPixel(const PixelRgba* src, PixelMono* dest)
+{
+    *dest = static_cast<unsigned char>((src->r + src->g + src->b)/3);
+}
 
-SPECIAL_COPY(VOCAB_PIXEL_RGBA,VOCAB_PIXEL_MONO)
-    *dest = (unsigned char)((src->r + src->g + src->b)/3);
-SPECIAL_COPY(VOCAB_PIXEL_RGBA,VOCAB_PIXEL_MONO16)
-    *dest = (yarp::sig::PixelMono16)((src->r + src->g + src->b)/3);
-SPECIAL_COPY(VOCAB_PIXEL_RGBA,VOCAB_PIXEL_INT)
-    *dest = (unsigned char)((src->r + src->g + src->b)/3);
-SPECIAL_COPY(VOCAB_PIXEL_RGBA,VOCAB_PIXEL_HSV)
+static inline void CopyPixel(const PixelRgba* src, PixelMono16* dest)
+{
+    *dest = static_cast<yarp::sig::PixelMono16>((src->r + src->g + src->b)/3);
+}
+
+static inline void CopyPixel(const PixelRgba* src, PixelInt* dest)
+{
+    *dest = static_cast<unsigned char>((src->r + src->g + src->b)/3);
+}
+
+static inline void CopyPixel(const PixelRgba* src, PixelHsv* dest)
+{
     yAssert(implemented_yet == 0);
-SPECIAL_COPY(VOCAB_PIXEL_RGBA,VOCAB_PIXEL_MONO_SIGNED)
-    *dest = (char)((src->r + src->g + src->b)/3);
-SPECIAL_COPY(VOCAB_PIXEL_RGBA,VOCAB_PIXEL_RGB_SIGNED)
-    dest->r = src->r; dest->g = src->g; dest->b = src->b;
-SPECIAL_COPY(VOCAB_PIXEL_RGBA,VOCAB_PIXEL_MONO_FLOAT)
+}
+
+static inline void CopyPixel(const PixelRgba* src, PixelMonoSigned* dest)
+{
+    *dest = static_cast<char>((src->r + src->g + src->b)/3);
+}
+
+static inline void CopyPixel(const PixelRgba* src, PixelRgbSigned* dest)
+{
+    dest->r = src->r;
+    dest->g = src->g;
+    dest->b = src->b;
+}
+
+static inline void CopyPixel(const PixelRgba* src, PixelFloat* dest)
+{
     *dest = ((src->r + src->g + src->b)/3.0f);
-SPECIAL_COPY(VOCAB_PIXEL_RGBA,VOCAB_PIXEL_RGB_FLOAT)
-    dest->r = src->r;
-dest->g = src->g;
-dest->b = src->b;
-SPECIAL_COPY(VOCAB_PIXEL_RGBA,VOCAB_PIXEL_RGB)
-    dest->r = src->r;
-dest->g = src->g;
-dest->b = src->b;
-SPECIAL_COPY(VOCAB_PIXEL_RGBA,VOCAB_PIXEL_BGRA)
-    dest->r = src->r;
-dest->g = src->g;
-dest->b = src->b;
-dest->a = src->a;
-SPECIAL_COPY(VOCAB_PIXEL_RGBA,VOCAB_PIXEL_BGR)
-    dest->r = src->r;
-dest->g = src->g;
-dest->b = src->b;
-SPECIAL_COPY(VOCAB_PIXEL_RGBA,VOCAB_PIXEL_RGB_INT)
-    dest->r = src->r;
-dest->g = src->g;
-dest->b = src->b;
-SPECIAL_COPY(VOCAB_PIXEL_RGBA,VOCAB_PIXEL_HSV_FLOAT)
-    yAssert(implemented_yet == 0);
+}
 
+static inline void CopyPixel(const PixelRgba* src, PixelRgbFloat* dest)
+{
+    dest->r = src->r;
+    dest->g = src->g;
+    dest->b = src->b;
+}
 
-SPECIAL_COPY(VOCAB_PIXEL_BGRA,VOCAB_PIXEL_MONO)
-    *dest = (unsigned char)((src->r + src->g + src->b)/3);
-SPECIAL_COPY(VOCAB_PIXEL_BGRA,VOCAB_PIXEL_MONO16)
-    *dest = (yarp::sig::PixelMono16)((src->r + src->g + src->b)/3);
-SPECIAL_COPY(VOCAB_PIXEL_BGRA,VOCAB_PIXEL_INT)
-    *dest = (unsigned char)((src->r + src->g + src->b)/3);
-SPECIAL_COPY(VOCAB_PIXEL_BGRA,VOCAB_PIXEL_HSV)
+static inline void CopyPixel(const PixelRgba* src, PixelRgb* dest)
+{
+    dest->r = src->r;
+    dest->g = src->g;
+    dest->b = src->b;
+}
+
+static inline void CopyPixel(const PixelRgba* src, PixelBgra* dest)
+{
+    dest->r = src->r;
+    dest->g = src->g;
+    dest->b = src->b;
+    dest->a = src->a;
+}
+
+static inline void CopyPixel(const PixelRgba* src, PixelBgr* dest)
+{
+    dest->r = src->r;
+    dest->g = src->g;
+    dest->b = src->b;
+}
+
+static inline void CopyPixel(const PixelRgba* src, PixelRgbInt* dest)
+{
+    dest->r = src->r;
+    dest->g = src->g;
+    dest->b = src->b;
+}
+
+static inline void CopyPixel(const PixelRgba* src, PixelHsvFloat* dest)
+{
     yAssert(implemented_yet == 0);
-SPECIAL_COPY(VOCAB_PIXEL_BGRA,VOCAB_PIXEL_MONO_SIGNED)
-    *dest = (char)((src->r + src->g + src->b)/3);
-SPECIAL_COPY(VOCAB_PIXEL_BGRA,VOCAB_PIXEL_RGB_SIGNED)
-    dest->r = src->r; dest->g = src->g; dest->b = src->b;
-SPECIAL_COPY(VOCAB_PIXEL_BGRA,VOCAB_PIXEL_MONO_FLOAT)
+}
+
+/******************************************************************************/
+
+static inline void CopyPixel(const PixelBgra* src, PixelMono* dest)
+{
+    *dest = static_cast<unsigned char>((src->r + src->g + src->b)/3);
+}
+
+static inline void CopyPixel(const PixelBgra* src, PixelMono16* dest)
+{
+    *dest = static_cast<yarp::sig::PixelMono16>((src->r + src->g + src->b)/3);
+}
+
+static inline void CopyPixel(const PixelBgra* src, PixelInt* dest)
+{
+    *dest = static_cast<unsigned char>((src->r + src->g + src->b)/3);
+}
+
+static inline void CopyPixel(const PixelBgra* src, PixelHsv* dest)
+{
+    yAssert(implemented_yet == 0);
+}
+
+static inline void CopyPixel(const PixelBgra* src, PixelMonoSigned* dest)
+{
+    *dest = static_cast<char>((src->r + src->g + src->b)/3);
+}
+
+static inline void CopyPixel(const PixelBgra* src, PixelRgbSigned* dest)
+{
+    dest->r = src->r;
+    dest->g = src->g;
+    dest->b = src->b;
+}
+
+static inline void CopyPixel(const PixelBgra* src, PixelFloat* dest)
+{
     *dest = ((src->r + src->g + src->b)/3.0f);
-SPECIAL_COPY(VOCAB_PIXEL_BGRA,VOCAB_PIXEL_RGB_FLOAT)
+}
+
+static inline void CopyPixel(const PixelBgra* src, PixelRgbFloat* dest)
+{
     dest->r = src->r;
-dest->g = src->g;
-dest->b = src->b;
-SPECIAL_COPY(VOCAB_PIXEL_BGRA,VOCAB_PIXEL_RGB)
+    dest->g = src->g;
+    dest->b = src->b;
+}
+
+static inline void CopyPixel(const PixelBgra* src, PixelRgb* dest)
+{
     dest->r = src->r;
-dest->g = src->g;
-dest->b = src->b;
-SPECIAL_COPY(VOCAB_PIXEL_BGRA,VOCAB_PIXEL_RGBA)
+    dest->g = src->g;
+    dest->b = src->b;
+}
+
+static inline void CopyPixel(const PixelBgra* src, PixelRgba* dest)
+{
     dest->r = src->r;
-dest->g = src->g;
-dest->b = src->b;
-dest->a = src->a;
-SPECIAL_COPY(VOCAB_PIXEL_BGRA,VOCAB_PIXEL_BGR)
+    dest->g = src->g;
+    dest->b = src->b;
+    dest->a = src->a;
+}
+
+static inline void CopyPixel(const PixelBgra* src, PixelBgr* dest)
+{
     dest->r = src->r;
-dest->g = src->g;
-dest->b = src->b;
-SPECIAL_COPY(VOCAB_PIXEL_BGRA,VOCAB_PIXEL_RGB_INT)
+    dest->g = src->g;
+    dest->b = src->b;
+}
+
+static inline void CopyPixel(const PixelBgra* src, PixelRgbInt* dest)
+{
     dest->r = src->r;
-dest->g = src->g;
-dest->b = src->b;
-SPECIAL_COPY(VOCAB_PIXEL_BGRA,VOCAB_PIXEL_HSV_FLOAT)
+    dest->g = src->g;
+    dest->b = src->b;
+}
+
+static inline void CopyPixel(const PixelBgra* src, PixelHsvFloat* dest)
+{
     yAssert(implemented_yet == 0);
+}
 
+/******************************************************************************/
 
+static inline void CopyPixel(const PixelRgbInt* src, PixelMono* dest)
+{
+    *dest = static_cast<unsigned char>((src->r + src->g + src->b)/3);
+}
 
-SPECIAL_COPY(VOCAB_PIXEL_RGB_INT,VOCAB_PIXEL_MONO)
-    *dest = (unsigned char)((src->r + src->g + src->b)/3);
-SPECIAL_COPY(VOCAB_PIXEL_RGB_INT,VOCAB_PIXEL_MONO16)
-    *dest = (yarp::sig::PixelMono16)((src->r + src->g + src->b)/3);
-SPECIAL_COPY(VOCAB_PIXEL_RGB_INT,VOCAB_PIXEL_INT)
-    *dest = (unsigned char)((src->r + src->g + src->b)/3);
-SPECIAL_COPY(VOCAB_PIXEL_RGB_INT,VOCAB_PIXEL_HSV)
+static inline void CopyPixel(const PixelRgbInt* src, PixelMono16* dest)
+{
+    *dest = static_cast<yarp::sig::PixelMono16>((src->r + src->g + src->b)/3);
+}
+
+static inline void CopyPixel(const PixelRgbInt* src, PixelInt* dest)
+{
+    *dest = static_cast<unsigned char>((src->r + src->g + src->b)/3);
+}
+
+static inline void CopyPixel(const PixelRgbInt* src, PixelHsv* dest)
+{
     yAssert(implemented_yet == 0);
-SPECIAL_COPY(VOCAB_PIXEL_RGB_INT,VOCAB_PIXEL_MONO_SIGNED)
-    *dest = (char)((src->r + src->g + src->b)/3);
-SPECIAL_COPY(VOCAB_PIXEL_RGB_INT,VOCAB_PIXEL_RGB_SIGNED)
-    dest->r = (char)src->r; dest->g = (char)src->g; dest->b = (char)src->b;
-SPECIAL_COPY(VOCAB_PIXEL_RGB_INT,VOCAB_PIXEL_MONO_FLOAT)
+}
+
+static inline void CopyPixel(const PixelRgbInt* src, PixelMonoSigned* dest)
+{
+    *dest = static_cast<char>((src->r + src->g + src->b)/3);
+}
+
+static inline void CopyPixel(const PixelRgbInt* src, PixelRgbSigned* dest)
+{
+    dest->r = static_cast<char>(src->r);
+    dest->g = static_cast<char>(src->g);
+    dest->b = static_cast<char>(src->b);
+}
+
+static inline void CopyPixel(const PixelRgbInt* src, PixelFloat* dest)
+{
     *dest = ((src->r + src->g + src->b)/3.0f);
-SPECIAL_COPY(VOCAB_PIXEL_RGB_INT,VOCAB_PIXEL_RGB_FLOAT)
-    dest->r = (float)((int) src->r);
-dest->g = (float)((int) src->g);
-dest->b = (float)((int) src->b);
-SPECIAL_COPY(VOCAB_PIXEL_RGB_INT,VOCAB_PIXEL_RGB)
-    dest->r = (unsigned char)src->r;
-dest->g = (unsigned char)src->g;
-dest->b = (unsigned char)src->b;
-SPECIAL_COPY(VOCAB_PIXEL_RGB_INT,VOCAB_PIXEL_BGR)
-    dest->r = (unsigned char)src->r;
-dest->g = (unsigned char)src->g;
-dest->b = (unsigned char)src->b;
-SPECIAL_COPY(VOCAB_PIXEL_RGB_INT,VOCAB_PIXEL_RGBA)
-    dest->r = (unsigned char)src->r;
-dest->g = (unsigned char)src->g;
-dest->b = (unsigned char)src->b;
-dest->a = 255;
-SPECIAL_COPY(VOCAB_PIXEL_RGB_INT,VOCAB_PIXEL_BGRA)
-    dest->r = (unsigned char)src->r;
-dest->g = (unsigned char)src->g;
-dest->b = (unsigned char)src->b;
-dest->a = 255;
-SPECIAL_COPY(VOCAB_PIXEL_RGB_INT,VOCAB_PIXEL_HSV_FLOAT)
+}
+
+static inline void CopyPixel(const PixelRgbInt* src, PixelRgbFloat* dest)
+{
+    dest->r = static_cast<float>(static_cast<int>(src->r));
+    dest->g = static_cast<float>(static_cast<int>(src->g));
+    dest->b = static_cast<float>(static_cast<int>(src->b));
+}
+
+static inline void CopyPixel(const PixelRgbInt* src, PixelRgb* dest)
+{
+    dest->r = static_cast<unsigned char>(src->r);
+    dest->g = static_cast<unsigned char>(src->g);
+    dest->b = static_cast<unsigned char>(src->b);
+}
+
+static inline void CopyPixel(const PixelRgbInt* src, PixelBgr* dest)
+{
+    dest->r = static_cast<unsigned char>(src->r);
+    dest->g = static_cast<unsigned char>(src->g);
+    dest->b = static_cast<unsigned char>(src->b);
+}
+
+static inline void CopyPixel(const PixelRgbInt* src, PixelRgba* dest)
+{
+    dest->r = static_cast<unsigned char>(src->r);
+    dest->g = static_cast<unsigned char>(src->g);
+    dest->b = static_cast<unsigned char>(src->b);
+    dest->a = 255;
+}
+
+static inline void CopyPixel(const PixelRgbInt* src, PixelBgra* dest)
+{
+    dest->r = static_cast<unsigned char>(src->r);
+    dest->g = static_cast<unsigned char>(src->g);
+    dest->b = static_cast<unsigned char>(src->b);
+    dest->a = 255;
+}
+
+static inline void CopyPixel(const PixelRgbInt* src, PixelHsvFloat* dest)
+{
     yAssert(implemented_yet == 0);
+}
 
+/******************************************************************************/
 
+static inline void CopyPixel(const PixelMonoSigned* src, PixelRgb* dest)
+{
+    dest->r = *src;
+    dest->g = *src;
+    dest->b = *src;
+}
 
-SPECIAL_COPY(VOCAB_PIXEL_MONO_SIGNED,VOCAB_PIXEL_RGB)
-    dest->r = dest->g = dest->b = *src;
-SPECIAL_COPY(VOCAB_PIXEL_MONO_SIGNED,VOCAB_PIXEL_RGBA)
-    dest->r = dest->g = dest->b = *src; dest->a = 255;
-SPECIAL_COPY(VOCAB_PIXEL_MONO_SIGNED,VOCAB_PIXEL_BGRA)
-    dest->r = dest->g = dest->b = *src; dest->a = 255;
-SPECIAL_COPY(VOCAB_PIXEL_MONO_SIGNED,VOCAB_PIXEL_RGB_INT)
-    dest->r = dest->g = dest->b = *src;
-SPECIAL_COPY(VOCAB_PIXEL_MONO_SIGNED,VOCAB_PIXEL_BGR)
-    dest->r = dest->g = dest->b = *src;
-SPECIAL_COPY(VOCAB_PIXEL_MONO_SIGNED,VOCAB_PIXEL_HSV)
+static inline void CopyPixel(const PixelMonoSigned* src, PixelRgba* dest)
+{
+    dest->r = *src;
+    dest->g = *src;
+    dest->b = *src;
+    dest->a = 255;
+}
+
+static inline void CopyPixel(const PixelMonoSigned* src, PixelBgra* dest)
+{
+    dest->r = *src;
+    dest->g = *src;
+    dest->b = *src;
+    dest->a = 255;
+}
+
+static inline void CopyPixel(const PixelMonoSigned* src, PixelRgbInt* dest)
+{
+    dest->r = *src;
+    dest->g = *src;
+    dest->b = *src;
+}
+
+static inline void CopyPixel(const PixelMonoSigned* src, PixelBgr* dest)
+{
+    dest->r = *src;
+    dest->g = *src;
+    dest->b = *src;
+}
+
+static inline void CopyPixel(const PixelMonoSigned* src, PixelHsv* dest)
+{
     dest->v = *src;
-dest->h = dest->s = 0;
-SPECIAL_COPY(VOCAB_PIXEL_MONO_SIGNED,VOCAB_PIXEL_RGB_SIGNED)
-    dest->r = dest->g = dest->b = *src;
-SPECIAL_COPY(VOCAB_PIXEL_MONO_SIGNED,VOCAB_PIXEL_RGB_FLOAT)
-    dest->r = dest->g = dest->b = *src;
-SPECIAL_COPY(VOCAB_PIXEL_MONO_SIGNED,VOCAB_PIXEL_HSV_FLOAT)
+    dest->h = 0;
+    dest->s = 0;
+}
+
+static inline void CopyPixel(const PixelMonoSigned* src, PixelRgbSigned* dest)
+{
+    dest->r = *src;
+    dest->g = *src;
+    dest->b = *src;
+}
+
+static inline void CopyPixel(const PixelMonoSigned* src, PixelRgbFloat* dest)
+{
+    dest->r = *src;
+    dest->g = *src;
+    dest->b = *src;
+}
+
+static inline void CopyPixel(const PixelMonoSigned* src, PixelHsvFloat* dest)
+{
     dest->v = *src;
-dest->h = dest->s = 0;
-SPECIAL_COPY(VOCAB_PIXEL_MONO_SIGNED,VOCAB_PIXEL_MONO)
+    dest->h = 0;
+    dest->s = 0;
+}
+
+static inline void CopyPixel(const PixelMonoSigned* src, PixelMono* dest)
+{
     *dest = *src + 128;
-SPECIAL_COPY(VOCAB_PIXEL_MONO_SIGNED,VOCAB_PIXEL_INT)
-    *dest = *src;
-SPECIAL_COPY(VOCAB_PIXEL_MONO_SIGNED,VOCAB_PIXEL_MONO16)
-    *dest = (yarp::sig::PixelMono16)(*src);
+}
 
-SPECIAL_COPY(VOCAB_PIXEL_RGB_SIGNED,VOCAB_PIXEL_MONO)
-    *dest = (unsigned char)((src->r + src->g + src->b)/3);
-SPECIAL_COPY(VOCAB_PIXEL_RGB_SIGNED,VOCAB_PIXEL_MONO16)
-    *dest = (PixelMono16)((src->r + src->g + src->b)/3);
-SPECIAL_COPY(VOCAB_PIXEL_RGB_SIGNED,VOCAB_PIXEL_INT)
-    *dest = (int)((src->r + src->g + src->b)/3);
-SPECIAL_COPY(VOCAB_PIXEL_RGB_SIGNED,VOCAB_PIXEL_HSV)
+static inline void CopyPixel(const PixelMonoSigned* src, PixelInt* dest)
+{
+    *dest = *src;
+}
+
+static inline void CopyPixel(const PixelMonoSigned* src, PixelMono16* dest)
+{
+    *dest = static_cast<yarp::sig::PixelMono16>(*src);
+}
+
+/******************************************************************************/
+
+static inline void CopyPixel(const PixelRgbSigned* src, PixelMono* dest)
+{
+    *dest = static_cast<unsigned char>((src->r + src->g + src->b)/3);
+}
+
+static inline void CopyPixel(const PixelRgbSigned* src, PixelMono16* dest)
+{
+    *dest = static_cast<PixelMono16>((src->r + src->g + src->b)/3);
+}
+
+static inline void CopyPixel(const PixelRgbSigned* src, PixelInt* dest)
+{
+    *dest = static_cast<int>((src->r + src->g + src->b)/3);
+}
+
+static inline void CopyPixel(const PixelRgbSigned* src, PixelHsv* dest)
+{
     yAssert(implemented_yet == 0);
-SPECIAL_COPY(VOCAB_PIXEL_RGB_SIGNED,VOCAB_PIXEL_MONO_SIGNED)
-    *dest = (char)((src->r + src->g + src->b)/3);
-SPECIAL_COPY(VOCAB_PIXEL_RGB_SIGNED,VOCAB_PIXEL_RGB)
+}
+
+static inline void CopyPixel(const PixelRgbSigned* src, PixelMonoSigned* dest)
+{
+    *dest = static_cast<char>((src->r + src->g + src->b)/3);
+}
+
+static inline void CopyPixel(const PixelRgbSigned* src, PixelRgb* dest)
+{
     dest->r = src->r;
-dest->g = src->g;
-dest->b = src->b;
-SPECIAL_COPY(VOCAB_PIXEL_RGB_SIGNED,VOCAB_PIXEL_RGBA)
+    dest->g = src->g;
+    dest->b = src->b;
+}
+
+static inline void CopyPixel(const PixelRgbSigned* src, PixelRgba* dest)
+{
     dest->r = src->r;
-dest->g = src->g;
-dest->b = src->b;
-dest->a = 255;
-SPECIAL_COPY(VOCAB_PIXEL_RGB_SIGNED,VOCAB_PIXEL_BGRA)
+    dest->g = src->g;
+    dest->b = src->b;
+    dest->a = 255;
+}
+
+static inline void CopyPixel(const PixelRgbSigned* src, PixelBgra* dest)
+{
     dest->r = src->r;
-dest->g = src->g;
-dest->b = src->b;
-dest->a = 255;
-SPECIAL_COPY(VOCAB_PIXEL_RGB_SIGNED,VOCAB_PIXEL_RGB_INT)
+    dest->g = src->g;
+    dest->b = src->b;
+    dest->a = 255;
+}
+
+static inline void CopyPixel(const PixelRgbSigned* src, PixelRgbInt* dest)
+{
     dest->r = src->r;
-dest->g = src->g;
-dest->b = src->b;
-SPECIAL_COPY(VOCAB_PIXEL_RGB_SIGNED,VOCAB_PIXEL_BGR)
+    dest->g = src->g;
+    dest->b = src->b;
+}
+
+static inline void CopyPixel(const PixelRgbSigned* src, PixelBgr* dest)
+{
     dest->r = src->r;
-dest->g = src->g;
-dest->b = src->b;
-SPECIAL_COPY(VOCAB_PIXEL_RGB_SIGNED,VOCAB_PIXEL_MONO_FLOAT)
+    dest->g = src->g;
+    dest->b = src->b;
+}
+
+static inline void CopyPixel(const PixelRgbSigned* src, PixelFloat* dest)
+{
     *dest = ((src->r + src->g + src->b)/3.0f);
-SPECIAL_COPY(VOCAB_PIXEL_RGB_SIGNED,VOCAB_PIXEL_RGB_FLOAT)
+}
+
+static inline void CopyPixel(const PixelRgbSigned* src, PixelRgbFloat* dest)
+{
     dest->r = src->r;
-dest->g = src->g;
-dest->b = src->b;
-SPECIAL_COPY(VOCAB_PIXEL_RGB_SIGNED,VOCAB_PIXEL_HSV_FLOAT)
-    yAssert(implemented_yet == 0);
+    dest->g = src->g;
+    dest->b = src->b;
+}
 
-SPECIAL_COPY(VOCAB_PIXEL_MONO_FLOAT,VOCAB_PIXEL_MONO)
-    *dest = (unsigned char)*src;
-SPECIAL_COPY(VOCAB_PIXEL_MONO_FLOAT,VOCAB_PIXEL_MONO16)
-    *dest = (yarp::sig::PixelMono16)*src;
-SPECIAL_COPY(VOCAB_PIXEL_MONO_FLOAT,VOCAB_PIXEL_INT)
-    *dest = (unsigned char)*src;
-SPECIAL_COPY(VOCAB_PIXEL_MONO_FLOAT,VOCAB_PIXEL_MONO_SIGNED)
-    *dest = (char)*src;
-SPECIAL_COPY(VOCAB_PIXEL_MONO_FLOAT,VOCAB_PIXEL_RGB)
-    dest->r = dest->g = dest->b = (unsigned char)(*src);
-SPECIAL_COPY(VOCAB_PIXEL_MONO_FLOAT,VOCAB_PIXEL_RGBA)
-    dest->r = dest->g = dest->b = (unsigned char)(*src);
-dest->a = 255;
-SPECIAL_COPY(VOCAB_PIXEL_MONO_FLOAT,VOCAB_PIXEL_BGRA)
-    dest->r = dest->g = dest->b = (unsigned char)(*src);
-dest->a = 255;
-SPECIAL_COPY(VOCAB_PIXEL_MONO_FLOAT,VOCAB_PIXEL_RGB_INT)
-    dest->r = dest->g = dest->b = (int)(*src);
-SPECIAL_COPY(VOCAB_PIXEL_MONO_FLOAT,VOCAB_PIXEL_BGR)
-    dest->r = dest->g = dest->b = (unsigned char)(*src);
-SPECIAL_COPY(VOCAB_PIXEL_MONO_FLOAT,VOCAB_PIXEL_HSV)
-    dest->v = (unsigned char)*src;
-dest->h = dest->s = 0;
-SPECIAL_COPY(VOCAB_PIXEL_MONO_FLOAT,VOCAB_PIXEL_RGB_SIGNED)
-    dest->r = dest->g = dest->b = (signed char) *src;
-SPECIAL_COPY(VOCAB_PIXEL_MONO_FLOAT,VOCAB_PIXEL_RGB_FLOAT)
-    dest->r = dest->g = dest->b = *src;
-SPECIAL_COPY(VOCAB_PIXEL_MONO_FLOAT,VOCAB_PIXEL_HSV_FLOAT)
+static inline void CopyPixel(const PixelRgbSigned* src, PixelHsvFloat* dest)
+{
+    yAssert(implemented_yet == 0);
+}
+
+/******************************************************************************/
+
+static inline void CopyPixel(const PixelFloat* src, PixelMono* dest)
+{
+    *dest = static_cast<unsigned char>(*src);
+}
+
+static inline void CopyPixel(const PixelFloat* src, PixelMono16* dest)
+{
+    *dest = static_cast<yarp::sig::PixelMono16>(*src);
+}
+
+static inline void CopyPixel(const PixelFloat* src, PixelInt* dest)
+{
+    *dest = static_cast<unsigned char>(*src);
+}
+
+static inline void CopyPixel(const PixelFloat* src, PixelMonoSigned* dest)
+{
+    *dest = static_cast<char>(*src);
+}
+
+static inline void CopyPixel(const PixelFloat* src, PixelRgb* dest)
+{
+    dest->r = static_cast<unsigned char>(*src);
+    dest->g = static_cast<unsigned char>(*src);
+    dest->b = static_cast<unsigned char>(*src);
+}
+
+static inline void CopyPixel(const PixelFloat* src, PixelRgba* dest)
+{
+    dest->r = static_cast<unsigned char>(*src);
+    dest->g = static_cast<unsigned char>(*src);
+    dest->b = static_cast<unsigned char>(*src);
+    dest->a = 255;
+}
+
+static inline void CopyPixel(const PixelFloat* src, PixelBgra* dest)
+{
+    dest->r = static_cast<unsigned char>(*src);
+    dest->g = static_cast<unsigned char>(*src);
+    dest->b = static_cast<unsigned char>(*src);
+    dest->a = 255;
+}
+
+static inline void CopyPixel(const PixelFloat* src, PixelRgbInt* dest)
+{
+    dest->r = static_cast<int>(*src);
+    dest->g = static_cast<int>(*src);
+    dest->b = static_cast<int>(*src);
+}
+
+static inline void CopyPixel(const PixelFloat* src, PixelBgr* dest)
+{
+    dest->r = static_cast<unsigned char>(*src);
+    dest->g = static_cast<unsigned char>(*src);
+    dest->b = static_cast<unsigned char>(*src);
+}
+
+static inline void CopyPixel(const PixelFloat* src, PixelHsv* dest)
+{
+    dest->v = static_cast<unsigned char>(*src);
+    dest->h = 0;
+    dest->s = 0;
+}
+
+static inline void CopyPixel(const PixelFloat* src, PixelRgbSigned* dest)
+{
+    dest->r = static_cast<signed char>(*src);
+    dest->g = static_cast<signed char>(*src);
+    dest->b = static_cast<signed char>(*src);
+}
+
+static inline void CopyPixel(const PixelFloat* src, PixelRgbFloat* dest)
+{
+    dest->r = *src;
+    dest->g = *src;
+    dest->b = *src;
+}
+
+static inline void CopyPixel(const PixelFloat* src, PixelHsvFloat* dest)
+{
     dest->v = *src;
-dest->h = dest->s = 0;
+    dest->h = 0;
+    dest->s = 0;
+}
 
-SPECIAL_COPY(VOCAB_PIXEL_RGB_FLOAT,VOCAB_PIXEL_MONO)
-    *dest = (unsigned char)((src->r + src->g + src->b)/3);
-SPECIAL_COPY(VOCAB_PIXEL_RGB_FLOAT,VOCAB_PIXEL_INT)
-    *dest = (unsigned char)((src->r + src->g + src->b)/3);
-SPECIAL_COPY(VOCAB_PIXEL_RGB_FLOAT,VOCAB_PIXEL_MONO16)
-    *dest = (yarp::sig::PixelMono16)((src->r + src->g + src->b)/3);
-SPECIAL_COPY(VOCAB_PIXEL_RGB_FLOAT,VOCAB_PIXEL_HSV)
+/******************************************************************************/
+
+static inline void CopyPixel(const PixelRgbFloat* src, PixelMono* dest)
+{
+    *dest = static_cast<unsigned char>((src->r + src->g + src->b)/3);
+}
+
+static inline void CopyPixel(const PixelRgbFloat* src, PixelInt* dest)
+{
+    *dest = static_cast<unsigned char>((src->r + src->g + src->b)/3);
+}
+
+static inline void CopyPixel(const PixelRgbFloat* src, PixelMono16* dest)
+{
+    *dest = static_cast<yarp::sig::PixelMono16>((src->r + src->g + src->b)/3);
+}
+
+static inline void CopyPixel(const PixelRgbFloat* src, PixelHsv* dest)
+{
     yAssert(implemented_yet == 0);
-SPECIAL_COPY(VOCAB_PIXEL_RGB_FLOAT,VOCAB_PIXEL_MONO_SIGNED)
-    *dest = (char)((src->r + src->g + src->b)/3);
-SPECIAL_COPY(VOCAB_PIXEL_RGB_FLOAT,VOCAB_PIXEL_RGB)
-    dest->r = (unsigned char) src->r;
-dest->g = (unsigned char) src->g;
-dest->b = (unsigned char) src->b;
-SPECIAL_COPY(VOCAB_PIXEL_RGB_FLOAT,VOCAB_PIXEL_RGBA)
-    dest->r = (unsigned char) src->r;
-dest->g = (unsigned char) src->g;
-dest->b = (unsigned char) src->b;
-dest->a = 255;
-SPECIAL_COPY(VOCAB_PIXEL_RGB_FLOAT,VOCAB_PIXEL_BGRA)
-    dest->r = (unsigned char) src->r;
-dest->g = (unsigned char) src->g;
-dest->b = (unsigned char) src->b;
-dest->a = 255;
-SPECIAL_COPY(VOCAB_PIXEL_RGB_FLOAT,VOCAB_PIXEL_RGB_INT)
-    dest->r = (int) src->r;
-dest->g = (int) src->g;
-dest->b = (int) src->b;
-SPECIAL_COPY(VOCAB_PIXEL_RGB_FLOAT,VOCAB_PIXEL_BGR)
-    dest->r = (unsigned char) src->r;
-dest->g = (unsigned char) src->g;
-dest->b = (unsigned char) src->b;
-SPECIAL_COPY(VOCAB_PIXEL_RGB_FLOAT,VOCAB_PIXEL_MONO_FLOAT)
+}
+
+static inline void CopyPixel(const PixelRgbFloat* src, PixelMonoSigned* dest)
+{
+    *dest = static_cast<char>((src->r + src->g + src->b)/3);
+}
+
+static inline void CopyPixel(const PixelRgbFloat* src, PixelRgb* dest)
+{
+    dest->r = static_cast<unsigned char>(src->r);
+    dest->g = static_cast<unsigned char>(src->g);
+    dest->b = static_cast<unsigned char>(src->b);
+}
+
+static inline void CopyPixel(const PixelRgbFloat* src, PixelRgba* dest)
+{
+    dest->r = static_cast<unsigned char>(src->r);
+    dest->g = static_cast<unsigned char>(src->g);
+    dest->b = static_cast<unsigned char>(src->b);
+    dest->a = 255;
+}
+
+static inline void CopyPixel(const PixelRgbFloat* src, PixelBgra* dest)
+{
+    dest->r = static_cast<unsigned char>(src->r);
+    dest->g = static_cast<unsigned char>(src->g);
+    dest->b = static_cast<unsigned char>(src->b);
+    dest->a = 255;
+}
+
+static inline void CopyPixel(const PixelRgbFloat* src, PixelRgbInt* dest)
+{
+    dest->r = static_cast<int>(src->r);
+    dest->g = static_cast<int>(src->g);
+    dest->b = static_cast<int>(src->b);
+}
+
+static inline void CopyPixel(const PixelRgbFloat* src, PixelBgr* dest)
+{
+    dest->r = static_cast<unsigned char>(src->r);
+    dest->g = static_cast<unsigned char>(src->g);
+    dest->b = static_cast<unsigned char>(src->b);
+}
+
+static inline void CopyPixel(const PixelRgbFloat* src, PixelFloat* dest)
+{
     *dest = ((src->r + src->g + src->b)/3);
-SPECIAL_COPY(VOCAB_PIXEL_RGB_FLOAT,VOCAB_PIXEL_RGB_SIGNED)
-    dest->r = (signed char) src->r;
-dest->g = (signed char) src->g;
-dest->b = (signed char) src->b;
-SPECIAL_COPY(VOCAB_PIXEL_RGB_FLOAT,VOCAB_PIXEL_HSV_FLOAT)
-    yAssert(implemented_yet == 0);
+}
 
-SPECIAL_COPY(VOCAB_PIXEL_HSV_FLOAT,VOCAB_PIXEL_MONO)
-    yAssert(implemented_yet == 0);
-SPECIAL_COPY(VOCAB_PIXEL_HSV_FLOAT,VOCAB_PIXEL_MONO16)
-    yAssert(implemented_yet == 0);
-SPECIAL_COPY(VOCAB_PIXEL_HSV_FLOAT,VOCAB_PIXEL_RGB)
-    yAssert(implemented_yet == 0);
-SPECIAL_COPY(VOCAB_PIXEL_HSV_FLOAT,VOCAB_PIXEL_BGR)
-    yAssert(implemented_yet == 0);
-SPECIAL_COPY(VOCAB_PIXEL_HSV_FLOAT,VOCAB_PIXEL_RGBA)
-    yAssert(implemented_yet == 0);
-SPECIAL_COPY(VOCAB_PIXEL_HSV_FLOAT,VOCAB_PIXEL_BGRA)
-    yAssert(implemented_yet == 0);
-SPECIAL_COPY(VOCAB_PIXEL_HSV_FLOAT,VOCAB_PIXEL_RGB_INT)
-    yAssert(implemented_yet == 0);
-SPECIAL_COPY(VOCAB_PIXEL_HSV_FLOAT,VOCAB_PIXEL_MONO_SIGNED)
-    yAssert(implemented_yet == 0);
-SPECIAL_COPY(VOCAB_PIXEL_HSV_FLOAT,VOCAB_PIXEL_RGB_SIGNED)
-    yAssert(implemented_yet == 0);
-SPECIAL_COPY(VOCAB_PIXEL_HSV_FLOAT,VOCAB_PIXEL_MONO_FLOAT)
-    yAssert(implemented_yet == 0);
-SPECIAL_COPY(VOCAB_PIXEL_HSV_FLOAT,VOCAB_PIXEL_RGB_FLOAT)
-    yAssert(implemented_yet == 0);
-SPECIAL_COPY(VOCAB_PIXEL_HSV_FLOAT,VOCAB_PIXEL_HSV)
-    yAssert(implemented_yet == 0);
-SPECIAL_COPY(VOCAB_PIXEL_HSV_FLOAT,VOCAB_PIXEL_INT)
-    yAssert(implemented_yet == 0);
+static inline void CopyPixel(const PixelRgbFloat* src, PixelRgbSigned* dest)
+{
+    dest->r = static_cast<signed char>(src->r);
+    dest->g = static_cast<signed char>(src->g);
+    dest->b = static_cast<signed char>(src->b);
+}
 
-SPECIAL_COPY(VOCAB_PIXEL_INT,VOCAB_PIXEL_RGB)
-    dest->r = dest->g = dest->b = (char)*src;
-SPECIAL_COPY(VOCAB_PIXEL_INT,VOCAB_PIXEL_RGBA)
-    dest->r = dest->g = dest->b = (char)*src;
-dest->a = 255;
-SPECIAL_COPY(VOCAB_PIXEL_INT,VOCAB_PIXEL_BGRA)
-    dest->r = dest->g = dest->b = (char)*src;
-dest->a = 255;
-SPECIAL_COPY(VOCAB_PIXEL_INT,VOCAB_PIXEL_RGB_INT)
-    dest->r = dest->g = dest->b = *src;
-SPECIAL_COPY(VOCAB_PIXEL_INT,VOCAB_PIXEL_BGR)
-    dest->r = dest->g = dest->b = (char)*src;
-SPECIAL_COPY(VOCAB_PIXEL_INT,VOCAB_PIXEL_HSV)
-    dest->v = (yarp::sig::PixelMono)(*src);
-dest->h = dest->s = 0;
-SPECIAL_COPY(VOCAB_PIXEL_INT,VOCAB_PIXEL_RGB_SIGNED)
-    dest->r = dest->g = dest->b = (yarp::sig::PixelMono)(*src);
-SPECIAL_COPY(VOCAB_PIXEL_INT,VOCAB_PIXEL_MONO_FLOAT)
-    *dest = (float)(*src);
-SPECIAL_COPY(VOCAB_PIXEL_INT,VOCAB_PIXEL_RGB_FLOAT)
-    dest->r = dest->g = dest->b = (float)(*src);
-SPECIAL_COPY(VOCAB_PIXEL_INT,VOCAB_PIXEL_HSV_FLOAT)
+static inline void CopyPixel(const PixelRgbFloat* src, PixelHsvFloat* dest)
+{
+    yAssert(implemented_yet == 0);
+}
+
+/******************************************************************************/
+
+static inline void CopyPixel(const PixelHsvFloat* src, PixelMono* dest)
+{
+    yAssert(implemented_yet == 0);
+}
+
+static inline void CopyPixel(const PixelHsvFloat* src, PixelMono16* dest)
+{
+    yAssert(implemented_yet == 0);
+}
+
+static inline void CopyPixel(const PixelHsvFloat* src, PixelRgb* dest)
+{
+    yAssert(implemented_yet == 0);
+}
+
+static inline void CopyPixel(const PixelHsvFloat* src, PixelBgr* dest)
+{
+    yAssert(implemented_yet == 0);
+}
+
+static inline void CopyPixel(const PixelHsvFloat* src, PixelRgba* dest)
+{
+    yAssert(implemented_yet == 0);
+}
+
+static inline void CopyPixel(const PixelHsvFloat* src, PixelBgra* dest)
+{
+    yAssert(implemented_yet == 0);
+}
+
+static inline void CopyPixel(const PixelHsvFloat* src, PixelRgbInt* dest)
+{
+    yAssert(implemented_yet == 0);
+}
+
+static inline void CopyPixel(const PixelHsvFloat* src, PixelMonoSigned* dest)
+{
+    yAssert(implemented_yet == 0);
+}
+
+static inline void CopyPixel(const PixelHsvFloat* src, PixelRgbSigned* dest)
+{
+    yAssert(implemented_yet == 0);
+}
+
+static inline void CopyPixel(const PixelHsvFloat* src, PixelFloat* dest)
+{
+    yAssert(implemented_yet == 0);
+}
+
+static inline void CopyPixel(const PixelHsvFloat* src, PixelRgbFloat* dest)
+{
+    yAssert(implemented_yet == 0);
+}
+
+static inline void CopyPixel(const PixelHsvFloat* src, PixelHsv* dest)
+{
+    yAssert(implemented_yet == 0);
+}
+
+static inline void CopyPixel(const PixelHsvFloat* src, PixelInt* dest)
+{
+    yAssert(implemented_yet == 0);
+}
+
+/******************************************************************************/
+
+static inline void CopyPixel(const PixelInt* src, PixelRgb* dest)
+{
+    dest->r = static_cast<char>(*src);
+    dest->g = static_cast<char>(*src);
+    dest->b = static_cast<char>(*src);
+}
+
+static inline void CopyPixel(const PixelInt* src, PixelRgba* dest)
+{
+    dest->r = static_cast<char>(*src);
+    dest->g = static_cast<char>(*src);
+    dest->b = static_cast<char>(*src);
+    dest->a = 255;
+}
+
+static inline void CopyPixel(const PixelInt* src, PixelBgra* dest)
+{
+    dest->r = static_cast<char>(*src);
+    dest->g = static_cast<char>(*src);
+    dest->b = static_cast<char>(*src);
+    dest->a = 255;
+}
+
+static inline void CopyPixel(const PixelInt* src, PixelRgbInt* dest)
+{
+    dest->r = *src;
+    dest->g = *src;
+    dest->b = *src;
+}
+
+static inline void CopyPixel(const PixelInt* src, PixelBgr* dest)
+{
+    dest->r = static_cast<char>(*src);
+    dest->g = static_cast<char>(*src);
+    dest->b = static_cast<char>(*src);
+}
+
+static inline void CopyPixel(const PixelInt* src, PixelHsv* dest)
+{
+    dest->v = static_cast<yarp::sig::PixelMono>(*src);
+    dest->h = dest->s = 0;
+}
+
+static inline void CopyPixel(const PixelInt* src, PixelRgbSigned* dest)
+{
+    dest->r = static_cast<yarp::sig::PixelMono>(*src);
+    dest->g = static_cast<yarp::sig::PixelMono>(*src);
+    dest->b = static_cast<yarp::sig::PixelMono>(*src);
+}
+
+static inline void CopyPixel(const PixelInt* src, PixelFloat* dest)
+{
+    *dest = static_cast<float>(*src);
+}
+
+static inline void CopyPixel(const PixelInt* src, PixelRgbFloat* dest)
+{
+    dest->r = static_cast<float>(*src);
+    dest->g = static_cast<float>(*src);
+    dest->b = static_cast<float>(*src);
+}
+
+static inline void CopyPixel(const PixelInt* src, PixelHsvFloat* dest)
+{
     dest->v = float(*src);
-dest->h = dest->s = 0;
-SPECIAL_COPY(VOCAB_PIXEL_INT,VOCAB_PIXEL_MONO_SIGNED)
-    *dest = (char)(*src >> 1);
-SPECIAL_COPY(VOCAB_PIXEL_INT,VOCAB_PIXEL_MONO)
-    *dest = (yarp::sig::PixelMono)(*src);
-SPECIAL_COPY(VOCAB_PIXEL_INT,VOCAB_PIXEL_MONO16)
-    *dest = (yarp::sig::PixelMono16)(*src);
+    dest->h = 0;
+    dest->s = 0;
+}
 
-SPECIAL_COPY(VOCAB_PIXEL_MONO16,VOCAB_PIXEL_RGB)
-    dest->r = dest->g = dest->b = (char)*src;
-SPECIAL_COPY(VOCAB_PIXEL_MONO16,VOCAB_PIXEL_RGBA)
-    dest->r = dest->g = dest->b = (char)*src;
-dest->a = 255;
-SPECIAL_COPY(VOCAB_PIXEL_MONO16,VOCAB_PIXEL_BGRA)
-    dest->r = dest->g = dest->b = (char)*src;
-dest->a = 255;
-SPECIAL_COPY(VOCAB_PIXEL_MONO16,VOCAB_PIXEL_RGB_INT)
-    dest->r = dest->g = dest->b = (int)((unsigned) *src);
-SPECIAL_COPY(VOCAB_PIXEL_MONO16,VOCAB_PIXEL_INT)
-  *dest = (int)((unsigned) *src);
-SPECIAL_COPY(VOCAB_PIXEL_MONO16,VOCAB_PIXEL_BGR)
-    dest->r = dest->g = dest->b = (char)*src;
-SPECIAL_COPY(VOCAB_PIXEL_MONO16,VOCAB_PIXEL_HSV)
-    dest->v = (yarp::sig::PixelMono)(*src);
-dest->h = dest->s = 0;
-SPECIAL_COPY(VOCAB_PIXEL_MONO16,VOCAB_PIXEL_RGB_SIGNED)
-    dest->r = dest->g = dest->b = (yarp::sig::PixelMono)(*src);
-SPECIAL_COPY(VOCAB_PIXEL_MONO16,VOCAB_PIXEL_MONO_FLOAT)
-    *dest = (float)(*src);
-SPECIAL_COPY(VOCAB_PIXEL_MONO16,VOCAB_PIXEL_RGB_FLOAT)
-    dest->r = dest->g = dest->b = (float)(*src);
-SPECIAL_COPY(VOCAB_PIXEL_MONO16,VOCAB_PIXEL_HSV_FLOAT)
-    dest->v = float(*src);
-dest->h = dest->s = 0;
-SPECIAL_COPY(VOCAB_PIXEL_MONO16,VOCAB_PIXEL_MONO_SIGNED)
-    *dest = (char)(*src >> 1);
-SPECIAL_COPY(VOCAB_PIXEL_MONO16,VOCAB_PIXEL_MONO)
-    *dest = (yarp::sig::PixelMono)(*src);
-SPECIAL_COPY(VOCAB_PIXEL_INT,VOCAB_PIXEL_INT)
+static inline void CopyPixel(const PixelInt* src, PixelMonoSigned* dest)
+{
+    *dest = static_cast<char>(*src >> 1);
+}
+
+static inline void CopyPixel(const PixelInt* src, PixelMono* dest)
+{
+    *dest = static_cast<yarp::sig::PixelMono>(*src);
+}
+
+static inline void CopyPixel(const PixelInt* src, PixelMono16* dest)
+{
+    *dest = static_cast<yarp::sig::PixelMono16>(*src);
+}
+
+/******************************************************************************/
+
+static inline void CopyPixel(const PixelMono16* src, PixelRgb* dest)
+{
+    dest->r = static_cast<char>(*src);
+    dest->g = static_cast<char>(*src);
+    dest->b = static_cast<char>(*src);
+}
+
+static inline void CopyPixel(const PixelMono16* src, PixelRgba* dest)
+{
+    dest->r = static_cast<char>(*src);
+    dest->g = static_cast<char>(*src);
+    dest->b = static_cast<char>(*src);
+    dest->a = 255;
+}
+
+static inline void CopyPixel(const PixelMono16* src, PixelBgra* dest)
+{
+    dest->r = static_cast<char>(*src);
+    dest->g = static_cast<char>(*src);
+    dest->b = static_cast<char>(*src);
+    dest->a = 255;
+}
+
+static inline void CopyPixel(const PixelMono16* src, PixelRgbInt* dest)
+{
+    dest->r = static_cast<int>(static_cast<unsigned>(*src));
+    dest->g = static_cast<int>(static_cast<unsigned>(*src));
+    dest->b = static_cast<int>(static_cast<unsigned>(*src));
+}
+
+static inline void CopyPixel(const PixelMono16* src, PixelInt* dest)
+{
+  *dest = static_cast<int>(static_cast<unsigned>(*src));
+}
+
+static inline void CopyPixel(const PixelMono16* src, PixelBgr* dest)
+{
+    dest->r = static_cast<char>(*src);
+    dest->g = static_cast<char>(*src);
+    dest->b = static_cast<char>(*src);
+}
+
+static inline void CopyPixel(const PixelMono16* src, PixelHsv* dest)
+{
+    dest->v = static_cast<yarp::sig::PixelMono>(*src);
+    dest->h = 0;
+    dest->s = 0;
+}
+
+static inline void CopyPixel(const PixelMono16* src, PixelRgbSigned* dest)
+{
+    dest->r = static_cast<yarp::sig::PixelMono>(*src);
+    dest->g = static_cast<yarp::sig::PixelMono>(*src);
+    dest->b = static_cast<yarp::sig::PixelMono>(*src);
+}
+
+static inline void CopyPixel(const PixelMono16* src, PixelFloat* dest)
+{
+    *dest = static_cast<float>(*src);
+}
+
+static inline void CopyPixel(const PixelMono16* src, PixelRgbFloat* dest)
+{
+    dest->r = static_cast<float>(*src);
+    dest->g = static_cast<float>(*src);
+    dest->b = static_cast<float>(*src);
+}
+
+static inline void CopyPixel(const PixelMono16* src, PixelHsvFloat* dest)
+{
+    dest->v = static_cast<float>(*src);
+    dest->h = 0;
+    dest->s = 0;
+}
+
+static inline void CopyPixel(const PixelMono16* src, PixelMonoSigned* dest)
+{
+    *dest = static_cast<char>(*src >> 1);
+}
+
+static inline void CopyPixel(const PixelMono16* src, PixelMono* dest)
+{
+    *dest = static_cast<yarp::sig::PixelMono>(*src);
+}
+
+static inline void CopyPixel(const PixelInt* src, PixelInt* dest)
+{
     *dest = *src;
+}
 
-SPECIAL_COPY_END
+/******************************************************************************/
+
 
 //static inline int PAD_BYTES (int len, int pad)
 //{
@@ -555,32 +1182,43 @@ static void CopyPixels(const T1 *osrc, int q1, T2 *odest, int q2,
     DBG printf("q1 %d q2 %d (%dx%d) inc %d %d\n", q1, q2, w, h, p1, p2);
 
     if (flip) {
-        odest = (T2*)(((char *)odest) + step2*(h-1));
+        odest = reinterpret_cast<T2*>(((char *)odest) + step2*(h-1));
         dest = odest;
     }
 
-    YARPDummyCopyPixel();
-    for (int i=0; i<h; i++)
-        {
-            DBG printf("x,y = %d,%d\n", 0,i);
-            for (int j = 0; j < w; j++)
-                {
-                    CopyPixel(src,dest);
-                    src++;
-                    dest++;
-                }
-
-            src = (const T1*)(((char *)src) + p1);
-            odest = (T2*)(((char *)odest) + step2*(flip?-1:1));
-            dest = odest;
+    for (int i=0; i<h; i++) {
+        DBG printf("x,y = %d,%d\n", 0,i);
+        for (int j = 0; j < w; j++) {
+            CopyPixel(src,dest);
+            src++;
+            dest++;
         }
+
+        src = reinterpret_cast<const T1*>(((char *)src) + p1);
+        odest = reinterpret_cast<T2*>(((char *)odest) + step2*(flip?-1:1));
+        dest = odest;
+    }
 }
 
 
-#define HASH(id1,id2) ((int)(((int)(id1%65537))*11+((long int)(id2))))
-#define HANDLE_CASE(len,x1,T1,q1,o1,x2,T2,q2,o2) CopyPixels((T1*)x1,q1,(T2*)x2,q2,w,h,o1!=o2);
-#define MAKE_CASE(id1,id2) case HASH(id1,id2): HANDLE_CASE(len,src,Def_##id1,quantum1,topIsLow1,dest,Def_##id2,quantum2,topIsLow2); break;
-#define MAKE_2CASE(id1,id2) MAKE_CASE(id1,id2); MAKE_CASE(id2,id1);
+typedef PixelMono Def_VOCAB_PIXEL_MONO;
+typedef PixelMono16 Def_VOCAB_PIXEL_MONO16;
+typedef PixelRgb Def_VOCAB_PIXEL_RGB;
+typedef PixelRgba Def_VOCAB_PIXEL_RGBA;
+typedef PixelBgra Def_VOCAB_PIXEL_BGRA;
+typedef PixelHsv Def_VOCAB_PIXEL_HSV;
+typedef PixelBgr Def_VOCAB_PIXEL_BGR;
+typedef PixelMonoSigned Def_VOCAB_PIXEL_MONO_SIGNED;
+typedef PixelRgbSigned Def_VOCAB_PIXEL_RGB_SIGNED;
+typedef PixelFloat Def_VOCAB_PIXEL_MONO_FLOAT;
+typedef PixelRgbFloat Def_VOCAB_PIXEL_RGB_FLOAT;
+typedef PixelHsvFloat Def_VOCAB_PIXEL_HSV_FLOAT;
+typedef PixelInt Def_VOCAB_PIXEL_INT;
+typedef PixelRgbInt Def_VOCAB_PIXEL_RGB_INT;
+
+#define HASH(id1, id2) ((int)(((int)(id1%65537))*11 + ((long int)(id2))))
+#define HANDLE_CASE(len, x1, T1, q1, o1, x2, T2, q2, o2) CopyPixels(reinterpret_cast<const T1*>(x1), q1, reinterpret_cast<T2*>(x2), q2, w, h, o1!=o2);
+#define MAKE_CASE(id1, id2) case HASH(id1, id2): HANDLE_CASE(len, src, Def_##id1, quantum1, topIsLow1, dest, Def_##id2, quantum2, topIsLow2); break;
 
 // More elegant ways to do this, but needs to be efficient at pixel level
 void Image::copyPixels(const unsigned char *src, int id1,
@@ -596,135 +1234,232 @@ void Image::copyPixels(const unsigned char *src, int id1,
     }
 
 
-    switch(HASH(id1,id2))
-        {
-            // Macros rely on len, x1, x2 variable names
+    switch(HASH(id1,id2)) {
+        // Macros rely on len, x1, x2 variable names
 
-            MAKE_CASE(VOCAB_PIXEL_MONO,VOCAB_PIXEL_MONO);
-            MAKE_2CASE(VOCAB_PIXEL_MONO,VOCAB_PIXEL_RGB);
-            MAKE_2CASE(VOCAB_PIXEL_MONO,VOCAB_PIXEL_RGBA);
-            MAKE_2CASE(VOCAB_PIXEL_MONO,VOCAB_PIXEL_BGRA);
-            MAKE_2CASE(VOCAB_PIXEL_MONO,VOCAB_PIXEL_HSV);
-            MAKE_2CASE(VOCAB_PIXEL_MONO,VOCAB_PIXEL_BGR);
-            MAKE_2CASE(VOCAB_PIXEL_MONO,VOCAB_PIXEL_MONO_SIGNED);
-            MAKE_2CASE(VOCAB_PIXEL_MONO,VOCAB_PIXEL_RGB_SIGNED);
-            MAKE_2CASE(VOCAB_PIXEL_MONO,VOCAB_PIXEL_MONO_FLOAT);
-            MAKE_2CASE(VOCAB_PIXEL_MONO,VOCAB_PIXEL_RGB_FLOAT);
-            MAKE_2CASE(VOCAB_PIXEL_MONO,VOCAB_PIXEL_HSV_FLOAT);
-            MAKE_2CASE(VOCAB_PIXEL_MONO,VOCAB_PIXEL_INT);
-            MAKE_2CASE(VOCAB_PIXEL_MONO,VOCAB_PIXEL_RGB_INT);
-            MAKE_2CASE(VOCAB_PIXEL_MONO,VOCAB_PIXEL_MONO16);
+        // Each MAKE_CASE line here expands to something like this:
+        //
+        // case HASH(VOCAB_PIXEL_MONO, VOCAB_PIXEL_RGB):
+        //     CopyPixels(reinterpret_cast<const PixelMono*>(src), quantum1,
+        //                reinterpret_cast<PixelRgb*>(dest), quantum2,
+        //                w, h, topIsLow1!=topIsLow2);
+        //     break;
 
-            MAKE_CASE(VOCAB_PIXEL_RGB,VOCAB_PIXEL_RGB);
-            MAKE_2CASE(VOCAB_PIXEL_RGB,VOCAB_PIXEL_HSV);
-            MAKE_2CASE(VOCAB_PIXEL_RGB,VOCAB_PIXEL_BGR);
-            MAKE_2CASE(VOCAB_PIXEL_RGB,VOCAB_PIXEL_RGBA);
-            MAKE_2CASE(VOCAB_PIXEL_RGB,VOCAB_PIXEL_BGRA);
-            MAKE_2CASE(VOCAB_PIXEL_RGB,VOCAB_PIXEL_MONO_SIGNED);
-            MAKE_2CASE(VOCAB_PIXEL_RGB,VOCAB_PIXEL_RGB_SIGNED);
-            MAKE_2CASE(VOCAB_PIXEL_RGB,VOCAB_PIXEL_MONO_FLOAT);
-            MAKE_2CASE(VOCAB_PIXEL_RGB,VOCAB_PIXEL_RGB_FLOAT);
-            MAKE_2CASE(VOCAB_PIXEL_RGB,VOCAB_PIXEL_HSV_FLOAT);
-            MAKE_2CASE(VOCAB_PIXEL_RGB,VOCAB_PIXEL_INT);
-            MAKE_2CASE(VOCAB_PIXEL_RGB,VOCAB_PIXEL_RGB_INT);
-            MAKE_2CASE(VOCAB_PIXEL_RGB,VOCAB_PIXEL_MONO16);
+        MAKE_CASE(VOCAB_PIXEL_MONO, VOCAB_PIXEL_MONO)
+        MAKE_CASE(VOCAB_PIXEL_MONO, VOCAB_PIXEL_RGB)
+        MAKE_CASE(VOCAB_PIXEL_MONO, VOCAB_PIXEL_RGBA)
+        MAKE_CASE(VOCAB_PIXEL_MONO, VOCAB_PIXEL_BGRA)
+        MAKE_CASE(VOCAB_PIXEL_MONO, VOCAB_PIXEL_HSV)
+        MAKE_CASE(VOCAB_PIXEL_MONO, VOCAB_PIXEL_BGR)
+        MAKE_CASE(VOCAB_PIXEL_MONO, VOCAB_PIXEL_MONO_SIGNED)
+        MAKE_CASE(VOCAB_PIXEL_MONO, VOCAB_PIXEL_RGB_SIGNED)
+        MAKE_CASE(VOCAB_PIXEL_MONO, VOCAB_PIXEL_MONO_FLOAT)
+        MAKE_CASE(VOCAB_PIXEL_MONO, VOCAB_PIXEL_RGB_FLOAT)
+        MAKE_CASE(VOCAB_PIXEL_MONO, VOCAB_PIXEL_HSV_FLOAT)
+        MAKE_CASE(VOCAB_PIXEL_MONO, VOCAB_PIXEL_INT)
+        MAKE_CASE(VOCAB_PIXEL_MONO, VOCAB_PIXEL_RGB_INT)
+        MAKE_CASE(VOCAB_PIXEL_MONO, VOCAB_PIXEL_MONO16)
 
-            MAKE_CASE(VOCAB_PIXEL_HSV,VOCAB_PIXEL_HSV);
-            MAKE_2CASE(VOCAB_PIXEL_HSV,VOCAB_PIXEL_BGR);
-            MAKE_2CASE(VOCAB_PIXEL_HSV,VOCAB_PIXEL_RGBA);
-            MAKE_2CASE(VOCAB_PIXEL_HSV,VOCAB_PIXEL_BGRA);
-            MAKE_2CASE(VOCAB_PIXEL_HSV,VOCAB_PIXEL_MONO_SIGNED);
-            MAKE_2CASE(VOCAB_PIXEL_HSV,VOCAB_PIXEL_RGB_SIGNED);
-            MAKE_2CASE(VOCAB_PIXEL_HSV,VOCAB_PIXEL_MONO_FLOAT);
-            MAKE_2CASE(VOCAB_PIXEL_HSV,VOCAB_PIXEL_RGB_FLOAT);
-            MAKE_2CASE(VOCAB_PIXEL_HSV,VOCAB_PIXEL_HSV_FLOAT);
-            MAKE_2CASE(VOCAB_PIXEL_HSV,VOCAB_PIXEL_INT);
-            MAKE_2CASE(VOCAB_PIXEL_HSV,VOCAB_PIXEL_RGB_INT);
-            MAKE_2CASE(VOCAB_PIXEL_HSV,VOCAB_PIXEL_MONO16);
+        MAKE_CASE(VOCAB_PIXEL_RGB, VOCAB_PIXEL_MONO)
+        MAKE_CASE(VOCAB_PIXEL_RGB, VOCAB_PIXEL_RGB)
+        MAKE_CASE(VOCAB_PIXEL_RGB, VOCAB_PIXEL_HSV)
+        MAKE_CASE(VOCAB_PIXEL_RGB, VOCAB_PIXEL_BGR)
+        MAKE_CASE(VOCAB_PIXEL_RGB, VOCAB_PIXEL_RGBA)
+        MAKE_CASE(VOCAB_PIXEL_RGB, VOCAB_PIXEL_BGRA)
+        MAKE_CASE(VOCAB_PIXEL_RGB, VOCAB_PIXEL_MONO_SIGNED)
+        MAKE_CASE(VOCAB_PIXEL_RGB, VOCAB_PIXEL_RGB_SIGNED)
+        MAKE_CASE(VOCAB_PIXEL_RGB, VOCAB_PIXEL_MONO_FLOAT)
+        MAKE_CASE(VOCAB_PIXEL_RGB, VOCAB_PIXEL_RGB_FLOAT)
+        MAKE_CASE(VOCAB_PIXEL_RGB, VOCAB_PIXEL_HSV_FLOAT)
+        MAKE_CASE(VOCAB_PIXEL_RGB, VOCAB_PIXEL_INT)
+        MAKE_CASE(VOCAB_PIXEL_RGB, VOCAB_PIXEL_RGB_INT)
+        MAKE_CASE(VOCAB_PIXEL_RGB, VOCAB_PIXEL_MONO16)
 
-            MAKE_CASE(VOCAB_PIXEL_BGR,VOCAB_PIXEL_BGR);
-            MAKE_2CASE(VOCAB_PIXEL_BGR,VOCAB_PIXEL_MONO_SIGNED);
-            MAKE_2CASE(VOCAB_PIXEL_BGR,VOCAB_PIXEL_RGBA);
-            MAKE_2CASE(VOCAB_PIXEL_BGR,VOCAB_PIXEL_BGRA);
-            MAKE_2CASE(VOCAB_PIXEL_BGR,VOCAB_PIXEL_RGB_SIGNED);
-            MAKE_2CASE(VOCAB_PIXEL_BGR,VOCAB_PIXEL_MONO_FLOAT);
-            MAKE_2CASE(VOCAB_PIXEL_BGR,VOCAB_PIXEL_RGB_FLOAT);
-            MAKE_2CASE(VOCAB_PIXEL_BGR,VOCAB_PIXEL_HSV_FLOAT);
-            MAKE_2CASE(VOCAB_PIXEL_BGR,VOCAB_PIXEL_INT);
-            MAKE_2CASE(VOCAB_PIXEL_BGR,VOCAB_PIXEL_RGB_INT);
-            MAKE_2CASE(VOCAB_PIXEL_BGR,VOCAB_PIXEL_MONO16);
+        MAKE_CASE(VOCAB_PIXEL_HSV, VOCAB_PIXEL_MONO)
+        MAKE_CASE(VOCAB_PIXEL_HSV, VOCAB_PIXEL_RGB)
+        MAKE_CASE(VOCAB_PIXEL_HSV, VOCAB_PIXEL_HSV)
+        MAKE_CASE(VOCAB_PIXEL_HSV, VOCAB_PIXEL_BGR)
+        MAKE_CASE(VOCAB_PIXEL_HSV, VOCAB_PIXEL_RGBA)
+        MAKE_CASE(VOCAB_PIXEL_HSV, VOCAB_PIXEL_BGRA)
+        MAKE_CASE(VOCAB_PIXEL_HSV, VOCAB_PIXEL_MONO_SIGNED)
+        MAKE_CASE(VOCAB_PIXEL_HSV, VOCAB_PIXEL_RGB_SIGNED)
+        MAKE_CASE(VOCAB_PIXEL_HSV, VOCAB_PIXEL_MONO_FLOAT)
+        MAKE_CASE(VOCAB_PIXEL_HSV, VOCAB_PIXEL_RGB_FLOAT)
+        MAKE_CASE(VOCAB_PIXEL_HSV, VOCAB_PIXEL_HSV_FLOAT)
+        MAKE_CASE(VOCAB_PIXEL_HSV, VOCAB_PIXEL_INT)
+        MAKE_CASE(VOCAB_PIXEL_HSV, VOCAB_PIXEL_RGB_INT)
+        MAKE_CASE(VOCAB_PIXEL_HSV, VOCAB_PIXEL_MONO16)
 
-            MAKE_CASE(VOCAB_PIXEL_MONO_SIGNED,VOCAB_PIXEL_MONO_SIGNED);
-            MAKE_2CASE(VOCAB_PIXEL_MONO_SIGNED,VOCAB_PIXEL_RGBA);
-            MAKE_2CASE(VOCAB_PIXEL_MONO_SIGNED,VOCAB_PIXEL_BGRA);
-            MAKE_2CASE(VOCAB_PIXEL_MONO_SIGNED,VOCAB_PIXEL_RGB_SIGNED);
-            MAKE_2CASE(VOCAB_PIXEL_MONO_SIGNED,VOCAB_PIXEL_MONO_FLOAT);
-            MAKE_2CASE(VOCAB_PIXEL_MONO_SIGNED,VOCAB_PIXEL_RGB_FLOAT);
-            MAKE_2CASE(VOCAB_PIXEL_MONO_SIGNED,VOCAB_PIXEL_HSV_FLOAT);
-            MAKE_2CASE(VOCAB_PIXEL_MONO_SIGNED,VOCAB_PIXEL_INT);
-            MAKE_2CASE(VOCAB_PIXEL_MONO_SIGNED,VOCAB_PIXEL_RGB_INT);
-            MAKE_2CASE(VOCAB_PIXEL_MONO_SIGNED,VOCAB_PIXEL_MONO16);
+        MAKE_CASE(VOCAB_PIXEL_BGR, VOCAB_PIXEL_MONO)
+        MAKE_CASE(VOCAB_PIXEL_BGR, VOCAB_PIXEL_RGB)
+        MAKE_CASE(VOCAB_PIXEL_BGR, VOCAB_PIXEL_HSV)
+        MAKE_CASE(VOCAB_PIXEL_BGR, VOCAB_PIXEL_BGR)
+        MAKE_CASE(VOCAB_PIXEL_BGR, VOCAB_PIXEL_MONO_SIGNED)
+        MAKE_CASE(VOCAB_PIXEL_BGR, VOCAB_PIXEL_RGBA)
+        MAKE_CASE(VOCAB_PIXEL_BGR, VOCAB_PIXEL_BGRA)
+        MAKE_CASE(VOCAB_PIXEL_BGR, VOCAB_PIXEL_RGB_SIGNED)
+        MAKE_CASE(VOCAB_PIXEL_BGR, VOCAB_PIXEL_MONO_FLOAT)
+        MAKE_CASE(VOCAB_PIXEL_BGR, VOCAB_PIXEL_RGB_FLOAT)
+        MAKE_CASE(VOCAB_PIXEL_BGR, VOCAB_PIXEL_HSV_FLOAT)
+        MAKE_CASE(VOCAB_PIXEL_BGR, VOCAB_PIXEL_INT)
+        MAKE_CASE(VOCAB_PIXEL_BGR, VOCAB_PIXEL_RGB_INT)
+        MAKE_CASE(VOCAB_PIXEL_BGR, VOCAB_PIXEL_MONO16)
 
+        MAKE_CASE(VOCAB_PIXEL_MONO_SIGNED, VOCAB_PIXEL_MONO)
+        MAKE_CASE(VOCAB_PIXEL_MONO_SIGNED, VOCAB_PIXEL_RGB)
+        MAKE_CASE(VOCAB_PIXEL_MONO_SIGNED, VOCAB_PIXEL_HSV)
+        MAKE_CASE(VOCAB_PIXEL_MONO_SIGNED, VOCAB_PIXEL_BGR)
+        MAKE_CASE(VOCAB_PIXEL_MONO_SIGNED, VOCAB_PIXEL_MONO_SIGNED)
+        MAKE_CASE(VOCAB_PIXEL_MONO_SIGNED, VOCAB_PIXEL_RGBA)
+        MAKE_CASE(VOCAB_PIXEL_MONO_SIGNED, VOCAB_PIXEL_BGRA)
+        MAKE_CASE(VOCAB_PIXEL_MONO_SIGNED, VOCAB_PIXEL_RGB_SIGNED)
+        MAKE_CASE(VOCAB_PIXEL_MONO_SIGNED, VOCAB_PIXEL_MONO_FLOAT)
+        MAKE_CASE(VOCAB_PIXEL_MONO_SIGNED, VOCAB_PIXEL_RGB_FLOAT)
+        MAKE_CASE(VOCAB_PIXEL_MONO_SIGNED, VOCAB_PIXEL_HSV_FLOAT)
+        MAKE_CASE(VOCAB_PIXEL_MONO_SIGNED, VOCAB_PIXEL_INT)
+        MAKE_CASE(VOCAB_PIXEL_MONO_SIGNED, VOCAB_PIXEL_RGB_INT)
+        MAKE_CASE(VOCAB_PIXEL_MONO_SIGNED, VOCAB_PIXEL_MONO16)
 
-            MAKE_CASE(VOCAB_PIXEL_RGB_SIGNED,VOCAB_PIXEL_RGB_SIGNED);
-            MAKE_2CASE(VOCAB_PIXEL_RGB_SIGNED,VOCAB_PIXEL_RGBA);
-            MAKE_2CASE(VOCAB_PIXEL_RGB_SIGNED,VOCAB_PIXEL_BGRA);
-            MAKE_2CASE(VOCAB_PIXEL_RGB_SIGNED,VOCAB_PIXEL_MONO_FLOAT);
-            MAKE_2CASE(VOCAB_PIXEL_RGB_SIGNED,VOCAB_PIXEL_RGB_FLOAT);
-            MAKE_2CASE(VOCAB_PIXEL_RGB_SIGNED,VOCAB_PIXEL_HSV_FLOAT);
-            MAKE_2CASE(VOCAB_PIXEL_RGB_SIGNED,VOCAB_PIXEL_INT);
-            MAKE_2CASE(VOCAB_PIXEL_RGB_SIGNED,VOCAB_PIXEL_RGB_INT);
-            MAKE_2CASE(VOCAB_PIXEL_RGB_SIGNED,VOCAB_PIXEL_MONO16);
+        MAKE_CASE(VOCAB_PIXEL_RGBA, VOCAB_PIXEL_MONO)
+        MAKE_CASE(VOCAB_PIXEL_RGBA, VOCAB_PIXEL_RGB)
+        MAKE_CASE(VOCAB_PIXEL_RGBA, VOCAB_PIXEL_HSV)
+        MAKE_CASE(VOCAB_PIXEL_RGBA, VOCAB_PIXEL_BGR)
+        MAKE_CASE(VOCAB_PIXEL_RGBA, VOCAB_PIXEL_MONO_SIGNED)
+        MAKE_CASE(VOCAB_PIXEL_RGBA, VOCAB_PIXEL_RGBA)
+        MAKE_CASE(VOCAB_PIXEL_RGBA, VOCAB_PIXEL_BGRA)
+        MAKE_CASE(VOCAB_PIXEL_RGBA, VOCAB_PIXEL_RGB_SIGNED)
+        MAKE_CASE(VOCAB_PIXEL_RGBA, VOCAB_PIXEL_MONO_FLOAT)
+        MAKE_CASE(VOCAB_PIXEL_RGBA, VOCAB_PIXEL_RGB_FLOAT)
+        MAKE_CASE(VOCAB_PIXEL_RGBA, VOCAB_PIXEL_HSV_FLOAT)
+        MAKE_CASE(VOCAB_PIXEL_RGBA, VOCAB_PIXEL_INT)
+        MAKE_CASE(VOCAB_PIXEL_RGBA, VOCAB_PIXEL_RGB_INT)
+        MAKE_CASE(VOCAB_PIXEL_RGBA, VOCAB_PIXEL_MONO16)
 
-            MAKE_CASE(VOCAB_PIXEL_MONO_FLOAT,VOCAB_PIXEL_MONO_FLOAT);
-            MAKE_2CASE(VOCAB_PIXEL_MONO_FLOAT,VOCAB_PIXEL_RGBA);
-            MAKE_2CASE(VOCAB_PIXEL_MONO_FLOAT,VOCAB_PIXEL_BGRA);
-            MAKE_2CASE(VOCAB_PIXEL_MONO_FLOAT,VOCAB_PIXEL_RGB_FLOAT);
-            MAKE_2CASE(VOCAB_PIXEL_MONO_FLOAT,VOCAB_PIXEL_HSV_FLOAT);
-            MAKE_2CASE(VOCAB_PIXEL_MONO_FLOAT,VOCAB_PIXEL_INT);
-            MAKE_2CASE(VOCAB_PIXEL_MONO_FLOAT,VOCAB_PIXEL_RGB_INT);
-            MAKE_2CASE(VOCAB_PIXEL_MONO_FLOAT,VOCAB_PIXEL_MONO16);
+        MAKE_CASE(VOCAB_PIXEL_BGRA, VOCAB_PIXEL_MONO)
+        MAKE_CASE(VOCAB_PIXEL_BGRA, VOCAB_PIXEL_RGB)
+        MAKE_CASE(VOCAB_PIXEL_BGRA, VOCAB_PIXEL_HSV)
+        MAKE_CASE(VOCAB_PIXEL_BGRA, VOCAB_PIXEL_BGR)
+        MAKE_CASE(VOCAB_PIXEL_BGRA, VOCAB_PIXEL_MONO_SIGNED)
+        MAKE_CASE(VOCAB_PIXEL_BGRA, VOCAB_PIXEL_RGBA)
+        MAKE_CASE(VOCAB_PIXEL_BGRA, VOCAB_PIXEL_BGRA)
+        MAKE_CASE(VOCAB_PIXEL_BGRA, VOCAB_PIXEL_RGB_SIGNED)
+        MAKE_CASE(VOCAB_PIXEL_BGRA, VOCAB_PIXEL_MONO_FLOAT)
+        MAKE_CASE(VOCAB_PIXEL_BGRA, VOCAB_PIXEL_RGB_FLOAT)
+        MAKE_CASE(VOCAB_PIXEL_BGRA, VOCAB_PIXEL_HSV_FLOAT)
+        MAKE_CASE(VOCAB_PIXEL_BGRA, VOCAB_PIXEL_INT)
+        MAKE_CASE(VOCAB_PIXEL_BGRA, VOCAB_PIXEL_RGB_INT)
+        MAKE_CASE(VOCAB_PIXEL_BGRA, VOCAB_PIXEL_MONO16)
 
-            MAKE_CASE(VOCAB_PIXEL_RGB_FLOAT,VOCAB_PIXEL_RGB_FLOAT);
-            MAKE_2CASE(VOCAB_PIXEL_RGB_FLOAT,VOCAB_PIXEL_RGBA);
-            MAKE_2CASE(VOCAB_PIXEL_RGB_FLOAT,VOCAB_PIXEL_BGRA);
-            MAKE_2CASE(VOCAB_PIXEL_RGB_FLOAT,VOCAB_PIXEL_HSV_FLOAT);
-            MAKE_2CASE(VOCAB_PIXEL_RGB_FLOAT,VOCAB_PIXEL_INT);
-            MAKE_2CASE(VOCAB_PIXEL_RGB_FLOAT,VOCAB_PIXEL_RGB_INT);
-            MAKE_2CASE(VOCAB_PIXEL_RGB_FLOAT,VOCAB_PIXEL_MONO16);
+        MAKE_CASE(VOCAB_PIXEL_RGB_SIGNED, VOCAB_PIXEL_MONO)
+        MAKE_CASE(VOCAB_PIXEL_RGB_SIGNED, VOCAB_PIXEL_RGB)
+        MAKE_CASE(VOCAB_PIXEL_RGB_SIGNED, VOCAB_PIXEL_HSV)
+        MAKE_CASE(VOCAB_PIXEL_RGB_SIGNED, VOCAB_PIXEL_BGR)
+        MAKE_CASE(VOCAB_PIXEL_RGB_SIGNED, VOCAB_PIXEL_MONO_SIGNED)
+        MAKE_CASE(VOCAB_PIXEL_RGB_SIGNED, VOCAB_PIXEL_RGBA)
+        MAKE_CASE(VOCAB_PIXEL_RGB_SIGNED, VOCAB_PIXEL_BGRA)
+        MAKE_CASE(VOCAB_PIXEL_RGB_SIGNED, VOCAB_PIXEL_RGB_SIGNED)
+        MAKE_CASE(VOCAB_PIXEL_RGB_SIGNED, VOCAB_PIXEL_MONO_FLOAT)
+        MAKE_CASE(VOCAB_PIXEL_RGB_SIGNED, VOCAB_PIXEL_RGB_FLOAT)
+        MAKE_CASE(VOCAB_PIXEL_RGB_SIGNED, VOCAB_PIXEL_HSV_FLOAT)
+        MAKE_CASE(VOCAB_PIXEL_RGB_SIGNED, VOCAB_PIXEL_INT)
+        MAKE_CASE(VOCAB_PIXEL_RGB_SIGNED, VOCAB_PIXEL_RGB_INT)
+        MAKE_CASE(VOCAB_PIXEL_RGB_SIGNED, VOCAB_PIXEL_MONO16)
 
-            MAKE_CASE(VOCAB_PIXEL_HSV_FLOAT,VOCAB_PIXEL_HSV_FLOAT);
-            MAKE_2CASE(VOCAB_PIXEL_HSV_FLOAT,VOCAB_PIXEL_RGBA);
-            MAKE_2CASE(VOCAB_PIXEL_HSV_FLOAT,VOCAB_PIXEL_BGRA);
-            MAKE_2CASE(VOCAB_PIXEL_HSV_FLOAT,VOCAB_PIXEL_INT);
-            MAKE_2CASE(VOCAB_PIXEL_HSV_FLOAT,VOCAB_PIXEL_RGB_INT);
-            MAKE_2CASE(VOCAB_PIXEL_HSV_FLOAT,VOCAB_PIXEL_MONO16);
+        MAKE_CASE(VOCAB_PIXEL_MONO_FLOAT, VOCAB_PIXEL_MONO)
+        MAKE_CASE(VOCAB_PIXEL_MONO_FLOAT, VOCAB_PIXEL_RGB)
+        MAKE_CASE(VOCAB_PIXEL_MONO_FLOAT, VOCAB_PIXEL_HSV)
+        MAKE_CASE(VOCAB_PIXEL_MONO_FLOAT, VOCAB_PIXEL_BGR)
+        MAKE_CASE(VOCAB_PIXEL_MONO_FLOAT, VOCAB_PIXEL_MONO_SIGNED)
+        MAKE_CASE(VOCAB_PIXEL_MONO_FLOAT, VOCAB_PIXEL_RGBA)
+        MAKE_CASE(VOCAB_PIXEL_MONO_FLOAT, VOCAB_PIXEL_BGRA)
+        MAKE_CASE(VOCAB_PIXEL_MONO_FLOAT, VOCAB_PIXEL_RGB_SIGNED)
+        MAKE_CASE(VOCAB_PIXEL_MONO_FLOAT, VOCAB_PIXEL_MONO_FLOAT)
+        MAKE_CASE(VOCAB_PIXEL_MONO_FLOAT, VOCAB_PIXEL_RGB_FLOAT)
+        MAKE_CASE(VOCAB_PIXEL_MONO_FLOAT, VOCAB_PIXEL_HSV_FLOAT)
+        MAKE_CASE(VOCAB_PIXEL_MONO_FLOAT, VOCAB_PIXEL_INT)
+        MAKE_CASE(VOCAB_PIXEL_MONO_FLOAT, VOCAB_PIXEL_RGB_INT)
+        MAKE_CASE(VOCAB_PIXEL_MONO_FLOAT, VOCAB_PIXEL_MONO16)
 
-            MAKE_CASE(VOCAB_PIXEL_INT,VOCAB_PIXEL_INT);
-            MAKE_2CASE(VOCAB_PIXEL_INT,VOCAB_PIXEL_RGBA);
-            MAKE_2CASE(VOCAB_PIXEL_INT,VOCAB_PIXEL_BGRA);
-            MAKE_2CASE(VOCAB_PIXEL_INT,VOCAB_PIXEL_RGB_INT);
-            MAKE_2CASE(VOCAB_PIXEL_INT,VOCAB_PIXEL_MONO16);
+        MAKE_CASE(VOCAB_PIXEL_RGB_FLOAT, VOCAB_PIXEL_MONO)
+        MAKE_CASE(VOCAB_PIXEL_RGB_FLOAT, VOCAB_PIXEL_RGB)
+        MAKE_CASE(VOCAB_PIXEL_RGB_FLOAT, VOCAB_PIXEL_HSV)
+        MAKE_CASE(VOCAB_PIXEL_RGB_FLOAT, VOCAB_PIXEL_BGR)
+        MAKE_CASE(VOCAB_PIXEL_RGB_FLOAT, VOCAB_PIXEL_MONO_SIGNED)
+        MAKE_CASE(VOCAB_PIXEL_RGB_FLOAT, VOCAB_PIXEL_RGBA)
+        MAKE_CASE(VOCAB_PIXEL_RGB_FLOAT, VOCAB_PIXEL_BGRA)
+        MAKE_CASE(VOCAB_PIXEL_RGB_FLOAT, VOCAB_PIXEL_RGB_SIGNED)
+        MAKE_CASE(VOCAB_PIXEL_RGB_FLOAT, VOCAB_PIXEL_MONO_FLOAT)
+        MAKE_CASE(VOCAB_PIXEL_RGB_FLOAT, VOCAB_PIXEL_RGB_FLOAT)
+        MAKE_CASE(VOCAB_PIXEL_RGB_FLOAT, VOCAB_PIXEL_HSV_FLOAT)
+        MAKE_CASE(VOCAB_PIXEL_RGB_FLOAT, VOCAB_PIXEL_INT)
+        MAKE_CASE(VOCAB_PIXEL_RGB_FLOAT, VOCAB_PIXEL_RGB_INT)
+        MAKE_CASE(VOCAB_PIXEL_RGB_FLOAT, VOCAB_PIXEL_MONO16)
 
-            MAKE_CASE(VOCAB_PIXEL_RGBA,VOCAB_PIXEL_RGBA);
-            MAKE_2CASE(VOCAB_PIXEL_RGBA,VOCAB_PIXEL_BGRA);
-            MAKE_2CASE(VOCAB_PIXEL_RGBA,VOCAB_PIXEL_RGB_INT);
-            MAKE_2CASE(VOCAB_PIXEL_RGBA,VOCAB_PIXEL_MONO16);
+        MAKE_CASE(VOCAB_PIXEL_HSV_FLOAT, VOCAB_PIXEL_MONO)
+        MAKE_CASE(VOCAB_PIXEL_HSV_FLOAT, VOCAB_PIXEL_RGB)
+        MAKE_CASE(VOCAB_PIXEL_HSV_FLOAT, VOCAB_PIXEL_HSV)
+        MAKE_CASE(VOCAB_PIXEL_HSV_FLOAT, VOCAB_PIXEL_BGR)
+        MAKE_CASE(VOCAB_PIXEL_HSV_FLOAT, VOCAB_PIXEL_MONO_SIGNED)
+        MAKE_CASE(VOCAB_PIXEL_HSV_FLOAT, VOCAB_PIXEL_RGBA)
+        MAKE_CASE(VOCAB_PIXEL_HSV_FLOAT, VOCAB_PIXEL_BGRA)
+        MAKE_CASE(VOCAB_PIXEL_HSV_FLOAT, VOCAB_PIXEL_RGB_SIGNED)
+        MAKE_CASE(VOCAB_PIXEL_HSV_FLOAT, VOCAB_PIXEL_MONO_FLOAT)
+        MAKE_CASE(VOCAB_PIXEL_HSV_FLOAT, VOCAB_PIXEL_RGB_FLOAT)
+        MAKE_CASE(VOCAB_PIXEL_HSV_FLOAT, VOCAB_PIXEL_HSV_FLOAT)
+        MAKE_CASE(VOCAB_PIXEL_HSV_FLOAT, VOCAB_PIXEL_INT)
+        MAKE_CASE(VOCAB_PIXEL_HSV_FLOAT, VOCAB_PIXEL_RGB_INT)
+        MAKE_CASE(VOCAB_PIXEL_HSV_FLOAT, VOCAB_PIXEL_MONO16)
 
-            MAKE_CASE(VOCAB_PIXEL_RGB_INT,VOCAB_PIXEL_RGB_INT);
-            MAKE_2CASE(VOCAB_PIXEL_RGB_INT,VOCAB_PIXEL_BGRA);
-            MAKE_2CASE(VOCAB_PIXEL_RGB_INT,VOCAB_PIXEL_MONO16);
+        MAKE_CASE(VOCAB_PIXEL_INT, VOCAB_PIXEL_MONO)
+        MAKE_CASE(VOCAB_PIXEL_INT, VOCAB_PIXEL_RGB)
+        MAKE_CASE(VOCAB_PIXEL_INT, VOCAB_PIXEL_HSV)
+        MAKE_CASE(VOCAB_PIXEL_INT, VOCAB_PIXEL_BGR)
+        MAKE_CASE(VOCAB_PIXEL_INT, VOCAB_PIXEL_MONO_SIGNED)
+        MAKE_CASE(VOCAB_PIXEL_INT, VOCAB_PIXEL_RGBA)
+        MAKE_CASE(VOCAB_PIXEL_INT, VOCAB_PIXEL_BGRA)
+        MAKE_CASE(VOCAB_PIXEL_INT, VOCAB_PIXEL_RGB_SIGNED)
+        MAKE_CASE(VOCAB_PIXEL_INT, VOCAB_PIXEL_MONO_FLOAT)
+        MAKE_CASE(VOCAB_PIXEL_INT, VOCAB_PIXEL_RGB_FLOAT)
+        MAKE_CASE(VOCAB_PIXEL_INT, VOCAB_PIXEL_HSV_FLOAT)
+        MAKE_CASE(VOCAB_PIXEL_INT, VOCAB_PIXEL_INT)
+        MAKE_CASE(VOCAB_PIXEL_INT, VOCAB_PIXEL_RGB_INT)
+        MAKE_CASE(VOCAB_PIXEL_INT, VOCAB_PIXEL_MONO16)
 
-            MAKE_CASE(VOCAB_PIXEL_BGRA,VOCAB_PIXEL_BGRA);
-            MAKE_2CASE(VOCAB_PIXEL_BGRA,VOCAB_PIXEL_MONO16);
+        MAKE_CASE(VOCAB_PIXEL_RGB_INT, VOCAB_PIXEL_MONO)
+        MAKE_CASE(VOCAB_PIXEL_RGB_INT, VOCAB_PIXEL_RGB)
+        MAKE_CASE(VOCAB_PIXEL_RGB_INT, VOCAB_PIXEL_HSV)
+        MAKE_CASE(VOCAB_PIXEL_RGB_INT, VOCAB_PIXEL_BGR)
+        MAKE_CASE(VOCAB_PIXEL_RGB_INT, VOCAB_PIXEL_MONO_SIGNED)
+        MAKE_CASE(VOCAB_PIXEL_RGB_INT, VOCAB_PIXEL_RGBA)
+        MAKE_CASE(VOCAB_PIXEL_RGB_INT, VOCAB_PIXEL_BGRA)
+        MAKE_CASE(VOCAB_PIXEL_RGB_INT, VOCAB_PIXEL_RGB_SIGNED)
+        MAKE_CASE(VOCAB_PIXEL_RGB_INT, VOCAB_PIXEL_MONO_FLOAT)
+        MAKE_CASE(VOCAB_PIXEL_RGB_INT, VOCAB_PIXEL_RGB_FLOAT)
+        MAKE_CASE(VOCAB_PIXEL_RGB_INT, VOCAB_PIXEL_HSV_FLOAT)
+        MAKE_CASE(VOCAB_PIXEL_RGB_INT, VOCAB_PIXEL_INT)
+        MAKE_CASE(VOCAB_PIXEL_RGB_INT, VOCAB_PIXEL_RGB_INT)
+        MAKE_CASE(VOCAB_PIXEL_RGB_INT, VOCAB_PIXEL_MONO16)
 
-            MAKE_CASE(VOCAB_PIXEL_MONO16,VOCAB_PIXEL_MONO16);
+        MAKE_CASE(VOCAB_PIXEL_MONO16, VOCAB_PIXEL_MONO)
+        MAKE_CASE(VOCAB_PIXEL_MONO16, VOCAB_PIXEL_RGB)
+        MAKE_CASE(VOCAB_PIXEL_MONO16, VOCAB_PIXEL_HSV)
+        MAKE_CASE(VOCAB_PIXEL_MONO16, VOCAB_PIXEL_BGR)
+        MAKE_CASE(VOCAB_PIXEL_MONO16, VOCAB_PIXEL_MONO_SIGNED)
+        MAKE_CASE(VOCAB_PIXEL_MONO16, VOCAB_PIXEL_RGBA)
+        MAKE_CASE(VOCAB_PIXEL_MONO16, VOCAB_PIXEL_BGRA)
+        MAKE_CASE(VOCAB_PIXEL_MONO16, VOCAB_PIXEL_RGB_SIGNED)
+        MAKE_CASE(VOCAB_PIXEL_MONO16, VOCAB_PIXEL_MONO_FLOAT)
+        MAKE_CASE(VOCAB_PIXEL_MONO16, VOCAB_PIXEL_RGB_FLOAT)
+        MAKE_CASE(VOCAB_PIXEL_MONO16, VOCAB_PIXEL_HSV_FLOAT)
+        MAKE_CASE(VOCAB_PIXEL_MONO16, VOCAB_PIXEL_INT)
+        MAKE_CASE(VOCAB_PIXEL_MONO16, VOCAB_PIXEL_RGB_INT)
+        MAKE_CASE(VOCAB_PIXEL_MONO16, VOCAB_PIXEL_MONO16)
 
         default:
             printf("*** Tried to copy type %d to %d\n", id1, id2);
             std::exit(1);
             break;
-        }
+    }
 
     DBG printf("... done copyPixels\n");
 }

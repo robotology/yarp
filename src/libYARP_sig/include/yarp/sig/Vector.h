@@ -111,7 +111,7 @@ private:
         if (len==0) {
             first = nullptr;
         } else {
-            first = (T *) bytes.get();
+            first = reinterpret_cast<T*>(bytes.get());
         }
     }
 

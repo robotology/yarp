@@ -556,20 +556,18 @@ private:
     T nullPixel;
 public:
 
-    virtual int getPixelSize() const {
+    virtual int getPixelSize() const override {
         return sizeof(T);
     }
 
-    virtual int getPixelCode() const {
-        return -((int) sizeof(T));
-    }
+    virtual int getPixelCode() const override;
 
     inline T& pixel(int x, int y) {
-        return *((T *)(getPixelAddress(x,y)));
+        return *(reinterpret_cast<T*>(getPixelAddress(x,y)));
     }
 
     inline T& pixel(int x, int y) const {
-        return *((T *)(getPixelAddress(x,y)));
+        return *(reinterpret_cast<T*>(getPixelAddress(x,y)));
     }
 
     inline const T& operator()(int x, int y) const {
@@ -582,85 +580,88 @@ public:
 
     inline T& safePixel(int x, int y) {
         if (!isPixel(x,y)) { return nullPixel; }
-        return *((T *)(getPixelAddress(x,y)));
+        return *(reinterpret_cast<T*>(getPixelAddress(x,y)));
     }
 
     inline const T& safePixel(int x, int y) const {
         if (!isPixel(x,y)) { return nullPixel; }
-        return *((T *)(getPixelAddress(x,y)));
+        return *(reinterpret_cast<T*>(getPixelAddress(x,y)));
     }
 };
 
-namespace yarp {
-    namespace sig {
-
-#define YARPIMAGE_ASSOCIATE_TAG(tag,T) \
-template<> \
-class YARP_sig_API ImageOf<T> : public Image \
-{ \
-private: \
-  T nullPixel; \
-public: \
-\
-  virtual int getPixelSize() const override { \
-    return sizeof(T); \
-  } \
-\
-  virtual int getPixelCode() const override { \
-    return tag; \
-  } \
-\
-  inline T& pixel(int x, int y) { \
-    return *((T *)(getPixelAddress(x,y))); \
-  } \
-\
-  inline const T& pixel(int x, int y) const { \
-    return *((T *)(getPixelAddress(x,y))); \
-  } \
-\
-  inline T& operator()(int x, int y) { \
-    return pixel(x,y); \
-  } \
-\
-  inline const T& operator()(int x, int y) const { \
-    return pixel(x,y); \
-  } \
-\
-  inline T& safePixel(int x, int y) { \
-    if (!isPixel(x,y)) { return nullPixel; } \
-    return *((T *)(getPixelAddress(x,y))); \
-  } \
-\
-  inline const T& safePixel(int x, int y) const { \
-    if (!isPixel(x,y)) { return nullPixel; } \
-    return *((T *)(getPixelAddress(x,y))); \
-  } \
-};
-
-
-            YARPIMAGE_ASSOCIATE_TAG(VOCAB_PIXEL_MONO,PixelMono)
-            YARPIMAGE_ASSOCIATE_TAG(VOCAB_PIXEL_MONO16,PixelMono16)
-            YARPIMAGE_ASSOCIATE_TAG(VOCAB_PIXEL_RGB,PixelRgb)
-            YARPIMAGE_ASSOCIATE_TAG(VOCAB_PIXEL_RGBA,PixelRgba)
-            YARPIMAGE_ASSOCIATE_TAG(VOCAB_PIXEL_HSV,PixelHsv)
-            YARPIMAGE_ASSOCIATE_TAG(VOCAB_PIXEL_BGR,PixelBgr)
-            YARPIMAGE_ASSOCIATE_TAG(VOCAB_PIXEL_BGRA,PixelBgra)
-            YARPIMAGE_ASSOCIATE_TAG(VOCAB_PIXEL_MONO_SIGNED,PixelMonoSigned)
-            YARPIMAGE_ASSOCIATE_TAG(VOCAB_PIXEL_RGB_SIGNED,PixelRgbSigned)
-            YARPIMAGE_ASSOCIATE_TAG(VOCAB_PIXEL_MONO_FLOAT,PixelFloat)
-            YARPIMAGE_ASSOCIATE_TAG(VOCAB_PIXEL_RGB_FLOAT,PixelRgbFloat)
-            YARPIMAGE_ASSOCIATE_TAG(VOCAB_PIXEL_RGB_INT,PixelRgbInt)
-            YARPIMAGE_ASSOCIATE_TAG(VOCAB_PIXEL_HSV_FLOAT,PixelHsvFloat)
-            YARPIMAGE_ASSOCIATE_TAG(VOCAB_PIXEL_INT,PixelInt)
-
-            }
+template<>
+inline int yarp::sig::ImageOf<yarp::sig::PixelMono>::getPixelCode() const {
+    return VOCAB_PIXEL_MONO;
 }
 
-#undef YARPIMAGE_ASSOCIATE_TAG
+template<>
+inline int yarp::sig::ImageOf<yarp::sig::PixelMono16>::getPixelCode() const {
+    return VOCAB_PIXEL_MONO16;
+}
 
+template<>
+inline int yarp::sig::ImageOf<yarp::sig::PixelRgb>::getPixelCode() const {
+    return VOCAB_PIXEL_RGB;
+}
 
-#ifndef YARP_IMAGE_HEADER_CONTROL
-#define YARP_IMAGE_HEADER_CONTROL
-#endif
+template<>
+inline int yarp::sig::ImageOf<yarp::sig::PixelRgba>::getPixelCode() const {
+    return VOCAB_PIXEL_RGBA;
+}
+
+template<>
+inline int yarp::sig::ImageOf<yarp::sig::PixelHsv>::getPixelCode() const {
+    return VOCAB_PIXEL_HSV;
+}
+
+template<>
+inline int yarp::sig::ImageOf<yarp::sig::PixelBgr>::getPixelCode() const {
+    return VOCAB_PIXEL_BGR;
+}
+
+template<>
+inline int yarp::sig::ImageOf<yarp::sig::PixelBgra>::getPixelCode() const {
+    return VOCAB_PIXEL_BGRA;
+}
+
+template<>
+inline int yarp::sig::ImageOf<yarp::sig::PixelMonoSigned>::getPixelCode() const {
+    return VOCAB_PIXEL_MONO_SIGNED;
+}
+
+template<>
+inline int yarp::sig::ImageOf<yarp::sig::PixelRgbSigned>::getPixelCode() const {
+    return VOCAB_PIXEL_RGB_SIGNED;
+}
+
+template<>
+inline int yarp::sig::ImageOf<yarp::sig::PixelFloat>::getPixelCode() const {
+    return VOCAB_PIXEL_MONO_FLOAT;
+}
+
+template<>
+inline int yarp::sig::ImageOf<yarp::sig::PixelRgbFloat>::getPixelCode() const {
+    return VOCAB_PIXEL_RGB_FLOAT;
+}
+
+template<>
+inline int yarp::sig::ImageOf<yarp::sig::PixelRgbInt>::getPixelCode() const {
+    return VOCAB_PIXEL_RGB_INT;
+}
+
+template<>
+inline int yarp::sig::ImageOf<yarp::sig::PixelHsvFloat>::getPixelCode() const {
+    return VOCAB_PIXEL_HSV_FLOAT;
+}
+
+template<>
+inline int yarp::sig::ImageOf<yarp::sig::PixelInt>::getPixelCode() const {
+    return VOCAB_PIXEL_INT;
+}
+
+template<typename T>
+inline int yarp::sig::ImageOf<T>::getPixelCode() const {
+    return -((int) sizeof(T));
+}
 
 #endif // YARP_SIG_IMAGE_H
