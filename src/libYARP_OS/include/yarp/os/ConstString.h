@@ -601,11 +601,25 @@ namespace std {
     }
 
     inline std::istream& getline(std::istream& is, yarp::os::ConstString& str, char delim) {
+#ifdef YARP_WRAP_STL_STRING_INLINE
         return getline(is, (std::string&)str, delim);
+#else
+        std::string line;
+        getline(is, line, delim);
+        str = line;
+        return is;
+#endif
     }
 
     inline std::istream& getline(std::istream& is, yarp::os::ConstString& str) {
+#ifdef YARP_WRAP_STL_STRING_INLINE
         return getline(is, (std::string&)str);
+#else
+        std::string line;
+        getline(is, line);
+        str = line;
+        return is;
+#endif
     }
 
 }
