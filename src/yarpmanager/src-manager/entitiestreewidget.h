@@ -29,7 +29,7 @@ public:
     void addComputer(yarp::manager::Computer* comp);
     void addModule(yarp::manager::Module* mod);
     void addAppTemplate(yarp::manager::AppTemplate* tmp);
-    void addPort(QString portName);
+    void addPort(QStringList portDetails);
 
     void clearApplications();
     void clearModules();
