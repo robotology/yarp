@@ -572,6 +572,7 @@ void ApplicationViewWidget::updateApplicationWindow()
     ui->moduleList->clear();
     ui->connectionList->clear();
     ui->resourcesList->clear();
+    listOfResourceNames.clear();
 
     disconnect(ui->moduleList,SIGNAL(itemChanged(QTreeWidgetItem*,int)),this,SLOT(onModuleItemChanged(QTreeWidgetItem*,int)));
 
@@ -709,6 +710,17 @@ void ApplicationViewWidget::updateApplicationWindow()
             type = "port";
         }
         QString res = QString("%1").arg((*itrS)->getName());
+        if (std::find(listOfResourceNames.begin(),
+                      listOfResourceNames.end(),
+                      res.toStdString()) == listOfResourceNames.end())
+        {
+          listOfResourceNames.push_back(res.toStdString());
+        }
+        else
+        {
+            // The resource has been already added
+            continue;
+        }
         QString status = "unknown";
         //m_resRow[m_resColumns.m_col_color] = Gdk::Color("#00000");
 
