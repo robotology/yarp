@@ -589,6 +589,9 @@ public:
     }
 };
 
+namespace yarp {
+namespace sig {
+
 template<>
 inline int yarp::sig::ImageOf<yarp::sig::PixelMono>::getPixelCode() const {
     return VOCAB_PIXEL_MONO;
@@ -662,6 +665,9 @@ inline int yarp::sig::ImageOf<yarp::sig::PixelInt>::getPixelCode() const {
 template<typename T>
 inline int yarp::sig::ImageOf<T>::getPixelCode() const {
     return -((int) sizeof(T));
+}
+
+}
 }
 
 #endif // YARP_SIG_IMAGE_H
