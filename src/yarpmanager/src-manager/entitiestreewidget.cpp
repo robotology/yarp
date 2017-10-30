@@ -189,11 +189,16 @@ void EntitiesTreeWidget::addAppTemplate(yarp::manager::AppTemplate* tmp)
     item->setIcon(0,QIcon(":/file-xml22.svg"));
 }
 
-void EntitiesTreeWidget::addPort(QString portName)
+void EntitiesTreeWidget::addPort(QStringList portDetails)
 {
-    QTreeWidgetItem *item = new QTreeWidgetItem(portsNode,QStringList() << portName);
-
+    if (portDetails.size() < 2)
+    {
+        return;
+    }
+    QTreeWidgetItem *item = new QTreeWidgetItem(portsNode,QStringList() << portDetails[0]);
     item->setIcon(0,QIcon(":/port22.svg"));
+    QTreeWidgetItem *portIp = new QTreeWidgetItem(item,QStringList() << portDetails[1]);
+    YARP_UNUSED(portIp);
 
 }
 
@@ -493,7 +498,7 @@ void EntitiesTreeWidget::onContext(QPoint p)
             loadFiles->setText("Load Module");
             secondLevelMenu.exec(mapToGlobal(pp));
         }
-        else if(it->parent() == portsNode)
+        else if(it->parent() == portsNode || it->parent()->parent() == portsNode)
         {
             //do nothing
         }

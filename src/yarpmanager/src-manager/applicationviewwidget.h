@@ -159,6 +159,8 @@ private:
 
     bool editingMode;
 
+    std::vector<std::string> listOfResourceNames;
+
 
 private slots:
     void onAssignHost();

@@ -1282,7 +1282,11 @@ void MainWindow::onYarpNameList()
     yarp::profiler::NetworkProfiler::yarpNameList(ports, true);
     for(size_t i = 0; i<ports.size(); i++)
     {
-        ui->entitiesTree->addPort(QString(ports[i].find("name").asString().c_str()));
+        std::string portName = ports[i].find("name").asString();
+        std::string portIp   = ports[i].find("ip").asString() + " port " +
+                    std::to_string(ports[i].find("port_number").asInt());
+        ui->entitiesTree->addPort(QStringList() << QString(portName.c_str())
+                                  << QString(portIp.c_str()));
     }
     onLogMessage(QString::fromLatin1("Running yarp name list...found %1 ports").arg(ports.size()));
 }

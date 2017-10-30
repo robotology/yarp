@@ -572,6 +572,7 @@ void ApplicationViewWidget::updateApplicationWindow()
     ui->moduleList->clear();
     ui->connectionList->clear();
     ui->resourcesList->clear();
+    listOfResourceNames.clear();
 
     disconnect(ui->moduleList,SIGNAL(itemChanged(QTreeWidgetItem*,int)),this,SLOT(onModuleItemChanged(QTreeWidgetItem*,int)));
 
@@ -615,6 +616,12 @@ void ApplicationViewWidget::updateApplicationWindow()
         QString workDir = QString("%1").arg((*moditr)->getWorkDir());
         QString env = QString("%1").arg((*moditr)->getEnv());
 
+        // The default host is "localhost" if the <node> is not specified.
+        if(host.isEmpty())
+        {
+            host = "localhost";
+        }
+
         QStringList l;
         l << command << id << "stopped" << host << param << stdio << workDir << env;
 
@@ -655,6 +662,11 @@ void ApplicationViewWidget::updateApplicationWindow()
         QString carrier = QString("%1").arg((*cnnitr).carrier());
         QString status = "disconnected";
         QString modifier="";
+        // The default carrier is "tcp" if <protocol> is not specified.
+        if(carrier.isEmpty())
+        {
+            carrier = "tcp";
+        }
         size_t pos = carrier.toStdString().find("+");
         if(pos != std::string::npos)
         {
@@ -698,6 +710,17 @@ void ApplicationViewWidget::updateApplicationWindow()
             type = "port";
         }
         QString res = QString("%1").arg((*itrS)->getName());
+        if (std::find(listOfResourceNames.begin(),
+                      listOfResourceNames.end(),
+                      res.toStdString()) == listOfResourceNames.end())
+        {
+          listOfResourceNames.push_back(res.toStdString());
+        }
+        else
+        {
+            // The resource has been already added
+            continue;
+        }
         QString status = "unknown";
         //m_resRow[m_resColumns.m_col_color] = Gdk::Color("#00000");
 
