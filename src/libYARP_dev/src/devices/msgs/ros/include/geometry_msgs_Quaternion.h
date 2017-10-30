@@ -20,141 +20,157 @@
 #include "std_msgs_Header.h"
 #include "geometry_msgs_Point.h"
 
-class geometry_msgs_Quaternion : public yarp::os::idl::WirePortable {
+class geometry_msgs_Quaternion : public yarp::os::idl::WirePortable
+{
 public:
-  yarp::os::NetFloat64 x;
-  yarp::os::NetFloat64 y;
-  yarp::os::NetFloat64 z;
-  yarp::os::NetFloat64 w;
+    yarp::os::NetFloat64 x;
+    yarp::os::NetFloat64 y;
+    yarp::os::NetFloat64 z;
+    yarp::os::NetFloat64 w;
 
-  geometry_msgs_Quaternion() :
-    x(0.0),
-    y(0.0),
-    z(0.0),
-    w(0.0)
-  {
-  }
+    geometry_msgs_Quaternion() :
+            x(0.0),
+            y(0.0),
+            z(0.0),
+            w(0.0)
+    {
+    }
 
-  void clear() {
-    // *** x ***
-    x = 0.0;
+    void clear()
+    {
+        // *** x ***
+        x = 0.0;
 
-    // *** y ***
-    y = 0.0;
+        // *** y ***
+        y = 0.0;
 
-    // *** z ***
-    z = 0.0;
+        // *** z ***
+        z = 0.0;
 
-    // *** w ***
-    w = 0.0;
-  }
+        // *** w ***
+        w = 0.0;
+    }
 
-  bool readBare(yarp::os::ConnectionReader& connection) override {
-    // *** x ***
-    x = connection.expectDouble();
+    bool readBare(yarp::os::ConnectionReader& connection) override
+    {
+        // *** x ***
+        x = connection.expectDouble();
 
-    // *** y ***
-    y = connection.expectDouble();
+        // *** y ***
+        y = connection.expectDouble();
 
-    // *** z ***
-    z = connection.expectDouble();
+        // *** z ***
+        z = connection.expectDouble();
 
-    // *** w ***
-    w = connection.expectDouble();
-    return !connection.isError();
-  }
+        // *** w ***
+        w = connection.expectDouble();
 
-  bool readBottle(yarp::os::ConnectionReader& connection) override {
-    connection.convertTextMode();
-    yarp::os::idl::WireReader reader(connection);
-    if (!reader.readListHeader(4)) return false;
+        return !connection.isError();
+    }
 
-    // *** x ***
-    x = reader.expectDouble();
+    bool readBottle(yarp::os::ConnectionReader& connection) override
+    {
+        connection.convertTextMode();
+        yarp::os::idl::WireReader reader(connection);
+        if (!reader.readListHeader(4)) {
+            return false;
+        }
 
-    // *** y ***
-    y = reader.expectDouble();
+        // *** x ***
+        x = reader.expectDouble();
 
-    // *** z ***
-    z = reader.expectDouble();
+        // *** y ***
+        y = reader.expectDouble();
 
-    // *** w ***
-    w = reader.expectDouble();
-    return !connection.isError();
-  }
+        // *** z ***
+        z = reader.expectDouble();
 
-  using yarp::os::idl::WirePortable::read;
-  bool read(yarp::os::ConnectionReader& connection) override {
-    if (connection.isBareMode()) return readBare(connection);
-    return readBottle(connection);
-  }
+        // *** w ***
+        w = reader.expectDouble();
 
-  bool writeBare(yarp::os::ConnectionWriter& connection) override {
-    // *** x ***
-    connection.appendDouble(x);
+        return !connection.isError();
+    }
 
-    // *** y ***
-    connection.appendDouble(y);
+    using yarp::os::idl::WirePortable::read;
+    bool read(yarp::os::ConnectionReader& connection) override
+    {
+        return (connection.isBareMode() ? readBare(connection)
+                                        : readBottle(connection));
+    }
 
-    // *** z ***
-    connection.appendDouble(z);
+    bool writeBare(yarp::os::ConnectionWriter& connection) override
+    {
+        // *** x ***
+        connection.appendDouble(x);
 
-    // *** w ***
-    connection.appendDouble(w);
-    return !connection.isError();
-  }
+        // *** y ***
+        connection.appendDouble(y);
 
-  bool writeBottle(yarp::os::ConnectionWriter& connection) override {
-    connection.appendInt(BOTTLE_TAG_LIST);
-    connection.appendInt(4);
+        // *** z ***
+        connection.appendDouble(z);
 
-    // *** x ***
-    connection.appendInt(BOTTLE_TAG_DOUBLE);
-    connection.appendDouble((double)x);
+        // *** w ***
+        connection.appendDouble(w);
 
-    // *** y ***
-    connection.appendInt(BOTTLE_TAG_DOUBLE);
-    connection.appendDouble((double)y);
+        return !connection.isError();
+    }
 
-    // *** z ***
-    connection.appendInt(BOTTLE_TAG_DOUBLE);
-    connection.appendDouble((double)z);
+    bool writeBottle(yarp::os::ConnectionWriter& connection) override
+    {
+        connection.appendInt(BOTTLE_TAG_LIST);
+        connection.appendInt(4);
 
-    // *** w ***
-    connection.appendInt(BOTTLE_TAG_DOUBLE);
-    connection.appendDouble((double)w);
-    connection.convertTextMode();
-    return !connection.isError();
-  }
+        // *** x ***
+        connection.appendInt(BOTTLE_TAG_DOUBLE);
+        connection.appendDouble((double)x);
 
-  using yarp::os::idl::WirePortable::write;
-  bool write(yarp::os::ConnectionWriter& connection) override {
-    if (connection.isBareMode()) return writeBare(connection);
-    return writeBottle(connection);
-  }
+        // *** y ***
+        connection.appendInt(BOTTLE_TAG_DOUBLE);
+        connection.appendDouble((double)y);
 
-  // This class will serialize ROS style or YARP style depending on protocol.
-  // If you need to force a serialization style, use one of these classes:
-  typedef yarp::os::idl::BareStyle<geometry_msgs_Quaternion> rosStyle;
-  typedef yarp::os::idl::BottleStyle<geometry_msgs_Quaternion> bottleStyle;
+        // *** z ***
+        connection.appendInt(BOTTLE_TAG_DOUBLE);
+        connection.appendDouble((double)z);
 
-  // Give source text for class, ROS will need this
-  yarp::os::ConstString getTypeText() {
-    return "# This represents an orientation in free space in quaternion form.\n\
+        // *** w ***
+        connection.appendInt(BOTTLE_TAG_DOUBLE);
+        connection.appendDouble((double)w);
+
+        connection.convertTextMode();
+        return !connection.isError();
+    }
+
+    using yarp::os::idl::WirePortable::write;
+    bool write(yarp::os::ConnectionWriter& connection) override
+    {
+        return (connection.isBareMode() ? writeBare(connection)
+                                        : writeBottle(connection));
+    }
+
+    // This class will serialize ROS style or YARP style depending on protocol.
+    // If you need to force a serialization style, use one of these classes:
+    typedef yarp::os::idl::BareStyle<geometry_msgs_Quaternion> rosStyle;
+    typedef yarp::os::idl::BottleStyle<geometry_msgs_Quaternion> bottleStyle;
+
+    // Give source text for class, ROS will need this
+    yarp::os::ConstString getTypeText()
+    {
+        return "# This represents an orientation in free space in quaternion form.\n\
 \n\
 float64 x\n\
 float64 y\n\
 float64 z\n\
 float64 w";
-  }
+    }
 
-  // Name the class, ROS will need this
-  yarp::os::Type getType() override {
-    yarp::os::Type typ = yarp::os::Type::byName("geometry_msgs/Quaternion","geometry_msgs/Quaternion");
-    typ.addProperty("md5sum",yarp::os::Value("a779879fadf0160734f906b8c19c7004"));
-    typ.addProperty("message_definition",yarp::os::Value(getTypeText()));
-    return typ;
-  }
+    // Name the class, ROS will need this
+    yarp::os::Type getType() override
+    {
+        yarp::os::Type typ = yarp::os::Type::byName("geometry_msgs/Quaternion", "geometry_msgs/Quaternion");
+        typ.addProperty("md5sum", yarp::os::Value("a779879fadf0160734f906b8c19c7004"));
+        typ.addProperty("message_definition", yarp::os::Value(getTypeText()));
+        return typ;
+    }
 };
 
 #endif

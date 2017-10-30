@@ -5,7 +5,7 @@
 #include <geometry_msgs_WrenchStamped.h>
 
 namespace geometry_msgs {
-  typedef geometry_msgs_WrenchStamped WrenchStamped;
+    typedef geometry_msgs_WrenchStamped WrenchStamped;
 }
 
 #endif

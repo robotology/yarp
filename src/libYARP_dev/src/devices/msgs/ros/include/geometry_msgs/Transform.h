@@ -5,7 +5,7 @@
 #include <geometry_msgs_Transform.h>
 
 namespace geometry_msgs {
-  typedef geometry_msgs_Transform Transform;
+    typedef geometry_msgs_Transform Transform;
 }
 
 #endif

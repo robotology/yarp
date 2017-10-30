@@ -28,118 +28,155 @@
 #include "geometry_msgs_Pose.h"
 #include "nav_msgs_MapMetaData.h"
 
-class nav_msgs_OccupancyGrid : public yarp::os::idl::WirePortable {
+class nav_msgs_OccupancyGrid : public yarp::os::idl::WirePortable
+{
 public:
-  std_msgs_Header header;
-  nav_msgs_MapMetaData info;
-  std::vector<char> data;
+    std_msgs_Header header;
+    nav_msgs_MapMetaData info;
+    std::vector<char> data;
 
-  nav_msgs_OccupancyGrid() :
-    header(),
-    info(),
-    data()
-  {
-  }
-
-  void clear() {
-    // *** header ***
-    header.clear();
-
-    // *** info ***
-    info.clear();
-
-    // *** data ***
-    data.clear();
-  }
-
-  bool readBare(yarp::os::ConnectionReader& connection) override {
-    // *** header ***
-    if (!header.read(connection)) return false;
-
-    // *** info ***
-    if (!info.read(connection)) return false;
-
-    // *** data ***
-    int len = connection.expectInt();
-    data.resize(len);
-    if (len > 0 && !connection.expectBlock((char*)&data[0],sizeof(char)*len)) return false;
-    return !connection.isError();
-  }
-
-  bool readBottle(yarp::os::ConnectionReader& connection) override {
-    connection.convertTextMode();
-    yarp::os::idl::WireReader reader(connection);
-    if (!reader.readListHeader(3)) return false;
-
-    // *** header ***
-    if (!header.read(connection)) return false;
-
-    // *** info ***
-    if (!info.read(connection)) return false;
-
-    // *** data ***
-    if (connection.expectInt()!=(BOTTLE_TAG_LIST|BOTTLE_TAG_INT)) return false;
-    int len = connection.expectInt();
-    data.resize(len);
-    for (int i=0; i<len; i++) {
-      data[i] = (char)connection.expectInt();
+    nav_msgs_OccupancyGrid() :
+            header(),
+            info(),
+            data()
+    {
     }
-    return !connection.isError();
-  }
 
-  using yarp::os::idl::WirePortable::read;
-  bool read(yarp::os::ConnectionReader& connection) override {
-    if (connection.isBareMode()) return readBare(connection);
-    return readBottle(connection);
-  }
+    void clear()
+    {
+        // *** header ***
+        header.clear();
 
-  bool writeBare(yarp::os::ConnectionWriter& connection) override {
-    // *** header ***
-    if (!header.write(connection)) return false;
+        // *** info ***
+        info.clear();
 
-    // *** info ***
-    if (!info.write(connection)) return false;
-
-    // *** data ***
-    connection.appendInt(data.size());
-    if (data.size()>0) {connection.appendExternalBlock((char*)&data[0],sizeof(char)*data.size());}
-    return !connection.isError();
-  }
-
-  bool writeBottle(yarp::os::ConnectionWriter& connection) override {
-    connection.appendInt(BOTTLE_TAG_LIST);
-    connection.appendInt(3);
-
-    // *** header ***
-    if (!header.write(connection)) return false;
-
-    // *** info ***
-    if (!info.write(connection)) return false;
-
-    // *** data ***
-    connection.appendInt(BOTTLE_TAG_LIST|BOTTLE_TAG_INT);
-    connection.appendInt(data.size());
-    for (size_t i=0; i<data.size(); i++) {
-      connection.appendInt((int)data[i]);
+        // *** data ***
+        data.clear();
     }
-    connection.convertTextMode();
-    return !connection.isError();
-  }
 
-  using yarp::os::idl::WirePortable::write;
-  bool write(yarp::os::ConnectionWriter& connection) override {
-    if (connection.isBareMode()) return writeBare(connection);
-    return writeBottle(connection);
-  }
+    bool readBare(yarp::os::ConnectionReader& connection) override
+    {
+        // *** header ***
+        if (!header.read(connection)) {
+            return false;
+        }
 
-  // This class will serialize ROS style or YARP style depending on protocol.
-  // If you need to force a serialization style, use one of these classes:
-  typedef yarp::os::idl::BareStyle<nav_msgs_OccupancyGrid> rosStyle;
-  typedef yarp::os::idl::BottleStyle<nav_msgs_OccupancyGrid> bottleStyle;
+        // *** info ***
+        if (!info.read(connection)) {
+            return false;
+        }
 
-  // Give source text for class, ROS will need this
-  yarp::os::ConstString getTypeText() {
-    return "# This represents a 2-D grid map, in which each cell represents the probability of\n\
+        // *** data ***
+        int len = connection.expectInt();
+        data.resize(len);
+        if (len > 0 && !connection.expectBlock((char*)&data[0], sizeof(char)*len)) {
+            return false;
+        }
+
+        return !connection.isError();
+    }
+
+    bool readBottle(yarp::os::ConnectionReader& connection) override
+    {
+        connection.convertTextMode();
+        yarp::os::idl::WireReader reader(connection);
+        if (!reader.readListHeader(3)) {
+            return false;
+        }
+
+        // *** header ***
+        if (!header.read(connection)) {
+            return false;
+        }
+
+        // *** info ***
+        if (!info.read(connection)) {
+            return false;
+        }
+
+        // *** data ***
+        if (connection.expectInt() != (BOTTLE_TAG_LIST|BOTTLE_TAG_INT)) {
+            return false;
+        }
+        int len = connection.expectInt();
+        data.resize(len);
+        for (int i=0; i<len; i++) {
+            data[i] = (char)connection.expectInt();
+        }
+
+        return !connection.isError();
+    }
+
+    using yarp::os::idl::WirePortable::read;
+    bool read(yarp::os::ConnectionReader& connection) override
+    {
+        return (connection.isBareMode() ? readBare(connection)
+                                        : readBottle(connection));
+    }
+
+    bool writeBare(yarp::os::ConnectionWriter& connection) override
+    {
+        // *** header ***
+        if (!header.write(connection)) {
+            return false;
+        }
+
+        // *** info ***
+        if (!info.write(connection)) {
+            return false;
+        }
+
+        // *** data ***
+        connection.appendInt(data.size());
+        if (data.size()>0) {
+            connection.appendExternalBlock((char*)&data[0], sizeof(char)*data.size());
+        }
+
+        return !connection.isError();
+    }
+
+    bool writeBottle(yarp::os::ConnectionWriter& connection) override
+    {
+        connection.appendInt(BOTTLE_TAG_LIST);
+        connection.appendInt(3);
+
+        // *** header ***
+        if (!header.write(connection)) {
+            return false;
+        }
+
+        // *** info ***
+        if (!info.write(connection)) {
+            return false;
+        }
+
+        // *** data ***
+        connection.appendInt(BOTTLE_TAG_LIST|BOTTLE_TAG_INT);
+        connection.appendInt(data.size());
+        for (size_t i=0; i<data.size(); i++) {
+            connection.appendInt((int)data[i]);
+        }
+
+        connection.convertTextMode();
+        return !connection.isError();
+    }
+
+    using yarp::os::idl::WirePortable::write;
+    bool write(yarp::os::ConnectionWriter& connection) override
+    {
+        return (connection.isBareMode() ? writeBare(connection)
+                                        : writeBottle(connection));
+    }
+
+    // This class will serialize ROS style or YARP style depending on protocol.
+    // If you need to force a serialization style, use one of these classes:
+    typedef yarp::os::idl::BareStyle<nav_msgs_OccupancyGrid> rosStyle;
+    typedef yarp::os::idl::BottleStyle<nav_msgs_OccupancyGrid> bottleStyle;
+
+    // Give source text for class, ROS will need this
+    yarp::os::ConstString getTypeText()
+    {
+        return "# This represents a 2-D grid map, in which each cell represents the probability of\n\
 # occupancy.\n\
 \n\
 Header header \n\
@@ -197,15 +234,16 @@ float64 x\n\
 float64 y\n\
 float64 z\n\
 float64 w";
-  }
+    }
 
-  // Name the class, ROS will need this
-  yarp::os::Type getType() override {
-    yarp::os::Type typ = yarp::os::Type::byName("nav_msgs/OccupancyGrid","nav_msgs/OccupancyGrid");
-    typ.addProperty("md5sum",yarp::os::Value("3381f2d731d4076ec5c71b0759edbe4e"));
-    typ.addProperty("message_definition",yarp::os::Value(getTypeText()));
-    return typ;
-  }
+    // Name the class, ROS will need this
+    yarp::os::Type getType() override
+    {
+        yarp::os::Type typ = yarp::os::Type::byName("nav_msgs/OccupancyGrid", "nav_msgs/OccupancyGrid");
+        typ.addProperty("md5sum", yarp::os::Value("3381f2d731d4076ec5c71b0759edbe4e"));
+        typ.addProperty("message_definition", yarp::os::Value(getTypeText()));
+        return typ;
+    }
 };
 
 #endif

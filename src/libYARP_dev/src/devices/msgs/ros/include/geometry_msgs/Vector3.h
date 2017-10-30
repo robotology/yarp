@@ -5,7 +5,7 @@
 #include <geometry_msgs_Vector3.h>
 
 namespace geometry_msgs {
-  typedef geometry_msgs_Vector3 Vector3;
+    typedef geometry_msgs_Vector3 Vector3;
 }
 
 #endif

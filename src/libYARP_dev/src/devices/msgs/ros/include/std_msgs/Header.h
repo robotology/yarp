@@ -5,7 +5,7 @@
 #include <std_msgs_Header.h>
 
 namespace std_msgs {
-  typedef std_msgs_Header Header;
+    typedef std_msgs_Header Header;
 }
 
 #endif

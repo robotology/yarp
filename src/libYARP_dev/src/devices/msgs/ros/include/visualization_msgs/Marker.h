@@ -5,7 +5,7 @@
 #include <visualization_msgs_Marker.h>
 
 namespace visualization_msgs {
-  typedef visualization_msgs_Marker Marker;
+    typedef visualization_msgs_Marker Marker;
 }
 
 #endif

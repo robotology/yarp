@@ -5,7 +5,7 @@
 #include <nav_msgs_OccupancyGrid.h>
 
 namespace nav_msgs {
-  typedef nav_msgs_OccupancyGrid OccupancyGrid;
+    typedef nav_msgs_OccupancyGrid OccupancyGrid;
 }
 
 #endif

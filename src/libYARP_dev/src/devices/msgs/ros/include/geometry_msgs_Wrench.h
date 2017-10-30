@@ -18,89 +18,120 @@
 #include "std_msgs_Header.h"
 #include "geometry_msgs_Vector3.h"
 
-class geometry_msgs_Wrench : public yarp::os::idl::WirePortable {
+class geometry_msgs_Wrench : public yarp::os::idl::WirePortable
+{
 public:
-  geometry_msgs_Vector3 force;
-  geometry_msgs_Vector3 torque;
+    geometry_msgs_Vector3 force;
+    geometry_msgs_Vector3 torque;
 
-  geometry_msgs_Wrench() :
-    force(),
-    torque()
-  {
-  }
+    geometry_msgs_Wrench() :
+            force(),
+            torque()
+    {
+    }
 
-  void clear() {
-    // *** force ***
-    force.clear();
+    void clear()
+    {
+        // *** force ***
+        force.clear();
 
-    // *** torque ***
-    torque.clear();
-  }
+        // *** torque ***
+        torque.clear();
+    }
 
-  bool readBare(yarp::os::ConnectionReader& connection) override {
-    // *** force ***
-    if (!force.read(connection)) return false;
+    bool readBare(yarp::os::ConnectionReader& connection) override
+    {
+        // *** force ***
+        if (!force.read(connection)) {
+            return false;
+        }
 
-    // *** torque ***
-    if (!torque.read(connection)) return false;
-    return !connection.isError();
-  }
+        // *** torque ***
+        if (!torque.read(connection)) {
+            return false;
+        }
 
-  bool readBottle(yarp::os::ConnectionReader& connection) override {
-    connection.convertTextMode();
-    yarp::os::idl::WireReader reader(connection);
-    if (!reader.readListHeader(2)) return false;
+        return !connection.isError();
+    }
 
-    // *** force ***
-    if (!force.read(connection)) return false;
+    bool readBottle(yarp::os::ConnectionReader& connection) override
+    {
+        connection.convertTextMode();
+        yarp::os::idl::WireReader reader(connection);
+        if (!reader.readListHeader(2)) {
+            return false;
+        }
 
-    // *** torque ***
-    if (!torque.read(connection)) return false;
-    return !connection.isError();
-  }
+        // *** force ***
+        if (!force.read(connection)) {
+            return false;
+        }
 
-  using yarp::os::idl::WirePortable::read;
-  bool read(yarp::os::ConnectionReader& connection) override {
-    if (connection.isBareMode()) return readBare(connection);
-    return readBottle(connection);
-  }
+        // *** torque ***
+        if (!torque.read(connection)) {
+            return false;
+        }
 
-  bool writeBare(yarp::os::ConnectionWriter& connection) override {
-    // *** force ***
-    if (!force.write(connection)) return false;
+        return !connection.isError();
+    }
 
-    // *** torque ***
-    if (!torque.write(connection)) return false;
-    return !connection.isError();
-  }
+    using yarp::os::idl::WirePortable::read;
+    bool read(yarp::os::ConnectionReader& connection) override
+    {
+        return (connection.isBareMode() ? readBare(connection)
+                                        : readBottle(connection));
+    }
 
-  bool writeBottle(yarp::os::ConnectionWriter& connection) override {
-    connection.appendInt(BOTTLE_TAG_LIST);
-    connection.appendInt(2);
+    bool writeBare(yarp::os::ConnectionWriter& connection) override
+    {
+        // *** force ***
+        if (!force.write(connection)) {
+            return false;
+        }
 
-    // *** force ***
-    if (!force.write(connection)) return false;
+        // *** torque ***
+        if (!torque.write(connection)) {
+            return false;
+        }
 
-    // *** torque ***
-    if (!torque.write(connection)) return false;
-    connection.convertTextMode();
-    return !connection.isError();
-  }
+        return !connection.isError();
+    }
 
-  using yarp::os::idl::WirePortable::write;
-  bool write(yarp::os::ConnectionWriter& connection) override {
-    if (connection.isBareMode()) return writeBare(connection);
-    return writeBottle(connection);
-  }
+    bool writeBottle(yarp::os::ConnectionWriter& connection) override
+    {
+        connection.appendInt(BOTTLE_TAG_LIST);
+        connection.appendInt(2);
 
-  // This class will serialize ROS style or YARP style depending on protocol.
-  // If you need to force a serialization style, use one of these classes:
-  typedef yarp::os::idl::BareStyle<geometry_msgs_Wrench> rosStyle;
-  typedef yarp::os::idl::BottleStyle<geometry_msgs_Wrench> bottleStyle;
+        // *** force ***
+        if (!force.write(connection)) {
+            return false;
+        }
 
-  // Give source text for class, ROS will need this
-  yarp::os::ConstString getTypeText() {
-    return "# This represents force in free space, separated into\n\
+        // *** torque ***
+        if (!torque.write(connection)) {
+            return false;
+        }
+
+        connection.convertTextMode();
+        return !connection.isError();
+    }
+
+    using yarp::os::idl::WirePortable::write;
+    bool write(yarp::os::ConnectionWriter& connection) override
+    {
+        return (connection.isBareMode() ? writeBare(connection)
+                                        : writeBottle(connection));
+    }
+
+    // This class will serialize ROS style or YARP style depending on protocol.
+    // If you need to force a serialization style, use one of these classes:
+    typedef yarp::os::idl::BareStyle<geometry_msgs_Wrench> rosStyle;
+    typedef yarp::os::idl::BottleStyle<geometry_msgs_Wrench> bottleStyle;
+
+    // Give source text for class, ROS will need this
+    yarp::os::ConstString getTypeText()
+    {
+        return "# This represents force in free space, separated into\n\
 # its linear and angular parts.\n\
 Vector3  force\n\
 Vector3  torque\n================================================================================\n\
@@ -110,15 +141,16 @@ MSG: geometry_msgs/Vector3\n\
 float64 x\n\
 float64 y\n\
 float64 z";
-  }
+    }
 
-  // Name the class, ROS will need this
-  yarp::os::Type getType() override {
-    yarp::os::Type typ = yarp::os::Type::byName("geometry_msgs/Wrench","geometry_msgs/Wrench");
-    typ.addProperty("md5sum",yarp::os::Value("4f539cf138b23283b520fd271b567936"));
-    typ.addProperty("message_definition",yarp::os::Value(getTypeText()));
-    return typ;
-  }
+    // Name the class, ROS will need this
+    yarp::os::Type getType() override
+    {
+        yarp::os::Type typ = yarp::os::Type::byName("geometry_msgs/Wrench", "geometry_msgs/Wrench");
+        typ.addProperty("md5sum", yarp::os::Value("4f539cf138b23283b520fd271b567936"));
+        typ.addProperty("message_definition", yarp::os::Value(getTypeText()));
+        return typ;
+    }
 };
 
 #endif

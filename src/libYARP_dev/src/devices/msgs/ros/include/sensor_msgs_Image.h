@@ -40,195 +40,230 @@
 #include "TickTime.h"
 #include "std_msgs_Header.h"
 
-class sensor_msgs_Image : public yarp::os::idl::WirePortable {
+class sensor_msgs_Image : public yarp::os::idl::WirePortable
+{
 public:
-  std_msgs_Header header;
-  yarp::os::NetUint32 height;
-  yarp::os::NetUint32 width;
-  std::string encoding;
-  unsigned char is_bigendian;
-  yarp::os::NetUint32 step;
-  std::vector<unsigned char> data;
+    std_msgs_Header header;
+    yarp::os::NetUint32 height;
+    yarp::os::NetUint32 width;
+    std::string encoding;
+    unsigned char is_bigendian;
+    yarp::os::NetUint32 step;
+    std::vector<unsigned char> data;
 
-  sensor_msgs_Image() :
-    header(),
-    height(0),
-    width(0),
-    encoding(""),
-    is_bigendian(0),
-    step(0),
-    data()
-  {
-  }
-
-  void clear() {
-    // *** header ***
-    header.clear();
-
-    // *** height ***
-    height = 0;
-
-    // *** width ***
-    width = 0;
-
-    // *** encoding ***
-    encoding = "";
-
-    // *** is_bigendian ***
-    is_bigendian = 0;
-
-    // *** step ***
-    step = 0;
-
-    // *** data ***
-    data.clear();
-  }
-
-  bool readBare(yarp::os::ConnectionReader& connection) override {
-    // *** header ***
-    if (!header.read(connection)) return false;
-
-    // *** height ***
-    height = connection.expectInt();
-
-    // *** width ***
-    width = connection.expectInt();
-
-    // *** encoding ***
-    int len = connection.expectInt();
-    encoding.resize(len);
-    if (!connection.expectBlock((char*)encoding.c_str(),len)) return false;
-
-    // *** is_bigendian ***
-    if (!connection.expectBlock((char*)&is_bigendian,1)) return false;
-
-    // *** step ***
-    step = connection.expectInt();
-
-    // *** data ***
-    len = connection.expectInt();
-    data.resize(len);
-    if (len > 0 && !connection.expectBlock((char*)&data[0],sizeof(unsigned char)*len)) return false;
-    return !connection.isError();
-  }
-
-  bool readBottle(yarp::os::ConnectionReader& connection) override {
-    connection.convertTextMode();
-    yarp::os::idl::WireReader reader(connection);
-    if (!reader.readListHeader(7)) return false;
-
-    // *** header ***
-    if (!header.read(connection)) return false;
-
-    // *** height ***
-    height = reader.expectInt();
-
-    // *** width ***
-    width = reader.expectInt();
-
-    // *** encoding ***
-    if (!reader.readString(encoding)) return false;
-
-    // *** is_bigendian ***
-    is_bigendian = reader.expectInt();
-
-    // *** step ***
-    step = reader.expectInt();
-
-    // *** data ***
-    if (connection.expectInt()!=(BOTTLE_TAG_LIST|BOTTLE_TAG_INT)) return false;
-    int len = connection.expectInt();
-    data.resize(len);
-    for (int i=0; i<len; i++) {
-      data[i] = (unsigned char)connection.expectInt();
+    sensor_msgs_Image() :
+            header(),
+            height(0),
+            width(0),
+            encoding(""),
+            is_bigendian(0),
+            step(0),
+            data()
+    {
     }
-    return !connection.isError();
-  }
 
-  using yarp::os::idl::WirePortable::read;
-  bool read(yarp::os::ConnectionReader& connection) override {
-    if (connection.isBareMode()) return readBare(connection);
-    return readBottle(connection);
-  }
+    void clear()
+    {
+        // *** header ***
+        header.clear();
 
-  bool writeBare(yarp::os::ConnectionWriter& connection) override {
-    // *** header ***
-    if (!header.write(connection)) return false;
+        // *** height ***
+        height = 0;
 
-    // *** height ***
-    connection.appendInt(height);
+        // *** width ***
+        width = 0;
 
-    // *** width ***
-    connection.appendInt(width);
+        // *** encoding ***
+        encoding = "";
 
-    // *** encoding ***
-    connection.appendInt(encoding.length());
-    connection.appendExternalBlock((char*)encoding.c_str(),encoding.length());
+        // *** is_bigendian ***
+        is_bigendian = 0;
 
-    // *** is_bigendian ***
-    connection.appendBlock((char*)&is_bigendian,1);
+        // *** step ***
+        step = 0;
 
-    // *** step ***
-    connection.appendInt(step);
-
-    // *** data ***
-    connection.appendInt(data.size());
-    if (data.size()>0) {connection.appendExternalBlock((char*)&data[0],sizeof(unsigned char)*data.size());}
-    return !connection.isError();
-  }
-
-  bool writeBottle(yarp::os::ConnectionWriter& connection) override {
-    connection.appendInt(BOTTLE_TAG_LIST);
-    connection.appendInt(7);
-
-    // *** header ***
-    if (!header.write(connection)) return false;
-
-    // *** height ***
-    connection.appendInt(BOTTLE_TAG_INT);
-    connection.appendInt((int)height);
-
-    // *** width ***
-    connection.appendInt(BOTTLE_TAG_INT);
-    connection.appendInt((int)width);
-
-    // *** encoding ***
-    connection.appendInt(BOTTLE_TAG_STRING);
-    connection.appendInt(encoding.length());
-    connection.appendExternalBlock((char*)encoding.c_str(),encoding.length());
-
-    // *** is_bigendian ***
-    connection.appendInt(BOTTLE_TAG_INT);
-    connection.appendInt((int)is_bigendian);
-
-    // *** step ***
-    connection.appendInt(BOTTLE_TAG_INT);
-    connection.appendInt((int)step);
-
-    // *** data ***
-    connection.appendInt(BOTTLE_TAG_LIST|BOTTLE_TAG_INT);
-    connection.appendInt(data.size());
-    for (size_t i=0; i<data.size(); i++) {
-      connection.appendInt((int)data[i]);
+        // *** data ***
+        data.clear();
     }
-    connection.convertTextMode();
-    return !connection.isError();
-  }
 
-  using yarp::os::idl::WirePortable::write;
-  bool write(yarp::os::ConnectionWriter& connection) override {
-    if (connection.isBareMode()) return writeBare(connection);
-    return writeBottle(connection);
-  }
+    bool readBare(yarp::os::ConnectionReader& connection) override
+    {
+        // *** header ***
+        if (!header.read(connection)) {
+            return false;
+        }
 
-  // This class will serialize ROS style or YARP style depending on protocol.
-  // If you need to force a serialization style, use one of these classes:
-  typedef yarp::os::idl::BareStyle<sensor_msgs_Image> rosStyle;
-  typedef yarp::os::idl::BottleStyle<sensor_msgs_Image> bottleStyle;
+        // *** height ***
+        height = connection.expectInt();
 
-  // Give source text for class, ROS will need this
-  yarp::os::ConstString getTypeText() {
-    return "# This message contains an uncompressed image\n\
+        // *** width ***
+        width = connection.expectInt();
+
+        // *** encoding ***
+        int len = connection.expectInt();
+        encoding.resize(len);
+        if (!connection.expectBlock((char*)encoding.c_str(), len)) {
+            return false;
+        }
+
+        // *** is_bigendian ***
+        if (!connection.expectBlock((char*)&is_bigendian, 1)) {
+            return false;
+        }
+
+        // *** step ***
+        step = connection.expectInt();
+
+        // *** data ***
+        len = connection.expectInt();
+        data.resize(len);
+        if (len > 0 && !connection.expectBlock((char*)&data[0], sizeof(unsigned char)*len)) {
+            return false;
+        }
+
+        return !connection.isError();
+    }
+
+    bool readBottle(yarp::os::ConnectionReader& connection) override
+    {
+        connection.convertTextMode();
+        yarp::os::idl::WireReader reader(connection);
+        if (!reader.readListHeader(7)) {
+            return false;
+        }
+
+        // *** header ***
+        if (!header.read(connection)) {
+            return false;
+        }
+
+        // *** height ***
+        height = reader.expectInt();
+
+        // *** width ***
+        width = reader.expectInt();
+
+        // *** encoding ***
+        if (!reader.readString(encoding)) {
+            return false;
+        }
+
+        // *** is_bigendian ***
+        is_bigendian = reader.expectInt();
+
+        // *** step ***
+        step = reader.expectInt();
+
+        // *** data ***
+        if (connection.expectInt() != (BOTTLE_TAG_LIST|BOTTLE_TAG_INT)) {
+            return false;
+        }
+        int len = connection.expectInt();
+        data.resize(len);
+        for (int i=0; i<len; i++) {
+            data[i] = (unsigned char)connection.expectInt();
+        }
+
+        return !connection.isError();
+    }
+
+    using yarp::os::idl::WirePortable::read;
+    bool read(yarp::os::ConnectionReader& connection) override
+    {
+        return (connection.isBareMode() ? readBare(connection)
+                                        : readBottle(connection));
+    }
+
+    bool writeBare(yarp::os::ConnectionWriter& connection) override
+    {
+        // *** header ***
+        if (!header.write(connection)) {
+            return false;
+        }
+
+        // *** height ***
+        connection.appendInt(height);
+
+        // *** width ***
+        connection.appendInt(width);
+
+        // *** encoding ***
+        connection.appendInt(encoding.length());
+        connection.appendExternalBlock((char*)encoding.c_str(), encoding.length());
+
+        // *** is_bigendian ***
+        connection.appendBlock((char*)&is_bigendian, 1);
+
+        // *** step ***
+        connection.appendInt(step);
+
+        // *** data ***
+        connection.appendInt(data.size());
+        if (data.size()>0) {
+            connection.appendExternalBlock((char*)&data[0], sizeof(unsigned char)*data.size());
+        }
+
+        return !connection.isError();
+    }
+
+    bool writeBottle(yarp::os::ConnectionWriter& connection) override
+    {
+        connection.appendInt(BOTTLE_TAG_LIST);
+        connection.appendInt(7);
+
+        // *** header ***
+        if (!header.write(connection)) {
+            return false;
+        }
+
+        // *** height ***
+        connection.appendInt(BOTTLE_TAG_INT);
+        connection.appendInt((int)height);
+
+        // *** width ***
+        connection.appendInt(BOTTLE_TAG_INT);
+        connection.appendInt((int)width);
+
+        // *** encoding ***
+        connection.appendInt(BOTTLE_TAG_STRING);
+        connection.appendInt(encoding.length());
+        connection.appendExternalBlock((char*)encoding.c_str(), encoding.length());
+
+        // *** is_bigendian ***
+        connection.appendInt(BOTTLE_TAG_INT);
+        connection.appendInt((int)is_bigendian);
+
+        // *** step ***
+        connection.appendInt(BOTTLE_TAG_INT);
+        connection.appendInt((int)step);
+
+        // *** data ***
+        connection.appendInt(BOTTLE_TAG_LIST|BOTTLE_TAG_INT);
+        connection.appendInt(data.size());
+        for (size_t i=0; i<data.size(); i++) {
+            connection.appendInt((int)data[i]);
+        }
+
+        connection.convertTextMode();
+        return !connection.isError();
+    }
+
+    using yarp::os::idl::WirePortable::write;
+    bool write(yarp::os::ConnectionWriter& connection) override
+    {
+        return (connection.isBareMode() ? writeBare(connection)
+                                        : writeBottle(connection));
+    }
+
+    // This class will serialize ROS style or YARP style depending on protocol.
+    // If you need to force a serialization style, use one of these classes:
+    typedef yarp::os::idl::BareStyle<sensor_msgs_Image> rosStyle;
+    typedef yarp::os::idl::BottleStyle<sensor_msgs_Image> bottleStyle;
+
+    // Give source text for class, ROS will need this
+    yarp::os::ConstString getTypeText()
+    {
+        return "# This message contains an uncompressed image\n\
 # (0, 0) is at top-left corner of image\n\
 #\n\
 \n\
@@ -272,15 +307,16 @@ time stamp\n\
 # 0: no frame\n\
 # 1: global frame\n\
 string frame_id";
-  }
+    }
 
-  // Name the class, ROS will need this
-  yarp::os::Type getType() override {
-    yarp::os::Type typ = yarp::os::Type::byName("sensor_msgs/Image","sensor_msgs/Image");
-    typ.addProperty("md5sum",yarp::os::Value("060021388200f6f0f447d0fcd9c64743"));
-    typ.addProperty("message_definition",yarp::os::Value(getTypeText()));
-    return typ;
-  }
+    // Name the class, ROS will need this
+    yarp::os::Type getType() override
+    {
+        yarp::os::Type typ = yarp::os::Type::byName("sensor_msgs/Image", "sensor_msgs/Image");
+        typ.addProperty("md5sum", yarp::os::Value("060021388200f6f0f447d0fcd9c64743"));
+        typ.addProperty("message_definition", yarp::os::Value(getTypeText()));
+        return typ;
+    }
 };
 
 #endif

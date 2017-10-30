@@ -5,7 +5,7 @@
 #include <geometry_msgs_Point.h>
 
 namespace geometry_msgs {
-  typedef geometry_msgs_Point Point;
+    typedef geometry_msgs_Point Point;
 }
 
 #endif

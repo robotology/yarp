@@ -39,198 +39,245 @@
 #include "TickTime.h"
 #include "std_msgs_Header.h"
 
-class sensor_msgs_JointState : public yarp::os::idl::WirePortable {
+class sensor_msgs_JointState : public yarp::os::idl::WirePortable
+{
 public:
-  std_msgs_Header header;
-  std::vector<std::string> name;
-  std::vector<yarp::os::NetFloat64> position;
-  std::vector<yarp::os::NetFloat64> velocity;
-  std::vector<yarp::os::NetFloat64> effort;
+    std_msgs_Header header;
+    std::vector<std::string> name;
+    std::vector<yarp::os::NetFloat64> position;
+    std::vector<yarp::os::NetFloat64> velocity;
+    std::vector<yarp::os::NetFloat64> effort;
 
-  sensor_msgs_JointState() :
-    header(),
-    name(),
-    position(),
-    velocity(),
-    effort()
-  {
-  }
-
-  void clear() {
-    // *** header ***
-    header.clear();
-
-    // *** name ***
-    name.clear();
-
-    // *** position ***
-    position.clear();
-
-    // *** velocity ***
-    velocity.clear();
-
-    // *** effort ***
-    effort.clear();
-  }
-
-  bool readBare(yarp::os::ConnectionReader& connection) override {
-    // *** header ***
-    if (!header.read(connection)) return false;
-
-    // *** name ***
-    int len = connection.expectInt();
-    name.resize(len);
-    for (int i=0; i<len; i++) {
-      int len2 = connection.expectInt();
-      name[i].resize(len2);
-      if (!connection.expectBlock((char*)name[i].c_str(),len2)) return false;
+    sensor_msgs_JointState() :
+            header(),
+            name(),
+            position(),
+            velocity(),
+            effort()
+    {
     }
 
-    // *** position ***
-    len = connection.expectInt();
-    position.resize(len);
-    if (len > 0 && !connection.expectBlock((char*)&position[0],sizeof(yarp::os::NetFloat64)*len)) return false;
+    void clear()
+    {
+        // *** header ***
+        header.clear();
 
-    // *** velocity ***
-    len = connection.expectInt();
-    velocity.resize(len);
-    if (len > 0 && !connection.expectBlock((char*)&velocity[0],sizeof(yarp::os::NetFloat64)*len)) return false;
+        // *** name ***
+        name.clear();
 
-    // *** effort ***
-    len = connection.expectInt();
-    effort.resize(len);
-    if (len > 0 && !connection.expectBlock((char*)&effort[0],sizeof(yarp::os::NetFloat64)*len)) return false;
-    return !connection.isError();
-  }
+        // *** position ***
+        position.clear();
 
-  bool readBottle(yarp::os::ConnectionReader& connection) override {
-    connection.convertTextMode();
-    yarp::os::idl::WireReader reader(connection);
-    if (!reader.readListHeader(5)) return false;
+        // *** velocity ***
+        velocity.clear();
 
-    // *** header ***
-    if (!header.read(connection)) return false;
-
-    // *** name ***
-    if (connection.expectInt()!=(BOTTLE_TAG_LIST|BOTTLE_TAG_STRING)) return false;
-    int len = connection.expectInt();
-    name.resize(len);
-    for (int i=0; i<len; i++) {
-      int len2 = connection.expectInt();
-      name[i].resize(len2);
-      if (!connection.expectBlock((char*)name[i].c_str(),len2)) return false;
+        // *** effort ***
+        effort.clear();
     }
 
-    // *** position ***
-    if (connection.expectInt()!=(BOTTLE_TAG_LIST|BOTTLE_TAG_DOUBLE)) return false;
-    len = connection.expectInt();
-    position.resize(len);
-    for (int i=0; i<len; i++) {
-      position[i] = (yarp::os::NetFloat64)connection.expectDouble();
+    bool readBare(yarp::os::ConnectionReader& connection) override
+    {
+        // *** header ***
+        if (!header.read(connection)) {
+            return false;
+        }
+
+        // *** name ***
+        int len = connection.expectInt();
+        name.resize(len);
+        for (int i=0; i<len; i++) {
+            int len2 = connection.expectInt();
+            name[i].resize(len2);
+            if (!connection.expectBlock((char*)name[i].c_str(), len2)) {
+                return false;
+            }
+        }
+
+        // *** position ***
+        len = connection.expectInt();
+        position.resize(len);
+        if (len > 0 && !connection.expectBlock((char*)&position[0], sizeof(yarp::os::NetFloat64)*len)) {
+            return false;
+        }
+
+        // *** velocity ***
+        len = connection.expectInt();
+        velocity.resize(len);
+        if (len > 0 && !connection.expectBlock((char*)&velocity[0], sizeof(yarp::os::NetFloat64)*len)) {
+            return false;
+        }
+
+        // *** effort ***
+        len = connection.expectInt();
+        effort.resize(len);
+        if (len > 0 && !connection.expectBlock((char*)&effort[0], sizeof(yarp::os::NetFloat64)*len)) {
+            return false;
+        }
+
+        return !connection.isError();
     }
 
-    // *** velocity ***
-    if (connection.expectInt()!=(BOTTLE_TAG_LIST|BOTTLE_TAG_DOUBLE)) return false;
-    len = connection.expectInt();
-    velocity.resize(len);
-    for (int i=0; i<len; i++) {
-      velocity[i] = (yarp::os::NetFloat64)connection.expectDouble();
+    bool readBottle(yarp::os::ConnectionReader& connection) override
+    {
+        connection.convertTextMode();
+        yarp::os::idl::WireReader reader(connection);
+        if (!reader.readListHeader(5)) {
+            return false;
+        }
+
+        // *** header ***
+        if (!header.read(connection)) {
+            return false;
+        }
+
+        // *** name ***
+        if (connection.expectInt() != (BOTTLE_TAG_LIST|BOTTLE_TAG_STRING)) {
+            return false;
+        }
+        int len = connection.expectInt();
+        name.resize(len);
+        for (int i=0; i<len; i++) {
+            int len2 = connection.expectInt();
+            name[i].resize(len2);
+            if (!connection.expectBlock((char*)name[i].c_str(), len2)) {
+                return false;
+            }
+        }
+
+        // *** position ***
+        if (connection.expectInt() != (BOTTLE_TAG_LIST|BOTTLE_TAG_DOUBLE)) {
+            return false;
+        }
+        len = connection.expectInt();
+        position.resize(len);
+        for (int i=0; i<len; i++) {
+            position[i] = (yarp::os::NetFloat64)connection.expectDouble();
+        }
+
+        // *** velocity ***
+        if (connection.expectInt() != (BOTTLE_TAG_LIST|BOTTLE_TAG_DOUBLE)) {
+            return false;
+        }
+        len = connection.expectInt();
+        velocity.resize(len);
+        for (int i=0; i<len; i++) {
+            velocity[i] = (yarp::os::NetFloat64)connection.expectDouble();
+        }
+
+        // *** effort ***
+        if (connection.expectInt() != (BOTTLE_TAG_LIST|BOTTLE_TAG_DOUBLE)) {
+            return false;
+        }
+        len = connection.expectInt();
+        effort.resize(len);
+        for (int i=0; i<len; i++) {
+            effort[i] = (yarp::os::NetFloat64)connection.expectDouble();
+        }
+
+        return !connection.isError();
     }
 
-    // *** effort ***
-    if (connection.expectInt()!=(BOTTLE_TAG_LIST|BOTTLE_TAG_DOUBLE)) return false;
-    len = connection.expectInt();
-    effort.resize(len);
-    for (int i=0; i<len; i++) {
-      effort[i] = (yarp::os::NetFloat64)connection.expectDouble();
-    }
-    return !connection.isError();
-  }
-
-  using yarp::os::idl::WirePortable::read;
-  bool read(yarp::os::ConnectionReader& connection) override {
-    if (connection.isBareMode()) return readBare(connection);
-    return readBottle(connection);
-  }
-
-  bool writeBare(yarp::os::ConnectionWriter& connection) override {
-    // *** header ***
-    if (!header.write(connection)) return false;
-
-    // *** name ***
-    connection.appendInt(name.size());
-    for (size_t i=0; i<name.size(); i++) {
-      connection.appendInt(name[i].length());
-      connection.appendExternalBlock((char*)name[i].c_str(),name[i].length());
+    using yarp::os::idl::WirePortable::read;
+    bool read(yarp::os::ConnectionReader& connection) override
+    {
+        return (connection.isBareMode() ? readBare(connection)
+                                        : readBottle(connection));
     }
 
-    // *** position ***
-    connection.appendInt(position.size());
-    if (position.size()>0) {connection.appendExternalBlock((char*)&position[0],sizeof(yarp::os::NetFloat64)*position.size());}
+    bool writeBare(yarp::os::ConnectionWriter& connection) override
+    {
+        // *** header ***
+        if (!header.write(connection)) {
+            return false;
+        }
 
-    // *** velocity ***
-    connection.appendInt(velocity.size());
-    if (velocity.size()>0) {connection.appendExternalBlock((char*)&velocity[0],sizeof(yarp::os::NetFloat64)*velocity.size());}
+        // *** name ***
+        connection.appendInt(name.size());
+        for (size_t i=0; i<name.size(); i++) {
+            connection.appendInt(name[i].length());
+            connection.appendExternalBlock((char*)name[i].c_str(), name[i].length());
+        }
 
-    // *** effort ***
-    connection.appendInt(effort.size());
-    if (effort.size()>0) {connection.appendExternalBlock((char*)&effort[0],sizeof(yarp::os::NetFloat64)*effort.size());}
-    return !connection.isError();
-  }
+        // *** position ***
+        connection.appendInt(position.size());
+        if (position.size()>0) {
+            connection.appendExternalBlock((char*)&position[0], sizeof(yarp::os::NetFloat64)*position.size());
+        }
 
-  bool writeBottle(yarp::os::ConnectionWriter& connection) override {
-    connection.appendInt(BOTTLE_TAG_LIST);
-    connection.appendInt(5);
+        // *** velocity ***
+        connection.appendInt(velocity.size());
+        if (velocity.size()>0) {
+            connection.appendExternalBlock((char*)&velocity[0], sizeof(yarp::os::NetFloat64)*velocity.size());
+        }
 
-    // *** header ***
-    if (!header.write(connection)) return false;
+        // *** effort ***
+        connection.appendInt(effort.size());
+        if (effort.size()>0) {
+            connection.appendExternalBlock((char*)&effort[0], sizeof(yarp::os::NetFloat64)*effort.size());
+        }
 
-    // *** name ***
-    connection.appendInt(BOTTLE_TAG_LIST|BOTTLE_TAG_STRING);
-    connection.appendInt(name.size());
-    for (size_t i=0; i<name.size(); i++) {
-      connection.appendInt(name[i].length());
-      connection.appendExternalBlock((char*)name[i].c_str(),name[i].length());
+        return !connection.isError();
     }
 
-    // *** position ***
-    connection.appendInt(BOTTLE_TAG_LIST|BOTTLE_TAG_DOUBLE);
-    connection.appendInt(position.size());
-    for (size_t i=0; i<position.size(); i++) {
-      connection.appendDouble((double)position[i]);
+    bool writeBottle(yarp::os::ConnectionWriter& connection) override
+    {
+        connection.appendInt(BOTTLE_TAG_LIST);
+        connection.appendInt(5);
+
+        // *** header ***
+        if (!header.write(connection)) {
+            return false;
+        }
+
+        // *** name ***
+        connection.appendInt(BOTTLE_TAG_LIST|BOTTLE_TAG_STRING);
+        connection.appendInt(name.size());
+        for (size_t i=0; i<name.size(); i++) {
+            connection.appendInt(name[i].length());
+            connection.appendExternalBlock((char*)name[i].c_str(), name[i].length());
+        }
+
+        // *** position ***
+        connection.appendInt(BOTTLE_TAG_LIST|BOTTLE_TAG_DOUBLE);
+        connection.appendInt(position.size());
+        for (size_t i=0; i<position.size(); i++) {
+            connection.appendDouble((double)position[i]);
+        }
+
+        // *** velocity ***
+        connection.appendInt(BOTTLE_TAG_LIST|BOTTLE_TAG_DOUBLE);
+        connection.appendInt(velocity.size());
+        for (size_t i=0; i<velocity.size(); i++) {
+            connection.appendDouble((double)velocity[i]);
+        }
+
+        // *** effort ***
+        connection.appendInt(BOTTLE_TAG_LIST|BOTTLE_TAG_DOUBLE);
+        connection.appendInt(effort.size());
+        for (size_t i=0; i<effort.size(); i++) {
+            connection.appendDouble((double)effort[i]);
+        }
+
+        connection.convertTextMode();
+        return !connection.isError();
     }
 
-    // *** velocity ***
-    connection.appendInt(BOTTLE_TAG_LIST|BOTTLE_TAG_DOUBLE);
-    connection.appendInt(velocity.size());
-    for (size_t i=0; i<velocity.size(); i++) {
-      connection.appendDouble((double)velocity[i]);
+    using yarp::os::idl::WirePortable::write;
+    bool write(yarp::os::ConnectionWriter& connection) override
+    {
+        return (connection.isBareMode() ? writeBare(connection)
+                                        : writeBottle(connection));
     }
 
-    // *** effort ***
-    connection.appendInt(BOTTLE_TAG_LIST|BOTTLE_TAG_DOUBLE);
-    connection.appendInt(effort.size());
-    for (size_t i=0; i<effort.size(); i++) {
-      connection.appendDouble((double)effort[i]);
-    }
-    connection.convertTextMode();
-    return !connection.isError();
-  }
+    // This class will serialize ROS style or YARP style depending on protocol.
+    // If you need to force a serialization style, use one of these classes:
+    typedef yarp::os::idl::BareStyle<sensor_msgs_JointState> rosStyle;
+    typedef yarp::os::idl::BottleStyle<sensor_msgs_JointState> bottleStyle;
 
-  using yarp::os::idl::WirePortable::write;
-  bool write(yarp::os::ConnectionWriter& connection) override {
-    if (connection.isBareMode()) return writeBare(connection);
-    return writeBottle(connection);
-  }
-
-  // This class will serialize ROS style or YARP style depending on protocol.
-  // If you need to force a serialization style, use one of these classes:
-  typedef yarp::os::idl::BareStyle<sensor_msgs_JointState> rosStyle;
-  typedef yarp::os::idl::BottleStyle<sensor_msgs_JointState> bottleStyle;
-
-  // Give source text for class, ROS will need this
-  yarp::os::ConstString getTypeText() {
-    return "# This is a message that holds data to describe the state of a set of torque controlled joints.\n\
+    // Give source text for class, ROS will need this
+    yarp::os::ConstString getTypeText()
+    {
+        return "# This is a message that holds data to describe the state of a set of torque controlled joints.\n\
 #\n\
 # The state of each joint (revolute or prismatic) is defined by:\n\
 #  * the position of the joint (rad or m),\n\
@@ -273,15 +320,16 @@ time stamp\n\
 # 0: no frame\n\
 # 1: global frame\n\
 string frame_id";
-  }
+    }
 
-  // Name the class, ROS will need this
-  yarp::os::Type getType() override {
-    yarp::os::Type typ = yarp::os::Type::byName("sensor_msgs/JointState","sensor_msgs/JointState");
-    typ.addProperty("md5sum",yarp::os::Value("3066dcd76a6cfaef579bd0f34173e9fd"));
-    typ.addProperty("message_definition",yarp::os::Value(getTypeText()));
-    return typ;
-  }
+    // Name the class, ROS will need this
+    yarp::os::Type getType() override
+    {
+        yarp::os::Type typ = yarp::os::Type::byName("sensor_msgs/JointState", "sensor_msgs/JointState");
+        typ.addProperty("md5sum", yarp::os::Value("3066dcd76a6cfaef579bd0f34173e9fd"));
+        typ.addProperty("message_definition", yarp::os::Value(getTypeText()));
+        return typ;
+    }
 };
 
 #endif
