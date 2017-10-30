@@ -593,81 +593,81 @@ namespace yarp {
 namespace sig {
 
 template<>
-inline int yarp::sig::ImageOf<yarp::sig::PixelMono>::getPixelCode() const {
+inline int ImageOf<yarp::sig::PixelMono>::getPixelCode() const {
     return VOCAB_PIXEL_MONO;
 }
 
 template<>
-inline int yarp::sig::ImageOf<yarp::sig::PixelMono16>::getPixelCode() const {
+inline int ImageOf<yarp::sig::PixelMono16>::getPixelCode() const {
     return VOCAB_PIXEL_MONO16;
 }
 
 template<>
-inline int yarp::sig::ImageOf<yarp::sig::PixelRgb>::getPixelCode() const {
+inline int ImageOf<yarp::sig::PixelRgb>::getPixelCode() const {
     return VOCAB_PIXEL_RGB;
 }
 
 template<>
-inline int yarp::sig::ImageOf<yarp::sig::PixelRgba>::getPixelCode() const {
+inline int ImageOf<yarp::sig::PixelRgba>::getPixelCode() const {
     return VOCAB_PIXEL_RGBA;
 }
 
 template<>
-inline int yarp::sig::ImageOf<yarp::sig::PixelHsv>::getPixelCode() const {
+inline int ImageOf<yarp::sig::PixelHsv>::getPixelCode() const {
     return VOCAB_PIXEL_HSV;
 }
 
 template<>
-inline int yarp::sig::ImageOf<yarp::sig::PixelBgr>::getPixelCode() const {
+inline int ImageOf<yarp::sig::PixelBgr>::getPixelCode() const {
     return VOCAB_PIXEL_BGR;
 }
 
 template<>
-inline int yarp::sig::ImageOf<yarp::sig::PixelBgra>::getPixelCode() const {
+inline int ImageOf<yarp::sig::PixelBgra>::getPixelCode() const {
     return VOCAB_PIXEL_BGRA;
 }
 
 template<>
-inline int yarp::sig::ImageOf<yarp::sig::PixelMonoSigned>::getPixelCode() const {
+inline int ImageOf<yarp::sig::PixelMonoSigned>::getPixelCode() const {
     return VOCAB_PIXEL_MONO_SIGNED;
 }
 
 template<>
-inline int yarp::sig::ImageOf<yarp::sig::PixelRgbSigned>::getPixelCode() const {
+inline int ImageOf<yarp::sig::PixelRgbSigned>::getPixelCode() const {
     return VOCAB_PIXEL_RGB_SIGNED;
 }
 
 template<>
-inline int yarp::sig::ImageOf<yarp::sig::PixelFloat>::getPixelCode() const {
+inline int ImageOf<yarp::sig::PixelFloat>::getPixelCode() const {
     return VOCAB_PIXEL_MONO_FLOAT;
 }
 
 template<>
-inline int yarp::sig::ImageOf<yarp::sig::PixelRgbFloat>::getPixelCode() const {
+inline int ImageOf<yarp::sig::PixelRgbFloat>::getPixelCode() const {
     return VOCAB_PIXEL_RGB_FLOAT;
 }
 
 template<>
-inline int yarp::sig::ImageOf<yarp::sig::PixelRgbInt>::getPixelCode() const {
+inline int ImageOf<yarp::sig::PixelRgbInt>::getPixelCode() const {
     return VOCAB_PIXEL_RGB_INT;
 }
 
 template<>
-inline int yarp::sig::ImageOf<yarp::sig::PixelHsvFloat>::getPixelCode() const {
+inline int ImageOf<yarp::sig::PixelHsvFloat>::getPixelCode() const {
     return VOCAB_PIXEL_HSV_FLOAT;
 }
 
 template<>
-inline int yarp::sig::ImageOf<yarp::sig::PixelInt>::getPixelCode() const {
+inline int ImageOf<yarp::sig::PixelInt>::getPixelCode() const {
     return VOCAB_PIXEL_INT;
 }
 
 template<typename T>
-inline int yarp::sig::ImageOf<T>::getPixelCode() const {
+inline int ImageOf<T>::getPixelCode() const {
     return -((int) sizeof(T));
 }
 
-}
-}
+} // namespace sig
+} // namespace yarp
 
 #endif // YARP_SIG_IMAGE_H
