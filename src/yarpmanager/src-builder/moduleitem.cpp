@@ -518,8 +518,9 @@ PortItem::PortItem(OutputData* node, BuilderItem *parent) : BuilderItem(parent)
             polygon << QPointF(-triangleH/2, -PORT_LINE_WIDTH/2) << QPointF(-triangleH/2, PORT_LINE_WIDTH/2) <<
                        QPointF(0, PORT_LINE_WIDTH/2) << QPointF(triangleH/2, 0) << QPointF(0, -PORT_LINE_WIDTH/2);
             boundingR = QRectF(-triangleH/2, -PORT_LINE_WIDTH/2,triangleH,PORT_LINE_WIDTH);
+            break;
         case SERVICE_PORT:
-        boundingR = QRectF(-PORT_LINE_WIDTH/2, -PORT_LINE_WIDTH/2,PORT_LINE_WIDTH,PORT_LINE_WIDTH);
+            boundingR = QRectF(-PORT_LINE_WIDTH/2, -PORT_LINE_WIDTH/2,PORT_LINE_WIDTH,PORT_LINE_WIDTH);
             break;
         default:
             break;
