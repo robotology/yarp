@@ -1,0 +1,13 @@
+<application>
+    <name>fixture-network-clock</name>
+    <description>Fixture for publishing a NetworkClock on the /clock port.</description>
+    <version>1.0</version>
+    <authors>
+        <author email="silvio.traversaro@iit.it">Silvio Traversaro</author>
+    </authors>
+    <module>
+        <name>yarp</name>
+        <parameters>clock --name /clock</parameters>
+        <node>localhost</node>
+    </module>
+</application>
