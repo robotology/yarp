@@ -593,9 +593,9 @@ public:
     static bool getConnectionQos(const ConstString& src, const ConstString& dest,
                                  QosStyle& srcStyle, QosStyle& destStyle, bool quiet=true);
     /**
-     * Checks that the port name doesn't contain invalid characters such as " "
+     * Checks that the port has a valid name.
      * @param portName the name of port
-     * @return true if portName doesn't contain invalid characters
+     * @return true if portName is valid
      */
     static bool isValidPortName(const ConstString& portName);
 };
