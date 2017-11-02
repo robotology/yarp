@@ -5,7 +5,7 @@
 #include <visualization_msgs_MarkerArray.h>
 
 namespace visualization_msgs {
-  typedef visualization_msgs_MarkerArray MarkerArray;
+    typedef visualization_msgs_MarkerArray MarkerArray;
 }
 
 #endif

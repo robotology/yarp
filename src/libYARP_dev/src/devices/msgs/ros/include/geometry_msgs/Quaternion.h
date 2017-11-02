@@ -5,7 +5,7 @@
 #include <geometry_msgs_Quaternion.h>
 
 namespace geometry_msgs {
-  typedef geometry_msgs_Quaternion Quaternion;
+    typedef geometry_msgs_Quaternion Quaternion;
 }
 
 #endif

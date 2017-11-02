@@ -32,145 +32,162 @@
 #include "TickTime.h"
 #include "std_msgs_Header.h"
 
-class sensor_msgs_RegionOfInterest : public yarp::os::idl::WirePortable {
+class sensor_msgs_RegionOfInterest : public yarp::os::idl::WirePortable
+{
 public:
-  yarp::os::NetUint32 x_offset;
-  yarp::os::NetUint32 y_offset;
-  yarp::os::NetUint32 height;
-  yarp::os::NetUint32 width;
-  bool do_rectify;
+    yarp::os::NetUint32 x_offset;
+    yarp::os::NetUint32 y_offset;
+    yarp::os::NetUint32 height;
+    yarp::os::NetUint32 width;
+    bool do_rectify;
 
-  sensor_msgs_RegionOfInterest() :
-    x_offset(0),
-    y_offset(0),
-    height(0),
-    width(0),
-    do_rectify(false)
-  {
-  }
+    sensor_msgs_RegionOfInterest() :
+            x_offset(0),
+            y_offset(0),
+            height(0),
+            width(0),
+            do_rectify(false)
+    {
+    }
 
-  void clear() {
-    // *** x_offset ***
-    x_offset = 0;
+    void clear()
+    {
+        // *** x_offset ***
+        x_offset = 0;
 
-    // *** y_offset ***
-    y_offset = 0;
+        // *** y_offset ***
+        y_offset = 0;
 
-    // *** height ***
-    height = 0;
+        // *** height ***
+        height = 0;
 
-    // *** width ***
-    width = 0;
+        // *** width ***
+        width = 0;
 
-    // *** do_rectify ***
-    do_rectify = false;
-  }
+        // *** do_rectify ***
+        do_rectify = false;
+    }
 
-  bool readBare(yarp::os::ConnectionReader& connection) override {
-    // *** x_offset ***
-    x_offset = connection.expectInt();
+    bool readBare(yarp::os::ConnectionReader& connection) override
+    {
+        // *** x_offset ***
+        x_offset = connection.expectInt();
 
-    // *** y_offset ***
-    y_offset = connection.expectInt();
+        // *** y_offset ***
+        y_offset = connection.expectInt();
 
-    // *** height ***
-    height = connection.expectInt();
+        // *** height ***
+        height = connection.expectInt();
 
-    // *** width ***
-    width = connection.expectInt();
+        // *** width ***
+        width = connection.expectInt();
 
-    // *** do_rectify ***
-    if (!connection.expectBlock((char*)&do_rectify,1)) return false;
-    return !connection.isError();
-  }
+        // *** do_rectify ***
+        if (!connection.expectBlock((char*)&do_rectify, 1)) {
+            return false;
+        }
 
-  bool readBottle(yarp::os::ConnectionReader& connection) override {
-    connection.convertTextMode();
-    yarp::os::idl::WireReader reader(connection);
-    if (!reader.readListHeader(5)) return false;
+        return !connection.isError();
+    }
 
-    // *** x_offset ***
-    x_offset = reader.expectInt();
+    bool readBottle(yarp::os::ConnectionReader& connection) override
+    {
+        connection.convertTextMode();
+        yarp::os::idl::WireReader reader(connection);
+        if (!reader.readListHeader(5)) {
+            return false;
+        }
 
-    // *** y_offset ***
-    y_offset = reader.expectInt();
+        // *** x_offset ***
+        x_offset = reader.expectInt();
 
-    // *** height ***
-    height = reader.expectInt();
+        // *** y_offset ***
+        y_offset = reader.expectInt();
 
-    // *** width ***
-    width = reader.expectInt();
+        // *** height ***
+        height = reader.expectInt();
 
-    // *** do_rectify ***
-    do_rectify = reader.expectInt();
-    return !connection.isError();
-  }
+        // *** width ***
+        width = reader.expectInt();
 
-  using yarp::os::idl::WirePortable::read;
-  bool read(yarp::os::ConnectionReader& connection) override {
-    if (connection.isBareMode()) return readBare(connection);
-    return readBottle(connection);
-  }
+        // *** do_rectify ***
+        do_rectify = reader.expectInt();
 
-  bool writeBare(yarp::os::ConnectionWriter& connection) override {
-    // *** x_offset ***
-    connection.appendInt(x_offset);
+        return !connection.isError();
+    }
 
-    // *** y_offset ***
-    connection.appendInt(y_offset);
+    using yarp::os::idl::WirePortable::read;
+    bool read(yarp::os::ConnectionReader& connection) override
+    {
+        return (connection.isBareMode() ? readBare(connection)
+                                        : readBottle(connection));
+    }
 
-    // *** height ***
-    connection.appendInt(height);
+    bool writeBare(yarp::os::ConnectionWriter& connection) override
+    {
+        // *** x_offset ***
+        connection.appendInt(x_offset);
 
-    // *** width ***
-    connection.appendInt(width);
+        // *** y_offset ***
+        connection.appendInt(y_offset);
 
-    // *** do_rectify ***
-    connection.appendBlock((char*)&do_rectify,1);
-    return !connection.isError();
-  }
+        // *** height ***
+        connection.appendInt(height);
 
-  bool writeBottle(yarp::os::ConnectionWriter& connection) override {
-    connection.appendInt(BOTTLE_TAG_LIST);
-    connection.appendInt(5);
+        // *** width ***
+        connection.appendInt(width);
 
-    // *** x_offset ***
-    connection.appendInt(BOTTLE_TAG_INT);
-    connection.appendInt((int)x_offset);
+        // *** do_rectify ***
+        connection.appendBlock((char*)&do_rectify, 1);
 
-    // *** y_offset ***
-    connection.appendInt(BOTTLE_TAG_INT);
-    connection.appendInt((int)y_offset);
+        return !connection.isError();
+    }
 
-    // *** height ***
-    connection.appendInt(BOTTLE_TAG_INT);
-    connection.appendInt((int)height);
+    bool writeBottle(yarp::os::ConnectionWriter& connection) override
+    {
+        connection.appendInt(BOTTLE_TAG_LIST);
+        connection.appendInt(5);
 
-    // *** width ***
-    connection.appendInt(BOTTLE_TAG_INT);
-    connection.appendInt((int)width);
+        // *** x_offset ***
+        connection.appendInt(BOTTLE_TAG_INT);
+        connection.appendInt((int)x_offset);
 
-    // *** do_rectify ***
-    connection.appendInt(BOTTLE_TAG_INT);
-    connection.appendInt((int)do_rectify);
-    connection.convertTextMode();
-    return !connection.isError();
-  }
+        // *** y_offset ***
+        connection.appendInt(BOTTLE_TAG_INT);
+        connection.appendInt((int)y_offset);
 
-  using yarp::os::idl::WirePortable::write;
-  bool write(yarp::os::ConnectionWriter& connection) override {
-    if (connection.isBareMode()) return writeBare(connection);
-    return writeBottle(connection);
-  }
+        // *** height ***
+        connection.appendInt(BOTTLE_TAG_INT);
+        connection.appendInt((int)height);
 
-  // This class will serialize ROS style or YARP style depending on protocol.
-  // If you need to force a serialization style, use one of these classes:
-  typedef yarp::os::idl::BareStyle<sensor_msgs_RegionOfInterest> rosStyle;
-  typedef yarp::os::idl::BottleStyle<sensor_msgs_RegionOfInterest> bottleStyle;
+        // *** width ***
+        connection.appendInt(BOTTLE_TAG_INT);
+        connection.appendInt((int)width);
 
-  // Give source text for class, ROS will need this
-  yarp::os::ConstString getTypeText() {
-    return "# This message is used to specify a region of interest within an image.\n\
+        // *** do_rectify ***
+        connection.appendInt(BOTTLE_TAG_INT);
+        connection.appendInt((int)do_rectify);
+
+        connection.convertTextMode();
+        return !connection.isError();
+    }
+
+    using yarp::os::idl::WirePortable::write;
+    bool write(yarp::os::ConnectionWriter& connection) override
+    {
+        return (connection.isBareMode() ? writeBare(connection)
+                                        : writeBottle(connection));
+    }
+
+    // This class will serialize ROS style or YARP style depending on protocol.
+    // If you need to force a serialization style, use one of these classes:
+    typedef yarp::os::idl::BareStyle<sensor_msgs_RegionOfInterest> rosStyle;
+    typedef yarp::os::idl::BottleStyle<sensor_msgs_RegionOfInterest> bottleStyle;
+
+    // Give source text for class, ROS will need this
+    yarp::os::ConstString getTypeText()
+    {
+        return "# This message is used to specify a region of interest within an image.\n\
 #\n\
 # When used to specify the ROI setting of the camera when the image was\n\
 # taken, the height and width fields should either match the height and\n\
@@ -189,15 +206,16 @@ uint32 width     # Width of ROI\n\
 # is captured (ROI not used), and True if a subwindow is captured (ROI\n\
 # used).\n\
 bool do_rectify";
-  }
+    }
 
-  // Name the class, ROS will need this
-  yarp::os::Type getType() override {
-    yarp::os::Type typ = yarp::os::Type::byName("sensor_msgs/RegionOfInterest","sensor_msgs/RegionOfInterest");
-    typ.addProperty("md5sum",yarp::os::Value("bdb633039d588fcccb441a4d43ccfe09"));
-    typ.addProperty("message_definition",yarp::os::Value(getTypeText()));
-    return typ;
-  }
+    // Name the class, ROS will need this
+    yarp::os::Type getType() override
+    {
+        yarp::os::Type typ = yarp::os::Type::byName("sensor_msgs/RegionOfInterest", "sensor_msgs/RegionOfInterest");
+        typ.addProperty("md5sum", yarp::os::Value("bdb633039d588fcccb441a4d43ccfe09"));
+        typ.addProperty("message_definition", yarp::os::Value(getTypeText()));
+        return typ;
+    }
 };
 
 #endif

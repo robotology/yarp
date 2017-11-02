@@ -5,7 +5,7 @@
 #include <sensor_msgs_Image.h>
 
 namespace sensor_msgs {
-  typedef sensor_msgs_Image Image;
+    typedef sensor_msgs_Image Image;
 }
 
 #endif

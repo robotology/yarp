@@ -5,7 +5,7 @@
 #include <sensor_msgs_Imu.h>
 
 namespace sensor_msgs {
-  typedef sensor_msgs_Imu Imu;
+    typedef sensor_msgs_Imu Imu;
 }
 
 #endif

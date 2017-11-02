@@ -5,7 +5,7 @@
 #include <geometry_msgs_TransformStamped.h>
 
 namespace geometry_msgs {
-  typedef geometry_msgs_TransformStamped TransformStamped;
+    typedef geometry_msgs_TransformStamped TransformStamped;
 }
 
 #endif

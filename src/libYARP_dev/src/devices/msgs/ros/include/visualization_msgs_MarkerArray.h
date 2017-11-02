@@ -20,88 +20,113 @@
 #include "TickDuration.h"
 #include "visualization_msgs_Marker.h"
 
-class visualization_msgs_MarkerArray : public yarp::os::idl::WirePortable {
+class visualization_msgs_MarkerArray : public yarp::os::idl::WirePortable
+{
 public:
-  std::vector<visualization_msgs_Marker> markers;
+    std::vector<visualization_msgs_Marker> markers;
 
-  visualization_msgs_MarkerArray() :
-    markers()
-  {
-  }
-
-  void clear() {
-    // *** markers ***
-    markers.clear();
-  }
-
-  bool readBare(yarp::os::ConnectionReader& connection) override {
-    // *** markers ***
-    int len = connection.expectInt();
-    markers.resize(len);
-    for (int i=0; i<len; i++) {
-      if (!markers[i].read(connection)) return false;
+    visualization_msgs_MarkerArray() :
+            markers()
+    {
     }
-    return !connection.isError();
-  }
 
-  bool readBottle(yarp::os::ConnectionReader& connection) override {
-    connection.convertTextMode();
-    yarp::os::idl::WireReader reader(connection);
-    if (!reader.readListHeader(1)) return false;
-
-    // *** markers ***
-    if (connection.expectInt()!=BOTTLE_TAG_LIST) return false;
-    int len = connection.expectInt();
-    markers.resize(len);
-    for (int i=0; i<len; i++) {
-      if (!markers[i].read(connection)) return false;
+    void clear()
+    {
+        // *** markers ***
+        markers.clear();
     }
-    return !connection.isError();
-  }
 
-  using yarp::os::idl::WirePortable::read;
-  bool read(yarp::os::ConnectionReader& connection) override {
-    if (connection.isBareMode()) return readBare(connection);
-    return readBottle(connection);
-  }
+    bool readBare(yarp::os::ConnectionReader& connection) override
+    {
+        // *** markers ***
+        int len = connection.expectInt();
+        markers.resize(len);
+        for (int i=0; i<len; i++) {
+            if (!markers[i].read(connection)) {
+                return false;
+            }
+        }
 
-  bool writeBare(yarp::os::ConnectionWriter& connection) override {
-    // *** markers ***
-    connection.appendInt(markers.size());
-    for (size_t i=0; i<markers.size(); i++) {
-      if (!markers[i].write(connection)) return false;
+        return !connection.isError();
     }
-    return !connection.isError();
-  }
 
-  bool writeBottle(yarp::os::ConnectionWriter& connection) override {
-    connection.appendInt(BOTTLE_TAG_LIST);
-    connection.appendInt(1);
+    bool readBottle(yarp::os::ConnectionReader& connection) override
+    {
+        connection.convertTextMode();
+        yarp::os::idl::WireReader reader(connection);
+        if (!reader.readListHeader(1)) {
+            return false;
+        }
 
-    // *** markers ***
-    connection.appendInt(BOTTLE_TAG_LIST);
-    connection.appendInt(markers.size());
-    for (size_t i=0; i<markers.size(); i++) {
-      if (!markers[i].write(connection)) return false;
+        // *** markers ***
+        if (connection.expectInt() != BOTTLE_TAG_LIST) {
+            return false;
+        }
+        int len = connection.expectInt();
+        markers.resize(len);
+        for (int i=0; i<len; i++) {
+            if (!markers[i].read(connection)) {
+                return false;
+            }
+        }
+
+        return !connection.isError();
     }
-    connection.convertTextMode();
-    return !connection.isError();
-  }
 
-  using yarp::os::idl::WirePortable::write;
-  bool write(yarp::os::ConnectionWriter& connection) override {
-    if (connection.isBareMode()) return writeBare(connection);
-    return writeBottle(connection);
-  }
+    using yarp::os::idl::WirePortable::read;
+    bool read(yarp::os::ConnectionReader& connection) override
+    {
+        return (connection.isBareMode() ? readBare(connection)
+                                        : readBottle(connection));
+    }
 
-  // This class will serialize ROS style or YARP style depending on protocol.
-  // If you need to force a serialization style, use one of these classes:
-  typedef yarp::os::idl::BareStyle<visualization_msgs_MarkerArray> rosStyle;
-  typedef yarp::os::idl::BottleStyle<visualization_msgs_MarkerArray> bottleStyle;
+    bool writeBare(yarp::os::ConnectionWriter& connection) override
+    {
+        // *** markers ***
+        connection.appendInt(markers.size());
+        for (size_t i=0; i<markers.size(); i++) {
+            if (!markers[i].write(connection)) {
+                return false;
+            }
+        }
 
-  // Give source text for class, ROS will need this
-  yarp::os::ConstString getTypeText() {
-    return "visualization_msgs/Marker[] markers\n================================================================================\n\
+        return !connection.isError();
+    }
+
+    bool writeBottle(yarp::os::ConnectionWriter& connection) override
+    {
+        connection.appendInt(BOTTLE_TAG_LIST);
+        connection.appendInt(1);
+
+        // *** markers ***
+        connection.appendInt(BOTTLE_TAG_LIST);
+        connection.appendInt(markers.size());
+        for (size_t i=0; i<markers.size(); i++) {
+            if (!markers[i].write(connection)) {
+                return false;
+            }
+        }
+
+        connection.convertTextMode();
+        return !connection.isError();
+    }
+
+    using yarp::os::idl::WirePortable::write;
+    bool write(yarp::os::ConnectionWriter& connection) override
+    {
+        return (connection.isBareMode() ? writeBare(connection)
+                                        : writeBottle(connection));
+    }
+
+    // This class will serialize ROS style or YARP style depending on protocol.
+    // If you need to force a serialization style, use one of these classes:
+    typedef yarp::os::idl::BareStyle<visualization_msgs_MarkerArray> rosStyle;
+    typedef yarp::os::idl::BottleStyle<visualization_msgs_MarkerArray> bottleStyle;
+
+    // Give source text for class, ROS will need this
+    yarp::os::ConstString getTypeText()
+    {
+        return "visualization_msgs/Marker[] markers\n================================================================================\n\
 MSG: visualization_msgs/Marker\n\
 # See http://www.ros.org/wiki/rviz/DisplayTypes/Marker and http://www.ros.org/wiki/rviz/Tutorials/Markers%3A%20Basic%20Shapes for more information on using this message with rviz\n\
 \n\
@@ -191,15 +216,16 @@ float32 r\n\
 float32 g\n\
 float32 b\n\
 float32 a";
-  }
+    }
 
-  // Name the class, ROS will need this
-  yarp::os::Type getType() override {
-    yarp::os::Type typ = yarp::os::Type::byName("visualization_msgs/MarkerArray","visualization_msgs/MarkerArray");
-    typ.addProperty("md5sum",yarp::os::Value("d155b9ce5188fbaf89745847fd5882d7"));
-    typ.addProperty("message_definition",yarp::os::Value(getTypeText()));
-    return typ;
-  }
+    // Name the class, ROS will need this
+    yarp::os::Type getType() override
+    {
+        yarp::os::Type typ = yarp::os::Type::byName("visualization_msgs/MarkerArray", "visualization_msgs/MarkerArray");
+        typ.addProperty("md5sum", yarp::os::Value("d155b9ce5188fbaf89745847fd5882d7"));
+        typ.addProperty("message_definition", yarp::os::Value(getTypeText()));
+        return typ;
+    }
 };
 
 #endif

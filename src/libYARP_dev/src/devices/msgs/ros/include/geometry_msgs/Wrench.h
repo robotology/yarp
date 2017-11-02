@@ -5,7 +5,7 @@
 #include <geometry_msgs_Wrench.h>
 
 namespace geometry_msgs {
-  typedef geometry_msgs_Wrench Wrench;
+    typedef geometry_msgs_Wrench Wrench;
 }
 
 #endif

@@ -28,112 +28,139 @@
 #include <yarp/os/idl/WireTypes.h>
 #include "TickTime.h"
 
-class std_msgs_Header : public yarp::os::idl::WirePortable {
+class std_msgs_Header : public yarp::os::idl::WirePortable
+{
 public:
-  yarp::os::NetUint32 seq;
-  TickTime stamp;
-  std::string frame_id;
+    yarp::os::NetUint32 seq;
+    TickTime stamp;
+    std::string frame_id;
 
-  std_msgs_Header() :
-    seq(0),
-    stamp(),
-    frame_id("")
-  {
-  }
+    std_msgs_Header() :
+            seq(0),
+            stamp(),
+            frame_id("")
+    {
+    }
 
-  void clear() {
-    // *** seq ***
-    seq = 0;
+    void clear()
+    {
+        // *** seq ***
+        seq = 0;
 
-    // *** stamp ***
-    stamp.clear();
+        // *** stamp ***
+        stamp.clear();
 
-    // *** frame_id ***
-    frame_id = "";
-  }
+        // *** frame_id ***
+        frame_id = "";
+    }
 
-  bool readBare(yarp::os::ConnectionReader& connection) override {
-    // *** seq ***
-    seq = connection.expectInt();
+    bool readBare(yarp::os::ConnectionReader& connection) override
+    {
+        // *** seq ***
+        seq = connection.expectInt();
 
-    // *** stamp ***
-    if (!stamp.read(connection)) return false;
+        // *** stamp ***
+        if (!stamp.read(connection)) {
+            return false;
+        }
 
-    // *** frame_id ***
-    int len = connection.expectInt();
-    frame_id.resize(len);
-    if (!connection.expectBlock((char*)frame_id.c_str(),len)) return false;
-    return !connection.isError();
-  }
+        // *** frame_id ***
+        int len = connection.expectInt();
+        frame_id.resize(len);
+        if (!connection.expectBlock((char*)frame_id.c_str(), len)) {
+            return false;
+        }
 
-  bool readBottle(yarp::os::ConnectionReader& connection) override {
-    connection.convertTextMode();
-    yarp::os::idl::WireReader reader(connection);
-    if (!reader.readListHeader(3)) return false;
+        return !connection.isError();
+    }
 
-    // *** seq ***
-    seq = reader.expectInt();
+    bool readBottle(yarp::os::ConnectionReader& connection) override
+    {
+        connection.convertTextMode();
+        yarp::os::idl::WireReader reader(connection);
+        if (!reader.readListHeader(3)) {
+            return false;
+        }
 
-    // *** stamp ***
-    if (!stamp.read(connection)) return false;
+        // *** seq ***
+        seq = reader.expectInt();
 
-    // *** frame_id ***
-    if (!reader.readString(frame_id)) return false;
-    return !connection.isError();
-  }
+        // *** stamp ***
+        if (!stamp.read(connection)) {
+            return false;
+        }
 
-  using yarp::os::idl::WirePortable::read;
-  bool read(yarp::os::ConnectionReader& connection) override {
-    if (connection.isBareMode()) return readBare(connection);
-    return readBottle(connection);
-  }
+        // *** frame_id ***
+        if (!reader.readString(frame_id)) {
+            return false;
+        }
 
-  bool writeBare(yarp::os::ConnectionWriter& connection) override {
-    // *** seq ***
-    connection.appendInt(seq);
+        return !connection.isError();
+    }
 
-    // *** stamp ***
-    if (!stamp.write(connection)) return false;
+    using yarp::os::idl::WirePortable::read;
+    bool read(yarp::os::ConnectionReader& connection) override
+    {
+        return (connection.isBareMode() ? readBare(connection)
+                                        : readBottle(connection));
+    }
 
-    // *** frame_id ***
-    connection.appendInt(frame_id.length());
-    connection.appendExternalBlock((char*)frame_id.c_str(),frame_id.length());
-    return !connection.isError();
-  }
+    bool writeBare(yarp::os::ConnectionWriter& connection) override
+    {
+        // *** seq ***
+        connection.appendInt(seq);
 
-  bool writeBottle(yarp::os::ConnectionWriter& connection) override {
-    connection.appendInt(BOTTLE_TAG_LIST);
-    connection.appendInt(3);
+        // *** stamp ***
+        if (!stamp.write(connection)) {
+            return false;
+        }
 
-    // *** seq ***
-    connection.appendInt(BOTTLE_TAG_INT);
-    connection.appendInt((int)seq);
+        // *** frame_id ***
+        connection.appendInt(frame_id.length());
+        connection.appendExternalBlock((char*)frame_id.c_str(), frame_id.length());
 
-    // *** stamp ***
-    if (!stamp.write(connection)) return false;
+        return !connection.isError();
+    }
 
-    // *** frame_id ***
-    connection.appendInt(BOTTLE_TAG_STRING);
-    connection.appendInt(frame_id.length());
-    connection.appendExternalBlock((char*)frame_id.c_str(),frame_id.length());
-    connection.convertTextMode();
-    return !connection.isError();
-  }
+    bool writeBottle(yarp::os::ConnectionWriter& connection) override
+    {
+        connection.appendInt(BOTTLE_TAG_LIST);
+        connection.appendInt(3);
 
-  using yarp::os::idl::WirePortable::write;
-  bool write(yarp::os::ConnectionWriter& connection) override {
-    if (connection.isBareMode()) return writeBare(connection);
-    return writeBottle(connection);
-  }
+        // *** seq ***
+        connection.appendInt(BOTTLE_TAG_INT);
+        connection.appendInt((int)seq);
 
-  // This class will serialize ROS style or YARP style depending on protocol.
-  // If you need to force a serialization style, use one of these classes:
-  typedef yarp::os::idl::BareStyle<std_msgs_Header> rosStyle;
-  typedef yarp::os::idl::BottleStyle<std_msgs_Header> bottleStyle;
+        // *** stamp ***
+        if (!stamp.write(connection)) {
+            return false;
+        }
 
-  // Give source text for class, ROS will need this
-  yarp::os::ConstString getTypeText() {
-    return "[std_msgs/Header]:\n\
+        // *** frame_id ***
+        connection.appendInt(BOTTLE_TAG_STRING);
+        connection.appendInt(frame_id.length());
+        connection.appendExternalBlock((char*)frame_id.c_str(), frame_id.length());
+
+        connection.convertTextMode();
+        return !connection.isError();
+    }
+
+    using yarp::os::idl::WirePortable::write;
+    bool write(yarp::os::ConnectionWriter& connection) override
+    {
+        return (connection.isBareMode() ? writeBare(connection)
+                                        : writeBottle(connection));
+    }
+
+    // This class will serialize ROS style or YARP style depending on protocol.
+    // If you need to force a serialization style, use one of these classes:
+    typedef yarp::os::idl::BareStyle<std_msgs_Header> rosStyle;
+    typedef yarp::os::idl::BottleStyle<std_msgs_Header> bottleStyle;
+
+    // Give source text for class, ROS will need this
+    yarp::os::ConstString getTypeText()
+    {
+        return "[std_msgs/Header]:\n\
 # Standard metadata for higher-level stamped data types.\n\
 # This is generally used to communicate timestamped data\n\
 # in a particular coordinate frame.\n\
@@ -149,15 +176,16 @@ time stamp\n\
 # 0: no frame\n\
 # 1: global frame\n\
 string frame_id";
-  }
+    }
 
-  // Name the class, ROS will need this
-  yarp::os::Type getType() override {
-    yarp::os::Type typ = yarp::os::Type::byName("std_msgs/Header","std_msgs/Header");
-    typ.addProperty("md5sum",yarp::os::Value("2176decaecbce78abc3b96ef049fabed"));
-    typ.addProperty("message_definition",yarp::os::Value(getTypeText()));
-    return typ;
-  }
+    // Name the class, ROS will need this
+    yarp::os::Type getType() override
+    {
+        yarp::os::Type typ = yarp::os::Type::byName("std_msgs/Header", "std_msgs/Header");
+        typ.addProperty("md5sum", yarp::os::Value("2176decaecbce78abc3b96ef049fabed"));
+        typ.addProperty("message_definition", yarp::os::Value(getTypeText()));
+        return typ;
+    }
 };
 
 #endif

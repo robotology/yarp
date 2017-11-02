@@ -5,7 +5,7 @@
 #include <nav_msgs_MapMetaData.h>
 
 namespace nav_msgs {
-  typedef nav_msgs_MapMetaData MapMetaData;
+    typedef nav_msgs_MapMetaData MapMetaData;
 }
 
 #endif

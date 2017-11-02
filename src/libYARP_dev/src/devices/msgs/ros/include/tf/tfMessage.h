@@ -5,7 +5,7 @@
 #include <tf_tfMessage.h>
 
 namespace tf {
-  typedef tf_tfMessage tfMessage;
+    typedef tf_tfMessage tfMessage;
 }
 
 #endif

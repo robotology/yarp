@@ -5,7 +5,7 @@
 #include <tf2_msgs_TFMessage.h>
 
 namespace tf2_msgs {
-  typedef tf2_msgs_TFMessage TFMessage;
+    typedef tf2_msgs_TFMessage TFMessage;
 }
 
 #endif

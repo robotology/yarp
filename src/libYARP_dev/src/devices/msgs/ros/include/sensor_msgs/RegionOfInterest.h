@@ -5,7 +5,7 @@
 #include <sensor_msgs_RegionOfInterest.h>
 
 namespace sensor_msgs {
-  typedef sensor_msgs_RegionOfInterest RegionOfInterest;
+    typedef sensor_msgs_RegionOfInterest RegionOfInterest;
 }
 
 #endif

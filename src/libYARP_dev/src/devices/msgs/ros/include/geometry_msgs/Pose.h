@@ -5,7 +5,7 @@
 #include <geometry_msgs_Pose.h>
 
 namespace geometry_msgs {
-  typedef geometry_msgs_Pose Pose;
+    typedef geometry_msgs_Pose Pose;
 }
 
 #endif
