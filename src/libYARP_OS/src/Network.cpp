@@ -871,6 +871,40 @@ bool NetworkBase::getConnectionQos(const ConstString& src, const ConstString& de
     return true;
 }
 
+bool NetworkBase::isValidPortName(const ConstString& portName)
+{
+    if (portName.empty())
+    {
+        fprintf(stderr, "Failure: invalid port name, the string is empty\n");
+        return false;
+    }
+
+    if (portName == "...")
+    {
+       return true;
+    }
+
+    if (portName.at(0) != '/')
+    {
+        fprintf(stderr, "Failure: invalid port name, missing starting '/' character in %s\n", portName.c_str());
+        return false;
+    }
+
+    if (portName.at(portName.size()-1) == '/')
+    {
+        fprintf(stderr, "Failure: invalid port name, ending '/' in %s not allowed\n", portName.c_str());
+        return false;
+    }
+
+    if (portName.find(" ") != std::string::npos)
+    {
+        fprintf(stderr, "Failure: invalid port name, the string %s contains spaces\n", portName.c_str());
+        return false;
+    }
+
+    return true;
+}
+
 
 bool NetworkBase::write(const Contact& contact,
                        PortWriter& cmd,
