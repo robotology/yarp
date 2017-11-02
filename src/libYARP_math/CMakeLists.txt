@@ -24,7 +24,7 @@ if (YARP_HAS_MATH_LIB)
                      include/yarp/math/Vec2D.h
                      include/yarp/math/FrameTransform.h)
 
-  set(YARP_math_IMPL_HDRS include/yarp/math/impl/mt.h)
+  set(YARP_math_IMPL_HDRS)
 
   set(YARP_math_SRCS src/math.cpp
                      src/NormRand.cpp
@@ -36,8 +36,7 @@ if (YARP_HAS_MATH_LIB)
                      src/Vec2D.cpp
                      src/FrameTransform.cpp
                      src/RandScalar.cpp
-                     src/RandnScalar.cpp
-                     src/mt.cc)
+                     src/RandnScalar.cpp)
 
   source_group(TREE "${CMAKE_CURRENT_SOURCE_DIR}"
                PREFIX "Source Files"
