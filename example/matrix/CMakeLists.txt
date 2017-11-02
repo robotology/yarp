@@ -10,11 +10,13 @@ project(Matrix)
 
 find_package(YARP REQUIRED)
 
+find_package(GSL REQUIRED)
+
 include_directories(${CMAKE_SOURCE_DIR})
 
 add_executable(basic_ops basic_ops.cpp)
 target_link_libraries(basic_ops ${YARP_LIBRARIES})
 
 add_executable(gsl_example gsl_example.cpp)
-target_link_libraries(gsl_example ${YARP_LIBRARIES})
+target_link_libraries(gsl_example ${YARP_LIBRARIES} YARP::YARP_gsl GSL::gsl GSL::gslcblas)
 

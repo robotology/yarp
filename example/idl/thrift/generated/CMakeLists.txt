@@ -18,4 +18,5 @@ set(generated_libs_include_dir ${CMAKE_CURRENT_SOURCE_DIR}/include CACHE INTERNA
 include_directories(${generated_libs_include_dir})
 
 add_library(generatedDemoLibrary ${THRIFT_HEADERS} ${THRIFT_SOURCES})
+target_link_libraries(generatedDemoLibrary ${YARP_LIBRARIES})
 set_target_properties(generatedDemoLibrary PROPERTIES LINKER_LANGUAGE CXX)
