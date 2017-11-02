@@ -18,8 +18,10 @@
 
 #include <yarp/sig/Matrix.h>
 #include <yarp/sig/Vector.h>
+#include <yarp/gsl/Gsl.h>
 
 using namespace yarp::sig;
+using namespace yarp::gsl;
 
 int main(int argc, const char **argv)
 {
@@ -29,8 +31,8 @@ int main(int argc, const char **argv)
     v2=1;
 
     double r;
-    gsl_blas_ddot((gsl_vector *)(v1.getGslVector()),
-                  (gsl_vector *)(v2.getGslVector()), &r);
+    gsl_blas_ddot((gsl_vector *)GslVector(v1).getGslVector(),
+                  (gsl_vector *)GslVector(v2).getGslVector(), &r);
 
     printf("Res vector: %lf\n", r);
 
@@ -51,10 +53,10 @@ int main(int argc, const char **argv)
 
     gsl_blas_dgemm(CblasNoTrans, CblasNoTrans,
         1.0,
-        (const gsl_matrix *) m1.getGslMatrix(),
-        (const gsl_matrix *) m2.getGslMatrix(),
+        (const gsl_matrix *) GslMatrix(m1).getGslMatrix(),
+        (const gsl_matrix *) GslMatrix(m2).getGslMatrix(),
         0.0,
-        (gsl_matrix *) m3.getGslMatrix());
+        (gsl_matrix *)GslMatrix(m3).getGslMatrix());
 
     printf("Result: (%s)", m3.toString().c_str());
 
