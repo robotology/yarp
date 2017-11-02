@@ -362,8 +362,7 @@ set(YARP_OS_SRCS src/AbstractCarrier.cpp
                  src/hmac_sha2.c
                  src/sha2.c
                  src/QosStyle.cpp)
-                 
-                 
+
 if(APPLE)
   list(APPEND YARP_OS_IMPL_HDRS include/yarp/os/impl/MacOSAPI.h)
   list(APPEND YARP_OS_SRCS src/MacOSAPI.mm)
