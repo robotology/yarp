@@ -11,9 +11,9 @@ While you can configure conventional YARP ports to talk to ROS topics (see
 \ref yarp_with_ros_existing_yarp_ports), YARP provides specialized classes that
 simplify this task:
 
-\li <tt>yarp::os::Node: a class to create a ROS node.
-\li <tt>yarp::os::Subscriber: a class to subscribe to a topic.
-\li <tt>yarp::os::Publisher: a class to publish to a topic.
+\li <pre>yarp::os::Node: a class to create a ROS node.</pre>
+\li <pre>yarp::os::Subscriber: a class to subscribe to a topic.</pre>
+\li <pre>yarp::os::Publisher: a class to publish to a topic.</pre>
 
 An important thing to keep in mind is that YARP needs to be aware of ROS types.
 If you are writing new code it is easy to generate ROS compatible YARP data
