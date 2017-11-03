@@ -13,7 +13,7 @@ Dependencies
 * [Qt 5](https://www.qt.io/download/)
 * [Graphviz](http://www.graphviz.org/)
  
-### Linux
+### Ubuntu or Debian-based distribution
 
 * Install graphviz and qt5 
 ```
@@ -48,7 +48,7 @@ $ brew install graphviz
 
 ### Windows
 
-download and install the library from (http://www.graphviz.org/Download_windows.php).
+Download and install the library from (http://www.graphviz.org/Download_windows.php).
 
 Set `GRAPHVIZ_ROOT` to point the installed directory (usually `C:\Program Files\Graphviz2.38` or `C:\Program Files (x86)\Graphviz2.38`).
 
