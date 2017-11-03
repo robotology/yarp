@@ -880,6 +880,7 @@ bool NetworkBase::isValidPortName(const ConstString& portName)
 {
     if (portName.empty())
     {
+        yAssert(false);
         return false;
     }
 
@@ -890,16 +891,19 @@ bool NetworkBase::isValidPortName(const ConstString& portName)
 
     if (portName.at(0) != '/')
     {
+        yAssert(false);
         return false;
     }
 
     if (portName.at(portName.size()-1) == '/')
     {
+        yAssert(false);
         return false;
     }
 
     if (portName.find(" ") != std::string::npos)
     {
+        yAssert(false);
         return false;
     }
 
