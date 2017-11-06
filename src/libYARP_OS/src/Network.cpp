@@ -259,6 +259,48 @@ static int enactConnection(const Contact& src,
     return ok ? 0 : 1;
 }
 
+
+
+static char* findCarrierParamsPointer(ConstString &carrier_name)
+{
+    size_t i = carrier_name.find('+');
+    if (i!=ConstString::npos) {
+        return &(carrier_name[i]);
+    }
+    else
+        return nullptr;
+}
+
+static ConstString collectParams(Contact &c)
+{
+
+    ConstString carrier_name = c.getCarrier();
+    char *params_ptr = findCarrierParamsPointer(carrier_name);
+    ConstString params;
+    params.clear();
+
+    if(nullptr != params_ptr)
+    {
+        params+=params_ptr;
+    }
+
+    CARRIER_DEBUG("\n ***** SONO NELLA COLLECTPARAMS: carrier=%s, params=%s\n\n ", c.getCarrier().c_str(), params.c_str());
+    return params;
+
+}
+
+static ConstString extractCarrierNameOnly(ConstString &carrier_name_with_params)
+{
+
+    ConstString carrier_name = carrier_name_with_params;
+    char *c = findCarrierParamsPointer(carrier_name);
+    if(nullptr != c){
+        *c = '\0';
+        carrier_name = carrier_name.c_str();
+    }
+    return carrier_name;
+}
+
 /*
 
    Connect two ports, bearing in mind that one of them may not be
@@ -347,6 +389,9 @@ static int metaConnect(const ConstString& src,
         staticDest = dynamicDest;
     }
 
+    //DynamicSrc and DynamicDst are the contacts created by connect command
+    //while staticSrc and staticDest are contacts created by quering th server
+
     if (staticSrc.getCarrier()=="xmlrpc" &&
         (staticDest.getCarrier()=="xmlrpc"||(staticDest.getCarrier().find("rossrv")==0))&&
         mode==YARP_ENACT_CONNECT) {
@@ -372,6 +417,8 @@ static int metaConnect(const ConstString& src,
                 if (srcBootstrap!="") {
                     srcIsCompetent = true;
                 } else {
+                    //if the srcCarrier is not competent, (that is it can't perform the starting yarp handshaking)
+                    //set the carrier contraint equal to the carrier with which the posrt had been registered.
                     carrierConstraint = staticSrc.getCarrier();
                 }
                 delete srcCarrier;
@@ -396,6 +443,8 @@ static int metaConnect(const ConstString& src,
                 if (destBootstrap!="") {
                     destIsCompetent = true;
                 } else {
+                    //if the destCarrier is not competent, (that is it can't perform the starting yarp handshaking)
+                    //set the carrier contraint equal to the carrier with which the posrt had been registered.
                     carrierConstraint = staticDest.getCarrier();
                 }
                 delete destCarrier;
@@ -441,32 +490,55 @@ static int metaConnect(const ConstString& src,
         return 0;
     }
 
-    if (dynamicSrc.getCarrier()!="") {
+    if (dynamicSrc.getCarrier()!="") { //if in connect command the user specified the carrier of src port
         style.carrier = dynamicSrc.getCarrier();
     }
 
-    if (dynamicDest.getCarrier()!="") {
+    if (dynamicDest.getCarrier()!="") { //if in connect command the user specified the carrier of dest port or the carrier of the connection
         style.carrier = dynamicDest.getCarrier();
     }
 
+    //here we'll check if the style carrier and the contraint carrier are equal.
+    //note that in both string may contain params of carrier, so we need to comapare only the name of carrier.
+    if(style.carrier!="" && carrierConstraint!="") {
+        //get only carrier name of style.
+        ConstString style_carrier_name = extractCarrierNameOnly(style.carrier);
 
-    if (style.carrier!="" && carrierConstraint!="") {
-        if (style.carrier!=carrierConstraint) {
+        //get only carrier name of carrierConstraint.
+        ConstString carrier_constraint_name = extractCarrierNameOnly(carrierConstraint);
+
+       if (style_carrier_name!=carrier_constraint_name) {
             fprintf(stderr, "Failure: conflict between %s and %s\n",
-                    style.carrier.c_str(),
-                    carrierConstraint.c_str());
+                    style_carrier_name.c_str(),
+                    carrier_constraint_name.c_str());
             return 1;
         }
     }
+    //we are going to choose the carrier of this connection, and we collect parameters specfied by user
+    //in order to pass them to the carrier, so it can configure itself.
     if (carrierConstraint!="") {
         style.carrier = carrierConstraint;
+        //if I'm here means that sorce or dest is not competent.
+        //so we need to get parameters of carrier given in connect command.
+        ConstString c = dynamicSrc.getCarrier();
+        if(extractCarrierNameOnly(c) == extractCarrierNameOnly(style.carrier))
+            style.carrier+=collectParams(dynamicSrc);
+        c = dynamicDest.getCarrier();
+        if(extractCarrierNameOnly(c) == extractCarrierNameOnly(style.carrier))
+            style.carrier+=collectParams(dynamicDest);
     }
     if (style.carrier=="") {
         style.carrier = staticDest.getCarrier();
+        //if I'm here means that both src and dest are copentent and the user didn't specified a carrier in the connect command
+        ConstString c = dynamicSrc.getCarrier();
+        if(extractCarrierNameOnly(c) == extractCarrierNameOnly(style.carrier))
+            style.carrier+=collectParams(staticSrc);
     }
     if (style.carrier=="") {
         style.carrier = staticSrc.getCarrier();
     }
+
+    //now stylecarrier contains the carrier choosen for this connection
 
     bool connectionIsPush = false;
     bool connectionIsPull = false;
