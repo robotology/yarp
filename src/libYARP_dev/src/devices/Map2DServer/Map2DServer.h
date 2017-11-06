@@ -37,6 +37,8 @@
 #include "include/visualization_msgs_MarkerArray.h"
 #include "include/geometry_msgs_TransformStamped.h"
 #include "include/tf_tfMessage.h"
+#include "include/nav_msgs_MapMetaData.h"
+#include "include/nav_msgs_OccupancyGrid.h"
 
 namespace yarp
 {
@@ -88,14 +90,19 @@ private:
     yarp::os::Mutex              m_mutex;
     yarp::os::ConstString        m_rpcPortName;
     yarp::os::Node*              m_rosNode;
-    bool                         m_enable_publish_ros_tf;
-    bool                         m_enable_subscribe_ros_tf;
+    bool                         m_enable_publish_ros_map;
+    bool                         m_enable_subscribe_ros_map;
 
-    yarp::os::RpcServer                      m_rpcPort;
-    yarp::os::Publisher<tf_tfMessage>        m_rosPublisherPort_tf_timed;
-    yarp::os::Subscriber<tf_tfMessage>       m_rosSubscriberPort_tf_timed;
+    #define ROSNODENAME "/map2DServerNode"
+    #define ROSTOPICNAME_MAP "/map"
+    #define ROSTOPICNAME_MAPMETADATA "/map_metadata"
 
-    yarp::os::Publisher<visualization_msgs_MarkerArray>        m_rosPublisherPort_markers;
+    yarp::os::RpcServer                                     m_rpcPort;
+    yarp::os::Publisher<nav_msgs_OccupancyGrid>             m_rosPublisherPort_map;
+    yarp::os::Publisher<nav_msgs_MapMetaData>               m_rosPublisherPort_metamap;
+    yarp::os::Subscriber<nav_msgs_OccupancyGrid>            m_rosSubscriberPort_map;
+    yarp::os::Subscriber<nav_msgs_MapMetaData>              m_rosSubscriberPort_metamap;
+    yarp::os::Publisher<visualization_msgs_MarkerArray>     m_rosPublisherPort_markers;
 
     virtual bool read(yarp::os::ConnectionReader& connection) override;
     inline  void list_response(yarp::os::Bottle& out);

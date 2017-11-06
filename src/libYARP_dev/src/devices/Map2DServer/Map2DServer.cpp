@@ -37,8 +37,8 @@ yarp::dev::DriverCreator *createMap2DServer() {
 
 Map2DServer::Map2DServer()
 {
-    m_enable_publish_ros_tf = false;
-    m_enable_subscribe_ros_tf = false;
+    m_enable_publish_ros_map = false;
+    m_enable_subscribe_ros_map = false;
     m_rosNode = nullptr;
 }
 
@@ -593,42 +593,127 @@ bool Map2DServer::open(yarp::os::Searchable &config)
     m_rpcPort.setReader(*this);
 
     //ROS configuration
-#if 0
-    if (!config.check("ROS"))
+    if (config.check("ROS"))
     {
-        yError() << "Map2DServer: Missing ROS group";
-        return false;
-    }
-    Bottle ROS_config = config.findGroup("ROS");
-    if (ROS_config.check("enable_ros_publisher") == false)
-    {
-        yError() << "Map2DServer: Missing 'enable_ros_publisher' in ROS group";
-        return false;
-    }
-    if (ROS_config.find("enable_ros_publisher").asInt() == 1 || ROS_config.find("enable_ros_publisher").asString() == "true")
-    {
-        m_enable_publish_ros_tf = true;
-        yInfo() << "Map2DServer: Enabled ROS publisher";
-    }
-    if (ROS_config.check("enable_ros_subscriber") == false)
-    {
-        yError() << "Map2DServer: Missing 'enable_ros_subscriber' in ROS group";
-        return false;
-    }
-    if (ROS_config.find("enable_ros_subscriber").asInt() == 1 || ROS_config.find("enable_ros_subscriber").asString() == "true")
-    {
-        m_enable_subscribe_ros_tf = true;
-        yInfo() << "Map2DServer: Enabled ROS subscriber";
-    }
+        yInfo ("Configuring ROS params");
+        Bottle ROS_config = config.findGroup("ROS");
+        if (ROS_config.check("enable_ros_publisher") == false)
+        {
+            yError() << "Map2DServer: Missing 'enable_ros_publisher' in ROS group";
+            return false;
+        }
+        if (ROS_config.find("enable_ros_publisher").asInt() == 1 || ROS_config.find("enable_ros_publisher").asString() == "true")
+        {
+            m_enable_publish_ros_map = true;
+            yInfo() << "Map2DServer: Enabled ROS publisher";
+        }
+        if (ROS_config.check("enable_ros_subscriber") == false)
+        {
+            yError() << "Map2DServer: Missing 'enable_ros_subscriber' in ROS group";
+            return false;
+        }
+        if (ROS_config.find("enable_ros_subscriber").asInt() == 1 || ROS_config.find("enable_ros_subscriber").asString() == "true")
+        {
+            m_enable_subscribe_ros_map = true;
+            yInfo() << "Map2DServer: Enabled ROS subscriber";
+        }
 
-    m_rosPublisherPort_markers.topic("/locationServerMarkers");
-#endif
+        if (m_enable_subscribe_ros_map || m_enable_publish_ros_map)
+        {
+            if (m_rosNode == nullptr)
+            {
+                m_rosNode = new yarp::os::Node(ROSNODENAME);
+            }
+            if (m_enable_publish_ros_map && !m_rosPublisherPort_map.topic(ROSTOPICNAME_MAP))
+            {
+                yError() << "Map2DServer: unable to publish to " << ROSTOPICNAME_MAP << " topic, check your yarp-ROS network configuration";
+                return false;
+            }
+            if (m_enable_publish_ros_map && !m_rosPublisherPort_metamap.topic(ROSTOPICNAME_MAPMETADATA))
+            {
+                yError() << "Map2DServer: unable to publish to " << ROSTOPICNAME_MAPMETADATA << " topic, check your yarp-ROS network configuration";
+                return false;
+            }
 
+            if (m_enable_subscribe_ros_map && !m_rosSubscriberPort_map.topic(ROSTOPICNAME_MAP))
+            {
+                yError() << "Map2DServer: unable to subscribe to " << ROSTOPICNAME_MAP << " topic, check your yarp-ROS network configuration";
+                return false;
+            }
+            if (m_enable_subscribe_ros_map && !m_rosSubscriberPort_metamap.topic(ROSTOPICNAME_MAPMETADATA))
+            {
+                yError() << "Map2DServer: unable to subscribe to " << ROSTOPICNAME_MAPMETADATA << " topic, check your yarp-ROS network configuration";
+                return false;
+            }
+            m_rosSubscriberPort_map.setStrict();
+            m_rosSubscriberPort_metamap.setStrict();
+
+        }
+        // m_rosPublisherPort_markers.topic("/locationServerMarkers");
+    }
+    else
+    {
+        //no ROS options
+    }
+    //yarp::os::Time::delay(5);
+    nav_msgs_OccupancyGrid*   map_ros = nullptr;
+    nav_msgs_MapMetaData*     metamap_ros = nullptr;
+
+    map_ros = m_rosSubscriberPort_map.read(true);
+    metamap_ros = m_rosSubscriberPort_metamap.read(true);
+    if (map_ros!=nullptr && metamap_ros!=nullptr)
+    {
+        yInfo() << "Received map for ROS";
+        string map_name = "ros_map";
+        yarp::dev::MapGrid2D map;
+        map.setSize_in_cells(map_ros->info.width,map_ros->info.height);
+        map.setResolution( map_ros->info.resolution);
+        map.setMapName(map_name);
+        yarp::math::Quaternion quat(map_ros->info.origin.orientation.x,
+                                    map_ros->info.origin.orientation.y,
+                                    map_ros->info.origin.orientation.z,
+                                    map_ros->info.origin.orientation.w);
+        yarp::sig::Matrix mat=quat.toRotationMatrix();
+        yarp::sig::Vector vec=yarp::math::dcm2rpy(mat);
+        double orig_angle = vec[2];
+        map.setOrigin(map_ros->info.origin.position.x,map_ros->info.origin.position.y,orig_angle);
+        for (int y=0; y< map_ros->info.height; y++)
+            for (int x=0; x< map_ros->info.width; x++)
+            {
+               MapGrid2D::XYCell cell(x,map_ros->info.height-1-y);
+               double occ = map_ros->data[x+y*map_ros->info.width];
+               map.setOccupancyData(cell,occ);
+             
+               if      (occ >= 0   && occ <= 70)  map.setMapFlag(cell, MapGrid2D::MAP_CELL_FREE);
+               else if (occ >= 71 && occ <= 100)  map.setMapFlag(cell, MapGrid2D::MAP_CELL_WALL);
+               else                               map.setMapFlag(cell, MapGrid2D::MAP_CELL_UNKNOWN);
+            }
+        auto p = m_maps_storage.find(map_name);
+        if (p == m_maps_storage.end())
+        {
+            yInfo() << "Added map "<< map_name <<" to mapServer";
+            m_maps_storage[map_name] = map;
+        }
+    }
     return true;
 }
 
 bool Map2DServer::close()
 {
+    if (m_enable_publish_ros_map)
+    {
+        m_rosPublisherPort_map.interrupt();
+        m_rosPublisherPort_metamap.interrupt();
+        m_rosPublisherPort_map.close();
+        m_rosPublisherPort_metamap.close();
+    }
+    if (m_enable_subscribe_ros_map)
+    {
+        m_rosSubscriberPort_map.interrupt();
+        m_rosSubscriberPort_metamap.interrupt();
+        m_rosSubscriberPort_map.close();
+        m_rosSubscriberPort_metamap.close();
+    }
     yTrace("Map2DServer::Close");
     return true;
 }
