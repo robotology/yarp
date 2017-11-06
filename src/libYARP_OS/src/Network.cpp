@@ -126,6 +126,14 @@ static int noteDud(const Contact& src)
     return ok ? 0 : 1;
  }
 
+
+//#define DEBUG_CONNECT_CARRIER
+#ifdef DEBUG_CONNECT_CARRIER
+# define CARRIER_DEBUG(fmt, args...)    fprintf(stderr, fmt, ## args)
+#else
+# define CARRIER_DEBUG(fmt, args...)
+#endif
+
 static int enactConnection(const Contact& src,
                            const Contact& dest,
                            const ContactStyle& style,
@@ -136,6 +144,9 @@ static int enactConnection(const Contact& src,
     rpc.admin = true;
     rpc.quiet = style.quiet;
     rpc.timeout = style.timeout;
+
+    CARRIER_DEBUG("enactConnection: SRC %s DST %s using carrier %s, MODE=%d, rev=%d\n",
+            src.getName().c_str(), dest.getName().c_str(), style.carrier.c_str(), mode, reversed);
 
     if (style.persistent) {
         bool ok = false;
@@ -334,9 +345,15 @@ static int metaConnect(const ConstString& src,
         fprintf(stderr, "Failure: no way to make connection %s->%s,\n", src.c_str(), dest.c_str());
         return 1;
     }
+
+    CARRIER_DEBUG("METACONNECT: src=%s dest=%s style=%s\n", src.c_str(), dest.c_str(), style.carrier.c_str());
     // get the expressed contacts, without name server input
     Contact dynamicSrc = Contact::fromString(src);
     Contact dynamicDest = Contact::fromString(dest);
+
+    CARRIER_DEBUG("DYNAMIC_SRC: name=%s, carrier=%s\n", dynamicSrc.getName().c_str(), dynamicSrc.getCarrier().c_str());
+    CARRIER_DEBUG("DYNAMIC_DST: name=%s, carrier=%s\n", dynamicDest.getName().c_str(), dynamicDest.getCarrier().c_str());
+
 
     bool topical = style.persistent;
     if (dynamicSrc.getCarrier()=="topic" ||
@@ -389,6 +406,9 @@ static int metaConnect(const ConstString& src,
         staticDest = dynamicDest;
     }
 
+    CARRIER_DEBUG("STATIC_SRC: name=%s, carrier=%s\n", staticSrc.getName().c_str(), staticSrc.getCarrier().c_str());
+    CARRIER_DEBUG("STATIC_DST: name=%s, carrier=%s\n", staticDest.getName().c_str(), staticDest.getCarrier().c_str());
+
     //DynamicSrc and DynamicDst are the contacts created by connect command
     //while staticSrc and staticDest are contacts created by quering th server
 
@@ -409,17 +429,22 @@ static int metaConnect(const ConstString& src,
     if (staticSrc.getCarrier()!="topic") {
         if (!topical) {
             Carrier *srcCarrier = nullptr;
+            CARRIER_DEBUG("staticSrc.getCarrier= %s  ", staticSrc.getCarrier().c_str());
             if (staticSrc.getCarrier()!="") {
                 srcCarrier = Carriers::chooseCarrier(staticSrc.getCarrier().c_str());
             }
             if (srcCarrier!=nullptr) {
+                CARRIER_DEBUG("srcCarrier is NOT null; its name is %s;  ", srcCarrier->getName().c_str());
                 ConstString srcBootstrap = srcCarrier->getBootstrapCarrierName();
                 if (srcBootstrap!="") {
+
+                    CARRIER_DEBUG(" it is competent(bootstrapname is %s), while its name is %s )\n\n", srcBootstrap.c_str(), srcCarrier->getName().c_str());
                     srcIsCompetent = true;
                 } else {
                     //if the srcCarrier is not competent, (that is it can't perform the starting yarp handshaking)
                     //set the carrier contraint equal to the carrier with which the posrt had been registered.
                     carrierConstraint = staticSrc.getCarrier();
+                    CARRIER_DEBUG(" it is NOT competent. its constraint is %s\n\n", carrierConstraint.c_str());
                 }
                 delete srcCarrier;
                 srcCarrier = nullptr;
@@ -435,17 +460,21 @@ static int metaConnect(const ConstString& src,
     if (staticDest.getCarrier()!="topic") {
         if (!topical) {
             Carrier *destCarrier = nullptr;
+            CARRIER_DEBUG("staticDest.getCarrier= %s  ", staticDest.getCarrier().c_str());
             if (staticDest.getCarrier()!="") {
                 destCarrier = Carriers::chooseCarrier(staticDest.getCarrier().c_str());
             }
             if (destCarrier!=nullptr) {
+                CARRIER_DEBUG("destCarrier is NOT null; its name is %s;  ", destCarrier->getName().c_str());
                 ConstString destBootstrap = destCarrier->getBootstrapCarrierName();
                 if (destBootstrap!="") {
+                    CARRIER_DEBUG(" it is competent(bootstrapname is %s), while its name is %s )\n\n\n\n", destBootstrap.c_str(), destCarrier->getName().c_str() );
                     destIsCompetent = true;
                 } else {
                     //if the destCarrier is not competent, (that is it can't perform the starting yarp handshaking)
                     //set the carrier contraint equal to the carrier with which the posrt had been registered.
                     carrierConstraint = staticDest.getCarrier();
+                    CARRIER_DEBUG(" it is NOT competent. its constraint is %s\n\n", carrierConstraint.c_str());
                 }
                 delete destCarrier;
                 destCarrier = nullptr;
@@ -490,13 +519,28 @@ static int metaConnect(const ConstString& src,
         return 0;
     }
 
+    CARRIER_DEBUG("---------\n");
+    CARRIER_DEBUG("dynamicSrc.getCarrier() = %s\n ", dynamicSrc.getCarrier().c_str());
+    CARRIER_DEBUG("dynamicDest.getCarrier() = %s\n ", dynamicDest.getCarrier().c_str());
+    CARRIER_DEBUG("staticSrc.getCarrier() = %s\n ", staticSrc.getCarrier().c_str());
+    CARRIER_DEBUG("staticDest.getCarrier() = %s\n ", staticDest.getCarrier().c_str());
+    CARRIER_DEBUG("carrierConstraint is %s\n ", carrierConstraint.c_str());
+    CARRIER_DEBUG("---------\n");
+
+    CARRIER_DEBUG("style.carrier (1) is %s\n ", style.carrier.c_str());
+
+
     if (dynamicSrc.getCarrier()!="") { //if in connect command the user specified the carrier of src port
         style.carrier = dynamicSrc.getCarrier();
+        CARRIER_DEBUG("style.carrier is %s ==> in connect command the user specified the carrier of src port\n ", style.carrier.c_str());
     }
 
     if (dynamicDest.getCarrier()!="") { //if in connect command the user specified the carrier of dest port or the carrier of the connection
         style.carrier = dynamicDest.getCarrier();
+         CARRIER_DEBUG("style.carrier is %s ==> in connect command the user specified the carrier of dest port or the carrier of the connection\n ", style.carrier.c_str());
     }
+
+    CARRIER_DEBUG("at the end style style.carrier is %s\n ", style.carrier.c_str());
 
     //here we'll check if the style carrier and the contraint carrier are equal.
     //note that in both string may contain params of carrier, so we need to comapare only the name of carrier.
@@ -513,6 +557,8 @@ static int metaConnect(const ConstString& src,
                     carrier_constraint_name.c_str());
             return 1;
         }
+       CARRIER_DEBUG("style_carrier_name=%s and carrier_constraint_name=%s are equals!\n", style_carrier_name.c_str(), carrier_constraint_name.c_str());
+
     }
     //we are going to choose the carrier of this connection, and we collect parameters specfied by user
     //in order to pass them to the carrier, so it can configure itself.
@@ -520,6 +566,7 @@ static int metaConnect(const ConstString& src,
         style.carrier = carrierConstraint;
         //if I'm here means that sorce or dest is not competent.
         //so we need to get parameters of carrier given in connect command.
+        CARRIER_DEBUG("if I'm here means that sorce or dest is not competent\n");
         ConstString c = dynamicSrc.getCarrier();
         if(extractCarrierNameOnly(c) == extractCarrierNameOnly(style.carrier))
             style.carrier+=collectParams(dynamicSrc);
@@ -530,15 +577,20 @@ static int metaConnect(const ConstString& src,
     if (style.carrier=="") {
         style.carrier = staticDest.getCarrier();
         //if I'm here means that both src and dest are copentent and the user didn't specified a carrier in the connect command
+        CARRIER_DEBUG("if I'm here means that both src and dest are copentent and the user didn't specified a carrier in the connect command\n");
         ConstString c = dynamicSrc.getCarrier();
         if(extractCarrierNameOnly(c) == extractCarrierNameOnly(style.carrier))
             style.carrier+=collectParams(staticSrc);
     }
+
     if (style.carrier=="") {
         style.carrier = staticSrc.getCarrier();
+        CARRIER_DEBUG("the choosen style carrier is static src\n ");
     }
 
     //now stylecarrier contains the carrier choosen for this connection
+
+    CARRIER_DEBUG("style_carrier with params  =%s\n", style.carrier.c_str());
 
     bool connectionIsPush = false;
     bool connectionIsPull = false;
