@@ -13,6 +13,7 @@
 #include <yarp/os/impl/SemaphoreImpl.h>
 
 #include <cstdlib>
+#include <thread>
 
 #if defined(YARP_HAS_CXX11)
 #  if defined(YARP_HAS_ACE)
@@ -518,13 +519,5 @@ void ThreadImpl::setDefaultStackSize(int stackSize)
 
 void ThreadImpl::yield()
 {
-#if defined(YARP_HAS_CXX11)
     std::this_thread::yield();
-#elif defined(YARP_HAS_ACE) // Use ACE API
-    ACE_Thread::yield();
-#elif defined(__unix__) // Use the POSIX syscalls
-    pthread_yield();
-#else
-    YARP_ERROR(Logger::get(), "Cannot yield thread without ACE");
-#endif
 }

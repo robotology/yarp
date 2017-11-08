@@ -13,7 +13,6 @@
 
 #include <yarp/os/Time.h>
 #include <yarp/os/SystemClock.h>
-
 #include <cmath> //sqrt
 
 //added threadRelease/threadInit methods and synchronization -nat
@@ -165,18 +164,24 @@ public:
             owner.run();
         }
 
-        count++;
+
+        // At the end of each run of updateModule function, the thread is supposed
+        // to be suspended and release CPU to other threads.
+        // Calling a yield here will help the threads to alternate in the execution.
+        // Note: call yield BEFORE computing elapsed time, so that any time spent due to
+        // yield is took into account and the sleep time is correct.
+        yield();
+
         lock();
-
+        count++;
         double elapsed = yarp::os::Time::now() - currentRun;
-
         //save last
         totalUsed+=elapsed;
         sumUsedSq+=elapsed*elapsed;
         unlock();
 
         sleepPeriod= adaptedPeriod - elapsed; // everything is in [seconds] except period, for it is used in the interface as [ms]
-        // Check if sleepPeriod is negative here or inside the delay (or both?)
+
         yarp::os::Time::delay(sleepPeriod);
     }
 
@@ -220,18 +225,24 @@ public:
             owner.run();
         }
 
-        count++;
+
+        // At the end of each run of updateModule function, the thread is supposed
+        // to be suspended and release CPU to other threads.
+        // Calling a yield here will help the threads to alternate in the execution.
+        // Note: call yield BEFORE computing elapsed time, so that any time spent due to
+        // yield is took into account and the sleep time is correct.
+        yield();
+
         lock();
-
+        count++;
         double elapsed = SystemClock::nowSystem() - currentRun;
-
         //save last
         totalUsed+=elapsed;
         sumUsedSq+=elapsed*elapsed;
         unlock();
 
         sleepPeriod= adaptedPeriod - elapsed;  //  all time computatio are done in [sec]
-        // Check if sleepPeriod is negative here or inside the delay (or both?)
+
         SystemClock::delaySystem(sleepPeriod);
     }
 

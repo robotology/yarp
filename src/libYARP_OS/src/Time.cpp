@@ -114,12 +114,7 @@ void Time::turboBoost() {
 }
 
 void Time::yield() {
-#ifdef YARP_HAS_ACE
-    ACE_Time_Value tv(0);
-    ACE_OS::sleep(tv);
-#else
-    sleep(0);
-#endif
+    return yarp::os::Thread::yield();
 }
 
 

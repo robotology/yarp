@@ -307,6 +307,13 @@ int RFModule::runModule() {
             break;
         }
 
+        // At the end of each run of updateModule function, the thread is supposed
+        // to be suspended and release CPU to other threads.
+        // Calling a yield here will help the threads to alternate in the execution.
+        // Note: call yield BEFORE computing elapsed time, so that any time spent due to
+        // yield is took into account and the sleep time is correct.
+        yarp::os::Time::yield();
+
         // The module is stopped for getPeriod() seconds.
         // If getPeriod() returns a time > 1 second, we check every second if
         // the module stopping, and eventually we exit the main loop.
