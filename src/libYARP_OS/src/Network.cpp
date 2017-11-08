@@ -129,9 +129,9 @@ static int noteDud(const Contact& src)
 
 //#define DEBUG_CONNECT_CARRIER
 #ifdef DEBUG_CONNECT_CARRIER
-# define CARRIER_DEBUG(fmt, args...)    fprintf(stderr, fmt, ## args)
+# define CARRIER_DEBUG(fmt, ...)    fprintf(stderr, fmt, ##__VA_ARGS__)
 #else
-# define CARRIER_DEBUG(fmt, args...)
+# define CARRIER_DEBUG(fmt, ...)
 #endif
 
 static int enactConnection(const Contact& src,
