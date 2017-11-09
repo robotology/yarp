@@ -9,6 +9,7 @@
 
 #include <yarp/os/Carrier.h>
 #include <yarp/os/Face.h>
+#include "H264Decoder.h"
 
 
 namespace yarp {
@@ -24,9 +25,15 @@ namespace yarp {
  *
  * Use this carrier in the following way:
  * - suppose there is a server that streams video frames to IP x.x.x.x and to port p:
- *   register this port to yarp by yarp command "yarp register" in this way: yarp register /serverH264Stream h264 x.x.x.x p
+ *   register this port to yarp by yarp command "yarp name register" in this way: yarp name register /serverH264Stream h264 x.x.x.x p
  * - you need to connect your client port (for example /yarpview/img:i ) to /serverH264Stream port by h264 carrier to get the video stream:
  *   yarp connect /serverH264Stream /yarpview/img:i h264
+ * You can comfigure the carrier to cro frames by passing parameters to the carrier with usual syntax: +pramName.paramValue:
+ *  - +cropLeft.100    ==> the carrier crops 100 pxel from left side
+ *  - +cropRight.100   ==> the carrier crops 100 pxel from right side
+ *  - +cropTop.100     ==> the carrier crops 100 pxel from top side
+ *  - +cropBottom.100  ==> the carrier crops 100 pxel from bottom side
+ *  - +verbose.1       ==> enables verbose mode (default is not verbose) (+verbose.0 disables it.)
  */
 
 class yarp::os::H264Carrier : public Carrier
@@ -34,6 +41,7 @@ class yarp::os::H264Carrier : public Carrier
 private:
     bool decoderIsRunning;
     yarp::os::ConstString envelope;
+    h264Decoder_cfgParamters cfgParams;
 public:
     H264Carrier()
     {;}
@@ -109,6 +117,7 @@ public:
     virtual ConstString getBootstrapCarrierName() override;
 
     virtual yarp::os::Face* createFace(void) override;
+
 };
 
 #endif

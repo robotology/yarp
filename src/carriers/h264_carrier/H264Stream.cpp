@@ -26,6 +26,32 @@ using namespace yarp::os;
 using namespace yarp::sig;
 using namespace std;
 
+H264Stream::H264Stream(h264Decoder_cfgParamters &config) :
+        delegate(NULL),
+        phase(0),
+        cursor(NULL),
+        remaining(0),
+        cfg(config)
+{
+    ;
+}
+
+H264Stream::~H264Stream()
+{
+    if (decoder!=NULL)
+    {
+        delete decoder;
+        decoder = NULL;
+    }
+
+    if (delegate!=NULL)
+    {
+        delete delegate;
+        delegate = NULL;
+    }
+}
+
+
 
 bool H264Stream::setStream(yarp::os::impl::DgramTwoWayStream *stream)
 {
@@ -39,7 +65,7 @@ bool H264Stream::setStream(yarp::os::impl::DgramTwoWayStream *stream)
 
 void H264Stream::start (void)
 {
-    decoder = new H264Decoder(this->remotePort);
+    decoder = new H264Decoder(this->cfg);
     decoder->init();
     decoder->start();
 }

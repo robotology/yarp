@@ -81,7 +81,7 @@ static GstBusSyncReply bus_call (GstBus *bus, GstMessage *msg, gpointer data)
 }
 */
 
-static gboolean link_videosrc2rtpdepay(GstElement *e1, GstElement *e2)
+static gboolean link_videosrc2rtpdepay(GstElement *e1, GstElement *e2, bool verbose)
 {
     gboolean link_ok;
     GstCaps *caps;
@@ -98,11 +98,12 @@ static gboolean link_videosrc2rtpdepay(GstElement *e1, GstElement *e2)
 
 
     link_ok = gst_element_link_filtered(e1, e2, caps);
+    //print error anyway, while print ok message only is verbose
     if(!link_ok)
     {
         g_print("GSTREAMER: failed link videosrc2convert with caps!!\n");
     }
-    else
+    else if(verbose)
     {
         g_print("GSTREAMER: link videosrc2convert with caps OK!!!!!!\n");
     }
@@ -112,7 +113,7 @@ static gboolean link_videosrc2rtpdepay(GstElement *e1, GstElement *e2)
 
 
 
-static gboolean link_convert2next(GstElement *e1, GstElement *e2)
+static gboolean link_convert2next(GstElement *e1, GstElement *e2, bool verbose)
 {
     gboolean link_ok;
     GstCaps *caps;
@@ -123,11 +124,13 @@ static gboolean link_convert2next(GstElement *e1, GstElement *e2)
 
 
     link_ok = gst_element_link_filtered(e1, e2, caps);
+
+    //print error anyway, while print ok message only is verbose
     if(!link_ok)
     {
         g_print("GSTREAMER: failed link_convert2next with caps\n");
     }
-    else
+    else if(verbose)
     {
         g_print("GSTREAMER: link_convert2next with caps OK\n");
     }
@@ -273,8 +276,10 @@ public:
     GstElement *parser;
     GstElement *convert;
     GstElement *decoder;
+    GstElement *sizeChanger;
 
     data_for_gst_callback gst_cbk_data;
+    bool verbose;
 
     GstBus *bus; //maybe can be moved in function where i use it
     guint bus_watch_id;
@@ -297,10 +302,11 @@ public:
         rtpDepay = gst_element_factory_make ("rtph264depay", "rtp-depay");
         parser   = gst_element_factory_make ("h264parse",    "parser");
         decoder  = gst_element_factory_make ("avdec_h264",   "decoder");
+        sizeChanger  = gst_element_factory_make ("videocrop",    "cropper");
         convert  = gst_element_factory_make ("videoconvert", "convert"); //because use RGB space
         sink     = gst_element_factory_make ("appsink",      "video-output");
 
-        if (!pipeline || !source || !rtpDepay || !parser || !decoder || !convert || !sink)
+        if (!pipeline || !source || !rtpDepay || !parser || !decoder || !convert || !sink || !sizeChanger)
         {
             g_printerr ("GSTREAMER: one element could not be created. Exiting.\n");
             return false;
@@ -308,16 +314,17 @@ public:
         return true;
     }
 
-    bool configureElements(gint portnumber) //maybe i can make callbak configurable in the future.....
+    bool configureElements(h264Decoder_cfgParamters &cfgParams) //maybe i can make callbak configurable in the future.....
     {
         // 1) configure source port
-        g_print("GSTREAMER: try to configure source port with %d.... \n", portnumber);
-        g_object_set(source, "port", portnumber/*3111*/, NULL);
+        if(verbose) g_print("GSTREAMER: try to configure source port with %d.... \n", cfgParams.remotePort);
+        g_object_set(source, "port", cfgParams.remotePort, NULL);
+        g_print("GSTREAMER: configured source port with %d.... \n", cfgParams.remotePort);
 
         // 2) configure callback on new frame
-        g_print("GSTREAMER: try to configure appsink.... \n");
+        if(verbose) g_print("GSTREAMER: try to configure appsink.... \n");
         //I decided to use callbaxk mechanism because it should have less overhead
-        g_object_set( sink, "emit-signals", false, NULL );
+        if(verbose) g_object_set( sink, "emit-signals", false, NULL );
 
         GstAppSinkCallbacks cbs; // Does this need to be kept alive?
 
@@ -335,6 +342,11 @@ public:
         gst_bus_set_sync_handler(bus, bus_call, pipeline, NULL);
         gst_object_unref (bus);
     */
+
+        //videocrop
+        if(verbose) g_print("try to set new size: left=%d right=%d \n", cfgParams.crop.left, cfgParams.crop.right);
+        g_object_set(G_OBJECT(sizeChanger), "left", cfgParams.crop.left, "right", cfgParams.crop.right, "top", cfgParams.crop.top, "bottom", cfgParams.crop.bottom, NULL);
+        g_print("GSTREAMER: set crop parameters: left=%d, right=%d, top=%d, bottom=%d\n", cfgParams.crop.left, cfgParams.crop.right, cfgParams.crop.top, cfgParams.crop.bottom);
         return true;
 
     }
@@ -342,30 +354,31 @@ public:
     bool linkElements(void)
     {
 
-        g_print("GSTREAMER: try to add elements to pipeline..... \n");
+        if(verbose) g_print("GSTREAMER: try to add elements to pipeline..... \n");
         /* we add all elements into the pipeline */
         gst_bin_add_many (GST_BIN (pipeline),
-                        source, rtpDepay, parser, decoder, convert, sink, NULL);
+                        source, rtpDepay, parser, decoder, sizeChanger, convert, sink, NULL);
 
-        g_print("GSTREAMER: elements have been added in pipeline!\n");
+        if(verbose) g_print("GSTREAMER: elements have been added in pipeline!\n");
 
 
         /* autovideosrc ! "video/x-raw, width=640, height=480, format=(string)I420" ! videoconvert ! 'video/x-raw, format=(string)RGB'  ! yarpdevice ! glimagesink */
-        g_print("GSTREAMER: try to link_videosrc2convert..... \n");
-        gboolean result = link_videosrc2rtpdepay(source, rtpDepay);
+        if(verbose) g_print("GSTREAMER: try to link_videosrc2convert..... \n");
+        gboolean result = link_videosrc2rtpdepay(source, rtpDepay, verbose);
         if(!result)
         {
             return false;
         }
 
-        g_print("GSTREAMER: try to link_convert2next..... \n");
-        result = link_convert2next(convert, sink);
+        if(verbose) g_print("GSTREAMER: try to link_convert2next..... \n");
+        result = link_convert2next(convert, sink, verbose);
         if(!result)
-            {
-                return false;
-            }
-        g_print("GSTREAMER: try to link all other elements..... \n");
-        gst_element_link_many(rtpDepay, parser, decoder, convert, NULL);
+        {
+            return false;
+        }
+
+        if(verbose)g_print("GSTREAMER: try to link all other elements..... \n");
+        gst_element_link_many(rtpDepay, parser, decoder, sizeChanger, convert, NULL);
 
         return true;
     }
@@ -377,10 +390,13 @@ public:
 
 #define GET_HELPER(x) (*((H264DecoderHelper*)(x)))
 
-H264Decoder::H264Decoder(int remotePortNum) : remotePort(remotePortNum), sysResource(nullptr)
+H264Decoder::H264Decoder(h264Decoder_cfgParamters &config) : sysResource(nullptr), cfg(config)
 {
     sysResource = new H264DecoderHelper(&mutex, &semaphore);
     yAssert(sysResource != nullptr);
+
+    H264DecoderHelper &helper = GET_HELPER(sysResource);
+    helper.verbose = cfg.verbose;
 }
 
 bool H264Decoder::init(void)
@@ -392,7 +408,7 @@ bool H264Decoder::init(void)
         return false;
     }
 
-    if(!helper.configureElements(remotePort))
+    if(!helper.configureElements(cfg))
     {
         yError() << "Error in configureElements";
         return false;
@@ -414,6 +430,8 @@ bool H264Decoder::start()
 {
     H264DecoderHelper &helper = GET_HELPER(sysResource);
     gst_element_set_state (helper.pipeline, GST_STATE_PLAYING);
+    yDebug() << "H264Decoder: pipeline started!";
+
     return true;
 
 }
@@ -423,7 +441,7 @@ bool H264Decoder::stop()
     H264DecoderHelper &helper = GET_HELPER(sysResource);
     gst_element_set_state (helper.pipeline, GST_STATE_NULL);
     gst_bus_set_sync_handler(gst_pipeline_get_bus (GST_PIPELINE (helper.pipeline)), nullptr, nullptr, nullptr);
-     yDebug() << "Deleting pipeline";
+    yDebug() << "H264Decoder: deleting pipeline";
     gst_object_unref (GST_OBJECT (helper.pipeline));
     return true;
 }
