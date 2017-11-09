@@ -22,6 +22,7 @@ namespace yarp {
     }
 }
 
+
 class yarp::os::H264Stream : public yarp::os::impl::DgramTwoWayStream
 {
 private:
@@ -35,29 +36,11 @@ private:
     int remaining;
     H264Decoder *decoder;
     int remotePort;
+    h264Decoder_cfgParamters cfg;
 public:
-    H264Stream( int remotePort) :
-            delegate(NULL),
-            phase(0),
-            cursor(NULL),
-            remaining(0),
-            remotePort(remotePort)
-    {;}
+    H264Stream(h264Decoder_cfgParamters &config);
 
-    virtual ~H264Stream()
-    {
-        if (decoder!=NULL)
-        {
-            delete decoder;
-            decoder = NULL;
-        }
-
-        if (delegate!=NULL)
-        {
-            delete delegate;
-            delegate = NULL;
-        }
-    }
+    virtual ~H264Stream();
 
     bool setStream(yarp::os::impl::DgramTwoWayStream *stream);
 

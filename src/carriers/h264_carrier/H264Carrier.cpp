@@ -11,6 +11,7 @@
 #include "H264Stream.h"
 #include "yarp/os/Contact.h"
 #include "yarp/os/impl/FakeFace.h"
+#include <yarp/os/Name.h>
 
 
 using namespace yarp::os;
@@ -91,34 +92,62 @@ bool H264Carrier::checkHeader(const Bytes& header)
 void H264Carrier::setParameters(const Bytes& header)
 {
     // no parameters - no carrier variants
+    printf("h264: setParameters \n");
 }
 
 
-// Now, the initial hand-shaking
+static int getIntParam(Name &n, const char *param)
+{
+    bool hasField;
+    ConstString strValue = n.getCarrierModifier(param, &hasField);
+    Value *v = Value::makeValue(strValue.c_str());
+    int intvalue = 0;
+    if((hasField) && v->isInt())
+    {
+        intvalue = v->asInt();
+    }
 
+    delete v;
+    return intvalue;
+}
+
+// Now, the initial hand-shaking
 bool H264Carrier::prepareSend(ConnectionState& proto)
 {
-    // nothing special to do
+     //get all parameters of this carrier
+     Name n(proto.getRoute().getCarrierName() + "://test");
+
+     cfgParams.crop.left = getIntParam(n, "cropLeft");
+     cfgParams.crop.right = getIntParam(n, "cropRight");
+     cfgParams.crop.top = getIntParam(n, "cropTop");
+     cfgParams.crop.bottom = getIntParam(n, "cropBottom");
+     cfgParams.fps_max = getIntParam(n, "max_fps");
+     cfgParams.verbose = (getIntParam(n, "verbose") >0) ? true: false;
+
     return true;
 }
 
 bool H264Carrier::sendHeader(ConnectionState& proto)
 {
+     //printf("h264: sendHeader \n");
     return true;
 }
 
 bool H264Carrier::expectSenderSpecifier(ConnectionState& proto)
 {
+     printf("h264: expectSenderSpecifier \n");
     return true;
 }
 
 bool H264Carrier::expectExtraHeader(ConnectionState& proto)
 {
+     printf("h264: expectExtraHeader \n");
     return true;
 }
 
 bool H264Carrier::respondToHeader(ConnectionState& proto)
 {
+     printf("h264: respondToHeader \n");
     return true;
 }
 
@@ -126,7 +155,9 @@ bool H264Carrier::expectReplyToHeader(ConnectionState& proto)
 {
     // I'm the receiver...
 
-    H264Stream *stream = new H264Stream(proto.getRoute().getToContact().getPort());
+    cfgParams.remotePort = proto.getRoute().getToContact().getPort();
+
+    H264Stream *stream = new H264Stream(cfgParams);
     if (stream==nullptr) { return false; }
 
     yarp::os::Contact remote = proto.getStreams().getRemoteAddress();
