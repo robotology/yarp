@@ -8,6 +8,8 @@
 #ifndef YARP_DEV_REMOTEFRAMEGRABBER_H
 #define YARP_DEV_REMOTEFRAMEGRABBER_H
 
+#include <cstring>          // for memcpy
+
 #include <yarp/os/Network.h>
 #include <yarp/os/Semaphore.h>
 #include <yarp/os/LogStream.h>
@@ -610,6 +612,38 @@ public:
         return false;
     }
 
+    virtual bool getImageCrop(cropType_id_t cropType, yarp::sig::VectorOf<std::pair<int, int> > vertices, yarp::sig::ImageOf<yarp::sig::PixelRgb>& image) override
+    {
+        yarp::os::Bottle cmd, response;
+        cmd.addVocab(VOCAB_FRAMEGRABBER_IMAGE);
+        cmd.addVocab(VOCAB_GET);
+        cmd.addVocab(VOCAB_CROP);
+        cmd.addInt(cropType);
+        yarp::os::Bottle & list = cmd.addList();
+        for(size_t i=0; i<vertices.size(); i++)
+        {
+            list.addInt(vertices[i].first);
+            list.addInt(vertices[i].second);
+        }
+        port.write(cmd,response);
+
+        // Parse the response
+        image.zero();
+        if( (response.get(0).asVocab() != VOCAB_CROP) || (response.size() != 5) || (!response.get(4).isBlob()))
+        {
+            yError() << "getImageCrop: malformed response message. Size is " << response.size();
+            return false;
+        }
+
+        image.resize(response.get(2).asInt(), response.get(3).asInt());
+        unsigned char *pixelOut    = image.getRawImage();
+
+        if(response.get(4).asBlob())
+            memcpy(pixelOut, response.get(4).asBlob(), (size_t) image.getRawImageSize());
+
+        return true;
+    }
+
     // this is bad!
     virtual int height() const override {
         return lastHeight;
@@ -644,8 +678,11 @@ public:
         if (remote!="") {
             yInfo() << "connecting "  << local << " to " << remote;
 
-            if(!yarp::os::Network::connect(remote,local,carrier))
-                yError() << "cannot connect "  << local << " to " << remote;
+            if(!config.check("no_stream") )
+            {
+                if(!yarp::os::Network::connect(remote,local,carrier))
+                    yError() << "cannot connect "  << local << " to " << remote;
+            }
 
             // reverse connection for RPC
             // could choose to do this only on need
