@@ -10,6 +10,8 @@
 #include <yarp/dev/DeviceDriver.h>
 #include <yarp/sig/Image.h>
 #include <yarp/dev/FrameGrabberControl2.h>
+#include <yarp/sig/Vector.h>
+
 
 /*! \file FrameGrabberInterfaces.h define common interfaces for frame
   grabber devices */
@@ -27,6 +29,12 @@ namespace yarp{
         class IFrameWriterImage;
     }
 }
+
+/*
+ *  Vocab for interfaces
+ */
+#define VOCAB_FRAMEGRABBER_IMAGE        VOCAB3('f','g','i')
+#define VOCAB_FRAMEGRABBER_IMAGERAW     VOCAB4('f','g','i','r')
 
 /*
  * Generic capabilities defines
@@ -50,7 +58,15 @@ namespace yarp{
 #define VOCAB_WIDTH                     VOCAB1('w')
 #define VOCAB_HEIGHT                    VOCAB1('h')
 
+#define VOCAB_CROP                      VOCAB4('c','r','o','p')
 
+
+typedef enum {
+    YARP_CROP_RECT = 0,             // Rectangular region of interest style, requires the two corner as a parameter
+    YARP_CROP_LIST                  // Unordered list of points, the returned image will be a nx1 image with n the
+                                    // number of points required by user (size of input vector), with the corresponding
+                                    // pixel color.
+} cropType_id_t;
 
 typedef enum {
     YARP_FEATURE_BRIGHTNESS=0,
@@ -222,6 +238,7 @@ public:
      * Destructor.
      */
     virtual ~IFrameGrabberImage(){}
+
     /**
      * Get an rgb image from the frame grabber, if required
      * demosaicking/color reconstruction is applied
@@ -230,6 +247,23 @@ public:
      * @return true/false upon success/failure
      */
     virtual bool getImage(yarp::sig::ImageOf<yarp::sig::PixelRgb>& image) = 0;
+
+    /**
+     * Get a crop of the rgb image from the frame grabber, if required
+     * demosaicking/color reconstruction is applied
+     *
+     * Note: this is not configuring the camera sensor to acquire a crop
+     *       of the image, nor to generate a cropped version of the streaming.
+     *       Instead, the full image is aquired and then a crop is created from
+     *       it. The crop is meant to be created by the image producer upon user
+     *       request via RPC call.
+     *
+     * @param cropType enum specifying how the crop shall be generated, defined at FrameGrabberInterfaces.h
+     * @param vertices the input coordinate (u,v) required by the cropType
+     * @param image the image to be filled
+     * @return true/false upon success/failure
+     */
+    virtual bool getImageCrop(cropType_id_t cropType, yarp::sig::VectorOf<std::pair<int, int> > vertices, yarp::sig::ImageOf<yarp::sig::PixelRgb>& image) { return false; };
 
     /**
      * Return the height of each frame.
@@ -263,6 +297,23 @@ public:
      * @return true/false upon success/failure
      */
     virtual bool getImage(yarp::sig::ImageOf<yarp::sig::PixelMono>& image) = 0;
+
+    /**
+     * Get a crop of the rgb image from the frame grabber, if required
+     * demosaicking/color reconstruction is applied
+     *
+     * Note: this is not configuring the camera sensor to acquire a crop
+     *       of the image, nor to generate a cropped version of the streaming.
+     *       Instead, the full image is aquired and then a crop is created from
+     *       it. The crop is meant to be created by the image producer upon user
+     *       request via RPC call.
+     *
+     * @param cropType enum specifying how the crop shall be generated, defined at FrameGrabberInterfaces.h
+     * @param vertices the input coordinate (u,v) required by the cropType
+     * @param image the image to be filled
+     * @return true/false upon success/failure
+     */
+    virtual bool getImageCrop(cropType_id_t cropType, yarp::sig::VectorOf<std::pair<int, int> > vertices, yarp::sig::ImageOf<yarp::sig::PixelMono>& image) { return false; };
 
     /**
      * Return the height of each frame.
