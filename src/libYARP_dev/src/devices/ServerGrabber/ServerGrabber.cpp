@@ -10,6 +10,10 @@
 #include <yarp/dev/PolyDriver.h>
 #include <yarp/os/LogStream.h>
 #include <yarp/os/ResourceFinder.h>
+#include <yarp/sig/Vector.h>
+#include <yarp/os/PortablePair.h>
+#include <yarp/dev/FrameGrabberInterfaces.h>
+
 #include <cstring>
 
 using namespace yarp::os;
@@ -541,11 +545,98 @@ bool ServerGrabber::initialize_YARP(yarp::os::Searchable &params)
 }
 
 bool ServerGrabber::respond(const yarp::os::Bottle& cmd,
-                                 yarp::os::Bottle& response, bool left, bool both=false) {
+                                  yarp::os::Bottle& response, bool left, bool both=false) {
     int code = cmd.get(0).asVocab();
     Bottle response2;
     switch (code)
     {
+    case VOCAB_FRAMEGRABBER_IMAGE:
+    {
+        switch (cmd.get(1).asVocab())
+        {
+            case VOCAB_GET:
+            {
+                switch (cmd.get(2).asVocab())
+                {
+                    case VOCAB_CROP:
+                    {
+                        response.clear();
+                        // If the device driver support it, use the device implementation, because it may be more efficient.
+                        // If not, acquire the whole image and crop it here before sending it.
+
+                        Bottle *list = cmd.get(4).asList();
+                        int nPoints = list->size() /2;          //  divided by 2 because each pixel is identified by 2 numbers (u,v)
+
+                        yarp::sig::VectorOf<std::pair<int, int> > vertices;
+                        vertices.resize(nPoints);
+
+                        for(int i=0; i<nPoints; i++)
+                        {
+                            vertices[i].first = list->get(i*2).asInt();
+                            vertices[i].second = list->get(i*2 +1).asInt();
+                        }
+
+                        ImageOf< PixelRgb > cropped;
+                        if(fgImage->getImageCrop((cropType_id_t) cmd.get(3).asVocab(), vertices, cropped) )
+                        {
+                            // use the device output
+                        }
+                        else
+                        {
+                            // In case the device has not yet implemented this feature, do it here (less efficient)
+                            if(cmd.get(3).asVocab() == YARP_CROP_RECT)
+                            {
+                                if(nPoints != 2)
+                                {
+                                    response.addString("GetImageCrop failed: RECT mode requires 2 vertices.");
+                                    yError() << "GetImageCrop failed: RECT mode requires 2 vertices, got " << nPoints;
+                                    return false;
+                                }
+                                ImageOf< PixelRgb > full;
+                                fgImage->getImage(full);
+
+                                cropped.resize(vertices[1].first - vertices[0].first +1, vertices[1].second - vertices[0].second +1);  // +1 to be inclusive
+                                for(int u_in=vertices[0].first, u_out=0; u_in<=vertices[1].first; u_in++, u_out++)
+                                {
+                                    for(int v_in=vertices[0].second, v_out=0; v_in <= vertices[1].second; v_in++, v_out++)
+                                    {
+                                        cropped.pixel(u_out, v_out).r = full.pixel(u_in, v_in).r;
+                                        cropped.pixel(u_out, v_out).g = full.pixel(u_in, v_in).g;
+                                        cropped.pixel(u_out, v_out).b = full.pixel(u_in, v_in).b;
+                                    }
+                                }
+                            }
+                            else if(cmd.get(3).asVocab() == YARP_CROP_LIST)
+                            {
+                                response.addString("List type not yet implemented");
+                            }
+                            else
+                            {
+                                response.addString("Crop type unknown");
+                            }
+                        }
+
+                        response.addVocab(VOCAB_CROP);
+                        response.addVocab(VOCAB_IS);
+                        response.addInt(cropped.width());                       // Actual width  of image in pixels, to check everything is ok
+                        response.addInt(cropped.height());                      // Actual height of image in pixels, to check everything is ok
+
+                        response.add(Value(cropped.getRawImage(), cropped.getRawImageSize()));
+                    } break;
+                } break;
+
+            } break;
+
+            case VOCAB_SET:   // Nothing to do here yet
+            default:
+            {
+                yError() << "FrameGrabberImage interface received an unknown command " << cmd.toString();
+            } break;
+
+        }
+
+    } break;
+
     // first check if requests are coming from new iFrameGrabberControl2 interface and process them
     case VOCAB_FRAMEGRABBER_CONTROL2:
     {
@@ -579,6 +670,7 @@ bool ServerGrabber::respond(const yarp::os::Bottle& cmd,
         else
             return ifgCtrl_Parser.respond(cmd, response);
     } break;
+
     case VOCAB_RGB_VISUAL_PARAMS:
     {
         if(param.twoCameras)
