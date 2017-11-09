@@ -32,27 +32,24 @@ namespace yarp{
  * Generic capabilities defines
  */
 
-#define VOCAB_BRIGHTNESS VOCAB3('b','r','i')
-#define VOCAB_EXPOSURE VOCAB4('e','x','p','o')
-#define VOCAB_SHARPNESS VOCAB4('s','h','a','r')
-#define VOCAB_WHITE VOCAB4('w','h','i','t')
-#define VOCAB_HUE VOCAB3('h','u','e')
-#define VOCAB_SATURATION VOCAB4('s','a','t','u')
-#define VOCAB_GAMMA VOCAB4('g','a','m','m')
-#define VOCAB_SHUTTER VOCAB4('s','h','u','t')
-#define VOCAB_GAIN VOCAB4('g','a','i','n')
-#define VOCAB_IRIS VOCAB4('i','r','i','s')
+#define VOCAB_BRIGHTNESS                VOCAB3('b','r','i')
+#define VOCAB_EXPOSURE                  VOCAB4('e','x','p','o')
+#define VOCAB_SHARPNESS                 VOCAB4('s','h','a','r')
+#define VOCAB_WHITE                     VOCAB4('w','h','i','t')
+#define VOCAB_HUE                       VOCAB3('h','u','e')
+#define VOCAB_SATURATION                VOCAB4('s','a','t','u')
+#define VOCAB_GAMMA                     VOCAB4('g','a','m','m')
+#define VOCAB_SHUTTER                   VOCAB4('s','h','u','t')
+#define VOCAB_GAIN                      VOCAB4('g','a','i','n')
+#define VOCAB_IRIS                      VOCAB4('i','r','i','s')
 
-//#define VOCAB_TEMPERATURE VOCAB4('t','e','m','p')
-//#define VOCAB_WHITE_SHADING VOCAB4('s','h','a','d')
-//#define VOCAB_OPTICAL_FILTER VOCAB4('f','i','l','t')
-//#define VOCAB_CAPTURE_QUALITY VOCAB4('q','u','a','l')
+// General usage vocabs
+#define VOCAB_SET                       VOCAB3('s','e','t')
+#define VOCAB_GET                       VOCAB3('g','e','t')
+#define VOCAB_IS                        VOCAB2('i','s')
+#define VOCAB_WIDTH                     VOCAB1('w')
+#define VOCAB_HEIGHT                    VOCAB1('h')
 
-#define VOCAB_SET VOCAB3('s','e','t')
-#define VOCAB_GET VOCAB3('g','e','t')
-#define VOCAB_IS VOCAB2('i','s')
-#define VOCAB_WIDTH VOCAB1('w')
-#define VOCAB_HEIGHT VOCAB1('h')
 
 
 typedef enum {
