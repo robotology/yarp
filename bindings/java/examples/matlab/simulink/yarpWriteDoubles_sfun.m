@@ -200,7 +200,7 @@ simStateCompliance = 'UnknownSimState';
 disp 'Welcome to yarpWriteDoubles. This program tries to open a port'
 disp 'called /yarpWriteDoubles, connect to a port called /read, and'
 disp 'then stream some doubles!!!'
-LoadYarp;
+yarp.matlab.LoadYarp;
 global dPort;
 dPort = yarp.Port;
 if dPort.open('/yarpWriteDoubles')

@@ -21,7 +21,7 @@ function FastImageConversion()
 
 
     % initialize YARP
-    LoadYarp;
+    yarp.matlab.LoadYarp;
     import yarp.BufferedPortImageRgb
     import yarp.BufferedPortBottle
     import yarp.Port
@@ -78,7 +78,7 @@ function FastImageConversion()
              h=yarpImage.height;
              w=yarpImage.width;
              pixSize=yarpImage.getPixelSize();
-             tool=YarpImageHelper(h, w);
+             tool=yarp.matlab.YarpImageHelper(h, w);
              tic %start time
              IN = tool.getRawImg(yarpImage); %use leo pape image patch
              TEST = reshape(IN, [h w pixSize]); %need to reshape the matrix from 1D to h w pixelSize 

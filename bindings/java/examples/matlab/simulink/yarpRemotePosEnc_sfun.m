@@ -1,4 +1,4 @@
-function [sys,x0,str,ts,simStateCompliance] = yarpReadDoubles_sfun(t,x,u,flag,setNumDoubles)
+function [sys,x0,str,ts,simStateCompliance] = yarpRemotePosEnc_sfun(t,x,u,flag,theName,theNumAxes)
 %SFUNTMPL General M-file S-function template
 %   With M-file S-functions, you can define you own ordinary differential
 %   equations (ODEs), discrete system equations, and/or just about
@@ -104,9 +104,7 @@ switch flag,
   % Initialization %
   %%%%%%%%%%%%%%%%%%
   case 0,
-    global numDoubles;
-    numDoubles = setNumDoubles;
-    [sys,x0,str,ts,simStateCompliance]=mdlInitializeSizes;    
+    [sys,x0,str,ts,simStateCompliance]=mdlInitializeSizes(theName,theNumAxes);
 
   %%%%%%%%%%%%%%%
   % Derivatives %
@@ -145,7 +143,7 @@ switch flag,
     DAStudio.error('Simulink:blocks:unhandledFlag', num2str(flag));
 
 end
-% end yarpReadDoubles
+% end yarpRemotePosEnc
 
 
 %=============================================================================
@@ -153,7 +151,7 @@ end
 % Return the sizes, initial conditions, and sample times for the S-function.
 %=============================================================================
 %
-function [sys,x0,str,ts,simStateCompliance]=mdlInitializeSizes
+function [sys,x0,str,ts,simStateCompliance]=mdlInitializeSizes(fName,fAxes)
 %
 % call simsizes for a sizes structure, fill it in and convert it to a
 % sizes array.
@@ -164,11 +162,12 @@ function [sys,x0,str,ts,simStateCompliance]=mdlInitializeSizes
 %
 sizes = simsizes;
 
-global numDoubles;
+global keepAxes;
+keepAxes = fAxes;
 sizes.NumContStates  = 0;
 sizes.NumDiscStates  = 0;
-sizes.NumOutputs     = numDoubles;
-sizes.NumInputs      = 0;
+sizes.NumOutputs     = fAxes;
+sizes.NumInputs      = fAxes;
 sizes.DirFeedthrough = 1;
 sizes.NumSampleTimes = 1;   % at least one sample time is needed
 
@@ -197,24 +196,44 @@ ts  = [0 0];
 simStateCompliance = 'UnknownSimState';
 
 % Now do all the YARP stuff.
-disp 'Welcome to yarpReadDoubles. This program tries to open a port'
-disp 'called /yarpReadDoubles, connect from a port called /write, and'
-disp 'then read some streaming doubles (connected to scopes)!!!'
-LoadYarp;
-global dPort;
-dPort = yarp.BufferedPortBottle;
-if dPort.open('/yarpReadDoubles')
-    disp '[success] port open';
+fprintf('Welcome to yarpRemotePosEnc. This program tries to open a port\n');
+fprintf('called /yarpRemotePosEnc, connect to a remote controlboard called\n');
+fprintf('%s, and then disp stream some doubles!!!\n',fName);
+yarp.matlab.LoadYarp;
+global dd;
+global pos;
+global enc;
+options = yarp.Property;  % create an instance of Property, a nice YARP class for storing name-value (key-value) pairs
+options.put('device','remote_controlboard');  % we add a name-value pair that indicates the YARP device
+options.put('remote',fName);  % we add info on to whom we will connect
+options.put('local','/yarpRemotePosEnc');  % we add info on how we will call ourselves on the YARP network
+dd = yarp.PolyDriver(options);  % create a YARP multi-use driver with the given options
+if isequal(dd.isValid,1)
+    disp '[success] robot available';
 else
-    disp '[warning] port NOT open, is there a yarp server available (or save, wait and restart Matlab)?';
+    disp '[warning] robot NOT available, does it exist?';
 end
-if yarp.Network.connect('/write','/yarpReadDoubles')  % autoconnect just for testing
-    disp '[success] port connected from /write';
+pos = dd.viewIPositionControl;  % make a position controller object we call 'pos'
+if isequal(pos,[])
+    disp '[warning] position NOT available, does it exist?';
 else
-    disp '[warning] port NOT connected from /write, does it exist?';
+    disp '[success] robot position interface available';
+end
+enc = dd.viewIEncoders;  % make an encoder controller object we call 'enc'
+if isequal(enc,[])
+    disp '[warning] encoders NOT available, does it exist?';
+else
+    disp '[success] robot encoder interface available';
+end
+global remoteAxes;
+remoteAxes=enc.getAxes;
+if isequal(remoteAxes,fAxes)
+    fprintf('[success] robot reports %d axes as configured in block\n',fAxes);
+else
+    fprintf('[warning] block configured for %d axes but robot reports %d axes\n',fAxes,remoteAxes);
 end
 global dUpdated;
-dUpdated = zeros(numDoubles,1);
+dUpdated = zeros(fAxes,1);
 % end mdlInitializeSizes
 
 
@@ -235,19 +254,23 @@ sys = [];
 %=============================================================================
 %
 function sys=mdlUpdate(t,x,u)
-global numDoubles;
-global dPort;
+global keepAxes;
+global pos;
+global enc;
 global dUpdated;
-dBottle=yarp.Bottle;
-dBottle = dPort.read(false);
-if isequal(dBottle,[])
-    %disp 'wait';
-else
-    %fprintf('got bottle size: %d\n',dBottle.size);
-    for i=1:1:numDoubles
-       %fprintf('%f ',dBottle.get(i).asDouble);
-       dUpdated(i) = dBottle.get(i-1).asDouble;
-    end
+global remoteAxes;
+vEnc = yarp.DVector(remoteAxes);  % create a YARP vector of doubles the size of the number of axes
+enc.getEncoders(vEnc);
+for i=1:1:keepAxes
+    dUpdated(i) = vEnc.get(i-1);
+end
+%vPos = yarp.DVector;  % create a YARP vector of doubles
+%for i=1:1:keepAxes
+%    vPos.add(u(i));
+%end
+%pos.positionMove(vPos);
+for i=1:1:keepAxes
+    pos.positionMove(i-1,u(i));
 end
 sys = [];
 % end mdlUpdate
@@ -284,9 +307,8 @@ sys = t + sampleTime;
 %=============================================================================
 %
 function sys=mdlTerminate(t,x,u)
-global dPort;
-dPort.interrupt;
-dPort.close;
-disp '[success] called for port close'
+global dd;
+dd.close;
+disp '[success] called for device close'
 sys = [];
 % end mdlTerminate

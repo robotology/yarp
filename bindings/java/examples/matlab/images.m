@@ -6,7 +6,7 @@
 % handle it within matlab -- nat Sept 06
 
 %initialize YARP (it seems ok to call this more than once...)
-LoadYarp;
+yarp.matlab.LoadYarp;
 import yarp.BufferedPortImageRgb
 port=BufferedPortImageRgb;
 
@@ -20,7 +20,7 @@ yarpImage=port.read;
 h=yarpImage.height;
 w=yarpImage.width;
 %now we need to convert the yarpImage (a Java object) into a matlab matrix
-tool=YarpImageHelper(h, w);
+tool=yarp.matlab.YarpImageHelper(h, w);
 
 % convert to color image, for efficiency reasons this method returns
 % a two-dimensional matrix that needs to be 'unpacked'

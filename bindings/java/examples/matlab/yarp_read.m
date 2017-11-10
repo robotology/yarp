@@ -7,7 +7,7 @@
 % Write a bottle (quivalent to yarp write)
 % -nat
 
-LoadYarp;
+yarp.matlab.LoadYarp;
 
 done=0;
 
