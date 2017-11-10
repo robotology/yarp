@@ -24,6 +24,25 @@ namespace yarp {
       }
 }
 
+/**
+* @ingroup dev_impl_wrapper
+*
+* \section SDLJoypad Description of input parameters
+* \brief Device that reads inputs of Joypads compatible with the SDL library.
+*
+* Parameters accepted in the config argument of the open method:
+* |   Parameter name      | Type   | Units | Default Value | Required                                    | Description                               | Notes                                                                                                                                   |
+* |:---------------------:|:------:|:-----:|:-------------:|:-------------------------------------------:|:-----------------------------------------:|:---------------------------------------------------------------------------------------------------------------------------------------:|
+* | UseAllJoypadAsOne     | string |       |               | if there are more than one joypad connected | merge together multiple joypad            | set it to 1 to have all the connected joypad as one                                                                                     |
+* | DefaultJoystickNumber | string |       | will be asked | No                                          | select the id of the joypad to use        | important if there are more than one joypad and UseAllJoypadAsOne is setted to 0. if not present, a input will be requested to the user |
+* | sticks                | int    |       |               | Yes                                         | count of sticks to configure              | for each stick there must be a group called STICK<id here> with data on the axis to be configured as stickl                             |
+* | STICK[ID]             | group  |       |               | depending on 'sticks' parameter             | group containing axes data for this stick |                                                                                                                                         |
+* | axes                  | int    |       |               | yes                                         | axes count for this stick                 | set it for each stick in the proper stick group                                                                                         |
+* | axis[ID]_id           | int    |       |               | depending on axes parameter                 | axis id for current stick related axis    | set it for each stick in the proper stick group                                                                                         |
+* | invert_axis_[ID]      | bool   |       | false         | no                                          | invert the current axis                   | set it for each stick in the proper stick group                                                                                         |
+* | deadZone              | double |       | 0.0           | yes                                         | set the deadzone for this stick           | set it for each stick in the proper stick group                                                                                         |
+**/
+
 struct yarp::dev::SDLJoypadImpl::stick
 {
     std::vector<unsigned int>  axes_ids;
