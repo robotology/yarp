@@ -288,6 +288,8 @@ before_install:
   - if [ "$TRAVIS_OS_NAME" == "linux" ]; then ls -la /usr/lib/ccache; fi
   - if [ "$TRAVIS_OS_NAME" == "linux" ]; then which swig3.0; fi
   - if [ "$TRAVIS_OS_NAME" == "linux" ]; then swig3.0 -version; fi
+  - which javac
+  - javac -version
   - echo "--------------------  END SYSTEM INFORMATION  --------------------"
 
 

@@ -115,7 +115,7 @@ for lang in $SUPPORTED_LANGUAGES; do
     fi
     export SWIG_LIB=$swig_base/$swig_ver/share/swig/$swig_ver
     $swig_base/$swig_ver/bin/swig -swiglib
-    search_path="-DCMAKE_SYSTEM_PROGRAM_PATH=$swig_base/$swig_ver/bin -DCMAKE_SYSTEM_PREFIX_PATH=$swig_base/$swig_ver -DYARP_SPECIAL_SWIG=TRUE"
+    search_path="-DSWIG_EXECUTABLE=$swig_base/$swig_ver/bin/swig -DSWIG_DIR=$swig_base/$swig_ver -DSWIG_VERSION=$swig_ver"
     cd $YARP_ROOT
     mkdir -p bindings
     cd bindings
@@ -125,7 +125,6 @@ for lang in $SUPPORTED_LANGUAGES; do
     cd $dir
     echo "* In $PWD"
     ok=true
-    YARP_JAVA_FLAGS="-DPREPARE_CLASS_FILES=TRUE"
     YARP_PYTHON_FLAGS="-DCREATE_PYTHON_VERSION=2.7 -DPython_ADDITIONAL_VERSIONS=2.7" # Old swig versions don't work with new python
     lang_var=YARP_${lang}_FLAGS
     lang_flags=${!lang_var}

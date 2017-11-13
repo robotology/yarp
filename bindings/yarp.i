@@ -28,7 +28,7 @@
   %include <argcargv.i>
   %apply (int ARGC, char **ARGV) { (int argc, char *argv[]) }
 #elif defined (SWIGLUA)
-  %include "swiglib/lua/argcargv.i"
+  %include "lua/argcargv.i"
   %apply (int ARGC, char **ARGV) { (int argc, char *argv[]) }
 #endif
 
@@ -301,7 +301,7 @@ namespace yarp {
 %enddef
 
 #if defined( SWIGALLEGROCL )
-  %include "compat.h"
+  %include "allegro/compat.h"
 #endif
 
 // Define typemaps for Matrix before including it

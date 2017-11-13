@@ -104,9 +104,5 @@ include(YarpPackage)
 # of build.  See cmake/YarpDoc.cmake
 include(YarpDoc)
 
-# Make sure yarp.i and related source files get installed, to allow
-# bindings for other languages to be compiled from the build material.
-include(YarpBindingsSource)
-
 # add rule for uninstalling YARP
 include(AddUninstallTarget)

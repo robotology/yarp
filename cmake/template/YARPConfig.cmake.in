@@ -19,12 +19,13 @@ set(YARP_VERSION_ABI "@YARP_VERSION_ABI@")
 set(YARP_LIBRARIES "@YARP_LIBRARIES@")
 set(YARP_INCLUDE_DIRS "@PACKAGE_YARP_INCLUDE_DIRS@")
 set(YARP_DEFINES "@YARP_ALL_DEFINES@") # only needed if you use ACE directly
-set_and_check(YARP_BINDINGS "@PACKAGE_YARP_BINDINGS@")
 
 # Check if deprecated methods are built
 set(YARP_NO_DEPRECATED @YARP_NO_DEPRECATED@)
 if(YARP_NO_DEPRECATED)
   add_definitions("-DYARP_NO_DEPRECATED")
+else(YARP_NO_DEPRECATED)
+  set_and_check(YARP_BINDINGS "@PACKAGE_YARP_BINDINGS@")
 endif(YARP_NO_DEPRECATED)
 
 # Disable deprecated warnings, but add an option to enable it
