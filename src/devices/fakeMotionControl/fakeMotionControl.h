@@ -34,6 +34,7 @@
 #include <yarp/os/Bottle.h>
 #include <yarp/sig/Vector.h>
 #include <yarp/os/Semaphore.h>
+#include <yarp/os/RateThread.h>
 #include <yarp/dev/DeviceDriver.h>
 #include <yarp/dev/ControlBoardInterfaces.h>
 #include <yarp/dev/ControlBoardInterfacesImpl.h>
@@ -95,7 +96,7 @@ struct ImpedanceParameters
 
 class yarp::dev::FakeMotionControl :    public DeviceDriver,
 //                                         public DeviceResponder,
-                                        public yarp::os::Thread,
+                                        public yarp::os::RateThread,
                                         public IPidControlRaw,
                                         public IControlCalibration2Raw,
                                         public IAmplifierControlRaw,
@@ -235,9 +236,9 @@ private:
     double  *_ref_torques;          // for torque control.
     double  *_ref_currents;
     yarp::sig::Vector       current, nominalCurrent, maxCurrent, peakCurrent;
-    yarp::sig::Vector       pwm, pwmLimit, refpwm, supplyVoltage;
+    yarp::sig::Vector       pwm, pwmLimit, refpwm, supplyVoltage,last_velocity_command;
     yarp::sig::Vector pos, dpos, vel, speed, acc, loc, amp;
-    double lifetime;
+    double prev_time;
     bool opened;
 
     // debugging
@@ -264,7 +265,8 @@ public:
      */
     void resizeBuffers();
 
-    bool init(void);
+    virtual bool threadInit();
+    virtual void threadRelease();
 
     /////////   PID INTERFACE   /////////
     virtual bool setPidRaw(const PidControlTypeEnum& pidtype,int j, const Pid &pid) override;

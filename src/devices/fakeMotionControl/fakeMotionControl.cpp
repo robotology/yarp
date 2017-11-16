@@ -24,12 +24,30 @@ using namespace yarp::os::impl;
 
 // macros
 #define NEW_JSTATUS_STRUCT 1
+#define VELOCITY_WATCHDOG 0.1
 
-void FakeMotionControl::run() {
-    if (lifetime>=0) {
-        Time::delay(lifetime);   // fake device shall run on mutable clock
-        std::exit(0);
+void FakeMotionControl::run()
+{
+    for (int i=0;i <_njoints ;i++)
+    {
+        if (_controlModes[i] == VOCAB_CM_VELOCITY)
+        {
+            //increment joint position
+            if (this->_command_speeds[i]!=0)
+            {
+                double elapsed = yarp::os::Time::now()-prev_time;
+                double increment = _command_speeds[i]*elapsed;
+                pos[i]+=increment;
+            }
+
+            //velocity watchdog
+            if (yarp::os::Time::now()-last_velocity_command[i]>=VELOCITY_WATCHDOG)
+            {
+                this->_command_speeds[i]=0.0;
+            }
+        }
     }
+    prev_time = yarp::os::Time::now();
 }
 
 static inline bool NOT_YET_IMPLEMENTED(const char *txt)
@@ -105,6 +123,7 @@ void FakeMotionControl::resizeBuffers()
     refpwm.resize(_njoints);
     pwmLimit.resize(_njoints);
     supplyVoltage.resize(_njoints);
+    last_velocity_command.resize(_njoints);
 
     pos.zero();
     dpos.zero();
@@ -305,7 +324,8 @@ FakeMotionControl::FakeMotionControl() :
     ImplementPWMControl(this),
     ImplementMotor(this),
     ImplementAxisInfo(this),
-    _mutex(1)
+    _mutex(1),
+    RateThread(10.0)
 //     SAFETY_THRESHOLD(2.0)
 {
     verbose = VERY_VERBOSE;
@@ -316,9 +336,6 @@ FakeMotionControl::FakeMotionControl() :
 
     _controlModes = nullptr;
     _interactMode = nullptr;
-
-    lifetime = -1;
-    init();
 
     _gearbox       = nullptr;
 //     opened        = 0;
@@ -425,6 +442,29 @@ bool FakeMotionControl::initialised()
     return opened;
 }
 
+bool FakeMotionControl::threadInit()
+{
+    yTrace();
+    for(int i=0; i<_njoints; i++)
+    {
+        pwm[i]              = 33+i;
+        pwmLimit[i]         = (33+i)*10;
+        current[i]          = (33+i)*100;
+        maxCurrent[i]       = (33+i)*1000;
+        peakCurrent[i]      = (33+i)*2;
+        nominalCurrent[i]   = (33+i)*20;
+        supplyVoltage[i]    = (33+i)*200;
+        last_velocity_command[i] = -1;
+        _controlModes[i]    = VOCAB_CM_POSITION;
+        _maxJntCmdVelocity[i]=50.0;
+    }
+    prev_time = yarp::os::Time::now();
+    return true;
+}
+
+void FakeMotionControl::threadRelease()
+{
+}
 
 bool FakeMotionControl::open(yarp::os::Searchable &config)
 {
@@ -504,7 +544,9 @@ bool FakeMotionControl::open(yarp::os::Searchable &config)
     ImplementPWMControl::initialize(_njoints, _axisMap, _dutycycleToPWM);
     ImplementCurrentControl::initialize(_njoints, _axisMap, _ampsToSensor);
 
-    if(!init() )
+    //start the rateThread
+    bool init = this->start();
+    if(!init)
     {
         yError() << "FakeMotionControl::open() has an error in call of FakeMotionControl::init() for board" ;
         return false;
@@ -516,8 +558,8 @@ bool FakeMotionControl::open(yarp::os::Searchable &config)
             yDebug() << "FakeMotionControl::init() has successfully initted board ";
         }
     }
-
     opened = true;
+
     return true;
 }
 
@@ -1347,24 +1389,6 @@ bool FakeMotionControl::fromConfig(yarp::os::Searchable &config)
 }
 
 
-bool FakeMotionControl::init()
-{
-    yTrace();
-    for(int i=0; i<_njoints; i++)
-    {
-        pwm[i]              = 33+i;
-        pwmLimit[i]         = (33+i)*10;
-        current[i]          = (33+i)*100;
-        maxCurrent[i]       = (33+i)*1000;
-        peakCurrent[i]      = (33+i)*2;
-        nominalCurrent[i]   = (33+i)*20;
-        supplyVoltage[i]    = (33+i)*200;
-    }
-    return true;
-}
-
-
-
 bool FakeMotionControl::close()
 {
     yTrace() << " FakeMotionControl::close()";
@@ -1770,6 +1794,7 @@ bool FakeMotionControl::velocityMoveRaw(int j, double sp)
           yError() << "velocityMoveRaw: skipping command because board "  << " joint " << j << " is not in VOCAB_CM_VELOCITY mode";
     }
     _command_speeds[j] = sp;
+    last_velocity_command[j]=yarp::os::Time::now();
     return true;
 }
 
@@ -2185,7 +2210,14 @@ bool FakeMotionControl::setControlModeRaw(const int j, const int _mode)
     if(verbose >= VERY_VERBOSE)
         yTrace() << "j: " << j << " mode: " << yarp::os::Vocab::decode(_mode);
 
-    _controlModes[j] = _mode;
+    if (_mode==VOCAB_CM_FORCE_IDLE)
+    {
+        _controlModes[j] = VOCAB_CM_IDLE;
+    }
+    else
+    {
+        _controlModes[j] = _mode;
+    }
     return true;
 }
 
