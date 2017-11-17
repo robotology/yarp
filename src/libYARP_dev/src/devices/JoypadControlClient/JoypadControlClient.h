@@ -24,7 +24,7 @@ namespace yarp
 class yarp::dev::JoypadControlWatchdog : public yarp::os::RateThread
 {
 public:
-    JoypadControlWatchdog() : RateThread(250) {};
+    JoypadControlWatchdog() : RateThread(250) {}
     virtual ~JoypadControlWatchdog() = default;
 
 
@@ -64,7 +64,7 @@ private:
 
 public:
     JoypadControlClient();
-    virtual ~JoypadControlClient() {};
+    virtual ~JoypadControlClient() {}
 
     //rateThread
 

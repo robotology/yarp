@@ -17,11 +17,10 @@
 namespace yarp {
     namespace dev {
         class  SDLJoypad;
-        namespace SDLJoypadImpl
-        {
+        namespace SDLJoypadImpl {
             struct stick;
         }
-      }
+    }
 }
 
 /**
