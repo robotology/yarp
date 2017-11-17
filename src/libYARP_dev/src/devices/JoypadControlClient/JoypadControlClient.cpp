@@ -328,10 +328,10 @@ bool JoypadControlClient::getRawTrackball(unsigned int trackball_id, yarp::sig::
     else
     {
         LockGuard l(m_trackballPort.mutex);
-        if(trackball_id < m_trackballPort.storage.size()/2)
+        if(trackball_id < m_trackballPort.storage.size() / 2)
         {
-            value.push_back(m_trackballPort.storage[trackball_id*2]);
-            value.push_back(m_trackballPort.storage[trackball_id*2 + 1]);
+            value.push_back(m_trackballPort.storage[trackball_id * 2]);
+            value.push_back(m_trackballPort.storage[trackball_id * 2 + 1]);
             return true;
         }
         else
@@ -522,8 +522,8 @@ bool JoypadControlClient::getRawTouch(unsigned int touch_id, yarp::sig::Vector& 
         LockGuard l(m_touchPort.mutex);
         if(touch_id < m_touchPort.storage.size()/2)
         {
-            value.push_back(m_touchPort.storage[touch_id*2]);
-            value.push_back(m_touchPort.storage[touch_id*2 + 1]);
+            value.push_back(m_touchPort.storage[touch_id * 2]);
+            value.push_back(m_touchPort.storage[touch_id * 2 + 1]);
             return true;
         }
         else
