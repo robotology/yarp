@@ -11,6 +11,19 @@
 #include <JoypadControlNetUtils.h>
 #include <yarp/os/RateThread.h>
 
+/**
+* @ingroup dev_impl_wrapper
+*
+* \section JoypadControlClient Description of input parameters
+* \brief joypad input network wrapper on client side
+*
+* Parameters accepted in the config argument of the open method:
+* |   Parameter name  | Type   | Units | Default Value | Required  | Description                                  | Notes |
+* |:-----------------:|:------:|:-----:|:-------------:|:---------:|:--------------------------------------------:|:-----:|
+* | local             | string |       |               | yes       | name for the local port to open              |       |
+* | remote            | string |       |               | yes       | name of the remote server port to connect to |       |
+**/
+
 #define DEFAULT_THREAD_PERIOD 10
 namespace yarp
 {
