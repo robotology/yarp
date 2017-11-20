@@ -7,8 +7,8 @@ rtf_add_plugin(NetworkClockTest SOURCES NetworkClockTest.cpp)
 # add_library(NetworkClockTest MODULE NetworkClockTest.cpp)
 target_link_libraries(NetworkClockTest YARP_init YARP_OS YARP_rtf ${RTF_LIBRARIES})
 rtf_add_suite(NAME NetworkClockTest
-              FIXTURE rtf_fixturemanager_yarpserver --silent
-              FIXTURE rtf_fixturemanager_yarpmanager --fixture ${CMAKE_CURRENT_SOURCE_DIR}/fixture-network-clock.xml
-              TEST NetworkClockTest TYPE dll
+              RTF_FIXTURE rtf_fixturemanager_yarpserver --silent
+              RTF_FIXTURE rtf_fixturemanager_yarpmanager --fixture ${CMAKE_CURRENT_SOURCE_DIR}/fixture-network-clock.xml
+              RTF_TEST NetworkClockTest TYPE dll
               VERBOSE)
 set_tests_properties(NetworkClockTest PROPERTIES TIMEOUT 30.0)
