@@ -10,10 +10,6 @@ include(CheckCXXCompilerFlag)
 include(GNUInstallDirs)
 
 if(NOT YARP_VERSION)
-  if(YARP_NO_DEPRECATED) # since YARP 2.3.72
-    message(FATAL_ERROR "Building YARP bindings outside main YARP build folder is not supported")
-  endif()
-  message(WARNING "Building YARP bindings outside main YARP build folder is deprecated and it will be removed soon")
 
   #############################################################################
   ## Discourage inplace compilation
@@ -73,7 +69,7 @@ endforeach()
 
 #############################################################################
 
-if (YARP_VERSION AND NOT YARP_NO_DEPRECATED) #since YARP 2.3.72
+if (YARP_VERSION)
   # Make sure yarp.i and related source files get installed, to allow
   # bindings for other languages to be compiled from the build material.
 
