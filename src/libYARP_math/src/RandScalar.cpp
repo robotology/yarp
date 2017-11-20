@@ -13,29 +13,28 @@
 #include <cstdio>
 #include <cmath>
 
-// implementation of Marsenne Twister
-#include <yarp/math/impl/mt.h>
+// implementation of Marsenne Twister from C++11's library
+#include <random>
 
 using namespace yarp::sig;
 using namespace yarp::math;
 
-inline MersenneTwister *implementation(void *t)
+inline std::mt19937 *implementation(void *t)
 {
-    return static_cast<MersenneTwister  *>(t);
+    return static_cast<std::mt19937 *>(t);
 }
 
 RandScalar::RandScalar()
 {
-    impl = new MersenneTwister;
-
+    impl = new std::mt19937();
     init();
 }
 
 RandScalar::RandScalar(int s) :
     seed(s)
 {
-    impl = new MersenneTwister;
-    implementation(impl)->init_genrand(seed);
+    impl = new std::mt19937;
+    implementation(impl)->seed(seed);
 }
 
 RandScalar::~RandScalar()
@@ -45,14 +44,14 @@ RandScalar::~RandScalar()
 
 double RandScalar::get()
 {
-    return implementation(impl)->random();
+    std::uniform_real_distribution<double> dist(0.0, 1.0);
+    return dist(*(implementation(impl)));
 }
 
 double RandScalar::get(double min, double max)
 {
-    double ret=implementation(impl)->random();
-    ret=ret*(max-min)+min;
-    return ret;
+    std::uniform_real_distribution<double> dist(min, max);
+    return dist(*(implementation(impl)));
 }
 
 // initialize with a call to "time"
@@ -66,5 +65,5 @@ void RandScalar::init()
 void RandScalar::init(int s)
 {
     seed=s;
-    implementation(impl)->init_genrand(seed);
+    implementation(impl)->seed(seed);
 }
