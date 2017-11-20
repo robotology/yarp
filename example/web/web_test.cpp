@@ -78,7 +78,7 @@ int main(int argc, char *argv[]) {
     Responder responder;
     server.setReader(responder);
 
-    Contact(name);
+    Contact contact(name);
     if (port_number!=0) {
         contact.setSocket("", "", port_number);
     }
@@ -95,7 +95,9 @@ int main(int argc, char *argv[]) {
         }
         Bottle push;
         push.addString("web");
-        ConstString div = ConstString("<div>")+ConstString::toString(at)+
+        std::stringstream ss;
+        ss << at;
+        ConstString div = ConstString("<div>")+ss.str()+
             " potatoes</div>";
         push.addString(div);
         server.write(push);
