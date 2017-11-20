@@ -17,7 +17,7 @@ using namespace yarp::math;
 
 inline RandScalar *implementation(void *t)
 {
-    return static_cast<RandScalar  *>(t);
+    return static_cast<RandScalar*>(t);
 }
 
 RandnScalar::RandnScalar()
@@ -69,7 +69,7 @@ double RandnScalar::get(double u, double sigma)
     }
 }
 
-inline void RandnScalar::boxMuller()
+void RandnScalar::boxMuller()
 {
     double x1 = 0.0;
     double x2 = 0.0;

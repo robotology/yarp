@@ -62,7 +62,8 @@ public:
             std+=(rv[k]-average)*(rv[k]-average);
         }
 
-        std=sqrt(std/(N-1));
+        std/=N-1;
+        std=sqrt(std);
 
         printf("Average: %lf\n", average);
         printf("Std: %lf\n", std);
