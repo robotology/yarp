@@ -1,5 +1,5 @@
 # Copyright: (C) 2009 RobotCub Consortium
-# Authors: Paul Fitzpatrick, Arjan Gijsberts, Lorenzo Natale, Fabien Benureau, Stephane Lallee, Ali Paikan, 
+# Authors: Paul Fitzpatrick, Arjan Gijsberts, Lorenzo Natale, Fabien Benureau, Stephane Lallee, Ali Paikan,
 #          Francesco Romano, Daniele Domenichelli
 # CopyPolicy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
 
@@ -22,7 +22,7 @@ if(NOT YARP_VERSION)
       endif()
     endif()
   endif()
-  
+
   # Find YARP for bindings-only builds
   find_package(YARP REQUIRED)
   find_package(SWIG 3.0 REQUIRED)
@@ -92,22 +92,31 @@ if (YARP_VERSION)
 
 endif()
 
+#############################################################################
+## Allow passing extra flags to swig (e.g. -Wall)
+
+set(SWIG_EXTRA_FLAGS "" CACHE STRING "Extra flags passed to swig commands (e.g. -Wall)")
+mark_as_advanced(SWIG_EXTRA_FLAGS)
 
 #############################################################################
 
 if(YARP_COMPILE_BINDINGS)
+  unset(SWIG_COMMON_FLAGS)
 
   #############################################################################
   ## Do not build deprecated functions when disabled
 
   if(YARP_NO_DEPRECATED)
-    set(SWIG_COMMON_FLAGS "-DYARP_NO_DEPRECATED")
+    list(APPEND SWIG_COMMON_FLAGS "-DYARP_NO_DEPRECATED")
   endif()
+
+  # Append user flags
+  list(APPEND SWIG_COMMON_FLAGS ${SWIG_EXTRA_FLAGS})
 
   #############################################################################
   # Include SWIG use file
   include(${SWIG_USE_FILE})
-  
+
   if(YARP_VERSION)
      get_property(YARP_INCLUDE_DIRS GLOBAL PROPERTY YARP_TREE_INCLUDE_DIRS)
    endif()

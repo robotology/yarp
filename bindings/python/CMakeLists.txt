@@ -6,7 +6,7 @@
 # this is set in the parent directory, but for some reason it does not get inherited
 set_source_files_properties(${SWIG_BINDINGS_SOURCE_FILE} PROPERTIES CPLUSPLUS ON)
 
-set(CMAKE_SWIG_FLAGS "-Wall;-module;yarp;-threads;${SWIG_COMMON_FLAGS}")
+set(CMAKE_SWIG_FLAGS "-module;yarp;-threads;${SWIG_COMMON_FLAGS}")
 if(CREATE_PYTHON_VERSION)
   message(WARNING "CREATE_PYTHON_VERSION was renamed YARP_USE_PYTHON_VERSION")
   set(YARP_USE_PYTHON_VERSION "${CREATE_PYTHON_VERSION}" CACHE STRING "Specify python version to use" )

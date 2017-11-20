@@ -5,7 +5,7 @@
 # this is set in the parent directory, but for some reason it does not get inherited
 set_source_files_properties(${SWIG_BINDINGS_SOURCE_FILE} PROPERTIES CPLUSPLUS ON)
 
-set(CMAKE_SWIG_FLAGS "-Wall;-module;cyarp;${SWIG_COMMON_FLAGS}")
+set(CMAKE_SWIG_FLAGS "-module;cyarp;${SWIG_COMMON_FLAGS}")
 swig_add_library(yarp_chicken
                  LANGUAGE chicken
                  SOURCES ${SWIG_BINDINGS_SOURCE_FILE})

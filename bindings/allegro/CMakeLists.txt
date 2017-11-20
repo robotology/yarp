@@ -14,7 +14,7 @@ set(allegro_PROJ_FILE allegro/yarp.asd)
 set(allegro_SRC_FILE yarp.cl)
 set(allegro_LIBS yarp-allegro.so)
 
-set(CMAKE_SWIG_FLAGS "-Wall;-module;yarp;-identifier-converter;lispify;${SWIG_COMMON_FLAGS}")
+set(CMAKE_SWIG_FLAGS "-module;yarp;-identifier-converter;lispify;${SWIG_COMMON_FLAGS}")
 swig_add_library(yarp_allegro
                  LANGUAGE allegrocl
                  SOURCES ${SWIG_BINDINGS_SOURCE_FILE})
