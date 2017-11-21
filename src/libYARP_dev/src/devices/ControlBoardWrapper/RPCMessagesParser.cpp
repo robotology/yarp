@@ -403,6 +403,9 @@ YARP_WARNING_POP
                     if (ControlBoardWrapper_p->verbose())
                         yDebug("getControlModes\n");
                     int *p = new int[controlledJoints];
+                    for (int i = 0; i < controlledJoints; ++i) {
+                        p[i] = -1;
+                    }
                     if(rpc_iCtrlMode)
                         *ok = rpc_iCtrlMode->getControlModes(p);
 
