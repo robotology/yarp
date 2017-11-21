@@ -31,12 +31,11 @@ TestFrameGrabber::TestFrameGrabber() :
     rnd(0),
     freq(30),
     period(1/freq),
-    // just for nostalgia
     first(0),
-    prev(0),
-    mode(0),
     horizontalFov(0.0),
     verticalFov(0.0),
+    prev(0),
+    mode(0),
     use_bayer(false),
     use_mono(false),
     mirror(false)

@@ -75,8 +75,8 @@ protected:
 
 public:
     laserHokuyo(int period=20) : RateThread(period),
-        mutex(1),
         pSerial(YARP_NULLPTR),
+        mutex(1),
         cardId(0),
         period(period),
         sensorsNum(0),
