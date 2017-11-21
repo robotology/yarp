@@ -47,23 +47,28 @@ class yarp::dev::FfmpegGrabber : public IFrameGrabberImage,
 {
 public:
 
-    FfmpegGrabber() {
-        m_h = m_w = 0;
-        m_channels = m_rate = 0;
-        pFormatCtx = NULL;
-        pFormatCtx2 = NULL;
-        pAudioFormatCtx = NULL;
-        packet.data = NULL;
-        active = false;
-        startTime = 0;
-        _hasAudio = _hasVideo = false;
-        system_resource = NULL;
-        needRateControl = false;
-        shouldLoop = true;
-        pace = 1;
-        imageSync = false;
-        formatParamsVideo = NULL;
-        formatParamsAudio = NULL;
+    FfmpegGrabber() :
+        system_resource(YARP_NULLPTR),
+        formatParamsVideo(YARP_NULLPTR),
+        formatParamsAudio(YARP_NULLPTR),
+        pFormatCtx(YARP_NULLPTR),
+        pFormatCtx2(YARP_NULLPTR),
+        pAudioFormatCtx(YARP_NULLPTR),
+        active(false),
+        startTime(0),
+        _hasAudio(false),
+        _hasVideo(false),
+        needRateControl(false),
+        shouldLoop(true),
+        pace(1),
+        imageSync(false),
+        m_w(0),
+        m_h(0),
+        m_channels(0),
+        m_rate(0),
+        m_capture(YARP_NULLPTR)
+    {
+        memset(&packet,0,sizeof(packet));
     }
 
     virtual bool open(yarp::os::Searchable & config) override;

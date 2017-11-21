@@ -49,7 +49,8 @@ private:
     int bx, by;
     int w, h;
     unsigned long rnd;
-    double period, freq;
+    double freq;
+    double period;
     double first;
     double horizontalFov,verticalFov;
     double prev;

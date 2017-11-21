@@ -74,7 +74,21 @@ protected:
     yarp::sig::Vector laser_data;
 
 public:
-    laserHokuyo(int period=20) : RateThread(period),mutex(1)
+    laserHokuyo(int period=20) : RateThread(period),
+        mutex(1),
+        pSerial(YARP_NULLPTR),
+        cardId(0),
+        period(period),
+        sensorsNum(0),
+        start_position(0),
+        end_position(0),
+        min_angle(0.0),
+        max_angle(0.0),
+        error_codes(0),
+        internal_status(0),
+        info(""),
+        device_status(Device_status::DEVICE_OK_STANBY),
+        laser_mode(Laser_mode_type::FAKE_MODE)
     {}
 
 
