@@ -17,7 +17,18 @@ using namespace yarp::sig;
 using namespace std;
 
 
-StreamingMessagesParser::StreamingMessagesParser() {}
+StreamingMessagesParser::StreamingMessagesParser() :
+        stream_IPosCtrl(nullptr),
+        stream_IPosCtrl2(nullptr),
+        stream_IPosDirect(nullptr),
+        stream_IVel(nullptr),
+        stream_IVel2(nullptr),
+        stream_ITorque(nullptr),
+        stream_IPWM(nullptr),
+        stream_ICurrent(nullptr),
+        stream_nJoints(0)
+{
+}
 
 void StreamingMessagesParser::init(ControlBoardWrapper *x) {
     stream_nJoints = 0;
