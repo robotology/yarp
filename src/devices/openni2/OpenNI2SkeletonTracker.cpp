@@ -12,15 +12,23 @@
 
 OpenNI2SkeletonTracker::SensorStatus *OpenNI2SkeletonTracker::sensorStatus;
 
-OpenNI2SkeletonTracker::OpenNI2SkeletonTracker(bool withTracking, bool withColorOn, bool withRgbMirrorOn, bool withDepthMirrorOn, double minConf, bool withOniPlayback, string withFileDevice, bool withOniRecord, string withOniOutputFile, bool withLoop, bool withFrameSync, bool withImageRegistration, bool prMode, int depthMode, int colorMode)
+OpenNI2SkeletonTracker::OpenNI2SkeletonTracker(bool withTracking, bool withColorOn, bool withRgbMirrorOn, bool withDepthMirrorOn, double minConf, bool withOniPlayback, string withFileDevice, bool withOniRecord, string withOniOutputFile, bool withLoop, bool withFrameSync, bool withImageRegistration, bool prMode, int depthMode, int colorMode) :
+    userTracking(withTracking),
+    colorON(withColorOn),
+    rgbMirrorON(withRgbMirrorOn),
+    depthMirrorON(withDepthMirrorOn),
+    oniPlayback(withOniPlayback),
+    oniRecord(withOniRecord),
+    loop(withLoop),
+    frameSync(withFrameSync),
+    imageRegistration(withImageRegistration),
+    printMode(prMode),
+    minConfidence(minConf),
+    depthVideoMode(DEFAULT_DEPTH_MODE),
+    colorVideoMode(DEFAULT_COLOR_MODE),
+    pDevice(nullptr),
+    playbackControl(nullptr)
 {
-    userTracking= withTracking;
-    colorON = withColorOn;
-    rgbMirrorON = withRgbMirrorOn;
-    depthMirrorON = withDepthMirrorOn;
-    colorVideoMode=DEFAULT_COLOR_MODE;
-    depthVideoMode=DEFAULT_DEPTH_MODE;
-    
     if (colorMode <= 11 && colorMode >= 0){
     colorVideoMode=colorMode;
     }
@@ -29,9 +37,6 @@ OpenNI2SkeletonTracker::OpenNI2SkeletonTracker(bool withTracking, bool withColor
     depthVideoMode=depthMode;
     }
     
-    minConfidence = minConf;
-    oniPlayback = withOniPlayback;
-    oniRecord = withOniRecord;
     if (oniPlayback) {
         fileDevice = withFileDevice;
     }
@@ -40,10 +45,6 @@ OpenNI2SkeletonTracker::OpenNI2SkeletonTracker(bool withTracking, bool withColor
          oniOutputFile = withOniOutputFile;
     }
     
-    loop = withLoop;
-    frameSync = withFrameSync;
-    printMode = prMode;
-    imageRegistration = withImageRegistration;
     init();
     initVars();
 }

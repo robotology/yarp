@@ -85,14 +85,28 @@ protected:
     std::uniform_real_distribution<>* m_dis;
 
 public:
-    FakeLaser(int period = 20) : RateThread(period), mutex(1)
+    FakeLaser(int period = 20) : RateThread(period),
+        m_test_mode(test_mode_t::NO_OBSTACLES),
+        m_loc_mode(localization_mode_t::LOC_NOT_SET),
+        mutex(1),
+        period(period),
+        sensorsNum(0),
+        min_angle(0.0),
+        max_angle(0.0),
+        min_distance(0.0),
+        max_distance(0.0),
+        resolution(0.0),
+        m_loc_port(nullptr),
+        m_pLoc(nullptr),
+        m_iLoc(nullptr),
+        m_loc_x(0.0),
+        m_loc_y(0.0),
+        m_loc_t(0.0),
+        device_status(Device_status::DEVICE_OK_STANBY)
     {
         m_rd = new std::random_device;
         m_gen = new std::mt19937((*m_rd)());
         m_dis = new std::uniform_real_distribution<>(0, 0.01);
-        m_loc_port = 0;
-        m_pLoc = 0;
-        m_iLoc = 0;
     }
     
     ~FakeLaser()

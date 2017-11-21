@@ -13,8 +13,9 @@ using namespace std;
 using namespace yarp::dev;
 
 FakeAnalogSensor::FakeAnalogSensor(int period) : RateThread(period),
-                                                 mutex(1),
-                                                 status(IAnalogSensor::AS_OK)
+        mutex(1),
+        channelsNum(0),
+        status(IAnalogSensor::AS_OK)
 {
     yTrace();
     timeStamp = yarp::os::Time::now();

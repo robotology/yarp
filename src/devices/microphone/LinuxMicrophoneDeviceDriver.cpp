@@ -26,9 +26,10 @@ using namespace yarp::os;
 using namespace yarp::dev;
 
 
-MicrophoneDeviceDriver::MicrophoneDeviceDriver() {
-    dsp = -1;
-}
+MicrophoneDeviceDriver::MicrophoneDeviceDriver() :
+    system_resources(nullptr),
+    dsp(-1)
+{}
 
 MicrophoneDeviceDriver::~MicrophoneDeviceDriver() {
     close();

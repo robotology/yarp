@@ -186,7 +186,18 @@ protected:
     yarp::sig::Vector laser_data;
 
 public:
-    RpLidar(int period = 10) : RateThread(period)
+    RpLidar(int period = 10) : RateThread(period),
+        pSerial(nullptr),
+        sensorsNum(0),
+        min_angle(0.0),
+        max_angle(0.0),
+        min_distance(0.0),
+        max_distance(0.0),
+        resolution(0.0),
+        clip_max_enable(false),
+        clip_min_enable(false),
+        do_not_clip_infinity_enable(false),
+        device_status(Device_status::DEVICE_OK_STANBY)
     {
         buffer = new rpLidarCircularBuffer(20000);
     }

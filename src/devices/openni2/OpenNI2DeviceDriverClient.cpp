@@ -7,7 +7,13 @@
 
 #include "OpenNI2DeviceDriverClient.h"
 
-yarp::dev::OpenNI2DeviceDriverClient::OpenNI2DeviceDriverClient(){}
+yarp::dev::OpenNI2DeviceDriverClient::OpenNI2DeviceDriverClient() :
+    outPort(nullptr),
+    inUserSkeletonPort(nullptr),
+    inDepthFramePort(nullptr),
+    inImageFramePort(nullptr),
+    skeletonData(nullptr)
+{}
 
 /*
  * GenericYarp

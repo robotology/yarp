@@ -25,7 +25,16 @@ using namespace std;
 using namespace yarp::os;
 using namespace yarp::dev;
 
-BoschIMU::BoschIMU() : RateThread(20), checkError(false)
+BoschIMU::BoschIMU() : RateThread(20),
+    verbose(false),
+    status(0),
+    nChannels(12),
+    timeStamp(0.0),
+    timeLastReport(0.0),
+    checkError(false),
+    fd_ser(0),
+    totMessagesRead(0),
+    errs({0,0,0,0})
 {
     data.resize(12);
     data.zero();
@@ -33,12 +42,6 @@ BoschIMU::BoschIMU() : RateThread(20), checkError(false)
     data_tmp.zero();
     errorCounter.resize(11);
     errorCounter.zero();
-    totMessagesRead = 0;
-    nChannels = 12;
-    errs.acceError = 0;
-    errs.gyroError = 0;
-    errs.magnError = 0;
-    errs.quatError = 0;
 }
 
 BoschIMU::~BoschIMU() { }

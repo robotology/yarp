@@ -22,22 +22,24 @@ using namespace yarp::sig::draw;
 #define VOCAB_RAND VOCAB4('r','a','n','d')
 #define VOCAB_NONE VOCAB4('n','o','n','e')
 #define VOCAB_GRID_MULTISIZE VOCAB4('s','i','z','e')
-TestFrameGrabber::TestFrameGrabber() {
-    ct = 0;
-    freq = 30;
-    period = 1/freq;
-    // just for nostalgia
-    w = 128;
-    h = 128;
-    first = 0;
-    prev = 0;
-    rnd = 0;
-    use_bayer = false;
-    use_mono = false;
-    mirror=false;
-    horizontalFov=0.0;
-    verticalFov=0.0;
-}
+TestFrameGrabber::TestFrameGrabber() :
+    ct(0),
+    bx(0),
+    by(0),
+    w(128),
+    h(128),
+    rnd(0),
+    freq(30),
+    period(1/freq),
+    first(0),
+    horizontalFov(0.0),
+    verticalFov(0.0),
+    prev(0),
+    mode(0),
+    use_bayer(false),
+    use_mono(false),
+    mirror(false)
+{}
 
 
 bool TestFrameGrabber::close() {

@@ -55,7 +55,17 @@ public:
      *
      */
     OpenCVGrabber() : IFrameGrabberImage(), DeviceDriver(),
-                      m_w(0), m_h(0), m_cap() { ; }
+        m_w(0),
+        m_h(0),
+        m_loop(false),
+        m_saidSize(false),
+        m_saidResize(false),
+        fromFile(false),
+        m_cap(),
+        m_transpose(false),
+        m_flip_x(false),
+        m_flip_y(false)
+    {}
 
     /** Destroy an OpenCV image grabber. */
     virtual ~OpenCVGrabber() { ; }
