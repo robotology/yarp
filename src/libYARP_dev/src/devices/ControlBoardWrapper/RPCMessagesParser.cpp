@@ -2862,7 +2862,33 @@ bool RPCMessagesParser::initialize()
     return ok;
 }
 
-RPCMessagesParser::RPCMessagesParser() {}
+RPCMessagesParser::RPCMessagesParser() :
+        ControlBoardWrapper_p(YARP_NULLPTR),
+        rpc_IPid(YARP_NULLPTR),
+        rpc_IPosCtrl(YARP_NULLPTR),
+        rpc_IPosCtrl2(YARP_NULLPTR),
+        rpc_IPosDirect(YARP_NULLPTR),
+        rpc_IVelCtrl(YARP_NULLPTR),
+        rpc_IVelCtrl2(YARP_NULLPTR),
+        rpc_IEncTimed(YARP_NULLPTR),
+        rpc_IMotEnc(YARP_NULLPTR),
+        rcp_IAmp(YARP_NULLPTR),
+        rcp_Ilim2(YARP_NULLPTR),
+        rpc_ITorque(YARP_NULLPTR),
+        rpc_iCtrlMode(YARP_NULLPTR),
+        rpc_iCtrlMode2(YARP_NULLPTR),
+        rpc_AxisInfo(YARP_NULLPTR),
+        rpc_IRemoteCalibrator(YARP_NULLPTR),
+        rpc_Icalib2(YARP_NULLPTR),
+        rpc_IImpedance(YARP_NULLPTR),
+        rpc_IInteract(YARP_NULLPTR),
+        rpc_IMotor(YARP_NULLPTR),
+        rpc_IVar(YARP_NULLPTR),
+        rpc_ICurrent(YARP_NULLPTR),
+        rpc_IPWM(YARP_NULLPTR),
+        controlledJoints(0)
+{
+}
 
 void RPCMessagesParser::init(ControlBoardWrapper *x)
 {
