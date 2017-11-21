@@ -454,6 +454,7 @@ YARP_WARNING_POP
                     for(int i=0; i<n_joints; i++)
                     {
                         js[i] = lIn.get(i).asInt();
+                        modes[i] = -1;
                     }
                     if(rpc_iCtrlMode2)
                         *ok = rpc_iCtrlMode2->getControlModes(n_joints, js, modes);
