@@ -12,6 +12,7 @@
 
 #include <csetjmp>
 #include <cstdio>
+#include <cstring>
 
 #if defined(_WIN32)
 #define INT32 long  // jpeg's definition
@@ -123,7 +124,10 @@ public:
     MjpegDecompressionHelper() :
             active(false),
             readEnvelopeCallback(NULL),
-            readEnvelopeCallbackData(NULL) {
+            readEnvelopeCallbackData(NULL)
+    {
+        memset(&cinfo, 0, sizeof(jpeg_decompress_struct));
+        memset(&jerr, 0, sizeof(net_error_mgr));
     }
 
     bool setReadEnvelopeCallback(yarp::os::InputStream::readEnvelopeCallbackType callback,
