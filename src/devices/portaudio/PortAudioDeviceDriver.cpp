@@ -9,7 +9,9 @@
 
 #include <cstdio>
 #include <cstdlib>
+#include <cstring>
 #include <portaudio.h>
+
 
 #include <yarp/os/Time.h>
 
@@ -121,18 +123,22 @@ static int bufferIOCallback( const void *inputBuffer, void *outputBuffer,
     return paAbort;
 }
 
-PortAudioDeviceDriver::PortAudioDeviceDriver()
+PortAudioDeviceDriver::PortAudioDeviceDriver() :
+    stream(0),
+    err(paNoError),
+    i(0),
+    numSamples(0),
+    numBytes(0),
+    system_resource(NULL),
+    numChannels(0),
+    frequency(0),
+    loopBack(false),
+    renderMode(RENDER_APPEND)
 {
-    system_resource = NULL;
-    numSamples = 0;
-    numChannels = 0;
-    loopBack = false;
-    frequency = 0;
-    err = paNoError;
-    dataBuffers.playData = 0;
-    dataBuffers.recData = 0;
-    renderMode = RENDER_APPEND;
-    stream = 0;
+    memset(&inputParameters, 0, sizeof(PaStreamParameters));
+    memset(&outputParameters, 0, sizeof(PaStreamParameters));
+    memset(&dataBuffers, 0, sizeof(circularDataBuffers));
+    memset(&driverConfig, 0, sizeof(PortAudioDeviceDriverSettings));
 }
 
 PortAudioDeviceDriver::~PortAudioDeviceDriver()
