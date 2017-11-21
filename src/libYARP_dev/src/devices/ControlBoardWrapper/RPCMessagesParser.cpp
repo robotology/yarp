@@ -750,8 +750,9 @@ void RPCMessagesParser::handleInteractionModeMsg(const yarp::os::Bottle& cmd,
                     modeList  = cmd.get(5).asList();
                     if( (jointList->size() != n_joints) || (modeList->size() != n_joints) )
                     {
-                    if (ControlBoardWrapper_p->verbose())
-                        yError("Received an invalid setInteractionMode message. Size of vectors doesn´t match\n");
+                        if (ControlBoardWrapper_p->verbose()) {
+                            yError("Received an invalid setInteractionMode message. Size of vectors doesn´t match\n");
+                        }
                         *ok = false;
                         break;
                     }
