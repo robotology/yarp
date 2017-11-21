@@ -468,6 +468,9 @@ YARP_WARNING_POP
                         b.addVocab(modes[i]);
                     }
 
+                    delete js[];
+                    delete modes[];
+
                     //yDebugf("Returning %d\n", p);
                     *rec=true;
                 }
