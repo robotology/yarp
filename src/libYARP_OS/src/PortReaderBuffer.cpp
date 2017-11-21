@@ -565,9 +565,10 @@ bool PortReaderBufferBase::acceptObjectBase(PortReader *obj,
     }
     bool ok = true;
     if (ok) {
+        HELPER(implementation).stateSema.wait();
+        reader = HELPER(implementation).get();
         reader->setExternal(obj, wrapper);
 
-        HELPER(implementation).stateSema.wait();
         bool pruned = false;
         if (HELPER(implementation).ct>0&&prune) {
             PortReaderPacket *readerPacket =
@@ -587,6 +588,7 @@ bool PortReaderBufferBase::acceptObjectBase(PortReader *obj,
         //YARP_ERROR(Logger::get(), ">>>>>>>>>>>>>>>>> adding data");
     } else {
         HELPER(implementation).stateSema.wait();
+        reader = HELPER(implementation).get();
         HELPER(implementation).pool.addInactivePacket(reader);
         HELPER(implementation).stateSema.post();
         //YARP_ERROR(Logger::get(), ">>>>>>>>>>>>>>>>> skipping data");
