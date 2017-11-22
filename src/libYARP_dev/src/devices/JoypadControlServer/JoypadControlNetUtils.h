@@ -23,12 +23,16 @@ struct yarp::dev::JoypadControl::LoopablePort
     bool                  valid;
     unsigned int          count;
     yarp::os::ConstString name;
+    yarp::os::Contactable* contactable;
+
     virtual ~LoopablePort(){}
-    LoopablePort():valid(false),count(0){}
+
+    LoopablePort() : valid(false),
+                     count(0),
+                     contactable(YARP_NULLPTR)
+    {}
 
     virtual void useCallback() = 0;
-
-    yarp::os::Contactable* contactable;
 };
 
 template <typename T>
