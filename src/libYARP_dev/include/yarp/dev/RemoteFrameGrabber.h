@@ -596,11 +596,19 @@ public:
         mutex(1),
         lastHeight(0),
         lastWidth(0),
+        no_stream(false),
         Ifirewire(nullptr)
     {}
 
     virtual bool getImage(yarp::sig::ImageOf<yarp::sig::PixelRgb>& image) override {
         mutex.wait();
+        if(no_stream == true)
+        {
+            image.zero();
+            mutex.post();
+            return false;
+        }
+
         if (reader.read(true)!=NULL) {
             image = *(reader.lastRead());
             lastHeight = image.height();
@@ -680,9 +688,12 @@ public:
 
             if(!config.check("no_stream") )
             {
+                no_stream = false;
                 if(!yarp::os::Network::connect(remote,local,carrier))
                     yError() << "cannot connect "  << local << " to " << remote;
             }
+            else
+                no_stream = true;
 
             // reverse connection for RPC
             // could choose to do this only on need
@@ -796,6 +807,7 @@ private:
     yarp::os::Semaphore mutex;
     int lastHeight;
     int lastWidth;
+    bool no_stream;
 
 protected:
 
