@@ -41,7 +41,7 @@ AuthHMAC::AuthHMAC() :
         // return as soon as possible
         return;
     }
-
+    memset(&context, 0, sizeof(HMAC_CONTEXT));
     ConstString key;
     ResourceFinder& rf = NameClient::getNameClient().getResourceFinder();
     ConstString fname;
