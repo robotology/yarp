@@ -599,7 +599,7 @@ bool ServerGrabber::respond(const yarp::os::Bottle& cmd,
                          */
 
                         // Default values here are valid for cases 1a and `left` side of 2a
-                        IFrameGrabberImage *imageInterface = nullptr;
+                        IFrameGrabberImage *imageInterface = fgImage;
                         int u_offset = 0;
 
                         if(param.twoCameras == false)   // a single HW source of images
@@ -652,6 +652,7 @@ bool ServerGrabber::respond(const yarp::os::Bottle& cmd,
                                     imageInterface->getImage(full);
 
                                     cropped.resize(vertices[1].first - vertices[0].first +1, vertices[1].second - vertices[0].second +1);  // +1 to be inclusive
+                                    cropped.zero();
                                     for(int u_in=vertices[0].first + u_offset, u_out=0; u_in<=vertices[1].first + u_offset; u_in++, u_out++)
                                     {
                                         for(int v_in=vertices[0].second, v_out=0; v_in <= vertices[1].second; v_in++, v_out++)
