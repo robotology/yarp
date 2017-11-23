@@ -74,17 +74,11 @@ public:
     // user gives back an object
     void release(void* key);
 
-protected:
-    void init();
-
-    PortReaderBufferBaseCreator* creator;
-    unsigned int maxBuffer;
-    bool prune;
-    bool allowReuse;
-    void* implementation;
-    yarp::os::PortReader* replier;
-    double period;
-    double last_recv;
+#ifndef DOXYGEN_SHOULD_SKIP_THIS
+private:
+    class Private;
+    Private* mPriv;
+#endif // DOXYGEN_SHOULD_SKIP_THIS
 };
 
 
