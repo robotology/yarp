@@ -9,13 +9,14 @@
 #include <QGraphicsView>
 #include <QGraphicsSceneWheelEvent>
 
-BuilderScene::BuilderScene(QObject *parent) :
-    QGraphicsScene(parent)
+BuilderScene::BuilderScene(QObject *parent) : QGraphicsScene(parent),
+    currentLine(YARP_NULLPTR),
+    startConnectionItem(YARP_NULLPTR),
+    endConnectionItem(YARP_NULLPTR),
+    snap(false),
+    editingMode(false)
 {
-    currentLine = NULL;
-    startConnectionItem = NULL;
     //connect(this,SIGNAL(changed(QList<QRectF>)),this,SLOT(onSceneChanged(QList<QRectF>)));
-    snap = false;
     setStickyFocus(true);
 }
 
