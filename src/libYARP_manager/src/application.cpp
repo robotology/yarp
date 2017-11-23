@@ -14,7 +14,10 @@ using namespace yarp::manager;
 /**
  * Class  ModuleInterface
  */
-ModuleInterface::ModuleInterface(Module* module)
+ModuleInterface::ModuleInterface(Module* module) :
+    iRank(0),
+    waitStart(0.0),
+    waitStop(0.0)
 {
     if(!module)
         return;
