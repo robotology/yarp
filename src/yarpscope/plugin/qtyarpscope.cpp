@@ -18,14 +18,15 @@
 #define SCALEWIDTH      25
 
 QtYARPScope::QtYARPScope(QQuickItem *parent):
-    QQuickPaintedItem(parent)
+    QQuickPaintedItem(parent),
+    i(0),
+    loader(YARP_NULLPTR),
+    topLevel(YARP_NULLPTR),
+    bPressed(false),
+    currentSelectedPlotter(YARP_NULLPTR)
 {
-
-    setFlag(ItemHasContents, true);
-
-    currentSelectedPlotter = NULL;
-    loader = NULL;
     plotManager = PlotManager::instance();
+    setFlag(ItemHasContents, true);
 
     setAcceptedMouseButtons(Qt::AllButtons);
     setRenderTarget(QQuickPaintedItem::FramebufferObject);
