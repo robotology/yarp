@@ -25,42 +25,40 @@
 #include <cmath>
 
 PartItem::PartItem(QString robotName, int id, QString partName, ResourceFinder& _finder,
-                   bool debug_param_enabled,
-                   bool speedview_param_enabled,
-                   bool enable_calib_all, QWidget *parent) :   QWidget(parent)
+                   bool debug_param_enabled, bool speedview_param_enabled,
+                   bool enable_calib_all, QWidget *parent) :
+    QWidget(parent),
+    m_node(YARP_NULLPTR),
+    m_sequenceWindow(YARP_NULLPTR),
+    m_partId(id),
+    m_mixedEnabled(false),
+    m_positionDirectEnabled(false),
+    m_pwmEnabled(false),
+    m_currentEnabled(false),
+    m_currentPidDlg(YARP_NULLPTR),
+    m_controlModes(YARP_NULLPTR),
+    m_refTrajectorySpeeds(YARP_NULLPTR),
+    m_refTrajectoryPositions(YARP_NULLPTR),
+    m_refTorques(YARP_NULLPTR),
+    m_refVelocitySpeeds(YARP_NULLPTR),
+    m_torques(YARP_NULLPTR),
+    m_positions(YARP_NULLPTR),
+    m_speeds(YARP_NULLPTR),
+    m_motorPositions(YARP_NULLPTR),
+    m_done(YARP_NULLPTR),
+    m_part_speedVisible(false),
+    m_part_motorPositionVisible(false),
+    m_interactionModes(YARP_NULLPTR),
+    m_finder(&_finder),
+    m_iMot(YARP_NULLPTR),
+    m_iinfo(YARP_NULLPTR),
+    m_slow_k(0)
 {
     m_layout = new FlowLayout();
     setLayout(m_layout);
-    m_slow_k = 0;
-
-    m_partId = id;
-    m_finder = NULL;
-    m_node = NULL;
-    m_currentPidDlg = NULL;
-    m_sequenceWindow = NULL;
-    m_finder = &_finder;
-    m_mixedEnabled = false;
-    m_positionDirectEnabled = false;
-    m_pwmEnabled = false;
-    m_currentEnabled = false;
-
-    m_controlModes = 0;
-    m_refTrajectorySpeeds = 0;
-    m_refTrajectoryPositions = 0;
-    m_refTorques = 0;
-    m_refVelocitySpeeds = 0;
-    m_torques = 0;
-    m_positions = 0;
-    m_speeds = 0;
-    m_motorPositions = 0;
-    m_done = 0;
-    m_interactionModes = 0;
-    m_part_motorPositionVisible = false;
-    m_part_speedVisible = false;
 
     //PolyDriver *cartesiandd[MAX_NUMBER_ACTIVATED];
 
- 
     if (robotName.at(0) == '/') robotName.remove(0, 1);
     if (partName.at(0) == '/')  partName.remove(0, 1);
     m_robotPartPort = QString("/%1/%2").arg(robotName).arg(partName);
