@@ -36,16 +36,18 @@ using namespace std;
 #endif
 
 /**********************************************************/
-WorkerClass::WorkerClass(int part, int numThreads)
-{
-    this->part = part;
-    utilities = NULL;
-    this->numThreads = numThreads;
-    initTime = 0.0;
-    frameRate = 0.0;
-    isActive = true;
-    startTime = 0.0;
-}
+WorkerClass::WorkerClass(int _part, int _numThreads) :
+    utilities(YARP_NULLPTR),
+    part(_part),
+    percentage(0),
+    numThreads(_numThreads),
+    currFrame(0),
+    isActive(true),
+    frameRate(0.0),
+    initTime(0.0),
+    virtualTime(0.0),
+    startTime(0.0)
+{}
 
 /**********************************************************/
 bool WorkerClass::init()
@@ -296,16 +298,16 @@ void WorkerClass::setManager(Utilities *utilities)
 }
 
 /**********************************************************/
-MasterThread::MasterThread(Utilities *utilities, int numPart, QMainWindow *gui, QObject *parent) : QObject(parent), RateThread (2)
+MasterThread::MasterThread(Utilities *_utilities, int _numPart, QMainWindow *gui, QObject *parent) : QObject(parent), RateThread (2),
+    utilities(_utilities),
+    numPart(_numPart),
+    timePassed(0.0),
+    initTime(0),
+    virtualTime(0.0),
+    wnd(gui)
 {
     //stepfromCmd = false;
-    this->wnd = gui;
-    this->numPart = numPart;
-    this->utilities = utilities;
     //guiUpdate = new UpdateGui( this->utilities, this->numPart, this->wnd );
-    timePassed = 0.0;
-    virtualTime = 0.0;
-    initTime = 0;
 }
 
 /**********************************************************/
