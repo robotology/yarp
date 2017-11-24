@@ -239,13 +239,12 @@ public:
 
 
 RobotInterface::XMLReader::Private::Private(XMLReader *p) :
-    parent(p)
-{
-}
+    parent(p),
+    minorVersion(0),
+    majorVersion(0)
+{}
 
-RobotInterface::XMLReader::Private::~Private()
-{
-}
+RobotInterface::XMLReader::Private::~Private() {}
 
 RobotInterface::Robot& RobotInterface::XMLReader::Private::readRobotFile(const std::string &fileName)
 {

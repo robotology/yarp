@@ -24,7 +24,9 @@ std::ostream& std::operator<<(std::ostream &oss, const RobotInterface::Param &t)
 class RobotInterface::Param::Private
 {
 public:
-    Private(Param * /*parent*/) {}
+    Private(Param * /*parent*/) :
+        isGroup(false)
+    {}
 
     std::string name;
     std::string value;
