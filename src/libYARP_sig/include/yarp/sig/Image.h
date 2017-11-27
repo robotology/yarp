@@ -267,7 +267,7 @@ public:
      * Returns IPL/OpenCV view of image, if possible.
      * Not possible if the image is the wrong size, with no padding.
      * This method is currently not well documented.
-     * @return pointer to an IplImage structure
+     * @return pointer to an IplImage structure or nullptr
      */
     void *getIplImage();
 
@@ -275,7 +275,7 @@ public:
      * Returns IPL/OpenCV view of image, if possible.
      * Not possible if the image is the wrong size, with no padding.
      * This method is currently not well documented.
-     * @return pointer to an IplImage structure
+     * @return pointer to an IplImage structure or nullptr
      */
     const void *getIplImage() const;
 
@@ -346,6 +346,9 @@ protected:
 
     void setPixelCode(int imgPixelCode);
 
+    //pixelCode and pixelsSize should be linked together consistently.
+    //since setPixelCode set also the corresponding pixelSize setPixelSize should not be used at all except for
+    //setting an arbitrary pixelSize with no corresponding pixel code (in that case the pixelCode will be set to -pixelSize).
     void setPixelSize(int imgPixelSize);
 
 
@@ -378,8 +381,12 @@ public:
         Image::setPixelCode(imgPixelCode);
     }
 
+
     void setPixelSize(int imgPixelSize) {
         Image::setPixelSize(imgPixelSize);
+    //pixelCode and pixelsSize should be linked together consistently.
+    //since setPixelCode set also the corresponding pixelSize setPixelSize should not be used at all except for
+    //setting an arbitrary pixelSize with no corresponding pixel code (in that case the pixelCode will be set to -pixelSize).
     }
 
     void setQuantum(int imgQuantum) {
