@@ -5,18 +5,8 @@
  *
  */
 
-#include <cstdio>
-#include <cstdlib>
-
-#include <yarp/conf/system.h>
-#include <yarp/os/all.h>
-#include <yarp/os/Os.h>
-#include <yarp/os/RosNameSpace.h>
-
-#include <yarp/name/NameServerManager.h>
-#include <yarp/name/BootstrapServer.h>
-
 #include <yarp/serversql/yarpserversql.h>
+#include <yarp/serversql/Server.h>
 
 #include <yarp/serversql/impl/TripleSourceCreator.h>
 #include <yarp/serversql/impl/NameServiceOnTriples.h>
@@ -26,13 +16,27 @@
 #include <yarp/serversql/impl/ComposedNameService.h>
 #include <yarp/serversql/impl/ParseName.h>
 
+#include <yarp/conf/system.h>
+#include <yarp/os/all.h>
+#include <yarp/os/Os.h>
+#include <yarp/os/RosNameSpace.h>
+
+#include <yarp/name/NameServerManager.h>
+#include <yarp/name/BootstrapServer.h>
+
 #include <yarp/os/impl/NameClient.h>
+
+#include <cmath>
+#include <cstdio>
+#include <cstdlib>
+
 
 // For a yarp server running on the port 10000
 // * the first port assigned will be 10002
 // * the last port assigned will be 19999
 #define MIN_PORT_NUMBER_OFFSET 2
 #define MAX_PORT_NUMBER_OFFSET 9999
+
 using namespace yarp::os;
 using namespace yarp::name;
 using namespace yarp::serversql::impl;
@@ -182,6 +186,7 @@ public:
 int yarp::serversql::Server::run(int argc, char** argv)
 {
     Property options;
+    bool     silent(false);
     FILE*    out;
 
     options.fromCommand(argc, argv, false);
@@ -212,37 +217,27 @@ int yarp::serversql::Server::run(int argc, char** argv)
         printf("  --no-web-cache           Reload pages from file for each request.\n");
         printf("  --ros                    Delegate pub/sub to ROS name server.\n");
         printf("  --silent                 Start in silent mode.\n");
+        //this->stop();
         return 0;
-    } else {
+    }
+    else
+    {
         fprintf(out, "Call with --help for information on available options\n");
     }
 
-    /*
-    ConstString configFilename = options.check("config",
-                                               Value("yarpserver.conf")).asString();
-    if (!options.check("config")) {
-        configFilename = Network::getConfigFile(configFilename.c_str());
-    }
-    if (yarp::os::stat(configFilename.c_str())==0) {
-        printf("Reading options from %s\n", configFilename.c_str());
-        options.fromConfigFile(configFilename.c_str(),false);
-    } else {
-        printf("Options can be set on command line or in %s\n", configFilename.c_str());
-    } */
+    NameServerContainer nc; if (!nc.open(options)) return 1;
 
-    Network yarp(yarp::os::YARP_CLOCK_SYSTEM);
-
-    NameServerContainer nc;
     nc.setSilent(silent);
-    if (!nc.open(options)) {
-        return 1;
-    }
 
+    bool              ok(false);
     NameServerManager name(nc);
-    BootstrapServer fallback(name);
+    BootstrapServer   fallback(name);
+    Port              server;
+    Contact           alt;
+    yarp::os::Bottle  cmd, reply;
+    double            messageCounter(0);
+    double            pollingRate(.1);
 
-
-    Port server;
     name.setPort(server);
     server.setReaderCreator(name);
 
@@ -283,14 +278,23 @@ int yarp::serversql::Server::run(int argc, char** argv)
            nc.where().getHost().c_str(), nc.where().getPort());
     fprintf(out, "\nOk.  Ready!\n");
 
-    while (true) {
-        SystemClock::delaySystem(600);
-        fprintf(out, "Name server running happily\n");
-    }
-    server.close();
+    while(!shouldStop)
+    {
+        messageCounter += pollingRate;
+        SystemClock::delaySystem(pollingRate);
+        double dummy;
 
+        if(std::modf(messageCounter / 600.0, &dummy) < .00001)
+        {
+            fprintf(out, "Name server running happily\n");
+        }
+    }
+
+    fprintf(out, "closing yarp server\n");
+    server.close();
     return 0;
 }
+
 yarp::os::NameStore *yarpserver_create(yarp::os::Searchable& options)
 {
     NameServerContainer *nc = new NameServerContainer;
@@ -302,4 +306,11 @@ yarp::os::NameStore *yarpserver_create(yarp::os::Searchable& options)
     }
     nc->goPublic();
     return nc;
+}
+
+int yarpserver_main(int argc, char *argv[])
+{
+    Network    yarp(yarp::os::YARP_CLOCK_SYSTEM);
+    yarp::serversql::Server yServer;
+    return yServer.run(argc, argv);
 }
