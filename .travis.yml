@@ -380,7 +380,7 @@ script:
 
   # Build also the os examples
   - mkdir example/os/build
-  - (cd example/os/build; cmake -G"${TRAVIS_CMAKE_GENERATOR}" -DCMAKE_BUILD_TYPE=${TRAVIS_BUILD_TYPE} -DYARP_DIR=${YARP_INSTALL_PREFIX}/lib/YARP ..)
+  - (cd example/os/build; cmake -G"${TRAVIS_CMAKE_GENERATOR}" -DCMAKE_BUILD_TYPE=${TRAVIS_BUILD_TYPE} -DYARP_DIR=${YARP_INSTALL_PREFIX}/lib/cmake/YARP ..)
   - (cd example/os/build; cmake --build . --config ${TRAVIS_BUILD_TYPE})
 
 
