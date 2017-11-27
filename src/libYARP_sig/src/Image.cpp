@@ -93,7 +93,7 @@ protected:
     void _free_data ();
 
     void _make_independent();
-    void _set_ipl_header(int x, int y, int pixel_type, int quantum,
+    bool _set_ipl_header(int x, int y, int pixel_type, int quantum,
                          bool topIsLow);
     void _free_ipl_header();
     void _alloc_complete(int x, int y, int pixel_type, int quantum,
@@ -126,7 +126,7 @@ public:
     }
 
     void resize(int x, int y, int pixel_type,
-                int pixel_size, int quantum, bool topIsLow);
+                int quantum, bool topIsLow);
 
     void _alloc_complete_extern(const void *buf, int x, int y, int pixel_type,
                                 int quantum, bool topIsLow);
@@ -135,7 +135,7 @@ public:
 
 
 void ImageStorage::resize(int x, int y, int pixel_type,
-                          int pixel_size, int quantum, bool topIsLow) {
+                          int quantum, bool topIsLow) {
     int need_recreation = 1;
 
     if (quantum==0) {
@@ -156,14 +156,13 @@ void ImageStorage::resize(int x, int y, int pixel_type,
 
 // allocates an empty image.
 void ImageStorage::_alloc () {
-    yAssert(pImage != nullptr);
 
-    if (pImage != nullptr)
-        if (pImage->imageData != nullptr)
-            _free(); // was iplDeallocateImage(pImage); but that won't work with refs
 
-    if ( (type_id == VOCAB_PIXEL_MONO_FLOAT) || (type_id == VOCAB_PIXEL_RGB_FLOAT) ||
-         (type_id == VOCAB_PIXEL_HSV_FLOAT) )
+    _free(); // was iplDeallocateImage(pImage); but that won't work with refs
+
+    if ((type_id == VOCAB_PIXEL_MONO_FLOAT) ||
+        (type_id == VOCAB_PIXEL_RGB_FLOAT)  ||
+        (type_id == VOCAB_PIXEL_HSV_FLOAT))
         iplAllocateImageFP(pImage, 0, 0);
     else
         iplAllocateImage (pImage, 0, 0);
@@ -288,296 +287,77 @@ void ImageStorage::_make_independent()
     // actually I think this isn't really needed -paulfitz
 }
 
+struct pixelTypeIplParams
+{
+    int   nChannels;
+    int   depth;
+    const char* colorModel;
+    const char* channelSeq;
+};
 
-void ImageStorage::_set_ipl_header(int x, int y, int pixel_type, int quantum,
+const pixelTypeIplParams iplPixelTypeMono{1, IPL_DEPTH_8U,  "GRAY", "GRAY"};
+const pixelTypeIplParams iplPixelTypeMono16{1, IPL_DEPTH_16U,  "GRAY", "GRAY"};
+
+const std::map<int, pixelTypeIplParams> pixelCode2iplParams = {
+    {VOCAB_PIXEL_MONO,                  iplPixelTypeMono},
+    {VOCAB_PIXEL_ENCODING_BAYER_GRBG8,  iplPixelTypeMono},
+    {VOCAB_PIXEL_ENCODING_BAYER_BGGR8,  iplPixelTypeMono},
+    {VOCAB_PIXEL_ENCODING_BAYER_GBRG8,  iplPixelTypeMono},
+    {VOCAB_PIXEL_ENCODING_BAYER_RGGB8,  iplPixelTypeMono},
+    {VOCAB_PIXEL_YUV_420,               iplPixelTypeMono},
+    {VOCAB_PIXEL_YUV_444,               iplPixelTypeMono},
+    {VOCAB_PIXEL_YUV_422,               iplPixelTypeMono},
+    {VOCAB_PIXEL_YUV_411,               iplPixelTypeMono},
+    {VOCAB_PIXEL_MONO16,                iplPixelTypeMono16},
+    {VOCAB_PIXEL_ENCODING_BAYER_GRBG16, iplPixelTypeMono16},
+    {VOCAB_PIXEL_ENCODING_BAYER_BGGR16, iplPixelTypeMono16},
+    {VOCAB_PIXEL_ENCODING_BAYER_GBRG16, iplPixelTypeMono16},
+    {VOCAB_PIXEL_ENCODING_BAYER_RGGB16, iplPixelTypeMono16},
+    {VOCAB_PIXEL_RGB,                   {3, IPL_DEPTH_8U,  "RGB",  "RGB" }},
+    {VOCAB_PIXEL_RGBA,                  {4, IPL_DEPTH_8U,  "RGBA", "RGBA"}},
+    {VOCAB_PIXEL_BGRA,                  {4, IPL_DEPTH_8U,  "BGRA", "BGRA"}},
+    {VOCAB_PIXEL_INT,                   {1, IPL_DEPTH_32S, "GRAY", "GRAY"}},
+    {VOCAB_PIXEL_HSV,                   {3, IPL_DEPTH_8U,  "HSV",  "HSV" }},
+    {VOCAB_PIXEL_BGR,                   {3, IPL_DEPTH_8U,  "RGB",  "BGR" }},
+    {VOCAB_PIXEL_MONO_SIGNED,           {1, IPL_DEPTH_8S,  "GRAY", "GRAY"}},
+    {VOCAB_PIXEL_RGB_INT,               {3, IPL_DEPTH_32S, "RGB",  "RGB" }},
+    {VOCAB_PIXEL_MONO_FLOAT,            {1, IPL_DEPTH_32F, "GRAY", "GRAY"}},
+    {VOCAB_PIXEL_RGB_FLOAT,             {3, IPL_DEPTH_32F, "RGB",  "RGB" }},
+    {-2,                                iplPixelTypeMono16},
+    {-4,                                {1, IPL_DEPTH_32S, "GRAY", "GRAY"}}
+};
+
+bool ImageStorage::_set_ipl_header(int x, int y, int pixel_type, int quantum,
                                    bool topIsLow)
 {
+    if (pImage != nullptr) {
+        iplDeallocateImage(pImage);
+        pImage = nullptr;
+    }
+
+    if (pixel_type == VOCAB_PIXEL_INVALID) {
+        // not a type!
+        printf ("*** Trying to allocate an invalid pixel type image\n");
+        std::exit(1);
+     }
+    if (pixelCode2iplParams.find(pixel_type) == pixelCode2iplParams.end()) {
+        // unknown pixel type. Should revert to a non-IPL mode... how?
+        return false;
+    }
+
+    const pixelTypeIplParams& param = pixelCode2iplParams.at(pixel_type);
+
     if (quantum==0) {
         quantum = IPL_ALIGN_QWORD;
     }
-    int origin = topIsLow?IPL_ORIGIN_TL:IPL_ORIGIN_BL;
-    int implemented_yet = 1;
-    // used to allocate the ipl header.
-    switch (pixel_type)
-        {
-        case VOCAB_PIXEL_MONO:
-            pImage = iplCreateImageHeader(
-                                          1,
-                                          0,
-                                          IPL_DEPTH_8U,
-                                          (char *)"GRAY",
-                                          (char *)"GRAY",
-                                          IPL_DATA_ORDER_PIXEL,
-                                          origin,
-                                          quantum,
-                                          x,
-                                          y,
-                                          nullptr,
-                                          nullptr,
-                                          nullptr,
-                                          nullptr);
-            DBGPF1 printf("Set pImage to %ld\n", (long int) pImage);
-            DBGPF1 printf("Set init h to %ld\n", (long int) pImage->height);
-            break;
+    int origin = topIsLow ? IPL_ORIGIN_TL : IPL_ORIGIN_BL;
 
-        case VOCAB_PIXEL_MONO16:
-            pImage = iplCreateImageHeader(
-                                          1,
-                                          0,
-                                          IPL_DEPTH_16U,
-                                          (char *)"GRAY",
-                                          (char *)"GRAY",
-                                          IPL_DATA_ORDER_PIXEL,
-                                          origin,
-                                          quantum,
-                                          x,
-                                          y,
-                                          nullptr,
-                                          nullptr,
-                                          nullptr,
-                                          nullptr);
-            break;
-
-        case VOCAB_PIXEL_RGB:
-            pImage = iplCreateImageHeader(
-                                          3,
-                                          0,
-                                          IPL_DEPTH_8U,
-                                          (char *)"RGB",
-                                          (char *)"RGB",
-                                          IPL_DATA_ORDER_PIXEL,
-                                          origin,
-                                          quantum,
-                                          x,
-                                          y,
-                                          nullptr,
-                                          nullptr,
-                                          nullptr,
-                                          nullptr);
-            break;
-
-        case VOCAB_PIXEL_RGBA:
-            pImage = iplCreateImageHeader(
-                                          4,
-                                          0,
-                                          IPL_DEPTH_8U,
-                                          (char *)"RGBA",
-                                          (char *)"RGBA",
-                                          IPL_DATA_ORDER_PIXEL,
-                                          origin,
-                                          quantum,
-                                          x,
-                                          y,
-                                          nullptr,
-                                          nullptr,
-                                          nullptr,
-                                          nullptr);
-            break;
-
-        case VOCAB_PIXEL_BGRA:
-            pImage = iplCreateImageHeader(
-                                          4,
-                                          0,
-                                          IPL_DEPTH_8U,
-                                          (char *)"BGRA",
-                                          (char *)"BGRA",
-                                          IPL_DATA_ORDER_PIXEL,
-                                          origin,
-                                          quantum,
-                                          x,
-                                          y,
-                                          nullptr,
-                                          nullptr,
-                                          nullptr,
-                                          nullptr);
-            break;
-
-        case VOCAB_PIXEL_RGB_INT:
-            pImage = iplCreateImageHeader(
-                                          3,
-                                          0,
-                                          IPL_DEPTH_32S,
-                                          (char *)"RGB",
-                                          (char *)"RGB",
-                                          IPL_DATA_ORDER_PIXEL,
-                                          origin,
-                                          quantum,
-                                          x,
-                                          y,
-                                          nullptr,
-                                          nullptr,
-                                          nullptr,
-                                          nullptr);
-            break;
-
-        case VOCAB_PIXEL_HSV:
-            pImage = iplCreateImageHeader(
-                                          3,
-                                          0,
-                                          IPL_DEPTH_8U,
-                                          (char *)"HSV",
-                                          (char *)"HSV",
-                                          IPL_DATA_ORDER_PIXEL,
-                                          origin,
-                                          quantum,
-                                          x,
-                                          y,
-                                          nullptr,
-                                          nullptr,
-                                          nullptr,
-                                          nullptr);
-            break;
-
-        case VOCAB_PIXEL_BGR:
-            pImage = iplCreateImageHeader(
-                                          3,
-                                          0,
-                                          IPL_DEPTH_8U,
-                                          (char *)"RGB",
-                                          (char *)"BGR",
-                                          IPL_DATA_ORDER_PIXEL,
-                                          origin,
-                                          quantum,
-                                          x,
-                                          y,
-                                          nullptr,
-                                          nullptr,
-                                          nullptr,
-                                          nullptr);
-            break;
-
-        case VOCAB_PIXEL_MONO_SIGNED:
-            pImage = iplCreateImageHeader(
-                                          1,
-                                          0,
-                                          IPL_DEPTH_8S,
-                                          (char *)"GRAY",
-                                          (char *)"GRAY",
-                                          IPL_DATA_ORDER_PIXEL,
-                                          origin,
-                                          quantum,
-                                          x,
-                                          y,
-                                          nullptr,
-                                          nullptr,
-                                          nullptr,
-                                          nullptr);
-            break;
-
-        case VOCAB_PIXEL_RGB_SIGNED:
-            yAssert(implemented_yet == 0);
-            break;
-
-        case VOCAB_PIXEL_MONO_FLOAT:
-            pImage = iplCreateImageHeader(
-                                          1,
-                                          0,
-                                          IPL_DEPTH_32F,
-                                          (char *)"GRAY",
-                                          (char *)"GRAY",
-                                          IPL_DATA_ORDER_PIXEL,
-                                          origin,
-                                          quantum,
-                                          x,
-                                          y,
-                                          nullptr,
-                                          nullptr,
-                                          nullptr,
-                                          nullptr);
-            break;
-
-        case VOCAB_PIXEL_RGB_FLOAT:
-            pImage = iplCreateImageHeader(
-                                          3,
-                                          0,
-                                          IPL_DEPTH_32F,
-                                          (char *)"RGB",
-                                          (char *)"RGB",
-                                          IPL_DATA_ORDER_PIXEL,
-                                          origin,
-                                          quantum,
-                                          x,
-                                          y,
-                                          nullptr,
-                                          nullptr,
-                                          nullptr,
-                                          nullptr);
-            //yAssert(implemented_yet == 0);
-            break;
-
-        case VOCAB_PIXEL_HSV_FLOAT:
-            yAssert(implemented_yet == 0);
-            break;
-
-        case VOCAB_PIXEL_INT:
-            pImage = iplCreateImageHeader(
-                                          1,
-                                          0,
-                                          IPL_DEPTH_32S,
-                                          (char *)"GRAY",
-                                          (char *)"GRAY",
-                                          IPL_DATA_ORDER_PIXEL,
-                                          origin,
-                                          quantum,
-                                          x,
-                                          y,
-                                          nullptr,
-                                          nullptr,
-                                          nullptr,
-                                          nullptr);
-            break;
-
-        case VOCAB_PIXEL_INVALID:
-            // not a type!
-            printf ("*** Trying to allocate an invalid pixel type image\n");
-            std::exit(1);
-            break;
-
-        case -2:
-            pImage = iplCreateImageHeader(
-                                          1,
-                                          0,
-                                          IPL_DEPTH_16U,
-                                          (char *)"GRAY",
-                                          (char *)"GRAY",
-                                          IPL_DATA_ORDER_PIXEL,
-                                          origin,
-                                          quantum,
-                                          x,
-                                          y,
-                                          nullptr,
-                                          nullptr,
-                                          nullptr,
-                                          nullptr);
-            break;
-
-        case -4:
-            pImage = iplCreateImageHeader(
-                                          1,
-                                          0,
-                                          IPL_DEPTH_32S,
-                                          (char *)"GRAY",
-                                          (char *)"GRAY",
-                                          IPL_DATA_ORDER_PIXEL,
-                                          origin,
-                                          quantum,
-                                          x,
-                                          y,
-                                          nullptr,
-                                          nullptr,
-                                          nullptr,
-                                          nullptr);
-            break;
-
-        default:
-            // unknown pixel type. Should revert to a non-IPL mode... how?
-            yAssert(implemented_yet == 0);
-            break;
-        }
+    pImage = iplCreateImageHeader(param.nChannels, 0, param.depth, const_cast<char*>(param.colorModel), const_cast<char*>(param.channelSeq), IPL_DATA_ORDER_PIXEL, origin, quantum, x, y, nullptr, nullptr, nullptr, nullptr);
 
     type_id = pixel_type;
     this->quantum = quantum;
     this->topIsLow = topIsLow;
+    return true;
 }
 
 void ImageStorage::_alloc_complete_extern(const void *buf, int x, int y, int pixel_type, int quantum, bool topIsLow)
@@ -604,12 +384,35 @@ int ImageStorage::_pad_bytes (int linesize, int align) const
     return yarp::sig::PAD_BYTES (linesize, align);
 }
 
-
-
-
-
-
-
+const std::map<YarpVocabPixelTypesEnum, unsigned int> Image::pixelCode2Size = {
+    {VOCAB_PIXEL_INVALID,               0 },
+    {VOCAB_PIXEL_MONO,                  sizeof(yarp::sig::PixelMono)},
+    {VOCAB_PIXEL_MONO16,                sizeof(yarp::sig::PixelMono16)},
+    {VOCAB_PIXEL_RGB,                   sizeof(yarp::sig::PixelRgb)},
+    {VOCAB_PIXEL_RGBA,                  sizeof(yarp::sig::PixelRgba)},
+    {VOCAB_PIXEL_BGRA,                  sizeof(yarp::sig::PixelBgra)},
+    {VOCAB_PIXEL_INT,                   sizeof(yarp::sig::PixelInt)},
+    {VOCAB_PIXEL_HSV,                   sizeof(yarp::sig::PixelHsv)},
+    {VOCAB_PIXEL_BGR,                   sizeof(yarp::sig::PixelBgr)},
+    {VOCAB_PIXEL_MONO_SIGNED,           sizeof(yarp::sig::PixelMonoSigned)},
+    {VOCAB_PIXEL_RGB_SIGNED,            sizeof(yarp::sig::PixelRgbSigned)},
+    {VOCAB_PIXEL_RGB_INT,               sizeof(yarp::sig::PixelRgbInt)},
+    {VOCAB_PIXEL_MONO_FLOAT,            sizeof(yarp::sig::PixelFloat)},
+    {VOCAB_PIXEL_RGB_FLOAT,             sizeof(yarp::sig::PixelRgbFloat)},
+    {VOCAB_PIXEL_HSV_FLOAT,             sizeof(yarp::sig::PixelHsvFloat)},
+    {VOCAB_PIXEL_ENCODING_BAYER_GRBG8,  1 },
+    {VOCAB_PIXEL_ENCODING_BAYER_GRBG16, 2 },
+    {VOCAB_PIXEL_ENCODING_BAYER_BGGR8,  1 },
+    {VOCAB_PIXEL_ENCODING_BAYER_BGGR16, 2 },
+    {VOCAB_PIXEL_ENCODING_BAYER_GBRG8,  1 },
+    {VOCAB_PIXEL_ENCODING_BAYER_GBRG16, 2 },
+    {VOCAB_PIXEL_ENCODING_BAYER_RGGB8,  1 },
+    {VOCAB_PIXEL_ENCODING_BAYER_RGGB16, 2 },
+    {VOCAB_PIXEL_YUV_420, 1},
+    {VOCAB_PIXEL_YUV_444, 1},
+    {VOCAB_PIXEL_YUV_422, 1},
+    {VOCAB_PIXEL_YUV_411, 1}
+};
 
 Image::Image() {
     initialize();
@@ -657,10 +460,9 @@ void Image::resize(int imgWidth, int imgHeight) {
     yAssert(imgWidth>=0 && imgHeight>=0);
 
     int code = getPixelCode();
-    int size = getPixelSize();
     bool change = false;
     if (code!=imgPixelCode) {
-        imgPixelCode = code;
+        setPixelCode(code);
         change = true;
     }
     if (imgPixelCode!=((ImageStorage*)implementation)->extern_type_id) {
@@ -669,10 +471,7 @@ void Image::resize(int imgWidth, int imgHeight) {
     if (imgQuantum!=((ImageStorage*)implementation)->extern_type_quantum) {
         change = true;
     }
-    if (size!=imgPixelSize) {
-        imgPixelSize = size;
-        change=true;
-    }
+
     if (imgWidth!=width()||imgHeight!=height()) {
         change = true;
     }
@@ -680,7 +479,6 @@ void Image::resize(int imgWidth, int imgHeight) {
     if (change) {
         ((ImageStorage*)implementation)->resize(imgWidth,imgHeight,
                                                 imgPixelCode,
-                                                imgPixelSize,
                                                 imgQuantum,
                                                 topIsLow);
         synchronize();
@@ -688,14 +486,23 @@ void Image::resize(int imgWidth, int imgHeight) {
     }
 }
 
+void Image::setPixelSize(int imgPixelSize) {
+    if(imgPixelSize == (int)pixelCode2Size.at((YarpVocabPixelTypesEnum)imgPixelCode))
+        return;
+
+    setPixelCode(-imgPixelSize);
+    return;
+}
 
 void Image::setPixelCode(int imgPixelCode) {
     this->imgPixelCode = imgPixelCode;
-}
 
+    if(imgPixelCode < 0)
+    {
+        imgPixelSize = -imgPixelCode;
+    }
 
-void Image::setPixelSize(int imgPixelSize) {
-    this->imgPixelSize = imgPixelSize;
+    imgPixelSize = pixelCode2Size.at((YarpVocabPixelTypesEnum)imgPixelCode);
 }
 
 
@@ -717,8 +524,6 @@ void Image::synchronize() {
         data = nullptr;
         imgWidth = imgHeight = 0;
     }
-    imgPixelSize = getPixelSize();
-    imgPixelCode = getPixelCode();
 }
 
 
@@ -868,7 +673,7 @@ bool Image::read(yarp::os::ConnectionReader& connection) {
         return !connection.isError();
     }
 
-    imgPixelCode = header.id;
+    setPixelCode(header.id);
 
     int q = getQuantum();
     if (q==0) {
@@ -884,7 +689,7 @@ bool Image::read(yarp::os::ConnectionReader& connection) {
     }
 
     // handle easy case, received and current image are compatible, no conversion needed
-    if (getPixelCode() == header.id && q == header.quantum)
+    if (getPixelCode() == header.id && q == header.quantum && imgPixelSize == header.depth)
     {
         return readFromConnection(*this, header, connection);
     }
@@ -1004,11 +809,10 @@ const Image& Image::operator=(const Image& alt) {
 
 
 bool Image::copy(const Image& alt) {
-    bool ok = false;
+
     int myCode = getPixelCode();
     if (myCode==0) {
         setPixelCode(alt.getPixelCode());
-        setPixelSize(alt.getPixelSize());
         setQuantum(alt.getQuantum());
     }
     resize(alt.width(),alt.height());
@@ -1028,12 +832,13 @@ bool Image::copy(const Image& alt) {
             yAssert(q1==q2);
         }
     }
+
     copyPixels(alt.getRawImage(),alt.getPixelCode(),
                getRawImage(),getPixelCode(),
                width(),height(),
                getRawImageSize(),q1,q2,o1,o2);
-    ok = true;
-    return ok;
+
+    return true;
 }
 
 
@@ -1054,7 +859,6 @@ void Image::setExternal(const void *data, int imgWidth, int imgHeight) {
 bool Image::copy(const Image& alt, int w, int h) {
     if (getPixelCode()==0) {
         setPixelCode(alt.getPixelCode());
-        setPixelSize(alt.getPixelSize());
         setQuantum(alt.getQuantum());
     }
     if (&alt==this) {
@@ -1066,7 +870,6 @@ bool Image::copy(const Image& alt, int w, int h) {
     if (getPixelCode()!=alt.getPixelCode()) {
         FlexImage img;
         img.setPixelCode(getPixelCode());
-        img.setPixelSize(getPixelSize());
         img.setQuantum(getQuantum());
         img.copy(alt);
         return copy(img,w,h);
