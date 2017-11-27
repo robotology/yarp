@@ -16,9 +16,12 @@ using namespace yarp::manager;
 #define POST_SEMAPHOR() postSemaphore();
 
 
-SafeManager::SafeManager()
-    :action(MNOTHING), eventReceiver(nullptr), busyAction(false)
-{ }
+SafeManager::SafeManager() :
+    m_pConfig(nullptr),
+    action(MNOTHING),
+    eventReceiver(nullptr),
+    busyAction(false)
+{}
 
 SafeManager::~SafeManager() { }
 

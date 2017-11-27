@@ -28,22 +28,21 @@
  *  \param autorescale not used
  */
 Plotter::Plotter(const QString &title, int gridx, int gridy, int hspan, int vspan, float minval, float maxval, int size, const QString &bgcolor, bool autorescale,  QObject *parent) :
-    QObject(parent)
+    QObject(parent),
+    title(title),
+    gridx(gridx),
+    gridy(gridy),
+    hspan(hspan),
+    vspan(vspan),
+    minval(minval),
+    maxval(maxval),
+    size(size),
+    bgcolor(bgcolor),
+    autorescale(autorescale),
+    initialSize(size),
+    start(0),
+    interact(false)
 {
-    Q_UNUSED(autorescale);
-    this->title = title;
-    this->gridx = gridx;
-    this->gridy = gridy;
-    this->hspan = hspan;
-    this->vspan = vspan;
-    this->minval = minval;
-    this->maxval = maxval;
-    this->size = size;
-    initialSize = size;
-    start = 0;
-    this->bgcolor = bgcolor;
-    interact = false;
-
     connect(customPlot.axisRect(),SIGNAL(zoomRequest()),this,SLOT(onInteract()));
     connect(customPlot.axisRect(),SIGNAL(dragStarted()),this,SLOT(onInteract()));
 
@@ -234,27 +233,25 @@ void Plotter::clear()
 
 
 /***********************************************************/
-Graph::Graph(int index, QString title, QString color, QString type, int size, double graph_y_scale, int buffer_size, QObject *parent) : QObject(parent)
-{
-    curr_connection = nullptr;
-    this->index = index;
-    this->type = type;
-    this->color = color;
-    this->buffer_size = buffer_size;
-    this->title = title;
-    this->graph_y_scale =graph_y_scale;
-
-    lastX = 0;
-    lastY = 0;
-    lastT = 0;
-
-    lineSize = size;
-    numberAcquiredData = 0;
-
-    curr_connection = nullptr;
-    deleteConnection = true;
-
-}
+Graph::Graph(int index, QString title, QString color, QString type, int size, double graph_y_scale, int buffer_size, QObject *parent) :
+    QObject(parent),
+    lastX(0),
+    lastY(0),
+    lastT(0),
+    deleteConnection(true),
+    customGraphPoint(nullptr),
+    customGraph(nullptr),
+    index(index),
+    graph_y_scale(graph_y_scale),
+    curr_connection(nullptr),
+    buffer_size(buffer_size),
+    numberAcquiredData(0),
+    lastIndex(0),
+    type(type),
+    color(color),
+    lineSize(size),
+    title(title)
+{}
 
 
 void Graph::init(QString remotePortName,

@@ -37,11 +37,17 @@ typedef std::vector<Node*>::iterator NodePVIterator;
 class KnowledgeBase{
 
 public:
-    KnowledgeBase(void) : mainApplication(NULL) {};
+    KnowledgeBase(void) :
+        modloader(nullptr),
+        apploader(nullptr),
+        resloader(nullptr),
+        mainApplication(nullptr)
+    {}
+
     virtual ~KnowledgeBase() {
         kbGraph.clear();
         tmpGraph.clear();
-    };
+    }
 
     bool createFrom(ModuleLoader* _mloader,
                     AppLoader* _apploader,

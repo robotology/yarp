@@ -239,7 +239,9 @@ public:
 
 
 RobotInterface::XMLReader::Private::Private(XMLReader *p) :
-    parent(p)
+        parent(p),
+        minorVersion(0),
+        majorVersion(0)
 {
 }
 

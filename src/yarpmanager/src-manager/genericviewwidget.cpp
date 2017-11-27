@@ -10,11 +10,10 @@
 
 #include "genericviewwidget.h"
 
-GenericViewWidget::GenericViewWidget(QWidget *parent) :
-    QWidget(parent)
-{
-    m_modified = false;
-}
+GenericViewWidget::GenericViewWidget(QWidget *parent) : QWidget(parent),
+    type(yarp::manager::NodeType::NODE_OTHER),
+    m_modified(false)
+{}
 
 /*! \brief return the type of the list*/
 yarp::manager::NodeType GenericViewWidget::getType()

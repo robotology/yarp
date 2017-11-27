@@ -3,16 +3,31 @@
 
 using namespace std;
 
-PropertiesTable::PropertiesTable(Manager *manager,QWidget *parent) : QWidget(parent)
+PropertiesTable::PropertiesTable(Manager *manager,QWidget *parent) :
+    QWidget(parent),
+    currentApplication(nullptr),
+    currentModule(nullptr),
+    appName(nullptr),
+    appDescr(nullptr),
+    appVersion(nullptr),
+    appAuthors(nullptr),
+    appPrefix(nullptr),
+    modName(nullptr),
+    modNode(nullptr),
+    modStdio(nullptr),
+    modWorkDir(nullptr),
+    modPrefix(nullptr),
+    modDeployer(nullptr),
+    modParams(nullptr),
+    manager(manager),
+    nodeCombo(nullptr),
+    deployerCombo(nullptr)
 {
     QHBoxLayout *lay = new QHBoxLayout(this);
     propertiesTab = new QTabWidget(this);
     appProperties = new QTreeWidget(this);
     moduleProperties = new QTreeWidget(this);
     moduleDescription = new QTreeWidget(this);
-    currentApplication = nullptr;
-    currentModule = nullptr;
-    this->manager = manager;
 
     paramsSignalMapper = new QSignalMapper(this);
     connect(paramsSignalMapper, SIGNAL(mapped(QWidget*)),
@@ -25,16 +40,7 @@ PropertiesTable::PropertiesTable(Manager *manager,QWidget *parent) : QWidget(par
     setLayout(lay);
     lay->setMargin(0);
 
-    appName = nullptr;
-    appDescr = nullptr;
-    appPrefix = nullptr;
-    appVersion = nullptr;
-    appAuthors = nullptr;
-    nodeCombo = nullptr;
-    deployerCombo = nullptr;
-
     propertiesTab->addTab(appProperties,"Application Properties");
-
 }
 
 void PropertiesTable::showApplicationTab(Application *application)

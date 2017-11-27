@@ -28,11 +28,19 @@ class BuilderItem :   public QGraphicsObject
 
 public:
 
-    BuilderItem(QGraphicsObject * parent = 0): QGraphicsObject(parent){
-        snap = false;
-        offset = QPointF(0,0);
-        nestedInApp = false;
-    }
+    BuilderItem(QGraphicsObject * parent = 0) : QGraphicsObject(parent),
+        itemType(ModuleItemType),
+        offset(QPointF(0,0)),
+        pressed(false),
+        moved(false),
+        creatingNewConnection(false),
+        allowInputs(false),
+        allowOutputs(false),
+        snap(false),
+        nestedInApp(false),
+        sigHandler(nullptr)
+    {}
+
     virtual QRectF boundingRect() const override = 0;
     virtual QPointF connectionPoint() = 0;
     virtual int type() const override = 0;

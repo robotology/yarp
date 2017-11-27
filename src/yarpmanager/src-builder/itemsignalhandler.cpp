@@ -3,10 +3,10 @@
 #include "sourceportitem.h"
 #include "destinationportitem.h"
 
-ItemSignalHandler::ItemSignalHandler(QObject *parent)  : QObject(parent)
-{
-    //parentItem = it;
-}
+ItemSignalHandler::ItemSignalHandler(QObject *parent) : QObject(parent),
+    parentItem(nullptr),
+    type(ModuleItemType)
+{}
 
 ItemSignalHandler::ItemSignalHandler(QGraphicsItem *it,ItemType type,QObject *parent)  : QObject(parent)
 {

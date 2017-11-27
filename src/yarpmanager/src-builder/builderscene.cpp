@@ -10,12 +10,14 @@
 #include <QGraphicsSceneWheelEvent>
 
 BuilderScene::BuilderScene(QObject *parent) :
-    QGraphicsScene(parent)
+    QGraphicsScene(parent),
+    currentLine(nullptr),
+    startConnectionItem(nullptr),
+    endConnectionItem(nullptr),
+    snap(false),
+    editingMode(false)
 {
-    currentLine = nullptr;
-    startConnectionItem = nullptr;
     //connect(this,SIGNAL(changed(QList<QRectF>)),this,SLOT(onSceneChanged(QList<QRectF>)));
-    snap = false;
     setStickyFocus(true);
 }
 

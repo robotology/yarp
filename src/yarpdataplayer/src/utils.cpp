@@ -64,18 +64,24 @@ Utilities::~Utilities()
 
 }
 /**********************************************************/
-Utilities::Utilities(string name, bool _add_prefix, QObject *parent) : QObject(parent)
+Utilities::Utilities(string name, bool _add_prefix, QObject *parent) : QObject(parent),
+    dir_count(0),
+    moduleName(name),
+    add_prefix(_add_prefix),
+    partDetails(nullptr),
+    speed(1.0),
+    repeat(false),
+    sendStrict(false),
+    totalSent(0),
+    totalThreads(0),
+    recursiveIterations(0),
+    masterThread(nullptr),
+    wnd(nullptr),
+    withExtraColumn(false),
+    column(0),
+    maxTimeStamp(0.0),
+    minTimeStamp(0.0)
 {
-    this->speed = 1.0;
-    masterThread = nullptr;
-    partDetails = nullptr;
-    this->moduleName = name;
-    add_prefix=_add_prefix;
-    dir_count = 0;
-    repeat = false;
-    sendStrict = false;
-    recursiveIterations = 0;
-
     connect(this,SIGNAL(updateGuiThread()),(MainWindow*)parent,
             SLOT(onUpdateGuiRateThread()),Qt::BlockingQueuedConnection);
 

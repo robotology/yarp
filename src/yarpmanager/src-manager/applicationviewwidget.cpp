@@ -30,7 +30,30 @@ ApplicationViewWidget::ApplicationViewWidget(yarp::manager::Application *app,
                                              bool editingMode,
                                              QWidget *parent) :
     GenericViewWidget(parent), ApplicationEvent(),
-    ui(new Ui::ApplicationViewWidget)
+    ui(new Ui::ApplicationViewWidget),
+    modRunAction(nullptr),
+    modStopAction(nullptr),
+    modkillAction(nullptr),
+    modSeparator(nullptr),
+    modRefreshAction(nullptr),
+    modSelectAllAction(nullptr),
+    modAttachAction(nullptr),
+    modAssignAction(nullptr),
+    connContex(nullptr),
+    connSubMenu(nullptr),
+    connConnectAction(nullptr),
+    connDisconnectAction(nullptr),
+    connSeparatorAction(nullptr),
+    connRefreshAction(nullptr),
+    connSelectAllAction(nullptr),
+    conn1SeparatorAction(nullptr),
+    connInspectAction(nullptr),
+    connYARPViewAction(nullptr),
+    connYARPReadAction(nullptr),
+    connYARPHearAction(nullptr),
+    connYARPScopeAction(nullptr),
+    resRefreshAction(nullptr),
+    resSelectAllAction(nullptr)
 {
     ui->setupUi(this);
     lazy = lazyManager;

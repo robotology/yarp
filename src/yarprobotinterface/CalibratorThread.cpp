@@ -18,7 +18,13 @@
 class RobotInterface::CalibratorThread::Private
 {
 public:
-    Private(CalibratorThread *parent) : parent(parent) {}
+    Private(CalibratorThread *parent) :
+            parent(parent),
+            calibrator(nullptr),
+            target(nullptr),
+            action(RobotInterface::CalibratorThread::Action::ActionCalibrate)
+    {
+    }
 
     void run()
     {

@@ -455,6 +455,7 @@ void ModuleItem::portMoved(PortItem *port,QGraphicsSceneMouseEvent *e)
 PortItem::PortItem(InputData *node, BuilderItem *parent) : BuilderItem(parent)
 {
     triangleH = (PORT_LINE_WIDTH/2)* sqrt(3.0);
+    outData = nullptr;
     inData = node;
     portAvailable = unknown;
 
@@ -504,6 +505,7 @@ PortItem::PortItem(OutputData* node, BuilderItem *parent) : BuilderItem(parent)
 {
     triangleH = (PORT_LINE_WIDTH/2)* sqrt(3.0);
     outData = node;
+    inData = nullptr;
     portAvailable = unknown;
     setAcceptHoverEvents(true);
     setFlag(ItemSendsGeometryChanges,true);
@@ -525,8 +527,6 @@ PortItem::PortItem(OutputData* node, BuilderItem *parent) : BuilderItem(parent)
         default:
             break;
     }
-
-
 
     this->itemName = node->getPort();
     setToolTip(itemName);

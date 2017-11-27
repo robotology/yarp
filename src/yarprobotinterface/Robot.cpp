@@ -41,8 +41,11 @@ std::ostringstream& operator<<(std::ostringstream &oss, const RobotInterface::Ro
 class RobotInterface::Robot::Private
 {
 public:
-    Private(Robot * /*parent*/) : currentPhase(ActionPhaseUnknown),
-                                  currentLevel(0) {
+    Private(Robot * /*parent*/) :
+            build(0),
+                currentPhase(ActionPhaseUnknown),
+        currentLevel(0)
+    {
     }
 
     // return true if a device with the given name exists

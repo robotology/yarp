@@ -17,7 +17,12 @@
 class RobotInterface::Action::Private
 {
 public:
-    Private(Action * /*parent*/) {}
+    Private(Action * /*parent*/) :
+            phase(ActionPhaseUnknown),
+            type(ActionTypeUnknown),
+            level(0)
+    {
+    }
 
     ActionPhase phase;
     ActionType type;

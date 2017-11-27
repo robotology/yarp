@@ -32,7 +32,7 @@ using namespace yarp::yarpLogger;
 
 class logger_module : public yarp::os::RFModule
 {
-    LoggerEngine* the_logger;
+    LoggerEngine* the_logger = nullptr;
 
     protected:
     yarp::os::Port rpcPort;

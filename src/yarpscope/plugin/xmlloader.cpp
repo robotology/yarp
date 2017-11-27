@@ -14,6 +14,7 @@
 
 XmlLoader::XmlLoader(QString fileName, PlotManager *plotManager,QObject *parent) : GenericLoader(parent)
 {
+    plotter = nullptr;
     this->plotManager = plotManager;
 
     QFile* file = new QFile(fileName);

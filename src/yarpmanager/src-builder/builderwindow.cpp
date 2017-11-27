@@ -1314,12 +1314,15 @@ void BuilderWindow::setInputPortAvailable(QString iData, bool available)
 /**********************************************************************************/
 /**********************************************************************************/
 
-CustomView::CustomView(BuilderWindow *builder,QGraphicsView *parent) : QGraphicsView(parent){
+CustomView::CustomView(BuilderWindow *builder,QGraphicsView *parent) :
+    QGraphicsView(parent),
+    builder(builder),
+    editingMode(false),
+    m_rubberBandActive(false),
+    mousepressed(false),
+    rubberBand(nullptr)
+{
     setInteractive(true);
-    mousepressed = false;
-    m_rubberBandActive = false;
-    rubberBand = nullptr;
-    this->builder = builder;
 
 //    QGLWidget *viewport = new QGLWidget(QGLFormat(QGL::SampleBuffers));
 //    setViewport(viewport);
