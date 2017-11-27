@@ -31,26 +31,25 @@ yarp::dev::DriverCreator *createRangefinder2DWrapper() {
   * It also creates one rpc port.
   */
 
-Rangefinder2DWrapper::Rangefinder2DWrapper() : RateThread(DEFAULT_THREAD_PERIOD)
-{
-    _rate = DEFAULT_THREAD_PERIOD;
-    sens_p = nullptr;
-
+Rangefinder2DWrapper::Rangefinder2DWrapper() : RateThread(DEFAULT_THREAD_PERIOD),
+    partName("Rangefinder2DWrapper"),
+    sens_p(nullptr),
+    iTimed(nullptr),
+    _rate(DEFAULT_THREAD_PERIOD),
+    minAngle(0),
+    maxAngle(0),
+    minDistance(0),
+    maxDistance(0),
+    resolution(0),
+    isDeviceOwned(false),
     // init ROS data
-    frame_id = "";
-    rosNodeName = "";
-    rosTopicName = "";
-    partName = "Rangefinder2DWrapper";
-    rosNode = nullptr;
-    rosMsgCounter = 0;
-    useROS      = ROS_disabled;
-    minAngle    = 0;
-    maxAngle    = 0;
-    minDistance = 0;
-    maxDistance = 0;
-    resolution  = 0;
-    isDeviceOwned = false;
-}
+    useROS(ROS_disabled),
+    frame_id(""),
+    rosNodeName(""),
+    rosTopicName(""),
+    rosNode(nullptr),
+    rosMsgCounter(0)
+{}
 
 Rangefinder2DWrapper::~Rangefinder2DWrapper()
 {
