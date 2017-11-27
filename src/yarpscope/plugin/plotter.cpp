@@ -27,23 +27,26 @@
  *  \param bgcolor the background color of the plotter
  *  \param autorescale not used
  */
-Plotter::Plotter(const QString &title, int gridx, int gridy, int hspan, int vspan, float minval, float maxval, int size, const QString &bgcolor, bool autorescale,  QObject *parent) :
-    QObject(parent)
+Plotter::Plotter(const QString &_title, int _gridx, int _gridy,
+                 int _hspan, int _vspan, float _minval,
+                 float _maxval, int _size, const QString &_bgcolor,
+                 bool _autorescale,  QObject *parent) :
+    QObject(parent),
+    title(_title),
+    gridx(_gridx),
+    gridy(_gridy),
+    hspan(_hspan),
+    vspan(_vspan),
+    minval(_minval),
+    maxval(_maxval),
+    size(_size),
+    bgcolor(_bgcolor),
+    autorescale(_autorescale),
+    initialSize(_size),
+    start(0),
+    interact(false)
 {
     Q_UNUSED(autorescale);
-    this->title = title;
-    this->gridx = gridx;
-    this->gridy = gridy;
-    this->hspan = hspan;
-    this->vspan = vspan;
-    this->minval = minval;
-    this->maxval = maxval;
-    this->size = size;
-    initialSize = size;
-    start = 0;
-    this->bgcolor = bgcolor;
-    interact = false;
-
     connect(customPlot.axisRect(),SIGNAL(zoomRequest()),this,SLOT(onInteract()));
     connect(customPlot.axisRect(),SIGNAL(dragStarted()),this,SLOT(onInteract()));
 
@@ -234,27 +237,25 @@ void Plotter::clear()
 
 
 /***********************************************************/
-Graph::Graph(int index, QString title, QString color, QString type, int size, double graph_y_scale, int buffer_size, QObject *parent) : QObject(parent)
-{
-    curr_connection = NULL;
-    this->index = index;
-    this->type = type;
-    this->color = color;
-    this->buffer_size = buffer_size;
-    this->title = title;
-    this->graph_y_scale =graph_y_scale;
-
-    lastX = 0;
-    lastY = 0;
-    lastT = 0;
-
-    lineSize = size;
-    numberAcquiredData = 0;
-
-    curr_connection = NULL;
-    deleteConnection = true;
-
-}
+Graph::Graph(int _index, QString _title, QString _color, QString _type, int _lineSize,
+             double _graph_y_scale, int _buffer_size, QObject *parent) : QObject(parent),
+    lastX(0),
+    lastY(0),
+    lastT(0),
+    deleteConnection(true),
+    customGraphPoint(YARP_NULLPTR),
+    customGraph(YARP_NULLPTR),
+    index(_index),
+    graph_y_scale(_graph_y_scale),
+    curr_connection(YARP_NULLPTR),
+    buffer_size(_buffer_size),
+    numberAcquiredData(0),
+    lastIndex(0),
+    type(_type),
+    color(_color),
+    lineSize(_lineSize),
+    title(_title)
+{}
 
 
 void Graph::init(QString remotePortName,

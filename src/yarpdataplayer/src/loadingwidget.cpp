@@ -3,16 +3,13 @@
 
 LoadingWidget::LoadingWidget(QWidget *parent) :
     QDialog(parent),
-    ui(new Ui::LoadingWidget)
+    ui(new Ui::LoadingWidget),
+    counter(0)
 {
     ui->setupUi(this);
-
     setWindowFlags(Qt::FramelessWindowHint | Qt::Dialog);
     setAttribute(Qt::WA_TranslucentBackground);
-
     setModal(true);
-
-
     splashTimer.setInterval(50);
     splashTimer.setSingleShot(false);
     connect(&splashTimer,SIGNAL(timeout()),this,SLOT(onSplashTimer()),Qt::DirectConnection);

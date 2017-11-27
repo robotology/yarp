@@ -12,9 +12,10 @@
 #include <QXmlStreamReader>
 #include <QFile>
 
-XmlLoader::XmlLoader(QString fileName, PlotManager *plotManager,QObject *parent) : GenericLoader(parent)
+XmlLoader::XmlLoader(QString fileName, PlotManager *_plotManager,QObject *parent) : GenericLoader(parent)
 {
-    this->plotManager = plotManager;
+    plotter = YARP_NULLPTR;
+    plotManager = _plotManager;
 
     QFile* file = new QFile(fileName);
        /* If we can't open it, let's show an error message. */
