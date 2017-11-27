@@ -632,7 +632,6 @@ string RGBDSensorWrapper::yarp2RosPixelCode(int code)
 void RGBDSensorWrapper::shallowCopyImages(const yarp::sig::FlexImage& src, yarp::sig::FlexImage& dest)
 {
     dest.setPixelCode(src.getPixelCode());
-    dest.setPixelSize(src.getPixelSize());
     dest.setQuantum(src.getQuantum());
     dest.setExternal(src.getRawImage(), src.width(), src.height());
 }

@@ -131,7 +131,6 @@ void Sound::init(int bytesPerSample) {
     yAssert(implementation!=nullptr);
 
     yAssert(bytesPerSample==2); // that's all thats implemented right now
-    HELPER(implementation).setPixelSize(sizeof(PixelMono16));
     HELPER(implementation).setPixelCode(VOCAB_PIXEL_MONO16);
     HELPER(implementation).setQuantum(2);
 
