@@ -2782,7 +2782,7 @@ int Companion::cmdClock(int argc, char *argv[])
 
     if(system)
     {
-        init = 0;
+        init = time;
         offset = time;
     }
     else
