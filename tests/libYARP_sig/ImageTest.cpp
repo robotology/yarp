@@ -614,10 +614,7 @@ public:
 
 
     virtual void runTests() override {
-#ifdef BROKEN_TEST
         readWrite();
-#endif // BROKEN
-
         testCreate();
         bool netMode = Network::setLocalMode(true);
         testTransmit();
