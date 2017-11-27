@@ -28,6 +28,11 @@
 
 #include <yarp/os/impl/NameClient.h>
 
+// For a yarp server running on the port 10000
+// * the first port assigned will be 10002
+// * the last port assigned will be 19999
+#define MIN_PORT_NUMBER_OFFSET 2
+#define MAX_PORT_NUMBER_OFFSET 9999
 using namespace yarp::os;
 using namespace yarp::name;
 using namespace yarp::serversql::impl;
@@ -160,8 +165,8 @@ public:
             }
         }
 
-        config.minPortNumber = contact.getPort()+2;
-        config.maxPortNumber = contact.getPort()+9999;
+        config.minPortNumber = contact.getPort() + MIN_PORT_NUMBER_OFFSET;
+        config.maxPortNumber = contact.getPort() + MAX_PORT_NUMBER_OFFSET;
         alloc.open(pmem,config);
         ns.open(pmem,&alloc,contact);
         NetworkBase::queryBypass(&ns);
@@ -174,33 +179,15 @@ public:
     }
 };
 
-yarpserversql_API yarp::os::NameStore *yarpserver_create(yarp::os::Searchable& options) {
-    NameServerContainer *nc = new NameServerContainer;
-    if (!nc) return nullptr;
-    nc->setSilent(true);
-    if (!nc->open(options)) {
-        delete nc;
-        return nullptr;
-    }
-    nc->goPublic();
-    return nc;
-}
-
-yarpserversql_API int yarpserver_main(int argc, char *argv[]) {
-    // check if YARP version is sufficiently up to date - there was
-    // an important bug fix
-    bool silent(false);
-    Bottle b("ip 10.0.0.10");
-    if (b.get(1).asString()!="10.0.0.10") {
-        fprintf(stderr, "Sorry, please update YARP version");
-        ::exit(1);
-    }
-
+int yarp::serversql::Server::run(int argc, char** argv)
+{
     Property options;
+    FILE*    out;
+
     options.fromCommand(argc, argv, false);
     silent = options.check("silent");
+    out    = silent ? tmpfile() : stdout;
 
-    FILE* out = silent ? tmpfile() : stdout;
     fprintf(out, "    __  __ ___  ____   ____\n\
     \\ \\/ //   ||  _ \\ |  _ \\\n\
      \\  // /| || |/ / | |/ /\n\
@@ -208,7 +195,8 @@ yarpserversql_API int yarpserver_main(int argc, char *argv[]) {
     /_//_/  |_||_| \\_\\|_|\n\
     ========================\n\n");
 
-    if (options.check("help")) {
+    if (options.check("help"))
+    {
         printf("Welcome to the YARP name server.\n");
         printf("  --write                  Write IP address and socket on the configuration file.\n");
         printf("  --config filename.conf   Load options from a file.\n");
@@ -257,14 +245,17 @@ yarpserversql_API int yarpserver_main(int argc, char *argv[]) {
     Port server;
     name.setPort(server);
     server.setReaderCreator(name);
-    bool ok = server.open(nc.where(),false);
-    if (!ok) {
+
+    ok = server.open(nc.where(),false);
+    if (!ok)
+    {
         fprintf(stderr, "Name server failed to open\n");
         return 1;
     }
-    printf("\n");
 
+    printf("\n");
     fallback.start();
+
 
     // Repeat registrations for the server and fallback server -
     // these registrations are more complete.
@@ -272,14 +263,15 @@ yarpserversql_API int yarpserver_main(int argc, char *argv[]) {
     nc.preregister(nc.where());
     nc.preregister(fallback.where());
 
-    Contact alt = nc.whereDelegate();
-    if (alt.isValid()) {
+    alt = nc.whereDelegate();
+
+    if (alt.isValid())
+    {
         nc.preregister(alt);
     }
     nc.goPublic();
 
     //Setting nameserver property
-    yarp::os::Bottle cmd, reply;
     cmd.addString("set");
     cmd.addString(server.getName());
     cmd.addString("nameserver");
@@ -298,4 +290,16 @@ yarpserversql_API int yarpserver_main(int argc, char *argv[]) {
     server.close();
 
     return 0;
+}
+yarp::os::NameStore *yarpserver_create(yarp::os::Searchable& options)
+{
+    NameServerContainer *nc = new NameServerContainer;
+    if (!nc) return nullptr;
+    nc->setSilent(true);
+    if (!nc->open(options)) {
+        delete nc;
+        return nullptr;
+    }
+    nc->goPublic();
+    return nc;
 }
