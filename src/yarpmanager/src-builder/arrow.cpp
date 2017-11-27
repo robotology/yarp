@@ -57,35 +57,29 @@ const qreal Pi = 3.14;
 
 
 
-Arrow::Arrow(BuilderItem *startItem, BuilderItem *endItem,int id, Manager *safeManager,
-             bool isInApp,bool editingMode, BuilderItem *parent)
-    : BuilderItem(parent),textLbl("",this)
+Arrow::Arrow(BuilderItem *startItem, BuilderItem *endItem,int _id, Manager *safeManager,
+             bool isInApp,bool editingMode, BuilderItem *parent) :
+    BuilderItem(parent),
+    manager(safeManager),
+    externalSelection(false),
+    editingMode(editingMode),
+    connected(false),
+    myStartItem(startItem),
+    myEndItem(endItem),
+    myColor(Qt::black),
+    textLbl("",this),
+    textWidth(0),
+    id(_id),
+    firstTime(true)
 {
-    sigHandler = new ItemSignalHandler();
     itemType = ConnectionItemType;
-    connected = false;
-    myStartItem = startItem;
-    myEndItem = endItem;
-    this->manager = safeManager;
+    nestedInApp = isInApp;
+    sigHandler = new ItemSignalHandler();
     setFlag(ItemIsSelectable,true);
     setFlag(ItemClipsToShape,false);
-    myColor = Qt::black;
-    this->id = id;
-    this->nestedInApp = isInApp;
-    this->editingMode = editingMode;
-
-
-    externalSelection = false;
-
-    firstTime = true;
-
     setToolTip(QString("%1 --> %2").arg(myStartItem->itemName).arg(myEndItem->itemName));
-
     textLbl.setFlag(ItemIsMovable,!nestedInApp);
     textLbl.setFlag(ItemSendsGeometryChanges,!nestedInApp);
-
-
-
 }
 
 Arrow::~Arrow()

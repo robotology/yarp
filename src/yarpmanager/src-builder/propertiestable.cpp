@@ -3,16 +3,30 @@
 
 using namespace std;
 
-PropertiesTable::PropertiesTable(Manager *manager,QWidget *parent) : QWidget(parent)
+PropertiesTable::PropertiesTable(Manager *_manager,QWidget *parent) : QWidget(parent),
+    currentApplication(YARP_NULLPTR),
+    currentModule(YARP_NULLPTR),
+    appName(YARP_NULLPTR),
+    appDescr(YARP_NULLPTR),
+    appVersion(YARP_NULLPTR),
+    appAuthors(YARP_NULLPTR),
+    appPrefix(YARP_NULLPTR),
+    modName(YARP_NULLPTR),
+    modNode(YARP_NULLPTR),
+    modStdio(YARP_NULLPTR),
+    modWorkDir(YARP_NULLPTR),
+    modPrefix(YARP_NULLPTR),
+    modDeployer(YARP_NULLPTR),
+    modParams(YARP_NULLPTR),
+    manager(_manager),
+    nodeCombo(YARP_NULLPTR),
+    deployerCombo(YARP_NULLPTR)
 {
     QHBoxLayout *lay = new QHBoxLayout(this);
     propertiesTab = new QTabWidget(this);
     appProperties = new QTreeWidget(this);
     moduleProperties = new QTreeWidget(this);
     moduleDescription = new QTreeWidget(this);
-    currentApplication = NULL;
-    currentModule = NULL;
-    this->manager = manager;
 
     paramsSignalMapper = new QSignalMapper(this);
     connect(paramsSignalMapper, SIGNAL(mapped(QWidget*)),
@@ -25,16 +39,7 @@ PropertiesTable::PropertiesTable(Manager *manager,QWidget *parent) : QWidget(par
     setLayout(lay);
     lay->setMargin(0);
 
-    appName = NULL;
-    appDescr = NULL;
-    appPrefix = NULL;
-    appVersion = NULL;
-    appAuthors = NULL;
-    nodeCombo = NULL;
-    deployerCombo = NULL;
-
     propertiesTab->addTab(appProperties,"Application Properties");
-
 }
 
 void PropertiesTable::showApplicationTab(Application *application)
