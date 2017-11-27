@@ -12,25 +12,35 @@
 #include <rtf/dll/Plugin.h>
 #include <yarp/serversql/yarpserversql.h>
 #include <yarp/os/LogStream.h>
-
+#include <yarp/os/impl/NameClient.h>
+#include <yarp/serversql/Server.h>
+#define YSERVFIXT_TIMEOUT 10
 using namespace yarp::os;
 using namespace RTF;
+//using namespace yarp::name;
 
-class YarpServerThread : public yarp::os::Thread
+class yarpServerThread : public yarp::os::Thread
 {
+    typedef yarp::serversql::Server Server;
+
+    Server ys;
+    int    argc;
+    char** argv;
+
+    virtual void run() override
+    {
+        ys.run(argc, argv);
+    }
+
+    virtual void onStop() override
+    {
+        ys.stop();
+    }
 public:
-    void configure(int inArgc, char** inArgv)
+    virtual void configure(int inArgc, char** inArgv)
     {
         argc = inArgc;
         argv = inArgv;
-    }
-private:
-    int    argc;
-    char** argv{0};
-    virtual void run() override
-    {
-        int ret = yarpserver_main(argc, argv);
-        YARP_UNUSED(ret);
     }
 };
 
@@ -38,21 +48,27 @@ class YarpNameServer : public FixtureManager
 {
 public:
     yarp::os::Network net;
-    YarpNameServer() {};
-    virtual ~YarpNameServer() {};
-    YarpServerThread yServer;
+    yarpServerThread  yServer;
+
+    virtual ~YarpNameServer(){ yServer.stop(); }
+
 
     virtual bool setup(int argc, char** argv) override
     {
+
         yServer.configure(argc, argv);
         yServer.start();
-        for (int i = 0; i < 10; i++)
+        double time = yarp::os::Time::now();
+        while(!net.checkNetwork() || (yarp::os::Time::now() - time) < YSERVFIXT_TIMEOUT)
         {
-            if(net.checkNetwork()) return true;
-            yarp::os::Time::delay(0.2);
+            yarp::os::Time::delay(0.1);
         }
-        yError() << "name server is taking too long to start.. aborting";
-        return false;
+        return net.checkNetwork();
+    }
+
+    virtual bool check() override
+    {
+        return net.checkNetwork();
     }
 
     virtual void tearDown() override
