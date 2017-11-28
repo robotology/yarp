@@ -284,15 +284,20 @@ static int metaConnect(const ConstString& src,
                   dest.c_str(),
                   (mode==YARP_ENACT_CONNECT)?"connect":((mode==YARP_ENACT_DISCONNECT)?"disconnect":"check")
                   );
-    // check if source name and destination name contain spaces
-    if(dest.find(" ") != std::string::npos || src.find(" ") != std::string::npos)
-    {
-        fprintf(stderr, "Failure: no way to make connection %s->%s,\n", src.c_str(), dest.c_str());
-        return 1;
-    }
     // get the expressed contacts, without name server input
     Contact dynamicSrc = Contact::fromString(src);
     Contact dynamicDest = Contact::fromString(dest);
+
+    if(!NetworkBase::isValidPortName(dynamicSrc.getName()))
+    {
+        fprintf(stderr, "Failure: no way to make connection, invalid source '%s'\n", dynamicSrc.getName().c_str());
+        return 1;
+    }
+    if(!NetworkBase::isValidPortName(dynamicDest.getName()))
+    {
+        fprintf(stderr, "Failure: no way to make connection, invalid destination '%s'\n", dynamicDest.getName().c_str());
+        return 1;
+    }
 
     bool topical = style.persistent;
     if (dynamicSrc.getCarrier()=="topic" ||
@@ -868,6 +873,36 @@ bool NetworkBase::getConnectionQos(const ConstString& src, const ConstString& de
         return false;
     if (!getPortQos(dest, src, destStyle, quiet))
         return false;
+    return true;
+}
+
+bool NetworkBase::isValidPortName(const ConstString& portName)
+{
+    if (portName.empty())
+    {
+        return false;
+    }
+
+    if (portName == "...")
+    {
+       return true;
+    }
+
+    if (portName.at(0) != '/')
+    {
+        return false;
+    }
+
+    if (portName.at(portName.size()-1) == '/')
+    {
+        return false;
+    }
+
+    if (portName.find(" ") != std::string::npos)
+    {
+        return false;
+    }
+
     return true;
 }
 
