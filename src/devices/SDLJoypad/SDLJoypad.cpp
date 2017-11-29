@@ -40,7 +40,15 @@ bool SDLJoypad::open(yarp::os::Searchable& rf)
     {
         yInfo() << "parameters:\n\n" <<
                    "UseAllJoypadAsOne     - set it to 1 to have all the connected joypad as one\n" <<
-                   "DefaultJoystickNumber - select the id of the joypad to use if there are more than one joypad and UseAllJoypadAsOne is setted to 0\n";
+                   "DefaultJoystickNumber - select the id of the joypad to use if there are more than one joypad and UseAllJoypadAsOne is setted to 0\n" <<
+                   "stick                 - the number of stick to configure. a stick is simply a wrapping of 2 or more axes so for every stick\n" <<
+                   "                        a group named STICK*ID* containing the stick's parameters is searched. \n" <<
+                   "\n\n" <<
+                   "stick groups parameters:\n\n" <<
+                   "axes             - axes count for this stick\n" <<
+                   "axis[ID]_id      - axis id for current stick related axis\n" <<
+                   "invert_axis_[ID] - invert the current axis\n" <<
+                   "deadZone         - set the deadzone for this stick\n";
         return false;
     }
 
