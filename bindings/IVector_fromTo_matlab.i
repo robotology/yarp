@@ -11,7 +11,7 @@
         const int* selfData = self->data();
         for(size_t i=0; i<selfDim; i++)
         {
-            d[i] = selfData[i];
+            d[i] = static_cast<double>(selfData[i]);
         }
         return p;
     }
