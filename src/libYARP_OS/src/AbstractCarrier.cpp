@@ -353,7 +353,6 @@ void AbstractCarrier::writeYarpInt(int n, ConnectionState& proto)
     Bytes header(&(buf[0]), sizeof(buf));
     createYarpNumber(n, header);
     proto.os().write(header);
-    proto.os().flush();
 }
 
 int AbstractCarrier::interpretYarpNumber(const yarp::os::Bytes& b)

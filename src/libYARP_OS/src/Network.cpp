@@ -354,6 +354,16 @@ static int metaConnect(const ConstString& src,
     CARRIER_DEBUG("DYNAMIC_SRC: name=%s, carrier=%s\n", dynamicSrc.getName().c_str(), dynamicSrc.getCarrier().c_str());
     CARRIER_DEBUG("DYNAMIC_DST: name=%s, carrier=%s\n", dynamicDest.getName().c_str(), dynamicDest.getCarrier().c_str());
 
+    if(!NetworkBase::isValidPortName(dynamicSrc.getName()))
+    {
+        fprintf(stderr, "Failure: no way to make connection, invalid source '%s'\n", dynamicSrc.getName().c_str());
+        return 1;
+    }
+    if(!NetworkBase::isValidPortName(dynamicDest.getName()))
+    {
+        fprintf(stderr, "Failure: no way to make connection, invalid destination '%s'\n", dynamicDest.getName().c_str());
+        return 1;
+    }
 
     bool topical = style.persistent;
     if (dynamicSrc.getCarrier()=="topic" ||
@@ -1036,6 +1046,36 @@ bool NetworkBase::getConnectionQos(const ConstString& src, const ConstString& de
         return false;
     if (!getPortQos(dest, src, destStyle, quiet))
         return false;
+    return true;
+}
+
+bool NetworkBase::isValidPortName(const ConstString& portName)
+{
+    if (portName.empty())
+    {
+        return false;
+    }
+
+    if (portName == "...")
+    {
+       return true;
+    }
+
+    if (portName.at(0) != '/')
+    {
+        return false;
+    }
+
+    if (portName.at(portName.size()-1) == '/')
+    {
+        return false;
+    }
+
+    if (portName.find(" ") != std::string::npos)
+    {
+        return false;
+    }
+
     return true;
 }
 

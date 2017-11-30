@@ -105,6 +105,10 @@ public:
         checkFalse(Network::connect("/p1","/p3"),"bad connect, not existing destination");
         checkFalse(Network::connect("/p1","/p2 /p3"),"bad connect, invalid destination");
         checkFalse(Network::connect("/p1 /p2","/p2"),"bad connect, invalid source");
+        checkFalse(Network::connect("/p1/", "/p2"),"bad connect, source with ending '/'");
+        checkFalse(Network::connect("/p1", "/p2/"),"bad connect, destination with ending '/'");
+        checkFalse(Network::connect("p1", "/p2"),"bad connect, source without starting '/'");
+        checkFalse(Network::connect("/p1", "p2"),"bad connect, destination without starting '/'");
         p2.close();
         p1.close();
     }

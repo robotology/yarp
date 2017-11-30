@@ -70,7 +70,7 @@ function(YARP_OSX_DUPLICATE_AND_ADD_BUNDLE)
         list(REMOVE_ITEM _all_properties "${_prop_name}")
         get_target_property(_prop_value ${_target_orig} ${_prop_name})
         # Icons should be added to the executable
-        add_executable(${_target_dest} "${_prop_value}" "${_DADB_APP_ICON}")
+        add_executable(${_target_dest} ${_prop_value} "${_DADB_APP_ICON}")
       elseif("${_prop_name}" MATCHES "^(ALIASED_TARGET)")
         # Target properties that should not be copied
         list(REMOVE_ITEM _all_properties "${_prop_name}")
