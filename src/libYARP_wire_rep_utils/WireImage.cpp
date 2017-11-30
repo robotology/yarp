@@ -47,7 +47,6 @@ FlexImage *WireImage::checkForImage(SizedWriter& writer) {
     int h = hdr.height;
     //int row_stride = hdr.imgSize/hdr.height;
     img.setPixelCode(hdr.id);
-    img.setPixelSize(hdr.depth);
     img.setQuantum(hdr.quantum);
     img.setExternal((char*)img_buf,w,h);
     return &img;

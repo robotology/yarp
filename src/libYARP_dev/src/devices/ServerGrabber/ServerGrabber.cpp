@@ -876,7 +876,6 @@ void ServerGrabber::split(const yarp::sig::Image& inputImage, yarp::sig::Image& 
 void ServerGrabber::setupFlexImage(const Image &_img, FlexImage &flex_i)
 {
     flex_i.setPixelCode(_img.getPixelCode());
-    flex_i.setPixelSize(_img.getPixelSize());
     flex_i.setQuantum(_img.getQuantum());
     flex_i.setExternal(_img.getRawImage(), _img.width(),_img.height());
 
@@ -1261,7 +1260,6 @@ void ServerGrabber::run()
 void ServerGrabber::shallowCopyImages(const yarp::sig::FlexImage& src, yarp::sig::FlexImage& dest)
 {
     dest.setPixelCode(src.getPixelCode());
-    dest.setPixelSize(src.getPixelSize());
     dest.setQuantum(src.getQuantum());
     dest.setExternal(src.getRawImage(), src.width(), src.height());
 }
