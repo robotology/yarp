@@ -1335,3 +1335,21 @@ public:
         return self->cast_as<yarp::sig::ImageOf<yarp::sig::PixelMono> >();
     }
 }
+
+
+//////////////////////////////////////////////////////////////////////////
+// Deal with IFrameGrabberControls2 pointer arguments that don't translate
+
+%extend yarp::dev::IFrameGrabberControls2 {
+  bool hasFeature(int feature) {
+      bool result;
+      self->hasFeature(feature, &result);
+      return result;
+  }
+
+  double getFeature(int feature) {
+      double result;
+      self->getFeature(feature, &result);
+      return result;
+  }
+}
