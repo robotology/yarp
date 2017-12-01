@@ -419,6 +419,7 @@ MAKE_COMMS(Bottle)
 %include <yarp/dev/IPWMControl.h>
 %include <yarp/dev/ICurrentControl.h>
 %include <yarp/dev/IAnalogSensor.h>
+%include <yarp/dev/FrameGrabberControl2.h>
 
 #if !defined(SWIGCHICKEN) && !defined(SWIGALLEGROCL)
   %template(DVector) std::vector<double>;
@@ -786,6 +787,13 @@ typedef yarp::os::BufferedPort<ImageRgbFloat> BufferedPortImageRgbFloat;
         self->view(result);
         return result;
     }
+
+    yarp::dev::IFrameGrabberControls2 *viewIFrameGrabberControls2() {
+        yarp::dev::IFrameGrabberControls2 *result;
+        self->view(result);
+        return result;
+    }
+
     // you'll need to add an entry for every interface you wish
     // to use
 }
