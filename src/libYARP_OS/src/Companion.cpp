@@ -1482,6 +1482,15 @@ int Companion::cmdNamespace(int argc, char *argv[]) {
 int Companion::cmdClean(int argc, char *argv[]) {
     Property options;
     if (argc==0) {
+        printf("\
+##### ATTENTION #######\n\n \
+the 'yarp clean'' command cannot solve any Address Conflict.\n \
+if not used properly it can cause them instead, deregistering\n \
+active ports from the name server\n \
+when the network is particulary slow\n \
+or if the timeout is set too quick\n\n \
+##### ATTENTION #######\n\n");
+
         printf("# If the cleaning process has long delays, you may wish to use a timeout, \n");
         printf("# specifying how long to wait (in seconds) for a test connection to a port:\n");
         printf("#   yarp clean --timeout 5.0\n");
