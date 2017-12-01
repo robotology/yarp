@@ -8,7 +8,7 @@ yarp_prepare_plugin(portmonitor
                     CATEGORY carrier
                     EXTRA_CONFIG SUBTYPE=recv
                                  CODE="not applicable"
-                    DEPENDS "CREATE_OPTIONAL_CARRIERS;YARP_HAS_ACE"
+                    DEPENDS "CREATE_OPTIONAL_CARRIERS"
                     DEFAULT ON)
 
 if (NOT SKIP_portmonitor)
@@ -33,8 +33,7 @@ if (NOT SKIP_portmonitor)
                   dll/MonitorSharedLib.cpp
                   ${portmonitor_LUA_SRCS})
 
-  target_link_libraries(yarp_portmonitor YARP::YARP_OS
-                                         ${ACE_LIBRARIES})
+  target_link_libraries(yarp_portmonitor YARP::YARP_OS)
 
   if(LUA_FOUND)
     target_link_libraries(yarp_portmonitor ${LUA_LIBRARY})

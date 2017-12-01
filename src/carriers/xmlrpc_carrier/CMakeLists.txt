@@ -7,7 +7,7 @@ yarp_prepare_plugin(xmlrpc
                     TYPE yarp::os::XmlRpcCarrier
                     INCLUDE XmlRpcCarrier.h
                     EXTRA_CONFIG CODE="POST /"
-                    DEPENDS "CREATE_OPTIONAL_CARRIERS;YARP_HAS_ACE"
+                    DEPENDS "CREATE_OPTIONAL_CARRIERS"
                     DEFAULT ON)
 
 if(NOT SKIP_xmlrpc)
