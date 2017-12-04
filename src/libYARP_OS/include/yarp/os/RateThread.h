@@ -22,7 +22,8 @@ namespace yarp {
  *
  * An abstraction for a periodic thread.
  */
-class YARP_OS_API yarp::os::RateThread {
+class YARP_OS_API yarp::os::RateThread
+{
 public:
 
     /**
@@ -210,11 +211,13 @@ public:
 private:
     bool join(double seconds = -1);
 
-    void *implementation;
+#ifndef DOXYGEN_SHOULD_SKIP_THIS
+private:
+    class Private;
+    Private* mPriv;
+#endif // DOXYGEN_SHOULD_SKIP_THIS
 
-    void initWithSystemClock();
-
-friend class SystemRateThread;
+    friend class SystemRateThread;
 };
 
 
@@ -236,7 +239,8 @@ public:
  * This class takes a Runnable instance and wraps a thread around it.
  * This class is under development - API may change a lot.
  */
-class YARP_OS_API yarp::os::RateThreadWrapper : public RateThread {
+class YARP_OS_API yarp::os::RateThreadWrapper : public RateThread
+{
 private:
     Runnable *helper;
     int owned;

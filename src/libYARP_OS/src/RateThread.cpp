@@ -4,25 +4,21 @@
 * CopyPolicy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
 */
 
-
-#include <yarp/os/impl/ThreadImpl.h>
 #include <yarp/os/RateThread.h>
-#include <yarp/os/impl/Logger.h>
-#include <yarp/os/impl/PlatformTime.h>
 #include <yarp/os/Semaphore.h>
-
 #include <yarp/os/Time.h>
 #include <yarp/os/SystemClock.h>
-#include <cmath> //sqrt
 
-//added threadRelease/threadInit methods and synchronization -nat
+#include <yarp/os/impl/ThreadImpl.h>
+#include <yarp/os/impl/Logger.h>
+#include <yarp/os/impl/PlatformTime.h>
+
+#include <cmath>
 
 using namespace yarp::os::impl;
 using namespace yarp::os;
 
-//const YARP_timeval _timeout_value(20, 0);    // (20 sec) timeout value for the release (20 sec)
-
-class RateThreadCallbackAdapter: public ThreadImpl
+class yarp::os::RateThread::Private : public ThreadImpl
 {
 private:
     float period_ms;
@@ -46,7 +42,8 @@ private:
     double currentRun;     //time when this iteration started
     bool scheduleReset;
 
-    void _resetStat() {
+    void _resetStat()
+    {
         totalUsed=0;
         count=0;
         estPIt=0;
@@ -59,11 +56,24 @@ private:
 
 public:
 
-    RateThreadCallbackAdapter(RateThread& owner, int p) :   period_ms(p), adaptedPeriod(period_ms/1000.0), owner(owner), useSystemClock(false),
-                                                            elapsed(0), sleepPeriod(adaptedPeriod), suspended(false), totalUsed(0), count(0),
-                                                            estPIt(0), sumTSq(0), sumUsedSq(0), previousRun(0), currentRun(0), scheduleReset(true)
+    Private(RateThread& owner, int p) :
+            period_ms(p),
+            adaptedPeriod(period_ms/1000.0),
+            owner(owner),
+            useSystemClock(false),
+            elapsed(0),
+            sleepPeriod(adaptedPeriod),
+            suspended(false),
+            totalUsed(0),
+            count(0),
+            estPIt(0),
+            totalT(0),
+            sumTSq(0),
+            sumUsedSq(0),
+            previousRun(0),
+            currentRun(0),
+            scheduleReset(false)
     {
-        _resetStat();
     }
 
     void initWithSystemClock()
@@ -71,11 +81,13 @@ public:
         useSystemClock = true;
     }
 
-    void resetStat() {
+    void resetStat()
+    {
         scheduleReset=true;
     }
 
-    double getEstPeriod() {
+    double getEstPeriod()
+    {
         double ret;
         lock();
         if (estPIt==0)
@@ -86,7 +98,8 @@ public:
         return ret;
     }
 
-    void getEstPeriod(double &av, double &std) {
+    void getEstPeriod(double &av, double &std)
+    {
         lock();
         if (estPIt==0) {
             av=0;
@@ -103,14 +116,16 @@ public:
         unlock();
     }
 
-    unsigned int getIterations() {
+    unsigned int getIterations()
+    {
         lock();
         unsigned int ret=count;
         unlock();
         return ret;
     }
 
-    double getEstUsed() {
+    double getEstUsed()
+    {
         double ret;
         lock();
         if (count<1)
@@ -121,7 +136,8 @@ public:
         return ret;
     }
 
-    void getEstUsed(double &av, double &std) {
+    void getEstUsed(double &av, double &std)
+    {
         lock();
         if (count<1) {
             av=0;
@@ -139,7 +155,8 @@ public:
     }
 
 
-    void singleStep() {
+    void singleStep()
+    {
         lock();
         currentRun = Time::now();
 
@@ -185,7 +202,8 @@ public:
         yarp::os::Time::delay(sleepPeriod);
     }
 
-    void run() override {
+    void run() override
+    {
         adaptedPeriod = period_ms/1000.0;   //  divide by 1000 because user's period is [ms] while all the rest is [secs]
         while(!isClosing())
         {
@@ -246,159 +264,159 @@ public:
         SystemClock::delaySystem(sleepPeriod);
     }
 
-    bool threadInit() override {
+    bool threadInit() override
+    {
         return owner.threadInit();
     }
 
-    void threadRelease() override {
+    void threadRelease() override
+    {
         owner.threadRelease();
     }
 
-    bool setRate(int p) {
+    bool setRate(int p)
+    {
         period_ms=p;
         adaptedPeriod = period_ms/1000.0;   //  divide by 1000 because user's period is [ms] while all the rest is [secs]
         return true;
     }
 
-    double getRate() {
+    double getRate()
+    {
         return period_ms;
     }
 
-    bool isSuspended() {
+    bool isSuspended()
+    {
         return suspended;
     }
 
-    void suspend() {
+    void suspend()
+    {
         suspended=true;
     }
 
-    void resume() {
+    void resume()
+    {
         suspended=false;
     }
 
-    void afterStart(bool s) override {
+    void afterStart(bool s) override
+    {
         owner.afterStart(s);
     }
 
-    void beforeStart() override {
+    void beforeStart() override
+    {
         owner.beforeStart();
     }
 
-    void lock() {
+    void lock()
+    {
         mutex.wait();
     }
 
-    void unlock() {
+    void unlock()
+    {
         mutex.post();
     }
-}; // class RateThreadCallbackAdapter
+};
 
 
 
-RateThread::RateThread(int period)
+RateThread::RateThread(int period) : mPriv(new Private(*this, period))
 {
-    // use period
-    implementation = new RateThreadCallbackAdapter(*this, period);
-    yAssert(implementation!=nullptr);
 }
 
 RateThread::~RateThread()
 {
-    if (implementation!=nullptr) {
-        delete ((RateThreadCallbackAdapter*)implementation);
-        implementation = nullptr;
-    }
-}
-
-void RateThread::initWithSystemClock()
-{
-    ((RateThreadCallbackAdapter*)implementation)->initWithSystemClock();
+    delete mPriv;
 }
 
 bool RateThread::setRate(int period)
 {
-    return ((RateThreadCallbackAdapter*)implementation)->setRate(period);
+    return mPriv->setRate(period);
 }
 
 double RateThread::getRate()
 {
-    return ((RateThreadCallbackAdapter*)implementation)->getRate();
+    return mPriv->getRate();
 }
 
 bool RateThread::isSuspended()
 {
-    return ((RateThreadCallbackAdapter*)implementation)->isSuspended();
+    return mPriv->isSuspended();
 }
 
 bool RateThread::join(double seconds)
 {
-    return ((ThreadImpl*)implementation)->join(seconds);
+    return ((ThreadImpl*)mPriv)->join(seconds);
 }
 
 void RateThread::stop()
 {
-    ((ThreadImpl*)implementation)->close();
+    ((ThreadImpl*)mPriv)->close();
 }
 
 void RateThread::askToStop()
 {
-    ((ThreadImpl*)implementation)->askToClose();
+    ((ThreadImpl*)mPriv)->askToClose();
 }
 
 bool RateThread::step()
 {
-    ((RateThreadCallbackAdapter*)implementation)->singleStep();
+    mPriv->singleStep();
     return true;
 }
 
 bool RateThread::start()
 {
-    return ((ThreadImpl*)implementation)->start();
+    return ((ThreadImpl*)mPriv)->start();
 }
 
 bool RateThread::isRunning()
 {
-    return ((ThreadImpl*)implementation)->isRunning();
+    return ((ThreadImpl*)mPriv)->isRunning();
 }
 
 void RateThread::suspend()
 {
-    ((RateThreadCallbackAdapter*)implementation)->suspend();
+    mPriv->suspend();
 }
 
 void RateThread::resume()
 {
-    ((RateThreadCallbackAdapter*)implementation)->resume();
+    mPriv->resume();
 }
 
 unsigned int RateThread::getIterations()
 {
-    return ((RateThreadCallbackAdapter*)implementation)->getIterations();
+    return mPriv->getIterations();
 }
 
 double RateThread::getEstPeriod()
 {
-    return ((RateThreadCallbackAdapter*)implementation)->getEstPeriod();
+    return mPriv->getEstPeriod();
 }
 
 double RateThread::getEstUsed()
 {
-    return ((RateThreadCallbackAdapter*)implementation)->getEstUsed();
+    return mPriv->getEstUsed();
 }
 
 void RateThread::getEstPeriod(double &av, double &std)
 {
-    ((RateThreadCallbackAdapter*)implementation)->getEstPeriod(av, std);
+    mPriv->getEstPeriod(av, std);
 }
 
 void RateThread::getEstUsed(double &av, double &std)
 {
-    ((RateThreadCallbackAdapter*)implementation)->getEstUsed(av, std);
+    mPriv->getEstUsed(av, std);
 }
 
 void RateThread::resetStat()
 {
-    ((RateThreadCallbackAdapter*)implementation)->resetStat();
+    mPriv->resetStat();
 }
 
 bool RateThread::threadInit()
@@ -419,17 +437,17 @@ void RateThread::afterStart(bool success)
 
 int RateThread::setPriority(int priority, int policy)
 {
-    return ((ThreadImpl*)implementation)->setPriority(priority, policy);
+    return ((ThreadImpl*)mPriv)->setPriority(priority, policy);
 }
 
 int RateThread::getPriority()
 {
-    return ((ThreadImpl*)implementation)->getPriority();
+    return ((ThreadImpl*)mPriv)->getPriority();
 }
 
 int RateThread::getPolicy()
 {
-    return ((ThreadImpl*)implementation)->getPolicy();
+    return ((ThreadImpl*)mPriv)->getPolicy();
 }
 
 //
@@ -438,7 +456,7 @@ int RateThread::getPolicy()
 
 SystemRateThread::SystemRateThread(int period) : RateThread(period)
 {
-    RateThread::initWithSystemClock();
+    mPriv->initWithSystemClock();
 }
 
 SystemRateThread::~SystemRateThread()
@@ -446,32 +464,37 @@ SystemRateThread::~SystemRateThread()
 
 bool SystemRateThread::stepSystem()
 {
-    ((RateThreadCallbackAdapter*)implementation)->singleStepSystem();
+    RateThread::mPriv->singleStepSystem();
     return true;
 }
 
 
-RateThreadWrapper::RateThreadWrapper(): RateThread(0) {
+RateThreadWrapper::RateThreadWrapper(): RateThread(0)
+{
     helper = nullptr;
     owned = false;
 }
 
 
-RateThreadWrapper::RateThreadWrapper(Runnable *helper): RateThread(0) {
+RateThreadWrapper::RateThreadWrapper(Runnable *helper): RateThread(0)
+{
     this->helper = helper;
     owned = true;
 }
 
-RateThreadWrapper::RateThreadWrapper(Runnable& helper): RateThread(0) {
+RateThreadWrapper::RateThreadWrapper(Runnable& helper): RateThread(0)
+{
     this->helper = &helper;
     owned = false;
 }
 
-RateThreadWrapper::~RateThreadWrapper() {
+RateThreadWrapper::~RateThreadWrapper()
+{
     detach();
 }
 
-void RateThreadWrapper::detach() {
+void RateThreadWrapper::detach()
+{
     if (owned) {
         if (helper!=nullptr) {
             delete helper;
@@ -481,21 +504,24 @@ void RateThreadWrapper::detach() {
     owned = false;
 }
 
-bool RateThreadWrapper::attach(Runnable& helper) {
+bool RateThreadWrapper::attach(Runnable& helper)
+{
     detach();
     this->helper = &helper;
     owned = false;
     return true;
 }
 
-bool RateThreadWrapper::attach(Runnable *helper) {
+bool RateThreadWrapper::attach(Runnable *helper)
+{
     detach();
     this->helper = helper;
     owned = true;
     return true;
 }
 
-bool RateThreadWrapper::open(double framerate, bool polling) {
+bool RateThreadWrapper::open(double framerate, bool polling)
+{
     int period = 0;
     if (framerate>0) {
         period=(int) (0.5+1000.0/framerate);
@@ -514,21 +540,25 @@ bool RateThreadWrapper::open(double framerate, bool polling) {
     return true;
 }
 
-void RateThreadWrapper::close() {
+void RateThreadWrapper::close()
+{
     RateThread::stop();
 }
 
-void RateThreadWrapper::stop() {
+void RateThreadWrapper::stop()
+{
     RateThread::stop();
 }
 
-void RateThreadWrapper::run() {
+void RateThreadWrapper::run()
+{
     if (helper!=nullptr) {
         helper->run();
     }
 }
 
-bool RateThreadWrapper::threadInit() {
+bool RateThreadWrapper::threadInit()
+{
     if (helper!=nullptr) {
         return helper->threadInit();
     }
@@ -536,24 +566,28 @@ bool RateThreadWrapper::threadInit() {
         return true;
 }
 
-void RateThreadWrapper::threadRelease() {
+void RateThreadWrapper::threadRelease()
+{
     if (helper!=nullptr) {
         helper->threadRelease();
     }
 }
 
-void RateThreadWrapper::afterStart(bool success) {
+void RateThreadWrapper::afterStart(bool success)
+{
     if (helper!=nullptr) {
         helper->afterStart(success);
     }
 }
 
-void RateThreadWrapper::beforeStart() {
+void RateThreadWrapper::beforeStart()
+{
     if (helper!=nullptr) {
         helper->beforeStart();
     }
 }
 
-Runnable *RateThreadWrapper::getAttachment() const {
+Runnable *RateThreadWrapper::getAttachment() const
+{
     return helper;
 }
