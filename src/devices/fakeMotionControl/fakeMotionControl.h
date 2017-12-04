@@ -265,8 +265,8 @@ public:
      */
     void resizeBuffers();
 
-    virtual bool threadInit();
-    virtual void threadRelease();
+    virtual bool threadInit() override;
+    virtual void threadRelease() override;
 
     /////////   PID INTERFACE   /////////
     virtual bool setPidRaw(const PidControlTypeEnum& pidtype,int j, const Pid &pid) override;
