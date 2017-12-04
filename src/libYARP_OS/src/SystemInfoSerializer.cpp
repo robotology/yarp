@@ -11,7 +11,10 @@
 using namespace yarp::os;
 
 
-SystemInfoSerializer::SystemInfoSerializer()
+SystemInfoSerializer::SystemInfoSerializer() :
+    memory(SystemInfo::MemoryInfo{0,0}),
+    storage(SystemInfo::StorageInfo{0,0}),
+    load(SystemInfo::LoadInfo{.0,.0,.0,0})
 {
 }
 

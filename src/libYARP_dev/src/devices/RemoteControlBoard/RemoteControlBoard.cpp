@@ -968,12 +968,14 @@ public:
     /**
      * Constructor.
      */
-    RemoteControlBoard() {
-        nj = 0;
-        njIsKnown = false;
-        writeStrict_singleJoint = true;
-        writeStrict_moreJoints  = false;
-    }
+    RemoteControlBoard() :
+        diagnosticThread(nullptr),
+        writeStrict_singleJoint(true),
+        writeStrict_moreJoints (false),
+        nj(0),
+        njIsKnown(false),
+        protocolVersion(ProtocolVersion{0,0,0})
+    {}
 
     /**
      * Destructor.
