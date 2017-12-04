@@ -8,14 +8,27 @@
 #include "OpenNI2SkeletonTracker.h"
 #include "OpenNI2DeviceDriverServer.h"
 
-yarp::dev::OpenNI2DeviceDriverServer::OpenNI2DeviceDriverServer()
-{
+yarp::dev::OpenNI2DeviceDriverServer::OpenNI2DeviceDriverServer() :
+    skeletonPort(YARP_NULLPTR),
+    receivingPort(YARP_NULLPTR),
+    depthFramePort(YARP_NULLPTR),
+    imageFramePort(YARP_NULLPTR),
+    skeleton(YARP_NULLPTR),
+    withOpenPorts(false),
 #ifdef OPENNI2_DRIVER_USES_NITE2
-    userTracking = true;
+    userTracking(true),
 #else
-    userTracking = false;
+    userTracking(false),
 #endif
-}
+    colorON(false),
+    depthMirrorON(false),
+    rgbMirrorON(false),
+    oniPlayback(false),
+    oniRecord(false),
+    loop(false),
+    frameSync(false),
+    imageRegistration(false)
+{}
 
 yarp::dev::OpenNI2DeviceDriverServer::~OpenNI2DeviceDriverServer()
 {
