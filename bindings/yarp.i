@@ -1341,6 +1341,12 @@ public:
 // Deal with IFrameGrabberControls2 pointer arguments that don't translate
 
 %extend yarp::dev::IFrameGrabberControls2 {
+  CameraDescriptor getCameraDescription() {
+      CameraDescriptor result;
+      self->getCameraDescription(&result);
+      return result;
+  }
+
   bool hasFeature(int feature) {
       bool result;
       self->hasFeature(feature, &result);
@@ -1350,6 +1356,42 @@ public:
   double getFeature(int feature) {
       double result;
       self->getFeature(feature, &result);
+      return result;
+  }
+
+  bool hasOnOff(int feature) {
+      bool result;
+      self->hasOnOff(feature, &result);
+      return result;
+  }
+
+  bool getActive(int feature) {
+      bool result;
+      self->getActive(feature, &result);
+      return result;
+  }
+
+  bool hasAuto(int feature) {
+      bool result;
+      self->hasAuto(feature, &result);
+      return result;
+  }
+
+  bool hasManual(int feature) {
+      bool result;
+      self->hasManual(feature, &result);
+      return result;
+  }
+
+  bool hasOnePush(int feature) {
+      bool result;
+      self->hasOnePush(feature, &result);
+      return result;
+  }
+
+  FeatureMode getMode(int feature) {
+      FeatureMode result;
+      self->getMode(feature, &result);
       return result;
   }
 }
