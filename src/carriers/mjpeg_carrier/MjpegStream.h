@@ -52,6 +52,7 @@ private:
 public:
     MjpegStream(TwoWayStream *delegate, bool sender, bool autocompress) :
             delegate(delegate),
+            blobHeader(BlobNetworkHeader{0,0,0}),
             phase(0),
             cursor(NULL),
             remaining(0),
@@ -59,8 +60,8 @@ public:
             firstRound(true),
             autocompress(autocompress),
             readEnvelopeCallback(NULL),
-            readEnvelopeCallbackData(NULL) {
-    }
+            readEnvelopeCallbackData(NULL)
+    {}
 
     virtual ~MjpegStream() {
         if (delegate!=NULL) {

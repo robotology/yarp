@@ -311,14 +311,14 @@ bool ServerGrabber::close() {
     if(responder2)
     {
         delete responder2;
-        responder=YARP_NULLPTR;
+        responder=nullptr;
     }
 
     if(isSubdeviceOwned && poly2)
     {
         poly2->close();
         delete poly2;
-        poly2=YARP_NULLPTR;
+        poly2=nullptr;
     }
     isSubdeviceOwned=false;
     if (p2!=nullptr) {

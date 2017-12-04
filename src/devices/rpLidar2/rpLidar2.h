@@ -61,9 +61,22 @@ protected:
     rplidardrv*           m_drv;
 
 public:
-    RpLidar2(int period = 10) : RateThread(period)
-    {
-    }
+    RpLidar2(int period = 10) : RateThread(period),
+        m_sensorsNum(0),
+        m_buffer_life(0),
+        m_min_angle(0.0),
+        m_max_angle(0.0),
+        m_min_distance(0.0),
+        m_max_distance(0.0),
+        m_resolution(0.0),
+        m_clip_max_enable(false),
+        m_clip_min_enable(false),
+        m_do_not_clip_infinity_enable(false),
+        m_inExpressMode(false),
+        m_pwm_val(0),
+        m_device_status(DEVICE_OK_STANBY),
+        m_drv(nullptr)
+    {}
 
 
     ~RpLidar2()

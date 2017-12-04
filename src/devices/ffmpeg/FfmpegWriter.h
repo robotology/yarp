@@ -43,9 +43,22 @@ class yarp::dev::FfmpegWriter : public IFrameWriterImage,
 {
 public:
 
-    FfmpegWriter() {
+    FfmpegWriter() :
+        fmt(nullptr),
+        oc(nullptr),
+        audio_st(nullptr),
+        video_st(nullptr),
+        audio_pts(0.0),
+        video_pts(0.0),
+        picture(nullptr),
+        tmp_picture(nullptr),
+        video_outbuf(nullptr),
+        frame_count(0),
+        video_outbuf_size(0),
+        ready(false),
+        delayed(false)
+    {
         system_resource = NULL;
-        ready = false;
     }
 
     virtual bool open(yarp::os::Searchable & config) override;
