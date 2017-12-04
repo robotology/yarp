@@ -306,6 +306,7 @@ bool FakeMotionControl::dealloc()
 }
 
 FakeMotionControl::FakeMotionControl() :
+    RateThread(10.0),
     ImplementControlCalibration2<FakeMotionControl, IControlCalibration2>(this),
     ImplementAmplifierControl<FakeMotionControl, IAmplifierControl>(this),
     ImplementPidControl(this),
@@ -324,8 +325,7 @@ FakeMotionControl::FakeMotionControl() :
     ImplementPWMControl(this),
     ImplementMotor(this),
     ImplementAxisInfo(this),
-    _mutex(1),
-    RateThread(10.0)
+    _mutex(1)
 //     SAFETY_THRESHOLD(2.0)
 {
     verbose = VERY_VERBOSE;
