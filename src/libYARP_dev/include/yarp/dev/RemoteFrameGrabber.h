@@ -590,10 +590,12 @@ public:
     /**
      * Constructor.
      */
-    RemoteFrameGrabber() : FrameGrabberControls2_Sender(port), Implement_RgbVisualParams_Sender(port), mutex(1) {
-        lastHeight = 0;
-        lastWidth = 0;
-    }
+    RemoteFrameGrabber() : FrameGrabberControls2_Sender(port), Implement_RgbVisualParams_Sender(port),
+        mutex(1),
+        lastHeight(0),
+        lastWidth(0),
+        Ifirewire(YARP_NULLPTR)
+    {}
 
     virtual bool getImage(yarp::sig::ImageOf<yarp::sig::PixelRgb>& image) YARP_OVERRIDE {
         mutex.wait();

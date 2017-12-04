@@ -13,6 +13,7 @@ yarp::os::SharedLibraryFactory::SharedLibraryFactory() :
         returnValue(0),
         rct(1)
 {
+    memset(&api, 0, sizeof(SharedLibraryClassApi));
 }
 
 yarp::os::SharedLibraryFactory::SharedLibraryFactory(const char *dll_name,
