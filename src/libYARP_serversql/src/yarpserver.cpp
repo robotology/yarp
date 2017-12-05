@@ -218,6 +218,9 @@ int yarp::serversql::Server::run(int argc, char** argv)
         printf("  --ros                    Delegate pub/sub to ROS name server.\n");
         printf("  --silent                 Start in silent mode.\n");
         //this->stop();
+        if (silent) {
+            fclose(out);
+        }
         return 0;
     }
     else
@@ -291,6 +294,9 @@ int yarp::serversql::Server::run(int argc, char** argv)
     }
 
     fprintf(out, "closing yarp server\n");
+    if (silent) {
+        fclose(out);
+    }
     server.close();
     return 0;
 }
