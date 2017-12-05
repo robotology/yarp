@@ -27,7 +27,7 @@ OpenNI2SkeletonTracker::OpenNI2SkeletonTracker(bool withTracking, bool withColor
     depthVideoMode(DEFAULT_DEPTH_MODE),
     colorVideoMode(DEFAULT_COLOR_MODE),
     pDevice(nullptr),
-    playbackControl(nullptr)
+    playbackControl(nullptr),
     depthInfo(nullptr),
     colorInfo(nullptr)
 {
