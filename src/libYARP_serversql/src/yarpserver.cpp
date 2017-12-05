@@ -42,7 +42,8 @@ using namespace yarp::name;
 using namespace yarp::serversql::impl;
 using namespace std;
 
-class NameServerContainer : public ComposedNameService {
+class NameServerContainer : public ComposedNameService
+{
 private:
     Contact contact;
     TripleSourceCreator db;
@@ -57,38 +58,49 @@ private:
 public:
     using ComposedNameService::open;
 
-    NameServerContainer() {
+    NameServerContainer()
+    {
         silent = false;
         space = nullptr;
     }
 
-    virtual ~NameServerContainer() {
+    virtual ~NameServerContainer()
+    {
         subscriber.clear();
-        if (space) delete space;
-        space = nullptr;
+        if (space) {
+            delete space;
+            space = nullptr;
+        }
     }
 
-    void setSilent(bool silent) {
+    void setSilent(bool silent)
+    {
         ns.setSilent(silent);
         subscriber.setSilent(silent);
         this->silent = silent;
     }
 
-    const Contact& where() {
+    const Contact& where()
+    {
         return contact;
     }
 
-    Contact whereDelegate() {
-        if (!space) return Contact();
+    Contact whereDelegate()
+    {
+        if (!space) {
+            return Contact();
+        }
         return space->getNameServerContact();
     }
 
-    void preregister(const Contact& c) {
+    void preregister(const Contact& c)
+    {
         Network::registerContact(c);
         subscriber.welcome(c.getName().c_str(),1);
     }
 
-    bool open(Searchable& options) {
+    bool open(Searchable& options)
+    {
         ConstString dbDefault = ":memory:";
         ConstString subdbDefault = ":memory:";
 
@@ -200,8 +212,7 @@ int yarp::serversql::Server::run(int argc, char** argv)
     /_//_/  |_||_| \\_\\|_|\n\
     ========================\n\n");
 
-    if (options.check("help"))
-    {
+    if (options.check("help")) {
         printf("Welcome to the YARP name server.\n");
         printf("  --write                  Write IP address and socket on the configuration file.\n");
         printf("  --config filename.conf   Load options from a file.\n");
@@ -222,31 +233,32 @@ int yarp::serversql::Server::run(int argc, char** argv)
             fclose(out);
         }
         return 0;
-    }
-    else
-    {
+    } else {
         fprintf(out, "Call with --help for information on available options\n");
     }
 
-    NameServerContainer nc; if (!nc.open(options)) return 1;
+    NameServerContainer nc;
+    if (!nc.open(options)) {
+        return 1;
+    }
 
     nc.setSilent(silent);
 
-    bool              ok(false);
+    bool ok = false;
     NameServerManager name(nc);
-    BootstrapServer   fallback(name);
-    Port              server;
-    Contact           alt;
-    yarp::os::Bottle  cmd, reply;
-    double            messageCounter(0);
-    double            pollingRate(.1);
+    BootstrapServer fallback(name);
+    Port server;
+    Contact alt;
+    yarp::os::Bottle cmd;
+    yarp::os::Bottle reply;
+    double messageCounter(0);
+    double pollingRate(.1);
 
     name.setPort(server);
     server.setReaderCreator(name);
 
     ok = server.open(nc.where(),false);
-    if (!ok)
-    {
+    if (!ok) {
         fprintf(stderr, "Name server failed to open\n");
         return 1;
     }
@@ -263,8 +275,7 @@ int yarp::serversql::Server::run(int argc, char** argv)
 
     alt = nc.whereDelegate();
 
-    if (alt.isValid())
-    {
+    if (alt.isValid()) {
         nc.preregister(alt);
     }
     nc.goPublic();
@@ -281,14 +292,12 @@ int yarp::serversql::Server::run(int argc, char** argv)
            nc.where().getHost().c_str(), nc.where().getPort());
     fprintf(out, "\nOk.  Ready!\n");
 
-    while(!shouldStop)
-    {
+    while(!shouldStop) {
         messageCounter += pollingRate;
         SystemClock::delaySystem(pollingRate);
         double dummy;
 
-        if(std::modf(messageCounter / 600.0, &dummy) < .00001)
-        {
+        if(std::modf(messageCounter / 600.0, &dummy) < .00001) {
             fprintf(out, "Name server running happily\n");
         }
     }
@@ -304,7 +313,9 @@ int yarp::serversql::Server::run(int argc, char** argv)
 yarp::os::NameStore *yarpserver_create(yarp::os::Searchable& options)
 {
     NameServerContainer *nc = new NameServerContainer;
-    if (!nc) return nullptr;
+    if (!nc) {
+        return nullptr;
+    }
     nc->setSilent(true);
     if (!nc->open(options)) {
         delete nc;
@@ -316,7 +327,7 @@ yarp::os::NameStore *yarpserver_create(yarp::os::Searchable& options)
 
 int yarpserver_main(int argc, char *argv[])
 {
-    Network    yarp(yarp::os::YARP_CLOCK_SYSTEM);
+    Network yarp(yarp::os::YARP_CLOCK_SYSTEM);
     yarp::serversql::Server yServer;
     return yServer.run(argc, argv);
 }
