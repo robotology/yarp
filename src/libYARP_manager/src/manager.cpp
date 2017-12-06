@@ -277,6 +277,27 @@ Executable* Manager::getExecutableById(size_t id)
     }
 }
 
+bool Manager::switchBroker(size_t id)
+{
+    Executable* exe = getExecutableById(id);
+    if (removeBroker(exe))
+    {
+        modules[id]->setHost(exe->getHost());
+        Broker* broker = createBroker(modules[id]);
+        if ( broker == nullptr)
+        {
+            return false;
+        }
+        broker->setDisplay(modules[id]->getDisplay());
+        exe->setAndInitializeBroker(broker);
+    }
+    else
+    {
+        return false;
+    }
+    return true;
+}
+
 
 bool Manager::prepare(bool silent)
 {
@@ -368,6 +389,22 @@ Broker* Manager::createBroker(Module* module)
         return (new ScriptLocalBroker(module->getBroker()));
 
     return (new ScriptYarprunBroker(module->getBroker()));
+}
+
+bool Manager::removeBroker(Executable* exe)
+{
+    if (exe == nullptr)
+    {
+        return false;
+    }
+    else if(exe->state() == RUNNING)
+    {
+        exe->stop();
+        exe->stopWatchDog();
+    }
+
+    exe->removeBroker(); //TODO possible race condition in case watchdog enabled.
+    return true;
 }
 
 bool Manager::updateExecutable(unsigned int id, const char* szparam,
@@ -721,6 +758,15 @@ bool Manager::run(unsigned int id, bool async)
     {
         logger->addError("Module id is out of range.");
         return false;
+    }
+
+    if (runnables[id]->shouldChangeBroker())
+    {
+        if (!switchBroker(id))
+        {
+            logger->addError("Failing to switch broker");
+            return false;
+        }
     }
 
     runnables[id]->disableAutoConnect();

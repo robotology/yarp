@@ -19,7 +19,6 @@
 namespace yarp {
 namespace manager {
 
-
 /**
  * Class Manager
  */
@@ -87,6 +86,7 @@ public:
     const char* defaultBroker(void) { return strDefBroker.c_str(); }
     ExecutablePContainer& getExecutables(void) { return runnables; }
     Executable* getExecutableById(size_t id);
+    bool switchBroker(size_t id);
     CnnContainer& getConnections(void) { return connections;}
     ResourcePContainer& getResources(void) { return resources; }
     const char* getApplicationName(void) { return strAppName.c_str(); }
@@ -148,6 +148,7 @@ private:
     bool timeout(double base, double t);
     bool updateResource(GenericResource* resource);
     Broker* createBroker(Module* module);
+    bool removeBroker(Executable* exe);
 };
 
 } // namespace yarp
