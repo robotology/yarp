@@ -69,8 +69,7 @@ Arrow::Arrow(BuilderItem *startItem, BuilderItem *endItem,int id, Manager *safeM
     myColor(Qt::black),
     textLbl("",this),
     textWidth(0),
-    id(id),
-    firstTime(true)
+    id(id)
 {
     itemType = ConnectionItemType;
     nestedInApp = isInApp;
