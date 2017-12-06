@@ -46,7 +46,7 @@ yarp_osx_duplicate_and_add_bundle(TARGET yarpscope
                                   INSTALL_COMPONENT utilities
                                   INSTALL_DESTINATION "${CMAKE_INSTALL_BINDIR}")
 
-if(APPLE)
+if(APPLE  AND NOT YARP_DISABLE_OSX_BUNDLES)
   add_dependencies(yarpscope.app QtYARPScopePlugin)
   add_custom_command(TARGET yarpscope.app POST_BUILD
                      COMMAND ${CMAKE_COMMAND} -E copy "$<TARGET_FILE:QtYARPScopePlugin>"
