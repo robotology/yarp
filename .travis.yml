@@ -367,6 +367,12 @@ before_script:
   # OpenCV on travis is built with C++98 ABI.
   - if [ "$TRAVIS_OS_NAME" == "linux" ]; then if [ "$CC" == "clang" ]; then export YARP_CMAKE_OPTIONS="${YARP_CMAKE_OPTIONS} -DYARP_USE_OPENCV=OFF"; fi; fi
 
+  # Avoid building Qt5 guis twice on macOS.
+  - if [ "$TRAVIS_OS_NAME" == "osx" ]; then YARP_CMAKE_OPTIONS="${YARP_CMAKE_OPTIONS} -DYARP_DISABLE_OSX_BUNDLES=ON"; fi
+
+  # Disable tests with race conditions on macOS.
+  - if [ "$TRAVIS_OS_NAME" == "osx" ]; then YARP_CMAKE_OPTIONS="${YARP_CMAKE_OPTIONS} -DYARP_DISABLE_FAILING_TESTS=ON"; fi
+
   # Print cmake flags
   - echo "--------------------     BEGIN CMAKE FLAGS    --------------------"
   - echo -G"${TRAVIS_CMAKE_GENERATOR}" -DCMAKE_BUILD_TYPE=${TRAVIS_BUILD_TYPE} ${YARP_CMAKE_OPTIONS}
