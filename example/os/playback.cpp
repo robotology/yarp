@@ -60,7 +60,7 @@ public:
             return false;
         }
         writer.appendExternalBlock(mem.get(),mem.length());
-        printf("Writing %d bytes\n", mem.length());
+        printf("Writing %zu bytes\n", mem.length());
         return true;
         
     }
