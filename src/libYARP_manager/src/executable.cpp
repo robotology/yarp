@@ -8,6 +8,7 @@
 
 
 #include <yarp/manager/executable.h>
+#include <yarp/manager/yarpbroker.h>
 
 using namespace yarp::manager;
 
@@ -45,8 +46,7 @@ Executable::~Executable()
     delete stopWrapper;
     delete killWrapper;
     delete execMachine;
-    if(broker)
-        delete broker;
+    removeBroker();
 }
 
 
@@ -164,6 +164,48 @@ RSTATE Executable::state()
 
     std::cerr<<"Unknown state!"<<std::endl;
     return STUNKNOWN;
+}
+
+BrokerType Executable::getBrokerType()
+{
+    if (broker == nullptr)
+    {
+        return BrokerType::invalid;
+    }
+    else if (dynamic_cast<YarpBroker*>(broker))
+    {
+        return BrokerType::yarp;
+    }
+    else
+    {
+        return BrokerType::local;
+    }
+
+}
+
+bool Executable::shouldChangeBroker()
+{
+    if (getBrokerType() == BrokerType::local &&
+        strHost != "localhost")
+    {
+       return true;
+    }
+    else if (getBrokerType() == BrokerType::yarp &&
+             strHost == "localhost")
+    {
+        return true;
+    }
+    return false;
+
+}
+
+void Executable::setAndInitializeBroker(Broker *_broker)
+{
+    if (_broker)
+    {
+        broker = _broker;
+        initialize();
+    }
 }
 
 bool Executable::startWatchDog() {
