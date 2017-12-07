@@ -5,6 +5,8 @@ group: deprecated-2017Q3
 
 cache:
   ccache: true
+  directories:
+    - $HOME/Library/Caches/Homebrew
 
 os:
   - linux
