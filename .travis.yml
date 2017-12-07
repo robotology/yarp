@@ -182,9 +182,9 @@ matrix:
       env: TRAVIS_WITH_ACE=false TRAVIS_WITH_VALGRIND=true
 
     # Normal build with valgrind and broken tests (linux, gcc)
-    - os: linux
-      compiler: gcc
-      env: TRAVIS_WITH_VALGRIND=true TRAVIS_WITH_BROKEN_TESTS=true
+#    - os: linux
+#      compiler: gcc
+#      env: TRAVIS_WITH_VALGRIND=true TRAVIS_WITH_BROKEN_TESTS=true
 
     # Normal build with clang (osx, clang)
     - os: osx
@@ -232,9 +232,9 @@ matrix:
 #           packages:
 #             - ros-jade-desktop-full
 
-  allow_failures:
-    # Broken tests are supposed to fail
-    - env: TRAVIS_WITH_VALGRIND=true TRAVIS_WITH_BROKEN_TESTS=true
+#  allow_failures:
+#    # Broken tests are supposed to fail
+#    - env: TRAVIS_WITH_VALGRIND=true TRAVIS_WITH_BROKEN_TESTS=true
 
 
 notifications:
