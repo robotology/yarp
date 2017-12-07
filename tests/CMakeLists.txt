@@ -4,12 +4,18 @@
 
 
 include(CMakeDependentOption)
+
 cmake_dependent_option(YARP_ENABLE_BROKEN_TESTS OFF "Enable broken tests" YARP_COMPILE_TESTS OFF)
 mark_as_advanced(YARP_ENABLE_BROKEN_TESTS)
 if(YARP_ENABLE_BROKEN_TESTS)
   add_definitions(-DBROKEN_TEST)
 endif()
 
+cmake_dependent_option(YARP_DISABLE_FAILING_TESTS OFF "Disable tests that fail randomly due to race conditions" YARP_COMPILE_TESTS OFF)
+mark_as_advanced(YARP_DISABLE_FAILING_TESTS)
+set(FAILING_TESTS OS::RateThreadTest
+                  dev::ControlBoardRemapperTest
+                  dev::FrameTransformClientTest)
 
 if(YARP_COMPILE_TESTS)
   # Prepare 'build_generator', 'build_options' and 'build_module_path' variables
@@ -99,13 +105,24 @@ if(YARP_COMPILE_TESTS)
       get_filename_component(XN ${test} NAME_WE)
       if(NOT "${XN}" MATCHES "^(harness|TestList)$")
         set(_cmd $<TARGET_FILE:${EXE}> verbose regression ${XN})
+        list(FIND FAILING_TESTS "${test_family}::${XN}" _failing_test)
+        set(_disabled 0)
+        if(YARP_DISABLE_FAILING_TESTS AND NOT _failing_test EQUAL -1)
+          set(_disabled 1)
+        endif()
         add_test(NAME "${test_family}::${XN}"
                  COMMAND ${_cmd})
+        if(_disabled)
+          set_property(TEST "${test_family}::${XN}" PROPERTY DISABLED ON)
+        endif()
         foreach(_Tool ${YARP_VALGRIND_TOOLS})
           string(TOUPPER "${_Tool}" _TOOL)
           if(YARP_VALGRIND_${_TOOL}_TESTS)
             add_test(NAME "${test_family}::${XN}::Valgrind::${_Tool}"
                      COMMAND ${VALGRIND_${_TOOL}_COMMAND} ${_cmd})
+            if(_disabled)
+              set_property(TEST "${test_family}::${XN}" PROPERTY DISABLED ON)
+            endif()
           endif()
         endforeach()
         if(YARP_GDB_TESTS)

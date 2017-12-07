@@ -11,9 +11,14 @@ if(POLICY CMP0054)
   cmake_policy(SET CMP0054 NEW)
 endif()
 
+if(APPLE)
+  option(YARP_DISABLE_OSX_BUNDLES "Disable macOS bundles" OFF)
+  mark_as_advanced(YARP_DISABLE_OSX_BUNDLES)
+endif()
+
 function(YARP_OSX_DUPLICATE_AND_ADD_BUNDLE)
 
- if(APPLE)
+  if(APPLE AND NOT YARP_DISABLE_OSX_BUNDLES)
     set(_options )
     set(_oneValueArgs TARGET
                       APP_ICON
@@ -130,7 +135,7 @@ function(YARP_OSX_DUPLICATE_AND_ADD_BUNDLE)
       install(TARGETS ${_target_dest} ${_component} DESTINATION "${_DADB_INSTALL_DESTINATION}")
     endif()
 
- endif()
+  endif()
 
 endfunction()
 

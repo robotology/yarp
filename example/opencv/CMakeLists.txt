@@ -9,9 +9,8 @@ include_directories(${CMAKE_SOURCE_DIR})
 find_package(YARP REQUIRED)
 
 find_package(OpenCV REQUIRED)
-link_directories(${OPENCV_LINK_DIRECTORIES})
-include_directories(${OPENCV_INCLUDE_DIR})
+include_directories(${OpenCV_INCLUDE_DIR})
 
 add_executable(opencv_test main.cpp)
-target_link_libraries(${YARP_LIBRARIES}
-                      ${OPENCV_LIBRARIES})
+target_link_libraries(opencv_test ${YARP_LIBRARIES}
+                                  ${OpenCV_LIBRARIES})
