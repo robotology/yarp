@@ -330,7 +330,7 @@ install:
   - if [ "$TRAVIS_OS_NAME" == "osx" ]; then brew install readline; fi
 
   # Install other dependencies (opencv, eigen, graphviz)
-  - if [ "$TRAVIS_OS_NAME" == "osx" ]; then /usr/bin/yes | pip uninstall numpy || true; fi
+  - if [ "$TRAVIS_OS_NAME" == "osx" ]; then /usr/bin/yes | pip2 uninstall numpy || true; fi
   - if [ "$TRAVIS_OS_NAME" == "osx" ]; then brew install opencv eigen graphviz; fi
 
   # Install swig stuff
