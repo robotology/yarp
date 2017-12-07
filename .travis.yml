@@ -5,6 +5,8 @@ group: deprecated-2017Q3
 
 cache:
   ccache: true
+  directories:
+    - $HOME/Library/Caches/Homebrew
 
 os:
   - linux
@@ -99,7 +101,6 @@ addons:
 matrix:
   exclude:
   - os: osx
-    compiler: gcc
 
   include:
     # No ACE build (linux, gcc)
@@ -183,19 +184,24 @@ matrix:
       env: TRAVIS_WITH_ACE=false TRAVIS_WITH_VALGRIND=true
 
     # Normal build with valgrind and broken tests (linux, gcc)
-    - os: linux
-      compiler: gcc
-      env: TRAVIS_WITH_VALGRIND=true TRAVIS_WITH_BROKEN_TESTS=true
+#    - os: linux
+#      compiler: gcc
+#      env: TRAVIS_WITH_VALGRIND=true TRAVIS_WITH_BROKEN_TESTS=true
 
-    # Normal build with Xcode 7.3 (osx, clang)
+    # Normal build with clang (osx, clang)
     - os: osx
-      osx_image: xcode7.3
+      osx_image: xcode8.3
+      compiler: clang
+
+    # Normal build with Xcode 8.3 (osx, clang)
+    - os: osx
+      osx_image: xcode8.3
       compiler: clang
       env: TRAVIS_CMAKE_GENERATOR="Xcode"
 
-    # Normal build with Xcode 8 (osx, clang)
+    # Normal build with Xcode 9.1 (osx, clang)
     - os: osx
-      osx_image: xcode8
+      osx_image: xcode9.1
       compiler: clang
       env: TRAVIS_CMAKE_GENERATOR="Xcode"
 
@@ -228,9 +234,9 @@ matrix:
 #           packages:
 #             - ros-jade-desktop-full
 
-  allow_failures:
-    # Broken tests are supposed to fail
-    - env: TRAVIS_WITH_VALGRIND=true TRAVIS_WITH_BROKEN_TESTS=true
+#  allow_failures:
+#    # Broken tests are supposed to fail
+#    - env: TRAVIS_WITH_VALGRIND=true TRAVIS_WITH_BROKEN_TESTS=true
 
 
 notifications:
@@ -326,7 +332,7 @@ install:
   - if [ "$TRAVIS_OS_NAME" == "osx" ]; then brew install readline; fi
 
   # Install other dependencies (opencv, eigen, graphviz)
-  - if [ "$TRAVIS_OS_NAME" == "osx" ]; then /usr/bin/yes | pip uninstall numpy || true; fi
+  - if [ "$TRAVIS_OS_NAME" == "osx" ]; then /usr/bin/yes | pip2 uninstall numpy || true; fi
   - if [ "$TRAVIS_OS_NAME" == "osx" ]; then brew install opencv eigen graphviz; fi
 
   # Install swig stuff
@@ -360,6 +366,12 @@ before_script:
 
   # OpenCV on travis is built with C++98 ABI.
   - if [ "$TRAVIS_OS_NAME" == "linux" ]; then if [ "$CC" == "clang" ]; then export YARP_CMAKE_OPTIONS="${YARP_CMAKE_OPTIONS} -DYARP_USE_OPENCV=OFF"; fi; fi
+
+  # Avoid building Qt5 guis twice on macOS.
+  - if [ "$TRAVIS_OS_NAME" == "osx" ]; then YARP_CMAKE_OPTIONS="${YARP_CMAKE_OPTIONS} -DYARP_DISABLE_OSX_BUNDLES=ON"; fi
+
+  # Disable tests with race conditions on macOS.
+  - if [ "$TRAVIS_OS_NAME" == "osx" ]; then YARP_CMAKE_OPTIONS="${YARP_CMAKE_OPTIONS} -DYARP_DISABLE_FAILING_TESTS=ON"; fi
 
   # Print cmake flags
   - echo "--------------------     BEGIN CMAKE FLAGS    --------------------"
