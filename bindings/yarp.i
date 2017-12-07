@@ -419,6 +419,7 @@ MAKE_COMMS(Bottle)
 %include <yarp/dev/IPWMControl.h>
 %include <yarp/dev/ICurrentControl.h>
 %include <yarp/dev/IAnalogSensor.h>
+%include <yarp/dev/FrameGrabberControl2.h>
 
 #if !defined(SWIGCHICKEN) && !defined(SWIGALLEGROCL)
   %template(DVector) std::vector<double>;
@@ -786,6 +787,13 @@ typedef yarp::os::BufferedPort<ImageRgbFloat> BufferedPortImageRgbFloat;
         self->view(result);
         return result;
     }
+
+    yarp::dev::IFrameGrabberControls2 *viewIFrameGrabberControls2() {
+        yarp::dev::IFrameGrabberControls2 *result;
+        self->view(result);
+        return result;
+    }
+
     // you'll need to add an entry for every interface you wish
     // to use
 }
@@ -1326,4 +1334,64 @@ public:
     yarp::sig::ImageOf<yarp::sig::PixelMono>* asImageOfPixelMono() {
         return self->cast_as<yarp::sig::ImageOf<yarp::sig::PixelMono> >();
     }
+}
+
+
+//////////////////////////////////////////////////////////////////////////
+// Deal with IFrameGrabberControls2 pointer arguments that don't translate
+
+%extend yarp::dev::IFrameGrabberControls2 {
+  CameraDescriptor getCameraDescription() {
+      CameraDescriptor result;
+      self->getCameraDescription(&result);
+      return result;
+  }
+
+  bool hasFeature(int feature) {
+      bool result;
+      self->hasFeature(feature, &result);
+      return result;
+  }
+
+  double getFeature(int feature) {
+      double result;
+      self->getFeature(feature, &result);
+      return result;
+  }
+
+  bool hasOnOff(int feature) {
+      bool result;
+      self->hasOnOff(feature, &result);
+      return result;
+  }
+
+  bool getActive(int feature) {
+      bool result;
+      self->getActive(feature, &result);
+      return result;
+  }
+
+  bool hasAuto(int feature) {
+      bool result;
+      self->hasAuto(feature, &result);
+      return result;
+  }
+
+  bool hasManual(int feature) {
+      bool result;
+      self->hasManual(feature, &result);
+      return result;
+  }
+
+  bool hasOnePush(int feature) {
+      bool result;
+      self->hasOnePush(feature, &result);
+      return result;
+  }
+
+  FeatureMode getMode(int feature) {
+      FeatureMode result;
+      self->getMode(feature, &result);
+      return result;
+  }
 }
