@@ -22,7 +22,8 @@ namespace yarp {
  *
  * An abstraction for a periodic thread.
  */
-class YARP_OS_API yarp::os::RateThread {
+class YARP_OS_API yarp::os::RateThread
+{
 public:
 
     /**
@@ -36,40 +37,6 @@ public:
     RateThread(int period);
 
     virtual ~RateThread();
-
-    /**
-     * Initialization method. The thread executes this function
-     * when it starts and before "run". This is a good place to
-     * perform initialization tasks that need to be done by the
-     * thread itself (device drivers initialization, memory
-     * allocation etc). If the function returns false the thread
-     * quits and never calls "run". The return value of threadInit()
-     * is notified to the class and passed as a parameter
-     * to afterStart(). Note that afterStart() is called by the
-     * same thread that is executing the "start" method.
-     */
-    virtual bool threadInit();
-
-    /**
-     * Release method. The thread executes this function once when
-     * it exits, after the last "run". This is a good place to release
-     * resources that were initialized in threadInit() (release memory,
-     * and device driver resources).
-     */
-     virtual void threadRelease();
-
-    /**
-     * Loop function. This is the thread itself.
-     * The thread calls the run() function every <period> ms.
-     * At the end of each run, the thread will sleep the amounth of time
-     * required, taking into account the time spent inside the loop function.
-     * Example:  requested period is 10ms, the run() function take 3ms to
-     * be executed, the thread will sleep for 7ms.
-     *
-     * Note: after each run is completed, the thread will call a yield()
-     * in order to facilitate other threads to run.
-     */
-    virtual void run() = 0;
 
     /**
      * Call this to start the thread. Blocks until initThread()
@@ -168,19 +135,6 @@ public:
     void getEstUsed(double &av, double &std);
 
     /**
-     * Called just before a new thread starts. This method is executed
-     * by the same thread that calls start().
-     */
-    virtual void beforeStart();
-
-    /**
-     * Called just after a new thread starts (or fails to start), this
-     * is executed by the same thread that calls start().
-     * @param success true iff the new thread started successfully.
-     */
-    virtual void afterStart(bool success);
-
-    /**
      * Set the priority and scheduling policy of the thread, if the OS supports that.
      * @param priority the new priority of the thread.
      * @param policy the scheduling policy of the thread
@@ -207,14 +161,64 @@ public:
      */
     int getPolicy();
 
+protected:
+    /**
+     * Initialization method. The thread executes this function
+     * when it starts and before "run". This is a good place to
+     * perform initialization tasks that need to be done by the
+     * thread itself (device drivers initialization, memory
+     * allocation etc). If the function returns false the thread
+     * quits and never calls "run". The return value of threadInit()
+     * is notified to the class and passed as a parameter
+     * to afterStart(). Note that afterStart() is called by the
+     * same thread that is executing the "start" method.
+     */
+    virtual bool threadInit();
+
+    /**
+     * Release method. The thread executes this function once when
+     * it exits, after the last "run". This is a good place to release
+     * resources that were initialized in threadInit() (release memory,
+     * and device driver resources).
+     */
+     virtual void threadRelease();
+
+    /**
+     * Loop function. This is the thread itself.
+     * The thread calls the run() function every <period> ms.
+     * At the end of each run, the thread will sleep the amounth of time
+     * required, taking into account the time spent inside the loop function.
+     * Example:  requested period is 10ms, the run() function take 3ms to
+     * be executed, the thread will sleep for 7ms.
+     *
+     * Note: after each run is completed, the thread will call a yield()
+     * in order to facilitate other threads to run.
+     */
+    virtual void run() = 0;
+
+    /**
+     * Called just before a new thread starts. This method is executed
+     * by the same thread that calls start().
+     */
+    virtual void beforeStart();
+
+    /**
+     * Called just after a new thread starts (or fails to start), this
+     * is executed by the same thread that calls start().
+     * @param success true iff the new thread started successfully.
+     */
+    virtual void afterStart(bool success);
+
 private:
     bool join(double seconds = -1);
 
-    void *implementation;
+#ifndef DOXYGEN_SHOULD_SKIP_THIS
+private:
+    class Private;
+    Private* mPriv;
+#endif // DOXYGEN_SHOULD_SKIP_THIS
 
-    void initWithSystemClock();
-
-friend class SystemRateThread;
+    friend class SystemRateThread;
 };
 
 
@@ -236,7 +240,8 @@ public:
  * This class takes a Runnable instance and wraps a thread around it.
  * This class is under development - API may change a lot.
  */
-class YARP_OS_API yarp::os::RateThreadWrapper : public RateThread {
+class YARP_OS_API yarp::os::RateThreadWrapper : public RateThread
+{
 private:
     Runnable *helper;
     int owned;
