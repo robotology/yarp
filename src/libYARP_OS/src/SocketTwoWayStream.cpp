@@ -85,12 +85,9 @@ int SocketTwoWayStream::open(yarp::os::impl::TcpAcceptor& acceptor) {
 }
 
 void SocketTwoWayStream::updateAddresses() {
-    //int zero = 0;
     int one = 1;
-
+    stream.set_option(IPPROTO_TCP, TCP_NODELAY, &one, sizeof(int));
 #ifdef YARP_HAS_ACE
-    stream.set_option (ACE_IPPROTO_TCP, TCP_NODELAY, &one,
-                       sizeof(int));
     ACE_INET_Addr local, remote;
     stream.get_local_addr(local);
     stream.get_remote_addr(remote);
@@ -101,8 +98,6 @@ void SocketTwoWayStream::updateAddresses() {
     localAddress = Contact(localHostAddress, local.get_port_number());
     remoteAddress = Contact(remoteHostAddress, remote.get_port_number());
 #else
-    stream.set_option (IPPROTO_TCP, TCP_NODELAY, &one,
-                       sizeof(int));
     struct sockaddr local;
     struct sockaddr remote;
     memset(&local, 0, sizeof(local));
