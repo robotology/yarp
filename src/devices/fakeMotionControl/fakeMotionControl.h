@@ -236,7 +236,7 @@ private:
     double  *_ref_torques;          // for torque control.
     double  *_ref_currents;
     yarp::sig::Vector       current, nominalCurrent, maxCurrent, peakCurrent;
-    yarp::sig::Vector       pwm, pwmLimit, refpwm, supplyVoltage,last_velocity_command;
+    yarp::sig::Vector       pwm, pwmLimit, refpwm, supplyVoltage,last_velocity_command, last_pwm_command;
     yarp::sig::Vector pos, dpos, vel, speed, acc, loc, amp;
     double prev_time;
     bool opened;

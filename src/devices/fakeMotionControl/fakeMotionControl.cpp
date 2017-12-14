@@ -25,6 +25,8 @@ using namespace yarp::os::impl;
 // macros
 #define NEW_JSTATUS_STRUCT 1
 #define VELOCITY_WATCHDOG 0.1
+#define OPENLOOP_WATCHDOG 0.1
+#define PWM_CONSTANT      0.1
 
 void FakeMotionControl::run()
 {
@@ -45,6 +47,44 @@ void FakeMotionControl::run()
             {
                 this->_command_speeds[i]=0.0;
             }
+        }
+        else if (_controlModes[i] == VOCAB_CM_PWM)
+        {
+            //increment joint position
+            if (this->refpwm[i]!=0)
+            {
+                double elapsed = yarp::os::Time::now()-prev_time;
+                double increment = refpwm[i]*elapsed*PWM_CONSTANT;
+                pos[i]+=increment;
+            }
+
+            //pwm watchdog
+            if (yarp::os::Time::now()-last_pwm_command[i]>=OPENLOOP_WATCHDOG)
+            {
+                this->refpwm[i]=0.0;
+            }
+        }
+        else if (_controlModes[i] == VOCAB_CM_POSITION_DIRECT)
+        {
+             pos[i] = _posDir_references[i];
+        }
+        else if (_controlModes[i] == VOCAB_CM_POSITION)
+        {
+             pos[i] = _posCtrl_references[i];
+             //do something with _ref_speeds[i];
+        }
+        else if (_controlModes[i] == VOCAB_CM_IDLE)
+        {
+            //do nothing
+        }
+        else if (_controlModes[i] == VOCAB_CM_MIXED)
+        {
+            //not yet implemented
+        }
+        else
+        {
+            //unsupported control mode
+            yWarning() << "Unsupported control mode, joint " << i << " " << yarp::os::Vocab::decode(_controlModes[i]);
         }
     }
     prev_time = yarp::os::Time::now();
@@ -124,6 +164,7 @@ void FakeMotionControl::resizeBuffers()
     pwmLimit.resize(_njoints);
     supplyVoltage.resize(_njoints);
     last_velocity_command.resize(_njoints);
+    last_pwm_command.resize(_njoints);
 
     pos.zero();
     dpos.zero();
@@ -455,6 +496,7 @@ bool FakeMotionControl::threadInit()
         nominalCurrent[i]   = (33+i)*20;
         supplyVoltage[i]    = (33+i)*200;
         last_velocity_command[i] = -1;
+        last_pwm_command[i] = -1;
         _controlModes[i]    = VOCAB_CM_POSITION;
         _maxJntCmdVelocity[i]=50.0;
     }
@@ -1863,7 +1905,6 @@ bool FakeMotionControl::positionMoveRaw(int j, double ref)
         yError() << "positionMoveRaw: skipping command because joint " << j << " is not in VOCAB_CM_POSITION mode";
     }
     _posCtrl_references[j] = ref;
-    pos[j] = _posCtrl_references[j];
     return true;
 }
 
@@ -1900,7 +1941,6 @@ bool FakeMotionControl::relativeMoveRaw(int j, double delta)
         yError() << "relativeMoveRaw: skipping command because joint " << j << " is not in VOCAB_CM_POSITION mode";
     }
     _posCtrl_references[j] += delta;
-    pos[j] = _posCtrl_references[j];
     return false;
 }
 
@@ -2789,7 +2829,6 @@ bool FakeMotionControl::velocityMoveRaw(const int n_joint, const int *joints, co
 bool FakeMotionControl::setPositionRaw(int j, double ref)
 {
     _posDir_references[j] = ref;
-    pos[j] = _posDir_references[j];
     return true;
 }
 
@@ -2798,7 +2837,6 @@ bool FakeMotionControl::setPositionsRaw(const int n_joint, const int *joints, do
     for(int i=0; i< n_joint; i++)
     {
         _posDir_references[joints[i]] = refs[i];
-        pos[joints[i]] = _posDir_references[joints[i]];
     }
     return true;
 }
@@ -2808,7 +2846,6 @@ bool FakeMotionControl::setPositionsRaw(const double *refs)
     for(int i=0; i< _njoints; i++)
     {
         _posDir_references[i] = refs[i];
-        pos[i] = _posDir_references[i];
     }
     return true;
 }
@@ -2989,6 +3026,7 @@ bool FakeMotionControl::setRefDutyCycleRaw(int j, double v)
 {
     refpwm[j] = v;
     pwm[j] = v;
+    last_pwm_command[j]=yarp::os::Time::now();
     return true;
 }
 
@@ -2996,8 +3034,7 @@ bool FakeMotionControl::setRefDutyCyclesRaw(const double *v)
 {
     for (int i = 0; i < _njoints; i++)
     {
-        refpwm[i] = v[i];
-        pwm[i] = v[i];
+        setRefDutyCycleRaw(i,v[i]);
     }
     return true;
 }
