@@ -8,12 +8,9 @@
 #define YARP_DEV_NAVIGATION2DCLIENT_H
 
 #include <yarp/os/Network.h>
-#include <yarp/os/BufferedPort.h>
-#include <yarp/dev/PreciselyTimed.h>
 #include <yarp/dev/ControlBoardInterfaces.h>
 #include <yarp/dev/ControlBoardHelpers.h>
 #include <yarp/sig/Vector.h>
-#include <yarp/os/Semaphore.h>
 #include <yarp/os/Time.h>
 #include <yarp/os/ConstString.h>
 #include <yarp/dev/PolyDriver.h>
@@ -29,9 +26,19 @@ namespace yarp {
 
 
 /**
-* @ingroup dev_impl_wrapper
-*
-*/
+ *  @ingroup dev_impl_wrapper
+ *
+ * \section Navigation2DClient
+ * A device which allows a client application to perform navigation tasks, such as commanding the robot to reach a specific location in a map.
+ *
+ *  Parameters required by this device are:
+ * | Parameter name | SubParameter   | Type    | Units          | Default Value | Required     | Description                                                       | Notes |
+ * |:--------------:|:--------------:|:-------:|:--------------:|:-------------:|:-----------: |:-----------------------------------------------------------------:|:-----:|
+ * | local          |      -         | string  | -              |   -           | Yes          | Full port name opened by the Navigation2DClient device.                             |       |
+ * | navigation_server    |     -    | string  | -              |   -           | Yes          | Full port name of the port remotely opened by the Navigation server, to which the Navigation2DClient connects to.           |  |
+ * | map_locations_server |     -    | string  | -              |   -           | Yes          | Full port name of the port remotely opened by the Map2DServer, to which the Navigation2DClient connects to.           |  |
+ * | localization_server  |     -    | string  | -              |   -           | Yes          | Full port name of the port remotely opened by the Localization server, to which the Navigation2DClient connects to.           |  |
+ */
 
 class yarp::dev::Navigation2DClient: public DeviceDriver,
                                        public INavigation2D
@@ -57,6 +64,7 @@ public:
     bool open(yarp::os::Searchable& config) override;
     bool close() override;
 
+    /* The following methods belong to INavigation2D interface */
     bool   gotoTargetByAbsoluteLocation(Map2DLocation loc) override;
     bool   gotoTargetByLocationName(yarp::os::ConstString location_name) override;
     bool   gotoTargetByRelativeLocation(double x, double y, double theta) override;

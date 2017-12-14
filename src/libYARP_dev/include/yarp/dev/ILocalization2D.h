@@ -18,9 +18,9 @@ namespace yarp {
 }
 
 /**
- * @ingroup dev_iface_motor
+ * @ingroup dev_iface_navigation
  *
- * ILocalization2D interface.
+ * ILocalization2D interface. Provides methods to obtain the pose of the robot in a known map.
  */
 class yarp::dev::ILocalization2D
 {

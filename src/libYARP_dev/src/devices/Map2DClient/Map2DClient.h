@@ -25,15 +25,6 @@ namespace yarp {
     }
 }
 
-#ifndef DOXYGEN_SHOULD_SKIP_THIS
-
-class Map2D_type
-{
-    private:
-};
-
-#endif /*DOXYGEN_SHOULD_SKIP_THIS*/
-
 /**
  *  @ingroup dev_impl_wrapper
  *
@@ -43,8 +34,8 @@ class Map2D_type
  *  Parameters required by this device are:
  * | Parameter name | SubParameter   | Type    | Units          | Default Value | Required     | Description                                                       | Notes |
  * |:--------------:|:--------------:|:-------:|:--------------:|:-------------:|:-----------: |:-----------------------------------------------------------------:|:-----:|
- * | local          |      -         | string  | -   |   -           | Yes          | Full port name openend by the Map2DClient device.                            |       |
- * | remote         |     -          | string  | -   |   -           | Yes          | Full port name of the port opened by the Map2DServer, to which the Map2DClient connects to.           |  |
+ * | local          |      -         | string  | -   |   -           | Yes          | Full port name opened by the Map2DClient device.                             |       |
+ * | remote         |     -          | string  | -   |   -           | Yes          | Full port name of the port remotely opened by the Map2DServer, to which the Map2DClient connects to.           |  |
  */
 
 class yarp::dev::Map2DClient : public DeviceDriver,
@@ -65,6 +56,7 @@ public:
     bool open(yarp::os::Searchable& config) override;
     bool close() override;
 
+    /* The following methods belong to IMap2D interface */
     virtual bool     clear      () override;
     virtual bool     remove_map (std::string map_name) override;
     virtual bool     store_map  (const yarp::dev::MapGrid2D& map) override;

@@ -22,6 +22,13 @@ namespace yarp
     {
         struct Map2DLocation
         {
+            /**
+            * Constructor
+            * @param map_name: the name of the map the location refers to.
+            * @param inX: location coordinates w.r.t. map reference frame (expressed in meters)
+            * @param inY: location coordinates w.r.t. map reference frame (expressed in meters)
+            * @param inT: location orientation w.r.t. map reference frame (expressed in degrees)
+            */
             Map2DLocation(const std::string& map_name, const double& inX, const double& inY, const double& inT)
             {
                 map_id = map_name;
@@ -30,6 +37,9 @@ namespace yarp
                 theta = inT;
             }
 
+            /**
+            * Default constructor: the map name is empty, coordinates are set to zero.
+            */
             Map2DLocation()
             {
                 map_id = "";
@@ -38,6 +48,10 @@ namespace yarp
                 theta = 0;
             }
 
+            /**
+            * Returns text representation of the location.
+            * @return a human readable string containing the location infos.
+            */
             std::string toString()
             {
                 std::ostringstream stringStream;
@@ -47,6 +61,10 @@ namespace yarp
                 return stringStream.str();
             }
 
+            /**
+            * Compares two Map2DLocations
+            * @return true if the two locations are different.
+            */
             inline bool operator!=(const Map2DLocation& r) const
             {
                 if (
@@ -61,6 +79,10 @@ namespace yarp
                 return false;
             }
 
+            /**
+            * Compares two Map2DLocations
+            * @return true if the two locations are identical.
+            */
             inline bool operator==(const Map2DLocation& r) const
             {
                 if (

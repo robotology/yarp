@@ -56,8 +56,8 @@ namespace yarp
  *  Parameters required by this device are:
  * | Parameter name | SubParameter   | Type    | Units          | Default Value    | Required     | Description                                                       | Notes |
  * |:--------------:|:--------------:|:-------:|:--------------:|:----------------:|:-----------: |:-----------------------------------------------------------------:|:-----:|
- * | name           |      -         | string  | -              | /mapServer/rpc   | No           | Full name of the rpc port openend by the Map2DServer device .     |       |
- * | mapCollection  |      -         | string  | -              |   -              | No           | The name of .ini file containgin a map collection.                |       |
+ * | name           |      -         | string  | -              | /mapServer/rpc   | No           | Full name of the rpc port opened by the Map2DServer device.       |       |
+ * | mapCollection  |      -         | string  | -              |   -              | No           | The name of .ini file containing a map collection.                |       |
 
  * \section Notes:
  * Integration with ROS map server is currently under development.
