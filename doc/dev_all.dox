@@ -57,6 +57,16 @@
  */
 
 
+ /**
+ * @ingroup dev_iface
+ *
+ * \defgroup dev_iface_navigation Navigation Interfaces
+ *
+ * Interfaces for navigation, localization and mapping.
+ *
+ */
+ 
+ 
 /**
  * @ingroup dev_iface
  *
