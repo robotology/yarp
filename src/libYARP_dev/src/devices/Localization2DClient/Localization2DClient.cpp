@@ -119,7 +119,7 @@ bool  yarp::dev::Localization2DClient::getCurrentPosition(Map2DLocation& loc)
     {
         if (resp.get(0).asVocab() != VOCAB_OK || resp.size() != 5)
         {
-            yError() << "Navigation2DClient::getCurrentPosition() recived error from localization server";
+            yError() << "Navigation2DClient::getCurrentPosition() received error from localization server";
             return false;
         }
         else

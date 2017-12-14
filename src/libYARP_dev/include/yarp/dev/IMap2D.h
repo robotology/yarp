@@ -23,9 +23,9 @@ namespace yarp
 }
 
 /**
- * @ingroup dev_iface_transform
+ * @ingroup dev_iface_navigation
  *
- * Transform Interface.
+ * IMap2D Interface. Provides methods to store/retrieve map grids and locations to/from a map server.
  */
 class YARP_dev_API yarp::dev::IMap2D
 {

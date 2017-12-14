@@ -33,9 +33,9 @@ namespace yarp {
 }
 
 /**
- * @ingroup dev_iface_motor
+ * @ingroup dev_iface_navigation
  *
- * Control board, encoder interface.
+ * An interface to control the navigation of a mobile robot in a 2D environment.
  */
 class yarp::dev::INavigation2D
 {
@@ -53,7 +53,7 @@ public:
     virtual bool gotoTargetByAbsoluteLocation(yarp::dev::Map2DLocation loc) = 0;
 
     /**
-     * Ask the robot to reach a previosuly stored location
+     * Ask the robot to reach a previously stored location
      * @param location_name the name of a location previously saved
      * @return true/false
      */
@@ -84,7 +84,6 @@ public:
 
     /**
     * Gets the last navigation target in the world reference frame
-    * @param x
     * @param loc the location of the robot
     * @return true/false
     */
@@ -161,7 +160,7 @@ public:
     virtual bool suspendNavigation() = 0;
 
     /**
-    * Resume a previosuly suspended navigation task.
+    * Resume a previously suspended navigation task.
     * @return true/false
     */
     virtual bool resumeNavigation() = 0;

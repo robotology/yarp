@@ -38,7 +38,7 @@ namespace yarp {
  *  Parameters required by this device are:
  * | Parameter name | SubParameter   | Type    | Units          | Default Value | Required     | Description                                                       | Notes |
  * |:--------------:|:--------------:|:-------:|:--------------:|:-------------:|:-----------: |:-----------------------------------------------------------------:|:-----:|
- * | local          |      -         | string  | -   |   -           | Yes          | Full port name openend by the Localization2DClient device.                            |       |
+ * | local          |      -         | string  | -   |   -           | Yes          | Full port name opened by the Localization2DClient device.                             |       |
  * | remote         |      -         | string  | -   |   -           | Yes          | Full port name of the port opened on the server side, to which the Localization2DClient connects to.                           | E.g.(https://github.com/robotology/navigation/src/localizationServer)    |
  */
 
@@ -59,6 +59,7 @@ public:
     bool open(yarp::os::Searchable& config) override;
     bool close() override;
 
+    /* The following methods belong to ILocalization2D interface */
     bool   getCurrentPosition(yarp::dev::Map2DLocation &loc) override;
     bool   setInitialPose(yarp::dev::Map2DLocation& loc) override;
 };
