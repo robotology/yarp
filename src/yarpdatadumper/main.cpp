@@ -301,8 +301,7 @@ public:
         saveData(_saveData),
         videoOn(_videoOn),
         videoType(_videoType),
-        closing(false),
-        t0(0.0)
+        closing(false)
     {
         infoFile=dirName;
         infoFile+="/info.log";
@@ -311,6 +310,7 @@ public:
         dataFile+="/data.log";
 
     #ifdef ADD_VIDEO
+        t0 = 0.0;
         transform(videoType.begin(),videoType.end(),videoType.begin(),::tolower);
         if ((videoType!="mkv") && (videoType!="avi"))
         {
@@ -341,9 +341,6 @@ public:
     bool threadInit() override
     {
         oldTime=Time::now();
-        cumulSize=0;
-        counter=0;
-        closing=false;
 
         finfo.open(infoFile.c_str());
         if (!finfo.is_open())
