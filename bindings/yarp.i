@@ -420,6 +420,7 @@ MAKE_COMMS(Bottle)
 %include <yarp/dev/ICurrentControl.h>
 %include <yarp/dev/IAnalogSensor.h>
 %include <yarp/dev/FrameGrabberControl2.h>
+%include <yarp/dev/IPidControl.h>
 
 #if !defined(SWIGCHICKEN) && !defined(SWIGALLEGROCL)
   %template(DVector) std::vector<double>;
