@@ -6,10 +6,9 @@
 * BSD-3-Clause license. See the accompanying LICENSE file for details.
 */
 
-#include <yarp/os/RateThread.h>
 #include <yarp/os/Mutex.h>
-#include <functional>
 #include <chrono>
+#include <functional>
 
 namespace yarp {
     namespace os {
@@ -20,7 +19,7 @@ namespace yarp {
 }
 
 struct yarp::os::YarpTimerEvent
-{   
+{
     /**
      * @brief lastExpected when the last callback actually happened
      */
@@ -32,7 +31,8 @@ struct yarp::os::YarpTimerEvent
     double lastReal;
 
     /**
-     * @brief currentExpected this is when the current callback should have been called
+     * @brief currentExpected this is when the current callback should have been
+     *        called
      */
     double currentExpected;
 
@@ -54,61 +54,107 @@ struct yarp::os::YarpTimerEvent
 
 struct yarp::os::TimerSettings
 {
-    TimerSettings(std::chrono::milliseconds inRate) : rate(inRate), totalTime(0.0), totalRunCount(0), tollerance(0.001){}
-    TimerSettings(std::chrono::milliseconds inRate, size_t count, double seconds) : rate(inRate), totalTime(seconds), totalRunCount(count), tollerance(0.001){}
-    TimerSettings(std::chrono::milliseconds inRate, size_t count, double seconds, double inTollerance)
-        : rate(inRate),
-          totalTime(seconds),
-          totalRunCount(count),
-          tollerance(inTollerance){}
+    TimerSettings(double inRate) :
+            rate(inRate),
+            totalTime(0.0),
+            totalRunCount(0),
+            tolerance(0.001)
+    {
+    }
+    TimerSettings(double inRate, size_t count, double seconds) :
+            rate(inRate),
+            totalTime(seconds),
+            totalRunCount(count),
+            tolerance(0.001)
+    {
+    }
+    TimerSettings(double inRate, size_t count, double seconds, double inTollerance) :
+            rate(inRate),
+            totalTime(seconds),
+            totalRunCount(count),
+            tolerance(inTollerance)
+    {
+    }
 
-    std::chrono::milliseconds rate;
-    double                    totalTime;
-    size_t                    totalRunCount;
-    double                    tollerance;
+    bool operator==(const TimerSettings& rhs) const
+    {
+        return rate == rhs.rate && totalTime == rhs.totalTime && totalRunCount == rhs.totalRunCount && tolerance == rhs.tolerance;
+    }
+
+
+    /**
+    * @param rate the rate of the timer in seconds
+    * @param totalTime the life of the timer in seconds. 0 == infinite.
+    *        The lower between totalTime and totalRunCount*rate + execution
+    *        delay will stop the timer
+    * @param totalRunCount the total count of execution. 0 == infinite.
+    *        The lower between totalTime and totalRunCount*rate + execution
+    *        delay will stop the timer
+    * @param tolerance the tolerance while checking the timer life
+    */
+    double rate;
+    double totalTime;
+    size_t totalRunCount;
+    double tolerance;
 };
 
-class YARP_OS_API yarp::os::Timer : public yarp::os::RateThread {
-    typedef std::function<bool(const yarp::os::YarpTimerEvent&)> TimerCallback;
-    class Private;
-
-    Private* impl;
-
+class YARP_OS_API yarp::os::Timer
+{
 public:
-
+    typedef std::function<bool(const yarp::os::YarpTimerEvent&)> TimerCallback;
+    Timer(const Timer&) = delete;
+    Timer operator=(const Timer&) = delete;
     /**
      * @brief Timer constructor
-     * @param rate the call frequency, in milliseconds
-     * @param callback the pointer to the function to call
-     * @param mutex if not nullptr will be locked before calling callback and released just after
-     * @param type sets the timer type, if ONE_SHOT will be called only once. PERIODIC will run periodically
+     * @param settings the timer settings. see TimerSettings documentation
+     * @param callback the pointer to the function to call. the signature should
+     *        be "bool foo(const yarp::os::YarpTimerEvent&)" and if it return
+     *        false the timer will stop
+     * @param mutex if not nullptr will be locked before calling callback and
+     *        released just after
+     * @param type sets the timer type, if ONE_SHOT will be called only once.
+     *        PERIODIC will run periodically
+     * @param newThread whether the timer should be executed in a his own thread
+     *        or with all the timers with newThread == false (in any case they
+     *        will not run in the main thread)
      */
-    Timer(const yarp::os::TimerSettings& settings, TimerCallback callback, yarp::os::Mutex* mutex = nullptr);
+    Timer(const yarp::os::TimerSettings& settings, TimerCallback callback, bool newThread, yarp::os::Mutex* mutex = nullptr);
 
     /**
      * @brief Timer constructor
-     * @param rate the call frequency, in milliseconds
+     * @param settings the timer settings. see TimerSettings documentation
      * @param callback the pointer to the member method to call
      * @param object the pointer to the object
-     * @param mutex if not nullptr will be locked before calling callback and released just after
-     * @param oneshot if true there will be only one call
+     * @param mutex if not nullptr will be locked before calling callback and
+     *        released just after
+     * @param newThread whether the timer should be executed in a his own thread
+     *        or with all the timers with newThread == false (in any case they
+     *        will not run in the main thread)
      */
-    template<class T>
-    Timer(const  yarp::os::TimerSettings& settings,
-          bool(T::*callback)(const yarp::os::YarpTimerEvent&),
+    template <class T>
+    Timer(const yarp::os::TimerSettings& settings,
+          bool (T::*callback)(const yarp::os::YarpTimerEvent&),
           T* object,
+          bool newThread,
           yarp::os::Mutex* mutex = nullptr) :
-        Timer(settings, std::bind(callback, object, std::placeholders::_1), mutex) {}
+
+            Timer(settings, std::bind(callback, object, std::placeholders::_1), newThread, mutex)
+    {
+    }
 
     /**
      * const version.
      */
-    template<class T>
-    Timer(const  yarp::os::TimerSettings& settings,
-          bool(T::*callback)(const yarp::os::YarpTimerEvent&) const,
+    template <class T>
+    Timer(const yarp::os::TimerSettings& settings,
+          bool (T::*callback)(const yarp::os::YarpTimerEvent&) const,
           const T* object,
+          bool newThread,
           yarp::os::Mutex* mutex = nullptr) :
-        Timer(settings, std::bind(callback, object, std::placeholders::_1), mutex) {}
+
+            Timer(settings, std::bind(callback, object, std::placeholders::_1), newThread, mutex)
+    {
+    }
 
     virtual ~Timer();
 
@@ -124,8 +170,17 @@ public:
      */
     const yarp::os::TimerSettings getSettings();
 
-protected:
-    virtual void beforeStart() override;
-    virtual void run() override;
-};
+    virtual bool start();
 
+    virtual bool step();
+
+    virtual void stop();
+
+    virtual bool isRunning();
+
+#ifndef DOXYGEN_SHOULD_SKIP_THIS
+    class PrivateImpl;
+private:
+    PrivateImpl* impl;
+#endif // DOXYGEN_SHOULD_SKIP_THIS
+};
