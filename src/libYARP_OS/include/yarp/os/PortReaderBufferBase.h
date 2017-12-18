@@ -32,8 +32,6 @@ public:
 
     void setPrune(bool flag = true);
 
-    void setAllowReuse(bool flag = true);
-
     void setTargetPeriod(double period);
 
     yarp::os::ConstString getName() const;
@@ -45,8 +43,6 @@ public:
     void clear();
 
     virtual yarp::os::PortReader* create();
-
-    void release(yarp::os::PortReader* completed);
 
     int check();
 
@@ -73,6 +69,11 @@ public:
 
     // user gives back an object
     void release(void* key);
+
+#ifndef YARP_NO_DEPRECATED // Since YARP 2.3.72
+    void YARP_DEPRECATED setAllowReuse(bool flag = true);
+    void YARP_DEPRECATED release(yarp::os::PortReader* completed);
+#endif // YARP_NO_DEPRECATED
 
 #ifndef DOXYGEN_SHOULD_SKIP_THIS
 private:

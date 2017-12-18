@@ -188,7 +188,6 @@ public:
     PortReaderBufferBaseCreator* creator;
     unsigned int maxBuffer;
     bool prune;
-    bool allowReuse;
     yarp::os::PortReader* replier;
     double period;
     double last_recv;
@@ -207,7 +206,6 @@ public:
             creator(nullptr),
             maxBuffer(maxBuffer),
             prune(false),
-            allowReuse(true),
             replier(nullptr),
             period(-1),
             last_recv(-1),
@@ -370,16 +368,6 @@ yarp::os::PortReader *PortReaderBufferBase::create()
     return nullptr;
 }
 
-void PortReaderBufferBase::release(PortReader *completed)
-{
-    YARP_UNUSED(completed);
-    //mPriv->stateSema.wait();
-    //mPriv->configure(completed, true, false);
-    //mPriv->stateSema.post();
-    printf("release not implemented anymore; not needed\n");
-    std::exit(1);
-}
-
 int PortReaderBufferBase::check()
 {
     mPriv->stateSema.wait();
@@ -535,11 +523,6 @@ void PortReaderBufferBase::setPrune(bool flag)
     mPriv->prune = flag;
 }
 
-void PortReaderBufferBase::setAllowReuse(bool flag)
-{
-    mPriv->allowReuse = flag;
-}
-
 void PortReaderBufferBase::setTargetPeriod(double period)
 {
     mPriv->period = period;
@@ -660,3 +643,21 @@ void typedReaderMissingCallback()
 {
     YARP_ERROR(Logger::get(), "Missing or incorrectly typed onRead function");
 }
+
+
+#ifndef YARP_NO_DEPRECATED // Since YARP 2.3.72
+void PortReaderBufferBase::release(PortReader *completed)
+{
+    YARP_UNUSED(completed);
+    //mPriv->stateSema.wait();
+    //mPriv->configure(completed, true, false);
+    //mPriv->stateSema.post();
+    printf("release not implemented anymore; not needed\n");
+    std::exit(1);
+}
+
+void PortReaderBufferBase::setAllowReuse(bool flag)
+{
+    YARP_UNUSED(flag);
+}
+#endif // YARP_NO_DEPRECATED
