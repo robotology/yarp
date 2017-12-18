@@ -187,17 +187,17 @@ void MainWindow::updateMain()
     return;
 }
 
-MainWindow::MainWindow(yarp::os::ResourceFinder rf, yarp::dev::IBattery* p_ibat, QWidget *parent) : QMainWindow(parent), ui(new Ui::MainWindow)
+MainWindow::MainWindow(yarp::os::ResourceFinder rf, yarp::dev::IBattery* p_ibat, QWidget *parent) : QMainWindow(parent),
+    ui(new Ui::MainWindow),
+    ibat(p_ibat),
+    drv(nullptr),
+    connected(false),
+    enable_ask_info(false),
+    voltage(0),
+    charge(0),
+    current(0)
 {
-    ibat = p_ibat;
-    connected = false;
-    enable_ask_info = false;
-    voltage = 0;
-    charge = 0;
-    current = 0;
-
     ui->setupUi(this);
-
     mainTimer = new QTimer(this);
     connect(mainTimer, SIGNAL(timeout()), this, SLOT(updateMain()));
     mainTimer->start(1000*10); //10 seconds

@@ -55,6 +55,9 @@ public:
                  const char *kind) :
             delegate(delegate),
             raw(raw),
+            header(BlobNetworkHeader{0,0,0}),
+            cursor(nullptr),
+            remaining(0),
             phase(0),
             expectTwiddle(service && sender),
             kind(kind),

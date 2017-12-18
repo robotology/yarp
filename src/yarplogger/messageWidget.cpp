@@ -22,10 +22,10 @@
 #include <QDateTime>
 
 MessageWidget::MessageWidget(QWidget *parent) :
-    QListWidget(parent)
+    QListWidget(parent),
+    contextMenu(nullptr)
 {
     //contextMenu = new QMenu(this);
-
     clearLogAction = new QAction("Clear Log",this);
     saveLogAction = new QAction("Save Log",this);
 
@@ -37,7 +37,6 @@ MessageWidget::MessageWidget(QWidget *parent) :
 
     connect(clearLogAction,SIGNAL(triggered()),this,SLOT(onClearLog()));
     connect(saveLogAction,SIGNAL(triggered()),this,SLOT(onSaveLog()));
-
 }
 
 void MessageWidget::onClearLog()

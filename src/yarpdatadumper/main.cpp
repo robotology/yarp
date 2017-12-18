@@ -136,7 +136,12 @@ class DumpTimeStamp
     bool   txOk;
 
 public:
-    DumpTimeStamp() : rxOk(false), txOk(false) { }
+    DumpTimeStamp() :
+        rxStamp(0.0),
+        txStamp(0.0),
+        rxOk(false),
+        txOk(false)
+    {}
     void setRxStamp(const double stamp) { rxStamp=stamp; rxOk=true; }
     void setTxStamp(const double stamp) { txStamp=stamp; txOk=true; }
     double getStamp() const
@@ -285,9 +290,19 @@ private:
 public:
     DumpThread(DumpType _type, DumpQueue &Q, const string &_dirName, int szToWrite,
                bool _saveData, bool _videoOn, const string &_videoType) :
-               RateThread(50), buf(Q), type(_type), dirName(_dirName),
-               blockSize(szToWrite), saveData(_saveData),
-               videoOn(_videoOn), videoType(_videoType)
+        RateThread(50),
+        buf(Q),
+        type(_type),
+        dirName(_dirName),
+        blockSize(szToWrite),
+        cumulSize(0),
+        counter(0),
+        oldTime(0.0),
+        saveData(_saveData),
+        videoOn(_videoOn),
+        videoType(_videoType),
+        closing(false),
+        t0(0.0)
     {
         infoFile=dirName;
         infoFile+="/info.log";
@@ -507,7 +522,16 @@ private:
     string            portName;
 
 public:
-    DumpModule() { }
+    DumpModule() :
+        q(nullptr),
+        p_bottle(nullptr),
+        p_image(nullptr),
+        t(nullptr),
+        type(bottle),
+        rxTime(false),
+        txTime(false),
+        dwnsample(0)
+    {}
 
     bool configure(ResourceFinder &rf) override
     {
