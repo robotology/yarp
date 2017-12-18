@@ -25,7 +25,7 @@ namespace yarp
             VOCAB_PIDTYPE_POSITION = VOCAB3('p', 'o', 's'),
             VOCAB_PIDTYPE_VELOCITY = VOCAB3('v', 'e', 'l'),
             VOCAB_PIDTYPE_TORQUE   = VOCAB3('t', 'r', 'q'),
-            VOCAB_PIDTYPE_CURRENT  = VOCAB3('c', 'u', 'r')
+            VOCAB_PIDTYPE_CURRENT  = VOCAB3(99/*'c'*/, 'u', 'r') // SWIG bug
         };
     }
 }
