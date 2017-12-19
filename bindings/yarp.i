@@ -959,6 +959,7 @@ typedef yarp::os::BufferedPort<ImageRgbFloat> BufferedPortImageRgbFloat;
 }
 
 %extend yarp::dev::IPidControl {
+#ifndef YARP_NO_DEPRECATED // Since YARP 2.3.70
     bool setReferences(std::vector<double>& data) {
         return self->setReferences(&data[0]);
     }
@@ -1014,6 +1015,7 @@ typedef yarp::os::BufferedPort<ImageRgbFloat> BufferedPortImageRgbFloat;
     bool getPids(std::vector<yarp::dev::Pid> pids) {
         return self->getPids(&pids[0]);
     }
+#endif
 }
 
 %extend yarp::dev::IAmplifierControl {
