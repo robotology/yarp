@@ -71,9 +71,9 @@ public:
         bool avOk=false;
         bool stdOk=false;
 
-        if (fabs(average-u)<0.05)
+        if (fabs(average-u)<0.075)
             avOk=true;
-        if (fabs(std-sigma)<0.05)
+        if (fabs(std-sigma)<0.075)
             stdOk=true;
 
         checkTrue(avOk, "normal distribution average ~as requested");
