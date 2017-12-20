@@ -421,6 +421,7 @@ MAKE_COMMS(Bottle)
 %include <yarp/dev/IAnalogSensor.h>
 %include <yarp/dev/FrameGrabberControl2.h>
 %include <yarp/dev/IPidControl.h>
+%include <yarp/dev/IPositionDirect.h>
 
 #if !defined(SWIGCHICKEN) && !defined(SWIGALLEGROCL)
   %template(DVector) std::vector<double>;
@@ -795,6 +796,12 @@ typedef yarp::os::BufferedPort<ImageRgbFloat> BufferedPortImageRgbFloat;
         return result;
     }
 
+    yarp::dev::IPositionDirect *viewIPositionDirect() {
+        yarp::dev::IPositionDirect *result;
+        self->view(result);
+        return result;
+    }
+
     // you'll need to add an entry for every interface you wish
     // to use
 }
@@ -1061,6 +1068,18 @@ typedef yarp::os::BufferedPort<ImageRgbFloat> BufferedPortImageRgbFloat;
     }
 }
 
+%extend yarp::dev::IPositionDirect {
+    int getAxes() {
+        int buffer;
+        bool ok = self->getAxes(&buffer);
+        if (!ok) return 0;
+        return buffer;
+    }
+
+    bool setPositions(std::vector<double>& data) {
+        return self->setPositions(&data[0]);
+    }
+}
 
 %extend yarp::sig::Vector {
 
