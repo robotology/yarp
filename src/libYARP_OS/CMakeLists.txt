@@ -297,7 +297,7 @@ set(YARP_OS_SRCS src/AbstractCarrier.cpp
                  src/PortCoreOutputUnit.cpp
                  src/Port.cpp
                  src/PortInfo.cpp
-                 src/PortReaderBuffer.cpp
+                 src/PortReaderBufferBase.cpp
                  src/PortReader.cpp
                  src/PortReaderCreator.cpp
                  src/PortReport.cpp
