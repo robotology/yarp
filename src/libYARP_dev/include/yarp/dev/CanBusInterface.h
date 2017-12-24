@@ -86,6 +86,10 @@ class yarp::dev::CanBuffer
         {
             return *data[k];
         }
+    inline const CanMessage &operator[](int k) const
+        {
+            return *data[k];
+        }
 };
 
 class yarp::dev::ICanBufferFactory
