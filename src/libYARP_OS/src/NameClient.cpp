@@ -331,6 +331,10 @@ Contact NameClient::registerName(const ConstString& name, const Contact& suggest
         if (typ!="*") {
             cmd.addString(typ);
         }
+    } else {
+        if (suggest.getCarrier()!="") {
+            cmd.addString(suggest.getCarrier().c_str());
+        }
     }
     Bottle reply;
     send(cmd, reply);
