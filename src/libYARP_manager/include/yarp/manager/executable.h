@@ -41,6 +41,13 @@ typedef enum __RSTATE {
     STUNKNOWN
 } RSTATE;
 
+enum class BrokerType
+{
+    invalid,
+    local,
+    yarp
+};
+
 
 class MEvent{
 
@@ -89,7 +96,12 @@ public:
     ResourceContainer& getResources(void) { return resources; }
 
     RSTATE state(void);
+    BrokerType getBrokerType();
+    bool shouldChangeBroker();
     Broker* getBroker(void) { return broker; }
+    void setAndInitializeBroker(Broker* _broker);
+    void removeBroker(void) { if (broker) delete broker;}
+
     MEvent* getEvent(void) { return event; }
     const char* getCommand(void) { return strCommand.c_str(); }
     const char* getParam(void) { return strParam.c_str(); }

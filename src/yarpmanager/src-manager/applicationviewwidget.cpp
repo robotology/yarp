@@ -452,14 +452,7 @@ void ApplicationViewWidget::onModuleItemSelectionChanged()
         if (all) {
             modAttachAction->setEnabled(true);
         }
-//        if (ui->moduleList->currentItem()->text(3) == "localhost")
-//        {
-//            modAttachAction->setEnabled(true);
-//        }
-//        else
-//        {
-//            modAttachAction->setEnabled(false);
-//        }
+
         modAssignAction->setEnabled(true);
         modRefreshAction->setEnabled(true);
 
@@ -654,11 +647,6 @@ void ApplicationViewWidget::updateApplicationWindow()
         else
             it = new CustomTreeWidgetItem(appNode,l);
 
-        if (host=="localhost")
-        {
-            it->setTextColor(3,QColor("#A0A0A0"));
-        }
-
         //it->setFlags(it->flags() | Qt::ItemIsEditable);
         it->setData(0,Qt::UserRole,yarp::manager::MODULE);
         it->setIcon(0,QIcon(":/close.svg"));
@@ -770,7 +758,6 @@ void ApplicationViewWidget::onModuleItemChanged(QTreeWidgetItem *it,int col)
     if (!(tmp & Qt::ItemIsEditable)) {
         return;
     }
-    qDebug() << "CHANGED " << it->text(col);
 }
 
 /*! \brief Called when an item has been double clicked */
@@ -800,7 +787,7 @@ bool ApplicationViewWidget::isEditable(QTreeWidgetItem *it,int col)
                }
            }
            if (col == 3) {
-                if (it->text(3) != "localhost" && it->text(2) == "stopped") {
+                if (it->text(2) == "stopped") {
                     return true;
                 }
            }
