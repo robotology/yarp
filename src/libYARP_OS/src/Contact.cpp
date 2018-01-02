@@ -20,6 +20,7 @@
 #include <cstdlib>
 #include <cstdio>
 #include <cstring>
+#include <regex>
 
 #if defined(YARP_HAS_ACE)
 # include <ace/INET_Addr.h>
@@ -197,6 +198,87 @@ Contact Contact::fromString(const ConstString& txt)
     return c;
 }
 
+bool Contact::isValidRegistrationName(const char* name)
+{
+    if(strcmp(name,"") == 0)                                    // anonymous
+        return true;
+
+    const std::string port_name_s(name);
+    std::regex port_exp("([a-zA-Z0-9]+(?:[_][a-zA-Z0-9]+)*)"    // plain expression "abc[_def]" without leading '/', allowed for topics
+                        "|"                                     // OR
+                        "(\\.\\.\\.)");                         // "..." is accepted as registration name, a default one is assigned
+
+    std::smatch port_match;
+    if (std::regex_match(port_name_s, port_match, port_exp))
+        return true;
+
+    return isValidRegisteredName(name);                         // otherwise, we need a good final name
+}
+
+bool Contact::isValidRegisteredName(const char* name)
+{
+    const std::string port_name_s(name);
+    std::regex port_exp(
+        "(?:([a-zA-Z0-9]+(?:[_][a-zA-Z0-9]+)*):/)?"         // carrier_name:/   - optional
+        "("
+            "("                                             // /port[category]@/node~wire syntax
+                "((?:/[a-zA-Z0-9]+(?:[_:][a-zA-Z0-9]+)*)+)" // port_name        - necessary
+                "(?:"
+                    "([\\+|-][1]?)?"                        // category         - optional, "+" | "-" | "+1" | "-1"
+                    "(@((?:/[a-zA-Z0-9]+(?:[_:][a-zA-Z0-9]+)*)*))"
+                                                            // @node_name       - optional, could also be ""
+                    "(~([_a-zA-Z0-9]+))?"                   // ~wire_type       - optional
+                ")?"
+            ")"
+            "|"                                             // OR
+            "("                                             // /node[category]#/port~wire syntax
+                "((?:/[a-zA-Z0-9]+(?:[_:][a-zA-Z0-9]+)*)+)" // node_name        - necessary
+                "([\\+|-][1]?)?"                            // category         - optional, "+" | "-" | "+1" | "-1"
+                "\x23"                                      // #                - necessary
+                "((?:/[a-zA-Z0-9]+(?:[_:][a-zA-Z0-9]+)*)+)" // /port_name       - necessary
+                "(~([_a-zA-Z0-9]+))?"                       // ~wire_type       - optional
+            ")"
+            "|"                                             // OR
+            "("                                             // /node=[category]/port~wire syntax
+                "((?:/[a-zA-Z0-9]+(?:[_:][a-zA-Z0-9]+)*)+)" // /node_name       - necessary
+                "="                                         // =                - necessary
+                "([\\+|-][1]?)?"                            // category         - optional, "+" | "-" | "+1" | "-1"
+                "((?:/[a-zA-Z0-9]+(?:[_:][a-zA-Z0-9]+)*)+)" // /port_name       - necessary
+                "(~([_a-zA-Z0-9]+))?"                       // ~wire_type       - optional
+            ")"
+            "|"                                             // OR
+            "(/"                                            // "/machine:NNN/" syntax
+                "[a-zA-Z0-9]+(?:\\.[a-zA-Z0-9]+)*"          // machine name     - "machine.domain.name" or IP addr
+                ":[\\d]+/?"                                 // port number
+            ")"
+        ")");
+
+    // Matching
+    std::smatch port_match;
+    bool match = std::regex_match(port_name_s, port_match, port_exp);
+
+    if (match)
+    {
+        return true;
+    }
+    else // basic error reporting:
+    {
+        std::cout << "\"" << port_name_s << "\" does not match the correct pattern for port definition.\n";
+        std::regex_search(port_name_s, port_match, port_exp);
+        if (port_match[0].str() != "")
+        {
+            std::cout << "Check for the error in prefix or suffix of the matched name:\n";
+            std::string prefix = (port_match.prefix().str().empty() ? "" : ("[" + port_match.prefix().str() + "] "));
+            std::string suffix = (port_match.suffix().str().empty() ? "" : (" [" + port_match.suffix().str() + "]"));
+            std::cout << prefix << port_match[0].str() << suffix << std::endl;
+        }
+        else
+        {
+            std::cout << "There is no matching pattern. Check the correct syntax --> where <-- for port names.\n";
+        }
+        return false;
+    }
+}
 
 
 ConstString Contact::getName() const

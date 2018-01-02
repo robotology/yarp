@@ -77,7 +77,10 @@ bool Port::openFake(const ConstString& name)
 
 bool Port::open(const ConstString& name)
 {
-    return open(Contact(name));
+    if(Contact::isValidRegistrationName(name.c_str())) {
+        return open(Contact::fromString(name));
+    }
+    return false;
 }
 
 bool Port::open(const Contact& contact, bool registerName)
