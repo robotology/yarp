@@ -273,14 +273,11 @@ bool NameServiceOnTriples::cmdRegister(NameTripleState& act) {
         at++;
     }
     lock();
-    if (port=="..." || (port.length()>0 && port[0]=='=')) {
+    if (port=="...") {
         Contact c(port, carrier, machine, sock);
         c = alloc->completePortName(c);
-        if (port =="...") {
-            port = c.getName();
-        } else {
-            port = c.getName() + port;
-        }
+        port = c.getName();
+
     }
     t.setNameValue("port",port.c_str());
     act.mem.remove_query(t, nullptr);
