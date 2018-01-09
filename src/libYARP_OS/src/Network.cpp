@@ -232,11 +232,6 @@ static int enactConnection(const Contact& src,
     if (c2.getPort()<=0) {
         c2 = NetworkBase::queryName(c2.getName());
     }
-    if (c2.getCarrier()!="tcp") {
-        YARP_SPRINTF2(Logger::get(), debug, "would have asked %s: %s",
-                      src.toString().c_str(), cmd.toString().c_str());
-        return 1;
-    }
 
     YARP_SPRINTF2(Logger::get(), debug, "** asking %s: %s",
                   src.toString().c_str(), cmd.toString().c_str());
