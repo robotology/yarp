@@ -86,7 +86,7 @@ __   __\n\
 
 #define HELP_MESSAGE        "\
 Usage:\n\
-      yarpmanager [option...]\n\n\
+      yarpmanager-console [option...]\n\n\
 Options:\n\
   --application <app>     Load a specific application identified by its xml file\n\
   --run                   Run the current application (should be used with --application)\n\
