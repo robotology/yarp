@@ -7,6 +7,8 @@
 #ifndef YARP_DEV_CANBUSINTERFACE_H
 #define YARP_DEV_CANBUSINTERFACE_H
 
+#include <cstring> // for std::memset
+
 #include <yarp/dev/DeviceDriver.h>
 #include <yarp/os/Log.h>
 
@@ -114,7 +116,7 @@ public:
         CanMessage **messages=new CanMessage *[elem];
         M *tmp=new M[elem];
 
-        memset(storage, 0, sizeof(IMPL)*elem);
+        std::memset(storage, 0, sizeof(IMPL)*elem);
 
         for(int k=0;k<elem;k++)
             {
