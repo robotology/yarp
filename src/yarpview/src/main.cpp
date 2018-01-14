@@ -21,12 +21,36 @@
 #include <QVariant>
 #include <QDir>
 #include <QtGlobal>
+#include <yarp/os/Network.h>
+#include <yarp/os/ResourceFinder.h>
 
 void catchSignals(int sig) {
     // blocking and not aysnc-signal-safe func are valid
     printf("\nYarpview killed by signal(%d).\n", sig);
     QCoreApplication::quit();
 }
+
+class PortConnector : public QObject
+{
+    Q_OBJECT
+public:
+    std::string portName;
+    std::string remote;
+
+public slots:
+    bool connectPort(QString source, QString carrier)
+    {
+        if (source.toStdString().empty()) yarp::os::Network::disconnect(remote, portName);
+        if (yarp::os::Network::connect(source.toStdString().c_str(), portName, carrier.toStdString().c_str()))
+        {
+            remote = source.toStdString();
+            return true;
+        }
+
+    }
+};
+
+#include <main.moc>
 
 /*! \brief Main method for the YARPView container.
  *
@@ -113,6 +137,19 @@ int main(int argc, char *argv[])
     if (keepabove)
     {
         window->setFlags(Qt::WindowStaysOnTopHint);
+    }
+
+    PortConnector            connector;
+    yarp::os::Value          val;
+    yarp::os::ResourceFinder opt;
+    QObject::connect(topLevel, SIGNAL(connectToPort(QString, QString)), &connector, SLOT(connectPort(QString,QString)));
+
+    if (opt.configure(argc, argv))
+    {
+        if(opt.check("PortName")) connector.portName = opt.find("PortName").asString();
+        else if(opt.check("name")) connector.portName = opt.find("name").asString();
+        else connector.portName = "/yarpview/img:i";
+
     }
 
     // Call the parseParameters of the qml object called YARPVideoSurface

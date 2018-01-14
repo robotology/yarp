@@ -30,13 +30,23 @@ Rectangle {
     property string name: "yarpview"
     property string version: "2.0"
 
-    signal changeWindowSize(int w, int h)
+    signal changeWindowSize(int w, int h);
     signal synchRate(bool check);
     signal autosize(bool check);
-    signal setName(string name)
-
+    signal setName(string name);
+    signal connectToPort(string source, string carrier);
 
     /*********Connections*********/
+
+    Connections
+    {
+        target: dataArea
+        onConnectPort:
+        {
+            connectToPort(source, carrier)
+        }
+    }
+
     Connections{
         target: yarpViewCore
         onSendPortFps:{
@@ -125,6 +135,7 @@ Rectangle {
     /********Functions************/
     function parseParameters(params){
         var ret = yarpViewCore.parseParameters(params)
+
         return ret
     }
 

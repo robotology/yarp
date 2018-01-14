@@ -22,6 +22,7 @@ import "qrc:/YARPView/" 1.0
 ApplicationWindow {
     id: window
 
+    signal connectToPort(string source, string carrier)
     x: vSurface.posX
     y: vSurface.posY
     width: vSurface.windowWidth
@@ -76,6 +77,11 @@ ApplicationWindow {
         }
         onSetName:{
             statusBar.setName(name)
+        }
+
+        onConnectToPort:
+        {
+            connectToPort(source, carrier)
         }
     }
 

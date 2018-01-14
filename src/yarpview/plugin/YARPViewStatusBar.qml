@@ -12,8 +12,8 @@ import QtQuick 2.0
 import QtQuick.Controls 1.1
 
 StatusBar {
-    id: bar
-    height: 60
+    id: root
+    height: 78
     property string avgFps: "0.0"
     property string minFps: "0.0"
     property string maxFps: "0.0"
@@ -25,51 +25,74 @@ StatusBar {
     property string name: "/name"
 
     function setName(name){
-        bar.name = name
+        root.name = name
     }
+    signal connectPort(string source, string carrier)
 
-    Column{
-        anchors.fill: parent
-        spacing: 2
 
-        Label{
-            id: fps
+    Column {
+        id: column1
+        spacing: 5
 
-            //anchors.bottom: displayFps.top
+        Row {
+            transformOrigin: Item.Center
+            antialiasing: false
 
-            text: "Port: " + bar.avgFps +
-                  " (min:" + bar.minFps +
-                  " max:" + bar.maxFps +") fps"
-            fontSizeMode: Text.VerticalFit
-            height: parent.height/3 - 2
+
+            TextField {
+                id: portField
+                placeholderText: qsTr("port")
+            }
+
+            TextField {
+                id: carrierField
+
+                placeholderText: qsTr("carrier")
+            }
+            Button {
+                id: connect_button
+                text: qsTr("Connect")
+                onClicked:
+                {
+                    root.connectPort(portField.displayText, carrierField.displayText)
+                }
+            }
         }
 
-        Label{
-            id: displayFps
+        Column {
+            spacing: 2
 
-            //anchors.bottom: name.top
+            Label{
+                id: fps
 
+                //anchors.bottom: displayFps.top
 
-            text: "Display: " + bar.displayAvgFps +
-                  " (min:" + bar.displayMinFps +
-                  " max:" + bar.displayMaxFps +") fps"
-            fontSizeMode: Text.VerticalFit
-            height: parent.height/3 - 2
+                text: "Port: " + root.avgFps +
+                      " (min:" + root.minFps +
+                      " max:" + root.maxFps +") fps"
+                fontSizeMode: Text.VerticalFit
+            }
 
+            Label{
+                id: displayFps
 
-        }
-
-        Label{
-            id: name
-
-
-            text: bar.name
-            fontSizeMode: Text.VerticalFit
-            height: parent.height/3 - 2
+                //anchors.bottom: name.top
 
 
+                text: "Display: " + root.displayAvgFps +
+                      " (min:" + root.displayMinFps +
+                      " max:" + root.displayMaxFps +") fps"
+                fontSizeMode: Text.VerticalFit
+
+            }
+
+            Label{
+                id: name
+                text: root.name
+                fontSizeMode: Text.VerticalFit
+
+            }
         }
     }
-
 
 }

@@ -34,7 +34,8 @@ add_executable(yarpview WIN32 ${yarpview_SRCS}
 
 target_link_libraries(yarpview Qt5::Widgets
                                Qt5::Qml
-                               Qt5::Quick)
+                               Qt5::Quick
+                               YARP::YARP_OS)
 
 install(TARGETS yarpview
         COMPONENT utilities
