@@ -49,6 +49,8 @@ restore only the original aspect ratio (Image->Original aspect ratio).
 
 From the menu "File" you can also save individual or sequences of frames.
 
+You can connect to remote image source via gui. If the remote name is not provided a disconnection command (from the last remote connected via gui) will be called.
+
 Usually you want to change the port name (especially to execute multiple instances of yarpview):
 
 \verbatim
