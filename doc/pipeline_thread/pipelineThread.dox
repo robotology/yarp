@@ -1,0 +1,223 @@
+
+/*
+ * Copyright: (C) 2018 Istituto Italiano di Tecnologia (IIT)
+ * Copy Policy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
+ *
+ */
+
+/**
+ * @page pipelineThread Implementing pipelines optimized through multithreading
+
+\author Nicolo' Genesio
+
+\section content Contents
+\li \ref what_is
+\li \ref which_is
+\li \ref need
+\li \ref example
+
+<br>
+\section what_is What is the PipelineThread class?
+Given a pipeline paradigm where the output of a step is the input of the following one, this class optimizes the pipeline's computational time through multithreading.
+
+yarp::os::PipelineThread is a template class that inherits from yarp::os::Thread. It has two yarp::os::AtomicBuffers, one for input and one for output that can be of different types.
+
+Both of yarp::os::PipelineThread and yarp::os::AtomicBuffer are included in `libYARP_OS`.
+
+<br>
+\section which_is What are the advantges given by PipelineThread class?
+- Performance optimization
+- Multithread safe
+- Provide a template to clearly distinguish the producer and consumer's roles in the code
+
+<br>
+\section need When do I need to use PipelineThread class?
+
+PipelineThread can be useful when you want optimize a code representing a pipeline, where the execution of one step depends by the output of the previous one.
+
+To fully exploit the functionalities of this class, the AtomicBuffers have to be shared among different PipelineThreads. For example, given two PipelineThreads T1 and T2 representing two sequential steps, the pointer to the output buffer of T1 has to point to the same location pointed by the input buffer of T2.
+
+\image html SimplePipeline.png "Example of PipelineThread and AtomicBuffer usage and relationship."
+
+In this way as soon as T1 produces new data, T2 will be woken up to consume it.
+
+\section example Use case: Computer vision pipeline
+
+Here is presented an implementation of a computer vision pipeline that acquire images, compute their features and descriptors using a multithreading approach.
+
+\image html pipelineExample.png "An example of PipelineThread and AtomicBuffer used in a computer vision context."
+
+The producer module can be implemented as follow:
+\code {.cpp}
+
+#include <yarp/os/all.h>
+#include <yarp/sig/all.h>
+#include "ThreadFeature.h"
+#include "ThreadDescriptor.h"
+
+using namespace yarp::os;
+using namespace yarp::sig;
+using namespace cv;
+using namespace std;
+
+
+class PipelineModule : public RFModule {
+private:
+    yarp::os::BufferedPort<ImageOf<PixelRgb> > image_port;
+    ThreadFeature* threadFeature; //thread that reads from a buffer of images and writes to a buffer of features
+    ThreadDescriptor* threadDescriptor; //thread that reads from a buffer of features and writes to a of descriptors
+
+    AtomicBuffer<Mat> bufferImage;
+    AtomicBuffer<vector<KeyPoint>> bufferFeature;
+    AtomicBuffer<Mat> bufferDescriptor;
+    int numOfImg;
+    bool configured;
+
+
+public:
+    PipelineModule()
+    {
+        threadFeature = nullptr; threadDescriptor = nullptr; numOfImg = 10; configured = false;
+    }
+    bool configure(yarp::os::ResourceFinder &rf)
+    {
+        //Open ports
+        image_port.open("/pipelineModule/img_port:i");
+        //Connect ports
+        bool ret = NetworkBase::connect("/icub/cam/left", image_port.getName());
+        if(!ret) {
+            yError()<<"Could not connect to some of the ports";
+            return configured;
+        }
+        //configure threads and select detector, descriptor and matcher
+        Ptr<Feature2D> detector;
+        Ptr<Feature2D> descriptor;
+
+        threadFeature = new ThreadFeature(bufferImage, bufferFeature,detector);
+        threadDescriptor = new ThreadDescriptor(bufferFeature,bufferDescriptor,descriptor);
+
+        //start threads
+        threadFeature->start();
+        threadDescriptor->start();
+
+        configured = true;
+        return configured;
+    }
+
+    bool updateModule()
+    {
+        static int count = 0;
+        if(count>numOfImg)
+        {
+            yInfo()<<"Finishing acquisition...";
+            return false;
+        }
+        ImageOf<PixelRgb> *image_yarp = image_port.read();
+
+        Mat image_cv = cvarrToMat(static_cast<IplImage*>(image_yarp->getIplImage()));
+        // convert to grayscale
+        cvtColor(image_cv, image_cv, CV_RGB2BGR);
+        cvtColor(image_cv, image_cv, COLOR_BGR2GRAY);
+
+        count++;
+
+        yInfo() <<"PipelineModule:writing images to buffers...";
+        bufferImage.write(image_cv);
+        return true;
+    }
+
+    bool close(){
+    //Once all the images are acquired the module will be closed, but first it waits that all the threads
+    //finish their work. We are checking how many frames has been processed by the last thread(descriptor)
+        if(configured) {
+            yInfo()<<"Waiting for worker thread...";
+            while(threadDescriptor->getCountProcessed() < (numOfImg) && !interrupted)//3->thickness
+                yarp::os::Time::delay(0.5);
+        }
+        //stop threads
+        threadFeature->close();
+        threadDescriptor->close();
+
+        //close ports
+        image_port.close();
+
+        //deallocate memory
+        delete threadFeature;
+        delete threadDescriptor;
+        return true;
+    }
+
+    double getPeriod(){
+        //This method is defined in order to call updateModule in an infinite loop while it returns true.
+        return 0.0;
+    }
+
+    bool interruptModule(){
+        interrupted=true;
+        image_port.interrupt();s
+        return true;
+    }
+
+};
+
+\endcode
+In this example the module is executed until it has computed the features and descriptors of 10 images.
+The important points to remember of this example are: 
+
+- `FeatureThread` and `DescriptorThread` are "sharing" the `bufferFeature` (see how they are instantiated).
+- The `close()` function should stop the last thread in the pipeline only after checking that it has finished its work.
+
+Here a possible implementation of `FeatureThread` and `DescriptorThread`:
+
+\code {.cpp}
+#include <yarp/os/PipelineThread.h>
+#include <opencv2/features2d.hpp>
+#include <opencv2/xfeatures2d.hpp>
+#include <opencv2/imgcodecs.hpp>
+#include <opencv2/opencv.hpp>
+#include <opencv2/imgproc/imgproc.hpp>
+
+
+class ThreadFeature : public PipelineThread<cv::Mat, std::vector<cv::KeyPoint>>
+{
+private:
+cv::Ptr<cv::Feature2D> detector;
+public:
+     ThreadFeature(AtomicBuffer<cv::Mat> &bufferIn, AtomicBuffer<std::vector<cv::KeyPoint>> &bufferOut,
+                   cv::Ptr<cv::Feature2D> _detector): PipelineThread(bufferIn, bufferOut), detector(_detector)
+     {}
+     virtual void processData(cv::Mat& dataIn, std::vector<cv::KeyPoint>& dataOut) override 
+     {
+         // compute features....
+     }
+};
+
+\endcode
+
+\code {.cpp}
+#include <yarp/os/PipelineThread.h>
+#include <opencv2/features2d.hpp>
+#include <opencv2/xfeatures2d.hpp>
+#include <opencv2/imgcodecs.hpp>
+#include <opencv2/opencv.hpp>
+#include <opencv2/imgproc/imgproc.hpp>
+#include "opencv2/opencv_modules.hpp"
+
+
+
+class ThreadDescriptor : public PipelineThread<std::vector<cv::KeyPoint>, cv::Mat>
+{
+private:
+cv::Ptr<cv::Feature2D> descriptor;
+public:
+     ThreadDescriptor(AtomicBuffer<std::vector<cv::KeyPoint> &bufferIn, AtomicBuffer<cv::Mat> &bufferOut,
+                      cv::Ptr<cv::Feature2D> _descriptor): PipelineThread(bufferIn, bufferOut), descriptor(_descriptor)
+     {}
+     virtual void processData(std::vector<cv::KeyPoint>& dataIn, cv::Mat& dataOut) override
+     {
+         // compute descriptor....
+     }
+};
+\endcode
+
+*/
