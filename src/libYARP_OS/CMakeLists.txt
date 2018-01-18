@@ -9,6 +9,7 @@ project(YARP_OS)
 
 set(YARP_OS_HDRS include/yarp/os/AbstractCarrier.h
                  include/yarp/os/AbstractContactable.h
+                 include/yarp/os/AtomicBuffer.h
                  include/yarp/os/all.h
                  include/yarp/os/api.h
                  include/yarp/os/BinPortable.h
@@ -69,6 +70,7 @@ set(YARP_OS_HDRS include/yarp/os/AbstractCarrier.h
                  include/yarp/os/OutputProtocol.h
                  include/yarp/os/OutputStream.h
                  include/yarp/os/Ping.h
+                 include/yarp/os/PipelineThread.h
                  include/yarp/os/Portable.h
                  include/yarp/os/PortablePair.h
                  include/yarp/os/Port.h
