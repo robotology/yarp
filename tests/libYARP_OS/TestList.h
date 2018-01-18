@@ -64,6 +64,7 @@ extern yarp::os::impl::UnitTest& getMessageStackTest();
 extern yarp::os::impl::UnitTest& getUnitTestTest();
 
 extern yarp::os::impl::UnitTest& getSystemInfoTest();
+extern yarp::os::impl::UnitTest& getPipelineThreadTest();
 
 class yarp::os::impl::TestList {
 public:
@@ -110,6 +111,7 @@ public:
         root.add(getUnitTestTest());
 
         root.add(getSystemInfoTest());
+        root.add(getPipelineThreadTest());
 
 #ifdef BROKEN_TEST
         root.add(getRunTest());
