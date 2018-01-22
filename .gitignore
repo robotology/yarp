@@ -3,6 +3,8 @@
 /packaging/windows/build/
 /packaging/linux/build/
 /bindings/build*/
+/example/dev/build*/
+/example/portmonitor/simple_dll/build*/
 /bindings/check*/
 /bindings/java/
 /bindings/lua/
