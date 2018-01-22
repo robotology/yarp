@@ -46,12 +46,11 @@ namespace yarp
 
 
 /**
- *  @ingroup dev_impl
- *
+ *  @ingroup dev_impl_media
  *
  *
  * This device is a YARP plugin for OpenNI2 compatible devices, and exposes the IRGBDSensor and IFrameGrabberControls2
- * interfaces to read the images and operate on available settings.
+ * interfaces to read the images and operate on the available settings.
  *
  * See they documentation for more details about each interface.
  *
