@@ -40,6 +40,8 @@ fakeDepthCameraDriver::~fakeDepthCameraDriver()
 bool fakeDepthCameraDriver::open(Searchable& config)
 {
     Property cfg;
+    cfg.fromString(config.toString());
+    cfg.unput("device");
     cfg.put("device", "test_grabber");
     testgrabber.open(cfg);
     testgrabber.view(image);
@@ -245,7 +247,7 @@ bool fakeDepthCameraDriver::getRgbImage(FlexImage& rgbImage, Stamp* timeStamp)
     rgbImage.setPixelCode(VOCAB_PIXEL_RGB);
     rgbImage.resize(imageof);
     memcpy((void*)rgbImage.getRawImage(), (void*)imageof.getRawImage(), imageof.getRawImageSize());
-    timeStamp->update(yarp::os::Time::now());
+    if(timeStamp) timeStamp->update(yarp::os::Time::now());
     return true;
 }
 
@@ -261,7 +263,8 @@ bool fakeDepthCameraDriver::getDepthImage(ImageOf<PixelFloat>& depthImage, Stamp
             *(PixelFloat*)depthImage.getPixelAddress(i, j) = (float(pix.b) / 255.0)/3.0 + (float(pix.g) / 255.0) / 3.0 + (float(pix.r) / 255.0) / 3.0;
         }
     }
-    timeStamp->update(yarp::os::Time::now());
+    if(timeStamp)
+        timeStamp->update(yarp::os::Time::now());
     return true;
 }
 
