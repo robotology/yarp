@@ -41,3 +41,5 @@ target_link_libraries(simple_motor_client ${YARP_LIBRARIES})
 
 add_executable(motortest motortest.cpp)
 target_link_libraries(motortest ${YARP_LIBRARIES})
+
+add_subdirectory(RGBD)
