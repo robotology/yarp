@@ -61,7 +61,7 @@ namespace yarp{
  *
  * An analog wrapper for virtual device
  * A virtual device is a software emulated device, for example force-torque computed from a real sensor
- * and then relocated to another part of the robot or some kind of estimated meassurement needed by the
+ * and then relocated to another part of the robot or some kind of estimated measurement needed by the
  * robot.
  *
  * This virtual wrapper will open a port and accept the incoming estimated measurement and send them to
@@ -147,7 +147,7 @@ public:
 
     void flushTorques()
     {
-        if (mpSensor) mpSensor->updateMeasure(mTorques);
+        if (mpSensor) mpSensor->updateVirtualAnalogSensorMeasure(mTorques);
     }
 
     const std::string& getKey(){ return mKey; }
