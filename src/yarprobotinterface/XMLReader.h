@@ -14,6 +14,39 @@ namespace RobotInterface
 {
 class Robot;
 
+
+class XMLReaderFileVx
+{
+public:
+    virtual  Robot& getRobotFile(const std::string &filename)=0;
+};
+
+class XMLReaderFileV1 : public XMLReaderFileVx
+{
+public:
+    XMLReaderFileV1();
+    virtual ~XMLReaderFileV1();
+
+    virtual Robot& getRobotFile(const std::string &filename) override;
+
+private:
+    class privateXMLReaderFileV1;
+    privateXMLReaderFileV1 * const mPriv;
+};
+
+class XMLReaderFileV3: public XMLReaderFileVx
+{
+public:
+    XMLReaderFileV3();
+    virtual ~XMLReaderFileV3();
+
+    virtual Robot& getRobotFile(const std::string &filename) override;
+
+private:
+    class privateXMLReaderFileV3;
+    privateXMLReaderFileV3 * const mPriv;
+};
+
 class XMLReader
 {
 public:
@@ -23,8 +56,7 @@ public:
     Robot& getRobot(const std::string &filename);
 
 private:
-    class Private;
-    Private * const mPriv;
+    XMLReaderFileVx * mReader;
 }; // class XMLReader
 
 } // namespace RobotInterface
