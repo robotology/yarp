@@ -290,7 +290,7 @@ void Bottle::fini()
     }
 }
 
-bool Bottle::operator==(const Bottle& alt)
+bool Bottle::operator==(const Bottle& alt) const
 {
     return ConstString(toString().c_str()) == alt.toString().c_str();
 }
@@ -317,7 +317,7 @@ bool Bottle::isNull() const
     return implementation->invalid;
 }
 
-bool Bottle::operator!=(const Bottle& alt)
+bool Bottle::operator!=(const Bottle& alt) const
 {
     return !((*this) == alt);
 }

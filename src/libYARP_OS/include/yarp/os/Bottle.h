@@ -323,7 +323,7 @@ public:
      * @param alt the value to compare against.
      * @result true iff the values are equal.
      */
-    bool operator==(const Bottle& alt);
+    bool operator==(const Bottle& alt) const;
 
     /**
      * Inequality test.
@@ -331,7 +331,7 @@ public:
      * @param alt the value to compare against.
      * @result true iff the values are not equal.
      */
-    bool operator!=(const Bottle& alt);
+    bool operator!=(const Bottle& alt) const;
 
     /**
      * Append the content of the given bottle to the current
