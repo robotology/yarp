@@ -575,6 +575,10 @@ typedef yarp::os::BufferedPort<yarp::sig::Vector> BufferedPortVector;
 %template(TypedReaderCallbackImageInt) yarp::os::TypedReaderCallback<yarp::sig::ImageOf<yarp::sig::PixelInt> >;
 %template(BufferedPortImageInt) yarp::os::BufferedPort<yarp::sig::ImageOf<yarp::sig::PixelInt> >;
 
+#if !defined (SWIGMATLAB)
+%feature("director") yarp::os::TypedReaderCallback<Sound>;
+%feature("director") yarp::os::TypedReaderCallback<yarp::sig::Sound>;
+#endif
 %template(TypedReaderSound) yarp::os::TypedReader<yarp::sig::Sound >;
 %template(TypedReaderCallbackSound) yarp::os::TypedReaderCallback<yarp::sig::Sound>;
 %template(BufferedPortSound) yarp::os::BufferedPort<yarp::sig::Sound >;
