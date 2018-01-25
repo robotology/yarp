@@ -157,6 +157,8 @@ MainWindow::MainWindow(QWidget *parent) :
     ui->actionStop->setEnabled(false);
     ui->actionKill->setEnabled(false);
 
+    ui->actionAuto_reload->setChecked(true);
+
     ui->action_Manager_Window->setChecked(true);
 #ifdef WIN32
     ui->tabWidgetLeft->tabBar()->hide();
@@ -364,7 +366,10 @@ void MainWindow::reportErrors()
  */
 void MainWindow::syncApplicationList(QString selectNodeForEditing, bool open)
 {
-    watcher->removePaths(listOfAppFiles);
+    if (!listOfAppFiles.isEmpty())
+    {
+        watcher->removePaths(listOfAppFiles);
+    }
     listOfAppFiles.clear();
     ui->entitiesTree->clearApplications();
     ui->entitiesTree->clearModules();
@@ -1200,7 +1205,12 @@ void MainWindow::onModified(bool mod)
 
 void MainWindow::onFileChanged(const QString &path)
 {
+
     watcher->addPaths(listOfAppFiles);
+    if (!ui->actionAuto_reload->isChecked())
+    {
+        return;
+    }
 
     // get the app name from the file name
     QString appName = getAppNameFromXml(path);

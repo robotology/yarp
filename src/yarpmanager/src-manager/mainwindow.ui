@@ -227,7 +227,7 @@
      <x>0</x>
      <y>0</y>
      <width>1200</width>
-     <height>19</height>
+     <height>26</height>
     </rect>
    </property>
    <property name="nativeMenuBar">
@@ -250,6 +250,7 @@
     </widget>
     <addaction name="menuNew"/>
     <addaction name="actionOpen_File"/>
+    <addaction name="actionAuto_reload"/>
     <addaction name="actionClose"/>
     <addaction name="separator"/>
     <addaction name="actionSave"/>
@@ -677,6 +678,17 @@
    </property>
    <property name="toolTip">
     <string>Run yarp name list</string>
+   </property>
+  </action>
+  <action name="actionAuto_reload">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="text">
+    <string>Auto-reload</string>
+   </property>
+   <property name="toolTip">
+    <string>Enable  the automatic reload of the applications</string>
    </property>
   </action>
  </widget>
