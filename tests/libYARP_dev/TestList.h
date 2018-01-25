@@ -42,6 +42,10 @@ extern yarp::os::impl::UnitTest& getFrameTransformClientTest();
 extern yarp::os::impl::UnitTest& getMapGrid2DTest();
 #endif
 
+#ifdef YARP_MULTIPLEANALOGSENSORSINTERFACES_TESTS
+extern yarp::os::impl::UnitTest& getMultipleAnalogSensorsInterfacesTest();
+#endif
+
 class yarp::os::impl::TestList {
 public:
     static void collectTests() {
@@ -60,7 +64,10 @@ public:
 #ifdef WITH_YARPMATH
         root.add(getFrameTransformClientTest());
         root.add(getMapGrid2DTest());
-#endif	
+#endif
+#ifdef YARP_MULTIPLEANALOGSENSORSINTERFACES_TESTS
+        root.add(getMultipleAnalogSensorsInterfacesTest());
+#endif
     }
 };
 

@@ -161,6 +161,11 @@ if(YARP_COMPILE_TESTS)
     add_definitions(-DYARP_TESTFRAMEGRABBER_TESTS)
   endif()
 
+  # Compile ControlBoardRemapperTest only if fakeMotionControl is enabled
+  if(ENABLE_yarpmod_fakeIMU)
+    add_definitions(-DYARP_MULTIPLEANALOGSENSORSINTERFACES_TESTS)
+  endif()
+
   # BEGIN FIXME
   # Temporarily disable tests for devices removed
   macro(yarp_disable_test _test _base_only)

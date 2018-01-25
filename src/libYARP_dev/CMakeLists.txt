@@ -79,6 +79,7 @@ set(YARP_dev_HDRS include/yarp/dev/all.h
                   include/yarp/dev/IVisualParamsImpl.h
                   include/yarp/dev/LaserMeasurementData.h
                   include/yarp/dev/IVisualServoing.h
+                  include/yarp/dev/MultipleAnalogSensorsInterfaces.h
                   include/yarp/dev/PolyDriverDescriptor.h
                   include/yarp/dev/PolyDriver.h
                   include/yarp/dev/PolyDriverList.h
@@ -126,6 +127,7 @@ set(YARP_dev_SRCS src/ControlBoardInterfacesImpl.cpp
                   src/IVelocityControl2Impl.cpp
                   src/IVisualParamsImpl.cpp
                   src/LaserMeasurementData.cpp
+                  src/MultipleAnalogSensorsInterfaces.cpp
                   src/PolyDriver.cpp
                   src/PolyDriverDescriptor.cpp
                   src/PolyDriverList.cpp
@@ -179,6 +181,7 @@ set(YARP_devices_HDRS src/devices/AnalogSensorClient/AnalogSensorClient.h
 # handle the ros / yarp thrift messages
 # the variables cbw2_msgs_srcs, cbw2_msgs_hrds and cbw2_msgs_incl_dirs will be set inside
 add_subdirectory(src/devices/msgs)
+
 # relative paths should be relative to current directory
 unset(_tmp)
 foreach(_var cbw2_msgs_srcs cbw2_msgs_hrds)
