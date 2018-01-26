@@ -292,7 +292,6 @@ FakeMotionControl::FakeMotionControl() :
     ImplementPidControl(this),
     ImplementEncodersTimed(this),
     ImplementPositionControl2(this),
-    ImplementVelocityControl<FakeMotionControl, IVelocityControl>(this),
     ImplementVelocityControl2(this),
     ImplementControlMode2(this),
     ImplementImpedanceControl(this),
@@ -492,7 +491,6 @@ bool FakeMotionControl::open(yarp::os::Searchable &config)
     ImplementPositionControl2::initialize(_njoints, _axisMap, _angleToEncoder, NULL);
     ImplementPidControl::initialize(_njoints, _axisMap, _angleToEncoder, NULL, _newtonsToSensor, _ampsToSensor);
     ImplementControlMode2::initialize(_njoints, _axisMap);
-    ImplementVelocityControl<FakeMotionControl, IVelocityControl>::initialize(_njoints, _axisMap, _angleToEncoder, NULL);
     ImplementVelocityControl2::initialize(_njoints, _axisMap, _angleToEncoder, NULL);
     ImplementControlLimits2::initialize(_njoints, _axisMap, _angleToEncoder, NULL);
     ImplementImpedanceControl::initialize(_njoints, _axisMap, _angleToEncoder, NULL, _newtonsToSensor);
@@ -1373,7 +1371,6 @@ bool FakeMotionControl::close()
     ImplementEncodersTimed::uninitialize();
     ImplementMotorEncoders::uninitialize();
     ImplementPositionControl2::uninitialize();
-    ImplementVelocityControl<FakeMotionControl, IVelocityControl>::uninitialize();
     ImplementVelocityControl2::uninitialize();
     ImplementPidControl::uninitialize();
     ImplementControlCalibration2<FakeMotionControl, IControlCalibration2>::uninitialize();
