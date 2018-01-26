@@ -1,0 +1,64 @@
+/*
+ * Copyright (C) 2018 Istituto Italiano di Tecnologia (IIT)
+ * Author: Alberto Cardellino <alberto.cardellino@iit.it>
+ * CopyPolicy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
+ */
+
+
+#include <stdio.h>
+#include <stdlib.h>
+#include <yarp/os/Time.h>
+#include <yarp/dev/Drivers.h>
+#include <yarp/dev/PolyDriver.h>
+#include <yarp/dev/IRGBDSensor.h>
+
+using namespace yarp::os;
+using namespace yarp::sig;
+using namespace yarp::dev;
+
+int main(int argc, char *argv[])
+{
+    Network yarp;       // Initialize yarp framework
+
+    // use YARP to create and configure an instance of fakeDepthCamera
+    Property config;
+    config.put("device", "fakeDepthCamera");         // device producing (fake) data
+    config.put("mode",   "ball");                    // fake data type to be produced
+
+    PolyDriver dd;
+    dd.open(config);
+    if (!dd.isValid())
+    {
+        yError("Failed to create and configure a the fake device\n");
+        return 1;
+    }
+
+    yarp::dev::IRGBDSensor *RGBDInterface;              // interface we want to use
+    if (!dd.view(RGBDInterface))                        // grab wanted device interface
+    {
+        yError("Failed to get RGBDInterface device interface\n");
+        return 1;
+    }
+
+    // Let's use the interface to get info from device
+    int rgbImageHeight   = RGBDInterface->getRgbHeight();
+    int rgbImageWidth    = RGBDInterface->getRgbWidth();
+    int depthImageHeight = RGBDInterface->getDepthHeight();
+    int depthImageWidth  = RGBDInterface->getDepthWidth();
+
+    FlexImage rgbImage;
+    ImageOf<PixelFloat> depthImage;
+    bool gotImage = RGBDInterface->getImages(rgbImage, depthImage);
+
+    if(gotImage)
+        yInfo("Succesfully retieved an image");
+    else
+        yError("Failed retieving images");
+
+    yarp::os::Property intrinsic;
+    RGBDInterface->getRgbIntrinsicParam(intrinsic);
+    yInfo("RGB intrinsic parameters: \n%s", intrinsic.toString().c_str());
+    dd.close();
+
+    return 0;
+}

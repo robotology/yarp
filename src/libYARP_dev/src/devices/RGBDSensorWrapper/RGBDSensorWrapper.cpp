@@ -552,6 +552,11 @@ bool RGBDSensorWrapper::attach(yarp::dev::IRGBDSensor *s)
         return false;
     }
     sensor_p = s;
+    if(!parser.configure(sensor_p) )
+    {
+        yError() << "RGBD wrapper: error configuring interfaces for parsers";
+        return false;
+    }
     RateThread::setRate(rate);
     return RateThread::start();
 }
@@ -567,6 +572,11 @@ bool RGBDSensorWrapper::attach(PolyDriver* poly)
         return false;
     }
 
+    if(!parser.configure(sensor_p) )
+    {
+        yError() << "RGBD wrapper: error configuring interfaces for parsers";
+        return false;
+    }
     RateThread::setRate(rate);
     return RateThread::start();
 }

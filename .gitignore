@@ -2,6 +2,8 @@
 /build*/
 /packaging/windows/build/
 /packaging/linux/build/
+/example/dev/build*/
+/example/portmonitor/simple_dll/build*/
 *kdev*
 *.orig
 tags
