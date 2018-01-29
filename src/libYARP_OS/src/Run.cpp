@@ -1945,7 +1945,6 @@ int yarp::os::Run::executeCmdStdout(Bottle& msg, Bottle& result, yarp::os::Const
     stdout_startup_info.hStdOutput=GetStdHandle(STD_OUTPUT_HANDLE);
     stdout_startup_info.hStdInput=read_from_pipe_cmd_to_stdout;
     stdout_startup_info.dwFlags|=STARTF_USESTDHANDLES;
-
     BOOL bSuccess=CreateProcess(nullptr,  // command name
                                 (char*)(yarp::os::ConstString("yarprun --log ")+loggerName+yarp::os::ConstString(" --write ")+portName).c_str(), // command line
                                 nullptr,  // process security attributes
@@ -1956,7 +1955,7 @@ int yarp::os::Run::executeCmdStdout(Bottle& msg, Bottle& result, yarp::os::Const
                                 nullptr,  // use parent's current directory
                                 &stdout_startup_info,   // STARTUPINFO pointer
                                 &stdout_process_info);  // receives PROCESS_INFORMATION
-
+    
     if (!bSuccess)
     {
         yarp::os::ConstString strError=yarp::os::ConstString("ABORTED: server=")+mPortName
@@ -2120,6 +2119,7 @@ int yarp::os::Run::executeCmdStdout(Bottle& msg, Bottle& result, yarp::os::Const
                              +yarp::os::ConstString("\n");
 
     result.addString(out.c_str());
+    portName = portName + "/" + std::to_string(stdout_process_info.dwProcessId);
     result.addString(portName.c_str());
     fprintf(stderr, "%s", out.c_str());
 
@@ -3220,6 +3220,8 @@ int yarp::os::Run::executeCmdStdout(yarp::os::Bottle& msg, yarp::os::Bottle& res
 
                 result.addInt(pid_cmd);
                 result.addString(out.c_str());
+                portName += "/" + int2String(pid_cmd-1);
+                result.addString(portName.c_str());
 
                 fprintf(stderr, "%s", out.c_str());
 
