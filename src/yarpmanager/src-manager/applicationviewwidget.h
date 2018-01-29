@@ -116,6 +116,7 @@ private:
 
 
 private:
+    QTimer* logTimer;
     QMainWindow *builderWindowContainer;
     QDockWidget *builderWidget;
     BuilderWindow *builder;
@@ -174,6 +175,7 @@ private slots:
     void onResourceItemSelectionChanged();
     void onConnectionItemSelectionChanged();
     void onModuleItemSelectionChanged();
+    void updateLogs();
     void selectAllModule();
     void selectAllConnections();
     void selectAllResources();

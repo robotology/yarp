@@ -22,6 +22,8 @@
 #include <QTreeWidgetItem>
 #include <QMainWindow>
 #include <QMdiArea>
+#include <QTimer>
+#define TOOLTIP_LOG_SIZE 10
 
 
 ApplicationViewWidget::ApplicationViewWidget(yarp::manager::Application *app,
@@ -90,6 +92,9 @@ ApplicationViewWidget::ApplicationViewWidget(yarp::manager::Application *app,
         ui->connectionList->resizeColumnToContents(4);
         ui->connectionList->resizeColumnToContents(5);
 
+        logTimer = new QTimer(this);
+        connect(logTimer, SIGNAL(timeout()), this, SLOT(updateLogs()));
+        logTimer->start(500);
         connect(ui->moduleList,SIGNAL(itemSelectionChanged()),this,SLOT(onModuleItemSelectionChanged()));
         connect(ui->moduleList,SIGNAL(itemDoubleClicked(QTreeWidgetItem*,int)),this,SLOT(onItemDoubleClicked(QTreeWidgetItem*,int)));
 
@@ -234,6 +239,8 @@ void ApplicationViewWidget::setAppName(QString appName)
 
 ApplicationViewWidget::~ApplicationViewWidget()
 {
+    logTimer->stop();
+    delete logTimer;
     delete ui;
 }
 
@@ -425,6 +432,32 @@ void ApplicationViewWidget::onConnectionItemSelectionChanged()
     }
 }
 
+void ApplicationViewWidget::updateLogs()
+{
+    for (int i = 0; i < ui->moduleList->topLevelItemCount(); i++)
+    {
+        Executable* ex = safeManager.getExecutableById(ui->moduleList->topLevelItem(i)->text(1).toInt());
+        if (ex && ex->getBrokerType() == BrokerType::yarp)
+        {
+            YarpBroker* b = dynamic_cast<YarpBroker*>(ex->getBroker());
+            if (b && b->getLog().size())
+            {
+                QString tt;
+                
+                for (int i = b->getLog().size()-1; i >= 0 && b->getLog().size() - i < TOOLTIP_LOG_SIZE; i--)
+                {
+                    tt = std::string(b->getLog()[i]).c_str() + tt;
+                }
+                if (tt.isEmpty())
+                    ui->moduleList->topLevelItem(i)->setToolTip(0, "no-log-avaiable");
+                else
+                    ui->moduleList->topLevelItem(i)->setToolTip(0, "Application Log:\n\n" + tt);
+                    
+            }
+        }
+    }
+}
+
 /*! \brief Called when an item of the modules tree has been selected. */
 void ApplicationViewWidget::onModuleItemSelectionChanged()
 {
@@ -441,7 +474,8 @@ void ApplicationViewWidget::onModuleItemSelectionChanged()
         modStopAction->setEnabled(true);
         modkillAction->setEnabled(true);
 
-        bool all = true;
+        bool all = true;        
+        
         foreach (QTreeWidgetItem *it, ui->moduleList->selectedItems()) {
             if (it->text(3) != "localhost") {
                  modAttachAction->setEnabled(false);

@@ -31,7 +31,38 @@
 namespace yarp {
 namespace manager {
 
+struct LogPort : yarp::os::Port
+{
+    std::vector<std::string> log;
+    struct CallBackBottle : public yarp::os::PortReader
+    {
+        std::vector<std::string>* container;
+        virtual bool read(yarp::os::ConnectionReader& reader) override
+        {
+            yarp::os::Bottle b;
+            bool ret = b.read(reader);
+            if (container && b.size() > 1) container->push_back(b.get(1).asString());
+            return ret;
+        }
+    }logb;
+    //yarp::os::Bottle log;
+    LogPort()
+    {
+        logb.container = &log;
+        this->setReader(logb);
+    }
 
+    bool connect(const std::string& remote)
+    {
+        int i = 0;
+        while (!yarp::os::Network::exists(remote) && i < 5)
+        {
+            yarp::os::Time::delay(0.05);
+            i++;
+        }
+        return yarp::os::Network::connect(remote, this->getName());
+    }
+};
 /**
  * Class Broker
  */
@@ -70,6 +101,8 @@ public:
      bool setQos(const char* from, const char* to,
                  const char* qosFrom, const char* qosTo);
 
+     std::vector<std::string>& getLog() { return log.log; }
+
 public: // for rate thread
     void run() override;
     bool threadInit() override;
@@ -95,6 +128,7 @@ private:
     std::string __trace_message;
 
     yarp::os::BufferedPort<yarp::os::Bottle> stdioPort;
+    LogPort log;
     //yarp::os::Port port;
 
     bool timeout(double base, double timeout);
