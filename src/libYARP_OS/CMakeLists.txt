@@ -94,6 +94,7 @@ set(YARP_OS_HDRS include/yarp/os/AbstractCarrier.h
                  include/yarp/os/ResourceFinder.h
                  include/yarp/os/ResourceFinderOptions.h
                  include/yarp/os/RFModule.h
+                 include/yarp/os/RFModuleFactory.h
                  include/yarp/os/RosNameSpace.h
                  include/yarp/os/Route.h
                  include/yarp/os/RpcClient.h
@@ -297,6 +298,7 @@ set(YARP_OS_SRCS src/AbstractCarrier.cpp
                  src/ResourceFinder.cpp
                  src/ResourceFinderOptions.cpp
                  src/RFModule.cpp
+                 src/RFModuleFactory.cpp
                  src/RosNameSpace.cpp
                  src/Route.cpp
                  src/RpcClient.cpp

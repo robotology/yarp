@@ -114,7 +114,6 @@ public:
     }
 };
 
-
 bool RFModuleRespondHandler::read(ConnectionReader& connection) {
     Bottle cmd, response;
     if (!cmd.read(connection)) { return false; }
@@ -207,6 +206,13 @@ public:
 
 static RFModule *module = nullptr;
 
+int RFModule::getThreadKey()
+{
+    if (HELPER(x).threaded_handler)
+        return HELPER(x).threaded_handler->getKey();
+    else
+        return yarp::os::Thread::getKeyOfCaller();
+}
 
 static void handler (int sig) {
     YARP_UNUSED(sig);
