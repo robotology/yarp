@@ -3470,10 +3470,12 @@ int yarp::os::Run::executeCmd(yarp::os::Bottle& msg, yarp::os::Bottle& result)
     {
         int saved_stderr = yarp::os::impl::dup(STDERR_FILENO);
         int null_file=open("/dev/null", O_WRONLY);
-        REDIRECT_TO(STDOUT_FILENO, null_file);
-        REDIRECT_TO(STDERR_FILENO, null_file);
-        close(null_file);
-
+        if (null_file >= 0)
+        {
+            REDIRECT_TO(STDOUT_FILENO, null_file);
+            REDIRECT_TO(STDERR_FILENO, null_file);
+            close(null_file);
+        }
         char *cmd_str=new char[strCmd.length()+1];
         strcpy(cmd_str, strCmd.c_str());
         /*
@@ -3573,7 +3575,10 @@ int yarp::os::Run::executeCmd(yarp::os::Bottle& msg, yarp::os::Bottle& result)
             fflush(out_to_parent);
             fclose(out_to_parent);
 
-            REDIRECT_TO(STDERR_FILENO, saved_stderr);
+            if (saved_stderr >= 0)
+            {
+                REDIRECT_TO(STDERR_FILENO, saved_stderr);
+            }
             fprintf(stderr, "%s", out.c_str());
         }
 
