@@ -564,8 +564,14 @@ bool ControlBoardWrapper::openDeferredAttach(Property& prop)
             return false;
         }
 
-        SubDevice *tmpDevice=device.getSubdevice(k);
-        if (tmpDevice) tmpDevice->setVerbose(_verb);
+        SubDevice *tmpDevice = device.getSubdevice(k);
+        if (!tmpDevice)
+        {
+            yError() << "get of subdevice returned null";
+            return false;
+        }
+
+        tmpDevice->setVerbose(_verb);
 
         int axes=top-base+1;
         if (!tmpDevice->configure(base, top, axes, nets->get(k).asString().c_str(), this))
