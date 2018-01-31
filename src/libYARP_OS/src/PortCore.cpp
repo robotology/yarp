@@ -2485,19 +2485,35 @@ bool PortCore::adminBlock(ConnectionReader& reader,
 
 bool PortCore::setTypeOfService(PortCoreUnit *unit, int tos)
 {
-    if (unit->isOutput()) {
-        OutputProtocol* op = dynamic_cast<PortCoreOutputUnit*>(unit)->getOutPutProtocol();
-        if (op)
-            return op->getOutputStream().setTypeOfService(tos);
+    if (!unit)
+    {
+        return false;
+    }
+
+    if (unit->isOutput())
+    {
+        PortCoreOutputUnit* outUnit = dynamic_cast<PortCoreOutputUnit*>(unit);
+        if (outUnit)
+        {
+            OutputProtocol* op = outUnit->getOutPutProtocol();
+            if (op)
+                return op->getOutputStream().setTypeOfService(tos);
+        }
     }
 
     // Some of the input units may have output stream object to write back to
     // the connection (e.g., tcp ack and reply). Thus the QoS preferences should be
     // also configured for them.
-    if (unit->isInput()) {
-        InputProtocol* ip = dynamic_cast<PortCoreInputUnit*>(unit)->getInPutProtocol();
-        if (ip && ip->getOutput().isOk())
-            return ip->getOutput().getOutputStream().setTypeOfService(tos);
+
+
+    if (unit->isInput())
+    {
+        PortCoreInputUnit* inUnit = dynamic_cast<PortCoreInputUnit*>(unit);
+        {
+            InputProtocol* ip = inUnit->getInPutProtocol();
+            if (ip && ip->getOutput().isOk())
+                return ip->getOutput().getOutputStream().setTypeOfService(tos);
+        }
     }
     // if there is nothing to be set, returns true
     return true;
@@ -2505,19 +2521,36 @@ bool PortCore::setTypeOfService(PortCoreUnit *unit, int tos)
 
 int PortCore::getTypeOfService(PortCoreUnit *unit)
 {
-    if (unit->isOutput()) {
-        OutputProtocol* op = dynamic_cast<PortCoreOutputUnit*>(unit)->getOutPutProtocol();
-        if (op)
-            return op->getOutputStream().getTypeOfService();
+    if (!unit)
+    {
+        return -1;
+    }
+
+    if (unit->isOutput())
+    {
+        PortCoreOutputUnit* outUnit = dynamic_cast<PortCoreOutputUnit*>(unit);
+        if (outUnit)
+        {
+            OutputProtocol* op = outUnit->getOutPutProtocol();
+            if (op)
+                return op->getOutputStream().getTypeOfService();
+        }
     }
 
     // Some of the input units may have output stream object to write back to
     // the connection (e.g., tcp ack and reply). Thus the QoS preferences should be
     // also configured for them.
-    if (unit->isInput()) {
-        InputProtocol* ip = dynamic_cast<PortCoreInputUnit*>(unit)->getInPutProtocol();
-        if (ip && ip->getOutput().isOk())
-            return ip->getOutput().getOutputStream().getTypeOfService();
+
+
+    if (unit->isInput())
+    {
+        PortCoreInputUnit* inUnit = dynamic_cast<PortCoreInputUnit*>(unit);
+        if (inUnit)
+        {
+            InputProtocol* ip = inUnit->getInPutProtocol();
+            if (ip && ip->getOutput().isOk())
+                return ip->getOutput().getOutputStream().getTypeOfService();
+        }
     }
     return -1;
 }
