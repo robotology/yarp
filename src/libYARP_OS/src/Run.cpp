@@ -29,6 +29,7 @@
 #include <cstdio>
 #include <string>
 #include <cstring>
+#include <random>
 
 #if defined(_WIN32)
 # if !defined(WIN32_LEAN_AND_MEAN)
@@ -343,9 +344,13 @@ int yarp::os::Run::main(int argc, char *argv[])
 
         mStresstest=true;
 
+        std::random_device rd;
+        std::mt19937 mt(rd());
+        std::uniform_int_distribution<int> dist0maxint(0, max_interval_ms -1);
+
         while (mStresstest)
         {
-            yarp::os::SystemClock::delaySystem(0.001*(rand() % max_interval_ms));
+            yarp::os::SystemClock::delaySystem(0.001*(dist0maxint(mt)));
 
             Property stresser=config;
 
@@ -360,11 +365,12 @@ int yarp::os::Run::main(int argc, char *argv[])
 
             client(stresser);
 
+            std::uniform_int_distribution<int> dist07(0, 7);
             if (isCommand && ++term_cycle>=4)
             {
                 term_cycle=0;
 
-                int r=t-(rand()%8);
+                int r = t - (dist07(mt));
 
                 for (int i=u; i<r; ++i)
                 {
