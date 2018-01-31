@@ -249,11 +249,15 @@ bool RGBDSensorWrapper::fromConfig(yarp::os::Searchable &config)
     {
         //if(verbose >= 2)
         //    yWarning() << "RGBDSensorWrapper: ROS topic support is not yet implemented";
-        Value* temp;
-        string confUseRos;
 
-        rosGroup.check("use_ROS", temp);
-        confUseRos = temp->asString();
+        string confUseRos = "";
+
+        if (!rosGroup.check("use_ROS"))
+        {
+            return false;
+        }
+
+        confUseRos = rosGroup.find("use_ROS").asString();
 
         if (confUseRos == "true" || confUseRos == "only")
         {
@@ -263,7 +267,7 @@ bool RGBDSensorWrapper::fromConfig(yarp::os::Searchable &config)
         else
         {
             use_ROS = false;
-            if (verbose >= 3 || confUseRos == "false")
+            if (verbose >= 3 && confUseRos != "false")
             {
                 yInfo("'use_ROS' value not understood.. skipping ROS topic initialization");
             }
