@@ -14,6 +14,7 @@
 #include <iostream>
 #include <yarp/os/Log.h>
 #include <yarp/os/LogStream.h>
+#include <sstream>
 
 #include <cstring>         // for memset function
 
