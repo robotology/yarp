@@ -170,7 +170,10 @@ if(YARP_COMPILE_TESTS)
     add_subdirectory(integration)
   endif()
 
-
+  # RTF-based tests
+  if(YARP_COMPILE_RTF_ADDONS)
+    add_subdirectory(rtf)
+  endif()
 
   yarp_deprecated_option(TEST_yarpidl_rosmsg) # Since YARP 2.3.70
   yarp_deprecated_option(TEST_yarpidl_thrift) # Since YARP 2.3.70
