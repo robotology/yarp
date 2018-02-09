@@ -130,7 +130,7 @@ int main() { return 0; }
 #endif
 " GSTREAMER_VERSION_COMPATIBLE)
 
-        if (NOT GSTREAMER_VERSION_COMPATIBLE AND NOT NOT GStreamer_FIND_QUIETLY)
+        if (NOT GSTREAMER_VERSION_COMPATIBLE AND NOT GStreamer_FIND_QUIETLY)
             message(STATUS "GStreamer ${GStreamer_FIND_VERSION} is required, but the version found is older")
         endif()
     else()

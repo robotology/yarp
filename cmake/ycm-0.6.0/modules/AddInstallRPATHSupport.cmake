@@ -6,7 +6,7 @@
 #
 #   add_install_rpath_support([BIN_DIRS dir [dir]]
 #                             [LIB_DIRS dir [dir]]
-#                             [INSTALL_NAME_DIR] [dir]]
+#                             [INSTALL_NAME_DIR [dir]]
 #                             [DEPENDS condition [condition]]
 #                             [USE_LINK_PATH])
 #

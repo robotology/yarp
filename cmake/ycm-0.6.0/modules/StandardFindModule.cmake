@@ -100,7 +100,7 @@ macro(STANDARD_FIND_MODULE _name _pkgconfig_name)
     # Disable package cache when not done automatically by CMake
     # This is a workaround for CMake bug #14849
     unset(_standard_find_module_registryArgs)
-    if(NOT CMAKE_REQUIRED_VERSION VERSION_LESS 3.1)
+    if(NOT CMAKE_MINIMUM_REQUIRED_VERSION VERSION_LESS 3.1)
       message(AUTHOR_WARNING "Disabling cmake cache is supported since CMake 3.1. You can remove this check")
     endif()
     if(CMAKE_VERSION VERSION_LESS 3.1)
