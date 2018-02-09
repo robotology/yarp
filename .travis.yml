@@ -247,9 +247,6 @@ before_install:
   # Update repositories (macOS)
   - if [ "$TRAVIS_OS_NAME" == "osx" ]; then brew update; fi
 
-  # Add additional repositories
-  - if [ "$TRAVIS_OS_NAME" == "osx" ]; then brew tap homebrew/science; fi
-
   # Install ccache on osx
   - if [ "$TRAVIS_OS_NAME" == "osx" ]; then brew install ccache; fi
   - if [ "$TRAVIS_OS_NAME" == "osx" ]; then export PATH="/usr/local/opt/ccache/libexec:$PATH"; fi
