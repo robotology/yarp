@@ -222,7 +222,9 @@ void DgramTwoWayStream::allocate(int readSize, int writeSize) {
                 int result = dgram->get_option(SOL_SOCKET, SO_RCVBUF, &_read_size, &len);
                 if (result < 0) {
                     YARP_ERROR(Logger::get(), ConstString("Failed to read buffer size from RCVBUF socket with error: ") +
-                               ConstString(strerror(errno)));
+                               ConstString(strerror(errno)) +
+                               ConstString(". Setting read buffer size to UDP_MAX_DATAGRAM_SIZE."));
+                    _read_size = UDP_MAX_DATAGRAM_SIZE;
                 }
             }
         #else
@@ -231,7 +233,9 @@ void DgramTwoWayStream::allocate(int readSize, int writeSize) {
             int result = getsockopt(dgram_sockfd, SOL_SOCKET, SO_RCVBUF, &_read_size, &len);
             if (result < 0) {
                 YARP_ERROR(Logger::get(), ConstString("Failed to read buffer size from RCVBUF socket with error: ") +
-                           ConstString(strerror(errno)));
+                           ConstString(strerror(errno)) +
+                           ConstString(". Setting read buffer size to UDP_MAX_DATAGRAM_SIZE."));
+                _read_size = UDP_MAX_DATAGRAM_SIZE;
             }
         #endif
     }

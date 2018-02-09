@@ -62,10 +62,12 @@ bool NestedContact::fromString(const ConstString& nFullName) {
         nodeName = fullName.substr(0, idx);
         nestedName = fullName.substr(idx+1, fullName.length());
         idx = nestedName.find('/');
-        if (idx==0) return true;
-        category = nestedName.substr(0, idx);
-        nestedName = nestedName.substr(idx, nestedName.length());
-        return true;
+        if (idx != ConstString::npos) {
+            if (idx==0) return true;
+            category = nestedName.substr(0, idx);
+            nestedName = nestedName.substr(idx, nestedName.length());
+            return true;
+        }
     }
     idx = fullName.find('#');
     if (idx!=ConstString::npos) {

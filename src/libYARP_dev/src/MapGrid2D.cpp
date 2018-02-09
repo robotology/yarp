@@ -1006,9 +1006,7 @@ bool MapGrid2D::getOccupancyData(XYCell cell, double& occupancy) const
         yError() << "Invalid cell requested " << cell.x << " " << cell.y;
         return false;
     }
-    if (m_map_occupancy.safePixel(cell.x, cell.y)==-1 ||
-        m_map_occupancy.safePixel(cell.x, cell.y)==255
-    )
+    if (m_map_occupancy.safePixel(cell.x, cell.y)==255)
     { 
       occupancy =-1;
     }
