@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2009 The Robotcub consortium
+ * Copyright (C) 2009 RobotCub Consortium
  * Author: Lorenzo Natale.
  * CopyPolicy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
  * Based on code by Paul Fitzpatrick 2007.

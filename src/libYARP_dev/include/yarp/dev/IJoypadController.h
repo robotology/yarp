@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2016 Istituto Italiano di Tecnologia (IIT)
+ * Copyright (C) 2017 Istituto Italiano di Tecnologia (IIT)
  * Authors: Andrea Ruzzenenti <andrea.ruzzenenti@iit.it>
  * CopyPolicy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
  */

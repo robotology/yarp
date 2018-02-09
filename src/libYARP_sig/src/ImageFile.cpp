@@ -1,8 +1,8 @@
 /*
-* Author: Lorenzo Natale, Giorgio Metta and Paul Fitzpatrick.
-* Copyright (C) 2006 The Robotcub consortium
-* CopyPolicy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
-*/
+ * Copyright (C) 2006 The RobotCub Consortium
+ * Authors: Lorenzo Natale, Giorgio Metta and Paul Fitzpatrick
+ * CopyPolicy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
+ */
 
 
 

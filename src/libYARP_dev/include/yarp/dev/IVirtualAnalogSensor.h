@@ -1,6 +1,6 @@
 /*
- * Copyright (C) 2013 RobotCub Consortium
- * Author: Alberto Cardellino
+ * Copyright (C) 2013 Istituto Italiano di Tecnologia (IIT)
+ * Author: Alberto Cardellino <alberto.cardellino@iit.it>
  * CopyPolicy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
  */
 

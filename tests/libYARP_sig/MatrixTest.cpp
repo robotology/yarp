@@ -1,8 +1,8 @@
 /*
-* Author: Lorenzo Natale.
-* Copyright (C) 2006 The Robotcub consortium
-* CopyPolicy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
-*/
+ * Copyright (C) 2006 RobotCub Consortium
+ * Author: Lorenzo Natale
+ * CopyPolicy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
+ */
 
 #include <yarp/sig/Matrix.h>
 #include <yarp/os/impl/BufferedConnectionWriter.h>
