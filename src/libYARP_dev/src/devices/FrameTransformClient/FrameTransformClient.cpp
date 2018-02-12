@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2016 iCub Facility - Istituto Italiano di Tecnologia
+ * Copyright (C) 2016 Istituto Italiano di Tecnologia (IIT)
  * Author: Marco Randazzo <marco.randazzo@iit.it>
  * CopyPolicy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
  */
@@ -74,7 +74,7 @@ void Transforms_client_storage::onRead(yarp::os::Bottle &b)
         {
             //this includes: timed yarp transforms, static yarp transforms, ros transforms
             Bottle* bt = b.get(i).asList();
-            if (bt != 0)
+            if (bt != nullptr)
             {
                 FrameTransform t;
                 t.src_frame_id = bt->get(0).asString();
@@ -239,6 +239,7 @@ bool yarp::dev::FrameTransformClient::read(yarp::os::ConnectionReader& connectio
     }
     else if (request == "publish_transform")
     {
+        out.addVocab(Vocab::encode("many"));
         std::string src  = in.get(1).asString();
         std::string dst  = in.get(2).asString();
         std::string port_name = in.get(3).asString();
@@ -256,6 +257,16 @@ bool yarp::dev::FrameTransformClient::read(yarp::os::ConnectionReader& connectio
                 break;
             }
         }
+        if (this->frameExists(src)==false)
+        {
+            out.addString("Requested src frame " + src + " does not exists.");
+            yWarning("Requested src frame %s does not exists.", src.c_str());
+        }
+        if (this->frameExists(dst)==false)
+        {
+            out.addString("Requested dst frame " + dst + " does not exists.");
+            yWarning("Requested fst frame %s does not exists.", dst.c_str());
+        }
         if (ret == true)
         {
             broadcast_port_t* b = new broadcast_port_t;
@@ -265,16 +276,14 @@ bool yarp::dev::FrameTransformClient::read(yarp::os::ConnectionReader& connectio
             bool pret = b->port.open(full_port_name);
             if (pret)
             {
-                std::string s;
-                s="Port " + full_port_name + "opened";
-                out.addString("Operation complete");
+                out.addString("Operation complete. Port " + full_port_name + " opened.");
                 m_array_of_ports.push_back(b);
                 if (m_array_of_ports.size()==1) this->start();
             }
             else
             {
                 delete b;
-                out.addString("operation failed");
+                out.addString("Operation failed. Unable to open port " + full_port_name + ".");
             }
         }
         else
@@ -288,11 +297,11 @@ bool yarp::dev::FrameTransformClient::read(yarp::os::ConnectionReader& connectio
         {
             (*it)->port.close();
             delete (*it);
-            (*it)=0;
+            (*it)=nullptr;
         }
         m_array_of_ports.clear();
         if (m_array_of_ports.size()==0) this->askToStop();
-        out.addString("operation complete");
+        out.addString("Operation complete");
     }
     else if (request == "unpublish_transform")
     {
@@ -306,7 +315,7 @@ bool yarp::dev::FrameTransformClient::read(yarp::os::ConnectionReader& connectio
             {
                 (*it)->port.close();
                 delete (*it);
-                (*it)=0;
+                (*it)=nullptr;
                  m_array_of_ports.erase(it);
                  ret = true;
                  break;
@@ -314,11 +323,11 @@ bool yarp::dev::FrameTransformClient::read(yarp::os::ConnectionReader& connectio
         }
         if (ret)
         {
-            out.addString("port " + full_port_name + " has been closed");
+            out.addString("Port " + full_port_name + " has been closed.");
         }
         else
         {
-            out.addString("port " + full_port_name + " was not found");
+            out.addString("Port " + full_port_name + " was not found.");
         }
         if (m_array_of_ports.size()==0) this->askToStop();
     }
@@ -327,10 +336,11 @@ bool yarp::dev::FrameTransformClient::read(yarp::os::ConnectionReader& connectio
         yError("Invalid vocab received in FrameTransformClient");
         out.clear();
         out.addVocab(VOCAB_ERR);
+        out.addString("Invalid command name");
     }
 
     yarp::os::ConnectionWriter *returnToSender = connection.getWriter();
-    if (returnToSender != NULL)
+    if (returnToSender != nullptr)
     {
         out.write(*returnToSender);
     }
@@ -417,10 +427,10 @@ bool yarp::dev::FrameTransformClient::close()
 {
     m_rpc_InterfaceToServer.close();
     m_rpc_InterfaceToUser.close();
-    if (m_transform_storage != 0)
+    if (m_transform_storage != nullptr)
     {
         delete m_transform_storage;
-        m_transform_storage = 0;
+        m_transform_storage = nullptr;
     }
     return true;
 }
@@ -434,7 +444,7 @@ bool yarp::dev::FrameTransformClient::allFramesAsString(std::string &all_frames)
     return true;
 }
 
-yarp::dev::FrameTransformClient::ConnectionType yarp::dev::FrameTransformClient::getConnectionType(const std::string &target_frame, const std::string &source_frame, std::string* commonAncestor = NULL)
+yarp::dev::FrameTransformClient::ConnectionType yarp::dev::FrameTransformClient::getConnectionType(const std::string &target_frame, const std::string &source_frame, std::string* commonAncestor = nullptr)
 {
     Transforms_client_storage& tfVec = *m_transform_storage;
     size_t                     i, j;
@@ -637,7 +647,7 @@ bool yarp::dev::FrameTransformClient::getTransform(const std::string& target_fra
         return true;
     }
 
-    yError() << "FrameTransformClient::getTransform() frames not connected";
+    yError() << "FrameTransformClient::getTransform() frames " << source_frame_id << " and " << target_frame_id << " are not connected";
     return false;
 }
 
@@ -832,23 +842,24 @@ bool yarp::dev::FrameTransformClient::transformQuaternion(const std::string &tar
 bool yarp::dev::FrameTransformClient::waitForTransform(const std::string &target_frame_id, const std::string &source_frame_id, const double &timeout)
 {
     //loop until canTransform == true or timeout expires
-    double start = yarp::os::Time::now();
+    double start = yarp::os::SystemClock::nowSystem();
     while (!canTransform(target_frame_id, source_frame_id))
     {
-        if (yarp::os::Time::now() - start > timeout)
+        if (yarp::os::SystemClock::nowSystem() - start > timeout)
         {
             yError() << "FrameTransformClient::waitForTransform() timeout expired";
             return false;
         }
-        yarp::os::Time::delay(0.001);
+        yarp::os::SystemClock::delaySystem(0.001);
     }
     return true;
 }
 
 FrameTransformClient::FrameTransformClient() : RateThread(10),
-    m_transform_storage(0),
+    m_transform_storage(nullptr),
     m_period(0)
-{}
+{
+}
 
 FrameTransformClient::~FrameTransformClient()
 {

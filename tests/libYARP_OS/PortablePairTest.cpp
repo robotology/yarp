@@ -58,8 +58,8 @@ public:
         report(0,"reading...");
         PortablePair<Bottle,Bottle> *result = buf.read();
         
-        checkTrue(result!=NULL,"got something check");
-        if (result!=NULL) {
+        checkTrue(result!=nullptr,"got something check");
+        if (result!=nullptr) {
             checkEqual(result->head.size(),3,"head len is right");  
             checkEqual(result->body.size(),2,"body len is right");  
         }

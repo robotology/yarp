@@ -76,7 +76,7 @@ public:
      * @param config The options to use
      * @return true iff the object could be configured.
      */
-    virtual bool open(yarp::os::Searchable& config) YARP_OVERRIDE
+    virtual bool open(yarp::os::Searchable& config) override
     {
         yInfo("(NOTE: Alternative to ServerSoundGrabber: just use normal ServerFrameGrabber)\n");
         p.setReader(*this);
@@ -128,7 +128,7 @@ public:
             return false;
     }
 
-    virtual bool close() YARP_OVERRIDE
+    virtual bool close() override
     {
         if (mic != NULL) {
             stop();
@@ -138,7 +138,7 @@ public:
         return false;
     }
 
-    virtual void run() YARP_OVERRIDE
+    virtual void run() override
     {
         while(!isStopping()) {
             if (mic!=NULL)
@@ -151,7 +151,7 @@ public:
         yInfo("Sound grabber stopping\n");
     }
 
-    virtual bool read(yarp::os::ConnectionReader& connection) YARP_OVERRIDE
+    virtual bool read(yarp::os::ConnectionReader& connection) override
     {
         yarp::os::Bottle cmd, response;
         cmd.read(connection);
@@ -161,17 +161,17 @@ public:
         return true;
     }
 
-    virtual bool getSound(yarp::sig::Sound& sound) YARP_OVERRIDE {
+    virtual bool getSound(yarp::sig::Sound& sound) override {
         if (mic==NULL) { return false; }
         return mic->getSound(sound);
     }
 
-    virtual bool startRecording() YARP_OVERRIDE {
+    virtual bool startRecording() override {
         if (mic==NULL) { return false; }
         return mic->startRecording();
     }
 
-    virtual bool stopRecording() YARP_OVERRIDE {
+    virtual bool stopRecording() override {
         if (mic==NULL) { return false; }
         return mic->stopRecording();
     }

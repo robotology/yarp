@@ -178,7 +178,7 @@ SDLPanel::~SDLPanel() {
     int ct = 10;
     while (wxsdl_drawing&&ct>0) {
         printf("sdl panel dying\n");
-        Time::delay(0.1);
+        SystemClock::delaySystem(0.1);
         ct--;
     }
     if (ct==0) {
@@ -281,7 +281,7 @@ void SDLPanel::putImage(ImageOf<PixelRgb>& image) {
 
     if (!wxsdl_running) {
         //printf("WAITING for wxsdl\n");
-        Time::delay(0.1);
+        SystemClock::delaySystem(0.1);
     }
 
     mutex.wait();
@@ -683,7 +683,7 @@ bool WxsdlWriter::putImage(yarp::sig::ImageOf<yarp::sig::PixelRgb> & image) {
     //printf("WAITING for wxsdl\n");
     if (!wxsdl_running) {
         //printf("WAITING for wxsdl\n");
-        Time::delay(0.1);
+        SystemClock::delaySystem(0.1);
     }
     //printf("FINISHED WAITING for wxsdl\n");
 
@@ -718,7 +718,7 @@ bool WxsdlWriter::putImage(yarp::sig::ImageOf<yarp::sig::PixelRgb> & image) {
 
 bool WxsdlWriter::updateService() {
     // could be a lot smarter here...
-    Time::delay(1);
+    SystemClock::delaySystem(1);
     return !wxsdl_stopped;
 }
     

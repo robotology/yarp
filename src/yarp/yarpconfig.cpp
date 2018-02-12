@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2013 iCub Facility
+ * Copyright (C) 2013 Istituto Italiano di Tecnologia (IIT)
  * Authors: Paul Fitzpatrick
  * CopyPolicy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
  *
@@ -7,7 +7,9 @@
 
 
 #include <yarp/os/Property.h>
+#include <yarp/os/Network.h>
 #include <yarp/conf/version.h>
+#include <yarp/os/Time.h>
 #include <yarp/os/impl/NameConfig.h>
 #include "yarpcontext.h"
 #include "yarprobot.h"
@@ -27,6 +29,8 @@ void show_help() {
 }
 
 int main(int argc, char *argv[]) {
+    // Configure system clock
+    yarp::os::Network::initMinimum(yarp::os::YARP_CLOCK_SYSTEM);
 
     yarp::os::Property options;
     options.fromCommand(argc,argv);

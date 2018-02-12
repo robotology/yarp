@@ -10,8 +10,6 @@ That tutorial showed how to use types defined in
 a ROS-style .msg file within YARP.  Now, we will
 work on sending data from YARP to ROS.
 
-<b>Make sure you have the latest version of YARP from github. Make sure you run the latest version of the yarp name server, there have been important fixes.</b>
-
 At the beginning of this tutorial, we assume you have a YARP
 server running, without any special configuration.  During
 the tutorial, we will reconfigure the name server to communicate

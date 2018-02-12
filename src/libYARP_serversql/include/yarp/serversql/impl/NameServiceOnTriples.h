@@ -72,15 +72,15 @@ private:
     yarp::os::NameSpace *delegate;
 public:
     NameServiceOnTriples() :
-            db(YARP_NULLPTR),
-            alloc(YARP_NULLPTR),
-            subscriber(YARP_NULLPTR),
+            db(nullptr),
+            alloc(nullptr),
+            subscriber(nullptr),
             lastRegister(""),
             mutex(1),
             access(1),
             gonePublic(false),
             silent(false),
-            delegate(YARP_NULLPTR)
+            delegate(nullptr)
     {
     }
 

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2011 Department of Robotics Brain and Cognitive Sciences - Istituto Italiano di Tecnologia
+ * Copyright (C) 2011 Istituto Italiano di Tecnologia (IIT)
  * Authors: Paul Fitzpatrick
  * CopyPolicy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
  *
@@ -44,7 +44,7 @@ public:
         buffer_length = 0;
         length = 0;
         unit_length = 0;
-        byte_start = YARP_NULLPTR;
+        byte_start = nullptr;
         byte_length = 0;
         ignore_external = false;
         wire_unit_length = -1;
@@ -67,12 +67,12 @@ class YARP_wire_rep_utils_API WireTwiddler {
 public:
     WireTwiddler() {
         buffer_start = 0;
-        writer = YARP_NULLPTR;
+        writer = nullptr;
     }
 
     virtual ~WireTwiddler() {
         if (writer) delete writer;
-        writer = YARP_NULLPTR;
+        writer = nullptr;
     }
 
     bool configure(const char *txt, const char *prompt);
@@ -161,7 +161,7 @@ public:
         index = -1;
         sent = 0;
         consumed = 0;
-        cursor = YARP_NULLPTR;
+        cursor = nullptr;
         pending_length = 0;
         pending_strings = 0;
         pending_string_length = 0;
@@ -173,11 +173,11 @@ public:
     virtual ~WireTwiddlerReader() {}
 
     using yarp::os::InputStream::read;
-    virtual YARP_SSIZE_T read(const yarp::os::Bytes& b) YARP_OVERRIDE;
+    virtual YARP_SSIZE_T read(const yarp::os::Bytes& b) override;
 
-    virtual void close() YARP_OVERRIDE { is.close(); }
+    virtual void close() override { is.close(); }
 
-    virtual bool isOk() YARP_OVERRIDE { return is.isOk(); }
+    virtual bool isOk() override { return is.isOk(); }
 
     YARP_SSIZE_T readMapped(yarp::os::InputStream& is,
                             const yarp::os::Bytes& b,
@@ -230,25 +230,25 @@ private:
                                int evidence);
 public:
     WireTwiddlerWriter(yarp::os::SizedWriter& parent,
-                       WireTwiddler& twiddler) : 
+                       WireTwiddler& twiddler) :
         parent(&parent),
         twiddler(&twiddler),
         srcs(),
         block(0),
         lastBlock(0),
         offset(0),
-        blockPtr(YARP_NULLPTR),
+        blockPtr(nullptr),
         blockLen(0),
         lengthBuffer(0),
         lengthBytes(),
         zeros(0),
         scratch(0),
         accumOffset(0),
-        activeEmit(YARP_NULLPTR),
-        activeGap(YARP_NULLPTR),
+        activeEmit(nullptr),
+        activeGap(nullptr),
         activeEmitLength(0),
         activeEmitOffset(0),
-        activeCheck(YARP_NULLPTR),
+        activeCheck(nullptr),
         errorState(false),
         scratchOffset(0),
         codeExpected(),
@@ -258,24 +258,24 @@ public:
     }
 
     WireTwiddlerWriter() :
-        parent(YARP_NULLPTR),
-        twiddler(YARP_NULLPTR),
+        parent(nullptr),
+        twiddler(nullptr),
         srcs(),
         block(0),
         lastBlock(0),
         offset(0),
-        blockPtr(YARP_NULLPTR),
+        blockPtr(nullptr),
         blockLen(0),
         lengthBuffer(0),
         lengthBytes(),
         zeros(0),
         scratch(0),
         accumOffset(0),
-        activeEmit(YARP_NULLPTR),
-        activeGap(YARP_NULLPTR),
+        activeEmit(nullptr),
+        activeGap(nullptr),
         activeEmitLength(0),
         activeEmitOffset(0),
-        activeCheck(YARP_NULLPTR),
+        activeCheck(nullptr),
         errorState(false),
         scratchOffset(0),
         codeExpected(),
@@ -293,28 +293,28 @@ public:
 
     bool update();
 
-    virtual size_t length() YARP_OVERRIDE {
+    virtual size_t length() override {
         return srcs.size();
     }
 
-    virtual size_t headerLength() YARP_OVERRIDE {
+    virtual size_t headerLength() override {
         return 0;
     }
 
-    virtual size_t length(size_t index) YARP_OVERRIDE {
+    virtual size_t length(size_t index) override {
         return srcs[index].len;
     }
 
-    virtual const char *data(size_t index) YARP_OVERRIDE {
+    virtual const char *data(size_t index) override {
         if (srcs[index].offset<0) return srcs[index].src;
         return scratch.get()+srcs[index].offset;
     }
 
-    virtual yarp::os::PortReader *getReplyHandler() YARP_OVERRIDE {
+    virtual yarp::os::PortReader *getReplyHandler() override {
         return parent->getReplyHandler();
     }
 
-    virtual yarp::os::Portable *getReference() YARP_OVERRIDE {
+    virtual yarp::os::Portable *getReference() override {
         return parent->getReference();
     }
 
@@ -326,7 +326,7 @@ public:
 
     bool pad(size_t len);
 
-    bool readLengthAndPass(int unitLength, const WireTwiddlerGap *gap = YARP_NULLPTR);
+    bool readLengthAndPass(int unitLength, const WireTwiddlerGap *gap = nullptr);
 
     bool advance(int length, bool shouldEmit, bool shouldAccum=false,
                  bool shouldCheck=false);
@@ -336,15 +336,15 @@ public:
     int readLength();
 
     //virtual void write(OutputStream& os);
-    virtual bool dropRequested() YARP_OVERRIDE {
+    virtual bool dropRequested() override {
         return false;
     }
 
-    virtual void startWrite() YARP_OVERRIDE {
+    virtual void startWrite() override {
         parent->startWrite();
     }
 
-    virtual void stopWrite() YARP_OVERRIDE {
+    virtual void stopWrite() override {
         parent->stopWrite();
     }
 };

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2014 iCub Facility - Istituto Italiano di Tecnologia
+ * Copyright (C) 2014 Istituto Italiano di Tecnologia (IIT)
  * Author: Davide Perrone
  * Date: Feb 2014
  * email:   dperrone@aitek.it
@@ -74,13 +74,13 @@ int main(int argc, char *argv[])
 
     // Setup resource finder
 
-    yarp::os::ResourceFinder rf;
+    yarp::os::ResourceFinder& rf = yarp::os::ResourceFinder::getResourceFinderSingleton();
     rf.setVerbose(false);
     rf.setDefaultContext("yarpmanager");
     rf.setDefaultConfigFile(DEF_CONFIG_FILE);
     rf.configure(argc, argv);
 
-    yarp::os::Network yarp;
+    yarp::os::Network yarp(yarp::os::YARP_CLOCK_SYSTEM);
     yarp.setVerbosity(-1);
 
     yarp::os::Property config;

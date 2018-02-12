@@ -45,20 +45,20 @@ public:
                             void *tracker) :
         creator(creator), tracker(tracker) {}
 
-    virtual bool write(ConnectionWriter& connection) YARP_OVERRIDE {
+    virtual bool write(ConnectionWriter& connection) override {
         return writer.write(connection);
     }
 
-    virtual void onCompletion() YARP_OVERRIDE {
+    virtual void onCompletion() override {
         writer.onCompletion();
         creator.onCompletion(tracker);
     }
 
-    virtual void onCommencement() YARP_OVERRIDE {
+    virtual void onCommencement() override {
         writer.onCommencement();
     }
 
-    virtual PortWriter *getInternal() YARP_OVERRIDE {
+    virtual PortWriter *getInternal() override {
         return &writer;
     }
 };
@@ -110,7 +110,7 @@ public:
 
 #ifndef DOXYGEN_SHOULD_SKIP_THIS
     virtual PortWriterWrapper *create(PortWriterBufferManager& man,
-                                      void *tracker) YARP_OVERRIDE {
+                                      void *tracker) override {
         return new PortWriterBufferAdaptor<T>(man, tracker);
     }
 #endif /*DOXYGEN_SHOULD_SKIP_THIS*/

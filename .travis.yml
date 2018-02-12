@@ -43,29 +43,15 @@ addons:
   apt:
     sources:
       - ubuntu-toolchain-r-test
-#      - llvm-toolchain-precise-3.6
-#      - llvm-toolchain-precise-3.7
-#      - llvm-toolchain-precise-3.8
-#      - llvm-toolchain-trusty-3.9
-#      - llvm-toolchain-trusty-4.0
       - llvm-toolchain-trusty-5.0
     packages:
       # gcc
-#      - gcc-5
-#      - g++-5
-#      - gcc-6
-#      - g++-6
       - gcc-7
       - g++-7
       # clang
-#      - clang-3.6
-#      - clang-3.7
-#      - clang-3.8
-#      - clang-3.9
-#      - clang-4.0
       - clang-5.0
-      - libc++-dev
       # build tools
+      - cmake3
       - ninja-build
       - lcov
       - valgrind
@@ -83,6 +69,8 @@ addons:
       - libopencv-dev
       - libeigen3-dev
       - libgraphviz-dev
+      - libgstreamer1.0-dev
+      - libgstreamer-plugins-base1.0-dev
       # Bindings
       - swig3.0
       # C# bindings
@@ -97,6 +85,10 @@ addons:
       - python3-dev
       # Octave bindings
       - liboctave-dev
+      # Java bindings
+      - default-jdk
+      # Ruby bindings
+      - ruby-dev
 
 matrix:
   exclude:
@@ -258,27 +250,6 @@ before_install:
   # Add additional repositories
   - if [ "$TRAVIS_OS_NAME" == "osx" ]; then brew tap homebrew/science; fi
 
-  # Install gcc alternatives
-  - if [ "$TRAVIS_OS_NAME" == "linux" ]; then sudo update-alternatives --install /usr/bin/gcc gcc /usr/bin/gcc-4.8 40 --slave /usr/bin/g++ g++ /usr/bin/g++-4.8; fi
-#  - if [ "$TRAVIS_OS_NAME" == "linux" ]; then sudo update-alternatives --install /usr/bin/gcc gcc /usr/bin/gcc-5 60 --slave /usr/bin/g++ g++ /usr/bin/g++-5; fi
-#  - if [ "$TRAVIS_OS_NAME" == "linux" ]; then sudo update-alternatives --install /usr/bin/gcc gcc /usr/bin/gcc-6 60 --slave /usr/bin/g++ g++ /usr/bin/g++-6; fi
-  - if [ "$TRAVIS_OS_NAME" == "linux" ]; then sudo update-alternatives --install /usr/bin/gcc gcc /usr/bin/gcc-7 60 --slave /usr/bin/g++ g++ /usr/bin/g++-7; fi
-
-  # Remove default clang from path
-  - if [ "$TRAVIS_OS_NAME" == "linux" ]; then export PATH=`echo $PATH | sed -e 's/\/usr\/local\/clang-3.5.0\/bin://'`; fi
-
-  # Install clang alternatives
-  - if [ "$TRAVIS_OS_NAME" == "linux" ]; then sudo update-alternatives --install /usr/bin/clang clang /usr/local/clang-3.5.0/bin/clang 40 --slave /usr/bin/clang++ clang++ /usr/local/clang-3.5.0/bin/clang++; fi
-#  - if [ "$TRAVIS_OS_NAME" == "linux" ]; then sudo update-alternatives --install /usr/bin/clang clang /usr/lib/llvm-3.6/bin/clang 60 --slave /usr/bin/clang++ clang++ /usr/lib/llvm-3.6/bin/clang++; fi
-#  - if [ "$TRAVIS_OS_NAME" == "linux" ]; then sudo update-alternatives --install /usr/bin/clang clang /usr/lib/llvm-3.7/bin/clang 60 --slave /usr/bin/clang++ clang++ /usr/lib/llvm-3.7/bin/clang++; fi
-#  - if [ "$TRAVIS_OS_NAME" == "linux" ]; then sudo update-alternatives --install /usr/bin/clang clang /usr/lib/llvm-3.8/bin/clang 60 --slave /usr/bin/clang++ clang++ /usr/lib/llvm-3.8/bin/clang++; fi
-#  - if [ "$TRAVIS_OS_NAME" == "linux" ]; then sudo update-alternatives --install /usr/bin/clang clang /usr/lib/llvm-3.9/bin/clang 60 --slave /usr/bin/clang++ clang++ /usr/lib/llvm-3.9/bin/clang++; fi
-#  - if [ "$TRAVIS_OS_NAME" == "linux" ]; then sudo update-alternatives --install /usr/bin/clang clang /usr/lib/llvm-4.0/bin/clang 60 --slave /usr/bin/clang++ clang++ /usr/lib/llvm-4.0/bin/clang++; fi
-  - if [ "$TRAVIS_OS_NAME" == "linux" ]; then sudo update-alternatives --install /usr/bin/clang clang /usr/lib/llvm-5.0/bin/clang 60 --slave /usr/bin/clang++ clang++ /usr/lib/llvm-5.0/bin/clang++; fi
-
-  # Clang on ubuntu trusty requires libc++-dev
-  - if [ "$TRAVIS_OS_NAME" == "linux" ]; then if [ "$CXX" == "clang++" ]; then export CXXFLGAS="$CXXFLAGS -stdlib=libc++"; fi; fi
-
   # Install ccache on osx
   - if [ "$TRAVIS_OS_NAME" == "osx" ]; then brew install ccache; fi
   - if [ "$TRAVIS_OS_NAME" == "osx" ]; then export PATH="/usr/local/opt/ccache/libexec:$PATH"; fi
@@ -286,11 +257,22 @@ before_install:
   # Use ccache also for clang and clang++ on linux
   - if [ "$TRAVIS_OS_NAME" == "linux" ]; then sudo ln -s ../../bin/ccache /usr/lib/ccache/clang; fi
   - if [ "$TRAVIS_OS_NAME" == "linux" ]; then sudo ln -s ../../bin/ccache /usr/lib/ccache/clang++; fi
+  - if [ "$TRAVIS_OS_NAME" == "linux" ]; then sudo ln -s ../../bin/ccache /usr/lib/ccache/clang-5.0; fi
+  - if [ "$TRAVIS_OS_NAME" == "linux" ]; then sudo ln -s ../../bin/ccache /usr/lib/ccache/clang++-5.0; fi
 
   # These can be removed for ccache 3.2 (at the moment Ubunty trusty has 3.1.9)
   # see https://bugzilla.samba.org/show_bug.cgi?id=8118
   - if [ "$TRAVIS_OS_NAME" == "linux" ]; then if [ "$CC" == "clang" ]; then export CFLAGS="$CFLAGS -Qunused-arguments"; fi; fi
   - if [ "$TRAVIS_OS_NAME" == "linux" ]; then if [ "$CXX" == "clang++" ]; then export CXXFLAGS="$CXXFLAGS -Qunused-arguments"; fi; fi
+
+  # Force gcc-7
+  - if [ "$TRAVIS_OS_NAME" == "linux" ]; then if [ "$CC" == "gcc" ]; then export CC=gcc-7; export CXX=g++-7; fi; fi
+
+  # Force clang-5.0
+  - if [ "$TRAVIS_OS_NAME" == "linux" ]; then if [ "$CC" == "clang" ]; then export CC=clang-5.0; export CXX=clang++-5.0; fi; fi
+
+  # Remove default clang from path
+  - if [ "$TRAVIS_OS_NAME" == "linux" ]; then export PATH=`echo $PATH | sed -e 's/\/usr\/local\/clang-3.5.0\/bin://'`; fi
 
   # Print some more system information after installing all build tools
   - echo "-------------------- BEGIN SYSTEM INFORMATION --------------------"
@@ -309,8 +291,11 @@ before_install:
   - which ccache
   - ccache --version
   - ccache -s
+  - if [ "$TRAVIS_OS_NAME" == "linux" ]; then ls -la /usr/lib/ccache; fi
   - if [ "$TRAVIS_OS_NAME" == "linux" ]; then which swig3.0; fi
   - if [ "$TRAVIS_OS_NAME" == "linux" ]; then swig3.0 -version; fi
+  - which javac
+  - javac -version
   - echo "--------------------  END SYSTEM INFORMATION  --------------------"
 
 
@@ -336,11 +321,11 @@ install:
   - if [ "$TRAVIS_OS_NAME" == "osx" ]; then brew install opencv eigen graphviz; fi
 
   # Install swig stuff
-  - if [ "$TRAVIS_OS_NAME" == "linux" ]; then if $TRAVIS_WITH_INTEGRATION_TESTS; then wget https://github.com/robotology-dependencies/swigs/releases/download/v0.0.5/swigs.zip; fi; fi
-  - if [ "$TRAVIS_OS_NAME" == "linux" ]; then if $TRAVIS_WITH_INTEGRATION_TESTS; then unzip -q swigs.zip; mkdir -p cache; mv swigs cache/swig; fi; fi
+  - if $TRAVIS_WITH_INTEGRATION_TESTS; then wget https://github.com/robotology-dependencies/swigs/releases/download/v0.0.5/swigs.zip; fi
+  - if $TRAVIS_WITH_INTEGRATION_TESTS; then unzip -q swigs.zip; mkdir -p cache; mv swigs cache/swig; fi
 
   # Init ROS
-  - if [ "$TRAVIS_OS_NAME" == "linux" ]; then if $TRAVIS_WITH_INTEGRATION_TESTS; then source /opt/ros/jade/setup.bash; fi; fi
+  - if $TRAVIS_WITH_INTEGRATION_TESTS; then source /opt/ros/jade/setup.bash; fi
 
 
 before_script:
@@ -350,16 +335,18 @@ before_script:
 
   # Prepare cmake options
   - . scripts/admin/generate-cmake-options.sh $(hostname) $(lsb_release -cs) continuous
-  - export YARP_CMAKE_OPTIONS="${CMAKE_OPTIONS} -DYARP_EXPERIMENTAL_CXX11=ON"
-  - if [ "$TRAVIS_OS_NAME" == "linux" ]; then export YARP_CMAKE_OPTIONS="${YARP_CMAKE_OPTIONS} -DYARP_COMPILE_BINDINGS=ON -DCREATE_LUA=ON -DCREATE_PYTHON=ON -DCREATE_TCL=ON"; fi
+  - export YARP_INSTALL_PREFIX="${PWD}/install"
+  - export YARP_CMAKE_OPTIONS="${CMAKE_OPTIONS} -DCMAKE_INSTALL_PREFIX=${YARP_INSTALL_PREFIX} -DYARP_EXPERIMENTAL_CXX11=ON"
   - if ! $TRAVIS_WITH_ACE; then export YARP_CMAKE_OPTIONS="${YARP_CMAKE_OPTIONS} -DSKIP_ACE=ON -DYARP_TEST_HEAP=ON"; fi
   - if ! $TRAVIS_WITH_MATH; then export YARP_CMAKE_OPTIONS="${YARP_CMAKE_OPTIONS} -DCREATE_LIB_MATH:BOOL=OFF -DENABLE_yarpmod_fakeIMU:BOOL=OFF -DENABLE_yarpmod_fakeLaser:BOOL=OFF"; fi
-  - if $TRAVIS_WITH_INTEGRATION_TESTS; then export YARP_CMAKE_OPTIONS="${YARP_CMAKE_OPTIONS} -DYARP_TEST_INTEGRATION=ON"; fi
+  - if [ "$TRAVIS_OS_NAME" == "linux" ]; then export YARP_CMAKE_OPTIONS="${YARP_CMAKE_OPTIONS} -DENABLE_yarpcar_h264:BOOL=ON"; fi
+  - if [ "$TRAVIS_OS_NAME" == "linux" ]; then export YARP_CMAKE_OPTIONS="${YARP_CMAKE_OPTIONS} -DYARP_COMPILE_BINDINGS=ON -DCREATE_LUA=ON -DCREATE_PYTHON=ON -DCREATE_TCL=ON -DCREATE_JAVA=ON -DCREATE_CSHARP=ON"; fi
   - if $TRAVIS_STATIC; then export YARP_CMAKE_OPTIONS="${YARP_CMAKE_OPTIONS} -DCREATE_SHARED_LIBRARY=OFF"; fi
   - if $TRAVIS_CLEAN_API; then export YARP_CMAKE_OPTIONS="${YARP_CMAKE_OPTIONS} -DYARP_CLEAN_API=ON -DYARP_COMPILE_TESTS=OFF"; fi
   - if $TRAVIS_WITH_VALGRIND; then export YARP_CMAKE_OPTIONS="${YARP_CMAKE_OPTIONS} -DYARP_VALGRIND_TESTS=ON -DYARP_VALGRIND_DRD_TESTS=OFF -DYARP_VALGRIND_HELGRIND_TESTS=OFF YARP_VALGRIND_MEMCHECK_TESTS=ON YARP_VALGRIND_SGCHECK_TESTS=OFF"; fi
   - if $TRAVIS_NO_DEPRECATED; then export YARP_CMAKE_OPTIONS="${YARP_CMAKE_OPTIONS} -DYARP_NO_DEPRECATED=ON"; fi
   - if $TRAVIS_WITH_BROKEN_TESTS; then export YARP_CMAKE_OPTIONS="${YARP_CMAKE_OPTIONS} -DYARP_ENABLE_BROKEN_TESTS=ON"; fi
+  - if $TRAVIS_WITH_INTEGRATION_TESTS; then export YARP_CMAKE_OPTIONS="${YARP_CMAKE_OPTIONS} -DYARP_TEST_INTEGRATION=ON"; fi
 
   # TinyXML on trusty is built with C++98 ABI and clang fails.
   - if [ "$TRAVIS_OS_NAME" == "linux" ]; then if [ "$CC" == "clang" ]; then export YARP_CMAKE_OPTIONS="${YARP_CMAKE_OPTIONS} -DYARP_USE_SYSTEM_TINYXML=OFF"; fi; fi
@@ -401,11 +388,11 @@ script:
   - if ! $TRAVIS_CLEAN_API; then (cd build; travis_wait 50 ctest --output-on-failure --build . -C ${TRAVIS_BUILD_TYPE}); fi
 
   # Test installation
-  - (cd build; sudo cmake --build . --config ${TRAVIS_BUILD_TYPE} --target install)
+  - (cd build; cmake --build . --config ${TRAVIS_BUILD_TYPE} --target install)
 
   # Build also the os examples
   - mkdir example/os/build
-  - (cd example/os/build; cmake -G"${TRAVIS_CMAKE_GENERATOR}" -DCMAKE_BUILD_TYPE=${TRAVIS_BUILD_TYPE} ..)
+  - (cd example/os/build; cmake -G"${TRAVIS_CMAKE_GENERATOR}" -DCMAKE_BUILD_TYPE=${TRAVIS_BUILD_TYPE} -DYARP_DIR=${YARP_INSTALL_PREFIX}/lib/cmake/YARP ..)
   - (cd example/os/build; cmake --build . --config ${TRAVIS_BUILD_TYPE})
 
 

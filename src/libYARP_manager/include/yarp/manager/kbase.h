@@ -1,6 +1,6 @@
 /*
  *  Yarp Modules Manager
- *  Copyright: (C) 2011 Robotics, Brain and Cognitive Sciences - Italian Institute of Technology (IIT)
+ *  Copyright: (C) 2011 Istituto Italiano di Tecnologia (IIT)
  *  Authors: Ali Paikan <ali.paikan@iit.it>
  *
  *  Copy Policy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
@@ -38,10 +38,10 @@ class KnowledgeBase{
 
 public:
     KnowledgeBase(void) :
-        modloader(YARP_NULLPTR),
-        apploader(YARP_NULLPTR),
-        resloader(YARP_NULLPTR),
-        mainApplication(YARP_NULLPTR)
+        modloader(nullptr),
+        apploader(nullptr),
+        resloader(nullptr),
+        mainApplication(nullptr)
     {}
 
     virtual ~KnowledgeBase() {

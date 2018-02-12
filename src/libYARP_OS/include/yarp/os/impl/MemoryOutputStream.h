@@ -1,4 +1,5 @@
 /*
+ * Copyright: (C) 2014 Istituto Italiano di Tecnologia (IIT)
  * Authors: Holger Friedrich
  * CopyPolicy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
  */

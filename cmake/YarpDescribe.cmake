@@ -40,6 +40,7 @@ foreach(lib ${YARP_LIBS})
      NOT "${lib}" STREQUAL "yarpmod" AND
      NOT "${lib}" STREQUAL "YARP_wire_rep_utils" AND
      NOT "${lib}" STREQUAL "YARP_manager" AND
+     NOT "${lib}" STREQUAL "YARP_profiler" AND
      NOT "${lib}" STREQUAL "YARP_logger" AND
      NOT "${lib}" STREQUAL "YARP_serversql" AND
      NOT "${lib}" STREQUAL "YARP_gsl" AND
@@ -85,19 +86,22 @@ export(TARGETS ${YARP_LIBS} ${YARP_TOOLS}
        NAMESPACE YARP::
        FILE ${CMAKE_BINARY_DIR}/YARPTargets.cmake)
 
+if(NOT CMAKE_MINIMUM_REQUIRED_VERSION VERSION_LESS 3.7)
+  message(AUTHOR_WARNING "Searching for packages in \"lib/cmake\" is supported on Windows since CMake 3.7. You can remove this check")
+endif()
 if(WIN32)
-    set(YARP_CMAKE_DESTINATION "cmake")
+  set(YARP_CMAKE_DESTINATION CMake)
+else()
+  set(YARP_CMAKE_DESTINATION "${CMAKE_INSTALL_LIBDIR}/cmake/YARP")
+endif()
     # Temporary fix to remove the outdated destination path that will
     # cause issues when looking for YARP package.
     # FIXME Remove this when this hack has been around for enough time.
-    install(CODE
+install(CODE
  "if(EXISTS \"\$ENV{DESTDIR}${CMAKE_INSTALL_PREFIX}/${CMAKE_INSTALL_LIBDIR}/YARP\")
     message(STATUS \"Deleted: \\\"\$ENV{DESTDIR}${CMAKE_INSTALL_PREFIX}/${CMAKE_INSTALL_LIBDIR}/YARP\\\"\")
     file(REMOVE_RECURSE \"\$ENV{DESTDIR}${CMAKE_INSTALL_PREFIX}/${CMAKE_INSTALL_LIBDIR}/YARP\")
   endif()")
-else()
-  set(YARP_CMAKE_DESTINATION ${CMAKE_INSTALL_LIBDIR}/YARP)
-endif()
 
 # Save variables for later
 yarp_backup_variable(YARP_INCLUDE_DIRS)

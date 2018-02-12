@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2015 iCub Facility, Istituto Italiano di Tecnologia
+ * Copyright (C) 2015 Istituto Italiano di Tecnologia (IIT)
  * Authors: Marco Randazzo <marco.randazzo@iit.it>
  * CopyPolicy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
  */
@@ -48,14 +48,14 @@ public:
 
     virtual ~ImplementMotor();
 
-    virtual bool getNumberOfMotors(int *num) YARP_OVERRIDE;
+    virtual bool getNumberOfMotors(int *num) override;
 
-    virtual bool getTemperature      (int m, double* val) YARP_OVERRIDE;
-    virtual bool getTemperatures     (double *vals) YARP_OVERRIDE;
-    virtual bool getTemperatureLimit (int m, double* val) YARP_OVERRIDE;
-    virtual bool setTemperatureLimit (int m, const double val) YARP_OVERRIDE;
-    virtual bool getGearboxRatio     (int m, double* val) YARP_OVERRIDE;
-    virtual bool setGearboxRatio     (int m, const double val) YARP_OVERRIDE;
+    virtual bool getTemperature      (int m, double* val) override;
+    virtual bool getTemperatures     (double *vals) override;
+    virtual bool getTemperatureLimit (int m, double* val) override;
+    virtual bool setTemperatureLimit (int m, const double val) override;
+    virtual bool getGearboxRatio     (int m, double* val) override;
+    virtual bool setGearboxRatio     (int m, const double val) override;
 };
 
 #endif // YARP_DEV_IMPLEMENTMOTOR_H

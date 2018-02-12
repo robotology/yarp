@@ -1,5 +1,5 @@
 /*
-* Copyright (C) 2016 iCub Facility, Istituto Italiano di Tecnologia
+* Copyright (C) 2016 Istituto Italiano di Tecnologia (IIT)
 * Authors: Marco Randazzo <marco.randazzo@iit.it>
 * CopyPolicy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
 */
@@ -17,20 +17,20 @@ using namespace yarp::dev;
 ImplementPWMControl::ImplementPWMControl(IPWMControlRaw *r) :
     helper(0),
     raw(r),
-    dummy(YARP_NULLPTR)
+    dummy(nullptr)
 {}
 
 bool ImplementPWMControl::initialize(int size, const int *amap, const double* dutyToPWM)
 {
-    if (helper != 0)
+    if (helper != nullptr)
         return false;
 
     double *dummy = new double[size];
     for (int k = 0; k<size; k++)
         dummy[k] = 0;
 
-    helper = (void *)(new ControlBoardHelper(size, amap, dummy, dummy, dummy, 0, 0, dutyToPWM));
-    yAssert(helper != 0);
+    helper = (void *)(new ControlBoardHelper(size, amap, dummy, dummy, dummy, nullptr, 0, dutyToPWM));
+    yAssert(helper != nullptr);
 
     delete[] dummy;
     return true;
@@ -43,10 +43,10 @@ ImplementPWMControl::~ImplementPWMControl()
 
 bool ImplementPWMControl::uninitialize()
 {
-    if (helper != 0)
+    if (helper != nullptr)
     {
         delete castToMapper(helper);
-        helper = 0;
+        helper = nullptr;
     }
 
     return true;

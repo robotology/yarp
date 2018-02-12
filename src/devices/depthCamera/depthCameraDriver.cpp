@@ -402,7 +402,7 @@ bool depthCameraDriver::setParams()
         for (int t = 0; t < 5; t++)
         {
             yInfo() << "depthCamera: trying to set rgb mirroring parameter for the" << t+1 << "time/s";
-            yarp::os::Time::delay(0.5);
+            yarp::os::SystemClock::delaySystem(0.5);
             if (setRgbMirroring(v.asBool()))
             {
                 yInfo() << "depthCamera: rgb mirroring parameter set succesfully";
@@ -432,7 +432,7 @@ bool depthCameraDriver::setParams()
         for (int t = 0; t < 5; t++)
         {
             yInfo() << "depthCamera: trying to set depth mirroring parameter for the" << t+1 << "time/s";
-            yarp::os::Time::delay(0.5);
+            yarp::os::SystemClock::delaySystem(0.5);
             if (setDepthMirroring(v.asBool()))
             {
                 yInfo() << "depthCamera: depth mirroring parameter setted succesfully";

@@ -83,7 +83,7 @@ public:
     void takeStreams(TwoWayStream *streams) override
     {
         shift.takeStream(streams);
-        if (streams!=YARP_NULLPTR) {
+        if (streams!=nullptr) {
             active = true;
         }
     }
@@ -222,7 +222,7 @@ public:
     // Documented in yarp::os::ConnectionState.
     Connection& getConnection() override
     {
-        if (delegate==YARP_NULLPTR) {
+        if (delegate==nullptr) {
             return nullConnection;
         }
         return *delegate;
@@ -231,7 +231,7 @@ public:
     // Documented in yarp::os::InputProtocol.
     Connection& getReceiver() override
     {
-        if (recv_delegate==YARP_NULLPTR) {
+        if (recv_delegate==nullptr) {
             return nullConnection;
         }
         return *recv_delegate;
@@ -240,7 +240,7 @@ public:
     // Documented in yarp::os::OutputProtocol.
     Connection& getSender() override
     {
-        if (send_delegate==YARP_NULLPTR) {
+        if (send_delegate==nullptr) {
             return nullConnection;
         }
         return *send_delegate;
@@ -296,7 +296,7 @@ private:
     /**
      *
      * Default implementation for reading what protocol we should
-     * be using.  These defaults go way back to YARP1, maybe a decade ago?
+     * be using.
      *
      */
     bool expectProtocolSpecifier();
@@ -309,7 +309,7 @@ private:
      */
     bool expectSenderSpecifier()
     {
-        yAssert(delegate!=YARP_NULLPTR);
+        yAssert(delegate!=nullptr);
         return delegate->expectSenderSpecifier(*this);
     }
 
@@ -338,7 +338,7 @@ private:
      */
     bool sendHeader()
     {
-        yAssert(delegate!=YARP_NULLPTR);
+        yAssert(delegate!=nullptr);
         return delegate->sendHeader(*this);
     }
 
@@ -350,7 +350,7 @@ private:
      */
     bool expectReplyToHeader()
     {
-        yAssert(delegate!=YARP_NULLPTR);
+        yAssert(delegate!=nullptr);
         return delegate->expectReplyToHeader(*this);
     }
 

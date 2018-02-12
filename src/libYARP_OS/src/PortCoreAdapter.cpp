@@ -1,6 +1,6 @@
 /*
  * Copyright (C) 2006 RobotCub Consortium
- * Copyright (C) 2016 iCub Facility, Istituto Italiano di Tecnologia
+ * Copyright (C) 2016 Istituto Italiano di Tecnologia (IIT)
  * Authors: Paul Fitzpatrick <paulfitz@alum.mit.edu>
  * CopyPolicy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
  */
@@ -12,10 +12,10 @@
 
 yarp::os::impl::PortCoreAdapter::PortCoreAdapter(Port& owner) :
         stateMutex(1),
-        readDelegate(YARP_NULLPTR),
-        permanentReadDelegate(YARP_NULLPTR),
-        adminReadDelegate(YARP_NULLPTR),
-        writeDelegate(YARP_NULLPTR),
+        readDelegate(nullptr),
+        permanentReadDelegate(nullptr),
+        adminReadDelegate(nullptr),
+        writeDelegate(nullptr),
         readResult(false),
         readActive(false),
         readBackground(false),
@@ -25,7 +25,7 @@ yarp::os::impl::PortCoreAdapter::PortCoreAdapter(Port& owner) :
         replyDue(false),
         dropDue(false),
         produce(0), consume(0), readBlock(1),
-        recReadCreator(YARP_NULLPTR),
+        recReadCreator(nullptr),
         recWaitAfterSend(-1),
         usedForRead(false),
         usedForWrite(false),
@@ -35,7 +35,7 @@ yarp::os::impl::PortCoreAdapter::PortCoreAdapter(Port& owner) :
         commitToWrite(false),
         commitToRpc(false),
         active(false),
-        recCallbackLock(YARP_NULLPTR),
+        recCallbackLock(nullptr),
         haveCallbackLock(false)
 {
     setContactable(&owner);
@@ -93,12 +93,12 @@ void yarp::os::impl::PortCoreAdapter::finishReading()
 void yarp::os::impl::PortCoreAdapter::finishWriting()
 {
     if (isWriting()) {
-        double start = Time::now();
+        double start = SystemClock::nowSystem();
         double pause = 0.01;
         do {
-            Time::delay(pause);
+            SystemClock::delaySystem(pause);
             pause *= 2;
-        } while (isWriting() && (Time::now()-start<3));
+        } while (isWriting() && (SystemClock::nowSystem()-start<3));
         if (isWriting()) {
             YARP_ERROR(Logger::get(), "Closing port that was sending data (slowly)");
         }
@@ -116,7 +116,7 @@ void yarp::os::impl::PortCoreAdapter::resumeFull()
 
 bool yarp::os::impl::PortCoreAdapter::read(ConnectionReader& reader)
 {
-    if (permanentReadDelegate!=YARP_NULLPTR) {
+    if (permanentReadDelegate!=nullptr) {
         bool result = permanentReadDelegate->read(reader);
         return result;
     }
@@ -127,7 +127,7 @@ bool yarp::os::impl::PortCoreAdapter::read(ConnectionReader& reader)
     if (!reader.isValid()) {
         // interrupt
         stateMutex.wait();
-        if (readDelegate!=YARP_NULLPTR) {
+        if (readDelegate!=nullptr) {
             readResult = readDelegate->read(reader);
         }
         stateMutex.post();
@@ -149,7 +149,7 @@ bool yarp::os::impl::PortCoreAdapter::read(ConnectionReader& reader)
 
     stateMutex.wait();
     readResult = false;
-    if (readDelegate!=YARP_NULLPTR) {
+    if (readDelegate!=nullptr) {
         readResult = readDelegate->read(reader);
     } else {
         // read and ignore
@@ -158,8 +158,8 @@ bool yarp::os::impl::PortCoreAdapter::read(ConnectionReader& reader)
         b.read(reader);
     }
     if (!readBackground) {
-        readDelegate = YARP_NULLPTR;
-        writeDelegate = YARP_NULLPTR;
+        readDelegate = nullptr;
+        writeDelegate = nullptr;
     }
     bool result = readResult;
     stateMutex.post();
@@ -173,10 +173,10 @@ bool yarp::os::impl::PortCoreAdapter::read(ConnectionReader& reader)
             readBlock.post();
             return false;
         }
-        if (writeDelegate!=YARP_NULLPTR) {
+        if (writeDelegate!=nullptr) {
             stateMutex.wait();
             ConnectionWriter *writer = reader.getWriter();
-            if (writer!=YARP_NULLPTR) {
+            if (writer!=nullptr) {
                 result = readResult = writeDelegate->write(*writer);
             }
             stateMutex.post();
@@ -210,7 +210,7 @@ bool yarp::os::impl::PortCoreAdapter::read(PortReader& reader, bool willReply)
     readActive = true;
     readDelegate = &reader;
     checkType(reader);
-    writeDelegate = YARP_NULLPTR;
+    writeDelegate = nullptr;
     this->willReply = willReply;
     consume.post(); // happy consumer
     stateMutex.post();
@@ -218,7 +218,7 @@ bool yarp::os::impl::PortCoreAdapter::read(PortReader& reader, bool willReply)
     produce.wait();
     stateMutex.wait();
     if (!readBackground) {
-        readDelegate = YARP_NULLPTR;
+        readDelegate = nullptr;
     }
     bool result = readResult;
     if (!result) replyDue = false;
@@ -290,7 +290,7 @@ bool yarp::os::impl::PortCoreAdapter::configCallbackLock(Mutex *lock)
 
 bool yarp::os::impl::PortCoreAdapter::unconfigCallbackLock()
 {
-    recCallbackLock = YARP_NULLPTR;
+    recCallbackLock = nullptr;
     haveCallbackLock = false;
     return removeCallbackLock();
 }

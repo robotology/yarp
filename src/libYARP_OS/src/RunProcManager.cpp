@@ -45,7 +45,7 @@
         while (true)
         {
             DWORD nCount=0;
-            HANDLE* aHandlesVector = YARP_NULLPTR;
+            HANDLE* aHandlesVector = nullptr;
             pProcessVector->GetHandles(aHandlesVector, nCount);
 
             if (nCount)
@@ -55,7 +55,7 @@
             }
             else
             {
-                //hZombieHunter = YARP_NULLPTR;
+                //hZombieHunter = nullptr;
 
                 return 0;
             }
@@ -141,7 +141,7 @@ bool YarpRunProcInfo::IsActive()
 bool YarpRunProcInfo::Clean()
 {
 #if !defined(_WIN32)
-    if (!mCleanCmd && yarp::os::impl::waitpid(mPidCmd, YARP_NULLPTR, WNOHANG) == mPidCmd)
+    if (!mCleanCmd && yarp::os::impl::waitpid(mPidCmd, nullptr, WNOHANG) == mPidCmd)
     {
         fprintf(stderr, "CLEANUP cmd %d\n", mPidCmd);
         mCleanCmd=true;
@@ -156,10 +156,10 @@ bool YarpRunProcInfo::Clean()
 YarpRunInfoVector::YarpRunInfoVector()
 {
     m_nProcesses=0;
-    m_pStdioMate = YARP_NULLPTR;
+    m_pStdioMate = nullptr;
     for (int i=0; i<MAX_PROCESSES; ++i)
     {
-        m_apList[i] = YARP_NULLPTR;
+        m_apList[i] = nullptr;
     }
 }
 
@@ -172,7 +172,7 @@ YarpRunInfoVector::~YarpRunInfoVector()
         if (m_apList[i])
         {
             delete m_apList[i];
-            m_apList[i] = YARP_NULLPTR;
+            m_apList[i] = nullptr;
         }
     }
 
@@ -180,7 +180,7 @@ YarpRunInfoVector::~YarpRunInfoVector()
     if (hZombieHunter)
     {
         HANDLE hkill=hZombieHunter;
-        hZombieHunter = YARP_NULLPTR;
+        hZombieHunter = nullptr;
         TerminateThread(hkill, 0);
     }
 #endif
@@ -203,7 +203,7 @@ bool YarpRunInfoVector::Add(YarpRunProcInfo *process)
     if (hZombieHunter)
     {
         HANDLE hkill=hZombieHunter;
-        hZombieHunter = YARP_NULLPTR;
+        hZombieHunter = nullptr;
         TerminateThread(hkill, 0);
     }
 #endif
@@ -314,7 +314,7 @@ bool YarpRunInfoVector::CleanZombie(int zombie)
 {
     bool bFound=false;
 
-    YarpRunProcInfo *pZombie = YARP_NULLPTR;
+    YarpRunProcInfo *pZombie = nullptr;
 
     WAIT()
 
@@ -323,7 +323,7 @@ bool YarpRunInfoVector::CleanZombie(int zombie)
         if (m_apList[i] && m_apList[i]->Clean(zombie, pZombie))
         {
             bFound=true;
-            if (pZombie) m_apList[i] = YARP_NULLPTR;
+            if (pZombie) m_apList[i] = nullptr;
             break;
         }
     }
@@ -425,7 +425,7 @@ void YarpRunInfoVector::Pack()
 
     for (int i=tot; i<m_nProcesses; ++i)
     {
-        m_apList[i]=YARP_NULLPTR;
+        m_apList[i]=nullptr;
     }
 
     m_nProcesses=tot;
@@ -447,7 +447,7 @@ YarpRunProcInfo(alias, on, pidCmd, handleCmd, hold)
     mPidStdout=pidStdout;
     mStdio=stdio;
     mStdioUUID="";
-    mStdioVector = YARP_NULLPTR;
+    mStdioVector = nullptr;
 
     mReadFromPipeStdinToCmd = 0;
     mWriteToPipeStdinToCmd = 0;
@@ -529,19 +529,19 @@ bool YarpRunCmdWithStdioInfo::Clean()
 
 #else
 
-    if (!mCleanCmd && yarp::os::impl::waitpid(mPidCmd, YARP_NULLPTR, WNOHANG) == mPidCmd)
+    if (!mCleanCmd && yarp::os::impl::waitpid(mPidCmd, nullptr, WNOHANG) == mPidCmd)
     {
         fprintf(stderr, "CLEANUP cmd %d\n", mPidCmd);
         mCleanCmd=true;
     }
 
-    if (!mCleanStdin && yarp::os::impl::waitpid(mPidStdin, YARP_NULLPTR, WNOHANG) == mPidStdin)
+    if (!mCleanStdin && yarp::os::impl::waitpid(mPidStdin, nullptr, WNOHANG) == mPidStdin)
     {
         fprintf(stderr, "CLEANUP stdin %d\n", mPidStdin);
         mCleanStdin=true;
     }
 
-    if (!mCleanStdout && yarp::os::impl::waitpid(mPidStdout, YARP_NULLPTR, WNOHANG) == mPidStdout)
+    if (!mCleanStdout && yarp::os::impl::waitpid(mPidStdout, nullptr, WNOHANG) == mPidStdout)
     {
         fprintf(stderr, "CLEANUP stdout %d\n", mPidStdout);
         mCleanStdout=true;
@@ -667,7 +667,7 @@ bool TERMINATE(PID dwPID)
     // then we give up immediately.
     hProc=OpenProcess(SYNCHRONIZE|PROCESS_TERMINATE, FALSE, dwPID);
 
-    if (hProc == YARP_NULLPTR)
+    if (hProc == nullptr)
     {
         return false;
     }

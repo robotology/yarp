@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2016 iCub Facility, Istituto Italiano di Tecnologia
+ * Copyright (C) 2017 Istituto Italiano di Tecnologia (IIT)
  * Authors: Andrea Ruzzenenti <andrea.ruzzenenti@iit.it>
  * CopyPolicy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
  */
@@ -10,7 +10,9 @@
 #include <yarp/sig/Vector.h>
 #include <yarp/dev/api.h>
 #include <yarp/os/Vocab.h>
+#include <yarp/os/RateThread.h>
 #include <map>
+#include <vector>
 
 #define HAT_ACTIONS_ID_SHIFT 100
 
@@ -19,19 +21,23 @@ namespace yarp
     namespace dev
     {
         class IJoypadController;
+        class IJoypadEvent;
+        class IJoypadEventDriven;
     }
 }
 
-class  YARP_dev_API yarp::dev::IJoypadController
+class YARP_dev_API yarp::dev::IJoypadController
 {
+public:
+    enum JoypadCtrl_coordinateMode {JypCtrlcoord_POLAR  =  0, JypCtrlcoord_CARTESIAN = 1};
+
 protected:
     std::map<int, std::string> m_actions;
 
-    virtual bool parseActions(const yarp::os::Searchable& cfg, int *count = YARP_NULLPTR);
+    virtual bool parseActions(const yarp::os::Searchable& cfg, int *count = nullptr);
     virtual bool executeAction(int action_id);
-public:
 
-    enum JoypadCtrl_coordinateMode {JypCtrlcoord_POLAR  =  0, JypCtrlcoord_CARTESIAN = 1};
+public:
 
     /**
     Destructor
@@ -39,6 +45,16 @@ public:
     * @return
     */
     virtual ~IJoypadController(){}
+
+    /**
+      Activate event Driven mode
+     * @brief eventDriven
+     * @param enable a bool to turn on or off the eventDriven mode
+     * * @param event a pointer to a valid yarp::dev::IJoypadEvent object whom action() method will be called on event detection
+     * @return true if succeded. false otherwise
+     */
+    virtual bool eventDriven(bool enable, yarp::dev::IJoypadEvent* event = nullptr){return false;}
+    virtual bool isEventDriven(){return false;}
 
     /**
       Get number of Axes
@@ -155,6 +171,97 @@ public:
     */
     virtual bool getTouch(unsigned int touch_id, yarp::sig::Vector& value) = 0;
 };
+
+class YARP_dev_API yarp::dev::IJoypadEvent
+{
+public:
+    virtual ~IJoypadEvent();
+
+    template <typename T> struct joyData
+    {
+        unsigned int m_id;
+        T            m_datum;
+
+        joyData(unsigned int id, const T& datum)
+        {
+            m_id    = id;
+            m_datum = datum;
+        }
+    };
+
+    virtual void action(std::vector<joyData<float> >             buttons,
+                        std::vector<joyData<double> >            axes,
+                        std::vector<joyData<unsigned char> >     hats,
+                        std::vector<joyData<yarp::sig::Vector> > trackBalls,
+                        std::vector<joyData<yarp::sig::Vector> > sticks,
+                        std::vector<joyData<yarp::sig::Vector> > Touch) = 0;
+};
+
+
+
+class YARP_dev_API yarp::dev::IJoypadEventDriven : yarp::os::RateThread,
+                                                   public yarp::dev::IJoypadController
+{
+private:
+    yarp::dev::IJoypadEvent*       m_event;
+    bool                           EventDrivenEnabled;
+    std::vector<float>             old_buttons;
+    std::vector<double>            old_axes;
+    std::vector<unsigned char>     old_hats;
+    std::vector<yarp::sig::Vector> old_trackballs;
+    std::vector<yarp::sig::Vector> old_sticks;
+    std::vector<yarp::sig::Vector> old_touches;
+protected:
+    virtual bool getRawAxisCount(unsigned int& axis_count) = 0;
+    virtual bool getRawButtonCount(unsigned int& button_count) = 0;
+    virtual bool getRawTrackballCount(unsigned int& Trackball_count) = 0;
+    virtual bool getRawHatCount(unsigned int& Hat_count) = 0;
+    virtual bool getRawTouchSurfaceCount(unsigned int& touch_count) = 0;
+    virtual bool getRawStickCount(unsigned int& stick_count) = 0;
+    virtual bool getRawStickDoF(unsigned int stick_id, unsigned int& DoF) = 0;
+    virtual bool getRawButton(unsigned int button_id, float& value) = 0;
+    virtual bool getRawTrackball(unsigned int trackball_id, yarp::sig::Vector& value) = 0;
+    virtual bool getRawHat(unsigned int hat_id, unsigned char& value) = 0;
+    virtual bool getRawAxis(unsigned int axis_id, double& value) = 0;
+    virtual bool getRawStick(unsigned int stick_id, yarp::sig::Vector& value, JoypadCtrl_coordinateMode coordinate_mode) = 0;
+    virtual bool getRawTouch(unsigned int touch_id, yarp::sig::Vector& value) = 0;
+    using IJoypadController::m_actions;
+    using IJoypadController::executeAction;
+    using IJoypadController::parseActions;
+
+public:
+
+    virtual bool getAxisCount(unsigned int& axis_count) override final;
+    virtual bool getButtonCount(unsigned int& button_count) override final;
+    virtual bool getTrackballCount(unsigned int& Trackball_count) override final;
+    virtual bool getHatCount(unsigned int& Hat_count) override final;
+    virtual bool getTouchSurfaceCount(unsigned int& touch_count) override final;
+    virtual bool getStickCount(unsigned int& stick_count) override final;
+    virtual bool getStickDoF(unsigned int stick_id, unsigned int& DoF) override final;
+    virtual bool getButton(unsigned int button_id, float& value) override final;
+    virtual bool getTrackball(unsigned int trackball_id, yarp::sig::Vector& value) override final;
+    virtual bool getHat(unsigned int hat_id, unsigned char& value) override final;
+    virtual bool getAxis(unsigned int axis_id, double& value) override final;
+    virtual bool getStick(unsigned int stick_id, yarp::sig::Vector& value, JoypadCtrl_coordinateMode coordinate_mode) override final;
+    virtual bool getTouch(unsigned int touch_id, yarp::sig::Vector& value) override final;
+    using IJoypadController::JoypadCtrl_coordinateMode;
+    using IJoypadController::JypCtrlcoord_CARTESIAN;
+    using IJoypadController::JypCtrlcoord_POLAR;
+
+
+
+    IJoypadEventDriven();
+
+    IJoypadEventDriven(int rate);
+
+    virtual bool threadInit() override final;
+    virtual void run() override final;
+
+    virtual bool eventDriven(bool enable, yarp::dev::IJoypadEvent* event = nullptr) override;
+    virtual bool isEventDriven() override { return EventDrivenEnabled;}
+};
+
+
 #define YRPJOY_HAT_CENTERED	 0x00
 #define YRPJOY_HAT_UP		 0x01
 #define YRPJOY_HAT_RIGHT	 0x02

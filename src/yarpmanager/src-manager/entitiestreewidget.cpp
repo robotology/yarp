@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2014 iCub Facility - Istituto Italiano di Tecnologia
+ * Copyright (C) 2014 Istituto Italiano di Tecnologia (IIT)
  * Author: Davide Perrone
  * Date: Feb 2014
  * email:   dperrone@aitek.it
@@ -26,20 +26,24 @@ EntitiesTreeWidget::EntitiesTreeWidget(QWidget *parent) : QTreeWidget(parent)
 {
 
     missingFile = false;
-    applicationNode = new QTreeWidgetItem(this,QStringList() << "Application");
+    applicationNode = new QTreeWidgetItem(this,QStringList() << "Applications");
     modulesNode = new QTreeWidgetItem(this,QStringList() << "Modules");
     resourcesNode = new QTreeWidgetItem(this,QStringList() << "Resources");
     templatesNode = new QTreeWidgetItem(this,QStringList() << "Templates");
+    portsNode = new QTreeWidgetItem(this,QStringList() << "Ports");
 
     applicationNode->setIcon(0,QIcon(":/folder-app.svg"));
     modulesNode->setIcon(0,QIcon(":/folder-mod.svg"));
     resourcesNode->setIcon(0,QIcon(":/folder-res.svg"));
     templatesNode->setIcon(0,QIcon(":/folder.svg"));
+    portsNode->setIcon(0,QIcon(":/folder-ports.svg"));
+
 
     addTopLevelItem(applicationNode);
     addTopLevelItem(modulesNode);
     addTopLevelItem(resourcesNode);
     addTopLevelItem(templatesNode);
+    addTopLevelItem(portsNode);
 
     setExpandsOnDoubleClick(false);
     setContextMenuPolicy(Qt::CustomContextMenu);
@@ -183,6 +187,19 @@ void EntitiesTreeWidget::addAppTemplate(yarp::manager::AppTemplate* tmp)
     item->setData(0,Qt::UserRole + 1 ,tmp->name.data());
     item->setData(0,Qt::UserRole + 2 ,tmp->tmpFileName.data());
     item->setIcon(0,QIcon(":/file-xml22.svg"));
+}
+
+void EntitiesTreeWidget::addPort(QStringList portDetails)
+{
+    if (portDetails.size() < 2)
+    {
+        return;
+    }
+    QTreeWidgetItem *item = new QTreeWidgetItem(portsNode,QStringList() << portDetails[0]);
+    item->setIcon(0,QIcon(":/port22.svg"));
+    QTreeWidgetItem *portIp = new QTreeWidgetItem(item,QStringList() << portDetails[1]);
+    YARP_UNUSED(portIp);
+
 }
 
 
@@ -433,11 +450,23 @@ void EntitiesTreeWidget::clearTemplates()
     }
 }
 
+void EntitiesTreeWidget::clearPorts()
+{
+    if (!portsNode)
+    {
+        return;
+    }
+    while (portsNode->childCount() > 0)
+    {
+        portsNode->removeChild(portsNode->child(0));
+    }
+}
+
 QTreeWidgetItem * EntitiesTreeWidget::getWidgetItemByFilename(const QString xmlFile){
     QList<QTreeWidgetItem*> clist = this->findItems(xmlFile, Qt::MatchContains|Qt::MatchRecursive, 0);
     if (clist.size())
         return clist.at(0)->parent();
-    return YARP_NULLPTR;
+    return nullptr;
 }
 
 /*! \brief Called when a context menu has been requested
@@ -453,7 +482,12 @@ void EntitiesTreeWidget::onContext(QPoint p)
     QPoint pp = QPoint(p.x(),p.y() + header()->height());
     if (it == applicationNode || it ==resourcesNode || it == modulesNode || it == templatesNode) {
         topLevelMenu.exec(mapToGlobal(pp));
-    } else {
+    }
+    else if(it == portsNode)
+    {
+        //do nothing
+    }
+    else {
         if (it->parent() == applicationNode) {
             loadFiles->setText("Load Application");
             secondLevelMenu.exec(mapToGlobal(pp));
@@ -463,7 +497,12 @@ void EntitiesTreeWidget::onContext(QPoint p)
         } else if (it->parent() == modulesNode) {
             loadFiles->setText("Load Module");
             secondLevelMenu.exec(mapToGlobal(pp));
-        } else {
+        }
+        else if(it->parent() == portsNode || it->parent()->parent() == portsNode)
+        {
+            //do nothing
+        }
+        else {
             leafLevelMenu.exec(mapToGlobal(pp));
         }
     }

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2014 iCub Facility - Istituto Italiano di Tecnologia
+ * Copyright (C) 2014 Istituto Italiano di Tecnologia (IIT)
  * Author: Davide Perrone
  * Date: Feb 2014
  * email:   dperrone@aitek.it
@@ -12,10 +12,12 @@
 #include "ui_mainwindow.h"
 
 #include <yarp/os/Log.h>
+#include <yarp/os/ResourceFinder.h>
 #include <yarp/manager/ymm-dir.h>
 #include <yarp/manager/xmlapploader.h>
 #include <yarp/manager/xmltemploader.h>
 #include <yarp/manager/localbroker.h>
+#include <yarp/profiler/NetworkProfiler.h>
 
 #include "moduleviewwidget.h"
 #include "applicationviewwidget.h"
@@ -29,6 +31,7 @@
 #include <QMessageBox>
 #include <QFileDialog>
 #include <QDesktopServices>
+#include <QInputDialog>
 
 #include <QWizardPage>
 #include <QLabel>
@@ -84,8 +87,10 @@ MainWindow::MainWindow(QWidget *parent) :
     qRegisterMetaType< QVector<int> >("QVector<int>");
     ui->mainToolBar->setContextMenuPolicy(Qt::PreventContextMenu);
     ui->menuBar->setContextMenuPolicy(Qt::PreventContextMenu);
-    builderToolBar = NULL;
-    prevWidget = NULL;
+    builderToolBar = nullptr;
+    prevWidget = nullptr;
+
+    watcher = new QFileSystemWatcher(this);
 
 
 
@@ -131,8 +136,12 @@ MainWindow::MainWindow(QWidget *parent) :
     connect(ui->actionAbout,SIGNAL(triggered()),this,SLOT(onAbout()));
     connect(ui->action_Builder_Window, SIGNAL(triggered()),this, SLOT(onViewBuilderWindows()));
     connect(ui->action_Manager_Window, SIGNAL(triggered()),this, SLOT(onViewBuilderWindows()));
+    connect(ui->actionYarpClean, SIGNAL(triggered()),this, SLOT(onYarpClean()));
+    connect(ui->actionYarpNameList, SIGNAL(triggered()),this, SLOT(onYarpNameList()));
 
     connect(this,SIGNAL(selectItem(QString, bool)),ui->entitiesTree,SLOT(onSelectItem(QString, bool)));
+
+    connect(watcher, SIGNAL(fileChanged(const QString &)), this, SLOT(onFileChanged(const QString &)));
 
     //Adding actions for making the window listen key events(shortcuts)
     this->addAction(ui->actionQuit);
@@ -148,7 +157,27 @@ MainWindow::MainWindow(QWidget *parent) :
     ui->actionStop->setEnabled(false);
     ui->actionKill->setEnabled(false);
 
+    ui->actionAuto_reload->setChecked(true);
+
     ui->action_Manager_Window->setChecked(true);
+#ifdef WIN32
+    ui->tabWidgetLeft->tabBar()->hide();
+#else
+    yarp::os::ResourceFinder& rf = yarp::os::ResourceFinder::getResourceFinderSingleton();
+
+    std::string confFile = rf.findFileByName("cluster-config.xml");
+    if (!confFile.empty())
+    {
+        ui->clusterWidget->setConfigFile(confFile);
+        ui->clusterWidget->init();
+        connect(ui->clusterWidget, SIGNAL(logError(QString)), this, SLOT(onLogError(QString)));
+        connect(ui->clusterWidget, SIGNAL(logMessage(QString)), this, SLOT(onLogMessage(QString)));
+    }
+    else
+    {
+        ui->tabWidgetLeft->tabBar()->hide();
+    }
+#endif
 
 }
 
@@ -314,6 +343,7 @@ void MainWindow::init(yarp::os::Property config)
         }
         //manageApplication(application->getName());
     }
+        onYarpNameList();
 }
 
 /*! \brief Reports tge error on the log window.
@@ -336,6 +366,11 @@ void MainWindow::reportErrors()
  */
 void MainWindow::syncApplicationList(QString selectNodeForEditing, bool open)
 {
+    if (!listOfAppFiles.isEmpty())
+    {
+        watcher->removePaths(listOfAppFiles);
+    }
+    listOfAppFiles.clear();
     ui->entitiesTree->clearApplications();
     ui->entitiesTree->clearModules();
     ui->entitiesTree->clearResources();
@@ -351,9 +386,11 @@ void MainWindow::syncApplicationList(QString selectNodeForEditing, bool open)
             if(strcmp(selectNodeForEditing.toLatin1().data(),app->getName())==0){
                 emit selectItem(selectNodeForEditing, open);
             }
-
+            listOfAppFiles.push_back(app->getXmlFile());
         }
     }
+
+    watcher->addPaths(listOfAppFiles);
 
     yarp::manager::ResourcePContainer resources = kb->getResources();
     for(yarp::manager::ResourcePIterator itr=resources.begin(); itr!=resources.end(); itr++){
@@ -394,12 +431,12 @@ bool MainWindow::loadRecursiveTemplates(const char* szPath)
 
     DIR *dir;
     struct dirent *entry;
-    if ((dir = opendir(strPath.c_str())) == NULL)
+    if ((dir = opendir(strPath.c_str())) == nullptr)
         return false;
 
     // loading from current folder
     yarp::manager::AppTemplate* tmp;
-    yarp::manager::XmlTempLoader tempload(strPath.c_str(), NULL);
+    yarp::manager::XmlTempLoader tempload(strPath.c_str(), nullptr);
     if(tempload.init())
     {
         while((tmp = tempload.getNextAppTemplate())){
@@ -434,7 +471,7 @@ bool MainWindow::loadRecursiveApplications(const char* szPath)
 
     DIR *dir;
     struct dirent *entry;
-    if ((dir = opendir(strPath.c_str())) == NULL)
+    if ((dir = opendir(strPath.c_str())) == nullptr)
         return false;
 
     lazyManager.addApplications(strPath.c_str());
@@ -484,6 +521,35 @@ bool MainWindow::initializeFile(string _class)
     }
 }
 
+int MainWindow::getAppTabIndex(QString appName)
+{
+    for (int i=0; i<ui->mainTabs->count(); i++){
+        if (ui->mainTabs->tabText(i) == appName){
+            return i;
+        }
+    }
+    return -1;
+}
+
+QString MainWindow::getAppNameFromXml(QString fileName)
+{
+    QString appName("");
+    yarp::manager::KnowledgeBase* kb = lazyManager.getKnowledgeBase();
+    yarp::manager::ApplicaitonPContainer apps =  kb->getApplications();
+    for(yarp::manager::ApplicationPIterator itr=apps.begin(); itr!=apps.end(); itr++)
+    {
+        yarp::manager::Application *app = dynamic_cast<yarp::manager::Application*>(*itr);
+        if(app)
+        {
+            if(app->getXmlFile() == fileName.toStdString())
+            {
+                return app->getName();
+            }
+        }
+    }
+    return appName;
+}
+
 /*! \brief Load the Resource on the MainWindow
     \param res the resource
  */
@@ -525,6 +591,7 @@ void MainWindow::viewModule(yarp::manager::Module *module)
  */
 void MainWindow::viewApplication(yarp::manager::Application *app,bool editingMode)
 {
+
     for (int i=0; i<ui->mainTabs->count(); i++){
         if (ui->mainTabs->tabText(i) == app->getName()){
             ui->mainTabs->setCurrentIndex(i);
@@ -745,11 +812,23 @@ bool MainWindow::onTabClose(int index)
         }
 
         if(aw && aw->isRunning()){
-            if( QMessageBox::warning(this,
-                                     QString("Closing %1").arg(ui->mainTabs->tabText(index)),
-                                     "You have some running module. After closing the application window you might not be able to recover them. Are you sure?",
-                                     QMessageBox::Yes,QMessageBox::No) == QMessageBox::No){
+            QMessageBox msgBox;
+            msgBox.setIcon(QMessageBox::Icon::Warning);
+            msgBox.setWindowTitle(QString("Closing %1").arg(ui->mainTabs->tabText(index)));
+            msgBox.setText(tr("You have some running module. After closing the application window you might not be able to recover them. Are you sure?"));
+            QPushButton* noButton = msgBox.addButton(tr("No"), QMessageBox::NoRole);
+            QPushButton* pstopAndClose = msgBox.addButton(tr("Yes and Stop"), QMessageBox::YesRole);
+            msgBox.addButton(tr("Yes"), QMessageBox::YesRole);
+            msgBox.setDefaultButton(noButton);
+            msgBox.exec();
+
+            if (msgBox.clickedButton() == noButton)
+            {
                 return false;
+            }
+            else if(msgBox.clickedButton() == pstopAndClose)
+            {
+                onStop();
             }
         }
 
@@ -921,7 +1000,7 @@ void MainWindow::onTabChangeItem(int index)
             prevWidget = w;
         }else{
             ui->actionRefresh_Status->setEnabled(false);
-            prevWidget = NULL;
+            prevWidget = nullptr;
         }
         ui->actionSelect_All->setEnabled(false);
         ui->actionExport_Graph->setEnabled(false);
@@ -980,7 +1059,7 @@ void MainWindow::onNewApplication()
                 if(appName)
                 {
                     delete [] appName;
-                    appName = YARP_NULLPTR;
+                    appName = nullptr;
                 }
                 return;
             }
@@ -1002,7 +1081,7 @@ void MainWindow::onNewApplication()
         if(appName)
         {
             delete [] appName;
-            appName = YARP_NULLPTR;
+            appName = nullptr;
         }
         delete newApplicationWizard;
         QFile f(fileName);
@@ -1031,7 +1110,7 @@ void MainWindow::onNewResource()
     }
 
     yarp::manager::LocalBroker launcher;
-    if(launcher.init(ext_editor.c_str(), fileName.toLatin1().data(), NULL, NULL, NULL, NULL)){
+    if(launcher.init(ext_editor.c_str(), fileName.toLatin1().data(), nullptr, nullptr, nullptr, nullptr)){
         if(!launcher.start() && strlen(launcher.error())){
             QString msg = QString("Error while launching %1. %2").arg(ext_editor.c_str()).arg(launcher.error());
             logger->addError(msg.toLatin1().data());
@@ -1058,7 +1137,7 @@ void MainWindow::onNewModule()
     }
 
     yarp::manager::LocalBroker launcher;
-    if(launcher.init(ext_editor.c_str(), fileName.toLatin1().data(), NULL, NULL, NULL, NULL)){
+    if(launcher.init(ext_editor.c_str(), fileName.toLatin1().data(), nullptr, nullptr, nullptr, nullptr)){
         if(!launcher.start() && strlen(launcher.error())){
             QString msg = QString("Error while launching %1. %2").arg(ext_editor.c_str()).arg(launcher.error());
             logger->addError(msg.toLatin1().data());
@@ -1122,15 +1201,104 @@ void MainWindow::onModified(bool mod)
             ui->mainTabs->setTabText(index,w->getAppName());
         }
     }
+}
 
+void MainWindow::onFileChanged(const QString &path)
+{
 
+    watcher->addPaths(listOfAppFiles);
+    if (!ui->actionAuto_reload->isChecked())
+    {
+        return;
+    }
 
+    // get the app name from the file name
+    QString appName = getAppNameFromXml(path);
 
+    QMessageBox::StandardButton reply;
+    reply = QMessageBox::question(this, "File changed", "Xml file '" + path +
+                                  "' changed.\nDo you want to reload the application? If open, the respective tab will be closed",
+                                  QMessageBox::Yes|QMessageBox::No);
+    if (reply == QMessageBox::No)
+        return;
 
-//    if(mod){
-//        int index = ui->mainTabs->currentIndex();
-//        ui->mainTabs->setTabText(index,QString("%1*").arg(ui->mainTabs->tabText(index).toLatin1().data()));
-//    }
+    Application* app = (Application*) lazyManager.getNode(appName.toStdString());
+    if (app)
+    {
+        int index = getAppTabIndex(appName);
+        if (index >= 0)
+        {
+            if (!onTabClose(index))
+            {
+                return;
+            }
+            else
+            {
+                // refresh it in the application list
+                onReopenApplication(appName, path);
+                // the reference has been changed reopening the application
+                app = (Application*) lazyManager.getNode(appName.toStdString());
+                // is it already open in the tab? if so close it and reopen it after the refresh
+                if (app)
+                {
+                    viewApplication(app, false);
+                }
+                return;            }
+        }
+        else
+        {
+            // refresh it in the application list
+            onReopenApplication(appName, path);
+            return;
+        }
+    }
+    return;
+}
+
+void MainWindow::onYarpClean()
+{
+    if(!yarp::os::Network::checkNetwork())
+    {
+        onLogWarning(QString::fromLatin1("yarpserver is not running"));
+        return;
+    }
+    QInputDialog* inputDialog = new QInputDialog(this);
+    inputDialog->setOptions(QInputDialog::NoButtons);
+
+    bool ok=false;
+
+    float timeout =  inputDialog->getDouble(nullptr ,"Running yarp clean",
+                                          "Be aware that yarp clean with a little timetout could\n"
+                                          "unregister ports that are actually open.\n\n"
+                                           "Timeout(seconds):", 0.3, 0, 2147483647, 1, &ok);
+    if (ok)
+    {
+        onLogMessage(QString("Yarp clean: cleaning death ports..."));
+        yarp::profiler::NetworkProfiler::yarpClean(timeout);
+        onYarpNameList();
+    }
+
+}
+
+void MainWindow::onYarpNameList()
+{
+    if(!yarp::os::Network::checkNetwork())
+    {
+        onLogWarning(QString::fromLatin1("yarpserver is not running"));
+        return;
+    }
+    ui->entitiesTree->clearPorts();
+    yarp::profiler::NetworkProfiler::ports_name_set ports;
+    yarp::profiler::NetworkProfiler::yarpNameList(ports, true);
+    for(size_t i = 0; i<ports.size(); i++)
+    {
+        std::string portName = ports[i].find("name").asString();
+        std::string portIp   = ports[i].find("ip").asString() + " port " +
+                    std::to_string(ports[i].find("port_number").asInt());
+        ui->entitiesTree->addPort(QStringList() << QString(portName.c_str())
+                                  << QString(portIp.c_str()));
+    }
+    onLogMessage(QString::fromLatin1("Running yarp name list...found %1 ports").arg(ports.size()));
 }
 
 void MainWindow::onSave()
@@ -1165,7 +1333,7 @@ void MainWindow::onSaveAs()
         return;
     }
     if(fileName.trimmed().size() == 0 || fileName.contains(" ")){
-        QMessageBox::critical(NULL, QObject::tr("Error"), QObject::tr(string("Invalid file name " + fileName.toStdString()).c_str()));
+        QMessageBox::critical(nullptr, QObject::tr("Error"), QObject::tr(string("Invalid file name " + fileName.toStdString()).c_str()));
         return;
     }
 
@@ -1223,7 +1391,7 @@ void MainWindow::onOpen()
         return;
     }
 
-    char* name = YARP_NULLPTR;
+    char* name = nullptr;
 
     if(lazyManager.addApplication(fileName.toLatin1().data(), &name, true)){
         QString appName(name);
@@ -1232,7 +1400,7 @@ void MainWindow::onOpen()
     if(name)
     {
         delete [] name;
-        name = YARP_NULLPTR;
+        name = nullptr;
     }
 
     if(lazyManager.addResource(fileName.toLatin1().data())){
@@ -1247,7 +1415,7 @@ void MainWindow::onOpen()
 /*! \brief Opens the About Dialog */
 void MainWindow::onAbout()
 {
-    QString copyright = "2014 (C) iCub Facility\nIstituto Italiano di Tecnologia";
+    QString copyright = "2014 (C) Istituto Italiano di Tecnologia (IIT)";
     QString name = APP_NAME;
     QString version = APP_VERSION;
     AboutDlg dlg(name,version,copyright,"http://www.icub.org/");

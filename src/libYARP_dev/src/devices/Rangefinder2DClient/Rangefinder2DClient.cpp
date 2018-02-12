@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2015 iCub Facility - Istituto Italiano di Tecnologia
+ * Copyright (C) 2015 Istituto Italiano di Tecnologia (IIT)
  * Author: Marco Randazzo <marco.randazzo@iit.it>
  * CopyPolicy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
  */
@@ -34,7 +34,7 @@ inline void  Rangefinder2DInputPortProcessor::resetStat()
     deltaT=0;
     deltaTMax=0;
     deltaTMin=1e22;
-    now=Time::now();
+    now=SystemClock::nowSystem();
     prev=now;
     mutex.post();
 }
@@ -47,7 +47,7 @@ Rangefinder2DInputPortProcessor::Rangefinder2DInputPortProcessor()
 
 void Rangefinder2DInputPortProcessor::onRead(yarp::os::Bottle &b)
 {
-    now=Time::now();
+    now=SystemClock::nowSystem();
     mutex.wait();
 
     if (count>0)
@@ -246,7 +246,7 @@ bool yarp::dev::Rangefinder2DClient::open(yarp::os::Searchable &config)
 
     if (b_canOpenTransformClient)
     {
-        yarp::dev::IFrameTransform* iTrf = YARP_NULLPTR;
+        yarp::dev::IFrameTransform* iTrf = nullptr;
         drv->view(iTrf);
         if (!iTrf)
         {
@@ -315,7 +315,7 @@ bool yarp::dev::Rangefinder2DClient::getLaserMeasurement(std::vector<LaserMeasur
     {
         double angle = (i / double(size)*laser_angle_of_view + device_position_theta + scan_angle_min)* DEG2RAD;
         double value = ranges[i];
-#if defined(USE_SET_CARTESIAN)
+#if 1 //cartesian version is preferrable, even if more computationally expensive, since it takes in account device_position
         data[i].set_cartesian(value * cos(angle) + device_position_x, value * sin(angle) + device_position_y);
 #else
         data[i].set_polar(value,angle);

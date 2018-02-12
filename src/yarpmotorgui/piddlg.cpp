@@ -1,6 +1,6 @@
 /*
  * Copyright (C) 2010 RobotCub Consortium, European Commission FP6 Project IST-004370
- * Copyright (C) 2015 iCub Facility - Istituto Italiano di Tecnologia
+ * Copyright (C) 2015 Istituto Italiano di Tecnologia (IIT)
  * Author: Marco Randazzo <marco.randazzo@iit.it>
  *         Francesco Nori <francesco.nori@iit.it>
  *         Davide Perrone <dperrone@aitek.it>
@@ -95,7 +95,7 @@ PidDlg::~PidDlg()
     for (size_t cc = 0; cc < buttons.size(); cc++)
     {
         delete buttons[cc];
-        buttons[cc] = 0;
+        buttons[cc] = nullptr;
     }
     buttons.clear();
     delete ui;
@@ -251,7 +251,7 @@ void PidDlg::initRemoteVariables(IRemoteVariables* iVar)
             for (size_t cc = 0; cc < buttons.size(); cc++)
             {
                 delete buttons[cc];
-                buttons[cc] = 0;
+                buttons[cc] = nullptr;
             }
             buttons.clear();
             buttons.resize(keys_size);

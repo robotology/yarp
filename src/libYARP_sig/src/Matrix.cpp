@@ -14,15 +14,15 @@
 #include <yarp/os/NetFloat64.h>
 #include <yarp/os/NetInt32.h>
 
-#include <yarp/os/impl/PlatformVector.h>
-#include <cstdio>
 #include <yarp/os/impl/Logger.h>
+
+#include <vector>
+#include <cstdio>
 
 using namespace yarp::sig;
 using namespace yarp::os;
 
-#define RES(v) ((PlatformVector<T> *)v)
-#define RES_ITERATOR(v) ((PLATFORM_VECTOR_ITERATOR(double) *)v)
+#define RES(v) ((std::vector<T> *)v)
 
 YARP_BEGIN_PACK
 class MatrixPortContentHeader
@@ -44,7 +44,7 @@ public:
 };
 YARP_END_PACK
 
-/// network stuff
+// network stuff
 #include <yarp/os/NetInt32.h>
 
 bool yarp::sig::removeCols(const Matrix &in, Matrix &out, int first_col, int how_many)
@@ -93,7 +93,7 @@ bool yarp::sig::submatrix(const Matrix &in, Matrix &out, int r1, int r2, int c1,
     const double *i=in.data()+in.cols()*r1+c1;
     const int offset=in.cols()-(c2-c1+1);
 
-    if(i == YARP_NULLPTR || t == YARP_NULLPTR)
+    if(i == nullptr || t == nullptr)
         return false;
 
     for(int r=0;r<=(r2-r1);r++)
@@ -205,7 +205,7 @@ ConstString Matrix::toString(int precision, int width, const char* endRowStr) co
 
 void Matrix::updatePointers()
 {
-    if (matrix!=0)
+    if (matrix!=nullptr)
         delete [] matrix;
 
     int r=0;
@@ -254,10 +254,10 @@ const Matrix &Matrix::operator=(double v)
 
 Matrix::~Matrix()
 {
-    if (matrix!=0)
+    if (matrix!=nullptr)
         delete [] matrix;
 
-    if (storage!=0)
+    if (storage!=nullptr)
         delete [] storage;
 }
 
@@ -272,7 +272,7 @@ void Matrix::resize(int new_r, int new_c)
     const int copy_c=(new_c<ncols) ? new_c:ncols;
     //copy_r = (new_r<nrows) ? new_r:nrows;
 
-    if (storage!=0)
+    if (storage!=nullptr)
     {
         double *tmp_new=new_storage;
         double *tmp_current=storage;
@@ -476,7 +476,7 @@ bool Matrix::operator==(const yarp::sig::Matrix &r) const
     const double *tmp1=data();
     const double *tmp2=r.data();
 
-    if(tmp1 == YARP_NULLPTR || tmp2 == YARP_NULLPTR)
+    if(tmp1 == nullptr || tmp2 == nullptr)
         return false;
 
     int c=rows()*cols();
@@ -545,8 +545,8 @@ bool Matrix::setSubcol(const Vector &v, int r, int c)
 }
 
 Matrix::Matrix(int r, int c):
-    storage(0),
-    matrix(0),
+    storage(nullptr),
+    matrix(nullptr),
     nrows(r),
     ncols(c)
 {
@@ -556,13 +556,13 @@ Matrix::Matrix(int r, int c):
 }
 
 Matrix::Matrix(const Matrix &m): yarp::os::Portable(),
-    storage(0),
-    matrix(0)
+    storage(nullptr),
+    matrix(nullptr)
 {
     nrows=m.nrows;
     ncols=m.ncols;
 
-    if (m.storage!=0)
+    if (m.storage!=nullptr)
     {
         storage=new double [nrows*ncols];
         memcpy(storage, m.storage, nrows*ncols*sizeof(double));

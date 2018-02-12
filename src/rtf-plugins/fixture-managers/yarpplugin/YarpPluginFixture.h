@@ -1,5 +1,5 @@
 /*
- * Copyright: (C) 2016 iCub Facility - Istituto Italiano di Tecnologia
+ * Copyright: (C) 2016 Istituto Italiano di Tecnologia (IIT)
  * Authors: Nicolò Genesio <nicolo.genesio@iit.it>
  * Copy Policy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
  */
@@ -16,13 +16,13 @@
 #define RTF_FIXTURE_REPORT(message)\
     if(dynamic_cast<RTF::FixtureManager*>(this) == 0) {\
         RTF_ASSERT_ERROR("RTF_FIXTURE_REPORT is called outside a FixtureManager!"); }\
-    if(dynamic_cast<RTF::TestSuit*>(getDispatcher()) == 0) {\
-        RTF_ASSERT_ERROR("RTF_FIXTURE_REPORT cannot get any TestSuit instance from dispacher!"); }\
+    if(dynamic_cast<RTF::TestSuite*>(getDispatcher()) == 0) {\
+        RTF_ASSERT_ERROR("RTF_FIXTURE_REPORT cannot get any TestSuite instance from dispacher!"); }\
     RTF::Asserter::report(RTF::TestMessage("reports",\
                                             message,\
                                             RTF_SOURCEFILE(),\
                                             RTF_SOURCELINE()),\
-                                            dynamic_cast<RTF::TestSuit*>(getDispatcher()))
+                                            dynamic_cast<RTF::TestSuite*>(getDispatcher()))
 
 class YarpPluginFixture : public RTF::FixtureManager {
 public:

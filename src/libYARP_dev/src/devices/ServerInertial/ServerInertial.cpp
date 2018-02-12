@@ -33,11 +33,14 @@ yarp::dev::DriverCreator *createServerInertial()
 /**
  * Constructor.
  */
-yarp::dev::ServerInertial::ServerInertial() : IMU_polydriver(YARP_NULLPTR), ownDevices(false), subDeviceOwned(NULL)
+yarp::dev::ServerInertial::ServerInertial() :
+        IMU_polydriver(nullptr),
+        ownDevices(false),
+        subDeviceOwned(NULL)
 {
-    IMU = NULL;
+    IMU = nullptr;
     spoke = false;
-    iTimed=0;
+    iTimed=nullptr;
     period = 0.005;
     prev_timestamp_counter=0;
     curr_timestamp_counter=0;
@@ -49,7 +52,7 @@ yarp::dev::ServerInertial::ServerInertial() : IMU_polydriver(YARP_NULLPTR), ownD
     frame_id = "";
     rosNodeName = "";
     rosTopicName = "";
-    rosNode = NULL;
+    rosNode = nullptr;
     rosMsgCounter = 0;
     useROS = ROS_disabled;
 
@@ -78,7 +81,7 @@ yarp::dev::ServerInertial::ServerInertial() : IMU_polydriver(YARP_NULLPTR), ownD
 
 yarp::dev::ServerInertial::~ServerInertial()
 {
-    if (IMU != NULL) close();
+    if (IMU != nullptr) close();
 }
 
 
@@ -177,7 +180,7 @@ bool ServerInertial::initialize_ROS()
         {
             rosNode = new yarp::os::Node(rosNodeName);   // add a ROS node
 
-            if(rosNode == NULL)
+            if(rosNode == nullptr)
             {
                 yError() << " opening " << rosNodeName << " Node, check your yarp-ROS network configuration\n";
                 success = false;
@@ -247,7 +250,7 @@ bool yarp::dev::ServerInertial::openAndAttachSubDevice(yarp::os::Property& prop)
 
     // if we are here, poly is valid
     IMU_polydriver->view(IMU);     // attach to subdevice
-    if(IMU == NULL)
+    if(IMU == nullptr)
     {
         yError("Error, subdevice <%s> has no valid IMU interface\n", subdevice.toString().c_str());
         IMU_polydriver->close();
@@ -329,7 +332,7 @@ bool yarp::dev::ServerInertial::open(yarp::os::Searchable& config)
         return false;
     }
 
-    if( (ownDevices) && (IMU!=NULL) )
+    if( (ownDevices) && (IMU!=nullptr) )
     {
         start();
     }
@@ -342,16 +345,16 @@ bool yarp::dev::ServerInertial::close()
     yInfo("Closing Server Inertial...\n");
     stop();
 
-    if(rosNode!=NULL) {
+    if(rosNode!=nullptr) {
         rosNode->interrupt();
         delete rosNode;
-        rosNode = NULL;
+        rosNode = nullptr;
     }
 
-    if( (ownDevices) && (IMU_polydriver != NULL) )
+    if( (ownDevices) && (IMU_polydriver != nullptr) )
     {
         IMU_polydriver->close();
-        IMU = NULL;
+        IMU = nullptr;
     }
     return true;
 }
@@ -359,7 +362,7 @@ bool yarp::dev::ServerInertial::close()
 
 bool yarp::dev::ServerInertial::getInertial(yarp::os::Bottle &bot)
 {
-    if (IMU==NULL)
+    if (IMU==nullptr)
     {
         return false;
     }
@@ -396,7 +399,7 @@ void yarp::dev::ServerInertial::run()
     while (!isStopping())
     {
         before = yarp::os::Time::now();
-        if (IMU!=NULL)
+        if (IMU!=nullptr)
         {
             Bottle imuData;
             bool res = getInertial(imuData);
@@ -495,19 +498,19 @@ bool yarp::dev::ServerInertial::read(ConnectionReader& connection)
 
 bool yarp::dev::ServerInertial::read(yarp::sig::Vector &out)
 {
-    if (IMU == NULL) { return false; }
+    if (IMU == nullptr) { return false; }
     return IMU->read (out);
 }
 
 bool yarp::dev::ServerInertial::getChannels(int *nc)
 {
-    if (IMU == NULL) { return false; }
+    if (IMU == nullptr) { return false; }
     return IMU->getChannels (nc);
 }
 
 bool yarp::dev::ServerInertial::calibrate(int ch, double v)
 {
-    if (IMU==NULL) {return false;}
+    if (IMU==nullptr) {return false;}
     return IMU->calibrate(ch, v);
 }
 
@@ -526,7 +529,7 @@ bool yarp::dev::ServerInertial::attach(PolyDriver* poly)
     // iTimed interface
     IMU_polydriver->view(iTimed);  // not mandatory
 
-    if(IMU != NULL)
+    if(IMU != nullptr)
     {
         if(!Thread::isRunning())
             start();
@@ -556,6 +559,6 @@ bool yarp::dev::ServerInertial::attachAll(const PolyDriverList &imuToAttachTo)
 
 bool yarp::dev::ServerInertial::detachAll()
 {
-    IMU = NULL;
+    IMU = nullptr;
     return true;
 }

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2011 Department of Robotics Brain and Cognitive Sciences - Istituto Italiano di Tecnologia
+ * Copyright (C) 2011 Istituto Italiano di Tecnologia (IIT)
  * Authors: Paul Fitzpatrick
  * CopyPolicy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
  */
@@ -22,13 +22,13 @@ bool NameSpace::checkNetwork() {
     if (!c.isValid()) return false;
 
     OutputProtocol *out = Carriers::connect(c);
-    if (out==YARP_NULLPTR) {
+    if (out==nullptr) {
         return false;
     }
 
     out->close();
     delete out;
-    out = YARP_NULLPTR;
+    out = nullptr;
 
     return true;
 }
@@ -39,13 +39,13 @@ bool NameSpace::checkNetwork(double timeout) {
 
     c.setTimeout((float)timeout);
     OutputProtocol *out = Carriers::connect(c);
-    if (out==YARP_NULLPTR) {
+    if (out==nullptr) {
         return false;
     }
 
     out->close();
     delete out;
-    out = YARP_NULLPTR;
+    out = nullptr;
 
     return true;
 }

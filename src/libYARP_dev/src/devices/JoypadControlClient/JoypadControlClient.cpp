@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2017 iCub Facility - Istituto Italiano di Tecnologia
+ * Copyright (C) 2017 Istituto Italiano di Tecnologia (IIT)
  * Author: Andrea Ruzzenenti <andrea.ruzzenenti@iit.it>
  * CopyPolicy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
  */
@@ -20,14 +20,24 @@ yarp::dev::DriverCreator* createJoypadControlClient()
     return new DriverCreatorOf<yarp::dev::JoypadControlClient>("JoypadControlClient", "JoypadControlClient", "yarp::dev::JoypadControlClient");
 }
 
-JoypadControlClient::JoypadControlClient() : m_rpc_only(false)
+JoypadControlClient::JoypadControlClient() :  m_rpc_only(false)
 {
-
+    m_ports.push_back(&m_buttonsPort  );
+    m_ports.push_back(&m_axisPort     );
+    m_ports.push_back(&m_stickPort    );
+    m_ports.push_back(&m_trackballPort);
+    m_ports.push_back(&m_touchPort    );
+    m_ports.push_back(&m_hatsPort     );
+    watchdog.m_ports = m_ports;
 }
 
 bool JoypadControlClient::getJoypadInfo()
 {
     unsigned int count;
+    bool         temp;
+
+    temp       = m_rpc_only;
+    m_rpc_only = true;
     vector<tuple<int, JoypadControl::LoopablePort*, string> > vocabs_ports;
     vocabs_ports.push_back(make_tuple(VOCAB_BUTTON,    &m_buttonsPort,   "/buttons"));
     vocabs_ports.push_back(make_tuple(VOCAB_AXIS,      &m_axisPort,      "/axis"));
@@ -80,7 +90,7 @@ bool JoypadControlClient::getJoypadInfo()
             get<1>(vocab_port)->useCallback();
         }
     }
-
+    m_rpc_only = temp;
     return true;
 }
 
@@ -130,7 +140,20 @@ bool JoypadControlClient::open(yarp::os::Searchable& config)
         return false;
     }
 
+    watchdog.start();
+
     return true;
+}
+
+void JoypadControlWatchdog::run()
+{
+    for (auto port : m_ports)
+    {
+        if (port->count)
+        {
+            port->onTimeout(0.5);
+        }
+    }
 }
 
 bool JoypadControlClient::getCount(const int& vocab_toget, unsigned int& value)
@@ -140,52 +163,32 @@ bool JoypadControlClient::getCount(const int& vocab_toget, unsigned int& value)
         switch(vocab_toget)
         {
         case VOCAB_BUTTON:
-            if(m_buttonsPort.valid)
-            {
-                value = m_buttonsPort.count;
-                return true;
-            }
-            break;
+            value = m_buttonsPort.count;
+            return true;
 
         case VOCAB_AXIS:
-            if(m_axisPort.valid)
-            {
-                value = m_axisPort.count;
-                return true;
-            }
-            break;
+
+            value = m_axisPort.count;
+            return true;
 
         case VOCAB_TRACKBALL:
-            if(m_trackballPort.valid)
-            {
-                value = m_trackballPort.count;
-                return true;
-            }
-            break;
+            value = m_trackballPort.count;
+            return true;
 
         case VOCAB_TOUCH:
-            if(m_touchPort.valid)
-            {
-                value = m_touchPort.count;
-                return true;
-            }
-            break;
+
+            value = m_touchPort.count;
+            return true;
 
         case VOCAB_STICK:
-            if(m_stickPort.valid)
-            {
-                value = m_stickPort.count;
-                return true;
-            }
-            break;
+
+            value = m_stickPort.count;
+            return true;
 
         case VOCAB_HAT:
-            if(m_hatsPort.valid)
-            {
-                value = m_hatsPort.count;
-                return true;
-            }
-            break;
+
+            value = m_hatsPort.count;
+            return true;
 
         default:
             break;
@@ -209,36 +212,37 @@ bool JoypadControlClient::getCount(const int& vocab_toget, unsigned int& value)
     }
 }
 
-bool JoypadControlClient::getButtonCount(unsigned int& button_count)
+bool JoypadControlClient::getRawButtonCount(unsigned int& button_count)
 {
     return getCount(VOCAB_BUTTON, button_count);
 }
 
-bool JoypadControlClient::getAxisCount(unsigned int& axis_count)
+bool JoypadControlClient::getRawAxisCount(unsigned int& axis_count)
 {
     return getCount(VOCAB_AXIS, axis_count);
 }
 
-bool JoypadControlClient::getTrackballCount(unsigned int& Trackball_count)
+bool JoypadControlClient::getRawTrackballCount(unsigned int& Trackball_count)
 {
     return getCount(VOCAB_TRACKBALL, Trackball_count);
 }
 
-bool JoypadControlClient::getHatCount(unsigned int& Hat_count)
+bool JoypadControlClient::getRawHatCount(unsigned int& Hat_count)
 {
     return getCount(VOCAB_HAT, Hat_count);
 }
 
-bool JoypadControlClient::getTouchSurfaceCount(unsigned int& touch_count)
+bool JoypadControlClient::getRawTouchSurfaceCount(unsigned int& touch_count)
 {
     return getCount(VOCAB_TOUCH, touch_count);
 }
 
-bool JoypadControlClient::getStickCount(unsigned int& stick_count)
+bool JoypadControlClient::getRawStickCount(unsigned int& stick_count)
 {
     return getCount(VOCAB_STICK, stick_count);
 }
-bool JoypadControlClient::getStickDoF(unsigned int stick_id, unsigned int& DoF)
+
+bool JoypadControlClient::getRawStickDoF(unsigned int stick_id, unsigned int& DoF)
 {
     Bottle cmd, response;
     cmd.addVocab(VOCAB_IJOYPADCTRL);
@@ -258,7 +262,7 @@ bool JoypadControlClient::getStickDoF(unsigned int stick_id, unsigned int& DoF)
     }
 }
 
-bool JoypadControlClient::getButton(unsigned int button_id, float& value)
+bool JoypadControlClient::getRawButton(unsigned int button_id, float& value)
 {
     if(m_rpc_only)
     {
@@ -297,7 +301,7 @@ bool JoypadControlClient::getButton(unsigned int button_id, float& value)
     }
 }
 
-bool JoypadControlClient::getTrackball(unsigned int trackball_id, yarp::sig::Vector& value)
+bool JoypadControlClient::getRawTrackball(unsigned int trackball_id, yarp::sig::Vector& value)
 {
     value.clear();
     if(m_rpc_only)
@@ -324,10 +328,10 @@ bool JoypadControlClient::getTrackball(unsigned int trackball_id, yarp::sig::Vec
     else
     {
         LockGuard l(m_trackballPort.mutex);
-        if(trackball_id < m_trackballPort.storage.size()/2)
+        if(trackball_id < m_trackballPort.storage.size() / 2)
         {
-            value.push_back(m_trackballPort.storage[trackball_id*2]);
-            value.push_back(m_trackballPort.storage[trackball_id*2 + 1]);
+            value.push_back(m_trackballPort.storage[trackball_id * 2]);
+            value.push_back(m_trackballPort.storage[trackball_id * 2 + 1]);
             return true;
         }
         else
@@ -337,7 +341,7 @@ bool JoypadControlClient::getTrackball(unsigned int trackball_id, yarp::sig::Vec
     }
 }
 
-bool JoypadControlClient::getHat(unsigned int hat_id, unsigned char& value)
+bool JoypadControlClient::getRawHat(unsigned int hat_id, unsigned char& value)
 {
     if(m_rpc_only)
     {
@@ -374,7 +378,7 @@ bool JoypadControlClient::getHat(unsigned int hat_id, unsigned char& value)
     }
 }
 
-bool JoypadControlClient::getAxis(unsigned int axis_id, double& value)
+bool JoypadControlClient::getRawAxis(unsigned int axis_id, double& value)
 {
     if(m_rpc_only)
     {
@@ -413,7 +417,7 @@ bool JoypadControlClient::getAxis(unsigned int axis_id, double& value)
     }
 }
 
-bool JoypadControlClient::getStick(unsigned int stick_id, yarp::sig::Vector& value, JoypadCtrl_coordinateMode coordinate_mode)
+bool JoypadControlClient::getRawStick(unsigned int stick_id, yarp::sig::Vector& value, JoypadCtrl_coordinateMode coordinate_mode)
 {
     value.clear();
     if(m_rpc_only || coordinate_mode == IJoypadController::JypCtrlcoord_POLAR)
@@ -469,6 +473,12 @@ bool JoypadControlClient::getStick(unsigned int stick_id, yarp::sig::Vector& val
         LockGuard l(m_stickPort.mutex);
         int offset = 0;
 
+        unsigned int i;
+        if(getStickCount(i), stick_id >= i)
+        {
+            yError() << "JoypadControlCLient: GetStick() error.. Stick_id out of bound";
+            return false;
+        }
         for(size_t j = 0; j < stick_id; j++)
         {
             offset += m_stickDof[j];
@@ -483,7 +493,7 @@ bool JoypadControlClient::getStick(unsigned int stick_id, yarp::sig::Vector& val
     }
 }
 
-bool JoypadControlClient::getTouch(unsigned int touch_id, yarp::sig::Vector& value)
+bool JoypadControlClient::getRawTouch(unsigned int touch_id, yarp::sig::Vector& value)
 {
     value.clear();
     if(m_rpc_only)
@@ -512,8 +522,8 @@ bool JoypadControlClient::getTouch(unsigned int touch_id, yarp::sig::Vector& val
         LockGuard l(m_touchPort.mutex);
         if(touch_id < m_touchPort.storage.size()/2)
         {
-            value.push_back(m_touchPort.storage[touch_id*2]);
-            value.push_back(m_touchPort.storage[touch_id*2 + 1]);
+            value.push_back(m_touchPort.storage[touch_id * 2]);
+            value.push_back(m_touchPort.storage[touch_id * 2 + 1]);
             return true;
         }
         else

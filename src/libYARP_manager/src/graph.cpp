@@ -1,6 +1,6 @@
 /*
  *  Yarp Modules Manager
- *  Copyright: (C) 2011 Robotics, Brain and Cognitive Sciences - Italian Institute of Technology (IIT)
+ *  Copyright: (C) 2011 Istituto Italiano di Tecnologia (IIT)
  *  Authors: Ali Paikan <ali.paikan@iit.it>
  *
  *  Copy Policy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
@@ -11,7 +11,7 @@
 
 using namespace yarp::manager;
 
-Graph::Graph(void) { }
+Graph::Graph() { }
 
 Graph::~Graph()
 {
@@ -22,9 +22,9 @@ Node* Graph::addNode(Node* _node)
 {
     //__CHECK_NULLPTR(_node);
     if(!_node)
-        return NULL;
+        return nullptr;
     if(hasNode(_node))
-        return NULL;
+        return nullptr;
 
     Node* node = _node->clone();
     nodes[node->getLabel()] = node;
@@ -54,7 +54,7 @@ bool Graph::removeNode(const char* szLabel)
     return true;
 }
 
-void Graph::clear(void)
+void Graph::clear()
 {
     NodePIterator itr;
     for(itr=nodes.begin(); itr!=nodes.end(); itr++)
@@ -81,7 +81,7 @@ Node* Graph::getNode( const char* szLabel)
     NodePIterator itr = nodes.find(szLabel);
     if(itr != nodes.end())
         return (*itr).second;
-    return NULL;
+    return nullptr;
 }
 
 bool Graph::addLink(Node* first, Node* second,
@@ -155,14 +155,14 @@ Node* Graph::getNodeAt(int index)
 }
 
 
-GraphIterator Graph::begin(void)
+GraphIterator Graph::begin()
 {
     GraphIterator itr;
     itr.itr = nodes.begin();
     return itr;
 }
 
-GraphIterator Graph::end(void)
+GraphIterator Graph::end()
 {
     GraphIterator itr;
     itr.itr = nodes.end();

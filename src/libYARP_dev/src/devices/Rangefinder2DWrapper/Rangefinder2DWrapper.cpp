@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2013 iCub Facility - Istituto Italiano di Tecnologia
+ * Copyright (C) 2013 Istituto Italiano di Tecnologia (IIT)
  * Authors: Marco Randazzo <marco.randazzo@iit.it>
  * CopyPolicy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
  */
@@ -31,30 +31,29 @@ yarp::dev::DriverCreator *createRangefinder2DWrapper() {
   * It also creates one rpc port.
   */
 
-Rangefinder2DWrapper::Rangefinder2DWrapper() : RateThread(DEFAULT_THREAD_PERIOD)
-{
-    _rate = DEFAULT_THREAD_PERIOD;
-    sens_p = NULL;
-
+Rangefinder2DWrapper::Rangefinder2DWrapper() : RateThread(DEFAULT_THREAD_PERIOD),
+    partName("Rangefinder2DWrapper"),
+    sens_p(nullptr),
+    iTimed(nullptr),
+    _rate(DEFAULT_THREAD_PERIOD),
+    minAngle(0),
+    maxAngle(0),
+    minDistance(0),
+    maxDistance(0),
+    resolution(0),
+    isDeviceOwned(false),
     // init ROS data
-    frame_id = "";
-    rosNodeName = "";
-    rosTopicName = "";
-    partName = "Rangefinder2DWrapper";
-    rosNode = NULL;
-    rosMsgCounter = 0;
-    useROS      = ROS_disabled;
-    minAngle    = 0;
-    maxAngle    = 0;
-    minDistance = 0;
-    maxDistance = 0;
-    resolution  = 0;
-    isDeviceOwned = false;
-}
+    useROS(ROS_disabled),
+    frame_id(""),
+    rosNodeName(""),
+    rosTopicName(""),
+    rosNode(nullptr),
+    rosMsgCounter(0)
+{}
 
 Rangefinder2DWrapper::~Rangefinder2DWrapper()
 {
-    sens_p = NULL;
+    sens_p = nullptr;
 }
 
 bool Rangefinder2DWrapper::checkROSParams(yarp::os::Searchable &config)
@@ -151,7 +150,7 @@ bool Rangefinder2DWrapper::initialize_ROS()
         case ROS_only:
         {
             rosNode = new yarp::os::Node(rosNodeName);   // add a ROS node
-            if (rosNode == NULL)
+            if (rosNode == nullptr)
             {
                 yError() << " opening " << rosNodeName << " Node, check your yarp-ROS network configuration\n";
                 success = false;
@@ -207,7 +206,7 @@ bool Rangefinder2DWrapper::attachAll(const PolyDriverList &device2attach)
         Idevice2attach->view(iTimed);
     }
 
-    if (NULL == sens_p)
+    if (nullptr == sens_p)
     {
         yError("Rangefinder2DWrapper: subdevice passed to attach method is invalid");
         return false;
@@ -244,7 +243,7 @@ bool Rangefinder2DWrapper::detachAll()
     {
         RateThread::stop();
     }
-    sens_p = NULL;
+    sens_p = nullptr;
     return true;
 }
 
@@ -259,7 +258,7 @@ void Rangefinder2DWrapper::detach()
     {
         RateThread::stop();
     }
-    sens_p = NULL;
+    sens_p = nullptr;
 }
 
 bool Rangefinder2DWrapper::read(yarp::os::ConnectionReader& connection)
@@ -441,7 +440,7 @@ bool Rangefinder2DWrapper::read(yarp::os::ConnectionReader& connection)
     }
 
     yarp::os::ConnectionWriter *returnToSender = connection.getWriter();
-    if (returnToSender != NULL) {
+    if (returnToSender != nullptr) {
         out.write(*returnToSender);
     }
     return true;
@@ -532,17 +531,17 @@ bool Rangefinder2DWrapper::initialize_YARP(yarp::os::Searchable &params)
 {
     if(useROS != ROS_only)
     {
-	    if (!streamingPort.open(streamingPortName.c_str()))
+        if (!streamingPort.open(streamingPortName.c_str()))
             {
                 yError("Rangefinder2DWrapper: failed to open port %s", streamingPortName.c_str());
                 return false;
             }
-	    if (!rpcPort.open(rpcPortName.c_str()))
+        if (!rpcPort.open(rpcPortName.c_str()))
             {
                 yError("Rangefinder2DWrapper: failed to open port %s", rpcPortName.c_str());
                 return false;
             }
-	    rpcPort.setReader(*this);
+        rpcPort.setReader(*this);
     }
     return true;
 }
@@ -557,7 +556,7 @@ void Rangefinder2DWrapper::threadRelease()
 
 void Rangefinder2DWrapper::run()
 {
-    if (sens_p!=0)
+    if (sens_p!=nullptr)
     {
         bool ret = true;
         IRangefinder2D::Device_status status;
@@ -624,10 +623,10 @@ bool Rangefinder2DWrapper::close()
     {
         RateThread::stop();
     }
-    if(rosNode!=NULL) {
+    if(rosNode!=nullptr) {
         rosNode->interrupt();
         delete rosNode;
-        rosNode = NULL;
+        rosNode = nullptr;
     }
 
     detachAll();

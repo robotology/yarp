@@ -9,11 +9,11 @@
 
 #include <yarp/os/ConstString.h>
 
-#include <yarp/os/impl/PlatformMap.h>
-#include <yarp/os/impl/PlatformVector.h>
-#include <cstdio>
 #include <yarp/os/impl/Logger.h>
 
+#include <map>
+#include <vector>
+#include <cstdio>
 
 namespace yarp {
     namespace os {
@@ -43,19 +43,19 @@ private:
         }
 
         Entry() :
-            fn(YARP_NULLPTR)
+            fn(nullptr)
         {
         }
     };
 
-    PLATFORM_MAP(ConstString, Entry) action;
-    PlatformVector<ConstString> names;
+    std::map<ConstString, Entry> action;
+    std::vector<ConstString> names;
 
 public:
     void add(const char *name, RET (T::*fn)(int argc, char *argv[]))
     {
         Entry e(name, fn);
-        PLATFORM_MAP_SET(action, ConstString(name), e);
+        action[ConstString(name)] = e;
         // maintain a record of order of keys
         names.push_back(ConstString(name));
     }
@@ -63,17 +63,16 @@ public:
     RET dispatch(T *owner, const char *name, int argc, char *argv[])
     {
         ConstString sname(name);
-        Entry e;
-        int result = PLATFORM_MAP_FIND_RAW(action, sname, e);
-        if (result!=-1) {
-            return (owner->*(e.fn))(argc, argv);
+        typename std::map<ConstString, Entry>::const_iterator it = action.find(sname);
+        if (it != action.end()) {
+            return (owner->*(it->second.fn))(argc, argv);
         } else {
             YARP_SPRINTF1(Logger::get(), error, "Could not find command \"%s\"", name);
         }
         return RET();
     }
 
-    PlatformVector<ConstString> getNames()
+    std::vector<ConstString> getNames()
     {
         return names;
     }

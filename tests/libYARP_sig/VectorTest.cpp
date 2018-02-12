@@ -1,6 +1,6 @@
 /*
+ * Copyright (C) 2006 RobotCub Consortium
  * Author: Lorenzo Natale and Giorgio Metta
- * Copyright (C) 2006 The Robotcub consortium
  * CopyPolicy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
  */
 
@@ -341,11 +341,11 @@ public:
     {
         Vector v;
         v.resize(0);
-        checkTrue(v.data()==NULL, "size 0 => null data()");
+        checkTrue(v.data()==nullptr, "size 0 => null data()");
         v.resize(1);
-        checkTrue(v.data()!=NULL, "size 1 => non-null data()");
+        checkTrue(v.data()!=nullptr, "size 1 => non-null data()");
         v.resize(2);
-        checkTrue(v.data()!=NULL, "size 2 => non-null data()");
+        checkTrue(v.data()!=nullptr, "size 2 => non-null data()");
     }
 
     virtual void runTests() override {

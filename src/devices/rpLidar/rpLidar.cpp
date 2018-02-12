@@ -1,5 +1,5 @@
 /*
-* Copyright (C) 2016 iCub Facility - Istituto Italiano di Tecnologia
+* Copyright (C) 2016 Istituto Italiano di Tecnologia (IIT)
 * Author: Marco Randazzo <marco.randazzo@iit.it>
 * CopyPolicy: Released under the terms of the GPLv2 or later, see GPL.TXT
 */
@@ -144,7 +144,7 @@ bool RpLidar::open(yarp::os::Searchable& config)
         return false;
     }
 
-    pSerial = 0;
+    pSerial = nullptr;
     driver.open(prop);
     if (!driver.isValid())
     {
@@ -325,7 +325,7 @@ bool RpLidar::HW_getInfo(string& s_info)
     cmd_arr[1] = 0x50;
     pSerial->send((char *)cmd_arr, 2);
 
-    yarp::os::Time::delay(0.010);
+    yarp::os::SystemClock::delaySystem(0.010);
 
     unsigned char s[255];
     r = pSerial->receiveBytes(s, 7);
@@ -367,7 +367,7 @@ bool RpLidar::HW_getHealth()
     cmd_arr[1] = 0x52;
     pSerial->send((char *)cmd_arr, 2);
 
-    yarp::os::Time::delay(0.010);
+    yarp::os::SystemClock::delaySystem(0.010);
 
     unsigned char s[255];
     memset(s, 0, 255);
@@ -421,7 +421,7 @@ bool RpLidar::HW_reset()
     cmd_arr[1] = 0x40;
     pSerial->send((char *)cmd_arr, 2);
 
-    yarp::os::Time::delay(0.010);
+    yarp::os::SystemClock::delaySystem(0.010);
     return true;
 }
 
@@ -440,7 +440,7 @@ bool RpLidar::HW_start()
 #endif
     pSerial->send((char *)cmd_arr,2);
 
-    yarp::os::Time::delay(0.010);
+    yarp::os::SystemClock::delaySystem(0.010);
 
     unsigned char s[255];
     memset(s, 0, 255);
@@ -470,7 +470,7 @@ bool RpLidar::HW_stop()
     cmd_arr[1] = 0x25;
     pSerial->send((char*)cmd_arr,2);
 
-    yarp::os::Time::delay(0.010);
+    yarp::os::SystemClock::delaySystem(0.010);
     return true;
 }
 

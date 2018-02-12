@@ -1,25 +1,20 @@
-# Copyright: (C) 2017 iCub Facility, Istituto Italiano di Tecnologia
+# Copyright: (C) 2017 Istituto Italiano di Tecnologia (IIT)
 # Authors: Daniele E. Domenichelli <daniele.domenichelli@iit.it>
 # Copy Policy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
 
 
 project(rtf_fixturemanager_yarpmanager)
 
-get_property(YARP_OS_INCLUDE_DIRS TARGET YARP_OS PROPERTY INCLUDE_DIRS)
-get_property(YARP_manager_INCLUDE_DIRS TARGET YARP_manager PROPERTY INCLUDE_DIRS)
-
 include_directories(SYSTEM ${RTF_INCLUDE_DIRS})
-include_directories(${YARP_OS_INCLUDE_DIRS}
-                    ${YARP_manager_INCLUDE_DIRS})
 
 add_definitions(-DSHLIBPP_FILTER_API)
 
-add_library(rtf_fixturemanager_yarpmanager MODULE YarpFixManager.h
-                                                  YarpFixManager.cpp)
-set_property(TARGET rtf_fixturemanager_yarpmanager PROPERTY PREFIX "")
-set_property(TARGET rtf_fixturemanager_yarpmanager PROPERTY OUTPUT_NAME yarpmanager)
+rtf_add_plugin(rtf_fixturemanager_yarpmanager OUTPUT_NAME yarpmanager
+                                              SOURCES     YarpFixManager.cpp
+                                              HEADERS     YarpFixManager.h)
 
 target_link_libraries(rtf_fixturemanager_yarpmanager PRIVATE RTF::RTF
+                                                             RTF::RTF_dll
                                                              YARP::YARP_OS
                                                              YARP::YARP_init
                                                              YARP::YARP_manager)

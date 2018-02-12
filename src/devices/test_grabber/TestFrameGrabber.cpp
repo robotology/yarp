@@ -9,7 +9,7 @@
 #include <yarp/dev/PolyDriver.h>
 
 #include <yarp/sig/ImageDraw.h>
-#include <yarp/os/Random.h>
+#include <random>
 #include <yarp/os/LogStream.h>
 
 using namespace yarp::os;
@@ -435,14 +435,16 @@ void TestFrameGrabber::createTestImage(yarp::sig::ImageOf<yarp::sig::PixelRgb>&
             int hh = image.height();
 
             if (ww>1&&hh>1) {
+                std::default_random_engine randengine;
+                std::uniform_real_distribution<double> udist(-1.0, 1.0);
                 for (int x=0; x<ww; x++) {
                     for (int y=0; y<hh; y++) {
                         //r+=(rand()%3)-1;
                         //g+=(rand()%3)-1;
                         //b+=(rand()%3)-1;
-                        r += Random::uniform(-1,1);
-                        g += Random::uniform(-1,1);
-                        b += Random::uniform(-1,1);
+                        r += udist(randengine);
+                        g += udist(randengine);
+                        b += udist(randengine);
                         image.pixel(x,y) = PixelRgb(r,g,b);
                     }
                 }

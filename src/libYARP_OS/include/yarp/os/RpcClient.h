@@ -24,8 +24,9 @@ namespace yarp {
  */
 class YARP_OS_API yarp::os::RpcClient : public AbstractContactable {
 public:
+#ifndef YARP_NO_DEPRECATED // since YARP 2.3.72
     using AbstractContactable::open;
-
+#endif // YARP_NO_DEPRECATED
 
     /**
      * Constructor.
@@ -38,24 +39,24 @@ public:
     virtual ~RpcClient();
 
     // documented in UnbufferedContactable
-    virtual bool read(PortReader& reader, bool willReply = false) YARP_OVERRIDE;
+    virtual bool read(PortReader& reader, bool willReply = false) override;
 
     // documented in UnbufferedContactable
-    virtual bool reply(PortWriter& writer) YARP_OVERRIDE;
+    virtual bool reply(PortWriter& writer) override;
 
     // documented in UnbufferedContactable
-    virtual bool replyAndDrop(PortWriter& writer) YARP_OVERRIDE;
+    virtual bool replyAndDrop(PortWriter& writer) override;
 
 
-    void setInputMode(bool expectInput) YARP_OVERRIDE;
-    void setOutputMode(bool expectOutput) YARP_OVERRIDE;
-    void setRpcMode(bool expectRpc) YARP_OVERRIDE;
+    void setInputMode(bool expectInput) override;
+    void setOutputMode(bool expectOutput) override;
+    void setRpcMode(bool expectRpc) override;
 
-    virtual Port& asPort() YARP_OVERRIDE {
+    virtual Port& asPort() override {
         return port;
     }
 
-    virtual const Port& asPort() const YARP_OVERRIDE {
+    virtual const Port& asPort() const override {
         return port;
     }
 

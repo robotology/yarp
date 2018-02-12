@@ -167,13 +167,13 @@ void getNeededType(t_type* curType, std::set<string>& neededTypes)
   std::vector<std::string> print_help       (t_function* tdoc);
   std::string print_type       (t_type* ttype);
   std::string print_const_value(t_const_value* tvalue,
-                                t_type* ttype = NULL);
+                                t_type* ttype = nullptr);
 
   std::string function_prototype(t_function *tfn, bool include_defaults,
-                                 const char *prefix=NULL,
-                                 const char *override_name=NULL);
+                                 const char *prefix=nullptr,
+                                 const char *override_name=nullptr);
 
-  std::string declare_field(t_field* tfield, bool init=false, bool pointer=false, bool is_constant=false, bool reference=false, const char *force_type=NULL);
+  std::string declare_field(t_field* tfield, bool init=false, bool pointer=false, bool is_constant=false, bool reference=false, const char *force_type=nullptr);
 
   std::string type_name(t_type* ttype, bool in_typedef=false, bool arg=false, bool ret = false);
   std::string base_type_name(t_base_type::t_base tbase);
@@ -413,7 +413,7 @@ string t_yarp_generator::type_name(t_type* ttype, bool in_typedef, bool arg,
 
   if (pname=="") {
     t_program* program = ttype->get_program();
-    if (program != NULL && program != program_) {
+    if (program != nullptr && program != program_) {
       pname =
         class_prefix +
         namespace_prefix(get_namespace(program)) +
@@ -862,7 +862,7 @@ std::vector<std::string> t_yarp_generator::print_help(t_function* tdoc) {
   std::vector<std::string> doxyPar;
   string quotes="\"";
   string replacement="\\\"";
-  doxyPar.push_back(replaceInString(function_prototype(tdoc, true, NULL), quotes, replacement));
+  doxyPar.push_back(replaceInString(function_prototype(tdoc, true, nullptr), quotes, replacement));
   quote_doc(doxyPar,tdoc);
   return doxyPar;
 }
@@ -929,7 +929,7 @@ string t_yarp_generator::print_const_value(t_const_value* tvalue,
   default:
     {
       bool done = false;
-      if (ttype!=NULL) {
+      if (ttype!=nullptr) {
         if (ttype->is_enum()) {
           result += tvalue->get_identifier_name();
           done = true;
@@ -1064,8 +1064,8 @@ void t_yarp_generator::generate_enum(t_enum* tenum) {
   f_types_ << "class " << namespace_decorate(ns,enum_name) << "Vocab : public yarp::os::idl::WireVocab {" << endl;
   f_types_ << "public:" << endl;
   indent_up();
-  indent(f_types_) << "virtual int fromString(const std::string& input) YARP_OVERRIDE;" << endl;
-  indent(f_types_) << "virtual std::string toString(int input) YARP_OVERRIDE;" << endl;
+  indent(f_types_) << "virtual int fromString(const std::string& input) override;" << endl;
+  indent(f_types_) << "virtual std::string toString(int input) override;" << endl;
   indent_down();
   f_types_ << "};" << endl;
   f_types_ << endl;
@@ -1272,7 +1272,7 @@ void t_yarp_generator::generate_struct(t_struct* tstruct) {
       }
       dval += t->is_string() ? "\"\"" : "0";
       t_const_value* cv = (*m_iter)->get_value();
-      if (cv != NULL) {
+      if (cv != nullptr) {
         dval = render_const_value(out, (*m_iter)->get_name(), t, cv);
       }
       if (!init_ctor) {
@@ -1291,7 +1291,7 @@ void t_yarp_generator::generate_struct(t_struct* tstruct) {
 
     if (!t->is_base_type()) {
       t_const_value* cv = (*m_iter)->get_value();
-      if (cv != NULL) {
+      if (cv != nullptr) {
         print_const_value(out, (*m_iter)->get_name(), t, cv);
       }
     }
@@ -1354,16 +1354,16 @@ void t_yarp_generator::generate_struct(t_struct* tstruct) {
 
   out << endl;
   indent(out) << "// read and write structure on a connection" << endl;
-  indent(out) << "bool read(yarp::os::idl::WireReader& reader) YARP_OVERRIDE;"
+  indent(out) << "bool read(yarp::os::idl::WireReader& reader) override;"
               << endl;
 
-  indent(out) << "bool read(yarp::os::ConnectionReader& connection) YARP_OVERRIDE;"
+  indent(out) << "bool read(yarp::os::ConnectionReader& connection) override;"
               << endl;
 
 
-  indent(out) << "bool write(yarp::os::idl::WireWriter& writer) YARP_OVERRIDE;"
+  indent(out) << "bool write(yarp::os::idl::WireWriter& writer) override;"
               << endl;
-  indent(out) << "bool write(yarp::os::ConnectionWriter& connection) YARP_OVERRIDE;"
+  indent(out) << "bool write(yarp::os::ConnectionWriter& connection) override;"
               << endl;
 
   out << endl;
@@ -1517,8 +1517,8 @@ void t_yarp_generator::generate_struct(t_struct* tstruct) {
 
 
   // serialize
-  indent(out) << "bool read(yarp::os::ConnectionReader& connection) YARP_OVERRIDE;" << endl;
-  indent(out) << "bool write(yarp::os::ConnectionWriter& connection) YARP_OVERRIDE;" << endl;
+  indent(out) << "bool read(yarp::os::ConnectionReader& connection) override;" << endl;
+  indent(out) << "bool write(yarp::os::ConnectionWriter& connection) override;" << endl;
 
 
   indent_down();
@@ -1870,7 +1870,7 @@ std::string t_yarp_generator::function_prototype(t_function *tfn,
   t_function **fn_iter = &tfn;
   string fn_name = (*fn_iter)->get_name();
   string return_type = print_type((*fn_iter)->get_returntype());
-  if (override_name!=NULL) {
+  if (override_name!=nullptr) {
     fn_name = override_name;
     return_type = "void";
   }
@@ -1893,7 +1893,7 @@ std::string t_yarp_generator::function_prototype(t_function *tfn,
       result += type_name((*arg_iter)->get_type(),false,true);
       result += string(" ") + (*arg_iter)->get_name();
       if (include_defaults) {
-        if ((*arg_iter)->get_value() != NULL) {
+        if ((*arg_iter)->get_value() != nullptr) {
           result += " = ";
           result += print_const_value((*arg_iter)->get_value(),
                                       (*arg_iter)->get_type());
@@ -1929,7 +1929,7 @@ void t_yarp_generator::generate_service(t_service* tservice) {
       if (need_common_)
         f_srv_ << "#include <"<< get_include_prefix(*program_) << program_->get_name() << "_common.h>" <<endl;
 
-      if (extends_service != NULL) {
+      if (extends_service != nullptr) {
         f_srv_ << "#include <" << get_include_prefix(*(extends_service->get_program())) << extends_service->get_name() << ".h>" << endl;
       }
 
@@ -2001,9 +2001,9 @@ void t_yarp_generator::generate_service(t_service* tservice) {
           indent(f_curr_) << declare_field(&returnfield) << endl;
         }
 
-        indent(f_curr_) << function_prototype(*fn_iter,false,NULL,"init") << ";" << endl;
-        indent(f_curr_) << "virtual bool write(yarp::os::ConnectionWriter& connection) YARP_OVERRIDE;" << endl;
-        indent(f_curr_) << "virtual bool read(yarp::os::ConnectionReader& connection) YARP_OVERRIDE;" << endl;
+        indent(f_curr_) << function_prototype(*fn_iter,false,nullptr,"init") << ";" << endl;
+        indent(f_curr_) << "virtual bool write(yarp::os::ConnectionWriter& connection) override;" << endl;
+        indent(f_curr_) << "virtual bool read(yarp::os::ConnectionReader& connection) override;" << endl;
 
         indent_down();
         f_curr_ << "};" << endl;
@@ -2097,7 +2097,7 @@ void t_yarp_generator::generate_service(t_service* tservice) {
     print_doc(f_srv_,tservice);
        // f_srv_ << "/** \class "<< svcname << f_header_name << f_header_name << endl<< print_doc(tservice)<< " */" <<endl;
     string extends = "";
-    if (extends_service != NULL) {
+    if (extends_service != nullptr) {
       extends = " :  public " + print_type(extends_service);
     }
     else
@@ -2176,7 +2176,7 @@ void t_yarp_generator::generate_service(t_service* tservice) {
     }
 
 
-    indent(f_srv_) << "virtual bool read(yarp::os::ConnectionReader& connection) YARP_OVERRIDE;"
+    indent(f_srv_) << "virtual bool read(yarp::os::ConnectionReader& connection) override;"
                    << endl;
     indent(f_srv_) << "virtual std::vector<std::string> help(const std::string& functionName=\"--all\");"
                    << endl;
@@ -2587,7 +2587,7 @@ void t_yarp_generator::generate_deserialize_field_fallback(ofstream& out,
                                                            t_field* tfield) {
   out << "{" << endl;
   indent_up();
-  if (tfield->get_value()!=NULL) {
+  if (tfield->get_value()!=nullptr) {
     indent(out) << tfield->get_name() <<
       " = " <<
       print_const_value(tfield->get_value(),tfield->get_type()) <<
@@ -2898,13 +2898,13 @@ void t_yarp_generator::print_const_value(ofstream& out, string name, t_type* typ
     const map<t_const_value*, t_const_value*>& val = value->get_map();
     map<t_const_value*, t_const_value*>::const_iterator v_iter;
     for (v_iter = val.begin(); v_iter != val.end(); ++v_iter) {
-      t_type* field_type = NULL;
+      t_type* field_type = nullptr;
       for (f_iter = fields.begin(); f_iter != fields.end(); ++f_iter) {
         if ((*f_iter)->get_name() == v_iter->first->get_string()) {
           field_type = (*f_iter)->get_type();
         }
       }
-      if (field_type == NULL) {
+      if (field_type == nullptr) {
         throw "type error: " + type->get_name() + " has no field " + v_iter->first->get_string();
       }
       string val = render_const_value(out, name, field_type, v_iter->second);

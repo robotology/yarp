@@ -1,5 +1,5 @@
 /*
-* Copyright (C) 2015 iCub Facility - Istituto Italiano di Tecnologia
+* Copyright (C) 2015 Istituto Italiano di Tecnologia (IIT)
 * Author: Marco Randazzo <marco.randazzo@iit.it>
 * CopyPolicy: Released under the terms of the GPLv2 or later, see GPL.TXT
 */
@@ -96,9 +96,9 @@ public:
         min_distance(0.0),
         max_distance(0.0),
         resolution(0.0),
-        m_loc_port(YARP_NULLPTR),
-        m_pLoc(YARP_NULLPTR),
-        m_iLoc(YARP_NULLPTR),
+        m_loc_port(nullptr),
+        m_pLoc(nullptr),
+        m_iLoc(nullptr),
         m_loc_x(0.0),
         m_loc_y(0.0),
         m_loc_t(0.0),

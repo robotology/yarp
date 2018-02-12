@@ -11,6 +11,7 @@
 
 #include <yarp/os/impl/IOException.h>
 
+#include <cfloat>
 
 yarp::os::Stamp::Stamp(int count, double time) {
     sequenceNumber = count;
@@ -35,42 +36,79 @@ bool yarp::os::Stamp::isValid() {
 }
 
 bool yarp::os::Stamp::read(ConnectionReader& connection) {
-    connection.convertTextMode();
-    int header = connection.expectInt();
-    if (header!=BOTTLE_TAG_LIST) {
-        return false;
+    if (connection.isTextMode())
+    {
+        ConstString stampStr = connection.expectText();
+        int seqNum;
+        double ts;
+#if defined(_MSC_VER) && (_MSC_VER <= 1800)
+        // Visual Studio 2013 does not support std::sscanf
+        int ret = sscanf(stampStr.c_str(), "%d %lg\n", &seqNum, &ts);
+#else
+        int ret = std::sscanf(stampStr.c_str(), "%d %lg\n", &seqNum, &ts);
+#endif
+        if (ret != 2) {
+            sequenceNumber = -1;
+            timeStamp = 0;
+            return false;
+        }
+        sequenceNumber = seqNum;
+        timeStamp = ts;
     }
-    int len = connection.expectInt();
-    if (len!=2) {
-        return false;
+    else
+    {
+        connection.convertTextMode();
+        int header = connection.expectInt();
+        if (header!=BOTTLE_TAG_LIST) {
+            return false;
+        }
+        int len = connection.expectInt();
+        if (len!=2) {
+            return false;
+        }
+        int code;
+        code = connection.expectInt();
+        if (code!=BOTTLE_TAG_INT) {
+            return false;
+        }
+        sequenceNumber = connection.expectInt();
+        code = connection.expectInt();
+        if (code!=BOTTLE_TAG_DOUBLE) {
+            return false;
+        }
+        timeStamp = connection.expectDouble();
+        if (connection.isError()) {
+            sequenceNumber = -1;
+            timeStamp = 0;
+            return false;
+        }
     }
-    int code;
-    code = connection.expectInt();
-    if (code!=BOTTLE_TAG_INT) {
-        return false;
-    }
-    sequenceNumber = connection.expectInt();
-    code = connection.expectInt();
-    if (code!=BOTTLE_TAG_DOUBLE) {
-        return false;
-    }
-    timeStamp = connection.expectDouble();
-    if (connection.isError()) {
-        sequenceNumber = -1;
-        timeStamp = 0;
-        return false;
-    }
-    return true;
+    return !connection.isError();
 }
 
 bool yarp::os::Stamp::write(ConnectionWriter& connection) {
-    connection.appendInt(BOTTLE_TAG_LIST); // nested structure
-    connection.appendInt(2);               // with two elements
-    connection.appendInt(BOTTLE_TAG_INT);
-    connection.appendInt(sequenceNumber);
-    connection.appendInt(BOTTLE_TAG_DOUBLE);
-    connection.appendDouble(timeStamp);
-    connection.convertTextMode();
+    if (connection.isTextMode())
+    {
+        char buf[512];
+#if defined(_MSC_VER) && (_MSC_VER <= 1800)
+        // Visual Studio 2013 does not support std::snprintf
+        _snprintf(buf, 511, "%d %.*g", sequenceNumber, DBL_DIG, timeStamp);
+        buf[511] = '\0';
+#else
+        std::snprintf(buf, 512, "%d %.*g", sequenceNumber, DBL_DIG, timeStamp);
+#endif
+        connection.appendString(buf);
+    }
+    else
+    {
+        connection.appendInt(BOTTLE_TAG_LIST); // nested structure
+        connection.appendInt(2);               // with two elements
+        connection.appendInt(BOTTLE_TAG_INT);
+        connection.appendInt(sequenceNumber);
+        connection.appendInt(BOTTLE_TAG_DOUBLE);
+        connection.appendDouble(timeStamp);
+        connection.convertTextMode();
+    }
     return !connection.isError();
 }
 

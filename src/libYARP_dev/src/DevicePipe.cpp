@@ -88,19 +88,19 @@ bool DevicePipe::updateService() {
     sink.view(imgSndSink);
     sink.view(sinkType);
 
-    if (sourceType!=NULL) {
+    if (sourceType!=nullptr) {
         if (!(sourceType->hasAudio()&&sourceType->hasVideo())) {
-            imgSndSource = NULL;
+            imgSndSource = nullptr;
         }
     }
-    if (sinkType!=NULL) {
+    if (sinkType!=nullptr) {
         if (!(sinkType->hasAudio()&&sinkType->hasVideo())) {
-            imgSndSink = NULL;
+            imgSndSink = nullptr;
         }
     }
 
 
-    if (imgSndSource!=NULL&&imgSndSink!=NULL) {
+    if (imgSndSource!=nullptr&&imgSndSink!=nullptr) {
         ImageOf<PixelRgb> tmp;
         Sound tmpSound;
         imgSndSource->getAudioVisual(tmp,tmpSound);
@@ -108,12 +108,12 @@ bool DevicePipe::updateService() {
         printf("piped %dx%d image, %dx%d sound\n",
                tmp.width(), tmp.height(),
                tmpSound.getSamples(), tmpSound.getChannels());
-    } else if (imgSource!=NULL&&imgSink!=NULL) {
+    } else if (imgSource!=nullptr&&imgSink!=nullptr) {
         ImageOf<PixelRgb> tmp;
         imgSource->getImage(tmp);
         imgSink->putImage(tmp);
         printf("piped %dx%d image\n", tmp.width(), tmp.height());
-    } else if (sndSource!=NULL&&sndSink!=NULL) {
+    } else if (sndSource!=nullptr&&sndSink!=nullptr) {
         Sound tmp;
         sndSource->getSound(tmp);
         sndSink->renderSound(tmp);

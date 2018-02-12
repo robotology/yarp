@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2011 Robotics Brain and Cognitive Sciences Department, Istituto Italiano di Tecnologia
+ * Copyright (C) 2011 Istituto Italiano di Tecnologia (IIT)
  * Authors: Marco Randazzo
  * CopyPolicy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
  */
@@ -55,20 +55,20 @@ public:
      */
     virtual ~ImplementTorqueControl();
 
-    virtual bool getAxes(int *ax) YARP_OVERRIDE;
-    virtual bool getRefTorque(int j, double *) YARP_OVERRIDE;
-    virtual bool getRefTorques(double *t) YARP_OVERRIDE;
-    virtual bool setRefTorques(const double *t) YARP_OVERRIDE;
-    virtual bool setRefTorque(int j, double t) YARP_OVERRIDE;
-    virtual bool setRefTorques(const int n_joint, const int *joints, const double *t) YARP_OVERRIDE;
-    virtual bool getTorques(double *t) YARP_OVERRIDE;
-    virtual bool getTorque(int j, double *t) YARP_OVERRIDE;
-    virtual bool getBemfParam(int j, double *bemf) YARP_OVERRIDE;
-    virtual bool setBemfParam(int j, double bemf) YARP_OVERRIDE;
-    virtual bool setMotorTorqueParams(int j, const yarp::dev::MotorTorqueParameters params) YARP_OVERRIDE;
-    virtual bool getMotorTorqueParams(int j, yarp::dev::MotorTorqueParameters *params) YARP_OVERRIDE;
-    virtual bool getTorqueRange(int j, double *min, double *max) YARP_OVERRIDE;
-    virtual bool getTorqueRanges(double *min, double *max) YARP_OVERRIDE;
+    virtual bool getAxes(int *ax) override;
+    virtual bool getRefTorque(int j, double *) override;
+    virtual bool getRefTorques(double *t) override;
+    virtual bool setRefTorques(const double *t) override;
+    virtual bool setRefTorque(int j, double t) override;
+    virtual bool setRefTorques(const int n_joint, const int *joints, const double *t) override;
+    virtual bool getTorques(double *t) override;
+    virtual bool getTorque(int j, double *t) override;
+    virtual bool getBemfParam(int j, double *bemf) override;
+    virtual bool setBemfParam(int j, double bemf) override;
+    virtual bool setMotorTorqueParams(int j, const yarp::dev::MotorTorqueParameters params) override;
+    virtual bool getMotorTorqueParams(int j, yarp::dev::MotorTorqueParameters *params) override;
+    virtual bool getTorqueRange(int j, double *min, double *max) override;
+    virtual bool getTorqueRanges(double *min, double *max) override;
 };
 
 #endif // YARP_DEV_IMPLEMENTTORQUECONTROL_H

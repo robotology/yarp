@@ -71,7 +71,7 @@ void RPCMessagesParser::handleImpedanceMsg(const yarp::os::Bottle& cmd,
                 case VOCAB_IMP_PARAM:
                 {
                     Bottle *b = cmd.get(4).asList();
-                    if (b!=NULL)
+                    if (b!=nullptr)
                     {
                         double stiff = b->get(0).asDouble();
                         double damp = b->get(1).asDouble();
@@ -83,7 +83,7 @@ void RPCMessagesParser::handleImpedanceMsg(const yarp::os::Bottle& cmd,
                 case VOCAB_IMP_OFFSET:
                 {
                     Bottle *b = cmd.get(4).asList();
-                    if (b!=NULL)
+                    if (b!=nullptr)
                     {
                         double offs = b->get(0).asDouble();
                         *ok = rpc_IImpedance->setImpedanceOffset(cmd.get(3).asInt(),offs);
@@ -541,7 +541,7 @@ void RPCMessagesParser::handleTorqueMsg(const yarp::os::Bottle& cmd,
                     int joint = cmd.get(3).asInt();
                     Bottle *b = cmd.get(4).asList();
 
-                    if (b==NULL)
+                    if (b==nullptr)
                         break;
 
                     if (b->size() != 4)
@@ -562,7 +562,7 @@ void RPCMessagesParser::handleTorqueMsg(const yarp::os::Bottle& cmd,
                 case VOCAB_REFS:
                 {
                     Bottle *b = cmd.get(3).asList();
-                    if (b==NULL)
+                    if (b==nullptr)
                         break;
 
                     int i;
@@ -1077,7 +1077,7 @@ void RPCMessagesParser::handlePidMsg(const yarp::os::Bottle& cmd, yarp::os::Bott
                     int j = cmd.get(4).asInt();
                     Bottle *b = cmd.get(5).asList();
 
-                    if (b==NULL)
+                    if (b==nullptr)
                         break;
 
                     p.kp = b->get(0).asDouble();
@@ -1098,7 +1098,7 @@ void RPCMessagesParser::handlePidMsg(const yarp::os::Bottle& cmd, yarp::os::Bott
                 {
                     Bottle *b = cmd.get(4).asList();
 
-                    if (b==NULL)
+                    if (b==nullptr)
                         break;
 
                     int i;
@@ -1112,7 +1112,7 @@ void RPCMessagesParser::handlePidMsg(const yarp::os::Bottle& cmd, yarp::os::Bott
                         for (i = 0; i < njs; i++)
                         {
                             Bottle *c = b->get(i).asList();
-                            if (c!=NULL)
+                            if (c!=nullptr)
                             {
                                 p[i].kp = c->get(0).asDouble();
                                 p[i].kd = c->get(1).asDouble();
@@ -1150,7 +1150,7 @@ void RPCMessagesParser::handlePidMsg(const yarp::os::Bottle& cmd, yarp::os::Bott
                 {
                     Bottle *b = cmd.get(4).asList();
 
-                    if (b==NULL)
+                    if (b==nullptr)
                         break;
 
                     int i;
@@ -1177,7 +1177,7 @@ void RPCMessagesParser::handlePidMsg(const yarp::os::Bottle& cmd, yarp::os::Bott
                     Bottle *b = cmd.get(4).asList();
                     int i;
 
-                    if (b==NULL)
+                    if (b==nullptr)
                         break;
 
                     const int njs = b->size();
@@ -1219,7 +1219,6 @@ void RPCMessagesParser::handlePidMsg(const yarp::os::Bottle& cmd, yarp::os::Bott
             if (ControlBoardWrapper_p->verbose())
                 yDebug("get command received\n");
             double dtmp = 0.0;
-            double dtmp2 = 0.0;
             response.addVocab(VOCAB_IS);
             response.add(cmd.get(1));
 
@@ -1415,7 +1414,6 @@ void RPCMessagesParser::handlePWMMsg(const yarp::os::Bottle& cmd, yarp::os::Bott
             if (ControlBoardWrapper_p->verbose())
                 yDebug("get command received\n");
             double dtmp = 0.0;
-            double dtmp2 = 0.0;
             response.addVocab(VOCAB_IS);
             response.add(cmd.get(1));
 
@@ -1736,7 +1734,7 @@ bool RPCMessagesParser::respond(const yarp::os::Bottle& cmd, yarp::os::Bottle& r
                         double v1=cmd.get(3).asDouble();
                         double v2=cmd.get(4).asDouble();
                         double v3=cmd.get(5).asDouble();
-                        if (rpc_Icalib2==0)
+                        if (rpc_Icalib2==nullptr)
                             yError("Sorry I don't have a IControlCalibration2 interface\n");
                         else
                             ok=rpc_Icalib2->calibrate2(j,ui,v1,v2,v3);
@@ -1756,7 +1754,7 @@ bool RPCMessagesParser::respond(const yarp::os::Bottle& cmd, yarp::os::Bottle& r
                         params.param2 = cmd.get(4).asDouble();
                         params.param3 = cmd.get(5).asDouble();
                         params.param4 = cmd.get(6).asDouble();
-                        if (rpc_Icalib2 == 0)
+                        if (rpc_Icalib2 == nullptr)
                             yError("Sorry I don't have a IControlCalibration2 interface\n");
                         else
                             ok = rpc_Icalib2->setCalibrationParameters(j, params);
@@ -1815,7 +1813,7 @@ bool RPCMessagesParser::respond(const yarp::os::Bottle& cmd, yarp::os::Bottle& r
                             {
                                 Bottle *b = cmd.get(2).asList();
                                 int i;
-                                if (b==NULL)
+                                if (b==nullptr)
                                     break;
                                 const int njs = b->size();
                                 if (njs!=controlledJoints)
@@ -1824,7 +1822,7 @@ bool RPCMessagesParser::respond(const yarp::os::Bottle& cmd, yarp::os::Bottle& r
                                 for (i = 0; i < njs; i++)
                                     tmpVect[i] = b->get(i).asDouble();
 
-                                if (rpc_IPosCtrl!=NULL)
+                                if (rpc_IPosCtrl!=nullptr)
                                     ok = rpc_IPosCtrl->positionMove(&tmpVect[0]);
                             }
                             break;
@@ -1835,10 +1833,10 @@ bool RPCMessagesParser::respond(const yarp::os::Bottle& cmd, yarp::os::Bottle& r
                                 Bottle *jlut = cmd.get(3).asList();
                                 Bottle *pos_val= cmd.get(4).asList();
 
-                                if (rpc_IPosCtrl2 == NULL)
+                                if (rpc_IPosCtrl2 == nullptr)
                                     break;
 
-                                if (jlut==NULL || pos_val==NULL)
+                                if (jlut==nullptr || pos_val==nullptr)
                                     break;
                                 if (len!=jlut->size() || len!=pos_val->size())
                                     break;
@@ -1864,7 +1862,7 @@ bool RPCMessagesParser::respond(const yarp::os::Bottle& cmd, yarp::os::Bottle& r
                             {
                                 Bottle *b = cmd.get(2).asList();
                                 int i;
-                                if (b==NULL)
+                                if (b==nullptr)
                                     break;
                                 const int njs = b->size();
                                 if (njs!=controlledJoints)
@@ -1872,7 +1870,7 @@ bool RPCMessagesParser::respond(const yarp::os::Bottle& cmd, yarp::os::Bottle& r
                                 tmpVect.resize(njs);
                                 for (i = 0; i < njs; i++)
                                     tmpVect[i] = b->get(i).asDouble();
-                                if (rpc_IVelCtrl!=NULL)
+                                if (rpc_IVelCtrl!=nullptr)
                                     ok = rpc_IVelCtrl->velocityMove(&tmpVect[0]);
 
                             }
@@ -1890,10 +1888,10 @@ bool RPCMessagesParser::respond(const yarp::os::Bottle& cmd, yarp::os::Bottle& r
                                 Bottle *jBottle_p = cmd.get(3).asList();
                                 Bottle *posBottle_p= cmd.get(4).asList();
 
-                                if (rpc_IPosCtrl2 == NULL)
+                                if (rpc_IPosCtrl2 == nullptr)
                                     break;
 
-                                if (jBottle_p==NULL || posBottle_p==NULL)
+                                if (jBottle_p==nullptr || posBottle_p==nullptr)
                                     break;
                                 if (len!=jBottle_p->size() || len!=posBottle_p->size())
                                     break;
@@ -1918,7 +1916,7 @@ bool RPCMessagesParser::respond(const yarp::os::Bottle& cmd, yarp::os::Bottle& r
                             {
                                 Bottle *b = cmd.get(2).asList();
 
-                                if (b==NULL)
+                                if (b==nullptr)
                                     break;
 
                                 int i;
@@ -1945,10 +1943,10 @@ bool RPCMessagesParser::respond(const yarp::os::Bottle& cmd, yarp::os::Bottle& r
                                 Bottle *jBottle_p = cmd.get(3).asList();
                                 Bottle *velBottle_p= cmd.get(4).asList();
 
-                                if (rpc_IPosCtrl2 == NULL)
+                                if (rpc_IPosCtrl2 == nullptr)
                                     break;
 
-                                if (jBottle_p==NULL || velBottle_p==NULL)
+                                if (jBottle_p==nullptr || velBottle_p==nullptr)
                                     break;
                                 if (len!=jBottle_p->size() || len!=velBottle_p->size())
                                     break;
@@ -1972,7 +1970,7 @@ bool RPCMessagesParser::respond(const yarp::os::Bottle& cmd, yarp::os::Bottle& r
                             {
                                 Bottle *b = cmd.get(2).asList();
 
-                                if (b==NULL)
+                                if (b==nullptr)
                                     break;
 
                                 int i;
@@ -1999,10 +1997,10 @@ bool RPCMessagesParser::respond(const yarp::os::Bottle& cmd, yarp::os::Bottle& r
                                 Bottle *jBottle_p = cmd.get(3).asList();
                                 Bottle *accBottle_p = cmd.get(4).asList();
 
-                                if (rpc_IPosCtrl2 == NULL)
+                                if (rpc_IPosCtrl2 == nullptr)
                                     break;
 
-                                if (jBottle_p==NULL || accBottle_p==NULL)
+                                if (jBottle_p==nullptr || accBottle_p==nullptr)
                                     break;
                                 if (len!=jBottle_p->size() || len!=accBottle_p->size())
                                     break;
@@ -2026,7 +2024,7 @@ bool RPCMessagesParser::respond(const yarp::os::Bottle& cmd, yarp::os::Bottle& r
                             {
                                 Bottle *b = cmd.get(2).asList();
 
-                                if (b==NULL)
+                                if (b==nullptr)
                                     break;
 
                                 int i;
@@ -2052,10 +2050,10 @@ bool RPCMessagesParser::respond(const yarp::os::Bottle& cmd, yarp::os::Bottle& r
                                 int len = cmd.get(2).asInt();
                                 Bottle *jBottle_p = cmd.get(3).asList();
 
-                                if (rpc_IPosCtrl2 == NULL)
+                                if (rpc_IPosCtrl2 == nullptr)
                                     break;
 
-                                if (jBottle_p==NULL)
+                                if (jBottle_p==nullptr)
                                     break;
                                 if (len!=jBottle_p->size())
                                     break;
@@ -2098,7 +2096,7 @@ bool RPCMessagesParser::respond(const yarp::os::Bottle& cmd, yarp::os::Bottle& r
                             {
                                 Bottle *b = cmd.get(2).asList();
 
-                                if (b==NULL)
+                                if (b==nullptr)
                                     break;
 
                                 int i;
@@ -2141,7 +2139,7 @@ bool RPCMessagesParser::respond(const yarp::os::Bottle& cmd, yarp::os::Bottle& r
                             {
                                 Bottle *b = cmd.get(2).asList();
 
-                                if (b==NULL)
+                                if (b==nullptr)
                                     break;
 
                                 int i;
@@ -2446,7 +2444,7 @@ bool RPCMessagesParser::respond(const yarp::os::Bottle& cmd, yarp::os::Bottle& r
                                 {
                                     jointList[j] = in.get(j).asInt();
                                 }
-                                if(rpc_IPosCtrl2!=NULL)
+                                if(rpc_IPosCtrl2!=nullptr)
                                     ok = rpc_IPosCtrl2->checkMotionDone(len, jointList, &x);
                                 response.addInt(x);
 
@@ -2863,29 +2861,29 @@ bool RPCMessagesParser::initialize()
 }
 
 RPCMessagesParser::RPCMessagesParser() :
-        ControlBoardWrapper_p(YARP_NULLPTR),
-        rpc_IPid(YARP_NULLPTR),
-        rpc_IPosCtrl(YARP_NULLPTR),
-        rpc_IPosCtrl2(YARP_NULLPTR),
-        rpc_IPosDirect(YARP_NULLPTR),
-        rpc_IVelCtrl(YARP_NULLPTR),
-        rpc_IVelCtrl2(YARP_NULLPTR),
-        rpc_IEncTimed(YARP_NULLPTR),
-        rpc_IMotEnc(YARP_NULLPTR),
-        rcp_IAmp(YARP_NULLPTR),
-        rcp_Ilim2(YARP_NULLPTR),
-        rpc_ITorque(YARP_NULLPTR),
-        rpc_iCtrlMode(YARP_NULLPTR),
-        rpc_iCtrlMode2(YARP_NULLPTR),
-        rpc_AxisInfo(YARP_NULLPTR),
-        rpc_IRemoteCalibrator(YARP_NULLPTR),
-        rpc_Icalib2(YARP_NULLPTR),
-        rpc_IImpedance(YARP_NULLPTR),
-        rpc_IInteract(YARP_NULLPTR),
-        rpc_IMotor(YARP_NULLPTR),
-        rpc_IVar(YARP_NULLPTR),
-        rpc_ICurrent(YARP_NULLPTR),
-        rpc_IPWM(YARP_NULLPTR),
+        ControlBoardWrapper_p(nullptr),
+        rpc_IPid(nullptr),
+        rpc_IPosCtrl(nullptr),
+        rpc_IPosCtrl2(nullptr),
+        rpc_IPosDirect(nullptr),
+        rpc_IVelCtrl(nullptr),
+        rpc_IVelCtrl2(nullptr),
+        rpc_IEncTimed(nullptr),
+        rpc_IMotEnc(nullptr),
+        rcp_IAmp(nullptr),
+        rcp_Ilim2(nullptr),
+        rpc_ITorque(nullptr),
+        rpc_iCtrlMode(nullptr),
+        rpc_iCtrlMode2(nullptr),
+        rpc_AxisInfo(nullptr),
+        rpc_IRemoteCalibrator(nullptr),
+        rpc_Icalib2(nullptr),
+        rpc_IImpedance(nullptr),
+        rpc_IInteract(nullptr),
+        rpc_IMotor(nullptr),
+        rpc_IVar(nullptr),
+        rpc_ICurrent(nullptr),
+        rpc_IPWM(nullptr),
         controlledJoints(0)
 {
 }

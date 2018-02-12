@@ -6,7 +6,7 @@
 #
 
 # Copyright: (C) 2009, 2010 RobotCub Consortium
-#            (C) 2013-2016 iCub Facility, Istituto Italiano di Tecnologia
+#            (C) 2013-2016 Istituto Italiano di Tecnologia (IIT)
 # Authors: Paul Fitzpatrick <paulfitz@alum.mit.edu>
 #          Giorgio Metta <giorgio.metta@iit.it>
 #          Lorenzo Natale <lorenzo.natale@iit.it>
@@ -585,8 +585,8 @@ macro(YARP_ADD_PLUGIN_YARPDEV_EXECUTABLE exename bundle_name)
     set(YARP_CODE_PRE)
     set(YARP_CODE_POST)
   else()
-    set(YARP_CODE_PRE "YARP_DECLARE_DEVICES(${bundle_name})")
-    set(YARP_CODE_POST "    YARP_REGISTER_DEVICES(${bundle_name})")
+    set(YARP_CODE_PRE "YARP_DECLARE_PLUGINS(${bundle_name})")
+    set(YARP_CODE_POST "    YARP_REGISTER_PLUGINS(${bundle_name})")
   endif()
   configure_file("${YARP_MODULE_DIR}/template/yarp_plugin_yarpdev_main.cpp.in"
                  "${CMAKE_CURRENT_BINARY_DIR}/${bundle_name}_yarpdev.cpp" @ONLY)

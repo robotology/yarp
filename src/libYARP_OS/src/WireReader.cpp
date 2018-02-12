@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2013 iCub Facility
+ * Copyright (C) 2013 Istituto Italiano di Tecnologia (IIT)
  * Authors: Paul Fitzpatrick
  * CopyPolicy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
  */
@@ -510,6 +510,7 @@ void WireReader::readMapBegin(WireState& nstate,
                               WireState& nstate2,
                               unsigned YARP_INT32& len)
 {
+    YARP_UNUSED(nstate2);
     readListBegin(nstate, len);
 }
 

@@ -92,7 +92,7 @@ bool SerialDeviceDriver::open(yarp::os::Searchable& config) {
     return open(config2);
 }
 
-bool SerialDeviceDriver::close(void) {
+bool SerialDeviceDriver::close() {
     _serial_dev.close();
     return true;
 }

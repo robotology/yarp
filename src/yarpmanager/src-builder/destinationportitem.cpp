@@ -13,7 +13,7 @@ DestinationPortItem::DestinationPortItem(QString itemName, bool isInApp,
     this->itemName = itemName;
     errorState = false;
     portAvailable = false;
-    sigHandler = new ItemSignalHandler((QGraphicsItem*)this,DestinationPortItemType,NULL);
+    sigHandler = new ItemSignalHandler((QGraphicsItem*)this,DestinationPortItemType,nullptr);
     pressed = false;
     moved = false;
     this->nestedInApp = isInApp;

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2014 iCub Facility
+ * Copyright (C) 2014 Istituto Italiano di Tecnologia (IIT)
  * Authors: Paul Fitzpatrick
  * CopyPolicy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
  */
@@ -27,7 +27,10 @@ namespace yarp {
 template <class T>
 class yarp::os::Publisher : public AbstractContactable {
 public:
+#ifndef YARP_NO_DEPRECATED // since YARP 2.3.72
     using Contactable::open;
+#endif // YARP_NO_DEPRECATED
+
     using AbstractContactable::write;
 
     /**
@@ -38,7 +41,7 @@ public:
      *
      */
     Publisher(const ConstString& name = "") {
-        buffered_port = YARP_NULLPTR;
+        buffered_port = nullptr;
         T example;
         port.promiseType(example.getType());
         port.setInputMode(false);
@@ -73,34 +76,34 @@ public:
     }
 
     // documentation provided in Contactable
-    virtual bool open(const ConstString& name) YARP_OVERRIDE {
+    virtual bool open(const ConstString& name) override {
         clear();
         return port.open(name);
     }
 
     // documentation provided in Contactable
-    virtual bool open(const Contact& contact, bool registerName = true) YARP_OVERRIDE {
+    virtual bool open(const Contact& contact, bool registerName = true) override {
         clear();
         return port.open(contact, registerName);
     }
 
     // documentation provided in Contactable
-    virtual void close() YARP_OVERRIDE {
+    virtual void close() override {
         active().close();
     }
 
     // documentation provided in Contactable
-    virtual void interrupt() YARP_OVERRIDE {
+    virtual void interrupt() override {
         active().interrupt();
     }
 
     // documentation provided in Contactable
-    virtual void resume() YARP_OVERRIDE {
+    virtual void resume() override {
         active().resume();
     }
 
     // documented in Contactable
-    void setReader(PortReader& reader) YARP_OVERRIDE {
+    void setReader(PortReader& reader) override {
         active().setReader(reader);
     }
 
@@ -122,6 +125,15 @@ public:
      */
     T& prepare() {
         return buffer().prepare();
+    }
+
+    /**
+     * Give the last prepared object back to YARP without writing it.
+     *
+     * @return true if there was a prepared object to return.
+     */
+    bool unprepare() {
+        return buffer().unprepare();
     }
 
     /**
@@ -154,11 +166,11 @@ public:
         return 0;
     }
 
-    virtual Port& asPort() YARP_OVERRIDE {
+    virtual Port& asPort() override {
         return port;
     }
 
-    virtual const Port& asPort() const YARP_OVERRIDE {
+    virtual const Port& asPort() const override {
         return port;
     }
 
@@ -182,7 +194,7 @@ private:
     void clear() {
         if (!buffered_port) return;
         delete buffered_port;
-        buffered_port = YARP_NULLPTR;
+        buffered_port = nullptr;
     }
 };
 

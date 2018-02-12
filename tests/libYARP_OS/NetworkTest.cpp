@@ -49,7 +49,7 @@ public:
         //printf("service provider read data\n");
         receive.addInt(5);
         ConnectionWriter *writer = connection.getWriter();
-        if (writer!=NULL) {
+        if (writer!=nullptr) {
             //printf("service provider replying\n");
             receive.write(*writer);
             //printf("service provider replied\n");
@@ -152,8 +152,8 @@ public:
         Network::registerName("/foo");
         Network::setProperty("/foo","my_prop",Value(15));
         Value *v = Network::getProperty("/foo","my_prop");
-        checkTrue(v!=NULL,"got property");
-        if (v!=NULL) {
+        checkTrue(v!=nullptr,"got property");
+        if (v!=nullptr) {
             checkEqual(v->asInt(),15,"recover property");
             delete v;
         }

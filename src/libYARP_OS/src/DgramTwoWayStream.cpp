@@ -42,7 +42,7 @@ using namespace yarp::os;
 
 
 static bool checkCrc(char *buf, YARP_SSIZE_T length, YARP_SSIZE_T crcLength, int pct,
-                     int *store_altPct = YARP_NULLPTR) {
+                     int *store_altPct = nullptr) {
     NetInt32 alt =
         (NetInt32)NetType::getCrc(buf+crcLength, (length>crcLength)?(length-crcLength):0);
     Bytes b(buf, 4);
@@ -58,7 +58,7 @@ static bool checkCrc(char *buf, YARP_SSIZE_T length, YARP_SSIZE_T crcLength, int
             YARP_DEBUG(Logger::get(), "packet code broken");
         }
     }
-    if (store_altPct != YARP_NULLPTR) {
+    if (store_altPct != nullptr) {
         *store_altPct = altPct;
     }
 
@@ -98,14 +98,14 @@ bool DgramTwoWayStream::open(const Contact& local, const Contact& remote) {
         remoteHandle.set(remoteAddress.getPort(), remoteAddress.getHost().c_str());
     }
     dgram = new ACE_SOCK_Dgram;
-    yAssert(dgram != YARP_NULLPTR);
+    yAssert(dgram != nullptr);
 
     int result = dgram->open(localHandle,
                              ACE_PROTOCOL_FAMILY_INET,
                              0,
                              1);
 #else
-    dgram = YARP_NULLPTR;
+    dgram = nullptr;
     dgram_sockfd = -1;
 
     int s = -1;
@@ -222,7 +222,9 @@ void DgramTwoWayStream::allocate(int readSize, int writeSize) {
                 int result = dgram->get_option(SOL_SOCKET, SO_RCVBUF, &_read_size, &len);
                 if (result < 0) {
                     YARP_ERROR(Logger::get(), ConstString("Failed to read buffer size from RCVBUF socket with error: ") +
-                               ConstString(strerror(errno)));
+                               ConstString(strerror(errno)) +
+                               ConstString(". Setting read buffer size to UDP_MAX_DATAGRAM_SIZE."));
+                    _read_size = UDP_MAX_DATAGRAM_SIZE;
                 }
             }
         #else
@@ -231,7 +233,9 @@ void DgramTwoWayStream::allocate(int readSize, int writeSize) {
             int result = getsockopt(dgram_sockfd, SOL_SOCKET, SO_RCVBUF, &_read_size, &len);
             if (result < 0) {
                 YARP_ERROR(Logger::get(), ConstString("Failed to read buffer size from RCVBUF socket with error: ") +
-                           ConstString(strerror(errno)));
+                           ConstString(strerror(errno)) +
+                           ConstString(". Setting read buffer size to UDP_MAX_DATAGRAM_SIZE."));
+                _read_size = UDP_MAX_DATAGRAM_SIZE;
             }
         #endif
     }
@@ -416,11 +420,11 @@ bool DgramTwoWayStream::openMcast(const Contact& group,
     ACE_SOCK_Dgram_Mcast *dmcast = new ACE_SOCK_Dgram_Mcast(mcastOptions);
     dgram = dmcast;
     mgram = dmcast;
-    yAssert(dgram != YARP_NULLPTR);
+    yAssert(dgram != nullptr);
 
     int result = -1;
     ACE_INET_Addr addr(group.getPort(), group.getHost().c_str());
-    result = dmcast->open(addr, YARP_NULLPTR, 1);
+    result = dmcast->open(addr, nullptr, 1);
     if (result==0) {
         result = restrictMcast(dmcast, group, ipLocal, false);
     }
@@ -431,7 +435,7 @@ bool DgramTwoWayStream::openMcast(const Contact& group,
     }
 
 #else
-    dgram = YARP_NULLPTR;
+    dgram = nullptr;
     dgram_sockfd = -1;
 
     int s = -1;
@@ -523,7 +527,7 @@ bool DgramTwoWayStream::join(const Contact& group, bool sender,
 
     dgram = dmcast;
     mgram = dmcast;
-    yAssert(dgram != YARP_NULLPTR);
+    yAssert(dgram != nullptr);
 
     ACE_INET_Addr addr(group.getPort(), group.getHost().c_str());
 
@@ -668,7 +672,7 @@ void DgramTwoWayStream::interrupt() {
                 tmp.flush();
                 tmp.close();
                 if (happy) {
-                    yarp::os::Time::delay(0.25);
+                    yarp::os::SystemClock::delaySystem(0.25);
                 }
             }
             YARP_DEBUG(Logger::get(), "dgram interrupt done");
@@ -682,7 +686,7 @@ void DgramTwoWayStream::interrupt() {
             while (interrupting) {
                 YARP_DEBUG(Logger::get(),
                            "waiting for dgram interrupt to be finished...");
-                yarp::os::Time::delay(0.1);
+                yarp::os::SystemClock::delaySystem(0.1);
             }
         }
     }
@@ -690,7 +694,7 @@ void DgramTwoWayStream::interrupt() {
 }
 
 void DgramTwoWayStream::closeMain() {
-    if (dgram != YARP_NULLPTR) {
+    if (dgram != nullptr) {
         //printf("Dgram closing, interrupt state %d\n", interrupting);
         interrupt();
         mutex.wait();
@@ -700,10 +704,10 @@ void DgramTwoWayStream::closeMain() {
         mutex.post();
         while (interrupting) {
             happy = false;
-            yarp::os::Time::delay(0.1);
+            yarp::os::SystemClock::delaySystem(0.1);
         }
         mutex.wait();
-        if (dgram != YARP_NULLPTR) {
+        if (dgram != nullptr) {
 #if defined(YARP_HAS_ACE)
             dgram->close();
             delete dgram;
@@ -713,8 +717,8 @@ void DgramTwoWayStream::closeMain() {
             }
             dgram_sockfd = -1;
 #endif
-            dgram = YARP_NULLPTR;
-            mgram = YARP_NULLPTR;
+            dgram = nullptr;
+            mgram = nullptr;
         }
         happy = false;
         mutex.post();
@@ -738,7 +742,7 @@ YARP_SSIZE_T DgramTwoWayStream::read(const Bytes& b) {
             readAt = 0;
 
 
-            //yAssert(dgram != YARP_NULLPTR);
+            //yAssert(dgram != nullptr);
             //YARP_DEBUG(Logger::get(), "DGRAM Waiting for something!");
             YARP_SSIZE_T result = -1;
 #if defined(YARP_HAS_ACE)
@@ -761,8 +765,8 @@ YARP_SSIZE_T DgramTwoWayStream::read(const Bytes& b) {
 
             } else
 #endif
-            if (dgram != YARP_NULLPTR) {
-                yAssert(dgram != YARP_NULLPTR);
+            if (dgram != nullptr) {
+                yAssert(dgram != nullptr);
 #if defined(YARP_HAS_ACE)
                 ACE_INET_Addr dummy((u_short)0, (ACE_UINT32)INADDR_ANY);
                 //YARP_DEBUG(Logger::get(), "DGRAM Waiting for something!");
@@ -826,7 +830,7 @@ YARP_SSIZE_T DgramTwoWayStream::read(const Bytes& b) {
                         bufferAlerted = true;
                     } else {
                         errCount++;
-                        double now = Time::now();
+                        double now = SystemClock::nowSystem();
                         if (now-lastReportTime>1) {
                             YARP_ERROR(Logger::get(),
                                        ConstString("*** ") + NetType::toString(errCount) + " datagram packet(s) dropped - checksum error ***");
@@ -869,7 +873,7 @@ void DgramTwoWayStream::write(const Bytes& b) {
     if (reader) {
         return;
     }
-    if (writeBuffer.get() == YARP_NULLPTR) {
+    if (writeBuffer.get() == nullptr) {
         return;
     }
 
@@ -894,7 +898,7 @@ void DgramTwoWayStream::write(const Bytes& b) {
 
 
 void DgramTwoWayStream::flush() {
-    if (writeBuffer.get() == YARP_NULLPTR) {
+    if (writeBuffer.get() == nullptr) {
         return;
     }
 
@@ -906,11 +910,11 @@ void DgramTwoWayStream::flush() {
     pct++;
 
     if (writeAvail>0) {
-        //yAssert(dgram != YARP_NULLPTR);
+        //yAssert(dgram != nullptr);
         YARP_SSIZE_T len = 0;
 
 #if defined(YARP_HAS_ACE)
-        if (mgram != YARP_NULLPTR) {
+        if (mgram != nullptr) {
             len = mgram->send(writeBuffer.get(), writeAvail);
             YARP_DEBUG(Logger::get(),
                        ConstString("MCAST - wrote ") +
@@ -918,7 +922,7 @@ void DgramTwoWayStream::flush() {
                        );
         } else
 #endif
-            if (dgram != YARP_NULLPTR) {
+            if (dgram != nullptr) {
 #if defined(YARP_HAS_ACE)
             len = dgram->send(writeBuffer.get(), writeAvail,
                               remoteHandle);
@@ -951,13 +955,13 @@ void DgramTwoWayStream::flush() {
             // there's an implementation below, but commented out -
             // better solution was to increase recv buffer size
 
-            double first = yarp::os::Time::now();
+            double first = yarp::os::SystemClock::nowSystem();
             double now;
             int ct = 0;
             do {
                 //printf("Busy wait... %d\n", ct);
-                yarp::os::Time::delay(0);
-                now = yarp::os::Time::now();
+                yarp::os::SystemClock::delaySystem(0);
+                now = yarp::os::SystemClock::nowSystem();
                 ct++;
             } while (now-first<0.001);
         }

@@ -128,10 +128,9 @@ Sound Sound::subSound(int first_sample, int last_sample)
 
 void Sound::init(int bytesPerSample) {
     implementation = new FlexImage();
-    yAssert(implementation!=NULL);
+    yAssert(implementation!=nullptr);
 
     yAssert(bytesPerSample==2); // that's all thats implemented right now
-    HELPER(implementation).setPixelSize(sizeof(PixelMono16));
     HELPER(implementation).setPixelCode(VOCAB_PIXEL_MONO16);
     HELPER(implementation).setQuantum(2);
 
@@ -141,9 +140,9 @@ void Sound::init(int bytesPerSample) {
 }
 
 Sound::~Sound() {
-    if (implementation!=NULL) {
+    if (implementation!=nullptr) {
         delete &HELPER(implementation);
-        implementation = NULL;
+        implementation = nullptr;
     }
 }
 
@@ -157,7 +156,7 @@ int Sound::get(int location, int channel) const {
     FlexImage& img = HELPER(implementation);
     unsigned char *addr = img.getPixelAddress(location,channel);
     if (bytesPerSample==2) {
-        return *((NetUint16 *)addr);
+        return *(reinterpret_cast<NetUint16*>(addr));
     }
     yInfo("sound only implemented for 16 bit samples");
     return 0;
@@ -174,7 +173,7 @@ void Sound::set(int value, int location, int channel) {
     FlexImage& img = HELPER(implementation);
     unsigned char *addr = img.getPixelAddress(location,channel);
     if (bytesPerSample==2) {
-        *((NetUint16 *)addr) = value;
+        *(reinterpret_cast<NetUint16*>(addr)) = value;
         return;
     }
     yInfo("sound only implemented for 16 bit samples");

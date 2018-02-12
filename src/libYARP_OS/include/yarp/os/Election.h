@@ -47,7 +47,7 @@ public:
         if (peerSet.begin()!=peerSet.end()) {
             return peerSet.begin()->first;
         }
-        return YARP_NULLPTR;
+        return nullptr;
     }
 };
 
@@ -77,7 +77,7 @@ private:
             entry = nameMap.find(key);
         }
         if (entry == nameMap.end()) {
-            return YARP_NULLPTR;
+            return nullptr;
         }
         return &(entry->second);
     }
@@ -112,7 +112,7 @@ private:
         if (rec) {
             return rec->getFirst();
         }
-        return YARP_NULLPTR;
+        return nullptr;
     }
 
     PR *getRecord(const yarp::os::ConstString& key) {

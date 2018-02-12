@@ -157,7 +157,7 @@ ModuleItem::~ModuleItem()
     if(manager && editingMode){
         Application* mainApplication = manager->getKnowledgeBase()->getApplication();
         manager->getKnowledgeBase()->removeIModuleFromApplication(mainApplication,module->getLabel());
-        module = NULL;
+        module = nullptr;
     }
 
 }
@@ -455,7 +455,7 @@ void ModuleItem::portMoved(PortItem *port,QGraphicsSceneMouseEvent *e)
 PortItem::PortItem(InputData *node, BuilderItem *parent) : BuilderItem(parent)
 {
     triangleH = (PORT_LINE_WIDTH/2)* sqrt(3.0);
-    outData = YARP_NULLPTR;
+    outData = nullptr;
     inData = node;
     portAvailable = unknown;
 
@@ -486,7 +486,7 @@ PortItem::PortItem(InputData *node, BuilderItem *parent) : BuilderItem(parent)
     this->nestedInApp = parent->nestedInApp;
     portType = INPUT_PORT;
 
-    sigHandler = NULL;
+    sigHandler = nullptr;
     pressed = false;
     moved = false;
     hovered =false;
@@ -505,7 +505,7 @@ PortItem::PortItem(OutputData* node, BuilderItem *parent) : BuilderItem(parent)
 {
     triangleH = (PORT_LINE_WIDTH/2)* sqrt(3.0);
     outData = node;
-    inData = YARP_NULLPTR;
+    inData = nullptr;
     portAvailable = unknown;
     setAcceptHoverEvents(true);
     setFlag(ItemSendsGeometryChanges,true);
@@ -520,8 +520,9 @@ PortItem::PortItem(OutputData* node, BuilderItem *parent) : BuilderItem(parent)
             polygon << QPointF(-triangleH/2, -PORT_LINE_WIDTH/2) << QPointF(-triangleH/2, PORT_LINE_WIDTH/2) <<
                        QPointF(0, PORT_LINE_WIDTH/2) << QPointF(triangleH/2, 0) << QPointF(0, -PORT_LINE_WIDTH/2);
             boundingR = QRectF(-triangleH/2, -PORT_LINE_WIDTH/2,triangleH,PORT_LINE_WIDTH);
+            break;
         case SERVICE_PORT:
-        boundingR = QRectF(-PORT_LINE_WIDTH/2, -PORT_LINE_WIDTH/2,PORT_LINE_WIDTH,PORT_LINE_WIDTH);
+            boundingR = QRectF(-PORT_LINE_WIDTH/2, -PORT_LINE_WIDTH/2,PORT_LINE_WIDTH,PORT_LINE_WIDTH);
             break;
         default:
             break;
@@ -533,7 +534,7 @@ PortItem::PortItem(OutputData* node, BuilderItem *parent) : BuilderItem(parent)
     this->nestedInApp = parent->nestedInApp;
     portType = OUTPUT_PORT;
 
-    sigHandler = NULL;
+    sigHandler = nullptr;
     pressed = false;
     moved = false;
     hovered =false;

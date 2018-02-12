@@ -1,6 +1,6 @@
 /*
  *  Yarp Modules Manager
- *  Copyright: (C) 2011 Robotics, Brain and Cognitive Sciences - Italian Institute of Technology (IIT)
+ *  Copyright: (C) 2011 Istituto Italiano di Tecnologia (IIT)
  *  Authors: Ali Paikan <ali.paikan@iit.it>
  *
  *  Copy Policy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
@@ -48,35 +48,35 @@ public:
 
     LocalBroker();
     virtual ~LocalBroker();
-    bool init() YARP_OVERRIDE;
+    bool init() override;
     bool init(const char* szcmd, const char* szparam,
               const char* szhost, const char* szstdio,
-              const char* szworkdir, const char* szenv) YARP_OVERRIDE;
-    void fini(void) YARP_OVERRIDE;
-    bool start() YARP_OVERRIDE;
-    bool stop() YARP_OVERRIDE;
-    bool kill() YARP_OVERRIDE;
+              const char* szworkdir, const char* szenv) override;
+    void fini(void) override;
+    bool start() override;
+    bool stop() override;
+    bool kill() override;
     bool connect(const char* from, const char* to,
-                 const char* carrier, bool persist=false) YARP_OVERRIDE;
+                 const char* carrier, bool persist=false) override;
     bool disconnect(const char* from, const char* to,
-                    const char *carrier) YARP_OVERRIDE;
-    int running(void) YARP_OVERRIDE;
-    bool exists(const char* port) YARP_OVERRIDE;
-    const char* requestRpc(const char* szport, const char* request, double timeout) YARP_OVERRIDE;
+                    const char *carrier) override;
+    int running(void) override;
+    bool exists(const char* port) override;
+    const char* requestRpc(const char* szport, const char* request, double timeout) override;
     bool connected(const char* from, const char* to,
-                   const char* carrier) YARP_OVERRIDE;
-    const char* error(void) YARP_OVERRIDE;
-    bool initialized(void) YARP_OVERRIDE { return bInitialized;}
-    bool attachStdout(void) YARP_OVERRIDE;
-    void detachStdout(void) YARP_OVERRIDE;
+                   const char* carrier) override;
+    const char* error(void) override;
+    bool initialized(void) override { return bInitialized;}
+    bool attachStdout(void) override;
+    void detachStdout(void) override;
 
     /** Define if the application will be visible or not */
     void setWindowMode(WindowMode m);
 
 public: // for rate thread
-    void run() YARP_OVERRIDE;
-    bool threadInit() YARP_OVERRIDE;
-    void threadRelease() YARP_OVERRIDE;
+    void run() override;
+    bool threadInit() override;
+    void threadRelease() override;
 
 protected:
 

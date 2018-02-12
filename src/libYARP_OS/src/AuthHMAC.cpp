@@ -9,6 +9,7 @@
 #include <cstring> //needed by strcpy
 #include <cstdio>
 #include <ctime>
+#include <random>
 #include <yarp/os/ConstString.h>
 #include <yarp/os/Property.h>
 #include <yarp/os/Network.h>
@@ -80,7 +81,7 @@ AuthHMAC::AuthHMAC() :
     strcpy((char*) tmp, key.c_str());
     HMAC_INIT(&context, tmp, (unsigned int)key_len);
     delete[] tmp;
-    srand((unsigned)time(YARP_NULLPTR));
+    srand((unsigned)time(nullptr));
 
     if (!authentication_enabled) {
         yInfo("Authentication enabled.\n");
@@ -268,6 +269,11 @@ bool AuthHMAC::check_hmac(unsigned char * mac, unsigned char * mac_check)
 
 
 void AuthHMAC::fill_nonce(unsigned char* nonce) {
+    std::random_device rd;
+    std::mt19937 mt(rd());
+    std::uniform_int_distribution<int> dist(0, 255);
     for (unsigned int i=0; i < NONCE_LEN; i++)
-        nonce[i] = static_cast<unsigned char>(rand()%256);
+    {
+        nonce[i] = static_cast<unsigned char>(dist(mt));
+    }
 }

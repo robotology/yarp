@@ -49,7 +49,7 @@ public:
         }
     }
 
-    virtual bool write(ConnectionWriter& connection) YARP_OVERRIDE {
+    virtual bool write(ConnectionWriter& connection) override {
         for (size_t i=0; i<length(); i++) {
             connection.appendBlock((char*)data(i), length(i));
         }

@@ -48,12 +48,12 @@ class yarp::dev::FfmpegGrabber : public IFrameGrabberImage,
 public:
 
     FfmpegGrabber() :
-        system_resource(YARP_NULLPTR),
-        formatParamsVideo(YARP_NULLPTR),
-        formatParamsAudio(YARP_NULLPTR),
-        pFormatCtx(YARP_NULLPTR),
-        pFormatCtx2(YARP_NULLPTR),
-        pAudioFormatCtx(YARP_NULLPTR),
+        system_resource(nullptr),
+        formatParamsVideo(nullptr),
+        formatParamsAudio(nullptr),
+        pFormatCtx(nullptr),
+        pFormatCtx2(nullptr),
+        pAudioFormatCtx(nullptr),
         active(false),
         startTime(0),
         _hasAudio(false),
@@ -66,7 +66,7 @@ public:
         m_h(0),
         m_channels(0),
         m_rate(0),
-        m_capture(YARP_NULLPTR)
+        m_capture(nullptr)
     {
         memset(&packet,0,sizeof(packet));
     }

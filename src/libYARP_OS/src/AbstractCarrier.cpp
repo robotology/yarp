@@ -114,15 +114,12 @@ bool AbstractCarrier::expectSenderSpecifier(ConnectionState& proto)
     if (len<1) {
         len = 1;
     }
-    // expect a string -- these days null terminated, but not in YARP1
     ManagedBytes b(len+1);
     r = proto.is().readFull(Bytes(b.get(), len));
     if ((int)r!=len) {
         YARP_DEBUG(Logger::get(), "did not get sender name");
         return false;
     }
-    // add null termination for YARP1
-    b.get()[len] = '\0';
     ConstString s = b.get();
     Route route = proto.getRoute();
     route.setFromName(s);
@@ -356,4 +353,34 @@ void AbstractCarrier::writeYarpInt(int n, ConnectionState& proto)
     Bytes header(&(buf[0]), sizeof(buf));
     createYarpNumber(n, header);
     proto.os().write(header);
+}
+
+int AbstractCarrier::interpretYarpNumber(const yarp::os::Bytes& b)
+{
+    if (b.length()==8) {
+        char *base = b.get();
+        if (base[0]=='Y' &&
+            base[1]=='A' &&
+            base[6]=='R' &&
+            base[7]=='P') {
+            yarp::os::Bytes b2(b.get()+2, 4);
+            int x = NetType::netInt(b2);
+            return x;
+        }
+    }
+    return -1;
+}
+
+void AbstractCarrier::createYarpNumber(int x, const yarp::os::Bytes& header)
+{
+    if (header.length()!=8) {
+        return;
+    }
+    char *base = header.get();
+    base[0] = 'Y';
+    base[1] = 'A';
+    base[6] = 'R';
+    base[7] = 'P';
+    yarp::os::Bytes code(base+2, 4);
+    NetType::netInt(x, code);
 }

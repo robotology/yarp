@@ -14,6 +14,7 @@
 #include <yarp/os/Property.h>
 #include <yarp/os/NameStore.h>
 #include <yarp/os/QosStyle.h>
+#include <yarp/os/Time.h>
 
 //protects against some dangerous ACE macros
 #ifdef main
@@ -49,12 +50,26 @@ public:
     static void initMinimum();
 
     /**
+     * Basic system initialization, not including plugins,
+     * The clock to be initialized can be specified.
+     * Must eventually make a matching call to finiMinimum().
+     */
+    static void initMinimum(yarp::os::yarpClockType clockType, yarp::os::Clock *custom=nullptr);
+
+    /**
      * Basic system initialization, not including plugins.
      * A matching finiMinimum() will be called automatically
      * on program termination.
      */
     static void autoInitMinimum();
 
+    /**
+     * Basic system initialization, not including plugins.
+     * The clock to be initialized can be specified.
+     * A matching finiMinimum() will be called automatically
+     * on program termination.
+     */
+    static void autoInitMinimum(yarp::os::yarpClockType clockType, yarp::os::Clock *custom=nullptr);
 
     /**
      * Deinitialization, excluding plugins.
@@ -73,11 +88,11 @@ public:
                         const ConstString& carrier = "",
                         bool quiet = true);
 
-    // Catch old uses of YARP_NULLPTR for carrier
+    // Catch old uses of nullptr for carrier
     static bool connect(const char *src, const char *dest,
                         const char *carrier,
                         bool quiet = true) {
-        return connect(ConstString(src), ConstString(dest), ConstString((carrier==YARP_NULLPTR)?"":carrier), quiet);
+        return connect(ConstString(src), ConstString(dest), ConstString((carrier==nullptr)?"":carrier), quiet);
     }
 
     /**
@@ -165,16 +180,6 @@ public:
      * @return 0 on success, non-zero on failure
      */
     static int main(int argc, char *argv[]);
-
-    /**
-     * Run a basic YARP name server.
-     *
-     * @param argc argument count
-     * @param argv command line arguments
-     * @return 0 on success, non-zero on failure
-     *
-     */
-    static int runNameServer(int argc, char *argv[]);
 
     /**
      * An assertion.  Should be true.  If false, this will be
@@ -316,7 +321,7 @@ public:
      * @return A string from standard input, without newline or
      * linefeed characters.
      */
-    static ConstString readString(bool *eof = YARP_NULLPTR);
+    static ConstString readString(bool *eof = nullptr);
 
 
     /**
@@ -448,7 +453,7 @@ public:
      *
      */
     static ConstString getEnvironment(const char *key,
-                                      bool *found = YARP_NULLPTR);
+                                      bool *found = nullptr);
 
     /**
      *
@@ -617,6 +622,20 @@ public:
     Network();
 
     /**
+     * Initialize the YARP network using the specified clock.
+     * This function will take precedence with respect to the environment
+     * variable YARP_CLOCK because it is explixitly required by the user.
+     *
+     * Calling this function with UNDEFINED_CLOCK is equivalent to use the
+     * classic yarp::Network() method and the environment variable will be
+     * used.
+     *
+     * In case CUSTOM_CLOCK is used, the Clock pointer must point to a valid
+     * Clock object already initialized.
+     */
+     Network(yarp::os::yarpClockType clockType, yarp::os::Clock *custom=nullptr);
+
+    /**
      * Destructor.  Disconnects from the YARP network.
      */
     virtual ~Network();
@@ -629,15 +648,40 @@ public:
      */
     static void init();
 
+    /**
+     * Initialization.  Same as init(), but let the user configure which
+     * clock shall be used right from the initialization phase.
+     */
+    static void init(yarp::os::yarpClockType clockType, Clock *custom=nullptr);
 
     /**
      * Deinitialization.  On some operating systems, there are certain
      * shut-down tasks that need to be performed, and this method does
-     * them.  It is a good idea to call Netork::init near the start of
+     * them.  It is a good idea to call Network::init near the start of
      * your program, and to call this method towards the end.
      */
     static void fini();
 
+    /**
+     * This function specifically initialize the clock
+     * In case clockType is one of the valid cases:
+     *      YARP_CLOCK_SYSTEM,
+     *      YARP_CLOCK_NETWORK,
+     *      YARP_CLOCK_CUSTOM
+     * (see yarp::os::Time for more), the corresponding clock will be initialized.
+     *
+     * In case the clockType is YARP_CLOCK_DEFAULT, the environment variable
+     * YARP_CLOCK will be used to choose between system or network clock.
+     *
+     * See description of yarp::os::Time::useNetworkClock() for more details about the
+     * network clock.
+     *
+     * This function is called by Network constructor and by Network::init(),
+     * and Network::initMinimum().
+     *
+     * In case of failure calls YARP_FAIL assert.
+     **/
+    static void yarpClockInit(yarp::os::yarpClockType clockType, Clock *custom=nullptr);
 };
 
 #endif // YARP_OS_NETWORK_H

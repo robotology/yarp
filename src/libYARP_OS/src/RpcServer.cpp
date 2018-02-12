@@ -10,29 +10,41 @@
 using namespace yarp::os;
 using namespace yarp::os::impl;
 
-RpcServer::RpcServer() {
+RpcServer::RpcServer()
+{
     port.setInputMode(true);
     port.setOutputMode(false);
     port.setRpcMode(true);
 }
 
-RpcServer::~RpcServer() {
+RpcServer::~RpcServer()
+{
     port.close();
 }
 
-bool RpcServer::write(PortWriter& writer, PortWriter *callback) const {
+bool RpcServer::write(PortWriter& writer, PortWriter *callback) const
+{
+    YARP_UNUSED(writer);
+    YARP_UNUSED(callback);
     YARP_SPRINTF1(Logger::get(), error, "RpcServer %s cannot write, please use a regular Port or RpcClient for that", port.getName().c_str());
     return false;
 }
 
-bool RpcServer::write(PortWriter& writer, PortReader& reader,
-                                PortWriter *callback) const {
+bool RpcServer::write(PortWriter& writer,
+                      PortReader& reader,
+                      PortWriter *callback) const
+{
+    YARP_UNUSED(writer);
+    YARP_UNUSED(reader);
+    YARP_UNUSED(callback);
     YARP_SPRINTF1(Logger::get(), error, "RpcServer %s cannot write, please use a regular Port or RpcClient for that", port.getName().c_str());
     return false;
 }
 
-bool RpcServer::read(PortReader& reader, bool willReply) {
-    if (!willReply) {
+bool RpcServer::read(PortReader& reader, bool willReply)
+{
+    if (!willReply)
+    {
         YARP_SPRINTF1(Logger::get(), error, "RpcServer %s must reply, please use a regular Port if you do not want to", port.getName().c_str());
         // this is an error for RpcServer
         return false;
@@ -40,17 +52,20 @@ bool RpcServer::read(PortReader& reader, bool willReply) {
     return port.read(reader, true);
 }
 
-void RpcServer::setInputMode(bool expectInput) {
+void RpcServer::setInputMode(bool expectInput)
+{
     yAssert(expectInput);
 }
 
 
-void RpcServer::setOutputMode(bool expectOutput) {
+void RpcServer::setOutputMode(bool expectOutput)
+{
     yAssert(!expectOutput);
 }
 
 
-void RpcServer::setRpcMode(bool expectRpc) {
+void RpcServer::setRpcMode(bool expectRpc)
+{
     yAssert(expectRpc);
 }
 

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2014 iCub Facility
+ * Copyright (C) 2014 Istituto Italiano di Tecnologia (IIT)
  * Authors: Paul Fitzpatrick
  * CopyPolicy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
  */
@@ -12,11 +12,11 @@
 using namespace yarp::os;
 
 Type::Type() {
-    prop = YARP_NULLPTR;
+    prop = nullptr;
 }
 
 Type::Type(const Type& alt) {
-    prop = YARP_NULLPTR;
+    prop = nullptr;
     name = alt.name;
     name_on_wire = alt.name_on_wire;
     if (alt.prop) {
@@ -28,7 +28,7 @@ Type::Type(const Type& alt) {
 Type::~Type() {
     if (prop) {
         delete prop;
-        prop = YARP_NULLPTR;
+        prop = nullptr;
     }
 }
 
@@ -40,7 +40,7 @@ const Type& Type::operator =(const Type& alt) {
         *prop = *(alt.prop);
     } else if (prop) {
         delete prop;
-        prop = YARP_NULLPTR;
+        prop = nullptr;
     }
     return *this;
 }

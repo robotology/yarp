@@ -20,6 +20,7 @@ add_subdirectory(libYARP_dev)
 add_subdirectory(libYARP_name)
 add_subdirectory(libYARP_serversql)
 add_subdirectory(libYARP_manager)
+add_subdirectory(libYARP_profiler)
 add_subdirectory(libYARP_logger)
 add_subdirectory(libYARP_wire_rep_utils)
 
@@ -56,6 +57,7 @@ if(YARP_COMPILE_EXECUTABLES)
     add_subdirectory(yarpmotorgui)
     add_subdirectory(yarpbatterygui)
     add_subdirectory(yarplaserscannergui)
+    add_subdirectory(yarpviz)
 endif()
 
 # Robot Testing Framework addons

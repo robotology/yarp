@@ -15,10 +15,13 @@ namespace yarp {
     }
 }
 
+namespace yarp {
+namespace os {
+
 /**
- * \ingroup comm_class
+ * @ingroup comm_class
  *
- * \brief Class for writing and reading simple binary structures.
+ * @brief Class for writing and reading simple binary structures.
  * Can be used in conjunction with the Port class to send data
  * across the network.
  * Don't use this for anything containing a pointer,
@@ -26,34 +29,29 @@ namespace yarp {
  * languages, operating systems, or processor architectures.
  */
 template <class T>
-class yarp::os::BinPortable : public Portable {
+class BinPortable : public Portable
+{
 private:
     T t;
 
 public:
-
     /**
      * Get the internal structure that will be read or written.
+     *
      * @return the internal structure that will be read or written.
      */
-    T& content() {
-        return t;
-    }
+    T& content();
 
+    // Documented in Portable
+    virtual bool read(ConnectionReader& connection) override;
 
-    virtual bool read(ConnectionReader& connection) YARP_OVERRIDE {
-        // An exception will get thrown upon error.
-        // Pending: translate this in expectBlock to a return value.
-        connection.convertTextMode(); // if connection is text-mode, convert!
-        connection.expectBlock((char*)(&t), sizeof(T));
-        return true;
-    }
-
-    virtual bool write(ConnectionWriter& connection) YARP_OVERRIDE {
-        connection.appendBlock((char*)(&t), sizeof(T));
-        connection.convertTextMode(); // if connection is text-mode, convert!
-        return true;
-    }
+    // Documented in Portable
+    virtual bool write(ConnectionWriter& connection) override;
 };
+
+} // namespace os
+} // namespace yarp
+
+#include <yarp/os/BinPortable-inl.h>
 
 #endif // YARP_OS_BINPORTABLE_H

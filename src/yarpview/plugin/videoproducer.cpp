@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2014 iCub Facility - Istituto Italiano di Tecnologia
+ * Copyright (C) 2014 Istituto Italiano di Tecnologia (IIT)
  * Author: Davide Perrone
  * Date: Feb 2014
  * email:   dperrone@aitek.it
@@ -14,8 +14,8 @@
 VideoProducer::VideoProducer(QObject *parent) :
     QObject(parent)
 {
-    m_format = NULL;
-    m_surface = NULL;
+    m_format = nullptr;
+    m_surface = nullptr;
 }
 
 VideoProducer::~VideoProducer()
@@ -23,7 +23,7 @@ VideoProducer::~VideoProducer()
     if(m_format)
     {
         delete m_format;
-        m_format = 0;
+        m_format = nullptr;
     }
 }
 
@@ -85,7 +85,7 @@ void VideoProducer::onNewVideoContentReceived(QVideoFrame *frame)
         {
             m_surface->stop();
             delete m_format;
-            m_format = NULL;
+            m_format = nullptr;
         }
 
         if (!m_surface->isActive())

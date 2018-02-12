@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2012 IITRBCS
+ * Copyright (C) 2012 Istituto Italiano di Tecnologia (IIT)
  * Authors: Paul Fitzpatrick
  * CopyPolicy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
  *
@@ -81,7 +81,7 @@ a:hover{\n\
             fileName = options.find("web").asString() + "/" + fileName;
             char buf[25600];
             FILE *fin = fopen(fileName.c_str(),"rb");
-            if (fin != YARP_NULLPTR) {
+            if (fin != nullptr) {
                 size_t len = 0;
                 do {
                     len = fread(buf,1,sizeof(buf),fin);
@@ -90,7 +90,7 @@ a:hover{\n\
                     }
                 } while (len>=1);
                 fclose(fin);
-                fin = YARP_NULLPTR;
+                fin = nullptr;
             }
             content.put(uri,accum);
             if (uri.find(".css")!=ConstString::npos) {

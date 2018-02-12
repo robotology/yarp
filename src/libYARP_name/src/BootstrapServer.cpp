@@ -35,15 +35,15 @@ private:
 public:
     BootstrapServerAdapter(NameService& owner) : handler(&owner) {
         fallback = new FallbackNameServer(*this);
-        if (fallback==NULL) {
+        if (fallback==nullptr) {
             fprintf(stderr,"Cannot allocate ServerAdapter\n");
             ::exit(1);
         }
     }
 
     virtual ~BootstrapServerAdapter() {
-        if (fallback!=NULL) delete fallback;
-        fallback = NULL;
+        if (fallback!=nullptr) delete fallback;
+        fallback = nullptr;
     }
 
     virtual ConstString apply(const ConstString& txt, const Contact& remote) override {
@@ -73,32 +73,29 @@ public:
 BootstrapServer::BootstrapServer(NameService& owner) {
 
     implementation = new BootstrapServerAdapter(owner);
-    if (implementation==NULL) {
+    if (implementation==nullptr) {
         fprintf(stderr,"Cannot allocate ServerAdapter\n");
         ::exit(1);
     }
 }
 
 BootstrapServer::~BootstrapServer() {
-
-    if (implementation!=NULL) {
+    if (implementation!=nullptr) {
         delete ((BootstrapServerAdapter*)implementation);
-        implementation = NULL;
+        implementation = nullptr;
     }
 
 }
 
 bool BootstrapServer::start() {
-
-    if (implementation!=NULL) {
+    if (implementation!=nullptr) {
         return ((BootstrapServerAdapter*)implementation)->start();
     }
     return false;
 }
 
 bool BootstrapServer::stop() {
-
-    if (implementation!=NULL) {
+    if (implementation!=nullptr) {
         return ((BootstrapServerAdapter*)implementation)->stop();
     }
     return false;
@@ -161,6 +158,14 @@ bool BootstrapServer::configFileBootstrap(yarp::os::Contact& contact,
             }
         }
     }
+    else
+    {
+        if (!conf.isLocalName(conf.getHostName())) {
+            fprintf(stderr,"The address written in config file doesn't belong any interface \n");
+            return false;
+        }
+        suggest.setHost(conf.getHostName());
+    }
 
     bool changed = false;
     if (prev.isValid()) {
@@ -177,7 +182,10 @@ bool BootstrapServer::configFileBootstrap(yarp::os::Contact& contact,
         fprintf(stderr,"  Desired settings:  host %s port %d family %s\n",
                 suggest.getHost().c_str(), suggest.getPort(), "yarp");
         fprintf(stderr,"Please specify '--write' if it is ok to overwrite current settings, or\n");
-        fprintf(stderr,"Please specify '--read' to use the current settings, or\n");
+        if(!configFileRequired)
+            fprintf(stderr,"Please specify '--read' to use the current settings, or\n");
+        else
+            fprintf(stderr,"Please set an existing address in config file, or\n");
         fprintf(stderr,"delete %s\n", conf.getConfigFileName().c_str());
         return false;
     }

@@ -18,7 +18,7 @@ int main() {
         p.read(in,true); // Read from the port, warn that we'll be replying.
         printf("Got %s\n", in.toString().c_str());                
         out.clear();
-        out.add("acknowledge");
+        out.addString("acknowledge");
         out.append(in);
         p.reply(out);    // send reply.
     }

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2012 IITRBCS
+ * Copyright (C) 2012 Istituto Italiano di Tecnologia (IIT)
  * Authors: Paul Fitzpatrick
  * CopyPolicy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
  */
@@ -23,19 +23,19 @@ namespace yarp {
 class YARP_OS_API yarp::os::ModifyingCarrier : public AbstractCarrier {
 public:
 
-    virtual Carrier *create() YARP_OVERRIDE = 0;
+    virtual Carrier *create() override = 0;
 
-    virtual ConstString getName() YARP_OVERRIDE = 0;
+    virtual ConstString getName() override = 0;
 
-    virtual bool checkHeader(const yarp::os::Bytes &header) YARP_OVERRIDE;
-    virtual void getHeader(const yarp::os::Bytes &header) YARP_OVERRIDE;
-    virtual bool respondToHeader(yarp::os::ConnectionState& proto) YARP_OVERRIDE;
-    virtual bool modifiesIncomingData() YARP_OVERRIDE;
-    virtual bool modifiesOutgoingData() YARP_OVERRIDE;
-    virtual bool modifiesReply() YARP_OVERRIDE;
-    virtual void setCarrierParams(const yarp::os::Property& params) YARP_OVERRIDE;
-    virtual void getCarrierParams(yarp::os::Property& params) YARP_OVERRIDE;
-    virtual bool configureFromProperty(yarp::os::Property& prop) YARP_OVERRIDE;
+    virtual bool checkHeader(const yarp::os::Bytes &header) override;
+    virtual void getHeader(const yarp::os::Bytes &header) override;
+    virtual bool respondToHeader(yarp::os::ConnectionState& proto) override;
+    virtual bool modifiesIncomingData() override;
+    virtual bool modifiesOutgoingData() override;
+    virtual bool modifiesReply() override;
+    virtual void setCarrierParams(const yarp::os::Property& params) override;
+    virtual void getCarrierParams(yarp::os::Property& params) override;
+    virtual bool configureFromProperty(yarp::os::Property& prop) override;
     // only remains to implement modifyIncomingData()
 };
 

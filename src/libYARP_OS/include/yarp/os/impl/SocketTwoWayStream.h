@@ -37,7 +37,7 @@ namespace yarp {
 /**
  * A stream abstraction for socket communication.  It supports TCP.
  */
-class yarp::os::impl::SocketTwoWayStream : public TwoWayStream,
+class YARP_OS_impl_API yarp::os::impl::SocketTwoWayStream : public TwoWayStream,
                                            public InputStream,
                                            public OutputStream
 {

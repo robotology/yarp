@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2012-2014  iCub Facility, Istituto Italiano di Tecnologia
+ * Copyright (C) 2012-2014 Istituto Italiano di Tecnologia (IIT)
  * Authors: Daniele E. Domenichelli <daniele.domenichelli@iit.it>
  *          Marco Randazzo          <marco.randazzo@iit.it>
  * CopyPolicy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
@@ -215,7 +215,7 @@ yarp::os::Log::Log(const char *file,
 }
 
 yarp::os::Log::Log() :
-        mPriv(new yarp::os::impl::LogImpl(YARP_NULLPTR, 0, YARP_NULLPTR))
+        mPriv(new yarp::os::impl::LogImpl(nullptr, 0, nullptr))
 {
 }
 
@@ -414,6 +414,8 @@ void yarp::os::Log::setLogCallback(yarp::os::Log::LogCallback cb)
 
 void yarp_print_trace(FILE *out, const char *file, int line) {
 #ifdef YARP_HAS_ACE
+    YARP_UNUSED(file);
+    YARP_UNUSED(line);
     ACE_Stack_Trace st(-1);
     // TODO demangle symbols using <cxxabi.h> and abi::__cxa_demangle
     //      when available.

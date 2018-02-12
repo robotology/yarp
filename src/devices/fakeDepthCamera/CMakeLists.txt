@@ -1,4 +1,4 @@
-# Copyright (C) 2016 iCub Facility, Istituto Italiano di Tecnologia
+# Copyright (C) 2016 Istituto Italiano di Tecnologia (IIT)
 # Authors: Andrea Ruzzenenti
 # email:   andrea.ruzzenenti@iit.it
 # CopyPolicy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT

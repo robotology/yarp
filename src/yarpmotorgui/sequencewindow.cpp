@@ -1,6 +1,6 @@
 /*
  * Copyright (C) 2010 RobotCub Consortium, European Commission FP6 Project IST-004370
- * Copyright (C) 2015 iCub Facility - Istituto Italiano di Tecnologia
+ * Copyright (C) 2015 Istituto Italiano di Tecnologia (IIT)
  * Author: Marco Randazzo <marco.randazzo@iit.it>
  *         Francesco Nori <francesco.nori@iit.it>
  *         Davide Perrone <dperrone@aitek.it>
@@ -204,7 +204,7 @@ void SequenceWindow::onReceiveValues(int sequenceNum, QList<double> values,QList
 
 bool SequenceWindow::checkAndGo()
 {
-    if(ui->treePositions->currentItem() == NULL){
+    if(ui->treePositions->currentItem() == nullptr){
         return false;
     }
     int index = ui->treePositions->currentIndex().row();
@@ -224,7 +224,7 @@ void SequenceWindow::onGo()
 
     SequenceItem sequenceItem;
 
-    if(ui->treePositions->currentItem() != NULL){
+    if(ui->treePositions->currentItem() != nullptr){
         int index = ui->treePositions->currentIndex().row();
         timing = ui->treePositions->topLevelItem(index)->text(1).toDouble();
 

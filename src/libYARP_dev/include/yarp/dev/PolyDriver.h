@@ -73,7 +73,7 @@ public:
      * @param config configuration options for the device
      * @return true iff the device was created and configured successfully
      */
-    bool open(yarp::os::Searchable& config) YARP_OVERRIDE;
+    bool open(yarp::os::Searchable& config) override;
 
     /**
      * Make this device be a link to an existing one.
@@ -106,7 +106,7 @@ public:
      */
     virtual ~PolyDriver();
 
-    virtual bool close() YARP_OVERRIDE {
+    virtual bool close() override {
         return closeMain();
     }
 
@@ -150,7 +150,7 @@ public:
      */
     yarp::os::Value getValue(const char *option);
 
-    DeviceDriver *getImplementation() YARP_OVERRIDE {
+    DeviceDriver *getImplementation() override {
       if(isValid())
         return dd->getImplementation();
       else

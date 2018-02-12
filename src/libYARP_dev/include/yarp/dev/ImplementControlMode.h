@@ -1,6 +1,7 @@
 /*
- * Copyright (C) 2011 Robotics Brain and Cognitive Sciences Department, Istituto Italiano di Tecnologia
- * Authors: Marco Randazzo and Lorenzo Natale
+ * Copyright (C) 2011 Istituto Italiano di Tecnologia (IIT)
+ * Authors: Marco Randazzo <marco.randazzo@iit.it>
+ *          Lorenzo Natale <lorenzo.natale@iit.it>
  * CopyPolicy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
  */
 
@@ -32,14 +33,14 @@ public:
     ImplementControlMode(IControlModeRaw *v);
     ~ImplementControlMode();
 #ifndef YARP_NO_DEPRECATED // since YARP 2.3.70
-    YARP_DEPRECATED bool setTorqueMode(int j) YARP_OVERRIDE;
-    YARP_DEPRECATED bool setImpedancePositionMode(int j) YARP_OVERRIDE;
-    YARP_DEPRECATED bool setImpedanceVelocityMode(int j) YARP_OVERRIDE;
-    YARP_DEPRECATED bool setPositionMode(int j) YARP_OVERRIDE;
-    YARP_DEPRECATED bool setVelocityMode(int j) YARP_OVERRIDE;
+    YARP_DEPRECATED bool setTorqueMode(int j) override;
+    YARP_DEPRECATED bool setImpedancePositionMode(int j) override;
+    YARP_DEPRECATED bool setImpedanceVelocityMode(int j) override;
+    YARP_DEPRECATED bool setPositionMode(int j) override;
+    YARP_DEPRECATED bool setVelocityMode(int j) override;
 #endif // YARP_NO_DEPRECATED
-    bool getControlMode(int j, int *f) YARP_OVERRIDE;
-    bool getControlModes(int *modes) YARP_OVERRIDE;
+    bool getControlMode(int j, int *f) override;
+    bool getControlModes(int *modes) override;
 };
 
 #if defined(_MSC_VER) && !defined(YARP_NO_DEPRECATED) // since YARP 2.3.70

@@ -39,13 +39,12 @@ public:
 #ifndef YARP_HAS_ACE
                           dgram_sockfd(-1),
 #endif
-                          dgram(YARP_NULLPTR), mgram(YARP_NULLPTR),
+                          dgram(nullptr), mgram(nullptr),
                           mutex(1), readAt(0), readAvail(0),
                           writeAvail(0), pct(0), happy(true),
                           bufferAlertNeeded(false), bufferAlerted(false),
                           multiMode(false), errCount(0), lastReportTime(0)
     {
-
     }
 
     virtual bool openMonitor(int readSize=0, int writeSize=0)

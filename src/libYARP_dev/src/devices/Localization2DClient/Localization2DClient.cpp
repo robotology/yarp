@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2017 iCub Facility - Istituto Italiano di Tecnologia
+ * Copyright (C) 2017 Istituto Italiano di Tecnologia (IIT)
  * Author: Marco Randazzo <marco.randazzo@iit.it>
  * CopyPolicy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
  */
@@ -119,7 +119,7 @@ bool  yarp::dev::Localization2DClient::getCurrentPosition(Map2DLocation& loc)
     {
         if (resp.get(0).asVocab() != VOCAB_OK || resp.size() != 5)
         {
-            yError() << "Navigation2DClient::getCurrentPosition() recived error from localization server";
+            yError() << "Navigation2DClient::getCurrentPosition() received error from localization server";
             return false;
         }
         else

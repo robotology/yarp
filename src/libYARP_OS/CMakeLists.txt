@@ -9,8 +9,10 @@ set(YARP_OS_HDRS include/yarp/os/AbstractCarrier.h
                  include/yarp/os/all.h
                  include/yarp/os/api.h
                  include/yarp/os/BinPortable.h
+                 include/yarp/os/BinPortable-inl.h
                  include/yarp/os/Bottle.h
                  include/yarp/os/BufferedPort.h
+                 include/yarp/os/BufferedPort-inl.h
                  include/yarp/os/Bytes.h
                  include/yarp/os/Carrier.h
                  include/yarp/os/Carriers.h
@@ -69,6 +71,9 @@ set(YARP_OS_HDRS include/yarp/os/AbstractCarrier.h
                  include/yarp/os/Port.h
                  include/yarp/os/PortInfo.h
                  include/yarp/os/PortReaderBuffer.h
+                 include/yarp/os/PortReaderBuffer-inl.h
+                 include/yarp/os/PortReaderBufferBase.h
+                 include/yarp/os/PortReaderBufferBaseCreator.h
                  include/yarp/os/PortReaderCreator.h
                  include/yarp/os/PortReader.h
                  include/yarp/os/PortReport.h
@@ -108,6 +113,11 @@ set(YARP_OS_HDRS include/yarp/os/AbstractCarrier.h
                  include/yarp/os/Time.h
                  include/yarp/os/TwoWayStream.h
                  include/yarp/os/Type.h
+                 include/yarp/os/TypedReader.h
+                 include/yarp/os/TypedReaderCallback.h
+                 include/yarp/os/TypedReaderCallback-inl.h
+                 include/yarp/os/TypedReaderThread.h
+                 include/yarp/os/TypedReaderThread-inl.h
                  include/yarp/os/UnbufferedContactable.h
                  include/yarp/os/Value.h
                  include/yarp/os/Vocab.h
@@ -120,12 +130,6 @@ set(YARP_OS_HDRS include/yarp/os/AbstractCarrier.h
                  include/yarp/os/SystemInfo.h
                  include/yarp/os/SystemInfoSerializer.h
                  include/yarp/os/QosStyle.h)
-
-if(NOT YARP_NO_DEPRECATED)
-  list(APPEND YARP_OS_HDRS include/yarp/os/begin_pack_for_net.h
-                           include/yarp/os/end_pack_for_net.h
-                           include/yarp/os/Module.h)
-endif()
 
 set(YARP_OS_IDL_HDRS include/yarp/os/idl/BareStyle.h
                      include/yarp/os/idl/BottleStyle.h
@@ -169,10 +173,7 @@ set(YARP_OS_IMPL_HDRS include/yarp/os/impl/ACELockImpl.h
                       include/yarp/os/impl/PlatformDlfcn.h
                       include/yarp/os/impl/PlatformIfaddrs.h
                       include/yarp/os/impl/PlatformLimits.h
-                      include/yarp/os/impl/PlatformList.h
-                      include/yarp/os/impl/PlatformMap.h
                       include/yarp/os/impl/PlatformNetdb.h
-                      include/yarp/os/impl/PlatformSet.h
                       include/yarp/os/impl/PlatformSignal.h
                       include/yarp/os/impl/PlatformSize.h
                       include/yarp/os/impl/PlatformStdio.h
@@ -183,7 +184,6 @@ set(YARP_OS_IMPL_HDRS include/yarp/os/impl/ACELockImpl.h
                       include/yarp/os/impl/PlatformThread.h
                       include/yarp/os/impl/PlatformTime.h
                       include/yarp/os/impl/PlatformUnistd.h
-                      include/yarp/os/impl/PlatformVector.h
                       include/yarp/os/impl/PortCommand.h
                       include/yarp/os/impl/PortCore.h
                       include/yarp/os/impl/PortCoreAdapter.h
@@ -225,11 +225,13 @@ set(YARP_OS_IMPL_HMAC_HDRS include/yarp/os/impl/hmac/hmac_sha2.h
                            include/yarp/os/impl/hmac/sha2.h)
 
 set(YARP_OS_SRCS src/AbstractCarrier.cpp
+                 src/AbstractContactable.cpp
                  src/AuthHMAC.cpp
                  src/Bottle.cpp
                  src/BottleImpl.cpp
                  src/BufferedConnectionWriter.cpp
                  src/Bytes.cpp
+                 src/Carrier.cpp
                  src/Carriers.cpp
                  src/Companion.cpp
                  src/ConnectionReader.cpp
@@ -295,7 +297,7 @@ set(YARP_OS_SRCS src/AbstractCarrier.cpp
                  src/PortCoreOutputUnit.cpp
                  src/Port.cpp
                  src/PortInfo.cpp
-                 src/PortReaderBuffer.cpp
+                 src/PortReaderBufferBase.cpp
                  src/PortReader.cpp
                  src/PortReaderCreator.cpp
                  src/PortReport.cpp
@@ -361,21 +363,10 @@ set(YARP_OS_SRCS src/AbstractCarrier.cpp
                  src/sha2.c
                  src/QosStyle.cpp)
 
-if(NOT YARP_NO_DEPRECATED)
-  set(YARP_OS_DEPRECATED_SRCS src/Module.cpp) # since YARP 2.3.65
-  list(APPEND YARP_OS_SRCS ${YARP_OS_DEPRECATED_SRCS})
-  if(MSVC)
-    set_source_files_properties(${YARP_OS_DEPRECATED_SRCS}
-                                PROPERTIES COMPILE_FLAGS "/wd4996")
-  else()
-    check_cxx_compiler_flag("-Wno-deprecated-declarations" CXX_HAS_WNO_DEPRECATED_DECLARATIONS)
-    if(CXX_HAS_WNO_DEPRECATED_DECLARATIONS)
-      set_source_files_properties(${YARP_OS_DEPRECATED_SRCS}
-                                  PROPERTIES COMPILE_FLAGS "-Wno-deprecated-declarations")
-    endif()
-  endif()
+if(APPLE)
+  list(APPEND YARP_OS_IMPL_HDRS include/yarp/os/impl/MacOSAPI.h)
+  list(APPEND YARP_OS_SRCS src/MacOSAPI.mm)
 endif()
-
 
 if(NOT SKIP_ACE)
   # this carrier have not yet been implemented without ACE
@@ -418,6 +409,23 @@ target_include_directories(YARP_OS PUBLIC $<BUILD_INTERFACE:${CMAKE_CURRENT_SOUR
 
 target_link_libraries(YARP_OS PRIVATE ${ACE_LIBRARIES}
                               PUBLIC YARP::YARP_conf)
+
+if(NOT CMAKE_MINIMUM_REQUIRED_VERSION VERSION_LESS 3.1)
+  message(AUTHOR_WARNING "CMAKE_MINIMUM_REQUIRED_VERSION is now ${CMAKE_MINIMUM_REQUIRED_VERSION}. This check can be removed.")
+endif()
+if(CMAKE_VERSION VERSION_LESS 3.1)
+  if(DEFINED CXX11_FLAGS)
+    target_compile_options(YARP_OS PUBLIC ${CXX11_FLAGS})
+  endif()
+else()
+  target_compile_features(YARP_OS PUBLIC cxx_nullptr
+                                         cxx_override
+                                         cxx_rvalue_references)
+endif()
+
+if(APPLE)
+  target_link_libraries(YARP_OS PRIVATE "-framework Foundation")
+endif()
 
 set_property(TARGET YARP_OS PROPERTY PUBLIC_HEADER ${YARP_OS_HDRS})
 set_property(TARGET YARP_OS PROPERTY PRIVATE_HEADER ${YARP_OS_IMPL_HDRS})

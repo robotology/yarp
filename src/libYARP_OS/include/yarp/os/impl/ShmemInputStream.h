@@ -43,13 +43,13 @@ public:
     {
         m_bOpen=false;
 
-        m_pAccessMutex=m_pWaitDataMutex=YARP_NULLPTR;
-        m_pMap=YARP_NULLPTR;
-        m_pData=YARP_NULLPTR;
-        m_pHeader=YARP_NULLPTR;
+        m_pAccessMutex=m_pWaitDataMutex=nullptr;
+        m_pMap=nullptr;
+        m_pData=nullptr;
+        m_pHeader=nullptr;
         m_ResizeNum=0;
         m_Port = -1;
-        m_pSock = YARP_NULLPTR;
+        m_pSock = nullptr;
     }
 
     ~ShmemInputStreamImpl()

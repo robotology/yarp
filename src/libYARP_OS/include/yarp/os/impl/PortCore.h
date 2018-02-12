@@ -23,20 +23,12 @@
 #include <yarp/os/Mutex.h>
 
 #include <yarp/os/ModifyingCarrier.h>
-#include <yarp/os/impl/PlatformVector.h>
 #include <yarp/os/impl/BufferedConnectionWriter.h>
+
+#include <vector>
 
 namespace yarp {
     namespace os {
-        /**
-         *
-         * The components from which ports and connections are built.
-         * These classes are not intended for regular users, but rather
-         * for those extending YARP to new situations.
-         * Unlike the classes in yarp::os, yarp::sig, and yarp::dev,
-         * there are dependencies on the ACE library here.
-         *
-         */
         namespace impl {
             class PortCore;
             class PortCoreUnit;
@@ -116,8 +108,8 @@ class YARP_OS_impl_API yarp::os::impl::PortDataModifier
 {
 public:
     PortDataModifier() :
-            outputModifier(YARP_NULLPTR),
-            inputModifier(YARP_NULLPTR)
+            outputModifier(nullptr),
+            inputModifier(nullptr)
     {
     }
 
@@ -129,19 +121,19 @@ public:
 
     void releaseOutModifier()
     {
-        if (outputModifier != YARP_NULLPTR) {
+        if (outputModifier != nullptr) {
             outputModifier->close();
             delete outputModifier;
-            outputModifier = YARP_NULLPTR;
+            outputModifier = nullptr;
         }
     }
 
     void releaseInModifier()
     {
-        if (inputModifier != YARP_NULLPTR) {
+        if (inputModifier != nullptr) {
             inputModifier->close();
             delete inputModifier;
-            inputModifier = YARP_NULLPTR;
+            inputModifier = nullptr;
         }
     }
 
@@ -164,11 +156,11 @@ public:
             packetMutex(1),
             connectionChange(1),
             log("port", Logger::get()),
-            face(YARP_NULLPTR),
-            reader(YARP_NULLPTR),
-            adminReader(YARP_NULLPTR),
-            readableCreator(YARP_NULLPTR),
-            eventReporter(YARP_NULLPTR),
+            face(nullptr),
+            reader(nullptr),
+            adminReader(nullptr),
+            readableCreator(nullptr),
+            eventReporter(nullptr),
             listening(false),
             running(false),
             starting(false),
@@ -191,9 +183,9 @@ public:
             logNeeded(false),
             timeout(-1),
             counter(1),
-            prop(YARP_NULLPTR),
-            contactable(YARP_NULLPTR),
-            mutex(YARP_NULLPTR),
+            prop(nullptr),
+            contactable(nullptr),
+            mutex(nullptr),
             mutexOwned(false),
             envelopeWriter(true),
             typeMutex(1),
@@ -286,6 +278,7 @@ public:
     virtual bool read(yarp::os::ConnectionReader& reader) override
     {
         // does nothing by default
+        YARP_UNUSED(reader);
         return true;
     }
 
@@ -307,8 +300,8 @@ public:
      * @param callback who to call onCompletion() on when message sent.
      */
     bool send(yarp::os::PortWriter& writer,
-              yarp::os::PortReader *reader = YARP_NULLPTR,
-              yarp::os::PortWriter *callback = YARP_NULLPTR);
+              yarp::os::PortReader *reader = nullptr,
+              yarp::os::PortWriter *callback = nullptr);
 
     /**
      * Send a message with a specific mode (normal or log).
@@ -318,8 +311,8 @@ public:
      */
     bool sendHelper(yarp::os::PortWriter& writer,
                     int mode,
-                    yarp::os::PortReader *reader = YARP_NULLPTR,
-                    yarp::os::PortWriter *callback = YARP_NULLPTR);
+                    yarp::os::PortReader *reader = nullptr,
+                    yarp::os::PortWriter *callback = nullptr);
 
     /**
      * Shut down port.
@@ -508,7 +501,7 @@ public:
     Property *acquireProperties(bool readOnly);
     void releaseProperties(Property *prop);
 
-    bool setCallbackLock(yarp::os::Mutex *mutex = YARP_NULLPTR)
+    bool setCallbackLock(yarp::os::Mutex *mutex = nullptr)
     {
         removeCallbackLock();
         if (mutex) {
@@ -526,7 +519,7 @@ public:
         if (mutexOwned&&mutex) {
             delete mutex;
         }
-        mutex = YARP_NULLPTR;
+        mutex = nullptr;
         mutexOwned = false;
         return true;
     }
@@ -552,6 +545,7 @@ public:
 
     void take(PortCore *alt)
     {
+        YARP_UNUSED(alt);
     }
 
     yarp::os::impl::PortDataModifier& getPortModifier()
@@ -589,7 +583,7 @@ public:
 private:
 
     // main internal PortCore state and operations
-    PlatformVector<PortCoreUnit *> units;  ///< list of connections
+    std::vector<PortCoreUnit *> units;  ///< list of connections
     SemaphoreImpl stateMutex;       ///< control access to essential port state
     SemaphoreImpl packetMutex;      ///< control access to message cache
     SemaphoreImpl connectionChange; ///< signal changes in connections
@@ -680,7 +674,7 @@ private:
     void addInput(InputProtocol *ip);
 
     bool removeUnit(const Route& route, bool synch = false,
-                    bool *except = YARP_NULLPTR);
+                    bool *except = nullptr);
 
     int getNextIndex()
     {

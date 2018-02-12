@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2011 Department of Robotics Brain and Cognitive Sciences - Istituto Italiano di Tecnologia
+ * Copyright (C) 2011 Istituto Italiano di Tecnologia (IIT)
  * Authors: Paul Fitzpatrick
  * CopyPolicy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
  */
@@ -25,7 +25,8 @@ namespace yarp {
  * implementations.
  *
  */
-class YARP_OS_API yarp::os::NameSpace {
+class YARP_OS_API yarp::os::NameSpace
+{
 public:
     /**
      *
@@ -41,11 +42,10 @@ public:
      *
      */
     virtual bool checkNetwork();
-    
+
     /**
-     *
      * Check if a name space is available, with a timeout on any
-     * network operations needed. If the timeout occurs, we 
+     * network operations needed. If the timeout occurs, we
      * assume the name space is not available.
      *
      * @param[in] timeout time in seconds to wait for a response in any network operation needed.
@@ -107,29 +107,33 @@ public:
 
     /**
      *
-     * Record contact information, with access to the contact 
+     * Record contact information, with access to the contact
      * information of other ports for cross-referencing.
      *
-     * @param contact the contact information to record 
+     * @param contact the contact information to record
      *
      * @param store an interface to port information as presented via
      * the YARP client API (as opposed to what a single NameSpace
      * would have access to).
      *
      */
-    virtual Contact registerAdvanced(const Contact& contact, 
-                                     NameStore *store) {
+    virtual Contact registerAdvanced(const Contact& contact,
+                                     NameStore *store)
+    {
+        YARP_UNUSED(store);
         return registerContact(contact);
     }
 
     /**
      *
-     * Remove contact information, with access to the contact 
+     * Remove contact information, with access to the contact
      * information of other ports for cross-referencing.
      *
      */
-    virtual Contact unregisterAdvanced(const ConstString& name, 
-                                       NameStore *store) {
+    virtual Contact unregisterAdvanced(const ConstString& name,
+                                       NameStore *store)
+    {
+        YARP_UNUSED(store);
         return unregisterName(name);
     }
 
@@ -138,17 +142,18 @@ public:
      * Associate a key/value pair with a named port.
      *
      */
-    virtual bool setProperty(const ConstString& name, const ConstString& key,
+    virtual bool setProperty(const ConstString& name,
+                             const ConstString& key,
                              const Value& value) = 0;
 
     /**
      *
      * Get the value of a named key from a named port.
      *
-     * @return YARP_NULLPTR if no value was set for the named key.
+     * @return nullptr if no value was set for the named key.
      *
      */
-    virtual Value *getProperty(const ConstString& name, 
+    virtual Value *getProperty(const ConstString& name,
                                const ConstString& key) = 0;
 
     /**
@@ -230,8 +235,8 @@ public:
 
     /**
      *
-     * When connections are made involving ports managed by this NameSpace 
-     * do the ports involved end up knowing the names of their 
+     * When connections are made involving ports managed by this NameSpace
+     * do the ports involved end up knowing the names of their
      * counterparties?
      *
      */

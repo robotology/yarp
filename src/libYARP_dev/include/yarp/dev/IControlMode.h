@@ -1,6 +1,7 @@
 /*
- * Copyright (C) 2011 Robotics Brain and Cognitive Sciences Department, Istituto Italiano di Tecnologia
- * Authors: Marco Randazzo and Lorenzo Natale
+ * Copyright (C) 2011 Istituto Italiano di Tecnologia (IIT)
+ * Authors: Marco Randazzo <marco.randazzo@iit.it>
+ *          Lorenzo Natale <lorenzo.natale@iit.it>
  * CopyPolicy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
  */
 

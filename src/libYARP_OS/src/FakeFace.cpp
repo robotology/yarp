@@ -13,20 +13,26 @@
 using namespace yarp::os::impl;
 using namespace yarp::os;
 
-bool FakeFace::open(const Contact& address) {
+bool FakeFace::open(const Contact& address)
+{
+    YARP_UNUSED(address);
     // happy to open without fuss
     return true;
 }
 
-void FakeFace::close() {
+void FakeFace::close()
+{
 }
 
-InputProtocol *FakeFace::read() {
+InputProtocol *FakeFace::read()
+{
     fprintf(stderr, "not implemented\n");
-    return YARP_NULLPTR;
+    return nullptr;
 }
 
-OutputProtocol *FakeFace::write(const Contact& address) {
+OutputProtocol *FakeFace::write(const Contact& address)
+{
+    YARP_UNUSED(address);
     Protocol *prot = new Protocol(new FakeTwoWayStream());
     return prot;
 }

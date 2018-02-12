@@ -278,7 +278,7 @@ void ydr_destroy(YDR *xdrs) {
 
 int ydrmem_create(YDR *xdrs, void* buf, size_t buflen, int op) {
     xdrs->controller = new YDRHelper;
-    if (xdrs->controller == YARP_NULLPTR) return 0;
+    if (xdrs->controller == nullptr) return 0;
     control(xdrs).create(buf, buflen, op);
     return 1;
 }

@@ -1,0 +1,419 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui version="4.0">
+ <class>MainWindow</class>
+ <widget class="QMainWindow" name="MainWindow">
+  <property name="geometry">
+   <rect>
+    <x>0</x>
+    <y>0</y>
+    <width>817</width>
+    <height>567</height>
+   </rect>
+  </property>
+  <property name="windowTitle">
+   <string>yarpviz</string>
+  </property>
+  <property name="windowIcon">
+   <iconset resource="ress.qrc">
+    <normaloff>:/icons/resources/profiling.png</normaloff>:/icons/resources/profiling.png</iconset>
+  </property>
+  <widget class="QWidget" name="centralWidget">
+   <layout class="QGridLayout" name="gridLayout">
+    <item row="0" column="0">
+     <widget class="QSplitter" name="hsplitter_1">
+      <property name="orientation">
+       <enum>Qt::Horizontal</enum>
+      </property>
+      <widget class="QSplitter" name="vsplitter_1">
+       <property name="sizePolicy">
+        <sizepolicy hsizetype="Preferred" vsizetype="Expanding">
+         <horstretch>20</horstretch>
+         <verstretch>0</verstretch>
+        </sizepolicy>
+       </property>
+       <property name="orientation">
+        <enum>Qt::Vertical</enum>
+       </property>
+       <widget class="QGraphicsViewEc" name="graphicsView">
+        <property name="sizePolicy">
+         <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
+          <horstretch>0</horstretch>
+          <verstretch>15</verstretch>
+         </sizepolicy>
+        </property>
+        <property name="renderHints">
+         <set>QPainter::Antialiasing|QPainter::SmoothPixmapTransform|QPainter::TextAntialiasing</set>
+        </property>
+        <property name="dragMode">
+         <enum>QGraphicsView::ScrollHandDrag</enum>
+        </property>
+       </widget>
+       <widget class="QListView" name="messageView">
+        <property name="sizePolicy">
+         <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
+          <horstretch>0</horstretch>
+          <verstretch>0</verstretch>
+         </sizepolicy>
+        </property>
+        <property name="maximumSize">
+         <size>
+          <width>16777215</width>
+          <height>16777215</height>
+         </size>
+        </property>
+        <property name="baseSize">
+         <size>
+          <width>0</width>
+          <height>0</height>
+         </size>
+        </property>
+       </widget>
+      </widget>
+      <widget class="QTreeWidget" name="nodesTreeWidget">
+       <property name="uniformRowHeights">
+        <bool>true</bool>
+       </property>
+       <property name="sortingEnabled">
+        <bool>true</bool>
+       </property>
+       <property name="animated">
+        <bool>true</bool>
+       </property>
+       <property name="columnCount">
+        <number>1</number>
+       </property>
+       <column>
+        <property name="text">
+         <string>Items</string>
+        </property>
+       </column>
+      </widget>
+     </widget>
+    </item>
+   </layout>
+  </widget>
+  <widget class="QMenuBar" name="menuBar">
+   <property name="geometry">
+    <rect>
+     <x>0</x>
+     <y>0</y>
+     <width>817</width>
+     <height>19</height>
+    </rect>
+   </property>
+   <widget class="QMenu" name="menuFile">
+    <property name="title">
+     <string>File</string>
+    </property>
+    <addaction name="separator"/>
+    <addaction name="action_Load_project"/>
+    <addaction name="action_Save_project"/>
+    <addaction name="separator"/>
+    <addaction name="actionExport_scene"/>
+    <addaction name="actionExport_connections_list"/>
+    <addaction name="separator"/>
+    <addaction name="actionQuit"/>
+   </widget>
+   <widget class="QMenu" name="menuHelp">
+    <property name="title">
+     <string>Help</string>
+    </property>
+    <addaction name="actionDocumentaion"/>
+    <addaction name="separator"/>
+    <addaction name="actionAbout"/>
+   </widget>
+   <widget class="QMenu" name="menuProfiling">
+    <property name="title">
+     <string>Profile</string>
+    </property>
+    <addaction name="actionProfile_YARP_network"/>
+    <addaction name="actionHighlight_Loops"/>
+    <addaction name="actionUpdateConnectionQosStatus"/>
+    <addaction name="actionProfilePortsRate"/>
+   </widget>
+   <widget class="QMenu" name="menuView">
+    <property name="title">
+     <string>View</string>
+    </property>
+    <widget class="QMenu" name="menuLayout">
+     <property name="title">
+      <string>Layout</string>
+     </property>
+     <addaction name="actionOrthogonal"/>
+     <addaction name="actionPolyline"/>
+     <addaction name="actionCurved"/>
+     <addaction name="actionLine"/>
+     <addaction name="separator"/>
+     <addaction name="actionSubgraph"/>
+    </widget>
+    <addaction name="separator"/>
+    <addaction name="menuLayout"/>
+    <addaction name="separator"/>
+    <addaction name="actionHidePorts"/>
+    <addaction name="actionHideConnectionsLable"/>
+    <addaction name="actionHideDisconnectedPorts"/>
+    <addaction name="actionColorMode"/>
+    <addaction name="actionDebugMode"/>
+   </widget>
+   <widget class="QMenu" name="menuView_2">
+    <property name="title">
+     <string>Window</string>
+    </property>
+    <addaction name="actionMessageBox"/>
+    <addaction name="actionItemswindow"/>
+   </widget>
+   <widget class="QMenu" name="menu_Tools">
+    <property name="title">
+     <string>&amp;Tools</string>
+    </property>
+    <addaction name="actionConfigure_connections_QOS"/>
+   </widget>
+   <addaction name="menuFile"/>
+   <addaction name="menuView"/>
+   <addaction name="menuProfiling"/>
+   <addaction name="menuView_2"/>
+   <addaction name="menu_Tools"/>
+   <addaction name="menuHelp"/>
+  </widget>
+  <widget class="QToolBar" name="mainToolBar">
+   <attribute name="toolBarArea">
+    <enum>TopToolBarArea</enum>
+   </attribute>
+   <attribute name="toolBarBreak">
+    <bool>false</bool>
+   </attribute>
+   <addaction name="actionProfile_YARP_network"/>
+   <addaction name="separator"/>
+   <addaction name="actionColorMode"/>
+   <addaction name="actionDebugMode"/>
+   <addaction name="actionHidePorts"/>
+   <addaction name="actionHighlight_Loops"/>
+  </widget>
+  <widget class="QStatusBar" name="statusBar"/>
+  <action name="action_Load_project">
+   <property name="text">
+    <string>&amp;Load project...</string>
+   </property>
+  </action>
+  <action name="actionQuit">
+   <property name="text">
+    <string>E&amp;xit</string>
+   </property>
+  </action>
+  <action name="actionDocumentaion">
+   <property name="text">
+    <string>Documentaion...</string>
+   </property>
+  </action>
+  <action name="actionAbout">
+   <property name="text">
+    <string>About</string>
+   </property>
+  </action>
+  <action name="action_Save_project">
+   <property name="text">
+    <string>&amp;Save project</string>
+   </property>
+  </action>
+  <action name="actionProfile_YARP_network">
+   <property name="icon">
+    <iconset resource="ress.qrc">
+     <normaloff>:/icons/resources/profiling.png</normaloff>:/icons/resources/profiling.png</iconset>
+   </property>
+   <property name="text">
+    <string>&amp;Profile YARP network...</string>
+   </property>
+  </action>
+  <action name="actionOrthogonal">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="text">
+    <string>Orthogonal</string>
+   </property>
+  </action>
+  <action name="actionPolyline">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="text">
+    <string>Polyline</string>
+   </property>
+  </action>
+  <action name="actionCurved">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="text">
+    <string>Curved</string>
+   </property>
+  </action>
+  <action name="actionSubgraph">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="text">
+    <string>Subgraph</string>
+   </property>
+  </action>
+  <action name="actionMessageBox">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="text">
+    <string>&amp;Message box</string>
+   </property>
+  </action>
+  <action name="actionItemswindow">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="text">
+    <string>Items window</string>
+   </property>
+  </action>
+  <action name="actionExport_scene">
+   <property name="text">
+    <string>Export scene...</string>
+   </property>
+  </action>
+  <action name="actionHighlight_Loops">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="icon">
+    <iconset resource="ress.qrc">
+     <normaloff>:/icons/resources/chain.png</normaloff>:/icons/resources/chain.png</iconset>
+   </property>
+   <property name="text">
+    <string>Highlight strongly connected Modules</string>
+   </property>
+   <property name="toolTip">
+    <string>Highlight Strongly connected modules</string>
+   </property>
+  </action>
+  <action name="actionLine">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="text">
+    <string>Line</string>
+   </property>
+  </action>
+  <action name="actionHidePorts">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="icon">
+    <iconset resource="ress.qrc">
+     <normaloff>:/icons/resources/port_hide.svg</normaloff>:/icons/resources/port_hide.svg</iconset>
+   </property>
+   <property name="text">
+    <string>Hide Ports</string>
+   </property>
+  </action>
+  <action name="actionHideConnectionsLable">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="text">
+    <string>Hide Connections Lable</string>
+   </property>
+  </action>
+  <action name="actionUpdateConnectionQosStatus">
+   <property name="icon">
+    <iconset resource="ress.qrc">
+     <normaloff>:/icons/resources/qos.png</normaloff>:/icons/resources/qos.png</iconset>
+   </property>
+   <property name="text">
+    <string>Update connection &amp;Qos status...</string>
+   </property>
+  </action>
+  <action name="actionProfilePortsRate">
+   <property name="icon">
+    <iconset resource="ress.qrc">
+     <normaloff>:/icons/resources/profile_rate.png</normaloff>:/icons/resources/profile_rate.png</iconset>
+   </property>
+   <property name="text">
+    <string>Profile ports rate...</string>
+   </property>
+  </action>
+  <action name="actionExport_connections_list">
+   <property name="text">
+    <string>Export &amp;connections list...</string>
+   </property>
+  </action>
+  <action name="actionConfigure_connections_QOS">
+   <property name="text">
+    <string>&amp;Configure connections QOS...</string>
+   </property>
+  </action>
+  <action name="actionHideDisconnectedPorts">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="text">
+    <string>Hide Disconnected Ports</string>
+   </property>
+  </action>
+  <action name="actionDebugMode">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="icon">
+    <iconset resource="ress.qrc">
+     <normaloff>:/icons/resources/debugMode.svg</normaloff>:/icons/resources/debugMode.svg</iconset>
+   </property>
+   <property name="text">
+    <string>DebugMode</string>
+   </property>
+   <property name="toolTip">
+    <string>Check it to show yarplogger and &quot;/log&quot; ports</string>
+   </property>
+  </action>
+  <action name="actionColorMode">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="icon">
+    <iconset resource="ress.qrc">
+     <normaloff>:/icons/resources/atooma.svg</normaloff>:/icons/resources/atooma.svg</iconset>
+   </property>
+   <property name="text">
+    <string>ColorMode</string>
+   </property>
+   <property name="toolTip">
+    <string>Enable the Color Mode</string>
+   </property>
+  </action>
+ </widget>
+ <layoutdefault spacing="6" margin="11"/>
+ <customwidgets>
+  <customwidget>
+   <class>QGraphicsViewEc</class>
+   <extends>QGraphicsView</extends>
+   <header>QGraphicsViewEc.h</header>
+  </customwidget>
+ </customwidgets>
+ <resources>
+  <include location="ress.qrc"/>
+ </resources>
+ <connections>
+  <connection>
+   <sender>actionQuit</sender>
+   <signal>triggered()</signal>
+   <receiver>MainWindow</receiver>
+   <slot>close()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>-1</x>
+     <y>-1</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>408</x>
+     <y>283</y>
+    </hint>
+   </hints>
+  </connection>
+ </connections>
+</ui>

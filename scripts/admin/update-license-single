@@ -10,8 +10,7 @@ my $fname = $ARGV[0];
 my $std_license = "
 /*
  * Copyright (C) 2006 Author McAuthor
- * CopyPolicy: Released under the terms of the GNU GPL v2.0.
- *
+ * CopyPolicy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
  */
 ";
 
@@ -25,18 +24,10 @@ while (<FIN>) {
 }
 close(FIN);
 
-$txt =~ s/Department of Robotics Brain and Cognitive Sciences - Istituto Italiano di Tecnologia/IITRBCS/;
-$txt =~ s/Robotics, Brain and Cognitive Sciences - Italian Institute of Technology .IIT./IITRBCS/;
-$txt =~ s/Robotics Brain and Cognitive Sciences, Istituto Italiano di Tecnologia/IITRBCS/;
-$txt =~ s/Robotics Brain and Cognitive Sciences Department, Istituto Italiano di Tecnologia/IITRBCS/;
-
-$txt =~ s/iCub Facility, Istituto Italiano di Tecnologia/IITICUB/;
-$txt =~ s/iCub Facility - Istituto Italiano di Tecnologia/IITICUB/;
-$txt =~ s/iCub Facility/IITICUB/;
-
 $txt =~ s/Copy Policy/CopyPolicy/;
 
 $txt =~ s/Original code by Lee Thomason.*/Copyright: Lee Thomason/;
+$txt =~ s/by Chris Morley/Chris Morley/;
 
 $txt =~ s/The RobotCub Consortium\.?/RobotCub Consortium/ig;
 $txt =~ s/Robotcub Consortium\.?/RobotCub Consortium/ig;
@@ -174,10 +165,11 @@ if ($copyright eq "unknown") {
     }
 }
 
-if ($copyright =~ /RobotCub/i || $copyright =~ /IITRBCS/i || $copyright =~ /IITICUB/i) {
+if ($copyright =~ /RobotCub/i || $copyright =~ /IIT/i) {
     if ($txt =~ /authors?: *([^ \n\r].*[^ \n\r])/i) {
         $authors = $1;
         $authors =~ s/[^ \n\r]*\@[^ \n\r]*//g;
+        $authors =~ s/^\s+|\s+$//g;
     }
 }
 
@@ -185,19 +177,6 @@ if ($policy eq "unknown") {
     if ($fname =~ /sfun_time.c/) {
         $copyright = "2009 The MathWorks, Inc.";
         $policy = "3-clause BSD";
-    }
-}
-
-if ($policy eq "unknown") {
-    if ($fname =~ /extern\/goocanvas\/goocanvas/) {
-        $copyright = "2005-2008 Damon Chaplin";
-        $policy = "LGPLv2";
-    }
-}
-
-if ($policy eq "unknown") {
-    if ($fname =~ /extern\/goocanvasmm\/goocanvasmm/) {
-        $policy = "LGPLv2.1 or later";
     }
 }
 

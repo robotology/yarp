@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2013 iCub Facility
+ * Copyright (C) 2013 Istituto Italiano di Tecnologia (IIT)
  * Authors: Paul Fitzpatrick
  * CopyPolicy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
  */
@@ -28,7 +28,7 @@ public:
     ConstString active_name;
     Node *dummy;
 
-    Helper() : dummy(YARP_NULLPTR)
+    Helper() : dummy(nullptr)
     {
         clear();
     }
@@ -55,9 +55,9 @@ public:
         is_external.clear();
         active = true;
         active_name = "";
-        if (dummy != YARP_NULLPTR) {
+        if (dummy != nullptr) {
             delete dummy;
-            dummy = YARP_NULLPTR;
+            dummy = nullptr;
         }
     }
 
@@ -144,14 +144,14 @@ Node *yarp::os::Nodes::Helper::getNode(const ConstString& name, bool create)
 {
     NestedContact nc(name);
     if (!nc.isNested()) {
-        return YARP_NULLPTR;
+        return nullptr;
     }
     std::map<ConstString, Node *>::const_iterator it = by_name.find(nc.getNodeName());
-    Node *node = YARP_NULLPTR;
+    Node *node = nullptr;
     if (it == by_name.end()) {
         if (create) {
             node = new Node();
-            yAssert(node != YARP_NULLPTR);
+            yAssert(node != nullptr);
             by_name[nc.getNodeName()] = node;
             node->prepare(nc.getNodeName());
         }
@@ -227,7 +227,7 @@ void yarp::os::Nodes::Helper::interrupt()
 Nodes::Nodes() :
         mPriv(new yarp::os::Nodes::Helper)
 {
-    yAssert(mPriv != YARP_NULLPTR);
+    yAssert(mPriv != nullptr);
 }
 
 

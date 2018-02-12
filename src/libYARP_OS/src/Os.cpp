@@ -31,7 +31,7 @@ yarp::os::YarpSignalHandler yarp::os::signal(int signum, yarp::os::YarpSignalHan
         case yarp::os::YARP_SIGTERM:
             return yarp::os::impl::signal(SIGTERM, sighandler);
         default:
-            return YARP_NULLPTR; //signal not implemented yet
+            return nullptr; //signal not implemented yet
     }
 }
 #endif // YARP_NO_DEPRECATED
@@ -52,6 +52,8 @@ void yarp::os::abort(bool verbose)
         _set_abort_behavior(0, _WRITE_ABORT_MSG);
         _set_abort_behavior(0, _CALL_REPORTFAULT);
     }
+#else
+    YARP_UNUSED(verbose);
 #endif
     std::abort();   // exit is not recommended in processes with multi thread, see http://www.cplusplus.com/reference/cstdlib/exit/ and http://www.cplusplus.com/reference/cstdlib/abort/
 }
@@ -135,8 +137,27 @@ char* yarp::os::getcwd(char *buf, size_t size)
     return yarp::os::impl::getcwd(buf, size);
 }
 
-int yarp::os::fork(void)
+int yarp::os::fork()
 {
     pid_t pid = yarp::os::impl::fork();
     return pid;
+}
+
+
+#if defined(__APPLE__)
+#include "yarp/os/impl/MacOSAPI.h"
+#endif
+
+
+void yarp::os::setEnergySavingModeState(bool enabled)
+{
+#if defined(__APPLE__)
+    static void* handle = 0;
+    if (!enabled && !handle) {
+        handle = disableAppNap();
+    } else {
+        restoreAppNap(handle);
+    }
+
+#endif
 }

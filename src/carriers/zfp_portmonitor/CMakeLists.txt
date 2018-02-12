@@ -1,5 +1,5 @@
-# Copyright (C) 2016 iCub Facility
-# Authors: Nicolo' Genesio
+# Copyright (C) 2016 Istituto Italiano di Tecnologia (IIT)
+# Authors: Nicolò Genesio
 # CopyPolicy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
 
 yarp_prepare_plugin(zfp TYPE ZfpMonitorObject

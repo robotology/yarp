@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2017 iCub Facility, Istituto Italiano di Tecnologia
+ * Copyright (C) 2017 Istituto Italiano di Tecnologia (IIT)
  * Authors: Andrea Ruzzenenti <andrea.ruzzenenti@iit.it>
  * CopyPolicy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
  */
@@ -9,6 +9,7 @@
 #include <yarp/os/LogStream.h>
 #include <cmath>
 #include <yarp/os/Time.h>
+#include <iostream>
 
 using namespace yarp::dev;
 using namespace yarp::dev::SDLJoypadImpl;
@@ -39,7 +40,15 @@ bool SDLJoypad::open(yarp::os::Searchable& rf)
     {
         yInfo() << "parameters:\n\n" <<
                    "UseAllJoypadAsOne     - set it to 1 to have all the connected joypad as one\n" <<
-                   "DefaultJoystickNumber - select the id of the joypad to use if there are more than one joypad and UseAllJoypadAsOne is setted to 0\n";
+                   "DefaultJoystickNumber - select the id of the joypad to use if there are more than one joypad and UseAllJoypadAsOne is setted to 0\n" <<
+                   "stick                 - the number of stick to configure. a stick is simply a wrapping of 2 or more axes so for every stick\n" <<
+                   "                        a group named STICK*ID* containing the stick's parameters is searched. \n" <<
+                   "\n\n" <<
+                   "stick groups parameters:\n\n" <<
+                   "axes             - axes count for this stick\n" <<
+                   "axis[ID]_id      - axis id for current stick related axis\n" <<
+                   "invert_axis_[ID] - invert the current axis\n" <<
+                   "deadZone         - set the deadzone for this stick\n";
         return false;
     }
 
@@ -120,7 +129,7 @@ bool SDLJoypad::open(yarp::os::Searchable& rf)
 
     for(size_t i = 0; i < m_device.size(); ++i)
     {
-        if ( m_device[i] == YARP_NULLPTR )
+        if ( m_device[i] == nullptr )
         {
             yError () << "SDLJoypad: Could not open joystick with id" << i;
             return false;
@@ -242,54 +251,59 @@ bool SDLJoypad::parseStickInfo(const yarp::os::Searchable& cfg)
     return true;
 }
 
-
 bool SDLJoypad::close()
 {
     return false;
 }
 
-bool SDLJoypad::getAxisCount(unsigned int& axes_count)
+bool SDLJoypad::getRawAxisCount(unsigned int& axes_count)
 {
     axes_count = m_axisCount;
     return true;
 }
 
-bool SDLJoypad::getButtonCount(unsigned int& button_count)
+bool SDLJoypad::getRawButtonCount(unsigned int& button_count)
 {
     button_count = m_buttonCount;
     return true;
 }
 
-bool SDLJoypad::getTrackballCount(unsigned int& trackball_count)
+bool SDLJoypad::getRawTrackballCount(unsigned int& trackball_count)
 {
     trackball_count = m_ballCount;
     return true;
 }
 
-bool SDLJoypad::getHatCount(unsigned int& hat_count)
+bool SDLJoypad::getRawHatCount(unsigned int& hat_count)
 {
     hat_count = m_hatCount;
     return true;
 }
 
-bool SDLJoypad::getTouchSurfaceCount(unsigned int& touch_count)
+bool SDLJoypad::getRawTouchSurfaceCount(unsigned int& touch_count)
 {
     touch_count = m_touchCount;
     return true;
 }
 
-bool SDLJoypad::getStickCount(unsigned int& stick_count)
+bool SDLJoypad::getRawStickCount(unsigned int& stick_count)
 {
     stick_count = m_stickCount;
     return true;
 }
 
-bool SDLJoypad::getStickDoF(unsigned int stick_id, unsigned int& DoF)
+bool SDLJoypad::getRawStickDoF(unsigned int stick_id, unsigned int& DoF)
 {
-    return false;
+    if(stick_id > m_sticks.size()-1)
+    {
+        yError() << "SDL_Joypad: stick_id out of bounds when calling 'getStickDoF'' method";
+        return false;
+    }
+    DoF = 2;
+    return true;
 }
 
-bool SDLJoypad::getButton(unsigned int button_id, float& value)
+bool SDLJoypad::getRawButton(unsigned int button_id, float& value)
 {
     if(button_id > m_buttonCount - 1){yError() << "SDLJoypad: button id out of bound!"; return false;}
     updateJoypad();
@@ -315,7 +329,7 @@ bool SDLJoypad::getButton(unsigned int button_id, float& value)
     return true;
 }
 
-bool SDLJoypad::getRawAxis(unsigned int axis_id, double& value)
+bool SDLJoypad::getPureAxis(unsigned int axis_id, double& value)
 {
     if(axis_id > m_axisCount - 1){yError() << "SDLJoypad: axis id out of bound!"; return false;}
     size_t i;
@@ -338,12 +352,12 @@ bool SDLJoypad::getRawAxis(unsigned int axis_id, double& value)
     return true;
 }
 
-bool SDLJoypad::getAxis(unsigned int axis_id, double& value)
+bool SDLJoypad::getRawAxis(unsigned int axis_id, double& value)
 {
     if(axis_id > m_axisCount - 1){yError() << "SDLJoypad: axis id out of bound!"; return false;}
     //if(!m_axes.at(axis_id)) {yWarning() << "SDLJoypad: requested axis is part of a stick!";}
     updateJoypad();
-    return getRawAxis(axis_id, value);
+    return getPureAxis(axis_id, value);
 }
 
 yarp::sig::Vector Vector3(const double& x, const double& y)
@@ -354,9 +368,9 @@ yarp::sig::Vector Vector3(const double& x, const double& y)
     return ret;
 }
 
-bool SDLJoypad::getStick(unsigned int stick_id, yarp::sig::Vector& value, JoypadCtrl_coordinateMode coordinate_mode)
+bool SDLJoypad::getRawStick(unsigned int stick_id, yarp::sig::Vector& value, JoypadCtrl_coordinateMode coordinate_mode)
 {
-    if(stick_id > m_stickCount - 1){yError() << "SDLJoypad: stick id out of bound!"; return false;}
+    if (stick_id > m_stickCount - 1){yError() << "SDLJoypad: stick id out of bound!"; return false;}
     value.clear();
     updateJoypad();
     stick& stk = m_sticks[stick_id];
@@ -368,9 +382,9 @@ bool SDLJoypad::getStick(unsigned int stick_id, yarp::sig::Vector& value, Joypad
         value.push_back(val * stk.direction[i] * (fabs(val) > stk.deadZone));
     }
 
-    if(coordinate_mode == JypCtrlcoord_POLAR)
+    if (coordinate_mode == JypCtrlcoord_POLAR)
     {
-        if(stk.axes_ids.size() > 2)
+        if (stk.axes_ids.size() > 2)
         {
             yError() << "polar coordinate system is supported only for bidimensional stick at the moment";
             return false;
@@ -380,12 +394,12 @@ bool SDLJoypad::getStick(unsigned int stick_id, yarp::sig::Vector& value, Joypad
     return true;
 }
 
-bool SDLJoypad::getTouch(unsigned int touch_id, yarp::sig::Vector& value)
+bool SDLJoypad::getRawTouch(unsigned int touch_id, yarp::sig::Vector& value)
 {
     return false;
 }
 
-bool SDLJoypad::getHat(unsigned int hat_id, unsigned char& value)
+bool SDLJoypad::getRawHat(unsigned int hat_id, unsigned char& value)
 {
     if(hat_id > m_hatCount - 1){yError() << "SDLJoypad: axis id out of bound!"; return false;}
     updateJoypad();
@@ -407,7 +421,7 @@ bool SDLJoypad::getHat(unsigned int hat_id, unsigned char& value)
     return true;
 }
 
-bool SDLJoypad::getTrackball(unsigned int trackball_id, yarp::sig::Vector& value)
+bool SDLJoypad::getRawTrackball(unsigned int trackball_id, yarp::sig::Vector& value)
 {
     if(trackball_id > m_ballCount - 1){yError() << "SDLJoypad: trackball id out of bound!"; return false;}
     updateJoypad();

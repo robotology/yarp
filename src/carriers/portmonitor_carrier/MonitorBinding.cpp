@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2014 iCub Facility
+ * Copyright (C) 2014 Istituto Italiano di Tecnologia (IIT)
  * Authors: Ali Paikan
  * CopyPolicy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
  *
@@ -39,5 +39,5 @@ MonitorBinding* MonitorBinding::create(const char* script_type)
     if(ConstString(script_type) == "dll")
         return new MonitorSharedLib();
        
-    return NULL;        
+    return nullptr;        
 }

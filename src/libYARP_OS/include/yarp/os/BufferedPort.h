@@ -12,16 +12,18 @@
 #include <yarp/os/PortReaderBuffer.h>
 #include <yarp/os/PortWriterBuffer.h>
 
+
+// Defined in this file:
+namespace yarp { namespace os { template <typename T> class BufferedPort; }}
+
+
 namespace yarp {
-    namespace os {
-        template <class T> class BufferedPort;
-    }
-}
+namespace os {
 
 /**
- * \ingroup comm_class
+ * @ingroup comm_class
  *
- * \brief A mini-server for performing network communication in the background.
+ * @brief A mini-server for performing network communication in the background.
  *
  * If you are a beginner, you might want to use the yarp::os::Port class first,
  * and then come back to BufferedPort when you want to send and receive
@@ -29,36 +31,45 @@ namespace yarp {
  * This is convenient, but requires a little care to understand the
  * life-cycle of objects written to and read from the network
  * (see BufferedPort::read and BufferedPort::write).
- * 
- * By default a BufferedPort attempts to reduce latency between senders 
- * and receivers. To do so messages may be dropped by the writer if BufferedPort::write 
- * is called too quickly. The reader may also drop old messages if BufferedPort::read 
- * is not called fast enough, so that new messages can travel with high priority. This policy 
- * is sometimes called Oldest Packet Drop (ODP).
  *
- * If your application cannot afford dropping messages you can change the buffering policy. 
- * Use BufferedPort::writeStrict() when writing to a port, this waits for pending 
- * transmissions to be finished before writing new data. Call  BufferedPort::setStrict() 
- * to change the buffering policy to FIFO at the receiver side. In this way all messages will be stored
- * inside the BufferedPort and delivered to the reader. Pay attention that in this case a slow reader
- * may cause increasing latency and memory use.
- * 
- * Methods that can be useful to monitor the status of read and write operations are: 
- * yarp::os::BufferedPort::getPendingReads() and yarp::os::BufferedPort::isWriting(). 
+ * By default a BufferedPort attempts to reduce latency between senders
+ * and receivers. To do so messages may be dropped by the writer if
+ * BufferedPort::write is called too quickly
+ * The reader may also drop old messages if BufferedPort::read is not called
+ * fast enough, so that new messages can travel with high priority.
+ * This policy is sometimes called Oldest Packet Drop (ODP).
  *
- * For examples and help, see:
- * \li \ref what_is_a_port
- * \li \ref note_ports
- * \li \ref port_expert
- * \li \ref yarp_buffering
+ * If your application cannot afford dropping messages you can change the
+ * buffering policy.
+ * Use BufferedPort::writeStrict() when writing to a port, this waits for
+ * pending transmissions to be finished before writing new data.
+ * Call BufferedPort::setStrict() to change the buffering policy to FIFO at the
+ * receiver side.
+ * In this way all messages will be stored inside the BufferedPort and delivered
+ * to the reader.
+ * Pay attention that in this case a slow reader may cause increasing latency
+ * and memory use.
+ *
+ * Methods that can be useful to monitor the status of read and write operations
+ * are yarp::os::BufferedPort::getPendingReads() and
+ * yarp::os::BufferedPort::isWriting().
+ *
+ * @sa For examples and help, see:
+ * @li @ref what_is_a_port
+ * @li @ref note_ports
+ * @li @ref port_expert
+ * @li @ref yarp_buffering
  */
-template <class T>
-class yarp::os::BufferedPort : public Contactable,
-                               public TypedReader<T>,
-                               public TypedReaderCallback<T>
+template <typename T>
+class BufferedPort : public Contactable,
+                     public TypedReader<T>,
+                     public TypedReaderCallback<T>
 {
 public:
+#ifndef YARP_NO_DEPRECATED // since YARP 2.3.72
     using Contactable::open;
+#endif // YARP_NO_DEPRECATED
+
     using yarp::os::TypedReaderCallback<T>::onRead;
 
     /**
@@ -69,365 +80,229 @@ public:
     /**
      * Constructor.
      */
-    BufferedPort() {
-        T example;
-        attached = false;
-        port.promiseType(example.getType());
-        port.enableBackgroundWrite(true);
-        interrupted = false;
-    }
+    BufferedPort();
 
     /**
      * Wrap an existing unbuffered port.
      */
-    BufferedPort(Port& port) {
-        attached = false;
-        sharedOpen(port);
-        interrupted = false;
-    }
+    BufferedPort(Port& port);
 
     /**
      * Destructor.
      */
-    virtual ~BufferedPort() {
-        close();
-    }
+    virtual ~BufferedPort();
 
+    // Documented in Contactable
+    virtual bool open(const ConstString& name) override;
 
-    // documentation provided in Contactable
-    virtual bool open(const ConstString& name) YARP_OVERRIDE {
-        attachIfNeeded();
-        return port.open(name);
-    }
+    // Documented in Contactable
+    virtual bool open(const Contact& contact, bool registerName = true) override;
 
-    // documentation provided in Contactable
-    virtual bool open(const Contact& contact, bool registerName = true) YARP_OVERRIDE {
-        attachIfNeeded();
-        return port.open(contact, registerName);
-    }
+    // Documented in Contactable
+    virtual bool addOutput(const ConstString& name) override;
 
-    // documentation provided in Contactable
-    virtual bool addOutput(const ConstString& name) YARP_OVERRIDE {
-        return port.addOutput(name);
-    }
+    // Documented in Contactable
+    virtual bool addOutput(const ConstString& name, const ConstString& carrier) override;
 
-    // documentation provided in Contactable
-    virtual bool addOutput(const ConstString& name, const ConstString& carrier) YARP_OVERRIDE {
-        return port.addOutput(name, carrier);
-    }
+    // Documented in Contactable
+    virtual bool addOutput(const Contact& contact) override;
 
-    // documentation provided in Contactable
-    virtual bool addOutput(const Contact& contact) YARP_OVERRIDE {
-        return port.addOutput(contact);
-    }
+    // Documented in Contactable
+    virtual void close() override;
 
-    // documentation provided in Contactable
-    virtual void close() YARP_OVERRIDE {
-        port.close();
-        reader.detach();
-        writer.detach();
-        attached = false;
-    }
+    // Documented in Contactable
+    virtual void interrupt() override;
 
-    // documentation provided in Contactable
-    virtual void interrupt() YARP_OVERRIDE {
-        interrupted = true;
-        port.interrupt();
-    }
-
-    virtual void resume() YARP_OVERRIDE {
-        port.resume();
-        interrupted = false;
-    }
+    virtual void resume() override;
 
     /**
      * Get the number of objects ready to be read.
      */
-    virtual int getPendingReads() YARP_OVERRIDE {
-        return reader.getPendingReads();
-    }
+    virtual int getPendingReads() override;
 
-    // documentation provided in Contactable
-    virtual Contact where() const YARP_OVERRIDE {
-        return port.where();
-    }
+    // Documented in Contactable
+    virtual Contact where() const override;
 
-    // documentation provided in Contactable
-    virtual ConstString getName() const YARP_OVERRIDE {
-        return where().getName();
-    }
+    // Documented in Contactable
+    virtual ConstString getName() const override;
 
 
     /**
      * Access the object which will be transmitted by the next call to
      * yarp::os::BufferedPort::write.
-     * The object can safely be modified by the user of this class, to
-     * prepare it.  Extra objects will be created or reused as
-     * necessary depending on the state of communication with the
-     * output(s) of the port.  Be careful!  If prepare() gives you
-     * a reused object, it is up to the user to clear the object if that is
-     * appropriate.
-     * If you are sending yarp::os::Bottle objects, you may want to call
-     * yarp::os::Bottle::clear(), for example.
-     * YARP doesn't clear objects for you, since there are many
-     * cases in which overwriting old data is suffient and reallocation
-     * of memory would be unnecessary and inefficient.
+     *
+     * The object can safely be modified by the user of this class, to prepare
+     * it.
+     * Extra objects will be created or reused as necessary depending on the
+     * state of communication with the output(s) of the port.
+     *
+     * @warning If prepare() gives you a reused object, it is up to the user to
+     *          clear the object if that is appropriate.
+     *          If you are sending yarp::os::Bottle objects, you may want to
+     *          call yarp::os::Bottle::clear(), for example.
+     *          YARP doesn't clear objects for you, since there are many
+     *          cases in which overwriting old data is suffient and reallocation
+     *          of memory would be unnecessary and inefficient.
+     *
      * @return the next object that will be written
      */
-    T& prepare() {
-        return writer.get();
-    }
-
+    T& prepare();
 
     /**
-     *
      * Give the last prepared object back to YARP without writing it.
      *
      * @return true if there was a prepared object to return.
-     *
      */
-    bool unprepare() {
-        return writer.unprepare();
-    }
+    bool unprepare();
 
     /**
      * Write the current object being returned by BufferedPort::prepare.
-     * That object should no longer be touched by the user of this class --
-     * it is now owned by the communications system.  The BufferedPort::prepare
-     * method should be called again to get a fresh (or reused) object
-     * guaranteed to be not in use by the communications system.
-     * @param forceStrict If this is true, wait until any previous sends
-     * are complete.  If false, the current object will not be sent on
-     * connections that are currently busy.
      *
+     * @warning That object should no longer be touched by the user of this
+     *          class, it is now owned by the communications system.
+     *          The BufferedPort::prepare method should be called again to get a
+     *          fresh (or reused) object guaranteed to be not in use by the
+     *          communications system.
+     *
+     * @param forceStrict If this is true, wait until any previous sends
+     *                    are complete.
+     *                    If false, the current object will not be sent on
+     *                    connections that are currently busy.
      */
-    void write(bool forceStrict=false) {
-        if(isClosed())
-        {
-            return;
-        }
-        writer.write(forceStrict);
-    }
+    void write(bool forceStrict = false);
 
     /**
      * Write the current object being returned by BufferedPort::prepare,
      * waiting until any previous sends are complete.
-     * That object should no longer be touched by the user of this class --
-     * it is now owned by the communications system.  The BufferedPort::prepare
-     * method should be called again to get a fresh (or reused) object
-     * guaranteed to be not in use by the communications system.
      *
+     * @warning That object should no longer be touched by the user of this
+     *          class it is now owned by the communications system.
+     *          The BufferedPort::prepare method should be called again to get a
+     *          fresh (or reused) object guaranteed to be not in use by the
+     *          communications system.
      */
-    void writeStrict() {
-        write(true);
-    }
+    void writeStrict();
 
     /**
-     *
      * Wait for any pending writes to complete.
-     *
      */
-    void waitForWrite() {
-        writer.waitForWrite();
-    }
+    void waitForWrite();
+
+    // Documented in TypedReader
+    virtual void setStrict(bool strict = true) override;
+
+    // Documented in TypedReader
+    virtual T* read(bool shouldWait = true) override;
+
+    // Documented in TypedReader
+    virtual T* lastRead() override;
+
+    // Documented in TypedReader
+    virtual bool isClosed() override;
+
+    // Documented in TypedReader
+    void setReplier(PortReader& reader) override;
+
+    // Documented in Contactable
+    void setReader(PortReader& reader) override;
+
+    // Documented in Contactable
+    void setAdminReader(PortReader& reader) override;
 
     /**
+     * Callback method.
      *
-     * Never drop any messages read.  If you can't read them as
-     * fast as the come in, watch out.
-     *
-     */
-    void setStrict(bool strict=true) YARP_OVERRIDE {
-        attachIfNeeded();
-        reader.setStrict(strict);
-    }
-
-    /**
-     *
-     * Read a message from the port.  Waits by default.
-     * May return YARP_NULLPTR if the port status has changed.
-     *
-     * @param shouldWait false if the call should return immediately if no message is available
-     * @return a message, or YARP_NULLPTR
-     *
-     */
-    virtual T *read(bool shouldWait=true) YARP_OVERRIDE {
-        if (!port.isOpen()) return YARP_NULLPTR;
-        if (interrupted) return YARP_NULLPTR;
-        T *result = reader.read(shouldWait);
-        // in some circs PortReaderBuffer::read(true) may return false
-        while (result==YARP_NULLPTR && shouldWait && !reader.isClosed() &&
-               !interrupted) {
-            result = reader.read(shouldWait);
-        }
-        return result;
-    }
-
-    virtual T *lastRead() YARP_OVERRIDE {
-        return reader.lastRead();
-    }
-
-    virtual bool isClosed() YARP_OVERRIDE {
-        return reader.isClosed();
-    }
-
-    void setReplier(PortReader& reader) YARP_OVERRIDE {
-        attachIfNeeded();
-        this->reader.setReplier(reader);
-    }
-
-    void setReader(PortReader& reader) YARP_OVERRIDE {
-        attachIfNeeded();
-        setReplier(reader);
-    }
-
-    void setAdminReader(PortReader& reader) YARP_OVERRIDE {
-        attachIfNeeded();
-        port.setAdminReader(reader);
-    }
-
-    /**
      * this method will be called with new data, as long as you've
      * requested this be done by calling useCallback()
+     *
+     * @param datum data read from a port
      */
-    virtual void onRead(T& datum) YARP_OVERRIDE {
-        YARP_UNUSED(datum);
-        // override this to do something
-    }
+    virtual void onRead(T& datum) override;
+
+    // Documented in TypedReader
+    virtual void useCallback(TypedReaderCallback<T>& callback) override;
 
     /**
-     * Set an object whose onRead method will be called when data is
-     * available.
+     * Use own onRead() method as callback.
+     *
+     * User can override that method to be informed about data as it arrives.
      */
-    void useCallback(TypedReaderCallback<T>& callback) YARP_OVERRIDE {
-        attachIfNeeded();
-        reader.useCallback(callback);
-    }
+    void useCallback();
 
-    /**
-     * Call own onRead() method -- user can override that method
-     * to be informed about data as it arrives
-     */
-    void useCallback() {
-        attachIfNeeded();
-        reader.useCallback(*this);
-    }
-
-    void disableCallback() YARP_OVERRIDE {
-        attachIfNeeded();
-        reader.disableCallback();
-    }
+    // Documented in TypedReader
+    virtual void disableCallback() override;
 
     // documented in Contactable
-    virtual bool setEnvelope(PortWriter& envelope) YARP_OVERRIDE {
-        return port.setEnvelope(envelope);
-    }
-
+    virtual bool setEnvelope(PortWriter& envelope) override;
 
     // documented in Contactable
-    virtual bool getEnvelope(PortReader& envelope) YARP_OVERRIDE {
-        return reader.getEnvelope(envelope);
-    }
+    virtual bool getEnvelope(PortReader& envelope) override;
 
     // documented in Contactable
-    virtual int getInputCount() YARP_OVERRIDE {
-        return port.getInputCount();
-    }
+    virtual int getInputCount() override;
 
     // documented in Contactable
-    virtual int getOutputCount() YARP_OVERRIDE {
-        return port.getOutputCount();
-    }
+    virtual int getOutputCount() override;
 
     // documented in Contactable
-    bool isWriting() YARP_OVERRIDE {
-        return port.isWriting();
-    }
+    bool isWriting() override;
 
     // documented in Contactable
-    virtual void getReport(PortReport& reporter) YARP_OVERRIDE {
-        port.getReport(reporter);
-    }
+    virtual void getReport(PortReport& reporter) override;
 
     // documented in Contactable
-    virtual void setReporter(PortReport& reporter) YARP_OVERRIDE {
-        port.setReporter(reporter);
-    }
+    virtual void setReporter(PortReport& reporter) override;
 
     // documented in Contactable
-    virtual void resetReporter() YARP_OVERRIDE {
-        port.resetReporter();
-    }
+    virtual void resetReporter() override ;
 
     // documented in TypedReader
-    virtual void *acquire() YARP_OVERRIDE {
-        return reader.acquire();
-    }
+    virtual void* acquire() override ;
 
     // documented in TypedReader
-    virtual void release(void *handle) YARP_OVERRIDE {
-        reader.release(handle);
-    }
-
+    virtual void release(void* handle) override;
 
     // documented in TypedReader
-    virtual void setTargetPeriod(double period) YARP_OVERRIDE {
-        attachIfNeeded();
-        reader.setTargetPeriod(period);
-    }
+    virtual void setTargetPeriod(double period) override;
 
-    virtual Type getType() YARP_OVERRIDE {
-        return port.getType();
-    }
+    // documented in Contactable
+    virtual Type getType() override;
 
-    virtual void promiseType(const Type& typ) YARP_OVERRIDE {
-        port.promiseType(typ);
-    }
+    // documented in Contactable
+    virtual void promiseType(const Type& typ) override;
 
-    virtual void setInputMode(bool expectInput) YARP_OVERRIDE {
-        port.setInputMode(expectInput);
-    }
+    // documented in Contactable
+    virtual void setInputMode(bool expectInput) override;
 
-    virtual void setOutputMode(bool expectOutput) YARP_OVERRIDE {
-        port.setOutputMode(expectOutput);
-    }
+    // documented in Contactable
+    virtual void setOutputMode(bool expectOutput) override;
 
-    virtual void setRpcMode(bool expectRpc) YARP_OVERRIDE {
-        port.setRpcMode(expectRpc);
-    }
+    // documented in Contactable
+    virtual void setRpcMode(bool expectRpc) override;
 
+    // documented in Contactable
+    virtual Property* acquireProperties(bool readOnly) override;
 
-    virtual Property *acquireProperties(bool readOnly) YARP_OVERRIDE {
-        return port.acquireProperties(readOnly);
-    }
+    // documented in Contactable
+    virtual void releaseProperties(Property* prop) override;
 
-    virtual void releaseProperties(Property *prop) YARP_OVERRIDE {
-        port.releaseProperties(prop);
-    }
+    // documented in Contactable
+    virtual void includeNodeInName(bool flag) override;
 
-    virtual void includeNodeInName(bool flag) YARP_OVERRIDE {
-        return port.includeNodeInName(flag);
-    }
+    // documented in Contactable
+    virtual bool setCallbackLock(yarp::os::Mutex* mutex) override;
 
-    virtual bool setCallbackLock(yarp::os::Mutex *mutex) YARP_OVERRIDE {
-        return port.setCallbackLock(mutex);
-    }
+    // documented in Contactable
+    virtual bool removeCallbackLock() override;
 
-    virtual bool removeCallbackLock() YARP_OVERRIDE {
-        return port.removeCallbackLock();
-    }
+    // documented in Contactable
+    virtual bool lockCallback() override;
 
-    virtual bool lockCallback() YARP_OVERRIDE {
-        return port.lockCallback();
-    }
+    // documented in Contactable
+    virtual bool tryLockCallback() override;
 
-    virtual bool tryLockCallback() YARP_OVERRIDE {
-        return port.tryLockCallback();
-    }
-
-    virtual void unlockCallback() YARP_OVERRIDE {
-        return port.unlockCallback();
-    }
+    // documented in Contactable
+    virtual void unlockCallback() override;
 
 private:
     PortWriterBuffer<T> writer;
@@ -437,32 +312,16 @@ private:
     bool attached;
 
     // forbid this
-    BufferedPort(const BufferedPort& alt) {
-        YARP_UNUSED(alt);
-    }
+    BufferedPort(const BufferedPort& alt) = delete;
+    const BufferedPort& operator=(const BufferedPort& alt) = delete;
 
-    // forbid this
-    const BufferedPort& operator = (const BufferedPort& alt) {
-        YARP_UNUSED(alt);
-        return *this;
-    }
-
-    void attachIfNeeded() {
-        if (!attached) {
-            reader.attach(port);
-            writer.attach(port);
-            attached = true;
-        }
-    }
-
-    bool sharedOpen(Port& port) {
-        bool ok = this->port.sharedOpen(port);
-        if (!ok) return false;
-        reader.attach(port);
-        writer.attach(port);
-        attached = true;
-        return true;
-    }
+    void attachIfNeeded();
+    bool sharedOpen(Port& port);
 };
+
+} // namespace os
+} // namespace yarp
+
+#include <yarp/os/BufferedPort-inl.h>
 
 #endif // YARP_OS_BUFFEREDPORT_H

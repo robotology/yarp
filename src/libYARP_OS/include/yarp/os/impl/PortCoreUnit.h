@@ -117,10 +117,10 @@ public:
      * before the method returns
      * @param waitBefore true if we should wait for any in-progress send
      * to complete before stating this one
-     * @parm gotReply if non-YARP_NULLPTR, this variable will be set to true if
+     * @parm gotReply if non-nullptr, this variable will be set to true if
      * a reply was received
      *
-     * @return YARP_NULLPTR, or a tracker for a previous send operation that
+     * @return nullptr, or a tracker for a previous send operation that
      * is no longer in progress. The tracker is an opaque pointer passed
      * in via a previous call to send().  Once it is returned, it is
      * the caller's responsibility to manage any memory associated
@@ -133,9 +133,16 @@ public:
                        const ConstString& envelope,
                        bool waitAfter = true,
                        bool waitBefore = true,
-                       bool *gotReply = YARP_NULLPTR)
+                       bool *gotReply = nullptr)
     {
         // do nothing
+        YARP_UNUSED(writer);
+        YARP_UNUSED(reader);
+        YARP_UNUSED(callback);
+        YARP_UNUSED(envelope);
+        YARP_UNUSED(waitAfter);
+        YARP_UNUSED(waitBefore);
+        YARP_UNUSED(gotReply);
         return tracker;
     }
 
@@ -145,12 +152,12 @@ public:
      * can be safely accessed.
      *
      * @return the opaque tracker pointer passed to a previous call to
-     * send(), or YARP_NULLPTR if there is no such tracker.  Once the tracker
-     * has been returned, calling this method again will return YARP_NULLPTR.
+     * send(), or nullptr if there is no such tracker.  Once the tracker
+     * has been returned, calling this method again will return nullptr.
      */
     virtual void *takeTracker()
     {
-        return YARP_NULLPTR;
+        return nullptr;
     }
 
     /**
@@ -200,9 +207,9 @@ public:
      *
      * @return the connection mode, or the empty string if there is none
      */
-    ConstString getMode(bool *hasMode = YARP_NULLPTR)
+    ConstString getMode(bool *hasMode = nullptr)
     {
-        if (hasMode!=YARP_NULLPTR) {
+        if (hasMode!=nullptr) {
             *hasMode = this->hasMode;
         }
         return (this->hasMode)?mode:"";
@@ -250,12 +257,18 @@ public:
      * Set arbitrary parameters for this connection.
      * @param params the parameters to set
      */
-    virtual void setCarrierParams(const yarp::os::Property& params) { }
+    virtual void setCarrierParams(const yarp::os::Property& params)
+    {
+        YARP_UNUSED(params);
+    }
 
     /**
      * @param [out]params parameters set by setCarrierParams()
      */
-    virtual void getCarrierParams(yarp::os::Property& params) { }
+    virtual void getCarrierParams(yarp::os::Property& params)
+    {
+        YARP_UNUSED(params);
+    }
 
 
 protected:

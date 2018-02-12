@@ -66,48 +66,6 @@ public:
      */
     bool setQuiet(bool quiet = true);
 
-#ifndef YARP_NO_DEPRECATED // since YARP 2.3.65
-    /**
-     *
-     * Sets up the finder.  The policyName is used to find
-     * a file containing the default policy for searching
-     * for resource files.  Policy can affect the environment
-     * variables that are checked, the directories that are searched,
-     * and the order of search.
-     *
-     * For a policy [P], YARP looks for an environment variable of
-     * that name.  If found, it tries to load the file [P]/[P].ini
-     * and use this to configure the search policy.
-     *
-     * An example ini file:
-     *
-     * \verbatim
-     * style capability
-     * capability_directory app
-     * default_capability default
-     * \endverbatim
-     *
-     * This would make the default search path include [P]/app/default
-     * and an added context [C] would add [P]/app/[C] to the search path.
-     *
-     * Some elements of policy can be changed from the commandline.
-     *
-     * @return true if configuration succeeded. Configuration fails
-     * if the user requests use of a policy and that policy cannot
-     * be found, of if the user requests a configuration file to
-     * be read (via --from for example) and that file cannot be
-     * found. If a default configuration file has been set with
-     * ResourceFinder::setDefaultConfigFile, the presence or
-     * absence of that file doesn't by itself contribute to
-     * sucess/failure (since it is perfectly valid for it to be
-     * absent).
-     *
-     * @deprecated since YARP 2.3.65
-     */
-    YARP_DEPRECATED bool configure(const char *policyName, int argc, char *argv[],
-                   bool skipFirstArgument = true);
-#endif // YARP_NO_DEPRECATED
-
     /**
      * Sets up the ResourceFinder.
      *
@@ -264,18 +222,6 @@ public:
      */
     yarp::os::ConstString getContext();
 
-#ifndef YARP_NO_DEPRECATED // since YARP 2.3.60
-    /**
-     *
-     * Return the path that the default context expands to, according to
-     * the policy. If no policy was used, behave as getHomeContextPath
-     *
-     * @deprecated since YARP 2.3.60
-     */
-    YARP_DEPRECATED_MSG("Use getHomeContextPath() instead")
-    yarp::os::ConstString getContextPath();
-#endif // YARP_NO_DEPRECATED
-
     /**
      *
      * Return the full stack of contexts used in searching
@@ -285,11 +231,11 @@ public:
     yarp::os::Bottle getContexts();
 
     // Searchable interface
-    virtual bool check(const ConstString& key) const YARP_OVERRIDE;
-    virtual Value& find(const ConstString& key) const YARP_OVERRIDE;
-    virtual Bottle& findGroup(const ConstString& key) const YARP_OVERRIDE;
-    virtual bool isNull() const YARP_OVERRIDE;
-    virtual ConstString toString() const YARP_OVERRIDE;
+    virtual bool check(const ConstString& key) const override;
+    virtual Value& find(const ConstString& key) const override;
+    virtual Bottle& findGroup(const ConstString& key) const override;
+    virtual bool isNull() const override;
+    virtual ConstString toString() const override;
 
 
     /**

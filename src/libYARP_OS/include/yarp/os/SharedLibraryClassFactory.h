@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2013 iCub Facility
+ * Copyright (C) 2013 Istituto Italiano di Tecnologia (IIT)
  * Authors: Paul Fitzpatrick
  * CopyPolicy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
  */
@@ -29,11 +29,11 @@ public:
     SharedLibraryClassFactory() {
     }
 
-    SharedLibraryClassFactory(const char *dll_name, const char *fn_name = YARP_NULLPTR) : SharedLibraryFactory(dll_name, fn_name) {
+    SharedLibraryClassFactory(const char *dll_name, const char *fn_name = nullptr) : SharedLibraryFactory(dll_name, fn_name) {
     }
 
     T *create() {
-        if (!isValid()) return YARP_NULLPTR;
+        if (!isValid()) return nullptr;
         return (T *)getApi().create();
     }
 

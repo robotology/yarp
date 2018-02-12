@@ -1,6 +1,6 @@
 /*
 *  Yarp Modules Manager
-*  Copyright: (C) 2011 Robotics, Brain and Cognitive Sciences - Italian Institute of Technology (IIT)
+*  Copyright: (C) 2011 Istituto Italiano di Tecnologia (IIT)
 *  Authors: Ali Paikan <ali.paikan@iit.it>
 *
 *  Copy Policy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
@@ -46,9 +46,9 @@ bool BinaryExpParser::parse(string _exp)
 
     binTree.clear();
     operands.clear();
-    BinaryNodePtr root = YARP_NULLPTR;
+    BinaryNodePtr root = nullptr;
     parseExpression(strexp, root);
-    if(root == YARP_NULLPTR)
+    if(root == nullptr)
     {
         ErrorLogger* logger = ErrorLogger::Instance();
         string msg = "BinaryExpParser: failed to parse the expression";
@@ -267,7 +267,7 @@ bool BinaryExpParser::checkExpression(std::string& strexp)
 void BinaryExpParser::parseExpression(std::string &strexp, BinaryNodePtr& node)
 {
     string op;
-    BinaryNodePtr rightNode = YARP_NULLPTR;
+    BinaryNodePtr rightNode = nullptr;
     parseNot(strexp, node);
     while(!strexp.empty() &&
           ((*strexp.begin() == EXPAND) ||
@@ -293,7 +293,7 @@ void BinaryExpParser::parseNot(std::string &strexp, BinaryNodePtr& node) {
         op = *strexp.begin();
         strexp.erase(strexp.begin());
         parseFactor(strexp, rightNode);
-        BinaryNode tmpNode(op.c_str(), rightNode, NULL);
+        BinaryNode tmpNode(op.c_str(), rightNode, nullptr);
         node = (BinaryNodePtr) binTree.addNode(&tmpNode);
     }
 }

@@ -1,6 +1,6 @@
 /*
  *  Yarp Modules Manager
- *  Copyright: (C) 2011 Robotics, Brain and Cognitive Sciences - Italian Institute of Technology (IIT)
+ *  Copyright: (C) 2011 Istituto Italiano di Tecnologia (IIT)
  *  Authors: Ali Paikan <ali.paikan@iit.it>
  *
  *  Copy Policy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
@@ -40,6 +40,13 @@ typedef enum __RSTATE {
     DEAD,
     STUNKNOWN
 } RSTATE;
+
+enum class BrokerType
+{
+    invalid,
+    local,
+    yarp
+};
 
 
 class MEvent{
@@ -81,7 +88,7 @@ public:
     void setHost(const char* val) { if(val) strHost = val; }
     void setStdio(const char* val) { if(val) strStdio = val; }
     void setWorkDir(const char* val) { if(val) strWorkdir = val; }
-    void setEnv(const char* val) {if(val) strEnv = val; }    
+    void setEnv(const char* val) {if(val) strEnv = val; }
 
     void addConnection(Connection &cnn) { connections.push_back(cnn); }
     CnnContainer& getConnections(void) { return connections;}
@@ -89,7 +96,12 @@ public:
     ResourceContainer& getResources(void) { return resources; }
 
     RSTATE state(void);
+    BrokerType getBrokerType();
+    bool shouldChangeBroker();
     Broker* getBroker(void) { return broker; }
+    void setAndInitializeBroker(Broker* _broker);
+    void removeBroker(void) { if (broker) delete broker;}
+
     MEvent* getEvent(void) { return event; }
     const char* getCommand(void) { return strCommand.c_str(); }
     const char* getParam(void) { return strParam.c_str(); }
@@ -105,6 +117,11 @@ public:
     void setPostStopWait(double t) { waitStop = t; }
     double getPostStopWait() { return waitStop; }
 
+    void setOriginalPostExecWait(double t){ originalWaitStart = t; }
+    void restoreOriginalPostExecWait(){ waitStart = originalWaitStart; }
+    void setOriginalPostStopWait(double t){ originalWaitStop = t; }
+    void restoreOriginalPostStopWait(){ waitStop = originalWaitStop; }
+
     void enableAutoConnect(void) { bAutoConnect = true; }
     void disableAutoConnect(void) { bAutoConnect = false; }
     bool autoConnect(void) { return bAutoConnect; }
@@ -113,7 +130,7 @@ public:
     void stopWatchDog();
 
 public: // from BrokerEventSink
-    void onBrokerStdout(const char* msg) YARP_OVERRIDE;
+    void onBrokerStdout(const char* msg) override;
 
 private:
     bool bAutoConnect;
@@ -126,6 +143,8 @@ private:
     int theID;
     double waitStart;
     double waitStop;
+    double originalWaitStart;
+    double originalWaitStop;
     bool bWatchDog;
     Broker* broker;
     MEvent* event;
@@ -162,7 +181,7 @@ public:
     virtual ~ConcurentWrapper() { if(isRunning()) stop(); }
 
 
-    void run() YARP_OVERRIDE {
+    void run() override {
         if(labor && executable)
             (executable->*labor)();
     }
@@ -186,7 +205,7 @@ public:
     virtual ~ConcurentRateWrapper() { if(isRunning()) stop(); }
 
 
-    void run() YARP_OVERRIDE {
+    void run() override {
         if(labor && executable)
             (executable->*labor)();
     }

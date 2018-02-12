@@ -29,7 +29,7 @@ YARP_SSIZE_T MjpegStream::read(const Bytes& b) {
             remaining = img.getRawImageSize();
         } else if (phase==3) {
             phase = 4;
-            cursor = NULL;
+            cursor = nullptr;
             remaining = blobHeader.blobLen;
         } else {
             phase = 0;
@@ -105,7 +105,7 @@ YARP_SSIZE_T MjpegStream::read(const Bytes& b) {
         if ((int)b.length()<allow) {
             allow = b.length();
         }
-        if (cursor!=NULL) {
+        if (cursor!=nullptr) {
             memcpy(b.get(),cursor,allow);
             cursor+=allow;
             remaining-=allow;

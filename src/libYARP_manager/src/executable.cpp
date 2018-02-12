@@ -1,6 +1,6 @@
 /*
  *  Yarp Modules Manager
- *  Copyright: (C) 2011 Robotics, Brain and Cognitive Sciences - Italian Institute of Technology (IIT)
+ *  Copyright: (C) 2011 Istituto Italiano di Tecnologia (IIT)
  *  Authors: Ali Paikan <ali.paikan@iit.it>
  *
  *  Copy Policy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
@@ -8,6 +8,7 @@
 
 
 #include <yarp/manager/executable.h>
+#include <yarp/manager/yarpbroker.h>
 
 using namespace yarp::manager;
 
@@ -20,6 +21,8 @@ Executable::Executable(Broker* _broker, MEvent* _event, Module *module,
     bWatchDog = _bWatchDog;
     waitStart = 0.0;
     waitStop = 0.0;
+    originalWaitStart = 0.0;
+    originalWaitStop  = 0.0;
     Executable::module = module;
     logger  = ErrorLogger::Instance();
     broker->setEventSink(dynamic_cast<BrokerEventSink*>(this));
@@ -32,7 +35,7 @@ Executable::Executable(Broker* _broker, MEvent* _event, Module *module,
     if(bWatchDog)
         watchdogWrapper = new ConcurentRateWrapper(this, &Executable::watchdogImplement);
     else
-        watchdogWrapper = NULL;
+        watchdogWrapper = nullptr;
 }
 
 Executable::~Executable()
@@ -43,12 +46,11 @@ Executable::~Executable()
     delete stopWrapper;
     delete killWrapper;
     delete execMachine;
-    if(broker)
-        delete broker;
+    removeBroker();
 }
 
 
-bool Executable::initialize(void)
+bool Executable::initialize()
 {
     __CHECK_NULLPTR(broker);
     __CHECK_NULLPTR(event);
@@ -75,7 +77,7 @@ bool Executable::initialize(void)
 }
 
 
-bool Executable::start(void)
+bool Executable::start()
 {
     if(!initialize()) {
       event->onExecutableDied(this);
@@ -98,7 +100,7 @@ void Executable::startImplement()
 }
 
 
-void Executable::stop(void)
+void Executable::stop()
 {
     if(!broker->initialized())
         initialize();
@@ -109,7 +111,7 @@ void Executable::stop(void)
     }
 }
 
-void Executable::stopImplement(void)
+void Executable::stopImplement()
 {
     execMachine->stop();
     execMachine->disconnectAllPorts();
@@ -118,7 +120,7 @@ void Executable::stopImplement(void)
 }
 
 
-void Executable::kill(void)
+void Executable::kill()
 {
     if(!broker->initialized())
         initialize();
@@ -128,14 +130,14 @@ void Executable::kill(void)
     killWrapper->start();
 }
 
-void Executable::killImplement(void)
+void Executable::killImplement()
 {
     execMachine->kill();
     execMachine->killModule();
 }
 
 
-RSTATE Executable::state(void)
+RSTATE Executable::state()
 {
 
     if(!broker->initialized())
@@ -164,8 +166,50 @@ RSTATE Executable::state(void)
     return STUNKNOWN;
 }
 
+BrokerType Executable::getBrokerType()
+{
+    if (broker == nullptr)
+    {
+        return BrokerType::invalid;
+    }
+    else if (dynamic_cast<YarpBroker*>(broker))
+    {
+        return BrokerType::yarp;
+    }
+    else
+    {
+        return BrokerType::local;
+    }
+
+}
+
+bool Executable::shouldChangeBroker()
+{
+    if (getBrokerType() == BrokerType::local &&
+        strHost != "localhost")
+    {
+       return true;
+    }
+    else if (getBrokerType() == BrokerType::yarp &&
+             strHost == "localhost")
+    {
+        return true;
+    }
+    return false;
+
+}
+
+void Executable::setAndInitializeBroker(Broker *_broker)
+{
+    if (_broker)
+    {
+        broker = _broker;
+        initialize();
+    }
+}
+
 bool Executable::startWatchDog() {
-    if(watchdogWrapper == NULL)
+    if(watchdogWrapper == nullptr)
         return false;
     if(!watchdogWrapper->isRunning())
         watchdogWrapper->start();
@@ -183,7 +227,7 @@ void Executable::onBrokerStdout(const char* msg)
 }
 
 
-void Executable::watchdogImplement(void)
+void Executable::watchdogImplement()
 {
     if(!broker->running())
             execMachine->moduleFailed();

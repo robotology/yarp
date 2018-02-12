@@ -1,6 +1,6 @@
 /*
- * Copyright (C) 2017 iCub Facility - Istituto Italiano di Tecnologia
- * Authors: Nicolo' Genesio <nicolo.genesio@iit.it>
+ * Copyright (C) 2017 Istituto Italiano di Tecnologia (IIT)
+ * Authors: Nicolò Genesio <nicolo.genesio@iit.it>
  * CopyPolicy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
  */
 
@@ -41,7 +41,7 @@ public:
             bool result;
             result = dd.open(p);
             checkTrue(result,"open reported successful");
-            IFrameGrabberImage *grabber = NULL;
+            IFrameGrabberImage *grabber = nullptr;
             result = dd.view(grabber);
             checkTrue(result,"interface reported");
             ImageOf<PixelRgb> img;
@@ -68,9 +68,10 @@ public:
             result = dd.open(p);
             checkTrue(result,"client open reported successful");
 
-            IFrameGrabberImage *grabber = NULL;
+            IFrameGrabberImage *grabber = nullptr;
             result = dd.view(grabber);
             checkTrue(result,"interface reported");
+            yarp::os::SystemClock::delaySystem(0.5);
             ImageOf<PixelRgb> img;
             grabber->getImage(img);
             checkTrue(img.width()>0,"interface seems functional");
@@ -87,17 +88,19 @@ public:
             report(0,"test the IRgbVisualParams interface");
             PolyDriver dd, dd2;
             Property p, p2, intrinsics;
-            Bottle* retM=0;
+            Bottle* retM=nullptr;
             p.put("device","remote_grabber");
             p.put("remote","/grabber");
             p.put("local","/grabber/client");
+            p.put("no_stream", 1);
+
             p2.put("device","grabber");
             p2.put("subdevice","test_grabber");
             bool result;
             result = dd2.open(p2);
             result &= dd.open(p);
             checkTrue(result,"open reported successful");
-            IRgbVisualParams* rgbParams=NULL;
+            IRgbVisualParams* rgbParams=nullptr;
             result= dd.view(rgbParams);
             checkTrue(result,"interface rgb params reported");
             // check the default parameter
@@ -170,6 +173,23 @@ public:
                     && configurations[2].framerate==15.0
                     && configurations[2].pixelCoding==VOCAB_PIXEL_MONO;
             checkTrue(result,"checking third supported configuration");
+
+            // Test the crop function - must NOT work.
+            // It is not implemeted in the old server
+            IFrameGrabberImage *grabber = nullptr;
+            result = dd.view(grabber);
+            ImageOf<PixelRgb> img, crop;
+            grabber->getImage(img);
+
+            yarp::sig::VectorOf<std::pair< int, int> > vertices;
+            vertices.clear();
+            vertices.resize(2);
+            vertices[0] = std::pair <int, int> (0, 0);
+            vertices[1] = std::pair <int, int> ( 10, 10);        // Configure a doable crop.
+            bool ret = grabber->getImageCrop(YARP_CROP_RECT, vertices, crop);
+
+            checkFalse(ret, "check crop function must not work on old server (call does not hangs)");
+
             result = dd2.close() && dd.close();
             checkTrue(result,"close reported successful");
         }
@@ -180,10 +200,11 @@ public:
             report(0,"test the IRgbVisualParams interface");
             PolyDriver dd, dd2;
             Property p, p2, intrinsics;
-            Bottle* retM=0;
+            Bottle* retM=nullptr;
             p.put("device","remote_grabber");
             p.put("remote","/grabber/left/rpc");
             p.put("local","/grabber/client");
+
             p2.put("device","grabberDual");
             p2.put("context","TestFrameGrabberTest");
             p2.put("left_config","left_test.ini");
@@ -192,7 +213,7 @@ public:
             result = dd2.open(p2);
             result &= dd.open(p);
             checkTrue(result,"open reported successful");
-            IRgbVisualParams* rgbParams=NULL;
+            IRgbVisualParams* rgbParams=nullptr;
             result= dd.view(rgbParams);
             checkTrue(result,"interface rgb params reported");
             // I check the default parameters
@@ -280,13 +301,16 @@ public:
                 }
             }
             checkTrue(result,"checking the retificationMatrix");
+
             result = dd.close();
             checkTrue(result, "checking closure");
             p.unput("remote");
             p.put("remote","/grabber/right/rpc");
+
+            yarp::os::SystemClock::delaySystem(0.5);
             result = dd.open(p);
             checkTrue(result, "checking opening client");
-            rgbParams=NULL;
+            rgbParams=nullptr;
             result= dd.view(rgbParams);
             checkTrue(result,"interface rgb params reported");
             // I check the default parameters
@@ -331,7 +355,7 @@ public:
                 }
             }
             checkTrue(result,"checking the retificationMatrix");
-            result &= dd2.close();
+            result = dd2.close();
             checkTrue(result,"close reported successful");
         }
 
@@ -356,7 +380,7 @@ public:
             result = dd.open(p);
             checkTrue(result,"client open reported successful");
 
-            IFrameGrabberImage *grabber = NULL;
+            IFrameGrabberImage *grabber = nullptr;
             result = dd.view(grabber);
             checkTrue(result,"interface reported");
             ImageOf<PixelRgb> img;
@@ -378,6 +402,19 @@ public:
             imgR = pRight.read();
             result &= imgL->width() == width/2;
             result &= imgR->width() == width/2;
+
+            //Test the crop function - must work
+            ImageOf<PixelRgb> crop;
+
+            yarp::sig::VectorOf<std::pair< int, int> > vertices;
+            vertices.clear();
+            vertices.resize(2);
+            vertices[0] = std::pair <int, int> (0, 0);
+            vertices[1] = std::pair <int, int> ( 10, 10);        // Configure a doable crop.
+            bool ret = grabber->getImageCrop(YARP_CROP_RECT, vertices, crop);
+
+            checkTrue(ret && crop.width() >0 && crop.height()>0, "check crop function");
+
             checkTrue(result,"checking imgL and imgR dimensions");
             result = dd2.close() && dd.close();
             checkTrue(result,"close reported successful");

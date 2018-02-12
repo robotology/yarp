@@ -41,16 +41,16 @@ T* AllocAligned (int size)
 
     char *p = ((char *)ptr) + addbytes;
     *(p - 1) = addbytes;
-    return (T*)p;
+    return reinterpret_cast<T*>(p);
 }
 
 template <class T>
 void FreeAligned (T* ptr)
 {
-    if (ptr == NULL) return;
+    if (ptr == nullptr) return;
 
     const char addbytes = *(((char *)ptr) - 1);
-    delete[] (T *)(((char *)ptr) - addbytes);
+    delete[] reinterpret_cast<T*>(((char *)ptr) - addbytes);
 }
 
 ///
@@ -80,7 +80,7 @@ IPLAPIIMPL(IplConvKernel*, iplCreateConvKernel,(int nCols, int nRows,
                                                 int anchorX, int anchorY, int* values, int nShiftR))
 {
     IplConvKernel *ret = new IplConvKernel;
-    yAssert(ret != NULL);
+    yAssert(ret != nullptr);
 
     ret->anchorX = anchorX;
     ret->anchorY = anchorY;
@@ -88,7 +88,7 @@ IPLAPIIMPL(IplConvKernel*, iplCreateConvKernel,(int nCols, int nRows,
     ret->nRows = nRows;
     ret->nShiftR = nShiftR;
     ret->values = new int[nCols * nRows];
-    yAssert(ret->values != NULL);
+    yAssert(ret->values != nullptr);
     memcpy (ret->values, values, sizeof(int) * nCols * nRows);
 
     return ret;
@@ -108,14 +108,14 @@ IPLAPIIMPL(IplConvKernelFP*, iplCreateConvKernelFP,(int nCols, int nRows,
                                                     int anchorX, int anchorY, float* values))
 {
     IplConvKernelFP *ret = new IplConvKernelFP;
-    yAssert(ret != NULL);
+    yAssert(ret != nullptr);
 
     ret->anchorX = anchorX;
     ret->anchorY = anchorY;
     ret->nCols = nCols;
     ret->nRows = nRows;
     ret->values = new float[nCols * nRows];
-    yAssert(ret->values != NULL);
+    yAssert(ret->values != nullptr);
     memcpy (ret->values, values, sizeof(float) * nCols * nRows);
 
     return ret;
@@ -124,8 +124,8 @@ IPLAPIIMPL(IplConvKernelFP*, iplCreateConvKernelFP,(int nCols, int nRows,
 IPLAPIIMPL(void,iplGetConvKernel,(IplConvKernel* kernel, int* nCols, int* nRows,
                                   int* anchorX, int* anchorY, int** values, int *nShiftR))
 {
-    yAssert(kernel != NULL);
-    yAssert(kernel->values != NULL);
+    yAssert(kernel != nullptr);
+    yAssert(kernel->values != nullptr);
 
     *nCols = kernel->nCols;
     *nRows = kernel->nRows;
@@ -138,8 +138,8 @@ IPLAPIIMPL(void,iplGetConvKernel,(IplConvKernel* kernel, int* nCols, int* nRows,
 IPLAPIIMPL(void,iplGetConvKernelFP,(IplConvKernelFP* kernel,int* nCols, int* nRows,
                                     int* anchorX, int* anchorY, float** values))
 {
-    yAssert(kernel != NULL);
-    yAssert(kernel->values != NULL);
+    yAssert(kernel != nullptr);
+    yAssert(kernel->values != nullptr);
 
     *nCols = kernel->nCols;
     *nRows = kernel->nRows;
@@ -150,7 +150,7 @@ IPLAPIIMPL(void,iplGetConvKernelFP,(IplConvKernelFP* kernel,int* nCols, int* nRo
 
 IPLAPIIMPL(void, iplDeleteConvKernel,(IplConvKernel* kernel))
 {
-    if (kernel == NULL)
+    if (kernel == nullptr)
         return;
 
     delete[] kernel->values;
@@ -159,7 +159,7 @@ IPLAPIIMPL(void, iplDeleteConvKernel,(IplConvKernel* kernel))
 
 IPLAPIIMPL(void, iplDeleteConvKernelFP,(IplConvKernelFP* kernel))
 {
-    if (kernel == NULL)
+    if (kernel == nullptr)
         return;
 
     delete[] kernel->values;
@@ -171,7 +171,7 @@ IPLAPIIMPL(void, iplDeleteConvKernelFP,(IplConvKernelFP* kernel))
 IPLAPIIMPL(void, iplConvolve2D,(IplImage* srcImage, IplImage* dstImage,
                                 IplConvKernel** kernel, int nKernels, int combineMethod))
 {
-    static char *__tmp_res = NULL;
+    static char *__tmp_res = nullptr;
     static int __tmp_size = -1;
 
     yAssert(nKernels == 1);
@@ -197,12 +197,12 @@ IPLAPIIMPL(void, iplConvolve2D,(IplImage* srcImage, IplImage* dstImage,
     yAssert(compareHeader (srcImage, dstImage));
     yAssert(srcImage->nChannels == 1); // Mono images only.
 
-    if (__tmp_res == NULL)
+    if (__tmp_res == nullptr)
         {
             __tmp_size = dstImage->imageSize;
             ///__tmp_res = new char[dstImage->imageSize];
             __tmp_res = AllocAligned<char> (dstImage->imageSize);
-            yAssert(__tmp_res != NULL);
+            yAssert(__tmp_res != nullptr);
         }
     else
         {
@@ -214,7 +214,7 @@ IPLAPIIMPL(void, iplConvolve2D,(IplImage* srcImage, IplImage* dstImage,
                     __tmp_size = dstImage->imageSize;
                     ///__tmp_res = new char[dstImage->imageSize];
                     __tmp_res = AllocAligned<char> (dstImage->imageSize);
-                    yAssert(__tmp_res != NULL);
+                    yAssert(__tmp_res != nullptr);
                 }
         }
 
@@ -289,7 +289,7 @@ IPLAPIIMPL(void, iplConvolve2DFP,(IplImage* srcImage, IplImage* dstImage,
     // I do not really like this solution, it would be much better to
     // alloc the array together with the Kernel.
     // clearly this is also a memory LEAK!
-    static float *__tmp_res = NULL;
+    static float *__tmp_res = nullptr;
     static int __tmp_size = -1;
 
     yAssert(nKernels == 1);
@@ -316,12 +316,12 @@ IPLAPIIMPL(void, iplConvolve2DFP,(IplImage* srcImage, IplImage* dstImage,
     yAssert(srcImage->nChannels == 1); // Mono images only.
     yAssert(srcImage->depth == IPL_DEPTH_32F);
 
-    if (__tmp_res == NULL)
+    if (__tmp_res == nullptr)
         {
             __tmp_size = dstImage->imageSize / sizeof(float);
             ///__tmp_res = new float[dstImage->imageSize / sizeof(float)];
             __tmp_res = AllocAligned<float> (dstImage->imageSize / sizeof(float));
-            yAssert(__tmp_res != NULL);
+            yAssert(__tmp_res != nullptr);
         }
     else
         {
@@ -333,15 +333,15 @@ IPLAPIIMPL(void, iplConvolve2DFP,(IplImage* srcImage, IplImage* dstImage,
                     __tmp_size = dstImage->imageSize / sizeof(float);
                     ///__tmp_res = new float[dstImage->imageSize / sizeof(float)];
                     __tmp_res = AllocAligned<float> (dstImage->imageSize / sizeof(float));
-                    yAssert(__tmp_res != NULL);
+                    yAssert(__tmp_res != nullptr);
                 }
         }
 
     if (srcImage != dstImage)
         {
             float tmp;
-            float *source = (float *)srcImage->imageData;
-            float *dest = (float *)dstImage->imageData;
+            float *source = reinterpret_cast<float*>(srcImage->imageData);
+            float *dest = reinterpret_cast<float*>(dstImage->imageData);
             for (int i = bordery; i <  h - bordery; i++)
                 {
                     for (int j = borderx; j < w - borderx; j++)
@@ -361,8 +361,8 @@ IPLAPIIMPL(void, iplConvolve2DFP,(IplImage* srcImage, IplImage* dstImage,
         {
             // inplace.
             float tmp;
-            float *source = (float *)srcImage->imageData;
-            //float *dest = (float *)dstImage->imageData;
+            float *source = reinterpret_cast<float*>(srcImage->imageData);
+            //float *dest = reinterpret_cast<float*>(dstImage->imageData);
             for (int i = bordery; i <  h - bordery; i++)
                 {
                     for (int j = borderx; j < w - borderx; j++)
@@ -389,15 +389,15 @@ IPLAPIIMPL(void, iplConvolveSep2DFP,(IplImage* srcImage,
                                      IplConvKernelFP* yKernel))
 {
     // here too I need memory to support inplace operations.
-    static float *__tmp_res = NULL;
+    static float *__tmp_res = nullptr;
     static int __tmp_size = -1;
 
-    if (xKernel != NULL)
+    if (xKernel != nullptr)
         {
             yAssert(xKernel->nRows == 1);
             yAssert((xKernel->nCols % 2) != 0);
         }
-    if (yKernel != NULL)
+    if (yKernel != nullptr)
         {
             yAssert(yKernel->nCols == 1);
             yAssert((yKernel->nRows % 2) != 0);
@@ -405,13 +405,13 @@ IPLAPIIMPL(void, iplConvolveSep2DFP,(IplImage* srcImage,
 
     // do not consider anchor, borders are not set, and assumes
     // that the kernel has odd dimensions (x only).
-    float *xvalues = (xKernel != NULL) ? xKernel->values : NULL;
-    const int xksize = (xKernel != NULL) ? xKernel->nCols : 0;
-    float *yvalues = (yKernel != NULL) ? yKernel->values : NULL;
-    const int yksize = (yKernel != NULL) ? yKernel->nRows : 0;
+    float *xvalues = (xKernel != nullptr) ? xKernel->values : nullptr;
+    const int xksize = (xKernel != nullptr) ? xKernel->nCols : 0;
+    float *yvalues = (yKernel != nullptr) ? yKernel->values : nullptr;
+    const int yksize = (yKernel != nullptr) ? yKernel->nRows : 0;
 
-    const int borderx = (xKernel != NULL) ? xKernel->nCols / 2 : 0;
-    const int bordery = (yKernel != NULL) ? yKernel->nRows / 2 : 0;
+    const int borderx = (xKernel != nullptr) ? xKernel->nCols / 2 : 0;
+    const int bordery = (yKernel != nullptr) ? yKernel->nRows / 2 : 0;
     const int w = srcImage->width;
     const int h = srcImage->height;
 
@@ -419,12 +419,12 @@ IPLAPIIMPL(void, iplConvolveSep2DFP,(IplImage* srcImage,
     yAssert(srcImage->nChannels == 1); // Mono images only.
     yAssert(srcImage->depth == IPL_DEPTH_32F);
 
-    if (__tmp_res == NULL)
+    if (__tmp_res == nullptr)
         {
             __tmp_size = dstImage->imageSize / sizeof(float);
             ///__tmp_res = new float[dstImage->imageSize / sizeof(float)];
             __tmp_res = AllocAligned<float> (dstImage->imageSize / sizeof(float));
-            yAssert(__tmp_res != NULL);
+            yAssert(__tmp_res != nullptr);
         }
     else
         {
@@ -436,14 +436,14 @@ IPLAPIIMPL(void, iplConvolveSep2DFP,(IplImage* srcImage,
                     __tmp_size = dstImage->imageSize / sizeof(float);
                     ///__tmp_res = new float[dstImage->imageSize / sizeof(float)];
                     __tmp_res = AllocAligned<float> (dstImage->imageSize / sizeof(float));
-                    yAssert(__tmp_res != NULL);
+                    yAssert(__tmp_res != nullptr);
                 }
         }
 
     // inplace.
-    float *src = (float *)srcImage->imageData;
-    float *dst = (float *)dstImage->imageData;
-    if (xKernel != NULL)
+    float *src = reinterpret_cast<float*>(srcImage->imageData);
+    float *dst = reinterpret_cast<float*>(dstImage->imageData);
+    if (xKernel != nullptr)
         {
             // apply x kernel.
             float tmp;
@@ -462,7 +462,7 @@ IPLAPIIMPL(void, iplConvolveSep2DFP,(IplImage* srcImage,
                 }
         }
 
-    if (yKernel != NULL)
+    if (yKernel != nullptr)
         {
             // apply y kernel.
             float tmp;
@@ -497,15 +497,15 @@ IPLAPIIMPL(void, iplConvolveSep2D,(IplImage* srcImage, IplImage* dstImage,
                                    IplConvKernel* xKernel, IplConvKernel* yKernel))
 {
     // in place stuff.
-    static char *__tmp_res = NULL;
+    static char *__tmp_res = nullptr;
     static int __tmp_size = -1;
 
-    if (xKernel != NULL)
+    if (xKernel != nullptr)
         {
             yAssert(xKernel->nRows == 1);
             yAssert((xKernel->nCols % 2) != 0);
         }
-    if (yKernel != NULL)
+    if (yKernel != nullptr)
         {
             yAssert(yKernel->nCols == 1);
             yAssert((yKernel->nRows % 2) != 0);
@@ -513,25 +513,25 @@ IPLAPIIMPL(void, iplConvolveSep2D,(IplImage* srcImage, IplImage* dstImage,
 
     // do not consider anchor, borders are not set, and assumes
     // that the kernel has odd dimensions (x only).
-    int *xvalues = (xKernel != NULL) ? xKernel->values : NULL;
-    const int xksize = (xKernel != NULL) ? xKernel->nCols : 0;
-    int *yvalues = (yKernel != NULL) ? yKernel->values : NULL;
-    const int yksize = (yKernel != NULL) ? yKernel->nRows : 0;
+    int *xvalues = (xKernel != nullptr) ? xKernel->values : nullptr;
+    const int xksize = (xKernel != nullptr) ? xKernel->nCols : 0;
+    int *yvalues = (yKernel != nullptr) ? yKernel->values : nullptr;
+    const int yksize = (yKernel != nullptr) ? yKernel->nRows : 0;
 
-    const int borderx = (xKernel != NULL) ? xKernel->nCols / 2 : 0;
-    const int bordery = (yKernel != NULL) ? yKernel->nRows / 2 : 0;
+    const int borderx = (xKernel != nullptr) ? xKernel->nCols / 2 : 0;
+    const int bordery = (yKernel != nullptr) ? yKernel->nRows / 2 : 0;
     const int w = srcImage->width;
     const int h = srcImage->height;
 
     yAssert(compareHeader (srcImage, dstImage));
     yAssert(srcImage->nChannels == 1); // Mono images only.
 
-    if (__tmp_res == NULL)
+    if (__tmp_res == nullptr)
         {
             __tmp_size = dstImage->imageSize;
             ///__tmp_res = new char[dstImage->imageSize];
             __tmp_res = AllocAligned<char> (dstImage->imageSize);
-            yAssert(__tmp_res != NULL);
+            yAssert(__tmp_res != nullptr);
         }
     else
         {
@@ -543,7 +543,7 @@ IPLAPIIMPL(void, iplConvolveSep2D,(IplImage* srcImage, IplImage* dstImage,
                     __tmp_size = dstImage->imageSize;
                     ///__tmp_res = new char[dstImage->imageSize];
                     __tmp_res = AllocAligned<char> (dstImage->imageSize);
-                    yAssert(__tmp_res != NULL);
+                    yAssert(__tmp_res != nullptr);
                 }
         }
 
@@ -551,7 +551,7 @@ IPLAPIIMPL(void, iplConvolveSep2D,(IplImage* srcImage, IplImage* dstImage,
         {
         case IPL_DEPTH_8U:
             {
-                if (xKernel != NULL)
+                if (xKernel != nullptr)
                     {
                         // apply x kernel.
                         int tmp;
@@ -576,7 +576,7 @@ IPLAPIIMPL(void, iplConvolveSep2D,(IplImage* srcImage, IplImage* dstImage,
                             }
                     }
 
-                if (yKernel != NULL)
+                if (yKernel != nullptr)
                     {
                         // apply y kernel.
                         int tmp;
@@ -606,7 +606,7 @@ IPLAPIIMPL(void, iplConvolveSep2D,(IplImage* srcImage, IplImage* dstImage,
 
         case IPL_DEPTH_8S:
             {
-                if (xKernel != NULL)
+                if (xKernel != nullptr)
                     {
                         int tmp;
                         for (int i = 0; i <  h; i++)
@@ -630,7 +630,7 @@ IPLAPIIMPL(void, iplConvolveSep2D,(IplImage* srcImage, IplImage* dstImage,
                             }
                     }
 
-                if (yKernel != NULL)
+                if (yKernel != nullptr)
                     {
                         int tmp;
                         for (int i = bordery; i <  h - bordery; i++)
@@ -667,7 +667,7 @@ IPLAPIIMPL(void, iplAllocateImage,(IplImage* image, int doFill, int fillValue))
     yAssert(image->imageSize == image->widthStep * image->height);
 
     image->imageData = AllocAligned<char> (image->imageSize); // new char[image->imageSize];
-    yAssert(image->imageData != NULL);
+    yAssert(image->imageData != nullptr);
 
     if (image->origin == IPL_ORIGIN_TL)
         image->imageDataOrigin = image->imageData + image->imageSize - image->widthStep;
@@ -699,7 +699,7 @@ IPLAPIIMPL(void, iplAllocateImageFP,(IplImage* image, int doFill, float fillValu
     yAssert(image->imageSize == image->widthStep * image->height);
 
     image->imageData = AllocAligned<char> (image->imageSize);
-    yAssert(image->imageData != NULL);
+    yAssert(image->imageData != nullptr);
 
     if (image->origin == IPL_ORIGIN_TL)
         image->imageDataOrigin = image->imageData + image->imageSize - image->widthStep;
@@ -718,7 +718,7 @@ IPLAPIIMPL(void, iplAllocateImageFP,(IplImage* image, int doFill, float fillValu
                     yAssert(PAD_BYTES (image->widthStep, YARP_IMAGE_ALIGN) == 0);
 
                     // time consuming
-                    float *tmp = (float *)image->imageData;
+                    float *tmp = reinterpret_cast<float*>(image->imageData);
                     const int limit = image->imageSize / sizeof(float);
                     for (int i = 0; i < limit; i++)
                         {
@@ -730,12 +730,12 @@ IPLAPIIMPL(void, iplAllocateImageFP,(IplImage* image, int doFill, float fillValu
 
 IPLAPIIMPL(void, iplDeallocateImage,(IplImage* image))
 {
-    if (image->imageData != NULL)
+    if (image->imageData != nullptr)
         FreeAligned<char> (image->imageData); ///delete[] image->imageData;
-    image->imageData = NULL;
+    image->imageData = nullptr;
 
     // Not allocated.
-    image->roi = NULL;
+    image->roi = nullptr;
 }
 
 
@@ -789,7 +789,7 @@ IPLAPIIMPL(IplImage*, iplCreateImageHeader,
         {
         default:
         case IPL_DEPTH_1U:
-            return NULL;
+            return nullptr;
 
         case IPL_DEPTH_8U:
         case IPL_DEPTH_8S:
@@ -800,9 +800,9 @@ IPLAPIIMPL(IplImage*, iplCreateImageHeader,
             break;
         }
 
-    IplImage *r = NULL;
+    IplImage *r = nullptr;
     r = new IplImage;
-    yAssert(r != NULL);
+    yAssert(r != nullptr);
 
     r->nSize = sizeof(IplImage);
     r->ID = 0xf0f0f0f0; // pasa's ID for IPL under QNX.
@@ -826,22 +826,22 @@ IPLAPIIMPL(IplImage*, iplCreateImageHeader,
     r->align = align;
     r->width = width;
     r->height = height;
-    r->roi = NULL;
-    r->maskROI = NULL;
-    r->imageId = NULL;
+    r->roi = nullptr;
+    r->maskROI = nullptr;
+    r->imageId = nullptr;
 
-    r->tileInfo = NULL;
+    r->tileInfo = nullptr;
     const int linew = width * (depth & IPL_DEPTH_MASK) / 8 * nChannels;
     r->widthStep = linew + PAD_BYTES(linew, align);
 
     r->imageSize = r->widthStep * height;
-    r->imageData = NULL;
-    r->tileInfo = NULL;
+    r->imageData = nullptr;
+    r->tileInfo = nullptr;
 
     memset (r->BorderMode, 0, 4);
     memset (r->BorderConst, 0, 4);
 
-    r->imageDataOrigin = NULL;
+    r->imageDataOrigin = nullptr;
     return r;
 }
 
@@ -849,10 +849,10 @@ IPLAPIIMPL(IplImage*, iplCloneImage, ( const IplImage* img ) )
 {
     IplImage *ret = iplCreateImageHeader (
                                           img->nChannels, img->alphaChannel, img->depth, (char *)img->colorModel, (char *)img->channelSeq,
-                                          img->dataOrder, img->origin, img->align, img->width, img->height, NULL, NULL,
-                                          img->imageId, NULL);
+                                          img->dataOrder, img->origin, img->align, img->width, img->height, nullptr, nullptr,
+                                          img->imageId, nullptr);
 
-    if (img->imageData != NULL)
+    if (img->imageData != nullptr)
         {
             switch (img->depth)
                 {
@@ -878,17 +878,17 @@ IPLAPIIMPL(IplImage*, iplCloneImage, ( const IplImage* img ) )
 
 IPLAPIIMPL(void, iplCopy, (IplImage* srcImage, IplImage* dstImage))
 {
-    yAssert(srcImage->imageData != NULL && dstImage->imageData != NULL);
+    yAssert(srcImage->imageData != nullptr && dstImage->imageData != nullptr);
     memcpy (dstImage->imageData, srcImage->imageData, srcImage->imageSize);
 }
 
 IPLAPIIMPL(void, iplDeallocateHeader,(IplImage* image))
 {
-    if (image == NULL)
+    if (image == nullptr)
         return;
 
     yAssert(image->nSize == sizeof(IplImage));
-    if (image->imageData != NULL)
+    if (image->imageData != nullptr)
         {
             FreeAligned<char> (image->imageData);
             ///delete[] image->imageData;
@@ -932,18 +932,18 @@ IPLAPIIMPL(void,iplSetBorderMode,(IplImage *src,int mode,int border,int constVal
 // this is ok only for 8 bits pixel/planes images. RGB and HSV are ok too.
 IPLAPIIMPL(void, iplSet, (IplImage* image, int fillValue))
 {
-    yAssert(image->imageData != NULL);
+    yAssert(image->imageData != nullptr);
     yAssert((image->depth & IPL_DEPTH_MASK) == 8);
     memset (image->imageData, fillValue, image->imageSize);
 }
 
 IPLAPIIMPL(void, iplSetFP, (IplImage* image, float fillValue))
 {
-    yAssert(image->imageData != NULL);
+    yAssert(image->imageData != nullptr);
     yAssert(image->depth == IPL_DEPTH_32F);
 
     const int size = image->imageSize / sizeof(float);
-    float *tmp = (float *)image->imageData;
+    float *tmp = reinterpret_cast<float*>(image->imageData);
     for (int i = 0; i < size; i++)
         *tmp++ = fillValue;
 }
@@ -1062,9 +1062,9 @@ IPLAPIIMPL(void, iplAdd,(IplImage* srcImageA, IplImage* srcImageB,
         case IPL_DEPTH_32F:
             {
                 const int size = srcImageA->imageSize / sizeof(float);
-                float * src1 = (float *)srcImageA->imageData;
-                float * src2 = (float *)srcImageB->imageData;
-                float * dst = (float *)dstImage->imageData;
+                float * src1 = reinterpret_cast<float*>(srcImageA->imageData);
+                float * src2 = reinterpret_cast<float*>(srcImageB->imageData);
+                float * dst = reinterpret_cast<float*>(dstImage->imageData);
 
                 for (int i = 0; i < size; i++)
                     {
@@ -1135,9 +1135,9 @@ IPLAPIIMPL(void, iplSubtract,(IplImage* srcImageA, IplImage* srcImageB,
         case IPL_DEPTH_32F:
             {
                 const int size = srcImageA->imageSize / sizeof(float);
-                float * src1 = (float *)srcImageA->imageData;
-                float * src2 = (float *)srcImageB->imageData;
-                float * dst = (float *)dstImage->imageData;
+                float * src1 = reinterpret_cast<float*>(srcImageA->imageData);
+                float * src2 = reinterpret_cast<float*>(srcImageB->imageData);
+                float * dst = reinterpret_cast<float*>(dstImage->imageData);
 
                 for (int i = 0; i < size; i++)
                     {
@@ -1223,8 +1223,8 @@ IPLAPIIMPL(void, iplMultiplySFP,(IplImage* srcImage, IplImage* dstImage,
     yAssert(srcImage->depth == IPL_DEPTH_32F);
 
     const int size = srcImage->imageSize / sizeof(float);
-    float * src1 = (float *)srcImage->imageData;
-    float * dst = (float *)dstImage->imageData;
+    float * src1 = reinterpret_cast<float*>(srcImage->imageData);
+    float * dst = reinterpret_cast<float*>(dstImage->imageData);
 
     for (int i = 0; i < size; i++)
         {
@@ -1338,7 +1338,7 @@ IPLAPIIMPL(IplROI *,iplCreateROI,(int coi,    int xOffset, int   yOffset,
 {
     // NOT IMPLEMENTED YET.
     yAssert(implemented_yet == 0);
-    return NULL;
+    return nullptr;
 }
 
 IPLAPIIMPL(void, iplSetROI,(IplROI*   roi,      int coi,

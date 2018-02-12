@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2011 Department of Robotics Brain and Cognitive Sciences - Istituto Italiano di Tecnologia
+ * Copyright (C) 2011 Istituto Italiano di Tecnologia (IIT)
  * Authors: Paul Fitzpatrick
  * CopyPolicy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
  */
@@ -18,15 +18,15 @@ using namespace yarp::os::impl;
 
 YarpNameSpace::YarpNameSpace(const Contact& contact) {
     system_resource = NameClient::create();
-    yAssert(system_resource!=YARP_NULLPTR);
+    yAssert(system_resource!=nullptr);
     HELPER(this).setContact(contact);
     this->contact = contact;
 }
 
 YarpNameSpace::~YarpNameSpace() {
-    if (system_resource!=YARP_NULLPTR) {
+    if (system_resource!=nullptr) {
         delete &HELPER(this);
-        system_resource = YARP_NULLPTR;
+        system_resource = nullptr;
     }
 }
 
@@ -152,6 +152,7 @@ Contact YarpNameSpace::detectNameServer(bool useDetectedServer,
 bool YarpNameSpace::writeToNameServer(PortWriter& cmd,
                                       PortReader& reply,
                                       const ContactStyle& style) {
+    YARP_UNUSED(style);
     Contact srv = getNameServerContact();
     ConstString cmd0 = "NAME_SERVER";
 

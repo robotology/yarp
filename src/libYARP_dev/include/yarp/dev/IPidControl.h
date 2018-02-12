@@ -1,6 +1,8 @@
 /*
- * Copyright (C) 2017 iCub Facility - Istituto Italiano di Tecnologia
- * Authors: Lorenzo Natale <lorenzo.natale@iit.it> , Giorgio Metta <giorgio.metta@iit.it>, Marco Randazzo <marco.randazzo@iit.it>
+ * Copyright (C) 2017 Istituto Italiano di Tecnologia (IIT)
+ * Authors: Lorenzo Natale <lorenzo.natale@iit.it>
+ *          Giorgio Metta <giorgio.metta@iit.it>
+ *          Marco Randazzo <marco.randazzo@iit.it>
  * CopyPolicy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
  */
 
@@ -23,7 +25,7 @@ namespace yarp
             VOCAB_PIDTYPE_POSITION = VOCAB3('p', 'o', 's'),
             VOCAB_PIDTYPE_VELOCITY = VOCAB3('v', 'e', 'l'),
             VOCAB_PIDTYPE_TORQUE   = VOCAB3('t', 'r', 'q'),
-            VOCAB_PIDTYPE_CURRENT  = VOCAB3('c', 'u', 'r')
+            VOCAB_PIDTYPE_CURRENT  = VOCAB3(99/*'c'*/, 'u', 'r') // SWIG bug
         };
     }
 }

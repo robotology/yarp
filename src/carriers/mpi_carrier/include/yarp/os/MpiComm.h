@@ -1,8 +1,7 @@
 /*
- * Author: Daniel Krieg krieg@fias.uni-frankfurt.de
  * Copyright (C) 2011 Daniel Krieg
+ * Author: Daniel Krieg <krieg@fias.uni-frankfurt.de>
  * CopyPolicy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
- *
  */
 
 
@@ -36,7 +35,7 @@ public:
         terminate = true;}
     bool threadInit() override;
     void run() override {
-        while (!terminate) {Time::delay(1);}
+        while (!terminate) {SystemClock::delaySystem(1);}
     }
     void threadRelease() override;
 };

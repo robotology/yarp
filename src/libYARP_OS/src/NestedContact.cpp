@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2013 iCub Facility
+ * Copyright (C) 2013 Istituto Italiano di Tecnologia (IIT)
  * Authors: Paul Fitzpatrick
  * CopyPolicy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
  */
@@ -62,10 +62,12 @@ bool NestedContact::fromString(const ConstString& nFullName) {
         nodeName = fullName.substr(0, idx);
         nestedName = fullName.substr(idx+1, fullName.length());
         idx = nestedName.find('/');
-        if (idx==0) return true;
-        category = nestedName.substr(0, idx);
-        nestedName = nestedName.substr(idx, nestedName.length());
-        return true;
+        if (idx != ConstString::npos) {
+            if (idx==0) return true;
+            category = nestedName.substr(0, idx);
+            nestedName = nestedName.substr(idx, nestedName.length());
+            return true;
+        }
     }
     idx = fullName.find('#');
     if (idx!=ConstString::npos) {

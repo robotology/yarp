@@ -1,5 +1,5 @@
 /*
-* Copyright (C) 2015 iCub Facility - Istituto Italiano di Tecnologia
+* Copyright (C) 2015 Istituto Italiano di Tecnologia (IIT)
 * Author: Marco Randazzo <marco.randazzo@iit.it>
 * CopyPolicy: Released under the terms of the GPLv2 or later, see GPL.TXT
 */
@@ -187,7 +187,7 @@ protected:
 
 public:
     RpLidar(int period = 10) : RateThread(period),
-        pSerial(YARP_NULLPTR),
+        pSerial(nullptr),
         sensorsNum(0),
         min_angle(0.0),
         max_angle(0.0),

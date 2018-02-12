@@ -51,13 +51,13 @@ public:
     * Read vector from a connection.
     * return true iff a vector was read correctly
     */
-    virtual bool read(yarp::os::ConnectionReader& connection) YARP_OVERRIDE;
+    virtual bool read(yarp::os::ConnectionReader& connection) override;
 
     /**
     * Write vector to a connection.
     * return true iff a vector was written correctly
     */
-    virtual bool write(yarp::os::ConnectionWriter& connection) YARP_OVERRIDE;
+    virtual bool write(yarp::os::ConnectionWriter& connection) override;
 };
 
 /*
@@ -109,9 +109,9 @@ private:
     inline void _updatePointers() {
         len = bytes.used()/sizeof(T);
         if (len==0) {
-            first = 0/*NULL*/;
+            first = nullptr;
         } else {
-            first = (T *) bytes.get();
+            first = reinterpret_cast<T*>(bytes.get());
         }
     }
 
@@ -119,7 +119,7 @@ public:
     VectorOf() {
         bytes.allocate(16*sizeof(T)); // preallocate space for 16 elements
         bytes.setUsed(0);
-        first = 0/*NULL*/;
+        first = nullptr;
         len = 0;
     }
 
@@ -139,20 +139,20 @@ public:
         return *this;
     }
 
-    virtual int getElementSize() const YARP_OVERRIDE {
+    virtual int getElementSize() const override {
         return sizeof(T);
     }
 
-    virtual int getBottleTag() const YARP_OVERRIDE {
+    virtual int getBottleTag() const override {
         return BottleTagMap <T>();
     }
 
-    virtual size_t getListSize() const YARP_OVERRIDE
+    virtual size_t getListSize() const override
     {
         return len;
     }
 
-    virtual const char *getMemoryBlock() const YARP_OVERRIDE
+    virtual const char *getMemoryBlock() const override
     {
         return (char *) bytes.get();
     }
@@ -167,7 +167,7 @@ public:
         return first;
     }
 
-    virtual void resize(size_t size) YARP_OVERRIDE
+    virtual void resize(size_t size) override
     {
         size_t prev_len = len;
         bytes.allocateOnNeed(size*sizeof(T),size*sizeof(T));
@@ -253,7 +253,7 @@ public:
         bytes.clear();
         bytes.setUsed(0);
         len = 0;
-        first = 0 /*NULL*/;
+        first = nullptr;
     }
 };
 
@@ -309,19 +309,6 @@ public:
     * Copy operator;
     */
     const Vector &operator=(const Vector &r);
-
-#ifndef YARP_NO_DEPRECATED // since YARP 2.3.65
-    /**
-    * Resize the vector, (warning: deprecated, use resize) here
-    * to maintain compatibility with the old Vector class.
-    * @param s the new size
-    * @deprecated since YARP 2.3.65
-    */
-    YARP_DEPRECATED void size(size_t s)
-    {
-        Vector::resize(s);
-    }
-#endif
 
     /**
     * Resize the vector.
@@ -395,7 +382,7 @@ public:
 
     /**
     * Return a pointer to the first element of the vector.
-    * @return a pointer to double (or NULL if the vector is of zero length)
+    * @return a pointer to double (or nullptr if the vector is of zero length)
     */
     inline double *data()
     { return storage.getFirst(); }
@@ -403,7 +390,7 @@ public:
     /**
     * Return a pointer to the first element of the vector,
     * const version
-    * @return a (const) pointer to double (or NULL if the vector is of zero length)
+    * @return a (const) pointer to double (or nullptr if the vector is of zero length)
     */
     inline const double *data() const
     { return storage.getFirst();}
@@ -473,15 +460,15 @@ public:
     * Read vector from a connection.
     * return true iff a vector was read correctly
     */
-    virtual bool read(yarp::os::ConnectionReader& connection) YARP_OVERRIDE;
+    virtual bool read(yarp::os::ConnectionReader& connection) override;
 
     /**
     * Write vector to a connection.
     * return true iff a vector was written correctly
     */
-    virtual bool write(yarp::os::ConnectionWriter& connection) YARP_OVERRIDE;
+    virtual bool write(yarp::os::ConnectionWriter& connection) override;
 
-    virtual yarp::os::Type getType() YARP_OVERRIDE {
+    virtual yarp::os::Type getType() override {
         return yarp::os::Type::byName("yarp/vector");
     }
 };

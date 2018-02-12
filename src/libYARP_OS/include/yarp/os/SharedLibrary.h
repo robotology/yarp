@@ -1,6 +1,5 @@
 /*
- * Copyright (C) 2011 Robotics Brain and Cognitive Sciences, Istituto Italiano di Tecnologia
- * Copyright (C) 2016 iCub Facility, Istituto Italiano di Tecnologia
+ * Copyright (C) 2011, 2016 Istituto Italiano di Tecnologia (IIT)
  * Authors: Paul Fitzpatrick <paulfitz@alum.mit.edu>
  * CopyPolicy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
  */
@@ -9,16 +8,23 @@
 #define YARP_OS_SHAREDLIBRARY_H
 
 #include <yarp/os/api.h>
+#include <yarp/conf/system.h>
 
 namespace yarp {
     namespace os {
         class SharedLibrary;
-        class ConstString;
         namespace impl {
             class SharedLibraryImpl;
         }
     }
 }
+
+#ifndef YARP_WRAP_STL_STRING
+# include <string>
+namespace yarp { namespace os { typedef std::string ConstString; }}
+#else
+namespace yarp { namespace os { class ConstString; }}
+#endif
 
 /**
  * Low-level wrapper for loading shared libraries (DLLs) and accessing

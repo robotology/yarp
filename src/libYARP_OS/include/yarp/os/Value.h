@@ -205,28 +205,28 @@ public:
     /**
      * Get list value.
      * @return pointer to list if value is indeed a list.
-     * Otherwise returns YARP_NULLPTR
+     * Otherwise returns nullptr
      */
     virtual Bottle *asList() const;
 
     /**
      * Get dictionary (hash table) value.
      * @return pointer to dictionary if value is indeed of the right type.
-     * Otherwise returns YARP_NULLPTR
+     * Otherwise returns nullptr
      */
     virtual Property *asDict() const;
 
     /**
      * Get dictionary or list value
      * @return pointer to dictionary or list value if present.
-     * Otherwise returns YARP_NULLPTR
+     * Otherwise returns nullptr
      */
     virtual Searchable *asSearchable() const;
 
     /**
      * Get binary data value.
      * @return pointer to binary data if value is indeed binary data.
-     * Otherwise returns YARP_NULLPTR
+     * Otherwise returns nullptr
      */
     virtual const char *asBlob() const;
 
@@ -238,19 +238,19 @@ public:
     virtual size_t asBlobLength() const;
 
     // documented in Portable
-    virtual bool read(ConnectionReader& connection) YARP_OVERRIDE;
+    virtual bool read(ConnectionReader& connection) override;
 
     // documented in Portable
-    virtual bool write(ConnectionWriter& connection) YARP_OVERRIDE;
+    virtual bool write(ConnectionWriter& connection) override;
 
     // documented in Searchable
-    virtual bool check(const ConstString& key) const YARP_OVERRIDE;
+    virtual bool check(const ConstString& key) const override;
 
     // documented in Searchable
-    virtual Value& find(const ConstString& key) const YARP_OVERRIDE;
+    virtual Value& find(const ConstString& key) const override;
 
     // documented in Searchable
-    virtual Bottle& findGroup(const ConstString& key) const YARP_OVERRIDE;
+    virtual Bottle& findGroup(const ConstString& key) const override;
 
     /**
      * Equality test.
@@ -288,7 +288,7 @@ public:
      */
     void fromString(const char *str);
 
-    ConstString toString() const YARP_OVERRIDE;
+    ConstString toString() const override;
 
     /**
      * Create a new value of the same type.
@@ -308,7 +308,7 @@ public:
      */
     virtual int getCode() const;
 
-    virtual bool isNull() const YARP_OVERRIDE;
+    virtual bool isNull() const override;
 
     virtual bool isLeaf() const;
 

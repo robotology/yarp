@@ -1,4 +1,4 @@
-# Copyright (C) 2012  iCub Facility, Istituto Italiano di Tecnologia
+# Copyright (C) 2012 Istituto Italiano di Tecnologia (IIT)
 # Author: Daniele E. Domenichelli <daniele.domenichelli@iit.it>
 # CopyPolicy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
 
@@ -40,4 +40,11 @@ if(YARP_BUILD_XMLRPCPP)
   set(xmlrpcpp_INCLUDE_DIRS ${xmlrpcpp_INCLUDE_DIRS} PARENT_SCOPE)
   set(xmlrpcpp_LIBRARIES ${xmlrpcpp_LIBRARIES} PARENT_SCOPE)
   set(xmlrpcpp_DEFINITIONS ${xmlrpcpp_DEFINITIONS} PARENT_SCOPE)
+endif()
+
+if(YARP_BUILD_QGVCORE)
+  add_subdirectory(qgv)
+  set(QGVCore_INCLUDE_DIRS ${QGVCore_INCLUDE_DIRS} PARENT_SCOPE)
+  set(QGVCore_LIBRARIES ${QGVCore_LIBRARIES} PARENT_SCOPE)
+  set(QGVCore_DEFINITIONS ${QGVCore_DEFINITIONS} PARENT_SCOPE)
 endif()

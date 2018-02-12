@@ -3,24 +3,25 @@
 
 using namespace std;
 
-PropertiesTable::PropertiesTable(Manager *_manager,QWidget *parent) : QWidget(parent),
-    currentApplication(YARP_NULLPTR),
-    currentModule(YARP_NULLPTR),
-    appName(YARP_NULLPTR),
-    appDescr(YARP_NULLPTR),
-    appVersion(YARP_NULLPTR),
-    appAuthors(YARP_NULLPTR),
-    appPrefix(YARP_NULLPTR),
-    modName(YARP_NULLPTR),
-    modNode(YARP_NULLPTR),
-    modStdio(YARP_NULLPTR),
-    modWorkDir(YARP_NULLPTR),
-    modPrefix(YARP_NULLPTR),
-    modDeployer(YARP_NULLPTR),
-    modParams(YARP_NULLPTR),
-    manager(_manager),
-    nodeCombo(YARP_NULLPTR),
-    deployerCombo(YARP_NULLPTR)
+PropertiesTable::PropertiesTable(Manager *manager,QWidget *parent) :
+    QWidget(parent),
+    currentApplication(nullptr),
+    currentModule(nullptr),
+    appName(nullptr),
+    appDescr(nullptr),
+    appVersion(nullptr),
+    appAuthors(nullptr),
+    appPrefix(nullptr),
+    modName(nullptr),
+    modNode(nullptr),
+    modStdio(nullptr),
+    modWorkDir(nullptr),
+    modPrefix(nullptr),
+    modDeployer(nullptr),
+    modParams(nullptr),
+    manager(manager),
+    nodeCombo(nullptr),
+    deployerCombo(nullptr)
 {
     QHBoxLayout *lay = new QHBoxLayout(this);
     propertiesTab = new QTabWidget(this);
@@ -47,7 +48,7 @@ void PropertiesTable::showApplicationTab(Application *application)
     if(!propertiesTab){
         return;
     }
-    currentModule = NULL;
+    currentModule = nullptr;
     currentApplication = application;
     disconnect(appProperties,SIGNAL(itemChanged(QTreeWidgetItem*,int)),this,SLOT(onAppItemChanged(QTreeWidgetItem*,int)));
     disconnect(appProperties,SIGNAL(itemDoubleClicked(QTreeWidgetItem*,int)),this,SLOT(onAppItemDoubleClicked(QTreeWidgetItem*,int)));
@@ -88,7 +89,7 @@ void PropertiesTable::showModuleTab(ModuleItem *mod)
     disconnect(moduleProperties,SIGNAL(itemChanged(QTreeWidgetItem*,int)),this,SLOT(onModItemChanged(QTreeWidgetItem*,int)));
     disconnect(moduleProperties,SIGNAL(itemDoubleClicked(QTreeWidgetItem*,int)),this,SLOT(onModItemDoubleClicked(QTreeWidgetItem*,int)));
 
-    currentApplication = NULL;
+    currentApplication = nullptr;
     currentModule = mod;
     propertiesTab->clear();
     propertiesTab->addTab(moduleProperties,"Module Properties");
@@ -124,12 +125,12 @@ void PropertiesTable::showModuleTab(ModuleItem *mod)
 
     if(deployerCombo){
         delete deployerCombo;
-        deployerCombo = NULL;
+        deployerCombo = nullptr;
     }
 
     if(nodeCombo){
         delete nodeCombo;
-        nodeCombo = NULL;
+        nodeCombo = nullptr;
     }
     deployerCombo = new QComboBox();
     nodeCombo = new QComboBox();
@@ -139,8 +140,6 @@ void PropertiesTable::showModuleTab(ModuleItem *mod)
 
     if(compareString(mod->getInnerModule()->getBroker(),"yarpdev")){
         deployerCombo->addItem("yarpdev");
-    }else if(compareString(mod->getInnerModule()->getBroker(),"icubmoddev")){
-        deployerCombo->addItem("icubmoddev");
     }else{
         deployerCombo->addItem("local");
         deployerCombo->addItem("yarprun");

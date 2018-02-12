@@ -4,19 +4,30 @@
 
 cmake_minimum_required(VERSION 3.0)
 
+if(NOT ${CMAKE_VERSION} VERSION_LESS 3.8)
+  cmake_policy(SET CMP0067 NEW)
+endif()
+
+# RPATH cmake policy set to NEW
+if(NOT ${CMAKE_VERSION} VERSION_LESS 3.9)
+  cmake_policy(SET CMP0068 NEW)
+endif()
+
 # Pick up our CMake scripts - they are all in the cmake subdirectory.
 set(YARP_MODULE_DIR "${CMAKE_SOURCE_DIR}/cmake")
 set(YARP_MODULE_PATH "${YARP_MODULE_DIR}")
 
-set(YCM_REQUIRED_VERSION 0.4.0) # Used also by YarpFindDependencies
+set(YCM_REQUIRED_VERSION 0.6.0) # Used also by YarpFindDependencies
 find_package(YCM ${YCM_REQUIRED_VERSION} QUIET)
 if(NOT YCM_FOUND)
   list(APPEND YARP_MODULE_PATH "${YARP_MODULE_DIR}/ycm-${YCM_REQUIRED_VERSION}/find-modules"
                                "${YARP_MODULE_DIR}/ycm-${YCM_REQUIRED_VERSION}/modules"
-                               "${YARP_MODULE_DIR}/ycm-${YCM_REQUIRED_VERSION}/3rdparty"
-                               "${YARP_MODULE_DIR}/ycm-${YCM_REQUIRED_VERSION}/cmake-next")
+                               "${YARP_MODULE_DIR}/ycm-${YCM_REQUIRED_VERSION}/3rdparty")
   if(${CMAKE_VERSION} VERSION_LESS 3.1)
     list(APPEND YARP_MODULE_PATH "${YARP_MODULE_DIR}/ycm-${YCM_REQUIRED_VERSION}/cmake-3.1/Modules")
+  endif()
+  if(${CMAKE_VERSION} VERSION_LESS 3.8)
+    list(APPEND YARP_MODULE_PATH "${YARP_MODULE_DIR}/ycm-${YCM_REQUIRED_VERSION}/cmake-3.8/Modules")
   endif()
 endif()
 
@@ -94,10 +105,6 @@ include(YarpPackage)
 # Make documentation target, documentation goes in doc subdirectory
 # of build.  See cmake/YarpDoc.cmake
 include(YarpDoc)
-
-# Make sure yarp.i and related source files get installed, to allow
-# bindings for other languages to be compiled from the build material.
-include(YarpBindingsSource)
 
 # add rule for uninstalling YARP
 include(AddUninstallTarget)

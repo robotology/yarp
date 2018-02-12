@@ -18,7 +18,6 @@
 
 #include <yarp/dev/Drivers.h>
 
-#include <yarp/os/impl/PlatformVector.h>
 #include <yarp/os/impl/PlatformSignal.h>
 #include <yarp/os/impl/Logger.h>
 
@@ -26,6 +25,7 @@
 
 #include <vector>
 #include <sstream>
+#include <iterator>
 
 using namespace yarp::os;
 using namespace yarp::dev;
@@ -35,11 +35,11 @@ Drivers Drivers::instance;
 
 class DriversHelper : public YarpPluginSelector {
 public:
-    PlatformVector<DriverCreator *> delegates;
+    std::vector<DriverCreator *> delegates;
 
     ~DriversHelper() {
         for (unsigned int i=0; i<delegates.size(); i++) {
-            if (delegates[i]==NULL) continue;
+            if (delegates[i]==nullptr) continue;
             delete delegates[i];
         }
         delegates.clear();
@@ -53,7 +53,7 @@ public:
         ConstString s;
         Property done;
         for (unsigned int i=0; i<delegates.size(); i++) {
-            if (delegates[i]==NULL) continue;
+            if (delegates[i]==nullptr) continue;
             ConstString name = delegates[i]->getName();
             done.put(name,1);
             ConstString wrapper = delegates[i]->getWrapper();
@@ -128,7 +128,7 @@ public:
     }
 
     void add(DriverCreator *creator) {
-        if (creator!=NULL) {
+        if (creator!=nullptr) {
             delegates.push_back(creator);
         }
     }
@@ -137,7 +137,7 @@ public:
 
     DriverCreator *find(const char *name) {
         for (unsigned int i=0; i<delegates.size(); i++) {
-            if (delegates[i]==NULL) continue;
+            if (delegates[i]==nullptr) continue;
             ConstString s = delegates[i]->toString();
             if (s==name) {
                 return delegates[i];
@@ -148,11 +148,11 @@ public:
 
     bool remove(const char *name) {
         for (unsigned int i=0; i<delegates.size(); i++) {
-            if (delegates[i]==NULL) continue;
+            if (delegates[i]==nullptr) continue;
             ConstString s = delegates[i]->toString();
             if (s==name) {
                 delete delegates[i];
-                delegates[i] = NULL;
+                delegates[i] = nullptr;
             }
         }
         return false;
@@ -240,15 +240,15 @@ public:
 
 Drivers::Drivers() {
     implementation = new DriversHelper;
-    yAssert(implementation!=NULL);
+    yAssert(implementation!=nullptr);
     init();
 }
 
 
 Drivers::~Drivers() {
-    if (implementation!=NULL) {
+    if (implementation!=nullptr) {
         delete &HELPER(implementation);
-        implementation = NULL;
+        implementation = nullptr;
     }
 }
 
@@ -273,7 +273,7 @@ bool Drivers::remove(const char *name) {
 DeviceDriver *Drivers::open(yarp::os::Searchable& prop) {
     PolyDriver poly;
     bool result = poly.open(prop);
-    if (!result) return NULL;
+    if (!result) return nullptr;
     return poly.take();
 }
 
@@ -281,8 +281,8 @@ DriverCreator *DriversHelper::load(const char *name) {
     StubDriver *result = new StubDriver(name,false);
     if (!result->isValid()) {
         delete result;
-        result = NULL;
-        return NULL;
+        result = nullptr;
+        return nullptr;
     }
     DriverCreator *creator = new StubDriverCreator(result->getPluginName().c_str(),
                                                    result->getwrapName().c_str(),
@@ -346,6 +346,7 @@ static void toDox(PolyDriver& dd, FILE *os) {
 static ConstString terminatorKey = "";
 static bool terminated = false;
 static void handler (int) {
+    Time::useSystemClock();
     static double handleTime = -100;
     static int ct = 0;
     double now = Time::now();
@@ -489,6 +490,18 @@ int Drivers::yarpdev(int argc, char *argv[]) {
         return -1;
     }
 
+    //
+    // yarpdev initializes the clock only before starting to do real thing.
+    // This way yarpdev --lish/help will not be affected by network clock.
+    //
+    // Shall other devices be affected by network clock ??
+    // Hereafter the device may need to use the SystemClock or the NetworkClock
+    // depending by the device, a real or a fake / simulated one.
+    // Using the YARP_CLOCK_DEFAULT the behaviour will be determined by the
+    // environment variable.
+    //
+    yarp::os::Network::yarpClockInit(yarp::os::YARP_CLOCK_DEFAULT);
+
     PolyDriver dd(options);
     if (verbose) {
         toDox(dd,stdout);
@@ -512,7 +525,7 @@ int Drivers::yarpdev(int argc, char *argv[]) {
         return 1;
     }
 
-    Terminee *terminee = 0;
+    Terminee *terminee = nullptr;
     if (dd.isValid()) {
         Value *v;
         ConstString s("/yarpdev/quit");
@@ -533,7 +546,7 @@ int Drivers::yarpdev(int argc, char *argv[]) {
             s.find("@") == ConstString::npos) {
             terminee = new Terminee(s.c_str());
             terminatorKey = s.c_str();
-            if (terminee == 0) {
+            if (terminee == nullptr) {
                 yError("Can't allocate terminator port\n");
                 terminatorKey = "";
                 dd.close();
@@ -543,7 +556,7 @@ int Drivers::yarpdev(int argc, char *argv[]) {
                 yError("Failed to create terminator port\n");
                 terminatorKey = "";
                 delete terminee;
-                terminee = NULL;
+                terminee = nullptr;
                 dd.close();
                 return 1;
             }
@@ -552,19 +565,19 @@ int Drivers::yarpdev(int argc, char *argv[]) {
 
     double dnow = 3;
     double startTime = Time::now()-dnow;
-    IService *service = NULL;
+    IService *service = nullptr;
     dd.view(service);
-    if (service!=NULL) {
+    if (service!=nullptr) {
         bool backgrounded = service->startService();
         if (backgrounded) {
             // we don't need to poll this, so forget about the
             // service interface
             yDebug("yarpdev: service backgrounded\n");
-            service = NULL;
+            service = nullptr;
         }
     }
     while (dd.isValid() && !(terminated||(terminee&&terminee->mustQuit()))) {
-        if (service!=NULL) {
+        if (service!=nullptr) {
             double now = Time::now();
             if (now-startTime>dnow) {
                 yInfo("device active...");
@@ -581,13 +594,13 @@ int Drivers::yarpdev(int argc, char *argv[]) {
         } else {
             // we don't need to do anything
             yInfo("device active in background...");
-            Time::delay(dnow);
+            SystemClock::delaySystem(dnow);
         }
     }
 
     if (terminee) {
         delete terminee;
-        terminee = NULL;
+        terminee = nullptr;
     }
     dd.close();
 
@@ -599,11 +612,11 @@ int Drivers::yarpdev(int argc, char *argv[]) {
 DeviceDriver *StubDriverCreator::create() {
     //yDebug("Creating %s from %s\n", desc.c_str(), libname.c_str());
     StubDriver *result = new StubDriver(libname.c_str(),fnname.c_str(),false);
-    if (result==NULL) return result;
+    if (result==nullptr) return result;
     if (!result->isValid()) {
         delete result;
-        result = NULL;
-        return NULL;
+        result = nullptr;
+        return nullptr;
     }
     //yDebug("Created %s from %s\n", desc.c_str(), libname.c_str());
     return result;

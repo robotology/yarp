@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2014 iCub Facility
+ * Copyright (C) 2014 Istituto Italiano di Tecnologia (IIT)
  * Authors: Paul Fitzpatrick
  * CopyPolicy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
  */
@@ -26,14 +26,16 @@ public:
     NetworkClock();
     virtual ~NetworkClock();
 
-    bool open(const ConstString& name);
+    bool open(const ConstString& clockSourcePortName, ConstString localPortName="");
 
-    virtual double now() YARP_OVERRIDE;
-    virtual void delay(double seconds) YARP_OVERRIDE;
-    virtual bool isValid() const YARP_OVERRIDE;
+    virtual double now() override;
+    virtual void delay(double seconds) override;
+    virtual bool isValid() const override;
 
-    virtual bool read(ConnectionReader& reader) YARP_OVERRIDE;
+    virtual bool read(ConnectionReader& reader) override;
 private:
+
+    ConstString clockName;
     void *pwaiters;
     Port port;
 
@@ -42,8 +44,9 @@ private:
 
     YARP_INT32 sec;
     YARP_INT32 nsec;
-    double t;
+    double _time;
     bool closing;
+    bool initted;
 };
 
 #endif // YARP_OS_NETWORKCLOCK_H

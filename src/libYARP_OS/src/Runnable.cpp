@@ -7,24 +7,32 @@
 #include <yarp/os/Runnable.h>
 
 
-yarp::os::Runnable::~Runnable() {
+yarp::os::Runnable::~Runnable()
+{
 }
 
-void yarp::os::Runnable::run() {
+void yarp::os::Runnable::run()
+{
 }
 
-void yarp::os::Runnable::close() {
+void yarp::os::Runnable::close()
+{
 }
 
-void yarp::os::Runnable::beforeStart() {
+void yarp::os::Runnable::beforeStart()
+{
 }
 
-void yarp::os::Runnable::afterStart(bool success) {
+void yarp::os::Runnable::afterStart(bool success)
+{
+    YARP_UNUSED(success);
 }
 
-bool yarp::os::Runnable::threadInit() {
+bool yarp::os::Runnable::threadInit()
+{
     return true;
 }
 
-void yarp::os::Runnable::threadRelease() {
+void yarp::os::Runnable::threadRelease()
+{
 }

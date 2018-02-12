@@ -19,7 +19,7 @@ Contact AllocatorOnTriples::completePortName(const Contact& c) {
     Triple t;
     t.setNsNameValue("alloc","tmpid","*");
     TripleContext context;
-    context.setRid(db->find(t, YARP_NULLPTR));
+    context.setRid(db->find(t, nullptr));
     if (context.rid>=0) {
         t.setNsNameValue("alloc","*","free");
         list<Triple> match = db->query(t,&context);
@@ -31,7 +31,7 @@ Contact AllocatorOnTriples::completePortName(const Contact& c) {
     if (name=="") {
         if (tmpid==-1) {
             t.setNsNameValue("alloc","tmpid","*");
-            list<Triple> lst = db->query(t, YARP_NULLPTR);
+            list<Triple> lst = db->query(t, nullptr);
             if (lst.size()>0) {
                 tmpid = atoi(lst.begin()->value.c_str());
             }
@@ -43,9 +43,9 @@ Contact AllocatorOnTriples::completePortName(const Contact& c) {
         char buf[256];
         sprintf(buf,"%d",tmpid);
         t.setNsNameValue("alloc","tmpid",buf);
-        db->update(t, YARP_NULLPTR);
+        db->update(t, nullptr);
         t.setNsNameValue("alloc","tmpid","*");
-        context.setRid(db->find(t, YARP_NULLPTR));
+        context.setRid(db->find(t, nullptr));
         sprintf(buf,"/tmp/port/%u", tmpid);
         name = buf;
     }
@@ -83,7 +83,7 @@ Contact AllocatorOnTriples::completePortNumber(const Contact& c) {
     Triple t;
     t.setNsNameValue("alloc","regid","*");
     TripleContext context;
-    context.setRid(db->find(t, YARP_NULLPTR));
+    context.setRid(db->find(t, nullptr));
     if (context.rid>=0) {
         t.setNsNameValue("prefer","*",c.getName().c_str());
         list<Triple> match = db->query(t,&context);
@@ -103,7 +103,7 @@ Contact AllocatorOnTriples::completePortNumber(const Contact& c) {
         if (regid==-1) {
             Triple t;
             t.setNsNameValue("alloc","regid","*");
-            list<Triple> lst = db->query(t, YARP_NULLPTR);
+            list<Triple> lst = db->query(t, nullptr);
             if (lst.size()>0) {
                 regid = atoi(lst.begin()->value.c_str());
             }
@@ -132,9 +132,9 @@ Contact AllocatorOnTriples::completePortNumber(const Contact& c) {
             char buf[256];
             sprintf(buf,"%d",regid);
             t.setNsNameValue("alloc","regid",buf);
-            db->update(t, YARP_NULLPTR);
+            db->update(t, nullptr);
             t.setNsNameValue("alloc","regid","*");
-            context.setRid(db->find(t, YARP_NULLPTR));
+            context.setRid(db->find(t, nullptr));
             nstring = buf;
             number = regid;
         }
@@ -164,7 +164,7 @@ Contact AllocatorOnTriples::completeHost(const yarp::os::Contact& c) {
     Triple t;
     t.setNsNameValue("alloc","mcastCursor","*");
     TripleContext context;
-    context.setRid(db->find(t, YARP_NULLPTR));
+    context.setRid(db->find(t, nullptr));
     if (context.rid>=0) {
         t.setNsNameValue("alloc","*","free");
         list<Triple> match = db->query(t,&context);
@@ -176,7 +176,7 @@ Contact AllocatorOnTriples::completeHost(const yarp::os::Contact& c) {
     if (name=="") {
         if (mcastCursor==-1) {
             t.setNsNameValue("alloc","mcastCursor","*");
-            list<Triple> lst = db->query(t, YARP_NULLPTR);
+            list<Triple> lst = db->query(t, nullptr);
             if (lst.size()>0) {
                 mcastCursor = atoi(lst.begin()->value.c_str());
             }
@@ -188,9 +188,9 @@ Contact AllocatorOnTriples::completeHost(const yarp::os::Contact& c) {
         char buf[256];
         sprintf(buf,"%d",mcastCursor);
         t.setNsNameValue("alloc","mcastCursor",buf);
-        db->update(t, YARP_NULLPTR);
+        db->update(t, nullptr);
         t.setNsNameValue("alloc","mcastCursor","*");
-        context.setRid(db->find(t, YARP_NULLPTR));
+        context.setRid(db->find(t, nullptr));
 
         int v1 = mcastCursor%255;
         int v2 = mcastCursor/255;
@@ -220,7 +220,7 @@ bool AllocatorOnTriples::freePortResources(const yarp::os::Contact& c) {
     Triple t;
     t.setNsNameValue("alloc","tmpid","*");
     TripleContext context;
-    context.setRid(db->find(t, YARP_NULLPTR));
+    context.setRid(db->find(t, nullptr));
     t.setNsNameValue("alloc",portName.c_str(),"in_use");
     if (db->find(t,&context)>=0) {
         t.setNsNameValue("alloc",portName.c_str(),"free");
@@ -228,7 +228,7 @@ bool AllocatorOnTriples::freePortResources(const yarp::os::Contact& c) {
     }
 
     t.setNsNameValue("alloc","regid","*");
-    context.setRid(db->find(t, YARP_NULLPTR));
+    context.setRid(db->find(t, nullptr));
     char buf[256];
     sprintf(buf,"%d",portNumber);
     t.setNsNameValue("alloc",buf,"in_use");
@@ -238,7 +238,7 @@ bool AllocatorOnTriples::freePortResources(const yarp::os::Contact& c) {
     }
 
     t.setNsNameValue("alloc","mcastCursor","*");
-    context.setRid(db->find(t, YARP_NULLPTR));
+    context.setRid(db->find(t, nullptr));
     t.setNsNameValue("alloc",hostName.c_str(),"in_use");
     if (db->find(t,&context)>=0) {
         t.setNsNameValue("alloc",hostName.c_str(),"free");

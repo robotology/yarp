@@ -101,8 +101,8 @@ void AnalogSubDevice::detach()
 {
     mMap0=mMap1=-1;
 
-    mpDevice=NULL;
-    mpSensor=NULL;
+    mpDevice=nullptr;
+    mpSensor=nullptr;
 
     mIsConfigured=false;
     mIsAttached=false;

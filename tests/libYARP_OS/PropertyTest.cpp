@@ -141,15 +141,15 @@ public:
         p6.fromCommand(3,strs);
         checkEqual(p6.find("name").asString().c_str(),"/foo",
                    "command line name");
-        Value *v = NULL;
+        Value *v = nullptr;
         p6.check("name",v);
-        checkTrue(v!=NULL,"check method");
+        checkTrue(v!=nullptr,"check method");
 
         Searchable *network = &p6.findGroup("NETWORK");
         if (network->isNull()) { network = &p6; }
-        v = NULL;
+        v = nullptr;
         network->check("name",v);
-        checkTrue(v!=NULL,"check method 2");
+        checkTrue(v!=nullptr,"check method 2");
 
         Property p7;
     }
@@ -206,11 +206,11 @@ CanAddress2 0x0E\n\
         const char *fname1 = "_yarp_regression_test1.txt";
 
         FILE *fout = fopen(fname1,"w");
-        yAssert(fout!=NULL);
+        yAssert(fout!=nullptr);
         fprintf(fout,"CanAddress1 0x0E\n");
         fprintf(fout,"CanAddress2 0x0C\n");
         fclose(fout);
-        fout = NULL;
+        fout = nullptr;
 
         p.fromConfigFile(fname1);
         checkEqual(p.find("CanAddress1").asInt(),14,"config text 0x0E");
@@ -325,12 +325,12 @@ check $x $y\n\
         checkEqual(p.check("#"),false,"presence of comment line properly ignored in fromConfig");
         const char *fname1 = "_yarp_regression_test_ini_comments.txt";
         FILE *fout = fopen(fname1,"w");
-        yAssert(fout!=NULL);
+        yAssert(fout!=nullptr);
         fprintf(fout,"robotName icub\n");
         fprintf(fout,"urdf_file model.urdf\n");
         fprintf(fout,"# this is trash\n");
         fclose(fout);
-        fout = NULL;
+        fout = nullptr;
         checkEqual(p.fromConfigFile(fname1),true,"test file correctly loaded");
         checkEqual(p.check("#"),false,"presence of comment line properly ignored in fromConfigFile");
     }
@@ -384,17 +384,17 @@ check $x $y\n\
 
         {
             FILE *fout = fopen(fname1,"w");
-            yAssert(fout!=NULL);
+            yAssert(fout!=nullptr);
             fprintf(fout,"x 1\n");
             fclose(fout);
-            fout = NULL;
+            fout = nullptr;
 
             fout = fopen(fname2,"w");
-            yAssert(fout!=NULL);
+            yAssert(fout!=nullptr);
             fprintf(fout,"[include %s]\n",fname1);
             fprintf(fout,"y 2\n");
             fclose(fout);
-            fout = NULL;
+            fout = nullptr;
 
             Property p;
             p.fromConfigFile(fname2);
@@ -405,17 +405,17 @@ check $x $y\n\
 
         {
             FILE *fout = fopen(fname1,"w");
-            yAssert(fout!=NULL);
+            yAssert(fout!=nullptr);
             fprintf(fout,"x 1\n");
             fclose(fout);
-            fout = NULL;
+            fout = nullptr;
 
             fout = fopen(fname2,"w");
-            yAssert(fout!=NULL);
+            yAssert(fout!=nullptr);
             fprintf(fout,"[include base %s]\n",fname1);
             fprintf(fout,"y 2\n");
             fclose(fout);
-            fout = NULL;
+            fout = nullptr;
 
             /*
             ofstream fout1(fname1);
@@ -436,13 +436,13 @@ check $x $y\n\
 
         {
             FILE *fout = fopen(fname1,"w");
-            yAssert(fout!=NULL);
+            yAssert(fout!=nullptr);
             fprintf(fout,"x 1\n");
             fclose(fout);
-            fout = NULL;
+            fout = nullptr;
 
             fout = fopen(fname2,"w");
-            yAssert(fout!=NULL);
+            yAssert(fout!=nullptr);
             fprintf(fout,"[base]\n");
             fprintf(fout,"w 4\n");
             fprintf(fout,"[base]\n");
@@ -450,7 +450,7 @@ check $x $y\n\
             fprintf(fout,"[include base %s]\n",fname1);
             fprintf(fout,"y 2\n");
             fclose(fout);
-            fout = NULL;
+            fout = nullptr;
 
             Property p;
             p.fromConfigFile(fname2);
@@ -462,20 +462,20 @@ check $x $y\n\
 
         {
             FILE *fout = fopen(fname1,"w");
-            yAssert(fout!=NULL);
+            yAssert(fout!=nullptr);
             fprintf(fout,"x 1\n");
             fclose(fout);
-            fout = NULL;
+            fout = nullptr;
 
             fout = fopen(fname2,"w");
-            yAssert(fout!=NULL);
+            yAssert(fout!=nullptr);
             fprintf(fout,"[b1]\n");
             fprintf(fout,"z 3\n");
             fprintf(fout,"[include base b1 %s]\n",fname1);
             fprintf(fout,"[include base b2 %s]\n",fname1);
             fprintf(fout,"y 2\n");
             fclose(fout);
-            fout = NULL;
+            fout = nullptr;
 
             Property p;
             p.fromConfigFile(fname2);
@@ -491,10 +491,10 @@ check $x $y\n\
     virtual void printStringToFile(const char * filename, const char * filecontent)
     {
         FILE *fout = fopen(filename,"w");
-        yAssert(fout!=NULL);
+        yAssert(fout!=nullptr);
         fprintf(fout,"%s",filecontent);
         fclose(fout);
-        fout = NULL;
+        fout = nullptr;
     }
 
     virtual void checkIncludesIssue459() {
@@ -591,19 +591,19 @@ check $x $y\n\
         checkTrue(yarp::os::stat(dirname.c_str())>=0,"test directory present");
         {
             FILE *fout = fopen((dirname + "/t1.ini").c_str(),"w");
-            yAssert(fout!=NULL);
+            yAssert(fout!=nullptr);
             fprintf(fout,"x 3\n");
             fprintf(fout,"[nesttest]\n");
             fprintf(fout,"z 14\n");
             fclose(fout);
-            fout = NULL;
+            fout = nullptr;
         }
         {
             FILE *fout = fopen((dirname + "/t2.ini").c_str(),"w");
-            yAssert(fout!=NULL);
+            yAssert(fout!=nullptr);
             fprintf(fout,"y 4\n");
             fclose(fout);
-            fout = NULL;
+            fout = nullptr;
         }
         Property p;
         p.fromConfigFile(dirname.c_str());

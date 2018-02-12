@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2012  iCub Facility, Istituto Italiano di Tecnologia
+ * Copyright (C) 2012 Istituto Italiano di Tecnologia (IIT)
  * Author: Daniele E. Domenichelli <daniele.domenichelli@iit.it>
  *
  * CopyPolicy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
@@ -18,12 +18,13 @@
 class RobotInterface::CalibratorThread::Private
 {
 public:
-    Private(CalibratorThread *_parent) :
-        parent(_parent),
-        calibrator(YARP_NULLPTR),
-        target(YARP_NULLPTR),
-        action(RobotInterface::CalibratorThread::Action::ActionCalibrate)
-    {}
+    Private(CalibratorThread *parent) :
+            parent(parent),
+            calibrator(nullptr),
+            target(nullptr),
+            action(RobotInterface::CalibratorThread::Action::ActionCalibrate)
+    {
+    }
 
     void run()
     {

@@ -30,12 +30,12 @@ const size_t ConstString::npos = std::string::npos;
 
 ConstString::ConstString() {
     implementation = new std::string();
-    yAssert(implementation != YARP_NULLPTR);
+    yAssert(implementation != nullptr);
 }
 
 ConstString::ConstString(const ConstString& str) {
     implementation = new std::string(HELPER(str.implementation));
-    yAssert(implementation != YARP_NULLPTR);
+    yAssert(implementation != nullptr);
 }
 
 ConstString::ConstString(const ConstString& str, size_t pos, size_t len) {
@@ -44,28 +44,28 @@ ConstString::ConstString(const ConstString& str, size_t pos, size_t len) {
 
 ConstString::ConstString(const char *str) {
     implementation = new std::string(str);
-    yAssert(implementation != YARP_NULLPTR);
+    yAssert(implementation != nullptr);
 }
 
 ConstString::ConstString(const char *str, size_t len) {
     implementation = new std::string(str, len);
-    yAssert(implementation != YARP_NULLPTR);
+    yAssert(implementation != nullptr);
 }
 
 void ConstString::init(const char *str, size_t len) {
     implementation = new std::string(str, len);
-    yAssert(implementation != YARP_NULLPTR);
+    yAssert(implementation != nullptr);
 }
 
 ConstString::ConstString(size_t len, char c) {
     implementation = new std::string(len, c);
-    yAssert(implementation != YARP_NULLPTR);
+    yAssert(implementation != nullptr);
 }
 
 ConstString::~ConstString() {
-    if (implementation != YARP_NULLPTR) {
+    if (implementation != nullptr) {
         delete (std::string*)implementation;
-        implementation = YARP_NULLPTR;
+        implementation = nullptr;
     }
 }
 
@@ -263,6 +263,21 @@ char& ConstString::at(size_t pos) {
 
 const char& ConstString::at(size_t pos) const {
     return HELPER(implementation).at(pos);
+}
+
+ConstString& ConstString::assign (const ConstString& str) {
+    HELPER(implementation).assign(str);
+    return *this;
+}
+
+ConstString& ConstString::assign (const ConstString& str, size_t subpos, size_t sublen) {
+    HELPER(implementation).assign(str, subpos, sublen);
+    return *this;
+}
+
+ConstString& ConstString::assign (const char* s) {
+    HELPER(implementation).assign(s);
+    return *this;
 }
 
 ConstString& ConstString::assign(const char *s, size_t n) {

@@ -1,6 +1,7 @@
 # Copyright (C) 2009  RobotCub Consortium
-# Copyright (C) 2012  iCub Facility, Istituto Italiano di Tecnologia
-# Authors: Lorenzo Natale, Daniele E. Domenichelli <daniele.domenichelli@iit.it>
+# Copyright (C) 2012 Istituto Italiano di Tecnologia (IIT)
+# Authors: Lorenzo Natale <lorenzo.natale@iit.it>
+#          Daniele E. Domenichelli <daniele.domenichelli@iit.it>
 # CopyPolicy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
 
 # This module checks if all the dependencies are installed and if the
@@ -273,6 +274,7 @@ cmake_dependent_option(CREATE_YARPDATAPLAYER "Do you want to compile yarpdatapla
 cmake_dependent_option(CREATE_YARPMOTORGUI "Do you want to compile yarpmotorgui?" ON CREATE_GUIS OFF)
 cmake_dependent_option(CREATE_YARPLASERSCANNERGUI  "Do you want to compile yarplaserscannergui?" OFF CREATE_GUIS OFF)
 cmake_dependent_option(CREATE_YARPBATTERYGUI "Do you want to compile yarpbatterygui?" OFF CREATE_GUIS OFF)
+cmake_dependent_option(CREATE_YARPVIZ "Do you want to compile yarpviz?" OFF CREATE_GUIS OFF)
 
 yarp_renamed_option(CREATE_YMANAGER CREATE_YARPMANAGER_CONSOLE)
 yarp_renamed_option(CREATE_GYARPMANAGER CREATE_YARPMANAGER)
@@ -285,6 +287,12 @@ if(CREATE_YARPMANAGER_CONSOLE OR CREATE_YARPMANAGER)
   set(CREATE_LIB_MANAGER ON CACHE INTERNAL "Create manager library libYARP_manager?")
 else()
   unset(CREATE_LIB_MANAGER CACHE)
+endif()
+
+if(CREATE_YARPVIZ OR CREATE_YARPMANAGER)
+  set(CREATE_LIB_PROFILER ON CACHE INTERNAL "Create profiler library libYARP_profiler?")
+else()
+  unset(CREATE_LIB_PROFILER CACHE)
 endif()
 
 
@@ -335,7 +343,7 @@ else()
   endif()
 endif()
 
-set(RTF_REQUIRED_VERSION 1.2.0)
+set(RTF_REQUIRED_VERSION 1.4.0)
 find_package(RTF ${RTF_REQUIRED_VERSION} QUIET)
 checkandset_dependency(RTF)
 
@@ -368,8 +376,15 @@ if(CREATE_YARPSCOPE)
   checkbuildandset_dependency(QCustomPlot Qt5)
 endif()
 
+if(CREATE_YARPVIZ)
+  find_package(Graphviz QUIET)
+  checkandset_dependency(Graphviz)
+  find_package(QGVCore QUIET)
+  checkbuildandset_dependency(QGVCore Qt5 Graphviz)
+endif()
+
 if(YARP_COMPILE_BINDINGS)
-  set(SWIG_REQUIRED_VERSION 1.3.29)
+  set(SWIG_REQUIRED_VERSION 3.0)
   find_package(SWIG ${SWIG_REQUIRED_VERSION} QUIET)
   checkandset_dependency(SWIG)
 endif()
@@ -451,6 +466,16 @@ checkandset_dependency(OpenNI2)
 find_package(Doxygen)
 checkandset_dependency(Doxygen)
 
+find_package(GLIB2 QUIET)
+checkandset_dependency(GLIB2)
+
+set(GStreamer_REQUIRED_VERSION 1.4)
+find_package(GStreamer ${GStreamer_REQUIRED_VERSION} QUIET)
+checkandset_dependency(GStreamer)
+
+set(GStreamerPluginsBase_REQUIRED_VERSION 1.4)
+find_package(GStreamerPluginsBase ${GStreamerPluginsBase_REQUIRED_VERSION} COMPONENTS app QUIET)
+checkandset_dependency(GStreamerPluginsBase)
 
 # PRINT DEPENDENCIES STATUS:
 
@@ -464,6 +489,8 @@ print_dependency(TinyXML)
 #print_dependency(xmlrpcpp)
 print_dependency(Qt5)
 print_dependency(QCustomPlot)
+print_dependency(Graphviz)
+#print_dependency(QGVCore)
 print_dependency(Libedit)
 print_dependency(SWIG)
 print_dependency(OpenCV)
@@ -485,6 +512,9 @@ print_dependency(Libusb1)
 print_dependency(Stage)
 print_dependency(ZFP)
 print_dependency(OpenNI2)
+print_dependency(GLIB2)
+print_dependency(GStreamer)
+print_dependency(GStreamerPluginsBase)
 
 
 # CHECK DEPENDENCIES:
@@ -497,6 +527,7 @@ check_optional_dependency(CREATE_YARPSCOPE TinyXML)
 check_optional_dependency(CREATE_GUIS Qt5)
 check_optional_dependency(CREATE_YARPSCOPE QCustomPlot)
 check_optional_dependency(CREATE_YARPLASERSCANNERGUI OpenCV)
+check_optional_dependency(CREATE_YARPVIZ Graphviz)
 check_optional_dependency(YARP_COMPILE_BINDINGS SWIG)
 check_optional_dependency(YARP_COMPILE_RTF_ADDONS RTF)
 

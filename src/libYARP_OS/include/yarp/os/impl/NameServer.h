@@ -17,8 +17,8 @@
 #include <yarp/os/Semaphore.h>
 #include <yarp/os/Bottle.h>
 
-#include <yarp/os/impl/PlatformMap.h>
-#include <yarp/os/impl/PlatformVector.h>
+#include <map>
+#include <vector>
 
 // ACE headers may fiddle with main
 #ifdef main
@@ -54,10 +54,6 @@ class YARP_OS_impl_API yarp::os::impl::NameServer : public NameServerStub
 public:
 
     NameServer() :
-#ifndef YARP_USE_STL
-            nameMap(17),
-            hostMap(17),
-#endif
             mutex(1)
     {
         setup();
@@ -86,8 +82,6 @@ public:
 
     Contact unregisterName(const ConstString& name);
 
-    static int main(int argc, char *argv[]);
-
     virtual ConstString apply(const ConstString& txt, const Contact& remote) override;
 
     bool apply(const yarp::os::Bottle& cmd, yarp::os::Bottle& result,
@@ -100,6 +94,7 @@ public:
 
     virtual void onEvent(yarp::os::Bottle& event)
     {
+        YARP_UNUSED(event);
     }
 
     static ConstString textify(const Contact& address);
@@ -120,7 +115,7 @@ private:
     class ReusableRecord
     {
     private:
-        PlatformVector<T> reuse;
+        std::vector<T> reuse;
     public:
         virtual ~ReusableRecord() {}
 
@@ -184,14 +179,12 @@ private:
     {
     private:
         int base;
-        int legacyStep; // this is for YARP1 compatibility
 
     public:
         HostRecord()
         {
             //YARP_DEBUG(Logger::get(), "FIXME: HostRecord has hardcoded base");
             base = 0;
-            legacyStep = 10;
         }
 
         void setBase(int base)
@@ -209,8 +202,7 @@ private:
 
         virtual int fresh() override
         {
-            int result = base;
-            base += legacyStep;
+            int result = base++;
             return result;
         }
     };
@@ -280,7 +272,7 @@ private:
     class PropertyRecord
     {
     private:
-        PlatformVector<ConstString> prop;
+        std::vector<ConstString> prop;
     public:
         PropertyRecord()
         {
@@ -338,13 +330,10 @@ private:
     private:
         bool reusablePort;
         bool reusableIp;
-        PLATFORM_MAP(ConstString, PropertyRecord) propMap;
+        std::map<ConstString, PropertyRecord> propMap;
         Contact address;
     public:
         NameRecord() :
-#ifndef YARP_USE_STL
-                propMap(5),
-#endif
                 address()
         {
             reusableIp = false;
@@ -352,11 +341,9 @@ private:
         }
 
         NameRecord(const NameRecord& alt) :
-#ifndef YARP_USE_STL
-                propMap(5),
-#endif
                 address()
         {
+            YARP_UNUSED(alt);
             reusableIp = false;
             reusablePort = false;
         }
@@ -373,7 +360,7 @@ private:
 
         void clear()
         {
-            PLATFORM_MAP_CLEAR(propMap);
+            propMap.clear();
             address = Contact();
             reusableIp = false;
             reusablePort = false;
@@ -396,18 +383,16 @@ private:
 
         PropertyRecord *getPR(const ConstString& key, bool create = true)
         {
-            PLATFORM_MAP_ITERATOR(ConstString, PropertyRecord, entry);
-            int result = PLATFORM_MAP_FIND(propMap, key, entry);
-            if (result==-1 && create) {
-                PropertyRecord blank;
-                PLATFORM_MAP_SET(propMap, key, blank);
-                result = PLATFORM_MAP_FIND(propMap, key, entry);
-                yAssert(result!=-1);
+            std::map<ConstString, PropertyRecord>::iterator entry = propMap.find(key);
+            if (entry == propMap.end()) {
+                if (!create) {
+                    return nullptr;
+                }
+                propMap[key] = PropertyRecord();
+                entry = propMap.find(key);
             }
-            if (result==-1) {
-                return YARP_NULLPTR;
-            }
-            return &(PLATFORM_MAP_ITERATOR_SECOND(entry));
+            yAssert(entry != propMap.end());
+            return &(entry->second);
         }
 
         void clearProp(const ConstString& key)
@@ -423,7 +408,7 @@ private:
         ConstString getProp(const ConstString& key)
         {
             PropertyRecord *rec = getPR(key, false);
-            if (rec!=YARP_NULLPTR) {
+            if (rec!=nullptr) {
                 return rec->toString();
             }
             return "";
@@ -432,7 +417,7 @@ private:
         bool checkProp(const ConstString& key, const ConstString& val)
         {
             PropertyRecord *rec = getPR(key, false);
-            if (rec!=YARP_NULLPTR) {
+            if (rec!=nullptr) {
                 return rec->check(val);
             }
             return false;
@@ -441,7 +426,7 @@ private:
         ConstString matchProp(const ConstString& key, const ConstString& val)
         {
             PropertyRecord *rec = getPR(key, false);
-            if (rec!=YARP_NULLPTR) {
+            if (rec!=nullptr) {
                 return rec->match(val);
             }
             return "";
@@ -471,8 +456,8 @@ private:
     yarp::os::Bottle ncmdSet(int argc, char *argv[]);
     yarp::os::Bottle ncmdGet(int argc, char *argv[]);
 
-    PLATFORM_MAP(ConstString, NameRecord) nameMap;
-    PLATFORM_MAP(ConstString, HostRecord) hostMap;
+    std::map<ConstString, NameRecord> nameMap;
+    std::map<ConstString, HostRecord> hostMap;
 
     McastRecord mcastRecord;
     DisposableNameRecord tmpNames;
@@ -482,7 +467,7 @@ private:
     NameRecord &getNameRecord(const ConstString& name)
     {
         NameRecord *result = getNameRecord(name, true);
-        yAssert(result!=YARP_NULLPTR);
+        yAssert(result!=nullptr);
         return *result;
     }
 
@@ -491,7 +476,7 @@ private:
     HostRecord &getHostRecord(const ConstString& name)
     {
         HostRecord *result = getHostRecord(name, true);
-        yAssert(result!=YARP_NULLPTR);
+        yAssert(result!=nullptr);
         return *result;
     }
 

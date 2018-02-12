@@ -28,17 +28,15 @@ class YARP_OS_API yarp::os::Portable : public PortReader, public PortWriter
 public:
     // reiterate the key inherited virtual methods, just as a reminder
 
-    virtual bool read(ConnectionReader& reader) YARP_OVERRIDE = 0;
-    virtual bool write(ConnectionWriter& writer) YARP_OVERRIDE = 0;
+    virtual bool read(ConnectionReader& reader) override = 0;
+    virtual bool write(ConnectionWriter& writer) override = 0;
 
     virtual Type getType() { return getReadType(); }
 
     /**
-     *
      * Copy one portable to another, via writing and reading.
      *
      * @return true iff writer.write and reader.read both succeeded.
-     *
      */
     static bool copyPortable(PortWriter& writer, PortReader& reader);
 };

@@ -1,6 +1,6 @@
 /*
- * Copyright (C) 2015 iCub Facility
- * Authors: Ali Paikan and Daniele Domenichelli
+ * Copyright (C) 2015 Istituto Italiano di Tecnologia (IIT)
+ * Authors: Ali Paikan and Daniele E. Domenichelli
  * CopyPolicy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
  */
 
@@ -8,13 +8,20 @@
 #define YARP_OS_QOSSTYLE_H
 
 #include <yarp/os/api.h>
+#include <yarp/conf/system.h>
 
 namespace yarp {
     namespace os {
         class QosStyle;
-        class ConstString;
     }
 }
+
+#ifndef YARP_WRAP_STL_STRING
+# include <string>
+namespace yarp { namespace os { typedef std::string ConstString; }}
+#else
+namespace yarp { namespace os { class ConstString; }}
+#endif
 
 /**
  * \ingroup comm_class

@@ -1,6 +1,6 @@
 /*
+* Copyright (C) 2017 RobotCub Consortium
 * Author: Marco Randazzo <marco.randazzo@iit.it>
-* Copyright (C) 2017 The Robotcub consortium.
 * CopyPolicy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
 */
 

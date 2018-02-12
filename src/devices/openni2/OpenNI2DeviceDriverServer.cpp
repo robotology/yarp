@@ -9,11 +9,11 @@
 #include "OpenNI2DeviceDriverServer.h"
 
 yarp::dev::OpenNI2DeviceDriverServer::OpenNI2DeviceDriverServer() :
-    skeletonPort(YARP_NULLPTR),
-    receivingPort(YARP_NULLPTR),
-    depthFramePort(YARP_NULLPTR),
-    imageFramePort(YARP_NULLPTR),
-    skeleton(YARP_NULLPTR),
+    skeletonPort(nullptr),
+    receivingPort(nullptr),
+    depthFramePort(nullptr),
+    imageFramePort(nullptr),
+    skeleton(nullptr),
     withOpenPorts(false),
 #ifdef OPENNI2_DRIVER_USES_NITE2
     userTracking(true),

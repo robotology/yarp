@@ -1,4 +1,4 @@
-# Copyright: (C) 2011 Department of Robotics Brain and Cognitive Sciences - Istituto Italiano di Tecnologia
+# Copyright: (C) 2011 Istituto Italiano di Tecnologia (IIT)
 # Authors: Vadim Tikhanoff
 # CopyPolicy: Released under the terms of the GNU GPL v2.0.
 

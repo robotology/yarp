@@ -100,6 +100,12 @@ namespace yarp
                 */
                 bool   isKeepOut        (XYCell cell) const;
                 /**
+                * Get the flag of a specific cell of the map.
+                * @param cell is the cell location, referred to the top-left corner of the map.
+                * @return true if cell is valid cell inside the map, false otherwise.
+                */
+                bool   getMapFlag       (XYCell cell, map_flags& flag) const;
+                /**
                 * Set the flag of a specific cell of the map.
                 * @param cell is the cell location, referred to the top-left corner of the map.
                 * @return true if cell is valid cell inside the map, false otherwise.
@@ -233,7 +239,7 @@ namespace yarp
                 bool   isIdenticalTo(const MapGrid2D& otherMap) const;
 
                 /**
-                * Performs the obstacle enlargement operation. It's useful to set size to a value equal or larger to the robot bounding box.
+                * Performs the obstacle enlargement operation. It's useful to set size to a value equal or larger to the radius of the robot bounding box.
                 * In this way a navigation algorithm can easily check obstacle collision by comparing the location of the center of the robot with cell value (free/occupied etc)
                 * @param size the size of the enlargement, in meters. If size>0 the requested enlargement is performed. If the function is called multiple times, the enlargement sums up.
                 If size <= 0 the enlargement stored in the map is cleaned up.
@@ -261,13 +267,13 @@ namespace yarp
                 * Read vector from a connection.
                 * return true iff a vector was read correctly
                 */
-                virtual bool read(yarp::os::ConnectionReader& connection) YARP_OVERRIDE;
+                virtual bool read(yarp::os::ConnectionReader& connection) override;
 
                 /**
                 * Write vector to a connection.
                 * return true iff a vector was written correctly
                 */
-                virtual bool write(yarp::os::ConnectionWriter& connection) YARP_OVERRIDE;
+                virtual bool write(yarp::os::ConnectionWriter& connection) override;
         };
     }
 }

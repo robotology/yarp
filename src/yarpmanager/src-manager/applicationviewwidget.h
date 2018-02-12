@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2014 iCub Facility - Istituto Italiano di Tecnologia
+ * Copyright (C) 2014 Istituto Italiano di Tecnologia (IIT)
  * Author: Davide Perrone
  * Date: Feb 2014
  * email:   dperrone@aitek.it
@@ -110,6 +110,8 @@ private:
     void attachStdOutNestedApplication(QTreeWidgetItem *it,std::vector<int> *MIDs);
     void modStdOutNestedApplication(QTreeWidgetItem *it, int id,QString s);
     void selectAllNestedApplicationModule(QTreeWidgetItem *it, bool check);
+    bool scanAvailableCarriers(QString carrier, bool isConnection = true);
+    void updateConnection(int index, std::vector<int> &CIDs);
 
 
 
@@ -118,6 +120,7 @@ private:
     QDockWidget *builderWidget;
     BuilderWindow *builder;
     QToolBar *builderToolBar;
+    QStringList stringLst;
 
     Ui::ApplicationViewWidget *ui;
     SafeManager safeManager;
@@ -155,6 +158,8 @@ private:
     QList <StdoutWindow*> stdoutWinList;
 
     bool editingMode;
+
+    std::vector<std::string> listOfResourceNames;
 
 
 private slots:

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2014 iCub Facility - Istituto Italiano di Tecnologia
+ * Copyright (C) 2014 Istituto Italiano di Tecnologia (IIT)
  * Author: Alberto Cardellino
  * CopyPolicy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
  */
@@ -14,7 +14,6 @@
 #include <yarp/os/BufferedPort.h>
 #include <yarp/os/Time.h>
 #include <yarp/os/Network.h>
-#include <yarp/os/RateThread.h>
 #include <yarp/os/Stamp.h>
 #include <yarp/os/Vocab.h>
 

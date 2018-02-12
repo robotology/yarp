@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2013 iCub Facility - Istituto Italiano di Tecnologia
+ * Copyright (C) 2013 Istituto Italiano di Tecnologia (IIT)
  * Author: Lorenzo Natale, Alberto Cardellino
  * CopyPolicy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
  */
@@ -98,11 +98,11 @@ public:
     MultiJointData() :
         deviceNum(0),
         maxJointsNumForDevice(0),
-        subdev_jointsVectorLen(YARP_NULLPTR),
-        jointNumbers(YARP_NULLPTR),
-        modes(YARP_NULLPTR),
-        values(YARP_NULLPTR),
-        subdevices_p(YARP_NULLPTR)
+        subdev_jointsVectorLen(nullptr),
+        jointNumbers(nullptr),
+        modes(nullptr),
+        values(nullptr),
+        subdevices_p(nullptr)
 {}
 
     void resize(int _deviceNum, int _maxJointsNumForDevice, yarp::dev::impl::WrappedDevice *_device)
@@ -151,13 +151,6 @@ public:
 
 #endif // DOXYGEN_SHOULD_SKIP_THIS
 
-
-
-#if defined(_MSC_VER) && !defined(YARP_NO_DEPRECATED) // since YARP 2.3.65
-// A class implementing setXxxxxMode(int) causes a warning on MSVC
-YARP_WARNING_PUSH
-YARP_DISABLE_DEPRECATED_WARNING
-#endif
 
 
 /**
@@ -1263,10 +1256,6 @@ public:
     virtual bool getRefCurrents(double *t) override;
     virtual bool getRefCurrent(int j, double *t) override;
 };
-
-#if defined(_MSC_VER) && !defined(YARP_NO_DEPRECATED) // since YARP 2.3.65
-YARP_WARNING_POP
-#endif
 
 
 #endif // YARP_DEV_CONTROLBOARDWRAPPER_CONTROLBOARDWRAPPER_H

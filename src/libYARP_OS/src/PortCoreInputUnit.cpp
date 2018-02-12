@@ -25,6 +25,39 @@
 using namespace yarp::os::impl;
 using namespace yarp::os;
 
+PortCoreInputUnit::PortCoreInputUnit(PortCore& owner,
+                                     int index,
+                                     InputProtocol *ip,
+                                     bool reversed) :
+        PortCoreUnit(owner, index),
+        ip(ip),
+        phase(1),
+        access(1),
+        closing(false),
+        finished(false),
+        running(false),
+        name(owner.getName()),
+        localReader(nullptr),
+        reversed(reversed)
+{
+    yAssert(ip!=nullptr);
+
+    yarp::os::PortReaderCreator *creator = owner.getReadCreator();
+    if (creator != nullptr) {
+        localReader = creator->create();
+    }
+}
+
+PortCoreInputUnit::~PortCoreInputUnit()
+{
+    closeMain();
+    if (localReader!=nullptr) {
+        delete localReader;
+        localReader = nullptr;
+    }
+}
+
+
 bool PortCoreInputUnit::start() {
 
 
@@ -32,7 +65,7 @@ bool PortCoreInputUnit::start() {
                getOwner().getName()+ " starting");
 
     /*
-    if (ip!=YARP_NULLPTR) {
+    if (ip!=nullptr) {
         Route route = ip->getRoute();
         YARP_DEBUG(Logger::get(), ConstString("starting output for ") +
                    route.toString());
@@ -68,7 +101,7 @@ void PortCoreInputUnit::run() {
 
     bool done = false;
 
-    yAssert(ip!=YARP_NULLPTR);
+    yAssert(ip!=nullptr);
 
     PortCommand cmd;
 
@@ -141,7 +174,7 @@ void PortCoreInputUnit::run() {
             op->rename(r);
 
             getOwner().addOutput(op);
-            ip = YARP_NULLPTR;
+            ip = nullptr;
             done = true;
         }
     }
@@ -152,7 +185,7 @@ void PortCoreInputUnit::run() {
 
     void *id = (void *)this;
 
-    if (ip!=YARP_NULLPTR && !ip->getConnection().canEscape()) {
+    if (ip!=nullptr && !ip->getConnection().canEscape()) {
         InputStream *is = &ip->getInputStream();
         is->setReadEnvelopeCallback(envelopeReadCallback, this);
     }
@@ -161,20 +194,20 @@ void PortCoreInputUnit::run() {
         if(!ip) break;
         ConnectionReader& br = ip->beginRead();
 
-        if (br.getReference()!=YARP_NULLPTR) {
+        if (br.getReference()!=nullptr) {
             //printf("HAVE A REFERENCE\n");
-            if (localReader!=YARP_NULLPTR) {
+            if (localReader!=nullptr) {
                 bool ok = localReader->read(br);
                 if (!br.isActive()) { break; }
                 if (!ok) continue;
             } else {
                 PortManager& man = getOwner();
-                bool ok = man.readBlock(br, id, YARP_NULLPTR);
+                bool ok = man.readBlock(br, id, nullptr);
                 if (!br.isActive()) { break; }
                 if (!ok) continue;
             }
             //printf("DONE WITH A REFERENCE\n");
-            if (ip!=YARP_NULLPTR) {
+            if (ip!=nullptr) {
                 ip->endRead();
             }
             continue;
@@ -197,7 +230,7 @@ void PortCoreInputUnit::run() {
         //         (key>=32)?key:'?', key, cmd.getText().c_str());
 
         PortManager& man = getOwner();
-        OutputStream *os = YARP_NULLPTR;
+        OutputStream *os = nullptr;
         if (br.isTextMode()) {
             os = &(ip->getOutputStream());
         }
@@ -322,7 +355,7 @@ void PortCoreInputUnit::run() {
                 op->rename(r);
 
                 getOwner().addOutput(op);
-                ip = YARP_NULLPTR;
+                ip = nullptr;
                 done = true;
             }
             break;
@@ -339,7 +372,7 @@ void PortCoreInputUnit::run() {
 #endif
         case '?':
         case 'h':
-            if (os!=YARP_NULLPTR) {
+            if (os!=nullptr) {
                 BufferedConnectionWriter bw(true);
                 bw.appendLine("This is a YARP port.  Here are the commands it responds to:");
                 bw.appendLine("*       Gives a description of this port");
@@ -359,7 +392,7 @@ void PortCoreInputUnit::run() {
             }
             break;
         default:
-            if (os!=YARP_NULLPTR) {
+            if (os!=nullptr) {
                 BufferedConnectionWriter bw(true);
                 bw.appendLine("Port command not understood.");
                 bw.appendLine("Type d to send data to the port's owner.");
@@ -368,10 +401,10 @@ void PortCoreInputUnit::run() {
             }
             break;
         }
-        if (ip!=YARP_NULLPTR) {
+        if (ip!=nullptr) {
             ip->endRead();
         }
-        if (ip==YARP_NULLPTR) {
+        if (ip==nullptr) {
             break;
         }
         if (closing||isDoomed()||(!ip->isOk())) {
@@ -383,7 +416,7 @@ void PortCoreInputUnit::run() {
 
     YARP_DEBUG(Logger::get(), "PortCoreInputUnit closing ip");
     access.wait();
-    if (ip!=YARP_NULLPTR) {
+    if (ip!=nullptr) {
         ip->close();
     }
     access.post();
@@ -419,9 +452,9 @@ void PortCoreInputUnit::run() {
         }
     }
 
-    if (localReader!=YARP_NULLPTR) {
+    if (localReader!=nullptr) {
         delete localReader;
-        localReader = YARP_NULLPTR;
+        localReader = nullptr;
     }
 
     running = false;
@@ -432,18 +465,57 @@ void PortCoreInputUnit::run() {
     // thread within and from themselves
 }
 
+bool PortCoreInputUnit::isInput()
+{
+    return true;
+}
+
+void PortCoreInputUnit::close()
+{
+    closeMain();
+}
+
+bool PortCoreInputUnit::isFinished()
+{
+    return finished;
+}
+
+const ConstString& PortCoreInputUnit::getName()
+{
+    return name;
+}
 
 bool PortCoreInputUnit::interrupt() {
     // give a kick (unfortunately unavoidable)
     access.wait();
     if (!closing) {
-        if (ip!=YARP_NULLPTR) {
+        if (ip!=nullptr) {
             ip->interrupt();
         }
         closing = true;
     }
     access.post();
     return true;
+}
+
+void PortCoreInputUnit::setCarrierParams(const yarp::os::Property& params)
+{
+    if (ip) {
+        ip->getReceiver().setCarrierParams(params);
+    }
+}
+
+void PortCoreInputUnit::getCarrierParams(yarp::os::Property& params)
+{
+    if (ip) {
+        ip->getReceiver().getCarrierParams(params);
+    }
+}
+
+// return the protocol object
+InputProtocol* PortCoreInputUnit::getInPutProtocol()
+{
+    return ip;
 }
 
 void PortCoreInputUnit::closeMain() {
@@ -462,10 +534,10 @@ void PortCoreInputUnit::closeMain() {
         YARP_DEBUG(log, "PortCoreInputUnit joined");
     }
 
-    if (ip!=YARP_NULLPTR) {
+    if (ip!=nullptr) {
         ip->close();
         delete ip;
-        ip = YARP_NULLPTR;
+        ip = nullptr;
     }
     running = false;
     closing = false;
@@ -495,7 +567,7 @@ bool PortCoreInputUnit::skipIncomingData(yarp::os::ConnectionReader& reader) {
 bool PortCoreInputUnit::isBusy() {
     bool busy = false;
     access.wait();
-    if (ip!=YARP_NULLPTR) {
+    if (ip!=nullptr) {
         busy = ip->isReplying();
     }
     access.post();

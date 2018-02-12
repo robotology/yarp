@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2014 iCub Facility - Istituto Italiano di Tecnologia
+ * Copyright (C) 2014 Istituto Italiano di Tecnologia (IIT)
  * Author: Davide Perrone
  * Date: Feb 2014
  * email:   dperrone@aitek.it
@@ -27,26 +27,22 @@
  *  \param bgcolor the background color of the plotter
  *  \param autorescale not used
  */
-Plotter::Plotter(const QString &_title, int _gridx, int _gridy,
-                 int _hspan, int _vspan, float _minval,
-                 float _maxval, int _size, const QString &_bgcolor,
-                 bool _autorescale,  QObject *parent) :
+Plotter::Plotter(const QString &title, int gridx, int gridy, int hspan, int vspan, float minval, float maxval, int size, const QString &bgcolor, bool autorescale,  QObject *parent) :
     QObject(parent),
-    title(_title),
-    gridx(_gridx),
-    gridy(_gridy),
-    hspan(_hspan),
-    vspan(_vspan),
-    minval(_minval),
-    maxval(_maxval),
-    size(_size),
-    bgcolor(_bgcolor),
-    autorescale(_autorescale),
-    initialSize(_size),
+    title(title),
+    gridx(gridx),
+    gridy(gridy),
+    hspan(hspan),
+    vspan(vspan),
+    minval(minval),
+    maxval(maxval),
+    size(size),
+    bgcolor(bgcolor),
+    autorescale(autorescale),
+    initialSize(size),
     start(0),
     interact(false)
 {
-    Q_UNUSED(autorescale);
     connect(customPlot.axisRect(),SIGNAL(zoomRequest()),this,SLOT(onInteract()));
     connect(customPlot.axisRect(),SIGNAL(dragStarted()),this,SLOT(onInteract()));
 
@@ -84,7 +80,7 @@ Plotter::~Plotter()
         Graph *idx = (Graph*)graphList.at(i);
         if (idx) {
             delete idx;
-            idx = NULL;
+            idx = nullptr;
         }
     }
     graphList.clear();
@@ -115,7 +111,7 @@ void Plotter::setPaintGeometry(QRectF r)
 */
 Graph * Plotter::addGraph(QString remotePort,QString localPort,int index, QString title, QString color, QString type, int size, double graph_y_scale)
 {
-    Graph *graph = NULL;
+    Graph *graph = nullptr;
     graph = new Graph(index,title,color,type,size,graph_y_scale,this->size);
 
 
@@ -237,24 +233,24 @@ void Plotter::clear()
 
 
 /***********************************************************/
-Graph::Graph(int _index, QString _title, QString _color, QString _type, int _lineSize,
-             double _graph_y_scale, int _buffer_size, QObject *parent) : QObject(parent),
+Graph::Graph(int index, QString title, QString color, QString type, int size, double graph_y_scale, int buffer_size, QObject *parent) :
+    QObject(parent),
     lastX(0),
     lastY(0),
     lastT(0),
     deleteConnection(true),
-    customGraphPoint(YARP_NULLPTR),
-    customGraph(YARP_NULLPTR),
-    index(_index),
-    graph_y_scale(_graph_y_scale),
-    curr_connection(YARP_NULLPTR),
-    buffer_size(_buffer_size),
+    customGraphPoint(nullptr),
+    customGraph(nullptr),
+    index(index),
+    graph_y_scale(graph_y_scale),
+    curr_connection(nullptr),
+    buffer_size(buffer_size),
     numberAcquiredData(0),
     lastIndex(0),
-    type(_type),
-    color(_color),
-    lineSize(_lineSize),
-    title(_title)
+    type(type),
+    color(color),
+    lineSize(size),
+    title(title)
 {}
 
 
@@ -282,7 +278,7 @@ Graph::~Graph()
 {
     if(curr_connection && deleteConnection){
         delete curr_connection;
-        curr_connection = NULL;
+        curr_connection = nullptr;
     }
     clearData();
 }
@@ -395,7 +391,7 @@ Connection::Connection(QString remotePortName,  QString localPortName, QObject *
 
     // Open the local port
     if (localPortName.isEmpty()) {
-        localPort->open();
+        localPort->open("...");
     } else {
         localPort->open(localPortName.toLatin1().data());
     }

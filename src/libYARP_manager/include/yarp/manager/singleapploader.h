@@ -1,6 +1,6 @@
 /*
  *  Yarp Modules Manager
- *  Copyright: (C) 2011 Robotics, Brain and Cognitive Sciences - Italian Institute of Technology (IIT)
+ *  Copyright: (C) 2011 Istituto Italiano di Tecnologia (IIT)
  *  Authors: Ali Paikan <ali.paikan@iit.it>
  *
  *  Copy Policy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
@@ -24,9 +24,9 @@ class SingleAppLoader : public AppLoader {
 public:
     SingleAppLoader(const char* szModule, const char* strHost);
     virtual ~SingleAppLoader();
-    virtual bool init(void) YARP_OVERRIDE;
-    virtual void fini(void) YARP_OVERRIDE;
-    virtual Application* getNextApplication(void) YARP_OVERRIDE;
+    virtual bool init(void) override;
+    virtual void fini(void) override;
+    virtual Application* getNextApplication(void) override;
 
 protected:
 

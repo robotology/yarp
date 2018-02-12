@@ -20,139 +20,163 @@
 #include "geometry_msgs_Pose.h"
 #include "geometry_msgs_Vector3.h"
 
-class std_msgs_ColorRGBA : public yarp::os::idl::WirePortable {
+class std_msgs_ColorRGBA : public yarp::os::idl::WirePortable
+{
 public:
-  yarp::os::NetFloat32 r;
-  yarp::os::NetFloat32 g;
-  yarp::os::NetFloat32 b;
-  yarp::os::NetFloat32 a;
+    yarp::os::NetFloat32 r;
+    yarp::os::NetFloat32 g;
+    yarp::os::NetFloat32 b;
+    yarp::os::NetFloat32 a;
 
-  std_msgs_ColorRGBA() :
-    r(0.0),
-    g(0.0),
-    b(0.0),
-    a(0.0)
-  {
-  }
+    std_msgs_ColorRGBA() :
+            r(0.0),
+            g(0.0),
+            b(0.0),
+            a(0.0)
+    {
+    }
 
-  void clear() {
-    // *** r ***
-    r = 0.0;
+    void clear()
+    {
+        // *** r ***
+        r = 0.0;
 
-    // *** g ***
-    g = 0.0;
+        // *** g ***
+        g = 0.0;
 
-    // *** b ***
-    b = 0.0;
+        // *** b ***
+        b = 0.0;
 
-    // *** a ***
-    a = 0.0;
-  }
+        // *** a ***
+        a = 0.0;
+    }
 
-  bool readBare(yarp::os::ConnectionReader& connection) YARP_OVERRIDE {
-    // *** r ***
-    if (!connection.expectBlock((char*)&r,4)) return false;
+    bool readBare(yarp::os::ConnectionReader& connection) override
+    {
+        // *** r ***
+        if (!connection.expectBlock((char*)&r, 4)) {
+            return false;
+        }
 
-    // *** g ***
-    if (!connection.expectBlock((char*)&g,4)) return false;
+        // *** g ***
+        if (!connection.expectBlock((char*)&g, 4)) {
+            return false;
+        }
 
-    // *** b ***
-    if (!connection.expectBlock((char*)&b,4)) return false;
+        // *** b ***
+        if (!connection.expectBlock((char*)&b, 4)) {
+            return false;
+        }
 
-    // *** a ***
-    if (!connection.expectBlock((char*)&a,4)) return false;
-    return !connection.isError();
-  }
+        // *** a ***
+        if (!connection.expectBlock((char*)&a, 4)) {
+            return false;
+        }
 
-  bool readBottle(yarp::os::ConnectionReader& connection) YARP_OVERRIDE {
-    connection.convertTextMode();
-    yarp::os::idl::WireReader reader(connection);
-    if (!reader.readListHeader(4)) return false;
+        return !connection.isError();
+    }
 
-    // *** r ***
-    r = reader.expectDouble();
+    bool readBottle(yarp::os::ConnectionReader& connection) override
+    {
+        connection.convertTextMode();
+        yarp::os::idl::WireReader reader(connection);
+        if (!reader.readListHeader(4)) {
+            return false;
+        }
 
-    // *** g ***
-    g = reader.expectDouble();
+        // *** r ***
+        r = reader.expectDouble();
 
-    // *** b ***
-    b = reader.expectDouble();
+        // *** g ***
+        g = reader.expectDouble();
 
-    // *** a ***
-    a = reader.expectDouble();
-    return !connection.isError();
-  }
+        // *** b ***
+        b = reader.expectDouble();
 
-  using yarp::os::idl::WirePortable::read;
-  bool read(yarp::os::ConnectionReader& connection) YARP_OVERRIDE {
-    if (connection.isBareMode()) return readBare(connection);
-    return readBottle(connection);
-  }
+        // *** a ***
+        a = reader.expectDouble();
 
-  bool writeBare(yarp::os::ConnectionWriter& connection) YARP_OVERRIDE {
-    // *** r ***
-    connection.appendBlock((char*)&r,4);
+        return !connection.isError();
+    }
 
-    // *** g ***
-    connection.appendBlock((char*)&g,4);
+    using yarp::os::idl::WirePortable::read;
+    bool read(yarp::os::ConnectionReader& connection) override
+    {
+        return (connection.isBareMode() ? readBare(connection)
+                                        : readBottle(connection));
+    }
 
-    // *** b ***
-    connection.appendBlock((char*)&b,4);
+    bool writeBare(yarp::os::ConnectionWriter& connection) override
+    {
+        // *** r ***
+        connection.appendBlock((char*)&r, 4);
 
-    // *** a ***
-    connection.appendBlock((char*)&a,4);
-    return !connection.isError();
-  }
+        // *** g ***
+        connection.appendBlock((char*)&g, 4);
 
-  bool writeBottle(yarp::os::ConnectionWriter& connection) YARP_OVERRIDE {
-    connection.appendInt(BOTTLE_TAG_LIST);
-    connection.appendInt(4);
+        // *** b ***
+        connection.appendBlock((char*)&b, 4);
 
-    // *** r ***
-    connection.appendInt(BOTTLE_TAG_DOUBLE);
-    connection.appendDouble((double)r);
+        // *** a ***
+        connection.appendBlock((char*)&a, 4);
 
-    // *** g ***
-    connection.appendInt(BOTTLE_TAG_DOUBLE);
-    connection.appendDouble((double)g);
+        return !connection.isError();
+    }
 
-    // *** b ***
-    connection.appendInt(BOTTLE_TAG_DOUBLE);
-    connection.appendDouble((double)b);
+    bool writeBottle(yarp::os::ConnectionWriter& connection) override
+    {
+        connection.appendInt(BOTTLE_TAG_LIST);
+        connection.appendInt(4);
 
-    // *** a ***
-    connection.appendInt(BOTTLE_TAG_DOUBLE);
-    connection.appendDouble((double)a);
-    connection.convertTextMode();
-    return !connection.isError();
-  }
+        // *** r ***
+        connection.appendInt(BOTTLE_TAG_DOUBLE);
+        connection.appendDouble((double)r);
 
-  using yarp::os::idl::WirePortable::write;
-  bool write(yarp::os::ConnectionWriter& connection) YARP_OVERRIDE {
-    if (connection.isBareMode()) return writeBare(connection);
-    return writeBottle(connection);
-  }
+        // *** g ***
+        connection.appendInt(BOTTLE_TAG_DOUBLE);
+        connection.appendDouble((double)g);
 
-  // This class will serialize ROS style or YARP style depending on protocol.
-  // If you need to force a serialization style, use one of these classes:
-  typedef yarp::os::idl::BareStyle<std_msgs_ColorRGBA> rosStyle;
-  typedef yarp::os::idl::BottleStyle<std_msgs_ColorRGBA> bottleStyle;
+        // *** b ***
+        connection.appendInt(BOTTLE_TAG_DOUBLE);
+        connection.appendDouble((double)b);
 
-  // Give source text for class, ROS will need this
-  yarp::os::ConstString getTypeText() {
-    return "float32 r\n\
+        // *** a ***
+        connection.appendInt(BOTTLE_TAG_DOUBLE);
+        connection.appendDouble((double)a);
+
+        connection.convertTextMode();
+        return !connection.isError();
+    }
+
+    using yarp::os::idl::WirePortable::write;
+    bool write(yarp::os::ConnectionWriter& connection) override
+    {
+        return (connection.isBareMode() ? writeBare(connection)
+                                        : writeBottle(connection));
+    }
+
+    // This class will serialize ROS style or YARP style depending on protocol.
+    // If you need to force a serialization style, use one of these classes:
+    typedef yarp::os::idl::BareStyle<std_msgs_ColorRGBA> rosStyle;
+    typedef yarp::os::idl::BottleStyle<std_msgs_ColorRGBA> bottleStyle;
+
+    // Give source text for class, ROS will need this
+    yarp::os::ConstString getTypeText()
+    {
+        return "float32 r\n\
 float32 g\n\
 float32 b\n\
 float32 a";
-  }
+    }
 
-  // Name the class, ROS will need this
-  yarp::os::Type getType() YARP_OVERRIDE {
-    yarp::os::Type typ = yarp::os::Type::byName("std_msgs/ColorRGBA","std_msgs/ColorRGBA");
-    typ.addProperty("md5sum",yarp::os::Value("a29a96539573343b1310c73607334b00"));
-    typ.addProperty("message_definition",yarp::os::Value(getTypeText()));
-    return typ;
-  }
+    // Name the class, ROS will need this
+    yarp::os::Type getType() override
+    {
+        yarp::os::Type typ = yarp::os::Type::byName("std_msgs/ColorRGBA", "std_msgs/ColorRGBA");
+        typ.addProperty("md5sum", yarp::os::Value("a29a96539573343b1310c73607334b00"));
+        typ.addProperty("message_definition", yarp::os::Value(getTypeText()));
+        return typ;
+    }
 };
 
 #endif

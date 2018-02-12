@@ -64,8 +64,8 @@ public:
         output.write(i);
         report(0,"reading...");
         BinPortable<int> *result = buf.read();
-        checkTrue(result!=NULL,"got something check");
-        if (result!=NULL) {
+        checkTrue(result!=nullptr,"got something check");
+        if (result!=nullptr) {
             checkEqual(result->content(),5,"value preserved");
         }
         output.close();

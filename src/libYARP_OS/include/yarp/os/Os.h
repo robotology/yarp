@@ -189,6 +189,20 @@ namespace yarp {
          * @since YARP 2.3.70
          */
         YARP_OS_API int fork(void);
+
+       /**
+        * @brief Toggle the OS energy saving feature
+        *
+        * This function toggle the state of the energy saving feature
+        * that may affect YARP calls.
+        *
+        * For example, in macOS this function toggles the state of the AppNap
+        * feature, which put the process into an idle state.
+        *
+        * @param enable true if the energy saving mode should be enabled. False otherwise.
+        * @since YARP 2.3.72
+        */
+        YARP_OS_API void setEnergySavingModeState(bool enabled);
     }
 }
 

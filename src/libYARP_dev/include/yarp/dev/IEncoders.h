@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2012 Robotics Brain and Cognitive Sciences Department, Istituto Italiano di Tecnologia
+ * Copyright (C) 2012 Istituto Italiano di Tecnologia (IIT)
  * Authors: Lorenzo Natale
  * CopyPolicy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
  */

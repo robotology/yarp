@@ -1,5 +1,5 @@
 /*
-* Copyright (C) 2015-2017  iCub Facility, Istituto Italiano di Tecnologia
+* Copyright (C) 2015-2017 Istituto Italiano di Tecnologia (IIT)
 * Author: Daniele E. Domenichelli <daniele.domenichelli@iit.it>
 * CopyPolicy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
 */
@@ -25,7 +25,7 @@
 #include "img-battery-charging-low.h"
 
 TextureBattery::TextureBattery(ovrSession session, bool enabled) :
-        RateThread(5000),
+        SystemRateThread(5000),
         session(session),
         currentTexture(nullptr),
         currentStatus(BatteryStatusMissing),

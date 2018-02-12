@@ -26,10 +26,10 @@ OpenNI2SkeletonTracker::OpenNI2SkeletonTracker(bool withTracking, bool withColor
     minConfidence(minConf),
     depthVideoMode(DEFAULT_DEPTH_MODE),
     colorVideoMode(DEFAULT_COLOR_MODE),
-    pDevice(YARP_NULLPTR),
-    playbackControl(YARP_NULLPTR),
-    depthInfo(YARP_NULLPTR),
-    colorInfo(YARP_NULLPTR)
+    pDevice(nullptr),
+    playbackControl(nullptr),
+    depthInfo(nullptr),
+    colorInfo(nullptr)
 {
     if (colorMode <= 11 && colorMode >= 0){
     colorVideoMode=colorMode;

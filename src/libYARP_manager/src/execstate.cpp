@@ -1,6 +1,6 @@
 /*
  *  Yarp Modules Manager
- *  Copyright: (C) 2011 Robotics, Brain and Cognitive Sciences - Italian Institute of Technology (IIT)
+ *  Copyright: (C) 2011 Istituto Italiano di Tecnologia (IIT)
  *  Authors: Ali Paikan <ali.paikan@iit.it>
  *
  *  Copy Policy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
@@ -9,7 +9,6 @@
 
 #include <yarp/manager/execstate.h>
 #include <yarp/manager/executable.h>
-
 #include <yarp/os/Time.h>
 
 #include <iostream>
@@ -54,27 +53,27 @@ Suspended::~Suspended()
 {
 }
 
-void Suspended::start(void)
+void Suspended::start()
 {
     castEvent(EventFactory::startEvent);
 }
 
-void Suspended::stop(void)
+void Suspended::stop()
 {
     executable->getEvent()->onExecutableStop(executable);
 }
 
-void Suspended::kill(void)
+void Suspended::kill()
 {
     castEvent(EventFactory::killEvent);
 }
 
-void Suspended::moduleFailed(void) { /* do nothing*/ }
+void Suspended::moduleFailed() { /* do nothing*/ }
 
 
 // refresh() from Suspended can be used for recovering from
 // unexptected termination of manager.
-void Suspended::refresh(void)
+void Suspended::refresh()
 {
     ErrorLogger* logger = ErrorLogger::Instance();
     int ret = executable->getBroker()->running();
@@ -103,7 +102,7 @@ Ready::~Ready()
 {
 }
 
-bool Ready::checkPriorityPorts(void)
+bool Ready::checkPriorityPorts()
 {
     CnnIterator itr;
     for(itr=executable->getConnections().begin();
@@ -139,7 +138,7 @@ bool Ready::checkResources(bool silent)
             const char* reply = executable->getBroker()->requestRpc((*itr).getPort(),
                                                                     (*itr).getRequest(),
                                                                     (*itr).getTimeout());
-            if(reply == NULL) {
+            if(reply == nullptr) {
                 allOK = false;
                 OSTRINGSTREAM msg;
                 msg<<"cannot request resource "<<(*itr).getPort()<<" for "<<(*itr).getRequest();
@@ -169,13 +168,13 @@ bool Ready::checkResources(bool silent)
 
 bool Ready::timeout(double base, double timeout)
 {
-    yarp::os::Time::delay(1.0);
-    if((yarp::os::Time::now()-base) > timeout)
+    yarp::os::SystemClock::delaySystem(1.0);
+    if((yarp::os::SystemClock::nowSystem()-base) > timeout)
         return true;
     return false;
 }
 
-void Ready::startModule(void)
+void Ready::startModule()
 {
 
     ErrorLogger* logger = ErrorLogger::Instance();
@@ -186,7 +185,7 @@ void Ready::startModule(void)
         bAborted = false;
         while(!checkPriorityPorts())
         {
-            yarp::os::Time::delay(1.0);
+            yarp::os::SystemClock::delaySystem(1.0);
             if(bAborted) return;
         }
     }
@@ -202,7 +201,7 @@ void Ready::startModule(void)
     }
 
     // waiting for resources
-    double base = yarp::os::Time::now();
+    double base = yarp::os::SystemClock::nowSystem();
     while(!checkResources()) {
         if(bAborted) return;
 
@@ -221,6 +220,11 @@ void Ready::startModule(void)
         }
     }
 
+    if (executable->getPostExecWait() > 0)
+    {
+        yarp::os::SystemClock::delaySystem(executable->getPostExecWait());
+    }
+    executable->restoreOriginalPostExecWait();
     if(!executable->getBroker()->start())
     {
         OSTRINGSTREAM msg;
@@ -234,20 +238,19 @@ void Ready::startModule(void)
     }
     else
     {
-        yarp::os::Time::delay(executable->getPostExecWait());
         castEvent(EventFactory::startModuleEventOk);
         executable->getEvent()->onExecutableStart(executable);
     }
 }
 
 
-void Ready::kill(void)
+void Ready::kill()
 {
     bAborted = true;
     castEvent(EventFactory::killEvent);
 }
 
-void Ready::moduleFailed(void) { /* do nothing */ }
+void Ready::moduleFailed() { /* do nothing */ }
 
 
 /**
@@ -263,7 +266,7 @@ Connecting::~Connecting()
 {
 }
 
-bool Connecting::checkNormalPorts(void)
+bool Connecting::checkNormalPorts()
 {
     CnnIterator itr;
     for(itr=executable->getConnections().begin();
@@ -277,7 +280,7 @@ bool Connecting::checkNormalPorts(void)
 }
 
 
-void Connecting::connectAllPorts(void)
+void Connecting::connectAllPorts()
 {
     ErrorLogger* logger = ErrorLogger::Instance();
     if(executable->autoConnect())
@@ -288,7 +291,7 @@ void Connecting::connectAllPorts(void)
         bAborted = false;
         while(!checkNormalPorts())
         {
-            yarp::os::Time::delay(1.0);
+            yarp::os::SystemClock::delaySystem(1.0);
             if(bAborted) return;
         }
 
@@ -313,7 +316,7 @@ void Connecting::connectAllPorts(void)
     castEvent(EventFactory::connectAllPortsEventOk);
 }
 
-void Connecting::refresh(void)
+void Connecting::refresh()
 {
     ErrorLogger* logger = ErrorLogger::Instance();
     int ret = executable->getBroker()->running();
@@ -323,13 +326,13 @@ void Connecting::refresh(void)
         logger->addError(executable->getBroker()->error());
 }
 
-void Connecting::kill(void)
+void Connecting::kill()
 {
     bAborted = true;
     castEvent(EventFactory::killEvent);
 }
 
-void Connecting::moduleFailed(void)
+void Connecting::moduleFailed()
 {
     bAborted = true;
     castEvent(EventFactory::failedEvent);
@@ -351,7 +354,7 @@ Running::~Running()
 {
 }
 
-void Running::refresh(void)
+void Running::refresh()
 {
     ErrorLogger* logger = ErrorLogger::Instance();
     int ret = executable->getBroker()->running();
@@ -362,23 +365,23 @@ void Running::refresh(void)
 
 }
 
-void Running::start(void)
+void Running::start()
 {
     executable->getEvent()->onExecutableStart(executable);
 }
 
 
-void Running::stop(void)
+void Running::stop()
 {
     castEvent(EventFactory::stopEvent);
 }
 
-void Running::kill(void)
+void Running::kill()
 {
     castEvent(EventFactory::killEvent);
 }
 
-void Running::moduleFailed(void)
+void Running::moduleFailed()
 {
     castEvent(EventFactory::failedEvent);
     executable->getEvent()->onExecutableFailed(executable);
@@ -404,11 +407,14 @@ Dying::~Dying()
 {
 }
 
-
-void Dying::stopModule(void)
+void Dying::stopModule()
 {
     ErrorLogger* logger = ErrorLogger::Instance();
-    yarp::os::Time::delay(executable->getPostStopWait());
+    if (executable->getPostStopWait() > 0)
+    {
+        yarp::os::SystemClock::delaySystem(executable->getPostStopWait());
+    }
+    executable->restoreOriginalPostStopWait();
     if(!executable->getBroker()->stop())
     {
         OSTRINGSTREAM msg;
@@ -426,7 +432,7 @@ void Dying::stopModule(void)
     }
 }
 
-void Dying::killModule(void)
+void Dying::killModule()
 {
     ErrorLogger* logger = ErrorLogger::Instance();
     if(!executable->getBroker()->kill())
@@ -447,7 +453,7 @@ void Dying::killModule(void)
 }
 
 
-void Dying::disconnectAllPorts(void)
+void Dying::disconnectAllPorts()
 {
     ErrorLogger* logger = ErrorLogger::Instance();
     if(executable->autoConnect())
@@ -471,7 +477,7 @@ void Dying::disconnectAllPorts(void)
     // We do not need to handle event disconnectAllPortsEventOk
 }
 
-void Dying::refresh(void)
+void Dying::refresh()
 {
     ErrorLogger* logger = ErrorLogger::Instance();
     int ret = executable->getBroker()->running();
@@ -482,9 +488,9 @@ void Dying::refresh(void)
 
 }
 
-void Dying::kill(void) { /* do nothing */ }
+void Dying::kill() { /* do nothing */ }
 
-void Dying::moduleFailed(void)
+void Dying::moduleFailed()
 {
     // Notice that we should not call onExecutableFailed
     // in DYING state!
@@ -509,25 +515,25 @@ Dead::~Dead()
 {
 }
 
-void Dead::start(void)
+void Dead::start()
 {
     castEvent(EventFactory::startEvent);
 }
 
-void Dead::stop(void)
+void Dead::stop()
 {
     executable->getEvent()->onExecutableStop(executable);
 }
 
 
-void Dead::kill(void)
+void Dead::kill()
 {
     castEvent(EventFactory::killEvent);
 }
 
 // refresh() from Dead can be used for recovering from
 // unexpect termination of manager.
-void Dead::refresh(void)
+void Dead::refresh()
 {
     ErrorLogger* logger = ErrorLogger::Instance();
     int ret = executable->getBroker()->running();
@@ -541,7 +547,7 @@ void Dead::refresh(void)
 }
 
 
-void Dead::moduleFailed(void) { /* do nothing*/ }
+void Dead::moduleFailed() { /* do nothing*/ }
 
 
 
@@ -620,7 +626,7 @@ ExecMachine::~ExecMachine()
     delete dead;
 }
 
-void ExecMachine::refresh(void)
+void ExecMachine::refresh()
 {
     ITransition* tr = dynamic_cast<ITransition*>(currentState());
     if (tr) {
@@ -628,7 +634,7 @@ void ExecMachine::refresh(void)
     }
 }
 
-void ExecMachine::start(void)
+void ExecMachine::start()
 {
     ITransition* tr = dynamic_cast<ITransition*>(currentState());
     if (tr) {
@@ -636,7 +642,7 @@ void ExecMachine::start(void)
     }
 }
 
-void ExecMachine::stop(void)
+void ExecMachine::stop()
 {
     ITransition* tr = dynamic_cast<ITransition*>(currentState());
     if (tr) {
@@ -644,7 +650,7 @@ void ExecMachine::stop(void)
     }
 }
 
-void ExecMachine::kill(void)
+void ExecMachine::kill()
 {
     ITransition* tr = dynamic_cast<ITransition*>(currentState());
     if (tr) {
@@ -652,7 +658,7 @@ void ExecMachine::kill(void)
     }
 }
 
-void ExecMachine::startModule(void)
+void ExecMachine::startModule()
 {
     ITransition* tr = dynamic_cast<ITransition*>(currentState());
     if (tr) {
@@ -660,7 +666,7 @@ void ExecMachine::startModule(void)
     }
 }
 
-void ExecMachine::stopModule(void)
+void ExecMachine::stopModule()
 {
     ITransition* tr = dynamic_cast<ITransition*>(currentState());
     if (tr) {
@@ -668,7 +674,7 @@ void ExecMachine::stopModule(void)
     }
 }
 
-void ExecMachine::killModule(void)
+void ExecMachine::killModule()
 {
     ITransition* tr = dynamic_cast<ITransition*>(currentState());
     if (tr) {
@@ -676,7 +682,7 @@ void ExecMachine::killModule(void)
     }
 }
 
-void ExecMachine::connectAllPorts(void)
+void ExecMachine::connectAllPorts()
 {
     ITransition* tr = dynamic_cast<ITransition*>(currentState());
     if (tr) {
@@ -684,7 +690,7 @@ void ExecMachine::connectAllPorts(void)
     }
 }
 
-void ExecMachine::disconnectAllPorts(void)
+void ExecMachine::disconnectAllPorts()
 {
     ITransition* tr = dynamic_cast<ITransition*>(currentState());
     if (tr) {
@@ -692,7 +698,7 @@ void ExecMachine::disconnectAllPorts(void)
     }
 }
 
-void ExecMachine::moduleFailed(void)
+void ExecMachine::moduleFailed()
 {
     ITransition* tr = dynamic_cast<ITransition*>(currentState());
     if (tr) {

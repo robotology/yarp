@@ -21,18 +21,6 @@ namespace yarp {
     }
 }
 
-#ifndef YARP_NO_DEPRECATED // since YARP 2.3.64
-// Make devices in a library available for use via yarp::dev::PolyDriver
-#define YARP_DECLARE_DEVICES(name) \
-  YARP_COMPILER_DEPRECATED_WARNING(YARP_DECLARE_DEVICES is deprecated. Use YARP_DECLARE_PLUGINS instead.) \
-  YARP_DECLARE_PLUGINS(name)
-
-#define YARP_REGISTER_DEVICES(name) \
-  YARP_COMPILER_DEPRECATED_WARNING(YARP_REGISTER_DEVICES is deprecated. Use YARP_REGISTER_DEVICES instead.) \
-  YARP_REGISTER_PLUGINS(name)
-#endif // YARP_NO_DEPRECATED
-
-
 /**
  * A base class for factories that create driver objects.
  * The DriverCreatorOf class is probably what you want.
@@ -113,23 +101,23 @@ public:
     {
     }
 
-    virtual yarp::os::ConstString toString() YARP_OVERRIDE {
+    virtual yarp::os::ConstString toString() override {
         return desc;
     }
 
-    virtual yarp::os::ConstString getName() YARP_OVERRIDE {
+    virtual yarp::os::ConstString getName() override {
         return desc;
     }
 
-    virtual yarp::os::ConstString getWrapper() YARP_OVERRIDE {
+    virtual yarp::os::ConstString getWrapper() override {
         return wrap;
     }
 
-    virtual yarp::os::ConstString getCode() YARP_OVERRIDE {
+    virtual yarp::os::ConstString getCode() override {
         return code;
     }
 
-    virtual DeviceDriver *create() YARP_OVERRIDE {
+    virtual DeviceDriver *create() override {
         return new T;
     }
 };
@@ -149,23 +137,23 @@ public:
     {
     }
 
-    virtual yarp::os::ConstString toString() YARP_OVERRIDE {
+    virtual yarp::os::ConstString toString() override {
         return desc;
     }
 
-    virtual yarp::os::ConstString getName() YARP_OVERRIDE {
+    virtual yarp::os::ConstString getName() override {
         return desc;
     }
 
-    virtual yarp::os::ConstString getWrapper() YARP_OVERRIDE {
+    virtual yarp::os::ConstString getWrapper() override {
         return wrap;
     }
 
-    virtual yarp::os::ConstString getCode() YARP_OVERRIDE {
+    virtual yarp::os::ConstString getCode() override {
         return code;
     }
 
-    virtual DeviceDriver *create() YARP_OVERRIDE;
+    virtual DeviceDriver *create() override;
 };
 
 

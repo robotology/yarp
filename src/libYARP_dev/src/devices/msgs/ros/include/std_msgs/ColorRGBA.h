@@ -5,7 +5,7 @@
 #include <std_msgs_ColorRGBA.h>
 
 namespace std_msgs {
-  typedef std_msgs_ColorRGBA ColorRGBA;
+    typedef std_msgs_ColorRGBA ColorRGBA;
 }
 
 #endif

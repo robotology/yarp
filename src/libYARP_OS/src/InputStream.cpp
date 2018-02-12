@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2013 iCub Facility
+ * Copyright (C) 2013 Istituto Italiano di Tecnologia (IIT)
  * Authors: Paul Fitzpatrick
  * CopyPolicy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
  */
@@ -15,13 +15,13 @@ ConstString InputStream::readLine(int terminal, bool *success) {
     ConstString buf("");
     bool done = false;
     int esc = 0;
-    if (success != YARP_NULLPTR) {
+    if (success != nullptr) {
         *success = true;
     }
     while (!done) {
         int v = read();
         if (v<0) {
-            if (success != YARP_NULLPTR) {
+            if (success != nullptr) {
                 *success = false;
             }
             return "";

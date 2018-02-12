@@ -18,14 +18,14 @@ using namespace std;
 
 
 StreamingMessagesParser::StreamingMessagesParser() :
-        stream_IPosCtrl(YARP_NULLPTR),
-        stream_IPosCtrl2(YARP_NULLPTR),
-        stream_IPosDirect(YARP_NULLPTR),
-        stream_IVel(YARP_NULLPTR),
-        stream_IVel2(YARP_NULLPTR),
-        stream_ITorque(YARP_NULLPTR),
-        stream_IPWM(YARP_NULLPTR),
-        stream_ICurrent(YARP_NULLPTR),
+        stream_IPosCtrl(nullptr),
+        stream_IPosCtrl2(nullptr),
+        stream_IPosDirect(nullptr),
+        stream_IVel(nullptr),
+        stream_IVel2(nullptr),
+        stream_ITorque(nullptr),
+        stream_IPWM(nullptr),
+        stream_ICurrent(nullptr),
         stream_nJoints(0)
 {
 }
@@ -68,7 +68,7 @@ void StreamingMessagesParser::onRead(CommandMessage& v)
         yError("Received command vector with number of elements bigger than axis controlled by this wrapper (cmd: %s requested jnts: %d received jnts: %d)\n",str.c_str(),stream_nJoints,(int)cmdVector.size());
         return;
     }
-    if (cmdVector.data()==0)
+    if (cmdVector.data()==nullptr)
     {
          yError("Received null command vector");
          return;

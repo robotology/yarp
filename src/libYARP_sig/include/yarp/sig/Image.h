@@ -12,6 +12,7 @@
 #include <yarp/os/Vocab.h>
 #include <yarp/os/NetUint16.h>
 #include <yarp/sig/api.h>
+#include <map>
 
 namespace yarp {
     /**
@@ -35,6 +36,38 @@ namespace yarp {
     }
 }
 
+// the image types partially reflect the IPL image types.
+// There must be a pixel type for every ImageType entry.
+enum YarpVocabPixelTypesEnum
+{
+    VOCAB_PIXEL_INVALID = 0,
+    VOCAB_PIXEL_MONO = VOCAB4('m','o','n','o'),
+    VOCAB_PIXEL_MONO16 = VOCAB4('m','o','1','6'),
+    VOCAB_PIXEL_RGB = VOCAB3('r','g','b'),
+    VOCAB_PIXEL_RGBA = VOCAB4('r','g','b','a'),
+    VOCAB_PIXEL_BGRA = VOCAB4(98/*'b'*/,'g','r','a'), /* SWIG BUG */
+    VOCAB_PIXEL_INT = VOCAB3('i','n','t'),
+    VOCAB_PIXEL_HSV = VOCAB3('h','s','v'),
+    VOCAB_PIXEL_BGR = VOCAB3(98/*'b'*/,'g','r'), /* SWIG BUG */
+    VOCAB_PIXEL_MONO_SIGNED = VOCAB4('s','i','g','n'),
+    VOCAB_PIXEL_RGB_SIGNED = VOCAB4('r','g','b','-'),
+    VOCAB_PIXEL_RGB_INT = VOCAB4('r','g','b','i'),
+    VOCAB_PIXEL_MONO_FLOAT = VOCAB3('d','e','c'),
+    VOCAB_PIXEL_RGB_FLOAT = VOCAB4('r','g','b','.'),
+    VOCAB_PIXEL_HSV_FLOAT = VOCAB4('h','s','v','.'),
+    VOCAB_PIXEL_ENCODING_BAYER_GRBG8 = VOCAB4('g', 'r', 'b', 'g'),   //grbg8
+    VOCAB_PIXEL_ENCODING_BAYER_GRBG16 = VOCAB4('g', 'r', '1', '6'),  //grbg16
+    VOCAB_PIXEL_ENCODING_BAYER_BGGR8 = VOCAB4(98/*'b'*/, 'g', 'g', 'r'),     //bggr8
+    VOCAB_PIXEL_ENCODING_BAYER_BGGR16 = VOCAB4(98/*'b'*/, 'g', '1', '6'),  //bggr16
+    VOCAB_PIXEL_ENCODING_BAYER_GBRG8 = VOCAB4('g', 'b', 'r', 'g'),  //gbrg8
+    VOCAB_PIXEL_ENCODING_BAYER_GBRG16 = VOCAB4('g', 'b', '1', '6'),  //gbrg16
+    VOCAB_PIXEL_ENCODING_BAYER_RGGB8 = -VOCAB4('r', 'g', 'g', 'b'),   //rggb8
+    VOCAB_PIXEL_ENCODING_BAYER_RGGB16 = VOCAB4('r', 'g', '1', '6'),  //rggb16
+    VOCAB_PIXEL_YUV_420 = VOCAB4('y','u','v','a'),
+    VOCAB_PIXEL_YUV_444 = VOCAB4('y','u','v','b'),
+    VOCAB_PIXEL_YUV_422 = VOCAB4('y','u','v','c'),
+    VOCAB_PIXEL_YUV_411 = VOCAB4('y','u','v','d')
+};
 
 /**
  * \ingroup sig_class
@@ -234,7 +267,7 @@ public:
      * Returns IPL/OpenCV view of image, if possible.
      * Not possible if the image is the wrong size, with no padding.
      * This method is currently not well documented.
-     * @return pointer to an IplImage structure
+     * @return pointer to an IplImage structure or nullptr
      */
     void *getIplImage();
 
@@ -242,7 +275,7 @@ public:
      * Returns IPL/OpenCV view of image, if possible.
      * Not possible if the image is the wrong size, with no padding.
      * This method is currently not well documented.
-     * @return pointer to an IplImage structure
+     * @return pointer to an IplImage structure or nullptr
      */
     const void *getIplImage() const;
 
@@ -266,13 +299,13 @@ public:
      * Read image from a connection.
      * @return true iff image was read correctly
      */
-    virtual bool read(yarp::os::ConnectionReader& connection) YARP_OVERRIDE;
+    virtual bool read(yarp::os::ConnectionReader& connection) override;
 
     /**
      * Write image to a connection.
      * @return true iff image was written correctly
      */
-    virtual bool write(yarp::os::ConnectionWriter& connection) YARP_OVERRIDE;
+    virtual bool write(yarp::os::ConnectionWriter& connection) override;
 
     void setQuantum(int imgQuantum);
 
@@ -305,7 +338,7 @@ public:
         return data;
     }
 
-    virtual yarp::os::Type getReadType() YARP_OVERRIDE {
+    virtual yarp::os::Type getReadType() override {
         return yarp::os::Type::byName("yarp/image");
     }
 
@@ -313,11 +346,14 @@ protected:
 
     void setPixelCode(int imgPixelCode);
 
+    //pixelCode and pixelsSize should be linked together consistently.
+    //since setPixelCode set also the corresponding pixelSize setPixelSize should not be used at all except for
+    //setting an arbitrary pixelSize with no corresponding pixel code (in that case the pixelCode will be set to -pixelSize).
     void setPixelSize(int imgPixelSize);
 
 
 private:
-
+    static const std::map<YarpVocabPixelTypesEnum, unsigned int> pixelCode2Size;
     int imgWidth, imgHeight, imgPixelSize, imgRowSize, imgPixelCode, imgQuantum;
     bool topIsLow;
 
@@ -345,8 +381,12 @@ public:
         Image::setPixelCode(imgPixelCode);
     }
 
+
     void setPixelSize(int imgPixelSize) {
         Image::setPixelSize(imgPixelSize);
+    //pixelCode and pixelsSize should be linked together consistently.
+    //since setPixelCode set also the corresponding pixelSize setPixelSize should not be used at all except for
+    //setting an arbitrary pixelSize with no corresponding pixel code (in that case the pixelCode will be set to -pixelSize).
     }
 
     void setQuantum(int imgQuantum) {
@@ -355,41 +395,6 @@ public:
 
 private:
 };
-
-
-
-// the image types partially reflect the IPL image types.
-// There must be a pixel type for every ImageType entry.
-enum YarpVocabPixelTypesEnum
-    {
-        VOCAB_PIXEL_INVALID = 0,
-        VOCAB_PIXEL_MONO = VOCAB4('m','o','n','o'),
-        VOCAB_PIXEL_MONO16 = VOCAB4('m','o','1','6'),
-        VOCAB_PIXEL_RGB = VOCAB3('r','g','b'),
-        VOCAB_PIXEL_RGBA = VOCAB4('r','g','b','a'),
-        VOCAB_PIXEL_BGRA = VOCAB4(98/*'b'*/,'g','r','a'), /* SWIG BUG */
-        VOCAB_PIXEL_INT = VOCAB3('i','n','t'),
-        VOCAB_PIXEL_HSV = VOCAB3('h','s','v'),
-        VOCAB_PIXEL_BGR = VOCAB3(98/*'b'*/,'g','r'), /* SWIG BUG */
-        VOCAB_PIXEL_MONO_SIGNED = VOCAB4('s','i','g','n'),
-        VOCAB_PIXEL_RGB_SIGNED = VOCAB4('r','g','b','-'),
-        VOCAB_PIXEL_RGB_INT = VOCAB4('r','g','b','i'),
-        VOCAB_PIXEL_MONO_FLOAT = VOCAB3('d','e','c'),
-        VOCAB_PIXEL_RGB_FLOAT = VOCAB4('r','g','b','.'),
-        VOCAB_PIXEL_HSV_FLOAT = VOCAB4('h','s','v','.'),
-        VOCAB_PIXEL_ENCODING_BAYER_GRBG8 = VOCAB4('g', 'r', 'b', 'g'),   //grbg8
-        VOCAB_PIXEL_ENCODING_BAYER_GRBG16 = VOCAB4('g', 'r', '1', '6'),  //grbg16
-        VOCAB_PIXEL_ENCODING_BAYER_BGGR8 = VOCAB4(98/*'b'*/, 'g', 'g', 'r'),     //bggr8
-        VOCAB_PIXEL_ENCODING_BAYER_BGGR16 = VOCAB4(98/*'b'*/, 'g', '1', '6'),  //bggr16
-        VOCAB_PIXEL_ENCODING_BAYER_GBRG8 = VOCAB4('g', 'b', 'r', 'g'),  //gbrg8
-        VOCAB_PIXEL_ENCODING_BAYER_GBRG16 = VOCAB4('g', 'b', '1', '6'),  //gbrg16
-        VOCAB_PIXEL_ENCODING_BAYER_RGGB8 = -VOCAB4('r', 'g', 'g', 'b'),   //rggb8
-        VOCAB_PIXEL_ENCODING_BAYER_RGGB16 = VOCAB4('r', 'g', '1', '6'),  //rggb16
-        VOCAB_PIXEL_YUV_420 = VOCAB4('y','u','v','a'),
-        VOCAB_PIXEL_YUV_444 = VOCAB4('y','u','v','b'),
-        VOCAB_PIXEL_YUV_422 = VOCAB4('y','u','v','c'),
-        VOCAB_PIXEL_YUV_411 = VOCAB4('y','u','v','d')
-    };
 
 
 
@@ -555,21 +560,22 @@ class yarp::sig::ImageOf : public Image
 private:
     T nullPixel;
 public:
+    ImageOf() : Image() {
+        setPixelCode(getPixelCode());
+    }
 
-    virtual int getPixelSize() const {
+    virtual int getPixelSize() const override {
         return sizeof(T);
     }
 
-    virtual int getPixelCode() const {
-        return -((int) sizeof(T));
-    }
+    virtual int getPixelCode() const override;
 
     inline T& pixel(int x, int y) {
-        return *((T *)(getPixelAddress(x,y)));
+        return *(reinterpret_cast<T*>(getPixelAddress(x,y)));
     }
 
     inline T& pixel(int x, int y) const {
-        return *((T *)(getPixelAddress(x,y)));
+        return *(reinterpret_cast<T*>(getPixelAddress(x,y)));
     }
 
     inline const T& operator()(int x, int y) const {
@@ -582,85 +588,94 @@ public:
 
     inline T& safePixel(int x, int y) {
         if (!isPixel(x,y)) { return nullPixel; }
-        return *((T *)(getPixelAddress(x,y)));
+        return *(reinterpret_cast<T*>(getPixelAddress(x,y)));
     }
 
     inline const T& safePixel(int x, int y) const {
         if (!isPixel(x,y)) { return nullPixel; }
-        return *((T *)(getPixelAddress(x,y)));
+        return *(reinterpret_cast<T*>(getPixelAddress(x,y)));
     }
 };
 
 namespace yarp {
-    namespace sig {
+namespace sig {
 
-#define YARPIMAGE_ASSOCIATE_TAG(tag,T) \
-template<> \
-class YARP_sig_API ImageOf<T> : public Image \
-{ \
-private: \
-  T nullPixel; \
-public: \
-\
-  virtual int getPixelSize() const YARP_OVERRIDE { \
-    return sizeof(T); \
-  } \
-\
-  virtual int getPixelCode() const YARP_OVERRIDE { \
-    return tag; \
-  } \
-\
-  inline T& pixel(int x, int y) { \
-    return *((T *)(getPixelAddress(x,y))); \
-  } \
-\
-  inline const T& pixel(int x, int y) const { \
-    return *((T *)(getPixelAddress(x,y))); \
-  } \
-\
-  inline T& operator()(int x, int y) { \
-    return pixel(x,y); \
-  } \
-\
-  inline const T& operator()(int x, int y) const { \
-    return pixel(x,y); \
-  } \
-\
-  inline T& safePixel(int x, int y) { \
-    if (!isPixel(x,y)) { return nullPixel; } \
-    return *((T *)(getPixelAddress(x,y))); \
-  } \
-\
-  inline const T& safePixel(int x, int y) const { \
-    if (!isPixel(x,y)) { return nullPixel; } \
-    return *((T *)(getPixelAddress(x,y))); \
-  } \
-};
-
-
-            YARPIMAGE_ASSOCIATE_TAG(VOCAB_PIXEL_MONO,PixelMono)
-            YARPIMAGE_ASSOCIATE_TAG(VOCAB_PIXEL_MONO16,PixelMono16)
-            YARPIMAGE_ASSOCIATE_TAG(VOCAB_PIXEL_RGB,PixelRgb)
-            YARPIMAGE_ASSOCIATE_TAG(VOCAB_PIXEL_RGBA,PixelRgba)
-            YARPIMAGE_ASSOCIATE_TAG(VOCAB_PIXEL_HSV,PixelHsv)
-            YARPIMAGE_ASSOCIATE_TAG(VOCAB_PIXEL_BGR,PixelBgr)
-            YARPIMAGE_ASSOCIATE_TAG(VOCAB_PIXEL_BGRA,PixelBgra)
-            YARPIMAGE_ASSOCIATE_TAG(VOCAB_PIXEL_MONO_SIGNED,PixelMonoSigned)
-            YARPIMAGE_ASSOCIATE_TAG(VOCAB_PIXEL_RGB_SIGNED,PixelRgbSigned)
-            YARPIMAGE_ASSOCIATE_TAG(VOCAB_PIXEL_MONO_FLOAT,PixelFloat)
-            YARPIMAGE_ASSOCIATE_TAG(VOCAB_PIXEL_RGB_FLOAT,PixelRgbFloat)
-            YARPIMAGE_ASSOCIATE_TAG(VOCAB_PIXEL_RGB_INT,PixelRgbInt)
-            YARPIMAGE_ASSOCIATE_TAG(VOCAB_PIXEL_HSV_FLOAT,PixelHsvFloat)
-            YARPIMAGE_ASSOCIATE_TAG(VOCAB_PIXEL_INT,PixelInt)
-
-            }
+template<>
+inline int ImageOf<yarp::sig::PixelMono>::getPixelCode() const {
+    return VOCAB_PIXEL_MONO;
 }
 
-#undef YARPIMAGE_ASSOCIATE_TAG
+template<>
+inline int ImageOf<yarp::sig::PixelMono16>::getPixelCode() const {
+    return VOCAB_PIXEL_MONO16;
+}
 
+template<>
+inline int ImageOf<yarp::sig::PixelRgb>::getPixelCode() const {
+    return VOCAB_PIXEL_RGB;
+}
 
-#ifndef YARP_IMAGE_HEADER_CONTROL
-#define YARP_IMAGE_HEADER_CONTROL
-#endif
+template<>
+inline int ImageOf<yarp::sig::PixelRgba>::getPixelCode() const {
+    return VOCAB_PIXEL_RGBA;
+}
+
+template<>
+inline int ImageOf<yarp::sig::PixelHsv>::getPixelCode() const {
+    return VOCAB_PIXEL_HSV;
+}
+
+template<>
+inline int ImageOf<yarp::sig::PixelBgr>::getPixelCode() const {
+    return VOCAB_PIXEL_BGR;
+}
+
+template<>
+inline int ImageOf<yarp::sig::PixelBgra>::getPixelCode() const {
+    return VOCAB_PIXEL_BGRA;
+}
+
+template<>
+inline int ImageOf<yarp::sig::PixelMonoSigned>::getPixelCode() const {
+    return VOCAB_PIXEL_MONO_SIGNED;
+}
+
+template<>
+inline int ImageOf<yarp::sig::PixelRgbSigned>::getPixelCode() const {
+    return VOCAB_PIXEL_RGB_SIGNED;
+}
+
+template<>
+inline int ImageOf<yarp::sig::PixelFloat>::getPixelCode() const {
+    return VOCAB_PIXEL_MONO_FLOAT;
+}
+
+template<>
+inline int ImageOf<yarp::sig::PixelRgbFloat>::getPixelCode() const {
+    return VOCAB_PIXEL_RGB_FLOAT;
+}
+
+template<>
+inline int ImageOf<yarp::sig::PixelRgbInt>::getPixelCode() const {
+    return VOCAB_PIXEL_RGB_INT;
+}
+
+template<>
+inline int ImageOf<yarp::sig::PixelHsvFloat>::getPixelCode() const {
+    return VOCAB_PIXEL_HSV_FLOAT;
+}
+
+template<>
+inline int ImageOf<yarp::sig::PixelInt>::getPixelCode() const {
+    return VOCAB_PIXEL_INT;
+}
+
+template<typename T>
+inline int ImageOf<T>::getPixelCode() const {
+    return -((int) sizeof(T));
+}
+
+} // namespace sig
+} // namespace yarp
 
 #endif // YARP_SIG_IMAGE_H

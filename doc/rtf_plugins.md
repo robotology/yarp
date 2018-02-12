@@ -20,4 +20,4 @@ Available plugins
    The xml file of the application is passed throught the parameter `--fixture`.
 - `yarpplugin`: plugin that allows you to check the availability of carriers (`--carriers`), portmonitor(`--portmonitors`),
    devices(`--devices`) and plugins (`--plugins`) in the machine on which the test is running.
-
+- `yarpserver`: plugin that allows you to launch a `yarpserver` inside the `TestSuite`.

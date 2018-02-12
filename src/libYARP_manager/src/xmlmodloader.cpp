@@ -1,6 +1,6 @@
 /*
  *  Yarp Modules Manager
- *  Copyright: (C) 2011 Robotics, Brain and Cognitive Sciences - Italian Institute of Technology (IIT)
+ *  Copyright: (C) 2011 Istituto Italiano di Tecnologia (IIT)
  *  Authors: Ali Paikan <ali.paikan@iit.it>
  *
  *  Copy Policy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
@@ -66,7 +66,7 @@ XmlModLoader::~XmlModLoader()
 }
 
 
-bool XmlModLoader::init(void)
+bool XmlModLoader::init()
 {
     module.clear();
     fileNames.clear();
@@ -89,7 +89,7 @@ bool XmlModLoader::init(void)
 
     DIR *dir;
     struct dirent *entry;
-    if ((dir = opendir(strPath.c_str())) == NULL)
+    if ((dir = opendir(strPath.c_str())) == nullptr)
     {
         OSTRINGSTREAM err;
         err<<"Cannot access "<<strPath;
@@ -123,29 +123,29 @@ bool XmlModLoader::init(void)
 }
 
 
-void XmlModLoader::reset(void)
+void XmlModLoader::reset()
 {
     fini();
     init();
 }
 
 
-void XmlModLoader::fini(void)
+void XmlModLoader::fini()
 {
     fileNames.clear();
     module.clear();
 }
 
 
-Module* XmlModLoader::getNextModule(void)
+Module* XmlModLoader::getNextModule()
 {
     if(strName.empty())
     {
-        Module* mod = NULL;
+        Module* mod = nullptr;
         while(!mod)
         {
             if(fileNames.empty())
-                return NULL;
+                return nullptr;
 
             string fname = fileNames.back();
             fileNames.pop_back();
@@ -166,7 +166,7 @@ Module* XmlModLoader::getNextModule(void)
                 return mod;
          }
     }
-    return NULL;
+    return nullptr;
 }
 
 
@@ -184,7 +184,7 @@ Module* XmlModLoader::parsXml(const char* szFile)
            <<doc.ErrorRow()<<": ";
         err<<doc.ErrorDesc();
         logger->addError(err);
-        return NULL;
+        return nullptr;
     }
 
     /* retrieving root module */
@@ -195,7 +195,7 @@ Module* XmlModLoader::parsXml(const char* szFile)
         err<<"Syntax error while loading "<<szFile<<" . ";
         err<<"No root element.";
         logger->addError(err);
-        return NULL;
+        return nullptr;
     }
 
     if(!compareString(root->Value(), "module"))
@@ -205,7 +205,7 @@ Module* XmlModLoader::parsXml(const char* szFile)
         msg<<szFile<<" is not a module descriptor file.";
         logger->addWarning(msg);
         */
-        return NULL;
+        return nullptr;
     }
 
     /* retrieving name */

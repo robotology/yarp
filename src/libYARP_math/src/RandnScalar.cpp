@@ -41,7 +41,7 @@ RandnScalar::~RandnScalar()
 void RandnScalar::init()
 {
     // initialize with time
-    int t=(int)time(0);
+    int t=(int)time(nullptr);
     RandnScalar::init(t);
 }
 

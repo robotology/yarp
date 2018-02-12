@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2015-2017  iCub Facility, Istituto Italiano di Tecnologia
+ * Copyright (C) 2015-2017 Istituto Italiano di Tecnologia (IIT)
  * Author: Daniele E. Domenichelli <daniele.domenichelli@iit.it>
  * CopyPolicy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
  */
@@ -19,7 +19,7 @@ class TextureStatic;
 namespace yarp { namespace dev { class PolyDriver; } }
 namespace yarp { namespace dev { class IBattery; } }
 
-class TextureBattery : public yarp::os::RateThread
+class TextureBattery : public yarp::os::SystemRateThread
 {
 public:
     enum BatteryStatus {

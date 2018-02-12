@@ -1,6 +1,6 @@
 /*
  *  YARP Modules Manager
- *  Copyright: (C) 2014 iCub Facility - Italian Institute of Technology (IIT)
+ *  Copyright: (C) 2014 Istituto Italiano di Tecnologia (IIT)
  *  Authors: Ali Paikan <ali.paikan@iit.it>
  *
  *  Copy Policy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
@@ -17,9 +17,9 @@ using namespace yarp::manager;
 
 
 SafeManager::SafeManager() :
-    m_pConfig(YARP_NULLPTR),
+    m_pConfig(nullptr),
     action(MNOTHING),
-    eventReceiver(YARP_NULLPTR),
+    eventReceiver(nullptr),
     busyAction(false)
 {}
 
@@ -28,7 +28,7 @@ SafeManager::~SafeManager() { }
 void SafeManager::close() {
     yarp::os::Thread::stop();
     WAIT_SEMAPHOR();
-    eventReceiver = NULL;
+    eventReceiver = nullptr;
     POST_SEMAPHOR();
 }
 
@@ -82,7 +82,7 @@ void SafeManager::threadRelease()
 {
 }
 
-bool SafeManager::busy(void) {
+bool SafeManager::busy() {
     bool ret;
     WAIT_SEMAPHOR();
     ret =  busyAction;
@@ -101,18 +101,132 @@ void SafeManager::run()
 
     switch(local_action){
     case MRUN:{
-            for(unsigned int i=0; i<local_modIds.size(); i++)
+            std::vector<double> waitVec;
+            for (unsigned int i=0; i<local_modIds.size(); i++)
+            {
+                Executable * exec = Manager::getExecutableById(local_modIds[i]);
+                if (exec)
+                {
+                    waitVec.push_back(exec->getPostExecWait());
+                }
+            }
+            double minWait=*std::min_element(waitVec.begin(), waitVec.end());
+            for (unsigned int i=0; i<local_modIds.size(); i++)
+            {
+                Executable * exec = Manager::getExecutableById(local_modIds[i]);
+                if (exec)
+                {
+                    exec->setPostExecWait(exec->getPostExecWait() - minWait);
+                }
                 Manager::run(local_modIds[i], true);
+            }
+
+            /*
+            for(unsigned int i=0; i<local_modIds.size(); i++)
+                Manager::waitingModuleRun(local_modIds[i]);
+
+            for(unsigned int i=0; i<local_conIds.size(); i++)
+            {
+                if(Manager::connected(local_conIds[i]))
+                {
+                    if(eventReceiver) eventReceiver->onConConnect(local_conIds[i]);
+                }
+                else
+                {
+                    if(eventReceiver) eventReceiver->onConDisconnect(local_conIds[i]);
+                }
+                refreshPortStatus(local_conIds[i]);
+            }
+            for(unsigned int i=0; i<local_resIds.size(); i++)
+            {
+                if(Manager::exist(local_resIds[i]))
+                {
+                    if(eventReceiver) eventReceiver->onResAvailable(local_resIds[i]);
+                }
+                else
+                {
+                    if(eventReceiver) eventReceiver->onResUnAvailable(local_resIds[i]);
+                }
+            }*/
             break;
         }
     case MSTOP:{
-            for(unsigned int i=0; i<local_modIds.size(); i++)
+            std::vector<double> waitVec;
+            for (unsigned int i=0; i<local_modIds.size(); i++)
+            {
+                Executable * exec = Manager::getExecutableById(local_modIds[i]);
+                if (exec)
+                {
+                    waitVec.push_back(exec->getPostStopWait());
+                }
+            }
+            double minWait=*std::min_element(waitVec.begin(), waitVec.end());
+            for (unsigned int i=0; i<local_modIds.size(); i++)
+            {
+                Executable * exec = Manager::getExecutableById(local_modIds[i]);
+                if (exec)
+                {
+                    exec->setPostStopWait(exec->getPostStopWait() - minWait);
+                }
                 Manager::stop(local_modIds[i], true);
+            }
+            /*for(unsigned int i=0; i<local_modIds.size(); i++)
+                Manager::waitingModuleStop(local_modIds[i]);
+
+            for(unsigned int i=0; i<local_conIds.size(); i++)
+            {
+                if(Manager::connected(local_conIds[i]))
+                {
+                    if(eventReceiver) eventReceiver->onConConnect(local_conIds[i]);
+                }
+                else
+                {
+                    if(eventReceiver) eventReceiver->onConDisconnect(local_conIds[i]);
+                }
+                refreshPortStatus(local_conIds[i]);
+            }
+            for(unsigned int i=0; i<local_resIds.size(); i++)
+            {
+                if(Manager::exist(local_resIds[i]))
+                {
+                    if(eventReceiver) eventReceiver->onResAvailable(local_resIds[i]);
+                }
+                else
+                {
+                    if(eventReceiver) eventReceiver->onResUnAvailable(local_resIds[i]);
+                }
+            }*/
             break;
         }
     case MKILL:{
             for(unsigned int i=0; i<local_modIds.size(); i++)
                 Manager::kill(local_modIds[i], true);
+            /*for(unsigned int i=0; i<local_modIds.size(); i++)
+                Manager::waitingModuleKill(local_modIds[i]);
+
+            for(unsigned int i=0; i<local_conIds.size(); i++)
+            {
+                if(Manager::connected(local_conIds[i]))
+                {
+                    if(eventReceiver) eventReceiver->onConConnect(local_conIds[i]);
+                }
+                else
+                {
+                    if(eventReceiver) eventReceiver->onConDisconnect(local_conIds[i]);
+                }
+                refreshPortStatus(local_conIds[i]);
+            }
+            for(unsigned int i=0; i<local_resIds.size(); i++)
+            {
+                if(Manager::exist(local_resIds[i]))
+                {
+                    if(eventReceiver) eventReceiver->onResAvailable(local_resIds[i]);
+                }
+                else
+                {
+                    if(eventReceiver) eventReceiver->onResUnAvailable(local_resIds[i]);
+                }
+            }*/
             break;
         }
     case MCONNECT:{
@@ -234,36 +348,42 @@ void SafeManager::run()
         eventReceiver->onError();
 }
 
-void SafeManager::safeRun(std::vector<int>& MIDs)
+void SafeManager::safeRun(std::vector<int>& MIDs, std::vector<int>& CIDs, std::vector<int> &RIDs)
 {
     if(busy()) return;
 
     WAIT_SEMAPHOR();
     modIds = MIDs;
+    conIds = CIDs;
+    resIds = RIDs;
     action = MRUN;
     POST_SEMAPHOR();
     if(!yarp::os::Thread::isRunning())
         yarp::os::Thread::start();
 }
 
-void SafeManager::safeStop(std::vector<int>& MIDs)
+void SafeManager::safeStop(std::vector<int>& MIDs, std::vector<int>& CIDs, std::vector<int> &RIDs)
 {
     if(busy()) return;
 
     WAIT_SEMAPHOR();
     modIds = MIDs;
+    conIds = CIDs;
+    resIds = RIDs;
     action = MSTOP;
     POST_SEMAPHOR();
     if(!yarp::os::Thread::isRunning())
         yarp::os::Thread::start();
 }
 
-void SafeManager::safeKill(std::vector<int>& MIDs)
+void SafeManager::safeKill(std::vector<int>& MIDs, std::vector<int> &CIDs, std::vector<int> &RIDs)
 {
     if(busy()) return;
 
     WAIT_SEMAPHOR();
     modIds = MIDs;
+    conIds = CIDs;
+    resIds = RIDs;
     action = MKILL;
     POST_SEMAPHOR();
     if(!yarp::os::Thread::isRunning())
@@ -338,7 +458,7 @@ void SafeManager::safeDetachStdout(std::vector<int>& MIDs)
         yarp::os::Thread::start();
 }
 
-void SafeManager::safeLoadBalance(void)
+void SafeManager::safeLoadBalance()
 {
    if(busy()) return;
 

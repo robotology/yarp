@@ -66,12 +66,10 @@ Route::Route(const Route& rhs) :
 {
 }
 
-#if defined(YARP_HAS_CXX11) && YARP_COMPILER_CXX_RVALUE_REFERENCES
 Route::Route(Route&& rhs) :
         mPriv(new Private(std::move(*(rhs.mPriv))))
 {
 }
-#endif
 
 Route::~Route()
 {
@@ -86,7 +84,6 @@ Route& Route::operator=(const Route& rhs)
     return *this;
 }
 
-#if defined(YARP_HAS_CXX11) && YARP_COMPILER_CXX_RVALUE_REFERENCES
 Route& Route::operator=(Route&& rhs)
 {
     if (&rhs != this) {
@@ -94,7 +91,6 @@ Route& Route::operator=(Route&& rhs)
     }
     return *this;
 }
-#endif
 
 const ConstString& Route::getFromName() const
 {

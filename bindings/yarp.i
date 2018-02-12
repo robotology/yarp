@@ -1,5 +1,5 @@
 // Copyright: (C) 2010 RobotCub Consortium
-// Author: Paul Fitzpatrick, Stephane Lallee, Arnaud Degroote, Leo Pape, Juan G Victores, Marek Rucinski, Fabien Benureau
+// Author: Paul Fitzpatrick, Stephane Lallee, Arnaud Degroote, Leo Pape, Juan G Victores, Marek Rucinski, Fabien Benureau, Ali Paikan
 // CopyPolicy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
 
 //////////////////////////////////////////////////////////////////////////
@@ -13,11 +13,6 @@
 //  + use of templates
 
 %module(directors="1") yarp
-
-%{
-// missing in some old versions of swig
-#include <stddef.h>
-%}
 
 %import "yarp/conf/api.h"
 
@@ -33,7 +28,7 @@
   %include <argcargv.i>
   %apply (int ARGC, char **ARGV) { (int argc, char *argv[]) }
 #elif defined (SWIGLUA)
-  %include "swiglib/lua/argcargv.i"
+  %include "lua/argcargv.i"
   %apply (int ARGC, char **ARGV) { (int argc, char *argv[]) }
 #endif
 
@@ -43,46 +38,10 @@
 #endif
 
 // Try to make yarp::os::ConstString act like std::string
-#if !defined(SWIGJAVA) && !defined(SWIGLUA) && !defined(SWIGCSHARP)
-  // Try to translate std::string and std::vector to native equivalents
-  %include "std_string.i"
-  %typemaps_std_string(yarp::os::ConstString, char, SWIG_AsCharPtrAndSize,
-               SWIG_FromCharPtrAndSize, %checkcode(STDSTRING));
-  %define YARP_WRAP_STL_STRING %enddef
-  %ignore yarp::os::ConstString;
-#else
-  #if (SWIG_VERSION >=0x020007)
-    // Try to translate std::string and std::vector to native equivalents
-    %include "std_string.i"
-//    %define _YARP2_CONSTSTRING_ %enddef
-//    namespace yarp {
-//      namespace os {
-//        typedef std::string ConstString;
-//      }
-//    }
-  #else
-    #if defined (SWIGLUA)
-      %include "std_string_lua.i"
-    #endif
-    #if defined (SWIGJAVA)
-      %include "std_string_java.i"
-    #endif
-    #if defined (SWIGCSHARP)
-      %include "std_string_csharp.i"
-    #endif
-
-  #endif
-%apply std::string {yarp::os::ConstString};
-#endif
-
-#if defined (SWIGPYTHON)
-%{
-    // add a stray definition missing in SWIG version 2.0.7
-#ifndef PyInt_FromSize_t
-#define PyInt_FromSize_t(x) PyLong_FromSize_t(x)
-#endif
-%}
-#endif
+// Try to translate std::string to native equivalents
+%include "std_string.i"
+%typemaps_std_string(yarp::os::ConstString, char, SWIG_AsCharPtrAndSize,
+             SWIG_FromCharPtrAndSize, %checkcode(STDSTRING));
 
 #if defined(SWIGCSHARP)
     // Get .NET pointers instead of swig generated types (useful when dealing with images)
@@ -312,8 +271,6 @@ void setExternal2(yarp::sig::Image *img, PyObject* mem, int w, int h) {
 %enddef
 %define YARP_OS_DEPRECATED_API
 %enddef
-%define YARP_OVERRIDE override
-%enddef
 
 %define _YARP2_NETINT32_
 %enddef
@@ -344,7 +301,7 @@ namespace yarp {
 %enddef
 
 #if defined( SWIGALLEGROCL )
-  %include "compat.h"
+  %include "allegro/compat.h"
 #endif
 
 // Define typemaps for Matrix before including it
@@ -390,6 +347,9 @@ namespace yarp {
 %include <yarp/os/PortReaderCreator.h>
 %include <yarp/os/Property.h>
 %include <yarp/os/Bottle.h>
+%include <yarp/os/TypedReader.h>
+%include <yarp/os/TypedReaderCallback.h>
+%include <yarp/os/TypedReaderThread.h>
 %include <yarp/os/PortReaderBuffer.h>
 %include <yarp/os/PortWriterBuffer.h>
 %include <yarp/os/Random.h>
@@ -451,6 +411,7 @@ MAKE_COMMS(Bottle)
 %include <yarp/dev/CalibratorInterfaces.h>
 %include <yarp/dev/ControlBoardPid.h>
 %include <yarp/dev/IControlMode.h>
+%include <yarp/dev/IControlMode2.h>
 %include <yarp/dev/IEncoders.h>
 %include <yarp/dev/ITorqueControl.h>
 %include <yarp/dev/IImpedanceControl.h>
@@ -458,12 +419,20 @@ MAKE_COMMS(Bottle)
 %include <yarp/dev/IPWMControl.h>
 %include <yarp/dev/ICurrentControl.h>
 %include <yarp/dev/IAnalogSensor.h>
+%include <yarp/dev/FrameGrabberControl2.h>
+%include <yarp/dev/IPidControl.h>
+%include <yarp/dev/IPositionDirect.h>
 
 #if !defined(SWIGCHICKEN) && !defined(SWIGALLEGROCL)
   %template(DVector) std::vector<double>;
   %template(BVector) std::vector<bool>;
   %template(SVector) std::vector<std::string>;
+#ifdef SWIGMATLAB
+  // Extend IVector for handling conversion of vectors from and to Matlab
+  %include "matlab/IVector_fromTo_matlab.i"
+#endif
   %template(IVector) std::vector<int>;
+
   #if defined(SWIGCSHARP)
       SWIG_STD_VECTOR_SPECIALIZE_MINIMUM(Pid,yarp::dev::Pid)
   #endif
@@ -490,6 +459,7 @@ MAKE_COMMS(Bottle)
         return self->toString().c_str();
     }
 }
+
 
 
 //////////////////////////////////////////////////////////////////////////
@@ -796,6 +766,12 @@ typedef yarp::os::BufferedPort<ImageRgbFloat> BufferedPortImageRgbFloat;
         return result;
     }
 
+    yarp::dev::IControlMode2 *viewIControlMode2() {
+        yarp::dev::IControlMode2 *result;
+        self->view(result);
+        return result;
+    }
+
     yarp::dev::IPWMControl *viewIPWMControl() {
             yarp::dev::IPWMControl *result;
         self->view(result);
@@ -813,6 +789,19 @@ typedef yarp::os::BufferedPort<ImageRgbFloat> BufferedPortImageRgbFloat;
         self->view(result);
         return result;
     }
+
+    yarp::dev::IFrameGrabberControls2 *viewIFrameGrabberControls2() {
+        yarp::dev::IFrameGrabberControls2 *result;
+        self->view(result);
+        return result;
+    }
+
+    yarp::dev::IPositionDirect *viewIPositionDirect() {
+        yarp::dev::IPositionDirect *result;
+        self->view(result);
+        return result;
+    }
+
     // you'll need to add an entry for every interface you wish
     // to use
 }
@@ -977,6 +966,7 @@ typedef yarp::os::BufferedPort<ImageRgbFloat> BufferedPortImageRgbFloat;
 }
 
 %extend yarp::dev::IPidControl {
+#ifndef YARP_NO_DEPRECATED // Since YARP 2.3.70
     bool setReferences(std::vector<double>& data) {
         return self->setReferences(&data[0]);
     }
@@ -1032,6 +1022,7 @@ typedef yarp::os::BufferedPort<ImageRgbFloat> BufferedPortImageRgbFloat;
     bool getPids(std::vector<yarp::dev::Pid> pids) {
         return self->getPids(&pids[0]);
     }
+#endif
 }
 
 %extend yarp::dev::IAmplifierControl {
@@ -1063,6 +1054,32 @@ typedef yarp::os::BufferedPort<ImageRgbFloat> BufferedPortImageRgbFloat;
     }
 }
 
+%extend yarp::dev::IControlMode2 {
+    bool getControlModes(int n_joint, std::vector<int>& joints, std::vector<int>& data) {
+        return self->getControlModes(n_joint, &joints[0], &data[0]);
+    }
+
+    bool setControlModes(std::vector<int>& data) {
+        return self->setControlModes(&data[0]);
+    }
+
+    bool setControlModes(int n_joint, std::vector<int>& joints, std::vector<int>& data) {
+        return self->setControlModes(n_joint, &joints[0], &data[0]);
+    }
+}
+
+%extend yarp::dev::IPositionDirect {
+    int getAxes() {
+        int buffer;
+        bool ok = self->getAxes(&buffer);
+        if (!ok) return 0;
+        return buffer;
+    }
+
+    bool setPositions(std::vector<double>& data) {
+        return self->setPositions(&data[0]);
+    }
+}
 
 %extend yarp::sig::Vector {
 
@@ -1298,23 +1315,105 @@ public static short[] getRawImg(Image img) {
 #endif
 
 
-#ifndef YARP_NO_DEPRECATED // since YARP 2.3.65
-%extend yarp::os::ResourceFinder {
-    bool configure(const std::string& policyName,
-                   std::vector<std::string>& argv,
-                   bool skipFirstArgument = true) {
-        std::vector<const char *> tmp(argv.size());
-        for (size_t i=0; i<argv.size(); i++) { tmp[i] = argv[i].c_str(); }
-        return self->configure(policyName.c_str(),
-                               argv.size(),
-                               (char**)&tmp[0]);
-    }
-}
-#endif // YARP_NO_DEPRECATED
-
-
 /*
  * Extending yarp::os::Things.h
  */
-%include "things.i"
+%extend yarp::os::Things  {
+public:
 
+    yarp::os::Value* asValue() {
+        return self->cast_as<yarp::os::Value>();
+    }
+
+    yarp::os::Bottle* asBottle() {
+        return self->cast_as<yarp::os::Bottle>();
+    }
+
+    yarp::os::Property* asProperty() {
+        return self->cast_as<yarp::os::Property>();
+    }
+
+    yarp::sig::Vector* asVector() {
+        return self->cast_as<yarp::sig::Vector>();
+    }
+
+    yarp::sig::Matrix* asMatrix() {
+        return self->cast_as<yarp::sig::Matrix>();
+    }
+
+    yarp::sig::Image* asImage() {
+        return self->cast_as<yarp::sig::Image>();
+    }
+
+    yarp::sig::ImageOf<yarp::sig::PixelRgb>* asImageOfPixelRgb() {
+        return self->cast_as<yarp::sig::ImageOf<yarp::sig::PixelRgb> >();
+    }
+
+    yarp::sig::ImageOf<yarp::sig::PixelBgr>* asImageOfPixelBgr() {
+        return self->cast_as<yarp::sig::ImageOf<yarp::sig::PixelBgr> >();
+    }
+
+    yarp::sig::ImageOf<yarp::sig::PixelMono>* asImageOfPixelMono() {
+        return self->cast_as<yarp::sig::ImageOf<yarp::sig::PixelMono> >();
+    }
+}
+
+
+//////////////////////////////////////////////////////////////////////////
+// Deal with IFrameGrabberControls2 pointer arguments that don't translate
+
+%extend yarp::dev::IFrameGrabberControls2 {
+  CameraDescriptor getCameraDescription() {
+      CameraDescriptor result;
+      self->getCameraDescription(&result);
+      return result;
+  }
+
+  bool hasFeature(int feature) {
+      bool result;
+      self->hasFeature(feature, &result);
+      return result;
+  }
+
+  double getFeature(int feature) {
+      double result;
+      self->getFeature(feature, &result);
+      return result;
+  }
+
+  bool hasOnOff(int feature) {
+      bool result;
+      self->hasOnOff(feature, &result);
+      return result;
+  }
+
+  bool getActive(int feature) {
+      bool result;
+      self->getActive(feature, &result);
+      return result;
+  }
+
+  bool hasAuto(int feature) {
+      bool result;
+      self->hasAuto(feature, &result);
+      return result;
+  }
+
+  bool hasManual(int feature) {
+      bool result;
+      self->hasManual(feature, &result);
+      return result;
+  }
+
+  bool hasOnePush(int feature) {
+      bool result;
+      self->hasOnePush(feature, &result);
+      return result;
+  }
+
+  FeatureMode getMode(int feature) {
+      FeatureMode result;
+      self->getMode(feature, &result);
+      return result;
+  }
+}

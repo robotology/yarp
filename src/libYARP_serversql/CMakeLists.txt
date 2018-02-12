@@ -1,5 +1,5 @@
 # Copyright: (C) 2009 RobotCub Consortium
-#            (C) 2015  iCub Facility, Istituto Italiano di Tecnologia
+#            (C) 2015 Istituto Italiano di Tecnologia (IIT)
 # Authors: Paul Fitzpatrick
 #          Daniele E. Domenichelli <daniele.domenichelli@iit.it>
 # CopyPolicy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
@@ -22,7 +22,9 @@ set(YARP_serversql_SRCS src/TripleSourceCreator.cpp
                         src/yarpserver.cpp
                         src/StyleNameService.cpp)
 
-set(YARP_serversql_HDRS include/yarp/serversql/yarpserversql.h)
+set(YARP_serversql_HDRS include/yarp/serversql/api.h
+                        include/yarp/serversql/yarpserversql.h
+                        include/yarp/serversql/Server.h)
 
 set(YARP_serversql_IMPL_HDRS include/yarp/serversql/impl/TripleSourceCreator.h
                              include/yarp/serversql/impl/Triple.h
@@ -38,9 +40,10 @@ set(YARP_serversql_IMPL_HDRS include/yarp/serversql/impl/TripleSourceCreator.h
                              include/yarp/serversql/impl/ParseName.h
                              include/yarp/serversql/impl/StyleNameService.h)
 
-add_library(YARP_serversql STATIC ${YARP_serversql_SRCS}
-                                  ${YARP_serversql_HDRS}
-                                  ${YARP_serversql_IMPL_HDRS})
+add_library(YARP_serversql ${YARP_serversql_SRCS}
+                           ${YARP_serversql_HDRS}
+                           ${YARP_serversql_IMPL_HDRS})
+
 add_library(YARP::YARP_serversql ALIAS YARP_serversql)
 
 target_include_directories(YARP_serversql PUBLIC $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>
@@ -48,7 +51,7 @@ target_include_directories(YARP_serversql PUBLIC $<BUILD_INTERFACE:${CMAKE_CURRE
 
 target_link_libraries(YARP_serversql PUBLIC YARP::YARP_conf
                                             YARP::YARP_OS
-                                     INTERFACE YARP::YARP_init
+                                            YARP::YARP_init
                                      PRIVATE YARP::YARP_name
                                              ${SQLite_LIBRARIES})
 if(UNIX)

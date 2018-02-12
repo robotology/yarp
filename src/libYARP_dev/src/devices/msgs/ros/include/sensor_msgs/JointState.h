@@ -5,7 +5,7 @@
 #include <sensor_msgs_JointState.h>
 
 namespace sensor_msgs {
-  typedef sensor_msgs_JointState JointState;
+    typedef sensor_msgs_JointState JointState;
 }
 
 #endif

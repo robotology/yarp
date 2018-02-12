@@ -17,7 +17,8 @@
 #include <yarp/os/Vocab.h>
 
 #include <yarp/os/impl/Logger.h>
-#include <yarp/os/impl/PlatformVector.h>
+
+#include <vector>
 
 namespace yarp {
     namespace os {
@@ -69,11 +70,11 @@ public:
         }
         return asList();
     }
-    virtual yarp::os::Bottle* asList() const override { return YARP_NULLPTR; }
-    virtual yarp::os::Property* asDict() const override { return YARP_NULLPTR; }
+    virtual yarp::os::Bottle* asList() const override { return nullptr; }
+    virtual yarp::os::Property* asDict() const override { return nullptr; }
     virtual const char* asBlob() const override
     {
-        return static_cast<const char*>(YARP_NULLPTR);
+        return static_cast<const char*>(nullptr);
     }
     virtual size_t asBlobLength() const override { return 0; }
     virtual bool read(ConnectionReader& connection) override;
@@ -127,7 +128,7 @@ public:
     virtual Storable* cloneStorable() const
     {
         Storable* item = createStorable();
-        yAssert(item != YARP_NULLPTR);
+        yAssert(item != nullptr);
         item->copy(*this);
         return item;
     }
@@ -154,13 +155,13 @@ class YARP_OS_impl_API yarp::os::impl::StoreNull : public Storable
 public:
     StoreNull() {}
     virtual ConstString toString() const override { return ""; }
-    virtual void fromString(const ConstString& src) override {}
+    virtual void fromString(const ConstString& src) override { YARP_UNUSED(src); }
     virtual int getCode() const override { return -1; }
-    virtual bool readRaw(ConnectionReader& connection) override { return false; }
-    virtual bool writeRaw(ConnectionWriter& connection) override { return false; }
+    virtual bool readRaw(ConnectionReader& connection) override { YARP_UNUSED(connection); return false; }
+    virtual bool writeRaw(ConnectionWriter& connection) override { YARP_UNUSED(connection); return false; }
     virtual Storable* createStorable() const override { return new StoreNull(); }
     virtual bool isNull() const override { return true; }
-    virtual void copy(const Storable& alt) override {}
+    virtual void copy(const Storable& alt) override { YARP_UNUSED(alt); }
 };
 
 
@@ -432,7 +433,7 @@ public:
  * Handy to use until you work out how to make your own more
  * efficient formats for transmission.
  */
-class YARP_OS_impl_API yarp::os::impl::BottleImpl : public yarp::os::Portable
+class YARP_OS_impl_API yarp::os::impl::BottleImpl
 {
 public:
     BottleImpl();
@@ -475,10 +476,10 @@ public:
     ConstString toString();
     size_t size() const;
 
-    virtual bool read(ConnectionReader& reader) override;
-    virtual bool write(ConnectionWriter& writer) override;
+    bool read(ConnectionReader& reader);
+    bool write(ConnectionWriter& writer);
 
-    virtual void onCommencement() override;
+    void onCommencement();
 
     const char* getBytes();
     size_t byteCount();
@@ -539,7 +540,7 @@ public:
     {
         if (storeNull) {
             delete storeNull;
-            storeNull = YARP_NULLPTR;
+            storeNull = nullptr;
         }
     }
 
@@ -554,8 +555,8 @@ public:
 private:
     static StoreNull* storeNull;
 
-    PlatformVector<Storable*> content;
-    PlatformVector<char> data;
+    std::vector<Storable*> content;
+    std::vector<char> data;
     int speciality;
     bool nested;
     bool dirty;

@@ -133,14 +133,14 @@ public:
      * @return true iff timeout is supported.
      *
      */
-    virtual bool setReadTimeout(double timeout) { return false; }
+    virtual bool setReadTimeout(double timeout) { YARP_UNUSED(timeout); return false; }
 
     /**
      *
      * Read a block of text terminated with a specific marker (or EOF).
      *
      */
-    ConstString readLine(int terminal = '\n', bool *success = YARP_NULLPTR);
+    ConstString readLine(int terminal = '\n', bool *success = nullptr);
 
     /**
      *
@@ -175,7 +175,7 @@ public:
      * @return true iff the \c callback was installed.
      *
      */
-    virtual bool setReadEnvelopeCallback(readEnvelopeCallbackType callback, void* data) { return false; }
+    virtual bool setReadEnvelopeCallback(readEnvelopeCallbackType callback, void* data) { YARP_UNUSED(callback); YARP_UNUSED(data); return false; }
 };
 
 #endif // YARP_OS_INPUTSTREAM_H

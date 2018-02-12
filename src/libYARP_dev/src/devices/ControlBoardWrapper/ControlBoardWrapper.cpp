@@ -36,13 +36,13 @@ ControlBoardWrapper::ControlBoardWrapper() :yarp::os::RateThread(20),
     period = 20; // ms.
     base = 0;
     top = 0;
-    subDeviceOwned = NULL;
+    subDeviceOwned = nullptr;
     _verb = false;
 
     // init ROS data
     rosNodeName = "";
     rosTopicName = "";
-    rosNode = NULL;
+    rosNode = nullptr;
     rosMsgCounter = 0;
     useROS = ROS_disabled;
     jointNames.clear();
@@ -84,21 +84,21 @@ bool ControlBoardWrapper::close()
         cleanup_yarpPorts();
     }
 
-    if(rosNode != NULL)
+    if(rosNode != nullptr)
     {
         delete rosNode;
-        rosNode = NULL;
+        rosNode = nullptr;
     }
 
     //if we own a deviced we have to close and delete it
     if (ownDevices)
     {
         // we should have created a new devices which we need to delete
-        if(subDeviceOwned != NULL)
+        if(subDeviceOwned != nullptr)
         {
             subDeviceOwned->close();
             delete subDeviceOwned;
-            subDeviceOwned = NULL;
+            subDeviceOwned = nullptr;
         }
     }
     else
@@ -269,7 +269,7 @@ bool ControlBoardWrapper::initialize_ROS()
         {
             rosNode = new yarp::os::Node(rosNodeName);   // add a ROS node
 
-            if(rosNode == NULL)
+            if(rosNode == nullptr)
             {
                 yError() << " opening " << rosNodeName << " Node, check your yarp-ROS network configuration\n";
                 success = false;
@@ -494,7 +494,7 @@ bool ControlBoardWrapper::openDeferredAttach(Property& prop)
     }
 
     Bottle *nets=prop.find("networks").asList();
-    if(nets==0)
+    if(nets==nullptr)
     {
        yError() <<"Error parsing parameters: \"networks\" should be followed by a list\n";
        return false;
@@ -523,7 +523,7 @@ bool ControlBoardWrapper::openDeferredAttach(Property& prop)
         {
             Bottle *bot=parameters.get(1).asList();
             Bottle tmpBot;
-            if(bot==NULL)
+            if(bot==nullptr)
             {
                 // probably data are not passed in the correct way, try to read them as a string.
                 ConstString bString(parameters.get(1).asString());
@@ -564,8 +564,14 @@ bool ControlBoardWrapper::openDeferredAttach(Property& prop)
             return false;
         }
 
-        SubDevice *tmpDevice=device.getSubdevice(k);
-        if (tmpDevice) tmpDevice->setVerbose(_verb);
+        SubDevice *tmpDevice = device.getSubdevice(k);
+        if (!tmpDevice)
+        {
+            yError() << "get of subdevice returned null";
+            return false;
+        }
+
+        tmpDevice->setVerbose(_verb);
 
         int axes=top-base+1;
         if (!tmpDevice->configure(base, top, axes, nets->get(k).asString().c_str(), this))
@@ -635,11 +641,11 @@ bool ControlBoardWrapper::openAndAttachSubDevice(Property& prop)
         return false;
     }
 
-    yarp::dev::IEncoders * iencs = 0;
+    yarp::dev::IEncoders * iencs = nullptr;
 
     subDeviceOwned->view(iencs);
 
-    if (iencs == 0)
+    if (iencs == nullptr)
     {
         yError("Opening IEncoders interface of controlBoardWrapper2 subdevice... FAILED\n");
         return false;
@@ -1422,9 +1428,9 @@ bool ControlBoardWrapper::positionMove(const double *refs)
             }
         }
 
-        if(joints!=0)
+        if(joints!=nullptr)
         { delete [] joints;
-          joints = 0;}
+          joints = nullptr;}
     }
 
     return ret;
@@ -1862,9 +1868,9 @@ bool ControlBoardWrapper::setRefSpeeds(const double *spds)
             }
         }
 
-        if(joints!=0)
+        if(joints!=nullptr)
         { delete [] joints;
-          joints = 0;}
+          joints = nullptr;}
     }
 
     return ret;
@@ -1994,9 +2000,9 @@ bool ControlBoardWrapper::setRefAccelerations(const double *accs)
             }
         }
 
-        if(joints!=0)
+        if(joints!=nullptr)
         { delete [] joints;
-        joints = 0;}
+        joints = nullptr;}
     }
 
     return ret;
@@ -2465,9 +2471,9 @@ bool ControlBoardWrapper::velocityMove(const double *v)
             }
         }
 
-        if(joints!=0)
+        if(joints!=nullptr)
         { delete [] joints;
-          joints = 0;}
+          joints = nullptr;}
     }
 
     return ret;
@@ -4186,10 +4192,10 @@ bool ControlBoardWrapper::setControlModes(int *modes)
             j_wrap+=wrapped_joints;
         }
 
-        if(joints!=0)
+        if(joints!=nullptr)
         {
             delete [] joints;
-            joints = 0;
+            joints = nullptr;
         }
     }
 

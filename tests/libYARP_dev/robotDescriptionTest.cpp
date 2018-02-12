@@ -42,7 +42,7 @@ public:
         bool ok_server = ddserver.open(pserver_cfg);
         checkTrue(ok_server, "robotDescriptionServer open reported successful");
 
-        IRobotDescription* idesc = 0;
+        IRobotDescription* idesc = nullptr;
         PolyDriver ddclient;
         Property pclient_cfg;
         pclient_cfg.put("device", "robotDescriptionClient");

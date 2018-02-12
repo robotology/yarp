@@ -30,14 +30,15 @@
 /src/libYARP_init/**                        @drdanz
 /src/libYARP_logger/**                      @randaz81
 /src/libYARP_manager/**                     @Nicogene
+/src/libYARP_profiler/**                    @Nicogene
 /src/libYARP_math/**                        @traversaro
 /src/libYARP_name/**                        @drdanz
 /src/libYARP_OS/**                          @drdanz
-/src/libYARP_rtf/**                         @drdanz @Nicogene
+/src/libYARP_rtf/**                         @Nicogene @aerydna
 /src/libYARP_serversql/**                   @drdanz
 /src/libYARP_sig/                           @drdanz
 /src/libYARP_wire_rep_utils/**              @drdanz
-/src/rtf-plugins/**                         @drdanz @Nicogene
+/src/rtf-plugins/**                         @Nicogene @aerydna
 /src/yarp/**                                @drdanz
 /src/yarpbatterygui/**                      @randaz81
 /src/yarpdatadumper/**                      @pattacini
@@ -52,5 +53,6 @@
 /src/yarprobotinterface/**                  @drdanz
 /src/yarprun/**                             @drdanz
 /src/yarpserver/**                          @drdanz
+/src/yarpviz/**                             @Nicogene
 CMakeLists.txt                              @drdanz
 *.cmake                                     @drdanz

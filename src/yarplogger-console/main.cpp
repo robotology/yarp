@@ -1,5 +1,5 @@
 /*
- * Copyright (C)2014  iCub Facility - Istituto Italiano di Tecnologia
+ * Copyright (C) 2014 Istituto Italiano di Tecnologia (IIT)
  * Author: Marco Randazzo
  * email:  marco.randazzo@iit.it
  * website: www.robotcub.org
@@ -32,7 +32,7 @@ using namespace yarp::yarpLogger;
 
 class logger_module : public yarp::os::RFModule
 {
-    LoggerEngine* the_logger = YARP_NULLPTR;
+    LoggerEngine* the_logger = nullptr;
 
     protected:
     yarp::os::Port rpcPort;
@@ -63,7 +63,7 @@ class logger_module : public yarp::os::RFModule
         if (the_logger)
         {
             delete the_logger;
-            the_logger=NULL;
+            the_logger=nullptr;
         }
         return true;
     }
@@ -172,7 +172,7 @@ class logger_module : public yarp::os::RFModule
 
 int main(int argc, char *argv[])
 {
-    yarp::os::Network yarp;
+    yarp::os::Network yarp(yarp::os::YARP_CLOCK_SYSTEM);
     if (!yarp.checkNetwork())
     {
         fprintf(stderr,"ERROR: check Yarp network.\n");

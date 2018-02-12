@@ -1,6 +1,6 @@
 #!/usr/bin/python
 
-# Copyright (C) 2016 iCub Facility, Istituto Italiano di Tecnologia
+# Copyright (C) 2016 Istituto Italiano di Tecnologia (IIT)
 # Authors: Silvio Traversaro <silvio.traversaro@iit.it>
 # CopyPolicy: LGPLv2 or later
 

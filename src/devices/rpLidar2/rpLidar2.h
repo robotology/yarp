@@ -1,5 +1,5 @@
 /*
-* Copyright (C) 2015 iCub Facility - Istituto Italiano di Tecnologia
+* Copyright (C) 2015 Istituto Italiano di Tecnologia (IIT)
 * Author: Marco Randazzo <marco.randazzo@iit.it>
 * CopyPolicy: Released under the terms of the GPLv2 or later, see GPL.TXT
 */
@@ -75,7 +75,7 @@ public:
         m_inExpressMode(false),
         m_pwm_val(0),
         m_device_status(DEVICE_OK_STANBY),
-        m_drv(YARP_NULLPTR)
+        m_drv(nullptr)
     {}
 
 

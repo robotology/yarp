@@ -68,8 +68,11 @@ if(NOT YARP_NO_DEPRECATED) # since YARP 2.3.68
                                   ycm-${YCM_REQUIRED_VERSION}/cmake-3.1/Modules/FindPackageHandleStandardArgs.cmake
                                   ycm-${YCM_REQUIRED_VERSION}/cmake-3.1/Modules/FindPackageMessage.cmake
                                   ycm-${YCM_REQUIRED_VERSION}/cmake-3.1/Modules/GNUInstallDirs.cmake)
-    set(YCM_CMAKE_cmake_next_FILES ycm-${YCM_REQUIRED_VERSION}/cmake-next/Modules/FindSWIG.cmake
-                                   ycm-${YCM_REQUIRED_VERSION}/cmake-next/Modules/UseSWIG.cmake)
+    set(YCM_CMAKE_cmake_3.8_FILES ycm-${YCM_REQUIRED_VERSION}/cmake-3.8/Modules/CMakeParseArguments.cmake
+                                  ycm-${YCM_REQUIRED_VERSION}/cmake-3.8/Modules/FindPackageHandleStandardArgs.cmake
+                                  ycm-${YCM_REQUIRED_VERSION}/cmake-3.8/Modules/FindPackageMessage.cmake
+                                  ycm-${YCM_REQUIRED_VERSION}/cmake-3.8/Modules/FindSWIG.cmake
+                                  ycm-${YCM_REQUIRED_VERSION}/cmake-3.8/Modules/UseSWIG.cmake)
     set(YCM_CMAKE_cmake_proposed_FILES ycm-${YCM_REQUIRED_VERSION}/cmake-proposed/Modules/FindGLEW.cmake)
 
     install(FILES ${YCM_CMAKE_find_modules_FILES}
@@ -85,14 +88,14 @@ if(NOT YARP_NO_DEPRECATED) # since YARP 2.3.68
             COMPONENT scripts
             DESTINATION share/yarp/cmake/ycm-${YCM_REQUIRED_VERSION}/cmake-proposed/Modules)
     if(${CMAKE_VERSION} VERSION_LESS 3.1)
-      # Files from CMake 3.1, available only if cmake is newer
+      # Files from CMake 3.1, available only if CMake on the system is older
       install(FILES ${YCM_CMAKE_cmake_3_1_FILES}
               COMPONENT scripts
               DESTINATION share/yarp/cmake/ycm-${YCM_REQUIRED_VERSION}/cmake-3.1/Modules)
     endif()
     if(${CMAKE_VERSION} VERSION_LESS 3.8)
-      # Files from CMake next (3.8), available only if cmake is newer
-      install(FILES ${YCM_CMAKE_cmake_next_FILES}
+      # Files from CMake 3.8, available only if CMake on the system is older
+      install(FILES ${YCM_CMAKE_cmake_3.8_FILES}
               COMPONENT scripts
               DESTINATION share/yarp/cmake/ycm-${YCM_REQUIRED_VERSION}/cmake-next/Modules)
     endif()
@@ -168,7 +171,9 @@ endforeach()
 foreach(_d cmake-3.1/  # since YARP 2.3.68
            cmake-3.5/
            ycm-0.2/    # since YARP 2.3.70
-           ycm-0.3.1)
+           ycm-0.3.1
+           ycm-0.4.0   # since YARP 2.3.72
+           ycm-0.5.1)
   install(CODE
  "if(EXISTS \"\$ENV{DESTDIR}${CMAKE_INSTALL_PREFIX}/share/yarp/cmake/${_d}\")
     message(STATUS \"Deleted: \\\"\$ENV{DESTDIR}${CMAKE_INSTALL_PREFIX}/share/yarp/cmake/${_d}\\\"\")

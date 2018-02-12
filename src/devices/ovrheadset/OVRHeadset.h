@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2015-2017  iCub Facility, Istituto Italiano di Tecnologia
+ * Copyright (C) 2015-2017 Istituto Italiano di Tecnologia (IIT)
  * Author: Daniele E. Domenichelli <daniele.domenichelli@iit.it>
  * CopyPolicy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
  */
@@ -16,6 +16,7 @@
 #include <yarp/dev/IJoypadController.h>
 #include <yarp/dev/IFrameTransform.h>
 #include <yarp/dev/PolyDriver.h>
+#include <yarp/sig/Image.h>
 
 #include <GL/glew.h>
 #include <OVR_CAPI.h>
@@ -31,13 +32,13 @@ struct GLFWwindow;
 class InputCallback;
 class TextureStatic;
 class TextureBattery;
+struct guiParam;
 
 namespace yarp {
 namespace dev {
 
-
 class OVRHeadset : public yarp::dev::DeviceDriver,
-                   public yarp::os::RateThread,
+                   public yarp::os::SystemRateThread,
                    public yarp::dev::IService,
                    public yarp::dev::IJoypadController
 {
@@ -60,21 +61,24 @@ public:
     virtual bool stopService();
 
     // yarp::dev::IJoypadController methods
-    virtual bool getAxisCount(unsigned int& axis_count) YARP_OVERRIDE;
-    virtual bool getButtonCount(unsigned int& button_count) YARP_OVERRIDE;
-    virtual bool getTrackballCount(unsigned int& Trackball_count) YARP_OVERRIDE;
-    virtual bool getHatCount(unsigned int& Hat_count) YARP_OVERRIDE;
-    virtual bool getTouchSurfaceCount(unsigned int& touch_count) YARP_OVERRIDE;
-    virtual bool getStickCount(unsigned int& stick_count) YARP_OVERRIDE;
-    virtual bool getStickDoF(unsigned int stick_id, unsigned int& DoF) YARP_OVERRIDE;
-    virtual bool getButton(unsigned int button_id, float& value) YARP_OVERRIDE;
-    virtual bool getTrackball(unsigned int trackball_id, yarp::sig::Vector& value) YARP_OVERRIDE;
-    virtual bool getHat(unsigned int hat_id, unsigned char& value) YARP_OVERRIDE;
-    virtual bool getAxis(unsigned int axis_id, double& value) YARP_OVERRIDE;
-    virtual bool getStick(unsigned int stick_id, yarp::sig::Vector& value, JoypadCtrl_coordinateMode coordinate_mode) YARP_OVERRIDE;
-    virtual bool getTouch(unsigned int touch_id, yarp::sig::Vector& value) YARP_OVERRIDE;
+    virtual bool getAxisCount(unsigned int& axis_count) override;
+    virtual bool getButtonCount(unsigned int& button_count) override;
+    virtual bool getTrackballCount(unsigned int& Trackball_count) override;
+    virtual bool getHatCount(unsigned int& Hat_count) override;
+    virtual bool getTouchSurfaceCount(unsigned int& touch_count) override;
+    virtual bool getStickCount(unsigned int& stick_count) override;
+    virtual bool getStickDoF(unsigned int stick_id, unsigned int& DoF) override;
+    virtual bool getButton(unsigned int button_id, float& value) override;
+    virtual bool getTrackball(unsigned int trackball_id, yarp::sig::Vector& value) override;
+    virtual bool getHat(unsigned int hat_id, unsigned char& value) override;
+    virtual bool getAxis(unsigned int axis_id, double& value) override;
+    virtual bool getStick(unsigned int stick_id, yarp::sig::Vector& value, JoypadCtrl_coordinateMode coordinate_mode) override;
+    virtual bool getTouch(unsigned int touch_id, yarp::sig::Vector& value) override;
 
 private:
+
+    typedef yarp::os::BufferedPort<yarp::sig::FlexImage> FlexImagePort;
+
     bool createWindow(int w, int h);
     void onKey(int key, int scancode, int action, int mods);
     void reconfigureRendering();
@@ -89,6 +93,7 @@ private:
     void fillErrorStorage();
     void fillButtonStorage();
     void fillHatStorage();
+    void resetInput();
 
 
     yarp::os::BufferedPort<yarp::os::Bottle>* orientationPort;
@@ -103,16 +108,27 @@ private:
     yarp::os::BufferedPort<yarp::os::Bottle>* predictedLinearVelocityPort;
     yarp::os::BufferedPort<yarp::os::Bottle>* predictedAngularAccelerationPort;
     yarp::os::BufferedPort<yarp::os::Bottle>* predictedLinearAccelerationPort;
+    FlexImagePort*                            gui_ports;
+    
+    std::vector<guiParam> huds;
     InputCallback* displayPorts[2];
     ovrEyeRenderDesc EyeRenderDesc[2];
     TextureStatic* textureLogo;
+    ovrLayerQuad logoLayer;
     TextureStatic* textureCrosshairs;
+    ovrLayerQuad crosshairsLayer;
     TextureBattery* textureBattery;
+    ovrLayerQuad batteryLayer;
     ovrMirrorTexture mirrorTexture;
     GLuint mirrorFBO;
     ovrSession session;
     ovrHmdDesc hmdDesc;
     GLFWwindow* window;
+    ovrTrackingState ts;
+    ovrPoseStatef headpose;
+    unsigned int guiCount;
+    bool         enableGui;
+
     yarp::os::Mutex                  inputStateMutex;
     ovrInputState                    inputState;
     bool                             inputStateError;
@@ -123,6 +139,7 @@ private:
     std::map<ovrResult, std::string> error_messages;
 
     IFrameTransform* tfPublisher;
+    bool             relative;
     std::string      left_frame;
     std::string      right_frame;
     std::string      root_frame;

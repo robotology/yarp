@@ -1,6 +1,6 @@
 /*
- * Copyright (C) 2013 RobotCub Consortium
- * Author: Alberto Cardellino
+ * Copyright (C) 2013 Istituto Italiano di Tecnologia (IIT)
+ * Author: Alberto Cardellino <alberto.cardellino@iit.it>
  * CopyPolicy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
  */
 
@@ -44,21 +44,21 @@ public:
      * @param ch channel number.
      * @return VAS_status type.
      */
-    virtual int getState(int ch)=0;
+    virtual VAS_status getVirtualAnalogSensorStatus(int ch)=0;
 
     /**
-     * Get the number of channels of the sensor.
+     * Get the number of channels of the virtual sensor.
      * @return number of channels (0 in case of errors).
      */
-    virtual int getChannels()=0;
+    virtual int getVirtualAnalogSensorChannels()=0;
 
     /**
-     * Set a vector of torque values for virtual sensor
+     * Set a vector of torque values for virtual sensor.
      * @param measure a vector containing the sensor's last readings.
      * @return true if ok, false otherwise.
      */
-    virtual bool updateMeasure(yarp::sig::Vector &measure)=0;
-    virtual bool updateMeasure(int ch, double &measure)=0;
+    virtual bool updateVirtualAnalogSensorMeasure(yarp::sig::Vector &measure)=0;
+    virtual bool updateVirtualAnalogSensorMeasure(int ch, double &measure)=0;
 
 };
 

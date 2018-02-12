@@ -40,37 +40,12 @@ public:
     PortCoreInputUnit(PortCore& owner,
                       int index,
                       InputProtocol *ip,
-                      bool reversed) :
-            PortCoreUnit(owner, index),
-            ip(ip),
-            phase(1),
-            access(1),
-            closing(false),
-            finished(false),
-            running(false),
-            name(owner.getName()),
-            localReader(YARP_NULLPTR),
-            reversed(reversed)
-    {
-        yAssert(ip!=YARP_NULLPTR);
-
-        yarp::os::PortReaderCreator *creator = owner.getReadCreator();
-        if (creator != YARP_NULLPTR) {
-            localReader = creator->create();
-        }
-    }
+                      bool reversed);
 
     /**
      * Destructor.
      */
-    virtual ~PortCoreInputUnit()
-    {
-        closeMain();
-        if (localReader!=YARP_NULLPTR) {
-            delete localReader;
-            localReader = YARP_NULLPTR;
-        }
-    }
+    virtual ~PortCoreInputUnit();
 
     /**
      *
@@ -88,49 +63,24 @@ public:
      */
     virtual void run() override;
 
-    virtual bool isInput() override
-    {
-        return true;
-    }
+    virtual bool isInput() override;
 
-    virtual void close() override
-    {
-        closeMain();
-    }
+    virtual void close() override;
 
-    virtual bool isFinished() override
-    {
-        return finished;
-    }
+    virtual bool isFinished() override;
 
-    const ConstString& getName()
-    {
-        return name;
-    }
+    const ConstString& getName();
 
     virtual Route getRoute() override;
 
     virtual bool interrupt() override;
 
-    void setCarrierParams(const yarp::os::Property& params) override
-    {
-        if (ip) {
-            ip->getReceiver().setCarrierParams(params);
-        }
-    }
+    virtual void setCarrierParams(const yarp::os::Property& params) override;
 
-    void getCarrierParams(yarp::os::Property& params) override
-    {
-        if (ip) {
-            ip->getReceiver().getCarrierParams(params);
-        }
-    }
+    virtual void getCarrierParams(yarp::os::Property& params) override;
 
     // return the protocol object
-    InputProtocol* getInPutProtocol()
-    {
-        return ip;
-    }
+    InputProtocol* getInPutProtocol();
 
     virtual bool isBusy() override;
 

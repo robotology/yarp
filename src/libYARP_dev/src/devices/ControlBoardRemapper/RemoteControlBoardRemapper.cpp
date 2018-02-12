@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2016 iCub Facility - Istituto Italiano di Tecnologia
+ * Copyright (C) 2016 Istituto Italiano di Tecnologia (IIT)
  * Author: Silvio Traversaro
  * CopyPolicy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
  */
@@ -43,7 +43,7 @@ void RemoteControlBoardRemapper::closeAllRemoteControlBoards()
         {
             m_remoteControlBoardDevices[ctrlBrd]->close();
             delete m_remoteControlBoardDevices[ctrlBrd];
-            m_remoteControlBoardDevices[ctrlBrd] = 0;
+            m_remoteControlBoardDevices[ctrlBrd] = nullptr;
         }
     }
 
@@ -88,7 +88,7 @@ bool RemoteControlBoardRemapper::open(Searchable& config)
     }
 
     Bottle *remoteControlBoards=prop.find("remoteControlBoards").asList();
-    if(remoteControlBoards==0)
+    if(remoteControlBoards==nullptr)
     {
         yError() <<"RemoteControlBoardRemapper: Error parsing parameters: \"remoteControlBoards\" should be followed by a list.";
         return false;
@@ -111,7 +111,7 @@ bool RemoteControlBoardRemapper::open(Searchable& config)
 
     // Parameters loaded, open all the remote controlboards
 
-    m_remoteControlBoardDevices.resize(remoteControlBoardsPorts.size(),0);
+    m_remoteControlBoardDevices.resize(remoteControlBoardsPorts.size(),nullptr);
 
     PolyDriverList remoteControlBoardsList;
 

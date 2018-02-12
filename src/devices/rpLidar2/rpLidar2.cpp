@@ -1,5 +1,5 @@
 /*
-* Copyright (C) 2016 iCub Facility - Istituto Italiano di Tecnologia
+* Copyright (C) 2016 Istituto Italiano di Tecnologia (IIT)
 * Author: Marco Randazzo <marco.randazzo@iit.it>
 * CopyPolicy: Released under the terms of the GPLv2 or later, see GPL.TXT
 */
@@ -43,6 +43,7 @@ bool RpLidar2::open(yarp::os::Searchable& config)
     m_device_status = DEVICE_OK_STANBY;
     m_min_distance  = 0.1; //m
     m_max_distance  = 2.5;  //m
+    m_pwm_val       = 0;
     bool br       = config.check("GENERAL");
     if (br != false)
     {

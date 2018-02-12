@@ -39,7 +39,7 @@ protected:
 
 private:
 
-    void *aceVector;
+    void *descriptors;
 };
 
 #endif // YARP_DEV_POLYDRIVERLIST_H

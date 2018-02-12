@@ -14,6 +14,7 @@
 #include <yarp/os/SystemInfoSerializer.h>
 #include <yarp/os/Time.h>
 
+#include <yarp/os/impl/NameClient.h>
 #include <yarp/os/impl/Logger.h>
 #include <yarp/os/impl/SplitString.h>
 #include <yarp/os/impl/PlatformSysPrctl.h>
@@ -28,6 +29,7 @@
 #include <cstdio>
 #include <string>
 #include <cstring>
+#include <random>
 
 #if defined(_WIN32)
 # if !defined(WIN32_LEAN_AND_MEAN)
@@ -45,7 +47,7 @@ inline yarp::os::ConstString lastError2String()
 {
     int error=GetLastError();
     char buff[1024];
-    FormatMessage(FORMAT_MESSAGE_FROM_SYSTEM, YARP_NULLPTR, error, 0, buff, 1024, YARP_NULLPTR);
+    FormatMessage(FORMAT_MESSAGE_FROM_SYSTEM, nullptr, error, 0, buff, 1024, nullptr);
 
     return yarp::os::ConstString(buff);
 }
@@ -54,9 +56,9 @@ inline yarp::os::ConstString lastError2String()
 #define READ_FROM_PIPE 0
 #define WRITE_TO_PIPE  1
 #define REDIRECT_TO(from, to) yarp::os::impl::dup2(to, from)
-YarpRunInfoVector* yarp::os::Run::mProcessVector = YARP_NULLPTR;
-YarpRunInfoVector* yarp::os::Run::mStdioVector = YARP_NULLPTR;
-ZombieHunterThread* yarp::os::Run::mBraveZombieHunter = YARP_NULLPTR;
+YarpRunInfoVector* yarp::os::Run::mProcessVector = nullptr;
+YarpRunInfoVector* yarp::os::Run::mStdioVector = nullptr;
+ZombieHunterThread* yarp::os::Run::mBraveZombieHunter = nullptr;
 #endif
 
 ///////////////////////////
@@ -64,7 +66,7 @@ ZombieHunterThread* yarp::os::Run::mBraveZombieHunter = YARP_NULLPTR;
 ///////////////////////////
 
 yarp::os::ConstString yarp::os::Run::mPortName;
-yarp::os::RpcServer* yarp::os::Run::pServerPort=YARP_NULLPTR;
+yarp::os::RpcServer* yarp::os::Run::pServerPort=nullptr;
 int yarp::os::Run::mProcCNT=0;
 bool yarp::os::Run::mStresstest=false;
 bool yarp::os::Run::mLogged=false;
@@ -72,11 +74,12 @@ yarp::os::ConstString yarp::os::Run::mLoggerPort("/yarplogger");
 
 ////////////////////////////////////
 
-static RunTerminator *pTerminator = YARP_NULLPTR;
+static RunTerminator *pTerminator = nullptr;
 
 void sigstdio_handler(int sig)
 {
     char msg[16];
+    yarp::os::Time::useSystemClock();
     sprintf(msg, "SIGNAL %d", sig);
     RUNLOG(msg);
 
@@ -113,7 +116,7 @@ static yarp::os::Bottle parsePaths(const yarp::os::ConstString& txt) {
 }
 
 static bool fileExists(const char *fname) {
-        FILE *fp = YARP_NULLPTR;
+        FILE *fp = nullptr;
         fp = fopen(fname, "r");
         if (!fp) {
             return false;
@@ -211,8 +214,8 @@ int yarp::os::Run::main(int argc, char *argv[])
         sigfillset(&new_action.sa_mask);
         new_action.sa_flags=0;
 
-        sigaction(SIGTERM, &new_action, YARP_NULLPTR);
-        sigaction(SIGHUP, &new_action, YARP_NULLPTR);
+        sigaction(SIGTERM, &new_action, nullptr);
+        sigaction(SIGHUP, &new_action, nullptr);
         //yarp::os::impl::signal(SIGHUP, SIG_IGN);
         //yarp::os::impl::signal(SIGINT, SIG_IGN);
         yarp::os::impl::signal(SIGPIPE, SIG_IGN);
@@ -226,7 +229,7 @@ int yarp::os::Run::main(int argc, char *argv[])
         yarp::os::impl::sigfillset(&new_action.sa_mask);
         new_action.sa_flags=0;
 
-        yarp::os::impl::sigaction(SIGTERM, &new_action, YARP_NULLPTR);
+        yarp::os::impl::sigaction(SIGTERM, &new_action, nullptr);
         yarp::os::impl::signal(SIGHUP, SIG_IGN);
         //yarp::os::impl::signal(SIGINT, SIG_IGN);
         yarp::os::impl::signal(SIGPIPE, SIG_IGN);
@@ -258,7 +261,7 @@ int yarp::os::Run::main(int argc, char *argv[])
         new_action.sa_handler=sigstdio_handler;
         yarp::os::impl::sigfillset(&new_action.sa_mask);
         new_action.sa_flags=0;
-        yarp::os::impl::sigaction(SIGTERM, &new_action, YARP_NULLPTR);
+        yarp::os::impl::sigaction(SIGTERM, &new_action, nullptr);
         //yarp::os::impl::signal(SIGINT,  SIG_IGN);
         yarp::os::impl::signal(SIGPIPE, SIG_IGN);
         yarp::os::impl::signal(SIGHUP,  SIG_IGN);
@@ -341,9 +344,13 @@ int yarp::os::Run::main(int argc, char *argv[])
 
         mStresstest=true;
 
+        std::random_device rd;
+        std::mt19937 mt(rd());
+        std::uniform_int_distribution<int> dist0maxint(0, max_interval_ms -1);
+
         while (mStresstest)
         {
-            yarp::os::Time::delay(0.001*(rand() % max_interval_ms));
+            yarp::os::SystemClock::delaySystem(0.001*(dist0maxint(mt)));
 
             Property stresser=config;
 
@@ -358,11 +365,12 @@ int yarp::os::Run::main(int argc, char *argv[])
 
             client(stresser);
 
+            std::uniform_int_distribution<int> dist07(0, 7);
             if (isCommand && ++term_cycle>=4)
             {
                 term_cycle=0;
 
-                int r=t-(rand()%8);
+                int r = t - (dist07(mt));
 
                 for (int i=u; i<r; ++i)
                 {
@@ -427,14 +435,14 @@ yarp::os::Bottle yarp::os::Run::sendMsg(Bottle& msg, yarp::os::ConstString targe
 
         if (!port.open("..."))
         {
-            yarp::os::Time::delay(DELAY);
+            yarp::os::SystemClock::delaySystem(DELAY);
             continue;
         }
 
         if (!yarp::os::Network::connect(port.getName(), target))
         {
             port.close();
-            yarp::os::Time::delay(DELAY);
+            yarp::os::SystemClock::delaySystem(DELAY);
             continue;
         }
 
@@ -442,7 +450,7 @@ yarp::os::Bottle yarp::os::Run::sendMsg(Bottle& msg, yarp::os::ConstString targe
         if (!port.write(msg, response))
         {
             port.close();
-            yarp::os::Time::delay(DELAY);
+            yarp::os::SystemClock::delaySystem(DELAY);
             continue;
         }
         RUNLOG(">>>port.write(msg, response)")
@@ -471,12 +479,13 @@ yarp::os::Bottle yarp::os::Run::sendMsg(Bottle& msg, yarp::os::ConstString targe
 
 void sigint_handler(int sig)
 {
+    YARP_UNUSED(sig);
     yarp::os::Run::mStresstest=false;
 
     if (yarp::os::Run::pServerPort)
     {
         yarp::os::RpcServer *pClose=yarp::os::Run::pServerPort;
-        yarp::os::Run::pServerPort = YARP_NULLPTR;
+        yarp::os::Run::pServerPort = nullptr;
         pClose->close();
     }
     //else
@@ -498,6 +507,14 @@ int yarp::os::Run::server()
         yError() << "Yarprun failed to open port: " << mPortName.c_str();
         return YARPRUN_ERROR;
     }
+
+    yarp::os::Bottle cmd, reply;
+    cmd.addString("set");
+    cmd.addString(port.getName());
+    cmd.addString("yarprun");
+    cmd.addString("true");
+    yarp::os::impl::NameClient::getNameClient().send(cmd, reply);
+
     yInfo() << "Yarprun succesfully started on port: " << mPortName.c_str();
 
     pServerPort=&port;
@@ -748,19 +765,19 @@ void yarp::os::Run::cleanBeforeExec()
     if (mProcessVector)
     {
         YarpRunInfoVector *p=mProcessVector;
-        mProcessVector = YARP_NULLPTR;
+        mProcessVector = nullptr;
         delete p;
     }
     if (mStdioVector)
     {
         YarpRunInfoVector *p=mStdioVector;
-        mStdioVector = YARP_NULLPTR;
+        mStdioVector = nullptr;
         delete p;
     }
     if (mBraveZombieHunter)
     {
         ZombieHunterThread *p=mBraveZombieHunter;
-        mBraveZombieHunter = YARP_NULLPTR;
+        mBraveZombieHunter = nullptr;
         p->stop();
         delete p;
     }
@@ -814,6 +831,7 @@ int yarp::os::Run::readFromPipe(int fd, char* &data, int& buffsize)
 
 static void sigchld_handler(int sig)
 {
+    YARP_UNUSED(sig);
     if (yarp::os::Run::mBraveZombieHunter)
     {
         yarp::os::Run::mBraveZombieHunter->sigchldHandler();
@@ -877,6 +895,14 @@ int yarp::os::Run::server()
             if (mPortName[0]!='/') yError("Invalid port name '%s', it should start with '/'\n", mPortName.c_str());
             return YARPRUN_ERROR;
         }
+        yarp::os::Bottle cmd, reply;
+        cmd.addString("set");
+        cmd.addString(port.getName());
+        cmd.addString("yarprun");
+        cmd.addString("true");
+
+        yarp::os::impl::NameClient::getNameClient().send(cmd, reply);
+
         yInfo() << "Yarprun succesfully started on port: " << mPortName.c_str();
 
         pServerPort=&port;
@@ -928,7 +954,7 @@ int yarp::os::Run::server()
 
             if (msg.check("exit"))
             {
-                pServerPort = YARP_NULLPTR;
+                pServerPort = nullptr;
                 Bottle result;
                 result.addString("exit OK");
                 port.reply(result);
@@ -1197,7 +1223,7 @@ int yarp::os::Run::server()
         {
             mBraveZombieHunter->stop();
             delete mBraveZombieHunter;
-            mBraveZombieHunter = YARP_NULLPTR;
+            mBraveZombieHunter = nullptr;
         }
 
         delete mProcessVector;
@@ -1637,7 +1663,7 @@ int yarp::os::Run::executeCmdAndStdio(Bottle& msg, Bottle& result)
     SECURITY_ATTRIBUTES pipe_sec_attr;
     pipe_sec_attr.nLength=sizeof(SECURITY_ATTRIBUTES);
     pipe_sec_attr.bInheritHandle=TRUE;
-    pipe_sec_attr.lpSecurityDescriptor = YARP_NULLPTR;
+    pipe_sec_attr.lpSecurityDescriptor = nullptr;
     HANDLE read_from_pipe_stdin_to_cmd, write_to_pipe_stdin_to_cmd;
     CreatePipe(&read_from_pipe_stdin_to_cmd, &write_to_pipe_stdin_to_cmd, &pipe_sec_attr, 0);
     HANDLE read_from_pipe_cmd_to_stdout, write_to_pipe_cmd_to_stdout;
@@ -1655,14 +1681,14 @@ int yarp::os::Run::executeCmdAndStdio(Bottle& msg, Bottle& result)
     stdout_startup_info.hStdInput=read_from_pipe_cmd_to_stdout;
     stdout_startup_info.dwFlags|=STARTF_USESTDHANDLES;
 
-    BOOL bSuccess=CreateProcess(YARP_NULLPTR,  // command name
+    BOOL bSuccess=CreateProcess(nullptr,  // command name
                                 (char*)(yarp::os::ConstString("yarprun --write ")+strStdioUUID).c_str(), // command line
-                                YARP_NULLPTR,  // process security attributes
-                                YARP_NULLPTR,  // primary thread security attributes
+                                nullptr,  // process security attributes
+                                nullptr,  // primary thread security attributes
                                 TRUE,          // handles are inherited
                                 CREATE_NEW_PROCESS_GROUP, // creation flags
-                                YARP_NULLPTR,  // use parent's environment
-                                YARP_NULLPTR,  // use parent's current directory
+                                nullptr,  // use parent's environment
+                                nullptr,  // use parent's current directory
                                 &stdout_startup_info,   // STARTUPINFO pointer
                                 &stdout_process_info);  // receives PROCESS_INFORMATION
 
@@ -1700,14 +1726,14 @@ int yarp::os::Run::executeCmdAndStdio(Bottle& msg, Bottle& result)
     stdin_startup_info.hStdInput=GetStdHandle(STD_INPUT_HANDLE);
     stdin_startup_info.dwFlags|=STARTF_USESTDHANDLES;
 
-    bSuccess=CreateProcess(YARP_NULLPTR,  // command name
+    bSuccess=CreateProcess(nullptr,  // command name
                            (char*)(yarp::os::ConstString("yarprun --read ")+strStdioUUID).c_str(), // command line
-                           YARP_NULLPTR,  // process security attributes
-                           YARP_NULLPTR,  // primary thread security attributes
+                           nullptr,  // process security attributes
+                           nullptr,  // primary thread security attributes
                            TRUE,          // handles are inherited
                            CREATE_NEW_PROCESS_GROUP, // creation flags
-                           YARP_NULLPTR,  // use parent's environment
-                           YARP_NULLPTR,  // use parent's current directory
+                           nullptr,  // use parent's environment
+                           nullptr,  // use parent's current directory
                            &stdin_startup_info,   // STARTUPINFO pointer
                            &stdin_process_info);  // receives PROCESS_INFORMATION
 
@@ -1791,23 +1817,23 @@ int yarp::os::Run::executeCmdAndStdio(Bottle& msg, Bottle& result)
     bool bWorkdir=msg.check("workdir");
     yarp::os::ConstString strWorkdir=bWorkdir?msg.find("workdir").asString()+"\\":"";
 
-    bSuccess=CreateProcess(YARP_NULLPTR,  // command name
+    bSuccess=CreateProcess(nullptr,  // command name
                            (char*)(strWorkdir+strCmd).c_str(), // command line
-                           YARP_NULLPTR,  // process security attributes
-                           YARP_NULLPTR,  // primary thread security attributes
+                           nullptr,  // process security attributes
+                           nullptr,  // primary thread security attributes
                            TRUE,          // handles are inherited
                            CREATE_NEW_PROCESS_GROUP, // creation flags
                            (LPVOID) chNewEnv,        // use new environment list
-                           bWorkdir ? strWorkdir.c_str() : YARP_NULLPTR, // working directory
+                           bWorkdir ? strWorkdir.c_str() : nullptr, // working directory
                            &cmd_startup_info,   // STARTUPINFO pointer
                            &cmd_process_info);  // receives PROCESS_INFORMATION
 
     if (!bSuccess && bWorkdir)
     {
-        bSuccess=CreateProcess(YARP_NULLPTR,  // command name
+        bSuccess=CreateProcess(nullptr,  // command name
                                (char*)(strCmd.c_str()), // command line
-                               YARP_NULLPTR,  // process security attributes
-                               YARP_NULLPTR,  // primary thread security attributes
+                               nullptr,  // process security attributes
+                               nullptr,  // primary thread security attributes
                                TRUE,          // handles are inherited
                                CREATE_NEW_PROCESS_GROUP, // creation flags
                                (LPVOID) chNewEnv,        // use new environment list
@@ -1910,7 +1936,7 @@ int yarp::os::Run::executeCmdStdout(Bottle& msg, Bottle& result, yarp::os::Const
     SECURITY_ATTRIBUTES pipe_sec_attr;
     pipe_sec_attr.nLength=sizeof(SECURITY_ATTRIBUTES);
     pipe_sec_attr.bInheritHandle=TRUE;
-    pipe_sec_attr.lpSecurityDescriptor = YARP_NULLPTR;
+    pipe_sec_attr.lpSecurityDescriptor = nullptr;
     HANDLE read_from_pipe_cmd_to_stdout, write_to_pipe_cmd_to_stdout;
     CreatePipe(&read_from_pipe_cmd_to_stdout, &write_to_pipe_cmd_to_stdout, &pipe_sec_attr, 0);
 
@@ -1926,14 +1952,14 @@ int yarp::os::Run::executeCmdStdout(Bottle& msg, Bottle& result, yarp::os::Const
     stdout_startup_info.hStdInput=read_from_pipe_cmd_to_stdout;
     stdout_startup_info.dwFlags|=STARTF_USESTDHANDLES;
 
-    BOOL bSuccess=CreateProcess(YARP_NULLPTR,  // command name
+    BOOL bSuccess=CreateProcess(nullptr,  // command name
                                 (char*)(yarp::os::ConstString("yarprun --log ")+loggerName+yarp::os::ConstString(" --write ")+portName).c_str(), // command line
-                                YARP_NULLPTR,  // process security attributes
-                                YARP_NULLPTR,  // primary thread security attributes
+                                nullptr,  // process security attributes
+                                nullptr,  // primary thread security attributes
                                 TRUE,          // handles are inherited
                                 CREATE_NEW_PROCESS_GROUP, // creation flags
-                                YARP_NULLPTR,  // use parent's environment
-                                YARP_NULLPTR,  // use parent's current directory
+                                nullptr,  // use parent's environment
+                                nullptr,  // use parent's current directory
                                 &stdout_startup_info,   // STARTUPINFO pointer
                                 &stdout_process_info);  // receives PROCESS_INFORMATION
 
@@ -2009,23 +2035,23 @@ int yarp::os::Run::executeCmdStdout(Bottle& msg, Bottle& result, yarp::os::Const
     bool bWorkdir=msg.check("workdir");
     yarp::os::ConstString strWorkdir=bWorkdir?msg.find("workdir").asString()+"\\":"";
 
-    bSuccess=CreateProcess(YARP_NULLPTR,  // command name
+    bSuccess=CreateProcess(nullptr,  // command name
                            (char*)(strWorkdir+strCmd).c_str(), // command line
-                           YARP_NULLPTR,  // process security attributes
-                           YARP_NULLPTR,  // primary thread security attributes
+                           nullptr,  // process security attributes
+                           nullptr,  // primary thread security attributes
                            TRUE,          // handles are inherited
                            CREATE_NEW_PROCESS_GROUP, // creation flags
                            (LPVOID) chNewEnv,        // use new environment list
-                           bWorkdir?strWorkdir.c_str():YARP_NULLPTR, // working directory
+                           bWorkdir?strWorkdir.c_str():nullptr, // working directory
                            &cmd_startup_info,   // STARTUPINFO pointer
                            &cmd_process_info);  // receives PROCESS_INFORMATION
 
     if (!bSuccess && bWorkdir)
     {
-        bSuccess=CreateProcess(YARP_NULLPTR,  // command name
+        bSuccess=CreateProcess(nullptr,  // command name
                                (char*)(strCmd.c_str()), // command line
-                               YARP_NULLPTR,  // process security attributes
-                               YARP_NULLPTR,  // primary thread security attributes
+                               nullptr,  // process security attributes
+                               nullptr,  // primary thread security attributes
                                TRUE,          // handles are inherited
                                CREATE_NEW_PROCESS_GROUP, // creation flags
                                (LPVOID) chNewEnv,        // use new environment list
@@ -2175,23 +2201,23 @@ int yarp::os::Run::executeCmd(yarp::os::Bottle& msg, Bottle& result)
     bool bWorkdir=msg.check("workdir");
     yarp::os::ConstString strWorkdir=bWorkdir?msg.find("workdir").asString()+"\\":"";
 
-    BOOL bSuccess=CreateProcess(YARP_NULLPTR,  // command name
+    BOOL bSuccess=CreateProcess(nullptr,  // command name
                                 (char*)(strWorkdir+strCmd).c_str(), // command line
-                                YARP_NULLPTR,  // process security attributes
-                                YARP_NULLPTR,  // primary thread security attributes
+                                nullptr,  // process security attributes
+                                nullptr,  // primary thread security attributes
                                 TRUE,          // handles are inherited
                                 CREATE_NEW_PROCESS_GROUP, // creation flags
                                 (LPVOID) chNewEnv, // use new environment
-                                bWorkdir ? strWorkdir.c_str() : YARP_NULLPTR, // working directory
+                                bWorkdir ? strWorkdir.c_str() : nullptr, // working directory
                                 &cmd_startup_info,   // STARTUPINFO pointer
                                 &cmd_process_info);  // receives PROCESS_INFORMATION
 
     if (!bSuccess && bWorkdir)
     {
-        bSuccess=CreateProcess(YARP_NULLPTR,  // command name
+        bSuccess=CreateProcess(nullptr,  // command name
                                (char*)(strCmd.c_str()), // command line
-                               YARP_NULLPTR,  // process security attributes
-                               YARP_NULLPTR,  // primary thread security attributes
+                               nullptr,  // process security attributes
+                               nullptr,  // primary thread security attributes
                                TRUE,          // handles are inherited
                                CREATE_NEW_PROCESS_GROUP, // creation flags
                                (LPVOID) chNewEnv, // use new environment
@@ -2262,14 +2288,14 @@ int yarp::os::Run::userStdio(Bottle& msg, Bottle& result)
     yarp::os::ConstString strCmd=yarp::os::ConstString("yarprun --readwrite ")+strUUID;
     if (msg.check("forward")) strCmd+=yarp::os::ConstString(" --forward ")+msg.findGroup("forward").get(1).asString()+yarp::os::ConstString(" ")+msg.findGroup("forward").get(2).asString();
 
-    BOOL bSuccess=CreateProcess(YARP_NULLPTR,  // command name
+    BOOL bSuccess=CreateProcess(nullptr,  // command name
                                 (char*)strCmd.c_str(), // command line
-                                YARP_NULLPTR,  // process security attributes
-                                YARP_NULLPTR,  // primary thread security attributes
+                                nullptr,  // process security attributes
+                                nullptr,  // primary thread security attributes
                                 TRUE,          // handles are inherited
                                 CREATE_NEW_CONSOLE, // creation flags
-                                YARP_NULLPTR,  // use parent's environment
-                                YARP_NULLPTR,  // use parent's current directory
+                                nullptr,  // use parent's environment
+                                nullptr,  // use parent's current directory
                                 &stdio_startup_info,   // STARTUPINFO pointer
                                 &stdio_process_info);  // receives PROCESS_INFORMATION
 
@@ -2371,7 +2397,7 @@ void splitLine(char *pLine, char **pArgs)
             pTmp++;
         }
         if (*pTmp == '\0') {
-            pTmp = YARP_NULLPTR;
+            pTmp = nullptr;
         }
     }
     *pArgs = pTmp;
@@ -2408,11 +2434,11 @@ void parseArguments(char *io_pLine, int *o_pArgc, char **o_pArgv)
     *o_pArgc = 1;
     o_pArgv[0] = io_pLine;
 
-    while ((YARP_NULLPTR != pNext) && (*o_pArgc < C_MAXARGS)) {
+    while ((nullptr != pNext) && (*o_pArgc < C_MAXARGS)) {
         splitLine(pNext, &(o_pArgv[*o_pArgc]));
         pNext = o_pArgv[*o_pArgc];
 
-        if (YARP_NULLPTR != o_pArgv[*o_pArgc]) {
+        if (nullptr != o_pArgv[*o_pArgc]) {
             *o_pArgc += 1;
         }
     }
@@ -2511,7 +2537,7 @@ int yarp::os::Run::executeCmdAndStdio(yarp::os::Bottle& msg, yarp::os::Bottle& r
 
         //yarp::os::impl::signal(SIGPIPE, SIG_DFL);
 
-        int ret = yarp::os::impl::execlp("yarprun", "yarprun", "--write", strStdioUUID.c_str(), static_cast<char*>(YARP_NULLPTR));
+        int ret = yarp::os::impl::execlp("yarprun", "yarprun", "--write", strStdioUUID.c_str(), static_cast<char*>(nullptr));
 
         CLOSE(pipe_cmd_to_stdout[READ_FROM_PIPE]);
 
@@ -2588,7 +2614,7 @@ int yarp::os::Run::executeCmdAndStdio(yarp::os::Bottle& msg, yarp::os::Bottle& r
 
             //yarp::os::impl::signal(SIGPIPE, SIG_DFL);
 
-            int ret = yarp::os::impl::execlp("yarprun", "yarprun", "--read", strStdioUUID.c_str(), static_cast<char*>(YARP_NULLPTR));
+            int ret = yarp::os::impl::execlp("yarprun", "yarprun", "--read", strStdioUUID.c_str(), static_cast<char*>(nullptr));
 
             CLOSE(pipe_stdin_to_cmd[WRITE_TO_PIPE]);
 
@@ -2672,9 +2698,9 @@ int yarp::os::Run::executeCmdAndStdio(yarp::os::Bottle& msg, yarp::os::Bottle& r
                 int nargs = 0;
                 char **arg_str = new char*[C_MAXARGS + 1];
                 parseArguments(cmd_str, &nargs, arg_str);
-                arg_str[nargs]=YARP_NULLPTR;
+                arg_str[nargs]=nullptr;
 
-                setvbuf(stdout, YARP_NULLPTR, _IONBF, 0);
+                setvbuf(stdout, nullptr, _IONBF, 0);
 
                 REDIRECT_TO(STDIN_FILENO, pipe_stdin_to_cmd[READ_FROM_PIPE]);
                 REDIRECT_TO(STDOUT_FILENO, pipe_cmd_to_stdout[WRITE_TO_PIPE]);
@@ -2724,7 +2750,7 @@ int yarp::os::Run::executeCmdAndStdio(yarp::os::Bottle& msg, yarp::os::Bottle& r
                 {
                     char **cwd_arg_str=new char*[nargs+1];
                     for (int i=1; i<nargs; ++i) cwd_arg_str[i]=arg_str[i];
-                    cwd_arg_str[nargs]=YARP_NULLPTR;
+                    cwd_arg_str[nargs]=nullptr;
                     cwd_arg_str[0]=new char[strlen(currWorkDir)+strlen(arg_str[0])+16];
 
                     strcpy(cwd_arg_str[0], currWorkDir);
@@ -2802,7 +2828,7 @@ int yarp::os::Run::executeCmdAndStdio(yarp::os::Bottle& msg, yarp::os::Bottle& r
                         pipe_stdin_to_cmd[WRITE_TO_PIPE],
                         pipe_cmd_to_stdout[READ_FROM_PIPE],
                         pipe_cmd_to_stdout[WRITE_TO_PIPE],
-                        YARP_NULLPTR,
+                        nullptr,
                         false
                     );
 
@@ -2815,7 +2841,7 @@ int yarp::os::Run::executeCmdAndStdio(yarp::os::Bottle& msg, yarp::os::Bottle& r
 
                 mProcessVector->Add(pInf);
 
-                yarp::os::Time::delay(0.01);
+                yarp::os::SystemClock::delaySystem(0.01);
 
                 FILE* in_from_child=fdopen(pipe_child_to_parent[READ_FROM_PIPE], "r");
                 int flags=fcntl(pipe_child_to_parent[READ_FROM_PIPE], F_GETFL, 0);
@@ -2945,7 +2971,7 @@ int yarp::os::Run::executeCmdStdout(yarp::os::Bottle& msg, yarp::os::Bottle& res
 
         //yarp::os::impl::signal(SIGPIPE, SIG_DFL);
 
-        int ret = yarp::os::impl::execlp("yarprun", "yarprun", "--write", portName.c_str(), "--log", loggerName.c_str(), static_cast<char*>(YARP_NULLPTR));
+        int ret = yarp::os::impl::execlp("yarprun", "yarprun", "--write", portName.c_str(), "--log", loggerName.c_str(), static_cast<char*>(nullptr));
 
         CLOSE(pipe_cmd_to_stdout[READ_FROM_PIPE]);
 
@@ -3028,9 +3054,9 @@ int yarp::os::Run::executeCmdStdout(yarp::os::Bottle& msg, yarp::os::Bottle& res
                 int nargs = 0;
                 char **arg_str = new char*[C_MAXARGS + 1];
                 parseArguments(cmd_str, &nargs, arg_str);
-                arg_str[nargs]=YARP_NULLPTR;
+                arg_str[nargs]=nullptr;
 
-                setvbuf(stdout, YARP_NULLPTR, _IONBF, 0);
+                setvbuf(stdout, nullptr, _IONBF, 0);
 
                 REDIRECT_TO(STDOUT_FILENO, pipe_cmd_to_stdout[WRITE_TO_PIPE]);
                 REDIRECT_TO(STDERR_FILENO, pipe_cmd_to_stdout[WRITE_TO_PIPE]);
@@ -3079,7 +3105,7 @@ int yarp::os::Run::executeCmdStdout(yarp::os::Bottle& msg, yarp::os::Bottle& res
                 {
                     char **cwd_arg_str=new char*[nargs+1];
                     for (int i=1; i<nargs; ++i) cwd_arg_str[i]=arg_str[i];
-                    cwd_arg_str[nargs]=YARP_NULLPTR;
+                    cwd_arg_str[nargs]=nullptr;
                     cwd_arg_str[0]=new char[strlen(currWorkDir)+strlen(arg_str[0])+16];
 
                     strcpy(cwd_arg_str[0], currWorkDir);
@@ -3150,7 +3176,7 @@ int yarp::os::Run::executeCmdStdout(yarp::os::Bottle& msg, yarp::os::Bottle& res
                         pid_stdout,
                         pipe_cmd_to_stdout[READ_FROM_PIPE],
                         pipe_cmd_to_stdout[WRITE_TO_PIPE],
-                        YARP_NULLPTR,
+                        nullptr,
                         false
                     );
 
@@ -3163,7 +3189,7 @@ int yarp::os::Run::executeCmdStdout(yarp::os::Bottle& msg, yarp::os::Bottle& res
 
                 mProcessVector->Add(pInf);
 
-                yarp::os::Time::delay(0.01);
+                yarp::os::SystemClock::delaySystem(0.01);
 
                 FILE* in_from_child=fdopen(pipe_child_to_parent[READ_FROM_PIPE], "r");
                 int flags=fcntl(pipe_child_to_parent[READ_FROM_PIPE], F_GETFL, 0);
@@ -3255,7 +3281,7 @@ int yarp::os::Run::userStdio(yarp::os::Bottle& msg, yarp::os::Bottle& result)
     int c=0;
     char *command[16];
     for (int i=0; i<16; ++i) {
-        command[i] = YARP_NULLPTR;
+        command[i] = nullptr;
     }
 
     cmdcpy(command[c++], "xterm");
@@ -3343,13 +3369,13 @@ int yarp::os::Run::userStdio(yarp::os::Bottle& msg, yarp::os::Bottle& result)
     {
         CLOSE(pipe_child_to_parent[WRITE_TO_PIPE]);
 
-        mStdioVector->Add(new YarpRunProcInfo(strAlias, mPortName, pid_cmd, YARP_NULLPTR, msg.check("hold")));
+        mStdioVector->Add(new YarpRunProcInfo(strAlias, mPortName, pid_cmd, nullptr, msg.check("hold")));
 
         result.clear();
 
         cmdclean(command);
 
-        yarp::os::Time::delay(0.01);
+        yarp::os::SystemClock::delaySystem(0.01);
 
         FILE* in_from_child=fdopen(pipe_child_to_parent[READ_FROM_PIPE], "r");
         int flags=fcntl(pipe_child_to_parent[READ_FROM_PIPE], F_GETFL, 0);
@@ -3450,10 +3476,12 @@ int yarp::os::Run::executeCmd(yarp::os::Bottle& msg, yarp::os::Bottle& result)
     {
         int saved_stderr = yarp::os::impl::dup(STDERR_FILENO);
         int null_file=open("/dev/null", O_WRONLY);
-        REDIRECT_TO(STDOUT_FILENO, null_file);
-        REDIRECT_TO(STDERR_FILENO, null_file);
-        close(null_file);
-
+        if (null_file >= 0)
+        {
+            REDIRECT_TO(STDOUT_FILENO, null_file);
+            REDIRECT_TO(STDERR_FILENO, null_file);
+            close(null_file);
+        }
         char *cmd_str=new char[strCmd.length()+1];
         strcpy(cmd_str, strCmd.c_str());
         /*
@@ -3465,7 +3493,7 @@ int yarp::os::Run::executeCmd(yarp::os::Bottle& msg, yarp::os::Bottle& result)
         int nargs = 0;
         char **arg_str = new char*[C_MAXARGS + 1];
         parseArguments(cmd_str, &nargs, arg_str);
-        arg_str[nargs]=YARP_NULLPTR;
+        arg_str[nargs]=nullptr;
 
         if (msg.check("env"))
         {
@@ -3510,7 +3538,7 @@ int yarp::os::Run::executeCmd(yarp::os::Bottle& msg, yarp::os::Bottle& result)
         {
             char **cwd_arg_str=new char*[nargs+1];
             for (int i=1; i<nargs; ++i) cwd_arg_str[i]=arg_str[i];
-            cwd_arg_str[nargs]=YARP_NULLPTR;
+            cwd_arg_str[nargs]=nullptr;
             cwd_arg_str[0]=new char[strlen(currWorkDir)+strlen(arg_str[0])+16];
 
 
@@ -3553,7 +3581,10 @@ int yarp::os::Run::executeCmd(yarp::os::Bottle& msg, yarp::os::Bottle& result)
             fflush(out_to_parent);
             fclose(out_to_parent);
 
-            REDIRECT_TO(STDERR_FILENO, saved_stderr);
+            if (saved_stderr >= 0)
+            {
+                REDIRECT_TO(STDERR_FILENO, saved_stderr);
+            }
             fprintf(stderr, "%s", out.c_str());
         }
 
@@ -3565,14 +3596,14 @@ int yarp::os::Run::executeCmd(yarp::os::Bottle& msg, yarp::os::Bottle& result)
 
     if (IS_PARENT_OF(pid_cmd))
     {
-        YarpRunProcInfo* pInf = new YarpRunProcInfo(strAlias, mPortName, pid_cmd, YARP_NULLPTR, false);
+        YarpRunProcInfo* pInf = new YarpRunProcInfo(strAlias, mPortName, pid_cmd, nullptr, false);
         pInf->setCmd(strCmd);
         if (msg.check("env")) pInf->setEnv(msg.find("env").asString());
         mProcessVector->Add(pInf);
         char pidstr[16];
         sprintf(pidstr, "%d", pid_cmd);
 
-        yarp::os::Time::delay(0.01);
+        yarp::os::SystemClock::delaySystem(0.01);
 
         FILE* in_from_child=fdopen(pipe_child_to_parent[READ_FROM_PIPE], "r");
         int flags=fcntl(pipe_child_to_parent[READ_FROM_PIPE], F_GETFL, 0);

@@ -1,6 +1,6 @@
 /*
-* Author: Lorenzo Natale, Ugo Pattacini
-* Copyright (C) 2007 The Robotcub consortium
+* Copyright (C) 2007 RobotCub Consortium
+* Authors: Lorenzo Natale, Ugo Pattacini
 * CopyPolicy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
 */
 

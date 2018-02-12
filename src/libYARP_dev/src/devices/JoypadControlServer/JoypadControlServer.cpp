@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2017 iCub Facility, Istituto Italiano di Tecnologia
+ * Copyright (C) 2017 Istituto Italiano di Tecnologia (IIT)
  * Authors: Andrea Ruzzenenti <andrea.ruzzenenti@iit.it>
  * CopyPolicy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
  */
@@ -15,7 +15,7 @@ using namespace std;
 using namespace yarp::dev;
 using namespace yarp::os;
 using namespace yarp::sig;
-JoypadCtrlParser::JoypadCtrlParser() : device(YARP_NULLPTR){}
+JoypadCtrlParser::JoypadCtrlParser() : device(nullptr){}
 
 inline void cat(Vector& a, const Vector& b)
 {
@@ -35,7 +35,7 @@ bool JoypadCtrlParser::configure(yarp::dev::IJoypadController* interface)
     }
     else
     {
-        device = YARP_NULLPTR;
+        device = nullptr;
         ret = false;
     }
 
@@ -217,13 +217,15 @@ bool JoypadCtrlParser::respond(const yarp::os::Bottle& cmd, yarp::os::Bottle& re
 
 JoypadControlServer::JoypadControlServer() : RateThread(DEFAULT_THREAD_PERIOD),
                                              m_rate(DEFAULT_THREAD_PERIOD),
-                                             m_device(YARP_NULLPTR),
-                                             m_subDeviceOwned(YARP_NULLPTR),
+                                             m_device(nullptr),
+                                             m_subDeviceOwned(nullptr),
                                              m_isSubdeviceOwned(false),
                                              m_separatePorts(false),
                                              m_profile(false),
                                              m_coordsMode(yarp::dev::IJoypadController::JoypadCtrl_coordinateMode::JypCtrlcoord_POLAR)
-{}
+{
+
+}
 
 JoypadControlServer::~JoypadControlServer()
 {
@@ -231,8 +233,8 @@ JoypadControlServer::~JoypadControlServer()
     {
         delete m_subDeviceOwned;
     }
-    m_subDeviceOwned = YARP_NULLPTR;
-    m_device         = YARP_NULLPTR;
+    m_subDeviceOwned = nullptr;
+    m_device         = nullptr;
 }
 
 bool JoypadControlServer::open(yarp::os::Searchable& params)
@@ -351,7 +353,7 @@ bool JoypadControlServer::attach(PolyDriver* poly)
     if(poly)
         poly->view(m_device);
 
-    if(m_device == YARP_NULLPTR)
+    if(m_device == nullptr)
     {
         yError() << "JoypadControlServer: attached device has no valid IJoypadController interface.";
         return false;
@@ -361,7 +363,7 @@ bool JoypadControlServer::attach(PolyDriver* poly)
 
 bool JoypadControlServer::attach(yarp::dev::IJoypadController *s)
 {
-    if(s == YARP_NULLPTR)
+    if(s == nullptr)
     {
         yError() << "JoypadControlServer: attached device has no valid IJoystickController interface.";
         return false;
@@ -372,7 +374,7 @@ bool JoypadControlServer::attach(yarp::dev::IJoypadController *s)
 
 bool JoypadControlServer::detach()
 {
-    m_device = YARP_NULLPTR;
+    m_device = nullptr;
     return true;
 }
 
@@ -818,7 +820,7 @@ bool JoypadControlServer::detachAll()
     if (m_isSubdeviceOwned)
         return false;
 
-    m_device = YARP_NULLPTR;
+    m_device = nullptr;
     return true;
 }
 
@@ -831,8 +833,8 @@ bool JoypadControlServer::close()
     {
         if(m_subDeviceOwned)m_subDeviceOwned->close();
 
-        m_subDeviceOwned   = YARP_NULLPTR;
-        m_device           = YARP_NULLPTR;
+        m_subDeviceOwned   = nullptr;
+        m_device           = nullptr;
         m_isSubdeviceOwned = false;
     }
 

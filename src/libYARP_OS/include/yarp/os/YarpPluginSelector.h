@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2013 iCub Facility, Istituto Italiano di Tecnologia
+ * Copyright (C) 2013 Istituto Italiano di Tecnologia (IIT)
  * Authors: Paul Fitzpatrick <paulfitz@alum.mit.edu>
  * CopyPolicy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
  */
@@ -47,7 +47,7 @@ public:
      * @return true if plugin is of interest.  By default, always returns true.
      *
      */
-    virtual bool select(Searchable& options) { return true; }
+    virtual bool select(Searchable& options) { YARP_UNUSED(options); return true; }
 
 
     /**

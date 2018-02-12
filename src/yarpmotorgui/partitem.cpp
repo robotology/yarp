@@ -1,6 +1,6 @@
 /*
  * Copyright (C) 2010 RobotCub Consortium, European Commission FP6 Project IST-004370
- * Copyright (C) 2015 iCub Facility - Istituto Italiano di Tecnologia
+ * Copyright (C) 2015 Istituto Italiano di Tecnologia (IIT)
  * Authors: Marco Randazzo <marco.randazzo@iit.it>
  *          Francesco Nori <francesco.nori@iit.it>
  *          Davide Perrone <dperrone@aitek.it>
@@ -25,33 +25,34 @@
 #include <cmath>
 
 PartItem::PartItem(QString robotName, int id, QString partName, ResourceFinder& _finder,
-                   bool debug_param_enabled, bool speedview_param_enabled,
+                   bool debug_param_enabled,
+                   bool speedview_param_enabled,
                    bool enable_calib_all, QWidget *parent) :
     QWidget(parent),
-    m_node(YARP_NULLPTR),
-    m_sequenceWindow(YARP_NULLPTR),
+    m_node(nullptr),
+    m_sequenceWindow(nullptr),
     m_partId(id),
     m_mixedEnabled(false),
     m_positionDirectEnabled(false),
     m_pwmEnabled(false),
     m_currentEnabled(false),
-    m_currentPidDlg(YARP_NULLPTR),
-    m_controlModes(YARP_NULLPTR),
-    m_refTrajectorySpeeds(YARP_NULLPTR),
-    m_refTrajectoryPositions(YARP_NULLPTR),
-    m_refTorques(YARP_NULLPTR),
-    m_refVelocitySpeeds(YARP_NULLPTR),
-    m_torques(YARP_NULLPTR),
-    m_positions(YARP_NULLPTR),
-    m_speeds(YARP_NULLPTR),
-    m_motorPositions(YARP_NULLPTR),
-    m_done(YARP_NULLPTR),
+    m_currentPidDlg(nullptr),
+    m_controlModes(nullptr),
+    m_refTrajectorySpeeds(nullptr),
+    m_refTrajectoryPositions(nullptr),
+    m_refTorques(nullptr),
+    m_refVelocitySpeeds(nullptr),
+    m_torques(nullptr),
+    m_positions(nullptr),
+    m_speeds(nullptr),
+    m_motorPositions(nullptr),
+    m_done(nullptr),
     m_part_speedVisible(false),
     m_part_motorPositionVisible(false),
-    m_interactionModes(YARP_NULLPTR),
+    m_interactionModes(nullptr),
     m_finder(&_finder),
-    m_iMot(YARP_NULLPTR),
-    m_iinfo(YARP_NULLPTR),
+    m_iMot(nullptr),
+    m_iinfo(nullptr),
     m_slow_k(0)
 {
     m_layout = new FlowLayout();
@@ -108,7 +109,7 @@ PartItem::PartItem(QString robotName, int id, QString partName, ResourceFinder& 
     if (m_interfaceError == true)
     {
         yError("Opening PolyDriver for part %s failed...", m_robotPartPort.toLatin1().data());
-        QMessageBox::critical(0, "Error opening a device", QString("Error while opening device for part ").append(m_robotPartPort.toLatin1().data()));
+        QMessageBox::critical(nullptr, "Error opening a device", QString("Error while opening device for part ").append(m_robotPartPort.toLatin1().data()));
     }
 
     /*********************************************************************/
@@ -143,12 +144,12 @@ PartItem::PartItem(QString robotName, int id, QString partName, ResourceFinder& 
         m_interactionModes = new yarp::dev::InteractionModeEnum[number_of_joints];
 
         bool ret = false;
-        Time::delay(0.050);
+        SystemClock::delaySystem(0.050);
         do {
             ret = m_iencs->getEncoders(m_positions);
             if (!ret) {
                 yError("%s iencs->getEncoders() failed, retrying...\n", partName.toLatin1().data());
-                Time::delay(0.050);
+                SystemClock::delaySystem(0.050);
             }
         } while (!ret);
 
@@ -186,7 +187,7 @@ PartItem::PartItem(QString robotName, int id, QString partName, ResourceFinder& 
             yarp::dev::JointTypeEnum jtype = yarp::dev::VOCAB_JOINTTYPE_REVOLUTE;
 
             Pid myPid(0,0,0,0,0,0);
-            yarp::os::Time::delay(0.005);
+            yarp::os::SystemClock::delaySystem(0.005);
             m_iPid->getPid(VOCAB_PIDTYPE_POSITION, k, &myPid);
             
             JointItem *joint = new JointItem(k);
@@ -296,16 +297,16 @@ PartItem::~PartItem()
         m_partsdd->close();
     }
 
-    if (m_controlModes) { delete[] m_controlModes; m_controlModes = 0; }
-    if (m_refTrajectorySpeeds) { delete[] m_refTrajectorySpeeds; m_refTrajectorySpeeds = 0; }
-    if (m_refTrajectoryPositions) { delete[] m_refTrajectoryPositions; m_refTrajectoryPositions = 0; }
-    if (m_refTorques) { delete[] m_refTorques; m_refTorques = 0; }
-    if (m_refVelocitySpeeds) { delete[] m_refVelocitySpeeds; m_refVelocitySpeeds = 0; }
-    if (m_torques) { delete[] m_torques; m_torques = 0; }
-    if (m_positions) { delete[] m_positions; m_positions = 0; }
-    if (m_speeds) { delete[] m_speeds; m_speeds = 0; }
-    if (m_motorPositions) { delete[] m_motorPositions; m_motorPositions = 0; }
-    if (m_done) { delete[] m_done; m_done = 0; }
+    if (m_controlModes) { delete[] m_controlModes; m_controlModes = nullptr; }
+    if (m_refTrajectorySpeeds) { delete[] m_refTrajectorySpeeds; m_refTrajectorySpeeds = nullptr; }
+    if (m_refTrajectoryPositions) { delete[] m_refTrajectoryPositions; m_refTrajectoryPositions = nullptr; }
+    if (m_refTorques) { delete[] m_refTorques; m_refTorques = nullptr; }
+    if (m_refVelocitySpeeds) { delete[] m_refVelocitySpeeds; m_refVelocitySpeeds = nullptr; }
+    if (m_torques) { delete[] m_torques; m_torques = nullptr; }
+    if (m_positions) { delete[] m_positions; m_positions = nullptr; }
+    if (m_speeds) { delete[] m_speeds; m_speeds = nullptr; }
+    if (m_motorPositions) { delete[] m_motorPositions; m_motorPositions = nullptr; }
+    if (m_done) { delete[] m_done; m_done = nullptr; }
 }
 
 bool PartItem::openPolyDrivers()
@@ -333,22 +334,22 @@ void PartItem::initInterfaces()
 {
     yDebug("Initializing interfaces...");
     //default value for unopened interfaces
-    m_iPos = NULL;
-    m_iVel = NULL;
-    m_iVar = NULL;
-    m_iDir = NULL;
-    m_iencs = NULL;
-    m_iAmp = NULL;
-    m_iPid = NULL;
-    m_iCur = NULL;
-    m_iPWM = NULL;
-    m_iTrq = NULL;
-    m_iImp = NULL;
-    m_iLim = NULL;
-    m_ical = NULL;
-    m_ictrlmode2 = NULL;
-    m_iinteract = NULL;
-    m_iremCalib = NULL;
+    m_iPos = nullptr;
+    m_iVel = nullptr;
+    m_iVar = nullptr;
+    m_iDir = nullptr;
+    m_iencs = nullptr;
+    m_iAmp = nullptr;
+    m_iPid = nullptr;
+    m_iCur = nullptr;
+    m_iPWM = nullptr;
+    m_iTrq = nullptr;
+    m_iImp = nullptr;
+    m_iLim = nullptr;
+    m_ical = nullptr;
+    m_ictrlmode2 = nullptr;
+    m_iinteract = nullptr;
+    m_iremCalib = nullptr;
 }
 
 bool PartItem::openInterfaces()
@@ -438,7 +439,7 @@ bool PartItem::openInterfaces()
 
         if (!ok) {
             yError("Error while acquiring interfaces!");
-            QMessageBox::critical(0,"Problems acquiring interfaces.","Check if interface is running");
+            QMessageBox::critical(nullptr,"Problems acquiring interfaces.","Check if interface is running");
             m_interfaceError = true;
         }
     }
@@ -571,9 +572,9 @@ void PartItem::onSendPWM(int jointIndex, double pwmVal)
 
     m_iPWM->setRefDutyCycle(jointIndex, pwmVal);
 
-    yarp::os::Time::delay(0.010);
+    yarp::os::SystemClock::delaySystem(0.010);
     m_iPWM->getRefDutyCycle(jointIndex, &pwm_reference);  //This is the reference reference
-    yarp::os::Time::delay(0.010);
+    yarp::os::SystemClock::delaySystem(0.010);
     m_iPWM->getDutyCycle(jointIndex, &current_pwm);  //This is the reak PWM output
 
     if (m_currentPidDlg){
@@ -590,7 +591,7 @@ void PartItem::onSendStiffness(int jointIdex,double stiff,double damp,double for
 
     m_iImp->setImpedance(jointIdex, stiff, damp);
     //imp->setImpedanceOffset(jointIdex, force);
-    yarp::os::Time::delay(0.005);
+    yarp::os::SystemClock::delaySystem(0.005);
     m_iImp->getImpedance(jointIdex, &stiff_val, &damp_val);
     m_iImp->getImpedanceOffset(jointIdex, &offset_val);
 
@@ -621,7 +622,7 @@ void PartItem::onSendTorquePid(int jointIndex,Pid newPid,MotorTorqueParameters n
     m_iPid->setPid(VOCAB_PIDTYPE_TORQUE, jointIndex, newPid);
 
     m_iTrq->setMotorTorqueParams(jointIndex, newTrqParam);
-    yarp::os::Time::delay(0.005);
+    yarp::os::SystemClock::delaySystem(0.005);
     m_iPid->getPid(VOCAB_PIDTYPE_TORQUE,jointIndex, &myTrqPid);
     m_iTrq->getMotorTorqueParams(jointIndex, &TrqParam);
 
@@ -634,7 +635,7 @@ void PartItem::onSendPositionPid(int jointIndex,Pid newPid)
 {
     Pid myPosPid(0,0,0,0,0,0);
     m_iPid->setPid(VOCAB_PIDTYPE_POSITION, jointIndex, newPid);
-    yarp::os::Time::delay(0.005);
+    yarp::os::SystemClock::delaySystem(0.005);
     m_iPid->getPid(VOCAB_PIDTYPE_POSITION, jointIndex, &myPosPid);
 
     if (m_currentPidDlg){
@@ -646,7 +647,7 @@ void PartItem::onSendVelocityPid(int jointIndex, Pid newPid)
 {
     Pid myVelPid(0, 0, 0, 0, 0, 0);
     m_iPid->setPid(VOCAB_PIDTYPE_VELOCITY, jointIndex, newPid);
-    yarp::os::Time::delay(0.005);
+    yarp::os::SystemClock::delaySystem(0.005);
     m_iPid->getPid(VOCAB_PIDTYPE_VELOCITY, jointIndex, &myVelPid);
 
     if (m_currentPidDlg){
@@ -678,28 +679,28 @@ void PartItem::onRefreshPids(int jointIndex)
 
     // Position
     m_iPid->getPid(VOCAB_PIDTYPE_POSITION, jointIndex, &myPosPid);
-    yarp::os::Time::delay(0.005);
+    yarp::os::SystemClock::delaySystem(0.005);
 
     // Velocity
     m_iPid->getPid(VOCAB_PIDTYPE_VELOCITY, jointIndex, &myVelPid);
-    yarp::os::Time::delay(0.005);
+    yarp::os::SystemClock::delaySystem(0.005);
 
     // Current
     if (m_iCur)
     {
         m_iPid->getPid(VOCAB_PIDTYPE_CURRENT, jointIndex, &myCurPid);
-        yarp::os::Time::delay(0.005);
+        yarp::os::SystemClock::delaySystem(0.005);
     }
 
     // Torque
     m_iPid->getPid(VOCAB_PIDTYPE_TORQUE, jointIndex, &myTrqPid);
     m_iTrq->getMotorTorqueParams(jointIndex, &motorTorqueParams);
-    yarp::os::Time::delay(0.005);
+    yarp::os::SystemClock::delaySystem(0.005);
 
     //Stiff
     m_iImp->getImpedance(jointIndex, &stiff_val, &damp_val);
     m_iImp->getImpedanceOffset(jointIndex, &impedance_offset_val);
-    yarp::os::Time::delay(0.005);
+    yarp::os::SystemClock::delaySystem(0.005);
 
     // PWM
     m_iPWM->getRefDutyCycle(jointIndex, &pwm_reference);
@@ -719,14 +720,14 @@ void PartItem::onRefreshPids(int jointIndex)
 
 void PartItem::onSendCurrentPid(int jointIndex, Pid newPid)
 {
-    if (m_iCur == 0)
+    if (m_iCur == nullptr)
     {
         yError() << "iCurrent interface not opened";
         return;
     }
     Pid myCurPid(0, 0, 0, 0, 0, 0);
     m_iPid->setPid(VOCAB_PIDTYPE_CURRENT, jointIndex, newPid);
-    yarp::os::Time::delay(0.005);
+    yarp::os::SystemClock::delaySystem(0.005);
     m_iPid->getPid(VOCAB_PIDTYPE_CURRENT, jointIndex, &myCurPid);
 
     if (m_currentPidDlg){
@@ -737,7 +738,7 @@ void PartItem::onSendCurrentPid(int jointIndex, Pid newPid)
 void PartItem::onSendSingleRemoteVariable(std::string key, yarp::os::Bottle val)
 {
     m_iVar->setRemoteVariable(key, val);
-    yarp::os::Time::delay(0.005);
+    yarp::os::SystemClock::delaySystem(0.005);
 }
 
 void PartItem::onUpdateAllRemoteVariables()
@@ -791,7 +792,7 @@ void PartItem::onPidClicked(JointItem *joint)
     m_currentPidDlg->exec();
 
     delete m_currentPidDlg;
-    m_currentPidDlg = NULL;
+    m_currentPidDlg = nullptr;
 }
 
 void PartItem::onRunClicked(JointItem *joint)
@@ -799,7 +800,7 @@ void PartItem::onRunClicked(JointItem *joint)
     const int jointIndex = joint->getJointIndex();
     double posJoint;
     while (!m_iencs->getEncoder(jointIndex, &posJoint)){
-        Time::delay(0.001);
+        SystemClock::delaySystem(0.001);
     }
 
     m_ictrlmode2->setControlMode(jointIndex, VOCAB_CM_POSITION);
@@ -1702,7 +1703,7 @@ void PartItem::fixedTimeMove(SequenceItem sequence)
     double cmdTime = sequence.getTiming();
 
     while (!m_iencs->getEncoders(startPositions)){
-        Time::delay(0.001);
+        SystemClock::delaySystem(0.001);
     }
 
 
@@ -2054,7 +2055,7 @@ bool PartItem::updatePart()
     if (number_of_joints == 0)
     {
         LOG_ERROR("Lost connection with the robot. You should save and restart.\n" );
-        Time::delay(0.1);
+        SystemClock::delaySystem(0.1);
 
         for (int i = 0; i<m_layout->count(); i++){
             JointItem *joint = (JointItem*)m_layout->itemAt(i)->widget();

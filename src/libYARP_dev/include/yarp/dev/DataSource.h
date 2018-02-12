@@ -75,7 +75,7 @@ public:
         writer.attach(port);
     }
 
-    virtual void run() YARP_OVERRIDE {
+    virtual void run() override {
 
         ///////////// execution statistics for logging
         double now=yarp::os::Time::now();
@@ -168,7 +168,7 @@ public:
         writer2.attach(port2);
     }
 
-    virtual void run() YARP_OVERRIDE {
+    virtual void run() override {
         T1& datum1 = writer1.get();
         T2& datum2 = writer2.get();
         dater.getDatum(datum1,datum2);

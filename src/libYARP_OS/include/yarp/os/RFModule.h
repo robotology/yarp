@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2009 The Robotcub consortium
+ * Copyright (C) 2009 RobotCub Consortium
  * Author: Lorenzo Natale.
  * CopyPolicy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
  * Based on code by Paul Fitzpatrick 2007.
@@ -51,6 +51,15 @@ public:
      * When your module wants to stop, return false.  The module's actual
      * work could be done during this call, or it could just check the
      * state of a thread running in the background.
+     *
+     * The thread calls the updateModule() function every <period> seconds.
+     * At the end of each run, the thread will sleep the amounth of time
+     * required, taking into account the time spent inside the loop function.
+     * Example:  requested period is 10ms, the updateModule() function take
+     * 3ms to be executed, the thread will sleep for 7ms.
+     *
+     * Note: after each run is completed, the thread will call a yield()
+     * in order to facilitate other threads to run.
      *
      * @return true iff module should continue
     */

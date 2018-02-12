@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2017 iCub Facility - Istituto Italiano di Tecnologia
+ * Copyright (C) 2017 Istituto Italiano di Tecnologia (IIT)
  * Author: Andrea Ruzzenenti <andrea.ruzzenenti@iit.it>
  * CopyPolicy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
  */
@@ -9,6 +9,20 @@
 #include <yarp/os/RateThread.h>
 #include <vector>
 #include <JoypadControlNetUtils.h>
+#include <yarp/os/RateThread.h>
+
+/**
+* @ingroup dev_impl_wrapper
+*
+* \section JoypadControlClient Description of input parameters
+* \brief joypad input network wrapper on client side
+*
+* Parameters accepted in the config argument of the open method:
+* |   Parameter name  | Type   | Units | Default Value | Required  | Description                                  | Notes |
+* |:-----------------:|:------:|:-----:|:-------------:|:---------:|:--------------------------------------------:|:-----:|
+* | local             | string |       |               | yes       | name for the local port to open              |       |
+* | remote            | string |       |               | yes       | name of the remote server port to connect to |       |
+**/
 
 #define DEFAULT_THREAD_PERIOD 10
 namespace yarp
@@ -16,10 +30,23 @@ namespace yarp
     namespace dev
     {
         class JoypadControlClient;
+        class JoypadControlWatchdog;
     }
 }
 
-class yarp::dev::JoypadControlClient : public yarp::dev::IJoypadController,
+class yarp::dev::JoypadControlWatchdog : public yarp::os::RateThread
+{
+public:
+    JoypadControlWatchdog() : RateThread(250) {}
+    virtual ~JoypadControlWatchdog() = default;
+
+
+    std::vector<JoypadControl::LoopablePort*> m_ports;
+    virtual void run() YARP_OVERRIDE;
+
+};
+
+class yarp::dev::JoypadControlClient : public yarp::dev::IJoypadEventDriven,
                                        public yarp::dev::DeviceDriver
 {
 private:
@@ -41,33 +68,37 @@ private:
     yarp::os::ConstString m_local;
     yarp::os::ConstString m_remote;
 
+    yarp::dev::JoypadControlWatchdog          watchdog;
+    std::vector<JoypadControl::LoopablePort*> m_ports;
+
     //--------------method
     bool getCount(const int& vocab_toget, unsigned int& value);
     bool getJoypadInfo();
 
 public:
     JoypadControlClient();
+    virtual ~JoypadControlClient() {}
 
     //rateThread
 
     //DeviceDriver
-    virtual bool open(yarp::os::Searchable& config) YARP_OVERRIDE;
-    virtual bool close() YARP_OVERRIDE;
+    virtual bool open(yarp::os::Searchable& config) override;
+    virtual bool close() override;
 
     //IJoypadController;
-    virtual bool getAxisCount(unsigned int& axis_count) YARP_OVERRIDE;
-    virtual bool getButtonCount(unsigned int& button_count) YARP_OVERRIDE;
-    virtual bool getTrackballCount(unsigned int& Trackball_count) YARP_OVERRIDE;
-    virtual bool getHatCount(unsigned int& Hat_count) YARP_OVERRIDE;
-    virtual bool getTouchSurfaceCount(unsigned int& touch_count) YARP_OVERRIDE;
-    virtual bool getStickCount(unsigned int& stick_count) YARP_OVERRIDE;
-    virtual bool getStickDoF(unsigned int stick_id, unsigned int& DoF) YARP_OVERRIDE;
-    virtual bool getButton(unsigned int button_id, float& value) YARP_OVERRIDE;
-    virtual bool getTrackball(unsigned int trackball_id, yarp::sig::Vector& value) YARP_OVERRIDE;
-    virtual bool getHat(unsigned int hat_id, unsigned char& value) YARP_OVERRIDE;
-    virtual bool getAxis(unsigned int axis_id, double& value) YARP_OVERRIDE;
-    virtual bool getStick(unsigned int stick_id, yarp::sig::Vector& value, JoypadCtrl_coordinateMode coordinate_mode) YARP_OVERRIDE;
-    virtual bool getTouch(unsigned int touch_id, yarp::sig::Vector& value) YARP_OVERRIDE;
+    virtual bool getRawAxisCount(unsigned int& axis_count) override;
+    virtual bool getRawButtonCount(unsigned int& button_count) override;
+    virtual bool getRawTrackballCount(unsigned int& Trackball_count) override;
+    virtual bool getRawHatCount(unsigned int& Hat_count) override;
+    virtual bool getRawTouchSurfaceCount(unsigned int& touch_count) override;
+    virtual bool getRawStickCount(unsigned int& stick_count) override;
+    virtual bool getRawStickDoF(unsigned int stick_id, unsigned int& DoF) override;
+    virtual bool getRawButton(unsigned int button_id, float& value) override;
+    virtual bool getRawTrackball(unsigned int trackball_id, yarp::sig::Vector& value) override;
+    virtual bool getRawHat(unsigned int hat_id, unsigned char& value) override;
+    virtual bool getRawAxis(unsigned int axis_id, double& value) override;
+    virtual bool getRawStick(unsigned int stick_id, yarp::sig::Vector& value, JoypadCtrl_coordinateMode coordinate_mode) override;
+    virtual bool getRawTouch(unsigned int touch_id, yarp::sig::Vector& value) override;
 
     #undef JoyPort
 

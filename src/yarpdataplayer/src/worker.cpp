@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2011 Department of Robotics Brain and Cognitive Sciences - Istituto Italiano di Tecnologia
+ * Copyright (C) 2011 Istituto Italiano di Tecnologia (IIT)
  * Author: Vadim Tikhanoff
  * email:  vadim.tikhanoff@iit.it
  * Permission is granted to copy, distribute, and/or modify this program
@@ -36,11 +36,11 @@ using namespace std;
 #endif
 
 /**********************************************************/
-WorkerClass::WorkerClass(int _part, int _numThreads) :
-    utilities(YARP_NULLPTR),
-    part(_part),
+WorkerClass::WorkerClass(int part, int numThreads) :
+    utilities(nullptr),
+    part(part),
     percentage(0),
-    numThreads(_numThreads),
+    numThreads(numThreads),
     currFrame(0),
     isActive(true),
     frameRate(0.0),
@@ -178,7 +178,7 @@ int WorkerClass::sendImages(int part, int frame)
     tmpPath = tmpPath + tmpName;
 
 #ifdef HAS_OPENCV
-    IplImage* img = NULL;
+    IplImage* img = nullptr;
 #else
     Image* img;
 
@@ -209,8 +209,8 @@ int WorkerClass::sendImages(int part, int frame)
     } else {
         Image &temp = utilities->partDetails[part].imagePort.prepare();
 
-        static IplImage *test = NULL;
-        if (test !=NULL)
+        static IplImage *test = nullptr;
+        if (test !=nullptr)
             cvReleaseImage(&test);
 
         test = cvCloneImage(img);
@@ -298,9 +298,11 @@ void WorkerClass::setManager(Utilities *utilities)
 }
 
 /**********************************************************/
-MasterThread::MasterThread(Utilities *_utilities, int _numPart, QMainWindow *gui, QObject *parent) : QObject(parent), RateThread (2),
-    utilities(_utilities),
-    numPart(_numPart),
+MasterThread::MasterThread(Utilities *utilities, int numPart, QMainWindow *gui, QObject *parent) :
+    QObject(parent),
+    RateThread (2),
+    utilities(utilities),
+    numPart(numPart),
     timePassed(0.0),
     initTime(0),
     virtualTime(0.0),

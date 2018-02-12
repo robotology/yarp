@@ -25,7 +25,7 @@ public:
 	Callback()
 	{
         Datum.clear();
-        Datum.add("null bottle");
+        Datum.addString("null bottle");
 	}
 
   	void onRead(Bottle &v)

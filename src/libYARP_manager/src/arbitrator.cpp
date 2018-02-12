@@ -1,6 +1,6 @@
 /*
  *  Yarp Modules Manager
- *  Copyright: (C) 2011 Robotics, Brain and Cognitive Sciences - Italian Institute of Technology (IIT)
+ *  Copyright: (C) 2011 Istituto Italiano di Tecnologia (IIT)
  *  Authors: Ali Paikan <ali.paikan@iit.it>
  *
  *  Copy Policy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
@@ -116,7 +116,7 @@ bool Arbitrator::trainWeights(const char* opnd)
     return true;
 }
 
-bool Arbitrator::trainWeights(void)
+bool Arbitrator::trainWeights()
 {
     biases.clear();
     alphas.clear();
@@ -128,7 +128,7 @@ bool Arbitrator::trainWeights(void)
     return bAllOk;
 }
 
-bool Arbitrator::validate(void)
+bool Arbitrator::validate()
 {
     ErrorLogger* logger  = ErrorLogger::Instance();
 

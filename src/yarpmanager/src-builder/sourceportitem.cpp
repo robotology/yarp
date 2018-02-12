@@ -14,7 +14,7 @@ SourcePortItem::SourcePortItem(QString itemName, bool isInApp,
     portAvailable = false;
     errorState = false;
 
-    sigHandler = new ItemSignalHandler((QGraphicsItem*)this,SourcePortItemType,NULL);
+    sigHandler = new ItemSignalHandler((QGraphicsItem*)this,SourcePortItemType,nullptr);
     pressed = false;
     moved = false;
     this->nestedInApp = isInApp;

@@ -1,6 +1,6 @@
 /*
  *  Yarp Modules Manager
- *  Copyright: (C) 2011 Robotics, Brain and Cognitive Sciences - Italian Institute of Technology (IIT)
+ *  Copyright: (C) 2011 Istituto Italiano di Tecnologia (IIT)
  *  Authors: Ali Paikan <ali.paikan@iit.it>
  *
  *  Copy Policy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
@@ -17,6 +17,9 @@
 #include <yarp/manager/xmlresloader.h>
 #include <yarp/manager/xmlappsaver.h>
 #include <yarp/manager/singleapploader.h>
+#include <yarp/os/LogStream.h>
+
+#include <yarp/os/impl/NameClient.h>
 
 
 #define RUN_TIMEOUT             10      // Run timeout in seconds
@@ -26,7 +29,6 @@
 #define BROKER_LOCAL            "local"
 #define BROKER_YARPRUN          "yarprun"
 #define BROKER_YARPDEV          "yarpdev"
-#define BROKER_ICUBMIODDEV      "icubmoddev"
 
 
 using namespace yarp::manager;
@@ -45,7 +47,7 @@ Manager::Manager(bool withWatchDog) : MEvent()
     bAutoConnect = false;
     bRestricted = false;
     strDefBroker = BROKER_YARPRUN;
-    knowledge.createFrom(NULL, NULL, NULL);
+    knowledge.createFrom(nullptr, nullptr, nullptr);
     connector.init();
 }
 
@@ -59,20 +61,20 @@ Manager::Manager(const char* szModPath, const char* szAppPath,
     bRestricted = false;
     strDefBroker = BROKER_YARPRUN;
 
-    XmlModLoader modload(szModPath, NULL);
+    XmlModLoader modload(szModPath, nullptr);
     XmlModLoader* pModLoad = &modload;
     if(!modload.init())
-        pModLoad = NULL;
+        pModLoad = nullptr;
 
-    XmlAppLoader appload(szAppPath, NULL);
+    XmlAppLoader appload(szAppPath, nullptr);
     XmlAppLoader* pAppLoad = &appload;
     if(!appload.init())
-        pAppLoad = NULL;
+        pAppLoad = nullptr;
 
-    XmlResLoader resload(szResPath, NULL);
+    XmlResLoader resload(szResPath, nullptr);
     XmlResLoader* pResLoad = &resload;
     if(!resload.init())
-        pResLoad = NULL;
+        pResLoad = nullptr;
 
     knowledge.createFrom(pModLoad, pAppLoad, pResLoad);
     connector.init();
@@ -105,7 +107,7 @@ bool Manager::addApplication(const char* szFileName, char** szAppName_, bool mod
 
 bool Manager::addApplications(const char* szPath)
 {
-    XmlAppLoader appload(szPath, NULL);
+    XmlAppLoader appload(szPath, nullptr);
     if(!appload.init())
         return false;
     Application* application;
@@ -133,7 +135,7 @@ bool Manager::addModule(const char* szFileName)
 
 bool Manager::addModules(const char* szPath)
 {
-    XmlModLoader modload(szPath, NULL);
+    XmlModLoader modload(szPath, nullptr);
     if(!modload.init())
         return false;
     Module* module;
@@ -158,7 +160,7 @@ bool Manager::addResource(const char* szFileName)
 
 bool Manager::addResources(const char* szPath)
 {
-    XmlResLoader resload(szPath, NULL);
+    XmlResLoader resload(szPath, nullptr);
     if(!resload.init())
         return false;
     GenericResource* resource;
@@ -256,11 +258,44 @@ bool Manager::saveApplication(const char* szAppName, const char* fileName)
 }
 
 
-bool Manager::loadBalance(void)
+bool Manager::loadBalance()
 {
     updateResources();
     bool ret = prepare(false);
     return ret;
+}
+
+Executable* Manager::getExecutableById(size_t id)
+{
+    if (id < runnables.size())
+    {
+       return runnables[id];
+    }
+    else
+    {
+        return nullptr;
+    }
+}
+
+bool Manager::switchBroker(size_t id)
+{
+    Executable* exe = getExecutableById(id);
+    if (removeBroker(exe))
+    {
+        modules[id]->setHost(exe->getHost());
+        Broker* broker = createBroker(modules[id]);
+        if ( broker == nullptr)
+        {
+            return false;
+        }
+        broker->setDisplay(modules[id]->getDisplay());
+        exe->setAndInitializeBroker(broker);
+    }
+    else
+    {
+        return false;
+    }
+    return true;
 }
 
 
@@ -299,6 +334,8 @@ bool Manager::prepare(bool silent)
         exe->setWorkDir((*itr)->getWorkDir());
         exe->setPostExecWait((*itr)->getPostExecWait());
         exe->setPostStopWait((*itr)->getPostStopWait());
+        exe->setOriginalPostExecWait((*itr)->getPostExecWait());
+        exe->setOriginalPostStopWait((*itr)->getPostStopWait());
         string env;
         if ((*itr)->getPrefix() && strlen((*itr)->getPrefix()))
             env = string("YARP_PORT_PREFIX=") + string((*itr)->getPrefix());
@@ -352,6 +389,22 @@ Broker* Manager::createBroker(Module* module)
         return (new ScriptLocalBroker(module->getBroker()));
 
     return (new ScriptYarprunBroker(module->getBroker()));
+}
+
+bool Manager::removeBroker(Executable* exe)
+{
+    if (exe == nullptr)
+    {
+        return false;
+    }
+    else if(exe->state() == RUNNING)
+    {
+        exe->stop();
+        exe->stopWatchDog();
+    }
+
+    exe->removeBroker(); //TODO possible race condition in case watchdog enabled.
+    return true;
 }
 
 bool Manager::updateExecutable(unsigned int id, const char* szparam,
@@ -434,14 +487,48 @@ bool Manager::exist(unsigned int id)
             string strPort = res->getName();
             if(strPort[0] != '/')
                 strPort = string("/") + strPort;
-            res->setAvailability(connector.exists(strPort.c_str()));
+            if(dynamic_cast<ResYarpPort*>(res))
+            {
+                res->setAvailability(connector.exists(strPort.c_str()));
+            }
+            else //if it is a computer I have to be sure that the port has been opened through yarp runner
+            {
+                yarp::os::Bottle cmd, reply;
+                cmd.addString("get");
+                cmd.addString(strPort);
+                cmd.addString("yarprun");
+                bool ret = yarp::os::impl::NameClient::getNameClient().send(cmd, reply);
+                if(!ret)
+                {
+                    yError()<<"Manager::Cannot contact the NameClient";
+                    return false;
+                }
+                if(reply.size()==6)
+                {
+                    if(reply.get(5).asBool())
+                    {
+                        res->setAvailability(true);
+                    }
+                    else
+                    {
+                        res->setAvailability(false);
+                    }
+
+                }
+                else
+                {
+                    res->setAvailability(false);
+                }
+
+            }
+
         }
     }
     return res->getAvailability();
 }
 
 
-bool Manager::updateResources(void)
+bool Manager::updateResources()
 {
     YarpBroker broker;
     broker.init();
@@ -557,6 +644,54 @@ bool Manager::updateResource(GenericResource* resource)
     return true;
 }
 
+bool Manager::waitingModuleRun(unsigned int id)
+{
+    double base = yarp::os::Time::now();
+    double wait = runnables[id]->getPostExecWait() + RUN_TIMEOUT;
+    while(!timeout(base, wait))
+        if(running(id)) return true;
+
+    OSTRINGSTREAM msg;
+    msg<<"Failed to run "<<runnables[id]->getCommand();
+    msg<<" on "<<runnables[id]->getHost();
+    msg<<". (State: "<<runnables[id]->state();
+    msg<<", parameter: "<<runnables[id]->getParam()<<")";
+    logger->addError(msg);
+    return false;
+
+}
+
+bool Manager::waitingModuleStop(unsigned int id)
+{
+    double base = yarp::os::Time::now();
+    while(!timeout(base, STOP_TIMEOUT))
+        if(!running(id)) return true;
+
+    OSTRINGSTREAM msg;
+    msg<<"Failed to stop "<<runnables[id]->getCommand();
+    msg<<" on "<<runnables[id]->getHost();
+    msg<<". (State: "<<runnables[id]->state();
+    msg<<", paramete: "<<runnables[id]->getParam()<<")";
+    logger->addError(msg);
+    return false;
+}
+
+bool Manager::waitingModuleKill(unsigned int id)
+{
+    double base = yarp::os::Time::now();
+    while(!timeout(base, KILL_TIMEOUT))
+        if(!running(id)) return true;
+
+    OSTRINGSTREAM msg;
+    msg<<"Failed to kill "<<runnables[id]->getCommand();
+    msg<<" on "<<runnables[id]->getHost();
+    msg<<". (State: "<<runnables[id]->state();
+    msg<<", paramete: "<<runnables[id]->getParam()<<")";
+    logger->addError(msg);
+    return false;
+
+}
+
 
 bool Manager::existPortFrom(unsigned int id)
 {
@@ -586,7 +721,7 @@ bool Manager::existPortTo(unsigned int id)
 }
 
 
-bool Manager::checkDependency(void)
+bool Manager::checkDependency()
 {
     /**
      * checking for port resources availability
@@ -625,31 +760,29 @@ bool Manager::run(unsigned int id, bool async)
         return false;
     }
 
+    if (runnables[id]->shouldChangeBroker())
+    {
+        if (!switchBroker(id))
+        {
+            logger->addError("Failing to switch broker");
+            return false;
+        }
+    }
+
     runnables[id]->disableAutoConnect();
     runnables[id]->start();
     if(bWithWatchDog) {
-        yarp::os::Time::delay(1.0);
+        yarp::os::SystemClock::delaySystem(1.0);
         runnables[id]->startWatchDog();
     }
     if(async)
         return true;
 
     // waiting for running
-    double base = yarp::os::Time::now();
-    double wait = runnables[id]->getPostExecWait() + RUN_TIMEOUT;
-    while(!timeout(base, wait))
-        if(running(id)) return true;
-
-    OSTRINGSTREAM msg;
-    msg<<"Failed to run "<<runnables[id]->getCommand();
-    msg<<" on "<<runnables[id]->getHost();
-    msg<<". (State: "<<runnables[id]->state();
-    msg<<", parameter: "<<runnables[id]->getParam()<<")";
-    logger->addError(msg);
-    return false;
+    return waitingModuleRun(id);
 }
 
-bool Manager::run(void)
+bool Manager::run()
 {
     if(runnables.empty())
     {
@@ -677,12 +810,12 @@ bool Manager::run(void)
         else
             (*itr)->disableAutoConnect();
         (*itr)->start();
-        yarp::os::Time::delay(0.2);
+        yarp::os::SystemClock::delaySystem(0.2);
         wait = (wait > (*itr)->getPostExecWait()) ? wait : (*itr)->getPostExecWait();
     }
 
     // waiting for running
-    double base = yarp::os::Time::now();
+    double base = yarp::os::SystemClock::nowSystem();
     while(!timeout(base, wait + RUN_TIMEOUT))
         if(allRunning()) break;
 
@@ -745,21 +878,11 @@ bool Manager::stop(unsigned int id, bool async)
         return true;
 
     // waiting for stop
-    double base = yarp::os::Time::now();
-    while(!timeout(base, STOP_TIMEOUT))
-        if(!running(id)) return true;
-
-    OSTRINGSTREAM msg;
-    msg<<"Failed to stop "<<runnables[id]->getCommand();
-    msg<<" on "<<runnables[id]->getHost();
-    msg<<". (State: "<<runnables[id]->state();
-    msg<<", paramete: "<<runnables[id]->getParam()<<")";
-    logger->addError(msg);
-    return false;
+    return waitingModuleStop(id);
 }
 
 
-bool Manager::stop(void)
+bool Manager::stop()
 {
     if(runnables.empty())
         return true;
@@ -768,10 +891,10 @@ bool Manager::stop(void)
     for(itr=runnables.begin(); itr!=runnables.end(); itr++)
     {
         (*itr)->stop();
-        yarp::os::Time::delay(0.2);
+        yarp::os::SystemClock::delaySystem(0.2);
     }
 
-    double base = yarp::os::Time::now();
+    double base = yarp::os::SystemClock::nowSystem();
     while(!timeout(base, STOP_TIMEOUT))
         if(allStopped()) break;
 
@@ -813,22 +936,11 @@ bool Manager::kill(unsigned int id, bool async)
 
     if(async)
         return true;
-
-    double base = yarp::os::Time::now();
-    while(!timeout(base, KILL_TIMEOUT))
-        if(!running(id)) return true;
-
-    OSTRINGSTREAM msg;
-    msg<<"Failed to kill "<<runnables[id]->getCommand();
-    msg<<" on "<<runnables[id]->getHost();
-    msg<<". (State: "<<runnables[id]->state();
-    msg<<", paramete: "<<runnables[id]->getParam()<<")";
-    logger->addError(msg);
-    return false;
+    return waitingModuleKill(id);
 }
 
 
-bool Manager::kill(void)
+bool Manager::kill()
 {
     if(runnables.empty())
         return true;
@@ -837,10 +949,10 @@ bool Manager::kill(void)
     for(itr=runnables.begin(); itr!=runnables.end(); itr++)
     {
         (*itr)->kill();
-        yarp::os::Time::delay(0.2);
+        yarp::os::SystemClock::delaySystem(0.2);
     }
 
-    double base = yarp::os::Time::now();
+    double base = yarp::os::SystemClock::nowSystem();
     while(!timeout(base, KILL_TIMEOUT))
         if(allStopped()) break;
 
@@ -865,7 +977,7 @@ bool Manager::kill(void)
 }
 
 
-void Manager::clearExecutables(void)
+void Manager::clearExecutables()
 {
     ExecutablePIterator itr;
     for(itr=runnables.begin(); itr!=runnables.end(); itr++)
@@ -905,7 +1017,7 @@ bool Manager::connect(unsigned int id)
                      connections[id].qosTo());
 }
 
-bool Manager::connect(void)
+bool Manager::connect()
 {
     //YarpBroker connector;
     //connector.init();
@@ -953,7 +1065,7 @@ bool Manager::disconnect(unsigned int id)
     return true;
 }
 
-bool Manager::disconnect(void)
+bool Manager::disconnect()
 {
     //YarpBroker connector;
     //connector.init();
@@ -988,7 +1100,7 @@ bool Manager::rmconnect(unsigned int id)
 }
 
 
-bool Manager::rmconnect(void)
+bool Manager::rmconnect()
 {
     CnnIterator cnn;
     for(cnn=connections.begin(); cnn!=connections.end(); cnn++)
@@ -1017,7 +1129,7 @@ bool Manager::connected(unsigned int id)
 }
 
 
-bool Manager::connected(void)
+bool Manager::connected()
 {
     //YarpBroker connector;
     //connector.init();
@@ -1045,12 +1157,12 @@ bool Manager::checkPortsAvailable(Broker* broker)
 }
 
 
-bool Manager::connectExtraPorts(void)
+bool Manager::connectExtraPorts()
 {
     //YarpBroker connector;
     //connector.init();
 
-    double base = yarp::os::Time::now();
+    double base = yarp::os::SystemClock::nowSystem();
     while(!timeout(base, 10.0))
         if(checkPortsAvailable(&connector))
             break;
@@ -1087,7 +1199,7 @@ bool Manager::running(unsigned int id)
 }
 
 
-bool Manager::allRunning(void)
+bool Manager::allRunning()
 {
     if(!runnables.size())
         return false;
@@ -1116,7 +1228,7 @@ bool Manager::suspended(unsigned int id)
 }
 
 
-bool Manager::allStopped(void)
+bool Manager::allStopped()
 {
     if(!runnables.size())
         return true;
@@ -1166,8 +1278,8 @@ bool Manager::detachStdout(unsigned int id)
 
 bool Manager::timeout(double base, double t)
 {
-    yarp::os::Time::delay(1.0);
-    if((yarp::os::Time::now()-base) > t)
+    yarp::os::SystemClock::delaySystem(1.0);
+    if((yarp::os::SystemClock::nowSystem()-base) > t)
         return true;
     return false;
 }

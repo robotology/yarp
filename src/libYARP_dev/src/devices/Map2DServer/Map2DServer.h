@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2016 iCub Facility - Istituto Italiano di Tecnologia
+ * Copyright (C) 2016 Istituto Italiano di Tecnologia (IIT)
  * Authors: Marco Randazzo <marco.randazzo@iit.it>
  * CopyPolicy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
  */
@@ -23,6 +23,7 @@
 #include <yarp/os/RpcServer.h>
 #include <yarp/sig/Vector.h>
 #include <yarp/dev/MapGrid2D.h>
+#include <yarp/dev/Map2DLocation.h>
 #include <yarp/os/ResourceFinder.h>
 
 #include <yarp/dev/PolyDriver.h>
@@ -33,9 +34,11 @@
 #include <yarp/os/Subscriber.h>
 #include <yarp/os/Node.h>
 #include <string>
-
+#include "include/visualization_msgs_MarkerArray.h"
 #include "include/geometry_msgs_TransformStamped.h"
 #include "include/tf_tfMessage.h"
+#include "include/nav_msgs_MapMetaData.h"
+#include "include/nav_msgs_OccupancyGrid.h"
 
 namespace yarp
 {
@@ -66,7 +69,8 @@ namespace yarp
 class yarp::dev::Map2DServer : public yarp::dev::DeviceDriver, public yarp::os::PortReader
 {
 private:
-    std::map<std::string, yarp::dev::MapGrid2D> m_maps_storage;
+    std::map<std::string, yarp::dev::MapGrid2D>     m_maps_storage;
+    std::map<std::string, yarp::dev::Map2DLocation> m_locations_storage;
 
 public:
     Map2DServer();
@@ -74,6 +78,8 @@ public:
     
     bool saveMaps(std::string filename);
     bool loadMaps(std::string filename);
+    bool load_locations(std::string locations_file);
+    bool save_locations(std::string locations_file);
     bool open(yarp::os::Searchable &params) override;
     bool close() override;
     yarp::os::Bottle getOptions();
@@ -84,15 +90,26 @@ private:
     yarp::os::Mutex              m_mutex;
     yarp::os::ConstString        m_rpcPortName;
     yarp::os::Node*              m_rosNode;
-    bool                         m_enable_publish_ros_tf;
-    bool                         m_enable_subscribe_ros_tf;
+    bool                         m_enable_publish_ros_map;
+    bool                         m_enable_subscribe_ros_map;
 
-    yarp::os::RpcServer                      m_rpcPort;
-    yarp::os::Publisher<tf_tfMessage>        m_rosPublisherPort_tf_timed;
-    yarp::os::Subscriber<tf_tfMessage>       m_rosSubscriberPort_tf_timed;
+    #define ROSNODENAME "/map2DServerNode"
+    #define ROSTOPICNAME_MAP "/map"
+    #define ROSTOPICNAME_MAPMETADATA "/map_metadata"
+
+    yarp::os::RpcServer                                     m_rpcPort;
+    yarp::os::Publisher<nav_msgs_OccupancyGrid>             m_rosPublisherPort_map;
+    yarp::os::Publisher<nav_msgs_MapMetaData>               m_rosPublisherPort_metamap;
+    yarp::os::Subscriber<nav_msgs_OccupancyGrid>            m_rosSubscriberPort_map;
+    yarp::os::Subscriber<nav_msgs_MapMetaData>              m_rosSubscriberPort_metamap;
+    yarp::os::Publisher<visualization_msgs_MarkerArray>     m_rosPublisherPort_markers;
 
     virtual bool read(yarp::os::ConnectionReader& connection) override;
     inline  void list_response(yarp::os::Bottle& out);
+
+    void parse_string_command(yarp::os::Bottle& in, yarp::os::Bottle& out);
+    void parse_vocab_command(yarp::os::Bottle& in, yarp::os::Bottle& out);
+    bool updateVizMarkers();
 
 #endif //DOXYGEN_SHOULD_SKIP_THIS
 };

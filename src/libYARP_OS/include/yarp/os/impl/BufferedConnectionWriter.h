@@ -11,14 +11,13 @@
 #include <yarp/os/ConnectionReader.h>
 #include <yarp/os/SizedWriter.h>
 #include <yarp/os/ManagedBytes.h>
-#include <yarp/os/impl/Logger.h>
 #include <yarp/os/NetType.h>
 #include <yarp/os/StringOutputStream.h>
 #include <yarp/os/Vocab.h>
 #include <yarp/os/Bottle.h>
 #include <yarp/os/NetInt64.h>
 
-#include <yarp/os/impl/PlatformVector.h>
+#include <vector>
 #include <cstdlib>
 
 namespace yarp {
@@ -35,16 +34,13 @@ namespace yarp {
 }
 
 /**
- *
  * When allocating space to store serialized data, we start off with
  * a block of this size.  It will be resized as necessary.
  * Data can optionally have a header, serialized separately.
- *
  */
 #define BUFFERED_CONNECTION_INITIAL_POOL_SIZE (1024)
 
 /**
- *
  * A helper for creating cached object descriptions.  When a object is
  * to be sent from one port to another, and we have multiple
  * connections but don't want to serialize the object multiple times,
@@ -55,13 +51,11 @@ namespace yarp {
  * lifecycle of external blocks (e.g. when they are created/destroyed,
  * or when they may change in value). If you use external blocks, be
  * sure to pay attention to onCompletion() events on your object.
- *
  */
 class YARP_OS_impl_API yarp::os::impl::BufferedConnectionWriter : public ConnectionWriter, public SizedWriter {
 public:
 
     /**
-     *
      * Constructor.
      *
      * @param textMode suggest that the object be serialized in a human
@@ -72,15 +66,14 @@ public:
      * assumption that all type information is known by recipient.
      * BufferedConnectionWriter simply passes this flag along to read/write
      * methods, it takes on action on it.
-     *
      */
     BufferedConnectionWriter(bool textMode = false,
                              bool bareMode = false) : textMode(textMode), bareMode(bareMode)
-        {
-        reader = YARP_NULLPTR;
+    {
+        reader = nullptr;
         target = &lst;
         target_used = &lst_used;
-        ref = YARP_NULLPTR;
+        ref = nullptr;
         initialPoolSize = BUFFERED_CONNECTION_INITIAL_POOL_SIZE;
         stopPool();
         shouldDrop = false;
@@ -90,44 +83,36 @@ public:
     }
 
     /**
-     *
      * Destructor.
-     *
      */
     virtual ~BufferedConnectionWriter() {
         clear();
     }
 
     /**
-     *
      * Completely clear the writer and start afresh.
      *
      * @param textMode see parameter to constructor for details
-     *
      */
     void reset(bool textMode) {
         this->textMode = textMode;
         clear();
-        reader = YARP_NULLPTR;
-        ref = YARP_NULLPTR;
+        reader = nullptr;
+        ref = nullptr;
         convertTextModePending = false;
     }
 
     /**
-     *
      * Tell the writer that we will be serializing a new object, but to
      * keep any cached buffers that already exist.  If the structure
      * of the new object matches that of what came before, the buffers
      * will be reused without any new memory allocation being necessary.
      * If the structure differs, memory allocation may be needed.
-     *
      */
     void restart();
 
     /**
-     *
      * Clear all cached data.
-     *
      */
     virtual void clear() override {
         target = &lst;
@@ -148,7 +133,6 @@ public:
     }
 
     /**
-     *
      * Add the specified bytes to the current pool buffer.
      * The pool buffer is a place to concatenate small
      * blocks of data that are not being held externally.
@@ -157,26 +141,22 @@ public:
      * A pool buffer will be created if none already exists.
      *
      * @return true on success
-     *
      */
     bool addPool(const yarp::os::Bytes& data);
 
     /**
-     *
      * Stop adding to the current pool buffer. Any further calls to
      * addPool() for the current write will result in creation
      * of a new pool.
-     *
      */
     void stopPool() {
-        pool = YARP_NULLPTR;
+        pool = nullptr;
         poolIndex = 0;
         poolLength = initialPoolSize;
         poolCount = 0;
     }
 
     /**
-     *
      * Add the specified buffer to the list of buffers to be written.
      * If the copy flag is set, the data in the buffer is copied,
      * otherwise a reference to it is kept (be careful to keep the
@@ -185,18 +165,15 @@ public:
      *
      * @param data the buffer to add
      * @param copy whether the data should be copied, or a reference stored
-     *
      */
     void push(const Bytes& data, bool copy);
 
     /**
-     *
      * Add a buffer by recording a reference to it, without copying it.
      * Be careful, this is the opposite of what appendBlock(ptr, len)
      * does. Sorry about that.
      *
      * @param data the buffer to add
-     *
      */
     virtual void appendBlock(const yarp::os::Bytes& data) {
         stopPool();
@@ -204,11 +181,9 @@ public:
     }
 
     /**
-     *
      * Add a buffer by copying its contents
      *
      * @param data the buffer to add
-     *
      */
     virtual void appendBlockCopy(const Bytes& data) {
         push(data, true);
@@ -241,13 +216,11 @@ public:
     }
 
     /**
-     *
      * Send a string along with a carriage-return-line-feed sequence.
      * This is a convenience function used by old parts of yarp,
      * for telnet compatibility on sockets.
      *
      * @param data string to write, not including carriage-return-line-feed.
-     *
      */
     virtual void appendLine(const ConstString& data) {
         yarp::os::Bytes b((char*)(data.c_str()), data.length());
@@ -286,10 +259,8 @@ public:
     void write(OutputStream& os) override;
 
     /**
-     *
      * @return the size of the message that will be sent, in bytes, including
      * the header and payload.
-     *
      */
     virtual size_t dataSize() {
         size_t i;
@@ -316,9 +287,7 @@ public:
     }
 
     /**
-     *
      * @return number of cache buffers lying around, internal or external
-     *
      */
     size_t bufferCount() const {
         return header.size() + lst.size();
@@ -345,9 +314,7 @@ public:
     }
 
     /**
-     *
      * @return the message serialized as a string
-     *
      */
     ConstString toString();
 
@@ -376,6 +343,8 @@ public:
 
     // defined by yarp::os::ConnectionWriter
     virtual void declareSizes(int argc, int *argv) override {
+        YARP_UNUSED(argc);
+        YARP_UNUSED(argv);
         // this method is never called yet, so no point using it yet.
     }
 
@@ -454,22 +423,18 @@ public:
     }
 
     /**
-     *
      * Write message to a receiving object.  This is to simplify writing tests,
      * YARP does not use this internally.
      * @param obj object to write into
      * @return true on success
-     *
      */
     bool write(PortReader& obj);
 
     /**
-     *
      * Set a custom initial pool size, which affects the size of buffers
      * created for temporary data storage.  If this method is not called,
      * the default used is BUFFERED_CONNECTION_INITIAL_POOL_SIZE
      * @param size the initial buffer size (in bytes) to use
-     *
      */
     void setInitialPoolSize(size_t size) {
         initialPoolSize = size;
@@ -477,21 +442,19 @@ public:
 
 private:
     /**
-     *
      * Do the work of converting a text mode message to binary,
      * if that has been requested. Conversion can only happen once
      * the full message is available, whereas conversion can be
      * requested at any time.
      *
      * @return true on success
-     *
      */
     bool applyConvertTextMode();
 
 
-    PlatformVector<yarp::os::ManagedBytes *> lst;    ///< buffers in payload
-    PlatformVector<yarp::os::ManagedBytes *> header; ///< buffers in header
-    PlatformVector<yarp::os::ManagedBytes *> *target;///< points to header or payload
+    std::vector<yarp::os::ManagedBytes *> lst;    ///< buffers in payload
+    std::vector<yarp::os::ManagedBytes *> header; ///< buffers in header
+    std::vector<yarp::os::ManagedBytes *> *target;///< points to header or payload
     yarp::os::ManagedBytes *pool; ///< the pool buffer (in lst or header)
     size_t poolIndex;  ///< current offset into pool buffer
     size_t poolCount;  ///< number of pool buffers allocated
@@ -525,17 +488,15 @@ private:
     yarp::os::Bottle blank;
 public:
     ConnectionRecorder() {
-        reader = YARP_NULLPTR;
-        writer = YARP_NULLPTR;
+        reader = nullptr;
+        writer = nullptr;
         writing = false;
         wrote = false;
         skipNextInt = false;
     }
 
     /**
-     *
      * Call this to wrap a specific ConnectionReader.
-     *
      */
     void init(ConnectionReader *wrappedReader) {
         reader = wrappedReader;
@@ -546,9 +507,7 @@ public:
     }
 
     /**
-     *
      * Call this when all reading/writing has been done.
-     *
      */
     void fini() {
         if (writing) {
@@ -730,7 +689,7 @@ public:
     BufferedConnectionWriter& getMessage() { return readerStore; }
     BufferedConnectionWriter& getReply() { return writerStore; }
     bool hasReply() { return wrote; }
-    virtual SizedWriter *getBuffer() override { return YARP_NULLPTR; }
+    virtual SizedWriter *getBuffer() override { return nullptr; }
 
     virtual bool setSize(size_t len) override {
         return reader->setSize(len);

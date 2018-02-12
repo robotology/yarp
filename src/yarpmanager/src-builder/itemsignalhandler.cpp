@@ -4,7 +4,7 @@
 #include "destinationportitem.h"
 
 ItemSignalHandler::ItemSignalHandler(QObject *parent) : QObject(parent),
-    parentItem(YARP_NULLPTR),
+    parentItem(nullptr),
     type(ModuleItemType)
 {}
 

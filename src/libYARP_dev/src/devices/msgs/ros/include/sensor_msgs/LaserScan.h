@@ -5,7 +5,7 @@
 #include <sensor_msgs_LaserScan.h>
 
 namespace sensor_msgs {
-  typedef sensor_msgs_LaserScan LaserScan;
+    typedef sensor_msgs_LaserScan LaserScan;
 }
 
 #endif

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2014 iCub Facility - Istituto Italiano di Tecnologia
+ * Copyright (C) 2014 Istituto Italiano di Tecnologia (IIT)
  * Author: Davide Perrone
  * Date: Feb 2014
  * email:   dperrone@aitek.it
@@ -12,10 +12,10 @@
 #include <QXmlStreamReader>
 #include <QFile>
 
-XmlLoader::XmlLoader(QString fileName, PlotManager *_plotManager,QObject *parent) : GenericLoader(parent)
+XmlLoader::XmlLoader(QString fileName, PlotManager *plotManager,QObject *parent) : GenericLoader(parent)
 {
-    plotter = YARP_NULLPTR;
-    plotManager = _plotManager;
+    plotter = nullptr;
+    this->plotManager = plotManager;
 
     QFile* file = new QFile(fileName);
        /* If we can't open it, let's show an error message. */

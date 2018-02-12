@@ -38,7 +38,7 @@ ApplicationItem::~ApplicationItem()
     if(editingMode && mainAppManager){
         Application* mainApplication = mainAppManager->getKnowledgeBase()->getApplication();
         mainAppManager->getKnowledgeBase()->removeIApplicationFromApplication(mainApplication,application->getName());
-        application = NULL;
+        application = nullptr;
     }
 }
 
@@ -136,17 +136,17 @@ void ApplicationItem::init()
         //                continue;
         //            }
         GraphicModel model = baseCon.getModelBase();
-        InputData* input = NULL;
-        OutputData* output = NULL;
-        BuilderItem *source = NULL;
-        BuilderItem *dest = NULL;
+        InputData* input = nullptr;
+        OutputData* output = nullptr;
+        BuilderItem *source = nullptr;
+        BuilderItem *dest = nullptr;
         QString inModulePrefix,outModulePrefix;
         findInputOutputData((*citr), /*!editingMode ?*/ allModules/* : modules*/, input, output);
         if(output){
             source = findModelFromOutput(output);
         }else{
             bool bExist = false;
-            SourcePortItem *sourcePort = NULL;
+            SourcePortItem *sourcePort = nullptr;
             for(int i=0;i<childItems().count() && !bExist;i++){
                 if(childItems().at(i)->type() == (QGraphicsItem::UserType + SourcePortItemType)){
                     SourcePortItem *auxSourceport = (SourcePortItem*)childItems().at(i);
@@ -184,7 +184,7 @@ void ApplicationItem::init()
             dest = findModelFromInput(input);
         }else{
             bool bExist = false;
-            DestinationPortItem *destPort = NULL;
+            DestinationPortItem *destPort = nullptr;
             for(int i=0;i<childItems().count() && !bExist;i++){
                 if(childItems().at(i)->type() == (QGraphicsItem::UserType + DestinationPortItemType)){
                     DestinationPortItem *auxDestPort = (DestinationPortItem*)childItems().at(i);
@@ -226,7 +226,7 @@ void ApplicationItem::init()
         }else{
             if(source && dest){
 
-                arrow = new Arrow(source, dest,*connectionsId,NULL,true,editingMode,this);
+                arrow = new Arrow(source, dest,*connectionsId,nullptr,true,editingMode,this);
                 arrow->setConnection(baseCon);
                 QObject::connect(arrow->signalHandler(),SIGNAL(connectctionSelected(QGraphicsItem*)),sigHandler,SLOT(onConnectionSelected(QGraphicsItem*)));
                 arrow->setColor(QColor(Qt::red));
@@ -401,8 +401,8 @@ void ApplicationItem::updateBoundingRect(QList<QGraphicsItem *> items)
 void ApplicationItem::findInputOutputData(Connection& cnn,  ModulePContainer &modules,
                                           InputData* &input_, OutputData* &output_)
 {
-    input_ = NULL;
-    output_ = NULL;
+    input_ = nullptr;
+    output_ = nullptr;
     string strTo = cnn.to();
     string strFrom = cnn.from();
 
@@ -476,7 +476,7 @@ PortItem* ApplicationItem::findModelFromOutput(OutputData* output)
 
 
 
-    return NULL;
+    return nullptr;
 }
 
 PortItem*  ApplicationItem::findModelFromInput(InputData* input)
@@ -517,7 +517,7 @@ PortItem*  ApplicationItem::findModelFromInput(InputData* input)
     }
 
 
-    return NULL;
+    return nullptr;
 }
 
 

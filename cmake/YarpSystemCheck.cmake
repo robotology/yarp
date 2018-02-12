@@ -1,5 +1,9 @@
 # Copyright: (C) 2009 RobotCub Consortium
-# Authors: Paul Fitzpatrick, Giorgio Metta, Lorenzo Natale, Alessandro Scalzo, Daniele E. Domenichelli
+# Authors: Paul Fitzpatrick <paulfitz@alum.mit.edu>
+#          Giorgio Metta <giorgio.metta@iit.it>
+#          Lorenzo Natale <lorenzo.natale@iit.it>
+#          Alessandro Scalzo <alessandro.scalzo@iit.it>
+#          Daniele E. Domenichelli <daniele.domenichelli@iit.it>
 # CopyPolicy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
 
 
@@ -27,6 +31,15 @@ endif()
 
 # Ensure that install directories are set
 include(GNUInstallDirs)
+
+
+#########################################################################
+# C++11 is required
+# These variables are used by try_compile, so they must be set here
+
+set(CMAKE_CXX_EXTENSIONS OFF)
+set(CMAKE_CXX_STANDARD 11)
+set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
 
 #########################################################################
@@ -250,8 +263,6 @@ else()
     ## Unwanted warning flags ##
     unset(UNWANTED_WARNING_FLAGS)
     yarp_check_and_append_cxx_compiler_flag(UNWANTED_WARNING_FLAGS "-Wno-unused-parameter") # FIXME Enable later
-    yarp_check_and_append_cxx_compiler_flag(UNWANTED_WARNING_FLAGS "-Wno-long-long")
-    yarp_check_and_append_cxx_compiler_flag(UNWANTED_WARNING_FLAGS "-Wno-cast-align") # FIXME Enable later
 
 
     ## Experimental warning flags ##
@@ -262,8 +273,6 @@ else()
     yarp_check_and_append_cxx_compiler_flag(EXPERIMENTAL_WARNING_FLAGS "-Wold-style-cast")
     yarp_check_and_append_cxx_compiler_flag(EXPERIMENTAL_WARNING_FLAGS "-Winline")
     yarp_check_and_append_cxx_compiler_flag(EXPERIMENTAL_WARNING_FLAGS "-Wfloat-equal")
-    yarp_check_and_append_cxx_compiler_flag(EXPERIMENTAL_WARNING_FLAGS "-Wc++98-compat")
-    yarp_check_and_append_cxx_compiler_flag(EXPERIMENTAL_WARNING_FLAGS "-Wc++98-compat-pedantic")
 
 
     ## Visibility hidden flags ##

@@ -19,12 +19,13 @@ set(YARP_VERSION_ABI "@YARP_VERSION_ABI@")
 set(YARP_LIBRARIES "@YARP_LIBRARIES@")
 set(YARP_INCLUDE_DIRS "@PACKAGE_YARP_INCLUDE_DIRS@")
 set(YARP_DEFINES "@YARP_ALL_DEFINES@") # only needed if you use ACE directly
-set_and_check(YARP_BINDINGS "@PACKAGE_YARP_BINDINGS@")
 
 # Check if deprecated methods are built
 set(YARP_NO_DEPRECATED @YARP_NO_DEPRECATED@)
 if(YARP_NO_DEPRECATED)
   add_definitions("-DYARP_NO_DEPRECATED")
+else(YARP_NO_DEPRECATED)
+  set_and_check(YARP_BINDINGS "@PACKAGE_YARP_BINDINGS@")
 endif(YARP_NO_DEPRECATED)
 
 # Disable deprecated warnings, but add an option to enable it
@@ -66,7 +67,7 @@ if(NOT YARP_NO_DEPRECATED)
       list(APPEND YARP_MODULE_PATH "${YARP_MODULE_DIR}/ycm-${YCM_REQUIRED_VERSION}/cmake-3.1/Modules")
     endif()
     if(${CMAKE_VERSION} VERSION_LESS 3.8)
-      list(APPEND YARP_MODULE_PATH "${YARP_MODULE_DIR}/ycm-${YCM_REQUIRED_VERSION}/cmake-next/Modules")
+      list(APPEND YARP_MODULE_PATH "${YARP_MODULE_DIR}/ycm-${YCM_REQUIRED_VERSION}/cmake-3.8/Modules")
     endif()
   endif()
 endif()
@@ -113,6 +114,12 @@ set(YARP_IDL_BINARY_HINT "@PACKAGE_YARP_IDL_BINARY_HINT@")
 if(NOT TARGET YARP::YARP_OS)
   include(${CMAKE_CURRENT_LIST_DIR}/YARPTargets.cmake)
 endif()
+
+# Find dependencies required by targets 
+if(TARGET YARP::YARP_rtf)
+  find_package(RTF QUIET)
+endif()
+
 
 # Export variables for available targets
 set(YARP_OS_LIBRARY YARP::YARP_OS)

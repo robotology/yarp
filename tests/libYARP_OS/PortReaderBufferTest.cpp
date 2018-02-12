@@ -48,16 +48,16 @@ public:
         buffer.acceptObject(&data, &dummy);
 
         Bottle *bot = buffer.read();
-        checkTrue(bot!=NULL,"Inserted message received");
-        if (bot!=NULL) {
+        checkTrue(bot!=nullptr,"Inserted message received");
+        if (bot!=nullptr) {
             checkEqual(bot->toString().c_str(),"hello","value ok");
         }
 
-        buffer.acceptObject(&data2, NULL);
+        buffer.acceptObject(&data2, nullptr);
 
         bot = buffer.read();
-        checkTrue(bot!=NULL,"Inserted message received");
-        if (bot!=NULL) {
+        checkTrue(bot!=nullptr,"Inserted message received");
+        if (bot!=nullptr) {
             checkEqual(bot->toString().c_str(),"there","value ok");
         }
 
@@ -85,8 +85,8 @@ public:
         p0.write(data);
 
         Bottle *bot = p2.read();
-        checkTrue(bot!=NULL,"Port message received");
-        if (bot!=NULL) {
+        checkTrue(bot!=nullptr,"Port message received");
+        if (bot!=nullptr) {
             checkEqual(bot->toString().c_str(),"hello","value ok");
         }
 
@@ -96,8 +96,8 @@ public:
 
 
         bot = p2.read();
-        checkTrue(bot!=NULL,"BufferedPort message received");
-        if (bot!=NULL) {
+        checkTrue(bot!=nullptr,"BufferedPort message received");
+        if (bot!=nullptr) {
             checkEqual(bot->toString().c_str(),"hello2","value ok");
         }
 
@@ -129,8 +129,8 @@ public:
         out.prepare().fromString("1 2 3 4");
         out.write(true);
         Bottle *datum = in.read();
-        checkTrue(datum!=NULL, "got message #2");
-        if(datum == NULL)
+        checkTrue(datum!=nullptr, "got message #2");
+        if(datum == nullptr)
         {
             report(1, "Message #2 is null..");
             return;

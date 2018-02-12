@@ -1,6 +1,6 @@
 /*
- * Copyright (C) 2006 The Robotcub consortium
- * Author: Lorenzo Natale.
+ * Copyright (C) 2006 RobotCub Consortium
+ * Author: Lorenzo Natale
  * CopyPolicy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
  */
 
@@ -16,12 +16,12 @@ using namespace yarp::dev;
 
 IControlCalibration::IControlCalibration()
 {
-    calibrator=0;
+    calibrator=nullptr;
 }
 
 bool IControlCalibration::setCalibrator(ICalibrator *c)
 {
-    if (c!=0)
+    if (c!=nullptr)
     {
         calibrator=c;
         return true;
@@ -33,7 +33,7 @@ bool IControlCalibration::setCalibrator(ICalibrator *c)
 bool IControlCalibration::calibrate()
 {
     bool ret = false;
-    if (calibrator!=0)
+    if (calibrator!=nullptr)
     {
         yDebug("Going to call calibrator\n");
         ret=calibrator->calibrate(dynamic_cast<DeviceDriver *>(this));
@@ -47,7 +47,7 @@ bool IControlCalibration::calibrate()
 bool IControlCalibration::park(bool wait)
 {
     bool ret=false;
-    if (calibrator!=0)
+    if (calibrator!=nullptr)
     {
         yDebug("Going to call calibrator\n");
         ret=calibrator->park(dynamic_cast<DeviceDriver *>(this), wait);
@@ -62,12 +62,12 @@ bool IControlCalibration::park(bool wait)
 /// IControlCalibration2
 IControlCalibration2::IControlCalibration2()
 {
-    calibrator=0;
+    calibrator=nullptr;
 }
 
 bool IControlCalibration2::setCalibrator(ICalibrator *c)
 {
-    if (c!=0)
+    if (c!=nullptr)
     {
         calibrator=c;
         return true;
@@ -79,7 +79,7 @@ bool IControlCalibration2::setCalibrator(ICalibrator *c)
 bool IControlCalibration2::calibrate()
 {
     bool ret = false;
-    if (calibrator!=0)
+    if (calibrator!=nullptr)
     {
         yDebug("Going to call calibrator\n");
         ret=calibrator->calibrate(dynamic_cast<DeviceDriver *>(this));
@@ -93,7 +93,7 @@ bool IControlCalibration2::calibrate()
 bool IControlCalibration2::abortCalibration()
 {
     bool ret=false;
-    if (calibrator!=0)
+    if (calibrator!=nullptr)
         ret=calibrator->quitCalibrate();
     return ret;
 }
@@ -101,7 +101,7 @@ bool IControlCalibration2::abortCalibration()
 bool IControlCalibration2::abortPark()
 {
     bool ret=false;
-    if (calibrator!=0)
+    if (calibrator!=nullptr)
         ret=calibrator->quitPark();
     return ret;
 }
@@ -109,7 +109,7 @@ bool IControlCalibration2::abortPark()
 bool IControlCalibration2::park(bool wait)
 {
     bool ret=false;
-    if (calibrator!=0)
+    if (calibrator!=nullptr)
     {
         yDebug("Going to call calibrator\n");
         ret=calibrator->park(dynamic_cast<DeviceDriver *>(this), wait);

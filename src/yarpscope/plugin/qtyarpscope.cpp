@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2014 iCub Facility - Istituto Italiano di Tecnologia
+ * Copyright (C) 2014 Istituto Italiano di Tecnologia (IIT)
  * Author: Davide Perrone
  * Date: Feb 2014
  * email:   dperrone@aitek.it
@@ -12,6 +12,7 @@
 #include <yarp/os/ResourceFinder.h>
 #include "simpleloader.h"
 #include "xmlloader.h"
+#include <yarp/os/Time.h>
 
 #define PADDING         25
 #define GRIDSPACING     25
@@ -20,10 +21,11 @@
 QtYARPScope::QtYARPScope(QQuickItem *parent):
     QQuickPaintedItem(parent),
     i(0),
-    loader(YARP_NULLPTR),
-    topLevel(YARP_NULLPTR),
+    yarp(yarp::os::YARP_CLOCK_SYSTEM),
+    loader(nullptr),
+    topLevel(nullptr),
     bPressed(false),
-    currentSelectedPlotter(YARP_NULLPTR)
+    currentSelectedPlotter(nullptr)
 {
     plotManager = PlotManager::instance();
     setFlag(ItemHasContents, true);
@@ -395,7 +397,7 @@ void QtYARPScope::routeMouseEvents( QWheelEvent* event )
 void QtYARPScope::updateCustomPlotSize()
 {
 
-    if(loader == NULL){
+    if(loader == nullptr){
         return;
     }
     int w = width();

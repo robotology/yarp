@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2012, 2015  iCub Facility, Istituto Italiano di Tecnologia
+ * Copyright (C) 2012, 2015 Istituto Italiano di Tecnologia (IIT)
  * Author: Daniele E. Domenichelli <daniele.domenichelli@iit.it>
  *
  * CopyPolicy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
@@ -42,10 +42,11 @@ class RobotInterface::Robot::Private
 {
 public:
     Private(Robot * /*parent*/) :
-        build(0),
-        currentPhase(ActionPhaseUnknown),
+            build(0),
+                currentPhase(ActionPhaseUnknown),
         currentLevel(0)
-    {}
+    {
+    }
 
     // return true if a device with the given name exists
     bool hasDevice(const std::string &name) const;
@@ -114,7 +115,7 @@ RobotInterface::Device* RobotInterface::Robot::Private::findDevice(const std::st
         }
     }
     yFatal() << "Cannot find device" << name;
-    return NULL;
+    return nullptr;
 }
 
 bool RobotInterface::Robot::Private::openDevices()

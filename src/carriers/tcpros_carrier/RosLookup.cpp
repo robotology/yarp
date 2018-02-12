@@ -85,7 +85,7 @@ bool RosLookup::lookupTopic(const ConstString& name) {
         return false;
     }
     Bottle *pref = reply.get(2).asList();
-    if (pref==NULL) {
+    if (pref==nullptr) {
         fprintf(stderr,"Failure looking up topic %s: expected list of protocols\n", name.c_str());
         return false;
     }

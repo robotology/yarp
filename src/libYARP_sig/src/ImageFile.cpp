@@ -1,8 +1,8 @@
 /*
-* Author: Lorenzo Natale, Giorgio Metta and Paul Fitzpatrick.
-* Copyright (C) 2006 The Robotcub consortium
-* CopyPolicy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
-*/
+ * Copyright (C) 2006 The RobotCub Consortium
+ * Authors: Lorenzo Natale, Giorgio Metta and Paul Fitzpatrick
+ * CopyPolicy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
+ */
 
 
 
@@ -26,7 +26,7 @@ static void warn(const char *message)
 bool file::write(const ImageOf<PixelFloat>& src, const ConstString& dest)
 {
     FILE *fp = fopen(dest.c_str(), "w");
-    if (fp==NULL) {
+    if (fp==nullptr) {
         return false;
     }
 
@@ -46,7 +46,7 @@ bool file::read(ImageOf<PixelFloat>& dest, const ConstString& src)
     int hh = 0, ww = 0;
 
     FILE *fp = fopen(src.c_str(), "r");
-    if (fp==NULL) {
+    if (fp==nullptr) {
         return false;
     }
     int blank = 1;
@@ -73,7 +73,7 @@ bool file::read(ImageOf<PixelFloat>& dest, const ConstString& src)
     }
     fclose(fp);
     fp = fopen(src.c_str(), "rb");
-    if (fp==NULL) {
+    if (fp==nullptr) {
         return false;
     }
     dest.resize(ww,hh);
@@ -218,10 +218,10 @@ static bool ReadHeader(FILE *fp, int *height, int *width, int *color)
 static bool ImageReadRGB(ImageOf<PixelRgb> &img, const char *filename)
 {
     int width, height, color, num;
-    FILE *fp=0;
+    FILE *fp=nullptr;
     fp = fopen(filename, "rb");
 
-    if(fp==0)
+    if(fp==nullptr)
         {
             fprintf(stderr, "Error opening %s, check if file exists.\n", filename);
             return false;
@@ -278,10 +278,10 @@ static bool ImageReadRGB(ImageOf<PixelRgb> &img, const char *filename)
 static bool ImageReadBGR(ImageOf<PixelBgr> &img, const char *filename)
 {
     int width, height, color, num;
-    FILE *fp=0;
+    FILE *fp=nullptr;
     fp = fopen(filename, "rb");
 
-    if(fp==0)
+    if(fp==nullptr)
         {
             fprintf(stderr, "Error opening %s, check if file exists.\n", filename);
             return false;
@@ -324,10 +324,10 @@ static bool ImageReadBGR(ImageOf<PixelBgr> &img, const char *filename)
 static bool ImageReadMono(ImageOf<PixelMono> &img, const char *filename)
 {
     int width, height, color, num;
-    FILE *fp=0;
+    FILE *fp=nullptr;
     fp = fopen(filename, "rb");
 
-    if(fp==0)
+    if(fp==nullptr)
         {
             fprintf(stderr, "Error opening %s, check if file exists.\n", filename);
             return false;

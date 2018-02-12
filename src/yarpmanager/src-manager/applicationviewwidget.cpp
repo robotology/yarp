@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2014 iCub Facility - Istituto Italiano di Tecnologia
+ * Copyright (C) 2014 Istituto Italiano di Tecnologia (IIT)
  * Author: Davide Perrone
  * Date: Feb 2014
  * email:   dperrone@aitek.it
@@ -15,6 +15,8 @@
 #include <QFileDialog>
 #include <yarp/os/Log.h>
 #include <yarp/os/LogStream.h>
+#include <yarp/os/Bottle.h>
+#include <yarp/os/Carriers.h>
 #include <yarp/manager/localbroker.h>
 #include "yscopewindow.h"
 #include <QTreeWidgetItem>
@@ -29,29 +31,29 @@ ApplicationViewWidget::ApplicationViewWidget(yarp::manager::Application *app,
                                              QWidget *parent) :
     GenericViewWidget(parent), ApplicationEvent(),
     ui(new Ui::ApplicationViewWidget),
-    modRunAction(YARP_NULLPTR),
-    modStopAction(YARP_NULLPTR),
-    modkillAction(YARP_NULLPTR),
-    modSeparator(YARP_NULLPTR),
-    modRefreshAction(YARP_NULLPTR),
-    modSelectAllAction(YARP_NULLPTR),
-    modAttachAction(YARP_NULLPTR),
-    modAssignAction(YARP_NULLPTR),
-    connContex(YARP_NULLPTR),
-    connSubMenu(YARP_NULLPTR),
-    connConnectAction(YARP_NULLPTR),
-    connDisconnectAction(YARP_NULLPTR),
-    connSeparatorAction(YARP_NULLPTR),
-    connRefreshAction(YARP_NULLPTR),
-    connSelectAllAction(YARP_NULLPTR),
-    conn1SeparatorAction(YARP_NULLPTR),
-    connInspectAction(YARP_NULLPTR),
-    connYARPViewAction(YARP_NULLPTR),
-    connYARPReadAction(YARP_NULLPTR),
-    connYARPHearAction(YARP_NULLPTR),
-    connYARPScopeAction(YARP_NULLPTR),
-    resRefreshAction(YARP_NULLPTR),
-    resSelectAllAction(YARP_NULLPTR)
+    modRunAction(nullptr),
+    modStopAction(nullptr),
+    modkillAction(nullptr),
+    modSeparator(nullptr),
+    modRefreshAction(nullptr),
+    modSelectAllAction(nullptr),
+    modAttachAction(nullptr),
+    modAssignAction(nullptr),
+    connContex(nullptr),
+    connSubMenu(nullptr),
+    connConnectAction(nullptr),
+    connDisconnectAction(nullptr),
+    connSeparatorAction(nullptr),
+    connRefreshAction(nullptr),
+    connSelectAllAction(nullptr),
+    conn1SeparatorAction(nullptr),
+    connInspectAction(nullptr),
+    connYARPViewAction(nullptr),
+    connYARPReadAction(nullptr),
+    connYARPHearAction(nullptr),
+    connYARPScopeAction(nullptr),
+    resRefreshAction(nullptr),
+    resSelectAllAction(nullptr)
 {
     ui->setupUi(this);
     lazy = lazyManager;
@@ -124,7 +126,7 @@ ApplicationViewWidget::ApplicationViewWidget(yarp::manager::Application *app,
     l->setMargin(0);
 
 
-    builderWindowContainer = new QMainWindow(NULL,Qt::Widget);
+    builderWindowContainer = new QMainWindow(nullptr,Qt::Widget);
     builderWindowContainer->setDockNestingEnabled(true);
     l->addWidget(builderWindowContainer);
 
@@ -450,14 +452,7 @@ void ApplicationViewWidget::onModuleItemSelectionChanged()
         if (all) {
             modAttachAction->setEnabled(true);
         }
-//        if (ui->moduleList->currentItem()->text(3) == "localhost")
-//        {
-//            modAttachAction->setEnabled(true);
-//        }
-//        else
-//        {
-//            modAttachAction->setEnabled(false);
-//        }
+
         modAssignAction->setEnabled(true);
         modRefreshAction->setEnabled(true);
 
@@ -496,7 +491,7 @@ void ApplicationViewWidget::onModuleItemSelectionChanged()
 /*! \brief Called when an item of the resources tree has been selected. */
 void ApplicationViewWidget::onResourceItemSelectionChanged()
 {
-    if (ui->resourcesList->currentItem() == NULL) {
+    if (ui->resourcesList->currentItem() == nullptr) {
         resRefreshAction->setEnabled(false);
     } else {
         resRefreshAction->setEnabled(true);
@@ -593,6 +588,7 @@ void ApplicationViewWidget::updateApplicationWindow()
     ui->moduleList->clear();
     ui->connectionList->clear();
     ui->resourcesList->clear();
+    listOfResourceNames.clear();
 
     disconnect(ui->moduleList,SIGNAL(itemChanged(QTreeWidgetItem*,int)),this,SLOT(onModuleItemChanged(QTreeWidgetItem*,int)));
 
@@ -606,7 +602,7 @@ void ApplicationViewWidget::updateApplicationWindow()
     {
 
         Module *mod = (*moditr)->getModule();
-        CustomTreeWidgetItem *appNode = NULL;
+        CustomTreeWidgetItem *appNode = nullptr;
         QString modLabel = mod->owner()->getLabel();
         QString appLabel = app->getLabel();
         if (modLabel != appLabel) {
@@ -636,6 +632,12 @@ void ApplicationViewWidget::updateApplicationWindow()
         QString workDir = QString("%1").arg((*moditr)->getWorkDir());
         QString env = QString("%1").arg((*moditr)->getEnv());
 
+        // The default host is "localhost" if the <node> is not specified.
+        if(host.isEmpty())
+        {
+            host = "localhost";
+        }
+
         QStringList l;
         l << command << id << "stopped" << host << param << stdio << workDir << env;
 
@@ -644,11 +646,6 @@ void ApplicationViewWidget::updateApplicationWindow()
             it = new CustomTreeWidgetItem(ui->moduleList,l);
         else
             it = new CustomTreeWidgetItem(appNode,l);
-
-        if (host=="localhost")
-        {
-            it->setTextColor(3,QColor("#A0A0A0"));
-        }
 
         //it->setFlags(it->flags() | Qt::ItemIsEditable);
         it->setData(0,Qt::UserRole,yarp::manager::MODULE);
@@ -675,12 +672,33 @@ void ApplicationViewWidget::updateApplicationWindow()
         QString to = QString("%1").arg((*cnnitr).to());
         QString carrier = QString("%1").arg((*cnnitr).carrier());
         QString status = "disconnected";
+        QString modifier="";
+        // The default carrier is "tcp" if <protocol> is not specified.
+        if(carrier.isEmpty())
+        {
+            carrier = "tcp";
+        }
+        size_t pos = carrier.toStdString().find("+");
+        if(pos != std::string::npos)
+        {
+            modifier = carrier.mid(pos);
+            QStringList myStringList = carrier.split('+');
+            carrier = myStringList.first();
+        }
 
 
         QStringList l;
-        l << type << sId << status << from << to << carrier;
+        l << type << sId << status << from << to << carrier << modifier;
         CustomTreeWidgetItem *it = new CustomTreeWidgetItem(ui->connectionList,l);
         ui->moduleList->addTopLevelItem(it);
+
+        //scanning available carriers:
+        scanAvailableCarriers(carrier,false);
+
+        QComboBox *comboBox = new QComboBox(this);
+        comboBox->addItems(stringLst);
+        comboBox->setEditable(true);
+        ui->connectionList->setItemWidget((QTreeWidgetItem *) it,5, comboBox);
         it->setData(0,Qt::UserRole,yarp::manager::INOUTD);
         it->setIcon(0,QIcon(":/disconnect22.svg"));
         it->setTextColor(2,QColor("#BF0303"));
@@ -703,6 +721,17 @@ void ApplicationViewWidget::updateApplicationWindow()
             type = "port";
         }
         QString res = QString("%1").arg((*itrS)->getName());
+        if (std::find(listOfResourceNames.begin(),
+                      listOfResourceNames.end(),
+                      res.toStdString()) == listOfResourceNames.end())
+        {
+          listOfResourceNames.push_back(res.toStdString());
+        }
+        else
+        {
+            // The resource has been already added
+            continue;
+        }
         QString status = "unknown";
         //m_resRow[m_resColumns.m_col_color] = Gdk::Color("#00000");
 
@@ -729,7 +758,6 @@ void ApplicationViewWidget::onModuleItemChanged(QTreeWidgetItem *it,int col)
     if (!(tmp & Qt::ItemIsEditable)) {
         return;
     }
-    qDebug() << "CHANGED " << it->text(col);
 }
 
 /*! \brief Called when an item has been double clicked */
@@ -759,14 +787,14 @@ bool ApplicationViewWidget::isEditable(QTreeWidgetItem *it,int col)
                }
            }
            if (col == 3) {
-                if (it->text(3) != "localhost" && it->text(2) == "stopped") {
+                if (it->text(2) == "stopped") {
                     return true;
                 }
            }
         break;
     }
     case yarp::manager::INOUTD:{
-           if (col == 3 || col == 4 || col == 5 ) {
+           if (col == 3 || col == 4 || col == 5 || col == 6) {
                if (it->text(2) == "disconnected") {
                     return true;
                }
@@ -892,7 +920,7 @@ void ApplicationViewWidget::onAssignHost()
 
         }
         safeManager.safeLoadBalance();
-        yarp::os::Time::delay(0.1);
+        yarp::os::SystemClock::delaySystem(0.1);
 
 
     } else {
@@ -994,6 +1022,8 @@ void ApplicationViewWidget::attachStdOutNestedApplication(QTreeWidgetItem *it,st
 /*! \brief Called when the Run button has been pressed */
 bool ApplicationViewWidget::onRun()
 {
+    selectAllConnections(true);
+    selectAllResources(true);
     if (safeManager.busy() ) {
         return false;
     }
@@ -1026,9 +1056,29 @@ bool ApplicationViewWidget::onRun()
         }
     }
 
-    safeManager.safeRun(MIDs);
-    yarp::os::Time::delay(0.1);
+    std::vector<int> CIDs;
+    /*for(int i=0;i<ui->connectionList->topLevelItemCount();i++)
+    {
+        updateConnection(i, CIDs);
+    }*/
+
+    std::vector<int> RIDs;
+    /*for(int i=0;i<ui->resourcesList->topLevelItemCount();i++) {
+        QTreeWidgetItem *it = ui->resourcesList->topLevelItem(i);
+        if (it->isSelected()) {
+            RIDs.push_back(it->text(1).toInt());
+            it->setText(3,"waiting");
+            it->setIcon(0,QIcon(":/refresh22.svg"));
+            it->setTextColor(3,QColor("#000000"));
+        }
+    }*/
+
+
+    safeManager.safeRun(MIDs,CIDs,RIDs);
+    yarp::os::SystemClock::delaySystem(0.1);
     selectAllModule(false);
+    selectAllConnections(false);
+    selectAllResources(false);
     return true;
 }
 
@@ -1063,6 +1113,8 @@ void ApplicationViewWidget::runNestedApplication(QTreeWidgetItem *it,std::vector
 /*! \brief Called when the Stop button has been pressed */
 bool ApplicationViewWidget::onStop()
 {
+    selectAllConnections(true);
+    selectAllResources(true);
     if (safeManager.busy()) {
         return false;
     }
@@ -1093,10 +1145,29 @@ bool ApplicationViewWidget::onStop()
 
     }
 
+    std::vector<int> CIDs;
+    /*for(int i=0;i<ui->connectionList->topLevelItemCount();i++)
+    {
+        updateConnection(i, CIDs);
+    }*/
 
-    safeManager.safeStop(MIDs);
-    yarp::os::Time::delay(0.1);
+    std::vector<int> RIDs;
+    /*for(int i=0;i<ui->resourcesList->topLevelItemCount();i++) {
+        QTreeWidgetItem *it = ui->resourcesList->topLevelItem(i);
+        if (it->isSelected()) {
+            RIDs.push_back(it->text(1).toInt());
+            it->setText(3,"waiting");
+            it->setIcon(0,QIcon(":/refresh22.svg"));
+            it->setTextColor(3,QColor("#000000"));
+        }
+    }*/
+
+
+    safeManager.safeStop(MIDs,CIDs,RIDs);
+    yarp::os::SystemClock::delaySystem(0.1);
     selectAllModule(false);
+    selectAllConnections(false);
+    selectAllResources(false);
     return true;
 }
 
@@ -1130,6 +1201,8 @@ void ApplicationViewWidget::stopNestedApplication(QTreeWidgetItem *it,std::vecto
 /*! \brief Called when the Kill button has been pressed */
 bool ApplicationViewWidget::onKill()
 {
+    selectAllConnections(true);
+    selectAllResources(true);
     if (safeManager.busy()) {
         return false;
     }
@@ -1163,10 +1236,30 @@ bool ApplicationViewWidget::onKill()
 
     }
 
+    std::vector<int> CIDs;
+    /*for(int i=0;i<ui->connectionList->topLevelItemCount();i++)
+    {
+        updateConnection(i, CIDs);
 
-    safeManager.safeKill(MIDs);
-    yarp::os::Time::delay(0.1);
+    }*/
+
+    std::vector<int> RIDs;
+    /*for(int i=0;i<ui->resourcesList->topLevelItemCount();i++) {
+        QTreeWidgetItem *it = ui->resourcesList->topLevelItem(i);
+        if (it->isSelected()) {
+            RIDs.push_back(it->text(1).toInt());
+            it->setText(3,"waiting");
+            it->setIcon(0,QIcon(":/refresh22.svg"));
+            it->setTextColor(3,QColor("#000000"));
+        }
+    }*/
+
+
+    safeManager.safeKill(MIDs, CIDs, RIDs);
+    yarp::os::SystemClock::delaySystem(0.1);
     selectAllModule(false);
+    selectAllConnections(false);
+    selectAllResources(false);
     return true;
 }
 
@@ -1205,25 +1298,15 @@ bool ApplicationViewWidget::onConnect()
     }
 
 
-    std::vector<int> MIDs;
-    for(int i=0;i<ui->connectionList->topLevelItemCount();i++) {
-        QTreeWidgetItem *it = ui->connectionList->topLevelItem(i);
-        if (it->isSelected()) {
-            MIDs.push_back(it->text(1).toInt());
-            safeManager.updateConnection(it->text(1).toInt(),
-                                     it->text(3).toLatin1().data(),
-                                     it->text(4).toLatin1().data(),
-                                     it->text(5).toLatin1().data());
-
-            it->setText(2,"waiting");
-            it->setIcon(0,QIcon(":/refresh22.svg"));
-            it->setTextColor(2,QColor("#000000"));
-        }
+    std::vector<int> CIDs;
+    for(int i=0;i<ui->connectionList->topLevelItemCount();i++)
+    {
+        updateConnection(i,CIDs);
     }
 
 
-    safeManager.safeConnect(MIDs);
-    yarp::os::Time::delay(0.1);
+    safeManager.safeConnect(CIDs);
+    yarp::os::SystemClock::delaySystem(0.1);
     selectAllConnections(false);
     return true;
 }
@@ -1236,26 +1319,15 @@ bool ApplicationViewWidget::onDisconnect()
     }
 
 
-    std::vector<int> MIDs;
-    for(int i=0;i<ui->connectionList->topLevelItemCount();i++) {
-        QTreeWidgetItem *it = ui->connectionList->topLevelItem(i);
-        if (it->isSelected()) {
-            MIDs.push_back(it->text(1).toInt());
-            safeManager.updateConnection(it->text(1).toInt(),
-                                     it->text(3).toLatin1().data(),
-                                     it->text(4).toLatin1().data(),
-                                     it->text(5).toLatin1().data());
-
-            it->setText(2,"waiting");
-            it->setIcon(0,QIcon(":/refresh22.svg"));
-            it->setTextColor(2,QColor("#000000"));
-
-        }
+    std::vector<int> CIDs;
+    for(int i=0;i<ui->connectionList->topLevelItemCount();i++)
+    {
+        updateConnection(i, CIDs);
     }
 
 
-    safeManager.safeDisconnect(MIDs);
-    yarp::os::Time::delay(0.1);
+    safeManager.safeDisconnect(CIDs);
+    yarp::os::SystemClock::delaySystem(0.1);
     selectAllConnections(false);
     return true;
 }
@@ -1294,13 +1366,7 @@ bool ApplicationViewWidget::onRefresh()
     }
 
     for(int i=0;i<ui->connectionList->topLevelItemCount();i++) {
-        QTreeWidgetItem *it = ui->connectionList->topLevelItem(i);
-        if (it->isSelected()) {
-            connectionsIDs.push_back(it->text(1).toInt());
-            it->setText(2,"waiting");
-            it->setIcon(0,QIcon(":/refresh22.svg"));
-            it->setTextColor(2,QColor("#000000"));
-        }
+        updateConnection(i,connectionsIDs);
     }
 
     for(int i=0;i<ui->resourcesList->topLevelItemCount();i++) {
@@ -1316,7 +1382,7 @@ bool ApplicationViewWidget::onRefresh()
     safeManager.safeRefresh(modulesIDs,
                         connectionsIDs,
                         resourcesIDs);
-    yarp::os::Time::delay(0.1);
+    yarp::os::SystemClock::delaySystem(0.1);
     selectAllConnections(false);
     selectAllModule(false);
     selectAllResources(false);
@@ -1451,6 +1517,71 @@ void ApplicationViewWidget::selectAllNestedApplicationModule(QTreeWidgetItem *it
     }
 }
 
+bool ApplicationViewWidget::scanAvailableCarriers(QString carrier, bool isConnection){
+    yarp::os::Bottle lst=yarp::os::Carriers::listCarriers();
+    yarp::manager::ErrorLogger* logger  = yarp::manager::ErrorLogger::Instance();
+    bool res=false;
+    stringLst.clear();
+    stringLst.push_back(carrier);
+    for (int i=0; i<lst.size(); i++)
+    {
+        if (lst.get(i).asString() == carrier.toStdString())
+            res = true;
+        else
+            stringLst.push_back(lst.get(i).asString().c_str());
+    }
+    if (!res && isConnection)
+    {
+        std::string msg = "Unable to find '"+ carrier.toStdString() +
+                "' among the available carriers in this machine, the connection could fail.";
+        logger->addWarning(msg.c_str());
+    }
+    return res;
+}
+
+void ApplicationViewWidget::updateConnection(int index, std::vector<int>& CIDs)
+{
+    QTreeWidgetItem *it = ui->connectionList->topLevelItem(index);
+    if (it->isSelected()) {
+        QComboBox* box = qobject_cast<QComboBox*>(ui->connectionList->itemWidget((QTreeWidgetItem *)it, 5));
+        QString carrier, modifier;
+        if (box)
+        {
+            carrier = box->currentText();
+
+        }
+        else
+        {
+            carrier=it->text(5);
+        }
+
+        //checking if in the carrier has been added a modifier
+
+        size_t pos = carrier.toStdString().find("+");
+        if(pos != std::string::npos)
+        {
+            modifier = carrier.mid(pos);
+            QStringList myStringList = carrier.split('+');
+            carrier = myStringList.first();
+            box->setCurrentText(carrier);
+            it->setText(6,modifier);
+        }
+
+        // scan the available carriers in the system where yarpmanager is launched.
+        scanAvailableCarriers(carrier);
+        carrier = carrier + it->text(6); //adding modifier.
+        CIDs.push_back(it->text(1).toInt());
+        safeManager.updateConnection(it->text(1).toInt(),
+                                 it->text(3).toLatin1().data(),
+                                 it->text(4).toLatin1().data(),
+                                 carrier.toLatin1().data());
+
+        it->setText(2,"waiting");
+        it->setIcon(0,QIcon(":/refresh22.svg"));
+        it->setTextColor(2,QColor("#000000"));
+    }
+
+}
 
 /*! \brief Select/deselect all connections
     \param check
@@ -1613,7 +1744,7 @@ void ApplicationViewWidget::onYARPView()
             to += "/yarpview/img:i";
 
             yarp::manager::LocalBroker launcher;
-            if (launcher.init("yarpview", NULL, NULL, NULL, NULL, env.toLatin1().data()))
+            if (launcher.init("yarpview", nullptr, nullptr, nullptr, nullptr, env.toLatin1().data()))
             {
                 if (!launcher.start() && strlen(launcher.error()))
                 {
@@ -1625,7 +1756,7 @@ void ApplicationViewWidget::onYARPView()
                 else
                 {
                     // waiting for the port to get open
-                    double base = yarp::os::Time::now();
+                    double base = yarp::os::SystemClock::nowSystem();
                     while(!timeout(base, 3.0)) {
                         if (launcher.exists(to.toLatin1().data())) {
                             break;
@@ -1644,7 +1775,7 @@ void ApplicationViewWidget::onYARPView()
     }
 
 
-    yarp::os::Time::delay(0.1);
+    yarp::os::SystemClock::delaySystem(0.1);
 }
 
 /*! \brief Launch YARPHear Inspection modality*/
@@ -1674,7 +1805,7 @@ void ApplicationViewWidget::onYARPHear()
 
             yarp::manager::LocalBroker launcher;
             launcher.setWindowMode(yarp::manager::LocalBroker::WINDOW_VISIBLE);
-            if (launcher.init(cmd.toLatin1().data(), param.toLatin1().data(), NULL, NULL, NULL, NULL))
+            if (launcher.init(cmd.toLatin1().data(), param.toLatin1().data(), nullptr, nullptr, nullptr, nullptr))
             {
                 if (!launcher.start() && strlen(launcher.error()))
                 {
@@ -1686,7 +1817,7 @@ void ApplicationViewWidget::onYARPHear()
                 else
                 {
                     // waiting for the port to get open
-                    double base = yarp::os::Time::now();
+                    double base = yarp::os::SystemClock::nowSystem();
                     while(!timeout(base, 3.0)) {
                         if (launcher.exists(to.toLatin1().data())) {
                             break;
@@ -1710,7 +1841,7 @@ void ApplicationViewWidget::onYARPHear()
 
         }
     }
-    yarp::os::Time::delay(0.1);
+    yarp::os::SystemClock::delaySystem(0.1);
 
 
 
@@ -1743,7 +1874,7 @@ void ApplicationViewWidget::onYARPRead()
 
             yarp::manager::LocalBroker launcher;
             launcher.setWindowMode(yarp::manager::LocalBroker::WINDOW_VISIBLE);
-            if (launcher.init(cmd.toLatin1().data(), param.toLatin1().data(), NULL, NULL, NULL, NULL))
+            if (launcher.init(cmd.toLatin1().data(), param.toLatin1().data(), nullptr, nullptr, nullptr, nullptr))
             {
                 if (!launcher.start() && strlen(launcher.error()))
                 {
@@ -1755,7 +1886,7 @@ void ApplicationViewWidget::onYARPRead()
                 else
                 {
                     // waiting for the port to get open
-                    double base = yarp::os::Time::now();
+                    double base = yarp::os::SystemClock::nowSystem();
                     while(!timeout(base, 3.0)) {
                         if (launcher.exists(to.toLatin1().data())) {
                             break;
@@ -1774,7 +1905,7 @@ void ApplicationViewWidget::onYARPRead()
     }
 
 
-    yarp::os::Time::delay(0.1);
+    yarp::os::SystemClock::delaySystem(0.1);
 
 }
 
@@ -1809,7 +1940,7 @@ void ApplicationViewWidget::onYARPScope()
 
 
             yarp::manager::LocalBroker launcher;
-            if (launcher.init("yarpscope", param.toLatin1().data(), NULL, NULL, NULL, env.toLatin1().data())) {
+            if (launcher.init("yarpscope", param.toLatin1().data(), nullptr, nullptr, nullptr, env.toLatin1().data())) {
                 if (!launcher.start() && strlen(launcher.error())) {
                     QString msg;
                     msg = QString("Error while launching yarpscope. %1").arg(launcher.error());
@@ -1818,7 +1949,7 @@ void ApplicationViewWidget::onYARPScope()
                 }
                 else{
                     // waiting for the port to get open
-                    double base = yarp::os::Time::now();
+                    double base = yarp::os::SystemClock::nowSystem();
                     while(!timeout(base, 3.0))
                         if (launcher.exists(to.toLatin1().data())) break;
                     if (!launcher.connect(from.toLatin1().data(), to.toLatin1().data(), "udp")) {
@@ -1833,15 +1964,15 @@ void ApplicationViewWidget::onYARPScope()
 
         }
     }
-    yarp::os::Time::delay(0.1);
+    yarp::os::SystemClock::delaySystem(0.1);
 }
 
 
 
 bool ApplicationViewWidget::timeout(double base, double timeout)
 {
-    yarp::os::Time::delay(1.0);
-    if ((yarp::os::Time::now()-base) > timeout)
+    yarp::os::SystemClock::delaySystem(1.0);
+    if ((yarp::os::SystemClock::nowSystem()-base) > timeout)
         return true;
     return false;
 }
@@ -1877,6 +2008,8 @@ void ApplicationViewWidget::onSelfConnect(int which)
         it->setTextColor(2,QColor("#008C00"));
         QString from = it->text(3);
         QString to = it->text(4);
+        QComboBox* box = qobject_cast<QComboBox*>(ui->connectionList->itemWidget((QTreeWidgetItem *)it, 5));
+        box->setEnabled(false);
         builder->setConnectionConnected(true,from,to);
     }
 
@@ -1897,6 +2030,8 @@ void ApplicationViewWidget::onSelfDisconnect(int which)
         it->setTextColor(2,QColor("#BF0303"));
         QString from = it->text(3);
         QString to = it->text(4);
+        QComboBox* box = qobject_cast<QComboBox*>(ui->connectionList->itemWidget((QTreeWidgetItem *)it, 5));
+        box->setEnabled(true);
         builder->setConnectionConnected(false,from,to);
     }
     reportErrors();
@@ -2102,21 +2237,21 @@ void ApplicationViewWidget::onConUnAvailable(int from, int to)
 /*! \brief Called when an error occurred
 
 */
-void ApplicationViewWidget::onError(void)
+void ApplicationViewWidget::onError()
 {
     reportErrors();
 }
 
 /*! \brief Refresh all and reports errors
 */
-void ApplicationViewWidget::onLoadBalance(void)
+void ApplicationViewWidget::onLoadBalance()
 {
     emit selfSafeLoadBolance();
 }
 
 
 
-void ApplicationViewWidget::onDetachStdout(void)
+void ApplicationViewWidget::onDetachStdout()
 {
 
 }
@@ -2143,7 +2278,7 @@ bool ApplicationViewWidget::getConRowByID(int id, int *row)
 */
 QTreeWidgetItem* ApplicationViewWidget::getModRowByID(int id, QTreeWidgetItem *parent)
 {
-    QTreeWidgetItem *ret = NULL;
+    QTreeWidgetItem *ret = nullptr;
     if (!parent) {
         for(int i=0;i< ui->moduleList->topLevelItemCount();i++) {
             QTreeWidgetItem *it = ui->moduleList->topLevelItem(i);

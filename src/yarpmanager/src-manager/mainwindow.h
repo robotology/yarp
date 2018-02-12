@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2014 iCub Facility - Istituto Italiano di Tecnologia
+ * Copyright (C) 2014 Istituto Italiano di Tecnologia (IIT)
  * Author: Davide Perrone
  * Date: Feb 2014
  * email:   dperrone@aitek.it
@@ -12,6 +12,7 @@
 #define MAINWINDOW_H
 
 #include <QMainWindow>
+#include <QFileSystemWatcher>
 #include <yarp/os/Network.h>
 #include <yarp/os/Property.h>
 #include <yarp/os/ConstString.h>
@@ -19,6 +20,7 @@
 #include "entitiestreewidget.h"
 #include "genericviewwidget.h"
 #include "newapplicationwizard.h"
+#include "clusterWidget.h"
 //#include "message_list.h"
 //#include "application_list.h"
 
@@ -46,6 +48,8 @@ private:
     bool loadRecursiveTemplates(const char* szPath);
     bool loadRecursiveApplications(const char* szPath);
     bool initializeFile(std::string _class);
+    int  getAppTabIndex(QString appName);
+    QString getAppNameFromXml(QString fileName);
 
 private:
     Ui::MainWindow *ui;
@@ -55,6 +59,9 @@ private:
     QString currentAppName;
     QString currentAppDescription;
     QString currentAppVersion;
+    QStringList listOfAppFiles;
+
+    QFileSystemWatcher* watcher;
 
     EntitiesTreeWidget *entitiesTree;
     QToolBar *builderToolBar;
@@ -99,6 +106,9 @@ private slots:
     void onViewBuilderWindows();
 
     void onModified(bool);
+    void onFileChanged(const QString & path);
+    void onYarpClean();
+    void onYarpNameList();
 
 public slots:
     void onTabChangeItem(int);

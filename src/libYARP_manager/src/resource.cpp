@@ -1,6 +1,6 @@
 /*
  *  Yarp Modules Manager
- *  Copyright: (C) 2011 Robotics, Brain and Cognitive Sciences - Italian Institute of Technology (IIT)
+ *  Copyright: (C) 2011 Istituto Italiano di Tecnologia (IIT)
  *  Authors: Ali Paikan <ali.paikan@iit.it>
  *
  *  Copy Policy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
@@ -18,7 +18,7 @@ using namespace yarp::manager;
 
 GenericResource::GenericResource(const char* szTypeName) : Node(RESOURCE)
 {
-    modOwner = NULL;
+    modOwner = nullptr;
     bAvailable = true;
     bDisabled = false;
     if(szTypeName)
@@ -45,7 +45,7 @@ GenericResource::~GenericResource() { }
  * Class MultiResource
  */
 
-MultiResource::MultiResource(void) : GenericResource("MultipleResource")
+MultiResource::MultiResource() : GenericResource("MultipleResource")
 {
 }
 
@@ -86,7 +86,7 @@ bool MultiResource::satisfy(GenericResource* resource)
 }
 
 
-Node* MultiResource::clone(void)
+Node* MultiResource::clone()
 {
     MultiResource* resource = new MultiResource(*this);
     return resource;
@@ -100,12 +100,12 @@ void MultiResource::swap(const MultiResource &res)
         addResource(res.getResourceAt(i));
 }
 
-void MultiResource::clear(void)
+void MultiResource::clear()
 {
     for(unsigned int i=0; i<resources.size(); i++)
     {
         delete resources[i];
-        resources[i] = NULL;
+        resources[i] = nullptr;
     }
     resources.clear();
 }

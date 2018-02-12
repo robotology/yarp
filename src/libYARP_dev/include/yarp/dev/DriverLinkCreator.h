@@ -34,29 +34,29 @@ public:
         holding.close();
     }
 
-    virtual yarp::os::ConstString toString() YARP_OVERRIDE {
+    virtual yarp::os::ConstString toString() override {
         return name;
     }
 
-    virtual DeviceDriver *create() YARP_OVERRIDE {
+    virtual DeviceDriver *create() override {
         DeviceDriver *internal;
         holding.view(internal);
         return internal;
     }
 
-    virtual yarp::os::ConstString getName() YARP_OVERRIDE {
+    virtual yarp::os::ConstString getName() override {
         return name;
     }
 
-    virtual yarp::os::ConstString getWrapper() YARP_OVERRIDE {
+    virtual yarp::os::ConstString getWrapper() override {
         return "(link)";
     }
 
-    virtual yarp::os::ConstString getCode() YARP_OVERRIDE {
+    virtual yarp::os::ConstString getCode() override {
         return "DriverLinkCreator";
     }
 
-    virtual PolyDriver *owner() YARP_OVERRIDE {
+    virtual PolyDriver *owner() override {
         return &holding;
     }
 

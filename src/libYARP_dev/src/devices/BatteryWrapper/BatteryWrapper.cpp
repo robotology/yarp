@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2013 iCub Facility - Istituto Italiano di Tecnologia
+ * Copyright (C) 2013 Istituto Italiano di Tecnologia (IIT)
  * Authors: Marco Randazzo <marco.randazzo@iit.it>
  * CopyPolicy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
  */
@@ -31,13 +31,13 @@ yarp::dev::DriverCreator *createBatteryWrapper() {
 BatteryWrapper::BatteryWrapper() : RateThread(DEFAULT_THREAD_PERIOD)
 {
     _rate = DEFAULT_THREAD_PERIOD;
-    battery_p = NULL;
+    battery_p = nullptr;
 }
 
 BatteryWrapper::~BatteryWrapper()
 {
     threadRelease();
-    battery_p = NULL;
+    battery_p = nullptr;
 }
 
 /**
@@ -59,7 +59,7 @@ bool BatteryWrapper::attachAll(const PolyDriverList &battery2attach)
         Idevice2attach->view(battery_p);
     }
 
-    if(NULL == battery_p)
+    if(nullptr == battery_p)
     {
         yError("BatteryWrapper: subdevice passed to attach method is invalid");
         return false;
@@ -73,7 +73,7 @@ bool BatteryWrapper::attachAll(const PolyDriverList &battery2attach)
 
 bool BatteryWrapper::detachAll()
 {
-    battery_p = NULL;
+    battery_p = nullptr;
     return true;
 }
 
@@ -84,7 +84,7 @@ void BatteryWrapper::attach(yarp::dev::IBattery *s)
 
 void BatteryWrapper::detach()
 {
-    battery_p = NULL;
+    battery_p = nullptr;
 }
 
 bool BatteryWrapper::read(yarp::os::ConnectionReader& connection)
@@ -129,7 +129,7 @@ bool BatteryWrapper::read(yarp::os::ConnectionReader& connection)
     }
 
     yarp::os::ConnectionWriter *returnToSender = connection.getWriter();
-    if (returnToSender != NULL) {
+    if (returnToSender != nullptr) {
         out.write(*returnToSender);
     }
     return true;
@@ -209,7 +209,7 @@ void BatteryWrapper::threadRelease()
 
 void BatteryWrapper::run()
 {
-    if (battery_p!=0)
+    if (battery_p!=nullptr)
     {
         double charge  = 0;
         double voltage = 0;

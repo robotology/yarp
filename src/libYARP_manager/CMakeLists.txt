@@ -1,5 +1,5 @@
 #  Yarp Modules Manager
-#  Copyright: (C) 2011 Robotics, Brain and Cognitive Sciences - Italian Institute of Technology (IIT)
+#  Copyright: (C) 2011 Istituto Italiano di Tecnologia (IIT)
 #  Authors: Ali Paikan <ali.paikan@iit.it>
 #
 #  Copy Policy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
@@ -34,6 +34,7 @@ if(CREATE_LIB_MANAGER)
                         include/yarp/manager/singleapploader.h
                         include/yarp/manager/utility.h
                         include/yarp/manager/xmlapploader.h
+                        include/yarp/manager/xmlclusterloader.h
                         include/yarp/manager/xmlappsaver.h
                         include/yarp/manager/xmlmodloader.h
                         include/yarp/manager/xmlresloader.h
@@ -66,6 +67,7 @@ if(CREATE_LIB_MANAGER)
                         src/singleapploader.cpp
                         src/utility.cpp
                         src/xmlapploader.cpp
+                        src/xmlclusterloader.cpp
                         src/xmlappsaver.cpp
                         src/xmlmodloader.cpp
                         src/xmlresloader.cpp
@@ -108,6 +110,17 @@ if(CREATE_LIB_MANAGER)
 
   if(CREATE_LIB_MATH)
     target_link_libraries(YARP_manager PRIVATE YARP::YARP_math)
+  endif()
+
+  if(NOT CMAKE_MINIMUM_REQUIRED_VERSION VERSION_LESS 3.1)
+    message(AUTHOR_WARNING "CMAKE_MINIMUM_REQUIRED_VERSION is now ${CMAKE_MINIMUM_REQUIRED_VERSION}. This check can be removed.")
+  endif()
+  if(CMAKE_VERSION VERSION_LESS 3.1)
+    if(DEFINED CXX11_FLAGS)
+      target_compile_options(YARP_manager PUBLIC ${CXX11_FLAGS})
+    endif()
+  else()
+    target_compile_features(YARP_manager PUBLIC cxx_override)
   endif()
 
   set_property(TARGET YARP_manager PROPERTY PUBLIC_HEADER ${YARP_manager_HDRS})

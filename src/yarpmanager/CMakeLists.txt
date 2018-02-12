@@ -1,4 +1,4 @@
-# Copyright (C) 2014  iCub Facility, Istituto Italiano di Tecnologia
+# Copyright (C) 2014 Istituto Italiano di Tecnologia (IIT)
 # Authors: Daniele E. Domenichelli <daniele.domenichelli@iit.it>
 #          Ali Paikan <ali.paikan@iit.it>
 # CopyPolicy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
@@ -10,8 +10,10 @@ if(CREATE_YARPMANAGER)
 
   get_property(YARP_OS_INCLUDE_DIRS TARGET YARP_OS PROPERTY INCLUDE_DIRS)
   get_property(YARP_manager_INCLUDE_DIRS TARGET YARP_manager PROPERTY INCLUDE_DIRS)
+  get_property(YARP_profiler_INCLUDE_DIRS TARGET YARP_profiler PROPERTY INCLUDE_DIRS)
   include_directories(${YARP_OS_INCLUDE_DIRS}
                       ${YARP_manager_INCLUDE_DIRS}
+                      ${YARP_profiler_INCLUDE_DIRS}
                       ./src-builder
                       ./src-manager)
 
@@ -20,6 +22,7 @@ if(CREATE_YARPMANAGER)
   # Manager files
   set(yarpmanager_manager_SRCS src-manager/aboutdlg.cpp
                                src-manager/applicationviewwidget.cpp
+                               src-manager/clusterWidget.cpp
                                src-manager/customtreewidget.cpp
                                src-manager/entitiestreewidget.cpp
                                src-manager/genericinfodlg.cpp
@@ -36,6 +39,7 @@ if(CREATE_YARPMANAGER)
 
   set(yarpmanager_manager_HDRS src-manager/aboutdlg.h
                                src-manager/applicationviewwidget.h
+                               src-manager/clusterWidget.h
                                src-manager/customtreewidget.h
                                src-manager/entitiestreewidget.h
                                src-manager/genericinfodlg.h
@@ -52,6 +56,7 @@ if(CREATE_YARPMANAGER)
 
   set(yarpmanager_manager_UI_FILES src-manager/aboutdlg.ui
                                    src-manager/applicationviewwidget.ui
+                                   src-manager/clusterWidget.ui
                                    src-manager/genericinfodlg.ui
                                    src-manager/mainwindow.ui
                                    src-manager/moduleviewwidget.ui
@@ -136,6 +141,7 @@ if(CREATE_YARPMANAGER)
   target_link_libraries(yarpmanager YARP::YARP_OS
                                     YARP::YARP_init
                                     YARP::YARP_manager
+                                    YARP::YARP_profiler
                                     Qt5::Widgets
                                     Qt5::Gui)
 

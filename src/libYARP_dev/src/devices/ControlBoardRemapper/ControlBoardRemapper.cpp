@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2016 iCub Facility - Istituto Italiano di Tecnologia
+ * Copyright (C) 2016 Istituto Italiano di Tecnologia (IIT)
  * Author: Lorenzo Natale, Silvio Traversaro
  * CopyPolicy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
  */
@@ -103,7 +103,7 @@ bool ControlBoardRemapper::parseOptions(Property& prop)
 bool ControlBoardRemapper::parseAxesNames(const Property& prop)
 {
     Bottle *propAxesNames=prop.find("axesNames").asList();
-    if(propAxesNames==0)
+    if(propAxesNames==nullptr)
     {
        yError() <<"ControlBoardRemapper: Error parsing parameters: \"axesNames\" should be followed by a list\n";
        return false;
@@ -123,7 +123,7 @@ bool ControlBoardRemapper::parseAxesNames(const Property& prop)
 bool ControlBoardRemapper::parseNetworks(const Property& prop)
 {
     Bottle *nets=prop.find("networks").asList();
-    if(nets==0)
+    if(nets==nullptr)
     {
        yError() <<"ControlBoardRemapper: Error parsing parameters: \"networks\" should be followed by a list\n";
        return false;
@@ -156,7 +156,7 @@ bool ControlBoardRemapper::parseNetworks(const Property& prop)
         {
             Bottle *bot=parameters.get(1).asList();
             Bottle tmpBot;
-            if(bot==NULL)
+            if(bot==nullptr)
             {
                 // probably data are not passed in the correct way, try to read them as a string.
                 ConstString bString(parameters.get(1).asString());
@@ -318,8 +318,8 @@ bool ControlBoardRemapper::attachAllUsingAxesNames(const PolyDriverList& polylis
         }
 
         // find if one of the desired axis is in this device
-        yarp::dev::IAxisInfo *iaxinfos = 0;
-        yarp::dev::IEncoders *iencs = 0;
+        yarp::dev::IAxisInfo *iaxinfos = nullptr;
+        yarp::dev::IEncoders *iencs = nullptr;
         polylist[p]->poly->view(iaxinfos);
         polylist[p]->poly->view(iencs);
 

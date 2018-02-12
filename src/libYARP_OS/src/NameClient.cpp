@@ -29,7 +29,7 @@ using namespace yarp::os;
  */
 
 
-NameClient *NameClient::instance = YARP_NULLPTR;
+NameClient *NameClient::instance = nullptr;
 bool NameClient::instanceClosed = false;
 yarp::os::Mutex NameClient::mutex;
 
@@ -55,7 +55,7 @@ public:
         argc = 0;
         for (int i = 0; i < MAX_ARG_CT; i++) 
         {
-            argv[i] = YARP_NULLPTR;
+            argv[i] = nullptr;
         }
     }
 
@@ -173,13 +173,13 @@ ConstString NameClient::send(const ConstString& cmd, bool multi) {
 
         TcpFace face;
         YARP_DEBUG(Logger::get(), ConstString("connecting to ") + getAddress().toURI());
-        OutputProtocol *ip = YARP_NULLPTR;
+        OutputProtocol *ip = nullptr;
         if (!retry) {
             ip = face.write(server);
         } else {
             retried = true;
         }
-        if (ip==YARP_NULLPTR) {
+        if (ip==nullptr) {
             YARP_INFO(Logger::get(), "No connection to nameserver");
             if (!allowScan) {
                 YARP_INFO(Logger::get(), "*** try running: yarp detect ***");
@@ -207,7 +207,7 @@ ConstString NameClient::send(const ConstString& cmd, bool multi) {
                 server = getAddress();
                 server.setTimeout(timeout);
                 ip = face.write(server);
-                if (ip==YARP_NULLPTR) {
+                if (ip==nullptr) {
                     YARP_ERROR(Logger::get(),
                                "no connection to nameserver, scanning mcast");
                     return "";
@@ -276,7 +276,7 @@ Contact NameClient::queryName(const ConstString& name) {
         }
     }
 
-    if (altStore!=YARP_NULLPTR) {
+    if (altStore!=nullptr) {
         Contact c = altStore->query(np.c_str());
         return c;
     }
@@ -331,6 +331,10 @@ Contact NameClient::registerName(const ConstString& name, const Contact& suggest
         if (typ!="*") {
             cmd.addString(typ);
         }
+    } else {
+        if (suggest.getCarrier()!="") {
+            cmd.addString(suggest.getCarrier().c_str());
+        }
     }
     Bottle reply;
     send(cmd, reply);
@@ -382,17 +386,17 @@ Contact NameClient::unregisterName(const ConstString& name) {
 
 
 NameClient::~NameClient() {
-    if (fakeServer!=YARP_NULLPTR) {
+    if (fakeServer!=nullptr) {
         delete fakeServer;
-        fakeServer = YARP_NULLPTR;
+        fakeServer = nullptr;
     }
 }
 
 NameServer& NameClient::getServer() {
-    if (fakeServer==YARP_NULLPTR) {
+    if (fakeServer==nullptr) {
         fakeServer = new NameServer;
     }
-    yAssert(fakeServer!=YARP_NULLPTR);
+    yAssert(fakeServer!=nullptr);
     return *fakeServer;
 }
 
@@ -423,13 +427,13 @@ bool NameClient::setContact(const yarp::os::Contact& contact) {
 
 NameClient::NameClient() :
         fake(false),
-        fakeServer(YARP_NULLPTR),
+        fakeServer(nullptr),
         allowScan(false),
         allowSaveScan(false),
         reportScan(false),
         reportSaveScan(false),
         isSetup(false),
-        altStore(YARP_NULLPTR)
+        altStore(nullptr)
 {
 }
 

@@ -29,6 +29,7 @@
 #include <yarp/dev/IKinectDeviceDriver.h>
 #include <yarp/dev/IRangefinder2D.h>
 #include <yarp/dev/IRGBDSensor.h>
+#include <yarp/dev/IVisualServoing.h>
 #include <yarp/dev/PolyDriver.h>
 #include <yarp/dev/RemoteFrameGrabber.h>
 #include <yarp/dev/ServerFrameGrabber.h>

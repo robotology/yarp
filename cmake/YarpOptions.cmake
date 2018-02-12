@@ -296,11 +296,8 @@ endif()
 
 
 #########################################################################
-# C++11 is required
+# Ensure that it is compiled with c++11 also with CMake 3.1
 
-set(CMAKE_CXX_EXTENSIONS OFF)
-set(CMAKE_CXX_STANDARD 11)
-set(CMAKE_CXX_STANDARD_REQUIRED ON)
 if(NOT CMAKE_MINIMUM_REQUIRED_VERSION VERSION_LESS 3.1)
   message(AUTHOR_WARNING "CMAKE_MINIMUM_REQUIRED_VERSION is now ${CMAKE_MINIMUM_REQUIRED_VERSION}. This check can be removed.")
 endif()
@@ -325,8 +322,11 @@ endif()
 # yarp::os::ConstString could now be set to std::string, if YARP
 # ever decides to accept STL as a dependency.
 
-
-option(YARP_WRAP_STL_STRING "Do you want the yarp string classes to wrap std::string? (as opposed to being exactly std::string)" ON)
+set(YARP_WRAP_STL_STRING_DEFAULT OFF)
+if(MSVC)
+  set(YARP_WRAP_STL_STRING_DEFAULT ON)
+endif()
+option(YARP_WRAP_STL_STRING "Do you want the yarp string classes to wrap std::string? (as opposed to being exactly std::string)" ${YARP_WRAP_STL_STRING_DEFAULT})
 mark_as_advanced(YARP_WRAP_STL_STRING)
 set(YARP_WRAP_STL_STRING_INLINE_DEFAULT ON)
 if(MSVC)
@@ -359,12 +359,12 @@ yarp_deprecated_option(INSTALL_WITH_RPATH)
 add_install_rpath_support(LIB_DIRS "${CMAKE_INSTALL_FULL_LIBDIR}"       # Libraries
                           BIN_DIRS "${CMAKE_INSTALL_FULL_BINDIR}"       # Binaries
                                    "${CMAKE_INSTALL_FULL_LIBDIR}/yarp"  # Plugins
+                          INSTALL_NAME_DIR "${CMAKE_INSTALL_FULL_LIBDIR}"
                           USE_LINK_PATH)
-
 
 #########################################################################
 # Specify yarp version and copyright into macOS bundles
-set(MACOSX_BUNDLE_COPYRIGHT "© Istituto Italiano di Tecnologia and RobotCub Consortium. YARP is released under the terms of the LGPL v2.1 or later.")
+set(MACOSX_BUNDLE_COPYRIGHT "© Istituto Italiano di Tecnologia (IIT) and RobotCub Consortium. YARP is released under the terms of the LGPL v2.1 or later.")
 set(MACOSX_BUNDLE_SHORT_VERSION_STRING "${YARP_VERSION_SHORT}")
 
 

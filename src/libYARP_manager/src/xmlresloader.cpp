@@ -1,6 +1,6 @@
 /*
  *  Yarp Modules Manager
- *  Copyright: (C) 2011 Robotics, Brain and Cognitive Sciences - Italian Institute of Technology (IIT)
+ *  Copyright: (C) 2011 Istituto Italiano di Tecnologia (IIT)
  *  Authors: Ali Paikan <ali.paikan@iit.it>
  *
  *  Copy Policy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
@@ -61,7 +61,7 @@ XmlResLoader::~XmlResLoader()
 }
 
 
-bool XmlResLoader::init(void)
+bool XmlResLoader::init()
 {
     fileNames.clear();
     ErrorLogger* logger  = ErrorLogger::Instance();
@@ -83,7 +83,7 @@ bool XmlResLoader::init(void)
 
     DIR *dir;
     struct dirent *entry;
-    if ((dir = opendir(strPath.c_str())) == NULL)
+    if ((dir = opendir(strPath.c_str())) == nullptr)
     {
         OSTRINGSTREAM err;
         err<<"Cannot access "<<strPath;
@@ -117,20 +117,20 @@ bool XmlResLoader::init(void)
 }
 
 
-void XmlResLoader::reset(void)
+void XmlResLoader::reset()
 {
     fini();
     init();
 }
 
 
-void XmlResLoader::fini(void)
+void XmlResLoader::fini()
 {
     fileNames.clear();
 }
 
 
-GenericResource* XmlResLoader::getNextResource(void)
+GenericResource* XmlResLoader::getNextResource()
 {
     if(strName.empty())
     {
@@ -146,7 +146,7 @@ GenericResource* XmlResLoader::getNextResource(void)
             do
             {
                 if(fileNames.empty())
-                    return NULL;
+                    return nullptr;
 
                 string fname = fileNames.back();
                 fileNames.pop_back();
@@ -174,7 +174,7 @@ GenericResource* XmlResLoader::getNextResource(void)
              }
          }
     }
-    return NULL;
+    return nullptr;
 }
 
 

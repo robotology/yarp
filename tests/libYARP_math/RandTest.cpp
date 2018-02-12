@@ -1,6 +1,6 @@
 /*
+* Copyright (C) 2010 RobotCub Consortium
 * Author: Lorenzo Natale
-* Copyright (C) 2010 The Robotcub consortium.
 * CopyPolicy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
 */
 
@@ -71,9 +71,9 @@ public:
         bool avOk=false;
         bool stdOk=false;
 
-        if (fabs(average-u)<0.05)
+        if (fabs(average-u)<0.075)
             avOk=true;
-        if (fabs(std-sigma)<0.05)
+        if (fabs(std-sigma)<0.075)
             stdOk=true;
 
         checkTrue(avOk, "normal distribution average ~as requested");

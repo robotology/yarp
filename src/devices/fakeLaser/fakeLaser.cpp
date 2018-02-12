@@ -1,5 +1,5 @@
 /*
-* Copyright (C) 2015 iCub Facility - Istituto Italiano di Tecnologia
+* Copyright (C) 2015 Istituto Italiano di Tecnologia (IIT)
 * Author: Marco Randazzo <marco.randazzo@iit.it>
 * CopyPolicy: Released under the terms of the GPLv2 or later, see GPL.TXT
 */
@@ -94,6 +94,7 @@ bool FakeLaser::open(yarp::os::Searchable& config)
             m_loc_port = new yarp::os::BufferedPort<yarp::os::Bottle>;
             m_loc_port->open(localization_port_name.c_str());
             yInfo() << "Robot localization will be obtained from port" << localization_port_name;
+            m_loc_mode = LOC_FROM_PORT;
         }
         else if (config.check("localization_client"))
         {
@@ -110,16 +111,18 @@ bool FakeLaser::open(yarp::os::Searchable& config)
                 return false;
             }
             m_pLoc->view(m_iLoc);
-            if (m_iLoc == 0)
+            if (m_iLoc == nullptr)
             {
                 yError() << "Unable to open localization interface";
                 return false;
             }
             yInfo() << "Robot localization will be obtained from localization_client" << localization_device_name;
+            m_loc_mode = LOC_FROM_CLIENT;
         }
         else
         {
             yInfo() << "No localization method selected. Robot location set to 0,0,0";
+            m_loc_mode = LOC_NOT_SET;
         }
 
         m_loc_x=0;

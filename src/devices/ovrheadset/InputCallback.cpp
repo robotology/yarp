@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2015-2017  iCub Facility, Istituto Italiano di Tecnologia
+ * Copyright (C) 2015-2017 Istituto Italiano di Tecnologia (IIT)
  * Author: Daniele E. Domenichelli <daniele.domenichelli@iit.it>
  * CopyPolicy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
  */
@@ -44,7 +44,7 @@ void InputCallback::onRead(ImageType &img)
 {
     int delaycnt = 0;
     while (eyeRenderTexture->dataReady && delaycnt <= 3) {
-        yarp::os::Time::delay(0.001);
+        yarp::os::SystemClock::delaySystem(0.001);
         ++delaycnt;
     }
 

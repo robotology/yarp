@@ -9,10 +9,11 @@
 #include <QGraphicsView>
 #include <QGraphicsSceneWheelEvent>
 
-BuilderScene::BuilderScene(QObject *parent) : QGraphicsScene(parent),
-    currentLine(YARP_NULLPTR),
-    startConnectionItem(YARP_NULLPTR),
-    endConnectionItem(YARP_NULLPTR),
+BuilderScene::BuilderScene(QObject *parent) :
+    QGraphicsScene(parent),
+    currentLine(nullptr),
+    startConnectionItem(nullptr),
+    endConnectionItem(nullptr),
     snap(false),
     editingMode(false)
 {
@@ -77,7 +78,7 @@ void BuilderScene::mousePressEvent(QGraphicsSceneMouseEvent *event)
     if(currentLine && !it){
         removeItem(currentLine);
         delete currentLine;
-        currentLine = NULL;
+        currentLine = nullptr;
     }
 
     QGraphicsScene::mousePressEvent(event);
@@ -120,7 +121,7 @@ void BuilderScene::mouseMoveEvent(QGraphicsSceneMouseEvent *event)
 void BuilderScene::onNewConnectionRequested(QPointF p,QGraphicsItem *item)
 {
 
-    startConnectionItem = NULL;
+    startConnectionItem = nullptr;
     if(!editingMode || !((BuilderItem*)item)->allowOutputConnections()){
         return;
     }
@@ -133,7 +134,7 @@ void BuilderScene::onNewConnectionRequested(QPointF p,QGraphicsItem *item)
     }else{
         removeItem(currentLine);
         delete currentLine;
-        currentLine = NULL;
+        currentLine = nullptr;
     }
 
 
@@ -150,7 +151,7 @@ void BuilderScene::onNewConnectionAdded(QPointF p,QGraphicsItem *item)
         if(currentLine){
             removeItem(currentLine);
             delete currentLine;
-            currentLine = NULL;
+            currentLine = nullptr;
         }
 
             BuilderItem *startItem = (BuilderItem*)startConnectionItem;
@@ -200,7 +201,7 @@ void BuilderScene::onNewConnectionAdded(QPointF p,QGraphicsItem *item)
                }
            }
 
-        startConnectionItem = NULL;
+        startConnectionItem = nullptr;
     }
 
 }

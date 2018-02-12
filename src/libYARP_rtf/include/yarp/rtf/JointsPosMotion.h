@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2015 iCub Facility, Istituto Italiano di Tecnologia
+ * Copyright (C) 2015 Istituto Italiano di Tecnologia (IIT)
  * Authors: Valentina Gaggero <valentina.gaggero@iit.it>
  * CopyPolicy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
  */
@@ -85,7 +85,7 @@ public:
      */
     bool goToSingle(int j,
                     double pos,
-                    double *reached_pos = YARP_NULLPTR);
+                    double *reached_pos = nullptr);
 
     /**
      * @brief Moves joints in corrisponding positions specified by
@@ -98,7 +98,7 @@ public:
      * @return: true if each joint has reached its target, false otherwise.
      */
     bool goTo(yarp::sig::Vector positions,
-              yarp::sig::Vector *reached_pos = YARP_NULLPTR);
+              yarp::sig::Vector *reached_pos = nullptr);
 
     /**
      * @brief Checks if joint @a j has reached its limit within tollerance

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2014 iCub Facility, Istituto Italiano di Tecnologia
+ * Copyright (C) 2014 Istituto Italiano di Tecnologia (IIT)
  * Authors: Alberto Cardellino
  * CopyPolicy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
  */
@@ -21,7 +21,7 @@ using namespace yarp::dev;
 
 IRemoteCalibrator::IRemoteCalibrator()
 {
-    _remoteCalibrator = NULL;
+    _remoteCalibrator = nullptr;
 }
 
 bool IRemoteCalibrator::setCalibratorDevice(yarp::dev::IRemoteCalibrator *dev)
@@ -37,11 +37,11 @@ IRemoteCalibrator *IRemoteCalibrator::getCalibratorDevice()
 
 bool IRemoteCalibrator::isCalibratorDevicePresent(bool *isCalib)
 {
-    _remoteCalibrator == NULL ? *isCalib = false : *isCalib = true;
+    _remoteCalibrator == nullptr ? *isCalib = false : *isCalib = true;
     return true;
 }
 
-void IRemoteCalibrator::releaseCalibratorDevice(void)
+void IRemoteCalibrator::releaseCalibratorDevice()
 {
-    _remoteCalibrator = NULL;
+    _remoteCalibrator = nullptr;
 }

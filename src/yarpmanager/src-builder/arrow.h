@@ -166,8 +166,6 @@ private:
     QPointF startP;
     QPointF endP;
 
-    bool firstTime;
-
     QList <LineHandle*> handleList;
 };
 

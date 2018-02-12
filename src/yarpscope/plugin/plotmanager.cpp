@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2014 iCub Facility - Istituto Italiano di Tecnologia
+ * Copyright (C) 2014 Istituto Italiano di Tecnologia (IIT)
  * Author: Davide Perrone
  * Date: Feb 2014
  * email:   dperrone@aitek.it
@@ -10,7 +10,7 @@
 
 #include "plotmanager.h"
 
-PlotManager *PlotManager::self = NULL;
+PlotManager *PlotManager::self = nullptr;
 
 PlotManager::PlotManager(QObject *parent) :
     QObject(parent)
@@ -35,7 +35,7 @@ PlotManager::~PlotManager()
 /*! \brief Returns an instance of the class (Singleton). */
 PlotManager * PlotManager::instance()
 {
-    if(self == NULL){
+    if(self == nullptr){
         return new PlotManager();
     }
     return self;

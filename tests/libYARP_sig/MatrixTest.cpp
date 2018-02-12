@@ -1,8 +1,8 @@
 /*
-* Author: Lorenzo Natale.
-* Copyright (C) 2006 The Robotcub consortium
-* CopyPolicy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
-*/
+ * Copyright (C) 2006 RobotCub Consortium
+ * Author: Lorenzo Natale
+ * CopyPolicy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
+ */
 
 #include <yarp/sig/Matrix.h>
 #include <yarp/os/impl/BufferedConnectionWriter.h>
@@ -416,7 +416,7 @@ public:
         checkEqual(bot.get(0).asInt(),rr,"row count matches");
         checkEqual(bot.get(1).asInt(),cc,"column count matches");
         Bottle *lst = bot.get(2).asList();
-        checkTrue(lst!=NULL,"have data");
+        checkTrue(lst!=nullptr,"have data");
         if (!lst) return;
         checkEqual(lst->size(),(int)(rr*cc),"data length matches");
         if (lst->size()!=(int)(rr*cc)) return;
@@ -459,12 +459,12 @@ public:
         bot.read(msg);
         Bottle *bot1 = bot.get(0).asList();
         Bottle *bot2 = bot.get(1).asList();
-        checkTrue(bot1!=NULL&&bot2!=NULL,"got head/body");
-        if (bot1==NULL || bot2==NULL) return;
+        checkTrue(bot1!=nullptr&&bot2!=nullptr,"got head/body");
+        if (bot1==nullptr || bot2==nullptr) return;
         checkEqual(bot1->get(0).asInt(),rr,"row count matches");
         checkEqual(bot1->get(1).asInt(),cc,"column count matches");
         Bottle *lst = bot1->get(2).asList();
-        checkTrue(lst!=NULL,"have data");
+        checkTrue(lst!=nullptr,"have data");
         if (!lst) return;
         checkEqual(lst->size(),(int)(rr*cc),"data length matches");
         checkEqualish(bot2->get(0).asDouble(),value,"value match");
@@ -474,16 +474,16 @@ public:
         report(0,"check data() when matrix is empty...");
         Matrix m;
         m.resize(0,0);
-        checkTrue(m.data()==NULL, "size 0x0 => null data()");
+        checkTrue(m.data()==nullptr, "size 0x0 => null data()");
         m.resize(0,5);
-        checkTrue(m.data()==NULL, "size 0x5 => null data()");
+        checkTrue(m.data()==nullptr, "size 0x5 => null data()");
         m.resize(5,0);
-        checkTrue(m.data()==NULL, "size 5x0 => null data()");
+        checkTrue(m.data()==nullptr, "size 5x0 => null data()");
         m.resize(5,5);
-        checkTrue(m.data()!=NULL, "size 5x5 => non-null data()");
+        checkTrue(m.data()!=nullptr, "size 5x5 => non-null data()");
         // This is *not* redundant with earlier test
         m.resize(0,0);
-        checkTrue(m.data()==NULL, "size 0x0 => null data()");
+        checkTrue(m.data()==nullptr, "size 0x0 => null data()");
     }
 
     virtual void runTests() override {

@@ -14,7 +14,7 @@
 
 #include <yarp/dev/AudioVisualInterfaces.h>
 
-#include <yarp/os/impl/PlatformVector.h>
+#include <vector>
 
 using namespace yarp::os;
 using namespace yarp::sig;
@@ -26,9 +26,9 @@ using namespace yarp::dev;
 
 class DeviceGroupHelper {
 private:
-    PlatformVector<PolyDriver *> drivers;
-    PlatformVector<ConstString> names;
-    PlatformVector<bool> needDrive;
+    std::vector<PolyDriver *> drivers;
+    std::vector<ConstString> names;
+    std::vector<bool> needDrive;
     Semaphore mutex;
 public:
     bool needDriveSummary;
@@ -39,7 +39,7 @@ public:
 
     void clear() {
         mutex.wait();
-        PlatformVector<PolyDriver *>& lst = drivers;
+        std::vector<PolyDriver *>& lst = drivers;
         for (unsigned int i=0; i<lst.size(); i++) {
             printf("*** Removing %s\n",names[i].c_str());
             Drivers::factory().remove(names[i].c_str());
@@ -54,12 +54,12 @@ public:
 
     void update() {
         mutex.wait();
-        PlatformVector<PolyDriver *>& lst = drivers;
+        std::vector<PolyDriver *>& lst = drivers;
         for (unsigned int i=0; i<lst.size(); i++) {
             if (needDrive[i]) {
                 IService *service;
                 lst[i]->view(service);
-                if (service!=NULL) {
+                if (service!=nullptr) {
                     service->updateService();
                 }
             }
@@ -81,7 +81,7 @@ public:
     bool add(const ConstString& name, yarp::os::Searchable& config) {
         //printf("ADDING %s\n", config.toString().c_str());
         PolyDriver *pd = new PolyDriver();
-        yAssert(pd!=NULL);
+        yAssert(pd!=nullptr);
         bool result = pd->open(config);
         if (!result) {
             delete pd;
@@ -89,16 +89,16 @@ public:
         }
         drivers.push_back(pd);
         names.push_back(name);
-        IService *service = NULL;
+        IService *service = nullptr;
         pd->view(service);
         bool backgrounded = true;
-        if (service!=NULL) {
+        if (service!=nullptr) {
             backgrounded = service->startService();
             if (backgrounded) {
                 // we don't need to poll this, so forget about the
                 // service interface
                 printf("group: service backgrounded\n");
-                service = NULL;
+                service = nullptr;
             }
         }
         needDrive.push_back(!backgrounded);
@@ -113,10 +113,10 @@ public:
 
 
 bool DeviceGroup::open(yarp::os::Searchable& config) {
-    if (implementation==NULL) {
+    if (implementation==nullptr) {
         implementation = new DeviceGroupHelper;
     }
-    if (implementation==NULL) {
+    if (implementation==nullptr) {
         printf("Out of memory\n");
         return false;
     }
@@ -192,8 +192,8 @@ bool DeviceGroup::updateService() {
 
 
 DeviceGroup::~DeviceGroup() {
-    if (implementation!=NULL) {
+    if (implementation!=nullptr) {
         delete &HELPER(implementation);
-        implementation = NULL;
+        implementation = nullptr;
     }
 }

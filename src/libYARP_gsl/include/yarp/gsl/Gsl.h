@@ -1,13 +1,13 @@
 /*
 * Author: Lorenzo Natale.
-* Copyright (C) 2016 iCub Facility, Istituto Italiano di Tecnologia
+* Copyright (C) 2016 Istituto Italiano di Tecnologia (IIT)
 * CopyPolicy: Released under the terms of the GPL 2.0 license or later.
 */
 
 #ifndef YARP_GSL_GSL_HEADER_H
 #define YARP_GSL_GSL_HEADER_H
 
-/**
+/*
  * This library provides functions for compatibility with GSL.
  * @warning Including/linking GSL forces this library to be GPL.
  */
@@ -18,8 +18,10 @@
 
 namespace yarp {
     /**
-    * A library for interoperability with the GSL library.
-    */
+     * A library for interoperability with the GSL library.
+     *
+     * @warning Including/linking GSL forces this library to be GPL.
+     */
     namespace gsl {
         class GslMatrix;
         class GslVector;

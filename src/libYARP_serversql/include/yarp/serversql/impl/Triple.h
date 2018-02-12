@@ -75,21 +75,21 @@ public:
 
     const char *getNs() {
         if (!hasNs) {
-            return YARP_NULLPTR;
+            return nullptr;
         }
         return ns.c_str();
     }
 
     const char *getName() {
         if (!hasName) {
-            return YARP_NULLPTR;
+            return nullptr;
         }
         return name.c_str();
     }
 
     const char *getValue() {
         if (!hasValue) {
-            return YARP_NULLPTR;
+            return nullptr;
         }
         return value.c_str();
     }

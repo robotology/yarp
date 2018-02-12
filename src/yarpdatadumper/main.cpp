@@ -58,7 +58,7 @@ public:
         return ret;
     }
 
-    void *getPtr() override { return NULL; }
+    void *getPtr() override { return nullptr; }
 };
 
 
@@ -136,7 +136,12 @@ class DumpTimeStamp
     bool   txOk;
 
 public:
-    DumpTimeStamp() : rxOk(false), txOk(false) { }
+    DumpTimeStamp() :
+        rxStamp(0.0),
+        txStamp(0.0),
+        rxOk(false),
+        txOk(false)
+    {}
     void setRxStamp(const double stamp) { rxStamp=stamp; rxOk=true; }
     void setTxStamp(const double stamp) { txStamp=stamp; txOk=true; }
     double getStamp() const
@@ -285,9 +290,18 @@ private:
 public:
     DumpThread(DumpType _type, DumpQueue &Q, const string &_dirName, int szToWrite,
                bool _saveData, bool _videoOn, const string &_videoType) :
-               RateThread(50), buf(Q), type(_type), dirName(_dirName),
-               blockSize(szToWrite), saveData(_saveData),
-               videoOn(_videoOn), videoType(_videoType)
+        RateThread(50),
+        buf(Q),
+        type(_type),
+        dirName(_dirName),
+        blockSize(szToWrite),
+        cumulSize(0),
+        counter(0),
+        oldTime(0.0),
+        saveData(_saveData),
+        videoOn(_videoOn),
+        videoType(_videoType),
+        closing(false)
     {
         infoFile=dirName;
         infoFile+="/info.log";
@@ -296,6 +310,7 @@ public:
         dataFile+="/data.log";
 
     #ifdef ADD_VIDEO
+        t0 = 0.0;
         transform(videoType.begin(),videoType.end(),videoType.begin(),::tolower);
         if ((videoType!="mkv") && (videoType!="avi"))
         {
@@ -326,9 +341,6 @@ public:
     bool threadInit() override
     {
         oldTime=Time::now();
-        cumulSize=0;
-        counter=0;
-        closing=false;
 
         finfo.open(infoFile.c_str());
         if (!finfo.is_open())
@@ -480,11 +492,11 @@ private:
     DumpThread *thread;
 
 public:
-    DumpReporter() : thread(NULL) { }
+    DumpReporter() : thread(nullptr) { }
     void setThread(DumpThread *thread) { this->thread=thread; }
     void report(const PortInfo &info) override
     {
-        if ((thread!=NULL) && info.incoming)
+        if ((thread!=nullptr) && info.incoming)
             thread->writeSource(info.sourceName.c_str(),info.created);
     }
 };
@@ -507,7 +519,16 @@ private:
     string            portName;
 
 public:
-    DumpModule() { }
+    DumpModule() :
+        q(nullptr),
+        p_bottle(nullptr),
+        p_image(nullptr),
+        t(nullptr),
+        type(bottle),
+        rxTime(false),
+        txTime(false),
+        dwnsample(0)
+    {}
 
     bool configure(ResourceFinder &rf) override
     {

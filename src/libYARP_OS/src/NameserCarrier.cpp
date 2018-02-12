@@ -22,9 +22,9 @@ yarp::os::impl::NameserTwoWayStream::NameserTwoWayStream(TwoWayStream *delegate)
 }
 
 yarp::os::impl::NameserTwoWayStream::~NameserTwoWayStream() {
-    if (delegate!=YARP_NULLPTR) {
+    if (delegate!=nullptr) {
         delete delegate;
-        delegate = YARP_NULLPTR;
+        delegate = nullptr;
     }
 }
 
@@ -162,14 +162,17 @@ bool yarp::os::impl::NameserCarrier::expectSenderSpecifier(ConnectionState& prot
 }
 
 bool yarp::os::impl::NameserCarrier::expectIndex(ConnectionState& proto) {
+    YARP_UNUSED(proto);
     return true;
 }
 
 bool yarp::os::impl::NameserCarrier::sendAck(ConnectionState& proto) {
+    YARP_UNUSED(proto);
     return true;
 }
 
 bool yarp::os::impl::NameserCarrier::expectAck(ConnectionState& proto) {
+    YARP_UNUSED(proto);
     return true;
 }
 
@@ -182,6 +185,7 @@ bool yarp::os::impl::NameserCarrier::respondToHeader(ConnectionState& proto) {
 }
 
 bool yarp::os::impl::NameserCarrier::expectReplyToHeader(ConnectionState& proto) {
+    YARP_UNUSED(proto);
     // I am the sender
     return true;
 }

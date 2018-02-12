@@ -9,10 +9,20 @@
 
 #include <yarp/os/ConstString.h>
 #include <yarp/os/Clock.h>
+#include <yarp/os/SystemClock.h>
+#include <yarp/os/NetworkClock.h>
 
 namespace yarp {
     namespace os {
         class Time;
+
+        typedef enum {
+            YARP_CLOCK_UNINITIALIZED=-1,
+            YARP_CLOCK_DEFAULT,
+            YARP_CLOCK_SYSTEM,
+            YARP_CLOCK_NETWORK,
+            YARP_CLOCK_CUSTOM
+        } yarpClockType;
     }
 }
 
@@ -54,7 +64,6 @@ public:
     /**
      *
      * Configure YARP to use system time (this is the default).
-     *
      */
     static void useSystemClock();
 
@@ -69,13 +78,23 @@ public:
      *
      * \see yarp::os::NetworkClock
      *
+     * return true on success, false on failure. Possible causes of
+     * failure are invalid port name or address conflict.
+     *
+     * Throws assert in case of failure
      */
-    static void useNetworkClock(const ConstString& clock);
+    static void useNetworkClock(const ConstString& clock, ConstString localPortName="");
 
     /**
      *
-     * Provide a custom time source.
+     * Configure YARP clients to use a custom clock source provided by the
+     * user. The Clock source must implement the yarp::os::Clock interface.
+     * This function check clock->isValid() to verify the source is working
+     * properly.
      *
+     * Possible causes of failure are: clock pointer invalid or isValid() false.
+     *
+     * Throws assert in case of failure
      */
     static void useCustomClock(Clock *clock);
 
@@ -85,6 +104,34 @@ public:
      *
      */
     static bool isSystemClock();
+
+    /**
+     *
+     * Check if YARP is providing network time.
+     *
+     */
+    static bool isNetworkClock();
+
+    /**
+     *
+     * Check if YARP is using a user-defined custom time.
+     *
+     */
+    static bool isCustomClock();
+
+    /**
+     * \return enum type with the current clock type used
+     */
+    static yarpClockType getClockType();
+
+    /**
+     *
+     * Converts clock type enum into string.
+     * @type Convert specified enum into string.
+     *
+     * clockTypeToString
+     */
+     static yarp::os::ConstString clockTypeToString(yarpClockType type);
 
     /**
      *

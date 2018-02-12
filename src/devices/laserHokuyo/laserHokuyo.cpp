@@ -86,29 +86,19 @@ bool laserHokuyo::open(yarp::os::Searchable& config)
         laser_mode = GD_MODE;
         yError("Laser_mode not found. Using GD mode (single acquisition)");
     }
-
-    bool ok = general_config.check("Serial_Configuration");
-    if (!ok)
-    {
-        yError("Cannot find configuration file for serial port communication!");
-        return false;
-    }
-    yarp::os::ConstString serial_filename = general_config.find("Serial_Configuration").asString();
-
-    //string st = config.toString();
     setRate(period);
 
-    Property prop;
-
-    prop.put("device", "serialport");
-    ok = prop.fromConfigFile(serial_filename.c_str(),config,false);
-    if (!ok)
+    bool br2 = config.check("SERIAL_PORT_CONFIGURATION");
+    if (br2 == false)
     {
-        yError("Unable to read from serial port configuration file");
+        yError("cannot read 'SERIAL_PORT_CONFIGURATION' section");
         return false;
     }
-
-    pSerial=0;
+    yarp::os::Searchable& serial_config = config.findGroup("SERIAL_PORT_CONFIGURATION");
+    string ss = serial_config.toString();
+    Property prop;
+    prop.fromString(ss);
+    prop.put("device", "serialport");
 
     driver.open(prop);
     if (!driver.isValid())
@@ -117,6 +107,7 @@ bool laserHokuyo::open(yarp::os::Searchable& config)
         return false;
     }
 
+    pSerial=0;
     driver.view(pSerial);
 
     if (!pSerial)
@@ -132,7 +123,7 @@ bool laserHokuyo::open(yarp::os::Searchable& config)
     // *** Check if the URG device is present ***
     b.addString("SCIP2.0\n");
     pSerial->send(b);
-    yarp::os::Time::delay(0.040);
+    yarp::os::SystemClock::delaySystem(0.040);
     pSerial->receive(b_ans);
     if (b_ans.size()>0)
     {
@@ -150,7 +141,7 @@ bool laserHokuyo::open(yarp::os::Searchable& config)
     // *** Change the baud rate to 115200 ***
     /*b.addString("SS01152001\n");
     pSerial->send(b);
-    yarp::os::Time::delay(0.040);
+    yarp::os::SystemClock::delaySystem(0.040);
     pSerial->receive(b_ans);
     ans = b_ans.get(0).asString();
     yDebug("%s\n",ans.c_str());
@@ -160,7 +151,7 @@ bool laserHokuyo::open(yarp::os::Searchable& config)
     // *** Read the firmware version parameters ***
     b.addString("VV\n");
     pSerial->send(b);
-    yarp::os::Time::delay(0.040);
+    yarp::os::SystemClock::delaySystem(0.040);
     pSerial->receive(b_ans);
     ans = b_ans.get(0).asString();
     yDebug("%s\n",ans.c_str());
@@ -170,7 +161,7 @@ bool laserHokuyo::open(yarp::os::Searchable& config)
     // *** Read the sensor specifications ***
     b.addString("II\n");
     pSerial->send(b);
-    yarp::os::Time::delay(0.040);
+    yarp::os::SystemClock::delaySystem(0.040);
     pSerial->receive(b_ans);
     ans = b_ans.get(0).asString();
     yDebug("%s\n", ans.c_str());
@@ -180,7 +171,7 @@ bool laserHokuyo::open(yarp::os::Searchable& config)
     // *** Read the URG configuration parameters ***
     b.addString("PP\n");
     pSerial->send(b);
-    yarp::os::Time::delay(0.040);
+    yarp::os::SystemClock::delaySystem(0.040);
     pSerial->receive(b_ans);
     /*
     syntax of the answer:
@@ -219,7 +210,7 @@ bool laserHokuyo::open(yarp::os::Searchable& config)
     // *** Turns on the Laser ***
     b.addString("BM\n");
     pSerial->send(b);
-    yarp::os::Time::delay(0.040);
+    yarp::os::SystemClock::delaySystem(0.040);
     pSerial->receive(b_ans);
     // @@@TODO: Check the answer
     b.clear();
@@ -335,16 +326,15 @@ bool laserHokuyo::getRawData(yarp::sig::Vector &out)
 {
     if (internal_status != HOKUYO_STATUS_NOT_READY)
     {
-        mutex.wait();
+        mutex.lock();
 #ifdef LASER_DEBUG
         //yDebug("data: %s\n", laser_data.toString().c_str());
 #endif
         out = laser_data;
-        mutex.post();
+        mutex.unlock();
         device_status = yarp::dev::IRangefinder2D::DEVICE_OK_IN_USE;
         return true;
     }
-
     device_status = yarp::dev::IRangefinder2D::DEVICE_GENERAL_ERROR;
     return false;
 }
@@ -353,7 +343,7 @@ bool laserHokuyo::getLaserMeasurement(std::vector<LaserMeasurementData> &data)
 {
     if (internal_status != HOKUYO_STATUS_NOT_READY)
     {
-        mutex.wait();
+        mutex.lock();
 #ifdef LASER_DEBUG
         //yDebug("data: %s\n", laser_data.toString().c_str());
 #endif
@@ -366,7 +356,7 @@ bool laserHokuyo::getLaserMeasurement(std::vector<LaserMeasurementData> &data)
             double angle = (i / double(size)*laser_angle_of_view + min_angle)* DEG2RAD;
             data[i].set_polar(laser_data[i], angle);
         }
-        mutex.post();
+        mutex.unlock();
         device_status = yarp::dev::IRangefinder2D::DEVICE_OK_IN_USE;
         return true;
     }
@@ -376,9 +366,9 @@ bool laserHokuyo::getLaserMeasurement(std::vector<LaserMeasurementData> &data)
 }
 bool laserHokuyo::getDeviceStatus(Device_status &status)
 {
-    mutex.wait();
+    mutex.lock();
     status = device_status;
-    mutex.post();
+    mutex.unlock();
     return true;
 }
 
@@ -512,8 +502,6 @@ int laserHokuyo::readData(const Laser_mode_type laser_mode, const char* text_dat
 
 void laserHokuyo::run()
 {
-    mutex.wait();
-
     //send the GD command: get one single measurement, D precision
     Bottle b;
     Bottle b_ans;
@@ -526,7 +514,7 @@ void laserHokuyo::run()
     yarp::sig::Vector data_vector;
 
     string data_text;
-    double t1 = yarp::os::Time::now();
+    double t1 = yarp::os::SystemClock::nowSystem();
     double t2 = 0;
     bool timeout = false;
     bool rx_completed = false;
@@ -535,7 +523,6 @@ void laserHokuyo::run()
     double maxtime=1;
     do
     {
-        //yDebug ("1status: %d!\n",internal_status);
         int answer_len = pSerial->receiveLine(answer, buffer_size);
         internal_status = readData(laser_mode, answer,answer_len,current_line,data_vector);
         if (internal_status <  0 && internal_status != HOKUYO_STATUS_ERROR_NOTHING_RECEIVED)
@@ -550,7 +537,7 @@ void laserHokuyo::run()
         {
             rx_completed = true;
         }
-        t2 = yarp::os::Time::now();
+        t2 = yarp::os::SystemClock::nowSystem();
         if (t2-t1>maxtime) timeout = true;
     }
     while (rx_completed == false && timeout == false && error == false);
@@ -563,16 +550,20 @@ void laserHokuyo::run()
     {
         yError("laserHokuyo Communication Error, internal status=%d",internal_status);
     }
-
     #ifdef LASER_DEBUG
     yDebug ("time: %.3f %.3f\n",t2-t1, t2-old);
     old = t2;
     #endif
+    
+    mutex.lock();
 
     if (rx_completed)
     {
         laser_data=data_vector;
+        // static int countt=0;
+        // yDebug() << countt++ << getEstPeriod() << getEstUsed();
     }
+    mutex.unlock();
 
     if (laser_mode==GD_MODE)
     {
@@ -581,8 +572,8 @@ void laserHokuyo::run()
         pSerial->send(b);
     }
 
-    //Time::delay (0.100);
-    mutex.post();
+    //SystemClock::delaySystem (0.100);
+    mutex.unlock();
 }
 
 void laserHokuyo::threadRelease()
@@ -595,8 +586,8 @@ void laserHokuyo::threadRelease()
 
 bool laserHokuyo::getDeviceInfo(yarp::os::ConstString &device_info)
 {
-    this->mutex.wait();
+    this->mutex.lock();
     device_info = info;
-    this->mutex.post();
+    this->mutex.unlock();
     return true;
 }

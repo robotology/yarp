@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2011 Department of Robotics Brain and Cognitive Sciences - Istituto Italiano di Tecnologia
+ * Copyright (C) 2011 Istituto Italiano di Tecnologia (IIT)
  * Authors: Paul Fitzpatrick
  * CopyPolicy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
  */
@@ -76,6 +76,7 @@ Contact RosNameSpace::queryName(const ConstString& name) {
 }
 
 Contact RosNameSpace::registerName(const ConstString& name) {
+    YARP_UNUSED(name);
     fprintf(stderr, "ROS name server does not do 'raw' registrations.\n");
     fprintf(stderr, "Use [Buffered]Port::open to get complete registrations.\n");
     std::exit(1);
@@ -84,7 +85,7 @@ Contact RosNameSpace::registerName(const ConstString& name) {
 }
 
 Contact RosNameSpace::registerContact(const Contact& contact) {
-    return registerAdvanced(contact, YARP_NULLPTR);
+    return registerAdvanced(contact, nullptr);
 }
 
 Contact RosNameSpace::registerAdvanced(const Contact& contact, NameStore *store) {
@@ -235,7 +236,7 @@ Contact RosNameSpace::registerAdvanced(const Contact& contact, NameStore *store)
 }
 
 Contact RosNameSpace::unregisterName(const ConstString& name) {
-    return unregisterAdvanced(name, YARP_NULLPTR);
+    return unregisterAdvanced(name, nullptr);
 }
 
 Contact RosNameSpace::unregisterAdvanced(const ConstString& name, NameStore *store) {
@@ -340,12 +341,17 @@ Contact RosNameSpace::unregisterContact(const Contact& contact) {
 bool RosNameSpace::setProperty(const ConstString& name,
                                const ConstString& key,
                                const Value& value) {
+    YARP_UNUSED(name);
+    YARP_UNUSED(key);
+    YARP_UNUSED(value);
     return false;
 }
 
 Value *RosNameSpace::getProperty(const ConstString& name,
                                  const ConstString& key) {
-        return YARP_NULLPTR;
+    YARP_UNUSED(name);
+    YARP_UNUSED(key);
+    return nullptr;
 }
 
 bool RosNameSpace::connectPortToTopic(const Contact& src,
@@ -399,12 +405,18 @@ bool RosNameSpace::disconnectTopicFromPort(const Contact& src,
 bool RosNameSpace::connectPortToPortPersistently(const Contact& src,
                                                  const Contact& dest,
                                                  ContactStyle style) {
+    YARP_UNUSED(src);
+    YARP_UNUSED(dest);
+    YARP_UNUSED(style);
     return false;
 }
 
 bool RosNameSpace::disconnectPortToPortPersistently(const Contact& src,
                                                     const Contact& dest,
                                                     ContactStyle style) {
+    YARP_UNUSED(src);
+    YARP_UNUSED(dest);
+    YARP_UNUSED(style);
     return false;
 }
 
@@ -441,7 +453,7 @@ bool RosNameSpace::connectTopic(Bottle& cmd,
         if (activeRegistration) {
             Bottle *lst = reply.get(2).asList();
             Bottle cmd2;
-            if (lst!=YARP_NULLPTR) {
+            if (lst!=nullptr) {
                 cmd2.addString("publisherUpdate");
                 cmd2.addString("/yarp");
                 cmd2.addString(dynamicSrc.getName());
@@ -475,6 +487,7 @@ bool RosNameSpace::connectionHasNameOfEndpoints() const {
 Contact RosNameSpace::detectNameServer(bool useDetectedServer,
                                        bool& scanNeeded,
                                        bool& serverUsed) {
+    YARP_UNUSED(useDetectedServer);
     NameConfig nc;
     nc.fromFile();
     Contact c = nc.getAddress();
@@ -510,7 +523,6 @@ bool RosNameSpace::writeToNameServer(PortWriter& cmd,
     ConstString arg1 = in.get(1).asString();
 
     Bottle cmd2, cache;
-    bool use_cache = false;
     if (key=="query") {
         Contact c = queryName(arg1.c_str());
         c.setName("");
@@ -524,20 +536,12 @@ bool RosNameSpace::writeToNameServer(PortWriter& cmd,
     } else if (key=="list") {
         cmd2.addString("getSystemState");
         cmd2.addString("dummy_id");
-        use_cache = true;
-    } else {
-        return false;
-    }
-    bool ok = NetworkBase::write(getNameServerContact(),
-                                 cmd2,
-                                 cache,
-                                 style);
-    if (!ok) {
-        fprintf(stderr, "Failed to contact ROS server\n");
-        return false;
-    }
 
-    if (key=="list") {
+        if (!NetworkBase::write(getNameServerContact(), cmd2, cache, style)) {
+            fprintf(stderr, "Failed to contact ROS server\n");
+            return false;
+        }
+
         Bottle out;
         out.addVocab(Vocab::encode("many"));
         Bottle *parts = cache.get(2).asList();
@@ -578,10 +582,10 @@ bool RosNameSpace::writeToNameServer(PortWriter& cmd,
             }
         }
         out.write(reply);
+        return true;
+    } else {
+        return false;
     }
-
-
-    return ok;
 
 }
 

@@ -1,11 +1,11 @@
 /*
 * Author: Marco Randazzo
-* Copyright (C) 2017 iCubFacility - Istituto Italiano di Tecnologia
+* Copyright (C) 2017 Istituto Italiano di Tecnologia (IIT)
 * CopyPolicy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
 */
 
-#ifndef YARP_VEC2D
-#define YARP_VEC2D
+#ifndef YARP_MATH_VEC2D_H
+#define YARP_MATH_VEC2D_H
 
 #include <yarp/math/api.h>
 #include <yarp/sig/Vector.h>
@@ -60,15 +60,15 @@ public:
     * Read vector from a connection.
     * return true if a Vec2D was read correctly
     */
-    virtual bool read(yarp::os::ConnectionReader& connection) YARP_OVERRIDE;
+    virtual bool read(yarp::os::ConnectionReader& connection) override;
 
     /**
     * Write vector to a connection.
     * return true if a Vec2D was written correctly
     */
-    virtual bool write(yarp::os::ConnectionWriter& connection) YARP_OVERRIDE;
+    virtual bool write(yarp::os::ConnectionWriter& connection) override;
 
-    virtual yarp::os::Type getType() YARP_OVERRIDE
+    virtual yarp::os::Type getType() override
     {
         return yarp::os::Type::byName("yarp/vec2D");
     }
@@ -91,4 +91,4 @@ yarp::math::Vec2D<T> YARP_math_API operator - (yarp::math::Vec2D<T> lhs, const y
 template <typename T>
 yarp::math::Vec2D<T> YARP_math_API operator * (const yarp::sig::Matrix& lhs, yarp::math::Vec2D<T> rhs);
 
-#endif //#ifndef YARP_VEC2D
+#endif // YARP_MATH_VEC2D_H

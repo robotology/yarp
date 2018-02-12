@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2010-2016 RobotCub Consortium, Istituto Italiano di Tecnologia
+ * Copyright (C) 2010-2016 RobotCub Consortium, Istituto Italiano di Tecnologia (IIT)
  * CopyPolicy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
  */
 
@@ -104,6 +104,7 @@ periodically check it.
 \li \subpage yarpmotorgui
 \li \subpage yarpbatterygui
 \li \subpage yarplaserscannergui
+\li \subpage yarpviz
 
 \section yarp_advanced_usage Interoperability and advanced use
 \li \subpage channelprioritization.

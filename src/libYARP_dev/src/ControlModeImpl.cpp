@@ -1,6 +1,7 @@
 /*
  * Copyright (C) 2008 RobotCub Consortium
- * Authors: Marco Randazzo and Lorenzo Natale
+ * Authors: Marco Randazzo <marco.randazzo@iit.it>
+ *          Lorenzo Natale <lorenzo.natale@iit.it>
  * CopyPolicy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
  */
 
@@ -15,12 +16,12 @@ using namespace yarp::dev;
 ImplementControlMode::ImplementControlMode(IControlModeRaw *r)
 {
     raw=r;
-    helper=0;
+    helper=nullptr;
 }
 
 bool ImplementControlMode::initialize(int size, const int *amap)
 {
-    if (helper!=0)
+    if (helper!=nullptr)
         return false;
 
     double *dummy=new double [size];
@@ -28,7 +29,7 @@ bool ImplementControlMode::initialize(int size, const int *amap)
         dummy[k]=0;
 
     helper=(void *)(new ControlBoardHelper(size, amap, dummy, dummy, dummy));
-    yAssert (helper != 0);
+    yAssert (helper != nullptr);
 
     delete [] dummy;
     return true;
@@ -41,10 +42,10 @@ ImplementControlMode::~ImplementControlMode()
 
 bool ImplementControlMode::uninitialize ()
 {
-    if (helper!=0)
+    if (helper!=nullptr)
     {
         delete castToMapper(helper);
-        helper=0;
+        helper=nullptr;
     }
 
     return true;

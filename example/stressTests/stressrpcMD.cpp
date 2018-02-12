@@ -13,7 +13,6 @@
 #include <yarp/os/Property.h>
 #include <yarp/dev/ControlBoardInterfaces.h>
 #include <yarp/os/Time.h>
-#include <yarp/os/Random.h>
 
 #include <yarp/sig/Vector.h>
 
@@ -70,8 +69,6 @@ int main(int argc, char **argv)
     PolyDriver dd;
     Property p;
 
-    Random::seed((unsigned int)Time::now());
-     
     string remote=string("/")+rname.c_str();
     if (part!="")
         {

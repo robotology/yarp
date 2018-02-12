@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2014 iCub Facility - Istituto Italiano di Tecnologia
+ * Copyright (C) 2014 Istituto Italiano di Tecnologia (IIT)
  * Author: Davide Perrone
  * Date: Feb 2014
  * email:   dperrone@aitek.it
@@ -102,8 +102,11 @@ private:
     void periodToFreq(double avT, double mT, double MT, double &avH, double &mH, double &MH);
 
 private:
-    SignalHandler sigHandler;
     VideoProducer videoProducer;
+
+    // This Network yarp must be placed before any other yarp dependant member
+    yarp::os::Network yarp;
+    SignalHandler sigHandler;
 #ifdef YARP_LITTLE_ENDIAN
     yarp::os::BufferedPort<yarp::sig::ImageOf<yarp::sig::PixelBgra> > *ptr_inputPort;
 #else
@@ -112,7 +115,6 @@ private:
     yarp::os::BufferedPort<yarp::os::Bottle> *_pOutPort;
     InputCallback *ptr_portCallback;
     pgmOptions _options;
-    yarp::os::Network yarp;
 
 signals:
     void refreshIntervalChanged();

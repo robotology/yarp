@@ -1,6 +1,6 @@
 /*
  *  YARP Modules Manager
- *  Copyright: (C) 2014 iCub Facility - Italian Institute of Technology (IIT)
+ *  Copyright: (C) 2014 Istituto Italiano di Tecnologia (IIT)
  *  Authors: Ali Paikan <ali.paikan@iit.it>
  *
  *  Copy Policy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
@@ -67,9 +67,9 @@ public:
     void run() override;
     void threadRelease() override;
 
-    void safeRun(std::vector<int>& MIDs);
-    void safeStop(std::vector<int>& MIDs);
-    void safeKill(std::vector<int>& MIDs);
+    void safeRun(std::vector<int>& MIDs, std::vector<int>& CIDs, std::vector<int>& RIDs);
+    void safeStop(std::vector<int>& MIDs, std::vector<int>& CIDs, std::vector<int>& RIDs);
+    void safeKill(std::vector<int>& MIDs, std::vector<int>& CIDs, std::vector<int>& RIDs);
     void safeConnect(std::vector<int>& CIDs);
     void safeDisconnect(std::vector<int>& CDs);
     void safeRefresh(std::vector<int>& MIDs,

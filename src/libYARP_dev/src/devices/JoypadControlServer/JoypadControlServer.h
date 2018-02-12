@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2017 iCub Facility - Istituto Italiano di Tecnologia
+ * Copyright (C) 2017 Istituto Italiano di Tecnologia (IIT)
  * Author: Andrea Ruzzenenti <andrea.ruzzenenti@iit.it>
  * CopyPolicy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
  */
@@ -41,52 +41,6 @@ public:
 
     bool         configure(yarp::dev::IJoypadController* interface);
     virtual bool respond(const yarp::os::Bottle& cmd, yarp::os::Bottle& response) override;
-};
-
-//TODO: finish the single port mode.. the struct below is for this purpose
-struct JoyData : public yarp::os::Portable
-{
-    yarp::sig::Vector Buttons;
-    yarp::sig::Vector Sticks;
-    yarp::sig::Vector Axes;
-    yarp::sig::Vector Balls;
-    yarp::sig::Vector Touch;
-    yarp::sig::VectorOf<unsigned char> Hats;
-
-    bool read(yarp::os::ConnectionReader& connection) override
-    {
-        Buttons.resize(connection.expectInt());
-        Sticks.resize(connection.expectInt());
-        Axes.resize(connection.expectInt());
-        Balls.resize(connection.expectInt());
-        Touch.resize(connection.expectInt());
-        Hats.resize(connection.expectInt());
-        connection.expectBlock((char*)Buttons.data(), Buttons.length() * sizeof(double));
-        connection.expectBlock((char*)Sticks.data(),  Sticks.length()  * sizeof(double));
-        connection.expectBlock((char*)Axes.data(),    Axes.length()    * sizeof(double));
-        connection.expectBlock((char*)Balls.data(),   Balls.length()   * sizeof(double));
-        connection.expectBlock((char*)Touch.data(),   Touch.length()   * sizeof(double));
-        connection.expectBlock((char*)&Hats[0],       Hats.size()      * sizeof(char));
-        return !connection.isError();
-    }
-
-    bool write(yarp::os::ConnectionWriter& connection) override
-    {
-        connection.appendInt(Buttons.length());
-        connection.appendInt(Sticks.length());
-        connection.appendInt(Axes.length()  );
-        connection.appendInt(Balls.length() );
-        connection.appendInt(Touch.length() );
-        connection.appendInt(Hats.size()  );
-        connection.appendBlock((char*)Buttons.data(), Buttons.length() * sizeof(double));
-        connection.appendBlock((char*)Sticks.data(),  Sticks.length()  * sizeof(double));
-        connection.appendBlock((char*)Axes.data(),    Axes.length()    * sizeof(double));
-        connection.appendBlock((char*)Balls.data(),   Balls.length()   * sizeof(double));
-        connection.appendBlock((char*)Touch.data(),   Touch.length()   * sizeof(double));
-        connection.appendBlock((char*)&Hats[0],       Hats.size()      * sizeof(char));
-        connection.convertTextMode();
-        return !connection.isError();
-    }
 };
 
 class yarp::dev::JoypadControlServer: public yarp::dev::DeviceDriver,

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2016 iCub Facility, Istituto Italiano di Tecnologia
+ * Copyright (C) 2016 Istituto Italiano di Tecnologia (IIT)
  * Authors: Marco Randazzo <marco.randazzo@iit.it>
  * CopyPolicy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
  */
@@ -24,6 +24,7 @@ namespace yarp {
             navigation_status_waiting_obstacle      = VOCAB4('w', 'a', 'i', 't'),
             navigation_status_goal_reached          = VOCAB4('r', 'e', 'c', 'h'),
             navigation_status_aborted               = VOCAB4('a', 'b', 'r', 't'),
+            navigation_status_failing               = VOCAB4('f', 'a', 'i', 'l'),
             navigation_status_paused                = VOCAB4('p', 'a', 'u', 's'),
             navigation_status_thinking              = VOCAB4('t', 'h', 'n', 'k'),
             navigation_status_error                 = VOCAB3('e', 'r', 'r'),
@@ -185,5 +186,9 @@ public:
 #define VOCAB_NAV_STOP              VOCAB4('s','t','o','p')
 #define VOCAB_NAV_SUSPEND           VOCAB4('s','u','s','p')
 #define VOCAB_NAV_RESUME            VOCAB4('r','e','s','m')
+
+#define VOCAB_OK                    VOCAB2('o','k')
+#define VOCAB_ERR                   VOCAB3('e','r','r')
+
 
 #endif // YARP_DEV_INAVIGATION2D_H

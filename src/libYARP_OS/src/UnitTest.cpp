@@ -19,14 +19,14 @@
 using namespace yarp::os::impl;
 using namespace yarp::os;
 
-UnitTest *UnitTest::theRoot = YARP_NULLPTR;
+UnitTest *UnitTest::theRoot = nullptr;
 
 #ifdef YARP_TEST_HEAP
 
 static bool heap_count_active = false;
 static int heap_count_ops = 0;
 static bool heap_expect_ops = false;
-static yarp::os::Mutex *heap_count_mutex = YARP_NULLPTR;
+static yarp::os::Mutex *heap_count_mutex = nullptr;
 
 void addHeapOperation(const char *act) {
     if (heap_count_active) {
@@ -80,7 +80,7 @@ UnitTest::UnitTest() {
 
 UnitTest::UnitTest(UnitTest *parent) {
     this->parent = parent;
-    if (parent!=YARP_NULLPTR) {
+    if (parent!=nullptr) {
         parent->add(*this);
     }
     hasProblem = false;
@@ -100,7 +100,7 @@ void UnitTest::clear() {
 }
 
 void UnitTest::report(int severity, const ConstString& problem) {
-    if (parent!=YARP_NULLPTR) {
+    if (parent!=nullptr) {
         parent->report(severity, getName() + ": " + problem);
     } else {
         YARP_SPRINTF2(Logger::get(), info,
@@ -125,7 +125,7 @@ void UnitTest::runSubTests(int argc, char *argv[]) {
 
 
 int UnitTest::run() {
-    run(0, YARP_NULLPTR);
+    run(0, nullptr);
     return hasProblem;
 }
 
@@ -164,8 +164,8 @@ int UnitTest::run(int argc, char *argv[]) {
 
 
 void UnitTest::startTestSystem() {
-    if (theRoot==YARP_NULLPTR) {
-        theRoot = new RootUnitTest(YARP_NULLPTR);
+    if (theRoot==nullptr) {
+        theRoot = new RootUnitTest(nullptr);
     }
 }
 
@@ -173,15 +173,15 @@ void UnitTest::startTestSystem() {
 // is to avoid link order dependency problems
 UnitTest& UnitTest::getRoot() {
     startTestSystem();
-    yAssert(theRoot!=YARP_NULLPTR);
+    yAssert(theRoot!=nullptr);
     return *theRoot;
 }
 
 // this is the important one to call
 void UnitTest::stopTestSystem() {
-    if (theRoot!=YARP_NULLPTR) {
+    if (theRoot!=nullptr) {
         delete theRoot;
-        theRoot = YARP_NULLPTR;
+        theRoot = nullptr;
     }
 }
 
@@ -271,7 +271,7 @@ void UnitTest::saveEnvironment(const char *key) {
 void UnitTest::restoreEnvironment() {
     for (int i=0; i<env.size(); i++) {
         Bottle *lst = env.get(i).asList();
-        if (lst==YARP_NULLPTR) continue;
+        if (lst==nullptr) continue;
         ConstString key = lst->get(0).asString();
         ConstString val = lst->get(1).asString();
         bool found = lst->get(2).asInt()?true:false;
@@ -300,6 +300,8 @@ void UnitTest::heapMonitorBegin(bool expectAllocations) {
     heap_count_mutex = new Mutex();
     heap_expect_ops = expectAllocations;
     heap_count_active = true;
+#else
+    YARP_UNUSED(expectAllocations);
 #endif
 }
 
@@ -330,7 +332,7 @@ int UnitTest::heapMonitorEnd() {
         checkEqual(0, diff, "heap operator final count");
     }
     delete heap_count_mutex;
-    heap_count_mutex = YARP_NULLPTR;
+    heap_count_mutex = nullptr;
     return diff;
 #else
     return -1;

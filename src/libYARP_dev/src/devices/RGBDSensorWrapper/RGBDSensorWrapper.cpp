@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2016 iCub Facility - Istituto Italiano di Tecnologia
+ * Copyright (C) 2016 Istituto Italiano di Tecnologia (IIT)
  * Authors: Alberto Cardellino <Alberto.Cardellino@iit.it>
  *          Andrea Ruzzenenti   <Andrea.Ruzzenenti@iit.it>
  * CopyPolicy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
@@ -29,7 +29,7 @@ yarp::dev::DriverCreator *createRGBDSensorWrapper() {
     return new DriverCreatorOf<yarp::dev::RGBDSensorWrapper>("RGBDSensorWrapper", "RGBDSensorWrapper", "yarp::dev::RGBDSensorWrapper");
 }
 
-RGBDSensorParser::RGBDSensorParser() : iRGBDSensor(YARP_NULLPTR) {};
+RGBDSensorParser::RGBDSensorParser() : iRGBDSensor(nullptr) {};
 
 bool RGBDSensorParser::configure(IRGBDSensor *interface)
 {
@@ -155,25 +155,25 @@ bool RGBDSensorParser::respond(const Bottle& cmd, Bottle& response)
 }
 
 
-RGBDSensorWrapper::RGBDSensorWrapper(): 
+RGBDSensorWrapper::RGBDSensorWrapper() :
     RateThread(DEFAULT_THREAD_PERIOD),
-    rosNode(YARP_NULLPTR),
+    rosNode(nullptr),
     nodeSeq(0),
     rate(DEFAULT_THREAD_PERIOD),
-    sensor_p(YARP_NULLPTR),
+    sensor_p(nullptr),
     sensorStatus(IRGBDSensor::RGBD_SENSOR_NOT_READY),
     verbose(4),
     use_YARP(true),
     use_ROS(false),
     forceInfoSync(true),
     isSubdeviceOwned(false),
-    subDeviceOwned(YARP_NULLPTR)
+    subDeviceOwned(nullptr)
 {}
 
 RGBDSensorWrapper::~RGBDSensorWrapper()
 {
     close();
-    sensor_p = NULL;
+    sensor_p = nullptr;
 }
 
 /** Device driver interface */
@@ -249,11 +249,15 @@ bool RGBDSensorWrapper::fromConfig(yarp::os::Searchable &config)
     {
         //if(verbose >= 2)
         //    yWarning() << "RGBDSensorWrapper: ROS topic support is not yet implemented";
-        Value* temp;
-        string confUseRos;
 
-        rosGroup.check("use_ROS", temp);
-        confUseRos = temp->asString();
+        string confUseRos = "";
+
+        if (!rosGroup.check("use_ROS"))
+        {
+            return false;
+        }
+
+        confUseRos = rosGroup.find("use_ROS").asString();
 
         if (confUseRos == "true" || confUseRos == "only")
         {
@@ -263,7 +267,7 @@ bool RGBDSensorWrapper::fromConfig(yarp::os::Searchable &config)
         else
         {
             use_ROS = false;
-            if (verbose >= 3 || confUseRos == "false")
+            if (verbose >= 3 && confUseRos != "false")
             {
                 yInfo("'use_ROS' value not understood.. skipping ROS topic initialization");
             }
@@ -392,9 +396,9 @@ bool RGBDSensorWrapper::close()
         if(subDeviceOwned)
         {
             delete subDeviceOwned;
-            subDeviceOwned=NULL;
+            subDeviceOwned=nullptr;
         }
-        sensor_p = NULL;
+        sensor_p = nullptr;
         isSubdeviceOwned = false;
     }
 
@@ -410,11 +414,11 @@ bool RGBDSensorWrapper::close()
         depthFrame_StreamingPort.close();
     }
 
-    if(rosNode!=NULL)
+    if(rosNode!=nullptr)
     {
         rosNode->interrupt();
         delete rosNode;
-        rosNode = NULL;
+        rosNode = nullptr;
     }
 
     // Closing ROS topic
@@ -540,13 +544,13 @@ bool RGBDSensorWrapper::detachAll()
     if (isSubdeviceOwned)
         return false;
 
-    sensor_p = NULL;
+    sensor_p = nullptr;
     return true;
 }
 
 bool RGBDSensorWrapper::attach(yarp::dev::IRGBDSensor *s)
 {
-    if(s == NULL)
+    if(s == nullptr)
     {
         yError() << "RGBDSensorWrapper: attached device has no valid IRGBDSensor interface.";
         return false;
@@ -566,7 +570,7 @@ bool RGBDSensorWrapper::attach(PolyDriver* poly)
     if(poly)
         poly->view(sensor_p);
 
-    if(sensor_p == NULL)
+    if(sensor_p == nullptr)
     {
         yError() << "RGBDSensorWrapper: attached device has no valid IRGBDSensor interface.";
         return false;
@@ -583,7 +587,7 @@ bool RGBDSensorWrapper::attach(PolyDriver* poly)
 
 bool RGBDSensorWrapper::detach()
 {
-    sensor_p = NULL;
+    sensor_p = nullptr;
     return true;
 }
 
@@ -642,7 +646,6 @@ string RGBDSensorWrapper::yarp2RosPixelCode(int code)
 void RGBDSensorWrapper::shallowCopyImages(const yarp::sig::FlexImage& src, yarp::sig::FlexImage& dest)
 {
     dest.setPixelCode(src.getPixelCode());
-    dest.setPixelSize(src.getPixelSize());
     dest.setQuantum(src.getQuantum());
     dest.setExternal(src.getRawImage(), src.width(), src.height());
 }
@@ -889,7 +892,7 @@ bool RGBDSensorWrapper::writeData()
 
 void RGBDSensorWrapper::run()
 {
-    if (sensor_p!=0)
+    if (sensor_p!=nullptr)
     {
         static int i = 0;
         sensorStatus = sensor_p->getSensorStatus();

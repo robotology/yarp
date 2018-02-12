@@ -41,256 +41,305 @@
 #include "TickTime.h"
 #include "std_msgs_Header.h"
 
-class sensor_msgs_LaserScan : public yarp::os::idl::WirePortable {
+class sensor_msgs_LaserScan : public yarp::os::idl::WirePortable
+{
 public:
-  std_msgs_Header header;
-  yarp::os::NetFloat32 angle_min;
-  yarp::os::NetFloat32 angle_max;
-  yarp::os::NetFloat32 angle_increment;
-  yarp::os::NetFloat32 time_increment;
-  yarp::os::NetFloat32 scan_time;
-  yarp::os::NetFloat32 range_min;
-  yarp::os::NetFloat32 range_max;
-  std::vector<yarp::os::NetFloat32> ranges;
-  std::vector<yarp::os::NetFloat32> intensities;
+    std_msgs_Header header;
+    yarp::os::NetFloat32 angle_min;
+    yarp::os::NetFloat32 angle_max;
+    yarp::os::NetFloat32 angle_increment;
+    yarp::os::NetFloat32 time_increment;
+    yarp::os::NetFloat32 scan_time;
+    yarp::os::NetFloat32 range_min;
+    yarp::os::NetFloat32 range_max;
+    std::vector<yarp::os::NetFloat32> ranges;
+    std::vector<yarp::os::NetFloat32> intensities;
 
-  sensor_msgs_LaserScan() :
-    header(),
-    angle_min(0.0),
-    angle_max(0.0),
-    angle_increment(0.0),
-    time_increment(0.0),
-    scan_time(0.0),
-    range_min(0.0),
-    range_max(0.0),
-    ranges(),
-    intensities()
-  {
-  }
-
-  void clear() {
-    // *** header ***
-    header.clear();
-
-    // *** angle_min ***
-    angle_min = 0.0;
-
-    // *** angle_max ***
-    angle_max = 0.0;
-
-    // *** angle_increment ***
-    angle_increment = 0.0;
-
-    // *** time_increment ***
-    time_increment = 0.0;
-
-    // *** scan_time ***
-    scan_time = 0.0;
-
-    // *** range_min ***
-    range_min = 0.0;
-
-    // *** range_max ***
-    range_max = 0.0;
-
-    // *** ranges ***
-    ranges.clear();
-
-    // *** intensities ***
-    intensities.clear();
-  }
-
-  bool readBare(yarp::os::ConnectionReader& connection) YARP_OVERRIDE {
-    // *** header ***
-    if (!header.read(connection)) return false;
-
-    // *** angle_min ***
-    if (!connection.expectBlock((char*)&angle_min,4)) return false;
-
-    // *** angle_max ***
-    if (!connection.expectBlock((char*)&angle_max,4)) return false;
-
-    // *** angle_increment ***
-    if (!connection.expectBlock((char*)&angle_increment,4)) return false;
-
-    // *** time_increment ***
-    if (!connection.expectBlock((char*)&time_increment,4)) return false;
-
-    // *** scan_time ***
-    if (!connection.expectBlock((char*)&scan_time,4)) return false;
-
-    // *** range_min ***
-    if (!connection.expectBlock((char*)&range_min,4)) return false;
-
-    // *** range_max ***
-    if (!connection.expectBlock((char*)&range_max,4)) return false;
-
-    // *** ranges ***
-    int len = connection.expectInt();
-    ranges.resize(len);
-    if (len > 0 && !connection.expectBlock((char*)&ranges[0],sizeof(yarp::os::NetFloat32)*len)) return false;
-
-    // *** intensities ***
-    len = connection.expectInt();
-    intensities.resize(len);
-    if (len > 0 && !connection.expectBlock((char*)&intensities[0],sizeof(yarp::os::NetFloat32)*len)) return false;
-    return !connection.isError();
-  }
-
-  bool readBottle(yarp::os::ConnectionReader& connection) YARP_OVERRIDE {
-    connection.convertTextMode();
-    yarp::os::idl::WireReader reader(connection);
-    if (!reader.readListHeader(10)) return false;
-
-    // *** header ***
-    if (!header.read(connection)) return false;
-
-    // *** angle_min ***
-    angle_min = reader.expectDouble();
-
-    // *** angle_max ***
-    angle_max = reader.expectDouble();
-
-    // *** angle_increment ***
-    angle_increment = reader.expectDouble();
-
-    // *** time_increment ***
-    time_increment = reader.expectDouble();
-
-    // *** scan_time ***
-    scan_time = reader.expectDouble();
-
-    // *** range_min ***
-    range_min = reader.expectDouble();
-
-    // *** range_max ***
-    range_max = reader.expectDouble();
-
-    // *** ranges ***
-    if (connection.expectInt()!=(BOTTLE_TAG_LIST|BOTTLE_TAG_DOUBLE)) return false;
-    int len = connection.expectInt();
-    ranges.resize(len);
-    for (int i=0; i<len; i++) {
-      ranges[i] = (yarp::os::NetFloat32)connection.expectDouble();
+    sensor_msgs_LaserScan() :
+            header(),
+            angle_min(0.0),
+            angle_max(0.0),
+            angle_increment(0.0),
+            time_increment(0.0),
+            scan_time(0.0),
+            range_min(0.0),
+            range_max(0.0),
+            ranges(),
+            intensities()
+    {
     }
 
-    // *** intensities ***
-    if (connection.expectInt()!=(BOTTLE_TAG_LIST|BOTTLE_TAG_DOUBLE)) return false;
-    len = connection.expectInt();
-    intensities.resize(len);
-    for (int i=0; i<len; i++) {
-      intensities[i] = (yarp::os::NetFloat32)connection.expectDouble();
-    }
-    return !connection.isError();
-  }
+    void clear()
+    {
+        // *** header ***
+        header.clear();
 
-  using yarp::os::idl::WirePortable::read;
-  bool read(yarp::os::ConnectionReader& connection) YARP_OVERRIDE {
-    if (connection.isBareMode()) return readBare(connection);
-    return readBottle(connection);
-  }
+        // *** angle_min ***
+        angle_min = 0.0;
 
-  bool writeBare(yarp::os::ConnectionWriter& connection) YARP_OVERRIDE {
-    // *** header ***
-    if (!header.write(connection)) return false;
+        // *** angle_max ***
+        angle_max = 0.0;
 
-    // *** angle_min ***
-    connection.appendBlock((char*)&angle_min,4);
+        // *** angle_increment ***
+        angle_increment = 0.0;
 
-    // *** angle_max ***
-    connection.appendBlock((char*)&angle_max,4);
+        // *** time_increment ***
+        time_increment = 0.0;
 
-    // *** angle_increment ***
-    connection.appendBlock((char*)&angle_increment,4);
+        // *** scan_time ***
+        scan_time = 0.0;
 
-    // *** time_increment ***
-    connection.appendBlock((char*)&time_increment,4);
+        // *** range_min ***
+        range_min = 0.0;
 
-    // *** scan_time ***
-    connection.appendBlock((char*)&scan_time,4);
+        // *** range_max ***
+        range_max = 0.0;
 
-    // *** range_min ***
-    connection.appendBlock((char*)&range_min,4);
+        // *** ranges ***
+        ranges.clear();
 
-    // *** range_max ***
-    connection.appendBlock((char*)&range_max,4);
-
-    // *** ranges ***
-    connection.appendInt(ranges.size());
-    if (ranges.size()>0) {connection.appendExternalBlock((char*)&ranges[0],sizeof(yarp::os::NetFloat32)*ranges.size());}
-
-    // *** intensities ***
-    connection.appendInt(intensities.size());
-    if (intensities.size()>0) {connection.appendExternalBlock((char*)&intensities[0],sizeof(yarp::os::NetFloat32)*intensities.size());}
-    return !connection.isError();
-  }
-
-  bool writeBottle(yarp::os::ConnectionWriter& connection) YARP_OVERRIDE {
-    connection.appendInt(BOTTLE_TAG_LIST);
-    connection.appendInt(10);
-
-    // *** header ***
-    if (!header.write(connection)) return false;
-
-    // *** angle_min ***
-    connection.appendInt(BOTTLE_TAG_DOUBLE);
-    connection.appendDouble((double)angle_min);
-
-    // *** angle_max ***
-    connection.appendInt(BOTTLE_TAG_DOUBLE);
-    connection.appendDouble((double)angle_max);
-
-    // *** angle_increment ***
-    connection.appendInt(BOTTLE_TAG_DOUBLE);
-    connection.appendDouble((double)angle_increment);
-
-    // *** time_increment ***
-    connection.appendInt(BOTTLE_TAG_DOUBLE);
-    connection.appendDouble((double)time_increment);
-
-    // *** scan_time ***
-    connection.appendInt(BOTTLE_TAG_DOUBLE);
-    connection.appendDouble((double)scan_time);
-
-    // *** range_min ***
-    connection.appendInt(BOTTLE_TAG_DOUBLE);
-    connection.appendDouble((double)range_min);
-
-    // *** range_max ***
-    connection.appendInt(BOTTLE_TAG_DOUBLE);
-    connection.appendDouble((double)range_max);
-
-    // *** ranges ***
-    connection.appendInt(BOTTLE_TAG_LIST|BOTTLE_TAG_DOUBLE);
-    connection.appendInt(ranges.size());
-    for (size_t i=0; i<ranges.size(); i++) {
-      connection.appendDouble((double)ranges[i]);
+        // *** intensities ***
+        intensities.clear();
     }
 
-    // *** intensities ***
-    connection.appendInt(BOTTLE_TAG_LIST|BOTTLE_TAG_DOUBLE);
-    connection.appendInt(intensities.size());
-    for (size_t i=0; i<intensities.size(); i++) {
-      connection.appendDouble((double)intensities[i]);
+    bool readBare(yarp::os::ConnectionReader& connection) override
+    {
+        // *** header ***
+        if (!header.read(connection)) {
+            return false;
+        }
+
+        // *** angle_min ***
+        if (!connection.expectBlock((char*)&angle_min, 4)) {
+            return false;
+        }
+
+        // *** angle_max ***
+        if (!connection.expectBlock((char*)&angle_max, 4)) {
+            return false;
+        }
+
+        // *** angle_increment ***
+        if (!connection.expectBlock((char*)&angle_increment, 4)) {
+            return false;
+        }
+
+        // *** time_increment ***
+        if (!connection.expectBlock((char*)&time_increment, 4)) {
+            return false;
+        }
+
+        // *** scan_time ***
+        if (!connection.expectBlock((char*)&scan_time, 4)) {
+            return false;
+        }
+
+        // *** range_min ***
+        if (!connection.expectBlock((char*)&range_min, 4)) {
+            return false;
+        }
+
+        // *** range_max ***
+        if (!connection.expectBlock((char*)&range_max, 4)) {
+            return false;
+        }
+
+        // *** ranges ***
+        int len = connection.expectInt();
+        ranges.resize(len);
+        if (len > 0 && !connection.expectBlock((char*)&ranges[0], sizeof(yarp::os::NetFloat32)*len)) {
+            return false;
+        }
+
+        // *** intensities ***
+        len = connection.expectInt();
+        intensities.resize(len);
+        if (len > 0 && !connection.expectBlock((char*)&intensities[0], sizeof(yarp::os::NetFloat32)*len)) {
+            return false;
+        }
+
+        return !connection.isError();
     }
-    connection.convertTextMode();
-    return !connection.isError();
-  }
 
-  using yarp::os::idl::WirePortable::write;
-  bool write(yarp::os::ConnectionWriter& connection) YARP_OVERRIDE {
-    if (connection.isBareMode()) return writeBare(connection);
-    return writeBottle(connection);
-  }
+    bool readBottle(yarp::os::ConnectionReader& connection) override
+    {
+        connection.convertTextMode();
+        yarp::os::idl::WireReader reader(connection);
+        if (!reader.readListHeader(10)) {
+            return false;
+        }
 
-  // This class will serialize ROS style or YARP style depending on protocol.
-  // If you need to force a serialization style, use one of these classes:
-  typedef yarp::os::idl::BareStyle<sensor_msgs_LaserScan> rosStyle;
-  typedef yarp::os::idl::BottleStyle<sensor_msgs_LaserScan> bottleStyle;
+        // *** header ***
+        if (!header.read(connection)) {
+            return false;
+        }
 
-  // Give source text for class, ROS will need this
-  yarp::os::ConstString getTypeText() {
-    return "# Single scan from a planar laser range-finder\n\
+        // *** angle_min ***
+        angle_min = reader.expectDouble();
+
+        // *** angle_max ***
+        angle_max = reader.expectDouble();
+
+        // *** angle_increment ***
+        angle_increment = reader.expectDouble();
+
+        // *** time_increment ***
+        time_increment = reader.expectDouble();
+
+        // *** scan_time ***
+        scan_time = reader.expectDouble();
+
+        // *** range_min ***
+        range_min = reader.expectDouble();
+
+        // *** range_max ***
+        range_max = reader.expectDouble();
+
+        // *** ranges ***
+        if (connection.expectInt() != (BOTTLE_TAG_LIST|BOTTLE_TAG_DOUBLE)) {
+            return false;
+        }
+        int len = connection.expectInt();
+        ranges.resize(len);
+        for (int i=0; i<len; i++) {
+            ranges[i] = (yarp::os::NetFloat32)connection.expectDouble();
+        }
+
+        // *** intensities ***
+        if (connection.expectInt() != (BOTTLE_TAG_LIST|BOTTLE_TAG_DOUBLE)) {
+            return false;
+        }
+        len = connection.expectInt();
+        intensities.resize(len);
+        for (int i=0; i<len; i++) {
+            intensities[i] = (yarp::os::NetFloat32)connection.expectDouble();
+        }
+
+        return !connection.isError();
+    }
+
+    using yarp::os::idl::WirePortable::read;
+    bool read(yarp::os::ConnectionReader& connection) override
+    {
+        return (connection.isBareMode() ? readBare(connection)
+                                        : readBottle(connection));
+    }
+
+    bool writeBare(yarp::os::ConnectionWriter& connection) override
+    {
+        // *** header ***
+        if (!header.write(connection)) {
+            return false;
+        }
+
+        // *** angle_min ***
+        connection.appendBlock((char*)&angle_min, 4);
+
+        // *** angle_max ***
+        connection.appendBlock((char*)&angle_max, 4);
+
+        // *** angle_increment ***
+        connection.appendBlock((char*)&angle_increment, 4);
+
+        // *** time_increment ***
+        connection.appendBlock((char*)&time_increment, 4);
+
+        // *** scan_time ***
+        connection.appendBlock((char*)&scan_time, 4);
+
+        // *** range_min ***
+        connection.appendBlock((char*)&range_min, 4);
+
+        // *** range_max ***
+        connection.appendBlock((char*)&range_max, 4);
+
+        // *** ranges ***
+        connection.appendInt(ranges.size());
+        if (ranges.size()>0) {
+            connection.appendExternalBlock((char*)&ranges[0], sizeof(yarp::os::NetFloat32)*ranges.size());
+        }
+
+        // *** intensities ***
+        connection.appendInt(intensities.size());
+        if (intensities.size()>0) {
+            connection.appendExternalBlock((char*)&intensities[0], sizeof(yarp::os::NetFloat32)*intensities.size());
+        }
+
+        return !connection.isError();
+    }
+
+    bool writeBottle(yarp::os::ConnectionWriter& connection) override
+    {
+        connection.appendInt(BOTTLE_TAG_LIST);
+        connection.appendInt(10);
+
+        // *** header ***
+        if (!header.write(connection)) {
+            return false;
+        }
+
+        // *** angle_min ***
+        connection.appendInt(BOTTLE_TAG_DOUBLE);
+        connection.appendDouble((double)angle_min);
+
+        // *** angle_max ***
+        connection.appendInt(BOTTLE_TAG_DOUBLE);
+        connection.appendDouble((double)angle_max);
+
+        // *** angle_increment ***
+        connection.appendInt(BOTTLE_TAG_DOUBLE);
+        connection.appendDouble((double)angle_increment);
+
+        // *** time_increment ***
+        connection.appendInt(BOTTLE_TAG_DOUBLE);
+        connection.appendDouble((double)time_increment);
+
+        // *** scan_time ***
+        connection.appendInt(BOTTLE_TAG_DOUBLE);
+        connection.appendDouble((double)scan_time);
+
+        // *** range_min ***
+        connection.appendInt(BOTTLE_TAG_DOUBLE);
+        connection.appendDouble((double)range_min);
+
+        // *** range_max ***
+        connection.appendInt(BOTTLE_TAG_DOUBLE);
+        connection.appendDouble((double)range_max);
+
+        // *** ranges ***
+        connection.appendInt(BOTTLE_TAG_LIST|BOTTLE_TAG_DOUBLE);
+        connection.appendInt(ranges.size());
+        for (size_t i=0; i<ranges.size(); i++) {
+            connection.appendDouble((double)ranges[i]);
+        }
+
+        // *** intensities ***
+        connection.appendInt(BOTTLE_TAG_LIST|BOTTLE_TAG_DOUBLE);
+        connection.appendInt(intensities.size());
+        for (size_t i=0; i<intensities.size(); i++) {
+            connection.appendDouble((double)intensities[i]);
+        }
+
+        connection.convertTextMode();
+        return !connection.isError();
+    }
+
+    using yarp::os::idl::WirePortable::write;
+    bool write(yarp::os::ConnectionWriter& connection) override
+    {
+        return (connection.isBareMode() ? writeBare(connection)
+                                        : writeBottle(connection));
+    }
+
+    // This class will serialize ROS style or YARP style depending on protocol.
+    // If you need to force a serialization style, use one of these classes:
+    typedef yarp::os::idl::BareStyle<sensor_msgs_LaserScan> rosStyle;
+    typedef yarp::os::idl::BottleStyle<sensor_msgs_LaserScan> bottleStyle;
+
+    // Give source text for class, ROS will need this
+    yarp::os::ConstString getTypeText()
+    {
+        return "# Single scan from a planar laser range-finder\n\
 #\n\
 # If you have another ranging device with different behavior (e.g. a sonar\n\
 # array), please find or create a different message, since applications\n\
@@ -336,15 +385,16 @@ time stamp\n\
 # 0: no frame\n\
 # 1: global frame\n\
 string frame_id";
-  }
+    }
 
-  // Name the class, ROS will need this
-  yarp::os::Type getType() YARP_OVERRIDE {
-    yarp::os::Type typ = yarp::os::Type::byName("sensor_msgs/LaserScan","sensor_msgs/LaserScan");
-    typ.addProperty("md5sum",yarp::os::Value("90c7ef2dc6895d81024acba2ac42f369"));
-    typ.addProperty("message_definition",yarp::os::Value(getTypeText()));
-    return typ;
-  }
+    // Name the class, ROS will need this
+    yarp::os::Type getType() override
+    {
+        yarp::os::Type typ = yarp::os::Type::byName("sensor_msgs/LaserScan", "sensor_msgs/LaserScan");
+        typ.addProperty("md5sum", yarp::os::Value("90c7ef2dc6895d81024acba2ac42f369"));
+        typ.addProperty("message_definition", yarp::os::Value(getTypeText()));
+        return typ;
+    }
 };
 
 #endif

@@ -12,6 +12,8 @@
 #include <yarp/os/Network.h>
 #include <QtGlobal>
 
+#include <yarp/os/Os.h>
+
 #if defined(_WIN32)
     #include <windows.h>
 #else
@@ -30,6 +32,7 @@ int main(int argc, char *argv[])
 #else
     qputenv("QT_DEVICE_PIXEL_RATIO", QByteArray("auto"));
 #endif
+    setEnergySavingModeState(false);
     QApplication a(argc, argv);
 
     Network yarp;
@@ -52,5 +55,7 @@ int main(int argc, char *argv[])
         w.show();
     }
 
-    return (a.exec()!=0?1:0);
+    int returnFlag = (a.exec()!=0?1:0);
+    setEnergySavingModeState(true);
+    return returnFlag;
 }

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2014 iCub Facility - Istituto Italiano di Tecnologia
+ * Copyright (C) 2014 Istituto Italiano di Tecnologia (IIT)
  * Author: Davide Perrone
  * Date: Feb 2014
  * email:   dperrone@aitek.it
@@ -29,11 +29,13 @@ public:
     void addComputer(yarp::manager::Computer* comp);
     void addModule(yarp::manager::Module* mod);
     void addAppTemplate(yarp::manager::AppTemplate* tmp);
+    void addPort(QStringList portDetails);
 
     void clearApplications();
     void clearModules();
     void clearResources();
     void clearTemplates();
+    void clearPorts();
 
     QTreeWidgetItem * getWidgetItemByFilename(const QString xmlFile);
 
@@ -48,6 +50,7 @@ private:
     QTreeWidgetItem *modulesNode;
     QTreeWidgetItem *resourcesNode;
     QTreeWidgetItem *templatesNode;
+    QTreeWidgetItem *portsNode;
 
     QMenu topLevelMenu;
     QMenu secondLevelMenu;

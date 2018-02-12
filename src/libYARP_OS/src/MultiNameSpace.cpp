@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2011 Department of Robotics Brain and Cognitive Sciences - Istituto Italiano di Tecnologia
+ * Copyright (C) 2011 Istituto Italiano di Tecnologia (IIT)
  * Authors: Paul Fitzpatrick
  * CopyPolicy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
  */
@@ -9,14 +9,15 @@
 #include <yarp/os/YarpNameSpace.h>
 #include <yarp/os/RosNameSpace.h>
 #include <yarp/os/Time.h>
-#include <yarp/os/impl/PlatformVector.h>
 #include <yarp/os/impl/NameConfig.h>
 #include <yarp/os/impl/Logger.h>
+
+#include <vector>
 
 using namespace yarp::os;
 using namespace yarp::os::impl;
 
-typedef PlatformVector<NameSpace *> SpaceList;
+typedef std::vector<NameSpace *> SpaceList;
 
 // private implementation of a namespace container
 class MultiNameSpaceHelper {
@@ -43,7 +44,7 @@ public:
             NameSpace *ns = spaces[i];
             if (ns) {
                 delete ns;
-                ns = YARP_NULLPTR;
+                ns = nullptr;
             }
         }
         spaces.clear();
@@ -102,7 +103,7 @@ public:
         // read namespace list from config file
         NameConfig conf;
         if (!conf.fromFile()) {
-            double now = Time::now();
+            double now = SystemClock::nowSystem();
             static double last_shown = now-10;
             if (now-last_shown>3) {
                 last_shown = now;
@@ -181,7 +182,7 @@ public:
     NameSpace *getOne() {
         activate();
         if (spaces.size()==0) {
-            return YARP_NULLPTR;
+            return nullptr;
         }
         return spaces[0];
     }
@@ -196,15 +197,15 @@ public:
 #define HELPER(x) (*((MultiNameSpaceHelper*)((x)->system_resource)))
 
 MultiNameSpace::MultiNameSpace() {
-    altStore = YARP_NULLPTR;
+    altStore = nullptr;
     system_resource = new MultiNameSpaceHelper;
-    yAssert(system_resource!=YARP_NULLPTR);
+    yAssert(system_resource!=nullptr);
 }
 
 MultiNameSpace::~MultiNameSpace() {
-    if (system_resource!=YARP_NULLPTR) {
+    if (system_resource!=nullptr) {
         delete &HELPER(this);
-        system_resource = YARP_NULLPTR;
+        system_resource = nullptr;
     }
 }
 
@@ -363,7 +364,7 @@ bool MultiNameSpace::setProperty(const ConstString& name, const ConstString& key
 
 Value *MultiNameSpace::getProperty(const ConstString& name, const ConstString& key) {
     NameSpace *ns = HELPER(this).getOne();
-    if (!ns) return YARP_NULLPTR;
+    if (!ns) return nullptr;
     return ns->getProperty(name, key);
 }
 

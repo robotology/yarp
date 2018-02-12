@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2013 iCub Facility
+ * Copyright (C) 2013 Istituto Italiano di Tecnologia (IIT)
  * Authors: Paul Fitzpatrick
  * CopyPolicy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
  */
@@ -24,12 +24,12 @@ public:
     Node(const ConstString& name);
     virtual ~Node();
 
-    virtual void add(Contactable& contactable) YARP_OVERRIDE;
+    virtual void add(Contactable& contactable) override;
     virtual void update(Contactable& contactable);
-    virtual void remove(Contactable& contactable) YARP_OVERRIDE;
+    virtual void remove(Contactable& contactable) override;
 
     virtual Contact query(const ConstString& name,
-                          const ConstString& category = "") YARP_OVERRIDE;
+                          const ConstString& category = "") override;
 
     virtual Contact where();
 

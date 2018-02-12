@@ -1,5 +1,5 @@
 /* 
- * Copyright (C)2014  iCub Facility - Istituto Italiano di Tecnologia
+ * Copyright (C) 2014 Istituto Italiano di Tecnologia (IIT)
  * Author: Marco Randazzo
  * email:  marco.randazzo@iit.it
  * website: www.robotcub.org
@@ -195,7 +195,7 @@ class yarp::yarpLogger::LogEntry
 class yarp::yarpLogger::LoggerEngine
 {
     //private class
-    class logger_thread : public yarp::os::RateThread
+    class logger_thread : public yarp::os::SystemRateThread
     {
         public:
         logger_thread (std::string _portname, int _rate=10, int _log_list_max_size=100);
@@ -210,8 +210,8 @@ class yarp::yarpLogger::LoggerEngine
 
         public:
         std::string getPortName();
-        void        run() YARP_OVERRIDE;
-        void        threadRelease() YARP_OVERRIDE;
+        void        run() override;
+        void        threadRelease() override;
         bool        listen_to_LOGLEVEL_UNDEFINED;
         bool        listen_to_LOGLEVEL_TRACE;
         bool        listen_to_LOGLEVEL_DEBUG;

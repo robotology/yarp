@@ -27,7 +27,7 @@ using namespace yarp::dev;
 
 
 MicrophoneDeviceDriver::MicrophoneDeviceDriver() :
-    system_resources(YARP_NULLPTR),
+    system_resources(nullptr),
     dsp(-1)
 {}
 
@@ -62,7 +62,7 @@ bool MicrophoneDeviceDriver::open(yarp::os::Searchable& config) {
     return true;
 }
 
-bool MicrophoneDeviceDriver::close(void) {
+bool MicrophoneDeviceDriver::close() {
     if (dsp!=-1) {
         ::close( dsp );
         dsp = -1;

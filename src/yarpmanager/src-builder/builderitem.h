@@ -38,7 +38,7 @@ public:
         allowOutputs(false),
         snap(false),
         nestedInApp(false),
-        sigHandler(YARP_NULLPTR)
+        sigHandler(nullptr)
     {}
 
     virtual QRectF boundingRect() const override = 0;

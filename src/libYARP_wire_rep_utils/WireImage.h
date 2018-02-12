@@ -61,7 +61,7 @@ private:
 public:
     RosWireImage() :
         ros_seq_stamp({0,0,0}),
-        image(YARP_NULLPTR)
+        image(nullptr)
     {}
 
     void init(const yarp::sig::FlexImage& img,
@@ -117,11 +117,11 @@ public:
         ros_seq_stamp.nsec = (int)((t-(int)t)*1e9);
     }
 
-    virtual size_t length() YARP_OVERRIDE { return 3; }
+    virtual size_t length() override { return 3; }
 
-    virtual size_t headerLength() YARP_OVERRIDE { return 0; }
+    virtual size_t headerLength() override { return 0; }
 
-    virtual size_t length(size_t index) YARP_OVERRIDE {
+    virtual size_t length(size_t index) override {
         size_t result = 0;
         switch (index) {
         case 0:
@@ -140,7 +140,7 @@ public:
         return result;
     }
 
-    virtual const char *data(size_t index) YARP_OVERRIDE {
+    virtual const char *data(size_t index) override {
         const char *result = 0 /*NULL*/;
         switch (index) {
         case 0:
@@ -156,15 +156,15 @@ public:
         return result;
     }
 
-    virtual yarp::os::PortReader *getReplyHandler() YARP_OVERRIDE { return NULL; }
+    virtual yarp::os::PortReader *getReplyHandler() override { return NULL; }
 
-    virtual yarp::os::Portable *getReference() YARP_OVERRIDE { return NULL; }
+    virtual yarp::os::Portable *getReference() override { return NULL; }
 
-    virtual bool dropRequested() YARP_OVERRIDE { return false; }
+    virtual bool dropRequested() override { return false; }
 
-    virtual void startWrite() YARP_OVERRIDE {}
+    virtual void startWrite() override {}
 
-    virtual void stopWrite() YARP_OVERRIDE {}
+    virtual void stopWrite() override {}
 };
 
 class YARP_wire_rep_utils_API WireImage {

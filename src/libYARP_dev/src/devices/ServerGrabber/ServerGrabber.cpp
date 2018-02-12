@@ -1,6 +1,6 @@
 /*
- * Copyright (C) 2017 iCub Facility
- * Authors: Nicolo' Genesio
+ * Copyright (C) 2017 Istituto Italiano di Tecnologia (IIT)
+ * Authors: Nicolò Genesio
  * CopyPolicy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
  */
 
@@ -10,6 +10,10 @@
 #include <yarp/dev/PolyDriver.h>
 #include <yarp/os/LogStream.h>
 #include <yarp/os/ResourceFinder.h>
+#include <yarp/sig/Vector.h>
+#include <yarp/os/PortablePair.h>
+#include <yarp/dev/FrameGrabberInterfaces.h>
+
 #include <cstring>
 
 using namespace yarp::os;
@@ -23,7 +27,7 @@ yarp::dev::DriverCreator *createServerGrabber()
             ("grabberDual", "grabberDual", "yarp::dev::ServerGrabber");
 }
 
-yarp::dev::DC1394::DC1394Parser::DC1394Parser() : fgCtrl_DC1394(YARP_NULLPTR) {};
+yarp::dev::DC1394::DC1394Parser::DC1394Parser() : fgCtrl_DC1394(nullptr) {};
 
 bool yarp::dev::DC1394::DC1394Parser::configure(IFrameGrabberControlsDC1394 *interface)
 {
@@ -202,7 +206,7 @@ bool yarp::dev::DC1394::DC1394Parser::respond(const Bottle& cmd, Bottle& respons
 
 yarp::dev::impl::ServerGrabberResponder::ServerGrabberResponder(bool _left) :
     left(_left),
-    server(YARP_NULLPTR)
+    server(nullptr)
 {}
 
 yarp::dev::impl::ServerGrabberResponder::~ServerGrabberResponder(){}
@@ -227,26 +231,26 @@ bool yarp::dev::impl::ServerGrabberResponder::respond(const os::Bottle &command,
 // **********ServerGrabber**********
 
 ServerGrabber::ServerGrabber():RateThread(DEFAULT_THREAD_PERIOD), period(DEFAULT_THREAD_PERIOD) {
-    responder = YARP_NULLPTR;
-    responder2 =YARP_NULLPTR;
-    rgbVis_p = YARP_NULLPTR;
-    rgbVis_p2 = YARP_NULLPTR;
-    fgImage = YARP_NULLPTR;
-    fgImage2 = YARP_NULLPTR;
-    fgImageRaw = YARP_NULLPTR;
-    fgImageRaw2 = YARP_NULLPTR;
-    fgCtrl_DC1394 = YARP_NULLPTR;
-    fgCtrl2_DC1394 = YARP_NULLPTR;
-//    fgAv = YARP_NULLPTR;
-    fgCtrl = YARP_NULLPTR;
-    fgCtrl2 = YARP_NULLPTR;
-    fgTimed = YARP_NULLPTR;
-    poly = YARP_NULLPTR;
-    poly2 = YARP_NULLPTR;
-    img=YARP_NULLPTR;
-    img2=YARP_NULLPTR;
-    img_Raw=YARP_NULLPTR;
-    img2_Raw=YARP_NULLPTR;
+    responder = nullptr;
+    responder2 =nullptr;
+    rgbVis_p = nullptr;
+    rgbVis_p2 = nullptr;
+    fgImage = nullptr;
+    fgImage2 = nullptr;
+    fgImageRaw = nullptr;
+    fgImageRaw2 = nullptr;
+    fgCtrl_DC1394 = nullptr;
+    fgCtrl2_DC1394 = nullptr;
+//    fgAv = nullptr;
+    fgCtrl = nullptr;
+    fgCtrl2 = nullptr;
+    fgTimed = nullptr;
+    poly = nullptr;
+    poly2 = nullptr;
+    img=nullptr;
+    img2=nullptr;
+    img_Raw=nullptr;
+    img2_Raw=nullptr;
     param.spoke = false;
     param.canDrop = true;
     param.addStamp = false;
@@ -258,7 +262,7 @@ ServerGrabber::ServerGrabber():RateThread(DEFAULT_THREAD_PERIOD), period(DEFAULT
     param.split = false;
 //    param.cap=AV;
     param.cap=COLOR;
-    p2 = YARP_NULLPTR;
+    p2 = nullptr;
     isSubdeviceOwned=false;
     count = 0;
     count2 = 0;
@@ -284,7 +288,7 @@ bool ServerGrabber::close() {
 
     if(responder){
         delete responder;
-        responder=YARP_NULLPTR;
+        responder=nullptr;
     }
 
     if(param.split)
@@ -305,25 +309,25 @@ bool ServerGrabber::close() {
     {
         poly->close();
         delete poly;
-        poly=YARP_NULLPTR;
+        poly=nullptr;
     }
 
     if(responder2)
     {
         delete responder2;
-        responder=YARP_NULLPTR;
+        responder=nullptr;
     }
 
     if(isSubdeviceOwned && poly2)
     {
         poly2->close();
         delete poly2;
-        poly2=YARP_NULLPTR;
+        poly2=nullptr;
     }
     isSubdeviceOwned=false;
-    if (p2!=YARP_NULLPTR) {
+    if (p2!=nullptr) {
         delete p2;
-        p2 =YARP_NULLPTR;
+        p2 =nullptr;
     }
     return true;
 }
@@ -541,11 +545,157 @@ bool ServerGrabber::initialize_YARP(yarp::os::Searchable &params)
 }
 
 bool ServerGrabber::respond(const yarp::os::Bottle& cmd,
-                                 yarp::os::Bottle& response, bool left, bool both=false) {
+                                  yarp::os::Bottle& response, bool left, bool both=false) {
     int code = cmd.get(0).asVocab();
     Bottle response2;
     switch (code)
     {
+    case VOCAB_FRAMEGRABBER_IMAGE:
+    {
+        switch (cmd.get(1).asVocab())
+        {
+            case VOCAB_GET:
+            {
+                switch (cmd.get(2).asVocab())
+                {
+                    case VOCAB_CROP:
+                    {
+                        response.clear();
+                        // If the device driver support it, use the device implementation, because it may be more efficient.
+                        // If not, acquire the whole image and crop it here before sending it.
+
+                        Bottle *list = cmd.get(4).asList();
+                        int nPoints = list->size() /2;          //  divided by 2 because each pixel is identified by 2 numbers (u,v)
+
+                        yarp::sig::VectorOf<std::pair<int, int> > vertices;
+                        vertices.resize(nPoints);
+
+                        for(int i=0; i<nPoints; i++)
+                        {
+                            vertices[i].first = list->get(i*2).asInt();
+                            vertices[i].second = list->get(i*2 +1).asInt();
+                        }
+
+                        ImageOf< PixelRgb > cropped;
+
+                        // Choose the interface and eventual offset depending on case.
+
+                        /* HW/SW configurations here:  (1a, 1b, 2a, 2b), for each one the user can request a crop on left or right image
+                         * 1) single HW camera as a source
+                         *  1a) split false:   a single image to handle
+                         *  1b) split true :   2 images, I have to handle left or right image. If user request a crop in the right side,
+                         *                      of the image, then add an offset
+                         *
+                         * 2) two HW sources
+                         *  2a) split true:   choose appropriate image source based on left/right request
+                         *  2b) split false:  choose appropriate image source based on crop position. Crop request have to belong to a
+                         *                      single frame, either left or right. Example: 2 cameras with 320x240 pixels each placed
+                         *                      one after the other, generates a single stitched image of 640x240.
+                         *                      Anyway a crop request like (200,100)(400,200) shall be rejected, even if it could be
+                         *                      considered as a part of the image resulting from the stitch.
+                         *                      Right now the decision is took based on the first point of vector 'vertices', since all
+                         *                      points are expected to belong to the same frame (left/right)
+                         *
+                         */
+
+                        // Default values here are valid for cases 1a and `left` side of 2a
+                        IFrameGrabberImage *imageInterface = fgImage;
+                        int u_offset = 0;
+
+                        if(param.twoCameras == false)   // a single HW source of images
+                        {
+                            imageInterface = fgImage;
+                            if(left == false)                               // if left is false, implicitly split is true
+                                u_offset = imageInterface->width()/2;       // 1b
+
+                        }
+                        else
+                        {
+                            if(param.split)                                 // 2a, right image
+                            {
+                                if(left == false)
+                                {
+                                    imageInterface = fgImage2;
+                                    u_offset = 0;
+                                }
+                            }
+                            else
+                            {
+                                if(vertices[0].first >= fgImage->width())    // 2b, right image
+                                {
+                                    imageInterface = fgImage2;
+                                    u_offset = -fgImage->width();
+                                }
+                            }
+
+                        }
+
+
+                        if(imageInterface != nullptr)
+                        {
+                            if(imageInterface->getImageCrop((cropType_id_t) cmd.get(3).asVocab(), vertices, cropped) )
+                            {
+                                // use the device output
+                            }
+                            else
+                            {
+                                // In case the device has not yet implemented this feature, do it here (less efficient)
+                                if(cmd.get(3).asVocab() == YARP_CROP_RECT)
+                                {
+                                    if(nPoints != 2)
+                                    {
+                                        response.addString("GetImageCrop failed: RECT mode requires 2 vertices.");
+                                        yError() << "GetImageCrop failed: RECT mode requires 2 vertices, got " << nPoints;
+                                        return false;
+                                    }
+                                    ImageOf< PixelRgb > full;
+                                    imageInterface->getImage(full);
+
+                                    cropped.resize(vertices[1].first - vertices[0].first +1, vertices[1].second - vertices[0].second +1);  // +1 to be inclusive
+                                    cropped.zero();
+                                    for(int u_in=vertices[0].first + u_offset, u_out=0; u_in<=vertices[1].first + u_offset; u_in++, u_out++)
+                                    {
+                                        for(int v_in=vertices[0].second, v_out=0; v_in <= vertices[1].second; v_in++, v_out++)
+                                        {
+                                            cropped.pixel(u_out, v_out).r = full.pixel(u_in, v_in).r;
+                                            cropped.pixel(u_out, v_out).g = full.pixel(u_in, v_in).g;
+                                            cropped.pixel(u_out, v_out).b = full.pixel(u_in, v_in).b;
+                                        }
+                                    }
+                                }
+                                else if(cmd.get(3).asVocab() == YARP_CROP_LIST)
+                                {
+                                    response.addString("List type not yet implemented");
+                                }
+                                else
+                                {
+                                    response.addString("Crop type unknown");
+                                }
+                            }
+                        }
+
+                        response.addVocab(VOCAB_CROP);
+                        response.addVocab(VOCAB_IS);
+                        response.addInt(cropped.width());                       // Actual width  of image in pixels, to check everything is ok
+                        response.addInt(cropped.height());                      // Actual height of image in pixels, to check everything is ok
+
+                        response.add(Value(cropped.getRawImage(), cropped.getRawImageSize()));
+                        return true;
+                    } break;
+                } break;
+
+            } break;
+
+            case VOCAB_SET:   // Nothing to do here yet
+            default:
+            {
+                yError() << "FrameGrabberImage interface received an unknown command " << cmd.toString();
+            } break;
+
+        }
+
+    } break;
+
     // first check if requests are coming from new iFrameGrabberControl2 interface and process them
     case VOCAB_FRAMEGRABBER_CONTROL2:
     {
@@ -579,6 +729,7 @@ bool ServerGrabber::respond(const yarp::os::Bottle& cmd,
         else
             return ifgCtrl_Parser.respond(cmd, response);
     } break;
+
     case VOCAB_RGB_VISUAL_PARAMS:
     {
         if(param.twoCameras)
@@ -707,7 +858,7 @@ bool ServerGrabber::attachAll(const PolyDriverList &device2attach)
         {
             case COLOR :
             {
-                if((fgImage==YARP_NULLPTR) || (fgImage2==YARP_NULLPTR))
+                if((fgImage==nullptr) || (fgImage2==nullptr))
                 {
                     yError()<<"ServerGrabber: capability required not supported";
                     return false;
@@ -716,19 +867,19 @@ bool ServerGrabber::attachAll(const PolyDriverList &device2attach)
             break;
             case RAW :
             {
-                if((fgImageRaw==YARP_NULLPTR) || (fgImageRaw2==YARP_NULLPTR))
+                if((fgImageRaw==nullptr) || (fgImageRaw2==nullptr))
                 {
                     yError()<<"ServerGrabber: capability required not supported";
                     return false;
                 }
             }
         }
-        if((rgbVis_p == YARP_NULLPTR) || (rgbVis_p2 == YARP_NULLPTR))
+        if((rgbVis_p == nullptr) || (rgbVis_p2 == nullptr))
         {
             yWarning()<<"ServerGrabber: Targets has not IVisualParamInterface, some features cannot be available";
         }
         //Configuring parsers
-        if(rgbVis_p != YARP_NULLPTR && rgbVis_p2 != YARP_NULLPTR)
+        if(rgbVis_p != nullptr && rgbVis_p2 != nullptr)
         {
             if(!(rgbParser.configure(rgbVis_p)) || !(rgbParser2.configure(rgbVis_p2)))
             {
@@ -736,7 +887,7 @@ bool ServerGrabber::attachAll(const PolyDriverList &device2attach)
                 return false;
             }
         }
-        if(fgCtrl != YARP_NULLPTR && fgCtrl2 != YARP_NULLPTR)
+        if(fgCtrl != nullptr && fgCtrl2 != nullptr)
         {
             if(!(ifgCtrl_Parser.configure(fgCtrl)) || !(ifgCtrl2_Parser.configure(fgCtrl2)))
             {
@@ -744,7 +895,7 @@ bool ServerGrabber::attachAll(const PolyDriverList &device2attach)
                 return false;
             }
         }
-        if(fgCtrl_DC1394 != YARP_NULLPTR && fgCtrl2_DC1394 != YARP_NULLPTR)
+        if(fgCtrl_DC1394 != nullptr && fgCtrl2_DC1394 != nullptr)
         {
             if(!(ifgCtrl_DC1394_Parser.configure(fgCtrl_DC1394)) || !(ifgCtrl2_DC1394_Parser.configure(fgCtrl2_DC1394)))
             {
@@ -768,7 +919,7 @@ bool ServerGrabber::attachAll(const PolyDriverList &device2attach)
         switch(param.cap){
             case COLOR :
             {
-                if(fgImage==YARP_NULLPTR)
+                if(fgImage==nullptr)
                 {
                     yError()<<"ServerGrabber: capability required not supported";
                     return false;
@@ -777,7 +928,7 @@ bool ServerGrabber::attachAll(const PolyDriverList &device2attach)
             break;
             case RAW :
             {
-                if(fgImageRaw==YARP_NULLPTR)
+                if(fgImageRaw==nullptr)
                 {
                     yError()<<"ServerGrabber: capability required not supported";
                     return false;
@@ -791,13 +942,13 @@ bool ServerGrabber::attachAll(const PolyDriverList &device2attach)
             return false;
         }
 
-        if(rgbVis_p == YARP_NULLPTR)
+        if(rgbVis_p == nullptr)
         {
             yWarning()<<"ServerGrabber: Targets has not IVisualParamInterface, some features cannot be available";
         }
 
         //Configuring parsers
-        if(rgbVis_p != YARP_NULLPTR)
+        if(rgbVis_p != nullptr)
         {
             if(!(rgbParser.configure(rgbVis_p)))
             {
@@ -805,7 +956,7 @@ bool ServerGrabber::attachAll(const PolyDriverList &device2attach)
                 return false;
             }
         }
-        if(fgCtrl != YARP_NULLPTR)
+        if(fgCtrl != nullptr)
         {
             if(!(ifgCtrl_Parser.configure(fgCtrl)))
             {
@@ -814,7 +965,7 @@ bool ServerGrabber::attachAll(const PolyDriverList &device2attach)
             }
         }
 
-        if(fgCtrl_DC1394 != YARP_NULLPTR)
+        if(fgCtrl_DC1394 != nullptr)
         {
             if(!(ifgCtrl_DC1394_Parser.configure(fgCtrl_DC1394)))
             {
@@ -843,16 +994,16 @@ void ServerGrabber::stopThread()
     if (yarp::os::RateThread::isRunning())
         yarp::os::RateThread::stop();
 
-    rgbVis_p       = YARP_NULLPTR;
-    rgbVis_p2      = YARP_NULLPTR;
-    fgImage        = YARP_NULLPTR;
-    fgImage2       = YARP_NULLPTR;
-    fgImageRaw     = YARP_NULLPTR;
-    fgImageRaw2    = YARP_NULLPTR;
-    fgCtrl         = YARP_NULLPTR;
-    fgCtrl2        = YARP_NULLPTR;
-    fgCtrl_DC1394  = YARP_NULLPTR;
-    fgCtrl2_DC1394 = YARP_NULLPTR;
+    rgbVis_p       = nullptr;
+    rgbVis_p2      = nullptr;
+    fgImage        = nullptr;
+    fgImage2       = nullptr;
+    fgImageRaw     = nullptr;
+    fgImageRaw2    = nullptr;
+    fgCtrl         = nullptr;
+    fgCtrl2        = nullptr;
+    fgCtrl_DC1394  = nullptr;
+    fgCtrl2_DC1394 = nullptr;
 }
 
 void ServerGrabber::split(const yarp::sig::Image& inputImage, yarp::sig::Image& _img, yarp::sig::Image& _img2)
@@ -876,7 +1027,6 @@ void ServerGrabber::split(const yarp::sig::Image& inputImage, yarp::sig::Image& 
 void ServerGrabber::setupFlexImage(const Image &_img, FlexImage &flex_i)
 {
     flex_i.setPixelCode(_img.getPixelCode());
-    flex_i.setPixelSize(_img.getPixelSize());
     flex_i.setQuantum(_img.getQuantum());
     flex_i.setExternal(_img.getRawImage(), _img.width(),_img.height());
 
@@ -1101,7 +1251,7 @@ void ServerGrabber::run()
             FlexImage& flex_i2=pImg2.prepare();
             if(param.cap==COLOR)
             {
-                if(fgImage!=YARP_NULLPTR && fgImage2 !=YARP_NULLPTR)
+                if(fgImage!=nullptr && fgImage2 !=nullptr)
                 {
                     fgImage->getImage(*img);
                     setupFlexImage(*img,flex_i);
@@ -1114,7 +1264,7 @@ void ServerGrabber::run()
             }
             if(param.cap==RAW)
             {
-                if(fgImageRaw!=YARP_NULLPTR && fgImageRaw2 !=YARP_NULLPTR)
+                if(fgImageRaw!=nullptr && fgImageRaw2 !=nullptr)
                 {
                     fgImageRaw->getImage(*img_Raw);
                     setupFlexImage(*img_Raw,flex_i);
@@ -1142,7 +1292,7 @@ void ServerGrabber::run()
             FlexImage& flex_i=pImg.prepare();
             if(param.cap==COLOR)
             {
-                if(fgImage!=YARP_NULLPTR && fgImage2 !=YARP_NULLPTR)
+                if(fgImage!=nullptr && fgImage2 !=nullptr)
                 {
                     flex_i.setPixelCode(VOCAB_PIXEL_RGB);
                     flex_i.resize(fgImage->width()*2,fgImage->height());
@@ -1156,7 +1306,7 @@ void ServerGrabber::run()
             }
             if(param.cap==RAW)
             {
-                if(fgImageRaw!=YARP_NULLPTR && fgImageRaw2 !=YARP_NULLPTR)
+                if(fgImageRaw!=nullptr && fgImageRaw2 !=nullptr)
                 {
                     flex_i.setPixelCode(VOCAB_PIXEL_MONO);
                     flex_i.resize(fgImageRaw->width()*2,fgImageRaw->height());
@@ -1185,7 +1335,7 @@ void ServerGrabber::run()
 
             if(param.cap==COLOR)
             {
-                if(fgImage!=YARP_NULLPTR)
+                if(fgImage!=nullptr)
                 {
                     yarp::sig::ImageOf<yarp::sig::PixelRgb> inputImage;
                     fgImage->getImage(inputImage);
@@ -1200,7 +1350,7 @@ void ServerGrabber::run()
             }
             if(param.cap==RAW)
             {
-                if(fgImageRaw!=YARP_NULLPTR)
+                if(fgImageRaw!=nullptr)
                 {
                     yarp::sig::ImageOf<yarp::sig::PixelMono> inputImage;
                     fgImageRaw->getImage(inputImage);
@@ -1231,7 +1381,7 @@ void ServerGrabber::run()
 
             if(param.cap==COLOR)
             {
-                if(fgImage!=YARP_NULLPTR)
+                if(fgImage!=nullptr)
                 {
                     fgImage->getImage(*img);
                     setupFlexImage(*img,flex_i);
@@ -1241,7 +1391,7 @@ void ServerGrabber::run()
             }
             if(param.cap==RAW)
             {
-                if(fgImageRaw!=YARP_NULLPTR)
+                if(fgImageRaw!=nullptr)
                 {
                     fgImageRaw->getImage(*img_Raw);
                     setupFlexImage(*img_Raw,flex_i);
@@ -1261,7 +1411,6 @@ void ServerGrabber::run()
 void ServerGrabber::shallowCopyImages(const yarp::sig::FlexImage& src, yarp::sig::FlexImage& dest)
 {
     dest.setPixelCode(src.getPixelCode());
-    dest.setPixelSize(src.getPixelSize());
     dest.setQuantum(src.getQuantum());
     dest.setExternal(src.getRawImage(), src.width(), src.height());
 }
@@ -1269,28 +1418,28 @@ void ServerGrabber::cleanUp()
 {
     if(param.cap==COLOR)
     {
-        if(img!=YARP_NULLPTR)
+        if(img!=nullptr)
         {
             delete img;
-            img=YARP_NULLPTR;
+            img=nullptr;
         }
-        if(img2!=YARP_NULLPTR)
+        if(img2!=nullptr)
         {
             delete img2;
-            img2=YARP_NULLPTR;
+            img2=nullptr;
         }
     }
     else
     {
-        if(img_Raw!=YARP_NULLPTR)
+        if(img_Raw!=nullptr)
         {
             delete img_Raw;
-            img_Raw=YARP_NULLPTR;
+            img_Raw=nullptr;
         }
-        if(img2_Raw!=YARP_NULLPTR)
+        if(img2_Raw!=nullptr)
         {
             delete img2_Raw;
-            img2_Raw=YARP_NULLPTR;
+            img2_Raw=nullptr;
         }
     }
 }

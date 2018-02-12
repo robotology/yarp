@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2015 iCub Facility, Istituto Italiano di Tecnologia
+ * Copyright (C) 2015 Istituto Italiano di Tecnologia (IIT)
  * Authors: Valentina Gaggero <valentina.gaggero@iit.it>
  * CopyPolicy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
  */
@@ -22,7 +22,7 @@ class yarp::rtf::jointsPosMotion::Private
 public:
     void init(yarp::dev::PolyDriver *polydriver);
     size_t getIndexOfJoint(int j);
-    void readJointsLimits(void);
+    void readJointsLimits();
 
     yarp::sig::Vector jointsList;
     yarp::sig::Vector encoders;
@@ -53,12 +53,12 @@ void yarp::rtf::jointsPosMotion::Private::init(yarp::dev::PolyDriver *polydriver
     timeout = 5.0;
 
     dd = polydriver;
-    RTF_ASSERT_ERROR_IF(dd->isValid(), "Unable to open device driver");
-    RTF_ASSERT_ERROR_IF(dd->view(ienc), "Unable to open encoders interface");
-    RTF_ASSERT_ERROR_IF(dd->view(ipos), "Unable to open position interface");
-    RTF_ASSERT_ERROR_IF(dd->view(icmd), "Unable to open control mode interface");
-    RTF_ASSERT_ERROR_IF(dd->view(iimd), "Unable to open interaction mode interface");
-    RTF_ASSERT_ERROR_IF(dd->view(ilim), "Unable to open limits interface");
+    RTF_ASSERT_ERROR_IF_FALSE(dd->isValid(), "Unable to open device driver");
+    RTF_ASSERT_ERROR_IF_FALSE(dd->view(ienc), "Unable to open encoders interface");
+    RTF_ASSERT_ERROR_IF_FALSE(dd->view(ipos), "Unable to open position interface");
+    RTF_ASSERT_ERROR_IF_FALSE(dd->view(icmd), "Unable to open control mode interface");
+    RTF_ASSERT_ERROR_IF_FALSE(dd->view(iimd), "Unable to open interaction mode interface");
+    RTF_ASSERT_ERROR_IF_FALSE(dd->view(ilim), "Unable to open limits interface");
 }
 
 
@@ -73,7 +73,7 @@ size_t yarp::rtf::jointsPosMotion::Private::getIndexOfJoint(int j)
 }
 
 
-void yarp::rtf::jointsPosMotion::Private::readJointsLimits(void)
+void yarp::rtf::jointsPosMotion::Private::readJointsLimits()
 {
     max_lims.resize(n_joints);
     min_lims.resize(n_joints);
@@ -163,7 +163,7 @@ void yarp::rtf::jointsPosMotion::setTimeout(double timeout)
 
 void yarp::rtf::jointsPosMotion::setSpeed(yarp::sig::Vector &speedlist)
 {
-    RTF_ASSERT_ERROR_IF((speedlist.size() != mPriv->jointsList.size()), "Speed list has a different size of joint list");
+    RTF_ASSERT_ERROR_IF_FALSE((speedlist.size() != mPriv->jointsList.size()), "Speed list has a different size of joint list");
     mPriv->speed = speedlist;
     for (size_t i = 0; i < mPriv->n_joints; i++) {
         mPriv->ipos->setRefSpeed((int)mPriv->jointsList[i], mPriv->speed[i]);
@@ -174,7 +174,7 @@ void yarp::rtf::jointsPosMotion::setSpeed(yarp::sig::Vector &speedlist)
 bool yarp::rtf::jointsPosMotion::goToSingle(int j, double pos, double *reached_pos)
 {
     size_t i = mPriv->getIndexOfJoint(j);
-    RTF_ASSERT_ERROR_IF(i < mPriv->n_joints, "Cannot move a joint not in list.");
+    RTF_ASSERT_ERROR_IF_FALSE(i < mPriv->n_joints, "Cannot move a joint not in list.");
 
     mPriv->ipos->positionMove((int)mPriv->jointsList[i], pos);
     double tmp = 0;
@@ -195,7 +195,7 @@ bool yarp::rtf::jointsPosMotion::goToSingle(int j, double pos, double *reached_p
         yarp::os::Time::delay(0.2);
     }
 
-    if(reached_pos != YARP_NULLPTR) {
+    if(reached_pos != nullptr) {
         *reached_pos = tmp;
     }
     return(ret);
@@ -229,7 +229,7 @@ bool yarp::rtf::jointsPosMotion::goTo(yarp::sig::Vector positions, yarp::sig::Ve
         yarp::os::Time::delay(0.2);
     }
 
-    if(reached_pos != YARP_NULLPTR) {
+    if(reached_pos != nullptr) {
         reached_pos->resize(mPriv->n_joints);
         *reached_pos = tmp;
     }
@@ -242,7 +242,7 @@ bool yarp::rtf::jointsPosMotion::checkJointLimitsReached(int j)
 {
     size_t i = mPriv->getIndexOfJoint(j);
 
-    RTF_ASSERT_ERROR_IF(i < mPriv->n_joints, "Cannot move a joint not in list.");
+    RTF_ASSERT_ERROR_IF_FALSE(i < mPriv->n_joints, "Cannot move a joint not in list.");
 
     double enc=0;
     mPriv->ienc->getEncoder((int)mPriv->jointsList[i], &enc);

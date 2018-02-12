@@ -1,5 +1,5 @@
 /*
-* Copyright (C) 2015 iCub Facility - Istituto Italiano di Tecnologia
+* Copyright (C) 2015 Istituto Italiano di Tecnologia (IIT)
 * Author: Marco Randazzo <marco.randazzo@iit.it>
 * CopyPolicy: Released under the terms of the GPLv2 or later, see GPL.TXT
 */
@@ -62,7 +62,7 @@ protected:
 
 public:
     LaserFromDepth(int period = 10) : RateThread(period),
-        iRGBD(YARP_NULLPTR),
+        iRGBD(nullptr),
         m_depth_width(0),
         m_depth_height(0),
         m_sensorsNum(0),

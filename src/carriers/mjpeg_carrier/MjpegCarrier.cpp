@@ -131,7 +131,7 @@ void jpeg_net_dest(j_compress_ptr cinfo) {
     /* The destination object is made permanent so that multiple JPEG images
      * can be written to the same buffer without re-executing jpeg_net_dest.
      */
-    if (cinfo->dest == NULL) {    /* first time for this JPEG object? */
+    if (cinfo->dest == nullptr) {    /* first time for this JPEG object? */
         cinfo->dest = (struct jpeg_destination_mgr *)
             (*cinfo->mem->alloc_large) ((j_common_ptr) cinfo, JPOOL_PERMANENT,
                                         sizeof(net_destination_mgr));
@@ -147,7 +147,7 @@ bool MjpegCarrier::write(ConnectionState& proto, SizedWriter& writer) {
     WireImage rep;
     FlexImage *img = rep.checkForImage(writer);
 
-    if (img==NULL) return false;
+    if (img==nullptr) return false;
     int w = img->width();
     int h = img->height();
     int row_stride = img->getRowSize();

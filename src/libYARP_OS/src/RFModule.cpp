@@ -116,7 +116,7 @@ bool RFModuleRespondHandler::read(ConnectionReader& connection) {
     bool result = owner.safeRespond(cmd, response);
     if (response.size() >= 1) {
         ConnectionWriter *writer = connection.getWriter();
-        if (writer!=YARP_NULLPTR) {
+        if (writer!=nullptr) {
             if (response.get(0).toString() == "many" && writer->isTextMode()) {
                 for (int i=1; i<response.size(); i++) {
                     Value& v = response.get(i);
@@ -159,18 +159,18 @@ public:
     RFModuleThreadedHandler *threaded_handler;
 
 
-    RFModuleHelper(RFModule& owner) : owner(owner), singleton_run_module(false), respond_handler(YARP_NULLPTR), threaded_handler(YARP_NULLPTR) {
+    RFModuleHelper(RFModule& owner) : owner(owner), singleton_run_module(false), respond_handler(nullptr), threaded_handler(nullptr) {
         respond_handler  = new RFModuleRespondHandler(owner);
     }
 
     ~RFModuleHelper() {
-        if (respond_handler != YARP_NULLPTR) {
+        if (respond_handler != nullptr) {
             delete respond_handler;
-            respond_handler = YARP_NULLPTR;
+            respond_handler = nullptr;
         }
-        if (threaded_handler != YARP_NULLPTR) {
+        if (threaded_handler != nullptr) {
             delete threaded_handler;
-            threaded_handler = YARP_NULLPTR;
+            threaded_handler = nullptr;
         }
     }
 
@@ -178,13 +178,13 @@ public:
     bool newThreadHandler() {
         threaded_handler = new RFModuleThreadedHandler(owner);
 
-        if (threaded_handler != YARP_NULLPTR) return true;
+        if (threaded_handler != nullptr) return true;
         else                                  return false;
     }
 
     void deleteThreadHandler() {
         delete threaded_handler;
-        threaded_handler = YARP_NULLPTR;
+        threaded_handler = nullptr;
     }
 
 
@@ -198,23 +198,25 @@ public:
 #define THREADED_HANDLER(x) (*(HELPER(x).threaded_handler))
 
 
-static RFModule *module = YARP_NULLPTR;
+static RFModule *module = nullptr;
 
 
 static void handler (int sig) {
+    YARP_UNUSED(sig);
     static int ct = 0;
     ct++;
+    yarp::os::Time::useSystemClock();
     if (ct > 3) {
         yInfo("Aborting (calling abort())...");
         std::abort();
     }
     yInfo("[try %d of 3] Trying to shut down.", ct);
 
-    if (module != YARP_NULLPTR) {
+    if (module != nullptr) {
         module->stopModule(false);
     }
 
-//    if (module!=YARP_NULLPTR) {
+//    if (module!=nullptr) {
 //        Bottle cmd, reply;
 //        cmd.fromString("quit");
 //        module->safeRespond(cmd, reply);
@@ -256,7 +258,7 @@ RFModule::RFModule() {
     stopFlag = false;
 
     //set up signal handlers for catching ctrl-c
-    if (module == YARP_NULLPTR) {
+    if (module == nullptr) {
         module = this;
     }
     else {
@@ -273,10 +275,10 @@ RFModule::RFModule() {
 
 
 RFModule::~RFModule() {
-    if (implementation != YARP_NULLPTR) {
+    if (implementation != nullptr) {
         //HELPER(implementation).stop();
         delete &HELPER(implementation);
-        implementation = YARP_NULLPTR;
+        implementation = nullptr;
     }
     yarp::os::Network::finiMinimum();
 }
@@ -292,34 +294,40 @@ int RFModule::runModule() {
     HELPER(implementation).setSingletonRunModule();
 
     // Setting up main loop
+    // Use yarp::os::Time
+    double currentRun;
+    double elapsed;
+    double sleepPeriod;
 
-    YARP_timeval currentRunTV;
-    YARP_timeval elapsedTV;
-    YARP_timeval sleepPeriodTV;
-    YARP_timeval oneSecTV;
-
-    fromDouble(oneSecTV, 1.0);
-
-    while (!isStopping()) {
-        getTime(currentRunTV);
-
+    while (!isStopping())
+    {
+        currentRun = yarp::os::Time::now();
         // If updateModule() returns false we exit the main loop.
         if (!updateModule()) {
             break;
         }
 
+        // At the end of each run of updateModule function, the thread is supposed
+        // to be suspended and release CPU to other threads.
+        // Calling a yield here will help the threads to alternate in the execution.
+        // Note: call yield BEFORE computing elapsed time, so that any time spent due to
+        // yield is took into account and the sleep time is correct.
+        yarp::os::Time::yield();
+
         // The module is stopped for getPeriod() seconds.
         // If getPeriod() returns a time > 1 second, we check every second if
         // the module stopping, and eventually we exit the main loop.
-        do {
-            getTime(elapsedTV);
-            fromDouble(sleepPeriodTV, getPeriod());
-            addTime(sleepPeriodTV, currentRunTV);
-            subtractTime(sleepPeriodTV, elapsedTV);
-            if (toDouble(sleepPeriodTV) > 1) {
-                sleepThread(oneSecTV);
-            } else {
-                sleepThread(sleepPeriodTV);
+        do
+        {
+            elapsed = yarp::os::Time::now() - currentRun;
+            sleepPeriod = getPeriod() - elapsed;
+            if(sleepPeriod > 1)
+            {
+                Time::delay(1.0);
+            }
+            else
+            {
+                Time::delay(sleepPeriod);
                 break;
             }
         } while (!isStopping());
@@ -392,6 +400,7 @@ int RFModule::runModuleThreaded(ResourceFinder &rf) {
 
 
 bool RFModule::configure(yarp::os::ResourceFinder &rf) {
+    YARP_UNUSED(rf);
     return true;
 }
 
@@ -458,7 +467,7 @@ bool RFModule::isStopping() {
 
 
 bool RFModule::joinModule(double seconds) {
-    if (&THREADED_HANDLER(implementation) != YARP_NULLPTR) {
+    if (&THREADED_HANDLER(implementation) != nullptr) {
         if (THREADED_HANDLER(implementation).join(seconds)) {
             HELPER(implementation).deleteThreadHandler();
             return true;

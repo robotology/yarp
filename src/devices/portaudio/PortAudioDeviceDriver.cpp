@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2013 iCub Facility - Istituto Italiano di Tecnologia
+ * Copyright (C) 2013 Istituto Italiano di Tecnologia (IIT)
  * Authors: Marco Randazzo, Paul Fitzpatrick
  * CopyPolicy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
  *
@@ -335,7 +335,7 @@ bool PortAudioDeviceDriver::getSound(yarp::sig::Sound& sound)
     {
          buff_size = dataBuffers.recData->size();
          if (buff_size == 0 && buff_size_wdt++ == 100) break;
-         yarp::os::Time::delay(SLEEP_TIME);
+         yarp::os::SystemClock::delaySystem(SLEEP_TIME);
     }
     buff_size_wdt = 0;
 
@@ -393,7 +393,7 @@ void streamThread::run()
             if( err != paNoError ) {handleError(); return;}
 
             while( ( err = Pa_IsStreamActive( stream ) ) == 1 )
-                {yarp::os::Time::delay(SLEEP_TIME);}
+                {yarp::os::SystemClock::delaySystem(SLEEP_TIME);}
             if( err < 0 ) {handleError(); return;}
 
             err = Pa_StopStream( stream );
@@ -405,7 +405,7 @@ void streamThread::run()
         if (something_to_record)
         {
             while( ( err = Pa_IsStreamActive( stream ) ) == 1 )
-                {yarp::os::Time::delay(SLEEP_TIME);}
+                {yarp::os::SystemClock::delaySystem(SLEEP_TIME);}
             if( err < 0 ) {handleError(); return;}
         }
 

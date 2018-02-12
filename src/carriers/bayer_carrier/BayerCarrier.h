@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2012 IITRBCS
+ * Copyright (C) 2012 Istituto Italiano di Tecnologia (IIT)
  * Authors: Paul Fitzpatrick
  * CopyPolicy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
  *
@@ -69,7 +69,7 @@ public:
         image_data_len(0),
         consumed(0),
         local(yarp::os::ConnectionReader::createConnectionReader(*this)),
-        parent(YARP_NULLPTR),
+        parent(nullptr),
         need_reset(true),
         have_result(false),
         happy(local!=0),
