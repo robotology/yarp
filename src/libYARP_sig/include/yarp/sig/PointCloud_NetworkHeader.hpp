@@ -7,6 +7,8 @@
 #include <yarp/os/Portable.h>
 #include <yarp/os/Bottle.h>
 #include <yarp/sig/Vector.h>
+#include <map>
+#include <yarp/sig/PointCloudTypes.hpp>
 
 namespace yarp {
     namespace sig {
@@ -19,40 +21,41 @@ namespace yarp {
 
 // Define a bit for each piece of information we want to carry
 // Is enum better?? Define some helper to get a string from number
-#define   PC_XY_DATA                        1 << 0
-#define   PC_XYZ_DATA                       1 << 1
-#define   PC_RGBA_DATA                      1 << 2
-#define   PC_INTENSITY_DATA                 1 << 3
-#define   PC_INTEREST_DATA                  1 << 4   // in PCL this field is also called strenght
-#define   PC_NORMAL_DATA                    1 << 5   // contains also a float curvature
-#define   PC_RANGE_DATA                     1 << 6
-#define   PC_VIEWPOINT_DATA                 1 << 7
-#define   PC_MOMENT_INV_DATA                1 << 8
-#define   PC_RADII_RSD_DATA                 1 << 9
-#define   PC_BOUNDARY_DATA                  1 << 10
-#define   PC_PRINCIPAL_CURVATURE_DATA       1 << 11
-#define   PC_PFH_SIGNAT_125_DATA            1 << 12
-#define   PC_FPFH_SIGNAT_33_DATA            1 << 13
-#define   PC_VFH_SIGNAT_308_DATA            1 << 14
-#define   PC_NARF_36_DATA                   1 << 15
-#define   PC_BORDER_DATA                    1 << 16
-#define   PC_INTENSITY_GRAD_DATA            1 << 17
-#define   PC_HISTOGRAM_DATA                 1 << 18
-#define   PC_SCALE_DATA                     1 << 19
-#define   PC_CONFIDENCE_DATA                1 << 20
-#define   PC_RADIUS_DATA                    1 << 21
-#define   PC_USER_DEFINED                   1 << 22
+#define   PC_XY_DATA                        (1 << 0)
+#define   PC_XYZ_DATA                       (1 << 1)
+#define   PC_RGBA_DATA                      (1 << 2)
+#define   PC_INTENSITY_DATA                 (1 << 3)
+#define   PC_INTEREST_DATA                  (1 << 4)   // in PCL this field is also called strenght
+#define   PC_NORMAL_DATA                    (1 << 5)   // contains also a float curvature
+#define   PC_RANGE_DATA                     (1 << 6)
+#define   PC_VIEWPOINT_DATA                 (1 << 7)
+#define   PC_MOMENT_INV_DATA                (1 << 8)
+#define   PC_RADII_RSD_DATA                 (1 << 9)
+#define   PC_BOUNDARY_DATA                  (1 << 10)
+#define   PC_PRINCIPAL_CURVATURE_DATA       (1 << 11)
+#define   PC_PFH_SIGNAT_125_DATA            (1 << 12)
+#define   PC_FPFH_SIGNAT_33_DATA            (1 << 13)
+#define   PC_VFH_SIGNAT_308_DATA            (1 << 14)
+#define   PC_NARF_36_DATA                   (1 << 15)
+#define   PC_BORDER_DATA                    (1 << 16)
+#define   PC_INTENSITY_GRAD_DATA            (1 << 17)
+#define   PC_HISTOGRAM_DATA                 (1 << 18)
+#define   PC_SCALE_DATA                     (1 << 19)
+#define   PC_CONFIDENCE_DATA                (1 << 20)
+#define   PC_RADIUS_DATA                    (1 << 21)
+#define   PC_USER_DEFINED                   (1 << 22)
 
 // Shortcuts names for matching PCL predefined types
 #define   PCL_POINT2D_XY                (PC_XY_DATA)
 #define   PCL_POINT_XYZ                 (PC_XYZ_DATA)
+
 #define   PCL_POINT_XYZ_RGBA            (PC_XYZ_DATA | PC_RGBA_DATA)
 #define   PCL_POINT_XYZ_I               (PC_XYZ_DATA | PC_INTENSITY_DATA)
+
 #define   PCL_INTEREST_POINT_XYZ        (PC_XYZ_DATA | PC_INTEREST_DATA)
 #define   PCL_NORMAL                    (PC_NORMAL_DATA)        // add 'POINT' in the name?
 #define   PCL_POINT_XYZ_NORMAL          (PC_XYZ_DATA | PC_NORMAL_DATA)
 #define   PCL_POINT_XYZ_NORMAL_RGBA     (PC_XYZ_DATA | PC_RGBA_DATA | PC_NORMAL_DATA)   // Actually PCL has PointXYZRGBNormal, not RGBA, but downgrade from rgba to rgb can be done while casting
-#define   PCL_POINT_XYZ_I_NORMAL        (PC_XYZ_DATA | PC_INTENSITY_DATA | PC_NORMAL_DATA)
 #define   PCL_POINT_XYZ_I_NORMAL        (PC_XYZ_DATA | PC_INTENSITY_DATA | PC_NORMAL_DATA)
 #define   PCL_POINT_XYZ_RANGE           (PC_XYZ_DATA | PC_RANGE_DATA)
 #define   PCL_POINT_XYZ_VIEWPOINT       (PC_XYZ_DATA | PC_VIEWPOINT_DATA)
@@ -71,6 +74,49 @@ namespace yarp {
 #define   PCL_POINT_XYZ_SURFEL          (PC_XYZ_DATA | PC_RGBA_DATA | PC_NORMAL_DATA | PC_RADIUS_DATA | PC_CONFIDENCE_DATA)
 
 
+std::map<std::pair<int, int>, int> offsetMap = {
+    // PCL_POINT_XYZ_RGBA
+    {std::make_pair(PCL_POINT_XYZ_RGBA, PC_RGBA_DATA) , sizeof(XYZ_DATA)},
+
+    // PCL_POINT_XYZ_I
+    {std::make_pair(PCL_POINT_XYZ_I, PC_INTENSITY_DATA) , sizeof(XYZ_DATA)},
+
+    // PCL_INTEREST_POINT_XYZ
+    {std::make_pair(PCL_INTEREST_POINT_XYZ, PC_INTEREST_DATA) , sizeof(XYZ_DATA)},
+
+    // PCL_POINT_XYZ_NORMAL
+    {std::make_pair(PCL_POINT_XYZ_NORMAL, PC_NORMAL_DATA) , sizeof(XYZ_DATA)},
+
+//    // PCL_XYZ_NORMAL_RGBA TBD... problems with curvature
+//    {std::make_pair(PCL_POINT_XYZ_NORMAL_RGBA, PC_NORMAL_DATA) , sizeof(XYZ_DATA},
+//    {std::make_pair(PCL_POINT_XYZ_NORMAL_RGBA, PC_RGBA_DATA) , sizeof(XYZ_DATA) + sizeof(NORMAL_DATA)},
+
+//    // PCL_XYZ_I_NORMAL TBD... problems with curvature
+                                 };
+
+
+std::map<int, std::vector<int> > compositionMap = {
+    // PCL_POINT_XYZ_RGBA
+    {PCL_POINT_XYZ_RGBA, std::vector<int> {PC_XYZ_DATA, PC_RGBA_DATA}},
+    // PCL_POINT_XYZ_I
+    {PCL_POINT_XYZ_I, std::vector<int> {PC_XYZ_DATA, PC_INTENSITY_DATA}},
+    // PCL_INTEREST_POINT_XYZ
+    {PCL_INTEREST_POINT_XYZ, std::vector<int> {PC_XYZ_DATA, PC_INTEREST_DATA}},
+    // PCL_POINT_XYZ_NORMAL
+    {PCL_POINT_XYZ_NORMAL, std::vector<int> {PC_XYZ_DATA, PC_NORMAL_DATA}}
+
+};
+
+std::map<int, size_t> sizeMap = {
+    {PC_XY_DATA, sizeof(XY_DATA)},
+    {PC_XYZ_DATA, sizeof(XYZ_DATA)},
+    {PC_RGBA_DATA, sizeof(RGBA_DATA)},
+    {PC_INTENSITY_DATA, sizeof(intensity)},
+    {PC_INTEREST_DATA, sizeof(strength)},
+    {PC_NORMAL_DATA, sizeof(NORMAL_DATA)},
+    {PC_RANGE_DATA, sizeof(range)},
+    {PC_VIEWPOINT_DATA, sizeof(VIEWPOINT_DATA)},
+};
 // Defined as in PCL pointTypes.h file for better compatibility
 enum BorderTrait
 {

@@ -4,8 +4,8 @@
 
 #include <yarp/sig/Vector.h>
 #include <yarp/os/LogStream.h>
-#include <yarp/sig/PointCloudTypes.hpp>
 #include <yarp/sig/PointCloud_NetworkHeader.hpp>
+#include <cstring>
 
 
 
@@ -30,7 +30,7 @@ public:
         header.width = width;
         header.height = height;
         data.resize(width * height);
-    };
+    }
 
     int wireSizeBytes()
     {
@@ -43,28 +43,77 @@ public:
     }
 
     // Portable interface
+
     PointCloud<T>();
-    virtual bool read(yarp::os::ConnectionReader& reader)
+
+    virtual bool read(yarp::os::ConnectionReader& connection)
     {
         yTrace();
-        data.read(reader);
+        connection.convertTextMode();
+        yarp::sig::PointCloud_NetworkHeader _header;
+        bool ok = connection.expectBlock((char*)&_header, sizeof(_header));
+        if (!ok) return false;
+
+        data.resize(_header.height * _header.width);
+        std::memset((void *) data.getFirst(), 0, data.size() * sizeof(T));
+
+        header.height = _header.height;
+        header.width = _header.width;
+        header.isDense = _header.isDense;
+
+        if (header.pointType == _header.pointType) //Working
+        {
+            yInfo("IS MATCHIIIIING BITCHESSSS\n");
+            return data.read(connection);
+        }
+
+        T *tmp = data.getFirst();
+
+        yAssert(tmp != nullptr);
+
+        // Skip the vector header....
+        connection.expectInt(); // Code auto-generated do not remove
+        connection.expectInt(); // Code auto-generated do not remove
+
+        std::vector<int> recipe = getComposition(_header.pointType);
+
+
+        yarp::os::ManagedBytes dummy;
+        for (uint i=0; i<data.size(); i++)
+        {
+            for (size_t j = 0; j<recipe.size(); j++)
+            {
+                size_t sizeToRead = sizeMap.find(recipe[j])->second;
+                if ((header.pointType & recipe[j]))
+                {
+                    size_t offset = getOffset(header.pointType, recipe[j]);
+                    connection.expectBlock((char*) &tmp[i]+offset, sizeToRead);
+                }
+                else
+                {
+                    dummy.allocateOnNeed(sizeToRead, sizeToRead);
+                    connection.expectBlock(dummy.bytes().get(), sizeToRead);
+                }
+            }
+        }
+
+        connection.convertTextMode();
         return true;
-    };
+    }
 
     virtual bool write(yarp::os::ConnectionWriter& writer)
     {
         writer.appendBlock((char*)&header, sizeof(header));
         return data.write(writer);
-    };
-    virtual yarp::os::Type getType()                        { return yarp::os::Type::byName("yarp/pointCloud"); };
+    }
+    virtual yarp::os::Type getType()                        { return yarp::os::Type::byName("yarp/pointCloud"); }
 
     virtual yarp::os::ConstString toString(int precision=-1, int width=-1)
     {
         yTrace();
         //yarp::os::ConstString("ciaoooo");
         return PointCloud< T >::toString(precision, width);
-    };
-
+    }
 
 
     // Internal conversions
@@ -72,8 +121,31 @@ public:
 
     yarp::sig::VectorOf<T> data;
 
-// private:
+ private:
     yarp::sig::PointCloud_NetworkHeader    header;
+
+    std::vector<int> getComposition(int type_composite)
+    {
+        //todo probably
+        std::vector<int> ret;
+        auto it = compositionMap.find(type_composite);
+        if (it != compositionMap.end())
+        {
+            ret = it->second;
+        }
+        return ret;
+    }
+    size_t getOffset(int type_composite, int type_basic)
+    {
+        size_t offset = 0;
+        auto it = offsetMap.find(std::make_pair(type_composite, type_basic));
+        if (it != offsetMap.end())
+        {
+            offset = it->second;
+        }
+        return offset;
+
+    }
 };
 
 
@@ -101,17 +173,11 @@ public:
 
 namespace yarp {
     namespace sig {
-        template<> yarp::sig::PointCloud<XYZ_RGBA_DATA>::PointCloud()   { PointCloud::header.pointType=PCL_POINT_XYZ_RGBA; };
-        template<> yarp::sig::PointCloud<XYZ_DATA>::PointCloud()        { PointCloud::header.pointType=PCL_POINT_XYZ; };
+        template<> yarp::sig::PointCloud<XYZ_RGBA_DATA>::PointCloud()   { PointCloud::header.pointType=PCL_POINT_XYZ_RGBA; }
+        template<> yarp::sig::PointCloud<XYZ_DATA>::PointCloud()        { PointCloud::header.pointType=PCL_POINT_XYZ; }
 
         template<> yarp::os::ConstString yarp::sig::PointCloud <XYZ_RGBA_DATA> ::toString(int precision, int width);
         template<> yarp::os::ConstString yarp::sig::PointCloud <XYZ_DATA> ::toString(int precision, int width);
-
-        template<> bool VectorOf <XYZ_RGBA_DATA> ::read(yarp::os::ConnectionReader& connection);
-        template<> bool VectorOf <XYZ_RGBA_DATA> ::write(yarp::os::ConnectionWriter& connection);
-
-        template<> bool VectorOf <XYZ_DATA> ::read(yarp::os::ConnectionReader& connection);
-        template<> bool VectorOf <XYZ_DATA> ::write(yarp::os::ConnectionWriter& connection);
     }
 }
 
@@ -122,149 +188,12 @@ inline int BottleTagMap <XYZ_RGBA_DATA> ()
     return BOTTLE_TAG_DOUBLE;
 }
 
-
 template<>
-bool yarp::sig::VectorOf <XYZ_RGBA_DATA> ::read(yarp::os::ConnectionReader& connection)
+inline int BottleTagMap <XYZ_DATA> ()
 {
-    yTrace();
-    connection.convertTextMode();
-    PointCloud_NetworkHeader header;
-    bool ok = connection.expectBlock((char*)&header, sizeof(header));
-    if (!ok) return false;
-
-    if (header.width > 0 && header.height > 0)    // if there are data
-    {
-        len = header.width * header.height;
-        resize(len);
-
-        XYZ_RGBA_DATA *tmp = getFirst();
-
-
-        // Verify what to do depending on source type
-        switch(header.pointType)
-        {
-            case PCL_POINT_XYZ_RGBA:    // types do match, easy case.
-            {
-                yInfo() << "Types match";
-                for(uint i=0; i<len; i++)
-                {
-                    // Copy data stripping out padding bytes ( remove unused memory to optimize size for transmission over network)
-                    // --> if both sender and receiver are on the same machine, can I leverage on IPC to just copy stuff
-                    ok = connection.expectBlock((char*) &tmp[i]._xyz, sizeof(XYZ_RGBA_DATA::_xyz));
-                    ok &= connection.expectBlock((char*) &tmp[i].rgba, sizeof(XYZ_RGBA_DATA::rgba));
-                    if (!ok)
-                        return false;
-//                     yDebug() << "x: " << tmp[i].x << "y: " << tmp[i].y << "z: " << tmp[i].z;
-//                     yDebug() << "r: " << (u_int8_t)tmp[i].r << "g: " << (u_int8_t)tmp[i].g << "b: " << (u_int8_t)tmp[i].b << "\n";
-                }
-                break;
-            }
-
-            case PCL_POINT_XYZ:         // types does not match exactly, but conversion is possible.
-            {
-                yInfo() << "Types does not match, but conversion is possible - NOT YET IMPLEMENTED";
-                break;
-            }
-
-            case PCL_NORMAL:
-            case PCL_BOUNDARY:
-//             case bla bla bla (put here all types supported which are not convertible
-            {
-                yError() << "Requested type cannot be read from received message. Source type is " << header.pointType << \
-                " while client is trying to read PCL_POINT_XYZ_RGBA (" << PCL_POINT_XYZ_RGBA << ")";
-                // read the memory, also if type does not match, to clean the buffer for next read... really needed?
-                // Vector isn't doing this. skip at the beginning and do some tests to verify
-//                 const char *ptr = getMemoryBlock();
-//                 yAssert(ptr != 0);
-//                 ok = connection.expectBlock(ptr, sizeof(len));
-//                 if (!ok) return false;
-                break;
-            }
-
-            case PC_USER_DEFINED:
-            {
-                yError() << "Source type is a custom user defined one, unknown conversion to requested type PCL_POINT_XYZ_RGBA";
-                // read the memory, also if type does not match, to clean the buffer for next read... really needed?
-                // Vector isn't doing this. skip at the beginning and do some tests to verify
-//                 const char *ptr = getMemoryBlock();
-//                 yAssert(ptr != 0);
-//                 ok = connection.expectBlock(ptr, sizeof(len));
-//                 if (!ok) return false;
-                break;
-            }
-            default:                    // types do not match and conversion is not possible
-            {
-                yError() << "Requested type cannot be read from received message. Source type is " << header.pointType << \
-                " while client is trying to read PCL_POINT_XYZ_RGBA (" << PCL_POINT_XYZ_RGBA << ")";
-                break;
-            }
-        }
-
-    }
-    else
-    {
-        yError() << "Header not valid";
-        return false;
-    }
-
-    return !connection.isError();
+    return BOTTLE_TAG_DOUBLE;
 }
 
-template<>
-bool yarp::sig::VectorOf <XYZ_RGBA_DATA> ::write(yarp::os::ConnectionWriter& connection)
-{
-    yTrace();
-    // Header is already set by the generic PointCloud
-    const char *ptr = getMemoryBlock();
-//     int elemSize=getElementSize();
-    yAssert(ptr != NULL);
-
-    XYZ_RGBA_DATA *tmp = getFirst();
-    for(uint i=0; i<len; i++)
-    {
-        // Copy data stripping out padding bytes ( remove unused memory to optimize size for transmission over network)
-        // --> if both sender and receiver are on the same machine, can I leverage on IPC to just copy stuff
-        connection.appendExternalBlock((char*) &tmp[i]._xyz, sizeof(XYZ_RGBA_DATA::_xyz));
-        connection.appendExternalBlock((char*) &tmp[i].rgba, sizeof(XYZ_RGBA_DATA::rgba));
-
-//         yDebug() << "x: " << tmp[i].x << "y: " << tmp[i].y << "z: " << tmp[i].z;
-//         yDebug() << "r: " << (u_int8_t)tmp[i].r << "g: " << (u_int8_t)tmp[i].g << "b: " << (u_int8_t)tmp[i].b << "\n";
-    }
-    // if someone is foolish enough to connect in text mode,
-    // let them see something readable.
-    connection.convertTextMode();
-
-    return !connection.isError();
-}
-
-
-template<>
-bool yarp::sig::VectorOf <XYZ_DATA> ::read(yarp::os::ConnectionReader& connection)
-{
-    yTrace();
-    return true;
-}
-
-template<>
-bool yarp::sig::VectorOf <XYZ_DATA> ::write(yarp::os::ConnectionWriter& connection)
-{
-    yTrace();
-//     VectorPortContentHeader header;  // maybe not needed, since the PC will have an header on his own
-//    header.listTag = (BOTTLE_TAG_LIST | getBottleTag());
-//    header.listLen = (int)getListSize();
-//    connection.appendBlock((char*)&header, sizeof(header));
-    const char *ptr = getMemoryBlock();
-    int elemSize=getElementSize();
-    yAssert(ptr != NULL);
-
-    connection.appendExternalBlock(ptr, elemSize*getListSize());
-
-    // if someone is foolish enough to connect in text mode,
-    // let them see something readable.
-    connection.convertTextMode();
-
-    return !connection.isError();
-}
 
 namespace yarp{
     namespace sig {

@@ -34,11 +34,54 @@ public:
 
     virtual void runTests() override
     {
-        bool netMode = Network::setLocalMode(true);
-        PointCloud<XYZ_RGBA_DATA>  testPC;
-        testPC.resize(100,20);
+        report(0, "Checking XYZ_RGBA_DATA sending");
+        BufferedPort< PointCloud<XYZ_RGBA_DATA> > outPort;
+        Port inPort;
+        checkTrue(outPort.open("/test/pointcloud/out"),"Opening output port");
+        checkTrue(inPort.open("/test/pointcloud/in"),"Opening input port");
+        checkTrue(NetworkBase::connect(outPort.getName(), inPort.getName()),"Checking connection");
+        PointCloud<XYZ_RGBA_DATA>& testPC = outPort.prepare();
+        int width  = 100;
+        int height = 20;
+        testPC.resize(width, height);
 
-        testPC.data[0].x = 0;
+        for (int i=0; i<width*height; i++)
+        {
+            testPC.data[i].x = i;
+            testPC.data[i].y = i + 1;
+            testPC.data[i].z = i + 2;
+            testPC.data[i].r = '1';
+            testPC.data[i].g = '2';
+            testPC.data[i].b = '3';
+            testPC.data[i].a = '4';
+        }
+
+        yarp::os::Time::delay(0.3);
+
+        outPort.write();
+
+        PointCloud<XYZ_RGBA_DATA> inCloud;
+        inPort.read(inCloud);
+
+        checkTrue(inCloud.dataSizeBytes() == testPC.dataSizeBytes(), "Checking size consistency");
+
+        bool ok = true;
+        for (int i=0; i<width*height; i++)
+        {
+            ok &= inCloud.data[i].x == i;
+            ok &= inCloud.data[i].y == i + 1;
+            ok &= inCloud.data[i].z == i + 2;
+            ok &= inCloud.data[i].r == '1';
+            ok &= inCloud.data[i].g == '2';
+            ok &= inCloud.data[i].b == '3';
+            ok &= inCloud.data[i].a == '4';
+        }
+
+        checkTrue(ok, "Checking data validity");
+
+
+
+
 
         printf("Hello Point cloud test\n");
     }

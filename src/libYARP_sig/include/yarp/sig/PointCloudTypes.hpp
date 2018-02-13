@@ -25,10 +25,18 @@ namespace yarp {
 
 // Definition of single fields data structures
 YARP_BEGIN_PACK
+
 typedef struct
 {
-    float x;
-    float y;
+    union
+    {
+        float _xy[2];
+        struct
+        {
+            float x;
+            float y;
+        };
+    };
 } XY_DATA;
 YARP_END_PACK
 
@@ -49,7 +57,7 @@ typedef struct
 } XYZ_DATA;
 YARP_END_PACK
 
-// RGBA fiels - quite useless alone
+// RGBA fields - quite useless alone
 YARP_BEGIN_PACK
 typedef struct
 {
