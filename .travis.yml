@@ -310,9 +310,6 @@ install:
   # Fix issue in trusty version of Qt5
   - if [ "$TRAVIS_OS_NAME" == "linux" ]; then sudo sed -i 's/COPY_ONLY/COPYONLY/g' /usr/lib/x86_64-linux-gnu/cmake/Qt5Core/Qt5CoreMacros.cmake; fi
 
-  # Install GPL dependencies (qcustomplot)
-  - if [ "$TRAVIS_OS_NAME" == "osx" ]; then brew install readline; fi
-
   # Install other dependencies (opencv, eigen, graphviz)
   - if [ "$TRAVIS_OS_NAME" == "osx" ]; then /usr/bin/yes | pip2 uninstall numpy || true; fi
   - if [ "$TRAVIS_OS_NAME" == "osx" ]; then brew install opencv eigen graphviz; fi
