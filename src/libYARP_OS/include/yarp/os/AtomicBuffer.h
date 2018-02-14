@@ -93,6 +93,19 @@ public:
         return true;
     }
 
+    /**
+     * @brief getNumElements
+     * @return the number of elements in the queue
+     */
+    size_t getNumElements()
+    {
+        size_t elemNum = 0;
+        bufMutex.lock();
+        elemNum = array.size();
+        bufMutex.unlock();
+        return elemNum;
+    }
+
     void interrupt() {
         // This function has to be called in the interrupt() of the thread that uses
         // this buffer
