@@ -96,6 +96,15 @@ std::map<std::pair<int, int>, int> offsetMap = {
 
 
 std::map<int, std::vector<int> > compositionMap = {
+    // recipe for basic data
+    {PC_XY_DATA,        std::vector<int> {PC_XY_DATA}},
+    {PC_XYZ_DATA,       std::vector<int> {PC_XYZ_DATA}},
+    {PC_RGBA_DATA,      std::vector<int> {PC_RGBA_DATA}},
+    {PC_INTENSITY_DATA, std::vector<int> {PC_INTENSITY_DATA}},
+    {PC_INTEREST_DATA,  std::vector<int> {PC_INTEREST_DATA}},
+    {PC_NORMAL_DATA,    std::vector<int> {PC_NORMAL_DATA}},
+    {PC_RANGE_DATA,     std::vector<int> {PC_RANGE_DATA}},
+    {PC_VIEWPOINT_DATA, std::vector<int> {PC_VIEWPOINT_DATA}},
     // PCL_POINT_XYZ_RGBA
     {PCL_POINT_XYZ_RGBA, std::vector<int> {PC_XYZ_DATA, PC_RGBA_DATA}},
     // PCL_POINT_XYZ_I
@@ -106,6 +115,8 @@ std::map<int, std::vector<int> > compositionMap = {
     {PCL_POINT_XYZ_NORMAL, std::vector<int> {PC_XYZ_DATA, PC_NORMAL_DATA}}
 
 };
+
+// TODO unify the info if possible
 
 std::map<int, size_t> sizeMap = {
     {PC_XY_DATA, sizeof(XY_DATA)},
