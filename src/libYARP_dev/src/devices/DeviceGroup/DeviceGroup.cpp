@@ -4,13 +4,14 @@
  * CopyPolicy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
  */
 
+#include "DeviceGroup.h"
+
 #include <cstdio>
 #include <yarp/os/Time.h>
 #include <yarp/os/Log.h>
 #include <yarp/os/Semaphore.h>
 #include <yarp/dev/Drivers.h>
 #include <yarp/dev/DriverLinkCreator.h>
-#include <yarp/dev/DeviceGroup.h>
 
 #include <yarp/dev/AudioVisualInterfaces.h>
 
@@ -20,6 +21,13 @@ using namespace yarp::os;
 using namespace yarp::sig;
 using namespace yarp::dev;
 
+
+// needed for the driver factory.
+yarp::dev::DriverCreator *createDeviceGroup() {
+    return new yarp::dev::DriverCreatorOf<yarp::dev::DeviceGroup>("group",
+                                                                  "",
+                                                                  "yarp::dev::DeviceGroup");
+}
 
 #define HELPER(x) (*((DeviceGroupHelper*)(x)))
 

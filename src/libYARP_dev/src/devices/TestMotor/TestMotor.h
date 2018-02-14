@@ -17,6 +17,7 @@
 
 #include <yarp/os/Time.h>
 #include <yarp/os/Log.h>
+#include <yarp/sig/Vector.h>
 
 namespace yarp {
     namespace dev {

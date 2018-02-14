@@ -3,9 +3,17 @@
  * CopyPolicy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
  */
 
-#include <yarp/dev/ServerSerial.h>
+#include "ServerSerial.h"
+
 #include <yarp/os/Log.h>
 #include <yarp/os/Os.h>
+
+// needed for the driver factory.
+yarp::dev::DriverCreator *createServerSerial() {
+    return new yarp::dev::DriverCreatorOf<yarp::dev::ServerSerial>("serial",
+                                                                   "",
+                                                                   "yarp::dev::ServerSerial");
+}
 
 ServerSerial::ServerSerial() :
         verb(false),
@@ -132,7 +140,7 @@ bool ServerSerial::open(Searchable& prop)
             yError("cannot make <%s>\n", name->toString().c_str());
         }
     } else {
-        yError("\"--subdevice <name>\" not set for server_serial\n");
+        yError("\"--subdevice <name>\" not set for serial\n");
         return false;
     }
 

@@ -4,16 +4,22 @@
  * CopyPolicy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
  */
 
+#include "ServerFrameGrabber.h"
 
-#include <yarp/os/Log.h>
-#include <yarp/dev/ServerFrameGrabber.h>
-//#include <yarp/dev/RemoteFrameGrabber.h>
-#include <yarp/dev/PolyDriver.h>
+#include <yarp/dev/Drivers.h>
 #include <yarp/os/LogStream.h>
 
 using namespace yarp::os;
 using namespace yarp::dev;
 using namespace yarp::sig;
+
+
+// needed for the driver factory.
+yarp::dev::DriverCreator *createServerFrameGrabber() {
+    return new yarp::dev::DriverCreatorOf<yarp::dev::ServerFrameGrabber>("remote_grabber",
+                                                                         "grabber",
+                                                                         "yarp::dev::ServerFrameGrabber");
+}
 
 
 ServerFrameGrabber::ServerFrameGrabber() {

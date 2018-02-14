@@ -4,8 +4,8 @@
  * CopyPolicy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
  */
 
+#include "DevicePipe.h"
 
-#include <yarp/dev/DevicePipe.h>
 #include <yarp/os/Time.h>
 #include <cstdio>
 
@@ -14,6 +14,15 @@
 using namespace yarp::os;
 using namespace yarp::sig;
 using namespace yarp::dev;
+
+
+// needed for the driver factory.
+yarp::dev::DriverCreator *createDevicePipe() {
+    return new yarp::dev::DriverCreatorOf<yarp::dev::DevicePipe>("pipe",
+                                                                 "",
+                                                                 "yarp::dev::DevicePipe");
+}
+
 
 bool DevicePipe::open(yarp::os::Searchable& config) {
     bool ok = open("source",source,config,
