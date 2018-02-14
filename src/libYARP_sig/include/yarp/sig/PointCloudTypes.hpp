@@ -221,7 +221,7 @@ YARP_END_PACK
 
 // point xyz + normals
 YARP_BEGIN_PACK
-typedef union
+typedef struct
 {
     union
     {
@@ -257,7 +257,7 @@ YARP_END_PACK
 
 // point xyz + normals + RGBA
 YARP_BEGIN_PACK
-typedef union
+typedef struct
 {
     union
     {
