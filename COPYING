@@ -505,77 +505,77 @@ src/libYARP_dev/include/yarp/dev/IVisualServoing.h
   CopyPolicy: Released under the terms of the 3-clause BSD.
 
 src/yarpmotorgui/partitem.h
-  Copyright: (C) 2010 RobotCub Consortium, European Commission FP6 Project IST-004370
+  Copyright: (C) 2010 RobotCub Consortium
   Authors: Marco Randazzo
   CopyPolicy: Released under the terms of the GPLv2 or later, see GPL.TXT
 
 src/yarpmotorgui/main.cpp
-  Copyright: (C) 2010 RobotCub Consortium, European Commission FP6 Project IST-004370
+  Copyright: (C) 2010 RobotCub Consortium
   Authors: Marco Randazzo
   CopyPolicy: Released under the terms of the GPLv2 or later, see GPL.TXT
 
 src/yarpmotorgui/jointitem.h
-  Copyright: (C) 2010 RobotCub Consortium, European Commission FP6 Project IST-004370
+  Copyright: (C) 2010 RobotCub Consortium
   Authors: Marco Randazzo
   CopyPolicy: Released under the terms of the GPLv2 or later, see GPL.TXT
 
 src/yarpmotorgui/sliderOptions.cpp
-  Copyright: (C) 2010 RobotCub Consortium, European Commission FP6 Project IST-004370
+  Copyright: (C) 2010 RobotCub Consortium
   Authors: Marco Randazzo
   CopyPolicy: Released under the terms of the GPLv2 or later, see GPL.TXT
 
 src/yarpmotorgui/yarpmotorgui.h
-  Copyright: (C) 2010 RobotCub Consortium, European Commission FP6 Project IST-004370
+  Copyright: (C) 2010 RobotCub Consortium
   Authors: Marco Randazzo
   CopyPolicy: Released under the terms of the GPLv2 or later, see GPL.TXT
 
 src/yarpmotorgui/jointitem.cpp
-  Copyright: (C) 2010 RobotCub Consortium, European Commission FP6 Project IST-004370
+  Copyright: (C) 2010 RobotCub Consortium
   Authors: Marco Randazzo
   CopyPolicy: Released under the terms of the GPLv2 or later, see GPL.TXT
 
 src/yarpmotorgui/startdlg.h
-  Copyright: (C) 2010 RobotCub Consortium, European Commission FP6 Project IST-004370
+  Copyright: (C) 2010 RobotCub Consortium
   Authors: Marco Randazzo
   CopyPolicy: Released under the terms of the GPLv2 or later, see GPL.TXT
 
 src/yarpmotorgui/sequencewindow.h
-  Copyright: (C) 2010 RobotCub Consortium, European Commission FP6 Project IST-004370
+  Copyright: (C) 2010 RobotCub Consortium
   Authors: Marco Randazzo
   CopyPolicy: Released under the terms of the GPLv2 or later, see GPL.TXT
 
 src/yarpmotorgui/sliderWithTarget.h
-  Copyright: (C) 2010 RobotCub Consortium, European Commission FP6 Project IST-004370
+  Copyright: (C) 2010 RobotCub Consortium
   Authors: Marco Randazzo
   CopyPolicy: Released under the terms of the GPLv2 or later, see GPL.TXT
 
 src/yarpmotorgui/startdlg.cpp
-  Copyright: (C) 2010 RobotCub Consortium, European Commission FP6 Project IST-004370
+  Copyright: (C) 2010 RobotCub Consortium
   Authors: Marco Randazzo
   CopyPolicy: Released under the terms of the GPLv2 or later, see GPL.TXT
 
 src/yarpmotorgui/piddlg.cpp
-  Copyright: (C) 2010 RobotCub Consortium, European Commission FP6 Project IST-004370
+  Copyright: (C) 2010 RobotCub Consortium
   Authors: Marco Randazzo
   CopyPolicy: Released under the terms of the GPLv2 or later, see GPL.TXT
 
 src/yarpmotorgui/mainwindow.h
-  Copyright: (C) 2010 RobotCub Consortium, European Commission FP6 Project IST-004370
+  Copyright: (C) 2010 RobotCub Consortium
   Authors: Marco Randazzo
   CopyPolicy: Released under the terms of the GPLv2 or later, see GPL.TXT
 
 src/yarpmotorgui/sliderWithTarget.cpp
-  Copyright: (C) 2010 RobotCub Consortium, European Commission FP6 Project IST-004370
+  Copyright: (C) 2010 RobotCub Consortium
   Authors: Marco Randazzo
   CopyPolicy: Released under the terms of the GPLv2 or later, see GPL.TXT
 
 src/yarpmotorgui/mainwindow.cpp
-  Copyright: (C) 2010 RobotCub Consortium, European Commission FP6 Project IST-004370
+  Copyright: (C) 2010 RobotCub Consortium
   Authors: Marco Randazzo
   CopyPolicy: Released under the terms of the GPLv2 or later, see GPL.TXT
 
 src/yarpmotorgui/piddlg.h
-  Copyright: (C) 2010 RobotCub Consortium, European Commission FP6 Project IST-004370
+  Copyright: (C) 2010 RobotCub Consortium
   Authors: Marco Randazzo
   CopyPolicy: Released under the terms of the GPLv2 or later, see GPL.TXT
 
@@ -584,12 +584,12 @@ src/yarpmotorgui/flowlayout.h
   CopyPolicy: unknown
 
 src/yarpmotorgui/log.h
-  Copyright: (C) 2010 RobotCub Consortium, European Commission FP6 Project IST-004370
+  Copyright: (C) 2010 RobotCub Consortium
   Authors: Marco Randazzo
   CopyPolicy: Released under the terms of the GPLv2 or later, see GPL.TXT
 
 src/yarpmotorgui/sequencewindow.cpp
-  Copyright: (C) 2010 RobotCub Consortium, European Commission FP6 Project IST-004370
+  Copyright: (C) 2010 RobotCub Consortium
   Authors: Marco Randazzo
   CopyPolicy: Released under the terms of the GPLv2 or later, see GPL.TXT
 
@@ -598,7 +598,7 @@ src/yarpmotorgui/flowlayout.cpp
   CopyPolicy: unknown
 
 src/yarpmotorgui/sliderOptions.h
-  Copyright: (C) 2010 RobotCub Consortium, European Commission FP6 Project IST-004370
+  Copyright: (C) 2010 RobotCub Consortium
   Authors: Marco Randazzo
   CopyPolicy: Released under the terms of the GPLv2 or later, see GPL.TXT
 
