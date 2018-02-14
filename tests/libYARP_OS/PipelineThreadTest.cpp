@@ -19,6 +19,7 @@ class SummerThread : public PipelineThread<int, int>
 public:
      SummerThread(AtomicBuffer<int> &bufferIn, AtomicBuffer<int> &bufferOut): PipelineThread(bufferIn, bufferOut)
      {}
+protected:
      virtual void processData(int& dataIn, int& dataOut) override
      {
          int busy = 0;
@@ -39,6 +40,7 @@ class DividerThread : public PipelineThread<int, double>
 public:
     DividerThread(AtomicBuffer<int> &bufferIn, AtomicBuffer<double> &bufferOut): PipelineThread(bufferIn, bufferOut)
     {}
+protected:
     virtual void processData(int& dataIn, double& dataOut) override
     {
         int busy = 0;
@@ -127,6 +129,19 @@ public:
 
 };
 
+
+class ConsProdThread :public PipelineThread<int, int>
+{
+public :
+    ConsProdThread(AtomicBuffer<int> &bufferIn, AtomicBuffer<int> &bufferOut): PipelineThread(bufferIn, bufferOut)
+    {}
+protected:
+     virtual void processData(int& dataIn, int& dataOut) override
+    {
+        dataOut = dataIn;
+    }
+};
+
 class PipelineThreadTest : public UnitTest
 {
 public:
@@ -143,13 +158,61 @@ public:
         mm.runModule();
     }
 
+    void testSizeBuffer()
+    {
+        report(0,"[Test] Checking size and data consistency");
+        AtomicBuffer<int> buffer, buffer2, buffer3;
+        ConsProdThread producer(buffer, buffer2);
+        ConsProdThread consumer(buffer2, buffer3);
 
+        producer.start();
+        for (int i =0; i<5; i++)
+        {
+            int data = i;
+            buffer.write(data);
+        }
+        while (producer.getCountProcessed() != 5)
+        {
+            // waiting that all the data have been produced ...
+            yarp::os::Time::delay(0.2);
+        }
+        bool checkSize = buffer2.getNumElements() == 5;
+
+        checkSize &= buffer.getNumElements() == 0;
+        checkTrue(checkSize, "checking the number of data produced");
+        consumer.start();
+
+        while (consumer.getCountProcessed() != 5)
+        {
+            // waiting that all the data have been consumed ...
+            yarp::os::Time::delay(0.2);
+        }
+
+        checkSize = buffer2.getNumElements() == 0;
+        checkSize &= buffer3.getNumElements() == 5;
+        checkTrue(checkSize, "checking the number of data consumed");
+
+        bool dataConsistent = true;
+        for (int i = 0; i < 5; i++)
+        {
+            int data = 6;
+            buffer3.read(data);
+            dataConsistent &= data == i;
+        }
+
+        checkTrue(dataConsistent, "checking consistency of the data");
+
+        producer.close();
+        consumer.close();
+
+    }
 
     virtual void runTests() override
     {
         Network::setLocalMode(true);
 
         testModule();
+        testSizeBuffer();
 
         Network::setLocalMode(false);
     }
