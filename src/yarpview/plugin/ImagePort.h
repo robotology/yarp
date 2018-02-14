@@ -1,5 +1,5 @@
 /* 
- * Copyright (C) 2009 RobotCub Consortium, European Commission FP6 Project IST-004370
+ * Copyright (C) 2009 RobotCub Consortium
  * Author Lorenzo Natale
  * email:   lorenzo.natale@robotcub.org
  * website: www.robotcub.org
