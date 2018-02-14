@@ -77,7 +77,6 @@ public:
 
         std::vector<int> recipe = getComposition(_header.pointType);
 
-
         yarp::os::ManagedBytes dummy;
         for (uint i=0; i<data.size(); i++)
         {
@@ -112,7 +111,8 @@ public:
     {
         yTrace();
         //yarp::os::ConstString("ciaoooo");
-        return PointCloud< T >::toString(precision, width);
+//        return PointCloud< T >::toString(precision, width);
+        return "not implemented, sorry man :/ \n";
     }
 
 
@@ -173,26 +173,41 @@ public:
 
 namespace yarp {
     namespace sig {
-        template<> yarp::sig::PointCloud<XYZ_RGBA_DATA>::PointCloud()   { PointCloud::header.pointType=PCL_POINT_XYZ_RGBA; }
-        template<> yarp::sig::PointCloud<XYZ_DATA>::PointCloud()        { PointCloud::header.pointType=PCL_POINT_XYZ; }
+    template<> PointCloud<XY_DATA>::PointCloud()                       { PointCloud::header.pointType=PCL_POINT2D_XY; }
+    template<> PointCloud<XYZ_DATA>::PointCloud()                      { PointCloud::header.pointType=PCL_POINT_XYZ; }
+//    template<> PointCloud<RGBA_DATA>::PointCloud()                    { PointCloud::header.pointType=PC_RGBA_DATA; } //has it sense to support them?
+//    template<> PointCloud<intensity>::PointCloud()                    { PointCloud::header.pointType=PC_INTENSITY_DATA; } //has it sense to support them?
+//    template<> PointCloud<VIEWPOINT_DATA>::PointCloud()               { PointCloud::header.pointType=PC_VIEWPOINT_DATA; } //has it sense to support them?
+    template<> PointCloud<NORMAL_DATA>::PointCloud()                   { PointCloud::header.pointType=PCL_NORMAL; }
+    template<> PointCloud<XYZ_RGBA_DATA>::PointCloud()                 { PointCloud::header.pointType=PCL_POINT_XYZ_RGBA; }
+    template<> PointCloud<XYZ_I_DATA>::PointCloud()                    { PointCloud::header.pointType=PCL_POINT_XYZ_I; }
+    template<> PointCloud<INTEREST_POINT_XYZ_DATA>::PointCloud()       { PointCloud::header.pointType=PCL_INTEREST_POINT_XYZ; }
+    template<> PointCloud<XYZ_NORMAL_DATA>::PointCloud()               { PointCloud::header.pointType=PCL_POINT_XYZ_NORMAL; }
+    // XYZ_NORMAL_RGBA problems with curvature...
+    // TODO extend the constructors...
 
-        template<> yarp::os::ConstString yarp::sig::PointCloud <XYZ_RGBA_DATA> ::toString(int precision, int width);
-        template<> yarp::os::ConstString yarp::sig::PointCloud <XYZ_DATA> ::toString(int precision, int width);
+        template<> yarp::os::ConstString PointCloud <XYZ_RGBA_DATA> ::toString(int precision, int width);
+        template<> yarp::os::ConstString PointCloud <XYZ_DATA> ::toString(int precision, int width);
     }
 }
 
-
-template<>
-inline int BottleTagMap <XYZ_RGBA_DATA> ()
-{
-    return BOTTLE_TAG_DOUBLE;
+#define TagMap(X) \
+template<> \
+inline int BottleTagMap <X> () \
+{ \
+    return BOTTLE_TAG_DOUBLE; \
 }
 
-template<>
-inline int BottleTagMap <XYZ_DATA> ()
-{
-    return BOTTLE_TAG_DOUBLE;
-}
+TagMap(XY_DATA)
+TagMap(XYZ_DATA)
+TagMap(NORMAL_DATA)
+TagMap(XYZ_RGBA_DATA)
+TagMap(XYZ_I_DATA)
+TagMap(INTEREST_POINT_XYZ_DATA)
+TagMap(XYZ_NORMAL_DATA)
+
+
+// TODO implement toString incrementally
 
 
 namespace yarp{
