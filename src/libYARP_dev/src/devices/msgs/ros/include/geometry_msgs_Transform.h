@@ -1,7 +1,7 @@
 // This is an automatically generated file.
 // Generated from this geometry_msgs_Transform.msg definition:
 //   # This represents the transform between two coordinate frames in free space.
-//
+//   
 //   Vector3 translation
 //   Quaternion rotation
 // Instances of this class can be read and written with YARP ports,

@@ -23,11 +23,11 @@
 //   # If the camera is uncalibrated, the matrices D, K, R, P should be left
 //   # zeroed out. In particular, clients may assume that K[0] == 0.0
 //   # indicates an uncalibrated camera.
-//
+//   
 //   #######################################################################
 //   #                     Image acquisition info                          #
 //   #######################################################################
-//
+//   
 //   # Time of image acquisition, camera coordinate frame ID
 //   Header header    # Header timestamp should be acquisition time of image
 //                    # Header frame_id should be optical frame of camera
@@ -35,8 +35,8 @@
 //                    # +x should point to the right in the image
 //                    # +y should point down in the image
 //                    # +z should point into the plane of the image
-//
-//
+//   
+//   
 //   #######################################################################
 //   #                      Calibration Parameters                         #
 //   #######################################################################
@@ -50,21 +50,21 @@
 //   #   2. A rectified image (requires D, K, R)                           #
 //   # The projection matrix P projects 3D points into the rectified image.#
 //   #######################################################################
-//
+//   
 //   # The image dimensions with which the camera was calibrated. Normally
 //   # this will be the full camera resolution in pixels.
 //   uint32 height
 //   uint32 width
-//
+//   
 //   # The distortion model used. Supported models are listed in
 //   # sensor_msgs/distortion_models.h. For most cameras, "plumb_bob" - a
 //   # simple model of radial and tangential distortion - is sufficient.
 //   string distortion_model
-//
+//   
 //   # The distortion parameters, size depending on the distortion model.
 //   # For "plumb_bob", the 5 parameters are: (k1, k2, t1, t2, k3).
 //   float64[] D
-//
+//   
 //   # Intrinsic camera matrix for the raw (distorted) images.
 //   #     [fx  0 cx]
 //   # K = [ 0 fy cy]
@@ -73,13 +73,13 @@
 //   # coordinates using the focal lengths (fx, fy) and principal point
 //   # (cx, cy).
 //   float64[9]  K # 3x3 row-major matrix
-//
+//   
 //   # Rectification matrix (stereo cameras only)
 //   # A rotation matrix aligning the camera coordinate system to the ideal
 //   # stereo image plane so that epipolar lines in both stereo images are
 //   # parallel.
 //   float64[9]  R # 3x3 row-major matrix
-//
+//   
 //   # Projection/camera matrix
 //   #     [fx'  0  cx' Tx]
 //   # P = [ 0  fy' cy' Ty]
@@ -105,8 +105,8 @@
 //   #         y = v / w
 //   #  This holds for both images of a stereo pair.
 //   float64[12] P # 3x4 row-major matrix
-//
-//
+//   
+//   
 //   #######################################################################
 //   #                      Operational Parameters                         #
 //   #######################################################################
@@ -114,7 +114,7 @@
 //   # driver. Although they affect the geometry of the output image, they #
 //   # may be changed freely without recalibrating the camera.             #
 //   #######################################################################
-//
+//   
 //   # Binning refers here to any camera setting which combines rectangular
 //   #  neighborhoods of pixels into larger "super-pixels." It reduces the
 //   #  resolution of the output image to
@@ -123,7 +123,7 @@
 //   #  as binning_x = binning_y = 1 (no subsampling).
 //   uint32 binning_x
 //   uint32 binning_y
-//
+//   
 //   # Region of interest (subwindow of full camera resolution), given in
 //   #  full resolution (unbinned) image coordinates. A particular ROI
 //   #  always denotes the same window of pixels on the camera sensor,

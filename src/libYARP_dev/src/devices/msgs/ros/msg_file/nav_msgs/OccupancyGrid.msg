@@ -1,7 +1,7 @@
 # This represents a 2-D grid map, in which each cell represents the probability of
 # occupancy.
 
-Header header
+Header header 
 
 #MetaData for the map
 MapMetaData info
