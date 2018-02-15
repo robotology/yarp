@@ -13,7 +13,7 @@
 #include <yarp/math/api.h>
 
 namespace yarp {
-    namespace math { 
+    namespace math {
         namespace impl {
             class RandnVector;
         }

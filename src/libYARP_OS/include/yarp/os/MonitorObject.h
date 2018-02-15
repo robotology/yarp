@@ -40,7 +40,7 @@ public:
     /**
      * This will be called when the portmonitor carrier parameters are set via Yarp admin port
      *
-     * @param params The Property 
+     * @param params The Property
      * @return Returns true if parameters are correctly set
      */
     virtual bool setparam(const yarp::os::Property& params);
@@ -48,11 +48,11 @@ public:
     /**
      * This will be called when the portmonitor carrier parameters are requested via Yarp admin port
      *
-     * @param params The Property 
+     * @param params The Property
      * @return Returns true of any parameter is available
      */
     virtual bool getparam(yarp::os::Property& params);
-   
+
     /**
      * This will be called when one of the peer connections to the same import port receives data
      * @note this is available only if the portmonitor object attached to the input port
@@ -63,19 +63,19 @@ public:
      * This will be called when the data reach the portmonitor object
      *
      * @param thing An instance of yarp::os::Thing object which can be used
-     *        to typecast the data to the correct type. 
-     * @return returning false will avoid delivering data to an input 
+     *        to typecast the data to the correct type.
+     * @return returning false will avoid delivering data to an input
      *         port or transmitting through the output port
      */
     virtual bool accept(yarp::os::Things& thing);
 
 
     /**
-     * After data get accpeted in the accept() callback, an instance of that 
+     * After data get accpeted in the accept() callback, an instance of that
      * is given to the update fucntion where the data can be accessed and modified
      *
      * @param thing An instance of yarp::os::Thing object which can be used
-     *        to typecast the data to the correct type. 
+     *        to typecast the data to the correct type.
      * @return An instance of modified data in form of Thing
      */
     virtual yarp::os::Things& update(yarp::os::Things& thing);

@@ -60,7 +60,7 @@ void yarp::os::Network::init(yarp::os::yarpClockType clockType, yarp::os::Clock 
     if (__custom_yarp_is_initialized==0) {
         initMinimum(clockType);
         // If we init the clock inside the initMinum, it will loop into itself twice
-        // calling again the initMinimun, ending with __yarp_is_initialized counter 
+        // calling again the initMinimun, ending with __yarp_is_initialized counter
         // increased twice.
         yarpCustomInit();
         // Network::yarpClockInit(clockType, custom);

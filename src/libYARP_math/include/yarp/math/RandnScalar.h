@@ -12,7 +12,7 @@
 #include <yarp/math/api.h>
 
 namespace yarp {
-    namespace math { 
+    namespace math {
             class RandnScalar;
     }
 }
@@ -43,7 +43,7 @@ public:
     */
     RandnScalar();
     ~RandnScalar();
-    
+
     /**
     * Constructor, initialize the generator.
     * @param seed, seed for the rnd generator.

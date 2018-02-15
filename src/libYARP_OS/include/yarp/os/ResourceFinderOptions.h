@@ -18,7 +18,7 @@ namespace yarp {
 
 /**
  *
- * These options are loosely based on 
+ * These options are loosely based on
  *   http://wiki.icub.org/wiki/YARP_ResourceFinder
  *
  * For a User search location:
@@ -28,7 +28,7 @@ namespace yarp {
  */
 class YARP_OS_API yarp::os::ResourceFinderOptions {
 public:
-   
+
     enum SearchLocations {
         NoLocation     = 0x0000,
         Directory      = 0x0001, // Search current directory

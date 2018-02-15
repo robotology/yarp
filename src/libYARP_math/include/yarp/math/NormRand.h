@@ -17,7 +17,7 @@ namespace yarp
 {
     namespace math
     {
-        
+
         /**
         * This class groups routines for random number generation, normal distribution.
         */
@@ -27,10 +27,10 @@ namespace yarp
 
 
 /**
-* A static class grouping function for normal random number 
+* A static class grouping function for normal random number
 * generator. Thread safe.
 *
-* Methods inside this class provides access to a global instance 
+* Methods inside this class provides access to a global instance
 * of a RandNScalar object that generates random numbers.
 */
 class YARP_math_API yarp::math::NormRand
@@ -47,7 +47,7 @@ public:
     * current time (time(0)).
     */
     static void init();
-    
+
     /**
     * Initialize the random number generator, provide
     * a seed.

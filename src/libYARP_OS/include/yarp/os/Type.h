@@ -50,7 +50,7 @@ public:
     static Type anon() {
         return Type();
     }
-    
+
     ConstString getName() const {
         return name;
     }

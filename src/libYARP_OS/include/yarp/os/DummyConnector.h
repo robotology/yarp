@@ -19,7 +19,7 @@ namespace yarp {
  *
  * A dummy connection to test yarp::os::Portable implementations.
  * This class provides simple means to test read and write methods of the Portable interface.
- * 
+ *
  * Pseudocode for a test should look something like this:
  * \code
  *   DummyConnector dummy; // create new connection with textmode=false
@@ -30,7 +30,7 @@ namespace yarp {
  *   newObject.read(dummy.getReader()); // write from the connection to the new object
  *   ... // assert newObject values
  * \endcode
- * 
+ *
  * \author Freyr Magnusson
  *
  */

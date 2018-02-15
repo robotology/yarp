@@ -152,7 +152,7 @@ public:
         isStrict = strict;
         if (buffered_port) buffered_port->setStrict(strict);
     }
-    
+
 private:
     bool isStrict;
     Port port;

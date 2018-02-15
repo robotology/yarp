@@ -53,7 +53,7 @@ private:
 public:
     Params() {
         argc = 0;
-        for (int i = 0; i < MAX_ARG_CT; i++) 
+        for (int i = 0; i < MAX_ARG_CT; i++)
         {
             argv[i] = nullptr;
         }

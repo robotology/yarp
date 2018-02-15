@@ -18,7 +18,7 @@ bool deBayer_GRBG8_TO_BGR(yarp::sig::Image &source, yarp::sig::Image &dest, int 
         //row i GRGRGR...
         for (int c = 0; c < dest.width() - 2; c += 2)
         {
-            //source is on G pixel 
+            //source is on G pixel
             destRow[0] = sourceRowNext[0];       //blue
             destRow[1] = sourceRowCurrent[0];    //green
             destRow[2] = sourceRowCurrent[1];    //red
@@ -45,7 +45,7 @@ bool deBayer_GRBG8_TO_BGR(yarp::sig::Image &source, yarp::sig::Image &dest, int 
         //row is now BGBGBG...
         for (int c = 0; c < dest.width() - 2; c += 2)
         {
-            //source is on B pixel 
+            //source is on B pixel
             destRow[0] = sourceRowCurrent[0];   //blue
             destRow[1] = sourceRowCurrent[1];   //green
             destRow[2] = sourceRowNext[1];;     //red
@@ -84,7 +84,7 @@ bool deBayer_GRBG8_TO_RGB(yarp::sig::Image &source, yarp::sig::Image &dest, int 
         //row i GRGRGR...
         for (int c = 0; c < source.width() - 2; c += 2)
         {
-            //source is on G pixel 
+            //source is on G pixel
             destRow[0] = sourceRowCurrent[1];    //red
             destRow[1] = sourceRowCurrent[0];    //green
             destRow[2] = sourceRowNext[0];;     //blue
@@ -111,7 +111,7 @@ bool deBayer_GRBG8_TO_RGB(yarp::sig::Image &source, yarp::sig::Image &dest, int 
         //row is now BGBGBG...
         for (int c = 0; c < dest.width() - 2; c += 2)
         {
-            //source is on B pixel 
+            //source is on B pixel
             destRow[0] = sourceRowNext[1];      //red
             destRow[1] = sourceRowCurrent[1];   //green
             destRow[2] = sourceRowCurrent[0];   //blue

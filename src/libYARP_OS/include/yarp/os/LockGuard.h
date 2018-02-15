@@ -24,11 +24,11 @@ namespace yarp {
 
 /**
  * This class is a mutex wrapper that provides a convenient RAII-style mechanism for owning
- * a mutex for the duration of a scoped block. When a LockGuard object is created, 
- * it attempts to take ownership of the mutex it is given. 
- * When control leaves the scope in which the LockGuard object was created, 
+ * a mutex for the duration of a scoped block. When a LockGuard object is created,
+ * it attempts to take ownership of the mutex it is given.
+ * When control leaves the scope in which the LockGuard object was created,
  * the LockGuard is destructed and the mutex is released.
- * The lock_guard class is non-copyable. 
+ * The lock_guard class is non-copyable.
  */
 template <typename Lockable>
 class yarp::os::AbstractLockGuard {
@@ -39,20 +39,20 @@ public:
      * @param _mutex the mutex which will be locked
      */
     explicit AbstractLockGuard(Lockable& _lock);
-    
+
     /**
      * destructs the LockGuard object, unlocks the underlying mutex
      */
     ~AbstractLockGuard();
-    
+
 private:
-    
+
     /** Copy constructor is disabled */
     AbstractLockGuard(const AbstractLockGuard&);
-    
+
     /** Assignment operator is disabled */
     AbstractLockGuard& operator=(const AbstractLockGuard&);
-    
+
     Lockable& lock; /*!< underlining mutex */
 };
 

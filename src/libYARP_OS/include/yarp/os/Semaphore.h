@@ -22,7 +22,7 @@ namespace yarp {
  * A semaphore has an internal counter.  Multiple threads can
  * safely increment or decrement that counter.  If one thread
  * attempts to decrement the counter below zero, it must wait
- * for another thread to first increment it.  This is a 
+ * for another thread to first increment it.  This is a
  * useful primitive for regulating thread interaction.
  */
 class YARP_OS_API yarp::os::Semaphore {
