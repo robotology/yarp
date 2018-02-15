@@ -42,7 +42,7 @@ bool yarp::dev::RobotDescriptionClient::open(yarp::os::Searchable &config)
 
     local_rpc  = m_local_name + "/rpc";
     remote_rpc = m_remote_name + "/rpc";
-    
+
     if (!m_rpc_port.open(local_rpc.c_str()))
     {
         yError("RobotDescriptionClient::open() error could not open rpc port %s, check network", local_rpc.c_str());
@@ -182,7 +182,7 @@ bool yarp::dev::RobotDescriptionClient::getAllDevices(std::vector<DeviceDescript
         else
         {
             Bottle *b = resp.get(1).asList();
-            for (int i = 0; i < b->size();i+=2) 
+            for (int i = 0; i < b->size();i+=2)
             {
                 DeviceDescription desc;
                 desc.device_name = b->get(i).asString();

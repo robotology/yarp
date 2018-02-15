@@ -28,7 +28,7 @@ public:
 
     /**
      * Constructor.  Sets the initial value of the counter.
-     * @param autoResetAfterWait if set, reset() will be called 
+     * @param autoResetAfterWait if set, reset() will be called
      * automatically after wait().
      */
     Event(bool autoResetAfterWait = true);
@@ -52,10 +52,10 @@ public:
 
     /**
      * Put the event in a signaled state. A thread wait()ing for
-     * the event will wake up.  If the event was created with 
-     * autoResetAfterWait set, then at most one thread will wake up 
-     * (and then automatically reset the event), otherwise all 
-     * waiting threads will wake up. 
+     * the event will wake up.  If the event was created with
+     * autoResetAfterWait set, then at most one thread will wake up
+     * (and then automatically reset the event), otherwise all
+     * waiting threads will wake up.
      *
      */
     void signal();

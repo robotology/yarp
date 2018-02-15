@@ -426,7 +426,7 @@ void Dying::stopModule()
         castEvent(EventFactory::stopModuleEventFailed);
     }
     else
-    {        
+    {
         castEvent(EventFactory::stopModuleEventOk);
         executable->getEvent()->onExecutableStop(executable);
     }

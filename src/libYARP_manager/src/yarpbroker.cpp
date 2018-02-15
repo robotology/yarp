@@ -724,7 +724,7 @@ bool YarpBroker::setQos(const char* from, const char *to,
     QosStyle styleFrom;
     QosStyle styleTo;
     if(qosFrom != nullptr && strlen(qosFrom)) {
-        if(!getQosFromString(qosFrom, styleFrom)) {            
+        if(!getQosFromString(qosFrom, styleFrom)) {
             strError = "Error in parsing Qos properties of " + string(from);
             return false;
         }
@@ -752,7 +752,7 @@ bool YarpBroker::getQosFromString(const char* qos, yarp::os::QosStyle& style) {
             string key = prop.substr(0, p);
             string value = prop.substr(p+1);
             if (key.length() > 0 && value.length() > 0) {
-                if (key == "LEVEL" || key=="DSCP" || key == "TOS") {                    
+                if (key == "LEVEL" || key=="DSCP" || key == "TOS") {
                     if(!style.setPacketPriority(prop))
                         return false;
                 }
@@ -840,7 +840,7 @@ int YarpBroker::SendMsg(Bottle& msg, ConstString target, Bottle& response, float
     // opening the port
     yarp::os::Port port;
     port.setTimeout(fTimeout);
-    if(!port.open("...")) 
+    if(!port.open("..."))
     {
         __trace_message.clear();
         semParam.post();

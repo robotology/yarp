@@ -1391,7 +1391,7 @@ bool ControlBoardWrapper::positionMove(const double *refs)
     {
         int subIndex=device.lut[j_wrap].deviceEntry;
         yarp::dev::impl::SubDevice *p=device.getSubdevice(subIndex);
-        
+
         if (!p)
         {
             return false;

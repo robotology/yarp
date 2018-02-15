@@ -10,7 +10,7 @@
 #include <yarp/math/RandVector.h>
 #include <yarp/sig/Vector.h>
 
-using namespace yarp::sig; 
+using namespace yarp::sig;
 using namespace yarp::math;
 using namespace yarp::math::impl;
 

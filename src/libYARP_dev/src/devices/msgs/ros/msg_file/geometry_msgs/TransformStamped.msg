@@ -1,8 +1,8 @@
 # This expresses a transform from coordinate frame header.frame_id
 # to the coordinate frame child_frame_id
 #
-# This message is mostly used by the 
-# tf package. 
+# This message is mostly used by the
+# tf package.
 # See it's documentation for more information.
 
 Header header

@@ -11,7 +11,7 @@
 #include <yarp/math/api.h>
 
 namespace yarp {
-    namespace math { 
+    namespace math {
             class RandScalar;
     }
 }
@@ -24,13 +24,13 @@ namespace yarp {
 * current time. You can reset the seed by explicitly calling Rand::init(seed).
 *
 * Default generator is std::mt19937.
-* 
+*
 */
 class YARP_math_API yarp::math::RandScalar
 {
     void *impl;
     int seed;
-    RandScalar(const RandScalar &l); 
+    RandScalar(const RandScalar &l);
 public:
     RandScalar(int seed);
     RandScalar();
@@ -56,14 +56,14 @@ public:
     { return seed; }
 
     /**
-    * Generate a random number from a 
+    * Generate a random number from a
     * uniform distribution.
     * @return the random value.
     */
     double get();
 
     /**
-    * Generate a random number from a 
+    * Generate a random number from a
     * uniform distribution within [min, max]
     * @return the random value.
     */

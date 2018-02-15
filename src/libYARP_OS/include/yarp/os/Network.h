@@ -534,8 +534,8 @@ public:
                                     bool& scanNeeded,
                                     bool& serverUsed);
 
-    /** 
-     * Set explicitly the nameserver information 
+    /**
+     * Set explicitly the nameserver information
      *
      * @param nameServerContact the NameServer contact information (e.g. IP, port)
      * @return true if succeed. False otherwise
@@ -555,8 +555,8 @@ public:
 
     /**
      *
-     * Under normal operation, YARP has a name server that manages a pool 
-     * of (socket) ports starting at a point specified by the YARP_PORT_RANGE 
+     * Under normal operation, YARP has a name server that manages a pool
+     * of (socket) ports starting at a point specified by the YARP_PORT_RANGE
      * environment variable (or 10000 if that is not set).
      *
      * @return the beginning of YARP's port range, as specified by

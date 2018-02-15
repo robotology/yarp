@@ -39,7 +39,7 @@ public:
     /**
      *
      * Start negotiating a carrier, using the given name as our own
-     * if a name is needed (this should generally match the name of 
+     * if a name is needed (this should generally match the name of
      * the associated port).
      *
      */
@@ -131,7 +131,7 @@ public:
      *
      */
     virtual void suppressReply() = 0;
-  
+
     /**
      *
      * Access the output stream associated with the connection.

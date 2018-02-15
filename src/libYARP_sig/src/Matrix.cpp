@@ -37,8 +37,8 @@ public:
     yarp::os::NetInt32 listTag;
     yarp::os::NetInt32 listLen;
 
-    MatrixPortContentHeader() : outerListTag(0), outerListLen(0), 
-                                rowsTag(0), rows(0), 
+    MatrixPortContentHeader() : outerListTag(0), outerListLen(0),
+                                rowsTag(0), rows(0),
                                 colsTag(0), cols(0),
                                 listTag(0), listLen(0) {}
 };

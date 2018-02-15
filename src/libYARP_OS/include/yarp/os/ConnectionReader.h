@@ -186,7 +186,7 @@ public:
 
     /**
      *
-     * Create an instance of YARP's standard connection reader 
+     * Create an instance of YARP's standard connection reader
      * implementation.
      *
      */

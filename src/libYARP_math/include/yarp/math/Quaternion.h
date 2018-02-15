@@ -16,7 +16,7 @@
 #include <yarp/os/NetInt32.h>
 
 namespace yarp {
-    namespace math { 
+    namespace math {
         class Quaternion;
     }
 }

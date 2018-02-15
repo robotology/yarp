@@ -64,7 +64,7 @@ public:
 
     void enableWatchDog(void) { bWithWatchDog = true; }
     void disableWatchDog(void) { bWithWatchDog = false; }
-    bool hasWatchDog(void) { return bWithWatchDog; }    
+    bool hasWatchDog(void) { return bWithWatchDog; }
     void setDisplay(const char* szDisplay) {if(szDisplay) strDisplay = szDisplay;}
 
     const char* getDisplay() const {return strDisplay.c_str(); }
@@ -73,7 +73,7 @@ protected:
     BrokerEventSink* eventSink;
     bool bWithWatchDog;
     std::string strDisplay;
-    
+
 private:
 
 };

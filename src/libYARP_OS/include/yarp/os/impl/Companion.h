@@ -224,7 +224,7 @@ private:
             fn(fn)
         {}
 
-        Entry() : 
+        Entry() :
             fn(nullptr)
         {}
     };

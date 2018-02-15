@@ -64,7 +64,7 @@ void Module::swap(const Module &mod)
     strEnvironment = mod.strEnvironment;
     strBasePrefix = mod.strBasePrefix;
     strDisplay = mod.strDisplay;
-    modOwner = mod.modOwner;    
+    modOwner = mod.modOwner;
     waitStart = mod.waitStart;
     waitStop = mod.waitStop;
     // deep copy

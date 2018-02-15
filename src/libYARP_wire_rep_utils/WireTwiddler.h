@@ -279,7 +279,7 @@ public:
         errorState(false),
         scratchOffset(0),
         codeExpected(),
-        codeReceived() 
+        codeReceived()
     {}
 
     virtual ~WireTwiddlerWriter();

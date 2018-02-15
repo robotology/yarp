@@ -686,7 +686,7 @@ void RPCMessagesParser::handleTorqueMsg(const yarp::os::Bottle& cmd,
                     delete[] p2;
                 }
                 break;
-                
+
                 case VOCAB_REFERENCE:
                 {
                     *ok = rpc_ITorque->getRefTorque(cmd.get(3).asInt(), &dtmp);
@@ -985,7 +985,7 @@ void RPCMessagesParser::handleCurrentMsg(const yarp::os::Bottle& cmd, yarp::os::
 
             case VOCAB_CURRENT_RANGE:
             {
-                
+
                 *ok = rpc_ICurrent->getCurrentRange(cmd.get(3).asInt(), &dtmp, &dtmp2);
                 response.addDouble(dtmp);
                 response.addDouble(dtmp2);

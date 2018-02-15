@@ -218,7 +218,7 @@ void strongConnect(Vertex* v,
         }
     } // end successors
 
-    // If v is a root node, pop the stack and generate an SCC    
+    // If v is a root node, pop the stack and generate an SCC
     if(v->property.find("lowlink").asInt() == v->property.find("index").asInt()) {
         // start a new strongly connected component
         pvertex_set vset;
@@ -227,7 +227,7 @@ void strongConnect(Vertex* v,
             w = S.top();
             S.pop();
             w->property.unput("onStack");
-            //add w to current strongly connected component            
+            //add w to current strongly connected component
             vset.push_back(w);
         } while(!S.empty() && w != v);
         //output the current strongly connected component

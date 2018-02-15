@@ -34,7 +34,7 @@ private:
     bool can_write;
     bool can_read;
 
-    bool attach(yarp::os::UnbufferedContactable& port, 
+    bool attach(yarp::os::UnbufferedContactable& port,
                 const yarp::os::ContactStyle& style) {
         reset();
         this->port = &port;

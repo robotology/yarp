@@ -371,7 +371,7 @@ bool NetworkProfiler::attachPortmonitorPlugin(std::string portName, yarp::os::Pr
     //e.g.,  atch in "(context yarpviz) (file portrate)"
     yarp::os::Bottle cmd, reply;
     cmd.addString("atch");
-    cmd.addString("in");    
+    cmd.addString("in");
     cmd.addString(pluginProp.toString());
     //Property& prop = cmd.addDict();
     //prop.fromString(pluginProp.toString());

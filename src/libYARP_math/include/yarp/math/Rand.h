@@ -21,7 +21,7 @@ namespace yarp
 {
     namespace math
     {
-        /** 
+        /**
         * This class groups routines for random number generation, uniform distribution.
         */
        class Rand;
@@ -30,10 +30,10 @@ namespace yarp
 
 
 /**
-* A static class grouping function for uniform random number 
+* A static class grouping function for uniform random number
 * generator. Thread safe.
 *
-* Methods inside this class provides access to a global instance 
+* Methods inside this class provides access to a global instance
 * of a RandScalar object that generates random numbers.
 */
 class YARP_math_API yarp::math::Rand
@@ -77,7 +77,7 @@ public:
     * Get a vector of random numbers from a uniform distribution,
     * values are in the range [min, max], for each components. The
     * function determines the size of the vector from the parameters.
-    * @param min a vector whose components specify the lower bound of 
+    * @param min a vector whose components specify the lower bound of
     * the distribution.
     * @param max a vector whose components specify the upper bound of
     * the distribution
@@ -91,7 +91,7 @@ public:
     * current time (time(0)).
     */
     static void init();
-    
+
     /**
     * Initialize the random number generator, provide
     * a seed.
@@ -133,7 +133,7 @@ public:
     * Get a vector of random numbers from a uniform distribution,
     * values are in the range [min, max], for each components. The
     * function determines the size of the vector from the parameters.
-    * @param min a vector whose components specify the lower bound of 
+    * @param min a vector whose components specify the lower bound of
     * the distribution.
     * @param max a vector whose components specify the upper bound of
     * the distribution
@@ -153,7 +153,7 @@ public:
     * current time (time(0)).
     */
     void init();
-    
+
     /**
     * Initialize the random number generator, provide
     * a seed.
@@ -161,7 +161,7 @@ public:
     */
     void init(int seed);
 };
-#endif 
+#endif
 
 #endif
 
