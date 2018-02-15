@@ -513,7 +513,7 @@ int Drivers::yarpdev(int argc, char *argv[]) {
             yInfo("Here are the known devices:\n");
             yInfo("%s", Drivers::factory().toString().c_str());
         }
-        else 
+        else
         {
             yInfo("Suggestions:\n");
             yInfo("+ Do \"yarpdev --list\" to see list of supported devices.\n");

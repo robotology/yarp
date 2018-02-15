@@ -37,13 +37,13 @@ namespace manager {
  * Class LocalBroker
  */
 class LocalBroker: public Broker, public yarp::os::Thread {
-    
+
 public:
 
      typedef enum  {  WINDOW_HIDDEN=0,                  //window is hidden, catch stdout
-                      WINDOW_VISIBLE=1,                 //window is visible 
+                      WINDOW_VISIBLE=1,                 //window is visible
                       WINDOW_MINIMIZED=2                //window is started minimized
-    } WindowMode;  
+    } WindowMode;
 
 
     LocalBroker();

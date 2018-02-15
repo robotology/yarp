@@ -63,7 +63,7 @@ public:
     * @return true/false on success/failure.
     */
     virtual bool isCartesianForceModeEnabled(bool &ret) = 0;
-    
+
     /*!
     * Enable Cartesian force feedback mode.
     * @return true/false on success/failure.
@@ -105,8 +105,8 @@ public:
     virtual bool stopFeedback() = 0;
 
     /*!
-     * Set the transformation matrix to be applied to position and 
-     * force feedback data. 
+     * Set the transformation matrix to be applied to position and
+     * force feedback data.
      * @param T the 4-by-4 transformation matrix.
      * @return true/false on success/failure.
      */

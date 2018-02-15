@@ -41,7 +41,7 @@ inline void checkAndDestroy(T* &p) {
 class ControlBoardHelper
 {
 public:
-    ControlBoardHelper(int n, const int *aMap, const double *angToEncs, const double *zs, const double *newtons, const double *amps = NULL, const double *volts = NULL, const double *dutycycles = NULL) : 
+    ControlBoardHelper(int n, const int *aMap, const double *angToEncs, const double *zs, const double *newtons, const double *amps = NULL, const double *volts = NULL, const double *dutycycles = NULL) :
         zeros(0),
         signs(0),
         axisMap(0),

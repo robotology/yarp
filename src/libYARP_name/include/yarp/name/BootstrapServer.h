@@ -31,7 +31,7 @@ public:
 
     virtual ~BootstrapServer();
 
-    static bool configFileBootstrap(yarp::os::Contact& contact, 
+    static bool configFileBootstrap(yarp::os::Contact& contact,
                                     bool configFileRequired,
                                     bool mayEditConfigFile);
 

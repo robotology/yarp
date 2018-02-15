@@ -40,7 +40,7 @@ namespace yarp {
 */
 
 class yarp::dev::RobotDescriptionServer : public DeviceDriver, public yarp::os::PortReader, public yarp::dev::IMultipleWrapper
-                                       
+
 {
 #ifndef DOXYGEN_SHOULD_SKIP_THIS
 protected:

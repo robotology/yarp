@@ -14,7 +14,7 @@
 #include <vector>
 #include <string>
 
-namespace yarp 
+namespace yarp
 {
     namespace dev
     {

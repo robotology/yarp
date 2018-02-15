@@ -394,7 +394,7 @@ public:
     */
     virtual void run() override;
 
-    /* IPidControl 
+    /* IPidControl
     These methods are documented by Doxygen in IPidControl.h*/
     virtual bool setPid(const PidControlTypeEnum& pidtype, int j, const Pid &p) override;
     virtual bool setPids(const PidControlTypeEnum& pidtype, const Pid *ps) override;

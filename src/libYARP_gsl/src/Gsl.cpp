@@ -109,8 +109,3 @@ const void *GslVector::getGslVector() const
 {
     return gslData;
 }
-
-
-
-
-

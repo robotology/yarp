@@ -31,7 +31,7 @@ Platform::Platform(const char* szName) : GenericResource("Platform")
 Platform::Platform(const Platform &resource) : GenericResource(resource)
 {
     strDistrib = resource.strDistrib;
-    strRelease = resource.strRelease;    
+    strRelease = resource.strRelease;
 }
 
 Node* Platform::clone()

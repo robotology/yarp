@@ -67,7 +67,7 @@ MapGrid2D::MapGrid2D()
     m_occupied_thresh = 0.80;
     m_free_thresh = 0.20;
     for (size_t y = 0; y < m_height; y++)
-    {  
+    {
         for (size_t x = 0; x < m_width; x++)
         {
             m_map_occupancy.safePixel(x, y) = 0;
@@ -151,7 +151,7 @@ bool MapGrid2D::getMapImage(yarp::sig::ImageOf<PixelRgb>& image) const
     return true;
 }
 
-bool MapGrid2D::setMapImage(yarp::sig::ImageOf<PixelRgb>& image) 
+bool MapGrid2D::setMapImage(yarp::sig::ImageOf<PixelRgb>& image)
 {
     if (image.width() != (int)(m_width) ||
         image.height() != (int)(m_height))
@@ -467,7 +467,7 @@ bool MapGrid2D::loadMapYarpOnly(string yarp_filename)
         for (size_t x = 0; x < (size_t)(m_map_flags.width()); x++)
         {
             yarp::sig::PixelMono pix_flg = m_map_flags.safePixel(x, y);
- 
+
             if      (pix_flg == MAP_CELL_FREE) m_map_occupancy.safePixel(x, y) = 0;//@@@SET HERE
             else if (pix_flg == MAP_CELL_KEEP_OUT) m_map_occupancy.safePixel(x, y) = 0;//@@@SET HERE
             else if (pix_flg == MAP_CELL_TEMPORARY_OBSTACLE) m_map_occupancy.safePixel(x, y) = 0;//@@@SET HERE
@@ -491,7 +491,7 @@ bool  MapGrid2D::loadFromFile(std::string map_file_with_path)
         yError() << "Unable to open .map description file:" << map_file_with_path;
         return false;
     }
-    
+
     if (mapfile.check("MapName") ==false)
     {
         yError() << "Unable to find 'MapName' parameter inside:" << map_file_with_path;
@@ -584,14 +584,14 @@ bool  MapGrid2D::crop (int left, int top, int right, int bottom)
                 yarp::sig::PixelMono pix = m_map_occupancy.safePixel(i,j);
                 if ( pix != 255)
                 {
-                 top = j; 
+                 top = j;
                     goto topFound;
                 }
             }
         }
     }
     topFound:
-    
+
     if (bottom < 0)
     {
         for (int j=height()-1; j>0; j--){
@@ -599,39 +599,39 @@ bool  MapGrid2D::crop (int left, int top, int right, int bottom)
                 yarp::sig::PixelMono pix = m_map_occupancy.safePixel(i,j);
                 if ( pix != 255)
                 {
-                    bottom = j+1; 
+                    bottom = j+1;
                     goto bottomFound;
                 }
             }
         }
     }
     bottomFound:
-    
+
     if (left<0)
     {
         for (size_t i=0;i<width();i++){
-            for (size_t j=0;j<height();j++){    
+            for (size_t j=0;j<height();j++){
                 yarp::sig::PixelMono pix = m_map_occupancy.safePixel(i,j);
                 if ( pix != 255)
                 {
-                    left = i; 
+                    left = i;
                     goto leftFound;
                 }
            }
         }
     }
     leftFound:
-    
+
     if (right<0)
     {
         for (size_t i=width()-1;i>0;i--){
-            for (size_t j=0;j<height();j++){    
+            for (size_t j=0;j<height();j++){
                 yarp::sig::PixelMono pix = m_map_occupancy.safePixel(i,j);
                 if ( pix != 255)
                 {
-                    right = i; 
+                    right = i;
                     goto rightFound;
-                } 
+                }
            }
         }
     }
@@ -651,10 +651,10 @@ bool  MapGrid2D::crop (int left, int top, int right, int bottom)
     new_map_flags.setQuantum(1);
     new_map_occupancy.resize(right-left,bottom-top);
     new_map_flags.resize(right-left,bottom-top);
-    
+
     size_t original_width = m_map_occupancy.width();
     size_t original_height = m_map_occupancy.height();
-    
+
     for (int j=top, y=0; j<bottom; j++, y++)
         for (int i=left, x=0; i<right; i++, x++)
         {
@@ -745,9 +745,9 @@ bool MapGrid2D::read(yarp::os::ConnectionReader& connection)
     connection.expectInt();
     m_origin.x = connection.expectDouble();
     connection.expectInt();
-    m_origin.y = connection.expectDouble(); 
+    m_origin.y = connection.expectDouble();
     connection.expectInt();
-    m_origin.theta = connection.expectDouble(); 
+    m_origin.theta = connection.expectDouble();
     connection.expectInt();
     m_resolution = connection.expectDouble();
     connection.expectInt();
@@ -772,7 +772,7 @@ bool MapGrid2D::read(yarp::os::ConnectionReader& connection)
     ok &= connection.expectBlock((char*)mem, memsize);
     if (!ok) return false;
 
-    return !connection.isError(); 
+    return !connection.isError();
         return true;
 }
 
@@ -807,7 +807,7 @@ bool MapGrid2D::write(yarp::os::ConnectionWriter& connection)
     connection.appendInt(BOTTLE_TAG_BLOB);
     connection.appendInt(memsize);
     connection.appendExternalBlock((char*)mem, memsize);
-   
+
     connection.convertTextMode();
     return !connection.isError();
 }
@@ -1007,7 +1007,7 @@ bool MapGrid2D::getOccupancyData(XYCell cell, double& occupancy) const
         return false;
     }
     if (m_map_occupancy.safePixel(cell.x, cell.y)==255)
-    { 
+    {
       occupancy =-1;
     }
     else

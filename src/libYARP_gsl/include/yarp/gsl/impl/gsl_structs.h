@@ -4,12 +4,12 @@
 * CopyPolicy: Released under the terms of the GPLv2 or later
 */
 
-/**
-* Defines types for binary compatibily with the GSL.
-*/
-
 #ifndef YARP_GSL_IMPL_GSL_COMPATIBILITY_H
 #define YARP_GSL_IMPL_GSL_COMPATIBILITY_H
+
+/*
+ * This file defines types for binary compatibily with the GSL.
+ */
 
 #include <cstddef>
 

@@ -83,5 +83,4 @@ private:
     void *gslData;
 };
 
-#endif //h
-
+#endif // YARP_GSL_GSL_HEADER_H

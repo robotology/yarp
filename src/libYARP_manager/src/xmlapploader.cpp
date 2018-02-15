@@ -434,7 +434,7 @@ Application* XmlAppLoader::parsXml(const char* szFile)
                             }
                             else {  // if "when" has not been specified, use setPostExecWait!
                                 if(parser->parseText(res->GetText()).c_str())
-                                    module.setPostExecWait(atof(parser->parseText(res->GetText()).c_str()));                              
+                                    module.setPostExecWait(atof(parser->parseText(res->GetText()).c_str()));
                             }
                         }
                         else
