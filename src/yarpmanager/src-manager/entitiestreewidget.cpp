@@ -111,7 +111,7 @@ void EntitiesTreeWidget::addApplication(yarp::manager::Application *app)
 
     string fname;
     string fpath = app->getXmlFile();
-    size_t pos = fpath.rfind(PATH_SEPERATOR);
+    size_t pos = fpath.rfind(yarp::os::NetworkBase::getDirectorySeparator());
     if (pos!=string::npos) {
         fname = fpath.substr(pos+1);
     } else {
@@ -137,7 +137,7 @@ void EntitiesTreeWidget::addComputer(yarp::manager::Computer* comp)
 
     string fname;
     string fpath = comp->getXmlFile();
-    size_t pos = fpath.rfind(PATH_SEPERATOR);
+    size_t pos = fpath.rfind(yarp::os::NetworkBase::getDirectorySeparator());
     if (pos!=string::npos) {
         fname = fpath.substr(pos+1);
     } else {
@@ -162,7 +162,7 @@ void EntitiesTreeWidget::addModule(yarp::manager::Module* mod)
 
     string fname;
     string fpath = mod->getXmlFile();
-    size_t pos = fpath.rfind(PATH_SEPERATOR);
+    size_t pos = fpath.rfind(yarp::os::NetworkBase::getDirectorySeparator());
     if (pos!=string::npos) {
         fname = fpath.substr(pos+1);
     } else {
