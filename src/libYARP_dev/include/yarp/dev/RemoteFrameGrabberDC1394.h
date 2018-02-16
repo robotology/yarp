@@ -8,7 +8,7 @@
 #ifndef YARP_DEV_REMOTEFRAMEGRABBERDC1394_H
 #define YARP_DEV_REMOTEFRAMEGRABBERDC1394_H
 
-#include <yarp/dev/ServerFrameGrabber.h>
+#include <yarp/dev/FrameGrabberInterfaces.h>
 #include <yarp/os/Network.h>
 #include <yarp/os/LogStream.h>
 
