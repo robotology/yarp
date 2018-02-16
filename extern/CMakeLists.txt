@@ -50,6 +50,9 @@ if(YARP_BUILD_QGVCORE)
   set(QGVCore_DEFINITIONS ${QGVCore_DEFINITIONS} PARENT_SCOPE)
 endif()
 
+# hmac
+set(hmac_ROOT "${CMAKE_CURRENT_SOURCE_DIR}/hmac/hmac" PARENT_SCOPE)
+
 # libdc1394_bayer
 set(libdc1394_bayer_ROOT "${CMAKE_CURRENT_SOURCE_DIR}/libdc1394_bayer" PARENT_SCOPE)
 
