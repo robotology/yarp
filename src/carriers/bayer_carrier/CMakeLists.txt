@@ -15,9 +15,9 @@ if(NOT SKIP_bayer)
   set(CMAKE_INCLUDE_CURRENT_DIR ON)
 
   if(NOT YARP_HAS_LIBDC1394)
-    set(DC1394_SRC ${CMAKE_SOURCE_DIR}/extern/libdc1394_bayer/libdc1394_bayer.c
-                   ${CMAKE_SOURCE_DIR}/extern/libdc1394_bayer/conversions.h)
-    include_directories(SYSTEM ${CMAKE_SOURCE_DIR}/extern/libdc1394_bayer/)
+    set(DC1394_SRC ${libdc1394_bayer_ROOT}/libdc1394_bayer.c
+                   ${libdc1394_bayer_ROOT}/conversions.h)
+    include_directories(SYSTEM ${libdc1394_bayer_ROOT})
     set(Libdc1394_LIBRARIES)
     if (MSVC AND DC1394_SRC)
       if(MSVC_VERSION VERSION_LESS 1900)

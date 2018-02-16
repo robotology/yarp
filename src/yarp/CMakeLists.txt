@@ -32,7 +32,7 @@ set(yarp_config_HDRS yarpcontext.h
                      yarprobot.h
                      yarpcontextutils.h)
 
-include_directories(SYSTEM ${CMAKE_SOURCE_DIR}/extern/diff_match_patch)
+include_directories(SYSTEM ${diff_match_patch_INCLUDE_DIRS})
 
 add_executable(yarp-config ${yarp_config_SRCS}
                            ${yarp_config_HDRS})

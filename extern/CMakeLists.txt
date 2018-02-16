@@ -42,9 +42,19 @@ if(YARP_BUILD_XMLRPCPP)
   set(xmlrpcpp_DEFINITIONS ${xmlrpcpp_DEFINITIONS} PARENT_SCOPE)
 endif()
 
+# Qgv
 if(YARP_BUILD_QGVCORE)
   add_subdirectory(qgv)
   set(QGVCore_INCLUDE_DIRS ${QGVCore_INCLUDE_DIRS} PARENT_SCOPE)
   set(QGVCore_LIBRARIES ${QGVCore_LIBRARIES} PARENT_SCOPE)
   set(QGVCore_DEFINITIONS ${QGVCore_DEFINITIONS} PARENT_SCOPE)
 endif()
+
+# libdc1394_bayer
+set(libdc1394_bayer_ROOT "${CMAKE_CURRENT_SOURCE_DIR}/libdc1394_bayer" PARENT_SCOPE)
+
+# rplidar SDK
+set(RPLIDAR_SDK_ROOT "${CMAKE_CURRENT_SOURCE_DIR}/rplidar/sdk" PARENT_SCOPE)
+
+# diff_match_patch
+set(diff_match_patch_INCLUDE_DIRS "${CMAKE_CURRENT_SOURCE_DIR}/diff_match_patch" PARENT_SCOPE)
