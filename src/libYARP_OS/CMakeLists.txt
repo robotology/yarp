@@ -221,9 +221,6 @@ set(YARP_OS_IMPL_HDRS include/yarp/os/impl/ACELockImpl.h
                       include/yarp/os/impl/UnitTest.h
                       include/yarp/os/impl/ydr.h)
 
-set(YARP_OS_IMPL_HMAC_HDRS include/yarp/os/impl/hmac/hmac_sha2.h
-                           include/yarp/os/impl/hmac/sha2.h)
-
 set(YARP_OS_SRCS src/AbstractCarrier.cpp
                  src/AbstractContactable.cpp
                  src/AuthHMAC.cpp
@@ -359,8 +356,6 @@ set(YARP_OS_SRCS src/AbstractCarrier.cpp
                  src/WireState.cpp
                  src/WireWriter.cpp
                  src/ydr.cpp
-                 src/hmac_sha2.c
-                 src/sha2.c
                  src/QosStyle.cpp)
 
 if(APPLE)
@@ -381,8 +376,7 @@ source_group(TREE "${CMAKE_CURRENT_SOURCE_DIR}"
              PREFIX "Header Files"
              FILES ${YARP_OS_HDRS}
                    ${YARP_OS_IDL_HDRS}
-                   ${YARP_OS_IMPL_HDRS}
-                   ${YARP_OS_IMPL_HMAC_HDRS})
+                   ${YARP_OS_IMPL_HDRS})
 
 option(ENABLE_YARPRUN_LOG "Enable yarprun log file in temp dir" OFF)
 if (ENABLE_YARPRUN_LOG)
@@ -396,18 +390,19 @@ include_directories(${YARP_TREE_INCLUDE_DIRS})
 if (NOT SKIP_ACE)
   include_directories(SYSTEM ${ACE_INCLUDE_DIRS})
 endif ()
+include_directories(${hmac_INCLUDE_DIRS})
 
 add_library(YARP_OS ${YARP_OS_SRCS}
                     ${YARP_OS_HDRS}
                     ${YARP_OS_IDL_HDRS}
-                    ${YARP_OS_IMPL_HDRS}
-                    ${YARP_OS_IMPL_HMAC_HDRS})
+                    ${YARP_OS_IMPL_HDRS})
 add_library(YARP::YARP_OS ALIAS YARP_OS)
 
 target_include_directories(YARP_OS PUBLIC $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>
                                           $<INSTALL_INTERFACE:${CMAKE_INSTALL_INCLUDEDIR}>)
 
 target_link_libraries(YARP_OS PRIVATE ${ACE_LIBRARIES}
+                                      ${hmac_LIBRARIES}
                               PUBLIC YARP::YARP_conf)
 
 if(NOT CMAKE_MINIMUM_REQUIRED_VERSION VERSION_LESS 3.1)
@@ -457,9 +452,6 @@ install(TARGETS YARP_OS
 install(FILES ${YARP_OS_IDL_HDRS}
         COMPONENT development
         DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}/yarp/os/idl)
-install(FILES ${YARP_OS_IMPL_HMAC_HDRS}
-        COMPONENT development
-        DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}/yarp/os/impl/hmac)
 
 set_property(GLOBAL APPEND PROPERTY YARP_LIBS YARP_OS)
 set_property(TARGET YARP_OS PROPERTY INCLUDE_DIRS ${YARP_TREE_INCLUDE_DIRS})

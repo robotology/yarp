@@ -90,6 +90,7 @@ if(YARP_COMPILE_TESTS)
     if(YARP_HAS_ACE)
       include_directories(${ACE_INCLUDE_DIRS})
     endif()
+    include_directories(${hmac_INCLUDE_DIRS})
 
     set(EXE harness_${test_family})
     string(TOLOWER ${EXE} EXE)
