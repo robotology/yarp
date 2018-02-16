@@ -41,7 +41,6 @@ if(CREATE_LIB_MANAGER)
                         include/yarp/manager/xmltemploader.h
                         include/yarp/manager/yarpbroker.h
                         include/yarp/manager/yarpdevbroker.h
-                        include/yarp/manager/ymm-dir.h
                         include/yarp/manager/ymm-types.h)
 
   set(YARP_manager_IMPL_HDRS include/yarp/manager/impl/textparser.h)
@@ -87,7 +86,9 @@ if(CREATE_LIB_MANAGER)
 
   include_directories(${YARP_TREE_INCLUDE_DIRS})
   include_directories(SYSTEM ${TinyXML_INCLUDE_DIRS})
-
+  if(MSVC)
+    include_directories(SYSTEM ${dirent_INCLUDE_DIRS})
+  endif()
 
   if(CREATE_LIB_MATH)
     add_definitions( -DWITH_YARPMATH )

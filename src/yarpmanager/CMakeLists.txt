@@ -16,6 +16,9 @@ if(CREATE_YARPMANAGER)
                       ${YARP_profiler_INCLUDE_DIRS}
                       ./src-builder
                       ./src-manager)
+  if(MSVC)
+    include_directories(SYSTEM ${dirent_INCLUDE_DIRS})
+  endif()
 
   set(CMAKE_INCLUDE_CURRENT_DIR TRUE)
 

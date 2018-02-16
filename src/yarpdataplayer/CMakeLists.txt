@@ -21,6 +21,10 @@ if(CREATE_YARPDATAPLAYER)
     message(STATUS "yarpdataplayer: OpenCV not selected, keep on building...")
   endif()
 
+  if(MSVC)
+    include_directories(SYSTEM ${dirent_INCLUDE_DIRS})
+  endif()
+
   set(yarpdataplayer_SRCS src/aboutdlg.cpp
                           src/genericinfodlg.cpp
                           src/loadingwidget.cpp
@@ -37,9 +41,7 @@ if(CREATE_YARPDATAPLAYER)
                           include/mainwindow.h
                           include/utils.h
                           include/worker.h)
-  if(MSVC)
-    list(APPEND yarpdataplayer_HDRS include/msvc/dirent.h)
-  endif()
+
   set(yarpdataplayer_QRC_FILES src/RC/res.qrc)
   set(yarpdataplayer_UI_FILES include/UI/aboutdlg.ui
                               include/UI/genericinfodlg.ui

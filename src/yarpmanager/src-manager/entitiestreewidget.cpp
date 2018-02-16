@@ -9,7 +9,7 @@
  */
 
 #include "entitiestreewidget.h"
-#include <yarp/manager/ymm-dir.h>
+#include <dirent.h>
 #include <QProcess>
 #include <QHeaderView>
 #include <QMessageBox>

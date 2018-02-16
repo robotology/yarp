@@ -11,7 +11,7 @@
 
 #include <yarp/manager/xmlapploader.h>
 #include <yarp/manager/application.h>
-#include <yarp/manager/ymm-dir.h>
+#include <dirent.h>
 #include <yarp/os/ResourceFinder.h>
 
 /*

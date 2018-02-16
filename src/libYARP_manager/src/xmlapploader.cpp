@@ -9,7 +9,7 @@
 
 #include <yarp/manager/xmlapploader.h>
 #include <yarp/manager/utility.h>
-#include <yarp/manager/ymm-dir.h>
+#include <dirent.h>
 #include <tinyxml.h>
 #include <yarp/os/Value.h>
 #ifdef WITH_GEOMETRY
