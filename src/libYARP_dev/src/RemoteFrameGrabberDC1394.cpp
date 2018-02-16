@@ -4,10 +4,7 @@
  * CopyPolicy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
  */
 
-
-#include <yarp/dev/ServerFrameGrabber.h>
 #include <yarp/dev/RemoteFrameGrabberDC1394.h>
-#include <yarp/dev/PolyDriver.h>
 
 using namespace yarp::os;
 using namespace yarp::dev;
