@@ -103,6 +103,7 @@ NewApplicationWizard::NewApplicationWizard(yarp::os::Property *config, bool _sav
 
 
 
+    const yarp::os::ConstString directorySeparator = yarp::os::NetworkBase::getDirectorySeparator();
     if(m_config->check("apppath")){
         string basepath=m_config->check("ymanagerini_dir", yarp::os::Value("")).asString().c_str();
         string appPaths(m_config->find("apppath").asString().c_str());
@@ -116,9 +117,9 @@ NewApplicationWizard::NewApplicationWizard(yarp::os::Property *config, bool _sav
             if (!absolute(strPath.c_str()))
                 strPath=basepath+strPath;
 
-            if((strPath.rfind(PATH_SEPERATOR)==string::npos) ||
-                    (strPath.rfind(PATH_SEPERATOR)!=strPath.size()-1))
-                strPath = strPath + string(PATH_SEPERATOR);
+            if((strPath.rfind(directorySeparator)==string::npos) ||
+                    (strPath.rfind(directorySeparator)!=strPath.size()-1))
+                strPath = strPath + string(directorySeparator);
             folderCombo->addItem(QString("%1").arg(strPath.c_str()));
 
             if (pos==string::npos)
@@ -131,7 +132,7 @@ NewApplicationWizard::NewApplicationWizard(yarp::os::Property *config, bool _sav
        string appPaths(m_config->find("apppath").asString().c_str());
        string homePath=m_config->find("yarpdatahome").asString().c_str();
 
-       homePath +=  string(PATH_SEPERATOR) + string("applications");
+       homePath +=  string(directorySeparator) + string("applications");
 
        if (appPaths.find(homePath)==string::npos)
            folderCombo->addItem(QString("%1").arg(homePath.c_str()));

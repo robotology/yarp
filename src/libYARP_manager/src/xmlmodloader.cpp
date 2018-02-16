@@ -34,10 +34,11 @@ XmlModLoader::XmlModLoader(const char* szPath, const char* szName)
 
     if(strlen(szPath))
     {
+        const yarp::os::ConstString directorySeparator = yarp::os::NetworkBase::getDirectorySeparator();
         strPath = szPath;
-        if((strPath.rfind(PATH_SEPERATOR)==string::npos) ||
-            (strPath.rfind(PATH_SEPERATOR)!=strPath.size()-1))
-            strPath = strPath + string(PATH_SEPERATOR);
+        if((strPath.rfind(directorySeparator)==string::npos) ||
+            (strPath.rfind(directorySeparator)!=strPath.size()-1))
+            strPath = strPath + string(directorySeparator);
     }
 
     if(szName)

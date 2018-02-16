@@ -781,7 +781,7 @@ bool YConsoleManager::process(const vector<string> &cmdList)
         return true;
     }
 
-
+    const yarp::os::ConstString directorySeparator = yarp::os::NetworkBase::getDirectorySeparator();
 
     /**
      *  list available modules
@@ -797,7 +797,7 @@ bool YConsoleManager::process(const vector<string> &cmdList)
             string fname;
             string fpath = (*itr)->getXmlFile();
 
-            size_t pos = fpath.rfind(PATH_SEPERATOR);
+            size_t pos = fpath.rfind(directorySeparator);
             if(pos!=string::npos)
                 fname = fpath.substr(pos);
             else
@@ -824,7 +824,7 @@ bool YConsoleManager::process(const vector<string> &cmdList)
             string fname;
             string fpath = (*itr)->getXmlFile();
 
-            size_t pos = fpath.rfind(PATH_SEPERATOR);
+            size_t pos = fpath.rfind(directorySeparator);
             if(pos!=string::npos)
                 fname = fpath.substr(pos);
             else
@@ -852,7 +852,7 @@ bool YConsoleManager::process(const vector<string> &cmdList)
             {
                 string fname;
                 string fpath = comp->getXmlFile();
-                size_t pos = fpath.rfind(PATH_SEPERATOR);
+                size_t pos = fpath.rfind(directorySeparator);
                 if(pos!=string::npos)
                     fname = fpath.substr(pos);
                 else
@@ -1156,10 +1156,11 @@ void YConsoleManager::onCnnFailed(void* which)
 
 bool YConsoleManager::loadRecursiveApplications(const char* szPath)
 {
+    const yarp::os::ConstString directorySeparator = yarp::os::NetworkBase::getDirectorySeparator();
     string strPath = szPath;
-    if((strPath.rfind(PATH_SEPERATOR)==string::npos) ||
-            (strPath.rfind(PATH_SEPERATOR)!=strPath.size()-1))
-            strPath = strPath + string(PATH_SEPERATOR);
+    if((strPath.rfind(directorySeparator)==string::npos) ||
+            (strPath.rfind(directorySeparator)!=strPath.size()-1))
+            strPath = strPath + string(directorySeparator);
 
     DIR *dir;
     struct dirent *entry;

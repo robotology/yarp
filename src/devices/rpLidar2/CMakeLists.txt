@@ -10,7 +10,6 @@ yarp_prepare_plugin(rpLidar2
 if(NOT SKIP_rpLidar2)
   set(CMAKE_INCLUDE_CURRENT_DIR ON)
 
-  set(RPLIDAR_SDK_ROOT ${CMAKE_SOURCE_DIR}/extern/rplidar/sdk)
   if(WIN32)
     set(RPLIDAR_ARCH_DIR win32)
   elseif(APPLE)

@@ -211,6 +211,7 @@ void MainWindow::onWizardError(QString err)
 void MainWindow::init(yarp::os::Property config)
 {
     this->config = config;
+    const yarp::os::ConstString directorySeparator = yarp::os::NetworkBase::getDirectorySeparator();
 
     string basepath=config.check("ymanagerini_dir", yarp::os::Value("")).asString().c_str();
 
@@ -223,9 +224,9 @@ void MainWindow::init(yarp::os::Property config)
             yarp::manager::trimString(strPath);
             if (!isAbsolute(strPath.c_str()))
                 strPath=basepath+strPath;
-            if((strPath.rfind(PATH_SEPERATOR)==string::npos) ||
-            (strPath.rfind(PATH_SEPERATOR)!=strPath.size()-1))
-                strPath = strPath + string(PATH_SEPERATOR);
+            if((strPath.rfind(directorySeparator)==string::npos) ||
+            (strPath.rfind(directorySeparator)!=strPath.size()-1))
+                strPath = strPath + string(directorySeparator);
             lazyManager.addModules(strPath.c_str());
             if (pos==string::npos || pos==0)
                 break;
@@ -243,9 +244,9 @@ void MainWindow::init(yarp::os::Property config)
             if (!isAbsolute(strPath.c_str()))
                 strPath=basepath+strPath;
 
-            if((strPath.rfind(PATH_SEPERATOR)==string::npos) ||
-            (strPath.rfind(PATH_SEPERATOR)!=strPath.size()-1))
-                strPath = strPath + string(PATH_SEPERATOR);
+            if((strPath.rfind(directorySeparator)==string::npos) ||
+            (strPath.rfind(directorySeparator)!=strPath.size()-1))
+                strPath = strPath + string(directorySeparator);
 
             lazyManager.addResources(strPath.c_str());
             if (pos==string::npos)
@@ -268,9 +269,9 @@ void MainWindow::init(yarp::os::Property config)
                 strPath=basepath+strPath;
             }
 
-            if((strPath.rfind(PATH_SEPERATOR)==string::npos) ||
-                (strPath.rfind(PATH_SEPERATOR)!=strPath.size()-1)){
-                    strPath = strPath + string(PATH_SEPERATOR);
+            if((strPath.rfind(directorySeparator)==string::npos) ||
+                (strPath.rfind(directorySeparator)!=strPath.size()-1)){
+                    strPath = strPath + string(directorySeparator);
             }
 
             if(config.find("load_subfolders").asString() == "yes"){
@@ -424,10 +425,11 @@ void MainWindow::syncApplicationList(QString selectNodeForEditing, bool open)
  */
 bool MainWindow::loadRecursiveTemplates(const char* szPath)
 {
+    const yarp::os::ConstString directorySeparator = yarp::os::NetworkBase::getDirectorySeparator();
     string strPath = szPath;
-    if((strPath.rfind(PATH_SEPERATOR)==string::npos) ||
-            (strPath.rfind(PATH_SEPERATOR)!=strPath.size()-1))
-            strPath = strPath + string(PATH_SEPERATOR);
+    if((strPath.rfind(directorySeparator)==string::npos) ||
+            (strPath.rfind(directorySeparator)!=strPath.size()-1))
+            strPath = strPath + string(directorySeparator);
 
     DIR *dir;
     struct dirent *entry;
@@ -464,10 +466,11 @@ bool MainWindow::loadRecursiveTemplates(const char* szPath)
  */
 bool MainWindow::loadRecursiveApplications(const char* szPath)
 {
+    const yarp::os::ConstString directorySeparator = yarp::os::NetworkBase::getDirectorySeparator();
     string strPath = szPath;
-    if((strPath.rfind(PATH_SEPERATOR)==string::npos) ||
-            (strPath.rfind(PATH_SEPERATOR)!=strPath.size()-1))
-            strPath = strPath + string(PATH_SEPERATOR);
+    if((strPath.rfind(directorySeparator)==string::npos) ||
+            (strPath.rfind(directorySeparator)!=strPath.size()-1))
+            strPath = strPath + string(directorySeparator);
 
     DIR *dir;
     struct dirent *entry;
