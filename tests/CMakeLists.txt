@@ -121,7 +121,7 @@ if(YARP_COMPILE_TESTS)
             add_test(NAME "${test_family}::${XN}::Valgrind::${_Tool}"
                      COMMAND ${VALGRIND_${_TOOL}_COMMAND} ${_cmd})
             if(_disabled)
-              set_property(TEST "${test_family}::${XN}" PROPERTY DISABLED ON)
+              set_property(TEST "${test_family}::${XN}::Valgrind::${_Tool}" PROPERTY DISABLED ON)
             endif()
           endif()
         endforeach()
