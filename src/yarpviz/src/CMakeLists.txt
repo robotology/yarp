@@ -1,3 +1,10 @@
+# Copyright (C) 2006-2018 Istituto Italiano di Tecnologia (IIT)
+# All rights reserved.
+#
+# This software may be modified and distributed under the terms of the
+# BSD-3-Clause license. See the accompanying LICENSE file for details.
+
+
 set(CMAKE_INCLUDE_CURRENT_DIR ON)
 
 include_directories(SYSTEM ${QGVCore_INCLUDE_DIRS} ${YARP_profiler_INCLUDE_DIRS})
