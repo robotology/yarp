@@ -41,6 +41,9 @@ public:
             bool result;
             result = dd.open(p);
             checkTrue(result,"open reported successful");
+            if(!result) {
+                return;
+            }
             IFrameGrabberImage *grabber = nullptr;
             result = dd.view(grabber);
             checkTrue(result,"interface reported");
