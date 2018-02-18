@@ -82,15 +82,9 @@ this:
 
 \author Lorenzo Natale and Vadim Tikhanoff
 
-Copyright (C) 2012 Instituto Italiano di Tecnologia (IIT).
-
-CopyPolicy: Released under the terms of the GNU GPL v2.0.
-
 \sa yarpdataplayerRecExample
 \sa yarpdataplayer
 \sa yarpdatadumper
-
-This file can be edited at \link main/app/yarpdataplayer/doc.dox
 */
 
 /**
@@ -143,12 +137,6 @@ connecting the ports, the recording should automatically start.
 
 \author Lorenzo Natale and Vadim Tikhanoff
 
-Copyright (C) 2012 Instituto Italiano di Tecnologia (IIT).
-
-CopyPolicy: Released under the terms of the GNU GPL v2.0.
-
 \sa yarpdatadumper
 \sa yarpdataplayer
-
-This file can be edited at \link main/app/yarpdataplayer/doc.dox
 */
