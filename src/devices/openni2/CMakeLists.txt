@@ -33,6 +33,8 @@ if (NOT SKIP_OpenNI2DeviceServer OR NOT SKIP_OpenNI2DeviceClient)
     add_definitions(-DOPENNI2_DRIVER_USES_NITE2)
   endif()
 
+  include_directories(${CMAKE_CURRENT_SOURCE_DIR}/include)
+
   include_directories(SYSTEM ${OpenNI2_INCLUDE_DIRS})
   if(NITE2_FOUND)
     include_directories(SYSTEM ${NITE2_INCLUDE_LOCAL})

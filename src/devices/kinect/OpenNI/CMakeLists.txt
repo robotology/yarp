@@ -2,6 +2,8 @@
 # Author: Paul Fitzpatrick
 # CopyPolicy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
 
+include_directories(${CMAKE_CURRENT_SOURCE_DIR}/include)
+
 yarp_prepare_plugin(KinectDeviceLocal
                     CATEGORY device
                     TYPE yarp::dev::KinectDeviceDriverServer

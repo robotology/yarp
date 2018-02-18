@@ -366,6 +366,8 @@ endif()
 
 buildandset_dependency(xmlrpcpp)
 
+buildandset_dependency(hmac)
+
 if(CREATE_GUIS)
   find_package(Qt5 COMPONENTS Core Widgets Gui Quick Qml Multimedia Xml PrintSupport QUIET)
   checkandset_dependency(Qt5)
@@ -487,6 +489,7 @@ print_dependency(SQLite)
 print_dependency(Eigen3)
 print_dependency(TinyXML)
 #print_dependency(xmlrpcpp)
+print_dependency(hmac)
 print_dependency(Qt5)
 print_dependency(QCustomPlot)
 print_dependency(Graphviz)

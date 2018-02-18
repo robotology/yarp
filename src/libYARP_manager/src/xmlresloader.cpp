@@ -9,7 +9,7 @@
 
 #include <yarp/manager/xmlresloader.h>
 #include <yarp/manager/utility.h>
-#include <yarp/manager/ymm-dir.h>
+#include <dirent.h>
 #include <yarp/manager/physicresource.h>
 #include <yarp/manager/logicresource.h>
 

@@ -13,7 +13,7 @@
 
 #include <yarp/os/Log.h>
 #include <yarp/os/ResourceFinder.h>
-#include <yarp/manager/ymm-dir.h>
+#include <dirent.h>
 #include <yarp/manager/xmlapploader.h>
 #include <yarp/manager/xmltemploader.h>
 #include <yarp/manager/localbroker.h>

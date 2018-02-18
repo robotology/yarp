@@ -41,7 +41,7 @@ public:
         DEVICE_TIMEOUT          = 3
     };
 
-    virtual ~IRangefinder2D(){}
+    virtual ~IRangefinder2D();
 
     /**
     * Get the device measurements

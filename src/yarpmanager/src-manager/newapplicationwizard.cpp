@@ -4,7 +4,7 @@
 #include <QFileInfo>
 #include <QMessageBox>
 
-#include <yarp/manager/ymm-dir.h>
+#include <dirent.h>
 #include <yarp/os/Network.h>
 
 using namespace std;

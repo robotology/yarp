@@ -15,7 +15,10 @@ if(CREATE_YARPMANAGER_CONSOLE)
 
   include_directories(${YARP_OS_INCLUDE_DIRS})
   include_directories(${YARP_manager_INCLUDE_DIRS})
-  include_directories(${ACE_INCLUDE_DIRS})
+  include_directories(SYSTEM ${ACE_INCLUDE_DIRS})
+  if(MSVC)
+    include_directories(SYSTEM ${dirent_INCLUDE_DIRS})
+  endif()
 
   if (YARP_HAS_LIBEDIT)
     add_definitions( -DWITH_LIBEDIT )

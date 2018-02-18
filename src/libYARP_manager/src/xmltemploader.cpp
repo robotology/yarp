@@ -9,7 +9,7 @@
 
 #include <yarp/manager/xmltemploader.h>
 #include <yarp/manager/utility.h>
-#include <yarp/manager/ymm-dir.h>
+#include <dirent.h>
 
 #include <algorithm>
 #include <cctype>

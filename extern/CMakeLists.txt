@@ -50,6 +50,14 @@ if(YARP_BUILD_QGVCORE)
   set(QGVCore_DEFINITIONS ${QGVCore_DEFINITIONS} PARENT_SCOPE)
 endif()
 
+# hmac
+if(YARP_BUILD_HMAC)
+  add_subdirectory(hmac)
+  set(hmac_INCLUDE_DIRS ${hmac_INCLUDE_DIRS} PARENT_SCOPE)
+  set(hmac_LIBRARIES ${hmac_LIBRARIES} PARENT_SCOPE)
+  set(hmac_DEFINITIONS ${hmac_DEFINITIONS} PARENT_SCOPE)
+endif()
+
 # libdc1394_bayer
 set(libdc1394_bayer_ROOT "${CMAKE_CURRENT_SOURCE_DIR}/libdc1394_bayer" PARENT_SCOPE)
 
@@ -58,3 +66,8 @@ set(RPLIDAR_SDK_ROOT "${CMAKE_CURRENT_SOURCE_DIR}/rplidar/sdk" PARENT_SCOPE)
 
 # diff_match_patch
 set(diff_match_patch_INCLUDE_DIRS "${CMAKE_CURRENT_SOURCE_DIR}/diff_match_patch" PARENT_SCOPE)
+
+# dirent (for MSVC)
+if(MSVC)
+  set(dirent_INCLUDE_DIRS "${CMAKE_CURRENT_SOURCE_DIR}/dirent/dirent/include" PARENT_SCOPE)
+endif()

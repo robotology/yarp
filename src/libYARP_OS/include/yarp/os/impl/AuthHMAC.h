@@ -9,7 +9,7 @@
 #include <yarp/os/InputStream.h>
 #include <yarp/os/OutputStream.h>
 
-#include <yarp/os/impl/hmac/hmac_sha2.h>
+#include <hmac_sha2.h>
 
 #define DIGEST_SIZE SHA256_DIGEST_SIZE
 #define HMAC_CONTEXT hmac_sha256_ctx
