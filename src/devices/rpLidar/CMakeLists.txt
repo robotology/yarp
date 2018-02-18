@@ -1,4 +1,5 @@
-# Copyright (C) 2015 Marco Randazzo
+# Copyright (C) 2015 Istituto Italiano di Tecnologia (IIT)
+# Author: Marco Randazzo
 # CopyPolicy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
 
 yarp_prepare_plugin(rpLidar
