@@ -5,7 +5,7 @@
  * email:   dperrone@aitek.it
  * website: www.aitek.it
  *
- * CopyPolicy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
+ * CopyPolicy: Released under the terms of the LGPLv2.1 or later, see LICENSE
  */
 
 import robotology.yarp.view 1.0
@@ -676,7 +676,7 @@ Rectangle {
                 anchors.rightMargin: 10
                 anchors.bottomMargin: 10
 
-                text: "Released under the terms of the LGPLv2.1 or later, see LGPL.TXT " +
+                text: "Released under the terms of the LGPLv2.1 or later, see LICENSE " +
                 "The complete license description is contained in the " +
                 "COPYING file included in this distribution." +
                 "Please refer to this file for complete " +

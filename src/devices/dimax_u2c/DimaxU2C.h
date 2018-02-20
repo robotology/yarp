@@ -1,6 +1,6 @@
 /*
  * Copyright (C) 2006 Assif Mirza
- * CopyPolicy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
+ * CopyPolicy: Released under the terms of the LGPLv2.1 or later, see LICENSE
  */
 
 #ifndef KASPAR_CONTROL_DEVICE_H

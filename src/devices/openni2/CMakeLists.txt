@@ -1,6 +1,6 @@
 # Copyright (C) 2013
 # Author: Konstantinos Theofilis
-# CopyPolicy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
+# CopyPolicy: Released under the terms of the LGPLv2.1 or later, see LICENSE
 
 
 find_path(NITE2_INCLUDE_LOCAL NAMES NiTE.h HINTS $ENV{NITE2_INCLUDE})

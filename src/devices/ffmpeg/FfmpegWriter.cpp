@@ -1,7 +1,7 @@
 /*
  * Copyright (C) 2006 RobotCub Consortium
  * Authors: Paul Fitzpatrick
- * CopyPolicy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
+ * CopyPolicy: Released under the terms of the LGPLv2.1 or later, see LICENSE
  *
  * Most of this file is from the output_example.c of ffmpeg -
  * copyright/copypolicy statement follows --

@@ -2,7 +2,7 @@
 * Copyright (C) 2015 Istituto Italiano di Tecnologia (IIT)
 * Author: Andrea Ruzzenenti <andrea.ruzzenenti@iit.it>
 *         Alberto Cardellino <alberto.cardellino@iit.it>
-* CopyPolicy: Released under the terms of the GPLv2 or later, see GPL.TXT
+* CopyPolicy: Released under the terms of the GPLv2 or later, see LICENSE
 *
 * Private header file.
 */

@@ -1,7 +1,7 @@
 
 /*
  * Copyright (C) 2006 Alexandre Bernardino, Julio Gomes
- * CopyPolicy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
+ * CopyPolicy: Released under the terms of the LGPLv2.1 or later, see LICENSE
  *
  */
 

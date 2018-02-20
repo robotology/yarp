@@ -1,6 +1,6 @@
 /*
  * Copyright (C) 2005,2006 Mike P. Blow, Lars Olsson, Assif Mirza 
- * CopyPolicy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
+ * CopyPolicy: Released under the terms of the LGPLv2.1 or later, see LICENSE
  *
  */
 #ifndef SERVO_H

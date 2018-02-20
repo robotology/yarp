@@ -4,7 +4,7 @@
  * Date:   Sep 2014
  * email:  alessandro.roncone@iit.it
  *
- * CopyPolicy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
+ * CopyPolicy: Released under the terms of the LGPLv2.1 or later, see LICENSE
  */
 
 import QtQuick 2.0
