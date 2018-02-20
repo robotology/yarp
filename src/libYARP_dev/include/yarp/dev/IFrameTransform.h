@@ -9,6 +9,7 @@
 #ifndef YARP_DEV_IFRAMETRANSFORM_H
 #define YARP_DEV_IFRAMETRANSFORM_H
 
+#include <yarp/dev/api.h>
 #include <yarp/os/Vocab.h>
 #include <yarp/sig/Matrix.h>
 #include <yarp/math/Quaternion.h>
