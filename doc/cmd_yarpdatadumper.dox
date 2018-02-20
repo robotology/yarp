@@ -6,14 +6,6 @@
 Acquires and stores Bottles or Images and Videos from a YARP
 port.
 
-Copyright (C) 2010 RobotCub Consortium
-
-Author: Ugo Pattacini
-
-Date: first release 2008/05/16
-
-CopyPolicy: Released under the terms of the GNU GPL v2.0.
-
 \section intro_sec Description
 
 When launched, the service monitors the presence of incoming

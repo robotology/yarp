@@ -53,7 +53,3 @@ Download and install the library from (http://www.graphviz.org/Download_windows.
 Set `GRAPHVIZ_ROOT` to point the installed directory (usually `C:\Program Files\Graphviz2.38` or `C:\Program Files (x86)\Graphviz2.38`).
 
 Append `%GRAPHVIZ_ROOT%\bin` to your PATH variable.
-
-
-
-

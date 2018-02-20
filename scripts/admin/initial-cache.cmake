@@ -1,3 +1,9 @@
+# Copyright (C) 2006-2018 Istituto Italiano di Tecnologia (IIT)
+# All rights reserved.
+#
+# This software may be modified and distributed under the terms of the
+# BSD-3-Clause license. See the accompanying LICENSE file for details.
+
 set(CMAKE_SKIP_INSTALL_RPATH ON CACHE BOOL "")
 set(YARP_EXPERIMENTAL_CXX11 OFF CACHE BOOL "") # At the moment this flag is broken on MSVC
 set(YARP_COMPILE_TESTS ON CACHE BOOL "")

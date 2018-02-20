@@ -1,9 +1,12 @@
 /*
- * Copyright (C) 2013 Istituto Italiano di Tecnologia (IIT)
- * Authors: Elena Ceseracciu
- * CopyPolicy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
+ * Copyright (C) 2006-2018 Istituto Italiano di Tecnologia (IIT)
+ * Copyright (C) 2006-2010 RobotCub Consortium
+ * All rights reserved.
  *
+ * This software may be modified and distributed under the terms of the
+ * BSD-3-Clause license. See the accompanying LICENSE file for details.
  */
+
 #ifndef YARPCONTEXTUTILS_H
 #define YARPCONTEXTUTILS_H
 
@@ -44,5 +47,5 @@ int remove(yarp::os::Bottle& removeArg, folderType fType, bool verbose=false);
 int diff(yarp::os::ConstString contextName, folderType fType, bool verbose=false);
 int diffList(folderType fType, bool verbose=false);
 int merge(yarp::os::Bottle& mergeArg, folderType fType, bool verbose=false);
-#endif
 
+#endif // YARPCONTEXTUTILS_H

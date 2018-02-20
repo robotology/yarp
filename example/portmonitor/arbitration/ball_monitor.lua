@@ -1,9 +1,9 @@
+-- Copyright (C) 2006-2018 Istituto Italiano di Tecnologia (IIT)
+-- All rights reserved.
 --
--- Copyright (C) 2012 Istituto Italiano di Tecnologia (IIT)
--- Authors: Ali Paikan
--- CopyPolicy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
---
- 
+-- This software may be modified and distributed under the terms of the
+-- BSD-3-Clause license. See the accompanying LICENSE file for details.
+
 -- loading lua-yarp binding library
 require("yarp")
 

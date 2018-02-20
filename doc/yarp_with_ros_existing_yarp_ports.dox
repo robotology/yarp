@@ -1,9 +1,3 @@
-/*
- * Copyright (C) 2011, 2016 Istituto Italiano di Tecnologia (IIT).
- * CopyPolicy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
- *
- */
-
 /**
  * @page yarp_with_ros_existing_yarp_ports Use ROS with existing YARP programs
  

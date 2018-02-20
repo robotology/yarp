@@ -1,7 +1,7 @@
 /*
  * Copyright (C) 2016 Istituto Italiano di Tecnologia (IIT)
  * Authors: Nicolò Genesio
- * CopyPolicy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
+ * CopyPolicy: Released under the terms of the LGPLv2.1 or later, see LICENSE
  */
 
 #ifndef YARP_ZFP_CARRIER_ZFPPORTMONITOR_H

@@ -1,6 +1,6 @@
 
 # Copyright (C) 2010 RobotCub Consortium
-# CopyPolicy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
+# CopyPolicy: Released under the terms of the LGPLv2.1 or later, see LICENSE
 
 
 Compilation tips.  Note, freenect is changing rapidly, so you may

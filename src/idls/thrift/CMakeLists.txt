@@ -1,6 +1,8 @@
-# Copyright: (C) 2012 Istituto Italiano di Tecnologia (IIT)
-# Authors: Paul Fitzpatrick
-# CopyPolicy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
+# Copyright (C) 2006-2018 Istituto Italiano di Tecnologia (IIT)
+# All rights reserved.
+#
+# This software may be modified and distributed under the terms of the
+# BSD-3-Clause license. See the accompanying LICENSE file for details.
 
 find_path(THRIFT_ROOT compiler/cpp/src/thrifty.yy PATHS ${CMAKE_SOURCE_DIR}/thrift ${CMAKE_SOURCE_DIR}/../thrift ENV THRIFT_ROOT DOC "Location of Thrift source code repository (optional)")
 option(THRIFT_USE_EXTERNAL "Use external Thrift source" FALSE)
