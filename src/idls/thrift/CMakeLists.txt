@@ -4,110 +4,98 @@
 # This software may be modified and distributed under the terms of the
 # BSD-3-Clause license. See the accompanying LICENSE file for details.
 
-find_path(THRIFT_ROOT compiler/cpp/src/thrifty.yy PATHS ${CMAKE_SOURCE_DIR}/thrift ${CMAKE_SOURCE_DIR}/../thrift ENV THRIFT_ROOT DOC "Location of Thrift source code repository (optional)")
-option(THRIFT_USE_EXTERNAL "Use external Thrift source" FALSE)
-mark_as_advanced(THRIFT_ROOT THRIFT_USE_EXTERNAL)
+include(YarpBackupVariable)
+yarp_backup_variable(PACKAGE_VERSION)
+set(PACKAGE_VERSION ${THRIFT_VERSION}-yarped)
+configure_file("${THRIFT_ROOT}/compiler/cpp/src/thrift/version.h.in"
+               "${CMAKE_CURRENT_BINARY_DIR}/thrift/version.h"
+               @ONLY)
+yarp_restore_variable(PACKAGE_VERSION)
 
-# Use external version of thrift, patching tcc to support yarp
-if (THRIFT_USE_EXTERNAL)
-  set(THRIFT_COMPILER_SOURCE ${THRIFT_ROOT}/compiler/cpp)
+set(yarpidl_thrift_SRCS "${CMAKE_CURRENT_BINARY_DIR}/thrift/version.h"
+                        "${THRIFT_ROOT}/compiler/cpp/src/thrift/common.cc"
+                        "${THRIFT_ROOT}/compiler/cpp/src/thrift/generate/t_generator.cc"
+                        "${THRIFT_ROOT}/compiler/cpp/src/thrift/parse/t_typedef.cc"
+                        "${THRIFT_ROOT}/compiler/cpp/src/thrift/parse/parse.cc"
+                        "${THRIFT_ROOT}/compiler/cpp/src/thrift/main.cc"
+                        "${THRIFT_ROOT}/compiler/cpp/src/thrift/audit/t_audit.cpp"
+                        "${THRIFT_ROOT}/compiler/cpp/src/thrift/generate/t_cpp_generator.cc")
 
-  file(GLOB_RECURSE thrift_source_cc ${THRIFT_COMPILER_SOURCE}/src/*.cc)
-  file(GLOB_RECURSE thrift_source_c ${THRIFT_COMPILER_SOURCE}/src/*.c)
+set(yarpidl_thrift_YARP_SRCS src/t_yarp_generator.cc)
 
-  set(tmp_src ${thrift_source_cc})
-  set(thrift_source_cc)
-  foreach(f ${tmp_src}) 
-    string(REGEX MATCH "t_([a-z0-9_]+)_generator[.]cc$" isgen ${f})
-    if (NOT isgen)
-      list(APPEND thrift_source_cc ${f})
-    endif ()
-  endforeach ()
-  file(GLOB_RECURSE insert_source_cc src/*.cc)
 
-  find_package(BISON REQUIRED)
-  find_package(FLEX REQUIRED)
-
-  include_directories(SYSTEM ${THRIFT_COMPILER_SOURCE})
-  include_directories(SYSTEM ${THRIFT_COMPILER_SOURCE}/src)
-  include_directories(SYSTEM ${THRIFT_COMPILER_SOURCE}/src/generate)
-  add_definitions(-DYYLTYPE_IS_TRIVIAL=0 -DYYENABLE_NLS=0)
-  bison_target(tcc_parser ${THRIFT_COMPILER_SOURCE}/src/thrifty.yy ${CMAKE_CURRENT_BINARY_DIR}/parser.cc)
-  flex_target(tcc_scanner ${THRIFT_COMPILER_SOURCE}/src/thriftl.ll  ${CMAKE_CURRENT_BINARY_DIR}/lexer.cc)
-  add_flex_bison_dependency(tcc_scanner tcc_parser)
-
-  if(MSVC)
-    set_source_files_properties(${CMAKE_CURRENT_BINARY_DIR}/parser.cc PROPERTIES COMPILE_FLAGS "/wd4065 /wd4244")
-    set_source_files_properties(${CMAKE_CURRENT_BINARY_DIR}/lexer.cc PROPERTIES COMPILE_FLAGS "/wd4068 /wd4003 /wd4102")
-  elseif(CXX_HAS_WREDUNDANT_DECLS)
-    set_property(SOURCE ${CMAKE_CURRENT_BINARY_DIR}/parser.cc
-                        ${CMAKE_CURRENT_BINARY_DIR}/lexer.cc
-                 APPEND_STRING
-                 PROPERTY COMPILE_FLAGS " -Wno-redundant-decls")
-  endif()
-  if(CXX_HAS_WMISLEADING_INDENTATION)
-    set_property(SOURCE ${CMAKE_CURRENT_BINARY_DIR}/lexer.cc
-                 APPEND_STRING
-                 PROPERTY COMPILE_FLAGS " -Wno-misleading-indentation")
-  endif()
-
-  include_directories(${CMAKE_CURRENT_SOURCE_DIR})
-  include_directories(${CMAKE_CURRENT_BINARY_DIR})
-
-  add_executable(yarpidl_thrift
-    ${CMAKE_CURRENT_BINARY_DIR}/parser.cc
-    ${CMAKE_CURRENT_BINARY_DIR}/lexer.cc
-    ${thrift_source_cc}
-    ${thrift_source_c}
-    ${insert_source_cc}
-    )
-
+if(BISON_FOUND AND FLEX_FOUND)
+  bison_target(thrifty
+               "${THRIFT_ROOT}/compiler/cpp/src/thrift/thrifty.yy"
+               "${CMAKE_CURRENT_BINARY_DIR}/thrift/thrifty.cc")
+  flex_target(thriftl
+              "${THRIFT_ROOT}/compiler/cpp/src/thrift/thriftl.ll"
+              "${CMAKE_CURRENT_BINARY_DIR}/thrift/thriftl.cc")
+  add_flex_bison_dependency(thriftl thrifty)
 else()
+  # Simulate bison and flex run
+  set(BISON_thrifty_DEFINED TRUE)
+  set(BISON_thrifty_INPUT "${THRIFT_ROOT}/compiler/cpp/src/thrifty.yy")
+  set(BISON_thrifty_OUTPUT_SOURCE "${CMAKE_CURRENT_SOURCE_DIR}/src_gen/thrift/thrifty.cc")
+  set(BISON_thrifty_OUTPUT_HEADER "${CMAKE_CURRENT_SOURCE_DIR}/src_gen/thrift/thrifty.hh")
+  set(BISON_thrifty_OUTPUTS "${BISON_thrifty_OUTPUT_SOURCE}" "${BISON_thrifty_OUTPUT_HEADER}")
+  set(BISON_thrifty_COMPILE_FLAGS -d)
+  set(FLEX_thriftl_DEFINED TRUE)
+  set(FLEX_thriftl_OUTPUTS "${CMAKE_CURRENT_SOURCE_DIR}/src_gen/thrift/thriftl.cc")
+  set(FLEX_thriftl_INPUT "${THRIFT_ROOT}/compiler/cpp/src/thriftl.ll")
+  set(FLEX_thriftl_OUTPUT_HEADER "")
+  include_directories(SYSTEM "${CMAKE_CURRENT_SOURCE_DIR}/src_gen")
 
-  # Use built-in version of thrift, pre flex/bisoned for min. dependencies.
+endif()
 
-  include_directories(SYSTEM ${CMAKE_CURRENT_SOURCE_DIR}/src_gen)
-  include_directories(SYSTEM ${CMAKE_CURRENT_SOURCE_DIR}/src_thrift)
-  include_directories(SYSTEM ${CMAKE_CURRENT_SOURCE_DIR}/src_thrift/generate)
-  include_directories(SYSTEM ${CMAKE_CURRENT_SOURCE_DIR}/src_thrift/parse)
-  include_directories(${CMAKE_CURRENT_SOURCE_DIR}/src)
-  add_definitions(-DYYLTYPE_IS_TRIVIAL=0 -DYYENABLE_NLS=0)
-  if(MSVC)
-    add_definitions(-DYY_NO_UNISTD_H -Dstrtoll=_strtoi64 -DPRIi64="I64i")
-    add_definitions(-DMINGW) # activate windows code in thrift
-    add_definitions(-DPATH_MAX=1000 -DS_ISDIR=1+0*)
-    include_directories(${CMAKE_CURRENT_SOURCE_DIR}/msvc)
-    add_definitions(-D__STDC_VERSION__=199901L)
-    set_source_files_properties(src_gen/parser.cc PROPERTIES COMPILE_FLAGS "/wd4065 /wd4244")
-    set_source_files_properties(src_gen/lexer.cc PROPERTIES COMPILE_FLAGS "/wd4068 /wd4003 /wd4102")
-  elseif(CXX_HAS_WREDUNDANT_DECLS)
-    set_property(SOURCE src_gen/parser.cc
-                        src_gen/lexer.cc
+set(yarpidl_thrift_GEN_SRCS ${BISON_thrifty_OUTPUTS} ${FLEX_thriftl_OUTPUTS})
+
+include_directories(SYSTEM ${THRIFT_ROOT}/compiler/cpp/src)
+include_directories(SYSTEM ${CMAKE_CURRENT_BINARY_DIR})
+
+add_definitions(-DYYENABLE_NLS=0)
+if(MSVC)
+  # TODO Check if these definitions are still required
+#   add_definitions(-DYY_NO_UNISTD_H)
+#   add_definitions(-Dstrtoll=_strtoi64)
+#   add_definitions(-DPRIi64="I64i")
+#   add_definitions(-DMINGW) # activate windows code in thrift
+#   add_definitions(-DPATH_MAX=1000)
+#   add_definitions(-DS_ISDIR=1+0*)
+#   add_definitions(-D__STDC_VERSION__=199901L)
+endif()
+
+
+if(MSVC)
+  set_property(SOURCE ${yarpidl_thrift_SRCS}
+                      ${yarpidl_thrift_GEN_SRCS}
+               APPEND_STRING
+               PROPERTY COMPILE_FLAGS " /wd4003 /wd4065 /wd4068 /wd4102 /wd4244")
+else()
+  if(CXX_HAS_WREDUNDANT_DECLS)
+    set_property(SOURCE ${yarpidl_thrift_SRCS}
+                        ${yarpidl_thrift_GEN_SRCS}
                  APPEND_STRING
                  PROPERTY COMPILE_FLAGS " -Wno-redundant-decls")
-  endif()
-  if(CXX_HAS_WMISLEADING_INDENTATION)
-    set_property(SOURCE src_gen/lexer.cc
-                 APPEND_STRING
-                 PROPERTY COMPILE_FLAGS " -Wno-misleading-indentation")
   endif()
   if(CXX_HAS_WSUGGEST_OVERRIDE)
-    set_property(SOURCE src_thrift/main.cc
-                        src_thrift/parse/parse.cc
+    set_property(SOURCE ${yarpidl_thrift_SRCS}
+                        ${yarpidl_thrift_GEN_SRCS}
                  APPEND_STRING
                  PROPERTY COMPILE_FLAGS " -Wno-suggest-override")
   endif()
-  add_executable(yarpidl_thrift
-    src_gen/parser.cc
-    src_gen/lexer.cc
-    src_thrift/md5.c
-    src_thrift/main.cc
-    src_thrift/generate/t_generator.cc
-    src_thrift/parse/parse.cc
-    src/t_yarp_generator
-    )
+  if(CXX_HAS_WSIGN_COMPARE)
+    set_property(SOURCE ${yarpidl_thrift_SRCS}
+                        ${yarpidl_thrift_GEN_SRCS}
+                 APPEND_STRING
+                 PROPERTY COMPILE_FLAGS " -Wno-sign-compare")
+  endif()
+endif()
 
-endif ()
+
+add_executable(yarpidl_thrift ${yarpidl_thrift_SRCS}
+                              ${yarpidl_thrift_GEN_SRCS}
+                              ${yarpidl_thrift_YARP_SRCS})
 
 add_executable(YARP::yarpidl_thrift ALIAS yarpidl_thrift)
 install(TARGETS yarpidl_thrift
@@ -118,3 +106,7 @@ install(TARGETS yarpidl_thrift
 set_property(GLOBAL APPEND PROPERTY YARP_TOOLS yarpidl_thrift)
 
 set_property(TARGET yarpidl_thrift PROPERTY FOLDER "Command Line Tools")
+
+
+yarp_deprecated_option(THRIFT_USE_EXTERNAL) # Since YARP 3.0.0
+yarp_deprecated_option(THRIFT_ROOT) # Since YARP 3.0.0

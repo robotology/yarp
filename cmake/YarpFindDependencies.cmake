@@ -480,6 +480,13 @@ set(GStreamerPluginsBase_REQUIRED_VERSION 1.4)
 find_package(GStreamerPluginsBase ${GStreamerPluginsBase_REQUIRED_VERSION} COMPONENTS app QUIET)
 checkandset_dependency(GStreamerPluginsBase)
 
+set(BISON_REQUIRED_VERSION 2.5)
+find_package(BISON ${BISON_REQUIRED_VERSION} QUIET)
+checkandset_dependency(BISON)
+
+find_package(FLEX QUIET)
+checkandset_dependency(FLEX)
+
 # PRINT DEPENDENCIES STATUS:
 
 message(STATUS "I have found the following libraries:")
@@ -519,6 +526,8 @@ print_dependency(OpenNI2)
 print_dependency(GLIB2)
 print_dependency(GStreamer)
 print_dependency(GStreamerPluginsBase)
+print_dependency(BISON)
+print_dependency(FLEX)
 
 
 # CHECK DEPENDENCIES:
