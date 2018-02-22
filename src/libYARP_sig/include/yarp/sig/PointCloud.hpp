@@ -44,7 +44,9 @@ public:
 
     int dataSizeBytes() const
     {
-        return /*sizeof(header) +*/ header.width*header.height*(sizeof(T));
+        return header.width*header.height*(sizeof(T));
+    }
+
     int height() const
     {
         return header.height;
@@ -134,7 +136,6 @@ public:
 
         if (header.pointType == _header.pointType) //Working
         {
-            yInfo("IS MATCHIIIIING BITCHESSSS\n");
             return data.read(connection);
         }
 
@@ -173,7 +174,7 @@ public:
 
     virtual bool write(yarp::os::ConnectionWriter& writer)
     {
-        writer.appendBlock((char*)&header, sizeof(header));
+        writer.appendBlock((char*)&header, sizeof(PointCloud_NetworkHeader));
         return data.write(writer);
     }
     virtual yarp::os::Type getType()                        { return yarp::os::Type::byName("yarp/pointCloud"); }
@@ -183,12 +184,11 @@ public:
         yTrace();
         //yarp::os::ConstString("ciaoooo");
 //        return PointCloud< T >::toString(precision, width);
-        return "not implemented, sorry man :/ \n";
+        return "not implemented, sorry man :/";
     }
 
-
-    // Internal conversions
-    template<class X1> bool convertTo(yarp::sig::PointCloud<X1> &out);
+    // TODO fare data privato, e per accedere a data[] overload
+    // l'operatore[] e/o [][] oppure get(u,v)
 
     yarp::sig::VectorOf<T> data;
 
@@ -217,6 +217,8 @@ public:
         return offset;
 
     }
+
+    // TODO to be tested with getRawData
     void copyFromRawData(const char* dst, const char* source, std::vector<int> &recipe)
     {
         char* tmpSrc = const_cast<char*> (source);
@@ -264,8 +266,6 @@ public:
 // //     virtual yarp::os::Type getType()                        { return yarp::os::Type::byName("yarp/pointCloud"); };
 //     virtual yarp::os::ConstString toString()                { yTrace(); return yarp::os::ConstString("ciaoooo");};
 //
-//     virtual void *convertFromType(int newType) { return NULL;};
-//     virtual void *convertToType(int newType) { return NULL;};
 //
 // private:
 //  allocate pointCloudData dynamically;
@@ -353,35 +353,9 @@ namespace yarp{
         return yarp::os::ConstString("XYZ_DATA");
     }
 
-//     template<> bool yarp::sig::PointCloud<XYZ_RGBA_DATA>::convertTo( int ciao);
-//     template<> template<class T2> bool yarp::sig::PointCloud<XYZ_RGBA_DATA>::convertTo(yarp::sig::PointCloud<T2> *out);
-//     template<class X1> bool  yarp::sig::PointCloud<XYZ_RGBA_DATA>::convertTo(yarp::sig::PointCloud<X1>);
-
-    template<>
-    template<class XYZ_DATA> bool  yarp::sig::PointCloud<XYZ_RGBA_DATA>::convertTo(yarp::sig::PointCloud<XYZ_DATA> &out)
-    {
-        yTrace() << "\n\tConverting from XYZ_RGBA_DATA to XYZ_DATA";
-        return true;
-    }
 
 }
 }
-
-
-
-// template<>
-// bool yarp::sig::PointCloud<XYZ_RGBA_DATA>::convertTo( int ciao)
-// {
-//     yTrace();
-//     return true;
-// }
-
-// template<> template<>
-// bool yarp::sig::PointCloud<XYZ_RGBA_DATA>::convertTo(yarp::sig::PointCloud<XYZ_DATA> *out)
-// {
-//     yTrace();
-//     return true;
-// }
 
 
 #endif // YARP_SIG_POINTCLOUD_H
