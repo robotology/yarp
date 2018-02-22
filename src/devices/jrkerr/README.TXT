@@ -1,5 +1,11 @@
-# Copyright: (C) 2009 RobotCub Consortium
-# CopyPolicy: Released under the terms of the LGPLv2.1 or later, see LICENSE
+# Copyright (C) 2006-2018 Istituto Italiano di Tecnologia (IIT)
+# Copyright (C) 2007 Jeffrey Kerr LLC
+# Copyright (C) 2006 Julio Gomes
+# Copyright (C) 2006 Alexandre Bernardino
+# All rights reserved.
+#
+# This software may be modified and distributed under the terms of the
+# BSD-3-Clause license. See the accompanying LICENSE file for details.
 
 YARP2 DRIVER FOR JRKERR CONTROL BOARDS
 WIN32 VERSION - STILL INCOMPLETE
