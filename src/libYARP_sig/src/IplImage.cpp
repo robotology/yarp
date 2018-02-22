@@ -11,7 +11,7 @@
 #include <cstring>
 
 #include <yarp/os/Log.h>
-#include <yarp/sig/IplImage.h>
+#include <yarp/sig/impl/IplImage.h>
 
 static int implemented_yet = 1;
 
