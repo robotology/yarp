@@ -71,7 +71,7 @@ typedef struct
             char a;
         };
         yarp::os::NetInt32 rgba;
-        float data_c[4];
+//        float data_c[4];
     };
 } RGBA_DATA;
 YARP_END_PACK
@@ -96,18 +96,47 @@ typedef struct
             float normal_y;
             float normal_z;
         };
+        union
+        {
+            struct
+            {
+                float curvature;
+            };
+            float data_c[4];
+        };
+
     };
+} NORMAL_DATA;
+YARP_END_PACK
+YARP_BEGIN_PACK
+typedef struct
+{
+    union
+    {
+        float filler_n[4];
+        float normal[3];
+        struct
+        {
+            float normal_x;
+            float normal_y;
+            float normal_z;
+        };
+    };
+} NORMAL_NO_CURV;
+YARP_END_PACK
+// curvature
+YARP_BEGIN_PACK
+typedef struct
+{
     union
     {
         struct
         {
             float curvature;
         };
-        float data_c[4];
     };
-} NORMAL_DATA;
+} CURVATURE_DATA;
 YARP_END_PACK
-
 // Range
 typedef float range;
 
