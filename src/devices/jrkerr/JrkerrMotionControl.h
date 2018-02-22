@@ -1,19 +1,18 @@
-
 /*
- * Copyright (C) 2006 Alexandre Bernardino, Julio Gomes
- * CopyPolicy: Released under the terms of the LGPLv2.1 or later, see LICENSE
+ * Copyright (C) 2006-2018 Istituto Italiano di Tecnologia (IIT)
+ * Copyright (C) 2006 Julio Gomes
+ * Copyright (C) 2006 Alexandre Bernardino
+ * All rights reserved.
  *
+ * This software may be modified and distributed under the terms of the
+ * BSD-3-Clause license. See the accompanying LICENSE file for details.
  */
-
 
 /***********************************************************************
 
   YARP2 JrkerrDeviceDriver
 
   Windows Implementation Jrkerr Motion Control Boards
-  Authors: Julio Gomes, Alexandre Bernardino, VisLab, ISR-IST
-
-  Contact: jgomes(a)isr.ist.utl.pt, alex(a)isr.ist.utl.pt
 
 ************************************************************************/
 
