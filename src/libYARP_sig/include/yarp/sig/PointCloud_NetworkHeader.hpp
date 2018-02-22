@@ -26,37 +26,40 @@ namespace yarp {
 #define   PC_RGBA_DATA                      (1 << 2)
 #define   PC_INTENSITY_DATA                 (1 << 3)
 #define   PC_INTEREST_DATA                  (1 << 4)   // in PCL this field is also called strenght
-#define   PC_NORMAL_DATA                    (1 << 5)   // contains also a float curvature
-#define   PC_RANGE_DATA                     (1 << 6)
-#define   PC_VIEWPOINT_DATA                 (1 << 7)
-#define   PC_MOMENT_INV_DATA                (1 << 8)
-#define   PC_RADII_RSD_DATA                 (1 << 9)
-#define   PC_BOUNDARY_DATA                  (1 << 10)
-#define   PC_PRINCIPAL_CURVATURE_DATA       (1 << 11)
-#define   PC_PFH_SIGNAT_125_DATA            (1 << 12)
-#define   PC_FPFH_SIGNAT_33_DATA            (1 << 13)
-#define   PC_VFH_SIGNAT_308_DATA            (1 << 14)
-#define   PC_NARF_36_DATA                   (1 << 15)
-#define   PC_BORDER_DATA                    (1 << 16)
-#define   PC_INTENSITY_GRAD_DATA            (1 << 17)
-#define   PC_HISTOGRAM_DATA                 (1 << 18)
-#define   PC_SCALE_DATA                     (1 << 19)
-#define   PC_CONFIDENCE_DATA                (1 << 20)
-#define   PC_RADIUS_DATA                    (1 << 21)
-#define   PC_USER_DEFINED                   (1 << 22)
+#define   PC_NORMAL_DATA                    (1 << 5)
+#define   PC_CURVATURE_DATA                 (1 << 6)
+#define   PC_RANGE_DATA                     (1 << 7)
+#define   PC_VIEWPOINT_DATA                 (1 << 8)
+#define   PC_MOMENT_INV_DATA                (1 << 9)
+#define   PC_RADII_RSD_DATA                 (1 << 10)
+#define   PC_BOUNDARY_DATA                  (1 << 11)
+#define   PC_PRINCIPAL_CURVATURE_DATA       (1 << 12)
+#define   PC_PFH_SIGNAT_125_DATA            (1 << 13)
+#define   PC_FPFH_SIGNAT_33_DATA            (1 << 14)
+#define   PC_VFH_SIGNAT_308_DATA            (1 << 15)
+#define   PC_NARF_36_DATA                   (1 << 16)
+#define   PC_BORDER_DATA                    (1 << 17)
+#define   PC_INTENSITY_GRAD_DATA            (1 << 18)
+#define   PC_HISTOGRAM_DATA                 (1 << 19)
+#define   PC_SCALE_DATA                     (1 << 20)
+#define   PC_CONFIDENCE_DATA                (1 << 21)
+#define   PC_RADIUS_DATA                    (1 << 22)
+#define   PC_USER_DEFINED                   (1 << 23)
+#define   PC_PADDING2                       (1 << 24)
+#define   PC_PADDING3                       (1 << 25)
 
 // Shortcuts names for matching PCL predefined types
 #define   PCL_POINT2D_XY                (PC_XY_DATA)
 #define   PCL_POINT_XYZ                 (PC_XYZ_DATA)
 
-#define   PCL_POINT_XYZ_RGBA            (PC_XYZ_DATA | PC_RGBA_DATA)
+#define   PCL_POINT_XYZ_RGBA            (PC_XYZ_DATA | PC_RGBA_DATA | PC_PADDING3)
 #define   PCL_POINT_XYZ_I               (PC_XYZ_DATA | PC_INTENSITY_DATA)
 
 #define   PCL_INTEREST_POINT_XYZ        (PC_XYZ_DATA | PC_INTEREST_DATA)
-#define   PCL_NORMAL                    (PC_NORMAL_DATA)        // add 'POINT' in the name?
-#define   PCL_POINT_XYZ_NORMAL          (PC_XYZ_DATA | PC_NORMAL_DATA)
-#define   PCL_POINT_XYZ_NORMAL_RGBA     (PC_XYZ_DATA | PC_RGBA_DATA | PC_NORMAL_DATA)   // Actually PCL has PointXYZRGBNormal, not RGBA, but downgrade from rgba to rgb can be done while casting
-#define   PCL_POINT_XYZ_I_NORMAL        (PC_XYZ_DATA | PC_INTENSITY_DATA | PC_NORMAL_DATA)
+#define   PCL_NORMAL                    (PC_NORMAL_DATA | PC_CURVATURE_DATA | PC_PADDING3)
+#define   PCL_POINT_XYZ_NORMAL          (PC_XYZ_DATA | PC_NORMAL_DATA | PC_CURVATURE_DATA | PC_PADDING3)
+#define   PCL_POINT_XYZ_NORMAL_RGBA     (PC_XYZ_DATA | PC_RGBA_DATA | PC_NORMAL_DATA | PC_CURVATURE_DATA | PC_PADDING2)   // Actually PCL has PointXYZRGBNormal, not RGBA, but downgrade from rgba to rgb can be done while casting
+#define   PCL_POINT_XYZ_I_NORMAL        (PC_XYZ_DATA | PC_INTENSITY_DATA | PC_NORMAL_DATA | PC_CURVATURE_DATA)
 #define   PCL_POINT_XYZ_RANGE           (PC_XYZ_DATA | PC_RANGE_DATA)
 #define   PCL_POINT_XYZ_VIEWPOINT       (PC_XYZ_DATA | PC_VIEWPOINT_DATA)
 #define   PCL_MOMENT_INVARIANTS         (PC_MOMENT_INV_DATA)
@@ -75,6 +78,9 @@ namespace yarp {
 
 
 std::map<std::pair<int, int>, int> offsetMap = {
+    // PCL_NORMAL
+    {std::make_pair(PCL_NORMAL, PC_CURVATURE_DATA) , sizeof(NORMAL_NO_CURV)},
+
     // PCL_POINT_XYZ_RGBA
     {std::make_pair(PCL_POINT_XYZ_RGBA, PC_RGBA_DATA) , sizeof(XYZ_DATA)},
 
@@ -86,12 +92,14 @@ std::map<std::pair<int, int>, int> offsetMap = {
 
     // PCL_POINT_XYZ_NORMAL
     {std::make_pair(PCL_POINT_XYZ_NORMAL, PC_NORMAL_DATA) , sizeof(XYZ_DATA)},
+    {std::make_pair(PCL_POINT_XYZ_NORMAL, PC_CURVATURE_DATA) , sizeof(XYZ_DATA) + sizeof(NORMAL_NO_CURV)},
 
-//    // PCL_XYZ_NORMAL_RGBA TBD... problems with curvature
-//    {std::make_pair(PCL_POINT_XYZ_NORMAL_RGBA, PC_NORMAL_DATA) , sizeof(XYZ_DATA},
-//    {std::make_pair(PCL_POINT_XYZ_NORMAL_RGBA, PC_RGBA_DATA) , sizeof(XYZ_DATA) + sizeof(NORMAL_DATA)},
+//    // PCL_XYZ_NORMAL_RGBA TBD
+    {std::make_pair(PCL_POINT_XYZ_NORMAL_RGBA, PC_NORMAL_DATA) , sizeof(XYZ_DATA)},
+    {std::make_pair(PCL_POINT_XYZ_NORMAL_RGBA, PC_RGBA_DATA) , sizeof(XYZ_DATA) + sizeof(NORMAL_NO_CURV)},
+    {std::make_pair(PCL_POINT_XYZ_NORMAL_RGBA, PC_CURVATURE_DATA) , sizeof(XYZ_DATA) + sizeof(NORMAL_NO_CURV) + sizeof(RGBA_DATA)},
 
-//    // PCL_XYZ_I_NORMAL TBD... problems with curvature
+//    // PCL_XYZ_I_NORMAL TBD
                                  };
 
 
@@ -102,31 +110,43 @@ std::map<int, std::vector<int> > compositionMap = {
     {PC_RGBA_DATA,      std::vector<int> {PC_RGBA_DATA}},
     {PC_INTENSITY_DATA, std::vector<int> {PC_INTENSITY_DATA}},
     {PC_INTEREST_DATA,  std::vector<int> {PC_INTEREST_DATA}},
+    {PCL_NORMAL,        std::vector<int> {PC_NORMAL_DATA, PC_CURVATURE_DATA, PC_PADDING3}},
     {PC_NORMAL_DATA,    std::vector<int> {PC_NORMAL_DATA}},
+    {PC_CURVATURE_DATA, std::vector<int> {PC_CURVATURE_DATA}},
     {PC_RANGE_DATA,     std::vector<int> {PC_RANGE_DATA}},
     {PC_VIEWPOINT_DATA, std::vector<int> {PC_VIEWPOINT_DATA}},
     // PCL_POINT_XYZ_RGBA
-    {PCL_POINT_XYZ_RGBA, std::vector<int> {PC_XYZ_DATA, PC_RGBA_DATA}},
+    {PCL_POINT_XYZ_RGBA, std::vector<int> {PC_XYZ_DATA, PC_RGBA_DATA, PC_PADDING3}},
     // PCL_POINT_XYZ_I
     {PCL_POINT_XYZ_I, std::vector<int> {PC_XYZ_DATA, PC_INTENSITY_DATA}},
     // PCL_INTEREST_POINT_XYZ
     {PCL_INTEREST_POINT_XYZ, std::vector<int> {PC_XYZ_DATA, PC_INTEREST_DATA}},
     // PCL_POINT_XYZ_NORMAL
-    {PCL_POINT_XYZ_NORMAL, std::vector<int> {PC_XYZ_DATA, PC_NORMAL_DATA}}
+    {PCL_POINT_XYZ_NORMAL, std::vector<int> {PC_XYZ_DATA, PC_NORMAL_DATA, PC_CURVATURE_DATA, PC_PADDING3}},
+    // PCL_POINT_XYZ_NORMAL_RGBA
+    {PCL_POINT_XYZ_NORMAL_RGBA, std::vector<int> {PC_XYZ_DATA, PC_NORMAL_DATA, PC_RGBA_DATA, PC_CURVATURE_DATA, PC_PADDING2}}
 
 };
 
 // TODO unify the info if possible
 
 std::map<int, size_t> sizeMap = {
+    {PC_PADDING3, 3*sizeof(float)},
+    {PC_PADDING2, 2*sizeof(float)},
     {PC_XY_DATA, sizeof(XY_DATA)},
     {PC_XYZ_DATA, sizeof(XYZ_DATA)},
     {PC_RGBA_DATA, sizeof(RGBA_DATA)},
     {PC_INTENSITY_DATA, sizeof(intensity)},
     {PC_INTEREST_DATA, sizeof(strength)},
-    {PC_NORMAL_DATA, sizeof(NORMAL_DATA)},
+    {PC_NORMAL_DATA, sizeof(NORMAL_NO_CURV)},
+    {PCL_NORMAL, sizeof(NORMAL_DATA)},
+    {PC_CURVATURE_DATA, sizeof(CURVATURE_DATA)}, //TODO it has different sizes....
     {PC_RANGE_DATA, sizeof(range)},
     {PC_VIEWPOINT_DATA, sizeof(VIEWPOINT_DATA)},
+    {PCL_POINT_XYZ_RGBA, sizeof(XYZ_RGBA_DATA)},
+    {PCL_POINT_XYZ_I, sizeof(XYZ_I_DATA)},
+    {PCL_INTEREST_POINT_XYZ, sizeof(INTEREST_POINT_XYZ_DATA)},
+    {PCL_POINT_XYZ_NORMAL, sizeof(XYZ_NORMAL_DATA)}
 };
 // Defined as in PCL pointTypes.h file for better compatibility
 enum BorderTrait
