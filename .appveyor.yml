@@ -5,8 +5,8 @@ platform:
   - x64
 
 os:
- - Visual Studio 2013
-# - Visual Studio 2015
+ - Visual Studio 2015
+ - Visual Studio 2017
 
 configuration:
   - Release
@@ -25,20 +25,24 @@ init:
   - cmd: git config --global core.autocrlf true
 
   # System related variables
-  - cmd: set CMAKE_GENERATOR=Visual Studio 12 2013
-  - cmd: if "%platform%"=="x64" set CMAKE_GENERATOR=%CMAKE_GENERATOR% Win64
+  - cmd: set CMAKE_GENERATOR=Visual Studio
+  - cmd: if "%APPVEYOR_BUILD_WORKER_IMAGE%"=="Visual Studio 2015" set CMAKE_GENERATOR=%CMAKE_GENERATOR% 14 2015
+  - cmd: if "%APPVEYOR_BUILD_WORKER_IMAGE%"=="Visual Studio 2017" set CMAKE_GENERATOR=%CMAKE_GENERATOR% 15 2017
+  - cmd: if "%Platform%"=="x64" set CMAKE_GENERATOR=%CMAKE_GENERATOR% Win64
   - cmd: echo CMAKE_GENERATOR=%CMAKE_GENERATOR%
-  - cmd: set DOWNLOADS_PATH=
 
   # Dependencies found in YARP and iCub packages
-  - cmd: set YARP_LATEST=2.3.68
+  - cmd: set YARP_LATEST=2.3.70
+  - cmd: set YARP_LATEST_TAG=v%YARP_LATEST%
   - cmd: set YARP_LATEST_PKG=1
-  - cmd: set ICUB_LATEST=1.6.0
+
+  - cmd: set ICUB_LATEST=1.8.0
+  - cmd: set ICUB_LATEST_TAG=%ICUB_LATEST%
   - cmd: set ICUB_LATEST_PKG=1
 
   - cmd: if "%platform%"=="Win32" set ROBOTOLOGY_ROOT=%ProgramFiles(x86)%\robotology
   - cmd: if "%platform%"=="x64" set ROBOTOLOGY_ROOT=%ProgramFiles%\robotology
-  - cmd: set ROBOTOLOGY_VS=v12
+  - cmd: set ROBOTOLOGY_VS=v14
   - cmd: if "%platform%"=="Win32" set ROBOTOLOGY_ARCH=x86
   - cmd: if "%platform%"=="x64" set ROBOTOLOGY_ARCH=x86_amd64
 
@@ -54,8 +58,8 @@ init:
   - cmd: set Qt5_DIR=%Qt5_ROOT%\lib\cmake\Qt5
   - cmd: set PATH=%PATH%;%Qt5_ROOT%\bin
 
-  - cmd: set OpenCV_DEFAULT_REL_DIR=opencv-2.4.9
-  - cmd: set OpenCV_REL_DIR=opencv-2.4.9_%ROBOTOLOGY_VS%_%ROBOTOLOGY_ARCH%
+  - cmd: set OpenCV_DEFAULT_REL_DIR=opencv-2.4.13
+  - cmd: set OpenCV_REL_DIR=opencv-2.4.13_%ROBOTOLOGY_VS%_%ROBOTOLOGY_ARCH%
   - cmd: set OpenCV_ROOT=%ROBOTOLOGY_ROOT%\%OpenCV_REL_DIR%
   - cmd: set OpenCV_DIR=%OpenCV_ROOT%
   - cmd: set PATH=%PATH%;%OpenCV_ROOT%\bin
@@ -69,8 +73,8 @@ init:
   - cmd: set PATH=%PATH%;%JPEG_ROOT%\bin
 
   # Installers URLs
-  - cmd: set YARP_INSTALLER=https://github.com/robotology/yarp/releases/download/v%YARP_LATEST%/yarp_%YARP_LATEST%_%ROBOTOLOGY_VS%_%ROBOTOLOGY_ARCH%_1.exe
-  - cmd: set ICUB_INSTALLER=https://github.com/robotology/icub-main/releases/download/v%ICUB_LATEST%/iCub_%ICUB_LATEST%_%ROBOTOLOGY_VS%_%ROBOTOLOGY_ARCH%_1.exe
+  - cmd: set YARP_INSTALLER=https://github.com/robotology/yarp/releases/download/%YARP_LATEST_TAG%/yarp_%YARP_LATEST%_%ROBOTOLOGY_VS%_%ROBOTOLOGY_ARCH%_1.exe
+  - cmd: set ICUB_INSTALLER=https://github.com/robotology/icub-main/releases/download/%ICUB_LATEST_TAG%/iCub_%ICUB_LATEST%_%ROBOTOLOGY_VS%_%ROBOTOLOGY_ARCH%_1.exe
   - cmd: if "%platform%"=="Win32" set JPEG_INSTALLER=https://sourceforge.net/projects/libjpeg-turbo/files/1.5.1/libjpeg-turbo-1.5.1-vc.exe/download
   - cmd: if "%platform%"=="x64" set JPEG_INSTALLER=https://sourceforge.net/projects/libjpeg-turbo/files/1.5.1/libjpeg-turbo-1.5.1-vc64.exe/download
 
@@ -104,7 +108,7 @@ install:
   - cmd: rmdir "%ROBOTOLOGY_ROOT%\icub-%ICUB_LATEST%" /S /Q
   - cmd: rmdir "%ROBOTOLOGY_ROOT%\glut-3.7.6" /S /Q
   - cmd: rmdir "%ROBOTOLOGY_ROOT%\gsl-1.14" /S /Q
-  - cmd: rmdir "%ROBOTOLOGY_ROOT%\ipopt-3.11.7" /S /Q
+  - cmd: rmdir "%ROBOTOLOGY_ROOT%\ipopt-3.12.7" /S /Q
   - cmd: rmdir "%ROBOTOLOGY_ROOT%\ode-0.13" /S /Q
   - cmd: rmdir "%ROBOTOLOGY_ROOT%\sdl-1.2.15" /S /Q
   - cmd: del "%ROBOTOLOGY_ROOT%\Uninstall_iCub.exe" /F /Q
