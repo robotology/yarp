@@ -60,10 +60,63 @@ public:
         return header.pointType;
 
     }
+
+
     // Portable interface
 
-    PointCloud<T>();
+    PointCloud()
+    {
+        data.clear();
+        setPointType();
+    }
 
+    /**
+     * Copy constructor.
+     * Clones the content of another point cloud.
+     * @param alt the point cloud to clone
+     */
+    template<class T1>
+    PointCloud(const PointCloud<T1>& alt)
+    {
+        setPointType();
+        copy<T1>(alt);
+        return;
+
+    }
+
+    template<class T1>
+    /**
+     * Copy operator
+     * @brief clones the content of another point cloud
+     * @param alt the point cloud to clone
+     */
+    void copy(const PointCloud<T1> &alt)
+    {
+        resize(alt.width(),alt.height());
+        if (std::is_same<T, T1>::value)
+        {
+            yAssert(dataSizeBytes()==alt.dataSizeBytes());
+            memcpy(const_cast<char*> (data.getMemoryBlock()), alt.data.getMemoryBlock(), dataSizeBytes());
+        }
+        else
+        {
+            std::vector<int> recipe = getComposition(alt.getPointType());
+            copyFromRawData(data.getMemoryBlock(), alt.data.getMemoryBlock(), recipe);
+        }
+
+    }
+
+    template<class T1>
+    /**
+     * Assignment operator.
+     * @brief Clones the content of another image.
+     * @param alt the image to clone
+     */
+    const PointCloud<T>& operator=(const PointCloud<T1>& alt)
+    {
+        copy(alt);
+        return *this;
+    }
     virtual bool read(yarp::os::ConnectionReader& connection)
     {
         yTrace();
@@ -164,6 +217,37 @@ public:
         return offset;
 
     }
+    void copyFromRawData(const char* dst, const char* source, std::vector<int> &recipe)
+    {
+        char* tmpSrc = const_cast<char*> (source);
+        char* tmpDst = const_cast<char*> (dst);
+        if (recipe.empty())
+        {
+            return;
+        }
+        yAssert(tmpSrc && tmpDst);
+
+
+        size_t sizeDst = sizeMap.find(getPointType())->second;
+        const size_t numPts  = height()*width();
+        for (uint i=0; i < numPts; i++)
+        {
+            for (size_t j = 0; j < recipe.size(); j++)
+            {
+                size_t sizeToRead = sizeMap.find(recipe[j])->second;
+                if ((header.pointType & recipe[j]))
+                {
+                    size_t offset = getOffset(header.pointType, recipe[j]);
+                    std::memcpy(tmpDst + i*sizeDst + offset, tmpSrc, sizeToRead);
+                }
+
+                // increment anyways, if the field is missing in the destination, simply skip it
+                tmpSrc += sizeToRead;
+            }
+        }
+    }
+
+    void setPointType();
 };
 
 
@@ -191,17 +275,17 @@ public:
 
 namespace yarp {
     namespace sig {
-    template<> PointCloud<XY_DATA>::PointCloud()                       { PointCloud::header.pointType=PCL_POINT2D_XY; }
-    template<> PointCloud<XYZ_DATA>::PointCloud()                      { PointCloud::header.pointType=PCL_POINT_XYZ; }
-//    template<> PointCloud<RGBA_DATA>::PointCloud()                    { PointCloud::header.pointType=PC_RGBA_DATA; } //has it sense to support them?
-//    template<> PointCloud<intensity>::PointCloud()                    { PointCloud::header.pointType=PC_INTENSITY_DATA; } //has it sense to support them?
-//    template<> PointCloud<VIEWPOINT_DATA>::PointCloud()               { PointCloud::header.pointType=PC_VIEWPOINT_DATA; } //has it sense to support them?
-    template<> PointCloud<NORMAL_DATA>::PointCloud()                   { PointCloud::header.pointType=PCL_NORMAL; }
-    template<> PointCloud<XYZ_RGBA_DATA>::PointCloud()                 { PointCloud::header.pointType=PCL_POINT_XYZ_RGBA; }
-    template<> PointCloud<XYZ_I_DATA>::PointCloud()                    { PointCloud::header.pointType=PCL_POINT_XYZ_I; }
-    template<> PointCloud<INTEREST_POINT_XYZ_DATA>::PointCloud()       { PointCloud::header.pointType=PCL_INTEREST_POINT_XYZ; }
-    template<> PointCloud<XYZ_NORMAL_DATA>::PointCloud()               { PointCloud::header.pointType=PCL_POINT_XYZ_NORMAL; }
-    // XYZ_NORMAL_RGBA problems with curvature...
+    template<> void PointCloud<XY_DATA>::setPointType()                       { header.pointType=PCL_POINT2D_XY; }
+    template<> void PointCloud<XYZ_DATA>::setPointType()                      { header.pointType=PCL_POINT_XYZ; }
+//    template<> void PointCloud<RGBA_DATA>::setPointType()                    { header.pointType=PC_RGBA_DATA; } //has it sense to support them?
+//    template<> void PointCloud<intensity>::setPointType()                    { header.pointType=PC_INTENSITY_DATA; } //has it sense to support them?
+//    template<> void PointCloud<VIEWPOINT_DATA>::setPointType()               { header.pointType=PC_VIEWPOINT_DATA; } //has it sense to support them?
+    template<> void PointCloud<NORMAL_DATA>::setPointType()                   { header.pointType=PCL_NORMAL; }
+    template<> void PointCloud<XYZ_RGBA_DATA>::setPointType()                 { header.pointType=PCL_POINT_XYZ_RGBA; }
+    template<> void PointCloud<XYZ_I_DATA>::setPointType()                    { header.pointType=PCL_POINT_XYZ_I; }
+    template<> void PointCloud<INTEREST_POINT_XYZ_DATA>::setPointType()       { header.pointType=PCL_INTEREST_POINT_XYZ; }
+    template<> void PointCloud<XYZ_NORMAL_DATA>::setPointType()               { header.pointType=PCL_POINT_XYZ_NORMAL; }
+    template<> void PointCloud<XYZ_NORMAL_RGBA_DATA>::setPointType()          { header.pointType=PCL_POINT_XYZ_NORMAL_RGBA; }
     // TODO extend the constructors...
 
         template<> yarp::os::ConstString PointCloud <XYZ_RGBA_DATA> ::toString(int precision, int width);
