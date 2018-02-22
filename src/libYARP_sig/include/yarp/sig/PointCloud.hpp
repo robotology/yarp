@@ -32,6 +32,11 @@ public:
         data.resize(width * height);
     }
 
+    const char* getRawData()
+    {
+        return data.getMemoryBlock();
+    }
+
     int wireSizeBytes()
     {
         return sizeof(header) + header.width*header.height*(sizeof(XYZ_RGBA_DATA::_xyz)+sizeof(XYZ_RGBA_DATA::rgba));
@@ -40,8 +45,21 @@ public:
     int dataSizeBytes() const
     {
         return /*sizeof(header) +*/ header.width*header.height*(sizeof(T));
+    int height() const
+    {
+        return header.height;
     }
 
+    int width() const
+    {
+        return header.width;
+    }
+
+    int getPointType() const
+    {
+        return header.pointType;
+
+    }
     // Portable interface
 
     PointCloud<T>();
