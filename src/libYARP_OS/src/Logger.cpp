@@ -14,16 +14,12 @@
 using namespace yarp::os::impl;
 using namespace yarp::os;
 
-Logger *Logger::root = nullptr;
-
 Logger& Logger::get() {
-    if (!root) root = new Logger("yarp");
-    return *root;
+    static Logger instance;
+    return instance;
 }
 
 void Logger::fini() {
-    if (root) delete root;
-    root = nullptr;
 }
 
 
