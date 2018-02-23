@@ -31,7 +31,7 @@ public:
     virtual ConstString getName() override
     { return "PointCloudTest"; }
 
-    void readWriteMatch()
+    void readWriteMatchTest()
     {
         Network::setLocalMode(true);
         report(0, "Checking XYZ_RGBA_DATA sending - Type match");
@@ -87,7 +87,7 @@ public:
 
     }
 
-    virtual void readWriteMisMatch1()
+    virtual void readWriteMisMatch1Test()
     {
         Network::setLocalMode(true);
         report(0,"Testing the case in which we receive a structure bigger than the one we expect");
@@ -136,7 +136,7 @@ public:
 
 
     }
-    virtual void readWriteMisMatch2()
+    virtual void readWriteMisMatch2Test()
     {
         Network::setLocalMode(true);
         report(0,"Testing the case in which we receive a structure smaller than the one we expect");
@@ -193,7 +193,7 @@ public:
 
     }
 
-    void copyAndAssignment()
+    void copyAndAssignmentTest()
     {
         report(0,"Testing the copy constructor with PC of the same type");
         PointCloud<XYZ_RGBA_DATA> testPC;
@@ -382,12 +382,97 @@ public:
 
     }
 
+    void fromExternalTest()
+    {
+        report(0,"Testing the fromExternalPC with PC of the same type");
+        PointCloud<XYZ_RGBA_DATA> testPC;
+        int width  = 32;
+        int height = 25;
+        testPC.resize(width, height);
+
+        for (int i=0; i<width*height; i++)
+        {
+            testPC(i).x = i;
+            testPC(i).y = i + 1;
+            testPC(i).z = i + 2;
+            testPC(i).r = '1';
+            testPC(i).g = '2';
+            testPC(i).b = '3';
+            testPC(i).a = '4';
+        }
+
+        PointCloud<XYZ_RGBA_DATA> testPC2;
+        testPC2.fromExternalPC(testPC.getRawData(), PCL_POINT_XYZ_RGBA, width, height);
+
+        checkTrue(testPC2.dataSizeBytes() == testPC.dataSizeBytes(), "Checking size");
+
+        bool ok = true;
+        for (int i=0; i<width*height; i++)
+        {
+            ok &= testPC2(i).x == i;
+            ok &= testPC2(i).y == i + 1;
+            ok &= testPC2(i).z == i + 2;
+            ok &= testPC2(i).r == '1';
+            ok &= testPC2(i).g == '2';
+            ok &= testPC2(i).b == '3';
+            ok &= testPC2(i).a == '4';
+        }
+
+        checkTrue(ok, "Checking data consistency");
+
+        report(0,"Testing the fromExternalPC with PC of different types:");
+        report(0,"Smaller structure built from bigger");
+        PointCloud<XYZ_DATA> testPC3;
+
+        testPC3.fromExternalPC(testPC2.getRawData(), PCL_POINT_XYZ_RGBA, width, height);
+
+        checkFalse(testPC3.dataSizeBytes() == testPC2.dataSizeBytes(), "Checking size, correctly different");
+        checkTrue(testPC3.height() == testPC2.height(), "Checking height");
+        checkTrue(testPC3.width() == testPC2.width(), "Checking width");
+
+        ok = true;
+        for (int i=0; i<width*height; i++)
+        {
+            ok &= testPC3(i).x == i;
+            ok &= testPC3(i).y == i + 1;
+            ok &= testPC3(i).z == i + 2;
+        }
+
+        checkTrue(ok, "Checking data consistency");
+
+        report(0,"Testing the fromExternalPC with PC of different types:");
+        report(0,"Bigger structure built from smaller");
+
+        PointCloud<XYZ_NORMAL_DATA> testPC4(testPC3);
+
+        testPC4.fromExternalPC(testPC3.getRawData(), PCL_POINT_XYZ, width, height);
+
+        checkFalse(testPC4.dataSizeBytes() == testPC3.dataSizeBytes(), "Checking size, correctly different");
+        checkTrue(testPC4.height() == testPC3.height(), "Checking height");
+        checkTrue(testPC4.width() == testPC3.width(), "Checking width");
+
+        ok = true;
+        for (int i=0; i<width*height; i++)
+        {
+            ok &= testPC4(i).x == i;
+            ok &= testPC4(i).y == i + 1;
+            ok &= testPC4(i).z == i + 2;
+            ok &= testPC4(i).normal_x == 0.0;
+            ok &= testPC4(i).normal_y == 0.0;
+            ok &= testPC4(i).normal_z == 0.0;
+            ok &= testPC4(i).curvature ==0.0;
+        }
+
+        checkTrue(ok, "Checking data consistency");
+    }
+
     virtual void runTests() override
     {
-        readWriteMatch();
-        readWriteMisMatch1();
-        readWriteMisMatch2();
-        copyAndAssignment();
+        readWriteMatchTest();
+        readWriteMisMatch1Test();
+        readWriteMisMatch2Test();
+        copyAndAssignmentTest();
+        fromExternalTest();
     }
 };
 
