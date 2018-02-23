@@ -18,7 +18,7 @@
 #include <cmath>
 #include <yarp/os/LogStream.h>
 
-#include "sensor_msgs_JointState.h"
+#include <TickTime.h>
 
 
 typedef enum
