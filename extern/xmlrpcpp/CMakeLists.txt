@@ -34,7 +34,15 @@ if(NOT MSVC)
   endif()
 endif()
 
-add_library(YARP_priv_xmlrpcpp STATIC ${xmlrpcpp_SRCS})
+set(YARP_priv_xmlrpcpp_TYPE "STATIC" CACHE STRING "YARP_priv_xmlrpcpp (LGPL2.1+) library type (STATIC or SHARED)" )
+set_property(CACHE YARP_priv_xmlrpcpp_TYPE PROPERTY STRINGS "STATIC" "SHARED")
+mark_as_advanced(YARP_priv_xmlrpcpp_TYPE)
+if(NOT YARP_priv_xmlrpcpp_TYPE MATCHES "(STATIC|SHARED)")
+  message(WARNING "Invalid value for YARP_priv_xmlrpcpp_TYPE: ${YARP_priv_xmlrpcpp_TYPE}. Valid values are \"STATIC\" and \"SHARED\". Resetting to default value (STATIC).")
+  set_property(CACHE YARP_priv_xmlrpcpp_TYPE PROPERTY VALUE "STATIC")
+  unset(YARP_priv_xmlrpcpp_TYPE)
+endif()
+add_library(YARP_priv_xmlrpcpp ${TYPE} ${xmlrpcpp_SRCS})
 
 set_property(TARGET YARP_priv_xmlrpcpp PROPERTY FOLDER "Libraries/External")
 
