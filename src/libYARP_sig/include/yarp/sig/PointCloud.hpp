@@ -25,7 +25,7 @@ class yarp::sig::PointCloud: public yarp::os::Portable
 {
 public:
     // Usage stuff
-    virtual void resize(int width, int height)
+    virtual void resize(size_t width, size_t height)
     {
         header.width = width;
         header.height = height;
@@ -37,22 +37,22 @@ public:
         return data.getMemoryBlock();
     }
 
-    int wireSizeBytes()
+    size_t wireSizeBytes()
     {
         return sizeof(header) + header.width*header.height*(sizeof(XYZ_RGBA_DATA::_xyz)+sizeof(XYZ_RGBA_DATA::rgba));
     }
 
-    int dataSizeBytes() const
+    size_t dataSizeBytes() const
     {
         return header.width*header.height*(sizeof(T));
     }
 
-    int height() const
+    size_t height() const
     {
         return header.height;
     }
 
-    int width() const
+    size_t width() const
     {
         return header.width;
     }
