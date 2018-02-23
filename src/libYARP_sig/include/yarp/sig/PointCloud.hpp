@@ -245,7 +245,6 @@ public:
         }
         yAssert(tmpSrc && tmpDst);
 
-
         size_t sizeDst = sizeMap.find(getPointType())->second;
         const size_t numPts  = height()*width();
         for (uint i=0; i < numPts; i++)
@@ -323,6 +322,7 @@ TagMap(XYZ_RGBA_DATA)
 TagMap(XYZ_I_DATA)
 TagMap(INTEREST_POINT_XYZ_DATA)
 TagMap(XYZ_NORMAL_DATA)
+TagMap(XYZ_NORMAL_RGBA_DATA)
 
 
 // TODO implement toString incrementally

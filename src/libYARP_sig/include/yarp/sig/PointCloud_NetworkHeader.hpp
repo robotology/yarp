@@ -146,7 +146,8 @@ std::map<int, size_t> sizeMap = {
     {PCL_POINT_XYZ_RGBA, sizeof(XYZ_RGBA_DATA)},
     {PCL_POINT_XYZ_I, sizeof(XYZ_I_DATA)},
     {PCL_INTEREST_POINT_XYZ, sizeof(INTEREST_POINT_XYZ_DATA)},
-    {PCL_POINT_XYZ_NORMAL, sizeof(XYZ_NORMAL_DATA)}
+    {PCL_POINT_XYZ_NORMAL, sizeof(XYZ_NORMAL_DATA)},
+    {PCL_POINT_XYZ_NORMAL_RGBA, sizeof(XYZ_NORMAL_RGBA_DATA)}
 };
 // Defined as in PCL pointTypes.h file for better compatibility
 enum BorderTrait
