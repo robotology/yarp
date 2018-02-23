@@ -46,6 +46,10 @@ yarp_begin_plugin_library(yarpmod)
   add_subdirectory(BatteryClient)
   add_subdirectory(BatteryWrapper)
 
+  if(CREATE_LIB_MATH)
+    add_subdirectory(FrameTransformClient)
+  endif()
+
   if(NOT YARP_NO_DEPRECATED) # since YARP 2.3.68
     add_subdirectory(microphone)
   endif()
