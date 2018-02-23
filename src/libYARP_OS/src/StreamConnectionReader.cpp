@@ -247,7 +247,9 @@ yarp::os::ConstString StreamConnectionReader::expectText(int terminatingChar)
     }
     yAssert(in!=nullptr);
     bool lsuccess = false;
+    in->setReadTimeout(2.0);
     ConstString result = in->readLine(terminatingChar, &lsuccess);
+    in->setReadTimeout(0.0);
     if (lsuccess) {
         messageLen -= result.length()+1;
     }
