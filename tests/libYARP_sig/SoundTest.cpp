@@ -38,7 +38,50 @@ public:
         checkEqual(99,snd2.get(50),"copy works");
     }
 
+    void checkSum() {
+        report(0,"check set/get sample...");
+        Sound snd1, snd2, sndSum;
+        snd1.resize(5, 8);
+        snd2.resize(3, 8);
 
+        for(int ch=0; ch<snd1.getChannels(); ch++)
+        {
+            for(int s=0; s<snd1.getSamples(); s++)
+            {
+                snd1.set(ch+s, s, ch);
+            }
+        }
+
+        for(int ch=0; ch<snd2.getChannels(); ch++)
+        {
+            for(int s=0; s<snd2.getSamples(); s++)
+            {
+                snd2.set(1000+ch+s, s, ch);
+            }
+        }
+
+        sndSum  = snd1;
+        sndSum += snd2;
+
+        // Checking sum is correct
+        bool ok = true;
+        int s1Samples = snd1.getSamples();
+        int s2Samples = snd2.getSamples();
+
+        for(int ch=0; ch<snd1.getChannels(); ch++)
+        {
+            for(int s=0; s<s1Samples; s++)
+            {
+                ok &= (sndSum.get(s, ch) == snd1.get(s, ch));
+            }
+
+            for(int s=0; s<s2Samples; s++)
+            {
+                ok &= (sndSum.get(s1Samples +s , ch) == snd2.get(s, ch));
+            }
+        }
+        checkTrue(ok,"operator '+=' test performed ");
+    }
 
     void checkTransmit() {
         report(0,"checking sound transmission...");
@@ -85,6 +128,7 @@ public:
     virtual void runTests() override {
         Network::setLocalMode(true);
         checkSetGet();
+        checkSum();
         checkTransmit();
         Network::setLocalMode(false);
     }
