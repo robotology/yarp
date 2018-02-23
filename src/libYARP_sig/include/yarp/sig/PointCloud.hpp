@@ -187,12 +187,28 @@ public:
         return "not implemented, sorry man :/";
     }
 
-    // TODO fare data privato, e per accedere a data[] overload
-    // l'operatore[] e/o [][] oppure get(u,v)
+    inline T& operator()(size_t u, size_t v) {
+        yAssert(header.isDense);
+        if (u > width() || v > height())
+        {
+            return nulldata;
+        }
+        return data[u + v*width()];
+    }
+
+    inline T& operator()(size_t i) {
+        yAssert(!header.isDense);
+        if (i > data.size())
+        {
+            return nulldata;
+        }
+        return data[i];
+    }
 
 
  private:
     yarp::sig::VectorOf<T> data;
+    T nulldata;
     yarp::sig::PointCloud_NetworkHeader    header;
 
     std::vector<int> getComposition(int type_composite)
