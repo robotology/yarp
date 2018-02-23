@@ -13,13 +13,17 @@ set(YARP_sig_HDRS include/yarp/sig/all.h
                   include/yarp/sig/ImageFile.h
                   include/yarp/sig/Image.h
                   include/yarp/sig/ImageNetworkHeader.h
-                  include/yarp/sig/IplImage.h
                   include/yarp/sig/Matrix.h
                   include/yarp/sig/SoundFile.h
                   include/yarp/sig/Sound.h
                   include/yarp/sig/Vector.h)
 
-set(YARP_sig_IMPL_HDRS include/yarp/sig/impl/DeBayer.h)
+if(NOT YARP_NO_DEPRECATED) # Since YARP 3.0.0
+  list(APPEND YARP_sig_HDRS include/yarp/sig/IplImage.h)
+endif()
+
+set(YARP_sig_IMPL_HDRS include/yarp/sig/impl/DeBayer.h
+                       include/yarp/sig/impl/IplImage.h)
 
 set(YARP_sig_SRCS src/ImageCopy.cpp
                   src/Image.cpp

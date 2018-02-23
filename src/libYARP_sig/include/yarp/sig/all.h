@@ -15,7 +15,6 @@
 #include <yarp/sig/ImageDraw.h>
 #include <yarp/sig/ImageFile.h>
 #include <yarp/sig/Image.h>
-//#include <yarp/sig/IplImage.h> // clashes with OpenCV - only include if really needed
 #include <yarp/sig/Sound.h>
 #include <yarp/sig/SoundFile.h>
 #include <yarp/sig/Vector.h>

@@ -12,7 +12,7 @@
 
 */
 
-#include <yarp/sig/IplImage.h>
+#include <yarp/sig/impl/IplImage.h>
 
 #include <yarp/os/Log.h>
 #include <yarp/sig/Image.h>
