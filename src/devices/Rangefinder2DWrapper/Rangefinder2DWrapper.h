@@ -34,10 +34,10 @@
 #include <yarp/dev/PreciselyTimed.h>
 
 // ROS state publisher
-#include <yarpRosHelper.h>
 #include <yarp/os/Node.h>
 #include <yarp/os/Publisher.h>
-#include <sensor_msgs_LaserScan.h>
+#include <yarp/rosmsg/sensor_msgs/LaserScan.h>
+#include <yarp/rosmsg/impl/yarpRosHelper.h>
 
 namespace yarp{
     namespace dev{
@@ -106,7 +106,7 @@ private:
     std::string                                         rosTopicName;               // name of the rosTopic
     yarp::os::Node                                      *rosNode;                   // add a ROS node
     yarp::os::NetUint32                                 rosMsgCounter;              // incremental counter in the ROS message
-    yarp::os::Publisher<sensor_msgs_LaserScan>          rosPublisherPort;           // Dedicated ROS topic publisher
+    yarp::os::Publisher<yarp::rosmsg::sensor_msgs::LaserScan> rosPublisherPort;     // Dedicated ROS topic publisher
 
 #endif //DOXYGEN_SHOULD_SKIP_THIS
 };

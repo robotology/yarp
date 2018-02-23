@@ -45,6 +45,7 @@ yarp_begin_plugin_library(yarpmod)
   add_subdirectory(SDLJoypad)
   add_subdirectory(BatteryClient)
   add_subdirectory(BatteryWrapper)
+  add_subdirectory(Rangefinder2DWrapper)
 
   if(CREATE_LIB_MATH)
     add_subdirectory(FrameTransformClient)
