@@ -32,7 +32,7 @@ public:
         data.resize(width * height);
     }
 
-    const char* getRawData()
+    const char* getRawData() const
     {
         return data.getMemoryBlock();
     }
@@ -98,12 +98,12 @@ public:
         if (std::is_same<T, T1>::value)
         {
             yAssert(dataSizeBytes()==alt.dataSizeBytes());
-            memcpy(const_cast<char*> (data.getMemoryBlock()), alt.data.getMemoryBlock(), dataSizeBytes());
+            memcpy(const_cast<char*> (getRawData()), alt.getRawData(), dataSizeBytes());
         }
         else
         {
             std::vector<int> recipe = getComposition(alt.getPointType());
-            copyFromRawData(data.getMemoryBlock(), alt.data.getMemoryBlock(), recipe);
+            copyFromRawData(getRawData(), alt.getRawData(), recipe);
         }
 
     }
@@ -190,9 +190,9 @@ public:
     // TODO fare data privato, e per accedere a data[] overload
     // l'operatore[] e/o [][] oppure get(u,v)
 
-    yarp::sig::VectorOf<T> data;
 
  private:
+    yarp::sig::VectorOf<T> data;
     yarp::sig::PointCloud_NetworkHeader    header;
 
     std::vector<int> getComposition(int type_composite)
