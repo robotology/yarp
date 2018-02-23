@@ -53,7 +53,9 @@ yarp_begin_plugin_library(yarpmod)
     add_subdirectory(Map2DClient)
     add_subdirectory(Map2DServer)
     add_subdirectory(Navigation2DClient)
+    add_subdirectory(Rangefinder2DClient)
   endif()
+
 
   if(NOT YARP_NO_DEPRECATED) # since YARP 2.3.68
     add_subdirectory(microphone)
