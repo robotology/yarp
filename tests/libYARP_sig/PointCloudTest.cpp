@@ -47,13 +47,13 @@ public:
 
         for (int i=0; i<width*height; i++)
         {
-            testPC.data[i].x = i;
-            testPC.data[i].y = i + 1;
-            testPC.data[i].z = i + 2;
-            testPC.data[i].r = '1';
-            testPC.data[i].g = '2';
-            testPC.data[i].b = '3';
-            testPC.data[i].a = '4';
+            testPC(i).x = i;
+            testPC(i).y = i + 1;
+            testPC(i).z = i + 2;
+            testPC(i).r = '1';
+            testPC(i).g = '2';
+            testPC(i).b = '3';
+            testPC(i).a = '4';
         }
 
         yarp::os::Time::delay(0.3);
@@ -68,13 +68,13 @@ public:
         bool ok = true;
         for (int i=0; i<width*height; i++)
         {
-            ok &= inCloud.data[i].x == i;
-            ok &= inCloud.data[i].y == i + 1;
-            ok &= inCloud.data[i].z == i + 2;
-            ok &= inCloud.data[i].r == '1';
-            ok &= inCloud.data[i].g == '2';
-            ok &= inCloud.data[i].b == '3';
-            ok &= inCloud.data[i].a == '4';
+            ok &= inCloud(i).x == i;
+            ok &= inCloud(i).y == i + 1;
+            ok &= inCloud(i).z == i + 2;
+            ok &= inCloud(i).r == '1';
+            ok &= inCloud(i).g == '2';
+            ok &= inCloud(i).b == '3';
+            ok &= inCloud(i).a == '4';
         }
 
         checkTrue(ok, "Checking data validity");
@@ -103,13 +103,13 @@ public:
 
         for (int i=0; i<width*height; i++)
         {
-            testPC.data[i].x = i;
-            testPC.data[i].y = i + 1;
-            testPC.data[i].z = i + 2;
-            testPC.data[i].r = '1';
-            testPC.data[i].g = '2';
-            testPC.data[i].b = '3';
-            testPC.data[i].a = '4';
+            testPC(i).x = i;
+            testPC(i).y = i + 1;
+            testPC(i).z = i + 2;
+            testPC(i).r = '1';
+            testPC(i).g = '2';
+            testPC(i).b = '3';
+            testPC(i).a = '4';
         }
 
         yarp::os::Time::delay(0.3);
@@ -124,9 +124,9 @@ public:
         bool ok = true;
         for (int i=0; i<width*height; i++)
         {
-            ok &= inCloud.data[i].x == i;
-            ok &= inCloud.data[i].y == i + 1;
-            ok &= inCloud.data[i].z == i + 2;
+            ok &= inCloud(i).x == i;
+            ok &= inCloud(i).y == i + 1;
+            ok &= inCloud(i).z == i + 2;
         }
 
         checkTrue(ok, "Checking data validity");
@@ -152,13 +152,13 @@ public:
 
         for (int i=0; i<width*height; i++)
         {
-            testPC.data[i].x = i;
-            testPC.data[i].y = i + 1;
-            testPC.data[i].z = i + 2;
-            testPC.data[i].normal_x = i * 2;
-            testPC.data[i].normal_y = i * 3;
-            testPC.data[i].normal_z = i * 4;
-            testPC.data[i].curvature = i * 5;
+            testPC(i).x = i;
+            testPC(i).y = i + 1;
+            testPC(i).z = i + 2;
+            testPC(i).normal_x = i * 2;
+            testPC(i).normal_y = i * 3;
+            testPC(i).normal_z = i * 4;
+            testPC(i).curvature = i * 5;
         }
 
         yarp::os::Time::delay(0.3);
@@ -173,17 +173,17 @@ public:
         bool ok = true;
         for (int i=0; i<width*height; i++)
         {
-            ok &= inCloud.data[i].x == i;
-            ok &= inCloud.data[i].y == i + 1;
-            ok &= inCloud.data[i].z == i + 2;
-            ok &= inCloud.data[i].normal_x == i * 2;
-            ok &= inCloud.data[i].normal_y == i * 3;
-            ok &= inCloud.data[i].normal_z == i * 4;
-            ok &= inCloud.data[i].curvature ==i * 5;
-            ok &= inCloud.data[i].r == 0;
-            ok &= inCloud.data[i].g == 0;
-            ok &= inCloud.data[i].b == 0;
-            ok &= inCloud.data[i].a == 0;
+            ok &= inCloud(i).x == i;
+            ok &= inCloud(i).y == i + 1;
+            ok &= inCloud(i).z == i + 2;
+            ok &= inCloud(i).normal_x == i * 2;
+            ok &= inCloud(i).normal_y == i * 3;
+            ok &= inCloud(i).normal_z == i * 4;
+            ok &= inCloud(i).curvature ==i * 5;
+            ok &= inCloud(i).r == 0;
+            ok &= inCloud(i).g == 0;
+            ok &= inCloud(i).b == 0;
+            ok &= inCloud(i).a == 0;
         }
 
         checkTrue(ok, "Checking data validity");
@@ -203,13 +203,13 @@ public:
 
         for (int i=0; i<width*height; i++)
         {
-            testPC.data[i].x = i;
-            testPC.data[i].y = i + 1;
-            testPC.data[i].z = i + 2;
-            testPC.data[i].r = '1';
-            testPC.data[i].g = '2';
-            testPC.data[i].b = '3';
-            testPC.data[i].a = '4';
+            testPC(i).x = i;
+            testPC(i).y = i + 1;
+            testPC(i).z = i + 2;
+            testPC(i).r = '1';
+            testPC(i).g = '2';
+            testPC(i).b = '3';
+            testPC(i).a = '4';
         }
 
         PointCloud<XYZ_RGBA_DATA> testPC2(testPC);
@@ -219,13 +219,13 @@ public:
         bool ok = true;
         for (int i=0; i<width*height; i++)
         {
-            ok &= testPC2.data[i].x == i;
-            ok &= testPC2.data[i].y == i + 1;
-            ok &= testPC2.data[i].z == i + 2;
-            ok &= testPC2.data[i].r == '1';
-            ok &= testPC2.data[i].g == '2';
-            ok &= testPC2.data[i].b == '3';
-            ok &= testPC2.data[i].a == '4';
+            ok &= testPC2(i).x == i;
+            ok &= testPC2(i).y == i + 1;
+            ok &= testPC2(i).z == i + 2;
+            ok &= testPC2(i).r == '1';
+            ok &= testPC2(i).g == '2';
+            ok &= testPC2(i).b == '3';
+            ok &= testPC2(i).a == '4';
         }
 
         checkTrue(ok, "Checking data consistency");
@@ -241,9 +241,9 @@ public:
         ok = true;
         for (int i=0; i<width*height; i++)
         {
-            ok &= testPC3.data[i].x == i;
-            ok &= testPC3.data[i].y == i + 1;
-            ok &= testPC3.data[i].z == i + 2;
+            ok &= testPC3(i).x == i;
+            ok &= testPC3(i).y == i + 1;
+            ok &= testPC3(i).z == i + 2;
         }
 
         checkTrue(ok, "Checking data consistency");
@@ -260,13 +260,13 @@ public:
         ok = true;
         for (int i=0; i<width*height; i++)
         {
-            ok &= testPC4.data[i].x == i;
-            ok &= testPC4.data[i].y == i + 1;
-            ok &= testPC4.data[i].z == i + 2;
-            ok &= testPC4.data[i].normal_x == 0.0;
-            ok &= testPC4.data[i].normal_y == 0.0;
-            ok &= testPC4.data[i].normal_z == 0.0;
-            ok &= testPC4.data[i].curvature ==0.0;
+            ok &= testPC4(i).x == i;
+            ok &= testPC4(i).y == i + 1;
+            ok &= testPC4(i).z == i + 2;
+            ok &= testPC4(i).normal_x == 0.0;
+            ok &= testPC4(i).normal_y == 0.0;
+            ok &= testPC4(i).normal_z == 0.0;
+            ok &= testPC4(i).curvature ==0.0;
         }
 
         checkTrue(ok, "Checking data consistency");
@@ -283,13 +283,13 @@ public:
         ok = true;
         for (int i=0; i<width*height; i++)
         {
-            ok &= testPC5.data[i].x == i;
-            ok &= testPC5.data[i].y == i + 1;
-            ok &= testPC5.data[i].z == i + 2;
-            ok &= testPC5.data[i].normal_x == 0.0;
-            ok &= testPC5.data[i].normal_y == 0.0;
-            ok &= testPC5.data[i].normal_z == 0.0;
-            ok &= testPC5.data[i].curvature ==0.0;
+            ok &= testPC5(i).x == i;
+            ok &= testPC5(i).y == i + 1;
+            ok &= testPC5(i).z == i + 2;
+            ok &= testPC5(i).normal_x == 0.0;
+            ok &= testPC5(i).normal_y == 0.0;
+            ok &= testPC5(i).normal_z == 0.0;
+            ok &= testPC5(i).curvature ==0.0;
         }
 
         checkTrue(ok, "Checking data consistency");
@@ -302,30 +302,30 @@ public:
 
         for (int i=0; i<width*height; i++)
         {
-            testPC6.data[i].x = i;
-            testPC6.data[i].y = i + 1;
-            testPC6.data[i].z = i + 2;
-            testPC6.data[i].r = '1';
-            testPC6.data[i].g = '2';
-            testPC6.data[i].b = '3';
-            testPC6.data[i].a = '4';
-            testPC6.data[i].normal_x = i*2;
-            testPC6.data[i].normal_y = i*3;
-            testPC6.data[i].normal_z = i*4;
-            testPC6.data[i].curvature = i*5;
+            testPC6(i).x = i;
+            testPC6(i).y = i + 1;
+            testPC6(i).z = i + 2;
+            testPC6(i).r = '1';
+            testPC6(i).g = '2';
+            testPC6(i).b = '3';
+            testPC6(i).a = '4';
+            testPC6(i).normal_x = i*2;
+            testPC6(i).normal_y = i*3;
+            testPC6(i).normal_z = i*4;
+            testPC6(i).curvature = i*5;
         }
 
         PointCloud<XYZ_NORMAL_DATA> testPC7(testPC6);
         ok = true;
         for (int i=0; i<width*height; i++)
         {
-            ok &= testPC7.data[i].x == i;
-            ok &= testPC7.data[i].y == i + 1;
-            ok &= testPC7.data[i].z == i + 2;
-            ok &= testPC7.data[i].normal_x == i*2;
-            ok &= testPC7.data[i].normal_y == i*3;
-            ok &= testPC7.data[i].normal_z == i*4;
-            ok &= testPC7.data[i].curvature ==i*5;
+            ok &= testPC7(i).x == i;
+            ok &= testPC7(i).y == i + 1;
+            ok &= testPC7(i).z == i + 2;
+            ok &= testPC7(i).normal_x == i*2;
+            ok &= testPC7(i).normal_y == i*3;
+            ok &= testPC7(i).normal_z == i*4;
+            ok &= testPC7(i).curvature ==i*5;
         }
 
         checkTrue(ok, "Checking data consistency");
