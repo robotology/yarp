@@ -50,7 +50,7 @@ Map2DServer::~Map2DServer()
 void Map2DServer::parse_vocab_command(yarp::os::Bottle& in, yarp::os::Bottle& out)
 {
     int code = in.get(0).asVocab();
-    bool ret = false;
+//     bool ret = false;
     if (code == VOCAB_IMAP)
     {
         int cmd = in.get(1).asVocab();
@@ -187,14 +187,14 @@ void Map2DServer::parse_vocab_command(yarp::os::Bottle& in, yarp::os::Bottle& ou
                 l.addString(it->first);
             }
             yInfo() << "The following locations are currently stored in the server: "<<l.toString();
-            ret = true;
+//             ret = true;
         }
         else if (cmd == VOCAB_NAV_CLEAR)
         {
             m_locations_storage.clear();
             yInfo() << "All locations deleted ";
             out.addVocab(VOCAB_OK);
-            ret = true;
+//             ret = true;
         }
         else if (cmd == VOCAB_NAV_DELETE)
         {
@@ -214,7 +214,7 @@ void Map2DServer::parse_vocab_command(yarp::os::Bottle& in, yarp::os::Bottle& ou
                 out.addVocab(VOCAB_ERR);
             }
 
-            ret = true;
+//             ret = true;
         }
         else if (cmd == VOCAB_NAV_GET_LOCATION)
         {
@@ -238,7 +238,7 @@ void Map2DServer::parse_vocab_command(yarp::os::Bottle& in, yarp::os::Bottle& ou
                 yError("User requested an invalid location name");
             }
 
-            ret = true;
+//             ret = true;
         }
         else if (cmd == VOCAB_NAV_STORE_ABS)
         {
@@ -253,7 +253,7 @@ void Map2DServer::parse_vocab_command(yarp::os::Bottle& in, yarp::os::Bottle& ou
             m_locations_storage.insert(std::pair<std::string, Map2DLocation>(name, location));
             yInfo() << "Added location " << name << "at " << location.toString();
             out.addVocab(VOCAB_OK);
-            ret = true;
+//             ret = true;
         }
         else
         {
