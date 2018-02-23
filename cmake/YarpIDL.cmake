@@ -290,6 +290,7 @@ function(YARP_ADD_IDL var first_file)
         message(FATAL_ERROR "Unknown extension ${ext}. Supported extensiona are .thrift, .msg, and .srv")
     endif()
 
+    # FIXME This should handle cross-compiling
     set(YARPIDL_${family}_COMMAND YARP::yarpidl_${family})
 
     # Set intermediate output directory, remove extra '/' and ensure that
