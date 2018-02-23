@@ -48,6 +48,7 @@ yarp_begin_plugin_library(yarpmod)
 
   if(CREATE_LIB_MATH)
     add_subdirectory(FrameTransformClient)
+    add_subdirectory(FrameTransformServer)
   endif()
 
   if(NOT YARP_NO_DEPRECATED) # since YARP 2.3.68
