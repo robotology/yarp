@@ -331,6 +331,55 @@ public:
         checkTrue(ok, "Checking data consistency");
 
 
+        report(0,"Testing the assignment operator with not matching types");
+        report(0,"Smaller structure built from bigger");
+
+        PointCloud<XYZ_DATA> testPC8 = testPC6;
+
+
+        checkFalse(testPC8.dataSizeBytes() == testPC6.dataSizeBytes(), "Checking size, correctly different");
+        checkTrue(testPC8.height() == testPC6.height(), "Checking height");
+        checkTrue(testPC8.width() == testPC6.width(), "Checking width");
+
+        ok = true;
+        for (int i=0; i<width*height; i++)
+        {
+            ok &= testPC8(i).x == i;
+            ok &= testPC8(i).y == i + 1;
+            ok &= testPC8(i).z == i + 2;
+        }
+
+        checkTrue(ok, "Checking data consistency");
+
+        report(0,"Testing the assignment operator with not matching types");
+        report(0,"Bigger structure built from smaller");
+
+        PointCloud<XYZ_NORMAL_RGBA_DATA> testPC9 = testPC7;
+
+
+        checkTrue(testPC9.dataSizeBytes() == testPC7.dataSizeBytes(), "Checking size");
+        checkTrue(testPC9.height() == testPC7.height(), "Checking height");
+        checkTrue(testPC9.width() == testPC7.width(), "Checking width");
+
+        ok = true;
+        for (int i=0; i<width*height; i++)
+        {
+            ok &= testPC9(i).x == i;
+            ok &= testPC9(i).y == i + 1;
+            ok &= testPC9(i).z == i + 2;
+            ok &= testPC9(i).normal_x == i*2;
+            ok &= testPC9(i).normal_y == i*3;
+            ok &= testPC9(i).normal_z == i*4;
+            ok &= testPC9(i).curvature ==i*5;
+            ok &= testPC9(i).r == 0;
+            ok &= testPC9(i).g == 0;
+            ok &= testPC9(i).b == 0;
+            ok &= testPC9(i).a == 0;
+        }
+
+        checkTrue(ok, "Checking data consistency");
+
+
     }
 
     virtual void runTests() override
