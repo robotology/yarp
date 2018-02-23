@@ -145,7 +145,8 @@ endmacro()
 # The ``TYPE`` argument is used to specify the class name (including the
 # eventual namespace) that implements the plugin.
 # ``INCLUDE`` is the header file that should be included and that contains the
-# definition of the class.
+# definition of the class. The path to the header file should be relative to one
+# of the include directories.
 #
 # For example, for a plugin implementing a ``carrier``, the header file
 # (``foo/Bar.h``) will contain something like this::
