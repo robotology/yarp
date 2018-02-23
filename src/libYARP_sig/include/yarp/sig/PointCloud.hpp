@@ -119,6 +119,22 @@ public:
         copy(alt);
         return *this;
     }
+
+    void fromExternalPC(const char* source, int type, size_t width, size_t height)
+    {
+        yAssert(source);
+        resize(width, height);
+        if (this->getPointType() == type)
+        {
+            memcpy(const_cast<char*> (getRawData()), source,dataSizeBytes());
+        }
+        else
+        {
+            std::vector<int> recipe = getComposition(type);
+            copyFromRawData(getRawData(), source, recipe);
+        }
+    }
+
     virtual bool read(yarp::os::ConnectionReader& connection)
     {
         yTrace();
