@@ -34,11 +34,9 @@
 #include <yarp/os/Subscriber.h>
 #include <yarp/os/Node.h>
 #include <string>
-#include "include/visualization_msgs_MarkerArray.h"
-#include "include/geometry_msgs_TransformStamped.h"
-#include "include/tf_tfMessage.h"
-#include "include/nav_msgs_MapMetaData.h"
-#include "include/nav_msgs_OccupancyGrid.h"
+#include <yarp/rosmsg/visualization_msgs/MarkerArray.h>
+#include <yarp/rosmsg/nav_msgs/MapMetaData.h>
+#include <yarp/rosmsg/nav_msgs/OccupancyGrid.h>
 
 namespace yarp
 {
@@ -98,11 +96,11 @@ private:
     #define ROSTOPICNAME_MAPMETADATA "/map_metadata"
 
     yarp::os::RpcServer                                     m_rpcPort;
-    yarp::os::Publisher<nav_msgs_OccupancyGrid>             m_rosPublisherPort_map;
-    yarp::os::Publisher<nav_msgs_MapMetaData>               m_rosPublisherPort_metamap;
-    yarp::os::Subscriber<nav_msgs_OccupancyGrid>            m_rosSubscriberPort_map;
-    yarp::os::Subscriber<nav_msgs_MapMetaData>              m_rosSubscriberPort_metamap;
-    yarp::os::Publisher<visualization_msgs_MarkerArray>     m_rosPublisherPort_markers;
+    yarp::os::Publisher<yarp::rosmsg::nav_msgs::OccupancyGrid>             m_rosPublisherPort_map;
+    yarp::os::Publisher<yarp::rosmsg::nav_msgs::MapMetaData>               m_rosPublisherPort_metamap;
+    yarp::os::Subscriber<yarp::rosmsg::nav_msgs::OccupancyGrid>            m_rosSubscriberPort_map;
+    yarp::os::Subscriber<yarp::rosmsg::nav_msgs::MapMetaData>              m_rosSubscriberPort_metamap;
+    yarp::os::Publisher<yarp::rosmsg::visualization_msgs::MarkerArray>     m_rosPublisherPort_markers;
 
     virtual bool read(yarp::os::ConnectionReader& connection) override;
     inline  void list_response(yarp::os::Bottle& out);

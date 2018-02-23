@@ -18,6 +18,8 @@
 #include <yarp/os/Publisher.h>
 #include <yarp/os/Subscriber.h>
 #include <yarp/os/Node.h>
+#include <yarp/rosmsg/TickDuration.h>
+#include <yarp/rosmsg/TickTime.h>
 
 using namespace yarp::sig;
 using namespace yarp::dev;
@@ -656,8 +658,8 @@ bool Map2DServer::open(yarp::os::Searchable &config)
         //no ROS options
     }
     //yarp::os::Time::delay(5);
-    nav_msgs_OccupancyGrid*   map_ros = nullptr;
-    nav_msgs_MapMetaData*     metamap_ros = nullptr;
+    yarp::rosmsg::nav_msgs::OccupancyGrid*   map_ros = nullptr;
+    yarp::rosmsg::nav_msgs::MapMetaData*     metamap_ros = nullptr;
 
     map_ros = m_rosSubscriberPort_map.read(true);
     metamap_ros = m_rosSubscriberPort_metamap.read(true);
@@ -780,12 +782,12 @@ bool Map2DServer::save_locations(std::string locations_file)
 
 bool Map2DServer::updateVizMarkers()
 {
-    TickDuration dur; dur.sec = 0xFFFFFFFF;
+    yarp::rosmsg::TickDuration dur; dur.sec = 0xFFFFFFFF;
     double yarpTimeStamp = yarp::os::Time::now();
     uint64_t time;
     uint64_t nsec_part;
     uint64_t sec_part;
-    TickTime ret;
+    yarp::rosmsg::TickTime ret;
     time = (uint64_t)(yarpTimeStamp * 1000000000UL);
     nsec_part = (time % 1000000000UL);
     sec_part = (time / 1000000000UL);
@@ -795,12 +797,12 @@ bool Map2DServer::updateVizMarkers()
         sec_part = 0;
     }
 
-    visualization_msgs_Marker marker;
-    TickTime                  tt;
+    yarp::rosmsg::visualization_msgs::Marker marker;
+    yarp::rosmsg::TickTime    tt;
     yarp::sig::Vector         rpy(3);
     yarp::math::Quaternion    q;
 
-    visualization_msgs_MarkerArray& markers = m_rosPublisherPort_markers.prepare();
+    yarp::rosmsg::visualization_msgs::MarkerArray& markers = m_rosPublisherPort_markers.prepare();
     markers.markers.clear();
 
     std::map<std::string, Map2DLocation>::iterator it;
@@ -819,8 +821,8 @@ bool Map2DServer::updateVizMarkers()
         marker.header.stamp       = tt;
         marker.ns                 = "my_namespace";
         marker.id                 = count;
-        marker.type               = visualization_msgs_Marker::ARROW;
-        marker.action             = visualization_msgs_Marker::ADD;
+        marker.type               = yarp::rosmsg::visualization_msgs::Marker::ARROW;
+        marker.action             = yarp::rosmsg::visualization_msgs::Marker::ADD;
         marker.pose.position.x    = it->second.x;
         marker.pose.position.y    = it->second.y;
         marker.pose.position.z    = 0;
