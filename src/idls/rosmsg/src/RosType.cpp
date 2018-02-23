@@ -123,7 +123,10 @@ bool RosType::read(const char *tname, RosTypeSearch& env, RosTypeCodeGen& gen,
         indent += "  ";
     }
     if (nesting>0) env.lookForService(false); // no srv nesting allowed in ros
-    printf("[type]%s Checking %s\n", indent.c_str(), tname);
+
+    if (verbose) {
+        printf("[type]%s Checking %s\n", indent.c_str(), tname);
+    }
     clear();
 
     std::string base = tname;
@@ -164,12 +167,14 @@ bool RosType::read(const char *tname, RosTypeSearch& env, RosTypeCodeGen& gen,
                 t1.rosName = "sec";
                 t1.isPrimitive = true;
                 t1.isValid = true;
+                t1.verbose = verbose;
                 subRosType.push_back(t1);
                 RosType t2;
                 t2.rosType = "uint32";
                 t2.rosName = "nsec";
                 t2.isPrimitive = true;
                 t2.isValid = true;
+                t2.verbose = verbose;
                 subRosType.push_back(t2);
             }
         } else {
@@ -244,6 +249,7 @@ bool RosType::read(const char *tname, RosTypeSearch& env, RosTypeCodeGen& gen,
             cursor->isValid = ok;
             ok = true;
             cursor->reply = new RosType();
+            cursor->reply->verbose = verbose;
             cursor = cursor->reply;
             cursor->rosType = rosType + "Reply";
             continue;
@@ -279,6 +285,7 @@ bool RosType::read(const char *tname, RosTypeSearch& env, RosTypeCodeGen& gen,
             fprintf(stderr,"\n");
         }
         RosType sub;
+        sub.verbose = verbose;
         sub.package = package;
         if (!sub.read(t.c_str(),env,gen,nesting+1)) {
             fprintf(stderr, "[type]%s Type not complete: %s\n",

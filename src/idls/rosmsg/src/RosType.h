@@ -130,9 +130,14 @@ public:
     std::string package;
     bool verbose;
 
-    RosType() {
-        reply = 0 /*NULL*/;
-        clear();
+    RosType() :
+            isValid(false),
+            isArray(false),
+            arrayLength(-1),
+            isStruct(false),
+            reply(nullptr),
+            verbose(false)
+    {
     }
 
     void clear() {
@@ -149,14 +154,13 @@ public:
         subRosType.clear();
         if (reply) {
             delete reply;
-            reply = 0 /*NULL*/;
+            reply = nullptr;
         }
         checksum_var_text.clear();
         checksum_const_text.clear();
         checksum = "";
         source = "";
         //package = "";
-        verbose = false;
     }
 
     virtual ~RosType() {
