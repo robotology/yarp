@@ -37,7 +37,7 @@ public:
         return data.getMemoryBlock();
     }
 
-    size_t wireSizeBytes()
+    size_t wireSizeBytes() const
     {
         return sizeof(header) + header.width*header.height*(sizeof(XYZ_RGBA_DATA::_xyz)+sizeof(XYZ_RGBA_DATA::rgba));
     }
@@ -61,6 +61,11 @@ public:
     {
         return header.pointType;
 
+    }
+
+    size_t size() const
+    {
+        return data.size();
     }
 
 
@@ -203,6 +208,11 @@ public:
         return "not implemented, sorry man :/";
     }
 
+    bool isOrganized()
+    {
+        return height() > 1;
+    }
+
     inline T& operator()(size_t u, size_t v) {
         yAssert(header.isDense);
         if (u > width() || v > height())
@@ -219,6 +229,67 @@ public:
             return nulldata;
         }
         return data[i];
+    }
+
+
+    /** \brief Concatenate a point cloud to the current cloud.
+      * \param[in] rhs the cloud to add to the current cloud
+      * \return the new cloud as a concatenation of the current cloud and the new given cloud
+      */
+    inline PointCloud<T>&
+    operator += (const PointCloud<T>& rhs)
+    {
+        //TODO: take the newest timestamp
+
+        yAssert(getPointType() == rhs.getPointType());
+
+        size_t nr_points = data.size();
+        data.resize (nr_points + rhs.size());
+        for (size_t i = nr_points; i < data.size (); ++i)
+        {
+            data[i] = rhs.data[i - nr_points];
+        }
+
+        header.width = data.size();
+        header.height   = 1;
+        if (rhs.isDense() && isDense())
+        {
+            header.isDense = true;
+        }
+        else
+        {
+            header.isDense = false;
+        }
+        return (*this);
+    }
+
+    /** \brief Concatenate a point cloud to another cloud.
+      * \param[in] rhs the cloud to add to the current cloud
+      * \return the new cloud as a concatenation of the current cloud and the new given cloud
+      */
+    inline const PointCloud<T>
+    operator + (const PointCloud<T>& rhs)
+    {
+      return (PointCloud<T> (*this) += rhs);
+    }
+
+    inline void push_back (const T& pt)
+       {
+         data.push_back(pt);
+         header.width = data.size();
+         header.height = 1;
+       }
+
+    inline void clear()
+    {
+        data.clear();
+        header.width = 0;
+        header.height = 0;
+    }
+
+    inline bool isDense() const
+    {
+        return header.isDense;
     }
 
 
