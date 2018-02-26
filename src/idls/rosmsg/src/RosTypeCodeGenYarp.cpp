@@ -96,7 +96,7 @@ bool RosTypeCodeGenYarp::beginType(const std::string& tname,
     if (target != "") {
         root = target + "/";
     }
-    if (target != "") {
+    if (!no_index && target != "") {
         string iname = target + "/" + getPartName(tname) + "_indexALL.txt";
         yarp::os::mkdir_p(iname.c_str(), 1);
         FILE *index = fopen(iname.c_str(), "w");

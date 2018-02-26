@@ -46,6 +46,8 @@ void show_usage()
     printf("    Generates .h file in the specified directory\n");
     printf("  --no-cache\n");
     printf("    Do not cache ros msg file\n");
+    printf("  --no-index\n");
+    printf("    Do not generate the indexALL.txt file\n");
     printf("  --verbose\n");
     printf("    Verbose output\n");
     printf("\n");
@@ -131,6 +133,7 @@ int generate_cpp(int argc, char *argv[])
     p.fromCommand(argc,argv);
     bool verbose = p.check("verbose");
     bool no_cache = p.check("no-cache");
+    bool no_index = p.check("no-index");
 
     fname = argv[argc-1];
 
@@ -151,6 +154,9 @@ int generate_cpp(int argc, char *argv[])
         env.setVerbose();
         t.setVerbose();
         gen.setVerbose();
+    }
+    if (no_index) {
+        gen.setNoIndex();
     }
 
     if (p.check("out")) {

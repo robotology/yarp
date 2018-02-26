@@ -212,8 +212,9 @@ public:
 class RosTypeCodeGen {
 protected:
     bool verbose;
+    bool no_index;
 public:
-    RosTypeCodeGen() : verbose(false) {}
+    RosTypeCodeGen() : verbose(false), no_index(false) {}
     virtual ~RosTypeCodeGen() {}
 
     virtual bool beginType(const std::string& tname,
@@ -250,6 +251,10 @@ public:
 
     void setVerbose() {
         verbose = true;
+    }
+
+    void setNoIndex() {
+        no_index = true;
     }
 };
 
