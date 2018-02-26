@@ -310,7 +310,7 @@ function(YARP_ADD_IDL var first_file)
     if("${family}" STREQUAL "thrift")
       set(cmd ${YARPIDL_thrift_COMMAND} --gen yarp:include_prefix --I "${CMAKE_CURRENT_SOURCE_DIR}" --out "${tmp_dir}" "${file}")
     else()
-      set(cmd ${YARPIDL_rosmsg_COMMAND} --no-ros true --out "${CMAKE_CURRENT_BINARY_DIR}/include" "${file}")
+      set(cmd ${YARPIDL_rosmsg_COMMAND} --no-ros true --no-cache --out "${CMAKE_CURRENT_BINARY_DIR}/include" "${file}")
     endif()
 
     # Prepare copy command (thrift only) and populate output variable
