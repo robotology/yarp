@@ -113,21 +113,10 @@ public:
 
     }
 
-    template<class T1>
-    /**
-     * Assignment operator.
-     * @brief Clones the content of another image.
-     * @param alt the image to clone
-     */
-    const PointCloud<T>& operator=(const PointCloud<T1>& alt)
-    {
-        copy(alt);
-        return *this;
-    }
-
-    void fromExternalPC(const char* source, int type, size_t width, size_t height)
+    void fromExternalPC(const char* source, int type, size_t width, size_t height, bool isDense = true)
     {
         yAssert(source);
+        header.isDense = isDense;
         resize(width, height);
         if (this->getPointType() == type)
         {
@@ -214,7 +203,7 @@ public:
     }
 
     inline T& operator()(size_t u, size_t v) {
-        yAssert(header.isDense);
+        yAssert(isOrganized());
         if (u > width() || v > height())
         {
             return nulldata;
@@ -223,12 +212,23 @@ public:
     }
 
     inline T& operator()(size_t i) {
-        yAssert(!header.isDense);
         if (i > data.size())
         {
             return nulldata;
         }
         return data[i];
+    }
+
+    template<class T1>
+    /**
+     * Assignment operator.
+     * @brief Clones the content of another image.
+     * @param alt the image to clone
+     */
+    const PointCloud<T>& operator=(const PointCloud<T1>& alt)
+    {
+        copy(alt);
+        return *this;
     }
 
 
