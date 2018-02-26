@@ -30,7 +30,10 @@ static std::string getPackageName(const std::string& name)
             tname = pname = tname.substr(0, at);
             do {
                 at = pname.rfind("/");
-                if (at == string::npos) break;
+                if (at == string::npos) {
+                    tname = pname;
+                    break;
+                }
                 tname = pname.substr(at+1, pname.length());
                 pname = pname.substr(0, at);
             } while (tname == "srv" || tname == "msg");

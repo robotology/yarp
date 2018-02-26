@@ -190,10 +190,23 @@ bool RosType::read(const char *tname, RosTypeSearch& env, RosTypeCodeGen& gen,
     if (isStruct) {
         size_t at = rosType.rfind("/");
         if (at != std::string::npos) {
-            package = rosType.substr(0, at);
-            size_t at = package.rfind("/");
+            std::string temp = rosType.substr(0, at);
+            at = temp.rfind("/");
             if (at != std::string::npos) {
-                package = package.substr(at+1);
+                package = temp.substr(at+1);
+            }
+            if (package == "srv" || package == "msg")
+            {
+                at = temp.rfind("/");
+                if (at != std::string::npos) {
+                    temp = temp.substr(0, at);
+                    at = temp.rfind("/");
+                    if (at != std::string::npos) {
+                        package = temp.substr(at+1);
+                    } else {
+                        package = temp;
+                    }
+                }
             }
         } else if (rosType == "Header") {
             rosType = "std_msgs/Header";
@@ -323,22 +336,45 @@ bool RosType::read(const char *tname, RosTypeSearch& env, RosTypeCodeGen& gen,
 bool RosType::cache(const char *tname, RosTypeSearch& env,
                     RosTypeCodeGen& gen) {
     std::string rosType = tname;
-    if (rosType.find(".")==std::string::npos) {
+    size_t at = rosType.rfind(".");
+    if (at == std::string::npos) {
         return false;
     }
-    rosType = rosType.substr(0,rosType.rfind("."));
+    std::string ext = rosType.substr(at+1);
+    rosType = rosType.substr(0,at);
+    std::string pkg;
+    at = rosType.rfind("/");
+    if (at != std::string::npos && at > 0) {
+        size_t pkg_at = rosType.rfind("/", at-1);
+        pkg = rosType.substr(pkg_at+1, at-pkg_at-1);
+        if (pkg == "srv" || pkg == "msg") {
+            pkg_at = rosType.rfind("/", pkg_at-1);
+            pkg = rosType.substr(pkg_at+1, at-pkg_at-5); // -1 -("/msg" or "/srv") = -5
+        }
+    }
+    rosType = rosType.substr(rosType.rfind("/")+1);
+    std::string outfile = rosType + "." + ext;
+    if (!pkg.empty()) {
+        outfile = pkg + "/" + outfile;
+    }
+
+    // If input and output are the same there is nothing to do
+    if (tname == outfile) {
+        return true;
+    }
+
     FILE *fin = fopen((env.getTargetDirectory() + "/" + tname).c_str(),"r");
-    yarp::os::mkdir_p((env.getTargetDirectory() + "/" + tname).c_str(),1);
-    FILE *fout = fopen((env.getTargetDirectory() + "/" + rosType).c_str(),"w");
+    yarp::os::mkdir_p((env.getTargetDirectory() + "/" + pkg).c_str(),1);
+    FILE *fout = fopen((env.getTargetDirectory() + "/" + outfile).c_str(),"w");
     if (!fin) {
         fin = fopen(tname,"r");
     }
     if (!fin) {
-        fprintf(stderr, "[type] FAILED to open %s\n", tname);
+        fprintf(stderr, "[type] FAILED to open input file \"%s\"\n", (env.getTargetDirectory() + "/" + tname).c_str());
         std::exit(1);
     }
     if (!fout) {
-        fprintf(stderr, "[type] FAILED to open %s\n", rosType.c_str());
+        fprintf(stderr, "[type] FAILED to open output file \"%s\"\n", (env.getTargetDirectory() + "/" + outfile).c_str());
         std::exit(1);
     }
 
@@ -660,6 +696,14 @@ std::string RosTypeSearch::findFile(const char *tname) {
                     package_name = source_dir.substr(at+1);
                     source_dir = source_dir.substr(0, at);
                 }
+                if (package_name == "srv" || package_name == "msg")
+                {
+                    size_t at = source_dir.rfind("/");
+                    if (at != std::string::npos) {
+                        package_name = source_dir.substr(at+1);
+                        source_dir = source_dir.substr(0, at);
+                    }
+                }
             } else {
                 source_dir = ".";
             }
@@ -667,9 +711,25 @@ std::string RosTypeSearch::findFile(const char *tname) {
         return target;
     }
 
+    std::string target2;
     if (!source_dir.empty()) {
+        size_t at = target.rfind("/");
+        if (at != std::string::npos) {
+            target2 = target.substr(0, at) + (find_service? "/srv/" : "/msg/") + target.substr(at+1);
+        }
+
         // Search in source directory
         std::string source_full = source_dir + "/" + target + (find_service? ".srv" : ".msg");
+        if (verbose)
+        {
+            printf("searching definition: %s... (source directory: %s)\n", source_full.c_str(), source_dir.c_str());
+        }
+        if (stat(source_full.c_str(), &dummy)==0) {
+            return source_full;
+        }
+
+        // Search in source directory (adding src/msg to path)
+        source_full = source_dir + "/" + target2 + (find_service? ".srv" : ".msg");
         if (verbose)
         {
             printf("searching definition: %s... (source directory: %s)\n", source_full.c_str(), source_dir.c_str());
@@ -688,6 +748,16 @@ std::string RosTypeSearch::findFile(const char *tname) {
             return source_full;
         }
 
+        // Search for current package in source directory (adding src/msg to path)
+        source_full = source_dir + "/" + package_name + "/" + target2 + (find_service? ".srv" : ".msg");
+        if (verbose)
+        {
+            printf("searching definition: %s... (package name: %s)\n", source_full.c_str(), package_name.c_str());
+        }
+        if (stat(source_full.c_str(), &dummy)==0) {
+            return source_full;
+        }
+
         // Search for std_msgs package in source directory
         source_full = source_dir + "/std_msgs/" + target + (find_service? ".srv" : ".msg");
         if (verbose)
@@ -698,8 +768,28 @@ std::string RosTypeSearch::findFile(const char *tname) {
             return source_full;
         }
 
+        // Search for std_msgs package in source directory (adding src/msg to path)
+        source_full = source_dir + "/std_msgs/" + target2 + (find_service? ".srv" : ".msg");
+        if (verbose)
+        {
+            printf("searching definition: %s...\n", source_full.c_str());
+        }
+        if (stat(source_full.c_str(), &dummy)==0) {
+            return source_full;
+        }
+
         // Search in current directory
         source_full = "./" + target + (find_service ? ".srv" : ".msg");
+        if (verbose)
+        {
+            printf("searching definition: %s...\n", source_full.c_str());
+        }
+        if (stat(source_full.c_str(), &dummy) == 0) {
+            return source_full;
+        }
+
+        // Search in current directory (adding src/msg to path)
+        source_full = "./" + target2 + (find_service ? ".srv" : ".msg");
         if (verbose)
         {
             printf("searching definition: %s...\n", source_full.c_str());
