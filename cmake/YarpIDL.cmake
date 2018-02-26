@@ -117,8 +117,15 @@ function(YARP_IDL_TO_DIR yarpidl_file_base output_dir)
     make_directory(${dir})
     # Generate a script controlling final layout of files.
     configure_file(${YARP_MODULE_DIR}/template/placeGeneratedYarpIdlFiles.cmake.in ${dir}/place${yarpidlName}.cmake @ONLY)
+
+    if("${family}" STREQUAL "thrift")
+      set(cmd ${YARPIDL_thrift_LOCATION} --gen yarp:include_prefix --I "${CMAKE_CURRENT_SOURCE_DIR}" --out "${dir}" "${yarpidl_file}")
+    else()
+      set(cmd ${YARPIDL_rosmsg_LOCATION} --no-ros true --no-cache --out "${dir}" "${yarpidl_file}")
+    endif()
+
     # Go ahead and generate files.
-    execute_process(COMMAND ${YARPIDL_${family}_LOCATION} --out ${dir} --gen yarp:include_prefix --I ${CMAKE_CURRENT_SOURCE_DIR} ${yarpidl_file}
+    execute_process(COMMAND ${cmd}
                     WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}
                     RESULT_VARIABLE res
                     OUTPUT_QUIET)
