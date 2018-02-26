@@ -181,7 +181,7 @@ public:
     PointCloud_NetworkHeader() :    width(10),
                                     height(1),
                                     pointType(0),
-                                    isDense(false),
+                                    isDense(true),
 //                                     pose(4, 0.0f),
 //                                     orientation(4, 0.0f),
                                     hasCustomData(false),
@@ -191,7 +191,7 @@ public:
     yarp::os::NetInt32  width;
     yarp::os::NetInt32  height;
     yarp::os::NetInt32  pointType;       // bitwise of all possible informations -> could also be int64 or just an enum, but I thin bitwise gives more freedom about all possible combinations
-    bool                isDense;         // this guy is mis-aligned // convert to (char?) when serialized
+    bool                isDense;         // the point cloud is dense if not contains NaN or Inf values
 //     yarp::sig::Vector   pose;            // translation from origin -- could be an Eigen::Vector4f for better PCL compatibility if yarp can afford to depend from it
 //     yarp::sig::Vector   orientation;     // orientation wrt origin  -- could be an Eigen::Quaternion for better PCL compatibility if yarp can afford to depend from it
 
