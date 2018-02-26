@@ -25,6 +25,8 @@
 using namespace yarp::sig;
 using namespace yarp::os;
 
+float acceptedDiff = 1e-6;
+
 class PointCloudTest : public yarp::os::impl::UnitTest
 {
 public:
@@ -466,6 +468,122 @@ public:
         checkTrue(ok, "Checking data consistency");
     }
 
+    void concatenationTest()
+    {
+        report(0,"Testing the operator+ with PC of the same type");
+        PointCloud<XYZ_NORMAL_RGBA_DATA> testPC;
+        PointCloud<XYZ_NORMAL_RGBA_DATA> testPC2;
+        int width  = 35;
+        int height = 62;
+        testPC.resize(width, height);
+        testPC2.resize(width, height);
+
+        for (int i=0; i<width*height; i++)
+        {
+            testPC(i).x = i;    testPC2(i).x = i;
+            testPC(i).y = i + 1;testPC2(i).y = i*2;
+            testPC(i).z = i + 2;testPC2(i).z = i*3;
+            testPC(i).r = '1';  testPC2(i).r = 'r';
+            testPC(i).g = '2';  testPC2(i).g = 'g';
+            testPC(i).b = '3';  testPC2(i).b = 'b';
+            testPC(i).a = '4';  testPC2(i).a = 'a';
+        }
+
+        PointCloud<XYZ_NORMAL_RGBA_DATA> sumPC;
+        sumPC = testPC + testPC2;
+
+        checkTrue(sumPC.size() == (size_t) (width*height*2), "Checking the size");
+
+        bool ok = true;
+        for (int i=0; i<width*height; i++)
+        {
+            ok &= sumPC(i).x == i;
+            ok &= sumPC(i).y == i + 1;
+            ok &= sumPC(i).z == i + 2;
+            ok &= sumPC(i).r == '1';
+            ok &= sumPC(i).g == '2';
+            ok &= sumPC(i).b == '3';
+            ok &= sumPC(i).a == '4';
+        }
+
+
+        checkTrue(ok,"Checking data consistency: part1");
+
+        ok = true;
+        for (int i=width*height; i<(2*(width*height)); i++)
+        {
+            ok &= sumPC(i).x == (i-(width*height));
+            ok &= sumPC(i).y == (i-(width*height))*2;
+            ok &= sumPC(i).z == (i-(width*height))*3;
+            ok &= sumPC(i).r == 'r';
+            ok &= sumPC(i).g == 'g';
+            ok &= sumPC(i).b == 'b';
+            ok &= sumPC(i).a == 'a';
+        }
+
+        checkTrue(ok,"Checking data consistency: part2");
+
+        report(0,"Testing the operator+= with PC of the same type");
+
+
+        testPC += testPC2;
+
+        XYZ_NORMAL_RGBA_DATA point;
+        point.x = 1.1; point.y = 1.2; point.z = 1.3;
+        point.normal_x = 2.1; point.normal_y = 2.2; point.normal_z = 2.3;
+        point.r = 'r'; point.g = 'g'; point.b = 'b'; point.a = 'a';
+
+        testPC.push_back(point);
+
+        checkTrue(testPC.size() == (size_t) (width*height*2) + 1, "Checking the size");
+
+        ok = true;
+        for (int i=0; i<width*height; i++)
+        {
+            ok &= testPC(i).x == i;
+            ok &= testPC(i).y == i + 1;
+            ok &= testPC(i).z == i + 2;
+            ok &= testPC(i).r == '1';
+            ok &= testPC(i).g == '2';
+            ok &= testPC(i).b == '3';
+            ok &= testPC(i).a == '4';
+        }
+
+        checkTrue(ok,"Checking data consistency: part1");
+
+        ok = true;
+        for (int i=width*height; i<(2*(width*height)); i++)
+        {
+            ok &= testPC(i).x == i-(width*height);
+            ok &= testPC(i).y == (i-(width*height))*2;
+            ok &= testPC(i).z == (i-(width*height))*3;
+            ok &= testPC(i).r == 'r';
+            ok &= testPC(i).g == 'g';
+            ok &= testPC(i).b == 'b';
+            ok &= testPC(i).a == 'a';
+        }
+
+        checkTrue(ok,"Checking data consistency: part2");
+
+        report(0,"Testing the push_back");
+
+        ok = true;
+
+        ok &= testPC(testPC.size()-1).x - 1.1 < acceptedDiff;
+        ok &= testPC(testPC.size()-1).y - 1.2 < acceptedDiff;
+        ok &= testPC(testPC.size()-1).z - 1.3 < acceptedDiff;
+        ok &= testPC(testPC.size()-1).normal_x - 2.1 < acceptedDiff;
+        ok &= testPC(testPC.size()-1).normal_y - 2.2 < acceptedDiff;
+        ok &= testPC(testPC.size()-1).normal_z - 2.3 < acceptedDiff;
+        ok &= testPC(testPC.size()-1).r == 'r';
+        ok &= testPC(testPC.size()-1).g == 'g';
+        ok &= testPC(testPC.size()-1).b == 'b';
+        ok &= testPC(testPC.size()-1).a == 'a';
+
+        checkTrue(ok,"Checking data consistency");
+
+    }
+
     virtual void runTests() override
     {
         readWriteMatchTest();
@@ -473,6 +591,7 @@ public:
         readWriteMisMatch2Test();
         copyAndAssignmentTest();
         fromExternalTest();
+        concatenationTest();
     }
 };
 
