@@ -14,12 +14,12 @@ set(YARP_sig_HDRS include/yarp/sig/all.h
                   include/yarp/sig/Image.h
                   include/yarp/sig/ImageNetworkHeader.h
                   include/yarp/sig/Matrix.h
+                  include/yarp/sig/PointCloud.h
+                  include/yarp/sig/PointCloudNetworkHeader.h
+                  include/yarp/sig/PointCloudTypes.h
                   include/yarp/sig/SoundFile.h
                   include/yarp/sig/Sound.h
-                  include/yarp/sig/Vector.h
-                  include/yarp/sig/PointCloud.hpp
-                  include/yarp/sig/PointCloud_NetworkHeader.hpp
-                  include/yarp/sig/PointCloudTypes.hpp)
+                  include/yarp/sig/Vector.h)
 
 if(NOT YARP_NO_DEPRECATED) # Since YARP 3.0.0
   list(APPEND YARP_sig_HDRS include/yarp/sig/IplImage.h)
@@ -33,11 +33,11 @@ set(YARP_sig_SRCS src/ImageCopy.cpp
                   src/ImageFile.cpp
                   src/IplImage.cpp
                   src/Matrix.cpp
+                  src/PointCloud.cpp
                   src/Sound.cpp
                   src/SoundFile.cpp
                   src/Vector.cpp
-                  src/DeBayer.cpp
-                  src/PointCloud.cpp)
+                  src/DeBayer.cpp)
 
 source_group(TREE "${CMAKE_CURRENT_SOURCE_DIR}"
              PREFIX "Source Files"

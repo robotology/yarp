@@ -19,5 +19,6 @@
 #include <yarp/sig/SoundFile.h>
 #include <yarp/sig/Vector.h>
 #include <yarp/sig/Matrix.h>
+#include <yarp/sig/PointCloud.h>
 
 #endif // YARP_SIG_ALL_H

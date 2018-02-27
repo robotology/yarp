@@ -17,7 +17,7 @@
 #include <yarp/os/Bottle.h>
 #include <yarp/os/Network.h>
 #include <yarp/os/NetType.h>
-#include <yarp/sig/PointCloud.hpp>
+#include <yarp/sig/PointCloud.h>
 #include <yarp/os/PortReaderBuffer.h>
 
 #include "TestList.h"
