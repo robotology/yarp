@@ -114,8 +114,8 @@ bool RosTypeCodeGenYarp::beginType(const std::string& tname,
             fclose(index);
             index = nullptr;
         }
-        fname = root + fname;
     }
+    fname = root + fname;
 
     yarp::os::mkdir_p(fname.c_str(), 1);
 
