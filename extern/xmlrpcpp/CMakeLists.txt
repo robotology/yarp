@@ -42,7 +42,7 @@ if(NOT YARP_priv_xmlrpcpp_TYPE MATCHES "(STATIC|SHARED)")
   set_property(CACHE YARP_priv_xmlrpcpp_TYPE PROPERTY VALUE "STATIC")
   unset(YARP_priv_xmlrpcpp_TYPE)
 endif()
-add_library(YARP_priv_xmlrpcpp ${TYPE} ${xmlrpcpp_SRCS})
+add_library(YARP_priv_xmlrpcpp ${YARP_priv_xmlrpcpp_TYPE} ${xmlrpcpp_SRCS})
 
 set_property(TARGET YARP_priv_xmlrpcpp PROPERTY FOLDER "Libraries/External")
 
