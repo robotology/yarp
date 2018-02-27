@@ -117,8 +117,15 @@ function(YARP_IDL_TO_DIR yarpidl_file_base output_dir)
     make_directory(${dir})
     # Generate a script controlling final layout of files.
     configure_file(${YARP_MODULE_DIR}/template/placeGeneratedYarpIdlFiles.cmake.in ${dir}/place${yarpidlName}.cmake @ONLY)
+
+    if("${family}" STREQUAL "thrift")
+      set(cmd ${YARPIDL_thrift_LOCATION} --gen yarp:include_prefix --I "${CMAKE_CURRENT_SOURCE_DIR}" --out "${dir}" "${yarpidl_file}")
+    else()
+      set(cmd ${YARPIDL_rosmsg_LOCATION} --no-ros true --no-cache --out "${dir}" "${yarpidl_file}")
+    endif()
+
     # Go ahead and generate files.
-    execute_process(COMMAND ${YARPIDL_${family}_LOCATION} --out ${dir} --gen yarp:include_prefix --I ${CMAKE_CURRENT_SOURCE_DIR} ${yarpidl_file}
+    execute_process(COMMAND ${cmd}
                     WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}
                     RESULT_VARIABLE res
                     OUTPUT_QUIET)
@@ -285,6 +292,10 @@ function(YARP_ADD_IDL var first_file)
       set(family rosmsg)
       get_filename_component(pkg "${path}" NAME)
       get_filename_component(path "${path}" PATH)
+      if(pkg MATCHES "(msg|srv)")
+        get_filename_component(pkg "${path}" NAME)
+        get_filename_component(path "${path}" PATH)
+      endif()
       _yarp_idl_rosmsg_to_file_list("${file}" "${path}" "${pkg}" "${basename}" ${ext} gen_srcs gen_hdrs)
     else()
         message(FATAL_ERROR "Unknown extension ${ext}. Supported extensiona are .thrift, .msg, and .srv")
@@ -310,7 +321,7 @@ function(YARP_ADD_IDL var first_file)
     if("${family}" STREQUAL "thrift")
       set(cmd ${YARPIDL_thrift_COMMAND} --gen yarp:include_prefix --I "${CMAKE_CURRENT_SOURCE_DIR}" --out "${tmp_dir}" "${file}")
     else()
-      set(cmd ${YARPIDL_rosmsg_COMMAND} --no-ros true --out "${CMAKE_CURRENT_BINARY_DIR}/include" "${file}")
+      set(cmd ${YARPIDL_rosmsg_COMMAND} --no-ros true --no-cache --no-index --out "${CMAKE_CURRENT_BINARY_DIR}/include" "${file}")
     endif()
 
     # Prepare copy command (thrift only) and populate output variable

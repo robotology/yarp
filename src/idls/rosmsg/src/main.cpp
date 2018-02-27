@@ -44,6 +44,10 @@ void show_usage()
     printf("    Allow YARP to look up missing types on ROS website\n");
     printf("  --out <dir>\n");
     printf("    Generates .h file in the specified directory\n");
+    printf("  --no-cache\n");
+    printf("    Do not cache ros msg file\n");
+    printf("  --no-index\n");
+    printf("    Do not generate the indexALL.txt file\n");
     printf("  --verbose\n");
     printf("    Verbose output\n");
     printf("\n");
@@ -128,6 +132,8 @@ int generate_cpp(int argc, char *argv[])
     string fname;
     p.fromCommand(argc,argv);
     bool verbose = p.check("verbose");
+    bool no_cache = p.check("no-cache");
+    bool no_index = p.check("no-index");
 
     fname = argv[argc-1];
 
@@ -149,6 +155,9 @@ int generate_cpp(int argc, char *argv[])
         t.setVerbose();
         gen.setVerbose();
     }
+    if (no_index) {
+        gen.setNoIndex();
+    }
 
     if (p.check("out")) {
         gen.setTargetDirectory(p.find("out").toString().c_str());
@@ -158,7 +167,9 @@ int generate_cpp(int argc, char *argv[])
     if (t.read(fname.c_str(),env,gen)) {
         RosTypeCodeGenState state;
         t.emitType(gen,state);
-        t.cache(fname.c_str(),env,gen);
+        if (!no_cache) {
+            t.cache(fname.c_str(),env,gen);
+        }
     }
 
     return 0;

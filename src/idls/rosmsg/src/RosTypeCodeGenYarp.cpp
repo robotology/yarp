@@ -30,7 +30,10 @@ static std::string getPackageName(const std::string& name)
             tname = pname = tname.substr(0, at);
             do {
                 at = pname.rfind("/");
-                if (at == string::npos) break;
+                if (at == string::npos) {
+                    tname = pname;
+                    break;
+                }
                 tname = pname.substr(at+1, pname.length());
                 pname = pname.substr(0, at);
             } while (tname == "srv" || tname == "msg");
@@ -93,7 +96,7 @@ bool RosTypeCodeGenYarp::beginType(const std::string& tname,
     if (target != "") {
         root = target + "/";
     }
-    if (target != "") {
+    if (!no_index && target != "") {
         string iname = target + "/" + getPartName(tname) + "_indexALL.txt";
         yarp::os::mkdir_p(iname.c_str(), 1);
         FILE *index = fopen(iname.c_str(), "w");
