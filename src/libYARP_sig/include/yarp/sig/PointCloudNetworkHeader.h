@@ -22,12 +22,10 @@ namespace yarp {
 }
 
 
-/**
- *
- * Byte order in Point Cloud header for network transmission.
- *
- */
 // YARP_BEGIN_PACK
+/**
+ * @brief The yarp::sig::PointCloudNetworkHeader class
+ */
 class yarp::sig::PointCloudNetworkHeader
 {
 public:

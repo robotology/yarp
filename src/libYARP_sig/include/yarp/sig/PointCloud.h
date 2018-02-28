@@ -31,7 +31,13 @@ namespace yarp {
 
 namespace yarp {
     namespace sig {
-
+    /**
+     * @brief The PointCloudBase class
+     *
+     * A Base class for a yarp::sig::PointCloud<T>, provide default implementation for
+     * some methods and hides some internal implementation to the user.
+     * It can't be instantiated, only inherited.
+     */
     class YARP_sig_API PointCloudBase :public yarp::os::Portable
     {
     public:
@@ -49,25 +55,55 @@ namespace yarp {
 
         virtual bool write(yarp::os::ConnectionWriter& writer) override = 0;
 
+        /**
+         * @brief
+         * @return the height specified int the yarp::sig::PointCloudNetworkHeader.
+         */
         virtual size_t height() const;
 
+        /**
+         * @brief
+         * @return the width specified int the yarp::sig::PointCloudNetworkHeader.
+         */
         virtual size_t width() const;
 
+        /**
+         * @brief
+         * @return the enum representing the point type.
+         */
         virtual int getPointType() const;
 
-        virtual yarp::os::Type getType() override ;
+        virtual yarp::os::Type getType() override;
 
+        /**
+         * @brief Copy the content of an external PointCloud.
+         * @param source, pointer to the source data.
+         * @param type, enum representing the type of the source cloud.
+         * @param width, width of the source cloud.
+         * @param height, height of the source cloud.
+         * @param isDense
+         */
         virtual void fromExternalPC(const char* source, int type, size_t width, size_t height, bool isDense = true);
 
+        /**
+         * @brief
+         * @return true if the point cloud is organized in an image-like structure
+         */
         virtual bool isOrganized();
 
-
+        /**
+         * @brief Clear data.
+         */
         virtual inline void clear()
         {
             header.width = 0;
             header.height = 0;
         }
 
+        /**
+         * @brief isDense
+         * @return true if the point cloud doesn't contain NaN or Inf values
+         */
         virtual inline bool isDense() const
         {
             return header.isDense;
@@ -90,10 +126,16 @@ namespace yarp {
     };
 
     template <class T>
+    /**
+     * @brief The PointCloud class.
+     */
     class PointCloud: public PointCloudBase
     {
     public:
 
+        /**
+         * @brief PointCloud, default constructor.
+         */
         PointCloud()
         {
             data.clear();
@@ -101,9 +143,9 @@ namespace yarp {
         }
 
         /**
-         * Copy constructor.
+         * @brief PointCloud, copy constructor.
          * Clones the content of another point cloud.
-         * @param alt the point cloud to clone
+         * @param alt the point cloud to clone.
          */
         template<class T1>
         PointCloud(const PointCloud<T1>& alt)
@@ -114,7 +156,11 @@ namespace yarp {
 
         }
 
-        // Usage stuff
+        /**
+         * @brief Resize the PointCloud.
+         * @param width.
+         * @param height.
+         */
         virtual void resize(size_t width, size_t height) override
         {
             header.width = width;
@@ -122,26 +168,50 @@ namespace yarp {
             data.resize(width * height);
         }
 
+        /**
+         * @brief Get the pointer to the data.
+         * @return the pointer to the data.
+         */
         virtual const char* getRawData() const override
         {
             return data.getMemoryBlock();
         }
 
+        /**
+         * @brief Get the size of the data + the header in terms of
+         * number of bytes.
+         * @return the size of the data sent through the network
+         */
         virtual size_t wireSizeBytes() const override
         {
             return sizeof(header) + dataSizeBytes();
         }
 
+        /**
+         * @brief Get the size of the data in terms of
+         * number of bytes.
+         * @return the size of the data
+         */
         virtual size_t dataSizeBytes() const override
         {
             return header.width*header.height*(sizeof(T));
         }
 
+        /**
+         * @brief
+         * @return the number of points of the PointCloud
+         */
         virtual size_t size() const override
         {
             return data.size();
         }
 
+        /**
+         * @brief Obtain the point given by the (column, row) coordinates.
+         * Only works on organized clouds (those that have height != 1).
+         * @param u, column coordinate
+         * @param v, row coordinate
+         */
         inline T& operator()(size_t u, size_t v) {
             yAssert(isOrganized());
             if (u > width() || v > height())
@@ -151,6 +221,10 @@ namespace yarp {
             return data[u + v*width()];
         }
 
+        /**
+         * @brief Obtain the point given by the index.
+         * @param i, index
+         */
         inline T& operator()(size_t i) {
             if (i > data.size())
             {
@@ -173,7 +247,7 @@ namespace yarp {
 
 
         /** \brief Concatenate a point cloud to the current cloud.
-          * \param[in] rhs the cloud to add to the current cloud
+          * \param rhs the cloud to add to the current cloud
           * \return the new cloud as a concatenation of the current cloud and the new given cloud
           */
         inline PointCloud<T>&
@@ -204,7 +278,7 @@ namespace yarp {
         }
 
         /** \brief Concatenate a point cloud to another cloud.
-          * \param[in] rhs the cloud to add to the current cloud
+          * \param rhs the cloud to add to the current cloud
           * \return the new cloud as a concatenation of the current cloud and the new given cloud
           */
         inline const PointCloud<T>

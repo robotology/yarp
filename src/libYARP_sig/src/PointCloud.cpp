@@ -10,7 +10,8 @@
 
 using namespace yarp::sig;
 
-
+// Map that contains the offset of the basic types respect the origin of the struct
+// representing the composite types.
 const std::map<std::pair<int, int>, int> offsetMap =  {
         // PCL_NORMAL
         {std::make_pair(PCL_NORMAL, PC_CURVATURE_DATA) , sizeof(yarp::sig::NORMAL_NO_CURV)},
@@ -35,6 +36,8 @@ const std::map<std::pair<int, int>, int> offsetMap =  {
 
         // PCL_XYZ_I_NORMAL TBD
                                      };
+// Map that contains the information about the basic types that form
+// the composite ones and in which order
 const std::map<int, std::vector<int> > compositionMap = {
         // recipe for basic data
         {PC_XY_DATA,        std::vector<int> {PC_XY_DATA}},
@@ -60,7 +63,7 @@ const std::map<int, std::vector<int> > compositionMap = {
 
     };
 
-    // TODO unify the info if possible
+// Map that contains the size of the struct given the enum representing the type
 const std::map<int, size_t> sizeMap = {
         {PC_PADDING3,             3*sizeof(float)},
         {PC_PADDING2,             2*sizeof(float)},

@@ -25,6 +25,9 @@ namespace yarp {
 
         // Define a bit for each piece of information we want to carry
         // Is enum better?? Define some helper to get a string from number
+        /**
+         * @brief The YarpPointCloudBasicTypesEnum enum
+         */
         enum YarpPointCloudBasicTypesEnum {
             PC_XY_DATA                  =      (1 << 0) ,
             PC_XYZ_DATA                 =      (1 << 1) ,
@@ -53,7 +56,9 @@ namespace yarp {
             PC_PADDING2                 =      (1 << 24),
             PC_PADDING3                 =      (1 << 25)
         };
-
+        /**
+         * @brief The YarpPointCloudCompositeTypesEnum enum
+         */
         enum YarpPointCloudCompositeTypesEnum {
         // Shortcuts names for matching PCL predefined types
             PCL_POINT2D_XY             =   (PC_XY_DATA),
