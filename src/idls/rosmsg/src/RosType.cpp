@@ -194,6 +194,8 @@ bool RosType::read(const char *tname, RosTypeSearch& env, RosTypeCodeGen& gen,
             at = temp.rfind("/");
             if (at != std::string::npos) {
                 package = temp.substr(at+1);
+            } else {
+                package = temp;
             }
             if (package == "srv" || package == "msg")
             {
