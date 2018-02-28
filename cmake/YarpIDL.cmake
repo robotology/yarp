@@ -121,7 +121,10 @@ function(YARP_IDL_TO_DIR yarpidl_file_base output_dir)
     if("${family}" STREQUAL "thrift")
       set(cmd ${YARPIDL_thrift_LOCATION} --gen yarp:include_prefix --I "${CMAKE_CURRENT_SOURCE_DIR}" --out "${dir}" "${yarpidl_file}")
     else()
-      set(cmd ${YARPIDL_rosmsg_LOCATION} --no-ros true --no-cache --out "${dir}" "${yarpidl_file}")
+      if(YARPIDL_rosmsg_VERBOSE)
+        set(_verbose --verbose)
+      endif()
+      set(cmd ${YARPIDL_rosmsg_LOCATION} --no-ros true --no-cache ${_verbose} --out "${dir}" "${yarpidl_file}")
     endif()
 
     # Go ahead and generate files.
@@ -316,12 +319,14 @@ function(YARP_ADD_IDL var first_file)
     string(REGEX REPLACE "/(/|$)" "\\1" srcs_out_dir "${srcs_out_dir}")
     string(REGEX REPLACE "/(/|$)" "\\1" hdrs_out_dir "${hdrs_out_dir}")
 
-
     # Prepare main command
     if("${family}" STREQUAL "thrift")
       set(cmd ${YARPIDL_thrift_COMMAND} --gen yarp:include_prefix --I "${CMAKE_CURRENT_SOURCE_DIR}" --out "${tmp_dir}" "${file}")
     else()
-      set(cmd ${YARPIDL_rosmsg_COMMAND} --no-ros true --no-cache --no-index --out "${CMAKE_CURRENT_BINARY_DIR}/include" "${file}")
+      if(YARPIDL_rosmsg_VERBOSE)
+        set(_verbose --verbose)
+      endif()
+      set(cmd ${YARPIDL_rosmsg_COMMAND} --no-ros true --no-cache --no-index ${_verbose} --out "${CMAKE_CURRENT_BINARY_DIR}/include" "${file}")
     endif()
 
     # Prepare copy command (thrift only) and populate output variable
