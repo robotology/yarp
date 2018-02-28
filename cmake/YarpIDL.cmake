@@ -284,10 +284,11 @@ function(YARP_ADD_IDL var first_file)
     get_filename_component(path ${file} PATH)
     get_filename_component(basename ${file} NAME_WE)
     get_filename_component(ext ${file} EXT)
-    string(TOLOWER ${ext} ext)
+    string(TOLOWER "${ext}" ext)
 
     # Figure out format we are working with and determine which files
     # will be generated
+    set(native 0)
     if("${ext}" STREQUAL ".thrift")
       set(family thrift)
       _yarp_idl_thrift_to_file_list("${file}" "${path}" "${basename}" ${ext} gen_srcs gen_hdrs)
@@ -300,8 +301,16 @@ function(YARP_ADD_IDL var first_file)
         get_filename_component(path "${path}" PATH)
       endif()
       _yarp_idl_rosmsg_to_file_list("${file}" "${path}" "${pkg}" "${basename}" ${ext} gen_srcs gen_hdrs)
+    elseif("${file}" STREQUAL "time")
+      set(family rosmsg)
+      set(native 1)
+      set(gen_hdrs TickTime.h)
+    elseif("${file}" STREQUAL "duration")
+      set(family rosmsg)
+      set(native 1)
+      set(gen_hdrs TickDuration.h)
     else()
-        message(FATAL_ERROR "Unknown extension ${ext}. Supported extensiona are .thrift, .msg, and .srv")
+      message(FATAL_ERROR "Unknown extension ${ext}. Supported extensiona are .thrift, .msg, and .srv")
     endif()
 
     # FIXME This should handle cross-compiling
@@ -359,9 +368,12 @@ function(YARP_ADD_IDL var first_file)
     endforeach()
 
     if(NOT "${output}" STREQUAL "")
+      set(depends ${YARPIDL_${family}_COMMAND})
+      if(NOT native)
+        list(APPEND depends ${file})
+      endif()
       add_custom_command(OUTPUT ${output}
-                         DEPENDS ${file}
-                                 ${extra_deps}
+                         DEPENDS ${depends}
                          COMMAND ${cmd}
                          WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}
                          COMMENT "Generating code from ${file}")
@@ -379,10 +391,14 @@ function(YARP_ADD_IDL var first_file)
       endif()
     endif()
 
-    # Force CMake to run again if the file is modified.
+    # Force CMake to run again if the file is modified (not just the build
+    # is not enough).
     # This is required because the new version might generate new
-    # output files, therefore we need to parse it again.
-    configure_file("${file}" "${tmp_dir}/${basename}${ext}" COPYONLY)
+    # output files, therefore we need to parse the file again and add the new
+    # output files as generated.
+    if(NOT ${native})
+      configure_file("${file}" "${tmp_dir}/${basename}${ext}" COPYONLY)
+    endif()
   endforeach()
 
   set(${var} ${${var}} PARENT_SCOPE)
