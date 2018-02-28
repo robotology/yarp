@@ -1,0 +1,131 @@
+/**
+  @page yarp_pointcloud YARP PointCloud
+  
+  \author Nicolo' Genesio
+
+This tutorial covers how to use the template class yarp::sig::PointCloud with pcl::PointCloud and stand alone.
+
+\section what_is_a_pointcloud What is a PointCloud?
+
+A point cloud is a set of data points in a pre-defined coordinate system.
+
+In a three-dimensional coordinate system, these points are usually defined
+by X, Y, and Z coordinates, and often are intended to represent the external surface of an object.
+
+A point cloud can also contain other kinds of information such as the normals,
+the RGB, etc.
+
+In YARP we support these point types:
+
+- yarp::sig::XY_DATA
+- yarp::sig::XYZ_DATA
+- yarp::sig::NORMAL_DATA
+- yarp::sig::XYZ_RGBA_DATA
+- yarp::sig::XYZ_I_DATA
+- yarp::sig::INTEREST_POINT_XYZ_DATA
+- yarp::sig::XYZ_NORMAL_DATA
+- yarp::sig::XYZ_NORMAL_RGBA_DATA
+
+These structures have been created  to be compatible with the 
+PCL's ones.
+
+\section read_and_write_point_cloud Write and read PointCloud to/from ports
+
+This code snippet shows how to send and then receive a yarp::sig::PointCloud
+through the YARP ports.
+
+\code {.cpp}
+        yarp::os::BufferedPort< yarp::sig::PointCloud<yarp::sig::XYZ_RGBA_DATA> > outPort;
+        yarp::os::Port inPort;
+        // Open the ports
+        outPort.open("/test/pointcloud/out");
+        inPort.open("/test/pointcloud/in");
+        // Connect the ports
+        yarp::os::NetworkBase::connect(outPort.getName(), inPort.getName());
+        // Declare the point cloud to be sent
+        yarp::sig::PointCloud<yarp::sig::XYZ_RGBA_DATA>& testPC = outPort.prepare();
+        int width  = 100;
+        int height = 20;
+        testPC.resize(width, height);
+        // Fill the point cloud
+        for (int i=0; i<width*height; i++)
+        {
+            testPC(i).x = i;
+            testPC(i).y = i + 1;
+            testPC(i).z = i + 2;
+            testPC(i).r = '1';
+            testPC(i).g = '2';
+            testPC(i).b = '3';
+            testPC(i).a = '4';
+        }
+
+        yarp::os::Time::delay(0.3);
+        // write the point cloud
+        outPort.write();
+        // read the point cloud
+        yarp::sig::PointCloud<yarp::sig::XYZ_RGBA_DATA> inCloud;
+        inPort.read(inCloud);
+\endcode
+**Note:** in this example, the type of the `testPC` and `inCloud` is the same
+but it is **NOT** mandatory.
+
+If the type of the input yarp::sig::PointCloud is different, only the fields in common
+with the output type will be actually read, the missing ones will be set to
+default values.
+
+For example, if you write a `yarp::sig::PointCloud<yarp::sig::XYZ_RGBA_DATA>` and you
+want to read through a `yarp::sig::PointCloud<yarp::sig::XYZ_NORMAL_DATA>`:
+- the `XYZ`fields will be filled
+- the `NORMAL` fields will be set to default
+- the`RGBA` will be ignored
+
+\section general_usage_point_cloud PointCloud initialization
+
+The flexibility on types has been implemented also for what concerns the 
+initialization of the point cloud (**copy constructor**
+and **assignment operator**):
+
+\code {.cpp}
+        yarp::sig::PointCloud<yarp::sig::XYZ_NORMAL_RGBA_DATA> pc1;
+        yarp::sig::PointCloud<yarp::sig::XYZ_NORMAL_DATA> pc2(pc1);
+        yarp::sig::PointCloud<yarp::sig::XYZ_NORMAL_RGBA_DATA> pc3 = pc2;
+\endcode
+
+In this case `pc3` will have only the `XYZ` and `NORMAL` values of `pc1` because
+the `RGBA` values have been lost in the construction of `pc2` that not contains
+the `RGBA` field.
+
+\section pcl_compatibility PCL compatibility
+
+The yarp::sig::PointCloud class has been implemented to be compatible with 
+Point Cloud Library (PCL).
+
+`libYARP_pcl` makes yarp::sig::PointCloud compatible with PCL, and it is
+compiled if PCL is found during the `YARP` configuration.
+
+This library has two methods `toPcl<T,T1>(...)`and `fromPcl<T,T1>(...)` 
+that can be used as follow
+
+\code {.cpp}
+    pcl::PointCloud<pcl::PointXYZRGBA> cloud;
+    cloud.resize(100);
+    for(int i=0; i<cloud.size(); i++)
+    {
+        cloud.points.at(i).x = i;
+        cloud.points.at(i).y = i+1;
+        cloud.points.at(i).z = i+2;
+        cloud.points.at(i).r = 'r';
+        cloud.points.at(i).g = 'g';
+        cloud.points.at(i).b = 'b';
+    }
+    // PCL -> YARP
+    yarp::sig::PointCloud<yarp::sig::XYZ_RGBA_DATA> yarpCloud;
+    yarpCloud = yarp::pcl::fromPCL<yarp::sig::XYZ_RGBA_DATA, pcl::PointXYZRGBA>(cloud);
+    // YARP -> PCL
+    pcl::PointCloud<pcl::PointXYZRGBA> cloud2;
+    cloud2 = yarp::pcl::toPCL<pcl::PointXYZRGBA, yarp::sig::XYZ_RGBA_DATA>(yarpCloud);
+\endcode
+
+Note that these conversions (PCL -> YARP, YARP -> PCL) are made through a **copy**.
+
+*/
