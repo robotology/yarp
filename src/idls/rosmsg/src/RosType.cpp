@@ -265,6 +265,7 @@ bool RosType::read(const char *tname, RosTypeSearch& env, RosTypeCodeGen& gen,
             ok = true;
             cursor->reply = new RosType();
             cursor->reply->verbose = verbose;
+            cursor->reply->no_recurse = no_recurse;
             cursor = cursor->reply;
             cursor->rosType = rosType + "Reply";
             continue;
@@ -299,22 +300,24 @@ bool RosType::read(const char *tname, RosTypeSearch& env, RosTypeCodeGen& gen,
             }
             fprintf(stderr,"\n");
         }
-        RosType sub;
-        sub.verbose = verbose;
-        sub.package = package;
-        if (!sub.read(t.c_str(),env,gen,nesting+1)) {
-            fprintf(stderr, "[type]%s Type not complete: %s\n",
-                    indent.c_str(),
-                    row.c_str());
-            ok = false;
+        if (!no_recurse) {
+            RosType sub;
+            sub.verbose = verbose;
+            sub.package = package;
+            if (!sub.read(t.c_str(),env,gen,nesting+1)) {
+                fprintf(stderr, "[type]%s Type not complete: %s\n",
+                        indent.c_str(),
+                        row.c_str());
+                ok = false;
+            }
+            sub.rosName = n;
+            const_txt.erase(0,const_txt.find_first_not_of(" \t"));
+            if (const_txt.find_first_of(" \t#")!=std::string::npos) {
+                const_txt = const_txt.substr(0,const_txt.find_first_of(" \t#"));
+            }
+            sub.initializer = const_txt;
+            cursor->subRosType.push_back(sub);
         }
-        sub.rosName = n;
-        const_txt.erase(0,const_txt.find_first_not_of(" \t"));
-        if (const_txt.find_first_of(" \t#")!=std::string::npos) {
-            const_txt = const_txt.substr(0,const_txt.find_first_of(" \t#"));
-        }
-        sub.initializer = const_txt;
-        cursor->subRosType.push_back(sub);
     } while (result!=nullptr);
     if (verbose) {
         fprintf(stderr,"[type]%s END %s\n", indent.c_str(), path.c_str());

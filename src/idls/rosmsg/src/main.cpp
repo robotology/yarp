@@ -48,6 +48,8 @@ void show_usage()
     printf("    Do not cache ros msg file\n");
     printf("  --no-index\n");
     printf("    Do not generate the indexALL.txt file\n");
+    printf("  --no-recurse\n");
+    printf("    Generate code only for the selected file, not for its dependencies\n");
     printf("  --verbose\n");
     printf("    Verbose output\n");
     printf("\n");
@@ -134,6 +136,7 @@ int generate_cpp(int argc, char *argv[])
     bool verbose = p.check("verbose");
     bool no_cache = p.check("no-cache");
     bool no_index = p.check("no-index");
+    bool no_recurse = p.check("no-recurse");
 
     fname = argv[argc-1];
 
@@ -157,6 +160,9 @@ int generate_cpp(int argc, char *argv[])
     }
     if (no_index) {
         gen.setNoIndex();
+    }
+    if (no_recurse) {
+        t.setNoRecurse();
     }
 
     if (p.check("out")) {

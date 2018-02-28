@@ -11,9 +11,13 @@
 # optionally storing the list of source/header files in the supplied
 # variables. Call as:
 #
-#   yarp_idl_to_dir(foo.thrift foo)
-#   yarp_idl_to_dir(foo.thrift foo SOURCES HEADERS)
-#   yarp_idl_to_dir(foo.thrift foo SOURCES HEADERS INCLUDE_PATHS)
+#   yarp_idl_to_dir(foo.thrift foo [NO_RECURSE])
+#   yarp_idl_to_dir(foo.thrift foo [NO_RECURSE] SOURCES HEADERS)
+#   yarp_idl_to_dir(foo.thrift foo [NO_RECURSE] SOURCES HEADERS INCLUDE_PATHS)
+#
+# If the ``NO_RECURSE`` option is set, the --no-recurse option is
+# passed to ``yarpidl_rosmsg``, hence generating code only for the
+# selected files, not for their dependencies.
 #
 #
 # yarp_add_idl
@@ -22,7 +26,7 @@
 # Take one or more IDL files and generate code at build time.
 # Files will be regenerated whenever the IDL file changes.
 #
-#   yarp_add_idl(<var> <file> [file [...]])
+#   yarp_add_idl(<var> [NO_RECURSE] <file> [file [...]])
 #
 # The <var> variable, will contain the generated files, and can be
 # added to the an add_executable or add_library call. For example:
@@ -32,7 +36,10 @@
 #                    file3.srv)
 #   yarp_add_idl(THRIFT_GEN_FILES ${THRIFT_FILES})
 #   add_executable(foo main.cpp ${THRIFT_GEN_FILES})
-
+#
+# If the ``NO_RECURSE`` option is set, the --no-recurse option is
+# passed to ``yarpidl_rosmsg``, hence generating code only for the
+# selected files, not for their dependencies.
 
 
 # Avoid multiple inclusions of this file
@@ -43,6 +50,14 @@ endif()
 function(YARP_IDL_TO_DIR yarpidl_file_base output_dir)
   # Store optional output variable(s).
   set(out_vars ${ARGN})
+
+  # If the first not named argument (ARGV2) is "NO_RECURSE", it is removed from
+  # the out_vars list, and the --no-recurse option is passed to yarpidl_rosmsg
+  set(_no_recurse )
+  if ("${ARGV2}" STREQUAL "NO_RECURSE")
+    list(REMOVE_AT out_vars 0)
+    set(_no_recurse --no-recurse)
+  endif()
 
   # Make sure output_dir variable is visible when expanding templates.
   set(output_dir ${output_dir})
@@ -124,7 +139,7 @@ function(YARP_IDL_TO_DIR yarpidl_file_base output_dir)
       if(YARPIDL_rosmsg_VERBOSE)
         set(_verbose --verbose)
       endif()
-      set(cmd ${YARPIDL_rosmsg_LOCATION} --no-ros true --no-cache ${_verbose} --out "${dir}" "${yarpidl_file}")
+      set(cmd ${YARPIDL_rosmsg_LOCATION} --no-ros true --no-cache ${_verbose} ${_no_recurse} --out "${dir}" "${yarpidl_file}")
     endif()
 
     # Go ahead and generate files.
@@ -273,7 +288,15 @@ function(YARP_ADD_IDL var first_file)
   unset(${var})
   unset(include_dirs)
 
-  foreach(file "${first_file}" ${ARGN})
+  if("${first_file}" STREQUAL "NO_RECURSE")
+    set(_files ${ARGN})
+    set(_no_recurse --no-recurse)
+  else()
+    set(_files "${first_file}" ${ARGN})
+    set(_no_recurse )
+  endif()
+
+  foreach(file ${_files})
 
     # Ensure that the filename is relative to the current source directory
     if(IS_ABSOLUTE "${file}")
@@ -335,7 +358,7 @@ function(YARP_ADD_IDL var first_file)
       if(YARPIDL_rosmsg_VERBOSE)
         set(_verbose --verbose)
       endif()
-      set(cmd ${YARPIDL_rosmsg_COMMAND} --no-ros true --no-cache --no-index ${_verbose} --out "${CMAKE_CURRENT_BINARY_DIR}/include" "${file}")
+      set(cmd ${YARPIDL_rosmsg_COMMAND} --no-ros true --no-cache --no-index ${_verbose} ${_no_recurse} --out "${CMAKE_CURRENT_BINARY_DIR}/include" "${file}")
     endif()
 
     # Prepare copy command (thrift only) and populate output variable
