@@ -1,5 +1,5 @@
 // This is an automatically generated file.
-// Generated from this sensor_msgs_RegionOfInterest.msg definition:
+// Generated from the following "sensor_msgs/RegionOfInterest" msg definition:
 //   # This message is used to specify a region of interest within an image.
 //   #
 //   # When used to specify the ROI setting of the camera when the image was

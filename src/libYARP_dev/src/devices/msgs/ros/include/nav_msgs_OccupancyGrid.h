@@ -1,5 +1,5 @@
 // This is an automatically generated file.
-// Generated from this nav_msgs_OccupancyGrid.msg definition:
+// Generated from the following "nav_msgs/OccupancyGrid" msg definition:
 //   # This represents a 2-D grid map, in which each cell represents the probability of
 //   # occupancy.
 //   

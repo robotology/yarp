@@ -1,5 +1,5 @@
 // This is an automatically generated file.
-// Generated from this std_msgs_Header.msg definition:
+// Generated from the following "std_msgs/Header" msg definition:
 //   [std_msgs/Header]:
 //   # Standard metadata for higher-level stamped data types.
 //   # This is generally used to communicate timestamped data

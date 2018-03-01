@@ -1,5 +1,5 @@
 // This is an automatically generated file.
-// Generated from this nav_msgs_MapMetaData.msg definition:
+// Generated from the following "nav_msgs/MapMetaData" msg definition:
 //   # This hold basic information about the characterists of the OccupancyGrid
 //   
 //   # The time at which the map was loaded

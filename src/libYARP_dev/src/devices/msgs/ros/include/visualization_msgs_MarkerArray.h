@@ -1,5 +1,5 @@
 // This is an automatically generated file.
-// Generated from this visualization_msgs_MarkerArray.msg definition:
+// Generated from the following "visualization_msgs/MarkerArray" msg definition:
 //   visualization_msgs/Marker[] markers// Instances of this class can be read and written with YARP ports,
 // using a ROS-compatible format.
 

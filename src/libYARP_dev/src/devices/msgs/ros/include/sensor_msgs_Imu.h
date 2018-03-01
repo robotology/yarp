@@ -1,5 +1,5 @@
 // This is an automatically generated file.
-// Generated from this sensor_msgs_Imu.msg definition:
+// Generated from the following "sensor_msgs/Imu" msg definition:
 //   # This is a message to hold data from an IMU (Inertial Measurement Unit)
 //   #
 //   # Accelerations should be in m/s^2 (not in g's), and rotational velocity should be in rad/sec

@@ -1,5 +1,5 @@
 // This is an automatically generated file.
-// Generated from this sensor_msgs_JointState.msg definition:
+// Generated from the following "sensor_msgs/JointState" msg definition:
 //   # This is a message that holds data to describe the state of a set of torque controlled joints.
 //   #
 //   # The state of each joint (revolute or prismatic) is defined by:

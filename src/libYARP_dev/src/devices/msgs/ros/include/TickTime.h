@@ -1,5 +1,5 @@
 // This is an automatically generated file.
-// Generated from this TickTime.msg definition:
+// Generated from the following "time" native type definition:
 // Instances of this class can be read and written with YARP ports,
 // using a ROS-compatible format.
 
@@ -10,6 +10,8 @@
 #include <vector>
 #include <yarp/os/Wire.h>
 #include <yarp/os/idl/WireTypes.h>
+#include <climits>
+#include <cstdint>
 
 class TickTime : public yarp::os::idl::WirePortable
 {
@@ -21,6 +23,43 @@ public:
             sec(0),
             nsec(0)
     {
+    }
+
+    TickTime(double timestamp) :
+            sec(0),
+            nsec(0)
+    {
+        uint64_t time = (uint64_t) (timestamp * 1000000000UL);
+        uint64_t sec_part = (time / 1000000000UL);
+        uint64_t nsec_part = (time % 1000000000UL);
+        if (sec > UINT32_MAX) {
+            yWarning("TickTime::TickTime(): Timestamp exceeded the 32 bit representation, resetting it to 0");
+            sec = 0;
+        }
+        sec = static_cast<yarp::os::NetUint32>(sec_part);
+        nsec = static_cast<yarp::os::NetUint32>(nsec_part);
+    }
+
+    TickTime& operator=(const double timestamp)
+    {
+        uint64_t time = (uint64_t) (timestamp * 1000000000UL);
+        uint64_t sec_part = (time / 1000000000UL);
+        uint64_t nsec_part = (time % 1000000000UL);
+        if (sec > UINT32_MAX) {
+            yWarning("TickTime::operator=(): Timestamp exceeded the 32 bit representation, resetting it to 0");
+            sec = 0;
+        }
+        sec = static_cast<yarp::os::NetUint32>(sec_part);
+        nsec = static_cast<yarp::os::NetUint32>(nsec_part);
+        return *this;
+    }
+
+    operator double()
+    {
+        if (nsec > 1000000000UL) {
+            yWarning("TickTime::operator double(): Check on nsec > 1000000000UL failed");
+        }
+        return sec + nsec * 1000000000.0;
     }
 
     void clear()

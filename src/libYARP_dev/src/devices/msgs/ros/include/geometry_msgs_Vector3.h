@@ -1,5 +1,5 @@
 // This is an automatically generated file.
-// Generated from this geometry_msgs_Vector3.msg definition:
+// Generated from the following "geometry_msgs/Vector3" msg definition:
 //   # This represents a vector in free space.
 //   
 //   float64 x
