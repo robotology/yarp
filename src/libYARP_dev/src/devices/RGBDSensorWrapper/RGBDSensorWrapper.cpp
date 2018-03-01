@@ -757,7 +757,7 @@ bool RGBDSensorWrapper::setCamInfo(sensor_msgs_CameraInfo& cameraInfo, const str
 
     cameraInfo.header.frame_id    = frame_id;
     cameraInfo.header.seq         = seq;
-    cameraInfo.header.stamp       = normalizeSecNSec(stamp);
+    cameraInfo.header.stamp       = stamp;
     cameraInfo.width              = sensorType == COLOR_SENSOR ? sensor_p->getRgbWidth() : sensor_p->getDepthWidth();
     cameraInfo.height             = sensorType == COLOR_SENSOR ? sensor_p->getRgbHeight() : sensor_p->getDepthHeight();
     cameraInfo.distortion_model   = distModel;
@@ -850,8 +850,8 @@ bool RGBDSensorWrapper::writeData()
         sensor_msgs_CameraInfo& camInfoD        = rosPublisherPort_depthCaminfo.prepare();
         TickTime                cRosStamp, dRosStamp;
 
-        cRosStamp = normalizeSecNSec(colorStamp.getTime());
-        dRosStamp = normalizeSecNSec(depthStamp.getTime());
+        cRosStamp = colorStamp.getTime();
+        dRosStamp = depthStamp.getTime();
 
         deepCopyImages(colorImage, rColorImage, rosFrameId, cRosStamp, nodeSeq);
         deepCopyImages(depthImage, rDepthImage, rosFrameId, dRosStamp, nodeSeq);

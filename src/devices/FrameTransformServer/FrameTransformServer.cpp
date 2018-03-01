@@ -85,44 +85,6 @@ void Transforms_server_storage::clear()
 }
 
 /**
-  * Helper functions
-  */
-
-inline TickTime normalizeSecNSec(double yarpTimeStamp)
-{
-    uint64_t time;
-    uint64_t nsec_part;
-    uint64_t sec_part;
-    TickTime ret;
-
-    time = (uint64_t)(yarpTimeStamp * 1000000000UL);
-    nsec_part = (time % 1000000000UL);
-    sec_part = (time / 1000000000UL);
-
-    if (sec_part > std::numeric_limits<unsigned int>::max())
-    {
-        yWarning() << "Timestamp exceeded the 64 bit representation, resetting it to 0";
-        sec_part = 0;
-    }
-
-    ret.sec = (yarp::os::NetUint32) sec_part;
-    ret.nsec = (yarp::os::NetUint32) nsec_part;
-    return ret;
-}
-
-inline double normalizeToYarpTime(TickTime rosTimeStamp)
-{
-    double yarptime = rosTimeStamp.sec;
-    if (rosTimeStamp.nsec > 1000000000UL)
-    {
-        yWarning() << "Check on rosTimeStamp.nsec > 1000000000UL failed";
-
-    }
-    yarptime = yarptime + rosTimeStamp.nsec * 1000000000.0;
-    return yarptime;
-}
-
-/**
   * FrameTransformServer
   */
 
@@ -720,9 +682,9 @@ void FrameTransformServer::run()
                         t.rotation.w() = tfs[i].transform.rotation.w;
                         t.src_frame_id = tfs[i].header.frame_id;
                         t.dst_frame_id = tfs[i].child_frame_id;
-                        //@@@ should we use yarp or ROS timestamps? 
+                        //@@@ should we use yarp or ROS timestamps?
                         t.timestamp = yarp::os::Time::now();
-                        //t.timestamp = normalizeToYarpTime(tfs[i].header.stamp); //@@@ is this ok?
+                        //t.timestamp = tfs[i].header.stamp; //@@@ is this ok?
                         (*m_ros_static_transform_storage).set_transform(t);
                     }
                 }
@@ -821,7 +783,7 @@ void FrameTransformServer::run()
                 transform_timed.child_frame_id = (*m_yarp_timed_transform_storage)[i].dst_frame_id;
                 transform_timed.header.frame_id = (*m_yarp_timed_transform_storage)[i].src_frame_id;
                 transform_timed.header.seq = rosMsgCounter;
-                transform_timed.header.stamp = normalizeSecNSec((*m_yarp_timed_transform_storage)[i].timestamp);
+                transform_timed.header.stamp = (*m_yarp_timed_transform_storage)[i].timestamp;
                 transform_timed.transform.rotation.x = (*m_yarp_timed_transform_storage)[i].rotation.x();
                 transform_timed.transform.rotation.y = (*m_yarp_timed_transform_storage)[i].rotation.y();
                 transform_timed.transform.rotation.z = (*m_yarp_timed_transform_storage)[i].rotation.z();
@@ -842,7 +804,7 @@ void FrameTransformServer::run()
                 transform_static.child_frame_id = (*m_yarp_static_transform_storage)[i].dst_frame_id;
                 transform_static.header.frame_id = (*m_yarp_static_transform_storage)[i].src_frame_id;
                 transform_static.header.seq = rosMsgCounter;
-                transform_static.header.stamp = normalizeSecNSec(yarp::os::Time::now()); //@@@check timestamp of static transform?
+                transform_static.header.stamp = yarp::os::Time::now(); //@@@check timestamp of static transform?
                 transform_static.transform.rotation.x = (*m_yarp_static_transform_storage)[i].rotation.x();
                 transform_static.transform.rotation.y = (*m_yarp_static_transform_storage)[i].rotation.y();
                 transform_static.transform.rotation.z = (*m_yarp_static_transform_storage)[i].rotation.z();

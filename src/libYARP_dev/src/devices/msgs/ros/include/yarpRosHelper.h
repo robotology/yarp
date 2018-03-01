@@ -32,32 +32,6 @@ ROSTopicUsageType;
 
 double const PI = 3.1415926535897932384626433;
 
-/**
- * This function has been took from ROS source file
- * http://docs.ros.org/diamondback/api/rostime/html/time_8h_source.html#l00095
- * and modified a bit to cope with yarp time handling in double
- * yarpTimeStamp: input yarp time in double
- * sec: sec part
- * nsec: nano second part
- */
-inline TickTime normalizeSecNSec(double yarpTimeStamp)
-{
-    uint64_t time = (uint64_t) (yarpTimeStamp * 1000000000UL);
-    uint64_t nsec_part = (time % 1000000000UL);
-    uint64_t sec_part = (time / 1000000000UL);
-    TickTime ret;
-
-    if (sec_part > UINT_MAX)
-    {
-        yWarning() << "Timestamp exceeded the 64 bit representation, resetting it to 0";
-        sec_part = 0;
-    }
-
-    ret.sec  = sec_part;
-    ret.nsec = nsec_part;
-    return ret;
-}
-
 /** convert degrees to radiants for ROS messages */
 inline double convertDegreesToRadians(double degrees)
 {

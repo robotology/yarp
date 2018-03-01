@@ -833,7 +833,7 @@ void AnalogWrapper::run()
                 {
                     geometry_msgs_WrenchStamped rosData;
                     rosData.header.seq = rosMsgCounter++;
-                    rosData.header.stamp = normalizeSecNSec(yarp::os::Time::now());
+                    rosData.header.stamp = yarp::os::Time::now();
                     rosData.header.frame_id = frame_id;
 
                     rosData.wrench.force.x = lastDataRead[0];
@@ -874,7 +874,7 @@ void AnalogWrapper::run()
                         }
                     }
                     rosData.header.seq = rosMsgCounter++;
-                    rosData.header.stamp = normalizeSecNSec(yarp::os::Time::now());
+                    rosData.header.stamp = yarp::os::Time::now();
                     rosPublisherJointPort.write(rosData);
                 }
             }

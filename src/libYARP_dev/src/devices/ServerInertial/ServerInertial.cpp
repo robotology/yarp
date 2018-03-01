@@ -456,7 +456,7 @@ void yarp::dev::ServerInertial::run()
                 sensor_msgs_Imu &rosData = rosPublisherPort.prepare();
 
                 rosData.header.seq = rosMsgCounter++;
-                rosData.header.stamp = normalizeSecNSec(yarp::os::Time::now());
+                rosData.header.stamp = yarp::os::Time::now();
                 rosData.header.frame_id = frame_id;
 
                 rosData.orientation.x = quaternion[0];
