@@ -220,96 +220,100 @@ bool RosType::read(const char *tname, RosTypeSearch& env, RosTypeCodeGen& gen,
     }
 
     bool ok = true;
-    std::string path = env.findFile(base.c_str());
-    rosPath = path;
+    if (nesting == 0 || !no_recurse) {
+        std::string path = env.findFile(base.c_str());
+        rosPath = path;
 
-    FILE *fin = fopen((env.getTargetDirectory() + "/" + path).c_str(),"r");
-    if (!fin) {
-        fin = fopen(path.c_str(),"r");
-    }
-    if (!fin) {
-        fprintf(stderr, "[type] FAILED to open %s\n", path.c_str());
-        std::exit(1);
-    }
+        FILE *fin = fopen((env.getTargetDirectory() + "/" + path).c_str(),"r");
+        if (!fin) {
+            fin = fopen(path.c_str(),"r");
+        }
+        if (!fin) {
+            fprintf(stderr, "[type] FAILED to open %s\n", path.c_str());
+            std::exit(1);
+        }
 
-    if (verbose) {
-        fprintf(stderr,"[type]%s BEGIN %s\n", indent.c_str(), path.c_str());
-    }
-    char *result = nullptr;
-    txt = "";
-    source = "";
+        if (verbose) {
+            fprintf(stderr,"[type]%s BEGIN %s\n", indent.c_str(), path.c_str());
+        }
+        char *result = nullptr;
+        txt = "";
+        source = "";
 
-    RosType *cursor = this;
-    do {
-        char buf[2048];
-        result = fgets(buf,sizeof(buf),fin);
-        if (result==nullptr) break;
-        txt += "//   ";
-        txt += result;
-        source += result;
-        int len = (int)strlen(result);
-        for (int i=0; i<len; i++) {
-            if (result[i]=='\n') {
-                result[i] = '\0';
-                break;
-            }
-        }
-        std::string row = result;
-        std::vector<std::string> msg = normalizedMessage(row);
-        if (msg.size()==0) { continue; }
-        if (msg[0] == "---") {
-            if (verbose) {
-                printf("--- reply ---\n");
-            }
-            cursor->isValid = ok;
-            ok = true;
-            cursor->reply = new RosType();
-            cursor->reply->verbose = verbose;
-            cursor->reply->no_recurse = no_recurse;
-            cursor = cursor->reply;
-            cursor->rosType = rosType + "Reply";
-            continue;
-        }
-        bool have_const = false;
-        std::string const_txt = "";
-        if (msg.size()>2) {
-            if (msg[2]=="=") {
-                have_const = true;
-                //printf("Not worrying about: %s\n", row.c_str());
-                //continue;
-                const_txt = msg[3];
-            }
-        }
-        if (msg.size()!=2 && !have_const) {
-            if (msg.size()>0) {
-                if (msg[0][0]!='[') {
-                    if (verbose) {
-                        fprintf(stderr,"[type] skip %s\n", row.c_str());
-                    }
-                    ok = false;
+        RosType *cursor = this;
+        do {
+            char buf[2048];
+            result = fgets(buf,sizeof(buf),fin);
+            if (result==nullptr) break;
+            txt += "//   ";
+            txt += result;
+            source += result;
+            int len = (int)strlen(result);
+            for (int i=0; i<len; i++) {
+                if (result[i]=='\n') {
+                    result[i] = '\0';
+                    break;
                 }
             }
-            continue;
-        }
-        std::string t = msg[0];
-        std::string n = msg[1];
-        if (verbose) {
-            fprintf(stderr,"[type]%s   %s %s", indent.c_str(), t.c_str(), n.c_str());
-            if (const_txt!="") {
-                fprintf(stderr," = %s", const_txt.c_str());
+            std::string row = result;
+            std::vector<std::string> msg = normalizedMessage(row);
+            if (msg.size()==0) { continue; }
+            if (msg[0] == "---") {
+                if (verbose) {
+                    printf("--- reply ---\n");
+                }
+                cursor->isValid = ok;
+                ok = true;
+                cursor->reply = new RosType();
+                cursor->reply->verbose = verbose;
+                cursor->reply->no_recurse = no_recurse;
+                cursor = cursor->reply;
+                cursor->rosType = rosType + "Reply";
+                continue;
             }
-            fprintf(stderr,"\n");
-        }
-        if (!no_recurse) {
+            bool have_const = false;
+            std::string const_txt = "";
+            if (msg.size()>2) {
+                if (msg[2]=="=") {
+                    have_const = true;
+                    //printf("Not worrying about: %s\n", row.c_str());
+                    //continue;
+                    const_txt = msg[3];
+                }
+            }
+            if (msg.size()!=2 && !have_const) {
+                if (msg.size()>0) {
+                    if (msg[0][0]!='[') {
+                        if (verbose) {
+                            fprintf(stderr,"[type] skip %s\n", row.c_str());
+                        }
+                        ok = false;
+                    }
+                }
+                continue;
+            }
+            std::string t = msg[0];
+            std::string n = msg[1];
+            if (verbose) {
+                fprintf(stderr,"[type]%s   %s %s", indent.c_str(), t.c_str(), n.c_str());
+                if (const_txt!="") {
+                    fprintf(stderr," = %s", const_txt.c_str());
+                }
+                fprintf(stderr,"\n");
+            }
             RosType sub;
             sub.verbose = verbose;
+            sub.no_recurse = no_recurse;
             sub.package = package;
             if (!sub.read(t.c_str(),env,gen,nesting+1)) {
-                fprintf(stderr, "[type]%s Type not complete: %s\n",
-                        indent.c_str(),
-                        row.c_str());
-                ok = false;
+                if (!no_recurse) {
+                    fprintf(stderr, "[type]%s Type not complete: %s\n",
+                            indent.c_str(),
+                            row.c_str());
+                    ok = no_recurse;
+                }
             }
+
             sub.rosName = n;
             const_txt.erase(0,const_txt.find_first_not_of(" \t"));
             if (const_txt.find_first_of(" \t#")!=std::string::npos) {
@@ -317,23 +321,23 @@ bool RosType::read(const char *tname, RosTypeSearch& env, RosTypeCodeGen& gen,
             }
             sub.initializer = const_txt;
             cursor->subRosType.push_back(sub);
+        } while (result!=nullptr);
+        if (verbose) {
+            fprintf(stderr,"[type]%s END %s\n", indent.c_str(), path.c_str());
         }
-    } while (result!=nullptr);
-    if (verbose) {
-        fprintf(stderr,"[type]%s END %s\n", indent.c_str(), path.c_str());
-    }
-    fclose(fin);
+        fclose(fin);
 
-    if (rosType == "Header") {
-        std::string preamble = "[std_msgs/Header]:";
-        if (source.find(preamble)==0) {
-            source = source.substr(preamble.length()+1,source.length());
+        if (rosType == "Header") {
+            std::string preamble = "[std_msgs/Header]:";
+            if (source.find(preamble)==0) {
+                source = source.substr(preamble.length()+1,source.length());
+            }
         }
-    }
 
-    isValid = ok;
-    if (!isValid) {
-        fprintf(stderr, "[type]%s Check failed: %s\n", indent.c_str(), tname);
+        isValid = ok;
+        if (!isValid) {
+            fprintf(stderr, "[type]%s Check failed: %s\n", indent.c_str(), tname);
+        }
     }
     return isValid;
 }
@@ -427,7 +431,7 @@ bool RosType::emitType(RosTypeCodeGen& gen,
         return true;
     }
 
-    if (subRosType.size()>0) {
+    if (!no_recurse && subRosType.size()>0) {
         for (int i=0; i<(int)subRosType.size(); i++) {
             RosType& e = subRosType[i];
             if (!e.emitType(gen,state)) return false;
