@@ -32,7 +32,7 @@ std::vector<std::string> normalizedMessage(const std::string& line) {
     bool quote = false;
     bool pending = false;
     bool can_quote = true;
-    for (int i=0; i<(int)line.length(); i++) {
+    for (size_t i=0; i<line.length(); i++) {
         char ch = line[i];
         if (ch=='\"'&&can_quote) {
             quote = !quote;
@@ -410,7 +410,7 @@ void RosType::show() {
     }
     if (!isPrimitive) {
         printf("(");
-        for (int i=0; i<(int)subRosType.size(); i++) {
+        for (size_t i=0; i<subRosType.size(); i++) {
             if (i>0) printf(" ");
             subRosType[i].show();
         }
@@ -432,7 +432,7 @@ bool RosType::emitType(RosTypeCodeGen& gen,
     }
 
     if (!no_recurse && subRosType.size()>0) {
-        for (int i=0; i<(int)subRosType.size(); i++) {
+        for (size_t i=0; i<subRosType.size(); i++) {
             RosType& e = subRosType[i];
             if (!e.emitType(gen,state)) return false;
 
@@ -490,55 +490,55 @@ bool RosType::emitType(RosTypeCodeGen& gen,
 
     state.usedVariables.clear();
     state.txt = txt;
-    for (int i=0; i<(int)subRosType.size(); i++) {
+    for (size_t i=0; i<subRosType.size(); i++) {
         state.useVariable(subRosType[i].rosName);
     }
 
     if (!gen.beginType(rosType,state)) return false;
 
     if (!gen.beginDeclare()) return false;
-    for (int i=0; i<(int)subRosType.size(); i++) {
+    for (size_t i=0; i<subRosType.size(); i++) {
         if (!gen.declareField(subRosType[i])) return false;
     }
     if (!gen.endDeclare()) return false;
 
     if (!gen.beginConstruct()) return false;
     bool isFirst = true;
-    for (int i=0; i<(int)subRosType.size(); i++) {
+    for (size_t i=0; i<subRosType.size(); i++) {
         if (!gen.initField(subRosType[i], isFirst)) return false;
     }
     if (!gen.endInitConstruct()) return false;
-    for (int i=0; i<(int)subRosType.size(); i++) {
+    for (size_t i=0; i<subRosType.size(); i++) {
         if (!gen.constructField(subRosType[i])) return false;
     }
     if (!gen.endConstruct()) return false;
 
     if (!gen.beginClear()) return false;
-    for (int i = 0; i<(int)subRosType.size(); i++) {
+    for (size_t i=0; i<subRosType.size(); i++) {
         if (!gen.clearField(subRosType[i])) return false;
     }
     if (!gen.endClear()) return false;
 
     if (!gen.beginRead(true,(int)subRosType.size())) return false;
-    for (int i=0; i<(int)subRosType.size(); i++) {
+    for (size_t i=0; i<subRosType.size(); i++) {
         if (!gen.readField(true,subRosType[i])) return false;
     }
     if (!gen.endRead(true)) return false;
 
     if (!gen.beginRead(false,(int)subRosType.size())) return false;
-    for (int i=0; i<(int)subRosType.size(); i++) {
+    for (size_t i=0; i<subRosType.size(); i++) {
         if (!gen.readField(false,subRosType[i])) return false;
     }
     if (!gen.endRead(false)) return false;
 
     if (!gen.beginWrite(true,(int)subRosType.size())) return false;
-    for (int i=0; i<(int)subRosType.size(); i++) {
+    for (size_t i=0; i<subRosType.size(); i++) {
         if (!gen.writeField(true,subRosType[i])) return false;
     }
     if (!gen.endWrite(true)) return false;
 
     if (!gen.beginWrite(false,(int)subRosType.size())) return false;
-    for (int i=0; i<(int)subRosType.size(); i++) {
+    for (size_t i=0; i<subRosType.size(); i++) {
         if (!gen.writeField(false,subRosType[i])) return false;
     }
     if (!gen.endWrite(false)) return false;
