@@ -1,5 +1,5 @@
 // This is an automatically generated file.
-// Generated from this geometry_msgs_Point.msg definition:
+// Generated from the following "geometry_msgs/Point" msg definition:
 //   # This contains the position of a point in free space
 //   float64 x
 //   float64 y

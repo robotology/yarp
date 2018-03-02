@@ -1,5 +1,5 @@
 // This is an automatically generated file.
-// Generated from this geometry_msgs_Pose.msg definition:
+// Generated from the following "geometry_msgs/Pose" msg definition:
 //   # A representation of pose in free space, composed of postion and orientation. 
 //   geometry_msgs/Point position
 //   geometry_msgs/Quaternion orientation// Instances of this class can be read and written with YARP ports,

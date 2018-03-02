@@ -1,5 +1,5 @@
 // This is an automatically generated file.
-// Generated from this sensor_msgs_LaserScan.msg definition:
+// Generated from the following "sensor_msgs/LaserScan" msg definition:
 //   # Single scan from a planar laser range-finder
 //   #
 //   # If you have another ranging device with different behavior (e.g. a sonar

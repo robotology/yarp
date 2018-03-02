@@ -1,5 +1,5 @@
 // This is an automatically generated file.
-// Generated from this sensor_msgs_CameraInfo.msg definition:
+// Generated from the following "sensor_msgs/CameraInfo" msg definition:
 //   # This message defines meta information for a camera. It should be in a
 //   # camera namespace on topic "camera_info" and accompanied by up to five
 //   # image topics named:

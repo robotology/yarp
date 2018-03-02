@@ -1,5 +1,5 @@
 // This is an automatically generated file.
-// Generated from this geometry_msgs_Quaternion.msg definition:
+// Generated from the following "geometry_msgs/Quaternion" msg definition:
 //   # This represents an orientation in free space in quaternion form.
 //   
 //   float64 x

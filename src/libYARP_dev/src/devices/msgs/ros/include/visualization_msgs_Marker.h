@@ -1,5 +1,5 @@
 // This is an automatically generated file.
-// Generated from this visualization_msgs_Marker.msg definition:
+// Generated from the following "visualization_msgs/Marker" msg definition:
 //   # See http://www.ros.org/wiki/rviz/DisplayTypes/Marker and http://www.ros.org/wiki/rviz/Tutorials/Markers%3A%20Basic%20Shapes for more information on using this message with rviz
 //   
 //   uint8 ARROW=0

@@ -1,5 +1,5 @@
 // This is an automatically generated file.
-// Generated from this std_msgs_ColorRGBA.msg definition:
+// Generated from the following "std_msgs/ColorRGBA" msg definition:
 //   float32 r
 //   float32 g
 //   float32 b

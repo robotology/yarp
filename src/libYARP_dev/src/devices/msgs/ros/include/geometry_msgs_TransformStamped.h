@@ -1,5 +1,5 @@
 // This is an automatically generated file.
-// Generated from this geometry_msgs_TransformStamped.msg definition:
+// Generated from the following "geometry_msgs/TransformStamped" msg definition:
 //   # This expresses a transform from coordinate frame header.frame_id
 //   # to the coordinate frame child_frame_id
 //   #

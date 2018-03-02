@@ -1,5 +1,5 @@
 // This is an automatically generated file.
-// Generated from this tf_tfMessage.msg definition:
+// Generated from the following "tf/tfMessage" msg definition:
 //   geometry_msgs/TransformStamped[] transforms
 // Instances of this class can be read and written with YARP ports,
 // using a ROS-compatible format.

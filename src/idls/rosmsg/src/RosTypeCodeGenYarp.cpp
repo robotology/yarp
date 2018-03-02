@@ -149,7 +149,11 @@ bool RosTypeCodeGenYarp::beginType(const std::string& tname,
         std::exit(1);
     }
     fprintf(out, "// This is an automatically generated file.\n");
-    fprintf(out, "// Generated from this %s.msg definition:\n", safe_tname.c_str());
+    if (className == "TickTime" || className == "TickDuration") {
+        fprintf(out, "// Generated from the following \"%s\" native type definition:\n", ((className == "TickTime") ? "time" : "duration"));
+    } else {
+        fprintf(out, "// Generated from the following \"%s\" msg definition:\n", getDoubleName(tname).c_str());
+    }
     fprintf(out, "%s", state.txt.c_str());
     fprintf(out, "// Instances of this class can be read and written with YARP ports,\n");
     fprintf(out, "// using a ROS-compatible format.\n");
@@ -160,6 +164,10 @@ bool RosTypeCodeGenYarp::beginType(const std::string& tname,
     fprintf(out, "#include <vector>\n");
     fprintf(out, "#include <yarp/os/Wire.h>\n");
     fprintf(out, "#include <yarp/os/idl/WireTypes.h>\n");
+    if (className == "TickTime" || className == "TickDuration") {
+        fprintf(out, "#include <climits>\n");
+        fprintf(out, "#include <cstdint>\n");
+    }
     for (int i=0; i<(int)state.dependencies.size(); i++) {
         fprintf(out, "#include \"%s.h\"\n", getSafeName(state.dependenciesAsPaths[i]).c_str());
     }
@@ -249,6 +257,58 @@ bool RosTypeCodeGenYarp::constructField(const RosField& field)
 bool RosTypeCodeGenYarp::endConstruct()
 {
     fprintf(out, "    }\n\n");
+
+    // Add special constructor, assignment operator, and cast operator
+    // operator to TickTime and TickDuration to support timestamps as a double
+    // These function has been took from ROS source file
+    // http://docs.ros.org/diamondback/api/rostime/html/time_8h_source.html#l00095
+    // and modified a bit to cope with yarp time handling in double
+    if (className == "TickTime" || className == "TickDuration") {
+        // Constructor
+        fprintf(out,
+"    %s(double timestamp) :\n"
+"            sec(0),\n"
+"            nsec(0)\n"
+"    {\n"
+"        uint64_t time = (uint64_t) (timestamp * 1000000000UL);\n"
+"        uint64_t sec_part = (time / 1000000000UL);\n"
+"        uint64_t nsec_part = (time %% 1000000000UL);\n"
+"        if (sec > UINT32_MAX) {\n"
+"            yWarning(\"%s::%s(): Timestamp exceeded the 32 bit representation, resetting it to 0\");\n"
+"            sec = 0;\n"
+"        }\n"
+"        sec = static_cast<yarp::os::NetUint32>(sec_part);\n"
+"        nsec = static_cast<yarp::os::NetUint32>(nsec_part);\n"
+"    }\n\n", className.c_str(), className.c_str(), className.c_str());
+
+        // Assignment operator
+        fprintf(out,
+"    %s& operator=(const double timestamp)\n"
+"    {\n"
+"        uint64_t time = (uint64_t) (timestamp * 1000000000UL);\n"
+"        uint64_t sec_part = (time / 1000000000UL);\n"
+"        uint64_t nsec_part = (time %% 1000000000UL);\n"
+"        if (sec > UINT32_MAX) {\n"
+"            yWarning(\"%s::operator=(): Timestamp exceeded the 32 bit representation, resetting it to 0\");\n"
+"            sec = 0;\n"
+"        }\n"
+"        sec = static_cast<yarp::os::NetUint32>(sec_part);\n"
+"        nsec = static_cast<yarp::os::NetUint32>(nsec_part);\n"
+"        return *this;\n"
+"    }\n\n", className.c_str(), className.c_str());
+
+        // Cast operator
+        fprintf(out,
+"    operator double()\n"
+"    {\n"
+"        if (nsec > 1000000000UL) {\n"
+"            yWarning(\"%s::operator double(): Check on nsec > 1000000000UL failed\");\n"
+"        }\n"
+"        return sec + nsec * 1000000000.0;\n"
+"    }\n\n", className.c_str());
+
+    }
+
     return true;
 }
 

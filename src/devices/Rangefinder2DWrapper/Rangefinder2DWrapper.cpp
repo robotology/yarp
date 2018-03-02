@@ -587,7 +587,7 @@ void Rangefinder2DWrapper::run()
             {
                 sensor_msgs_LaserScan &rosData = rosPublisherPort.prepare();
                 rosData.header.seq = rosMsgCounter++;
-                rosData.header.stamp = normalizeSecNSec(lastStateStamp.getTime());
+                rosData.header.stamp = lastStateStamp.getTime();
                 rosData.header.frame_id = frame_id;
 
                 rosData.angle_min = minAngle * M_PI / 180.0;

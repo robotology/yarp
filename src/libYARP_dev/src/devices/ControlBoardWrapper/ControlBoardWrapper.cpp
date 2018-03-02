@@ -947,7 +947,7 @@ void ControlBoardWrapper::run()
         ros_struct.name=jointNames;
 
         ros_struct.header.seq = rosMsgCounter++;
-        ros_struct.header.stamp = normalizeSecNSec(time.getTime());
+        ros_struct.header.stamp = time.getTime();
 
         rosPublisherPort.write(ros_struct);
     }

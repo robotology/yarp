@@ -1,5 +1,5 @@
 // This is an automatically generated file.
-// Generated from this geometry_msgs_Wrench.msg definition:
+// Generated from the following "geometry_msgs/Wrench" msg definition:
 //   # This represents force in free space, separated into
 //   # its linear and angular parts.
 //   Vector3  force

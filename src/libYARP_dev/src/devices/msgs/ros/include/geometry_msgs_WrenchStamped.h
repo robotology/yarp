@@ -1,5 +1,5 @@
 // This is an automatically generated file.
-// Generated from this geometry_msgs_WrenchStamped.msg definition:
+// Generated from the following "geometry_msgs/WrenchStamped" msg definition:
 //   # A wrench with reference coordinate frame and timestamp
 //   Header header
 //   Wrench wrench

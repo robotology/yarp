@@ -1,5 +1,5 @@
 // This is an automatically generated file.
-// Generated from this geometry_msgs_Transform.msg definition:
+// Generated from the following "geometry_msgs/Transform" msg definition:
 //   # This represents the transform between two coordinate frames in free space.
 //   
 //   Vector3 translation

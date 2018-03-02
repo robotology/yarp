@@ -1,5 +1,5 @@
 // This is an automatically generated file.
-// Generated from this sensor_msgs_Image.msg definition:
+// Generated from the following "sensor_msgs/Image" msg definition:
 //   # This message contains an uncompressed image
 //   # (0, 0) is at top-left corner of image
 //   #
