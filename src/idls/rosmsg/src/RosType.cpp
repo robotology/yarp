@@ -24,6 +24,7 @@
 #include <string>
 #include <sstream>
 #include <vector>
+#include <algorithm>
 
 
 std::vector<std::string> normalizedMessage(const std::string& line) {
@@ -161,6 +162,7 @@ bool RosType::read(const char *tname, RosTypeSearch& env, RosTypeCodeGen& gen,
                 isPrimitive = true;
             } else {
                 rosType = (base=="time")?"TickTime":"TickDuration";
+                isStruct = true;
                 isPrimitive = false;
                 RosType t1;
                 t1.rosType = "uint32";
@@ -494,6 +496,13 @@ bool RosType::emitType(RosTypeCodeGen& gen,
         state.useVariable(subRosType[i].rosName);
     }
 
+    for (size_t i=0; i<subRosType.size(); i++) {
+        if (subRosType[i].isStruct && std::find(state.dependencies[rosType].begin(), state.dependencies[rosType].end(), subRosType[i].rosType) == state.dependencies[rosType].end()) {
+            state.dependencies[rosType].push_back(subRosType[i].rosType);
+            state.dependenciesAsPaths[rosType].push_back((subRosType[i].rosPath=="")?subRosType[i].rosType:subRosType[i].rosPath);
+        }
+    }
+
     if (!gen.beginType(rosType,state)) return false;
 
     if (!gen.beginDeclare()) return false;
@@ -546,12 +555,9 @@ bool RosType::emitType(RosTypeCodeGen& gen,
     if (!gen.endType(rosType,*this)) return false;
 
     state.generated[rosType] = this;
-    state.dependencies.push_back(rosType);
-    state.dependenciesAsPaths.push_back((rosPath=="")?rosType:rosPath);
 
     return true;
 }
-
 
 static std::vector<std::string> &split(const std::string &s, char delim, std::vector<std::string> &elems) {
     std::stringstream ss(s);

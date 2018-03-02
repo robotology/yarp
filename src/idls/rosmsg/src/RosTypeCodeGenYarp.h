@@ -35,6 +35,7 @@ class RosTypeCodeGenYarp : public RosTypeCodeGen {
 private:
     std::string target;
     std::string className;
+    std::string packageName;
 
 public:
     std::string counter;
@@ -75,6 +76,7 @@ public:
     virtual bool endType(const std::string& tname,
                          const RosField& field) override;
 
+    virtual bool writeIndex(RosTypeCodeGenState& state) override;
     virtual bool hasNativeTimeClass() const override {
         return false;
     }

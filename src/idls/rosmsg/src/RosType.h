@@ -198,9 +198,10 @@ public:
     std::map<std::string, RosType *> generated;
     std::map<std::string, bool> usedVariables;
     std::map<std::string, std::string> checksums;
-    std::vector<std::string> dependencies;
-    std::vector<std::string> dependenciesAsPaths;
+    std::map<std::string, std::vector<std::string>> dependencies;
+    std::map<std::string, std::vector<std::string>> dependenciesAsPaths;
     std::string txt;
+    std::vector<std::string> generatedFiles;
 
     std::string useVariable(const std::string& name) {
         usedVariables[name] = true;
@@ -218,9 +219,8 @@ public:
 class RosTypeCodeGen {
 protected:
     bool verbose;
-    bool no_index;
 public:
-    RosTypeCodeGen() : verbose(false), no_index(false) {}
+    RosTypeCodeGen() : verbose(false) {}
     virtual ~RosTypeCodeGen() {}
 
     virtual bool beginType(const std::string& tname,
@@ -251,16 +251,14 @@ public:
     virtual bool endType(const std::string& tname,
                          const RosField& field) = 0;
 
+    virtual bool writeIndex(RosTypeCodeGenState& state) = 0;
+
     virtual bool hasNativeTimeClass() const {
         return false;
     }
 
     void setVerbose() {
         verbose = true;
-    }
-
-    void setNoIndex() {
-        no_index = true;
     }
 };
 
