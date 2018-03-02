@@ -131,6 +131,14 @@ namespace yarp {
      */
     class PointCloud: public PointCloudBase
     {
+        static_assert(std::is_same<T, XY_DATA>::value ||
+                      std::is_same<T, XYZ_DATA>::value ||
+                      std::is_same<T, NORMAL_DATA>::value ||
+                      std::is_same<T, XYZ_RGBA_DATA>::value ||
+                      std::is_same<T, XYZ_I_DATA>::value ||
+                      std::is_same<T, INTEREST_POINT_XYZ_DATA>::value ||
+                      std::is_same<T, XYZ_NORMAL_DATA>::value ||
+                      std::is_same<T, XYZ_NORMAL_RGBA_DATA>::value, "yarp::sig::PointCloud<T>: T chosen is not supported");
     public:
 
         /**
