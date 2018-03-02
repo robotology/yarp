@@ -107,6 +107,9 @@ This library has two methods `toPcl<T,T1>(...)`and `fromPcl<T,T1>(...)`
 that can be used as follow
 
 \code {.cpp}
+    // Include the compatibility library
+    #include <yarp/pcl/Pcl.h>
+
     pcl::PointCloud<pcl::PointXYZRGBA> cloud;
     cloud.resize(100);
     for(int i=0; i<cloud.size(); i++)
