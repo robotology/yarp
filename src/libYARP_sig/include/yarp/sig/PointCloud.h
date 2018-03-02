@@ -384,7 +384,31 @@ namespace yarp {
 
         virtual yarp::os::ConstString toString(int precision=-1, int width=-1)
         {
-            return "not implemented, sorry man :/";
+            yarp::os::ConstString ret;
+            if (isOrganized())
+            {
+                for (size_t r=0; r<this->width(); r++)
+                {
+                    for (size_t c=0; c<this->height(); c++)
+                    {
+                        ret += (*this)(r,c).toString(precision, width);
+                    }
+                    if (r<this->width()-1) // if it is not the last row
+                    {
+                        ret+= "\n";
+                    }
+                }
+
+            }
+            else
+            {
+                for (size_t i=0; i<this->size(); i++)
+                {
+                    ret += (*this)(i).toString(precision, width);
+                }
+
+            }
+            return ret;
         }
 
      private:

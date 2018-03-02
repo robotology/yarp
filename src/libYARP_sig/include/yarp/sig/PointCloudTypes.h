@@ -15,6 +15,7 @@
 #include <yarp/conf/system.h>
 
 #include <yarp/os/NetInt32.h>
+#include <yarp/os/LogStream.h>
 
 namespace yarp {
     namespace sig {
@@ -121,6 +122,25 @@ namespace yarp {
                     float y;
                 };
             };
+            yarp::os::ConstString toString(int precision, int width)
+            {
+                yarp::os::ConstString ret = "";
+                char tmp[100];
+                if(width<0)
+                {
+                    sprintf(tmp, "% .*lf % .*lf\t", precision, x,
+                                                  precision, y);
+                    ret+=tmp;
+
+                }
+                else
+                {
+                    sprintf(tmp, "% *.*lf % *.*lf", width, precision, x,
+                                                  width, precision, y);
+                    ret+=tmp;
+                }
+                return ret;
+            }
         } XY_DATA;
         YARP_END_PACK
 
@@ -138,6 +158,27 @@ namespace yarp {
                     float z;
                 };
             };
+            yarp::os::ConstString toString(int precision, int width)
+            {
+                yarp::os::ConstString ret = "";
+                char tmp[100];
+                if(width<0)
+                {
+                    sprintf(tmp, "% .*lf % .*lf % .*lf\t", precision, x,
+                                                           precision, y,
+                                                           precision, z);
+                    ret+=tmp;
+
+                }
+                else
+                {
+                    sprintf(tmp, "% *.*lf % *.*lf % *.*lf", width, precision, x,
+                                                            width, precision, y,
+                                                            width, precision, z);
+                    ret+=tmp;
+                }
+                return ret;
+            }
         } XYZ_DATA;
         YARP_END_PACK
 
@@ -157,6 +198,15 @@ namespace yarp {
                 yarp::os::NetInt32 rgba;
         //        float data_c[4];
             };
+            yarp::os::ConstString toString(int precision, int width)
+            {
+                YARP_UNUSED(precision); YARP_UNUSED(width);
+                yarp::os::ConstString ret = "";
+                char tmp[10];
+                sprintf(tmp, "%c %c %c %c\t", r, g, b, a);
+                ret+=tmp;
+                return ret;
+            }
         } RGBA_DATA;
         YARP_END_PACK
 
@@ -190,6 +240,29 @@ namespace yarp {
                 };
 
             };
+            yarp::os::ConstString toString(int precision, int width)
+            {
+                yarp::os::ConstString ret = "";
+                char tmp[100];
+                if(width<0)
+                {
+                    sprintf(tmp, "% .*lf % .*lf % .*lf % .*lf\t", precision, normal_x,
+                                                                  precision, normal_y,
+                                                                  precision, normal_z,
+                                                                  precision, curvature);
+                    ret+=tmp;
+
+                }
+                else
+                {
+                    sprintf(tmp, "% *.*lf % *.*lf % *.*lf % *.*lf", width, precision, normal_x,
+                                                                    width, precision, normal_y,
+                                                                    width, precision, normal_z,
+                                                                    width, precision, curvature);
+                    ret+=tmp;
+                }
+                return ret;
+            }
         } NORMAL_DATA;
         YARP_END_PACK
         YARP_BEGIN_PACK
@@ -206,6 +279,27 @@ namespace yarp {
                     float normal_z;
                 };
             };
+            yarp::os::ConstString toString(int precision, int width)
+            {
+                yarp::os::ConstString ret = "";
+                char tmp[100];
+                if(width<0)
+                {
+                    sprintf(tmp, "% .*lf % .*lf % .*lf\t", precision, normal_x,
+                                                           precision, normal_y,
+                                                           precision, normal_z);
+                    ret+=tmp;
+
+                }
+                else
+                {
+                    sprintf(tmp, "% *.*lf % *.*lf % *.*lf", width, precision, normal_x,
+                                                            width, precision, normal_y,
+                                                            width, precision, normal_z);
+                    ret+=tmp;
+                }
+                return ret;
+            }
         } NORMAL_NO_CURV;
         YARP_END_PACK
         // curvature
@@ -238,6 +332,27 @@ namespace yarp {
                     float vp_z;
                 };
             };
+            yarp::os::ConstString toString(int precision, int width)
+            {
+                yarp::os::ConstString ret = "";
+                char tmp[100];
+                if(width<0)
+                {
+                    sprintf(tmp, "% .*lf % .*lf % .*lf\t", precision, vp_x,
+                                                           precision, vp_y,
+                                                           precision, vp_z);
+                    ret+=tmp;
+
+                }
+                else
+                {
+                    sprintf(tmp, "% *.*lf % *.*lf % *.*lf", width, precision, vp_x,
+                                                            width, precision, vp_y,
+                                                            width, precision, vp_z);
+                    ret+=tmp;
+                }
+                return ret;
+            }
         } VIEWPOINT_DATA;
         YARP_END_PACK
 
@@ -276,6 +391,30 @@ namespace yarp {
                 yarp::os::NetInt32 rgba;
                 float rgba_padding[4];
             };
+            yarp::os::ConstString toString(int precision, int width)
+            {
+                yarp::os::ConstString ret = "";
+                char tmp[100];
+                if(width<0)
+                {
+                    sprintf(tmp, "% .*lf % .*lf % .*lf ", precision, x,
+                                                          precision, y,
+                                                          precision, z);
+                    ret+=tmp;
+
+                }
+                else
+                {
+                    sprintf(tmp, "% *.*lf % *.*lf % *.*lf ", width, precision, x,
+                                                             width, precision, y,
+                                                             width, precision, z);
+                    ret+=tmp;
+                }
+                sprintf(tmp, "%c %c %c %c\t", r, g, b, a);
+                ret+=tmp;
+                return ret;
+            }
+
         } XYZ_RGBA_DATA;
         YARP_END_PACK
 
@@ -302,6 +441,29 @@ namespace yarp {
                 };
                 float intensity_padding[4];
             };
+            yarp::os::ConstString toString(int precision, int width)
+            {
+                yarp::os::ConstString ret = "";
+                char tmp[100];
+                if(width<0)
+                {
+                    sprintf(tmp, "% .*lf % .*lf % .*lf % .*lf\t", precision, x,
+                                                                  precision, y,
+                                                                  precision, z,
+                                                                  precision, intensity);
+                    ret+=tmp;
+
+                }
+                else
+                {
+                    sprintf(tmp, "% *.*lf % *.*lf % *.*lf % *.*lf", width, precision, x,
+                                                                    width, precision, y,
+                                                                    width, precision, z,
+                                                                    width, precision, intensity);
+                    ret+=tmp;
+                }
+                return ret;
+            }
         } XYZ_I_DATA;
         YARP_END_PACK
 
@@ -328,6 +490,29 @@ namespace yarp {
                 };
                 float strength_padding[4];
             };
+            yarp::os::ConstString toString(int precision, int width)
+            {
+                yarp::os::ConstString ret = "";
+                char tmp[100];
+                if(width<0)
+                {
+                    sprintf(tmp, "% .*lf % .*lf % .*lf % .*lf\t", precision, x,
+                                                                  precision, y,
+                                                                  precision, z,
+                                                                  precision, strength);
+                    ret+=tmp;
+
+                }
+                else
+                {
+                    sprintf(tmp, "% *.*lf % *.*lf % *.*lf % *.*lf", width, precision, x,
+                                                                    width, precision, y,
+                                                                    width, precision, z,
+                                                                    width, precision, strength);
+                    ret+=tmp;
+                }
+                return ret;
+            }
         } INTEREST_POINT_XYZ_DATA;
         YARP_END_PACK
 
@@ -365,6 +550,37 @@ namespace yarp {
                 };
                 float filler_c[4];
             };
+            yarp::os::ConstString toString(int precision, int width)
+            {
+                yarp::os::ConstString ret = "";
+                char tmp[100];
+                if(width<0)
+                {
+                    sprintf(tmp, "% .*lf % .*lf % .*lf ", precision, x,
+                                                          precision, y,
+                                                          precision, z);
+                    ret+=tmp;
+                    sprintf(tmp, "% .*lf % .*lf % .*lf % .*lf\t", precision, normal_x,
+                                                                  precision, normal_y,
+                                                                  precision, normal_z,
+                                                                  precision, curvature);
+                    ret+=tmp;
+
+                }
+                else
+                {
+                    sprintf(tmp, "% *.*lf % *.*lf % *.*lf ", width, precision, x,
+                                                             width, precision, y,
+                                                             width, precision, z);
+                    ret+=tmp;
+                    sprintf(tmp, "% *.*lf % *.*lf % *.*lf % *.*lf", width, precision, normal_x,
+                                                                    width, precision, normal_y,
+                                                                    width, precision, normal_z,
+                                                                    width, precision, curvature);
+                    ret+=tmp;
+                }
+                return ret;
+            }
         } XYZ_NORMAL_DATA;
         YARP_END_PACK
 
@@ -414,6 +630,39 @@ namespace yarp {
                 };
                 float filler_others[4];
             };
+            yarp::os::ConstString toString(int precision, int width)
+            {
+                yarp::os::ConstString ret = "";
+                char tmp[100];
+                if(width<0)
+                {
+                    sprintf(tmp, "% .*lf % .*lf % .*lf ", precision, x,
+                                                          precision, y,
+                                                          precision, z);
+                    ret+=tmp;
+                    sprintf(tmp, "% .*lf % .*lf % .*lf % .*lf ", precision, normal_x,
+                                                                 precision, normal_y,
+                                                                 precision, normal_z,
+                                                                 precision, curvature);
+                    ret+=tmp;
+
+                }
+                else
+                {
+                    sprintf(tmp, "% *.*lf % *.*lf % *.*lf ", width, precision, x,
+                                                             width, precision, y,
+                                                             width, precision, z);
+                    ret+=tmp;
+                    sprintf(tmp, "% *.*lf % *.*lf % *.*lf % *.*lf ", width, precision, normal_x,
+                                                                     width, precision, normal_y,
+                                                                     width, precision, normal_z,
+                                                                     width, precision, curvature);
+                    ret+=tmp;
+                }
+                sprintf(tmp, "%c %c %c %c\t", r, g, b, a);
+                ret+=tmp;
+                return ret;
+            }
         } XYZ_NORMAL_RGBA_DATA;
         YARP_END_PACK
 
