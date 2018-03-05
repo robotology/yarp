@@ -18,7 +18,7 @@
 #include <cmath>
 #include <yarp/os/LogStream.h>
 
-#include <TickTime.h>
+#include <yarp/rosmsg/TickTime.h>
 
 
 typedef enum
