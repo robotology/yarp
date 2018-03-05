@@ -19,6 +19,7 @@
 #include <yarp/os/NetUint16.h>
 #include <yarp/os/NetUint32.h>
 #include <yarp/os/NetUint64.h>
+#include <yarp/os/AtomicBuffer.h>
 #include <yarp/os/BinPortable.h>
 #include <yarp/os/Bottle.h>
 #include <yarp/os/BufferedPort.h>
@@ -32,6 +33,7 @@
 #include <yarp/os/Network.h>
 #include <yarp/os/Node.h>
 #include <yarp/os/Os.h>
+#include <yarp/os/PipelineThread.h>
 #include <yarp/os/Portable.h>
 #include <yarp/os/PortablePair.h>
 #include <yarp/os/Port.h>
