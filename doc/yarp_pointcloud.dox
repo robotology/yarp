@@ -103,7 +103,7 @@ Point Cloud Library (PCL).
 `libYARP_pcl` makes yarp::sig::PointCloud compatible with PCL, and it is
 compiled if PCL is found during the `YARP` configuration.
 
-This library has two methods `toPcl<T,T1>(...)`and `fromPcl<T,T1>(...)` 
+This library has two methods to transform between the two point clouds `toPcl<T,T1>(...)` and `fromPcl<T,T1>(...)`
 that can be used as follow
 
 \code {.cpp}
@@ -130,5 +130,24 @@ that can be used as follow
 \endcode
 
 Note that these conversions (PCL -> YARP, YARP -> PCL) are made through a **copy**.
+
+\section yarp_pcd Saving/Loading PCDs
+
+The `YARP_pcl` library has also methods to save/load yarp point clouds to PCD files. These functions
+`savePCD<T,T1>(...)` and `loadPCD<T,T1>(...)` can be used as follows:
+
+\code {.cpp}
+    yarp::sig::PointCloud<yarp::sig::XYZ_RGBA_DATA> cloud1;
+    ...
+    // save point cloud to file
+    const string filename("name.pcd");
+    int result = yarp::pcl::savePCD< pcl::PointXYZRGBA, yarp::sig::XYZ_RGBA_DATA >(filename, cloud1);
+
+    // load from file
+    yarp::sig::PointCloud<yarp::sig::XYZ_RGBA_DATA> cloud2;
+    result = yarp::pcl::loadPCD< yarp::sig::XYZ_RGBA_DATA, pcl::PointXYZRGBA >(filename, cloud2);
+\endcode
+
+Note that these functions implicitly convert to and from PCL types.
 
 */
