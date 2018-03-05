@@ -46,6 +46,35 @@ inline yarp::sig::PointCloud<T1> fromPCL(::pcl::PointCloud< T2 > &pclCloud)
     return yarpCloud;
 }
 
+/**
+ * Save a yarp::sig::PointCloud to PCD file, ASCII format
+ * @param file_name name of the file to be created wth the cloud
+ * @param yarpCloud yarp::sig::PointCloud input
+ * @return result of the save operation
+ */
+template< class T1, class T2 >
+inline int savePCD(const std::string &file_name, yarp::sig::PointCloud< T2 > &yarpCloud)
+{
+    yAssert(sizeof(T1) == sizeof(T2));
+    ::pcl::PointCloud<T1> pclCloud = yarp::pcl::toPCL< T1, T2 >(yarpCloud);
+    return ::pcl::io::savePCDFile(file_name, pclCloud);
+}
+
+/**
+ * Load a yarp::sig::PointCloud from a PCD file, ASCII format
+ * @param file_name of the PCD file containing the cloud
+ * @param yarpCloud yarp::sig::PointCloud obtained from the PCD file
+ * @return result og the load operation
+ */
+template< class T1, class T2 >
+inline int loadPCD(const std::string &file_name, yarp::sig::PointCloud<T1> &yarpCloud)
+{
+    yAssert(sizeof(T1) == sizeof(T2));
+    ::pcl::PointCloud<T2> pclCloud;
+    int ret = ::pcl::io::loadPCDFile(file_name, pclCloud);
+    yarpCloud = yarp::pcl::fromPCL< T1, T2 >(pclCloud);
+    return ret;
+}
 
 } // pcl
 } // yarp
