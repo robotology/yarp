@@ -270,11 +270,11 @@ function(_YARP_IDL_ROSMSG_TO_FILE_LIST file path pkg basename ext gen_srcs_var g
   # Read rosmsg file
   file(READ ${file} file_content)
 
-  # Check if std_msgs/Header.h or TickTime.h will be created
-  if("${file_content}" MATCHES "(^|\n)Header[ \t]")
-    list(APPEND gen_hdrs std_msgs/Header.h std_msgs_Header.h TickTime.h)
-  elseif("${file_content}" MATCHES "(^|\n)time[ \t]")
+  # Check for native types (time, duration):
+  if("${file_content}" MATCHES "(^|\n)time[ \t]")
     list(APPEND gen_hdrs TickTime.h)
+  elseif("${file_content}" MATCHES "(^|\n)duration[ \t]")
+    list(APPEND gen_hdrs TickDuration.h)
   endif()
 
   set(${gen_srcs_var} ${gen_srcs} PARENT_SCOPE)
