@@ -65,18 +65,18 @@ init:
   - cmd: set PATH=%PATH%;%OpenCV_ROOT%\bin
 
   # Other dependencies (libjpeg-turbo)
-  - cmd: set JPEG_REL_DIR=libjpeg-turbo-1.5.1_%ROBOTOLOGY_VS%_%ROBOTOLOGY_ARCH%
-  - cmd: set JPEG_DEFAULT_ROOT=%ROBOTOLOGY_ROOT%\%JPEG_REL_DIR%
-  - cmd: set JPEG_ROOT=%ROBOTOLOGY_ROOT%\%JPEG_REL_DIR%
-  - cmd: set JPEG_INCLUDE_DIR=%JPEG_ROOT%\include
-  - cmd: set JPEG_LIBRARY=%JPEG_ROOT%\lib\jpeg.lib
-  - cmd: set PATH=%PATH%;%JPEG_ROOT%\bin
+  #- cmd: set JPEG_REL_DIR=libjpeg-turbo-1.5.1_%ROBOTOLOGY_VS%_%ROBOTOLOGY_ARCH%
+  #- cmd: set JPEG_DEFAULT_ROOT=%ROBOTOLOGY_ROOT%\%JPEG_REL_DIR%
+  #- cmd: set JPEG_ROOT=%ROBOTOLOGY_ROOT%\%JPEG_REL_DIR%
+  #- cmd: set JPEG_INCLUDE_DIR=%JPEG_ROOT%\include
+  #- cmd: set JPEG_LIBRARY=%JPEG_ROOT%\lib\jpeg.lib
+  #- cmd: set PATH=%PATH%;%JPEG_ROOT%\bin
 
   # Installers URLs
   - cmd: set YARP_INSTALLER=https://github.com/robotology/yarp/releases/download/%YARP_LATEST_TAG%/yarp_%YARP_LATEST%_%ROBOTOLOGY_VS%_%ROBOTOLOGY_ARCH%_1.exe
   - cmd: set ICUB_INSTALLER=https://github.com/robotology/icub-main/releases/download/%ICUB_LATEST_TAG%/iCub_%ICUB_LATEST%_%ROBOTOLOGY_VS%_%ROBOTOLOGY_ARCH%_1.exe
-  - cmd: if "%platform%"=="Win32" set JPEG_INSTALLER=https://sourceforge.net/projects/libjpeg-turbo/files/1.5.1/libjpeg-turbo-1.5.1-vc.exe/download
-  - cmd: if "%platform%"=="x64" set JPEG_INSTALLER=https://sourceforge.net/projects/libjpeg-turbo/files/1.5.1/libjpeg-turbo-1.5.1-vc64.exe/download
+  #- cmd: if "%platform%"=="Win32" set JPEG_INSTALLER=https://sourceforge.net/projects/libjpeg-turbo/files/1.5.1/libjpeg-turbo-1.5.1-vc.exe/download
+  #- cmd: if "%platform%"=="x64" set JPEG_INSTALLER=https://sourceforge.net/projects/libjpeg-turbo/files/1.5.1/libjpeg-turbo-1.5.1-vc64.exe/download
 
   # Prepare YARP for tests
   - cmd: set PATH=%PATH%;%APPVEYOR_BUILD_FOLDER%\build\bin\%CONFIGURATION%
@@ -114,13 +114,13 @@ install:
   - cmd: del "%ROBOTOLOGY_ROOT%\Uninstall_iCub.exe" /F /Q
 
   # Get libjpeg-turbo installer
-  - cmd: echo Downloading %JPEG_INSTALLER%
-  - cmd: appveyor DownloadFile "%JPEG_INSTALLER%" -FileName "C:\downloads\libjpeg-turbo.exe"
-  - cmd: start "" /WAIT "C:\downloads\libjpeg-turbo.exe" /S /D=%JPEG_DEFAULT_ROOT%
-  - cmd: timeout 10
-  - cmd: rmdir "%JPEG_DEFAULT_ROOT%\classes" /S /Q
-  - cmd: rmdir "%JPEG_DEFAULT_ROOT%\doc" /S /Q
-  - cmd: del "%JPEG_DEFAULT_ROOT%\*.exe" /S /F /Q
+  #- cmd: echo Downloading %JPEG_INSTALLER%
+  #- cmd: appveyor DownloadFile "%JPEG_INSTALLER%" -FileName "C:\downloads\libjpeg-turbo.exe"
+  #- cmd: start "" /WAIT "C:\downloads\libjpeg-turbo.exe" /S /D=%JPEG_DEFAULT_ROOT%
+  #- cmd: timeout 10
+  #- cmd: rmdir "%JPEG_DEFAULT_ROOT%\classes" /S /Q
+  #- cmd: rmdir "%JPEG_DEFAULT_ROOT%\doc" /S /Q
+  #- cmd: del "%JPEG_DEFAULT_ROOT%\*.exe" /S /F /Q
 
 before_build:
   - cmd: cmake -H%APPVEYOR_BUILD_FOLDER% -B%APPVEYOR_BUILD_FOLDER%\build -G"%CMAKE_GENERATOR%" -DCMAKE_INSTALL_PREFIX:PATH=%APPVEYOR_BUILD_FOLDER%\install -C%APPVEYOR_BUILD_FOLDER%\scripts\admin\initial-cache.cmake
@@ -146,7 +146,7 @@ artifacts:
   - path: 'robotology/$(Eigen3_REL_DIR)'
   - path: 'robotology/$(Qt5_REL_DIR)'
   - path: 'robotology/$(OpenCV_REL_DIR)'
-  - path: 'robotology/$(JPEG_REL_DIR)'
+  #- path: 'robotology/$(JPEG_REL_DIR)'
 
 notifications:
   - provider: Slack
