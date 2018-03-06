@@ -440,8 +440,9 @@ function(YARP_ADD_IDL var first_file)
     # output files, therefore we need to parse the file again and add the new
     # output files as generated.
     if(NOT ${native})
-      configure_file("${file}" "${tmp_dir}/${basename}${ext}" COPYONLY)
+      set_property(DIRECTORY APPEND PROPERTY CMAKE_CONFIGURE_DEPENDS "${file}")
     endif()
+
   endforeach()
 
   set(${var} ${${var}} PARENT_SCOPE)
