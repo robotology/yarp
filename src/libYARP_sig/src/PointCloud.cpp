@@ -91,6 +91,12 @@ void PointCloudBase::resize(size_t width, size_t height)
     header.height = height;
 }
 
+void PointCloudBase::resize(size_t width)
+{
+    header.width  = width;
+    header.height = 1;
+}
+
 size_t PointCloudBase::height() const
 {
     return header.height;

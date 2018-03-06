@@ -43,6 +43,8 @@ namespace yarp {
     public:
         virtual void resize(size_t width, size_t height);
 
+        virtual void resize(size_t width);
+
         virtual size_t wireSizeBytes() const = 0;
 
         virtual size_t dataSizeBytes() const = 0;
@@ -54,6 +56,8 @@ namespace yarp {
         virtual bool read(yarp::os::ConnectionReader& connection) override = 0;
 
         virtual bool write(yarp::os::ConnectionWriter& writer) override = 0;
+
+        virtual int getBottleTag() const = 0;
 
         /**
          * @brief
@@ -174,6 +178,18 @@ namespace yarp {
             header.width = width;
             header.height = height;
             data.resize(width * height);
+        }
+
+        /**
+         * @brief Resize the PointCloud.
+         * @param width.
+         * Calling this function the cloud will become NOT organizedS
+         */
+        virtual void resize(size_t width) override
+        {
+            header.width = width;
+            header.height = 1;
+            data.resize(width);
         }
 
         /**
@@ -356,8 +372,8 @@ namespace yarp {
             yAssert(tmp != nullptr);
 
             // Skip the vector header....
-            connection.expectInt(); // Code auto-generated do not remove
-            connection.expectInt(); // Code auto-generated do not remove
+            connection.expectInt();
+            connection.expectInt();
 
             std::vector<int> recipe = getComposition(_header.pointType);
 
@@ -417,6 +433,10 @@ namespace yarp {
 
             }
             return ret;
+        }
+
+        virtual int getBottleTag() const override {
+            return BottleTagMap <T>();
         }
 
      private:
