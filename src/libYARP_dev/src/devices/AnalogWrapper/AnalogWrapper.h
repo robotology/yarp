@@ -39,8 +39,8 @@
 #include <yarpRosHelper.h>
 #include <yarp/os/Node.h>
 #include <yarp/os/Publisher.h>
-#include <geometry_msgs_WrenchStamped.h>  // Defines ROS jointState msg; it already includes TickTime and Header
-#include <sensor_msgs_JointState.h>
+#include <yarp/rosmsg/geometry_msgs/WrenchStamped.h>
+#include <yarp/rosmsg/sensor_msgs/JointState.h>
 
 
 /* Using yarp::dev::impl namespace for all helper class inside yarp::dev to reduce
@@ -241,11 +241,11 @@ private:
     yarp::os::NetUint32                                      rosMsgCounter;              // incremental counter in the ROS message
 
     // TODO: in the future, in order to support multiple ROS msgs this should be a pointer allocated dynamically depending on the msg maybe (??)
-    //  yarp::os::PortWriterBuffer<geometry_msgs_WrenchStamped>  rosOutputWrench_buffer;      // Buffer associated to the ROS topic
-    yarp::os::Publisher<geometry_msgs_WrenchStamped>         rosPublisherWrenchPort;      // Dedicated ROS topic publisher
+    //  yarp::os::PortWriterBuffer<yarp::rosmsg::geometry_msgs::WrenchStamped> rosOutputWrench_buffer; // Buffer associated to the ROS topic
+    yarp::os::Publisher<yarp::rosmsg::geometry_msgs::WrenchStamped> rosPublisherWrenchPort; // Dedicated ROS topic publisher
 
-    //yarp::os::PortWriterBuffer<sensor_msgs_JointState>       rosOutputJoint_buffer;       // Buffer associated to the ROS topic
-    yarp::os::Publisher<sensor_msgs_JointState>              rosPublisherJointPort;       // Dedicated ROS topic publisher
+    //yarp::os::PortWriterBuffer<yarp::rosmsg::sensor_msgs::JointState> rosOutputJoint_buffer; // Buffer associated to the ROS topic
+    yarp::os::Publisher<yarp::rosmsg::sensor_msgs::JointState> rosPublisherJointPort; // Dedicated ROS topic publisher
 
 
     bool ownDevices;

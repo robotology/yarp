@@ -46,7 +46,7 @@
 #include <yarpRosHelper.h>
 #include <yarp/os/Node.h>
 #include <yarp/os/Publisher.h>
-#include <sensor_msgs_JointState.h>  // Defines ROS jointState msg; it already includes TickTime and Header
+#include <yarp/rosmsg/sensor_msgs/JointState.h>
 #endif // DOXYGEN_SHOULD_SKIP_THIS
 
 #ifdef MSVC
@@ -306,8 +306,8 @@ private:
     std::string                                         rosTopicName;               // name of the rosTopic
     yarp::os::Node                                      *rosNode;                   // add a ROS node
     yarp::os::NetUint32                                 rosMsgCounter;              // incremental counter in the ROS message
-    yarp::os::PortWriterBuffer<sensor_msgs_JointState>  rosOutputState_buffer;      // Buffer associated to the ROS topic
-    yarp::os::Publisher<sensor_msgs_JointState>         rosPublisherPort;           // Dedicated ROS topic publisher
+    yarp::os::PortWriterBuffer<yarp::rosmsg::sensor_msgs::JointState> rosOutputState_buffer; // Buffer associated to the ROS topic
+    yarp::os::Publisher<yarp::rosmsg::sensor_msgs::JointState> rosPublisherPort;    // Dedicated ROS topic publisher
 
     yarp::os::PortReaderBuffer<yarp::os::Bottle>    inputRPC_buffer;                // Buffer associated to the inputRPCPort port
     yarp::dev::impl::RPCMessagesParser              RPC_parser;                     // Message parser associated to the inputRPCPort port

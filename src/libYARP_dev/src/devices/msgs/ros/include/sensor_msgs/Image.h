@@ -1,12 +1,20 @@
 // This is an automatically generated file.
-#ifndef YARPMSG_TYPE_wrap_sensor_msgs_Image
-#define YARPMSG_TYPE_wrap_sensor_msgs_Image
 
+#ifndef YARP_ROSMSG_deprecated2_sensor_msgs_Image_h
+#define YARP_ROSMSG_deprecated2_sensor_msgs_Image_h
+
+#include <yarp/conf/system.h>
+
+YARP_COMPILER_DEPRECATED_WARNING(<sensor_msgs/Image.h> header is deprecated. Use <yarp/rosmsg/sensor_msgs/Image.h> instead)
+
+#include <yarp/rosmsg/sensor_msgs/Image.h>
 #include <sensor_msgs_Image.h>
+#include <yarp/conf/api.h>
 
 namespace sensor_msgs {
-    typedef sensor_msgs_Image Image;
-}
 
-#endif
+YARP_DEPRECATED typedef yarp::rosmsg::sensor_msgs::Image Image;
 
+} // namespace sensor_msgs
+
+#endif // YARP_ROSMSG_deprecated2_sensor_msgs_Image_h

@@ -254,16 +254,36 @@ function(_YARP_IDL_ROSMSG_TO_FILE_LIST file path pkg basename ext gen_srcs_var g
 
   get_filename_component(ext ${file} EXT)
 
+  unset(gen_hdrs)
   if(NOT "${pkg}" STREQUAL "")
-    set(gen_hdrs "${pkg}/${basename}.h"
-                 "${pkg}_${basename}.h")
+    list(APPEND gen_hdrs "yarp/rosmsg/${pkg}/${basename}.h")
   else()
-    set(gen_hdrs "${basename}.h")
+    list(APPEND gen_hdrs "yarp/rosmsg/${basename}.h")
   endif()
+
+  if(NOT YARP_NO_DEPRECATED)
+    if(NOT "${pkg}" STREQUAL "")
+      list(APPEND gen_hdrs "${pkg}/${basename}.h"
+                           "${pkg}_${basename}.h")
+    else()
+      list(APPEND gen_hdrs "${basename}.h")
+    endif()
+  endif()
+
   if("${ext}" STREQUAL ".srv")
-    list(APPEND gen_hdrs ${basename}Reply.h)
-    if(NOT "${path}" STREQUAL "")
-      list(APPEND gen_hdrs ${clean_path}_${basename}Reply.h)
+    if(NOT "${pkg}" STREQUAL "")
+      list(APPEND gen_hdrs "yarp/rosmsg/${pkg}/${basename}Reply.h")
+    else()
+      list(APPEND gen_hdrs "yarp/rosmsg/${basename}Reply.h")
+    endif()
+
+    if(NOT YARP_NO_DEPRECATED)
+      if(NOT "${pkg}" STREQUAL "")
+        list(APPEND gen_hdrs "${pkg}/${basename}Reply.h"
+                             "${pkg}_${basename}Reply.h")
+      else()
+        list(APPEND gen_hdrs "${basename}Reply.h")
+      endif()
     endif()
   endif()
 
@@ -420,8 +440,9 @@ function(YARP_ADD_IDL var first_file)
     # output files, therefore we need to parse the file again and add the new
     # output files as generated.
     if(NOT ${native})
-      configure_file("${file}" "${tmp_dir}/${basename}${ext}" COPYONLY)
+      set_property(DIRECTORY APPEND PROPERTY CMAKE_CONFIGURE_DEPENDS "${file}")
     endif()
+
   endforeach()
 
   set(${var} ${${var}} PARENT_SCOPE)

@@ -453,7 +453,7 @@ void yarp::dev::ServerInertial::run()
 
                 convertEulerAngleYXZdegrees_to_quaternion(euler_xyz, quaternion);
 
-                sensor_msgs_Imu &rosData = rosPublisherPort.prepare();
+                yarp::rosmsg::sensor_msgs::Imu &rosData = rosPublisherPort.prepare();
 
                 rosData.header.seq = rosMsgCounter++;
                 rosData.header.stamp = yarp::os::Time::now();

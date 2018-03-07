@@ -27,7 +27,7 @@
 #include <yarpRosHelper.h>
 #include <yarp/os/Node.h>
 #include <yarp/os/Publisher.h>
-#include <sensor_msgs_Imu.h>
+#include <yarp/rosmsg/sensor_msgs/Imu.h>
 
 namespace yarp
 {
@@ -144,7 +144,7 @@ private:
     std::string                                         rosTopicName;               // name of the rosTopic
     yarp::os::Node                                      *rosNode;                   // add a ROS node
     yarp::os::NetUint32                                 rosMsgCounter;              // incremental counter in the ROS message
-    yarp::os::Publisher<sensor_msgs_Imu>                rosPublisherPort;           // Dedicated ROS topic publisher
+    yarp::os::Publisher<yarp::rosmsg::sensor_msgs::Imu> rosPublisherPort;           // Dedicated ROS topic publisher
     std::vector<yarp::os::NetFloat64>                   covariance;                 // empty matrix to store covariance data needed by ROS msg
 
     bool checkROSParams(yarp::os::Searchable &config);

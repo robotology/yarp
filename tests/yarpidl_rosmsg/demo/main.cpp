@@ -8,12 +8,12 @@
 
 #include <cstdio>
 
-#include <Demo.h>
-#include <Tennis.h>
-#include <Rpc.h>
-#include <SharedData.h>
-#include <HeaderTest.h>
-#include <HeaderTest2.h>
+#include <yarp/rosmsg/Demo.h>
+#include <yarp/rosmsg/Tennis.h>
+#include <yarp/rosmsg/Rpc.h>
+#include <yarp/rosmsg/SharedData.h>
+#include <yarp/rosmsg/HeaderTest.h>
+#include <yarp/rosmsg/HeaderTest2.h>
 #include <yarp/os/all.h>
 #include <yarp/os/impl/UnitTest.h>
 
@@ -29,7 +29,7 @@ public:
 
 bool test_signs() {
     printf("\n*** test_signs()\n");
-    Demo demo;
+    yarp::rosmsg::Demo demo;
     demo.an_unsigned_byte = 254;
     if (demo.an_unsigned_byte<0) {
         printf("Oops, an_unsigned_byte is signed\n");
@@ -46,7 +46,7 @@ bool test_signs() {
 
 bool test_serialization() {
    printf("\n*** test_serialization()\n");
-   SharedData data;
+   yarp::rosmsg::SharedData data;
    data.text = "hello";
    data.content.push_back(1);
    data.content.push_back(2);
@@ -117,11 +117,11 @@ int main(int argc, char *argv[]) {
     if (!test_signs()) return 1;
     if (!test_serialization()) return 1;
 
-    Demo demo1;
+    yarp::rosmsg::Demo demo1;
     if (!test_lists(test,demo1,"regular")) return 1;
-    Demo::bottleStyle demo2;
+    yarp::rosmsg::Demo::bottleStyle demo2;
     if (!test_lists(test,demo2,"bottle")) return 1;
-    Demo::rosStyle demo3;
+    yarp::rosmsg::Demo::rosStyle demo3;
     if (!test_lists(test,demo3,"ros")) return 1;
     UnitTest::stopTestSystem();
 

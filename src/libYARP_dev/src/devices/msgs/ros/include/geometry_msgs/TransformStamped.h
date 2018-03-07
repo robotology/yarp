@@ -1,12 +1,20 @@
 // This is an automatically generated file.
-#ifndef YARPMSG_TYPE_wrap_geometry_msgs_TransformStamped
-#define YARPMSG_TYPE_wrap_geometry_msgs_TransformStamped
 
+#ifndef YARP_ROSMSG_deprecated2_geometry_msgs_TransformStamped_h
+#define YARP_ROSMSG_deprecated2_geometry_msgs_TransformStamped_h
+
+#include <yarp/conf/system.h>
+
+YARP_COMPILER_DEPRECATED_WARNING(<geometry_msgs/TransformStamped.h> header is deprecated. Use <yarp/rosmsg/geometry_msgs/TransformStamped.h> instead)
+
+#include <yarp/rosmsg/geometry_msgs/TransformStamped.h>
 #include <geometry_msgs_TransformStamped.h>
+#include <yarp/conf/api.h>
 
 namespace geometry_msgs {
-    typedef geometry_msgs_TransformStamped TransformStamped;
-}
 
-#endif
+YARP_DEPRECATED typedef yarp::rosmsg::geometry_msgs::TransformStamped TransformStamped;
 
+} // namespace geometry_msgs
+
+#endif // YARP_ROSMSG_deprecated2_geometry_msgs_TransformStamped_h

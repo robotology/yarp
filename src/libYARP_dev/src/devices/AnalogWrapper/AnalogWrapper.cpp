@@ -831,7 +831,7 @@ void AnalogWrapper::run()
 
                 if (useROS != ROS_disabled && rosMsgType == "geometry_msgs/WrenchedStamped")
                 {
-                    geometry_msgs_WrenchStamped rosData;
+                    yarp::rosmsg::geometry_msgs::WrenchStamped rosData;
                     rosData.header.seq = rosMsgCounter++;
                     rosData.header.stamp = yarp::os::Time::now();
                     rosData.header.frame_id = frame_id;
@@ -848,7 +848,7 @@ void AnalogWrapper::run()
                 }
                 else if (useROS != ROS_disabled && rosMsgType == "sensor_msgs/JointState")
                 {
-                    sensor_msgs_JointState rosData;
+                    yarp::rosmsg::sensor_msgs::JointState rosData;
                     size_t data_size = lastDataRead.size();
                     rosData.name.resize(data_size);
                     rosData.position.resize(data_size);

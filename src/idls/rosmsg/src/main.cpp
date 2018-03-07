@@ -158,9 +158,6 @@ int generate_cpp(int argc, char *argv[])
         t.setVerbose();
         gen.setVerbose();
     }
-    if (no_index) {
-        gen.setNoIndex();
-    }
     if (no_recurse) {
         t.setNoRecurse();
     }
@@ -175,6 +172,9 @@ int generate_cpp(int argc, char *argv[])
         t.emitType(gen,state);
         if (!no_cache) {
             t.cache(fname.c_str(),env,gen);
+        }
+        if (!no_index) {
+            gen.writeIndex(state);
         }
     }
 
