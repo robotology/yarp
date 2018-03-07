@@ -1,9 +1,11 @@
 /**
  * @page yarp_with_ros_parameters Talking to the ROS parameter server
 
- 
+
 YARP has no special support for the ROS parameter server, but can
-communicate with it via its [network API](http://wiki.ros.org/ROS/Parameter%20Server%20API). Here is a command-line example:
+communicate with it via its
+[network API](http://wiki.ros.org/ROS/Parameter%20Server%20API).
+Here is a command-line example:
 
 \verbatim
 yarp rpc /ros

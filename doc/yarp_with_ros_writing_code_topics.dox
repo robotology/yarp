@@ -23,8 +23,8 @@ The first thing to do is to generate a YARP compatible type for std_msgs/String:
 $ yarpidl_rosmsg String
 \endverbatim
 
-This will produce the file String.h which can be used directly in our YARP
-program.
+This will produce the file \em yarp/rosmsg/String.h which can be used directly
+in our YARP program.
 
 Type the following code in a file, e.g. listener.cpp:
 

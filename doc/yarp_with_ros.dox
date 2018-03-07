@@ -10,7 +10,7 @@ fresh YARP, so make sure you are up to date.
 These instructions are separated in a few pages. Make sure you check out:
 
 \li \subpage yarp_with_ros_configure
-\li \subpage yarp_with_ros_nameservers 
+\li \subpage yarp_with_ros_nameservers
 
 You can then see how to write code that talks to ROS topics and services:
 

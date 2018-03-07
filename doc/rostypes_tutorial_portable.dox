@@ -65,7 +65,7 @@ This is the output you shuld get:
 Generating SharedData.h
 \endcode
 
-This will generate one file: \em SharedData.h
+This will generate one file: \em yarp/rosidl/SharedData.h
 
 In case you are interested you can inspect it to see that it defines a C++ class
 with some extra code. The good thing is that you don't actually need to bother
@@ -77,8 +77,8 @@ receiver.
 \section rostypes_sec-code Code
 
 This code is straightforward. We define a sender executable that opens a port
-and periodically writes a \em SharedData object and a receiver that opens a port
-and receives the same message type.
+and periodically writes a \em yarp::rosidl::SharedData object and a receiver
+that opens a port and receives the same message type.
 
 As usual we start with the CMake code, write your CMakeLists.txt:
 
@@ -99,7 +99,7 @@ Now we write the code for the sender in \em sender.cpp:
 \code
 
 
-#include "SharedData.h"
+#include <yarp/rosidl/SharedData.h>
 #include <iostream>
 #include <yarp/os/Network.h>
 #include <yarp/os/BufferedPort.h>
@@ -109,35 +109,35 @@ using namespace std;
 
 int main()
 {
-   yarp::os::Network network;
+    yarp::os::Network network;
 
-   yarp::os::Port port;
+    yarp::os::Port port;
 
-   if (!port.open("/sender"))
-   {
-       cerr<<"Error opening port, check your yarp network\n";
-       return -1;
-   }
+    if (!port.open("/sender"))
+    {
+        cerr<<"Error opening port, check your yarp network\n";
+        return -1;
+    }
 
-   cout<<"Starting sender\n";
-   double count=0.0;
-   while(true)
-   {
-      SharedData d;
+    cout<<"Starting sender\n";
+    double count=0.0;
+    while(true)
+    {
+        yarp::rosidl::SharedData d;
 
-      // d.text is a string
-      d.text="Hello from sender";
+        // d.text is a string
+        d.text="Hello from sender";
 
-      //d.content is a vector, let's push some data
-      d.content.push_back(count++);
-      d.content.push_back(count++);
+        //d.content is a vector, let's push some data
+        d.content.push_back(count++);
+        d.content.push_back(count++);
 
-      port.write(d);
+        port.write(d);
 
-      yarp::os::Time::delay(0.1);
-   }
+        yarp::os::Time::delay(0.1);
+    }
 
-   return 0;
+    return 0;
 }
 
 \endcode
@@ -177,7 +177,7 @@ Now we write the code for the receiver in \em receiver.cpp:
 
 \code
 
-#include <SharedData.h>
+#include <yarp/rosidl/SharedData.h>
 #include <iostream>
 #include <yarp/os/Network.h>
 #include <yarp/os/BufferedPort.h>
@@ -186,37 +186,37 @@ using namespace std;
 
 int main()
 {
-   yarp::os::Network network;
+    yarp::os::Network network;
 
-   cout<<"Starting receiver\n";
+    cout<<"Starting receiver\n";
 
-   yarp::os::Port port;
-   if (!port.open("/receiver"))
-   {
-       cerr<<"Error opening port, check your yarp network\n";
-       return -1;
-   }
+    yarp::os::Port port;
+    if (!port.open("/receiver"))
+    {
+        cerr<<"Error opening port, check your yarp network\n";
+        return -1;
+    }
 
-   network.connect("/sender", "/receiver");
+    network.connect("/sender", "/receiver");
 
-   int count=0;
-   while(true)
-   {
-       SharedData d;
-       port.read(d);
+    int count=0;
+    while(true)
+    {
+        yarp::rosidl::SharedData d;
+        port.read(d);
 
-       //access d
-       cout << count << " Received SharedData:\n";
-       cout << d.text << "\n";
-       for (int i=0; i<d.content.size(); i++)
-       {
-          cout<<d.content[i]<<" ";
-       }
-       cout<<"\n";
-       count++;
-   }
+        //access d
+        cout << count << " Received SharedData:\n";
+        cout << d.text << "\n";
+        for (int i=0; i<d.content.size(); i++)
+        {
+            cout<<d.content[i]<<" ";
+        }
+        cout<<"\n";
+        count++;
+    }
 
-   return 0;
+    return 0;
 }
 \endcode
 
