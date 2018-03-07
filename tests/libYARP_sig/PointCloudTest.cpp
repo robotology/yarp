@@ -1,8 +1,9 @@
 /*
- * Copyright (C) 2017 RobotCub Consortium
- * Authors: Alberto Cardellino
- * CopyPolicy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
+ * Copyright (C) 2006-2018 Istituto Italiano di Tecnologia (IIT)
+ * All rights reserved.
  *
+ * This software may be modified and distributed under the terms of the
+ * BSD-3-Clause license. See the accompanying LICENSE file for details.
  */
 
 
@@ -584,6 +585,187 @@ public:
 
     }
 
+    void toFromBottle()
+    {
+       {
+            report(0,"Testing fromBottle(toBottle) XYZ_NORMAL_RGBA");
+            PointCloud<XYZ_NORMAL_RGBA_DATA> testPC;
+            size_t width = 21; size_t height = 32;
+            testPC.resize(width, height);
+            for (size_t i=0; i<width*height; i++)
+            {
+                testPC(i).x = i;
+                testPC(i).y = i + 1;
+                testPC(i).z = i + 2;
+                testPC(i).normal_x = i*2;
+                testPC(i).normal_y = i*3;
+                testPC(i).normal_z = i*4;
+                testPC(i).curvature =i*5;
+                testPC(i).r = 'r';
+                testPC(i).g = 'g';
+                testPC(i).b = 'b';
+                testPC(i).a = 'a';
+            }
+            PointCloud<XYZ_NORMAL_RGBA_DATA> testPC2;
+            Bottle bt = testPC.toBottle();
+            testPC2.fromBottle(bt);
+            checkEqual(testPC.width(), testPC2.width(),"Checking width");
+            checkEqual(testPC.height(), testPC2.height(),"Checking height");
+
+            bool ok = true;
+
+            for (size_t i=0; i<width*height; i++)
+            {
+                ok &= testPC2(i).x == i;
+                ok &= testPC2(i).y == i + 1;
+                ok &= testPC2(i).z == i + 2;
+                ok &= testPC2(i).normal_x == i*2;
+                ok &= testPC2(i).normal_y == i*3;
+                ok &= testPC2(i).normal_z == i*4;
+                ok &= testPC2(i).curvature ==i*5;
+                ok &= testPC2(i).r == 'r';
+                ok &= testPC2(i).g == 'g';
+                ok &= testPC2(i).b == 'b';
+                ok &= testPC2(i).a == 'a';
+            }
+            checkTrue(ok,"Checking data consistency");
+
+            PointCloud<XYZ_NORMAL_DATA> testPCfail;
+            checkFalse(testPCfail.fromBottle(bt),"from bottle correctly failing... type mismatch");
+        }
+
+        {
+             report(0,"Testing fromBottle(toBottle) XYZ_NORMAL");
+             PointCloud<XYZ_NORMAL_DATA> testPC;
+             size_t width = 21; size_t height = 32;
+             testPC.resize(width, height);
+             for (size_t i=0; i<width*height; i++)
+             {
+                 testPC(i).x = i;
+                 testPC(i).y = i + 1;
+                 testPC(i).z = i + 2;
+                 testPC(i).normal_x = i*2;
+                 testPC(i).normal_y = i*3;
+                 testPC(i).normal_z = i*4;
+                 testPC(i).curvature =i*5;
+             }
+             PointCloud<XYZ_NORMAL_DATA> testPC2;
+             Bottle bt = testPC.toBottle();
+             testPC2.fromBottle(bt);
+             checkEqual(testPC.width(), testPC2.width(),"Checking width");
+             checkEqual(testPC.height(), testPC2.height(),"Checking height");
+
+             bool ok = true;
+
+             for (size_t i=0; i<width*height; i++)
+             {
+                 ok &= testPC2(i).x == i;
+                 ok &= testPC2(i).y == i + 1;
+                 ok &= testPC2(i).z == i + 2;
+                 ok &= testPC2(i).normal_x == i*2;
+                 ok &= testPC2(i).normal_y == i*3;
+                 ok &= testPC2(i).normal_z == i*4;
+                 ok &= testPC2(i).curvature ==i*5;
+             }
+             checkTrue(ok,"Checking data consistency");
+         }
+
+        {
+             report(0,"Testing fromBottle(toBottle) XYZ_RGBA");
+             PointCloud<XYZ_RGBA_DATA> testPC;
+             size_t width = 21; size_t height = 32;
+             testPC.resize(width, height);
+             for (size_t i=0; i<width*height; i++)
+             {
+                 testPC(i).x = i;
+                 testPC(i).y = i + 1;
+                 testPC(i).z = i + 2;
+                 testPC(i).r = 'r';
+                 testPC(i).g = 'g';
+                 testPC(i).b = 'b';
+                 testPC(i).a = 'a';
+             }
+             PointCloud<XYZ_RGBA_DATA> testPC2;
+             Bottle bt = testPC.toBottle();
+             testPC2.fromBottle(bt);
+             checkEqual(testPC.width(), testPC2.width(),"Checking width");
+             checkEqual(testPC.height(), testPC2.height(),"Checking height");
+
+             bool ok = true;
+
+             for (size_t i=0; i<width*height; i++)
+             {
+                 ok &= testPC2(i).x == i;
+                 ok &= testPC2(i).y == i + 1;
+                 ok &= testPC2(i).z == i + 2;
+                 ok &= testPC2(i).r == 'r';
+                 ok &= testPC2(i).g == 'g';
+                 ok &= testPC2(i).b == 'b';
+                 ok &= testPC2(i).a == 'a';
+             }
+             checkTrue(ok,"Checking data consistency");
+         }
+
+        {
+             report(0,"Testing fromBottle(toBottle) XYZ");
+             PointCloud<XYZ_DATA> testPC;
+             size_t width = 21; size_t height = 32;
+             testPC.resize(width, height);
+             for (size_t i=0; i<width*height; i++)
+             {
+                 testPC(i).x = i;
+                 testPC(i).y = i + 1;
+                 testPC(i).z = i + 2;
+             }
+             PointCloud<XYZ_DATA> testPC2;
+             Bottle bt = testPC.toBottle();
+             testPC2.fromBottle(bt);
+             checkEqual(testPC.width(), testPC2.width(),"Checking width");
+             checkEqual(testPC.height(), testPC2.height(),"Checking height");
+
+             bool ok = true;
+
+             for (size_t i=0; i<width*height; i++)
+             {
+                 ok &= testPC2(i).x == i;
+                 ok &= testPC2(i).y == i + 1;
+                 ok &= testPC2(i).z == i + 2;
+             }
+             checkTrue(ok,"Checking data consistency");
+         }
+
+        {
+             report(0,"Testing fromBottle(toBottle) NORMAL");
+             PointCloud<NORMAL_DATA> testPC;
+             size_t width = 3; size_t height = 3;
+             testPC.resize(width, height);
+             for (size_t i=0; i<width*height; i++)
+             {
+                 testPC(i).normal_x = i*2;
+                 testPC(i).normal_y = i*3;
+                 testPC(i).normal_z = i*4;
+                 testPC(i).curvature =i*5;
+             }
+             PointCloud<NORMAL_DATA> testPC2;
+             Bottle bt = testPC.toBottle();
+             testPC2.fromBottle(bt);
+             checkEqual(testPC.width(), testPC2.width(),"Checking width");
+             checkEqual(testPC.height(), testPC2.height(),"Checking height");
+
+             bool ok = true;
+
+             for (size_t i=0; i<width*height; i++)
+             {
+                 ok &= testPC2(i).normal_x == i*2;
+                 ok &= testPC2(i).normal_y == i*3;
+                 ok &= testPC2(i).normal_z == i*4;
+                 ok &= testPC2(i).curvature ==i*5;
+             }
+             checkTrue(ok,"Checking data consistency");
+         }
+
+    }
+
     virtual void runTests() override
     {
         readWriteMatchTest();
@@ -592,6 +774,7 @@ public:
         copyAndAssignmentTest();
         fromExternalTest();
         concatenationTest();
+        toFromBottle();
     }
 };
 
