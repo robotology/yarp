@@ -9,8 +9,8 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <yarp/os/all.h>
-#include "package/src/yarp_test/srv/AddTwoInts.h"
-#include "package/src/yarp_test/srv/AddTwoIntsReply.h"
+#include <yarp/rosmsg/yarp_test/AddTwoInts.h>
+#include <yarp/rosmsg/yarp_test/AddTwoIntsReply.h>
 
 using namespace yarp::os;
 
@@ -22,7 +22,7 @@ int main(int argc, char *argv[]) {
 
     Network yarp;
     RpcClient client;
-    yarp_test::AddTwoInts example;
+    yarp::rosmsg::yarp_test::AddTwoInts example;
     client.promiseType(example.getType());
 
     if (!client.open("/add_two_ints@/yarp_add_int_client")) {
@@ -30,8 +30,8 @@ int main(int argc, char *argv[]) {
         return 1;
     }
 
-    yarp_test::AddTwoInts msg;
-    yarp_test::AddTwoIntsReply reply;
+    yarp::rosmsg::yarp_test::AddTwoInts msg;
+    yarp::rosmsg::yarp_test::AddTwoIntsReply reply;
     msg.a = atoi(argv[1]);
     msg.b = atoi(argv[2]);
     if (!client.write(msg,reply)) {

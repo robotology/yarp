@@ -14,16 +14,16 @@ using namespace std;
 
 /* Make sure you run yarpidl_rosmsg std_msg/String */
 /* to generate String.h  */
-#include "String.h"
+#include <yarp/rosmsg/std_msgs/String.h>
 
 int main(int argc, char *argv[]) {
     Network yarp;
-    
+
     /* creates a node called /yarp/talker */
     Node node("/yarp/talker");
-    
+
     /* subscribe to topic chatter */
-    yarp::os::Publisher<String> publisher;
+    yarp::os::Publisher<yarp::rosmsg::std_msgs::String> publisher;
     if (!publisher.topic("/chatter")) {
         cerr<< "Failed to create publisher to /chatter\n";
         return -1;
@@ -31,7 +31,7 @@ int main(int argc, char *argv[]) {
 
     while (true) {
         /* prepare some data */
-        String data;
+        yarp::rosmsg::std_msgs::String data;
         data.data="Hello from YARP";
 
         /* publish it to the topic */
@@ -40,6 +40,6 @@ int main(int argc, char *argv[]) {
         /* wait some time to avoid flooding with messages */
         Time::delay(0.1);
     }
-  
+
     return 0;
 }
