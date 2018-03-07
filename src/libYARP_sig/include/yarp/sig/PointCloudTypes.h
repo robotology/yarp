@@ -16,6 +16,7 @@
 
 #include <yarp/os/NetInt32.h>
 #include <yarp/os/LogStream.h>
+#include <yarp/os/Bottle.h>
 
 namespace yarp {
     namespace sig {
@@ -141,6 +142,21 @@ namespace yarp {
                 }
                 return ret;
             }
+            yarp::os::Bottle toBottle()
+            {
+                yarp::os::Bottle ret;
+                ret.addDouble(x);
+                ret.addDouble(y);
+                return ret;
+
+            }
+            void fromBottle(yarp::os::Bottle &bt, size_t i)
+            {
+                yarp::os::Bottle* intBt = bt.get(i).asList();
+                x = intBt->get(0).asDouble();
+                y = intBt->get(1).asDouble();
+                return;
+            }
         } XY_DATA;
         YARP_END_PACK
 
@@ -179,6 +195,26 @@ namespace yarp {
                 }
                 return ret;
             }
+            yarp::os::Bottle toBottle()
+            {
+                yarp::os::Bottle ret;
+                ret.addDouble(x);
+                ret.addDouble(y);
+                ret.addDouble(z);
+                return ret;
+
+            }
+            void fromBottle(yarp::os::Bottle &bt, size_t i)
+            {
+                yarp::os::Bottle* intBt = bt.get(i).asList();
+
+                if(!intBt) return;
+
+                x = intBt->get(0).asDouble();
+                y = intBt->get(1).asDouble();
+                z = intBt->get(2).asDouble();
+                return;
+            }
         } XYZ_DATA;
         YARP_END_PACK
 
@@ -206,6 +242,25 @@ namespace yarp {
                 sprintf(tmp, "%c %c %c %c\t", r, g, b, a);
                 ret+=tmp;
                 return ret;
+            }
+            yarp::os::Bottle toBottle()
+            {
+                yarp::os::Bottle ret;
+                ret.addInt(r);
+                ret.addInt(g);
+                ret.addInt(b);
+                ret.addInt(a);
+                return ret;
+
+            }
+            void fromBottle(yarp::os::Bottle &bt, size_t i)
+            {
+                yarp::os::Bottle* intBt = bt.get(i).asList();
+                r = intBt->get(0).asInt();
+                g = intBt->get(1).asInt();
+                b = intBt->get(2).asInt();
+                a = intBt->get(3).asInt();
+                return;
             }
         } RGBA_DATA;
         YARP_END_PACK
@@ -262,6 +317,28 @@ namespace yarp {
                 }
                 return ret;
             }
+            yarp::os::Bottle toBottle()
+            {
+                yarp::os::Bottle ret;
+                ret.addDouble(normal_x);
+                ret.addDouble(normal_y);
+                ret.addDouble(normal_z);
+                ret.addDouble(curvature);
+                return ret;
+
+            }
+            void fromBottle(yarp::os::Bottle &bt, size_t i)
+            {
+                yarp::os::Bottle* intBt = bt.get(i).asList();
+
+                if(!intBt) return;
+
+                normal_x = intBt->get(0).asDouble();
+                normal_y = intBt->get(1).asDouble();
+                normal_z = intBt->get(2).asDouble();
+                curvature = intBt->get(3).asDouble();
+                return;
+            }
         } NORMAL_DATA;
         YARP_END_PACK
         YARP_BEGIN_PACK
@@ -298,6 +375,26 @@ namespace yarp {
                     ret+=tmp;
                 }
                 return ret;
+            }
+            yarp::os::Bottle toBottle()
+            {
+                yarp::os::Bottle ret;
+                ret.addDouble(normal_x);
+                ret.addDouble(normal_y);
+                ret.addDouble(normal_z);
+                return ret;
+
+            }
+            void fromBottle(yarp::os::Bottle &bt, size_t i)
+            {
+                yarp::os::Bottle* intBt = bt.get(i).asList();
+
+                if(!intBt) return;
+
+                normal_x = intBt->get(0).asDouble();
+                normal_y = intBt->get(1).asDouble();
+                normal_z = intBt->get(2).asDouble();
+                return;
             }
         } NORMAL_NO_CURV;
         YARP_END_PACK
@@ -351,6 +448,26 @@ namespace yarp {
                     ret+=tmp;
                 }
                 return ret;
+            }
+            yarp::os::Bottle toBottle()
+            {
+                yarp::os::Bottle ret;
+                ret.addDouble(vp_x);
+                ret.addDouble(vp_y);
+                ret.addDouble(vp_z);
+                return ret;
+
+            }
+            void fromBottle(yarp::os::Bottle &bt, size_t i)
+            {
+                yarp::os::Bottle* intBt = bt.get(i).asList();
+
+                if(!intBt) return;
+
+                vp_x = intBt->get(0).asDouble();
+                vp_y = intBt->get(1).asDouble();
+                vp_z = intBt->get(2).asDouble();
+                return;
             }
         } VIEWPOINT_DATA;
         YARP_END_PACK
@@ -413,6 +530,33 @@ namespace yarp {
                 ret+=tmp;
                 return ret;
             }
+            yarp::os::Bottle toBottle()
+            {
+                yarp::os::Bottle ret;
+                ret.addDouble(x);
+                ret.addDouble(y);
+                ret.addDouble(z);
+                ret.addInt(r);
+                ret.addInt(g);
+                ret.addInt(b);
+                ret.addInt(a);
+                return ret;
+            }
+            void fromBottle(yarp::os::Bottle &bt, size_t i)
+            {
+                yarp::os::Bottle* intBt = bt.get(i).asList();
+
+                if(!intBt) return;
+
+                x = intBt->get(0).asDouble();
+                y = intBt->get(1).asDouble();
+                z = intBt->get(2).asDouble();
+                r = intBt->get(3).asInt();
+                g = intBt->get(4).asInt();
+                b = intBt->get(5).asInt();
+                a = intBt->get(6).asInt();
+                return;
+            }
 
         } XYZ_RGBA_DATA;
         YARP_END_PACK
@@ -463,6 +607,28 @@ namespace yarp {
                 }
                 return ret;
             }
+            yarp::os::Bottle toBottle()
+            {
+                yarp::os::Bottle ret;
+                ret.addDouble(x);
+                ret.addDouble(y);
+                ret.addDouble(z);
+                ret.addDouble(intensity);
+                return ret;
+
+            }
+            void fromBottle(yarp::os::Bottle &bt, size_t i)
+            {
+                yarp::os::Bottle* intBt = bt.get(i).asList();
+
+                if(!intBt) return;
+
+                x = intBt->get(0).asDouble();
+                y = intBt->get(1).asDouble();
+                z = intBt->get(2).asDouble();
+                intensity = intBt->get(3).asDouble();
+                return;
+            }
         } XYZ_I_DATA;
         YARP_END_PACK
 
@@ -511,6 +677,28 @@ namespace yarp {
                     ret+=tmp;
                 }
                 return ret;
+            }
+            yarp::os::Bottle toBottle()
+            {
+                yarp::os::Bottle ret;
+                ret.addDouble(x);
+                ret.addDouble(y);
+                ret.addDouble(z);
+                ret.addDouble(strength);
+                return ret;
+
+            }
+            void fromBottle(yarp::os::Bottle &bt, size_t i)
+            {
+                yarp::os::Bottle* intBt = bt.get(i).asList();
+
+                if(!intBt) return;
+
+                x = intBt->get(0).asDouble();
+                y = intBt->get(1).asDouble();
+                z = intBt->get(2).asDouble();
+                strength = intBt->get(3).asDouble();
+                return;
             }
         } INTEREST_POINT_XYZ_DATA;
         YARP_END_PACK
@@ -579,6 +767,34 @@ namespace yarp {
                     ret+=tmp;
                 }
                 return ret;
+            }
+            yarp::os::Bottle toBottle()
+            {
+                yarp::os::Bottle ret;
+                ret.addDouble(x);
+                ret.addDouble(y);
+                ret.addDouble(z);
+                ret.addDouble(normal_x);
+                ret.addDouble(normal_y);
+                ret.addDouble(normal_z);
+                ret.addDouble(curvature);
+                return ret;
+
+            }
+            void fromBottle(yarp::os::Bottle &bt, size_t i)
+            {
+                yarp::os::Bottle* intBt = bt.get(i).asList();
+
+                if(!intBt) return;
+
+                x = intBt->get(0).asDouble();
+                y = intBt->get(1).asDouble();
+                z = intBt->get(2).asDouble();
+                normal_x = intBt->get(3).asDouble();
+                normal_y = intBt->get(4).asDouble();
+                normal_z = intBt->get(5).asDouble();
+                curvature = intBt->get(6).asDouble();
+                return;
             }
         } XYZ_NORMAL_DATA;
         YARP_END_PACK
@@ -661,6 +877,42 @@ namespace yarp {
                 sprintf(tmp, "%c %c %c %c\t", r, g, b, a);
                 ret+=tmp;
                 return ret;
+            }
+            yarp::os::Bottle toBottle()
+            {
+                yarp::os::Bottle ret;
+                ret.addDouble(x);
+                ret.addDouble(y);
+                ret.addDouble(z);
+                ret.addDouble(normal_x);
+                ret.addDouble(normal_y);
+                ret.addDouble(normal_z);
+                ret.addDouble(curvature);
+                ret.addInt(r);
+                ret.addInt(g);
+                ret.addInt(b);
+                ret.addInt(a);
+                return ret;
+
+            }
+            void fromBottle(yarp::os::Bottle &bt, size_t i)
+            {
+                yarp::os::Bottle* intBt = bt.get(i).asList();
+
+                if(!intBt) return;
+
+                x = intBt->get(0).asDouble();
+                y = intBt->get(1).asDouble();
+                z = intBt->get(2).asDouble();
+                normal_x = intBt->get(3).asDouble();
+                normal_y = intBt->get(4).asDouble();
+                normal_z = intBt->get(5).asDouble();
+                curvature = intBt->get(6).asDouble();
+                r = intBt->get(7).asInt();
+                g = intBt->get(8).asInt();
+                b = intBt->get(9).asInt();
+                a = intBt->get(10).asInt();
+                return;
             }
         } XYZ_NORMAL_RGBA_DATA;
         YARP_END_PACK
