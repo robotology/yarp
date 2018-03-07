@@ -230,15 +230,14 @@ namespace yarp {
                     float normal_y;
                     float normal_z;
                 };
-                union
+            };
+            union
+            {
+                struct
                 {
-                    struct
-                    {
-                        float curvature;
-                    };
-                    float data_c[4];
+                    float curvature;
                 };
-
+                float data_c[4];
             };
             yarp::os::ConstString toString(int precision, int width)
             {
