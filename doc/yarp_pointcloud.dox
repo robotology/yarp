@@ -123,10 +123,10 @@ that can be used as follow
     }
     // PCL -> YARP
     yarp::sig::PointCloud<yarp::sig::XYZ_RGBA_DATA> yarpCloud;
-    yarpCloud = yarp::pcl::fromPCL<yarp::sig::XYZ_RGBA_DATA, pcl::PointXYZRGBA>(cloud);
+    yarp::pcl::fromPCL<pcl::PointXYZRGBA, yarp::sig::XYZ_RGBA_DATA>(cloud, yarpCloud);
     // YARP -> PCL
     pcl::PointCloud<pcl::PointXYZRGBA> cloud2;
-    cloud2 = yarp::pcl::toPCL<pcl::PointXYZRGBA, yarp::sig::XYZ_RGBA_DATA>(yarpCloud);
+    yarp::pcl::toPCL<yarp::sig::XYZ_RGBA_DATA, pcl::PointXYZRGBA>(yarpCloud, cloud2);
 \endcode
 
 Note that these conversions (PCL -> YARP, YARP -> PCL) are made through a **copy**.
@@ -141,11 +141,11 @@ The `YARP_pcl` library has also methods to save/load yarp point clouds to PCD fi
     ...
     // save point cloud to file
     const string filename("name.pcd");
-    int result = yarp::pcl::savePCD< pcl::PointXYZRGBA, yarp::sig::XYZ_RGBA_DATA >(filename, cloud1);
+    int result = yarp::pcl::savePCD< yarp::sig::XYZ_RGBA_DATA, pcl::PointXYZRGBA>(filename, cloud1);
 
     // load from file
     yarp::sig::PointCloud<yarp::sig::XYZ_RGBA_DATA> cloud2;
-    result = yarp::pcl::loadPCD< yarp::sig::XYZ_RGBA_DATA, pcl::PointXYZRGBA >(filename, cloud2);
+    result = yarp::pcl::loadPCD< pcl::PointXYZRGBA, yarp::sig::XYZ_RGBA_DATA >(filename, cloud2);
 \endcode
 
 Note that these functions implicitly convert to and from PCL types.
