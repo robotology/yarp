@@ -43,10 +43,10 @@
 #include "RPCMessagesParser.h"
 
 // ROS state publisher
-#include <yarpRosHelper.h>
 #include <yarp/os/Node.h>
 #include <yarp/os/Publisher.h>
 #include <yarp/rosmsg/sensor_msgs/JointState.h>
+#include <yarp/rosmsg/impl/yarpRosHelper.h>
 #endif // DOXYGEN_SHOULD_SKIP_THIS
 
 #ifdef MSVC

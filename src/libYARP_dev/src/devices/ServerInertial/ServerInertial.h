@@ -24,10 +24,10 @@
 #include <yarp/dev/Wrapper.h>
 
 // ROS state publisher
-#include <yarpRosHelper.h>
 #include <yarp/os/Node.h>
 #include <yarp/os/Publisher.h>
 #include <yarp/rosmsg/sensor_msgs/Imu.h>
+#include <yarp/rosmsg/impl/yarpRosHelper.h>
 
 namespace yarp
 {
