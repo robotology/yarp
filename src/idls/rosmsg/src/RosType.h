@@ -135,6 +135,7 @@ public:
             isValid(false),
             isArray(false),
             arrayLength(-1),
+            isPrimitive(false),
             isStruct(false),
             reply(nullptr),
             verbose(false),
