@@ -71,24 +71,27 @@ function(YARP_IDL_TO_DIR yarpidl_file_base output_dir)
   get_filename_component(include_prefix ${yarpidl_file} PATH)
   get_filename_component(yarpidlName ${yarpidl_file} NAME_WE)
   get_filename_component(yarpidlExt ${yarpidl_file} EXT)
-  string(TOLOWER ${yarpidlExt} yarpidlExt)
-  string(TOLOWER ${yarpidlName} yarpidlNameLower)
+  string(TOLOWER "${yarpidlExt}" yarpidlExt)
+  string(TOLOWER "${yarpidlName}" yarpidlNameLower)
   set(dir_add "")
 
   # Figure out format we are working with.
-  set(family none)
+  set(yarpidl_native 0)
   if(yarpidlExt STREQUAL ".thrift")
     set(family thrift)
     set(dir_add "/${yarpidlNameLower}")
-  endif()
-  if(yarpidlExt STREQUAL ".msg")
+  elseif("${yarpidlExt}" MATCHES "\\.(msg|srv)" OR
+         "${yarpidl_file}" MATCHES "^(time|duration)$")
     set(family rosmsg)
-  endif()
-  if(yarpidlExt STREQUAL ".srv")
-    set(family rosmsg)
-  endif()
-  if(family STREQUAL "none")
-    message(FATAL_ERROR "yarp_idl_to_dir does not know what to do with ${yarpidl_file}, unrecognized extension ${yarpidlExt}")
+    if("${yarpidl_file}" STREQUAL "time")
+      set(yarpidlName TickTime)
+      set(yarpidl_native 1)
+    elseif("${yarpidl_file}" STREQUAL "duration")
+      set(yarpidlName TickDuration)
+      set(yarpidl_native 1)
+    endif()
+  else()
+    message(FATAL_ERROR "yarp_idl_to_dir does not know what to do with \"${yarpidl_file}\", unrecognized extension \"${yarpidlExt}\"")
   endif()
 
   if("${family}" STREQUAL "thrift")
@@ -172,11 +175,15 @@ function(YARP_IDL_TO_DIR yarpidl_file_base output_dir)
 
   if(ALLOW_IDL_GENERATION)
     # Add a command/target to regenerate the files if the IDL file changes.
+    set(yarpidl_depends ${yarpidl_file})
+    if(yarpidl_native)
+      unset(yarpidl_depends)
+    endif()
     add_custom_command(OUTPUT ${output_dir}/${yarpidl_target_name}.cmake ${DEST_FILES}
                        COMMAND ${YARPIDL_${family}_LOCATION} --out ${dir} --gen yarp:include_prefix --I ${CMAKE_CURRENT_SOURCE_DIR} ${yarpidl_file}
                        WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}
                        COMMAND ${CMAKE_COMMAND} -P ${dir}/place${yarpidlName}.cmake
-                       DEPENDS ${yarpidl_file} ${YARPIDL_LOCATION})
+                       DEPENDS ${yarpidl_depends} ${YARPIDL_LOCATION})
     add_custom_target(${yarpidl_target_name} DEPENDS ${output_dir}/${yarpidl_target_name}.cmake)
 
     # Put the target in the right folder if defined
