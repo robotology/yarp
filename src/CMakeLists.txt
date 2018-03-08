@@ -17,6 +17,7 @@ add_subdirectory(libYARP_sig)
 add_subdirectory(libYARP_eigen)
 add_subdirectory(libYARP_gsl)
 add_subdirectory(libYARP_math)
+add_subdirectory(libYARP_rosmsg)
 add_subdirectory(libYARP_dev)
 
 # private libraries
