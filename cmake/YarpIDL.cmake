@@ -114,6 +114,10 @@ function(YARP_IDL_TO_DIR yarpidl_file_base output_dir)
 
   # Set intermediate output directory.
   set(dir ${CMAKE_CURRENT_BINARY_DIR}/_yarp_idl_${include_prefix}${dir_add})
+
+  # Ensure that the intermediate output directory is deleted on make clean
+  set_property(DIRECTORY APPEND PROPERTY ADDITIONAL_MAKE_CLEAN_FILES ${dir})
+
   set(settings_file ${output_dir}/${yarpidl_target_name}.cmake)
 
   # Check if generation has never happened.
