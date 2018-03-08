@@ -427,7 +427,9 @@ void RosType::show() {
 
 bool RosType::emitType(RosTypeCodeGen& gen,
                        RosTypeCodeGenState& state) {
-    if (isPrimitive) return true;
+    if (isPrimitive) {
+        return true;
+    }
     if (state.generated.find(rosType)!=state.generated.end()) {
         checksum = state.generated[rosType]->checksum;
         return true;
@@ -436,7 +438,9 @@ bool RosType::emitType(RosTypeCodeGen& gen,
     if (!no_recurse && subRosType.size()>0) {
         for (size_t i=0; i<subRosType.size(); i++) {
             RosType& e = subRosType[i];
-            if (!e.emitType(gen,state)) return false;
+            if (!e.emitType(gen,state)) {
+                return false;
+            }
 
             if (e.isConst()) {
                 std::string add = e.rosType + " " + e.rosName + "=" + e.initializer + "\n";
@@ -486,7 +490,9 @@ bool RosType::emitType(RosTypeCodeGen& gen,
     checksum = (char *)hex_output;
 
     if (reply!=nullptr) {
-        if (!reply->emitType(gen,state)) return false;
+        if (!reply->emitType(gen,state)) {
+            return false;
+        }
     }
 
 
