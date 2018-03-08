@@ -33,6 +33,7 @@
 #define TINYXML_UNSIGNED_INT_BUG 0
 
 
+#ifdef USE_DTD
 namespace {
 
 // Represent something like this in the xml file
@@ -193,6 +194,7 @@ bool RobotInterfaceDTD::parse(TiXmlUnknown* unknownNode, std::string curr_filena
 }
 
 } // namespace
+#endif // USE_DTD
 
 
 class RobotInterface::XMLReader::Private
