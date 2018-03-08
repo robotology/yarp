@@ -147,8 +147,11 @@ function(YARP_IDL_TO_DIR yarpidl_file_base output_dir)
     if("${family}" STREQUAL "thrift")
       set(cmd ${YARPIDL_thrift_LOCATION} --gen yarp:include_prefix --I "${CMAKE_CURRENT_SOURCE_DIR}" --out "${dir}" "${yarpidl_file}")
     else()
+      set(_verbose )
+      set(_output_quiet OUTPUT_QUIET)
       if(YARPIDL_rosmsg_VERBOSE)
         set(_verbose --verbose)
+        set(_output_quiet )
       endif()
       set(cmd ${YARPIDL_rosmsg_LOCATION} --no-ros true --no-cache ${_verbose} ${_no_recurse} --out "${dir}" "${yarpidl_file}")
     endif()
@@ -157,7 +160,7 @@ function(YARP_IDL_TO_DIR yarpidl_file_base output_dir)
     execute_process(COMMAND ${cmd}
                     WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}
                     RESULT_VARIABLE res
-                    OUTPUT_QUIET)
+                    ${_output_quiet})
     # Failure is bad news, let user know.
     if(NOT "${res}" STREQUAL "0")
       message(FATAL_ERROR "yarpidl_${family} (${YARPIDL_${family}_LOCATION}) failed, aborting.")
