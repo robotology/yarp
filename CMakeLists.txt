@@ -13,6 +13,11 @@ if(NOT ${CMAKE_VERSION} VERSION_LESS 3.9)
   cmake_policy(SET CMP0068 NEW)
 endif()
 
+# Run automoc on generated files
+if(NOT ${CMAKE_VERSION} VERSION_LESS 3.10)
+  cmake_policy(SET CMP0071 NEW)
+endif()
+
 # Pick up our CMake scripts - they are all in the cmake subdirectory.
 set(YARP_MODULE_DIR "${CMAKE_SOURCE_DIR}/cmake")
 set(YARP_MODULE_PATH "${YARP_MODULE_DIR}")
