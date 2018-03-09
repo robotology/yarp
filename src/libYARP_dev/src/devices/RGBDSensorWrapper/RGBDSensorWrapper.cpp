@@ -12,7 +12,7 @@
 #include <cstring>
 #include <yarp/os/Log.h>
 #include <yarp/os/LogStream.h>
-#include <yarpRosHelper.h>
+#include <yarp/rosmsg/impl/yarpRosHelper.h>
 #include "rosPixelCode.h"
 
 using namespace yarp::dev::RGBDImpl;

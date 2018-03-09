@@ -36,11 +36,11 @@
 
 
 // ROS state publisher
-#include <yarpRosHelper.h>
 #include <yarp/os/Node.h>
 #include <yarp/os/Publisher.h>
 #include <yarp/rosmsg/geometry_msgs/WrenchStamped.h>
 #include <yarp/rosmsg/sensor_msgs/JointState.h>
+#include <yarp/rosmsg/impl/yarpRosHelper.h>
 
 
 /* Using yarp::dev::impl namespace for all helper class inside yarp::dev to reduce
