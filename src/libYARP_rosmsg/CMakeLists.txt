@@ -49,6 +49,7 @@ source_group(TREE "${CMAKE_CURRENT_SOURCE_DIR}"
 
 # Add main target
 add_custom_target(YARP_rosmsg_gen_all ALL)
+set_property(TARGET YARP_rosmsg_gen_all PROPERTY FOLDER "Libraries/YARP_rosmsg")
 
 # Add main library
 add_library(YARP_rosmsg INTERFACE)
@@ -74,6 +75,7 @@ _yarp_choose_idl(native_MSG
                  duration)
 
 add_custom_target(YARP_rosmsg_gen_native DEPENDS ${native_MSG_GEN_FILES})
+set_property(TARGET YARP_rosmsg_gen_native PROPERTY FOLDER "Libraries/YARP_rosmsg")
 
 add_library(YARP_rosmsg_native INTERFACE)
 add_library(YARP::YARP_rosmsg_native ALIAS YARP_rosmsg_native)
@@ -127,6 +129,7 @@ foreach(_pkg ${ROS_MSG_PACKAGES})
   # Add custom target and set it as YARP_rosmsg_gen_all dependency
   add_custom_target(YARP_rosmsg_gen_${_pkg} DEPENDS ${${_pkg}_MSG_GEN_FILES}
                                                     ${${_pkg}_SRV_GEN_FILES})
+  set_property(TARGET YARP_rosmsg_gen_${_pkg} PROPERTY FOLDER "Libraries/YARP_rosmsg")
   add_dependencies(YARP_rosmsg_gen_all YARP_rosmsg_gen_${_pkg})
 
   # Add library
