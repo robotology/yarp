@@ -113,10 +113,8 @@ set(YARP_dev_SRCS src/ControlBoardInterfacesImpl.cpp
                   src/IBattery.cpp
                   src/IControlLimit2sImpl.cpp
                   src/IEncodersTimedImpl.cpp
-                  src/IFrameTransform.cpp
                   src/IInteractionModeImpl.cpp
                   src/IJoypadController.cpp
-                  src/IMap2D.cpp
                   src/IMotorEncodersImpl.cpp
                   src/IMotorImpl.cpp
                   src/ImpedanceControlImpl.cpp
@@ -138,7 +136,10 @@ set(YARP_dev_SRCS src/ControlBoardInterfacesImpl.cpp
                   src/TorqueControlImpl.cpp)
 
 if(CREATE_LIB_MATH)
-  list(APPEND YARP_dev_SRCS src/MapGrid2D.cpp)
+  list(APPEND YARP_dev_SRCS                   src/IFrameTransform.cpp
+                  src/IMap2D.cpp
+
+  src/MapGrid2D.cpp)
 endif()
 
 set(YARP_devices_SRCS src/devices/AnalogSensorClient/AnalogSensorClient.cpp
