@@ -677,8 +677,8 @@ bool Map2DServer::open(yarp::os::Searchable &config)
         yarp::sig::Vector vec=yarp::math::dcm2rpy(mat);
         double orig_angle = vec[2];
         map.setOrigin(map_ros->info.origin.position.x,map_ros->info.origin.position.y,orig_angle);
-        for (int y=0; y< map_ros->info.height; y++)
-            for (int x=0; x< map_ros->info.width; x++)
+        for (size_t y=0; y< map_ros->info.height; y++)
+            for (size_t x=0; x< map_ros->info.width; x++)
             {
                MapGrid2D::XYCell cell(x,map_ros->info.height-1-y);
                double occ = map_ros->data[x+y*map_ros->info.width];
