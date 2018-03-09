@@ -1,6 +1,6 @@
-/*
+ /*
  * Copyright (C) 2015 Istituto Italiano di Tecnologia (IIT)
- * Authors: Marco Randazzo <marco.randazzo@iit.it>
+ * Authors: Marco Randazzo <marco.randazzo@iit.it>, David Estevez <destevez@ing.uc3m.es>
  * CopyPolicy: Released under the terms of the LGPLv2.1 or later, see LICENSE
  */
 
@@ -70,8 +70,6 @@ public:
     void attach(yarp::dev::IBattery *s);
     void detach();
 
-    bool threadInit() override;
-    void threadRelease() override;
     void run() override;
 
 private:
@@ -87,6 +85,17 @@ private:
 
     bool initialize_YARP(yarp::os::Searchable &config);
     virtual bool read(yarp::os::ConnectionReader& connection) override;
+
+    // Default usage
+    // Open the wrapper only, the attach method needs to be called before using it
+    bool openDeferredAttach(yarp::os::Searchable &prop);
+
+    // If a subdevice parameter is given to the wrapper, it will
+    // open it and and attach to it immediatly.
+    yarp::dev::PolyDriver *subDeviceOwned;
+    bool openAndAttachSubDevice(yarp::os::Searchable &prop);
+
+ bool ownDevices;
 
 #endif //DOXYGEN_SHOULD_SKIP_THIS
 };

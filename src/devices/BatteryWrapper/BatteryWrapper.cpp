@@ -1,6 +1,6 @@
 /*
  * Copyright (C) 2013 Istituto Italiano di Tecnologia (IIT)
- * Authors: Marco Randazzo <marco.randazzo@iit.it>
+ * Authors: Marco Randazzo <marco.randazzo@iit.it>, David Estevez <destevez@ing.uc3m.es>
  * CopyPolicy: Released under the terms of the LGPLv2.1 or later, see LICENSE
  */
 
@@ -36,7 +36,6 @@ BatteryWrapper::BatteryWrapper() : RateThread(DEFAULT_THREAD_PERIOD)
 
 BatteryWrapper::~BatteryWrapper()
 {
-    threadRelease();
     battery_p = nullptr;
 }
 
@@ -46,6 +45,10 @@ BatteryWrapper::~BatteryWrapper()
 
 bool BatteryWrapper::attachAll(const PolyDriverList &battery2attach)
 {
+    //check if we already instantiated a subdevice previously
+    if (ownDevices)
+        return false;
+
     if (battery2attach.size() != 1)
     {
         yError("BatteryWrapper: cannot attach more than one device");
@@ -64,15 +67,18 @@ bool BatteryWrapper::attachAll(const PolyDriverList &battery2attach)
         yError("BatteryWrapper: subdevice passed to attach method is invalid");
         return false;
     }
+
     attach(battery_p);
     RateThread::setRate(_rate);
-    RateThread::start();
-
-    return true;
+    return RateThread::start();
 }
 
 bool BatteryWrapper::detachAll()
 {
+    //check if we already instantiated a subdevice previously
+    if (ownDevices)
+        return false;
+
     battery_p = nullptr;
     return true;
 }
@@ -135,15 +141,46 @@ bool BatteryWrapper::read(yarp::os::ConnectionReader& connection)
     return true;
 }
 
-bool BatteryWrapper::threadInit()
+bool BatteryWrapper::openDeferredAttach(yarp::os::Searchable &prop)
 {
-    // open data port
-    if (!streamingPort.open(streamingPortName.c_str()))
-        {
-            yError("BatteryWrapper: failed to open port %s", streamingPortName.c_str());
-            return false;
-        }
+    // nothing to do here?
+    if( (subDeviceOwned != nullptr) || (ownDevices == true) )
+        yError() << "BatteryWrapper: something wrong with the initialization.";
     return true;
+}
+
+bool BatteryWrapper::openAndAttachSubDevice(yarp::os::Searchable &prop)
+{
+    Property p;
+    subDeviceOwned = new PolyDriver;
+    p.fromString(prop.toString().c_str());
+
+    p.unput("device");
+    p.put("device", prop.find("subdevice").asString());  // subdevice was already checked before
+
+    // if error occour during open, quit here.
+    yDebug("Opening BatteryWrapper subdevice...");
+    subDeviceOwned->open(p);
+
+    if (!subDeviceOwned->isValid())
+    {
+        yError() << "Opening BatteryWrapper subdevice \"" << prop.find("subdevice").asString()
+                 << "\"... FAILED";
+        return false;
+    }
+
+    subDeviceOwned->view(battery_p);
+
+    if (battery_p == nullptr)
+    {
+        yError() << "Opening IBattery interface of BatteryWrapper subdevice \"" << prop.find("subdevice").asString()
+               << "\"... FAILED";
+        return false;
+    }
+
+    attach(battery_p);
+    RateThread::setRate(_rate);
+    return RateThread::start();
 }
 
 void BatteryWrapper::setId(const std::string &id)
@@ -161,6 +198,7 @@ bool BatteryWrapper::open(yarp::os::Searchable &config)
 {
     Property params;
     params.fromString(config.toString().c_str());
+    yTrace() << "BatteryWrapper params are: " << config.toString();
 
     if (!config.check("period"))
     {
@@ -180,7 +218,7 @@ bool BatteryWrapper::open(yarp::os::Searchable &config)
     {
         streamingPortName  = config.find("name").asString().c_str();
         rpcPortName = streamingPortName + "/rpc:i";
-        setId("batteryWrapper");
+        setId("BatteryWrapper");
     }
 
     if(!initialize_YARP(config) )
@@ -188,23 +226,43 @@ bool BatteryWrapper::open(yarp::os::Searchable &config)
         yError() << sensorId << "Error initializing YARP ports";
         return false;
     }
+
+    // check if we need to create subdevice or if they are
+    // passed later on thorugh attachAll()
+    if(config.check("subdevice"))
+    {
+        ownDevices=true;
+        if(! openAndAttachSubDevice(config))
+        {
+            yError("BatteryWrapper: error while opening subdevice\n");
+            return false;
+        }
+    }
+    else
+    {
+        ownDevices=false;
+        if(!openDeferredAttach(config))
+            return false;
+    }
+
     return true;
 }
 
 bool BatteryWrapper::initialize_YARP(yarp::os::Searchable &params)
-{
-    streamingPort.open(streamingPortName.c_str());
-    rpcPort.open(rpcPortName.c_str() );
+{ 
+    if (!streamingPort.open(streamingPortName.c_str()))
+    {
+        yError() << "Error opening port " << streamingPortName << "\n";
+        return false;
+    }
+
+    if (!rpcPort.open(rpcPortName.c_str()))
+    {
+      yError() << "Error opening port " << rpcPortName << "\n";
+      return false;
+    }
     rpcPort.setReader(*this);
     return true;
-}
-
-void BatteryWrapper::threadRelease()
-{
-    streamingPort.interrupt();
-    streamingPort.close();
-    rpcPort.interrupt();
-    rpcPort.close();
 }
 
 void BatteryWrapper::run()
@@ -249,7 +307,20 @@ bool BatteryWrapper::close()
         RateThread::stop();
     }
 
-    RateThread::stop();
     detachAll();
+
+    if(subDeviceOwned)
+    {
+        subDeviceOwned->close();
+        delete subDeviceOwned;
+        subDeviceOwned = nullptr;
+    }
+
+    // close ports
+    streamingPort.interrupt();
+    streamingPort.close();
+    rpcPort.interrupt();
+    rpcPort.close();
+
     return true;
 }
