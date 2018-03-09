@@ -179,3 +179,16 @@ bool ManagedBytes::write(ConnectionWriter& writer) {
     writer.convertTextMode();
     return !writer.isError();
 }
+
+void ManagedBytes::setExternal(const char *extData, size_t len)
+{
+    if (!extData)
+    {
+        return;
+    }
+    clear();
+    owned = false;
+    Bytes extb(const_cast<char*>(extData), len);
+    b = extb;
+    setUsed(len);
+}

@@ -139,6 +139,13 @@ public:
         return owned;
     }
 
+    /**
+     * @brief Use this to wrap an external blob of data.
+     * @param extData, pointer to the external data.
+     * @param len, size in bytes of the external blob
+     */
+    void setExternal(const char* extData, size_t len);
+
 private:
     Bytes b;
     bool owned;
