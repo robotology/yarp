@@ -5,16 +5,11 @@
 # This software may be modified and distributed under the terms of the
 # BSD-3-Clause license. See the accompanying LICENSE file for details.
 
-get_property(YARP_OS_INCLUDE_DIRS TARGET YARP_OS PROPERTY INCLUDE_DIRS)
-get_property(YARP_serversql_INCLUDE_DIRS TARGET YARP_serversql PROPERTY INCLUDE_DIRS)
-
-include_directories(${YARP_OS_INCLUDE_DIRS}
-                    ${YARP_serversql_INCLUDE_DIRS}
-                    ${ACE_INCLUDE_DIRS})
 
 set(yarp_SRCS yarp.cpp)
 
 add_executable(yarp ${yarp_SRCS})
+target_include_directories(yarp SYSTEM PRIVATE ${ACE_INCLUDE_DIRS})
 target_link_libraries(yarp YARP::YARP_OS
                            YARP::YARP_init
                            YARP::YARP_serversql)
