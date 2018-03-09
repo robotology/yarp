@@ -9,7 +9,7 @@ yarp_prepare_plugin(imuBosch_BNO055
                     TYPE yarp::dev::BoschIMU
                     INCLUDE imuBosch_BNO055.h
                     EXTRA_CONFIG WRAPPER=inertial
-                    DEPENDS "CREATE_DEVICE_LIBRARY_MODULES;NOT WIN32;CREATE_LIB_MATH")
+                    DEPENDS "CREATE_DEVICE_LIBRARY_MODULES;NOT WIN32;YARP_HAS_MATH_LIB")
 
 if(ENABLE_imuBosch_BNO055)
   set(CMAKE_INCLUDE_CURRENT_DIR ON)
