@@ -41,14 +41,14 @@ public:
         BATTERY_CRITICAL_WARNING = 6
     };
 
-    virtual ~IBattery(){}
+    virtual ~IBattery();
 
     /**
      * Get the instantaneous voltage measurement
      * @param voltage the voltage measurement
      * @return true/false.
      */
-    virtual bool getBatteryVoltage(double &voltage)=0;
+    virtual bool getBatteryVoltage(double &voltage) = 0;
 
     /**
      * Get the instantaneous current measurement

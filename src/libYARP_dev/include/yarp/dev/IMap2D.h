@@ -35,7 +35,7 @@ public:
     /**
      * Destructor.
      */
-    virtual ~IMap2D() {}
+    virtual ~IMap2D();
 
     /**
      Removes all the registered maps from the server.

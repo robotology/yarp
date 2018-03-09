@@ -38,7 +38,7 @@ public:
     /**
      * Destructor.
      */
-    virtual ~IFrameTransform() {}
+    virtual ~IFrameTransform();
 
     /**
     Creates a debug string containing the list of all registered frames.

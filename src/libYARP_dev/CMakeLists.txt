@@ -110,10 +110,13 @@ set(YARP_dev_SRCS src/ControlBoardInterfacesImpl.cpp
                   src/Dummy.cpp
                   src/FrameGrabberControl2Impl.cpp
                   src/IAxisInfoImpl.cpp
+                  src/IBattery.cpp
                   src/IControlLimit2sImpl.cpp
                   src/IEncodersTimedImpl.cpp
+                  src/IFrameTransform.cpp
                   src/IInteractionModeImpl.cpp
                   src/IJoypadController.cpp
+                  src/IMap2D.cpp
                   src/IMotorEncodersImpl.cpp
                   src/IMotorImpl.cpp
                   src/ImpedanceControlImpl.cpp
