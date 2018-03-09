@@ -24,25 +24,3 @@ install(TARGETS yarp
         DESTINATION ${CMAKE_INSTALL_BINDIR})
 
 set_property(TARGET yarp PROPERTY FOLDER "Command Line Tools")
-
-set(yarp_config_SRCS yarpconfig.cpp
-                     yarpcontext.cpp
-                     yarprobot.cpp
-                     yarpcontextutils.cpp)
-
-set(yarp_config_HDRS yarpcontext.h
-                     yarprobot.h
-                     yarpcontextutils.h)
-
-include_directories(SYSTEM ${diff_match_patch_INCLUDE_DIRS})
-
-add_executable(yarp-config ${yarp_config_SRCS}
-                           ${yarp_config_HDRS})
-target_link_libraries(yarp-config YARP::YARP_OS
-                                  YARP::YARP_init
-                                  ${ACE_LIBRARIES})
-install(TARGETS yarp-config
-        COMPONENT utilities
-        DESTINATION ${CMAKE_INSTALL_BINDIR})
-
-set_property(TARGET yarp-config PROPERTY FOLDER "Command Line Tools")
