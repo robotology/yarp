@@ -15,7 +15,7 @@
 
 #include <yarp/os/BufferedPort.h>
 #include <yarp/dev/PolyDriver.h>
-#include <yarp/dev/GenericSensorInterfaces.h>
+#include <yarp/dev/AudioGrabberInterfaces.h>
 #include <yarp/os/Time.h>
 #include <yarp/os/Network.h>
 #include <yarp/os/Thread.h>
@@ -44,10 +44,10 @@ namespace yarp
  * \author (adapted) Júlio Gomes, VisLab ISR/IST - 2006
  *
  */
-class yarp::dev::ServerSoundGrabber : public DeviceDriver,
+class yarp::dev::ServerSoundGrabber : public yarp::dev::DeviceDriver,
                                       private yarp::os::Thread,
                                       public yarp::os::PortReader,
-                                      public IAudioGrabberSound
+                                      public yarp::dev::IAudioGrabberSound
 {
 private:
     bool spoke;

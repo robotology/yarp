@@ -585,7 +585,7 @@ void Rangefinder2DWrapper::run()
             // publish ROS topic if required
             if (useROS != ROS_disabled)
             {
-                sensor_msgs_LaserScan &rosData = rosPublisherPort.prepare();
+                yarp::rosmsg::sensor_msgs::LaserScan &rosData = rosPublisherPort.prepare();
                 rosData.header.seq = rosMsgCounter++;
                 rosData.header.stamp = lastStateStamp.getTime();
                 rosData.header.frame_id = frame_id;
