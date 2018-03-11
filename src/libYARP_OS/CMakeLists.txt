@@ -159,7 +159,6 @@ set(YARP_OS_IMPL_HDRS include/yarp/os/impl/ACELockImpl.h
                       include/yarp/os/impl/FallbackNameClient.h
                       include/yarp/os/impl/FallbackNameServer.h
                       include/yarp/os/impl/HttpCarrier.h
-                      include/yarp/os/impl/IOException.h
                       include/yarp/os/impl/LocalCarrier.h
                       include/yarp/os/impl/LockImpl.h
                       include/yarp/os/impl/Logger.h
@@ -215,8 +214,7 @@ set(YARP_OS_IMPL_HDRS include/yarp/os/impl/ACELockImpl.h
                       include/yarp/os/impl/TextCarrier.h
                       include/yarp/os/impl/ThreadImpl.h
                       include/yarp/os/impl/UdpCarrier.h
-                      include/yarp/os/impl/UnitTest.h
-                      include/yarp/os/impl/ydr.h)
+                      include/yarp/os/impl/UnitTest.h)
 
 set(YARP_OS_IMPL_POSIX_HDRS include/yarp/os/impl/posix/TcpAcceptor.h
                             include/yarp/os/impl/posix/TcpConnector.h
@@ -349,7 +347,6 @@ set(YARP_OS_SRCS src/AbstractCarrier.cpp
                  src/WireReader.cpp
                  src/WireState.cpp
                  src/WireWriter.cpp
-                 src/ydr.cpp
                  src/QosStyle.cpp)
 
 if(SKIP_ACE)

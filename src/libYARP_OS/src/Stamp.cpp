@@ -11,35 +11,38 @@
 #include <yarp/os/Bottle.h>
 #include <yarp/os/Time.h>
 
-#include <yarp/os/impl/IOException.h>
-
 #include <cfloat>
 
-yarp::os::Stamp::Stamp(int count, double time) {
+yarp::os::Stamp::Stamp(int count, double time)
+{
     sequenceNumber = count;
     timeStamp = time;
 }
 
-yarp::os::Stamp::Stamp() {
+yarp::os::Stamp::Stamp()
+{
     sequenceNumber = -1;
     timeStamp = 0;
 }
 
-int yarp::os::Stamp::getCount() {
+int yarp::os::Stamp::getCount()
+{
     return sequenceNumber;
 }
 
-double yarp::os::Stamp::getTime() {
+double yarp::os::Stamp::getTime()
+{
     return timeStamp;
 }
 
-bool yarp::os::Stamp::isValid() {
-    return sequenceNumber>=0;
+bool yarp::os::Stamp::isValid()
+{
+    return sequenceNumber >= 0;
 }
 
-bool yarp::os::Stamp::read(ConnectionReader& connection) {
-    if (connection.isTextMode())
-    {
+bool yarp::os::Stamp::read(ConnectionReader& connection)
+{
+    if (connection.isTextMode()) {
         ConstString stampStr = connection.expectText();
         int seqNum;
         double ts;
@@ -56,26 +59,24 @@ bool yarp::os::Stamp::read(ConnectionReader& connection) {
         }
         sequenceNumber = seqNum;
         timeStamp = ts;
-    }
-    else
-    {
+    } else {
         connection.convertTextMode();
         int header = connection.expectInt();
-        if (header!=BOTTLE_TAG_LIST) {
+        if (header != BOTTLE_TAG_LIST) {
             return false;
         }
         int len = connection.expectInt();
-        if (len!=2) {
+        if (len != 2) {
             return false;
         }
         int code;
         code = connection.expectInt();
-        if (code!=BOTTLE_TAG_INT) {
+        if (code != BOTTLE_TAG_INT) {
             return false;
         }
         sequenceNumber = connection.expectInt();
         code = connection.expectInt();
-        if (code!=BOTTLE_TAG_DOUBLE) {
+        if (code != BOTTLE_TAG_DOUBLE) {
             return false;
         }
         timeStamp = connection.expectDouble();
@@ -88,9 +89,9 @@ bool yarp::os::Stamp::read(ConnectionReader& connection) {
     return !connection.isError();
 }
 
-bool yarp::os::Stamp::write(ConnectionWriter& connection) {
-    if (connection.isTextMode())
-    {
+bool yarp::os::Stamp::write(ConnectionWriter& connection)
+{
+    if (connection.isTextMode()) {
         char buf[512];
 #if defined(_MSC_VER) && (_MSC_VER <= 1800)
         // Visual Studio 2013 does not support std::snprintf
@@ -100,9 +101,7 @@ bool yarp::os::Stamp::write(ConnectionWriter& connection) {
         std::snprintf(buf, 512, "%d %.*g", sequenceNumber, DBL_DIG, timeStamp);
 #endif
         connection.appendString(buf);
-    }
-    else
-    {
+    } else {
         connection.appendInt(BOTTLE_TAG_LIST); // nested structure
         connection.appendInt(2);               // with two elements
         connection.appendInt(BOTTLE_TAG_INT);
@@ -114,29 +113,31 @@ bool yarp::os::Stamp::write(ConnectionWriter& connection) {
     return !connection.isError();
 }
 
-int yarp::os::Stamp::getMaxCount() {
+int yarp::os::Stamp::getMaxCount()
+{
     // a very conservative maximum
     return 32767;
 }
 
-void yarp::os::Stamp::update() {
+void yarp::os::Stamp::update()
+{
     double now = Time::now();
 
     sequenceNumber++;
-    if (sequenceNumber>getMaxCount()||sequenceNumber<0) {
+    if (sequenceNumber > getMaxCount() || sequenceNumber < 0) {
         sequenceNumber = 0;
     }
     timeStamp = now;
 }
 
-void yarp::os::Stamp::update(double time) {
+void yarp::os::Stamp::update(double time)
+{
     sequenceNumber++;
-    if (sequenceNumber>getMaxCount()||sequenceNumber<0) {
+    if (sequenceNumber > getMaxCount() || sequenceNumber < 0) {
         sequenceNumber = 0;
     }
     timeStamp = time;
 }
 
 
-yarp::os::Stamped::~Stamped() {
-}
+yarp::os::Stamped::~Stamped() = default;

@@ -14,17 +14,15 @@
 #include <yarp/os/NetFloat64.h>
 #include <yarp/os/Portable.h>
 
+
 namespace yarp {
-    namespace os {
-        class Stamp;
-        class Stamped;
-    }
-}
+namespace os {
 
 /**
  * An abstraction for a time stamp and/or sequence number.
  */
-class YARP_OS_API yarp::os::Stamp : public Portable {
+class YARP_OS_API Stamp : public Portable
+{
 private:
     NetInt32 sequenceNumber;
     NetFloat64 timeStamp;
@@ -95,7 +93,8 @@ public:
 /**
  * A base class for objects with time stamps and/or sequence numbers.
  */
-class YARP_OS_API yarp::os::Stamped {
+class YARP_OS_DEPRECATED_API Stamped
+{
 public:
     /**
      * Destructor
@@ -109,5 +108,7 @@ public:
     virtual Stamp getStamp() const = 0;
 };
 
+} // namespace os
+} // namespace yarp
 
 #endif // YARP_OS_STAMP_H
