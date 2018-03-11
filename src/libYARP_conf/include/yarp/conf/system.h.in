@@ -15,7 +15,6 @@
 #cmakedefine YARP_WRAP_STL_STRING
 #cmakedefine YARP_WRAP_STL_STRING_INLINE
 #cmakedefine YARP_HAS_ACE
-#cmakedefine YARP_HAS_CXX11
 
 // ACE information
 #if defined(YARP_HAS_ACE)

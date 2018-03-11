@@ -12,6 +12,7 @@
 #include <yarp/os/impl/Logger.h>
 #include <yarp/os/impl/PortCore.h>
 #include <yarp/os/impl/BufferedConnectionWriter.h>
+#include <yarp/os/impl/PlatformUnistd.h>
 #include <yarp/os/impl/PortCoreInputUnit.h>
 #include <yarp/os/impl/PortCoreOutputUnit.h>
 #include <yarp/os/impl/StreamConnectionReader.h>
@@ -2192,7 +2193,7 @@ bool PortCore::adminBlock(ConnectionReader& reader,
             // ROS-style query for PID.
             result.addInt(1);
             result.addString("");
-            result.addInt(getPid());
+            result.addInt(yarp::os::impl::getpid());
             reader.requestDrop(); // ROS likes to close down.
         }
         break;
@@ -2694,7 +2695,7 @@ bool PortCore::setProcessSchedulingParam(int priority, int policy)
 
     DIR *dir;
     char path[PATH_MAX];
-    sprintf(path, "/proc/%d/task/", getPid());
+    sprintf(path, "/proc/%d/task/", yarp::os::impl::getpid());
 
     dir = opendir(path);
     if (dir==nullptr) {
@@ -2722,23 +2723,11 @@ bool PortCore::setProcessSchedulingParam(int priority, int policy)
 #elif defined(YARP_HAS_ACE) // for other platforms
     // TODO: Check how to set the scheduling properties of all process's threads in Windows
     ACE_Sched_Params param(policy, (ACE_Sched_Priority) priority, ACE_SCOPE_PROCESS);
-    int ret = ACE_OS::set_scheduling_params(param, ACE_OS::getpid());
+    int ret = ACE_OS::set_scheduling_params(param, yarp::os::impl::getpid());
     return (ret != -1);
 #else
     return false;
 #endif
-}
-
-int PortCore::getPid()
-{
-#if defined(YARP_HAS_ACE)
-    return ACE_OS::getpid();
-#elif defined(__linux__)
-    return getpid();
-#elif defined(_WIN32)
-    return (int) GetCurrentProcessId();
-#endif
-    return -1;
 }
 
 Property *PortCore::acquireProperties(bool readOnly)

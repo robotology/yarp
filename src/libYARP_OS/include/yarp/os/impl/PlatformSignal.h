@@ -30,12 +30,7 @@ namespace impl {
     using ACE_OS::sigfillset;
     using ACE_OS::sigaction;
     using ACE_OS::kill;
-    // std::signal is broken for Visual Studio 12 2013
-    // (Fixed in Visual studio 14 2015)
-#  if defined(_MSC_VER) && _MSC_VER <= 1800
-    using ACE_OS::signal;
-    using ACE_OS::raise;
-# elif defined(YARP_HAS_CSIGNAL)
+# if defined(YARP_HAS_CSIGNAL)
     // Prefer std::signal over ::signal
     using std::signal;
     using std::raise;

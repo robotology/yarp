@@ -143,14 +143,10 @@ set(YARP_OS_IDL_HDRS include/yarp/os/idl/BareStyle.h
                      include/yarp/os/idl/WireVocab.h
                      include/yarp/os/idl/WireWriter.h)
 
-set(YARP_OS_IMPL_HDRS include/yarp/os/impl/ACELockImpl.h
-                      include/yarp/os/impl/ACESemaphoreImpl.h
-                      include/yarp/os/impl/AuthHMAC.h
+set(YARP_OS_IMPL_HDRS include/yarp/os/impl/AuthHMAC.h
                       include/yarp/os/impl/BottleImpl.h
                       include/yarp/os/impl/BufferedConnectionWriter.h
                       include/yarp/os/impl/Companion.h
-                      include/yarp/os/impl/CXX11LockImpl.h
-                      include/yarp/os/impl/CXX11SemaphoreImpl.h
                       include/yarp/os/impl/DgramTwoWayStream.h
                       include/yarp/os/impl/Dispatcher.h
                       include/yarp/os/impl/FakeFace.h
@@ -159,11 +155,9 @@ set(YARP_OS_IMPL_HDRS include/yarp/os/impl/ACELockImpl.h
                       include/yarp/os/impl/FallbackNameServer.h
                       include/yarp/os/impl/HttpCarrier.h
                       include/yarp/os/impl/LocalCarrier.h
-                      include/yarp/os/impl/LockImpl.h
                       include/yarp/os/impl/Logger.h
                       include/yarp/os/impl/LogImpl.h
                       include/yarp/os/impl/LogForwarder.h
-                      include/yarp/os/impl/MachSemaphoreImpl.h
                       include/yarp/os/impl/McastCarrier.h
                       include/yarp/os/impl/MemoryOutputStream.h
                       include/yarp/os/impl/NameClient.h
@@ -179,7 +173,6 @@ set(YARP_OS_IMPL_HDRS include/yarp/os/impl/ACELockImpl.h
                       include/yarp/os/impl/PlatformStdio.h
                       include/yarp/os/impl/PlatformStdlib.h
                       include/yarp/os/impl/PlatformSysWait.h
-                      include/yarp/os/impl/PlatformThread.h
                       include/yarp/os/impl/PlatformTime.h
                       include/yarp/os/impl/PlatformUnistd.h
                       include/yarp/os/impl/PortCommand.h
@@ -191,9 +184,8 @@ set(YARP_OS_IMPL_HDRS include/yarp/os/impl/ACELockImpl.h
                       include/yarp/os/impl/PortCorePackets.h
                       include/yarp/os/impl/PortCoreUnit.h
                       include/yarp/os/impl/PortManager.h
-                      include/yarp/os/impl/POSIXLockImpl.h
-                      include/yarp/os/impl/POSIXSemaphoreImpl.h
                       include/yarp/os/impl/Protocol.h
+                      include/yarp/os/impl/RecursiveLockImpl.h
                       include/yarp/os/impl/Runnable.h
                       include/yarp/os/impl/SemaphoreImpl.h
                       include/yarp/os/impl/SocketTwoWayStream.h

@@ -8,7 +8,7 @@
  */
 
 #include <yarp/os/impl/Logger.h>
-#include <yarp/os/impl/PlatformThread.h>
+#include <yarp/os/impl/ThreadImpl.h>
 #include <yarp/os/Os.h>
 #include <yarp/os/Network.h>
 #include <yarp/conf/system.h>
@@ -47,9 +47,9 @@ void Logger::show(unsigned YARP_INT32 level, const ConstString& txt) {
     if (parent == nullptr) {
         if (level>=low) {
             if (inLevel<=LM_DEBUG) {
-                fprintf(stream, "%s(%04x): %s\n",
+                fprintf(stream, "%s(%04lx): %s\n",
                                 prefix.c_str(),
-                                (int)(long int)(PLATFORM_THREAD_SELF()),
+                                ThreadImpl::getKeyOfCaller(),
                                 txt.c_str());
             } else {
                 fprintf(stream, "%s: %s\n", prefix.c_str(), txt.c_str());

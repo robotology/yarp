@@ -14,11 +14,7 @@
 
 void yarp::os::SystemClock::delaySystem(double seconds)
 {
-#if defined _MSC_VER && _MSC_VER <= 1800
-    std::this_thread::sleep_for(std::chrono::duration_cast<std::chrono::nanoseconds>(std::chrono::duration<double>(seconds)));
-#else
     std::this_thread::sleep_for(std::chrono::duration<double>(seconds));
-#endif
 }
 
 double yarp::os::SystemClock::nowSystem()

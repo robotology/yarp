@@ -10,33 +10,88 @@
 #ifndef YARP_OS_IMPL_SEMAPHOREIMPL_H
 #define YARP_OS_IMPL_SEMAPHOREIMPL_H
 
+#include <condition_variable>
+#include <mutex>
 
-// Pre-declare semaphore
+
 namespace yarp {
-    namespace os {
-        namespace impl {
-            class SemaphoreImpl;
+namespace os {
+namespace impl {
+
+class YARP_OS_impl_API SemaphoreImpl
+{
+public:
+    SemaphoreImpl(unsigned int initialCount = 1) :
+            count(initialCount),
+            wakeups(0)
+    {
+    }
+
+    SemaphoreImpl(SemaphoreImpl&) = delete;
+    SemaphoreImpl& operator=(SemaphoreImpl&) = delete;
+    virtual ~SemaphoreImpl() = default;
+
+    // blocking wait
+    void wait()
+    {
+        std::unique_lock<std::mutex> lock(mutex);
+        count--;
+        if (count < 0) {
+            cond.wait(lock,
+                      [this] { return wakeups > 0; });
+            wakeups--;
         }
     }
-}
 
-//Decide which implementation to use
-#include <yarp/conf/system.h>
+    // blocking wait with timeout
+    bool waitWithTimeout(double timeout)
+    {
+        std::unique_lock<std::mutex> lock(mutex);
+        count--;
+        if (count < 0) {
+            std::chrono::duration<double> ctime(timeout);
+            cond.wait_for(lock, ctime, [this] { return wakeups > 0; });
 
-#if defined(YARP_HAS_CXX11)
-#  include <yarp/os/impl/CXX11SemaphoreImpl.h>
-#elif defined(__unix__)
-// There is a problem with YARP+ACE semaphores on some Linux distributions,
-// where semaphores fail to work correctly.  Workaround.
-#  include <yarp/os/impl/POSIXSemaphoreImpl.h>
-# elif defined(__APPLE__)
-// On Mac, POSIX semaphores are just too burdensome
-#  include <yarp/os/impl/MachSemaphoreImpl.h>
-# elif defined(YARP_HAS_ACE)
-// For everything else, there's ACE
-# include <yarp/os/impl/ACESemaphoreImpl.h>
-# else
-YARP_COMPILER_ERROR(Cannot implement semaphores on this platform)
-#endif
+            if (wakeups <= 0) {
+                count++;
+                return false;
+            }
+            wakeups--;
+        }
+        return true;
+    }
+
+    // polling wait
+    bool check()
+    {
+        std::unique_lock<std::mutex> lock(mutex);
+        if (count) {
+            count--;
+            return true;
+        }
+        return false;
+    }
+
+    // increment
+    void post()
+    {
+        std::lock_guard<std::mutex> lock(mutex);
+        count++;
+        if (count <= 0) {
+            wakeups++;
+            cond.notify_one();
+        }
+    }
+
+private:
+    std::mutex mutex;
+    std::condition_variable cond;
+    int count;
+    int wakeups;
+};
+
+} // namespace impl
+} // namespace os
+} // namespace yarp
 
 #endif // YARP_OS_IMPL_SEMAPHOREIMPL_H
