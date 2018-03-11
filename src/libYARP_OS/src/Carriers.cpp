@@ -13,12 +13,7 @@
 #include <yarp/os/impl/FakeFace.h>
 #include <yarp/os/impl/TcpCarrier.h>
 #include <yarp/os/impl/TextCarrier.h>
-
-#  include <yarp/os/impl/McastCarrier.h>
-#ifdef YARP_HAS_ACE
-#  include <yarp/os/impl/ShmemCarrier.h>
-#endif
-
+#include <yarp/os/impl/McastCarrier.h>
 #include <yarp/os/impl/UdpCarrier.h>
 #include <yarp/os/impl/LocalCarrier.h>
 #include <yarp/os/impl/NameserCarrier.h>
@@ -213,10 +208,6 @@ Carriers::Carriers() :
     mPriv->delegates.push_back(new HttpCarrier());
     mPriv->delegates.push_back(new NameserCarrier());
     mPriv->delegates.push_back(new LocalCarrier());
-#ifdef YARP_HAS_ACE
-    //mPriv->delegates.push_back(new ShmemCarrier(1));
-    mPriv->delegates.push_back(new ShmemCarrier(2)); // new Alessandro version
-#endif
     mPriv->delegates.push_back(new TcpCarrier());
     mPriv->delegates.push_back(new TcpCarrier(false));
     mPriv->delegates.push_back(new McastCarrier());
