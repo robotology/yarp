@@ -22,7 +22,6 @@
 #include <yarp/os/Port.h>
 #include <yarp/os/Property.h>
 #include <yarp/os/ResourceFinder.h>
-#include <yarp/os/Run.h>
 #include <yarp/os/Stamp.h>
 #include <yarp/os/SystemClock.h>
 #include <yarp/os/Terminator.h>
@@ -322,8 +321,6 @@ Companion::Companion() {
         "write commands to a port, and read replies");
     add("rpcserver",  &Companion::cmdRpcServer,
         "make a test RPC server to receive and reply to Bottle-format messages");
-    add("run",  &Companion::cmdRun,
-        "start and stop processes");
     add("sample", &Companion::cmdSample,
         "drop or duplicate messages to achieve a constant frame-rate");
     add("terminate",  &Companion::cmdTerminate,
@@ -1444,11 +1441,6 @@ int Companion::cmdMake(int argc, char *argv[]) {
     printf("Wrote to %s\n", target);
     printf("Run cmake to generate makefiles or project files for compiling.\n");
     return 0;
-}
-
-
-int Companion::cmdRun(int argc, char *argv[]) {
-    return Run::main(argc, argv);
 }
 
 

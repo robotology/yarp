@@ -20,7 +20,6 @@
 #include <yarp/os/impl/Logger.h>
 #include <yarp/os/impl/NameClient.h>
 #include <yarp/os/impl/NameConfig.h>
-#include <yarp/os/impl/PlatformUnistd.h>
 #include <yarp/os/impl/PlatformSysStat.h>
 
 #include <cstdio>

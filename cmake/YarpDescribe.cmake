@@ -49,6 +49,7 @@ foreach(lib ${YARP_LIBS})
      NOT "${lib}" STREQUAL "YARP_gsl" AND
      NOT "${lib}" STREQUAL "YARP_eigen" AND
      NOT "${lib}" STREQUAL "YARP_rtf" AND
+     NOT "${lib}" STREQUAL "YARP_run" AND
      NOT "${lib}" MATCHES "$YARP_rosmsg")
     list(APPEND YARP_LIBRARIES YARP::${lib})
   endif()

@@ -18,7 +18,6 @@
 #include <yarp/os/Carriers.h>
 #include <yarp/os/impl/NameServer.h>
 #include <yarp/os/impl/NameConfig.h>
-#include <yarp/os/impl/PlatformUnistd.h>
 #ifdef YARP_HAS_ACE
 #  include <yarp/os/impl/FallbackNameClient.h>
 #endif

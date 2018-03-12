@@ -11,7 +11,6 @@
 #define YARP_OS_IMPL_PLATFORMTIME_H
 
 #include <yarp/conf/system.h>
-#include <yarp/os/impl/PlatformUnistd.h>
 #ifdef YARP_HAS_ACE
 #  include <ace/OS_NS_sys_time.h>
 #  include <ace/Time_Value.h>

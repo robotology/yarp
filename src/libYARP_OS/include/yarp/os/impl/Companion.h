@@ -157,7 +157,7 @@ public:
 
     int cmdWrite(int argc, char *argv[]);
 
-	int cmdReadWrite(int argc, char *argv[]);
+    int cmdReadWrite(int argc, char *argv[]);
 
     int cmdRpc(int argc, char *argv[]);
 
@@ -176,8 +176,6 @@ public:
     int cmdWait(int argc, char *argv[]);
 
     int cmdMake(int argc, char *argv[]);
-
-    int cmdRun(int argc, char *argv[]);
 
     int cmdNamespace(int argc, char *argv[]);
 

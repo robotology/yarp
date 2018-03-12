@@ -7,7 +7,8 @@
  * BSD-3-Clause license. See the accompanying LICENSE file for details.
  */
 
-#include <yarp/os/impl/RunProcManager.h>
+#include <yarp/run/impl/RunProcManager.h>
+#include <yarp/run/impl/RunCheckpoints.h>
 
 #include <yarp/os/Network.h>
 #include <yarp/os/RpcClient.h>
@@ -15,7 +16,6 @@
 #include <yarp/os/Time.h>
 
 #include <yarp/os/impl/PlatformSysWait.h>
-#include <yarp/os/impl/RunCheckpoints.h>
 
 #include <cstring>
 
@@ -609,7 +609,7 @@ void YarpRunCmdWithStdioInfo::TerminateStdio()
     {
         yarp::os::Bottle msg;
         msg.fromString((yarp::os::ConstString("(killstdio ")+mAlias+")").c_str());
-        yarp::os::Run::sendMsg(msg, mStdio);
+        yarp::run::Run::sendMsg(msg, mStdio);
     }
 }
 

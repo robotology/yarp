@@ -7,28 +7,24 @@
  * BSD-3-Clause license. See the accompanying LICENSE file for details.
  */
 
-#ifndef YARP_OS_RUN_H
-#define YARP_OS_RUN_H
+#ifndef YARP_RUN_RUN_H
+#define YARP_RUN_RUN_H
 
 #include <cstring>
-#include <yarp/os/api.h>
+#include <yarp/run/api.h>
 #include <yarp/os/RpcServer.h>
 #include <yarp/os/Property.h>
 #include <yarp/os/Semaphore.h>
-
-namespace yarp {
-  namespace os {
-    class Run;
-  }
-}
 
 // watch out for ACE randomly redefining main, depending on configuration
 #ifdef main
 #undef main
 #endif
 
-class YARP_OS_API YarpRunInfoVector;
-class YARP_OS_API ZombieHunterThread;
+
+class YarpRunInfoVector;
+class ZombieHunterThread;
+
 
 /*
  * Typical Yarp applications consist of several intercommunicating modules distributed on different machines.
@@ -80,12 +76,15 @@ class YARP_OS_API ZombieHunterThread;
  *
  */
 
+namespace yarp {
+namespace run {
+
 /**
  * \class yarp::os::Run
  * \brief yarprun provides the APIs to a client-server environment that is able to run,
  * kill and monitor applications commands on a remote machin in Windows and Linux.
  */
-class YARP_OS_API yarp::os::Run
+class YARP_run_API Run
 {
 public:
     // API
@@ -103,20 +102,20 @@ public:
      * @param keyv is the tag that will identify the running application. It must be unique in the network.
      * @return 0=success -1=failed.
      */
-    static int start(const ConstString &node, Property &command, ConstString &keyv);
+    static int start(const yarp::os::ConstString &node, yarp::os::Property &command, yarp::os::ConstString &keyv);
     /**
      * Terminate an application running on a yarprun server.
      * @param node is the yarprun server port name. It must be unique in the network.
      * @param keyv is the tag that identifies the running application. It must be unique in the network.
      * @return 0=success -1=failed.
      */
-    static int sigterm(const ConstString &node, const ConstString &keyv);
+    static int sigterm(const yarp::os::ConstString &node, const yarp::os::ConstString &keyv);
     /**
      * Terminate all applications running on a yarprun server.
      * @param node is the yarprun server port name. It must be unique in the network.
      * @return 0=success -1=failed.
      */
-    static int sigterm(const ConstString &node);
+    static int sigterm(const yarp::os::ConstString &node);
     /**
      * Send a SIGNAL to an application running on a yarprun server (Linux only).
      * @param node is the yarprun server port name. It must be unique in the network.
@@ -124,7 +123,7 @@ public:
      * @param s is the SIGNAL number.
      * @return 0=success -1=failed.
      */
-    static int kill(const ConstString &node, const ConstString &keyv, int s);
+    static int kill(const yarp::os::ConstString &node, const yarp::os::ConstString &keyv, int s);
     /**
      * Get a report of all applications running on a yarprun server.
      * @param node is the yarprun server port name. It must be unique in the network.
@@ -133,14 +132,14 @@ public:
      * @param num_processes return the number of running processes.
      * @return 0=success -1=failed.
      */
-    // static int ps(const ConstString &node, ConstString** &processes, int &num_processes);
+    // static int ps(const yarp::os::ConstString &node, yarp::os::ConstString** &processes, int &num_processes);
     /**
      * Report if an application is still running on a yarprun server.
      * @param node is the yarprun server port name. It must be unique in the network.
      * @param keyv is the tag that identifies the application. It must be unique in the network.
      * @return true=running false=terminated.
      */
-    static bool isRunning(const ConstString &node, ConstString &keyv);
+    static bool isRunning(const yarp::os::ConstString &node, yarp::os::ConstString &keyv);
 
     // end API
 
@@ -155,7 +154,7 @@ public:
      * @return 0 on success, -1 on failure
      *
      */
-    static int client(Property& config);
+    static int client(yarp::os::Property& config);
 
 #ifndef DOXYGEN_SHOULD_SKIP_THIS
 
@@ -177,21 +176,21 @@ public:
     static void CleanZombie(int pid);
 #endif
 
-    static yarp::os::Bottle sendMsg(Bottle& msg, yarp::os::ConstString target, int RETRY=20, double DELAY=0.5);
+    static yarp::os::Bottle sendMsg(yarp::os::Bottle& msg, yarp::os::ConstString target, int RETRY=20, double DELAY=0.5);
 
 protected:
     static void Help(const char* msg="");
     static int server();
-    static int executeCmdAndStdio(Bottle& msg, Bottle& result);
-    static int executeCmdStdout(Bottle& msg, Bottle& result, yarp::os::ConstString& loggerName);
-    static int executeCmd(Bottle& msg, Bottle& result);
-    static int userStdio(Bottle& msg, Bottle& result);
+    static int executeCmdAndStdio(yarp::os::Bottle& msg, yarp::os::Bottle& result);
+    static int executeCmdStdout(yarp::os::Bottle& msg, yarp::os::Bottle& result, yarp::os::ConstString& loggerName);
+    static int executeCmd(yarp::os::Bottle& msg, yarp::os::Bottle& result);
+    static int userStdio(yarp::os::Bottle& msg, yarp::os::Bottle& result);
 
     static inline bool IS_PARENT_OF(int pid){ return pid>0; }
     static inline bool IS_NEW_PROCESS(int pid){ return !pid; }
     static inline bool IS_INVALID(int pid){ return pid<0; }
 
-    static ConstString mPortName;
+    static yarp::os::ConstString mPortName;
     static int mProcCNT;
 
 #if !defined(_WIN32)
@@ -217,4 +216,8 @@ protected:
 #endif /*DOXYGEN_SHOULD_SKIP_THIS*/
 };
 
-#endif // YARP_OS_RUN_H
+} // namespace run
+} // namespace yarp
+
+
+#endif // YARP_RUN_RUN_H

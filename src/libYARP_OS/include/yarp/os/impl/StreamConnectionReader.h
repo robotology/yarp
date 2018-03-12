@@ -19,7 +19,6 @@
 #include <yarp/os/impl/Logger.h>
 #include <yarp/os/Route.h>
 #include <yarp/os/Contact.h>
-#include <yarp/os/impl/PlatformSize.h>
 #include <yarp/os/Bottle.h>
 #include <yarp/os/NetInt64.h>
 

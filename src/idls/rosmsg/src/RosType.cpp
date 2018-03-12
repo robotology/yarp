@@ -594,14 +594,23 @@ bool RosTypeSearch::fetchFromRos(const std::string& target_file,
     if (verbose) {
         fprintf(stderr,"[ros]  %s\n", cmd.c_str());
     }
-    pid_t p = yarp::os::fork();
-    if (p==0) {
-#ifdef __linux__
-        // This was ACE_OS::execlp, but that fails
-        ::execlp("sh","sh","-c",cmd.c_str(),(char *)nullptr);
-#else
-        yarp::os::impl::execlp("sh","sh","-c",cmd.c_str(),(char *)NULL);
+
+#if defined(YARP_HAS_ACE)
+    using ACE_OS::fork;
+# if defined(__linux__)
+    // This was ACE_OS::execlp, but that fails
+    using ::execlp;
+# else
+    using ACE_OS::execlp;
+# endif
+#elif defined(__unix__)
+    using ::fork;
+    using ::execlp;
 #endif
+
+    pid_t p = fork();
+    if (p==0) {
+        execlp("sh", "sh", "-c", cmd.c_str(), (char *)nullptr);
         std::exit(0);
     } else {
         yarp::os::impl::wait(nullptr);
