@@ -1,7 +1,6 @@
 sudo: required
 dist: trusty
 language: cpp
-group: deprecated-2017Q3
 
 cache:
   ccache: true
@@ -51,7 +50,6 @@ addons:
       # clang
       - clang-5.0
       # build tools
-      - cmake3
       - ninja-build
       - lcov
       - valgrind
