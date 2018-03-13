@@ -13,35 +13,19 @@
 #include <yarp/conf/system.h>
 #include <yarp/os/Face.h>
 #include <yarp/os/impl/AuthHMAC.h>
-
-#ifdef YARP_HAS_ACE
-#  include <ace/config.h>
-#  include <ace/SOCK_Acceptor.h>
-#  include <ace/SOCK_Connector.h>
-#  include <ace/SOCK_Stream.h>
-#  include <ace/Log_Msg.h>
-#  define PlatformTcpAcceptor ACE_SOCK_Acceptor
-#else
-#  include <yarp/os/impl/TcpAcceptor.h>
-#  define PlatformTcpAcceptor TcpAcceptor
-#endif
-
+#include <yarp/os/impl/TcpAcceptor.h>
 
 namespace yarp {
-    namespace os {
-        namespace impl {
-            class TcpFace;
-        }
-    }
-}
+namespace os {
+namespace impl {
 
 /**
  * Communicating with a port via TCP.
  */
-class YARP_OS_impl_API yarp::os::impl::TcpFace : public yarp::os::Face
+class YARP_OS_impl_API TcpFace : public yarp::os::Face
 {
 public:
-    TcpFace() { }
+    TcpFace();
 
     virtual ~TcpFace();
 
@@ -52,10 +36,9 @@ public:
 
     virtual Contact getLocalAddress() override;
 
-    /**
+    /*
      * This class like all classes except the port objects does
      * not have any notion of running in a multi-threaded environment.
-     *
      */
 
 protected:
@@ -65,8 +48,12 @@ protected:
 private:
     void closeFace();
     Contact address;
-    PlatformTcpAcceptor peerAcceptor;
+    yarp::os::impl::TcpAcceptor peerAcceptor;
 };
 
+
+} // namespace impl
+} // namespace os
+} // namespace yarp
 
 #endif // YARP_OS_IMPL_TCPFACE_H

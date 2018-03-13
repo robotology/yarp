@@ -20,6 +20,7 @@ using namespace yarp::os::impl;
 using namespace yarp::os;
 
 
+TcpFace::TcpFace() = default;
 
 TcpFace::~TcpFace() {
     closeFace();
