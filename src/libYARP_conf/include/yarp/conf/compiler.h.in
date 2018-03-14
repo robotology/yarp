@@ -1589,10 +1589,7 @@
 
 
 #  ifndef YARP_DEPRECATED
-#    if YARP_COMPILER_CXX_ATTRIBUTE_DEPRECATED
-#      define YARP_DEPRECATED [[deprecated]]
-#      define YARP_DEPRECATED_MSG(MSG) [[deprecated(MSG)]]
-#    elif YARP_COMPILER_IS_GNU || YARP_COMPILER_IS_Clang
+#    if YARP_COMPILER_IS_GNU || YARP_COMPILER_IS_Clang
 #      define YARP_DEPRECATED __attribute__((__deprecated__))
 #      define YARP_DEPRECATED_MSG(MSG) __attribute__((__deprecated__(MSG)))
 #    elif YARP_COMPILER_IS_MSVC
