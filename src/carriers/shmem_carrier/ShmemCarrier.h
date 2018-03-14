@@ -12,53 +12,32 @@
 
 #include <yarp/os/AbstractCarrier.h>
 
-namespace yarp {
-    namespace os {
-        namespace impl {
-            class ShmemCarrier;
-        }
-    }
-}
 
 /**
  * Communicating between two ports via shared memory.
  */
-class yarp::os::impl::ShmemCarrier : public AbstractCarrier
+class ShmemCarrier : public yarp::os::AbstractCarrier
 {
-private:
-    int version;
 public:
-    /**
-     * verion 1 is "classic" YARP implementation of shmem.
-     * version 2 is "Alessandro" version.
-     */
-    ShmemCarrier(int version = 2);
+    ShmemCarrier();
+    virtual ~ShmemCarrier();
 
-    virtual Carrier *create() override;
+    virtual Carrier* create() override;
 
-    virtual ConstString getName() override;
+    virtual yarp::os::ConstString getName() override;
 
     virtual int getSpecifierCode();
     virtual bool requireAck() override;
     virtual bool isConnectionless() override;
-    virtual bool checkHeader(const Bytes& header) override;
-    virtual void getHeader(const Bytes& header) override;
-    virtual void setParameters(const Bytes& header) override;
-    virtual bool respondToHeader(ConnectionState& proto) override;
-    virtual bool expectReplyToHeader(ConnectionState& proto) override;
+    virtual bool checkHeader(const yarp::os::Bytes& header) override;
+    virtual void getHeader(const yarp::os::Bytes& header) override;
+    virtual void setParameters(const yarp::os::Bytes& header) override;
+    virtual bool respondToHeader(yarp::os::ConnectionState& proto) override;
+    virtual bool expectReplyToHeader(yarp::os::ConnectionState& proto) override;
 
-    /*
-      -- unfortunately member templates not working on Visual Studio 6?
-    template <class T>
-    void becomeShmemVersion(ConnectionState& proto, bool sender);
-    */
-
-    /*
-    void becomeShmemVersionTwoWayStream(ConnectionState& proto, bool sender);
-    */
-
-    bool becomeShmemVersionHybridStream(ConnectionState& proto, bool sender);
-    bool becomeShmem(ConnectionState& proto, bool sender);
+private:
+    bool becomeShmemVersionHybridStream(yarp::os::ConnectionState& proto, bool sender);
+    bool becomeShmem(yarp::os::ConnectionState& proto, bool sender);
 };
 
 #endif // YARP_OS_IMPL_SHMEMCARRIER_H
