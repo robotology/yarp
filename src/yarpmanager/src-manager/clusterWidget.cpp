@@ -17,6 +17,7 @@
 #include <yarp/os/Time.h>
 
 #include <yarp/os/impl/NameClient.h>
+#include <yarp/profiler/NetworkProfiler.h>
 
 #include <mainwindow.h>
 
@@ -489,6 +490,14 @@ bool ClusterWidget::checkNode(const string &name)
         yError()<<"ClusterWidget: yarpserver is not running";
         return false;
     }
+
+    yarp::profiler::NetworkProfiler::PortDetails dummy;
+    if (! yarp::profiler::NetworkProfiler::getPortDetails(portname, dummy))
+    {
+        yError()<<"ClusterWidget: port"<<portname<<"is not responding";
+        return false;
+    }
+
 
     yarp::os::Bottle cmd, reply;
     cmd.addString("get");
