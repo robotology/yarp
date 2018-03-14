@@ -178,10 +178,13 @@ void Plotter::onTimeout()
             b = graph->curr_connection->localPort->lastRead();
         }
         if (!b) {
-            qDebug("No data received. Using previous values.");
+//             qDebug("No data received. Using previous values.");
             graph->appendPreviousValues();
 
         } else {
+            if (b->size() == 1 && b->get(0).isList()) {
+                b = b->get(0).asList();
+            }
             yarp::os::Stamp stmp;
             graph->curr_connection->localPort->getEnvelope(stmp);
 
