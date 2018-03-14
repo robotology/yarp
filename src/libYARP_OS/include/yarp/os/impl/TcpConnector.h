@@ -1,6 +1,5 @@
 /*
  * Copyright (C) 2006-2018 Istituto Italiano di Tecnologia (IIT)
- * Copyright (C) 2010 Anne van Rossum <anne@almende.com>
  * All rights reserved.
  *
  * This software may be modified and distributed under the terms of the
@@ -10,42 +9,27 @@
 #ifndef YARP_OS_IMPL_TCPCONNECTOR_H
 #define YARP_OS_IMPL_TCPCONNECTOR_H
 
-#include <yarp/os/Contact.h>
-#include <yarp/os/impl/TcpStream.h>
-
+#if defined(YARP_HAS_ACE)
+#  include <ace/config.h>
+#  include <ace/SOCK_Connector.h>
+#elif defined(__unix__)
+#  include <yarp/os/impl/posix/TcpConnector.h>
+#else
+YARP_COMPILER_ERROR(Cannot implement TcpConnector on this platform)
+#endif
 
 namespace yarp {
-    namespace os {
-        namespace impl {
-            class TcpConnector;
-        }
-    }
-}
+namespace os {
+namespace impl {
 
-/* **************************************************************************************
- * Interface of TcpConnector
- * **************************************************************************************/
+#ifdef YARP_HAS_ACE
+typedef ACE_SOCK_Connector TcpConnector;
+#elif defined(__unix__)
+typedef yarp::os::impl::posix::TcpConnector TcpConnector;
+#endif
 
-class yarp::os::impl::TcpConnector
-{
-public:
-    /**
-     * Constructor TcpConnector
-     */
-    TcpConnector();
-
-    /**
-     * Destructor ~TcpConnector
-     */
-    virtual ~TcpConnector();
-
-    int connect (TcpStream &new_stream,
-                 const yarp::os::Contact &remote_address);
-protected:
-
-    int open(TcpStream &stream);
-private:
-
-};
+} // namespace impl
+} // namespace os
+} // namespace yarp
 
 #endif // YARP_OS_IMPL_TCPCONNECTOR_H

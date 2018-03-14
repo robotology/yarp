@@ -14,20 +14,8 @@
 #include <yarp/os/TwoWayStream.h>
 #include <yarp/os/impl/Logger.h>
 #include <yarp/os/impl/PlatformTime.h>
-
-#ifdef YARP_HAS_ACE
-#  include <ace/config.h>
-#  include <ace/SOCK_Acceptor.h>
-#  include <ace/SOCK_Connector.h>
-#  include <ace/SOCK_Stream.h>
-#  include <ace/Log_Msg.h>
-#  include <ace/Time_Value.h>
-#else
-#  include <yarp/os/impl/TcpStream.h>
-#  include <yarp/os/impl/TcpAcceptor.h>
-#  define ACE_SOCK_Acceptor TcpAcceptor
-#  define ACE_SOCK_Stream TcpStream
-#endif
+#include <yarp/os/impl/TcpStream.h>
+#include <yarp/os/impl/TcpAcceptor.h>
 
 namespace yarp {
     namespace os {
@@ -54,7 +42,7 @@ public:
 
     int open(const Contact& address);
 
-    int open(ACE_SOCK_Acceptor& acceptor);
+    int open(yarp::os::impl::TcpAcceptor& acceptor);
 
     virtual ~SocketTwoWayStream()
     {
@@ -200,7 +188,7 @@ public:
     virtual int getTypeOfService() override;
 
 private:
-    ACE_SOCK_Stream stream;
+    yarp::os::impl::TcpStream stream;
     bool haveWriteTimeout;
     bool haveReadTimeout;
     ACE_Time_Value writeTimeout;

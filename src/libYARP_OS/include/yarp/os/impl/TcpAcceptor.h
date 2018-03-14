@@ -1,6 +1,5 @@
 /*
  * Copyright (C) 2006-2018 Istituto Italiano di Tecnologia (IIT)
- * Copyright (C) 2010 Anne van Rossum <anne@almende.com>
  * All rights reserved.
  *
  * This software may be modified and distributed under the terms of the
@@ -10,67 +9,27 @@
 #ifndef YARP_OS_IMPL_TCPACCEPTOR_H
 #define YARP_OS_IMPL_TCPACCEPTOR_H
 
-
-#include <yarp/os/TwoWayStream.h>
-#include <yarp/os/impl/Logger.h>
-
-#include <yarp/os/impl/TcpStream.h>
-
-//#include <sys/time.h>
-//#include <iostream>
-//
-//#include <sys/types.h>
-//#include <sys/socket.h>
-//#include <arpa/inet.h>
-//#include <unistd.h>
-
-// General files
+#if defined(YARP_HAS_ACE)
+#  include <ace/config.h>
+#  include <ace/SOCK_Acceptor.h>
+#elif defined(__unix__)
+#  include <yarp/os/impl/posix/TcpAcceptor.h>
+#else
+YARP_COMPILER_ERROR(Cannot implement TcpAcceptor on this platform)
+#endif
 
 namespace yarp {
-    namespace os {
-        namespace impl {
-            class TcpAcceptor;
-        }
-    }
-}
+namespace os {
+namespace impl {
 
-/* **************************************************************************************
- * Interface of TcpAcceptor
- * **************************************************************************************/
+#ifdef YARP_HAS_ACE
+typedef ACE_SOCK_Acceptor TcpAcceptor;
+#elif defined(__unix__)
+typedef yarp::os::impl::posix::TcpAcceptor TcpAcceptor;
+#endif
 
-class YARP_OS_impl_API yarp::os::impl::TcpAcceptor
-{
-public:
-
-    TcpAcceptor();
-
-    virtual ~TcpAcceptor() {};
-
-    int open(const yarp::os::Contact& address);
-
-    int connect(const yarp::os::Contact& address);
-
-    int close();
-
-    int accept(TcpStream &new_stream);
-
-    int get_port_number() {
-      return port_number;
-    }
-
-//    const Address& getLocalAddress();
-
-//    const Address& getRemoteAddress();
-protected:
-    int shared_open(const yarp::os::Contact& address);
-
-    int get_handle() { return ad; }
-
-    void set_handle(int h) { ad = h; }
-private:
-    // acceptor descriptor
-    int ad;
-    int port_number;
-};
+} // namespace impl
+} // namespace os
+} // namespace yarp
 
 #endif // YARP_OS_IMPL_TCPACCEPTOR_H

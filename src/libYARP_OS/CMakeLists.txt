@@ -224,6 +224,10 @@ set(YARP_OS_IMPL_HDRS include/yarp/os/impl/ACELockImpl.h
                       include/yarp/os/impl/UnitTest.h
                       include/yarp/os/impl/ydr.h)
 
+set(YARP_OS_IMPL_POSIX_HDRS include/yarp/os/impl/posix/TcpAcceptor.h
+                            include/yarp/os/impl/posix/TcpConnector.h
+                            include/yarp/os/impl/posix/TcpStream.h)
+
 set(YARP_OS_SRCS src/AbstractCarrier.cpp
                  src/AbstractContactable.cpp
                  src/AuthHMAC.cpp
@@ -335,11 +339,8 @@ set(YARP_OS_SRCS src/AbstractCarrier.cpp
                  src/SystemClock.cpp
                  src/SystemInfo.cpp
                  src/SystemInfoSerializer.cpp
-                 src/TcpAcceptor.cpp
                  src/TcpCarrier.cpp
-                 src/TcpConnector.cpp
                  src/TcpFace.cpp
-                 src/TcpStream.cpp
                  src/Terminator.cpp
                  src/TextCarrier.cpp
                  src/Things.cpp
@@ -361,6 +362,12 @@ set(YARP_OS_SRCS src/AbstractCarrier.cpp
                  src/ydr.cpp
                  src/QosStyle.cpp)
 
+if(SKIP_ACE)
+  list(APPEND YARP_OS_SRCS src/posix/TcpAcceptor.cpp
+                           src/posix/TcpConnector.cpp
+                           src/posix/TcpStream.cpp)
+endif()
+
 if(APPLE)
   list(APPEND YARP_OS_IMPL_HDRS include/yarp/os/impl/MacOSAPI.h)
   list(APPEND YARP_OS_SRCS src/MacOSAPI.mm)
@@ -379,7 +386,8 @@ source_group(TREE "${CMAKE_CURRENT_SOURCE_DIR}"
              PREFIX "Header Files"
              FILES ${YARP_OS_HDRS}
                    ${YARP_OS_IDL_HDRS}
-                   ${YARP_OS_IMPL_HDRS})
+                   ${YARP_OS_IMPL_HDRS}
+                   ${YARP_OS_IMPL_POSIX_HDRS})
 
 option(ENABLE_YARPRUN_LOG "Enable yarprun log file in temp dir" OFF)
 if (ENABLE_YARPRUN_LOG)
@@ -398,7 +406,8 @@ include_directories(${hmac_INCLUDE_DIRS})
 add_library(YARP_OS ${YARP_OS_SRCS}
                     ${YARP_OS_HDRS}
                     ${YARP_OS_IDL_HDRS}
-                    ${YARP_OS_IMPL_HDRS})
+                    ${YARP_OS_IMPL_HDRS}
+                    ${YARP_OS_IMPL_POSIX_HDRS})
 add_library(YARP::YARP_OS ALIAS YARP_OS)
 
 target_include_directories(YARP_OS PUBLIC $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>
@@ -455,6 +464,9 @@ install(TARGETS YARP_OS
 install(FILES ${YARP_OS_IDL_HDRS}
         COMPONENT development
         DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}/yarp/os/idl)
+install(FILES ${YARP_OS_IMPL_POSIX_HDRS}
+        COMPONENT development
+        DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}/yarp/os/impl/posix)
 
 set_property(GLOBAL APPEND PROPERTY YARP_LIBS YARP_OS)
 set_property(TARGET YARP_OS PROPERTY INCLUDE_DIRS ${YARP_TREE_INCLUDE_DIRS})
