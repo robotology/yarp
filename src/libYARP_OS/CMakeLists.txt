@@ -204,12 +204,6 @@ set(YARP_OS_IMPL_HDRS include/yarp/os/impl/ACELockImpl.h
                       include/yarp/os/impl/RunProcManager.h
                       include/yarp/os/impl/RunReadWrite.h
                       include/yarp/os/impl/SemaphoreImpl.h
-                      include/yarp/os/impl/ShmemCarrier.h
-                      include/yarp/os/impl/ShmemHybridStream.h
-                      include/yarp/os/impl/ShmemInputStream.h
-                      include/yarp/os/impl/ShmemOutputStream.h
-                      include/yarp/os/impl/ShmemTwoWayStream.h
-                      include/yarp/os/impl/ShmemTypes.h
                       include/yarp/os/impl/SocketTwoWayStream.h
                       include/yarp/os/impl/SplitString.h
                       include/yarp/os/impl/StreamConnectionReader.h
@@ -328,10 +322,6 @@ set(YARP_OS_SRCS src/AbstractCarrier.cpp
                  src/Semaphore.cpp
                  src/SharedLibrary.cpp
                  src/SharedLibraryFactory.cpp
-                 src/ShmemHybridStream.cpp
-                 src/ShmemInputStream.cpp
-                 src/ShmemOutputStream.cpp
-                 src/ShmemTwoWayStream.cpp
                  src/SocketTwoWayStream.cpp
                  src/SplitString.cpp
                  src/Stamp.cpp
@@ -371,12 +361,6 @@ endif()
 if(APPLE)
   list(APPEND YARP_OS_IMPL_HDRS include/yarp/os/impl/MacOSAPI.h)
   list(APPEND YARP_OS_SRCS src/MacOSAPI.mm)
-endif()
-
-if(NOT SKIP_ACE)
-  # this carrier have not yet been implemented without ACE
-  set(YARP_OS_SRCS ${YARP_OS_SRCS}
-                   src/ShmemCarrier.cpp)
 endif()
 
 source_group(TREE "${CMAKE_CURRENT_SOURCE_DIR}"

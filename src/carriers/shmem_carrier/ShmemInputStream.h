@@ -29,44 +29,23 @@
 #include <yarp/os/impl/Logger.h>
 
 #include <yarp/os/InputStream.h>
-#include <yarp/os/impl/ShmemTypes.h>
 #include <yarp/os/impl/PlatformSize.h>
 
-namespace yarp {
-    namespace os {
-        namespace impl {
-            class ShmemInputStreamImpl;
-        }
-    }
-}
+#include "ShmemTypes.h"
 
-class yarp::os::impl::ShmemInputStreamImpl {
+class ShmemInputStreamImpl
+{
 public:
-    ShmemInputStreamImpl()
-    {
-        m_bOpen=false;
+    ShmemInputStreamImpl();
+    ~ShmemInputStreamImpl();
 
-        m_pAccessMutex=m_pWaitDataMutex=nullptr;
-        m_pMap=nullptr;
-        m_pData=nullptr;
-        m_pHeader=nullptr;
-        m_ResizeNum=0;
-        m_Port = -1;
-        m_pSock = nullptr;
-    }
-
-    ~ShmemInputStreamImpl()
-    {
-        close();
-    }
-
-    bool isOk() { return m_bOpen; }
-    bool open(int port, ACE_SOCK_Stream *pSock, int size=SHMEM_DEFAULT_SIZE);
-    YARP_SSIZE_T read(const Bytes& b);
+    bool isOk();
+    bool open(int port, ACE_SOCK_Stream* pSock, int size = SHMEM_DEFAULT_SIZE);
+    YARP_SSIZE_T read(const yarp::os::Bytes& b);
     void close();
 
 protected:
-    int read(char *data, int len);
+    int read(char* data, int len);
     bool Resize();
     bool m_bOpen;
 
@@ -74,18 +53,20 @@ protected:
     int m_Port;
 
 #if defined(_ACE_USE_SV_SEM)
-    ACE_Mutex *m_pAccessMutex, *m_pWaitDataMutex;
+    ACE_Mutex* m_pAccessMutex;
+    ACE_Mutex* m_pWaitDataMutex;
 #else
-    ACE_Process_Mutex *m_pAccessMutex, *m_pWaitDataMutex;
+    ACE_Process_Mutex* m_pAccessMutex;
+    ACE_Process_Mutex* m_pWaitDataMutex;
 #endif
 
     yarp::os::Semaphore m_ReadSerializerMutex;
 
-    ACE_Shared_Memory *m_pMap;
-    char *m_pData;
-    ShmemHeader_t *m_pHeader;
+    ACE_Shared_Memory* m_pMap;
+    char* m_pData;
+    ShmemHeader_t* m_pHeader;
 
-    ACE_SOCK_Stream *m_pSock;
+    ACE_SOCK_Stream* m_pSock;
 };
 
 #endif

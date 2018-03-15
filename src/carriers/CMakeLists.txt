@@ -9,6 +9,7 @@ option(CREATE_OPTIONAL_CARRIERS "Compile some optional carriers" FALSE)
 
 include(YarpPlugin)
 yarp_begin_plugin_library(yarpcar)
+  add_subdirectory(shmem_carrier)
   add_subdirectory(human_carrier)
   add_subdirectory(mpi_carrier)
   add_subdirectory(xmlrpc_carrier)

@@ -23,44 +23,23 @@
 #include <ace/Shared_Memory_SV.h>
 #endif
 
+#include <yarp/os/OutputStream.h>
 #include <yarp/os/Semaphore.h>
 #include <yarp/os/Thread.h>
 #include <yarp/os/Time.h>
 #include <yarp/os/impl/Logger.h>
-#include <yarp/os/OutputStream.h>
 
-#include <yarp/os/impl/ShmemTypes.h>
+#include "ShmemTypes.h"
 
-namespace yarp {
-    namespace os {
-        namespace impl {
-            class ShmemOutputStreamImpl;
-        }
-    }
-}
-
-class yarp::os::impl::ShmemOutputStreamImpl {
+class ShmemOutputStreamImpl
+{
 public:
-    ShmemOutputStreamImpl()
-    {
-        m_bOpen=false;
+    ShmemOutputStreamImpl();
+    ~ShmemOutputStreamImpl();
 
-        m_pAccessMutex=m_pWaitDataMutex=nullptr;
-        m_pMap=nullptr;
-        m_pData=nullptr;
-        m_pHeader=nullptr;
-        m_ResizeNum=0;
-        m_Port=0;
-    }
-
-    ~ShmemOutputStreamImpl()
-    {
-        close();
-    }
-
-    bool isOk() { return m_bOpen; }
-    bool open(int port, int size=SHMEM_DEFAULT_SIZE);
-    bool write(const Bytes& b);
+    bool isOk();
+    bool open(int port, int size = SHMEM_DEFAULT_SIZE);
+    bool write(const yarp::os::Bytes& b);
     void close();
 
 protected:
@@ -72,14 +51,16 @@ protected:
     int m_Port;
 
 #if defined(_ACE_USE_SV_SEM)
-    ACE_Mutex *m_pAccessMutex, *m_pWaitDataMutex;
+    ACE_Mutex* m_pAccessMutex;
+    ACE_Mutex* m_pWaitDataMutex;
 #else
-    ACE_Process_Mutex *m_pAccessMutex, *m_pWaitDataMutex;
+    ACE_Process_Mutex* m_pAccessMutex;
+    ACE_Process_Mutex* m_pWaitDataMutex;
 #endif
 
-    ACE_Shared_Memory *m_pMap;
-    char *m_pData;
-    ShmemHeader_t *m_pHeader;
+    ACE_Shared_Memory* m_pMap;
+    char* m_pData;
+    ShmemHeader_t* m_pHeader;
 };
 
 #endif // YARP_OS_IMPL_SHMEMOUTPUTSTREAM_H
