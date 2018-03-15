@@ -11,6 +11,7 @@
 
 #include <stdio.h>
 
+#include <yarp/os/Network.h>
 #include <yarp/os/Thread.h>
 #include <yarp/os/Time.h>
 
@@ -60,6 +61,7 @@ public:
 };
 
 int main() {
+    Network yarp;
     Thread1 t1;
     Thread2 t2;
     printf("Starting threads...\n");
