@@ -85,18 +85,6 @@ const std::map<int, size_t> sizeMap = {
     };
 
 
-void PointCloudBase::resize(size_t width, size_t height)
-{
-    header.width = width;
-    header.height = height;
-}
-
-void PointCloudBase::resize(size_t width)
-{
-    header.width  = width;
-    header.height = 1;
-}
-
 size_t PointCloudBase::height() const
 {
     return header.height;
@@ -116,22 +104,6 @@ int PointCloudBase::getPointType() const
 yarp::os::Type PointCloudBase::getType()
 {
     return yarp::os::Type::byName("yarp/pointCloud");
-}
-
-void PointCloudBase::fromExternalPC(const char* source, int type, size_t width, size_t height, bool isDense)
-{
-    yAssert(source);
-    header.isDense = isDense;
-    resize(width, height);
-    if (this->getPointType() == type)
-    {
-        memcpy(const_cast<char*> (getRawData()), source, dataSizeBytes());
-    }
-    else
-    {
-        std::vector<int> recipe = getComposition(type);
-        copyFromRawData(getRawData(), source, recipe);
-    }
 }
 
 bool PointCloudBase::isOrganized()
@@ -154,7 +126,7 @@ void PointCloudBase::copyFromRawData(const char* dst, const char* source, std::v
 
     size_t sizeDst = pointType2Size(getPointType());
     const size_t numPts  = height()*width();
-    for (uint i=0; i < numPts; i++)
+    for (size_t i=0; i < numPts; i++)
     {
         for (size_t j = 0; j < recipe.size(); j++)
         {

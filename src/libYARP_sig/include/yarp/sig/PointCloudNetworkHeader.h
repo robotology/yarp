@@ -29,15 +29,16 @@ namespace yarp {
 class yarp::sig::PointCloudNetworkHeader
 {
 public:
-    PointCloudNetworkHeader() :    width(10),
-                                    height(1),
-                                    pointType(0),
-                                    isDense(true),
-//                                     pose(4, 0.0f),
-//                                     orientation(4, 0.0f),
-                                    hasCustomData(false),
-                                    pad{0,0}
-                                    { YARP_UNUSED(pad); }
+    PointCloudNetworkHeader() : width(0),
+                                height(0),
+                                pointType(0),
+                                isDense(true),
+//                                pose(4, 0.0f),
+//                                orientation(4, 0.0f),
+                                hasCustomData(false),
+                                pad{0,0}
+    { YARP_UNUSED(pad); }
+
     // PCL like fields
     yarp::os::NetInt32  width;
     yarp::os::NetInt32  height;

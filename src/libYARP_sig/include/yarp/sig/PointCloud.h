@@ -21,7 +21,6 @@
 
 namespace yarp {
     namespace sig {
-        class FlexPointCloud;
         template <class T> class PointCloud;
         class PointCloudBase;
     }
@@ -38,12 +37,9 @@ namespace yarp {
      * some methods and hides some internal implementation to the user.
      * It can't be instantiated, only inherited.
      */
-    class YARP_sig_API PointCloudBase :public yarp::os::Portable
+    class YARP_sig_API PointCloudBase : public yarp::os::Portable
     {
     public:
-        virtual void resize(size_t width, size_t height);
-
-        virtual void resize(size_t width);
 
         virtual size_t wireSizeBytes() const = 0;
 
@@ -80,29 +76,10 @@ namespace yarp {
         virtual yarp::os::Type getType() override;
 
         /**
-         * @brief Copy the content of an external PointCloud.
-         * @param source, pointer to the source data.
-         * @param type, enum representing the type of the source cloud.
-         * @param width, width of the source cloud.
-         * @param height, height of the source cloud.
-         * @param isDense
-         */
-        virtual void fromExternalPC(const char* source, int type, size_t width, size_t height, bool isDense = true);
-
-        /**
          * @brief
          * @return true if the point cloud is organized in an image-like structure
          */
         virtual bool isOrganized();
-
-        /**
-         * @brief Clear data.
-         */
-        virtual inline void clear()
-        {
-            header.width = 0;
-            header.height = 0;
-        }
 
         /**
          * @brief isDense
@@ -133,7 +110,7 @@ namespace yarp {
     /**
      * @brief The PointCloud class.
      */
-    class PointCloud: public PointCloudBase
+    class PointCloud : public PointCloudBase
     {
         static_assert(std::is_same<T, XY_DATA>::value ||
                       std::is_same<T, XYZ_DATA>::value ||
@@ -173,7 +150,7 @@ namespace yarp {
          * @param width.
          * @param height.
          */
-        virtual void resize(size_t width, size_t height) override
+        virtual void resize(size_t width, size_t height)
         {
             header.width = width;
             header.height = height;
@@ -185,7 +162,7 @@ namespace yarp {
          * @param width.
          * Calling this function the cloud will become NOT organizedS
          */
-        virtual void resize(size_t width) override
+        virtual void resize(size_t width)
         {
             header.width = width;
             header.height = 1;
@@ -270,12 +247,13 @@ namespace yarp {
         }
 
 
-        /** \brief Concatenate a point cloud to the current cloud.
-          * \param rhs the cloud to add to the current cloud
-          * \return the new cloud as a concatenation of the current cloud and the new given cloud
-          */
+        /**
+         * \brief Concatenate a point cloud to the current cloud.
+         *  \param rhs the cloud to add to the current cloud
+         * \return the new cloud as a concatenation of the current cloud and the new given cloud
+         */
         inline PointCloud<T>&
-        operator += (const PointCloud<T>& rhs)
+        operator+=(const PointCloud<T>& rhs)
         {
             //TODO: take the newest timestamp
 
@@ -301,10 +279,11 @@ namespace yarp {
             return (*this);
         }
 
-        /** \brief Concatenate a point cloud to another cloud.
-          * \param rhs the cloud to add to the current cloud
-          * \return the new cloud as a concatenation of the current cloud and the new given cloud
-          */
+        /**
+         * \brief Concatenate a point cloud to another cloud.
+         * \param rhs the cloud to add to the current cloud
+         * \return the new cloud as a concatenation of the current cloud and the new given cloud
+         */
         inline const PointCloud<T>
         operator + (const PointCloud<T>& rhs)
         {
@@ -318,11 +297,38 @@ namespace yarp {
              header.height = 1;
            }
 
-        virtual inline void clear() override
+        /**
+         * @brief Clear the data.
+         */
+        virtual inline void clear()
         {
             data.clear();
             header.width = 0;
             header.height = 0;
+        }
+
+        /**
+         * @brief Copy the content of an external PointCloud.
+         * @param source, pointer to the source data.
+         * @param type, enum representing the type of the source cloud.
+         * @param width, width of the source cloud.
+         * @param height, height of the source cloud.
+         * @param isDense
+         */
+        virtual void fromExternalPC(const char* source, int type, size_t width, size_t height, bool isDense = true)
+        {
+            yAssert(source);
+            header.isDense = isDense;
+            resize(width, height);
+            if (this->getPointType() == type)
+            {
+                memcpy(const_cast<char*> (getRawData()), source, dataSizeBytes());
+            }
+            else
+            {
+                std::vector<int> recipe = getComposition(type);
+                copyFromRawData(getRawData(), source, recipe);
+            }
         }
 
 
@@ -362,7 +368,7 @@ namespace yarp {
             header.width = _header.width;
             header.isDense = _header.isDense;
 
-            if (header.pointType == _header.pointType) //Working
+            if (header.pointType == _header.pointType)
             {
                 return data.read(connection);
             }
@@ -378,7 +384,7 @@ namespace yarp {
             std::vector<int> recipe = getComposition(_header.pointType);
 
             yarp::os::ManagedBytes dummy;
-            for (uint i=0; i<data.size(); i++)
+            for (size_t i=0; i<data.size(); i++)
             {
                 for (size_t j = 0; j<recipe.size(); j++)
                 {
@@ -499,8 +505,6 @@ namespace yarp {
         yarp::sig::VectorOf<T> data;
         T nulldata;
 
-        // TODO to be tested with getRawData
-
         void setPointType()
         {
             if (std::is_same<T, XY_DATA>::value)
@@ -561,25 +565,6 @@ namespace yarp {
         }
 
     };
-
-
-    // Maybe do a Flex type in the same way as Flex Image / ImageOf is doing?
-    // template <class T>
-    // class yarp::sig::Flex: public yarp::sig::PointCloud
-    // {
-    // public:
-    //
-    //     virtual FlexPointCloud()  {};
-    //     // Portable interface
-    // //     virtual bool read(yarp::os::ConnectionReader& reader)   { return data.read(reader);};
-    // //     virtual bool write(yarp::os::ConnectionWriter& writer)  { return data.write(writer);};
-    // //     virtual yarp::os::Type getType()                        { return yarp::os::Type::byName("yarp/pointCloud"); };
-    //     virtual yarp::os::ConstString toString()                { yTrace(); return yarp::os::ConstString("ciaoooo");};
-    //
-    //
-    // private:
-    //  allocate pointCloudData dynamically;
-    // };
 
     } // sig
 
