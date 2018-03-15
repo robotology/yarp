@@ -14,6 +14,7 @@
 #include <yarp/os/RateThread.h>
 #include <yarp/os/Time.h>
 #include <yarp/os/Thread.h>
+#include <yarp/os/Network.h>
 
 using namespace yarp::os;
 
@@ -78,6 +79,7 @@ public:
 };
 
 int main() {
+    yarp::os::Network network;
     Thread1 t1(500);  //run every 500ms
 	Thread2 t2(1000); //run every 1s
 	printf("thread1 rate is %d[ms]\n", 500);

@@ -14,7 +14,7 @@
 #include <yarp/os/RateThread.h>
 #include <yarp/os/Time.h>
 #include <yarp/os/Thread.h>
-
+#include <yarp/os/Network.h>
 #include <yarp/sig/Matrix.h>
 #include <stdio.h>
 
@@ -72,6 +72,7 @@ public:
 };
 
 int main() {
+    yarp::os::Network network;
     Thread1 t1(THREAD_PERIOD);
     Time::turboBoost();
     t1.start(); 
