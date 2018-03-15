@@ -10,6 +10,8 @@
 #include <yarp/os/impl/PlatformTime.h>
 
 #include <yarp/os/Time.h>
+#include <chrono>
+#include <thread>
 
 //time helper functions
 void yarp::os::impl::getTime(YARP_timeval& now) {
@@ -34,17 +36,7 @@ void yarp::os::impl::getTime(YARP_timeval& now) {
 
 void yarp::os::impl::sleepThread(YARP_timeval& sleep_period) {
     if (Time::isSystemClock()) {
-#ifdef YARP_HAS_ACE
-        if (sleep_period.usec() < 0 || sleep_period.sec() < 0)
-            sleep_period.set(0, 0);
-        ACE_OS::sleep(sleep_period);
-#else
-        if (sleep_period.tv_usec < 0 || sleep_period.tv_sec < 0) {
-            sleep_period.tv_usec = 0;
-            sleep_period.tv_sec = 0;
-        }
-        usleep(sleep_period.tv_sec * 1000000 + sleep_period.tv_usec );
-#endif
+        std::this_thread::sleep_for(std::chrono::duration<double>(toDouble(sleep_period)));
     } else {
         Time::delay(toDouble(sleep_period));
     }
