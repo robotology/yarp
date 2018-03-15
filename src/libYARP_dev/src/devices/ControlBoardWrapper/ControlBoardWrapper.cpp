@@ -14,6 +14,7 @@
 #include <iostream>
 #include <yarp/os/Log.h>
 #include <yarp/os/LogStream.h>
+#include <sstream>
 
 #include <cstring>         // for memset function
 
@@ -801,6 +802,7 @@ bool ControlBoardWrapper::attachAll(const PolyDriverList &polylist)
     {
         if (!device.subdevices[k].isAttached())
         {
+            yError("ControlBoardWrapper: device %s was not found in the list passed to attachAll", device.subdevices[k].id.c_str());
             ready=false;
         }
     }
@@ -808,6 +810,12 @@ bool ControlBoardWrapper::attachAll(const PolyDriverList &polylist)
     if (!ready)
     {
         yError("ControlBoardWrapper: AttachAll failed, some subdevice was not found or its attach failed\n");
+        stringstream ss;
+        for(int p=0;p<polylist.size();p++)
+        {
+            ss << polylist[p]->key.c_str() << " ";
+        }
+        yError("ControlBoardWrapper: List of devices keys passed to attachAll: %s\n", ss.str().c_str());
         return false;
     }
 
