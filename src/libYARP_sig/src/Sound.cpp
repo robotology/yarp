@@ -12,6 +12,7 @@
 #include <yarp/os/Bottle.h>
 #include <yarp/os/PortablePair.h>
 #include <yarp/os/Log.h>
+#include <yarp/os/Time.h>
 #include <yarp/os/Value.h>
 
 #include <cstring>
@@ -48,9 +49,6 @@ Sound& Sound::operator += (const Sound& alt) {
         return *this;
     }
 
-    int offset = this->getRawDataSize();
-    int size   = alt.getRawDataSize();
-
     Sound orig= *this;
     this->resize(this->samples+alt.samples,channels);
 
@@ -58,12 +56,20 @@ Sound& Sound::operator += (const Sound& alt) {
     unsigned char* p2    = alt.getRawData();
     unsigned char* pout  = this->getRawData();
 
-    for (int i=0; i<offset; i++)
-        pout[i]=p1[i];
+    for (int ch=0; ch<channels; ch++)
+    {
+        int out1 = ch* this->getBytesPerSample() * this->samples;
+        int out2 = ch* this->getBytesPerSample() * this->samples + this->getBytesPerSample() *  orig.samples;
 
-    int j=0;
-    for (int i=offset; i<offset+size; i++)
-        pout[i]=p2[j++];
+        int ori1 = ch * orig.getBytesPerSample() * orig.samples;
+        int s1   = orig.getBytesPerSample() * orig.samples;
+
+        int alt1 = ch * orig.getBytesPerSample() *  alt.samples;
+        uint s2  = alt.getBytesPerSample() *  alt.samples;
+
+        memcpy((void *) &pout[out1], (void *) (p1+ori1), s1);
+        memcpy((void *) &pout[out2], (void *) (p2+alt1), s2);
+    }
 
     this->synchronize();
     return *this;
