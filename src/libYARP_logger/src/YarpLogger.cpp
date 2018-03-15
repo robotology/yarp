@@ -395,6 +395,12 @@ bool LoggerEngine::start_logging()
         return true;
     }
 
+    if (yarp::os::Network::exists(log_updater->getPortName().c_str()))
+    {
+        fprintf(stderr, "Unable to start logger: port %s is unavailable because another instance of the logger is already running (or address conflict)\n", log_updater->getPortName().c_str());
+        return false;
+    }
+
     if (log_updater->logger_port.open(log_updater->getPortName().c_str()))
     {
         fprintf(stdout,"Logger successfully started, listening on port %s\n", log_updater->getPortName().c_str());
