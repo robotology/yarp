@@ -107,7 +107,6 @@ set(YARP_dev_SRCS src/ControlBoardInterfacesImpl.cpp
                   src/CurrentControlImpl.cpp
                   src/DeviceDriver.cpp
                   src/Drivers.cpp
-                  src/Dummy.cpp
                   src/FrameGrabberControl2Impl.cpp
                   src/IAxisInfoImpl.cpp
                   src/IBattery.cpp
@@ -132,14 +131,12 @@ set(YARP_dev_SRCS src/ControlBoardInterfacesImpl.cpp
                   src/PopulateDrivers.cpp
                   src/PWMControlImpl.cpp
                   src/RemoteCalibratorImpl.cpp
-                  src/RemoteFrameGrabberDC1394.cpp
                   src/TorqueControlImpl.cpp)
 
 if(CREATE_LIB_MATH)
-  list(APPEND YARP_dev_SRCS                   src/IFrameTransform.cpp
-                  src/IMap2D.cpp
-
-  src/MapGrid2D.cpp)
+  list(APPEND YARP_dev_SRCS src/IFrameTransform.cpp
+                            src/IMap2D.cpp
+                            src/MapGrid2D.cpp)
 endif()
 
 set(YARP_devices_SRCS src/devices/AnalogSensorClient/AnalogSensorClient.cpp

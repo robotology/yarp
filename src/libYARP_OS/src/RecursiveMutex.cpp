@@ -13,30 +13,35 @@
 using namespace yarp::os::impl;
 using namespace yarp::os;
 
-RecursiveMutex::RecursiveMutex() {
+RecursiveMutex::RecursiveMutex()
+{
     implementation = new RecursiveLockImpl();
-    yAssert(implementation!=nullptr);
+    yAssert(implementation != nullptr);
 }
 
-RecursiveMutex::~RecursiveMutex() {
-    RecursiveLockImpl *lock = static_cast<RecursiveLockImpl*>(implementation);
+RecursiveMutex::~RecursiveMutex()
+{
+    RecursiveLockImpl* lock = static_cast<RecursiveLockImpl*>(implementation);
     if (lock) {
         delete lock;
         implementation = nullptr;
     }
 }
 
-void RecursiveMutex::lock() {
-    RecursiveLockImpl *lock = static_cast<RecursiveLockImpl*>(implementation);
+void RecursiveMutex::lock()
+{
+    RecursiveLockImpl* lock = static_cast<RecursiveLockImpl*>(implementation);
     lock->lock();
 }
 
-bool RecursiveMutex::tryLock() {
-    RecursiveLockImpl *lock = static_cast<RecursiveLockImpl*>(implementation);
+bool RecursiveMutex::tryLock()
+{
+    RecursiveLockImpl* lock = static_cast<RecursiveLockImpl*>(implementation);
     return lock->tryLock();
 }
 
-void RecursiveMutex::unlock() {
-    RecursiveLockImpl *lock = static_cast<RecursiveLockImpl*>(implementation);
+void RecursiveMutex::unlock()
+{
+    RecursiveLockImpl* lock = static_cast<RecursiveLockImpl*>(implementation);
     lock->unlock();
 }

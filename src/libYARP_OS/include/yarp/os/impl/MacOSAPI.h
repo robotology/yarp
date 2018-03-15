@@ -6,11 +6,11 @@
  * BSD-3-Clause license. See the accompanying LICENSE file for details.
  */
 
-#ifndef YARP_OS_MACOSAPI_H
-#define YARP_OS_MACOSAPI_H
+#ifndef YARP_OS_IMPL_MACOSAPI_H
+#define YARP_OS_IMPL_MACOSAPI_H
 
 void* disableAppNap();
 void restoreAppNap(void *activityInfo);
 
 
-#endif /* end of include guard: YARP_OS_MACOSAPI_H */
+#endif // YARP_OS_IMPL_MACOSAPI_H
