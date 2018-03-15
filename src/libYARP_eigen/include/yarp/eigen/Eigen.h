@@ -8,6 +8,8 @@
 #define YARP_EIGEN_EIGEN_H
 
 #include <Eigen/Core>
+#include <yarp/sig/Matrix.h>
+#include <yarp/sig/Vector.h>
 
 namespace yarp
 {
