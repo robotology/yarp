@@ -59,13 +59,13 @@ Sound& Sound::operator += (const Sound& alt) {
     for (int ch=0; ch<channels; ch++)
     {
         int out1 = ch* this->getBytesPerSample() * this->samples;
-        int out2 = ch* this->getBytesPerSample() * this->samples + this->getBytesPerSample() *  orig.samples;
+        int out2 = ch* this->getBytesPerSample() * this->samples + this->getBytesPerSample() * orig.samples;
 
         int ori1 = ch * orig.getBytesPerSample() * orig.samples;
         int s1   = orig.getBytesPerSample() * orig.samples;
 
-        int alt1 = ch * orig.getBytesPerSample() *  alt.samples;
-        uint s2  = alt.getBytesPerSample() *  alt.samples;
+        int alt1 = ch * orig.getBytesPerSample() * alt.samples;
+        unsigned int s2 = alt.getBytesPerSample() * alt.samples;
 
         memcpy((void *) &pout[out1], (void *) (p1+ori1), s1);
         memcpy((void *) &pout[out2], (void *) (p2+alt1), s2);
