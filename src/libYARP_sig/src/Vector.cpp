@@ -24,7 +24,7 @@
 #include <vector>
 #include <cstdio>
 #include <cstdlib>
-
+#include <map>
 using namespace yarp::sig;
 using namespace yarp::os;
 
@@ -40,6 +40,14 @@ public:
     VectorPortContentHeader() : listTag(0), listLen(0) {}
 };
 YARP_END_PACK
+
+const std::map<int, std::string> tag2FormatStr = {
+    {BOTTLE_TAG_INT, "d"},
+    {BOTTLE_TAG_INT64, "ld"},
+    {BOTTLE_TAG_VOCAB, "c"},
+    {BOTTLE_TAG_STRING, "s"},
+    {BOTTLE_TAG_DOUBLE, "lf"},
+};
 
 bool VectorBase::read(yarp::os::ConnectionReader& connection) {
     // auto-convert text mode interaction
@@ -83,6 +91,19 @@ bool VectorBase::write(yarp::os::ConnectionWriter& connection) const {
     connection.convertTextMode();
 
     return !connection.isError();
+}
+
+std::string VectorBase::getFormatStr(int tag) const
+{
+    std::string ret = "";
+    auto it = tag2FormatStr.find(tag);
+
+    if (it != tag2FormatStr.end())
+    {
+        ret = it->second;
+    }
+
+    return ret;
 }
 
 

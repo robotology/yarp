@@ -10,7 +10,7 @@
 #ifndef YARP_SIG_VECTOR_H
 #define YARP_SIG_VECTOR_H
 
-//#include <cstdlib> //defines size_t
+#include <cstring>
 #include <cstddef> //defines size_t
 #include <yarp/os/Portable.h>
 #include <string>
@@ -61,6 +61,10 @@ public:
     * return true iff a vector was written correctly
     */
     virtual bool write(yarp::os::ConnectionWriter& connection) const override;
+
+protected:
+    virtual std::string getFormatStr(int tag) const;
+
 };
 
 /*
@@ -131,14 +135,50 @@ public:
         _updatePointers();
     }
 
+    /**
+    * Build a vector and initialize it with def.
+    * @param s the size
+    * @param def a default value used to fill the vector
+    */
+    VectorOf(size_t s, const T&def)
+    {
+        this->resize(s,def);
+    }
+
+    /**
+    * Builds a vector and initialize it with
+    * values from 'p'. Copies memory.
+    * @param s the size of the data to be copied
+    * @param T* the pointer to the data
+    */
+    VectorOf(size_t s, const T *p)
+    {
+        this->resize(s);
+
+        memcpy(this->data(), p, sizeof(T)*s);
+    }
+
     VectorOf(const VectorOf &r) : VectorBase() {
         bytes = r.bytes;
         _updatePointers();
     }
 
+    /**
+    * Copy operator;
+    */
     const VectorOf<T> &operator=(const VectorOf<T> &r) {
-        bytes = r.bytes;
-        _updatePointers();
+
+        if (this == &r) return *this;
+
+        if(this->size() == r.size())
+        {
+            memcpy(this->data(), r.data(), sizeof(T)*r.size());
+        }
+        else
+        {
+            bytes = r.bytes;
+            _updatePointers();
+        }
         return *this;
     }
 
@@ -175,6 +215,25 @@ public:
         return first;
     }
 
+    /**
+    * Return a pointer to the first element of the vector.
+    * @return a pointer to double (or nullptr if the vector is of zero length)
+    */
+    inline T *data()
+    { return first; }
+
+    /**
+    * Return a pointer to the first element of the vector,
+    * const version
+    * @return a (const) pointer to double (or nullptr if the vector is of zero length)
+    */
+    inline const T *data() const
+    { return first;}
+
+    /**
+    * Resize the vector.
+    * @param s the new size
+    */
     virtual void resize(size_t size) override
     {
         size_t prev_len = len;
@@ -186,6 +245,11 @@ public:
         }
     }
 
+    /**
+    * Resize the vector and initilize the element to a default value.
+    * @param s the new size
+    * @param def the default value
+    */
     void resize(size_t size, const T&def)
     {
         bytes.allocateOnNeed(size*sizeof(T),size*sizeof(T));
@@ -196,6 +260,9 @@ public:
         }
     }
 
+    /**
+    * Push a new element in the vector: size is changed
+    */
     inline void push_back (const T &elem)
     {
         bytes.allocateOnNeed(bytes.used()+sizeof(T),bytes.length()*2+sizeof(T));
@@ -204,6 +271,9 @@ public:
         first[len-1] = elem;
     }
 
+    /**
+    * Pop an element out of the vector: size is changed
+    */
     inline void pop_back (void)
     {
         if (bytes.used()>sizeof(T)) {
@@ -257,11 +327,147 @@ public:
         return len;
     }
 
+    /**
+    * Get the length of the vector.
+    * @return the length of the vector.
+    */
+    inline size_t length() const
+    { return this->size();}
+
+    /**
+    * Zero the elements of the vector.
+    */
+    void zero()
+    {
+        memset(this->data(), 0, sizeof(T)*this->size());
+    }
+
+    /**
+    * Creates a string object containing a text representation of the object. Useful for printing.
+    * To get a nice format the optional parameters precision and width may be used (same meaning as in printf and cout).
+    * @param precision the number of digits to be printed after the decimal point.
+    * @param width minimum number of characters to be printed. If the value to be printed is shorter than this number, the result is padded with blank spaces. The value is never truncated.
+    * If width is specified the inter-value separator is a blank space, otherwise it is a tab.
+    * Warning: the string format might change in the future. This method
+    * is here to ease debugging.
+    */
+    yarp::os::ConstString toString(int precision=-1, int width=-1) const
+    {
+        yarp::os::ConstString ret = "";
+        size_t c = 0;
+        const size_t buffSize = 256;
+        char tmp[buffSize];
+        std::string formatStr;
+        if (getBottleTag() == BOTTLE_TAG_DOUBLE) {
+            if (width<0) {
+                formatStr = "% .*lf\t";
+                for (c=0;c<length();c++) {
+                    snprintf(tmp, buffSize, formatStr.c_str(), precision, (*this)[c]);
+                    ret+=tmp;
+                }
+            }
+            else{
+                formatStr = "% *.*lf ";
+                for (c=0;c<length();c++){
+                    snprintf(tmp, buffSize, formatStr.c_str(), width, precision, (*this)[c]);
+                    ret+=tmp;
+                }
+            }
+        }
+        else {
+            formatStr = "%" + getFormatStr(getBottleTag()) + " ";
+            for (c=0;c<length();c++) {
+                snprintf(tmp, buffSize, formatStr.c_str(), (*this)[c]);
+                ret+=tmp;
+            }
+        }
+
+        if (length()>=1)
+            return ret.substr(0, ret.length()-1);
+        return ret;
+    }
+
+    /**
+    * Creates and returns a new vector, being the portion of the original
+    * vector defined by the first and last indexes of the items to be included
+    * in the subvector. The indexes are checked: if wrong, a null vector is
+    * returned.
+    */
+    VectorOf<T> subVector(unsigned int first, unsigned int last) const
+    {
+        VectorOf<T> ret;
+        if ((first<=last)&&((int)last<(int)this->size()))
+        {
+            ret.resize(last-first+1);
+            for (unsigned int k=first; k<=last; k++)
+                ret[k-first]=(*this)[k];
+        }
+        return ret;
+    }
+
+    /**
+     * Set a portion of this vector with the values of the specified vector.
+     * If the specified vector v is to big the method does not resize the vector,
+     * but return false.
+     *
+     * @param position index of the first value to set
+     * @param v vector containing the values to set
+     * @return true if the operation succeeded, false otherwise
+     */
+    bool setSubvector(int position, const VectorOf<T> &v)
+    {
+        if (position+v.size() > this->size())
+            return false;
+        for (size_t i=0;i<v.size();i++)
+            (*this)[position+i] = v(i);
+        return true;
+    }
+
+    /**
+    * Set all elements of the vector to a scalar.
+    */
+    const VectorOf<T> &operator=(T v)
+    {
+        T *tmp = this->data();
+
+        for(size_t k=0; k<length(); k++)
+            tmp[k]=v;
+
+        return *this;
+    }
+
+    /**
+    * True iff all elements of 'a' match all element of 'b'.
+    */
+    bool operator==(const VectorOf<T> &r) const
+    {
+        //check dimensions first
+        size_t c=size();
+        if (c!=r.size())
+            return false;
+
+        const T *tmp1=data();
+        const T *tmp2=r.data();
+
+        while(c--)
+        {
+            if (*tmp1++!=*tmp2++)
+                return false;
+        }
+
+        return true;
+
+    }
+
     void clear() {
         bytes.clear();
         bytes.setUsed(0);
         len = 0;
         first = nullptr;
+    }
+
+    virtual yarp::os::Type getType() override {
+        return yarp::os::Type::byName("yarp/vector");
     }
 };
 
