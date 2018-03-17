@@ -10,7 +10,7 @@
 // The main body of yarprun is now part of the libYARP_run library, in:
 //   src/libYARP_run/src/Run.cpp
 
-#include <yarp/os/Run.h>
+#include <yarp/run/Run.h>
 #include <yarp/os/Network.h>
 #include <yarp/os/LogStream.h>
 #include <cstdio>
