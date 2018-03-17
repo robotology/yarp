@@ -435,6 +435,7 @@ bool ControlBoardWrapper::open(Searchable& config)
     if(prop.check("subdevice"))
     {
         ownDevices=true;
+        prop.setMonitor(config.getMonitor());
         if(! openAndAttachSubDevice(prop))
         {
             yError("ControlBoardWrapper: error while opening subdevice\n");
