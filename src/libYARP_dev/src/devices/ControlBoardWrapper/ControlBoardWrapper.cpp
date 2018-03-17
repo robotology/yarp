@@ -628,9 +628,10 @@ bool ControlBoardWrapper::openAndAttachSubDevice(Property& prop)
     subDeviceOwned = new PolyDriver;
     p.fromString(prop.toString().c_str());
 
-    p.setMonitor(prop.getMonitor(), "subdevice"); // pass on any monitoring
+    std::string subdevice = prop.find("subdevice").asString();
+    p.setMonitor(prop.getMonitor(), subdevice.c_str()); // pass on any monitoring
     p.unput("device");
-    p.put("device",prop.find("subdevice").asString());  // subdevice was already checked before
+    p.put("device", subdevice);  // subdevice was already checked before
 
     // if error occour during open, quit here.
     yDebug("opening controlBoardWrapper2 subdevice\n");
@@ -672,7 +673,7 @@ bool ControlBoardWrapper::openAndAttachSubDevice(Property& prop)
     SubDevice *tmpDevice=device.getSubdevice(0);
     tmpDevice->setVerbose(_verb);
 
-    std::string subDevName ((partName + "_" + prop.find("subdevice").asString().c_str()));
+    std::string subDevName ((partName + "_" + subdevice.c_str()));
     if (!tmpDevice->configure(base, top, controlledJoints, subDevName, this) )
     {
         yError() <<"configure of subdevice ret false";
