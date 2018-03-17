@@ -12,7 +12,8 @@ include_directories(SYSTEM ${ACE_INCLUDE_DIRS})
 
 add_executable(yarprun yarprun.cpp)
 target_link_libraries(yarprun YARP::YARP_OS
-                              YARP::YARP_init)
+                              YARP::YARP_init
+                              YARP::YARP_run)
 
 install(TARGETS yarprun COMPONENT utilities DESTINATION ${CMAKE_INSTALL_BINDIR})
 set_property(TARGET yarprun PROPERTY FOLDER "Command Line Tools")

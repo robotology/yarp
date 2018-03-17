@@ -94,7 +94,6 @@ set(YARP_OS_HDRS include/yarp/os/AbstractCarrier.h
                  include/yarp/os/Route.h
                  include/yarp/os/RpcClient.h
                  include/yarp/os/RpcServer.h
-                 include/yarp/os/Run.h
                  include/yarp/os/Runnable.h
                  include/yarp/os/Searchable.h
                  include/yarp/os/Semaphore.h
@@ -177,11 +176,8 @@ set(YARP_OS_IMPL_HDRS include/yarp/os/impl/ACELockImpl.h
                       include/yarp/os/impl/PlatformLimits.h
                       include/yarp/os/impl/PlatformNetdb.h
                       include/yarp/os/impl/PlatformSignal.h
-                      include/yarp/os/impl/PlatformSize.h
                       include/yarp/os/impl/PlatformStdio.h
                       include/yarp/os/impl/PlatformStdlib.h
-                      include/yarp/os/impl/PlatformSysPrctl.h
-                      include/yarp/os/impl/PlatformSysStat.h
                       include/yarp/os/impl/PlatformSysWait.h
                       include/yarp/os/impl/PlatformThread.h
                       include/yarp/os/impl/PlatformTime.h
@@ -198,10 +194,7 @@ set(YARP_OS_IMPL_HDRS include/yarp/os/impl/ACELockImpl.h
                       include/yarp/os/impl/POSIXLockImpl.h
                       include/yarp/os/impl/POSIXSemaphoreImpl.h
                       include/yarp/os/impl/Protocol.h
-                      include/yarp/os/impl/RunCheckpoints.h
                       include/yarp/os/impl/Runnable.h
-                      include/yarp/os/impl/RunProcManager.h
-                      include/yarp/os/impl/RunReadWrite.h
                       include/yarp/os/impl/SemaphoreImpl.h
                       include/yarp/os/impl/SocketTwoWayStream.h
                       include/yarp/os/impl/SplitString.h
@@ -311,11 +304,7 @@ set(YARP_OS_SRCS src/AbstractCarrier.cpp
                  src/Route.cpp
                  src/RpcClient.cpp
                  src/RpcServer.cpp
-                 src/RunCheckpoints.cpp
-                 src/Run.cpp
                  src/Runnable.cpp
-                 src/RunProcManager.cpp
-                 src/RunReadWrite.cpp
                  src/Searchable.cpp
                  src/Semaphore.cpp
                  src/SharedLibrary.cpp

@@ -28,13 +28,14 @@
 #include <cstdlib>
 #include <cstdio>
 
-#ifdef YARP_HAS_ACE
+#if defined(YARP_HAS_ACE)
 # include <ace/INET_Addr.h>
 # include <ace/Sock_Connect.h>
-#else
+#elif defined(__unix__)
 # include <cstring>
 # include <arpa/inet.h>
 # include <sys/socket.h>
+# include <unistd.h>
 #endif
 
 using namespace yarp::os::impl;
@@ -331,7 +332,7 @@ ConstString NameConfig::getHostName(bool prefer_loopback, const ConstString& see
 bool NameConfig::isLocalName(const ConstString& name) {
     bool result = false;
 
-#ifdef YARP_HAS_ACE
+#if defined(YARP_HAS_ACE)
     ACE_INET_Addr *ips = nullptr;
     size_t count = 0;
     if (ACE::get_ip_interfaces(count, ips)>=0) {
@@ -344,7 +345,7 @@ bool NameConfig::isLocalName(const ConstString& name) {
         }
         delete[] ips;
     }
-#else
+#elif defined(__unix__)
     /**
      * If this does not work properly, use a more sophisticated way
      * instead of just gethostname.

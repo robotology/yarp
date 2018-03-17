@@ -7,8 +7,8 @@
  * BSD-3-Clause license. See the accompanying LICENSE file for details.
  */
 
-// The main body of yarprun is now part of the libYARP_OS library, in:
-//   src/libYARP_OS/src/Run.cpp
+// The main body of yarprun is now part of the libYARP_run library, in:
+//   src/libYARP_run/src/Run.cpp
 
 #include <yarp/os/Run.h>
 #include <yarp/os/Network.h>
@@ -26,6 +26,5 @@ int main(int argc, char *argv[])
         return 1;
     }
 
-    int ret=yarp::os::Run::main(argc,argv);
-    return (ret!=0?1:0);
+    return yarp::run::Run::main(argc,argv);
 }

@@ -12,7 +12,8 @@ add_executable(yarp ${yarp_SRCS})
 target_include_directories(yarp SYSTEM PRIVATE ${ACE_INCLUDE_DIRS})
 target_link_libraries(yarp YARP::YARP_OS
                            YARP::YARP_init
-                           YARP::YARP_serversql)
+                           YARP::YARP_serversql
+                           YARP::YARP_run)
 
 install(TARGETS yarp
         COMPONENT utilities

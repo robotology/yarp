@@ -17,7 +17,6 @@
 
 #include <yarp/os/Election.h>
 #include <yarp/os/impl/SplitString.h>
-#include <yarp/os/impl/PlatformSize.h>
 
 #include <cstdio>
 

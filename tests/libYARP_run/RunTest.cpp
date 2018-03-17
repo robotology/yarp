@@ -7,9 +7,10 @@
  * BSD-3-Clause license. See the accompanying LICENSE file for details.
  */
 
+#include <yarp/run/Run.h>
+
 #include <yarp/os/Network.h>
 #include <yarp/os/Time.h>
-#include <yarp/os/Run.h>
 #include <yarp/os/Thread.h>
 
 #include <string>
@@ -65,7 +66,7 @@ public:
 
     void run() override
     {
-        yarp::os::Run::main(_argc, _argv);
+        yarp::run::Run::main(_argc, _argv);
     }
 };
 
@@ -96,11 +97,11 @@ public:
 
 
         ConstString moduleTag="test_module";
-        yarp::os::Run::start("/run", par, moduleTag);
+        yarp::run::Run::start("/run", par, moduleTag);
 
         Time::delay(1);
 
-        bool isRunning=yarp::os::Run::isRunning("/run", moduleTag);
+        bool isRunning=yarp::run::Run::isRunning("/run", moduleTag);
         checkTrue(isRunning,"isRunning");
 
     //    terminate("/prova");

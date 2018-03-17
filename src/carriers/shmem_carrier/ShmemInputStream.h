@@ -29,7 +29,6 @@
 #include <yarp/os/impl/Logger.h>
 
 #include <yarp/os/InputStream.h>
-#include <yarp/os/impl/PlatformSize.h>
 
 #include "ShmemTypes.h"
 

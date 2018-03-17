@@ -17,7 +17,6 @@
 #include <yarp/os/NetType.h>
 #include <yarp/os/impl/PlatformSysStat.h>
 #include <yarp/os/impl/PlatformSysWait.h>
-#include <yarp/os/impl/PlatformUnistd.h>
 
 #include <cstdlib>
 

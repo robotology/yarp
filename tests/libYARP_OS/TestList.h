@@ -55,7 +55,6 @@ extern yarp::os::impl::UnitTest& getResourceFinderTest();
 extern yarp::os::impl::UnitTest& getDgramTwoWayStreamTest();
 extern yarp::os::impl::UnitTest& getSemaphoreTest();
 extern yarp::os::impl::UnitTest& getEventTest();
-extern yarp::os::impl::UnitTest& getRunTest();
 extern yarp::os::impl::UnitTest& getNodeTest();
 extern yarp::os::impl::UnitTest& getPublisherTest();
 extern yarp::os::impl::UnitTest& getLogTest();
@@ -108,13 +107,7 @@ public:
         root.add(getLogStreamTest());
         root.add(getMessageStackTest());
         root.add(getUnitTestTest());
-
         root.add(getSystemInfoTest());
-
-#ifdef BROKEN_TEST
-        root.add(getRunTest());
-#endif
-
     }
 };
 

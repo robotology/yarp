@@ -137,7 +137,7 @@ bool fileCopy(yarp::os::ConstString srcFileName, yarp::os::ConstString destFileN
 
 bool fileRemove(ConstString fileName)
 {
-    return !unlink(fileName.c_str());
+    return !yarp::os::impl::unlink(fileName.c_str());
 }
 
 int recursiveCopy(ConstString srcDirName, ConstString destDirName, bool force, bool verbose)

@@ -21,11 +21,11 @@
 #  include <cstdlib>
 #  include <fcntl.h>
 #  include <yarp/os/impl/PlatformSysWait.h>
-#  include <yarp/os/impl/PlatformUnistd.h>
+#  include <yarp/run/impl/PlatformUnistd.h>
 #endif
 
 #include <cstdio>
-#include <yarp/os/Run.h>
+#include <yarp/run/Run.h>
 #include <yarp/os/Bottle.h>
 #include <yarp/os/ConstString.h>
 #include <yarp/os/impl/PlatformSignal.h>
@@ -48,7 +48,7 @@ class ZombieHunterThread : public yarp::os::Thread
 public:
     ZombieHunterThread()
     {
-        int warn_suppress = yarp::os::impl::pipe(pipe_sync);
+        int warn_suppress = yarp::run::impl::pipe(pipe_sync);
         YARP_UNUSED(warn_suppress);
     }
     virtual ~ZombieHunterThread(){}
@@ -86,7 +86,7 @@ public:
                 if (zombie > 0)
                 {
                     //Remove child information from the process info table
-                    yarp::os::Run::CleanZombie(zombie);
+                    yarp::run::Run::CleanZombie(zombie);
                 }
                 else
                 {

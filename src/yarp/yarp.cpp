@@ -9,12 +9,14 @@
 
 #include <yarp/os/Network.h>
 #include <yarp/serversql/yarpserversql.h>
+#include <yarp/run/Run.h>
 
 
 using namespace yarp::os;
 
 
 int main(int argc, char *argv[]) {
+
     // intercept "yarp server" if needed
     if (argc>=2) {
         if (ConstString(argv[1])=="server") {
@@ -22,8 +24,16 @@ int main(int argc, char *argv[]) {
         }
     }
 
-    // call the yarp standard companion
     Network yarp(yarp::os::YARP_CLOCK_SYSTEM);
+
+    // intercept "yarp run" if needed
+    if (argc>=2) {
+        if (ConstString(argv[1])=="run") {
+            return yarp::run::Run::main(argc,argv);
+        }
+    }
+
+    // call the yarp standard companion
     return Network::main(argc,argv);
 }
 

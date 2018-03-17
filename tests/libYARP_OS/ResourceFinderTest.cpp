@@ -14,7 +14,6 @@
 
 #include <yarp/os/impl/PlatformDirent.h>
 #include <yarp/os/impl/PlatformSysStat.h>
-#include <yarp/os/impl/PlatformUnistd.h>
 #include <yarp/os/impl/UnitTest.h>
 
 #include <cstdlib>

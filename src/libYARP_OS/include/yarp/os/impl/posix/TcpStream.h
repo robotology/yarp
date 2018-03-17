@@ -19,10 +19,6 @@
 
 #include <cstring>
 
-//#include <yarp/os/impl/PlatformSignal.h>
-//#include <yarp/os/impl/PlatformUnistd.h>
-//#include <yarp/os/impl/PlatformSysWait.h>
-
 namespace yarp {
 namespace os {
 namespace impl {

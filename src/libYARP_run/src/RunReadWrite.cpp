@@ -7,13 +7,14 @@
  * BSD-3-Clause license. See the accompanying LICENSE file for details.
  */
 
-#include <cstdio>
+#include <yarp/run/impl/RunReadWrite.h>
+
 #include <yarp/os/Time.h>
 #include <yarp/os/Bottle.h>
 #include <yarp/os/Property.h>
-#include <yarp/os/impl/RunReadWrite.h>
 #include <yarp/os/impl/PlatformSignal.h>
 
+#include <cstdio>
 
 int RunWrite::loop()
 {
@@ -198,9 +199,9 @@ int RunReadWrite::loop()
         ::exit(0);
 #else
         int term_pipe[2];
-        int warn_suppress = yarp::os::impl::pipe(term_pipe);
+        int warn_suppress = yarp::run::impl::pipe(term_pipe);
         YARP_UNUSED(warn_suppress);
-        yarp::os::impl::dup2(term_pipe[0], STDIN_FILENO);
+        yarp::run::impl::dup2(term_pipe[0], STDIN_FILENO);
         FILE* file_term_pipe=fdopen(term_pipe[1], "w");
         fprintf(file_term_pipe, "SHKIATTETE!\n");
         fflush(file_term_pipe);

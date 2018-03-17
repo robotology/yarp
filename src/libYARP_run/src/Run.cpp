@@ -7,12 +7,18 @@
  * BSD-3-Clause license. See the accompanying LICENSE file for details.
  */
 
-#include <yarp/os/Run.h>
+#include <yarp/run/Run.h>
+#include <yarp/run/impl/RunCheckpoints.h>
+#include <yarp/run/impl/RunProcManager.h>
+#include <yarp/run/impl/RunReadWrite.h>
+#include <yarp/run/impl/PlatformUnistd.h>
+#include <yarp/run/impl/PlatformSysPrctl.h>
 
 #include <yarp/os/Network.h>
 #include <yarp/os/Os.h>
 #include <yarp/os/LogStream.h>
 #include <yarp/os/RpcClient.h>
+#include <yarp/os/RpcServer.h>
 #include <yarp/os/SystemInfo.h>
 #include <yarp/os/SystemInfoSerializer.h>
 #include <yarp/os/Time.h>
@@ -20,14 +26,9 @@
 #include <yarp/os/impl/NameClient.h>
 #include <yarp/os/impl/Logger.h>
 #include <yarp/os/impl/SplitString.h>
-#include <yarp/os/impl/PlatformSysPrctl.h>
 #include <yarp/os/impl/PlatformSignal.h>
 #include <yarp/os/impl/PlatformStdlib.h>
 #include <yarp/os/impl/PlatformStdio.h>
-#include <yarp/os/impl/PlatformUnistd.h>
-#include <yarp/os/impl/RunCheckpoints.h>
-#include <yarp/os/impl/RunProcManager.h>
-#include <yarp/os/impl/RunReadWrite.h>
 
 #include <cstdio>
 #include <string>
@@ -44,8 +45,8 @@
 #endif
 
 #if defined(_WIN32)
-YarpRunInfoVector yarp::os::Run::mProcessVector;
-YarpRunInfoVector yarp::os::Run::mStdioVector;
+YarpRunInfoVector yarp::run::Run::mProcessVector;
+YarpRunInfoVector yarp::run::Run::mStdioVector;
 inline yarp::os::ConstString lastError2String()
 {
     int error=GetLastError();
@@ -58,22 +59,22 @@ inline yarp::os::ConstString lastError2String()
 //#define SIGSTDIO SIGHUP
 #define READ_FROM_PIPE 0
 #define WRITE_TO_PIPE  1
-#define REDIRECT_TO(from, to) yarp::os::impl::dup2(to, from)
-YarpRunInfoVector* yarp::os::Run::mProcessVector = nullptr;
-YarpRunInfoVector* yarp::os::Run::mStdioVector = nullptr;
-ZombieHunterThread* yarp::os::Run::mBraveZombieHunter = nullptr;
+#define REDIRECT_TO(from, to) yarp::run::impl::dup2(to, from)
+YarpRunInfoVector* yarp::run::Run::mProcessVector = nullptr;
+YarpRunInfoVector* yarp::run::Run::mStdioVector = nullptr;
+ZombieHunterThread* yarp::run::Run::mBraveZombieHunter = nullptr;
 #endif
 
 ///////////////////////////
 // OS INDEPENDENT FUNCTIONS
 ///////////////////////////
 
-yarp::os::ConstString yarp::os::Run::mPortName;
-yarp::os::RpcServer* yarp::os::Run::pServerPort=nullptr;
-int yarp::os::Run::mProcCNT=0;
-bool yarp::os::Run::mStresstest=false;
-bool yarp::os::Run::mLogged=false;
-yarp::os::ConstString yarp::os::Run::mLoggerPort("/yarplogger");
+yarp::os::ConstString yarp::run::Run::mPortName;
+yarp::os::RpcServer* yarp::run::Run::pServerPort=nullptr;
+int yarp::run::Run::mProcCNT=0;
+bool yarp::run::Run::mStresstest=false;
+bool yarp::run::Run::mLogged=false;
+yarp::os::ConstString yarp::run::Run::mLoggerPort("/yarplogger");
 
 ////////////////////////////////////
 
@@ -131,9 +132,9 @@ static bool fileExists(const char *fname) {
 
 
 /////////
-int yarp::os::Run::main(int argc, char *argv[])
+int yarp::run::Run::main(int argc, char *argv[])
 {
-    Property config;
+    yarp::os::Property config;
     config.fromCommand(argc, argv, false);
 
     // SERVER
@@ -143,7 +144,7 @@ int yarp::os::Run::main(int argc, char *argv[])
 
         if (mLogged)
         {
-            Bottle botPortLogger=config.findGroup("log");
+            yarp::os::Bottle botPortLogger=config.findGroup("log");
 
             if (botPortLogger.size()>1)
             {
@@ -355,7 +356,7 @@ int yarp::os::Run::main(int argc, char *argv[])
         {
             yarp::os::SystemClock::delaySystem(0.001*(dist0maxint(mt)));
 
-            Property stresser=config;
+            yarp::os::Property stresser=config;
 
             sprintf(tag, "%s_%u", tag_zero.c_str(), t++);
             stresser.put("as", tag);
@@ -379,11 +380,11 @@ int yarp::os::Run::main(int argc, char *argv[])
                 {
                     sprintf(tag, "%s_%u", tag_zero.c_str(), i);
 
-                    Bottle as;
+                    yarp::os::Bottle as;
                     as.addString("sigterm");
                     as.addString(tag);
 
-                    Bottle term;
+                    yarp::os::Bottle term;
                     term.addList()=srv;
                     term.addList()=as;
 
@@ -428,9 +429,9 @@ int yarp::os::Run::main(int argc, char *argv[])
     return 0;
 }
 
-yarp::os::Bottle yarp::os::Run::sendMsg(Bottle& msg, yarp::os::ConstString target, int RETRY, double DELAY)
+yarp::os::Bottle yarp::run::Run::sendMsg(yarp::os::Bottle& msg, yarp::os::ConstString target, int RETRY, double DELAY)
 {
-    Bottle response;
+    yarp::os::Bottle response;
 
     for (int r=0; r<RETRY; ++r)
     {
@@ -483,12 +484,12 @@ yarp::os::Bottle yarp::os::Run::sendMsg(Bottle& msg, yarp::os::ConstString targe
 void sigint_handler(int sig)
 {
     YARP_UNUSED(sig);
-    yarp::os::Run::mStresstest=false;
+    yarp::run::Run::mStresstest=false;
 
-    if (yarp::os::Run::pServerPort)
+    if (yarp::run::Run::pServerPort)
     {
-        yarp::os::RpcServer *pClose=yarp::os::Run::pServerPort;
-        yarp::os::Run::pServerPort = nullptr;
+        yarp::os::RpcServer *pClose=yarp::run::Run::pServerPort;
+        yarp::run::Run::pServerPort = nullptr;
         pClose->close();
     }
     //else
@@ -499,11 +500,11 @@ void sigint_handler(int sig)
 ///////////////////////////
 // WINDOWS SERVER
 #if defined(_WIN32)
-int yarp::os::Run::server()
+int yarp::run::Run::server()
 {
     yarp::os::Semaphore serializer(1);
 
-    RpcServer port;
+    yarp::os::RpcServer port;
 
     if (!port.open(mPortName.c_str()))
     {
@@ -530,7 +531,7 @@ int yarp::os::Run::server()
 
     while (pServerPort)
     {
-        Bottle msg;
+        yarp::os::Bottle msg;
 
         RUNLOG("<<<port.read(msg, true)")
         if (!port.read(msg, true)) break;
@@ -552,7 +553,7 @@ int yarp::os::Run::server()
             if (strOnPort==mPortName)
             {
                 yarp::os::ConstString strUUID=mPortName+"/"+int2String(getpid())+"/"+msg.find("as").asString()+"-"+int2String(mProcCNT++);
-                Bottle botUUID;
+                yarp::os::Bottle botUUID;
                 botUUID.addString("stdiouuid");
                 botUUID.addString(strUUID.c_str());
                 msg.addList()=botUUID;
@@ -564,10 +565,10 @@ int yarp::os::Run::server()
                     portName+=mPortName+"/";
                     yarp::os::ConstString command=msg.findGroup("cmd").get(1).asString();
                     int space=command.find(" ");
-                    if (space!=ConstString::npos) command=command.substr(0, space);
+                    if (space!=yarp::os::ConstString::npos) command=command.substr(0, space);
                     portName+=command;
 
-                    Bottle botFwd;
+                    yarp::os::Bottle botFwd;
                     botFwd.addString("forward");
                     botFwd.addString(portName.c_str());
                     if (msg.check("log"))
@@ -590,12 +591,12 @@ int yarp::os::Run::server()
                     msg.addList()=botFwd;
                 }
 
-                Bottle cmdResult;
+                yarp::os::Bottle cmdResult;
                 if (executeCmdAndStdio(msg, cmdResult)>0)
                 {
                     if (strStdioPort==mPortName)
                     {
-                        Bottle stdioResult;
+                        yarp::os::Bottle stdioResult;
                         userStdio(msg, stdioResult);
                         cmdResult.append(stdioResult);
                     }
@@ -609,7 +610,7 @@ int yarp::os::Run::server()
             }
             else
             {
-                Bottle stdioResult;
+                yarp::os::Bottle stdioResult;
                 userStdio(msg, stdioResult);
                 port.reply(stdioResult);
             }
@@ -620,7 +621,7 @@ int yarp::os::Run::server()
         // without stdio
         if (msg.check("cmd"))
         {
-            Bottle cmdResult;
+            yarp::os::Bottle cmdResult;
 
             if (msg.check("log"))
             {
@@ -652,7 +653,7 @@ int yarp::os::Run::server()
         {
             yarp::os::ConstString alias(msg.findGroup("kill").get(1).asString());
             int sig=msg.findGroup("kill").get(2).asInt();
-            Bottle result;
+            yarp::os::Bottle result;
             result.addString(mProcessVector.Signal(alias, sig)?"kill OK":"kill FAILED");
             port.reply(result);
             continue;
@@ -661,7 +662,7 @@ int yarp::os::Run::server()
         if (msg.check("sigterm"))
         {
             yarp::os::ConstString alias(msg.find("sigterm").asString());
-            Bottle result;
+            yarp::os::Bottle result;
             result.addString(mProcessVector.Signal(alias, SIGTERM)?"sigterm OK":"sigterm FAILED");
             port.reply(result);
             continue;
@@ -670,7 +671,7 @@ int yarp::os::Run::server()
         if (msg.check("sigtermall"))
         {
             mProcessVector.Killall(SIGTERM);
-            Bottle result;
+            yarp::os::Bottle result;
             result.addString("sigtermall OK");
             port.reply(result);
             continue;
@@ -678,7 +679,7 @@ int yarp::os::Run::server()
 
         if (msg.check("ps"))
         {
-            Bottle result;
+            yarp::os::Bottle result;
             result.append(mProcessVector.PS());
             port.reply(result);
             continue;
@@ -687,7 +688,7 @@ int yarp::os::Run::server()
         if (msg.check("isrunning"))
         {
             yarp::os::ConstString alias(msg.find("isrunning").asString());
-            Bottle result;
+            yarp::os::Bottle result;
             result.addString(mProcessVector.IsRunning(alias)?"running":"not running");
             port.reply(result);
             continue;
@@ -697,7 +698,7 @@ int yarp::os::Run::server()
         {
             yarp::os::ConstString alias(msg.find("killstdio").asString());
             mStdioVector.Signal(alias, SIGTERM);
-            Bottle result;
+            yarp::os::Bottle result;
             result.addString("killstdio OK");
             port.reply(result);
             continue;
@@ -714,13 +715,13 @@ int yarp::os::Run::server()
 
         if (msg.check("which"))
         {
-            ConstString fileName=msg.find("which").asString();
+            yarp::os::ConstString fileName=msg.find("which").asString();
             if (fileName!="")
             {
                 yarp::os::Bottle possiblePaths = parsePaths(yarp::os::NetworkBase::getEnvironment("PATH"));
                 for (int i=0; i<possiblePaths.size(); ++i)
                 {
-                    ConstString guessString=possiblePaths.get(i).asString() + slash + fileName;
+                    yarp::os::ConstString guessString=possiblePaths.get(i).asString() + slash + fileName;
                     const char* guess=guessString.c_str();
                     if (fileExists (guess))
                     {
@@ -737,7 +738,7 @@ int yarp::os::Run::server()
         if (msg.check("exit"))
         {
             pServerPort=0;
-            Bottle result;
+            yarp::os::Bottle result;
             result.addString("exit OK");
             port.reply(result);
             port.close();
@@ -756,7 +757,7 @@ int yarp::os::Run::server()
 #else // LINUX SERVER
 ///////////////////////
 
-void yarp::os::Run::cleanBeforeExec()
+void yarp::run::Run::cleanBeforeExec()
 {
     // zombie hunter stop
 
@@ -788,7 +789,7 @@ void yarp::os::Run::cleanBeforeExec()
     //yarp::os::Network::fini();
 }
 
-void yarp::os::Run::writeToPipe(int fd, yarp::os::ConstString str)
+void yarp::run::Run::writeToPipe(int fd, yarp::os::ConstString str)
 {
     int len=str.length()+1;
 
@@ -796,7 +797,7 @@ void yarp::os::Run::writeToPipe(int fd, yarp::os::ConstString str)
     write(fd, str.c_str(), len);
 }
 
-int yarp::os::Run::readFromPipe(int fd, char* &data, int& buffsize)
+int yarp::run::Run::readFromPipe(int fd, char* &data, int& buffsize)
 {
     int len=0;
     char* buff=(char*)&len;
@@ -835,18 +836,18 @@ int yarp::os::Run::readFromPipe(int fd, char* &data, int& buffsize)
 static void sigchld_handler(int sig)
 {
     YARP_UNUSED(sig);
-    if (yarp::os::Run::mBraveZombieHunter)
+    if (yarp::run::Run::mBraveZombieHunter)
     {
-        yarp::os::Run::mBraveZombieHunter->sigchldHandler();
+        yarp::run::Run::mBraveZombieHunter->sigchldHandler();
     }
 }
 
-int yarp::os::Run::server()
+int yarp::run::Run::server()
 {
     int pipe_server2manager[2];
     int pipe_manager2server[2];
 
-    if (yarp::os::impl::pipe(pipe_server2manager))
+    if (yarp::run::impl::pipe(pipe_server2manager))
     {
         fprintf(stderr, "Can't open pipe because %s\n", strerror(errno));
         fflush(stderr);
@@ -854,7 +855,7 @@ int yarp::os::Run::server()
         return YARPRUN_ERROR;
     }
 
-    if (yarp::os::impl::pipe(pipe_manager2server))
+    if (yarp::run::impl::pipe(pipe_manager2server))
     {
         fprintf(stderr, "Can't open pipe because %s\n", strerror(errno));
         fflush(stderr);
@@ -862,7 +863,7 @@ int yarp::os::Run::server()
         return YARPRUN_ERROR;
     }
 
-    int pid_process_manager=yarp::os::fork();
+    int pid_process_manager=yarp::run::impl::fork();
 
     if (IS_INVALID(pid_process_manager))
     {
@@ -916,7 +917,7 @@ int yarp::os::Run::server()
         int rsp_size=1024;
         char *rsp_str=new char[rsp_size];
 
-        Bottle msg, response;
+        yarp::os::Bottle msg, response;
 
         while (pServerPort)
         {
@@ -935,13 +936,13 @@ int yarp::os::Run::server()
 
             if (msg.check("which"))
             {
-                ConstString fileName=msg.find("which").asString();
+                yarp::os::ConstString fileName=msg.find("which").asString();
                 if (fileName!="")
                 {
                     yarp::os::Bottle possiblePaths = parsePaths(yarp::os::NetworkBase::getEnvironment("PATH"));
                     for (int i=0; i<possiblePaths.size(); ++i)
                     {
-                        ConstString guessString=possiblePaths.get(i).asString() + slash + fileName;
+                        yarp::os::ConstString guessString=possiblePaths.get(i).asString() + slash + fileName;
                         const char* guess=guessString.c_str();
                         if (fileExists (guess))
                         {
@@ -958,7 +959,7 @@ int yarp::os::Run::server()
             if (msg.check("exit"))
             {
                 pServerPort = nullptr;
-                Bottle result;
+                yarp::os::Bottle result;
                 result.addString("exit OK");
                 port.reply(result);
                 port.close();
@@ -1019,7 +1020,7 @@ int yarp::os::Run::server()
         int msg_size=1024;
         char *msg_str=new char[msg_size];
 
-        Bottle msg;
+        yarp::os::Bottle msg;
 
         //while(readFromPipe(pipe_server2manager[READ_FROM_PIPE], msg_str, msg_size)>0)
         while (true)
@@ -1042,7 +1043,7 @@ int yarp::os::Run::server()
                 if (strOnPort==mPortName)
                 {
                     yarp::os::ConstString strUUID=mPortName+"/"+int2String(getpid())+"/"+msg.find("as").asString()+"-"+int2String(mProcCNT++);
-                    Bottle botUUID;
+                    yarp::os::Bottle botUUID;
                     botUUID.addString("stdiouuid");
                     botUUID.addString(strUUID.c_str());
                     msg.addList()=botUUID;
@@ -1054,10 +1055,10 @@ int yarp::os::Run::server()
                         portName+=mPortName+"/";
                         yarp::os::ConstString command=msg.findGroup("cmd").get(1).asString();
                         size_t space=command.find(' ');
-                        if (space!=ConstString::npos) command=command.substr(0, space);
+                        if (space!=yarp::os::ConstString::npos) command=command.substr(0, space);
                         portName+=command;
 
-                        Bottle botFwd;
+                        yarp::os::Bottle botFwd;
                         botFwd.addString("forward");
                         botFwd.addString(portName.c_str());
                         if (msg.check("log"))
@@ -1084,12 +1085,12 @@ int yarp::os::Run::server()
                         yarp::os::Network::connect(portName.c_str(), mLoggerPort.c_str(), style);
                     }
 
-                    Bottle cmdResult;
+                    yarp::os::Bottle cmdResult;
                     if (executeCmdAndStdio(msg, cmdResult)>0)
                     {
                         if (strStdioPort==mPortName)
                         {
-                            Bottle stdioResult;
+                            yarp::os::Bottle stdioResult;
                             userStdio(msg, stdioResult);
                             cmdResult.append(stdioResult);
                         }
@@ -1105,7 +1106,7 @@ int yarp::os::Run::server()
                 }
                 else
                 {
-                    Bottle stdioResult;
+                    yarp::os::Bottle stdioResult;
                     userStdio(msg, stdioResult);
                     RUNLOG("<<<writeToPipe")
                     writeToPipe(pipe_manager2server[WRITE_TO_PIPE], stdioResult.toString());
@@ -1118,7 +1119,7 @@ int yarp::os::Run::server()
             // without stdio
             if (msg.check("cmd"))
             {
-                Bottle cmdResult;
+                yarp::os::Bottle cmdResult;
 
                 if (msg.check("log"))
                 {
@@ -1153,7 +1154,7 @@ int yarp::os::Run::server()
             {
                 yarp::os::ConstString alias(msg.findGroup("kill").get(1).asString());
                 int sig=msg.findGroup("kill").get(2).asInt();
-                Bottle result;
+                yarp::os::Bottle result;
                 result.addString(mProcessVector->Signal(alias, sig)?"kill OK":"kill FAILED");
                 RUNLOG("<<<writeToPipe")
                 writeToPipe(pipe_manager2server[WRITE_TO_PIPE], result.toString());
@@ -1164,7 +1165,7 @@ int yarp::os::Run::server()
             if (msg.check("sigterm"))
             {
                 yarp::os::ConstString alias(msg.find("sigterm").asString());
-                Bottle result;
+                yarp::os::Bottle result;
                 result.addString(mProcessVector->Signal(alias, SIGTERM)?"sigterm OK":"sigterm FAILED");
                 RUNLOG("<<<writeToPipe")
                 writeToPipe(pipe_manager2server[WRITE_TO_PIPE], result.toString());
@@ -1175,7 +1176,7 @@ int yarp::os::Run::server()
             if (msg.check("sigtermall"))
             {
                 mProcessVector->Killall(SIGTERM);
-                Bottle result;
+                yarp::os::Bottle result;
                 result.addString("sigtermall OK");
 
                 RUNLOG("<<<writeToPipe")
@@ -1186,7 +1187,7 @@ int yarp::os::Run::server()
 
             if (msg.check("ps"))
             {
-                Bottle result;
+                yarp::os::Bottle result;
                 result.append(mProcessVector->PS());
                 RUNLOG("<<<writeToPipe")
                 writeToPipe(pipe_manager2server[WRITE_TO_PIPE], result.toString());
@@ -1197,7 +1198,7 @@ int yarp::os::Run::server()
             if (msg.check("isrunning"))
             {
                 yarp::os::ConstString alias(msg.find("isrunning").asString());
-                Bottle result;
+                yarp::os::Bottle result;
                 result.addString(mProcessVector->IsRunning(alias)?"running":"not running");
                 RUNLOG("<<<writeToPipe")
                 writeToPipe(pipe_manager2server[WRITE_TO_PIPE], result.toString());
@@ -1209,7 +1210,7 @@ int yarp::os::Run::server()
             {
                 yarp::os::ConstString alias(msg.find("killstdio").asString());
                 mStdioVector->Signal(alias, SIGTERM);
-                Bottle result;
+                yarp::os::Bottle result;
                 result.addString("killstdio OK");
                 RUNLOG("<<<writeToPipe")
                 writeToPipe(pipe_manager2server[WRITE_TO_PIPE], result.toString());
@@ -1249,7 +1250,7 @@ int yarp::os::Run::server()
 
 
 // CLIENT
-int yarp::os::Run::client(yarp::os::Property& config)
+int yarp::run::Run::client(yarp::os::Property& config)
 {
     // WITH STDIO
     //
@@ -1295,16 +1296,16 @@ int yarp::os::Run::client(yarp::os::Property& config)
         if (config.check("log")) msg.addList()=config.findGroup("log");
         /*
         {
-            Bottle log;
+            yarp::os::Bottle log;
             log.addString("log");
             log.addString("log");
             msg.addList()=log;
         }
         */
 
-        ConstString on=config.find("on").asString();
+        yarp::os::ConstString on=config.find("on").asString();
 
-        Bottle response=sendMsg(msg, on);
+        yarp::os::Bottle response=sendMsg(msg, on);
 
         if (!response.size()) return YARPRUN_ERROR;
 
@@ -1345,7 +1346,7 @@ int yarp::os::Run::client(yarp::os::Property& config)
         if (config.check("log")) msg.addList()=config.findGroup("log");
         /*
         {
-            Bottle log;
+            yarp::os::Bottle log;
             log.addString("log");
             log.addString("log");
             msg.addList()=log;
@@ -1353,7 +1354,7 @@ int yarp::os::Run::client(yarp::os::Property& config)
         */
         if (config.check("env")) msg.addList()=config.findGroup("env");
 
-        Bottle response=sendMsg(msg, config.find("on").asString());
+        yarp::os::Bottle response=sendMsg(msg, config.find("on").asString());
 
         if (!response.size()) return YARPRUN_ERROR;
 
@@ -1388,7 +1389,7 @@ int yarp::os::Run::client(yarp::os::Property& config)
         yarp::os::Bottle msg;
         msg.addList()=config.findGroup("kill");
 
-        Bottle response=sendMsg(msg, config.find("on").asString());
+        yarp::os::Bottle response=sendMsg(msg, config.find("on").asString());
 
         if (!response.size())
         {
@@ -1415,7 +1416,7 @@ int yarp::os::Run::client(yarp::os::Property& config)
         yarp::os::Bottle msg;
         msg.addList()=config.findGroup("sigterm");
 
-        Bottle response=sendMsg(msg, config.find("on").asString());
+        yarp::os::Bottle response=sendMsg(msg, config.find("on").asString());
 
         if (!response.size())
         {
@@ -1437,7 +1438,7 @@ int yarp::os::Run::client(yarp::os::Property& config)
         yarp::os::Bottle msg;
         msg.addList()=config.findGroup("sigtermall");
 
-        Bottle response=sendMsg(msg, config.find("on").asString());
+        yarp::os::Bottle response=sendMsg(msg, config.find("on").asString());
 
         if (!response.size())
         {
@@ -1458,7 +1459,7 @@ int yarp::os::Run::client(yarp::os::Property& config)
         yarp::os::Bottle msg;
         msg.addList()=config.findGroup("ps");
 
-        Bottle response=sendMsg(msg, config.find("on").asString());
+        yarp::os::Bottle response=sendMsg(msg, config.find("on").asString());
 
         if (!response.size())
         {
@@ -1485,7 +1486,7 @@ int yarp::os::Run::client(yarp::os::Property& config)
         yarp::os::Bottle msg;
         msg.addList()=config.findGroup("isrunning");
 
-        Bottle response=sendMsg(msg, config.find("on").asString());
+        yarp::os::Bottle response=sendMsg(msg, config.find("on").asString());
 
         if (!response.size())
         {
@@ -1595,7 +1596,7 @@ int yarp::os::Run::client(yarp::os::Property& config)
         yarp::os::Bottle msg;
         msg.addList()=config.findGroup("which");
 
-        Bottle response=sendMsg(msg, config.find("on").asString());
+        yarp::os::Bottle response=sendMsg(msg, config.find("on").asString());
 
         if (!response.size())
         {
@@ -1616,7 +1617,7 @@ int yarp::os::Run::client(yarp::os::Property& config)
         yarp::os::Bottle msg;
         msg.addList()=config.findGroup("exit");
 
-        Bottle response=sendMsg(msg, config.find("on").asString());
+        yarp::os::Bottle response=sendMsg(msg, config.find("on").asString());
 
         if (!response.size())
         {
@@ -1629,7 +1630,7 @@ int yarp::os::Run::client(yarp::os::Property& config)
     return 0;
 }
 
-void yarp::os::Run::Help(const char *msg)
+void yarp::run::Run::Help(const char *msg)
 {
     fprintf(stderr, "%s", msg);
     fprintf(stderr, "\nUSAGE:\n\n");
@@ -1655,7 +1656,7 @@ void yarp::os::Run::Help(const char *msg)
 #if defined(_WIN32)
 
 // CMD SERVER
-int yarp::os::Run::executeCmdAndStdio(Bottle& msg, Bottle& result)
+int yarp::run::Run::executeCmdAndStdio(yarp::os::Bottle& msg, yarp::os::Bottle& result)
 {
     yarp::os::ConstString strAlias=msg.find("as").asString();
     yarp::os::ConstString strStdio=msg.find("stdio").asString();
@@ -1777,7 +1778,7 @@ int yarp::os::Run::executeCmdAndStdio(Bottle& msg, Bottle& result)
     cmd_startup_info.hStdInput=read_from_pipe_stdin_to_cmd;
     cmd_startup_info.dwFlags|=STARTF_USESTDHANDLES;
 
-    Bottle botCmd=msg.findGroup("cmd").tail();
+    yarp::os::Bottle botCmd=msg.findGroup("cmd").tail();
 
     yarp::os::ConstString strCmd;
     for (int s=0; s<botCmd.size(); ++s)
@@ -1925,14 +1926,14 @@ int yarp::os::Run::executeCmdAndStdio(Bottle& msg, Bottle& result)
     return cmd_process_info.dwProcessId;
 }
 
-int yarp::os::Run::executeCmdStdout(Bottle& msg, Bottle& result, yarp::os::ConstString& loggerName)
+int yarp::run::Run::executeCmdStdout(yarp::os::Bottle& msg, yarp::os::Bottle& result, yarp::os::ConstString& loggerName)
 {
     yarp::os::ConstString strAlias=msg.find("as").asString();
     yarp::os::ConstString portName="/log";
     portName+=mPortName+"/";
     yarp::os::ConstString command=msg.findGroup("cmd").get(1).asString();
     int space=command.find(" ");
-    if (space!=ConstString::npos) command=command.substr(0, space);
+    if (space!=yarp::os::ConstString::npos) command=command.substr(0, space);
     portName+=command;
 
     // PIPES
@@ -1998,7 +1999,7 @@ int yarp::os::Run::executeCmdStdout(Bottle& msg, Bottle& result, yarp::os::Const
     cmd_startup_info.hStdInput=GetStdHandle(STD_INPUT_HANDLE);
     cmd_startup_info.dwFlags|=STARTF_USESTDHANDLES;
 
-    Bottle botCmd=msg.findGroup("cmd").tail();
+    yarp::os::Bottle botCmd=msg.findGroup("cmd").tail();
 
     yarp::os::ConstString strCmd;
     for (int s=0; s<botCmd.size(); ++s)
@@ -2136,7 +2137,7 @@ int yarp::os::Run::executeCmdStdout(Bottle& msg, Bottle& result, yarp::os::Const
 }
 
 
-int yarp::os::Run::executeCmd(yarp::os::Bottle& msg, Bottle& result)
+int yarp::run::Run::executeCmd(yarp::os::Bottle& msg, yarp::os::Bottle& result)
 {
     yarp::os::ConstString strAlias=msg.find("as").asString().c_str();
 
@@ -2148,7 +2149,7 @@ int yarp::os::Run::executeCmd(yarp::os::Bottle& msg, Bottle& result)
 
     cmd_startup_info.cb=sizeof(STARTUPINFO);
 
-    Bottle botCmd=msg.findGroup("cmd").tail();
+    yarp::os::Bottle botCmd=msg.findGroup("cmd").tail();
 
     yarp::os::ConstString strCmd;
     for (int s=0; s<botCmd.size(); ++s)
@@ -2275,7 +2276,7 @@ int yarp::os::Run::executeCmd(yarp::os::Bottle& msg, Bottle& result)
 }
 
 // STDIO SERVER
-int yarp::os::Run::userStdio(Bottle& msg, Bottle& result)
+int yarp::run::Run::userStdio(yarp::os::Bottle& msg, yarp::os::Bottle& result)
 {
     PROCESS_INFORMATION stdio_process_info;
     ZeroMemory(&stdio_process_info, sizeof(PROCESS_INFORMATION));
@@ -2456,7 +2457,7 @@ void parseArguments(char *io_pLine, int *o_pArgc, char **o_pArgv)
     }
 }
 
-void yarp::os::Run::CleanZombie(int pid)
+void yarp::run::Run::CleanZombie(int pid)
 {
     bool bFound=mProcessVector && mProcessVector->CleanZombie(pid);
 
@@ -2465,7 +2466,7 @@ void yarp::os::Run::CleanZombie(int pid)
 
 /////////////////////////////////////////////////////////////////////////////////////////
 
-int yarp::os::Run::executeCmdAndStdio(yarp::os::Bottle& msg, yarp::os::Bottle& result)
+int yarp::run::Run::executeCmdAndStdio(yarp::os::Bottle& msg, yarp::os::Bottle& result)
 {
     yarp::os::ConstString strAlias=msg.find("as").asString();
     yarp::os::ConstString strCmd=msg.find("cmd").asString();
@@ -2473,13 +2474,13 @@ int yarp::os::Run::executeCmdAndStdio(yarp::os::Bottle& msg, yarp::os::Bottle& r
     yarp::os::ConstString strStdioUUID=msg.find("stdiouuid").asString();
 
     int  pipe_stdin_to_cmd[2];
-    int ret_stdin_to_cmd=yarp::os::impl::pipe(pipe_stdin_to_cmd);
+    int ret_stdin_to_cmd=yarp::run::impl::pipe(pipe_stdin_to_cmd);
 
     int  pipe_cmd_to_stdout[2];
-    int  ret_cmd_to_stdout=yarp::os::impl::pipe(pipe_cmd_to_stdout);
+    int  ret_cmd_to_stdout=yarp::run::impl::pipe(pipe_cmd_to_stdout);
 
     int  pipe_child_to_parent[2];
-    int  ret_child_to_parent=yarp::os::impl::pipe(pipe_child_to_parent);
+    int  ret_child_to_parent=yarp::run::impl::pipe(pipe_child_to_parent);
 
     if (ret_child_to_parent!=0 || ret_cmd_to_stdout!=0 || ret_stdin_to_cmd!=0)
     {
@@ -2498,7 +2499,7 @@ int yarp::os::Run::executeCmdAndStdio(yarp::os::Bottle& msg, yarp::os::Bottle& r
         return YARPRUN_ERROR;
     }
 
-    int pid_stdout=yarp::os::fork();
+    int pid_stdout=yarp::run::impl::fork();
 
     if (IS_INVALID(pid_stdout))
     {
@@ -2540,7 +2541,7 @@ int yarp::os::Run::executeCmdAndStdio(yarp::os::Bottle& msg, yarp::os::Bottle& r
 
         //yarp::os::impl::signal(SIGPIPE, SIG_DFL);
 
-        int ret = yarp::os::impl::execlp("yarprun", "yarprun", "--write", strStdioUUID.c_str(), static_cast<char*>(nullptr));
+        int ret = yarp::run::impl::execlp("yarprun", "yarprun", "--write", strStdioUUID.c_str(), static_cast<char*>(nullptr));
 
         CLOSE(pipe_cmd_to_stdout[READ_FROM_PIPE]);
 
@@ -2573,7 +2574,7 @@ int yarp::os::Run::executeCmdAndStdio(yarp::os::Bottle& msg, yarp::os::Bottle& r
 
         fprintf(stderr, "STARTED: server=%s alias=%s cmd=stdout pid=%d\n", mPortName.c_str(), strAlias.c_str(), pid_stdout);
 
-        int pid_stdin=yarp::os::fork();
+        int pid_stdin=yarp::run::impl::fork();
 
         if (IS_INVALID(pid_stdin))
         {
@@ -2617,7 +2618,7 @@ int yarp::os::Run::executeCmdAndStdio(yarp::os::Bottle& msg, yarp::os::Bottle& r
 
             //yarp::os::impl::signal(SIGPIPE, SIG_DFL);
 
-            int ret = yarp::os::impl::execlp("yarprun", "yarprun", "--read", strStdioUUID.c_str(), static_cast<char*>(nullptr));
+            int ret = yarp::run::impl::execlp("yarprun", "yarprun", "--read", strStdioUUID.c_str(), static_cast<char*>(nullptr));
 
             CLOSE(pipe_stdin_to_cmd[WRITE_TO_PIPE]);
 
@@ -2651,7 +2652,7 @@ int yarp::os::Run::executeCmdAndStdio(yarp::os::Bottle& msg, yarp::os::Bottle& r
 
             fprintf(stderr, "STARTED: server=%s alias=%s cmd=stdin pid=%d\n", mPortName.c_str(), strAlias.c_str(), pid_stdin);
 
-            int pid_cmd=yarp::os::fork();
+            int pid_cmd=yarp::run::impl::fork();
 
             if (IS_INVALID(pid_cmd))
             {
@@ -2765,7 +2766,7 @@ int yarp::os::Run::executeCmdAndStdio(yarp::os::Bottle& msg, yarp::os::Bottle& r
                     //furthermore after fork() only the thread which called fork() is forked!
                     //            cleanBeforeExec();
 
-                    ret = yarp::os::impl::execvp(cwd_arg_str[0], cwd_arg_str);
+                    ret = yarp::run::impl::execvp(cwd_arg_str[0], cwd_arg_str);
 
                     delete [] cwd_arg_str[0];
                     delete [] cwd_arg_str;
@@ -2778,7 +2779,7 @@ int yarp::os::Run::executeCmdAndStdio(yarp::os::Bottle& msg, yarp::os::Bottle& r
                     //furthermore after fork() only the thread which called fork() is forked!
                     //            cleanBeforeExec();
 
-                    ret = yarp::os::impl::execvp(arg_str[0], arg_str);
+                    ret = yarp::run::impl::execvp(arg_str[0], arg_str);
                 }
 
                 fflush(stdout);
@@ -2898,7 +2899,7 @@ int yarp::os::Run::executeCmdAndStdio(yarp::os::Bottle& msg, yarp::os::Bottle& r
     return YARPRUN_ERROR;
 }
 
-int yarp::os::Run::executeCmdStdout(yarp::os::Bottle& msg, yarp::os::Bottle& result, yarp::os::ConstString& loggerName)
+int yarp::run::Run::executeCmdStdout(yarp::os::Bottle& msg, yarp::os::Bottle& result, yarp::os::ConstString& loggerName)
 {
     yarp::os::ConstString strAlias=msg.find("as").asString();
     yarp::os::ConstString strCmd=msg.find("cmd").asString();
@@ -2908,16 +2909,18 @@ int yarp::os::Run::executeCmdStdout(yarp::os::Bottle& msg, yarp::os::Bottle& res
 
     yarp::os::ConstString command=strCmd;
     size_t space=command.find(' ');
-    if (space!=ConstString::npos) command=command.substr(0, space);
+    if (space != yarp::os::ConstString::npos) {
+        command=command.substr(0, space);
+    }
     portName+=command;
 
 
 
     int  pipe_cmd_to_stdout[2];
-    int  ret_cmd_to_stdout=yarp::os::impl::pipe(pipe_cmd_to_stdout);
+    int  ret_cmd_to_stdout=yarp::run::impl::pipe(pipe_cmd_to_stdout);
 
     int  pipe_child_to_parent[2];
-    int  ret_child_to_parent=yarp::os::impl::pipe(pipe_child_to_parent);
+    int  ret_child_to_parent=yarp::run::impl::pipe(pipe_child_to_parent);
 
     if (ret_child_to_parent!=0 || ret_cmd_to_stdout!=0)
     {
@@ -2936,7 +2939,7 @@ int yarp::os::Run::executeCmdStdout(yarp::os::Bottle& msg, yarp::os::Bottle& res
         return YARPRUN_ERROR;
     }
 
-    int pid_stdout=yarp::os::fork();
+    int pid_stdout=yarp::run::impl::fork();
 
     if (IS_INVALID(pid_stdout))
     {
@@ -2974,7 +2977,7 @@ int yarp::os::Run::executeCmdStdout(yarp::os::Bottle& msg, yarp::os::Bottle& res
 
         //yarp::os::impl::signal(SIGPIPE, SIG_DFL);
 
-        int ret = yarp::os::impl::execlp("yarprun", "yarprun", "--write", portName.c_str(), "--log", loggerName.c_str(), static_cast<char*>(nullptr));
+        int ret = yarp::run::impl::execlp("yarprun", "yarprun", "--write", portName.c_str(), "--log", loggerName.c_str(), static_cast<char*>(nullptr));
 
         CLOSE(pipe_cmd_to_stdout[READ_FROM_PIPE]);
 
@@ -3011,7 +3014,7 @@ int yarp::os::Run::executeCmdStdout(yarp::os::Bottle& msg, yarp::os::Bottle& res
 
         //if (IS_PARENT_OF(pid_stdin))
         {
-            int pid_cmd=yarp::os::fork();
+            int pid_cmd=yarp::run::impl::fork();
 
             if (IS_INVALID(pid_cmd))
             {
@@ -3120,7 +3123,7 @@ int yarp::os::Run::executeCmdStdout(yarp::os::Bottle& msg, yarp::os::Bottle& res
                     //furthermore after fork() only the thread which called fork() is forked!
                     //            cleanBeforeExec();
 
-                    ret = yarp::os::impl::execvp(cwd_arg_str[0], cwd_arg_str);
+                    ret = yarp::run::impl::execvp(cwd_arg_str[0], cwd_arg_str);
 
                     delete [] cwd_arg_str[0];
                     delete [] cwd_arg_str;
@@ -3133,7 +3136,7 @@ int yarp::os::Run::executeCmdStdout(yarp::os::Bottle& msg, yarp::os::Bottle& res
                     //furthermore after fork() only the thread which called fork() is forked!
                     //            cleanBeforeExec();
 
-                    ret = yarp::os::impl::execvp(arg_str[0], arg_str);
+                    ret = yarp::run::impl::execvp(arg_str[0], arg_str);
                 }
 
                 fflush(stdout);
@@ -3245,7 +3248,7 @@ int yarp::os::Run::executeCmdStdout(yarp::os::Bottle& msg, yarp::os::Bottle& res
     return YARPRUN_ERROR;
 }
 
-int yarp::os::Run::userStdio(yarp::os::Bottle& msg, yarp::os::Bottle& result)
+int yarp::run::Run::userStdio(yarp::os::Bottle& msg, yarp::os::Bottle& result)
 {
     yarp::os::ConstString strAlias=msg.find("as").asString();
     yarp::os::ConstString strUUID=msg.find("stdiouuid").asString();
@@ -3264,7 +3267,7 @@ int yarp::os::Run::userStdio(yarp::os::Bottle& msg, yarp::os::Bottle& result)
 
     int pipe_child_to_parent[2];
 
-    if (yarp::os::impl::pipe(pipe_child_to_parent))
+    if (yarp::run::impl::pipe(pipe_child_to_parent))
     {
         int error=errno;
 
@@ -3302,7 +3305,7 @@ int yarp::os::Run::userStdio(yarp::os::Bottle& msg, yarp::os::Bottle& result)
     cmdcpy(command[c++], "-e");
     cmdcpy(command[c++], strCmd.c_str());
 
-    int pid_cmd=yarp::os::fork();
+    int pid_cmd=yarp::run::impl::fork();
 
     if (IS_INVALID(pid_cmd))
     {
@@ -3341,7 +3344,7 @@ int yarp::os::Run::userStdio(yarp::os::Bottle& msg, yarp::os::Bottle& result)
 
         //yarp::os::impl::signal(SIGHUP, rwSighupHandler);
 
-        int ret = yarp::os::impl::execvp("xterm", command);
+        int ret = yarp::run::impl::execvp("xterm", command);
 
         cmdclean(command);
 
@@ -3431,13 +3434,13 @@ int yarp::os::Run::userStdio(yarp::os::Bottle& msg, yarp::os::Bottle& result)
     return YARPRUN_ERROR;
 }
 
-int yarp::os::Run::executeCmd(yarp::os::Bottle& msg, yarp::os::Bottle& result)
+int yarp::run::Run::executeCmd(yarp::os::Bottle& msg, yarp::os::Bottle& result)
 {
     yarp::os::ConstString strAlias(msg.find("as").asString());
     yarp::os::ConstString strCmd(msg.find("cmd").toString());
 
     int  pipe_child_to_parent[2];
-    int ret_pipe_child_to_parent=yarp::os::impl::pipe(pipe_child_to_parent);
+    int ret_pipe_child_to_parent=yarp::run::impl::pipe(pipe_child_to_parent);
 
     if (ret_pipe_child_to_parent!=0)
     {
@@ -3456,7 +3459,7 @@ int yarp::os::Run::executeCmd(yarp::os::Bottle& msg, yarp::os::Bottle& result)
         return YARPRUN_ERROR;
     }
 
-    int pid_cmd=yarp::os::fork();
+    int pid_cmd=yarp::run::impl::fork();
 
     if (IS_INVALID(pid_cmd))
     {
@@ -3477,7 +3480,7 @@ int yarp::os::Run::executeCmd(yarp::os::Bottle& msg, yarp::os::Bottle& result)
 
     if (IS_NEW_PROCESS(pid_cmd)) // RUN COMMAND HERE
     {
-        int saved_stderr = yarp::os::impl::dup(STDERR_FILENO);
+        int saved_stderr = yarp::run::impl::dup(STDERR_FILENO);
         int null_file=open("/dev/null", O_WRONLY);
         if (null_file >= 0)
         {
@@ -3554,7 +3557,7 @@ int yarp::os::Run::executeCmd(yarp::os::Bottle& msg, yarp::os::Bottle& result)
             //furthermore after fork() only the thread which called fork() is forked!
 //            cleanBeforeExec();
 
-            ret = yarp::os::impl::execvp(cwd_arg_str[0], cwd_arg_str);
+            ret = yarp::run::impl::execvp(cwd_arg_str[0], cwd_arg_str);
 
             delete [] cwd_arg_str[0];
             delete [] cwd_arg_str;
@@ -3566,7 +3569,7 @@ int yarp::os::Run::executeCmd(yarp::os::Bottle& msg, yarp::os::Bottle& result)
             //exec* never returns and memory is claimed by the system
             //furthermore after fork() only the thread which called fork() is forked!
             //            cleanBeforeExec();
-            ret = yarp::os::impl::execvp(arg_str[0], arg_str);
+            ret = yarp::run::impl::execvp(arg_str[0], arg_str);
         }
 
         if (ret==YARPRUN_ERROR)
@@ -3663,7 +3666,7 @@ int yarp::os::Run::executeCmd(yarp::os::Bottle& msg, yarp::os::Bottle& result)
 // API
 /////////////////////////////////////////////////////////////////
 
-int yarp::os::Run::start(const yarp::os::ConstString &node, Property &command, yarp::os::ConstString &keyv)
+int yarp::run::Run::start(const yarp::os::ConstString &node, yarp::os::Property &command, yarp::os::ConstString &keyv)
 {
     yarp::os::Bottle msg, grp, response;
 
@@ -3721,7 +3724,7 @@ int yarp::os::Run::start(const yarp::os::ConstString &node, Property &command, y
     return response.get(0).asInt()>0?0:YARPRUN_ERROR;
 }
 
-int yarp::os::Run::sigterm(const yarp::os::ConstString &node, const yarp::os::ConstString &keyv)
+int yarp::run::Run::sigterm(const yarp::os::ConstString &node, const yarp::os::ConstString &keyv)
 {
     yarp::os::Bottle msg, grp, response;
 
@@ -3742,7 +3745,7 @@ int yarp::os::Run::sigterm(const yarp::os::ConstString &node, const yarp::os::Co
     return response.get(0).asString()=="sigterm OK"?0:YARPRUN_ERROR;
 }
 
-int yarp::os::Run::sigterm(const yarp::os::ConstString &node)
+int yarp::run::Run::sigterm(const yarp::os::ConstString &node)
 {
     yarp::os::Bottle msg, grp, response;
 
@@ -3762,7 +3765,7 @@ int yarp::os::Run::sigterm(const yarp::os::ConstString &node)
     return response.get(0).asString()=="sigtermall OK"?0:YARPRUN_ERROR;
 }
 
-int yarp::os::Run::kill(const yarp::os::ConstString &node, const yarp::os::ConstString &keyv, int s)
+int yarp::run::Run::kill(const yarp::os::ConstString &node, const yarp::os::ConstString &keyv, int s)
 {
     yarp::os::Bottle msg, grp, response;
 
@@ -3784,7 +3787,7 @@ int yarp::os::Run::kill(const yarp::os::ConstString &node, const yarp::os::Const
     return response.get(0).asString()=="kill OK"?0:YARPRUN_ERROR;
 }
 
-bool yarp::os::Run::isRunning(const yarp::os::ConstString &node, yarp::os::ConstString &keyv)
+bool yarp::run::Run::isRunning(const yarp::os::ConstString &node, yarp::os::ConstString &keyv)
 {
     yarp::os::Bottle msg, grp, response;
 

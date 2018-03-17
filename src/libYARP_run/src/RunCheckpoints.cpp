@@ -7,9 +7,8 @@
  * BSD-3-Clause license. See the accompanying LICENSE file for details.
  */
 
-#include <yarp/os/impl/RunCheckpoints.h>
-#include <yarp/conf/compiler.h>
-#include <yarp/os/impl/PlatformUnistd.h>
+#include <yarp/run/impl/RunCheckpoints.h>
+#include <yarp/run/impl/PlatformUnistd.h>
 #include <yarp/os/impl/PlatformTime.h>
 
 #include <ctime>

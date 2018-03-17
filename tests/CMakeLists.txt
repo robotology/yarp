@@ -59,7 +59,8 @@ if(YARP_COMPILE_TESTS)
   set(targets OS
               sig
               dev
-              serversql)
+              serversql
+              run)
   get_property(YARP_HAS_MATH_LIB GLOBAL PROPERTY YARP_HAS_MATH_LIB)
   if(YARP_HAS_MATH_LIB)
     list(APPEND targets math)
