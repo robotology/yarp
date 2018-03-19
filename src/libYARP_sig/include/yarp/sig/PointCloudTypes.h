@@ -150,11 +150,11 @@ namespace yarp {
                 return ret;
 
             }
-            void fromBottle(yarp::os::Bottle &bt, size_t i)
+            void fromBottle(const yarp::os::Bottle &bt, size_t i)
             {
                 yarp::os::Bottle* intBt = bt.get(i).asList();
-                x = intBt->get(0).asDouble();
-                y = intBt->get(1).asDouble();
+                x = static_cast<float>(intBt->get(0).asDouble());
+                y = static_cast<float>(intBt->get(1).asDouble());
                 return;
             }
         } XY_DATA;
@@ -204,15 +204,15 @@ namespace yarp {
                 return ret;
 
             }
-            void fromBottle(yarp::os::Bottle &bt, size_t i)
+            void fromBottle(const yarp::os::Bottle &bt, size_t i)
             {
                 yarp::os::Bottle* intBt = bt.get(i).asList();
 
                 if(!intBt) return;
 
-                x = intBt->get(0).asDouble();
-                y = intBt->get(1).asDouble();
-                z = intBt->get(2).asDouble();
+                x = static_cast<float>(intBt->get(0).asDouble());
+                y = static_cast<float>(intBt->get(1).asDouble());
+                z = static_cast<float>(intBt->get(2).asDouble());
                 return;
             }
         } XYZ_DATA;
@@ -253,7 +253,7 @@ namespace yarp {
                 return ret;
 
             }
-            void fromBottle(yarp::os::Bottle &bt, size_t i)
+            void fromBottle(const yarp::os::Bottle &bt, size_t i)
             {
                 yarp::os::Bottle* intBt = bt.get(i).asList();
                 r = intBt->get(0).asInt();
@@ -327,16 +327,16 @@ namespace yarp {
                 return ret;
 
             }
-            void fromBottle(yarp::os::Bottle &bt, size_t i)
+            void fromBottle(const yarp::os::Bottle &bt, size_t i)
             {
                 yarp::os::Bottle* intBt = bt.get(i).asList();
 
                 if(!intBt) return;
 
-                normal_x = intBt->get(0).asDouble();
-                normal_y = intBt->get(1).asDouble();
-                normal_z = intBt->get(2).asDouble();
-                curvature = intBt->get(3).asDouble();
+                normal_x = static_cast<float>(intBt->get(0).asDouble());
+                normal_y = static_cast<float>(intBt->get(1).asDouble());
+                normal_z = static_cast<float>(intBt->get(2).asDouble());
+                curvature = static_cast<float>(intBt->get(3).asDouble());
                 return;
             }
         } NORMAL_DATA;
@@ -385,15 +385,15 @@ namespace yarp {
                 return ret;
 
             }
-            void fromBottle(yarp::os::Bottle &bt, size_t i)
+            void fromBottle(const yarp::os::Bottle &bt, size_t i)
             {
                 yarp::os::Bottle* intBt = bt.get(i).asList();
 
                 if(!intBt) return;
 
-                normal_x = intBt->get(0).asDouble();
-                normal_y = intBt->get(1).asDouble();
-                normal_z = intBt->get(2).asDouble();
+                normal_x = static_cast<float>(intBt->get(0).asDouble());
+                normal_y = static_cast<float>(intBt->get(1).asDouble());
+                normal_z = static_cast<float>(intBt->get(2).asDouble());
                 return;
             }
         } NORMAL_NO_CURV;
@@ -458,15 +458,15 @@ namespace yarp {
                 return ret;
 
             }
-            void fromBottle(yarp::os::Bottle &bt, size_t i)
+            void fromBottle(const yarp::os::Bottle &bt, size_t i)
             {
                 yarp::os::Bottle* intBt = bt.get(i).asList();
 
                 if(!intBt) return;
 
-                vp_x = intBt->get(0).asDouble();
-                vp_y = intBt->get(1).asDouble();
-                vp_z = intBt->get(2).asDouble();
+                vp_x = static_cast<float>(intBt->get(0).asDouble());
+                vp_y = static_cast<float>(intBt->get(1).asDouble());
+                vp_z = static_cast<float>(intBt->get(2).asDouble());
                 return;
             }
         } VIEWPOINT_DATA;
@@ -542,15 +542,15 @@ namespace yarp {
                 ret.addInt(a);
                 return ret;
             }
-            void fromBottle(yarp::os::Bottle &bt, size_t i)
+            void fromBottle(const yarp::os::Bottle &bt, size_t i)
             {
                 yarp::os::Bottle* intBt = bt.get(i).asList();
 
                 if(!intBt) return;
 
-                x = intBt->get(0).asDouble();
-                y = intBt->get(1).asDouble();
-                z = intBt->get(2).asDouble();
+                x = static_cast<float>(intBt->get(0).asDouble());
+                y = static_cast<float>(intBt->get(1).asDouble());
+                z = static_cast<float>(intBt->get(2).asDouble());
                 r = intBt->get(3).asInt();
                 g = intBt->get(4).asInt();
                 b = intBt->get(5).asInt();
@@ -617,16 +617,18 @@ namespace yarp {
                 return ret;
 
             }
-            void fromBottle(yarp::os::Bottle &bt, size_t i)
+            void fromBottle(const yarp::os::Bottle &bt, size_t i)
             {
                 yarp::os::Bottle* intBt = bt.get(i).asList();
 
-                if(!intBt) return;
+                if (!intBt) {
+                    return;
+                }
 
-                x = intBt->get(0).asDouble();
-                y = intBt->get(1).asDouble();
-                z = intBt->get(2).asDouble();
-                intensity = intBt->get(3).asDouble();
+                x = static_cast<float>(intBt->get(0).asDouble());
+                y = static_cast<float>(intBt->get(1).asDouble());
+                z = static_cast<float>(intBt->get(2).asDouble());
+                intensity = static_cast<float>(intBt->get(3).asDouble());
                 return;
             }
         } XYZ_I_DATA;
@@ -688,16 +690,18 @@ namespace yarp {
                 return ret;
 
             }
-            void fromBottle(yarp::os::Bottle &bt, size_t i)
+            void fromBottle(const yarp::os::Bottle &bt, size_t i)
             {
                 yarp::os::Bottle* intBt = bt.get(i).asList();
 
-                if(!intBt) return;
+                if (!intBt) {
+                    return;
+                }
 
-                x = intBt->get(0).asDouble();
-                y = intBt->get(1).asDouble();
-                z = intBt->get(2).asDouble();
-                strength = intBt->get(3).asDouble();
+                x = static_cast<float>(intBt->get(0).asDouble());
+                y = static_cast<float>(intBt->get(1).asDouble());
+                z = static_cast<float>(intBt->get(2).asDouble());
+                strength = static_cast<float>(intBt->get(3).asDouble());
                 return;
             }
         } INTEREST_POINT_XYZ_DATA;
@@ -781,19 +785,21 @@ namespace yarp {
                 return ret;
 
             }
-            void fromBottle(yarp::os::Bottle &bt, size_t i)
+            void fromBottle(const yarp::os::Bottle &bt, size_t i)
             {
                 yarp::os::Bottle* intBt = bt.get(i).asList();
 
-                if(!intBt) return;
+                if (!intBt) {
+                    return;
+                }
 
-                x = intBt->get(0).asDouble();
-                y = intBt->get(1).asDouble();
-                z = intBt->get(2).asDouble();
-                normal_x = intBt->get(3).asDouble();
-                normal_y = intBt->get(4).asDouble();
-                normal_z = intBt->get(5).asDouble();
-                curvature = intBt->get(6).asDouble();
+                x = static_cast<float>(intBt->get(0).asDouble());
+                y = static_cast<float>(intBt->get(1).asDouble());
+                z = static_cast<float>(intBt->get(2).asDouble());
+                normal_x = static_cast<float>(intBt->get(3).asDouble());
+                normal_y = static_cast<float>(intBt->get(4).asDouble());
+                normal_z = static_cast<float>(intBt->get(5).asDouble());
+                curvature = static_cast<float>(intBt->get(6).asDouble());
                 return;
             }
         } XYZ_NORMAL_DATA;
@@ -895,19 +901,21 @@ namespace yarp {
                 return ret;
 
             }
-            void fromBottle(yarp::os::Bottle &bt, size_t i)
+            void fromBottle(const yarp::os::Bottle &bt, size_t i)
             {
                 yarp::os::Bottle* intBt = bt.get(i).asList();
 
-                if(!intBt) return;
+                if (!intBt) {
+                    return;
+                }
 
-                x = intBt->get(0).asDouble();
-                y = intBt->get(1).asDouble();
-                z = intBt->get(2).asDouble();
-                normal_x = intBt->get(3).asDouble();
-                normal_y = intBt->get(4).asDouble();
-                normal_z = intBt->get(5).asDouble();
-                curvature = intBt->get(6).asDouble();
+                x = static_cast<float>(intBt->get(0).asDouble());
+                y = static_cast<float>(intBt->get(1).asDouble());
+                z = static_cast<float>(intBt->get(2).asDouble());
+                normal_x = static_cast<float>(intBt->get(3).asDouble());
+                normal_y = static_cast<float>(intBt->get(4).asDouble());
+                normal_z = static_cast<float>(intBt->get(5).asDouble());
+                curvature = static_cast<float>(intBt->get(6).asDouble());
                 r = intBt->get(7).asInt();
                 g = intBt->get(8).asInt();
                 b = intBt->get(9).asInt();

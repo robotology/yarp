@@ -19,11 +19,12 @@ namespace pcl
 
 /**
  * Convert a yarp::sig::PointCloud to a pcl::PointCloud object
- * @param yarpCloud yarp::sig::PointCloud input
- * @return a pcl PointCloud filled with data contained in the yarp cloud.
+ * @param[in] yarpCloud yarp::sig::PointCloud input
+ * @param[out] pclCloud pcl::PointCloud filled with data contained in the yarp cloud
+ * @return true on success, false otherwise.
  */
 template< class T1, class T2 >
-inline bool toPCL(yarp::sig::PointCloud< T1 > &yarpCloud, ::pcl::PointCloud< T2 > &pclCloud)
+inline bool toPCL(const yarp::sig::PointCloud< T1 > &yarpCloud, ::pcl::PointCloud< T2 > &pclCloud)
 {
     static_assert(sizeof(T1) == sizeof(T2), "yarp::pcl::toPcl: T1 and T2 are incompatible");
     pclCloud.points.resize(yarpCloud.size());
@@ -35,11 +36,12 @@ inline bool toPCL(yarp::sig::PointCloud< T1 > &yarpCloud, ::pcl::PointCloud< T2 
 
 /**
  * Convert a pcl::PointCloud to a yarp::sig::PointCloud object
- * @param pclCloud pcl::PointCloud input
- * @return a yarp cloud filled with data contained in the pcl cloud.
+ * @param[in] pclCloud pcl::PointCloud input
+ * @param[out] yarpCloud yarp cloud filled with data contained in the pcl cloud.
+ * @return true on success, false otherwise.
  */
 template< class T1, class T2 >
-inline bool fromPCL(::pcl::PointCloud< T1 > &pclCloud, yarp::sig::PointCloud< T2 > &yarpCloud)
+inline bool fromPCL(const ::pcl::PointCloud< T1 > &pclCloud, yarp::sig::PointCloud< T2 > &yarpCloud)
 {
     static_assert(sizeof(T1) == sizeof(T2), "yarp::pcl::fromPCL: T1 and T2 are incompatible");
     yarpCloud.fromExternalPC((char*) &pclCloud(0,0), yarpCloud.getPointType(), pclCloud.width, pclCloud.height, pclCloud.is_dense);
@@ -48,12 +50,12 @@ inline bool fromPCL(::pcl::PointCloud< T1 > &pclCloud, yarp::sig::PointCloud< T2
 
 /**
  * Save a yarp::sig::PointCloud to PCD file, ASCII format
- * @param file_name name of the file to be created wth the cloud
- * @param yarpCloud yarp::sig::PointCloud input
- * @return result of the save operation
+ * @param[in] file_name name of the file to be created wth the cloud
+ * @param[in] yarpCloud yarp::sig::PointCloud input
+ * @return result of the save operation(see pcl::io::savePCDFile documentation)
  */
 template< class T1, class T2 >
-inline int savePCD(const std::string &file_name, yarp::sig::PointCloud< T1 > &yarpCloud)
+inline int savePCD(const std::string &file_name, const yarp::sig::PointCloud< T1 > &yarpCloud)
 {
     static_assert(sizeof(T1) == sizeof(T2), "yarp::pcl::savePCD: T1 and T2 are incompatible");
     ::pcl::PointCloud<T2> pclCloud(yarpCloud.width(), yarpCloud.height());
@@ -63,9 +65,9 @@ inline int savePCD(const std::string &file_name, yarp::sig::PointCloud< T1 > &ya
 
 /**
  * Load a yarp::sig::PointCloud from a PCD file, ASCII format
- * @param file_name of the PCD file containing the cloud
- * @param yarpCloud yarp::sig::PointCloud obtained from the PCD file
- * @return result of the load operation
+ * @param[in] file_name of the PCD file containing the cloud
+ * @param[out] yarpCloud yarp::sig::PointCloud obtained from the PCD file
+ * @return result of the load operation(see pcl::io::loadPCDFile documentation)
  */
 template< class T1, class T2 >
 inline int loadPCD(const std::string &file_name, yarp::sig::PointCloud<T2> &yarpCloud)

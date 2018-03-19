@@ -32,4 +32,3 @@ install(DIRECTORY ${PROJECT_SOURCE_DIR}/include/yarp/pcl
         DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}/yarp)
 
 set_property(GLOBAL APPEND PROPERTY YARP_LIBS YARP_pcl)
-#set_property(TARGET YARP_pcl PROPERTY FOLDER "Libraries")

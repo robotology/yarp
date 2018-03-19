@@ -26,7 +26,7 @@ namespace yarp {
 /**
  * @brief The yarp::sig::PointCloudNetworkHeader class
  */
-class yarp::sig::PointCloudNetworkHeader
+class YARP_sig_API yarp::sig::PointCloudNetworkHeader
 {
 public:
     PointCloudNetworkHeader() : width(0),
