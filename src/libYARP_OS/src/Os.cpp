@@ -14,6 +14,7 @@
 #include <yarp/os/impl/PlatformSysStat.h>
 #include <yarp/os/impl/PlatformStdlib.h>
 #include <yarp/os/impl/PlatformSignal.h>
+#include <yarp/os/SystemInfo.h>
 
 #include <cstdio>
 #include <cstdlib>
@@ -64,31 +65,12 @@ int yarp::os::getpid()
     return pid;
 }
 
-void yarp::os::setprogname(const char *progname)
-{
-#ifdef YARP_HAS_ACE
-    ACE_OS::setprogname(ACE::basename(progname));
-#else
-    // not available
-    YARP_UNUSED(progname);
-#endif
-}
-
 
 void yarp::os::getprogname(char* progname, size_t size)
 {
-#ifdef YARP_HAS_ACE
-    const char* tmp = ACE_OS::getprogname();
-    if (std::strlen(tmp)==0) {
-        std::strncpy(progname, "no_progname", size);
-    } else {
-        std::strncpy(progname, tmp, size);
-    }
-#else
-    // not available
-    *progname = '\0';
-    YARP_UNUSED(size);
-#endif
+    int pid = yarp::os::getpid();
+    yarp::os::SystemInfo::ProcessInfo info = yarp::os::SystemInfo::getProcessInfo(pid);
+    std::strncpy(progname, info.name.c_str(), size);
 }
 
 
