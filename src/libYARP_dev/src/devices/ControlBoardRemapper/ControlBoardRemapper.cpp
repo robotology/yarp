@@ -1964,7 +1964,7 @@ bool ControlBoardRemapper::getEncoderAccelerations(double *accs)
 
         if (p->iJntEnc)
         {
-            bool ok = p->iJntEnc->getEncoderSpeed(off, accs+l);
+            bool ok = p->iJntEnc->getEncoderAcceleration(off, accs+l);
             ret = ret && ok;
         }
         else
