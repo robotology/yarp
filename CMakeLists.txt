@@ -1,6 +1,9 @@
-# Copyright: (C) 2009, 2010 RobotCub Consortium
-# Authors: Paul Fitzpatrick, Giorgio Metta, Lorenzo Natale
-# CopyPolicy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
+# Copyright (C) 2006-2018 Istituto Italiano di Tecnologia (IIT)
+# Copyright (C) 2006-2010 RobotCub Consortium
+# All rights reserved.
+#
+# This software may be modified and distributed under the terms of the
+# BSD-3-Clause license. See the accompanying LICENSE file for details.
 
 cmake_minimum_required(VERSION 3.0)
 
@@ -11,6 +14,11 @@ endif()
 # RPATH cmake policy set to NEW
 if(NOT ${CMAKE_VERSION} VERSION_LESS 3.9)
   cmake_policy(SET CMP0068 NEW)
+endif()
+
+# Run automoc on generated files
+if(NOT ${CMAKE_VERSION} VERSION_LESS 3.10)
+  cmake_policy(SET CMP0071 NEW)
 endif()
 
 # Pick up our CMake scripts - they are all in the cmake subdirectory.

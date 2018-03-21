@@ -1,7 +1,10 @@
 /*
- * Copyright (C) 2006 RobotCub Consortium
- * Authors: Paul Fitzpatrick
- * CopyPolicy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
+ * Copyright (C) 2006-2018 Istituto Italiano di Tecnologia (IIT)
+ * Copyright (C) 2006-2010 RobotCub Consortium
+ * All rights reserved.
+ *
+ * This software may be modified and distributed under the terms of the
+ * BSD-3-Clause license. See the accompanying LICENSE file for details.
  */
 
 #ifndef YARP_OS_IMPL_SOCKETTWOWAYSTREAM_H
@@ -11,20 +14,8 @@
 #include <yarp/os/TwoWayStream.h>
 #include <yarp/os/impl/Logger.h>
 #include <yarp/os/impl/PlatformTime.h>
-
-#ifdef YARP_HAS_ACE
-#  include <ace/config.h>
-#  include <ace/SOCK_Acceptor.h>
-#  include <ace/SOCK_Connector.h>
-#  include <ace/SOCK_Stream.h>
-#  include <ace/Log_Msg.h>
-#  include <ace/Time_Value.h>
-#else
-#  include <yarp/os/impl/TcpStream.h>
-#  include <yarp/os/impl/TcpAcceptor.h>
-#  define ACE_SOCK_Acceptor TcpAcceptor
-#  define ACE_SOCK_Stream TcpStream
-#endif
+#include <yarp/os/impl/TcpStream.h>
+#include <yarp/os/impl/TcpAcceptor.h>
 
 namespace yarp {
     namespace os {
@@ -51,7 +42,7 @@ public:
 
     int open(const Contact& address);
 
-    int open(ACE_SOCK_Acceptor& acceptor);
+    int open(yarp::os::impl::TcpAcceptor& acceptor);
 
     virtual ~SocketTwoWayStream()
     {
@@ -197,7 +188,7 @@ public:
     virtual int getTypeOfService() override;
 
 private:
-    ACE_SOCK_Stream stream;
+    yarp::os::impl::TcpStream stream;
     bool haveWriteTimeout;
     bool haveReadTimeout;
     ACE_Time_Value writeTimeout;

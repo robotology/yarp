@@ -1,8 +1,9 @@
 /*
- * Copyright (C) 2011 Istituto Italiano di Tecnologia (IIT)
- * Authors: Paul Fitzpatrick
- * CopyPolicy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
+ * Copyright (C) 2006-2018 Istituto Italiano di Tecnologia (IIT)
+ * All rights reserved.
  *
+ * This software may be modified and distributed under the terms of the
+ * BSD-3-Clause license. See the accompanying LICENSE file for details.
  */
 
 #include "RosType.h"
@@ -23,6 +24,7 @@
 #include <string>
 #include <sstream>
 #include <vector>
+#include <algorithm>
 
 
 std::vector<std::string> normalizedMessage(const std::string& line) {
@@ -31,7 +33,7 @@ std::vector<std::string> normalizedMessage(const std::string& line) {
     bool quote = false;
     bool pending = false;
     bool can_quote = true;
-    for (int i=0; i<(int)line.length(); i++) {
+    for (size_t i=0; i<line.length(); i++) {
         char ch = line[i];
         if (ch=='\"'&&can_quote) {
             quote = !quote;
@@ -122,7 +124,10 @@ bool RosType::read(const char *tname, RosTypeSearch& env, RosTypeCodeGen& gen,
         indent += "  ";
     }
     if (nesting>0) env.lookForService(false); // no srv nesting allowed in ros
-    printf("[type]%s Checking %s\n", indent.c_str(), tname);
+
+    if (verbose) {
+        printf("[type]%s Checking %s\n", indent.c_str(), tname);
+    }
     clear();
 
     std::string base = tname;
@@ -157,18 +162,21 @@ bool RosType::read(const char *tname, RosTypeSearch& env, RosTypeCodeGen& gen,
                 isPrimitive = true;
             } else {
                 rosType = (base=="time")?"TickTime":"TickDuration";
+                isStruct = true;
                 isPrimitive = false;
                 RosType t1;
                 t1.rosType = "uint32";
                 t1.rosName = "sec";
                 t1.isPrimitive = true;
                 t1.isValid = true;
+                t1.verbose = verbose;
                 subRosType.push_back(t1);
                 RosType t2;
                 t2.rosType = "uint32";
                 t2.rosName = "nsec";
                 t2.isPrimitive = true;
                 t2.isValid = true;
+                t2.verbose = verbose;
                 subRosType.push_back(t2);
             }
         } else {
@@ -184,10 +192,25 @@ bool RosType::read(const char *tname, RosTypeSearch& env, RosTypeCodeGen& gen,
     if (isStruct) {
         size_t at = rosType.rfind("/");
         if (at != std::string::npos) {
-            package = rosType.substr(0, at);
-            size_t at = package.rfind("/");
+            std::string temp = rosType.substr(0, at);
+            at = temp.rfind("/");
             if (at != std::string::npos) {
-                package = package.substr(at+1);
+                package = temp.substr(at+1);
+            } else {
+                package = temp;
+            }
+            if (package == "srv" || package == "msg")
+            {
+                at = temp.rfind("/");
+                if (at != std::string::npos) {
+                    temp = temp.substr(0, at);
+                    at = temp.rfind("/");
+                    if (at != std::string::npos) {
+                        package = temp.substr(at+1);
+                    } else {
+                        package = temp;
+                    }
+                }
             }
         } else if (rosType == "Header") {
             rosType = "std_msgs/Header";
@@ -199,115 +222,124 @@ bool RosType::read(const char *tname, RosTypeSearch& env, RosTypeCodeGen& gen,
     }
 
     bool ok = true;
-    std::string path = env.findFile(base.c_str());
-    rosPath = path;
+    if (nesting == 0 || !no_recurse) {
+        std::string path = env.findFile(base.c_str());
+        rosPath = path;
 
-    FILE *fin = fopen((env.getTargetDirectory() + "/" + path).c_str(),"r");
-    if (!fin) {
-        fin = fopen(path.c_str(),"r");
-    }
-    if (!fin) {
-        fprintf(stderr, "[type] FAILED to open %s\n", path.c_str());
-        std::exit(1);
-    }
+        FILE *fin = fopen((env.getTargetDirectory() + "/" + path).c_str(),"r");
+        if (!fin) {
+            fin = fopen(path.c_str(),"r");
+        }
+        if (!fin) {
+            fprintf(stderr, "[type] FAILED to open %s\n", path.c_str());
+            std::exit(1);
+        }
 
-    if (verbose) {
-        fprintf(stderr,"[type]%s BEGIN %s\n", indent.c_str(), path.c_str());
-    }
-    char *result = nullptr;
-    txt = "";
-    source = "";
+        if (verbose) {
+            fprintf(stderr,"[type]%s BEGIN %s\n", indent.c_str(), path.c_str());
+        }
+        char *result = nullptr;
+        txt = "";
+        source = "";
 
-    RosType *cursor = this;
-    do {
-        char buf[2048];
-        result = fgets(buf,sizeof(buf),fin);
-        if (result==nullptr) break;
-        txt += "//   ";
-        txt += result;
-        source += result;
-        int len = (int)strlen(result);
-        for (int i=0; i<len; i++) {
-            if (result[i]=='\n') {
-                result[i] = '\0';
-                break;
-            }
-        }
-        std::string row = result;
-        std::vector<std::string> msg = normalizedMessage(row);
-        if (msg.size()==0) { continue; }
-        if (msg[0] == "---") {
-            if (verbose) {
-                printf("--- reply ---\n");
-            }
-            cursor->isValid = ok;
-            ok = true;
-            cursor->reply = new RosType();
-            cursor = cursor->reply;
-            cursor->rosType = rosType + "Reply";
-            continue;
-        }
-        bool have_const = false;
-        std::string const_txt = "";
-        if (msg.size()>2) {
-            if (msg[2]=="=") {
-                have_const = true;
-                //printf("Not worrying about: %s\n", row.c_str());
-                //continue;
-                const_txt = msg[3];
-            }
-        }
-        if (msg.size()!=2 && !have_const) {
-            if (msg.size()>0) {
-                if (msg[0][0]!='[') {
-                    if (verbose) {
-                        fprintf(stderr,"[type] skip %s\n", row.c_str());
-                    }
-                    ok = false;
+        RosType *cursor = this;
+        do {
+            char buf[2048];
+            result = fgets(buf,sizeof(buf),fin);
+            if (result==nullptr) break;
+            txt += "//   ";
+            txt += result;
+            source += result;
+            int len = (int)strlen(result);
+            for (int i=0; i<len; i++) {
+                if (result[i]=='\n') {
+                    result[i] = '\0';
+                    break;
                 }
             }
-            continue;
-        }
-        std::string t = msg[0];
-        std::string n = msg[1];
-        if (verbose) {
-            fprintf(stderr,"[type]%s   %s %s", indent.c_str(), t.c_str(), n.c_str());
-            if (const_txt!="") {
-                fprintf(stderr," = %s", const_txt.c_str());
+            std::string row = result;
+            std::vector<std::string> msg = normalizedMessage(row);
+            if (msg.size()==0) { continue; }
+            if (msg[0] == "---") {
+                if (verbose) {
+                    printf("--- reply ---\n");
+                }
+                cursor->isValid = ok;
+                ok = true;
+                cursor->reply = new RosType();
+                cursor->reply->verbose = verbose;
+                cursor->reply->no_recurse = no_recurse;
+                cursor = cursor->reply;
+                cursor->rosType = rosType + "Reply";
+                continue;
             }
-            fprintf(stderr,"\n");
-        }
-        RosType sub;
-        sub.package = package;
-        if (!sub.read(t.c_str(),env,gen,nesting+1)) {
-            fprintf(stderr, "[type]%s Type not complete: %s\n",
-                    indent.c_str(),
-                    row.c_str());
-            ok = false;
-        }
-        sub.rosName = n;
-        const_txt.erase(0,const_txt.find_first_not_of(" \t"));
-        if (const_txt.find_first_of(" \t#")!=std::string::npos) {
-            const_txt = const_txt.substr(0,const_txt.find_first_of(" \t#"));
-        }
-        sub.initializer = const_txt;
-        cursor->subRosType.push_back(sub);
-    } while (result!=nullptr);
-    if (verbose) {
-        fprintf(stderr,"[type]%s END %s\n", indent.c_str(), path.c_str());
-    }
-    fclose(fin);
+            bool have_const = false;
+            std::string const_txt = "";
+            if (msg.size()>2) {
+                if (msg[2]=="=") {
+                    have_const = true;
+                    //printf("Not worrying about: %s\n", row.c_str());
+                    //continue;
+                    const_txt = msg[3];
+                }
+            }
+            if (msg.size()!=2 && !have_const) {
+                if (msg.size()>0) {
+                    if (msg[0][0]!='[') {
+                        if (verbose) {
+                            fprintf(stderr,"[type] skip %s\n", row.c_str());
+                        }
+                        ok = false;
+                    }
+                }
+                continue;
+            }
+            std::string t = msg[0];
+            std::string n = msg[1];
+            if (verbose) {
+                fprintf(stderr,"[type]%s   %s %s", indent.c_str(), t.c_str(), n.c_str());
+                if (const_txt!="") {
+                    fprintf(stderr," = %s", const_txt.c_str());
+                }
+                fprintf(stderr,"\n");
+            }
+            RosType sub;
+            sub.verbose = verbose;
+            sub.no_recurse = no_recurse;
+            sub.package = package;
+            if (!sub.read(t.c_str(),env,gen,nesting+1)) {
+                if (!no_recurse) {
+                    fprintf(stderr, "[type]%s Type not complete: %s\n",
+                            indent.c_str(),
+                            row.c_str());
+                    ok = no_recurse;
+                }
+            }
 
-    if (rosType == "Header") {
-        std::string preamble = "[std_msgs/Header]:";
-        if (source.find(preamble)==0) {
-            source = source.substr(preamble.length()+1,source.length());
+            sub.rosName = n;
+            const_txt.erase(0,const_txt.find_first_not_of(" \t"));
+            if (const_txt.find_first_of(" \t#")!=std::string::npos) {
+                const_txt = const_txt.substr(0,const_txt.find_first_of(" \t#"));
+            }
+            sub.initializer = const_txt;
+            cursor->subRosType.push_back(sub);
+        } while (result!=nullptr);
+        if (verbose) {
+            fprintf(stderr,"[type]%s END %s\n", indent.c_str(), path.c_str());
         }
-    }
+        fclose(fin);
 
-    isValid = ok;
-    if (!isValid) {
-        fprintf(stderr, "[type]%s Check failed: %s\n", indent.c_str(), tname);
+        if (rosType == "Header") {
+            std::string preamble = "[std_msgs/Header]:";
+            if (source.find(preamble)==0) {
+                source = source.substr(preamble.length()+1,source.length());
+            }
+        }
+
+        isValid = ok;
+        if (!isValid) {
+            fprintf(stderr, "[type]%s Check failed: %s\n", indent.c_str(), tname);
+        }
     }
     return isValid;
 }
@@ -315,22 +347,45 @@ bool RosType::read(const char *tname, RosTypeSearch& env, RosTypeCodeGen& gen,
 bool RosType::cache(const char *tname, RosTypeSearch& env,
                     RosTypeCodeGen& gen) {
     std::string rosType = tname;
-    if (rosType.find(".")==std::string::npos) {
+    size_t at = rosType.rfind(".");
+    if (at == std::string::npos) {
         return false;
     }
-    rosType = rosType.substr(0,rosType.rfind("."));
+    std::string ext = rosType.substr(at+1);
+    rosType = rosType.substr(0,at);
+    std::string pkg;
+    at = rosType.rfind("/");
+    if (at != std::string::npos && at > 0) {
+        size_t pkg_at = rosType.rfind("/", at-1);
+        pkg = rosType.substr(pkg_at+1, at-pkg_at-1);
+        if (pkg == "srv" || pkg == "msg") {
+            pkg_at = rosType.rfind("/", pkg_at-1);
+            pkg = rosType.substr(pkg_at+1, at-pkg_at-5); // -1 -("/msg" or "/srv") = -5
+        }
+    }
+    rosType = rosType.substr(rosType.rfind("/")+1);
+    std::string outfile = rosType + "." + ext;
+    if (!pkg.empty()) {
+        outfile = pkg + "/" + outfile;
+    }
+
+    // If input and output are the same there is nothing to do
+    if (tname == outfile) {
+        return true;
+    }
+
     FILE *fin = fopen((env.getTargetDirectory() + "/" + tname).c_str(),"r");
-    yarp::os::mkdir_p((env.getTargetDirectory() + "/" + tname).c_str(),1);
-    FILE *fout = fopen((env.getTargetDirectory() + "/" + rosType).c_str(),"w");
+    yarp::os::mkdir_p((env.getTargetDirectory() + "/" + pkg).c_str(),1);
+    FILE *fout = fopen((env.getTargetDirectory() + "/" + outfile).c_str(),"w");
     if (!fin) {
         fin = fopen(tname,"r");
     }
     if (!fin) {
-        fprintf(stderr, "[type] FAILED to open %s\n", tname);
+        fprintf(stderr, "[type] FAILED to open input file \"%s\"\n", (env.getTargetDirectory() + "/" + tname).c_str());
         std::exit(1);
     }
     if (!fout) {
-        fprintf(stderr, "[type] FAILED to open %s\n", rosType.c_str());
+        fprintf(stderr, "[type] FAILED to open output file \"%s\"\n", (env.getTargetDirectory() + "/" + outfile).c_str());
         std::exit(1);
     }
 
@@ -357,7 +412,7 @@ void RosType::show() {
     }
     if (!isPrimitive) {
         printf("(");
-        for (int i=0; i<(int)subRosType.size(); i++) {
+        for (size_t i=0; i<subRosType.size(); i++) {
             if (i>0) printf(" ");
             subRosType[i].show();
         }
@@ -372,16 +427,20 @@ void RosType::show() {
 
 bool RosType::emitType(RosTypeCodeGen& gen,
                        RosTypeCodeGenState& state) {
-    if (isPrimitive) return true;
+    if (isPrimitive) {
+        return true;
+    }
     if (state.generated.find(rosType)!=state.generated.end()) {
         checksum = state.generated[rosType]->checksum;
         return true;
     }
 
-    if (subRosType.size()>0) {
-        for (int i=0; i<(int)subRosType.size(); i++) {
+    if (!no_recurse && subRosType.size()>0) {
+        for (size_t i=0; i<subRosType.size(); i++) {
             RosType& e = subRosType[i];
-            if (!e.emitType(gen,state)) return false;
+            if (!e.emitType(gen,state)) {
+                return false;
+            }
 
             if (e.isConst()) {
                 std::string add = e.rosType + " " + e.rosName + "=" + e.initializer + "\n";
@@ -431,63 +490,70 @@ bool RosType::emitType(RosTypeCodeGen& gen,
     checksum = (char *)hex_output;
 
     if (reply!=nullptr) {
-        if (!reply->emitType(gen,state)) return false;
+        if (!reply->emitType(gen,state)) {
+            return false;
+        }
     }
 
 
     state.usedVariables.clear();
     state.txt = txt;
-    for (int i=0; i<(int)subRosType.size(); i++) {
+    for (size_t i=0; i<subRosType.size(); i++) {
         state.useVariable(subRosType[i].rosName);
+    }
+
+    for (size_t i=0; i<subRosType.size(); i++) {
+        if (subRosType[i].isStruct && std::find(state.dependencies[rosType].begin(), state.dependencies[rosType].end(), subRosType[i].rosType) == state.dependencies[rosType].end()) {
+            state.dependencies[rosType].push_back(subRosType[i].rosType);
+            state.dependenciesAsPaths[rosType].push_back((subRosType[i].rosPath=="")?subRosType[i].rosType:subRosType[i].rosPath);
+        }
     }
 
     if (!gen.beginType(rosType,state)) return false;
 
     if (!gen.beginDeclare()) return false;
-    for (int i=0; i<(int)subRosType.size(); i++) {
+    for (size_t i=0; i<subRosType.size(); i++) {
         if (!gen.declareField(subRosType[i])) return false;
     }
     if (!gen.endDeclare()) return false;
 
     if (!gen.beginConstruct()) return false;
     bool isFirst = true;
-    for (int i=0; i<(int)subRosType.size(); i++) {
+    for (size_t i=0; i<subRosType.size(); i++) {
         if (!gen.initField(subRosType[i], isFirst)) return false;
-        if (i == (int)subRosType.size() -1) {
-            if (!gen.endInitConstruct()) return false;
-        }
     }
-    for (int i=0; i<(int)subRosType.size(); i++) {
+    if (!gen.endInitConstruct()) return false;
+    for (size_t i=0; i<subRosType.size(); i++) {
         if (!gen.constructField(subRosType[i])) return false;
     }
     if (!gen.endConstruct()) return false;
 
     if (!gen.beginClear()) return false;
-    for (int i = 0; i<(int)subRosType.size(); i++) {
+    for (size_t i=0; i<subRosType.size(); i++) {
         if (!gen.clearField(subRosType[i])) return false;
     }
     if (!gen.endClear()) return false;
 
     if (!gen.beginRead(true,(int)subRosType.size())) return false;
-    for (int i=0; i<(int)subRosType.size(); i++) {
+    for (size_t i=0; i<subRosType.size(); i++) {
         if (!gen.readField(true,subRosType[i])) return false;
     }
     if (!gen.endRead(true)) return false;
 
     if (!gen.beginRead(false,(int)subRosType.size())) return false;
-    for (int i=0; i<(int)subRosType.size(); i++) {
+    for (size_t i=0; i<subRosType.size(); i++) {
         if (!gen.readField(false,subRosType[i])) return false;
     }
     if (!gen.endRead(false)) return false;
 
     if (!gen.beginWrite(true,(int)subRosType.size())) return false;
-    for (int i=0; i<(int)subRosType.size(); i++) {
+    for (size_t i=0; i<subRosType.size(); i++) {
         if (!gen.writeField(true,subRosType[i])) return false;
     }
     if (!gen.endWrite(true)) return false;
 
     if (!gen.beginWrite(false,(int)subRosType.size())) return false;
-    for (int i=0; i<(int)subRosType.size(); i++) {
+    for (size_t i=0; i<subRosType.size(); i++) {
         if (!gen.writeField(false,subRosType[i])) return false;
     }
     if (!gen.endWrite(false)) return false;
@@ -495,12 +561,9 @@ bool RosType::emitType(RosTypeCodeGen& gen,
     if (!gen.endType(rosType,*this)) return false;
 
     state.generated[rosType] = this;
-    state.dependencies.push_back(rosType);
-    state.dependenciesAsPaths.push_back((rosPath=="")?rosType:rosPath);
 
     return true;
 }
-
 
 static std::vector<std::string> &split(const std::string &s, char delim, std::vector<std::string> &elems) {
     std::stringstream ss(s);
@@ -652,6 +715,14 @@ std::string RosTypeSearch::findFile(const char *tname) {
                     package_name = source_dir.substr(at+1);
                     source_dir = source_dir.substr(0, at);
                 }
+                if (package_name == "srv" || package_name == "msg")
+                {
+                    size_t at = source_dir.rfind("/");
+                    if (at != std::string::npos) {
+                        package_name = source_dir.substr(at+1);
+                        source_dir = source_dir.substr(0, at);
+                    }
+                }
             } else {
                 source_dir = ".";
             }
@@ -659,9 +730,25 @@ std::string RosTypeSearch::findFile(const char *tname) {
         return target;
     }
 
+    std::string target2;
     if (!source_dir.empty()) {
+        size_t at = target.rfind("/");
+        if (at != std::string::npos) {
+            target2 = target.substr(0, at) + (find_service? "/srv/" : "/msg/") + target.substr(at+1);
+        }
+
         // Search in source directory
         std::string source_full = source_dir + "/" + target + (find_service? ".srv" : ".msg");
+        if (verbose)
+        {
+            printf("searching definition: %s... (source directory: %s)\n", source_full.c_str(), source_dir.c_str());
+        }
+        if (stat(source_full.c_str(), &dummy)==0) {
+            return source_full;
+        }
+
+        // Search in source directory (adding src/msg to path)
+        source_full = source_dir + "/" + target2 + (find_service? ".srv" : ".msg");
         if (verbose)
         {
             printf("searching definition: %s... (source directory: %s)\n", source_full.c_str(), source_dir.c_str());
@@ -680,6 +767,16 @@ std::string RosTypeSearch::findFile(const char *tname) {
             return source_full;
         }
 
+        // Search for current package in source directory (adding src/msg to path)
+        source_full = source_dir + "/" + package_name + "/" + target2 + (find_service? ".srv" : ".msg");
+        if (verbose)
+        {
+            printf("searching definition: %s... (package name: %s)\n", source_full.c_str(), package_name.c_str());
+        }
+        if (stat(source_full.c_str(), &dummy)==0) {
+            return source_full;
+        }
+
         // Search for std_msgs package in source directory
         source_full = source_dir + "/std_msgs/" + target + (find_service? ".srv" : ".msg");
         if (verbose)
@@ -690,8 +787,28 @@ std::string RosTypeSearch::findFile(const char *tname) {
             return source_full;
         }
 
+        // Search for std_msgs package in source directory (adding src/msg to path)
+        source_full = source_dir + "/std_msgs/" + target2 + (find_service? ".srv" : ".msg");
+        if (verbose)
+        {
+            printf("searching definition: %s...\n", source_full.c_str());
+        }
+        if (stat(source_full.c_str(), &dummy)==0) {
+            return source_full;
+        }
+
         // Search in current directory
         source_full = "./" + target + (find_service ? ".srv" : ".msg");
+        if (verbose)
+        {
+            printf("searching definition: %s...\n", source_full.c_str());
+        }
+        if (stat(source_full.c_str(), &dummy) == 0) {
+            return source_full;
+        }
+
+        // Search in current directory (adding src/msg to path)
+        source_full = "./" + target2 + (find_service ? ".srv" : ".msg");
         if (verbose)
         {
             printf("searching definition: %s...\n", source_full.c_str());

@@ -1,8 +1,9 @@
 /*
- * Copyright (C) 2016 Istituto Italiano di Tecnologia (IIT)
- * Authors: Alberto Cardellino <Alberto.Cardellino@iit.it>
- *          Andrea Ruzzenenti   <Andrea.Ruzzenenti@iit.it>
- * CopyPolicy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
+ * Copyright (C) 2006-2018 Istituto Italiano di Tecnologia (IIT)
+ * All rights reserved.
+ *
+ * This software may be modified and distributed under the terms of the
+ * BSD-3-Clause license. See the accompanying LICENSE file for details.
  */
 
 #include "RGBDSensorWrapper.h"
@@ -11,7 +12,7 @@
 #include <cstring>
 #include <yarp/os/Log.h>
 #include <yarp/os/LogStream.h>
-#include <yarpRosHelper.h>
+#include <yarp/rosmsg/impl/yarpRosHelper.h>
 #include "rosPixelCode.h"
 
 using namespace yarp::dev::RGBDImpl;
@@ -658,11 +659,11 @@ void RGBDSensorWrapper::shallowCopyImages(const ImageOf<PixelFloat>& src, ImageO
 
 
 
-void RGBDSensorWrapper::deepCopyImages(const yarp::sig::FlexImage& src,
-                                       sensor_msgs_Image&          dest,
-                                       const string&               frame_id,
-                                       const TickTime&             timeStamp,
-                                       const UInt&                 seq)
+void RGBDSensorWrapper::deepCopyImages(const yarp::sig::FlexImage&       src,
+                                       yarp::rosmsg::sensor_msgs::Image& dest,
+                                       const string&                     frame_id,
+                                       const yarp::rosmsg::TickTime&     timeStamp,
+                                       const UInt&                       seq)
 {
     dest.data.resize(src.getRawImageSize());
     dest.width           = src.width();
@@ -676,11 +677,11 @@ void RGBDSensorWrapper::deepCopyImages(const yarp::sig::FlexImage& src,
     dest.is_bigendian    = 0;
 }
 
-void RGBDSensorWrapper::deepCopyImages(const DepthImage&  src,
-                                       sensor_msgs_Image& dest,
-                                       const string&      frame_id,
-                                       const TickTime&    timeStamp,
-                                       const UInt&        seq)
+void RGBDSensorWrapper::deepCopyImages(const DepthImage&                 src,
+                                       yarp::rosmsg::sensor_msgs::Image& dest,
+                                       const string&                     frame_id,
+                                       const yarp::rosmsg::TickTime&     timeStamp,
+                                       const UInt&                       seq)
 {
     dest.data.resize(src.getRawImageSize());
 
@@ -697,7 +698,7 @@ void RGBDSensorWrapper::deepCopyImages(const DepthImage&  src,
     dest.is_bigendian    = 0;
 }
 
-bool RGBDSensorWrapper::setCamInfo(sensor_msgs_CameraInfo& cameraInfo, const string& frame_id, const UInt& seq, const SensorType& sensorType)
+bool RGBDSensorWrapper::setCamInfo(yarp::rosmsg::sensor_msgs::CameraInfo& cameraInfo, const string& frame_id, const UInt& seq, const SensorType& sensorType)
 {
     double                  fx, fy, cx, cy, k1, k2, t1, t2, k3, stamp;
     string                  distModel, currentSensor;
@@ -756,7 +757,7 @@ bool RGBDSensorWrapper::setCamInfo(sensor_msgs_CameraInfo& cameraInfo, const str
 
     cameraInfo.header.frame_id    = frame_id;
     cameraInfo.header.seq         = seq;
-    cameraInfo.header.stamp       = normalizeSecNSec(stamp);
+    cameraInfo.header.stamp       = stamp;
     cameraInfo.width              = sensorType == COLOR_SENSOR ? sensor_p->getRgbWidth() : sensor_p->getDepthWidth();
     cameraInfo.height             = sensorType == COLOR_SENSOR ? sensor_p->getRgbHeight() : sensor_p->getDepthHeight();
     cameraInfo.distortion_model   = distModel;
@@ -843,14 +844,14 @@ bool RGBDSensorWrapper::writeData()
     }
     if (use_ROS)
     {
-        sensor_msgs_Image&      rColorImage     = rosPublisherPort_color.prepare();
-        sensor_msgs_Image&      rDepthImage     = rosPublisherPort_depth.prepare();
-        sensor_msgs_CameraInfo& camInfoC        = rosPublisherPort_colorCaminfo.prepare();
-        sensor_msgs_CameraInfo& camInfoD        = rosPublisherPort_depthCaminfo.prepare();
-        TickTime                cRosStamp, dRosStamp;
+        yarp::rosmsg::sensor_msgs::Image&      rColorImage     = rosPublisherPort_color.prepare();
+        yarp::rosmsg::sensor_msgs::Image&      rDepthImage     = rosPublisherPort_depth.prepare();
+        yarp::rosmsg::sensor_msgs::CameraInfo& camInfoC        = rosPublisherPort_colorCaminfo.prepare();
+        yarp::rosmsg::sensor_msgs::CameraInfo& camInfoD        = rosPublisherPort_depthCaminfo.prepare();
+        yarp::rosmsg::TickTime                 cRosStamp, dRosStamp;
 
-        cRosStamp = normalizeSecNSec(colorStamp.getTime());
-        dRosStamp = normalizeSecNSec(depthStamp.getTime());
+        cRosStamp = colorStamp.getTime();
+        dRosStamp = depthStamp.getTime();
 
         deepCopyImages(colorImage, rColorImage, rosFrameId, cRosStamp, nodeSeq);
         deepCopyImages(depthImage, rDepthImage, rosFrameId, dRosStamp, nodeSeq);

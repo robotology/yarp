@@ -1,14 +1,16 @@
 /*
- * Copyright (C) 2015 Istituto Italiano di Tecnologia (IIT)
- * Authors: Paul Fitzpatrick
- * CopyPolicy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
+ * Copyright (C) 2006-2018 Istituto Italiano di Tecnologia (IIT)
+ * All rights reserved.
+ *
+ * This software may be modified and distributed under the terms of the
+ * BSD-3-Clause license. See the accompanying LICENSE file for details.
  */
 
 #include <yarp/os/all.h>
-#include "std_msgs_String.h"
-#include "sensor_msgs_Image.h"
-#include "sensor_msgs_PointCloud2.h"
-#include "stereo_msgs_DisparityImage.h"
+#include <yarp/rosmsg/std_msgs/String.h>
+#include <yarp/rosmsg/sensor_msgs/Image.h>
+#include <yarp/rosmsg/sensor_msgs/PointCloud2.h>
+#include <yarp/rosmsg/stereo_msgs/DisparityImage.h>
 
 using namespace yarp::os;
 
@@ -17,10 +19,10 @@ int main(int argc, char *argv[]) {
     bool wait = (argc==3);
     ConstString name = argv[1];
     Node node(name + "/node");
-    Publisher<std_msgs_String> topic_string;
-    Publisher<sensor_msgs_Image> topic_image;
-    Publisher<stereo_msgs_DisparityImage> topic_disp;
-    Publisher<sensor_msgs_PointCloud2> topic_cloud;
+    Publisher<yarp::rosmsg::std_msgs::String> topic_string;
+    Publisher<yarp::rosmsg::sensor_msgs::Image> topic_image;
+    Publisher<yarp::rosmsg::stereo_msgs::DisparityImage> topic_disp;
+    Publisher<yarp::rosmsg::sensor_msgs::PointCloud2> topic_cloud;
     if (!topic_string.topic(name + "/str")) return 1;
     while (wait) {
         if (topic_string.asPort().getOutputCount()>0) break;

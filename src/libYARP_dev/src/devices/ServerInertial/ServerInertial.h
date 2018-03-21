@@ -1,9 +1,11 @@
 /*
- * Copyright (C) 2006 RobotCub Consortium
- * Authors: Alexis Maldonado, Radu Bogdan Rusu
- * CopyPolicy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
+ * Copyright (C) 2006-2018 Istituto Italiano di Tecnologia (IIT)
+ * Copyright (C) 2006-2010 RobotCub Consortium
+ * All rights reserved.
+ *
+ * This software may be modified and distributed under the terms of the
+ * BSD-3-Clause license. See the accompanying LICENSE file for details.
  */
-
 
 #ifndef YARP_DEV_SERVERINERTIAL_SERVERINERTIAL_H
 #define YARP_DEV_SERVERINERTIAL_SERVERINERTIAL_H
@@ -22,10 +24,10 @@
 #include <yarp/dev/Wrapper.h>
 
 // ROS state publisher
-#include <yarpRosHelper.h>
 #include <yarp/os/Node.h>
 #include <yarp/os/Publisher.h>
-#include <sensor_msgs_Imu.h>
+#include <yarp/rosmsg/sensor_msgs/Imu.h>
+#include <yarp/rosmsg/impl/yarpRosHelper.h>
 
 namespace yarp
 {
@@ -142,7 +144,7 @@ private:
     std::string                                         rosTopicName;               // name of the rosTopic
     yarp::os::Node                                      *rosNode;                   // add a ROS node
     yarp::os::NetUint32                                 rosMsgCounter;              // incremental counter in the ROS message
-    yarp::os::Publisher<sensor_msgs_Imu>                rosPublisherPort;           // Dedicated ROS topic publisher
+    yarp::os::Publisher<yarp::rosmsg::sensor_msgs::Imu> rosPublisherPort;           // Dedicated ROS topic publisher
     std::vector<yarp::os::NetFloat64>                   covariance;                 // empty matrix to store covariance data needed by ROS msg
 
     bool checkROSParams(yarp::os::Searchable &config);

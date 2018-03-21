@@ -1,10 +1,3 @@
-
-/*
- * Copyright (C) 2011, 2016 Istituto Italiano di Tecnologia (IIT).
- * CopyPolicy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
- *
- */
-
 /**
  * @page yarp_with_ros Using YARP with ROS
 
@@ -17,7 +10,7 @@ fresh YARP, so make sure you are up to date.
 These instructions are separated in a few pages. Make sure you check out:
 
 \li \subpage yarp_with_ros_configure
-\li \subpage yarp_with_ros_nameservers 
+\li \subpage yarp_with_ros_nameservers
 
 You can then see how to write code that talks to ROS topics and services:
 

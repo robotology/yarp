@@ -1,6 +1,9 @@
-# Copyright: (C) 2009 RobotCub Consortium
-# Authors: Paul Fitzpatrick, Giorgio Metta, Lorenzo Natale
-# CopyPolicy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
+# Copyright (C) 2006-2018 Istituto Italiano di Tecnologia (IIT)
+# Copyright (C) 2006-2010 RobotCub Consortium
+# All rights reserved.
+#
+# This software may be modified and distributed under the terms of the
+# BSD-3-Clause license. See the accompanying LICENSE file for details.
 
 include(GNUInstallDirs)
 include(CMakeDependentOption)
@@ -364,7 +367,7 @@ add_install_rpath_support(LIB_DIRS "${CMAKE_INSTALL_FULL_LIBDIR}"       # Librar
 
 #########################################################################
 # Specify yarp version and copyright into macOS bundles
-set(MACOSX_BUNDLE_COPYRIGHT "© Istituto Italiano di Tecnologia (IIT) and RobotCub Consortium. YARP is released under the terms of the LGPL v2.1 or later.")
+set(MACOSX_BUNDLE_COPYRIGHT "© 2006-2018 Istituto Italiano di Tecnologia (IIT), 2006-2010 RobotCub Consortium. YARP is released under the terms of the BSD-3-Clause. See the accompanying LICENSE file for details.")
 set(MACOSX_BUNDLE_SHORT_VERSION_STRING "${YARP_VERSION_SHORT}")
 
 

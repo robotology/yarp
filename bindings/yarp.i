@@ -1,6 +1,9 @@
-// Copyright: (C) 2010 RobotCub Consortium
-// Author: Paul Fitzpatrick, Stephane Lallee, Arnaud Degroote, Leo Pape, Juan G Victores, Marek Rucinski, Fabien Benureau, Ali Paikan
-// CopyPolicy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
+// Copyright (C) 2006-2018 Istituto Italiano di Tecnologia (IIT)
+// Copyright (C) 2006-2010 RobotCub Consortium
+// All rights reserved.
+//
+// This software may be modified and distributed under the terms of the
+// BSD-3-Clause license. See the accompanying LICENSE file for details.
 
 //////////////////////////////////////////////////////////////////////////
 //
@@ -572,6 +575,10 @@ typedef yarp::os::BufferedPort<yarp::sig::Vector> BufferedPortVector;
 %template(TypedReaderCallbackImageInt) yarp::os::TypedReaderCallback<yarp::sig::ImageOf<yarp::sig::PixelInt> >;
 %template(BufferedPortImageInt) yarp::os::BufferedPort<yarp::sig::ImageOf<yarp::sig::PixelInt> >;
 
+#if !defined (SWIGMATLAB)
+%feature("director") yarp::os::TypedReaderCallback<Sound>;
+%feature("director") yarp::os::TypedReaderCallback<yarp::sig::Sound>;
+#endif
 %template(TypedReaderSound) yarp::os::TypedReader<yarp::sig::Sound >;
 %template(TypedReaderCallbackSound) yarp::os::TypedReaderCallback<yarp::sig::Sound>;
 %template(BufferedPortSound) yarp::os::BufferedPort<yarp::sig::Sound >;

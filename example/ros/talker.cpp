@@ -1,7 +1,9 @@
 /*
- * Copyright (C) 2016 Istituto Italiano di Tecnologia (IIT)
- * Authors: Lorenzo Natale
- * CopyPolicy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
+ * Copyright (C) 2006-2018 Istituto Italiano di Tecnologia (IIT)
+ * All rights reserved.
+ *
+ * This software may be modified and distributed under the terms of the
+ * BSD-3-Clause license. See the accompanying LICENSE file for details.
  */
 
 #include <iostream>
@@ -12,16 +14,16 @@ using namespace std;
 
 /* Make sure you run yarpidl_rosmsg std_msg/String */
 /* to generate String.h  */
-#include "String.h"
+#include <yarp/rosmsg/std_msgs/String.h>
 
 int main(int argc, char *argv[]) {
     Network yarp;
-    
+
     /* creates a node called /yarp/talker */
     Node node("/yarp/talker");
-    
+
     /* subscribe to topic chatter */
-    yarp::os::Publisher<String> publisher;
+    yarp::os::Publisher<yarp::rosmsg::std_msgs::String> publisher;
     if (!publisher.topic("/chatter")) {
         cerr<< "Failed to create publisher to /chatter\n";
         return -1;
@@ -29,7 +31,7 @@ int main(int argc, char *argv[]) {
 
     while (true) {
         /* prepare some data */
-        String data;
+        yarp::rosmsg::std_msgs::String data;
         data.data="Hello from YARP";
 
         /* publish it to the topic */
@@ -38,6 +40,6 @@ int main(int argc, char *argv[]) {
         /* wait some time to avoid flooding with messages */
         Time::delay(0.1);
     }
-  
+
     return 0;
 }

@@ -1,7 +1,9 @@
-# Copyright (C) 2013
-# Author: Konstantinos Theofilis
-# CopyPolicy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
-
+# Copyright (C) 2006-2018 Istituto Italiano di Tecnologia (IIT)
+# Copyright (C) 2013 Konstantinos Theofilis <k.theofilis@herts.ac.uk>
+# All rights reserved.
+#
+# This software may be modified and distributed under the terms of the
+# BSD-3-Clause license. See the accompanying LICENSE file for details.
 
 find_path(NITE2_INCLUDE_LOCAL NAMES NiTE.h HINTS $ENV{NITE2_INCLUDE})
 find_library(NITE2_LIBRARY NAMES NiTE2 HINTS $ENV{NITE2_REDIST64})
@@ -16,12 +18,12 @@ yarp_prepare_plugin(OpenNI2DeviceServer
                     CATEGORY device
                     TYPE yarp::dev::OpenNI2DeviceDriverServer
                     INCLUDE OpenNI2DeviceDriverServer.h
-                    DEPENDS "CREATE_DEVICE_LIBRARY_MODULES;OpenNI2_FOUND")
+                    DEPENDS "CREATE_DEVICE_LIBRARY_MODULES;YARP_HAS_MATH_LIB;OpenNI2_FOUND")
 yarp_prepare_plugin(OpenNI2DeviceClient
                     CATEGORY device
                     TYPE yarp::dev::OpenNI2DeviceDriverClient
                     INCLUDE OpenNI2DeviceDriverClient.h
-                    DEPENDS "CREATE_DEVICE_LIBRARY_MODULES;OpenNI2_FOUND")
+                    DEPENDS "CREATE_DEVICE_LIBRARY_MODULES;YARP_HAS_MATH_LIB;OpenNI2_FOUND")
 
 if (NOT SKIP_OpenNI2DeviceServer OR NOT SKIP_OpenNI2DeviceClient)
   set(CMAKE_INCLUDE_CURRENT_DIR ON)
@@ -32,6 +34,8 @@ if (NOT SKIP_OpenNI2DeviceServer OR NOT SKIP_OpenNI2DeviceClient)
   else()
     add_definitions(-DOPENNI2_DRIVER_USES_NITE2)
   endif()
+
+  include_directories(${CMAKE_CURRENT_SOURCE_DIR}/include)
 
   include_directories(SYSTEM ${OpenNI2_INCLUDE_DIRS})
   if(NITE2_FOUND)

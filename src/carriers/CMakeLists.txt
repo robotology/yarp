@@ -1,11 +1,15 @@
-# Copyright (C) 2010 RobotCub Consortium
-# Authors: Paul Fitzpatrick
-# CopyPolicy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
+# Copyright (C) 2006-2018 Istituto Italiano di Tecnologia (IIT)
+# Copyright (C) 2006-2010 RobotCub Consortium
+# All rights reserved.
+#
+# This software may be modified and distributed under the terms of the
+# BSD-3-Clause license. See the accompanying LICENSE file for details.
 
 option(CREATE_OPTIONAL_CARRIERS "Compile some optional carriers" FALSE)
 
 include(YarpPlugin)
 yarp_begin_plugin_library(yarpcar)
+  add_subdirectory(shmem_carrier)
   add_subdirectory(human_carrier)
   add_subdirectory(mpi_carrier)
   add_subdirectory(xmlrpc_carrier)

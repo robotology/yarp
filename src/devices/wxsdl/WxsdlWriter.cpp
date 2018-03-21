@@ -1,7 +1,7 @@
 /*
  * Copyright (C) 2007 RobotCub Consortium
  * Author: Paul Fitzpatrick
- * CopyPolicy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
+ * CopyPolicy: Released under the terms of the LGPLv2.1 or later, see LICENSE
  *
  * Originally based on "wx-sdl tutorial v1.1", copyright follows
  *

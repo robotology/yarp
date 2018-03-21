@@ -1,8 +1,9 @@
-# Copyright (C) 2009  RobotCub Consortium
-# Copyright (C) 2012 Istituto Italiano di Tecnologia (IIT)
-# Authors: Lorenzo Natale <lorenzo.natale@iit.it>
-#          Daniele E. Domenichelli <daniele.domenichelli@iit.it>
-# CopyPolicy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
+# Copyright (C) 2006-2018 Istituto Italiano di Tecnologia (IIT)
+# Copyright (C) 2006-2010 RobotCub Consortium
+# All rights reserved.
+#
+# This software may be modified and distributed under the terms of the
+# BSD-3-Clause license. See the accompanying LICENSE file for details.
 
 # This module checks if all the dependencies are installed and if the
 # dependencies to build some parts of Yarp are satisfied.
@@ -366,6 +367,8 @@ endif()
 
 buildandset_dependency(xmlrpcpp)
 
+buildandset_dependency(hmac)
+
 if(CREATE_GUIS)
   find_package(Qt5 COMPONENTS Core Widgets Gui Quick Qml Multimedia Xml PrintSupport QUIET)
   checkandset_dependency(Qt5)
@@ -477,6 +480,13 @@ set(GStreamerPluginsBase_REQUIRED_VERSION 1.4)
 find_package(GStreamerPluginsBase ${GStreamerPluginsBase_REQUIRED_VERSION} COMPONENTS app QUIET)
 checkandset_dependency(GStreamerPluginsBase)
 
+set(BISON_REQUIRED_VERSION 2.5)
+find_package(BISON ${BISON_REQUIRED_VERSION} QUIET)
+checkandset_dependency(BISON)
+
+find_package(FLEX QUIET)
+checkandset_dependency(FLEX)
+
 # PRINT DEPENDENCIES STATUS:
 
 message(STATUS "I have found the following libraries:")
@@ -487,6 +497,7 @@ print_dependency(SQLite)
 print_dependency(Eigen3)
 print_dependency(TinyXML)
 #print_dependency(xmlrpcpp)
+print_dependency(hmac)
 print_dependency(Qt5)
 print_dependency(QCustomPlot)
 print_dependency(Graphviz)
@@ -515,6 +526,8 @@ print_dependency(OpenNI2)
 print_dependency(GLIB2)
 print_dependency(GStreamer)
 print_dependency(GStreamerPluginsBase)
+print_dependency(BISON)
+print_dependency(FLEX)
 
 
 # CHECK DEPENDENCIES:

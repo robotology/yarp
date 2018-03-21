@@ -1,6 +1,9 @@
-# Copyright: (C) 2009 RobotCub Consortium
-# Author: Paul Fitzpatrick
-# CopyPolicy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
+# Copyright (C) 2006-2018 Istituto Italiano di Tecnologia (IIT)
+# Copyright (C) 2006-2010 RobotCub Consortium
+# All rights reserved.
+#
+# This software may be modified and distributed under the terms of the
+# BSD-3-Clause license. See the accompanying LICENSE file for details.
 
 project(YARP_sig)
 
@@ -10,13 +13,17 @@ set(YARP_sig_HDRS include/yarp/sig/all.h
                   include/yarp/sig/ImageFile.h
                   include/yarp/sig/Image.h
                   include/yarp/sig/ImageNetworkHeader.h
-                  include/yarp/sig/IplImage.h
                   include/yarp/sig/Matrix.h
                   include/yarp/sig/SoundFile.h
                   include/yarp/sig/Sound.h
                   include/yarp/sig/Vector.h)
 
-set(YARP_sig_IMPL_HDRS include/yarp/sig/impl/DeBayer.h)
+if(NOT YARP_NO_DEPRECATED) # Since YARP 3.0.0
+  list(APPEND YARP_sig_HDRS include/yarp/sig/IplImage.h)
+endif()
+
+set(YARP_sig_IMPL_HDRS include/yarp/sig/impl/DeBayer.h
+                       include/yarp/sig/impl/IplImage.h)
 
 set(YARP_sig_SRCS src/ImageCopy.cpp
                   src/Image.cpp

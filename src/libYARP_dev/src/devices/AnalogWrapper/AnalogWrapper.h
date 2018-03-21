@@ -1,7 +1,9 @@
 /*
- * Copyright (C) 2013 Istituto Italiano di Tecnologia (IIT)
- * Authors: Alberto Cardellino <alberto.cardellino@iit.it>
- * CopyPolicy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
+ * Copyright (C) 2006-2018 Istituto Italiano di Tecnologia (IIT)
+ * All rights reserved.
+ *
+ * This software may be modified and distributed under the terms of the
+ * BSD-3-Clause license. See the accompanying LICENSE file for details.
  */
 
 #ifndef YARP_DEV_ANALOGWRAPPER_ANALOGWRAPPER_H
@@ -34,11 +36,11 @@
 
 
 // ROS state publisher
-#include <yarpRosHelper.h>
 #include <yarp/os/Node.h>
 #include <yarp/os/Publisher.h>
-#include <geometry_msgs_WrenchStamped.h>  // Defines ROS jointState msg; it already includes TickTime and Header
-#include <sensor_msgs_JointState.h>
+#include <yarp/rosmsg/geometry_msgs/WrenchStamped.h>
+#include <yarp/rosmsg/sensor_msgs/JointState.h>
+#include <yarp/rosmsg/impl/yarpRosHelper.h>
 
 
 /* Using yarp::dev::impl namespace for all helper class inside yarp::dev to reduce
@@ -239,11 +241,11 @@ private:
     yarp::os::NetUint32                                      rosMsgCounter;              // incremental counter in the ROS message
 
     // TODO: in the future, in order to support multiple ROS msgs this should be a pointer allocated dynamically depending on the msg maybe (??)
-    //  yarp::os::PortWriterBuffer<geometry_msgs_WrenchStamped>  rosOutputWrench_buffer;      // Buffer associated to the ROS topic
-    yarp::os::Publisher<geometry_msgs_WrenchStamped>         rosPublisherWrenchPort;      // Dedicated ROS topic publisher
+    //  yarp::os::PortWriterBuffer<yarp::rosmsg::geometry_msgs::WrenchStamped> rosOutputWrench_buffer; // Buffer associated to the ROS topic
+    yarp::os::Publisher<yarp::rosmsg::geometry_msgs::WrenchStamped> rosPublisherWrenchPort; // Dedicated ROS topic publisher
 
-    //yarp::os::PortWriterBuffer<sensor_msgs_JointState>       rosOutputJoint_buffer;       // Buffer associated to the ROS topic
-    yarp::os::Publisher<sensor_msgs_JointState>              rosPublisherJointPort;       // Dedicated ROS topic publisher
+    //yarp::os::PortWriterBuffer<yarp::rosmsg::sensor_msgs::JointState> rosOutputJoint_buffer; // Buffer associated to the ROS topic
+    yarp::os::Publisher<yarp::rosmsg::sensor_msgs::JointState> rosPublisherJointPort; // Dedicated ROS topic publisher
 
 
     bool ownDevices;

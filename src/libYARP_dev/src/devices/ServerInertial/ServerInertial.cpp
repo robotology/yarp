@@ -1,7 +1,10 @@
 /*
- * Copyright (C) 2006 RobotCub Consortium
- * Authors: Alexis Maldonado, Radu Bogdan Rusu
- * CopyPolicy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
+ * Copyright (C) 2006-2018 Istituto Italiano di Tecnologia (IIT)
+ * Copyright (C) 2006-2010 RobotCub Consortium
+ * All rights reserved.
+ *
+ * This software may be modified and distributed under the terms of the
+ * BSD-3-Clause license. See the accompanying LICENSE file for details.
  */
 
 #include "ServerInertial.h"
@@ -450,10 +453,10 @@ void yarp::dev::ServerInertial::run()
 
                 convertEulerAngleYXZdegrees_to_quaternion(euler_xyz, quaternion);
 
-                sensor_msgs_Imu &rosData = rosPublisherPort.prepare();
+                yarp::rosmsg::sensor_msgs::Imu &rosData = rosPublisherPort.prepare();
 
                 rosData.header.seq = rosMsgCounter++;
-                rosData.header.stamp = normalizeSecNSec(yarp::os::Time::now());
+                rosData.header.stamp = yarp::os::Time::now();
                 rosData.header.frame_id = frame_id;
 
                 rosData.orientation.x = quaternion[0];

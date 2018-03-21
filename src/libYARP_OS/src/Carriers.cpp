@@ -1,9 +1,11 @@
 /*
- * Copyright (C) 2006 RobotCub Consortium
- * Authors: Paul Fitzpatrick
- * CopyPolicy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
+ * Copyright (C) 2006-2018 Istituto Italiano di Tecnologia (IIT)
+ * Copyright (C) 2006-2010 RobotCub Consortium
+ * All rights reserved.
+ *
+ * This software may be modified and distributed under the terms of the
+ * BSD-3-Clause license. See the accompanying LICENSE file for details.
  */
-
 
 #include <yarp/os/Carriers.h>
 #include <yarp/os/impl/Logger.h>
@@ -11,12 +13,7 @@
 #include <yarp/os/impl/FakeFace.h>
 #include <yarp/os/impl/TcpCarrier.h>
 #include <yarp/os/impl/TextCarrier.h>
-
-#  include <yarp/os/impl/McastCarrier.h>
-#ifdef YARP_HAS_ACE
-#  include <yarp/os/impl/ShmemCarrier.h>
-#endif
-
+#include <yarp/os/impl/McastCarrier.h>
 #include <yarp/os/impl/UdpCarrier.h>
 #include <yarp/os/impl/LocalCarrier.h>
 #include <yarp/os/impl/NameserCarrier.h>
@@ -211,10 +208,6 @@ Carriers::Carriers() :
     mPriv->delegates.push_back(new HttpCarrier());
     mPriv->delegates.push_back(new NameserCarrier());
     mPriv->delegates.push_back(new LocalCarrier());
-#ifdef YARP_HAS_ACE
-    //mPriv->delegates.push_back(new ShmemCarrier(1));
-    mPriv->delegates.push_back(new ShmemCarrier(2)); // new Alessandro version
-#endif
     mPriv->delegates.push_back(new TcpCarrier());
     mPriv->delegates.push_back(new TcpCarrier(false));
     mPriv->delegates.push_back(new McastCarrier());

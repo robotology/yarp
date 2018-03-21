@@ -1,7 +1,8 @@
-# Copyright: (C) 2017 Istituto Italiano di Tecnologia (IIT)
-# Authors: Daniele E. Domenichelli <daniele.domenichelli@iit.it>
-# CopyPolicy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
-
+# Copyright (C) 2006-2018 Istituto Italiano di Tecnologia (IIT)
+# All rights reserved.
+#
+# This software may be modified and distributed under the terms of the
+# BSD-3-Clause license. See the accompanying LICENSE file for details.
 
 macro(add_yarpidl_rosmsg_test name wd file check_file)
   # Run the test
@@ -28,17 +29,17 @@ endmacro()
 
 # Try generating the files using different combinations of current working
 # directory and path to the file
-add_yarpidl_rosmsg_test(test1 "${CMAKE_CURRENT_SOURCE_DIR}/demo" Demo.msg Demo.h)
-add_yarpidl_rosmsg_test(test2 "${CMAKE_CURRENT_SOURCE_DIR}" demo/Demo.msg demo/Demo.h)
+add_yarpidl_rosmsg_test(test1 "${CMAKE_CURRENT_SOURCE_DIR}/demo" Demo.msg yarp/rosmsg/Demo.h)
+add_yarpidl_rosmsg_test(test2 "${CMAKE_CURRENT_SOURCE_DIR}" demo/Demo.msg yarp/rosmsg/demo/Demo.h)
 
 if(YARP_ENABLE_BROKEN_TESTS)
-  add_yarpidl_rosmsg_test(test3 "${CMAKE_CURRENT_BINARY_DIR}" "${CMAKE_CURRENT_SOURCE_DIR}/demo/Demo.msg" demo/Demo.h)
+  add_yarpidl_rosmsg_test(test3 "${CMAKE_CURRENT_BINARY_DIR}" "${CMAKE_CURRENT_SOURCE_DIR}/demo/Demo.msg" yarp/rosmsg/demo/Demo.h)
 endif()
 
 # Try using the type name
 if(YARP_ENABLE_BROKEN_TESTS)
-  add_yarpidl_rosmsg_test(test6 "${CMAKE_CURRENT_SOURCE_DIR}/demo" Demo Demo.h)
-  add_yarpidl_rosmsg_test(test7 "${CMAKE_CURRENT_SOURCE_DIR}" demo/Demo demo/Demo.h)
+  add_yarpidl_rosmsg_test(test6 "${CMAKE_CURRENT_SOURCE_DIR}/demo" Demo yarp/rosmsg/.h)
+  add_yarpidl_rosmsg_test(test7 "${CMAKE_CURRENT_SOURCE_DIR}" demo/Demo yarp/rosmsg/demo/Demo.h)
 endif()
 
 # Test yarp_idl_to_dir and yarp_add_idl

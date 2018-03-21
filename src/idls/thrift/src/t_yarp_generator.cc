@@ -27,9 +27,10 @@
 #include <cstdlib>
 #include <sys/stat.h>
 #include <sstream>
-#include "t_generator.h"
-#include "t_oop_generator.h"
-#include "platform.h"
+
+#include "thrift/generate/t_generator.h"
+#include "thrift/generate/t_oop_generator.h"
+#include "thrift/platform.h"
 using namespace std;
 
 
@@ -320,7 +321,7 @@ string t_yarp_generator::type_to_enum(t_type* type) {
       return "BOTTLE_TAG_STRING";
     case t_base_type::TYPE_BOOL:
       return "BOTTLE_TAG_VOCAB";
-    case t_base_type::TYPE_BYTE:
+    case t_base_type::TYPE_I8:
       return "::apache::thrift::protocol::T_BYTE";
     case t_base_type::TYPE_I16:
       return "::apache::thrift::protocol::T_I16";
@@ -446,7 +447,7 @@ string t_yarp_generator::base_type_name(t_base_type::t_base tbase) {
     return "std::string";
   case t_base_type::TYPE_BOOL:
     return "bool";
-  case t_base_type::TYPE_BYTE:
+  case t_base_type::TYPE_I8:
     return "int8_t";
   case t_base_type::TYPE_I16:
     return "int16_t";
@@ -1129,7 +1130,7 @@ void t_yarp_generator::generate_enum_constant_list(std::ofstream& f,
     print_doc(f,(*c_iter));
     indent(f)
       << prefix << (*c_iter)->get_name() << suffix;
-    if (include_values && (*c_iter)->has_value()) {
+    if (include_values) {
       f << " = " << (*c_iter)->get_value();
     }
   }
@@ -2460,7 +2461,7 @@ void t_yarp_generator::generate_serialize_field(ofstream& out,
       case t_base_type::TYPE_BOOL:
         out << "writeBool(" << name << ")";
         break;
-      case t_base_type::TYPE_BYTE:
+      case t_base_type::TYPE_I8:
         out << "writeByte(" << name << ")";
         break;
       case t_base_type::TYPE_I16:
@@ -2640,7 +2641,7 @@ void t_yarp_generator::generate_deserialize_field(ofstream& out,
     case t_base_type::TYPE_BOOL:
       out << "readBool(" << name << ")";
       break;
-    case t_base_type::TYPE_BYTE:
+    case t_base_type::TYPE_I8:
       out << "readByte(" << name << ")";
       break;
     case t_base_type::TYPE_I16:
@@ -2859,7 +2860,7 @@ string t_yarp_generator::declare_field(t_field* tfield, bool init, bool pointer,
       case t_base_type::TYPE_BOOL:
         result += " = false";
         break;
-      case t_base_type::TYPE_BYTE:
+      case t_base_type::TYPE_I8:
       case t_base_type::TYPE_I16:
       case t_base_type::TYPE_I32:
       case t_base_type::TYPE_I64:
@@ -2960,7 +2961,7 @@ string t_yarp_generator::render_const_value(ofstream& out, string name, t_type* 
     case t_base_type::TYPE_BOOL:
       render << ((value->get_integer() > 0) ? "true" : "false");
       break;
-    case t_base_type::TYPE_BYTE:
+    case t_base_type::TYPE_I8:
     case t_base_type::TYPE_I16:
     case t_base_type::TYPE_I32:
       render << value->get_integer();

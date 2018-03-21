@@ -1,8 +1,11 @@
 /*
+ * Copyright (C) 2006-2018 Istituto Italiano di Tecnologia (IIT)
  * Copyright (C) 2011 Duarte Aragao
- * Copyright (C) 2013 Konstantinos Theofilis, University of Hertfordshire, k.theofilis@herts.ac.uk
- * Authors: Duarte Aragao, Konstantinos Theofilis
- * CopyPolicy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
+ * Copyright (C) 2013 Konstantinos Theofilis <k.theofilis@herts.ac.uk>
+ * All rights reserved.
+ *
+ * This software may be modified and distributed under the terms of the
+ * BSD-3-Clause license. See the accompanying LICENSE file for details.
  */
 
 #ifndef OPENNI2_CLIENT_H

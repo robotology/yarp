@@ -1,9 +1,8 @@
-#  Yarp Modules Manager
-#  Copyright: (C) 2011 Istituto Italiano di Tecnologia (IIT)
-#  Authors: Ali Paikan <ali.paikan@iit.it>
+# Copyright (C) 2006-2018 Istituto Italiano di Tecnologia (IIT)
+# All rights reserved.
 #
-#  Copy Policy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
-#
+# This software may be modified and distributed under the terms of the
+# BSD-3-Clause license. See the accompanying LICENSE file for details.
 
 if(CREATE_LIB_MANAGER)
 
@@ -41,7 +40,6 @@ if(CREATE_LIB_MANAGER)
                         include/yarp/manager/xmltemploader.h
                         include/yarp/manager/yarpbroker.h
                         include/yarp/manager/yarpdevbroker.h
-                        include/yarp/manager/ymm-dir.h
                         include/yarp/manager/ymm-types.h)
 
   set(YARP_manager_IMPL_HDRS include/yarp/manager/impl/textparser.h)
@@ -87,7 +85,9 @@ if(CREATE_LIB_MANAGER)
 
   include_directories(${YARP_TREE_INCLUDE_DIRS})
   include_directories(SYSTEM ${TinyXML_INCLUDE_DIRS})
-
+  if(MSVC)
+    include_directories(SYSTEM ${dirent_INCLUDE_DIRS})
+  endif()
 
   if(CREATE_LIB_MATH)
     add_definitions( -DWITH_YARPMATH )

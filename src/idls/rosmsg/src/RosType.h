@@ -1,8 +1,9 @@
 /*
- * Copyright (C) 2011 Istituto Italiano di Tecnologia (IIT)
- * Authors: Paul Fitzpatrick
- * CopyPolicy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
+ * Copyright (C) 2006-2018 Istituto Italiano di Tecnologia (IIT)
+ * All rights reserved.
  *
+ * This software may be modified and distributed under the terms of the
+ * BSD-3-Clause license. See the accompanying LICENSE file for details.
  */
 
 #ifndef YARP2_ROSTYPE_INC
@@ -128,10 +129,18 @@ public:
     RosType *reply;
     std::string package;
     bool verbose;
+    bool no_recurse;
 
-    RosType() {
-        reply = 0 /*NULL*/;
-        clear();
+    RosType() :
+            isValid(false),
+            isArray(false),
+            arrayLength(-1),
+            isPrimitive(false),
+            isStruct(false),
+            reply(nullptr),
+            verbose(false),
+            no_recurse(false)
+    {
     }
 
     void clear() {
@@ -148,14 +157,13 @@ public:
         subRosType.clear();
         if (reply) {
             delete reply;
-            reply = 0 /*NULL*/;
+            reply = nullptr;
         }
         checksum_var_text.clear();
         checksum_const_text.clear();
         checksum = "";
         source = "";
         //package = "";
-        verbose = false;
     }
 
     virtual ~RosType() {
@@ -177,6 +185,10 @@ public:
     void setVerbose() {
         verbose = true;
     }
+
+    void setNoRecurse() {
+        no_recurse = true;
+    }
 };
 
 typedef RosType RosField;
@@ -187,9 +199,10 @@ public:
     std::map<std::string, RosType *> generated;
     std::map<std::string, bool> usedVariables;
     std::map<std::string, std::string> checksums;
-    std::vector<std::string> dependencies;
-    std::vector<std::string> dependenciesAsPaths;
+    std::map<std::string, std::vector<std::string>> dependencies;
+    std::map<std::string, std::vector<std::string>> dependenciesAsPaths;
     std::string txt;
+    std::vector<std::string> generatedFiles;
 
     std::string useVariable(const std::string& name) {
         usedVariables[name] = true;
@@ -238,6 +251,8 @@ public:
 
     virtual bool endType(const std::string& tname,
                          const RosField& field) = 0;
+
+    virtual bool writeIndex(RosTypeCodeGenState& state) = 0;
 
     virtual bool hasNativeTimeClass() const {
         return false;

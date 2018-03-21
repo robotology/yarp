@@ -1,10 +1,3 @@
-
-/*
- * Copyright: (C) 2011 Istituto Italiano di Tecnologia (IIT)
- * Copy Policy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
- *
- */
-
 /**
  * @page simple_modification An example which shows how to use a Lua script to modify incoming data in an input port
 

@@ -1,3 +1,10 @@
+# Copyright (C) 2006-2018 Istituto Italiano di Tecnologia (IIT)
+# Copyright (C) 2006-2010 RobotCub Consortium
+# All rights reserved.
+#
+# This software may be modified and distributed under the terms of the
+# BSD-3-Clause license. See the accompanying LICENSE file for details.
+
 ### parameters are
 # $1: hostname (could be also buildtype)
 # $2: os (macos, winxp, lenny, etch, karmic ...)
@@ -28,7 +35,6 @@ CMAKE_OPTIONS="\
 -DENABLE_yarpmod_fakeAnalogSensor=TRUE \
 -DENABLE_yarpmod_fakeIMU=TRUE \
 -DENABLE_yarpmod_SerialServoBoard=TRUE \
--DENABLE_yarpmod_serial=TRUE \
 -DENABLE_yarpmod_serialport=TRUE \
 -DENABLE_yarpmod_imuBosch_BNO055=TRUE \
 -DENABLE_yarpmod_fakeLaser=TRUE \

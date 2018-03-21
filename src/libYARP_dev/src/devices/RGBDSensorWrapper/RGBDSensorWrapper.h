@@ -1,7 +1,9 @@
 /*
- * Copyright (C) 2016 Istituto Italiano di Tecnologia (IIT)
- * Author: Alberto Cardellino <alberto.cardellino@iit.it>
- * CopyPolicy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
+ * Copyright (C) 2006-2018 Istituto Italiano di Tecnologia (IIT)
+ * All rights reserved.
+ *
+ * This software may be modified and distributed under the terms of the
+ * BSD-3-Clause license. See the accompanying LICENSE file for details.
  */
 
 #ifndef YARP_DEV_RGBDSENSORWRAPPER_RGBDSENSORWRAPPER_H
@@ -33,8 +35,9 @@
 #include <yarp/os/Node.h>
 #include <yarp/os/Publisher.h>
 #include <yarp/os/Subscriber.h>
-#include <../msgs/ros/include/sensor_msgs_CameraInfo.h>
-#include <../msgs/ros/include/sensor_msgs_Image.h>
+#include <yarp/rosmsg/TickTime.h>
+#include <yarp/rosmsg/sensor_msgs/CameraInfo.h>
+#include <yarp/rosmsg/sensor_msgs/Image.h>
 
 
 namespace yarp{
@@ -130,8 +133,8 @@ private:
     typedef yarp::sig::ImageOf<yarp::sig::PixelFloat>    DepthImage;
     typedef yarp::os::BufferedPort<DepthImage>           DepthPortType;
     typedef yarp::os::BufferedPort<yarp::sig::FlexImage> ImagePortType;
-    typedef yarp::os::Publisher<sensor_msgs_Image>       ImageTopicType;
-    typedef yarp::os::Publisher<sensor_msgs_CameraInfo>  DepthTopicType;
+    typedef yarp::os::Publisher<yarp::rosmsg::sensor_msgs::Image>       ImageTopicType;
+    typedef yarp::os::Publisher<yarp::rosmsg::sensor_msgs::CameraInfo>  DepthTopicType;
     typedef unsigned int                                 UInt;
 
     enum SensorType{COLOR_SENSOR, DEPTH_SENSOR};
@@ -204,22 +207,22 @@ private:
     void shallowCopyImages(const yarp::sig::FlexImage& src, yarp::sig::FlexImage& dest);
     void shallowCopyImages(const DepthImage& src, DepthImage& dest);
     bool writeData();
-    void deepCopyImages(const yarp::sig::FlexImage& src,
-                        sensor_msgs_Image&          dest,
-                        const std::string&          frame_id,
-                        const TickTime&             timeStamp,
-                        const UInt&                 seq);
+    void deepCopyImages(const yarp::sig::FlexImage&       src,
+                        yarp::rosmsg::sensor_msgs::Image& dest,
+                        const std::string&                frame_id,
+                        const yarp::rosmsg::TickTime&     timeStamp,
+                        const UInt&                       seq);
 
-    void deepCopyImages(const DepthImage&           src,
-                        sensor_msgs_Image&          dest,
-                        const std::string&          frame_id,
-                        const TickTime&             timeStamp,
-                        const UInt&                 seq);
+    void deepCopyImages(const DepthImage&                 src,
+                        yarp::rosmsg::sensor_msgs::Image& dest,
+                        const std::string&                frame_id,
+                        const yarp::rosmsg::TickTime&     timeStamp,
+                        const UInt&                       seq);
 
-    bool setCamInfo(sensor_msgs_CameraInfo&         cameraInfo,
-                    const std::string&              frame_id,
-                    const UInt&                     seq,
-                    const SensorType&               sensorType);
+    bool setCamInfo(yarp::rosmsg::sensor_msgs::CameraInfo& cameraInfo,
+                    const std::string&                     frame_id,
+                    const UInt&                            seq,
+                    const SensorType&                      sensorType);
 
     static std::string yarp2RosPixelCode(int code);
 

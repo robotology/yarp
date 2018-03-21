@@ -1,66 +1,35 @@
-/**
- * @file TcpConnector.h
- * @brief
+/*
+ * Copyright (C) 2006-2018 Istituto Italiano di Tecnologia (IIT)
+ * All rights reserved.
  *
- * This file is created at Almende B.V. It is open-source software and part of the Common
- * Hybrid Agent Platform (CHAP). A toolbox with a lot of open-source tools, ranging from
- * thread pools and TCP/IP components to control architectures and learning algorithms.
- * This software is published under the GNU Lesser General Public license (LGPL).
- *
- * It is not possible to add usage restrictions to an open-source license. Nevertheless,
- * we personally strongly object against this software used by the military, in the
- * bio-industry, for animal experimentation, or anything that violates the Universal
- * Declaration of Human Rights.
- *
- * Copyright © 2010 Anne van Rossum <anne@almende.com>
- *
- * @author  Anne C. van Rossum
- * @date    Feb 17, 2011
- * @project Replicator FP7
- * @company Almende B.V.
- * @case
+ * This software may be modified and distributed under the terms of the
+ * BSD-3-Clause license. See the accompanying LICENSE file for details.
  */
-
 
 #ifndef YARP_OS_IMPL_TCPCONNECTOR_H
 #define YARP_OS_IMPL_TCPCONNECTOR_H
 
-#include <yarp/os/Contact.h>
-#include <yarp/os/impl/TcpStream.h>
-
+#if defined(YARP_HAS_ACE)
+#  include <ace/config.h>
+#  include <ace/SOCK_Connector.h>
+#elif defined(__unix__)
+#  include <yarp/os/impl/posix/TcpConnector.h>
+#else
+YARP_COMPILER_ERROR(Cannot implement TcpConnector on this platform)
+#endif
 
 namespace yarp {
-    namespace os {
-        namespace impl {
-            class TcpConnector;
-        }
-    }
-}
+namespace os {
+namespace impl {
 
-/* **************************************************************************************
- * Interface of TcpConnector
- * **************************************************************************************/
+#ifdef YARP_HAS_ACE
+typedef ACE_SOCK_Connector TcpConnector;
+#elif defined(__unix__)
+typedef yarp::os::impl::posix::TcpConnector TcpConnector;
+#endif
 
-class yarp::os::impl::TcpConnector
-{
-public:
-    /**
-     * Constructor TcpConnector
-     */
-    TcpConnector();
-
-    /**
-     * Destructor ~TcpConnector
-     */
-    virtual ~TcpConnector();
-
-    int connect (TcpStream &new_stream,
-                 const yarp::os::Contact &remote_address);
-protected:
-
-    int open(TcpStream &stream);
-private:
-
-};
+} // namespace impl
+} // namespace os
+} // namespace yarp
 
 #endif // YARP_OS_IMPL_TCPCONNECTOR_H

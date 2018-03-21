@@ -1,7 +1,9 @@
-# Copyright: (C) 2009 RobotCub Consortium
-# Authors: Paul Fitzpatrick, Giorgio Metta, Giacomo Spigler
-# CopyPolicy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
-# Thanks to Rui Silva for a sugggested improvement to external module support
+# Copyright (C) 2006-2018 Istituto Italiano di Tecnologia (IIT)
+# Copyright (C) 2006-2010 RobotCub Consortium
+# All rights reserved.
+#
+# This software may be modified and distributed under the terms of the
+# BSD-3-Clause license. See the accompanying LICENSE file for details.
 
 option(CREATE_DEVICE_LIBRARY_MODULES "Compile device modules" FALSE)
 
@@ -23,7 +25,7 @@ yarp_begin_plugin_library(yarpmod)
   add_subdirectory(SerialServoBoard)
   add_subdirectory(ffmpeg)
   add_subdirectory(opencv)
-  add_subdirectory(serial)
+  add_subdirectory(serialport)
   add_subdirectory(portaudio)
   add_subdirectory(imuBosch_BNO055)
   add_subdirectory(jrkerr)
@@ -41,6 +43,21 @@ yarp_begin_plugin_library(yarpmod)
   add_subdirectory(meiMotionControl)
   add_subdirectory(test_grabber)
   add_subdirectory(SDLJoypad)
+  add_subdirectory(BatteryClient)
+  add_subdirectory(BatteryWrapper)
+  add_subdirectory(Rangefinder2DWrapper)
+  add_subdirectory(ServerSoundGrabber)
+
+  if(CREATE_LIB_MATH)
+    add_subdirectory(FrameTransformClient)
+    add_subdirectory(FrameTransformServer)
+    add_subdirectory(Localization2DClient)
+    add_subdirectory(Map2DClient)
+    add_subdirectory(Map2DServer)
+    add_subdirectory(Navigation2DClient)
+    add_subdirectory(Rangefinder2DClient)
+  endif()
+
 
   if(NOT YARP_NO_DEPRECATED) # since YARP 2.3.68
     add_subdirectory(microphone)

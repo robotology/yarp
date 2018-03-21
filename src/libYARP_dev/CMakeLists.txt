@@ -1,6 +1,9 @@
-# Copyright: (C) 2009 RobotCub Consortium
-# Authors: Paul Fitzpatrick, Giorgio Metta, Lorenzo Natale
-# CopyPolicy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
+# Copyright (C) 2006-2018 Istituto Italiano di Tecnologia (IIT)
+# Copyright (C) 2006-2010 RobotCub Consortium
+# All rights reserved.
+#
+# This software may be modified and distributed under the terms of the
+# BSD-3-Clause license. See the accompanying LICENSE file for details.
 
 project(YARP_dev)
 
@@ -19,8 +22,6 @@ set(YARP_dev_HDRS include/yarp/dev/all.h
                   include/yarp/dev/ControlBoardPid.h
                   include/yarp/dev/DataSource.h
                   include/yarp/dev/DeviceDriver.h
-                  include/yarp/dev/DeviceGroup.h
-                  include/yarp/dev/DevicePipe.h
                   include/yarp/dev/DriverLinkCreator.h
                   include/yarp/dev/Drivers.h
                   include/yarp/dev/FrameGrabberControl2.h
@@ -43,7 +44,6 @@ set(YARP_dev_HDRS include/yarp/dev/all.h
                   include/yarp/dev/IInteractionMode.h
                   include/yarp/dev/IInteractionModeImpl.h
                   include/yarp/dev/IJoypadController.h
-                  include/yarp/dev/IKinectDeviceDriver.h
                   include/yarp/dev/IMotorEncoders.h
                   include/yarp/dev/IMotor.h
                   include/yarp/dev/ImplementAxisInfo.h
@@ -58,7 +58,6 @@ set(YARP_dev_HDRS include/yarp/dev/all.h
                   include/yarp/dev/ImplementPWMControl.h
                   include/yarp/dev/ImplementRemoteVariables.h
                   include/yarp/dev/ImplementTorqueControl.h
-                  include/yarp/dev/IOpenNI2DeviceDriver.h
                   include/yarp/dev/IPidControl.h
                   include/yarp/dev/IPidControlImpl.h
                   include/yarp/dev/IPositionControl2.h
@@ -85,13 +84,8 @@ set(YARP_dev_HDRS include/yarp/dev/all.h
                   include/yarp/dev/PolyDriverList.h
                   include/yarp/dev/PreciselyTimed.h
                   include/yarp/dev/RemoteFrameGrabberDC1394.h
-                  include/yarp/dev/RemoteFrameGrabber.h
                   include/yarp/dev/SerialInterfaces.h
-                  include/yarp/dev/ServerFrameGrabber.h
-                  include/yarp/dev/ServerSerial.h
-                  include/yarp/dev/ServerSoundGrabber.h
                   include/yarp/dev/ServiceInterfaces.h
-                  include/yarp/dev/TestMotor.h
                   include/yarp/dev/Wrapper.h)
 
 if (CREATE_LIB_MATH)
@@ -112,12 +106,10 @@ set(YARP_dev_SRCS src/ControlBoardInterfacesImpl.cpp
                   src/ControlModeImpl.cpp
                   src/CurrentControlImpl.cpp
                   src/DeviceDriver.cpp
-                  src/DeviceGroup.cpp
-                  src/DevicePipe.cpp
                   src/Drivers.cpp
-                  src/Dummy.cpp
                   src/FrameGrabberControl2Impl.cpp
                   src/IAxisInfoImpl.cpp
+                  src/IBattery.cpp
                   src/IControlLimit2sImpl.cpp
                   src/IEncodersTimedImpl.cpp
                   src/IInteractionModeImpl.cpp
@@ -128,6 +120,7 @@ set(YARP_dev_SRCS src/ControlBoardInterfacesImpl.cpp
                   src/IPidControlImpl.cpp
                   src/IPositionControl2Impl.cpp
                   src/IPositionDirectImpl.cpp
+                  src/IRangefinder2D.cpp
                   src/IRemoteVariablesImpl.cpp
                   src/IVelocityControl2Impl.cpp
                   src/IVisualParamsImpl.cpp
@@ -138,64 +131,48 @@ set(YARP_dev_SRCS src/ControlBoardInterfacesImpl.cpp
                   src/PopulateDrivers.cpp
                   src/PWMControlImpl.cpp
                   src/RemoteCalibratorImpl.cpp
-                  src/RemoteFrameGrabber.cpp
-                  src/RemoteFrameGrabberDC1394.cpp
-                  src/ServerFrameGrabber.cpp
-                  src/ServerSerial.cpp
                   src/TorqueControlImpl.cpp)
 
 if(CREATE_LIB_MATH)
-  list(APPEND YARP_dev_SRCS src/MapGrid2D.cpp)
+  list(APPEND YARP_dev_SRCS src/IFrameTransform.cpp
+                            src/IMap2D.cpp
+                            src/MapGrid2D.cpp)
 endif()
 
 set(YARP_devices_SRCS src/devices/AnalogSensorClient/AnalogSensorClient.cpp
                       src/devices/AnalogWrapper/AnalogWrapper.cpp
-                      src/devices/BatteryClient/BatteryClient.cpp
-                      src/devices/BatteryWrapper/BatteryWrapper.cpp
                       src/devices/ControlBoardRemapper/ControlBoardRemapper.cpp
                       src/devices/ControlBoardRemapper/ControlBoardRemapperHelpers.cpp
                       src/devices/ControlBoardRemapper/RemoteControlBoardRemapper.cpp
+                      src/devices/DeviceGroup/DeviceGroup.cpp
+                      src/devices/DevicePipe/DevicePipe.cpp
                       src/devices/JoypadControlClient/JoypadControlClient.cpp
                       src/devices/JoypadControlServer/JoypadControlServer.cpp
-                      src/devices/Rangefinder2DWrapper/Rangefinder2DWrapper.cpp
+                      src/devices/RemoteFrameGrabber/RemoteFrameGrabber.cpp
                       src/devices/RobotDescriptionClient/RobotDescriptionClient.cpp
                       src/devices/RobotDescriptionServer/RobotDescriptionServer.cpp
+                      src/devices/ServerFrameGrabber/ServerFrameGrabber.cpp
+                      src/devices/ServerSerial/ServerSerial.cpp
+                      src/devices/TestMotor/TestMotor.cpp
                       src/devices/VirtualAnalogWrapper/VirtualAnalogWrapper.cpp)
-
-if (CREATE_LIB_MATH)
-  list(APPEND YARP_devices_SRCS src/devices/FrameTransformClient/FrameTransformClient.cpp
-                                src/devices/FrameTransformServer/FrameTransformServer.cpp
-                                src/devices/Localization2DClient/Localization2DClient.cpp
-                                src/devices/Map2DClient/Map2DClient.cpp
-                                src/devices/Map2DServer/Map2DServer.cpp
-                                src/devices/Navigation2DClient/Navigation2DClient.cpp
-                                src/devices/Rangefinder2DClient/Rangefinder2DClient.cpp)
-endif()
 
 set(YARP_devices_HDRS src/devices/AnalogSensorClient/AnalogSensorClient.h
                       src/devices/AnalogWrapper/AnalogWrapper.h
-                      src/devices/BatteryClient/BatteryClient.h
-                      src/devices/BatteryWrapper/BatteryWrapper.h
                       src/devices/ControlBoardRemapper/ControlBoardRemapper.h
                       src/devices/ControlBoardRemapper/ControlBoardRemapperHelpers.h
                       src/devices/ControlBoardRemapper/RemoteControlBoardRemapper.h
+                      src/devices/DeviceGroup/DeviceGroup.h
+                      src/devices/DevicePipe/DevicePipe.h
                       src/devices/JoypadControlClient/JoypadControlClient.h
                       src/devices/JoypadControlServer/JoypadControlNetUtils.h
                       src/devices/JoypadControlServer/JoypadControlServer.h
-                      src/devices/Rangefinder2DWrapper/Rangefinder2DWrapper.h
+                      src/devices/RemoteFrameGrabber/RemoteFrameGrabber.h
                       src/devices/RobotDescriptionClient/RobotDescriptionClient.h
                       src/devices/RobotDescriptionServer/RobotDescriptionServer.h
+                      src/devices/ServerFrameGrabber/ServerFrameGrabber.h
+                      src/devices/ServerSerial/ServerSerial.h
+                      src/devices/TestMotor/TestMotor.h
                       src/devices/VirtualAnalogWrapper/VirtualAnalogWrapper.h)
-
-if (CREATE_LIB_MATH)
-  list(APPEND YARP_devices_HDRS src/devices/FrameTransformClient/FrameTransformClient.h
-                                src/devices/FrameTransformServer/FrameTransformServer.h
-                                src/devices/Localization2DClient/Localization2DClient.h
-                                src/devices/Map2DClient/Map2DClient.h
-                                src/devices/Map2DServer/Map2DServer.h
-                                src/devices/Navigation2DClient/Navigation2DClient.h
-                                src/devices/Rangefinder2DClient/Rangefinder2DClient.h)
-endif()
 
 # handle the ros / yarp thrift messages
 # the variables cbw2_msgs_srcs, cbw2_msgs_hrds and cbw2_msgs_incl_dirs will be set inside
@@ -285,8 +262,6 @@ if (CREATE_LIB_MATH)
 endif()
 
 include_directories(${CMAKE_CURRENT_SOURCE_DIR}/src/devices/AnalogSensorClient
-                    ${CMAKE_CURRENT_SOURCE_DIR}/src/devices/BatteryClient
-                    ${CMAKE_CURRENT_SOURCE_DIR}/src/devices/FrameTransformClient
                     ${CMAKE_CURRENT_SOURCE_DIR}/src/devices/JoypadControlServer)
 
 include_directories(${YARP_TREE_INCLUDE_DIRS})
@@ -302,8 +277,9 @@ add_library(YARP::YARP_dev ALIAS YARP_dev)
 target_include_directories(YARP_dev PUBLIC $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>
                                            $<INSTALL_INTERFACE:${CMAKE_INSTALL_INCLUDEDIR}>)
 
-target_link_libraries(YARP_dev PRIVATE YARP::YARP_OS)
-target_link_libraries(YARP_dev PUBLIC YARP::YARP_sig)
+target_link_libraries(YARP_dev PRIVATE YARP::YARP_OS
+                                       YARP::YARP_rosmsg
+                               PUBLIC YARP::YARP_sig)
 
 if (CREATE_LIB_MATH)
   target_link_libraries(YARP_dev PRIVATE YARP::YARP_math)

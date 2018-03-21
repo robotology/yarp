@@ -1,8 +1,9 @@
 /*
- * Copyright (C) 2013 Istituto Italiano di Tecnologia (IIT)
- * Authors: Paul Fitzpatrick
- * CopyPolicy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
+ * Copyright (C) 2006-2018 Istituto Italiano di Tecnologia (IIT)
+ * All rights reserved.
  *
+ * This software may be modified and distributed under the terms of the
+ * BSD-3-Clause license. See the accompanying LICENSE file for details.
  */
 
 #include <cstdio>
@@ -43,6 +44,12 @@ void show_usage()
     printf("    Allow YARP to look up missing types on ROS website\n");
     printf("  --out <dir>\n");
     printf("    Generates .h file in the specified directory\n");
+    printf("  --no-cache\n");
+    printf("    Do not cache ros msg file\n");
+    printf("  --no-index\n");
+    printf("    Do not generate the indexALL.txt file\n");
+    printf("  --no-recurse\n");
+    printf("    Generate code only for the selected file, not for its dependencies\n");
     printf("  --verbose\n");
     printf("    Verbose output\n");
     printf("\n");
@@ -127,6 +134,9 @@ int generate_cpp(int argc, char *argv[])
     string fname;
     p.fromCommand(argc,argv);
     bool verbose = p.check("verbose");
+    bool no_cache = p.check("no-cache");
+    bool no_index = p.check("no-index");
+    bool no_recurse = p.check("no-recurse");
 
     fname = argv[argc-1];
 
@@ -148,6 +158,9 @@ int generate_cpp(int argc, char *argv[])
         t.setVerbose();
         gen.setVerbose();
     }
+    if (no_recurse) {
+        t.setNoRecurse();
+    }
 
     if (p.check("out")) {
         gen.setTargetDirectory(p.find("out").toString().c_str());
@@ -157,7 +170,12 @@ int generate_cpp(int argc, char *argv[])
     if (t.read(fname.c_str(),env,gen)) {
         RosTypeCodeGenState state;
         t.emitType(gen,state);
-        t.cache(fname.c_str(),env,gen);
+        if (!no_cache) {
+            t.cache(fname.c_str(),env,gen);
+        }
+        if (!no_index) {
+            gen.writeIndex(state);
+        }
     }
 
     return 0;

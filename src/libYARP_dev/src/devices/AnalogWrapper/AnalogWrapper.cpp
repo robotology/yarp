@@ -1,7 +1,9 @@
 /*
- * Copyright (C) 2013 Istituto Italiano di Tecnologia (IIT)
- * Authors: Alberto Cardellino <alberto.cardellino@iit.it>
- * CopyPolicy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
+ * Copyright (C) 2006-2018 Istituto Italiano di Tecnologia (IIT)
+ * All rights reserved.
+ *
+ * This software may be modified and distributed under the terms of the
+ * BSD-3-Clause license. See the accompanying LICENSE file for details.
  */
 
 #include "AnalogWrapper.h"
@@ -829,9 +831,9 @@ void AnalogWrapper::run()
 
                 if (useROS != ROS_disabled && rosMsgType == "geometry_msgs/WrenchedStamped")
                 {
-                    geometry_msgs_WrenchStamped rosData;
+                    yarp::rosmsg::geometry_msgs::WrenchStamped rosData;
                     rosData.header.seq = rosMsgCounter++;
-                    rosData.header.stamp = normalizeSecNSec(yarp::os::Time::now());
+                    rosData.header.stamp = yarp::os::Time::now();
                     rosData.header.frame_id = frame_id;
 
                     rosData.wrench.force.x = lastDataRead[0];
@@ -846,7 +848,7 @@ void AnalogWrapper::run()
                 }
                 else if (useROS != ROS_disabled && rosMsgType == "sensor_msgs/JointState")
                 {
-                    sensor_msgs_JointState rosData;
+                    yarp::rosmsg::sensor_msgs::JointState rosData;
                     size_t data_size = lastDataRead.size();
                     rosData.name.resize(data_size);
                     rosData.position.resize(data_size);
@@ -872,7 +874,7 @@ void AnalogWrapper::run()
                         }
                     }
                     rosData.header.seq = rosMsgCounter++;
-                    rosData.header.stamp = normalizeSecNSec(yarp::os::Time::now());
+                    rosData.header.stamp = yarp::os::Time::now();
                     rosPublisherJointPort.write(rosData);
                 }
             }

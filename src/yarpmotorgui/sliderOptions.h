@@ -2,7 +2,7 @@
  * Copyright (C) 2010 RobotCub Consortium
  * Copyright (C) 2015 Istituto Italiano di Tecnologia (IIT)
  * Author: Marco Randazzo <marco.randazzo@iit.it>
- * CopyPolicy: Released under the terms of the GPLv2 or later, see GPL.TXT
+ * CopyPolicy: Released under the terms of the GPLv2 or later, see LICENSE
  */
 
 

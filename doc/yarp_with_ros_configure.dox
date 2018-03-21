@@ -1,12 +1,6 @@
-/*
- * Copyright (C) 2011, 2016 Istituto Italiano di Tecnologia (IIT).
- * CopyPolicy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
- *
- */
-
 /**
  * @page yarp_with_ros_configure Configure YARP to use ROS
- 
+
 Not all versions of YARP have ROS support enabled by default. In this case
 you'll need to turn the following flags on in CMake before (re-)compiling YARP:
 \li CREATE_OPTIONAL_CARRIERS (for support of ROS wire protocols)

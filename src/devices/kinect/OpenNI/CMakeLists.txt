@@ -1,6 +1,11 @@
-# Copyright: (C) 2009 RobotCub Consortium
-# Author: Paul Fitzpatrick
-# CopyPolicy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
+# Copyright (C) 2006-2018 Istituto Italiano di Tecnologia (IIT)
+# Copyright (C) 2006-2010 RobotCub Consortium
+# All rights reserved.
+#
+# This software may be modified and distributed under the terms of the
+# BSD-3-Clause license. See the accompanying LICENSE file for details.
+
+include_directories(${CMAKE_CURRENT_SOURCE_DIR}/include)
 
 yarp_prepare_plugin(KinectDeviceLocal
                     CATEGORY device
@@ -17,7 +22,7 @@ yarp_prepare_plugin(KinectDeviceClient
                     CATEGORY device
                     TYPE yarp::dev::KinectDeviceDriverClient
                     INCLUDE KinectYarpDeviceClientLib/KinectDeviceDriverClient.h
-                    DEPENDS "CREATE_DEVICE_LIBRARY_MODULES;YARP_COMPILE_UNMAINTAINED"
+                    DEPENDS "CREATE_DEVICE_LIBRARY_MODULES;YARP_HAS_MATH_LIB;YARP_COMPILE_UNMAINTAINED"
                     ADVANCED)
 
 if(ENABLE_KinectDeviceClient)

@@ -1,8 +1,9 @@
 /*
- * Copyright (C) 2011 Istituto Italiano di Tecnologia (IIT)
- * Authors: Paul Fitzpatrick
- * CopyPolicy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
+ * Copyright (C) 2006-2018 Istituto Italiano di Tecnologia (IIT)
+ * All rights reserved.
  *
+ * This software may be modified and distributed under the terms of the
+ * BSD-3-Clause license. See the accompanying LICENSE file for details.
  */
 
 #include <RosTypeCodeGenYarp.h>
@@ -29,7 +30,10 @@ static std::string getPackageName(const std::string& name)
             tname = pname = tname.substr(0, at);
             do {
                 at = pname.rfind("/");
-                if (at == string::npos) break;
+                if (at == string::npos) {
+                    tname = pname;
+                    break;
+                }
                 tname = pname.substr(at+1, pname.length());
                 pname = pname.substr(0, at);
             } while (tname == "srv" || tname == "msg");
@@ -67,12 +71,12 @@ static std::string getSafeName(const std::string& tname)
     return safe_tname;
 }
 
-static std::string getDoubleName(const std::string& tname)
+static std::string getDoubleName(const std::string& tname, const std::string& separator = "/")
 {
     string package_name = getPackageName(tname);
     string part_name = getPartName(tname);
     if (package_name != "") {
-        part_name = package_name + "/" + part_name;
+        part_name = package_name + separator + part_name;
     }
     return part_name;
 }
@@ -83,86 +87,124 @@ bool RosTypeCodeGenYarp::beginType(const std::string& tname,
     counter = state.getFreeVariable("i");
     len = state.getFreeVariable("len");
     len2 = state.getFreeVariable("len2");
-    string safe_tname = getSafeName(tname);
-    className = safe_tname;
-    string fname = safe_tname + ".h";
-    string pack = getPackageName(tname);
-    string part = getPartName(tname);
-    string root = "";
-    if (target != "") {
-        root = target + "/";
-    }
-    if (target != "") {
-        string iname = target + "/" + getPartName(tname) + "_indexALL.txt";
-        yarp::os::mkdir_p(iname.c_str(), 1);
-        FILE *index = fopen(iname.c_str(), "w");
-        if (index != nullptr) {
-            fprintf(index, "%s\n", fname.c_str());
-            if (pack != "") {
-                fprintf(index, "%s/%s.h\n", pack.c_str(), part.c_str());
-            }
-            for (int i=0; i<(int)state.dependencies.size(); i++) {
-                fprintf(index, "%s.h\n", getSafeName(state.dependenciesAsPaths[i]).c_str());
-                if(getPackageName(state.dependenciesAsPaths[i]) != "") {
-                    fprintf(index, "%s.h\n", getDoubleName(state.dependenciesAsPaths[i]).c_str());
-                }
-            }
-            fclose(index);
-            index = nullptr;
-        }
-        fname = root + fname;
-    }
 
-    yarp::os::mkdir_p(fname.c_str(), 1);
+    string safename = getSafeName(tname);
+    string doublename = getDoubleName(tname);
+    string hdr_name = "yarp/rosmsg/" + doublename + ".h";
+    string fullClassName = "yarp::rosmsg::" + getDoubleName(tname, "::");
+    packageName = getPackageName(tname);
+    className = getPartName(tname);
+    string root = (target != "") ? (target + "/") : "";
 
-    if (pack != "" && target != "") {
-        // Make header file names more sensible
-        string alt_fname =  root + pack + "/" + part + ".h";
-        yarp::os::mkdir_p(alt_fname.c_str(), 1);
-        out = fopen(alt_fname.c_str(), "w");
-        if (!out) {
-            fprintf(stderr, "Failed to open %s for writing\n",
-                    alt_fname.c_str());
-            std::exit(1);
-        }
-        if (verbose) {
-            printf("Generating %s\n", alt_fname.c_str());
-        }
-        fprintf(out, "// This is an automatically generated file.\n");
-        fprintf(out, "#ifndef YARPMSG_TYPE_wrap_%s\n", safe_tname.c_str());
-        fprintf(out, "#define YARPMSG_TYPE_wrap_%s\n\n", safe_tname.c_str());
-        fprintf(out, "#include <%s.h>\n\n", getSafeName(tname).c_str());
-        fprintf(out, "namespace %s {\n", pack.c_str());
-        fprintf(out, "    typedef %s %s;\n", safe_tname.c_str(), part.c_str());
-        fprintf(out, "}\n\n");
-        fprintf(out, "#endif\n\n");
-        fclose(out);
-    }
+#ifndef YARP_NO_DEPRECATED // since YARP 3.0.0
+    string deprecated_fname1 = safename + ".h";
+    string deprecated_fname2 = doublename + ".h";
 
-    out = fopen(fname.c_str(), "w");
+    // package_class.h
+    yarp::os::mkdir_p((root + deprecated_fname1).c_str(), 1);
+    out = fopen((root + deprecated_fname1).c_str(), "w");
     if (!out) {
-        fprintf(stderr, "Failed to open %s for writing\n", fname.c_str());
+        fprintf(stderr, "Failed to open %s for writing\n", deprecated_fname1.c_str());
         std::exit(1);
     }
-    fprintf(out, "// This is an automatically generated file.\n");
-    fprintf(out, "// Generated from this %s.msg definition:\n", safe_tname.c_str());
+    state.generatedFiles.push_back(deprecated_fname1);
+    if (verbose) {
+        printf("Generating %s\n", deprecated_fname1.c_str());
+    }
+
+    fprintf(out, "// This is an automatically generated file.\n\n");
+    fprintf(out, "#ifndef YARP_ROSMSG_deprecated1_%s_h\n", safename.c_str());
+    fprintf(out, "#define YARP_ROSMSG_deprecated1_%s_h\n\n", safename.c_str());
+    fprintf(out, "#include <yarp/conf/system.h>\n\n");
+    fprintf(out, "YARP_COMPILER_DEPRECATED_WARNING(<%s> header is deprecated. Use <%s> instead)\n\n", deprecated_fname1.c_str(), hdr_name.c_str());
+    fprintf(out, "#include <%s>\n", hdr_name.c_str());
+    for (const auto& dep : state.dependenciesAsPaths[tname]) {
+        fprintf(out, "#include <%s.h>\n", getSafeName(dep).c_str());
+    }
+    fprintf(out, "#include <yarp/conf/api.h>\n\n");
+    fprintf(out, "YARP_DEPRECATED_MSG(\"%s is deprecated, use %s instead\")\n", safename.c_str(), fullClassName.c_str());
+    fprintf(out, "typedef %s %s;\n", fullClassName.c_str(), safename.c_str());
+    fprintf(out, "\n");
+    fprintf(out, "#endif // YARP_ROSMSG_deprecated1_%s_h\n", safename.c_str());
+    fclose(out);
+    out = nullptr;
+
+    // package/class.h
+    if (packageName != "" && target != "") {
+        yarp::os::mkdir_p((root + deprecated_fname2).c_str(), 1);
+        out = fopen((root + deprecated_fname2).c_str(), "w");
+        if (!out) {
+            fprintf(stderr, "Failed to open %s for writing\n", deprecated_fname1.c_str());
+            std::exit(1);
+        }
+        state.generatedFiles.push_back(deprecated_fname2);
+        if (verbose) {
+            printf("Generating %s\n", deprecated_fname2.c_str());
+        }
+
+        fprintf(out, "// This is an automatically generated file.\n\n");
+        fprintf(out, "#ifndef YARP_ROSMSG_deprecated2_%s_h\n", safename.c_str());
+        fprintf(out, "#define YARP_ROSMSG_deprecated2_%s_h\n\n", safename.c_str());
+        fprintf(out, "#include <yarp/conf/system.h>\n\n");
+        fprintf(out, "YARP_COMPILER_DEPRECATED_WARNING(<%s> header is deprecated. Use <%s> instead)\n\n", deprecated_fname2.c_str(), hdr_name.c_str());
+        fprintf(out, "#include <%s>\n", hdr_name.c_str());
+        fprintf(out, "#include <%s>\n", deprecated_fname1.c_str());
+        fprintf(out, "#include <yarp/conf/api.h>\n\n");
+        fprintf(out, "namespace %s {\n\n", packageName.c_str());
+        fprintf(out, "YARP_DEPRECATED typedef %s %s;\n\n", fullClassName.c_str(), className.c_str());
+        fprintf(out, "} // namespace %s\n\n", packageName.c_str());
+        fprintf(out, "#endif // YARP_ROSMSG_deprecated2_%s_h\n", safename.c_str());
+        fclose(out);
+        out = nullptr;
+    }
+#endif // YARP_NO_DEPRECATED
+
+    // yarp/rosmsg/package/class.h
+    yarp::os::mkdir_p((root + hdr_name).c_str(), 1);
+    out = fopen((root + hdr_name).c_str(), "w");
+    if (!out) {
+        fprintf(stderr, "Failed to open %s for writing\n", hdr_name.c_str());
+        std::exit(1);
+    }
+    state.generatedFiles.push_back(hdr_name);
+    if (verbose) {
+        printf("Generating %s\n", hdr_name.c_str());
+    }
+
+    fprintf(out, "// This is an automatically generated file.\n\n");
+    if (className == "TickTime" || className == "TickDuration") {
+        fprintf(out, "// Generated from the following \"%s\" native type definition:\n", ((className == "TickTime") ? "time" : "duration"));
+    } else {
+        fprintf(out, "// Generated from the following \"%s\" msg definition:\n", doublename.c_str());
+    }
     fprintf(out, "%s", state.txt.c_str());
     fprintf(out, "// Instances of this class can be read and written with YARP ports,\n");
     fprintf(out, "// using a ROS-compatible format.\n");
     fprintf(out, "\n");
-    fprintf(out, "#ifndef YARPMSG_TYPE_%s\n", safe_tname.c_str());
-    fprintf(out, "#define YARPMSG_TYPE_%s\n\n", safe_tname.c_str());
-    fprintf(out, "#include <string>\n");
-    fprintf(out, "#include <vector>\n");
+    fprintf(out, "#ifndef YARP_ROSMSG_%s_h\n", safename.c_str());
+    fprintf(out, "#define YARP_ROSMSG_%s_h\n\n", safename.c_str());
     fprintf(out, "#include <yarp/os/Wire.h>\n");
     fprintf(out, "#include <yarp/os/idl/WireTypes.h>\n");
-    for (int i=0; i<(int)state.dependencies.size(); i++) {
-        fprintf(out, "#include \"%s.h\"\n", getSafeName(state.dependenciesAsPaths[i]).c_str());
+    fprintf(out, "#include <string>\n");
+    fprintf(out, "#include <vector>\n");
+    if (className == "TickTime" || className == "TickDuration") {
+        fprintf(out, "#include <climits>\n");
+        fprintf(out, "#include <cstdint>\n");
+    }
+    for (auto dep : state.dependenciesAsPaths[tname]) {
+        fprintf(out, "#include <yarp/rosmsg/%s.h>\n", getDoubleName(dep).c_str());
     }
     fprintf(out, "\n");
-    fprintf(out, "class %s : public yarp::os::idl::WirePortable\n", safe_tname.c_str());
+    fprintf(out, "namespace yarp {\n");
+    fprintf(out, "namespace rosmsg {\n");
+    if (!packageName.empty()) {
+        fprintf(out, "namespace %s {\n", packageName.c_str());
+    }
+    fprintf(out, "\n");
+    fprintf(out, "class %s : public yarp::os::idl::WirePortable\n", className.c_str());
     fprintf(out, "{\n");
     fprintf(out, "public:\n");
+
     return true;
 }
 
@@ -245,6 +287,58 @@ bool RosTypeCodeGenYarp::constructField(const RosField& field)
 bool RosTypeCodeGenYarp::endConstruct()
 {
     fprintf(out, "    }\n\n");
+
+    // Add special constructor, assignment operator, and cast operator
+    // operator to TickTime and TickDuration to support timestamps as a double
+    // These function has been took from ROS source file
+    // http://docs.ros.org/diamondback/api/rostime/html/time_8h_source.html#l00095
+    // and modified a bit to cope with yarp time handling in double
+    if (className == "TickTime" || className == "TickDuration") {
+        // Constructor
+        fprintf(out,
+"    %s(double timestamp) :\n"
+"            sec(0),\n"
+"            nsec(0)\n"
+"    {\n"
+"        uint64_t time = (uint64_t) (timestamp * 1000000000UL);\n"
+"        uint64_t sec_part = (time / 1000000000UL);\n"
+"        uint64_t nsec_part = (time %% 1000000000UL);\n"
+"        if (sec > UINT32_MAX) {\n"
+"            yWarning(\"%s::%s(): Timestamp exceeded the 32 bit representation, resetting it to 0\");\n"
+"            sec = 0;\n"
+"        }\n"
+"        sec = static_cast<yarp::os::NetUint32>(sec_part);\n"
+"        nsec = static_cast<yarp::os::NetUint32>(nsec_part);\n"
+"    }\n\n", className.c_str(), className.c_str(), className.c_str());
+
+        // Assignment operator
+        fprintf(out,
+"    %s& operator=(const double timestamp)\n"
+"    {\n"
+"        uint64_t time = (uint64_t) (timestamp * 1000000000UL);\n"
+"        uint64_t sec_part = (time / 1000000000UL);\n"
+"        uint64_t nsec_part = (time %% 1000000000UL);\n"
+"        if (sec > UINT32_MAX) {\n"
+"            yWarning(\"%s::operator=(): Timestamp exceeded the 32 bit representation, resetting it to 0\");\n"
+"            sec = 0;\n"
+"        }\n"
+"        sec = static_cast<yarp::os::NetUint32>(sec_part);\n"
+"        nsec = static_cast<yarp::os::NetUint32>(nsec_part);\n"
+"        return *this;\n"
+"    }\n\n", className.c_str(), className.c_str());
+
+        // Cast operator
+        fprintf(out,
+"    operator double()\n"
+"    {\n"
+"        if (nsec > 1000000000UL) {\n"
+"            yWarning(\"%s::operator double(): Check on nsec > 1000000000UL failed\");\n"
+"        }\n"
+"        return sec + nsec * 1000000000.0;\n"
+"    }\n\n", className.c_str());
+
+    }
+
     return true;
 }
 
@@ -682,12 +776,13 @@ static void output_type(FILE *out,
 bool RosTypeCodeGenYarp::endType(const std::string& tname,
                                  const RosField& field)
 {
-    string safe_tname = getSafeName(tname);
+    string safename = getSafeName(tname);
     string dbl_name = getDoubleName(tname);
+    string fullClassName = "yarp::rosmsg::" + getDoubleName(tname, "::");
     fprintf(out, "    // This class will serialize ROS style or YARP style depending on protocol.\n");
     fprintf(out, "    // If you need to force a serialization style, use one of these classes:\n");
-    fprintf(out, "    typedef yarp::os::idl::BareStyle<%s> rosStyle;\n", safe_tname.c_str());
-    fprintf(out, "    typedef yarp::os::idl::BottleStyle<%s> bottleStyle;\n\n", safe_tname.c_str());
+    fprintf(out, "    typedef yarp::os::idl::BareStyle<%s> rosStyle;\n", fullClassName.c_str());
+    fprintf(out, "    typedef yarp::os::idl::BottleStyle<%s> bottleStyle;\n\n", fullClassName.c_str());
 
     fprintf(out, "    // Give source text for class, ROS will need this\n");
     fprintf(out, "    yarp::os::ConstString getTypeText()\n");
@@ -708,9 +803,17 @@ bool RosTypeCodeGenYarp::endType(const std::string& tname,
     fprintf(out, "        return typ;\n");
     fprintf(out, "    }\n");
     fprintf(out, "};\n\n");
-    fprintf(out, "#endif\n");
+
+    if (!packageName.empty()) {
+        fprintf(out, "} // namespace %s\n", packageName.c_str());
+    }
+    fprintf(out, "} // namespace rosmsg\n");
+    fprintf(out, "} // namespace yarp\n\n");
+    fprintf(out, "#endif // YARP_ROSMSG_%s_h\n", safename.c_str());
+
     fclose(out);
     out = nullptr;
+
     return true;
 }
 
@@ -720,11 +823,12 @@ RosYarpType RosTypeCodeGenYarp::mapPrimitive(const RosField& field)
     RosYarpType ry;
     ry.rosType = field.rosType;
     ry.yarpType = field.rosType;
-    for (int i=0; i<(int)ry.yarpType.length(); i++) {
-        if (ry.yarpType[i] == '/') {
-            ry.yarpType[i] = '_';
-        }
+    size_t pos = ry.yarpType.find('/');
+    if(pos != std::string::npos) {
+        ry.yarpType.replace(pos, 1, "::");
     }
+    ry.yarpType = "yarp::rosmsg::" + ry.yarpType;
+
     if (field.rosType == "string") {
         ry.yarpType = "std::string";
     }
@@ -824,4 +928,31 @@ RosYarpType RosTypeCodeGenYarp::mapPrimitive(const RosField& field)
         }
     }
     return ry;
+}
+
+
+bool RosTypeCodeGenYarp::writeIndex(RosTypeCodeGenState& state)
+{
+    // Generate _indexALL.txt file
+    string root = (target != "") ? (target + "/") : "";
+    string index_fname = className + "_indexALL.txt";
+
+    yarp::os::mkdir_p((root + index_fname).c_str(), 1);
+    out = fopen((root + index_fname).c_str(), "w");
+    if (!out) {
+        fprintf(stderr, "Failed to open %s for writing\n", index_fname.c_str());
+        return false;
+    }
+    if (verbose) {
+        printf("Generating %s\n", index_fname.c_str());
+    }
+
+    for (const auto& str : state.generatedFiles) {
+        fprintf(out, "%s\n", str.c_str());
+    }
+
+    fclose(out);
+    out = nullptr;
+
+    return true;
 }

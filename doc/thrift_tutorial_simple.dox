@@ -1,9 +1,3 @@
-/*
- * Copyright: (C) 2012 Istituto Italiano di Tecnologia (IIT)
- * Copy Policy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
- *
- */
-
 /**
 *
 @page thrift_tutorial_simple Thrift IDL in YARP: simple tutorial

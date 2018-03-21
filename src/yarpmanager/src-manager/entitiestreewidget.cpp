@@ -5,11 +5,11 @@
  * email:   dperrone@aitek.it
  * website: www.aitek.it
  *
- * CopyPolicy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
+ * CopyPolicy: Released under the terms of the LGPLv2.1 or later, see LICENSE
  */
 
 #include "entitiestreewidget.h"
-#include <yarp/manager/ymm-dir.h>
+#include <dirent.h>
 #include <QProcess>
 #include <QHeaderView>
 #include <QMessageBox>

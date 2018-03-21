@@ -1,13 +1,10 @@
-/*
- * Copyright (C) 2011, 2016 Istituto Italiano di Tecnologia (IIT).
- * CopyPolicy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
- *
- */
-
 /**
  * @page yarp_with_ros_services Use YARP to talk to ROS services
 
-Please see "example/ros" in the YARP source code for full examples.  For simple cases, we can just use YARP Bottles whose content matches ROS types structurally.  For example, to call a ROS service that adds two integers, we could do this:
+Please see "example/ros" in the YARP source code for full examples.
+For simple cases, we can just use YARP Bottles whose content matches ROS types
+structurally.
+For example, to call a ROS service that adds two integers, we could do this:
 
 \include example/ros/add_int_client_v2.cpp
 
@@ -26,7 +23,8 @@ On the ROS side we'd do:
 rosrun rospy_tutorials add_two_ints_server
 \endverbatim
 
-Then on the YARP side we can try it out (assume the above program is compiled as 'add_int_client_v1'):
+Then on the YARP side we can try it out (assume the above program is compiled as
+'add_int_client_v1'):
 
 \verbatim
 $ ./add_int_client_v1 4 6

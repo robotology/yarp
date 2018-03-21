@@ -1,7 +1,9 @@
-# Copyright: (C) 2009 RobotCub Consortium
-# Authors: Paul Fitzpatrick
-# CopyPolicy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
-
+# Copyright (C) 2006-2018 Istituto Italiano di Tecnologia (IIT)
+# Copyright (C) 2006-2010 RobotCub Consortium
+# All rights reserved.
+#
+# This software may be modified and distributed under the terms of the
+# BSD-3-Clause license. See the accompanying LICENSE file for details.
 
 include(CMakeDependentOption)
 
@@ -90,6 +92,7 @@ if(YARP_COMPILE_TESTS)
     if(YARP_HAS_ACE)
       include_directories(${ACE_INCLUDE_DIRS})
     endif()
+    include_directories(${hmac_INCLUDE_DIRS})
 
     set(EXE harness_${test_family})
     string(TOLOWER ${EXE} EXE)
@@ -156,6 +159,37 @@ if(YARP_COMPILE_TESTS)
   if(ENABLE_yarpmod_test_grabber)
     add_definitions(-DYARP_TESTFRAMEGRABBER_TESTS)
   endif()
+
+  # BEGIN FIXME
+  # Temporarily disable tests for devices removed
+  macro(yarp_disable_test _test _base_only)
+    if(${CMAKE_VERSION} VERSION_LESS 3.9)
+      set(_prop WILL_FAIL)
+    else()
+      set(_prop DISABLED)
+    endif()
+    set_property(TEST ${_test} PROPERTY ${_prop} ON)
+    if(NOT ${_base_only})
+      foreach(_Tool ${YARP_VALGRIND_TOOLS})
+        string(TOUPPER "${_Tool}" _TOOL)
+        if(YARP_VALGRIND_${_TOOL}_TESTS)
+          set_property(TEST ${_test}::Valgrind::${_Tool} PROPERTY ${_prop} ON)
+        endif()
+      endforeach()
+      if(YARP_GDB_TESTS)
+        set_property(TEST ${_test}::gdb PROPERTY ${_prop} ON)
+      endif()
+    endif()
+  endmacro()
+
+  if(YARP_HAS_MATH_LIB)
+    yarp_disable_test(dev::FrameTransformClientTest 0)
+    yarp_disable_test(dev::MapGrid2DTest 0)
+  endif()
+  if(ENABLE_yarpmod_test_grabber)
+    yarp_disable_test(dev::TestFrameGrabberTest 0)
+  endif()
+  # END FIXME
 
   add_subdirectory(carriers)
   add_subdirectory(devices)

@@ -1,7 +1,10 @@
 /*
- * Copyright (C) 2009 RobotCub Consortium
- * Author: Lorenzo Natale, Alberto Cardellino
- * CopyPolicy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
+ * Copyright (C) 2006-2018 Istituto Italiano di Tecnologia (IIT)
+ * Copyright (C) 2006-2010 RobotCub Consortium
+ * All rights reserved.
+ *
+ * This software may be modified and distributed under the terms of the
+ * BSD-3-Clause license. See the accompanying LICENSE file for details.
  */
 
 #include "ControlBoardWrapper.h"
@@ -11,6 +14,7 @@
 #include <iostream>
 #include <yarp/os/Log.h>
 #include <yarp/os/LogStream.h>
+#include <sstream>
 
 #include <cstring>         // for memset function
 
@@ -798,6 +802,7 @@ bool ControlBoardWrapper::attachAll(const PolyDriverList &polylist)
     {
         if (!device.subdevices[k].isAttached())
         {
+            yError("ControlBoardWrapper: device %s was not found in the list passed to attachAll", device.subdevices[k].id.c_str());
             ready=false;
         }
     }
@@ -805,6 +810,12 @@ bool ControlBoardWrapper::attachAll(const PolyDriverList &polylist)
     if (!ready)
     {
         yError("ControlBoardWrapper: AttachAll failed, some subdevice was not found or its attach failed\n");
+        stringstream ss;
+        for(int p=0;p<polylist.size();p++)
+        {
+            ss << polylist[p]->key.c_str() << " ";
+        }
+        yError("ControlBoardWrapper: List of devices keys passed to attachAll: %s\n", ss.str().c_str());
         return false;
     }
 
@@ -919,7 +930,7 @@ void ControlBoardWrapper::run()
 
     if(useROS != ROS_disabled)
     {
-        sensor_msgs_JointState ros_struct;
+        yarp::rosmsg::sensor_msgs::JointState ros_struct;
 
         ros_struct.name.resize(controlledJoints);
         ros_struct.position.resize(controlledJoints);
@@ -944,7 +955,7 @@ void ControlBoardWrapper::run()
         ros_struct.name=jointNames;
 
         ros_struct.header.seq = rosMsgCounter++;
-        ros_struct.header.stamp = normalizeSecNSec(time.getTime());
+        ros_struct.header.stamp = time.getTime();
 
         rosPublisherPort.write(ros_struct);
     }

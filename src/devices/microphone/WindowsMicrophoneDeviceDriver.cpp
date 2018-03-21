@@ -1,7 +1,11 @@
 /*
- * Copyright (C) 2006 Julio Gomes, Alexandre Bernardino
- * CopyPolicy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
+ * Copyright (C) 2006-2018 Istituto Italiano di Tecnologia (IIT)
+ * Copyright (C) 2006 Julio Gomes
+ * Copyright (C) 2006 Alexandre Bernardino
+ * All rights reserved.
  *
+ * This software may be modified and distributed under the terms of the
+ * BSD-3-Clause license. See the accompanying LICENSE file for details.
  */
 
 /***********************************************************************
@@ -9,14 +13,6 @@
   YARP2 MicrophoneDeviceDriver
 
   Windows Native Implementation for sound acquisition
-
-  Adapted from YARP1 - YarpSoundDeviceDriver, YarpSoundCardUtils
-
-  Author of YARP1 (original) Code: Carlos Beltran, Lira-Lab, DIST, UNIGE
-
-  Authors of YARP2 (adapted) Code: Julio Gomes, Alexandre Bernardino, VisLab, ISR-IST
-
-  Contact: jgomes(a)isr.ist.utl.pt, alex(a)isr.ist.utl.pt
 
 ************************************************************************/
 

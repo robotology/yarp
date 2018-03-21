@@ -21,7 +21,7 @@ The <tt>sender</tt> program from
 \ref rostypes_tutorial_portable looks like this:
 
 \code
-#include "SharedData.h"
+#include <yarp/rosidl/SharedData.h>
 #include <iostream>
 #include <yarp/os/Network.h>
 #include <yarp/os/BufferedPort.h>
@@ -31,35 +31,35 @@ using namespace std;
 
 int main()
 {
-   yarp::os::Network network;
+    yarp::os::Network network;
 
-   yarp::os::Port port;
+    yarp::os::Port port;
 
-   if (!port.open("/sender"))
-   {
-       cerr<<"Error opening port, check your yarp network\n";
+    if (!port.open("/sender"))
+    {
+        cerr<<"Error opening port, check your yarp network\n";
        return -1;
-   }
+    }
 
-   cout<<"Starting sender\n";
-   double count=0.0;
-   while(true)
-   {
-      SharedData d;
+    cout<<"Starting sender\n";
+    double count=0.0;
+    while(true)
+    {
+        yarp::rosidl::SharedData d;
 
-      // d.text is a string
-      d.text="Hello from sender";
+        // d.text is a string
+        d.text="Hello from sender";
 
-      //d.content is a vector, let's push some data
-      d.content.push_back(count++);
-      d.content.push_back(count++);
+        //d.content is a vector, let's push some data
+        d.content.push_back(count++);
+        d.content.push_back(count++);
 
-      port.write(d);
+        port.write(d);
 
-      yarp::os::Time::delay(0.1);
-   }
+        yarp::os::Time::delay(0.1);
+    }
 
-   return 0;
+    return 0;
 }
 \endcode
 
@@ -188,7 +188,7 @@ here.  Do the following:
   <version>0.0.0</version>
   <description>A test yarp package</description>
   <maintainer email="paul@robotrebuilt.com">Paul Fitzpatrick</maintainer>
-  <license>BSD</license>
+  <license>BSD-3-Clause</license>
   <build_depend>message_generation</build_depend>
   <run_depend>message_runtime</run_depend>
   <buildtool_depend>catkin</buildtool_depend>

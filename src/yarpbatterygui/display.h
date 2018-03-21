@@ -3,7 +3,7 @@
 * Author: Marco Randazzo
 * Date: June 2015
 * email:   marco.randazzo@iit.it
-* CopyPolicy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
+* CopyPolicy: Released under the terms of the LGPLv2.1 or later, see LICENSE
 */
 
 #ifndef DISPLAY_H
