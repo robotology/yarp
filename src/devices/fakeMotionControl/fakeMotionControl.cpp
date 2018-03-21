@@ -572,7 +572,9 @@ bool FakeMotionControl::open(yarp::os::Searchable &config)
     ImplementEncodersTimed::initialize(_njoints, _axisMap, _angleToEncoder, nullptr);
     ImplementMotorEncoders::initialize(_njoints, _axisMap, _angleToEncoder, nullptr);
     ImplementPositionControl2::initialize(_njoints, _axisMap, _angleToEncoder, nullptr);
-    ImplementPidControl::initialize(_njoints, _axisMap, _angleToEncoder, nullptr, _newtonsToSensor, _ampsToSensor);
+    ImplementPidControl::initialize(_njoints, _axisMap, _angleToEncoder, nullptr, _newtonsToSensor, _ampsToSensor, _dutycycleToPWM);
+    ImplementPidControl::setConversion(PidControlTypeEnum::VOCAB_PIDTYPE_POSITION, PidUnitsEnum::METRIC, PidUnitsEnum::METRIC);
+    ImplementPidControl::setConversion(PidControlTypeEnum::VOCAB_PIDTYPE_TORQUE, PidUnitsEnum::METRIC, PidUnitsEnum::METRIC);
     ImplementControlMode2::initialize(_njoints, _axisMap);
     ImplementVelocityControl2::initialize(_njoints, _axisMap, _angleToEncoder, nullptr);
     ImplementControlLimits2::initialize(_njoints, _axisMap, _angleToEncoder, nullptr);
@@ -841,7 +843,7 @@ bool FakeMotionControl::parseTorquePidsGroup(Bottle& pidsGroup, Pid myPid[], dou
     //optional PWM limit
     if(_pwmIsLimited)
     {   // check for value in the file
-        if (!extractGroup(pidsGroup, xtmp, "limPwm", "Limited PWD", _njoints))
+        if (!extractGroup(pidsGroup, xtmp, "limPwm", "Limited PWM", _njoints))
         {
             yError() << "The PID parameter limPwm was requested but was not correctly set in the configuration file, please fill it.";
             return false;
@@ -955,15 +957,15 @@ bool FakeMotionControl::fromConfig(yarp::os::Searchable &config)
     }
 
     // pwm conversions factor
-    if (general.check("dutycycleToPWM"))
+    if (general.check("fullscalePWM"))
     {
-        if (extractGroup(general, xtmp, "dutycycleToPWM", "a list of scales for the dutycycleToPWM conversion factors", _njoints))
+        if (extractGroup(general, xtmp, "fullscalePWM", "a list of scales for the fullscalePWM conversion factors", _njoints))
         {
             for (i = 1; i < xtmp.size(); i++)
             {
-                if (xtmp.get(i).isDouble())
+                if (xtmp.get(i).isDouble() || xtmp.get(i).isInt())
                 {
-                    _dutycycleToPWM[i - 1] = xtmp.get(i).asDouble();
+                    _dutycycleToPWM[i - 1] = xtmp.get(i).asDouble() / 100.0;
                 }
             }
         }
@@ -972,7 +974,7 @@ bool FakeMotionControl::fromConfig(yarp::os::Searchable &config)
     }
     else
     {
-        yInfo() << "Using default ampsToSensor";
+        yInfo() << "Using default dutycycleToPWM=1.0";
         for (i = 0; i < _njoints; i++)
             _dutycycleToPWM[i] = 1.0;
     }
@@ -1465,6 +1467,7 @@ void FakeMotionControl::cleanup()
 
 bool FakeMotionControl::setPidRaw(const PidControlTypeEnum& pidtype, int j, const Pid &pid)
 {
+    yDebug() << "setPidRaw" << pidtype << j << pid.kp;
     switch (pidtype)
     {
         case VOCAB_PIDTYPE_POSITION:
@@ -1610,6 +1613,7 @@ bool FakeMotionControl::getPidRaw(const PidControlTypeEnum& pidtype, int j, Pid 
         default:
         break;
     }
+    yDebug() << "getPidRaw" << pidtype << j << pid->kp;
     return true;
 }
 
@@ -1791,16 +1795,16 @@ bool FakeMotionControl::getPidOutputRaw(const PidControlTypeEnum& pidtype, int j
     switch (pidtype)
     {
         case VOCAB_PIDTYPE_POSITION:
-            *out=1.1;
+            *out=1.1 + j * 10;
         break;
         case VOCAB_PIDTYPE_VELOCITY:
-            *out=1.2;
+            *out=1.2 + j * 10;
         break;
         case VOCAB_PIDTYPE_CURRENT:
-            *out=1.3;
+            *out=1.3 + j * 10;
         break;
         case VOCAB_PIDTYPE_TORQUE:
-            *out=1.4;
+            *out=1.4 + j * 10;
         break;
         default:
         break;

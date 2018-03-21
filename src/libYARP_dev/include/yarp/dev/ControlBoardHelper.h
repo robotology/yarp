@@ -330,6 +330,11 @@ public:
         enc=ang*angleToEncoders[j];
     }
 
+    inline double velA2E(double ang, int j)
+    {
+        return ang*angleToEncoders[j];
+    }
+
     inline void velA2E_abs(double ang, int j, double &enc, int &k)
     {
         k=toHw(j);
@@ -506,19 +511,13 @@ public:
     //***************** current ******************//
     inline void ampereA2S(double ampere, int j, double &sens, int &k)
     {
-        if(ampereToSensors)
-            sens=ampere*ampereToSensors[j];
-        else
-            sens=ampere;
+        sens=ampere*ampereToSensors[j];
         k=toHw(j);
     }
 
     inline double ampereA2S(double ampere, int j)
     {
-        if(ampereToSensors)
-            return ampere*ampereToSensors[j];
-        else
-            return ampere;
+         return ampere*ampereToSensors[j];
     }
 
     //map a vector, convert from ampere to sensors
@@ -548,39 +547,26 @@ public:
     inline void ampereS2A(double sens, int j, double &ampere, int &k)
     {
         k=toUser(j);
-        if(ampereToSensors)
-            ampere=(sens/ampereToSensors[k]);
-        else
-            ampere=sens;  //conversion factor = 1 if not defined;
+        ampere=(sens/ampereToSensors[k]);
     }
 
     inline double ampereS2A(double sens, int j)
     {
         int k=toUser(j);
-
-        if(ampereToSensors)
-            return sens/ampereToSensors[k];
-        else
-            return sens;  //conversion factor = 1 if not defined;
+        return sens/ampereToSensors[k];
     }
     // *******************************************//
 
     //***************** voltage ******************//
     inline void voltageV2S(double voltage, int j, double &sens, int &k)
     {
-        if(voltToSensors)
-            sens=voltage*voltToSensors[j];
-        else
-            sens=voltage;
+        sens=voltage*voltToSensors[j];
         k=toHw(j);
     }
 
     inline double voltageV2S(double voltage, int j)
     {
-        if(voltToSensors)
-            return voltage*voltToSensors[j];
-        else
-            return voltage;
+        return voltage*voltToSensors[j];
     }
 
     //map a vector, convert from voltage to sensors
@@ -610,17 +596,12 @@ public:
     inline void voltageS2V(double sens, int j, double &voltage, int &k)
     {
         k=toUser(j);
-
-        if(voltToSensors)
-            voltage=(sens/voltToSensors[k]);
-        else
-            voltage = sens;
+        voltage=(sens/voltToSensors[k]);
     }
 
     inline double voltageS2V(double sens, int j)
     {
         int k=toUser(j);
-
         return (sens/voltToSensors[k]);
     }
     // *******************************************//
@@ -628,19 +609,13 @@ public:
     //***************** dutycycle ******************//
     inline void dutycycle2PWM(double dutycycle, int j, double &pwm, int &k)
     {
-        if (dutycycleToPWMs)
-            pwm = dutycycle*dutycycleToPWMs[j];
-        else
-            pwm = dutycycle;
+        pwm = dutycycle*dutycycleToPWMs[j];
         k = toHw(j);
     }
 
     inline double dutycycle2PWM(double dutycycle, int j)
     {
-        if (dutycycleToPWMs)
-            return dutycycle*dutycycleToPWMs[j];
-        else
-            return dutycycle;
+        return dutycycle*dutycycleToPWMs[j];
     }
 
     inline void dutycycle2PWM(const double *dutycycle, double *sens)
@@ -665,21 +640,16 @@ public:
         }
     }
 
-    inline void PWM2dutycycle(double pwm, int j, double &dutycycle, int &k)
+    inline void PWM2dutycycle(double pwm_raw, int k_raw, double &dutycycle, int &j)
     {
-        k = toUser(j);
-
-        if (dutycycleToPWMs)
-            dutycycle = (pwm / dutycycleToPWMs[k]);
-        else
-            dutycycle = pwm;
+        j = toUser(k_raw);
+        dutycycle = (pwm_raw / dutycycleToPWMs[j]);
     }
 
-    inline double PWM2dutycycle(double pwm, int j)
+    inline double PWM2dutycycle(double pwm_raw, int k_raw)
     {
-        int k = toUser(j);
-
-        return (pwm / dutycycleToPWMs[k]);
+        int j = toUser(k_raw);
+        return (pwm_raw / dutycycleToPWMs[j]);
     }
     // *******************************************//
 
