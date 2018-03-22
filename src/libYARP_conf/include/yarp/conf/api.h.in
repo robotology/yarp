@@ -90,12 +90,29 @@ recommended usage of this header within YARP is:
 #  define YARP_DEPRECATED_MSG(X)
 #endif
 
+// Due to a GCC bug, it is not a good idea to mix C++14 and compiler-specific attributes
+// For this reason, only for usage with visibility macro, we define the compiler-specific attributes
+// See https://github.com/robotology/yarp/issues/1531
+#if defined YARP_NO_DEPRECATED_WARNINGS
+#  define YARP_DEPRECATED_COMPILER_SPECIFIC
+#  define YARP_DEPRECATED_COMPILER_SPECIFIC_MSG(x)
+#elif YARP_COMPILER_IS_GNU || YARP_COMPILER_IS_Clang
+#  define YARP_DEPRECATED_COMPILER_SPECIFIC __attribute__((__deprecated__))
+#  define YARP_DEPRECATED_COMPILER_SPECIFIC_MSG(MSG) __attribute__((__deprecated__(MSG)))
+#elif YARP_COMPILER_IS_MSVC
+#  define YARP_DEPRECATED_COMPILER_SPECIFIC __declspec(deprecated)
+#  define YARP_DEPRECATED_COMPILER_SPECIFIC_MSG(MSG) __declspec(deprecated(MSG))
+#else
+#  define YARP_DEPRECATED_COMPILER_SPECIFIC
+#  define YARP_DEPRECATED_COMPILER_SPECIFIC_MSG(MSG)
+#endif
+
 #ifdef YARP_NO_DEPRECATED
 #  define YARP_DEPRECATED_API YARP_DEPRECATED
 #  define YARP_DEPRECATED_API_MSG(X) YARP_DEPRECATED_MSG(X)
 #else
-#  define YARP_DEPRECATED_API YARP_DEPRECATED YARP_OS_API
-#  define YARP_DEPRECATED_API_MSG(X) YARP_DEPRECATED_MSG(X) YARP_OS_API
+#  define YARP_DEPRECATED_API YARP_DEPRECATED_COMPILER_SPECIFIC YARP_OS_API
+#  define YARP_DEPRECATED_API_MSG(X) YARP_DEPRECATED_COMPILER_SPECIFIC_MSG(X) YARP_OS_API
 #endif
 
 // YARP_NODISCARD: print a warning if the result unused
