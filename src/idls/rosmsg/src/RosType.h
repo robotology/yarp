@@ -14,7 +14,8 @@
 #include <map>
 #include <list>
 
-class RosTypeSearch {
+class RosTypeSearch
+{
 private:
     bool find_service;
     std::string target_dir;
@@ -82,33 +83,8 @@ class RosTypeCodeGen;
 class RosTypeCodeGenState;
 
 
-class RosType {
-public:
-
-    // std::vector<RosType> subRosType; is awkward to export in a MSVC DLL
-    // so we work around it
-    class RosTypes {
-    public:
-        void *system_resource;
-
-        RosTypes();
-
-        virtual ~RosTypes();
-
-        RosTypes(const RosTypes& alt);
-
-        const RosTypes& operator=(const RosTypes& alt);
-
-        void clear();
-
-        void push_back(const RosType& t);
-
-        size_t size() const;
-
-        RosType& operator[](int i);
-        const RosType& operator[](int i) const;
-    };
-
+class RosType
+{
 public:
     bool isValid;
     bool isArray;
@@ -120,7 +96,7 @@ public:
     std::string rosName;
     std::string rosPath;
     std::string initializer;
-    RosTypes subRosType;
+    std::vector<RosType> subRosType;
     std::string txt;
     std::list<std::string> checksum_var_text;
     std::list<std::string> checksum_const_text;
@@ -193,7 +169,8 @@ public:
 
 typedef RosType RosField;
 
-class RosTypeCodeGenState {
+class RosTypeCodeGenState
+{
 public:
     std::string directory;
     std::map<std::string, RosType *> generated;
@@ -217,7 +194,8 @@ public:
     }
 };
 
-class RosTypeCodeGen {
+class RosTypeCodeGen
+{
 protected:
     bool verbose;
 public:

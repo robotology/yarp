@@ -57,7 +57,7 @@ void show_usage()
 static void generateTypeMap1(RosType& t, ConstString& txt)
 {
     if (!t.isValid) return;
-    RosType::RosTypes& lst = t.subRosType;
+    std::vector<RosType>& lst = t.subRosType;
     if (lst.size()>0) {
         bool simple = true;
         for (size_t i=0; i<lst.size(); i++) {

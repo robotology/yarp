@@ -731,7 +731,7 @@ static void output_type(FILE *out,
                         const RosField& field,
                         std::map<std::string, int>& processed)
 {
-    const std::string& name = field.rosType;
+    const std::string& name = getDoubleName(field.rosType);
     processed[name] = 1;
     const std::string& source = field.source;
     bool need_newline = false;
@@ -757,9 +757,7 @@ static void output_type(FILE *out,
         }
         fprintf(out, "%c", ch);
     }
-    size_t len = field.subRosType.size();
-    for (size_t i=0; i<len; i++) {
-        const RosField& sub_field = field.subRosType[i];
+    for (const auto& sub_field : field.subRosType) {
         if (!sub_field.isStruct) {
             continue;
         }

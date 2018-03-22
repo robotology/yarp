@@ -33,8 +33,7 @@ std::vector<std::string> normalizedMessage(const std::string& line) {
     bool quote = false;
     bool pending = false;
     bool can_quote = true;
-    for (size_t i=0; i<line.length(); i++) {
-        char ch = line[i];
+    for (char ch : line) {
         if (ch=='\"'&&can_quote) {
             quote = !quote;
             result += ch;
@@ -65,65 +64,15 @@ std::vector<std::string> normalizedMessage(const std::string& line) {
     return all;
 }
 
-#define HELPER(x) (*((std::vector<RosType> *)(x)))
-
-RosType::RosTypes::RosTypes() {
-    system_resource = new std::vector<RosType>();
-    if (!system_resource) {
-        fprintf(stderr,"Failed to allocated storage for ros types\n");
-        std::exit(1);
-    }
-}
-
-RosType::RosTypes::~RosTypes() {
-    delete &HELPER(system_resource);
-    system_resource = nullptr;
-}
-
-RosType::RosTypes::RosTypes(const RosTypes& alt) {
-    system_resource = new std::vector<RosType>();
-    if (!system_resource) {
-        fprintf(stderr,"Failed to allocated storage for ros types\n");
-        std::exit(1);
-    }
-    HELPER(system_resource) = HELPER(alt.system_resource);
-}
-
-const RosType::RosTypes& RosType::RosTypes::operator=(const RosTypes& alt) {
-    HELPER(system_resource) = HELPER(alt.system_resource);
-    return *this;
-}
-
-
-
-void RosType::RosTypes::clear() {
-    HELPER(system_resource).clear();
-}
-
-void RosType::RosTypes::push_back(const RosType& t) {
-    HELPER(system_resource).push_back(t);
-}
-
-size_t RosType::RosTypes::size() const {
-    return HELPER(system_resource).size();
-}
-
-RosType& RosType::RosTypes::operator[](int i) {
-    return HELPER(system_resource)[i];
-}
-
-const RosType& RosType::RosTypes::operator[](int i) const {
-    return HELPER(system_resource)[i];
-}
-
-
 bool RosType::read(const char *tname, RosTypeSearch& env, RosTypeCodeGen& gen,
                    int nesting) {
     std::string indent = "";
     for (int i=0; i<nesting; i++) {
         indent += "  ";
     }
-    if (nesting>0) env.lookForService(false); // no srv nesting allowed in ros
+    if (nesting>0) {
+        env.lookForService(false); // no srv nesting allowed in ros
+    }
 
     if (verbose) {
         printf("[type]%s Checking %s\n", indent.c_str(), tname);
@@ -435,48 +384,43 @@ bool RosType::emitType(RosTypeCodeGen& gen,
         return true;
     }
 
-    if (subRosType.size()>0) {
-        for (size_t i=0; i<subRosType.size(); i++) {
-            RosType& e = subRosType[i];
-            if (!no_recurse) {
-                if (!e.emitType(gen,state)) {
-                    return false;
-                }
+    for (RosType& e : subRosType) {
+        if (!no_recurse) {
+            if (!e.emitType(gen,state)) {
+                return false;
             }
+        }
 
-            if (e.isConst()) {
-                std::string add = e.rosType + " " + e.rosName + "=" + e.initializer + "\n";
-                checksum_const_text.push_back(add);
+        if (e.isConst()) {
+            std::string add = e.rosType + " " + e.rosName + "=" + e.initializer + "\n";
+            checksum_const_text.push_back(add);
+        } else {
+            std::string add = "";
+            if (!e.isStruct) {
+                add += e.rosRawType;
             } else {
-                std::string add = "";
-                if (!e.isStruct) {
-                    add += e.rosRawType;
-                } else {
-                    add += e.checksum;
-                }
-                if (e.isArray && !e.isStruct) {
-                    add += "[";
-                    if (e.arrayLength!=-1) {
-                        add += yarp::os::Bottle::toString(e.arrayLength);
-                    }
-                    add += "]";
-                }
-                add += " ";
-                add += e.rosName;
-                add += "\n";
-                checksum_var_text.push_back(add);
+                add += e.checksum;
             }
+            if (e.isArray && !e.isStruct) {
+                add += "[";
+                if (e.arrayLength!=-1) {
+                    add += yarp::os::Bottle::toString(e.arrayLength);
+                }
+                add += "]";
+            }
+            add += " ";
+            add += e.rosName;
+            add += "\n";
+            checksum_var_text.push_back(add);
         }
     }
 
     std::string sum = "";
-    for (std::list<std::string>::iterator it=checksum_const_text.begin();
-         it!=checksum_const_text.end(); it++) {
-        sum += *it;
+    for (const auto& txt : checksum_const_text) {
+        sum += txt;
     }
-    for (std::list<std::string>::iterator it=checksum_var_text.begin();
-         it!=checksum_var_text.end(); it++) {
-        sum += *it;
+    for (const auto& txt : checksum_var_text) {
+        sum += txt;
     }
     //printf("SUM [%s]\n", sum.c_str());
     sum = sum.substr(0,sum.length()-1);
