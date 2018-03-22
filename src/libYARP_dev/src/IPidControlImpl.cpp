@@ -23,7 +23,9 @@ public:
     PidUnits* TrqPid_units;
     std::map<PidControlTypeEnum, PidUnits*>   pid_units;
 
-    PrivateUnitsHandler(int size)
+    PrivateUnitsHandler(const PrivateUnitsHandler &) = delete;
+
+    explicit PrivateUnitsHandler(int size)
     {
         PosPid_units = new PidUnits[size];
         yAssert(PosPid_units != nullptr);
