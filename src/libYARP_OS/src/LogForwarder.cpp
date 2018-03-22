@@ -11,6 +11,7 @@
 #include <yarp/os/Os.h>
 #include <yarp/os/Time.h>
 #include <yarp/os/Log.h>
+#include <yarp/os/SystemInfo.h>
 
 yarp::os::LogForwarder* yarp::os::LogForwarder::instance = nullptr;
 yarp::os::Semaphore *yarp::os::LogForwarder::sem = nullptr;
@@ -60,10 +61,11 @@ yarp::os::LogForwarder::LogForwarder()
     outputPort = new yarp::os::BufferedPort<yarp::os::Bottle>;
     char host_name [MAX_STRING_SIZE]; //unsafe
     yarp::os::gethostname(host_name, MAX_STRING_SIZE);
-    char prog_name [MAX_STRING_SIZE]; //unsafe
-    yarp::os::getprogname(prog_name, MAX_STRING_SIZE);
-    int pid = yarp::os::getpid();
-    sprintf(logPortName, "/log/%s/%s/%d", host_name, prog_name, pid);  //unsafe, better to use snprintf when available
+
+    yarp::os::SystemInfo::ProcessInfo processInfo = yarp::os::SystemInfo::getProcessInfo();
+
+    std::snprintf(logPortName, MAX_STRING_SIZE, "/log/%s/%s/%d", host_name, processInfo.name.c_str(), processInfo.pid);
+
     if (outputPort->open(logPortName) == false)
     {
         printf("LogForwarder error while opening port %s\n", logPortName);

@@ -8,6 +8,7 @@
 
 #include <yarp/os/NetworkClock.h>
 #include <yarp/os/SystemClock.h>
+#include <yarp/os/SystemInfo.h>
 #include <yarp/os/NestedContact.h>
 #include <yarp/os/Os.h>
 #include <yarp/os/impl/Logger.h>
@@ -79,14 +80,11 @@ bool NetworkClock::open(const ConstString& clockSourcePortName, ConstString loca
         yarp::os::gethostname(hostName, MAX_STRING_SIZE);
         hostName[strlen(hostName)] = '\0';      // manually set the null terminator, so it is ok in any case
 
-        char progName [MAX_STRING_SIZE];
-        yarp::os::getprogname(progName, MAX_STRING_SIZE);
-        progName[strlen(progName)] = '\0';      // manually set the null terminator, so it is ok in any case
-        int pid = yarp::os::getpid();
+        yarp::os::SystemInfo::ProcessInfo processInfo = yarp::os::SystemInfo::getProcessInfo();
 
         localPortName = "/";
         // Ports may be anonymous to not pollute the yarp name list
-        localPortName += ConstString(hostName) + "/" + ConstString(progName) + "/" + ConstString(std::to_string(pid)) + "/clock:i";
+        localPortName += ConstString(hostName) + "/" + processInfo.name + "/" + ConstString(std::to_string(processInfo.pid)) + "/clock:i";
     }
 
     // if receiving port cannot be opened, return false.
