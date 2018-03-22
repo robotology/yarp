@@ -37,13 +37,16 @@ YARP_OS_API const char* getenv(const char* var);
  */
 YARP_OS_API int getpid();
 
+#ifndef YARP_NO_DEPRECATED // Since YARP 3.0.0
 /**
  * @brief Portable wrapper for the setprogname() function.
  *
  * Set the program name.
  *
  * @param[in] progname the program name
+ * @deprecated Since YARP 3.0.0.
  */
+YARP_DEPRECATED
 YARP_OS_API void setprogname(const char* progname);
 
 /**
@@ -53,8 +56,11 @@ YARP_OS_API void setprogname(const char* progname);
  *
  * @param[out] progname the program name
  * @param size The size of the @c progname array
+ * @deprecated Since YARP 3.0.0. Use yarp::os::SystemInfo::getProcessInfo().name.
  */
+YARP_DEPRECATED_MSG("This method is deprecated. Use yarp::os::SystemInfo::getProcessInfo().name instead")
 YARP_OS_API void getprogname(char* progname, size_t size);
+#endif // YARP_NO_DEPRECATED
 
 /**
  * @brief Portable wrapper for the gethostname() function.

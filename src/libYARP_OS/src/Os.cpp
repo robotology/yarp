@@ -64,6 +64,7 @@ int yarp::os::getpid()
     return pid;
 }
 
+#ifndef YARP_NO_DEPRECATED // Since YARP 3.0.0
 void yarp::os::setprogname(const char *progname)
 {
 #ifdef YARP_HAS_ACE
@@ -90,6 +91,7 @@ void yarp::os::getprogname(char* progname, size_t size)
     YARP_UNUSED(size);
 #endif
 }
+#endif // YARP_NO_DEPRECATED
 
 
 void yarp::os::gethostname(char* hostname, size_t size)
