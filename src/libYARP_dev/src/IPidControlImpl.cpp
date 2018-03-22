@@ -10,8 +10,47 @@
 #include <yarp/dev/ControlBoardHelper.h>
 
 #include <cmath>
+#include <map>
 
 using namespace yarp::dev;
+
+class  yarp::dev::ImplementPidControl::PrivateUnitsHandler
+{
+public:
+    PidUnits * PosPid_units;
+    PidUnits* VelPid_units;
+    PidUnits* CurPid_units;
+    PidUnits* TrqPid_units;
+    std::map<PidControlTypeEnum, PidUnits*>   pid_units;
+
+    PrivateUnitsHandler(int size)
+    {
+        PosPid_units = new PidUnits[size];
+        yAssert(PosPid_units != nullptr);
+
+        VelPid_units = new PidUnits[size];
+        yAssert(VelPid_units != nullptr);
+
+        TrqPid_units = new PidUnits[size];
+        yAssert(TrqPid_units != nullptr);
+
+        CurPid_units = new PidUnits[size];
+        yAssert(CurPid_units != nullptr);
+
+        pid_units[VOCAB_PIDTYPE_POSITION] = PosPid_units;
+        pid_units[VOCAB_PIDTYPE_VELOCITY] = VelPid_units;
+        pid_units[VOCAB_PIDTYPE_CURRENT] = CurPid_units;
+        pid_units[VOCAB_PIDTYPE_TORQUE] = TrqPid_units;
+    }
+
+    ~PrivateUnitsHandler()
+    {
+        checkAndDestroy(PosPid_units);
+        checkAndDestroy(VelPid_units);
+        checkAndDestroy(TrqPid_units);
+        checkAndDestroy(CurPid_units);
+    }
+};
 
 void ImplementPidControl::convert_pid_to_user(const yarp::dev::PidControlTypeEnum& pidtype, const Pid &in_raw, int j_raw,  Pid &out_usr, int &k_usr)
 {
@@ -21,13 +60,13 @@ void ImplementPidControl::convert_pid_to_user(const yarp::dev::PidControlTypeEnu
     switch (pidtype)
     {
     case PidControlTypeEnum::VOCAB_PIDTYPE_POSITION:
-        if (pid_units[VOCAB_PIDTYPE_POSITION][k_usr].fbk_units == PidUnitsEnum::METRIC)
+        if (mPriv->pid_units[VOCAB_PIDTYPE_POSITION][k_usr].fbk_units == PidUnitsEnum::METRIC)
         {
             out_usr.kp = castToMapper(helper)->posE2A(out_usr.kp, j_raw);
             out_usr.ki = castToMapper(helper)->posE2A(out_usr.ki, j_raw);
             out_usr.kd = castToMapper(helper)->posE2A(out_usr.kd, j_raw);
         }
-        if (pid_units[VOCAB_PIDTYPE_POSITION][k_usr].out_units == PidUnitsEnum::METRIC)
+        if (mPriv->pid_units[VOCAB_PIDTYPE_POSITION][k_usr].out_units == PidUnitsEnum::METRIC)
         {
             out_usr.kp = castToMapper(helper)->PWM2dutycycle(out_usr.kp, j_raw);
             out_usr.ki = castToMapper(helper)->PWM2dutycycle(out_usr.ki, j_raw);
@@ -40,13 +79,13 @@ void ImplementPidControl::convert_pid_to_user(const yarp::dev::PidControlTypeEnu
         }
         break;
     case PidControlTypeEnum::VOCAB_PIDTYPE_VELOCITY:
-        if (pid_units[VOCAB_PIDTYPE_VELOCITY][k_usr].fbk_units == PidUnitsEnum::METRIC)
+        if (mPriv->pid_units[VOCAB_PIDTYPE_VELOCITY][k_usr].fbk_units == PidUnitsEnum::METRIC)
         {
             out_usr.kp = castToMapper(helper)->velE2A(out_usr.kp, j_raw);
             out_usr.ki = castToMapper(helper)->velE2A(out_usr.ki, j_raw);
             out_usr.kd = castToMapper(helper)->velE2A(out_usr.kd, j_raw);
         }
-        if (pid_units[VOCAB_PIDTYPE_VELOCITY][k_usr].out_units == PidUnitsEnum::METRIC)
+        if (mPriv->pid_units[VOCAB_PIDTYPE_VELOCITY][k_usr].out_units == PidUnitsEnum::METRIC)
         {
             out_usr.kp = castToMapper(helper)->PWM2dutycycle(out_usr.kp, j_raw);
             out_usr.ki = castToMapper(helper)->PWM2dutycycle(out_usr.ki, j_raw);
@@ -59,13 +98,13 @@ void ImplementPidControl::convert_pid_to_user(const yarp::dev::PidControlTypeEnu
         }
         break;
     case PidControlTypeEnum::VOCAB_PIDTYPE_TORQUE:
-        if (pid_units[VOCAB_PIDTYPE_TORQUE][k_usr].fbk_units == PidUnitsEnum::METRIC)
+        if (mPriv->pid_units[VOCAB_PIDTYPE_TORQUE][k_usr].fbk_units == PidUnitsEnum::METRIC)
         {
             out_usr.kp = castToMapper(helper)->trqS2N(out_usr.kp, j_raw);
             out_usr.ki = castToMapper(helper)->trqS2N(out_usr.ki, j_raw);
             out_usr.kd = castToMapper(helper)->trqS2N(out_usr.kd, j_raw);
         }
-        if (pid_units[VOCAB_PIDTYPE_TORQUE][k_usr].out_units == PidUnitsEnum::METRIC)
+        if (mPriv->pid_units[VOCAB_PIDTYPE_TORQUE][k_usr].out_units == PidUnitsEnum::METRIC)
         {
             out_usr.kp = castToMapper(helper)->PWM2dutycycle(out_usr.kp, j_raw);
             out_usr.ki = castToMapper(helper)->PWM2dutycycle(out_usr.ki, j_raw);
@@ -78,13 +117,13 @@ void ImplementPidControl::convert_pid_to_user(const yarp::dev::PidControlTypeEnu
         }
         break;
     case PidControlTypeEnum::VOCAB_PIDTYPE_CURRENT:
-        if (pid_units[VOCAB_PIDTYPE_CURRENT][k_usr].fbk_units == PidUnitsEnum::METRIC)
+        if (mPriv->pid_units[VOCAB_PIDTYPE_CURRENT][k_usr].fbk_units == PidUnitsEnum::METRIC)
         {
             out_usr.kp = castToMapper(helper)->ampereS2A(out_usr.kp, j_raw);
             out_usr.ki = castToMapper(helper)->ampereS2A(out_usr.ki, j_raw);
             out_usr.kd = castToMapper(helper)->ampereS2A(out_usr.kd, j_raw);
         }
-        if (pid_units[VOCAB_PIDTYPE_CURRENT][k_usr].out_units == PidUnitsEnum::METRIC)
+        if (mPriv->pid_units[VOCAB_PIDTYPE_CURRENT][k_usr].out_units == PidUnitsEnum::METRIC)
         {
             out_usr.kp = castToMapper(helper)->PWM2dutycycle(out_usr.kp, j_raw);
             out_usr.ki = castToMapper(helper)->PWM2dutycycle(out_usr.ki, j_raw);
@@ -109,13 +148,13 @@ void ImplementPidControl::convert_pid_to_machine(const yarp::dev::PidControlType
     switch (pidtype)
     {
     case PidControlTypeEnum::VOCAB_PIDTYPE_POSITION:
-        if (pid_units[VOCAB_PIDTYPE_POSITION][j_usr].fbk_units == PidUnitsEnum::METRIC)
+        if (mPriv->pid_units[VOCAB_PIDTYPE_POSITION][j_usr].fbk_units == PidUnitsEnum::METRIC)
         {
             out_raw.kp = castToMapper(helper)->posA2E(out_raw.kp, j_usr);
             out_raw.ki = castToMapper(helper)->posA2E(out_raw.ki, j_usr);
             out_raw.kd = castToMapper(helper)->posA2E(out_raw.kd, j_usr);
         }
-        if (pid_units[VOCAB_PIDTYPE_POSITION][j_usr].out_units == PidUnitsEnum::METRIC)
+        if (mPriv->pid_units[VOCAB_PIDTYPE_POSITION][j_usr].out_units == PidUnitsEnum::METRIC)
         {
             out_raw.kp = castToMapper(helper)->dutycycle2PWM(out_raw.kp, j_usr);
             out_raw.ki = castToMapper(helper)->dutycycle2PWM(out_raw.ki, j_usr);
@@ -128,13 +167,13 @@ void ImplementPidControl::convert_pid_to_machine(const yarp::dev::PidControlType
         }
         break;
     case PidControlTypeEnum::VOCAB_PIDTYPE_VELOCITY:
-        if (pid_units[VOCAB_PIDTYPE_VELOCITY][j_usr].fbk_units == PidUnitsEnum::METRIC)
+        if (mPriv->pid_units[VOCAB_PIDTYPE_VELOCITY][j_usr].fbk_units == PidUnitsEnum::METRIC)
         {
             out_raw.kp = castToMapper(helper)->velA2E(out_raw.kp, j_usr);
             out_raw.ki = castToMapper(helper)->velA2E(out_raw.ki, j_usr);
             out_raw.kd = castToMapper(helper)->velA2E(out_raw.kd, j_usr);
         }
-        if (pid_units[VOCAB_PIDTYPE_VELOCITY][j_usr].out_units == PidUnitsEnum::METRIC)
+        if (mPriv->pid_units[VOCAB_PIDTYPE_VELOCITY][j_usr].out_units == PidUnitsEnum::METRIC)
         {
             out_raw.kp = castToMapper(helper)->dutycycle2PWM(out_raw.kp, j_usr);
             out_raw.ki = castToMapper(helper)->dutycycle2PWM(out_raw.ki, j_usr);
@@ -147,13 +186,13 @@ void ImplementPidControl::convert_pid_to_machine(const yarp::dev::PidControlType
         }
         break;
     case PidControlTypeEnum::VOCAB_PIDTYPE_TORQUE:
-        if (pid_units[VOCAB_PIDTYPE_TORQUE][j_usr].fbk_units == PidUnitsEnum::METRIC)
+        if (mPriv->pid_units[VOCAB_PIDTYPE_TORQUE][j_usr].fbk_units == PidUnitsEnum::METRIC)
         {
             out_raw.kp = castToMapper(helper)->trqN2S(out_raw.kp, j_usr);
             out_raw.ki = castToMapper(helper)->trqN2S(out_raw.ki, j_usr);
             out_raw.kd = castToMapper(helper)->trqN2S(out_raw.kd, j_usr);
         }
-        if (pid_units[VOCAB_PIDTYPE_TORQUE][j_usr].out_units == PidUnitsEnum::METRIC)
+        if (mPriv->pid_units[VOCAB_PIDTYPE_TORQUE][j_usr].out_units == PidUnitsEnum::METRIC)
         {
             out_raw.kp = castToMapper(helper)->dutycycle2PWM(out_raw.kp, j_usr);
             out_raw.ki = castToMapper(helper)->dutycycle2PWM(out_raw.ki, j_usr);
@@ -166,13 +205,13 @@ void ImplementPidControl::convert_pid_to_machine(const yarp::dev::PidControlType
         }
         break;
     case PidControlTypeEnum::VOCAB_PIDTYPE_CURRENT:
-        if (pid_units[VOCAB_PIDTYPE_CURRENT][j_usr].fbk_units == PidUnitsEnum::METRIC)
+        if (mPriv->pid_units[VOCAB_PIDTYPE_CURRENT][j_usr].fbk_units == PidUnitsEnum::METRIC)
         {
             out_raw.kp = castToMapper(helper)->ampereA2S(out_raw.kp, j_usr);
             out_raw.ki = castToMapper(helper)->ampereA2S(out_raw.ki, j_usr);
             out_raw.kd = castToMapper(helper)->ampereA2S(out_raw.kd, j_usr);
         }
-        if (pid_units[VOCAB_PIDTYPE_CURRENT][j_usr].out_units == PidUnitsEnum::METRIC)
+        if (mPriv->pid_units[VOCAB_PIDTYPE_CURRENT][j_usr].out_units == PidUnitsEnum::METRIC)
         {
             out_raw.kp = castToMapper(helper)->dutycycle2PWM(out_raw.kp, j_usr);
             out_raw.ki = castToMapper(helper)->dutycycle2PWM(out_raw.ki, j_usr);
@@ -284,10 +323,7 @@ ImplementPidControl::ImplementPidControl(IPidControlRaw *y)
     helper = nullptr;
     temp=nullptr;
     tmpPids=nullptr;
-    PosPid_units = nullptr;
-    VelPid_units = nullptr;
-    TrqPid_units = nullptr;
-    CurPid_units = nullptr;
+    mPriv = nullptr;
 }
 
 ImplementPidControl::~ImplementPidControl()
@@ -297,10 +333,11 @@ ImplementPidControl::~ImplementPidControl()
 
 bool ImplementPidControl::setConversion(const PidControlTypeEnum& pidtype, const PidUnitsEnum fbk_conv_units, const PidUnitsEnum out_conv_units)
 {
-    for (size_t i = 0; i < njoints; i++)
+    int nj = castToMapper(helper)->axes();
+    for (size_t i = 0; i < nj; i++)
     {
-        pid_units[pidtype][i].fbk_units = fbk_conv_units;
-        pid_units[pidtype][i].out_units = out_conv_units;
+        mPriv->pid_units[pidtype][i].fbk_units = fbk_conv_units;
+        mPriv->pid_units[pidtype][i].out_units = out_conv_units;
     }
     return true;
 }
@@ -310,7 +347,6 @@ bool ImplementPidControl:: initialize (int size, const int *amap, const double *
     if (helper!=nullptr)
         return false;
 
-    njoints = size;
     helper=(void *)(new ControlBoardHelper(size, amap, enc, zos,newtons,amps,0,dutys));
     yAssert (helper != nullptr);
     temp=new double [size];
@@ -318,22 +354,7 @@ bool ImplementPidControl:: initialize (int size, const int *amap, const double *
     tmpPids=new Pid[size];
     yAssert (tmpPids != nullptr);
 
-    PosPid_units = new PidUnits[size];
-    yAssert(PosPid_units != nullptr);
-
-    VelPid_units = new PidUnits[size];
-    yAssert(VelPid_units != nullptr);
-
-    TrqPid_units = new PidUnits[size];
-    yAssert(TrqPid_units != nullptr);
-
-    CurPid_units = new PidUnits[size];
-    yAssert(CurPid_units != nullptr);
-
-    pid_units[VOCAB_PIDTYPE_POSITION] = PosPid_units;
-    pid_units[VOCAB_PIDTYPE_VELOCITY] = VelPid_units;
-    pid_units[VOCAB_PIDTYPE_CURRENT] = CurPid_units;
-    pid_units[VOCAB_PIDTYPE_TORQUE] = TrqPid_units;
+    mPriv = new PrivateUnitsHandler(size);
 
     return true;
 }
@@ -350,10 +371,10 @@ bool ImplementPidControl::uninitialize ()
 
     checkAndDestroy(tmpPids);
     checkAndDestroy(temp);
-    checkAndDestroy(PosPid_units);
-    checkAndDestroy(VelPid_units);
-    checkAndDestroy(TrqPid_units);
-    checkAndDestroy(CurPid_units);
+
+    if (mPriv!= nullptr)
+        delete mPriv;
+    mPriv = nullptr;
 
     return true;
 }
@@ -441,7 +462,7 @@ bool ImplementPidControl::getPidOutput(const PidControlTypeEnum& pidtype,  int j
     ret = iPid->getPidOutputRaw(pidtype, k_raw, &raw);
     if (ret)
     {
-        if (pid_units[pidtype][j].out_units == PidUnitsEnum::METRIC)
+        if (mPriv->pid_units[pidtype][j].out_units == PidUnitsEnum::METRIC)
         {
             castToMapper(helper)->PWM2dutycycle(raw, k_raw, *out, j);
         }
@@ -456,11 +477,12 @@ bool ImplementPidControl::getPidOutput(const PidControlTypeEnum& pidtype,  int j
 
 bool ImplementPidControl::getPidOutputs(const PidControlTypeEnum& pidtype,  double *outs)
 {
+    int nj = castToMapper(helper)->axes();
     bool ret=iPid->getPidOutputsRaw(pidtype, temp);
     
-    for (int j = 0; j < njoints; j++)
+    for (int j = 0; j < nj; j++)
     {
-        if (pid_units[pidtype][j].out_units == PidUnitsEnum::METRIC)
+        if (mPriv->pid_units[pidtype][j].out_units == PidUnitsEnum::METRIC)
         {
             temp[j] = castToMapper(helper)->PWM2dutycycle(temp[j],j);
         }
@@ -574,7 +596,7 @@ bool ImplementPidControl::setPidOffset(const PidControlTypeEnum& pidtype, int j,
 {
     int k = 0;
     double rawoff;
-    if (pid_units[pidtype][j].out_units == PidUnitsEnum::METRIC)
+    if (mPriv->pid_units[pidtype][j].out_units == PidUnitsEnum::METRIC)
     {
         castToMapper(helper)->dutycycle2PWM(off, j, rawoff, k);
     }
@@ -593,4 +615,3 @@ bool ImplementPidControl::isPidEnabled(const PidControlTypeEnum& pidtype, int j,
 
     return iPid->isPidEnabledRaw(pidtype, k, enabled);
 }
-

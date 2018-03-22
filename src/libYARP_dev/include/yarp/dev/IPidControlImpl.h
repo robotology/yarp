@@ -10,7 +10,6 @@
 #define YARP_DEV_IMPLEMENTPIDCONTROL_H
 
 #include <yarp/dev/IPidControl.h>
-#include <map>
 
 namespace yarp {
     namespace dev {
@@ -38,12 +37,8 @@ class YARP_dev_API yarp::dev::ImplementPidControl : public IPidControl
     };
 
 private:
-    PidUnits* PosPid_units;
-    PidUnits* VelPid_units;
-    PidUnits* CurPid_units;
-    PidUnits* TrqPid_units;
-    std::map<PidControlTypeEnum, PidUnits*>   pid_units;
-    int njoints;
+    class PrivateUnitsHandler;
+    PrivateUnitsHandler* mPriv;
 
 protected:
     IPidControlRaw *iPid;
