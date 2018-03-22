@@ -435,11 +435,13 @@ bool RosType::emitType(RosTypeCodeGen& gen,
         return true;
     }
 
-    if (!no_recurse && subRosType.size()>0) {
+    if (subRosType.size()>0) {
         for (size_t i=0; i<subRosType.size(); i++) {
             RosType& e = subRosType[i];
-            if (!e.emitType(gen,state)) {
-                return false;
+            if (!no_recurse) {
+                if (!e.emitType(gen,state)) {
+                    return false;
+                }
             }
 
             if (e.isConst()) {
