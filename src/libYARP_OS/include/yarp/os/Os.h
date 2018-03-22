@@ -38,6 +38,15 @@ YARP_OS_API const char* getenv(const char* var);
 YARP_OS_API int getpid();
 
 /**
+ * @brief Portable wrapper for the setprogname() function.
+ *
+ * Set the program name.
+ *
+ * @param[in] progname the program name
+ */
+YARP_OS_API void setprogname(const char* progname);
+
+/**
  * @brief Portable wrapper for the getprogname() function.
  *
  * Get the program name.

@@ -158,8 +158,13 @@ public:
         return "";
     }
 
-    bool configure(Property& config, int argc, char *argv[], bool skip)
-    {
+    bool configure(Property& config, int argc, char *argv[], bool skip) {
+        if (argc>0) {
+            if (argv[0]!=nullptr) {
+                yarp::os::setprogname(argv[0]);
+            }
+        }
+
         Property p;
         p.fromCommand(argc, argv, skip);
 
