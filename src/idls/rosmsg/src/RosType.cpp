@@ -212,7 +212,7 @@ bool RosType::read(const char *tname, RosTypeSearch& env, RosTypeCodeGen& gen,
                     }
                 }
             }
-        } else if (rosType == "Header") {
+        } else if (rosType == "Header" || rosType == "std_msgs/Header") {
             rosType = "std_msgs/Header";
             base = "std_msgs/Header";
         } else if (package != "" && package != ".") {
@@ -329,7 +329,7 @@ bool RosType::read(const char *tname, RosTypeSearch& env, RosTypeCodeGen& gen,
         }
         fclose(fin);
 
-        if (rosType == "Header") {
+        if (rosType == "Header" || rosType == "std_msgs/Header") {
             std::string preamble = "[std_msgs/Header]:";
             if (source.find(preamble)==0) {
                 source = source.substr(preamble.length()+1,source.length());
