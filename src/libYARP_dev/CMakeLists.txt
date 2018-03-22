@@ -84,6 +84,7 @@ set(YARP_dev_HDRS include/yarp/dev/all.h
                   include/yarp/dev/PolyDriverList.h
                   include/yarp/dev/PreciselyTimed.h
                   include/yarp/dev/RemoteFrameGrabberDC1394.h
+                  include/yarp/dev/RGBDSensorParamParser.h
                   include/yarp/dev/SerialInterfaces.h
                   include/yarp/dev/ServiceInterfaces.h
                   include/yarp/dev/Wrapper.h)
@@ -131,6 +132,7 @@ set(YARP_dev_SRCS src/ControlBoardInterfacesImpl.cpp
                   src/PopulateDrivers.cpp
                   src/PWMControlImpl.cpp
                   src/RemoteCalibratorImpl.cpp
+                  src/RGBDSensorParamParser.cpp
                   src/TorqueControlImpl.cpp)
 
 if(CREATE_LIB_MATH)
