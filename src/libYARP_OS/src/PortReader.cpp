@@ -14,7 +14,7 @@ yarp::os::PortReader::~PortReader()
 {
 }
 
-yarp::os::Type yarp::os::PortReader::getReadType() const
+yarp::os::Type yarp::os::PortReader::getReadType()
 {
     return Type::anon();
 }

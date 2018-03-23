@@ -34,7 +34,7 @@ public:
     virtual bool read(ConnectionReader& reader) override = 0;
     virtual bool write(ConnectionWriter& writer) override = 0;
 
-    virtual Type getType() const { return getReadType(); }
+    virtual Type getType() { return getReadType(); }
 
     /**
      * Copy one portable to another, via writing and reading.

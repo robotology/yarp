@@ -128,7 +128,7 @@ public:
     */
     virtual bool write(yarp::os::ConnectionWriter& connection) override;
 
-    virtual yarp::os::Type getType() const override
+    virtual yarp::os::Type getType() override
     {
         return yarp::os::Type::byName("yarp/quaternion");
     }
