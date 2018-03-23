@@ -2230,12 +2230,11 @@ bool PortCore::adminBlock(ConnectionReader& reader,
                                     sched_prop.put("priority", this->getPriority());
                                     sched_prop.put("policy", this->getPolicy());
 
-                                    int pid =  getPid();
-                                    SystemInfo::ProcessInfo info = SystemInfo::getProcessInfo(pid);
+                                    SystemInfo::ProcessInfo info = SystemInfo::getProcessInfo();
                                     Bottle& proc = result.addList();
                                     proc.addString("process");
                                     Property& proc_prop = proc.addDict();
-                                    proc_prop.put("pid", pid);
+                                    proc_prop.put("pid", info.pid);
                                     proc_prop.put("name", (info.pid !=-1) ? info.name : "unknown");
                                     proc_prop.put("arguments", (info.pid !=-1) ? info.arguments : "unknown");
                                     proc_prop.put("priority", info.schedPriority);

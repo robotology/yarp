@@ -12,6 +12,8 @@
 #include <cstring>
 #include <yarp/os/SystemInfo.h>
 #include <yarp/os/SystemInfoSerializer.h>
+#include <yarp/os/Os.h>
+
 using namespace yarp::os;
 
 #if defined(__linux__)
@@ -770,7 +772,13 @@ SystemInfo::LoadInfo SystemInfo::getLoadInfo()
 }
 
 
-SystemInfo::ProcessInfo SystemInfo::getProcessInfo(int pid) {
+SystemInfo::ProcessInfo SystemInfo::getProcessInfo(int pid)
+{
+    // If not specified, get information for current process
+    if (pid == 0) {
+        pid = yarp::os::getpid();
+    }
+
     SystemInfo::ProcessInfo info;
     info.pid = -1; // invalid
     info.schedPolicy = -1;

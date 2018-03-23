@@ -48,8 +48,14 @@ public:
         report(0, ConstString(str.str()));
 
         emptyAndClearString();
-        report(0, "Getting (system dependent) process 1 info:");
+        report(0, "Getting (system dependent) process info for process 1:");
         SystemInfo::ProcessInfo prctinfo = SystemInfo::getProcessInfo(1);
+        str << "Name: " << prctinfo.name << ", arguments: " << prctinfo.arguments << ", PID: " << prctinfo.pid << ", scheduler policy: " << prctinfo.schedPolicy << ", scheduler priority: " << prctinfo.schedPriority << ".\n";
+        report(0, ConstString(str.str()));
+
+        emptyAndClearString();
+        report(0, "Getting (system dependent) process info for current process:");
+        prctinfo = SystemInfo::getProcessInfo();
         str << "Name: " << prctinfo.name << ", arguments: " << prctinfo.arguments << ", PID: " << prctinfo.pid << ", scheduler policy: " << prctinfo.schedPolicy << ", scheduler priority: " << prctinfo.schedPriority << ".\n";
         report(0, ConstString(str.str()));
 
