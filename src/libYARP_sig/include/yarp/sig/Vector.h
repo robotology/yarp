@@ -470,7 +470,7 @@ public:
     */
     virtual bool write(yarp::os::ConnectionWriter& connection) override;
 
-    virtual yarp::os::Type getType() override {
+    virtual yarp::os::Type getType() const override {
         return yarp::os::Type::byName("yarp/vector");
     }
 };

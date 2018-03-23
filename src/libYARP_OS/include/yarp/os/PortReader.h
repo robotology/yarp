@@ -45,7 +45,7 @@ public:
      */
     virtual bool read(ConnectionReader& reader) = 0;
 
-    virtual Type getReadType();
+    virtual Type getReadType() const;
 };
 
 } // namespace os
