@@ -162,9 +162,10 @@ public:
     typedef yarp::os::idl::BottleStyle<yarp::rosmsg::sensor_msgs::ChannelFloat32> bottleStyle;
 
     // Give source text for class, ROS will need this
-    yarp::os::ConstString getTypeText()
+    static yarp::os::ConstString typeText()
     {
-        return "# This message is used by the PointCloud message to hold optional data\n\
+        return yarp::os::ConstString("\
+# This message is used by the PointCloud message to hold optional data\n\
 # associated with each point in the cloud. The length of the values\n\
 # array should be the same as the length of the points array in the\n\
 # PointCloud, and each value should be associated with the corresponding\n\
@@ -187,14 +188,20 @@ string name\n\
 \n\
 # The values array should be 1-1 with the elements of the associated\n\
 # PointCloud.\n\
-float32[] values";
+float32[] values\n\
+");
+    }
+
+    yarp::os::ConstString getTypeText() const
+    {
+        return yarp::rosmsg::sensor_msgs::ChannelFloat32::typeText();
     }
 
     // Name the class, ROS will need this
     yarp::os::Type getType() override
     {
         yarp::os::Type typ = yarp::os::Type::byName("sensor_msgs/ChannelFloat32", "sensor_msgs/ChannelFloat32");
-        typ.addProperty("md5sum", yarp::os::Value("d41d8cd98f00b204e9800998ecf8427e"));
+        typ.addProperty("md5sum", yarp::os::Value("3d40139cdd33dfedcb71ffeeeb42ae7f"));
         typ.addProperty("message_definition", yarp::os::Value(getTypeText()));
         return typ;
     }

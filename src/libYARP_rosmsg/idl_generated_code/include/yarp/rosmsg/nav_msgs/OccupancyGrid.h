@@ -175,9 +175,10 @@ public:
     typedef yarp::os::idl::BottleStyle<yarp::rosmsg::nav_msgs::OccupancyGrid> bottleStyle;
 
     // Give source text for class, ROS will need this
-    yarp::os::ConstString getTypeText()
+    static yarp::os::ConstString typeText()
     {
-        return "# This represents a 2-D grid map, in which each cell represents the probability of\n\
+        return yarp::os::ConstString("\
+# This represents a 2-D grid map, in which each cell represents the probability of\n\
 # occupancy.\n\
 \n\
 Header header \n\
@@ -187,18 +188,26 @@ MapMetaData info\n\
 \n\
 # The map data, in row-major order, starting with (0,0).  Occupancy\n\
 # probabilities are in the range [0,100].  Unknown is -1.\n\
-int8[] data\n================================================================================\n\
+int8[] data\n\
+") + yarp::os::ConstString("\n\
+================================================================================\n\
 MSG: std_msgs/Header\n\
-\n================================================================================\n\
+") + yarp::rosmsg::std_msgs::Header::typeText() + yarp::os::ConstString("\n\
+================================================================================\n\
 MSG: nav_msgs/MapMetaData\n\
-";
+") + yarp::rosmsg::nav_msgs::MapMetaData::typeText();
+    }
+
+    yarp::os::ConstString getTypeText() const
+    {
+        return yarp::rosmsg::nav_msgs::OccupancyGrid::typeText();
     }
 
     // Name the class, ROS will need this
     yarp::os::Type getType() override
     {
         yarp::os::Type typ = yarp::os::Type::byName("nav_msgs/OccupancyGrid", "nav_msgs/OccupancyGrid");
-        typ.addProperty("md5sum", yarp::os::Value("d41d8cd98f00b204e9800998ecf8427e"));
+        typ.addProperty("md5sum", yarp::os::Value("fa42de0b4cf33305265664ef1208eb4f"));
         typ.addProperty("message_definition", yarp::os::Value(getTypeText()));
         return typ;
     }

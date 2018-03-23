@@ -103,18 +103,25 @@ public:
     typedef yarp::os::idl::BottleStyle<yarp::rosmsg::nav_msgs::GetPlanReply> bottleStyle;
 
     // Give source text for class, ROS will need this
-    yarp::os::ConstString getTypeText()
+    static yarp::os::ConstString typeText()
     {
-        return "\n================================================================================\n\
+        return yarp::os::ConstString("\
+") + yarp::os::ConstString("\n\
+================================================================================\n\
 MSG: nav_msgs/Path\n\
-";
+") + yarp::rosmsg::nav_msgs::Path::typeText();
+    }
+
+    yarp::os::ConstString getTypeText() const
+    {
+        return yarp::rosmsg::nav_msgs::GetPlanReply::typeText();
     }
 
     // Name the class, ROS will need this
     yarp::os::Type getType() override
     {
         yarp::os::Type typ = yarp::os::Type::byName("nav_msgs/GetPlanReply", "nav_msgs/GetPlanReply");
-        typ.addProperty("md5sum", yarp::os::Value("d41d8cd98f00b204e9800998ecf8427e"));
+        typ.addProperty("md5sum", yarp::os::Value("6dfb16dea9d3887d02805fba77da7d13"));
         typ.addProperty("message_definition", yarp::os::Value(getTypeText()));
         return typ;
     }

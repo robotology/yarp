@@ -132,22 +132,31 @@ public:
     typedef yarp::os::idl::BottleStyle<yarp::rosmsg::geometry_msgs::AccelStamped> bottleStyle;
 
     // Give source text for class, ROS will need this
-    yarp::os::ConstString getTypeText()
+    static yarp::os::ConstString typeText()
     {
-        return "# An accel with reference coordinate frame and timestamp\n\
+        return yarp::os::ConstString("\
+# An accel with reference coordinate frame and timestamp\n\
 Header header\n\
-Accel accel\n================================================================================\n\
+Accel accel\n\
+") + yarp::os::ConstString("\n\
+================================================================================\n\
 MSG: std_msgs/Header\n\
-\n================================================================================\n\
+") + yarp::rosmsg::std_msgs::Header::typeText() + yarp::os::ConstString("\n\
+================================================================================\n\
 MSG: geometry_msgs/Accel\n\
-";
+") + yarp::rosmsg::geometry_msgs::Accel::typeText();
+    }
+
+    yarp::os::ConstString getTypeText() const
+    {
+        return yarp::rosmsg::geometry_msgs::AccelStamped::typeText();
     }
 
     // Name the class, ROS will need this
     yarp::os::Type getType() override
     {
         yarp::os::Type typ = yarp::os::Type::byName("geometry_msgs/AccelStamped", "geometry_msgs/AccelStamped");
-        typ.addProperty("md5sum", yarp::os::Value("d41d8cd98f00b204e9800998ecf8427e"));
+        typ.addProperty("md5sum", yarp::os::Value("604ae3e1ed716360e856f5f02f992bf2"));
         typ.addProperty("message_definition", yarp::os::Value(getTypeText()));
         return typ;
     }

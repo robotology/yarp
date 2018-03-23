@@ -130,9 +130,10 @@ public:
     typedef yarp::os::idl::BottleStyle<yarp::rosmsg::diagnostic_msgs::AddDiagnostics> bottleStyle;
 
     // Give source text for class, ROS will need this
-    yarp::os::ConstString getTypeText()
+    static yarp::os::ConstString typeText()
     {
-        return "# This service is used as part of the process for loading analyzers at runtime,\n\
+        return yarp::os::ConstString("\
+# This service is used as part of the process for loading analyzers at runtime,\n\
 # and should be used by a loader script or program, not as a standalone service.\n\
 # Information about dynamic addition of analyzers can be found at\n\
 # http://wiki.ros.org/diagnostics/Tutorials/Adding%20Analyzers%20at%20Runtime\n\
@@ -158,14 +159,20 @@ string load_namespace\n\
 bool success\n\
 \n\
 # Message with additional information about the success or failure\n\
-string message";
+string message\n\
+");
+    }
+
+    yarp::os::ConstString getTypeText() const
+    {
+        return yarp::rosmsg::diagnostic_msgs::AddDiagnostics::typeText();
     }
 
     // Name the class, ROS will need this
     yarp::os::Type getType() override
     {
         yarp::os::Type typ = yarp::os::Type::byName("diagnostic_msgs/AddDiagnostics", "diagnostic_msgs/AddDiagnostics");
-        typ.addProperty("md5sum", yarp::os::Value("d41d8cd98f00b204e9800998ecf8427e"));
+        typ.addProperty("md5sum", yarp::os::Value("c26cf6e164288fbc6050d74f838bcdf0"));
         typ.addProperty("message_definition", yarp::os::Value(getTypeText()));
         return typ;
     }

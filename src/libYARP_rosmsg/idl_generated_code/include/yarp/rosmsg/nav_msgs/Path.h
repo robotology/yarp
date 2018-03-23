@@ -150,22 +150,31 @@ public:
     typedef yarp::os::idl::BottleStyle<yarp::rosmsg::nav_msgs::Path> bottleStyle;
 
     // Give source text for class, ROS will need this
-    yarp::os::ConstString getTypeText()
+    static yarp::os::ConstString typeText()
     {
-        return "#An array of poses that represents a Path for a robot to follow\n\
+        return yarp::os::ConstString("\
+#An array of poses that represents a Path for a robot to follow\n\
 Header header\n\
-geometry_msgs/PoseStamped[] poses\n================================================================================\n\
+geometry_msgs/PoseStamped[] poses\n\
+") + yarp::os::ConstString("\n\
+================================================================================\n\
 MSG: std_msgs/Header\n\
-\n================================================================================\n\
+") + yarp::rosmsg::std_msgs::Header::typeText() + yarp::os::ConstString("\n\
+================================================================================\n\
 MSG: geometry_msgs/PoseStamped\n\
-";
+") + yarp::rosmsg::geometry_msgs::PoseStamped::typeText();
+    }
+
+    yarp::os::ConstString getTypeText() const
+    {
+        return yarp::rosmsg::nav_msgs::Path::typeText();
     }
 
     // Name the class, ROS will need this
     yarp::os::Type getType() override
     {
         yarp::os::Type typ = yarp::os::Type::byName("nav_msgs/Path", "nav_msgs/Path");
-        typ.addProperty("md5sum", yarp::os::Value("d41d8cd98f00b204e9800998ecf8427e"));
+        typ.addProperty("md5sum", yarp::os::Value("9712a75a035153dd596e494f05be2a9a"));
         typ.addProperty("message_definition", yarp::os::Value(getTypeText()));
         return typ;
     }

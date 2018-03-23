@@ -162,9 +162,10 @@ public:
     typedef yarp::os::idl::BottleStyle<yarp::rosmsg::std_msgs::Header> bottleStyle;
 
     // Give source text for class, ROS will need this
-    yarp::os::ConstString getTypeText()
+    static yarp::os::ConstString typeText()
     {
-        return "# Standard metadata for higher-level stamped data types.\n\
+        return yarp::os::ConstString("\
+# Standard metadata for higher-level stamped data types.\n\
 # This is generally used to communicate timestamped data \n\
 # in a particular coordinate frame.\n\
 # \n\
@@ -178,16 +179,20 @@ time stamp\n\
 #Frame this data is associated with\n\
 # 0: no frame\n\
 # 1: global frame\n\
-string frame_id\n================================================================================\n\
-MSG: TickTime\n\
-";
+string frame_id\n\
+");
+    }
+
+    yarp::os::ConstString getTypeText() const
+    {
+        return yarp::rosmsg::std_msgs::Header::typeText();
     }
 
     // Name the class, ROS will need this
     yarp::os::Type getType() override
     {
         yarp::os::Type typ = yarp::os::Type::byName("std_msgs/Header", "std_msgs/Header");
-        typ.addProperty("md5sum", yarp::os::Value("d41d8cd98f00b204e9800998ecf8427e"));
+        typ.addProperty("md5sum", yarp::os::Value("6d6c809e8451bcc009a0a22d8d3857b4"));
         typ.addProperty("message_definition", yarp::os::Value(getTypeText()));
         return typ;
     }

@@ -252,9 +252,10 @@ public:
     typedef yarp::os::idl::BottleStyle<yarp::rosmsg::trajectory_msgs::JointTrajectoryPoint> bottleStyle;
 
     // Give source text for class, ROS will need this
-    yarp::os::ConstString getTypeText()
+    static yarp::os::ConstString typeText()
     {
-        return "# Each trajectory point specifies either positions[, velocities[, accelerations]]\n\
+        return yarp::os::ConstString("\
+# Each trajectory point specifies either positions[, velocities[, accelerations]]\n\
 # or positions[, effort] for the trajectory to be executed.\n\
 # All specified values are in the same order as the joint names in JointTrajectory.msg\n\
 \n\
@@ -262,16 +263,20 @@ float64[] positions\n\
 float64[] velocities\n\
 float64[] accelerations\n\
 float64[] effort\n\
-duration time_from_start\n================================================================================\n\
-MSG: TickDuration\n\
-";
+duration time_from_start\n\
+");
+    }
+
+    yarp::os::ConstString getTypeText() const
+    {
+        return yarp::rosmsg::trajectory_msgs::JointTrajectoryPoint::typeText();
     }
 
     // Name the class, ROS will need this
     yarp::os::Type getType() override
     {
         yarp::os::Type typ = yarp::os::Type::byName("trajectory_msgs/JointTrajectoryPoint", "trajectory_msgs/JointTrajectoryPoint");
-        typ.addProperty("md5sum", yarp::os::Value("d41d8cd98f00b204e9800998ecf8427e"));
+        typ.addProperty("md5sum", yarp::os::Value("32aa46c1b23c0fd4d41578b2d62f37c5"));
         typ.addProperty("message_definition", yarp::os::Value(getTypeText()));
         return typ;
     }

@@ -205,9 +205,10 @@ public:
     typedef yarp::os::idl::BottleStyle<yarp::rosmsg::sensor_msgs::PointCloud> bottleStyle;
 
     // Give source text for class, ROS will need this
-    yarp::os::ConstString getTypeText()
+    static yarp::os::ConstString typeText()
     {
-        return "# This message holds a collection of 3d points, plus optional additional\n\
+        return yarp::os::ConstString("\
+# This message holds a collection of 3d points, plus optional additional\n\
 # information about each point.\n\
 \n\
 # Time of sensor data acquisition, coordinate frame ID.\n\
@@ -220,20 +221,29 @@ geometry_msgs/Point32[] points\n\
 # Each channel should have the same number of elements as points array,\n\
 # and the data in each channel should correspond 1:1 with each point.\n\
 # Channel names in common practice are listed in ChannelFloat32.msg.\n\
-ChannelFloat32[] channels\n================================================================================\n\
+ChannelFloat32[] channels\n\
+") + yarp::os::ConstString("\n\
+================================================================================\n\
 MSG: std_msgs/Header\n\
-\n================================================================================\n\
+") + yarp::rosmsg::std_msgs::Header::typeText() + yarp::os::ConstString("\n\
+================================================================================\n\
 MSG: geometry_msgs/Point32\n\
-\n================================================================================\n\
+") + yarp::rosmsg::geometry_msgs::Point32::typeText() + yarp::os::ConstString("\n\
+================================================================================\n\
 MSG: sensor_msgs/ChannelFloat32\n\
-";
+") + yarp::rosmsg::sensor_msgs::ChannelFloat32::typeText();
+    }
+
+    yarp::os::ConstString getTypeText() const
+    {
+        return yarp::rosmsg::sensor_msgs::PointCloud::typeText();
     }
 
     // Name the class, ROS will need this
     yarp::os::Type getType() override
     {
         yarp::os::Type typ = yarp::os::Type::byName("sensor_msgs/PointCloud", "sensor_msgs/PointCloud");
-        typ.addProperty("md5sum", yarp::os::Value("d41d8cd98f00b204e9800998ecf8427e"));
+        typ.addProperty("md5sum", yarp::os::Value("4a210f70acdf10eaffc5341a10892a11"));
         typ.addProperty("message_definition", yarp::os::Value(getTypeText()));
         return typ;
     }

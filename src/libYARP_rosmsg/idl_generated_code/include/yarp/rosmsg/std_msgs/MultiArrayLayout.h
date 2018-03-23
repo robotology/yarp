@@ -165,9 +165,10 @@ public:
     typedef yarp::os::idl::BottleStyle<yarp::rosmsg::std_msgs::MultiArrayLayout> bottleStyle;
 
     // Give source text for class, ROS will need this
-    yarp::os::ConstString getTypeText()
+    static yarp::os::ConstString typeText()
     {
-        return "# The multiarray declares a generic multi-dimensional array of a\n\
+        return yarp::os::ConstString("\
+# The multiarray declares a generic multi-dimensional array of a\n\
 # particular data type.  Dimensions are ordered from outer most\n\
 # to inner most.\n\
 \n\
@@ -192,16 +193,23 @@ uint32 data_offset        # padding elements at front of data\n\
 # dim[2].size   = 3\n\
 # dim[2].stride = 3\n\
 #\n\
-# multiarray(i,j,k) refers to the ith row, jth column, and kth channel.\n================================================================================\n\
+# multiarray(i,j,k) refers to the ith row, jth column, and kth channel.\n\
+") + yarp::os::ConstString("\n\
+================================================================================\n\
 MSG: std_msgs/MultiArrayDimension\n\
-";
+") + yarp::rosmsg::std_msgs::MultiArrayDimension::typeText();
+    }
+
+    yarp::os::ConstString getTypeText() const
+    {
+        return yarp::rosmsg::std_msgs::MultiArrayLayout::typeText();
     }
 
     // Name the class, ROS will need this
     yarp::os::Type getType() override
     {
         yarp::os::Type typ = yarp::os::Type::byName("std_msgs/MultiArrayLayout", "std_msgs/MultiArrayLayout");
-        typ.addProperty("md5sum", yarp::os::Value("d41d8cd98f00b204e9800998ecf8427e"));
+        typ.addProperty("md5sum", yarp::os::Value("e10036af50f0a8d6adf51348bd797b70"));
         typ.addProperty("message_definition", yarp::os::Value(getTypeText()));
         return typ;
     }

@@ -161,9 +161,10 @@ public:
     typedef yarp::os::idl::BottleStyle<yarp::rosmsg::sensor_msgs::JoyFeedback> bottleStyle;
 
     // Give source text for class, ROS will need this
-    yarp::os::ConstString getTypeText()
+    static yarp::os::ConstString typeText()
     {
-        return "# Declare of the type of feedback\n\
+        return yarp::os::ConstString("\
+# Declare of the type of feedback\n\
 uint8 TYPE_LED    = 0\n\
 uint8 TYPE_RUMBLE = 1\n\
 uint8 TYPE_BUZZER = 2\n\
@@ -177,14 +178,20 @@ uint8 id\n\
 # Intensity of the feedback, from 0.0 to 1.0, inclusive.  If device is\n\
 # actually binary, driver should treat 0<=x<0.5 as off, 0.5<=x<=1 as on.\n\
 float32 intensity\n\
-";
+\n\
+");
+    }
+
+    yarp::os::ConstString getTypeText() const
+    {
+        return yarp::rosmsg::sensor_msgs::JoyFeedback::typeText();
     }
 
     // Name the class, ROS will need this
     yarp::os::Type getType() override
     {
         yarp::os::Type typ = yarp::os::Type::byName("sensor_msgs/JoyFeedback", "sensor_msgs/JoyFeedback");
-        typ.addProperty("md5sum", yarp::os::Value("d41d8cd98f00b204e9800998ecf8427e"));
+        typ.addProperty("md5sum", yarp::os::Value("f4dcd73460360d98f36e55ee7f2e46f1"));
         typ.addProperty("message_definition", yarp::os::Value(getTypeText()));
         return typ;
     }

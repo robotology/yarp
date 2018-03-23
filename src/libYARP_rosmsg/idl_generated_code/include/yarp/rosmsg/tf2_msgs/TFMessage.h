@@ -122,18 +122,26 @@ public:
     typedef yarp::os::idl::BottleStyle<yarp::rosmsg::tf2_msgs::TFMessage> bottleStyle;
 
     // Give source text for class, ROS will need this
-    yarp::os::ConstString getTypeText()
+    static yarp::os::ConstString typeText()
     {
-        return "geometry_msgs/TransformStamped[] transforms\n================================================================================\n\
+        return yarp::os::ConstString("\
+geometry_msgs/TransformStamped[] transforms\n\
+") + yarp::os::ConstString("\n\
+================================================================================\n\
 MSG: geometry_msgs/TransformStamped\n\
-";
+") + yarp::rosmsg::geometry_msgs::TransformStamped::typeText();
+    }
+
+    yarp::os::ConstString getTypeText() const
+    {
+        return yarp::rosmsg::tf2_msgs::TFMessage::typeText();
     }
 
     // Name the class, ROS will need this
     yarp::os::Type getType() override
     {
         yarp::os::Type typ = yarp::os::Type::byName("tf2_msgs/TFMessage", "tf2_msgs/TFMessage");
-        typ.addProperty("md5sum", yarp::os::Value("d41d8cd98f00b204e9800998ecf8427e"));
+        typ.addProperty("md5sum", yarp::os::Value("8c6a1a3d0e669cd77bc1c3c5819f493b"));
         typ.addProperty("message_definition", yarp::os::Value(getTypeText()));
         return typ;
     }

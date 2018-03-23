@@ -132,21 +132,29 @@ public:
     typedef yarp::os::idl::BottleStyle<yarp::rosmsg::geometry_msgs::Wrench> bottleStyle;
 
     // Give source text for class, ROS will need this
-    yarp::os::ConstString getTypeText()
+    static yarp::os::ConstString typeText()
     {
-        return "# This represents force in free space, separated into\n\
+        return yarp::os::ConstString("\
+# This represents force in free space, separated into\n\
 # its linear and angular parts.\n\
 Vector3  force\n\
-Vector3  torque\n================================================================================\n\
+Vector3  torque\n\
+") + yarp::os::ConstString("\n\
+================================================================================\n\
 MSG: geometry_msgs/Vector3\n\
-";
+") + yarp::rosmsg::geometry_msgs::Vector3::typeText();
+    }
+
+    yarp::os::ConstString getTypeText() const
+    {
+        return yarp::rosmsg::geometry_msgs::Wrench::typeText();
     }
 
     // Name the class, ROS will need this
     yarp::os::Type getType() override
     {
         yarp::os::Type typ = yarp::os::Type::byName("geometry_msgs/Wrench", "geometry_msgs/Wrench");
-        typ.addProperty("md5sum", yarp::os::Value("d41d8cd98f00b204e9800998ecf8427e"));
+        typ.addProperty("md5sum", yarp::os::Value("d6f1f51e63e90b83a69b04e44511dcfc"));
         typ.addProperty("message_definition", yarp::os::Value(getTypeText()));
         return typ;
     }

@@ -186,9 +186,10 @@ public:
     typedef yarp::os::idl::BottleStyle<yarp::rosmsg::sensor_msgs::MagneticField> bottleStyle;
 
     // Give source text for class, ROS will need this
-    yarp::os::ConstString getTypeText()
+    static yarp::os::ConstString typeText()
     {
-        return " # Measurement of the Magnetic Field vector at a specific location.\n\
+        return yarp::os::ConstString("\
+ # Measurement of the Magnetic Field vector at a specific location.\n\
 \n\
  # If the covariance of the measurement is known, it should be filled in\n\
  # (if all you know is the variance of each measurement, e.g. from the datasheet,\n\
@@ -209,18 +210,25 @@ public:
                                       # put NaNs in the components not reported.\n\
 \n\
  float64[9] magnetic_field_covariance # Row major about x, y, z axes\n\
-                                      # 0 is interpreted as variance unknown\n================================================================================\n\
+                                      # 0 is interpreted as variance unknown") + yarp::os::ConstString("\n\
+================================================================================\n\
 MSG: std_msgs/Header\n\
-\n================================================================================\n\
+") + yarp::rosmsg::std_msgs::Header::typeText() + yarp::os::ConstString("\n\
+================================================================================\n\
 MSG: geometry_msgs/Vector3\n\
-";
+") + yarp::rosmsg::geometry_msgs::Vector3::typeText();
+    }
+
+    yarp::os::ConstString getTypeText() const
+    {
+        return yarp::rosmsg::sensor_msgs::MagneticField::typeText();
     }
 
     // Name the class, ROS will need this
     yarp::os::Type getType() override
     {
         yarp::os::Type typ = yarp::os::Type::byName("sensor_msgs/MagneticField", "sensor_msgs/MagneticField");
-        typ.addProperty("md5sum", yarp::os::Value("d41d8cd98f00b204e9800998ecf8427e"));
+        typ.addProperty("md5sum", yarp::os::Value("c3a1c14c11bcc220466cbea9651d29f7"));
         typ.addProperty("message_definition", yarp::os::Value(getTypeText()));
         return typ;
     }

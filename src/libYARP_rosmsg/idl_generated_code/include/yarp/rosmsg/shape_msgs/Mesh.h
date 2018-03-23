@@ -172,26 +172,35 @@ public:
     typedef yarp::os::idl::BottleStyle<yarp::rosmsg::shape_msgs::Mesh> bottleStyle;
 
     // Give source text for class, ROS will need this
-    yarp::os::ConstString getTypeText()
+    static yarp::os::ConstString typeText()
     {
-        return "# Definition of a mesh\n\
+        return yarp::os::ConstString("\
+# Definition of a mesh\n\
 \n\
 # list of triangles; the index values refer to positions in vertices[]\n\
 MeshTriangle[] triangles\n\
 \n\
 # the actual vertices that make up the mesh\n\
-geometry_msgs/Point[] vertices\n================================================================================\n\
+geometry_msgs/Point[] vertices\n\
+") + yarp::os::ConstString("\n\
+================================================================================\n\
 MSG: shape_msgs/MeshTriangle\n\
-\n================================================================================\n\
+") + yarp::rosmsg::shape_msgs::MeshTriangle::typeText() + yarp::os::ConstString("\n\
+================================================================================\n\
 MSG: geometry_msgs/Point\n\
-";
+") + yarp::rosmsg::geometry_msgs::Point::typeText();
+    }
+
+    yarp::os::ConstString getTypeText() const
+    {
+        return yarp::rosmsg::shape_msgs::Mesh::typeText();
     }
 
     // Name the class, ROS will need this
     yarp::os::Type getType() override
     {
         yarp::os::Type typ = yarp::os::Type::byName("shape_msgs/Mesh", "shape_msgs/Mesh");
-        typ.addProperty("md5sum", yarp::os::Value("d41d8cd98f00b204e9800998ecf8427e"));
+        typ.addProperty("md5sum", yarp::os::Value("be375e34f00321cb559e78a51365ad99"));
         typ.addProperty("message_definition", yarp::os::Value(getTypeText()));
         return typ;
     }

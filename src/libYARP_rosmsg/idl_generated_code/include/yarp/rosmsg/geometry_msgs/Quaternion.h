@@ -155,21 +155,28 @@ public:
     typedef yarp::os::idl::BottleStyle<yarp::rosmsg::geometry_msgs::Quaternion> bottleStyle;
 
     // Give source text for class, ROS will need this
-    yarp::os::ConstString getTypeText()
+    static yarp::os::ConstString typeText()
     {
-        return "# This represents an orientation in free space in quaternion form.\n\
+        return yarp::os::ConstString("\
+# This represents an orientation in free space in quaternion form.\n\
 \n\
 float64 x\n\
 float64 y\n\
 float64 z\n\
-float64 w";
+float64 w\n\
+");
+    }
+
+    yarp::os::ConstString getTypeText() const
+    {
+        return yarp::rosmsg::geometry_msgs::Quaternion::typeText();
     }
 
     // Name the class, ROS will need this
     yarp::os::Type getType() override
     {
         yarp::os::Type typ = yarp::os::Type::byName("geometry_msgs/Quaternion", "geometry_msgs/Quaternion");
-        typ.addProperty("md5sum", yarp::os::Value("d41d8cd98f00b204e9800998ecf8427e"));
+        typ.addProperty("md5sum", yarp::os::Value("a779879fadf0160734f906b8c19c7004"));
         typ.addProperty("message_definition", yarp::os::Value(getTypeText()));
         return typ;
     }

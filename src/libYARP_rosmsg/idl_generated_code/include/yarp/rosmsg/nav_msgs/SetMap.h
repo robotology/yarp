@@ -135,25 +135,34 @@ public:
     typedef yarp::os::idl::BottleStyle<yarp::rosmsg::nav_msgs::SetMap> bottleStyle;
 
     // Give source text for class, ROS will need this
-    yarp::os::ConstString getTypeText()
+    static yarp::os::ConstString typeText()
     {
-        return "# Set a new map together with an initial pose\n\
+        return yarp::os::ConstString("\
+# Set a new map together with an initial pose\n\
 nav_msgs/OccupancyGrid map\n\
 geometry_msgs/PoseWithCovarianceStamped initial_pose\n\
 ---\n\
 bool success\n\
-\n================================================================================\n\
+\n\
+") + yarp::os::ConstString("\n\
+================================================================================\n\
 MSG: nav_msgs/OccupancyGrid\n\
-\n================================================================================\n\
+") + yarp::rosmsg::nav_msgs::OccupancyGrid::typeText() + yarp::os::ConstString("\n\
+================================================================================\n\
 MSG: geometry_msgs/PoseWithCovarianceStamped\n\
-";
+") + yarp::rosmsg::geometry_msgs::PoseWithCovarianceStamped::typeText();
+    }
+
+    yarp::os::ConstString getTypeText() const
+    {
+        return yarp::rosmsg::nav_msgs::SetMap::typeText();
     }
 
     // Name the class, ROS will need this
     yarp::os::Type getType() override
     {
         yarp::os::Type typ = yarp::os::Type::byName("nav_msgs/SetMap", "nav_msgs/SetMap");
-        typ.addProperty("md5sum", yarp::os::Value("d41d8cd98f00b204e9800998ecf8427e"));
+        typ.addProperty("md5sum", yarp::os::Value("85980e5164caf4e7f9849c41c8c25a05"));
         typ.addProperty("message_definition", yarp::os::Value(getTypeText()));
         return typ;
     }

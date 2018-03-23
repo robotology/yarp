@@ -395,9 +395,10 @@ public:
     typedef yarp::os::idl::BottleStyle<yarp::rosmsg::visualization_msgs::InteractiveMarkerControl> bottleStyle;
 
     // Give source text for class, ROS will need this
-    yarp::os::ConstString getTypeText()
+    static yarp::os::ConstString typeText()
     {
-        return "# Represents a control that is to be displayed together with an interactive marker\n\
+        return yarp::os::ConstString("\
+# Represents a control that is to be displayed together with an interactive marker\n\
 \n\
 # Identifying string for this control.\n\
 # You need to assign a unique value to this to receive feedback from the GUI\n\
@@ -473,18 +474,26 @@ bool independent_marker_orientation\n\
 # Short description (< 40 characters) of what this control does,\n\
 # e.g. \"Move the robot\". \n\
 # Default: A generic description based on the interaction mode\n\
-string description\n================================================================================\n\
+string description\n\
+") + yarp::os::ConstString("\n\
+================================================================================\n\
 MSG: geometry_msgs/Quaternion\n\
-\n================================================================================\n\
+") + yarp::rosmsg::geometry_msgs::Quaternion::typeText() + yarp::os::ConstString("\n\
+================================================================================\n\
 MSG: visualization_msgs/Marker\n\
-";
+") + yarp::rosmsg::visualization_msgs::Marker::typeText();
+    }
+
+    yarp::os::ConstString getTypeText() const
+    {
+        return yarp::rosmsg::visualization_msgs::InteractiveMarkerControl::typeText();
     }
 
     // Name the class, ROS will need this
     yarp::os::Type getType() override
     {
         yarp::os::Type typ = yarp::os::Type::byName("visualization_msgs/InteractiveMarkerControl", "visualization_msgs/InteractiveMarkerControl");
-        typ.addProperty("md5sum", yarp::os::Value("d41d8cd98f00b204e9800998ecf8427e"));
+        typ.addProperty("md5sum", yarp::os::Value("8189f1c4e7103172af5b395a47d21970"));
         typ.addProperty("message_definition", yarp::os::Value(getTypeText()));
         return typ;
     }

@@ -98,16 +98,23 @@ public:
     typedef yarp::os::idl::BottleStyle<yarp::rosmsg::std_msgs::Byte> bottleStyle;
 
     // Give source text for class, ROS will need this
-    yarp::os::ConstString getTypeText()
+    static yarp::os::ConstString typeText()
     {
-        return "byte data";
+        return yarp::os::ConstString("\
+byte data\n\
+");
+    }
+
+    yarp::os::ConstString getTypeText() const
+    {
+        return yarp::rosmsg::std_msgs::Byte::typeText();
     }
 
     // Name the class, ROS will need this
     yarp::os::Type getType() override
     {
         yarp::os::Type typ = yarp::os::Type::byName("std_msgs/Byte", "std_msgs/Byte");
-        typ.addProperty("md5sum", yarp::os::Value("d41d8cd98f00b204e9800998ecf8427e"));
+        typ.addProperty("md5sum", yarp::os::Value("ad736a2e8818154c487bb80fe42ce43b"));
         typ.addProperty("message_definition", yarp::os::Value(getTypeText()));
         return typ;
     }

@@ -135,19 +135,26 @@ public:
     typedef yarp::os::idl::BottleStyle<yarp::rosmsg::geometry_msgs::Point> bottleStyle;
 
     // Give source text for class, ROS will need this
-    yarp::os::ConstString getTypeText()
+    static yarp::os::ConstString typeText()
     {
-        return "# This contains the position of a point in free space\n\
+        return yarp::os::ConstString("\
+# This contains the position of a point in free space\n\
 float64 x\n\
 float64 y\n\
-float64 z";
+float64 z\n\
+");
+    }
+
+    yarp::os::ConstString getTypeText() const
+    {
+        return yarp::rosmsg::geometry_msgs::Point::typeText();
     }
 
     // Name the class, ROS will need this
     yarp::os::Type getType() override
     {
         yarp::os::Type typ = yarp::os::Type::byName("geometry_msgs/Point", "geometry_msgs/Point");
-        typ.addProperty("md5sum", yarp::os::Value("d41d8cd98f00b204e9800998ecf8427e"));
+        typ.addProperty("md5sum", yarp::os::Value("4a842b65f413084dc2b10fb484ea7f17"));
         typ.addProperty("message_definition", yarp::os::Value(getTypeText()));
         return typ;
     }

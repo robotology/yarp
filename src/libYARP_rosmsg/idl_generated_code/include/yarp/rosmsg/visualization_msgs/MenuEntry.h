@@ -248,9 +248,10 @@ public:
     typedef yarp::os::idl::BottleStyle<yarp::rosmsg::visualization_msgs::MenuEntry> bottleStyle;
 
     // Give source text for class, ROS will need this
-    yarp::os::ConstString getTypeText()
+    static yarp::os::ConstString typeText()
     {
-        return "# MenuEntry message.\n\
+        return yarp::os::ConstString("\
+# MenuEntry message.\n\
 \n\
 # Each InteractiveMarker message has an array of MenuEntry messages.\n\
 # A collection of MenuEntries together describe a\n\
@@ -303,14 +304,20 @@ string command\n\
 uint8 FEEDBACK=0\n\
 uint8 ROSRUN=1\n\
 uint8 ROSLAUNCH=2\n\
-uint8 command_type";
+uint8 command_type\n\
+");
+    }
+
+    yarp::os::ConstString getTypeText() const
+    {
+        return yarp::rosmsg::visualization_msgs::MenuEntry::typeText();
     }
 
     // Name the class, ROS will need this
     yarp::os::Type getType() override
     {
         yarp::os::Type typ = yarp::os::Type::byName("visualization_msgs/MenuEntry", "visualization_msgs/MenuEntry");
-        typ.addProperty("md5sum", yarp::os::Value("d41d8cd98f00b204e9800998ecf8427e"));
+        typ.addProperty("md5sum", yarp::os::Value("b90ec63024573de83b57aa93eb39be2d"));
         typ.addProperty("message_definition", yarp::os::Value(getTypeText()));
         return typ;
     }

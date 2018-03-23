@@ -501,9 +501,10 @@ public:
     typedef yarp::os::idl::BottleStyle<yarp::rosmsg::sensor_msgs::CameraInfo> bottleStyle;
 
     // Give source text for class, ROS will need this
-    yarp::os::ConstString getTypeText()
+    static yarp::os::ConstString typeText()
     {
-        return "# This message defines meta information for a camera. It should be in a\n\
+        return yarp::os::ConstString("\
+# This message defines meta information for a camera. It should be in a\n\
 # camera namespace on topic \"camera_info\" and accompanied by up to five\n\
 # image topics named:\n\
 #\n\
@@ -633,18 +634,26 @@ uint32 binning_y\n\
 #  regardless of binning settings.\n\
 # The default setting of roi (all values 0) is considered the same as\n\
 #  full resolution (roi.width = width, roi.height = height).\n\
-RegionOfInterest roi\n================================================================================\n\
+RegionOfInterest roi\n\
+") + yarp::os::ConstString("\n\
+================================================================================\n\
 MSG: std_msgs/Header\n\
-\n================================================================================\n\
+") + yarp::rosmsg::std_msgs::Header::typeText() + yarp::os::ConstString("\n\
+================================================================================\n\
 MSG: sensor_msgs/RegionOfInterest\n\
-";
+") + yarp::rosmsg::sensor_msgs::RegionOfInterest::typeText();
+    }
+
+    yarp::os::ConstString getTypeText() const
+    {
+        return yarp::rosmsg::sensor_msgs::CameraInfo::typeText();
     }
 
     // Name the class, ROS will need this
     yarp::os::Type getType() override
     {
         yarp::os::Type typ = yarp::os::Type::byName("sensor_msgs/CameraInfo", "sensor_msgs/CameraInfo");
-        typ.addProperty("md5sum", yarp::os::Value("d41d8cd98f00b204e9800998ecf8427e"));
+        typ.addProperty("md5sum", yarp::os::Value("4fbf300fa2b68a963ca60bd79ef5a806"));
         typ.addProperty("message_definition", yarp::os::Value(getTypeText()));
         return typ;
     }

@@ -123,16 +123,22 @@ public:
     typedef yarp::os::idl::BottleStyle<yarp::rosmsg::diagnostic_msgs::AddDiagnosticsReply> bottleStyle;
 
     // Give source text for class, ROS will need this
-    yarp::os::ConstString getTypeText()
+    static yarp::os::ConstString typeText()
     {
-        return "";
+        return yarp::os::ConstString("\
+");
+    }
+
+    yarp::os::ConstString getTypeText() const
+    {
+        return yarp::rosmsg::diagnostic_msgs::AddDiagnosticsReply::typeText();
     }
 
     // Name the class, ROS will need this
     yarp::os::Type getType() override
     {
         yarp::os::Type typ = yarp::os::Type::byName("diagnostic_msgs/AddDiagnosticsReply", "diagnostic_msgs/AddDiagnosticsReply");
-        typ.addProperty("md5sum", yarp::os::Value("d41d8cd98f00b204e9800998ecf8427e"));
+        typ.addProperty("md5sum", yarp::os::Value("937c9679a518e3a18d831e57125ea522"));
         typ.addProperty("message_definition", yarp::os::Value(getTypeText()));
         return typ;
     }

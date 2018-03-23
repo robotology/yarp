@@ -154,9 +154,10 @@ public:
     typedef yarp::os::idl::BottleStyle<yarp::rosmsg::tf2_msgs::TF2Error> bottleStyle;
 
     // Give source text for class, ROS will need this
-    yarp::os::ConstString getTypeText()
+    static yarp::os::ConstString typeText()
     {
-        return "uint8 NO_ERROR = 0\n\
+        return yarp::os::ConstString("\
+uint8 NO_ERROR = 0\n\
 uint8 LOOKUP_ERROR = 1\n\
 uint8 CONNECTIVITY_ERROR = 2\n\
 uint8 EXTRAPOLATION_ERROR = 3\n\
@@ -165,14 +166,20 @@ uint8 TIMEOUT_ERROR = 5\n\
 uint8 TRANSFORM_ERROR = 6\n\
 \n\
 uint8 error\n\
-string error_string";
+string error_string\n\
+");
+    }
+
+    yarp::os::ConstString getTypeText() const
+    {
+        return yarp::rosmsg::tf2_msgs::TF2Error::typeText();
     }
 
     // Name the class, ROS will need this
     yarp::os::Type getType() override
     {
         yarp::os::Type typ = yarp::os::Type::byName("tf2_msgs/TF2Error", "tf2_msgs/TF2Error");
-        typ.addProperty("md5sum", yarp::os::Value("d41d8cd98f00b204e9800998ecf8427e"));
+        typ.addProperty("md5sum", yarp::os::Value("bc6848fd6fd750c92e38575618a4917d"));
         typ.addProperty("message_definition", yarp::os::Value(getTypeText()));
         return typ;
     }

@@ -360,9 +360,10 @@ public:
     typedef yarp::os::idl::BottleStyle<yarp::rosmsg::sensor_msgs::MultiEchoLaserScan> bottleStyle;
 
     // Give source text for class, ROS will need this
-    yarp::os::ConstString getTypeText()
+    static yarp::os::ConstString typeText()
     {
-        return "# Single scan from a multi-echo planar laser range-finder\n\
+        return yarp::os::ConstString("\
+# Single scan from a multi-echo planar laser range-finder\n\
 #\n\
 # If you have another ranging device with different behavior (e.g. a sonar\n\
 # array), please find or create a different message, since applications\n\
@@ -392,18 +393,25 @@ LaserEcho[] ranges       # range data [m] (Note: NaNs, values < range_min or > r
                          # -Inf measurements are too close to determine exact distance.\n\
 LaserEcho[] intensities  # intensity data [device-specific units].  If your\n\
                          # device does not provide intensities, please leave\n\
-                         # the array empty.\n================================================================================\n\
+                         # the array empty.") + yarp::os::ConstString("\n\
+================================================================================\n\
 MSG: std_msgs/Header\n\
-\n================================================================================\n\
+") + yarp::rosmsg::std_msgs::Header::typeText() + yarp::os::ConstString("\n\
+================================================================================\n\
 MSG: sensor_msgs/LaserEcho\n\
-";
+") + yarp::rosmsg::sensor_msgs::LaserEcho::typeText();
+    }
+
+    yarp::os::ConstString getTypeText() const
+    {
+        return yarp::rosmsg::sensor_msgs::MultiEchoLaserScan::typeText();
     }
 
     // Name the class, ROS will need this
     yarp::os::Type getType() override
     {
         yarp::os::Type typ = yarp::os::Type::byName("sensor_msgs/MultiEchoLaserScan", "sensor_msgs/MultiEchoLaserScan");
-        typ.addProperty("md5sum", yarp::os::Value("d41d8cd98f00b204e9800998ecf8427e"));
+        typ.addProperty("md5sum", yarp::os::Value("7b20aa6a60f9a341f727b9fba1d11f04"));
         typ.addProperty("message_definition", yarp::os::Value(getTypeText()));
         return typ;
     }

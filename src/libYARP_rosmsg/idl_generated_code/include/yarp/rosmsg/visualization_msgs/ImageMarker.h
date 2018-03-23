@@ -456,9 +456,10 @@ public:
     typedef yarp::os::idl::BottleStyle<yarp::rosmsg::visualization_msgs::ImageMarker> bottleStyle;
 
     // Give source text for class, ROS will need this
-    yarp::os::ConstString getTypeText()
+    static yarp::os::ConstString typeText()
     {
-        return "uint8 CIRCLE=0\n\
+        return yarp::os::ConstString("\
+uint8 CIRCLE=0\n\
 uint8 LINE_STRIP=1\n\
 uint8 LINE_LIST=2\n\
 uint8 POLYGON=3\n\
@@ -481,22 +482,28 @@ duration lifetime       # How long the object should last before being automatic
 \n\
 \n\
 geometry_msgs/Point[] points # used for LINE_STRIP/LINE_LIST/POINTS/etc., 2D in pixel coords\n\
-std_msgs/ColorRGBA[] outline_colors # a color for each line, point, etc.\n================================================================================\n\
+std_msgs/ColorRGBA[] outline_colors # a color for each line, point, etc.") + yarp::os::ConstString("\n\
+================================================================================\n\
 MSG: std_msgs/Header\n\
-\n================================================================================\n\
+") + yarp::rosmsg::std_msgs::Header::typeText() + yarp::os::ConstString("\n\
+================================================================================\n\
 MSG: geometry_msgs/Point\n\
-\n================================================================================\n\
+") + yarp::rosmsg::geometry_msgs::Point::typeText() + yarp::os::ConstString("\n\
+================================================================================\n\
 MSG: std_msgs/ColorRGBA\n\
-\n================================================================================\n\
-MSG: TickDuration\n\
-";
+") + yarp::rosmsg::std_msgs::ColorRGBA::typeText();
+    }
+
+    yarp::os::ConstString getTypeText() const
+    {
+        return yarp::rosmsg::visualization_msgs::ImageMarker::typeText();
     }
 
     // Name the class, ROS will need this
     yarp::os::Type getType() override
     {
         yarp::os::Type typ = yarp::os::Type::byName("visualization_msgs/ImageMarker", "visualization_msgs/ImageMarker");
-        typ.addProperty("md5sum", yarp::os::Value("d41d8cd98f00b204e9800998ecf8427e"));
+        typ.addProperty("md5sum", yarp::os::Value("2b65f14ce69621f37ce1f10b7d2635a9"));
         typ.addProperty("message_definition", yarp::os::Value(getTypeText()));
         return typ;
     }

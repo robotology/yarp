@@ -82,9 +82,15 @@ public:
     typedef yarp::os::idl::BottleStyle<yarp::rosmsg::std_msgs::Empty> bottleStyle;
 
     // Give source text for class, ROS will need this
-    yarp::os::ConstString getTypeText()
+    static yarp::os::ConstString typeText()
     {
-        return "";
+        return yarp::os::ConstString("\
+");
+    }
+
+    yarp::os::ConstString getTypeText() const
+    {
+        return yarp::rosmsg::std_msgs::Empty::typeText();
     }
 
     // Name the class, ROS will need this

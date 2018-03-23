@@ -192,24 +192,33 @@ public:
     typedef yarp::os::idl::BottleStyle<yarp::rosmsg::nav_msgs::GridCells> bottleStyle;
 
     // Give source text for class, ROS will need this
-    yarp::os::ConstString getTypeText()
+    static yarp::os::ConstString typeText()
     {
-        return "#an array of cells in a 2D grid\n\
+        return yarp::os::ConstString("\
+#an array of cells in a 2D grid\n\
 Header header\n\
 float32 cell_width\n\
 float32 cell_height\n\
-geometry_msgs/Point[] cells\n================================================================================\n\
+geometry_msgs/Point[] cells\n\
+") + yarp::os::ConstString("\n\
+================================================================================\n\
 MSG: std_msgs/Header\n\
-\n================================================================================\n\
+") + yarp::rosmsg::std_msgs::Header::typeText() + yarp::os::ConstString("\n\
+================================================================================\n\
 MSG: geometry_msgs/Point\n\
-";
+") + yarp::rosmsg::geometry_msgs::Point::typeText();
+    }
+
+    yarp::os::ConstString getTypeText() const
+    {
+        return yarp::rosmsg::nav_msgs::GridCells::typeText();
     }
 
     // Name the class, ROS will need this
     yarp::os::Type getType() override
     {
         yarp::os::Type typ = yarp::os::Type::byName("nav_msgs/GridCells", "nav_msgs/GridCells");
-        typ.addProperty("md5sum", yarp::os::Value("d41d8cd98f00b204e9800998ecf8427e"));
+        typ.addProperty("md5sum", yarp::os::Value("303d4db2c18abdde75d4dfdd171d1d79"));
         typ.addProperty("message_definition", yarp::os::Value(getTypeText()));
         return typ;
     }

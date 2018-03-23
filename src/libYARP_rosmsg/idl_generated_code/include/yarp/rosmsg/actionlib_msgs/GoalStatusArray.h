@@ -152,24 +152,33 @@ public:
     typedef yarp::os::idl::BottleStyle<yarp::rosmsg::actionlib_msgs::GoalStatusArray> bottleStyle;
 
     // Give source text for class, ROS will need this
-    yarp::os::ConstString getTypeText()
+    static yarp::os::ConstString typeText()
     {
-        return "# Stores the statuses for goals that are currently being tracked\n\
+        return yarp::os::ConstString("\
+# Stores the statuses for goals that are currently being tracked\n\
 # by an action server\n\
 Header header\n\
 GoalStatus[] status_list\n\
-\n================================================================================\n\
+\n\
+") + yarp::os::ConstString("\n\
+================================================================================\n\
 MSG: std_msgs/Header\n\
-\n================================================================================\n\
+") + yarp::rosmsg::std_msgs::Header::typeText() + yarp::os::ConstString("\n\
+================================================================================\n\
 MSG: actionlib_msgs/GoalStatus\n\
-";
+") + yarp::rosmsg::actionlib_msgs::GoalStatus::typeText();
+    }
+
+    yarp::os::ConstString getTypeText() const
+    {
+        return yarp::rosmsg::actionlib_msgs::GoalStatusArray::typeText();
     }
 
     // Name the class, ROS will need this
     yarp::os::Type getType() override
     {
         yarp::os::Type typ = yarp::os::Type::byName("actionlib_msgs/GoalStatusArray", "actionlib_msgs/GoalStatusArray");
-        typ.addProperty("md5sum", yarp::os::Value("d41d8cd98f00b204e9800998ecf8427e"));
+        typ.addProperty("md5sum", yarp::os::Value("f7b1afd7373d029bb80aa9907d3911c8"));
         typ.addProperty("message_definition", yarp::os::Value(getTypeText()));
         return typ;
     }

@@ -146,25 +146,32 @@ public:
     typedef yarp::os::idl::BottleStyle<yarp::rosmsg::sensor_msgs::Temperature> bottleStyle;
 
     // Give source text for class, ROS will need this
-    yarp::os::ConstString getTypeText()
+    static yarp::os::ConstString typeText()
     {
-        return " # Single temperature reading.\n\
+        return yarp::os::ConstString("\
+ # Single temperature reading.\n\
 \n\
  Header header           # timestamp is the time the temperature was measured\n\
                          # frame_id is the location of the temperature reading\n\
 \n\
  float64 temperature     # Measurement of the Temperature in Degrees Celsius\n\
 \n\
- float64 variance        # 0 is interpreted as variance unknown\n================================================================================\n\
+ float64 variance        # 0 is interpreted as variance unknown") + yarp::os::ConstString("\n\
+================================================================================\n\
 MSG: std_msgs/Header\n\
-";
+") + yarp::rosmsg::std_msgs::Header::typeText();
+    }
+
+    yarp::os::ConstString getTypeText() const
+    {
+        return yarp::rosmsg::sensor_msgs::Temperature::typeText();
     }
 
     // Name the class, ROS will need this
     yarp::os::Type getType() override
     {
         yarp::os::Type typ = yarp::os::Type::byName("sensor_msgs/Temperature", "sensor_msgs/Temperature");
-        typ.addProperty("md5sum", yarp::os::Value("d41d8cd98f00b204e9800998ecf8427e"));
+        typ.addProperty("md5sum", yarp::os::Value("c4e1005cdb717be580271cca71f0ba15"));
         typ.addProperty("message_definition", yarp::os::Value(getTypeText()));
         return typ;
     }

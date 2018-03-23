@@ -97,16 +97,22 @@ public:
     typedef yarp::os::idl::BottleStyle<yarp::rosmsg::std_msgs::UInt64> bottleStyle;
 
     // Give source text for class, ROS will need this
-    yarp::os::ConstString getTypeText()
+    static yarp::os::ConstString typeText()
     {
-        return "uint64 data";
+        return yarp::os::ConstString("\
+uint64 data");
+    }
+
+    yarp::os::ConstString getTypeText() const
+    {
+        return yarp::rosmsg::std_msgs::UInt64::typeText();
     }
 
     // Name the class, ROS will need this
     yarp::os::Type getType() override
     {
         yarp::os::Type typ = yarp::os::Type::byName("std_msgs/UInt64", "std_msgs/UInt64");
-        typ.addProperty("md5sum", yarp::os::Value("d41d8cd98f00b204e9800998ecf8427e"));
+        typ.addProperty("md5sum", yarp::os::Value("1b2a79973e8bf53d7b53acb71299cb57"));
         typ.addProperty("message_definition", yarp::os::Value(getTypeText()));
         return typ;
     }

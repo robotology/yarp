@@ -122,18 +122,26 @@ public:
     typedef yarp::os::idl::BottleStyle<yarp::rosmsg::visualization_msgs::MarkerArray> bottleStyle;
 
     // Give source text for class, ROS will need this
-    yarp::os::ConstString getTypeText()
+    static yarp::os::ConstString typeText()
     {
-        return "Marker[] markers\n================================================================================\n\
+        return yarp::os::ConstString("\
+Marker[] markers\n\
+") + yarp::os::ConstString("\n\
+================================================================================\n\
 MSG: visualization_msgs/Marker\n\
-";
+") + yarp::rosmsg::visualization_msgs::Marker::typeText();
+    }
+
+    yarp::os::ConstString getTypeText() const
+    {
+        return yarp::rosmsg::visualization_msgs::MarkerArray::typeText();
     }
 
     // Name the class, ROS will need this
     yarp::os::Type getType() override
     {
         yarp::os::Type typ = yarp::os::Type::byName("visualization_msgs/MarkerArray", "visualization_msgs/MarkerArray");
-        typ.addProperty("md5sum", yarp::os::Value("d41d8cd98f00b204e9800998ecf8427e"));
+        typ.addProperty("md5sum", yarp::os::Value("b9ff0612907ac45cd4543f054804937a"));
         typ.addProperty("message_definition", yarp::os::Value(getTypeText()));
         return typ;
     }

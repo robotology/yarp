@@ -148,9 +148,10 @@ public:
     typedef yarp::os::idl::BottleStyle<yarp::rosmsg::geometry_msgs::PoseWithCovariance> bottleStyle;
 
     // Give source text for class, ROS will need this
-    yarp::os::ConstString getTypeText()
+    static yarp::os::ConstString typeText()
     {
-        return "# This represents a pose in free space with uncertainty.\n\
+        return yarp::os::ConstString("\
+# This represents a pose in free space with uncertainty.\n\
 \n\
 Pose pose\n\
 \n\
@@ -158,16 +159,23 @@ Pose pose\n\
 # The orientation parameters use a fixed-axis representation.\n\
 # In order, the parameters are:\n\
 # (x, y, z, rotation about X axis, rotation about Y axis, rotation about Z axis)\n\
-float64[36] covariance\n================================================================================\n\
+float64[36] covariance\n\
+") + yarp::os::ConstString("\n\
+================================================================================\n\
 MSG: geometry_msgs/Pose\n\
-";
+") + yarp::rosmsg::geometry_msgs::Pose::typeText();
+    }
+
+    yarp::os::ConstString getTypeText() const
+    {
+        return yarp::rosmsg::geometry_msgs::PoseWithCovariance::typeText();
     }
 
     // Name the class, ROS will need this
     yarp::os::Type getType() override
     {
         yarp::os::Type typ = yarp::os::Type::byName("geometry_msgs/PoseWithCovariance", "geometry_msgs/PoseWithCovariance");
-        typ.addProperty("md5sum", yarp::os::Value("d41d8cd98f00b204e9800998ecf8427e"));
+        typ.addProperty("md5sum", yarp::os::Value("0e9fc50f3c2bd77e58a9c3282d24f79b"));
         typ.addProperty("message_definition", yarp::os::Value(getTypeText()));
         return typ;
     }

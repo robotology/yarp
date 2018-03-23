@@ -245,9 +245,10 @@ public:
     typedef yarp::os::idl::BottleStyle<yarp::rosmsg::geometry_msgs::Inertia> bottleStyle;
 
     // Give source text for class, ROS will need this
-    yarp::os::ConstString getTypeText()
+    static yarp::os::ConstString typeText()
     {
-        return "# Mass [kg]\n\
+        return yarp::os::ConstString("\
+# Mass [kg]\n\
 float64 m\n\
 \n\
 # Center of mass [m]\n\
@@ -262,16 +263,23 @@ float64 ixy\n\
 float64 ixz\n\
 float64 iyy\n\
 float64 iyz\n\
-float64 izz\n================================================================================\n\
+float64 izz\n\
+") + yarp::os::ConstString("\n\
+================================================================================\n\
 MSG: geometry_msgs/Vector3\n\
-";
+") + yarp::rosmsg::geometry_msgs::Vector3::typeText();
+    }
+
+    yarp::os::ConstString getTypeText() const
+    {
+        return yarp::rosmsg::geometry_msgs::Inertia::typeText();
     }
 
     // Name the class, ROS will need this
     yarp::os::Type getType() override
     {
         yarp::os::Type typ = yarp::os::Type::byName("geometry_msgs/Inertia", "geometry_msgs/Inertia");
-        typ.addProperty("md5sum", yarp::os::Value("d41d8cd98f00b204e9800998ecf8427e"));
+        typ.addProperty("md5sum", yarp::os::Value("844e18d03e7ef1b4c56cad531832c35d"));
         typ.addProperty("message_definition", yarp::os::Value(getTypeText()));
         return typ;
     }

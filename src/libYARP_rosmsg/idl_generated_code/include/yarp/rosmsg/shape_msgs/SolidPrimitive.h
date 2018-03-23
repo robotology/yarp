@@ -210,9 +210,10 @@ public:
     typedef yarp::os::idl::BottleStyle<yarp::rosmsg::shape_msgs::SolidPrimitive> bottleStyle;
 
     // Give source text for class, ROS will need this
-    yarp::os::ConstString getTypeText()
+    static yarp::os::ConstString typeText()
     {
-        return "# Define box, sphere, cylinder, cone \n\
+        return yarp::os::ConstString("\
+# Define box, sphere, cylinder, cone \n\
 # All shapes are defined to have their bounding boxes centered around 0,0,0.\n\
 \n\
 uint8 BOX=1\n\
@@ -253,14 +254,20 @@ uint8 CYLINDER_HEIGHT=0\n\
 uint8 CYLINDER_RADIUS=1\n\
 \n\
 uint8 CONE_HEIGHT=0\n\
-uint8 CONE_RADIUS=1";
+uint8 CONE_RADIUS=1\n\
+");
+    }
+
+    yarp::os::ConstString getTypeText() const
+    {
+        return yarp::rosmsg::shape_msgs::SolidPrimitive::typeText();
     }
 
     // Name the class, ROS will need this
     yarp::os::Type getType() override
     {
         yarp::os::Type typ = yarp::os::Type::byName("shape_msgs/SolidPrimitive", "shape_msgs/SolidPrimitive");
-        typ.addProperty("md5sum", yarp::os::Value("d41d8cd98f00b204e9800998ecf8427e"));
+        typ.addProperty("md5sum", yarp::os::Value("d8f8cbc74c5ff283fca29569ccefb45d"));
         typ.addProperty("message_definition", yarp::os::Value(getTypeText()));
         return typ;
     }

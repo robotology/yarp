@@ -132,22 +132,31 @@ public:
     typedef yarp::os::idl::BottleStyle<yarp::rosmsg::geometry_msgs::Vector3Stamped> bottleStyle;
 
     // Give source text for class, ROS will need this
-    yarp::os::ConstString getTypeText()
+    static yarp::os::ConstString typeText()
     {
-        return "# This represents a Vector3 with reference coordinate frame and timestamp\n\
+        return yarp::os::ConstString("\
+# This represents a Vector3 with reference coordinate frame and timestamp\n\
 Header header\n\
-Vector3 vector\n================================================================================\n\
+Vector3 vector\n\
+") + yarp::os::ConstString("\n\
+================================================================================\n\
 MSG: std_msgs/Header\n\
-\n================================================================================\n\
+") + yarp::rosmsg::std_msgs::Header::typeText() + yarp::os::ConstString("\n\
+================================================================================\n\
 MSG: geometry_msgs/Vector3\n\
-";
+") + yarp::rosmsg::geometry_msgs::Vector3::typeText();
+    }
+
+    yarp::os::ConstString getTypeText() const
+    {
+        return yarp::rosmsg::geometry_msgs::Vector3Stamped::typeText();
     }
 
     // Name the class, ROS will need this
     yarp::os::Type getType() override
     {
         yarp::os::Type typ = yarp::os::Type::byName("geometry_msgs/Vector3Stamped", "geometry_msgs/Vector3Stamped");
-        typ.addProperty("md5sum", yarp::os::Value("d41d8cd98f00b204e9800998ecf8427e"));
+        typ.addProperty("md5sum", yarp::os::Value("bbafd95d4356c863ee31839ffb80d0b7"));
         typ.addProperty("message_definition", yarp::os::Value(getTypeText()));
         return typ;
     }

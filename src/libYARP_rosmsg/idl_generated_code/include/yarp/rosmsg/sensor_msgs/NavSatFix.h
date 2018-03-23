@@ -297,9 +297,10 @@ public:
     typedef yarp::os::idl::BottleStyle<yarp::rosmsg::sensor_msgs::NavSatFix> bottleStyle;
 
     // Give source text for class, ROS will need this
-    yarp::os::ConstString getTypeText()
+    static yarp::os::ConstString typeText()
     {
-        return "# Navigation Satellite fix for any Global Navigation Satellite System\n\
+        return yarp::os::ConstString("\
+# Navigation Satellite fix for any Global Navigation Satellite System\n\
 #\n\
 # Specified using the WGS 84 reference ellipsoid\n\
 \n\
@@ -344,18 +345,26 @@ uint8 COVARIANCE_TYPE_APPROXIMATED = 1\n\
 uint8 COVARIANCE_TYPE_DIAGONAL_KNOWN = 2\n\
 uint8 COVARIANCE_TYPE_KNOWN = 3\n\
 \n\
-uint8 position_covariance_type\n================================================================================\n\
+uint8 position_covariance_type\n\
+") + yarp::os::ConstString("\n\
+================================================================================\n\
 MSG: std_msgs/Header\n\
-\n================================================================================\n\
+") + yarp::rosmsg::std_msgs::Header::typeText() + yarp::os::ConstString("\n\
+================================================================================\n\
 MSG: sensor_msgs/NavSatStatus\n\
-";
+") + yarp::rosmsg::sensor_msgs::NavSatStatus::typeText();
+    }
+
+    yarp::os::ConstString getTypeText() const
+    {
+        return yarp::rosmsg::sensor_msgs::NavSatFix::typeText();
     }
 
     // Name the class, ROS will need this
     yarp::os::Type getType() override
     {
         yarp::os::Type typ = yarp::os::Type::byName("sensor_msgs/NavSatFix", "sensor_msgs/NavSatFix");
-        typ.addProperty("md5sum", yarp::os::Value("d41d8cd98f00b204e9800998ecf8427e"));
+        typ.addProperty("md5sum", yarp::os::Value("122998cc9a34a5b4e4b83952e42242b4"));
         typ.addProperty("message_definition", yarp::os::Value(getTypeText()));
         return typ;
     }

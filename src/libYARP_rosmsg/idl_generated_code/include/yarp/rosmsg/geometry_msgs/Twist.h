@@ -131,20 +131,28 @@ public:
     typedef yarp::os::idl::BottleStyle<yarp::rosmsg::geometry_msgs::Twist> bottleStyle;
 
     // Give source text for class, ROS will need this
-    yarp::os::ConstString getTypeText()
+    static yarp::os::ConstString typeText()
     {
-        return "# This expresses velocity in free space broken into its linear and angular parts.\n\
+        return yarp::os::ConstString("\
+# This expresses velocity in free space broken into its linear and angular parts.\n\
 Vector3  linear\n\
-Vector3  angular\n================================================================================\n\
+Vector3  angular\n\
+") + yarp::os::ConstString("\n\
+================================================================================\n\
 MSG: geometry_msgs/Vector3\n\
-";
+") + yarp::rosmsg::geometry_msgs::Vector3::typeText();
+    }
+
+    yarp::os::ConstString getTypeText() const
+    {
+        return yarp::rosmsg::geometry_msgs::Twist::typeText();
     }
 
     // Name the class, ROS will need this
     yarp::os::Type getType() override
     {
         yarp::os::Type typ = yarp::os::Type::byName("geometry_msgs/Twist", "geometry_msgs/Twist");
-        typ.addProperty("md5sum", yarp::os::Value("d41d8cd98f00b204e9800998ecf8427e"));
+        typ.addProperty("md5sum", yarp::os::Value("c10c4562cad16cfd891d35d0afcdb338"));
         typ.addProperty("message_definition", yarp::os::Value(getTypeText()));
         return typ;
     }

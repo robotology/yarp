@@ -103,16 +103,22 @@ public:
     typedef yarp::os::idl::BottleStyle<yarp::rosmsg::tf2_msgs::FrameGraphReply> bottleStyle;
 
     // Give source text for class, ROS will need this
-    yarp::os::ConstString getTypeText()
+    static yarp::os::ConstString typeText()
     {
-        return "";
+        return yarp::os::ConstString("\
+");
+    }
+
+    yarp::os::ConstString getTypeText() const
+    {
+        return yarp::rosmsg::tf2_msgs::FrameGraphReply::typeText();
     }
 
     // Name the class, ROS will need this
     yarp::os::Type getType() override
     {
         yarp::os::Type typ = yarp::os::Type::byName("tf2_msgs/FrameGraphReply", "tf2_msgs/FrameGraphReply");
-        typ.addProperty("md5sum", yarp::os::Value("d41d8cd98f00b204e9800998ecf8427e"));
+        typ.addProperty("md5sum", yarp::os::Value("437ea58e9463815a0d511c7326b686b0"));
         typ.addProperty("message_definition", yarp::os::Value(getTypeText()));
         return typ;
     }

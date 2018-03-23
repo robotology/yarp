@@ -177,9 +177,10 @@ public:
     typedef yarp::os::idl::BottleStyle<yarp::rosmsg::sensor_msgs::CompressedImage> bottleStyle;
 
     // Give source text for class, ROS will need this
-    yarp::os::ConstString getTypeText()
+    static yarp::os::ConstString typeText()
     {
-        return "# This message contains a compressed image\n\
+        return yarp::os::ConstString("\
+# This message contains a compressed image\n\
 \n\
 Header header        # Header timestamp should be acquisition time of image\n\
                      # Header frame_id should be optical frame of camera\n\
@@ -191,16 +192,23 @@ Header header        # Header timestamp should be acquisition time of image\n\
 string format        # Specifies the format of the data\n\
                      #   Acceptable values:\n\
                      #     jpeg, png\n\
-uint8[] data         # Compressed image buffer\n================================================================================\n\
+uint8[] data         # Compressed image buffer\n\
+") + yarp::os::ConstString("\n\
+================================================================================\n\
 MSG: std_msgs/Header\n\
-";
+") + yarp::rosmsg::std_msgs::Header::typeText();
+    }
+
+    yarp::os::ConstString getTypeText() const
+    {
+        return yarp::rosmsg::sensor_msgs::CompressedImage::typeText();
     }
 
     // Name the class, ROS will need this
     yarp::os::Type getType() override
     {
         yarp::os::Type typ = yarp::os::Type::byName("sensor_msgs/CompressedImage", "sensor_msgs/CompressedImage");
-        typ.addProperty("md5sum", yarp::os::Value("d41d8cd98f00b204e9800998ecf8427e"));
+        typ.addProperty("md5sum", yarp::os::Value("b45c9678c28d51a94f9514a03cdf273a"));
         typ.addProperty("message_definition", yarp::os::Value(getTypeText()));
         return typ;
     }

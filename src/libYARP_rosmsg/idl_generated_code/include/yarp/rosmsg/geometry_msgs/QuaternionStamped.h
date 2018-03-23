@@ -133,23 +133,32 @@ public:
     typedef yarp::os::idl::BottleStyle<yarp::rosmsg::geometry_msgs::QuaternionStamped> bottleStyle;
 
     // Give source text for class, ROS will need this
-    yarp::os::ConstString getTypeText()
+    static yarp::os::ConstString typeText()
     {
-        return "# This represents an orientation with reference coordinate frame and timestamp.\n\
+        return yarp::os::ConstString("\
+# This represents an orientation with reference coordinate frame and timestamp.\n\
 \n\
 Header header\n\
-Quaternion quaternion\n================================================================================\n\
+Quaternion quaternion\n\
+") + yarp::os::ConstString("\n\
+================================================================================\n\
 MSG: std_msgs/Header\n\
-\n================================================================================\n\
+") + yarp::rosmsg::std_msgs::Header::typeText() + yarp::os::ConstString("\n\
+================================================================================\n\
 MSG: geometry_msgs/Quaternion\n\
-";
+") + yarp::rosmsg::geometry_msgs::Quaternion::typeText();
+    }
+
+    yarp::os::ConstString getTypeText() const
+    {
+        return yarp::rosmsg::geometry_msgs::QuaternionStamped::typeText();
     }
 
     // Name the class, ROS will need this
     yarp::os::Type getType() override
     {
         yarp::os::Type typ = yarp::os::Type::byName("geometry_msgs/QuaternionStamped", "geometry_msgs/QuaternionStamped");
-        typ.addProperty("md5sum", yarp::os::Value("d41d8cd98f00b204e9800998ecf8427e"));
+        typ.addProperty("md5sum", yarp::os::Value("61b69e24c508617fa01a6c46d556b3d2"));
         typ.addProperty("message_definition", yarp::os::Value(getTypeText()));
         return typ;
     }

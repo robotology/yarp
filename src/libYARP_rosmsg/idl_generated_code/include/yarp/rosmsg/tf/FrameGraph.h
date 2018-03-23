@@ -84,10 +84,17 @@ public:
     typedef yarp::os::idl::BottleStyle<yarp::rosmsg::tf::FrameGraph> bottleStyle;
 
     // Give source text for class, ROS will need this
-    yarp::os::ConstString getTypeText()
+    static yarp::os::ConstString typeText()
     {
-        return "---\n\
-string dot_graph";
+        return yarp::os::ConstString("\
+---\n\
+string dot_graph\n\
+");
+    }
+
+    yarp::os::ConstString getTypeText() const
+    {
+        return yarp::rosmsg::tf::FrameGraph::typeText();
     }
 
     // Name the class, ROS will need this

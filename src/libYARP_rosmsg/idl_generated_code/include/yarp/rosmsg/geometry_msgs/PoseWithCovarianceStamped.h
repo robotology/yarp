@@ -133,23 +133,32 @@ public:
     typedef yarp::os::idl::BottleStyle<yarp::rosmsg::geometry_msgs::PoseWithCovarianceStamped> bottleStyle;
 
     // Give source text for class, ROS will need this
-    yarp::os::ConstString getTypeText()
+    static yarp::os::ConstString typeText()
     {
-        return "# This expresses an estimated pose with a reference coordinate frame and timestamp\n\
+        return yarp::os::ConstString("\
+# This expresses an estimated pose with a reference coordinate frame and timestamp\n\
 \n\
 Header header\n\
-PoseWithCovariance pose\n================================================================================\n\
+PoseWithCovariance pose\n\
+") + yarp::os::ConstString("\n\
+================================================================================\n\
 MSG: std_msgs/Header\n\
-\n================================================================================\n\
+") + yarp::rosmsg::std_msgs::Header::typeText() + yarp::os::ConstString("\n\
+================================================================================\n\
 MSG: geometry_msgs/PoseWithCovariance\n\
-";
+") + yarp::rosmsg::geometry_msgs::PoseWithCovariance::typeText();
+    }
+
+    yarp::os::ConstString getTypeText() const
+    {
+        return yarp::rosmsg::geometry_msgs::PoseWithCovarianceStamped::typeText();
     }
 
     // Name the class, ROS will need this
     yarp::os::Type getType() override
     {
         yarp::os::Type typ = yarp::os::Type::byName("geometry_msgs/PoseWithCovarianceStamped", "geometry_msgs/PoseWithCovarianceStamped");
-        typ.addProperty("md5sum", yarp::os::Value("d41d8cd98f00b204e9800998ecf8427e"));
+        typ.addProperty("md5sum", yarp::os::Value("c9cbe44492afa76990ab59fa26e3eeaa"));
         typ.addProperty("message_definition", yarp::os::Value(getTypeText()));
         return typ;
     }

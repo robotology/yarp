@@ -140,9 +140,10 @@ public:
     typedef yarp::os::idl::BottleStyle<yarp::rosmsg::geometry_msgs::Vector3> bottleStyle;
 
     // Give source text for class, ROS will need this
-    yarp::os::ConstString getTypeText()
+    static yarp::os::ConstString typeText()
     {
-        return "# This represents a vector in free space. \n\
+        return yarp::os::ConstString("\
+# This represents a vector in free space. \n\
 # It is only meant to represent a direction. Therefore, it does not\n\
 # make sense to apply a translation to it (e.g., when applying a \n\
 # generic rigid transformation to a Vector3, tf2 will only apply the\n\
@@ -151,14 +152,19 @@ public:
 \n\
 float64 x\n\
 float64 y\n\
-float64 z";
+float64 z");
+    }
+
+    yarp::os::ConstString getTypeText() const
+    {
+        return yarp::rosmsg::geometry_msgs::Vector3::typeText();
     }
 
     // Name the class, ROS will need this
     yarp::os::Type getType() override
     {
         yarp::os::Type typ = yarp::os::Type::byName("geometry_msgs/Vector3", "geometry_msgs/Vector3");
-        typ.addProperty("md5sum", yarp::os::Value("d41d8cd98f00b204e9800998ecf8427e"));
+        typ.addProperty("md5sum", yarp::os::Value("4a842b65f413084dc2b10fb484ea7f17"));
         typ.addProperty("message_definition", yarp::os::Value(getTypeText()));
         return typ;
     }

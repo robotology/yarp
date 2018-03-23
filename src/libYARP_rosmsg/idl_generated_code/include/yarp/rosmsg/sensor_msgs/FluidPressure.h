@@ -150,9 +150,10 @@ public:
     typedef yarp::os::idl::BottleStyle<yarp::rosmsg::sensor_msgs::FluidPressure> bottleStyle;
 
     // Give source text for class, ROS will need this
-    yarp::os::ConstString getTypeText()
+    static yarp::os::ConstString typeText()
     {
-        return " # Single pressure reading.  This message is appropriate for measuring the\n\
+        return yarp::os::ConstString("\
+ # Single pressure reading.  This message is appropriate for measuring the\n\
  # pressure inside of a fluid (air, water, etc).  This also includes\n\
  # atmospheric or barometric pressure.\n\
 \n\
@@ -163,16 +164,22 @@ public:
 \n\
  float64 fluid_pressure  # Absolute pressure reading in Pascals.\n\
 \n\
- float64 variance        # 0 is interpreted as variance unknown\n================================================================================\n\
+ float64 variance        # 0 is interpreted as variance unknown") + yarp::os::ConstString("\n\
+================================================================================\n\
 MSG: std_msgs/Header\n\
-";
+") + yarp::rosmsg::std_msgs::Header::typeText();
+    }
+
+    yarp::os::ConstString getTypeText() const
+    {
+        return yarp::rosmsg::sensor_msgs::FluidPressure::typeText();
     }
 
     // Name the class, ROS will need this
     yarp::os::Type getType() override
     {
         yarp::os::Type typ = yarp::os::Type::byName("sensor_msgs/FluidPressure", "sensor_msgs/FluidPressure");
-        typ.addProperty("md5sum", yarp::os::Value("d41d8cd98f00b204e9800998ecf8427e"));
+        typ.addProperty("md5sum", yarp::os::Value("6044b5e640052c3b9f62b75e8c295e2d"));
         typ.addProperty("message_definition", yarp::os::Value(getTypeText()));
         return typ;
     }

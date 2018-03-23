@@ -306,9 +306,10 @@ public:
     typedef yarp::os::idl::BottleStyle<yarp::rosmsg::sensor_msgs::MultiDOFJointState> bottleStyle;
 
     // Give source text for class, ROS will need this
-    yarp::os::ConstString getTypeText()
+    static yarp::os::ConstString typeText()
     {
-        return "# Representation of state for joints with multiple degrees of freedom, \n\
+        return yarp::os::ConstString("\
+# Representation of state for joints with multiple degrees of freedom, \n\
 # following the structure of JointState.\n\
 #\n\
 # It is assumed that a joint in a system corresponds to a transform that gets applied \n\
@@ -333,22 +334,32 @@ Header header\n\
 string[] joint_names\n\
 geometry_msgs/Transform[] transforms\n\
 geometry_msgs/Twist[] twist\n\
-geometry_msgs/Wrench[] wrench\n================================================================================\n\
+geometry_msgs/Wrench[] wrench\n\
+") + yarp::os::ConstString("\n\
+================================================================================\n\
 MSG: std_msgs/Header\n\
-\n================================================================================\n\
+") + yarp::rosmsg::std_msgs::Header::typeText() + yarp::os::ConstString("\n\
+================================================================================\n\
 MSG: geometry_msgs/Transform\n\
-\n================================================================================\n\
+") + yarp::rosmsg::geometry_msgs::Transform::typeText() + yarp::os::ConstString("\n\
+================================================================================\n\
 MSG: geometry_msgs/Twist\n\
-\n================================================================================\n\
+") + yarp::rosmsg::geometry_msgs::Twist::typeText() + yarp::os::ConstString("\n\
+================================================================================\n\
 MSG: geometry_msgs/Wrench\n\
-";
+") + yarp::rosmsg::geometry_msgs::Wrench::typeText();
+    }
+
+    yarp::os::ConstString getTypeText() const
+    {
+        return yarp::rosmsg::sensor_msgs::MultiDOFJointState::typeText();
     }
 
     // Name the class, ROS will need this
     yarp::os::Type getType() override
     {
         yarp::os::Type typ = yarp::os::Type::byName("sensor_msgs/MultiDOFJointState", "sensor_msgs/MultiDOFJointState");
-        typ.addProperty("md5sum", yarp::os::Value("d41d8cd98f00b204e9800998ecf8427e"));
+        typ.addProperty("md5sum", yarp::os::Value("a3a2c9ecbf495a6e3a665cd3ea73df46"));
         typ.addProperty("message_definition", yarp::os::Value(getTypeText()));
         return typ;
     }

@@ -198,9 +198,10 @@ public:
     typedef yarp::os::idl::BottleStyle<yarp::rosmsg::sensor_msgs::PointField> bottleStyle;
 
     // Give source text for class, ROS will need this
-    yarp::os::ConstString getTypeText()
+    static yarp::os::ConstString typeText()
     {
-        return "# This message holds the description of one point entry in the\n\
+        return yarp::os::ConstString("\
+# This message holds the description of one point entry in the\n\
 # PointCloud2 message format.\n\
 uint8 INT8    = 1\n\
 uint8 UINT8   = 2\n\
@@ -214,14 +215,20 @@ uint8 FLOAT64 = 8\n\
 string name      # Name of field\n\
 uint32 offset    # Offset from start of point struct\n\
 uint8  datatype  # Datatype enumeration, see above\n\
-uint32 count     # How many elements in the field";
+uint32 count     # How many elements in the field\n\
+");
+    }
+
+    yarp::os::ConstString getTypeText() const
+    {
+        return yarp::rosmsg::sensor_msgs::PointField::typeText();
     }
 
     // Name the class, ROS will need this
     yarp::os::Type getType() override
     {
         yarp::os::Type typ = yarp::os::Type::byName("sensor_msgs/PointField", "sensor_msgs/PointField");
-        typ.addProperty("md5sum", yarp::os::Value("d41d8cd98f00b204e9800998ecf8427e"));
+        typ.addProperty("md5sum", yarp::os::Value("268eacb2962780ceac86cbd17e328150"));
         typ.addProperty("message_definition", yarp::os::Value(getTypeText()));
         return typ;
     }

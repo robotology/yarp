@@ -164,9 +164,10 @@ public:
     typedef yarp::os::idl::BottleStyle<yarp::rosmsg::visualization_msgs::InteractiveMarkerPose> bottleStyle;
 
     // Give source text for class, ROS will need this
-    yarp::os::ConstString getTypeText()
+    static yarp::os::ConstString typeText()
     {
-        return "# Time/frame info.\n\
+        return yarp::os::ConstString("\
+# Time/frame info.\n\
 Header header\n\
 \n\
 # Initial pose. Also, defines the pivot point for rotations.\n\
@@ -174,18 +175,26 @@ geometry_msgs/Pose pose\n\
 \n\
 # Identifying string. Must be globally unique in\n\
 # the topic that this message is sent through.\n\
-string name\n================================================================================\n\
+string name\n\
+") + yarp::os::ConstString("\n\
+================================================================================\n\
 MSG: std_msgs/Header\n\
-\n================================================================================\n\
+") + yarp::rosmsg::std_msgs::Header::typeText() + yarp::os::ConstString("\n\
+================================================================================\n\
 MSG: geometry_msgs/Pose\n\
-";
+") + yarp::rosmsg::geometry_msgs::Pose::typeText();
+    }
+
+    yarp::os::ConstString getTypeText() const
+    {
+        return yarp::rosmsg::visualization_msgs::InteractiveMarkerPose::typeText();
     }
 
     // Name the class, ROS will need this
     yarp::os::Type getType() override
     {
         yarp::os::Type typ = yarp::os::Type::byName("visualization_msgs/InteractiveMarkerPose", "visualization_msgs/InteractiveMarkerPose");
-        typ.addProperty("md5sum", yarp::os::Value("d41d8cd98f00b204e9800998ecf8427e"));
+        typ.addProperty("md5sum", yarp::os::Value("e64e2b0ea082f8f273b36ccb05c2a8cd"));
         typ.addProperty("message_definition", yarp::os::Value(getTypeText()));
         return typ;
     }

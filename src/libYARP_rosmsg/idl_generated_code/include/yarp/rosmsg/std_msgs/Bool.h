@@ -98,16 +98,23 @@ public:
     typedef yarp::os::idl::BottleStyle<yarp::rosmsg::std_msgs::Bool> bottleStyle;
 
     // Give source text for class, ROS will need this
-    yarp::os::ConstString getTypeText()
+    static yarp::os::ConstString typeText()
     {
-        return "bool data";
+        return yarp::os::ConstString("\
+bool data\n\
+");
+    }
+
+    yarp::os::ConstString getTypeText() const
+    {
+        return yarp::rosmsg::std_msgs::Bool::typeText();
     }
 
     // Name the class, ROS will need this
     yarp::os::Type getType() override
     {
         yarp::os::Type typ = yarp::os::Type::byName("std_msgs/Bool", "std_msgs/Bool");
-        typ.addProperty("md5sum", yarp::os::Value("d41d8cd98f00b204e9800998ecf8427e"));
+        typ.addProperty("md5sum", yarp::os::Value("8b94c1b53db61fb6aed406028ad6332a"));
         typ.addProperty("message_definition", yarp::os::Value(getTypeText()));
         return typ;
     }

@@ -244,9 +244,10 @@ public:
     typedef yarp::os::idl::BottleStyle<yarp::rosmsg::trajectory_msgs::MultiDOFJointTrajectoryPoint> bottleStyle;
 
     // Give source text for class, ROS will need this
-    yarp::os::ConstString getTypeText()
+    static yarp::os::ConstString typeText()
     {
-        return "# Each multi-dof joint can specify a transform (up to 6 DOF)\n\
+        return yarp::os::ConstString("\
+# Each multi-dof joint can specify a transform (up to 6 DOF)\n\
 geometry_msgs/Transform[] transforms\n\
 \n\
 # There can be a velocity specified for the origin of the joint \n\
@@ -255,20 +256,26 @@ geometry_msgs/Twist[] velocities\n\
 # There can be an acceleration specified for the origin of the joint \n\
 geometry_msgs/Twist[] accelerations\n\
 \n\
-duration time_from_start\n================================================================================\n\
+duration time_from_start\n\
+") + yarp::os::ConstString("\n\
+================================================================================\n\
 MSG: geometry_msgs/Transform\n\
-\n================================================================================\n\
+") + yarp::rosmsg::geometry_msgs::Transform::typeText() + yarp::os::ConstString("\n\
+================================================================================\n\
 MSG: geometry_msgs/Twist\n\
-\n================================================================================\n\
-MSG: TickDuration\n\
-";
+") + yarp::rosmsg::geometry_msgs::Twist::typeText();
+    }
+
+    yarp::os::ConstString getTypeText() const
+    {
+        return yarp::rosmsg::trajectory_msgs::MultiDOFJointTrajectoryPoint::typeText();
     }
 
     // Name the class, ROS will need this
     yarp::os::Type getType() override
     {
         yarp::os::Type typ = yarp::os::Type::byName("trajectory_msgs/MultiDOFJointTrajectoryPoint", "trajectory_msgs/MultiDOFJointTrajectoryPoint");
-        typ.addProperty("md5sum", yarp::os::Value("d41d8cd98f00b204e9800998ecf8427e"));
+        typ.addProperty("md5sum", yarp::os::Value("a76bc9abe5770d936ec37dd337b89caa"));
         typ.addProperty("message_definition", yarp::os::Value(getTypeText()));
         return typ;
     }

@@ -246,9 +246,10 @@ public:
     typedef yarp::os::idl::BottleStyle<yarp::rosmsg::diagnostic_msgs::DiagnosticStatus> bottleStyle;
 
     // Give source text for class, ROS will need this
-    yarp::os::ConstString getTypeText()
+    static yarp::os::ConstString typeText()
     {
-        return "# This message holds the status of an individual component of the robot.\n\
+        return yarp::os::ConstString("\
+# This message holds the status of an individual component of the robot.\n\
 # \n\
 \n\
 # Possible levels of operations\n\
@@ -262,16 +263,23 @@ string name # a description of the test/component reporting\n\
 string message # a description of the status\n\
 string hardware_id # a hardware unique string\n\
 KeyValue[] values # an array of values associated with the status\n\
-\n================================================================================\n\
+\n\
+") + yarp::os::ConstString("\n\
+================================================================================\n\
 MSG: diagnostic_msgs/KeyValue\n\
-";
+") + yarp::rosmsg::diagnostic_msgs::KeyValue::typeText();
+    }
+
+    yarp::os::ConstString getTypeText() const
+    {
+        return yarp::rosmsg::diagnostic_msgs::DiagnosticStatus::typeText();
     }
 
     // Name the class, ROS will need this
     yarp::os::Type getType() override
     {
         yarp::os::Type typ = yarp::os::Type::byName("diagnostic_msgs/DiagnosticStatus", "diagnostic_msgs/DiagnosticStatus");
-        typ.addProperty("md5sum", yarp::os::Value("d41d8cd98f00b204e9800998ecf8427e"));
+        typ.addProperty("md5sum", yarp::os::Value("5a412cd6e2444883e5ed4ed18a863d6c"));
         typ.addProperty("message_definition", yarp::os::Value(getTypeText()));
         return typ;
     }

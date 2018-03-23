@@ -133,23 +133,32 @@ public:
     typedef yarp::os::idl::BottleStyle<yarp::rosmsg::geometry_msgs::Transform> bottleStyle;
 
     // Give source text for class, ROS will need this
-    yarp::os::ConstString getTypeText()
+    static yarp::os::ConstString typeText()
     {
-        return "# This represents the transform between two coordinate frames in free space.\n\
+        return yarp::os::ConstString("\
+# This represents the transform between two coordinate frames in free space.\n\
 \n\
 Vector3 translation\n\
-Quaternion rotation\n================================================================================\n\
+Quaternion rotation\n\
+") + yarp::os::ConstString("\n\
+================================================================================\n\
 MSG: geometry_msgs/Vector3\n\
-\n================================================================================\n\
+") + yarp::rosmsg::geometry_msgs::Vector3::typeText() + yarp::os::ConstString("\n\
+================================================================================\n\
 MSG: geometry_msgs/Quaternion\n\
-";
+") + yarp::rosmsg::geometry_msgs::Quaternion::typeText();
+    }
+
+    yarp::os::ConstString getTypeText() const
+    {
+        return yarp::rosmsg::geometry_msgs::Transform::typeText();
     }
 
     // Name the class, ROS will need this
     yarp::os::Type getType() override
     {
         yarp::os::Type typ = yarp::os::Type::byName("geometry_msgs/Transform", "geometry_msgs/Transform");
-        typ.addProperty("md5sum", yarp::os::Value("d41d8cd98f00b204e9800998ecf8427e"));
+        typ.addProperty("md5sum", yarp::os::Value("b80e7b68f6212f618f74ba19064568bd"));
         typ.addProperty("message_definition", yarp::os::Value(getTypeText()));
         return typ;
     }

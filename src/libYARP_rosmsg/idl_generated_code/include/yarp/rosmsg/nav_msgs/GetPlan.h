@@ -161,9 +161,10 @@ public:
     typedef yarp::os::idl::BottleStyle<yarp::rosmsg::nav_msgs::GetPlan> bottleStyle;
 
     // Give source text for class, ROS will need this
-    yarp::os::ConstString getTypeText()
+    static yarp::os::ConstString typeText()
     {
-        return "# Get a plan from the current position to the goal Pose \n\
+        return yarp::os::ConstString("\
+# Get a plan from the current position to the goal Pose \n\
 \n\
 # The start pose for the plan\n\
 geometry_msgs/PoseStamped start\n\
@@ -175,16 +176,23 @@ geometry_msgs/PoseStamped goal\n\
 # relax the constraint in x and y before failing. \n\
 float32 tolerance\n\
 ---\n\
-nav_msgs/Path plan\n================================================================================\n\
+nav_msgs/Path plan\n\
+") + yarp::os::ConstString("\n\
+================================================================================\n\
 MSG: geometry_msgs/PoseStamped\n\
-";
+") + yarp::rosmsg::geometry_msgs::PoseStamped::typeText();
+    }
+
+    yarp::os::ConstString getTypeText() const
+    {
+        return yarp::rosmsg::nav_msgs::GetPlan::typeText();
     }
 
     // Name the class, ROS will need this
     yarp::os::Type getType() override
     {
         yarp::os::Type typ = yarp::os::Type::byName("nav_msgs/GetPlan", "nav_msgs/GetPlan");
-        typ.addProperty("md5sum", yarp::os::Value("d41d8cd98f00b204e9800998ecf8427e"));
+        typ.addProperty("md5sum", yarp::os::Value("baa499cbbd04e1d4cacbdc61bda3509f"));
         typ.addProperty("message_definition", yarp::os::Value(getTypeText()));
         return typ;
     }

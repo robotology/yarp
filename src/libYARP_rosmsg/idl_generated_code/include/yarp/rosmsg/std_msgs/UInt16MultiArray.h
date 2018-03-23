@@ -144,23 +144,31 @@ public:
     typedef yarp::os::idl::BottleStyle<yarp::rosmsg::std_msgs::UInt16MultiArray> bottleStyle;
 
     // Give source text for class, ROS will need this
-    yarp::os::ConstString getTypeText()
+    static yarp::os::ConstString typeText()
     {
-        return "# Please look at the MultiArrayLayout message definition for\n\
+        return yarp::os::ConstString("\
+# Please look at the MultiArrayLayout message definition for\n\
 # documentation on all multiarrays.\n\
 \n\
 MultiArrayLayout  layout        # specification of data layout\n\
 uint16[]            data        # array of data\n\
-\n================================================================================\n\
+\n\
+") + yarp::os::ConstString("\n\
+================================================================================\n\
 MSG: std_msgs/MultiArrayLayout\n\
-";
+") + yarp::rosmsg::std_msgs::MultiArrayLayout::typeText();
+    }
+
+    yarp::os::ConstString getTypeText() const
+    {
+        return yarp::rosmsg::std_msgs::UInt16MultiArray::typeText();
     }
 
     // Name the class, ROS will need this
     yarp::os::Type getType() override
     {
         yarp::os::Type typ = yarp::os::Type::byName("std_msgs/UInt16MultiArray", "std_msgs/UInt16MultiArray");
-        typ.addProperty("md5sum", yarp::os::Value("d41d8cd98f00b204e9800998ecf8427e"));
+        typ.addProperty("md5sum", yarp::os::Value("88a3d2cb34b05a3f4063908c27fa4e22"));
         typ.addProperty("message_definition", yarp::os::Value(getTypeText()));
         return typ;
     }

@@ -150,9 +150,10 @@ public:
     typedef yarp::os::idl::BottleStyle<yarp::rosmsg::sensor_msgs::RelativeHumidity> bottleStyle;
 
     // Give source text for class, ROS will need this
-    yarp::os::ConstString getTypeText()
+    static yarp::os::ConstString typeText()
     {
-        return " # Single reading from a relative humidity sensor.  Defines the ratio of partial\n\
+        return yarp::os::ConstString("\
+ # Single reading from a relative humidity sensor.  Defines the ratio of partial\n\
  # pressure of water vapor to the saturated vapor pressure at a temperature.\n\
 \n\
  Header header             # timestamp of the measurement\n\
@@ -163,16 +164,22 @@ public:
                            # 0.0 is no partial pressure of water vapor\n\
                            # 1.0 represents partial pressure of saturation\n\
 \n\
- float64 variance          # 0 is interpreted as variance unknown\n================================================================================\n\
+ float64 variance          # 0 is interpreted as variance unknown") + yarp::os::ConstString("\n\
+================================================================================\n\
 MSG: std_msgs/Header\n\
-";
+") + yarp::rosmsg::std_msgs::Header::typeText();
+    }
+
+    yarp::os::ConstString getTypeText() const
+    {
+        return yarp::rosmsg::sensor_msgs::RelativeHumidity::typeText();
     }
 
     // Name the class, ROS will need this
     yarp::os::Type getType() override
     {
         yarp::os::Type typ = yarp::os::Type::byName("sensor_msgs/RelativeHumidity", "sensor_msgs/RelativeHumidity");
-        typ.addProperty("md5sum", yarp::os::Value("d41d8cd98f00b204e9800998ecf8427e"));
+        typ.addProperty("md5sum", yarp::os::Value("d9287f9862e9d881c4452852f18f2352"));
         typ.addProperty("message_definition", yarp::os::Value(getTypeText()));
         return typ;
     }

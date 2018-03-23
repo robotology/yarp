@@ -321,9 +321,10 @@ public:
     typedef yarp::os::idl::BottleStyle<yarp::rosmsg::sensor_msgs::PointCloud2> bottleStyle;
 
     // Give source text for class, ROS will need this
-    yarp::os::ConstString getTypeText()
+    static yarp::os::ConstString typeText()
     {
-        return "# This message holds a collection of N-dimensional points, which may\n\
+        return yarp::os::ConstString("\
+# This message holds a collection of N-dimensional points, which may\n\
 # contain additional information such as normals, intensity, etc. The\n\
 # point data is stored as a binary blob, its layout described by the\n\
 # contents of the \"fields\" array.\n\
@@ -349,18 +350,26 @@ uint32  point_step   # Length of a point in bytes\n\
 uint32  row_step     # Length of a row in bytes\n\
 uint8[] data         # Actual point data, size is (row_step*height)\n\
 \n\
-bool is_dense        # True if there are no invalid points\n================================================================================\n\
+bool is_dense        # True if there are no invalid points\n\
+") + yarp::os::ConstString("\n\
+================================================================================\n\
 MSG: std_msgs/Header\n\
-\n================================================================================\n\
+") + yarp::rosmsg::std_msgs::Header::typeText() + yarp::os::ConstString("\n\
+================================================================================\n\
 MSG: sensor_msgs/PointField\n\
-";
+") + yarp::rosmsg::sensor_msgs::PointField::typeText();
+    }
+
+    yarp::os::ConstString getTypeText() const
+    {
+        return yarp::rosmsg::sensor_msgs::PointCloud2::typeText();
     }
 
     // Name the class, ROS will need this
     yarp::os::Type getType() override
     {
         yarp::os::Type typ = yarp::os::Type::byName("sensor_msgs/PointCloud2", "sensor_msgs/PointCloud2");
-        typ.addProperty("md5sum", yarp::os::Value("d41d8cd98f00b204e9800998ecf8427e"));
+        typ.addProperty("md5sum", yarp::os::Value("66e57468e2282f83f63002906dc532dc"));
         typ.addProperty("message_definition", yarp::os::Value(getTypeText()));
         return typ;
     }

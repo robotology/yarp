@@ -194,22 +194,30 @@ public:
     typedef yarp::os::idl::BottleStyle<yarp::rosmsg::trajectory_msgs::JointTrajectory> bottleStyle;
 
     // Give source text for class, ROS will need this
-    yarp::os::ConstString getTypeText()
+    static yarp::os::ConstString typeText()
     {
-        return "Header header\n\
+        return yarp::os::ConstString("\
+Header header\n\
 string[] joint_names\n\
-JointTrajectoryPoint[] points\n================================================================================\n\
+JointTrajectoryPoint[] points") + yarp::os::ConstString("\n\
+================================================================================\n\
 MSG: std_msgs/Header\n\
-\n================================================================================\n\
+") + yarp::rosmsg::std_msgs::Header::typeText() + yarp::os::ConstString("\n\
+================================================================================\n\
 MSG: trajectory_msgs/JointTrajectoryPoint\n\
-";
+") + yarp::rosmsg::trajectory_msgs::JointTrajectoryPoint::typeText();
+    }
+
+    yarp::os::ConstString getTypeText() const
+    {
+        return yarp::rosmsg::trajectory_msgs::JointTrajectory::typeText();
     }
 
     // Name the class, ROS will need this
     yarp::os::Type getType() override
     {
         yarp::os::Type typ = yarp::os::Type::byName("trajectory_msgs/JointTrajectory", "trajectory_msgs/JointTrajectory");
-        typ.addProperty("md5sum", yarp::os::Value("d41d8cd98f00b204e9800998ecf8427e"));
+        typ.addProperty("md5sum", yarp::os::Value("56a436936b97f1588e684cef0098abd3"));
         typ.addProperty("message_definition", yarp::os::Value(getTypeText()));
         return typ;
     }

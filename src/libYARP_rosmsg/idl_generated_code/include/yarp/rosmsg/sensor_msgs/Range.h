@@ -248,9 +248,10 @@ public:
     typedef yarp::os::idl::BottleStyle<yarp::rosmsg::sensor_msgs::Range> bottleStyle;
 
     // Give source text for class, ROS will need this
-    yarp::os::ConstString getTypeText()
+    static yarp::os::ConstString typeText()
     {
-        return "# Single range reading from an active ranger that emits energy and reports\n\
+        return yarp::os::ConstString("\
+# Single range reading from an active ranger that emits energy and reports\n\
 # one range reading that is valid along an arc at the distance measured. \n\
 # This message is  not appropriate for laser scanners. See the LaserScan\n\
 # message if you are working with a laser scanner.\n\
@@ -289,16 +290,22 @@ float32 range           # range data [m]\n\
                         # -Inf represents a detection within fixed distance.\n\
                         # (Detection too close to the sensor to quantify)\n\
                         # +Inf represents no detection within the fixed distance.\n\
-                        # (Object out of range)\n================================================================================\n\
+                        # (Object out of range)") + yarp::os::ConstString("\n\
+================================================================================\n\
 MSG: std_msgs/Header\n\
-";
+") + yarp::rosmsg::std_msgs::Header::typeText();
+    }
+
+    yarp::os::ConstString getTypeText() const
+    {
+        return yarp::rosmsg::sensor_msgs::Range::typeText();
     }
 
     // Name the class, ROS will need this
     yarp::os::Type getType() override
     {
         yarp::os::Type typ = yarp::os::Type::byName("sensor_msgs/Range", "sensor_msgs/Range");
-        typ.addProperty("md5sum", yarp::os::Value("d41d8cd98f00b204e9800998ecf8427e"));
+        typ.addProperty("md5sum", yarp::os::Value("b763a427e10893eec9430b21f1c4b8b0"));
         typ.addProperty("message_definition", yarp::os::Value(getTypeText()));
         return typ;
     }

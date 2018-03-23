@@ -159,9 +159,10 @@ public:
     typedef yarp::os::idl::BottleStyle<yarp::rosmsg::sensor_msgs::Illuminance> bottleStyle;
 
     // Give source text for class, ROS will need this
-    yarp::os::ConstString getTypeText()
+    static yarp::os::ConstString typeText()
     {
-        return " # Single photometric illuminance measurement.  Light should be assumed to be\n\
+        return yarp::os::ConstString("\
+ # Single photometric illuminance measurement.  Light should be assumed to be\n\
  # measured along the sensor's x-axis (the area of detection is the y-z plane).\n\
  # The illuminance should have a 0 or positive value and be received with\n\
  # the sensor's +X axis pointing toward the light source.\n\
@@ -181,16 +182,22 @@ public:
 \n\
  float64 illuminance     # Measurement of the Photometric Illuminance in Lux.\n\
 \n\
- float64 variance        # 0 is interpreted as variance unknown\n================================================================================\n\
+ float64 variance        # 0 is interpreted as variance unknown") + yarp::os::ConstString("\n\
+================================================================================\n\
 MSG: std_msgs/Header\n\
-";
+") + yarp::rosmsg::std_msgs::Header::typeText();
+    }
+
+    yarp::os::ConstString getTypeText() const
+    {
+        return yarp::rosmsg::sensor_msgs::Illuminance::typeText();
     }
 
     // Name the class, ROS will need this
     yarp::os::Type getType() override
     {
         yarp::os::Type typ = yarp::os::Type::byName("sensor_msgs/Illuminance", "sensor_msgs/Illuminance");
-        typ.addProperty("md5sum", yarp::os::Value("d41d8cd98f00b204e9800998ecf8427e"));
+        typ.addProperty("md5sum", yarp::os::Value("8e0e340fd1b25d249223d34acd5db664"));
         typ.addProperty("message_definition", yarp::os::Value(getTypeText()));
         return typ;
     }

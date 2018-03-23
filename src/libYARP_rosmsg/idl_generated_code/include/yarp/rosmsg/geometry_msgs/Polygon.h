@@ -123,19 +123,27 @@ public:
     typedef yarp::os::idl::BottleStyle<yarp::rosmsg::geometry_msgs::Polygon> bottleStyle;
 
     // Give source text for class, ROS will need this
-    yarp::os::ConstString getTypeText()
+    static yarp::os::ConstString typeText()
     {
-        return "#A specification of a polygon where the first and last points are assumed to be connected\n\
-Point32[] points\n================================================================================\n\
+        return yarp::os::ConstString("\
+#A specification of a polygon where the first and last points are assumed to be connected\n\
+Point32[] points\n\
+") + yarp::os::ConstString("\n\
+================================================================================\n\
 MSG: geometry_msgs/Point32\n\
-";
+") + yarp::rosmsg::geometry_msgs::Point32::typeText();
+    }
+
+    yarp::os::ConstString getTypeText() const
+    {
+        return yarp::rosmsg::geometry_msgs::Polygon::typeText();
     }
 
     // Name the class, ROS will need this
     yarp::os::Type getType() override
     {
         yarp::os::Type typ = yarp::os::Type::byName("geometry_msgs/Polygon", "geometry_msgs/Polygon");
-        typ.addProperty("md5sum", yarp::os::Value("d41d8cd98f00b204e9800998ecf8427e"));
+        typ.addProperty("md5sum", yarp::os::Value("f56a39eff4969badd4f6a5d0305ad7e6"));
         typ.addProperty("message_definition", yarp::os::Value(getTypeText()));
         return typ;
     }

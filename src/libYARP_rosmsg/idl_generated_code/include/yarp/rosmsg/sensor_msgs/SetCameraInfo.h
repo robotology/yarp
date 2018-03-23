@@ -115,9 +115,10 @@ public:
     typedef yarp::os::idl::BottleStyle<yarp::rosmsg::sensor_msgs::SetCameraInfo> bottleStyle;
 
     // Give source text for class, ROS will need this
-    yarp::os::ConstString getTypeText()
+    static yarp::os::ConstString typeText()
     {
-        return "# This service requests that a camera stores the given CameraInfo \n\
+        return yarp::os::ConstString("\
+# This service requests that a camera stores the given CameraInfo \n\
 # as that camera's calibration information.\n\
 #\n\
 # The width and height in the camera_info field should match what the\n\
@@ -128,16 +129,23 @@ public:
 sensor_msgs/CameraInfo camera_info # The camera_info to store\n\
 ---\n\
 bool success          # True if the call succeeded\n\
-string status_message # Used to give details about success\n================================================================================\n\
+string status_message # Used to give details about success\n\
+") + yarp::os::ConstString("\n\
+================================================================================\n\
 MSG: sensor_msgs/CameraInfo\n\
-";
+") + yarp::rosmsg::sensor_msgs::CameraInfo::typeText();
+    }
+
+    yarp::os::ConstString getTypeText() const
+    {
+        return yarp::rosmsg::sensor_msgs::SetCameraInfo::typeText();
     }
 
     // Name the class, ROS will need this
     yarp::os::Type getType() override
     {
         yarp::os::Type typ = yarp::os::Type::byName("sensor_msgs/SetCameraInfo", "sensor_msgs/SetCameraInfo");
-        typ.addProperty("md5sum", yarp::os::Value("d41d8cd98f00b204e9800998ecf8427e"));
+        typ.addProperty("md5sum", yarp::os::Value("4871c761f200349d940adb467d4301a5"));
         typ.addProperty("message_definition", yarp::os::Value(getTypeText()));
         return typ;
     }

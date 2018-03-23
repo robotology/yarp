@@ -181,9 +181,10 @@ public:
     typedef yarp::os::idl::BottleStyle<yarp::rosmsg::visualization_msgs::InteractiveMarkerInit> bottleStyle;
 
     // Give source text for class, ROS will need this
-    yarp::os::ConstString getTypeText()
+    static yarp::os::ConstString typeText()
     {
-        return "# Identifying string. Must be unique in the topic namespace\n\
+        return yarp::os::ConstString("\
+# Identifying string. Must be unique in the topic namespace\n\
 # that this server works on.\n\
 string server_id\n\
 \n\
@@ -196,16 +197,23 @@ string server_id\n\
 uint64 seq_num\n\
 \n\
 # All markers.\n\
-InteractiveMarker[] markers\n================================================================================\n\
+InteractiveMarker[] markers\n\
+") + yarp::os::ConstString("\n\
+================================================================================\n\
 MSG: visualization_msgs/InteractiveMarker\n\
-";
+") + yarp::rosmsg::visualization_msgs::InteractiveMarker::typeText();
+    }
+
+    yarp::os::ConstString getTypeText() const
+    {
+        return yarp::rosmsg::visualization_msgs::InteractiveMarkerInit::typeText();
     }
 
     // Name the class, ROS will need this
     yarp::os::Type getType() override
     {
         yarp::os::Type typ = yarp::os::Type::byName("visualization_msgs/InteractiveMarkerInit", "visualization_msgs/InteractiveMarkerInit");
-        typ.addProperty("md5sum", yarp::os::Value("d41d8cd98f00b204e9800998ecf8427e"));
+        typ.addProperty("md5sum", yarp::os::Value("f841fa4983f6e3fabef1e2662e67ddd2"));
         typ.addProperty("message_definition", yarp::os::Value(getTypeText()));
         return typ;
     }

@@ -188,9 +188,10 @@ public:
     typedef yarp::os::idl::BottleStyle<yarp::rosmsg::sensor_msgs::RegionOfInterest> bottleStyle;
 
     // Give source text for class, ROS will need this
-    yarp::os::ConstString getTypeText()
+    static yarp::os::ConstString typeText()
     {
-        return "# This message is used to specify a region of interest within an image.\n\
+        return yarp::os::ConstString("\
+# This message is used to specify a region of interest within an image.\n\
 #\n\
 # When used to specify the ROI setting of the camera when the image was\n\
 # taken, the height and width fields should either match the height and\n\
@@ -208,14 +209,20 @@ uint32 width     # Width of ROI\n\
 # ROI in this message. Typically this should be False if the full image\n\
 # is captured (ROI not used), and True if a subwindow is captured (ROI\n\
 # used).\n\
-bool do_rectify";
+bool do_rectify\n\
+");
+    }
+
+    yarp::os::ConstString getTypeText() const
+    {
+        return yarp::rosmsg::sensor_msgs::RegionOfInterest::typeText();
     }
 
     // Name the class, ROS will need this
     yarp::os::Type getType() override
     {
         yarp::os::Type typ = yarp::os::Type::byName("sensor_msgs/RegionOfInterest", "sensor_msgs/RegionOfInterest");
-        typ.addProperty("md5sum", yarp::os::Value("d41d8cd98f00b204e9800998ecf8427e"));
+        typ.addProperty("md5sum", yarp::os::Value("bdb633039d588fcccb441a4d43ccfe09"));
         typ.addProperty("message_definition", yarp::os::Value(getTypeText()));
         return typ;
     }

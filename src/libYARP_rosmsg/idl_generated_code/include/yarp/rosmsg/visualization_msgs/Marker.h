@@ -558,9 +558,10 @@ public:
     typedef yarp::os::idl::BottleStyle<yarp::rosmsg::visualization_msgs::Marker> bottleStyle;
 
     // Give source text for class, ROS will need this
-    yarp::os::ConstString getTypeText()
+    static yarp::os::ConstString typeText()
     {
-        return "# See http://www.ros.org/wiki/rviz/DisplayTypes/Marker and http://www.ros.org/wiki/rviz/Tutorials/Markers%3A%20Basic%20Shapes for more information on using this message with rviz\n\
+        return yarp::os::ConstString("\
+# See http://www.ros.org/wiki/rviz/DisplayTypes/Marker and http://www.ros.org/wiki/rviz/Tutorials/Markers%3A%20Basic%20Shapes for more information on using this message with rviz\n\
 \n\
 uint8 ARROW=0\n\
 uint8 CUBE=1\n\
@@ -603,26 +604,35 @@ string text\n\
 \n\
 # NOTE: only used for MESH_RESOURCE markers\n\
 string mesh_resource\n\
-bool mesh_use_embedded_materials\n================================================================================\n\
+bool mesh_use_embedded_materials\n\
+") + yarp::os::ConstString("\n\
+================================================================================\n\
 MSG: std_msgs/Header\n\
-\n================================================================================\n\
+") + yarp::rosmsg::std_msgs::Header::typeText() + yarp::os::ConstString("\n\
+================================================================================\n\
 MSG: geometry_msgs/Pose\n\
-\n================================================================================\n\
+") + yarp::rosmsg::geometry_msgs::Pose::typeText() + yarp::os::ConstString("\n\
+================================================================================\n\
 MSG: geometry_msgs/Vector3\n\
-\n================================================================================\n\
+") + yarp::rosmsg::geometry_msgs::Vector3::typeText() + yarp::os::ConstString("\n\
+================================================================================\n\
 MSG: std_msgs/ColorRGBA\n\
-\n================================================================================\n\
-MSG: TickDuration\n\
-\n================================================================================\n\
+") + yarp::rosmsg::std_msgs::ColorRGBA::typeText() + yarp::os::ConstString("\n\
+================================================================================\n\
 MSG: geometry_msgs/Point\n\
-";
+") + yarp::rosmsg::geometry_msgs::Point::typeText();
+    }
+
+    yarp::os::ConstString getTypeText() const
+    {
+        return yarp::rosmsg::visualization_msgs::Marker::typeText();
     }
 
     // Name the class, ROS will need this
     yarp::os::Type getType() override
     {
         yarp::os::Type typ = yarp::os::Type::byName("visualization_msgs/Marker", "visualization_msgs/Marker");
-        typ.addProperty("md5sum", yarp::os::Value("d41d8cd98f00b204e9800998ecf8427e"));
+        typ.addProperty("md5sum", yarp::os::Value("1c642a6a8df38444ae1a0cb66e87b19f"));
         typ.addProperty("message_definition", yarp::os::Value(getTypeText()));
         return typ;
     }

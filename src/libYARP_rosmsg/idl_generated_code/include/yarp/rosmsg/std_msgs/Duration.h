@@ -104,18 +104,23 @@ public:
     typedef yarp::os::idl::BottleStyle<yarp::rosmsg::std_msgs::Duration> bottleStyle;
 
     // Give source text for class, ROS will need this
-    yarp::os::ConstString getTypeText()
+    static yarp::os::ConstString typeText()
     {
-        return "duration data\n================================================================================\n\
-MSG: TickDuration\n\
-";
+        return yarp::os::ConstString("\
+duration data\n\
+");
+    }
+
+    yarp::os::ConstString getTypeText() const
+    {
+        return yarp::rosmsg::std_msgs::Duration::typeText();
     }
 
     // Name the class, ROS will need this
     yarp::os::Type getType() override
     {
         yarp::os::Type typ = yarp::os::Type::byName("std_msgs/Duration", "std_msgs/Duration");
-        typ.addProperty("md5sum", yarp::os::Value("d41d8cd98f00b204e9800998ecf8427e"));
+        typ.addProperty("md5sum", yarp::os::Value("0ea4632898b92ef8fdbd8104d97cf6b1"));
         typ.addProperty("message_definition", yarp::os::Value(getTypeText()));
         return typ;
     }

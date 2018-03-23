@@ -284,9 +284,10 @@ public:
     typedef yarp::os::idl::BottleStyle<yarp::rosmsg::stereo_msgs::DisparityImage> bottleStyle;
 
     // Give source text for class, ROS will need this
-    yarp::os::ConstString getTypeText()
+    static yarp::os::ConstString typeText()
     {
-        return "# Separate header for compatibility with current TimeSynchronizer.\n\
+        return yarp::os::ConstString("\
+# Separate header for compatibility with current TimeSynchronizer.\n\
 # Likely to be removed in a later release, use image.header instead.\n\
 Header header\n\
 \n\
@@ -314,20 +315,29 @@ float32 max_disparity\n\
 \n\
 # Smallest allowed disparity increment. The smallest achievable depth range\n\
 # resolution is delta_Z = (Z^2/fT)*delta_d.\n\
-float32 delta_d\n================================================================================\n\
+float32 delta_d\n\
+") + yarp::os::ConstString("\n\
+================================================================================\n\
 MSG: std_msgs/Header\n\
-\n================================================================================\n\
+") + yarp::rosmsg::std_msgs::Header::typeText() + yarp::os::ConstString("\n\
+================================================================================\n\
 MSG: sensor_msgs/Image\n\
-\n================================================================================\n\
+") + yarp::rosmsg::sensor_msgs::Image::typeText() + yarp::os::ConstString("\n\
+================================================================================\n\
 MSG: sensor_msgs/RegionOfInterest\n\
-";
+") + yarp::rosmsg::sensor_msgs::RegionOfInterest::typeText();
+    }
+
+    yarp::os::ConstString getTypeText() const
+    {
+        return yarp::rosmsg::stereo_msgs::DisparityImage::typeText();
     }
 
     // Name the class, ROS will need this
     yarp::os::Type getType() override
     {
         yarp::os::Type typ = yarp::os::Type::byName("stereo_msgs/DisparityImage", "stereo_msgs/DisparityImage");
-        typ.addProperty("md5sum", yarp::os::Value("d41d8cd98f00b204e9800998ecf8427e"));
+        typ.addProperty("md5sum", yarp::os::Value("ebf62e5419287b81477833ad374eefe4"));
         typ.addProperty("message_definition", yarp::os::Value(getTypeText()));
         return typ;
     }

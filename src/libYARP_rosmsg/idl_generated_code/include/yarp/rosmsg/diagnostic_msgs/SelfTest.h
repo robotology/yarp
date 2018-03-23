@@ -86,12 +86,19 @@ public:
     typedef yarp::os::idl::BottleStyle<yarp::rosmsg::diagnostic_msgs::SelfTest> bottleStyle;
 
     // Give source text for class, ROS will need this
-    yarp::os::ConstString getTypeText()
+    static yarp::os::ConstString typeText()
     {
-        return "---\n\
+        return yarp::os::ConstString("\
+---\n\
 string id\n\
 byte passed\n\
-DiagnosticStatus[] status";
+DiagnosticStatus[] status\n\
+");
+    }
+
+    yarp::os::ConstString getTypeText() const
+    {
+        return yarp::rosmsg::diagnostic_msgs::SelfTest::typeText();
     }
 
     // Name the class, ROS will need this

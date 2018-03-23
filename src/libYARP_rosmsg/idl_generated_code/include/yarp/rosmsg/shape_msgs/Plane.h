@@ -121,23 +121,30 @@ public:
     typedef yarp::os::idl::BottleStyle<yarp::rosmsg::shape_msgs::Plane> bottleStyle;
 
     // Give source text for class, ROS will need this
-    yarp::os::ConstString getTypeText()
+    static yarp::os::ConstString typeText()
     {
-        return "# Representation of a plane, using the plane equation ax + by + cz + d = 0\n\
+        return yarp::os::ConstString("\
+# Representation of a plane, using the plane equation ax + by + cz + d = 0\n\
 \n\
 # a := coef[0]\n\
 # b := coef[1]\n\
 # c := coef[2]\n\
 # d := coef[3]\n\
 \n\
-float64[4] coef";
+float64[4] coef\n\
+");
+    }
+
+    yarp::os::ConstString getTypeText() const
+    {
+        return yarp::rosmsg::shape_msgs::Plane::typeText();
     }
 
     // Name the class, ROS will need this
     yarp::os::Type getType() override
     {
         yarp::os::Type typ = yarp::os::Type::byName("shape_msgs/Plane", "shape_msgs/Plane");
-        typ.addProperty("md5sum", yarp::os::Value("d41d8cd98f00b204e9800998ecf8427e"));
+        typ.addProperty("md5sum", yarp::os::Value("2c1b92ed8f31492f8e73f6a4a44ca796"));
         typ.addProperty("message_definition", yarp::os::Value(getTypeText()));
         return typ;
     }

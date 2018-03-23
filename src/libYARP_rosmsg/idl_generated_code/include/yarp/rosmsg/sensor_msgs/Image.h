@@ -265,9 +265,10 @@ public:
     typedef yarp::os::idl::BottleStyle<yarp::rosmsg::sensor_msgs::Image> bottleStyle;
 
     // Give source text for class, ROS will need this
-    yarp::os::ConstString getTypeText()
+    static yarp::os::ConstString typeText()
     {
-        return "# This message contains an uncompressed image\n\
+        return yarp::os::ConstString("\
+# This message contains an uncompressed image\n\
 # (0, 0) is at top-left corner of image\n\
 #\n\
 \n\
@@ -293,16 +294,23 @@ string encoding       # Encoding of pixels -- channel meaning, ordering, size\n\
 \n\
 uint8 is_bigendian    # is this data bigendian?\n\
 uint32 step           # Full row length in bytes\n\
-uint8[] data          # actual matrix data, size is (step * rows)\n================================================================================\n\
+uint8[] data          # actual matrix data, size is (step * rows)\n\
+") + yarp::os::ConstString("\n\
+================================================================================\n\
 MSG: std_msgs/Header\n\
-";
+") + yarp::rosmsg::std_msgs::Header::typeText();
+    }
+
+    yarp::os::ConstString getTypeText() const
+    {
+        return yarp::rosmsg::sensor_msgs::Image::typeText();
     }
 
     // Name the class, ROS will need this
     yarp::os::Type getType() override
     {
         yarp::os::Type typ = yarp::os::Type::byName("sensor_msgs/Image", "sensor_msgs/Image");
-        typ.addProperty("md5sum", yarp::os::Value("d41d8cd98f00b204e9800998ecf8427e"));
+        typ.addProperty("md5sum", yarp::os::Value("3c86695f2698009b90589c63d81ff6ad"));
         typ.addProperty("message_definition", yarp::os::Value(getTypeText()));
         return typ;
     }

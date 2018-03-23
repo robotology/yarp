@@ -132,22 +132,31 @@ public:
     typedef yarp::os::idl::BottleStyle<yarp::rosmsg::geometry_msgs::PointStamped> bottleStyle;
 
     // Give source text for class, ROS will need this
-    yarp::os::ConstString getTypeText()
+    static yarp::os::ConstString typeText()
     {
-        return "# This represents a Point with reference coordinate frame and timestamp\n\
+        return yarp::os::ConstString("\
+# This represents a Point with reference coordinate frame and timestamp\n\
 Header header\n\
-Point point\n================================================================================\n\
+Point point\n\
+") + yarp::os::ConstString("\n\
+================================================================================\n\
 MSG: std_msgs/Header\n\
-\n================================================================================\n\
+") + yarp::rosmsg::std_msgs::Header::typeText() + yarp::os::ConstString("\n\
+================================================================================\n\
 MSG: geometry_msgs/Point\n\
-";
+") + yarp::rosmsg::geometry_msgs::Point::typeText();
+    }
+
+    yarp::os::ConstString getTypeText() const
+    {
+        return yarp::rosmsg::geometry_msgs::PointStamped::typeText();
     }
 
     // Name the class, ROS will need this
     yarp::os::Type getType() override
     {
         yarp::os::Type typ = yarp::os::Type::byName("geometry_msgs/PointStamped", "geometry_msgs/PointStamped");
-        typ.addProperty("md5sum", yarp::os::Value("d41d8cd98f00b204e9800998ecf8427e"));
+        typ.addProperty("md5sum", yarp::os::Value("18a357bddd1f10d3ff4dd9cfce245d5a"));
         typ.addProperty("message_definition", yarp::os::Value(getTypeText()));
         return typ;
     }

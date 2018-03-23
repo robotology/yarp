@@ -148,9 +148,10 @@ public:
     typedef yarp::os::idl::BottleStyle<yarp::rosmsg::geometry_msgs::AccelWithCovariance> bottleStyle;
 
     // Give source text for class, ROS will need this
-    yarp::os::ConstString getTypeText()
+    static yarp::os::ConstString typeText()
     {
-        return "# This expresses acceleration in free space with uncertainty.\n\
+        return yarp::os::ConstString("\
+# This expresses acceleration in free space with uncertainty.\n\
 \n\
 Accel accel\n\
 \n\
@@ -158,16 +159,23 @@ Accel accel\n\
 # The orientation parameters use a fixed-axis representation.\n\
 # In order, the parameters are:\n\
 # (x, y, z, rotation about X axis, rotation about Y axis, rotation about Z axis)\n\
-float64[36] covariance\n================================================================================\n\
+float64[36] covariance\n\
+") + yarp::os::ConstString("\n\
+================================================================================\n\
 MSG: geometry_msgs/Accel\n\
-";
+") + yarp::rosmsg::geometry_msgs::Accel::typeText();
+    }
+
+    yarp::os::ConstString getTypeText() const
+    {
+        return yarp::rosmsg::geometry_msgs::AccelWithCovariance::typeText();
     }
 
     // Name the class, ROS will need this
     yarp::os::Type getType() override
     {
         yarp::os::Type typ = yarp::os::Type::byName("geometry_msgs/AccelWithCovariance", "geometry_msgs/AccelWithCovariance");
-        typ.addProperty("md5sum", yarp::os::Value("d41d8cd98f00b204e9800998ecf8427e"));
+        typ.addProperty("md5sum", yarp::os::Value("f10cf81eab8fdd6514341a13d3e782b5"));
         typ.addProperty("message_definition", yarp::os::Value(getTypeText()));
         return typ;
     }

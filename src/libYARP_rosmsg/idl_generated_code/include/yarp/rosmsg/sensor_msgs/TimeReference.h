@@ -162,26 +162,32 @@ public:
     typedef yarp::os::idl::BottleStyle<yarp::rosmsg::sensor_msgs::TimeReference> bottleStyle;
 
     // Give source text for class, ROS will need this
-    yarp::os::ConstString getTypeText()
+    static yarp::os::ConstString typeText()
     {
-        return "# Measurement from an external time source not actively synchronized with the system clock.\n\
+        return yarp::os::ConstString("\
+# Measurement from an external time source not actively synchronized with the system clock.\n\
 \n\
 Header header    # stamp is system time for which measurement was valid\n\
                  # frame_id is not used \n\
 \n\
 time   time_ref  # corresponding time from this external source\n\
-string source    # (optional) name of time source\n================================================================================\n\
+string source    # (optional) name of time source\n\
+") + yarp::os::ConstString("\n\
+================================================================================\n\
 MSG: std_msgs/Header\n\
-\n================================================================================\n\
-MSG: TickTime\n\
-";
+") + yarp::rosmsg::std_msgs::Header::typeText();
+    }
+
+    yarp::os::ConstString getTypeText() const
+    {
+        return yarp::rosmsg::sensor_msgs::TimeReference::typeText();
     }
 
     // Name the class, ROS will need this
     yarp::os::Type getType() override
     {
         yarp::os::Type typ = yarp::os::Type::byName("sensor_msgs/TimeReference", "sensor_msgs/TimeReference");
-        typ.addProperty("md5sum", yarp::os::Value("d41d8cd98f00b204e9800998ecf8427e"));
+        typ.addProperty("md5sum", yarp::os::Value("3e7a07ca48b00edd267e79dc39291953"));
         typ.addProperty("message_definition", yarp::os::Value(getTypeText()));
         return typ;
     }

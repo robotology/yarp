@@ -132,22 +132,31 @@ public:
     typedef yarp::os::idl::BottleStyle<yarp::rosmsg::geometry_msgs::WrenchStamped> bottleStyle;
 
     // Give source text for class, ROS will need this
-    yarp::os::ConstString getTypeText()
+    static yarp::os::ConstString typeText()
     {
-        return "# A wrench with reference coordinate frame and timestamp\n\
+        return yarp::os::ConstString("\
+# A wrench with reference coordinate frame and timestamp\n\
 Header header\n\
-Wrench wrench\n================================================================================\n\
+Wrench wrench\n\
+") + yarp::os::ConstString("\n\
+================================================================================\n\
 MSG: std_msgs/Header\n\
-\n================================================================================\n\
+") + yarp::rosmsg::std_msgs::Header::typeText() + yarp::os::ConstString("\n\
+================================================================================\n\
 MSG: geometry_msgs/Wrench\n\
-";
+") + yarp::rosmsg::geometry_msgs::Wrench::typeText();
+    }
+
+    yarp::os::ConstString getTypeText() const
+    {
+        return yarp::rosmsg::geometry_msgs::WrenchStamped::typeText();
     }
 
     // Name the class, ROS will need this
     yarp::os::Type getType() override
     {
         yarp::os::Type typ = yarp::os::Type::byName("geometry_msgs/WrenchStamped", "geometry_msgs/WrenchStamped");
-        typ.addProperty("md5sum", yarp::os::Value("d41d8cd98f00b204e9800998ecf8427e"));
+        typ.addProperty("md5sum", yarp::os::Value("898f3053138df2ef7a7dc367b3ff3ba1"));
         typ.addProperty("message_definition", yarp::os::Value(getTypeText()));
         return typ;
     }

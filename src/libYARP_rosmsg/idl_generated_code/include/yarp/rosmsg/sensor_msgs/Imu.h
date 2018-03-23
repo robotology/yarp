@@ -312,9 +312,10 @@ public:
     typedef yarp::os::idl::BottleStyle<yarp::rosmsg::sensor_msgs::Imu> bottleStyle;
 
     // Give source text for class, ROS will need this
-    yarp::os::ConstString getTypeText()
+    static yarp::os::ConstString typeText()
     {
-        return "# This is a message to hold data from an IMU (Inertial Measurement Unit)\n\
+        return yarp::os::ConstString("\
+# This is a message to hold data from an IMU (Inertial Measurement Unit)\n\
 #\n\
 # Accelerations should be in m/s^2 (not in g's), and rotational velocity should be in rad/sec\n\
 #\n\
@@ -337,20 +338,29 @@ geometry_msgs/Vector3 angular_velocity\n\
 float64[9] angular_velocity_covariance # Row major about x, y, z axes\n\
 \n\
 geometry_msgs/Vector3 linear_acceleration\n\
-float64[9] linear_acceleration_covariance # Row major x, y z \n================================================================================\n\
+float64[9] linear_acceleration_covariance # Row major x, y z \n\
+") + yarp::os::ConstString("\n\
+================================================================================\n\
 MSG: std_msgs/Header\n\
-\n================================================================================\n\
+") + yarp::rosmsg::std_msgs::Header::typeText() + yarp::os::ConstString("\n\
+================================================================================\n\
 MSG: geometry_msgs/Quaternion\n\
-\n================================================================================\n\
+") + yarp::rosmsg::geometry_msgs::Quaternion::typeText() + yarp::os::ConstString("\n\
+================================================================================\n\
 MSG: geometry_msgs/Vector3\n\
-";
+") + yarp::rosmsg::geometry_msgs::Vector3::typeText();
+    }
+
+    yarp::os::ConstString getTypeText() const
+    {
+        return yarp::rosmsg::sensor_msgs::Imu::typeText();
     }
 
     // Name the class, ROS will need this
     yarp::os::Type getType() override
     {
         yarp::os::Type typ = yarp::os::Type::byName("sensor_msgs/Imu", "sensor_msgs/Imu");
-        typ.addProperty("md5sum", yarp::os::Value("d41d8cd98f00b204e9800998ecf8427e"));
+        typ.addProperty("md5sum", yarp::os::Value("d0d0e531b0142e60248f47b1f457e702"));
         typ.addProperty("message_definition", yarp::os::Value(getTypeText()));
         return typ;
     }

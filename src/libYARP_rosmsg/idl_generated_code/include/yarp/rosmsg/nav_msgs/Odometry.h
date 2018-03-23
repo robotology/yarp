@@ -188,28 +188,38 @@ public:
     typedef yarp::os::idl::BottleStyle<yarp::rosmsg::nav_msgs::Odometry> bottleStyle;
 
     // Give source text for class, ROS will need this
-    yarp::os::ConstString getTypeText()
+    static yarp::os::ConstString typeText()
     {
-        return "# This represents an estimate of a position and velocity in free space.  \n\
+        return yarp::os::ConstString("\
+# This represents an estimate of a position and velocity in free space.  \n\
 # The pose in this message should be specified in the coordinate frame given by header.frame_id.\n\
 # The twist in this message should be specified in the coordinate frame given by the child_frame_id\n\
 Header header\n\
 string child_frame_id\n\
 geometry_msgs/PoseWithCovariance pose\n\
-geometry_msgs/TwistWithCovariance twist\n================================================================================\n\
+geometry_msgs/TwistWithCovariance twist\n\
+") + yarp::os::ConstString("\n\
+================================================================================\n\
 MSG: std_msgs/Header\n\
-\n================================================================================\n\
+") + yarp::rosmsg::std_msgs::Header::typeText() + yarp::os::ConstString("\n\
+================================================================================\n\
 MSG: geometry_msgs/PoseWithCovariance\n\
-\n================================================================================\n\
+") + yarp::rosmsg::geometry_msgs::PoseWithCovariance::typeText() + yarp::os::ConstString("\n\
+================================================================================\n\
 MSG: geometry_msgs/TwistWithCovariance\n\
-";
+") + yarp::rosmsg::geometry_msgs::TwistWithCovariance::typeText();
+    }
+
+    yarp::os::ConstString getTypeText() const
+    {
+        return yarp::rosmsg::nav_msgs::Odometry::typeText();
     }
 
     // Name the class, ROS will need this
     yarp::os::Type getType() override
     {
         yarp::os::Type typ = yarp::os::Type::byName("nav_msgs/Odometry", "nav_msgs/Odometry");
-        typ.addProperty("md5sum", yarp::os::Value("d41d8cd98f00b204e9800998ecf8427e"));
+        typ.addProperty("md5sum", yarp::os::Value("769bf3ff91fdc20ce3108690bafc4276"));
         typ.addProperty("message_definition", yarp::os::Value(getTypeText()));
         return typ;
     }

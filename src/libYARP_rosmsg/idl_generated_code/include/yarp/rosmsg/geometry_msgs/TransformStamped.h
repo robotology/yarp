@@ -165,9 +165,10 @@ public:
     typedef yarp::os::idl::BottleStyle<yarp::rosmsg::geometry_msgs::TransformStamped> bottleStyle;
 
     // Give source text for class, ROS will need this
-    yarp::os::ConstString getTypeText()
+    static yarp::os::ConstString typeText()
     {
-        return "# This expresses a transform from coordinate frame header.frame_id\n\
+        return yarp::os::ConstString("\
+# This expresses a transform from coordinate frame header.frame_id\n\
 # to the coordinate frame child_frame_id\n\
 #\n\
 # This message is mostly used by the \n\
@@ -176,18 +177,26 @@ public:
 \n\
 Header header\n\
 string child_frame_id # the frame id of the child frame\n\
-Transform transform\n================================================================================\n\
+Transform transform\n\
+") + yarp::os::ConstString("\n\
+================================================================================\n\
 MSG: std_msgs/Header\n\
-\n================================================================================\n\
+") + yarp::rosmsg::std_msgs::Header::typeText() + yarp::os::ConstString("\n\
+================================================================================\n\
 MSG: geometry_msgs/Transform\n\
-";
+") + yarp::rosmsg::geometry_msgs::Transform::typeText();
+    }
+
+    yarp::os::ConstString getTypeText() const
+    {
+        return yarp::rosmsg::geometry_msgs::TransformStamped::typeText();
     }
 
     // Name the class, ROS will need this
     yarp::os::Type getType() override
     {
         yarp::os::Type typ = yarp::os::Type::byName("geometry_msgs/TransformStamped", "geometry_msgs/TransformStamped");
-        typ.addProperty("md5sum", yarp::os::Value("d41d8cd98f00b204e9800998ecf8427e"));
+        typ.addProperty("md5sum", yarp::os::Value("7bac7a51f3037b9611ed936cb9593deb"));
         typ.addProperty("message_definition", yarp::os::Value(getTypeText()));
         return typ;
     }

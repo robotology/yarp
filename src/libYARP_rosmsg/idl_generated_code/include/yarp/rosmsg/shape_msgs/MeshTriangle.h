@@ -115,17 +115,24 @@ public:
     typedef yarp::os::idl::BottleStyle<yarp::rosmsg::shape_msgs::MeshTriangle> bottleStyle;
 
     // Give source text for class, ROS will need this
-    yarp::os::ConstString getTypeText()
+    static yarp::os::ConstString typeText()
     {
-        return "# Definition of a triangle's vertices\n\
-uint32[3] vertex_indices";
+        return yarp::os::ConstString("\
+# Definition of a triangle's vertices\n\
+uint32[3] vertex_indices\n\
+");
+    }
+
+    yarp::os::ConstString getTypeText() const
+    {
+        return yarp::rosmsg::shape_msgs::MeshTriangle::typeText();
     }
 
     // Name the class, ROS will need this
     yarp::os::Type getType() override
     {
         yarp::os::Type typ = yarp::os::Type::byName("shape_msgs/MeshTriangle", "shape_msgs/MeshTriangle");
-        typ.addProperty("md5sum", yarp::os::Value("d41d8cd98f00b204e9800998ecf8427e"));
+        typ.addProperty("md5sum", yarp::os::Value("23688b2e6d2de3d32fe8af104a903253"));
         typ.addProperty("message_definition", yarp::os::Value(getTypeText()));
         return typ;
     }

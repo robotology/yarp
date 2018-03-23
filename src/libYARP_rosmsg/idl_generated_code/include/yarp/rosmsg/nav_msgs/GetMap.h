@@ -85,11 +85,18 @@ public:
     typedef yarp::os::idl::BottleStyle<yarp::rosmsg::nav_msgs::GetMap> bottleStyle;
 
     // Give source text for class, ROS will need this
-    yarp::os::ConstString getTypeText()
+    static yarp::os::ConstString typeText()
     {
-        return "# Get the map as a nav_msgs/OccupancyGrid\n\
+        return yarp::os::ConstString("\
+# Get the map as a nav_msgs/OccupancyGrid\n\
 ---\n\
-nav_msgs/OccupancyGrid map";
+nav_msgs/OccupancyGrid map\n\
+");
+    }
+
+    yarp::os::ConstString getTypeText() const
+    {
+        return yarp::rosmsg::nav_msgs::GetMap::typeText();
     }
 
     // Name the class, ROS will need this

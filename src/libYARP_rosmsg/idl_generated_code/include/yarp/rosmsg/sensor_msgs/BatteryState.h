@@ -502,9 +502,10 @@ public:
     typedef yarp::os::idl::BottleStyle<yarp::rosmsg::sensor_msgs::BatteryState> bottleStyle;
 
     // Give source text for class, ROS will need this
-    yarp::os::ConstString getTypeText()
+    static yarp::os::ConstString typeText()
     {
-        return "\n\
+        return yarp::os::ConstString("\
+\n\
 # Constants are chosen to match the enums in the linux kernel\n\
 # defined in include/linux/power_supply.h as of version 3.7\n\
 # The one difference is for style reasons the constants are\n\
@@ -552,16 +553,23 @@ bool    present          # True if the battery is present\n\
 float32[] cell_voltage   # An array of individual cell voltages for each cell in the pack\n\
                          # If individual voltages unknown but number of cells known set each to NaN\n\
 string location          # The location into which the battery is inserted. (slot number or plug)\n\
-string serial_number     # The best approximation of the battery serial number\n================================================================================\n\
+string serial_number     # The best approximation of the battery serial number\n\
+") + yarp::os::ConstString("\n\
+================================================================================\n\
 MSG: std_msgs/Header\n\
-";
+") + yarp::rosmsg::std_msgs::Header::typeText();
+    }
+
+    yarp::os::ConstString getTypeText() const
+    {
+        return yarp::rosmsg::sensor_msgs::BatteryState::typeText();
     }
 
     // Name the class, ROS will need this
     yarp::os::Type getType() override
     {
         yarp::os::Type typ = yarp::os::Type::byName("sensor_msgs/BatteryState", "sensor_msgs/BatteryState");
-        typ.addProperty("md5sum", yarp::os::Value("d41d8cd98f00b204e9800998ecf8427e"));
+        typ.addProperty("md5sum", yarp::os::Value("417c393bc3ef8e9b2f3754f4962fe60e"));
         typ.addProperty("message_definition", yarp::os::Value(getTypeText()));
         return typ;
     }

@@ -139,9 +139,10 @@ public:
     typedef yarp::os::idl::BottleStyle<yarp::rosmsg::actionlib_msgs::GoalID> bottleStyle;
 
     // Give source text for class, ROS will need this
-    yarp::os::ConstString getTypeText()
+    static yarp::os::ConstString typeText()
     {
-        return "# The stamp should store the time at which this goal was requested.\n\
+        return yarp::os::ConstString("\
+# The stamp should store the time at which this goal was requested.\n\
 # It is used by an action server when it tries to preempt all\n\
 # goals that were requested before a certain time\n\
 time stamp\n\
@@ -150,16 +151,20 @@ time stamp\n\
 # result message with specific goal requests. The id\n\
 # specified must be unique.\n\
 string id\n\
-\n================================================================================\n\
-MSG: TickTime\n\
-";
+\n\
+");
+    }
+
+    yarp::os::ConstString getTypeText() const
+    {
+        return yarp::rosmsg::actionlib_msgs::GoalID::typeText();
     }
 
     // Name the class, ROS will need this
     yarp::os::Type getType() override
     {
         yarp::os::Type typ = yarp::os::Type::byName("actionlib_msgs/GoalID", "actionlib_msgs/GoalID");
-        typ.addProperty("md5sum", yarp::os::Value("d41d8cd98f00b204e9800998ecf8427e"));
+        typ.addProperty("md5sum", yarp::os::Value("8d71100205f1bc7f948d7f53442ef35e"));
         typ.addProperty("message_definition", yarp::os::Value(getTypeText()));
         return typ;
     }

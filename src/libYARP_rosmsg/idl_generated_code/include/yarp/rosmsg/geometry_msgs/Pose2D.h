@@ -135,20 +135,26 @@ public:
     typedef yarp::os::idl::BottleStyle<yarp::rosmsg::geometry_msgs::Pose2D> bottleStyle;
 
     // Give source text for class, ROS will need this
-    yarp::os::ConstString getTypeText()
+    static yarp::os::ConstString typeText()
     {
-        return "# This expresses a position and orientation on a 2D manifold.\n\
+        return yarp::os::ConstString("\
+# This expresses a position and orientation on a 2D manifold.\n\
 \n\
 float64 x\n\
 float64 y\n\
-float64 theta";
+float64 theta");
+    }
+
+    yarp::os::ConstString getTypeText() const
+    {
+        return yarp::rosmsg::geometry_msgs::Pose2D::typeText();
     }
 
     // Name the class, ROS will need this
     yarp::os::Type getType() override
     {
         yarp::os::Type typ = yarp::os::Type::byName("geometry_msgs/Pose2D", "geometry_msgs/Pose2D");
-        typ.addProperty("md5sum", yarp::os::Value("d41d8cd98f00b204e9800998ecf8427e"));
+        typ.addProperty("md5sum", yarp::os::Value("938fa65709584ad8e77d238529be13b8"));
         typ.addProperty("message_definition", yarp::os::Value(getTypeText()));
         return typ;
     }

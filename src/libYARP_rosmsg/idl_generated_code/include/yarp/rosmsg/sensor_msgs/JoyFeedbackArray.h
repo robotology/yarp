@@ -122,19 +122,26 @@ public:
     typedef yarp::os::idl::BottleStyle<yarp::rosmsg::sensor_msgs::JoyFeedbackArray> bottleStyle;
 
     // Give source text for class, ROS will need this
-    yarp::os::ConstString getTypeText()
+    static yarp::os::ConstString typeText()
     {
-        return "# This message publishes values for multiple feedback at once. \n\
-JoyFeedback[] array\n================================================================================\n\
+        return yarp::os::ConstString("\
+# This message publishes values for multiple feedback at once. \n\
+JoyFeedback[] array") + yarp::os::ConstString("\n\
+================================================================================\n\
 MSG: sensor_msgs/JoyFeedback\n\
-";
+") + yarp::rosmsg::sensor_msgs::JoyFeedback::typeText();
+    }
+
+    yarp::os::ConstString getTypeText() const
+    {
+        return yarp::rosmsg::sensor_msgs::JoyFeedbackArray::typeText();
     }
 
     // Name the class, ROS will need this
     yarp::os::Type getType() override
     {
         yarp::os::Type typ = yarp::os::Type::byName("sensor_msgs/JoyFeedbackArray", "sensor_msgs/JoyFeedbackArray");
-        typ.addProperty("md5sum", yarp::os::Value("d41d8cd98f00b204e9800998ecf8427e"));
+        typ.addProperty("md5sum", yarp::os::Value("971ea6a41c587e25837655fdb4940e7e"));
         typ.addProperty("message_definition", yarp::os::Value(getTypeText()));
         return typ;
     }

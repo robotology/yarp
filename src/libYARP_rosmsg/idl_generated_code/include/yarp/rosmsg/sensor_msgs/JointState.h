@@ -279,9 +279,10 @@ public:
     typedef yarp::os::idl::BottleStyle<yarp::rosmsg::sensor_msgs::JointState> bottleStyle;
 
     // Give source text for class, ROS will need this
-    yarp::os::ConstString getTypeText()
+    static yarp::os::ConstString typeText()
     {
-        return "# This is a message that holds data to describe the state of a set of torque controlled joints. \n\
+        return yarp::os::ConstString("\
+# This is a message that holds data to describe the state of a set of torque controlled joints. \n\
 #\n\
 # The state of each joint (revolute or prismatic) is defined by:\n\
 #  * the position of the joint (rad or m),\n\
@@ -306,16 +307,23 @@ Header header\n\
 string[] name\n\
 float64[] position\n\
 float64[] velocity\n\
-float64[] effort\n================================================================================\n\
+float64[] effort\n\
+") + yarp::os::ConstString("\n\
+================================================================================\n\
 MSG: std_msgs/Header\n\
-";
+") + yarp::rosmsg::std_msgs::Header::typeText();
+    }
+
+    yarp::os::ConstString getTypeText() const
+    {
+        return yarp::rosmsg::sensor_msgs::JointState::typeText();
     }
 
     // Name the class, ROS will need this
     yarp::os::Type getType() override
     {
         yarp::os::Type typ = yarp::os::Type::byName("sensor_msgs/JointState", "sensor_msgs/JointState");
-        typ.addProperty("md5sum", yarp::os::Value("d41d8cd98f00b204e9800998ecf8427e"));
+        typ.addProperty("md5sum", yarp::os::Value("c6896bb1d34b808c898e9e47d66ed742"));
         typ.addProperty("message_definition", yarp::os::Value(getTypeText()));
         return typ;
     }

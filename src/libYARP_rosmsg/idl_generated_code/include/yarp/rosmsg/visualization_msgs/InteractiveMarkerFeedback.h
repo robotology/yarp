@@ -351,9 +351,10 @@ public:
     typedef yarp::os::idl::BottleStyle<yarp::rosmsg::visualization_msgs::InteractiveMarkerFeedback> bottleStyle;
 
     // Give source text for class, ROS will need this
-    yarp::os::ConstString getTypeText()
+    static yarp::os::ConstString typeText()
     {
-        return "# Time/frame info.\n\
+        return yarp::os::ConstString("\
+# Time/frame info.\n\
 Header header\n\
 \n\
 # Identifying string. Must be unique in the topic namespace.\n\
@@ -394,20 +395,29 @@ uint32 menu_entry_id\n\
 # control.  If it does, mouse_point_valid will be true.  mouse_point\n\
 # will be relative to the frame listed in the header.\n\
 geometry_msgs/Point mouse_point\n\
-bool mouse_point_valid\n================================================================================\n\
+bool mouse_point_valid\n\
+") + yarp::os::ConstString("\n\
+================================================================================\n\
 MSG: std_msgs/Header\n\
-\n================================================================================\n\
+") + yarp::rosmsg::std_msgs::Header::typeText() + yarp::os::ConstString("\n\
+================================================================================\n\
 MSG: geometry_msgs/Pose\n\
-\n================================================================================\n\
+") + yarp::rosmsg::geometry_msgs::Pose::typeText() + yarp::os::ConstString("\n\
+================================================================================\n\
 MSG: geometry_msgs/Point\n\
-";
+") + yarp::rosmsg::geometry_msgs::Point::typeText();
+    }
+
+    yarp::os::ConstString getTypeText() const
+    {
+        return yarp::rosmsg::visualization_msgs::InteractiveMarkerFeedback::typeText();
     }
 
     // Name the class, ROS will need this
     yarp::os::Type getType() override
     {
         yarp::os::Type typ = yarp::os::Type::byName("visualization_msgs/InteractiveMarkerFeedback", "visualization_msgs/InteractiveMarkerFeedback");
-        typ.addProperty("md5sum", yarp::os::Value("d41d8cd98f00b204e9800998ecf8427e"));
+        typ.addProperty("md5sum", yarp::os::Value("b7e4f603b24bd370bd5a8304ad699285"));
         typ.addProperty("message_definition", yarp::os::Value(getTypeText()));
         return typ;
     }

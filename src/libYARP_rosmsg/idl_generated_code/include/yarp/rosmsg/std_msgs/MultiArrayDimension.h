@@ -141,18 +141,24 @@ public:
     typedef yarp::os::idl::BottleStyle<yarp::rosmsg::std_msgs::MultiArrayDimension> bottleStyle;
 
     // Give source text for class, ROS will need this
-    yarp::os::ConstString getTypeText()
+    static yarp::os::ConstString typeText()
     {
-        return "string label   # label of given dimension\n\
+        return yarp::os::ConstString("\
+string label   # label of given dimension\n\
 uint32 size    # size of given dimension (in type units)\n\
-uint32 stride  # stride of given dimension";
+uint32 stride  # stride of given dimension");
+    }
+
+    yarp::os::ConstString getTypeText() const
+    {
+        return yarp::rosmsg::std_msgs::MultiArrayDimension::typeText();
     }
 
     // Name the class, ROS will need this
     yarp::os::Type getType() override
     {
         yarp::os::Type typ = yarp::os::Type::byName("std_msgs/MultiArrayDimension", "std_msgs/MultiArrayDimension");
-        typ.addProperty("md5sum", yarp::os::Value("d41d8cd98f00b204e9800998ecf8427e"));
+        typ.addProperty("md5sum", yarp::os::Value("4cd0c83a8683deae40ecdac60e53bfa8"));
         typ.addProperty("message_definition", yarp::os::Value(getTypeText()));
         return typ;
     }

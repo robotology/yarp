@@ -163,9 +163,10 @@ public:
     typedef yarp::os::idl::BottleStyle<yarp::rosmsg::sensor_msgs::NavSatStatus> bottleStyle;
 
     // Give source text for class, ROS will need this
-    yarp::os::ConstString getTypeText()
+    static yarp::os::ConstString typeText()
     {
-        return "# Navigation Satellite fix status for any Global Navigation Satellite System\n\
+        return yarp::os::ConstString("\
+# Navigation Satellite fix status for any Global Navigation Satellite System\n\
 \n\
 # Whether to output an augmented fix is determined by both the fix\n\
 # type and the last time differential corrections were received.  A\n\
@@ -186,14 +187,20 @@ uint16 SERVICE_GLONASS = 2\n\
 uint16 SERVICE_COMPASS = 4      # includes BeiDou.\n\
 uint16 SERVICE_GALILEO = 8\n\
 \n\
-uint16 service";
+uint16 service\n\
+");
+    }
+
+    yarp::os::ConstString getTypeText() const
+    {
+        return yarp::rosmsg::sensor_msgs::NavSatStatus::typeText();
     }
 
     // Name the class, ROS will need this
     yarp::os::Type getType() override
     {
         yarp::os::Type typ = yarp::os::Type::byName("sensor_msgs/NavSatStatus", "sensor_msgs/NavSatStatus");
-        typ.addProperty("md5sum", yarp::os::Value("d41d8cd98f00b204e9800998ecf8427e"));
+        typ.addProperty("md5sum", yarp::os::Value("331cdbddfa4bc96ffc3b9ad98900a54c"));
         typ.addProperty("message_definition", yarp::os::Value(getTypeText()));
         return typ;
     }
