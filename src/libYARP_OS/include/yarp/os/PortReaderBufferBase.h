@@ -74,8 +74,8 @@ public:
     void release(void* key);
 
 #ifndef YARP_NO_DEPRECATED // Since YARP 2.3.72
-    void YARP_DEPRECATED setAllowReuse(bool flag = true);
-    void YARP_DEPRECATED release(yarp::os::PortReader* completed);
+    YARP_DEPRECATED void setAllowReuse(bool flag = true);
+    YARP_DEPRECATED void release(yarp::os::PortReader* completed);
 #endif // YARP_NO_DEPRECATED
 
 #ifndef DOXYGEN_SHOULD_SKIP_THIS
