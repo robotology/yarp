@@ -731,20 +731,17 @@ static void output_type(FILE *out,
                         const RosField& field,
                         std::map<std::string, int>& processed)
 {
+    fprintf(out, "yarp::os::ConstString(\"\\\n");
     const std::string& name = getDoubleName(field.rosType);
     processed[name] = 1;
     const std::string& source = field.source;
-    bool need_newline = false;
-    for (size_t i=0; i<source.length(); i++) {
-        char ch = source[i];
-        if (ch == '\r') continue;
-        if (need_newline) {
-            fprintf(out, "\\n");
-            fprintf(out, "\\\n");
-            need_newline = false;
+    for (char ch : source) {
+        if (ch == '\r') {
+            continue;
         }
         if (ch == '\n') {
-            need_newline = true;
+            fprintf(out, "\\n");
+            fprintf(out, "\\\n");
             continue;
         }
         if (ch == '\\') {
@@ -757,6 +754,8 @@ static void output_type(FILE *out,
         }
         fprintf(out, "%c", ch);
     }
+    fprintf(out, "\")");
+
     for (const auto& sub_field : field.subRosType) {
         if (!sub_field.isStruct) {
             continue;
@@ -765,10 +764,18 @@ static void output_type(FILE *out,
         if (processed.find(sub_name) != processed.end()) {
             continue;
         }
-        fprintf(out, "\\n================================================================================\\n\\\n");
-        fprintf(out, "MSG: %s\\n\\\n", (sub_name == "Header"?"std_msgs/Header":sub_name.c_str()));
-        output_type(out, sub_field, processed);
+        if (sub_name == "TickTime" || sub_name == "TickDuration") {
+            continue;
+        }
+        processed[sub_name] = 1;
+        string fullClassName = "yarp::rosmsg::" + getDoubleName(sub_field.rosType, "::");
+        fprintf(out, " + yarp::os::ConstString(\"\\n\\\n");
+        fprintf(out, "================================================================================\\n\\\n");
+        fprintf(out, "MSG: %s\\n\\\n", (sub_name == "Header" ? "std_msgs/Header" : sub_name.c_str()));
+        fprintf(out, "\")");
+        fprintf(out, " + %s::typeText()", fullClassName.c_str());
     }
+
 }
 
 bool RosTypeCodeGenYarp::endType(const std::string& tname,
@@ -782,13 +789,20 @@ bool RosTypeCodeGenYarp::endType(const std::string& tname,
     fprintf(out, "    typedef yarp::os::idl::BareStyle<%s> rosStyle;\n", fullClassName.c_str());
     fprintf(out, "    typedef yarp::os::idl::BottleStyle<%s> bottleStyle;\n\n", fullClassName.c_str());
 
+    // See http://wiki.ros.org/roslib/gentools for details about the format
     fprintf(out, "    // Give source text for class, ROS will need this\n");
-    fprintf(out, "    yarp::os::ConstString getTypeText()\n");
+    fprintf(out, "    static yarp::os::ConstString typeText()\n");
     fprintf(out, "    {\n");
-    fprintf(out, "        return \"");
+    fprintf(out, "        return ");
     std::map<std::string, int> processed;
     output_type(out, field, processed);
-    fprintf(out, "\";\n");
+    fprintf(out, ";\n");
+    fprintf(out, "    }\n");
+    fprintf(out, "\n");
+
+    fprintf(out, "    yarp::os::ConstString getTypeText() const\n");
+    fprintf(out, "    {\n");
+    fprintf(out, "        return %s::typeText();\n", fullClassName.c_str());
     fprintf(out, "    }\n");
     fprintf(out, "\n");
 
