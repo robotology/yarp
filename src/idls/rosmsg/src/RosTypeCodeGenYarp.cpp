@@ -81,6 +81,20 @@ static std::string getDoubleName(const std::string& tname, const std::string& se
     return part_name;
 }
 
+static void writeLicenseHeader(FILE* out)
+{
+    fprintf(out, "/*\n");
+    fprintf(out, " * Copyright (C) 2006-2018 Istituto Italiano di Tecnologia (IIT)\n");
+    fprintf(out, " * All rights reserved.\n");
+    fprintf(out, " *\n");
+    fprintf(out, " * This software may be modified and distributed under the terms of the\n");
+    fprintf(out, " * BSD-3-Clause license. See the accompanying LICENSE file for details.\n");
+    fprintf(out, " */\n");
+    fprintf(out, "\n");
+    fprintf(out, "// This is an automatically generated file.\n");
+    fprintf(out, "\n");
+}
+
 bool RosTypeCodeGenYarp::beginType(const std::string& tname,
                                    RosTypeCodeGenState& state)
 {
@@ -112,7 +126,7 @@ bool RosTypeCodeGenYarp::beginType(const std::string& tname,
         printf("Generating %s\n", deprecated_fname1.c_str());
     }
 
-    fprintf(out, "// This is an automatically generated file.\n\n");
+    writeLicenseHeader(out);
     fprintf(out, "#ifndef YARP_ROSMSG_deprecated1_%s_h\n", safename.c_str());
     fprintf(out, "#define YARP_ROSMSG_deprecated1_%s_h\n\n", safename.c_str());
     fprintf(out, "#include <yarp/conf/system.h>\n\n");
@@ -142,7 +156,7 @@ bool RosTypeCodeGenYarp::beginType(const std::string& tname,
             printf("Generating %s\n", deprecated_fname2.c_str());
         }
 
-        fprintf(out, "// This is an automatically generated file.\n\n");
+        writeLicenseHeader(out);
         fprintf(out, "#ifndef YARP_ROSMSG_deprecated2_%s_h\n", safename.c_str());
         fprintf(out, "#define YARP_ROSMSG_deprecated2_%s_h\n\n", safename.c_str());
         fprintf(out, "#include <yarp/conf/system.h>\n\n");
@@ -171,7 +185,7 @@ bool RosTypeCodeGenYarp::beginType(const std::string& tname,
         printf("Generating %s\n", hdr_name.c_str());
     }
 
-    fprintf(out, "// This is an automatically generated file.\n\n");
+    writeLicenseHeader(out);
     if (className == "TickTime" || className == "TickDuration") {
         fprintf(out, "// Generated from the following \"%s\" native type definition:\n", ((className == "TickTime") ? "time" : "duration"));
     } else {
