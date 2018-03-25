@@ -343,6 +343,7 @@ private:
     bool openAndAttachSubDevice(yarp::os::Property& prop);
 
     bool ownDevices;
+    void calculateMaxNumOfJointsInDevices();
 #endif  //DOXYGEN_SHOULD_SKIP_THIS
 
 public:

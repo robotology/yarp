@@ -579,7 +579,7 @@ bool ControlBoardWrapper::openDeferredAttach(Property& prop)
         tmpDevice->setVerbose(_verb);
 
         int axes=top-base+1;
-        if (!tmpDevice->configure(base, top, axes, nets->get(k).asString().c_str(), this))
+        if (!tmpDevice->configure(wBase, wTop, base, top, axes, nets->get(k).asString().c_str(), this))
         {
             yError() <<"configure of subdevice ret false";
             return false;
@@ -607,10 +607,11 @@ bool ControlBoardWrapper::openDeferredAttach(Property& prop)
             return false;
         }
 
-        for(int j=wBase;j<=wTop;j++)
+        for(int j=wBase, jInDev=base;j<=wTop;j++, jInDev++)
         {
             device.lut[j].deviceEntry=k;
             device.lut[j].offset=j-wBase;
+            device.lut[j].jointIndexInDev=jInDev;
         }
 
         totalJ+=axes;
@@ -674,11 +675,13 @@ bool ControlBoardWrapper::openAndAttachSubDevice(Property& prop)
     base = 0;
     top  = controlledJoints-1;
 
+    int wbase = base;
+    int wtop = top;
     SubDevice *tmpDevice=device.getSubdevice(0);
     tmpDevice->setVerbose(_verb);
 
     std::string subDevName ((partName + "_" + subdevice.c_str()));
-    if (!tmpDevice->configure(base, top, controlledJoints, subDevName, this) )
+    if (!tmpDevice->configure(wbase, wtop, base, top, controlledJoints, subDevName, this) )
     {
         yError() <<"configure of subdevice ret false";
         return false;
@@ -697,7 +700,20 @@ bool ControlBoardWrapper::openAndAttachSubDevice(Property& prop)
     // initialization.
     RPC_parser.initialize();
     updateAxisName();
+    calculateMaxNumOfJointsInDevices();
     return true;
+}
+
+void ControlBoardWrapper::calculateMaxNumOfJointsInDevices()
+{
+    device.maxNumOfJointsInDevices = 0;
+    
+    for(unsigned int d=0; d<device.subdevices.size(); d++)
+    {
+        yarp::dev::impl::SubDevice *p = device.getSubdevice(d);
+        if(p->totalAxis > device.maxNumOfJointsInDevices)
+            device.maxNumOfJointsInDevices = p->totalAxis;
+    }
 }
 
 bool ControlBoardWrapper::updateAxisName()
@@ -825,6 +841,7 @@ bool ControlBoardWrapper::attachAll(const PolyDriverList &polylist)
     RPC_parser.initialize();
 
     updateAxisName();
+    calculateMaxNumOfJointsInDevices();
     RateThread::setRate(period);
     RateThread::start();
 
