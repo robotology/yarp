@@ -537,7 +537,7 @@ public:
     bool tryLockCallback()
     {
         if (!mutex) return true;
-        return mutex->tryLock();
+        return mutex->try_lock();
     }
 
     void unlockCallback()

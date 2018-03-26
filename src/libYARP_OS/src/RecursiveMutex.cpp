@@ -7,41 +7,44 @@
  */
 
 #include <yarp/os/RecursiveMutex.h>
-#include <yarp/os/impl/RecursiveLockImpl.h>
-#include <yarp/os/LogStream.h>
+#include <mutex>
 
 using yarp::os::RecursiveMutex;
-using yarp::os::impl::RecursiveLockImpl;
 
-RecursiveMutex::RecursiveMutex()
+class RecursiveMutex::Private
 {
-    implementation = new RecursiveLockImpl();
-    yAssert(implementation != nullptr);
+public:
+    std::recursive_mutex mutex;
+};
+
+RecursiveMutex::RecursiveMutex() :
+        mPriv(new Private)
+{
 }
 
 RecursiveMutex::~RecursiveMutex()
 {
-    RecursiveLockImpl* lock = static_cast<RecursiveLockImpl*>(implementation);
-    if (lock) {
-        delete lock;
-        implementation = nullptr;
-    }
+    delete mPriv;
 }
 
 void RecursiveMutex::lock()
 {
-    RecursiveLockImpl* lock = static_cast<RecursiveLockImpl*>(implementation);
-    lock->lock();
+    mPriv->mutex.lock();
 }
 
-bool RecursiveMutex::tryLock()
+bool RecursiveMutex::try_lock()
 {
-    RecursiveLockImpl* lock = static_cast<RecursiveLockImpl*>(implementation);
-    return lock->tryLock();
+    return mPriv->mutex.try_lock();
 }
 
 void RecursiveMutex::unlock()
 {
-    RecursiveLockImpl* lock = static_cast<RecursiveLockImpl*>(implementation);
-    lock->unlock();
+    mPriv->mutex.unlock();
 }
+
+#ifndef YARP_NO_DEPRECATED // Since YARP 3.0.0
+bool RecursiveMutex::tryLock()
+{
+    return mPriv->mutex.try_lock();
+}
+#endif // YARP_NO_DEPRECATED
