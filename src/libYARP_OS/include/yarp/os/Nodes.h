@@ -12,13 +12,11 @@
 #include <yarp/os/Contactables.h>
 
 namespace yarp {
-    namespace os {
-        class Node;
-        class Nodes;
-    }
-}
+namespace os {
 
-class YARP_OS_API yarp::os::Nodes : public Contactables
+class Node;
+
+class YARP_OS_API Nodes : public yarp::os::Contactables
 {
 public:
     Nodes();
@@ -47,9 +45,16 @@ public:
     void removeExternalNode(const ConstString& name);
     ConstString getActiveName();
     bool requireActiveName();
+
+#ifndef DOXYGEN_SHOULD_SKIP_THIS
 private:
-    class Helper;
-    Helper * const mPriv;
+    class Private;
+    Private* mPriv;
+#endif // DOXYGEN_SHOULD_SKIP_THIS
 };
+
+} // namespace yarp
+} // namespace os
+
 
 #endif // YARP_OS_NODES_H
