@@ -159,7 +159,7 @@ RGBDSensorWrapper::RGBDSensorWrapper() :
     RateThread(DEFAULT_THREAD_PERIOD),
     rosNode(nullptr),
     nodeSeq(0),
-    rate(DEFAULT_THREAD_PERIOD),
+    period(DEFAULT_THREAD_PERIOD),
     sensor_p(nullptr),
     sensorStatus(IRGBDSensor::RGBD_SENSOR_NOT_READY),
     verbose(4),
@@ -235,7 +235,7 @@ bool RGBDSensorWrapper::fromConfig(yarp::os::Searchable &config)
             yInfo() << "RGBDSensorWrapper: using default 'period' parameter of " << DEFAULT_THREAD_PERIOD << "ms";
     }
     else
-        rate = config.find("period").asInt();
+        period = config.find("period").asInt();
 
     Bottle &rosGroup = config.findGroup("ROS");
     if(rosGroup.isNull())
@@ -531,7 +531,7 @@ bool RGBDSensorWrapper::attachAll(const PolyDriverList &device2attach)
     if(!attach(sensor_p))
         return false;
 
-    RateThread::setRate(rate);
+    RateThread::setRate(period);
     return RateThread::start();
 }
 
@@ -561,7 +561,7 @@ bool RGBDSensorWrapper::attach(yarp::dev::IRGBDSensor *s)
         yError() << "RGBD wrapper: error configuring interfaces for parsers";
         return false;
     }
-    RateThread::setRate(rate);
+    RateThread::setRate(period);
     return RateThread::start();
 }
 
@@ -581,7 +581,7 @@ bool RGBDSensorWrapper::attach(PolyDriver* poly)
         yError() << "RGBD wrapper: error configuring interfaces for parsers";
         return false;
     }
-    RateThread::setRate(rate);
+    RateThread::setRate(period);
     return RateThread::start();
 }
 

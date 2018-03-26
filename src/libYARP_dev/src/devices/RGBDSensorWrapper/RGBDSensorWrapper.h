@@ -174,7 +174,7 @@ private:
 
     // Image data specs
     // int hDim, vDim;
-    UInt                           rate;
+    UInt                           period;
     std::string                    sensorId;
     yarp::dev::IRGBDSensor*        sensor_p;
     IRGBDSensor::RGBDSensor_status sensorStatus;
