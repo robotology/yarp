@@ -17,22 +17,31 @@ namespace yarp {
     }
 }
 
-enum PidUnitsEnum
+enum class PidFeedbackUnitsEnum
 {
-    MACHINE = 0,
+    RAW_MACHINE_UNITS = 0,
     METRIC = 1,
-    UNKNOWN = 2
+};
+
+enum class PidOutputUnitsEnum
+{
+    RAW_MACHINE_UNITS = 0,
+    DUTYCYCLE_PWM_PERCENT = 1,
+    POSITION_METRIC = 2,
+    VELOCITY_METRIC = 3,
+    TORQUE_METRIC = 4,
+    CURRENT_METRIC = 5
 };
 
 class YARP_dev_API yarp::dev::ImplementPidControl : public IPidControl
 {
     struct PidUnits
     {
-        PidUnitsEnum fbk_units;
-        PidUnitsEnum out_units;
+        PidFeedbackUnitsEnum fbk_units;
+        PidOutputUnitsEnum out_units;
         PidUnits() {
-            fbk_units = MACHINE;
-            out_units = MACHINE;
+            fbk_units = PidFeedbackUnitsEnum::RAW_MACHINE_UNITS;
+            out_units = PidOutputUnitsEnum::RAW_MACHINE_UNITS;
         }
     };
 
@@ -60,7 +69,7 @@ protected:
     */
     bool uninitialize();
 
-    bool setConversion(const PidControlTypeEnum& pidtype, const PidUnitsEnum fbk_conv_units, const PidUnitsEnum out_conv_units);
+    bool setConversion(const PidControlTypeEnum& pidtype, const PidFeedbackUnitsEnum fbk_conv_units, const PidOutputUnitsEnum out_conv_units);
 
 public:
     /* Constructor.
@@ -103,6 +112,8 @@ private:
 
     void convert_pid_to_user    (const yarp::dev::PidControlTypeEnum& pidtype, const Pid &in_raw, int j_raw, Pid &out_usr, int &k_usr);
     void convert_pid_to_machine (const yarp::dev::PidControlTypeEnum& pidtype, const Pid &in_usr, int j_usr, Pid &out_raw, int &k_raw);
+
+    void get_output_conversion_units(const yarp::dev::PidControlTypeEnum& pidtype, int j, double*& output_conversion_units);
 };
 
 #endif // YARP_DEV_IMPLEMENTPIDCONTROL_H

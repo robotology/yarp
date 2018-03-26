@@ -573,8 +573,8 @@ bool FakeMotionControl::open(yarp::os::Searchable &config)
     ImplementMotorEncoders::initialize(_njoints, _axisMap, _angleToEncoder, nullptr);
     ImplementPositionControl2::initialize(_njoints, _axisMap, _angleToEncoder, nullptr);
     ImplementPidControl::initialize(_njoints, _axisMap, _angleToEncoder, nullptr, _newtonsToSensor, _ampsToSensor, _dutycycleToPWM);
-    ImplementPidControl::setConversion(PidControlTypeEnum::VOCAB_PIDTYPE_POSITION, PidUnitsEnum::METRIC, PidUnitsEnum::METRIC);
-    ImplementPidControl::setConversion(PidControlTypeEnum::VOCAB_PIDTYPE_TORQUE, PidUnitsEnum::METRIC, PidUnitsEnum::METRIC);
+    ImplementPidControl::setConversion(PidControlTypeEnum::VOCAB_PIDTYPE_POSITION, PidFeedbackUnitsEnum::METRIC, PidOutputUnitsEnum::DUTYCYCLE_PWM_PERCENT);
+    ImplementPidControl::setConversion(PidControlTypeEnum::VOCAB_PIDTYPE_TORQUE, PidFeedbackUnitsEnum::METRIC, PidOutputUnitsEnum::DUTYCYCLE_PWM_PERCENT);
     ImplementControlMode2::initialize(_njoints, _axisMap);
     ImplementVelocityControl2::initialize(_njoints, _axisMap, _angleToEncoder, nullptr);
     ImplementControlLimits2::initialize(_njoints, _axisMap, _angleToEncoder, nullptr);

@@ -44,7 +44,8 @@ class ControlBoardHelper
 {
 public:
     ControlBoardHelper(int n, const int *aMap, const double *angToEncs, const double *zs, const double *newtons, const double *amps = NULL, const double *volts = NULL, const double *dutycycles = NULL) :
-        zeros(0),
+        position_zeros(0),
+        helper_ones(0),
         signs(0),
         axisMap(0),
         invAxisMap(0),
@@ -61,10 +62,12 @@ public:
 
         memcpy(axisMap, aMap, sizeof(int)*nj);
 
+        std::fill_n(helper_ones, nj, 1.0);
+
         if (zs!=0)
-            memcpy(zeros, zs, sizeof(double)*nj);
+            memcpy(position_zeros, zs, sizeof(double)*nj);
         else
-            std::fill_n(zeros, nj, 0.0);
+            std::fill_n(position_zeros, nj, 0.0);
 
         if (angToEncs!=0)
             memcpy(angleToEncoders, angToEncs, sizeof(double)*nj);
@@ -120,10 +123,11 @@ public:
         if (nj<=0)
             return false;
 
-        if (zeros!=0)
+        if (position_zeros !=0)
             dealloc();
 
-        zeros=new double [nj];
+        position_zeros =new double [nj];
+        helper_ones = new double[nj];
         signs=new double [nj];
         axisMap=new int [nj];
         invAxisMap=new int [nj];
@@ -133,7 +137,8 @@ public:
         voltToSensors=new double [nj];
         dutycycleToPWMs = new double[nj];
 
-        yAssert( zeros != 0);
+        yAssert(position_zeros != 0);
+        yAssert( helper_ones != 0);
         yAssert( signs != 0);
         yAssert( axisMap != 0);
         yAssert( invAxisMap != 0);
@@ -148,7 +153,8 @@ public:
 
     bool dealloc()
     {
-        checkAndDestroy<double> (zeros);
+        checkAndDestroy<double> (position_zeros);
+        checkAndDestroy<double> (helper_ones);
         checkAndDestroy<double> (signs);
         checkAndDestroy<int> (axisMap);
         checkAndDestroy<int> (invAxisMap);
@@ -205,27 +211,27 @@ public:
 
     inline void posA2E(double ang, int j, double &enc, int &k)
     {
-        enc=(ang+zeros[j])*angleToEncoders[j];
+        enc=(ang+ position_zeros[j])*angleToEncoders[j];
         k=toHw(j);
     }
 
     inline double posA2E(double ang, int j)
     {
-        return (ang+zeros[j])*angleToEncoders[j];
+        return (ang+ position_zeros[j])*angleToEncoders[j];
     }
 
     inline void posE2A(double enc, int j, double &ang, int &k)
     {
         k=toUser(j);
 
-        ang=(enc/angleToEncoders[k])-zeros[k];
+        ang=(enc/angleToEncoders[k])- position_zeros[k];
     }
 
     inline double posE2A(double enc, int j)
     {
         int k=toUser(j);
 
-        return (enc/angleToEncoders[k])-zeros[k];
+        return (enc/angleToEncoders[k])- position_zeros[k];
     }
 
     inline void impN2S(double newtons, int j, double &sens, int &k)
@@ -651,6 +657,37 @@ public:
         int j = toUser(k_raw);
         return (pwm_raw / dutycycleToPWMs[j]);
     }
+
+    // *******************************************//
+    inline double raw2user(double value_raw, int k_raw, const double* conv_user2raw)
+    {
+        int j = toUser(k_raw);
+        return (value_raw / conv_user2raw[j]);
+    }
+
+    inline double user2raw(double value_user, int j, const double* conv_user2raw)
+    {
+        return value_user * conv_user2raw[j];
+    }
+
+    inline void user2raw(double value_user, int j, double &value_raw, int &k, const double* conv_user2raw)
+    {
+        value_raw = value_user * conv_user2raw[j];
+        k = toHw(j);
+    }
+
+    inline void raw2user(double value_raw, int k_raw, double &value_user, int &j, const double* conv_user2raw)
+    {
+        j = toUser(k_raw);
+        value_user = (value_raw / conv_user2raw[j]);
+    }
+
+    inline double raw2user(double value_raw, int k_raw)
+    {
+        int j = toUser(k_raw);
+        return (value_raw / dutycycleToPWMs[j]);
+    }
+
     // *******************************************//
 
     inline int axes()
@@ -658,7 +695,8 @@ public:
 
     int nj;
 
-    double *zeros;
+    double *position_zeros;
+    double *helper_ones;
     double *signs;
     int *axisMap;
     int *invAxisMap;

@@ -56,178 +56,114 @@ public:
 
 void ImplementPidControl::convert_pid_to_user(const yarp::dev::PidControlTypeEnum& pidtype, const Pid &in_raw, int j_raw,  Pid &out_usr, int &k_usr)
 {
-    k_usr = castToMapper(helper)->toUser(j_raw);
+    double* output_conversion_units = 0;
+    ControlBoardHelper* cb_helper = castToMapper(helper);
+    k_usr = cb_helper->toUser(j_raw);
     out_usr = in_raw;
 
     switch (pidtype)
     {
     case PidControlTypeEnum::VOCAB_PIDTYPE_POSITION:
-        if (mPriv->pid_units[VOCAB_PIDTYPE_POSITION][k_usr].fbk_units == PidUnitsEnum::METRIC)
+        if (mPriv->pid_units[VOCAB_PIDTYPE_POSITION][k_usr].fbk_units == PidFeedbackUnitsEnum::METRIC)
         {
-            out_usr.kp = castToMapper(helper)->posE2A(out_usr.kp, j_raw);
-            out_usr.ki = castToMapper(helper)->posE2A(out_usr.ki, j_raw);
-            out_usr.kd = castToMapper(helper)->posE2A(out_usr.kd, j_raw);
-        }
-        if (mPriv->pid_units[VOCAB_PIDTYPE_POSITION][k_usr].out_units == PidUnitsEnum::METRIC)
-        {
-            out_usr.kp = castToMapper(helper)->PWM2dutycycle(out_usr.kp, j_raw);
-            out_usr.ki = castToMapper(helper)->PWM2dutycycle(out_usr.ki, j_raw);
-            out_usr.kd = castToMapper(helper)->PWM2dutycycle(out_usr.kd, j_raw);
-            out_usr.max_output        = castToMapper(helper)->PWM2dutycycle(out_usr.max_output, j_raw);
-            out_usr.max_int           = castToMapper(helper)->PWM2dutycycle(out_usr.max_int, j_raw);
-            out_usr.stiction_up_val   = castToMapper(helper)->PWM2dutycycle(out_usr.stiction_up_val, j_raw);
-            out_usr.stiction_down_val = castToMapper(helper)->PWM2dutycycle(out_usr.stiction_down_val, j_raw);
-            out_usr.offset            = castToMapper(helper)->PWM2dutycycle(out_usr.offset, j_raw);
+            out_usr.kp = cb_helper->posE2A(out_usr.kp, j_raw);
+            out_usr.ki = cb_helper->posE2A(out_usr.ki, j_raw);
+            out_usr.kd = cb_helper->posE2A(out_usr.kd, j_raw);
         }
         break;
     case PidControlTypeEnum::VOCAB_PIDTYPE_VELOCITY:
-        if (mPriv->pid_units[VOCAB_PIDTYPE_VELOCITY][k_usr].fbk_units == PidUnitsEnum::METRIC)
+        if (mPriv->pid_units[VOCAB_PIDTYPE_VELOCITY][k_usr].fbk_units == PidFeedbackUnitsEnum::METRIC)
         {
-            out_usr.kp = castToMapper(helper)->velE2A(out_usr.kp, j_raw);
-            out_usr.ki = castToMapper(helper)->velE2A(out_usr.ki, j_raw);
-            out_usr.kd = castToMapper(helper)->velE2A(out_usr.kd, j_raw);
-        }
-        if (mPriv->pid_units[VOCAB_PIDTYPE_VELOCITY][k_usr].out_units == PidUnitsEnum::METRIC)
-        {
-            out_usr.kp = castToMapper(helper)->PWM2dutycycle(out_usr.kp, j_raw);
-            out_usr.ki = castToMapper(helper)->PWM2dutycycle(out_usr.ki, j_raw);
-            out_usr.kd = castToMapper(helper)->PWM2dutycycle(out_usr.kd, j_raw);
-            out_usr.max_output        = castToMapper(helper)->PWM2dutycycle(out_usr.max_output, j_raw);
-            out_usr.max_int           = castToMapper(helper)->PWM2dutycycle(out_usr.max_int, j_raw);
-            out_usr.stiction_up_val   = castToMapper(helper)->PWM2dutycycle(out_usr.stiction_up_val, j_raw);
-            out_usr.stiction_down_val = castToMapper(helper)->PWM2dutycycle(out_usr.stiction_down_val, j_raw);
-            out_usr.offset            = castToMapper(helper)->PWM2dutycycle(out_usr.offset, j_raw);
+            out_usr.kp = cb_helper->velE2A(out_usr.kp, j_raw);
+            out_usr.ki = cb_helper->velE2A(out_usr.ki, j_raw);
+            out_usr.kd = cb_helper->velE2A(out_usr.kd, j_raw);
         }
         break;
     case PidControlTypeEnum::VOCAB_PIDTYPE_TORQUE:
-        if (mPriv->pid_units[VOCAB_PIDTYPE_TORQUE][k_usr].fbk_units == PidUnitsEnum::METRIC)
+        if (mPriv->pid_units[VOCAB_PIDTYPE_TORQUE][k_usr].fbk_units == PidFeedbackUnitsEnum::METRIC)
         {
-            out_usr.kp = castToMapper(helper)->trqS2N(out_usr.kp, j_raw);
-            out_usr.ki = castToMapper(helper)->trqS2N(out_usr.ki, j_raw);
-            out_usr.kd = castToMapper(helper)->trqS2N(out_usr.kd, j_raw);
-        }
-        if (mPriv->pid_units[VOCAB_PIDTYPE_TORQUE][k_usr].out_units == PidUnitsEnum::METRIC)
-        {
-            out_usr.kp = castToMapper(helper)->PWM2dutycycle(out_usr.kp, j_raw);
-            out_usr.ki = castToMapper(helper)->PWM2dutycycle(out_usr.ki, j_raw);
-            out_usr.kd = castToMapper(helper)->PWM2dutycycle(out_usr.kd, j_raw);
-            out_usr.max_output        = castToMapper(helper)->PWM2dutycycle(out_usr.max_output, j_raw);
-            out_usr.max_int           = castToMapper(helper)->PWM2dutycycle(out_usr.max_int, j_raw);
-            out_usr.stiction_up_val   = castToMapper(helper)->PWM2dutycycle(out_usr.stiction_up_val, j_raw);
-            out_usr.stiction_down_val = castToMapper(helper)->PWM2dutycycle(out_usr.stiction_down_val, j_raw);
-            out_usr.offset            = castToMapper(helper)->PWM2dutycycle(out_usr.offset, j_raw);
+            out_usr.kp = cb_helper->trqS2N(out_usr.kp, j_raw);
+            out_usr.ki = cb_helper->trqS2N(out_usr.ki, j_raw);
+            out_usr.kd = cb_helper->trqS2N(out_usr.kd, j_raw);
         }
         break;
     case PidControlTypeEnum::VOCAB_PIDTYPE_CURRENT:
-        if (mPriv->pid_units[VOCAB_PIDTYPE_CURRENT][k_usr].fbk_units == PidUnitsEnum::METRIC)
+        if (mPriv->pid_units[VOCAB_PIDTYPE_CURRENT][k_usr].fbk_units == PidFeedbackUnitsEnum::METRIC)
         {
-            out_usr.kp = castToMapper(helper)->ampereS2A(out_usr.kp, j_raw);
-            out_usr.ki = castToMapper(helper)->ampereS2A(out_usr.ki, j_raw);
-            out_usr.kd = castToMapper(helper)->ampereS2A(out_usr.kd, j_raw);
-        }
-        if (mPriv->pid_units[VOCAB_PIDTYPE_CURRENT][k_usr].out_units == PidUnitsEnum::METRIC)
-        {
-            out_usr.kp = castToMapper(helper)->PWM2dutycycle(out_usr.kp, j_raw);
-            out_usr.ki = castToMapper(helper)->PWM2dutycycle(out_usr.ki, j_raw);
-            out_usr.kd = castToMapper(helper)->PWM2dutycycle(out_usr.kd, j_raw);
-            out_usr.max_output        = castToMapper(helper)->PWM2dutycycle(out_usr.max_output, j_raw);
-            out_usr.max_int           = castToMapper(helper)->PWM2dutycycle(out_usr.max_int, j_raw);
-            out_usr.stiction_up_val   = castToMapper(helper)->PWM2dutycycle(out_usr.stiction_up_val, j_raw);
-            out_usr.stiction_down_val = castToMapper(helper)->PWM2dutycycle(out_usr.stiction_down_val, j_raw);
-            out_usr.offset            = castToMapper(helper)->PWM2dutycycle(out_usr.offset, j_raw);
+            out_usr.kp = cb_helper->ampereS2A(out_usr.kp, j_raw);
+            out_usr.ki = cb_helper->ampereS2A(out_usr.ki, j_raw);
+            out_usr.kd = cb_helper->ampereS2A(out_usr.kd, j_raw);
         }
         break;
     default:
         break;
     }
+
+    get_output_conversion_units(pidtype, j_raw, output_conversion_units);
+    out_usr.kp = cb_helper->raw2user(out_usr.kp, j_raw, output_conversion_units);
+    out_usr.ki = cb_helper->raw2user(out_usr.ki, j_raw, output_conversion_units);
+    out_usr.kd = cb_helper->raw2user(out_usr.kd, j_raw, output_conversion_units);
+    out_usr.max_output = cb_helper->raw2user(out_usr.max_output, j_raw, output_conversion_units);
+    out_usr.max_int = cb_helper->raw2user(out_usr.max_int, j_raw, output_conversion_units);
+    out_usr.stiction_up_val = cb_helper->raw2user(out_usr.stiction_up_val, j_raw, output_conversion_units);
+    out_usr.stiction_down_val = cb_helper->raw2user(out_usr.stiction_down_val, j_raw, output_conversion_units);
+    out_usr.offset = cb_helper->raw2user(out_usr.offset, j_raw, output_conversion_units);
 }
 
 void ImplementPidControl::convert_pid_to_machine(const yarp::dev::PidControlTypeEnum& pidtype, const Pid &in_usr, int j_usr,  Pid &out_raw, int &k_raw)
 {
+    double* output_conversion_units = 0;
+    ControlBoardHelper* cb_helper = castToMapper(helper);
     k_raw = castToMapper(helper)->toHw(j_usr);
     out_raw = in_usr;
 
     switch (pidtype)
     {
     case PidControlTypeEnum::VOCAB_PIDTYPE_POSITION:
-        if (mPriv->pid_units[VOCAB_PIDTYPE_POSITION][j_usr].fbk_units == PidUnitsEnum::METRIC)
+        if (mPriv->pid_units[VOCAB_PIDTYPE_POSITION][j_usr].fbk_units == PidFeedbackUnitsEnum::METRIC)
         {
             out_raw.kp = castToMapper(helper)->posA2E(out_raw.kp, j_usr);
             out_raw.ki = castToMapper(helper)->posA2E(out_raw.ki, j_usr);
             out_raw.kd = castToMapper(helper)->posA2E(out_raw.kd, j_usr);
         }
-        if (mPriv->pid_units[VOCAB_PIDTYPE_POSITION][j_usr].out_units == PidUnitsEnum::METRIC)
-        {
-            out_raw.kp = castToMapper(helper)->dutycycle2PWM(out_raw.kp, j_usr);
-            out_raw.ki = castToMapper(helper)->dutycycle2PWM(out_raw.ki, j_usr);
-            out_raw.kd = castToMapper(helper)->dutycycle2PWM(out_raw.kd, j_usr);
-            out_raw.max_output        = castToMapper(helper)->dutycycle2PWM(out_raw.max_output, j_usr);
-            out_raw.max_int           = castToMapper(helper)->dutycycle2PWM(out_raw.max_int, j_usr);
-            out_raw.stiction_up_val   = castToMapper(helper)->dutycycle2PWM(out_raw.stiction_up_val, j_usr);
-            out_raw.stiction_down_val = castToMapper(helper)->dutycycle2PWM(out_raw.stiction_down_val, j_usr);
-            out_raw.offset            = castToMapper(helper)->dutycycle2PWM(out_raw.offset, j_usr);
-        }
         break;
     case PidControlTypeEnum::VOCAB_PIDTYPE_VELOCITY:
-        if (mPriv->pid_units[VOCAB_PIDTYPE_VELOCITY][j_usr].fbk_units == PidUnitsEnum::METRIC)
+        if (mPriv->pid_units[VOCAB_PIDTYPE_VELOCITY][j_usr].fbk_units == PidFeedbackUnitsEnum::METRIC)
         {
             out_raw.kp = castToMapper(helper)->velA2E(out_raw.kp, j_usr);
             out_raw.ki = castToMapper(helper)->velA2E(out_raw.ki, j_usr);
             out_raw.kd = castToMapper(helper)->velA2E(out_raw.kd, j_usr);
         }
-        if (mPriv->pid_units[VOCAB_PIDTYPE_VELOCITY][j_usr].out_units == PidUnitsEnum::METRIC)
-        {
-            out_raw.kp = castToMapper(helper)->dutycycle2PWM(out_raw.kp, j_usr);
-            out_raw.ki = castToMapper(helper)->dutycycle2PWM(out_raw.ki, j_usr);
-            out_raw.kd = castToMapper(helper)->dutycycle2PWM(out_raw.kd, j_usr);
-            out_raw.max_output        = castToMapper(helper)->dutycycle2PWM(out_raw.max_output, j_usr);
-            out_raw.max_int           = castToMapper(helper)->dutycycle2PWM(out_raw.max_int, j_usr);
-            out_raw.stiction_up_val   = castToMapper(helper)->dutycycle2PWM(out_raw.stiction_up_val, j_usr);
-            out_raw.stiction_down_val = castToMapper(helper)->dutycycle2PWM(out_raw.stiction_down_val, j_usr);
-            out_raw.offset            = castToMapper(helper)->dutycycle2PWM(out_raw.offset, j_usr);
-        }
         break;
     case PidControlTypeEnum::VOCAB_PIDTYPE_TORQUE:
-        if (mPriv->pid_units[VOCAB_PIDTYPE_TORQUE][j_usr].fbk_units == PidUnitsEnum::METRIC)
+        if (mPriv->pid_units[VOCAB_PIDTYPE_TORQUE][j_usr].fbk_units == PidFeedbackUnitsEnum::METRIC)
         {
             out_raw.kp = castToMapper(helper)->trqN2S(out_raw.kp, j_usr);
             out_raw.ki = castToMapper(helper)->trqN2S(out_raw.ki, j_usr);
             out_raw.kd = castToMapper(helper)->trqN2S(out_raw.kd, j_usr);
         }
-        if (mPriv->pid_units[VOCAB_PIDTYPE_TORQUE][j_usr].out_units == PidUnitsEnum::METRIC)
-        {
-            out_raw.kp = castToMapper(helper)->dutycycle2PWM(out_raw.kp, j_usr);
-            out_raw.ki = castToMapper(helper)->dutycycle2PWM(out_raw.ki, j_usr);
-            out_raw.kd = castToMapper(helper)->dutycycle2PWM(out_raw.kd, j_usr);
-            out_raw.max_output        = castToMapper(helper)->dutycycle2PWM(out_raw.max_output, j_usr);
-            out_raw.max_int           = castToMapper(helper)->dutycycle2PWM(out_raw.max_int, j_usr);
-            out_raw.stiction_up_val   = castToMapper(helper)->dutycycle2PWM(out_raw.stiction_up_val, j_usr);
-            out_raw.stiction_down_val = castToMapper(helper)->dutycycle2PWM(out_raw.stiction_down_val, j_usr);
-            out_raw.offset            = castToMapper(helper)->dutycycle2PWM(out_raw.offset, j_usr);
-        }
         break;
     case PidControlTypeEnum::VOCAB_PIDTYPE_CURRENT:
-        if (mPriv->pid_units[VOCAB_PIDTYPE_CURRENT][j_usr].fbk_units == PidUnitsEnum::METRIC)
+        if (mPriv->pid_units[VOCAB_PIDTYPE_CURRENT][j_usr].fbk_units == PidFeedbackUnitsEnum::METRIC)
         {
             out_raw.kp = castToMapper(helper)->ampereA2S(out_raw.kp, j_usr);
             out_raw.ki = castToMapper(helper)->ampereA2S(out_raw.ki, j_usr);
             out_raw.kd = castToMapper(helper)->ampereA2S(out_raw.kd, j_usr);
         }
-        if (mPriv->pid_units[VOCAB_PIDTYPE_CURRENT][j_usr].out_units == PidUnitsEnum::METRIC)
-        {
-            out_raw.kp = castToMapper(helper)->dutycycle2PWM(out_raw.kp, j_usr);
-            out_raw.ki = castToMapper(helper)->dutycycle2PWM(out_raw.ki, j_usr);
-            out_raw.kd = castToMapper(helper)->dutycycle2PWM(out_raw.kd, j_usr);
-            out_raw.max_output        = castToMapper(helper)->dutycycle2PWM(out_raw.max_output, j_usr);
-            out_raw.max_int           = castToMapper(helper)->dutycycle2PWM(out_raw.max_int, j_usr);
-            out_raw.stiction_up_val   = castToMapper(helper)->dutycycle2PWM(out_raw.stiction_up_val, j_usr);
-            out_raw.stiction_down_val = castToMapper(helper)->dutycycle2PWM(out_raw.stiction_down_val, j_usr);
-            out_raw.offset            = castToMapper(helper)->dutycycle2PWM(out_raw.offset, j_usr);
-        }
         break;
     default:
         break;
     }
+
+    get_output_conversion_units(pidtype, j_usr, output_conversion_units);
+    out_raw.kp = cb_helper->user2raw(out_raw.kp, j_usr, output_conversion_units);
+    out_raw.ki = cb_helper->user2raw(out_raw.ki, j_usr, output_conversion_units);
+    out_raw.kd = cb_helper->user2raw(out_raw.kd, j_usr, output_conversion_units);
+    out_raw.max_output = cb_helper->user2raw(out_raw.max_output, j_usr, output_conversion_units);
+    out_raw.max_int = cb_helper->user2raw(out_raw.max_int, j_usr, output_conversion_units);
+    out_raw.stiction_up_val = cb_helper->user2raw(out_raw.stiction_up_val, j_usr, output_conversion_units);
+    out_raw.stiction_down_val = cb_helper->user2raw(out_raw.stiction_down_val, j_usr, output_conversion_units);
+    out_raw.offset = cb_helper->user2raw(out_raw.offset, j_usr, output_conversion_units);
 }
 
 void ImplementPidControl::convert_units_to_machine (const yarp::dev::PidControlTypeEnum& pidtype, double userval, int j, double &machineval, int &k)
@@ -333,7 +269,7 @@ ImplementPidControl::~ImplementPidControl()
     uninitialize();
 }
 
-bool ImplementPidControl::setConversion(const PidControlTypeEnum& pidtype, const PidUnitsEnum fbk_conv_units, const PidUnitsEnum out_conv_units)
+bool ImplementPidControl::setConversion(const PidControlTypeEnum& pidtype, const PidFeedbackUnitsEnum fbk_conv_units, const PidOutputUnitsEnum out_conv_units)
 {
     int nj = castToMapper(helper)->axes();
     for (size_t i = 0; i < nj; i++)
@@ -462,16 +398,14 @@ bool ImplementPidControl::getPidOutput(const PidControlTypeEnum& pidtype,  int j
     double raw;
     k_raw = castToMapper(helper)->toHw(j);
     ret = iPid->getPidOutputRaw(pidtype, k_raw, &raw);
+
+    double* output_conversion_units=0;
+    ControlBoardHelper* cb_helper = castToMapper(helper);
+    get_output_conversion_units(pidtype, j, output_conversion_units);
+
     if (ret)
     {
-        if (mPriv->pid_units[pidtype][j].out_units == PidUnitsEnum::METRIC)
-        {
-            castToMapper(helper)->PWM2dutycycle(raw, k_raw, *out, j);
-        }
-        else
-        {
-            *out = raw;
-        }
+        cb_helper->raw2user(raw, k_raw, *out, j, output_conversion_units);
         return true;
     }
     return false;
@@ -484,10 +418,11 @@ bool ImplementPidControl::getPidOutputs(const PidControlTypeEnum& pidtype,  doub
     
     for (int j = 0; j < nj; j++)
     {
-        if (mPriv->pid_units[pidtype][j].out_units == PidUnitsEnum::METRIC)
-        {
-            temp[j] = castToMapper(helper)->PWM2dutycycle(temp[j],j);
-        }
+        double* output_conversion_units=0;
+        ControlBoardHelper* cb_helper = castToMapper(helper);
+        get_output_conversion_units(pidtype, j, output_conversion_units);
+
+        temp[j] = cb_helper->raw2user(temp[j],j, output_conversion_units);
     }
     castToMapper(helper)->toUser(temp, outs);
 
@@ -518,7 +453,6 @@ bool ImplementPidControl::getPids(const PidControlTypeEnum& pidtype, Pid *pids)
         int j_usr;
         Pid outpid;
         this->convert_pid_to_user(pidtype, tmpPids[k_raw], k_raw, outpid, j_usr);
-        //pids[castToMapper(helper)->toUser(j)] = outpid;
         pids[j_usr] = outpid;
     }
     return ret;
@@ -598,15 +532,12 @@ bool ImplementPidControl::setPidOffset(const PidControlTypeEnum& pidtype, int j,
 {
     int k = 0;
     double rawoff;
-    if (mPriv->pid_units[pidtype][j].out_units == PidUnitsEnum::METRIC)
-    {
-        castToMapper(helper)->dutycycle2PWM(off, j, rawoff, k);
-    }
-    else
-    {
-        k = castToMapper(helper)->toHw(j);
-        rawoff = off;
-    }
+    double* output_conversion_units=0;
+    ControlBoardHelper* cb_helper = castToMapper(helper);
+    get_output_conversion_units(pidtype,j,output_conversion_units);
+
+    cb_helper->user2raw(off, j, rawoff, k, output_conversion_units);
+
     return iPid->setPidOffsetRaw(pidtype, k, rawoff);
 }
 
@@ -616,4 +547,18 @@ bool ImplementPidControl::isPidEnabled(const PidControlTypeEnum& pidtype, int j,
     k=castToMapper(helper)->toHw(j);
 
     return iPid->isPidEnabledRaw(pidtype, k, enabled);
+}
+
+void ImplementPidControl::get_output_conversion_units(const yarp::dev::PidControlTypeEnum& pidtype, int j, double*&  output_conversion_units )
+{
+    ControlBoardHelper* cb_helper = castToMapper(helper);
+    switch (mPriv->pid_units[pidtype][j].out_units)
+    {
+        case  PidOutputUnitsEnum::DUTYCYCLE_PWM_PERCENT:  output_conversion_units = cb_helper->dutycycleToPWMs; break;
+        case  PidOutputUnitsEnum::CURRENT_METRIC:  output_conversion_units = cb_helper->ampereToSensors; break;
+        case  PidOutputUnitsEnum::POSITION_METRIC:  output_conversion_units = cb_helper->angleToEncoders; break;
+        case  PidOutputUnitsEnum::VELOCITY_METRIC:  output_conversion_units = cb_helper->angleToEncoders; break;
+        case  PidOutputUnitsEnum::TORQUE_METRIC:  output_conversion_units = cb_helper->newtonsToSensors; break;
+        default: output_conversion_units = cb_helper->helper_ones; break;
+    }
 }
