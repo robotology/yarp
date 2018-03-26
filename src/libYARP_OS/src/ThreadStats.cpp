@@ -323,3 +323,190 @@ void ThreadStats::getEstUsed(double& av, double& std)
         std = sqrt(1.0 / (m_cycle_count - 1) * m_elapsed_M2);
     }
 }
+
+// ===================
+// MultipleThreadStats
+// ===================
+
+MultipleThreadStats::MultipleThreadStats(const double& period,
+                                         const double& window_length,
+                                         const unsigned& bins_pitch_ms)
+    : m_period(period), m_window_length(window_length), m_bins_pitch_ms(bins_pitch_ms)
+{
+    assert(m_period != 0.0);
+}
+
+// Private methods
+// ===============
+
+ConstString MultipleThreadStats::_messagePrefix() const
+{
+    return ConstString("yarp::os::MultipleThreadStats: ");
+}
+
+// Public API
+// ==========
+
+bool MultipleThreadStats::insertThreadStats(const yarp::os::ThreadStats& ts)
+{
+    bool ret;
+    ThreadStats::ThreadId id = ts.getThreadId();
+    if (m_threads_stats.find(id) == m_threads_stats.end()) {
+        ret = true;
+    }
+    else {
+        yWarning() << _messagePrefix() << "ThreadStats with id=" << id << " has been overwritten";
+        ret = false;
+    }
+    m_threads_stats[id] = ts;
+    return ret;
+}
+
+bool MultipleThreadStats::newThreadStats(const ThreadStats::ThreadId& id,
+                                         const double& period,
+                                         const double& window_length,
+                                         const unsigned& bins_pitch_ms)
+{
+    bool ret = false;
+
+    // Use values passed in the constructor if not given
+    if (period == 0.0) {
+        return ret = insertThreadStats({m_period, m_window_length, m_bins_pitch_ms, id});
+    }
+    else if (window_length == 0.0) {
+        return ret = insertThreadStats({period, m_window_length, m_bins_pitch_ms, id});
+    }
+    else if (bins_pitch_ms == 0) {
+        return ret = insertThreadStats({period, window_length, m_bins_pitch_ms, id});
+    }
+    else {
+        return ret = insertThreadStats({period, window_length, bins_pitch_ms, id});
+    }
+}
+
+bool MultipleThreadStats::removeThreadStats(const ThreadStats::ThreadId& id)
+{
+    if (m_threads_stats.erase(id) == 0) {
+        yWarning() << _messagePrefix() << "Tried to remove unexisting thread with id=" << id;
+        return false;
+    }
+    else {
+        return true;
+    }
+}
+
+// ThreadStats transparent usage
+// =============================
+
+void MultipleThreadStats::tick(const ThreadStats::ThreadId& id)
+{
+    if (m_threads_stats.find(id) != m_threads_stats.end()) {
+        m_threads_stats[id].tick();
+    }
+    else {
+        yWarning() << _messagePrefix() << "Thread with id=" << id << " not found";
+    }
+}
+
+void MultipleThreadStats::tock(const ThreadStats::ThreadId& id)
+{
+    if (m_threads_stats.find(id) != m_threads_stats.end()) {
+        m_threads_stats[id].tock();
+    }
+    else {
+        yWarning() << _messagePrefix() << "Thread with id=" << id << " not found";
+    }
+}
+
+void MultipleThreadStats::resetStat(const ThreadStats::ThreadId& id)
+{
+    if (m_threads_stats.find(id) != m_threads_stats.end()) {
+        m_threads_stats[id].resetStat();
+    }
+    else {
+        yWarning() << _messagePrefix() << "Thread with id=" << id << " not found";
+    }
+}
+
+void MultipleThreadStats::sleepRemainingTime(const ThreadStats::ThreadId& id) const
+{
+    if (m_threads_stats.find(id) != m_threads_stats.end()) {
+        m_threads_stats.at(id).sleepRemainingTime();
+    }
+    else {
+        yWarning() << _messagePrefix() << "Thread with id=" << id << " not found";
+    }
+}
+void MultipleThreadStats::enableAdvancedStatistics(const ThreadStats::ThreadId& id)
+{
+    if (m_threads_stats.find(id) != m_threads_stats.end()) {
+        m_threads_stats[id].enableAdvancedStatistics();
+    }
+    else {
+        yWarning() << _messagePrefix() << "Thread with id=" << id << " not found";
+    }
+}
+void MultipleThreadStats::disableAdvancedStatistics(const ThreadStats::ThreadId& id)
+{
+    if (m_threads_stats.find(id) != m_threads_stats.end()) {
+        m_threads_stats[id].disableAdvancedStatistics();
+    }
+    else {
+        yWarning() << _messagePrefix() << "Thread with id=" << id << " not found";
+    }
+}
+
+double MultipleThreadStats::getEstPeriod(const ThreadStats::ThreadId& id)
+{
+    double estimated_period = 0;
+    if (m_threads_stats.find(id) != m_threads_stats.end()) {
+        estimated_period = m_threads_stats[id].getEstPeriod();
+    }
+    else {
+        yWarning() << _messagePrefix() << "Thread with id=" << id << " not found";
+    }
+    return estimated_period;
+}
+
+void MultipleThreadStats::getEstPeriod(double& av, double& std, const ThreadStats::ThreadId& id)
+{
+    if (m_threads_stats.find(id) != m_threads_stats.end()) {
+        m_threads_stats[id].getEstPeriod(av, std);
+    }
+    else {
+        yWarning() << _messagePrefix() << "Thread with id=" << id << " not found";
+    }
+}
+unsigned MultipleThreadStats::getIterations(const ThreadStats::ThreadId& id)
+{
+    unsigned iterations = 0;
+    if (m_threads_stats.find(id) != m_threads_stats.end()) {
+        iterations = m_threads_stats[id].getIterations();
+    }
+    else {
+        yWarning() << _messagePrefix() << "Thread with id=" << id << " not found";
+    }
+    return iterations;
+}
+
+double MultipleThreadStats::getEstUsed(const ThreadStats::ThreadId& id)
+{
+    double estimated_used = 0;
+    if (m_threads_stats.find(id) != m_threads_stats.end()) {
+        estimated_used = m_threads_stats[id].getEstUsed();
+    }
+    else {
+        yWarning() << _messagePrefix() << "Thread with id=" << id << " not found";
+    }
+    return estimated_used;
+}
+
+void MultipleThreadStats::getEstUsed(double& av, double& std, const ThreadStats::ThreadId& id)
+{
+    if (m_threads_stats.find(id) != m_threads_stats.end()) {
+        m_threads_stats[id].getEstUsed(av, std);
+    }
+    else {
+        yWarning() << _messagePrefix() << "Thread with id=" << id << " not found";
+    }
+}
