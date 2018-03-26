@@ -645,9 +645,6 @@ private:
     // whithin the process scope.
     bool setProcessSchedulingParam(int priority=-1, int policy=-1);
 
-    // cross-platform way of getting process ID (with or whitout ACE)
-    int  getPid();
-
     // attach a portmonitor plugin to the port or to a specific connection
     bool attachPortMonitor(yarp::os::Property& prop, bool isOutput, ConstString &errMsg);
 

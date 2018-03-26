@@ -46,12 +46,7 @@ bool yarp::os::Stamp::read(ConnectionReader& connection)
         ConstString stampStr = connection.expectText();
         int seqNum;
         double ts;
-#if defined(_MSC_VER) && (_MSC_VER <= 1800)
-        // Visual Studio 2013 does not support std::sscanf
-        int ret = sscanf(stampStr.c_str(), "%d %lg\n", &seqNum, &ts);
-#else
         int ret = std::sscanf(stampStr.c_str(), "%d %lg\n", &seqNum, &ts);
-#endif
         if (ret != 2) {
             sequenceNumber = -1;
             timeStamp = 0;
@@ -93,13 +88,7 @@ bool yarp::os::Stamp::write(ConnectionWriter& connection)
 {
     if (connection.isTextMode()) {
         char buf[512];
-#if defined(_MSC_VER) && (_MSC_VER <= 1800)
-        // Visual Studio 2013 does not support std::snprintf
-        _snprintf(buf, 511, "%d %.*g", sequenceNumber, DBL_DIG, timeStamp);
-        buf[511] = '\0';
-#else
         std::snprintf(buf, 512, "%d %.*g", sequenceNumber, DBL_DIG, timeStamp);
-#endif
         connection.appendString(buf);
     } else {
         connection.appendInt(BOTTLE_TAG_LIST); // nested structure

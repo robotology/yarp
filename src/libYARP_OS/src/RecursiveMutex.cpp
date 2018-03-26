@@ -7,11 +7,11 @@
  */
 
 #include <yarp/os/RecursiveMutex.h>
-#include <yarp/os/impl/LockImpl.h>
+#include <yarp/os/impl/RecursiveLockImpl.h>
 #include <yarp/os/LogStream.h>
 
-using namespace yarp::os::impl;
-using namespace yarp::os;
+using yarp::os::RecursiveMutex;
+using yarp::os::impl::RecursiveLockImpl;
 
 RecursiveMutex::RecursiveMutex()
 {

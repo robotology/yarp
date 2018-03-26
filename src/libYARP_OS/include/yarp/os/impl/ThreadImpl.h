@@ -13,7 +13,8 @@
 #include <yarp/os/impl/Runnable.h>
 #include <yarp/os/impl/SemaphoreImpl.h>
 
-#include <yarp/os/impl/PlatformThread.h>
+#include <thread>
+#include <atomic>
 
 namespace yarp {
     namespace os {
@@ -86,7 +87,7 @@ public:
     static void fini();
 
     long tid;
-    Platform_thread_t  id;
+    std::thread::id id;
 
     static void yield();
 
@@ -94,8 +95,8 @@ private:
     int defaultPriority;
     int defaultPolicy;
     int stackSize;
-    Platform_hthread_t hid;
-    bool active; // FIXME should be atomic
+    std::thread hid;
+    std::atomic<bool> active;
     bool opened;
     bool closing;
     bool needJoin;

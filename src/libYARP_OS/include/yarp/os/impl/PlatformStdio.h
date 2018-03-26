@@ -22,9 +22,6 @@ namespace impl {
 
 #ifdef YARP_HAS_ACE
     using ACE_OS::fileno;
-# if defined(_MSC_VER) && _MSC_VER < 1900
-    using ACE_OS::snprintf;
-# endif
 #else
     using ::fileno;
 #endif

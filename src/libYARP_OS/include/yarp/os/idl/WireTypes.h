@@ -9,18 +9,7 @@
 #ifndef YARP_OS_IDL_WIRETYPES_H
 #define YARP_OS_IDL_WIRETYPES_H
 
-
-#if __cplusplus >= 201103L
-# include <cstdint>
-#elif defined(_WIN32) && !defined(__MINGW32__) && (!defined(_MSC_VER) || _MSC_VER<1600)
-  typedef __int32 int32_t;
-  typedef unsigned __int32 uint32_t;
-  typedef __int64 int64_t;
-  typedef unsigned __int64 uint64_t;
-#else
-# include <stdint.h>
-#endif
-
+#include <cstdint>
 #include <string>
 #include <vector>
 #include <map>

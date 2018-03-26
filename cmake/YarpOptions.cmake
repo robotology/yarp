@@ -310,16 +310,6 @@ endif()
 
 
 #########################################################################
-# Control whether to build YARP using C++11 replacements for ACE stuff
-
-option(YARP_EXPERIMENTAL_CXX11 "Build YARP using C++11 replacement for threads, semaphores, etc." OFF)
-mark_as_advanced(YARP_EXPERIMENTAL_CXX11)
-if(YARP_EXPERIMENTAL_CXX11)
-  set(YARP_HAS_CXX11 ON)
-endif()
-
-
-#########################################################################
 # Control whether yarp::os::ConstString should be std::string or opaque
 # Not an important option for end users yet.  In principle
 # yarp::os::ConstString could now be set to std::string, if YARP
@@ -407,3 +397,8 @@ if(TEST_MACHINE_HOSTNAME)
   message(STATUS "TEST_MACHINE_OS_TYPE: ${TEST_MACHINE_OS_TYPE}")
   message(STATUS "TEST_MACHINE_TEST_TYPE: ${TEST_MACHINE_TEST_TYPE}")
 endif()
+
+
+
+
+yarp_deprecated_option(YARP_EXPERIMENTAL_CXX11) # Since YARP 3.0.0

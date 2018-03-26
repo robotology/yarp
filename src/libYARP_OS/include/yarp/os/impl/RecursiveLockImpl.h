@@ -6,17 +6,23 @@
  * BSD-3-Clause license. See the accompanying LICENSE file for details.
  */
 
-#ifndef YARP_OS_IMPL_CXX11LOCKIMPL_H
-#define YARP_OS_IMPL_CXX11LOCKIMPL_H
+#ifndef YARP_OS_IMPL_RECURSIVELOCKIMPL_H
+#define YARP_OS_IMPL_RECURSIVELOCKIMPL_H
 
 #include <mutex>
 
-class YARP_OS_impl_API yarp::os::impl::RecursiveLockImpl
+
+namespace yarp {
+namespace os {
+namespace impl {
+
+class YARP_OS_impl_API RecursiveLockImpl
 {
 public:
-    RecursiveLockImpl() {}
+    RecursiveLockImpl() = default;
     RecursiveLockImpl(RecursiveLockImpl&) = delete;
-    RecursiveLockImpl& operator= (RecursiveLockImpl&) = delete;
+    RecursiveLockImpl& operator=(RecursiveLockImpl&) = delete;
+    ~RecursiveLockImpl() = default;
 
     void lock()
     {
@@ -38,4 +44,9 @@ private:
     std::recursive_mutex mutex;
 };
 
-#endif // YARP_OS_IMPL_CXX11LOCKIMPL_H
+} // namespace impl
+} // namespace os
+} // namespace yarp
+
+
+#endif // YARP_OS_IMPL_RECURSIVELOCKIMPL_H
