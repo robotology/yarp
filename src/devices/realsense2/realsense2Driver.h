@@ -122,10 +122,11 @@ private:
 
     bool        getImage(FlexImage& Frame, Stamp* timeStamp, rs2::frameset& sourceFrame);
     bool        getImage(depthImage& Frame, Stamp* timeStamp, const rs2::frameset& sourceFrame);
-    bool        setResolution(int w, int h);
-    bool        setFOV(double horizontalFov, double verticalFov);
     bool        setIntrinsic(yarp::os::Property& intrinsic, const rs2_intrinsics& values);
     void        settingErrorMsg(const std::string& error, bool& ret);
+    void        updateTransformations();
+    bool        pipelineStartup();
+    bool        pipelineShutdown();
 
 
     // realsense classes
@@ -134,6 +135,8 @@ private:
     rs2::pipeline m_pipeline;
     rs2::device  m_device;
     std::vector<rs2::sensor> m_sensors;
+    rs2::sensor* m_depth_sensor;
+    rs2::sensor* m_color_sensor;
     rs2_intrinsics m_depth_intrin, m_color_intrin;
     rs2_extrinsics m_depth_to_color, m_color_to_depth;
 
@@ -143,6 +146,7 @@ private:
     yarp::os::ConstString m_lastError;
     yarp::dev::RGBDSensorParamParser* m_paramParser;
     bool m_depthRegistration;
+    bool m_verbose;
     int m_period;
     std::vector<cameraFeature_id_t> m_supportedFeatures;
     std::map<std::string, RGBDSensorParamParser::RGBDParam> m_params_map;
