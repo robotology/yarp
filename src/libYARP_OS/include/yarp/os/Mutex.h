@@ -9,11 +9,16 @@
 #ifndef YARP_OS_MUTEX_H
 #define YARP_OS_MUTEX_H
 
+#ifndef YARP_NO_DEPRECATED // Since YARP 3.0.0
 #include <yarp/os/api.h>
+#else // YARP_NO_DEPRECATED
+#include <mutex>
+#endif // YARP_NO_DEPRECATED
 
 namespace yarp {
 namespace os {
 
+#ifndef YARP_NO_DEPRECATED // Since YARP 3.0.0
 /**
  * Basic wrapper for mutual exclusion.
  *
@@ -56,7 +61,6 @@ public:
      */
     void unlock();
 
-#ifndef YARP_NO_DEPRECATED // Since YARP 3.0.0
     /**
      * Lock the associated resource if possible.  Don't wait.
      * Behavior is undefined if called by the thread currently locking
@@ -68,7 +72,6 @@ public:
      */
     YARP_DEPRECATED_MSG("Use try_lock() instead")
     bool tryLock();
-#endif // YARP_NO_DEPRECATED
 
 #ifndef DOXYGEN_SHOULD_SKIP_THIS
 private:
@@ -76,6 +79,12 @@ private:
     Private* mPriv;
 #endif // DOXYGEN_SHOULD_SKIP_THIS
 };
+
+#else
+
+using Mutex = std::mutex;
+
+#endif // YARP_NO_DEPRECATED
 
 } // namespace os
 } // namespace yarp

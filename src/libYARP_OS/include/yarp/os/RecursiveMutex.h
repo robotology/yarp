@@ -9,11 +9,16 @@
 #ifndef YARP_OS_RECURSIVELOCK_H
 #define YARP_OS_RECURSIVELOCK_H
 
+#ifndef YARP_NO_DEPRECATED // Since YARP 3.0.0
 #include <yarp/os/api.h>
+#else // YARP_NO_DEPRECATED
+#include <mutex>
+#endif // YARP_NO_DEPRECATED
 
 namespace yarp {
 namespace os {
 
+#ifndef YARP_NO_DEPRECATED // Since YARP 3.0.0
 /**
  * RecursiveMutex offers exclusive, recursive ownership semantics:
  *   - A calling thread owns a RecursiveMutex for a period of time that starts
@@ -69,7 +74,6 @@ public:
      */
     void unlock();
 
-#ifndef YARP_NO_DEPRECATED // Since YARP 3.0.0
     /**
      * @brief Lock the associated resource if it is free.
      *
@@ -81,7 +85,6 @@ public:
      */
     YARP_DEPRECATED_MSG("Use try_lock() instead")
     bool tryLock();
-#endif // YARP_NO_DEPRECATED
 
 #ifndef DOXYGEN_SHOULD_SKIP_THIS
 private:
@@ -89,6 +92,12 @@ private:
     Private* mPriv;
 #endif // DOXYGEN_SHOULD_SKIP_THIS
 };
+
+#else // YARP_NO_DEPRECATED
+
+using RecursiveMutex = std::recursive_mutex;
+
+#endif // YARP_NO_DEPRECATED
 
 } // namespace os
 } // namespace yarp

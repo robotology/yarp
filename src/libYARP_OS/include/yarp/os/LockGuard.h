@@ -16,8 +16,13 @@ namespace yarp {
         template <typename Lockable>
         class AbstractLockGuard;
 
+#ifndef YARP_NO_DEPRECATED // Since YARP 3.0.0
         class Mutex;
         class RecursiveMutex;
+#else
+        using Mutex = std::mutex;
+        using RecursiveMutex = std::recursive_mutex;
+#endif
 
         typedef AbstractLockGuard<Mutex> LockGuard;
         typedef AbstractLockGuard<RecursiveMutex> RecursiveLockGuard;

@@ -240,7 +240,6 @@ set(YARP_OS_SRCS src/AbstractCarrier.cpp
                  src/MessageStack.cpp
                  src/ModifyingCarrier.cpp
                  src/MultiNameSpace.cpp
-                 src/Mutex.cpp
                  src/NameClient.cpp
                  src/NameConfig.cpp
                  src/Name.cpp
@@ -287,7 +286,6 @@ set(YARP_OS_SRCS src/AbstractCarrier.cpp
                  src/Protocol.cpp
                  src/Random.cpp
                  src/RateThread.cpp
-                 src/RecursiveMutex.cpp
                  src/ResourceFinder.cpp
                  src/ResourceFinderOptions.cpp
                  src/RFModule.cpp
@@ -328,6 +326,12 @@ set(YARP_OS_SRCS src/AbstractCarrier.cpp
                  src/WireState.cpp
                  src/WireWriter.cpp
                  src/QosStyle.cpp)
+
+if(NOT YARP_NO_DEPRECATED) # Since YARP 3.0.0
+  list(APPEND YARP_OS_SRCS src/Mutex.cpp
+                           src/RecursiveMutex.cpp)
+endif()
+
 
 if(SKIP_ACE)
   list(APPEND YARP_OS_SRCS src/posix/TcpAcceptor.cpp
