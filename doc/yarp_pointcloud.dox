@@ -17,14 +17,14 @@ the RGB, etc.
 
 In YARP we support these point types:
 
-- yarp::sig::XY_DATA
-- yarp::sig::XYZ_DATA
-- yarp::sig::NORMAL_DATA
-- yarp::sig::XYZ_RGBA_DATA
-- yarp::sig::XYZ_I_DATA
-- yarp::sig::INTEREST_POINT_XYZ_DATA
-- yarp::sig::XYZ_NORMAL_DATA
-- yarp::sig::XYZ_NORMAL_RGBA_DATA
+- yarp::sig::XYData
+- yarp::sig::XYZData
+- yarp::sig::NormalData
+- yarp::sig::XYZRGBAData
+- yarp::sig::XYZIData
+- yarp::sig::InterestPointXYZData
+- yarp::sig::XYZNormalData
+- yarp::sig::XYZNormalRGBAData
 
 These structures have been created  to be compatible with the 
 PCL's ones.
@@ -35,7 +35,7 @@ This code snippet shows how to send and then receive a yarp::sig::PointCloud
 through the YARP ports.
 
 \code {.cpp}
-        yarp::os::BufferedPort< yarp::sig::PointCloud<yarp::sig::XYZ_RGBA_DATA> > outPort;
+        yarp::os::BufferedPort< yarp::sig::PointCloud<yarp::sig::XYZRGBAData> > outPort;
         yarp::os::Port inPort;
         // Open the ports
         outPort.open("/test/pointcloud/out");
@@ -43,7 +43,7 @@ through the YARP ports.
         // Connect the ports
         yarp::os::NetworkBase::connect(outPort.getName(), inPort.getName());
         // Declare the point cloud to be sent
-        yarp::sig::PointCloud<yarp::sig::XYZ_RGBA_DATA>& testPC = outPort.prepare();
+        yarp::sig::PointCloud<yarp::sig::XYZRGBAData>& testPC = outPort.prepare();
         int width  = 100;
         int height = 20;
         testPC.resize(width, height);
@@ -63,7 +63,7 @@ through the YARP ports.
         // write the point cloud
         outPort.write();
         // read the point cloud
-        yarp::sig::PointCloud<yarp::sig::XYZ_RGBA_DATA> inCloud;
+        yarp::sig::PointCloud<yarp::sig::XYZRGBAData> inCloud;
         inPort.read(inCloud);
 \endcode
 **Note:** in this example, the type of the `testPC` and `inCloud` is the same
@@ -73,10 +73,10 @@ If the type of the input yarp::sig::PointCloud is different, only the fields in 
 with the output type will be actually read, the missing ones will be set to
 default values.
 
-For example, if you write a `yarp::sig::PointCloud<yarp::sig::XYZ_RGBA_DATA>` and you
-want to read through a `yarp::sig::PointCloud<yarp::sig::XYZ_NORMAL_DATA>`:
+For example, if you write a `yarp::sig::PointCloud<yarp::sig::XYZRGBAData>` and you
+want to read through a `yarp::sig::PointCloud<yarp::sig::XYZNormalData>`:
 - the `XYZ`fields will be filled
-- the `NORMAL` fields will be set to default
+- the `Normal` fields will be set to default
 - the`RGBA` will be ignored
 
 \section general_usage_point_cloud PointCloud initialization
@@ -86,12 +86,12 @@ initialization of the point cloud (**copy constructor**
 and **assignment operator**):
 
 \code {.cpp}
-        yarp::sig::PointCloud<yarp::sig::XYZ_NORMAL_RGBA_DATA> pc1;
-        yarp::sig::PointCloud<yarp::sig::XYZ_NORMAL_DATA> pc2(pc1);
-        yarp::sig::PointCloud<yarp::sig::XYZ_NORMAL_RGBA_DATA> pc3 = pc2;
+        yarp::sig::PointCloud<yarp::sig::XYZNormalRGBAData> pc1;
+        yarp::sig::PointCloud<yarp::sig::XYZNormalData> pc2(pc1);
+        yarp::sig::PointCloud<yarp::sig::XYZNormalRGBAData> pc3 = pc2;
 \endcode
 
-In this case `pc3` will have only the `XYZ` and `NORMAL` values of `pc1` because
+In this case `pc3` will have only the `XYZ` and `Normal` values of `pc1` because
 the `RGBA` values have been lost in the construction of `pc2` that not contains
 the `RGBA` field.
 
@@ -122,11 +122,11 @@ that can be used as follow
         cloud.points.at(i).b = 'b';
     }
     // PCL -> YARP
-    yarp::sig::PointCloud<yarp::sig::XYZ_RGBA_DATA> yarpCloud;
-    yarp::pcl::fromPCL<pcl::PointXYZRGBA, yarp::sig::XYZ_RGBA_DATA>(cloud, yarpCloud);
+    yarp::sig::PointCloud<yarp::sig::XYZRGBAData> yarpCloud;
+    yarp::pcl::fromPCL<pcl::PointXYZRGBA, yarp::sig::XYZRGBAData>(cloud, yarpCloud);
     // YARP -> PCL
     pcl::PointCloud<pcl::PointXYZRGBA> cloud2;
-    yarp::pcl::toPCL<yarp::sig::XYZ_RGBA_DATA, pcl::PointXYZRGBA>(yarpCloud, cloud2);
+    yarp::pcl::toPCL<yarp::sig::XYZRGBAData, pcl::PointXYZRGBA>(yarpCloud, cloud2);
 \endcode
 
 Note that these conversions (PCL -> YARP, YARP -> PCL) are made through a **copy**.
@@ -137,15 +137,15 @@ The `YARP_pcl` library has also methods to save/load yarp point clouds to PCD fi
 `savePCD<T,T1>(...)` and `loadPCD<T,T1>(...)` can be used as follows:
 
 \code {.cpp}
-    yarp::sig::PointCloud<yarp::sig::XYZ_RGBA_DATA> cloud1;
+    yarp::sig::PointCloud<yarp::sig::XYZRGBAData> cloud1;
     ...
     // save point cloud to file
     const string filename("name.pcd");
-    int result = yarp::pcl::savePCD< yarp::sig::XYZ_RGBA_DATA, pcl::PointXYZRGBA>(filename, cloud1);
+    int result = yarp::pcl::savePCD< yarp::sig::XYZRGBAData, pcl::PointXYZRGBA>(filename, cloud1);
 
     // load from file
-    yarp::sig::PointCloud<yarp::sig::XYZ_RGBA_DATA> cloud2;
-    result = yarp::pcl::loadPCD< pcl::PointXYZRGBA, yarp::sig::XYZ_RGBA_DATA >(filename, cloud2);
+    yarp::sig::PointCloud<yarp::sig::XYZRGBADat> cloud2;
+    result = yarp::pcl::loadPCD< pcl::PointXYZRGBA, yarp::sig::XYZRGBAData >(filename, cloud2);
 \endcode
 
 Note that these functions implicitly convert to and from PCL types.
