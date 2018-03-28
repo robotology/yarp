@@ -111,8 +111,7 @@ namespace yarp {
 
         // Definition of single fields data structures
         YARP_BEGIN_PACK
-
-        typedef struct
+        struct XYData
         {
             union
             {
@@ -157,12 +156,12 @@ namespace yarp {
                 y = static_cast<float>(intBt->get(1).asDouble());
                 return;
             }
-        } XY_DATA;
+        };
         YARP_END_PACK
 
         // xyz
         YARP_BEGIN_PACK
-        typedef struct
+        struct XYZData
         {
             union
             {
@@ -215,12 +214,12 @@ namespace yarp {
                 z = static_cast<float>(intBt->get(2).asDouble());
                 return;
             }
-        } XYZ_DATA;
+        };
         YARP_END_PACK
 
         // RGBA fields - quite useless alone
         YARP_BEGIN_PACK
-        typedef struct
+        struct RGBAData
         {
             union
             {
@@ -262,18 +261,18 @@ namespace yarp {
                 a = intBt->get(3).asInt();
                 return;
             }
-        } RGBA_DATA;
+        };
         YARP_END_PACK
 
         // Intensity
-        typedef float intensity;
+        typedef float Intensity;
 
         // Intensity
-        typedef float strength;
+        typedef float Strength;
 
         // Normal
         YARP_BEGIN_PACK
-        typedef struct
+        struct NormalData
         {
             union
             {
@@ -339,10 +338,11 @@ namespace yarp {
                 curvature = static_cast<float>(intBt->get(3).asDouble());
                 return;
             }
-        } NORMAL_DATA;
+        };
         YARP_END_PACK
+
         YARP_BEGIN_PACK
-        typedef struct
+        struct NormalNoCurv
         {
             union
             {
@@ -396,11 +396,12 @@ namespace yarp {
                 normal_z = static_cast<float>(intBt->get(2).asDouble());
                 return;
             }
-        } NORMAL_NO_CURV;
+        };
         YARP_END_PACK
+
         // curvature
         YARP_BEGIN_PACK
-        typedef struct
+        struct CurvatureData
         {
             union
             {
@@ -409,14 +410,14 @@ namespace yarp {
                     float curvature;
                 };
             };
-        } CURVATURE_DATA;
+        };
         YARP_END_PACK
         // Range
-        typedef float range;
+        typedef float Range;
 
         // viewPoint
         YARP_BEGIN_PACK
-        typedef struct
+        struct ViewpointData
         {
             union
             {
@@ -469,7 +470,7 @@ namespace yarp {
                 vp_z = static_cast<float>(intBt->get(2).asDouble());
                 return;
             }
-        } VIEWPOINT_DATA;
+        };
         YARP_END_PACK
 
         // TBD: many others ...
@@ -481,7 +482,7 @@ namespace yarp {
 
         // xyz + rgba - most common type
         YARP_BEGIN_PACK
-        typedef struct
+        struct XYZRGBAData
         {
             union
             {
@@ -558,12 +559,12 @@ namespace yarp {
                 return;
             }
 
-        } XYZ_RGBA_DATA;
+        };
         YARP_END_PACK
 
         // xyz + intensity
         YARP_BEGIN_PACK
-        typedef struct
+        struct XYZIData
         {
             union
             {
@@ -631,12 +632,12 @@ namespace yarp {
                 intensity = static_cast<float>(intBt->get(3).asDouble());
                 return;
             }
-        } XYZ_I_DATA;
+        };
         YARP_END_PACK
 
         // interest point -> xyz + strength
         YARP_BEGIN_PACK
-        typedef struct
+        struct InterestPointXYZData
         {
             union
             {
@@ -704,13 +705,13 @@ namespace yarp {
                 strength = static_cast<float>(intBt->get(3).asDouble());
                 return;
             }
-        } INTEREST_POINT_XYZ_DATA;
+        };
         YARP_END_PACK
 
 
         // point xyz + normals
         YARP_BEGIN_PACK
-        typedef struct
+        struct XYZNormalData
         {
             union
             {
@@ -802,12 +803,12 @@ namespace yarp {
                 curvature = static_cast<float>(intBt->get(6).asDouble());
                 return;
             }
-        } XYZ_NORMAL_DATA;
+        };
         YARP_END_PACK
 
         // point xyz + normals + RGBA
         YARP_BEGIN_PACK
-        typedef struct
+        struct XYZNormalRGBAData
         {
             union
             {
@@ -922,7 +923,7 @@ namespace yarp {
                 a = intBt->get(10).asInt();
                 return;
             }
-        } XYZ_NORMAL_RGBA_DATA;
+        };
         YARP_END_PACK
 
     // TBD: many others ...

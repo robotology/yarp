@@ -103,14 +103,14 @@ namespace yarp {
      */
     class PointCloud : public PointCloudBase
     {
-        static_assert(std::is_same<T, XY_DATA>::value ||
-                      std::is_same<T, XYZ_DATA>::value ||
-                      std::is_same<T, NORMAL_DATA>::value ||
-                      std::is_same<T, XYZ_RGBA_DATA>::value ||
-                      std::is_same<T, XYZ_I_DATA>::value ||
-                      std::is_same<T, INTEREST_POINT_XYZ_DATA>::value ||
-                      std::is_same<T, XYZ_NORMAL_DATA>::value ||
-                      std::is_same<T, XYZ_NORMAL_RGBA_DATA>::value, "yarp::sig::PointCloud<T>: T chosen is not supported");
+        static_assert(std::is_same<T, XYData>::value ||
+                      std::is_same<T, XYZData>::value ||
+                      std::is_same<T, NormalData>::value ||
+                      std::is_same<T, XYZRGBAData>::value ||
+                      std::is_same<T, XYZIData>::value ||
+                      std::is_same<T, InterestPointXYZData>::value ||
+                      std::is_same<T, XYZNormalData>::value ||
+                      std::is_same<T, XYZNormalRGBAData>::value, "yarp::sig::PointCloud<T>: T chosen is not supported");
     public:
 
         /**
@@ -504,57 +504,57 @@ namespace yarp {
 
         void setPointType()
         {
-            if (std::is_same<T, XY_DATA>::value)
+            if (std::is_same<T, XYData>::value)
             {
                 header.pointType = PCL_POINT2D_XY;
                 return;
             }
 
-            if (std::is_same<T, XYZ_DATA>::value)
+            if (std::is_same<T, XYZData>::value)
             {
                 header.pointType = PCL_POINT_XYZ;
                 return;
             }
 
-            if (std::is_same<T, NORMAL_DATA>::value)
+            if (std::is_same<T, NormalData>::value)
             {
                 header.pointType = PCL_NORMAL;
                 return;
             }
 
-            if (std::is_same<T, XYZ_RGBA_DATA>::value)
+            if (std::is_same<T, XYZRGBAData>::value)
             {
                 header.pointType = PCL_POINT_XYZ_RGBA;
                 return;
             }
 
-            if (std::is_same<T, XYZ_I_DATA>::value)
+            if (std::is_same<T, XYZIData>::value)
             {
                 header.pointType = PCL_POINT_XYZ_I;
                 return;
             }
 
-            if (std::is_same<T, INTEREST_POINT_XYZ_DATA>::value)
+            if (std::is_same<T, InterestPointXYZData>::value)
             {
                 header.pointType = PCL_INTEREST_POINT_XYZ;
                 return;
             }
 
-            if (std::is_same<T, XYZ_NORMAL_DATA>::value)
+            if (std::is_same<T, XYZNormalData>::value)
             {
                 header.pointType = PCL_POINT_XYZ_NORMAL;
                 return;
             }
 
-            if (std::is_same<T, XYZ_NORMAL_RGBA_DATA>::value)
+            if (std::is_same<T, XYZNormalRGBAData>::value)
             {
                 header.pointType = PCL_POINT_XYZ_NORMAL_RGBA;
                 return;
             }
 
-    //        RGBA_DATA       has sense to implement them?
+    //        RGBAData       has sense to implement them?
     //        intensity       has sense to implement them?
-    //        VIEWPOINT_DATA  has sense to implement them?
+    //        ViewpointData  has sense to implement them?
 
             header.pointType = 0;
 
@@ -576,14 +576,14 @@ inline int BottleTagMap <X> () \
     return BOTTLE_TAG_DOUBLE; \
 }
 
-TagMap(yarp::sig::XY_DATA)
-TagMap(yarp::sig::XYZ_DATA)
-TagMap(yarp::sig::NORMAL_DATA)
-TagMap(yarp::sig::XYZ_RGBA_DATA)
-TagMap(yarp::sig::XYZ_I_DATA)
-TagMap(yarp::sig::INTEREST_POINT_XYZ_DATA)
-TagMap(yarp::sig::XYZ_NORMAL_DATA)
-TagMap(yarp::sig::XYZ_NORMAL_RGBA_DATA)
+TagMap(yarp::sig::XYData)
+TagMap(yarp::sig::XYZData)
+TagMap(yarp::sig::NormalData)
+TagMap(yarp::sig::XYZRGBAData)
+TagMap(yarp::sig::XYZIData)
+TagMap(yarp::sig::InterestPointXYZData)
+TagMap(yarp::sig::XYZNormalData)
+TagMap(yarp::sig::XYZNormalRGBAData)
 
 
 
