@@ -125,17 +125,17 @@ namespace yarp {
             yarp::os::ConstString toString(int precision, int width)
             {
                 yarp::os::ConstString ret = "";
-                char tmp[100];
+                char tmp[128];
                 if(width<0)
                 {
-                    sprintf(tmp, "% .*lf % .*lf\t", precision, x,
+                    snprintf(tmp, 128, "% .*lf % .*lf\t", precision, x,
                                                   precision, y);
                     ret+=tmp;
 
                 }
                 else
                 {
-                    sprintf(tmp, "% *.*lf % *.*lf", width, precision, x,
+                    snprintf(tmp, 128, "% *.*lf % *.*lf", width, precision, x,
                                                   width, precision, y);
                     ret+=tmp;
                 }
@@ -176,10 +176,10 @@ namespace yarp {
             yarp::os::ConstString toString(int precision, int width)
             {
                 yarp::os::ConstString ret = "";
-                char tmp[100];
+                char tmp[128];
                 if(width<0)
                 {
-                    sprintf(tmp, "% .*lf % .*lf % .*lf\t", precision, x,
+                    snprintf(tmp, 128, "% .*lf % .*lf % .*lf\t", precision, x,
                                                            precision, y,
                                                            precision, z);
                     ret+=tmp;
@@ -187,7 +187,7 @@ namespace yarp {
                 }
                 else
                 {
-                    sprintf(tmp, "% *.*lf % *.*lf % *.*lf", width, precision, x,
+                    snprintf(tmp, 128, "% *.*lf % *.*lf % *.*lf", width, precision, x,
                                                             width, precision, y,
                                                             width, precision, z);
                     ret+=tmp;
@@ -207,7 +207,9 @@ namespace yarp {
             {
                 yarp::os::Bottle* intBt = bt.get(i).asList();
 
-                if(!intBt) return;
+                if (!intBt) {
+                    return;
+                }
 
                 x = static_cast<float>(intBt->get(0).asDouble());
                 y = static_cast<float>(intBt->get(1).asDouble());
@@ -238,7 +240,7 @@ namespace yarp {
                 YARP_UNUSED(precision); YARP_UNUSED(width);
                 yarp::os::ConstString ret = "";
                 char tmp[10];
-                sprintf(tmp, "%c %c %c %c\t", r, g, b, a);
+                snprintf(tmp, 128, "%c %c %c %c\t", r, g, b, a);
                 ret+=tmp;
                 return ret;
             }
@@ -296,10 +298,10 @@ namespace yarp {
             yarp::os::ConstString toString(int precision, int width)
             {
                 yarp::os::ConstString ret = "";
-                char tmp[100];
+                char tmp[128];
                 if(width<0)
                 {
-                    sprintf(tmp, "% .*lf % .*lf % .*lf % .*lf\t", precision, normal_x,
+                    snprintf(tmp, 128, "% .*lf % .*lf % .*lf % .*lf\t", precision, normal_x,
                                                                   precision, normal_y,
                                                                   precision, normal_z,
                                                                   precision, curvature);
@@ -308,7 +310,7 @@ namespace yarp {
                 }
                 else
                 {
-                    sprintf(tmp, "% *.*lf % *.*lf % *.*lf % *.*lf", width, precision, normal_x,
+                    snprintf(tmp, 128, "% *.*lf % *.*lf % *.*lf % *.*lf", width, precision, normal_x,
                                                                     width, precision, normal_y,
                                                                     width, precision, normal_z,
                                                                     width, precision, curvature);
@@ -330,7 +332,9 @@ namespace yarp {
             {
                 yarp::os::Bottle* intBt = bt.get(i).asList();
 
-                if(!intBt) return;
+                if (!intBt) {
+                    return;
+                }
 
                 normal_x = static_cast<float>(intBt->get(0).asDouble());
                 normal_y = static_cast<float>(intBt->get(1).asDouble());
@@ -358,10 +362,10 @@ namespace yarp {
             yarp::os::ConstString toString(int precision, int width)
             {
                 yarp::os::ConstString ret = "";
-                char tmp[100];
+                char tmp[128];
                 if(width<0)
                 {
-                    sprintf(tmp, "% .*lf % .*lf % .*lf\t", precision, normal_x,
+                    snprintf(tmp, 128, "% .*lf % .*lf % .*lf\t", precision, normal_x,
                                                            precision, normal_y,
                                                            precision, normal_z);
                     ret+=tmp;
@@ -369,7 +373,7 @@ namespace yarp {
                 }
                 else
                 {
-                    sprintf(tmp, "% *.*lf % *.*lf % *.*lf", width, precision, normal_x,
+                    snprintf(tmp, 128, "% *.*lf % *.*lf % *.*lf", width, precision, normal_x,
                                                             width, precision, normal_y,
                                                             width, precision, normal_z);
                     ret+=tmp;
@@ -389,7 +393,9 @@ namespace yarp {
             {
                 yarp::os::Bottle* intBt = bt.get(i).asList();
 
-                if(!intBt) return;
+                if (!intBt) {
+                    return;
+                }
 
                 normal_x = static_cast<float>(intBt->get(0).asDouble());
                 normal_y = static_cast<float>(intBt->get(1).asDouble());
@@ -432,10 +438,10 @@ namespace yarp {
             yarp::os::ConstString toString(int precision, int width)
             {
                 yarp::os::ConstString ret = "";
-                char tmp[100];
+                char tmp[128];
                 if(width<0)
                 {
-                    sprintf(tmp, "% .*lf % .*lf % .*lf\t", precision, vp_x,
+                    snprintf(tmp, 128, "% .*lf % .*lf % .*lf\t", precision, vp_x,
                                                            precision, vp_y,
                                                            precision, vp_z);
                     ret+=tmp;
@@ -443,7 +449,7 @@ namespace yarp {
                 }
                 else
                 {
-                    sprintf(tmp, "% *.*lf % *.*lf % *.*lf", width, precision, vp_x,
+                    snprintf(tmp, 128, "% *.*lf % *.*lf % *.*lf", width, precision, vp_x,
                                                             width, precision, vp_y,
                                                             width, precision, vp_z);
                     ret+=tmp;
@@ -463,7 +469,9 @@ namespace yarp {
             {
                 yarp::os::Bottle* intBt = bt.get(i).asList();
 
-                if(!intBt) return;
+                if (!intBt) {
+                    return;
+                }
 
                 vp_x = static_cast<float>(intBt->get(0).asDouble());
                 vp_y = static_cast<float>(intBt->get(1).asDouble());
@@ -511,10 +519,10 @@ namespace yarp {
             yarp::os::ConstString toString(int precision, int width)
             {
                 yarp::os::ConstString ret = "";
-                char tmp[100];
+                char tmp[128];
                 if(width<0)
                 {
-                    sprintf(tmp, "% .*lf % .*lf % .*lf ", precision, x,
+                    snprintf(tmp, 128, "% .*lf % .*lf % .*lf ", precision, x,
                                                           precision, y,
                                                           precision, z);
                     ret+=tmp;
@@ -522,12 +530,12 @@ namespace yarp {
                 }
                 else
                 {
-                    sprintf(tmp, "% *.*lf % *.*lf % *.*lf ", width, precision, x,
+                    snprintf(tmp, 128, "% *.*lf % *.*lf % *.*lf ", width, precision, x,
                                                              width, precision, y,
                                                              width, precision, z);
                     ret+=tmp;
                 }
-                sprintf(tmp, "%c %c %c %c\t", r, g, b, a);
+                snprintf(tmp, 128, "%c %c %c %c\t", r, g, b, a);
                 ret+=tmp;
                 return ret;
             }
@@ -547,7 +555,9 @@ namespace yarp {
             {
                 yarp::os::Bottle* intBt = bt.get(i).asList();
 
-                if(!intBt) return;
+                if (!intBt) {
+                    return;
+                }
 
                 x = static_cast<float>(intBt->get(0).asDouble());
                 y = static_cast<float>(intBt->get(1).asDouble());
@@ -588,10 +598,10 @@ namespace yarp {
             yarp::os::ConstString toString(int precision, int width)
             {
                 yarp::os::ConstString ret = "";
-                char tmp[100];
+                char tmp[128];
                 if(width<0)
                 {
-                    sprintf(tmp, "% .*lf % .*lf % .*lf % .*lf\t", precision, x,
+                    snprintf(tmp, 128, "% .*lf % .*lf % .*lf % .*lf\t", precision, x,
                                                                   precision, y,
                                                                   precision, z,
                                                                   precision, intensity);
@@ -600,7 +610,7 @@ namespace yarp {
                 }
                 else
                 {
-                    sprintf(tmp, "% *.*lf % *.*lf % *.*lf % *.*lf", width, precision, x,
+                    snprintf(tmp, 128, "% *.*lf % *.*lf % *.*lf % *.*lf", width, precision, x,
                                                                     width, precision, y,
                                                                     width, precision, z,
                                                                     width, precision, intensity);
@@ -661,10 +671,10 @@ namespace yarp {
             yarp::os::ConstString toString(int precision, int width)
             {
                 yarp::os::ConstString ret = "";
-                char tmp[100];
+                char tmp[128];
                 if(width<0)
                 {
-                    sprintf(tmp, "% .*lf % .*lf % .*lf % .*lf\t", precision, x,
+                    snprintf(tmp, 128, "% .*lf % .*lf % .*lf % .*lf\t", precision, x,
                                                                   precision, y,
                                                                   precision, z,
                                                                   precision, strength);
@@ -673,7 +683,7 @@ namespace yarp {
                 }
                 else
                 {
-                    sprintf(tmp, "% *.*lf % *.*lf % *.*lf % *.*lf", width, precision, x,
+                    snprintf(tmp, 128, "% *.*lf % *.*lf % *.*lf % *.*lf", width, precision, x,
                                                                     width, precision, y,
                                                                     width, precision, z,
                                                                     width, precision, strength);
@@ -745,14 +755,14 @@ namespace yarp {
             yarp::os::ConstString toString(int precision, int width)
             {
                 yarp::os::ConstString ret = "";
-                char tmp[100];
+                char tmp[128];
                 if(width<0)
                 {
-                    sprintf(tmp, "% .*lf % .*lf % .*lf ", precision, x,
+                    snprintf(tmp, 128, "% .*lf % .*lf % .*lf ", precision, x,
                                                           precision, y,
                                                           precision, z);
                     ret+=tmp;
-                    sprintf(tmp, "% .*lf % .*lf % .*lf % .*lf\t", precision, normal_x,
+                    snprintf(tmp, 128, "% .*lf % .*lf % .*lf % .*lf\t", precision, normal_x,
                                                                   precision, normal_y,
                                                                   precision, normal_z,
                                                                   precision, curvature);
@@ -761,11 +771,11 @@ namespace yarp {
                 }
                 else
                 {
-                    sprintf(tmp, "% *.*lf % *.*lf % *.*lf ", width, precision, x,
+                    snprintf(tmp, 128, "% *.*lf % *.*lf % *.*lf ", width, precision, x,
                                                              width, precision, y,
                                                              width, precision, z);
                     ret+=tmp;
-                    sprintf(tmp, "% *.*lf % *.*lf % *.*lf % *.*lf", width, precision, normal_x,
+                    snprintf(tmp, 128, "% *.*lf % *.*lf % *.*lf % *.*lf", width, precision, normal_x,
                                                                     width, precision, normal_y,
                                                                     width, precision, normal_z,
                                                                     width, precision, curvature);
@@ -855,14 +865,14 @@ namespace yarp {
             yarp::os::ConstString toString(int precision, int width)
             {
                 yarp::os::ConstString ret = "";
-                char tmp[100];
+                char tmp[128];
                 if(width<0)
                 {
-                    sprintf(tmp, "% .*lf % .*lf % .*lf ", precision, x,
+                    snprintf(tmp, 128, "% .*lf % .*lf % .*lf ", precision, x,
                                                           precision, y,
                                                           precision, z);
                     ret+=tmp;
-                    sprintf(tmp, "% .*lf % .*lf % .*lf % .*lf ", precision, normal_x,
+                    snprintf(tmp, 128, "% .*lf % .*lf % .*lf % .*lf ", precision, normal_x,
                                                                  precision, normal_y,
                                                                  precision, normal_z,
                                                                  precision, curvature);
@@ -871,17 +881,17 @@ namespace yarp {
                 }
                 else
                 {
-                    sprintf(tmp, "% *.*lf % *.*lf % *.*lf ", width, precision, x,
+                    snprintf(tmp, 128, "% *.*lf % *.*lf % *.*lf ", width, precision, x,
                                                              width, precision, y,
                                                              width, precision, z);
                     ret+=tmp;
-                    sprintf(tmp, "% *.*lf % *.*lf % *.*lf % *.*lf ", width, precision, normal_x,
+                    snprintf(tmp, 128, "% *.*lf % *.*lf % *.*lf % *.*lf ", width, precision, normal_x,
                                                                      width, precision, normal_y,
                                                                      width, precision, normal_z,
                                                                      width, precision, curvature);
                     ret+=tmp;
                 }
-                sprintf(tmp, "%c %c %c %c\t", r, g, b, a);
+                snprintf(tmp, 128, "%c %c %c %c\t", r, g, b, a);
                 ret+=tmp;
                 return ret;
             }

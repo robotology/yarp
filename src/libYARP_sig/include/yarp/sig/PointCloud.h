@@ -52,7 +52,6 @@ public:
     {
         setPointType();
         copy<T1>(alt);
-        return;
 
     }
 
@@ -469,8 +468,6 @@ public:
 //        ViewpointData  has sense to implement them?
 
         header.pointType = 0;
-
-        return;
     }
 
 };

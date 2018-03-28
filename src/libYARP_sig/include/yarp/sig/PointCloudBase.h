@@ -82,7 +82,7 @@ public:
     /**
      * @return true if the point cloud is organized in an image-like structure
      */
-    virtual bool isOrganized();
+    virtual bool isOrganized() const;
 
     /**
      * @return true if the point cloud doesn't contain NaN or Inf values
