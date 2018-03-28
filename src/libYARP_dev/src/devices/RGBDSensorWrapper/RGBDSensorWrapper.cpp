@@ -29,7 +29,8 @@ yarp::dev::DriverCreator *createRGBDSensorWrapper() {
     return new DriverCreatorOf<yarp::dev::RGBDSensorWrapper>("RGBDSensorWrapper", "RGBDSensorWrapper", "yarp::dev::RGBDSensorWrapper");
 }
 
-RGBDSensorParser::RGBDSensorParser() : iRGBDSensor(nullptr) {};
+RGBDSensorParser::RGBDSensorParser() : iRGBDSensor(nullptr)
+{}
 
 bool RGBDSensorParser::configure(IRGBDSensor *interface)
 {
@@ -45,6 +46,11 @@ bool RGBDSensorParser::configure(IRgbVisualParams *rgbInterface, IDepthVisualPar
     bool ret = rgbParser.configure(rgbInterface);
     ret &= depthParser.configure(depthInterface);
     return ret;
+}
+
+bool RGBDSensorParser::configure(IFrameGrabberControls2* _fgCtrl)
+{
+    return fgCtrlParsers.configure(_fgCtrl);
 }
 
 bool RGBDSensorParser::respond(const Bottle& cmd, Bottle& response)
@@ -66,6 +72,13 @@ bool RGBDSensorParser::respond(const Bottle& cmd, Bottle& response)
         {
             // forwarding to the proper parser.
             ret = depthParser.respond(cmd, response);
+        }
+        break;
+
+        case VOCAB_FRAMEGRABBER_CONTROL2:
+        {
+            // forwarding to the proper parser.
+            ret = fgCtrlParsers.respond(cmd, response);
         }
         break;
 
@@ -161,6 +174,7 @@ RGBDSensorWrapper::RGBDSensorWrapper() :
     nodeSeq(0),
     period(DEFAULT_THREAD_PERIOD),
     sensor_p(nullptr),
+    fgCtrl(nullptr),
     sensorStatus(IRGBDSensor::RGBD_SENSOR_NOT_READY),
     verbose(4),
     use_YARP(true),
@@ -174,6 +188,7 @@ RGBDSensorWrapper::~RGBDSensorWrapper()
 {
     close();
     sensor_p = nullptr;
+    fgCtrl = nullptr;
 }
 
 /** Device driver interface */
@@ -367,11 +382,12 @@ bool RGBDSensorWrapper::openAndAttachSubDevice(Searchable& prop)
     if(!attach(subDeviceOwned))
         return false;
 
-    if(!parser.configure(sensor_p) )
+    if(!rgbdParser.configure(sensor_p) || !rgbdParser.configure(fgCtrl))
     {
         yError() << "RGBD wrapper: error configuring interfaces for parsers";
         return false;
     }
+
     /*
     bool conf = rgbParser.configure(rgbVis_p);
     conf &= depthParser.configure(depthVis_p);
@@ -399,6 +415,7 @@ bool RGBDSensorWrapper::close()
             subDeviceOwned=nullptr;
         }
         sensor_p = nullptr;
+        fgCtrl = nullptr;
         isSubdeviceOwned = false;
     }
 
@@ -442,7 +459,7 @@ bool RGBDSensorWrapper::initialize_YARP(yarp::os::Searchable &params)
         yError() << "RGBDSensorWrapper: unable to open rpc Port" << rpcPort_Name.c_str();
         bRet = false;
     }
-    rpcPort.setReader(parser);
+    rpcPort.setReader(rgbdParser);
 
     if(!colorFrame_StreamingPort.open(colorFrame_StreamingPort_Name.c_str()))
     {
@@ -528,6 +545,7 @@ bool RGBDSensorWrapper::attachAll(const PolyDriverList &device2attach)
     }
 
     Idevice2attach->view(sensor_p);
+    Idevice2attach->view(fgCtrl);
     if(!attach(sensor_p))
         return false;
 
@@ -556,11 +574,20 @@ bool RGBDSensorWrapper::attach(yarp::dev::IRGBDSensor *s)
         return false;
     }
     sensor_p = s;
-    if(!parser.configure(sensor_p) )
+    if(!rgbdParser.configure(sensor_p) )
     {
         yError() << "RGBD wrapper: error configuring interfaces for parsers";
         return false;
     }
+    if (fgCtrl)
+    {
+        if(!rgbdParser.configure(fgCtrl) )
+        {
+            yError() << "RGBD wrapper: error configuring interfaces for parsers";
+            return false;
+        }
+    }
+
     RateThread::setRate(period);
     return RateThread::start();
 }
@@ -568,7 +595,10 @@ bool RGBDSensorWrapper::attach(yarp::dev::IRGBDSensor *s)
 bool RGBDSensorWrapper::attach(PolyDriver* poly)
 {
     if(poly)
+    {
         poly->view(sensor_p);
+        poly->view(fgCtrl);
+    }
 
     if(sensor_p == nullptr)
     {
@@ -576,7 +606,7 @@ bool RGBDSensorWrapper::attach(PolyDriver* poly)
         return false;
     }
 
-    if(!parser.configure(sensor_p) )
+    if(!rgbdParser.configure(sensor_p) || !rgbdParser.configure(fgCtrl))
     {
         yError() << "RGBD wrapper: error configuring interfaces for parsers";
         return false;

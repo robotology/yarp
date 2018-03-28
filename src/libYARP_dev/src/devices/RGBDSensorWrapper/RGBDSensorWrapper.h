@@ -28,6 +28,7 @@
 #include <yarp/dev/PolyDriver.h>
 #include <yarp/dev/IRGBDSensor.h>
 #include <yarp/dev/IVisualParamsImpl.h>
+#include <yarp/dev/FrameGrabberControl2Impl.h>
 
 // ROS stuff
 #include <yarp/os/Node.h>
@@ -69,12 +70,14 @@ private:
     yarp::dev::IRGBDSensor  *iRGBDSensor;
     yarp::dev::Implement_RgbVisualParams_Parser  rgbParser;
     yarp::dev::Implement_DepthVisualParams_Parser depthParser;
+    yarp::dev::FrameGrabberControls2_Parser fgCtrlParsers;
 
 public:
     RGBDSensorParser();
-    virtual ~RGBDSensorParser() {};
+    virtual ~RGBDSensorParser() {}
     bool configure(IRGBDSensor *interface);
     bool configure(IRgbVisualParams *rgbInterface, IDepthVisualParams *depthInterface);
+    bool configure(IFrameGrabberControls2 *_fgCtrl);
     virtual bool respond(const yarp::os::Bottle& cmd, yarp::os::Bottle& response) override;
 };
 
@@ -170,13 +173,14 @@ private:
 //     sensor::depth::RGBDSensor_RPCMgsParser  RPC_parser;
 
     //Helper class for RPCs
-    yarp::dev::RGBDImpl::RGBDSensorParser        parser;
+    yarp::dev::RGBDImpl::RGBDSensorParser        rgbdParser;
 
     // Image data specs
     // int hDim, vDim;
     UInt                           period;
     std::string                    sensorId;
     yarp::dev::IRGBDSensor*        sensor_p;
+    yarp::dev::IFrameGrabberControls2* fgCtrl;
     IRGBDSensor::RGBDSensor_status sensorStatus;
     int                            verbose;
     bool                           use_YARP;
