@@ -22,7 +22,7 @@ namespace yarp {
 }
 
 
-// YARP_BEGIN_PACK
+YARP_BEGIN_PACK
 /**
  * @brief The yarp::sig::PointCloudNetworkHeader class
  */
@@ -33,8 +33,6 @@ public:
                                 height(0),
                                 pointType(0),
                                 isDense(true),
-//                                pose(4, 0.0f),
-//                                orientation(4, 0.0f),
                                 hasCustomData(false),
                                 pad{0,0}
     { YARP_UNUSED(pad); }
@@ -44,19 +42,12 @@ public:
     yarp::os::NetInt32  height;
     yarp::os::NetInt32  pointType;       // bitwise of all possible informations -> could also be int64 or just an enum, but I thin bitwise gives more freedom about all possible combinations
     bool                isDense;         // the point cloud is dense if not contains NaN or Inf values
-//     yarp::sig::Vector   pose;            // translation from origin -- could be an Eigen::Vector4f for better PCL compatibility if yarp can afford to depend from it
-//     yarp::sig::Vector   orientation;     // orientation wrt origin  -- could be an Eigen::Quaternion for better PCL compatibility if yarp can afford to depend from it
-
-    // YARPish fileds
-//     char                *data;           // actual pointCloud data.
 
     // Other
     bool                hasCustomData;   // this guy is mis-aligned --> for future use, to have addictional data not initially forseen or fields from ROS which does not fit into yarp pointTypes
-//     yarp::os::Bottle    *customData;     // used in case of custom data, to check if a different type can be better optimized for transmission?
-private:
     char pad[2]; // char vector to align the bytes of the headers
 };
-// YARP_END_PACK
+YARP_END_PACK
 
 
 
