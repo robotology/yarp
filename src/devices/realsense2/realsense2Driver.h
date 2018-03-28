@@ -10,13 +10,14 @@
 #ifndef REALSENSE2_DRIVER_H
 #define REALSENSE2_DRIVER_H
 
-#ifndef WIN32
+#ifdef WIN32
 #define _USE_MATH_DEFINES
 #endif
 
 #include <iostream>
 #include <cstring>
 #include <map>
+#include <mutex>
 
 #include <yarp/dev/DeviceDriver.h>
 #include <yarp/dev/FrameGrabberControl2.h>
@@ -28,7 +29,6 @@
 #include <yarp/dev/IRGBDSensor.h>
 #include <yarp/dev/RGBDSensorParamParser.h>
 #include <librealsense2/rs.hpp>
-
 
 constexpr double RAD2DEG (180.0 / M_PI);
 
@@ -123,6 +123,7 @@ private:
     bool        getImage(FlexImage& Frame, Stamp* timeStamp, rs2::frameset& sourceFrame);
     bool        getImage(depthImage& Frame, Stamp* timeStamp, const rs2::frameset& sourceFrame);
     bool        setIntrinsic(yarp::os::Property& intrinsic, const rs2_intrinsics& values);
+    bool        setExtrinsicParam(yarp::sig::Matrix& extrinsic, const rs2_extrinsics& values);
     void        settingErrorMsg(const std::string& error, bool& ret);
     void        updateTransformations();
     bool        pipelineStartup();
@@ -130,6 +131,7 @@ private:
 
 
     // realsense classes
+    std::mutex   m_mutex;
     rs2::context m_ctx;
     rs2::config m_cfg;
     rs2::pipeline m_pipeline;
@@ -147,6 +149,7 @@ private:
     yarp::dev::RGBDSensorParamParser* m_paramParser;
     bool m_depthRegistration;
     bool m_verbose;
+    bool m_initialized;
     int m_period;
     std::vector<cameraFeature_id_t> m_supportedFeatures;
     std::map<std::string, RGBDSensorParamParser::RGBDParam> m_params_map;

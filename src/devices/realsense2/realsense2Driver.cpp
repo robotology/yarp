@@ -85,6 +85,118 @@ static void print_supported_options(const rs2::sensor& sensor)
     std::cout<<std::endl;
 }
 
+static bool isSupportedFormat(const rs2::sensor &sensor, const int width, const int height, bool verbose = false)
+{
+    bool ret = false;
+    std::vector<rs2::stream_profile> stream_profiles = sensor.get_stream_profiles();
+
+    std::map<std::pair<rs2_stream, int>, int> unique_streams;
+    for (auto&& sp : stream_profiles)
+    {
+        unique_streams[std::make_pair(sp.stream_type(), sp.stream_index())]++;
+    }
+
+    if (verbose)
+    {
+        std::cout << "Sensor consists of " << unique_streams.size() << " streams: " << std::endl;
+        for (size_t i = 0; i < unique_streams.size(); i++)
+        {
+            auto it = unique_streams.begin();
+            std::advance(it, i);
+            std::cout << "  - " << it->first.first << " #" << it->first.second << std::endl;
+        }
+        std::cout << "Sensor provides the following stream profiles:" << std::endl;
+    }
+
+    //Next, we go over all the stream profiles and print the details of each one
+
+    int profile_num = 0;
+    for (rs2::stream_profile stream_profile : stream_profiles)
+    {
+        if (verbose)
+        {
+            rs2_stream stream_data_type = stream_profile.stream_type();
+
+            int stream_index = stream_profile.stream_index();
+
+            std::cout << std::setw(3) << profile_num << ": " << stream_data_type << " #" << stream_index;
+        }
+
+        // As noted, a stream is an abstraction.
+        // In order to get additional data for the specific type of a
+        //  stream, a mechanism of "Is" and "As" is provided:
+        if (stream_profile.is<rs2::video_stream_profile>()) //"Is" will test if the type tested is of the type given
+        {
+            // "As" will try to convert the instance to the given type
+            rs2::video_stream_profile video_stream_profile = stream_profile.as<rs2::video_stream_profile>();
+
+            // After using the "as" method we can use the new data type
+            //  for additinal operations:
+            if (verbose)
+            {
+                std::cout << " (Video Stream: " << video_stream_profile.format() << " " <<
+                video_stream_profile.width() << "x" << video_stream_profile.height() << "@ " << video_stream_profile.fps() << "Hz)";
+                std::cout << std::endl;
+            }
+
+            if(video_stream_profile.width() == width && video_stream_profile.height() == height)
+                ret=true;
+        }
+        profile_num++;
+    }
+
+
+    return ret;
+}
+
+static bool optionPerc2Value(rs2_option option,const rs2::sensor* sensor, const float& perc, float& value)
+{
+    if (!sensor)
+    {
+        return false;
+    }
+    try
+    {
+        rs2::option_range optionRange = sensor->get_option_range(option);
+        value =(float) (perc * (optionRange.max - optionRange.min) + optionRange.min);
+
+    }
+    catch (const rs2::error& e)
+    {
+        // Some options can only be set while the camera is streaming,
+        // and generally the hardware might fail so it is good practice to catch exceptions from set_option
+        yError() << "Failed to get option " << option << " range. (" << e.what() << ")";
+        return false;
+    }
+
+    return true;
+}
+
+static bool optionValue2Perc(rs2_option option,const rs2::sensor* sensor, float& perc, const float& value)
+{
+    if (!sensor)
+    {
+        return false;
+    }
+    try
+    {
+        rs2::option_range optionRange = sensor->get_option_range(option);
+        perc =(float) ((value - optionRange.min) /  (optionRange.max - optionRange.min));
+
+    }
+    catch (const rs2::error& e)
+    {
+        // Some options can only be set while the camera is streaming,
+        // and generally the hardware might fail so it is good practice to catch exceptions from set_option
+        yError() << "Failed to get option " << option << " range. (" << e.what() << ")";
+        return false;
+    }
+
+    return true;
+}
+
+
+
 static bool setOption(rs2_option option,const rs2::sensor* sensor, float value)
 {
 
@@ -96,7 +208,7 @@ static bool setOption(rs2_option option,const rs2::sensor* sensor, float value)
     // First, verify that the sensor actually supports this option
     if (!sensor->supports(option))
     {
-        yError() << "The option" << option << "is not supported by this sensor";
+        yError() << "realsense2Driver: The option" << rs2_option_to_string(option) << "is not supported by this sensor";
         return false;
     }
 
@@ -109,7 +221,7 @@ static bool setOption(rs2_option option,const rs2::sensor* sensor, float value)
     {
         // Some options can only be set while the camera is streaming,
         // and generally the hardware might fail so it is good practice to catch exceptions from set_option
-        yError() << "Failed to set option " << option << ". (" << e.what() << ")";
+        yError() << "realsense2Driver: Failed to set option " << rs2_option_to_string(option) << ". (" << e.what() << ")";
         return false;
     }
     return true;
@@ -125,7 +237,7 @@ static bool getOption(rs2_option option,const rs2::sensor *sensor, float &value)
     // First, verify that the sensor actually supports this option
     if (!sensor->supports(option))
     {
-        yError() << "The option" << option << "is not supported by this sensor";
+        yError() << "realsense2Driver: The option" << rs2_option_to_string(option) << "is not supported by this sensor";
         return false;
     }
 
@@ -138,7 +250,7 @@ static bool getOption(rs2_option option,const rs2::sensor *sensor, float &value)
     {
         // Some options can only be set while the camera is streaming,
         // and generally the hardware might fail so it is good practice to catch exceptions from set_option
-        yError() << "Failed to get option " << option << ". (" << e.what() << ")";
+        yError() << "realsense2Driver: Failed to get option " << rs2_option_to_string(option) << ". (" << e.what() << ")";
         return false;
     }
     return true;
@@ -215,7 +327,7 @@ static size_t bytesPerPixel(const rs2_format format)
 
 realsense2Driver::realsense2Driver() : m_depth_sensor(nullptr), m_color_sensor(nullptr),
                                        m_paramParser(nullptr), m_depthRegistration(false),
-                                       m_verbose(false), m_period(0)
+                                       m_verbose(false), m_initialized(false), m_period(0)
 {
 
     m_params_map =
@@ -296,6 +408,7 @@ bool realsense2Driver::initializeRealsenseDevice()
 
     if (!pipelineStartup())
         return false;
+    m_initialized = true;
 
     // Camera warmup - Dropped frames to allow stabilization
     yInfo()<<"realsense2Driver: sensor warm-up....";
@@ -505,30 +618,61 @@ bool realsense2Driver::getRgbResolution(int &width, int &height)
 
 bool realsense2Driver::setDepthResolution(int width, int height)
 {
-    m_cfg.enable_stream(RS2_STREAM_COLOR, m_color_intrin.width, m_color_intrin.height, RS2_FORMAT_RGB8, 0); //TODO Supported fps and res
-    m_cfg.enable_stream(RS2_STREAM_DEPTH, width, height, RS2_FORMAT_Z16, 0);
+    if (m_depth_sensor && isSupportedFormat(*m_depth_sensor, width, height, m_verbose))
+    {
+        m_cfg.enable_stream(RS2_STREAM_COLOR, m_color_intrin.width, m_color_intrin.height, RS2_FORMAT_RGB8, 0); //TODO Supported fps and res
+        m_cfg.enable_stream(RS2_STREAM_DEPTH, width, height, RS2_FORMAT_Z16, 0);
+    }
+    else
+    {
+        if (m_initialized)
+        {
+            m_cfg.enable_stream(RS2_STREAM_COLOR, m_color_intrin.width, m_color_intrin.height, RS2_FORMAT_RGB8, 0); //TODO Supported fps and res
+            m_cfg.enable_stream(RS2_STREAM_DEPTH, m_depth_intrin.width, m_depth_intrin.height, RS2_FORMAT_Z16, 0);
+            yWarning()<<"realsense2Driver: format"<<width<<"x"<<height<<"not supported, use --verbose for more details. Setting the fallback format";
+            std::cout<<"COLOR: "<<m_color_intrin.width<<"x"<<m_color_intrin.height<<std::endl;
+            std::cout<<"DEPTH: "<<m_depth_intrin.width<<"x"<<m_depth_intrin.height<<std::endl;
+        }
+    }
 
-    if (!pipelineShutdown())
-        return false;
+    {
+        std::lock_guard<std::mutex> guard(m_mutex);
+        if (!pipelineShutdown())
+            return false;
 
-    if (!pipelineStartup())
-        return false;
-
+        if (!pipelineStartup())
+            return false;
+    }
     updateTransformations();
     return true;
 }
 
 bool realsense2Driver::setRgbResolution(int width, int height)
 {
-    m_cfg.enable_stream(RS2_STREAM_COLOR, width, height, RS2_FORMAT_RGB8, 0); //TODO Supported fps and res
-    m_cfg.enable_stream(RS2_STREAM_DEPTH, m_depth_intrin.width, m_depth_intrin.height, RS2_FORMAT_Z16, 0);
+    if (m_color_sensor && isSupportedFormat(*m_color_sensor, width, height, m_verbose)) {
+        m_cfg.enable_stream(RS2_STREAM_COLOR, width, height, RS2_FORMAT_RGB8, 0); //TODO Supported fps and res
+        m_cfg.enable_stream(RS2_STREAM_DEPTH, m_depth_intrin.width, m_depth_intrin.height, RS2_FORMAT_Z16, 0);
+    }
+    else
+    {
+        if (m_initialized)
+        {
+            m_cfg.enable_stream(RS2_STREAM_COLOR, m_color_intrin.width, m_color_intrin.height, RS2_FORMAT_RGB8, 0); //TODO Supported fps and res
+            m_cfg.enable_stream(RS2_STREAM_DEPTH, m_depth_intrin.width, m_depth_intrin.height, RS2_FORMAT_Z16, 0);
+            yWarning()<<"realsense2Driver: format"<<width<<"x"<<height<<"not supported, use --verbose for more details. Setting the fallback format";
+            std::cout<<"COLOR: "<<m_color_intrin.width<<"x"<<m_color_intrin.height<<std::endl;
+            std::cout<<"DEPTH: "<<m_depth_intrin.width<<"x"<<m_depth_intrin.height<<std::endl;
+        }
 
-    if (!pipelineShutdown())
-        return false;
+    }
+    {
+        std::lock_guard<std::mutex> guard(m_mutex);
+        if (!pipelineShutdown())
+            return false;
 
-    if (!pipelineStartup())
-        return false;
-
+        if (!pipelineStartup())
+            return false;
+    }
     updateTransformations();
     return true;
 }
@@ -592,6 +736,32 @@ bool realsense2Driver::setIntrinsic(Property& intrinsic, const rs2_intrinsics &v
     return true;
 }
 
+bool realsense2Driver::setExtrinsicParam(Matrix &extrinsic, const rs2_extrinsics &values)
+{
+
+    if (extrinsic.cols() != 4 || extrinsic.rows() != 4)
+    {
+        yError()<<"realsense2Driver: extrinsic matrix is not 4x4";
+        return false;
+    }
+
+    extrinsic.eye();
+
+    for (int j=0; j<extrinsic.rows() - 1; j++)
+    {
+        for (int i=0; i<extrinsic.cols() - 1; i++)
+        {
+            extrinsic[j][i] = values.rotation[i + j*extrinsic.cols()];
+        }
+    }
+
+    extrinsic[0][3] = values.translation[0];
+    extrinsic[1][3] = values.translation[1];
+    extrinsic[2][3] = values.translation[2];
+
+    return false;
+}
+
 bool realsense2Driver::getRgbIntrinsicParam(Property& intrinsic)
 {
     return setIntrinsic(intrinsic, m_color_intrin);
@@ -633,17 +803,27 @@ double realsense2Driver::getDepthAccuracy()
 
 bool realsense2Driver::getDepthClipPlanes(double& nearPlane, double& farPlane)
 {
+    if (m_params_map[clipPlanes].isDescription)
+    {
+        nearPlane = m_params_map[clipPlanes].val[0].asDouble();
+        farPlane  = m_params_map[clipPlanes].val[1].asDouble();
+        return true;
+    }
     bool ret = true;
-    ret  = getOption(RS2_OPTION_MIN_DISTANCE, m_depth_sensor, (float&) nearPlane);// Not sure it is the correct option
-    ret &= getOption(RS2_OPTION_MAX_DISTANCE, m_depth_sensor, (float&) farPlane); // Not sure it is the correct option
+    ret  = getOption(RS2_OPTION_MIN_DISTANCE, m_depth_sensor, (float&) nearPlane);
+    ret &= getOption(RS2_OPTION_MAX_DISTANCE, m_depth_sensor, (float&) farPlane);
     return ret;
 }
 
 bool realsense2Driver::setDepthClipPlanes(double nearPlane, double farPlane)
 {
+    if (m_params_map[clipPlanes].isDescription)
+    {
+        return false;
+    }
     bool ret = true;
-    ret  = setOption(RS2_OPTION_MIN_DISTANCE, m_depth_sensor, nearPlane);// Not sure it is the correct option
-    ret &= setOption(RS2_OPTION_MAX_DISTANCE, m_depth_sensor, farPlane); // Not sure it is the correct option
+    ret  = setOption(RS2_OPTION_MIN_DISTANCE, m_depth_sensor, nearPlane);
+    ret &= setOption(RS2_OPTION_MAX_DISTANCE, m_depth_sensor, farPlane);
     return ret;
 }
 
@@ -661,18 +841,19 @@ bool realsense2Driver::setDepthMirroring(bool mirror)
 
 bool realsense2Driver::getExtrinsicParam(Matrix& extrinsic)
 {
-    extrinsic = m_paramParser->transformationMatrix;
-    return true;
+    return setExtrinsicParam(extrinsic, m_depth_to_color);
 }
 
 bool realsense2Driver::getRgbImage(FlexImage& rgbImage, Stamp* timeStamp)
 {
+    std::lock_guard<std::mutex> guard(m_mutex);
     rs2::frameset data = m_pipeline.wait_for_frames();
     return getImage(rgbImage, timeStamp, data);
 }
 
 bool realsense2Driver::getDepthImage(ImageOf<PixelFloat>& depthImage, Stamp* timeStamp)
 {
+    std::lock_guard<std::mutex> guard(m_mutex);
     rs2::frameset data = m_pipeline.wait_for_frames();
     rs2::align align(RS2_STREAM_COLOR);
     auto aligned_frames = align.process(data);
@@ -741,6 +922,7 @@ bool realsense2Driver::getImage(depthImage& Frame, Stamp *timeStamp, const rs2::
 
 bool realsense2Driver::getImages(FlexImage& colorFrame, ImageOf<PixelFloat>& depthFrame, Stamp* colorStamp, Stamp* depthStamp)
 {
+    std::lock_guard<std::mutex> guard(m_mutex);
     rs2::frameset data = m_pipeline.wait_for_frames();
     rs2::align align(RS2_STREAM_COLOR);
     auto aligned_frames = align.process(data);
@@ -787,41 +969,58 @@ bool realsense2Driver::hasFeature(int feature, bool* hasFeature)
 
 bool realsense2Driver::setFeature(int feature, double value)
 {
-    bool b;
+    bool b = false;
     if (!hasFeature(feature, &b) || !b)
     {
         yError() << "feature not supported!";
         return false;
     }
 
+    float valToSet = 0.0;
+    b = false;
     cameraFeature_id_t f = static_cast<cameraFeature_id_t>(feature);
     switch(f)
     {
     case YARP_FEATURE_EXPOSURE:
-        b = setOption(RS2_OPTION_EXPOSURE, m_color_sensor, value);
-        return b;
+        if(optionPerc2Value(RS2_OPTION_EXPOSURE, m_color_sensor, value, valToSet))
+            b = setOption(RS2_OPTION_EXPOSURE, m_color_sensor, valToSet);
+        break;
     case YARP_FEATURE_GAIN:
-        b = setOption(RS2_OPTION_GAIN, m_color_sensor, value);
-        return b;
+        if(optionPerc2Value(RS2_OPTION_GAIN, m_color_sensor,value, valToSet))
+            b = setOption(RS2_OPTION_GAIN, m_color_sensor, valToSet);
+        break;
     case YARP_FEATURE_FRAME_RATE:
     {
         //TODO to implement
-        return false;
+        break;
     }
     case YARP_FEATURE_WHITE_BALANCE:
-        b = setOption(RS2_OPTION_WHITE_BALANCE, m_color_sensor, value);
-        return b;
+        if(optionPerc2Value(RS2_OPTION_WHITE_BALANCE, m_color_sensor, value, valToSet))
+            b = setOption(RS2_OPTION_WHITE_BALANCE, m_color_sensor, valToSet);
+        break;
     case YARP_FEATURE_SHARPNESS:
-        b = setOption(RS2_OPTION_SHARPNESS, m_color_sensor, value);
-        return b;
+        if(optionPerc2Value(RS2_OPTION_SHARPNESS, m_color_sensor, value, valToSet))
+            b = setOption(RS2_OPTION_SHARPNESS, m_color_sensor, valToSet);
+        break;
     case YARP_FEATURE_HUE:
-        b = setOption(RS2_OPTION_HUE, m_color_sensor, value);
-        return b;
+        if(optionPerc2Value(RS2_OPTION_HUE, m_color_sensor, value, valToSet))
+            b = setOption(RS2_OPTION_HUE, m_color_sensor, valToSet);
+        break;
     case YARP_FEATURE_SATURATION:
-        b = setOption(RS2_OPTION_SATURATION, m_color_sensor, value);
-        return b;
+        if(optionPerc2Value(RS2_OPTION_SATURATION, m_color_sensor, value, valToSet))
+            b = setOption(RS2_OPTION_SATURATION, m_color_sensor, valToSet);
+        break;
     default:
         yError() << "feature not supported!";
+        return false;
+    }
+    if (!b)
+    {
+        yError()<<"realsense2Driver: something went wrong setting the feature requested, run the device with --verbose for the supported options";
+        if (m_verbose)
+        {
+            print_supported_options(*m_color_sensor);
+        }
         return false;
     }
     return true;
@@ -829,41 +1028,59 @@ bool realsense2Driver::setFeature(int feature, double value)
 
 bool realsense2Driver::getFeature(int feature, double *value)
 {
-    bool b;
+    bool b = false;
     if (!hasFeature(feature, &b) || !b)
     {
         yError() << "feature not supported!";
         return false;
     }
 
+    float valToGet = 0.0;
+    b = false;
+
     cameraFeature_id_t f = static_cast<cameraFeature_id_t>(feature);
     switch(f)
     {
     case YARP_FEATURE_EXPOSURE:
-        b = getOption(RS2_OPTION_EXPOSURE, m_color_sensor, (float&) value);
-        return b;
+        if (getOption(RS2_OPTION_EXPOSURE, m_color_sensor, valToGet))
+            b = optionValue2Perc(RS2_OPTION_EXPOSURE, m_color_sensor, (float&) value, valToGet);
+        break;
     case YARP_FEATURE_GAIN:
-        b = getOption(RS2_OPTION_GAIN, m_color_sensor, (float&) value);
-        return b;
+        if (getOption(RS2_OPTION_GAIN, m_color_sensor, valToGet))
+            b = optionValue2Perc(RS2_OPTION_GAIN, m_color_sensor, (float&) value, valToGet);
+        break;
     case YARP_FEATURE_FRAME_RATE:
     {
         //TODO to implement
-        return false;
+        break;
     }
     case YARP_FEATURE_WHITE_BALANCE:
-        b = getOption(RS2_OPTION_WHITE_BALANCE, m_color_sensor, (float&) value);
-        return b;
+        if (getOption(RS2_OPTION_WHITE_BALANCE, m_color_sensor, valToGet))
+            b = optionValue2Perc(RS2_OPTION_WHITE_BALANCE, m_color_sensor, (float&) value, valToGet);
+        break;
     case YARP_FEATURE_SHARPNESS:
-        b = getOption(RS2_OPTION_SHARPNESS, m_color_sensor, (float&) value);
-        return b;
+        if (getOption(RS2_OPTION_SHARPNESS, m_color_sensor, valToGet))
+            b = optionValue2Perc(RS2_OPTION_SHARPNESS, m_color_sensor, (float&) value, valToGet);
+        break;
     case YARP_FEATURE_HUE:
-        b = getOption(RS2_OPTION_HUE, m_color_sensor, (float&) value);
-        return b;
+        if (getOption(RS2_OPTION_HUE, m_color_sensor, valToGet))
+            b = optionValue2Perc(RS2_OPTION_HUE, m_color_sensor, (float&) value, valToGet);
+        break;
     case YARP_FEATURE_SATURATION:
-        b = getOption(RS2_OPTION_SATURATION, m_color_sensor, (float&) value);
-        return b;
+        if (getOption(RS2_OPTION_SATURATION, m_color_sensor, valToGet))
+            b = optionValue2Perc(RS2_OPTION_SATURATION, m_color_sensor, (float&) value, valToGet);
+        break;
     default:
         yError() << "feature not supported!";
+        return false;
+    }
+    if (!b)
+    {
+        yError()<<"realsense2Driver: something went wrong setting the feature requested, run the device with --verbose for the supported options";
+        if (m_verbose)
+        {
+            print_supported_options(*m_color_sensor);
+        }
         return false;
     }
     return true;
