@@ -9,24 +9,20 @@
 #ifndef YARP_SIG_POINTCLOUDNETWORKHEADER_H
 #define YARP_SIG_POINTCLOUDNETWORKHEADER_H
 
-#include <yarp/conf/system.h>
+#include <yarp/sig/api.h>
 
 #include <yarp/os/NetInt32.h>
 
 #include <yarp/sig/PointCloudTypes.h>
 
 namespace yarp {
-    namespace sig {
-        class PointCloudNetworkHeader;
-    }
-}
-
+namespace sig {
 
 YARP_BEGIN_PACK
 /**
  * @brief The yarp::sig::PointCloudNetworkHeader class
  */
-class YARP_sig_API yarp::sig::PointCloudNetworkHeader
+class YARP_sig_API PointCloudNetworkHeader
 {
 public:
     PointCloudNetworkHeader() : width(0),
@@ -48,6 +44,9 @@ public:
     char pad[2]; // char vector to align the bytes of the headers
 };
 YARP_END_PACK
+
+}
+}
 
 
 

@@ -6,7 +6,7 @@
  * BSD-3-Clause license. See the accompanying LICENSE file for details.
  */
 
-#include <yarp/sig/PointCloud.h>
+#include <yarp/sig/PointCloudBase.h>
 
 using namespace yarp::sig;
 
@@ -106,13 +106,10 @@ yarp::os::Type PointCloudBase::getType()
     return yarp::os::Type::byName("yarp/pointCloud");
 }
 
-bool PointCloudBase::isOrganized()
+bool PointCloudBase::isOrganized() const
 {
     return height() > 1;
 }
-
-PointCloudBase::PointCloudBase()
-{}
 
 void PointCloudBase::copyFromRawData(const char* dst, const char* source, std::vector<int> &recipe)
 {
