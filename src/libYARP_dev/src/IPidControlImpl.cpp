@@ -13,6 +13,9 @@
 #include <map>
 
 using namespace yarp::dev;
+#define JOINTIDCHECK if (j >= castToMapper(helper)->axes()){yError("joint id out of bound"); return false;}
+#define MJOINTIDCHECK(i) if (joints[i] >= castToMapper(helper)->axes()){yError("joint id out of bound"); return false;}
+#define PJOINTIDCHECK(j) if (j >= castToMapper(helper)->axes()){yError("joint id out of bound"); return false;}
 
 class  yarp::dev::ImplementPidControl::PrivateUnitsHandler
 {
@@ -319,6 +322,7 @@ bool ImplementPidControl::uninitialize ()
 
 bool ImplementPidControl::setPid(const PidControlTypeEnum& pidtype, int j, const Pid &pid)
 {
+    JOINTIDCHECK
     Pid pid_machine;
     int k;
     this->convert_pid_to_machine(pidtype, pid, j, pid_machine, k);
@@ -343,6 +347,7 @@ bool ImplementPidControl::setPids(const PidControlTypeEnum& pidtype,  const Pid 
 
 bool ImplementPidControl::setPidReference(const PidControlTypeEnum& pidtype,  int j, double ref)
 {
+    JOINTIDCHECK
     int k=0;
     double raw;
     this->convert_units_to_machine(pidtype,ref,j,raw,k);
@@ -357,6 +362,7 @@ bool ImplementPidControl::setPidReferences(const PidControlTypeEnum& pidtype,  c
 
 bool ImplementPidControl::setPidErrorLimit(const PidControlTypeEnum& pidtype,  int j, double limit)
 {
+    JOINTIDCHECK
     int k;
     double raw;
     this->convert_units_to_machine(pidtype,limit,j,raw,k);
@@ -372,6 +378,7 @@ bool ImplementPidControl::setPidErrorLimits(const PidControlTypeEnum& pidtype,  
 
 bool ImplementPidControl::getPidError(const PidControlTypeEnum& pidtype, int j, double *err)
 {
+    JOINTIDCHECK
     int k;
     double raw;
     k=castToMapper(helper)->toHw(j);
@@ -393,6 +400,7 @@ bool ImplementPidControl::getPidErrors(const PidControlTypeEnum& pidtype,  doubl
 
 bool ImplementPidControl::getPidOutput(const PidControlTypeEnum& pidtype,  int j, double *out)
 {
+    JOINTIDCHECK
     bool ret;
     int k_raw;
     double raw;
@@ -431,6 +439,7 @@ bool ImplementPidControl::getPidOutputs(const PidControlTypeEnum& pidtype,  doub
 
 bool ImplementPidControl::getPid(const PidControlTypeEnum& pidtype, int j, Pid *pid)
 {
+    JOINTIDCHECK
     int k_raw;
     k_raw=castToMapper(helper)->toHw(j);
     Pid rawPid;
@@ -460,6 +469,7 @@ bool ImplementPidControl::getPids(const PidControlTypeEnum& pidtype, Pid *pids)
 
 bool ImplementPidControl::getPidReference(const PidControlTypeEnum& pidtype, int j, double *ref)
 {
+    JOINTIDCHECK
     bool ret;
     int k;
     double raw;
@@ -483,6 +493,7 @@ bool ImplementPidControl::getPidReferences(const PidControlTypeEnum& pidtype, do
 
 bool ImplementPidControl::getPidErrorLimit(const PidControlTypeEnum& pidtype, int j, double *ref)
 {
+    JOINTIDCHECK
     bool ret;
     int k;
     double raw;
@@ -506,6 +517,7 @@ bool ImplementPidControl::getPidErrorLimits(const PidControlTypeEnum& pidtype, d
 
 bool ImplementPidControl::resetPid(const PidControlTypeEnum& pidtype, int j)
 {
+    JOINTIDCHECK
     int k=0;
     k=castToMapper(helper)->toHw(j);
 
@@ -514,6 +526,7 @@ bool ImplementPidControl::resetPid(const PidControlTypeEnum& pidtype, int j)
 
 bool ImplementPidControl::enablePid(const PidControlTypeEnum& pidtype, int j)
 {
+    JOINTIDCHECK
     int k=0;
     k=castToMapper(helper)->toHw(j);
 
@@ -522,6 +535,7 @@ bool ImplementPidControl::enablePid(const PidControlTypeEnum& pidtype, int j)
 
 bool ImplementPidControl::disablePid(const PidControlTypeEnum& pidtype, int j)
 {
+    JOINTIDCHECK
     int k=0;
     k=castToMapper(helper)->toHw(j);
 
@@ -530,6 +544,7 @@ bool ImplementPidControl::disablePid(const PidControlTypeEnum& pidtype, int j)
 
 bool ImplementPidControl::setPidOffset(const PidControlTypeEnum& pidtype, int j, double off)
 {
+    JOINTIDCHECK
     int k = 0;
     double rawoff;
     double* output_conversion_units=0;
@@ -543,6 +558,7 @@ bool ImplementPidControl::setPidOffset(const PidControlTypeEnum& pidtype, int j,
 
 bool ImplementPidControl::isPidEnabled(const PidControlTypeEnum& pidtype, int j, bool* enabled)
 {
+    JOINTIDCHECK
     int k=0;
     k=castToMapper(helper)->toHw(j);
 

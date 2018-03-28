@@ -250,6 +250,8 @@ bool FakeMotionControl::alloc(int nj)
     _velocityTimeout=allocAndCheck<int>(nj);
     _kbemf=allocAndCheck<double>(nj);
     _ktau=allocAndCheck<double>(nj);
+    _kbemf_scale = allocAndCheck<int>(nj);
+    _ktau_scale = allocAndCheck<int>(nj);
     _filterType=allocAndCheck<int>(nj);
     _last_position_move_time=allocAndCheck<double>(nj);
 
@@ -321,6 +323,8 @@ bool FakeMotionControl::dealloc()
     checkAndDestroy(_velocityTimeout);
     checkAndDestroy(_kbemf);
     checkAndDestroy(_ktau);
+    checkAndDestroy(_kbemf_scale);
+    checkAndDestroy(_ktau_scale);
     checkAndDestroy(_filterType);
     checkAndDestroy(_posCtrl_references);
     checkAndDestroy(_posDir_references);
@@ -443,6 +447,8 @@ FakeMotionControl::FakeMotionControl() :
     _kinematic_mj     = nullptr;
     _kbemf            = nullptr;
     _ktau             = nullptr;
+    _kbemf_scale      = nullptr;
+    _ktau_scale       = nullptr;
     _filterType       = nullptr;
     _positionControlUnits = P_MACHINE_UNITS;
     _torqueControlUnits = T_MACHINE_UNITS;
@@ -579,7 +585,7 @@ bool FakeMotionControl::open(yarp::os::Searchable &config)
     ImplementVelocityControl2::initialize(_njoints, _axisMap, _angleToEncoder, nullptr);
     ImplementControlLimits2::initialize(_njoints, _axisMap, _angleToEncoder, nullptr);
     ImplementImpedanceControl::initialize(_njoints, _axisMap, _angleToEncoder, nullptr, _newtonsToSensor);
-    ImplementTorqueControl::initialize(_njoints, _axisMap, _angleToEncoder, nullptr, _newtonsToSensor);
+    ImplementTorqueControl::initialize(_njoints, _axisMap, _angleToEncoder, nullptr, _newtonsToSensor, _ampsToSensor, _dutycycleToPWM);
     ImplementPositionDirect::initialize(_njoints, _axisMap, _angleToEncoder, nullptr);
     ImplementInteractionMode::initialize(_njoints, _axisMap, _angleToEncoder, nullptr);
     ImplementMotor::initialize(_njoints, _axisMap);
@@ -2798,22 +2804,38 @@ bool FakeMotionControl::getCurrentImpedanceLimitRaw(int j, double *min_stiff, do
 
 bool FakeMotionControl::getBemfParamRaw(int j, double *bemf)
 {
-    return DEPRECATED("getBemfParamRaw");
+    *bemf = _kbemf[j];
+    yDebug() << *bemf;
+    return true;
 }
 
 bool FakeMotionControl::setBemfParamRaw(int j, double bemf)
 {
-    return DEPRECATED("setBemfParamRaw");
+    _kbemf[j] = bemf;
+    yDebug() << bemf;
+    return true;
 }
 
 bool FakeMotionControl::getMotorTorqueParamsRaw(int j, MotorTorqueParameters *params)
 {
-    return false;
+    params->bemf = _kbemf[j];
+    params->bemf_scale = _kbemf_scale[j];
+    params->ktau = _ktau[j];
+    params->ktau_scale = _ktau_scale[j];
+    yDebug() << params->bemf;
+    yDebug() << params->ktau;
+    return true;
 }
 
 bool FakeMotionControl::setMotorTorqueParamsRaw(int j, const MotorTorqueParameters params)
 {
-    return false;
+    _kbemf[j] = params.bemf;
+    _ktau[j] = params.ktau;
+    _kbemf_scale[j] = params.bemf_scale;
+    _ktau_scale[j] = params.ktau_scale;
+    yDebug() << params.bemf << params.bemf_scale;
+    yDebug() << params.ktau << params.ktau_scale;
+    return true;
 }
 
 // IVelocityControl2

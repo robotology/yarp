@@ -688,6 +688,30 @@ public:
         return (value_raw / dutycycleToPWMs[j]);
     }
 
+    inline void bemfuser2bemfraw(double bemf_user, int j, double &bemf_raw, int &k)
+    {
+        bemf_raw = bemf_user * newtonsToSensors[j] / angleToEncoders[j];
+        k = toHw(j);
+    }
+
+    inline void ktauuser2ktauraw(double ktau_user, int j, double &ktau_raw, int &k)
+    {
+        ktau_raw = ktau_user * dutycycleToPWMs[j] / newtonsToSensors[j];
+        k = toHw(j);
+    }
+
+    inline void bemfraw2bemfuser(double bemf_raw, int k_raw, double &bemf_user, int &j_user)
+    {
+        j_user = toUser(k_raw);
+        bemf_user = bemf_raw / newtonsToSensors[j_user] * angleToEncoders[j_user];
+    }
+
+    inline void ktauraw2ktauuser(double ktau_raw, int k_raw, double &ktau_user, int &j_user)
+    {
+        j_user = toUser(k_raw);
+        ktau_user = ktau_raw / dutycycleToPWMs[j_user] * newtonsToSensors[j_user];
+    }
+
     // *******************************************//
 
     inline int axes()
