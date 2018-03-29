@@ -97,31 +97,24 @@ Node* yarp::os::Nodes::Private::getNode(const ConstString& name, bool create)
         return nullptr;
     }
     Node* node = nullptr;
-    mutex.lock();
     auto it = nodes_map.find(nc.getNodeName());
-    mutex.unlock();
-    if (it == nodes_map.end()) {
-        if (create) {
-            // The Node constructor ends up in locking again the the mutex,
-            // hence it must be outside the lock
-            node = new Node();
-            mutex.lock();
-            it = nodes_map.find(nc.getNodeName());
-            if (it == nodes_map.end()) {
-                nodes_map[nc.getNodeName()] = std::make_pair(node, false);
-                node->prepare(nc.getNodeName());
-            } else {
-                // The node was not created by some other thread while this
-                // thread was waiting on the lock.
-                delete node;
-                node = it->second.first;
-            }
-            mutex.unlock();
-        }
-    } else {
+    if (it != nodes_map.end()) {
         node = it->second.first;
+    } else if (create) {
+        mutex.lock();
+        node = new Node();
+        it = nodes_map.find(nc.getNodeName());
+        if (it == nodes_map.end()) {
+            nodes_map[nc.getNodeName()] = std::make_pair(node, false);
+            node->prepare(nc.getNodeName());
+        } else {
+            // The node was not created by some other thread while this
+            // thread was waiting on the lock.
+            delete node;
+            node = it->second.first;
+        }
+        mutex.unlock();
     }
-    mutex.unlock();
     return node;
 }
 
