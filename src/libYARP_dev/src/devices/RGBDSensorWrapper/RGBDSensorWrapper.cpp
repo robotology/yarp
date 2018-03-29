@@ -160,7 +160,7 @@ bool RGBDSensorParser::respond(const Bottle& cmd, Bottle& response)
         default:
         {
             yError() << "RGBD sensor wrapper received a command for a wrong interface " << yarp::os::Vocab::decode(interfaceType);
-            ret = false;
+            return DeviceResponder::respond(cmd,response);
         }
         break;
     }
