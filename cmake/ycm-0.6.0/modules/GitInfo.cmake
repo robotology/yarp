@@ -198,7 +198,7 @@ function(git_commit_info)
   endif()
 
   # Check repository
-  if(NOT EXISTS "${_GCI_SOURCE_DIR}/.git/HEAD")
+  if(NOT EXISTS "${_GCI_SOURCE_DIR}/.git")
     # This is not a git folder.
     if(_GCI_FATAL)
       message(FATAL_ERROR "Source dir \"${_GCI_SOURCE_DIR}\" is not a git repository.")
