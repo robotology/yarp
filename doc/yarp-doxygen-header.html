@@ -10,6 +10,11 @@
 <!--BEGIN !PROJECT_NAME--><title>$title</title><!--END !PROJECT_NAME-->
 <link rel="shortcut icon" href="$relpath^yarp-favicon.ico" type="image/x-icon" />
 <link href="$relpath^tabs.css" rel="stylesheet" type="text/css"/>
+<!--BEGIN PROJECT_NUMBER-->
+<script type="text/javascript">
+    var DOCUMENTATION_OPTIONS = { VERSION: '$projectnumber' };
+</script>
+<!--END PROJECT_NUMBER-->
 <script type="text/javascript" src="$relpath^jquery.js"></script>
 <script type="text/javascript" src="$relpath^dynsections.js"></script>
 $treeview
@@ -17,6 +22,7 @@ $search
 $mathjax
 <link href="$relpath^$stylesheet" rel="stylesheet" type="text/css" />
 $extrastylesheet
+<script type="text/javascript" src="../version_switch.js"></script>
 </head>
 <body>
 <div id="top"><!-- do not remove this div, it is closed by doxygen! -->
@@ -31,9 +37,7 @@ $extrastylesheet
   <!--END PROJECT_LOGO-->
   <!--BEGIN PROJECT_NAME-->
   <td id="projectalign" style="padding-left: 1.5em;">
-   <div id="projectname">$projectname
-   <!--BEGIN PROJECT_NUMBER-->&#160;<span id="projectnumber">$projectnumber</span><!--END PROJECT_NUMBER-->
-   </div>
+   <div id="projectname">$projectname</div>
    <!--BEGIN PROJECT_BRIEF--><div id="projectbrief">$projectbrief</div><!--END PROJECT_BRIEF-->
   </td>
   <!--END PROJECT_NAME-->
