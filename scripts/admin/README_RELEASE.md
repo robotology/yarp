@@ -21,7 +21,7 @@ Steps for building a YARP stable release
 * Check regression tests
 
 
-* Bump `YARP_VERSION_TWEAK` in `cmake/YarpVersion.cmake`.
+* Bump the fourth number in the `project` command in the main `CMakeLists.txt`.
   Ensure that the resulting version is the same as the one that we are going to
   create.
 
@@ -41,7 +41,7 @@ Steps for building a YARP stable release
 * Commit:
 
 ```
-git add cmake/YarpVersion.cmake
+git add CMakeLists.txt
 git add doc/release/v2_3_70_2.md
 git add doc/releases.dox
 git add doc/installation/download.dox
@@ -136,8 +136,8 @@ Steps for building a YARP feature release
 
 * Check regression tests
 
-* Bump `YARP_VERSION_PATCH` and make `YARP_VERSION_TWEAK` to empty in
-  `cmake/YarpVersion.cmake`.
+* Bump the third number and make sure that there is not a fourth number in the
+  `project` command in the main `CMakeLists.txt`.
   Ensure that the resulting version is the same as the one that we are going to
   create.
 
@@ -205,8 +205,8 @@ git commit -m "Prepare for next stable release (2.3.72.1)"
   git merge --no-ff master
 ```
 
-* Bump `YARP_VERSION_PATCH` in `cmake/YarpVersion.cmake` by one (it should be an
-  odd number, in this example `71`).
+* Bump the third number in the `project` command in the main `CMakeLists.txt` by
+  one (it should be an odd number, in this example `71`).
 
 * Prepare for the next feature release by adding the relative file in
  `doc/release/` (in this example `v2_3_74.md`)
@@ -215,7 +215,7 @@ git commit -m "Prepare for next stable release (2.3.72.1)"
 * Commit
 
 ```
-git add cmake/YarpVersion.cmake
+git add CMakeLists.txt
 git add doc/release/v2_3_74.md
 git add doc/releases.dox
 git commit -m "Prepare for next feature release (2.3.74)"

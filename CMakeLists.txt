@@ -38,14 +38,15 @@ endif()
 
 list(APPEND CMAKE_MODULE_PATH ${YARP_MODULE_PATH})
 
+# Main project
+project(YARP
+        DESCRIPTION "YARP: A thin middleware for humanoid robots and more"
+        VERSION 2.3.72
+        LANGUAGES C CXX)
+
 # Get the current YARP version.
 # See cmake/YarpVersion.cmake.
 include(YarpVersion)
-
-# Main project
-project(YARP
-        VERSION ${YARP_VERSION_SHORT}
-        LANGUAGES C CXX)
 
 message(STATUS "Using:")
 message(STATUS "  CMake: ${CMAKE_VERSION} (${CMAKE_COMMAND})")

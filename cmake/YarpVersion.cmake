@@ -8,22 +8,7 @@
 
 include(GitInfo)
 
-
-## manually increase tweak number when required. Set to zero when
-# bumping VERSION_PATCH
-set(YARP_VERSION_MAJOR "2")
-set(YARP_VERSION_MINOR "3")
-set(YARP_VERSION_PATCH "72")
-set(YARP_VERSION_TWEAK "")
-
 set(YARP_VERSION_ABI "1")
-
-# Generate YARP_VERSION
-if(YARP_VERSION_TWEAK)
-    set(YARP_VERSION "${YARP_VERSION_MAJOR}.${YARP_VERSION_MINOR}.${YARP_VERSION_PATCH}.${YARP_VERSION_TWEAK}")
-else()
-    set(YARP_VERSION "${YARP_VERSION_MAJOR}.${YARP_VERSION_MINOR}.${YARP_VERSION_PATCH}")
-endif()
 
 set(YARP_GENERIC_SOVERSION "${YARP_VERSION_ABI}")
 
