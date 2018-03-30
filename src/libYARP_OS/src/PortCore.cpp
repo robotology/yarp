@@ -51,6 +51,48 @@ using namespace yarp::os::impl;
 using namespace yarp::os;
 using namespace yarp;
 
+PortCore::PortCore() :
+        stateMutex(1),
+        packetMutex(1),
+        connectionChange(1),
+        log("port", Logger::get()),
+        face(nullptr),
+        reader(nullptr),
+        adminReader(nullptr),
+        readableCreator(nullptr),
+        eventReporter(nullptr),
+        listening(false),
+        running(false),
+        starting(false),
+        closing(false),
+        finished(false),
+        finishing(false),
+        waitBeforeSend(true),
+        waitAfterSend(true),
+        controlRegistration(true),
+        interruptible(true),
+        interrupted(false),
+        manual(false),
+        events(0),
+        connectionListeners(0),
+        inputCount(0),
+        outputCount(0),
+        dataOutputCount(0),
+        flags(PORTCORE_IS_INPUT|PORTCORE_IS_OUTPUT),
+        verbosity(1),
+        logNeeded(false),
+        timeout(-1),
+        counter(1),
+        prop(nullptr),
+        contactable(nullptr),
+        mutex(nullptr),
+        mutexOwned(false),
+        envelopeWriter(true),
+        typeMutex(1),
+        checkedType(false)
+{
+}
+
 PortCore::~PortCore()
 {
     close();
