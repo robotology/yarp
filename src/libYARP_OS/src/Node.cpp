@@ -199,7 +199,7 @@ public:
 
     void clear()
     {
-        if (!mutex.tryLock()) {
+        if (!mutex.try_lock()) {
             return;
         }
         while (name_cache.begin() != name_cache.end()) {

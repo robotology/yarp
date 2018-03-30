@@ -53,7 +53,7 @@ public:
 };
 
 Carriers* Carriers::Private::yarp_carriers_instance = nullptr;
-yarp::os::Mutex Carriers::Private::mutex = yarp::os::Mutex();
+yarp::os::Mutex Carriers::Private::mutex {};
 
 
 Carrier* Carriers::Private::chooseCarrier(const ConstString *name,
