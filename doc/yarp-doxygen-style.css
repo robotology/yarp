@@ -29,6 +29,17 @@
     padding: 0px 0px;
 }
 
+#projectname_footer {
+    font-size: 150%;
+    font-family: Moonhouse, Roboto, sans-serif;
+    font-weight: bold;
+    font-stretch: ultra-expanded;
+    font-style: oblique;
+    color: #5991ac;
+    text-shadow: 0 2px 2px rgba(135,181,204,0.9);
+    padding: 0px 0px;
+}
+
 #projectbrief
 {
     font-size: 120%;
@@ -42,10 +53,30 @@
 
 #projectnumber
 {
-    font-size: 20%;
     font-family: monospace, fixed;
-    color: #19c2d8;
+    font-size: 10px;
+    color: #195370;
     text-shadow: 0 2px 2px rgba(135,181,204,0.9);
+}
+
+#projectnumber select {
+    color: #195370;
+/*     background-color:rgba(0,0,0,0.1); */
+/*   background: transparent; */
+
+    font-family: monospace, fixed;
+    font-weight: bold;
+    font-size: 11px;
+    padding: 2px;
+    padding-left: 20px;
+    border-width: 1px;
+    border-style: solid;
+    border-color: #c4cfe5;
+    border-radius: 12px;
+    -webkit-appearance: none;
+    -moz-appearance: none;
+    appearance: none;
+    background: url('yarp-favicon.ico') 7px / 13px no-repeat rgba(135,181,204,0.9);
 }
 
 #titlearea {
@@ -146,7 +177,6 @@ code {
     border: 1px solid #C4CFE5;
     background-color: #FBFCFD;
     padding: 1px 3px;
-    font-size: 9pt;
     line-height: 160%;
     font-size: 85%;
     border-radius: 4px;
