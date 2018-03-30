@@ -40,9 +40,10 @@ list(APPEND CMAKE_MODULE_PATH ${YARP_MODULE_PATH})
 
 # Main project
 project(YARP
-        DESCRIPTION "YARP: A thin middleware for humanoid robots and more"
         VERSION 2.3.72
         LANGUAGES C CXX)
+set(PROJECT_DESCRIPTION "YARP: A thin middleware for humanoid robots and more")
+
 
 # Get the current YARP version.
 # See cmake/YarpVersion.cmake.
