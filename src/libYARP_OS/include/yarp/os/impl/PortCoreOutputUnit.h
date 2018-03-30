@@ -38,24 +38,7 @@ public:
      * @param op the protocol object used to read/write to connection
      *
      */
-    PortCoreOutputUnit(PortCore& owner, int index, OutputProtocol *op) :
-            PortCoreUnit(owner, index),
-            op(op),
-            closing(false),
-            finished(false),
-            running(false),
-            threaded(false),
-            sending(false),
-            phase(1),
-            activate(0),
-            trackerMutex(1),
-            cachedWriter(nullptr),
-            cachedReader(nullptr),
-            cachedCallback(nullptr),
-            cachedTracker(nullptr)
-    {
-        yAssert(op!=nullptr);
-    }
+    PortCoreOutputUnit(PortCore& owner, int index, OutputProtocol *op);
 
     /**
      * Destructor.

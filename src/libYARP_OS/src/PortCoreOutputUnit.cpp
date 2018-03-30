@@ -26,6 +26,26 @@
 using namespace yarp::os::impl;
 using namespace yarp::os;
 
+PortCoreOutputUnit::PortCoreOutputUnit(PortCore& owner, int index, OutputProtocol *op) :
+            PortCoreUnit(owner, index),
+            op(op),
+            closing(false),
+            finished(false),
+            running(false),
+            threaded(false),
+            sending(false),
+            phase(1),
+            activate(0),
+            trackerMutex(1),
+            cachedWriter(nullptr),
+            cachedReader(nullptr),
+            cachedCallback(nullptr),
+            cachedTracker(nullptr)
+{
+    yAssert(op!=nullptr);
+
+}
+
 bool PortCoreOutputUnit::start() {
 
     phase.wait();
