@@ -7,6 +7,7 @@
  * BSD-3-Clause license. See the accompanying LICENSE file for details.
  */
 
+#include <yarp/conf/version.h>
 #include <yarp/os/Network.h>
 
 #include <yarp/os/Bottle.h>
@@ -139,6 +140,17 @@ static int noteDud(const Contact& src)
 #else
 # define CARRIER_DEBUG(fmt, ...)
 #endif
+
+yarp::os::ProtocolVersion::ProtocolVersion() :  protoMajor(YARP_PROTOCOL_VERSION_MAJOR),
+                                                protoMinor(YARP_PROTOCOL_VERSION_MINOR),
+                                                protoPatch(YARP_PROTOCOL_VERSION_PATCH)
+{}
+
+yarp::os::ProtocolVersion::ProtocolVersion(const int Major, const int Minor, const int Patch) :
+                                            protoMajor(Major),
+                                            protoMinor(Minor),
+                                            protoPatch(Patch)
+{}
 
 static int enactConnection(const Contact& src,
                            const Contact& dest,

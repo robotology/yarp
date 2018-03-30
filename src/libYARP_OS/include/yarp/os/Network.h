@@ -30,6 +30,7 @@ namespace yarp {
         class Network;
         class ContactStyle;
         class QosStyle;
+        struct ProtocolVersion;
     }
 }
 
@@ -37,6 +38,15 @@ namespace yarp {
 #define YARP_DECLARE_PLUGINS(name) extern "C" void add_ ## name ## _plugins();
 #define YARP_REGISTER_PLUGINS(name) add_ ## name ## _plugins();
 
+struct YARP_OS_API yarp::os::ProtocolVersion
+{
+    int protoMajor;
+    int protoMinor;
+    int protoPatch;
+
+    ProtocolVersion();
+    ProtocolVersion(const int Major, const int Minor, const int Patch);
+};
 
 /**
  * \ingroup comm_class
