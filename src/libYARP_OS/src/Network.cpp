@@ -25,6 +25,7 @@
 #include <yarp/os/Vocab.h>
 #include <yarp/os/YarpPlugin.h>
 #include <yarp/os/Face.h>
+#include <yarp/os/LogStream.h>
 
 #include <yarp/os/impl/BottleImpl.h>
 #include <yarp/os/impl/BufferedConnectionWriter.h>
@@ -152,6 +153,94 @@ yarp::os::ProtocolVersion::ProtocolVersion(const int Major, const int Minor, con
                                             protoPatch(Patch)
 {}
 
+static bool askSupportedProtocolVersions(const std::string& port, ProtocolVersion &out)
+{
+    bool success = false;
+    ContactStyle rpc;
+    rpc.admin = true;
+    Bottle getVer_cmd, getVer_reply;
+    getVer_reply.clear();
+
+    getVer_cmd.addString("ver");
+    NetworkBase::write(port, getVer_cmd, getVer_reply, rpc);
+
+    // Expected reply is '[ver] Major Minor Patch', only Major and Minor are meaningful for the check.
+    // Patches are meant to be back compatible
+    if (getVer_reply.get(0).asString() == "ver")
+    {
+        if( (getVer_reply.get(1).isInt32()) && (getVer_reply.get(2).isInt32()) && (getVer_reply.get(3).isInt32()) )
+        {
+            out.protoMajor = getVer_reply.get(1).asInt32();
+            out.protoMinor = getVer_reply.get(2).asInt32();
+            out.protoPatch = getVer_reply.get(3).asInt32();
+        }
+        success = true;
+    }
+    else
+    {
+        yError("Connect failure: cannot get YARP protocol version for port %s\n", port.c_str());
+        out.protoMajor = 0;
+        out.protoMinor = 0;
+        out.protoPatch = 0;
+        success = false;
+    }
+    return success;
+}
+
+bool findMatchingVersion(ProtocolVersion &src, ProtocolVersion &dest, ProtocolVersion &match)
+{
+    if(src.protoMajor == dest.protoMajor  &&
+       src.protoMinor == dest.protoMinor)
+    {
+        match.protoMajor = dest.protoMajor;
+        match.protoMinor = dest.protoMinor;
+        match.protoPatch = 0;
+        return true;
+    }
+    return false;
+}
+
+bool NetworkBase::checkProtocolVersion(const std::string& src,
+                                       const std::string& dest,
+                                       const std::string& style,
+                                       std::string &error_msg_p)
+{
+    ProtocolVersion srcVersion, destVersion;
+    ProtocolVersion match;
+    std::string msg;
+
+    /*
+     * We need to discriminate between YARP to YARP connections or YARP to non YARP connection.
+     * The 'canEscape()' function is called for this purpose. In order to call it, we need to
+     * instantiate a dummy version of the carrier
+     */
+    Carrier *chosenCarrier = Carriers::chooseCarrier(style);
+    if((chosenCarrier !=nullptr) && chosenCarrier->canEscape())
+    {
+        // srcVersion is already filled in with correct values by constructor.
+        if(!askSupportedProtocolVersions(dest, destVersion)) return false;      // this function prints an error if it fails
+
+        if(!findMatchingVersion(srcVersion, destVersion, match) )
+        {
+            std::string listA, listB;
+            listA += std::to_string(srcVersion.protoMajor)  +  "." + std::to_string(srcVersion.protoMinor) + " ";
+            listB += std::to_string(destVersion.protoMajor)  +  "." + std::to_string(destVersion.protoMinor) + " ";
+
+            msg  = "Cannot connect <" + src + "> to <" + dest + "> because YARP protocol versions between source and destination do NOT match.\n";
+            msg += "Source port <" + src + "> protocol version is " + listA + "\n";
+            msg += "Destination port <" + dest + "> protocol version is " + listB + "\n";
+            msg += "Please update YARP\n";
+            yError() << msg;
+            error_msg_p = msg;
+            return false;
+        }
+    }
+    delete chosenCarrier;
+    error_msg_p = "No error";
+
+    return true;
+}
+
 static int enactConnection(const Contact& src,
                            const Contact& dest,
                            const ContactStyle& style,
@@ -188,6 +277,8 @@ static int enactConnection(const Contact& src,
     }
 
     Bottle cmd, reply;
+    cmd.clear();
+    reply.clear();
     cmd.addVocab(Vocab::encode("list"));
     cmd.addVocab(Vocab::encode(reversed?"in":"out"));
     cmd.addString(dest.getName().c_str());

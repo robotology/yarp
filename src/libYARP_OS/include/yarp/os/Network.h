@@ -449,6 +449,10 @@ public:
      */
     static bool checkNetwork(double timeout);
 
+    static bool checkProtocolVersion(const std::string& src,
+                                     const std::string& dest,
+                                     const std::string& style,
+                                     std::string &error_msg_p);
     /**
      *
      * Returns true if YARP has been fully initialized.

@@ -27,6 +27,7 @@
 #include <yarp/os/SystemInfo.h>
 #include <yarp/os/DummyConnector.h>
 
+#include <yarp/os/LogStream.h>
 #include <vector>
 #include <cstdio>
 
@@ -1705,11 +1706,22 @@ bool PortCore::adminBlock(ConnectionReader& reader,
             if (carrier!="") {
                 output = carrier + ":/" + output;
             }
-            addOutput(output, id, &cache, false);
-            std::string r = cache.toString();
-            int v = (r[0]=='A')?0:-1;
-            result.addInt32(v);
-            result.addString(r.c_str());
+            Contact dest = Name(output).toAddress();
+            std::string error;
+            if(!yarp::os::Network::checkProtocolVersion(getName(), output, dest.getCarrier(), error))
+            {
+                result.clear();
+                result.addInt32(-1);
+                result.addString(error);
+            }
+            else
+            {
+                addOutput(output, id, &cache, false);
+                std::string r = cache.toString();
+                int v = (r[0]=='A')?0:-1;
+                result.addInt32(v);
+                result.addString(r.c_str());
+            }
         }
         break;
     case VOCAB4('a', 't', 'c', 'h'):
