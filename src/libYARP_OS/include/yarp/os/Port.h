@@ -18,11 +18,14 @@
 #include <yarp/os/PortReaderCreator.h>
 
 // Defined in this file:
+#ifndef YARP_NO_DEPRECATED // Since YARP 3.0.0
 namespace yarp { namespace os { class Port; }}
+#endif // YARP_NO_DEPRECATED
 
 namespace yarp {
 namespace os {
 
+#ifndef YARP_NO_DEPRECATED // Since YARP 3.0.0
 /**
  * @ingroup comm_class
  *
@@ -46,8 +49,13 @@ namespace os {
  * @li @ref note_ports
  * @li @ref port_expert
  * @li @ref yarp_buffering
+ *
+ * @deprecated since YARP 3.0.0. YARP no longer supports Port and BufferedPort.
+ *             Use yarp::os::Publisher or yarp::os::Subscriber instead.
  */
-class YARP_OS_API Port : public UnbufferedContactable
+class
+YARP_OS_DEPRECATED_API_MSG("YARP no longer supports Port and BufferedPort. Use yarp::os::Publisher or yarp::os::Subscriber instead.")
+Port : public UnbufferedContactable
 {
 
 public:
@@ -269,6 +277,8 @@ private:
               const char *fakeName);
 
 };
+
+#endif // YARP_NO_DEPRECATED
 
 } // namespace os
 } // namespace yarp
