@@ -17,11 +17,15 @@
 
 
 // Defined in this file:
+#ifndef YARP_NO_DEPRECATED // Since YARP 3.0.0
 namespace yarp { namespace os { template <typename T> class BufferedPort; }}
+#endif // YARP_NO_DEPRECATED
 
 
 namespace yarp {
 namespace os {
+
+#ifndef YARP_NO_DEPRECATED // Since YARP 3.0.0
 
 /**
  * @ingroup comm_class
@@ -62,11 +66,15 @@ namespace os {
  * @li @ref note_ports
  * @li @ref port_expert
  * @li @ref yarp_buffering
+ *
+ * @deprecated since YARP 3.0.0. YARP no longer supports Port and BufferedPort.
+ *             Use yarp::os::Publisher or yarp::os::Subscriber instead.
  */
 template <typename T>
-class BufferedPort : public Contactable,
-                     public TypedReader<T>,
-                     public TypedReaderCallback<T>
+class YARP_DEPRECATED_MSG("YARP no longer supports Port and BufferedPort. Use yarp::os::Publisher or yarp::os::Subscriber instead.")
+BufferedPort : public Contactable,
+               public TypedReader<T>,
+               public TypedReaderCallback<T>
 {
 public:
 #ifndef YARP_NO_DEPRECATED // since YARP 2.3.72
@@ -326,5 +334,7 @@ private:
 } // namespace yarp
 
 #include <yarp/os/BufferedPort-inl.h>
+
+#endif // YARP_NO_DEPRECATED
 
 #endif // YARP_OS_BUFFEREDPORT_H
