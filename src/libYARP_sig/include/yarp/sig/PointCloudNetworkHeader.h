@@ -28,25 +28,20 @@ public:
     PointCloudNetworkHeader() : width(0),
                                 height(0),
                                 pointType(0),
-                                isDense(true),
-                                hasCustomData(false),
-                                pad{0,0}
-    { YARP_UNUSED(pad); }
+                                isDense(1)
+    {}
 
     // PCL like fields
     yarp::os::NetInt32  width;
     yarp::os::NetInt32  height;
     yarp::os::NetInt32  pointType;       // bitwise of all possible informations -> could also be int64 or just an enum, but I thin bitwise gives more freedom about all possible combinations
-    bool                isDense;         // the point cloud is dense if not contains NaN or Inf values
+    YARP_INT8           isDense;         // the point cloud is dense if not contains NaN or Inf values
 
-    // Other
-    bool                hasCustomData;   // this guy is mis-aligned --> for future use, to have addictional data not initially forseen or fields from ROS which does not fit into yarp pointTypes
-    char pad[2]; // char vector to align the bytes of the headers
 };
 YARP_END_PACK
 
-}
-}
+} // namespace sig
+} // namespace yarp
 
 
 

@@ -173,11 +173,11 @@ public:
         header.height   = 1;
         if (rhs.isDense() && isDense())
         {
-            header.isDense = true;
+            header.isDense = 1;
         }
         else
         {
-            header.isDense = false;
+            header.isDense = 0;
         }
         return (*this);
     }
@@ -360,7 +360,6 @@ public:
         ret.addInt(height());
         ret.addInt(getPointType());
         ret.addInt(isDense());
-        ret.addInt(header.hasCustomData);
 
         for (size_t i=0; i<this->size(); i++)
         {
@@ -389,17 +388,16 @@ public:
         }
 
         this->resize(bt.get(0).asInt(), bt.get(1).asInt());
-        this->header.isDense       = bt.get(3).asBool();
-        this->header.hasCustomData = bt.get(4).asBool();
+        this->header.isDense       = bt.get(3).asInt();
 
-        if ((size_t) bt.size() != 5 + width()*height())
+        if ((size_t) bt.size() != 4 + width()*height())
         {
             return false;
         }
 
         for (size_t i=0; i<this->size(); i++)
         {
-            (*this)(i).fromBottle(bt, i+5);
+            (*this)(i).fromBottle(bt, i+4);
         }
 
         return true;

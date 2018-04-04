@@ -89,7 +89,7 @@ public:
      */
     virtual inline bool isDense() const
     {
-        return header.isDense;
+        return header.isDense != 0;
     }
 
 protected:
