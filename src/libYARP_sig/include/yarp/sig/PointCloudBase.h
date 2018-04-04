@@ -109,8 +109,8 @@ protected:
 };
 
 
-}
-}
+} // namespace sig
+} // namespace yarp
 
 #endif
 

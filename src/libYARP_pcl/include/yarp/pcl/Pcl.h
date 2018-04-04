@@ -79,8 +79,8 @@ inline int loadPCD(const std::string &file_name, yarp::sig::PointCloud<T2> &yarp
     return ret;
 }
 
-} // pcl
-} // yarp
+} // namespace pcl
+} // namespace yarp
 
 
 #endif

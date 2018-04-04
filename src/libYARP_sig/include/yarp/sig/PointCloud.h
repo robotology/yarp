@@ -409,7 +409,7 @@ public:
         return BottleTagMap <T>();
     }
 
- private:
+private:
     yarp::sig::VectorOf<T> data;
     T nulldata;
 
@@ -472,10 +472,8 @@ public:
 
 };
 
-} // sig
-
-
-} // yarp
+} // namespace sig
+} // namespace yarp
 
 
 #define TagMap(X) \
