@@ -475,23 +475,53 @@ private:
 } // namespace sig
 } // namespace yarp
 
-
-#define TagMap(X) \
-template<> \
-inline int BottleTagMap <X> () \
-{ \
-    return BOTTLE_TAG_DOUBLE; \
+template<>
+inline int BottleTagMap <yarp::sig::XYData> ()
+{
+    return BOTTLE_TAG_DOUBLE;
 }
 
-TagMap(yarp::sig::XYData)
-TagMap(yarp::sig::XYZData)
-TagMap(yarp::sig::NormalData)
-TagMap(yarp::sig::XYZRGBAData)
-TagMap(yarp::sig::XYZIData)
-TagMap(yarp::sig::InterestPointXYZData)
-TagMap(yarp::sig::XYZNormalData)
-TagMap(yarp::sig::XYZNormalRGBAData)
+template<>
+inline int BottleTagMap <yarp::sig::XYZData> ()
+{
+    return BOTTLE_TAG_DOUBLE;
+}
 
+template<>
+inline int BottleTagMap <yarp::sig::NormalData> ()
+{
+    return BOTTLE_TAG_DOUBLE;
+}
+
+template<>
+inline int BottleTagMap <yarp::sig::XYZRGBAData> ()
+{
+    return BOTTLE_TAG_DOUBLE;
+}
+
+template<>
+inline int BottleTagMap <yarp::sig::XYZIData> ()
+{
+    return BOTTLE_TAG_DOUBLE;
+}
+
+template<>
+inline int BottleTagMap <yarp::sig::InterestPointXYZData> ()
+{
+    return BOTTLE_TAG_DOUBLE;
+}
+
+template<>
+inline int BottleTagMap <yarp::sig::XYZNormalData> ()
+{
+    return BOTTLE_TAG_DOUBLE;
+}
+
+template<>
+inline int BottleTagMap <yarp::sig::XYZNormalRGBAData> ()
+{
+    return BOTTLE_TAG_DOUBLE;
+}
 
 
 #endif // YARP_SIG_POINTCLOUD_H
