@@ -27,7 +27,6 @@ protected:
     double *temp;
     double *temp2;
     int    *temp_int;
-    yarp::dev::Pid *tmpPids;
 
     /**
      * Initialize the internal data and alloc memory.

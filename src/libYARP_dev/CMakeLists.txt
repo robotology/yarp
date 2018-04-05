@@ -59,6 +59,7 @@ set(YARP_dev_HDRS include/yarp/dev/all.h
                   include/yarp/dev/ImplementRemoteVariables.h
                   include/yarp/dev/ImplementTorqueControl.h
                   include/yarp/dev/IPidControl.h
+                  include/yarp/dev/PidEnums.h
                   include/yarp/dev/IPidControlImpl.h
                   include/yarp/dev/IPositionControl2.h
                   include/yarp/dev/IPositionControl2Impl.h
@@ -102,6 +103,7 @@ endif()
 set(YARP_dev_IMPL_HDRS )
 
 set(YARP_dev_SRCS src/ControlBoardInterfacesImpl.cpp
+                  src/ControlBoardHelper.cpp
                   src/ControlBoardPid.cpp
                   src/ControlCalibrationImpl.cpp
                   src/ControlMode2Impl.cpp

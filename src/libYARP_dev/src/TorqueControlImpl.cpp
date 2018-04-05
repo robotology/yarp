@@ -20,10 +20,8 @@ ImplementTorqueControl::ImplementTorqueControl(ITorqueControlRaw *tq)
     iTorqueRaw = tq;
     helper=nullptr;
     temp=nullptr;
-//     fake =0;
     temp2=nullptr;
     temp_int=nullptr;
-    tmpPids=nullptr;
 }
 
 ImplementTorqueControl::~ImplementTorqueControl()
@@ -44,8 +42,6 @@ bool ImplementTorqueControl::initialize(int size, const int *amap, const double 
     yAssert (temp2 != nullptr);
     temp_int=new int [size];
     yAssert (temp_int != nullptr);
-    tmpPids=new Pid[size];
-    yAssert (tmpPids!=nullptr);
 
     return true;
 }
@@ -60,7 +56,6 @@ bool ImplementTorqueControl::uninitialize ()
     checkAndDestroy(temp);
     checkAndDestroy(temp2);
     checkAndDestroy(temp_int);
-    checkAndDestroy(tmpPids);
 
     return true;
 }

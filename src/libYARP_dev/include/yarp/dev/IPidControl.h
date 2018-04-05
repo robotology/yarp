@@ -11,6 +11,7 @@
 
 #include <yarp/os/Vocab.h>
 #include <yarp/dev/DeviceDriver.h>
+#include <yarp/dev/PidEnums.h>
 #include <yarp/dev/ControlBoardPid.h>
 
 namespace yarp
@@ -19,14 +20,6 @@ namespace yarp
     {
         class IPidControlRaw;
         class IPidControl;
-
-        enum YARP_dev_API PidControlTypeEnum
-        {
-            VOCAB_PIDTYPE_POSITION = VOCAB3('p', 'o', 's'),
-            VOCAB_PIDTYPE_VELOCITY = VOCAB3('v', 'e', 'l'),
-            VOCAB_PIDTYPE_TORQUE   = VOCAB3('t', 'r', 'q'),
-            VOCAB_PIDTYPE_CURRENT  = VOCAB3(99/*'c'*/, 'u', 'r') // SWIG bug
-        };
     }
 }
 

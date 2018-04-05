@@ -8,6 +8,7 @@
 
 #include "yarp/dev/ImplementPWMControl.h"
 #include <yarp/dev/ControlBoardHelper.h>
+#include <yarp/os/LogStream.h>
 #include <iostream>
 
 using namespace yarp::dev;

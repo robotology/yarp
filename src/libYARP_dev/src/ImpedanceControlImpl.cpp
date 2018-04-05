@@ -11,6 +11,8 @@
 
 #include <yarp/dev/ImplementImpedanceControl.h>
 #include <yarp/dev/ControlBoardHelper.h>
+#include <yarp/os/LogStream.h>
+#include <math.h>   
 
 using namespace yarp::dev;
 #define JOINTIDCHECK if (j >= castToMapper(helper)->axes()){yError("joint id out of bound"); return false;}
@@ -28,7 +30,7 @@ bool ImplementImpedanceControl::initialize(int size, const int *amap, const doub
     if (helper!=nullptr)
         return false;
 
-    helper=(void *)(new ControlBoardHelper(size, amap, enc, zos, nw));
+    helper=(void *)(new ControlBoardHelper(size, amap, enc, zos, nw, nullptr, nullptr, nullptr));
     yAssert (helper != nullptr);
 
     return true;
