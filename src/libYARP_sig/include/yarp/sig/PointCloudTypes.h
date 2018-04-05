@@ -147,7 +147,7 @@ struct DataXY
     }
     void fromBottle(const yarp::os::Bottle& bt, size_t i)
     {
-        yarp::os::Bottle* intBt = bt.get(i).asList();
+        yarp::os::Bottle* intBt = bt.get(static_cast<int>(i)).asList();
         x = static_cast<float>(intBt->get(0).asDouble());
         y = static_cast<float>(intBt->get(1).asDouble());
         return;
@@ -197,7 +197,7 @@ struct DataXYZ
     }
     void fromBottle(const yarp::os::Bottle& bt, size_t i)
     {
-        yarp::os::Bottle* intBt = bt.get(i).asList();
+        yarp::os::Bottle* intBt = bt.get(static_cast<int>(i)).asList();
 
         if (!intBt) {
             return;
@@ -248,7 +248,7 @@ struct DataRGBA
     }
     void fromBottle(const yarp::os::Bottle& bt, size_t i)
     {
-        yarp::os::Bottle* intBt = bt.get(i).asList();
+        yarp::os::Bottle* intBt = bt.get(static_cast<int>(i)).asList();
         r = intBt->get(0).asInt();
         g = intBt->get(1).asInt();
         b = intBt->get(2).asInt();
@@ -312,7 +312,7 @@ struct DataNormal
     }
     void fromBottle(const yarp::os::Bottle& bt, size_t i)
     {
-        yarp::os::Bottle* intBt = bt.get(i).asList();
+        yarp::os::Bottle* intBt = bt.get(static_cast<int>(i)).asList();
 
         if (!intBt) {
             return;
@@ -369,7 +369,7 @@ struct DataNormalNoCurvature
     }
     void fromBottle(const yarp::os::Bottle& bt, size_t i)
     {
-        yarp::os::Bottle* intBt = bt.get(i).asList();
+        yarp::os::Bottle* intBt = bt.get(static_cast<int>(i)).asList();
 
         if (!intBt) {
             return;
@@ -441,7 +441,7 @@ struct DataViewpoint
     }
     void fromBottle(const yarp::os::Bottle& bt, size_t i)
     {
-        yarp::os::Bottle* intBt = bt.get(i).asList();
+        yarp::os::Bottle* intBt = bt.get(static_cast<int>(i)).asList();
 
         if (!intBt) {
             return;
@@ -524,7 +524,7 @@ struct DataXYZRGBA
     }
     void fromBottle(const yarp::os::Bottle& bt, size_t i)
     {
-        yarp::os::Bottle* intBt = bt.get(i).asList();
+        yarp::os::Bottle* intBt = bt.get(static_cast<int>(i)).asList();
 
         if (!intBt) {
             return;
@@ -596,7 +596,7 @@ struct DataXYZI
     }
     void fromBottle(const yarp::os::Bottle& bt, size_t i)
     {
-        yarp::os::Bottle* intBt = bt.get(i).asList();
+        yarp::os::Bottle* intBt = bt.get(static_cast<int>(i)).asList();
 
         if (!intBt) {
             return;
@@ -665,7 +665,7 @@ struct DataInterestPointXYZ
     }
     void fromBottle(const yarp::os::Bottle& bt, size_t i)
     {
-        yarp::os::Bottle* intBt = bt.get(i).asList();
+        yarp::os::Bottle* intBt = bt.get(static_cast<int>(i)).asList();
 
         if (!intBt) {
             return;
@@ -756,7 +756,7 @@ struct DataXYZNormal
     }
     void fromBottle(const yarp::os::Bottle& bt, size_t i)
     {
-        yarp::os::Bottle* intBt = bt.get(i).asList();
+        yarp::os::Bottle* intBt = bt.get(static_cast<int>(i)).asList();
 
         if (!intBt) {
             return;
@@ -868,7 +868,7 @@ struct DataXYZNormalRGBA
     }
     void fromBottle(const yarp::os::Bottle& bt, size_t i)
     {
-        yarp::os::Bottle* intBt = bt.get(i).asList();
+        yarp::os::Bottle* intBt = bt.get(static_cast<int>(i)).asList();
 
         if (!intBt) {
             return;
