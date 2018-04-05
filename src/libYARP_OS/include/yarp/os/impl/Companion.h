@@ -237,18 +237,9 @@ private:
     yarp::os::ConstString argType;
     bool waitConnect;
 
-    void add(const char *name, int (Companion::*fn)(int argc, char *argv[]),
-             const char *tip = nullptr) {
-        Entry e(name, fn);
-        action[ConstString(name)] = e;
-        // maintain a record of order of keys
-        names.push_back(ConstString(name));
-        if (tip!=nullptr) {
-            tips.push_back(ConstString(tip));
-        } else {
-            tips.push_back(ConstString(""));
-        }
-    }
+    void add(const char* name,
+             int (Companion::*fn)(int argc, char* argv[]),
+             const char* tip);
 };
 
 #endif // YARP_OS_IMPL_COMPANION_H

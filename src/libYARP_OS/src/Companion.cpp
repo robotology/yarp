@@ -13,8 +13,8 @@
 #include <yarp/conf/version.h>
 #include <yarp/os/Bottle.h>
 #include <yarp/os/BufferedPort.h>
-#include <yarp/os/ConstString.h>
 #include <yarp/os/Carriers.h>
+#include <yarp/os/ConstString.h>
 #include <yarp/os/Name.h>
 #include <yarp/os/Network.h>
 #include <yarp/os/Os.h>
@@ -341,10 +341,26 @@ Companion::Companion() {
         "write to the network from standard input");
 }
 
-int Companion::dispatch(const char *name, int argc, char *argv[]) {
+void Companion::add(const char* name,
+                    int (Companion::*fn)(int argc, char* argv[]),
+                    const char* tip = nullptr)
+{
+    Entry e(name, fn);
+    action[ConstString(name)] = e;
+    // maintain a record of order of keys
+    names.push_back(ConstString(name));
+    if (tip != nullptr) {
+        tips.push_back(ConstString(tip));
+    } else {
+        tips.push_back(ConstString(""));
+    }
+}
+
+int Companion::dispatch(const char* name, int argc, char* argv[])
+{
     // new logic to handle some global arguments
-    char **argv_copy = new char *[argc];
-    char **argv_copy_org = argv_copy;
+    char** argv_copy = new char*[argc];
+    char** argv_copy_org = argv_copy;
     int argc_copy = argc;
     if (!argv_copy) {
         YARP_SPRINTF0(Logger::get(),
@@ -354,21 +370,21 @@ int Companion::dispatch(const char *name, int argc, char *argv[]) {
     }
     int at = 0;
     int skip = 0;
-    for (int i=0; i<argc; i++) {
-        if (skip>0) {
+    for (int i = 0; i < argc; i++) {
+        if (skip > 0) {
             skip--;
             continue;
         }
         ConstString arg = argv[i];
-        if (arg.find("--")==0) {
-            if (i+1<argc) {
-                if (arg=="--type") {
+        if (arg.find("--") == 0) {
+            if (i + 1 < argc) {
+                if (arg == "--type") {
                     skip = 1;
-                    argType = argv[i+1];
+                    argType = argv[i + 1];
                     continue;
                 }
             }
-            if (arg=="--wait-connect") {
+            if (arg == "--wait-connect") {
                 skip = 0;
                 waitConnect = true;
                 continue;
@@ -386,7 +402,8 @@ int Companion::dispatch(const char *name, int argc, char *argv[]) {
     } else {
         YARP_SPRINTF1(Logger::get(),
                       error,
-                      "Could not find command \"%s\"", name);
+                      "Could not find command \"%s\"",
+                      name);
     }
     delete[] argv_copy_org;
     return v;
