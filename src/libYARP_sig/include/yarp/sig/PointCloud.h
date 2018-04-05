@@ -123,10 +123,31 @@ public:
     }
 
     /**
+     * @brief Obtain the point given by the (column, row) coordinates (const version).
+     * Only works on organized clouds (those that have height != 1).
+     * @param u, column coordinate
+     * @param v, row coordinate
+     */
+    inline const T& operator()(size_t u, size_t v) const
+    {
+        yAssert(isOrganized());
+        return data[u + v * width()];
+    }
+
+    /**
      * @brief Obtain the point given by the index.
      * @param i, index
      */
     inline T& operator()(size_t i)
+    {
+        return data[i];
+    }
+
+    /**
+     * @brief Obtain the point given by the index (const version).
+     * @param i, index
+     */
+    inline const T& operator()(size_t i) const
     {
         return data[i];
     }
