@@ -119,9 +119,6 @@ public:
     inline T& operator()(size_t u, size_t v)
     {
         yAssert(isOrganized());
-        if (u > width() || v > height()) {
-            return nulldata;
-        }
         return data[u + v * width()];
     }
 
@@ -131,9 +128,6 @@ public:
      */
     inline T& operator()(size_t i)
     {
-        if (i > data.size()) {
-            return nulldata;
-        }
         return data[i];
     }
 
@@ -382,7 +376,6 @@ public:
 
 private:
     yarp::sig::VectorOf<T> data;
-    T nulldata;
 
     void setPointType()
     {
