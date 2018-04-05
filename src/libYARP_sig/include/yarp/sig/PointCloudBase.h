@@ -11,9 +11,9 @@
 
 #include <yarp/sig/PointCloudNetworkHeader.h>
 
+#include <cstring>
 #include <map>
 #include <vector>
-#include <cstring>
 
 namespace yarp {
 namespace sig {
@@ -93,10 +93,9 @@ public:
     }
 
 protected:
-
     PointCloudBase() = default;
 
-    virtual void copyFromRawData(const char* dst, const char* source, std::vector<int> &recipe);
+    virtual void copyFromRawData(const char* dst, const char* source, std::vector<int>& recipe);
 
     virtual std::vector<int> getComposition(int type_composite) const;
 
@@ -104,8 +103,7 @@ protected:
 
     virtual size_t getOffset(int type_composite, int type_basic) const;
 
-    yarp::sig::PointCloudNetworkHeader    header;
-
+    yarp::sig::PointCloudNetworkHeader header;
 };
 
 
@@ -113,4 +111,3 @@ protected:
 } // namespace yarp
 
 #endif
-

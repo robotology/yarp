@@ -17,7 +17,7 @@
 namespace yarp {
 namespace sig {
 
-template<class T>
+template <class T>
 /**
  * @brief The PointCloud class.
  */
@@ -47,12 +47,11 @@ public:
      * Clones the content of another point cloud.
      * @param alt the point cloud to clone.
      */
-    template<class T1>
+    template <class T1>
     PointCloud(const PointCloud<T1>& alt)
     {
         setPointType();
         copy<T1>(alt);
-
     }
 
     /**
@@ -103,7 +102,7 @@ public:
      */
     virtual size_t dataSizeBytes() const override
     {
-        return header.width*header.height*(sizeof(T));
+        return header.width * header.height * (sizeof(T));
     }
 
     virtual size_t size() const override
@@ -117,28 +116,28 @@ public:
      * @param u, column coordinate
      * @param v, row coordinate
      */
-    inline T& operator()(size_t u, size_t v) {
+    inline T& operator()(size_t u, size_t v)
+    {
         yAssert(isOrganized());
-        if (u > width() || v > height())
-        {
+        if (u > width() || v > height()) {
             return nulldata;
         }
-        return data[u + v*width()];
+        return data[u + v * width()];
     }
 
     /**
      * @brief Obtain the point given by the index.
      * @param i, index
      */
-    inline T& operator()(size_t i) {
-        if (i > data.size())
-        {
+    inline T& operator()(size_t i)
+    {
+        if (i > data.size()) {
             return nulldata;
         }
         return data[i];
     }
 
-    template<class T1>
+    template <class T1>
     /**
      * Assignment operator.
      * @brief Clones the content of another image.
@@ -163,20 +162,16 @@ public:
         yAssert(getPointType() == rhs.getPointType());
 
         size_t nr_points = data.size();
-        data.resize (nr_points + rhs.size());
-        for (size_t i = nr_points; i < data.size (); ++i)
-        {
+        data.resize(nr_points + rhs.size());
+        for (size_t i = nr_points; i < data.size(); ++i) {
             data[i] = rhs.data[i - nr_points];
         }
 
         header.width = data.size();
-        header.height   = 1;
-        if (rhs.isDense() && isDense())
-        {
+        header.height = 1;
+        if (rhs.isDense() && isDense()) {
             header.isDense = 1;
-        }
-        else
-        {
+        } else {
             header.isDense = 0;
         }
         return (*this);
@@ -190,7 +185,7 @@ public:
     inline const PointCloud<T>
     operator+(const PointCloud<T>& rhs)
     {
-      return (PointCloud<T> (*this) += rhs);
+        return (PointCloud<T>(*this) += rhs);
     }
 
     /**
@@ -228,38 +223,31 @@ public:
         yAssert(source);
         header.isDense = isDense;
         resize(width, height);
-        if (this->getPointType() == type)
-        {
-            memcpy(const_cast<char*> (getRawData()), source, dataSizeBytes());
-        }
-        else
-        {
+        if (this->getPointType() == type) {
+            memcpy(const_cast<char*>(getRawData()), source, dataSizeBytes());
+        } else {
             std::vector<int> recipe = getComposition(type);
             copyFromRawData(getRawData(), source, recipe);
         }
     }
 
 
-    template<class T1>
+    template <class T1>
     /**
      * Copy operator
      * @brief clones the content of another point cloud
      * @param alt the point cloud to clone
      */
-    void copy(const PointCloud<T1> &alt)
+    void copy(const PointCloud<T1>& alt)
     {
-        resize(alt.width(),alt.height());
-        if (std::is_same<T, T1>::value)
-        {
-            yAssert(dataSizeBytes()==alt.dataSizeBytes());
-            memcpy(const_cast<char*> (getRawData()), alt.getRawData(), dataSizeBytes());
-        }
-        else
-        {
+        resize(alt.width(), alt.height());
+        if (std::is_same<T, T1>::value) {
+            yAssert(dataSizeBytes() == alt.dataSizeBytes());
+            memcpy(const_cast<char*>(getRawData()), alt.getRawData(), dataSizeBytes());
+        } else {
             std::vector<int> recipe = getComposition(alt.getPointType());
             copyFromRawData(getRawData(), alt.getRawData(), recipe);
         }
-
     }
 
     virtual bool read(yarp::os::ConnectionReader& connection) override
@@ -267,21 +255,22 @@ public:
         connection.convertTextMode();
         yarp::sig::PointCloudNetworkHeader _header;
         bool ok = connection.expectBlock((char*)&_header, sizeof(_header));
-        if (!ok) return false;
+        if (!ok) {
+            return false;
+        }
 
         data.resize(_header.height * _header.width);
-        std::memset((void *) data.getFirst(), 0, data.size() * sizeof(T));
+        std::memset((void*)data.getFirst(), 0, data.size() * sizeof(T));
 
         header.height = _header.height;
         header.width = _header.width;
         header.isDense = _header.isDense;
 
-        if (header.pointType == _header.pointType)
-        {
+        if (header.pointType == _header.pointType) {
             return data.read(connection);
         }
 
-        T *tmp = data.getFirst();
+        T* tmp = data.getFirst();
 
         yAssert(tmp != nullptr);
 
@@ -292,18 +281,13 @@ public:
         std::vector<int> recipe = getComposition(_header.pointType);
 
         yarp::os::ManagedBytes dummy;
-        for (size_t i=0; i<data.size(); i++)
-        {
-            for (size_t j = 0; j<recipe.size(); j++)
-            {
+        for (size_t i = 0; i < data.size(); i++) {
+            for (size_t j = 0; j < recipe.size(); j++) {
                 size_t sizeToRead = pointType2Size(recipe[j]);
-                if ((header.pointType & recipe[j]))
-                {
+                if ((header.pointType & recipe[j])) {
                     size_t offset = getOffset(header.pointType, recipe[j]);
-                    connection.expectBlock((char*) &tmp[i]+offset, sizeToRead);
-                }
-                else
-                {
+                    connection.expectBlock((char*)&tmp[i] + offset, sizeToRead);
+                } else {
                     dummy.allocateOnNeed(sizeToRead, sizeToRead);
                     connection.expectBlock(dummy.bytes().get(), sizeToRead);
                 }
@@ -320,31 +304,24 @@ public:
         return data.write(writer);
     }
 
-    virtual yarp::os::ConstString toString(int precision=-1, int width=-1)
+    virtual yarp::os::ConstString toString(int precision = -1, int width = -1)
     {
         yarp::os::ConstString ret;
-        if (isOrganized())
-        {
-            for (size_t r=0; r<this->width(); r++)
-            {
-                for (size_t c=0; c<this->height(); c++)
-                {
-                    ret += (*this)(r,c).toString(precision, width);
+        if (isOrganized()) {
+            for (size_t r = 0; r < this->width(); r++) {
+                for (size_t c = 0; c < this->height(); c++) {
+                    ret += (*this)(r, c).toString(precision, width);
                 }
-                if (r<this->width()-1) // if it is not the last row
+                if (r < this->width() - 1) // if it is not the last row
                 {
-                    ret+= "\n";
+                    ret += "\n";
                 }
             }
 
-        }
-        else
-        {
-            for (size_t i=0; i<this->size(); i++)
-            {
+        } else {
+            for (size_t i = 0; i < this->size(); i++) {
                 ret += (*this)(i).toString(precision, width);
             }
-
         }
         return ret;
     }
@@ -361,8 +338,7 @@ public:
         ret.addInt(getPointType());
         ret.addInt(isDense());
 
-        for (size_t i=0; i<this->size(); i++)
-        {
+        for (size_t i = 0; i < this->size(); i++) {
             ret.addList().append((*this)(i).toBottle());
         }
         return ret;
@@ -377,34 +353,31 @@ public:
 
     bool fromBottle(const yarp::os::Bottle& bt)
     {
-        if (bt.isNull())
-        {
+        if (bt.isNull()) {
             return false;
         }
 
-        if (this->getPointType() != bt.get(2).asInt())
-        {
+        if (this->getPointType() != bt.get(2).asInt()) {
             return false;
         }
 
         this->resize(bt.get(0).asInt(), bt.get(1).asInt());
-        this->header.isDense       = bt.get(3).asInt();
+        this->header.isDense = bt.get(3).asInt();
 
-        if ((size_t) bt.size() != 4 + width()*height())
-        {
+        if ((size_t)bt.size() != 4 + width() * height()) {
             return false;
         }
 
-        for (size_t i=0; i<this->size(); i++)
-        {
-            (*this)(i).fromBottle(bt, i+4);
+        for (size_t i = 0; i < this->size(); i++) {
+            (*this)(i).fromBottle(bt, i + 4);
         }
 
         return true;
     }
 
-    virtual int getBottleTag() const override {
-        return BottleTagMap <T>();
+    virtual int getBottleTag() const override
+    {
+        return BottleTagMap<T>();
     }
 
 private:
@@ -413,50 +386,42 @@ private:
 
     void setPointType()
     {
-        if (std::is_same<T, DataXY>::value)
-        {
+        if (std::is_same<T, DataXY>::value) {
             header.pointType = PCL_POINT2D_XY;
             return;
         }
 
-        if (std::is_same<T, DataXYZ>::value)
-        {
+        if (std::is_same<T, DataXYZ>::value) {
             header.pointType = PCL_POINT_XYZ;
             return;
         }
 
-        if (std::is_same<T, DataNormal>::value)
-        {
+        if (std::is_same<T, DataNormal>::value) {
             header.pointType = PCL_NORMAL;
             return;
         }
 
-        if (std::is_same<T, DataXYZRGBA>::value)
-        {
+        if (std::is_same<T, DataXYZRGBA>::value) {
             header.pointType = PCL_POINT_XYZ_RGBA;
             return;
         }
 
-        if (std::is_same<T, DataXYZI>::value)
-        {
+        if (std::is_same<T, DataXYZI>::value) {
             header.pointType = PCL_POINT_XYZ_I;
             return;
         }
 
-        if (std::is_same<T, DataInterestPointXYZ>::value)
-        {
+        if (std::is_same<T, DataInterestPointXYZ>::value) {
             header.pointType = PCL_INTEREST_POINT_XYZ;
             return;
         }
 
-        if (std::is_same<T, DataXYZNormal>::value)
-        {
+        if (std::is_same<T, DataXYZNormal>::value) {
             header.pointType = PCL_POINT_XYZ_NORMAL;
             return;
         }
 
-        if (std::is_same<T, DataXYZNormalRGBA>::value)
-        {
+        if (std::is_same<T, DataXYZNormalRGBA>::value) {
             header.pointType = PCL_POINT_XYZ_NORMAL_RGBA;
             return;
         }
@@ -467,56 +432,55 @@ private:
 
         header.pointType = 0;
     }
-
 };
 
 } // namespace sig
 } // namespace yarp
 
-template<>
-inline int BottleTagMap <yarp::sig::DataXY> ()
+template <>
+inline int BottleTagMap<yarp::sig::DataXY>()
 {
     return BOTTLE_TAG_DOUBLE;
 }
 
-template<>
-inline int BottleTagMap <yarp::sig::DataXYZ> ()
+template <>
+inline int BottleTagMap<yarp::sig::DataXYZ>()
 {
     return BOTTLE_TAG_DOUBLE;
 }
 
-template<>
-inline int BottleTagMap <yarp::sig::DataNormal> ()
+template <>
+inline int BottleTagMap<yarp::sig::DataNormal>()
 {
     return BOTTLE_TAG_DOUBLE;
 }
 
-template<>
-inline int BottleTagMap <yarp::sig::DataXYZRGBA> ()
+template <>
+inline int BottleTagMap<yarp::sig::DataXYZRGBA>()
 {
     return BOTTLE_TAG_DOUBLE;
 }
 
-template<>
-inline int BottleTagMap <yarp::sig::DataXYZI> ()
+template <>
+inline int BottleTagMap<yarp::sig::DataXYZI>()
 {
     return BOTTLE_TAG_DOUBLE;
 }
 
-template<>
-inline int BottleTagMap <yarp::sig::DataInterestPointXYZ> ()
+template <>
+inline int BottleTagMap<yarp::sig::DataInterestPointXYZ>()
 {
     return BOTTLE_TAG_DOUBLE;
 }
 
-template<>
-inline int BottleTagMap <yarp::sig::DataXYZNormal> ()
+template <>
+inline int BottleTagMap<yarp::sig::DataXYZNormal>()
 {
     return BOTTLE_TAG_DOUBLE;
 }
 
-template<>
-inline int BottleTagMap <yarp::sig::DataXYZNormalRGBA> ()
+template <>
+inline int BottleTagMap<yarp::sig::DataXYZNormalRGBA>()
 {
     return BOTTLE_TAG_DOUBLE;
 }

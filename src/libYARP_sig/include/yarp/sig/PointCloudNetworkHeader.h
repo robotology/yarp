@@ -44,5 +44,4 @@ YARP_END_PACK
 } // namespace yarp
 
 
-
 #endif // YARP_SIG_POINTCLOUDNETWORKHEADER_H

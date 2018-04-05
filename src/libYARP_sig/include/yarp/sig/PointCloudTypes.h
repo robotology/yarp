@@ -14,9 +14,9 @@
 
 #include <yarp/conf/system.h>
 
-#include <yarp/os/NetInt32.h>
-#include <yarp/os/LogStream.h>
 #include <yarp/os/Bottle.h>
+#include <yarp/os/LogStream.h>
+#include <yarp/os/NetInt32.h>
 
 namespace yarp {
 namespace sig {
@@ -126,18 +126,15 @@ struct DataXY
     {
         yarp::os::ConstString ret = "";
         char tmp[128];
-        if(width<0)
-        {
+        if (width < 0) {
             snprintf(tmp, 128, "% .*lf % .*lf\t", precision, x,
-                                          precision, y);
-            ret+=tmp;
+                                                  precision, y);
+            ret += tmp;
 
-        }
-        else
-        {
+        } else {
             snprintf(tmp, 128, "% *.*lf % *.*lf", width, precision, x,
-                                          width, precision, y);
-            ret+=tmp;
+                                                  width, precision, y);
+            ret += tmp;
         }
         return ret;
     }
@@ -147,9 +144,8 @@ struct DataXY
         ret.addDouble(x);
         ret.addDouble(y);
         return ret;
-
     }
-    void fromBottle(const yarp::os::Bottle &bt, size_t i)
+    void fromBottle(const yarp::os::Bottle& bt, size_t i)
     {
         yarp::os::Bottle* intBt = bt.get(i).asList();
         x = static_cast<float>(intBt->get(0).asDouble());
@@ -177,20 +173,17 @@ struct DataXYZ
     {
         yarp::os::ConstString ret = "";
         char tmp[128];
-        if(width<0)
-        {
+        if (width < 0) {
             snprintf(tmp, 128, "% .*lf % .*lf % .*lf\t", precision, x,
-                                                   precision, y,
-                                                   precision, z);
-            ret+=tmp;
+                                                         precision, y,
+                                                         precision, z);
+            ret += tmp;
 
-        }
-        else
-        {
+        } else {
             snprintf(tmp, 128, "% *.*lf % *.*lf % *.*lf", width, precision, x,
-                                                    width, precision, y,
-                                                    width, precision, z);
-            ret+=tmp;
+                                                          width, precision, y,
+                                                          width, precision, z);
+            ret += tmp;
         }
         return ret;
     }
@@ -201,9 +194,8 @@ struct DataXYZ
         ret.addDouble(y);
         ret.addDouble(z);
         return ret;
-
     }
-    void fromBottle(const yarp::os::Bottle &bt, size_t i)
+    void fromBottle(const yarp::os::Bottle& bt, size_t i)
     {
         yarp::os::Bottle* intBt = bt.get(i).asList();
 
@@ -237,11 +229,12 @@ struct DataRGBA
     };
     yarp::os::ConstString toString(int precision, int width)
     {
-        YARP_UNUSED(precision); YARP_UNUSED(width);
+        YARP_UNUSED(precision);
+        YARP_UNUSED(width);
         yarp::os::ConstString ret = "";
         char tmp[10];
         snprintf(tmp, 128, "%c %c %c %c\t", r, g, b, a);
-        ret+=tmp;
+        ret += tmp;
         return ret;
     }
     yarp::os::Bottle toBottle()
@@ -252,9 +245,8 @@ struct DataRGBA
         ret.addInt(b);
         ret.addInt(a);
         return ret;
-
     }
-    void fromBottle(const yarp::os::Bottle &bt, size_t i)
+    void fromBottle(const yarp::os::Bottle& bt, size_t i)
     {
         yarp::os::Bottle* intBt = bt.get(i).asList();
         r = intBt->get(0).asInt();
@@ -293,22 +285,19 @@ struct DataNormal
     {
         yarp::os::ConstString ret = "";
         char tmp[128];
-        if(width<0)
-        {
+        if (width < 0) {
             snprintf(tmp, 128, "% .*lf % .*lf % .*lf % .*lf\t", precision, normal_x,
-                                                          precision, normal_y,
-                                                          precision, normal_z,
-                                                          precision, curvature);
-            ret+=tmp;
+                                                                precision, normal_y,
+                                                                precision, normal_z,
+                                                                precision, curvature);
+            ret += tmp;
 
-        }
-        else
-        {
+        } else {
             snprintf(tmp, 128, "% *.*lf % *.*lf % *.*lf % *.*lf", width, precision, normal_x,
-                                                            width, precision, normal_y,
-                                                            width, precision, normal_z,
-                                                            width, precision, curvature);
-            ret+=tmp;
+                                                                  width, precision, normal_y,
+                                                                  width, precision, normal_z,
+                                                                  width, precision, curvature);
+            ret += tmp;
         }
         return ret;
     }
@@ -320,9 +309,8 @@ struct DataNormal
         ret.addDouble(normal_z);
         ret.addDouble(curvature);
         return ret;
-
     }
-    void fromBottle(const yarp::os::Bottle &bt, size_t i)
+    void fromBottle(const yarp::os::Bottle& bt, size_t i)
     {
         yarp::os::Bottle* intBt = bt.get(i).asList();
 
@@ -357,20 +345,17 @@ struct DataNormalNoCurvature
     {
         yarp::os::ConstString ret = "";
         char tmp[128];
-        if(width<0)
-        {
+        if (width < 0) {
             snprintf(tmp, 128, "% .*lf % .*lf % .*lf\t", precision, normal_x,
-                                                   precision, normal_y,
-                                                   precision, normal_z);
-            ret+=tmp;
+                                                         precision, normal_y,
+                                                         precision, normal_z);
+            ret += tmp;
 
-        }
-        else
-        {
+        } else {
             snprintf(tmp, 128, "% *.*lf % *.*lf % *.*lf", width, precision, normal_x,
-                                                    width, precision, normal_y,
-                                                    width, precision, normal_z);
-            ret+=tmp;
+                                                          width, precision, normal_y,
+                                                          width, precision, normal_z);
+            ret += tmp;
         }
         return ret;
     }
@@ -381,9 +366,8 @@ struct DataNormalNoCurvature
         ret.addDouble(normal_y);
         ret.addDouble(normal_z);
         return ret;
-
     }
-    void fromBottle(const yarp::os::Bottle &bt, size_t i)
+    void fromBottle(const yarp::os::Bottle& bt, size_t i)
     {
         yarp::os::Bottle* intBt = bt.get(i).asList();
 
@@ -433,20 +417,17 @@ struct DataViewpoint
     {
         yarp::os::ConstString ret = "";
         char tmp[128];
-        if(width<0)
-        {
+        if (width < 0) {
             snprintf(tmp, 128, "% .*lf % .*lf % .*lf\t", precision, vp_x,
-                                                   precision, vp_y,
-                                                   precision, vp_z);
-            ret+=tmp;
+                                                         precision, vp_y,
+                                                         precision, vp_z);
+            ret += tmp;
 
-        }
-        else
-        {
+        } else {
             snprintf(tmp, 128, "% *.*lf % *.*lf % *.*lf", width, precision, vp_x,
-                                                    width, precision, vp_y,
-                                                    width, precision, vp_z);
-            ret+=tmp;
+                                                          width, precision, vp_y,
+                                                          width, precision, vp_z);
+            ret += tmp;
         }
         return ret;
     }
@@ -457,9 +438,8 @@ struct DataViewpoint
         ret.addDouble(vp_y);
         ret.addDouble(vp_z);
         return ret;
-
     }
-    void fromBottle(const yarp::os::Bottle &bt, size_t i)
+    void fromBottle(const yarp::os::Bottle& bt, size_t i)
     {
         yarp::os::Bottle* intBt = bt.get(i).asList();
 
@@ -514,23 +494,20 @@ struct DataXYZRGBA
     {
         yarp::os::ConstString ret = "";
         char tmp[128];
-        if(width<0)
-        {
+        if (width < 0) {
             snprintf(tmp, 128, "% .*lf % .*lf % .*lf ", precision, x,
-                                                  precision, y,
-                                                  precision, z);
-            ret+=tmp;
+                                                        precision, y,
+                                                        precision, z);
+            ret += tmp;
 
-        }
-        else
-        {
+        } else {
             snprintf(tmp, 128, "% *.*lf % *.*lf % *.*lf ", width, precision, x,
-                                                     width, precision, y,
-                                                     width, precision, z);
-            ret+=tmp;
+                                                           width, precision, y,
+                                                           width, precision, z);
+            ret += tmp;
         }
         snprintf(tmp, 128, "%c %c %c %c\t", r, g, b, a);
-        ret+=tmp;
+        ret += tmp;
         return ret;
     }
     yarp::os::Bottle toBottle()
@@ -545,7 +522,7 @@ struct DataXYZRGBA
         ret.addInt(a);
         return ret;
     }
-    void fromBottle(const yarp::os::Bottle &bt, size_t i)
+    void fromBottle(const yarp::os::Bottle& bt, size_t i)
     {
         yarp::os::Bottle* intBt = bt.get(i).asList();
 
@@ -562,7 +539,6 @@ struct DataXYZRGBA
         a = intBt->get(6).asInt();
         return;
     }
-
 };
 YARP_END_PACK
 
@@ -593,22 +569,19 @@ struct DataXYZI
     {
         yarp::os::ConstString ret = "";
         char tmp[128];
-        if(width<0)
-        {
+        if (width < 0) {
             snprintf(tmp, 128, "% .*lf % .*lf % .*lf % .*lf\t", precision, x,
-                                                          precision, y,
-                                                          precision, z,
-                                                          precision, intensity);
-            ret+=tmp;
+                                                                precision, y,
+                                                                precision, z,
+                                                                precision, intensity);
+            ret += tmp;
 
-        }
-        else
-        {
+        } else {
             snprintf(tmp, 128, "% *.*lf % *.*lf % *.*lf % *.*lf", width, precision, x,
-                                                            width, precision, y,
-                                                            width, precision, z,
-                                                            width, precision, intensity);
-            ret+=tmp;
+                                                                  width, precision, y,
+                                                                  width, precision, z,
+                                                                  width, precision, intensity);
+            ret += tmp;
         }
         return ret;
     }
@@ -620,9 +593,8 @@ struct DataXYZI
         ret.addDouble(z);
         ret.addDouble(intensity);
         return ret;
-
     }
-    void fromBottle(const yarp::os::Bottle &bt, size_t i)
+    void fromBottle(const yarp::os::Bottle& bt, size_t i)
     {
         yarp::os::Bottle* intBt = bt.get(i).asList();
 
@@ -666,22 +638,19 @@ struct DataInterestPointXYZ
     {
         yarp::os::ConstString ret = "";
         char tmp[128];
-        if(width<0)
-        {
+        if (width < 0) {
             snprintf(tmp, 128, "% .*lf % .*lf % .*lf % .*lf\t", precision, x,
-                                                          precision, y,
-                                                          precision, z,
-                                                          precision, strength);
-            ret+=tmp;
+                                                                precision, y,
+                                                                precision, z,
+                                                                precision, strength);
+            ret += tmp;
 
-        }
-        else
-        {
+        } else {
             snprintf(tmp, 128, "% *.*lf % *.*lf % *.*lf % *.*lf", width, precision, x,
-                                                            width, precision, y,
-                                                            width, precision, z,
-                                                            width, precision, strength);
-            ret+=tmp;
+                                                                  width, precision, y,
+                                                                  width, precision, z,
+                                                                  width, precision, strength);
+            ret += tmp;
         }
         return ret;
     }
@@ -693,9 +662,8 @@ struct DataInterestPointXYZ
         ret.addDouble(z);
         ret.addDouble(strength);
         return ret;
-
     }
-    void fromBottle(const yarp::os::Bottle &bt, size_t i)
+    void fromBottle(const yarp::os::Bottle& bt, size_t i)
     {
         yarp::os::Bottle* intBt = bt.get(i).asList();
 
@@ -750,30 +718,27 @@ struct DataXYZNormal
     {
         yarp::os::ConstString ret = "";
         char tmp[128];
-        if(width<0)
-        {
+        if (width < 0) {
             snprintf(tmp, 128, "% .*lf % .*lf % .*lf ", precision, x,
-                                                  precision, y,
-                                                  precision, z);
-            ret+=tmp;
+                                                        precision, y,
+                                                        precision, z);
+            ret += tmp;
             snprintf(tmp, 128, "% .*lf % .*lf % .*lf % .*lf\t", precision, normal_x,
-                                                          precision, normal_y,
-                                                          precision, normal_z,
-                                                          precision, curvature);
-            ret+=tmp;
+                                                                precision, normal_y,
+                                                                precision, normal_z,
+                                                                precision, curvature);
+            ret += tmp;
 
-        }
-        else
-        {
+        } else {
             snprintf(tmp, 128, "% *.*lf % *.*lf % *.*lf ", width, precision, x,
-                                                     width, precision, y,
-                                                     width, precision, z);
-            ret+=tmp;
+                                                           width, precision, y,
+                                                           width, precision, z);
+            ret += tmp;
             snprintf(tmp, 128, "% *.*lf % *.*lf % *.*lf % *.*lf", width, precision, normal_x,
-                                                            width, precision, normal_y,
-                                                            width, precision, normal_z,
-                                                            width, precision, curvature);
-            ret+=tmp;
+                                                                  width, precision, normal_y,
+                                                                  width, precision, normal_z,
+                                                                  width, precision, curvature);
+            ret += tmp;
         }
         return ret;
     }
@@ -788,9 +753,8 @@ struct DataXYZNormal
         ret.addDouble(normal_z);
         ret.addDouble(curvature);
         return ret;
-
     }
-    void fromBottle(const yarp::os::Bottle &bt, size_t i)
+    void fromBottle(const yarp::os::Bottle& bt, size_t i)
     {
         yarp::os::Bottle* intBt = bt.get(i).asList();
 
@@ -860,33 +824,30 @@ struct DataXYZNormalRGBA
     {
         yarp::os::ConstString ret = "";
         char tmp[128];
-        if(width<0)
-        {
+        if (width < 0) {
             snprintf(tmp, 128, "% .*lf % .*lf % .*lf ", precision, x,
-                                                  precision, y,
-                                                  precision, z);
-            ret+=tmp;
+                                                        precision, y,
+                                                        precision, z);
+            ret += tmp;
             snprintf(tmp, 128, "% .*lf % .*lf % .*lf % .*lf ", precision, normal_x,
-                                                         precision, normal_y,
-                                                         precision, normal_z,
-                                                         precision, curvature);
-            ret+=tmp;
+                                                               precision, normal_y,
+                                                               precision, normal_z,
+                                                               precision, curvature);
+            ret += tmp;
 
-        }
-        else
-        {
+        } else {
             snprintf(tmp, 128, "% *.*lf % *.*lf % *.*lf ", width, precision, x,
-                                                     width, precision, y,
-                                                     width, precision, z);
-            ret+=tmp;
+                                                           width, precision, y,
+                                                           width, precision, z);
+            ret += tmp;
             snprintf(tmp, 128, "% *.*lf % *.*lf % *.*lf % *.*lf ", width, precision, normal_x,
-                                                             width, precision, normal_y,
-                                                             width, precision, normal_z,
-                                                             width, precision, curvature);
-            ret+=tmp;
+                                                                   width, precision, normal_y,
+                                                                   width, precision, normal_z,
+                                                                   width, precision, curvature);
+            ret += tmp;
         }
         snprintf(tmp, 128, "%c %c %c %c\t", r, g, b, a);
-        ret+=tmp;
+        ret += tmp;
         return ret;
     }
     yarp::os::Bottle toBottle()
@@ -904,9 +865,8 @@ struct DataXYZNormalRGBA
         ret.addInt(b);
         ret.addInt(a);
         return ret;
-
     }
-    void fromBottle(const yarp::os::Bottle &bt, size_t i)
+    void fromBottle(const yarp::os::Bottle& bt, size_t i)
     {
         yarp::os::Bottle* intBt = bt.get(i).asList();
 
@@ -934,8 +894,6 @@ YARP_END_PACK
 
 } // namespace sig
 } // namespace yarp
-
-
 
 
 #endif // YARP_SIG_POINTCLOUDTYPES_H
