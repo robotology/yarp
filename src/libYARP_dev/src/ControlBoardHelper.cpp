@@ -32,7 +32,6 @@ public:
     int nj;
     double *position_zeros;
     double *helper_ones;
-    double *signs;
     int    *axisMap;
     int    *invAxisMap;
     double *angleToEncoders;
@@ -50,7 +49,6 @@ public:
     explicit PrivateUnitsHandler(int size) :
         position_zeros(0),
         helper_ones(0),
-        signs(0),
         axisMap(0),
         invAxisMap(0),
         angleToEncoders(0),
@@ -74,7 +72,6 @@ public:
         checkAndDestroy(CurPid_units);
         checkAndDestroy<double>(position_zeros);
         checkAndDestroy<double>(helper_ones);
-        checkAndDestroy<double>(signs);
         checkAndDestroy<int>(axisMap);
         checkAndDestroy<int>(invAxisMap);
         checkAndDestroy<double>(angleToEncoders);
@@ -89,7 +86,6 @@ public:
         nj = n;
         position_zeros = new double[nj];
         helper_ones = new double[nj];
-        signs = new double[nj];
         axisMap = new int[nj];
         invAxisMap = new int[nj];
         angleToEncoders = new double[nj];
@@ -104,7 +100,6 @@ public:
 
         yAssert(position_zeros != nullptr);
         yAssert(helper_ones != nullptr);
-        yAssert(signs != nullptr);
         yAssert(axisMap != nullptr);
         yAssert(invAxisMap != nullptr);
         yAssert(angleToEncoders != nullptr);
@@ -126,20 +121,19 @@ public:
     PrivateUnitsHandler(const PrivateUnitsHandler& other)
     {
         alloc(other.nj);
-        memcpy(this->position_zeros, other.position_zeros, sizeof(other.position_zeros));
-        memcpy(this->helper_ones, other.helper_ones, sizeof(other.helper_ones));
-        memcpy(this->signs, other.signs, sizeof(other.signs));
-        memcpy(this->axisMap, other.axisMap, sizeof(other.axisMap));
-        memcpy(this->invAxisMap, other.invAxisMap, sizeof(other.invAxisMap));
-        memcpy(this->angleToEncoders, other.angleToEncoders, sizeof(other.angleToEncoders));
-        memcpy(this->newtonsToSensors, other.newtonsToSensors, sizeof(other.newtonsToSensors));
-        memcpy(this->ampereToSensors, other.ampereToSensors, sizeof(other.ampereToSensors));
-        memcpy(this->voltToSensors, other.voltToSensors, sizeof(other.voltToSensors));
-        memcpy(this->dutycycleToPWMs, other.dutycycleToPWMs, sizeof(other.dutycycleToPWMs));
-        memcpy(this->PosPid_units, other.PosPid_units, sizeof(other.PosPid_units));
-        memcpy(this->VelPid_units, other.VelPid_units, sizeof(other.VelPid_units));
-        memcpy(this->TrqPid_units, other.TrqPid_units, sizeof(other.TrqPid_units));
-        memcpy(this->CurPid_units, other.CurPid_units, sizeof(other.CurPid_units));
+        memcpy(this->position_zeros, other.position_zeros, sizeof(*other.position_zeros)*nj);
+        memcpy(this->helper_ones, other.helper_ones, sizeof(*other.helper_ones)*nj);
+        memcpy(this->axisMap, other.axisMap, sizeof(*other.axisMap)*nj);
+        memcpy(this->invAxisMap, other.invAxisMap, sizeof(*other.invAxisMap)*nj);
+        memcpy(this->angleToEncoders, other.angleToEncoders, sizeof(*other.angleToEncoders)*nj);
+        memcpy(this->newtonsToSensors, other.newtonsToSensors, sizeof(*other.newtonsToSensors)*nj);
+        memcpy(this->ampereToSensors, other.ampereToSensors, sizeof(*other.ampereToSensors)*nj);
+        memcpy(this->voltToSensors, other.voltToSensors, sizeof(*other.voltToSensors)*nj);
+        memcpy(this->dutycycleToPWMs, other.dutycycleToPWMs, sizeof(*other.dutycycleToPWMs)*nj);
+        memcpy(this->PosPid_units, other.PosPid_units, sizeof(*other.PosPid_units)*nj);
+        memcpy(this->VelPid_units, other.VelPid_units, sizeof(*other.VelPid_units)*nj);
+        memcpy(this->TrqPid_units, other.TrqPid_units, sizeof(*other.TrqPid_units)*nj);
+        memcpy(this->CurPid_units, other.CurPid_units, sizeof(*other.CurPid_units)*nj);
     }
 };
 
