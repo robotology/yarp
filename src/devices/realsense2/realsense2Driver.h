@@ -128,6 +128,9 @@ private:
     void        updateTransformations();
     bool        pipelineStartup();
     bool        pipelineShutdown();
+    bool        pipelineRestart();
+    bool        setFramerate(const int _fps);
+    void        fallback();
 
 
     // realsense classes
@@ -150,7 +153,7 @@ private:
     bool m_depthRegistration;
     bool m_verbose;
     bool m_initialized;
-    int m_period;
+    int m_fps;
     std::vector<cameraFeature_id_t> m_supportedFeatures;
     std::map<std::string, RGBDSensorParamParser::RGBDParam> m_params_map;
 #endif

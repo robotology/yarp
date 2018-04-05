@@ -26,6 +26,8 @@ constexpr char accuracy       [] = "accuracy";
 constexpr char clipPlanes     [] = "clipPlanes";
 constexpr char depthRes       [] = "depthResolution";
 constexpr char rgbRes         [] = "rgbResolution";
+constexpr char framerate      [] = "framerate";
+constexpr char enableEmitter  [] = "enableEmitter";
 
 static std::string get_device_information(const rs2::device& dev)
 {
@@ -85,7 +87,7 @@ static void print_supported_options(const rs2::sensor& sensor)
     std::cout<<std::endl;
 }
 
-static bool isSupportedFormat(const rs2::sensor &sensor, const int width, const int height, bool verbose = false)
+static bool isSupportedFormat(const rs2::sensor &sensor, const int width, const int height, const int fps, bool verbose = false)
 {
     bool ret = false;
     std::vector<rs2::stream_profile> stream_profiles = sensor.get_stream_profiles();
@@ -139,7 +141,7 @@ static bool isSupportedFormat(const rs2::sensor &sensor, const int width, const 
                 std::cout << std::endl;
             }
 
-            if(video_stream_profile.width() == width && video_stream_profile.height() == height)
+            if(video_stream_profile.width() == width && video_stream_profile.height() == height && video_stream_profile.fps() == fps)
                 ret=true;
         }
         profile_num++;
@@ -327,7 +329,7 @@ static size_t bytesPerPixel(const rs2_format format)
 
 realsense2Driver::realsense2Driver() : m_depth_sensor(nullptr), m_color_sensor(nullptr),
                                        m_paramParser(nullptr), m_depthRegistration(false),
-                                       m_verbose(false), m_initialized(false), m_period(0)
+                                       m_verbose(false), m_initialized(false), m_fps(0)
 {
 
     m_params_map =
@@ -335,7 +337,10 @@ realsense2Driver::realsense2Driver() : m_depth_sensor(nullptr), m_color_sensor(n
         {accuracy,       RGBDSensorParamParser::RGBDParam(accuracy,        1)},
         {clipPlanes,     RGBDSensorParamParser::RGBDParam(clipPlanes,      2)},
         {depthRes,       RGBDSensorParamParser::RGBDParam(depthRes,        2)},
-        {rgbRes,         RGBDSensorParamParser::RGBDParam(rgbRes,          2)}
+        {rgbRes,         RGBDSensorParamParser::RGBDParam(rgbRes,          2)},
+        {framerate,      RGBDSensorParamParser::RGBDParam(framerate,       1)},
+        {enableEmitter,  RGBDSensorParamParser::RGBDParam(enableEmitter,   1)}
+
 
     };
 
@@ -377,6 +382,7 @@ bool realsense2Driver::pipelineStartup()
     catch (const rs2::error& e)
     {
         yError() << "realsense2Driver: failed to start the pipeline:"<< "(" << e.what() << ")";
+        m_lastError = e.what();
         return false;
     }
     return true;
@@ -391,9 +397,59 @@ bool realsense2Driver::pipelineShutdown()
     catch (const rs2::error& e)
     {
         yError() << "realsense2Driver: failed to stop the pipeline:"<< "(" << e.what() << ")";
+        m_lastError = e.what();
         return false;
     }
     return true;
+}
+
+bool realsense2Driver::pipelineRestart()
+{
+    std::lock_guard<std::mutex> guard(m_mutex);
+    if (!pipelineShutdown())
+        return false;
+
+    if (!pipelineStartup())
+        return false;
+
+    return true;
+}
+
+bool realsense2Driver::setFramerate(const int _fps)
+{
+    if (m_color_sensor && isSupportedFormat(*m_color_sensor,m_color_intrin.width, m_color_intrin.height, _fps, m_verbose) &&
+        m_depth_sensor && isSupportedFormat(*m_depth_sensor,m_depth_intrin.width, m_depth_intrin.height, _fps, m_verbose)) {
+
+        m_cfg.enable_stream(RS2_STREAM_COLOR, m_color_intrin.width, m_color_intrin.height, RS2_FORMAT_RGB8, _fps);
+        m_cfg.enable_stream(RS2_STREAM_DEPTH, m_depth_intrin.width, m_depth_intrin.height, RS2_FORMAT_Z16, _fps);
+    }
+    else
+    {
+        if (m_initialized)
+        {
+            fallback();
+        }
+
+    }
+
+    if (!pipelineRestart())
+        return false;
+
+    m_fps = _fps;
+
+    updateTransformations();
+
+    return true;
+
+}
+
+void realsense2Driver::fallback()
+{
+    m_cfg.enable_stream(RS2_STREAM_COLOR, m_color_intrin.width, m_color_intrin.height, RS2_FORMAT_RGB8, m_fps);
+    m_cfg.enable_stream(RS2_STREAM_DEPTH, m_depth_intrin.width, m_depth_intrin.height, RS2_FORMAT_Z16, m_fps);
+    yWarning()<<"realsense2Driver: format not supported, use --verbose for more details. Setting the fallback format";
+    std::cout<<"COLOR: "<<m_color_intrin.width<<"x"<<m_color_intrin.height<<" fps: "<<m_fps<<std::endl;
+    std::cout<<"DEPTH: "<<m_depth_intrin.width<<"x"<<m_depth_intrin.height<<" fps: "<<m_fps<<std::endl;
 }
 
 bool realsense2Driver::initializeRealsenseDevice()
@@ -403,8 +459,8 @@ bool realsense2Driver::initializeRealsenseDevice()
     double colorH = m_params_map[rgbRes].val[1].asDouble();
     double depthW = m_params_map[depthRes].val[0].asDouble();
     double depthH = m_params_map[depthRes].val[1].asDouble();
-    m_cfg.enable_stream(RS2_STREAM_COLOR, colorW, colorH, RS2_FORMAT_RGB8, 0); //TODO Supported fps and res
-    m_cfg.enable_stream(RS2_STREAM_DEPTH, depthW, depthH, RS2_FORMAT_Z16, 0);
+    m_cfg.enable_stream(RS2_STREAM_COLOR, colorW, colorH, RS2_FORMAT_RGB8, m_fps);
+    m_cfg.enable_stream(RS2_STREAM_DEPTH, depthW, depthH, RS2_FORMAT_Z16, m_fps);
 
     if (!pipelineStartup())
         return false;
@@ -511,6 +567,38 @@ bool realsense2Driver::setParams()
             settingErrorMsg("Setting param " + m_params_map[clipPlanes].name + " failed... quitting.", ret);
     }
 
+    //FRAMERATE
+    if (m_params_map[framerate].isSetting && ret)
+    {
+        if (!m_params_map[framerate].val[0].isInt() )
+            settingErrorMsg("Param " + m_params_map[framerate].name + " is not a int as it should be.", ret);
+        else
+            m_fps = m_params_map[framerate].val[0].asInt();
+    }
+    else
+    {
+        yWarning()<<"realsense2Driver: framerate not specified... setting 30 fps by default";
+        m_fps = 30;
+    }
+
+    //EMITTER
+
+    if (m_params_map[enableEmitter].isSetting && ret)
+    {
+        Value& v = m_params_map[enableEmitter].val[0];
+
+        if (!v.isBool())
+        {
+            settingErrorMsg("Param " + m_params_map[enableEmitter].name + " is not a bool as it should be.", ret);
+            return false;
+        }
+        if(!setOption(RS2_OPTION_EMITTER_ENABLED, m_depth_sensor, (float) v.asBool()))
+        {
+            settingErrorMsg("Setting param " + m_params_map[enableEmitter].name + " failed... quitting.", ret);
+        }
+    }
+
+
     //DEPTH_RES
     if (m_params_map[depthRes].isSetting && ret)
     {
@@ -559,7 +647,6 @@ bool realsense2Driver::open(Searchable& config)
         params.push_back(&(p.second));
     }
 
-    m_period = config.check("period", yarp::os::Value(30), "period of the camera").asInt();
     m_verbose = config.check("verbose");
     if (!m_paramParser->parseParam(config, params))
     {
@@ -618,61 +705,43 @@ bool realsense2Driver::getRgbResolution(int &width, int &height)
 
 bool realsense2Driver::setDepthResolution(int width, int height)
 {
-    if (m_depth_sensor && isSupportedFormat(*m_depth_sensor, width, height, m_verbose))
+    if (m_depth_sensor && isSupportedFormat(*m_depth_sensor, width, height, m_fps, m_verbose))
     {
-        m_cfg.enable_stream(RS2_STREAM_COLOR, m_color_intrin.width, m_color_intrin.height, RS2_FORMAT_RGB8, 0); //TODO Supported fps and res
-        m_cfg.enable_stream(RS2_STREAM_DEPTH, width, height, RS2_FORMAT_Z16, 0);
+        m_cfg.enable_stream(RS2_STREAM_COLOR, m_color_intrin.width, m_color_intrin.height, RS2_FORMAT_RGB8, m_fps);
+        m_cfg.enable_stream(RS2_STREAM_DEPTH, width, height, RS2_FORMAT_Z16, m_fps);
     }
     else
     {
         if (m_initialized)
         {
-            m_cfg.enable_stream(RS2_STREAM_COLOR, m_color_intrin.width, m_color_intrin.height, RS2_FORMAT_RGB8, 0); //TODO Supported fps and res
-            m_cfg.enable_stream(RS2_STREAM_DEPTH, m_depth_intrin.width, m_depth_intrin.height, RS2_FORMAT_Z16, 0);
-            yWarning()<<"realsense2Driver: format"<<width<<"x"<<height<<"not supported, use --verbose for more details. Setting the fallback format";
-            std::cout<<"COLOR: "<<m_color_intrin.width<<"x"<<m_color_intrin.height<<std::endl;
-            std::cout<<"DEPTH: "<<m_depth_intrin.width<<"x"<<m_depth_intrin.height<<std::endl;
+            fallback();
         }
     }
 
-    {
-        std::lock_guard<std::mutex> guard(m_mutex);
-        if (!pipelineShutdown())
-            return false;
+    if (!pipelineRestart())
+        return false;
 
-        if (!pipelineStartup())
-            return false;
-    }
     updateTransformations();
     return true;
 }
 
 bool realsense2Driver::setRgbResolution(int width, int height)
 {
-    if (m_color_sensor && isSupportedFormat(*m_color_sensor, width, height, m_verbose)) {
-        m_cfg.enable_stream(RS2_STREAM_COLOR, width, height, RS2_FORMAT_RGB8, 0); //TODO Supported fps and res
-        m_cfg.enable_stream(RS2_STREAM_DEPTH, m_depth_intrin.width, m_depth_intrin.height, RS2_FORMAT_Z16, 0);
+    if (m_color_sensor && isSupportedFormat(*m_color_sensor, width, height, m_fps, m_verbose)) {
+        m_cfg.enable_stream(RS2_STREAM_COLOR, width, height, RS2_FORMAT_RGB8, m_fps);
+        m_cfg.enable_stream(RS2_STREAM_DEPTH, m_depth_intrin.width, m_depth_intrin.height, RS2_FORMAT_Z16, m_fps);
     }
     else
     {
         if (m_initialized)
         {
-            m_cfg.enable_stream(RS2_STREAM_COLOR, m_color_intrin.width, m_color_intrin.height, RS2_FORMAT_RGB8, 0); //TODO Supported fps and res
-            m_cfg.enable_stream(RS2_STREAM_DEPTH, m_depth_intrin.width, m_depth_intrin.height, RS2_FORMAT_Z16, 0);
-            yWarning()<<"realsense2Driver: format"<<width<<"x"<<height<<"not supported, use --verbose for more details. Setting the fallback format";
-            std::cout<<"COLOR: "<<m_color_intrin.width<<"x"<<m_color_intrin.height<<std::endl;
-            std::cout<<"DEPTH: "<<m_depth_intrin.width<<"x"<<m_depth_intrin.height<<std::endl;
+            fallback();
         }
 
     }
-    {
-        std::lock_guard<std::mutex> guard(m_mutex);
-        if (!pipelineShutdown())
-            return false;
+    if (!pipelineRestart())
+        return false;
 
-        if (!pipelineStartup())
-            return false;
-    }
     updateTransformations();
     return true;
 }
@@ -936,7 +1005,7 @@ IRGBDSensor::RGBDSensor_status realsense2Driver::getSensorStatus()
 
 ConstString realsense2Driver::getLastErrorMsg(Stamp* timeStamp)
 {
-    return "";
+    return m_lastError;
 }
 
 bool realsense2Driver::getCameraDescription(CameraDescriptor* camera)
@@ -991,7 +1060,7 @@ bool realsense2Driver::setFeature(int feature, double value)
         break;
     case YARP_FEATURE_FRAME_RATE:
     {
-        //TODO to implement
+        b = setFramerate((int) value);
         break;
     }
     case YARP_FEATURE_WHITE_BALANCE:
@@ -1051,7 +1120,8 @@ bool realsense2Driver::getFeature(int feature, double *value)
         break;
     case YARP_FEATURE_FRAME_RATE:
     {
-        //TODO to implement
+        b = true;
+        *value = (double) m_fps;
         break;
     }
     case YARP_FEATURE_WHITE_BALANCE:
