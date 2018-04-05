@@ -27,12 +27,23 @@ if(NOT YARP_VERSION)
 
   # Find YARP for bindings-only builds
   find_package(YARP REQUIRED)
+  list(APPEND CMAKE_MODULE_PATH ${YARP_MODULE_PATH})
+  include_directories(${YARP_INCLUDE_DIRS})
+
   find_package(SWIG 3.0 REQUIRED)
+
+  set(_nested_build 0)
+else()
+  # this is necessary for SWIG to parse yarp.i file
+  get_property(YARP_INCLUDE_DIRS GLOBAL PROPERTY YARP_TREE_INCLUDE_DIRS)
+  include_directories(${YARP_INCLUDE_DIRS})
+
+  set(_nested_build 1)
 endif()
 
 set(YARP_COMPILE_BINDINGS_DEFAULT TRUE)
 set(YARP_BASE_DIR ${CMAKE_CURRENT_BINARY_DIR})
-if(YARP_VERSION)
+if(_nested_build)
   # this is a nested build
   set(YARP_COMPILE_BINDINGS_DEFAULT FALSE)
   set(YARP_BASE_DIR ${CMAKE_BINARY_DIR})
@@ -71,7 +82,7 @@ endforeach()
 
 #############################################################################
 
-if (YARP_VERSION)
+if (_nested_build)
   # Make sure yarp.i and related source files get installed, to allow
   # bindings for other languages to be compiled from the build material.
 
@@ -119,11 +130,6 @@ if(YARP_COMPILE_BINDINGS)
   # Include SWIG use file
   include(${SWIG_USE_FILE})
 
-  if(YARP_VERSION)
-     get_property(YARP_INCLUDE_DIRS GLOBAL PROPERTY YARP_TREE_INCLUDE_DIRS)
-   endif()
-   # this is necessary for SWIG to parse yarp.i file
-  include_directories(${YARP_INCLUDE_DIRS})
   set(SWIG_YARP_LIBRARIES YARP::YARP_OS YARP::YARP_sig YARP::YARP_dev YARP::YARP_init)
   # link_libraries(YARP::YARP_OS YARP::YARP_sig YARP::YARP_dev YARP::YARP_init)
 
