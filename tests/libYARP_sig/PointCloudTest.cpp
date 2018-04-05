@@ -37,13 +37,13 @@ public:
     void readWriteMatchTest()
     {
         Network::setLocalMode(true);
-        report(0, "Checking XYZRGBAData sending - Type match");
-        BufferedPort< PointCloud<XYZRGBAData> > outPort;
+        report(0, "Checking DataXYZRGBA sending - Type match");
+        BufferedPort< PointCloud<DataXYZRGBA> > outPort;
         Port inPort;
         checkTrue(outPort.open("/test/pointcloud/out"),"Opening output port");
         checkTrue(inPort.open("/test/pointcloud/in"),"Opening input port");
         checkTrue(NetworkBase::connect(outPort.getName(), inPort.getName()),"Checking connection");
-        PointCloud<XYZRGBAData>& testPC = outPort.prepare();
+        PointCloud<DataXYZRGBA>& testPC = outPort.prepare();
         int width  = 100;
         int height = 20;
         testPC.resize(width, height);
@@ -63,7 +63,7 @@ public:
 
         outPort.write();
 
-        PointCloud<XYZRGBAData> inCloud;
+        PointCloud<DataXYZRGBA> inCloud;
         inPort.read(inCloud);
 
         checkTrue(inCloud.dataSizeBytes() == testPC.dataSizeBytes(), "Checking size consistency");
@@ -94,12 +94,12 @@ public:
     {
         Network::setLocalMode(true);
         report(0,"Testing the case in which we receive a structure bigger than the one we expect");
-        BufferedPort< PointCloud<XYZRGBAData> > outPort;
+        BufferedPort< PointCloud<DataXYZRGBA> > outPort;
         Port inPort;
         checkTrue(outPort.open("/test/pointcloud/out"),"Opening output port");
         checkTrue(inPort.open("/test/pointcloud/in"),"Opening input port");
         checkTrue(NetworkBase::connect(outPort.getName(), inPort.getName()),"Checking connection");
-        PointCloud<XYZRGBAData>& testPC = outPort.prepare();
+        PointCloud<DataXYZRGBA>& testPC = outPort.prepare();
         int width  = 200;
         int height = 20;
         testPC.resize(width, height);
@@ -119,7 +119,7 @@ public:
 
         outPort.write();
 
-        PointCloud<XYZData> inCloud;
+        PointCloud<DataXYZ> inCloud;
         inPort.read(inCloud);
 
         checkFalse(inCloud.dataSizeBytes() == testPC.dataSizeBytes(), "Checking size, correctly different");
@@ -143,12 +143,12 @@ public:
     {
         Network::setLocalMode(true);
         report(0,"Testing the case in which we receive a structure smaller than the one we expect");
-        BufferedPort< PointCloud<XYZNormalData> > outPort;
+        BufferedPort< PointCloud<DataXYZNormal> > outPort;
         Port inPort;
         checkTrue(outPort.open("/test/pointcloud/out"),"Opening output port");
         checkTrue(inPort.open("/test/pointcloud/in"),"Opening input port");
         checkTrue(NetworkBase::connect(outPort.getName(), inPort.getName()),"Checking connection");
-        PointCloud<XYZNormalData>& testPC = outPort.prepare();
+        PointCloud<DataXYZNormal>& testPC = outPort.prepare();
         int width  = 200;
         int height = 42;
         testPC.resize(width, height);
@@ -168,7 +168,7 @@ public:
 
         outPort.write();
 
-        PointCloud<XYZNormalRGBAData> inCloud;
+        PointCloud<DataXYZNormalRGBA> inCloud;
         inPort.read(inCloud);
 
         checkTrue(inCloud.dataSizeBytes() == testPC.dataSizeBytes(), "Checking size, equals for the padding");
@@ -199,7 +199,7 @@ public:
     void copyAndAssignmentTest()
     {
         report(0,"Testing the copy constructor with PC of the same type");
-        PointCloud<XYZRGBAData> testPC;
+        PointCloud<DataXYZRGBA> testPC;
         int width  = 5;
         int height = 5;
         testPC.resize(width, height);
@@ -215,7 +215,7 @@ public:
             testPC(i).a = '4';
         }
 
-        PointCloud<XYZRGBAData> testPC2(testPC);
+        PointCloud<DataXYZRGBA> testPC2(testPC);
 
         checkTrue(testPC2.dataSizeBytes() == testPC.dataSizeBytes(), "Checking size");
 
@@ -235,7 +235,7 @@ public:
 
         report(0,"Testing the copy constructor with PC of different types:");
         report(0,"Smaller structure built from bigger");
-        PointCloud<XYZData> testPC3(testPC);
+        PointCloud<DataXYZ> testPC3(testPC);
 
         checkFalse(testPC3.dataSizeBytes() == testPC.dataSizeBytes(), "Checking size, correctly different");
         checkTrue(testPC3.height() == testPC.height(), "Checking height");
@@ -254,7 +254,7 @@ public:
         report(0,"Testing the copy constructor with PC of different types:");
         report(0,"Bigger structure built from smaller");
 
-        PointCloud<XYZNormalData> testPC4(testPC3);
+        PointCloud<DataXYZNormal> testPC4(testPC3);
 
         checkFalse(testPC4.dataSizeBytes() == testPC3.dataSizeBytes(), "Checking size, correctly different");
         checkTrue(testPC4.height() == testPC3.height(), "Checking height");
@@ -276,7 +276,7 @@ public:
 
         report(0,"Testing the assignment operator with matching types");
 
-        PointCloud<XYZNormalData> testPC5 = testPC4;
+        PointCloud<DataXYZNormal> testPC5 = testPC4;
 
 
         checkTrue(testPC5.dataSizeBytes() == testPC4.dataSizeBytes(), "Checking size");
@@ -300,7 +300,7 @@ public:
         report(0,"Testing the copy constructor for the curvature case:");
         report(0,"Smaller structure built from bigger");
 
-        PointCloud<XYZNormalRGBAData> testPC6;
+        PointCloud<DataXYZNormalRGBA> testPC6;
         testPC6.resize(width, height);
 
         for (int i=0; i<width*height; i++)
@@ -318,7 +318,7 @@ public:
             testPC6(i).curvature = i*5;
         }
 
-        PointCloud<XYZNormalData> testPC7(testPC6);
+        PointCloud<DataXYZNormal> testPC7(testPC6);
         ok = true;
         for (int i=0; i<width*height; i++)
         {
@@ -337,7 +337,7 @@ public:
         report(0,"Testing the assignment operator with not matching types");
         report(0,"Smaller structure built from bigger");
 
-        PointCloud<XYZData> testPC8 = testPC6;
+        PointCloud<DataXYZ> testPC8 = testPC6;
 
 
         checkFalse(testPC8.dataSizeBytes() == testPC6.dataSizeBytes(), "Checking size, correctly different");
@@ -357,7 +357,7 @@ public:
         report(0,"Testing the assignment operator with not matching types");
         report(0,"Bigger structure built from smaller");
 
-        PointCloud<XYZNormalRGBAData> testPC9 = testPC7;
+        PointCloud<DataXYZNormalRGBA> testPC9 = testPC7;
 
 
         checkTrue(testPC9.dataSizeBytes() == testPC7.dataSizeBytes(), "Checking size");
@@ -388,7 +388,7 @@ public:
     void fromExternalTest()
     {
         report(0,"Testing the fromExternalPC with PC of the same type");
-        PointCloud<XYZRGBAData> testPC;
+        PointCloud<DataXYZRGBA> testPC;
         int width  = 32;
         int height = 25;
         testPC.resize(width, height);
@@ -404,7 +404,7 @@ public:
             testPC(i).a = '4';
         }
 
-        PointCloud<XYZRGBAData> testPC2;
+        PointCloud<DataXYZRGBA> testPC2;
         testPC2.fromExternalPC(testPC.getRawData(), PCL_POINT_XYZ_RGBA, width, height);
 
         checkTrue(testPC2.dataSizeBytes() == testPC.dataSizeBytes(), "Checking size");
@@ -425,7 +425,7 @@ public:
 
         report(0,"Testing the fromExternalPC with PC of different types:");
         report(0,"Smaller structure built from bigger");
-        PointCloud<XYZData> testPC3;
+        PointCloud<DataXYZ> testPC3;
 
         testPC3.fromExternalPC(testPC2.getRawData(), PCL_POINT_XYZ_RGBA, width, height);
 
@@ -446,7 +446,7 @@ public:
         report(0,"Testing the fromExternalPC with PC of different types:");
         report(0,"Bigger structure built from smaller");
 
-        PointCloud<XYZNormalData> testPC4(testPC3);
+        PointCloud<DataXYZNormal> testPC4(testPC3);
 
         testPC4.fromExternalPC(testPC3.getRawData(), PCL_POINT_XYZ, width, height);
 
@@ -472,8 +472,8 @@ public:
     void concatenationTest()
     {
         report(0,"Testing the operator+ with PC of the same type");
-        PointCloud<XYZNormalRGBAData> testPC;
-        PointCloud<XYZNormalRGBAData> testPC2;
+        PointCloud<DataXYZNormalRGBA> testPC;
+        PointCloud<DataXYZNormalRGBA> testPC2;
         int width  = 35;
         int height = 62;
         testPC.resize(width, height);
@@ -490,7 +490,7 @@ public:
             testPC(i).a = '4';  testPC2(i).a = 'a';
         }
 
-        PointCloud<XYZNormalRGBAData> sumPC;
+        PointCloud<DataXYZNormalRGBA> sumPC;
         sumPC = testPC + testPC2;
 
         checkTrue(sumPC.size() == (size_t) (width*height*2), "Checking the size");
@@ -529,7 +529,7 @@ public:
 
         testPC += testPC2;
 
-        XYZNormalRGBAData point;
+        DataXYZNormalRGBA point;
         point.x = 1.1; point.y = 1.2; point.z = 1.3;
         point.normal_x = 2.1; point.normal_y = 2.2; point.normal_z = 2.3;
         point.r = 'r'; point.g = 'g'; point.b = 'b'; point.a = 'a';
@@ -589,7 +589,7 @@ public:
     {
        {
             report(0,"Testing fromBottle(toBottle) XYZ_NORMAL_RGBA");
-            PointCloud<XYZNormalRGBAData> testPC;
+            PointCloud<DataXYZNormalRGBA> testPC;
             size_t width = 21; size_t height = 32;
             testPC.resize(width, height);
             for (size_t i=0; i<width*height; i++)
@@ -606,7 +606,7 @@ public:
                 testPC(i).b = 'b';
                 testPC(i).a = 'a';
             }
-            PointCloud<XYZNormalRGBAData> testPC2;
+            PointCloud<DataXYZNormalRGBA> testPC2;
             Bottle bt = testPC.toBottle();
             testPC2.fromBottle(bt);
             checkEqual(testPC.width(), testPC2.width(),"Checking width");
@@ -630,13 +630,13 @@ public:
             }
             checkTrue(ok,"Checking data consistency");
 
-            PointCloud<XYZNormalData> testPCfail;
+            PointCloud<DataXYZNormal> testPCfail;
             checkFalse(testPCfail.fromBottle(bt),"from bottle correctly failing... type mismatch");
         }
 
         {
              report(0,"Testing fromBottle(toBottle) XYZ_NORMAL");
-             PointCloud<XYZNormalData> testPC;
+             PointCloud<DataXYZNormal> testPC;
              size_t width = 21; size_t height = 32;
              testPC.resize(width, height);
              for (size_t i=0; i<width*height; i++)
@@ -649,7 +649,7 @@ public:
                  testPC(i).normal_z = i*4;
                  testPC(i).curvature =i*5;
              }
-             PointCloud<XYZNormalData> testPC2;
+             PointCloud<DataXYZNormal> testPC2;
              Bottle bt = testPC.toBottle();
              testPC2.fromBottle(bt);
              checkEqual(testPC.width(), testPC2.width(),"Checking width");
@@ -672,7 +672,7 @@ public:
 
         {
              report(0,"Testing fromBottle(toBottle) XYZ_RGBA");
-             PointCloud<XYZRGBAData> testPC;
+             PointCloud<DataXYZRGBA> testPC;
              size_t width = 21; size_t height = 32;
              testPC.resize(width, height);
              for (size_t i=0; i<width*height; i++)
@@ -685,7 +685,7 @@ public:
                  testPC(i).b = 'b';
                  testPC(i).a = 'a';
              }
-             PointCloud<XYZRGBAData> testPC2;
+             PointCloud<DataXYZRGBA> testPC2;
              Bottle bt = testPC.toBottle();
              testPC2.fromBottle(bt);
              checkEqual(testPC.width(), testPC2.width(),"Checking width");
@@ -708,7 +708,7 @@ public:
 
         {
              report(0,"Testing fromBottle(toBottle) XYZ");
-             PointCloud<XYZData> testPC;
+             PointCloud<DataXYZ> testPC;
              size_t width = 21; size_t height = 32;
              testPC.resize(width, height);
              for (size_t i=0; i<width*height; i++)
@@ -717,7 +717,7 @@ public:
                  testPC(i).y = i + 1;
                  testPC(i).z = i + 2;
              }
-             PointCloud<XYZData> testPC2;
+             PointCloud<DataXYZ> testPC2;
              Bottle bt = testPC.toBottle();
              testPC2.fromBottle(bt);
              checkEqual(testPC.width(), testPC2.width(),"Checking width");
@@ -736,7 +736,7 @@ public:
 
         {
              report(0,"Testing fromBottle(toBottle) NORMAL");
-             PointCloud<NormalData> testPC;
+             PointCloud<DataNormal> testPC;
              size_t width = 3; size_t height = 3;
              testPC.resize(width, height);
              for (size_t i=0; i<width*height; i++)
@@ -746,7 +746,7 @@ public:
                  testPC(i).normal_z = i*4;
                  testPC(i).curvature =i*5;
              }
-             PointCloud<NormalData> testPC2;
+             PointCloud<DataNormal> testPC2;
              Bottle bt = testPC.toBottle();
              testPC2.fromBottle(bt);
              checkEqual(testPC.width(), testPC2.width(),"Checking width");

@@ -90,7 +90,7 @@ enum PointCloudCompositeType : YARP_INT32 {
 };
 
 // Defined as in PCL pointTypes.h file for better compatibility
-enum BorderTrait : YARP_INT32
+enum PointCloudBorderTrait : YARP_INT32
 {
     BORDER_TRAIT__OBSTACLE_BORDER,
     BORDER_TRAIT__SHADOW_BORDER,
@@ -111,7 +111,7 @@ enum BorderTrait : YARP_INT32
 
 // Definition of single fields data structures
 YARP_BEGIN_PACK
-struct XYData
+struct DataXY
 {
     union
     {
@@ -161,7 +161,7 @@ YARP_END_PACK
 
 // xyz
 YARP_BEGIN_PACK
-struct XYZData
+struct DataXYZ
 {
     union
     {
@@ -221,7 +221,7 @@ YARP_END_PACK
 
 // RGBA fields - quite useless alone
 YARP_BEGIN_PACK
-struct RGBAData
+struct DataRGBA
 {
     union
     {
@@ -268,7 +268,7 @@ YARP_END_PACK
 
 // Normal
 YARP_BEGIN_PACK
-struct NormalData
+struct DataNormal
 {
     union
     {
@@ -340,7 +340,7 @@ struct NormalData
 YARP_END_PACK
 
 YARP_BEGIN_PACK
-struct NormalNoCurv
+struct DataNormalNoCurvature
 {
     union
     {
@@ -401,7 +401,7 @@ YARP_END_PACK
 
 // curvature
 YARP_BEGIN_PACK
-struct CurvatureData
+struct DataCurvature
 {
     union
     {
@@ -417,7 +417,7 @@ typedef float Range;
 
 // viewPoint
 YARP_BEGIN_PACK
-struct ViewpointData
+struct DataViewpoint
 {
     union
     {
@@ -484,7 +484,7 @@ YARP_END_PACK
 
 // xyz + rgba - most common type
 YARP_BEGIN_PACK
-struct XYZRGBAData
+struct DataXYZRGBA
 {
     union
     {
@@ -568,7 +568,7 @@ YARP_END_PACK
 
 // xyz + intensity
 YARP_BEGIN_PACK
-struct XYZIData
+struct DataXYZI
 {
     union
     {
@@ -641,7 +641,7 @@ YARP_END_PACK
 
 // interest point -> xyz + strength
 YARP_BEGIN_PACK
-struct InterestPointXYZData
+struct DataInterestPointXYZ
 {
     union
     {
@@ -715,7 +715,7 @@ YARP_END_PACK
 
 // point xyz + normals
 YARP_BEGIN_PACK
-struct XYZNormalData
+struct DataXYZNormal
 {
     union
     {
@@ -812,7 +812,7 @@ YARP_END_PACK
 
 // point xyz + normals + RGBA
 YARP_BEGIN_PACK
-struct XYZNormalRGBAData
+struct DataXYZNormalRGBA
 {
     union
     {

@@ -14,25 +14,25 @@ using namespace yarp::sig;
 // representing the composite types.
 const std::map<std::pair<int, int>, int> offsetMap =  {
         // PCL_NORMAL
-        {std::make_pair(PCL_NORMAL, PC_CURVATURE_DATA) , sizeof(yarp::sig::NormalNoCurv)},
+        {std::make_pair(PCL_NORMAL, PC_CURVATURE_DATA) , sizeof(yarp::sig::DataNormalNoCurvature)},
 
         // PCL_POINT_XYZ_RGBA
-        {std::make_pair(PCL_POINT_XYZ_RGBA, PC_RGBA_DATA) , sizeof(yarp::sig::XYZData)},
+        {std::make_pair(PCL_POINT_XYZ_RGBA, PC_RGBA_DATA) , sizeof(yarp::sig::DataXYZ)},
 
         // PCL_POINT_XYZ_I
-        {std::make_pair(PCL_POINT_XYZ_I, PC_INTENSITY_DATA) , sizeof(yarp::sig::XYZData)},
+        {std::make_pair(PCL_POINT_XYZ_I, PC_INTENSITY_DATA) , sizeof(yarp::sig::DataXYZ)},
 
         // PCL_INTEREST_POINT_XYZ
-        {std::make_pair(PCL_INTEREST_POINT_XYZ, PC_INTEREST_DATA) , sizeof(yarp::sig::XYZData)},
+        {std::make_pair(PCL_INTEREST_POINT_XYZ, PC_INTEREST_DATA) , sizeof(yarp::sig::DataXYZ)},
 
         // PCL_POINT_XYZ_NORMAL
-        {std::make_pair(PCL_POINT_XYZ_NORMAL, PC_NORMAL_DATA) ,    sizeof(yarp::sig::XYZData)},
-        {std::make_pair(PCL_POINT_XYZ_NORMAL, PC_CURVATURE_DATA) , sizeof(yarp::sig::XYZData) + sizeof(yarp::sig::NormalNoCurv)},
+        {std::make_pair(PCL_POINT_XYZ_NORMAL, PC_NORMAL_DATA) ,    sizeof(yarp::sig::DataXYZ)},
+        {std::make_pair(PCL_POINT_XYZ_NORMAL, PC_CURVATURE_DATA) , sizeof(yarp::sig::DataXYZ) + sizeof(yarp::sig::DataNormalNoCurvature)},
 
        // PCL_XYZ_NORMAL_RGBA
-        {std::make_pair(PCL_POINT_XYZ_NORMAL_RGBA, PC_NORMAL_DATA) ,    sizeof(yarp::sig::XYZData)},
-        {std::make_pair(PCL_POINT_XYZ_NORMAL_RGBA, PC_RGBA_DATA) ,      sizeof(yarp::sig::XYZData) + sizeof(yarp::sig::NormalNoCurv)},
-        {std::make_pair(PCL_POINT_XYZ_NORMAL_RGBA, PC_CURVATURE_DATA) , sizeof(yarp::sig::XYZData) + sizeof(yarp::sig::NormalNoCurv) + sizeof(yarp::sig::RGBAData)},
+        {std::make_pair(PCL_POINT_XYZ_NORMAL_RGBA, PC_NORMAL_DATA) ,    sizeof(yarp::sig::DataXYZ)},
+        {std::make_pair(PCL_POINT_XYZ_NORMAL_RGBA, PC_RGBA_DATA) ,      sizeof(yarp::sig::DataXYZ) + sizeof(yarp::sig::DataNormalNoCurvature)},
+        {std::make_pair(PCL_POINT_XYZ_NORMAL_RGBA, PC_CURVATURE_DATA) , sizeof(yarp::sig::DataXYZ) + sizeof(yarp::sig::DataNormalNoCurvature) + sizeof(yarp::sig::DataRGBA)},
 
         // PCL_XYZ_I_NORMAL TBD
                                      };
@@ -67,21 +67,21 @@ const std::map<int, std::vector<int> > compositionMap = {
 const std::map<int, size_t> sizeMap = {
         {PC_PADDING3,             3*sizeof(float)},
         {PC_PADDING2,             2*sizeof(float)},
-        {PC_XY_DATA,                sizeof(yarp::sig::XYData)},
-        {PC_XYZ_DATA,               sizeof(yarp::sig::XYZData)},
-        {PC_RGBA_DATA,              sizeof(yarp::sig::RGBAData)},
+        {PC_XY_DATA,                sizeof(yarp::sig::DataXY)},
+        {PC_XYZ_DATA,               sizeof(yarp::sig::DataXYZ)},
+        {PC_RGBA_DATA,              sizeof(yarp::sig::DataRGBA)},
         {PC_INTENSITY_DATA,         sizeof(float)},
         {PC_INTEREST_DATA,          sizeof(float)},
-        {PC_NORMAL_DATA,            sizeof(yarp::sig::NormalNoCurv)},
-        {PCL_NORMAL,                sizeof(yarp::sig::NormalData)},
-        {PC_CURVATURE_DATA,         sizeof(yarp::sig::CurvatureData)},
+        {PC_NORMAL_DATA,            sizeof(yarp::sig::DataNormalNoCurvature)},
+        {PCL_NORMAL,                sizeof(yarp::sig::DataNormal)},
+        {PC_CURVATURE_DATA,         sizeof(yarp::sig::DataCurvature)},
         {PC_RANGE_DATA,             sizeof(yarp::sig::Range)},
-        {PC_VIEWPOINT_DATA,         sizeof(yarp::sig::ViewpointData)},
-        {PCL_POINT_XYZ_RGBA,        sizeof(yarp::sig::XYZRGBAData)},
-        {PCL_POINT_XYZ_I,           sizeof(yarp::sig::XYZIData)},
-        {PCL_INTEREST_POINT_XYZ,    sizeof(yarp::sig::InterestPointXYZData)},
-        {PCL_POINT_XYZ_NORMAL,      sizeof(yarp::sig::XYZNormalData)},
-        {PCL_POINT_XYZ_NORMAL_RGBA, sizeof(yarp::sig::XYZNormalRGBAData)}
+        {PC_VIEWPOINT_DATA,         sizeof(yarp::sig::DataViewpoint)},
+        {PCL_POINT_XYZ_RGBA,        sizeof(yarp::sig::DataXYZRGBA)},
+        {PCL_POINT_XYZ_I,           sizeof(yarp::sig::DataXYZI)},
+        {PCL_INTEREST_POINT_XYZ,    sizeof(yarp::sig::DataInterestPointXYZ)},
+        {PCL_POINT_XYZ_NORMAL,      sizeof(yarp::sig::DataXYZNormal)},
+        {PCL_POINT_XYZ_NORMAL_RGBA, sizeof(yarp::sig::DataXYZNormalRGBA)}
     };
 
 

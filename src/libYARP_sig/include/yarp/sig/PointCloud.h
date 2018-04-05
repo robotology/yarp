@@ -23,14 +23,14 @@ template<class T>
  */
 class PointCloud : public PointCloudBase
 {
-    static_assert(std::is_same<T, XYData>::value ||
-                  std::is_same<T, XYZData>::value ||
-                  std::is_same<T, NormalData>::value ||
-                  std::is_same<T, XYZRGBAData>::value ||
-                  std::is_same<T, XYZIData>::value ||
-                  std::is_same<T, InterestPointXYZData>::value ||
-                  std::is_same<T, XYZNormalData>::value ||
-                  std::is_same<T, XYZNormalRGBAData>::value, "yarp::sig::PointCloud<T>: T chosen is not supported");
+    static_assert(std::is_same<T, DataXY>::value ||
+                  std::is_same<T, DataXYZ>::value ||
+                  std::is_same<T, DataNormal>::value ||
+                  std::is_same<T, DataXYZRGBA>::value ||
+                  std::is_same<T, DataXYZI>::value ||
+                  std::is_same<T, DataInterestPointXYZ>::value ||
+                  std::is_same<T, DataXYZNormal>::value ||
+                  std::is_same<T, DataXYZNormalRGBA>::value, "yarp::sig::PointCloud<T>: T chosen is not supported");
 public:
 
     /**
@@ -413,57 +413,57 @@ private:
 
     void setPointType()
     {
-        if (std::is_same<T, XYData>::value)
+        if (std::is_same<T, DataXY>::value)
         {
             header.pointType = PCL_POINT2D_XY;
             return;
         }
 
-        if (std::is_same<T, XYZData>::value)
+        if (std::is_same<T, DataXYZ>::value)
         {
             header.pointType = PCL_POINT_XYZ;
             return;
         }
 
-        if (std::is_same<T, NormalData>::value)
+        if (std::is_same<T, DataNormal>::value)
         {
             header.pointType = PCL_NORMAL;
             return;
         }
 
-        if (std::is_same<T, XYZRGBAData>::value)
+        if (std::is_same<T, DataXYZRGBA>::value)
         {
             header.pointType = PCL_POINT_XYZ_RGBA;
             return;
         }
 
-        if (std::is_same<T, XYZIData>::value)
+        if (std::is_same<T, DataXYZI>::value)
         {
             header.pointType = PCL_POINT_XYZ_I;
             return;
         }
 
-        if (std::is_same<T, InterestPointXYZData>::value)
+        if (std::is_same<T, DataInterestPointXYZ>::value)
         {
             header.pointType = PCL_INTEREST_POINT_XYZ;
             return;
         }
 
-        if (std::is_same<T, XYZNormalData>::value)
+        if (std::is_same<T, DataXYZNormal>::value)
         {
             header.pointType = PCL_POINT_XYZ_NORMAL;
             return;
         }
 
-        if (std::is_same<T, XYZNormalRGBAData>::value)
+        if (std::is_same<T, DataXYZNormalRGBA>::value)
         {
             header.pointType = PCL_POINT_XYZ_NORMAL_RGBA;
             return;
         }
 
-//        RGBAData       has sense to implement them?
+//        DataRGBA       has sense to implement them?
 //        intensity       has sense to implement them?
-//        ViewpointData  has sense to implement them?
+//        DataViewpoint  has sense to implement them?
 
         header.pointType = 0;
     }
@@ -474,49 +474,49 @@ private:
 } // namespace yarp
 
 template<>
-inline int BottleTagMap <yarp::sig::XYData> ()
+inline int BottleTagMap <yarp::sig::DataXY> ()
 {
     return BOTTLE_TAG_DOUBLE;
 }
 
 template<>
-inline int BottleTagMap <yarp::sig::XYZData> ()
+inline int BottleTagMap <yarp::sig::DataXYZ> ()
 {
     return BOTTLE_TAG_DOUBLE;
 }
 
 template<>
-inline int BottleTagMap <yarp::sig::NormalData> ()
+inline int BottleTagMap <yarp::sig::DataNormal> ()
 {
     return BOTTLE_TAG_DOUBLE;
 }
 
 template<>
-inline int BottleTagMap <yarp::sig::XYZRGBAData> ()
+inline int BottleTagMap <yarp::sig::DataXYZRGBA> ()
 {
     return BOTTLE_TAG_DOUBLE;
 }
 
 template<>
-inline int BottleTagMap <yarp::sig::XYZIData> ()
+inline int BottleTagMap <yarp::sig::DataXYZI> ()
 {
     return BOTTLE_TAG_DOUBLE;
 }
 
 template<>
-inline int BottleTagMap <yarp::sig::InterestPointXYZData> ()
+inline int BottleTagMap <yarp::sig::DataInterestPointXYZ> ()
 {
     return BOTTLE_TAG_DOUBLE;
 }
 
 template<>
-inline int BottleTagMap <yarp::sig::XYZNormalData> ()
+inline int BottleTagMap <yarp::sig::DataXYZNormal> ()
 {
     return BOTTLE_TAG_DOUBLE;
 }
 
 template<>
-inline int BottleTagMap <yarp::sig::XYZNormalRGBAData> ()
+inline int BottleTagMap <yarp::sig::DataXYZNormalRGBA> ()
 {
     return BOTTLE_TAG_DOUBLE;
 }
