@@ -14,6 +14,10 @@ set(YARP_sig_HDRS include/yarp/sig/all.h
                   include/yarp/sig/Image.h
                   include/yarp/sig/ImageNetworkHeader.h
                   include/yarp/sig/Matrix.h
+                  include/yarp/sig/PointCloud.h
+                  include/yarp/sig/PointCloudBase.h
+                  include/yarp/sig/PointCloudNetworkHeader.h
+                  include/yarp/sig/PointCloudTypes.h
                   include/yarp/sig/SoundFile.h
                   include/yarp/sig/Sound.h
                   include/yarp/sig/Vector.h)
@@ -30,6 +34,7 @@ set(YARP_sig_SRCS src/ImageCopy.cpp
                   src/ImageFile.cpp
                   src/IplImage.cpp
                   src/Matrix.cpp
+                  src/PointCloudBase.cpp
                   src/Sound.cpp
                   src/SoundFile.cpp
                   src/Vector.cpp

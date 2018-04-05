@@ -49,6 +49,7 @@ Using YARP devices:
 \li \subpage yarp_config_files
 
 More software tutorials:
+\li \subpage yarp_pointcloud
 \li \subpage yarp_code_examples
 \li \subpage gpu_tutorial
 \li \subpage using_cmake

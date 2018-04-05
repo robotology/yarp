@@ -43,6 +43,7 @@ foreach(lib ${YARP_LIBS})
      NOT "${lib}" STREQUAL "yarpmod" AND
      NOT "${lib}" STREQUAL "YARP_wire_rep_utils" AND
      NOT "${lib}" STREQUAL "YARP_manager" AND
+     NOT "${lib}" STREQUAL "YARP_pcl" AND
      NOT "${lib}" STREQUAL "YARP_profiler" AND
      NOT "${lib}" STREQUAL "YARP_logger" AND
      NOT "${lib}" STREQUAL "YARP_serversql" AND
