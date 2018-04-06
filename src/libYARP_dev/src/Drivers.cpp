@@ -20,18 +20,13 @@
 
 #include <yarp/dev/Drivers.h>
 
-#include <yarp/os/impl/PlatformSignal.h>
-#include <yarp/os/impl/Logger.h>
-
-#include <yarp/os/YarpPlugin.h>
-
 #include <vector>
 #include <sstream>
 #include <iterator>
+#include <csignal>
 
 using namespace yarp::os;
 using namespace yarp::dev;
-using namespace std;
 
 Drivers Drivers::instance;
 
@@ -395,8 +390,8 @@ std::vector<ConstString> split(const ConstString &s, char delim) {
 
 int Drivers::yarpdev(int argc, char *argv[]) {
 
-    yarp::os::impl::signal(SIGINT, handler);
-    yarp::os::impl::signal(SIGTERM, handler);
+    std::signal(SIGINT, handler);
+    std::signal(SIGTERM, handler);
 
     // get command line options
     ResourceFinder rf;

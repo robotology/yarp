@@ -204,7 +204,7 @@ void ServerSerial::run() {
 
 yarp::dev::ImplementCallbackHelper2::ImplementCallbackHelper2(yarp::dev::ServerSerial *x) {
     ser = dynamic_cast<yarp::dev::ISerialDevice *> (x);
-    //ACE_ASSERT (ser != 0);
+    //yAssert(ser != 0);
     if (ser==nullptr) {
         yError("Could not get serial device\n");
         std::exit(1);

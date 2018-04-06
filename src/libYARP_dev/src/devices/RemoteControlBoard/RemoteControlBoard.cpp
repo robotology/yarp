@@ -899,8 +899,8 @@ protected:
 
             int nj1 = l1.size();
             int nj2 = l2.size();
-           // ACE_ASSERT (nj == nj1);
-           // ACE_ASSERT (nj == nj2);
+           // yAssert(nj == nj1);
+           // yAssert(nj == nj2);
 
             for (i = 0; i < nj1; i++)
                 val1[i] = l1.get(i).asDouble();

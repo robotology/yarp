@@ -270,7 +270,6 @@ include_directories(${CMAKE_CURRENT_SOURCE_DIR}/src/devices/AnalogSensorClient
                     ${CMAKE_CURRENT_SOURCE_DIR}/src/devices/JoypadControlServer)
 
 include_directories(${YARP_TREE_INCLUDE_DIRS})
-include_directories(SYSTEM ${ACE_INCLUDE_DIRS})
 
 add_library(YARP_dev ${YARP_dev_SRCS}
                      ${YARP_dev_HDRS}
@@ -305,10 +304,6 @@ endif()
 
 set_property(TARGET YARP_dev PROPERTY PUBLIC_HEADER ${YARP_dev_HDRS})
 set_property(TARGET YARP_dev PROPERTY PRIVATE_HEADER ${YARP_dev_IMPL_HDRS})
-
-if(YARP_HAS_ACE)
-  target_link_libraries(YARP_dev PRIVATE ${ACE_LIBRARIES})
-endif(YARP_HAS_ACE)
 
 install(TARGETS YARP_dev
         EXPORT YARP
