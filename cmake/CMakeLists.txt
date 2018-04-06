@@ -9,7 +9,8 @@
 set(YARP_CMAKE_FILES YarpDeprecatedWarning.cmake
                      YarpPlugin.cmake
                      YarpIDL.cmake
-                     YarpInstallationHelpers.cmake)
+                     YarpInstallationHelpers.cmake
+                     YarpPrintFeature.cmake)
 install(FILES ${YARP_CMAKE_FILES}
         COMPONENT scripts
         DESTINATION share/yarp/cmake)

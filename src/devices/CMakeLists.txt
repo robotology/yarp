@@ -5,12 +5,14 @@
 # This software may be modified and distributed under the terms of the
 # BSD-3-Clause license. See the accompanying LICENSE file for details.
 
-option(CREATE_DEVICE_LIBRARY_MODULES "Compile device modules" FALSE)
-
 include(YarpPlugin)
+include(YarpPrintFeature)
+
+option(CREATE_DEVICE_LIBRARY_MODULES "Compile device modules" OFF)
+yarp_print_feature(CREATE_DEVICE_LIBRARY_MODULES 0 "Compile device modules")
 
 # Prepare a plugin library called "yarpmod".
-yarp_begin_plugin_library(yarpmod)
+yarp_begin_plugin_library(yarpmod QUIET)
   add_subdirectory(cuda)
   add_subdirectory(depthCamera)
   add_subdirectory(fakeDepthCamera)
@@ -108,7 +110,7 @@ yarp_begin_plugin_library(yarpmod)
   endif(EXISTS ${EXTFILE})
 endforeach(EXTFILE)
 
-yarp_end_plugin_library(yarpmod)
+yarp_end_plugin_library(yarpmod QUIET)
 add_library(YARP::yarpmod ALIAS yarpmod)
 
 
