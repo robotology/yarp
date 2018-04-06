@@ -14,8 +14,6 @@ if(CREATE_YARPFS)
   get_property(YARP_OS_INCLUDE_DIRS TARGET YARP_OS PROPERTY INCLUDE_DIRS)
   include_directories(${YARP_OS_INCLUDE_DIRS})
 
-  include_directories(${ACE_INCLUDE_DIRS})
-
   # Find Fuse
   find_package(Fuse REQUIRED)
   add_definitions(${Fuse_DEFINITIONS})
@@ -29,7 +27,6 @@ if(CREATE_YARPFS)
   add_executable(yarpfs ${yarpfs_SRCS} ${yarpfs_HDRS})
   target_link_libraries(yarpfs YARP::YARP_OS
                                YARP::YARP_init
-                               ${ACE_LIBRARIES}
                                ${Fuse_LIBRARIES})
 
   set_property(TARGET yarpfs PROPERTY FOLDER "Unsupported")

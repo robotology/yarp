@@ -22,7 +22,7 @@
 #include <string>
 #include <csignal>
 
-#include <ace/Containers_T.h>
+#include <set>
 
 using namespace yarp::os;
 using namespace yarp::os::impl;
@@ -99,7 +99,7 @@ int yarp_readdir(const char *path, void *buf, fuse_fill_dir_t filler,
 
     printf("Got %s\n", reply.toString().c_str());
 
-    ACE_Ordered_MultiSet<ConstString> lines;
+    std::set<ConstString> lines;
 
 
     for (int i=1; i<reply.size(); i++) {
@@ -128,7 +128,6 @@ int yarp_readdir(const char *path, void *buf, fuse_fill_dir_t filler,
                     ConstString item(part.c_str());
                     printf("    %s is the item\n", item.c_str());
                     if (item!="") {
-                        lines.remove(item);
                         lines.insert(item);
                     }
                 }
@@ -137,12 +136,9 @@ int yarp_readdir(const char *path, void *buf, fuse_fill_dir_t filler,
     }
 
     // return result in alphabetical order
-    ACE_Ordered_MultiSet_Iterator<ConstString> iter(lines);
-    iter.first();
-    while (!iter.done()) {
-        printf("adding item %s\n", (*iter).c_str());
-        filler(buf, (*iter).c_str(), NULL, 0);
-        iter.advance();
+    for (const auto& line : lines) {
+        printf("adding item %s\n", line.c_str());
+        filler(buf, line.c_str(), NULL, 0);
     }
 
     return 0;

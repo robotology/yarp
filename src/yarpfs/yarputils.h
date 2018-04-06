@@ -27,8 +27,6 @@
 #include <string>
 #include <csignal>
 
-#include <ace/Containers_T.h>
-
 using namespace yarp::os;
 using namespace yarp::os::impl;
 using namespace std;

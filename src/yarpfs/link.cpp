@@ -20,8 +20,6 @@
 #include <string>
 #include <csignal>
 
-#include <ace/Containers_T.h>
-
 #include "yarputils.h"
 #include "yarpfns.h"
 
