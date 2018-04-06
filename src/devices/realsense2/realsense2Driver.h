@@ -10,10 +10,6 @@
 #ifndef REALSENSE2_DRIVER_H
 #define REALSENSE2_DRIVER_H
 
-#ifdef WIN32
-#define _USE_MATH_DEFINES
-#endif
-
 #include <iostream>
 #include <cstring>
 #include <map>
@@ -29,10 +25,6 @@
 #include <yarp/dev/IRGBDSensor.h>
 #include <yarp/dev/RGBDSensorParamParser.h>
 #include <librealsense2/rs.hpp>
-
-constexpr double RAD2DEG (180.0 / M_PI);
-
-constexpr double DEG2RAD (M_PI / 180.0);
 
 namespace yarp
 {
@@ -215,12 +207,10 @@ private:
     yarp::os::Stamp m_depth_stamp;
     yarp::os::ConstString m_lastError;
     yarp::dev::RGBDSensorParamParser* m_paramParser;
-    bool m_depthRegistration;
     bool m_verbose;
     bool m_initialized;
     int m_fps;
     std::vector<cameraFeature_id_t> m_supportedFeatures;
-    std::map<std::string, RGBDSensorParamParser::RGBDParam> m_params_map;
 #endif
 };
 #endif

@@ -29,6 +29,17 @@ constexpr char rgbRes         [] = "rgbResolution";
 constexpr char framerate      [] = "framerate";
 constexpr char enableEmitter  [] = "enableEmitter";
 
+
+static std::map<std::string, RGBDSensorParamParser::RGBDParam> params_map =
+{
+    {accuracy,       RGBDSensorParamParser::RGBDParam(accuracy,        1)},
+    {clipPlanes,     RGBDSensorParamParser::RGBDParam(clipPlanes,      2)},
+    {depthRes,       RGBDSensorParamParser::RGBDParam(depthRes,        2)},
+    {rgbRes,         RGBDSensorParamParser::RGBDParam(rgbRes,          2)},
+    {framerate,      RGBDSensorParamParser::RGBDParam(framerate,       1)},
+    {enableEmitter,  RGBDSensorParamParser::RGBDParam(enableEmitter,   1)}
+};
+
 static std::string get_device_information(const rs2::device& dev)
 {
 
@@ -328,23 +339,9 @@ static size_t bytesPerPixel(const rs2_format format)
 
 
 realsense2Driver::realsense2Driver() : m_depth_sensor(nullptr), m_color_sensor(nullptr),
-                                       m_paramParser(nullptr), m_depthRegistration(false),
-                                       m_verbose(false), m_initialized(false), m_fps(0)
+                                       m_paramParser(nullptr), m_verbose(false),
+                                       m_initialized(false), m_fps(0)
 {
-
-    m_params_map =
-    {
-        {accuracy,       RGBDSensorParamParser::RGBDParam(accuracy,        1)},
-        {clipPlanes,     RGBDSensorParamParser::RGBDParam(clipPlanes,      2)},
-        {depthRes,       RGBDSensorParamParser::RGBDParam(depthRes,        2)},
-        {rgbRes,         RGBDSensorParamParser::RGBDParam(rgbRes,          2)},
-        {framerate,      RGBDSensorParamParser::RGBDParam(framerate,       1)},
-        {enableEmitter,  RGBDSensorParamParser::RGBDParam(enableEmitter,   1)}
-
-
-    };
-
-    m_depthRegistration = true;
 
     m_paramParser = new RGBDSensorParamParser();
 
@@ -369,8 +366,6 @@ realsense2Driver::~realsense2Driver()
         delete m_paramParser;
         m_paramParser = nullptr;
     }
-
-    return;
 }
 
 bool realsense2Driver::pipelineStartup()
@@ -455,10 +450,10 @@ void realsense2Driver::fallback()
 bool realsense2Driver::initializeRealsenseDevice()
 {
     // TODO get configurations of the device, and read the value from the conf file
-    double colorW = m_params_map[rgbRes].val[0].asDouble();
-    double colorH = m_params_map[rgbRes].val[1].asDouble();
-    double depthW = m_params_map[depthRes].val[0].asDouble();
-    double depthH = m_params_map[depthRes].val[1].asDouble();
+    double colorW = params_map[rgbRes].val[0].asDouble();
+    double colorH = params_map[rgbRes].val[1].asDouble();
+    double depthW = params_map[depthRes].val[0].asDouble();
+    double depthH = params_map[depthRes].val[1].asDouble();
     m_cfg.enable_stream(RS2_STREAM_COLOR, colorW, colorH, RS2_FORMAT_RGB8, m_fps);
     m_cfg.enable_stream(RS2_STREAM_DEPTH, depthW, depthH, RS2_FORMAT_Z16, m_fps);
 
@@ -545,35 +540,35 @@ bool realsense2Driver::setParams()
 {
     bool ret = true;
     //ACCURACY
-    if (m_params_map[accuracy].isSetting && ret)
+    if (params_map[accuracy].isSetting && ret)
     {
-        if (!m_params_map[accuracy].val[0].isDouble() )
-            settingErrorMsg("Param " + m_params_map[accuracy].name + " is not a double as it should be.", ret);
+        if (!params_map[accuracy].val[0].isDouble() )
+            settingErrorMsg("Param " + params_map[accuracy].name + " is not a double as it should be.", ret);
 
-        if (! setDepthAccuracy(m_params_map[accuracy].val[0].asDouble() ) )
-            settingErrorMsg("Setting param " + m_params_map[accuracy].name + " failed... quitting.", ret);
+        if (! setDepthAccuracy(params_map[accuracy].val[0].asDouble() ) )
+            settingErrorMsg("Setting param " + params_map[accuracy].name + " failed... quitting.", ret);
     }
 
     //CLIP_PLANES
-    if (m_params_map[clipPlanes].isSetting && ret)
+    if (params_map[clipPlanes].isSetting && ret)
     {
-        if (!m_params_map[clipPlanes].val[0].isDouble() )
-            settingErrorMsg("Param " + m_params_map[clipPlanes].name + " is not a double as it should be.", ret);
+        if (!params_map[clipPlanes].val[0].isDouble() )
+            settingErrorMsg("Param " + params_map[clipPlanes].name + " is not a double as it should be.", ret);
 
-        if (!m_params_map[clipPlanes].val[1].isDouble() )
-            settingErrorMsg("Param " + m_params_map[clipPlanes].name + " is not a double as it should be.", ret);
+        if (!params_map[clipPlanes].val[1].isDouble() )
+            settingErrorMsg("Param " + params_map[clipPlanes].name + " is not a double as it should be.", ret);
 
-        if (! setDepthClipPlanes(m_params_map[clipPlanes].val[0].asDouble(), m_params_map[clipPlanes].val[1].asDouble() ) )
-            settingErrorMsg("Setting param " + m_params_map[clipPlanes].name + " failed... quitting.", ret);
+        if (! setDepthClipPlanes(params_map[clipPlanes].val[0].asDouble(), params_map[clipPlanes].val[1].asDouble() ) )
+            settingErrorMsg("Setting param " + params_map[clipPlanes].name + " failed... quitting.", ret);
     }
 
     //FRAMERATE
-    if (m_params_map[framerate].isSetting && ret)
+    if (params_map[framerate].isSetting && ret)
     {
-        if (!m_params_map[framerate].val[0].isInt() )
-            settingErrorMsg("Param " + m_params_map[framerate].name + " is not a int as it should be.", ret);
+        if (!params_map[framerate].val[0].isInt() )
+            settingErrorMsg("Param " + params_map[framerate].name + " is not a int as it should be.", ret);
         else
-            m_fps = m_params_map[framerate].val[0].asInt();
+            m_fps = params_map[framerate].val[0].asInt();
     }
     else
     {
@@ -583,55 +578,55 @@ bool realsense2Driver::setParams()
 
     //EMITTER
 
-    if (m_params_map[enableEmitter].isSetting && ret)
+    if (params_map[enableEmitter].isSetting && ret)
     {
-        Value& v = m_params_map[enableEmitter].val[0];
+        Value& v = params_map[enableEmitter].val[0];
 
         if (!v.isBool())
         {
-            settingErrorMsg("Param " + m_params_map[enableEmitter].name + " is not a bool as it should be.", ret);
+            settingErrorMsg("Param " + params_map[enableEmitter].name + " is not a bool as it should be.", ret);
             return false;
         }
         if(!setOption(RS2_OPTION_EMITTER_ENABLED, m_depth_sensor, (float) v.asBool()))
         {
-            settingErrorMsg("Setting param " + m_params_map[enableEmitter].name + " failed... quitting.", ret);
+            settingErrorMsg("Setting param " + params_map[enableEmitter].name + " failed... quitting.", ret);
         }
     }
 
 
     //DEPTH_RES
-    if (m_params_map[depthRes].isSetting && ret)
+    if (params_map[depthRes].isSetting && ret)
     {
         Value p1, p2;
-        p1 = m_params_map[depthRes].val[0];
-        p2 = m_params_map[depthRes].val[1];
+        p1 = params_map[depthRes].val[0];
+        p2 = params_map[depthRes].val[1];
 
         if (!p1.isInt() || !p2.isInt() )
         {
-            settingErrorMsg("Param " + m_params_map[depthRes].name + " is not a int as it should be.", ret);
+            settingErrorMsg("Param " + params_map[depthRes].name + " is not a int as it should be.", ret);
         }
 
         if (! setDepthResolution(p1.asInt(), p2.asInt()))
         {
-            settingErrorMsg("Setting param " + m_params_map[depthRes].name + " failed... quitting.", ret);
+            settingErrorMsg("Setting param " + params_map[depthRes].name + " failed... quitting.", ret);
         }
     }
 
     //RGB_RES
-    if (m_params_map[rgbRes].isSetting && ret)
+    if (params_map[rgbRes].isSetting && ret)
     {
         Value p1, p2;
-        p1 = m_params_map[rgbRes].val[0];
-        p2 = m_params_map[rgbRes].val[1];
+        p1 = params_map[rgbRes].val[0];
+        p2 = params_map[rgbRes].val[1];
 
         if (!p1.isInt() || !p2.isInt() )
         {
-            settingErrorMsg("Param " + m_params_map[rgbRes].name + " is not a int as it should be.", ret);
+            settingErrorMsg("Param " + params_map[rgbRes].name + " is not a int as it should be.", ret);
         }
 
         if (! setRgbResolution(p1.asInt(), p2.asInt()))
         {
-            settingErrorMsg("Setting param " + m_params_map[rgbRes].name + " failed... quitting.", ret);
+            settingErrorMsg("Setting param " + params_map[rgbRes].name + " failed... quitting.", ret);
         }
     }
 
@@ -642,7 +637,7 @@ bool realsense2Driver::setParams()
 bool realsense2Driver::open(Searchable& config)
 {
     std::vector<RGBDSensorParamParser::RGBDParam*> params;
-    for (auto& p:m_params_map)
+    for (auto& p:params_map)
     {
         params.push_back(&(p.second));
     }
@@ -653,11 +648,6 @@ bool realsense2Driver::open(Searchable& config)
         yError()<<"realsense2Driver: failed to parse the parameters";
         return false;
     }
-
-    //"registered" is a hidden parameter for debugging pourpose
-    m_depthRegistration = !(config.check("registered") && config.find("registered").isBool() && config.find("registered").asBool() == false);
-
-
 
     if (!initializeRealsenseDevice())
     {
@@ -761,9 +751,7 @@ bool realsense2Driver::setDepthFOV(double horizontalFov, double verticalFov)
 
 bool realsense2Driver::setDepthAccuracy(double accuracy)
 {
-    bool ret = true;
-    ret = setOption(RS2_OPTION_ACCURACY, m_depth_sensor, accuracy);
-    return ret;
+    return setOption(RS2_OPTION_ACCURACY, m_depth_sensor, accuracy);;
 }
 
 bool realsense2Driver::getRgbFOV(double &horizontalFov, double &verticalFov)
@@ -872,27 +860,26 @@ double realsense2Driver::getDepthAccuracy()
 
 bool realsense2Driver::getDepthClipPlanes(double& nearPlane, double& farPlane)
 {
-    if (m_params_map[clipPlanes].isDescription)
+    if (params_map[clipPlanes].isDescription)
     {
-        nearPlane = m_params_map[clipPlanes].val[0].asDouble();
-        farPlane  = m_params_map[clipPlanes].val[1].asDouble();
+        nearPlane = params_map[clipPlanes].val[0].asDouble();
+        farPlane  = params_map[clipPlanes].val[1].asDouble();
         return true;
     }
-    bool ret = true;
-    ret  = getOption(RS2_OPTION_MIN_DISTANCE, m_depth_sensor, (float&) nearPlane);
+
+    bool ret  = getOption(RS2_OPTION_MIN_DISTANCE, m_depth_sensor, (float&) nearPlane);
     ret &= getOption(RS2_OPTION_MAX_DISTANCE, m_depth_sensor, (float&) farPlane);
     return ret;
 }
 
 bool realsense2Driver::setDepthClipPlanes(double nearPlane, double farPlane)
 {
-    if (m_params_map[clipPlanes].isDescription)
+    if (params_map[clipPlanes].isDescription)
     {
         return false;
     }
-    bool ret = true;
-    ret  = setOption(RS2_OPTION_MIN_DISTANCE, m_depth_sensor, nearPlane);
-    ret &= setOption(RS2_OPTION_MAX_DISTANCE, m_depth_sensor, farPlane);
+    bool ret  = setOption(RS2_OPTION_MIN_DISTANCE, m_depth_sensor, nearPlane);
+    ret      &= setOption(RS2_OPTION_MAX_DISTANCE, m_depth_sensor, farPlane);
     return ret;
 }
 
