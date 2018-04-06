@@ -42,7 +42,6 @@
 #ifdef YARP_HAS_ACE
 # include <ace/config.h>
 # include <ace/Init_ACE.h>
-# include <ace/String_Base.h>
 #endif
 
 #include <cstdio>
