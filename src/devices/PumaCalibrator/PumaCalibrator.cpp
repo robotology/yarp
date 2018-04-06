@@ -7,13 +7,9 @@
 
 #include "PumaCalibrator.h"
 
-#include <ace/config.h>
-#include <ace/OS.h>
-#include <ace/Log_Msg.h>
-
 #include <yarp/os/Time.h>
 #include <yarp/os/Value.h>
-
+#include <yarp/os/Log.h>
 
 using namespace yarp::os;
 using namespace yarp::dev;
@@ -47,31 +43,31 @@ bool PumaCalibrator::open(yarp::os::Searchable& config)
 
     int nj = p.findGroup("GENERAL").find("Joints").asInt();
     type = new unsigned char[nj];
-    ACE_ASSERT (type != NULL);
+    yAssert(type != NULL);
     speed1 = new double[nj];
-    ACE_ASSERT (speed1 != NULL);
+    yAssert(speed1 != NULL);
     accs = new double[nj];
-    ACE_ASSERT (accs != NULL);
+    yAssert(accs != NULL);
     PositionZero = new double[nj];
-    ACE_ASSERT (PositionZero != NULL);
+    yAssert(PositionZero != NULL);
 
     pos = new double[nj];
-    ACE_ASSERT (pos != NULL);
+    yAssert(pos != NULL);
     vel = new double[nj];
-    ACE_ASSERT (vel != NULL);
+    yAssert(vel != NULL);
 
     Bottle& xtmp = p.findGroup("CALIBRATION").findGroup("PositionZero");
-    ACE_ASSERT (xtmp.size() == nj+1);
+    yAssert(xtmp.size() == nj+1);
     for (int i = 1; i < xtmp.size(); i++)
         PositionZero[i-1] = xtmp.get(i).asDouble();
 
     xtmp = p.findGroup("CALIBRATION").findGroup("Speed1");
-    ACE_ASSERT (xtmp.size() == nj+1);
+    yAssert(xtmp.size() == nj+1);
     for (int i = 1; i < xtmp.size(); i++)
         speed1[i-1] = xtmp.get(i).asDouble();
 
     xtmp = p.findGroup("CALIBRATION").findGroup("accs");
-    ACE_ASSERT (xtmp.size() == nj+1);
+    yAssert(xtmp.size() == nj+1);
     for (int i = 1; i < xtmp.size(); i++)
         accs[i-1] = (unsigned char) xtmp.get(i).asDouble();
 

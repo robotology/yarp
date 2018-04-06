@@ -7,11 +7,10 @@
 
 /// general purpose stuff.
 #include <yarp/os/Time.h>
-#include <ace/config.h>
-#include <ace/OS.h>
-#include <ace/Log_Msg.h>
-#include <ace/Sched_Params.h>
+#include <yarp/os/Log.h>
+#include <yarp/os/SystemClock.h>
 
+#include <cstring>
 
 /// specific to this device driver.
 #include "MEIMotionControl.h"
@@ -90,7 +89,7 @@ MEIMotionControlParameters::MEIMotionControlParameters(int nj)
 
 
 		// invert the axis map.
-		ACE_OS::memset (_inv_axis_map, 0, sizeof(int) * _njoints);
+		std::memset(_inv_axis_map, 0, sizeof(int) * _njoints);
 		for (i = 0; i < _njoints; i++)
 		{
 			int j;
@@ -440,7 +439,7 @@ MEIMotionControl::MEIMotionControl() :
 {
 	system_resources = NULL;
 	system_resources = (void *) new MEIResources;
-	ACE_ASSERT (system_resources != NULL);
+	yAssert(system_resources != NULL);
     _opened			= false;
 	_alreadyinint	= false;
 	_amplifiers		= false;
@@ -529,7 +528,7 @@ bool MEIMotionControl::open (const MEIMotionControlParameters &params)
 	int set3 = set_io(1,0);
 
 	printf("\n NOW it is possible to switch the ampli ON!!!\n");
-	ACE_OS::sleep(ACE_Time_Value(5,0));
+    yarp::os::SystemClock::delaySystem(5);
 
 	_amplifiers = true;
 	_opened = true;
@@ -574,12 +573,12 @@ bool MEIMotionControl::open(yarp::os::Searchable& config) {
 	int i;
 
 	_filter_coeffs = new int16* [params._njoints];
-	ACE_ASSERT (_filter_coeffs != NULL);
+	yAssert(_filter_coeffs != NULL);
 
 	for(i = 0; i < params._njoints; i++)
 	{
 		_filter_coeffs[i] = new int16 [r.COEFFICIENTS];
-		ACE_ASSERT (_filter_coeffs[i] != NULL);
+		yAssert(_filter_coeffs[i] != NULL);
 	}
 
 
@@ -693,7 +692,7 @@ else
 
     ////// GENERAL
     Bottle& xtmp = p.findGroup("MaxDAC");
-	ACE_ASSERT (xtmp.size() == nj+1);
+	yAssert(xtmp.size() == nj+1);
 
     for (i = 1; i < xtmp.size(); i++)
 	{
@@ -702,7 +701,7 @@ else
 
 
     xtmp = p.findGroup("AxisMap");
-	ACE_ASSERT (xtmp.size() == nj+1);
+	yAssert(xtmp.size() == nj+1);
 	printf("_axis_map = ");
     for (i = 1; i < xtmp.size(); i++)
 	{
@@ -712,7 +711,7 @@ else
 	printf("\n");
 
 	xtmp = p.findGroup("FwdCouple");
-	ACE_ASSERT (xtmp.size() == nj+1);
+	yAssert(xtmp.size() == nj+1);
     for (i = 1; i < xtmp.size(); i++)
 	{
 		params._fwdCouple[i-1] = xtmp.get(i).asDouble();
@@ -721,21 +720,21 @@ else
 
 
     xtmp = p.findGroup("Zeros");
-	ACE_ASSERT (xtmp.size() == nj+1);
+	yAssert(xtmp.size() == nj+1);
     for (i = 1; i < xtmp.size(); i++)
 	{
 		params._zeros[i-1] = xtmp.get(i).asDouble();
 	}
 
 	xtmp = p.findGroup("Signs");
-	ACE_ASSERT (xtmp.size() == nj+1);
+	yAssert(xtmp.size() == nj+1);
 	for (i = 1; i < xtmp.size(); i++)
 	{
 		params._signs[i-1] = xtmp.get(i).asDouble();
 	}
 
 	xtmp = p.findGroup("Stiff");
-	ACE_ASSERT (xtmp.size() == nj+1);
+	yAssert(xtmp.size() == nj+1);
     for (i = 1; i < xtmp.size(); i++)
 	{
 		params._stiffPID[i-1] = xtmp.get(i).asInt();
@@ -743,14 +742,14 @@ else
 
     /////// LIMITS
     xtmp = p.findGroup("Max");
- 	ACE_ASSERT (xtmp.size() == nj+1);
+ 	yAssert(xtmp.size() == nj+1);
     for(i=1;i<xtmp.size(); i++)
 	{
 		params._limitsMax[i-1]=xtmp.get(i).asDouble();
 	}
 
 	xtmp = p.findGroup("Min");
-	ACE_ASSERT (xtmp.size() == nj+1);
+	yAssert(xtmp.size() == nj+1);
     for(i=1;i<xtmp.size(); i++)
 	{
 		params._limitsMin[i-1]=xtmp.get(i).asDouble();
@@ -794,14 +793,14 @@ else
 	double *encWheels = new double [params._njoints];
 
     xtmp = p.findGroup("EncWheel");
-	ACE_ASSERT (xtmp.size() == nj+1);
+	yAssert(xtmp.size() == nj+1);
     for (i = 1; i < xtmp.size(); i++)
 	{
 		encWheels[i-1] = xtmp.get(i).asDouble();
 	}
 
     xtmp = p.findGroup("Encoder");
-	ACE_ASSERT (xtmp.size() == nj+1);
+	yAssert(xtmp.size() == nj+1);
 
     for (i = 1; i < xtmp.size(); i++)
 	{
@@ -904,7 +903,7 @@ bool MEIMotionControl::getPidRaw (int axis, Pid *pids)
 {
 
 	MEIResources& r = RES(system_resources);
-	ACE_ASSERT (axis >= 0 && axis <= r.getJoints());
+	yAssert(axis >= 0 && axis <= r.getJoints());
 
 	get_filter(axis, _filter_coeffs[axis]);
 
@@ -1014,7 +1013,7 @@ bool MEIMotionControl::setPidsRaw(const Pid *pids)
 bool MEIMotionControl::setReferenceRaw (int axis, double ref)		//revisionata Mattia
 {
 	MEIResources& r = RES(system_resources);
-	ACE_ASSERT (axis >= 0 && axis <= r.getJoints());
+	yAssert(axis >= 0 && axis <= r.getJoints());
 
 	r._Rref_positions[axis] = ref;
 
@@ -1024,7 +1023,7 @@ bool MEIMotionControl::setReferenceRaw (int axis, double ref)		//revisionata Mat
 
 bool MEIMotionControl::setReferencesRaw (const double *refs)		//revisionata Mattia
 {
-	ACE_ASSERT(refs!=0);
+	yAssert(refs!=0);
 	int i;
 	MEIResources& r = RES(system_resources);
 
@@ -1051,7 +1050,7 @@ bool MEIMotionControl::setErrorLimitsRaw(const double *limit)
 bool MEIMotionControl::getErrorRaw(int axis, double *err)				//revisionata Mattia
 {
 	MEIResources& r = RES(system_resources);
-	ACE_ASSERT (axis >= 0 && axis <= r.getJoints());
+	yAssert(axis >= 0 && axis <= r.getJoints());
 
 	long rc = 0;
 	double *out = (double *) err;
@@ -1095,7 +1094,7 @@ bool MEIMotionControl::getOutputsRaw(double *outs)
 bool MEIMotionControl::getReferenceRaw(int axis, double *ref)
 {
 	MEIResources& r = RES(system_resources);
-	ACE_ASSERT (axis >= 0 && axis <= r.getJoints());
+	yAssert(axis >= 0 && axis <= r.getJoints());
 
 	ref[axis] = r._Rref_positions[axis];
 
@@ -1140,7 +1139,7 @@ bool MEIMotionControl::setOffsetRaw(int axis, double v)
 {
 
 	MEIResources& r = RES(system_resources);
-	ACE_ASSERT (axis >= 0 && axis <= r.getJoints());
+	yAssert(axis >= 0 && axis <= r.getJoints());
 
 	_filter_coeffs[axis][r.DF_OFFSET] = v;
 	set_filter(axis, _filter_coeffs[axis]);
@@ -1198,7 +1197,7 @@ bool MEIMotionControl::setVelocityMode()
 bool MEIMotionControl::positionMoveRaw(int axis, double ref)
 {
 	MEIResources& r = RES(system_resources);
-	ACE_ASSERT (axis >= 0 && axis <= r.getJoints());
+	yAssert(axis >= 0 && axis <= r.getJoints());
 
 	if(_positionmode == true)
 	{
@@ -1257,7 +1256,7 @@ bool MEIMotionControl::relativeMoveRaw(const double *deltas)
 bool MEIMotionControl::checkMotionDoneRaw(int axis, bool *ret)
 {
 	MEIResources& r = RES(system_resources);
-	ACE_ASSERT (axis >= 0 && axis <= r.getJoints());
+	yAssert(axis >= 0 && axis <= r.getJoints());
 
 	if (!axis_done(axis))
         {
@@ -1293,7 +1292,7 @@ bool MEIMotionControl::checkMotionDoneRaw (bool *ret)
 bool MEIMotionControl::setRefSpeedRaw(int axis, double sp)
 {
 	MEIResources& r = RES(system_resources);
-	ACE_ASSERT (axis >= 0 && axis <= r.getJoints());
+	yAssert(axis >= 0 && axis <= r.getJoints());
 
 
 	r._Rref_speeds[axis] = sp;
@@ -1366,7 +1365,7 @@ bool MEIMotionControl::getRefSpeedsRaw (double *spds)
 bool MEIMotionControl::getRefSpeedRaw (int axis, double *spd)	//revisionata Mattia
 {
 	MEIResources& r = RES(system_resources);
-    ACE_ASSERT (axis >= 0 && axis <= r.getJoints());
+    yAssert(axis >= 0 && axis <= r.getJoints());
 
 	spd[axis] = r._Rref_speeds[axis];
 
@@ -1392,7 +1391,7 @@ bool MEIMotionControl::getRefAccelerationsRaw (double *accs)				//revisionata Ma
 bool MEIMotionControl::getRefAccelerationRaw (int axis, double *accs)				//revisionata Mattia
 {
 	MEIResources& r = RES(system_resources);
-    ACE_ASSERT (axis >= 0 && axis <= r.getJoints());
+    yAssert(axis >= 0 && axis <= r.getJoints());
 
 	accs[axis] = r._Rref_acc[axis];
 
@@ -1402,7 +1401,7 @@ bool MEIMotionControl::getRefAccelerationRaw (int axis, double *accs)				//revis
 bool MEIMotionControl::stopRaw(int axis)
 {
 	MEIResources& r = RES(system_resources);
-    ACE_ASSERT (axis >= 0 && axis <= r.getJoints());
+    yAssert(axis >= 0 && axis <= r.getJoints());
 
 	int stop = set_stop(axis);
 	printf("\nAxis %d has been stopped!!!",axis);
@@ -1425,7 +1424,7 @@ bool MEIMotionControl::stopRaw()
 bool MEIMotionControl::velocityMoveRaw (int axis, double sp) 				//revisionata Mattia
 {
 	MEIResources& r = RES(system_resources);
-    ACE_ASSERT (axis >= 0 && axis <= r.getJoints());
+    yAssert(axis >= 0 && axis <= r.getJoints());
 
 	int check;
 	if(dsp_init(PCDSP_BASE))
@@ -1491,7 +1490,7 @@ int MEIMotionControl::safeVMove (double *spds, double *accs)
 bool MEIMotionControl::setEncoderRaw(int axis, double val)
 {
 	MEIResources& r = RES(system_resources);
-    ACE_ASSERT (axis >= 0 && axis <= r.getJoints());
+    yAssert(axis >= 0 && axis <= r.getJoints());
 
 	r._Rzeros[axis] = double (dsp_encoder(axis)) + val;
 	r._Rwinding[axis] = 0;
@@ -1622,7 +1621,7 @@ bool MEIMotionControl::getEncoderAccelerationRaw(int j, double *v)
 bool MEIMotionControl::disableAmpRaw(int axis)
 {
 	MEIResources& r = RES(system_resources);
-    ACE_ASSERT (axis >= 0 && axis <= r.getJoints());
+    yAssert(axis >= 0 && axis <= r.getJoints());
 
 	int amp = disable_amplifier(axis);
 
@@ -1642,7 +1641,7 @@ bool MEIMotionControl::enableAmpRaw(int axis)
 	int cs = clear_status(axis);
 	int rc = controller_run(axis);
 
-	ACE_ASSERT (axis >= 0 && axis <= r.getJoints());
+	yAssert(axis >= 0 && axis <= r.getJoints());
 
 
 	int amp = enable_amplifier(axis);						//set the state of the amp to the
@@ -1690,7 +1689,7 @@ bool MEIMotionControl::getMaxCurrentRaw(int axis, double v)
 bool MEIMotionControl::calibrateRaw(int axis, double zero)
 {
     MEIResources& r = RES(system_resources);
-	ACE_ASSERT (axis >= 0 && axis <= r.getJoints());
+	yAssert(axis >= 0 && axis <= r.getJoints());
 
 	int check;
 
@@ -1930,7 +1929,7 @@ bool MEIMotionControl::setLimitsRaw(int axis, double min, double max)
 	}
 
 	//regular limit setting
-	ACE_ASSERT (axis >= 0 && axis <= r.getJoints());
+	yAssert(axis >= 0 && axis <= r.getJoints());
 
 	set_positive_sw_limit(axis,max,STOP_EVENT);
 	set_negative_sw_limit(axis,min,STOP_EVENT);
@@ -1944,7 +1943,7 @@ bool MEIMotionControl::getLimitsRaw(int axis, double *min, double *max)
 	int iMin, iMax;
 
 	MEIResources& r = RES(system_resources);
-	ACE_ASSERT (axis >= 0 && axis <= r.getJoints());
+	yAssert(axis >= 0 && axis <= r.getJoints());
 
 	double tmpmax,tmpmin;
 
@@ -2001,7 +2000,7 @@ bool MEIMotionControl::saveBootMemory ()
 bool MEIMotionControl::setBCastMessages (int axis, double v)
 {
 	MEIResources& r = RES(system_resources);
-	ACE_ASSERT (axis >= 0 && axis <= r.getJoints());
+	yAssert(axis >= 0 && axis <= r.getJoints());
 
 	return true;
 }

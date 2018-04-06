@@ -32,8 +32,6 @@
 #include <yarp/dev/DeviceDriver.h>
 #include <yarp/dev/ControlBoardInterfaces.h>
 
-#include <ace/Vector_T.h>
-
 #include <cstdio>
 #include <cstdlib>
 #include <cmath>
@@ -42,8 +40,6 @@
 //#include <libftdi/ftdi.h>
 #include <usb.h>
 #include <iostream>
-#include <ace/DEV_Connector.h>
-#include <ace/TTY_IO.h>
 #include <yarp/os/Time.h>
 
 #include <yarp/os/Semaphore.h>

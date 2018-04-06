@@ -18,7 +18,6 @@
 
 #include <MicrophoneDeviceDriver.h>
 #include <yarp/os/all.h>
-#include <ace/Sched_Params.h>
 
 #undef main
 #include <windows.h>
@@ -418,7 +417,7 @@ int SoundResources::_init (const SoundOpenParameters& params)
     //----------------------------------------------------------------------
     _bmutex.wait ();
     _rawBuffer = new unsigned char [dwBufferLength];
-    // ACE_ASSERT (_rawBuffer != NULL);
+    // yAssert(_rawBuffer != NULL);
     _bmutex.post ();
 
     return 1;
@@ -520,7 +519,6 @@ void SoundResources::run()
                             //  can't acquire, it means the buffer is still in use.
                             //  silently ignores this condition.
                             //----------------------------------------------------------------------
-                            //ACE_DEBUG ((LM_DEBUG, "lost a frame, acq thread\n"));
                             printf("lost a frame, acq thread\n");
                         }
                 }
@@ -536,7 +534,7 @@ void SoundResources::run()
 
                 /* Our main thread is opening the WAVE device */
             case MM_WIM_OPEN:
-                //printf( "ace_Debug: MicrophoneDeviceDriver: sound device opened\n");
+                //printf( "MicrophoneDeviceDriver: sound device opened\n");
                 break;
 
                 /* Our main thread is closing the WAVE device */
@@ -544,7 +542,7 @@ void SoundResources::run()
                 break;
 
             default:
-                //ACE_DEBUG ((LM_DEBUG, "yarpsounddriver: received an unknown message\n"));
+                //printf("yarpsounddriver: received an unknown message\n");
                 break;
 
             }
