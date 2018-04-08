@@ -784,9 +784,9 @@ void ControlBoardHelper::convert_pid_to_user(const yarp::dev::PidControlTypeEnum
 
     //feedback is at the denominator, i.e. kp=[PWM/deg]
     double feedback_conversion_units_user2raw = get_pidfeedback_conversion_factor_user2raw(pidtype, k_usr);
-    out_usr.kp = out_usr.kp * feedback_conversion_units_user2raw;
-    out_usr.ki = out_usr.ki * feedback_conversion_units_user2raw;
-    out_usr.kd = out_usr.kd * feedback_conversion_units_user2raw;
+    out_usr.kp = out_usr.kp / feedback_conversion_units_user2raw;
+    out_usr.ki = out_usr.ki / feedback_conversion_units_user2raw;
+    out_usr.kd = out_usr.kd / feedback_conversion_units_user2raw;
 
     //output is at the numerator, i.e. kp=[PWM/deg]
     double output_conversion_units_user2raw = get_pidoutput_conversion_factor_user2raw(pidtype, k_usr);
@@ -816,9 +816,9 @@ void ControlBoardHelper::convert_pid_to_machine(const yarp::dev::PidControlTypeE
 
     //feedback is at the denominator, i.e. kp=[PWM/deg]
     double feedback_conversion_units_user2raw = get_pidfeedback_conversion_factor_user2raw(pidtype, j_usr);
-    out_raw.kp = out_raw.kp / feedback_conversion_units_user2raw;
-    out_raw.ki = out_raw.ki / feedback_conversion_units_user2raw;
-    out_raw.kd = out_raw.kd / feedback_conversion_units_user2raw;
+    out_raw.kp = out_raw.kp * feedback_conversion_units_user2raw;
+    out_raw.ki = out_raw.ki * feedback_conversion_units_user2raw;
+    out_raw.kd = out_raw.kd * feedback_conversion_units_user2raw;
 
     //output is at the numerator, i.e. kp=[PWM/deg]
     double output_conversion_units_user2raw = get_pidoutput_conversion_factor_user2raw(pidtype, j_usr);
