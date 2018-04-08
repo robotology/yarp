@@ -89,7 +89,7 @@ bool ImplementTorqueControl::getBemfParam(int j, double *bemf)
     ret = iTorqueRaw->getBemfParamRaw(k, &bemf_raw);
     if (ret)
     {
-        castToMapper(helper)->bemfraw2bemfuser(bemf_raw, k, *bemf, tmp_j);
+        castToMapper(helper)->bemf_raw2user(bemf_raw, k, *bemf, tmp_j);
     }
     return ret;
 }
@@ -100,7 +100,7 @@ bool ImplementTorqueControl::setBemfParam(int j, double bemf)
     int k;
     bool ret;
     double bemf_raw;
-    castToMapper(helper)->bemfuser2bemfraw(bemf, j, bemf_raw, k);
+    castToMapper(helper)->bemf_user2raw(bemf, j, bemf_raw, k);
 
     ret = iTorqueRaw->setBemfParamRaw(k, bemf_raw);
     return ret;
@@ -112,8 +112,8 @@ bool ImplementTorqueControl::setMotorTorqueParams(int j,  const yarp::dev::Motor
     int k;
     
     yarp::dev::MotorTorqueParameters params_raw;
-    castToMapper(helper)->bemfuser2bemfraw(params.bemf, j, params_raw.bemf, k);
-    castToMapper(helper)->ktauuser2ktauraw(params.ktau, j, params_raw.ktau, k);
+    castToMapper(helper)->bemf_user2raw(params.bemf, j, params_raw.bemf, k);
+    castToMapper(helper)->ktau_user2raw(params.ktau, j, params_raw.ktau, k);
     params_raw.bemf_scale = params.bemf_scale;
     params_raw.ktau_scale = params.ktau_scale;
 
@@ -132,8 +132,8 @@ bool ImplementTorqueControl::getMotorTorqueParams(int j,  yarp::dev::MotorTorque
     if (b)
     {
         *params = params_raw;
-        castToMapper(helper)->bemfraw2bemfuser(params_raw.bemf, k, (*params).bemf, tmp_j);
-        castToMapper(helper)->ktauraw2ktauuser(params_raw.ktau, k, (*params).ktau, tmp_j);
+        castToMapper(helper)->bemf_raw2user(params_raw.bemf, k, (*params).bemf, tmp_j);
+        castToMapper(helper)->ktau_raw2user(params_raw.ktau, k, (*params).ktau, tmp_j);
         (*params).bemf_scale = params_raw.bemf_scale;
         (*params).ktau_scale = params_raw.ktau_scale;
     }

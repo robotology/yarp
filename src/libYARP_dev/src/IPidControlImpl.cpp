@@ -74,13 +74,13 @@ bool ImplementPidControl::setPid(const PidControlTypeEnum& pidtype, int j, const
 bool ImplementPidControl::setPids(const PidControlTypeEnum& pidtype,  const Pid *pids)
 {
     int tmp=0;
-    int nj=castToMapper(helper)->axes();
+    ControlBoardHelper* cb_helper = castToMapper(helper);
+    int nj= cb_helper->axes();
 
     for(int j=0;j<nj;j++)
     {
         Pid pid_machine;
         int k;
-        ControlBoardHelper* cb_helper = castToMapper(helper);
         cb_helper->convert_pid_to_machine(pidtype,  pids[j], j, pid_machine, k);
         tmpPids[k] = pid_machine;
     }
@@ -155,34 +155,30 @@ bool ImplementPidControl::getPidOutput(const PidControlTypeEnum& pidtype,  int j
     double raw;
     k_raw = castToMapper(helper)->toHw(j);
     ret = iPid->getPidOutputRaw(pidtype, k_raw, &raw);
-
-    double* output_conversion_units=0;
-    ControlBoardHelper* cb_helper = castToMapper(helper);
-    cb_helper->get_pidoutput_conversion_units(pidtype, j, output_conversion_units);
-
     if (ret)
     {
-        cb_helper->raw2user(raw, k_raw, *out, j, output_conversion_units);
+        ControlBoardHelper* cb_helper = castToMapper(helper);
+        double output_conversion_units_user2raw = cb_helper->get_pidoutput_conversion_factor_user2raw(pidtype, j);
+        *out = raw / output_conversion_units_user2raw;
         return true;
     }
     return false;
 }
 
-bool ImplementPidControl::getPidOutputs(const PidControlTypeEnum& pidtype,  double *outs)
+bool ImplementPidControl::getPidOutputs(const PidControlTypeEnum& pidtype, double *outs)
 {
-    int nj = castToMapper(helper)->axes();
-    bool ret=iPid->getPidOutputsRaw(pidtype, temp);
-    
-    for (int j = 0; j < nj; j++)
+    ControlBoardHelper* cb_helper = castToMapper(helper);
+    int nj = cb_helper->axes();
+    bool ret = iPid->getPidOutputsRaw(pidtype, temp);
+    if (ret)
     {
-        double* output_conversion_units=0;
-        ControlBoardHelper* cb_helper = castToMapper(helper);
-        cb_helper->get_pidoutput_conversion_units(pidtype, j, output_conversion_units);
-
-        temp[j] = cb_helper->raw2user(temp[j],j, output_conversion_units);
+        castToMapper(cb_helper)->toUser(temp, outs);
+        for (int j = 0; j < nj; j++)
+        {
+            double output_conversion_units_user2raw = cb_helper->get_pidoutput_conversion_factor_user2raw(pidtype, j);
+            outs[j] = outs[j] / output_conversion_units_user2raw;
+        }
     }
-    castToMapper(helper)->toUser(temp, outs);
-
     return ret;
 }
 
@@ -300,12 +296,9 @@ bool ImplementPidControl::setPidOffset(const PidControlTypeEnum& pidtype, int j,
     JOINTIDCHECK
     int k = 0;
     double rawoff;
-    double* output_conversion_units=0;
     ControlBoardHelper* cb_helper = castToMapper(helper);
-    cb_helper->get_pidoutput_conversion_units(pidtype,j,output_conversion_units);
-
-    cb_helper->user2raw(off, j, rawoff, k, output_conversion_units);
-
+    double output_conversion_units_user2raw = cb_helper->get_pidoutput_conversion_factor_user2raw(pidtype,j);
+    rawoff = off * output_conversion_units_user2raw;
     return iPid->setPidOffsetRaw(pidtype, k, rawoff);
 }
 

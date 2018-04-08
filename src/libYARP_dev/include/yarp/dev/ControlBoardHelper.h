@@ -135,25 +135,17 @@ public:
     double PWM2dutycycle(double pwm_raw, int k_raw);
 
     // *******************************************//
-    double raw2user(double value_raw, int k_raw, const double* conv_user2raw);
-    double user2raw(double value_user, int j, const double* conv_user2raw);
-    void user2raw(double value_user, int j, double &value_raw, int &k, const double* conv_user2raw);
-    void raw2user(double value_raw, int k_raw, double &value_user, int &j, const double* conv_user2raw);
-    double raw2user(double value_raw, int k_raw);
-
-    // *******************************************//
-    double bemfuser2bemfraw(double bemf_user, int j);
-    double ktauuser2ktauraw(double ktau_user, int j);
-    void bemfuser2bemfraw(double bemf_user, int j, double &bemf_raw, int &k);
-    void ktauuser2ktauraw(double ktau_user, int j, double &ktau_raw, int &k);
-    void bemfraw2bemfuser(double bemf_raw, int k_raw, double &bemf_user, int &j_user);
-    void ktauraw2ktauuser(double ktau_raw, int k_raw, double &ktau_user, int &j_user);
+    double bemf_user2raw(double bemf_user, int j);
+    double ktau_user2raw(double ktau_user, int j);
+    void bemf_user2raw(double bemf_user, int j, double &bemf_raw, int &k);
+    void ktau_user2raw(double ktau_user, int j, double &ktau_raw, int &k);
+    void bemf_raw2user(double bemf_raw, int k_raw, double &bemf_user, int &j_user);
+    void ktau_raw2user(double ktau_raw, int k_raw, double &ktau_user, int &j_user);
 
     int axes();
 
     // *******************************************//
 public:
-    void get_pidoutput_conversion_units(const yarp::dev::PidControlTypeEnum& pidtype, int j, double*&  output_conversion_units);
     void convert_pidunits_to_machine(const yarp::dev::PidControlTypeEnum& pidtype, double userval, int j, double &machineval, int &k);
     void convert_pidunits_to_machine(const yarp::dev::PidControlTypeEnum& pidtype, const double* userval, double* machineval);
     void convert_pidunits_to_user(const yarp::dev::PidControlTypeEnum& pidtype, const double machineval, double* userval, int k);
@@ -164,6 +156,8 @@ public:
     Pid  convert_pid_to_machine(const yarp::dev::PidControlTypeEnum& pidtype, const Pid &in_usr, int j_usr);
 
     void set_pid_conversion_units(const PidControlTypeEnum& pidtype, const PidFeedbackUnitsEnum fbk_conv_units, const PidOutputUnitsEnum out_conv_units);
+    double get_pidfeedback_conversion_factor_user2raw(const yarp::dev::PidControlTypeEnum& pidtype,  int j);
+    double get_pidoutput_conversion_factor_user2raw(const yarp::dev::PidControlTypeEnum& pidtype, int j);
 
 private:
     class PrivateUnitsHandler;

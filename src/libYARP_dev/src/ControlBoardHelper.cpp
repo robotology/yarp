@@ -700,65 +700,36 @@ double ControlBoardHelper::PWM2dutycycle(double pwm_raw, int k_raw)
 }
 
 // *******************************************//
-double ControlBoardHelper::raw2user(double value_raw, int k_raw, const double* conv_user2raw)
-{
-    int j = toUser(k_raw);
-    return (value_raw / conv_user2raw[j]);
-}
-
-double ControlBoardHelper::user2raw(double value_user, int j, const double* conv_user2raw)
-{
-    return value_user * conv_user2raw[j];
-}
-
-void ControlBoardHelper::user2raw(double value_user, int j, double &value_raw, int &k, const double* conv_user2raw)
-{
-    value_raw = value_user * conv_user2raw[j];
-    k = toHw(j);
-}
-
-void ControlBoardHelper::raw2user(double value_raw, int k_raw, double &value_user, int &j, const double* conv_user2raw)
-{
-    j = toUser(k_raw);
-    value_user = (value_raw / conv_user2raw[j]);
-}
-
-double ControlBoardHelper::raw2user(double value_raw, int k_raw)
-{
-    int j = toUser(k_raw);
-    return (value_raw / mPriv->dutycycleToPWMs[j]);
-}
-
-void ControlBoardHelper::bemfuser2bemfraw(double bemf_user, int j, double &bemf_raw, int &k)
+void ControlBoardHelper::bemf_user2raw(double bemf_user, int j, double &bemf_raw, int &k)
 {
     bemf_raw = bemf_user * mPriv->newtonsToSensors[j] / mPriv->angleToEncoders[j];
     k = toHw(j);
 }
 
-void ControlBoardHelper::ktauuser2ktauraw(double ktau_user, int j, double &ktau_raw, int &k)
+void ControlBoardHelper::ktau_user2raw(double ktau_user, int j, double &ktau_raw, int &k)
 {
     ktau_raw = ktau_user * mPriv->dutycycleToPWMs[j] / mPriv->newtonsToSensors[j];
     k = toHw(j);
 }
 
-void ControlBoardHelper::bemfraw2bemfuser(double bemf_raw, int k_raw, double &bemf_user, int &j_user)
+void ControlBoardHelper::bemf_raw2user(double bemf_raw, int k_raw, double &bemf_user, int &j_user)
 {
     j_user = toUser(k_raw);
     bemf_user = bemf_raw / mPriv->newtonsToSensors[j_user] * mPriv->angleToEncoders[j_user];
 }
 
-void ControlBoardHelper::ktauraw2ktauuser(double ktau_raw, int k_raw, double &ktau_user, int &j_user)
+void ControlBoardHelper::ktau_raw2user(double ktau_raw, int k_raw, double &ktau_user, int &j_user)
 {
     j_user = toUser(k_raw);
     ktau_user = ktau_raw / mPriv->dutycycleToPWMs[j_user] * mPriv->newtonsToSensors[j_user];
 }
 
-double  ControlBoardHelper::bemfuser2bemfraw(double bemf_user, int j)
+double  ControlBoardHelper::bemf_user2raw(double bemf_user, int j)
 {
     return bemf_user * mPriv->newtonsToSensors[j] / mPriv->angleToEncoders[j];
 }
 
-double  ControlBoardHelper::ktauuser2ktauraw(double ktau_user, int j)
+double  ControlBoardHelper::ktau_user2raw(double ktau_user, int j)
 {
     return ktau_user * mPriv->dutycycleToPWMs[j] / mPriv->newtonsToSensors[j];;
 }
@@ -770,73 +741,63 @@ int ControlBoardHelper::axes()
 
 // *******************************************//
 
-void ControlBoardHelper::get_pidoutput_conversion_units(const yarp::dev::PidControlTypeEnum& pidtype, int j, double*&  output_conversion_units)
+double ControlBoardHelper::get_pidoutput_conversion_factor_user2raw(const yarp::dev::PidControlTypeEnum& pidtype, int j)
 {
+    double output_conversion_factor;
     switch (mPriv->pid_units[pidtype][j].out_units)
     {
-    case  PidOutputUnitsEnum::DUTYCYCLE_PWM_PERCENT:  output_conversion_units = mPriv->dutycycleToPWMs; break;
-    case  PidOutputUnitsEnum::CURRENT_METRIC:  output_conversion_units = mPriv->ampereToSensors; break;
-    case  PidOutputUnitsEnum::POSITION_METRIC:  output_conversion_units = mPriv->angleToEncoders; break;
-    case  PidOutputUnitsEnum::VELOCITY_METRIC:  output_conversion_units = mPriv->angleToEncoders; break;
-    case  PidOutputUnitsEnum::TORQUE_METRIC:  output_conversion_units = mPriv->newtonsToSensors; break;
-    default: output_conversion_units = mPriv->helper_ones; break;
+        case  PidOutputUnitsEnum::DUTYCYCLE_PWM_PERCENT:  output_conversion_factor = mPriv->dutycycleToPWMs[j]; break;
+        case  PidOutputUnitsEnum::CURRENT_METRIC:  output_conversion_factor = mPriv->ampereToSensors[j]; break;
+        case  PidOutputUnitsEnum::POSITION_METRIC:  output_conversion_factor = mPriv->angleToEncoders[j]; break;
+        case  PidOutputUnitsEnum::VELOCITY_METRIC:  output_conversion_factor = mPriv->angleToEncoders[j]; break;
+        case  PidOutputUnitsEnum::TORQUE_METRIC:  output_conversion_factor = mPriv->newtonsToSensors[j]; break;
+        case  PidOutputUnitsEnum::RAW_MACHINE_UNITS:
+        default: output_conversion_factor = mPriv->helper_ones[j]; break;
     }
+    return output_conversion_factor;
 }
 
+double ControlBoardHelper::get_pidfeedback_conversion_factor_user2raw(const yarp::dev::PidControlTypeEnum& pidtype, int j)
+{
+    double feedback_conversion_factor;
+    switch (mPriv->pid_units[pidtype][j].fbk_units)
+    {
+        case PidFeedbackUnitsEnum::METRIC:
+            switch (pidtype)
+            {
+                case yarp::dev::PidControlTypeEnum::VOCAB_PIDTYPE_POSITION: feedback_conversion_factor = mPriv->angleToEncoders[j];  break;
+                case yarp::dev::PidControlTypeEnum::VOCAB_PIDTYPE_VELOCITY: feedback_conversion_factor = mPriv->angleToEncoders[j];  break;
+                case yarp::dev::PidControlTypeEnum::VOCAB_PIDTYPE_TORQUE: feedback_conversion_factor = mPriv->newtonsToSensors[j];  break;
+                case yarp::dev::PidControlTypeEnum::VOCAB_PIDTYPE_CURRENT: feedback_conversion_factor = mPriv->ampereToSensors[j];  break;
+            }
+        break;
+        case PidFeedbackUnitsEnum::RAW_MACHINE_UNITS:
+        default: feedback_conversion_factor = mPriv->helper_ones[j]; break;
+    }
+    return (1.0 / feedback_conversion_factor);
+}
 void ControlBoardHelper::convert_pid_to_user(const yarp::dev::PidControlTypeEnum& pidtype, const Pid &in_raw, int j_raw, Pid &out_usr, int &k_usr)
 {
-    double* output_conversion_units = 0;
     ControlBoardHelper* cb_helper = this;
     k_usr = cb_helper->toUser(j_raw);
     out_usr = in_raw;
 
-    switch (pidtype)
-    {
-    case PidControlTypeEnum::VOCAB_PIDTYPE_POSITION:
-        if (mPriv->pid_units[VOCAB_PIDTYPE_POSITION][k_usr].fbk_units == PidFeedbackUnitsEnum::METRIC)
-        {
-            out_usr.kp = cb_helper->posE2A(out_usr.kp, j_raw);
-            out_usr.ki = cb_helper->posE2A(out_usr.ki, j_raw);
-            out_usr.kd = cb_helper->posE2A(out_usr.kd, j_raw);
-        }
-        break;
-    case PidControlTypeEnum::VOCAB_PIDTYPE_VELOCITY:
-        if (mPriv->pid_units[VOCAB_PIDTYPE_VELOCITY][k_usr].fbk_units == PidFeedbackUnitsEnum::METRIC)
-        {
-            out_usr.kp = cb_helper->velE2A(out_usr.kp, j_raw);
-            out_usr.ki = cb_helper->velE2A(out_usr.ki, j_raw);
-            out_usr.kd = cb_helper->velE2A(out_usr.kd, j_raw);
-        }
-        break;
-    case PidControlTypeEnum::VOCAB_PIDTYPE_TORQUE:
-        if (mPriv->pid_units[VOCAB_PIDTYPE_TORQUE][k_usr].fbk_units == PidFeedbackUnitsEnum::METRIC)
-        {
-            out_usr.kp = cb_helper->trqS2N(out_usr.kp, j_raw);
-            out_usr.ki = cb_helper->trqS2N(out_usr.ki, j_raw);
-            out_usr.kd = cb_helper->trqS2N(out_usr.kd, j_raw);
-        }
-        break;
-    case PidControlTypeEnum::VOCAB_PIDTYPE_CURRENT:
-        if (mPriv->pid_units[VOCAB_PIDTYPE_CURRENT][k_usr].fbk_units == PidFeedbackUnitsEnum::METRIC)
-        {
-            out_usr.kp = cb_helper->ampereS2A(out_usr.kp, j_raw);
-            out_usr.ki = cb_helper->ampereS2A(out_usr.ki, j_raw);
-            out_usr.kd = cb_helper->ampereS2A(out_usr.kd, j_raw);
-        }
-        break;
-    default:
-        break;
-    }
+    //feedback is at the denominator, i.e. kp=[PWM/deg]
+    double feedback_conversion_units_user2raw = get_pidfeedback_conversion_factor_user2raw(pidtype, k_usr);
+    out_usr.kp = out_usr.kp * feedback_conversion_units_user2raw;
+    out_usr.ki = out_usr.ki * feedback_conversion_units_user2raw;
+    out_usr.kd = out_usr.kd * feedback_conversion_units_user2raw;
 
-    get_pidoutput_conversion_units(pidtype, j_raw, output_conversion_units);
-    out_usr.kp = cb_helper->raw2user(out_usr.kp, j_raw, output_conversion_units);
-    out_usr.ki = cb_helper->raw2user(out_usr.ki, j_raw, output_conversion_units);
-    out_usr.kd = cb_helper->raw2user(out_usr.kd, j_raw, output_conversion_units);
-    out_usr.max_output = cb_helper->raw2user(out_usr.max_output, j_raw, output_conversion_units);
-    out_usr.max_int = cb_helper->raw2user(out_usr.max_int, j_raw, output_conversion_units);
-    out_usr.stiction_up_val = cb_helper->raw2user(out_usr.stiction_up_val, j_raw, output_conversion_units);
-    out_usr.stiction_down_val = cb_helper->raw2user(out_usr.stiction_down_val, j_raw, output_conversion_units);
-    out_usr.offset = cb_helper->raw2user(out_usr.offset, j_raw, output_conversion_units);
+    //output is at the numerator, i.e. kp=[PWM/deg]
+    double output_conversion_units_user2raw = get_pidoutput_conversion_factor_user2raw(pidtype, k_usr);
+    out_usr.kp = out_usr.kp / output_conversion_units_user2raw;
+    out_usr.ki = out_usr.ki / output_conversion_units_user2raw;
+    out_usr.kd = out_usr.kd / output_conversion_units_user2raw;
+    out_usr.max_output = out_usr.max_output / output_conversion_units_user2raw;
+    out_usr.max_int = out_usr.max_int / output_conversion_units_user2raw;
+    out_usr.stiction_up_val = out_usr.stiction_up_val / output_conversion_units_user2raw;
+    out_usr.stiction_down_val = out_usr.stiction_down_val / output_conversion_units_user2raw;
+    out_usr.offset = out_usr.offset / output_conversion_units_user2raw;
 }
 
 Pid ControlBoardHelper::convert_pid_to_machine(const yarp::dev::PidControlTypeEnum& pidtype, const Pid &in_usr, int j_usr)
@@ -850,57 +811,25 @@ Pid ControlBoardHelper::convert_pid_to_machine(const yarp::dev::PidControlTypeEn
 void ControlBoardHelper::convert_pid_to_machine(const yarp::dev::PidControlTypeEnum& pidtype, const Pid &in_usr, int j_usr, Pid &out_raw, int &k_raw)
 {
     ControlBoardHelper* cb_helper = this;
-    double* output_conversion_units = 0;
     k_raw = cb_helper->toHw(j_usr);
     out_raw = in_usr;
 
-    switch (pidtype)
-    {
-    case PidControlTypeEnum::VOCAB_PIDTYPE_POSITION:
-        if (mPriv->pid_units[VOCAB_PIDTYPE_POSITION][j_usr].fbk_units == PidFeedbackUnitsEnum::METRIC)
-        {
-            out_raw.kp = cb_helper->posA2E(out_raw.kp, j_usr);
-            out_raw.ki = cb_helper->posA2E(out_raw.ki, j_usr);
-            out_raw.kd = cb_helper->posA2E(out_raw.kd, j_usr);
-        }
-        break;
-    case PidControlTypeEnum::VOCAB_PIDTYPE_VELOCITY:
-        if (mPriv->pid_units[VOCAB_PIDTYPE_VELOCITY][j_usr].fbk_units == PidFeedbackUnitsEnum::METRIC)
-        {
-            out_raw.kp = cb_helper->velA2E(out_raw.kp, j_usr);
-            out_raw.ki = cb_helper->velA2E(out_raw.ki, j_usr);
-            out_raw.kd = cb_helper->velA2E(out_raw.kd, j_usr);
-        }
-        break;
-    case PidControlTypeEnum::VOCAB_PIDTYPE_TORQUE:
-        if (mPriv->pid_units[VOCAB_PIDTYPE_TORQUE][j_usr].fbk_units == PidFeedbackUnitsEnum::METRIC)
-        {
-            out_raw.kp = cb_helper->trqN2S(out_raw.kp, j_usr);
-            out_raw.ki = cb_helper->trqN2S(out_raw.ki, j_usr);
-            out_raw.kd = cb_helper->trqN2S(out_raw.kd, j_usr);
-        }
-        break;
-    case PidControlTypeEnum::VOCAB_PIDTYPE_CURRENT:
-        if (mPriv->pid_units[VOCAB_PIDTYPE_CURRENT][j_usr].fbk_units == PidFeedbackUnitsEnum::METRIC)
-        {
-            out_raw.kp = cb_helper->ampereA2S(out_raw.kp, j_usr);
-            out_raw.ki = cb_helper->ampereA2S(out_raw.ki, j_usr);
-            out_raw.kd = cb_helper->ampereA2S(out_raw.kd, j_usr);
-        }
-        break;
-    default:
-        break;
-    }
+    //feedback is at the denominator, i.e. kp=[PWM/deg]
+    double feedback_conversion_units_user2raw = get_pidfeedback_conversion_factor_user2raw(pidtype, j_usr);
+    out_raw.kp = out_raw.kp / feedback_conversion_units_user2raw;
+    out_raw.ki = out_raw.ki / feedback_conversion_units_user2raw;
+    out_raw.kd = out_raw.kd / feedback_conversion_units_user2raw;
 
-    get_pidoutput_conversion_units(pidtype, j_usr, output_conversion_units);
-    out_raw.kp = cb_helper->user2raw(out_raw.kp, j_usr, output_conversion_units);
-    out_raw.ki = cb_helper->user2raw(out_raw.ki, j_usr, output_conversion_units);
-    out_raw.kd = cb_helper->user2raw(out_raw.kd, j_usr, output_conversion_units);
-    out_raw.max_output = cb_helper->user2raw(out_raw.max_output, j_usr, output_conversion_units);
-    out_raw.max_int = cb_helper->user2raw(out_raw.max_int, j_usr, output_conversion_units);
-    out_raw.stiction_up_val = cb_helper->user2raw(out_raw.stiction_up_val, j_usr, output_conversion_units);
-    out_raw.stiction_down_val = cb_helper->user2raw(out_raw.stiction_down_val, j_usr, output_conversion_units);
-    out_raw.offset = cb_helper->user2raw(out_raw.offset, j_usr, output_conversion_units);
+    //output is at the numerator, i.e. kp=[PWM/deg]
+    double output_conversion_units_user2raw = get_pidoutput_conversion_factor_user2raw(pidtype, j_usr);
+    out_raw.kp = out_raw.kp * output_conversion_units_user2raw;
+    out_raw.ki = out_raw.ki * output_conversion_units_user2raw;
+    out_raw.kd = out_raw.kd * output_conversion_units_user2raw;
+    out_raw.max_output = out_raw.max_output * output_conversion_units_user2raw;
+    out_raw.max_int = out_raw.max_int * output_conversion_units_user2raw;
+    out_raw.stiction_up_val = out_raw.stiction_up_val * output_conversion_units_user2raw;
+    out_raw.stiction_down_val = out_raw.stiction_down_val * output_conversion_units_user2raw;
+    out_raw.offset = out_raw.offset * output_conversion_units_user2raw;
 }
 
 void ControlBoardHelper::convert_pidunits_to_machine(const yarp::dev::PidControlTypeEnum& pidtype, double userval, int j, double &machineval, int &k)
@@ -909,6 +838,8 @@ void ControlBoardHelper::convert_pidunits_to_machine(const yarp::dev::PidControl
     switch (pidtype)
     {
     case yarp::dev::VOCAB_PIDTYPE_POSITION:
+        //Beware:posA2E employs zeros, not only angleToEncoders
+        //This is fine if convert_pidunits_to_machine() is called by methods that are aware of this feature, that is intentional.
         cb_helper->posA2E(userval, j, machineval, k);
         break;
     case yarp::dev::VOCAB_PIDTYPE_VELOCITY:
@@ -932,6 +863,8 @@ void ControlBoardHelper::convert_pidunits_to_machine(const yarp::dev::PidControl
     switch (pidtype)
     {
     case yarp::dev::VOCAB_PIDTYPE_POSITION:
+        //Beware:posA2E employs zeros, not only angleToEncoders
+        //This is fine if convert_pidunits_to_machine() is called by methods that are aware of this feature, that is intentional.
         cb_helper->posA2E(userval, machineval);
         break;
     case yarp::dev::VOCAB_PIDTYPE_VELOCITY:
@@ -955,6 +888,8 @@ void ControlBoardHelper::convert_pidunits_to_user(const yarp::dev::PidControlTyp
     switch (pidtype)
     {
     case yarp::dev::VOCAB_PIDTYPE_POSITION:
+        //Beware:posE2A employs zeros, not only angleToEncoders.
+        //This is fine if convert_pidunits_to_user() is called by methods that are aware of this feature, that is intentional.
         *userval = cb_helper->posE2A(machineval, k);
         break;
     case yarp::dev::VOCAB_PIDTYPE_VELOCITY:
@@ -978,6 +913,8 @@ void ControlBoardHelper::convert_pidunits_to_user(const yarp::dev::PidControlTyp
     switch (pidtype)
     {
     case yarp::dev::VOCAB_PIDTYPE_POSITION:
+        //Beware:posE2A employs zeros, not only angleToEncoders.
+        //This is fine if convert_pidunits_to_user() is called by methods that are aware of this feature, that is intentional.
         cb_helper->posE2A(machineval, userval);
         break;
     case yarp::dev::VOCAB_PIDTYPE_VELOCITY:
