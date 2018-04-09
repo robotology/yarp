@@ -17,7 +17,7 @@ using namespace yarp::os::impl;
 using namespace yarp::os;
 
 Logger& Logger::get() {
-    static Logger instance;
+    static Logger instance("yarp");
     return instance;
 }
 
