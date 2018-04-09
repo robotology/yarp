@@ -22,6 +22,7 @@
 #include "YarpBuildLocation.h"
 
 #include <cstdio>
+#include <cstdlib>
 
 using namespace yarp::os::impl;
 using namespace yarp::os;

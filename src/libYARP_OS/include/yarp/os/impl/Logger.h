@@ -11,14 +11,13 @@
 #include <yarp/conf/system.h>
 #include <yarp/os/ConstString.h>
 #include <yarp/os/Log.h>
-
 #include <yarp/os/impl/PlatformStdio.h>
 
 #ifdef YARP_HAS_ACE
-# include <ace/Log_Msg.h>
-# include <ace/Log_Record.h>
+# include <ace/Log_Priority.h>
 # include <ace/Log_Msg_Callback.h>
 // In one of these files or their inclusions, there is a definition of "main"
+// for WIN32
 # ifdef main
 #  undef main
 # endif
@@ -28,25 +27,20 @@
 #  define LM_WARNING   040
 #  define LM_ERROR    0200
 #endif
-#include <cstdio>
 
 
 namespace yarp {
-    namespace os {
-        namespace impl {
-            class Logger;
-        }
-    }
-}
+namespace os {
+namespace impl {
 
 /**
  * This is a wrapper for message logging.
  * This is currently a sad mixture of the java yarp logging mechanism
  * and ACE.
  */
-class YARP_OS_impl_API yarp::os::impl::Logger : public yarp::os::Log
+class YARP_OS_impl_API Logger : public yarp::os::Log
 #ifdef YARP_HAS_ACE
-                                              , public ACE_Log_Msg_Callback
+                              , public ACE_Log_Msg_Callback
 #endif
 {
 public:
@@ -55,132 +49,37 @@ public:
         DEFAULT_WARN=LM_INFO
     };
 
-    Logger(const char *prefix, Logger *parent = nullptr) {
-        this->prefix = prefix;
-        this->parent = parent;
-        verbose = 0;
-        low = DEFAULT_WARN;
-        stream = nullptr;
-        pid = -1;
-#ifdef YARP_HAS_ACE
-        if (parent == nullptr) {
-            ACE_Log_Msg *acer = ACE_Log_Msg::instance();
-            acer->set_flags(8);
-            acer->clr_flags(1);
-            acer->msg_callback(this);
-        }
-#endif
-    }
-
-    Logger(const char *prefix, Logger& parent) {
-        this->prefix = prefix;
-        this->parent = &parent;
-        verbose = 0;
-        stream = nullptr;
-        low = DEFAULT_WARN;
-        pid = -1;
-    }
+    Logger(const char *prefix, Logger *parent = nullptr);
+    Logger(const char *prefix, Logger& parent);
 
     static Logger& get();
-    static void fini();
 
 #ifdef YARP_HAS_ACE
-    virtual void log(ACE_Log_Record& log_record) override {
-        show(log_record.type(), log_record.msg_data());
-    }
+    virtual void log(ACE_Log_Record& log_record) override;
 #endif
 
-    void println(const ConstString& txt) {
-        internal_debug(txt);
-    }
-
-
-
-    void internal_debug(const ConstString& txt) {
-        show(LM_DEBUG, txt);
-    }
-
-    void internal_info(const ConstString& txt) {
-        show(LM_INFO, txt);
-    }
-
-    void internal_warning(const ConstString& txt) {
-        show(LM_WARNING, txt);
-    }
-
-    void internal_error(const ConstString& txt) {
-        show(LM_ERROR, txt);
-    }
-
-    void internal_fail(const ConstString& txt) {
-        show(LM_ERROR, txt);
-        exit(1);
-    }
-
-
-
-    void internal_debug(const char *txt) {
-        ConstString stxt(txt);
-        show(LM_DEBUG, stxt);
-    }
-
-    void internal_info(const char *txt) {
-        ConstString stxt(txt);
-        show(LM_INFO, stxt);
-    }
-
-    void internal_warning(const char *txt) {
-        ConstString stxt(txt);
-        show(LM_WARNING, stxt);
-    }
-
-    void internal_error(const char *txt) {
-        ConstString stxt(txt);
-        show(LM_ERROR, stxt);
-    }
-
-    void internal_fail(const char *txt) {
-        ConstString stxt(txt);
-        show(LM_ERROR, stxt);
-        exit(1);
-    }
-
-
-    void assertion(bool cond) {
-        if (!cond) {
-            internal_fail("assertion failure");
-        }
-    }
-
-    void setVerbosity(int verbose = 0) {
-        this->verbose = verbose;
-    }
-
-    void setPrefix(const char *prefix) {
-        this->prefix = prefix;
-    }
-
+    void println(const ConstString& txt);
+    void internal_debug(const ConstString& txt);
+    void internal_info(const ConstString& txt);
+    void internal_warning(const ConstString& txt);
+    void internal_error(const ConstString& txt);
+    void internal_fail(const ConstString& txt);
+    void internal_debug(const char *txt);
+    void internal_info(const char *txt);
+    void internal_warning(const char *txt);
+    void internal_error(const char *txt);
+    void internal_fail(const char *txt);
+    void assertion(bool cond);
+    void setVerbosity(int verbose = 0);
+    void setPrefix(const char *prefix);
     void setPid();
-
-    long int getPid() {
-        return pid;
-    }
-
-    bool shouldShowInfo() {
-        return (verbose>=0);
-    }
-
-    bool shouldShowError() {
-        return true;
-    }
-
-    bool shouldShowDebug() {
-        return (verbose>0);
-    }
+    long int getPid();
+    bool shouldShowInfo();
+    bool shouldShowError();
+    bool shouldShowDebug();
 
 private:
     void show(unsigned YARP_INT32 level, const ConstString& txt);
-    void exit(int level);
 
     ConstString prefix;
     Logger *parent;
@@ -189,6 +88,11 @@ private:
     long int pid;
     FILE *stream;
 };
+
+} // namespace impl
+} // namespace os
+} // namespace yarp
+
 
 // compromise - use macros so that debugging can evaporate in optimized code.
 // also, make a printf-style adaptor since c++ is a bit of a pain to
