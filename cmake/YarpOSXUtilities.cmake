@@ -82,6 +82,9 @@ function(YARP_OSX_DUPLICATE_AND_ADD_BUNDLE)
       elseif("${_prop_name}" MATCHES "<.+>")
         # Remove other properties containing "<...>" that are not target properties.
         list(REMOVE_ITEM _all_properties "${_prop_name}")
+      elseif("${_prop_name}" MATCHES "IMPORTED_GLOBAL")
+        # Remove other properties containing "IMPORTED_GLOBAL".
+        list(REMOVE_ITEM _all_properties "${_prop_name}")
       endif()
     endforeach()
 

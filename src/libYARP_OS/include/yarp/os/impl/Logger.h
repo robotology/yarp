@@ -66,7 +66,7 @@ public:
         stream = nullptr;
         pid = -1;
 #ifdef YARP_HAS_ACE
-        if (this==root) {
+        if (this==&get()) {
             ACE_Log_Msg *acer = ACE_Log_Msg::instance();
             acer->set_flags(8);
             acer->clr_flags(1);
@@ -182,10 +182,10 @@ public:
     }
 
 private:
+    Logger() = default;
     void show(unsigned YARP_INT32 level, const ConstString& txt);
     void exit(int level);
 
-    static Logger *root;
     ConstString prefix;
     Logger *parent;
     int verbose;
