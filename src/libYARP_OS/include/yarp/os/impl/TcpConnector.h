@@ -27,6 +27,7 @@
 
 #include <yarp/os/Contact.h>
 #include <yarp/os/impl/TcpStream.h>
+#include <yarp/os/impl/PlatformTime.h>
 
 
 namespace yarp {
@@ -55,7 +56,8 @@ public:
     virtual ~TcpConnector();
 
     int connect (TcpStream &new_stream,
-                 const yarp::os::Contact &remote_address);
+                 const yarp::os::Contact &remote_address,
+                 YARP_timeval* timeout = nullptr);
 protected:
 
     int open(TcpStream &stream);
