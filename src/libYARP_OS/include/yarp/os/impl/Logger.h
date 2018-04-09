@@ -63,7 +63,7 @@ public:
         stream = nullptr;
         pid = -1;
 #ifdef YARP_HAS_ACE
-        if (this==&get()) {
+        if (parent == nullptr) {
             ACE_Log_Msg *acer = ACE_Log_Msg::instance();
             acer->set_flags(8);
             acer->clr_flags(1);
