@@ -179,7 +179,6 @@ public:
     }
 
 private:
-    Logger() = default;
     void show(unsigned YARP_INT32 level, const ConstString& txt);
     void exit(int level);
 
