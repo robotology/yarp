@@ -101,8 +101,9 @@ clipPlanes (0.2 10.0)
 
 
 class yarp::dev::realsense2Driver :  public yarp::dev::DeviceDriver,
-                                     public yarp::dev::IRGBDSensor,
-                                     public yarp::dev::IFrameGrabberControls2
+                                     public yarp::dev::IFrameGrabberControls2,
+                                     public yarp::dev::IFrameGrabberImageRaw,
+                                     public yarp::dev::IRGBDSensor
 {
 private:
     typedef yarp::sig::ImageOf<yarp::sig::PixelFloat> depthImage;
@@ -171,6 +172,11 @@ public:
     virtual bool   getMode(   int feature, FeatureMode *mode) override;
     virtual bool   setOnePush(int feature) override;
 
+    //IFrameGrabberImageRaw
+    virtual bool getImage(yarp::sig::ImageOf<yarp::sig::PixelMono>& image) override;
+    virtual int height() const override;
+    virtual int width() const override;
+
 private:
 #ifndef DOXYGEN_SHOULD_SKIP_THIS
     //method
@@ -199,7 +205,7 @@ private:
     std::vector<rs2::sensor> m_sensors;
     rs2::sensor* m_depth_sensor;
     rs2::sensor* m_color_sensor;
-    rs2_intrinsics m_depth_intrin, m_color_intrin;
+    rs2_intrinsics m_depth_intrin, m_color_intrin, m_infrared_intrin;
     rs2_extrinsics m_depth_to_color, m_color_to_depth;
 
 
@@ -209,6 +215,8 @@ private:
     yarp::dev::RGBDSensorParamParser* m_paramParser;
     bool m_verbose;
     bool m_initialized;
+    bool m_stereoMode;
+    bool m_needAlignment;
     int m_fps;
     std::vector<cameraFeature_id_t> m_supportedFeatures;
 #endif

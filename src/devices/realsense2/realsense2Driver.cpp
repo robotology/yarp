@@ -340,7 +340,8 @@ static size_t bytesPerPixel(const rs2_format format)
 
 realsense2Driver::realsense2Driver() : m_depth_sensor(nullptr), m_color_sensor(nullptr),
                                        m_paramParser(nullptr), m_verbose(false),
-                                       m_initialized(false), m_fps(0)
+                                       m_initialized(false), m_stereoMode(false),
+                                       m_needAlignment(true), m_fps(0)
 {
 
     m_paramParser = new RGBDSensorParamParser();
@@ -454,9 +455,13 @@ bool realsense2Driver::initializeRealsenseDevice()
     double colorH = params_map[rgbRes].val[1].asDouble();
     double depthW = params_map[depthRes].val[0].asDouble();
     double depthH = params_map[depthRes].val[1].asDouble();
+
     m_cfg.enable_stream(RS2_STREAM_COLOR, colorW, colorH, RS2_FORMAT_RGB8, m_fps);
     m_cfg.enable_stream(RS2_STREAM_DEPTH, depthW, depthH, RS2_FORMAT_Z16, m_fps);
-
+    if (m_stereoMode) {
+        m_cfg.enable_stream(RS2_STREAM_INFRARED, 1, colorW, colorH, RS2_FORMAT_Y8, m_fps);
+        m_cfg.enable_stream(RS2_STREAM_INFRARED, 2, colorW, colorH, RS2_FORMAT_Y8, m_fps);
+    }
     if (!pipelineStartup())
         return false;
     m_initialized = true;
@@ -527,6 +532,12 @@ void realsense2Driver::updateTransformations()
     m_color_intrin = color_stream_profile.get_intrinsics();
     m_depth_to_color = depth_stream_profile.get_extrinsics_to(color_stream_profile);
     m_color_to_depth = color_stream_profile.get_extrinsics_to(depth_stream_profile);
+
+    if (m_stereoMode) {
+        rs2::video_stream_profile infrared_stream_profile = rs2::video_stream_profile(pipeline_profile.get_stream(RS2_STREAM_INFRARED));
+        m_infrared_intrin = infrared_stream_profile.get_intrinsics();
+    }
+
 }
 
 
@@ -643,6 +654,10 @@ bool realsense2Driver::open(Searchable& config)
     }
 
     m_verbose = config.check("verbose");
+    if (config.check("stereoMode")) {
+        m_stereoMode = config.find("stereoMode").asBool();
+    }
+
     if (!m_paramParser->parseParam(config, params))
     {
         yError()<<"realsense2Driver: failed to parse the parameters";
@@ -717,16 +732,24 @@ bool realsense2Driver::setDepthResolution(int width, int height)
 
 bool realsense2Driver::setRgbResolution(int width, int height)
 {
+    bool fail = true;
     if (m_color_sensor && isSupportedFormat(*m_color_sensor, width, height, m_fps, m_verbose)) {
         m_cfg.enable_stream(RS2_STREAM_COLOR, width, height, RS2_FORMAT_RGB8, m_fps);
         m_cfg.enable_stream(RS2_STREAM_DEPTH, m_depth_intrin.width, m_depth_intrin.height, RS2_FORMAT_Z16, m_fps);
-    }
-    else
-    {
-        if (m_initialized)
+        fail = false;
+        if (m_stereoMode)
         {
-            fallback();
+            if (m_depth_sensor && isSupportedFormat(*m_depth_sensor, width, height, m_fps, m_verbose))
+            {
+                m_cfg.enable_stream(RS2_STREAM_INFRARED, 1, width, height, RS2_FORMAT_Y8, m_fps);
+                m_cfg.enable_stream(RS2_STREAM_INFRARED, 2, width, height, RS2_FORMAT_Y8, m_fps);
+            }
+            else
+            {
+                fail = true;
+            }
         }
+    }
 
     }
     if (!pipelineRestart())
@@ -1388,4 +1411,56 @@ bool realsense2Driver::setOnePush(int feature)
     setMode(feature, MODE_MANUAL);
 
     return true;
+}
+
+bool realsense2Driver::getImage(yarp::sig::ImageOf<yarp::sig::PixelMono>& image)
+{
+    if (!m_stereoMode)
+    {
+        yError()<<"realsense2Driver: infrared stereo stream not enabled";
+        return false;
+    }
+
+    image.resize(width(), height());
+    std::lock_guard<std::mutex> guard(m_mutex);
+    rs2::frameset data = m_pipeline.wait_for_frames();
+
+    rs2::video_frame frm1 = data.get_infrared_frame(1);
+    rs2::video_frame frm2 = data.get_infrared_frame(2);
+
+    int pixCode = pixFormatToCode(frm1.get_profile().format());
+
+    if (pixCode != VOCAB_PIXEL_MONO && pixCode != VOCAB_PIXEL_MONO16)
+    {
+        yError() << "realsense2Driver: expecting Pixel Format MONO or MONO16";
+        return false;
+    }
+
+    int singleImage_rowSizeByte   =  image.getRowSize()/2;
+    unsigned char * pixelLeft     =  (unsigned char*) (frm1.get_data());
+    unsigned char * pixelRight    =  (unsigned char*) (frm2.get_data());
+    unsigned char * pixelOutLeft  =  image.getRawImage();
+    unsigned char * pixelOutRight =  image.getRawImage() + singleImage_rowSizeByte;
+
+    for (int h=0; h< image.height(); h++)
+    {
+        memcpy(pixelOutLeft, pixelLeft, singleImage_rowSizeByte);
+        memcpy(pixelOutRight, pixelRight, singleImage_rowSizeByte);
+        pixelOutLeft  += 2*singleImage_rowSizeByte;
+        pixelOutRight += 2*singleImage_rowSizeByte;
+        pixelLeft     += singleImage_rowSizeByte;
+        pixelRight    += singleImage_rowSizeByte;
+    }
+    return true;
+
+}
+
+int  realsense2Driver::height() const
+{
+    return m_infrared_intrin.height;
+}
+
+int  realsense2Driver::width() const
+{
+    return m_infrared_intrin.width*2;
 }
