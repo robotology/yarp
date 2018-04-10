@@ -10,7 +10,7 @@ os:
 
 configuration:
   - Release
-  - Debug
+  #- Debug
 
 branches:
   except:
@@ -137,15 +137,15 @@ after_build:
 test_script:
   - cmd: cmake --build %APPVEYOR_BUILD_FOLDER%\build --target RUN_TESTS --config %CONFIGURATION%
 
-after_test:
-  - cmd: move "%ROBOTOLOGY_ROOT%" "%APPVEYOR_BUILD_FOLDER%/robotology"
+#after_test:
+  #- cmd: move "%ROBOTOLOGY_ROOT%" "%APPVEYOR_BUILD_FOLDER%/robotology"
 
-artifacts:
-  - path: '*.exe'
-  - path: 'robotology/$(ACE_REL_DIR)'
-  - path: 'robotology/$(Eigen3_REL_DIR)'
-  - path: 'robotology/$(Qt5_REL_DIR)'
-  - path: 'robotology/$(OpenCV_REL_DIR)'
+#artifacts:
+  #- path: '*.exe'
+  #- path: 'robotology/$(ACE_REL_DIR)'
+  #- path: 'robotology/$(Eigen3_REL_DIR)'
+  #- path: 'robotology/$(Qt5_REL_DIR)'
+  #- path: 'robotology/$(OpenCV_REL_DIR)'
   #- path: 'robotology/$(JPEG_REL_DIR)'
 
 notifications:
