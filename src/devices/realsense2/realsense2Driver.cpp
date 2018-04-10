@@ -724,6 +724,7 @@ bool realsense2Driver::setDepthResolution(int width, int height)
         if (m_initialized)
         {
             fallback();
+            return false;
         }
     }
 
@@ -755,7 +756,12 @@ bool realsense2Driver::setRgbResolution(int width, int height)
         }
     }
 
+    if (m_initialized && fail)
+    {
+        fallback();
+        return false;
     }
+
     if (!pipelineRestart())
         return false;
 
