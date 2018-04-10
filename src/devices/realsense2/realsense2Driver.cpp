@@ -1072,11 +1072,29 @@ bool realsense2Driver::setFeature(int feature, double value)
     {
     case YARP_FEATURE_EXPOSURE:
         if(optionPerc2Value(RS2_OPTION_EXPOSURE, m_color_sensor, value, valToSet))
+        {
             b = setOption(RS2_OPTION_EXPOSURE, m_color_sensor, valToSet);
+            if (m_stereoMode)
+            {
+                if(optionPerc2Value(RS2_OPTION_EXPOSURE, m_depth_sensor, value, valToSet))
+                {
+                    b &= setOption(RS2_OPTION_EXPOSURE, m_depth_sensor, valToSet);
+                }
+            }
+        }
         break;
     case YARP_FEATURE_GAIN:
         if(optionPerc2Value(RS2_OPTION_GAIN, m_color_sensor,value, valToSet))
+        {
             b = setOption(RS2_OPTION_GAIN, m_color_sensor, valToSet);
+            if (m_stereoMode)
+            {
+                if(optionPerc2Value(RS2_OPTION_EXPOSURE, m_depth_sensor, value, valToSet))
+                {
+                    b &= setOption(RS2_OPTION_EXPOSURE, m_depth_sensor, valToSet);
+                }
+            }
+        }
         break;
     case YARP_FEATURE_FRAME_RATE:
     {
