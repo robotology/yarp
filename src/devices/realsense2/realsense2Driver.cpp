@@ -1198,7 +1198,7 @@ bool realsense2Driver::hasOnOff(  int feature, bool *HasOnOff)
     }
 
     cameraFeature_id_t f = static_cast<cameraFeature_id_t>(feature);
-    if (f == YARP_FEATURE_WHITE_BALANCE || f == YARP_FEATURE_MIRROR)
+    if (f == YARP_FEATURE_WHITE_BALANCE || f == YARP_FEATURE_MIRROR || f == YARP_FEATURE_EXPOSURE)
     {
         *HasOnOff = true;
         return true;
@@ -1225,10 +1225,10 @@ bool realsense2Driver::setActive( int feature, bool onoff)
     switch(feature)
     {
     case YARP_FEATURE_WHITE_BALANCE:
-        b = setOption(RS2_OPTION_ENABLE_AUTO_WHITE_BALANCE, m_color_sensor, (float) onoff); //TODO check if this exotic conversion works
+        b = setOption(RS2_OPTION_ENABLE_AUTO_WHITE_BALANCE, m_color_sensor, (float) onoff);
         return b;
     case YARP_FEATURE_EXPOSURE:
-        b = setOption(RS2_OPTION_ENABLE_AUTO_EXPOSURE, m_color_sensor, (float) onoff); //TODO check if this exotic conversion works
+        b = setOption(RS2_OPTION_ENABLE_AUTO_EXPOSURE, m_color_sensor, (float) onoff);
         return b;
     default:
         return false;
@@ -1251,13 +1251,16 @@ bool realsense2Driver::getActive( int feature, bool *isActive)
         yError() << "feature does not have OnOff.. call hasOnOff() to know if a specific feature support OnOff mode";
         return false;
     }
+    float response = 0.0;
     switch(feature)
     {
     case YARP_FEATURE_WHITE_BALANCE:
-        b = getOption(RS2_OPTION_ENABLE_AUTO_WHITE_BALANCE, m_color_sensor, (float&) isActive); //TODO check if this exotic conversion works
+        b = getOption(RS2_OPTION_ENABLE_AUTO_WHITE_BALANCE, m_color_sensor, response); //TODO check if this exotic conversion works
+        *isActive = (bool) response;
         return b;
     case YARP_FEATURE_EXPOSURE:
-        b = getOption(RS2_OPTION_ENABLE_AUTO_EXPOSURE, m_color_sensor, (float&) isActive); //TODO check if this exotic conversion works
+        b = getOption(RS2_OPTION_ENABLE_AUTO_EXPOSURE, m_color_sensor, response); //TODO check if this exotic conversion works
+        *isActive = (bool) response;
         return b;
     default:
         return false;
