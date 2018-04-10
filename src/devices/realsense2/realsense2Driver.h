@@ -75,6 +75,7 @@ namespace yarp
  * |                              |  accuracy           | double              |  Read / write   | meters         |   -           |  No                              | Accuracy of the device, as the depth measurement error at 1 meter distance             |  Note that only few realsense devices allows to set it                |
  * |                              |  framerate          | int                 |  Read / Write   | fps            |   30          |  No                              | Framerate of the sensor                                                                |                                                                       |
  * |                              |  enableEmitter      | bool                |  Read / Write   | -              |   true        |  No                              | Flag for enabling the IR emitter(if supported by the sensor)                           |                                                                       |
+ * |                              |  needAlignment      | bool                |  Read / Write   | -              |   true        |  No                              | Flag for enabling the alignment of the depth frame over the rgb frame                  |  This operation could be heavy, set it to false to increase the fps   |
  * |  HW_DESCRIPTION              |      -              |  group              |                 | -              |   -           |  Yes                             | Hardware description of device property.                                               |  Read only property. Setting will be disabled                         |
  * |                              |  clipPlanes         | double, double      |  Read / write   | meters         |   -           |  No                              | Minumum and maximum distance at which an object is seen by the depth sensor            |  parameter introduced mainly for simulated sensors, it can be used to set the clip planes if Openni gives wrong values |
  *
@@ -91,6 +92,7 @@ depthResolution (640 480)    #Note the parentesys
 rgbResolution   (640 480)
 framerate       30
 enableEmitter   true
+needAlignment   true
 
 [HW_DESCRIPTION]
 clipPlanes (0.2 10.0)

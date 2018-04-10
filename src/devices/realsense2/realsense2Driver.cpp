@@ -28,6 +28,7 @@ constexpr char depthRes       [] = "depthResolution";
 constexpr char rgbRes         [] = "rgbResolution";
 constexpr char framerate      [] = "framerate";
 constexpr char enableEmitter  [] = "enableEmitter";
+constexpr char needAlignment  [] = "needAlignment";
 
 
 static std::map<std::string, RGBDSensorParamParser::RGBDParam> params_map =
@@ -37,7 +38,8 @@ static std::map<std::string, RGBDSensorParamParser::RGBDParam> params_map =
     {depthRes,       RGBDSensorParamParser::RGBDParam(depthRes,        2)},
     {rgbRes,         RGBDSensorParamParser::RGBDParam(rgbRes,          2)},
     {framerate,      RGBDSensorParamParser::RGBDParam(framerate,       1)},
-    {enableEmitter,  RGBDSensorParamParser::RGBDParam(enableEmitter,   1)}
+    {enableEmitter,  RGBDSensorParamParser::RGBDParam(enableEmitter,   1)},
+    {needAlignment,  RGBDSensorParamParser::RGBDParam(needAlignment,   1)}
 };
 
 static std::string get_device_information(const rs2::device& dev)
@@ -592,7 +594,6 @@ bool realsense2Driver::setParams()
     }
 
     //EMITTER
-
     if (params_map[enableEmitter].isSetting && ret)
     {
         Value& v = params_map[enableEmitter].val[0];
@@ -606,6 +607,20 @@ bool realsense2Driver::setParams()
         {
             settingErrorMsg("Setting param " + params_map[enableEmitter].name + " failed... quitting.", ret);
         }
+    }
+
+    //ALIGNMENT
+    if (params_map[needAlignment].isSetting && ret)
+    {
+        Value& v = params_map[needAlignment].val[0];
+        if (!v.isBool())
+        {
+            settingErrorMsg("Param " + params_map[needAlignment].name + " is not a bool as it should be.", ret);
+            return false;
+        }
+
+        m_needAlignment = v.asBool();
+
     }
 
 
@@ -944,9 +959,12 @@ bool realsense2Driver::getDepthImage(ImageOf<PixelFloat>& depthImage, Stamp* tim
 {
     std::lock_guard<std::mutex> guard(m_mutex);
     rs2::frameset data = m_pipeline.wait_for_frames();
-    rs2::align align(RS2_STREAM_COLOR);
-    auto aligned_frames = align.process(data);
-    return getImage(depthImage, timeStamp, aligned_frames);
+    if (m_needAlignment)
+    {
+        rs2::align align(RS2_STREAM_COLOR);
+        data = align.process(data);
+    }
+    return getImage(depthImage, timeStamp, data);
 }
 
 bool realsense2Driver::getImage(FlexImage& Frame, Stamp *timeStamp, rs2::frameset &sourceFrame)
@@ -1013,9 +1031,12 @@ bool realsense2Driver::getImages(FlexImage& colorFrame, ImageOf<PixelFloat>& dep
 {
     std::lock_guard<std::mutex> guard(m_mutex);
     rs2::frameset data = m_pipeline.wait_for_frames();
-    rs2::align align(RS2_STREAM_COLOR);
-    auto aligned_frames = align.process(data);
-    return getImage(colorFrame, colorStamp, aligned_frames) & getImage(depthFrame, depthStamp, aligned_frames);
+    if (m_needAlignment)
+    {
+        rs2::align align(RS2_STREAM_COLOR);
+        data = align.process(data);
+    }
+    return getImage(colorFrame, colorStamp, data) & getImage(depthFrame, depthStamp, data);
 }
 
 IRGBDSensor::RGBDSensor_status realsense2Driver::getSensorStatus()
