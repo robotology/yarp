@@ -270,6 +270,7 @@ bool RGBDSensorWrapper::fromConfig(yarp::os::Searchable &config)
 
         if (!rosGroup.check("use_ROS"))
         {
+            yError()<<"RGBDSensorWrapper: missing use_ROS parameter";
             return false;
         }
 
