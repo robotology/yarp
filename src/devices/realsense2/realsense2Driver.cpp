@@ -450,7 +450,11 @@ void realsense2Driver::fallback()
 
 bool realsense2Driver::initializeRealsenseDevice()
 {
-    // TODO get configurations of the device, and read the value from the conf file
+    if (!params_map[rgbRes].isSetting || !params_map[depthRes].isSetting)
+    {
+        yError()<<"realsense2Driver: missing depthResolution or rgbResolution from [SETTINGS]";
+        return false;
+    }
     double colorW = params_map[rgbRes].val[0].asDouble();
     double colorH = params_map[rgbRes].val[1].asDouble();
     double depthW = params_map[depthRes].val[0].asDouble();
