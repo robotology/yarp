@@ -6,8 +6,8 @@
 * BSD-3-Clause license. See the accompanying LICENSE file for details.
 */
 
+#include <yarp/os/api.h>
 #include <yarp/os/Mutex.h>
-#include <chrono>
 #include <functional>
 
 namespace yarp {
@@ -18,7 +18,7 @@ namespace yarp {
     }
 }
 
-struct yarp::os::YarpTimerEvent
+struct YARP_OS_API yarp::os::YarpTimerEvent
 {
     /**
      * @brief lastExpected when the last callback actually happened
@@ -52,7 +52,7 @@ struct yarp::os::YarpTimerEvent
     unsigned int runCount;
 };
 
-struct yarp::os::TimerSettings
+struct YARP_OS_API yarp::os::TimerSettings
 {
     TimerSettings(double inRate) :
             rate(inRate),
@@ -83,15 +83,15 @@ struct yarp::os::TimerSettings
 
 
     /**
-    * @param rate the rate of the timer in seconds
-    * @param totalTime the life of the timer in seconds. 0 == infinite.
-    *        The lower between totalTime and totalRunCount*rate + execution
-    *        delay will stop the timer
-    * @param totalRunCount the total count of execution. 0 == infinite.
-    *        The lower between totalTime and totalRunCount*rate + execution
-    *        delay will stop the timer
-    * @param tolerance the tolerance while checking the timer life
-    */
+     * @param rate the rate of the timer in seconds
+     * @param totalTime the life of the timer in seconds. 0 == infinite.
+     *        The lower between totalTime and totalRunCount*rate + execution
+     *        delay will stop the timer
+     * @param totalRunCount the total count of execution. 0 == infinite.
+     *        The lower between totalTime and totalRunCount*rate + execution
+     *        delay will stop the timer
+     * @param tolerance the tolerance while checking the timer life
+     */
     double rate;
     double totalTime;
     size_t totalRunCount;
