@@ -113,6 +113,7 @@ set(YARP_OS_HDRS include/yarp/os/AbstractCarrier.h
                  include/yarp/os/Things.h
                  include/yarp/os/Thread.h
                  include/yarp/os/Time.h
+                 include/yarp/os/Timer.h
                  include/yarp/os/TwoWayStream.h
                  include/yarp/os/Type.h
                  include/yarp/os/TypedReader.h
@@ -313,6 +314,7 @@ set(YARP_OS_SRCS src/AbstractCarrier.cpp
                  src/Thread.cpp
                  src/ThreadImpl.cpp
                  src/Time.cpp
+                 src/Timer.cpp
                  src/TwoWayStream.cpp
                  src/Type.cpp
                  src/UdpCarrier.cpp

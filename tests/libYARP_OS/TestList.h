@@ -60,6 +60,7 @@ extern yarp::os::impl::UnitTest& getPublisherTest();
 extern yarp::os::impl::UnitTest& getLogTest();
 extern yarp::os::impl::UnitTest& getLogStreamTest();
 extern yarp::os::impl::UnitTest& getMessageStackTest();
+extern yarp::os::impl::UnitTest& getTimerTest();
 extern yarp::os::impl::UnitTest& getUnitTestTest();
 
 extern yarp::os::impl::UnitTest& getSystemInfoTest();
@@ -106,6 +107,7 @@ public:
         root.add(getLogTest());
         root.add(getLogStreamTest());
         root.add(getMessageStackTest());
+        root.add(getTimerTest());
         root.add(getUnitTestTest());
         root.add(getSystemInfoTest());
     }
