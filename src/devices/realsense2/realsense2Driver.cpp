@@ -28,6 +28,7 @@ constexpr char depthRes       [] = "depthResolution";
 constexpr char rgbRes         [] = "rgbResolution";
 constexpr char framerate      [] = "framerate";
 constexpr char enableEmitter  [] = "enableEmitter";
+constexpr char needAlignment  [] = "needAlignment";
 
 
 static std::map<std::string, RGBDSensorParamParser::RGBDParam> params_map =
@@ -37,7 +38,8 @@ static std::map<std::string, RGBDSensorParamParser::RGBDParam> params_map =
     {depthRes,       RGBDSensorParamParser::RGBDParam(depthRes,        2)},
     {rgbRes,         RGBDSensorParamParser::RGBDParam(rgbRes,          2)},
     {framerate,      RGBDSensorParamParser::RGBDParam(framerate,       1)},
-    {enableEmitter,  RGBDSensorParamParser::RGBDParam(enableEmitter,   1)}
+    {enableEmitter,  RGBDSensorParamParser::RGBDParam(enableEmitter,   1)},
+    {needAlignment,  RGBDSensorParamParser::RGBDParam(needAlignment,   1)}
 };
 
 static std::string get_device_information(const rs2::device& dev)
@@ -340,7 +342,8 @@ static size_t bytesPerPixel(const rs2_format format)
 
 realsense2Driver::realsense2Driver() : m_depth_sensor(nullptr), m_color_sensor(nullptr),
                                        m_paramParser(nullptr), m_verbose(false),
-                                       m_initialized(false), m_fps(0)
+                                       m_initialized(false), m_stereoMode(false),
+                                       m_needAlignment(true), m_fps(0)
 {
 
     m_paramParser = new RGBDSensorParamParser();
@@ -449,14 +452,22 @@ void realsense2Driver::fallback()
 
 bool realsense2Driver::initializeRealsenseDevice()
 {
-    // TODO get configurations of the device, and read the value from the conf file
+    if (!params_map[rgbRes].isSetting || !params_map[depthRes].isSetting)
+    {
+        yError()<<"realsense2Driver: missing depthResolution or rgbResolution from [SETTINGS]";
+        return false;
+    }
     double colorW = params_map[rgbRes].val[0].asDouble();
     double colorH = params_map[rgbRes].val[1].asDouble();
     double depthW = params_map[depthRes].val[0].asDouble();
     double depthH = params_map[depthRes].val[1].asDouble();
+
     m_cfg.enable_stream(RS2_STREAM_COLOR, colorW, colorH, RS2_FORMAT_RGB8, m_fps);
     m_cfg.enable_stream(RS2_STREAM_DEPTH, depthW, depthH, RS2_FORMAT_Z16, m_fps);
-
+    if (m_stereoMode) {
+        m_cfg.enable_stream(RS2_STREAM_INFRARED, 1, colorW, colorH, RS2_FORMAT_Y8, m_fps);
+        m_cfg.enable_stream(RS2_STREAM_INFRARED, 2, colorW, colorH, RS2_FORMAT_Y8, m_fps);
+    }
     if (!pipelineStartup())
         return false;
     m_initialized = true;
@@ -527,6 +538,12 @@ void realsense2Driver::updateTransformations()
     m_color_intrin = color_stream_profile.get_intrinsics();
     m_depth_to_color = depth_stream_profile.get_extrinsics_to(color_stream_profile);
     m_color_to_depth = color_stream_profile.get_extrinsics_to(depth_stream_profile);
+
+    if (m_stereoMode) {
+        rs2::video_stream_profile infrared_stream_profile = rs2::video_stream_profile(pipeline_profile.get_stream(RS2_STREAM_INFRARED));
+        m_infrared_intrin = infrared_stream_profile.get_intrinsics();
+    }
+
 }
 
 
@@ -577,7 +594,6 @@ bool realsense2Driver::setParams()
     }
 
     //EMITTER
-
     if (params_map[enableEmitter].isSetting && ret)
     {
         Value& v = params_map[enableEmitter].val[0];
@@ -591,6 +607,20 @@ bool realsense2Driver::setParams()
         {
             settingErrorMsg("Setting param " + params_map[enableEmitter].name + " failed... quitting.", ret);
         }
+    }
+
+    //ALIGNMENT
+    if (params_map[needAlignment].isSetting && ret)
+    {
+        Value& v = params_map[needAlignment].val[0];
+        if (!v.isBool())
+        {
+            settingErrorMsg("Param " + params_map[needAlignment].name + " is not a bool as it should be.", ret);
+            return false;
+        }
+
+        m_needAlignment = v.asBool();
+
     }
 
 
@@ -643,6 +673,10 @@ bool realsense2Driver::open(Searchable& config)
     }
 
     m_verbose = config.check("verbose");
+    if (config.check("stereoMode")) {
+        m_stereoMode = config.find("stereoMode").asBool();
+    }
+
     if (!m_paramParser->parseParam(config, params))
     {
         yError()<<"realsense2Driver: failed to parse the parameters";
@@ -705,6 +739,7 @@ bool realsense2Driver::setDepthResolution(int width, int height)
         if (m_initialized)
         {
             fallback();
+            return false;
         }
     }
 
@@ -717,18 +752,31 @@ bool realsense2Driver::setDepthResolution(int width, int height)
 
 bool realsense2Driver::setRgbResolution(int width, int height)
 {
+    bool fail = true;
     if (m_color_sensor && isSupportedFormat(*m_color_sensor, width, height, m_fps, m_verbose)) {
         m_cfg.enable_stream(RS2_STREAM_COLOR, width, height, RS2_FORMAT_RGB8, m_fps);
         m_cfg.enable_stream(RS2_STREAM_DEPTH, m_depth_intrin.width, m_depth_intrin.height, RS2_FORMAT_Z16, m_fps);
-    }
-    else
-    {
-        if (m_initialized)
+        fail = false;
+        if (m_stereoMode)
         {
-            fallback();
+            if (m_depth_sensor && isSupportedFormat(*m_depth_sensor, width, height, m_fps, m_verbose))
+            {
+                m_cfg.enable_stream(RS2_STREAM_INFRARED, 1, width, height, RS2_FORMAT_Y8, m_fps);
+                m_cfg.enable_stream(RS2_STREAM_INFRARED, 2, width, height, RS2_FORMAT_Y8, m_fps);
+            }
+            else
+            {
+                fail = true;
+            }
         }
-
     }
+
+    if (m_initialized && fail)
+    {
+        fallback();
+        return false;
+    }
+
     if (!pipelineRestart())
         return false;
 
@@ -911,9 +959,12 @@ bool realsense2Driver::getDepthImage(ImageOf<PixelFloat>& depthImage, Stamp* tim
 {
     std::lock_guard<std::mutex> guard(m_mutex);
     rs2::frameset data = m_pipeline.wait_for_frames();
-    rs2::align align(RS2_STREAM_COLOR);
-    auto aligned_frames = align.process(data);
-    return getImage(depthImage, timeStamp, aligned_frames);
+    if (m_needAlignment)
+    {
+        rs2::align align(RS2_STREAM_COLOR);
+        data = align.process(data);
+    }
+    return getImage(depthImage, timeStamp, data);
 }
 
 bool realsense2Driver::getImage(FlexImage& Frame, Stamp *timeStamp, rs2::frameset &sourceFrame)
@@ -980,9 +1031,12 @@ bool realsense2Driver::getImages(FlexImage& colorFrame, ImageOf<PixelFloat>& dep
 {
     std::lock_guard<std::mutex> guard(m_mutex);
     rs2::frameset data = m_pipeline.wait_for_frames();
-    rs2::align align(RS2_STREAM_COLOR);
-    auto aligned_frames = align.process(data);
-    return getImage(colorFrame, colorStamp, aligned_frames) & getImage(depthFrame, depthStamp, aligned_frames);
+    if (m_needAlignment)
+    {
+        rs2::align align(RS2_STREAM_COLOR);
+        data = align.process(data);
+    }
+    return getImage(colorFrame, colorStamp, data) & getImage(depthFrame, depthStamp, data);
 }
 
 IRGBDSensor::RGBDSensor_status realsense2Driver::getSensorStatus()
@@ -1039,11 +1093,29 @@ bool realsense2Driver::setFeature(int feature, double value)
     {
     case YARP_FEATURE_EXPOSURE:
         if(optionPerc2Value(RS2_OPTION_EXPOSURE, m_color_sensor, value, valToSet))
+        {
             b = setOption(RS2_OPTION_EXPOSURE, m_color_sensor, valToSet);
+            if (m_stereoMode)
+            {
+                if(optionPerc2Value(RS2_OPTION_EXPOSURE, m_depth_sensor, value, valToSet))
+                {
+                    b &= setOption(RS2_OPTION_EXPOSURE, m_depth_sensor, valToSet);
+                }
+            }
+        }
         break;
     case YARP_FEATURE_GAIN:
         if(optionPerc2Value(RS2_OPTION_GAIN, m_color_sensor,value, valToSet))
+        {
             b = setOption(RS2_OPTION_GAIN, m_color_sensor, valToSet);
+            if (m_stereoMode)
+            {
+                if(optionPerc2Value(RS2_OPTION_EXPOSURE, m_depth_sensor, value, valToSet))
+                {
+                    b &= setOption(RS2_OPTION_EXPOSURE, m_depth_sensor, valToSet);
+                }
+            }
+        }
         break;
     case YARP_FEATURE_FRAME_RATE:
     {
@@ -1165,7 +1237,7 @@ bool realsense2Driver::hasOnOff(  int feature, bool *HasOnOff)
     }
 
     cameraFeature_id_t f = static_cast<cameraFeature_id_t>(feature);
-    if (f == YARP_FEATURE_WHITE_BALANCE || f == YARP_FEATURE_MIRROR)
+    if (f == YARP_FEATURE_WHITE_BALANCE || f == YARP_FEATURE_MIRROR || f == YARP_FEATURE_EXPOSURE)
     {
         *HasOnOff = true;
         return true;
@@ -1192,10 +1264,10 @@ bool realsense2Driver::setActive( int feature, bool onoff)
     switch(feature)
     {
     case YARP_FEATURE_WHITE_BALANCE:
-        b = setOption(RS2_OPTION_ENABLE_AUTO_WHITE_BALANCE, m_color_sensor, (float) onoff); //TODO check if this exotic conversion works
+        b = setOption(RS2_OPTION_ENABLE_AUTO_WHITE_BALANCE, m_color_sensor, (float) onoff);
         return b;
     case YARP_FEATURE_EXPOSURE:
-        b = setOption(RS2_OPTION_ENABLE_AUTO_EXPOSURE, m_color_sensor, (float) onoff); //TODO check if this exotic conversion works
+        b = setOption(RS2_OPTION_ENABLE_AUTO_EXPOSURE, m_color_sensor, (float) onoff);
         return b;
     default:
         return false;
@@ -1218,13 +1290,16 @@ bool realsense2Driver::getActive( int feature, bool *isActive)
         yError() << "feature does not have OnOff.. call hasOnOff() to know if a specific feature support OnOff mode";
         return false;
     }
+    float response = 0.0;
     switch(feature)
     {
     case YARP_FEATURE_WHITE_BALANCE:
-        b = getOption(RS2_OPTION_ENABLE_AUTO_WHITE_BALANCE, m_color_sensor, (float&) isActive); //TODO check if this exotic conversion works
+        b = getOption(RS2_OPTION_ENABLE_AUTO_WHITE_BALANCE, m_color_sensor, response); //TODO check if this exotic conversion works
+        *isActive = (bool) response;
         return b;
     case YARP_FEATURE_EXPOSURE:
-        b = getOption(RS2_OPTION_ENABLE_AUTO_EXPOSURE, m_color_sensor, (float&) isActive); //TODO check if this exotic conversion works
+        b = getOption(RS2_OPTION_ENABLE_AUTO_EXPOSURE, m_color_sensor, response); //TODO check if this exotic conversion works
+        *isActive = (bool) response;
         return b;
     default:
         return false;
@@ -1388,4 +1463,56 @@ bool realsense2Driver::setOnePush(int feature)
     setMode(feature, MODE_MANUAL);
 
     return true;
+}
+
+bool realsense2Driver::getImage(yarp::sig::ImageOf<yarp::sig::PixelMono>& image)
+{
+    if (!m_stereoMode)
+    {
+        yError()<<"realsense2Driver: infrared stereo stream not enabled";
+        return false;
+    }
+
+    image.resize(width(), height());
+    std::lock_guard<std::mutex> guard(m_mutex);
+    rs2::frameset data = m_pipeline.wait_for_frames();
+
+    rs2::video_frame frm1 = data.get_infrared_frame(1);
+    rs2::video_frame frm2 = data.get_infrared_frame(2);
+
+    int pixCode = pixFormatToCode(frm1.get_profile().format());
+
+    if (pixCode != VOCAB_PIXEL_MONO && pixCode != VOCAB_PIXEL_MONO16)
+    {
+        yError() << "realsense2Driver: expecting Pixel Format MONO or MONO16";
+        return false;
+    }
+
+    int singleImage_rowSizeByte   =  image.getRowSize()/2;
+    unsigned char * pixelLeft     =  (unsigned char*) (frm1.get_data());
+    unsigned char * pixelRight    =  (unsigned char*) (frm2.get_data());
+    unsigned char * pixelOutLeft  =  image.getRawImage();
+    unsigned char * pixelOutRight =  image.getRawImage() + singleImage_rowSizeByte;
+
+    for (int h=0; h< image.height(); h++)
+    {
+        memcpy(pixelOutLeft, pixelLeft, singleImage_rowSizeByte);
+        memcpy(pixelOutRight, pixelRight, singleImage_rowSizeByte);
+        pixelOutLeft  += 2*singleImage_rowSizeByte;
+        pixelOutRight += 2*singleImage_rowSizeByte;
+        pixelLeft     += singleImage_rowSizeByte;
+        pixelRight    += singleImage_rowSizeByte;
+    }
+    return true;
+
+}
+
+int  realsense2Driver::height() const
+{
+    return m_infrared_intrin.height;
+}
+
+int  realsense2Driver::width() const
+{
+    return m_infrared_intrin.width*2;
 }

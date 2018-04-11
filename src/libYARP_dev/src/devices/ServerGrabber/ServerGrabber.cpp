@@ -1230,7 +1230,7 @@ bool ServerGrabber::threadInit()
             }
             else
             {
-                img_Raw->resize(fgImage->width(),fgImage->height());
+                img_Raw->resize(fgImageRaw->width(), fgImageRaw->height());
             }
         }
     }
