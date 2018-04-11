@@ -765,7 +765,6 @@ void NetworkBase::initMinimum(yarp::os::yarpClockType clockType, yarp::os::Clock
         ThreadImpl::init();
         BottleImpl::getNull();
         Bottle::getNullBottle();
-        Logger::get();
         ConstString quiet = getEnvironment("YARP_QUIET");
         Bottle b2(quiet.c_str());
         if (b2.get(0).asInt()>0) {
@@ -787,7 +786,6 @@ void NetworkBase::initMinimum(yarp::os::yarpClockType clockType, yarp::os::Clock
                           "YARP_STACK_SIZE set to %d", sz);
         }
 
-        Logger::get().setPid();
         // make sure system is actually able to do things fast
         Time::turboBoost();
 
@@ -807,7 +805,6 @@ void NetworkBase::finiMinimum() {
         Carriers::removeInstance();
         NameClient::removeNameClient();
         removeNameSpace();
-        Logger::fini();
         Bottle::fini();
         BottleImpl::fini();
         ThreadImpl::fini();

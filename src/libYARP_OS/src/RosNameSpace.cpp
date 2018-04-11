@@ -18,6 +18,7 @@
 #include <yarp/os/impl/PlatformLimits.h>
 
 #include <cstdio>
+#include <cstdlib>
 
 using namespace yarp::os;
 using namespace yarp::os::impl;
