@@ -225,7 +225,7 @@ guidelines, then communication will not be a problem:
 \section note_ports_example A worked example
 
 Make sure you've followed the instructions for installing and testing
-your YARP configuration on the website (http://yarp0.sourceforge.net).
+your YARP configuration on the website (http://www.yarp.it).
 Now start some three terminals and do the following:
 
 \verbatim
