@@ -4,10 +4,7 @@
 # This software may be modified and distributed under the terms of the
 # BSD-3-Clause license. See the accompanying LICENSE file for details.
 
-if(ENABLE_yarpmod_multipleanalogsensorsclient OR
-   ENABLE_yarpmod_multipleanalogsensorsremapper OR
-   ENABLE_yarpmod_multipleanalogsensorsserver)
-
+if(CREATE_DEVICE_LIBRARY_MODULES)
   yarp_add_idl(MAS_THRIFT_GEN_FILES "${CMAKE_CURRENT_SOURCE_DIR}/multipleAnalogSensorsSerializations.thrift")
 
   # See https://gitlab.kitware.com/cmake/cmake/issues/14778
