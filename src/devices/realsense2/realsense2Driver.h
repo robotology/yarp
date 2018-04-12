@@ -220,6 +220,7 @@ private:
     bool m_stereoMode;
     bool m_needAlignment;
     int m_fps;
+    float m_scale;
     std::vector<cameraFeature_id_t> m_supportedFeatures;
 #endif
 };

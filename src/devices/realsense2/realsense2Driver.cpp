@@ -343,7 +343,8 @@ static size_t bytesPerPixel(const rs2_format format)
 realsense2Driver::realsense2Driver() : m_depth_sensor(nullptr), m_color_sensor(nullptr),
                                        m_paramParser(nullptr), m_verbose(false),
                                        m_initialized(false), m_stereoMode(false),
-                                       m_needAlignment(true), m_fps(0)
+                                       m_needAlignment(true), m_fps(0),
+                                       m_scale(0.0)
 {
 
     m_paramParser = new RGBDSensorParamParser();
@@ -517,11 +518,17 @@ bool realsense2Driver::initializeRealsenseDevice()
     for (size_t i=0; i < m_sensors.size(); i++)
     {
         if (m_sensors[i].is<rs2::depth_sensor>())
-            m_depth_sensor = &m_sensors[i];
+        {
+            m_depth_sensor =  &m_sensors[i];
+            if (!getOption(RS2_OPTION_DEPTH_UNITS, m_depth_sensor, m_scale))
+            {
+                yError()<<"relsense2Driver: failed to retrieve scale";
+                return false;
+            }
+        }
         else
             m_color_sensor = &m_sensors[i];
     }
-
 
     // Get stream intrinsics & extrinsics
     updateTransformations();
@@ -1014,12 +1021,12 @@ bool realsense2Driver::getImage(depthImage& Frame, Stamp *timeStamp, const rs2::
 
     Frame.resize(w, h);
 
-    for (int x = 0; x < w; x++)
+    float* rawImage = &Frame.pixel(0,0);
+    const uint16_t * rawImageRs =(const uint16_t *) depth_frm.get_data();
+
+    for(int i = 0; i < w * h; i++)
     {
-        for (int y = 0; y < h ; y++)
-        {
-            Frame.safePixel(x, y) = depth_frm.get_distance(x, y);
-        }
+        rawImage[i] = m_scale * rawImageRs[i];
     }
 
     m_depth_stamp.update();
