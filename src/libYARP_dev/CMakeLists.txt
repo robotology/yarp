@@ -89,7 +89,8 @@ set(YARP_dev_HDRS include/yarp/dev/all.h
                   include/yarp/dev/RGBDSensorParamParser.h
                   include/yarp/dev/SerialInterfaces.h
                   include/yarp/dev/ServiceInterfaces.h
-                  include/yarp/dev/Wrapper.h)
+                  include/yarp/dev/Wrapper.h
+                  include/yarp/dev/IVirtualAnalogSensorImpl.h)
 
 if (CREATE_LIB_MATH)
   list(APPEND YARP_dev_HDRS include/yarp/dev/IFrameTransform.h
@@ -136,9 +137,8 @@ set(YARP_dev_SRCS src/ControlBoardInterfacesImpl.cpp
                   src/PopulateDrivers.cpp
                   src/PWMControlImpl.cpp
                   src/RemoteCalibratorImpl.cpp
-                  src/RGBDSensorParamParser.cpp
-                  src/TorqueControlImpl.cpp)
-
+                  src/TorqueControlImpl.cpp
+                  src/RGBDSensorParamParser.cpp                  src/VirtualAnalogSensorImpl.cpp)
 if(CREATE_LIB_MATH)
   list(APPEND YARP_dev_SRCS src/IFrameTransform.cpp
                             src/IMap2D.cpp

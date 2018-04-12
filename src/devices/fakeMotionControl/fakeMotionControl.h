@@ -28,6 +28,8 @@
 #include <yarp/dev/ControlBoardInterfaces.h>
 #include <yarp/dev/ControlBoardInterfacesImpl.h>
 #include <yarp/dev/ControlBoardInterfacesImpl.inl>
+#include <yarp/dev/IVirtualAnalogSensor.h>
+#include <yarp/dev/IVirtualAnalogSensorImpl.h>
 
 namespace yarp {
     namespace dev {
@@ -103,6 +105,7 @@ class yarp::dev::FakeMotionControl :    public DeviceDriver,
                                         public IImpedanceControlRaw,
                                         public IInteractionModeRaw,
                                         public IAxisInfoRaw,
+                                        public IVirtualAnalogSensorRaw, //*
                                         public ImplementControlCalibration2<FakeMotionControl, IControlCalibration2>,
                                         public ImplementAmplifierControl<FakeMotionControl, IAmplifierControl>,
                                         public ImplementPidControl,
@@ -119,7 +122,8 @@ class yarp::dev::FakeMotionControl :    public DeviceDriver,
                                         public ImplementCurrentControl,
                                         public ImplementPWMControl,
                                         public ImplementMotor,
-                                        public ImplementAxisInfo
+                                        public ImplementAxisInfo,
+                                        public ImplementVirtualAnalogSensor //*
 {
 private:
     enum VerboseLevel
@@ -196,10 +200,9 @@ private:
     bool  *checking_motiondone;                 /* flag telling if I'm already waiting for motion done */
     double *_last_position_move_time;           /** time stamp for last received position move command*/
     double *_motorPwmLimits;                    /** motors PWM limits*/
+    double *_torques;                           /** joint torques */
 
-    // TODO doubled!!! optimize using just one of the 2!!!
 //     ImpedanceParameters *_impedance_params;     /** impedance parameters */
-//     eOmc_impedance_t *_cacheImpedance;          /* cache impedance value to split up the 2 sets */
 
     bool        verbosewhenok;
     bool        useRawEncoderData;
@@ -486,6 +489,11 @@ public:
     virtual bool setRefCurrentsRaw(const int n_joint, const int *joints, const double *t) override;
     virtual bool getRefCurrentsRaw(double *t) override;
     virtual bool getRefCurrentRaw(int j, double *t) override;
+
+    yarp::dev::VAS_status getVirtualAnalogSensorStatusRaw(int ch) override;
+    int getVirtualAnalogSensorChannelsRaw() override;
+    bool updateVirtualAnalogSensorMeasureRaw(yarp::sig::Vector &measure) override;
+    bool updateVirtualAnalogSensorMeasureRaw(int ch, double &measure) override;
 
     void run() override;
 private:

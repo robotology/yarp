@@ -205,6 +205,7 @@ bool FakeMotionControl::alloc(int nj)
     _torqueSensorId= allocAndCheck<int>(nj);
     _torqueSensorChan= allocAndCheck<int>(nj);
     _maxTorque=allocAndCheck<double>(nj);
+    _torques = allocAndCheck<double>(nj);
     _maxJntCmdVelocity = allocAndCheck<double>(nj);
     _maxMotorVelocity = allocAndCheck<double>(nj);
     _newtonsToSensor=allocAndCheck<double>(nj);
@@ -347,6 +348,7 @@ bool FakeMotionControl::dealloc()
     checkAndDestroy(_rotorlimits_max);
     checkAndDestroy(_rotorlimits_min);
     checkAndDestroy(_last_position_move_time);
+    checkAndDestroy(_torques);
 
     return true;
 }
@@ -370,6 +372,7 @@ FakeMotionControl::FakeMotionControl() :
     ImplementPWMControl(this),
     ImplementMotor(this),
     ImplementAxisInfo(this),
+    ImplementVirtualAnalogSensor(this),
     _mutex(1)
 //     SAFETY_THRESHOLD(2.0)
 {
@@ -450,6 +453,7 @@ FakeMotionControl::FakeMotionControl() :
     _kbemf_scale      = nullptr;
     _ktau_scale       = nullptr;
     _filterType       = nullptr;
+    _torques          = nullptr;
     _positionControlUnits = P_MACHINE_UNITS;
     _torqueControlUnits = T_MACHINE_UNITS;
     _torqueControlEnabled = false;
@@ -594,6 +598,7 @@ bool FakeMotionControl::open(yarp::os::Searchable &config)
     ImplementAxisInfo::initialize(_njoints, _axisMap);
     ImplementPWMControl::initialize(_njoints, _axisMap, _dutycycleToPWM);
     ImplementCurrentControl::initialize(_njoints, _axisMap, _ampsToSensor);
+    ImplementVirtualAnalogSensor::initialize(_njoints, _axisMap, _newtonsToSensor);
 
     //start the rateThread
     bool init = this->start();
@@ -1458,6 +1463,7 @@ bool FakeMotionControl::close()
     ImplementPositionDirect::uninitialize();
     ImplementInteractionMode::uninitialize();
     ImplementAxisInfo::uninitialize();
+    ImplementVirtualAnalogSensor::uninitialize();
 
 //     cleanup();
 
@@ -2735,11 +2741,16 @@ bool FakeMotionControl::getVelLimitsRaw(int axis, double *min, double *max)
 // Torque control
 bool FakeMotionControl::getTorqueRaw(int j, double *t)
 {
+    *t = _torques[j];
     return true;
 }
 
 bool FakeMotionControl::getTorquesRaw(double *t)
 {
+    for (int i = 0; i < _njoints; i++)
+    {
+        t[i]= _torques[i];
+    }
     return true;
 }
 
@@ -3172,6 +3183,31 @@ bool FakeMotionControl::getRefCurrentRaw(int j, double *t)
 // {
 //     return false;
 // }
+
+yarp::dev::VAS_status  FakeMotionControl::getVirtualAnalogSensorStatusRaw(int ch)
+{
+    return yarp::dev::VAS_status::VAS_OK;
+}
+
+int  FakeMotionControl::getVirtualAnalogSensorChannelsRaw()
+{
+    return _njoints;
+}
+
+bool FakeMotionControl::updateVirtualAnalogSensorMeasureRaw(yarp::sig::Vector &measure)
+{
+    for (int i = 0; i < _njoints; i++)
+    {
+        measure[i] = _torques[i];
+    }
+    return true;
+}
+
+bool FakeMotionControl::updateVirtualAnalogSensorMeasureRaw(int ch, double &measure)
+{
+    _torques[ch] = measure;
+    return true;
+}
 
 
 // eof
