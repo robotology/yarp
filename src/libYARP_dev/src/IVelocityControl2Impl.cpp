@@ -15,13 +15,13 @@ using namespace yarp::dev;
 #define JOINTIDCHECK if (j >= castToMapper(helper)->axes()){yError("joint id out of bound"); return false;}
 #define MJOINTIDCHECK(i) if (joints[i] >= castToMapper(helper)->axes()){yError("joint id out of bound"); return false;}
 #define PJOINTIDCHECK(j) if (j >= castToMapper(helper)->axes()){yError("joint id out of bound"); return false;}
+#define MJOINTIDCHECK_DEL1(i) if (joints[i] >= castToMapper(helper)->axes()){yError("joint id out of bound"); delete[] tmp_joints; return false;}
+#define MJOINTIDCHECK_DEL2(i) if (joints[i] >= castToMapper(helper)->axes()){yError("joint id out of bound"); delete[] tmp_joints; delete[] tmp_vals; return false;}
 
 ImplementVelocityControl2::ImplementVelocityControl2(IVelocityControl2Raw *y) :
     iVelocity2(y),
     helper(nullptr),
-    temp_int(nullptr),
-    temp_double(nullptr),
-    tempPids()
+    nj(0)
 {
 
 }
@@ -38,13 +38,7 @@ bool ImplementVelocityControl2::initialize(int size, const int *axis_map, const 
 
     helper=(void *)(new ControlBoardHelper(size, axis_map, enc, zeros));
     yAssert (helper != nullptr);
-    temp_double = new double [size];
-    yAssert (temp_double != nullptr);
-    temp_int = new int [size];
-    yAssert (temp_int != nullptr);
-    tempPids = new Pid [size];
-    yAssert (tempPids != nullptr);
-
+    nj=size;
     return true;
 }
 
@@ -55,10 +49,6 @@ bool ImplementVelocityControl2::uninitialize()
         delete castToMapper(helper);
         helper = nullptr;
     }
-    checkAndDestroy(temp_double);
-    checkAndDestroy(temp_int);
-    checkAndDestroy(tempPids);
-
     return true;
 }
 
@@ -79,18 +69,26 @@ bool ImplementVelocityControl2::velocityMove(int j, double sp)
 
 bool ImplementVelocityControl2::velocityMove(const int n_joint, const int *joints, const double *spds)
 {
+    int *tmp_joints=new int[nj];
+    double *tmp_vals=new double[nj];
     for(int idx=0; idx<n_joint; idx++)
     {
-        MJOINTIDCHECK(idx)
-        castToMapper(helper)->velA2E(spds[idx], joints[idx], temp_double[idx], temp_int[idx]);
+        MJOINTIDCHECK_DEL2(idx)
+        castToMapper(helper)->velA2E(spds[idx], joints[idx], tmp_vals[idx], tmp_joints[idx]);
     }
-    return iVelocity2->velocityMoveRaw(n_joint, temp_int, temp_double);
+    bool ret = iVelocity2->velocityMoveRaw(n_joint, tmp_joints, tmp_vals);
+    delete [] tmp_joints;
+    delete [] tmp_vals;
+    return ret;
 }
 
 bool ImplementVelocityControl2::velocityMove(const double *sp)
 {
-    castToMapper(helper)->velA2E(sp, temp_double);
-    return iVelocity2->velocityMoveRaw(temp_double);
+    double *tmp=new double[nj];
+    castToMapper(helper)->velA2E(sp, tmp);
+    bool ret = iVelocity2->velocityMoveRaw(tmp);
+    delete [] tmp;
+    return ret;
 }
 
 bool ImplementVelocityControl2::getRefVelocity(const int j, double* vel)
@@ -106,25 +104,29 @@ bool ImplementVelocityControl2::getRefVelocity(const int j, double* vel)
 
 bool ImplementVelocityControl2::getRefVelocities(double *vels)
 {
-    bool ret=iVelocity2->getRefVelocitiesRaw(temp_double);
-    castToMapper(helper)->velE2A(temp_double, vels);
+    double *tmp=new double[nj];
+    bool ret=iVelocity2->getRefVelocitiesRaw(tmp);
+    castToMapper(helper)->velE2A(tmp, vels);
+    delete [] tmp;
     return ret;
 }
 
 bool ImplementVelocityControl2::getRefVelocities(const int n_joint, const int *joints, double *vels)
 {
+    int *tmp_joints = new int[nj];
     for(int idx=0; idx<n_joint; idx++)
     {
-        MJOINTIDCHECK(idx)
-        temp_int[idx]=castToMapper(helper)->toHw(joints[idx]);
+        MJOINTIDCHECK_DEL1(idx)
+        tmp_joints[idx]=castToMapper(helper)->toHw(joints[idx]);
     }
-
-    bool ret = iVelocity2->getRefVelocitiesRaw(n_joint, temp_int, temp_double);
+    double *tmp_vels =new double [nj];
+    bool ret = iVelocity2->getRefVelocitiesRaw(n_joint, tmp_joints, tmp_vels);
 
     for(int idx=0; idx<n_joint; idx++)
     {
-        vels[idx]=castToMapper(helper)->velE2A(temp_double[idx], temp_int[idx]);
+        vels[idx]=castToMapper(helper)->velE2A(tmp_vels[idx], tmp_joints[idx]);
     }
+    delete [] tmp_vels;
     return ret;
 }
 
@@ -139,18 +141,27 @@ bool ImplementVelocityControl2::setRefAcceleration(int j, double acc)
 
 bool ImplementVelocityControl2::setRefAccelerations(const int n_joint, const int *joints, const double *accs)
 {
+    int *tmp_joints=new int[nj];
+    double *tmp_vals=new double[nj];
     for(int idx=0; idx<n_joint; idx++)
     {
-        MJOINTIDCHECK(idx)
-        castToMapper(helper)->accA2E_abs(accs[idx], joints[idx], temp_double[idx], temp_int[idx]);
+        MJOINTIDCHECK_DEL2(idx)
+        castToMapper(helper)->accA2E_abs(accs[idx], joints[idx], tmp_vals[idx], tmp_joints[idx]);
     }
-    return iVelocity2->setRefAccelerationsRaw(n_joint, temp_int, temp_double);
+    bool ret = iVelocity2->setRefAccelerationsRaw(n_joint, tmp_joints, tmp_vals);
+    delete [] tmp_joints;
+    delete [] tmp_vals;
+    
+    return ret;
 }
 
 bool ImplementVelocityControl2::setRefAccelerations(const double *accs)
 {
-    castToMapper(helper)->accA2E_abs(accs, temp_double);
-    return iVelocity2->setRefAccelerationsRaw(temp_double);
+    double *tmp=new double[nj];
+    castToMapper(helper)->accA2E_abs(accs, tmp);
+    bool ret = iVelocity2->setRefAccelerationsRaw(tmp);
+    delete[] tmp;
+    return ret;
 }
 
 bool ImplementVelocityControl2::getRefAcceleration(int j, double *acc)
@@ -166,26 +177,31 @@ bool ImplementVelocityControl2::getRefAcceleration(int j, double *acc)
 
 bool ImplementVelocityControl2::getRefAccelerations(const int n_joint, const int *joints, double *accs)
 {
+    int * tmp_joints=new int[nj];
     for(int idx=0; idx<n_joint; idx++)
     {
-        MJOINTIDCHECK(idx)
-        temp_int[idx]=castToMapper(helper)->toHw(joints[idx]);
+        MJOINTIDCHECK_DEL1(idx)
+        tmp_joints[idx]=castToMapper(helper)->toHw(joints[idx]);
     }
-
-    bool ret = iVelocity2->getRefAccelerationsRaw(n_joint, temp_int, temp_double);
+    double *tmp_accs=new double[nj];
+    bool ret = iVelocity2->getRefAccelerationsRaw(n_joint, tmp_joints, tmp_accs);
 
     for(int idx=0; idx<n_joint; idx++)
     {
-        accs[idx]=castToMapper(helper)->accE2A_abs(temp_double[idx], temp_int[idx]);
+        accs[idx]=castToMapper(helper)->accE2A_abs(tmp_accs[idx], tmp_joints[idx]);
     }
+    delete[]tmp_joints;
+    delete[]tmp_accs;
     return ret;
 }
 
 
 bool ImplementVelocityControl2::getRefAccelerations(double *accs)
 {
-    bool ret=iVelocity2->getRefAccelerationsRaw(temp_double);
-    castToMapper(helper)->accE2A_abs(temp_double, accs);
+    double *tmp=new double[nj];
+    bool ret=iVelocity2->getRefAccelerationsRaw(tmp);
+    castToMapper(helper)->accE2A_abs(tmp, accs);
+    delete[]tmp;
     return ret;
 }
 
@@ -201,12 +217,15 @@ bool ImplementVelocityControl2::stop(int j)
 
 bool ImplementVelocityControl2::stop(const int n_joint, const int *joints)
 {
+    int *tmp_joints=new int[nj];
     for(int idx=0; idx<n_joint; idx++)
     {
-        MJOINTIDCHECK(idx)
-        temp_int[idx] = castToMapper(helper)->toHw(joints[idx]);
+        MJOINTIDCHECK_DEL1(idx)
+        tmp_joints[idx] = castToMapper(helper)->toHw(joints[idx]);
     }
-    return iVelocity2->stopRaw(n_joint, temp_int);
+    bool ret = iVelocity2->stopRaw(n_joint, tmp_joints);
+    delete[]tmp_joints;
+    return ret;
 }
 
 

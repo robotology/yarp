@@ -23,10 +23,7 @@ class YARP_dev_API yarp::dev::ImplementCurrentControl: public ICurrentControl
 protected:
     yarp::dev::ICurrentControlRaw *iCurrentRaw;
     void *helper;
-    double *temp;
-    double *temp2;
-    int    *temp_int;
-    yarp::dev::Pid *tmpPids;
+    int nj;
 
     /**
      * Initialize the internal data and alloc memory.

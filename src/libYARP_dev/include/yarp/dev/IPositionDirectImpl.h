@@ -30,8 +30,7 @@ class YARP_dev_API yarp::dev::ImplementPositionDirect : public yarp::dev::IPosit
 protected:
     IPositionDirectRaw *iPDirect;
     void    *helper;
-    int     *temp_int;
-    double  *temp_double;
+    int nj;
     /**
      * Initialize the internal data and alloc memory.
      * @param size is the number of controlled axes the driver deals with.

@@ -29,6 +29,7 @@ class YARP_dev_API yarp::dev::ImplementControlMode2: public IControlMode2
     void *helper;
     int *temp_int;
     int *temp_mode;
+    int nj;
 
     yarp::dev::IControlMode2Raw *raw;
 public:

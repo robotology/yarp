@@ -16,12 +16,10 @@ using namespace yarp::dev;
 
 ////////////////////////
 // Encoder Interface Timed Implementation
-ImplementMotor::ImplementMotor(IMotorRaw *y)
+ImplementMotor::ImplementMotor(IMotorRaw *y):nj(0)
 {
     imotor=y;
     helper = nullptr;
-    temp1=nullptr;
-    temp2=nullptr;
 }
 
 ImplementMotor::~ImplementMotor()
@@ -36,10 +34,8 @@ bool ImplementMotor:: initialize (int size, const int *amap)
 
     helper=(void *)(new ControlBoardHelper(size, amap));
     yAssert (helper != nullptr);
-    temp1=new double [size];
-    yAssert (temp1 != nullptr);
-    temp2=new double [size];
-    yAssert (temp2 != nullptr);
+
+    nj=size;
     return true;
 }
 
@@ -54,9 +50,6 @@ bool ImplementMotor::uninitialize ()
         delete castToMapper(helper);
         helper=nullptr;
     }
-
-    checkAndDestroy(temp1);
-    checkAndDestroy(temp2);
 
     return true;
 }

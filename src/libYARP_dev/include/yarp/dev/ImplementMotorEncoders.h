@@ -22,8 +22,7 @@ class YARP_dev_API yarp::dev::ImplementMotorEncoders: public IMotorEncoders
 protected:
     IMotorEncodersRaw *iMotorEncoders;
     void *helper;
-    double *temp;
-    double *temp2;
+    int nj;
 
 
     /**
