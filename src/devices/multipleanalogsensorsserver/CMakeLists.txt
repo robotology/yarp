@@ -7,8 +7,10 @@
 yarp_prepare_plugin(multipleanalogsensorsserver
                     CATEGORY device
                     TYPE yarp::dev::MultipleAnalogSensorsServer
-                    DEFAULT ON
-                    INCLUDE MultipleAnalogSensorsServer.h)
+                    INCLUDE MultipleAnalogSensorsServer.h
+                    DEPENDS "CREATE_DEVICE_LIBRARY_MODULES"
+                    DEFAULT ON)
+
 
 if(ENABLE_multipleanalogsensorsserver)
   set(CMAKE_INCLUDE_CURRENT_DIR ON)

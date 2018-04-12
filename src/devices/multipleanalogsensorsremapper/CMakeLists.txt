@@ -7,8 +7,9 @@
 yarp_prepare_plugin(multipleanalogsensorsremapper
                     CATEGORY device
                     TYPE yarp::dev::MultipleAnalogSensorsRemapper
-                    DEFAULT ON
-                    INCLUDE MultipleAnalogSensorsRemapper.h)
+                    INCLUDE MultipleAnalogSensorsRemapper.h
+                    DEPENDS "CREATE_DEVICE_LIBRARY_MODULES"
+                    DEFAULT ON)
 
 if(ENABLE_multipleanalogsensorsremapper)
   set(CMAKE_INCLUDE_CURRENT_DIR ON)
