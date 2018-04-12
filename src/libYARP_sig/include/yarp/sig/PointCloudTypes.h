@@ -219,10 +219,10 @@ struct DataRGBA
     {
         struct
         {
-            char b;
-            char g;
-            char r;
-            char a;
+            unsigned char b;
+            unsigned char g;
+            unsigned char r;
+            unsigned char a;
         };
         yarp::os::NetInt32 rgba;
 //        float data_c[4];
@@ -482,10 +482,10 @@ struct DataXYZRGBA
     {
         struct
         {
-            char b;
-            char g;
-            char r;
-            char a;
+            unsigned char b;
+            unsigned char g;
+            unsigned char r;
+            unsigned char a;
         };
         yarp::os::NetInt32 rgba;
         float rgba_padding[4];
@@ -809,10 +809,10 @@ struct DataXYZNormalRGBA
             {
                 struct
                 {
-                    char b;
-                    char g;
-                    char r;
-                    char a;
+                    unsigned char b;
+                    unsigned char g;
+                    unsigned char r;
+                    unsigned char a;
                 };
                 yarp::os::NetInt32 rgba;
             };
