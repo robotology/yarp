@@ -179,6 +179,7 @@ public:
      * @return the global factory for devices.
      */
     static Drivers& factory() {
+        static Drivers instance;
         return instance;
     }
 
@@ -263,8 +264,6 @@ private:
     void *implementation;
 
     Drivers();
-
-    static Drivers instance;
 };
 
 #endif // YARP_DRIVERS_H
