@@ -62,7 +62,7 @@
 
 
 /* Copy the first part of user declarations.  */
-#line 4 "/home/ddomenichelli/Workspace/iit/src/yarp/extern/thrift/thrift/compiler/cpp/src/thrift/thrifty.yy" /* yacc.c:339  */
+
 
 /*
  * Licensed to the Apache Software Foundation (ASF) under one
@@ -135,7 +135,7 @@ const int struct_is_struct = 0;
 const int struct_is_union = 1;
 
 
-#line 139 "/home/ddomenichelli/Workspace/iit/build/yarp/src/idls/thrift/thrift/thrifty.cc" /* yacc.c:339  */
+
 
 # ifndef YY_NULLPTR
 #  if defined __cplusplus && 201103L <= __cplusplus
@@ -165,11 +165,11 @@ const int struct_is_union = 1;
 extern int yydebug;
 #endif
 /* "%code requires" blocks.  */
-#line 1 "/home/ddomenichelli/Workspace/iit/src/yarp/extern/thrift/thrift/compiler/cpp/src/thrift/thrifty.yy" /* yacc.c:355  */
+
 
 #include "thrift/parse/t_program.h"
 
-#line 173 "/home/ddomenichelli/Workspace/iit/build/yarp/src/idls/thrift/thrift/thrifty.cc" /* yacc.c:355  */
+
 
 /* Token type.  */
 #ifndef YYTOKENTYPE
@@ -224,7 +224,7 @@ extern int yydebug;
 
 union YYSTYPE
 {
-#line 81 "/home/ddomenichelli/Workspace/iit/src/yarp/extern/thrift/thrift/compiler/cpp/src/thrift/thrifty.yy" /* yacc.c:355  */
+
 
   char*          id;
   int64_t        iconst;
@@ -247,7 +247,7 @@ union YYSTYPE
   t_annotation*  tannot;
   t_field_id     tfieldid;
 
-#line 251 "/home/ddomenichelli/Workspace/iit/build/yarp/src/idls/thrift/thrift/thrifty.cc" /* yacc.c:355  */
+
 };
 
 typedef union YYSTYPE YYSTYPE;
@@ -264,7 +264,7 @@ int yyparse (void);
 
 /* Copy the second part of user declarations.  */
 
-#line 268 "/home/ddomenichelli/Workspace/iit/build/yarp/src/idls/thrift/thrift/thrifty.cc" /* yacc.c:358  */
+
 
 #ifdef short
 # undef short
@@ -1492,7 +1492,7 @@ yyreduce:
   switch (yyn)
     {
         case 2:
-#line 250 "/home/ddomenichelli/Workspace/iit/src/yarp/extern/thrift/thrift/compiler/cpp/src/thrift/thrifty.yy" /* yacc.c:1646  */
+
     {
       pdebug("Program -> Headers DefinitionList");
       if((g_program_doctext_candidate != NULL) && (g_program_doctext_status != ALREADY_PROCESSED))
@@ -1502,11 +1502,11 @@ yyreduce:
       }
       clear_doctext();
     }
-#line 1506 "/home/ddomenichelli/Workspace/iit/build/yarp/src/idls/thrift/thrift/thrifty.cc" /* yacc.c:1646  */
+
     break;
 
   case 3:
-#line 261 "/home/ddomenichelli/Workspace/iit/src/yarp/extern/thrift/thrift/compiler/cpp/src/thrift/thrifty.yy" /* yacc.c:1646  */
+
     {
       if (g_parse_mode == PROGRAM) {
         (yyval.dtext) = g_doctext;
@@ -1515,45 +1515,45 @@ yyreduce:
         (yyval.dtext) = NULL;
       }
     }
-#line 1519 "/home/ddomenichelli/Workspace/iit/build/yarp/src/idls/thrift/thrift/thrifty.cc" /* yacc.c:1646  */
+
     break;
 
   case 4:
-#line 272 "/home/ddomenichelli/Workspace/iit/src/yarp/extern/thrift/thrift/compiler/cpp/src/thrift/thrifty.yy" /* yacc.c:1646  */
+
     {
       if (g_parse_mode == PROGRAM) {
         clear_doctext();
       }
     }
-#line 1529 "/home/ddomenichelli/Workspace/iit/build/yarp/src/idls/thrift/thrift/thrifty.cc" /* yacc.c:1646  */
+
     break;
 
   case 5:
-#line 282 "/home/ddomenichelli/Workspace/iit/src/yarp/extern/thrift/thrift/compiler/cpp/src/thrift/thrifty.yy" /* yacc.c:1646  */
+
     {
       pdebug("HeaderList -> HeaderList Header");
     }
-#line 1537 "/home/ddomenichelli/Workspace/iit/build/yarp/src/idls/thrift/thrift/thrifty.cc" /* yacc.c:1646  */
+
     break;
 
   case 6:
-#line 286 "/home/ddomenichelli/Workspace/iit/src/yarp/extern/thrift/thrift/compiler/cpp/src/thrift/thrifty.yy" /* yacc.c:1646  */
+
     {
       pdebug("HeaderList -> ");
     }
-#line 1545 "/home/ddomenichelli/Workspace/iit/build/yarp/src/idls/thrift/thrift/thrifty.cc" /* yacc.c:1646  */
+
     break;
 
   case 7:
-#line 292 "/home/ddomenichelli/Workspace/iit/src/yarp/extern/thrift/thrift/compiler/cpp/src/thrift/thrifty.yy" /* yacc.c:1646  */
+
     {
       pdebug("Header -> Include");
     }
-#line 1553 "/home/ddomenichelli/Workspace/iit/build/yarp/src/idls/thrift/thrift/thrifty.cc" /* yacc.c:1646  */
+
     break;
 
   case 8:
-#line 296 "/home/ddomenichelli/Workspace/iit/src/yarp/extern/thrift/thrift/compiler/cpp/src/thrift/thrifty.yy" /* yacc.c:1646  */
+
     {
       pdebug("Header -> tok_namespace tok_identifier tok_identifier");
       declare_valid_program_doctext();
@@ -1565,11 +1565,11 @@ yyreduce:
         delete (yyvsp[0].ttype);
       }
     }
-#line 1569 "/home/ddomenichelli/Workspace/iit/build/yarp/src/idls/thrift/thrift/thrifty.cc" /* yacc.c:1646  */
+
     break;
 
   case 9:
-#line 308 "/home/ddomenichelli/Workspace/iit/src/yarp/extern/thrift/thrift/compiler/cpp/src/thrift/thrifty.yy" /* yacc.c:1646  */
+
     {
       pdebug("Header -> tok_namespace * tok_identifier");
       declare_valid_program_doctext();
@@ -1577,11 +1577,11 @@ yyreduce:
         g_program->set_namespace("*", (yyvsp[0].id));
       }
     }
-#line 1581 "/home/ddomenichelli/Workspace/iit/build/yarp/src/idls/thrift/thrift/thrifty.cc" /* yacc.c:1646  */
+
     break;
 
   case 10:
-#line 316 "/home/ddomenichelli/Workspace/iit/src/yarp/extern/thrift/thrift/compiler/cpp/src/thrift/thrifty.yy" /* yacc.c:1646  */
+
     {
       pdebug("Header -> tok_cpp_include tok_literal");
       declare_valid_program_doctext();
@@ -1589,11 +1589,11 @@ yyreduce:
         g_program->add_cpp_include((yyvsp[0].id));
       }
     }
-#line 1593 "/home/ddomenichelli/Workspace/iit/build/yarp/src/idls/thrift/thrift/thrifty.cc" /* yacc.c:1646  */
+
     break;
 
   case 11:
-#line 326 "/home/ddomenichelli/Workspace/iit/src/yarp/extern/thrift/thrift/compiler/cpp/src/thrift/thrifty.yy" /* yacc.c:1646  */
+
     {
       pdebug("Include -> tok_include tok_literal");
       declare_valid_program_doctext();
@@ -1604,30 +1604,30 @@ yyreduce:
         }
       }
     }
-#line 1608 "/home/ddomenichelli/Workspace/iit/build/yarp/src/idls/thrift/thrift/thrifty.cc" /* yacc.c:1646  */
+
     break;
 
   case 12:
-#line 339 "/home/ddomenichelli/Workspace/iit/src/yarp/extern/thrift/thrift/compiler/cpp/src/thrift/thrifty.yy" /* yacc.c:1646  */
+
     {
       pdebug("DefinitionList -> DefinitionList Definition");
       if ((yyvsp[-1].dtext) != NULL && (yyvsp[0].tdoc) != NULL) {
         (yyvsp[0].tdoc)->set_doc((yyvsp[-1].dtext));
       }
     }
-#line 1619 "/home/ddomenichelli/Workspace/iit/build/yarp/src/idls/thrift/thrift/thrifty.cc" /* yacc.c:1646  */
+
     break;
 
   case 13:
-#line 346 "/home/ddomenichelli/Workspace/iit/src/yarp/extern/thrift/thrift/compiler/cpp/src/thrift/thrifty.yy" /* yacc.c:1646  */
+
     {
       pdebug("DefinitionList -> ");
     }
-#line 1627 "/home/ddomenichelli/Workspace/iit/build/yarp/src/idls/thrift/thrift/thrifty.cc" /* yacc.c:1646  */
+
     break;
 
   case 14:
-#line 352 "/home/ddomenichelli/Workspace/iit/src/yarp/extern/thrift/thrift/compiler/cpp/src/thrift/thrifty.yy" /* yacc.c:1646  */
+
     {
       pdebug("Definition -> Const");
       if (g_parse_mode == PROGRAM) {
@@ -1635,11 +1635,11 @@ yyreduce:
       }
       (yyval.tdoc) = (yyvsp[0].tconst);
     }
-#line 1639 "/home/ddomenichelli/Workspace/iit/build/yarp/src/idls/thrift/thrift/thrifty.cc" /* yacc.c:1646  */
+
     break;
 
   case 15:
-#line 360 "/home/ddomenichelli/Workspace/iit/src/yarp/extern/thrift/thrift/compiler/cpp/src/thrift/thrifty.yy" /* yacc.c:1646  */
+
     {
       pdebug("Definition -> TypeDefinition");
       if (g_parse_mode == PROGRAM) {
@@ -1654,11 +1654,11 @@ yyreduce:
       }
       (yyval.tdoc) = (yyvsp[0].ttype);
     }
-#line 1658 "/home/ddomenichelli/Workspace/iit/build/yarp/src/idls/thrift/thrift/thrifty.cc" /* yacc.c:1646  */
+
     break;
 
   case 16:
-#line 375 "/home/ddomenichelli/Workspace/iit/src/yarp/extern/thrift/thrift/compiler/cpp/src/thrift/thrifty.yy" /* yacc.c:1646  */
+
     {
       pdebug("Definition -> Service");
       if (g_parse_mode == PROGRAM) {
@@ -1674,84 +1674,84 @@ yyreduce:
       }
       (yyval.tdoc) = (yyvsp[0].tservice);
     }
-#line 1678 "/home/ddomenichelli/Workspace/iit/build/yarp/src/idls/thrift/thrift/thrifty.cc" /* yacc.c:1646  */
+
     break;
 
   case 17:
-#line 393 "/home/ddomenichelli/Workspace/iit/src/yarp/extern/thrift/thrift/compiler/cpp/src/thrift/thrifty.yy" /* yacc.c:1646  */
+
     {
       pdebug("TypeDefinition -> Typedef");
       if (g_parse_mode == PROGRAM) {
         g_program->add_typedef((yyvsp[0].ttypedef));
       }
     }
-#line 1689 "/home/ddomenichelli/Workspace/iit/build/yarp/src/idls/thrift/thrift/thrifty.cc" /* yacc.c:1646  */
+
     break;
 
   case 18:
-#line 400 "/home/ddomenichelli/Workspace/iit/src/yarp/extern/thrift/thrift/compiler/cpp/src/thrift/thrifty.yy" /* yacc.c:1646  */
+
     {
       pdebug("TypeDefinition -> Enum");
       if (g_parse_mode == PROGRAM) {
         g_program->add_enum((yyvsp[0].tenum));
       }
     }
-#line 1700 "/home/ddomenichelli/Workspace/iit/build/yarp/src/idls/thrift/thrift/thrifty.cc" /* yacc.c:1646  */
+
     break;
 
   case 19:
-#line 407 "/home/ddomenichelli/Workspace/iit/src/yarp/extern/thrift/thrift/compiler/cpp/src/thrift/thrifty.yy" /* yacc.c:1646  */
+
     {
       pdebug("TypeDefinition -> Senum");
       if (g_parse_mode == PROGRAM) {
         g_program->add_typedef((yyvsp[0].ttypedef));
       }
     }
-#line 1711 "/home/ddomenichelli/Workspace/iit/build/yarp/src/idls/thrift/thrift/thrifty.cc" /* yacc.c:1646  */
+
     break;
 
   case 20:
-#line 414 "/home/ddomenichelli/Workspace/iit/src/yarp/extern/thrift/thrift/compiler/cpp/src/thrift/thrifty.yy" /* yacc.c:1646  */
+
     {
       pdebug("TypeDefinition -> Struct");
       if (g_parse_mode == PROGRAM) {
         g_program->add_struct((yyvsp[0].tstruct));
       }
     }
-#line 1722 "/home/ddomenichelli/Workspace/iit/build/yarp/src/idls/thrift/thrift/thrifty.cc" /* yacc.c:1646  */
+
     break;
 
   case 21:
-#line 421 "/home/ddomenichelli/Workspace/iit/src/yarp/extern/thrift/thrift/compiler/cpp/src/thrift/thrifty.yy" /* yacc.c:1646  */
+
     {
       pdebug("TypeDefinition -> Xception");
       if (g_parse_mode == PROGRAM) {
         g_program->add_xception((yyvsp[0].tstruct));
       }
     }
-#line 1733 "/home/ddomenichelli/Workspace/iit/build/yarp/src/idls/thrift/thrift/thrifty.cc" /* yacc.c:1646  */
+
     break;
 
   case 22:
-#line 430 "/home/ddomenichelli/Workspace/iit/src/yarp/extern/thrift/thrift/compiler/cpp/src/thrift/thrifty.yy" /* yacc.c:1646  */
+
     {}
-#line 1739 "/home/ddomenichelli/Workspace/iit/build/yarp/src/idls/thrift/thrift/thrifty.cc" /* yacc.c:1646  */
+
     break;
 
   case 23:
-#line 432 "/home/ddomenichelli/Workspace/iit/src/yarp/extern/thrift/thrift/compiler/cpp/src/thrift/thrifty.yy" /* yacc.c:1646  */
+
     {}
-#line 1745 "/home/ddomenichelli/Workspace/iit/build/yarp/src/idls/thrift/thrift/thrifty.cc" /* yacc.c:1646  */
+
     break;
 
   case 24:
-#line 434 "/home/ddomenichelli/Workspace/iit/src/yarp/extern/thrift/thrift/compiler/cpp/src/thrift/thrifty.yy" /* yacc.c:1646  */
+
     {}
-#line 1751 "/home/ddomenichelli/Workspace/iit/build/yarp/src/idls/thrift/thrift/thrifty.cc" /* yacc.c:1646  */
+
     break;
 
   case 25:
-#line 438 "/home/ddomenichelli/Workspace/iit/src/yarp/extern/thrift/thrift/compiler/cpp/src/thrift/thrifty.yy" /* yacc.c:1646  */
+
     {
       pdebug("TypeDef -> tok_typedef FieldType tok_identifier");
       validate_simple_identifier( (yyvsp[-2].id));
@@ -1762,11 +1762,11 @@ yyreduce:
         delete (yyvsp[-1].ttype);
       }
     }
-#line 1766 "/home/ddomenichelli/Workspace/iit/build/yarp/src/idls/thrift/thrift/thrifty.cc" /* yacc.c:1646  */
+
     break;
 
   case 26:
-#line 451 "/home/ddomenichelli/Workspace/iit/src/yarp/extern/thrift/thrift/compiler/cpp/src/thrift/thrifty.yy" /* yacc.c:1646  */
+
     {
       pdebug("Enum -> tok_enum tok_identifier { EnumDefList }");
       (yyval.tenum) = (yyvsp[-2].tenum);
@@ -1792,31 +1792,31 @@ yyreduce:
         }
       }
     }
-#line 1796 "/home/ddomenichelli/Workspace/iit/build/yarp/src/idls/thrift/thrift/thrifty.cc" /* yacc.c:1646  */
+
     break;
 
   case 27:
-#line 479 "/home/ddomenichelli/Workspace/iit/src/yarp/extern/thrift/thrift/compiler/cpp/src/thrift/thrifty.yy" /* yacc.c:1646  */
+
     {
       pdebug("EnumDefList -> EnumDefList EnumDef");
       (yyval.tenum) = (yyvsp[-1].tenum);
       (yyval.tenum)->append((yyvsp[0].tenumv));
     }
-#line 1806 "/home/ddomenichelli/Workspace/iit/build/yarp/src/idls/thrift/thrift/thrifty.cc" /* yacc.c:1646  */
+
     break;
 
   case 28:
-#line 485 "/home/ddomenichelli/Workspace/iit/src/yarp/extern/thrift/thrift/compiler/cpp/src/thrift/thrifty.yy" /* yacc.c:1646  */
+
     {
       pdebug("EnumDefList -> ");
       (yyval.tenum) = new t_enum(g_program);
       y_enum_val = -1;
     }
-#line 1816 "/home/ddomenichelli/Workspace/iit/build/yarp/src/idls/thrift/thrift/thrifty.cc" /* yacc.c:1646  */
+
     break;
 
   case 29:
-#line 493 "/home/ddomenichelli/Workspace/iit/src/yarp/extern/thrift/thrift/compiler/cpp/src/thrift/thrifty.yy" /* yacc.c:1646  */
+
     {
       pdebug("EnumDef -> EnumValue");
       (yyval.tenumv) = (yyvsp[-2].tenumv);
@@ -1828,11 +1828,11 @@ yyreduce:
         delete (yyvsp[-1].ttype);
       }
     }
-#line 1832 "/home/ddomenichelli/Workspace/iit/build/yarp/src/idls/thrift/thrift/thrifty.cc" /* yacc.c:1646  */
+
     break;
 
   case 30:
-#line 507 "/home/ddomenichelli/Workspace/iit/src/yarp/extern/thrift/thrift/compiler/cpp/src/thrift/thrifty.yy" /* yacc.c:1646  */
+
     {
       pdebug("EnumValue -> tok_identifier = tok_int_constant");
       if ((yyvsp[0].iconst) < INT32_MIN || (yyvsp[0].iconst) > INT32_MAX) {
@@ -1846,11 +1846,11 @@ yyreduce:
       y_enum_val = static_cast<int32_t>((yyvsp[0].iconst));
       (yyval.tenumv) = new t_enum_value((yyvsp[-2].id), y_enum_val);
     }
-#line 1850 "/home/ddomenichelli/Workspace/iit/build/yarp/src/idls/thrift/thrift/thrifty.cc" /* yacc.c:1646  */
+
     break;
 
   case 31:
-#line 522 "/home/ddomenichelli/Workspace/iit/src/yarp/extern/thrift/thrift/compiler/cpp/src/thrift/thrifty.yy" /* yacc.c:1646  */
+
     {
       pdebug("EnumValue -> tok_identifier");
       validate_simple_identifier( (yyvsp[0].id));
@@ -1860,11 +1860,11 @@ yyreduce:
       ++y_enum_val;
       (yyval.tenumv) = new t_enum_value((yyvsp[0].id), y_enum_val);
     }
-#line 1864 "/home/ddomenichelli/Workspace/iit/build/yarp/src/idls/thrift/thrift/thrifty.cc" /* yacc.c:1646  */
+
     break;
 
   case 32:
-#line 534 "/home/ddomenichelli/Workspace/iit/src/yarp/extern/thrift/thrift/compiler/cpp/src/thrift/thrifty.yy" /* yacc.c:1646  */
+
     {
       pdebug("Senum -> tok_senum tok_identifier { SenumDefList }");
       validate_simple_identifier( (yyvsp[-4].id));
@@ -1874,40 +1874,40 @@ yyreduce:
         delete (yyvsp[0].ttype);
       }
     }
-#line 1878 "/home/ddomenichelli/Workspace/iit/build/yarp/src/idls/thrift/thrift/thrifty.cc" /* yacc.c:1646  */
+
     break;
 
   case 33:
-#line 546 "/home/ddomenichelli/Workspace/iit/src/yarp/extern/thrift/thrift/compiler/cpp/src/thrift/thrifty.yy" /* yacc.c:1646  */
+
     {
       pdebug("SenumDefList -> SenumDefList SenumDef");
       (yyval.tbase) = (yyvsp[-1].tbase);
       (yyval.tbase)->add_string_enum_val((yyvsp[0].id));
     }
-#line 1888 "/home/ddomenichelli/Workspace/iit/build/yarp/src/idls/thrift/thrift/thrifty.cc" /* yacc.c:1646  */
+
     break;
 
   case 34:
-#line 552 "/home/ddomenichelli/Workspace/iit/src/yarp/extern/thrift/thrift/compiler/cpp/src/thrift/thrifty.yy" /* yacc.c:1646  */
+
     {
       pdebug("SenumDefList -> ");
       (yyval.tbase) = new t_base_type("string", t_base_type::TYPE_STRING);
       (yyval.tbase)->set_string_enum(true);
     }
-#line 1898 "/home/ddomenichelli/Workspace/iit/build/yarp/src/idls/thrift/thrift/thrifty.cc" /* yacc.c:1646  */
+
     break;
 
   case 35:
-#line 560 "/home/ddomenichelli/Workspace/iit/src/yarp/extern/thrift/thrift/compiler/cpp/src/thrift/thrifty.yy" /* yacc.c:1646  */
+
     {
       pdebug("SenumDef -> tok_literal");
       (yyval.id) = (yyvsp[-1].id);
     }
-#line 1907 "/home/ddomenichelli/Workspace/iit/build/yarp/src/idls/thrift/thrift/thrifty.cc" /* yacc.c:1646  */
+
     break;
 
   case 36:
-#line 567 "/home/ddomenichelli/Workspace/iit/src/yarp/extern/thrift/thrift/compiler/cpp/src/thrift/thrifty.yy" /* yacc.c:1646  */
+
     {
       pdebug("Const -> tok_const FieldType tok_identifier = ConstValue");
       if (g_parse_mode == PROGRAM) {
@@ -1924,11 +1924,11 @@ yyreduce:
         (yyval.tconst) = NULL;
       }
     }
-#line 1928 "/home/ddomenichelli/Workspace/iit/build/yarp/src/idls/thrift/thrift/thrifty.cc" /* yacc.c:1646  */
+
     break;
 
   case 37:
-#line 586 "/home/ddomenichelli/Workspace/iit/src/yarp/extern/thrift/thrift/compiler/cpp/src/thrift/thrifty.yy" /* yacc.c:1646  */
+
     {
       pdebug("ConstValue => tok_int_constant");
       (yyval.tconstv) = new t_const_value();
@@ -1937,132 +1937,132 @@ yyreduce:
         pwarning(1, "64-bit constant \"%" PRIi64"\" may not work in all languages.\n", (yyvsp[0].iconst));
       }
     }
-#line 1941 "/home/ddomenichelli/Workspace/iit/build/yarp/src/idls/thrift/thrift/thrifty.cc" /* yacc.c:1646  */
+
     break;
 
   case 38:
-#line 595 "/home/ddomenichelli/Workspace/iit/src/yarp/extern/thrift/thrift/compiler/cpp/src/thrift/thrifty.yy" /* yacc.c:1646  */
+
     {
       pdebug("ConstValue => tok_dub_constant");
       (yyval.tconstv) = new t_const_value();
       (yyval.tconstv)->set_double((yyvsp[0].dconst));
     }
-#line 1951 "/home/ddomenichelli/Workspace/iit/build/yarp/src/idls/thrift/thrift/thrifty.cc" /* yacc.c:1646  */
+
     break;
 
   case 39:
-#line 601 "/home/ddomenichelli/Workspace/iit/src/yarp/extern/thrift/thrift/compiler/cpp/src/thrift/thrifty.yy" /* yacc.c:1646  */
+
     {
       pdebug("ConstValue => tok_literal");
       (yyval.tconstv) = new t_const_value((yyvsp[0].id));
     }
-#line 1960 "/home/ddomenichelli/Workspace/iit/build/yarp/src/idls/thrift/thrift/thrifty.cc" /* yacc.c:1646  */
+
     break;
 
   case 40:
-#line 606 "/home/ddomenichelli/Workspace/iit/src/yarp/extern/thrift/thrift/compiler/cpp/src/thrift/thrifty.yy" /* yacc.c:1646  */
+
     {
       pdebug("ConstValue => tok_identifier");
       (yyval.tconstv) = new t_const_value();
       (yyval.tconstv)->set_identifier((yyvsp[0].id));
     }
-#line 1970 "/home/ddomenichelli/Workspace/iit/build/yarp/src/idls/thrift/thrift/thrifty.cc" /* yacc.c:1646  */
+
     break;
 
   case 41:
-#line 612 "/home/ddomenichelli/Workspace/iit/src/yarp/extern/thrift/thrift/compiler/cpp/src/thrift/thrifty.yy" /* yacc.c:1646  */
+
     {
       pdebug("ConstValue => ConstList");
       (yyval.tconstv) = (yyvsp[0].tconstv);
     }
-#line 1979 "/home/ddomenichelli/Workspace/iit/build/yarp/src/idls/thrift/thrift/thrifty.cc" /* yacc.c:1646  */
+
     break;
 
   case 42:
-#line 617 "/home/ddomenichelli/Workspace/iit/src/yarp/extern/thrift/thrift/compiler/cpp/src/thrift/thrifty.yy" /* yacc.c:1646  */
+
     {
       pdebug("ConstValue => ConstMap");
       (yyval.tconstv) = (yyvsp[0].tconstv);
     }
-#line 1988 "/home/ddomenichelli/Workspace/iit/build/yarp/src/idls/thrift/thrift/thrifty.cc" /* yacc.c:1646  */
+
     break;
 
   case 43:
-#line 624 "/home/ddomenichelli/Workspace/iit/src/yarp/extern/thrift/thrift/compiler/cpp/src/thrift/thrifty.yy" /* yacc.c:1646  */
+
     {
       pdebug("ConstList => [ ConstListContents ]");
       (yyval.tconstv) = (yyvsp[-1].tconstv);
     }
-#line 1997 "/home/ddomenichelli/Workspace/iit/build/yarp/src/idls/thrift/thrift/thrifty.cc" /* yacc.c:1646  */
+
     break;
 
   case 44:
-#line 631 "/home/ddomenichelli/Workspace/iit/src/yarp/extern/thrift/thrift/compiler/cpp/src/thrift/thrifty.yy" /* yacc.c:1646  */
+
     {
       pdebug("ConstListContents => ConstListContents ConstValue CommaOrSemicolonOptional");
       (yyval.tconstv) = (yyvsp[-2].tconstv);
       (yyval.tconstv)->add_list((yyvsp[-1].tconstv));
     }
-#line 2007 "/home/ddomenichelli/Workspace/iit/build/yarp/src/idls/thrift/thrift/thrifty.cc" /* yacc.c:1646  */
+
     break;
 
   case 45:
-#line 637 "/home/ddomenichelli/Workspace/iit/src/yarp/extern/thrift/thrift/compiler/cpp/src/thrift/thrifty.yy" /* yacc.c:1646  */
+
     {
       pdebug("ConstListContents =>");
       (yyval.tconstv) = new t_const_value();
       (yyval.tconstv)->set_list();
     }
-#line 2017 "/home/ddomenichelli/Workspace/iit/build/yarp/src/idls/thrift/thrift/thrifty.cc" /* yacc.c:1646  */
+
     break;
 
   case 46:
-#line 645 "/home/ddomenichelli/Workspace/iit/src/yarp/extern/thrift/thrift/compiler/cpp/src/thrift/thrifty.yy" /* yacc.c:1646  */
+
     {
       pdebug("ConstMap => { ConstMapContents }");
       (yyval.tconstv) = (yyvsp[-1].tconstv);
     }
-#line 2026 "/home/ddomenichelli/Workspace/iit/build/yarp/src/idls/thrift/thrift/thrifty.cc" /* yacc.c:1646  */
+
     break;
 
   case 47:
-#line 652 "/home/ddomenichelli/Workspace/iit/src/yarp/extern/thrift/thrift/compiler/cpp/src/thrift/thrifty.yy" /* yacc.c:1646  */
+
     {
       pdebug("ConstMapContents => ConstMapContents ConstValue CommaOrSemicolonOptional");
       (yyval.tconstv) = (yyvsp[-4].tconstv);
       (yyval.tconstv)->add_map((yyvsp[-3].tconstv), (yyvsp[-1].tconstv));
     }
-#line 2036 "/home/ddomenichelli/Workspace/iit/build/yarp/src/idls/thrift/thrift/thrifty.cc" /* yacc.c:1646  */
+
     break;
 
   case 48:
-#line 658 "/home/ddomenichelli/Workspace/iit/src/yarp/extern/thrift/thrift/compiler/cpp/src/thrift/thrifty.yy" /* yacc.c:1646  */
+
     {
       pdebug("ConstMapContents =>");
       (yyval.tconstv) = new t_const_value();
       (yyval.tconstv)->set_map();
     }
-#line 2046 "/home/ddomenichelli/Workspace/iit/build/yarp/src/idls/thrift/thrift/thrifty.cc" /* yacc.c:1646  */
+
     break;
 
   case 49:
-#line 666 "/home/ddomenichelli/Workspace/iit/src/yarp/extern/thrift/thrift/compiler/cpp/src/thrift/thrifty.yy" /* yacc.c:1646  */
+
     {
       (yyval.iconst) = struct_is_struct;
     }
-#line 2054 "/home/ddomenichelli/Workspace/iit/build/yarp/src/idls/thrift/thrift/thrifty.cc" /* yacc.c:1646  */
+
     break;
 
   case 50:
-#line 670 "/home/ddomenichelli/Workspace/iit/src/yarp/extern/thrift/thrift/compiler/cpp/src/thrift/thrifty.yy" /* yacc.c:1646  */
+
     {
       (yyval.iconst) = struct_is_union;
     }
-#line 2062 "/home/ddomenichelli/Workspace/iit/build/yarp/src/idls/thrift/thrift/thrifty.cc" /* yacc.c:1646  */
+
     break;
 
   case 51:
-#line 676 "/home/ddomenichelli/Workspace/iit/src/yarp/extern/thrift/thrift/compiler/cpp/src/thrift/thrifty.yy" /* yacc.c:1646  */
+
     {
       pdebug("Struct -> tok_struct tok_identifier { FieldList }");
       validate_simple_identifier( (yyvsp[-5].id));
@@ -2075,75 +2075,75 @@ yyreduce:
         delete (yyvsp[0].ttype);
       }
     }
-#line 2079 "/home/ddomenichelli/Workspace/iit/build/yarp/src/idls/thrift/thrift/thrifty.cc" /* yacc.c:1646  */
+
     break;
 
   case 52:
-#line 691 "/home/ddomenichelli/Workspace/iit/src/yarp/extern/thrift/thrift/compiler/cpp/src/thrift/thrifty.yy" /* yacc.c:1646  */
+
     {
       (yyval.tbool) = true;
     }
-#line 2087 "/home/ddomenichelli/Workspace/iit/build/yarp/src/idls/thrift/thrift/thrifty.cc" /* yacc.c:1646  */
+
     break;
 
   case 53:
-#line 695 "/home/ddomenichelli/Workspace/iit/src/yarp/extern/thrift/thrift/compiler/cpp/src/thrift/thrifty.yy" /* yacc.c:1646  */
+
     {
       (yyval.tbool) = false;
     }
-#line 2095 "/home/ddomenichelli/Workspace/iit/build/yarp/src/idls/thrift/thrift/thrifty.cc" /* yacc.c:1646  */
+
     break;
 
   case 54:
-#line 701 "/home/ddomenichelli/Workspace/iit/src/yarp/extern/thrift/thrift/compiler/cpp/src/thrift/thrifty.yy" /* yacc.c:1646  */
+
     {
       (yyval.tbool) = true;
     }
-#line 2103 "/home/ddomenichelli/Workspace/iit/build/yarp/src/idls/thrift/thrift/thrifty.cc" /* yacc.c:1646  */
+
     break;
 
   case 55:
-#line 705 "/home/ddomenichelli/Workspace/iit/src/yarp/extern/thrift/thrift/compiler/cpp/src/thrift/thrifty.yy" /* yacc.c:1646  */
+
     {
       (yyval.tbool) = false;
     }
-#line 2111 "/home/ddomenichelli/Workspace/iit/build/yarp/src/idls/thrift/thrift/thrifty.cc" /* yacc.c:1646  */
+
     break;
 
   case 56:
-#line 711 "/home/ddomenichelli/Workspace/iit/src/yarp/extern/thrift/thrift/compiler/cpp/src/thrift/thrifty.yy" /* yacc.c:1646  */
+
     {
       (yyval.tbool) = true;
     }
-#line 2119 "/home/ddomenichelli/Workspace/iit/build/yarp/src/idls/thrift/thrift/thrifty.cc" /* yacc.c:1646  */
+
     break;
 
   case 57:
-#line 715 "/home/ddomenichelli/Workspace/iit/src/yarp/extern/thrift/thrift/compiler/cpp/src/thrift/thrifty.yy" /* yacc.c:1646  */
+
     {
       (yyval.tbool) = false;
     }
-#line 2127 "/home/ddomenichelli/Workspace/iit/build/yarp/src/idls/thrift/thrift/thrifty.cc" /* yacc.c:1646  */
+
     break;
 
   case 58:
-#line 721 "/home/ddomenichelli/Workspace/iit/src/yarp/extern/thrift/thrift/compiler/cpp/src/thrift/thrifty.yy" /* yacc.c:1646  */
+
     {
       (yyval.tstruct) = (yyvsp[-1].tstruct);
     }
-#line 2135 "/home/ddomenichelli/Workspace/iit/build/yarp/src/idls/thrift/thrift/thrifty.cc" /* yacc.c:1646  */
+
     break;
 
   case 59:
-#line 725 "/home/ddomenichelli/Workspace/iit/src/yarp/extern/thrift/thrift/compiler/cpp/src/thrift/thrifty.yy" /* yacc.c:1646  */
+
     {
       (yyval.tstruct) = NULL;
     }
-#line 2143 "/home/ddomenichelli/Workspace/iit/build/yarp/src/idls/thrift/thrift/thrifty.cc" /* yacc.c:1646  */
+
     break;
 
   case 60:
-#line 731 "/home/ddomenichelli/Workspace/iit/src/yarp/extern/thrift/thrift/compiler/cpp/src/thrift/thrifty.yy" /* yacc.c:1646  */
+
     {
       pdebug("Xception -> tok_xception tok_identifier { FieldList }");
       validate_simple_identifier( (yyvsp[-4].id));
@@ -2155,11 +2155,11 @@ yyreduce:
         delete (yyvsp[0].ttype);
       }
     }
-#line 2159 "/home/ddomenichelli/Workspace/iit/build/yarp/src/idls/thrift/thrift/thrifty.cc" /* yacc.c:1646  */
+
     break;
 
   case 61:
-#line 745 "/home/ddomenichelli/Workspace/iit/src/yarp/extern/thrift/thrift/compiler/cpp/src/thrift/thrifty.yy" /* yacc.c:1646  */
+
     {
       pdebug("Service -> tok_service tok_identifier { FunctionList }");
       validate_simple_identifier( (yyvsp[-7].id));
@@ -2171,27 +2171,27 @@ yyreduce:
         delete (yyvsp[0].ttype);
       }
     }
-#line 2175 "/home/ddomenichelli/Workspace/iit/build/yarp/src/idls/thrift/thrift/thrifty.cc" /* yacc.c:1646  */
+
     break;
 
   case 62:
-#line 758 "/home/ddomenichelli/Workspace/iit/src/yarp/extern/thrift/thrift/compiler/cpp/src/thrift/thrifty.yy" /* yacc.c:1646  */
+
     {
        g_arglist = 1;
     }
-#line 2183 "/home/ddomenichelli/Workspace/iit/build/yarp/src/idls/thrift/thrift/thrifty.cc" /* yacc.c:1646  */
+
     break;
 
   case 63:
-#line 763 "/home/ddomenichelli/Workspace/iit/src/yarp/extern/thrift/thrift/compiler/cpp/src/thrift/thrifty.yy" /* yacc.c:1646  */
+
     {
        g_arglist = 0;
     }
-#line 2191 "/home/ddomenichelli/Workspace/iit/build/yarp/src/idls/thrift/thrift/thrifty.cc" /* yacc.c:1646  */
+
     break;
 
   case 64:
-#line 769 "/home/ddomenichelli/Workspace/iit/src/yarp/extern/thrift/thrift/compiler/cpp/src/thrift/thrifty.yy" /* yacc.c:1646  */
+
     {
       pdebug("Extends -> tok_extends tok_identifier");
       (yyval.tservice) = NULL;
@@ -2203,38 +2203,38 @@ yyreduce:
         }
       }
     }
-#line 2207 "/home/ddomenichelli/Workspace/iit/build/yarp/src/idls/thrift/thrift/thrifty.cc" /* yacc.c:1646  */
+
     break;
 
   case 65:
-#line 781 "/home/ddomenichelli/Workspace/iit/src/yarp/extern/thrift/thrift/compiler/cpp/src/thrift/thrifty.yy" /* yacc.c:1646  */
+
     {
       (yyval.tservice) = NULL;
     }
-#line 2215 "/home/ddomenichelli/Workspace/iit/build/yarp/src/idls/thrift/thrift/thrifty.cc" /* yacc.c:1646  */
+
     break;
 
   case 66:
-#line 787 "/home/ddomenichelli/Workspace/iit/src/yarp/extern/thrift/thrift/compiler/cpp/src/thrift/thrifty.yy" /* yacc.c:1646  */
+
     {
       pdebug("FunctionList -> FunctionList Function");
       (yyval.tservice) = (yyvsp[-1].tservice);
       (yyvsp[-1].tservice)->add_function((yyvsp[0].tfunction));
     }
-#line 2225 "/home/ddomenichelli/Workspace/iit/build/yarp/src/idls/thrift/thrift/thrifty.cc" /* yacc.c:1646  */
+
     break;
 
   case 67:
-#line 793 "/home/ddomenichelli/Workspace/iit/src/yarp/extern/thrift/thrift/compiler/cpp/src/thrift/thrifty.yy" /* yacc.c:1646  */
+
     {
       pdebug("FunctionList -> ");
       (yyval.tservice) = new t_service(g_program);
     }
-#line 2234 "/home/ddomenichelli/Workspace/iit/build/yarp/src/idls/thrift/thrift/thrifty.cc" /* yacc.c:1646  */
+
     break;
 
   case 68:
-#line 800 "/home/ddomenichelli/Workspace/iit/src/yarp/extern/thrift/thrift/compiler/cpp/src/thrift/thrifty.yy" /* yacc.c:1646  */
+
     {
       validate_simple_identifier( (yyvsp[-6].id));
       (yyvsp[-4].tstruct)->set_name(std::string((yyvsp[-6].id)) + "_args");
@@ -2247,27 +2247,27 @@ yyreduce:
         delete (yyvsp[-1].ttype);
       }
     }
-#line 2251 "/home/ddomenichelli/Workspace/iit/build/yarp/src/idls/thrift/thrift/thrifty.cc" /* yacc.c:1646  */
+
     break;
 
   case 69:
-#line 815 "/home/ddomenichelli/Workspace/iit/src/yarp/extern/thrift/thrift/compiler/cpp/src/thrift/thrifty.yy" /* yacc.c:1646  */
+
     {
       (yyval.tbool) = true;
     }
-#line 2259 "/home/ddomenichelli/Workspace/iit/build/yarp/src/idls/thrift/thrift/thrifty.cc" /* yacc.c:1646  */
+
     break;
 
   case 70:
-#line 819 "/home/ddomenichelli/Workspace/iit/src/yarp/extern/thrift/thrift/compiler/cpp/src/thrift/thrifty.yy" /* yacc.c:1646  */
+
     {
       (yyval.tbool) = false;
     }
-#line 2267 "/home/ddomenichelli/Workspace/iit/build/yarp/src/idls/thrift/thrift/thrifty.cc" /* yacc.c:1646  */
+
     break;
 
   case 71:
-#line 825 "/home/ddomenichelli/Workspace/iit/src/yarp/extern/thrift/thrift/compiler/cpp/src/thrift/thrifty.yy" /* yacc.c:1646  */
+
     {
       pdebug("Throws -> tok_throws ( FieldList )");
       (yyval.tstruct) = (yyvsp[-1].tstruct);
@@ -2276,19 +2276,19 @@ yyreduce:
         exit(1);
       }
     }
-#line 2280 "/home/ddomenichelli/Workspace/iit/build/yarp/src/idls/thrift/thrift/thrifty.cc" /* yacc.c:1646  */
+
     break;
 
   case 72:
-#line 834 "/home/ddomenichelli/Workspace/iit/src/yarp/extern/thrift/thrift/compiler/cpp/src/thrift/thrifty.yy" /* yacc.c:1646  */
+
     {
       (yyval.tstruct) = new t_struct(g_program);
     }
-#line 2288 "/home/ddomenichelli/Workspace/iit/build/yarp/src/idls/thrift/thrift/thrifty.cc" /* yacc.c:1646  */
+
     break;
 
   case 73:
-#line 840 "/home/ddomenichelli/Workspace/iit/src/yarp/extern/thrift/thrift/compiler/cpp/src/thrift/thrifty.yy" /* yacc.c:1646  */
+
     {
       pdebug("FieldList -> FieldList , Field");
       (yyval.tstruct) = (yyvsp[-1].tstruct);
@@ -2297,21 +2297,21 @@ yyreduce:
         exit(1);
       }
     }
-#line 2301 "/home/ddomenichelli/Workspace/iit/build/yarp/src/idls/thrift/thrift/thrifty.cc" /* yacc.c:1646  */
+
     break;
 
   case 74:
-#line 849 "/home/ddomenichelli/Workspace/iit/src/yarp/extern/thrift/thrift/compiler/cpp/src/thrift/thrifty.yy" /* yacc.c:1646  */
+
     {
       pdebug("FieldList -> ");
       y_field_val = -1;
       (yyval.tstruct) = new t_struct(g_program);
     }
-#line 2311 "/home/ddomenichelli/Workspace/iit/build/yarp/src/idls/thrift/thrift/thrifty.cc" /* yacc.c:1646  */
+
     break;
 
   case 75:
-#line 857 "/home/ddomenichelli/Workspace/iit/src/yarp/extern/thrift/thrift/compiler/cpp/src/thrift/thrifty.yy" /* yacc.c:1646  */
+
     {
       pdebug("tok_int_constant : Field -> FieldType tok_identifier");
       if ((yyvsp[-10].tfieldid).auto_assigned) {
@@ -2343,11 +2343,11 @@ yyreduce:
         delete (yyvsp[-1].ttype);
       }
     }
-#line 2347 "/home/ddomenichelli/Workspace/iit/build/yarp/src/idls/thrift/thrift/thrifty.cc" /* yacc.c:1646  */
+
     break;
 
   case 76:
-#line 891 "/home/ddomenichelli/Workspace/iit/src/yarp/extern/thrift/thrift/compiler/cpp/src/thrift/thrifty.yy" /* yacc.c:1646  */
+
     {
       if ((yyvsp[-1].iconst) <= 0) {
         if (g_allow_neg_field_keys) {
@@ -2386,11 +2386,11 @@ yyreduce:
                  (yyval.tfieldid).value, SHRT_MIN, SHRT_MAX);
       }
     }
-#line 2390 "/home/ddomenichelli/Workspace/iit/build/yarp/src/idls/thrift/thrift/thrifty.cc" /* yacc.c:1646  */
+
     break;
 
   case 77:
-#line 930 "/home/ddomenichelli/Workspace/iit/src/yarp/extern/thrift/thrift/compiler/cpp/src/thrift/thrifty.yy" /* yacc.c:1646  */
+
     {
       (yyval.tfieldid).value = y_field_val--;
       (yyval.tfieldid).auto_assigned = true;
@@ -2399,35 +2399,35 @@ yyreduce:
                  (yyval.tfieldid).value, SHRT_MIN, SHRT_MAX);
       }
     }
-#line 2403 "/home/ddomenichelli/Workspace/iit/build/yarp/src/idls/thrift/thrift/thrifty.cc" /* yacc.c:1646  */
+
     break;
 
   case 78:
-#line 941 "/home/ddomenichelli/Workspace/iit/src/yarp/extern/thrift/thrift/compiler/cpp/src/thrift/thrifty.yy" /* yacc.c:1646  */
+
     {
       (yyval.tbool) = true;
     }
-#line 2411 "/home/ddomenichelli/Workspace/iit/build/yarp/src/idls/thrift/thrift/thrifty.cc" /* yacc.c:1646  */
+
     break;
 
   case 79:
-#line 945 "/home/ddomenichelli/Workspace/iit/src/yarp/extern/thrift/thrift/compiler/cpp/src/thrift/thrifty.yy" /* yacc.c:1646  */
+
     {
      (yyval.tbool) = false;
    }
-#line 2419 "/home/ddomenichelli/Workspace/iit/build/yarp/src/idls/thrift/thrift/thrifty.cc" /* yacc.c:1646  */
+
     break;
 
   case 80:
-#line 951 "/home/ddomenichelli/Workspace/iit/src/yarp/extern/thrift/thrift/compiler/cpp/src/thrift/thrifty.yy" /* yacc.c:1646  */
+
     {
       (yyval.ereq) = t_field::T_REQUIRED;
     }
-#line 2427 "/home/ddomenichelli/Workspace/iit/build/yarp/src/idls/thrift/thrift/thrifty.cc" /* yacc.c:1646  */
+
     break;
 
   case 81:
-#line 955 "/home/ddomenichelli/Workspace/iit/src/yarp/extern/thrift/thrift/compiler/cpp/src/thrift/thrifty.yy" /* yacc.c:1646  */
+
     {
       if (g_arglist) {
         if (g_parse_mode == PROGRAM) {
@@ -2438,19 +2438,19 @@ yyreduce:
         (yyval.ereq) = t_field::T_OPTIONAL;
       }
     }
-#line 2442 "/home/ddomenichelli/Workspace/iit/build/yarp/src/idls/thrift/thrift/thrifty.cc" /* yacc.c:1646  */
+
     break;
 
   case 82:
-#line 966 "/home/ddomenichelli/Workspace/iit/src/yarp/extern/thrift/thrift/compiler/cpp/src/thrift/thrifty.yy" /* yacc.c:1646  */
+
     {
       (yyval.ereq) = t_field::T_OPT_IN_REQ_OUT;
     }
-#line 2450 "/home/ddomenichelli/Workspace/iit/build/yarp/src/idls/thrift/thrift/thrifty.cc" /* yacc.c:1646  */
+
     break;
 
   case 83:
-#line 972 "/home/ddomenichelli/Workspace/iit/src/yarp/extern/thrift/thrift/compiler/cpp/src/thrift/thrifty.yy" /* yacc.c:1646  */
+
     {
       if (g_parse_mode == PROGRAM) {
         (yyval.tconstv) = (yyvsp[0].tconstv);
@@ -2458,37 +2458,37 @@ yyreduce:
         (yyval.tconstv) = NULL;
       }
     }
-#line 2462 "/home/ddomenichelli/Workspace/iit/build/yarp/src/idls/thrift/thrift/thrifty.cc" /* yacc.c:1646  */
+
     break;
 
   case 84:
-#line 980 "/home/ddomenichelli/Workspace/iit/src/yarp/extern/thrift/thrift/compiler/cpp/src/thrift/thrifty.yy" /* yacc.c:1646  */
+
     {
       (yyval.tconstv) = NULL;
     }
-#line 2470 "/home/ddomenichelli/Workspace/iit/build/yarp/src/idls/thrift/thrift/thrifty.cc" /* yacc.c:1646  */
+
     break;
 
   case 85:
-#line 986 "/home/ddomenichelli/Workspace/iit/src/yarp/extern/thrift/thrift/compiler/cpp/src/thrift/thrifty.yy" /* yacc.c:1646  */
+
     {
       pdebug("FunctionType -> FieldType");
       (yyval.ttype) = (yyvsp[0].ttype);
     }
-#line 2479 "/home/ddomenichelli/Workspace/iit/build/yarp/src/idls/thrift/thrift/thrifty.cc" /* yacc.c:1646  */
+
     break;
 
   case 86:
-#line 991 "/home/ddomenichelli/Workspace/iit/src/yarp/extern/thrift/thrift/compiler/cpp/src/thrift/thrifty.yy" /* yacc.c:1646  */
+
     {
       pdebug("FunctionType -> tok_void");
       (yyval.ttype) = g_type_void;
     }
-#line 2488 "/home/ddomenichelli/Workspace/iit/build/yarp/src/idls/thrift/thrift/thrifty.cc" /* yacc.c:1646  */
+
     break;
 
   case 87:
-#line 998 "/home/ddomenichelli/Workspace/iit/src/yarp/extern/thrift/thrift/compiler/cpp/src/thrift/thrifty.yy" /* yacc.c:1646  */
+
     {
       pdebug("FieldType -> tok_identifier");
       if (g_parse_mode == INCLUDES) {
@@ -2507,29 +2507,29 @@ yyreduce:
         }
       }
     }
-#line 2511 "/home/ddomenichelli/Workspace/iit/build/yarp/src/idls/thrift/thrift/thrifty.cc" /* yacc.c:1646  */
+
     break;
 
   case 88:
-#line 1017 "/home/ddomenichelli/Workspace/iit/src/yarp/extern/thrift/thrift/compiler/cpp/src/thrift/thrifty.yy" /* yacc.c:1646  */
+
     {
       pdebug("FieldType -> BaseType");
       (yyval.ttype) = (yyvsp[0].ttype);
     }
-#line 2520 "/home/ddomenichelli/Workspace/iit/build/yarp/src/idls/thrift/thrift/thrifty.cc" /* yacc.c:1646  */
+
     break;
 
   case 89:
-#line 1022 "/home/ddomenichelli/Workspace/iit/src/yarp/extern/thrift/thrift/compiler/cpp/src/thrift/thrifty.yy" /* yacc.c:1646  */
+
     {
       pdebug("FieldType -> ContainerType");
       (yyval.ttype) = (yyvsp[0].ttype);
     }
-#line 2529 "/home/ddomenichelli/Workspace/iit/build/yarp/src/idls/thrift/thrift/thrifty.cc" /* yacc.c:1646  */
+
     break;
 
   case 90:
-#line 1028 "/home/ddomenichelli/Workspace/iit/src/yarp/extern/thrift/thrift/compiler/cpp/src/thrift/thrifty.yy" /* yacc.c:1646  */
+
     {
       pdebug("BaseType -> SimpleBaseType TypeAnnotations");
       if ((yyvsp[0].ttype) != NULL) {
@@ -2540,92 +2540,92 @@ yyreduce:
         (yyval.ttype) = (yyvsp[-1].ttype);
       }
     }
-#line 2544 "/home/ddomenichelli/Workspace/iit/build/yarp/src/idls/thrift/thrift/thrifty.cc" /* yacc.c:1646  */
+
     break;
 
   case 91:
-#line 1041 "/home/ddomenichelli/Workspace/iit/src/yarp/extern/thrift/thrift/compiler/cpp/src/thrift/thrifty.yy" /* yacc.c:1646  */
+
     {
       pdebug("BaseType -> tok_string");
       (yyval.ttype) = g_type_string;
     }
-#line 2553 "/home/ddomenichelli/Workspace/iit/build/yarp/src/idls/thrift/thrift/thrifty.cc" /* yacc.c:1646  */
+
     break;
 
   case 92:
-#line 1046 "/home/ddomenichelli/Workspace/iit/src/yarp/extern/thrift/thrift/compiler/cpp/src/thrift/thrifty.yy" /* yacc.c:1646  */
+
     {
       pdebug("BaseType -> tok_binary");
       (yyval.ttype) = g_type_binary;
     }
-#line 2562 "/home/ddomenichelli/Workspace/iit/build/yarp/src/idls/thrift/thrift/thrifty.cc" /* yacc.c:1646  */
+
     break;
 
   case 93:
-#line 1051 "/home/ddomenichelli/Workspace/iit/src/yarp/extern/thrift/thrift/compiler/cpp/src/thrift/thrifty.yy" /* yacc.c:1646  */
+
     {
       pdebug("BaseType -> tok_slist");
       (yyval.ttype) = g_type_slist;
     }
-#line 2571 "/home/ddomenichelli/Workspace/iit/build/yarp/src/idls/thrift/thrift/thrifty.cc" /* yacc.c:1646  */
+
     break;
 
   case 94:
-#line 1056 "/home/ddomenichelli/Workspace/iit/src/yarp/extern/thrift/thrift/compiler/cpp/src/thrift/thrifty.yy" /* yacc.c:1646  */
+
     {
       pdebug("BaseType -> tok_bool");
       (yyval.ttype) = g_type_bool;
     }
-#line 2580 "/home/ddomenichelli/Workspace/iit/build/yarp/src/idls/thrift/thrift/thrifty.cc" /* yacc.c:1646  */
+
     break;
 
   case 95:
-#line 1061 "/home/ddomenichelli/Workspace/iit/src/yarp/extern/thrift/thrift/compiler/cpp/src/thrift/thrifty.yy" /* yacc.c:1646  */
+
     {
       pdebug("BaseType -> tok_i8");
       (yyval.ttype) = g_type_i8;
     }
-#line 2589 "/home/ddomenichelli/Workspace/iit/build/yarp/src/idls/thrift/thrift/thrifty.cc" /* yacc.c:1646  */
+
     break;
 
   case 96:
-#line 1066 "/home/ddomenichelli/Workspace/iit/src/yarp/extern/thrift/thrift/compiler/cpp/src/thrift/thrifty.yy" /* yacc.c:1646  */
+
     {
       pdebug("BaseType -> tok_i16");
       (yyval.ttype) = g_type_i16;
     }
-#line 2598 "/home/ddomenichelli/Workspace/iit/build/yarp/src/idls/thrift/thrift/thrifty.cc" /* yacc.c:1646  */
+
     break;
 
   case 97:
-#line 1071 "/home/ddomenichelli/Workspace/iit/src/yarp/extern/thrift/thrift/compiler/cpp/src/thrift/thrifty.yy" /* yacc.c:1646  */
+
     {
       pdebug("BaseType -> tok_i32");
       (yyval.ttype) = g_type_i32;
     }
-#line 2607 "/home/ddomenichelli/Workspace/iit/build/yarp/src/idls/thrift/thrift/thrifty.cc" /* yacc.c:1646  */
+
     break;
 
   case 98:
-#line 1076 "/home/ddomenichelli/Workspace/iit/src/yarp/extern/thrift/thrift/compiler/cpp/src/thrift/thrifty.yy" /* yacc.c:1646  */
+
     {
       pdebug("BaseType -> tok_i64");
       (yyval.ttype) = g_type_i64;
     }
-#line 2616 "/home/ddomenichelli/Workspace/iit/build/yarp/src/idls/thrift/thrift/thrifty.cc" /* yacc.c:1646  */
+
     break;
 
   case 99:
-#line 1081 "/home/ddomenichelli/Workspace/iit/src/yarp/extern/thrift/thrift/compiler/cpp/src/thrift/thrifty.yy" /* yacc.c:1646  */
+
     {
       pdebug("BaseType -> tok_double");
       (yyval.ttype) = g_type_double;
     }
-#line 2625 "/home/ddomenichelli/Workspace/iit/build/yarp/src/idls/thrift/thrift/thrifty.cc" /* yacc.c:1646  */
+
     break;
 
   case 100:
-#line 1087 "/home/ddomenichelli/Workspace/iit/src/yarp/extern/thrift/thrift/compiler/cpp/src/thrift/thrifty.yy" /* yacc.c:1646  */
+
     {
       pdebug("ContainerType -> SimpleContainerType TypeAnnotations");
       (yyval.ttype) = (yyvsp[-1].ttype);
@@ -2634,38 +2634,38 @@ yyreduce:
         delete (yyvsp[0].ttype);
       }
     }
-#line 2638 "/home/ddomenichelli/Workspace/iit/build/yarp/src/idls/thrift/thrift/thrifty.cc" /* yacc.c:1646  */
+
     break;
 
   case 101:
-#line 1098 "/home/ddomenichelli/Workspace/iit/src/yarp/extern/thrift/thrift/compiler/cpp/src/thrift/thrifty.yy" /* yacc.c:1646  */
+
     {
       pdebug("SimpleContainerType -> MapType");
       (yyval.ttype) = (yyvsp[0].ttype);
     }
-#line 2647 "/home/ddomenichelli/Workspace/iit/build/yarp/src/idls/thrift/thrift/thrifty.cc" /* yacc.c:1646  */
+
     break;
 
   case 102:
-#line 1103 "/home/ddomenichelli/Workspace/iit/src/yarp/extern/thrift/thrift/compiler/cpp/src/thrift/thrifty.yy" /* yacc.c:1646  */
+
     {
       pdebug("SimpleContainerType -> SetType");
       (yyval.ttype) = (yyvsp[0].ttype);
     }
-#line 2656 "/home/ddomenichelli/Workspace/iit/build/yarp/src/idls/thrift/thrift/thrifty.cc" /* yacc.c:1646  */
+
     break;
 
   case 103:
-#line 1108 "/home/ddomenichelli/Workspace/iit/src/yarp/extern/thrift/thrift/compiler/cpp/src/thrift/thrifty.yy" /* yacc.c:1646  */
+
     {
       pdebug("SimpleContainerType -> ListType");
       (yyval.ttype) = (yyvsp[0].ttype);
     }
-#line 2665 "/home/ddomenichelli/Workspace/iit/build/yarp/src/idls/thrift/thrift/thrifty.cc" /* yacc.c:1646  */
+
     break;
 
   case 104:
-#line 1115 "/home/ddomenichelli/Workspace/iit/src/yarp/extern/thrift/thrift/compiler/cpp/src/thrift/thrifty.yy" /* yacc.c:1646  */
+
     {
       pdebug("MapType -> tok_map <FieldType, FieldType>");
       (yyval.ttype) = new t_map((yyvsp[-3].ttype), (yyvsp[-1].ttype));
@@ -2673,11 +2673,11 @@ yyreduce:
         ((t_container*)(yyval.ttype))->set_cpp_name(std::string((yyvsp[-5].id)));
       }
     }
-#line 2677 "/home/ddomenichelli/Workspace/iit/build/yarp/src/idls/thrift/thrift/thrifty.cc" /* yacc.c:1646  */
+
     break;
 
   case 105:
-#line 1125 "/home/ddomenichelli/Workspace/iit/src/yarp/extern/thrift/thrift/compiler/cpp/src/thrift/thrifty.yy" /* yacc.c:1646  */
+
     {
       pdebug("SetType -> tok_set<FieldType>");
       (yyval.ttype) = new t_set((yyvsp[-1].ttype));
@@ -2685,11 +2685,11 @@ yyreduce:
         ((t_container*)(yyval.ttype))->set_cpp_name(std::string((yyvsp[-3].id)));
       }
     }
-#line 2689 "/home/ddomenichelli/Workspace/iit/build/yarp/src/idls/thrift/thrift/thrifty.cc" /* yacc.c:1646  */
+
     break;
 
   case 106:
-#line 1135 "/home/ddomenichelli/Workspace/iit/src/yarp/extern/thrift/thrift/compiler/cpp/src/thrift/thrifty.yy" /* yacc.c:1646  */
+
     {
       pdebug("ListType -> tok_list<FieldType>");
       check_for_list_of_bytes((yyvsp[-2].ttype));
@@ -2698,93 +2698,93 @@ yyreduce:
         ((t_container*)(yyval.ttype))->set_cpp_name(std::string((yyvsp[0].id)));
       }
     }
-#line 2702 "/home/ddomenichelli/Workspace/iit/build/yarp/src/idls/thrift/thrift/thrifty.cc" /* yacc.c:1646  */
+
     break;
 
   case 107:
-#line 1146 "/home/ddomenichelli/Workspace/iit/src/yarp/extern/thrift/thrift/compiler/cpp/src/thrift/thrifty.yy" /* yacc.c:1646  */
+
     {
       (yyval.id) = (yyvsp[0].id);
     }
-#line 2710 "/home/ddomenichelli/Workspace/iit/build/yarp/src/idls/thrift/thrift/thrifty.cc" /* yacc.c:1646  */
+
     break;
 
   case 108:
-#line 1150 "/home/ddomenichelli/Workspace/iit/src/yarp/extern/thrift/thrift/compiler/cpp/src/thrift/thrifty.yy" /* yacc.c:1646  */
+
     {
       (yyval.id) = NULL;
     }
-#line 2718 "/home/ddomenichelli/Workspace/iit/build/yarp/src/idls/thrift/thrift/thrifty.cc" /* yacc.c:1646  */
+
     break;
 
   case 109:
-#line 1156 "/home/ddomenichelli/Workspace/iit/src/yarp/extern/thrift/thrift/compiler/cpp/src/thrift/thrifty.yy" /* yacc.c:1646  */
+
     {
       pdebug("TypeAnnotations -> ( TypeAnnotationList )");
       (yyval.ttype) = (yyvsp[-1].ttype);
     }
-#line 2727 "/home/ddomenichelli/Workspace/iit/build/yarp/src/idls/thrift/thrift/thrifty.cc" /* yacc.c:1646  */
+
     break;
 
   case 110:
-#line 1161 "/home/ddomenichelli/Workspace/iit/src/yarp/extern/thrift/thrift/compiler/cpp/src/thrift/thrifty.yy" /* yacc.c:1646  */
+
     {
       (yyval.ttype) = NULL;
     }
-#line 2735 "/home/ddomenichelli/Workspace/iit/build/yarp/src/idls/thrift/thrift/thrifty.cc" /* yacc.c:1646  */
+
     break;
 
   case 111:
-#line 1167 "/home/ddomenichelli/Workspace/iit/src/yarp/extern/thrift/thrift/compiler/cpp/src/thrift/thrifty.yy" /* yacc.c:1646  */
+
     {
       pdebug("TypeAnnotationList -> TypeAnnotationList , TypeAnnotation");
       (yyval.ttype) = (yyvsp[-1].ttype);
       (yyval.ttype)->annotations_[(yyvsp[0].tannot)->key] = (yyvsp[0].tannot)->val;
       delete (yyvsp[0].tannot);
     }
-#line 2746 "/home/ddomenichelli/Workspace/iit/build/yarp/src/idls/thrift/thrift/thrifty.cc" /* yacc.c:1646  */
+
     break;
 
   case 112:
-#line 1174 "/home/ddomenichelli/Workspace/iit/src/yarp/extern/thrift/thrift/compiler/cpp/src/thrift/thrifty.yy" /* yacc.c:1646  */
+
     {
       /* Just use a dummy structure to hold the annotations. */
       (yyval.ttype) = new t_struct(g_program);
     }
-#line 2755 "/home/ddomenichelli/Workspace/iit/build/yarp/src/idls/thrift/thrift/thrifty.cc" /* yacc.c:1646  */
+
     break;
 
   case 113:
-#line 1181 "/home/ddomenichelli/Workspace/iit/src/yarp/extern/thrift/thrift/compiler/cpp/src/thrift/thrifty.yy" /* yacc.c:1646  */
+
     {
       pdebug("TypeAnnotation -> TypeAnnotationValue");
       (yyval.tannot) = new t_annotation;
       (yyval.tannot)->key = (yyvsp[-2].id);
       (yyval.tannot)->val = (yyvsp[-1].id);
     }
-#line 2766 "/home/ddomenichelli/Workspace/iit/build/yarp/src/idls/thrift/thrift/thrifty.cc" /* yacc.c:1646  */
+
     break;
 
   case 114:
-#line 1190 "/home/ddomenichelli/Workspace/iit/src/yarp/extern/thrift/thrift/compiler/cpp/src/thrift/thrifty.yy" /* yacc.c:1646  */
+
     {
       pdebug("TypeAnnotationValue -> = tok_literal");
       (yyval.id) = (yyvsp[0].id);
     }
-#line 2775 "/home/ddomenichelli/Workspace/iit/build/yarp/src/idls/thrift/thrift/thrifty.cc" /* yacc.c:1646  */
+
     break;
 
   case 115:
-#line 1195 "/home/ddomenichelli/Workspace/iit/src/yarp/extern/thrift/thrift/compiler/cpp/src/thrift/thrifty.yy" /* yacc.c:1646  */
+
     {
       pdebug("TypeAnnotationValue ->");
       (yyval.id) = strdup("1");
     }
-#line 2784 "/home/ddomenichelli/Workspace/iit/build/yarp/src/idls/thrift/thrift/thrifty.cc" /* yacc.c:1646  */
+
     break;
 
 
-#line 2788 "/home/ddomenichelli/Workspace/iit/build/yarp/src/idls/thrift/thrift/thrifty.cc" /* yacc.c:1646  */
+
       default: break;
     }
   /* User semantic actions sometimes alter yychar, and that requires
@@ -3012,5 +3012,5 @@ yyreturn:
 #endif
   return yyresult;
 }
-#line 1200 "/home/ddomenichelli/Workspace/iit/src/yarp/extern/thrift/thrift/compiler/cpp/src/thrift/thrifty.yy" /* yacc.c:1906  */
+
 

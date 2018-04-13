@@ -40,11 +40,11 @@
 extern int yydebug;
 #endif
 /* "%code requires" blocks.  */
-#line 1 "/home/ddomenichelli/Workspace/iit/src/yarp/extern/thrift/thrift/compiler/cpp/src/thrift/thrifty.yy" /* yacc.c:1909  */
+
 
 #include "thrift/parse/t_program.h"
 
-#line 48 "/home/ddomenichelli/Workspace/iit/build/yarp/src/idls/thrift/thrift/thrifty.hh" /* yacc.c:1909  */
+
 
 /* Token type.  */
 #ifndef YYTOKENTYPE
@@ -99,7 +99,7 @@ extern int yydebug;
 
 union YYSTYPE
 {
-#line 81 "/home/ddomenichelli/Workspace/iit/src/yarp/extern/thrift/thrift/compiler/cpp/src/thrift/thrifty.yy" /* yacc.c:1909  */
+
 
   char*          id;
   int64_t        iconst;
@@ -122,7 +122,7 @@ union YYSTYPE
   t_annotation*  tannot;
   t_field_id     tfieldid;
 
-#line 126 "/home/ddomenichelli/Workspace/iit/build/yarp/src/idls/thrift/thrift/thrifty.hh" /* yacc.c:1909  */
+
 };
 
 typedef union YYSTYPE YYSTYPE;

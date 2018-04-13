@@ -27,10 +27,12 @@ set(yarpidl_thrift_YARP_SRCS src/t_yarp_generator.cc)
 if(BISON_FOUND AND FLEX_FOUND)
   bison_target(thrifty
                "${THRIFT_ROOT}/compiler/cpp/src/thrift/thrifty.yy"
-               "${CMAKE_CURRENT_BINARY_DIR}/thrift/thrifty.cc")
+               "${CMAKE_CURRENT_BINARY_DIR}/thrift/thrifty.cc"
+               COMPILE_FLAGS --no-lines)
   flex_target(thriftl
               "${THRIFT_ROOT}/compiler/cpp/src/thrift/thriftl.ll"
-              "${CMAKE_CURRENT_BINARY_DIR}/thrift/thriftl.cc")
+              "${CMAKE_CURRENT_BINARY_DIR}/thrift/thriftl.cc"
+              COMPILE_FLAGS --noline)
   add_flex_bison_dependency(thriftl thrifty)
 else()
   # Simulate bison and flex run

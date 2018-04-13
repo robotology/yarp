@@ -1,6 +1,3 @@
-#line 2 "/home/ddomenichelli/Workspace/iit/build/yarp/src/idls/thrift/thrift/thriftl.cc"
-
-#line 4 "/home/ddomenichelli/Workspace/iit/build/yarp/src/idls/thrift/thrift/thriftl.cc"
 
 #define  YY_INT_ALIGNED short int
 
@@ -1109,7 +1106,6 @@ int yy_flex_debug = 0;
 
 char yytext[YYLMAX];
 char *yytext_ptr;
-#line 1 "/home/ddomenichelli/Workspace/iit/src/yarp/extern/thrift/thrift/compiler/cpp/src/thrift/thriftl.ll"
 /*
  * Licensed to the Apache Software Foundation (ASF) under one
  * or more contributor license agreements. See the NOTICE file
@@ -1133,7 +1129,6 @@ char *yytext_ptr;
  *
  * Tokenizes a thrift definition file.
  */
-#line 27 "/home/ddomenichelli/Workspace/iit/src/yarp/extern/thrift/thrift/compiler/cpp/src/thrift/thriftl.ll"
 
 /* This is redundant with some of the flags in Makefile.am, but it works
  * when people override CXXFLAGS without being careful. The pragmas are
@@ -1213,7 +1208,6 @@ void unexpected_token(char* text) {
 /**
  * Helper definitions, comments, constants, and whatnot
  */
-#line 1217 "/home/ddomenichelli/Workspace/iit/build/yarp/src/idls/thrift/thrift/thriftl.cc"
 
 #define INITIAL 0
 
@@ -1429,10 +1423,6 @@ YY_DECL
 		}
 
 	{
-#line 128 "/home/ddomenichelli/Workspace/iit/src/yarp/extern/thrift/thrift/compiler/cpp/src/thrift/thriftl.ll"
-
-
-#line 1436 "/home/ddomenichelli/Workspace/iit/build/yarp/src/idls/thrift/thrift/thriftl.cc"
 
 	while ( /*CONSTCOND*/1 )		/* loops until end-of-file is reached */
 		{
@@ -1502,17 +1492,14 @@ do_action:	/* This label is used only to access EOF actions. */
 case 1:
 /* rule 1 can match eol */
 YY_RULE_SETUP
-#line 130 "/home/ddomenichelli/Workspace/iit/src/yarp/extern/thrift/thrift/compiler/cpp/src/thrift/thriftl.ll"
 { /* do nothing */                 }
 	YY_BREAK
 case 2:
 YY_RULE_SETUP
-#line 131 "/home/ddomenichelli/Workspace/iit/src/yarp/extern/thrift/thrift/compiler/cpp/src/thrift/thriftl.ll"
 { /* do nothing */                 }
 	YY_BREAK
 case 3:
 YY_RULE_SETUP
-#line 133 "/home/ddomenichelli/Workspace/iit/src/yarp/extern/thrift/thrift/compiler/cpp/src/thrift/thriftl.ll"
 {
   std::string parsed("/**");
   int state = 0;  // 0 = normal, 1 = "*" seen, "*/" seen
@@ -1558,7 +1545,6 @@ YY_RULE_SETUP
 	YY_BREAK
 case 4:
 YY_RULE_SETUP
-#line 176 "/home/ddomenichelli/Workspace/iit/src/yarp/extern/thrift/thrift/compiler/cpp/src/thrift/thriftl.ll"
 { /* parsed, but thrown away */
   std::string parsed("/*");
   int state = 0;  // 0 = normal, 1 = "*" seen, "*/" seen
@@ -1586,147 +1572,118 @@ YY_RULE_SETUP
 	YY_BREAK
 case 5:
 YY_RULE_SETUP
-#line 201 "/home/ddomenichelli/Workspace/iit/src/yarp/extern/thrift/thrift/compiler/cpp/src/thrift/thriftl.ll"
 { /* do nothing */                 }
 	YY_BREAK
 case 6:
 YY_RULE_SETUP
-#line 202 "/home/ddomenichelli/Workspace/iit/src/yarp/extern/thrift/thrift/compiler/cpp/src/thrift/thriftl.ll"
 { /* do nothing */                 }
 	YY_BREAK
 case 7:
 YY_RULE_SETUP
-#line 204 "/home/ddomenichelli/Workspace/iit/src/yarp/extern/thrift/thrift/compiler/cpp/src/thrift/thriftl.ll"
 { return yytext[0];                }
 	YY_BREAK
 case 8:
 YY_RULE_SETUP
-#line 205 "/home/ddomenichelli/Workspace/iit/src/yarp/extern/thrift/thrift/compiler/cpp/src/thrift/thriftl.ll"
 { return yytext[0];                }
 	YY_BREAK
 case 9:
 YY_RULE_SETUP
-#line 207 "/home/ddomenichelli/Workspace/iit/src/yarp/extern/thrift/thrift/compiler/cpp/src/thrift/thriftl.ll"
 { yylval.iconst=0; return tok_int_constant; }
 	YY_BREAK
 case 10:
 YY_RULE_SETUP
-#line 208 "/home/ddomenichelli/Workspace/iit/src/yarp/extern/thrift/thrift/compiler/cpp/src/thrift/thriftl.ll"
 { yylval.iconst=1; return tok_int_constant; }
 	YY_BREAK
 case 11:
 YY_RULE_SETUP
-#line 210 "/home/ddomenichelli/Workspace/iit/src/yarp/extern/thrift/thrift/compiler/cpp/src/thrift/thriftl.ll"
 { return tok_namespace;            }
 	YY_BREAK
 case 12:
 YY_RULE_SETUP
-#line 211 "/home/ddomenichelli/Workspace/iit/src/yarp/extern/thrift/thrift/compiler/cpp/src/thrift/thriftl.ll"
 { error_unsupported_namespace_decl("cpp"); /* do nothing */ }
 	YY_BREAK
 case 13:
 YY_RULE_SETUP
-#line 212 "/home/ddomenichelli/Workspace/iit/src/yarp/extern/thrift/thrift/compiler/cpp/src/thrift/thriftl.ll"
 { return tok_cpp_include;          }
 	YY_BREAK
 case 14:
 YY_RULE_SETUP
-#line 213 "/home/ddomenichelli/Workspace/iit/src/yarp/extern/thrift/thrift/compiler/cpp/src/thrift/thriftl.ll"
 { return tok_cpp_type;             }
 	YY_BREAK
 case 15:
 YY_RULE_SETUP
-#line 214 "/home/ddomenichelli/Workspace/iit/src/yarp/extern/thrift/thrift/compiler/cpp/src/thrift/thriftl.ll"
 { error_unsupported_namespace_decl("java_package", "java"); /* do nothing */ }
 	YY_BREAK
 case 16:
 YY_RULE_SETUP
-#line 215 "/home/ddomenichelli/Workspace/iit/src/yarp/extern/thrift/thrift/compiler/cpp/src/thrift/thriftl.ll"
 { error_unsupported_namespace_decl("cocoa_prefix", "cocoa"); /* do nothing */ }
 	YY_BREAK
 case 17:
 YY_RULE_SETUP
-#line 216 "/home/ddomenichelli/Workspace/iit/src/yarp/extern/thrift/thrift/compiler/cpp/src/thrift/thriftl.ll"
 { error_unsupported_namespace_decl("csharp"); /* do nothing */ }
 	YY_BREAK
 case 18:
 YY_RULE_SETUP
-#line 217 "/home/ddomenichelli/Workspace/iit/src/yarp/extern/thrift/thrift/compiler/cpp/src/thrift/thriftl.ll"
 { error_unsupported_namespace_decl("delphi"); /* do nothing */ }
 	YY_BREAK
 case 19:
 YY_RULE_SETUP
-#line 218 "/home/ddomenichelli/Workspace/iit/src/yarp/extern/thrift/thrift/compiler/cpp/src/thrift/thriftl.ll"
 { error_unsupported_namespace_decl("php"); /* do nothing */ }
 	YY_BREAK
 case 20:
 YY_RULE_SETUP
-#line 219 "/home/ddomenichelli/Workspace/iit/src/yarp/extern/thrift/thrift/compiler/cpp/src/thrift/thriftl.ll"
 { error_unsupported_namespace_decl("py_module", "py"); /* do nothing */ }
 	YY_BREAK
 case 21:
 YY_RULE_SETUP
-#line 220 "/home/ddomenichelli/Workspace/iit/src/yarp/extern/thrift/thrift/compiler/cpp/src/thrift/thriftl.ll"
 { error_unsupported_namespace_decl("perl_package", "perl"); /* do nothing */ }
 	YY_BREAK
 case 22:
 YY_RULE_SETUP
-#line 221 "/home/ddomenichelli/Workspace/iit/src/yarp/extern/thrift/thrift/compiler/cpp/src/thrift/thriftl.ll"
 { error_unsupported_namespace_decl("ruby"); /* do nothing */ }
 	YY_BREAK
 case 23:
 YY_RULE_SETUP
-#line 222 "/home/ddomenichelli/Workspace/iit/src/yarp/extern/thrift/thrift/compiler/cpp/src/thrift/thriftl.ll"
 { error_unsupported_namespace_decl("smalltalk_category", "smalltalk.category"); /* do nothing */ }
 	YY_BREAK
 case 24:
 YY_RULE_SETUP
-#line 223 "/home/ddomenichelli/Workspace/iit/src/yarp/extern/thrift/thrift/compiler/cpp/src/thrift/thriftl.ll"
 { error_unsupported_namespace_decl("smalltalk_category", "smalltalk.category"); /* do nothing */ }
 	YY_BREAK
 case 25:
 YY_RULE_SETUP
-#line 224 "/home/ddomenichelli/Workspace/iit/src/yarp/extern/thrift/thrift/compiler/cpp/src/thrift/thriftl.ll"
 { return tok_xsd_all;              }
 	YY_BREAK
 case 26:
 YY_RULE_SETUP
-#line 225 "/home/ddomenichelli/Workspace/iit/src/yarp/extern/thrift/thrift/compiler/cpp/src/thrift/thriftl.ll"
 { return tok_xsd_optional;         }
 	YY_BREAK
 case 27:
 YY_RULE_SETUP
-#line 226 "/home/ddomenichelli/Workspace/iit/src/yarp/extern/thrift/thrift/compiler/cpp/src/thrift/thriftl.ll"
 { return tok_xsd_nillable;         }
 	YY_BREAK
 case 28:
 YY_RULE_SETUP
-#line 227 "/home/ddomenichelli/Workspace/iit/src/yarp/extern/thrift/thrift/compiler/cpp/src/thrift/thriftl.ll"
 { error_unsupported_namespace_decl("xsd"); /* do nothing */ }
 	YY_BREAK
 case 29:
 YY_RULE_SETUP
-#line 228 "/home/ddomenichelli/Workspace/iit/src/yarp/extern/thrift/thrift/compiler/cpp/src/thrift/thriftl.ll"
 { return tok_xsd_attrs;            }
 	YY_BREAK
 case 30:
 YY_RULE_SETUP
-#line 229 "/home/ddomenichelli/Workspace/iit/src/yarp/extern/thrift/thrift/compiler/cpp/src/thrift/thriftl.ll"
 { return tok_include;              }
 	YY_BREAK
 case 31:
 YY_RULE_SETUP
-#line 230 "/home/ddomenichelli/Workspace/iit/src/yarp/extern/thrift/thrift/compiler/cpp/src/thrift/thriftl.ll"
 { return tok_void;                 }
 	YY_BREAK
 case 32:
 YY_RULE_SETUP
-#line 231 "/home/ddomenichelli/Workspace/iit/src/yarp/extern/thrift/thrift/compiler/cpp/src/thrift/thriftl.ll"
 { return tok_bool;                 }
 	YY_BREAK
 case 33:
 YY_RULE_SETUP
-#line 232 "/home/ddomenichelli/Workspace/iit/src/yarp/extern/thrift/thrift/compiler/cpp/src/thrift/thriftl.ll"
 {
   emit_byte_type_warning();
   return tok_i8;
@@ -1734,42 +1691,34 @@ YY_RULE_SETUP
 	YY_BREAK
 case 34:
 YY_RULE_SETUP
-#line 236 "/home/ddomenichelli/Workspace/iit/src/yarp/extern/thrift/thrift/compiler/cpp/src/thrift/thriftl.ll"
 { return tok_i8;                   }
 	YY_BREAK
 case 35:
 YY_RULE_SETUP
-#line 237 "/home/ddomenichelli/Workspace/iit/src/yarp/extern/thrift/thrift/compiler/cpp/src/thrift/thriftl.ll"
 { return tok_i16;                  }
 	YY_BREAK
 case 36:
 YY_RULE_SETUP
-#line 238 "/home/ddomenichelli/Workspace/iit/src/yarp/extern/thrift/thrift/compiler/cpp/src/thrift/thriftl.ll"
 { return tok_i32;                  }
 	YY_BREAK
 case 37:
 YY_RULE_SETUP
-#line 239 "/home/ddomenichelli/Workspace/iit/src/yarp/extern/thrift/thrift/compiler/cpp/src/thrift/thriftl.ll"
 { return tok_i64;                  }
 	YY_BREAK
 case 38:
 YY_RULE_SETUP
-#line 240 "/home/ddomenichelli/Workspace/iit/src/yarp/extern/thrift/thrift/compiler/cpp/src/thrift/thriftl.ll"
 { return tok_double;               }
 	YY_BREAK
 case 39:
 YY_RULE_SETUP
-#line 241 "/home/ddomenichelli/Workspace/iit/src/yarp/extern/thrift/thrift/compiler/cpp/src/thrift/thriftl.ll"
 { return tok_string;               }
 	YY_BREAK
 case 40:
 YY_RULE_SETUP
-#line 242 "/home/ddomenichelli/Workspace/iit/src/yarp/extern/thrift/thrift/compiler/cpp/src/thrift/thriftl.ll"
 { return tok_binary;               }
 	YY_BREAK
 case 41:
 YY_RULE_SETUP
-#line 243 "/home/ddomenichelli/Workspace/iit/src/yarp/extern/thrift/thrift/compiler/cpp/src/thrift/thriftl.ll"
 {
   pwarning(0, "\"slist\" is deprecated and will be removed in a future compiler version.  This type should be replaced with \"string\".\n");
   return tok_slist;
@@ -1777,7 +1726,6 @@ YY_RULE_SETUP
 	YY_BREAK
 case 42:
 YY_RULE_SETUP
-#line 247 "/home/ddomenichelli/Workspace/iit/src/yarp/extern/thrift/thrift/compiler/cpp/src/thrift/thriftl.ll"
 {
   pwarning(0, "\"senum\" is deprecated and will be removed in a future compiler version.  This type should be replaced with \"string\".\n");
   return tok_senum;
@@ -1785,82 +1733,66 @@ YY_RULE_SETUP
 	YY_BREAK
 case 43:
 YY_RULE_SETUP
-#line 251 "/home/ddomenichelli/Workspace/iit/src/yarp/extern/thrift/thrift/compiler/cpp/src/thrift/thriftl.ll"
 { return tok_map;                  }
 	YY_BREAK
 case 44:
 YY_RULE_SETUP
-#line 252 "/home/ddomenichelli/Workspace/iit/src/yarp/extern/thrift/thrift/compiler/cpp/src/thrift/thriftl.ll"
 { return tok_list;                 }
 	YY_BREAK
 case 45:
 YY_RULE_SETUP
-#line 253 "/home/ddomenichelli/Workspace/iit/src/yarp/extern/thrift/thrift/compiler/cpp/src/thrift/thriftl.ll"
 { return tok_set;                  }
 	YY_BREAK
 case 46:
 YY_RULE_SETUP
-#line 254 "/home/ddomenichelli/Workspace/iit/src/yarp/extern/thrift/thrift/compiler/cpp/src/thrift/thriftl.ll"
 { return tok_oneway;               }
 	YY_BREAK
 case 47:
 YY_RULE_SETUP
-#line 255 "/home/ddomenichelli/Workspace/iit/src/yarp/extern/thrift/thrift/compiler/cpp/src/thrift/thriftl.ll"
 { return tok_typedef;              }
 	YY_BREAK
 case 48:
 YY_RULE_SETUP
-#line 256 "/home/ddomenichelli/Workspace/iit/src/yarp/extern/thrift/thrift/compiler/cpp/src/thrift/thriftl.ll"
 { return tok_struct;               }
 	YY_BREAK
 case 49:
 YY_RULE_SETUP
-#line 257 "/home/ddomenichelli/Workspace/iit/src/yarp/extern/thrift/thrift/compiler/cpp/src/thrift/thriftl.ll"
 { return tok_union;                }
 	YY_BREAK
 case 50:
 YY_RULE_SETUP
-#line 258 "/home/ddomenichelli/Workspace/iit/src/yarp/extern/thrift/thrift/compiler/cpp/src/thrift/thriftl.ll"
 { return tok_xception;             }
 	YY_BREAK
 case 51:
 YY_RULE_SETUP
-#line 259 "/home/ddomenichelli/Workspace/iit/src/yarp/extern/thrift/thrift/compiler/cpp/src/thrift/thriftl.ll"
 { return tok_extends;              }
 	YY_BREAK
 case 52:
 YY_RULE_SETUP
-#line 260 "/home/ddomenichelli/Workspace/iit/src/yarp/extern/thrift/thrift/compiler/cpp/src/thrift/thriftl.ll"
 { return tok_throws;               }
 	YY_BREAK
 case 53:
 YY_RULE_SETUP
-#line 261 "/home/ddomenichelli/Workspace/iit/src/yarp/extern/thrift/thrift/compiler/cpp/src/thrift/thriftl.ll"
 { return tok_service;              }
 	YY_BREAK
 case 54:
 YY_RULE_SETUP
-#line 262 "/home/ddomenichelli/Workspace/iit/src/yarp/extern/thrift/thrift/compiler/cpp/src/thrift/thriftl.ll"
 { return tok_enum;                 }
 	YY_BREAK
 case 55:
 YY_RULE_SETUP
-#line 263 "/home/ddomenichelli/Workspace/iit/src/yarp/extern/thrift/thrift/compiler/cpp/src/thrift/thriftl.ll"
 { return tok_const;                }
 	YY_BREAK
 case 56:
 YY_RULE_SETUP
-#line 264 "/home/ddomenichelli/Workspace/iit/src/yarp/extern/thrift/thrift/compiler/cpp/src/thrift/thriftl.ll"
 { return tok_required;             }
 	YY_BREAK
 case 57:
 YY_RULE_SETUP
-#line 265 "/home/ddomenichelli/Workspace/iit/src/yarp/extern/thrift/thrift/compiler/cpp/src/thrift/thriftl.ll"
 { return tok_optional;             }
 	YY_BREAK
 case 58:
 YY_RULE_SETUP
-#line 266 "/home/ddomenichelli/Workspace/iit/src/yarp/extern/thrift/thrift/compiler/cpp/src/thrift/thriftl.ll"
 {
   pwarning(0, "\"async\" is deprecated.  It is called \"oneway\" now.\n");
   return tok_oneway;
@@ -1868,527 +1800,422 @@ YY_RULE_SETUP
 	YY_BREAK
 case 59:
 YY_RULE_SETUP
-#line 270 "/home/ddomenichelli/Workspace/iit/src/yarp/extern/thrift/thrift/compiler/cpp/src/thrift/thriftl.ll"
 { return tok_reference;            }
 	YY_BREAK
 case 60:
 YY_RULE_SETUP
-#line 273 "/home/ddomenichelli/Workspace/iit/src/yarp/extern/thrift/thrift/compiler/cpp/src/thrift/thriftl.ll"
 { thrift_reserved_keyword(yytext); }
 	YY_BREAK
 case 61:
 YY_RULE_SETUP
-#line 274 "/home/ddomenichelli/Workspace/iit/src/yarp/extern/thrift/thrift/compiler/cpp/src/thrift/thriftl.ll"
 { thrift_reserved_keyword(yytext); }
 	YY_BREAK
 case 62:
 YY_RULE_SETUP
-#line 275 "/home/ddomenichelli/Workspace/iit/src/yarp/extern/thrift/thrift/compiler/cpp/src/thrift/thriftl.ll"
 { thrift_reserved_keyword(yytext); }
 	YY_BREAK
 case 63:
 YY_RULE_SETUP
-#line 276 "/home/ddomenichelli/Workspace/iit/src/yarp/extern/thrift/thrift/compiler/cpp/src/thrift/thriftl.ll"
 { thrift_reserved_keyword(yytext); }
 	YY_BREAK
 case 64:
 YY_RULE_SETUP
-#line 277 "/home/ddomenichelli/Workspace/iit/src/yarp/extern/thrift/thrift/compiler/cpp/src/thrift/thriftl.ll"
 { thrift_reserved_keyword(yytext); }
 	YY_BREAK
 case 65:
 YY_RULE_SETUP
-#line 278 "/home/ddomenichelli/Workspace/iit/src/yarp/extern/thrift/thrift/compiler/cpp/src/thrift/thriftl.ll"
 { thrift_reserved_keyword(yytext); }
 	YY_BREAK
 case 66:
 YY_RULE_SETUP
-#line 279 "/home/ddomenichelli/Workspace/iit/src/yarp/extern/thrift/thrift/compiler/cpp/src/thrift/thriftl.ll"
 { thrift_reserved_keyword(yytext); }
 	YY_BREAK
 case 67:
 YY_RULE_SETUP
-#line 280 "/home/ddomenichelli/Workspace/iit/src/yarp/extern/thrift/thrift/compiler/cpp/src/thrift/thriftl.ll"
 { thrift_reserved_keyword(yytext); }
 	YY_BREAK
 case 68:
 YY_RULE_SETUP
-#line 281 "/home/ddomenichelli/Workspace/iit/src/yarp/extern/thrift/thrift/compiler/cpp/src/thrift/thriftl.ll"
 { thrift_reserved_keyword(yytext); }
 	YY_BREAK
 case 69:
 YY_RULE_SETUP
-#line 282 "/home/ddomenichelli/Workspace/iit/src/yarp/extern/thrift/thrift/compiler/cpp/src/thrift/thriftl.ll"
 { thrift_reserved_keyword(yytext); }
 	YY_BREAK
 case 70:
 YY_RULE_SETUP
-#line 283 "/home/ddomenichelli/Workspace/iit/src/yarp/extern/thrift/thrift/compiler/cpp/src/thrift/thriftl.ll"
 { thrift_reserved_keyword(yytext); }
 	YY_BREAK
 case 71:
 YY_RULE_SETUP
-#line 284 "/home/ddomenichelli/Workspace/iit/src/yarp/extern/thrift/thrift/compiler/cpp/src/thrift/thriftl.ll"
 { thrift_reserved_keyword(yytext); }
 	YY_BREAK
 case 72:
 YY_RULE_SETUP
-#line 285 "/home/ddomenichelli/Workspace/iit/src/yarp/extern/thrift/thrift/compiler/cpp/src/thrift/thriftl.ll"
 { thrift_reserved_keyword(yytext); }
 	YY_BREAK
 case 73:
 YY_RULE_SETUP
-#line 286 "/home/ddomenichelli/Workspace/iit/src/yarp/extern/thrift/thrift/compiler/cpp/src/thrift/thriftl.ll"
 { thrift_reserved_keyword(yytext); }
 	YY_BREAK
 case 74:
 YY_RULE_SETUP
-#line 287 "/home/ddomenichelli/Workspace/iit/src/yarp/extern/thrift/thrift/compiler/cpp/src/thrift/thriftl.ll"
 { thrift_reserved_keyword(yytext); }
 	YY_BREAK
 case 75:
 YY_RULE_SETUP
-#line 288 "/home/ddomenichelli/Workspace/iit/src/yarp/extern/thrift/thrift/compiler/cpp/src/thrift/thriftl.ll"
 { thrift_reserved_keyword(yytext); }
 	YY_BREAK
 case 76:
 YY_RULE_SETUP
-#line 289 "/home/ddomenichelli/Workspace/iit/src/yarp/extern/thrift/thrift/compiler/cpp/src/thrift/thriftl.ll"
 { thrift_reserved_keyword(yytext); }
 	YY_BREAK
 case 77:
 YY_RULE_SETUP
-#line 290 "/home/ddomenichelli/Workspace/iit/src/yarp/extern/thrift/thrift/compiler/cpp/src/thrift/thriftl.ll"
 { thrift_reserved_keyword(yytext); }
 	YY_BREAK
 case 78:
 YY_RULE_SETUP
-#line 291 "/home/ddomenichelli/Workspace/iit/src/yarp/extern/thrift/thrift/compiler/cpp/src/thrift/thriftl.ll"
 { thrift_reserved_keyword(yytext); }
 	YY_BREAK
 case 79:
 YY_RULE_SETUP
-#line 292 "/home/ddomenichelli/Workspace/iit/src/yarp/extern/thrift/thrift/compiler/cpp/src/thrift/thriftl.ll"
 { thrift_reserved_keyword(yytext); }
 	YY_BREAK
 case 80:
 YY_RULE_SETUP
-#line 293 "/home/ddomenichelli/Workspace/iit/src/yarp/extern/thrift/thrift/compiler/cpp/src/thrift/thriftl.ll"
 { thrift_reserved_keyword(yytext); }
 	YY_BREAK
 case 81:
 YY_RULE_SETUP
-#line 294 "/home/ddomenichelli/Workspace/iit/src/yarp/extern/thrift/thrift/compiler/cpp/src/thrift/thriftl.ll"
 { thrift_reserved_keyword(yytext); }
 	YY_BREAK
 case 82:
 YY_RULE_SETUP
-#line 295 "/home/ddomenichelli/Workspace/iit/src/yarp/extern/thrift/thrift/compiler/cpp/src/thrift/thriftl.ll"
 { thrift_reserved_keyword(yytext); }
 	YY_BREAK
 case 83:
 YY_RULE_SETUP
-#line 296 "/home/ddomenichelli/Workspace/iit/src/yarp/extern/thrift/thrift/compiler/cpp/src/thrift/thriftl.ll"
 { thrift_reserved_keyword(yytext); }
 	YY_BREAK
 case 84:
 YY_RULE_SETUP
-#line 297 "/home/ddomenichelli/Workspace/iit/src/yarp/extern/thrift/thrift/compiler/cpp/src/thrift/thriftl.ll"
 { thrift_reserved_keyword(yytext); }
 	YY_BREAK
 case 85:
 YY_RULE_SETUP
-#line 298 "/home/ddomenichelli/Workspace/iit/src/yarp/extern/thrift/thrift/compiler/cpp/src/thrift/thriftl.ll"
 { thrift_reserved_keyword(yytext); }
 	YY_BREAK
 case 86:
 YY_RULE_SETUP
-#line 299 "/home/ddomenichelli/Workspace/iit/src/yarp/extern/thrift/thrift/compiler/cpp/src/thrift/thriftl.ll"
 { thrift_reserved_keyword(yytext); }
 	YY_BREAK
 case 87:
 YY_RULE_SETUP
-#line 300 "/home/ddomenichelli/Workspace/iit/src/yarp/extern/thrift/thrift/compiler/cpp/src/thrift/thriftl.ll"
 { thrift_reserved_keyword(yytext); }
 	YY_BREAK
 case 88:
 YY_RULE_SETUP
-#line 301 "/home/ddomenichelli/Workspace/iit/src/yarp/extern/thrift/thrift/compiler/cpp/src/thrift/thriftl.ll"
 { thrift_reserved_keyword(yytext); }
 	YY_BREAK
 case 89:
 YY_RULE_SETUP
-#line 302 "/home/ddomenichelli/Workspace/iit/src/yarp/extern/thrift/thrift/compiler/cpp/src/thrift/thriftl.ll"
 { thrift_reserved_keyword(yytext); }
 	YY_BREAK
 case 90:
 YY_RULE_SETUP
-#line 303 "/home/ddomenichelli/Workspace/iit/src/yarp/extern/thrift/thrift/compiler/cpp/src/thrift/thriftl.ll"
 { thrift_reserved_keyword(yytext); }
 	YY_BREAK
 case 91:
 YY_RULE_SETUP
-#line 304 "/home/ddomenichelli/Workspace/iit/src/yarp/extern/thrift/thrift/compiler/cpp/src/thrift/thriftl.ll"
 { thrift_reserved_keyword(yytext); }
 	YY_BREAK
 case 92:
 YY_RULE_SETUP
-#line 305 "/home/ddomenichelli/Workspace/iit/src/yarp/extern/thrift/thrift/compiler/cpp/src/thrift/thriftl.ll"
 { thrift_reserved_keyword(yytext); }
 	YY_BREAK
 case 93:
 YY_RULE_SETUP
-#line 306 "/home/ddomenichelli/Workspace/iit/src/yarp/extern/thrift/thrift/compiler/cpp/src/thrift/thriftl.ll"
 { thrift_reserved_keyword(yytext); }
 	YY_BREAK
 case 94:
 YY_RULE_SETUP
-#line 307 "/home/ddomenichelli/Workspace/iit/src/yarp/extern/thrift/thrift/compiler/cpp/src/thrift/thriftl.ll"
 { thrift_reserved_keyword(yytext); }
 	YY_BREAK
 case 95:
 YY_RULE_SETUP
-#line 308 "/home/ddomenichelli/Workspace/iit/src/yarp/extern/thrift/thrift/compiler/cpp/src/thrift/thriftl.ll"
 { thrift_reserved_keyword(yytext); }
 	YY_BREAK
 case 96:
 YY_RULE_SETUP
-#line 309 "/home/ddomenichelli/Workspace/iit/src/yarp/extern/thrift/thrift/compiler/cpp/src/thrift/thriftl.ll"
 { thrift_reserved_keyword(yytext); }
 	YY_BREAK
 case 97:
 YY_RULE_SETUP
-#line 310 "/home/ddomenichelli/Workspace/iit/src/yarp/extern/thrift/thrift/compiler/cpp/src/thrift/thriftl.ll"
 { thrift_reserved_keyword(yytext); }
 	YY_BREAK
 case 98:
 YY_RULE_SETUP
-#line 311 "/home/ddomenichelli/Workspace/iit/src/yarp/extern/thrift/thrift/compiler/cpp/src/thrift/thriftl.ll"
 { thrift_reserved_keyword(yytext); }
 	YY_BREAK
 case 99:
 YY_RULE_SETUP
-#line 312 "/home/ddomenichelli/Workspace/iit/src/yarp/extern/thrift/thrift/compiler/cpp/src/thrift/thriftl.ll"
 { thrift_reserved_keyword(yytext); }
 	YY_BREAK
 case 100:
 YY_RULE_SETUP
-#line 313 "/home/ddomenichelli/Workspace/iit/src/yarp/extern/thrift/thrift/compiler/cpp/src/thrift/thriftl.ll"
 { thrift_reserved_keyword(yytext); }
 	YY_BREAK
 case 101:
 YY_RULE_SETUP
-#line 314 "/home/ddomenichelli/Workspace/iit/src/yarp/extern/thrift/thrift/compiler/cpp/src/thrift/thriftl.ll"
 { thrift_reserved_keyword(yytext); }
 	YY_BREAK
 case 102:
 YY_RULE_SETUP
-#line 315 "/home/ddomenichelli/Workspace/iit/src/yarp/extern/thrift/thrift/compiler/cpp/src/thrift/thriftl.ll"
 { thrift_reserved_keyword(yytext); }
 	YY_BREAK
 case 103:
 YY_RULE_SETUP
-#line 316 "/home/ddomenichelli/Workspace/iit/src/yarp/extern/thrift/thrift/compiler/cpp/src/thrift/thriftl.ll"
 { thrift_reserved_keyword(yytext); }
 	YY_BREAK
 case 104:
 YY_RULE_SETUP
-#line 317 "/home/ddomenichelli/Workspace/iit/src/yarp/extern/thrift/thrift/compiler/cpp/src/thrift/thriftl.ll"
 { thrift_reserved_keyword(yytext); }
 	YY_BREAK
 case 105:
 YY_RULE_SETUP
-#line 318 "/home/ddomenichelli/Workspace/iit/src/yarp/extern/thrift/thrift/compiler/cpp/src/thrift/thriftl.ll"
 { thrift_reserved_keyword(yytext); }
 	YY_BREAK
 case 106:
 YY_RULE_SETUP
-#line 319 "/home/ddomenichelli/Workspace/iit/src/yarp/extern/thrift/thrift/compiler/cpp/src/thrift/thriftl.ll"
 { thrift_reserved_keyword(yytext); }
 	YY_BREAK
 case 107:
 YY_RULE_SETUP
-#line 320 "/home/ddomenichelli/Workspace/iit/src/yarp/extern/thrift/thrift/compiler/cpp/src/thrift/thriftl.ll"
 { thrift_reserved_keyword(yytext); }
 	YY_BREAK
 case 108:
 YY_RULE_SETUP
-#line 321 "/home/ddomenichelli/Workspace/iit/src/yarp/extern/thrift/thrift/compiler/cpp/src/thrift/thriftl.ll"
 { thrift_reserved_keyword(yytext); }
 	YY_BREAK
 case 109:
 YY_RULE_SETUP
-#line 322 "/home/ddomenichelli/Workspace/iit/src/yarp/extern/thrift/thrift/compiler/cpp/src/thrift/thriftl.ll"
 { thrift_reserved_keyword(yytext); }
 	YY_BREAK
 case 110:
 YY_RULE_SETUP
-#line 323 "/home/ddomenichelli/Workspace/iit/src/yarp/extern/thrift/thrift/compiler/cpp/src/thrift/thriftl.ll"
 { thrift_reserved_keyword(yytext); }
 	YY_BREAK
 case 111:
 YY_RULE_SETUP
-#line 324 "/home/ddomenichelli/Workspace/iit/src/yarp/extern/thrift/thrift/compiler/cpp/src/thrift/thriftl.ll"
 { thrift_reserved_keyword(yytext); }
 	YY_BREAK
 case 112:
 YY_RULE_SETUP
-#line 325 "/home/ddomenichelli/Workspace/iit/src/yarp/extern/thrift/thrift/compiler/cpp/src/thrift/thriftl.ll"
 { thrift_reserved_keyword(yytext); }
 	YY_BREAK
 case 113:
 YY_RULE_SETUP
-#line 326 "/home/ddomenichelli/Workspace/iit/src/yarp/extern/thrift/thrift/compiler/cpp/src/thrift/thriftl.ll"
 { thrift_reserved_keyword(yytext); }
 	YY_BREAK
 case 114:
 YY_RULE_SETUP
-#line 327 "/home/ddomenichelli/Workspace/iit/src/yarp/extern/thrift/thrift/compiler/cpp/src/thrift/thriftl.ll"
 { thrift_reserved_keyword(yytext); }
 	YY_BREAK
 case 115:
 YY_RULE_SETUP
-#line 328 "/home/ddomenichelli/Workspace/iit/src/yarp/extern/thrift/thrift/compiler/cpp/src/thrift/thriftl.ll"
 { thrift_reserved_keyword(yytext); }
 	YY_BREAK
 case 116:
 YY_RULE_SETUP
-#line 329 "/home/ddomenichelli/Workspace/iit/src/yarp/extern/thrift/thrift/compiler/cpp/src/thrift/thriftl.ll"
 { thrift_reserved_keyword(yytext); }
 	YY_BREAK
 case 117:
 YY_RULE_SETUP
-#line 330 "/home/ddomenichelli/Workspace/iit/src/yarp/extern/thrift/thrift/compiler/cpp/src/thrift/thriftl.ll"
 { thrift_reserved_keyword(yytext); }
 	YY_BREAK
 case 118:
 YY_RULE_SETUP
-#line 331 "/home/ddomenichelli/Workspace/iit/src/yarp/extern/thrift/thrift/compiler/cpp/src/thrift/thriftl.ll"
 { thrift_reserved_keyword(yytext); }
 	YY_BREAK
 case 119:
 YY_RULE_SETUP
-#line 332 "/home/ddomenichelli/Workspace/iit/src/yarp/extern/thrift/thrift/compiler/cpp/src/thrift/thriftl.ll"
 { thrift_reserved_keyword(yytext); }
 	YY_BREAK
 case 120:
 YY_RULE_SETUP
-#line 333 "/home/ddomenichelli/Workspace/iit/src/yarp/extern/thrift/thrift/compiler/cpp/src/thrift/thriftl.ll"
 { thrift_reserved_keyword(yytext); }
 	YY_BREAK
 case 121:
 YY_RULE_SETUP
-#line 334 "/home/ddomenichelli/Workspace/iit/src/yarp/extern/thrift/thrift/compiler/cpp/src/thrift/thriftl.ll"
 { thrift_reserved_keyword(yytext); }
 	YY_BREAK
 case 122:
 YY_RULE_SETUP
-#line 335 "/home/ddomenichelli/Workspace/iit/src/yarp/extern/thrift/thrift/compiler/cpp/src/thrift/thriftl.ll"
 { thrift_reserved_keyword(yytext); }
 	YY_BREAK
 case 123:
 YY_RULE_SETUP
-#line 336 "/home/ddomenichelli/Workspace/iit/src/yarp/extern/thrift/thrift/compiler/cpp/src/thrift/thriftl.ll"
 { thrift_reserved_keyword(yytext); }
 	YY_BREAK
 case 124:
 YY_RULE_SETUP
-#line 337 "/home/ddomenichelli/Workspace/iit/src/yarp/extern/thrift/thrift/compiler/cpp/src/thrift/thriftl.ll"
 { thrift_reserved_keyword(yytext); }
 	YY_BREAK
 case 125:
 YY_RULE_SETUP
-#line 338 "/home/ddomenichelli/Workspace/iit/src/yarp/extern/thrift/thrift/compiler/cpp/src/thrift/thriftl.ll"
 { thrift_reserved_keyword(yytext); }
 	YY_BREAK
 case 126:
 YY_RULE_SETUP
-#line 339 "/home/ddomenichelli/Workspace/iit/src/yarp/extern/thrift/thrift/compiler/cpp/src/thrift/thriftl.ll"
 { thrift_reserved_keyword(yytext); }
 	YY_BREAK
 case 127:
 YY_RULE_SETUP
-#line 340 "/home/ddomenichelli/Workspace/iit/src/yarp/extern/thrift/thrift/compiler/cpp/src/thrift/thriftl.ll"
 { thrift_reserved_keyword(yytext); }
 	YY_BREAK
 case 128:
 YY_RULE_SETUP
-#line 341 "/home/ddomenichelli/Workspace/iit/src/yarp/extern/thrift/thrift/compiler/cpp/src/thrift/thriftl.ll"
 { thrift_reserved_keyword(yytext); }
 	YY_BREAK
 case 129:
 YY_RULE_SETUP
-#line 342 "/home/ddomenichelli/Workspace/iit/src/yarp/extern/thrift/thrift/compiler/cpp/src/thrift/thriftl.ll"
 { thrift_reserved_keyword(yytext); }
 	YY_BREAK
 case 130:
 YY_RULE_SETUP
-#line 343 "/home/ddomenichelli/Workspace/iit/src/yarp/extern/thrift/thrift/compiler/cpp/src/thrift/thriftl.ll"
 { thrift_reserved_keyword(yytext); }
 	YY_BREAK
 case 131:
 YY_RULE_SETUP
-#line 344 "/home/ddomenichelli/Workspace/iit/src/yarp/extern/thrift/thrift/compiler/cpp/src/thrift/thriftl.ll"
 { thrift_reserved_keyword(yytext); }
 	YY_BREAK
 case 132:
 YY_RULE_SETUP
-#line 345 "/home/ddomenichelli/Workspace/iit/src/yarp/extern/thrift/thrift/compiler/cpp/src/thrift/thriftl.ll"
 { thrift_reserved_keyword(yytext); }
 	YY_BREAK
 case 133:
 YY_RULE_SETUP
-#line 346 "/home/ddomenichelli/Workspace/iit/src/yarp/extern/thrift/thrift/compiler/cpp/src/thrift/thriftl.ll"
 { thrift_reserved_keyword(yytext); }
 	YY_BREAK
 case 134:
 YY_RULE_SETUP
-#line 347 "/home/ddomenichelli/Workspace/iit/src/yarp/extern/thrift/thrift/compiler/cpp/src/thrift/thriftl.ll"
 { thrift_reserved_keyword(yytext); }
 	YY_BREAK
 case 135:
 YY_RULE_SETUP
-#line 348 "/home/ddomenichelli/Workspace/iit/src/yarp/extern/thrift/thrift/compiler/cpp/src/thrift/thriftl.ll"
 { thrift_reserved_keyword(yytext); }
 	YY_BREAK
 case 136:
 YY_RULE_SETUP
-#line 349 "/home/ddomenichelli/Workspace/iit/src/yarp/extern/thrift/thrift/compiler/cpp/src/thrift/thriftl.ll"
 { thrift_reserved_keyword(yytext); }
 	YY_BREAK
 case 137:
 YY_RULE_SETUP
-#line 350 "/home/ddomenichelli/Workspace/iit/src/yarp/extern/thrift/thrift/compiler/cpp/src/thrift/thriftl.ll"
 { thrift_reserved_keyword(yytext); }
 	YY_BREAK
 case 138:
 YY_RULE_SETUP
-#line 351 "/home/ddomenichelli/Workspace/iit/src/yarp/extern/thrift/thrift/compiler/cpp/src/thrift/thriftl.ll"
 { thrift_reserved_keyword(yytext); }
 	YY_BREAK
 case 139:
 YY_RULE_SETUP
-#line 352 "/home/ddomenichelli/Workspace/iit/src/yarp/extern/thrift/thrift/compiler/cpp/src/thrift/thriftl.ll"
 { thrift_reserved_keyword(yytext); }
 	YY_BREAK
 case 140:
 YY_RULE_SETUP
-#line 353 "/home/ddomenichelli/Workspace/iit/src/yarp/extern/thrift/thrift/compiler/cpp/src/thrift/thriftl.ll"
 { thrift_reserved_keyword(yytext); }
 	YY_BREAK
 case 141:
 YY_RULE_SETUP
-#line 354 "/home/ddomenichelli/Workspace/iit/src/yarp/extern/thrift/thrift/compiler/cpp/src/thrift/thriftl.ll"
 { thrift_reserved_keyword(yytext); }
 	YY_BREAK
 case 142:
 YY_RULE_SETUP
-#line 355 "/home/ddomenichelli/Workspace/iit/src/yarp/extern/thrift/thrift/compiler/cpp/src/thrift/thriftl.ll"
 { thrift_reserved_keyword(yytext); }
 	YY_BREAK
 case 143:
 YY_RULE_SETUP
-#line 356 "/home/ddomenichelli/Workspace/iit/src/yarp/extern/thrift/thrift/compiler/cpp/src/thrift/thriftl.ll"
 { thrift_reserved_keyword(yytext); }
 	YY_BREAK
 case 144:
 YY_RULE_SETUP
-#line 357 "/home/ddomenichelli/Workspace/iit/src/yarp/extern/thrift/thrift/compiler/cpp/src/thrift/thriftl.ll"
 { thrift_reserved_keyword(yytext); }
 	YY_BREAK
 case 145:
 YY_RULE_SETUP
-#line 358 "/home/ddomenichelli/Workspace/iit/src/yarp/extern/thrift/thrift/compiler/cpp/src/thrift/thriftl.ll"
 { thrift_reserved_keyword(yytext); }
 	YY_BREAK
 case 146:
 YY_RULE_SETUP
-#line 359 "/home/ddomenichelli/Workspace/iit/src/yarp/extern/thrift/thrift/compiler/cpp/src/thrift/thriftl.ll"
 { thrift_reserved_keyword(yytext); }
 	YY_BREAK
 case 147:
 YY_RULE_SETUP
-#line 360 "/home/ddomenichelli/Workspace/iit/src/yarp/extern/thrift/thrift/compiler/cpp/src/thrift/thriftl.ll"
 { thrift_reserved_keyword(yytext); }
 	YY_BREAK
 case 148:
 YY_RULE_SETUP
-#line 361 "/home/ddomenichelli/Workspace/iit/src/yarp/extern/thrift/thrift/compiler/cpp/src/thrift/thriftl.ll"
 { thrift_reserved_keyword(yytext); }
 	YY_BREAK
 case 149:
 YY_RULE_SETUP
-#line 362 "/home/ddomenichelli/Workspace/iit/src/yarp/extern/thrift/thrift/compiler/cpp/src/thrift/thriftl.ll"
 { thrift_reserved_keyword(yytext); }
 	YY_BREAK
 case 150:
 YY_RULE_SETUP
-#line 363 "/home/ddomenichelli/Workspace/iit/src/yarp/extern/thrift/thrift/compiler/cpp/src/thrift/thriftl.ll"
 { thrift_reserved_keyword(yytext); }
 	YY_BREAK
 case 151:
 YY_RULE_SETUP
-#line 364 "/home/ddomenichelli/Workspace/iit/src/yarp/extern/thrift/thrift/compiler/cpp/src/thrift/thriftl.ll"
 { thrift_reserved_keyword(yytext); }
 	YY_BREAK
 case 152:
 YY_RULE_SETUP
-#line 365 "/home/ddomenichelli/Workspace/iit/src/yarp/extern/thrift/thrift/compiler/cpp/src/thrift/thriftl.ll"
 { thrift_reserved_keyword(yytext); }
 	YY_BREAK
 case 153:
 YY_RULE_SETUP
-#line 366 "/home/ddomenichelli/Workspace/iit/src/yarp/extern/thrift/thrift/compiler/cpp/src/thrift/thriftl.ll"
 { thrift_reserved_keyword(yytext); }
 	YY_BREAK
 case 154:
 YY_RULE_SETUP
-#line 367 "/home/ddomenichelli/Workspace/iit/src/yarp/extern/thrift/thrift/compiler/cpp/src/thrift/thriftl.ll"
 { thrift_reserved_keyword(yytext); }
 	YY_BREAK
 case 155:
 YY_RULE_SETUP
-#line 368 "/home/ddomenichelli/Workspace/iit/src/yarp/extern/thrift/thrift/compiler/cpp/src/thrift/thriftl.ll"
 { thrift_reserved_keyword(yytext); }
 	YY_BREAK
 case 156:
 YY_RULE_SETUP
-#line 369 "/home/ddomenichelli/Workspace/iit/src/yarp/extern/thrift/thrift/compiler/cpp/src/thrift/thriftl.ll"
 { thrift_reserved_keyword(yytext); }
 	YY_BREAK
 case 157:
 YY_RULE_SETUP
-#line 370 "/home/ddomenichelli/Workspace/iit/src/yarp/extern/thrift/thrift/compiler/cpp/src/thrift/thriftl.ll"
 { thrift_reserved_keyword(yytext); }
 	YY_BREAK
 case 158:
 YY_RULE_SETUP
-#line 371 "/home/ddomenichelli/Workspace/iit/src/yarp/extern/thrift/thrift/compiler/cpp/src/thrift/thriftl.ll"
 { thrift_reserved_keyword(yytext); }
 	YY_BREAK
 case 159:
 YY_RULE_SETUP
-#line 372 "/home/ddomenichelli/Workspace/iit/src/yarp/extern/thrift/thrift/compiler/cpp/src/thrift/thriftl.ll"
 { thrift_reserved_keyword(yytext); }
 	YY_BREAK
 case 160:
 YY_RULE_SETUP
-#line 373 "/home/ddomenichelli/Workspace/iit/src/yarp/extern/thrift/thrift/compiler/cpp/src/thrift/thriftl.ll"
 { thrift_reserved_keyword(yytext); }
 	YY_BREAK
 case 161:
 YY_RULE_SETUP
-#line 374 "/home/ddomenichelli/Workspace/iit/src/yarp/extern/thrift/thrift/compiler/cpp/src/thrift/thriftl.ll"
 { thrift_reserved_keyword(yytext); }
 	YY_BREAK
 case 162:
 YY_RULE_SETUP
-#line 375 "/home/ddomenichelli/Workspace/iit/src/yarp/extern/thrift/thrift/compiler/cpp/src/thrift/thriftl.ll"
 { thrift_reserved_keyword(yytext); }
 	YY_BREAK
 case 163:
 YY_RULE_SETUP
-#line 377 "/home/ddomenichelli/Workspace/iit/src/yarp/extern/thrift/thrift/compiler/cpp/src/thrift/thriftl.ll"
 {
   errno = 0;
   yylval.iconst = strtoll(yytext, NULL, 10);
@@ -2400,7 +2227,6 @@ YY_RULE_SETUP
 	YY_BREAK
 case 164:
 YY_RULE_SETUP
-#line 386 "/home/ddomenichelli/Workspace/iit/src/yarp/extern/thrift/thrift/compiler/cpp/src/thrift/thriftl.ll"
 {
   errno = 0;
   char sign = yytext[0];
@@ -2417,7 +2243,6 @@ YY_RULE_SETUP
 	YY_BREAK
 case 165:
 YY_RULE_SETUP
-#line 400 "/home/ddomenichelli/Workspace/iit/src/yarp/extern/thrift/thrift/compiler/cpp/src/thrift/thriftl.ll"
 {
   yylval.id = strdup(yytext);
   return tok_identifier;
@@ -2425,7 +2250,6 @@ YY_RULE_SETUP
 	YY_BREAK
 case 166:
 YY_RULE_SETUP
-#line 405 "/home/ddomenichelli/Workspace/iit/src/yarp/extern/thrift/thrift/compiler/cpp/src/thrift/thriftl.ll"
 {
  /* Deliberately placed after identifier, since "e10" is NOT a double literal (THRIFT-3477) */
   yylval.dconst = atof(yytext);
@@ -2434,7 +2258,6 @@ YY_RULE_SETUP
 	YY_BREAK
 case 167:
 YY_RULE_SETUP
-#line 411 "/home/ddomenichelli/Workspace/iit/src/yarp/extern/thrift/thrift/compiler/cpp/src/thrift/thriftl.ll"
 {
   char mark = yytext[0];
   std::string result;
@@ -2487,17 +2310,14 @@ YY_RULE_SETUP
 	YY_BREAK
 case 168:
 YY_RULE_SETUP
-#line 462 "/home/ddomenichelli/Workspace/iit/src/yarp/extern/thrift/thrift/compiler/cpp/src/thrift/thriftl.ll"
 {
   unexpected_token(yytext);
 }
 	YY_BREAK
 case 169:
 YY_RULE_SETUP
-#line 466 "/home/ddomenichelli/Workspace/iit/src/yarp/extern/thrift/thrift/compiler/cpp/src/thrift/thriftl.ll"
 ECHO;
 	YY_BREAK
-#line 2501 "/home/ddomenichelli/Workspace/iit/build/yarp/src/idls/thrift/thrift/thriftl.cc"
 case YY_STATE_EOF(INITIAL):
 	yyterminate();
 
@@ -3468,10 +3288,6 @@ void yyfree (void * ptr )
 }
 
 #define YYTABLES_NAME "yytables"
-
-#line 466 "/home/ddomenichelli/Workspace/iit/src/yarp/extern/thrift/thrift/compiler/cpp/src/thrift/thriftl.ll"
-
-
 
 #ifdef _MSC_VER
 #pragma warning( pop )
