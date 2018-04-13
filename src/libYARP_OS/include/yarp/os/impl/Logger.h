@@ -16,20 +16,10 @@
 #include <yarp/os/Log.h>
 #include <yarp/os/impl/PlatformStdio.h>
 
-#ifdef YARP_HAS_ACE
-# include <ace/Log_Priority.h>
-# include <ace/Log_Msg_Callback.h>
-// In one of these files or their inclusions, there is a definition of "main"
-// for WIN32
-# ifdef main
-#  undef main
-# endif
-#else
-#  define LM_DEBUG      04
-#  define LM_INFO      010
-#  define LM_WARNING   040
-#  define LM_ERROR    0200
-#endif
+#define YARP_LM_DEBUG      04
+#define YARP_LM_INFO      010
+#define YARP_LM_WARNING   040
+#define YARP_LM_ERROR    0200
 
 
 namespace yarp {
@@ -38,28 +28,19 @@ namespace impl {
 
 /**
  * This is a wrapper for message logging.
- * This is currently a sad mixture of the java yarp logging mechanism
- * and ACE.
  */
 class YARP_OS_impl_API Logger : public yarp::os::Log
-#ifdef YARP_HAS_ACE
-                              , public ACE_Log_Msg_Callback
-#endif
 {
 public:
     enum Level {
-        MAJOR_DEBUG=LM_INFO,
-        DEFAULT_WARN=LM_INFO
+        MAJOR_DEBUG=YARP_LM_INFO,
+        DEFAULT_WARN=YARP_LM_INFO
     };
 
     Logger(const char *prefix, Logger *parent = nullptr);
     Logger(const char *prefix, Logger& parent);
 
     static Logger& get();
-
-#ifdef YARP_HAS_ACE
-    virtual void log(ACE_Log_Record& log_record) override;
-#endif
 
     void println(const ConstString& txt);
     void internal_debug(const ConstString& txt);
