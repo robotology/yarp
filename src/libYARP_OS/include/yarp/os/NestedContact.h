@@ -10,13 +10,11 @@
 #ifndef YARP_OS_NESTEDCONTACT_H
 #define YARP_OS_NESTEDCONTACT_H
 
+#include <yarp/os/api.h>
 #include <yarp/os/ConstString.h>
 
 namespace yarp {
-    namespace os {
-        class NestedContact;
-    }
-}
+namespace os {
 
 /**
  *
@@ -24,64 +22,95 @@ namespace yarp {
  * can express a ROS-style node/topic or node/service combination.
  *
  */
-class YARP_OS_API yarp::os::NestedContact {
+class YARP_OS_API NestedContact
+{
 public:
-    NestedContact() {}
+    /** @{ */
 
-    NestedContact(const ConstString& nFullName);
+    /**
+     * @brief Default constructor.
+     */
+    NestedContact();
+
+    /**
+     * @brief Constructor.
+     *
+     * @param fullName the full name.
+     */
+    NestedContact(const ConstString& fullName);
+
+    /**
+     * @brief Copy constructor.
+     *
+     * @param rhs the NestedContact to copy
+     */
+    NestedContact(const NestedContact& rhs);
+
+    /**
+     * @brief Move constructor.
+     *
+     * @param rhs the NestedContact to be moved
+     */
+    NestedContact(NestedContact&& rhs);
+
+    /**
+     * @brief Destructor.
+     */
+    ~NestedContact();
+
+    /**
+     * Copy assignment operator.
+     *
+     * @param rhs the NestedContact to copy
+     * @return this object
+     */
+    NestedContact& operator=(const NestedContact& rhs);
+
+    /**
+     * @brief Move assignment operator.
+     *
+     * @param rhs the NestedContact to be moved
+     * @return this object
+     */
+    NestedContact& operator=(NestedContact&& rhs);
+
+    /** @} */
+    /** @{ */
 
     bool fromString(const ConstString& nFullName);
 
-    void setTypeName(const ConstString& nWireType) {
-        wireType = nWireType;
-    }
+    void setTypeName(const ConstString& nWireType);
 
-    void setCategoryWrite() {
-        category = "+";
-    }
+    void setCategoryWrite();
 
-    void setCategoryRead() {
-        category = "-";
-    }
+    void setCategoryRead();
 
-    ConstString getFullName() const {
-        return fullName;
-    }
-    ConstString getNodeName() const {
-        return nodeName;
-    }
+    ConstString getFullName() const;
 
-    ConstString getNestedName() const {
-        return nestedName;
-    }
+    ConstString getNodeName() const;
 
-    ConstString getCategory() const {
-        return category;
-    }
+    ConstString getNestedName() const;
 
-    ConstString getTypeName() const {
-        return wireType;
-    }
+    ConstString getCategory() const;
 
-    ConstString getTypeNameStar() const {
-        return (wireType!="")?wireType:"*";
-    }
+    ConstString getTypeName() const;
 
+    ConstString getTypeNameStar() const;
 
-    bool isNested() const {
-        return nestedName!="";
-    }
+    bool isNested() const;
 
-    ConstString toString() const {
-        return nestedName + category + "@" + nodeName;
-    }
+    ConstString toString() const;
 
+    /** @} */
+
+#ifndef DOXYGEN_SHOULD_SKIP_THIS
 private:
-    ConstString fullName;
-    ConstString nodeName;
-    ConstString nestedName;
-    ConstString category;
-    ConstString wireType;
+    class Private;
+    Private* mPriv;
+#endif // DOXYGEN_SHOULD_SKIP_THIS
 };
+
+} // namespace os
+} // namespace yarp
 
 #endif // YARP_OS_NESTEDCONTACT_H
