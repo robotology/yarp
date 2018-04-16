@@ -12,6 +12,7 @@ YARP
 
 [![YARP Homepage](https://img.shields.io/badge/YARP-Yet_Another_Robot_Platform-orange.svg)](http://www.yarp.it/)
 [![Latest Release](https://img.shields.io/github/release/robotology/yarp.svg?label=Latest%20Release)](https://github.com/robotology/yarp/releases)
+<a href="https://zenhub.com"><img src="https://raw.githubusercontent.com/ZenHubIO/support/master/zenhub-badge.png"></a>
 
 YARP is a library and toolkit for communication and device interfaces,
 used on everything from humanoids to embedded devices.
