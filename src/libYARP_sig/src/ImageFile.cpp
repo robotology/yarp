@@ -26,93 +26,46 @@ static void warn(const char *message)
 
 bool file::write(const ImageOf<PixelFloat>& src, const ConstString& dest)
 {
-    FILE *fp = fopen(dest.c_str(), "w");
+    FILE *fp = fopen(dest.c_str(),"wb");
     if (fp==nullptr) {
         return false;
     }
 
-    for (int i=0; i<src.height(); i++) {
-        for (int j=0; j<src.width(); j++) {
-            fprintf(fp,"%g ", src(j,i));
-        }
-        fprintf(fp,"\n");
+    int dims[2] = { src.width(), src.height() };
+
+    size_t bw = 0;
+    size_t size_ = sizeof(float);
+    size_t count_ = (size_t)(dims[0]*dims[1]);
+
+    if (fwrite(dims,sizeof(dims),1,fp) > 0) {
+        bw = fwrite(&src(0,0),size_,count_,fp);
     }
+
     fclose(fp);
-    return false;
+    return (bw > 0);
 }
 
 
 bool file::read(ImageOf<PixelFloat>& dest, const ConstString& src)
 {
-    int hh = 0, ww = 0;
+    FILE *fp = fopen(src.c_str(),"rb");
+    if (fp==nullptr) {
+        return false;
+    }
 
-    FILE *fp = fopen(src.c_str(), "r");
-    if (fp==nullptr) {
-        return false;
+    size_t br = 0;
+    size_t size_ = sizeof(float);
+    size_t count_ = 0;
+
+    int dims[2];
+    if (fread(dims,sizeof(dims),1,fp) > 0) {
+        count_ = (size_t)(dims[0]*dims[1]);
+        dest.resize(dims[0],dims[1]);
+        br = fread(&dest(0,0),size_,count_,fp);
     }
-    int blank = 1;
-    int curr = 0;
-    while (!feof(fp)) {
-        int ch = fgetc(fp);
-        if (ch==' ' || ch == '\t' || ch == '\r' ||ch == '\n'|| feof(fp)){
-            if (!blank) {
-                if (curr==0) {
-                    hh++;
-                }
-                curr++;
-                if (curr>ww) {
-                    ww = curr;
-                }
-            }
-            blank = 1;
-            if (ch=='\n') {
-                curr = 0;
-            }
-        } else {
-            blank = 0;
-        }
-    }
+
     fclose(fp);
-    fp = fopen(src.c_str(), "rb");
-    if (fp==nullptr) {
-        return false;
-    }
-    dest.resize(ww,hh);
-    hh = 0; ww = 0;
-    {
-        char buf[256];
-        int idx = 0;
-        int blank = 1;
-        int curr = 0;
-        while (!feof(fp)) {
-            int ch = fgetc(fp);
-            if (ch==' ' || ch == '\t' ||ch == '\r'||ch == '\n' || feof(fp)){
-                if (!blank) {
-                    if (curr==0) {
-                        hh++;
-                    }
-                    curr++;
-                    if (curr>ww) {
-                        ww = curr;
-                    }
-                    buf[idx] = '\0';
-                    dest(curr-1,hh-1) = float(atof(buf));
-                    idx = 0;
-                }
-                blank = 1;
-                if (ch=='\n') {
-                    curr = 0;
-                }
-            } else {
-                buf[idx] = ch;
-                idx++;
-                yAssert(((unsigned int)idx)<sizeof(buf));
-                blank = 0;
-            }
-        }
-    }
-    fclose(fp);
-    return true;
+    return (br > 0);
 }
 
 
