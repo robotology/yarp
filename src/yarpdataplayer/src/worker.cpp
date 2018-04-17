@@ -21,6 +21,7 @@
     #pragma warning (disable : 4520)
 #endif
 
+#include <memory>
 #include "yarp/os/Stamp.h"
 #include "include/worker.h"
 #include "include/mainwindow.h"
@@ -154,7 +155,7 @@ int WorkerClass::sendImages(int part, int frame)
 {
     string tmpPath = utilities->partDetails[part].path;
     string tmpName, tmp;
-    if (utilities->withExtraColumn){
+    if (utilities->withExtraColumn) {
         tmpName = utilities->partDetails[part].bot.get(frame).asList()->tail().tail().get(1).asString().c_str();
         tmp = utilities->partDetails[part].bot.get(frame).asList()->tail().tail().tail().tail().toString().c_str();
     } else {
@@ -162,130 +163,73 @@ int WorkerClass::sendImages(int part, int frame)
         tmp = utilities->partDetails[part].bot.get(frame).asList()->tail().tail().tail().toString().c_str();
     }
 
-#ifndef HAS_OPENCV
     int code = 0;
-#endif
-
-    if (tmp.size()>0)
-    {
-        tmp.erase (tmp.begin());
-        tmp.erase (tmp.end()-1);
-#ifndef HAS_OPENCV
+    if (tmp.size()>0) {
+        tmp.erase(tmp.begin());
+        tmp.erase(tmp.end()-1);
         code = Vocab::encode(tmp);
-#endif
     }
 
     tmpPath = tmpPath + tmpName;
+    unique_ptr<Image> img_yarp = nullptr;
 
 #ifdef HAS_OPENCV
-    IplImage* img = nullptr;
-#else
-    Image* img;
+    IplImage* img_ipl = nullptr;
+    if (code==VOCAB_PIXEL_MONO_FLOAT) {
+        img_yarp = unique_ptr<Image>(new ImageOf<PixelFloat>);
+        if ( read(*static_cast<ImageOf<PixelFloat>*>(img_yarp.get()),tmpPath.c_str()) ) {
+            img_ipl=(IplImage*)img_yarp->getIplImage();
+        }
+    } else {
+        img_ipl=cvLoadImage(tmpPath.c_str(),CV_LOAD_IMAGE_UNCHANGED);
+    }
 
-    if (code==VOCAB_PIXEL_RGB)
-        img = new ImageOf<PixelRgb>;
-    else if (code==VOCAB_PIXEL_BGR)
-        img = new ImageOf<PixelBgr>;
-    else if (code==VOCAB_PIXEL_RGBA)
-        img = new ImageOf<PixelRgba>;
-    else if (code==VOCAB_PIXEL_MONO_FLOAT)
-        img = new ImageOf<PixelFloat>;
-    else if (code==VOCAB_PIXEL_MONO)
-        img = new ImageOf<PixelMono>;
-    else
-        img = new ImageOf<PixelRgb>; // use PixelRgb as default
-
-#endif
-
-#ifdef HAS_OPENCV
-    img = cvLoadImage( tmpPath.c_str(), CV_LOAD_IMAGE_UNCHANGED );
-#endif
-
-#ifdef HAS_OPENCV
-    if ( !img )
-    {
+    if ( img_ipl==nullptr ) {
         LOG_ERROR("Cannot load file %s !\n", tmpPath.c_str() );
         return 1;
     } else {
-        Image &temp = utilities->partDetails[part].imagePort.prepare();
-
-        static IplImage *test = nullptr;
-        if (test !=nullptr)
-            cvReleaseImage(&test);
-
-        test = cvCloneImage(img);
-        temp.wrapIplImage(test);
-
+        utilities->partDetails[part].imagePort.prepare().wrapIplImage(img_ipl);
 #else
     bool fileValid = true;
-
-    if (code==VOCAB_PIXEL_RGB)
-    {
-        img = new ImageOf<PixelRgb>;
-        if ( !read(*static_cast<ImageOf<PixelRgb>*> (img),tmpPath.c_str()) )
-            fileValid = false;
-    }
-    else if (code==VOCAB_PIXEL_BGR)
-    {
-        img = new ImageOf<PixelBgr>;
-        if ( !read(*static_cast<ImageOf<PixelBgr>*> (img),tmpPath.c_str()) )
-            fileValid = false;
-    }
-    else if (code==VOCAB_PIXEL_RGBA)
-    {
-        img = new ImageOf<PixelRgba>;
-        if ( !read(*static_cast<ImageOf<PixelRgba>*> (img),tmpPath.c_str()) )
-            fileValid = false;
-    }
-    else if (code==VOCAB_PIXEL_MONO_FLOAT)
-    {
-        img = new ImageOf<PixelFloat>;
-        if ( !read(*static_cast<ImageOf<PixelFloat>*> (img),tmpPath.c_str()) )
-            fileValid = false;
-    }
-    else if (code==VOCAB_PIXEL_MONO)
-    {
-        img = new ImageOf<PixelMono>;
-        if ( !read(*static_cast<ImageOf<PixelMono>*> (img),tmpPath.c_str()) )
-            fileValid = false;
-    }
-    else
-    {
-        img = new ImageOf<PixelRgb>;
-        if ( !read(*static_cast<ImageOf<PixelRgb>*> (img),tmpPath.c_str()) )
-            fileValid = false;
+    if (code==VOCAB_PIXEL_RGB) {
+        img_yarp = unique_ptr<Image>(new ImageOf<PixelRgb>);
+        fileValid = read(*static_cast<ImageOf<PixelRgb>*>(img_yarp.get()),tmpPath.c_str());
+    } else if (code==VOCAB_PIXEL_BGR) {
+        img_yarp = unique_ptr<Image>(new ImageOf<PixelBgr>);
+        fileValid = read(*static_cast<ImageOf<PixelBgr>*>(img_yarp.get()),tmpPath.c_str());
+    } else if (code==VOCAB_PIXEL_RGBA) {
+        img_yarp = unique_ptr<Image>(new ImageOf<PixelRgba>);
+        fileValid = read(*static_cast<ImageOf<PixelRgba>*>(img_yarp.get()),tmpPath.c_str());
+    } else if (code==VOCAB_PIXEL_MONO_FLOAT) {
+        img_yarp = unique_ptr<Image>(new ImageOf<PixelFloat>);
+        fileValid = read(*static_cast<ImageOf<PixelFloat>*>(img_yarp.get()),tmpPath.c_str());
+    } else if (code==VOCAB_PIXEL_MONO) {
+        img_yarp = unique_ptr<Image>(new ImageOf<PixelMono>);
+        fileValid = read(*static_cast<ImageOf<PixelMono>*>(img_yarp.get()),tmpPath.c_str());
+    } else {
+        img_yarp = unique_ptr<Image>(new ImageOf<PixelRgb>);
+        fileValid = read(*static_cast<ImageOf<PixelRgb>*>(img_yarp.get()),tmpPath.c_str());
     }
 
-    if (!fileValid)
-    {
+    if (!fileValid) {
         LOG_ERROR("Cannot load file %s !\n", tmpPath.c_str() );
-#ifdef HAS_OPENCV
-        cvReleaseImage(&img);
-#else
-        delete img;
-#endif
         return 1;
-    }
-    else
-    {
-        Image &temp = utilities->partDetails[part].imagePort.prepare();
-        temp = *img;
-
+    } else {
+        utilities->partDetails[part].imagePort.prepare()=*img_yarp;
 #endif
-        //propagate timestamp
         Stamp ts(frame,utilities->partDetails[part].timestamp[frame]);
         utilities->partDetails[part].imagePort.setEnvelope(ts);
 
-        if (utilities->sendStrict){
+        if (utilities->sendStrict) {
             utilities->partDetails[part].imagePort.writeStrict();
         } else {
             utilities->partDetails[part].imagePort.write();
         }
 
 #ifdef HAS_OPENCV
-        cvReleaseImage(&img);
-#else
-        delete img;
+        if (img_yarp==nullptr) {
+            cvReleaseImage(&img_ipl);
+        }
 #endif
     }
 
