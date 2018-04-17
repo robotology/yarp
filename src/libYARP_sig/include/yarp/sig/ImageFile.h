@@ -40,7 +40,6 @@ namespace yarp {
             bool YARP_sig_API read(ImageOf<PixelMono>& dest,
                                    const yarp::os::ConstString& src);
 
-            // plain text format
             bool YARP_sig_API read(ImageOf<PixelFloat>& dest,
                                    const yarp::os::ConstString& src);
 
@@ -54,7 +53,6 @@ namespace yarp {
             bool YARP_sig_API write(const ImageOf<PixelMono>& src,
                                     const yarp::os::ConstString& dest);
 
-            // plain text format
             bool YARP_sig_API write(const ImageOf<PixelFloat>& src,
                                     const yarp::os::ConstString& dest);
 
