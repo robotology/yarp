@@ -70,8 +70,9 @@ Route::Route(const Route& rhs) :
 }
 
 Route::Route(Route&& rhs) :
-        mPriv(new Private(std::move(*(rhs.mPriv))))
+        mPriv(rhs.mPriv)
 {
+    rhs.mPriv = nullptr;
 }
 
 Route::~Route()
