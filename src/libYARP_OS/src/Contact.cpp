@@ -95,8 +95,9 @@ Contact::Contact(const Contact& rhs) :
 }
 
 Contact::Contact(Contact&& rhs) :
-        mPriv(new Private(std::move(*(rhs.mPriv))))
+        mPriv(rhs.mPriv)
 {
+    rhs.mPriv = nullptr;
 }
 
 Contact::~Contact()
