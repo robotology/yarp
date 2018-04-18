@@ -58,6 +58,7 @@ signals:
     void sendSingleRemoteVariable(std::string key, yarp::os::Bottle val);
     void refreshPids(int jointIndex);
     void updateAllRemoteVariables();
+    void dumpRemoteVariables();
 
 private:
     Ui::PidDlg *ui;
@@ -69,7 +70,7 @@ private slots:
     void onSend();
     void onCancel();
     void onSendRemoteVariable();
-
+    void onDumpRemoteVariables();
 };
 
 class TableIntDelegate : public QItemDelegate

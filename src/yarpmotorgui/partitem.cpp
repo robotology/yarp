@@ -23,6 +23,7 @@
 #include <QMessageBox>
 #include <QSettings>
 #include <cmath>
+#include <cstdio>
 
 PartItem::PartItem(QString robotName, int id, QString partName, ResourceFinder& _finder,
                    bool debug_param_enabled,
@@ -502,6 +503,44 @@ void PartItem::onSliderDirectPositionCommand(double dirpos, int index)
     }
 }
 
+void PartItem::onDumpAllRemoteVariables()
+{
+    if (m_iVar == 0)
+    {
+        return;
+    }
+
+    QString fileName = QFileDialog::getSaveFileName(this, QString("Save Dump for Remote Variables as:"), QDir::homePath()+QString("/RemoteVariablesDump.txt"));
+
+    FILE* dumpfile = fopen(fileName.toStdString().c_str(), "w");
+    if (dumpfile != NULL)
+    {
+        yarp::os::Bottle keys;
+        if (m_iVar->getRemoteVariablesList(&keys))
+        {
+            std::string s = keys.toString();
+            int keys_size = keys.size();
+            for (int i = 0; i < keys_size; i++)
+            {
+                std::string key_name;
+                if (keys.get(i).isString())
+                {
+                    yarp::os::Bottle val;
+                    key_name = keys.get(i).asString();
+                    if (m_iVar->getRemoteVariable(key_name, val))
+                    {
+                        std::string key_value = val.toString();
+                        std::string p_value = key_name + ' ' + key_value + '\n';
+                        fputs(p_value.c_str(), dumpfile);
+                    }
+                }
+            }
+        }
+        fclose(dumpfile);
+    }
+}
+
+
 void PartItem::onSliderTrajectoryPositionCommand(double posVal, int index)
 {
     int mode;
@@ -786,6 +825,7 @@ void PartItem::onPidClicked(JointItem *joint)
     connect(m_currentPidDlg, SIGNAL(sendStiffness(int, double, double, double)), this, SLOT(onSendStiffness(int, double, double, double)));
     connect(m_currentPidDlg, SIGNAL(sendPWM(int, double)), this, SLOT(onSendPWM(int, double)));
     connect(m_currentPidDlg, SIGNAL(refreshPids(int)), this, SLOT(onRefreshPids(int)));
+    connect(m_currentPidDlg, SIGNAL(dumpRemoteVariables()), this, SLOT(onDumpAllRemoteVariables()));
 
     this->onRefreshPids(jointIndex);
 

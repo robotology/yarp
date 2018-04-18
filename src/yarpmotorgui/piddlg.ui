@@ -1759,6 +1759,13 @@
       </spacer>
      </item>
      <item>
+      <widget class="QPushButton" name="btnDump">
+       <property name="text">
+        <string>DumpToFile</string>
+       </property>
+      </widget>
+     </item>
+     <item>
       <widget class="QPushButton" name="btnRefresh">
        <property name="text">
         <string>Refresh</string>

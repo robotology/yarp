@@ -221,6 +221,7 @@ private slots:
     void onSendStiffness(int jointIdex, double stiff, double damp, double force);
     void onSendPWM(int jointIndex, double dutyVal);
     void onRefreshPids(int jointIndex);
+    void onDumpAllRemoteVariables();
 
 
 };
