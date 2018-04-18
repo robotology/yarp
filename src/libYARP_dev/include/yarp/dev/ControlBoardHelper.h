@@ -47,7 +47,7 @@ namespace yarp {
 class YARP_dev_API yarp::dev::ControlBoardHelper
 {
 public:
-    ControlBoardHelper(int n, const int *aMap, const double *angToEncs, const double *zs, const double *newtons, const double *amps = nullptr, const double *volts = nullptr, const double *dutycycles = nullptr);
+    ControlBoardHelper(int n, const int *aMap, const double *angToEncs = nullptr, const double *zs = nullptr, const double *newtons = nullptr, const double *amps = nullptr, const double *volts = nullptr, const double *dutycycles = nullptr, const double *kbemf = nullptr, const double *ktau = nullptr);
     ~ControlBoardHelper();
     ControlBoardHelper(const ControlBoardHelper& other);
     ControlBoardHelper& operator = (const ControlBoardHelper & other);

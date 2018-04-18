@@ -29,12 +29,12 @@ ImplementTorqueControl::~ImplementTorqueControl()
     uninitialize();
 }
 
-bool ImplementTorqueControl::initialize(int size, const int *amap, const double *enc, const double *zos, const double *nw, const double* amps, const double* dutys)
+bool ImplementTorqueControl::initialize(int size, const int *amap, const double *enc, const double *zos, const double *nw, const double* amps, const double* dutys, const double* bemfs, const double* ktaus)
 {
     if (helper!=nullptr)
         return false;
 
-    helper=(void *)(new ControlBoardHelper(size, amap, enc, zos, nw, amps, 0, dutys));
+    helper=(void *)(new ControlBoardHelper(size, amap, enc, zos, nw, amps, nullptr, dutys,bemfs,ktaus));
     yAssert (helper != nullptr);
     temp=new double [size];
     yAssert (temp != nullptr);

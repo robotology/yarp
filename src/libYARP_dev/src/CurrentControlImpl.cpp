@@ -36,7 +36,7 @@ bool ImplementCurrentControl::initialize(int size, const int *amap, const double
     if (helper!=nullptr)
         return false;
 
-    helper = (void *)(new ControlBoardHelper(size, amap, nullptr, 0, 0, ampsToSens, nullptr, 0));
+    helper = (void *)(new ControlBoardHelper(size, amap, nullptr, nullptr, nullptr, ampsToSens, nullptr, nullptr));
     yAssert (helper != nullptr);
     temp=new double [size];
     yAssert (temp != nullptr);

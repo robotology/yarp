@@ -188,7 +188,7 @@ bool ImplementPositionControl<DERIVED, IMPLEMENT>:: initialize (int size, const 
     if (helper!=0)
         return false;
 
-    helper=(void *)(new ControlBoardHelper(size, amap, enc, zos,0));
+    helper=(void *)(new ControlBoardHelper(size, amap, enc, zos));
     yAssert (helper != 0);
     temp=new double [size];
     yAssert (temp != 0);
@@ -235,7 +235,7 @@ bool ImplementVelocityControl<DERIVED, IMPLEMENT>:: initialize (int size, const 
     if (helper!=0)
         return false;
 
-    helper=(void *)(new ControlBoardHelper(size, amap, enc, zos,0));
+    helper=(void *)(new ControlBoardHelper(size, amap, enc, zos));
     yAssert (helper != 0);
     temp=new double [size];
     yAssert (temp != 0);
@@ -360,7 +360,7 @@ bool ImplementEncoders<DERIVED, IMPLEMENT>:: initialize (int size, const int *am
     if (helper!=0)
         return false;
 
-    helper=(void *)(new ControlBoardHelper(size, amap, enc, zos,0));
+    helper=(void *)(new ControlBoardHelper(size, amap, enc, zos));
     yAssert (helper != 0);
     temp=new double [size];
     yAssert (temp != 0);
@@ -532,7 +532,7 @@ bool ImplementControlCalibration<DERIVED, IMPLEMENT>:: initialize (int size, con
     if (helper!=0)
         return false;
 
-    helper=(void *)(new ControlBoardHelper(size, amap, enc, zos,0));
+    helper=(void *)(new ControlBoardHelper(size, amap, enc, zos));
     yAssert (helper != 0);
     temp=new double [size];
     yAssert (temp != 0);
@@ -597,7 +597,7 @@ bool ImplementControlCalibration2<DERIVED, IMPLEMENT>:: initialize (int size, co
     if (helper!=0)
         return false;
 
-    helper=(void *)(new ControlBoardHelper(size, amap, enc, zos, nullptr, nullptr, nullptr, nullptr));
+    helper=(void *)(new ControlBoardHelper(size, amap, enc, zos));
     yAssert (helper != 0);
     temp=new double [size];
     yAssert (temp != 0);
@@ -668,9 +668,7 @@ bool ImplementControlLimits<DERIVED, IMPLEMENT>:: initialize (int size, const in
     if (helper!=0)
         return false;
 
-    // not sure if fix from next line to the line after is correct, hope so
-    //helper=(void *)(new ControlBoardHelper(size, amap, enc, zeros));
-    helper=(void *)(new ControlBoardHelper(size, amap, enc, zos,0));
+    helper=(void *)(new ControlBoardHelper(size, amap, enc, zos));
     yAssert (helper != 0);
     temp=new double [size];
     yAssert (temp != 0);
@@ -759,9 +757,7 @@ bool ImplementAmplifierControl<DERIVED, IMPLEMENT>:: initialize (int size, const
     if (helper!=0)
         return false;
 
-    // not sure if fix from next line to the line after is correct, hope so
-    //helper=(void *)(new ControlBoardHelper(size, amap, enc, zeros));
-    helper=(void *)(new ControlBoardHelper(size, amap, enc, zos,0, ampereFactor, voltFactor, nullptr));
+    helper=(void *)(new ControlBoardHelper(size, amap, enc, zos,nullptr, ampereFactor, voltFactor));
     yAssert (helper != 0);
     dTemp=new double[size];
     yAssert (dTemp != 0);

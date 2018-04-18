@@ -14,14 +14,14 @@
 #include <yarp/os/LogStream.h>
 #include <yarp/os/NetType.h>
 #include <yarp/dev/Drivers.h>
-
+#include <yarp/math/Math.h>
 #include "fakeMotionControl.h"
 
 using namespace std;
 using namespace yarp::dev;
 using namespace yarp::os;
 using namespace yarp::os::impl;
-
+using namespace yarp::math;
 
 // macros
 #define NEW_JSTATUS_STRUCT 1
@@ -576,6 +576,10 @@ bool FakeMotionControl::open(yarp::os::Searchable &config)
     //  INIT ALL INTERFACES
     yarp::sig::Vector tmpZeros; tmpZeros.resize (_njoints, 0.0);
     yarp::sig::Vector tmpOnes;  tmpOnes.resize  (_njoints, 1.0);
+    yarp::sig::Vector bemfToRaw; bemfToRaw.resize(_njoints, 1.0);
+    yarp::sig::Vector ktauToRaw; ktauToRaw.resize(_njoints, 1.0);
+    bemfToRaw = yarp::sig::Vector(_njoints, _newtonsToSensor) / yarp::sig::Vector(_njoints, _angleToEncoder);
+    ktauToRaw = yarp::sig::Vector(_njoints, _dutycycleToPWM)  / yarp::sig::Vector(_njoints, _newtonsToSensor);
 
     ControlBoardHelper cb(_njoints, _axisMap, _angleToEncoder, nullptr, _newtonsToSensor, _ampsToSensor, _dutycycleToPWM);
     ControlBoardHelper cb_copy_test(cb);
@@ -591,7 +595,7 @@ bool FakeMotionControl::open(yarp::os::Searchable &config)
     ImplementVelocityControl2::initialize(_njoints, _axisMap, _angleToEncoder, nullptr);
     ImplementControlLimits2::initialize(_njoints, _axisMap, _angleToEncoder, nullptr);
     ImplementImpedanceControl::initialize(_njoints, _axisMap, _angleToEncoder, nullptr, _newtonsToSensor);
-    ImplementTorqueControl::initialize(_njoints, _axisMap, _angleToEncoder, nullptr, _newtonsToSensor, _ampsToSensor, _dutycycleToPWM);
+    ImplementTorqueControl::initialize(_njoints, _axisMap, _angleToEncoder, nullptr, _newtonsToSensor, _ampsToSensor, _dutycycleToPWM, bemfToRaw.data(), ktauToRaw.data());
     ImplementPositionDirect::initialize(_njoints, _axisMap, _angleToEncoder, nullptr);
     ImplementInteractionMode::initialize(_njoints, _axisMap, _angleToEncoder, nullptr);
     ImplementMotor::initialize(_njoints, _axisMap);

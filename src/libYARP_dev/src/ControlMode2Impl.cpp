@@ -27,11 +27,7 @@ bool ImplementControlMode2::initialize(int size, const int *amap)
     if (helper!=nullptr)
         return false;
 
-    double *dummy=new double [size];
-    for(int k=0;k<size;k++)
-        dummy[k]=0;
-
-    helper=(void *)(new ControlBoardHelper(size, amap, dummy, dummy, dummy));
+    helper=(void *)(new ControlBoardHelper(size, amap));
     yAssert (helper != nullptr);
 
     temp_int=new int [size];
@@ -40,7 +36,6 @@ bool ImplementControlMode2::initialize(int size, const int *amap)
     temp_mode=new int [size];
     yAssert(temp_mode != nullptr);
 
-    delete [] dummy;
     return true;
 }
 

@@ -35,7 +35,7 @@ bool ImplementPositionDirect::initialize(int size, const int *amap, const double
     if(helper != nullptr)
         return false;
 
-    helper=(void *)(new ControlBoardHelper(size, amap, enc, zos,nullptr, nullptr, nullptr, nullptr));
+    helper=(void *)(new ControlBoardHelper(size, amap, enc, zos));
     yAssert(helper != nullptr);
 
     temp_double=new double [size];

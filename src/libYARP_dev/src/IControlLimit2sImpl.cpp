@@ -53,7 +53,7 @@ bool ImplementControlLimits2::initialize(int size, const int *amap, const double
     if(helper != nullptr)
         return false;
 
-    helper=(void *)(new ControlBoardHelper(size, amap, enc, zos,nullptr));
+    helper=(void *)(new ControlBoardHelper(size, amap, enc, zos));
     yAssert(helper != nullptr);
     temp_max=new double [size];
     yAssert(temp_max != nullptr);

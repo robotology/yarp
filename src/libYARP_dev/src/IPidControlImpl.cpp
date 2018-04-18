@@ -35,7 +35,7 @@ bool ImplementPidControl:: initialize (int size, const int *amap, const double *
     if (helper!=nullptr)
         return false;
 
-    helper=(void *)(new ControlBoardHelper(size, amap, enc, zos,newtons,amps,0,dutys));
+    helper=(void *)(new ControlBoardHelper(size, amap, enc, zos,newtons,amps,nullptr,dutys));
     yAssert (helper != nullptr);
     temp=new double [size];
     yAssert (temp != nullptr);

@@ -29,16 +29,19 @@ struct PidUnits
 class  yarp::dev::ControlBoardHelper::PrivateUnitsHandler
 {
 public:
-    int nj;
-    double *position_zeros;
-    double *helper_ones;
+    int     nj;
     int    *axisMap;
     int    *invAxisMap;
+
+    double *position_zeros;
+    double *helper_ones;
     double *angleToEncoders;
     double *newtonsToSensors;
     double *ampereToSensors;
     double *voltToSensors;
     double *dutycycleToPWMs;
+    double *bemfToRaws;
+    double *ktauToRaws;
 
     PidUnits * PosPid_units;
     PidUnits* VelPid_units;
@@ -59,9 +62,20 @@ public:
         PosPid_units(0),
         TrqPid_units(0),
         VelPid_units(0),
-        CurPid_units(0)
+        CurPid_units(0),
+        bemfToRaws(0),
+        ktauToRaws(0)
     {
         alloc(size);
+        std::fill_n(helper_ones, size, 1.0);
+        std::fill_n(position_zeros, size, 0.0);
+        std::fill_n(angleToEncoders, size, 1.0);
+        std::fill_n(newtonsToSensors, size, 1.0);
+        std::fill_n(ampereToSensors, size, 1.0);
+        std::fill_n(voltToSensors, size, 1.0);
+        std::fill_n(dutycycleToPWMs, size, 1.0);
+        std::fill_n(bemfToRaws, size, 1.0);
+        std::fill_n(ktauToRaws, size, 1.0);
     }
 
     ~PrivateUnitsHandler()
@@ -79,6 +93,8 @@ public:
         checkAndDestroy<double>(ampereToSensors);
         checkAndDestroy<double>(voltToSensors);
         checkAndDestroy<double>(dutycycleToPWMs);
+        checkAndDestroy<double>(bemfToRaws);
+        checkAndDestroy<double>(ktauToRaws);
     }
 
     void alloc(int n)
@@ -97,6 +113,8 @@ public:
         VelPid_units = new PidUnits[nj];
         TrqPid_units = new PidUnits[nj];
         CurPid_units = new PidUnits[nj];
+        bemfToRaws = new double[nj];
+        ktauToRaws = new double[nj];
 
         yAssert(position_zeros != nullptr);
         yAssert(helper_ones != nullptr);
@@ -111,6 +129,8 @@ public:
         yAssert(VelPid_units != nullptr);
         yAssert(TrqPid_units != nullptr);
         yAssert(CurPid_units != nullptr);
+        yAssert(bemfToRaws != nullptr);
+        yAssert(ktauToRaws != nullptr);
 
         pid_units[VOCAB_PIDTYPE_POSITION] = PosPid_units;
         pid_units[VOCAB_PIDTYPE_VELOCITY] = VelPid_units;
@@ -134,10 +154,12 @@ public:
         memcpy(this->VelPid_units, other.VelPid_units, sizeof(*other.VelPid_units)*nj);
         memcpy(this->TrqPid_units, other.TrqPid_units, sizeof(*other.TrqPid_units)*nj);
         memcpy(this->CurPid_units, other.CurPid_units, sizeof(*other.CurPid_units)*nj);
+        memcpy(this->bemfToRaws, other.bemfToRaws, sizeof(*other.bemfToRaws)*nj);
+        memcpy(this->ktauToRaws, other.ktauToRaws, sizeof(*other.ktauToRaws)*nj);
     }
 };
 
-ControlBoardHelper::ControlBoardHelper(int n, const int *aMap, const double *angToEncs, const double *zs, const double *newtons, const double *amps, const double *volts, const double *dutycycles )
+ControlBoardHelper::ControlBoardHelper(int n, const int *aMap, const double *angToEncs, const double *zs, const double *newtons, const double *amps, const double *volts, const double *dutycycles, const double *kbemf, const double *ktau)
 {
     yAssert(n>=0);         // if number of joints is negative complain!
     yAssert(aMap!=0);      // at least the axisMap is required
@@ -145,37 +167,14 @@ ControlBoardHelper::ControlBoardHelper(int n, const int *aMap, const double *ang
 
     memcpy(mPriv->axisMap, aMap, sizeof(int)*n);
 
-    std::fill_n(mPriv->helper_ones, n, 1.0);
-
-    if (zs!=0)
-        memcpy(mPriv->position_zeros, zs, sizeof(double)*n);
-    else
-        std::fill_n(mPriv->position_zeros, n, 0.0);
-
-    if (angToEncs!=0)
-        memcpy(mPriv->angleToEncoders, angToEncs, sizeof(double)*n);
-    else
-        std::fill_n(mPriv->angleToEncoders, n, 1.0);
-
-    if (newtons!=0)
-        memcpy(mPriv->newtonsToSensors, newtons, sizeof(double)*n);
-    else
-        std::fill_n(mPriv->newtonsToSensors, n, 1.0);
-
-    if (amps!=0)
-        memcpy(mPriv->ampereToSensors, amps, sizeof(double)*n);
-    else
-        std::fill_n(mPriv->ampereToSensors, n, 1.0);
-
-    if (volts!=0)
-        memcpy(mPriv->voltToSensors, volts, sizeof(double)*n);
-    else
-        std::fill_n(mPriv->voltToSensors, n, 1.0);
-
-    if (dutycycles != 0)
-        memcpy(mPriv->dutycycleToPWMs, dutycycles, sizeof(double)*n);
-    else
-        std::fill_n(mPriv->dutycycleToPWMs, n, 1.0);
+    if (zs!=0)           memcpy(mPriv->position_zeros, zs, sizeof(double)*n);
+    if (angToEncs!=0)    memcpy(mPriv->angleToEncoders, angToEncs, sizeof(double)*n);
+    if (newtons!=0)      memcpy(mPriv->newtonsToSensors, newtons, sizeof(double)*n);
+    if (amps!=0)         memcpy(mPriv->ampereToSensors, amps, sizeof(double)*n);
+    if (volts!=0)        memcpy(mPriv->voltToSensors, volts, sizeof(double)*n);
+    if (dutycycles != 0) memcpy(mPriv->dutycycleToPWMs, dutycycles, sizeof(double)*n);
+    if (kbemf != 0)      memcpy(mPriv->bemfToRaws, kbemf, sizeof(double)*n);
+    if (ktau != 0)       memcpy(mPriv->ktauToRaws, ktau, sizeof(double)*n);
 
     // invert the axis map
     memset (mPriv->invAxisMap, 0, sizeof(int) * n);
@@ -702,36 +701,36 @@ double ControlBoardHelper::PWM2dutycycle(double pwm_raw, int k_raw)
 // *******************************************//
 void ControlBoardHelper::bemf_user2raw(double bemf_user, int j, double &bemf_raw, int &k)
 {
-    bemf_raw = bemf_user * mPriv->newtonsToSensors[j] / mPriv->angleToEncoders[j];
+    bemf_raw = bemf_user * mPriv->bemfToRaws[j];
     k = toHw(j);
 }
 
 void ControlBoardHelper::ktau_user2raw(double ktau_user, int j, double &ktau_raw, int &k)
 {
-    ktau_raw = ktau_user * mPriv->dutycycleToPWMs[j] / mPriv->newtonsToSensors[j];
+    ktau_raw = ktau_user * mPriv->ktauToRaws[j];
     k = toHw(j);
 }
 
 void ControlBoardHelper::bemf_raw2user(double bemf_raw, int k_raw, double &bemf_user, int &j_user)
 {
     j_user = toUser(k_raw);
-    bemf_user = bemf_raw / mPriv->newtonsToSensors[j_user] * mPriv->angleToEncoders[j_user];
+    bemf_user = bemf_raw / mPriv->bemfToRaws[j_user];
 }
 
 void ControlBoardHelper::ktau_raw2user(double ktau_raw, int k_raw, double &ktau_user, int &j_user)
 {
     j_user = toUser(k_raw);
-    ktau_user = ktau_raw / mPriv->dutycycleToPWMs[j_user] * mPriv->newtonsToSensors[j_user];
+    ktau_user = ktau_raw / mPriv->ktauToRaws[j_user];
 }
 
 double  ControlBoardHelper::bemf_user2raw(double bemf_user, int j)
 {
-    return bemf_user * mPriv->newtonsToSensors[j] / mPriv->angleToEncoders[j];
+    return bemf_user * mPriv->bemfToRaws[j];
 }
 
 double  ControlBoardHelper::ktau_user2raw(double ktau_user, int j)
 {
-    return ktau_user * mPriv->dutycycleToPWMs[j] / mPriv->newtonsToSensors[j];;
+    return ktau_user * mPriv->ktauToRaws[j];
 }
 
 // *******************************************//
