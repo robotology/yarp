@@ -399,6 +399,7 @@ public:
     virtual bool getCurrentsRaw(double *vals) override;
     virtual bool getCurrentRaw(int j, double *val) override;
     virtual bool getNominalCurrentRaw(int m, double *val) override;
+    virtual bool setNominalCurrentRaw(int m, const double val) override;
     virtual bool setMaxCurrentRaw(int j, double val) override;
     virtual bool getMaxCurrentRaw(int j, double *val) override;
     virtual bool getPeakCurrentRaw(int m, double *val) override;
@@ -421,8 +422,6 @@ public:
     // Torque control
     virtual bool getTorqueRaw(int j, double *t) override;
     virtual bool getTorquesRaw(double *t) override;
-    virtual bool getBemfParamRaw(int j, double *bemf) override;
-    virtual bool setBemfParamRaw(int j, double bemf) override;
     virtual bool getTorqueRangeRaw(int j, double *min, double *max) override;
     virtual bool getTorqueRangesRaw(double *min, double *max) override;
     virtual bool setRefTorquesRaw(const double *t) override;

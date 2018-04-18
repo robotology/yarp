@@ -3371,6 +3371,22 @@ bool ControlBoardWrapper::setPeakCurrent(int m, const double val)
     return p->amp->setPeakCurrent(off+p->base, val);
 }
 
+bool ControlBoardWrapper::setNominalCurrent(int m, const double val)
+{
+    int off = device.lut[m].offset;
+    int subIndex = device.lut[m].deviceEntry;
+
+    yarp::dev::impl::SubDevice *p = device.getSubdevice(subIndex);
+    if (!p)
+        return false;
+
+    if (!p->amp)
+    {
+        return false;
+    }
+    return p->amp->setNominalCurrent(off + p->base, val);
+}
+
 bool ControlBoardWrapper::getPWM(int m, double* val)
 {
     int off=device.lut[m].offset;
@@ -3829,40 +3845,6 @@ bool ControlBoardWrapper::setRefTorques(const int n_joints, const int *joints, c
     }
     rpcDataMutex.post();
     return ret;
-}
-
-
-bool ControlBoardWrapper::getBemfParam(int j, double *t)
-{
-
-    int off; try{off = device.lut.at(j).offset;} catch(...){yError() << "joint number " << j <<  " out of bound [0-"<< controlledJoints << "] for part " << partName; return false; }
-    int subIndex=device.lut[j].deviceEntry;
-
-    yarp::dev::impl::SubDevice *p=device.getSubdevice(subIndex);
-    if (!p)
-        return false;
-
-    if (p->iTorque)
-    {
-        return p->iTorque->getBemfParam(off+p->base, t);
-    }
-    return false;
-}
-
-bool ControlBoardWrapper::setBemfParam(int j, double t)
-{
-    int off; try{off = device.lut.at(j).offset;} catch(...){yError() << "joint number " << j <<  " out of bound [0-"<< controlledJoints << "] for part " << partName; return false; }
-    int subIndex=device.lut[j].deviceEntry;
-
-    yarp::dev::impl::SubDevice *p=device.getSubdevice(subIndex);
-    if (!p)
-        return false;
-
-    if (p->iTorque)
-    {
-        return p->iTorque->setBemfParam(off+p->base, t);
-    }
-    return false;
 }
 
 bool ControlBoardWrapper::getMotorTorqueParams(int j,  yarp::dev::MotorTorqueParameters *params)

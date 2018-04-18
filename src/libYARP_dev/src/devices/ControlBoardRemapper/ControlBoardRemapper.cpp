@@ -2713,6 +2713,26 @@ bool ControlBoardRemapper::setPeakCurrent(int m, const double val)
     return p->amp->setPeakCurrent(off, val);
 }
 
+bool ControlBoardRemapper::setNominalCurrent(int m, const double val)
+{
+    int off = (int)remappedControlBoards.lut[m].axisIndexInSubControlBoard;
+    size_t subIndex = remappedControlBoards.lut[m].subControlBoardIndex;
+
+    yarp::dev::RemappedSubControlBoard *p = remappedControlBoards.getSubControlBoard(subIndex);
+
+    if (!p)
+    {
+        return false;
+    }
+
+    if (!p->amp)
+    {
+        return false;
+    }
+
+    return p->amp->setNominalCurrent(off, val);
+}
+
 bool ControlBoardRemapper::getPWM(int m, double* val)
 {
     int off=(int)remappedControlBoards.lut[m].axisIndexInSubControlBoard;
@@ -3321,43 +3341,6 @@ bool ControlBoardRemapper::setRefTorques(const int n_joints, const int *joints, 
     }
 
     return ret;
-}
-
-
-bool ControlBoardRemapper::getBemfParam(int j, double *t)
-{
-    int off=(int)remappedControlBoards.lut[j].axisIndexInSubControlBoard;
-    size_t subIndex=remappedControlBoards.lut[j].subControlBoardIndex;
-
-    yarp::dev::RemappedSubControlBoard *p=remappedControlBoards.getSubControlBoard(subIndex);
-    if (!p)
-        return false;
-
-    if (p->iTorque)
-    {
-        return p->iTorque->getBemfParam(off, t);
-    }
-    return false;
-}
-
-bool ControlBoardRemapper::setBemfParam(int j, double t)
-{
-    int off=(int)remappedControlBoards.lut[j].axisIndexInSubControlBoard;
-    size_t subIndex=remappedControlBoards.lut[j].subControlBoardIndex;
-
-    yarp::dev::RemappedSubControlBoard *p=remappedControlBoards.getSubControlBoard(subIndex);
-
-    if (!p)
-    {
-        return false;
-    }
-
-    if (p->iTorque)
-    {
-        return p->iTorque->setBemfParam(off, t);
-    }
-
-    return false;
 }
 
 bool ControlBoardRemapper::getMotorTorqueParams(int j,  yarp::dev::MotorTorqueParameters *params)

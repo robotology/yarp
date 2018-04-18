@@ -389,6 +389,8 @@ public:
 
     virtual bool getNominalCurrent(int m, double *val) override;
 
+    virtual bool setNominalCurrent(int m, const double val) override;
+
     virtual bool getPeakCurrent(int m, double *val) override;
 
     virtual bool setPeakCurrent(int m, const double val) override;
@@ -485,10 +487,6 @@ public:
     virtual bool setRefTorque(int j, double t) override;
 
     virtual bool setRefTorques(const int n_joint, const int *joints, const double *t) override;
-
-    virtual bool getBemfParam(int j, double *t) override;
-
-    virtual bool setBemfParam(int j, double t) override;
 
     virtual bool getMotorTorqueParams(int j, yarp::dev::MotorTorqueParameters *params) override;
 

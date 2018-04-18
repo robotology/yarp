@@ -907,6 +907,17 @@ public:
      */
     virtual bool getNominalCurrent(int m, double *val) override;
 
+    /* Set the the nominal current which can be kept for an indefinite amount of time
+    * without harming the motor. This value is specific for each motor and it is typically
+    * found in its datasheet. The units are Ampere.
+    * This value and the peak current may be used by the firmware to configure
+    * an I2T filter.
+    * @param m motor number
+    * @param val storage for return value. [Ampere]
+    * @return true/false success failure.
+    */
+    virtual bool setNominalCurrent(int m, const double val) override;
+
     /* Get the the peak current which causes damage to the motor if maintained
      * for a long amount of time.
      * The value is often found in the motor datasheet, units are Ampere.
@@ -1126,10 +1137,6 @@ public:
     virtual bool setRefTorque(int j, double t) override;
 
     virtual bool setRefTorques(const int n_joint, const int *joints, const double *t) override;
-
-    virtual bool getBemfParam(int j, double *t) override;
-
-    virtual bool setBemfParam(int j, double t) override;
 
     virtual bool getMotorTorqueParams(int j,  yarp::dev::MotorTorqueParameters *params) override;
 

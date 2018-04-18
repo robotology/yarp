@@ -64,8 +64,6 @@ public:
     virtual bool setRefTorques(const int n_joint, const int *joints, const double *t) override;
     virtual bool getTorques(double *t) override;
     virtual bool getTorque(int j, double *t) override;
-    virtual bool getBemfParam(int j, double *bemf) override;
-    virtual bool setBemfParam(int j, double bemf) override;
     virtual bool setMotorTorqueParams(int j, const yarp::dev::MotorTorqueParameters params) override;
     virtual bool getMotorTorqueParams(int j, yarp::dev::MotorTorqueParameters *params) override;
     virtual bool getTorqueRange(int j, double *min, double *max) override;

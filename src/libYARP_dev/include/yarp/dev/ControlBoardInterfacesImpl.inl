@@ -893,6 +893,15 @@ bool ImplementAmplifierControl<DERIVED, IMPLEMENT>::setPeakCurrent(int m, const 
 }
 
 template <class DERIVED, class IMPLEMENT>
+bool ImplementAmplifierControl<DERIVED, IMPLEMENT>::setNominalCurrent(int m, const double curr)
+{
+    int k;
+    double val;
+    castToMapper(helper)->ampereA2S(curr, m, val, k);
+    return iAmplifier->setNominalCurrentRaw(k, val);
+}
+
+template <class DERIVED, class IMPLEMENT>
 bool ImplementAmplifierControl<DERIVED, IMPLEMENT>::getPWM(int m, double* pwm)
 {
     int k;

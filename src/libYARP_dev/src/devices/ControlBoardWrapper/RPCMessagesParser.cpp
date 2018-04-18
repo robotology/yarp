@@ -269,13 +269,6 @@ void RPCMessagesParser::handleControlModeMsg(const yarp::os::Bottle& cmd,
                         case VOCAB_CM_POSITION:
                             if(rpc_iCtrlMode2)
                                 *ok = rpc_iCtrlMode2->setControlMode(axis, VOCAB_CM_POSITION);
-#ifndef YARP_NO_DEPRECATED // since YARP 2.3.70
-                            else
-YARP_WARNING_PUSH
-YARP_DISABLE_DEPRECATED_WARNING
-                                *ok = rpc_iCtrlMode->setPositionMode(axis);
-YARP_WARNING_POP
-#endif // YARP_NO_DEPRECATED
                         break;
 
                         case VOCAB_CM_POSITION_DIRECT:
@@ -292,51 +285,19 @@ YARP_WARNING_POP
                         case VOCAB_CM_VELOCITY:
                             if(rpc_iCtrlMode2)
                                 *ok = rpc_iCtrlMode2->setControlMode(axis, VOCAB_CM_VELOCITY);
-#ifndef YARP_NO_DEPRECATED // since YARP 2.3.70
-                            else
-YARP_WARNING_PUSH
-YARP_DISABLE_DEPRECATED_WARNING
-                                *ok = rpc_iCtrlMode->setVelocityMode(axis);
-YARP_WARNING_POP
-#endif // YARP_NO_DEPRECATED
                         break;
 
                         case VOCAB_CM_TORQUE:
                             if(rpc_iCtrlMode2)
                                 *ok = rpc_iCtrlMode2->setControlMode(axis, VOCAB_CM_TORQUE);
-#ifndef YARP_NO_DEPRECATED // since YARP 2.3.70
-                            else
-YARP_WARNING_PUSH
-YARP_DISABLE_DEPRECATED_WARNING
-                                *ok = rpc_iCtrlMode->setTorqueMode(axis);
-YARP_WARNING_POP
-#endif // YARP_NO_DEPRECATED
                         break;
 
                         case VOCAB_CM_IMPEDANCE_POS:
                             yError() << "The 'impedancePosition' control mode is deprecated. \nUse setInteractionMode(axis, VOCAB_IM_COMPLIANT) + setControlMode(axis, VOCAB_CM_POSITION) instead";
-
-                            //                      Let´s propagate the legacy version as is until it will be removed
-#ifndef YARP_NO_DEPRECATED // since YARP 2.3.70
-YARP_WARNING_PUSH
-YARP_DISABLE_DEPRECATED_WARNING
-                            if(rpc_iCtrlMode)
-                                *ok = rpc_iCtrlMode->setImpedancePositionMode(axis);
-YARP_WARNING_POP
-#endif // YARP_NO_DEPRECATED
                         break;
 
                         case VOCAB_CM_IMPEDANCE_VEL:
                             yError() << "The 'impedanceVelocity' control mode is deprecated. \nUse setInteractionMode(axis, VOCAB_IM_COMPLIANT) + setControlMode(axis, VOCAB_CM_VELOCITY) instead";
-
-                            //                      Let´s propagate the legacy version as is until it will be removed
-#ifndef YARP_NO_DEPRECATED // since YARP 2.3.70
-YARP_WARNING_PUSH
-YARP_DISABLE_DEPRECATED_WARNING
-                            if(rpc_iCtrlMode)
-                                *ok = rpc_iCtrlMode->setImpedanceVelocityMode(axis);
-YARP_WARNING_POP
-#endif // YARP_NO_DEPRECATED
                         break;
 
                         case VOCAB_CM_PWM:
@@ -532,12 +493,6 @@ void RPCMessagesParser::handleTorqueMsg(const yarp::os::Bottle& cmd,
                 }
                 break;
 
-                case VOCAB_BEMF:
-                {
-                    *ok = rpc_ITorque->setBemfParam(cmd.get(3).asInt(), cmd.get(4).asDouble());
-                }
-                break;
-
                 case VOCAB_MOTOR_PARAMS:
                 {
                     yarp::dev::MotorTorqueParameters params;
@@ -625,13 +580,6 @@ void RPCMessagesParser::handleTorqueMsg(const yarp::os::Bottle& cmd,
                 case VOCAB_TRQ:
                 {
                     *ok = rpc_ITorque->getTorque(cmd.get(3).asInt(), &dtmp);
-                    response.addDouble(dtmp);
-                }
-                break;
-
-                case VOCAB_BEMF:
-                {
-                    *ok = rpc_ITorque->getBemfParam(cmd.get(3).asInt(), &dtmp);
                     response.addDouble(dtmp);
                 }
                 break;
@@ -2178,6 +2126,12 @@ bool RPCMessagesParser::respond(const yarp::os::Bottle& cmd, yarp::os::Bottle& r
                             case VOCAB_AMP_PEAK_CURRENT:
                             {
                                 ok = rcp_IAmp->setPeakCurrent(cmd.get(2).asInt(), cmd.get(3).asDouble());
+                            }
+                            break;
+
+                            case VOCAB_AMP_NOMINAL_CURRENT:
+                            {
+                                ok = rcp_IAmp->setNominalCurrent(cmd.get(2).asInt(), cmd.get(3).asDouble());
                             }
                             break;
 

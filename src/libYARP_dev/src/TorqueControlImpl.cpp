@@ -77,35 +77,6 @@ bool ImplementTorqueControl::getRefTorque(int j, double *r)
     return ret;
 }
 
-bool ImplementTorqueControl::getBemfParam(int j, double *bemf)
-{
-    JOINTIDCHECK
-    int k;
-    int tmp_j;
-    bool ret;
-    double bemf_raw;
-    k=castToMapper(helper)->toHw(j);
-
-    ret = iTorqueRaw->getBemfParamRaw(k, &bemf_raw);
-    if (ret)
-    {
-        castToMapper(helper)->bemf_raw2user(bemf_raw, k, *bemf, tmp_j);
-    }
-    return ret;
-}
-
-bool ImplementTorqueControl::setBemfParam(int j, double bemf)
-{
-    JOINTIDCHECK
-    int k;
-    bool ret;
-    double bemf_raw;
-    castToMapper(helper)->bemf_user2raw(bemf, j, bemf_raw, k);
-
-    ret = iTorqueRaw->setBemfParamRaw(k, bemf_raw);
-    return ret;
-}
-
 bool ImplementTorqueControl::setMotorTorqueParams(int j,  const yarp::dev::MotorTorqueParameters params)
 {
     JOINTIDCHECK

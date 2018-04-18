@@ -2598,6 +2598,12 @@ bool FakeMotionControl::getNominalCurrentRaw(int m, double *val)
     return true;
 }
 
+bool FakeMotionControl::setNominalCurrentRaw(int m, const double val)
+{
+    nominalCurrent[m] = val;
+    return true;
+}
+
 bool FakeMotionControl::getPWMRaw(int m, double *val)
 {
     *val = pwm[m];
@@ -2819,20 +2825,6 @@ bool FakeMotionControl::getImpedanceOffsetRaw(int j, double *offset)
 bool FakeMotionControl::getCurrentImpedanceLimitRaw(int j, double *min_stiff, double *max_stiff, double *min_damp, double *max_damp)
 {
     return false;
-}
-
-bool FakeMotionControl::getBemfParamRaw(int j, double *bemf)
-{
-    *bemf = _kbemf[j];
-    yDebug() << "getBemfParamRaw" << *bemf;
-    return true;
-}
-
-bool FakeMotionControl::setBemfParamRaw(int j, double bemf)
-{
-    _kbemf[j] = bemf;
-    yDebug() << "setBemfParamRaw" << bemf;
-    return true;
 }
 
 bool FakeMotionControl::getMotorTorqueParamsRaw(int j, MotorTorqueParameters *params)
