@@ -351,12 +351,12 @@ static int metaConnect(const ConstString& src,
     CARRIER_DEBUG("DYNAMIC_SRC: name=%s, carrier=%s\n", dynamicSrc.getName().c_str(), dynamicSrc.getCarrier().c_str());
     CARRIER_DEBUG("DYNAMIC_DST: name=%s, carrier=%s\n", dynamicDest.getName().c_str(), dynamicDest.getCarrier().c_str());
 
-    if(!NetworkBase::isValidPortName(dynamicSrc.getName()))
+    if(!Contact::isValidRegisteredName(dynamicSrc.getName().c_str()))
     {
         fprintf(stderr, "Failure: no way to make connection, invalid source '%s'\n", dynamicSrc.getName().c_str());
         return 1;
     }
-    if(!NetworkBase::isValidPortName(dynamicDest.getName()))
+    if(!Contact::isValidRegisteredName(dynamicDest.getName().c_str()))
     {
         fprintf(stderr, "Failure: no way to make connection, invalid destination '%s'\n", dynamicDest.getName().c_str());
         return 1;

@@ -344,6 +344,60 @@ public:
 
     virtual ConstString getName() override { return "PortTest"; }
 
+    void testName() {
+        // good names
+        checkTrue(Contact::isValidRegistrationName(""),                 "Void name is a good registration name.");
+        checkTrue(Contact::isValidRegistrationName("..."),              "\"...\" name is a good registration name.");
+        checkTrue(Contact::isValidRegistrationName("/port"),            "\"/port\" is a good registration name.");
+        checkTrue(Contact::isValidRegistrationName("/port:spec"),       "\"/port:spec\" is a good registration name.");
+        checkTrue(Contact::isValidRegistrationName("/p1/p2"),           "\"/p1/p2\" is a good registration name.");
+        checkTrue(Contact::isValidRegistrationName("/p1/p2/p3/p4"),     "\"/p1/p2/p3/p4\" is a good registration name.");
+        checkTrue(Contact::isValidRegistrationName("/p1/p2/p3:any/p4"), "\"/p1/p2/p3:any/p4\" is a good registration name.");
+        checkTrue(Contact::isValidRegistrationName("/p1/p_2"),          "\"/p1/p_2\" is a good name.");
+        checkTrue(Contact::isValidRegistrationName("/p1/p_2:sp1:ssp2"), "\"/p1/p_2:sp1:ssp2\" is a good name.");
+        checkTrue(Contact::isValidRegistrationName("carr://port"),              "\"carr://port\" is a good registration name.");
+        checkTrue(Contact::isValidRegistrationName("carr://port/port:spec"),    "\"carr://port:spec\" is a good registration name.");
+        checkTrue(Contact::isValidRegistrationName("carr://p1/p2"),             "\"carr://p1/p2\" is a good registration name.");
+        checkTrue(Contact::isValidRegistrationName("fast_carr://p1/p2/p3/p4"),  "\"fast_carr://p1/p2/p3/p4\" is a good registration name.");
+        checkTrue(Contact::isValidRegistrationName("/n1#/p1/p2"),               "\"/n1#/p1/p2\" is a good registration name.");
+        checkTrue(Contact::isValidRegistrationName("/n1+#/p1"),         "\"/n1+#/p1\" is a good registration name.");
+        checkTrue(Contact::isValidRegistrationName("/n1+1#/p1"),        "\"/n1+1#/p1\" is a good registration name.");
+        checkTrue(Contact::isValidRegistrationName("/n1-1#/p1"),        "\"/n1-1#/p1\" is a good registration name.");
+        checkTrue(Contact::isValidRegistrationName("/n1=/p1"),          "\"/n1=/p1\" is a good registration name.");
+        checkTrue(Contact::isValidRegistrationName("/n1=-1/p1"),        "\"/n1=-1/p1\" is a good registration name.");
+        checkTrue(Contact::isValidRegistrationName("/n1=+/p1/p2:sp"),   "\"/n1=+/p1/p2:sp\" is a good registration name.");
+        checkTrue(Contact::isValidRegistrationName("/p@"),              "\"/p@\" is a good registration name.");
+        checkTrue(Contact::isValidRegistrationName("/p:s@/n~wire"),     "\"/p:s@/n~wire\" is a good registration name.");
+        checkTrue(Contact::isValidRegistrationName("/p-1@/n~wire"),     "\"/p-1@/n~wire\" is a good registration name.");
+        checkTrue(Contact::isValidRegistrationName("/machine:10005"),   "\"machine:10005\" is a good registration name.");
+        checkTrue(Contact::isValidRegistrationName("/mac12.at.domain:10005"),   "\"mac12.at.domain:10005\" is a good registration name.");
+        checkTrue(Contact::isValidRegistrationName("/111.2.30.4:10005"),        "\"111.2.30.4:10005\" is a good registration name.");
+        checkTrue(Contact::isValidRegistrationName("carr://11.12.13.14:10005"), "\"carr://11.12.13.14:10005\" is a good registration name.");
+        checkTrue(Contact::isValidRegistrationName("carr://11.12.13.14:10005/"),"\"carr://11.12.13.14:10005\" is a good registration name.");
+
+        // bad names:
+        checkFalse(Contact::isValidRegistrationName("/"),                   "\"/\" is not a good registration name.");
+        checkFalse(Contact::isValidRegistrationName("/p space"),            "\"/p space\" is not a good registration name.");
+        checkFalse(Contact::isValidRegistrationName("/_"),                  "\"/_\" is not a good registration name.");
+        checkFalse(Contact::isValidRegistrationName("/:"),                  "\"/:\" is not a good registration name.");
+        checkFalse(Contact::isValidRegistrationName("/p_"),                 "\"/p_\" is a not good registration name.");
+        checkFalse(Contact::isValidRegistrationName("/p/"),                 "\"/p_\" is a not good registration name.");
+        checkFalse(Contact::isValidRegistrationName("/port:"),              "\"/port:\" is not a good registration name.");
+        checkFalse(Contact::isValidRegistrationName("/str@ng&%port"),       "\"/str@ng&%port\" is not a good registration name.");
+        checkFalse(Contact::isValidRegistrationName("str4ng&~c4rr://p1/p2"),"\"str4ng&~c4rr://p1/p2\" is not a good registration name.");
+        checkFalse(Contact::isValidRegistrationName("carr:/"),              "\"carr:/ \" is not a good registration name.");
+        checkFalse(Contact::isValidRegistrationName("=+/p1/p2:sp"),         "\"=+/p1/p2:sp\" is not a good registration name.");
+        checkFalse(Contact::isValidRegistrationName("#+/p1/p2:sp"),         "\"#+/p1/p2:sp\" is not a good registration name.");
+        checkFalse(Contact::isValidRegistrationName("/n="),                 "\"/n=\" is not a good registration name.");
+        checkFalse(Contact::isValidRegistrationName("/n#"),                 "\"/n#\" is not a good registration name.");
+        checkFalse(Contact::isValidRegistrationName("="),                   "\"=\" is not a good registration name.");
+        checkFalse(Contact::isValidRegistrationName("#"),                   "\"#\" is not a good registration name.");
+        checkFalse(Contact::isValidRegistrationName("@"),                   "\"@\" is not a good registration name.");
+        checkFalse(Contact::isValidRegistrationName("machine:10005"),       "\"machine:10005\" is not a good registration name.");
+        checkFalse(Contact::isValidRegistrationName("111.2.30.4:abc"),      "\"111.2.30.4:abc\" is not a good registration name.");
+        checkFalse(Contact::isValidRegistrationName("carr:/11.12.13.14:69"),"\"carr:/11.12.13.14:69\" is not a good registration name.");
+    }
+
     void testOpen() {
         report(0,"checking opening and closing ports");
         Port out, in;
@@ -1548,6 +1602,8 @@ public:
 #ifdef BROKEN_TEST
         testTcp();
 #endif
+        testName();
+
         testOpen();
         //bbb testReadBuffer();
         testPair();

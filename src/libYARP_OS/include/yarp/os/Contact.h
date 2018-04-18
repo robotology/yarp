@@ -129,6 +129,29 @@ public:
      */
     static Contact fromString(const ConstString& txt);
 
+    /**
+     * @brief isValidRegisteredName
+     *
+     * Checks if a provided name match the syntax of possibly
+     * registered port names. The syntax is defined into the function code.
+     *
+     * @param name char sequence with the name to check
+     * @return true if the name could correspond to a registered contact
+     */
+    static bool isValidRegisteredName(const char* name);
+
+    /**
+     * @brief isValidRegistrationName
+     *
+     * Checks if a provided name is valid to enter registration phase.
+     * Valid syntax includes valid registered names plus anonymous ports
+     * and plain char sequences for topics.
+     *
+     * @param name char sequence with the name to check
+     * @return true if the contact can be registered by YARP network
+     */
+    static bool isValidRegistrationName(const char* name);
+
 /** @} */
 /** @{ */
 

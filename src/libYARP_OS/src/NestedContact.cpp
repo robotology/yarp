@@ -75,9 +75,24 @@ bool NestedContact::fromString(const ConstString& nFullName) {
         nodeName = fullName.substr(0, idx);
         nestedName = fullName.substr(idx+1, fullName.length());
         char ch = nodeName[nodeName.length()-1];
-        if (ch=='-'||ch=='+') {
-            category += ch;
-            nodeName = nodeName.substr(0, nodeName.length()-1);
+        if (ch=='-'||ch=='+'||ch=='1') {
+            size_t offset = 1;
+            bool ok = true;
+            if (ch=='1') {
+                ok = false;
+                if (nodeName.length()>=2) {
+                    char ch0 = nodeName[nodeName.length()-2];
+                    if (ch0=='-'||ch0=='+') {
+                        offset++;
+                        category += ch0;
+                        ok = true;
+                    }
+                }
+            }
+            if (ok) {
+                category += ch;
+                nodeName = nodeName.substr(0, nodeName.length()-offset);
+            }
         }
         return true;
     }

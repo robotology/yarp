@@ -79,7 +79,10 @@ bool Port::openFake(const ConstString& name)
 
 bool Port::open(const ConstString& name)
 {
-    return open(Contact(name));
+    if(Contact::isValidRegistrationName(name.c_str())) {
+        return open(Contact::fromString(name));
+    }
+    return false;
 }
 
 bool Port::open(const Contact& contact, bool registerName)
@@ -129,7 +132,7 @@ bool Port::open(const Contact& contact, bool registerName,
     PortCoreAdapter *currentCore = &(IMPL());
     if (currentCore!=nullptr) {
         currentCore->active = false;
-        if (n!="" && (n[0]!='/'||currentCore->includeNode) && n[0]!='=' && n!="..." && n.substr(0, 3)!="...") {
+        if (n!="" && (n[0]!='/'||currentCore->includeNode) && n!="..." && n.substr(0, 3)!="...") {
             if (fakeName==nullptr) {
                 Nodes& nodes = NameClient::getNameClient().getNodes();
                 ConstString node_name = nodes.getActiveName();
@@ -139,7 +142,7 @@ bool Port::open(const Contact& contact, bool registerName,
             }
         }
     }
-    if (n!="" && n[0]!='/'  && n[0]!='=' && n!="..." && n.substr(0, 3)!="...") {
+    if (n!="" && n[0]!='/' && n!="..." && n.substr(0, 3)!="...") {
         if (fakeName==nullptr) {
             YARP_SPRINTF1(Logger::get(), error,
                           "Port name '%s' needs to start with a '/' character",
@@ -147,7 +150,7 @@ bool Port::open(const Contact& contact, bool registerName,
             return false;
         }
     }
-    if (n!="" && n!="..." && n[0]!='=' && n.substr(0, 3)!="...") {
+    if (n!="" && n!="..." && n.substr(0, 3)!="...") {
         if (fakeName==nullptr) {
             ConstString prefix = NetworkBase::getEnvironment("YARP_PORT_PREFIX");
             if (prefix!="") {
