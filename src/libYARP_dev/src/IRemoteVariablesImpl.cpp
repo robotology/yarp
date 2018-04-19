@@ -32,7 +32,7 @@ bool ImplementRemoteVariables::initialize(int size, const int *amap)
     if (helper!=nullptr)
         return false;
 
-    helper=(void *)(new ControlBoardHelper(size, amap, nullptr, 0, 0));
+    helper=(void *)(new ControlBoardHelper(size, amap));
     yAssert (helper != nullptr);
     temp1=new double [size];
     yAssert (temp1 != nullptr);

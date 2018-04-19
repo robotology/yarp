@@ -45,7 +45,7 @@ bool ImplementPositionControl2::initialize(int size, const int *amap, const doub
     if(helper != nullptr)
         return false;
 
-    helper=(void *)(new ControlBoardHelper(size, amap, enc, zos,nullptr));
+    helper=(void *)(new ControlBoardHelper(size, amap, enc, zos));
     yAssert(helper != nullptr);
     temp_double=new double [size];
     yAssert(temp_double != nullptr);

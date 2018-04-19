@@ -8,6 +8,7 @@
 
 #include "yarp/dev/ImplementPWMControl.h"
 #include <yarp/dev/ControlBoardHelper.h>
+#include <yarp/os/LogStream.h>
 #include <iostream>
 
 using namespace yarp::dev;
@@ -27,14 +28,9 @@ bool ImplementPWMControl::initialize(int size, const int *amap, const double* du
     if (helper != nullptr)
         return false;
 
-    double *dummy = new double[size];
-    for (int k = 0; k<size; k++)
-        dummy[k] = 0;
-
-    helper = (void *)(new ControlBoardHelper(size, amap, dummy, dummy, dummy, nullptr, 0, dutyToPWM));
+    helper = (void *)(new ControlBoardHelper(size, amap, nullptr, nullptr, nullptr, nullptr, nullptr, dutyToPWM));
     yAssert(helper != nullptr);
 
-    delete[] dummy;
     return true;
 }
 

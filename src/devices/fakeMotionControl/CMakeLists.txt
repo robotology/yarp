@@ -17,7 +17,8 @@ if(NOT SKIP_fakeMotionControl)
                                          fakeMotionControl.h)
   target_link_libraries(yarp_fakeMotionControl YARP::YARP_OS
                                                YARP::YARP_sig
-                                               YARP::YARP_dev)
+                                               YARP::YARP_dev
+                                               YARP::YARP_math)
   yarp_install(TARGETS yarp_fakeMotionControl
                EXPORT YARP
                COMPONENT runtime

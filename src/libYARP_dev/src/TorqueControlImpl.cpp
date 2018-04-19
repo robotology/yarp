@@ -20,10 +20,8 @@ ImplementTorqueControl::ImplementTorqueControl(ITorqueControlRaw *tq)
     iTorqueRaw = tq;
     helper=nullptr;
     temp=nullptr;
-//     fake =0;
     temp2=nullptr;
     temp_int=nullptr;
-    tmpPids=nullptr;
 }
 
 ImplementTorqueControl::~ImplementTorqueControl()
@@ -31,12 +29,12 @@ ImplementTorqueControl::~ImplementTorqueControl()
     uninitialize();
 }
 
-bool ImplementTorqueControl::initialize(int size, const int *amap, const double *enc, const double *zos, const double *nw)
+bool ImplementTorqueControl::initialize(int size, const int *amap, const double *enc, const double *zos, const double *nw, const double* amps, const double* dutys, const double* bemfs, const double* ktaus)
 {
     if (helper!=nullptr)
         return false;
 
-    helper=(void *)(new ControlBoardHelper(size, amap, enc, zos, nw));
+    helper=(void *)(new ControlBoardHelper(size, amap, enc, zos, nw, amps, nullptr, dutys,bemfs,ktaus));
     yAssert (helper != nullptr);
     temp=new double [size];
     yAssert (temp != nullptr);
@@ -44,8 +42,6 @@ bool ImplementTorqueControl::initialize(int size, const int *amap, const double 
     yAssert (temp2 != nullptr);
     temp_int=new int [size];
     yAssert (temp_int != nullptr);
-    tmpPids=new Pid[size];
-    yAssert (tmpPids!=nullptr);
 
     return true;
 }
@@ -60,7 +56,6 @@ bool ImplementTorqueControl::uninitialize ()
     checkAndDestroy(temp);
     checkAndDestroy(temp2);
     checkAndDestroy(temp_int);
-    checkAndDestroy(tmpPids);
 
     return true;
 }
@@ -82,39 +77,38 @@ bool ImplementTorqueControl::getRefTorque(int j, double *r)
     return ret;
 }
 
-bool ImplementTorqueControl::getBemfParam(int j, double *bemf)
-{
-    JOINTIDCHECK
-    int k;
-    bool ret;
-    k=castToMapper(helper)->toHw(j);
-    ret = iTorqueRaw->getBemfParamRaw(k, bemf);
-    return ret;
-}
-
-bool ImplementTorqueControl::setBemfParam(int j, double bemf)
-{
-    JOINTIDCHECK
-    int k;
-    bool ret;
-    k=castToMapper(helper)->toHw(j);
-    ret = iTorqueRaw->setBemfParamRaw(k, bemf);
-    return ret;
-}
-
 bool ImplementTorqueControl::setMotorTorqueParams(int j,  const yarp::dev::MotorTorqueParameters params)
 {
     JOINTIDCHECK
     int k;
-    k=castToMapper(helper)->toHw(j);
-    return iTorqueRaw->setMotorTorqueParamsRaw(k, params);
+    
+    yarp::dev::MotorTorqueParameters params_raw;
+    castToMapper(helper)->bemf_user2raw(params.bemf, j, params_raw.bemf, k);
+    castToMapper(helper)->ktau_user2raw(params.ktau, j, params_raw.ktau, k);
+    params_raw.bemf_scale = params.bemf_scale;
+    params_raw.ktau_scale = params.ktau_scale;
+
+    return iTorqueRaw->setMotorTorqueParamsRaw(k, params_raw);
 }
 
 bool ImplementTorqueControl::getMotorTorqueParams(int j,  yarp::dev::MotorTorqueParameters *params)
 {
     JOINTIDCHECK
-  int k=castToMapper(helper)->toHw(j);
-  return iTorqueRaw->getMotorTorqueParamsRaw(k, params);
+    int k=castToMapper(helper)->toHw(j);
+
+    yarp::dev::MotorTorqueParameters params_raw;
+    bool b = iTorqueRaw->getMotorTorqueParamsRaw(k, &params_raw);
+    int tmp_j;
+
+    if (b)
+    {
+        *params = params_raw;
+        castToMapper(helper)->bemf_raw2user(params_raw.bemf, k, (*params).bemf, tmp_j);
+        castToMapper(helper)->ktau_raw2user(params_raw.ktau, k, (*params).ktau, tmp_j);
+        (*params).bemf_scale = params_raw.bemf_scale;
+        (*params).ktau_scale = params_raw.ktau_scale;
+    }
+    return b;
 }
 
 bool ImplementTorqueControl::getRefTorques(double *t)

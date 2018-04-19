@@ -42,13 +42,6 @@ public:
     virtual  ~ImplementControlMode2();
 
     // Control mode
-#ifndef YARP_NO_DEPRECATED // since YARP 2.3.70
-    YARP_DEPRECATED bool setTorqueMode(int j) override;
-    YARP_DEPRECATED bool setImpedancePositionMode(int j) override;
-    YARP_DEPRECATED bool setImpedanceVelocityMode(int j) override;
-    YARP_DEPRECATED bool setPositionMode(int j) override;
-    YARP_DEPRECATED bool setVelocityMode(int j) override;
-#endif // YARP_NO_DEPRECATED
     bool getControlMode(int j, int *f) override;
     bool getControlModes(int *modes) override;
     // Control Mode 2

@@ -27,11 +27,7 @@ bool ImplementControlMode2::initialize(int size, const int *amap)
     if (helper!=nullptr)
         return false;
 
-    double *dummy=new double [size];
-    for(int k=0;k<size;k++)
-        dummy[k]=0;
-
-    helper=(void *)(new ControlBoardHelper(size, amap, dummy, dummy, dummy));
+    helper=(void *)(new ControlBoardHelper(size, amap));
     yAssert (helper != nullptr);
 
     temp_int=new int [size];
@@ -40,7 +36,6 @@ bool ImplementControlMode2::initialize(int size, const int *amap)
     temp_mode=new int [size];
     yAssert(temp_mode != nullptr);
 
-    delete [] dummy;
     return true;
 }
 
@@ -61,58 +56,6 @@ bool ImplementControlMode2::uninitialize ()
     checkAndDestroy(temp_mode);
     return true;
 }
-
-#ifndef YARP_NO_DEPRECATED // since YARP 2.3.70
-bool ImplementControlMode2::setPositionMode(int j)
-{
-    JOINTIDCHECK
-    int k=castToMapper(helper)->toHw(j);
-YARP_WARNING_PUSH
-YARP_DISABLE_DEPRECATED_WARNING
-    return raw->setPositionModeRaw(k);
-YARP_WARNING_POP
-}
-
-bool ImplementControlMode2::setVelocityMode(int j)
-{
-    JOINTIDCHECK
-    int k=castToMapper(helper)->toHw(j);
-YARP_WARNING_PUSH
-YARP_DISABLE_DEPRECATED_WARNING
-    return raw->setVelocityModeRaw(k);
-YARP_WARNING_POP
-}
-
-bool ImplementControlMode2::setTorqueMode(int j)
-{
-    JOINTIDCHECK
-    int k=castToMapper(helper)->toHw(j);
-YARP_WARNING_PUSH
-YARP_DISABLE_DEPRECATED_WARNING
-    return raw->setTorqueModeRaw(k);
-YARP_WARNING_POP
-}
-
-bool ImplementControlMode2::setImpedancePositionMode(int j)
-{
-    JOINTIDCHECK
-    int k=castToMapper(helper)->toHw(j);
-YARP_WARNING_PUSH
-YARP_DISABLE_DEPRECATED_WARNING
-    return raw->setImpedancePositionModeRaw(k);
-YARP_WARNING_POP
-}
-
-bool ImplementControlMode2::setImpedanceVelocityMode(int j)
-{
-    JOINTIDCHECK
-    int k=castToMapper(helper)->toHw(j);
-YARP_WARNING_PUSH
-YARP_DISABLE_DEPRECATED_WARNING
-    return raw->setImpedanceVelocityModeRaw(k);
-YARP_WARNING_POP
-}
-#endif // YARP_NO_DEPRECATED
 
 bool ImplementControlMode2::getControlMode(int j, int *f)
 {

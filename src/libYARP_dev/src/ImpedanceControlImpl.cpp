@@ -11,6 +11,8 @@
 
 #include <yarp/dev/ImplementImpedanceControl.h>
 #include <yarp/dev/ControlBoardHelper.h>
+#include <yarp/os/LogStream.h>
+#include <math.h>   
 
 using namespace yarp::dev;
 #define JOINTIDCHECK if (j >= castToMapper(helper)->axes()){yError("joint id out of bound"); return false;}

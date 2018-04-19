@@ -26,14 +26,9 @@ bool ImplementControlMode::initialize(int size, const int *amap)
     if (helper!=nullptr)
         return false;
 
-    double *dummy=new double [size];
-    for(int k=0;k<size;k++)
-        dummy[k]=0;
-
-    helper=(void *)(new ControlBoardHelper(size, amap, dummy, dummy, dummy));
+    helper=(void *)(new ControlBoardHelper(size, amap));
     yAssert (helper != nullptr);
 
-    delete [] dummy;
     return true;
 }
 
@@ -52,58 +47,6 @@ bool ImplementControlMode::uninitialize ()
 
     return true;
 }
-
-#ifndef YARP_NO_DEPRECATED // since YARP 2.3.70
-bool ImplementControlMode::setPositionMode(int j)
-{
-    JOINTIDCHECK
-    int k=castToMapper(helper)->toHw(j);
-YARP_WARNING_PUSH
-YARP_DISABLE_DEPRECATED_WARNING
-    return raw->setPositionModeRaw(k);
-YARP_WARNING_POP
-}
-
-bool ImplementControlMode::setVelocityMode(int j)
-{
-    JOINTIDCHECK
-    int k=castToMapper(helper)->toHw(j);
-YARP_WARNING_PUSH
-YARP_DISABLE_DEPRECATED_WARNING
-    return raw->setVelocityModeRaw(k);
-YARP_WARNING_POP
-}
-
-bool ImplementControlMode::setTorqueMode(int j)
-{
-    JOINTIDCHECK
-    int k=castToMapper(helper)->toHw(j);
-YARP_WARNING_PUSH
-YARP_DISABLE_DEPRECATED_WARNING
-    return raw->setTorqueModeRaw(k);
-YARP_WARNING_POP
-}
-
-bool ImplementControlMode::setImpedancePositionMode(int j)
-{
-    JOINTIDCHECK
-    int k=castToMapper(helper)->toHw(j);
-YARP_WARNING_PUSH
-YARP_DISABLE_DEPRECATED_WARNING
-    return raw->setImpedancePositionModeRaw(k);
-YARP_WARNING_POP
-}
-
-bool ImplementControlMode::setImpedanceVelocityMode(int j)
-{
-    JOINTIDCHECK
-    int k=castToMapper(helper)->toHw(j);
-YARP_WARNING_PUSH
-YARP_DISABLE_DEPRECATED_WARNING
-    return raw->setImpedanceVelocityModeRaw(k);
-YARP_WARNING_POP
-}
-#endif // YARP_NO_DEPRECATED
 
 bool ImplementControlMode::getControlMode(int j, int *f)
 {

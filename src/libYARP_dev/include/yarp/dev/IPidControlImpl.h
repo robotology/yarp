@@ -25,14 +25,13 @@ protected:
     double *temp;
     yarp::dev::Pid *tmpPids;
 
-
     /**
     * Initialize the internal data and alloc memory.
     * @param size is the number of controlled axes the driver deals with.
     * @param amap is a lookup table mapping axes onto physical drivers.
     * @return true if initialized succeeded, false if it wasn't executed, or assert.
     */
-    bool initialize(int size, const int *amap, const double *enc, const double *zos, const double* newtons, const double* amps);
+    bool initialize(int size, const int *amap, const double *enc, const double *zos, const double* newtons, const double* amps, const double* dutys);
 
     /**
     * Clean up internal data and memory.
@@ -40,12 +39,18 @@ protected:
     */
     bool uninitialize();
 
+    bool setConversionUnits(const PidControlTypeEnum& pidtype, const PidFeedbackUnitsEnum fbk_conv_units, const PidOutputUnitsEnum out_conv_units);
+
 public:
     /* Constructor.
     * @param y is the pointer to the class instance inheriting from this
     *  implementation.
     */
     ImplementPidControl(yarp::dev::IPidControlRaw *y);
+
+    /* Destructor.
+    */
+    virtual ~ImplementPidControl();
 
     virtual bool setPid(const PidControlTypeEnum& pidtype, int j, const Pid &pid) override;
     virtual bool setPids(const PidControlTypeEnum& pidtype, const Pid *pids) override;
@@ -68,13 +73,6 @@ public:
     virtual bool disablePid(const PidControlTypeEnum& pidtype, int j) override;
     virtual bool setPidOffset(const PidControlTypeEnum& pidtype, int j, double v) override;
     virtual bool isPidEnabled(const PidControlTypeEnum& pidtype, int j, bool* enabled) override;
-
-    void convert_units_to_machine (const yarp::dev::PidControlTypeEnum& pidtype, double userval, int j, double &machineval, int &k);
-    void convert_units_to_machine (const yarp::dev::PidControlTypeEnum& pidtype, const double* userval, double* machineval);
-    void convert_units_to_user(const yarp::dev::PidControlTypeEnum& pidtype, const double machineval, double* userval, int k);
-    void convert_units_to_user(const yarp::dev::PidControlTypeEnum& pidtype, const double* machineval, double* userval);
-
-    virtual ~ImplementPidControl();
 };
 
 #endif // YARP_DEV_IMPLEMENTPIDCONTROL_H

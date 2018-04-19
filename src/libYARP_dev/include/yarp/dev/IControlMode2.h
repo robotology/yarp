@@ -29,13 +29,6 @@ class YARP_dev_API yarp::dev::IControlMode2 : public yarp::dev::IControlMode
 public:
     virtual ~IControlMode2(){}
 
-#ifndef YARP_NO_DEPRECATED // since YARP 2.3.70
-    using IControlMode::setPositionMode;
-    using IControlMode::setVelocityMode;
-    using IControlMode::setTorqueMode;
-    using IControlMode::setImpedancePositionMode;
-    using IControlMode::setImpedanceVelocityMode;
-#endif // YARP_NO_DEPRECATED
     using IControlMode::getControlMode;
     using IControlMode::getControlModes;
 
@@ -99,14 +92,6 @@ class yarp::dev::IControlMode2Raw: public IControlModeRaw
 {
 public:
     virtual ~IControlMode2Raw(){}
-
-#ifndef YARP_NO_DEPRECATED // since YARP 2.3.70
-    using IControlModeRaw::setPositionModeRaw;
-    using IControlModeRaw::setVelocityModeRaw;
-    using IControlModeRaw::setTorqueModeRaw;
-    using IControlModeRaw::setImpedancePositionModeRaw;
-    using IControlModeRaw::setImpedanceVelocityModeRaw;
-#endif // YARP_NO_DEPRECATED
     using IControlModeRaw::getControlModeRaw;
     using IControlModeRaw::getControlModesRaw;
 

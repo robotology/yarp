@@ -2345,6 +2345,20 @@ public:
         return get1V1I1D(VOCAB_AMP_NOMINAL_CURRENT, m, val);
     }
 
+    /* Set the the nominal current which can be kept for an indefinite amount of time
+    * without harming the motor. This value is specific for each motor and it is typically
+    * found in its datasheet. The units are Ampere.
+    * This value and the peak current may be used by the firmware to configure
+    * an I2T filter.
+    * @param m motor number
+    * @param val storage for return value. [Ampere]
+    * @return true/false success failure.
+    */
+    virtual bool setNominalCurrent(int m, const double val) override
+    {
+        return set1V1I1D(VOCAB_AMP_NOMINAL_CURRENT, m, val);
+    }
+
     /* Get the the peak current which causes damage to the motor if maintained
      * for a long amount of time.
      * The value is often found in the motor datasheet, units are Ampere.
@@ -2578,12 +2592,6 @@ public:
         command_buffer.write(writeStrict_moreJoints);
         return true;
     }
-
-    bool getBemfParam(int j, double *t) override
-    { return get2V1I1D(VOCAB_TORQUE, VOCAB_BEMF, j, t); }
-
-    bool setBemfParam(int j, double v) override
-    { return set2V1I1D(VOCAB_TORQUE, VOCAB_BEMF, j, v); }
 
     bool setMotorTorqueParams(int j, const MotorTorqueParameters params) override
     {
@@ -3359,20 +3367,6 @@ public:
         return ret;
     }
 
-#ifndef YARP_NO_DEPRECATED // since YARP 2.3.70
-#if !defined(_MSC_VER)
-YARP_WARNING_PUSH
-YARP_DISABLE_DEPRECATED_WARNING
-#endif
-    YARP_DEPRECATED bool setPositionMode(int j) override { return setControlMode(j,VOCAB_CM_POSITION); }
-    YARP_DEPRECATED bool setVelocityMode(int j) override { return setControlMode(j,VOCAB_CM_VELOCITY); }
-    YARP_DEPRECATED bool setTorqueMode(int j) override { return setControlMode(j,VOCAB_CM_TORQUE); }
-    YARP_DEPRECATED bool setImpedancePositionMode(int j) override { return setControlMode(j,VOCAB_CM_IMPEDANCE_POS); }
-    YARP_DEPRECATED bool setImpedanceVelocityMode(int j) override { return setControlMode(j,VOCAB_CM_IMPEDANCE_VEL); }
-#if !defined(_MSC_VER)
-YARP_WARNING_POP
-#endif
-#endif // YARP_NO_DEPRECATED
 };
 
 #if defined(_MSC_VER) && !defined(YARP_NO_DEPRECATED) // since YARP 2.3.70

@@ -14,14 +14,14 @@
 #include <yarp/os/LogStream.h>
 #include <yarp/os/NetType.h>
 #include <yarp/dev/Drivers.h>
-
+#include <yarp/math/Math.h>
 #include "fakeMotionControl.h"
 
 using namespace std;
 using namespace yarp::dev;
 using namespace yarp::os;
 using namespace yarp::os::impl;
-
+using namespace yarp::math;
 
 // macros
 #define NEW_JSTATUS_STRUCT 1
@@ -205,6 +205,7 @@ bool FakeMotionControl::alloc(int nj)
     _torqueSensorId= allocAndCheck<int>(nj);
     _torqueSensorChan= allocAndCheck<int>(nj);
     _maxTorque=allocAndCheck<double>(nj);
+    _torques = allocAndCheck<double>(nj);
     _maxJntCmdVelocity = allocAndCheck<double>(nj);
     _maxMotorVelocity = allocAndCheck<double>(nj);
     _newtonsToSensor=allocAndCheck<double>(nj);
@@ -250,6 +251,8 @@ bool FakeMotionControl::alloc(int nj)
     _velocityTimeout=allocAndCheck<int>(nj);
     _kbemf=allocAndCheck<double>(nj);
     _ktau=allocAndCheck<double>(nj);
+    _kbemf_scale = allocAndCheck<int>(nj);
+    _ktau_scale = allocAndCheck<int>(nj);
     _filterType=allocAndCheck<int>(nj);
     _last_position_move_time=allocAndCheck<double>(nj);
 
@@ -321,6 +324,8 @@ bool FakeMotionControl::dealloc()
     checkAndDestroy(_velocityTimeout);
     checkAndDestroy(_kbemf);
     checkAndDestroy(_ktau);
+    checkAndDestroy(_kbemf_scale);
+    checkAndDestroy(_ktau_scale);
     checkAndDestroy(_filterType);
     checkAndDestroy(_posCtrl_references);
     checkAndDestroy(_posDir_references);
@@ -343,6 +348,7 @@ bool FakeMotionControl::dealloc()
     checkAndDestroy(_rotorlimits_max);
     checkAndDestroy(_rotorlimits_min);
     checkAndDestroy(_last_position_move_time);
+    checkAndDestroy(_torques);
 
     return true;
 }
@@ -366,6 +372,7 @@ FakeMotionControl::FakeMotionControl() :
     ImplementPWMControl(this),
     ImplementMotor(this),
     ImplementAxisInfo(this),
+    ImplementVirtualAnalogSensor(this),
     _mutex(1)
 //     SAFETY_THRESHOLD(2.0)
 {
@@ -443,7 +450,10 @@ FakeMotionControl::FakeMotionControl() :
     _kinematic_mj     = nullptr;
     _kbemf            = nullptr;
     _ktau             = nullptr;
+    _kbemf_scale      = nullptr;
+    _ktau_scale       = nullptr;
     _filterType       = nullptr;
+    _torques          = nullptr;
     _positionControlUnits = P_MACHINE_UNITS;
     _torqueControlUnits = T_MACHINE_UNITS;
     _torqueControlEnabled = false;
@@ -566,24 +576,33 @@ bool FakeMotionControl::open(yarp::os::Searchable &config)
     //  INIT ALL INTERFACES
     yarp::sig::Vector tmpZeros; tmpZeros.resize (_njoints, 0.0);
     yarp::sig::Vector tmpOnes;  tmpOnes.resize  (_njoints, 1.0);
+    yarp::sig::Vector bemfToRaw; bemfToRaw.resize(_njoints, 1.0);
+    yarp::sig::Vector ktauToRaw; ktauToRaw.resize(_njoints, 1.0);
+    bemfToRaw = yarp::sig::Vector(_njoints, _newtonsToSensor) / yarp::sig::Vector(_njoints, _angleToEncoder);
+    ktauToRaw = yarp::sig::Vector(_njoints, _dutycycleToPWM)  / yarp::sig::Vector(_njoints, _newtonsToSensor);
 
+    ControlBoardHelper cb(_njoints, _axisMap, _angleToEncoder, nullptr, _newtonsToSensor, _ampsToSensor, _dutycycleToPWM);
+    ControlBoardHelper cb_copy_test(cb);
     ImplementControlCalibration2<FakeMotionControl, IControlCalibration2>::initialize(_njoints, _axisMap, _angleToEncoder, nullptr);
     ImplementAmplifierControl<FakeMotionControl, IAmplifierControl>::initialize(_njoints, _axisMap, _angleToEncoder, nullptr);
     ImplementEncodersTimed::initialize(_njoints, _axisMap, _angleToEncoder, nullptr);
     ImplementMotorEncoders::initialize(_njoints, _axisMap, _angleToEncoder, nullptr);
     ImplementPositionControl2::initialize(_njoints, _axisMap, _angleToEncoder, nullptr);
-    ImplementPidControl::initialize(_njoints, _axisMap, _angleToEncoder, nullptr, _newtonsToSensor, _ampsToSensor);
+    ImplementPidControl::initialize(_njoints, _axisMap, _angleToEncoder, nullptr, _newtonsToSensor, _ampsToSensor, _dutycycleToPWM);
+    ImplementPidControl::setConversionUnits(PidControlTypeEnum::VOCAB_PIDTYPE_POSITION, PidFeedbackUnitsEnum::METRIC, PidOutputUnitsEnum::DUTYCYCLE_PWM_PERCENT);
+    ImplementPidControl::setConversionUnits(PidControlTypeEnum::VOCAB_PIDTYPE_TORQUE, PidFeedbackUnitsEnum::METRIC, PidOutputUnitsEnum::DUTYCYCLE_PWM_PERCENT);
     ImplementControlMode2::initialize(_njoints, _axisMap);
     ImplementVelocityControl2::initialize(_njoints, _axisMap, _angleToEncoder, nullptr);
     ImplementControlLimits2::initialize(_njoints, _axisMap, _angleToEncoder, nullptr);
     ImplementImpedanceControl::initialize(_njoints, _axisMap, _angleToEncoder, nullptr, _newtonsToSensor);
-    ImplementTorqueControl::initialize(_njoints, _axisMap, _angleToEncoder, nullptr, _newtonsToSensor);
+    ImplementTorqueControl::initialize(_njoints, _axisMap, _angleToEncoder, nullptr, _newtonsToSensor, _ampsToSensor, _dutycycleToPWM, bemfToRaw.data(), ktauToRaw.data());
     ImplementPositionDirect::initialize(_njoints, _axisMap, _angleToEncoder, nullptr);
     ImplementInteractionMode::initialize(_njoints, _axisMap, _angleToEncoder, nullptr);
     ImplementMotor::initialize(_njoints, _axisMap);
     ImplementAxisInfo::initialize(_njoints, _axisMap);
     ImplementPWMControl::initialize(_njoints, _axisMap, _dutycycleToPWM);
     ImplementCurrentControl::initialize(_njoints, _axisMap, _ampsToSensor);
+    ImplementVirtualAnalogSensor::initialize(_njoints, _axisMap, _newtonsToSensor);
 
     //start the rateThread
     bool init = this->start();
@@ -841,7 +860,7 @@ bool FakeMotionControl::parseTorquePidsGroup(Bottle& pidsGroup, Pid myPid[], dou
     //optional PWM limit
     if(_pwmIsLimited)
     {   // check for value in the file
-        if (!extractGroup(pidsGroup, xtmp, "limPwm", "Limited PWD", _njoints))
+        if (!extractGroup(pidsGroup, xtmp, "limPwm", "Limited PWM", _njoints))
         {
             yError() << "The PID parameter limPwm was requested but was not correctly set in the configuration file, please fill it.";
             return false;
@@ -955,15 +974,15 @@ bool FakeMotionControl::fromConfig(yarp::os::Searchable &config)
     }
 
     // pwm conversions factor
-    if (general.check("dutycycleToPWM"))
+    if (general.check("fullscalePWM"))
     {
-        if (extractGroup(general, xtmp, "dutycycleToPWM", "a list of scales for the dutycycleToPWM conversion factors", _njoints))
+        if (extractGroup(general, xtmp, "fullscalePWM", "a list of scales for the fullscalePWM conversion factors", _njoints))
         {
             for (i = 1; i < xtmp.size(); i++)
             {
-                if (xtmp.get(i).isDouble())
+                if (xtmp.get(i).isDouble() || xtmp.get(i).isInt())
                 {
-                    _dutycycleToPWM[i - 1] = xtmp.get(i).asDouble();
+                    _dutycycleToPWM[i - 1] = xtmp.get(i).asDouble() / 100.0;
                 }
             }
         }
@@ -972,7 +991,7 @@ bool FakeMotionControl::fromConfig(yarp::os::Searchable &config)
     }
     else
     {
-        yInfo() << "Using default ampsToSensor";
+        yInfo() << "Using default dutycycleToPWM=1.0";
         for (i = 0; i < _njoints; i++)
             _dutycycleToPWM[i] = 1.0;
     }
@@ -1448,6 +1467,7 @@ bool FakeMotionControl::close()
     ImplementPositionDirect::uninitialize();
     ImplementInteractionMode::uninitialize();
     ImplementAxisInfo::uninitialize();
+    ImplementVirtualAnalogSensor::uninitialize();
 
 //     cleanup();
 
@@ -1465,6 +1485,7 @@ void FakeMotionControl::cleanup()
 
 bool FakeMotionControl::setPidRaw(const PidControlTypeEnum& pidtype, int j, const Pid &pid)
 {
+    yDebug() << "setPidRaw" << pidtype << j << pid.kp;
     switch (pidtype)
     {
         case VOCAB_PIDTYPE_POSITION:
@@ -1610,6 +1631,7 @@ bool FakeMotionControl::getPidRaw(const PidControlTypeEnum& pidtype, int j, Pid 
         default:
         break;
     }
+    yDebug() << "getPidRaw" << pidtype << j << pid->kp;
     return true;
 }
 
@@ -1744,6 +1766,7 @@ bool FakeMotionControl::enablePidRaw(const PidControlTypeEnum& pidtype, int j)
 
 bool FakeMotionControl::setPidOffsetRaw(const PidControlTypeEnum& pidtype, int j, double v)
 {
+    yDebug() << "setPidOffsetRaw" << pidtype << j << v;
     switch (pidtype)
     {
         case VOCAB_PIDTYPE_POSITION:
@@ -1791,20 +1814,21 @@ bool FakeMotionControl::getPidOutputRaw(const PidControlTypeEnum& pidtype, int j
     switch (pidtype)
     {
         case VOCAB_PIDTYPE_POSITION:
-            *out=1.1;
+            *out=1.1 + j * 10;
         break;
         case VOCAB_PIDTYPE_VELOCITY:
-            *out=1.2;
+            *out=1.2 + j * 10;
         break;
         case VOCAB_PIDTYPE_CURRENT:
-            *out=1.3;
+            *out=1.3 + j * 10;
         break;
         case VOCAB_PIDTYPE_TORQUE:
-            *out=1.4;
+            *out=1.4 + j * 10;
         break;
         default:
         break;
     }
+    yDebug() << "getPidOutputRaw" << pidtype << j << *out;
     return true;
 }
 
@@ -2574,6 +2598,12 @@ bool FakeMotionControl::getNominalCurrentRaw(int m, double *val)
     return true;
 }
 
+bool FakeMotionControl::setNominalCurrentRaw(int m, const double val)
+{
+    nominalCurrent[m] = val;
+    return true;
+}
+
 bool FakeMotionControl::getPWMRaw(int m, double *val)
 {
     *val = pwm[m];
@@ -2721,11 +2751,16 @@ bool FakeMotionControl::getVelLimitsRaw(int axis, double *min, double *max)
 // Torque control
 bool FakeMotionControl::getTorqueRaw(int j, double *t)
 {
+    *t = _torques[j];
     return true;
 }
 
 bool FakeMotionControl::getTorquesRaw(double *t)
 {
+    for (int i = 0; i < _njoints; i++)
+    {
+        t[i]= _torques[i];
+    }
     return true;
 }
 
@@ -2792,24 +2827,24 @@ bool FakeMotionControl::getCurrentImpedanceLimitRaw(int j, double *min_stiff, do
     return false;
 }
 
-bool FakeMotionControl::getBemfParamRaw(int j, double *bemf)
-{
-    return DEPRECATED("getBemfParamRaw");
-}
-
-bool FakeMotionControl::setBemfParamRaw(int j, double bemf)
-{
-    return DEPRECATED("setBemfParamRaw");
-}
-
 bool FakeMotionControl::getMotorTorqueParamsRaw(int j, MotorTorqueParameters *params)
 {
-    return false;
+    params->bemf = _kbemf[j];
+    params->bemf_scale = _kbemf_scale[j];
+    params->ktau = _ktau[j];
+    params->ktau_scale = _ktau_scale[j];
+    yDebug() << "getMotorTorqueParamsRaw" << params->bemf << params->bemf_scale << params->ktau << params->ktau_scale;
+    return true;
 }
 
 bool FakeMotionControl::setMotorTorqueParamsRaw(int j, const MotorTorqueParameters params)
 {
-    return false;
+    _kbemf[j] = params.bemf;
+    _ktau[j] = params.ktau;
+    _kbemf_scale[j] = params.bemf_scale;
+    _ktau_scale[j] = params.ktau_scale;
+    yDebug() << "setMotorTorqueParamsRaw" << params.bemf << params.bemf_scale << params.ktau << params.ktau_scale;
+    return true;
 }
 
 // IVelocityControl2
@@ -3144,6 +3179,31 @@ bool FakeMotionControl::getRefCurrentRaw(int j, double *t)
 // {
 //     return false;
 // }
+
+yarp::dev::VAS_status  FakeMotionControl::getVirtualAnalogSensorStatusRaw(int ch)
+{
+    return yarp::dev::VAS_status::VAS_OK;
+}
+
+int  FakeMotionControl::getVirtualAnalogSensorChannelsRaw()
+{
+    return _njoints;
+}
+
+bool FakeMotionControl::updateVirtualAnalogSensorMeasureRaw(yarp::sig::Vector &measure)
+{
+    for (int i = 0; i < _njoints; i++)
+    {
+        measure[i] = _torques[i];
+    }
+    return true;
+}
+
+bool FakeMotionControl::updateVirtualAnalogSensorMeasureRaw(int ch, double &measure)
+{
+    _torques[ch] = measure;
+    return true;
+}
 
 
 // eof

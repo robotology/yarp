@@ -34,7 +34,7 @@ bool ImplementEncodersTimed:: initialize (int size, const int *amap, const doubl
     if (helper!=nullptr)
         return false;
 
-    helper=(void *)(new ControlBoardHelper(size, amap, enc, zos,nullptr));
+    helper=(void *)(new ControlBoardHelper(size, amap, enc, zos));
     yAssert (helper != nullptr);
     temp=new double [size];
     yAssert (temp != nullptr);
