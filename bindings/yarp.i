@@ -105,8 +105,6 @@
 %ignore *::check(const ConstString& key, Value *& result, const ConstString& comment) const;
 %rename(where_c) *::where();
 %rename(seed_c) *::seed(int seed);  // perl clash
-%ignore *::setPid(int j, const Pid &pid);
-%ignore *::getPid(int j, Pid *pid);
 %ignore *::setKp(double);
 %ignore *::setKi(double);
 %ignore *::setKd(double);
@@ -985,65 +983,6 @@ typedef yarp::os::BufferedPort<ImageRgbFloat> BufferedPortImageRgbFloat;
     }
 }
 
-%extend yarp::dev::IPidControl {
-#ifndef YARP_NO_DEPRECATED // Since YARP 2.3.70
-    bool setReferences(std::vector<double>& data) {
-        return self->setReferences(&data[0]);
-    }
-
-    bool getReference(int j, std::vector<double>& data) {
-        return self->getReference(j, &data[0]);
-    }
-
-    bool getReferences(std::vector<double>& data) {
-        return self->getReferences(&data[0]);
-    }
-
-    bool setErrorLimits(std::vector<double>& data) {
-        return self->setErrorLimits(&data[0]);
-    }
-
-    bool getErrorLimit(int j, std::vector<double>& data) {
-        return self->getErrorLimit(j, &data[0]);
-    }
-
-    bool getErrorLimits(std::vector<double>& data) {
-        return self->getErrorLimits(&data[0]);
-    }
-
-    bool getError(int j, std::vector<double>& data) {
-        return self->getError(j, &data[0]);
-    }
-
-    bool getErrors(std::vector<double>& data) {
-        return self->getErrors(&data[0]);
-    }
-
-    bool getOutput(int j, std::vector<double>& data) {
-        return self->getOutput(j, &data[0]);
-    }
-
-    bool getOutputs(std::vector<double>& data) {
-        return self->getOutputs(&data[0]);
-    }
-
-    bool setPid(int j, yarp::dev::Pid pid) {
-        return self->setPid(j,pid);
-    }
-
-    bool setPids(std::vector<yarp::dev::Pid> pids) {
-        return self->setPids(&pids[0]);
-    }
-
-    bool getPid(int j, std::vector<yarp::dev::Pid> pid) {
-        return self->getPid(j,&pid[0]);
-    }
-
-    bool getPids(std::vector<yarp::dev::Pid> pids) {
-        return self->getPids(&pids[0]);
-    }
-#endif
-}
 
 %extend yarp::dev::IAmplifierControl {
     bool getCurrents(std::vector<double>& data) {
