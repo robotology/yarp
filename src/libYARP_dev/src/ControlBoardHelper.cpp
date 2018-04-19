@@ -43,28 +43,28 @@ public:
     double *bemfToRaws;
     double *ktauToRaws;
 
-    PidUnits * PosPid_units;
+    PidUnits* PosPid_units;
     PidUnits* VelPid_units;
     PidUnits* CurPid_units;
     PidUnits* TrqPid_units;
     std::map<PidControlTypeEnum, PidUnits*>   pid_units;
 
     explicit PrivateUnitsHandler(int size) :
-        position_zeros(0),
-        helper_ones(0),
-        axisMap(0),
-        invAxisMap(0),
-        angleToEncoders(0),
-        newtonsToSensors(0),
-        ampereToSensors(0),
-        voltToSensors(0),
-        dutycycleToPWMs(0),
-        PosPid_units(0),
-        TrqPid_units(0),
-        VelPid_units(0),
-        CurPid_units(0),
-        bemfToRaws(0),
-        ktauToRaws(0)
+        axisMap(nullptr),
+        invAxisMap(nullptr),
+        position_zeros(nullptr),
+        helper_ones(nullptr),
+        angleToEncoders(nullptr),
+        newtonsToSensors(nullptr),
+        ampereToSensors(nullptr),
+        voltToSensors(nullptr),
+        dutycycleToPWMs(nullptr),
+        bemfToRaws(nullptr),
+        ktauToRaws(nullptr),
+        PosPid_units(nullptr),
+        VelPid_units(nullptr),
+        CurPid_units(nullptr),
+        TrqPid_units(nullptr)
     {
         alloc(size);
         std::fill_n(helper_ones, size, 1.0);
@@ -758,7 +758,7 @@ double ControlBoardHelper::get_pidoutput_conversion_factor_user2raw(const yarp::
 
 double ControlBoardHelper::get_pidfeedback_conversion_factor_user2raw(const yarp::dev::PidControlTypeEnum& pidtype, int j)
 {
-    double feedback_conversion_factor;
+    double feedback_conversion_factor = 0.0;
     switch (mPriv->pid_units[pidtype][j].fbk_units)
     {
         case PidFeedbackUnitsEnum::METRIC:
@@ -935,7 +935,7 @@ void ControlBoardHelper::set_pid_conversion_units(const PidControlTypeEnum& pidt
 {
     ControlBoardHelper* cb_helper = this;
     int nj = cb_helper->axes();
-    for (size_t i = 0; i < nj; i++)
+    for (int i = 0; i < nj; i++)
     {
         mPriv->pid_units[pidtype][i].fbk_units = fbk_conv_units;
         mPriv->pid_units[pidtype][i].out_units = out_conv_units;

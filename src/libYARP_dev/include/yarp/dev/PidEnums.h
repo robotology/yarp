@@ -23,6 +23,8 @@ namespace yarp
             VOCAB_PIDTYPE_CURRENT  = VOCAB3(99/*'c'*/, 'u', 'r') // SWIG bug
         };
 
+YARP_WARNING_PUSH
+YARP_DISABLE_CLASS_ENUM_API_WARNING
         enum class YARP_dev_API PidFeedbackUnitsEnum
         {
             RAW_MACHINE_UNITS = 0,
@@ -38,7 +40,7 @@ namespace yarp
             TORQUE_METRIC = 4,
             CURRENT_METRIC = 5
         };
-
+YARP_WARNING_POP
     }
 }
 

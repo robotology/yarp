@@ -264,4 +264,12 @@
 # define YARP_DISABLE_DEPRECATED_WARNING
 #endif
 
+// Bug in GCC < 6
+// See https://gcc.gnu.org/bugzilla/show_bug.cgi?id=43407
+#if defined(__GNUC__) && (__GNUC__ < 6)
+# define YARP_DISABLE_CLASS_ENUM_API_WARNING _Pragma("GCC diagnostic ignored \"-Wattributes\"")
+#else
+# define YARP_DISABLE_CLASS_ENUM_API_WARNING
+#endif
+
 #endif
