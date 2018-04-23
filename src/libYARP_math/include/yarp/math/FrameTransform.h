@@ -92,7 +92,7 @@ namespace yarp
             {
                 yarp::sig::Vector rotV;
                 yarp::sig::Matrix rotM;
-                rotM = rotation.toRotationMatrix();
+                rotM = rotation.toRotationMatrix4x4();
                 rotV = dcm2rpy(rotM);
                 return rotV;
             }
@@ -101,7 +101,7 @@ namespace yarp
             {
                 yarp::sig::Vector rotV;
                 yarp::sig::Matrix t_mat(4,4);
-                t_mat = rotation.toRotationMatrix();
+                t_mat = rotation.toRotationMatrix4x4();
                 t_mat[0][3] = translation.tX;
                 t_mat[1][3] = translation.tY;
                 t_mat[2][3] = translation.tZ;

@@ -49,6 +49,9 @@ public:
     */
     double abs();
 
+    /**
+    * Normalizes the quaternion elements.
+    */
     void normalize();
 
     /**
@@ -128,9 +131,18 @@ public:
     *         rotation components in the top left 3 by 3 submatrix.
     *
     */
-    yarp::sig::Matrix toRotationMatrix() const;
+    yarp::sig::Matrix toRotationMatrix4x4() const;
 
+    /**
+    * Converts a quaternion to a rotation matrix.
+    * @param q the quaternion
+    * @return the corresponding 3 by 3 rotation matrix
+    */
+    yarp::sig::Matrix toRotationMatrix3x3() const;
 
+    /**
+    * Converts the quaternion to a vector of length 4.
+    */
     yarp::sig::Vector toVector() const;
 
     ///////// Serialization methods

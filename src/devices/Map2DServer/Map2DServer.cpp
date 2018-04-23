@@ -675,7 +675,7 @@ bool Map2DServer::open(yarp::os::Searchable &config)
                                     map_ros->info.origin.orientation.y,
                                     map_ros->info.origin.orientation.z,
                                     map_ros->info.origin.orientation.w);
-        yarp::sig::Matrix mat=quat.toRotationMatrix();
+        yarp::sig::Matrix mat=quat.toRotationMatrix4x4();
         yarp::sig::Vector vec=yarp::math::dcm2rpy(mat);
         double orig_angle = vec[2];
         map.setOrigin(map_ros->info.origin.position.x,map_ros->info.origin.position.y,orig_angle);

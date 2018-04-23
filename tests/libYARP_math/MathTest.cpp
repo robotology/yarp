@@ -641,7 +641,7 @@ public:
         Matrix mB = euler2dcm(Vector(3, vB));
         q3.fromRotationMatrix(mA);
         q4.fromRotationMatrix(mB);
-        assertEqual(mA*mB, (q3 * q4).toRotationMatrix(), "check quaternion multiplication");
+        assertEqual(mA*mB, (q3 * q4).toRotationMatrix4x4(), "check quaternion multiplication");
         q3 = Quaternion(2.0, 3.0, 4.0, 5.0);
         q3.normalize();
         assertEqual(q3.w()*q3.w() + q3.x()*q3.x() + q3.y()*q3.y() + q3.z()*q3.z(), 1, "check quaternion normalization");
@@ -694,7 +694,7 @@ public:
 
         q2 = q1;
 
-        m = q2.toRotationMatrix();
+        m = q2.toRotationMatrix4x4();
         assertEqual(m, m_check, "check method toRotationMatrix");
 
         Vector v = q2.toVector();

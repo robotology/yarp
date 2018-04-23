@@ -208,12 +208,31 @@ void Quaternion::fromRotationMatrix(const yarp::sig::Matrix &R)
     }
 }
 
-yarp::sig::Matrix Quaternion::toRotationMatrix() const
+yarp::sig::Matrix Quaternion::toRotationMatrix4x4() const
 {
     yarp::sig::Vector q = this->toVector();
     yarp::sig::Vector qin = (1.0 / yarp::math::norm(q))*q;
 
     yarp::sig::Matrix R = yarp::math::eye(4, 4);
+    R(0, 0) = qin[0] * qin[0] + qin[1] * qin[1] - qin[2] * qin[2] - qin[3] * qin[3];
+    R(1, 0) = 2.0*(qin[1] * qin[2] + qin[0] * qin[3]);
+    R(2, 0) = 2.0*(qin[1] * qin[3] - qin[0] * qin[2]);
+    R(0, 1) = 2.0*(qin[1] * qin[2] - qin[0] * qin[3]);
+    R(1, 1) = qin[0] * qin[0] - qin[1] * qin[1] + qin[2] * qin[2] - qin[3] * qin[3];
+    R(2, 1) = 2.0*(qin[2] * qin[3] + qin[0] * qin[1]);
+    R(0, 2) = 2.0*(qin[1] * qin[3] + qin[0] * qin[2]);
+    R(1, 2) = 2.0*(qin[2] * qin[3] - qin[0] * qin[1]);
+    R(2, 2) = qin[0] * qin[0] - qin[1] * qin[1] - qin[2] * qin[2] + qin[3] * qin[3];
+
+    return R;
+}
+
+yarp::sig::Matrix Quaternion::toRotationMatrix3x3() const
+{
+    yarp::sig::Vector q = this->toVector();
+    yarp::sig::Vector qin = (1.0 / yarp::math::norm(q))*q;
+
+    yarp::sig::Matrix R = yarp::math::zeros(3,3);
     R(0, 0) = qin[0] * qin[0] + qin[1] * qin[1] - qin[2] * qin[2] - qin[3] * qin[3];
     R(1, 0) = 2.0*(qin[1] * qin[2] + qin[0] * qin[3]);
     R(2, 0) = 2.0*(qin[1] * qin[3] - qin[0] * qin[2]);
@@ -275,7 +294,7 @@ void Quaternion::fromAxisAngle(const yarp::sig::Vector& axis, const double& angl
 
 yarp::sig::Vector Quaternion::toAxisAngle()
 {
-    yarp::sig::Matrix m=this->toRotationMatrix();
+    yarp::sig::Matrix m=this->toRotationMatrix4x4();
     yarp::sig::Vector v = dcm2axis(m);
     return v;
 }
