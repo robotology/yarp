@@ -198,7 +198,7 @@ bool yarp::dev::BatteryClient::open(yarp::os::Searchable &config)
     ConstString local_rpc = local;
     local_rpc += "/rpc:o";
     ConstString remote_rpc = remote;
-    remote_rpc += "/rpc:i";
+    //remote_rpc += "/rpc:i";
 
     if (!inputPort.open(local.c_str()))
     {
