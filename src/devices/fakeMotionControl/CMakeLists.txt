@@ -9,7 +9,7 @@ yarp_prepare_plugin(fakeMotionControl
                     TYPE yarp::dev::FakeMotionControl
                     INCLUDE fakeMotionControl.h
                     EXTRA_CONFIG WRAPPER=controlboardwrapper2
-                    DEPENDS CREATE_DEVICE_LIBRARY_MODULES)
+                    DEPENDS "CREATE_DEVICE_LIBRARY_MODULES;YARP_HAS_MATH_LIB")
 
 if(NOT SKIP_fakeMotionControl)
   set(CMAKE_INCLUDE_CURRENT_DIR ON)
