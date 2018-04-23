@@ -153,6 +153,7 @@ public:
     */
     VectorOf(size_t s, const T *p)
     {
+        len = 0;
         this->resize(s);
 
         memcpy(this->data(), p, sizeof(T)*s);
