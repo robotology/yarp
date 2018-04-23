@@ -6,12 +6,13 @@
  * BSD-3-Clause license. See the accompanying LICENSE file for details.
  */
 
-#include <yarp/sig/Vector.h>
 #include <yarp/os/impl/BufferedConnectionWriter.h>
 #include <yarp/os/Bottle.h>
-#include <yarp/os/Thread.h>
 #include <yarp/os/Port.h>
+#include <yarp/os/LogStream.h>
+#include <yarp/os/Thread.h>
 #include <yarp/os/Time.h>
+#include <yarp/sig/Vector.h>
 
 //#include <vector>
 
@@ -260,10 +261,45 @@ public:
         checkTrue(success, "VectorOf<int> was received correctly in a Bottle");
     }
 
+    void testToString()
+    {
+        {
+            report(0, "testing toString int");
+            bool ok = true;
+            VectorOf<int> vec;
+            std::string strToCheck = "0 1 2 3 4 5 6 7 8 9";
+            for (size_t i=0; i<10; i++)
+            {
+                vec.push_back(i);
+            }
+
+            ok = vec.toString() == strToCheck;
+            checkTrue(ok, "string correctly formatted");
+        }
+
+        {
+            report(0, "testing toString double");
+            bool ok = true;
+            VectorOf<double> vec;
+            std::string strToCheck = " 0.000000\t 1.000000\t 2.000000\t 3.000000\t 4.000000\t"
+                                     " 5.000000\t 6.000000\t 7.000000\t 8.000000\t 9.000000";
+            for (size_t i=0; i<10; i++)
+            {
+                vec.push_back(i);
+            }
+
+            ok = vec.toString() == strToCheck;
+            checkTrue(ok, "string correctly formatted");
+        }
+
+    }
+
+
 
     virtual void runTests() override {
         Network::setLocalMode(true);
         checkSendReceiveInt();
+        testToString();
         Network::setLocalMode(false);
     }
 };
