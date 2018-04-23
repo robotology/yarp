@@ -19,7 +19,7 @@ using namespace yarp::sig;
 
 // needed for the driver factory.
 yarp::dev::DriverCreator *createServerFrameGrabber() {
-    return new yarp::dev::DriverCreatorOf<yarp::dev::ServerFrameGrabber>("remote_grabber",
+    return new yarp::dev::DriverCreatorOf<yarp::dev::ServerFrameGrabber>("grabber",
                                                                          "grabber",
                                                                          "yarp::dev::ServerFrameGrabber");
 }
