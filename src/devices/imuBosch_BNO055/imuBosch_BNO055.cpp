@@ -539,7 +539,7 @@ void BoschIMU::run()
         quaternion_tmp.z() = ((double)raw_data[3]) / (2 << 13);
 
         RPY_angle.resize(3);
-        RPY_angle   = yarp::math::dcm2rpy(quaternion.toRotationMatrix());
+        RPY_angle   = yarp::math::dcm2rpy(quaternion.toRotationMatrix4x4());
         data_tmp[0] = RPY_angle[0] * 180 / M_PI;
         data_tmp[1] = RPY_angle[1] * 180 / M_PI;
         data_tmp[2] = RPY_angle[2] * 180 / M_PI;
