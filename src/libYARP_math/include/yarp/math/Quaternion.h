@@ -52,18 +52,36 @@ public:
     void normalize();
 
     /**
+    * Computes the inverse of the quaternion.
+    */
+    Quaternion inverse() const;
+
+    /**
     * Computes the argument or phase of the quaternion in radians.
     */
     double arg();
 
+    /**
+    * Computes the quaternion from an axis-angle representation
+    * @param v a 4D vector, where the first three elements represent the axis, while the fourth element represents the angle (in radians)
+    */
     void fromAxisAngle(const yarp::sig::Vector &v);
+
+    /**
+    * Computes the quaternion from an axis-angle representation
+    * @param axis a 3D vector representing the axis.
+    * @angle the rotation angle (in radians)
+    */
+    void fromAxisAngle(const yarp::sig::Vector& axis, const double& angle);
+    
+
     yarp::sig::Vector toAxisAngle();
 
     /**
     * Converts a rotation matrix to a quaternion.
     *
     * The returned quaternion is ordered in the following way:
-    * - s = q_0 \in \mathbb{R} the real part of the quaterion
+    * - s = q_0 \in \mathbb{R} the real part of the quaternion
     * - r = \begin{bmatrix} q_1 \\ q_2 \\ q_3 \end{bmatrix} \in \mathbb{R}^3 the imaginary part of the quaternion
     *
     * The input rotation matrix and the output quaternion are related by the following formula:
@@ -89,7 +107,7 @@ public:
     * Converts a quaternion to a rotation matrix.
     *
     * The quaternion is expected to be ordered in the following way:
-    * - s = q_0 \in \mathbb{R} the real part of the quaterion
+    * - s = q_0 \in \mathbb{R} the real part of the quaternion
     * - r = \begin{bmatrix} q_1 \\ q_2 \\ q_3 \end{bmatrix} \in \mathbb{R}^3 the imaginary part of the quaternion
     *
     * The returned rotation matrix is given by the following formula:
@@ -132,6 +150,8 @@ public:
     {
         return yarp::os::Type::byName("yarp/quaternion");
     }
+
+
 };
 
 #endif

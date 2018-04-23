@@ -260,6 +260,19 @@ void Quaternion::fromAxisAngle(const yarp::sig::Vector &v)
     this->internal_data[3] = q.internal_data[3];
 }
 
+void Quaternion::fromAxisAngle(const yarp::sig::Vector& axis, const double& angle)
+{
+    yarp::sig::Vector v = axis;
+    v.resize(4); v[4] = angle;
+    yarp::sig::Matrix m = axis2dcm(v);
+    Quaternion q;
+    q.fromRotationMatrix(m);
+    this->internal_data[0] = q.internal_data[0];
+    this->internal_data[1] = q.internal_data[1];
+    this->internal_data[2] = q.internal_data[2];
+    this->internal_data[3] = q.internal_data[3];
+}
+
 yarp::sig::Vector Quaternion::toAxisAngle()
 {
     yarp::sig::Matrix m=this->toRotationMatrix();
@@ -291,4 +304,10 @@ double Quaternion::arg()
                       internal_data[2] * internal_data[2] +
                       internal_data[3] * internal_data[3]),
                  internal_data[0]);
+}
+
+Quaternion Quaternion::inverse() const
+{
+    //                     w                  x                 y                  z
+    return Quaternion(internal_data[0], -internal_data[1], -internal_data[2], -internal_data[3]);
 }
