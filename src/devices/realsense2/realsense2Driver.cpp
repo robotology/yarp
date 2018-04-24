@@ -1043,7 +1043,7 @@ bool realsense2Driver::getImages(FlexImage& colorFrame, ImageOf<PixelFloat>& dep
         rs2::align align(RS2_STREAM_COLOR);
         data = align.process(data);
     }
-    return getImage(colorFrame, colorStamp, data) & getImage(depthFrame, depthStamp, data);
+    return getImage(colorFrame, colorStamp, data) && getImage(depthFrame, depthStamp, data);
 }
 
 IRGBDSensor::RGBDSensor_status realsense2Driver::getSensorStatus()
