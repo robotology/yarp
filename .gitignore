@@ -23,3 +23,5 @@ tags
 /.ycm_extra_conf.py
 /.clang-format
 *.aps
+/CMakeSettings.json
+/.vs/
