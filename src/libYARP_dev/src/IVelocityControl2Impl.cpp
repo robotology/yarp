@@ -98,7 +98,7 @@ bool ImplementVelocityControl2::getRefVelocity(const int j, double* vel)
     int k;
     double tmp;
     k=castToMapper(helper)->toHw(j);
-    bool ret = iVelocity2->getRefVelocityRaw(j, &tmp);
+    bool ret = iVelocity2->getRefVelocityRaw(k, &tmp);
     *vel=castToMapper(helper)->velE2A(tmp, k);
     return ret;
 }
