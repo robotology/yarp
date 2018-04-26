@@ -147,7 +147,7 @@ if(YARP_COMPILE_TESTS)
   endif()
 
   # Compile ControlBoardRemapperTest only if fakeMotionControl is enabled
-  if(ENABLE_yarpmod_fakeMotionControl)
+  if(ENABLE_yarpmod_fakeMotionControl AND YARP_HAS_MATH_LIB)
     add_definitions(-DYARP_CONTROLBOARDREMAPPER_TESTS)
   endif()
 
