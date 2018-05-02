@@ -19,7 +19,9 @@ namespace yarp {
 
 // We need a macro for efficient switching.
 // Use as, for example, VOCAB('s','e','t')
+#ifndef SWIG_PREPROCESSOR_SHOULD_SKIP_THIS
 #define VOCAB(a,b,c,d) ((((int)(d))<<24)+(((int)(c))<<16)+(((int)(b))<<8)+((int)(a)))
+#endif // SWIG_PREPROCESSOR_SHOULD_SKIP_THIS
 #define VOCAB4(a,b,c,d) VOCAB((a),(b),(c),(d))
 #define VOCAB3(a,b,c) VOCAB((a),(b),(c),(0))
 #define VOCAB2(a,b) VOCAB((a),(b),(0),(0))
