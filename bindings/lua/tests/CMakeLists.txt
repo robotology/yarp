@@ -28,3 +28,4 @@ endmacro()
 
 add_lua_unit_test(test_bottle_and_property.lua)
 add_lua_unit_test(test_resource_finder.lua)
+add_lua_unit_test(test_vocab.lua)

@@ -17,6 +17,8 @@
 
 %module(directors="1") yarp
 
+%define SWIG_PREPROCESSOR_SHOULD_SKIP_THIS %enddef
+
 %import "yarp/conf/api.h"
 
 #if !defined (SWIGMATLAB)
