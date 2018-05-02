@@ -76,7 +76,7 @@ public:
     * @angle the rotation angle (in radians)
     */
     void fromAxisAngle(const yarp::sig::Vector& axis, const double& angle);
-    
+
 
     yarp::sig::Vector toAxisAngle();
 

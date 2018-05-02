@@ -695,7 +695,7 @@ public:
         q2 = q1;
 
         m = q2.toRotationMatrix4x4();
-        assertEqual(m, m_check, "check method toRotationMatrix");
+        assertEqual(m, m_check, "check method toRotationMatrix4x4");
 
         Vector v = q2.toVector();
         assertEqual(v, v_check, "check method toVector");
