@@ -36,7 +36,7 @@ private:
     TwoWayStream *delegate;
     StringInputStream sis;
     StringOutputStream sos;
-    yarp::sig::ImageOf<yarp::sig::PixelRgb> img;
+    yarp::sig::FlexImage img;
     yarp::sig::ImageNetworkHeader imgHeader;
     BlobNetworkHeader blobHeader;
     ManagedBytes cimg;

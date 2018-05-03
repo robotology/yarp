@@ -28,7 +28,7 @@ public:
     virtual ~MjpegDecompression();
 
     bool decompress(const yarp::os::Bytes& data,
-                    yarp::sig::ImageOf<yarp::sig::PixelRgb>& image);
+                    yarp::sig::FlexImage& image);
 
     bool isAutomatic() const;
 
