@@ -215,14 +215,14 @@ bool V4L_camera::open(yarp::os::Searchable& config)
     // stat file
     if (-1 == stat(param.deviceId.c_str(), &st))
     {
-        fprintf(stderr, "Cannot identify '%s': %d, %s\n", param.deviceId.c_str(), errno, strerror(errno));
+        yError("usbCamera: Cannot identify '%s': %d, %s", param.deviceId.c_str(), errno, strerror(errno));
         return false;
     }
 
     // check if it is a device
     if (!S_ISCHR(st.st_mode))
     {
-        fprintf(stderr, "%s is no device\n", param.deviceId.c_str());
+        yError("usbCamera: %s is no device", param.deviceId.c_str());
         return false;
     }
 
@@ -231,7 +231,7 @@ bool V4L_camera::open(yarp::os::Searchable& config)
 
     // check if opening was successfull
     if (-1 == param.fd) {
-        fprintf(stderr, "Cannot open '%s': %d, %s\n", param.deviceId.c_str(), errno, strerror(errno));
+        yError("usbCamera: Cannot open '%s': %d, %s", param.deviceId.c_str(), errno, strerror(errno));
         return false;
     }
 
@@ -246,7 +246,7 @@ bool V4L_camera::open(yarp::os::Searchable& config)
 
     // check if opening was successfull
     if (-1 == param.fd) {
-        fprintf(stderr, "Cannot open '%s': %d, %s\n", param.deviceId.c_str(), errno, strerror(errno));
+        yError("usbCamera: Cannot open '%s': %d, %s", param.deviceId.c_str(), errno, strerror(errno));
         return false;
     }
 
@@ -340,7 +340,7 @@ bool V4L_camera::setRgbMirroring(bool mirror){
     int ret=ioctl(param.fd,V4L2_CID_HFLIP,&mirror);
     if (ret < 0)
     {
-        yError()<<"V4L2_CID_HFLIP - Unable to mirror image-"<<strerror(errno);
+        yError()<<"usbCamera: V4L2_CID_HFLIP - Unable to mirror image-"<<strerror(errno);
         return false;
     }
     return true;
@@ -353,7 +353,7 @@ bool V4L_camera::fromConfig(yarp::os::Searchable& config)
 
     if(!config.check("width") )
     {
-        yDebug() << "width parameter not found, using default value of " << DEFAULT_WIDTH;
+        yDebug() << "usbCamera: width parameter not found, using default value of " << DEFAULT_WIDTH;
         param.user_width = DEFAULT_WIDTH;
     }
     else
@@ -361,7 +361,7 @@ bool V4L_camera::fromConfig(yarp::os::Searchable& config)
 
     if(!config.check("height") )
     {
-        yDebug() << "height parameter not found, using default value of " << DEFAULT_HEIGHT;
+        yDebug() << "usbCamera: height parameter not found, using default value of " << DEFAULT_HEIGHT;
         param.user_height = DEFAULT_HEIGHT;
     }
     else
@@ -369,7 +369,7 @@ bool V4L_camera::fromConfig(yarp::os::Searchable& config)
 
     if(!config.check("framerate") )
     {
-        yDebug() << "framerate parameter not found, using default value of " << DEFAULT_FRAMERATE;
+        yDebug() << "usbCamera: framerate parameter not found, using default value of " << DEFAULT_FRAMERATE;
         param.fps = DEFAULT_FRAMERATE;
     }
     else
@@ -377,7 +377,7 @@ bool V4L_camera::fromConfig(yarp::os::Searchable& config)
 
     if(!config.check("d") )
     {
-        yError() << "No camera identifier was specified! (e.g. '--d /dev/video0' on Linux OS)";
+        yError() << "usbCamera: No camera identifier was specified! (e.g. '--d /dev/video0' on Linux OS)";
         return false;
     }
     else
@@ -388,7 +388,7 @@ bool V4L_camera::fromConfig(yarp::os::Searchable& config)
 
     if(!config.check("camModel") )
     {
-        yInfo() << "No 'camModel' was specified, working with 'standard' uvc";
+        yInfo() << "usbCamera: No 'camModel' was specified, working with 'standard' uvc";
         param.camModel = STANDARD_UVC;
     }
     else
@@ -397,15 +397,15 @@ bool V4L_camera::fromConfig(yarp::os::Searchable& config)
         if( it != camMap.end() )
         {
             param.camModel = it->second;
-            yDebug() << "cam model name : " <<  config.find("camModel").asString() << "  -- number : " << it->second;
+            yDebug() << "usbCamera: cam model name : " <<  config.find("camModel").asString() << "  -- number : " << it->second;
         }
         else
         {
-            yError() << "Unknown camera model <" << config.find("camModel").asString() << ">";
-            yInfo() << "Supported models are: ";
+            yError() << "usbCamera: Unknown camera model <" << config.find("camModel").asString() << ">";
+            yInfo() << "usbCamera: Supported models are: ";
             for(it=camMap.begin(); it!=camMap.end(); it++)
             {
-                yInfo(" <%s>", it->first.c_str());
+                yInfo("usbCamera:  <%s>", it->first.c_str());
             }
             return false;
         }
@@ -414,7 +414,7 @@ bool V4L_camera::fromConfig(yarp::os::Searchable& config)
     // Check for addictional leopard parameter for debugging purpose
     if(param.camModel == LEOPARD_PYTHON)
     {
-        yDebug() << "-------------------------------\nUsing leopard camera!!";
+        yDebug() << "-------------------------------\nusbCamera: Using leopard camera!!";
         bit_shift = config.check("shift", Value(bit_shift), "right shift of <n> bits").asInt();
         bit_bayer = config.check("bit_bayer", Value(bit_bayer), "uses <n> bits bayer conversion").asInt();
         switch(bit_bayer)
@@ -442,15 +442,15 @@ bool V4L_camera::fromConfig(yarp::os::Searchable& config)
         }
 
         yDebug() << "--------------------------------";
-        yDebug() << bit_shift << "bits of right shift applied to raw data";
-        yDebug() << "Bits used for de-bayer " << bit_bayer;
+        yDebug() << bit_shift << "usbCamera: bits of right shift applied to raw data";
+        yDebug() << "usbCamera: Bits used for de-bayer " << bit_bayer;
     }
 
     //crop is used to pass from 16:9 to 4:3
     if(config.check("crop") )
     {
         doCropping = true;
-        yInfo("Cropping enabled.");
+        yInfo("usbCamera: Cropping enabled.");
     }
     else
         doCropping = false;
@@ -460,7 +460,7 @@ bool V4L_camera::fromConfig(yarp::os::Searchable& config)
     if(config.find("dual").asBool())
     {
         param.dual = true;
-        yInfo("Using dual input camera.");
+        yInfo("usbCamera: Using dual input camera.");
     }
     else
         param.dual = false;
@@ -468,7 +468,7 @@ bool V4L_camera::fromConfig(yarp::os::Searchable& config)
     int type = 0;
     if(!config.check("pixelType") )
     {
-        yError() << "No 'pixelType' was specified!";
+        yError() << "usbCamera: No 'pixelType' was specified!";
         return false;
     }
     else
@@ -487,7 +487,7 @@ bool V4L_camera::fromConfig(yarp::os::Searchable& config)
             break;
 
         default:
-            printf("Error, no valid pixel format found!! This should not happen!!\n");
+            yError("usbCamera: no valid pixel format found!! This should not happen!!");
             return false;
             break;
     }
@@ -557,7 +557,7 @@ bool V4L_camera::fromConfig(yarp::os::Searchable& config)
     }
     delete retM;
 
-    yDebug() << "using following device " << param.deviceId << "with the configuration: " << param.user_width << "x" << param.user_height << "; camModel is " << param.camModel;
+    yDebug() << "usbCamera: using following device " << param.deviceId << "with the configuration: " << param.user_width << "x" << param.user_height << "; camModel is " << param.camModel;
     return true;
 }
 
@@ -580,12 +580,12 @@ void V4L_camera::run()
     if(full_FrameRead())
         frameCounter++;
     else
-        yError() << "Failed acquiring new frame";
+        yError() << "usbCamera: Failed acquiring new frame";
 
     timeNow = yarp::os::Time::now();
     if( (timeElapsed = timeNow - timeStart) > 1.0f)
     {
-        printf("frames acquired %d in %f sec\n", frameCounter, timeElapsed);
+        yInfo("usbCamera: frames acquired %d in %f sec", frameCounter, timeElapsed);
         frameCounter = 0;
         timeStart = timeNow;
     }
@@ -613,7 +613,7 @@ bool V4L_camera::deviceInit()
     {
         if (EINVAL == errno)
         {
-            fprintf(stderr, "%s is no V4L2 device\n", param.deviceId.c_str());
+            yError("usbCamera: %s is no V4L2 device", param.deviceId.c_str());
         }
         return false;
     }
@@ -622,18 +622,18 @@ bool V4L_camera::deviceInit()
 
     if (!(cap.capabilities & V4L2_CAP_VIDEO_CAPTURE))
     {
-        fprintf(stderr, "%s is no video capture device\n", param.deviceId.c_str());
+        yError("usbCamera: %s is no video capture device", param.deviceId.c_str());
         return false;
     }
     else
-        fprintf(stderr, "%s is good V4L2_CAP_VIDEO_CAPTURE\n", param.deviceId.c_str());
+        yError("usbCamera: %s is good V4L2_CAP_VIDEO_CAPTURE", param.deviceId.c_str());
 
     switch (param.io)
     {
         case IO_METHOD_READ:
         {
             if (!(cap.capabilities & V4L2_CAP_READWRITE)) {
-                fprintf(stderr, "%s does not support read i/o\n", param.deviceId.c_str());
+                yError("usbCamera: %s does not support read i/o", param.deviceId.c_str());
                 return false;
             }
         } break;
@@ -642,13 +642,13 @@ bool V4L_camera::deviceInit()
         case IO_METHOD_USERPTR:
         {
             if (!(cap.capabilities & V4L2_CAP_STREAMING)) {
-                fprintf(stderr, "%s does not support streaming i/o\n", param.deviceId.c_str());
+                yError("usbCamera: %s does not support streaming i/o", param.deviceId.c_str());
                 return false;
             }
         } break;
 
         default:
-            fprintf(stderr, "Unknown io method for device %s\n", param.deviceId.c_str());
+            yError("usbCamera: Unknown io method for device %s", param.deviceId.c_str());
             return false;
             break;
     }
@@ -672,7 +672,7 @@ bool V4L_camera::deviceInit()
 
     _v4lconvert_data = v4lconvert_create(param.fd);
     if (_v4lconvert_data == NULL)
-        yError() << " Failed to initialize v4lconvert. Conversion to required format may not work";
+        yError() << "usbCamera: Failed to initialize v4lconvert. Conversion to required format may not work";
 
     /*
      * dst_fmt is the image format the user require.
@@ -698,7 +698,7 @@ bool V4L_camera::deviceInit()
 
     if (v4lconvert_try_format(_v4lconvert_data, &(param.dst_fmt), &(param.src_fmt)) != 0)
     {
-        printf("ERROR: v4lconvert_try_format\n\nError is: %s", v4lconvert_get_error_message(_v4lconvert_data));
+        yError("usbCamera: v4lconvert_try_format -> Error is: %s", v4lconvert_get_error_message(_v4lconvert_data));
         return false;
     }
 
@@ -763,7 +763,7 @@ bool V4L_camera::deviceInit()
     }
 
     if (-1 == xioctl(param.fd, VIDIOC_S_FMT, &param.src_fmt)){
-        yError() << "xioctl error VIDIOC_S_FMT" << strerror(errno);
+        yError() << "usbCamera: xioctl error VIDIOC_S_FMT" << strerror(errno);
         return false;
     }
 
@@ -777,7 +777,7 @@ bool V4L_camera::deviceInit()
         frameint.parm.capture.timeperframe.numerator = 1;
         frameint.parm.capture.timeperframe.denominator = param.fps;
         if (-1 == xioctl(param.fd, VIDIOC_S_PARM, &frameint))
-            fprintf(stderr,"Unable to set frame interval.\n");
+            yError("usbCamera: Unable to set frame interval.");
     }
 
     param.src_image_size = param.src_fmt.fmt.pix.sizeimage;
@@ -852,7 +852,7 @@ bool V4L_camera::deviceUninit()
             param.req.memory = V4L2_MEMORY_MMAP;
             if(xioctl(param.fd, VIDIOC_REQBUFS, &param.req) < 0)
             {
-                printf("VIDIOC_REQBUFS - Failed to delete buffers: %s (errno %d)\n", strerror(errno), errno);
+                yError("usbCamera: VIDIOC_REQBUFS - Failed to delete buffers: %s (errno %d)", strerror(errno), errno);
                 return false;
             }
 
@@ -910,7 +910,7 @@ bool V4L_camera::close()
         deviceUninit();
 
         if (-1 == v4l2_close(param.fd))
-            yError() << "Error closing V4l2 device";
+            yError() << "usbCamera: Error closing V4l2 device";
         return false;
     }
     param.fd = -1;
@@ -1024,7 +1024,7 @@ struct v4l2_querymenu querymenu;
 
 void V4L_camera::enumerate_menu (void)
 {
-    printf ("  Menu items:\n");
+    yInfo("usbCamera: Menu items:");
 
     memset (&querymenu, 0, sizeof (querymenu));
     querymenu.id = queryctrl.id;
@@ -1033,7 +1033,7 @@ void V4L_camera::enumerate_menu (void)
     {
         if (0 == ioctl (param.fd, VIDIOC_QUERYMENU, &querymenu))
         {
-            printf ("  %s\n", querymenu.name);
+            yInfo(" %s", querymenu.name);
         } else {
             perror ("VIDIOC_QUERYMENU");
             return;
@@ -1053,7 +1053,7 @@ bool V4L_camera::enumerate_controls()
             if (queryctrl.flags & V4L2_CTRL_FLAG_DISABLED)
                 continue;
 
-            printf ("Control %s (id %d)\n", queryctrl.name, queryctrl.id);
+            yInfo("Control %s (id %d)", queryctrl.name, queryctrl.id);
 
             if (queryctrl.type == V4L2_CTRL_TYPE_MENU)
                 enumerate_menu ();
@@ -1075,7 +1075,7 @@ bool V4L_camera::enumerate_controls()
             if (queryctrl.flags & V4L2_CTRL_FLAG_DISABLED)
                 continue;
 
-            printf ("Control %s\n", queryctrl.name);
+            yInfo("Control %s", queryctrl.name);
 
             if (queryctrl.type == V4L2_CTRL_TYPE_MENU)
                 enumerate_menu ();
@@ -1132,7 +1132,7 @@ bool V4L_camera::full_FrameRead(void)
         {
             numberOfTimeouts++;
             {
-                printf("select timeout number %d\n", numberOfTimeouts);
+                yWarning("usbCamera: timeout while reading image [%d/%d]", numberOfTimeouts, count);
                 got_it = false;
             }
         }
@@ -1171,7 +1171,6 @@ bool V4L_camera::frameRead()
     {
         case IO_METHOD_READ:
         {
-            printf("IO_METHOD_READ\n");
             if (-1 == v4l2_read(param.fd, param.buffers[0].start, param.buffers[0].length))
             {
                 mutex.post();
@@ -1186,8 +1185,6 @@ bool V4L_camera::frameRead()
 
         case IO_METHOD_MMAP:
         {
-//                 printf("IO_METHOD_MMAP\n");
-
             CLEAR(buf);
 
             buf.type = V4L2_BUF_TYPE_VIDEO_CAPTURE;
@@ -1195,20 +1192,19 @@ bool V4L_camera::frameRead()
 
             if (-1 == xioctl(param.fd, VIDIOC_DQBUF, &buf))
             {
-                printf("\n ERROR: VIDIOC_DQBUF\n");
+                yError("usbCamera VIDIOC_DQBUF");
                 mutex.post();
                 return false;
             }
 
             if( !(buf.index < param.n_buffers) )
             {
-                yError() << "at line " << __LINE__;
                 mutex.post();
                 return false;
             }
 
             memcpy(param.read_image, param.buffers[buf.index].start, param.buffers[0].length);
-//                 imageProcess(param.raw_image);
+//            imageProcess(param.raw_image);
             timeStamp.update(toEpochOffset + buf.timestamp.tv_sec + buf.timestamp.tv_usec/1000000.0);
 
             if (-1 == xioctl(param.fd, VIDIOC_QBUF, &buf))
@@ -1222,8 +1218,6 @@ bool V4L_camera::frameRead()
 
         case IO_METHOD_USERPTR:
         {
-            printf("IO_METHOD_USERPTR\n");
-
             CLEAR (buf);
 
             buf.type = V4L2_BUF_TYPE_VIDEO_CAPTURE;
@@ -1231,7 +1225,7 @@ bool V4L_camera::frameRead()
 
             if (-1 == xioctl(param.fd, VIDIOC_DQBUF, &buf))
             {
-                printf("\n ERROR: VIDIOC_DQBUF\n");
+                yError("usbCamera: VIDIOC_DQBUF");
                 mutex.post();
                 return false;
             }
@@ -1242,7 +1236,6 @@ bool V4L_camera::frameRead()
 
                 if(! (i < param.n_buffers) )
                 {
-                    yError() << "at line " << __LINE__;
                     mutex.post();
                     return false;
                 }
@@ -1257,7 +1250,7 @@ bool V4L_camera::frameRead()
 
         default:
         {
-            printf("frameRead, default case\n");
+            yError("usbCamera: frameRead no read method configured");
         }
     }
     mutex.post();
@@ -1319,8 +1312,7 @@ void V4L_camera::imageProcess()
     {
         if((err %20) == 0)
         {
-            printf("error converting \n"); fflush(stdout);
-            printf("Message is: %s", v4lconvert_get_error_message(_v4lconvert_data));
+            yError("usbCamera: error converting \n\t Error message is: %s", v4lconvert_get_error_message(_v4lconvert_data));
             err=0;
         }
         err++;
@@ -1467,7 +1459,7 @@ bool V4L_camera::readInit(unsigned int buffer_size)
 
     if (!param.buffers)
     {
-        fprintf(stderr, "Out of memory\n");
+        yError("usbCamera: cannot allocate buffer, out of memory");
         return false;
     }
 
@@ -1476,7 +1468,7 @@ bool V4L_camera::readInit(unsigned int buffer_size)
 
     if (!param.buffers[0].start)
     {
-        fprintf (stderr, "Out of memory\n");
+        yError("usbCamera: cannot allocate buffer, out of memory");
         return false;
     }
     return true;
@@ -1495,32 +1487,32 @@ bool V4L_camera::mmapInit()
     {
         if (EINVAL == errno)
         {
-            fprintf(stderr, "%s does not support memory mapping\n", param.deviceId.c_str());
+            yError("usbCamera: %s does not support memory mapping", param.deviceId.c_str());
             return false;
         }
         else
         {
-            fprintf(stderr, "Error on device %s requesting memory mapping (VIDIOC_REQBUFS)\n", param.deviceId.c_str());
+            yError("usbCamera: Error on device %s requesting memory mapping (VIDIOC_REQBUFS)", param.deviceId.c_str());
             return false;
         }
     }
 
     if (param.req.count < 1)
     {
-        fprintf(stderr, "Insufficient buffer memory on %s\n", param.deviceId.c_str());
+        yError("usbCamera: Insufficient buffer memory on %s", param.deviceId.c_str());
         return false;
     }
 
     if (param.req.count == 1)
     {
-        fprintf(stderr, "Only 1 buffer was available, you may encounter performance issue acquiring images from device %s\n", param.deviceId.c_str());
+        yError("usbCamera: Only 1 buffer was available, you may encounter performance issue acquiring images from device %s", param.deviceId.c_str());
     }
 
     param.buffers = (struct buffer *) calloc(param.req.count, sizeof(*(param.buffers)));
 
     if (!param.buffers)
     {
-        fprintf(stderr, "Out of memory\n");
+        yError("usbCamera: Out of memory");
         return false;
     }
 
@@ -1563,12 +1555,12 @@ bool V4L_camera::userptrInit(unsigned int buffer_size)
     {
         if (EINVAL == errno)
         {
-            fprintf(stderr, "%s does not support user pointer i/o\n", param.deviceId.c_str());
+            yError("usbCamera: %s does not support user pointer i/o", param.deviceId.c_str());
             return false;
         }
         else
         {
-            fprintf(stderr, "Error requesting VIDIOC_REQBUFS for device %s\n", param.deviceId.c_str());
+            yError("usbCamera: Error requesting VIDIOC_REQBUFS for device %s", param.deviceId.c_str());
             return false;
         }
     }
@@ -1577,7 +1569,7 @@ bool V4L_camera::userptrInit(unsigned int buffer_size)
 
     if (!param.buffers)
     {
-        fprintf(stderr, "Out of memory\n");
+        yError("usbCamera: cannot allocate buffer, out of memory");
         return false;
     }
 
@@ -1588,7 +1580,7 @@ bool V4L_camera::userptrInit(unsigned int buffer_size)
 
         if (!param.buffers[param.n_buffers].start)
         {
-            fprintf(stderr, "Out of memory\n");
+            yError("usbCamera: cannot allocate buffer, out of memory");
             return false;
         }
     }
@@ -1614,14 +1606,14 @@ bool V4L_camera::set_V4L2_control(uint32_t id, double value, bool verbatim)
         }
         else
         {
-            yError("Cannot set control <%s> (id 0x%0X) is not supported \n", queryctrl.name, queryctrl.id);
+            yError("usbCamera: Cannot set control <%s> (id 0x%0X) is not supported", queryctrl.name, queryctrl.id);
         }
         return false;
     }
 
     if (queryctrl.flags & V4L2_CTRL_FLAG_DISABLED)
     {
-        printf ("Control %s is disabled\n", queryctrl.name);
+        yError("usbCamera: Control %s is disabled", queryctrl.name);
         return false;
     }
     else
@@ -1647,11 +1639,11 @@ bool V4L_camera::set_V4L2_control(uint32_t id, double value, bool verbatim)
             perror ("VIDIOC_S_CTRL");
             if(errno == ERANGE)
             {
-                printf("Normalized input value %f ( equivalent to raw value of %d) was out of range for control %s: Min and Max are: %d - %d \n", value, control.value, queryctrl.name, queryctrl.minimum, queryctrl.maximum);
+                yError("usbCamera: Normalized input value %f ( equivalent to raw value of %d) was out of range for control %s: Min and Max are: %d - %d", value, control.value, queryctrl.name, queryctrl.minimum, queryctrl.maximum);
             }
             return false;
         }
-        if(verbose) yInfo("set control %s to %d done!\n", queryctrl.name, control.value);
+        if(verbose) yInfo("set control %s to %d done!", queryctrl.name, control.value);
     }
     return true;
 }
@@ -1702,7 +1694,7 @@ double V4L_camera::get_V4L2_control(uint32_t id, bool verbatim)
 
     if (queryctrl.flags & V4L2_CTRL_FLAG_DISABLED)
     {
-        printf ("Control %s is disabled\n", queryctrl.name);
+        yError("usbCamera: Control %s is disabled", queryctrl.name);
     }
     else
     {
@@ -1777,7 +1769,7 @@ double V4L_camera::getSharpness()
 
 double V4L_camera::getShutter()
 {
-    printf("Don't know how to map it :-&\n");
+    yError("usbCamera: shutter option not available on Linux (V4l2 driver)");
     return false;
 }
 
@@ -1840,8 +1832,7 @@ bool V4L_camera::setSharpness(double v)
 
 bool V4L_camera::setShutter(double v)
 {
-//     return set_V4L2_control(V4L2_CID_BRIGHTNESS, v);
-    yWarning("Cannot set shutter option on Linux (V4l2 driver)");
+    yError("usbCamera: shutter option not available on Linux (V4l2 driver)");
     return false;
 }
 
@@ -2021,7 +2012,7 @@ bool V4L_camera::setActive(int feature, bool onoff)
                 {
                     man = set_V4L2_control(V4L2_CID_EXPOSURE_AUTO, V4L2_EXPOSURE_SHUTTER_PRIORITY, true);
                     if(!man)
-                        yError() << "Cannot set manual exposure";
+                        yError() << "usbCamera: Cannot set manual exposure";
                 }
                 set_V4L2_control(V4L2_LOCK_EXPOSURE, true);
                 isActive_vector[feature] = onoff;
@@ -2189,12 +2180,12 @@ bool V4L_camera::setMode(int feature, FeatureMode mode)
         {
             if(mode == MODE_AUTO)
             {
-                yInfo() << "GAIN: set mode auto";
+                yInfo() << "usbCamera: GAIN: set mode auto";
                 ret = set_V4L2_control(V4L2_CID_AUTOGAIN, true);
             }
             else
             {
-                yInfo() << "GAIN: set mode manual";
+                yInfo() << "usbCamera: GAIN: set mode manual";
                 ret = set_V4L2_control(V4L2_CID_AUTOGAIN, false);
             }
         } break;
@@ -2230,7 +2221,7 @@ bool V4L_camera::setMode(int feature, FeatureMode mode)
 
         default:
         {
-            yError() << "Feature " << feature << " does not support auto mode";
+            yError() << "usbCamera: Feature " << feature << " does not support auto mode";
         } break;
     }
     return ret;
