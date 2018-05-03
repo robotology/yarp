@@ -19,7 +19,6 @@
 namespace yarp {
     namespace os {
         class MjpegCarrier;
-        class MjpegCarrierRaw;
     }
 }
 
@@ -179,7 +178,7 @@ Content-Type: multipart/x-mixed-replace;boundary=boundarydonotcross\r\n\
         } while (txt!="");
 
         sender = false;
-        MjpegStream *stream = new MjpegStream(proto.giveStreams(),sender,
+        MjpegStream *stream = new MjpegStream(proto.giveStreams(),
                                               autoCompression());
         if (stream==NULL) { return false; }
         proto.takeStreams(stream);
