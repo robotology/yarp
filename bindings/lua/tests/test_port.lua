@@ -7,6 +7,7 @@
 -- set LUA_CPATH to include yarp.so/yarp.dll
 require("yarp")
 yarp.Network()
+yarp.Network.setLocalMode(true)
 port = yarp.BufferedPortBottle()
 port:open("/lua/test")
 port:close()
