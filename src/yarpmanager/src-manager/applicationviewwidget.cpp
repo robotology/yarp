@@ -2001,7 +2001,14 @@ bool ApplicationViewWidget::isEditingMode()
 
 void ApplicationViewWidget::onSelfConnect(int which)
 {
-    QTreeWidgetItem *it = ui->connectionList->topLevelItem(which);
+    int row;
+    if (!getConRowByID(which, &row))
+    {
+        yError()<<"ApplicationViewWidget: unable to find row with id:"<<which;
+        return;
+    }
+
+    QTreeWidgetItem *it = ui->connectionList->topLevelItem(row);
     if (it) {
         it->setText(2,"connected");
         it->setIcon(0,QIcon(":/connect22.svg"));
@@ -2023,7 +2030,14 @@ void ApplicationViewWidget::onSelfConnect(int which)
 
 void ApplicationViewWidget::onSelfDisconnect(int which)
 {
-    QTreeWidgetItem *it = ui->connectionList->topLevelItem(which);
+    int row;
+    if (!getConRowByID(which, &row))
+    {
+        yError()<<"ApplicationViewWidget: unable to find row with id:"<<which;
+        return;
+    }
+
+    QTreeWidgetItem *it = ui->connectionList->topLevelItem(row);
     if (it) {
         it->setText(2,"disconnected");
         it->setIcon(0,QIcon(":/disconnect22.svg"));
@@ -2175,7 +2189,7 @@ void ApplicationViewWidget::modStdOutNestedApplication(QTreeWidgetItem *it, int 
 */
 void ApplicationViewWidget::onConConnect(int which)
 {
-   emit selfConnect(which);
+    emit selfConnect(which);
 }
 
 /*! \brief Called when a disconnection has been performed
