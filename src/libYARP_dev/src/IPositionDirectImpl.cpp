@@ -16,7 +16,8 @@ using namespace yarp::dev;
 #define JOINTIDCHECK if (j >= castToMapper(helper)->axes()){yError("joint id out of bound"); return false;}
 #define MJOINTIDCHECK(i) if (joints[i] >= castToMapper(helper)->axes()){yError("joint id out of bound"); return false;}
 #define PJOINTIDCHECK(j) if (j >= castToMapper(helper)->axes()){yError("joint id out of bound"); return false;}
-#define MJOINTIDCHECK_DEL(i) if (joints[i] >= castToMapper(helper)->axes()){yError("joint id out of bound"); delete [] tmp_joints; return false;}
+#define MJOINTIDCHECK_DEL1(i) if (joints[i] >= castToMapper(helper)->axes()){yError("joint id out of bound"); delete [] tmp_joints; return false;}
+#define MJOINTIDCHECK_DEL2(i) if (joints[i] >= castToMapper(helper)->axes()){yError("joint id out of bound"); delete [] tmp_joints; delete [] tmp_refs;return false;}
 
 ImplementPositionDirect::ImplementPositionDirect(IPositionDirectRaw *y) :
     iPDirect(y),
@@ -75,7 +76,7 @@ bool ImplementPositionDirect::setPositions(const int n_joint, const int *joints,
     double *tmp_refs = new double [nj];
     for(int idx=0; idx<n_joint; idx++)
     {
-        MJOINTIDCHECK_DEL(idx)
+        MJOINTIDCHECK_DEL2(idx)
         castToMapper(helper)->posA2E(refs[idx], joints[idx], tmp_refs[idx], tmp_joints[idx]);
     }
     bool ret = iPDirect->setPositionsRaw(n_joint, tmp_joints, tmp_refs);
@@ -114,7 +115,7 @@ bool ImplementPositionDirect::getRefPositions(const int n_joint, const int* join
     int * tmp_joints = new int[nj];
     for(int idx=0; idx<n_joint; idx++)
     {
-        MJOINTIDCHECK_DEL(idx)
+        MJOINTIDCHECK_DEL1(idx)
         tmp_joints[idx]=castToMapper(helper)->toHw(joints[idx]);
     }
 

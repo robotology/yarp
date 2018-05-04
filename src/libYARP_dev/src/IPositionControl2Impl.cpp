@@ -285,7 +285,7 @@ bool ImplementPositionControl2::getRefAccelerations(double *accs)
     double *refs = new double[nj];
     bool ret=iPosition2->getRefAccelerationsRaw(refs);
     castToMapper(helper)->accE2A_abs(refs, accs);
-    delete refs;
+    delete [] refs;
     return ret;
 }
 
@@ -385,7 +385,6 @@ bool ImplementPositionControl2::getTargetPositions(double* refs)
 bool ImplementPositionControl2::getTargetPositions(const int n_joint, const int* joints, double* refs)
 {
     int * temp = new int [nj];
-    double *trgPos =  new double[nj];
 
     for(int idx=0; idx<n_joint; idx++)
     {
@@ -393,6 +392,7 @@ bool ImplementPositionControl2::getTargetPositions(const int n_joint, const int*
         temp[idx]=castToMapper(helper)->toHw(joints[idx]);
     }
 
+    double *trgPos =  new double[nj];
     bool ret = iPosition2->getTargetPositionsRaw(n_joint, temp, trgPos);
 
     for(int idx=0; idx<n_joint; idx++)
