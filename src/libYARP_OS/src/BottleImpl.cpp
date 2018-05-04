@@ -965,7 +965,7 @@ bool StoreString::readRaw(ConnectionReader& reader)
     int len = reader.expectInt();
     ConstString buf(YARP_STRINIT(len));
     reader.expectBlock(buf.c_str(), len);
-    // This is needed for compatiblity with versions of yarp before March 2015
+    // This is needed for compatibility with versions of yarp before March 2015
     if (len > 0) {
         if (buf[len - 1] == '\0') {
             len--;

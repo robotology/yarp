@@ -225,7 +225,7 @@ static void handler (int sig) {
 //    }
 
 #if defined(_WIN32)
-    // on windows we need to reset the handler after beeing called, otherwise it
+    // on windows we need to reset the handler after being called, otherwise it
     // will not be called anymore.
     // see http://www.geeksforgeeks.org/write-a-c-program-that-doesnt-terminate-when-ctrlc-is-pressed/
 

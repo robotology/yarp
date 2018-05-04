@@ -26,7 +26,7 @@ private:
     int version;
 public:
     /**
-     * verion 1 is "classic" YARP implementation of shmem.
+     * version 1 is "classic" YARP implementation of shmem.
      * version 2 is "Alessandro" version.
      */
     ShmemCarrier(int version = 2);

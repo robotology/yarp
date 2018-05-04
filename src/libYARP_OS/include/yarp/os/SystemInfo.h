@@ -64,7 +64,7 @@ public:
 
 
     /**
-     * @brief The LoadInfo stuct holds the current cpu load information
+     * @brief The LoadInfo struct holds the current cpu load information
      */
     typedef struct LoadInfo {
         double cpuLoad1;
@@ -75,7 +75,7 @@ public:
 
 
     /**
-     * @brief The PlatformInfo stuct holds the operating system information
+     * @brief The PlatformInfo struct holds the operating system information
      */
     typedef struct PlatformInfo {
         yarp::os::ConstString name;
@@ -87,7 +87,7 @@ public:
     } PlatformInfo;
 
     /**
-     * @brief The UserInfo stuct holds the current user information
+     * @brief The UserInfo struct holds the current user information
      */
     typedef struct UserInfo {
         yarp::os::ConstString userName;
@@ -105,7 +105,7 @@ public:
     */
 
     /**
-     * @brief The ProcessInfo stuct provides the operating system proccess information.
+     * @brief The ProcessInfo struct provides the operating system process information.
      */
     typedef struct ProcessInfo {
         yarp::os::ConstString name;

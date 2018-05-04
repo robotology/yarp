@@ -22,7 +22,7 @@ namespace impl {
     using ACE_OS::gethostbyaddr;
     using ACE_OS::gethostbyname;
     // ACE_OS::getaddrinfo, etc are not implemented, anyway ACE implementation
-    // is different, therefore they are not neeeded.
+    // is different, therefore they are not needed.
 #else
     using ::gethostbyaddr;
     using ::gethostbyname;

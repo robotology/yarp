@@ -128,7 +128,7 @@ public:
 /** @{ */
 
     /**
-     * @brief Get the destination contact of the route, if avaiable
+     * @brief Get the destination contact of the route, if available
      *
      * @return the destination of the route as a contact
      */
