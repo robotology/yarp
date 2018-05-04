@@ -13,6 +13,7 @@
 using namespace yarp::dev;
 #define JOINTIDCHECK if (j >= castToMapper(helper)->axes()){yError("joint id out of bound"); return false;}
 #define MJOINTIDCHECK(i) if (joints[i] >= castToMapper(helper)->axes()){yError("joint id out of bound"); return false;}
+#define MJOINTIDCHECK_DEL(i) if (joints[i] >= castToMapper(helper)->axes()){yError("joint id out of bound"); delete [] tmp_joints; delete [] tmp;return false;}
 #define PJOINTIDCHECK(j) if (j >= castToMapper(helper)->axes()){yError("joint id out of bound"); return false;}
 
 ImplementCurrentControl::ImplementCurrentControl(ICurrentControlRaw *tq):nj(0)
@@ -108,7 +109,7 @@ bool ImplementCurrentControl::setRefCurrents(const int n_joint, const int *joint
     int *tmp_joints = new int[nj];
     for(int idx=0; idx<n_joint; idx++)
     {
-        MJOINTIDCHECK(idx)
+        MJOINTIDCHECK_DEL(idx)
         castToMapper(helper)->ampereA2S(t[idx], joints[idx], tmp[idx], tmp_joints[idx]);
     }
     bool ret = iCurrentRaw->setRefCurrentsRaw(n_joint, tmp_joints, tmp);

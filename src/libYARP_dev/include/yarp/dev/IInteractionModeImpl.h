@@ -31,8 +31,7 @@ class YARP_dev_API yarp::dev::ImplementInteractionMode : public yarp::dev::IInte
 protected:
     yarp::dev::IInteractionModeRaw *iInteraction;
     void    *helper;                                // class controlBoardHelper, to handle axis map and conversion unit, where needed
-    int     *temp_int;                              // to convert axis number
-    yarp::dev::InteractionModeEnum *temp_modes;     // helper for all joints methods
+    int      nj;                                    //number of controlled axes the driver deals with.
 
     /**
      * Initialize the internal data and alloc memory, smaller version.
