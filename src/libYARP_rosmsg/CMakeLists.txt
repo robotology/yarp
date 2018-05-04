@@ -22,14 +22,14 @@ macro(_yarp_choose_idl _prefix)
        NOT CMAKE_CROSSCOMPILING AND
        NOT ALLOW_IDL_GENERATION)
       yarp_add_idl(${_prefix}_GEN_FILES
-                   NO_RECURSE
+#                   NO_RECURSE # Temporarily disable until the md5sum generated is correct
                    ${ARGN})
       set(${_prefix}_BUILD_INTERFACE_INCLUDE_DIRS "${CMAKE_CURRENT_BINARY_DIR}/include")
     else()
       foreach(_msg ${ARGN})
         yarp_idl_to_dir(${_msg}
                         "${CMAKE_CURRENT_SOURCE_DIR}/idl_generated_code"
-                        NO_RECURSE
+#                        NO_RECURSE # Temporarily disable until the md5sum generated is correct
                         ${_prefix}_GEN_SRCS
                         ${_prefix}_GEN_HDRS
                         ${_prefix}_BUILD_INTERFACE_INCLUDE_DIRS)
