@@ -64,6 +64,11 @@ void yarp::os::impl::NameserTwoWayStream::endPacket() {
     delegate->endPacket();
 }
 
+bool yarp::os::impl::NameserTwoWayStream::setReadTimeout(double timeout)
+{
+    return delegate->getInputStream().setReadTimeout(timeout);
+}
+
 YARP_SSIZE_T yarp::os::impl::NameserTwoWayStream::read(const Bytes& b) {
     // assume it is ok for name_ser to go byte-by-byte
     // since this protocol will be phased out
