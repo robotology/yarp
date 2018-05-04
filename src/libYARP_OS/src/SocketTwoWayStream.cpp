@@ -45,7 +45,22 @@ int SocketTwoWayStream::open(const Contact& address) {
     }
     int result = connector.connect(stream, addr, timeout, ACE_Addr::sap_any, 1);
 #else
-    int result = connector.connect(stream, address);
+    int result;
+
+    if (address.hasTimeout())
+    {
+        YARP_timeval timeout;
+        /* set timeout seconds and microseconds */
+        timeout.tv_sec = (int) address.getTimeout();
+        timeout.tv_usec = (address.getTimeout() - (int) address.getTimeout()) * 1000000;
+        result = connector.connect(stream, address, &timeout);
+    }
+    else
+    {
+        result = connector.connect(stream, address, nullptr);
+    }
+
+
 #endif
     if (result>=0) {
         happy = true;

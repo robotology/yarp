@@ -18,6 +18,7 @@
 
 #include <iostream>
 #include <cstdio>
+#include <fcntl.h>
 
 #include <sys/socket.h>
 
@@ -44,7 +45,7 @@ int TcpConnector::open(TcpStream &stream) {
 /**
  * Connect to server
  */
-int TcpConnector::connect(TcpStream &new_stream, const Contact& address) {
+int TcpConnector::connect(TcpStream &new_stream, const Contact& address, YARP_timeval* timeout) {
 //     printf("TCP/IP start in client mode\n");
 //     sockets.set_as_client();
 //     sockets.set_client_sockfd(sockfd);
@@ -65,16 +66,94 @@ int TcpConnector::connect(TcpStream &new_stream, const Contact& address) {
         inet_pton(AF_INET, address.getHost().c_str(), &servAddr.sin_addr);
     }
 
-    yAssert(new_stream.get_handle() != -1);
+    auto handle = new_stream.get_handle();
 
-    int result = ::connect(new_stream.get_handle(), (sockaddr*) &servAddr, sizeof(servAddr));
+    yAssert(handle != -1);
 
-    if (result < 0) {
-        perror("TcpConnector::connect fail");
+    int res;
+    long arg;
+    fd_set myset;
+    int valopt;
+    socklen_t lon;
+
+    // Set non-blocking
+    if( (arg = fcntl(handle, F_GETFL, NULL)) < 0)
+    {
+       yError("TcpConnector::connect fail: Error fcntl(..., F_GETFL) (%s)\n", strerror(errno));
+       return -1;
+    }
+    arg |= O_NONBLOCK;
+    if( fcntl(handle, F_SETFL, arg) < 0)
+    {
+       yError("TcpConnector::connect fail: Error fcntl(..., F_SETFL) (%s)\n", strerror(errno));
+       return -1;
+    }
+    // Trying to connect with timeout
+    res = ::connect(handle, (sockaddr*) &servAddr, sizeof(servAddr));
+
+    if (res < 0)
+    {
+        if (errno == EINPROGRESS)
+        {
+            FD_ZERO(&myset);
+            FD_SET(handle, &myset);
+            res = select(handle+1, nullptr, &myset, nullptr, timeout);
+            if (res < 0 && errno != EINTR)
+            {
+                yError("TcpConnector::connect fail: Error connecting %d - %s\n", errno, strerror(errno));
+                res = -1;
+            }
+            else if (res > 0)
+            {
+                // Socket selected for write
+                lon = sizeof(int);
+                if (getsockopt(handle, SOL_SOCKET, SO_ERROR, (void*)(&valopt), &lon) < 0)
+                {
+                    yError("TcpConnector::connect fail: Error in getsockopt() %d - %s\n", errno, strerror(errno));
+                    res = -1;
+                }
+                // Check the value returned...
+                if (valopt)
+                {
+                    yError("TcpConnector::connect fail: Error in delayed connection() %d - %s\n", valopt, strerror(valopt));
+                    res = -1;
+                }
+                res = 0;
+            }
+            else
+            {
+                yError("TcpConnector::connect fail: Timeout in select() - Cancelling!\n");
+                res = -1;
+            }
+        }
+        else
+        {
+            yError("TcpConnector::connect fail: Error connecting %d - %s\n", errno, strerror(errno));
+            res = -1;
+        }
+    }
+
+    if (res != 0)
+    {
         char buf[INET_ADDRSTRLEN];
         std::cerr << "Connect [handle=" << new_stream.get_handle() << "] at " << inet_ntop(AF_INET, &servAddr.sin_addr, buf, INET_ADDRSTRLEN) << ":" << servAddr.sin_port << std::endl;
+        return -1;
     }
-    return result;
+
+    // Set to blocking mode again...
+    if( (arg = fcntl(handle, F_GETFL, nullptr)) < 0)
+    {
+       yError("TcpConnector::connect fail: Error fcntl(..., F_GETFL) (%s)\n", strerror(errno));
+       return -1;
+    }
+    arg &= (~O_NONBLOCK);
+    if( fcntl(handle, F_SETFL, arg) < 0)
+    {
+       yError("TcpConnector::connect fail: Error fcntl(..., F_SETFL) (%s)\n", strerror(errno));
+       return -1;
+    }
+
+    return res;
 }
 
 #endif

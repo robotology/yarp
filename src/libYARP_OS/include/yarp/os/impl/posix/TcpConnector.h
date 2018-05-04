@@ -11,6 +11,7 @@
 #define YARP_OS_IMPL_POSIX_TCPCONNECTOR_H
 
 #include <yarp/os/Contact.h>
+#include <yarp/os/impl/PlatformTime.h>
 #include <yarp/os/impl/posix/TcpStream.h>
 
 
@@ -38,7 +39,8 @@ public:
     virtual ~TcpConnector();
 
     int connect (TcpStream &new_stream,
-                 const yarp::os::Contact &remote_address);
+                 const yarp::os::Contact &remote_address,
+                 YARP_timeval* timeout = nullptr);
 protected:
 
     int open(TcpStream &stream);
