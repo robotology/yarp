@@ -2039,7 +2039,14 @@ void ApplicationViewWidget::onSelfDisconnect(int which)
 
 void ApplicationViewWidget::onSelfResAvailable(int which)
 {
-    QTreeWidgetItem *it = ui->resourcesList->topLevelItem(which);
+    int row;
+    if (!getResRowByID(which, &row))
+    {
+        yError()<<"ApplicationViewWidget: unable to find row with id:"<<which;
+        return;
+    }
+
+    QTreeWidgetItem *it = ui->resourcesList->topLevelItem(row);
     if (it) {
         it->setText(3,"available");
         if (it->text(2) == "computer") {
@@ -2061,7 +2068,14 @@ void ApplicationViewWidget::onSelfResAvailable(int which)
 
 void ApplicationViewWidget::onSelfResUnavailable(int which)
 {
-    QTreeWidgetItem *it = ui->resourcesList->topLevelItem(which);
+    int row;
+    if (!getResRowByID(which, &row))
+    {
+        yError()<<"ApplicationViewWidget: unable to find row with id:"<<which;
+        return;
+    }
+
+    QTreeWidgetItem *it = ui->resourcesList->topLevelItem(row);
     if (it) {
         it->setText(3,"unavailable");
         if (it->text(2) == "computer") {
