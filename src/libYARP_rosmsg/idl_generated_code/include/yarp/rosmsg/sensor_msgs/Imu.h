@@ -368,7 +368,7 @@ MSG: geometry_msgs/Vector3\n\
     yarp::os::Type getType() override
     {
         yarp::os::Type typ = yarp::os::Type::byName("sensor_msgs/Imu", "sensor_msgs/Imu");
-        typ.addProperty("md5sum", yarp::os::Value("d0d0e531b0142e60248f47b1f457e702"));
+        typ.addProperty("md5sum", yarp::os::Value("6a62c6daae103f4ff57a132d6f95cec2"));
         typ.addProperty("message_definition", yarp::os::Value(getTypeText()));
         return typ;
     }

@@ -129,7 +129,7 @@ MSG: nav_msgs/OccupancyGrid\n\
     yarp::os::Type getType() override
     {
         yarp::os::Type typ = yarp::os::Type::byName("nav_msgs/GetMapReply", "nav_msgs/GetMapReply");
-        typ.addProperty("md5sum", yarp::os::Value("566fee7272391072dda4c74be14e062c"));
+        typ.addProperty("md5sum", yarp::os::Value("6cdd0a18e0aff5b0a3ca2326a89b54ff"));
         typ.addProperty("message_definition", yarp::os::Value(getTypeText()));
         return typ;
     }

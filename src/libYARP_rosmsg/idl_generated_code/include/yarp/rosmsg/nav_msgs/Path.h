@@ -182,7 +182,7 @@ MSG: geometry_msgs/PoseStamped\n\
     yarp::os::Type getType() override
     {
         yarp::os::Type typ = yarp::os::Type::byName("nav_msgs/Path", "nav_msgs/Path");
-        typ.addProperty("md5sum", yarp::os::Value("9712a75a035153dd596e494f05be2a9a"));
+        typ.addProperty("md5sum", yarp::os::Value("6227e2b7e9cce15051f669a5e197bbf7"));
         typ.addProperty("message_definition", yarp::os::Value(getTypeText()));
         return typ;
     }

@@ -216,7 +216,7 @@ MSG: std_msgs/Header\n\
     yarp::os::Type getType() override
     {
         yarp::os::Type typ = yarp::os::Type::byName("sensor_msgs/CompressedImage", "sensor_msgs/CompressedImage");
-        typ.addProperty("md5sum", yarp::os::Value("b45c9678c28d51a94f9514a03cdf273a"));
+        typ.addProperty("md5sum", yarp::os::Value("8f7a12909da2c9d3332d540a0977563f"));
         typ.addProperty("message_definition", yarp::os::Value(getTypeText()));
         return typ;
     }

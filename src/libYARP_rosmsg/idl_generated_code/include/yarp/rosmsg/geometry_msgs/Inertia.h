@@ -287,7 +287,7 @@ MSG: geometry_msgs/Vector3\n\
     yarp::os::Type getType() override
     {
         yarp::os::Type typ = yarp::os::Type::byName("geometry_msgs/Inertia", "geometry_msgs/Inertia");
-        typ.addProperty("md5sum", yarp::os::Value("844e18d03e7ef1b4c56cad531832c35d"));
+        typ.addProperty("md5sum", yarp::os::Value("1d26e4bb6c83ff141c5cf0d883c2b0fe"));
         typ.addProperty("message_definition", yarp::os::Value(getTypeText()));
         return typ;
     }

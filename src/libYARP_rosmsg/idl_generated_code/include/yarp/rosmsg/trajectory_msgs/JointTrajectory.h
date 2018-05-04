@@ -225,7 +225,7 @@ MSG: trajectory_msgs/JointTrajectoryPoint\n\
     yarp::os::Type getType() override
     {
         yarp::os::Type typ = yarp::os::Type::byName("trajectory_msgs/JointTrajectory", "trajectory_msgs/JointTrajectory");
-        typ.addProperty("md5sum", yarp::os::Value("56a436936b97f1588e684cef0098abd3"));
+        typ.addProperty("md5sum", yarp::os::Value("65b4f94a94d1ed67169da35a02f33d3f"));
         typ.addProperty("message_definition", yarp::os::Value(getTypeText()));
         return typ;
     }

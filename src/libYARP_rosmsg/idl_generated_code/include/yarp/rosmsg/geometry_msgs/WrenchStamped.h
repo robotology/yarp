@@ -164,7 +164,7 @@ MSG: geometry_msgs/Wrench\n\
     yarp::os::Type getType() override
     {
         yarp::os::Type typ = yarp::os::Type::byName("geometry_msgs/WrenchStamped", "geometry_msgs/WrenchStamped");
-        typ.addProperty("md5sum", yarp::os::Value("898f3053138df2ef7a7dc367b3ff3ba1"));
+        typ.addProperty("md5sum", yarp::os::Value("d78d3cb249ce23087ade7e7d0c40cfa7"));
         typ.addProperty("message_definition", yarp::os::Value(getTypeText()));
         return typ;
     }

@@ -205,7 +205,7 @@ MSG: std_msgs/Header\n\
     yarp::os::Type getType() override
     {
         yarp::os::Type typ = yarp::os::Type::byName("sensor_msgs/Illuminance", "sensor_msgs/Illuminance");
-        typ.addProperty("md5sum", yarp::os::Value("8e0e340fd1b25d249223d34acd5db664"));
+        typ.addProperty("md5sum", yarp::os::Value("8cf5febb0952fca9d650c3d11a81a188"));
         typ.addProperty("message_definition", yarp::os::Value(getTypeText()));
         return typ;
     }

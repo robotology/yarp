@@ -170,7 +170,7 @@ MSG: geometry_msgs/PoseWithCovarianceStamped\n\
     yarp::os::Type getType() override
     {
         yarp::os::Type typ = yarp::os::Type::byName("nav_msgs/SetMap", "nav_msgs/SetMap");
-        typ.addProperty("md5sum", yarp::os::Value("85980e5164caf4e7f9849c41c8c25a05"));
+        typ.addProperty("md5sum", yarp::os::Value("91149a20d7be299b87c340df8cc94fd4"));
         typ.addProperty("message_definition", yarp::os::Value(getTypeText()));
         return typ;
     }

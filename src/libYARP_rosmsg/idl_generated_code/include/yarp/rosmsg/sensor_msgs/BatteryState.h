@@ -577,7 +577,7 @@ MSG: std_msgs/Header\n\
     yarp::os::Type getType() override
     {
         yarp::os::Type typ = yarp::os::Type::byName("sensor_msgs/BatteryState", "sensor_msgs/BatteryState");
-        typ.addProperty("md5sum", yarp::os::Value("417c393bc3ef8e9b2f3754f4962fe60e"));
+        typ.addProperty("md5sum", yarp::os::Value("476f837fa6771f6e16e3bf4ef96f8770"));
         typ.addProperty("message_definition", yarp::os::Value(getTypeText()));
         return typ;
     }

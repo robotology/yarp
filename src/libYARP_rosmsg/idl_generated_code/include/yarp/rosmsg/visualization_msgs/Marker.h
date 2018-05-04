@@ -640,7 +640,7 @@ MSG: geometry_msgs/Point\n\
     yarp::os::Type getType() override
     {
         yarp::os::Type typ = yarp::os::Type::byName("visualization_msgs/Marker", "visualization_msgs/Marker");
-        typ.addProperty("md5sum", yarp::os::Value("1c642a6a8df38444ae1a0cb66e87b19f"));
+        typ.addProperty("md5sum", yarp::os::Value("4048c9de2a16f4ae8e0538085ebf1b97"));
         typ.addProperty("message_definition", yarp::os::Value(getTypeText()));
         return typ;
     }

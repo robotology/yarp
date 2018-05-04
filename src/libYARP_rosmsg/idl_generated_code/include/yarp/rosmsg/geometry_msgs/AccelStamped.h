@@ -164,7 +164,7 @@ MSG: geometry_msgs/Accel\n\
     yarp::os::Type getType() override
     {
         yarp::os::Type typ = yarp::os::Type::byName("geometry_msgs/AccelStamped", "geometry_msgs/AccelStamped");
-        typ.addProperty("md5sum", yarp::os::Value("604ae3e1ed716360e856f5f02f992bf2"));
+        typ.addProperty("md5sum", yarp::os::Value("d8a98a5d81351b6eb0578c78557e7659"));
         typ.addProperty("message_definition", yarp::os::Value(getTypeText()));
         return typ;
     }

@@ -313,7 +313,7 @@ MSG: std_msgs/Header\n\
     yarp::os::Type getType() override
     {
         yarp::os::Type typ = yarp::os::Type::byName("sensor_msgs/Range", "sensor_msgs/Range");
-        typ.addProperty("md5sum", yarp::os::Value("b763a427e10893eec9430b21f1c4b8b0"));
+        typ.addProperty("md5sum", yarp::os::Value("c005c34273dc426c67a020a87bc24148"));
         typ.addProperty("message_definition", yarp::os::Value(getTypeText()));
         return typ;
     }

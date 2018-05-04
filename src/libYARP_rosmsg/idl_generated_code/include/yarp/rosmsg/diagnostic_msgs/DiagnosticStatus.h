@@ -287,7 +287,7 @@ MSG: diagnostic_msgs/KeyValue\n\
     yarp::os::Type getType() override
     {
         yarp::os::Type typ = yarp::os::Type::byName("diagnostic_msgs/DiagnosticStatus", "diagnostic_msgs/DiagnosticStatus");
-        typ.addProperty("md5sum", yarp::os::Value("5a412cd6e2444883e5ed4ed18a863d6c"));
+        typ.addProperty("md5sum", yarp::os::Value("d0ce08bc6e5ba34c7754f563a9cabaf1"));
         typ.addProperty("message_definition", yarp::os::Value(getTypeText()));
         return typ;
     }

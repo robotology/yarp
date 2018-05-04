@@ -227,7 +227,7 @@ MSG: geometry_msgs/TwistWithCovariance\n\
     yarp::os::Type getType() override
     {
         yarp::os::Type typ = yarp::os::Type::byName("nav_msgs/Odometry", "nav_msgs/Odometry");
-        typ.addProperty("md5sum", yarp::os::Value("769bf3ff91fdc20ce3108690bafc4276"));
+        typ.addProperty("md5sum", yarp::os::Value("cd5e73d190d741a2f92e81eda573aca7"));
         typ.addProperty("message_definition", yarp::os::Value(getTypeText()));
         return typ;
     }

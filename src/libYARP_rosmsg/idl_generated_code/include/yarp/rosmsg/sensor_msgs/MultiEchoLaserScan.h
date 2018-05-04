@@ -419,7 +419,7 @@ MSG: sensor_msgs/LaserEcho\n\
     yarp::os::Type getType() override
     {
         yarp::os::Type typ = yarp::os::Type::byName("sensor_msgs/MultiEchoLaserScan", "sensor_msgs/MultiEchoLaserScan");
-        typ.addProperty("md5sum", yarp::os::Value("7b20aa6a60f9a341f727b9fba1d11f04"));
+        typ.addProperty("md5sum", yarp::os::Value("6fefb0c6da89d7c8abe4b339f5c2f8fb"));
         typ.addProperty("message_definition", yarp::os::Value(getTypeText()));
         return typ;
     }

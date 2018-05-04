@@ -241,7 +241,7 @@ MSG: trajectory_msgs/MultiDOFJointTrajectoryPoint\n\
     yarp::os::Type getType() override
     {
         yarp::os::Type typ = yarp::os::Type::byName("trajectory_msgs/MultiDOFJointTrajectory", "trajectory_msgs/MultiDOFJointTrajectory");
-        typ.addProperty("md5sum", yarp::os::Value("56a436936b97f1588e684cef0098abd3"));
+        typ.addProperty("md5sum", yarp::os::Value("ef145a45a5f47b77b7f5cdde4b16c942"));
         typ.addProperty("message_definition", yarp::os::Value(getTypeText()));
         return typ;
     }

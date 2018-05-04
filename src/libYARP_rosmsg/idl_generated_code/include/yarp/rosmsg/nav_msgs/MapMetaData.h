@@ -235,7 +235,7 @@ MSG: geometry_msgs/Pose\n\
     yarp::os::Type getType() override
     {
         yarp::os::Type typ = yarp::os::Type::byName("nav_msgs/MapMetaData", "nav_msgs/MapMetaData");
-        typ.addProperty("md5sum", yarp::os::Value("010b5a4b925034582a608fa141fb2e89"));
+        typ.addProperty("md5sum", yarp::os::Value("10cfc8a2818024d3248802c00c95f11b"));
         typ.addProperty("message_definition", yarp::os::Value(getTypeText()));
         return typ;
     }

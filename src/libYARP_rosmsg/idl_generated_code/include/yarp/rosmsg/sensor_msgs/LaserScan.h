@@ -397,7 +397,7 @@ MSG: std_msgs/Header\n\
     yarp::os::Type getType() override
     {
         yarp::os::Type typ = yarp::os::Type::byName("sensor_msgs/LaserScan", "sensor_msgs/LaserScan");
-        typ.addProperty("md5sum", yarp::os::Value("96479642fab1ea5e0c24376452aa2b37"));
+        typ.addProperty("md5sum", yarp::os::Value("90c7ef2dc6895d81024acba2ac42f369"));
         typ.addProperty("message_definition", yarp::os::Value(getTypeText()));
         return typ;
     }

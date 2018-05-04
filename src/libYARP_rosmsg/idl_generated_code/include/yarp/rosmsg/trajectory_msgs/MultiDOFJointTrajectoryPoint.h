@@ -283,7 +283,7 @@ MSG: geometry_msgs/Twist\n\
     yarp::os::Type getType() override
     {
         yarp::os::Type typ = yarp::os::Type::byName("trajectory_msgs/MultiDOFJointTrajectoryPoint", "trajectory_msgs/MultiDOFJointTrajectoryPoint");
-        typ.addProperty("md5sum", yarp::os::Value("a76bc9abe5770d936ec37dd337b89caa"));
+        typ.addProperty("md5sum", yarp::os::Value("3ebe08d1abd5b65862d50e09430db776"));
         typ.addProperty("message_definition", yarp::os::Value(getTypeText()));
         return typ;
     }

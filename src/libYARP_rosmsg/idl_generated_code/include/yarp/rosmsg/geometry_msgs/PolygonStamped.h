@@ -164,7 +164,7 @@ MSG: geometry_msgs/Polygon\n\
     yarp::os::Type getType() override
     {
         yarp::os::Type typ = yarp::os::Type::byName("geometry_msgs/PolygonStamped", "geometry_msgs/PolygonStamped");
-        typ.addProperty("md5sum", yarp::os::Value("fd4c9a42d76b92f2fe036efb633b74be"));
+        typ.addProperty("md5sum", yarp::os::Value("c6be8f7dc3bee7fe9e8d296070f53340"));
         typ.addProperty("message_definition", yarp::os::Value(getTypeText()));
         return typ;
     }

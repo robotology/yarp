@@ -377,7 +377,7 @@ MSG: sensor_msgs/PointField\n\
     yarp::os::Type getType() override
     {
         yarp::os::Type typ = yarp::os::Type::byName("sensor_msgs/PointCloud2", "sensor_msgs/PointCloud2");
-        typ.addProperty("md5sum", yarp::os::Value("66e57468e2282f83f63002906dc532dc"));
+        typ.addProperty("md5sum", yarp::os::Value("1158d486dd51d683ce2f1be655c3c181"));
         typ.addProperty("message_definition", yarp::os::Value(getTypeText()));
         return typ;
     }

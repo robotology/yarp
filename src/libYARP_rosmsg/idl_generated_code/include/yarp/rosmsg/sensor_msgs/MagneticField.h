@@ -236,7 +236,7 @@ MSG: geometry_msgs/Vector3\n\
     yarp::os::Type getType() override
     {
         yarp::os::Type typ = yarp::os::Type::byName("sensor_msgs/MagneticField", "sensor_msgs/MagneticField");
-        typ.addProperty("md5sum", yarp::os::Value("c3a1c14c11bcc220466cbea9651d29f7"));
+        typ.addProperty("md5sum", yarp::os::Value("2f3b0b43eed0c9501de0fa3ff89a45aa"));
         typ.addProperty("message_definition", yarp::os::Value(getTypeText()));
         return typ;
     }

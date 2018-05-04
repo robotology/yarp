@@ -501,7 +501,7 @@ MSG: visualization_msgs/Marker\n\
     yarp::os::Type getType() override
     {
         yarp::os::Type typ = yarp::os::Type::byName("visualization_msgs/InteractiveMarkerControl", "visualization_msgs/InteractiveMarkerControl");
-        typ.addProperty("md5sum", yarp::os::Value("8189f1c4e7103172af5b395a47d21970"));
+        typ.addProperty("md5sum", yarp::os::Value("b3c81e785788195d1840b86c28da1aac"));
         typ.addProperty("message_definition", yarp::os::Value(getTypeText()));
         return typ;
     }

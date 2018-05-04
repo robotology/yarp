@@ -129,7 +129,7 @@ MSG: nav_msgs/Path\n\
     yarp::os::Type getType() override
     {
         yarp::os::Type typ = yarp::os::Type::byName("nav_msgs/GetPlanReply", "nav_msgs/GetPlanReply");
-        typ.addProperty("md5sum", yarp::os::Value("6dfb16dea9d3887d02805fba77da7d13"));
+        typ.addProperty("md5sum", yarp::os::Value("0002bc113c0259d71f6cf8cbc9430e18"));
         typ.addProperty("message_definition", yarp::os::Value(getTypeText()));
         return typ;
     }

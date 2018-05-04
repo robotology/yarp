@@ -195,7 +195,7 @@ MSG: std_msgs/Header\n\
     yarp::os::Type getType() override
     {
         yarp::os::Type typ = yarp::os::Type::byName("sensor_msgs/TimeReference", "sensor_msgs/TimeReference");
-        typ.addProperty("md5sum", yarp::os::Value("3e7a07ca48b00edd267e79dc39291953"));
+        typ.addProperty("md5sum", yarp::os::Value("fded64a0265108ba86c3d38fb11c0c16"));
         typ.addProperty("message_definition", yarp::os::Value(getTypeText()));
         return typ;
     }

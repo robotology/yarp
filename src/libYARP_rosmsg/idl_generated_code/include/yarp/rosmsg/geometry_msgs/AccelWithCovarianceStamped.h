@@ -164,7 +164,7 @@ MSG: geometry_msgs/AccelWithCovariance\n\
     yarp::os::Type getType() override
     {
         yarp::os::Type typ = yarp::os::Type::byName("geometry_msgs/AccelWithCovarianceStamped", "geometry_msgs/AccelWithCovarianceStamped");
-        typ.addProperty("md5sum", yarp::os::Value("604ae3e1ed716360e856f5f02f992bf2"));
+        typ.addProperty("md5sum", yarp::os::Value("96adb295225031ec8d57fb4251b0a886"));
         typ.addProperty("message_definition", yarp::os::Value(getTypeText()));
         return typ;
     }

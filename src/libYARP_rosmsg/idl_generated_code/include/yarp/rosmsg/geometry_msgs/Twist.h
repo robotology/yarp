@@ -160,7 +160,7 @@ MSG: geometry_msgs/Vector3\n\
     yarp::os::Type getType() override
     {
         yarp::os::Type typ = yarp::os::Type::byName("geometry_msgs/Twist", "geometry_msgs/Twist");
-        typ.addProperty("md5sum", yarp::os::Value("c10c4562cad16cfd891d35d0afcdb338"));
+        typ.addProperty("md5sum", yarp::os::Value("9f195f881246fdfa2798d1d3eebca84a"));
         typ.addProperty("message_definition", yarp::os::Value(getTypeText()));
         return typ;
     }

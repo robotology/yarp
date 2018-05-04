@@ -164,7 +164,7 @@ MSG: geometry_msgs/Quaternion\n\
     yarp::os::Type getType() override
     {
         yarp::os::Type typ = yarp::os::Type::byName("geometry_msgs/Pose", "geometry_msgs/Pose");
-        typ.addProperty("md5sum", yarp::os::Value("704a580260fbb3211da491fc01df5270"));
+        typ.addProperty("md5sum", yarp::os::Value("e45d45a5a1ce597b249e23fb30fc871f"));
         typ.addProperty("message_definition", yarp::os::Value(getTypeText()));
         return typ;
     }

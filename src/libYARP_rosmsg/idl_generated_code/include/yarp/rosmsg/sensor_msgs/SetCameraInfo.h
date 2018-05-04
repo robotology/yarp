@@ -153,7 +153,7 @@ MSG: sensor_msgs/CameraInfo\n\
     yarp::os::Type getType() override
     {
         yarp::os::Type typ = yarp::os::Type::byName("sensor_msgs/SetCameraInfo", "sensor_msgs/SetCameraInfo");
-        typ.addProperty("md5sum", yarp::os::Value("4871c761f200349d940adb467d4301a5"));
+        typ.addProperty("md5sum", yarp::os::Value("ee34be01fdeee563d0d99cd594d5581d"));
         typ.addProperty("message_definition", yarp::os::Value(getTypeText()));
         return typ;
     }

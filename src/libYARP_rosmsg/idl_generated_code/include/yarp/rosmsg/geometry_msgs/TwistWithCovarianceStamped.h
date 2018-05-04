@@ -164,7 +164,7 @@ MSG: geometry_msgs/TwistWithCovariance\n\
     yarp::os::Type getType() override
     {
         yarp::os::Type typ = yarp::os::Type::byName("geometry_msgs/TwistWithCovarianceStamped", "geometry_msgs/TwistWithCovarianceStamped");
-        typ.addProperty("md5sum", yarp::os::Value("240815ffcd3988f47c77fefbba6ecd71"));
+        typ.addProperty("md5sum", yarp::os::Value("8927a1a12fb2607ceea095b2dc440a96"));
         typ.addProperty("message_definition", yarp::os::Value(getTypeText()));
         return typ;
     }

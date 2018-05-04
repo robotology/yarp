@@ -251,7 +251,7 @@ MSG: sensor_msgs/ChannelFloat32\n\
     yarp::os::Type getType() override
     {
         yarp::os::Type typ = yarp::os::Type::byName("sensor_msgs/PointCloud", "sensor_msgs/PointCloud");
-        typ.addProperty("md5sum", yarp::os::Value("4a210f70acdf10eaffc5341a10892a11"));
+        typ.addProperty("md5sum", yarp::os::Value("d8e9c3f5afbdd8a130fd1d2763945fca"));
         typ.addProperty("message_definition", yarp::os::Value(getTypeText()));
         return typ;
     }

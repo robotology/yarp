@@ -207,7 +207,7 @@ MSG: std_msgs/Header\n\
     yarp::os::Type getType() override
     {
         yarp::os::Type typ = yarp::os::Type::byName("sensor_msgs/Joy", "sensor_msgs/Joy");
-        typ.addProperty("md5sum", yarp::os::Value("9c04d54cadf0980e4526bba548c961f7"));
+        typ.addProperty("md5sum", yarp::os::Value("5a9ea5f83505693b71e785041e67a8bb"));
         typ.addProperty("message_definition", yarp::os::Value(getTypeText()));
         return typ;
     }

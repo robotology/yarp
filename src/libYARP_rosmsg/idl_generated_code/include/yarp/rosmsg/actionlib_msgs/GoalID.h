@@ -172,7 +172,7 @@ string id\n\
     yarp::os::Type getType() override
     {
         yarp::os::Type typ = yarp::os::Type::byName("actionlib_msgs/GoalID", "actionlib_msgs/GoalID");
-        typ.addProperty("md5sum", yarp::os::Value("8d71100205f1bc7f948d7f53442ef35e"));
+        typ.addProperty("md5sum", yarp::os::Value("302881f31927c1df708a2dbab0e80ee8"));
         typ.addProperty("message_definition", yarp::os::Value(getTypeText()));
         return typ;
     }

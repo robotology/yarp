@@ -149,7 +149,7 @@ MSG: geometry_msgs/TransformStamped\n\
     yarp::os::Type getType() override
     {
         yarp::os::Type typ = yarp::os::Type::byName("tf/tfMessage", "tf/tfMessage");
-        typ.addProperty("md5sum", yarp::os::Value("8c6a1a3d0e669cd77bc1c3c5819f493b"));
+        typ.addProperty("md5sum", yarp::os::Value("94810edda583a504dfda3829e70d7eec"));
         typ.addProperty("message_definition", yarp::os::Value(getTypeText()));
         return typ;
     }

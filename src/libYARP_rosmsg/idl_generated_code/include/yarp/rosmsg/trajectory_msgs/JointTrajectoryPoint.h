@@ -284,7 +284,7 @@ duration time_from_start\n\
     yarp::os::Type getType() override
     {
         yarp::os::Type typ = yarp::os::Type::byName("trajectory_msgs/JointTrajectoryPoint", "trajectory_msgs/JointTrajectoryPoint");
-        typ.addProperty("md5sum", yarp::os::Value("32aa46c1b23c0fd4d41578b2d62f37c5"));
+        typ.addProperty("md5sum", yarp::os::Value("f3cd1e1c4d320c79d6985c904ae5dcd3"));
         typ.addProperty("message_definition", yarp::os::Value(getTypeText()));
         return typ;
     }

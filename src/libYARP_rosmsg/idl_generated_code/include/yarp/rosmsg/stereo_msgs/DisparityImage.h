@@ -345,7 +345,7 @@ MSG: sensor_msgs/RegionOfInterest\n\
     yarp::os::Type getType() override
     {
         yarp::os::Type typ = yarp::os::Type::byName("stereo_msgs/DisparityImage", "stereo_msgs/DisparityImage");
-        typ.addProperty("md5sum", yarp::os::Value("ebf62e5419287b81477833ad374eefe4"));
+        typ.addProperty("md5sum", yarp::os::Value("04a177815f75271039fa21f16acad8c9"));
         typ.addProperty("message_definition", yarp::os::Value(getTypeText()));
         return typ;
     }

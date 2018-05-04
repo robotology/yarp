@@ -183,7 +183,7 @@ MSG: geometry_msgs/Pose\n\
     yarp::os::Type getType() override
     {
         yarp::os::Type typ = yarp::os::Type::byName("geometry_msgs/PoseWithCovariance", "geometry_msgs/PoseWithCovariance");
-        typ.addProperty("md5sum", yarp::os::Value("0e9fc50f3c2bd77e58a9c3282d24f79b"));
+        typ.addProperty("md5sum", yarp::os::Value("c23e848cf1b7533a8d7c259073a97e6f"));
         typ.addProperty("message_definition", yarp::os::Value(getTypeText()));
         return typ;
     }

@@ -372,7 +372,7 @@ MSG: sensor_msgs/NavSatStatus\n\
     yarp::os::Type getType() override
     {
         yarp::os::Type typ = yarp::os::Type::byName("sensor_msgs/NavSatFix", "sensor_msgs/NavSatFix");
-        typ.addProperty("md5sum", yarp::os::Value("122998cc9a34a5b4e4b83952e42242b4"));
+        typ.addProperty("md5sum", yarp::os::Value("2d3a8cd499b9b4a0249fb98fd05cfa48"));
         typ.addProperty("message_definition", yarp::os::Value(getTypeText()));
         return typ;
     }

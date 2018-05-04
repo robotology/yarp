@@ -226,7 +226,7 @@ MSG: geometry_msgs/Point\n\
     yarp::os::Type getType() override
     {
         yarp::os::Type typ = yarp::os::Type::byName("nav_msgs/GridCells", "nav_msgs/GridCells");
-        typ.addProperty("md5sum", yarp::os::Value("303d4db2c18abdde75d4dfdd171d1d79"));
+        typ.addProperty("md5sum", yarp::os::Value("b9e4f5df6d28e272ebde00a3994830f5"));
         typ.addProperty("message_definition", yarp::os::Value(getTypeText()));
         return typ;
     }

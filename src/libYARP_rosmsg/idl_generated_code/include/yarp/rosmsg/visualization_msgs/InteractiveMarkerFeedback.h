@@ -425,7 +425,7 @@ MSG: geometry_msgs/Point\n\
     yarp::os::Type getType() override
     {
         yarp::os::Type typ = yarp::os::Type::byName("visualization_msgs/InteractiveMarkerFeedback", "visualization_msgs/InteractiveMarkerFeedback");
-        typ.addProperty("md5sum", yarp::os::Value("b7e4f603b24bd370bd5a8304ad699285"));
+        typ.addProperty("md5sum", yarp::os::Value("ab0f1eee058667e28c19ff3ffc3f4b78"));
         typ.addProperty("message_definition", yarp::os::Value(getTypeText()));
         return typ;
     }

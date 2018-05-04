@@ -164,7 +164,7 @@ MSG: geometry_msgs/Pose\n\
     yarp::os::Type getType() override
     {
         yarp::os::Type typ = yarp::os::Type::byName("geometry_msgs/PoseStamped", "geometry_msgs/PoseStamped");
-        typ.addProperty("md5sum", yarp::os::Value("c9cbe44492afa76990ab59fa26e3eeaa"));
+        typ.addProperty("md5sum", yarp::os::Value("d3812c3cbc69362b77dc0b19b345f8f5"));
         typ.addProperty("message_definition", yarp::os::Value(getTypeText()));
         return typ;
     }

@@ -187,7 +187,7 @@ MSG: std_msgs/Header\n\
     yarp::os::Type getType() override
     {
         yarp::os::Type typ = yarp::os::Type::byName("sensor_msgs/FluidPressure", "sensor_msgs/FluidPressure");
-        typ.addProperty("md5sum", yarp::os::Value("6044b5e640052c3b9f62b75e8c295e2d"));
+        typ.addProperty("md5sum", yarp::os::Value("804dc5cea1c5306d6a2eb80b9833befe"));
         typ.addProperty("message_definition", yarp::os::Value(getTypeText()));
         return typ;
     }

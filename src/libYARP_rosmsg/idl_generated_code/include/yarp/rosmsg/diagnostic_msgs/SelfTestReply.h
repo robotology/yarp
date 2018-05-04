@@ -193,7 +193,7 @@ MSG: diagnostic_msgs/DiagnosticStatus\n\
     yarp::os::Type getType() override
     {
         yarp::os::Type typ = yarp::os::Type::byName("diagnostic_msgs/SelfTestReply", "diagnostic_msgs/SelfTestReply");
-        typ.addProperty("md5sum", yarp::os::Value("9994747280b6cc8b923920ccd7ac6cf9"));
+        typ.addProperty("md5sum", yarp::os::Value("ac21b1bab7ab17546986536c22eb34e9"));
         typ.addProperty("message_definition", yarp::os::Value(getTypeText()));
         return typ;
     }

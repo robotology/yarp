@@ -373,7 +373,7 @@ MSG: visualization_msgs/InteractiveMarkerPose\n\
     yarp::os::Type getType() override
     {
         yarp::os::Type typ = yarp::os::Type::byName("visualization_msgs/InteractiveMarkerUpdate", "visualization_msgs/InteractiveMarkerUpdate");
-        typ.addProperty("md5sum", yarp::os::Value("d824fbeea88d4067b9878be50741a9f6"));
+        typ.addProperty("md5sum", yarp::os::Value("710d308d0a9276d65945e92dd30b3946"));
         typ.addProperty("message_definition", yarp::os::Value(getTypeText()));
         return typ;
     }

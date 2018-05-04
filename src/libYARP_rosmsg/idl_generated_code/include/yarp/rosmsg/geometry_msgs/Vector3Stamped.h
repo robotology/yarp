@@ -164,7 +164,7 @@ MSG: geometry_msgs/Vector3\n\
     yarp::os::Type getType() override
     {
         yarp::os::Type typ = yarp::os::Type::byName("geometry_msgs/Vector3Stamped", "geometry_msgs/Vector3Stamped");
-        typ.addProperty("md5sum", yarp::os::Value("bbafd95d4356c863ee31839ffb80d0b7"));
+        typ.addProperty("md5sum", yarp::os::Value("7b324c7325e683bf02a9b14b01090ec7"));
         typ.addProperty("message_definition", yarp::os::Value(getTypeText()));
         return typ;
     }

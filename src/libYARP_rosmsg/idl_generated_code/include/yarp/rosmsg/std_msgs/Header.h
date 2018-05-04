@@ -200,7 +200,7 @@ string frame_id\n\
     yarp::os::Type getType() override
     {
         yarp::os::Type typ = yarp::os::Type::byName("std_msgs/Header", "std_msgs/Header");
-        typ.addProperty("md5sum", yarp::os::Value("6d6c809e8451bcc009a0a22d8d3857b4"));
+        typ.addProperty("md5sum", yarp::os::Value("2176decaecbce78abc3b96ef049fabed"));
         typ.addProperty("message_definition", yarp::os::Value(getTypeText()));
         return typ;
     }

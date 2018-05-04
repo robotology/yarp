@@ -186,7 +186,7 @@ MSG: geometry_msgs/Pose\n\
     yarp::os::Type getType() override
     {
         yarp::os::Type typ = yarp::os::Type::byName("geometry_msgs/PoseArray", "geometry_msgs/PoseArray");
-        typ.addProperty("md5sum", yarp::os::Value("9712a75a035153dd596e494f05be2a9a"));
+        typ.addProperty("md5sum", yarp::os::Value("916c28c5764443f268b296bb671b9d97"));
         typ.addProperty("message_definition", yarp::os::Value(getTypeText()));
         return typ;
     }

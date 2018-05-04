@@ -367,7 +367,7 @@ MSG: geometry_msgs/Wrench\n\
     yarp::os::Type getType() override
     {
         yarp::os::Type typ = yarp::os::Type::byName("sensor_msgs/MultiDOFJointState", "sensor_msgs/MultiDOFJointState");
-        typ.addProperty("md5sum", yarp::os::Value("a3a2c9ecbf495a6e3a665cd3ea73df46"));
+        typ.addProperty("md5sum", yarp::os::Value("690f272f0640d2631c305eeb8301e59d"));
         typ.addProperty("message_definition", yarp::os::Value(getTypeText()));
         return typ;
     }

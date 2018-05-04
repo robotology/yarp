@@ -151,7 +151,7 @@ MSG: geometry_msgs/Point32\n\
     yarp::os::Type getType() override
     {
         yarp::os::Type typ = yarp::os::Type::byName("geometry_msgs/Polygon", "geometry_msgs/Polygon");
-        typ.addProperty("md5sum", yarp::os::Value("f56a39eff4969badd4f6a5d0305ad7e6"));
+        typ.addProperty("md5sum", yarp::os::Value("cd60a26494a087f577976f0329fa120e"));
         typ.addProperty("message_definition", yarp::os::Value(getTypeText()));
         return typ;
     }

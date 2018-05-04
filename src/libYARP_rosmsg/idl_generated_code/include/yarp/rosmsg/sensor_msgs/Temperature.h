@@ -179,7 +179,7 @@ MSG: std_msgs/Header\n\
     yarp::os::Type getType() override
     {
         yarp::os::Type typ = yarp::os::Type::byName("sensor_msgs/Temperature", "sensor_msgs/Temperature");
-        typ.addProperty("md5sum", yarp::os::Value("c4e1005cdb717be580271cca71f0ba15"));
+        typ.addProperty("md5sum", yarp::os::Value("ff71b307acdbe7c871a5a6d7ed359100"));
         typ.addProperty("message_definition", yarp::os::Value(getTypeText()));
         return typ;
     }

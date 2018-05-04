@@ -176,7 +176,7 @@ MSG: std_msgs/MultiArrayLayout\n\
     yarp::os::Type getType() override
     {
         yarp::os::Type typ = yarp::os::Type::byName("std_msgs/UInt64MultiArray", "std_msgs/UInt64MultiArray");
-        typ.addProperty("md5sum", yarp::os::Value("b00df346d223ae9a0658b057773db1c5"));
+        typ.addProperty("md5sum", yarp::os::Value("6088f127afb1d6c72927aa1247e945af"));
         typ.addProperty("message_definition", yarp::os::Value(getTypeText()));
         return typ;
     }

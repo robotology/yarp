@@ -162,7 +162,7 @@ MSG: geometry_msgs/Vector3\n\
     yarp::os::Type getType() override
     {
         yarp::os::Type typ = yarp::os::Type::byName("geometry_msgs/Wrench", "geometry_msgs/Wrench");
-        typ.addProperty("md5sum", yarp::os::Value("d6f1f51e63e90b83a69b04e44511dcfc"));
+        typ.addProperty("md5sum", yarp::os::Value("4f539cf138b23283b520fd271b567936"));
         typ.addProperty("message_definition", yarp::os::Value(getTypeText()));
         return typ;
     }

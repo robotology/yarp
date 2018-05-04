@@ -149,7 +149,7 @@ MSG: sensor_msgs/JoyFeedback\n\
     yarp::os::Type getType() override
     {
         yarp::os::Type typ = yarp::os::Type::byName("sensor_msgs/JoyFeedbackArray", "sensor_msgs/JoyFeedbackArray");
-        typ.addProperty("md5sum", yarp::os::Value("971ea6a41c587e25837655fdb4940e7e"));
+        typ.addProperty("md5sum", yarp::os::Value("cde5730a895b1fc4dee6f91b754b213d"));
         typ.addProperty("message_definition", yarp::os::Value(getTypeText()));
         return typ;
     }

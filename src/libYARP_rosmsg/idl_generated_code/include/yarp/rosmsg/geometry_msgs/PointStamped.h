@@ -164,7 +164,7 @@ MSG: geometry_msgs/Point\n\
     yarp::os::Type getType() override
     {
         yarp::os::Type typ = yarp::os::Type::byName("geometry_msgs/PointStamped", "geometry_msgs/PointStamped");
-        typ.addProperty("md5sum", yarp::os::Value("18a357bddd1f10d3ff4dd9cfce245d5a"));
+        typ.addProperty("md5sum", yarp::os::Value("c63aecb41bfdfd6b7e1fac37c7cbe7bf"));
         typ.addProperty("message_definition", yarp::os::Value(getTypeText()));
         return typ;
     }

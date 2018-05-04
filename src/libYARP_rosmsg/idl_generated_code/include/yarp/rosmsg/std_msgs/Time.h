@@ -128,7 +128,7 @@ time data\n\
     yarp::os::Type getType() override
     {
         yarp::os::Type typ = yarp::os::Type::byName("std_msgs/Time", "std_msgs/Time");
-        typ.addProperty("md5sum", yarp::os::Value("0ea4632898b92ef8fdbd8104d97cf6b1"));
+        typ.addProperty("md5sum", yarp::os::Value("cd7166c74c552c311fbcc2fe5a7bc289"));
         typ.addProperty("message_definition", yarp::os::Value(getTypeText()));
         return typ;
     }
