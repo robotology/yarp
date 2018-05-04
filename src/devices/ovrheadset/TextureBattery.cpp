@@ -87,7 +87,7 @@ bool TextureBattery::initBatteryClient()
 
     yarp::os::Property options;
     options.put("robot", robot_name.c_str());
-    options.put("device", "batteryClient");
+    options.put("device", "BatteryClient");
     options.put("local", localPort.c_str());
     options.put("remote", remotePort.c_str());
     options.put("period", getRate());
