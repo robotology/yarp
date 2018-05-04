@@ -697,8 +697,10 @@ std::string RosTypeSearch::findFile(const char *tname) {
             target2 = target.substr(0, at) + (find_service? "/srv/" : "/msg/") + target.substr(at+1);
         }
 
+        std::string source_full;
+
         // Search in source directory
-        std::string source_full = source_dir + "/" + target + (find_service? ".srv" : ".msg");
+        source_full = source_dir + "/" + target + (find_service? ".srv" : ".msg");
         if (verbose)
         {
             printf("searching definition: %s... (source directory: %s)\n", source_full.c_str(), source_dir.c_str());
@@ -712,6 +714,26 @@ std::string RosTypeSearch::findFile(const char *tname) {
         if (verbose)
         {
             printf("searching definition: %s... (source directory: %s)\n", source_full.c_str(), source_dir.c_str());
+        }
+        if (stat(source_full.c_str(), &dummy)==0) {
+            return source_full;
+        }
+
+        // Search in parent source directory
+        source_full = source_dir + "/../" + target + (find_service? ".srv" : ".msg");
+        if (verbose)
+        {
+            printf("searching definition: %s... (parent source directory: %s)\n", source_full.c_str(), source_dir.c_str());
+        }
+        if (stat(source_full.c_str(), &dummy)==0) {
+            return source_full;
+        }
+
+        // Search in parent source directory (adding src/msg to path)
+        source_full = source_dir + "/../" + target2 + (find_service? ".srv" : ".msg");
+        if (verbose)
+        {
+            printf("searching definition: %s... (parent source directory: %s)\n", source_full.c_str(), source_dir.c_str());
         }
         if (stat(source_full.c_str(), &dummy)==0) {
             return source_full;
@@ -749,6 +771,26 @@ std::string RosTypeSearch::findFile(const char *tname) {
 
         // Search for std_msgs package in source directory (adding src/msg to path)
         source_full = source_dir + "/std_msgs/" + target2 + (find_service? ".srv" : ".msg");
+        if (verbose)
+        {
+            printf("searching definition: %s...\n", source_full.c_str());
+        }
+        if (stat(source_full.c_str(), &dummy)==0) {
+            return source_full;
+        }
+
+        // Search for common_msgs package in parent source directory
+        source_full = source_dir + "/../common_msgs/" + target + (find_service? ".srv" : ".msg");
+        if (verbose)
+        {
+            printf("searching definition: %s...\n", source_full.c_str());
+        }
+        if (stat(source_full.c_str(), &dummy)==0) {
+            return source_full;
+        }
+
+        // Search for common_msgs package in parent source directory (adding src/msg to path)
+        source_full = source_dir + "/../common_msgs/" + target2 + (find_service? ".srv" : ".msg");
         if (verbose)
         {
             printf("searching definition: %s...\n", source_full.c_str());
