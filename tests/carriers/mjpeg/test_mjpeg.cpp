@@ -27,7 +27,7 @@ int main(int argc, char *argv[]) {
     BufferedPort<ManagedBytes> in; 
     // BufferedPort<Bottle> would also work fine, but less efficient
 
-    BufferedPort<ImageOf<PixelRgb> > out;
+    BufferedPort<FlexImage> out;
 
     if (!in.open(inName)) return 1;
     if (!out.open(outName)) return 1;

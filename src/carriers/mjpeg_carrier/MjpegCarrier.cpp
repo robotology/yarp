@@ -164,8 +164,16 @@ bool MjpegCarrier::write(ConnectionState& proto, SizedWriter& writer) {
     jpeg_net_dest(&cinfo);
     cinfo.image_width = w;
     cinfo.image_height = h;
-    cinfo.input_components = 3;
-    cinfo.in_color_space = JCS_RGB;
+
+    if (img->getPixelCode() != VOCAB_PIXEL_MONO) {
+        cinfo.in_color_space = JCS_RGB;
+        cinfo.input_components = 3;
+    }
+    else {
+        cinfo.in_color_space = JCS_GRAYSCALE;
+        cinfo.input_components = 1;
+    }
+
     jpeg_set_defaults(&cinfo);
     //jpeg_set_quality(&cinfo, 85, TRUE);
     dbg_printf("Starting to compress...\n");

@@ -36,7 +36,7 @@ private:
     TwoWayStream *delegate;
     StringInputStream sis;
     StringOutputStream sos;
-    yarp::sig::ImageOf<yarp::sig::PixelRgb> img;
+    yarp::sig::FlexImage img;
     yarp::sig::ImageNetworkHeader imgHeader;
     BlobNetworkHeader blobHeader;
     ManagedBytes cimg;
@@ -44,24 +44,16 @@ private:
     int phase;
     char *cursor;
     int remaining;
-    bool sender;
-    bool firstRound;
     bool autocompress;
     yarp::os::Bytes envelope;
-    readEnvelopeCallbackType readEnvelopeCallback;
-    void* readEnvelopeCallbackData;
 public:
-    MjpegStream(TwoWayStream *delegate, bool sender, bool autocompress) :
+    MjpegStream(TwoWayStream *delegate, bool autocompress) :
             delegate(delegate),
             blobHeader(BlobNetworkHeader{0,0,0}),
             phase(0),
             cursor(NULL),
             remaining(0),
-            sender(sender),
-            firstRound(true),
-            autocompress(autocompress),
-            readEnvelopeCallback(NULL),
-            readEnvelopeCallbackData(NULL)
+            autocompress(autocompress)
     {}
 
     virtual ~MjpegStream() {
