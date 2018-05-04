@@ -519,7 +519,7 @@ int yarp::run::Run::server()
     cmd.addString("true");
     yarp::os::impl::NameClient::getNameClient().send(cmd, reply);
 
-    yInfo() << "Yarprun succesfully started on port: " << mPortName.c_str();
+    yInfo() << "Yarprun successfully started on port: " << mPortName.c_str();
 
     pServerPort=&port;
 
@@ -907,7 +907,7 @@ int yarp::run::Run::server()
 
         yarp::os::impl::NameClient::getNameClient().send(cmd, reply);
 
-        yInfo() << "Yarprun succesfully started on port: " << mPortName.c_str();
+        yInfo() << "Yarprun successfully started on port: " << mPortName.c_str();
 
         pServerPort=&port;
 

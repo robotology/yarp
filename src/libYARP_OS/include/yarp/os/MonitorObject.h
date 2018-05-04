@@ -74,7 +74,7 @@ public:
 
     /**
      * After data get accpeted in the accept() callback, an instance of that
-     * is given to the update fucntion where the data can be accessed and modified
+     * is given to the update function where the data can be accessed and modified
      *
      * @param thing An instance of yarp::os::Thing object which can be used
      *        to typecast the data to the correct type.

@@ -289,7 +289,7 @@ bool WireReader::readString(ConstString& str, bool *is_vocab)
     }
     str.resize(len);
     reader.expectBlock((const char *)str.c_str(), len);
-    // This is needed for compatiblity with versions of yarp before March 2015
+    // This is needed for compatibility with versions of yarp before March 2015
     if (len>0) {
         if (str[len-1] == '\0') {
             str.resize(len-1);

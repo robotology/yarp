@@ -76,7 +76,7 @@ public:
      * requests a configuration file to be read (via --from for example) and
      * that file cannot be found. If a default configuration file has been set
      * with ResourceFinder::setDefaultConfigFile, the presence or absence of
-     * that file doesn't by itself contribute to  sucess/failure (since it is
+     * that file doesn't by itself contribute to  success/failure (since it is
      * perfectly valid for it to be
      * absent).
      */

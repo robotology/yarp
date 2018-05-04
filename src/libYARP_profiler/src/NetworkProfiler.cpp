@@ -87,6 +87,7 @@ bool NetworkProfiler::getPortDetails(const string& portName, PortDetails& info) 
     cmd.addString("list"); cmd.addString("out");
     if(!ping.write(cmd, reply)) {
         yError()<<"Cannot write (list out) to"<<portName;
+        ping.close();
         return false;
     }
     for(int i=0; i<reply.size(); i++) {
@@ -107,6 +108,7 @@ bool NetworkProfiler::getPortDetails(const string& portName, PortDetails& info) 
     cmd.addString("list"); cmd.addString("in");
     if(!ping.write(cmd, reply)) {
         yError()<<"Cannot write (list in) to"<<portName;
+        ping.close();
         return false;
     }
     for(int i=0; i<reply.size(); i++) {
@@ -121,6 +123,7 @@ bool NetworkProfiler::getPortDetails(const string& portName, PortDetails& info) 
     cmd.addString("prop"); cmd.addString("get"); cmd.addString(portName);
     if(!ping.write(cmd, reply)) {
         yError()<<"Cannot write (prop get"<<portName<<") to"<<portName;
+        ping.close();
         return false;
     }
 

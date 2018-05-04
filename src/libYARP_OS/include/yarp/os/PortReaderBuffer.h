@@ -110,7 +110,7 @@ public:
 
     /**
      * Factory method.  New instances are created as needed to store incoming
-     * data.  By default, this just uses the default contructor - override
+     * data.  By default, this just uses the default constructor - override
      * this if you need to do something fancier (such as allocating
      * a shared memory space).
      *

@@ -128,7 +128,7 @@ public:
      * Get a report of all applications running on a yarprun server.
      * @param node is the yarprun server port name. It must be unique in the network.
      * @param processes is a list of applications running on the remote yarprun server. It must not be allocated
-     * and it is responsability of the caller to delete it.
+     * and it is responsibility of the caller to delete it.
      * @param num_processes return the number of running processes.
      * @return 0=success -1=failed.
      */

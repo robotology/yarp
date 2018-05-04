@@ -607,7 +607,7 @@ SystemInfo::PlatformInfo SystemInfo::getPlatformInfo()
     if (a[i] == '\0') {
         std::string tmpVariable(a + prev, a + i);
         size_t equalsSign=tmpVariable.find("=");
-        if (equalsSign!=std::string::npos && equalsSign!=0) // among enviroment variables there are DOS-related ones that start with a =
+        if (equalsSign!=std::string::npos && equalsSign!=0) // among environment variables there are DOS-related ones that start with a =
         {
             platform.environmentVars.put(tmpVariable.substr(0, equalsSign), tmpVariable.substr(equalsSign+1));
         }

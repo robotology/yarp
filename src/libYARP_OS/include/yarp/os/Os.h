@@ -23,7 +23,7 @@ namespace os {
  *
  * Get an environment variable.
  *
- * @param[in] var string that containt the environment variable name
+ * @param[in] var string that contains the environment variable name
  * @return the value corresponding to the envarionment variable v
  */
 YARP_OS_API const char* getenv(const char* var);

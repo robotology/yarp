@@ -17,6 +17,7 @@
 #include <yarp/os/Time.h>
 
 #include <yarp/os/impl/NameClient.h>
+#include <yarp/profiler/NetworkProfiler.h>
 
 #include <mainwindow.h>
 
@@ -441,6 +442,13 @@ bool ClusterWidget::checkNameserver()
     }
 
 
+    if (!NetworkBase::checkNetwork(2.0))
+    {
+        yError()<<"ClusterWidget: yarpserver is not running";
+        return false;
+    }
+
+
     yarp::os::Bottle cmd, reply;
     cmd.addString("get");
     cmd.addString(name);
@@ -448,7 +456,7 @@ bool ClusterWidget::checkNameserver()
     bool ret = yarp::os::impl::NameClient::getNameClient().send(cmd, reply);
     if (!ret)
     {
-        yError()<<"Manager::Cannot contact the NameClient";
+        yError()<<"ClusterWidget: Cannot contact the NameClient";
         return false;
     }
     if (reply.size()==6)
@@ -477,6 +485,20 @@ bool ClusterWidget::checkNode(const string &name)
         portname = "/" + portname;
     }
 
+    if (!NetworkBase::checkNetwork(2.0))
+    {
+        yError()<<"ClusterWidget: yarpserver is not running";
+        return false;
+    }
+
+    yarp::profiler::NetworkProfiler::PortDetails dummy;
+    if (! yarp::profiler::NetworkProfiler::getPortDetails(portname, dummy))
+    {
+        yError()<<"ClusterWidget: port"<<portname<<"is not responding";
+        return false;
+    }
+
+
     yarp::os::Bottle cmd, reply;
     cmd.addString("get");
     cmd.addString(portname);
@@ -484,7 +506,7 @@ bool ClusterWidget::checkNode(const string &name)
     bool ret = yarp::os::impl::NameClient::getNameClient().send(cmd, reply);
     if (!ret)
     {
-        yError()<<"Manager::Cannot contact the NameClient";
+        yError()<<"ClusterWidget: Cannot contact the NameClient";
         return false;
     }
     if (reply.size()==6)

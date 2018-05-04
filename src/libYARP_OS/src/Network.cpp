@@ -417,7 +417,7 @@ static int metaConnect(const ConstString& src,
     CARRIER_DEBUG("STATIC_DST: name=%s, carrier=%s\n", staticDest.getName().c_str(), staticDest.getCarrier().c_str());
 
     //DynamicSrc and DynamicDst are the contacts created by connect command
-    //while staticSrc and staticDest are contacts created by quering th server
+    //while staticSrc and staticDest are contacts created by querying th server
 
     if (staticSrc.getCarrier()=="xmlrpc" &&
         (staticDest.getCarrier()=="xmlrpc"||(staticDest.getCarrier().find("rossrv")==0))&&
@@ -567,7 +567,7 @@ static int metaConnect(const ConstString& src,
        CARRIER_DEBUG("style_carrier_name=%s and carrier_constraint_name=%s are equals!\n", style_carrier_name.c_str(), carrier_constraint_name.c_str());
 
     }
-    //we are going to choose the carrier of this connection, and we collect parameters specfied by user
+    //we are going to choose the carrier of this connection, and we collect parameters specified by user
     //in order to pass them to the carrier, so it can configure itself.
     if (carrierConstraint!="") {
         style.carrier = carrierConstraint;
@@ -592,10 +592,10 @@ static int metaConnect(const ConstString& src,
 
     if (style.carrier=="") {
         style.carrier = staticSrc.getCarrier();
-        CARRIER_DEBUG("the choosen style carrier is static src\n ");
+        CARRIER_DEBUG("the chosen style carrier is static src\n ");
     }
 
-    //now stylecarrier contains the carrier choosen for this connection
+    //now stylecarrier contains the carrier chosen for this connection
 
     CARRIER_DEBUG("style_carrier with params  =%s\n", style.carrier.c_str());
 

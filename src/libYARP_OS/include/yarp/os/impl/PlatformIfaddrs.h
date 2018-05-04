@@ -20,7 +20,7 @@ namespace os {
 namespace impl {
 
 // ACE_OS::getifaddrs, etc are not implemented, anyway ACE implementation
-// is different, therefore they are not neeeded.
+// is different, therefore they are not needed.
 #if !defined(YARP_HAS_ACE)
     using ::getifaddrs;
     using ::freeifaddrs;

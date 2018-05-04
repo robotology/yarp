@@ -158,9 +158,9 @@ void Time::useSystemClock()
  * In this situation
  * - isSystemClock()    will be false
  * - isNetworkClock()   will be true
- * - isValid()          will be false until the first clock mesage is received, then it'll be true
+ * - isValid()          will be false until the first clock message is received, then it'll be true
  *
- * As soon as the clock starts beeing published, the networkClock has to acknowledge it and 'attach' to it. Clock will
+ * As soon as the clock starts being published, the networkClock has to acknowledge it and 'attach' to it. Clock will
  * then be valid.
  */
 void Time::useNetworkClock(const ConstString& clock, ConstString localPortName)

@@ -142,7 +142,7 @@ public:
      * @param priority the new priority of the thread.
      * @param policy the scheduling policy of the thread
      * @return -1 if the priority cannot be set.
-     * @note The thread plolicy is highly OS dependant and a right combination of
+     * @note The thread policy is highly OS dependent and a right combination of
      * priority and policy should be used. In some platform changing thread priorities
      * is subject to having the right permission. For example, the following combinations
      * are supported on most Linux platforms:
@@ -160,7 +160,7 @@ public:
 
     /**
      * @brief Query the current scheduling policy of the thread, if the OS supports that.
-     * @return the scheduling policy of the theread.
+     * @return the scheduling policy of the thread.
      */
     int getPolicy();
 
