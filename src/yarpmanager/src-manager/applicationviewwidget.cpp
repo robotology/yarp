@@ -2272,6 +2272,23 @@ bool ApplicationViewWidget::getConRowByID(int id, int *row)
     }
     return false;
 }
+
+/*! \brief Get the resource row by id
+    \param id the requested id
+    \param the output row
+*/
+bool ApplicationViewWidget::getResRowByID(int id, int *row)
+{
+    for(int i=0;i< ui->resourcesList->topLevelItemCount();i++) {
+        QTreeWidgetItem *it = ui->resourcesList->topLevelItem(i);
+
+        if (it->text(1).toInt() == id) {
+            *row = i;
+            return true;
+        }
+    }
+    return false;
+}
 /*! \brief Get the Module row by id
     \param id the requested id
     \param the output row
