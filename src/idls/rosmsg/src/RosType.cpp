@@ -106,6 +106,7 @@ bool RosType::read(const char *tname, RosTypeSearch& env, RosTypeCodeGen& gen,
     rosRawType = base;
     if (base[0]>='a'&&base[0]<='z'&&base.find("/")==std::string::npos&&base.find(".")==std::string::npos) {
         isStruct = false;
+        isRosPrimitive = true;
         if (base=="time"||base=="duration") {
             if (gen.hasNativeTimeClass()) {
                 isPrimitive = true;
@@ -117,6 +118,7 @@ bool RosType::read(const char *tname, RosTypeSearch& env, RosTypeCodeGen& gen,
                 t1.rosType = "uint32";
                 t1.rosName = "sec";
                 t1.isPrimitive = true;
+                t1.isRosPrimitive = true;
                 t1.isValid = true;
                 t1.verbose = verbose;
                 subRosType.push_back(t1);
@@ -124,12 +126,14 @@ bool RosType::read(const char *tname, RosTypeSearch& env, RosTypeCodeGen& gen,
                 t2.rosType = "uint32";
                 t2.rosName = "nsec";
                 t2.isPrimitive = true;
+                t2.isRosPrimitive = true;
                 t2.isValid = true;
                 t2.verbose = verbose;
                 subRosType.push_back(t2);
             }
         } else {
             isPrimitive = true;
+            isRosPrimitive = true;
         }
         isValid = true;
         return true;
@@ -396,7 +400,7 @@ bool RosType::emitType(RosTypeCodeGen& gen,
             checksum_const_text.push_back(add);
         } else {
             std::string add = "";
-            if (!e.isStruct) {
+            if (e.isRosPrimitive) {
                 add += e.rosRawType;
             } else {
                 add += e.checksum;
@@ -422,7 +426,7 @@ bool RosType::emitType(RosTypeCodeGen& gen,
     for (const auto& txt : checksum_var_text) {
         sum += txt;
     }
-    //printf("SUM [%s]\n", sum.c_str());
+    //printf("SUM [%s] [%s]\n", rosType.c_str(), sum.c_str());
     sum = sum.substr(0,sum.length()-1);
     md5_state_t cstate;
     md5_byte_t digest[16];
@@ -434,6 +438,7 @@ bool RosType::emitType(RosTypeCodeGen& gen,
         sprintf(hex_output + di * 2, "%02x", digest[di]);
     }
     checksum = (char *)hex_output;
+    //printf("CHECKSUM [%s] [%s]\n", rosType.c_str(), checksum.c_str());
 
     if (reply!=nullptr) {
         if (!reply->emitType(gen,state)) {

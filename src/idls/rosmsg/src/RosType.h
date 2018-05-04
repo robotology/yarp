@@ -90,6 +90,7 @@ public:
     bool isArray;
     int arrayLength;
     bool isPrimitive;
+    bool isRosPrimitive;
     bool isStruct;
     std::string rosType;
     std::string rosRawType;
@@ -112,6 +113,7 @@ public:
             isArray(false),
             arrayLength(-1),
             isPrimitive(false),
+            isRosPrimitive(false),
             isStruct(false),
             reply(nullptr),
             verbose(false),
@@ -122,9 +124,10 @@ public:
     void clear() {
         isValid = false;
         isArray = false;
-        isStruct = false;
         arrayLength = -1;
         isPrimitive = false;
+        isRosPrimitive = false;
+        isStruct = false;
         txt = "";
         rosType = "";
         rosRawType = "";
