@@ -2,8 +2,6 @@
 # Authors: Silvio Traversaro <silvio.traversaro@iit.it>
 # CopyPolicy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
 
-# test_string.lua uses the yarpserver, so for now it is not include in the CTest infrastructure
-
 macro(add_lua_unit_test luascript)
   # Find the lua interpreter (ideally, this should be handled in FindLua or in a separate
   # FindLuaInterp like for python)
@@ -27,3 +25,4 @@ endmacro()
 add_lua_unit_test(test_bottle_and_property.lua)
 add_lua_unit_test(test_resource_finder.lua)
 add_lua_unit_test(test_vocab.lua)
+add_lua_unit_test(test_port.lua)
