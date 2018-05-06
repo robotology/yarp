@@ -36,6 +36,7 @@ BatteryWrapper::BatteryWrapper() : RateThread(DEFAULT_THREAD_PERIOD)
 
 BatteryWrapper::~BatteryWrapper()
 {
+    threadRelease();
     battery_p = nullptr;
 }
 
