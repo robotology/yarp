@@ -485,7 +485,7 @@ bool AnalogWrapper::checkROSParams(Searchable &config)
     rosMsgType = rosGroup.find("ROS_msgType").asString();
 
     // check for frame_id parameter
-    if (rosMsgType == "geometry_msgs/WrenchedStamped")
+    if (rosMsgType == "geometry_msgs/WrenchStamped")
     {
         yInfo() << sensorId << "ROS_msgType is " << rosMsgType;
         if (!rosGroup.check("frame_id"))
@@ -571,20 +571,31 @@ bool AnalogWrapper::initialize_ROS()
                 break;
             }
 
-            if (rosMsgType == " geometry_msgs/WrenchedStamped" && !rosPublisherWrenchPort.topic(rosTopicName))
+            if (rosMsgType == "geometry_msgs/WrenchStamped")
             {
-                yError() << " opening " << rosTopicName << " Topic, check your yarp-ROS network configuration\n";
-                success = false;
-                break;
+		if (!rosPublisherWrenchPort.topic(rosTopicName))
+                {
+                   yError() << " opening " << rosTopicName << " Topic, check your yarp-ROS network configuration\n";
+                   success = false;
+                   break;
+                }
             }
-
-            if (rosMsgType == "sensor_msgs/JointState" && !rosPublisherJointPort.topic(rosTopicName))
+            else if (rosMsgType == "sensor_msgs/JointState")
             {
-                yError() << " opening " << rosTopicName << " Topic, check your yarp-ROS network configuration\n";
-                success = false;
-                break;
+		if (!rosPublisherJointPort.topic(rosTopicName))
+                {
+		    yError() << " opening " << rosTopicName << " Topic, check your yarp-ROS network configuration\n";
+                    success = false;
+                    break;
+		}
             }
+            else
+            {
+		yError() << sensorId << "Invalid rosMsgType: " << rosMsgType;
+	    }
 
+   	    yInfo() << sensorId << "ROS initialized succesfully, node:" << rosNodeName << " topic:" << rosTopicName;
+						
             success = true;
         } break;
 
@@ -827,7 +838,7 @@ void AnalogWrapper::run()
                     }
                 }
 
-                if (useROS != ROS_disabled && rosMsgType == "geometry_msgs/WrenchedStamped")
+                if (useROS != ROS_disabled && rosMsgType == "geometry_msgs/WrenchStamped")
                 {
                     geometry_msgs_WrenchStamped rosData;
                     rosData.header.seq = rosMsgCounter++;
