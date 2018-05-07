@@ -113,13 +113,13 @@ void configure_search(RosTypeSearch& env, Searchable& p)
     if (p.check("out")) {
         env.setTargetDirectory(p.find("out").toString().c_str());
     }
-    if (p.check("no-ros",Value(0)).asInt()!=0 || p.findGroup("no-ros").size()==1) {
+    if (p.check("no-ros",Value(0)).asInt32()!=0 || p.findGroup("no-ros").size()==1) {
         env.disableRos();
     }
-    if (p.check("web",Value(0)).asInt()!=0 || p.findGroup("web").size()==1) {
+    if (p.check("web",Value(0)).asInt32()!=0 || p.findGroup("web").size()==1) {
         env.enableWeb();
     }
-    if (p.check("soft",Value(0)).asInt()!=0 || p.findGroup("soft").size()==1) {
+    if (p.check("soft",Value(0)).asInt32()!=0 || p.findGroup("soft").size()==1) {
         env.softFail();
     }
     env.lookForService(p.check("service"));
