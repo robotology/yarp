@@ -326,14 +326,14 @@ string t_yarp_generator::type_to_enum(t_type* type) {
     case t_base_type::TYPE_I16:
       return "::apache::thrift::protocol::T_I16";
     case t_base_type::TYPE_I32:
-      return "BOTTLE_TAG_INT";
+      return "BOTTLE_TAG_INT32";
     case t_base_type::TYPE_I64:
       return "::apache::thrift::protocol::T_I64";
     case t_base_type::TYPE_DOUBLE:
-      return "BOTTLE_TAG_DOUBLE";
+      return "BOTTLE_TAG_FLOAT64";
     }
   } else if (type->is_enum()) {
-    return "BOTTLE_TAG_INT";
+    return "BOTTLE_TAG_INT32";
   } else if (type->is_struct()) {
     return "BOTTLE_TAG_LIST";
   } else if (type->is_xception()) {
@@ -2304,7 +2304,7 @@ void t_yarp_generator::generate_service(t_service* tservice) {
     indent_up();
     indent(f_cpp_) << "if (!writer.writeListHeader(2)) return false;" << endl;
     indent(f_cpp_) << "if (!writer.writeTag(\"many\",1, 0)) return false;" << endl;
-    indent(f_cpp_) << "if (!writer.writeListBegin(BOTTLE_TAG_INT, static_cast<uint32_t>(_return.size()))) return false;" << endl;
+    indent(f_cpp_) << "if (!writer.writeListBegin(BOTTLE_TAG_INT32, static_cast<uint32_t>(_return.size()))) return false;" << endl;
     indent(f_cpp_) << "std::vector<std::string> ::iterator _iterHelp;" << endl;
     indent(f_cpp_) << "for (_iterHelp = _return.begin(); _iterHelp != _return.end(); ++_iterHelp)" << endl;
     indent(f_cpp_) << "{" << endl;
@@ -2462,7 +2462,7 @@ void t_yarp_generator::generate_serialize_field(ofstream& out,
         out << "writeBool(" << name << ")";
         break;
       case t_base_type::TYPE_I8:
-        out << "writeByte(" << name << ")";
+        out << "writeI8(" << name << ")";
         break;
       case t_base_type::TYPE_I16:
         out << "writeI16(" << name << ")";
@@ -2474,7 +2474,7 @@ void t_yarp_generator::generate_serialize_field(ofstream& out,
         out << "writeI64(" << name << ")";
         break;
       case t_base_type::TYPE_DOUBLE:
-        out << "writeDouble(" << name << ")";
+        out << "writeFloat64(" << name << ")";
         break;
       default:
         throw "compiler error: no C++ writer for base type " + t_base_type::t_base_name(tbase) + name;
@@ -2642,7 +2642,7 @@ void t_yarp_generator::generate_deserialize_field(ofstream& out,
       out << "readBool(" << name << ")";
       break;
     case t_base_type::TYPE_I8:
-      out << "readByte(" << name << ")";
+      out << "readI8(" << name << ")";
       break;
     case t_base_type::TYPE_I16:
       out << "readI16(" << name << ")";
@@ -2654,7 +2654,7 @@ void t_yarp_generator::generate_deserialize_field(ofstream& out,
       out << "readI64(" << name << ")";
       break;
     case t_base_type::TYPE_DOUBLE:
-      out << "readDouble(" << name << ")";
+      out << "readFloat64(" << name << ")";
       break;
     default:
       throw "compiler error: no C++ reader for base type " + t_base_type::t_base_name(tbase) + name;
