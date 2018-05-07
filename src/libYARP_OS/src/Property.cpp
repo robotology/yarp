@@ -9,12 +9,13 @@
 
 #include <yarp/os/Property.h>
 #include <yarp/os/Bottle.h>
+#include <yarp/os/NetType.h>
+#include <yarp/os/StringInputStream.h>
+#include <yarp/os/Network.h>
+
 #include <yarp/os/impl/BottleImpl.h>
 #include <yarp/os/impl/Logger.h>
-#include <yarp/os/StringInputStream.h>
-#include <yarp/os/NetType.h>
 #include <yarp/os/impl/SplitString.h>
-
 #include <yarp/os/impl/PlatformDirent.h>
 
 #include <algorithm>

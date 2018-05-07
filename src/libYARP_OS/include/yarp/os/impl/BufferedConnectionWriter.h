@@ -479,8 +479,11 @@ private:
 /**
  * A helper for recording entire message/reply transactions
  */
-class yarp::os::impl::ConnectionRecorder : public ConnectionReader,
-            public ConnectionWriter, public yarp::os::PortWriter {
+class yarp::os::impl::ConnectionRecorder :
+        public ConnectionReader,
+        public ConnectionWriter,
+        public yarp::os::PortWriter
+{
 private:
     ConnectionReader *reader;
     ConnectionWriter *writer;
