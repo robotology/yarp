@@ -52,17 +52,17 @@ class GoalStatus : public yarp::os::idl::WirePortable
 {
 public:
     yarp::rosmsg::actionlib_msgs::GoalID goal_id;
-    unsigned char status;
-    static const unsigned char PENDING = 0;
-    static const unsigned char ACTIVE = 1;
-    static const unsigned char PREEMPTED = 2;
-    static const unsigned char SUCCEEDED = 3;
-    static const unsigned char ABORTED = 4;
-    static const unsigned char REJECTED = 5;
-    static const unsigned char PREEMPTING = 6;
-    static const unsigned char RECALLING = 7;
-    static const unsigned char RECALLED = 8;
-    static const unsigned char LOST = 9;
+    std::uint8_t status;
+    static const std::uint8_t PENDING = 0;
+    static const std::uint8_t ACTIVE = 1;
+    static const std::uint8_t PREEMPTED = 2;
+    static const std::uint8_t SUCCEEDED = 3;
+    static const std::uint8_t ABORTED = 4;
+    static const std::uint8_t REJECTED = 5;
+    static const std::uint8_t PREEMPTING = 6;
+    static const std::uint8_t RECALLING = 7;
+    static const std::uint8_t RECALLED = 8;
+    static const std::uint8_t LOST = 9;
     std::string text;
 
     GoalStatus() :
@@ -112,12 +112,10 @@ public:
         }
 
         // *** status ***
-        if (!connection.expectBlock((char*)&status, 1)) {
-            return false;
-        }
+        status = connection.expectInt8();
 
         // *** text ***
-        int len = connection.expectInt();
+        int len = connection.expectInt32();
         text.resize(len);
         if (!connection.expectBlock((char*)text.c_str(), len)) {
             return false;
@@ -140,7 +138,7 @@ public:
         }
 
         // *** status ***
-        status = reader.expectInt();
+        status = reader.expectInt8();
 
         // *** text ***
         if (!reader.readString(text)) {
@@ -165,10 +163,10 @@ public:
         }
 
         // *** status ***
-        connection.appendBlock((char*)&status, 1);
+        connection.appendInt8(status);
 
         // *** text ***
-        connection.appendInt(text.length());
+        connection.appendInt32(text.length());
         connection.appendExternalBlock((char*)text.c_str(), text.length());
 
         return !connection.isError();
@@ -176,8 +174,8 @@ public:
 
     bool writeBottle(yarp::os::ConnectionWriter& connection) override
     {
-        connection.appendInt(BOTTLE_TAG_LIST);
-        connection.appendInt(13);
+        connection.appendInt32(BOTTLE_TAG_LIST);
+        connection.appendInt32(13);
 
         // *** goal_id ***
         if (!goal_id.write(connection)) {
@@ -185,12 +183,12 @@ public:
         }
 
         // *** status ***
-        connection.appendInt(BOTTLE_TAG_INT);
-        connection.appendInt((int)status);
+        connection.appendInt32(BOTTLE_TAG_INT8);
+        connection.appendInt8(status);
 
         // *** text ***
-        connection.appendInt(BOTTLE_TAG_STRING);
-        connection.appendInt(text.length());
+        connection.appendInt32(BOTTLE_TAG_STRING);
+        connection.appendInt32(text.length());
         connection.appendExternalBlock((char*)text.c_str(), text.length());
 
         connection.convertTextMode();

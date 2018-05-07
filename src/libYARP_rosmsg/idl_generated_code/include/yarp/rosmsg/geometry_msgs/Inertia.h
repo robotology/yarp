@@ -44,14 +44,14 @@ namespace geometry_msgs {
 class Inertia : public yarp::os::idl::WirePortable
 {
 public:
-    yarp::os::NetFloat64 m;
+    yarp::conf::float64_t m;
     yarp::rosmsg::geometry_msgs::Vector3 com;
-    yarp::os::NetFloat64 ixx;
-    yarp::os::NetFloat64 ixy;
-    yarp::os::NetFloat64 ixz;
-    yarp::os::NetFloat64 iyy;
-    yarp::os::NetFloat64 iyz;
-    yarp::os::NetFloat64 izz;
+    yarp::conf::float64_t ixx;
+    yarp::conf::float64_t ixy;
+    yarp::conf::float64_t ixz;
+    yarp::conf::float64_t iyy;
+    yarp::conf::float64_t iyz;
+    yarp::conf::float64_t izz;
 
     Inertia() :
             m(0.0),
@@ -95,7 +95,7 @@ public:
     bool readBare(yarp::os::ConnectionReader& connection) override
     {
         // *** m ***
-        m = connection.expectDouble();
+        m = connection.expectFloat64();
 
         // *** com ***
         if (!com.read(connection)) {
@@ -103,22 +103,22 @@ public:
         }
 
         // *** ixx ***
-        ixx = connection.expectDouble();
+        ixx = connection.expectFloat64();
 
         // *** ixy ***
-        ixy = connection.expectDouble();
+        ixy = connection.expectFloat64();
 
         // *** ixz ***
-        ixz = connection.expectDouble();
+        ixz = connection.expectFloat64();
 
         // *** iyy ***
-        iyy = connection.expectDouble();
+        iyy = connection.expectFloat64();
 
         // *** iyz ***
-        iyz = connection.expectDouble();
+        iyz = connection.expectFloat64();
 
         // *** izz ***
-        izz = connection.expectDouble();
+        izz = connection.expectFloat64();
 
         return !connection.isError();
     }
@@ -132,7 +132,7 @@ public:
         }
 
         // *** m ***
-        m = reader.expectDouble();
+        m = reader.expectFloat64();
 
         // *** com ***
         if (!com.read(connection)) {
@@ -140,22 +140,22 @@ public:
         }
 
         // *** ixx ***
-        ixx = reader.expectDouble();
+        ixx = reader.expectFloat64();
 
         // *** ixy ***
-        ixy = reader.expectDouble();
+        ixy = reader.expectFloat64();
 
         // *** ixz ***
-        ixz = reader.expectDouble();
+        ixz = reader.expectFloat64();
 
         // *** iyy ***
-        iyy = reader.expectDouble();
+        iyy = reader.expectFloat64();
 
         // *** iyz ***
-        iyz = reader.expectDouble();
+        iyz = reader.expectFloat64();
 
         // *** izz ***
-        izz = reader.expectDouble();
+        izz = reader.expectFloat64();
 
         return !connection.isError();
     }
@@ -170,7 +170,7 @@ public:
     bool writeBare(yarp::os::ConnectionWriter& connection) override
     {
         // *** m ***
-        connection.appendDouble(m);
+        connection.appendFloat64(m);
 
         // *** com ***
         if (!com.write(connection)) {
@@ -178,34 +178,34 @@ public:
         }
 
         // *** ixx ***
-        connection.appendDouble(ixx);
+        connection.appendFloat64(ixx);
 
         // *** ixy ***
-        connection.appendDouble(ixy);
+        connection.appendFloat64(ixy);
 
         // *** ixz ***
-        connection.appendDouble(ixz);
+        connection.appendFloat64(ixz);
 
         // *** iyy ***
-        connection.appendDouble(iyy);
+        connection.appendFloat64(iyy);
 
         // *** iyz ***
-        connection.appendDouble(iyz);
+        connection.appendFloat64(iyz);
 
         // *** izz ***
-        connection.appendDouble(izz);
+        connection.appendFloat64(izz);
 
         return !connection.isError();
     }
 
     bool writeBottle(yarp::os::ConnectionWriter& connection) override
     {
-        connection.appendInt(BOTTLE_TAG_LIST);
-        connection.appendInt(8);
+        connection.appendInt32(BOTTLE_TAG_LIST);
+        connection.appendInt32(8);
 
         // *** m ***
-        connection.appendInt(BOTTLE_TAG_DOUBLE);
-        connection.appendDouble((double)m);
+        connection.appendInt32(BOTTLE_TAG_FLOAT64);
+        connection.appendFloat64(m);
 
         // *** com ***
         if (!com.write(connection)) {
@@ -213,28 +213,28 @@ public:
         }
 
         // *** ixx ***
-        connection.appendInt(BOTTLE_TAG_DOUBLE);
-        connection.appendDouble((double)ixx);
+        connection.appendInt32(BOTTLE_TAG_FLOAT64);
+        connection.appendFloat64(ixx);
 
         // *** ixy ***
-        connection.appendInt(BOTTLE_TAG_DOUBLE);
-        connection.appendDouble((double)ixy);
+        connection.appendInt32(BOTTLE_TAG_FLOAT64);
+        connection.appendFloat64(ixy);
 
         // *** ixz ***
-        connection.appendInt(BOTTLE_TAG_DOUBLE);
-        connection.appendDouble((double)ixz);
+        connection.appendInt32(BOTTLE_TAG_FLOAT64);
+        connection.appendFloat64(ixz);
 
         // *** iyy ***
-        connection.appendInt(BOTTLE_TAG_DOUBLE);
-        connection.appendDouble((double)iyy);
+        connection.appendInt32(BOTTLE_TAG_FLOAT64);
+        connection.appendFloat64(iyy);
 
         // *** iyz ***
-        connection.appendInt(BOTTLE_TAG_DOUBLE);
-        connection.appendDouble((double)iyz);
+        connection.appendInt32(BOTTLE_TAG_FLOAT64);
+        connection.appendFloat64(iyz);
 
         // *** izz ***
-        connection.appendInt(BOTTLE_TAG_DOUBLE);
-        connection.appendDouble((double)izz);
+        connection.appendInt32(BOTTLE_TAG_FLOAT64);
+        connection.appendFloat64(izz);
 
         connection.convertTextMode();
         return !connection.isError();

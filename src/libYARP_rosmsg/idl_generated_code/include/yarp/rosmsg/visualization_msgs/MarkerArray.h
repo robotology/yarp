@@ -45,7 +45,7 @@ public:
     bool readBare(yarp::os::ConnectionReader& connection) override
     {
         // *** markers ***
-        int len = connection.expectInt();
+        int len = connection.expectInt32();
         markers.resize(len);
         for (int i=0; i<len; i++) {
             if (!markers[i].read(connection)) {
@@ -65,10 +65,10 @@ public:
         }
 
         // *** markers ***
-        if (connection.expectInt() != BOTTLE_TAG_LIST) {
+        if (connection.expectInt32() != BOTTLE_TAG_LIST) {
             return false;
         }
-        int len = connection.expectInt();
+        int len = connection.expectInt32();
         markers.resize(len);
         for (int i=0; i<len; i++) {
             if (!markers[i].read(connection)) {
@@ -89,7 +89,7 @@ public:
     bool writeBare(yarp::os::ConnectionWriter& connection) override
     {
         // *** markers ***
-        connection.appendInt(markers.size());
+        connection.appendInt32(markers.size());
         for (size_t i=0; i<markers.size(); i++) {
             if (!markers[i].write(connection)) {
                 return false;
@@ -101,12 +101,12 @@ public:
 
     bool writeBottle(yarp::os::ConnectionWriter& connection) override
     {
-        connection.appendInt(BOTTLE_TAG_LIST);
-        connection.appendInt(1);
+        connection.appendInt32(BOTTLE_TAG_LIST);
+        connection.appendInt32(1);
 
         // *** markers ***
-        connection.appendInt(BOTTLE_TAG_LIST);
-        connection.appendInt(markers.size());
+        connection.appendInt32(BOTTLE_TAG_LIST);
+        connection.appendInt32(markers.size());
         for (size_t i=0; i<markers.size(); i++) {
             if (!markers[i].write(connection)) {
                 return false;

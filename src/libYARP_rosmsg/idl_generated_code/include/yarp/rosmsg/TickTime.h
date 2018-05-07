@@ -28,8 +28,8 @@ namespace rosmsg {
 class TickTime : public yarp::os::idl::WirePortable
 {
 public:
-    yarp::os::NetUint32 sec;
-    yarp::os::NetUint32 nsec;
+    std::uint32_t sec;
+    std::uint32_t nsec;
 
     TickTime() :
             sec(0),
@@ -86,10 +86,10 @@ public:
     bool readBare(yarp::os::ConnectionReader& connection) override
     {
         // *** sec ***
-        sec = connection.expectInt();
+        sec = connection.expectInt32();
 
         // *** nsec ***
-        nsec = connection.expectInt();
+        nsec = connection.expectInt32();
 
         return !connection.isError();
     }
@@ -103,10 +103,10 @@ public:
         }
 
         // *** sec ***
-        sec = reader.expectInt();
+        sec = reader.expectInt32();
 
         // *** nsec ***
-        nsec = reader.expectInt();
+        nsec = reader.expectInt32();
 
         return !connection.isError();
     }
@@ -121,26 +121,26 @@ public:
     bool writeBare(yarp::os::ConnectionWriter& connection) override
     {
         // *** sec ***
-        connection.appendInt(sec);
+        connection.appendInt32(sec);
 
         // *** nsec ***
-        connection.appendInt(nsec);
+        connection.appendInt32(nsec);
 
         return !connection.isError();
     }
 
     bool writeBottle(yarp::os::ConnectionWriter& connection) override
     {
-        connection.appendInt(BOTTLE_TAG_LIST);
-        connection.appendInt(2);
+        connection.appendInt32(BOTTLE_TAG_LIST);
+        connection.appendInt32(2);
 
         // *** sec ***
-        connection.appendInt(BOTTLE_TAG_INT);
-        connection.appendInt((int)sec);
+        connection.appendInt32(BOTTLE_TAG_INT32);
+        connection.appendInt32(sec);
 
         // *** nsec ***
-        connection.appendInt(BOTTLE_TAG_INT);
-        connection.appendInt((int)nsec);
+        connection.appendInt32(BOTTLE_TAG_INT32);
+        connection.appendInt32(nsec);
 
         connection.convertTextMode();
         return !connection.isError();

@@ -76,15 +76,15 @@ public:
     std::string client_id;
     std::string marker_name;
     std::string control_name;
-    static const unsigned char KEEP_ALIVE = 0;
-    static const unsigned char POSE_UPDATE = 1;
-    static const unsigned char MENU_SELECT = 2;
-    static const unsigned char BUTTON_CLICK = 3;
-    static const unsigned char MOUSE_DOWN = 4;
-    static const unsigned char MOUSE_UP = 5;
-    unsigned char event_type;
+    static const std::uint8_t KEEP_ALIVE = 0;
+    static const std::uint8_t POSE_UPDATE = 1;
+    static const std::uint8_t MENU_SELECT = 2;
+    static const std::uint8_t BUTTON_CLICK = 3;
+    static const std::uint8_t MOUSE_DOWN = 4;
+    static const std::uint8_t MOUSE_UP = 5;
+    std::uint8_t event_type;
     yarp::rosmsg::geometry_msgs::Pose pose;
-    yarp::os::NetUint32 menu_entry_id;
+    std::uint32_t menu_entry_id;
     yarp::rosmsg::geometry_msgs::Point mouse_point;
     bool mouse_point_valid;
 
@@ -151,30 +151,28 @@ public:
         }
 
         // *** client_id ***
-        int len = connection.expectInt();
+        int len = connection.expectInt32();
         client_id.resize(len);
         if (!connection.expectBlock((char*)client_id.c_str(), len)) {
             return false;
         }
 
         // *** marker_name ***
-        len = connection.expectInt();
+        len = connection.expectInt32();
         marker_name.resize(len);
         if (!connection.expectBlock((char*)marker_name.c_str(), len)) {
             return false;
         }
 
         // *** control_name ***
-        len = connection.expectInt();
+        len = connection.expectInt32();
         control_name.resize(len);
         if (!connection.expectBlock((char*)control_name.c_str(), len)) {
             return false;
         }
 
         // *** event_type ***
-        if (!connection.expectBlock((char*)&event_type, 1)) {
-            return false;
-        }
+        event_type = connection.expectInt8();
 
         // *** pose ***
         if (!pose.read(connection)) {
@@ -182,7 +180,7 @@ public:
         }
 
         // *** menu_entry_id ***
-        menu_entry_id = connection.expectInt();
+        menu_entry_id = connection.expectInt32();
 
         // *** mouse_point ***
         if (!mouse_point.read(connection)) {
@@ -226,7 +224,7 @@ public:
         }
 
         // *** event_type ***
-        event_type = reader.expectInt();
+        event_type = reader.expectInt8();
 
         // *** pose ***
         if (!pose.read(connection)) {
@@ -234,7 +232,7 @@ public:
         }
 
         // *** menu_entry_id ***
-        menu_entry_id = reader.expectInt();
+        menu_entry_id = reader.expectInt32();
 
         // *** mouse_point ***
         if (!mouse_point.read(connection)) {
@@ -242,7 +240,7 @@ public:
         }
 
         // *** mouse_point_valid ***
-        mouse_point_valid = reader.expectInt();
+        mouse_point_valid = reader.expectInt8();
 
         return !connection.isError();
     }
@@ -262,19 +260,19 @@ public:
         }
 
         // *** client_id ***
-        connection.appendInt(client_id.length());
+        connection.appendInt32(client_id.length());
         connection.appendExternalBlock((char*)client_id.c_str(), client_id.length());
 
         // *** marker_name ***
-        connection.appendInt(marker_name.length());
+        connection.appendInt32(marker_name.length());
         connection.appendExternalBlock((char*)marker_name.c_str(), marker_name.length());
 
         // *** control_name ***
-        connection.appendInt(control_name.length());
+        connection.appendInt32(control_name.length());
         connection.appendExternalBlock((char*)control_name.c_str(), control_name.length());
 
         // *** event_type ***
-        connection.appendBlock((char*)&event_type, 1);
+        connection.appendInt8(event_type);
 
         // *** pose ***
         if (!pose.write(connection)) {
@@ -282,7 +280,7 @@ public:
         }
 
         // *** menu_entry_id ***
-        connection.appendInt(menu_entry_id);
+        connection.appendInt32(menu_entry_id);
 
         // *** mouse_point ***
         if (!mouse_point.write(connection)) {
@@ -297,8 +295,8 @@ public:
 
     bool writeBottle(yarp::os::ConnectionWriter& connection) override
     {
-        connection.appendInt(BOTTLE_TAG_LIST);
-        connection.appendInt(15);
+        connection.appendInt32(BOTTLE_TAG_LIST);
+        connection.appendInt32(15);
 
         // *** header ***
         if (!header.write(connection)) {
@@ -306,23 +304,23 @@ public:
         }
 
         // *** client_id ***
-        connection.appendInt(BOTTLE_TAG_STRING);
-        connection.appendInt(client_id.length());
+        connection.appendInt32(BOTTLE_TAG_STRING);
+        connection.appendInt32(client_id.length());
         connection.appendExternalBlock((char*)client_id.c_str(), client_id.length());
 
         // *** marker_name ***
-        connection.appendInt(BOTTLE_TAG_STRING);
-        connection.appendInt(marker_name.length());
+        connection.appendInt32(BOTTLE_TAG_STRING);
+        connection.appendInt32(marker_name.length());
         connection.appendExternalBlock((char*)marker_name.c_str(), marker_name.length());
 
         // *** control_name ***
-        connection.appendInt(BOTTLE_TAG_STRING);
-        connection.appendInt(control_name.length());
+        connection.appendInt32(BOTTLE_TAG_STRING);
+        connection.appendInt32(control_name.length());
         connection.appendExternalBlock((char*)control_name.c_str(), control_name.length());
 
         // *** event_type ***
-        connection.appendInt(BOTTLE_TAG_INT);
-        connection.appendInt((int)event_type);
+        connection.appendInt32(BOTTLE_TAG_INT8);
+        connection.appendInt8(event_type);
 
         // *** pose ***
         if (!pose.write(connection)) {
@@ -330,8 +328,8 @@ public:
         }
 
         // *** menu_entry_id ***
-        connection.appendInt(BOTTLE_TAG_INT);
-        connection.appendInt((int)menu_entry_id);
+        connection.appendInt32(BOTTLE_TAG_INT32);
+        connection.appendInt32(menu_entry_id);
 
         // *** mouse_point ***
         if (!mouse_point.write(connection)) {
@@ -339,8 +337,8 @@ public:
         }
 
         // *** mouse_point_valid ***
-        connection.appendInt(BOTTLE_TAG_INT);
-        connection.appendInt((int)mouse_point_valid);
+        connection.appendInt32(BOTTLE_TAG_INT8);
+        connection.appendInt8(mouse_point_valid);
 
         connection.convertTextMode();
         return !connection.isError();

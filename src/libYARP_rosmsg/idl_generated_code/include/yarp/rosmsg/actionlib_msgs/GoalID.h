@@ -64,7 +64,7 @@ public:
         }
 
         // *** id ***
-        int len = connection.expectInt();
+        int len = connection.expectInt32();
         id.resize(len);
         if (!connection.expectBlock((char*)id.c_str(), len)) {
             return false;
@@ -109,7 +109,7 @@ public:
         }
 
         // *** id ***
-        connection.appendInt(id.length());
+        connection.appendInt32(id.length());
         connection.appendExternalBlock((char*)id.c_str(), id.length());
 
         return !connection.isError();
@@ -117,8 +117,8 @@ public:
 
     bool writeBottle(yarp::os::ConnectionWriter& connection) override
     {
-        connection.appendInt(BOTTLE_TAG_LIST);
-        connection.appendInt(2);
+        connection.appendInt32(BOTTLE_TAG_LIST);
+        connection.appendInt32(2);
 
         // *** stamp ***
         if (!stamp.write(connection)) {
@@ -126,8 +126,8 @@ public:
         }
 
         // *** id ***
-        connection.appendInt(BOTTLE_TAG_STRING);
-        connection.appendInt(id.length());
+        connection.appendInt32(BOTTLE_TAG_STRING);
+        connection.appendInt32(id.length());
         connection.appendExternalBlock((char*)id.c_str(), id.length());
 
         connection.convertTextMode();

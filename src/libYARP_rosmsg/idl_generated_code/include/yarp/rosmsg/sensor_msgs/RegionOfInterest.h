@@ -46,10 +46,10 @@ namespace sensor_msgs {
 class RegionOfInterest : public yarp::os::idl::WirePortable
 {
 public:
-    yarp::os::NetUint32 x_offset;
-    yarp::os::NetUint32 y_offset;
-    yarp::os::NetUint32 height;
-    yarp::os::NetUint32 width;
+    std::uint32_t x_offset;
+    std::uint32_t y_offset;
+    std::uint32_t height;
+    std::uint32_t width;
     bool do_rectify;
 
     RegionOfInterest() :
@@ -82,16 +82,16 @@ public:
     bool readBare(yarp::os::ConnectionReader& connection) override
     {
         // *** x_offset ***
-        x_offset = connection.expectInt();
+        x_offset = connection.expectInt32();
 
         // *** y_offset ***
-        y_offset = connection.expectInt();
+        y_offset = connection.expectInt32();
 
         // *** height ***
-        height = connection.expectInt();
+        height = connection.expectInt32();
 
         // *** width ***
-        width = connection.expectInt();
+        width = connection.expectInt32();
 
         // *** do_rectify ***
         if (!connection.expectBlock((char*)&do_rectify, 1)) {
@@ -110,19 +110,19 @@ public:
         }
 
         // *** x_offset ***
-        x_offset = reader.expectInt();
+        x_offset = reader.expectInt32();
 
         // *** y_offset ***
-        y_offset = reader.expectInt();
+        y_offset = reader.expectInt32();
 
         // *** height ***
-        height = reader.expectInt();
+        height = reader.expectInt32();
 
         // *** width ***
-        width = reader.expectInt();
+        width = reader.expectInt32();
 
         // *** do_rectify ***
-        do_rectify = reader.expectInt();
+        do_rectify = reader.expectInt8();
 
         return !connection.isError();
     }
@@ -137,16 +137,16 @@ public:
     bool writeBare(yarp::os::ConnectionWriter& connection) override
     {
         // *** x_offset ***
-        connection.appendInt(x_offset);
+        connection.appendInt32(x_offset);
 
         // *** y_offset ***
-        connection.appendInt(y_offset);
+        connection.appendInt32(y_offset);
 
         // *** height ***
-        connection.appendInt(height);
+        connection.appendInt32(height);
 
         // *** width ***
-        connection.appendInt(width);
+        connection.appendInt32(width);
 
         // *** do_rectify ***
         connection.appendBlock((char*)&do_rectify, 1);
@@ -156,28 +156,28 @@ public:
 
     bool writeBottle(yarp::os::ConnectionWriter& connection) override
     {
-        connection.appendInt(BOTTLE_TAG_LIST);
-        connection.appendInt(5);
+        connection.appendInt32(BOTTLE_TAG_LIST);
+        connection.appendInt32(5);
 
         // *** x_offset ***
-        connection.appendInt(BOTTLE_TAG_INT);
-        connection.appendInt((int)x_offset);
+        connection.appendInt32(BOTTLE_TAG_INT32);
+        connection.appendInt32(x_offset);
 
         // *** y_offset ***
-        connection.appendInt(BOTTLE_TAG_INT);
-        connection.appendInt((int)y_offset);
+        connection.appendInt32(BOTTLE_TAG_INT32);
+        connection.appendInt32(y_offset);
 
         // *** height ***
-        connection.appendInt(BOTTLE_TAG_INT);
-        connection.appendInt((int)height);
+        connection.appendInt32(BOTTLE_TAG_INT32);
+        connection.appendInt32(height);
 
         // *** width ***
-        connection.appendInt(BOTTLE_TAG_INT);
-        connection.appendInt((int)width);
+        connection.appendInt32(BOTTLE_TAG_INT32);
+        connection.appendInt32(width);
 
         // *** do_rectify ***
-        connection.appendInt(BOTTLE_TAG_INT);
-        connection.appendInt((int)do_rectify);
+        connection.appendInt32(BOTTLE_TAG_INT8);
+        connection.appendInt8(do_rectify);
 
         connection.convertTextMode();
         return !connection.isError();

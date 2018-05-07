@@ -45,7 +45,7 @@ public:
     bool readBare(yarp::os::ConnectionReader& connection) override
     {
         // *** transforms ***
-        int len = connection.expectInt();
+        int len = connection.expectInt32();
         transforms.resize(len);
         for (int i=0; i<len; i++) {
             if (!transforms[i].read(connection)) {
@@ -65,10 +65,10 @@ public:
         }
 
         // *** transforms ***
-        if (connection.expectInt() != BOTTLE_TAG_LIST) {
+        if (connection.expectInt32() != BOTTLE_TAG_LIST) {
             return false;
         }
-        int len = connection.expectInt();
+        int len = connection.expectInt32();
         transforms.resize(len);
         for (int i=0; i<len; i++) {
             if (!transforms[i].read(connection)) {
@@ -89,7 +89,7 @@ public:
     bool writeBare(yarp::os::ConnectionWriter& connection) override
     {
         // *** transforms ***
-        connection.appendInt(transforms.size());
+        connection.appendInt32(transforms.size());
         for (size_t i=0; i<transforms.size(); i++) {
             if (!transforms[i].write(connection)) {
                 return false;
@@ -101,12 +101,12 @@ public:
 
     bool writeBottle(yarp::os::ConnectionWriter& connection) override
     {
-        connection.appendInt(BOTTLE_TAG_LIST);
-        connection.appendInt(1);
+        connection.appendInt32(BOTTLE_TAG_LIST);
+        connection.appendInt32(1);
 
         // *** transforms ***
-        connection.appendInt(BOTTLE_TAG_LIST);
-        connection.appendInt(transforms.size());
+        connection.appendInt32(BOTTLE_TAG_LIST);
+        connection.appendInt32(transforms.size());
         for (size_t i=0; i<transforms.size(); i++) {
             if (!transforms[i].write(connection)) {
                 return false;

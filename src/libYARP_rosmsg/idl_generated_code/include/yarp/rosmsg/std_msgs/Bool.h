@@ -60,7 +60,7 @@ public:
         }
 
         // *** data ***
-        data = reader.expectInt();
+        data = reader.expectInt8();
 
         return !connection.isError();
     }
@@ -82,12 +82,12 @@ public:
 
     bool writeBottle(yarp::os::ConnectionWriter& connection) override
     {
-        connection.appendInt(BOTTLE_TAG_LIST);
-        connection.appendInt(1);
+        connection.appendInt32(BOTTLE_TAG_LIST);
+        connection.appendInt32(1);
 
         // *** data ***
-        connection.appendInt(BOTTLE_TAG_INT);
-        connection.appendInt((int)data);
+        connection.appendInt32(BOTTLE_TAG_INT8);
+        connection.appendInt8(data);
 
         connection.convertTextMode();
         return !connection.isError();

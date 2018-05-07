@@ -98,10 +98,10 @@ public:
         }
 
         // *** joint_names ***
-        int len = connection.expectInt();
+        int len = connection.expectInt32();
         joint_names.resize(len);
         for (int i=0; i<len; i++) {
-            int len2 = connection.expectInt();
+            int len2 = connection.expectInt32();
             joint_names[i].resize(len2);
             if (!connection.expectBlock((char*)joint_names[i].c_str(), len2)) {
                 return false;
@@ -109,7 +109,7 @@ public:
         }
 
         // *** transforms ***
-        len = connection.expectInt();
+        len = connection.expectInt32();
         transforms.resize(len);
         for (int i=0; i<len; i++) {
             if (!transforms[i].read(connection)) {
@@ -118,7 +118,7 @@ public:
         }
 
         // *** twist ***
-        len = connection.expectInt();
+        len = connection.expectInt32();
         twist.resize(len);
         for (int i=0; i<len; i++) {
             if (!twist[i].read(connection)) {
@@ -127,7 +127,7 @@ public:
         }
 
         // *** wrench ***
-        len = connection.expectInt();
+        len = connection.expectInt32();
         wrench.resize(len);
         for (int i=0; i<len; i++) {
             if (!wrench[i].read(connection)) {
@@ -152,13 +152,13 @@ public:
         }
 
         // *** joint_names ***
-        if (connection.expectInt() != (BOTTLE_TAG_LIST|BOTTLE_TAG_STRING)) {
+        if (connection.expectInt32() != (BOTTLE_TAG_LIST|BOTTLE_TAG_STRING)) {
             return false;
         }
-        int len = connection.expectInt();
+        int len = connection.expectInt32();
         joint_names.resize(len);
         for (int i=0; i<len; i++) {
-            int len2 = connection.expectInt();
+            int len2 = connection.expectInt32();
             joint_names[i].resize(len2);
             if (!connection.expectBlock((char*)joint_names[i].c_str(), len2)) {
                 return false;
@@ -166,10 +166,10 @@ public:
         }
 
         // *** transforms ***
-        if (connection.expectInt() != BOTTLE_TAG_LIST) {
+        if (connection.expectInt32() != BOTTLE_TAG_LIST) {
             return false;
         }
-        len = connection.expectInt();
+        len = connection.expectInt32();
         transforms.resize(len);
         for (int i=0; i<len; i++) {
             if (!transforms[i].read(connection)) {
@@ -178,10 +178,10 @@ public:
         }
 
         // *** twist ***
-        if (connection.expectInt() != BOTTLE_TAG_LIST) {
+        if (connection.expectInt32() != BOTTLE_TAG_LIST) {
             return false;
         }
-        len = connection.expectInt();
+        len = connection.expectInt32();
         twist.resize(len);
         for (int i=0; i<len; i++) {
             if (!twist[i].read(connection)) {
@@ -190,10 +190,10 @@ public:
         }
 
         // *** wrench ***
-        if (connection.expectInt() != BOTTLE_TAG_LIST) {
+        if (connection.expectInt32() != BOTTLE_TAG_LIST) {
             return false;
         }
-        len = connection.expectInt();
+        len = connection.expectInt32();
         wrench.resize(len);
         for (int i=0; i<len; i++) {
             if (!wrench[i].read(connection)) {
@@ -219,14 +219,14 @@ public:
         }
 
         // *** joint_names ***
-        connection.appendInt(joint_names.size());
+        connection.appendInt32(joint_names.size());
         for (size_t i=0; i<joint_names.size(); i++) {
-            connection.appendInt(joint_names[i].length());
+            connection.appendInt32(joint_names[i].length());
             connection.appendExternalBlock((char*)joint_names[i].c_str(), joint_names[i].length());
         }
 
         // *** transforms ***
-        connection.appendInt(transforms.size());
+        connection.appendInt32(transforms.size());
         for (size_t i=0; i<transforms.size(); i++) {
             if (!transforms[i].write(connection)) {
                 return false;
@@ -234,7 +234,7 @@ public:
         }
 
         // *** twist ***
-        connection.appendInt(twist.size());
+        connection.appendInt32(twist.size());
         for (size_t i=0; i<twist.size(); i++) {
             if (!twist[i].write(connection)) {
                 return false;
@@ -242,7 +242,7 @@ public:
         }
 
         // *** wrench ***
-        connection.appendInt(wrench.size());
+        connection.appendInt32(wrench.size());
         for (size_t i=0; i<wrench.size(); i++) {
             if (!wrench[i].write(connection)) {
                 return false;
@@ -254,8 +254,8 @@ public:
 
     bool writeBottle(yarp::os::ConnectionWriter& connection) override
     {
-        connection.appendInt(BOTTLE_TAG_LIST);
-        connection.appendInt(5);
+        connection.appendInt32(BOTTLE_TAG_LIST);
+        connection.appendInt32(5);
 
         // *** header ***
         if (!header.write(connection)) {
@@ -263,16 +263,16 @@ public:
         }
 
         // *** joint_names ***
-        connection.appendInt(BOTTLE_TAG_LIST|BOTTLE_TAG_STRING);
-        connection.appendInt(joint_names.size());
+        connection.appendInt32(BOTTLE_TAG_LIST|BOTTLE_TAG_STRING);
+        connection.appendInt32(joint_names.size());
         for (size_t i=0; i<joint_names.size(); i++) {
-            connection.appendInt(joint_names[i].length());
+            connection.appendInt32(joint_names[i].length());
             connection.appendExternalBlock((char*)joint_names[i].c_str(), joint_names[i].length());
         }
 
         // *** transforms ***
-        connection.appendInt(BOTTLE_TAG_LIST);
-        connection.appendInt(transforms.size());
+        connection.appendInt32(BOTTLE_TAG_LIST);
+        connection.appendInt32(transforms.size());
         for (size_t i=0; i<transforms.size(); i++) {
             if (!transforms[i].write(connection)) {
                 return false;
@@ -280,8 +280,8 @@ public:
         }
 
         // *** twist ***
-        connection.appendInt(BOTTLE_TAG_LIST);
-        connection.appendInt(twist.size());
+        connection.appendInt32(BOTTLE_TAG_LIST);
+        connection.appendInt32(twist.size());
         for (size_t i=0; i<twist.size(); i++) {
             if (!twist[i].write(connection)) {
                 return false;
@@ -289,8 +289,8 @@ public:
         }
 
         // *** wrench ***
-        connection.appendInt(BOTTLE_TAG_LIST);
-        connection.appendInt(wrench.size());
+        connection.appendInt32(BOTTLE_TAG_LIST);
+        connection.appendInt32(wrench.size());
         for (size_t i=0; i<wrench.size(); i++) {
             if (!wrench[i].write(connection)) {
                 return false;

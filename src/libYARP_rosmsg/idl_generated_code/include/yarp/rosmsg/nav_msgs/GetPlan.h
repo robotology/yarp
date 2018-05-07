@@ -43,12 +43,12 @@ class GetPlan : public yarp::os::idl::WirePortable
 public:
     yarp::rosmsg::geometry_msgs::PoseStamped start;
     yarp::rosmsg::geometry_msgs::PoseStamped goal;
-    yarp::os::NetFloat32 tolerance;
+    yarp::conf::float32_t tolerance;
 
     GetPlan() :
             start(),
             goal(),
-            tolerance(0.0)
+            tolerance(0.0f)
     {
     }
 
@@ -61,7 +61,7 @@ public:
         goal.clear();
 
         // *** tolerance ***
-        tolerance = 0.0;
+        tolerance = 0.0f;
     }
 
     bool readBare(yarp::os::ConnectionReader& connection) override
@@ -77,9 +77,7 @@ public:
         }
 
         // *** tolerance ***
-        if (!connection.expectBlock((char*)&tolerance, 4)) {
-            return false;
-        }
+        tolerance = connection.expectFloat32();
 
         return !connection.isError();
     }
@@ -103,7 +101,7 @@ public:
         }
 
         // *** tolerance ***
-        tolerance = reader.expectDouble();
+        tolerance = reader.expectFloat32();
 
         return !connection.isError();
     }
@@ -128,15 +126,15 @@ public:
         }
 
         // *** tolerance ***
-        connection.appendBlock((char*)&tolerance, 4);
+        connection.appendFloat32(tolerance);
 
         return !connection.isError();
     }
 
     bool writeBottle(yarp::os::ConnectionWriter& connection) override
     {
-        connection.appendInt(BOTTLE_TAG_LIST);
-        connection.appendInt(3);
+        connection.appendInt32(BOTTLE_TAG_LIST);
+        connection.appendInt32(3);
 
         // *** start ***
         if (!start.write(connection)) {
@@ -149,8 +147,8 @@ public:
         }
 
         // *** tolerance ***
-        connection.appendInt(BOTTLE_TAG_DOUBLE);
-        connection.appendDouble((double)tolerance);
+        connection.appendInt32(BOTTLE_TAG_FLOAT32);
+        connection.appendFloat32(tolerance);
 
         connection.convertTextMode();
         return !connection.isError();

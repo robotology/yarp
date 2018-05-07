@@ -77,15 +77,15 @@ class NavSatFix : public yarp::os::idl::WirePortable
 public:
     yarp::rosmsg::std_msgs::Header header;
     yarp::rosmsg::sensor_msgs::NavSatStatus status;
-    yarp::os::NetFloat64 latitude;
-    yarp::os::NetFloat64 longitude;
-    yarp::os::NetFloat64 altitude;
-    std::vector<yarp::os::NetFloat64> position_covariance;
-    static const unsigned char COVARIANCE_TYPE_UNKNOWN = 0;
-    static const unsigned char COVARIANCE_TYPE_APPROXIMATED = 1;
-    static const unsigned char COVARIANCE_TYPE_DIAGONAL_KNOWN = 2;
-    static const unsigned char COVARIANCE_TYPE_KNOWN = 3;
-    unsigned char position_covariance_type;
+    yarp::conf::float64_t latitude;
+    yarp::conf::float64_t longitude;
+    yarp::conf::float64_t altitude;
+    std::vector<yarp::conf::float64_t> position_covariance;
+    static const std::uint8_t COVARIANCE_TYPE_UNKNOWN = 0;
+    static const std::uint8_t COVARIANCE_TYPE_APPROXIMATED = 1;
+    static const std::uint8_t COVARIANCE_TYPE_DIAGONAL_KNOWN = 2;
+    static const std::uint8_t COVARIANCE_TYPE_KNOWN = 3;
+    std::uint8_t position_covariance_type;
 
     NavSatFix() :
             header(),
@@ -145,25 +145,23 @@ public:
         }
 
         // *** latitude ***
-        latitude = connection.expectDouble();
+        latitude = connection.expectFloat64();
 
         // *** longitude ***
-        longitude = connection.expectDouble();
+        longitude = connection.expectFloat64();
 
         // *** altitude ***
-        altitude = connection.expectDouble();
+        altitude = connection.expectFloat64();
 
         // *** position_covariance ***
         int len = 9;
         position_covariance.resize(len);
-        if (len > 0 && !connection.expectBlock((char*)&position_covariance[0], sizeof(yarp::os::NetFloat64)*len)) {
+        if (len > 0 && !connection.expectBlock((char*)&position_covariance[0], sizeof(yarp::conf::float64_t)*len)) {
             return false;
         }
 
         // *** position_covariance_type ***
-        if (!connection.expectBlock((char*)&position_covariance_type, 1)) {
-            return false;
-        }
+        position_covariance_type = connection.expectInt8();
 
         return !connection.isError();
     }
@@ -187,26 +185,26 @@ public:
         }
 
         // *** latitude ***
-        latitude = reader.expectDouble();
+        latitude = reader.expectFloat64();
 
         // *** longitude ***
-        longitude = reader.expectDouble();
+        longitude = reader.expectFloat64();
 
         // *** altitude ***
-        altitude = reader.expectDouble();
+        altitude = reader.expectFloat64();
 
         // *** position_covariance ***
-        if (connection.expectInt() != (BOTTLE_TAG_LIST|BOTTLE_TAG_DOUBLE)) {
+        if (connection.expectInt32() != (BOTTLE_TAG_LIST|BOTTLE_TAG_FLOAT64)) {
             return false;
         }
-        int len = connection.expectInt();
+        int len = connection.expectInt32();
         position_covariance.resize(len);
         for (int i=0; i<len; i++) {
-            position_covariance[i] = (yarp::os::NetFloat64)connection.expectDouble();
+            position_covariance[i] = (yarp::conf::float64_t)connection.expectFloat64();
         }
 
         // *** position_covariance_type ***
-        position_covariance_type = reader.expectInt();
+        position_covariance_type = reader.expectInt8();
 
         return !connection.isError();
     }
@@ -231,29 +229,29 @@ public:
         }
 
         // *** latitude ***
-        connection.appendDouble(latitude);
+        connection.appendFloat64(latitude);
 
         // *** longitude ***
-        connection.appendDouble(longitude);
+        connection.appendFloat64(longitude);
 
         // *** altitude ***
-        connection.appendDouble(altitude);
+        connection.appendFloat64(altitude);
 
         // *** position_covariance ***
         if (position_covariance.size()>0) {
-            connection.appendExternalBlock((char*)&position_covariance[0], sizeof(yarp::os::NetFloat64)*position_covariance.size());
+            connection.appendExternalBlock((char*)&position_covariance[0], sizeof(yarp::conf::float64_t)*position_covariance.size());
         }
 
         // *** position_covariance_type ***
-        connection.appendBlock((char*)&position_covariance_type, 1);
+        connection.appendInt8(position_covariance_type);
 
         return !connection.isError();
     }
 
     bool writeBottle(yarp::os::ConnectionWriter& connection) override
     {
-        connection.appendInt(BOTTLE_TAG_LIST);
-        connection.appendInt(11);
+        connection.appendInt32(BOTTLE_TAG_LIST);
+        connection.appendInt32(11);
 
         // *** header ***
         if (!header.write(connection)) {
@@ -266,27 +264,27 @@ public:
         }
 
         // *** latitude ***
-        connection.appendInt(BOTTLE_TAG_DOUBLE);
-        connection.appendDouble((double)latitude);
+        connection.appendInt32(BOTTLE_TAG_FLOAT64);
+        connection.appendFloat64(latitude);
 
         // *** longitude ***
-        connection.appendInt(BOTTLE_TAG_DOUBLE);
-        connection.appendDouble((double)longitude);
+        connection.appendInt32(BOTTLE_TAG_FLOAT64);
+        connection.appendFloat64(longitude);
 
         // *** altitude ***
-        connection.appendInt(BOTTLE_TAG_DOUBLE);
-        connection.appendDouble((double)altitude);
+        connection.appendInt32(BOTTLE_TAG_FLOAT64);
+        connection.appendFloat64(altitude);
 
         // *** position_covariance ***
-        connection.appendInt(BOTTLE_TAG_LIST|BOTTLE_TAG_DOUBLE);
-        connection.appendInt(position_covariance.size());
+        connection.appendInt32(BOTTLE_TAG_LIST|BOTTLE_TAG_FLOAT64);
+        connection.appendInt32(position_covariance.size());
         for (size_t i=0; i<position_covariance.size(); i++) {
-            connection.appendDouble((double)position_covariance[i]);
+            connection.appendFloat64(position_covariance[i]);
         }
 
         // *** position_covariance_type ***
-        connection.appendInt(BOTTLE_TAG_INT);
-        connection.appendInt((int)position_covariance_type);
+        connection.appendInt32(BOTTLE_TAG_INT8);
+        connection.appendInt8(position_covariance_type);
 
         connection.convertTextMode();
         return !connection.isError();

@@ -35,7 +35,7 @@ class UInt16MultiArray : public yarp::os::idl::WirePortable
 {
 public:
     yarp::rosmsg::std_msgs::MultiArrayLayout layout;
-    std::vector<yarp::os::NetUint16> data;
+    std::vector<std::uint16_t> data;
 
     UInt16MultiArray() :
             layout(),
@@ -60,9 +60,9 @@ public:
         }
 
         // *** data ***
-        int len = connection.expectInt();
+        int len = connection.expectInt32();
         data.resize(len);
-        if (len > 0 && !connection.expectBlock((char*)&data[0], sizeof(yarp::os::NetUint16)*len)) {
+        if (len > 0 && !connection.expectBlock((char*)&data[0], sizeof(std::uint16_t)*len)) {
             return false;
         }
 
@@ -83,13 +83,13 @@ public:
         }
 
         // *** data ***
-        if (connection.expectInt() != (BOTTLE_TAG_LIST|BOTTLE_TAG_INT)) {
+        if (connection.expectInt32() != (BOTTLE_TAG_LIST|BOTTLE_TAG_INT16)) {
             return false;
         }
-        int len = connection.expectInt();
+        int len = connection.expectInt32();
         data.resize(len);
         for (int i=0; i<len; i++) {
-            data[i] = (yarp::os::NetUint16)connection.expectInt();
+            data[i] = (std::uint16_t)connection.expectInt16();
         }
 
         return !connection.isError();
@@ -110,9 +110,9 @@ public:
         }
 
         // *** data ***
-        connection.appendInt(data.size());
+        connection.appendInt32(data.size());
         if (data.size()>0) {
-            connection.appendExternalBlock((char*)&data[0], sizeof(yarp::os::NetUint16)*data.size());
+            connection.appendExternalBlock((char*)&data[0], sizeof(std::uint16_t)*data.size());
         }
 
         return !connection.isError();
@@ -120,8 +120,8 @@ public:
 
     bool writeBottle(yarp::os::ConnectionWriter& connection) override
     {
-        connection.appendInt(BOTTLE_TAG_LIST);
-        connection.appendInt(2);
+        connection.appendInt32(BOTTLE_TAG_LIST);
+        connection.appendInt32(2);
 
         // *** layout ***
         if (!layout.write(connection)) {
@@ -129,10 +129,10 @@ public:
         }
 
         // *** data ***
-        connection.appendInt(BOTTLE_TAG_LIST|BOTTLE_TAG_INT);
-        connection.appendInt(data.size());
+        connection.appendInt32(BOTTLE_TAG_LIST|BOTTLE_TAG_INT16);
+        connection.appendInt32(data.size());
         for (size_t i=0; i<data.size(); i++) {
-            connection.appendInt((int)data[i]);
+            connection.appendInt16(data[i]);
         }
 
         connection.convertTextMode();

@@ -30,8 +30,8 @@ class MultiArrayDimension : public yarp::os::idl::WirePortable
 {
 public:
     std::string label;
-    yarp::os::NetUint32 size;
-    yarp::os::NetUint32 stride;
+    std::uint32_t size;
+    std::uint32_t stride;
 
     MultiArrayDimension() :
             label(""),
@@ -55,17 +55,17 @@ public:
     bool readBare(yarp::os::ConnectionReader& connection) override
     {
         // *** label ***
-        int len = connection.expectInt();
+        int len = connection.expectInt32();
         label.resize(len);
         if (!connection.expectBlock((char*)label.c_str(), len)) {
             return false;
         }
 
         // *** size ***
-        size = connection.expectInt();
+        size = connection.expectInt32();
 
         // *** stride ***
-        stride = connection.expectInt();
+        stride = connection.expectInt32();
 
         return !connection.isError();
     }
@@ -84,10 +84,10 @@ public:
         }
 
         // *** size ***
-        size = reader.expectInt();
+        size = reader.expectInt32();
 
         // *** stride ***
-        stride = reader.expectInt();
+        stride = reader.expectInt32();
 
         return !connection.isError();
     }
@@ -102,35 +102,35 @@ public:
     bool writeBare(yarp::os::ConnectionWriter& connection) override
     {
         // *** label ***
-        connection.appendInt(label.length());
+        connection.appendInt32(label.length());
         connection.appendExternalBlock((char*)label.c_str(), label.length());
 
         // *** size ***
-        connection.appendInt(size);
+        connection.appendInt32(size);
 
         // *** stride ***
-        connection.appendInt(stride);
+        connection.appendInt32(stride);
 
         return !connection.isError();
     }
 
     bool writeBottle(yarp::os::ConnectionWriter& connection) override
     {
-        connection.appendInt(BOTTLE_TAG_LIST);
-        connection.appendInt(3);
+        connection.appendInt32(BOTTLE_TAG_LIST);
+        connection.appendInt32(3);
 
         // *** label ***
-        connection.appendInt(BOTTLE_TAG_STRING);
-        connection.appendInt(label.length());
+        connection.appendInt32(BOTTLE_TAG_STRING);
+        connection.appendInt32(label.length());
         connection.appendExternalBlock((char*)label.c_str(), label.length());
 
         // *** size ***
-        connection.appendInt(BOTTLE_TAG_INT);
-        connection.appendInt((int)size);
+        connection.appendInt32(BOTTLE_TAG_INT32);
+        connection.appendInt32(size);
 
         // *** stride ***
-        connection.appendInt(BOTTLE_TAG_INT);
-        connection.appendInt((int)stride);
+        connection.appendInt32(BOTTLE_TAG_INT32);
+        connection.appendInt32(stride);
 
         connection.convertTextMode();
         return !connection.isError();

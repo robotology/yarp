@@ -27,25 +27,23 @@ namespace std_msgs {
 class Float32 : public yarp::os::idl::WirePortable
 {
 public:
-    yarp::os::NetFloat32 data;
+    yarp::conf::float32_t data;
 
     Float32() :
-            data(0.0)
+            data(0.0f)
     {
     }
 
     void clear()
     {
         // *** data ***
-        data = 0.0;
+        data = 0.0f;
     }
 
     bool readBare(yarp::os::ConnectionReader& connection) override
     {
         // *** data ***
-        if (!connection.expectBlock((char*)&data, 4)) {
-            return false;
-        }
+        data = connection.expectFloat32();
 
         return !connection.isError();
     }
@@ -59,7 +57,7 @@ public:
         }
 
         // *** data ***
-        data = reader.expectDouble();
+        data = reader.expectFloat32();
 
         return !connection.isError();
     }
@@ -74,19 +72,19 @@ public:
     bool writeBare(yarp::os::ConnectionWriter& connection) override
     {
         // *** data ***
-        connection.appendBlock((char*)&data, 4);
+        connection.appendFloat32(data);
 
         return !connection.isError();
     }
 
     bool writeBottle(yarp::os::ConnectionWriter& connection) override
     {
-        connection.appendInt(BOTTLE_TAG_LIST);
-        connection.appendInt(1);
+        connection.appendInt32(BOTTLE_TAG_LIST);
+        connection.appendInt32(1);
 
         // *** data ***
-        connection.appendInt(BOTTLE_TAG_DOUBLE);
-        connection.appendDouble((double)data);
+        connection.appendInt32(BOTTLE_TAG_FLOAT32);
+        connection.appendFloat32(data);
 
         connection.convertTextMode();
         return !connection.isError();

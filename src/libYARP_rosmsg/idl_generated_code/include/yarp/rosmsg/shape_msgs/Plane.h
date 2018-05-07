@@ -35,7 +35,7 @@ namespace shape_msgs {
 class Plane : public yarp::os::idl::WirePortable
 {
 public:
-    std::vector<yarp::os::NetFloat64> coef;
+    std::vector<yarp::conf::float64_t> coef;
 
     Plane() :
             coef()
@@ -55,7 +55,7 @@ public:
         // *** coef ***
         int len = 4;
         coef.resize(len);
-        if (len > 0 && !connection.expectBlock((char*)&coef[0], sizeof(yarp::os::NetFloat64)*len)) {
+        if (len > 0 && !connection.expectBlock((char*)&coef[0], sizeof(yarp::conf::float64_t)*len)) {
             return false;
         }
 
@@ -71,13 +71,13 @@ public:
         }
 
         // *** coef ***
-        if (connection.expectInt() != (BOTTLE_TAG_LIST|BOTTLE_TAG_DOUBLE)) {
+        if (connection.expectInt32() != (BOTTLE_TAG_LIST|BOTTLE_TAG_FLOAT64)) {
             return false;
         }
-        int len = connection.expectInt();
+        int len = connection.expectInt32();
         coef.resize(len);
         for (int i=0; i<len; i++) {
-            coef[i] = (yarp::os::NetFloat64)connection.expectDouble();
+            coef[i] = (yarp::conf::float64_t)connection.expectFloat64();
         }
 
         return !connection.isError();
@@ -94,7 +94,7 @@ public:
     {
         // *** coef ***
         if (coef.size()>0) {
-            connection.appendExternalBlock((char*)&coef[0], sizeof(yarp::os::NetFloat64)*coef.size());
+            connection.appendExternalBlock((char*)&coef[0], sizeof(yarp::conf::float64_t)*coef.size());
         }
 
         return !connection.isError();
@@ -102,14 +102,14 @@ public:
 
     bool writeBottle(yarp::os::ConnectionWriter& connection) override
     {
-        connection.appendInt(BOTTLE_TAG_LIST);
-        connection.appendInt(1);
+        connection.appendInt32(BOTTLE_TAG_LIST);
+        connection.appendInt32(1);
 
         // *** coef ***
-        connection.appendInt(BOTTLE_TAG_LIST|BOTTLE_TAG_DOUBLE);
-        connection.appendInt(coef.size());
+        connection.appendInt32(BOTTLE_TAG_LIST|BOTTLE_TAG_FLOAT64);
+        connection.appendInt32(coef.size());
         for (size_t i=0; i<coef.size(); i++) {
-            connection.appendDouble((double)coef[i]);
+            connection.appendFloat64(coef[i]);
         }
 
         connection.convertTextMode();

@@ -37,14 +37,14 @@ namespace tf2_msgs {
 class TF2Error : public yarp::os::idl::WirePortable
 {
 public:
-    static const unsigned char NO_ERROR = 0;
-    static const unsigned char LOOKUP_ERROR = 1;
-    static const unsigned char CONNECTIVITY_ERROR = 2;
-    static const unsigned char EXTRAPOLATION_ERROR = 3;
-    static const unsigned char INVALID_ARGUMENT_ERROR = 4;
-    static const unsigned char TIMEOUT_ERROR = 5;
-    static const unsigned char TRANSFORM_ERROR = 6;
-    unsigned char error;
+    static const std::uint8_t NO_ERROR = 0;
+    static const std::uint8_t LOOKUP_ERROR = 1;
+    static const std::uint8_t CONNECTIVITY_ERROR = 2;
+    static const std::uint8_t EXTRAPOLATION_ERROR = 3;
+    static const std::uint8_t INVALID_ARGUMENT_ERROR = 4;
+    static const std::uint8_t TIMEOUT_ERROR = 5;
+    static const std::uint8_t TRANSFORM_ERROR = 6;
+    std::uint8_t error;
     std::string error_string;
 
     TF2Error() :
@@ -79,12 +79,10 @@ public:
     bool readBare(yarp::os::ConnectionReader& connection) override
     {
         // *** error ***
-        if (!connection.expectBlock((char*)&error, 1)) {
-            return false;
-        }
+        error = connection.expectInt8();
 
         // *** error_string ***
-        int len = connection.expectInt();
+        int len = connection.expectInt32();
         error_string.resize(len);
         if (!connection.expectBlock((char*)error_string.c_str(), len)) {
             return false;
@@ -102,7 +100,7 @@ public:
         }
 
         // *** error ***
-        error = reader.expectInt();
+        error = reader.expectInt8();
 
         // *** error_string ***
         if (!reader.readString(error_string)) {
@@ -122,10 +120,10 @@ public:
     bool writeBare(yarp::os::ConnectionWriter& connection) override
     {
         // *** error ***
-        connection.appendBlock((char*)&error, 1);
+        connection.appendInt8(error);
 
         // *** error_string ***
-        connection.appendInt(error_string.length());
+        connection.appendInt32(error_string.length());
         connection.appendExternalBlock((char*)error_string.c_str(), error_string.length());
 
         return !connection.isError();
@@ -133,16 +131,16 @@ public:
 
     bool writeBottle(yarp::os::ConnectionWriter& connection) override
     {
-        connection.appendInt(BOTTLE_TAG_LIST);
-        connection.appendInt(9);
+        connection.appendInt32(BOTTLE_TAG_LIST);
+        connection.appendInt32(9);
 
         // *** error ***
-        connection.appendInt(BOTTLE_TAG_INT);
-        connection.appendInt((int)error);
+        connection.appendInt32(BOTTLE_TAG_INT8);
+        connection.appendInt8(error);
 
         // *** error_string ***
-        connection.appendInt(BOTTLE_TAG_STRING);
-        connection.appendInt(error_string.length());
+        connection.appendInt32(BOTTLE_TAG_STRING);
+        connection.appendInt32(error_string.length());
         connection.appendExternalBlock((char*)error_string.c_str(), error_string.length());
 
         connection.convertTextMode();

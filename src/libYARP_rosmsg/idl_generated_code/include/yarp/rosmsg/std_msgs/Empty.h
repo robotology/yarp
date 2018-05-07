@@ -69,8 +69,8 @@ public:
 
     bool writeBottle(yarp::os::ConnectionWriter& connection) override
     {
-        connection.appendInt(BOTTLE_TAG_LIST);
-        connection.appendInt(0);
+        connection.appendInt32(BOTTLE_TAG_LIST);
+        connection.appendInt32(0);
 
 
         connection.convertTextMode();

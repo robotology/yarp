@@ -43,11 +43,11 @@ namespace diagnostic_msgs {
 class DiagnosticStatus : public yarp::os::idl::WirePortable
 {
 public:
-    static const unsigned char OK = 0;
-    static const unsigned char WARN = 1;
-    static const unsigned char ERROR = 2;
-    static const unsigned char STALE = 3;
-    unsigned char level;
+    static const std::uint8_t OK = 0;
+    static const std::uint8_t WARN = 1;
+    static const std::uint8_t ERROR = 2;
+    static const std::uint8_t STALE = 3;
+    std::uint8_t level;
     std::string name;
     std::string message;
     std::string hardware_id;
@@ -91,33 +91,31 @@ public:
     bool readBare(yarp::os::ConnectionReader& connection) override
     {
         // *** level ***
-        if (!connection.expectBlock((char*)&level, 1)) {
-            return false;
-        }
+        level = connection.expectInt8();
 
         // *** name ***
-        int len = connection.expectInt();
+        int len = connection.expectInt32();
         name.resize(len);
         if (!connection.expectBlock((char*)name.c_str(), len)) {
             return false;
         }
 
         // *** message ***
-        len = connection.expectInt();
+        len = connection.expectInt32();
         message.resize(len);
         if (!connection.expectBlock((char*)message.c_str(), len)) {
             return false;
         }
 
         // *** hardware_id ***
-        len = connection.expectInt();
+        len = connection.expectInt32();
         hardware_id.resize(len);
         if (!connection.expectBlock((char*)hardware_id.c_str(), len)) {
             return false;
         }
 
         // *** values ***
-        len = connection.expectInt();
+        len = connection.expectInt32();
         values.resize(len);
         for (int i=0; i<len; i++) {
             if (!values[i].read(connection)) {
@@ -137,7 +135,7 @@ public:
         }
 
         // *** level ***
-        level = reader.expectInt();
+        level = reader.expectInt8();
 
         // *** name ***
         if (!reader.readString(name)) {
@@ -155,10 +153,10 @@ public:
         }
 
         // *** values ***
-        if (connection.expectInt() != BOTTLE_TAG_LIST) {
+        if (connection.expectInt32() != BOTTLE_TAG_LIST) {
             return false;
         }
-        int len = connection.expectInt();
+        int len = connection.expectInt32();
         values.resize(len);
         for (int i=0; i<len; i++) {
             if (!values[i].read(connection)) {
@@ -179,22 +177,22 @@ public:
     bool writeBare(yarp::os::ConnectionWriter& connection) override
     {
         // *** level ***
-        connection.appendBlock((char*)&level, 1);
+        connection.appendInt8(level);
 
         // *** name ***
-        connection.appendInt(name.length());
+        connection.appendInt32(name.length());
         connection.appendExternalBlock((char*)name.c_str(), name.length());
 
         // *** message ***
-        connection.appendInt(message.length());
+        connection.appendInt32(message.length());
         connection.appendExternalBlock((char*)message.c_str(), message.length());
 
         // *** hardware_id ***
-        connection.appendInt(hardware_id.length());
+        connection.appendInt32(hardware_id.length());
         connection.appendExternalBlock((char*)hardware_id.c_str(), hardware_id.length());
 
         // *** values ***
-        connection.appendInt(values.size());
+        connection.appendInt32(values.size());
         for (size_t i=0; i<values.size(); i++) {
             if (!values[i].write(connection)) {
                 return false;
@@ -206,31 +204,31 @@ public:
 
     bool writeBottle(yarp::os::ConnectionWriter& connection) override
     {
-        connection.appendInt(BOTTLE_TAG_LIST);
-        connection.appendInt(9);
+        connection.appendInt32(BOTTLE_TAG_LIST);
+        connection.appendInt32(9);
 
         // *** level ***
-        connection.appendInt(BOTTLE_TAG_INT);
-        connection.appendInt((int)level);
+        connection.appendInt32(BOTTLE_TAG_INT8);
+        connection.appendInt8(level);
 
         // *** name ***
-        connection.appendInt(BOTTLE_TAG_STRING);
-        connection.appendInt(name.length());
+        connection.appendInt32(BOTTLE_TAG_STRING);
+        connection.appendInt32(name.length());
         connection.appendExternalBlock((char*)name.c_str(), name.length());
 
         // *** message ***
-        connection.appendInt(BOTTLE_TAG_STRING);
-        connection.appendInt(message.length());
+        connection.appendInt32(BOTTLE_TAG_STRING);
+        connection.appendInt32(message.length());
         connection.appendExternalBlock((char*)message.c_str(), message.length());
 
         // *** hardware_id ***
-        connection.appendInt(BOTTLE_TAG_STRING);
-        connection.appendInt(hardware_id.length());
+        connection.appendInt32(BOTTLE_TAG_STRING);
+        connection.appendInt32(hardware_id.length());
         connection.appendExternalBlock((char*)hardware_id.c_str(), hardware_id.length());
 
         // *** values ***
-        connection.appendInt(BOTTLE_TAG_LIST);
-        connection.appendInt(values.size());
+        connection.appendInt32(BOTTLE_TAG_LIST);
+        connection.appendInt32(values.size());
         for (size_t i=0; i<values.size(); i++) {
             if (!values[i].write(connection)) {
                 return false;

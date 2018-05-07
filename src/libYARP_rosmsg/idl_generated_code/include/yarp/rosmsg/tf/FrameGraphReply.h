@@ -43,7 +43,7 @@ public:
     bool readBare(yarp::os::ConnectionReader& connection) override
     {
         // *** dot_graph ***
-        int len = connection.expectInt();
+        int len = connection.expectInt32();
         dot_graph.resize(len);
         if (!connection.expectBlock((char*)dot_graph.c_str(), len)) {
             return false;
@@ -78,7 +78,7 @@ public:
     bool writeBare(yarp::os::ConnectionWriter& connection) override
     {
         // *** dot_graph ***
-        connection.appendInt(dot_graph.length());
+        connection.appendInt32(dot_graph.length());
         connection.appendExternalBlock((char*)dot_graph.c_str(), dot_graph.length());
 
         return !connection.isError();
@@ -86,12 +86,12 @@ public:
 
     bool writeBottle(yarp::os::ConnectionWriter& connection) override
     {
-        connection.appendInt(BOTTLE_TAG_LIST);
-        connection.appendInt(1);
+        connection.appendInt32(BOTTLE_TAG_LIST);
+        connection.appendInt32(1);
 
         // *** dot_graph ***
-        connection.appendInt(BOTTLE_TAG_STRING);
-        connection.appendInt(dot_graph.length());
+        connection.appendInt32(BOTTLE_TAG_STRING);
+        connection.appendInt32(dot_graph.length());
         connection.appendExternalBlock((char*)dot_graph.c_str(), dot_graph.length());
 
         connection.convertTextMode();

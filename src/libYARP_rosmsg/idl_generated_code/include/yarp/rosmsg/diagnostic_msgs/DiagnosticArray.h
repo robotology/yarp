@@ -57,7 +57,7 @@ public:
         }
 
         // *** status ***
-        int len = connection.expectInt();
+        int len = connection.expectInt32();
         status.resize(len);
         for (int i=0; i<len; i++) {
             if (!status[i].read(connection)) {
@@ -82,10 +82,10 @@ public:
         }
 
         // *** status ***
-        if (connection.expectInt() != BOTTLE_TAG_LIST) {
+        if (connection.expectInt32() != BOTTLE_TAG_LIST) {
             return false;
         }
-        int len = connection.expectInt();
+        int len = connection.expectInt32();
         status.resize(len);
         for (int i=0; i<len; i++) {
             if (!status[i].read(connection)) {
@@ -111,7 +111,7 @@ public:
         }
 
         // *** status ***
-        connection.appendInt(status.size());
+        connection.appendInt32(status.size());
         for (size_t i=0; i<status.size(); i++) {
             if (!status[i].write(connection)) {
                 return false;
@@ -123,8 +123,8 @@ public:
 
     bool writeBottle(yarp::os::ConnectionWriter& connection) override
     {
-        connection.appendInt(BOTTLE_TAG_LIST);
-        connection.appendInt(2);
+        connection.appendInt32(BOTTLE_TAG_LIST);
+        connection.appendInt32(2);
 
         // *** header ***
         if (!header.write(connection)) {
@@ -132,8 +132,8 @@ public:
         }
 
         // *** status ***
-        connection.appendInt(BOTTLE_TAG_LIST);
-        connection.appendInt(status.size());
+        connection.appendInt32(BOTTLE_TAG_LIST);
+        connection.appendInt32(status.size());
         for (size_t i=0; i<status.size(); i++) {
             if (!status[i].write(connection)) {
                 return false;

@@ -31,7 +31,7 @@ namespace sensor_msgs {
 class LaserEcho : public yarp::os::idl::WirePortable
 {
 public:
-    std::vector<yarp::os::NetFloat32> echoes;
+    std::vector<yarp::conf::float32_t> echoes;
 
     LaserEcho() :
             echoes()
@@ -47,9 +47,9 @@ public:
     bool readBare(yarp::os::ConnectionReader& connection) override
     {
         // *** echoes ***
-        int len = connection.expectInt();
+        int len = connection.expectInt32();
         echoes.resize(len);
-        if (len > 0 && !connection.expectBlock((char*)&echoes[0], sizeof(yarp::os::NetFloat32)*len)) {
+        if (len > 0 && !connection.expectBlock((char*)&echoes[0], sizeof(yarp::conf::float32_t)*len)) {
             return false;
         }
 
@@ -65,13 +65,13 @@ public:
         }
 
         // *** echoes ***
-        if (connection.expectInt() != (BOTTLE_TAG_LIST|BOTTLE_TAG_DOUBLE)) {
+        if (connection.expectInt32() != (BOTTLE_TAG_LIST|BOTTLE_TAG_FLOAT32)) {
             return false;
         }
-        int len = connection.expectInt();
+        int len = connection.expectInt32();
         echoes.resize(len);
         for (int i=0; i<len; i++) {
-            echoes[i] = (yarp::os::NetFloat32)connection.expectDouble();
+            echoes[i] = (yarp::conf::float32_t)connection.expectFloat32();
         }
 
         return !connection.isError();
@@ -87,9 +87,9 @@ public:
     bool writeBare(yarp::os::ConnectionWriter& connection) override
     {
         // *** echoes ***
-        connection.appendInt(echoes.size());
+        connection.appendInt32(echoes.size());
         if (echoes.size()>0) {
-            connection.appendExternalBlock((char*)&echoes[0], sizeof(yarp::os::NetFloat32)*echoes.size());
+            connection.appendExternalBlock((char*)&echoes[0], sizeof(yarp::conf::float32_t)*echoes.size());
         }
 
         return !connection.isError();
@@ -97,14 +97,14 @@ public:
 
     bool writeBottle(yarp::os::ConnectionWriter& connection) override
     {
-        connection.appendInt(BOTTLE_TAG_LIST);
-        connection.appendInt(1);
+        connection.appendInt32(BOTTLE_TAG_LIST);
+        connection.appendInt32(1);
 
         // *** echoes ***
-        connection.appendInt(BOTTLE_TAG_LIST|BOTTLE_TAG_DOUBLE);
-        connection.appendInt(echoes.size());
+        connection.appendInt32(BOTTLE_TAG_LIST|BOTTLE_TAG_FLOAT32);
+        connection.appendInt32(echoes.size());
         for (size_t i=0; i<echoes.size(); i++) {
-            connection.appendDouble((double)echoes[i]);
+            connection.appendFloat32(echoes[i]);
         }
 
         connection.convertTextMode();

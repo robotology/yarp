@@ -43,7 +43,7 @@ class InteractiveMarkerInit : public yarp::os::idl::WirePortable
 {
 public:
     std::string server_id;
-    yarp::os::NetUint64 seq_num;
+    std::uint64_t seq_num;
     std::vector<yarp::rosmsg::visualization_msgs::InteractiveMarker> markers;
 
     InteractiveMarkerInit() :
@@ -68,19 +68,17 @@ public:
     bool readBare(yarp::os::ConnectionReader& connection) override
     {
         // *** server_id ***
-        int len = connection.expectInt();
+        int len = connection.expectInt32();
         server_id.resize(len);
         if (!connection.expectBlock((char*)server_id.c_str(), len)) {
             return false;
         }
 
         // *** seq_num ***
-        if (!connection.expectBlock((char*)&seq_num, 8)) {
-            return false;
-        }
+        seq_num = connection.expectInt64();
 
         // *** markers ***
-        len = connection.expectInt();
+        len = connection.expectInt32();
         markers.resize(len);
         for (int i=0; i<len; i++) {
             if (!markers[i].read(connection)) {
@@ -105,13 +103,13 @@ public:
         }
 
         // *** seq_num ***
-        seq_num = reader.expectInt();
+        seq_num = reader.expectInt64();
 
         // *** markers ***
-        if (connection.expectInt() != BOTTLE_TAG_LIST) {
+        if (connection.expectInt32() != BOTTLE_TAG_LIST) {
             return false;
         }
-        int len = connection.expectInt();
+        int len = connection.expectInt32();
         markers.resize(len);
         for (int i=0; i<len; i++) {
             if (!markers[i].read(connection)) {
@@ -132,14 +130,14 @@ public:
     bool writeBare(yarp::os::ConnectionWriter& connection) override
     {
         // *** server_id ***
-        connection.appendInt(server_id.length());
+        connection.appendInt32(server_id.length());
         connection.appendExternalBlock((char*)server_id.c_str(), server_id.length());
 
         // *** seq_num ***
-        connection.appendBlock((char*)&seq_num, 8);
+        connection.appendInt64(seq_num);
 
         // *** markers ***
-        connection.appendInt(markers.size());
+        connection.appendInt32(markers.size());
         for (size_t i=0; i<markers.size(); i++) {
             if (!markers[i].write(connection)) {
                 return false;
@@ -151,21 +149,21 @@ public:
 
     bool writeBottle(yarp::os::ConnectionWriter& connection) override
     {
-        connection.appendInt(BOTTLE_TAG_LIST);
-        connection.appendInt(3);
+        connection.appendInt32(BOTTLE_TAG_LIST);
+        connection.appendInt32(3);
 
         // *** server_id ***
-        connection.appendInt(BOTTLE_TAG_STRING);
-        connection.appendInt(server_id.length());
+        connection.appendInt32(BOTTLE_TAG_STRING);
+        connection.appendInt32(server_id.length());
         connection.appendExternalBlock((char*)server_id.c_str(), server_id.length());
 
         // *** seq_num ***
-        connection.appendInt(BOTTLE_TAG_INT);
-        connection.appendInt((int)seq_num);
+        connection.appendInt32(BOTTLE_TAG_INT64);
+        connection.appendInt64(seq_num);
 
         // *** markers ***
-        connection.appendInt(BOTTLE_TAG_LIST);
-        connection.appendInt(markers.size());
+        connection.appendInt32(BOTTLE_TAG_LIST);
+        connection.appendInt32(markers.size());
         for (size_t i=0; i<markers.size(); i++) {
             if (!markers[i].write(connection)) {
                 return false;

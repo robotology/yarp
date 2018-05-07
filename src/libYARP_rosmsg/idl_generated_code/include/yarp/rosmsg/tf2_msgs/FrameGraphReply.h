@@ -43,7 +43,7 @@ public:
     bool readBare(yarp::os::ConnectionReader& connection) override
     {
         // *** frame_yaml ***
-        int len = connection.expectInt();
+        int len = connection.expectInt32();
         frame_yaml.resize(len);
         if (!connection.expectBlock((char*)frame_yaml.c_str(), len)) {
             return false;
@@ -78,7 +78,7 @@ public:
     bool writeBare(yarp::os::ConnectionWriter& connection) override
     {
         // *** frame_yaml ***
-        connection.appendInt(frame_yaml.length());
+        connection.appendInt32(frame_yaml.length());
         connection.appendExternalBlock((char*)frame_yaml.c_str(), frame_yaml.length());
 
         return !connection.isError();
@@ -86,12 +86,12 @@ public:
 
     bool writeBottle(yarp::os::ConnectionWriter& connection) override
     {
-        connection.appendInt(BOTTLE_TAG_LIST);
-        connection.appendInt(1);
+        connection.appendInt32(BOTTLE_TAG_LIST);
+        connection.appendInt32(1);
 
         // *** frame_yaml ***
-        connection.appendInt(BOTTLE_TAG_STRING);
-        connection.appendInt(frame_yaml.length());
+        connection.appendInt32(BOTTLE_TAG_STRING);
+        connection.appendInt32(frame_yaml.length());
         connection.appendExternalBlock((char*)frame_yaml.c_str(), frame_yaml.length());
 
         connection.convertTextMode();

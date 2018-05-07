@@ -56,12 +56,12 @@ class Image : public yarp::os::idl::WirePortable
 {
 public:
     yarp::rosmsg::std_msgs::Header header;
-    yarp::os::NetUint32 height;
-    yarp::os::NetUint32 width;
+    std::uint32_t height;
+    std::uint32_t width;
     std::string encoding;
-    unsigned char is_bigendian;
-    yarp::os::NetUint32 step;
-    std::vector<unsigned char> data;
+    std::uint8_t is_bigendian;
+    std::uint32_t step;
+    std::vector<std::uint8_t> data;
 
     Image() :
             header(),
@@ -106,30 +106,28 @@ public:
         }
 
         // *** height ***
-        height = connection.expectInt();
+        height = connection.expectInt32();
 
         // *** width ***
-        width = connection.expectInt();
+        width = connection.expectInt32();
 
         // *** encoding ***
-        int len = connection.expectInt();
+        int len = connection.expectInt32();
         encoding.resize(len);
         if (!connection.expectBlock((char*)encoding.c_str(), len)) {
             return false;
         }
 
         // *** is_bigendian ***
-        if (!connection.expectBlock((char*)&is_bigendian, 1)) {
-            return false;
-        }
+        is_bigendian = connection.expectInt8();
 
         // *** step ***
-        step = connection.expectInt();
+        step = connection.expectInt32();
 
         // *** data ***
-        len = connection.expectInt();
+        len = connection.expectInt32();
         data.resize(len);
-        if (len > 0 && !connection.expectBlock((char*)&data[0], sizeof(unsigned char)*len)) {
+        if (len > 0 && !connection.expectBlock((char*)&data[0], sizeof(std::uint8_t)*len)) {
             return false;
         }
 
@@ -150,10 +148,10 @@ public:
         }
 
         // *** height ***
-        height = reader.expectInt();
+        height = reader.expectInt32();
 
         // *** width ***
-        width = reader.expectInt();
+        width = reader.expectInt32();
 
         // *** encoding ***
         if (!reader.readString(encoding)) {
@@ -161,19 +159,19 @@ public:
         }
 
         // *** is_bigendian ***
-        is_bigendian = reader.expectInt();
+        is_bigendian = reader.expectInt8();
 
         // *** step ***
-        step = reader.expectInt();
+        step = reader.expectInt32();
 
         // *** data ***
-        if (connection.expectInt() != (BOTTLE_TAG_LIST|BOTTLE_TAG_INT)) {
+        if (connection.expectInt32() != (BOTTLE_TAG_LIST|BOTTLE_TAG_INT8)) {
             return false;
         }
-        int len = connection.expectInt();
+        int len = connection.expectInt32();
         data.resize(len);
         for (int i=0; i<len; i++) {
-            data[i] = (unsigned char)connection.expectInt();
+            data[i] = (std::uint8_t)connection.expectInt8();
         }
 
         return !connection.isError();
@@ -194,25 +192,25 @@ public:
         }
 
         // *** height ***
-        connection.appendInt(height);
+        connection.appendInt32(height);
 
         // *** width ***
-        connection.appendInt(width);
+        connection.appendInt32(width);
 
         // *** encoding ***
-        connection.appendInt(encoding.length());
+        connection.appendInt32(encoding.length());
         connection.appendExternalBlock((char*)encoding.c_str(), encoding.length());
 
         // *** is_bigendian ***
-        connection.appendBlock((char*)&is_bigendian, 1);
+        connection.appendInt8(is_bigendian);
 
         // *** step ***
-        connection.appendInt(step);
+        connection.appendInt32(step);
 
         // *** data ***
-        connection.appendInt(data.size());
+        connection.appendInt32(data.size());
         if (data.size()>0) {
-            connection.appendExternalBlock((char*)&data[0], sizeof(unsigned char)*data.size());
+            connection.appendExternalBlock((char*)&data[0], sizeof(std::uint8_t)*data.size());
         }
 
         return !connection.isError();
@@ -220,8 +218,8 @@ public:
 
     bool writeBottle(yarp::os::ConnectionWriter& connection) override
     {
-        connection.appendInt(BOTTLE_TAG_LIST);
-        connection.appendInt(7);
+        connection.appendInt32(BOTTLE_TAG_LIST);
+        connection.appendInt32(7);
 
         // *** header ***
         if (!header.write(connection)) {
@@ -229,31 +227,31 @@ public:
         }
 
         // *** height ***
-        connection.appendInt(BOTTLE_TAG_INT);
-        connection.appendInt((int)height);
+        connection.appendInt32(BOTTLE_TAG_INT32);
+        connection.appendInt32(height);
 
         // *** width ***
-        connection.appendInt(BOTTLE_TAG_INT);
-        connection.appendInt((int)width);
+        connection.appendInt32(BOTTLE_TAG_INT32);
+        connection.appendInt32(width);
 
         // *** encoding ***
-        connection.appendInt(BOTTLE_TAG_STRING);
-        connection.appendInt(encoding.length());
+        connection.appendInt32(BOTTLE_TAG_STRING);
+        connection.appendInt32(encoding.length());
         connection.appendExternalBlock((char*)encoding.c_str(), encoding.length());
 
         // *** is_bigendian ***
-        connection.appendInt(BOTTLE_TAG_INT);
-        connection.appendInt((int)is_bigendian);
+        connection.appendInt32(BOTTLE_TAG_INT8);
+        connection.appendInt8(is_bigendian);
 
         // *** step ***
-        connection.appendInt(BOTTLE_TAG_INT);
-        connection.appendInt((int)step);
+        connection.appendInt32(BOTTLE_TAG_INT32);
+        connection.appendInt32(step);
 
         // *** data ***
-        connection.appendInt(BOTTLE_TAG_LIST|BOTTLE_TAG_INT);
-        connection.appendInt(data.size());
+        connection.appendInt32(BOTTLE_TAG_LIST|BOTTLE_TAG_INT8);
+        connection.appendInt32(data.size());
         for (size_t i=0; i<data.size(); i++) {
-            connection.appendInt((int)data[i]);
+            connection.appendInt8(data[i]);
         }
 
         connection.convertTextMode();

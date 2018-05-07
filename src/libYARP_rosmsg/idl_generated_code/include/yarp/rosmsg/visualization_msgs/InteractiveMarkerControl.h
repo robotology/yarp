@@ -108,21 +108,21 @@ class InteractiveMarkerControl : public yarp::os::idl::WirePortable
 public:
     std::string name;
     yarp::rosmsg::geometry_msgs::Quaternion orientation;
-    static const unsigned char INHERIT = 0;
-    static const unsigned char FIXED = 1;
-    static const unsigned char VIEW_FACING = 2;
-    unsigned char orientation_mode;
-    static const unsigned char NONE = 0;
-    static const unsigned char MENU = 1;
-    static const unsigned char BUTTON = 2;
-    static const unsigned char MOVE_AXIS = 3;
-    static const unsigned char MOVE_PLANE = 4;
-    static const unsigned char ROTATE_AXIS = 5;
-    static const unsigned char MOVE_ROTATE = 6;
-    static const unsigned char MOVE_3D = 7;
-    static const unsigned char ROTATE_3D = 8;
-    static const unsigned char MOVE_ROTATE_3D = 9;
-    unsigned char interaction_mode;
+    static const std::uint8_t INHERIT = 0;
+    static const std::uint8_t FIXED = 1;
+    static const std::uint8_t VIEW_FACING = 2;
+    std::uint8_t orientation_mode;
+    static const std::uint8_t NONE = 0;
+    static const std::uint8_t MENU = 1;
+    static const std::uint8_t BUTTON = 2;
+    static const std::uint8_t MOVE_AXIS = 3;
+    static const std::uint8_t MOVE_PLANE = 4;
+    static const std::uint8_t ROTATE_AXIS = 5;
+    static const std::uint8_t MOVE_ROTATE = 6;
+    static const std::uint8_t MOVE_3D = 7;
+    static const std::uint8_t ROTATE_3D = 8;
+    static const std::uint8_t MOVE_ROTATE_3D = 9;
+    std::uint8_t interaction_mode;
     bool always_visible;
     std::vector<yarp::rosmsg::visualization_msgs::Marker> markers;
     bool independent_marker_orientation;
@@ -196,7 +196,7 @@ public:
     bool readBare(yarp::os::ConnectionReader& connection) override
     {
         // *** name ***
-        int len = connection.expectInt();
+        int len = connection.expectInt32();
         name.resize(len);
         if (!connection.expectBlock((char*)name.c_str(), len)) {
             return false;
@@ -208,14 +208,10 @@ public:
         }
 
         // *** orientation_mode ***
-        if (!connection.expectBlock((char*)&orientation_mode, 1)) {
-            return false;
-        }
+        orientation_mode = connection.expectInt8();
 
         // *** interaction_mode ***
-        if (!connection.expectBlock((char*)&interaction_mode, 1)) {
-            return false;
-        }
+        interaction_mode = connection.expectInt8();
 
         // *** always_visible ***
         if (!connection.expectBlock((char*)&always_visible, 1)) {
@@ -223,7 +219,7 @@ public:
         }
 
         // *** markers ***
-        len = connection.expectInt();
+        len = connection.expectInt32();
         markers.resize(len);
         for (int i=0; i<len; i++) {
             if (!markers[i].read(connection)) {
@@ -237,7 +233,7 @@ public:
         }
 
         // *** description ***
-        len = connection.expectInt();
+        len = connection.expectInt32();
         description.resize(len);
         if (!connection.expectBlock((char*)description.c_str(), len)) {
             return false;
@@ -265,19 +261,19 @@ public:
         }
 
         // *** orientation_mode ***
-        orientation_mode = reader.expectInt();
+        orientation_mode = reader.expectInt8();
 
         // *** interaction_mode ***
-        interaction_mode = reader.expectInt();
+        interaction_mode = reader.expectInt8();
 
         // *** always_visible ***
-        always_visible = reader.expectInt();
+        always_visible = reader.expectInt8();
 
         // *** markers ***
-        if (connection.expectInt() != BOTTLE_TAG_LIST) {
+        if (connection.expectInt32() != BOTTLE_TAG_LIST) {
             return false;
         }
-        int len = connection.expectInt();
+        int len = connection.expectInt32();
         markers.resize(len);
         for (int i=0; i<len; i++) {
             if (!markers[i].read(connection)) {
@@ -286,7 +282,7 @@ public:
         }
 
         // *** independent_marker_orientation ***
-        independent_marker_orientation = reader.expectInt();
+        independent_marker_orientation = reader.expectInt8();
 
         // *** description ***
         if (!reader.readString(description)) {
@@ -306,7 +302,7 @@ public:
     bool writeBare(yarp::os::ConnectionWriter& connection) override
     {
         // *** name ***
-        connection.appendInt(name.length());
+        connection.appendInt32(name.length());
         connection.appendExternalBlock((char*)name.c_str(), name.length());
 
         // *** orientation ***
@@ -315,16 +311,16 @@ public:
         }
 
         // *** orientation_mode ***
-        connection.appendBlock((char*)&orientation_mode, 1);
+        connection.appendInt8(orientation_mode);
 
         // *** interaction_mode ***
-        connection.appendBlock((char*)&interaction_mode, 1);
+        connection.appendInt8(interaction_mode);
 
         // *** always_visible ***
         connection.appendBlock((char*)&always_visible, 1);
 
         // *** markers ***
-        connection.appendInt(markers.size());
+        connection.appendInt32(markers.size());
         for (size_t i=0; i<markers.size(); i++) {
             if (!markers[i].write(connection)) {
                 return false;
@@ -335,7 +331,7 @@ public:
         connection.appendBlock((char*)&independent_marker_orientation, 1);
 
         // *** description ***
-        connection.appendInt(description.length());
+        connection.appendInt32(description.length());
         connection.appendExternalBlock((char*)description.c_str(), description.length());
 
         return !connection.isError();
@@ -343,12 +339,12 @@ public:
 
     bool writeBottle(yarp::os::ConnectionWriter& connection) override
     {
-        connection.appendInt(BOTTLE_TAG_LIST);
-        connection.appendInt(21);
+        connection.appendInt32(BOTTLE_TAG_LIST);
+        connection.appendInt32(21);
 
         // *** name ***
-        connection.appendInt(BOTTLE_TAG_STRING);
-        connection.appendInt(name.length());
+        connection.appendInt32(BOTTLE_TAG_STRING);
+        connection.appendInt32(name.length());
         connection.appendExternalBlock((char*)name.c_str(), name.length());
 
         // *** orientation ***
@@ -357,20 +353,20 @@ public:
         }
 
         // *** orientation_mode ***
-        connection.appendInt(BOTTLE_TAG_INT);
-        connection.appendInt((int)orientation_mode);
+        connection.appendInt32(BOTTLE_TAG_INT8);
+        connection.appendInt8(orientation_mode);
 
         // *** interaction_mode ***
-        connection.appendInt(BOTTLE_TAG_INT);
-        connection.appendInt((int)interaction_mode);
+        connection.appendInt32(BOTTLE_TAG_INT8);
+        connection.appendInt8(interaction_mode);
 
         // *** always_visible ***
-        connection.appendInt(BOTTLE_TAG_INT);
-        connection.appendInt((int)always_visible);
+        connection.appendInt32(BOTTLE_TAG_INT8);
+        connection.appendInt8(always_visible);
 
         // *** markers ***
-        connection.appendInt(BOTTLE_TAG_LIST);
-        connection.appendInt(markers.size());
+        connection.appendInt32(BOTTLE_TAG_LIST);
+        connection.appendInt32(markers.size());
         for (size_t i=0; i<markers.size(); i++) {
             if (!markers[i].write(connection)) {
                 return false;
@@ -378,12 +374,12 @@ public:
         }
 
         // *** independent_marker_orientation ***
-        connection.appendInt(BOTTLE_TAG_INT);
-        connection.appendInt((int)independent_marker_orientation);
+        connection.appendInt32(BOTTLE_TAG_INT8);
+        connection.appendInt8(independent_marker_orientation);
 
         // *** description ***
-        connection.appendInt(BOTTLE_TAG_STRING);
-        connection.appendInt(description.length());
+        connection.appendInt32(BOTTLE_TAG_STRING);
+        connection.appendInt32(description.length());
         connection.appendExternalBlock((char*)description.c_str(), description.length());
 
         connection.convertTextMode();

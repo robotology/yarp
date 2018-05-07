@@ -62,10 +62,10 @@ public:
         }
 
         // *** joint_names ***
-        int len = connection.expectInt();
+        int len = connection.expectInt32();
         joint_names.resize(len);
         for (int i=0; i<len; i++) {
-            int len2 = connection.expectInt();
+            int len2 = connection.expectInt32();
             joint_names[i].resize(len2);
             if (!connection.expectBlock((char*)joint_names[i].c_str(), len2)) {
                 return false;
@@ -73,7 +73,7 @@ public:
         }
 
         // *** points ***
-        len = connection.expectInt();
+        len = connection.expectInt32();
         points.resize(len);
         for (int i=0; i<len; i++) {
             if (!points[i].read(connection)) {
@@ -98,13 +98,13 @@ public:
         }
 
         // *** joint_names ***
-        if (connection.expectInt() != (BOTTLE_TAG_LIST|BOTTLE_TAG_STRING)) {
+        if (connection.expectInt32() != (BOTTLE_TAG_LIST|BOTTLE_TAG_STRING)) {
             return false;
         }
-        int len = connection.expectInt();
+        int len = connection.expectInt32();
         joint_names.resize(len);
         for (int i=0; i<len; i++) {
-            int len2 = connection.expectInt();
+            int len2 = connection.expectInt32();
             joint_names[i].resize(len2);
             if (!connection.expectBlock((char*)joint_names[i].c_str(), len2)) {
                 return false;
@@ -112,10 +112,10 @@ public:
         }
 
         // *** points ***
-        if (connection.expectInt() != BOTTLE_TAG_LIST) {
+        if (connection.expectInt32() != BOTTLE_TAG_LIST) {
             return false;
         }
-        len = connection.expectInt();
+        len = connection.expectInt32();
         points.resize(len);
         for (int i=0; i<len; i++) {
             if (!points[i].read(connection)) {
@@ -141,14 +141,14 @@ public:
         }
 
         // *** joint_names ***
-        connection.appendInt(joint_names.size());
+        connection.appendInt32(joint_names.size());
         for (size_t i=0; i<joint_names.size(); i++) {
-            connection.appendInt(joint_names[i].length());
+            connection.appendInt32(joint_names[i].length());
             connection.appendExternalBlock((char*)joint_names[i].c_str(), joint_names[i].length());
         }
 
         // *** points ***
-        connection.appendInt(points.size());
+        connection.appendInt32(points.size());
         for (size_t i=0; i<points.size(); i++) {
             if (!points[i].write(connection)) {
                 return false;
@@ -160,8 +160,8 @@ public:
 
     bool writeBottle(yarp::os::ConnectionWriter& connection) override
     {
-        connection.appendInt(BOTTLE_TAG_LIST);
-        connection.appendInt(3);
+        connection.appendInt32(BOTTLE_TAG_LIST);
+        connection.appendInt32(3);
 
         // *** header ***
         if (!header.write(connection)) {
@@ -169,16 +169,16 @@ public:
         }
 
         // *** joint_names ***
-        connection.appendInt(BOTTLE_TAG_LIST|BOTTLE_TAG_STRING);
-        connection.appendInt(joint_names.size());
+        connection.appendInt32(BOTTLE_TAG_LIST|BOTTLE_TAG_STRING);
+        connection.appendInt32(joint_names.size());
         for (size_t i=0; i<joint_names.size(); i++) {
-            connection.appendInt(joint_names[i].length());
+            connection.appendInt32(joint_names[i].length());
             connection.appendExternalBlock((char*)joint_names[i].c_str(), joint_names[i].length());
         }
 
         // *** points ***
-        connection.appendInt(BOTTLE_TAG_LIST);
-        connection.appendInt(points.size());
+        connection.appendInt32(BOTTLE_TAG_LIST);
+        connection.appendInt32(points.size());
         for (size_t i=0; i<points.size(); i++) {
             if (!points[i].write(connection)) {
                 return false;

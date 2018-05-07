@@ -68,21 +68,21 @@ class Range : public yarp::os::idl::WirePortable
 {
 public:
     yarp::rosmsg::std_msgs::Header header;
-    static const unsigned char ULTRASOUND = 0;
-    static const unsigned char INFRARED = 1;
-    unsigned char radiation_type;
-    yarp::os::NetFloat32 field_of_view;
-    yarp::os::NetFloat32 min_range;
-    yarp::os::NetFloat32 max_range;
-    yarp::os::NetFloat32 range;
+    static const std::uint8_t ULTRASOUND = 0;
+    static const std::uint8_t INFRARED = 1;
+    std::uint8_t radiation_type;
+    yarp::conf::float32_t field_of_view;
+    yarp::conf::float32_t min_range;
+    yarp::conf::float32_t max_range;
+    yarp::conf::float32_t range;
 
     Range() :
             header(),
             radiation_type(0),
-            field_of_view(0.0),
-            min_range(0.0),
-            max_range(0.0),
-            range(0.0)
+            field_of_view(0.0f),
+            min_range(0.0f),
+            max_range(0.0f),
+            range(0.0f)
     {
     }
 
@@ -99,16 +99,16 @@ public:
         radiation_type = 0;
 
         // *** field_of_view ***
-        field_of_view = 0.0;
+        field_of_view = 0.0f;
 
         // *** min_range ***
-        min_range = 0.0;
+        min_range = 0.0f;
 
         // *** max_range ***
-        max_range = 0.0;
+        max_range = 0.0f;
 
         // *** range ***
-        range = 0.0;
+        range = 0.0f;
     }
 
     bool readBare(yarp::os::ConnectionReader& connection) override
@@ -119,29 +119,19 @@ public:
         }
 
         // *** radiation_type ***
-        if (!connection.expectBlock((char*)&radiation_type, 1)) {
-            return false;
-        }
+        radiation_type = connection.expectInt8();
 
         // *** field_of_view ***
-        if (!connection.expectBlock((char*)&field_of_view, 4)) {
-            return false;
-        }
+        field_of_view = connection.expectFloat32();
 
         // *** min_range ***
-        if (!connection.expectBlock((char*)&min_range, 4)) {
-            return false;
-        }
+        min_range = connection.expectFloat32();
 
         // *** max_range ***
-        if (!connection.expectBlock((char*)&max_range, 4)) {
-            return false;
-        }
+        max_range = connection.expectFloat32();
 
         // *** range ***
-        if (!connection.expectBlock((char*)&range, 4)) {
-            return false;
-        }
+        range = connection.expectFloat32();
 
         return !connection.isError();
     }
@@ -160,19 +150,19 @@ public:
         }
 
         // *** radiation_type ***
-        radiation_type = reader.expectInt();
+        radiation_type = reader.expectInt8();
 
         // *** field_of_view ***
-        field_of_view = reader.expectDouble();
+        field_of_view = reader.expectFloat32();
 
         // *** min_range ***
-        min_range = reader.expectDouble();
+        min_range = reader.expectFloat32();
 
         // *** max_range ***
-        max_range = reader.expectDouble();
+        max_range = reader.expectFloat32();
 
         // *** range ***
-        range = reader.expectDouble();
+        range = reader.expectFloat32();
 
         return !connection.isError();
     }
@@ -192,27 +182,27 @@ public:
         }
 
         // *** radiation_type ***
-        connection.appendBlock((char*)&radiation_type, 1);
+        connection.appendInt8(radiation_type);
 
         // *** field_of_view ***
-        connection.appendBlock((char*)&field_of_view, 4);
+        connection.appendFloat32(field_of_view);
 
         // *** min_range ***
-        connection.appendBlock((char*)&min_range, 4);
+        connection.appendFloat32(min_range);
 
         // *** max_range ***
-        connection.appendBlock((char*)&max_range, 4);
+        connection.appendFloat32(max_range);
 
         // *** range ***
-        connection.appendBlock((char*)&range, 4);
+        connection.appendFloat32(range);
 
         return !connection.isError();
     }
 
     bool writeBottle(yarp::os::ConnectionWriter& connection) override
     {
-        connection.appendInt(BOTTLE_TAG_LIST);
-        connection.appendInt(8);
+        connection.appendInt32(BOTTLE_TAG_LIST);
+        connection.appendInt32(8);
 
         // *** header ***
         if (!header.write(connection)) {
@@ -220,24 +210,24 @@ public:
         }
 
         // *** radiation_type ***
-        connection.appendInt(BOTTLE_TAG_INT);
-        connection.appendInt((int)radiation_type);
+        connection.appendInt32(BOTTLE_TAG_INT8);
+        connection.appendInt8(radiation_type);
 
         // *** field_of_view ***
-        connection.appendInt(BOTTLE_TAG_DOUBLE);
-        connection.appendDouble((double)field_of_view);
+        connection.appendInt32(BOTTLE_TAG_FLOAT32);
+        connection.appendFloat32(field_of_view);
 
         // *** min_range ***
-        connection.appendInt(BOTTLE_TAG_DOUBLE);
-        connection.appendDouble((double)min_range);
+        connection.appendInt32(BOTTLE_TAG_FLOAT32);
+        connection.appendFloat32(min_range);
 
         // *** max_range ***
-        connection.appendInt(BOTTLE_TAG_DOUBLE);
-        connection.appendDouble((double)max_range);
+        connection.appendInt32(BOTTLE_TAG_FLOAT32);
+        connection.appendFloat32(max_range);
 
         // *** range ***
-        connection.appendInt(BOTTLE_TAG_DOUBLE);
-        connection.appendDouble((double)range);
+        connection.appendInt32(BOTTLE_TAG_FLOAT32);
+        connection.appendFloat32(range);
 
         connection.convertTextMode();
         return !connection.isError();

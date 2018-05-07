@@ -54,22 +54,22 @@ namespace visualization_msgs {
 class ImageMarker : public yarp::os::idl::WirePortable
 {
 public:
-    static const unsigned char CIRCLE = 0;
-    static const unsigned char LINE_STRIP = 1;
-    static const unsigned char LINE_LIST = 2;
-    static const unsigned char POLYGON = 3;
-    static const unsigned char POINTS = 4;
-    static const unsigned char ADD = 0;
-    static const unsigned char REMOVE = 1;
+    static const std::uint8_t CIRCLE = 0;
+    static const std::uint8_t LINE_STRIP = 1;
+    static const std::uint8_t LINE_LIST = 2;
+    static const std::uint8_t POLYGON = 3;
+    static const std::uint8_t POINTS = 4;
+    static const std::uint8_t ADD = 0;
+    static const std::uint8_t REMOVE = 1;
     yarp::rosmsg::std_msgs::Header header;
     std::string ns;
-    yarp::os::NetInt32 id;
-    yarp::os::NetInt32 type;
-    yarp::os::NetInt32 action;
+    std::int32_t id;
+    std::int32_t type;
+    std::int32_t action;
     yarp::rosmsg::geometry_msgs::Point position;
-    yarp::os::NetFloat32 scale;
+    yarp::conf::float32_t scale;
     yarp::rosmsg::std_msgs::ColorRGBA outline_color;
-    unsigned char filled;
+    std::uint8_t filled;
     yarp::rosmsg::std_msgs::ColorRGBA fill_color;
     yarp::rosmsg::TickDuration lifetime;
     std::vector<yarp::rosmsg::geometry_msgs::Point> points;
@@ -82,7 +82,7 @@ public:
             type(0),
             action(0),
             position(),
-            scale(0.0),
+            scale(0.0f),
             outline_color(),
             filled(0),
             fill_color(),
@@ -127,7 +127,7 @@ public:
         position.clear();
 
         // *** scale ***
-        scale = 0.0;
+        scale = 0.0f;
 
         // *** outline_color ***
         outline_color.clear();
@@ -156,20 +156,20 @@ public:
         }
 
         // *** ns ***
-        int len = connection.expectInt();
+        int len = connection.expectInt32();
         ns.resize(len);
         if (!connection.expectBlock((char*)ns.c_str(), len)) {
             return false;
         }
 
         // *** id ***
-        id = connection.expectInt();
+        id = connection.expectInt32();
 
         // *** type ***
-        type = connection.expectInt();
+        type = connection.expectInt32();
 
         // *** action ***
-        action = connection.expectInt();
+        action = connection.expectInt32();
 
         // *** position ***
         if (!position.read(connection)) {
@@ -177,9 +177,7 @@ public:
         }
 
         // *** scale ***
-        if (!connection.expectBlock((char*)&scale, 4)) {
-            return false;
-        }
+        scale = connection.expectFloat32();
 
         // *** outline_color ***
         if (!outline_color.read(connection)) {
@@ -187,9 +185,7 @@ public:
         }
 
         // *** filled ***
-        if (!connection.expectBlock((char*)&filled, 1)) {
-            return false;
-        }
+        filled = connection.expectInt8();
 
         // *** fill_color ***
         if (!fill_color.read(connection)) {
@@ -202,7 +198,7 @@ public:
         }
 
         // *** points ***
-        len = connection.expectInt();
+        len = connection.expectInt32();
         points.resize(len);
         for (int i=0; i<len; i++) {
             if (!points[i].read(connection)) {
@@ -211,7 +207,7 @@ public:
         }
 
         // *** outline_colors ***
-        len = connection.expectInt();
+        len = connection.expectInt32();
         outline_colors.resize(len);
         for (int i=0; i<len; i++) {
             if (!outline_colors[i].read(connection)) {
@@ -241,13 +237,13 @@ public:
         }
 
         // *** id ***
-        id = reader.expectInt();
+        id = reader.expectInt32();
 
         // *** type ***
-        type = reader.expectInt();
+        type = reader.expectInt32();
 
         // *** action ***
-        action = reader.expectInt();
+        action = reader.expectInt32();
 
         // *** position ***
         if (!position.read(connection)) {
@@ -255,7 +251,7 @@ public:
         }
 
         // *** scale ***
-        scale = reader.expectDouble();
+        scale = reader.expectFloat32();
 
         // *** outline_color ***
         if (!outline_color.read(connection)) {
@@ -263,7 +259,7 @@ public:
         }
 
         // *** filled ***
-        filled = reader.expectInt();
+        filled = reader.expectInt8();
 
         // *** fill_color ***
         if (!fill_color.read(connection)) {
@@ -276,10 +272,10 @@ public:
         }
 
         // *** points ***
-        if (connection.expectInt() != BOTTLE_TAG_LIST) {
+        if (connection.expectInt32() != BOTTLE_TAG_LIST) {
             return false;
         }
-        int len = connection.expectInt();
+        int len = connection.expectInt32();
         points.resize(len);
         for (int i=0; i<len; i++) {
             if (!points[i].read(connection)) {
@@ -288,10 +284,10 @@ public:
         }
 
         // *** outline_colors ***
-        if (connection.expectInt() != BOTTLE_TAG_LIST) {
+        if (connection.expectInt32() != BOTTLE_TAG_LIST) {
             return false;
         }
-        len = connection.expectInt();
+        len = connection.expectInt32();
         outline_colors.resize(len);
         for (int i=0; i<len; i++) {
             if (!outline_colors[i].read(connection)) {
@@ -317,17 +313,17 @@ public:
         }
 
         // *** ns ***
-        connection.appendInt(ns.length());
+        connection.appendInt32(ns.length());
         connection.appendExternalBlock((char*)ns.c_str(), ns.length());
 
         // *** id ***
-        connection.appendInt(id);
+        connection.appendInt32(id);
 
         // *** type ***
-        connection.appendInt(type);
+        connection.appendInt32(type);
 
         // *** action ***
-        connection.appendInt(action);
+        connection.appendInt32(action);
 
         // *** position ***
         if (!position.write(connection)) {
@@ -335,7 +331,7 @@ public:
         }
 
         // *** scale ***
-        connection.appendBlock((char*)&scale, 4);
+        connection.appendFloat32(scale);
 
         // *** outline_color ***
         if (!outline_color.write(connection)) {
@@ -343,7 +339,7 @@ public:
         }
 
         // *** filled ***
-        connection.appendBlock((char*)&filled, 1);
+        connection.appendInt8(filled);
 
         // *** fill_color ***
         if (!fill_color.write(connection)) {
@@ -356,7 +352,7 @@ public:
         }
 
         // *** points ***
-        connection.appendInt(points.size());
+        connection.appendInt32(points.size());
         for (size_t i=0; i<points.size(); i++) {
             if (!points[i].write(connection)) {
                 return false;
@@ -364,7 +360,7 @@ public:
         }
 
         // *** outline_colors ***
-        connection.appendInt(outline_colors.size());
+        connection.appendInt32(outline_colors.size());
         for (size_t i=0; i<outline_colors.size(); i++) {
             if (!outline_colors[i].write(connection)) {
                 return false;
@@ -376,8 +372,8 @@ public:
 
     bool writeBottle(yarp::os::ConnectionWriter& connection) override
     {
-        connection.appendInt(BOTTLE_TAG_LIST);
-        connection.appendInt(20);
+        connection.appendInt32(BOTTLE_TAG_LIST);
+        connection.appendInt32(20);
 
         // *** header ***
         if (!header.write(connection)) {
@@ -385,21 +381,21 @@ public:
         }
 
         // *** ns ***
-        connection.appendInt(BOTTLE_TAG_STRING);
-        connection.appendInt(ns.length());
+        connection.appendInt32(BOTTLE_TAG_STRING);
+        connection.appendInt32(ns.length());
         connection.appendExternalBlock((char*)ns.c_str(), ns.length());
 
         // *** id ***
-        connection.appendInt(BOTTLE_TAG_INT);
-        connection.appendInt((int)id);
+        connection.appendInt32(BOTTLE_TAG_INT32);
+        connection.appendInt32(id);
 
         // *** type ***
-        connection.appendInt(BOTTLE_TAG_INT);
-        connection.appendInt((int)type);
+        connection.appendInt32(BOTTLE_TAG_INT32);
+        connection.appendInt32(type);
 
         // *** action ***
-        connection.appendInt(BOTTLE_TAG_INT);
-        connection.appendInt((int)action);
+        connection.appendInt32(BOTTLE_TAG_INT32);
+        connection.appendInt32(action);
 
         // *** position ***
         if (!position.write(connection)) {
@@ -407,8 +403,8 @@ public:
         }
 
         // *** scale ***
-        connection.appendInt(BOTTLE_TAG_DOUBLE);
-        connection.appendDouble((double)scale);
+        connection.appendInt32(BOTTLE_TAG_FLOAT32);
+        connection.appendFloat32(scale);
 
         // *** outline_color ***
         if (!outline_color.write(connection)) {
@@ -416,8 +412,8 @@ public:
         }
 
         // *** filled ***
-        connection.appendInt(BOTTLE_TAG_INT);
-        connection.appendInt((int)filled);
+        connection.appendInt32(BOTTLE_TAG_INT8);
+        connection.appendInt8(filled);
 
         // *** fill_color ***
         if (!fill_color.write(connection)) {
@@ -430,8 +426,8 @@ public:
         }
 
         // *** points ***
-        connection.appendInt(BOTTLE_TAG_LIST);
-        connection.appendInt(points.size());
+        connection.appendInt32(BOTTLE_TAG_LIST);
+        connection.appendInt32(points.size());
         for (size_t i=0; i<points.size(); i++) {
             if (!points[i].write(connection)) {
                 return false;
@@ -439,8 +435,8 @@ public:
         }
 
         // *** outline_colors ***
-        connection.appendInt(BOTTLE_TAG_LIST);
-        connection.appendInt(outline_colors.size());
+        connection.appendInt32(BOTTLE_TAG_LIST);
+        connection.appendInt32(outline_colors.size());
         for (size_t i=0; i<outline_colors.size(); i++) {
             if (!outline_colors[i].write(connection)) {
                 return false;

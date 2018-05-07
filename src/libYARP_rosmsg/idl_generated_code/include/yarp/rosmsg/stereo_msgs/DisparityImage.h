@@ -61,22 +61,22 @@ class DisparityImage : public yarp::os::idl::WirePortable
 public:
     yarp::rosmsg::std_msgs::Header header;
     yarp::rosmsg::sensor_msgs::Image image;
-    yarp::os::NetFloat32 f;
-    yarp::os::NetFloat32 T;
+    yarp::conf::float32_t f;
+    yarp::conf::float32_t T;
     yarp::rosmsg::sensor_msgs::RegionOfInterest valid_window;
-    yarp::os::NetFloat32 min_disparity;
-    yarp::os::NetFloat32 max_disparity;
-    yarp::os::NetFloat32 delta_d;
+    yarp::conf::float32_t min_disparity;
+    yarp::conf::float32_t max_disparity;
+    yarp::conf::float32_t delta_d;
 
     DisparityImage() :
             header(),
             image(),
-            f(0.0),
-            T(0.0),
+            f(0.0f),
+            T(0.0f),
             valid_window(),
-            min_disparity(0.0),
-            max_disparity(0.0),
-            delta_d(0.0)
+            min_disparity(0.0f),
+            max_disparity(0.0f),
+            delta_d(0.0f)
     {
     }
 
@@ -89,22 +89,22 @@ public:
         image.clear();
 
         // *** f ***
-        f = 0.0;
+        f = 0.0f;
 
         // *** T ***
-        T = 0.0;
+        T = 0.0f;
 
         // *** valid_window ***
         valid_window.clear();
 
         // *** min_disparity ***
-        min_disparity = 0.0;
+        min_disparity = 0.0f;
 
         // *** max_disparity ***
-        max_disparity = 0.0;
+        max_disparity = 0.0f;
 
         // *** delta_d ***
-        delta_d = 0.0;
+        delta_d = 0.0f;
     }
 
     bool readBare(yarp::os::ConnectionReader& connection) override
@@ -120,14 +120,10 @@ public:
         }
 
         // *** f ***
-        if (!connection.expectBlock((char*)&f, 4)) {
-            return false;
-        }
+        f = connection.expectFloat32();
 
         // *** T ***
-        if (!connection.expectBlock((char*)&T, 4)) {
-            return false;
-        }
+        T = connection.expectFloat32();
 
         // *** valid_window ***
         if (!valid_window.read(connection)) {
@@ -135,19 +131,13 @@ public:
         }
 
         // *** min_disparity ***
-        if (!connection.expectBlock((char*)&min_disparity, 4)) {
-            return false;
-        }
+        min_disparity = connection.expectFloat32();
 
         // *** max_disparity ***
-        if (!connection.expectBlock((char*)&max_disparity, 4)) {
-            return false;
-        }
+        max_disparity = connection.expectFloat32();
 
         // *** delta_d ***
-        if (!connection.expectBlock((char*)&delta_d, 4)) {
-            return false;
-        }
+        delta_d = connection.expectFloat32();
 
         return !connection.isError();
     }
@@ -171,10 +161,10 @@ public:
         }
 
         // *** f ***
-        f = reader.expectDouble();
+        f = reader.expectFloat32();
 
         // *** T ***
-        T = reader.expectDouble();
+        T = reader.expectFloat32();
 
         // *** valid_window ***
         if (!valid_window.read(connection)) {
@@ -182,13 +172,13 @@ public:
         }
 
         // *** min_disparity ***
-        min_disparity = reader.expectDouble();
+        min_disparity = reader.expectFloat32();
 
         // *** max_disparity ***
-        max_disparity = reader.expectDouble();
+        max_disparity = reader.expectFloat32();
 
         // *** delta_d ***
-        delta_d = reader.expectDouble();
+        delta_d = reader.expectFloat32();
 
         return !connection.isError();
     }
@@ -213,10 +203,10 @@ public:
         }
 
         // *** f ***
-        connection.appendBlock((char*)&f, 4);
+        connection.appendFloat32(f);
 
         // *** T ***
-        connection.appendBlock((char*)&T, 4);
+        connection.appendFloat32(T);
 
         // *** valid_window ***
         if (!valid_window.write(connection)) {
@@ -224,21 +214,21 @@ public:
         }
 
         // *** min_disparity ***
-        connection.appendBlock((char*)&min_disparity, 4);
+        connection.appendFloat32(min_disparity);
 
         // *** max_disparity ***
-        connection.appendBlock((char*)&max_disparity, 4);
+        connection.appendFloat32(max_disparity);
 
         // *** delta_d ***
-        connection.appendBlock((char*)&delta_d, 4);
+        connection.appendFloat32(delta_d);
 
         return !connection.isError();
     }
 
     bool writeBottle(yarp::os::ConnectionWriter& connection) override
     {
-        connection.appendInt(BOTTLE_TAG_LIST);
-        connection.appendInt(8);
+        connection.appendInt32(BOTTLE_TAG_LIST);
+        connection.appendInt32(8);
 
         // *** header ***
         if (!header.write(connection)) {
@@ -251,12 +241,12 @@ public:
         }
 
         // *** f ***
-        connection.appendInt(BOTTLE_TAG_DOUBLE);
-        connection.appendDouble((double)f);
+        connection.appendInt32(BOTTLE_TAG_FLOAT32);
+        connection.appendFloat32(f);
 
         // *** T ***
-        connection.appendInt(BOTTLE_TAG_DOUBLE);
-        connection.appendDouble((double)T);
+        connection.appendInt32(BOTTLE_TAG_FLOAT32);
+        connection.appendFloat32(T);
 
         // *** valid_window ***
         if (!valid_window.write(connection)) {
@@ -264,16 +254,16 @@ public:
         }
 
         // *** min_disparity ***
-        connection.appendInt(BOTTLE_TAG_DOUBLE);
-        connection.appendDouble((double)min_disparity);
+        connection.appendInt32(BOTTLE_TAG_FLOAT32);
+        connection.appendFloat32(min_disparity);
 
         // *** max_disparity ***
-        connection.appendInt(BOTTLE_TAG_DOUBLE);
-        connection.appendDouble((double)max_disparity);
+        connection.appendInt32(BOTTLE_TAG_FLOAT32);
+        connection.appendFloat32(max_disparity);
 
         // *** delta_d ***
-        connection.appendInt(BOTTLE_TAG_DOUBLE);
-        connection.appendDouble((double)delta_d);
+        connection.appendInt32(BOTTLE_TAG_FLOAT32);
+        connection.appendFloat32(delta_d);
 
         connection.convertTextMode();
         return !connection.isError();

@@ -42,17 +42,17 @@ namespace sensor_msgs {
 class JoyFeedback : public yarp::os::idl::WirePortable
 {
 public:
-    static const unsigned char TYPE_LED = 0;
-    static const unsigned char TYPE_RUMBLE = 1;
-    static const unsigned char TYPE_BUZZER = 2;
-    unsigned char type;
-    unsigned char id;
-    yarp::os::NetFloat32 intensity;
+    static const std::uint8_t TYPE_LED = 0;
+    static const std::uint8_t TYPE_RUMBLE = 1;
+    static const std::uint8_t TYPE_BUZZER = 2;
+    std::uint8_t type;
+    std::uint8_t id;
+    yarp::conf::float32_t intensity;
 
     JoyFeedback() :
             type(0),
             id(0),
-            intensity(0.0)
+            intensity(0.0f)
     {
     }
 
@@ -71,25 +71,19 @@ public:
         id = 0;
 
         // *** intensity ***
-        intensity = 0.0;
+        intensity = 0.0f;
     }
 
     bool readBare(yarp::os::ConnectionReader& connection) override
     {
         // *** type ***
-        if (!connection.expectBlock((char*)&type, 1)) {
-            return false;
-        }
+        type = connection.expectInt8();
 
         // *** id ***
-        if (!connection.expectBlock((char*)&id, 1)) {
-            return false;
-        }
+        id = connection.expectInt8();
 
         // *** intensity ***
-        if (!connection.expectBlock((char*)&intensity, 4)) {
-            return false;
-        }
+        intensity = connection.expectFloat32();
 
         return !connection.isError();
     }
@@ -103,13 +97,13 @@ public:
         }
 
         // *** type ***
-        type = reader.expectInt();
+        type = reader.expectInt8();
 
         // *** id ***
-        id = reader.expectInt();
+        id = reader.expectInt8();
 
         // *** intensity ***
-        intensity = reader.expectDouble();
+        intensity = reader.expectFloat32();
 
         return !connection.isError();
     }
@@ -124,33 +118,33 @@ public:
     bool writeBare(yarp::os::ConnectionWriter& connection) override
     {
         // *** type ***
-        connection.appendBlock((char*)&type, 1);
+        connection.appendInt8(type);
 
         // *** id ***
-        connection.appendBlock((char*)&id, 1);
+        connection.appendInt8(id);
 
         // *** intensity ***
-        connection.appendBlock((char*)&intensity, 4);
+        connection.appendFloat32(intensity);
 
         return !connection.isError();
     }
 
     bool writeBottle(yarp::os::ConnectionWriter& connection) override
     {
-        connection.appendInt(BOTTLE_TAG_LIST);
-        connection.appendInt(6);
+        connection.appendInt32(BOTTLE_TAG_LIST);
+        connection.appendInt32(6);
 
         // *** type ***
-        connection.appendInt(BOTTLE_TAG_INT);
-        connection.appendInt((int)type);
+        connection.appendInt32(BOTTLE_TAG_INT8);
+        connection.appendInt8(type);
 
         // *** id ***
-        connection.appendInt(BOTTLE_TAG_INT);
-        connection.appendInt((int)id);
+        connection.appendInt32(BOTTLE_TAG_INT8);
+        connection.appendInt8(id);
 
         // *** intensity ***
-        connection.appendInt(BOTTLE_TAG_DOUBLE);
-        connection.appendDouble((double)intensity);
+        connection.appendInt32(BOTTLE_TAG_FLOAT32);
+        connection.appendFloat32(intensity);
 
         connection.convertTextMode();
         return !connection.isError();

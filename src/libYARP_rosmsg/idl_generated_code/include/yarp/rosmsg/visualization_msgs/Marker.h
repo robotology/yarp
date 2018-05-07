@@ -77,27 +77,27 @@ namespace visualization_msgs {
 class Marker : public yarp::os::idl::WirePortable
 {
 public:
-    static const unsigned char ARROW = 0;
-    static const unsigned char CUBE = 1;
-    static const unsigned char SPHERE = 2;
-    static const unsigned char CYLINDER = 3;
-    static const unsigned char LINE_STRIP = 4;
-    static const unsigned char LINE_LIST = 5;
-    static const unsigned char CUBE_LIST = 6;
-    static const unsigned char SPHERE_LIST = 7;
-    static const unsigned char POINTS = 8;
-    static const unsigned char TEXT_VIEW_FACING = 9;
-    static const unsigned char MESH_RESOURCE = 10;
-    static const unsigned char TRIANGLE_LIST = 11;
-    static const unsigned char ADD = 0;
-    static const unsigned char MODIFY = 0;
-    static const unsigned char DELETE = 2;
-    static const unsigned char DELETEALL = 3;
+    static const std::uint8_t ARROW = 0;
+    static const std::uint8_t CUBE = 1;
+    static const std::uint8_t SPHERE = 2;
+    static const std::uint8_t CYLINDER = 3;
+    static const std::uint8_t LINE_STRIP = 4;
+    static const std::uint8_t LINE_LIST = 5;
+    static const std::uint8_t CUBE_LIST = 6;
+    static const std::uint8_t SPHERE_LIST = 7;
+    static const std::uint8_t POINTS = 8;
+    static const std::uint8_t TEXT_VIEW_FACING = 9;
+    static const std::uint8_t MESH_RESOURCE = 10;
+    static const std::uint8_t TRIANGLE_LIST = 11;
+    static const std::uint8_t ADD = 0;
+    static const std::uint8_t MODIFY = 0;
+    static const std::uint8_t DELETE = 2;
+    static const std::uint8_t DELETEALL = 3;
     yarp::rosmsg::std_msgs::Header header;
     std::string ns;
-    yarp::os::NetInt32 id;
-    yarp::os::NetInt32 type;
-    yarp::os::NetInt32 action;
+    std::int32_t id;
+    std::int32_t type;
+    std::int32_t action;
     yarp::rosmsg::geometry_msgs::Pose pose;
     yarp::rosmsg::geometry_msgs::Vector3 scale;
     yarp::rosmsg::std_msgs::ColorRGBA color;
@@ -216,20 +216,20 @@ public:
         }
 
         // *** ns ***
-        int len = connection.expectInt();
+        int len = connection.expectInt32();
         ns.resize(len);
         if (!connection.expectBlock((char*)ns.c_str(), len)) {
             return false;
         }
 
         // *** id ***
-        id = connection.expectInt();
+        id = connection.expectInt32();
 
         // *** type ***
-        type = connection.expectInt();
+        type = connection.expectInt32();
 
         // *** action ***
-        action = connection.expectInt();
+        action = connection.expectInt32();
 
         // *** pose ***
         if (!pose.read(connection)) {
@@ -257,7 +257,7 @@ public:
         }
 
         // *** points ***
-        len = connection.expectInt();
+        len = connection.expectInt32();
         points.resize(len);
         for (int i=0; i<len; i++) {
             if (!points[i].read(connection)) {
@@ -266,7 +266,7 @@ public:
         }
 
         // *** colors ***
-        len = connection.expectInt();
+        len = connection.expectInt32();
         colors.resize(len);
         for (int i=0; i<len; i++) {
             if (!colors[i].read(connection)) {
@@ -275,14 +275,14 @@ public:
         }
 
         // *** text ***
-        len = connection.expectInt();
+        len = connection.expectInt32();
         text.resize(len);
         if (!connection.expectBlock((char*)text.c_str(), len)) {
             return false;
         }
 
         // *** mesh_resource ***
-        len = connection.expectInt();
+        len = connection.expectInt32();
         mesh_resource.resize(len);
         if (!connection.expectBlock((char*)mesh_resource.c_str(), len)) {
             return false;
@@ -315,13 +315,13 @@ public:
         }
 
         // *** id ***
-        id = reader.expectInt();
+        id = reader.expectInt32();
 
         // *** type ***
-        type = reader.expectInt();
+        type = reader.expectInt32();
 
         // *** action ***
-        action = reader.expectInt();
+        action = reader.expectInt32();
 
         // *** pose ***
         if (!pose.read(connection)) {
@@ -344,13 +344,13 @@ public:
         }
 
         // *** frame_locked ***
-        frame_locked = reader.expectInt();
+        frame_locked = reader.expectInt8();
 
         // *** points ***
-        if (connection.expectInt() != BOTTLE_TAG_LIST) {
+        if (connection.expectInt32() != BOTTLE_TAG_LIST) {
             return false;
         }
-        int len = connection.expectInt();
+        int len = connection.expectInt32();
         points.resize(len);
         for (int i=0; i<len; i++) {
             if (!points[i].read(connection)) {
@@ -359,10 +359,10 @@ public:
         }
 
         // *** colors ***
-        if (connection.expectInt() != BOTTLE_TAG_LIST) {
+        if (connection.expectInt32() != BOTTLE_TAG_LIST) {
             return false;
         }
-        len = connection.expectInt();
+        len = connection.expectInt32();
         colors.resize(len);
         for (int i=0; i<len; i++) {
             if (!colors[i].read(connection)) {
@@ -381,7 +381,7 @@ public:
         }
 
         // *** mesh_use_embedded_materials ***
-        mesh_use_embedded_materials = reader.expectInt();
+        mesh_use_embedded_materials = reader.expectInt8();
 
         return !connection.isError();
     }
@@ -401,17 +401,17 @@ public:
         }
 
         // *** ns ***
-        connection.appendInt(ns.length());
+        connection.appendInt32(ns.length());
         connection.appendExternalBlock((char*)ns.c_str(), ns.length());
 
         // *** id ***
-        connection.appendInt(id);
+        connection.appendInt32(id);
 
         // *** type ***
-        connection.appendInt(type);
+        connection.appendInt32(type);
 
         // *** action ***
-        connection.appendInt(action);
+        connection.appendInt32(action);
 
         // *** pose ***
         if (!pose.write(connection)) {
@@ -437,7 +437,7 @@ public:
         connection.appendBlock((char*)&frame_locked, 1);
 
         // *** points ***
-        connection.appendInt(points.size());
+        connection.appendInt32(points.size());
         for (size_t i=0; i<points.size(); i++) {
             if (!points[i].write(connection)) {
                 return false;
@@ -445,7 +445,7 @@ public:
         }
 
         // *** colors ***
-        connection.appendInt(colors.size());
+        connection.appendInt32(colors.size());
         for (size_t i=0; i<colors.size(); i++) {
             if (!colors[i].write(connection)) {
                 return false;
@@ -453,11 +453,11 @@ public:
         }
 
         // *** text ***
-        connection.appendInt(text.length());
+        connection.appendInt32(text.length());
         connection.appendExternalBlock((char*)text.c_str(), text.length());
 
         // *** mesh_resource ***
-        connection.appendInt(mesh_resource.length());
+        connection.appendInt32(mesh_resource.length());
         connection.appendExternalBlock((char*)mesh_resource.c_str(), mesh_resource.length());
 
         // *** mesh_use_embedded_materials ***
@@ -468,8 +468,8 @@ public:
 
     bool writeBottle(yarp::os::ConnectionWriter& connection) override
     {
-        connection.appendInt(BOTTLE_TAG_LIST);
-        connection.appendInt(31);
+        connection.appendInt32(BOTTLE_TAG_LIST);
+        connection.appendInt32(31);
 
         // *** header ***
         if (!header.write(connection)) {
@@ -477,21 +477,21 @@ public:
         }
 
         // *** ns ***
-        connection.appendInt(BOTTLE_TAG_STRING);
-        connection.appendInt(ns.length());
+        connection.appendInt32(BOTTLE_TAG_STRING);
+        connection.appendInt32(ns.length());
         connection.appendExternalBlock((char*)ns.c_str(), ns.length());
 
         // *** id ***
-        connection.appendInt(BOTTLE_TAG_INT);
-        connection.appendInt((int)id);
+        connection.appendInt32(BOTTLE_TAG_INT32);
+        connection.appendInt32(id);
 
         // *** type ***
-        connection.appendInt(BOTTLE_TAG_INT);
-        connection.appendInt((int)type);
+        connection.appendInt32(BOTTLE_TAG_INT32);
+        connection.appendInt32(type);
 
         // *** action ***
-        connection.appendInt(BOTTLE_TAG_INT);
-        connection.appendInt((int)action);
+        connection.appendInt32(BOTTLE_TAG_INT32);
+        connection.appendInt32(action);
 
         // *** pose ***
         if (!pose.write(connection)) {
@@ -514,12 +514,12 @@ public:
         }
 
         // *** frame_locked ***
-        connection.appendInt(BOTTLE_TAG_INT);
-        connection.appendInt((int)frame_locked);
+        connection.appendInt32(BOTTLE_TAG_INT8);
+        connection.appendInt8(frame_locked);
 
         // *** points ***
-        connection.appendInt(BOTTLE_TAG_LIST);
-        connection.appendInt(points.size());
+        connection.appendInt32(BOTTLE_TAG_LIST);
+        connection.appendInt32(points.size());
         for (size_t i=0; i<points.size(); i++) {
             if (!points[i].write(connection)) {
                 return false;
@@ -527,8 +527,8 @@ public:
         }
 
         // *** colors ***
-        connection.appendInt(BOTTLE_TAG_LIST);
-        connection.appendInt(colors.size());
+        connection.appendInt32(BOTTLE_TAG_LIST);
+        connection.appendInt32(colors.size());
         for (size_t i=0; i<colors.size(); i++) {
             if (!colors[i].write(connection)) {
                 return false;
@@ -536,18 +536,18 @@ public:
         }
 
         // *** text ***
-        connection.appendInt(BOTTLE_TAG_STRING);
-        connection.appendInt(text.length());
+        connection.appendInt32(BOTTLE_TAG_STRING);
+        connection.appendInt32(text.length());
         connection.appendExternalBlock((char*)text.c_str(), text.length());
 
         // *** mesh_resource ***
-        connection.appendInt(BOTTLE_TAG_STRING);
-        connection.appendInt(mesh_resource.length());
+        connection.appendInt32(BOTTLE_TAG_STRING);
+        connection.appendInt32(mesh_resource.length());
         connection.appendExternalBlock((char*)mesh_resource.c_str(), mesh_resource.length());
 
         // *** mesh_use_embedded_materials ***
-        connection.appendInt(BOTTLE_TAG_INT);
-        connection.appendInt((int)mesh_use_embedded_materials);
+        connection.appendInt32(BOTTLE_TAG_INT8);
+        connection.appendInt8(mesh_use_embedded_materials);
 
         connection.convertTextMode();
         return !connection.isError();

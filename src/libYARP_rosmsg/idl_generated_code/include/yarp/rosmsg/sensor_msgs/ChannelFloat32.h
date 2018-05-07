@@ -52,7 +52,7 @@ class ChannelFloat32 : public yarp::os::idl::WirePortable
 {
 public:
     std::string name;
-    std::vector<yarp::os::NetFloat32> values;
+    std::vector<yarp::conf::float32_t> values;
 
     ChannelFloat32() :
             name(""),
@@ -72,16 +72,16 @@ public:
     bool readBare(yarp::os::ConnectionReader& connection) override
     {
         // *** name ***
-        int len = connection.expectInt();
+        int len = connection.expectInt32();
         name.resize(len);
         if (!connection.expectBlock((char*)name.c_str(), len)) {
             return false;
         }
 
         // *** values ***
-        len = connection.expectInt();
+        len = connection.expectInt32();
         values.resize(len);
-        if (len > 0 && !connection.expectBlock((char*)&values[0], sizeof(yarp::os::NetFloat32)*len)) {
+        if (len > 0 && !connection.expectBlock((char*)&values[0], sizeof(yarp::conf::float32_t)*len)) {
             return false;
         }
 
@@ -102,13 +102,13 @@ public:
         }
 
         // *** values ***
-        if (connection.expectInt() != (BOTTLE_TAG_LIST|BOTTLE_TAG_DOUBLE)) {
+        if (connection.expectInt32() != (BOTTLE_TAG_LIST|BOTTLE_TAG_FLOAT32)) {
             return false;
         }
-        int len = connection.expectInt();
+        int len = connection.expectInt32();
         values.resize(len);
         for (int i=0; i<len; i++) {
-            values[i] = (yarp::os::NetFloat32)connection.expectDouble();
+            values[i] = (yarp::conf::float32_t)connection.expectFloat32();
         }
 
         return !connection.isError();
@@ -124,13 +124,13 @@ public:
     bool writeBare(yarp::os::ConnectionWriter& connection) override
     {
         // *** name ***
-        connection.appendInt(name.length());
+        connection.appendInt32(name.length());
         connection.appendExternalBlock((char*)name.c_str(), name.length());
 
         // *** values ***
-        connection.appendInt(values.size());
+        connection.appendInt32(values.size());
         if (values.size()>0) {
-            connection.appendExternalBlock((char*)&values[0], sizeof(yarp::os::NetFloat32)*values.size());
+            connection.appendExternalBlock((char*)&values[0], sizeof(yarp::conf::float32_t)*values.size());
         }
 
         return !connection.isError();
@@ -138,19 +138,19 @@ public:
 
     bool writeBottle(yarp::os::ConnectionWriter& connection) override
     {
-        connection.appendInt(BOTTLE_TAG_LIST);
-        connection.appendInt(2);
+        connection.appendInt32(BOTTLE_TAG_LIST);
+        connection.appendInt32(2);
 
         // *** name ***
-        connection.appendInt(BOTTLE_TAG_STRING);
-        connection.appendInt(name.length());
+        connection.appendInt32(BOTTLE_TAG_STRING);
+        connection.appendInt32(name.length());
         connection.appendExternalBlock((char*)name.c_str(), name.length());
 
         // *** values ***
-        connection.appendInt(BOTTLE_TAG_LIST|BOTTLE_TAG_DOUBLE);
-        connection.appendInt(values.size());
+        connection.appendInt32(BOTTLE_TAG_LIST|BOTTLE_TAG_FLOAT32);
+        connection.appendInt32(values.size());
         for (size_t i=0; i<values.size(); i++) {
-            connection.appendDouble((double)values[i]);
+            connection.appendFloat32(values[i]);
         }
 
         connection.convertTextMode();

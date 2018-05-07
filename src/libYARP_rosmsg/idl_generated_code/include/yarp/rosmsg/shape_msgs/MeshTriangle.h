@@ -29,7 +29,7 @@ namespace shape_msgs {
 class MeshTriangle : public yarp::os::idl::WirePortable
 {
 public:
-    std::vector<yarp::os::NetUint32> vertex_indices;
+    std::vector<std::uint32_t> vertex_indices;
 
     MeshTriangle() :
             vertex_indices()
@@ -49,7 +49,7 @@ public:
         // *** vertex_indices ***
         int len = 3;
         vertex_indices.resize(len);
-        if (len > 0 && !connection.expectBlock((char*)&vertex_indices[0], sizeof(yarp::os::NetUint32)*len)) {
+        if (len > 0 && !connection.expectBlock((char*)&vertex_indices[0], sizeof(std::uint32_t)*len)) {
             return false;
         }
 
@@ -65,13 +65,13 @@ public:
         }
 
         // *** vertex_indices ***
-        if (connection.expectInt() != (BOTTLE_TAG_LIST|BOTTLE_TAG_INT)) {
+        if (connection.expectInt32() != (BOTTLE_TAG_LIST|BOTTLE_TAG_INT32)) {
             return false;
         }
-        int len = connection.expectInt();
+        int len = connection.expectInt32();
         vertex_indices.resize(len);
         for (int i=0; i<len; i++) {
-            vertex_indices[i] = (yarp::os::NetUint32)connection.expectInt();
+            vertex_indices[i] = (std::uint32_t)connection.expectInt32();
         }
 
         return !connection.isError();
@@ -88,7 +88,7 @@ public:
     {
         // *** vertex_indices ***
         if (vertex_indices.size()>0) {
-            connection.appendExternalBlock((char*)&vertex_indices[0], sizeof(yarp::os::NetUint32)*vertex_indices.size());
+            connection.appendExternalBlock((char*)&vertex_indices[0], sizeof(std::uint32_t)*vertex_indices.size());
         }
 
         return !connection.isError();
@@ -96,14 +96,14 @@ public:
 
     bool writeBottle(yarp::os::ConnectionWriter& connection) override
     {
-        connection.appendInt(BOTTLE_TAG_LIST);
-        connection.appendInt(1);
+        connection.appendInt32(BOTTLE_TAG_LIST);
+        connection.appendInt32(1);
 
         // *** vertex_indices ***
-        connection.appendInt(BOTTLE_TAG_LIST|BOTTLE_TAG_INT);
-        connection.appendInt(vertex_indices.size());
+        connection.appendInt32(BOTTLE_TAG_LIST|BOTTLE_TAG_INT32);
+        connection.appendInt32(vertex_indices.size());
         for (size_t i=0; i<vertex_indices.size(); i++) {
-            connection.appendInt((int)vertex_indices[i]);
+            connection.appendInt32(vertex_indices[i]);
         }
 
         connection.convertTextMode();

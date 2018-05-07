@@ -61,7 +61,7 @@ public:
     yarp::rosmsg::geometry_msgs::Pose pose;
     std::string name;
     std::string description;
-    yarp::os::NetFloat32 scale;
+    yarp::conf::float32_t scale;
     std::vector<yarp::rosmsg::visualization_msgs::MenuEntry> menu_entries;
     std::vector<yarp::rosmsg::visualization_msgs::InteractiveMarkerControl> controls;
 
@@ -70,7 +70,7 @@ public:
             pose(),
             name(""),
             description(""),
-            scale(0.0),
+            scale(0.0f),
             menu_entries(),
             controls()
     {
@@ -91,7 +91,7 @@ public:
         description = "";
 
         // *** scale ***
-        scale = 0.0;
+        scale = 0.0f;
 
         // *** menu_entries ***
         menu_entries.clear();
@@ -113,26 +113,24 @@ public:
         }
 
         // *** name ***
-        int len = connection.expectInt();
+        int len = connection.expectInt32();
         name.resize(len);
         if (!connection.expectBlock((char*)name.c_str(), len)) {
             return false;
         }
 
         // *** description ***
-        len = connection.expectInt();
+        len = connection.expectInt32();
         description.resize(len);
         if (!connection.expectBlock((char*)description.c_str(), len)) {
             return false;
         }
 
         // *** scale ***
-        if (!connection.expectBlock((char*)&scale, 4)) {
-            return false;
-        }
+        scale = connection.expectFloat32();
 
         // *** menu_entries ***
-        len = connection.expectInt();
+        len = connection.expectInt32();
         menu_entries.resize(len);
         for (int i=0; i<len; i++) {
             if (!menu_entries[i].read(connection)) {
@@ -141,7 +139,7 @@ public:
         }
 
         // *** controls ***
-        len = connection.expectInt();
+        len = connection.expectInt32();
         controls.resize(len);
         for (int i=0; i<len; i++) {
             if (!controls[i].read(connection)) {
@@ -181,13 +179,13 @@ public:
         }
 
         // *** scale ***
-        scale = reader.expectDouble();
+        scale = reader.expectFloat32();
 
         // *** menu_entries ***
-        if (connection.expectInt() != BOTTLE_TAG_LIST) {
+        if (connection.expectInt32() != BOTTLE_TAG_LIST) {
             return false;
         }
-        int len = connection.expectInt();
+        int len = connection.expectInt32();
         menu_entries.resize(len);
         for (int i=0; i<len; i++) {
             if (!menu_entries[i].read(connection)) {
@@ -196,10 +194,10 @@ public:
         }
 
         // *** controls ***
-        if (connection.expectInt() != BOTTLE_TAG_LIST) {
+        if (connection.expectInt32() != BOTTLE_TAG_LIST) {
             return false;
         }
-        len = connection.expectInt();
+        len = connection.expectInt32();
         controls.resize(len);
         for (int i=0; i<len; i++) {
             if (!controls[i].read(connection)) {
@@ -230,18 +228,18 @@ public:
         }
 
         // *** name ***
-        connection.appendInt(name.length());
+        connection.appendInt32(name.length());
         connection.appendExternalBlock((char*)name.c_str(), name.length());
 
         // *** description ***
-        connection.appendInt(description.length());
+        connection.appendInt32(description.length());
         connection.appendExternalBlock((char*)description.c_str(), description.length());
 
         // *** scale ***
-        connection.appendBlock((char*)&scale, 4);
+        connection.appendFloat32(scale);
 
         // *** menu_entries ***
-        connection.appendInt(menu_entries.size());
+        connection.appendInt32(menu_entries.size());
         for (size_t i=0; i<menu_entries.size(); i++) {
             if (!menu_entries[i].write(connection)) {
                 return false;
@@ -249,7 +247,7 @@ public:
         }
 
         // *** controls ***
-        connection.appendInt(controls.size());
+        connection.appendInt32(controls.size());
         for (size_t i=0; i<controls.size(); i++) {
             if (!controls[i].write(connection)) {
                 return false;
@@ -261,8 +259,8 @@ public:
 
     bool writeBottle(yarp::os::ConnectionWriter& connection) override
     {
-        connection.appendInt(BOTTLE_TAG_LIST);
-        connection.appendInt(7);
+        connection.appendInt32(BOTTLE_TAG_LIST);
+        connection.appendInt32(7);
 
         // *** header ***
         if (!header.write(connection)) {
@@ -275,22 +273,22 @@ public:
         }
 
         // *** name ***
-        connection.appendInt(BOTTLE_TAG_STRING);
-        connection.appendInt(name.length());
+        connection.appendInt32(BOTTLE_TAG_STRING);
+        connection.appendInt32(name.length());
         connection.appendExternalBlock((char*)name.c_str(), name.length());
 
         // *** description ***
-        connection.appendInt(BOTTLE_TAG_STRING);
-        connection.appendInt(description.length());
+        connection.appendInt32(BOTTLE_TAG_STRING);
+        connection.appendInt32(description.length());
         connection.appendExternalBlock((char*)description.c_str(), description.length());
 
         // *** scale ***
-        connection.appendInt(BOTTLE_TAG_DOUBLE);
-        connection.appendDouble((double)scale);
+        connection.appendInt32(BOTTLE_TAG_FLOAT32);
+        connection.appendFloat32(scale);
 
         // *** menu_entries ***
-        connection.appendInt(BOTTLE_TAG_LIST);
-        connection.appendInt(menu_entries.size());
+        connection.appendInt32(BOTTLE_TAG_LIST);
+        connection.appendInt32(menu_entries.size());
         for (size_t i=0; i<menu_entries.size(); i++) {
             if (!menu_entries[i].write(connection)) {
                 return false;
@@ -298,8 +296,8 @@ public:
         }
 
         // *** controls ***
-        connection.appendInt(BOTTLE_TAG_LIST);
-        connection.appendInt(controls.size());
+        connection.appendInt32(BOTTLE_TAG_LIST);
+        connection.appendInt32(controls.size());
         for (size_t i=0; i<controls.size(); i++) {
             if (!controls[i].write(connection)) {
                 return false;

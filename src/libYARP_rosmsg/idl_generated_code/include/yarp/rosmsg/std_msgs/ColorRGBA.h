@@ -31,55 +31,47 @@ namespace std_msgs {
 class ColorRGBA : public yarp::os::idl::WirePortable
 {
 public:
-    yarp::os::NetFloat32 r;
-    yarp::os::NetFloat32 g;
-    yarp::os::NetFloat32 b;
-    yarp::os::NetFloat32 a;
+    yarp::conf::float32_t r;
+    yarp::conf::float32_t g;
+    yarp::conf::float32_t b;
+    yarp::conf::float32_t a;
 
     ColorRGBA() :
-            r(0.0),
-            g(0.0),
-            b(0.0),
-            a(0.0)
+            r(0.0f),
+            g(0.0f),
+            b(0.0f),
+            a(0.0f)
     {
     }
 
     void clear()
     {
         // *** r ***
-        r = 0.0;
+        r = 0.0f;
 
         // *** g ***
-        g = 0.0;
+        g = 0.0f;
 
         // *** b ***
-        b = 0.0;
+        b = 0.0f;
 
         // *** a ***
-        a = 0.0;
+        a = 0.0f;
     }
 
     bool readBare(yarp::os::ConnectionReader& connection) override
     {
         // *** r ***
-        if (!connection.expectBlock((char*)&r, 4)) {
-            return false;
-        }
+        r = connection.expectFloat32();
 
         // *** g ***
-        if (!connection.expectBlock((char*)&g, 4)) {
-            return false;
-        }
+        g = connection.expectFloat32();
 
         // *** b ***
-        if (!connection.expectBlock((char*)&b, 4)) {
-            return false;
-        }
+        b = connection.expectFloat32();
 
         // *** a ***
-        if (!connection.expectBlock((char*)&a, 4)) {
-            return false;
-        }
+        a = connection.expectFloat32();
 
         return !connection.isError();
     }
@@ -93,16 +85,16 @@ public:
         }
 
         // *** r ***
-        r = reader.expectDouble();
+        r = reader.expectFloat32();
 
         // *** g ***
-        g = reader.expectDouble();
+        g = reader.expectFloat32();
 
         // *** b ***
-        b = reader.expectDouble();
+        b = reader.expectFloat32();
 
         // *** a ***
-        a = reader.expectDouble();
+        a = reader.expectFloat32();
 
         return !connection.isError();
     }
@@ -117,40 +109,40 @@ public:
     bool writeBare(yarp::os::ConnectionWriter& connection) override
     {
         // *** r ***
-        connection.appendBlock((char*)&r, 4);
+        connection.appendFloat32(r);
 
         // *** g ***
-        connection.appendBlock((char*)&g, 4);
+        connection.appendFloat32(g);
 
         // *** b ***
-        connection.appendBlock((char*)&b, 4);
+        connection.appendFloat32(b);
 
         // *** a ***
-        connection.appendBlock((char*)&a, 4);
+        connection.appendFloat32(a);
 
         return !connection.isError();
     }
 
     bool writeBottle(yarp::os::ConnectionWriter& connection) override
     {
-        connection.appendInt(BOTTLE_TAG_LIST);
-        connection.appendInt(4);
+        connection.appendInt32(BOTTLE_TAG_LIST);
+        connection.appendInt32(4);
 
         // *** r ***
-        connection.appendInt(BOTTLE_TAG_DOUBLE);
-        connection.appendDouble((double)r);
+        connection.appendInt32(BOTTLE_TAG_FLOAT32);
+        connection.appendFloat32(r);
 
         // *** g ***
-        connection.appendInt(BOTTLE_TAG_DOUBLE);
-        connection.appendDouble((double)g);
+        connection.appendInt32(BOTTLE_TAG_FLOAT32);
+        connection.appendFloat32(g);
 
         // *** b ***
-        connection.appendInt(BOTTLE_TAG_DOUBLE);
-        connection.appendDouble((double)b);
+        connection.appendInt32(BOTTLE_TAG_FLOAT32);
+        connection.appendFloat32(b);
 
         // *** a ***
-        connection.appendInt(BOTTLE_TAG_DOUBLE);
-        connection.appendDouble((double)a);
+        connection.appendInt32(BOTTLE_TAG_FLOAT32);
+        connection.appendFloat32(a);
 
         connection.convertTextMode();
         return !connection.isError();

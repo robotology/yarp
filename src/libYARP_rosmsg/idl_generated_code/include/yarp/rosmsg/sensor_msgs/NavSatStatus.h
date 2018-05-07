@@ -49,16 +49,16 @@ namespace sensor_msgs {
 class NavSatStatus : public yarp::os::idl::WirePortable
 {
 public:
-    static const char STATUS_NO_FIX = -1;
-    static const char STATUS_FIX = 0;
-    static const char STATUS_SBAS_FIX = 1;
-    static const char STATUS_GBAS_FIX = 2;
-    char status;
-    static const yarp::os::NetUint16 SERVICE_GPS = 1;
-    static const yarp::os::NetUint16 SERVICE_GLONASS = 2;
-    static const yarp::os::NetUint16 SERVICE_COMPASS = 4;
-    static const yarp::os::NetUint16 SERVICE_GALILEO = 8;
-    yarp::os::NetUint16 service;
+    static const std::int8_t STATUS_NO_FIX = -1;
+    static const std::int8_t STATUS_FIX = 0;
+    static const std::int8_t STATUS_SBAS_FIX = 1;
+    static const std::int8_t STATUS_GBAS_FIX = 2;
+    std::int8_t status;
+    static const std::uint16_t SERVICE_GPS = 1;
+    static const std::uint16_t SERVICE_GLONASS = 2;
+    static const std::uint16_t SERVICE_COMPASS = 4;
+    static const std::uint16_t SERVICE_GALILEO = 8;
+    std::uint16_t service;
 
     NavSatStatus() :
             status(0),
@@ -94,14 +94,10 @@ public:
     bool readBare(yarp::os::ConnectionReader& connection) override
     {
         // *** status ***
-        if (!connection.expectBlock((char*)&status, 1)) {
-            return false;
-        }
+        status = connection.expectInt8();
 
         // *** service ***
-        if (!connection.expectBlock((char*)&service, 2)) {
-            return false;
-        }
+        service = connection.expectInt16();
 
         return !connection.isError();
     }
@@ -115,10 +111,10 @@ public:
         }
 
         // *** status ***
-        status = reader.expectInt();
+        status = reader.expectInt8();
 
         // *** service ***
-        service = reader.expectInt();
+        service = reader.expectInt16();
 
         return !connection.isError();
     }
@@ -133,26 +129,26 @@ public:
     bool writeBare(yarp::os::ConnectionWriter& connection) override
     {
         // *** status ***
-        connection.appendBlock((char*)&status, 1);
+        connection.appendInt8(status);
 
         // *** service ***
-        connection.appendBlock((char*)&service, 2);
+        connection.appendInt16(service);
 
         return !connection.isError();
     }
 
     bool writeBottle(yarp::os::ConnectionWriter& connection) override
     {
-        connection.appendInt(BOTTLE_TAG_LIST);
-        connection.appendInt(10);
+        connection.appendInt32(BOTTLE_TAG_LIST);
+        connection.appendInt32(10);
 
         // *** status ***
-        connection.appendInt(BOTTLE_TAG_INT);
-        connection.appendInt((int)status);
+        connection.appendInt32(BOTTLE_TAG_INT8);
+        connection.appendInt8(status);
 
         // *** service ***
-        connection.appendInt(BOTTLE_TAG_INT);
-        connection.appendInt((int)service);
+        connection.appendInt32(BOTTLE_TAG_INT16);
+        connection.appendInt16(service);
 
         connection.convertTextMode();
         return !connection.isError();

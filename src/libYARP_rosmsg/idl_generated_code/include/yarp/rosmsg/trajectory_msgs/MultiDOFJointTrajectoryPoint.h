@@ -71,7 +71,7 @@ public:
     bool readBare(yarp::os::ConnectionReader& connection) override
     {
         // *** transforms ***
-        int len = connection.expectInt();
+        int len = connection.expectInt32();
         transforms.resize(len);
         for (int i=0; i<len; i++) {
             if (!transforms[i].read(connection)) {
@@ -80,7 +80,7 @@ public:
         }
 
         // *** velocities ***
-        len = connection.expectInt();
+        len = connection.expectInt32();
         velocities.resize(len);
         for (int i=0; i<len; i++) {
             if (!velocities[i].read(connection)) {
@@ -89,7 +89,7 @@ public:
         }
 
         // *** accelerations ***
-        len = connection.expectInt();
+        len = connection.expectInt32();
         accelerations.resize(len);
         for (int i=0; i<len; i++) {
             if (!accelerations[i].read(connection)) {
@@ -114,10 +114,10 @@ public:
         }
 
         // *** transforms ***
-        if (connection.expectInt() != BOTTLE_TAG_LIST) {
+        if (connection.expectInt32() != BOTTLE_TAG_LIST) {
             return false;
         }
-        int len = connection.expectInt();
+        int len = connection.expectInt32();
         transforms.resize(len);
         for (int i=0; i<len; i++) {
             if (!transforms[i].read(connection)) {
@@ -126,10 +126,10 @@ public:
         }
 
         // *** velocities ***
-        if (connection.expectInt() != BOTTLE_TAG_LIST) {
+        if (connection.expectInt32() != BOTTLE_TAG_LIST) {
             return false;
         }
-        len = connection.expectInt();
+        len = connection.expectInt32();
         velocities.resize(len);
         for (int i=0; i<len; i++) {
             if (!velocities[i].read(connection)) {
@@ -138,10 +138,10 @@ public:
         }
 
         // *** accelerations ***
-        if (connection.expectInt() != BOTTLE_TAG_LIST) {
+        if (connection.expectInt32() != BOTTLE_TAG_LIST) {
             return false;
         }
-        len = connection.expectInt();
+        len = connection.expectInt32();
         accelerations.resize(len);
         for (int i=0; i<len; i++) {
             if (!accelerations[i].read(connection)) {
@@ -167,7 +167,7 @@ public:
     bool writeBare(yarp::os::ConnectionWriter& connection) override
     {
         // *** transforms ***
-        connection.appendInt(transforms.size());
+        connection.appendInt32(transforms.size());
         for (size_t i=0; i<transforms.size(); i++) {
             if (!transforms[i].write(connection)) {
                 return false;
@@ -175,7 +175,7 @@ public:
         }
 
         // *** velocities ***
-        connection.appendInt(velocities.size());
+        connection.appendInt32(velocities.size());
         for (size_t i=0; i<velocities.size(); i++) {
             if (!velocities[i].write(connection)) {
                 return false;
@@ -183,7 +183,7 @@ public:
         }
 
         // *** accelerations ***
-        connection.appendInt(accelerations.size());
+        connection.appendInt32(accelerations.size());
         for (size_t i=0; i<accelerations.size(); i++) {
             if (!accelerations[i].write(connection)) {
                 return false;
@@ -200,12 +200,12 @@ public:
 
     bool writeBottle(yarp::os::ConnectionWriter& connection) override
     {
-        connection.appendInt(BOTTLE_TAG_LIST);
-        connection.appendInt(4);
+        connection.appendInt32(BOTTLE_TAG_LIST);
+        connection.appendInt32(4);
 
         // *** transforms ***
-        connection.appendInt(BOTTLE_TAG_LIST);
-        connection.appendInt(transforms.size());
+        connection.appendInt32(BOTTLE_TAG_LIST);
+        connection.appendInt32(transforms.size());
         for (size_t i=0; i<transforms.size(); i++) {
             if (!transforms[i].write(connection)) {
                 return false;
@@ -213,8 +213,8 @@ public:
         }
 
         // *** velocities ***
-        connection.appendInt(BOTTLE_TAG_LIST);
-        connection.appendInt(velocities.size());
+        connection.appendInt32(BOTTLE_TAG_LIST);
+        connection.appendInt32(velocities.size());
         for (size_t i=0; i<velocities.size(); i++) {
             if (!velocities[i].write(connection)) {
                 return false;
@@ -222,8 +222,8 @@ public:
         }
 
         // *** accelerations ***
-        connection.appendInt(BOTTLE_TAG_LIST);
-        connection.appendInt(accelerations.size());
+        connection.appendInt32(BOTTLE_TAG_LIST);
+        connection.appendInt32(accelerations.size());
         for (size_t i=0; i<accelerations.size(); i++) {
             if (!accelerations[i].write(connection)) {
                 return false;

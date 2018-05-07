@@ -33,8 +33,8 @@ class Joy : public yarp::os::idl::WirePortable
 {
 public:
     yarp::rosmsg::std_msgs::Header header;
-    std::vector<yarp::os::NetFloat32> axes;
-    std::vector<yarp::os::NetInt32> buttons;
+    std::vector<yarp::conf::float32_t> axes;
+    std::vector<std::int32_t> buttons;
 
     Joy() :
             header(),
@@ -63,16 +63,16 @@ public:
         }
 
         // *** axes ***
-        int len = connection.expectInt();
+        int len = connection.expectInt32();
         axes.resize(len);
-        if (len > 0 && !connection.expectBlock((char*)&axes[0], sizeof(yarp::os::NetFloat32)*len)) {
+        if (len > 0 && !connection.expectBlock((char*)&axes[0], sizeof(yarp::conf::float32_t)*len)) {
             return false;
         }
 
         // *** buttons ***
-        len = connection.expectInt();
+        len = connection.expectInt32();
         buttons.resize(len);
-        if (len > 0 && !connection.expectBlock((char*)&buttons[0], sizeof(yarp::os::NetInt32)*len)) {
+        if (len > 0 && !connection.expectBlock((char*)&buttons[0], sizeof(std::int32_t)*len)) {
             return false;
         }
 
@@ -93,23 +93,23 @@ public:
         }
 
         // *** axes ***
-        if (connection.expectInt() != (BOTTLE_TAG_LIST|BOTTLE_TAG_DOUBLE)) {
+        if (connection.expectInt32() != (BOTTLE_TAG_LIST|BOTTLE_TAG_FLOAT32)) {
             return false;
         }
-        int len = connection.expectInt();
+        int len = connection.expectInt32();
         axes.resize(len);
         for (int i=0; i<len; i++) {
-            axes[i] = (yarp::os::NetFloat32)connection.expectDouble();
+            axes[i] = (yarp::conf::float32_t)connection.expectFloat32();
         }
 
         // *** buttons ***
-        if (connection.expectInt() != (BOTTLE_TAG_LIST|BOTTLE_TAG_INT)) {
+        if (connection.expectInt32() != (BOTTLE_TAG_LIST|BOTTLE_TAG_INT32)) {
             return false;
         }
-        len = connection.expectInt();
+        len = connection.expectInt32();
         buttons.resize(len);
         for (int i=0; i<len; i++) {
-            buttons[i] = (yarp::os::NetInt32)connection.expectInt();
+            buttons[i] = (std::int32_t)connection.expectInt32();
         }
 
         return !connection.isError();
@@ -130,15 +130,15 @@ public:
         }
 
         // *** axes ***
-        connection.appendInt(axes.size());
+        connection.appendInt32(axes.size());
         if (axes.size()>0) {
-            connection.appendExternalBlock((char*)&axes[0], sizeof(yarp::os::NetFloat32)*axes.size());
+            connection.appendExternalBlock((char*)&axes[0], sizeof(yarp::conf::float32_t)*axes.size());
         }
 
         // *** buttons ***
-        connection.appendInt(buttons.size());
+        connection.appendInt32(buttons.size());
         if (buttons.size()>0) {
-            connection.appendExternalBlock((char*)&buttons[0], sizeof(yarp::os::NetInt32)*buttons.size());
+            connection.appendExternalBlock((char*)&buttons[0], sizeof(std::int32_t)*buttons.size());
         }
 
         return !connection.isError();
@@ -146,8 +146,8 @@ public:
 
     bool writeBottle(yarp::os::ConnectionWriter& connection) override
     {
-        connection.appendInt(BOTTLE_TAG_LIST);
-        connection.appendInt(3);
+        connection.appendInt32(BOTTLE_TAG_LIST);
+        connection.appendInt32(3);
 
         // *** header ***
         if (!header.write(connection)) {
@@ -155,17 +155,17 @@ public:
         }
 
         // *** axes ***
-        connection.appendInt(BOTTLE_TAG_LIST|BOTTLE_TAG_DOUBLE);
-        connection.appendInt(axes.size());
+        connection.appendInt32(BOTTLE_TAG_LIST|BOTTLE_TAG_FLOAT32);
+        connection.appendInt32(axes.size());
         for (size_t i=0; i<axes.size(); i++) {
-            connection.appendDouble((double)axes[i]);
+            connection.appendFloat32(axes[i]);
         }
 
         // *** buttons ***
-        connection.appendInt(BOTTLE_TAG_LIST|BOTTLE_TAG_INT);
-        connection.appendInt(buttons.size());
+        connection.appendInt32(BOTTLE_TAG_LIST|BOTTLE_TAG_INT32);
+        connection.appendInt32(buttons.size());
         for (size_t i=0; i<buttons.size(); i++) {
-            connection.appendInt((int)buttons[i]);
+            connection.appendInt32(buttons[i]);
         }
 
         connection.convertTextMode();
