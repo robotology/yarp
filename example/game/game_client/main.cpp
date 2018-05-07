@@ -123,9 +123,9 @@ public:
                 if (strlen(playerName.c_str())<40) {
                     sprintf(buf,"PLAYER %s is at (%d,%d) with lifeforce %d",
                                     playerName.c_str(),
-                                    location.get(1).asInt(),
-                                    location.get(2).asInt(),
-                                    life.asInt());
+                                    location.get(1).asInt32(),
+                                    location.get(2).asInt32(),
+                                    life.asInt32());
                     cprintf("%s\n", pad(String(buf)).c_str());
                 }
             }

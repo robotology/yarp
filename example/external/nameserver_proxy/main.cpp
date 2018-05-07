@@ -24,7 +24,7 @@ public:
     info.addString("ip");
     info.addString(c.getHost().c_str());
     info.addString("port");
-    info.addInt(c.getPort());
+    info.addInt32(c.getPort());
     info.addString("type");
     info.addString(c.getCarrier().c_str());
   }
@@ -92,7 +92,7 @@ int main(int argc, char *argv[]) {
     fprintf(stderr,"Please supply a --socket NNNN option\n");
     exit(1);
   }
-  int socket = config.find("socket").asInt();
+  int socket = config.find("socket").asInt32();
 
   Network yarp;
   Contact contact(config.check("name", Value("/name/proxy")).asString(),

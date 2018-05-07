@@ -28,15 +28,15 @@ void Thing::applyMove() {
 
     if (dx!=0 || dy!=0) {
 
-        ID x2 = x.asInt()+dx;
-        ID y2 = y.asInt()+dy;
+        ID x2 = x.asInt32()+dx;
+        ID y2 = y.asInt32()+dy;
     
         if (game.getCell(x2,y2)==0) {
             game.setCell(x,y,0);    
             x = x2;
             y = y2;
             game.setCell(x,y,id);
-            printf("Implemented move for %ld\n", id.asInt());
+            printf("Implemented move for %ld\n", id.asInt32());
         } else {
             printf("Ignored blocked move\n");
         }

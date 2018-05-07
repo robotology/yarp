@@ -122,17 +122,17 @@ public:
             break;
         case VOCAB3('d','e','l'):
             {
-                if (command.get(1).isInt()) {
-                    int idx = command.get(1).asInt();
+                if (command.get(1).isInt32()) {
+                    int idx = command.get(1).asInt32();
                     bool acted = removeName(idx);
                     if (acted) {
                         reply.clear();
                         reply.add(Value::makeVocab("del"));
-                        reply.addInt(idx);
+                        reply.addInt32(idx);
                     } else {
                         reply.clear();
                         reply.add(Value::makeVocab("no"));
-                        reply.addInt(idx);
+                        reply.addInt32(idx);
                     }
                     addQueue(reply);
                 } else {

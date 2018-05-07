@@ -23,7 +23,7 @@ int main() {
         out.clear();
         out.addString("hello");
         out.addString("world");
-        out.addInt(ct);
+        out.addInt32(ct);
         ct++;
         p.write(out,in); // send command, wait for reply.
         // process response "in".

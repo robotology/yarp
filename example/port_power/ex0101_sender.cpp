@@ -22,7 +22,7 @@ int main() {
         b.clear();  // clear is important - b might be a reused object
         b.addString("hello");
         b.addString("world");
-        b.addInt(ct);
+        b.addInt32(ct);
         ct++;
         printf("Sending %s\n", b.toString().c_str());
         p.write();            // Send the data.

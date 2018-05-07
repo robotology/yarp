@@ -249,9 +249,9 @@ void Player::fire(int tx, int ty) {
     for(int i=1; i<=fr; i++) {
         //send("Fire loop");
 
-        ID nid = game.getCell(ID(x.asInt() + i*tx),ID(y.asInt() + i*ty));
-        game.setTransient(ID(x.asInt() + i*tx),ID(y.asInt() + i*ty),1,0.5);
-        long int myid = nid.asInt();
+        ID nid = game.getCell(ID(x.asInt32() + i*tx),ID(y.asInt32() + i*ty));
+        game.setTransient(ID(x.asInt32() + i*tx),ID(y.asInt32() + i*ty),1,0.5);
+        long int myid = nid.asInt32();
 
         if (myid != 0) {
             if(myid >= 100) {
@@ -291,7 +291,7 @@ void Player::look() {
     at++;
     buf_bar[at] = '\"';
     at++;
-    for (long int xx=x.asInt()-dx; xx<=x.asInt()+dx+2; xx++) {
+    for (long int xx=x.asInt32()-dx; xx<=x.asInt32()+dx+2; xx++) {
         buf_bar[at] = ':';
         at++;
     }
@@ -303,7 +303,7 @@ void Player::look() {
     at++;
     buf_bar[at] = '\0';
 
-    for (long int yy=y.asInt()-dy; yy<=y.asInt()+dy; yy++) {
+    for (long int yy=y.asInt32()-dy; yy<=y.asInt32()+dy; yy++) {
         at = 0;
         buf[at] = ' ';
         at++;
@@ -317,19 +317,19 @@ void Player::look() {
         at++;
         buf[at] = ':';
         at++;
-        for (long int xx=x.asInt()-dx; xx<=x.asInt()+dx; xx++) {
+        for (long int xx=x.asInt32()-dx; xx<=x.asInt32()+dx; xx++) {
             char ch = ' ';
             ID nid = game.getCell(ID(xx),ID(yy));
-            long int x = nid.asInt();
+            long int x = nid.asInt32();
             if (x!=0) {
                 if (x>=100) {
                     if(!game.getThing(nid).isAlive()) {
-                        if (x==login.getID().asInt()) {
+                        if (x==login.getID().asInt32()) {
                             ch = '%';
                         } else {
                             ch = '*';
                         }
-                    } else if (x==login.getID().asInt()) {
+                    } else if (x==login.getID().asInt32()) {
                         ch = 'Q';  // me 
                     } else if(game.getThing(nid).isBullet()) {
                         ch = '.';
@@ -364,16 +364,16 @@ void Player::look() {
     send("  (players ");
     sprintf(buf,"    (%s (location %d %d) (life %d))", 
             login.getThing().getName(),
-            thing.getX().asInt(),
-            thing.getY().asInt(),
+            thing.getX().asInt32(),
+            thing.getY().asInt32(),
             login.getThing().getLife()/1000);
     send(buf);
 
-    for (long int yy=y.asInt()-dy; yy<=y.asInt()+dy; yy++) {
-        for (long int xx=x.asInt()-dx; xx<=x.asInt()+dx; xx++) {
+    for (long int yy=y.asInt32()-dy; yy<=y.asInt32()+dy; yy++) {
+        for (long int xx=x.asInt32()-dx; xx<=x.asInt32()+dx; xx++) {
             ID nid = game.getCell(ID(xx),ID(yy));
-            long int x = nid.asInt();
-            if (x>=100 && x!=login.getID().asInt()) {
+            long int x = nid.asInt32();
+            if (x>=100 && x!=login.getID().asInt32()) {
                 char buf[1000];
                 sprintf(buf,"    (%s (location %d %d) (life %d))", 
                         game.getThing(nid).getName(),

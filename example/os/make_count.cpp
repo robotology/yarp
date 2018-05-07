@@ -23,7 +23,7 @@ int main(int argc, char *argv[]) {
 	    Bottle& msg = out.prepare();
 		msg.clear();
 		msg.addString("countdown");
-		msg.addInt(i);
+		msg.addInt32(i);
 		out.write();
 		Time::delay(1);
     }

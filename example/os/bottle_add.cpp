@@ -15,7 +15,7 @@ int main() {
     // create a bottle representing the list (5,"plus",2,"is")
     Bottle b("5 plus 2 is");
     // add an integer that is the sum of element 0 and 2
-    b.addInt(b.get(0).asInt()+b.get(2).asInt());
+    b.addInt32(b.get(0).asInt32()+b.get(2).asInt32());
     // print the result -- "result: 5 plus 2 is 7"
     printf("result: %s\n", b.toString().c_str());
     return 0;

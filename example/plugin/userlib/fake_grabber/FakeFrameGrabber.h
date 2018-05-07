@@ -27,8 +27,8 @@ public:
     virtual bool open(yarp::os::Searchable& config) { 
 	// extract width and height configuration, if present
 	// otherwise use 128x128
-	int desiredWidth = config.check("w",yarp::os::Value(128)).asInt();
-	int desiredHeight = config.check("h",yarp::os::Value(128)).asInt();
+	int desiredWidth = config.check("w",yarp::os::Value(128)).asInt32();
+	int desiredHeight = config.check("h",yarp::os::Value(128)).asInt32();
 	return open(desiredWidth,desiredHeight);
     }
 

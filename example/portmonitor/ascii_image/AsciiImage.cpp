@@ -85,7 +85,7 @@ yarp::os::Things& AsciiImageMonitorObject::update(yarp::os::Things& thing)
     }
     str[count++] = '\0';
     //printf("%s\n", str);
-    bt.addInt(0);
+    bt.addInt32(0);
     bt.addString(str);
     th.setPortWriter(&bt);
     free(str);

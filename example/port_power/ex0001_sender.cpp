@@ -22,7 +22,7 @@ int main() {
         b.clear();
         b.addString("hello");
         b.addString("world");
-        b.addInt(ct);
+        b.addInt32(ct);
         ct++;
         p.write(b);      // Send the data.
         printf("Sent %s\n", b.toString().c_str());

@@ -49,7 +49,7 @@ int runClient(Searchable& config) {
     for (int i=0; i<10000; i++) {
         Bottle cmd, reply;
         cmd.addString(p.getName().c_str());
-        cmd.addInt(i);
+        cmd.addInt32(i);
         p.write(cmd,reply);
         printf("[%s] [%s]\n", cmd.toString().c_str(), 
                reply.toString().c_str());

@@ -109,9 +109,9 @@ public:
                 Value &life = player->find("life");
                 std::string playerName = player->get(0).asString();
        
-                myX=location.get(1).asInt(),
-                    myY=location.get(2).asInt(),
-                    myLife=life.asInt();
+                myX=location.get(1).asInt32(),
+                    myY=location.get(2).asInt32(),
+                    myLife=life.asInt32();
             }
     }
 

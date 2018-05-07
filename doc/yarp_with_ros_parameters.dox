@@ -28,7 +28,7 @@ From code, you could use a Bottle:
   cmd.addString("setParam");
   cmd.addString("/demo");
   cmd.addString("foo");
-  cmd.addInt(15);
+  cmd.addInt32(15);
   Network::write(ros,cmd,reply);
   printf("reply to setParam is: %s\n", reply.toString().c_str());
 
@@ -39,7 +39,7 @@ From code, you could use a Bottle:
   cmd.addString("foo");
   Network::write(ros,cmd,reply);
   printf("reply to getParam is: %s\n", reply.toString().c_str());
-  printf("Stored value is hopefully %d\n", reply.get(2).asInt());
+  printf("Stored value is hopefully %d\n", reply.get(2).asInt32());
   return 0;
 \endcode
 

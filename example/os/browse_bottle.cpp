@@ -18,11 +18,11 @@ void showBottle(Bottle& anUnknownBottle, int indentation = 0) {
         printf("[%d]: ", i);
         Value& element = anUnknownBottle.get(i);
         switch (element.getCode()) {
-        case BOTTLE_TAG_INT:
-            printf("int %d\n", element.asInt());
+        case BOTTLE_TAG_INT32:
+            printf("int %d\n", element.asInt32());
             break;
-        case BOTTLE_TAG_DOUBLE:
-            printf("float %g\n", element.asDouble());
+        case BOTTLE_TAG_FLOAT64:
+            printf("float %g\n", element.asFloat64());
             break;
         case BOTTLE_TAG_STRING:
             printf("string \"%s\"\n", element.asString().c_str());

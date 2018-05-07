@@ -52,7 +52,7 @@ public:
         for (int i=0; i<R; i++) {
             Bottle b;
             b.addString(p.getName());
-            b.addInt(i);
+            b.addInt32(i);
             printf("Writing %s\n", b.toString().c_str());
             p.write(b);
             Time::delay(3);
@@ -82,7 +82,7 @@ public:
             if (p.read(b)) {
                 printf("%s read %s\n", p.getName().c_str(),
                        b.toString().c_str());
-                counter->count(b.get(1).asInt());
+                counter->count(b.get(1).asInt32());
             }
         }
     }

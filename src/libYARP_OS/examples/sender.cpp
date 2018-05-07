@@ -23,7 +23,7 @@ int main() {
     for (int i=0; i<100; i++) {
         output.write(bot1);
         printf("Sent message: %s\n", bot1.toString().c_str());
-        bot1.addInt(i); // change the message for next time
+        bot1.addInt32(i); // change the message for next time
         Time::delay(1);
     }
     output.close();

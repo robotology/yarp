@@ -28,7 +28,7 @@ int main(int argc, char *argv[])
         
     std::string robotName=rf.find("robot").asString();
     std::string partName=rf.find("part").asString();
-    int joint=rf.find("joint").asInt();
+    int joint=rf.find("joint").asInt32();
 
     cout<<"Running with:"<<endl;
     cout<<"robot: "<<robotName.c_str()<<endl;

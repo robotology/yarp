@@ -133,8 +133,8 @@ int main(int argc, char **argv)
     Property p;
     p.fromCommand(argc, argv);
 
-    int period=p.check("period", Value(THREAD_PERIOD)).asInt();
-    int iterations=p.check("iterations", Value(-1)).asInt();
+    int period=p.check("period", Value(THREAD_PERIOD)).asInt32();
+    int iterations=p.check("iterations", Value(-1)).asInt32();
 
     ThreadB tB;
     ThreadA tA(period);

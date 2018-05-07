@@ -329,7 +329,7 @@ int main(int argc, char **argv) {
     if (p.check("server"))
         {
 
-            int payload=p.check("payload", Value(1)).asInt();
+            int payload=p.check("payload", Value(1)).asInt32();
 
             printf("Setting payload to %d[bytes]\n", payload);
 
@@ -342,10 +342,10 @@ int main(int argc, char **argv) {
                     return -1;
                 }
 
-            return server(p.find("period").asDouble()/1000.0, name, payload);
+            return server(p.find("period").asFloat64()/1000.0, name, payload);
         }
     else if (p.check("client"))
-        return client(p.find("nframes").asInt(), name);
+        return client(p.find("nframes").asInt32(), name);
 }
 
 

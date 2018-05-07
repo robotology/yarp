@@ -75,7 +75,7 @@ void CollatzServer::run()
 #if 0
             if (in.get(0).asVocab()==COLLATZ_VOCAB_REQ_ITEM)
             {
-                unsigned int num=in.get(1).asInt();
+                unsigned int num=in.get(1).asInt32();
 
                 fprintf(stdout,"Request received\n");
 
@@ -92,8 +92,8 @@ void CollatzServer::run()
 
             out.clear();
             out.addVocab(COLLATZ_VOCAB_ITEM);
-            out.addInt((int)num);
-            out.addInt((int)thres);
+            out.addInt32((int)num);
+            out.addInt32((int)thres);
 
             // send the item to the client
             port.reply(out);
