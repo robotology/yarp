@@ -253,7 +253,7 @@ int main(int argc, char *argv[]) {
         } else if (cmd=="q"||cmd=="quit") {
             done = true;
         } else if (cmd=="buf"||cmd=="b") {
-            padding = b.get(1).asInt();
+            padding = b.get(1).asInt32();
             yInfo("Buffering at %d\n", padding);
         }
     }

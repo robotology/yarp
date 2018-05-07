@@ -207,20 +207,20 @@ void strongConnect(Vertex* v,
         if(!w.property.check("index")) {
             // Successor w has not yet been visited; recurse on it
             strongConnect((Vertex*)(&w), scc, S, index);
-            int lowlink = std::min(v->property.find("lowlink").asInt(),
-                                   w.property.find("lowlink").asInt());
+            int lowlink = std::min(v->property.find("lowlink").asInt32(),
+                                   w.property.find("lowlink").asInt32());
             v->property.put("lowlink", lowlink);
 
         } else if (w.property.check("onStack")) {
             // Successor w is in stack S and hence in the current SCC
-            int lowlink = std::min(v->property.find("lowlink").asInt(),
-                                   w.property.find("index").asInt());
+            int lowlink = std::min(v->property.find("lowlink").asInt32(),
+                                   w.property.find("index").asInt32());
             v->property.put("lowlink", lowlink);
         }
     } // end successors
 
     // If v is a root node, pop the stack and generate an SCC
-    if(v->property.find("lowlink").asInt() == v->property.find("index").asInt()) {
+    if(v->property.find("lowlink").asInt32() == v->property.find("index").asInt32()) {
         // start a new strongly connected component
         pvertex_set vset;
         Vertex* w;

@@ -371,8 +371,8 @@ Application* XmlAppLoader::parsXml(const char* szFile)
                     GyPoint pt;
                     if(prop.check("Pos"))
                     {
-                        pt.x = prop.findGroup("Pos").find("x").asDouble();
-                        pt.y = prop.findGroup("Pos").find("y").asDouble();
+                        pt.x = prop.findGroup("Pos").find("x").asFloat64();
+                        pt.y = prop.findGroup("Pos").find("y").asFloat64();
                         model.points.push_back(pt);
                         module.setModelBase(model);
                     }
@@ -496,8 +496,8 @@ Application* XmlAppLoader::parsXml(const char* szFile)
                     GyPoint pt;
                     if(prop.check("Pos"))
                     {
-                        pt.x = prop.findGroup("Pos").find("x").asDouble();
-                        pt.y = prop.findGroup("Pos").find("y").asDouble();
+                        pt.x = prop.findGroup("Pos").find("x").asFloat64();
+                        pt.y = prop.findGroup("Pos").find("y").asFloat64();
                         model.points.push_back(pt);
                         IApp.setModelBase(model);
                     }
@@ -549,8 +549,8 @@ Application* XmlAppLoader::parsXml(const char* szFile)
                         for(int i=1; i<pos.size(); i++)
                         {
                             GyPoint pt;
-                            pt.x = pos.get(i).find("x").asDouble();
-                            pt.y = pos.get(i).find("y").asDouble();
+                            pt.x = pos.get(i).find("x").asFloat64();
+                            pt.y = pos.get(i).find("y").asFloat64();
                             model.points.push_back(pt);
                         }
                         arbitrator.setModelBase(model);
@@ -657,8 +657,8 @@ Application* XmlAppLoader::parsXml(const char* szFile)
                         for(int i=1; i<pos.size(); i++)
                         {
                             GyPoint pt;
-                            pt.x = pos.get(i).find("x").asDouble();
-                            pt.y = pos.get(i).find("y").asDouble();
+                            pt.x = pos.get(i).find("x").asFloat64();
+                            pt.y = pos.get(i).find("y").asFloat64();
                             model.points.push_back(pt);
                         }
                         connection.setModelBase(model);

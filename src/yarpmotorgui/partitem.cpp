@@ -1153,8 +1153,8 @@ bool PartItem::homeToCustomPosition(const yarp::os::Bottle& positionElement)
     {
         for (int jointIndex = 0; jointIndex < NUMBER_OF_JOINTS; jointIndex++)
         {
-            double position = xtmp.get(jointIndex+1).asDouble();
-            double velocity = ytmp.get(jointIndex + 1).asDouble();
+            double position = xtmp.get(jointIndex+1).asFloat64();
+            double velocity = ytmp.get(jointIndex + 1).asFloat64();
             m_iPos->setRefSpeed(jointIndex, velocity);
             m_iPos->positionMove(jointIndex, position);
         }

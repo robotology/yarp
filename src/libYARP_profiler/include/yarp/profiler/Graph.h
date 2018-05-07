@@ -209,7 +209,7 @@ public:
 
         virtual bool operator == (const yarp::profiler::graph::Vertex &v1) const override {
             return property.find("hostname").asString() == v1.property.find("hostname").asString() &&
-                   property.find("pid").asInt() == v1.property.find("pid").asInt();
+                   property.find("pid").asInt32() == v1.property.find("pid").asInt32();
         }
 
 };

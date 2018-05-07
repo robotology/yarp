@@ -45,17 +45,17 @@ void InformationDialog::setProcessVertexInfo(yarp::profiler::graph::ProcessVerte
 
     prop.clear();
     prop.append("PID");
-    prop.append(QString::number(vertex->property.find("pid").asInt()));
+    prop.append(QString::number(vertex->property.find("pid").asInt32()));
     item = new QTreeWidgetItem( ui->treeWidgetProperty, prop);
 
     prop.clear();
     prop.append("Priority");
-    prop.append(QString::number(vertex->property.find("priority").asInt()));
+    prop.append(QString::number(vertex->property.find("priority").asInt32()));
     item = new QTreeWidgetItem( ui->treeWidgetProperty, prop);
 
     prop.clear();
     prop.append("Policy");
-    prop.append(QString::number(vertex->property.find("policy").asInt()));
+    prop.append(QString::number(vertex->property.find("policy").asInt32()));
     item = new QTreeWidgetItem( ui->treeWidgetProperty, prop);
 }
 
@@ -98,35 +98,35 @@ void InformationDialog::setEdgeInfo(yarp::profiler::graph::Edge* edge) {
     if(edge->property.check("FromPacketPriority")) {
         // source
         yarp::os::QosStyle::PacketPriorityLevel level=
-                (yarp::os::QosStyle::PacketPriorityLevel)edge->property.find("FromPacketPriority").asInt();
+                (yarp::os::QosStyle::PacketPriorityLevel)edge->property.find("FromPacketPriority").asInt32();
         prop.clear();
         prop.append("Source packet priority");
         prop.append(yarp::profiler::NetworkProfiler::packetPrioToString(level).c_str());
         item = new QTreeWidgetItem( ui->treeWidgetProperty, prop);
         prop.clear();
         prop.append("Source thread priority");
-        prop.append(QString::number(edge->property.find("FromThreadPriority").asInt()));
+        prop.append(QString::number(edge->property.find("FromThreadPriority").asInt32()));
         item = new QTreeWidgetItem( ui->treeWidgetProperty, prop);
 
         prop.clear();
         prop.append("Source thread policy");
-        prop.append(QString::number(edge->property.find("FromThreadPolicy").asInt()));
+        prop.append(QString::number(edge->property.find("FromThreadPolicy").asInt32()));
         item = new QTreeWidgetItem( ui->treeWidgetProperty, prop);
 
         // destination
-        level = (yarp::os::QosStyle::PacketPriorityLevel)edge->property.find("ToPacketPriority").asInt();
+        level = (yarp::os::QosStyle::PacketPriorityLevel)edge->property.find("ToPacketPriority").asInt32();
         prop.clear();
         prop.append("Destination packet priority");
         prop.append(yarp::profiler::NetworkProfiler::packetPrioToString(level).c_str());
         item = new QTreeWidgetItem( ui->treeWidgetProperty, prop);
         prop.clear();
         prop.append("Destination thread priority");
-        prop.append(QString::number(edge->property.find("ToThreadPriority").asInt()));
+        prop.append(QString::number(edge->property.find("ToThreadPriority").asInt32()));
         item = new QTreeWidgetItem( ui->treeWidgetProperty, prop);
 
         prop.clear();
         prop.append("Destination thread policy");
-        prop.append(QString::number(edge->property.find("FromThreadPolicy").asInt()));
+        prop.append(QString::number(edge->property.find("FromThreadPolicy").asInt32()));
         item = new QTreeWidgetItem( ui->treeWidgetProperty, prop);
     }
 }
