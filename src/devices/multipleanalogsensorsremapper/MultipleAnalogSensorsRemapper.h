@@ -20,6 +20,22 @@ namespace yarp {
 namespace dev {
 
 /**
+ * Internal identifier of the type of sensors.
+ */
+enum MAS_SensorType
+{
+    ThreeAxisGyroscopes=0,
+    ThreeAxisLinearAccelerometers=1,
+    ThreeAxisMagnetometers=2,
+    OrientationSensors=3,
+    TemperatureSensors=4,
+    SixAxisForceTorqueSensors=5,
+    ContactLoadCellArrays=6,
+    EncoderArrays=7,
+    SkinPatches=8
+};
+
+/**
 * \brief `multipleanalogsensorsremapper` : device that takes a list of sensor from multiple analog sensors device and expose them as a single device exposing MultipleAnalogSensors interface.
 * 
 * | YARP device name |
