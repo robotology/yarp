@@ -104,7 +104,7 @@ public:
         receiver.start();
         //Time::delay(1);
         Bottle bot;
-        bot.addInt(0);
+        bot.addInt32(0);
         bot.addString("Hello world");
         report(0,"sending bottle, should received nothing");
         expectation = "";
@@ -152,7 +152,7 @@ public:
         receiver.start();
         //Time::delay(1);
         Bottle bot;
-        bot.addInt(0);
+        bot.addInt32(0);
         bot.addString("Hello world");
         report(0,"sending bottle, should received nothing");
         expectation = "";

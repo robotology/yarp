@@ -183,8 +183,8 @@ public:
         checkEqual((int)bot.size(),(int)v.size(),"size matches");
         {
             for (int i=0; i<bot.size(); i++) {
-                checkTrue(bot.get(i).asDouble()>i-0.25,"bounded below");
-                checkTrue(bot.get(i).asDouble()<i+0.25,"bounded above");
+                checkTrue(bot.get(i).asFloat64()>i-0.25,"bounded below");
+                checkTrue(bot.get(i).asFloat64()<i+0.25,"bounded above");
             }
         }
     }

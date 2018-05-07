@@ -416,8 +416,8 @@ public:
         std::string s = writer.toString();
         Bottle bot;
         bot.fromBinary(s.c_str(),(int)s.length());
-        checkEqual(bot.get(0).asInt(),rr,"row count matches");
-        checkEqual(bot.get(1).asInt(),cc,"column count matches");
+        checkEqual(bot.get(0).asInt32(),rr,"row count matches");
+        checkEqual(bot.get(1).asInt32(),cc,"column count matches");
         Bottle *lst = bot.get(2).asList();
         checkTrue(lst!=nullptr,"have data");
         if (!lst) return;
@@ -425,7 +425,7 @@ public:
         if (lst->size()!=(int)(rr*cc)) return;
         bool ok = true;
         for (int i=0; i<(int)(rr*cc); i++) {
-            double v = lst->get(i).asDouble();
+            double v = lst->get(i).asFloat64();
             if (fabs(v-i)>0.01) {
                 ok = false;
                 checkEqualish(v,i,"cell matches");
@@ -456,7 +456,7 @@ public:
         msg2.read(reader);
         checkEqual(msg.head.rows(),msg2.head.rows(),"matrix row match");
         checkEqual(msg.head.cols(),msg2.head.cols(),"matrix col match");
-        checkEqualish(msg.body.asDouble(),msg2.body.asDouble(),"value match");
+        checkEqualish(msg.body.asFloat64(),msg2.body.asFloat64(),"value match");
 
         Bottle bot;
         bot.read(msg);
@@ -464,13 +464,13 @@ public:
         Bottle *bot2 = bot.get(1).asList();
         checkTrue(bot1!=nullptr&&bot2!=nullptr,"got head/body");
         if (bot1==nullptr || bot2==nullptr) return;
-        checkEqual(bot1->get(0).asInt(),rr,"row count matches");
-        checkEqual(bot1->get(1).asInt(),cc,"column count matches");
+        checkEqual(bot1->get(0).asInt32(),rr,"row count matches");
+        checkEqual(bot1->get(1).asInt32(),cc,"column count matches");
         Bottle *lst = bot1->get(2).asList();
         checkTrue(lst!=nullptr,"have data");
         if (!lst) return;
         checkEqual(lst->size(),(int)(rr*cc),"data length matches");
-        checkEqualish(bot2->get(0).asDouble(),value,"value match");
+        checkEqualish(bot2->get(0).asFloat64(),value,"value match");
     }
 
     void checkEmpty() {

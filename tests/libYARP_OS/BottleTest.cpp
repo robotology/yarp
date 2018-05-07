@@ -42,7 +42,7 @@ public:
         report(0,"testing sizes...");
         BottleImpl bot;
         checkEqual(0,(int)bot.size(),"empty bottle");
-        bot.addInt(1);
+        bot.addInt32(1);
         checkEqual(1,(int)bot.size(),"add int");
         bot.addString("hello");
         checkEqual(2,(int)bot.size(),"add string");
@@ -55,7 +55,7 @@ public:
         report(0,"testing string representation...");
         std::string target = "hello \"my\" \\friend";
         BottleImpl bot;
-        bot.addInt(5);
+        bot.addInt32(5);
         bot.addString("hello \"my\" \\friend");
         std::string txt = bot.toString();
         const char *expect = "5 \"hello \\\"my\\\" \\\\friend\"";
@@ -68,16 +68,16 @@ public:
     void testBinary() {
         report(0,"testing binary representation...");
         BottleImpl bot;
-        bot.addInt(5);
+        bot.addInt32(5);
         bot.addString("hello");
-        checkEqual(bot.isInt(0),true,"type check");
+        checkEqual(bot.isInt32(0),true,"type check");
         checkEqual(bot.isString(1),true,"type check");
         ManagedBytes store(bot.byteCount());
         bot.toBytes(store.bytes());
         BottleImpl bot2;
         bot2.fromBytes(store.bytes());
         checkEqual((int)bot2.size(),2,"recovery binary, length");
-        checkEqual(bot2.isInt(0),bot.isInt(0),"recovery binary, integer");
+        checkEqual(bot2.isInt32(0),bot.isInt32(0),"recovery binary, integer");
         checkEqual(bot2.isString(1),bot.isString(1),"recovery binary, integer");
         BottleImpl bot3;
         bot3.fromString("[go] (10 20 30 40)");
@@ -100,24 +100,24 @@ public:
         report(0,"testing hexadecimal...");
         Bottle b;
         b.fromString("0x0C");
-        checkTrue(b.get(0).isInt(),"0x0C is an integer");
-        checkEqual(b.get(0).asInt(),12,"0x0C");
+        checkTrue(b.get(0).isInt32(),"0x0C is an integer");
+        checkEqual(b.get(0).asInt32(),12,"0x0C");
         b.fromString("0x0E");
-        checkTrue(b.get(0).isInt(),"0x0E is an integer");
-        checkEqual(b.get(0).asInt(),14,"0x0E");
+        checkTrue(b.get(0).isInt32(),"0x0E is an integer");
+        checkEqual(b.get(0).asInt32(),14,"0x0E");
         b.fromString("0x0c");
-        checkEqual(b.get(0).asInt(),12,"0x0c");
+        checkEqual(b.get(0).asInt32(),12,"0x0c");
         b.fromString("0x0e");
-        checkEqual(b.get(0).asInt(),14,"0x0e");
+        checkEqual(b.get(0).asInt32(),14,"0x0e");
         b.fromString("0xff");
-        checkEqual(b.get(0).asInt(),255,"0xff");
+        checkEqual(b.get(0).asInt32(),255,"0xff");
     }
 
     void testStreaming() {
         report(0,"testing streaming (just text mode)...");
 
         BottleImpl bot;
-        bot.addInt(5);
+        bot.addInt32(5);
         bot.addString("hello");
 
         BufferedConnectionWriter bbw(true);
@@ -140,30 +140,176 @@ public:
 
     void testTypes() {
         report(0,"testing types...");
-        BottleImpl bot[3];
-        bot[0].fromString("5 10.2 \"hello\" -0xF -15.0");
-        checkEqual(bot[0].get(3).asInt(),-15,"hex works");
-        bot[1].addInt(5);
-        bot[1].addDouble(10.2);
-        bot[1].addString("hello");
-        bot[1].addInt(-15);
-        bot[1].addDouble(-15.0);
-        ManagedBytes store(bot[0].byteCount());
-        bot[0].toBytes(store.bytes());
-        bot[2].fromBytes(store.bytes());
+        BottleImpl bot[4];
 
-        for (int i=0; i<3; i++) {
+        bot[0].fromString("8 16 32 64 32.01 64.01 \"hello\" -0xF -15.0");
+
+        ManagedBytes store0(bot[0].byteCount());
+        bot[0].toBytes(store0.bytes());
+        bot[1].fromBytes(store0.bytes());
+
+        bot[2].addInt8(8);
+        bot[2].addInt16(16);
+        bot[2].addInt32(32);
+        bot[2].addInt64(64);
+        bot[2].addFloat32(32.01f);
+        bot[2].addFloat64(64.01);
+        bot[2].addString("hello");
+        bot[2].addInt32(-0xF);
+        bot[2].addFloat64(-15.0);
+
+
+        ManagedBytes store1(bot[2].byteCount());
+        bot[2].toBytes(store1.bytes());
+        bot[3].fromBytes(store1.bytes());
+
+        for (size_t i=0; i<4; i++) {
             BottleImpl& b = bot[i];
-            report(0,std::string("check for bottle number ") +
-                   NetType::toString(i));
-            checkTrue(b.isInt(0)&&b.isInt(3),"ints");
-            checkTrue(b.isDouble(1)&&b.isDouble(4),"doubles");
-            checkTrue(b.isString(2),"strings");
-            checkEqual(b.getInt(0),5,"arg 0");
-            checkTrue(myfabs(b.getDouble(1)-10.2)<0.01,"arg 1");
-            checkEqual(b.getString(2).c_str(),"hello","arg 2");
-            checkEqual(b.getInt(3),-15,"arg 3");
-            checkTrue(myfabs(b.getDouble(4)+15.0)<0.01,"arg 4");
+            report(0, std::string("check for bottle number ") + std::to_string(i));
+
+            // arg 0 (int8)
+            // note int8 are not created from string
+
+            if (i < 2) {
+                checkFalse(b.isInt8(0), "arg 0 is not int8");
+            } else {
+                checkTrue(b.isInt8(0), "arg 0 is int8");
+            }
+            checkEqual(b.get(0).asInt8(), 8, "arg 0 value is correct (as int8)");
+
+            checkFalse(b.isInt16(0), "arg 0 is not int16");
+            checkEqual(b.get(0).asInt16(), 8, "arg 0 value is correct (as int16)");
+
+            if (i < 2) {
+                checkTrue(b.isInt32(0), "arg 0 is int32");
+            } else {
+                checkFalse(b.isInt32(0), "arg 0 is not int32");
+            }
+            checkEqual(b.get(0).asInt32(), 8, "arg 0 value is correct (as int32)");
+
+            checkFalse(b.isInt64(0), "arg 0 is not int64");
+            checkEqual(b.get(0).asInt64(), 8, "arg 0 value is correct (as int64)");
+
+            checkFalse(b.isFloat32(0), "arg 0 is not float32");
+            checkTrue(myfabs(b.get(0).asFloat32() - 8) < 0.001, "arg 0 value is correct (as float32)");
+
+            checkFalse(b.isFloat64(0), "arg 0 is not float64");
+            checkTrue(myfabs(b.get(0).asFloat64() - 8) < 0.001, "arg 0 value is correct (as float64)");
+
+
+            // arg 1 (int16)
+            // note: int16 are not created from string
+
+            checkFalse(b.isInt8(1), "arg 1 is not int8");
+            checkEqual(b.get(1).asInt8(), 16, "arg 1 value is correct (as int8)");
+
+            if (i < 2) {
+                checkFalse(b.isInt16(1), "arg 1 is not int16");
+            } else {
+                checkTrue(b.isInt16(1), "arg 1 is int16");
+            }
+            checkEqual(b.get(1).asInt16(), 16, "arg 1 value is correct (as int16)");
+
+            if (i < 2) {
+                checkTrue(b.isInt32(1), "arg 1 is int32");
+            } else {
+                checkFalse(b.isInt32(1), "arg 1 is not int32");
+            }
+            checkEqual(b.get(1).asInt32(), 16, "arg 1 value is correct (as int32)");
+
+            checkFalse(b.isInt64(1), "arg 1 is not int64");
+            checkEqual(b.get(1).asInt64(), 16, "arg 1 value is correct (as int64)");
+
+            checkFalse(b.isFloat32(1), "arg 1 is not float32");
+            checkTrue(myfabs(b.get(1).asFloat32() - 16) < 0.001, "arg 1 value is correct (as float32)");
+
+            checkFalse(b.isFloat64(1), "arg 1 is not float64");
+            checkTrue(myfabs(b.get(1).asFloat64() - 16) < 0.001, "arg 1 value is correct (as float64)");
+
+
+            // arg 2 (int32)
+            checkFalse(b.isInt8(2), "arg 2 is not int8");
+            checkEqual(b.get(2).asInt8(), 32, "arg 2 value is correct (as int8)");
+
+            checkFalse(b.isInt16(2), "arg 2 is not int16");
+            checkEqual(b.get(2).asInt16(), 32, "arg 2 value is correct (as int16)");
+
+            checkTrue(b.isInt32(2), "arg 2 is int32");
+            checkEqual(b.get(2).asInt32(), 32, "arg 2 value is correct (as int32)");
+
+            checkFalse(b.isInt64(2), "arg 2 is not int64");
+            checkEqual(b.get(2).asInt64(), 32, "arg 2 value is correct (as int64)");
+
+            checkFalse(b.isFloat32(2), "arg 2 is not float32");
+            checkTrue(myfabs(b.get(2).asFloat32() - 32) < 0.001, "arg 2 value is correct (as float32)");
+
+            checkFalse(b.isFloat64(2), "arg 2 is not float64");
+            checkTrue(myfabs(b.get(2).asFloat64() - 32) < 0.001, "arg 2 value is correct (as float64)");
+
+
+            // arg 3 (int64)
+            // note: int64 are not created from string
+
+            checkFalse(b.isInt8(3), "arg 3 is not int8");
+            checkEqual(b.get(3).asInt8(), 64, "arg 3 value is correct (as int8)");
+
+            checkFalse(b.isInt16(3), "arg 3 is not int16");
+            checkEqual(b.get(3).asInt16(), 64, "arg 3 value is correct (as int16)");
+
+            if (i < 2) {
+                checkTrue(b.isInt32(3), "arg 3 is int32");
+            } else {
+                checkFalse(b.isInt32(3), "arg 3 is not int32");
+            }
+            checkEqual(b.get(3).asInt32(), 64, "arg 3 value is correct (as int32)");
+
+            if (i < 2) {
+                checkFalse(b.isInt64(3), "arg 3 is not int64");
+            } else {
+                checkTrue(b.isInt64(3), "arg 3 is int64");
+            }
+            checkEqual(b.get(3).asInt64(), 64, "arg 3 value is correct (as int64)");
+
+            checkFalse(b.isFloat32(3), "arg 3 is not float32");
+            checkTrue(myfabs(b.get(3).asFloat32() - 64) < 0.001, "arg 3 value is correct (as float32)");
+
+            checkFalse(b.isFloat64(3), "arg 3 is not float64");
+            checkTrue(myfabs(b.get(3).asFloat64() - 64) < 0.001, "arg 3 value is correct (as float64)");
+
+            // arg 4 (float32)
+            // note: float32 are not created from string
+
+            if (i < 2) {
+                checkFalse(b.isFloat32(4), "arg 4 is not float32");
+            } else {
+                checkTrue(b.isFloat32(4), "arg 4 is float32");
+            }
+            checkTrue(myfabs(b.get(4).asFloat32() - 32.01f) < 0.001, "arg 4 value is correct (as float32)");
+
+            if (i < 2) {
+                checkTrue(b.isFloat64(4), "arg 4 is float64");
+            } else {
+                checkFalse(b.isFloat64(4), "arg 4 is not float64");
+            }
+            checkTrue(myfabs(b.get(4).asFloat64() - 32.01) < 0.001, "arg 4 value is correct (as float64)");
+
+
+            checkFalse(b.isFloat32(5), "arg 5 is not float32");
+            checkTrue(myfabs(b.get(5).asFloat32() - 64.01f) < 0.001, "arg 5 value is correct (as float32)");
+
+            checkTrue(b.isFloat64(5), "arg 5 is float64");
+            checkTrue(myfabs(b.get(5).asFloat64() - 64.01) < 0.001, "arg 5 value is correct (as float64)");
+
+
+            checkTrue(b.isString(6), "arg 6 is string");
+            checkEqual(b.get(6).asString().c_str(), "hello", "arg 6 value is correct");
+
+            checkTrue(b.isInt32(7), "arg 7 is int32");
+            checkEqual(b.get(7).asInt32(), -0xF, "arg 7 value is correct (hex works)");
+
+            checkFalse(b.isFloat32(8), "arg 8 is not float32");
+            checkTrue(b.isFloat64(8), "arg 8 is float64");
+            checkTrue(myfabs(b.get(8).asFloat64() + 15.0) < 0.001,"arg 8 value is correct");
         }
 
     }
@@ -197,15 +343,15 @@ public:
         Bottle bot10;
         {
             Bottle& bb = bot10.addList();
-            bb.addInt(1);
-            bb.addInt(2);
-            bb.addInt(3);
+            bb.addInt32(1);
+            bb.addInt32(2);
+            bb.addInt32(3);
         }
         {
             Bottle& bb = bot10.addList();
-            bb.addInt(4);
-            bb.addInt(5);
-            bb.addInt(6);
+            bb.addInt32(4);
+            bb.addInt32(5);
+            bb.addInt32(6);
         }
         checkEqual(bot10.size(),2,"construction test 1");
         checkEqual(bot10.toString().c_str(),"(1 2 3) (4 5 6)",
@@ -218,12 +364,12 @@ public:
     void testBits() {
         report(0,"testing Value interface...");
         Bottle bot("1 \"hi\" (4 \"foo\") 6 7");
-        checkTrue(bot.get(0).isInt(),"type check");
+        checkTrue(bot.get(0).isInt32(),"type check");
         checkTrue(bot.get(1).isString(),"type check");
         checkTrue(bot.get(2).isList(),"type check");
         checkTrue(bot.get(2).asList()!=nullptr,"can get sublist");
         if (bot.get(2).asList()!=nullptr) {
-            checkTrue(bot.get(2).asList()->get(0).isInt(),"type check");
+            checkTrue(bot.get(2).asList()->get(0).isInt32(),"type check");
             checkTrue(bot.get(2).asList()->get(1).isString(),"type check");
         }
         checkTrue(bot.get(50).isNull(),"null type check");
@@ -257,7 +403,7 @@ public:
         checkFalse(bot.check("goodbye"), "group check fails ok");
 
         // shortcut find, some people use it
-        checkEqual(bot.find("green").asInt(), 255, "shortcut find succeeds ok");
+        checkEqual(bot.find("green").asInt32(), 255, "shortcut find succeeds ok");
         checkTrue(bot.find("red").isNull(), "shortcut find fails ok");
 
         // shortcut check?
@@ -276,7 +422,7 @@ public:
         Bottle bot("[send] 10 20");
         checkEqual(bot.size(),3,"plausible parse");
         checkTrue(bot.get(0).isVocab(),"vocab present");
-        checkEqual(bot.get(0).asInt(),VOCAB('s','e','n','d'),
+        checkEqual(bot.get(0).asInt32(),VOCAB('s','e','n','d'),
                    "vocab match");
     }
 
@@ -347,7 +493,7 @@ public:
             //printf("bot is %s\n", bot.toString().c_str());
             //printf("bot2 is %s\n", bot2.toString().c_str());
             checkEqual(bot.size(),bot2.size(),"length check");
-            checkTrue(bot2.get(2).isInt(),"type check");
+            checkTrue(bot2.get(2).isInt32(),"type check");
             checkEqual(bot.toString().c_str(),bot2.toString().c_str(),
                        "content check");
         }
@@ -361,7 +507,7 @@ public:
             br.reset(sis,nullptr,Route(),sis.toString().length(),false);
             bot2.read(br);
             checkEqual(bot.size(),bot2.size(),"length check");
-            checkTrue(bot2.get(2).isDouble(),"type check");
+            checkTrue(bot2.get(2).isFloat64(),"type check");
             checkEqual(bot.toString().c_str(),bot2.toString().c_str(),
                        "content check");
         }
@@ -375,7 +521,7 @@ public:
         bot.fromString("\t\thello\t10\n");
         checkEqual(bot.size(),2,"ok with tab");
         checkEqual(bot.get(0).asString().c_str(),"hello","pre-tab ok");
-        checkEqual(bot.get(1).asInt(),10,"post-tab ok");
+        checkEqual(bot.get(1).asInt32(),10,"post-tab ok");
 
         report(0, "checking pasa problem with lists missing last element...");
         std::string s2 = "[set] [poss] (10.0 20.0 30.0 40.0 5.1)\n";
@@ -415,23 +561,23 @@ public:
     void testStack() {
         report(0,"testing stack functionality...");
         Bottle bot;
-        bot.addInt(10);
-        bot.addInt(11);
+        bot.addInt32(10);
+        bot.addInt32(11);
         bot.addString("Foo");
         Bottle& bot2 = bot.addList();
-        bot2.addInt(3);
-        bot.addDouble(2.71828);
-        checkTrue(bot.pop().isDouble(),"popping double");
+        bot2.addInt32(3);
+        bot.addFloat64(2.71828);
+        checkTrue(bot.pop().isFloat64(),"popping double");
         checkEqual(bot.size(),4,"bottle size decreased after pop");
-        checkEqual(bot.pop().asList()->pop().asInt(),3,"popping list and nested int");
+        checkEqual(bot.pop().asList()->pop().asInt32(),3,"popping list and nested int");
         checkEqual(bot.pop().asString().c_str(),"Foo", "popping string");
         Value val;
         val = bot.pop();
-        checkTrue(val.isInt(), "popped value is of type int");
-        checkEqual(val.asInt(), 11, "popped value is integer 11");
+        checkTrue(val.isInt32(), "popped value is of type int");
+        checkEqual(val.asInt32(), 11, "popped value is integer 11");
         val = bot.pop();
-        checkTrue(val.isInt(), "popped value is of type int");
-        checkEqual(val.asInt(), 10, "popped value is integer 10");
+        checkTrue(val.isInt32(), "popped value is of type int");
+        checkEqual(val.asInt32(), 10, "popped value is integer 10");
         val = bot.pop();
         checkTrue(bot.pop().isNull(), "empty bottle pops null");
         checkEqual(bot.size(),0,"bottle is empty after popping");
@@ -449,24 +595,24 @@ public:
     void testModify() {
         report(0,"test bottle modification...");
         Bottle b;
-        b.addInt(3);
+        b.addInt32(3);
         b.get(0) = 5;
         b.hasChanged();
-        checkEqual(b.get(0).asInt(),5,"assignment works");
+        checkEqual(b.get(0).asInt32(),5,"assignment works");
     }
 
     void testScientific() {
         report(0,"test scientific notation...");
         Bottle b;
         b.fromString("10.0e5");
-        checkTrue(similar(b.get(0).asDouble(),10e5, 1),
+        checkTrue(similar(b.get(0).asFloat64(),10e5, 1),
                   "positive positive lower case");
         b.fromString("10.0e-2");
-        checkTrue(similar(b.get(0).asDouble(),10e-2, 1e-2),
+        checkTrue(similar(b.get(0).asFloat64(),10e-2, 1e-2),
                   "positive negative lower case");
         b.fromString("1E-8");
-        checkTrue(b.get(0).isDouble(),"type check");
-        checkTrue(similar(b.get(0).asDouble(),1e-8, 1e-9),
+        checkTrue(b.get(0).isFloat64(),"type check");
+        checkTrue(similar(b.get(0).asFloat64(),1e-8, 1e-9),
                   "positive negative upper case");
     }
 
@@ -544,10 +690,10 @@ public:
         Value v(3.14);
         Bottle b;
         b.read(v);
-        checkEqualish(b.get(0).asDouble(),3.14,"copy to bottle succeeded");
+        checkEqualish(b.get(0).asFloat64(),3.14,"copy to bottle succeeded");
         Bottle b2;
         b.write(b2);
-        checkEqualish(b2.get(0).asDouble(),3.14,"copy from bottle succeeded");
+        checkEqualish(b2.get(0).asFloat64(),3.14,"copy from bottle succeeded");
     }
 
     void testStringWithNull() {
@@ -616,7 +762,7 @@ public:
         report(0,"test infinite loop tickled by yarpmanager + string type change");
         Bottle pos("Pos ((x 349.5) (y 122)) ((x 286) (y 122)) ((x 413) (y 122))");
         for(int i=1; i<pos.size(); i++) {
-            pos.get(i).find("x").asDouble();
+            pos.get(i).find("x").asFloat64();
         }
     }
 
@@ -631,12 +777,12 @@ public:
         Bottle b1("1 2 3"), b2;
         Portable::copyPortable(b1,b2);
         checkEqual(b2.size(),b1.size(),"length ok");
-        checkEqual(b2.get(2).asInt(),3,"content ok");
+        checkEqual(b2.get(2).asInt32(),3,"content ok");
         Stamp s1(42,10.0),s2,s3;
         Portable::copyPortable(s1,s2);
         checkEqual(s1.getCount(),42,"stamp-to-stamp ok");
         Portable::copyPortable(s1,b1);
-        checkEqual(b1.get(0).asInt(),42,"stamp-to-bottle ok");
+        checkEqual(b1.get(0).asInt32(),42,"stamp-to-bottle ok");
         Portable::copyPortable(b1,s3);
         checkEqual(s3.getCount(),42,"bottle-to-stamp ok");
     }
