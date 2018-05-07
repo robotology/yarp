@@ -437,17 +437,17 @@ bool yarp::dev::IJoypadController::parseActions(const yarp::os::Searchable& cfg,
             actCount = 0;
             return false;
         }
-        if(!keyvalue.get(0).isInt()                 ||
-            keyvalue.get(0).asInt() < 0             ||
-            keyvalue.get(0).asInt() > buttonCount-1 ||
+        if(!keyvalue.get(0).isInt32()                 ||
+            keyvalue.get(0).asInt32() < 0             ||
+            keyvalue.get(0).asInt32() > buttonCount-1 ||
            !keyvalue.get(1).isString())
         {
             myError() << "Button's actions parameters must be in the format 'unsigned int string' and the button id must be in range";
             actCount = 0;
             return false;
         }
-        myInfo() << "assigning actions" << keyvalue.get(1).asString() << "to button" << keyvalue.get(0).asInt();
-        m_actions[keyvalue.get(0).asInt()] = keyvalue.get(1).asString();
+        myInfo() << "assigning actions" << keyvalue.get(1).asString() << "to button" << keyvalue.get(0).asInt32();
+        m_actions[keyvalue.get(0).asInt32()] = keyvalue.get(1).asString();
     }
 
     actCount = i;

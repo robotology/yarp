@@ -275,22 +275,22 @@ bool MapGrid2D::loadROSParams(string ros_yaml_filename, string& pgm_occ_filename
     //ppm_flg_filename = (pgm_occ_filename.substr(0, pgm_occ_filename.size()-4))+"_yarpflags"+".ppm";
 
     if (bbb.check("resolution:") == false) { yError() << "missing resolution"; ret = false; }
-    resolution = bbb.find("resolution:").asDouble();
+    resolution = bbb.find("resolution:").asFloat64();
 
     if (bbb.check("origin:") == false) { yError() << "missing origin"; ret = false; }
     Bottle* b = bbb.find("origin:").asList();
     if (b)
     {
-        orig_x = b->get(0).asDouble();
-        orig_y = b->get(1).asDouble();
-        orig_t = b->get(2).asDouble();
+        orig_x = b->get(0).asFloat64();
+        orig_y = b->get(1).asFloat64();
+        orig_t = b->get(2).asFloat64();
     }
 
     if (bbb.check("occupied_thresh:"))
-    {m_occupied_thresh = bbb.find("occupied_thresh:").asDouble();}
+    {m_occupied_thresh = bbb.find("occupied_thresh:").asFloat64();}
 
     if (bbb.check("free_thresh:"))
-    {m_free_thresh = bbb.find("free_thresh:").asDouble();}
+    {m_free_thresh = bbb.find("free_thresh:").asFloat64();}
 
     return ret;
 }
@@ -737,23 +737,23 @@ bool MapGrid2D::read(yarp::os::ConnectionReader& connection)
     // auto-convert text mode interaction
     connection.convertTextMode();
 
-    connection.expectInt();
-    connection.expectInt();
+    connection.expectInt32();
+    connection.expectInt32();
 
-    connection.expectInt();
-    m_width = connection.expectInt();
-    connection.expectInt();
-    m_height = connection.expectInt();
-    connection.expectInt();
-    m_origin.x = connection.expectDouble();
-    connection.expectInt();
-    m_origin.y = connection.expectDouble();
-    connection.expectInt();
-    m_origin.theta = connection.expectDouble();
-    connection.expectInt();
-    m_resolution = connection.expectDouble();
-    connection.expectInt();
-    int siz = connection.expectInt();
+    connection.expectInt32();
+    m_width = connection.expectInt32();
+    connection.expectInt32();
+    m_height = connection.expectInt32();
+    connection.expectInt32();
+    m_origin.x = connection.expectFloat64();
+    connection.expectInt32();
+    m_origin.y = connection.expectFloat64();
+    connection.expectInt32();
+    m_origin.theta = connection.expectFloat64();
+    connection.expectInt32();
+    m_resolution = connection.expectFloat64();
+    connection.expectInt32();
+    int siz = connection.expectInt32();
     char buff[255]; memset(buff, 0, 255);
     connection.expectBlock((char*)buff, siz);
     m_map_name = buff;
@@ -762,13 +762,13 @@ bool MapGrid2D::read(yarp::os::ConnectionReader& connection)
     bool ok = true;
     unsigned char *mem = nullptr;
     int            memsize = 0;
-    connection.expectInt();
-    memsize = connection.expectInt();
+    connection.expectInt32();
+    memsize = connection.expectInt32();
     if (memsize != m_map_occupancy.getRawImageSize()) { return false; }
     mem = m_map_occupancy.getRawImage();
     ok &= connection.expectBlock((char*)mem, memsize);
-    connection.expectInt();
-    memsize = connection.expectInt();
+    connection.expectInt32();
+    memsize = connection.expectInt32();
     if (memsize != m_map_flags.getRawImageSize()) { return false; }
     mem = m_map_flags.getRawImage();
     ok &= connection.expectBlock((char*)mem, memsize);
@@ -780,34 +780,34 @@ bool MapGrid2D::read(yarp::os::ConnectionReader& connection)
 
 bool MapGrid2D::write(yarp::os::ConnectionWriter& connection)
 {
-    connection.appendInt(BOTTLE_TAG_LIST);
-    connection.appendInt(9);
-    connection.appendInt(BOTTLE_TAG_INT);
-    connection.appendInt(m_width);
-    connection.appendInt(BOTTLE_TAG_INT);
-    connection.appendInt(m_height);
-    connection.appendInt(BOTTLE_TAG_DOUBLE);
-    connection.appendDouble(m_origin.x);
-    connection.appendInt(BOTTLE_TAG_DOUBLE);
-    connection.appendDouble(m_origin.y);
-    connection.appendInt(BOTTLE_TAG_DOUBLE);
-    connection.appendDouble(m_origin.theta);
-    connection.appendInt(BOTTLE_TAG_DOUBLE);
-    connection.appendDouble(m_resolution);
-    connection.appendInt(BOTTLE_TAG_STRING);
+    connection.appendInt32(BOTTLE_TAG_LIST);
+    connection.appendInt32(9);
+    connection.appendInt32(BOTTLE_TAG_INT32);
+    connection.appendInt32(m_width);
+    connection.appendInt32(BOTTLE_TAG_INT32);
+    connection.appendInt32(m_height);
+    connection.appendInt32(BOTTLE_TAG_FLOAT64);
+    connection.appendFloat64(m_origin.x);
+    connection.appendInt32(BOTTLE_TAG_FLOAT64);
+    connection.appendFloat64(m_origin.y);
+    connection.appendInt32(BOTTLE_TAG_FLOAT64);
+    connection.appendFloat64(m_origin.theta);
+    connection.appendInt32(BOTTLE_TAG_FLOAT64);
+    connection.appendFloat64(m_resolution);
+    connection.appendInt32(BOTTLE_TAG_STRING);
     connection.appendRawString(m_map_name.c_str());
 
     unsigned char *mem = nullptr;
     int            memsize = 0;
     mem     = m_map_occupancy.getRawImage();
     memsize = m_map_occupancy.getRawImageSize();
-    connection.appendInt(BOTTLE_TAG_BLOB);
-    connection.appendInt(memsize);
+    connection.appendInt32(BOTTLE_TAG_BLOB);
+    connection.appendInt32(memsize);
     connection.appendExternalBlock((char*)mem, memsize);
     mem     = m_map_flags.getRawImage();
     memsize = m_map_flags.getRawImageSize();
-    connection.appendInt(BOTTLE_TAG_BLOB);
-    connection.appendInt(memsize);
+    connection.appendInt32(BOTTLE_TAG_BLOB);
+    connection.appendInt32(memsize);
     connection.appendExternalBlock((char*)mem, memsize);
 
     connection.convertTextMode();
