@@ -28,14 +28,17 @@
 #include <cfloat>
 #include <cinttypes>
 
-using yarp::os::impl::StoreInt;
+using yarp::os::impl::StoreInt8;
+using yarp::os::impl::StoreInt16;
+using yarp::os::impl::StoreInt32;
+using yarp::os::impl::StoreInt64;
+using yarp::os::impl::StoreFloat32;
+using yarp::os::impl::StoreFloat64;
 using yarp::os::impl::StoreVocab;
-using yarp::os::impl::StoreDouble;
 using yarp::os::impl::StoreString;
 using yarp::os::impl::StoreList;
 using yarp::os::impl::StoreBlob;
 using yarp::os::impl::StoreDict;
-using yarp::os::impl::StoreInt64;
 using yarp::os::impl::BottleImpl;
 using yarp::os::impl::Storable;
 using yarp::os::Bytes;
@@ -62,6 +65,50 @@ using yarp::os::Value;
  */
 #define YARP_DOUBLE_TO_STRING_MAX_LENGTH    16 + DBL_DIG + YARP_DBL_EXP_DIG
 
+namespace {
+/*
+ * Converts a floating point number to a string, dealing with locale issues
+ */
+template <typename T>
+inline std::string fp_to_string(T x)
+{
+    char buf[YARP_DOUBLE_TO_STRING_MAX_LENGTH];    // -> see comment at the top of the file
+    std::snprintf(buf, YARP_DOUBLE_TO_STRING_MAX_LENGTH, "%.*g", DBL_DIG, x);
+    std::string str(buf);
+
+    // If locale is set, the locale version of the decimal point is used.
+    // In this case we change it to the standard "."
+    // If there is no decimal point, and it is not being used the exponential
+    // notation (i.e. the number is in integer form, for example 100000 and not
+    // 1e5) we add ".0" to ensure that it will be interpreted as a double.
+    struct lconv* lc = localeconv();
+    size_t offset = str.find(lc->decimal_point);
+    if (offset != std::string::npos) {
+        str[offset] = '.';
+    } else {
+        if (str.find('e') == std::string::npos) {
+            str += ".0";
+        }
+    }
+    return str;
+}
+
+/*
+ * Converts a string to a floating point number, dealing with locale issues
+ */
+template <typename T>
+inline T fp_from_string(std::string src)
+{
+    // YARP Bug 2526259: Locale settings influence YARP behavior
+    // Need to deal with alternate versions of the decimal point.
+    size_t offset = src.find('.');
+    if (offset != std::string::npos) {
+        struct lconv* lc = localeconv();
+        src[offset] = lc->decimal_point[0];
+    }
+    return static_cast<T>(strtod(src.c_str(), nullptr));
+}
+}
 
 //#define YMSG(x) printf x;
 //#define YTRACE(x) YMSG(("at %s\n", x))
@@ -69,39 +116,54 @@ using yarp::os::Value;
 #define YMSG(x)
 #define YTRACE(x)
 
-const int StoreInt::code = BOTTLE_TAG_INT;
+const int StoreInt8::code = BOTTLE_TAG_INT8;
+const int StoreInt16::code = BOTTLE_TAG_INT16;
+const int StoreInt32::code = BOTTLE_TAG_INT32;
+const int StoreInt64::code = BOTTLE_TAG_INT64;
+const int StoreFloat32::code = BOTTLE_TAG_FLOAT32;
+const int StoreFloat64::code = BOTTLE_TAG_FLOAT64;
 const int StoreVocab::code = BOTTLE_TAG_VOCAB;
-const int StoreDouble::code = BOTTLE_TAG_DOUBLE;
 const int StoreString::code = BOTTLE_TAG_STRING;
 const int StoreBlob::code = BOTTLE_TAG_BLOB;
 const int StoreList::code = BOTTLE_TAG_LIST;
 const int StoreDict::code = BOTTLE_TAG_LIST | BOTTLE_TAG_DICT;
-const int StoreInt64::code = BOTTLE_TAG_INT64;
 
-#define UNIT_MASK                                            \
-    (BOTTLE_TAG_INT | BOTTLE_TAG_VOCAB | BOTTLE_TAG_DOUBLE | \
-     BOTTLE_TAG_STRING | BOTTLE_TAG_BLOB | BOTTLE_TAG_INT64)
-#define GROUP_MASK (BOTTLE_TAG_LIST | BOTTLE_TAG_DICT)
+#define UNIT_MASK        \
+    (BOTTLE_TAG_INT8  | \
+     BOTTLE_TAG_INT16  | \
+     BOTTLE_TAG_INT32  | \
+     BOTTLE_TAG_INT64  | \
+     BOTTLE_TAG_FLOAT32 | \
+     BOTTLE_TAG_FLOAT64 | \
+     BOTTLE_TAG_VOCAB  | \
+     BOTTLE_TAG_STRING | \
+     BOTTLE_TAG_BLOB)
+
+#define GROUP_MASK \
+    (BOTTLE_TAG_LIST | \
+     BOTTLE_TAG_DICT)
 
 
 yarp::os::impl::StoreNull* BottleImpl::storeNull = nullptr;
 
-BottleImpl::BottleImpl() : parent(nullptr)
+BottleImpl::BottleImpl() :
+        parent(nullptr),
+        invalid(false),
+        ro(false),
+        speciality(0),
+        nested(false),
+        dirty(true)
 {
-    dirty = true;
-    nested = false;
-    speciality = 0;
-    invalid = false;
-    ro = false;
 }
 
-BottleImpl::BottleImpl(Searchable* parent) : parent(parent)
+BottleImpl::BottleImpl(Searchable* parent) :
+        parent(parent),
+        invalid(false),
+        ro(false),
+        speciality(0),
+        nested(false),
+        dirty(true)
 {
-    dirty = true;
-    nested = false;
-    speciality = 0;
-    invalid = false;
-    ro = false;
 }
 
 
@@ -190,9 +252,9 @@ void BottleImpl::smartAdd(const std::string& str)
             ((ch >= '0' && ch <= '9') || ch == '+' || ch == '-' || ch == '.') &&
             (ch != '.' || str.length() > 1)) {
             if (!hasPeriodOrE) {
-                s = new StoreInt(0);
+                s = new StoreInt32(0);
             } else {
-                s = new StoreDouble(0);
+                s = new StoreFloat64(0);
             }
         } else if (ch == '(') {
             s = new StoreList();
@@ -369,19 +431,31 @@ Storable::~Storable()
 {
 }
 
-Storable* Storable::createByCode(int id)
+Storable* Storable::createByCode(std::int32_t id)
 {
     Storable* storable = nullptr;
-    int subCode = 0;
+    std::int32_t subCode = 0;
     switch (id) {
-    case StoreInt::code:
-        storable = new StoreInt();
+    case StoreInt8::code:
+        storable = new StoreInt8();
+        break;
+    case StoreInt16::code:
+        storable = new StoreInt16();
+        break;
+    case StoreInt32::code:
+        storable = new StoreInt32();
+        break;
+    case StoreInt64::code:
+        storable = new StoreInt64();
         break;
     case StoreVocab::code:
         storable = new StoreVocab();
         break;
-    case StoreDouble::code:
-        storable = new StoreDouble();
+    case StoreFloat32::code:
+        storable = new StoreFloat32();
+        break;
+    case StoreFloat64::code:
+        storable = new StoreFloat64();
         break;
     case StoreString::code:
         storable = new StoreString();
@@ -393,9 +467,6 @@ Storable* Storable::createByCode(int id)
         storable = new StoreList();
         yAssert(storable != nullptr);
         storable->asList()->implementation->setNested(true);
-        break;
-    case StoreInt64::code:
-        storable = new StoreInt64();
         break;
     default:
         if ((id & GROUP_MASK) != 0) {
@@ -422,18 +493,18 @@ bool BottleImpl::fromBytes(ConnectionReader& reader)
     if (reader.isError()) {
         return false;
     }
-    int id = speciality;
+    std::int32_t id = speciality;
     YMSG(("READING, nest flag is %d\n", nested));
     if (id == 0) {
-        id = reader.expectInt();
-        YMSG(("READ subcode %d\n", id));
+        id = reader.expectInt32();
+        YMSG(("READ subcode %" PRId32 "\n", id));
     } else {
-        YMSG(("READ skipped subcode %d\n", speciality));
+        YMSG(("READ skipped subcode %" PRId32 "\n", speciality));
     }
     Storable* storable = Storable::createByCode(id);
     if (storable == nullptr) {
         YARP_SPRINTF1(Logger::get(), error,
-                      "BottleImpl reader failed, unrecognized object code %d",
+                      "BottleImpl reader failed, unrecognized object code %" PRId32,
                       id);
         return false;
     }
@@ -471,17 +542,17 @@ bool BottleImpl::fromBytes(const Bytes& data)
         clear();
         specialize(0);
 
-        int code = reader.expectInt();
+        std::int32_t code = reader.expectInt32();
         if (reader.isError()) {
             return false;
         }
-        YMSG(("READ got top level code %d\n", code));
+        YMSG(("READ got top level code %" PRId32 "\n", code));
         code = code & UNIT_MASK;
         if (code != 0) {
             specialize(code);
         }
     }
-    int len = reader.expectInt();
+    std::int32_t len = reader.expectInt32();
     if (reader.isError()) {
         return false;
     }
@@ -534,9 +605,9 @@ bool BottleImpl::write(ConnectionWriter& writer)
           if (!nested) {
           // No byte count any more, to facilitate nesting
           //YMSG(("bottle byte count %d\n", byteCount()));
-          //writer.appendInt(byteCount()+sizeof(NetInt32));
+          //writer.appendInt32(byteCount()+sizeof(NetInt32));
 
-          writer.appendInt(StoreList::code + speciality);
+          writer.appendInt32(StoreList::code + speciality);
           }
         */
         // writer.appendBlockCopy(Bytes((char*)getBytes(), byteCount()));
@@ -580,16 +651,16 @@ bool BottleImpl::read(ConnectionReader& reader)
     } else {
         if (!nested) {
             // no byte length any more to facilitate nesting
-            // reader.expectInt(); // the bottle byte ct; ignored
+            // reader.expectInt32(); // the bottle byte ct; ignored
 
             clear();
             specialize(0);
 
-            int code = reader.expectInt();
+            std::int32_t code = reader.expectInt32();
             if (reader.isError()) {
                 return false;
             }
-            YMSG(("READ got top level code %d\n", code));
+            YMSG(("READ got top level code %" PRId32 "\n", code));
             code = code & UNIT_MASK;
             if (code != 0) {
                 specialize(code);
@@ -600,14 +671,13 @@ bool BottleImpl::read(ConnectionReader& reader)
         clear();
         dirty = true; // for clarity
 
-        int len = 0;
-        int i = 0;
-        len = reader.expectInt();
+        std::int32_t len = 0;
+        len = reader.expectInt32();
         if (reader.isError()) {
             return false;
         }
         YMSG(("READ got length %d\n", len));
-        for (i = 0; i < len; i++) {
+        for (int i = 0; i < len; i++) {
             bool ok = fromBytes(reader);
             if (!ok) {
                 return false;
@@ -623,23 +693,23 @@ void BottleImpl::synch()
     if (dirty) {
         if (!nested) {
             subCode();
-            YMSG(("bottle code %d\n", StoreList::code + subCode()));
+            YMSG(("bottle code %" PRId32 "\n", StoreList::code + subCode()));
         }
         data.clear();
         BufferedConnectionWriter writer;
         if (!nested) {
-            writer.appendInt(StoreList::code + speciality);
-            YMSG(("wrote bottle code %d\n", StoreList::code + speciality));
+            writer.appendInt32(StoreList::code + speciality);
+            YMSG(("wrote bottle code %" PRId32 "\n", StoreList::code + speciality));
         }
-        YMSG(("bottle length %d\n", size()));
-        writer.appendInt(static_cast<int>(size()));
+        YMSG(("bottle length %zd\n", size()));
+        writer.appendInt32(static_cast<std::int32_t>(size()));
         for (unsigned int i = 0; i < content.size(); i++) {
             Storable* s = content[i];
             if (speciality == 0) {
-                YMSG(("subcode %d\n", s->getCode()));
-                writer.appendInt(s->getCode());
+                YMSG(("subcode %" PRId32 "\n", s->getCode()));
+                writer.appendInt32(s->getCode());
             } else {
-                YMSG(("skipped subcode %d\n", s->getCode()));
+                YMSG(("skipped subcode %" PRId32 "\n", s->getCode()));
                 yAssert(speciality == s->getCode());
             }
             if (s->isList()) {
@@ -655,7 +725,7 @@ void BottleImpl::synch()
 }
 
 
-void BottleImpl::specialize(int subCode)
+void BottleImpl::specialize(std::int32_t subCode)
 {
     speciality = subCode;
 }
@@ -673,30 +743,85 @@ void BottleImpl::setNested(bool nested)
 
 
 ////////////////////////////////////////////////////////////////////////////
-// StoreInt
+// StoreInt8
 
-std::string StoreInt::toString() const
+std::string StoreInt8::toString() const
+{
+    char buf[256];
+    sprintf(buf, "%" PRId8, x);
+    return std::string(buf);
+}
+
+void StoreInt8::fromString(const std::string& src)
+{
+    x = strtol(src.c_str(), static_cast<char**>(nullptr), 0);
+}
+
+bool StoreInt8::readRaw(ConnectionReader& reader)
+{
+    x = reader.expectInt8();
+    return true;
+}
+
+bool StoreInt8::writeRaw(ConnectionWriter& writer)
+{
+    writer.appendInt8(x);
+    return true;
+}
+
+
+////////////////////////////////////////////////////////////////////////////
+// StoreInt16
+
+std::string StoreInt16::toString() const
+{
+    char buf[256];
+    sprintf(buf, "%" PRId16, x);
+    return std::string(buf);
+}
+
+void StoreInt16::fromString(const std::string& src)
+{
+    x = strtol(src.c_str(), static_cast<char**>(nullptr), 0);
+}
+
+bool StoreInt16::readRaw(ConnectionReader& reader)
+{
+    x = reader.expectInt16();
+    return true;
+}
+
+bool StoreInt16::writeRaw(ConnectionWriter& writer)
+{
+    writer.appendInt16(x);
+    return true;
+}
+
+
+////////////////////////////////////////////////////////////////////////////
+// StoreInt32
+
+std::string StoreInt32::toString() const
 {
     char buf[256];
     sprintf(buf, "%" PRId32, x);
     return std::string(buf);
 }
 
-void StoreInt::fromString(const std::string& src)
+void StoreInt32::fromString(const std::string& src)
 {
-    // x = atoi(src.c_str());
     x = strtol(src.c_str(), static_cast<char**>(nullptr), 0);
 }
 
-bool StoreInt::readRaw(ConnectionReader& reader)
+bool StoreInt32::readRaw(ConnectionReader& reader)
 {
-    x = reader.expectInt();
+    x = reader.expectInt32();
     return true;
 }
 
-bool StoreInt::writeRaw(ConnectionWriter& writer)
+bool StoreInt32::writeRaw(ConnectionWriter& writer)
 {
-    writer.appendInt(x);
+    writer.appendInt32(x);
     return true;
 }
 
@@ -777,69 +902,67 @@ void StoreVocab::fromStringNested(const std::string& src)
 
 bool StoreVocab::readRaw(ConnectionReader& reader)
 {
-    x = reader.expectInt();
+    x = reader.expectInt32();
     return true;
 }
 
 bool StoreVocab::writeRaw(ConnectionWriter& writer)
 {
-    writer.appendInt(x);
+    writer.appendInt32(x);
     return true;
 }
 
 
 ////////////////////////////////////////////////////////////////////////////
-// StoreDouble
+// StoreFloat32
 
-std::string StoreDouble::toString() const
+
+std::string StoreFloat32::toString() const
 {
-    char buf[YARP_DOUBLE_TO_STRING_MAX_LENGTH];    // -> see comment at the top of the file
-    std::snprintf(buf, YARP_DOUBLE_TO_STRING_MAX_LENGTH, "%.*g", DBL_DIG, x);
-    std::string str(buf);
-
-    // If locale is set, the locale version of the decimal point is used.
-    // In this case we change it to the standard "."
-    // If there is no decimal point, and it is not being used the exponential
-    // notation (i.e. the number is in integer form, for example 100000 and not
-    // 1e5) we add ".0" to ensure that it will be interpreted as a double.
-    struct lconv* lc = localeconv();
-    size_t offset = str.find(lc->decimal_point);
-    if (offset != std::string::npos) {
-        str[offset] = '.';
-    } else {
-        if (str.find('e') == std::string::npos) {
-            str += ".0";
-        }
-    }
-    return str;
+    return fp_to_string<yarp::conf::float32_t>(x);
 }
 
-void StoreDouble::fromString(const std::string& src)
+void StoreFloat32::fromString(const std::string& src)
 {
-    // YARP Bug 2526259: Locale settings influence YARP behavior
-    // Need to deal with alternate versions of the decimal point.
-    std::string tmp = src;
-    size_t offset = tmp.find('.');
-    if (offset != std::string::npos) {
-        struct lconv* lc = localeconv();
-        tmp[offset] = lc->decimal_point[0];
-    }
-    x = strtod(tmp.c_str(), nullptr);
+    x = fp_from_string<yarp::conf::float32_t>(src);
 }
 
-bool StoreDouble::readRaw(ConnectionReader& reader)
+bool StoreFloat32::readRaw(ConnectionReader& reader)
 {
-    NetFloat64 flt = 0;
-    reader.expectBlock(reinterpret_cast<const char*>(&flt), sizeof(flt));
-    x = flt;
+    x = reader.expectFloat32();
     return true;
 }
 
-bool StoreDouble::writeRaw(ConnectionWriter& writer)
+bool StoreFloat32::writeRaw(ConnectionWriter& writer)
 {
-    // writer.appendBlockCopy(Bytes((char*)&x, sizeof(x)));
-    NetFloat64 flt = x;
-    writer.appendBlock(reinterpret_cast<char*>(&flt), sizeof(flt));
+    writer.appendFloat32(x);
+    return true;
+}
+
+
+
+////////////////////////////////////////////////////////////////////////////
+// StoreFloat64
+
+std::string StoreFloat64::toString() const
+{
+    return fp_to_string<yarp::conf::float64_t>(x);
+}
+
+void StoreFloat64::fromString(const std::string& src)
+{
+    x = fp_from_string<yarp::conf::float64_t>(src);
+}
+
+bool StoreFloat64::readRaw(ConnectionReader& reader)
+{
+    x = reader.expectFloat64();
+    return true;
+}
+
+bool StoreFloat64::writeRaw(ConnectionWriter& writer)
+{
+    writer.appendFloat64(x);
     return true;
 }
 
@@ -959,22 +1082,24 @@ void StoreString::fromStringNested(const std::string& src)
 
 bool StoreString::readRaw(ConnectionReader& reader)
 {
-    int len = reader.expectInt();
+    std::int32_t len = reader.expectInt32();
     std::string buf(YARP_STRINIT(len));
     reader.expectBlock(buf.c_str(), len);
+#ifndef YARP_NO_DEPRECATED // Since YARP 2.3.72
     // This is needed for compatibility with versions of yarp before March 2015
     if (len > 0) {
         if (buf[len - 1] == '\0') {
             len--;
         }
     }
+#endif // YARP_NO_DEPRECATED
     x = buf.substr(0, len);
     return true;
 }
 
 bool StoreString::writeRaw(ConnectionWriter& writer)
 {
-    writer.appendInt(static_cast<int>(x.length()));
+    writer.appendInt32(static_cast<std::int32_t>(x.length()));
     writer.appendBlock(x.c_str(), x.length());
     return true;
 }
@@ -1008,7 +1133,7 @@ void StoreBlob::fromString(const std::string& src)
     std::string buf(YARP_STRINIT(bot.size()));
     for (int i = 0; i < bot.size(); i++) {
         buf[i] =
-            static_cast<char>(static_cast<unsigned char>(bot.get(i).asInt()));
+            static_cast<char>(static_cast<unsigned char>(bot.get(i).asInt32()));
     }
     x = buf;
 }
@@ -1026,7 +1151,7 @@ void StoreBlob::fromStringNested(const std::string& src)
 
 bool StoreBlob::readRaw(ConnectionReader& reader)
 {
-    int len = reader.expectInt();
+    std::int32_t len = reader.expectInt32();
     std::string buf(YARP_STRINIT(len));
     reader.expectBlock(static_cast<const char*>(buf.c_str()), len);
     x = buf;
@@ -1035,7 +1160,7 @@ bool StoreBlob::readRaw(ConnectionReader& reader)
 
 bool StoreBlob::writeRaw(ConnectionWriter& writer)
 {
-    writer.appendInt(static_cast<int>(x.length()));
+    writer.appendInt32(static_cast<std::int32_t>(x.length()));
     writer.appendBlock(x.c_str(), x.length());
     return true;
 }
@@ -1084,13 +1209,13 @@ bool StoreList::writeRaw(ConnectionWriter& writer)
     return true;
 }
 
-template <class T>
-int subCoder(T& content)
+template <typename T>
+inline std::int32_t subCoder(T& content)
 {
-    int c = -1;
+    std::int32_t c = -1;
     bool ok = false;
     for (unsigned int i = 0; i < content.size(); ++i) {
-        int sc = content.get(i).getCode();
+        std::int32_t sc = content.get(i).getCode();
         if (c == -1) {
             c = sc;
             ok = true;
@@ -1108,7 +1233,7 @@ int subCoder(T& content)
     return c;
 }
 
-int StoreList::subCode() const
+std::int32_t StoreList::subCode() const
 {
     return subCoder(*(content.implementation));
 }
@@ -1161,43 +1286,57 @@ bool StoreDict::writeRaw(ConnectionWriter& writer)
 // BottleImpl
 
 
-int BottleImpl::subCode()
+std::int32_t BottleImpl::subCode()
 {
     return subCoder(*this);
 }
 
-bool BottleImpl::isInt(int index)
+bool BottleImpl::checkIndex(int index) const
 {
     if (index >= 0 && index < static_cast<int>(size())) {
-        return content[index]->getCode() == StoreInt::code;
+        return true;
     }
     return false;
 }
 
+bool BottleImpl::isInt8(int index)
+{
+    return (checkIndex(index) ? content[index]->isInt8() : false);
+}
+
+bool BottleImpl::isInt16(int index)
+{
+    return (checkIndex(index) ? content[index]->isInt16() : false);
+}
+
+bool BottleImpl::isInt32(int index)
+{
+    return (checkIndex(index) ? content[index]->isInt32() : false);
+}
+
+bool BottleImpl::isInt64(int index)
+{
+    return (checkIndex(index) ? content[index]->isInt64() : false);
+}
+
+bool BottleImpl::isFloat32(int index)
+{
+    return (checkIndex(index) ? content[index]->isFloat32() : false);
+}
+
+bool BottleImpl::isFloat64(int index)
+{
+    return (checkIndex(index) ? content[index]->isFloat64() : false);
+}
 
 bool BottleImpl::isString(int index)
 {
-    if (index >= 0 && index < static_cast<int>(size())) {
-        return content[index]->getCode() == StoreString::code;
-    }
-    return false;
+    return (checkIndex(index) ? content[index]->isString() : false);
 }
-
-bool BottleImpl::isDouble(int index)
-{
-    if (index >= 0 && index < static_cast<int>(size())) {
-        return content[index]->getCode() == StoreDouble::code;
-    }
-    return false;
-}
-
 
 bool BottleImpl::isList(int index)
 {
-    if (index >= 0 && index < static_cast<int>(size())) {
-        return content[index]->isList();
-    }
-    return false;
+    return (checkIndex(index) ? content[index]->isList() : false);
 }
 
 Storable* BottleImpl::pop()
@@ -1216,42 +1355,7 @@ Storable* BottleImpl::pop()
 
 Storable& BottleImpl::get(int index) const
 {
-    if (index >= 0 && index < static_cast<int>(size())) {
-        return *(content[index]);
-    }
-    return getNull();
-}
-
-int BottleImpl::getInt(int index)
-{
-    if (!isInt(index)) {
-        return 0;
-    }
-    return content[index]->asInt();
-}
-
-std::string BottleImpl::getString(int index)
-{
-    if (!isString(index)) {
-        return "";
-    }
-    return content[index]->asString();
-}
-
-double BottleImpl::getDouble(int index)
-{
-    if (!isDouble(index)) {
-        return 0;
-    }
-    return content[index]->asDouble();
-}
-
-yarp::os::Bottle* BottleImpl::getList(int index)
-{
-    if (!isList(index)) {
-        return nullptr;
-    }
-    return &((dynamic_cast<StoreList*>(content[index]))->internal());
+    return (checkIndex(index) ? *(content[index]) : getNull());
 }
 
 yarp::os::Bottle& BottleImpl::addList()
@@ -1338,7 +1442,7 @@ bool Storable::operator==(const Value& alt) const
 
 bool Storable::read(ConnectionReader& connection)
 {
-    int x = connection.expectInt();
+    std::int32_t x = connection.expectInt32();
     if (x != getCode()) {
         return false;
     }
@@ -1347,7 +1451,7 @@ bool Storable::read(ConnectionReader& connection)
 
 bool Storable::write(ConnectionWriter& connection)
 {
-    connection.appendInt(getCode());
+    connection.appendInt32(getCode());
     return writeRaw(connection);
 }
 

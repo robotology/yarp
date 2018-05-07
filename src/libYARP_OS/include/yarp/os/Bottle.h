@@ -18,14 +18,23 @@
 
 #include <string>
 
-#define BOTTLE_TAG_INT 1          // 0000 0000 0001
-#define BOTTLE_TAG_VOCAB (1 + 8)  // 0000 0000 1001
-#define BOTTLE_TAG_DOUBLE (2 + 8) // 0000 0000 1010
-#define BOTTLE_TAG_STRING (4)     // 0000 0000 0100
-#define BOTTLE_TAG_BLOB (4 + 8)   // 0000 0000 1100
-#define BOTTLE_TAG_INT64 (1 + 16) // 0000 0001 0001
-#define BOTTLE_TAG_LIST 256       // 0001 0000 0000
-#define BOTTLE_TAG_DICT 512       // 0010 0000 0000
+#define BOTTLE_TAG_INT8 32         // 0000 0000 0010 0000
+#define BOTTLE_TAG_INT16 64        // 0000 0000 0100 0000
+#define BOTTLE_TAG_INT32 1         // 0000 0000 0000 0001
+#define BOTTLE_TAG_INT64 (1 + 16)  // 0000 0000 0001 0001
+#define BOTTLE_TAG_VOCAB (1 + 8)   // 0000 0000 0000 1001
+#define BOTTLE_TAG_FLOAT32 128     // 0000 0000 1000 0000
+#define BOTTLE_TAG_FLOAT64 (2 + 8) // 0000 0000 0000 1010
+#define BOTTLE_TAG_STRING (4)      // 0000 0000 0000 0100
+#define BOTTLE_TAG_BLOB (4 + 8)    // 0000 0000 0000 1100
+#define BOTTLE_TAG_LIST 256        // 0000 0001 0000 0000
+#define BOTTLE_TAG_DICT 512        // 0000 0010 0000 0000
+
+YARP_DEPRECATED_INTERNAL_MSG("Use BOTTLE_TAG_INT32 instead") // Since YARP 3.0.0
+constexpr std::int32_t BOTTLE_TAG_DOUBLE = BOTTLE_TAG_FLOAT64;
+
+YARP_DEPRECATED_INTERNAL_MSG("Use BOTTLE_TAG_FLOAT64 instead") // Since YARP 3.0.0
+constexpr std::int32_t BOTTLE_TAG_INT = BOTTLE_TAG_INT32;
 
 namespace yarp {
     namespace os {
@@ -110,15 +119,38 @@ public:
      * Places an integer in the bottle, at the end of the list.
      *
      * @param x the integer to add.
+     * @warning Unsafe, sizeof(int) is platform dependent. Use addInt32 instead.
      */
-    void addInt(int x);
+    YARP_DEPRECATED_INTERNAL_MSG("Use addInt32 instead") // Since YARP 3.0.0
+    inline void addInt(int x) { addInt32(static_cast<std::int32_t>(x)); }
 
     /**
-     * Places a 64 integer in the bottle, at the end of the list.
+     * Places a 8-bit integer in the bottle, at the end of the list.
      *
-     * @param x the integer to add.
+     * @param x the 8-bit integer to add.
      */
-    void addInt64(const std::int64_t& x);
+    void addInt8(std::int8_t x);
+
+    /**
+     * Places a 16-bit integer in the bottle, at the end of the list.
+     *
+     * @param x the 16-bit integer to add.
+     */
+    void addInt16(std::int16_t x);
+
+    /**
+     * Places a 32-bit integer in the bottle, at the end of the list.
+     *
+     * @param x the 32-bit integer to add.
+     */
+    void addInt32(std::int32_t x);
+
+    /**
+     * Places a 64-bit integer in the bottle, at the end of the list.
+     *
+     * @param x the 64-bit integer to add.
+     */
+    void addInt64(std::int64_t x);
 
     /**
      * Places a vocabulary item in the bottle, at the end of the list.
@@ -132,8 +164,26 @@ public:
      * list.
      *
      * @param x the number to add.
+     * @warning Unsafe, sizeof(double) is platform dependent. Use addFloat64 instead.
      */
-    void addDouble(double x);
+    YARP_DEPRECATED_INTERNAL_MSG("Use addFloat64 instead") // Since YARP 3.0.0
+    inline void addDouble(double x) { addFloat64(static_cast<yarp::conf::float64_t>(x)); }
+
+    /**
+     * Places a 32-bit floating point number in the bottle, at the end of the
+     * list.
+     *
+     * @param x the number to add.
+     */
+    void addFloat32(yarp::conf::float32_t x);
+
+    /**
+     * Places a 64-bit floating point number in the bottle, at the end of the
+     * list.
+     *
+     * @param x the number to add.
+     */
+    void addFloat64(yarp::conf::float64_t x);
 
     /**
      * Places a string in the bottle, at the end of the list.
@@ -196,9 +246,9 @@ public:
     /**
      * Reads a Value v from a certain part of the list.
      *
-     * Methods like v.isInt() or v.isString() can be used to check the
+     * Methods like v.isInt32() or v.isString() can be used to check the
      * type of the result.
-     * Methods like v.asInt() or v.asString() can be used to access the
+     * Methods like v.asInt32() or v.asString() can be used to access the
      * result as a particular type.
      *
      * @param index the part of the list to read from.

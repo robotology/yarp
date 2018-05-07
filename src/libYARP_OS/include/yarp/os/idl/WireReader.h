@@ -58,31 +58,71 @@ public:
 
     bool readNested(yarp::os::PortReader& obj);
 
+    bool readBool(bool& x);
+
+    bool readI8(std::int8_t& x);
+
     bool readI16(std::int16_t& x);
 
     bool readI32(std::int32_t& x);
 
     bool readI64(std::int64_t& x);
 
-    bool readBool(bool& x);
+    bool readFloat32(yarp::conf::float32_t& x);
 
-    bool readByte(std::int8_t& x);
+    bool readFloat64(yarp::conf::float64_t& x);
 
     bool readVocab(std::int32_t& x);
 
-    bool readDouble(double& x);
+#ifndef YARP_NO_DEPRECATED // Since YARP 3.0.0
+    YARP_DEPRECATED_MSG("Use readI8 instead")
+    bool readByte(std::int8_t& x) { return readI8(x); }
 
-    int expectInt() {
+    YARP_DEPRECATED_MSG("Use readFloat64 instead")
+    bool readDouble(double& x) { return readFloat64(x); }
+#endif // YARP_NO_DEPRECATED
+
+    std::int8_t expectInt8() {
+        std::int8_t x;
+        readI8(x);
+        return x;
+    }
+    std::int16_t expectInt16() {
+        std::int16_t x;
+        readI16(x);
+        return x;
+    }
+    std::int32_t expectInt32() {
         std::int32_t x;
         readI32(x);
         return x;
     }
 
-    double expectDouble() {
-        double x;
-        readDouble(x);
+    std::int64_t expectInt64() {
+        std::int64_t x;
+        readI64(x);
         return x;
     }
+
+    yarp::conf::float32_t expectFloat32() {
+        yarp::conf::float32_t x;
+        readFloat32(x);
+        return x;
+    }
+
+    yarp::conf::float64_t expectFloat64() {
+        yarp::conf::float64_t x;
+        readFloat64(x);
+        return x;
+    }
+
+#ifndef YARP_NO_DEPRECATED // Since YARP 3.0.0
+    YARP_DEPRECATED_MSG("Use expectInt32 instead")
+    int expectInt() { return (int)expectInt32(); }
+
+    YARP_DEPRECATED_MSG("Use expectFloat64 instead")
+    double expectDouble() { return (double)expectFloat64(); }
+#endif // YARP_NO_DEPRECATED
 
     bool readString(std::string& str, bool *is_vocab = nullptr);
 

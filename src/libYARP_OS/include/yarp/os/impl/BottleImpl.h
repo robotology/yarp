@@ -25,102 +25,22 @@
 #include <vector>
 
 namespace yarp {
-    namespace os {
-        namespace impl {
-            class BottleImpl;
-            class Storable;
-            class StoreNull;
-            class StoreInt;
-            class StoreInt64;
-            class StoreBool;
-            class StoreVocab;
-            class StoreDouble;
-            class StoreString;
-            class StoreBlob;
-            class StoreList;
-            class StoreDict;
-        }
-    }
-}
+namespace os {
+namespace impl {
 
 
 /**
  * A single item in a Bottle.  This extends the public yarp::os::Value
  * interface with some implementation-specific details.
  */
-class YARP_OS_impl_API yarp::os::impl::Storable : public yarp::os::Value
+class YARP_OS_impl_API Storable : public yarp::os::Value
 {
 public:
-    virtual bool isBool() const override { return false; }
-    virtual bool isInt() const override { return false; }
-    virtual bool isInt64() const override { return false; }
-    virtual bool isString() const override { return false; }
-    virtual bool isDouble() const override { return false; }
-    virtual bool isList() const override { return false; }
-    virtual bool isDict() const override { return false; }
-    virtual bool isVocab() const override { return false; }
-    virtual bool isBlob() const override { return false; }
-    virtual bool isNull() const override { return false; }
-    virtual bool asBool() const override { return false; }
-    virtual int asInt() const override { return 0; }
-    virtual std::int64_t asInt64() const override { return 0; }
-    virtual int asVocab() const override { return 0; }
-    virtual double asDouble() const override { return 0; }
-    virtual std::string asString() const override { return ""; }
-    virtual Searchable* asSearchable() const override
-    {
-        if (isDict()) {
-            return asDict();
-        }
-        return asList();
-    }
-    virtual yarp::os::Bottle* asList() const override { return nullptr; }
-    virtual yarp::os::Property* asDict() const override { return nullptr; }
-    virtual const char* asBlob() const override
-    {
-        return static_cast<const char*>(nullptr);
-    }
-    virtual size_t asBlobLength() const override { return 0; }
-    virtual bool read(ConnectionReader& connection) override;
-    virtual bool write(ConnectionWriter& connection) override;
-
-    virtual bool readRaw(ConnectionReader& connection) = 0;
-    virtual bool writeRaw(ConnectionWriter& connection) = 0;
-
-    using yarp::os::Searchable::check;
-    virtual bool check(const std::string& key) const override;
-
-    virtual yarp::os::Value& find(const std::string& key) const override;
-    virtual yarp::os::Bottle& findGroup(const std::string& key) const override;
-
-    bool operator==(const yarp::os::Value& alt) const;
-
-    virtual yarp::os::Value* create() const override { return createStorable(); }
-    virtual yarp::os::Value* clone() const override { return cloneStorable(); }
     /**
      * Destructor.
      */
     virtual ~Storable();
 
-    /**
-     * Initialize from a string representation, assuming that any
-     * syntax around this representation such as braces or
-     * parentheses has already been consumed.
-     */
-    virtual void fromString(const std::string& src) = 0;
-
-    /**
-     * Initialize from a string representation.  This should consume
-     * any syntax around that representation such as braces or
-     * parentheses.
-     */
-    virtual void fromStringNested(const std::string& src) { fromString(src); }
-    virtual std::string toString() const override = 0;
-    /**
-     * Create string representation, including any syntax that should
-     * wrap it such as braces or parentheses.
-     */
-    virtual std::string toStringNested() const { return toString(); }
     /**
      * Factory method.
      */
@@ -142,123 +62,370 @@ public:
      */
     virtual void copy(const Storable& alt) = 0;
 
+    bool operator==(const yarp::os::Value& alt) const;
+
+    virtual yarp::os::Value* create() const override { return createStorable(); }
+    virtual yarp::os::Value* clone() const override { return cloneStorable(); }
+
+    static Storable* createByCode(std::int32_t id);
+
+
+    virtual bool read(ConnectionReader& connection) override;
+    virtual bool write(ConnectionWriter& connection) override;
+
+    virtual bool readRaw(ConnectionReader& connection) = 0;
+    virtual bool writeRaw(ConnectionWriter& connection) = 0;
+
+    virtual bool isBool() const override { return false; }
+    virtual bool asBool() const override { return false; }
+
+    virtual bool isInt8() const override { return false; }
+    virtual std::int8_t asInt8() const override { return 0; }
+
+    virtual bool isInt16() const override { return false; }
+    virtual std::int16_t asInt16() const override { return 0; }
+
+    virtual bool isInt32() const override { return false; }
+    virtual std::int32_t asInt32() const override { return 0; }
+
+    virtual bool isInt64() const override { return false; }
+    virtual std::int64_t asInt64() const override { return 0; }
+
+    virtual bool isFloat32() const override { return false; }
+    virtual yarp::conf::float32_t asFloat32() const override { return 0.0f; }
+
+    virtual bool isFloat64() const override { return false; }
+    virtual yarp::conf::float64_t asFloat64() const override { return 0.0; }
+
+    virtual bool isString() const override { return false; }
+    virtual std::string asString() const override { return std::string(""); }
+
+    virtual bool isList() const override { return false; }
+    virtual yarp::os::Bottle* asList() const override { return nullptr; }
+
+    virtual bool isDict() const override { return false; }
+    virtual yarp::os::Property* asDict() const override { return nullptr; }
+
+    virtual bool isVocab() const override { return false; }
+    virtual std::int32_t asVocab() const override { return 0; }
+
+    virtual bool isBlob() const override { return false; }
+    virtual const char* asBlob() const override { return static_cast<const char*>(nullptr); }
+    virtual size_t asBlobLength() const override { return 0; }
+
+    virtual bool isNull() const override { return false; }
+
+
+    virtual Searchable* asSearchable() const override
+    {
+        if (isDict()) {
+            return asDict();
+        }
+        return asList();
+    }
+    using yarp::os::Searchable::check;
+    virtual bool check(const std::string& key) const override;
+
+    virtual yarp::os::Value& find(const std::string& key) const override;
+    virtual yarp::os::Bottle& findGroup(const std::string& key) const override;
+
+
+    /**
+     * Initialize from a string representation, assuming that any
+     * syntax around this representation such as braces or
+     * parentheses has already been consumed.
+     */
+    virtual void fromString(const std::string& src) = 0;
+
+    /**
+     * Initialize from a string representation.  This should consume
+     * any syntax around that representation such as braces or
+     * parentheses.
+     */
+    virtual void fromStringNested(const std::string& src) { fromString(src); }
+    virtual std::string toString() const override = 0;
+    /**
+     * Create string representation, including any syntax that should
+     * wrap it such as braces or parentheses.
+     */
+    virtual std::string toStringNested() const { return toString(); }
+
     /**
      * Return a code describing this item, used in serializing bottles.
      */
-    virtual int subCode() const { return 0; }
+    virtual std::int32_t subCode() const { return 0; }
+
     virtual bool isLeaf() const override { return true; }
-    static Storable* createByCode(int id);
 };
 
 
 /**
  * An empty item.
  */
-class YARP_OS_impl_API yarp::os::impl::StoreNull : public Storable
+class YARP_OS_impl_API StoreNull : public Storable
 {
 public:
     StoreNull() {}
+    virtual Storable* createStorable() const override { return new StoreNull(); }
+    virtual void copy(const Storable& alt) override { YARP_UNUSED(alt); }
+
     virtual std::string toString() const override { return ""; }
     virtual void fromString(const std::string& src) override { YARP_UNUSED(src); }
-    virtual int getCode() const override { return -1; }
+
+    virtual std::int32_t getCode() const override { return -1; }
+
     virtual bool readRaw(ConnectionReader& connection) override { YARP_UNUSED(connection); return false; }
     virtual bool writeRaw(ConnectionWriter& connection) override { YARP_UNUSED(connection); return false; }
-    virtual Storable* createStorable() const override { return new StoreNull(); }
+
     virtual bool isNull() const override { return true; }
-    virtual void copy(const Storable& alt) override { YARP_UNUSED(alt); }
 };
 
 
 /**
- * An integer item.
+ * A 8-bit integer item.
  */
-class YARP_OS_impl_API yarp::os::impl::StoreInt : public Storable
+class YARP_OS_impl_API StoreInt8 : public Storable
 {
 private:
-    int x;
+    std::int8_t x;
 
 public:
-    StoreInt() { x = 0; }
-    StoreInt(int x) { this->x = x; }
+    StoreInt8() : x(0) {}
+    StoreInt8(std::int8_t x) : x(x) {}
+    virtual Storable* createStorable() const override { return new StoreInt8(0); }
+    virtual void copy(const Storable& alt) override { x = alt.asInt8(); }
+
     virtual std::string toString() const override;
     virtual void fromString(const std::string& src) override;
-    virtual int getCode() const override { return code; }
+
+    static const std::int32_t code;
+    virtual std::int32_t getCode() const override { return code; }
+
     virtual bool readRaw(ConnectionReader& reader) override;
     virtual bool writeRaw(ConnectionWriter& writer) override;
-    virtual Storable* createStorable() const override { return new StoreInt(0); }
-    virtual bool asBool() const override { return x; }
-    virtual int asInt() const override { return x; }
+
+    virtual bool isInt8() const override { return true; }
+    virtual bool asBool() const override { return x != 0; }
+    virtual std::int8_t asInt8() const override { return x; }
+    virtual std::int16_t asInt16() const override { return x; }
+    virtual std::int32_t asInt32() const override { return x; }
     virtual std::int64_t asInt64() const override { return x; }
-    virtual int asVocab() const override { return x; }
-    virtual double asDouble() const override { return x; }
-    virtual bool isInt() const override { return true; }
-    virtual bool isInt64() const override { return true; }
-    static const int code;
-    virtual void copy(const Storable& alt) override { x = alt.asInt(); }
+    virtual yarp::conf::float32_t asFloat32() const override { return x; }
+    virtual yarp::conf::float64_t asFloat64() const override { return x; }
+    virtual std::int32_t asVocab() const override { return x; }
+};
+
+
+
+/**
+ * A 16-bit integer item.
+ */
+class YARP_OS_impl_API StoreInt16 : public Storable
+{
+private:
+    std::int16_t x;
+
+public:
+    StoreInt16() : x(0) {}
+    StoreInt16(std::int16_t x) : x(x) {}
+    virtual Storable* createStorable() const override { return new StoreInt16(0); }
+    virtual void copy(const Storable& alt) override { x = alt.asInt16(); }
+
+    virtual std::string toString() const override;
+    virtual void fromString(const std::string& src) override;
+
+    static const std::int32_t code;
+    virtual std::int32_t getCode() const override { return code; }
+
+    virtual bool readRaw(ConnectionReader& reader) override;
+    virtual bool writeRaw(ConnectionWriter& writer) override;
+
+    virtual bool isInt16() const override { return true; }
+    virtual bool asBool() const override { return x != 0; }
+    virtual std::int8_t asInt8() const override { return static_cast<std::int8_t>(x); }
+    virtual std::int16_t asInt16() const override { return x; }
+    virtual std::int32_t asInt32() const override { return x; }
+    virtual std::int64_t asInt64() const override { return x; }
+    virtual yarp::conf::float32_t asFloat32() const override { return x; }
+    virtual yarp::conf::float64_t asFloat64() const override { return x; }
+    virtual std::int32_t asVocab() const override { return x; }
+};
+
+
+/**
+ * A 32-bit integer item.
+ */
+class YARP_OS_impl_API StoreInt32 : public Storable
+{
+private:
+    std::int32_t x;
+
+public:
+    StoreInt32() : x(0) {}
+    StoreInt32(std::int32_t x) : x(x) {}
+    virtual Storable* createStorable() const override { return new StoreInt32(0); }
+    virtual void copy(const Storable& alt) override { x = alt.asInt32(); }
+
+    virtual std::string toString() const override;
+    virtual void fromString(const std::string& src) override;
+
+    static const std::int32_t code;
+    virtual std::int32_t getCode() const override { return code; }
+
+    virtual bool readRaw(ConnectionReader& reader) override;
+    virtual bool writeRaw(ConnectionWriter& writer) override;
+
+    virtual std::int8_t asInt8() const override { return static_cast<std::int8_t>(x); }
+    virtual bool asBool() const override { return x != 0; }
+    virtual std::int16_t asInt16() const override { return static_cast<std::int16_t>(x); }
+    virtual bool isInt32() const override { return true; }
+    virtual std::int32_t asInt32() const override { return x; }
+    virtual std::int64_t asInt64() const override { return x; }
+    virtual yarp::conf::float32_t asFloat32() const override { return x; }
+    virtual yarp::conf::float64_t asFloat64() const override { return x; }
+    virtual std::int32_t asVocab() const override { return x; }
 };
 
 /**
  * A 64-bit integer item.
  */
-class YARP_OS_impl_API yarp::os::impl::StoreInt64 : public Storable
+class YARP_OS_impl_API StoreInt64 : public Storable
 {
 private:
     std::int64_t x;
 
 public:
-    StoreInt64() { x = 0; }
-    StoreInt64(const std::int64_t& x) { this->x = x; }
+    StoreInt64() : x(0) {}
+    StoreInt64(std::int64_t x) : x(x) {}
+    virtual Storable* createStorable() const override { return new StoreInt64(0); }
+    virtual void copy(const Storable& alt) override { x = alt.asInt64(); }
+
     virtual std::string toString() const override;
     virtual void fromString(const std::string& src) override;
-    virtual int getCode() const override { return code; }
+
+    static const std::int32_t code;
+    virtual std::int32_t getCode() const override { return code; }
+
     virtual bool readRaw(ConnectionReader& reader) override;
     virtual bool writeRaw(ConnectionWriter& writer) override;
-    virtual Storable* createStorable() const override { return new StoreInt64(0); }
-    virtual int asInt() const override { return (int)x; }
-    virtual std::int64_t asInt64() const override { return x; }
-    virtual int asVocab() const override { return (int)x; }
-    virtual double asDouble() const override { return (double)x; }
-    virtual bool isInt() const override { return false; }
+
     virtual bool isInt64() const override { return true; }
-    static const int code;
-    virtual void copy(const Storable& alt) override { x = alt.asInt64(); }
+    virtual bool asBool() const override { return x != 0; }
+    virtual std::int8_t asInt8() const override { return static_cast<std::int8_t>(x); }
+    virtual std::int16_t asInt16() const override { return static_cast<std::int16_t>(x); }
+    virtual std::int32_t asInt32() const override { return static_cast<std::int32_t>(x); }
+    virtual std::int64_t asInt64() const override { return x; }
+    virtual yarp::conf::float32_t asFloat32() const override { return static_cast<yarp::conf::float32_t>(x); }
+    virtual yarp::conf::float64_t asFloat64() const override { return static_cast<yarp::conf::float64_t>(x); }
+    virtual std::int32_t asVocab() const override { return (std::int32_t)x; }
+};
+
+/**
+ * A 32-bit floating point number item.
+ */
+class YARP_OS_impl_API StoreFloat32 : public Storable
+{
+private:
+    yarp::conf::float32_t x;
+
+public:
+    StoreFloat32() : x(0) {}
+    StoreFloat32(yarp::conf::float32_t x) : x(x) {}
+    virtual Storable* createStorable() const override { return new StoreFloat32(0); }
+    virtual void copy(const Storable& alt) override { x = alt.asFloat32(); }
+
+    virtual std::string toString() const override;
+    virtual void fromString(const std::string& src) override;
+
+    static const std::int32_t code;
+    virtual std::int32_t getCode() const override { return code; }
+
+    virtual bool readRaw(ConnectionReader& reader) override;
+    virtual bool writeRaw(ConnectionWriter& writer) override;
+
+    virtual bool isFloat32() const override { return true; }
+    virtual std::int8_t asInt8() const override { return static_cast<std::int8_t>(x); }
+    virtual std::int16_t asInt16() const override { return static_cast<std::int16_t>(x); }
+    virtual std::int32_t asInt32() const override { return static_cast<std::int32_t>(x); }
+    virtual std::int64_t asInt64() const override { return static_cast<std::int64_t>(x); }
+    virtual yarp::conf::float32_t asFloat32() const override { return x; }
+    virtual yarp::conf::float64_t asFloat64() const override { return x; }
+};
+
+/**
+ * A 64-bit floating point number item.
+ */
+class YARP_OS_impl_API StoreFloat64 : public Storable
+{
+private:
+    yarp::conf::float64_t x;
+
+public:
+    StoreFloat64() : x(0) {}
+    StoreFloat64(yarp::conf::float64_t x) : x(x) {}
+    virtual Storable* createStorable() const override { return new StoreFloat64(0); }
+    virtual void copy(const Storable& alt) override { x = alt.asFloat64(); }
+
+    virtual std::string toString() const override;
+    virtual void fromString(const std::string& src) override;
+
+    static const std::int32_t code;
+    virtual std::int32_t getCode() const override { return code; }
+
+    virtual bool readRaw(ConnectionReader& reader) override;
+    virtual bool writeRaw(ConnectionWriter& writer) override;
+
+    virtual bool isFloat64() const override { return true; }
+    virtual std::int8_t asInt8() const override { return static_cast<std::int8_t>(x); }
+    virtual std::int16_t asInt16() const override { return static_cast<std::int16_t>(x); }
+    virtual std::int32_t asInt32() const override { return static_cast<std::int32_t>(x); }
+    virtual std::int64_t asInt64() const override { return static_cast<std::int64_t>(x); }
+    virtual yarp::conf::float32_t asFloat32() const override { return static_cast<yarp::conf::float32_t>(x); }
+    virtual yarp::conf::float64_t asFloat64() const override { return x; }
 };
 
 /**
  * A vocabulary item.
  */
-class YARP_OS_impl_API yarp::os::impl::StoreVocab : public Storable
+class YARP_OS_impl_API StoreVocab : public Storable
 {
-private:
-    int x;
+    std::int32_t x;
 
 public:
-    StoreVocab() { x = 0; }
-    StoreVocab(int x) { this->x = x; }
+    StoreVocab() : x(0) {}
+    StoreVocab(std::int32_t x) : x(x) {}
+    virtual Storable* createStorable() const override { return new StoreVocab(0); }
+    virtual void copy(const Storable& alt) override { x = alt.asVocab(); }
+
     virtual std::string toString() const override;
     virtual void fromString(const std::string& src) override;
     virtual std::string toStringNested() const override;
     virtual void fromStringNested(const std::string& src) override;
-    virtual int getCode() const override { return code; }
+
+    static const std::int32_t code;
+    virtual std::int32_t getCode() const override { return code; }
+
     virtual bool readRaw(ConnectionReader& reader) override;
     virtual bool writeRaw(ConnectionWriter& writer) override;
-    virtual Storable* createStorable() const override { return new StoreVocab(0); }
-    virtual bool asBool() const override { return x != 0; }
-    virtual int asInt() const override { return x; }
-    virtual std::int64_t asInt64() const override { return x; }
-    virtual int asVocab() const override { return x; }
-    virtual double asDouble() const override { return x; }
-    virtual bool isVocab() const override { return true; }
+
     virtual bool isBool() const override { return (x == 0 || x == '1'); }
-    static const int code;
-    virtual void copy(const Storable& alt) override { x = alt.asVocab(); }
+    virtual bool asBool() const override { return x != 0; }
+
+    virtual std::int32_t asInt32() const override { return x; }
+    virtual std::int64_t asInt64() const override { return x; }
+    virtual yarp::conf::float32_t asFloat32() const override { return x; }
+    virtual yarp::conf::float64_t asFloat64() const override { return x; }
+
+    virtual bool isVocab() const override { return true; }
+    virtual std::int32_t asVocab() const override { return x; }
+
     virtual std::string asString() const override { return toString(); }
 };
 
 /**
  * A string item.
  */
-class YARP_OS_impl_API yarp::os::impl::StoreString : public Storable
+class YARP_OS_impl_API StoreString : public Storable
 {
 private:
     std::string x;
@@ -266,34 +433,30 @@ private:
 public:
     StoreString() { x = ""; }
     StoreString(const std::string& x) { this->x = x; }
+    virtual Storable* createStorable() const override { return new StoreString(std::string("")); }
+    virtual void copy(const Storable& alt) override { x = alt.asString(); }
+
     virtual std::string toString() const override;
     virtual void fromString(const std::string& src) override;
     virtual std::string toStringNested() const override;
     virtual void fromStringNested(const std::string& src) override;
-    virtual int getCode() const override { return code; }
+
+    static const std::int32_t code;
+    virtual std::int32_t getCode() const override { return code; }
+
     virtual bool readRaw(ConnectionReader& reader) override;
     virtual bool writeRaw(ConnectionWriter& writer) override;
-    virtual Storable* createStorable() const override
-    {
-        return new StoreString(std::string(""));
-    }
-    virtual std::string asString() const override { return x; }
-    virtual int asVocab() const override { return yarp::os::Vocab::encode(x.c_str()); }
+
     virtual bool isString() const override { return true; }
-    static const int code;
-    virtual void copy(const Storable& alt) override
-    {
-        // std::string y =
-        x = alt.asString();
-        // std::string tmp(y.c_str(), y.length());
-        // x = tmp;
-    }
+    virtual std::string asString() const override { return x; }
+
+    virtual std::int32_t asVocab() const override { return yarp::os::Vocab::encode(x.c_str()); }
 };
 
 /**
  * A binary blob item.
  */
-class YARP_OS_impl_API yarp::os::impl::StoreBlob : public Storable
+class YARP_OS_impl_API StoreBlob : public Storable
 {
 private:
     std::string x;
@@ -301,21 +464,7 @@ private:
 public:
     StoreBlob() { x = ""; }
     StoreBlob(const std::string& x) { this->x = x; }
-    virtual std::string toString() const override;
-    virtual void fromString(const std::string& src) override;
-    virtual std::string toStringNested() const override;
-    virtual void fromStringNested(const std::string& src) override;
-    virtual int getCode() const override { return code; }
-    virtual bool readRaw(ConnectionReader& reader) override;
-    virtual bool writeRaw(ConnectionWriter& writer) override;
-    virtual Storable* createStorable() const override
-    {
-        return new StoreBlob(std::string(""));
-    }
-    virtual bool isBlob() const override { return true; }
-    virtual const char* asBlob() const override { return x.c_str(); }
-    virtual size_t asBlobLength() const override { return x.length(); }
-    static const int code;
+    virtual Storable* createStorable() const override { return new StoreBlob(std::string("")); }
     virtual void copy(const Storable& alt) override
     {
         if (alt.isBlob()) {
@@ -325,60 +474,57 @@ public:
             x = std::string();
         }
     }
-};
 
-/**
- * A floating point number item.
- */
-class YARP_OS_impl_API yarp::os::impl::StoreDouble : public Storable
-{
-private:
-    double x;
-
-public:
-    StoreDouble() { x = 0; }
-    StoreDouble(double x) { this->x = x; }
     virtual std::string toString() const override;
     virtual void fromString(const std::string& src) override;
-    virtual int getCode() const override { return code; }
+    virtual std::string toStringNested() const override;
+    virtual void fromStringNested(const std::string& src) override;
+
+    static const std::int32_t code;
+    virtual std::int32_t getCode() const override { return code; }
+
     virtual bool readRaw(ConnectionReader& reader) override;
     virtual bool writeRaw(ConnectionWriter& writer) override;
-    virtual Storable* createStorable() const override { return new StoreDouble(0); }
-    virtual int asInt() const override { return (int)x; }
-    virtual std::int64_t asInt64() const override { return (std::int64_t)x; }
-    virtual double asDouble() const override { return x; }
-    virtual bool isDouble() const override { return true; }
-    static const int code;
-    virtual void copy(const Storable& alt) override { x = alt.asDouble(); }
+
+    virtual bool isBlob() const override { return true; }
+    virtual const char* asBlob() const override { return x.c_str(); }
+    virtual size_t asBlobLength() const override { return x.length(); }
 };
 
 
 /**
  * A nested list of items.
  */
-class YARP_OS_impl_API yarp::os::impl::StoreList : public Storable
+class YARP_OS_impl_API StoreList : public Storable
 {
 private:
     yarp::os::Bottle content;
 
 public:
     StoreList() {}
+    virtual Storable* createStorable() const override { return new StoreList(); }
+    virtual void copy(const Storable& alt) override { content = *(alt.asList()); }
+
     yarp::os::Bottle& internal() { return content; }
+
     virtual std::string toString() const override;
     virtual void fromString(const std::string& src) override;
     virtual std::string toStringNested() const override;
     virtual void fromStringNested(const std::string& src) override;
-    virtual int getCode() const override { return code + subCode(); }
+
+    static const std::int32_t code;
+    virtual std::int32_t getCode() const override { return code + subCode(); }
+
     virtual bool readRaw(ConnectionReader& reader) override;
     virtual bool writeRaw(ConnectionWriter& writer) override;
-    virtual Storable* createStorable() const override { return new StoreList(); }
+
     virtual bool isList() const override { return true; }
     virtual yarp::os::Bottle* asList() const override
     {
         return (yarp::os::Bottle*)(&content);
     }
-    static const int code;
-    virtual int subCode() const override;
+
+    virtual std::int32_t subCode() const override;
 
     virtual yarp::os::Value& find(const std::string& key) const override
     {
@@ -389,35 +535,37 @@ public:
     {
         return content.findGroup(key);
     }
-    virtual void copy(const Storable& alt) override { content = *(alt.asList()); }
 };
 
 
 /**
  * Key/value pairs
  */
-class YARP_OS_impl_API yarp::os::impl::StoreDict : public Storable
+class YARP_OS_impl_API StoreDict : public Storable
 {
 private:
     yarp::os::Property content;
 
 public:
     StoreDict() {}
+    virtual Storable* createStorable() const override { return new StoreDict(); }
+    virtual void copy(const Storable& alt) override { content = *(alt.asDict()); }
+
     yarp::os::Property& internal() { return content; }
+
     virtual std::string toString() const override;
     virtual void fromString(const std::string& src) override;
     virtual std::string toStringNested() const override;
     virtual void fromStringNested(const std::string& src) override;
-    virtual int getCode() const override { return code; }
+
+    static const std::int32_t code;
+    virtual std::int32_t getCode() const override { return code; }
+
     virtual bool readRaw(ConnectionReader& reader) override;
     virtual bool writeRaw(ConnectionWriter& writer) override;
-    virtual Storable* createStorable() const override { return new StoreDict(); }
+
     virtual bool isDict() const override { return true; }
-    virtual yarp::os::Property* asDict() const override
-    {
-        return (yarp::os::Property*)(&content);
-    }
-    static const int code;
+    virtual yarp::os::Property* asDict() const override { return const_cast<yarp::os::Property*>(&content); }
 
     virtual yarp::os::Value& find(const std::string& key) const override
     {
@@ -428,7 +576,6 @@ public:
     {
         return content.findGroup(key);
     }
-    virtual void copy(const Storable& alt) override { content = *(alt.asDict()); }
 };
 
 
@@ -437,7 +584,7 @@ public:
  * Handy to use until you work out how to make your own more
  * efficient formats for transmission.
  */
-class YARP_OS_impl_API yarp::os::impl::BottleImpl
+class YARP_OS_impl_API BottleImpl
 {
 public:
     BottleImpl();
@@ -446,29 +593,27 @@ public:
 
     Searchable* const parent;
 
-    bool isInt(int index);
+    bool isInt8(int index);
+    bool isInt16(int index);
+    bool isInt32(int index);
+    bool isInt64(int index);
+    bool isFloat32(int index);
+    bool isFloat64(int index);
     bool isString(int index);
-    bool isDouble(int index);
     bool isList(int index);
 
     Storable* pop();
 
-    int getInt(int index);
-    std::string getString(int index);
-    double getDouble(int index);
-
     Storable& get(int index) const;
 
-    yarp::os::Bottle* getList(int index);
-
-    void addInt(int x) { add(new StoreInt(x)); }
-    void addInt64(const std::int64_t& x) { add(new StoreInt64(x)); }
-    void addVocab(int x) { add(new StoreVocab(x)); }
-    void addDouble(double x) { add(new StoreDouble(x)); }
-    void addString(const std::string& text)
-    {
-        add(new StoreString(text));
-    }
+    void addInt8(std::int8_t x) { add(new StoreInt8(x)); }
+    void addInt16(std::int16_t x) { add(new StoreInt16(x)); }
+    void addInt32(std::int32_t x) { add(new StoreInt32(x)); }
+    void addInt64(std::int64_t x) { add(new StoreInt64(x)); }
+    void addFloat32(yarp::conf::float32_t x) { add(new StoreFloat32(x)); }
+    void addFloat64(yarp::conf::float64_t x) { add(new StoreFloat64(x)); }
+    void addVocab(std::int32_t x) { add(new StoreVocab(x)); }
+    void addString(const std::string& text) { add(new StoreString(text)); }
 
     yarp::os::Bottle& addList();
 
@@ -497,11 +642,11 @@ public:
 
     void fromBinary(const char* text, int len);
 
-    void specialize(int subCode);
+    void specialize(std::int32_t subCode);
     int getSpecialization();
     void setNested(bool nested);
 
-    int subCode();
+    std::int32_t subCode();
 
     void addBit(yarp::os::Value* bit)
     {
@@ -548,6 +693,8 @@ public:
         }
     }
 
+    bool checkIndex(int index) const;
+
     bool invalid;
     bool ro;
 
@@ -559,8 +706,8 @@ public:
 private:
     static StoreNull* storeNull;
 
-    std::vector<Storable*> content;
-    std::vector<char> data;
+    YARP_SUPPRESS_DLL_INTERFACE_WARNING_ARG(std::vector<Storable*>) content;
+    YARP_SUPPRESS_DLL_INTERFACE_WARNING_ARG(std::vector<char>) data;
     int speciality;
     bool nested;
     bool dirty;
@@ -570,6 +717,10 @@ private:
 
     void synch();
 };
+
+} // namespace impl
+} // namespace os
+} // namespace yarp
 
 
 #endif // YARP_OS_IMPL_BOTTLEIMPL_H

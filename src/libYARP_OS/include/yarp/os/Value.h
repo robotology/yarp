@@ -36,13 +36,14 @@ namespace yarp {
  * find anything in them unless they are actually a list.
  *
  */
-class YARP_OS_API yarp::os::Value : public Portable, public Searchable {
+class YARP_OS_API yarp::os::Value : public Portable,
+                                    public Searchable
+{
 private:
     yarp::os::impl::Storable *proxy;
 
     void setProxy(yarp::os::impl::Storable *proxy);
     void ok() const;
-
 
 public:
     using Searchable::check;
@@ -59,13 +60,13 @@ public:
      * @param isVocab set this to true if the integer should be interpreted
      * as a vocabulary identifier
      */
-    Value(int x, bool isVocab = false);
+    Value(std::int32_t x, bool isVocab = false);
 
     /**
      * Construct a floating point Value
      * @param x the number
      */
-    Value(double x);
+    Value(yarp::conf::float64_t x);
 
     /**
      * Construct a string Value
@@ -107,30 +108,69 @@ public:
     virtual bool isBool() const;
 
     /**
-     * Checks if value is an integer (32 bit or smaller). If so, asInt() will
-     * return that integer.
+     * Checks if value is an integer. If so, asInt() will return that integer.
      * @return true iff value is an integer
+     * @warning Unsafe, sizeof(int) is platform dependent. Use isInt32 instead.
      */
-    virtual bool isInt() const;
+    YARP_DEPRECATED_INTERNAL_MSG("Use isInt32 instead") // Since YARP 3.0.0
+    inline virtual bool isInt() const final { return isInt32(); }
 
     /**
-     * Checks if value is a 64-bit integer or smaller. If so, asInt64() will
+     * Checks if value is a 8-bit integer. If so, asInt8() will
      * return that integer.
-     * @return true iff value is a 64-bit integer or smaller
+     * @return true iff value is a 8-bit integer
+     */
+    virtual bool isInt8() const;
+
+    /**
+     * Checks if value is a 16-bit integer. If so, asInt16() will
+     * return that integer.
+     * @return true iff value is a 16-bit integer
+     */
+    virtual bool isInt16() const;
+
+    /**
+     * Checks if value is a 32-bit integer. If so, asInt32() will
+     * return that integer.
+     * @return true iff value is a 32-bit integer
+     */
+    virtual bool isInt32() const;
+
+    /**
+     * Checks if value is a 64-bit integer. If so, asInt64() will
+     * return that integer.
+     * @return true iff value is a 64-bit integer
      */
     virtual bool isInt64() const;
+
+    /**
+     * Checks if value is a floating point number.
+     * If so, asDouble() will return that number.
+     * @return true iff value is a floating point number
+     * @warning Unsafe, sizeof(double) is platform dependent. Use isFloat64 instead.
+     */
+    YARP_DEPRECATED_INTERNAL_MSG("Use isFloat64 instead") // Since YARP 3.0.0
+    inline virtual bool isDouble() const final { return isFloat64(); }
+
+    /**
+     * Checks if value is a 32-bit floating point number.
+     * If so, asFloat32() will return that number.
+     * @return true iff value is a 32-bit floating point number
+     */
+    virtual bool isFloat32() const;
+
+    /**
+     * Checks if value is a 64-bit floating point number.
+     * If so, asFloat64() will return that number.
+     * @return true iff value is a 64-bit floating point number
+     */
+    virtual bool isFloat64() const;
 
     /**
      * Checks if value is a string. If so, asString() will return that string.
      * @return true iff value is a string
      */
     virtual bool isString() const;
-
-    /**
-     * Checks if value is a floating point number. If so, asDouble() will return that number.
-     * @return true iff value is a floating point number
-     */
-    virtual bool isDouble() const;
 
     /**
      * Checks if value is a list. If so, asList() will return that list.
@@ -152,7 +192,6 @@ public:
      */
     virtual bool isVocab() const;
 
-
     /**
      * Checks if value is a binary object. If so, asBlob() and asBlobLength()
      * will return it.
@@ -173,30 +212,92 @@ public:
      * @return integer value if value is indeed an integer.
      * If it is another numeric type, the appropriate cast value is returned.
      * Otherwise returns 0.
+     * @warning Unsafe, sizeof(int) is platform dependent. Use asInt32 instead.
      */
-    virtual int asInt() const;
+    YARP_DEPRECATED_INTERNAL_MSG("Use asInt32 instead") // Since YARP 3.0.0
+    inline virtual int asInt() const final { return static_cast<int>(asInt32()); }
+
+    /**
+     * Get 8-bit integer value.
+     * @return 8-bit integer value if value is indeed an integer.
+     * If it is another numeric type, the appropriate cast value is returned.
+     * Otherwise returns 0.
+     * @warning This method performs casts if the Value is not a Float32 value,
+     * therefore it might lead to unexpected behaviours if the type is not
+     * properly checked.
+     */
+    virtual std::int8_t asInt8() const;
+
+    /**
+     * Get 16-bit integer value.
+     * @return 16-bit integer value if value is indeed an integer.
+     * If it is another numeric type, the appropriate cast value is returned.
+     * Otherwise returns 0.
+     * @warning This method performs casts if the Value is not a Float32 value,
+     * therefore it might lead to unexpected behaviours if the type is not
+     * properly checked.
+     */
+    virtual std::int16_t asInt16() const;
+
+    /**
+     * Get 32-bit integer value.
+     * @return 32-bit integer value if value is indeed an integer.
+     * If it is another numeric type, the appropriate cast value is returned.
+     * Otherwise returns 0.
+     * @warning This method performs casts if the Value is not a Float32 value,
+     * therefore it might lead to unexpected behaviours if the type is not
+     * properly checked.
+     */
+    virtual std::int32_t asInt32() const;
 
     /**
      * Get 64-bit integer value.
      * @return 64-bit integer value if value is indeed an integer.
      * If it is another numeric type, the appropriate cast value is returned.
      * Otherwise returns 0.
+     * @warning This method performs casts if the Value is not a Float32 value,
+     * therefore it might lead to unexpected behaviours if the type is not
+     * properly checked.
      */
     virtual std::int64_t asInt64() const;
-
-    /**
-     * Get vocabulary identifier as an integer.
-     * @return integer value of vocabulary identifier.
-     */
-    virtual int asVocab() const;
 
     /**
      * Get floating point value.
      * @return floating point value if value is indeed a floating point.
      * If it is another numeric type, the appropriate cast value is returned.
      * Otherwise returns 0.
+     * @warning Unsafe, sizeof(double) is platform dependent. Use asFloat64 instead.
      */
-    virtual double asDouble() const;
+    YARP_DEPRECATED_INTERNAL_MSG("Use asFloat64 instead") // Since YARP 3.0.0
+    inline virtual double asDouble() const final { return static_cast<double>(asFloat64()); }
+
+    /**
+     * Get 32-bit floating point value.
+     * @return floating point value if value is indeed a 32-bit floating point.
+     * If it is another numeric type, the appropriate cast value is returned.
+     * Otherwise returns 0.
+     * @warning This method performs casts if the Value is not a Float32 value,
+     * therefore it might lead to unexpected behaviours if the type is not
+     * properly checked.
+     */
+    virtual yarp::conf::float32_t asFloat32() const;
+
+    /**
+     * Get 64-bit floating point value.
+     * @return floating point value if value is indeed a 64-bit floating point.
+     * If it is another numeric type, the appropriate cast value is returned.
+     * Otherwise returns 0.
+     * @warning This method performs casts if the Value is not a Float32 value,
+     * therefore it might lead to unexpected behaviours if the type is not
+     * properly checked.
+     */
+    virtual yarp::conf::float64_t asFloat64() const;
+
+    /**
+     * Get vocabulary identifier as an integer.
+     * @return integer value of vocabulary identifier.
+     */
+    virtual std::int32_t asVocab() const;
 
     /**
      * Get string value.
@@ -309,7 +410,7 @@ public:
      * Get standard type code of value.
      * @return the standard type code of the value.
      */
-    virtual int getCode() const;
+    virtual std::int32_t getCode() const;
 
     virtual bool isNull() const override;
 
@@ -319,15 +420,61 @@ public:
      * Create an integer Value
      * @param x the value to take on
      * @return an integer Value
+     * @warning Unsafe, sizeof(int) is platform dependent. Use makeInt instead.
      */
-    static Value *makeInt(int x);
+    YARP_DEPRECATED_INTERNAL_MSG("Use makeInt32 instead") // Since YARP 3.0.0
+    inline static Value* makeInt(int x) { return makeInt32(static_cast<std::int32_t>(x)); }
+
+    /**
+     * Create a 8-bit integer Value
+     * @param x the value to take on
+     * @return a 8-bit integer Value
+     */
+    static Value* makeInt8(std::int8_t x);
+
+    /**
+     * Create a 16-bit integer Value
+     * @param x the value to take on
+     * @return a 16-bit integer Value
+     */
+    static Value* makeInt16(std::int16_t x);
+
+    /**
+     * Create a 32-bit integer Value
+     * @param x the value to take on
+     * @return a 32-bit integer Value
+     */
+    static Value* makeInt32(std::int32_t x);
+
+    /**
+     * Create a 64-bit integer Value
+     * @param x the value to take on
+     * @return a 64-bit integer Value
+     */
+    static Value* makeInt64(std::int64_t x);
 
     /**
      * Create a floating point Value
      * @param x the value to take on
      * @return a floating point Value
+     * @warning Unsafe, sizeof(double) is platform dependent. Use makeFloat64 instead.
      */
-    static Value *makeDouble(double x);
+    YARP_DEPRECATED_INTERNAL_MSG("Use makeFloat64 instead") // Since YARP 3.0.0
+    inline static Value* makeDouble(double x) { return makeFloat64(static_cast<yarp::conf::float64_t>(x)); }
+
+    /**
+     * Create a 32-bit floating point Value
+     * @param x the value to take on
+     * @return a 32-bit floating point Value
+     */
+    static Value* makeFloat32(yarp::conf::float32_t x);
+
+    /**
+     * Create a 64-bit floating point Value
+     * @param x the value to take on
+     * @return a 64-bit floating point Value
+     */
+    static Value* makeFloat64(yarp::conf::float64_t x);
 
     /**
      * Create a string Value
@@ -341,7 +488,7 @@ public:
      * @param v the value to take on
      * @return a vocabulary identifier Value
      */
-    static Value *makeVocab(int v);
+    static Value* makeVocab(std::int32_t v);
 
     /**
      * Create a vocabulary identifier Value
@@ -349,7 +496,6 @@ public:
      * @return a vocabulary identifier Value
      */
     static Value *makeVocab(const std::string& str);
-
 
     /**
      * Create a Value containing binary data

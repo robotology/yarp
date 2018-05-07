@@ -182,7 +182,40 @@ bool StreamConnectionReader::pushInt(int x)
     return true;
 }
 
-int StreamConnectionReader::expectInt()
+template <typename T, typename NetT>
+inline T StreamConnectionReader::expectType()
+{
+    yAssert(in!=nullptr);
+
+    NetT x = 0;
+    yarp::os::Bytes b((char*)(&x), sizeof(T));
+    YARP_SSIZE_T r = in->read(b);
+    if (r < 0 || (size_t)r < b.length()) {
+        err = true;
+        return 0;
+    }
+    messageLen -= b.length();
+
+    return static_cast<T>(x);
+}
+
+std::int8_t StreamConnectionReader::expectInt8()
+{
+    if (!isGood()) {
+        return 0;
+    }
+    return expectType<std::int8_t, NetInt8>();
+}
+
+std::int16_t StreamConnectionReader::expectInt16()
+{
+    if (!isGood()) {
+        return 0;
+    }
+    return expectType<std::int16_t, NetInt16>();
+}
+
+std::int32_t StreamConnectionReader::expectInt32()
 {
     if (pushedIntFlag) {
         pushedIntFlag = false;
@@ -191,16 +224,7 @@ int StreamConnectionReader::expectInt()
     if (!isGood()) {
         return 0;
     }
-    NetInt32 x = 0;
-    yarp::os::Bytes b((char*)(&x), sizeof(x));
-    yAssert(in!=nullptr);
-    YARP_SSIZE_T r = in->read(b);
-    if (r<0 || (size_t)r<b.length()) {
-        err = true;
-        return 0;
-    }
-    messageLen -= b.length();
-    return x;
+    return expectType<std::int32_t, NetInt32>();
 }
 
 std::int64_t StreamConnectionReader::expectInt64()
@@ -208,33 +232,23 @@ std::int64_t StreamConnectionReader::expectInt64()
     if (!isGood()) {
         return 0;
     }
-    NetInt64 x = 0;
-    yarp::os::Bytes b((char*)(&x), sizeof(x));
-    yAssert(in!=nullptr);
-    YARP_SSIZE_T r = in->read(b);
-    if (r<0 || (size_t)r<b.length()) {
-        err = true;
-        return 0;
-    }
-    messageLen -= b.length();
-    return x;
+    return expectType<std::int64_t, NetInt64>();
 }
 
-double StreamConnectionReader::expectDouble()
+yarp::conf::float32_t StreamConnectionReader::expectFloat32()
 {
     if (!isGood()) {
         return 0;
     }
-    NetFloat64 x = 0;
-    yarp::os::Bytes b((char*)(&x), sizeof(x));
-    yAssert(in!=nullptr);
-    YARP_SSIZE_T r = in->read(b);
-    if (r<0 || (size_t)r<b.length()) {
-        err = true;
+    return expectType<yarp::conf::float32_t, NetFloat32>();
+}
+
+yarp::conf::float64_t StreamConnectionReader::expectFloat64()
+{
+    if (!isGood()) {
         return 0;
     }
-    messageLen -= b.length();
-    return x;
+    return expectType<yarp::conf::float64_t, NetFloat64>();
 }
 
 bool StreamConnectionReader::expectBlock(const char *data, size_t len)

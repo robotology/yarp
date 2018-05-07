@@ -18,7 +18,12 @@
 #include <yarp/os/StringOutputStream.h>
 #include <yarp/os/Vocab.h>
 #include <yarp/os/Bottle.h>
+#include <yarp/os/NetInt8.h>
+#include <yarp/os/NetInt16.h>
+#include <yarp/os/NetInt32.h>
 #include <yarp/os/NetInt64.h>
+#include <yarp/os/NetFloat32.h>
+#include <yarp/os/NetFloat64.h>
 
 #include <string>
 #include <vector>
@@ -193,25 +198,50 @@ public:
         push(data, true);
     }
 
-    // defined by yarp::os::ConnectionWriter
-    virtual void appendInt(int data) override {
-        NetInt32 i = data;
-        yarp::os::Bytes b((char*)(&i), sizeof(i));
-        push(b, true);
+    template <typename T, typename NetT>
+    inline void appendType(T data)
+    {
+        if (std::is_same<T,NetT>::value) {
+            yarp::os::Bytes b((char*)(&data), sizeof(T));
+            push(b, true);
+        } else {
+            NetT i = data;
+            yarp::os::Bytes b((char*)(&i), sizeof(T));
+            push(b, true);
+        }
     }
 
     // defined by yarp::os::ConnectionWriter
-    virtual void appendInt64(const std::int64_t& data) override {
-        NetInt64 i = data;
-        yarp::os::Bytes b((char*)(&i), sizeof(i));
-        push(b, true);
+    virtual void appendInt8(std::int8_t data) override
+    {
+        appendType<std::int8_t, NetInt8>(data);
     }
 
     // defined by yarp::os::ConnectionWriter
-    virtual void appendDouble(double data) override {
-        NetFloat64 i = data;
-        yarp::os::Bytes b((char*)(&i), sizeof(i));
-        push(b, true);
+    virtual void appendInt16(std::int16_t data) override
+    {
+        appendType<std::int16_t, NetInt16>(data);
+    }
+
+    // defined by yarp::os::ConnectionWriter
+    virtual void appendInt32(std::int32_t data) override
+    {
+        appendType<std::int32_t, NetInt32>(data);
+    }
+
+    // defined by yarp::os::ConnectionWriter
+    virtual void appendInt64(std::int64_t data) override {
+        appendType<std::int64_t, NetInt64>(data);
+    }
+
+    // defined by yarp::os::ConnectionWriter
+    virtual void appendFloat32(yarp::conf::float32_t data) override {
+        appendType<yarp::conf::float32_t, NetFloat32>(data);
+    }
+
+    // defined by yarp::os::ConnectionWriter
+    virtual void appendFloat64(yarp::conf::float64_t data) override {
+        appendType<yarp::conf::float64_t, NetFloat64>(data);
     }
 
     virtual void appendStringBase(const std::string& data) {
@@ -479,11 +509,8 @@ private:
 /**
  * A helper for recording entire message/reply transactions
  */
-class yarp::os::impl::ConnectionRecorder :
-        public ConnectionReader,
-        public ConnectionWriter,
-        public yarp::os::PortWriter
-{
+class yarp::os::impl::ConnectionRecorder : public ConnectionReader,
+            public ConnectionWriter, public yarp::os::PortWriter {
 private:
     ConnectionReader *reader;
     ConnectionWriter *writer;
@@ -539,10 +566,22 @@ public:
         return str;
     }
 
-    virtual int expectInt() override {
-        int x = reader->expectInt();
+    virtual std::int8_t expectInt8() override {
+        std::int8_t x = reader->expectInt8();
+        readerStore.appendInt8(x);
+        return x;
+    }
+
+    virtual std::int16_t expectInt16() override {
+        std::int16_t x = reader->expectInt16();
+        readerStore.appendInt16(x);
+        return x;
+    }
+
+    virtual std::int32_t expectInt32() override {
+        std::int32_t x = reader->expectInt32();
         if (!skipNextInt) {
-            readerStore.appendInt(x);
+            readerStore.appendInt32(x);
         } else {
             skipNextInt = false;
         }
@@ -555,16 +594,22 @@ public:
         return x;
     }
 
+    virtual yarp::conf::float32_t expectFloat32() override {
+        yarp::conf::float32_t x = reader->expectFloat32();
+        readerStore.appendFloat32(x);
+        return x;
+    }
+
+    virtual yarp::conf::float64_t expectFloat64() override {
+        yarp::conf::float64_t x = reader->expectFloat64();
+        readerStore.appendFloat64(x);
+        return x;
+    }
+
     virtual bool pushInt(int x) override {
         bool ok = reader->pushInt(x);
         skipNextInt = skipNextInt || ok;
         return ok;
-    }
-
-    virtual double expectDouble() override {
-        double x = reader->expectDouble();
-        readerStore.appendDouble(x);
-        return x;
     }
 
     virtual bool isTextMode() override {
@@ -627,25 +672,39 @@ public:
         return reader->isError();
     }
 
-
     virtual void appendBlock(const char *data, size_t len) override {
         writer->appendBlock(data, len);
         writerStore.appendBlock(data, len);
     }
 
-    virtual void appendInt(int data) override {
-        writer->appendInt(data);
-        writerStore.appendInt(data);
+    virtual void appendInt8(std::int8_t data) override {
+        writer->appendInt8(data);
+        writerStore.appendInt8(data);
     }
 
-    virtual void appendInt64(const std::int64_t& data) override {
+    virtual void appendInt16(std::int16_t data) override {
+        writer->appendInt16(data);
+        writerStore.appendInt16(data);
+    }
+
+    virtual void appendInt32(std::int32_t data) override {
+        writer->appendInt32(data);
+        writerStore.appendInt32(data);
+    }
+
+    virtual void appendInt64(std::int64_t data) override {
         writer->appendInt64(data);
         writerStore.appendInt64(data);
     }
 
-    virtual void appendDouble(double data) override {
-        writer->appendDouble(data);
-        writerStore.appendDouble(data);
+    virtual void appendFloat32(yarp::conf::float32_t data) override {
+        writer->appendFloat32(data);
+        writerStore.appendFloat32(data);
+    }
+
+    virtual void appendFloat64(yarp::conf::float64_t data) override {
+        writer->appendFloat64(data);
+        writerStore.appendFloat64(data);
     }
 
     virtual void appendString(const char *str, int terminate) override {
@@ -672,10 +731,10 @@ public:
 
     virtual bool write(ConnectionWriter& connection) override {
         if (hasReply()) {
-            connection.appendInt(BOTTLE_TAG_LIST); // nested structure
-            connection.appendInt(3);               // with three elements
-            connection.appendInt(BOTTLE_TAG_VOCAB);
-            connection.appendInt(VOCAB3('r', 'p', 'c'));
+            connection.appendInt32(BOTTLE_TAG_LIST); // nested structure
+            connection.appendInt32(3);               // with three elements
+            connection.appendInt32(BOTTLE_TAG_VOCAB);
+            connection.appendInt32(VOCAB3('r', 'p', 'c'));
             bool ok = readerStore.write(connection);
             if (ok) {
                 writerStore.write(connection);

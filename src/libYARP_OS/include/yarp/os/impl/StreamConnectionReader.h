@@ -20,7 +20,12 @@
 #include <yarp/os/Route.h>
 #include <yarp/os/Contact.h>
 #include <yarp/os/Bottle.h>
+#include <yarp/os/NetInt8.h>
+#include <yarp/os/NetInt16.h>
+#include <yarp/os/NetInt32.h>
 #include <yarp/os/NetInt64.h>
+#include <yarp/os/NetFloat32.h>
+#include <yarp/os/NetFloat64.h>
 
 namespace yarp {
     namespace os {
@@ -59,9 +64,12 @@ public:
     virtual bool setSize(size_t len) override;
     virtual size_t getSize() override;
     virtual bool pushInt(int x) override;
-    virtual int expectInt() override;
+    virtual std::int8_t expectInt8() override;
+    virtual std::int16_t expectInt16() override;
+    virtual std::int32_t expectInt32() override;
     virtual std::int64_t expectInt64() override;
-    virtual double expectDouble() override;
+    virtual yarp::conf::float32_t expectFloat32() override;
+    virtual yarp::conf::float64_t expectFloat64() override;
     virtual bool expectBlock(const char *data, size_t len) override;
     virtual std::string expectText(int terminatingChar) override;
     virtual bool isTextMode() override;
@@ -82,6 +90,9 @@ public:
 private:
 
     bool isGood();
+
+    template <typename T, typename NetT>
+    T expectType();
 
     BufferedConnectionWriter *writer;
     StringInputStream altStream;

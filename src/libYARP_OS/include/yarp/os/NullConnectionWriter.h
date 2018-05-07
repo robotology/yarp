@@ -26,9 +26,12 @@ namespace yarp {
 class YARP_OS_API yarp::os::NullConnectionWriter : public ConnectionWriter {
 public:
     virtual void appendBlock(const char *data, size_t len) override;
-    virtual void appendInt(int data) override;
-    virtual void appendInt64(const std::int64_t& data) override;
-    virtual void appendDouble(double data) override;
+    virtual void appendInt8(std::int8_t data) override;
+    virtual void appendInt16(std::int16_t data) override;
+    virtual void appendInt32(std::int32_t data) override;
+    virtual void appendInt64(std::int64_t data) override;
+    virtual void appendFloat32(yarp::conf::float32_t data) override;
+    virtual void appendFloat64(yarp::conf::float64_t data) override;
     virtual void appendString(const char *str, int terminate = '\n') override;
     virtual void appendExternalBlock(const char *data, size_t len) override;
     virtual bool isTextMode() override;

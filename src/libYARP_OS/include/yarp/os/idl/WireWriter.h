@@ -52,19 +52,29 @@ public:
 
     bool writeNested(yarp::os::PortWriter& obj);
 
-    bool writeI16(const std::int16_t& x);
-
-    bool writeI32(const std::int32_t& x);
-
-    bool writeI64(const std::int64_t& x);
-
     bool writeBool(bool x);
 
-    bool writeByte(const std::int8_t& x);
+    bool writeI8(std::int8_t x);
 
-    bool writeDouble(double x);
+    bool writeI16(std::int16_t x);
 
-    bool writeVocab(int x);
+    bool writeI32(std::int32_t x);
+
+    bool writeI64(std::int64_t x);
+
+    bool writeFloat32(yarp::conf::float32_t x);
+
+    bool writeFloat64(yarp::conf::float64_t x);
+
+#ifndef YARP_NO_DEPRECATED // Since YARP 3.0.0
+    YARP_DEPRECATED_MSG("Use writeI8 instead")
+    bool writeByte(std::int8_t x) { return writeI8(x); }
+
+    YARP_DEPRECATED_MSG("Use writeFloat64 instead")
+    bool writeDouble(double x) { return writeFloat64(static_cast<yarp::conf::float64_t>(x)); }
+#endif // YARP_NO_DEPRECATED
+
+    bool writeVocab(std::int32_t x);
 
     bool isValid();
 

@@ -81,28 +81,46 @@ void Bottle::clear()
     implementation->clear();
 }
 
-void Bottle::addInt(int x)
+void Bottle::addInt8(std::int8_t x)
 {
     implementation->edit();
-    implementation->addInt(x);
+    implementation->addInt8(x);
 }
 
-void Bottle::addInt64(const std::int64_t& x)
+void Bottle::addInt16(std::int16_t x)
+{
+    implementation->edit();
+    implementation->addInt16(x);
+}
+
+void Bottle::addInt32(std::int32_t x)
+{
+    implementation->edit();
+    implementation->addInt32(x);
+}
+
+void Bottle::addInt64(std::int64_t x)
 {
     implementation->edit();
     implementation->addInt64(x);
+}
+
+void Bottle::addFloat32(yarp::conf::float32_t x)
+{
+    implementation->edit();
+    implementation->addFloat32(x);
+}
+
+void Bottle::addFloat64(yarp::conf::float64_t x)
+{
+    implementation->edit();
+    implementation->addFloat64(x);
 }
 
 void Bottle::addVocab(int x)
 {
     implementation->edit();
     implementation->addVocab(x);
-}
-
-void Bottle::addDouble(double x)
-{
-    implementation->edit();
-    implementation->addDouble(x);
 }
 
 void Bottle::addString(const char* str)
@@ -356,13 +374,13 @@ std::string Bottle::describeBottleCode(int code)
     case 0:
         unitName = "mixed";
         break;
-    case BOTTLE_TAG_INT:
+    case BOTTLE_TAG_INT32:
         unitName = "int";
         break;
     case BOTTLE_TAG_VOCAB:
         unitName = "vocab";
         break;
-    case BOTTLE_TAG_DOUBLE:
+    case BOTTLE_TAG_FLOAT64:
         unitName = "float";
         break;
     case BOTTLE_TAG_STRING:
