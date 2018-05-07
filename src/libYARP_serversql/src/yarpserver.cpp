@@ -117,7 +117,7 @@ public:
                                                   Value(subdbDefault)).asString();
 
         std::string ip = options.check("ip",Value("...")).asString();
-        int sock = options.check("socket",Value(Network::getDefaultPortRange())).asInt();
+        int sock = options.check("socket",Value(Network::getDefaultPortRange())).asInt32();
         bool cautious = options.check("cautious");
         bool verbose = options.check("verbose");
 

@@ -122,8 +122,8 @@ public:
             return ok;
         }
         if (tag=="announce") {
-            if (cmd.get(2).isInt()) {
-                welcome(cmd.get(1).asString().c_str(),cmd.get(2).asInt()?1:0);
+            if (cmd.get(2).isInt32()) {
+                welcome(cmd.get(1).asString().c_str(),cmd.get(2).asInt32()?1:0);
             } else {
                 welcome(cmd.get(1).asString().c_str(),true);
             }
