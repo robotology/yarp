@@ -18,23 +18,14 @@
 // The goal of this file is just to define a 64 bit unsigned little-endian
 // integer type
 //
-// If you are having trouble with it, and your system has a 64 bit
-// little-endian type called e.g. ___my_system_uint64, you can replace
-// this whole file with:
-//    typedef ___my_system_uint64 NetUint64;
-//
 ////////////////////////////////////////////////////////////////////////
-
-
-////////////////////////////////////////////////////////////////////////
-//   YARP_BIG_ENDIAN should be defined if we are big endian
-//   YARP_LITTLE_ENDIAN should be defined if we are little endian
 
 namespace yarp {
 namespace os {
+
 /**
-    * Definition of the NetInt64 type
-    */
+ * Definition of the NetInt64 type
+ */
 
 #ifdef YARP_LITTLE_ENDIAN
 
@@ -74,4 +65,4 @@ public:
 } // namespace os
 } // namespace yarp
 
-#endif // YARP_OS_NETINT64_H
+#endif // YARP_OS_NETUINT64_H

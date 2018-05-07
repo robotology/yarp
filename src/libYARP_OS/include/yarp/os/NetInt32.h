@@ -18,17 +18,7 @@
 // The goal of this file is just to define a 32 bit signed little-endian
 // integer type.
 //
-// If you are having trouble with it, and your system has a 32 bit
-// little-endian type called e.g. ___my_system_int32, you can replace
-// this whole file with:
-//    typedef ___my_system_int32 NetInt32;
-//
 ////////////////////////////////////////////////////////////////////////
-
-
-////////////////////////////////////////////////////////////////////////
-//   YARP_BIG_ENDIAN should be defined if we are big endian
-//   YARP_LITTLE_ENDIAN should be defined if we are little endian
 
 namespace yarp {
 namespace os {
@@ -41,7 +31,7 @@ namespace os {
 
 typedef std::int32_t NetInt32;
 
-#else
+#else // YARP_LITTLE_ENDIAN
 
 class YARP_OS_API NetInt32
 {

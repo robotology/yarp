@@ -18,17 +18,7 @@
 // The goal of this file is just to define a 16 bit signed little-endian
 // integer type.
 //
-// If you are having trouble with it, and your system has a 16 bit
-// little-endian type called e.g. ___my_system_int16, you can replace
-// this whole file with:
-//    typedef ___my_system_int16 NetInt16;
-//
 ////////////////////////////////////////////////////////////////////////
-
-
-////////////////////////////////////////////////////////////////////////
-//   YARP_BIG_ENDIAN should be defined if we are big endian
-//   YARP_LITTLE_ENDIAN should be defined if we are little endian
 
 namespace yarp {
 namespace os {

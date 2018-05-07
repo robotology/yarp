@@ -18,17 +18,7 @@
 // The goal of this file is just to define a 64 bit signed little-endian
 // integer type
 //
-// If you are having trouble with it, and your system has a 64 bit
-// little-endian type called e.g. ___my_system_int64, you can replace
-// this whole file with:
-//    typedef ___my_system_int64 NetInt64;
-//
 ////////////////////////////////////////////////////////////////////////
-
-
-////////////////////////////////////////////////////////////////////////
-//   YARP_BIG_ENDIAN should be defined if we are big endian
-//   YARP_LITTLE_ENDIAN should be defined if we are little endian
 
 namespace yarp {
 namespace os {
@@ -41,7 +31,7 @@ namespace os {
 
 typedef std::int64_t NetInt64;
 
-#else
+#else // YARP_LITTLE_ENDIAN
 
 typedef std::int64_t RawNetInt64;
 union UnionNetInt64
