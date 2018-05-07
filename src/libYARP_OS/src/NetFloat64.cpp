@@ -9,7 +9,6 @@
 
 #include <yarp/os/NetFloat64.h>
 
-#ifdef YARP_FLOAT64
 #ifndef YARP_LITTLE_ENDIAN
 
 using namespace yarp;
@@ -76,5 +75,5 @@ void NetFloat64::operator/=(RawNetFloat64 v) {
     set(get()/v);
 }
 
+
 #endif // YARP_LITTLE_ENDIAN
-#endif // YARP_FLOAT64
