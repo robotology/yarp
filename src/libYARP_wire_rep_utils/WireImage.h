@@ -96,13 +96,13 @@ public:
             break;
         }
         buf.appendRawString(frame);
-        buf.appendInt(image->height());
-        buf.appendInt(image->width());
+        buf.appendInt32(image->height());
+        buf.appendInt32(image->width());
         buf.appendRawString(encoding);
         char is_bigendian = 0;
         buf.appendBlock(&is_bigendian,1);
-        buf.appendInt((image->width()*image->getPixelSize())+image->getPadding());
-        buf.appendInt(image->getRawImageSize());
+        buf.appendInt32((image->width()*image->getPixelSize())+image->getPadding());
+        buf.appendInt32(image->getRawImageSize());
         buf.getBuffer()->write(ss);
         std::string hdr = ss.toString();
         yarp::os::Bytes hdr_wrap((char*)hdr.c_str(),hdr.length());

@@ -38,13 +38,13 @@ static char *checkBottle(char *cursor, int& remaining, int ct, int list_tag) {
         }
         //printf("tag is %d\n", tag);
         switch (tag) {
-        case BOTTLE_TAG_INT:
+        case BOTTLE_TAG_INT32:
         case BOTTLE_TAG_VOCAB:
             if (remaining<4) { return nullptr; }
             cursor += 4;
             remaining -= 4;
             break;
-        case BOTTLE_TAG_DOUBLE:
+        case BOTTLE_TAG_FLOAT64:
             if (remaining<8) { return nullptr; }
             cursor += 8;
             remaining -= 8;
