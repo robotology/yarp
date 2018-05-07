@@ -81,8 +81,8 @@ bool PortMonitor::configureFromProperty(yarp::os::Property& options) {
     info.put("type", script);
     info.put("source", options.find("source").asString());
     info.put("destination", options.find("destination").asString());
-    info.put("sender_side",  options.find("sender_side").asInt());
-    info.put("receiver_side",options.find("receiver_side").asInt());
+    info.put("sender_side",  options.find("sender_side").asInt32());
+    info.put("receiver_side",options.find("receiver_side").asInt32());
     info.put("carrier", options.find("carrier").asString());
 
     PortMonitor::lock();

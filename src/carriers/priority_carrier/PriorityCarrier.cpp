@@ -65,15 +65,15 @@ bool PriorityCarrier::configure(yarp::os::ConnectionState& proto) {
     Property options;
     options.fromString(proto.getSenderSpecifier().c_str());
 
-    timeConstant = fabs(options.check("tc",Value(1.0)).asDouble());
-    timeResting = fabs(options.check("tr",Value(0.0)).asDouble());
-    stimulation = fabs(options.check("st",Value(STIMUL_THRESHOLD*10)).asDouble());
+    timeConstant = fabs(options.check("tc",Value(1.0)).asFloat64());
+    timeResting = fabs(options.check("tr",Value(0.0)).asFloat64());
+    stimulation = fabs(options.check("st",Value(STIMUL_THRESHOLD*10)).asFloat64());
     // Zero stimulation is undefined and will be interpreted as S=Thresould.
     if(stimulation == 0)
         stimulation = STIMUL_THRESHOLD*10;
     stimulation /= 10.0;
 
-    baias = options.check("bs",Value(STIMUL_THRESHOLD*10)).asDouble();
+    baias = options.check("bs",Value(STIMUL_THRESHOLD*10)).asFloat64();
     baias /= 10.0;
 
     excitation = options.findGroup("ex");
@@ -104,7 +104,7 @@ bool PriorityCarrier::configure(yarp::os::ConnectionState& proto) {
                 Bottle* b = v.asList();
                 safe_printf(dummy, 1024, "(%s, %.2f) ",
                                 b->get(0).asString().c_str(),
-                                b->get(1).asDouble()/10.0 );
+                                b->get(1).asFloat64()/10.0 );
                 msg+= dummy;
             }
         }
@@ -113,7 +113,7 @@ bool PriorityCarrier::configure(yarp::os::ConnectionState& proto) {
         safe_printf(dummy, 1024, "   virtual: %s\n",
                             (isVirtual)?"yes":"no");
         msg+= dummy;
-        int rate = options.check("rate", Value(10)).asInt();
+        int rate = options.check("rate", Value(10)).asInt32();
         safe_printf(dummy, 1024, "   db.rate: %dms\n", rate);
         msg+= dummy;
         yInfo("%s", msg.c_str());
@@ -214,7 +214,7 @@ double PriorityCarrier::getActualInput(double t)
                     Bottle* b = v.asList();
                     // an exitatory to this priority carrier
                     if(sourceName == b->get(0).asString().c_str())
-                        E += peer->getActualInput(t) * (b->get(1).asDouble()/10.0);
+                        E += peer->getActualInput(t) * (b->get(1).asFloat64()/10.0);
                 }
             }
 
@@ -267,7 +267,7 @@ bool PriorityGroup::recalculate(double t)
                     Bottle* b = v.asList();
                     // an exitatory link to this connection
                     if(peer->sourceName == b->get(0).asString().c_str())
-                        InvA(row,col) = -(b->get(1).asDouble()/10.0)*xi;
+                        InvA(row,col) = -(b->get(1).asFloat64()/10.0)*xi;
                 }
             }
             col++;

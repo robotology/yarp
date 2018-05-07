@@ -16,7 +16,7 @@
 using namespace yarp::os;
 using namespace std;
 
-void RosHeader::appendInt(char *&buf,int x) {
+void RosHeader::appendInt32(char *&buf,int x) {
     Bytes bytes(buf,4);
     NetType::netInt(x,bytes);
     buf += 4;
@@ -53,7 +53,7 @@ string RosHeader::writeHeader() {
          it!=data.end(); it++) {
         string key = it->first;
         string val = it->second;
-        appendInt(buf,key.length()+1+val.length());
+        appendInt32(buf,key.length()+1+val.length());
         appendString(buf,key);
         appendString(buf,string("="));
         appendString(buf,val);

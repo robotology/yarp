@@ -195,7 +195,7 @@ bool ShmemOutputStreamImpl::write(const yarp::os::Bytes& b)
     }
 
     if ((int)m_pHeader->size - (int)m_pHeader->avail < (int)b.length()) {
-        YARP_SSIZE_T required = m_pHeader->size + 2 * b.length();
+        yarp::conf::ssize_t required = m_pHeader->size + 2 * b.length();
         Resize((int)required);
     }
 

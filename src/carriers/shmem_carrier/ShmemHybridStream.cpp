@@ -55,7 +55,7 @@ int ShmemHybridStream::accept()
         return -1;
     }
 
-    YARP_SSIZE_T result = m_Acceptor.accept(m_SockStream);
+    yarp::conf::ssize_t result = m_Acceptor.accept(m_SockStream);
 
     if (result < 0) {
         yError("ShmemHybridStream server returned %zd", result);
@@ -111,7 +111,7 @@ int ShmemHybridStream::connect(const ACE_INET_Addr& ace_address)
     }
 
     ACE_SOCK_Connector connector;
-    YARP_SSIZE_T result = connector.connect(m_SockStream, ace_address);
+    yarp::conf::ssize_t result = connector.connect(m_SockStream, ace_address);
     if (result < 0) {
         yError("ShmemHybridStream client returned %zd", result);
         close();
@@ -173,9 +173,9 @@ void ShmemHybridStream::write(const yarp::os::Bytes& b)
     }
 }
 
-YARP_SSIZE_T ShmemHybridStream::read(const yarp::os::Bytes& b)
+yarp::conf::ssize_t ShmemHybridStream::read(const yarp::os::Bytes& b)
 {
-    YARP_SSIZE_T ret = in.read(b);
+    yarp::conf::ssize_t ret = in.read(b);
     if (ret == -1) {
         close();
     }

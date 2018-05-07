@@ -67,28 +67,28 @@ string showFormat(Bottle& b, string root) {
     r += addPart("int32",root + "_tag",BOTTLE_TAG_LIST+code,nullptr,"BOTTLE_TAG_LIST+code");
     r += "\n";
     bool specialized = (code>0);
-    if (code==BOTTLE_TAG_INT) {
+    if (code==BOTTLE_TAG_INT32) {
         r += addPart("int32[]",root,b.size(),nullptr,"length","length");
         r += "\n";
         if (b.size()<50) {
             r += " # integers seen: ";
             for (int i=0; i<b.size(); i++) {
                 char buf[1000];
-                sprintf(buf," %d",b.get(i).asInt());
+                sprintf(buf," %d",b.get(i).asInt32());
                 r += buf;
             }
             r += "\n";
         }
         return r;
     }
-    if (code==BOTTLE_TAG_DOUBLE) {
+    if (code==BOTTLE_TAG_FLOAT64) {
         r += addPart("float64[]",root,b.size(),nullptr,"length","length");
         r += "\n";
         if (b.size()<50) {
             r += " # floats seen: ";
             for (int i=0; i<b.size(); i++) {
                 char buf[1000];
-                sprintf(buf," %g",b.get(i).asDouble());
+                sprintf(buf," %g",b.get(i).asFloat64());
                 r += buf;
             }
             r += "\n";
@@ -109,23 +109,23 @@ string showFormat(Bottle& b, string root) {
                              "BOTTLE_TAG_VOCAB");
                 r += "\n";
             }
-            r += addPart("int32",val_name,v.asInt(),nullptr,v.toString().c_str(),"vocab");
+            r += addPart("int32",val_name,v.asInt32(),nullptr,v.toString().c_str(),"vocab");
             r += "\n";
-        } else if (v.isInt()) {
+        } else if (v.isInt32()) {
             if (!specialized) {
-                r += addPart("int32",tag_name,BOTTLE_TAG_INT,nullptr,
-                             "BOTTLE_TAG_INT");
+                r += addPart("int32",tag_name,BOTTLE_TAG_INT32,nullptr,
+                             "BOTTLE_TAG_INT32");
                 r += "\n";
             }
-            r += addPart("int32",val_name,v.asInt(),&v,v.toString().c_str());
+            r += addPart("int32",val_name,v.asInt32(),&v,v.toString().c_str());
             r += "\n";
-        } else if (v.isDouble()) {
+        } else if (v.isFloat64()) {
             if (!specialized) {
-                r += addPart("int32",tag_name,BOTTLE_TAG_DOUBLE,nullptr,
-                             "BOTTLE_TAG_DOUBLE");
+                r += addPart("int32",tag_name,BOTTLE_TAG_FLOAT64,nullptr,
+                             "BOTTLE_TAG_FLOAT64");
                 r += "\n";
             }
-            r += addPart("float64",val_name,v.asInt(),&v,v.toString().c_str());
+            r += addPart("float64",val_name,v.asInt32(),&v,v.toString().c_str());
             r += "\n";
         } else if (v.isList()) {
             r += showFormat(*v.asList(), val_name);
@@ -210,7 +210,7 @@ bool register_port(const char *name,
     req.addString(name);
     req.addString(carrier);
     req.addString(ip);
-    req.addInt(portnum);
+    req.addInt32(portnum);
     bool ok = Network::write(Network::getNameServerContact(),
                              req,
                              reply);
@@ -259,13 +259,13 @@ int main(int argc, char *argv[]) {
     // Process the command
     if (tag=="roscore") {
         if (cmd.size()>1) {
-            if (!(cmd.get(1).isString()&&cmd.get(2).isInt())) {
+            if (!(cmd.get(1).isString()&&cmd.get(2).isInt32())) {
                 fprintf(stderr,"wrong syntax, run with no arguments for help\n");
                 return 1;
             }
             Bottle reply;
             register_port("/roscore", "xmlrpc",
-                          cmd.get(1).asString().c_str(), cmd.get(2).asInt(),
+                          cmd.get(1).asString().c_str(), cmd.get(2).asInt32(),
                           reply);
             printf("%s\n", reply.toString().c_str());
         } else {

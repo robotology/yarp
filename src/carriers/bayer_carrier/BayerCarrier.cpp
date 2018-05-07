@@ -70,7 +70,7 @@ yarp::os::ConnectionReader& BayerCarrier::modifyIncomingData(yarp::os::Connectio
     con.setTextMode(reader.isTextMode());
     Bottle b;
     b.read(reader);
-    b.addInt(42);
+    b.addInt32(42);
     b.addString("(p.s. bork bork bork)");
     b.write(con.getWriter());
     return con.getReader();
@@ -328,7 +328,7 @@ bool BayerCarrier::processDirect(const yarp::os::Bytes& bytes) {
 }
 
 
-YARP_SSIZE_T BayerCarrier::read(const yarp::os::Bytes& b) {
+yarp::conf::ssize_t BayerCarrier::read(const yarp::os::Bytes& b) {
     // copy across small stuff - the image header
     if (consumed<sizeof(header)) {
         size_t len = b.length();
@@ -337,7 +337,7 @@ YARP_SSIZE_T BayerCarrier::read(const yarp::os::Bytes& b) {
         }
         memcpy(b.get(),((char*)(&header))+consumed,len);
         consumed += len;
-        return (YARP_SSIZE_T) len;
+        return (yarp::conf::ssize_t) len;
     }
     // sane client will want to read image into correct-sized block
     if (b.length()==image_data_len) {
@@ -355,7 +355,7 @@ YARP_SSIZE_T BayerCarrier::read(const yarp::os::Bytes& b) {
         }
         memcpy(b.get(),out.getRawImage()+consumed-sizeof(header),len);
         consumed += len;
-        return (YARP_SSIZE_T) len;
+        return (yarp::conf::ssize_t) len;
     }
     return -1;
 }
