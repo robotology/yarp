@@ -130,7 +130,7 @@ bool Matrix::read(yarp::os::ConnectionReader& connection) {
         int l=0;
         double *tmp=data();
         for(l=0;l<header.listLen;l++)
-            tmp[l]=connection.expectDouble();
+            tmp[l]=connection.expectFloat64();
     }
     else
         return false;
@@ -145,9 +145,9 @@ bool Matrix::write(yarp::os::ConnectionWriter& connection) {
     //header.totalLen = sizeof(header)+sizeof(double)*this->size();
     header.outerListTag = BOTTLE_TAG_LIST;
     header.outerListLen = 3;
-    header.rowsTag = BOTTLE_TAG_INT;
-    header.colsTag = BOTTLE_TAG_INT;
-    header.listTag = BOTTLE_TAG_LIST + BOTTLE_TAG_DOUBLE;
+    header.rowsTag = BOTTLE_TAG_INT32;
+    header.colsTag = BOTTLE_TAG_INT32;
+    header.listTag = BOTTLE_TAG_LIST + BOTTLE_TAG_FLOAT64;
     header.rows=rows();
     header.cols=cols();
     header.listLen = header.rows*header.cols;
@@ -157,7 +157,7 @@ bool Matrix::write(yarp::os::ConnectionWriter& connection) {
     int l=0;
     const double *tmp=data();
     for(l=0;l<header.listLen;l++)
-        connection.appendDouble(tmp[l]);
+        connection.appendFloat64(tmp[l]);
 
     // if someone is foolish enough to connect in text mode,
     // let them see something readable.

@@ -769,7 +769,7 @@ bool Image::write(yarp::os::ConnectionWriter& connection) {
     header.paramName = VOCAB3('m','a','t');
     header.paramIdTag = BOTTLE_TAG_VOCAB;
     header.id = getPixelCode();
-    header.paramListTag = BOTTLE_TAG_LIST + BOTTLE_TAG_INT;
+    header.paramListTag = BOTTLE_TAG_LIST + BOTTLE_TAG_INT32;
     header.paramListLen = 5;
     header.depth = getPixelSize();
     header.imgSize = getRawImageSize();

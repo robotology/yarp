@@ -290,8 +290,8 @@ public:
         yAssert(tmp != nullptr);
 
         // Skip the vector header....
-        connection.expectInt();
-        connection.expectInt();
+        connection.expectInt32();
+        connection.expectInt32();
 
         std::vector<int> recipe = getComposition(_header.pointType);
 
@@ -348,10 +348,10 @@ public:
     yarp::os::Bottle toBottle()
     {
         yarp::os::Bottle ret;
-        ret.addInt(width());
-        ret.addInt(height());
-        ret.addInt(getPointType());
-        ret.addInt(isDense());
+        ret.addInt32(width());
+        ret.addInt32(height());
+        ret.addInt32(getPointType());
+        ret.addInt32(isDense());
 
         for (size_t i = 0; i < this->size(); i++) {
             ret.addList().append((*this)(i).toBottle());
@@ -372,12 +372,12 @@ public:
             return false;
         }
 
-        if (this->getPointType() != bt.get(2).asInt()) {
+        if (this->getPointType() != bt.get(2).asInt32()) {
             return false;
         }
 
-        this->resize(bt.get(0).asInt(), bt.get(1).asInt());
-        this->header.isDense = bt.get(3).asInt();
+        this->resize(bt.get(0).asInt32(), bt.get(1).asInt32());
+        this->header.isDense = bt.get(3).asInt32();
 
         if ((size_t)bt.size() != 4 + width() * height()) {
             return false;
@@ -454,49 +454,49 @@ private:
 template <>
 inline int BottleTagMap<yarp::sig::DataXY>()
 {
-    return BOTTLE_TAG_DOUBLE;
+    return BOTTLE_TAG_FLOAT64;
 }
 
 template <>
 inline int BottleTagMap<yarp::sig::DataXYZ>()
 {
-    return BOTTLE_TAG_DOUBLE;
+    return BOTTLE_TAG_FLOAT64;
 }
 
 template <>
 inline int BottleTagMap<yarp::sig::DataNormal>()
 {
-    return BOTTLE_TAG_DOUBLE;
+    return BOTTLE_TAG_FLOAT64;
 }
 
 template <>
 inline int BottleTagMap<yarp::sig::DataXYZRGBA>()
 {
-    return BOTTLE_TAG_DOUBLE;
+    return BOTTLE_TAG_FLOAT64;
 }
 
 template <>
 inline int BottleTagMap<yarp::sig::DataXYZI>()
 {
-    return BOTTLE_TAG_DOUBLE;
+    return BOTTLE_TAG_FLOAT64;
 }
 
 template <>
 inline int BottleTagMap<yarp::sig::DataInterestPointXYZ>()
 {
-    return BOTTLE_TAG_DOUBLE;
+    return BOTTLE_TAG_FLOAT64;
 }
 
 template <>
 inline int BottleTagMap<yarp::sig::DataXYZNormal>()
 {
-    return BOTTLE_TAG_DOUBLE;
+    return BOTTLE_TAG_FLOAT64;
 }
 
 template <>
 inline int BottleTagMap<yarp::sig::DataXYZNormalRGBA>()
 {
-    return BOTTLE_TAG_DOUBLE;
+    return BOTTLE_TAG_FLOAT64;
 }
 
 

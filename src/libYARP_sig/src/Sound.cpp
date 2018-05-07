@@ -200,7 +200,7 @@ bool Sound::read(ConnectionReader& connection) {
     FlexImage& img = HELPER(implementation);
     Bottle bot;
     bool ok = PortablePair<FlexImage,Bottle>::readPair(connection,img,bot);
-    frequency = bot.get(0).asInt();
+    frequency = bot.get(0).asInt32();
     synchronize();
     return ok;
 }
@@ -210,7 +210,7 @@ bool Sound::write(ConnectionWriter& connection) {
     // lousy format - fix soon!
     FlexImage& img = HELPER(implementation);
     Bottle bot;
-    bot.addInt(frequency);
+    bot.addInt32(frequency);
     return PortablePair<FlexImage,Bottle>::writePair(connection,img,bot);
 }
 

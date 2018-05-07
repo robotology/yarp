@@ -196,13 +196,13 @@ bool Vector::read(yarp::os::ConnectionReader& connection) {
     if (!ok) return false;
 
     if (header.listLen > 0 &&
-        header.listTag == (BOTTLE_TAG_LIST | BOTTLE_TAG_DOUBLE)) {
+        header.listTag == (BOTTLE_TAG_LIST | BOTTLE_TAG_FLOAT64)) {
         if (size() != (size_t)(header.listLen))
             resize(header.listLen);
 
         int k=0;
         for (k=0;k<header.listLen;k++)
-            (*this)[k]=connection.expectDouble();
+            (*this)[k]=connection.expectFloat64();
     } else {
         return false;
     }
@@ -213,14 +213,14 @@ bool Vector::read(yarp::os::ConnectionReader& connection) {
 bool Vector::write(yarp::os::ConnectionWriter& connection) {
     VectorPortContentHeader header;
 
-    header.listTag = (BOTTLE_TAG_LIST | BOTTLE_TAG_DOUBLE);
+    header.listTag = (BOTTLE_TAG_LIST | BOTTLE_TAG_FLOAT64);
     header.listLen = (int)size();
 
     connection.appendBlock((char*)&header, sizeof(header));
 
     int k=0;
     for (k=0;k<header.listLen;k++)
-        connection.appendDouble((*this)[k]);
+        connection.appendFloat64((*this)[k]);
 
     // if someone is foolish enough to connect in text mode,
     // let them see something readable.
