@@ -16,7 +16,7 @@ public:
 
 class yarprobotinterfaceRpc_get_level : public yarp::os::Portable {
 public:
-  int32_t _return;
+  std::int32_t _return;
   void init();
   virtual bool write(yarp::os::ConnectionWriter& connection) override;
   virtual bool read(yarp::os::ConnectionReader& connection) override;
@@ -222,12 +222,12 @@ std::string yarprobotinterfaceRpc::get_phase() {
   bool ok = yarp().write(helper,helper);
   return ok?helper._return:_return;
 }
-int32_t yarprobotinterfaceRpc::get_level() {
-  int32_t _return = 0;
+std::int32_t yarprobotinterfaceRpc::get_level() {
+  std::int32_t _return = 0;
   yarprobotinterfaceRpc_get_level helper;
   helper.init();
   if (!yarp().canWrite()) {
-    yError("Missing server method '%s'?","int32_t yarprobotinterfaceRpc::get_level()");
+    yError("Missing server method '%s'?","std::int32_t yarprobotinterfaceRpc::get_level()");
   }
   bool ok = yarp().write(helper,helper);
   return ok?helper._return:_return;
@@ -304,7 +304,7 @@ bool yarprobotinterfaceRpc::read(yarp::os::ConnectionReader& connection) {
       return true;
     }
     if (tag == "get_level") {
-      int32_t _return;
+      std::int32_t _return;
       _return = get_level();
       yarp::os::idl::WireWriter writer(reader);
       if (!writer.isNull()) {
@@ -418,7 +418,7 @@ std::vector<std::string> yarprobotinterfaceRpc::help(const std::string& function
       helpString.push_back("Returns current phase. ");
     }
     if (functionName=="get_level") {
-      helpString.push_back("int32_t get_level() ");
+      helpString.push_back("std::int32_t get_level() ");
       helpString.push_back("Returns current level. ");
     }
     if (functionName=="get_robot") {

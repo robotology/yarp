@@ -46,8 +46,8 @@ private:
     Mutex listMutex;
     Mutex timeMutex;
 
-    YARP_INT32 sec;
-    YARP_INT32 nsec;
+    std::int32_t sec;
+    std::int32_t nsec;
     double _time;
     bool closing;
     bool initted;

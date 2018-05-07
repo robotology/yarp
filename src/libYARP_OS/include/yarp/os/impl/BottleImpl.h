@@ -63,7 +63,7 @@ public:
     virtual bool isNull() const override { return false; }
     virtual bool asBool() const override { return false; }
     virtual int asInt() const override { return 0; }
-    virtual YARP_INT64 asInt64() const override { return 0; }
+    virtual std::int64_t asInt64() const override { return 0; }
     virtual int asVocab() const override { return 0; }
     virtual double asDouble() const override { return 0; }
     virtual std::string asString() const override { return ""; }
@@ -188,7 +188,7 @@ public:
     virtual Storable* createStorable() const override { return new StoreInt(0); }
     virtual bool asBool() const override { return x; }
     virtual int asInt() const override { return x; }
-    virtual YARP_INT64 asInt64() const override { return x; }
+    virtual std::int64_t asInt64() const override { return x; }
     virtual int asVocab() const override { return x; }
     virtual double asDouble() const override { return x; }
     virtual bool isInt() const override { return true; }
@@ -203,11 +203,11 @@ public:
 class YARP_OS_impl_API yarp::os::impl::StoreInt64 : public Storable
 {
 private:
-    YARP_INT64 x;
+    std::int64_t x;
 
 public:
     StoreInt64() { x = 0; }
-    StoreInt64(const YARP_INT64& x) { this->x = x; }
+    StoreInt64(const std::int64_t& x) { this->x = x; }
     virtual std::string toString() const override;
     virtual void fromString(const std::string& src) override;
     virtual int getCode() const override { return code; }
@@ -215,7 +215,7 @@ public:
     virtual bool writeRaw(ConnectionWriter& writer) override;
     virtual Storable* createStorable() const override { return new StoreInt64(0); }
     virtual int asInt() const override { return (int)x; }
-    virtual YARP_INT64 asInt64() const override { return x; }
+    virtual std::int64_t asInt64() const override { return x; }
     virtual int asVocab() const override { return (int)x; }
     virtual double asDouble() const override { return (double)x; }
     virtual bool isInt() const override { return false; }
@@ -245,7 +245,7 @@ public:
     virtual Storable* createStorable() const override { return new StoreVocab(0); }
     virtual bool asBool() const override { return x != 0; }
     virtual int asInt() const override { return x; }
-    virtual YARP_INT64 asInt64() const override { return x; }
+    virtual std::int64_t asInt64() const override { return x; }
     virtual int asVocab() const override { return x; }
     virtual double asDouble() const override { return x; }
     virtual bool isVocab() const override { return true; }
@@ -345,7 +345,7 @@ public:
     virtual bool writeRaw(ConnectionWriter& writer) override;
     virtual Storable* createStorable() const override { return new StoreDouble(0); }
     virtual int asInt() const override { return (int)x; }
-    virtual YARP_INT64 asInt64() const override { return (YARP_INT64)x; }
+    virtual std::int64_t asInt64() const override { return (std::int64_t)x; }
     virtual double asDouble() const override { return x; }
     virtual bool isDouble() const override { return true; }
     static const int code;
@@ -462,7 +462,7 @@ public:
     yarp::os::Bottle* getList(int index);
 
     void addInt(int x) { add(new StoreInt(x)); }
-    void addInt64(const YARP_INT64& x) { add(new StoreInt64(x)); }
+    void addInt64(const std::int64_t& x) { add(new StoreInt64(x)); }
     void addVocab(int x) { add(new StoreVocab(x)); }
     void addDouble(double x) { add(new StoreDouble(x)); }
     void addString(const std::string& text)

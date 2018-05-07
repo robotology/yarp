@@ -64,7 +64,7 @@ public:
      * Read a 64 bit integer from the network connection.
      * @return the integer read from the connection
      */
-    virtual YARP_INT64 expectInt64() = 0;
+    virtual std::int64_t expectInt64() = 0;
 
     /**
      * Read a floating point number from the network connection.

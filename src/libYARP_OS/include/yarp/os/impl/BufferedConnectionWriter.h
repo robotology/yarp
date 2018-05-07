@@ -201,7 +201,7 @@ public:
     }
 
     // defined by yarp::os::ConnectionWriter
-    virtual void appendInt64(const YARP_INT64& data) override {
+    virtual void appendInt64(const std::int64_t& data) override {
         NetInt64 i = data;
         yarp::os::Bytes b((char*)(&i), sizeof(i));
         push(b, true);
@@ -549,8 +549,8 @@ public:
         return x;
     }
 
-    virtual YARP_INT64 expectInt64() override {
-        YARP_INT64 x = reader->expectInt64();
+    virtual std::int64_t expectInt64() override {
+        std::int64_t x = reader->expectInt64();
         readerStore.appendInt64(x);
         return x;
     }
@@ -638,7 +638,7 @@ public:
         writerStore.appendInt(data);
     }
 
-    virtual void appendInt64(const YARP_INT64& data) override {
+    virtual void appendInt64(const std::int64_t& data) override {
         writer->appendInt64(data);
         writerStore.appendInt64(data);
     }

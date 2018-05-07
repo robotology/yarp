@@ -20,7 +20,7 @@ public:
   /**
    * Returns current level.
    */
-  virtual int32_t get_level();
+  virtual std::int32_t get_level();
   /**
    * Returns robot name.
    */

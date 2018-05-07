@@ -61,7 +61,7 @@ public:
      * Send a representation of a 64-bit integer to the network connection.
      * @param data the integer to send
      */
-    virtual void appendInt64(const YARP_INT64& data) = 0;
+    virtual void appendInt64(const std::int64_t& data) = 0;
 
     /**
      * Send a representation of a floating point number to the network

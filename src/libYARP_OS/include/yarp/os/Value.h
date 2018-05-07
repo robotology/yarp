@@ -182,7 +182,7 @@ public:
      * If it is another numeric type, the appropriate cast value is returned.
      * Otherwise returns 0.
      */
-    virtual YARP_INT64 asInt64() const;
+    virtual std::int64_t asInt64() const;
 
     /**
      * Get vocabulary identifier as an integer.

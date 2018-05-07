@@ -87,7 +87,7 @@ void Bottle::addInt(int x)
     implementation->addInt(x);
 }
 
-void Bottle::addInt64(const YARP_INT64& x)
+void Bottle::addInt64(const std::int64_t& x)
 {
     implementation->edit();
     implementation->addInt64(x);

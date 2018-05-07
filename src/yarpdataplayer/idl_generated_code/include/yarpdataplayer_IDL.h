@@ -30,14 +30,14 @@ public:
    *  would like to skip to
    * @return true/false on success/failure
    */
-  virtual bool setFrame(const std::string& name, const int32_t frameNum);
+  virtual bool setFrame(const std::string& name, const std::int32_t frameNum);
   /**
    * Gets the frame number the user is requesting
    * @param name specifies the name of the data to modify
    *  would like to skip to
    * @return i32 returns the current frame index
    */
-  virtual int32_t getFrame(const std::string& name);
+  virtual std::int32_t getFrame(const std::string& name);
   /**
    * Loads a dataset from a path
    * @return true/false on success/failure

@@ -35,7 +35,7 @@ public:
     yarp::os::NetInt32  width;
     yarp::os::NetInt32  height;
     yarp::os::NetInt32  pointType;       // bitwise of all possible informations -> could also be int64 or just an enum, but I thin bitwise gives more freedom about all possible combinations
-    YARP_INT8           isDense;         // the point cloud is dense if not contains NaN or Inf values
+    std::int8_t         isDense;         // the point cloud is dense if not contains NaN or Inf values
 
 };
 YARP_END_PACK

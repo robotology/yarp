@@ -20,7 +20,7 @@ void yarp::os::NullConnectionWriter::appendInt(int data)
     YARP_UNUSED(data);
 }
 
-void yarp::os::NullConnectionWriter::appendInt64(const YARP_INT64& data)
+void yarp::os::NullConnectionWriter::appendInt64(const std::int64_t& data)
 {
     YARP_UNUSED(data);
 }

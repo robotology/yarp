@@ -58,22 +58,22 @@ public:
 
     bool readNested(yarp::os::PortReader& obj);
 
-    bool readI16(YARP_INT16& x);
+    bool readI16(std::int16_t& x);
 
-    bool readI32(YARP_INT32& x);
+    bool readI32(std::int32_t& x);
 
-    bool readI64(YARP_INT64& x);
+    bool readI64(std::int64_t& x);
 
     bool readBool(bool& x);
 
-    bool readByte(YARP_INT8& x);
+    bool readByte(std::int8_t& x);
 
-    bool readVocab(YARP_INT32& x);
+    bool readVocab(std::int32_t& x);
 
     bool readDouble(double& x);
 
     int expectInt() {
-        YARP_INT32 x;
+        std::int32_t x;
         readI32(x);
         return x;
     }
@@ -88,7 +88,7 @@ public:
 
     bool readBinary(std::string& str);
 
-    bool readEnum(YARP_INT32& x, WireVocab& converter);
+    bool readEnum(std::int32_t& x, WireVocab& converter);
 
     bool readListHeader();
 
@@ -108,11 +108,11 @@ public:
 
     std::string readTag();
 
-    void readListBegin(WireState& nstate, unsigned YARP_INT32& len);
+    void readListBegin(WireState& nstate, std::uint32_t& len);
 
-    void readSetBegin(WireState& nstate, unsigned YARP_INT32& len);
+    void readSetBegin(WireState& nstate, std::uint32_t& len);
 
-    void readMapBegin(WireState& nstate, WireState& nstate2, unsigned YARP_INT32& len);
+    void readMapBegin(WireState& nstate, WireState& nstate2, std::uint32_t& len);
 
     void readListEnd();
 

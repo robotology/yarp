@@ -9,14 +9,13 @@
 
 #include <yarp/os/NetUint64.h>
 
-#ifdef YARP_INT64
 #ifndef YARP_LITTLE_ENDIAN
 
 using namespace yarp;
 using namespace yarp::os;
 
 
-unsigned YARP_INT64 NetUint64::swap(unsigned YARP_INT64 x) const {
+std::uint64_t NetUint64::swap(std::uint64_t x) const {
     UnionNetUint64 in, out;
     in.d = x;
     for (int i=0; i<8; i++) {
@@ -63,4 +62,3 @@ void NetUint64::operator/=(RawNetUint64 v) {
     set(get()/v);
 }
 #endif // YARP_LITTLE_ENDIAN
-#endif // YARP_INT64

@@ -16,11 +16,12 @@
 #endif
 
 #include <cstddef>
+#include <cstdint>
 
-#define YARP_INT8 signed char
-#define YARP_INT16 @YARP_INT16@
-#define YARP_INT32 @YARP_INT32@
-#define YARP_INT64 @YARP_INT64@
+typedef std::int8_t YARP_INT8;
+typedef std::int16_t YARP_INT16;
+typedef std::int32_t YARP_INT32;
+typedef std::int64_t YARP_INT64;
 #define YARP_FLOAT32 @YARP_FLOAT32@
 #define YARP_FLOAT64 @YARP_FLOAT64@
 

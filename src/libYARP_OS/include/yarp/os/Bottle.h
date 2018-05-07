@@ -118,7 +118,7 @@ public:
      *
      * @param x the integer to add.
      */
-    void addInt64(const YARP_INT64& x);
+    void addInt64(const std::int64_t& x);
 
     /**
      * Places a vocabulary item in the bottle, at the end of the list.

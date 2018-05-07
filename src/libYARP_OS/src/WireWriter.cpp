@@ -55,19 +55,19 @@ bool WireWriter::writeNested(yarp::os::PortWriter& obj) {
     return obj.write(writer);
 }
 
-bool WireWriter::writeI16(const YARP_INT16& x) {
+bool WireWriter::writeI16(const std::int16_t& x) {
     writer.appendInt(BOTTLE_TAG_INT);
     writer.appendInt((int)x);
     return !writer.isError();
 }
 
-bool WireWriter::writeI32(const YARP_INT32& x) {
+bool WireWriter::writeI32(const std::int32_t& x) {
     writer.appendInt(BOTTLE_TAG_INT);
     writer.appendInt((int)x);
     return !writer.isError();
 }
 
-bool WireWriter::writeI64(const YARP_INT64& x) {
+bool WireWriter::writeI64(const std::int64_t& x) {
     writer.appendInt(BOTTLE_TAG_INT64);
     writer.appendInt64(x);
     return !writer.isError();
@@ -79,7 +79,7 @@ bool WireWriter::writeBool(bool x) {
     return !writer.isError();
 }
 
-bool WireWriter::writeByte(const YARP_INT8& x) {
+bool WireWriter::writeByte(const std::int8_t& x) {
     writer.appendInt(BOTTLE_TAG_INT);
     writer.appendInt((int)x);
     return !writer.isError();
@@ -164,7 +164,7 @@ bool WireWriter::writeListHeader(int len) {
 }
 
 
-bool WireWriter::writeListBegin(int tag, unsigned YARP_INT32 len) {
+bool WireWriter::writeListBegin(int tag, std::uint32_t len) {
     YARP_UNUSED(tag);
     // this should be optimized for double/int/etc
     writer.appendInt(BOTTLE_TAG_LIST);
@@ -172,11 +172,11 @@ bool WireWriter::writeListBegin(int tag, unsigned YARP_INT32 len) {
     return !writer.isError();
 }
 
-bool WireWriter::writeSetBegin(int tag, unsigned YARP_INT32 len) {
+bool WireWriter::writeSetBegin(int tag, std::uint32_t len) {
     return writeListBegin(tag, len);
 }
 
-bool WireWriter::writeMapBegin(int tag, int tag2, unsigned YARP_INT32 len) {
+bool WireWriter::writeMapBegin(int tag, int tag2, std::uint32_t len) {
     YARP_UNUSED(tag);
     YARP_UNUSED(tag2);
     writer.appendInt(BOTTLE_TAG_LIST);

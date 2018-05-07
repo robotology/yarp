@@ -25,7 +25,7 @@ WireReader::WireReader(ConnectionReader& reader) : reader(reader)
 WireReader::~WireReader()
 {
     if (state->need_ok) {
-        YARP_INT32 dummy;
+        std::int32_t dummy;
         readVocab(dummy);
         state->need_ok = false;
     }
@@ -92,7 +92,7 @@ bool WireReader::readNested(yarp::os::PortReader& obj)
     return obj.read(reader);
 }
 
-bool WireReader::readI16(YARP_INT16& x)
+bool WireReader::readI16(std::int16_t& x)
 {
     int tag = state->code;
     if (tag<0) {
@@ -102,12 +102,12 @@ bool WireReader::readI16(YARP_INT16& x)
     if (tag!=BOTTLE_TAG_INT) return false;
     if (noMore()) return false;
     int v = reader.expectInt();
-    x = (YARP_INT16) v;
+    x = (std::int16_t) v;
     state->len--;
     return !reader.isError();
 }
 
-bool WireReader::readI32(YARP_INT32& x)
+bool WireReader::readI32(std::int32_t& x)
 {
     int tag = state->code;
     if (tag<0) {
@@ -123,12 +123,12 @@ bool WireReader::readI32(YARP_INT32& x)
         return false;
     }
     int v = reader.expectInt();
-    x = (YARP_INT32) v;
+    x = (std::int32_t) v;
     state->len--;
     return !reader.isError();
 }
 
-bool WireReader::readI64(YARP_INT64& x)
+bool WireReader::readI64(std::int64_t& x)
 {
     int tag = state->code;
     if (tag<0) {
@@ -145,7 +145,7 @@ bool WireReader::readI64(YARP_INT64& x)
     }
     if (tag==BOTTLE_TAG_INT) {
         int v = reader.expectInt();
-        x = (YARP_INT32) v;
+        x = (std::int32_t) v;
     } else {
         x = reader.expectInt64();
     }
@@ -173,7 +173,7 @@ bool WireReader::readBool(bool& x)
     return !reader.isError();
 }
 
-bool WireReader::readByte(YARP_INT8& x)
+bool WireReader::readByte(std::int8_t& x)
 {
     int tag = state->code;
     if (tag<0) {
@@ -189,12 +189,12 @@ bool WireReader::readByte(YARP_INT8& x)
         return false;
     }
     int v = reader.expectInt();
-    x = (YARP_INT8) v;
+    x = (std::int8_t) v;
     state->len--;
     return !reader.isError();
 }
 
-bool WireReader::readVocab(YARP_INT32& x)
+bool WireReader::readVocab(std::int32_t& x)
 {
     int tag = state->code;
     if (tag<0) {
@@ -210,7 +210,7 @@ bool WireReader::readVocab(YARP_INT32& x)
         return false;
     }
     int v = reader.expectInt();
-    x = (YARP_INT32) v;
+    x = (std::int32_t) v;
     state->len--;
     return !reader.isError();
 }
@@ -335,7 +335,7 @@ bool WireReader::readBinary(std::string& str)
     return !reader.isError();
 }
 
-bool WireReader::readEnum(YARP_INT32& x, WireVocab& converter)
+bool WireReader::readEnum(std::int32_t& x, WireVocab& converter)
 {
     int tag = state->code;
     if (tag<0) {
@@ -349,7 +349,7 @@ bool WireReader::readEnum(YARP_INT32& x, WireVocab& converter)
             return false;
         }
         int v = reader.expectInt();
-        x = (YARP_INT32) v;
+        x = (std::int32_t) v;
         state->len--;
         return !reader.isError();
     }
@@ -375,7 +375,7 @@ bool WireReader::readEnum(YARP_INT32& x, WireVocab& converter)
         if (reader.isError()) {
             return false;
         }
-        x = (YARP_INT32)converter.fromString(str);
+        x = (std::int32_t)converter.fromString(str);
         return (x>=0);
     }
     return false;
@@ -427,7 +427,7 @@ bool WireReader::readListReturn()
         return false;
     }
     // possibly old-style return: [is] foo val [ok]
-    YARP_INT32 v = 0;
+    std::int32_t v = 0;
     if (!readVocab(v)) {
         return false;
     }
@@ -494,23 +494,23 @@ std::string WireReader::readTag()
     return str.c_str();
 }
 
-void WireReader::readListBegin(WireState& nstate, unsigned YARP_INT32& len)
+void WireReader::readListBegin(WireState& nstate, std::uint32_t& len)
 {
     nstate.parent = state;
     state = &nstate;
     len = 0;
     readListHeader();
-    len = (unsigned YARP_INT32)state->len;
+    len = (std::uint32_t)state->len;
 }
 
-void WireReader::readSetBegin(WireState& nstate, unsigned YARP_INT32& len)
+void WireReader::readSetBegin(WireState& nstate, std::uint32_t& len)
 {
     readListBegin(nstate, len);
 }
 
 void WireReader::readMapBegin(WireState& nstate,
                               WireState& nstate2,
-                              unsigned YARP_INT32& len)
+                              std::uint32_t& len)
 {
     YARP_UNUSED(nstate2);
     readListBegin(nstate, len);

@@ -27,56 +27,48 @@
 
 
 ////////////////////////////////////////////////////////////////////////
-//   YARP_INT16 should be a 16-bit integer
 //   YARP_BIG_ENDIAN should be defined if we are big endian
 //   YARP_LITTLE_ENDIAN should be defined if we are little endian
 
-
-#ifdef YARP_INT16
-
 namespace yarp {
-    namespace os {
-        /**
-         * Definition of the NetInt16 type
-         */
+namespace os {
+
+/**
+ * Definition of the NetInt16 type
+ */
 
 #ifdef YARP_LITTLE_ENDIAN
 
-        typedef YARP_INT16 NetInt16;
+typedef std::int16_t NetInt16;
 
 #else // YARP_LITTLE_ENDIAN
 
-        class YARP_OS_API NetInt16 {
-        private:
-            unsigned YARP_INT16 raw_value;
-            unsigned YARP_INT16 swap(unsigned YARP_INT16 x) const;
-            YARP_INT16 get() const;
-            void set(YARP_INT16 v);
-        public:
-            NetInt16();
-            NetInt16(YARP_INT16 val);
-            operator YARP_INT16() const;
-            YARP_INT16 operator+(YARP_INT16 v) const;
-            YARP_INT16 operator-(YARP_INT16 v) const;
-            YARP_INT16 operator*(YARP_INT16 v) const;
-            YARP_INT16 operator/(YARP_INT16 v) const;
-            void operator+=(YARP_INT16 v);
-            void operator-=(YARP_INT16 v);
-            void operator*=(YARP_INT16 v);
-            void operator/=(YARP_INT16 v);
-            void operator++(int);
-            void operator--(int);
-        };
+class YARP_OS_API NetInt16
+{
+private:
+    std::uint16_t raw_value;
+    std::uint16_t swap(std::uint16_t x) const;
+    std::int16_t get() const;
+    void set(std::int16_t v);
+public:
+    NetInt16();
+    NetInt16(std::int16_t val);
+    operator std::int16_t() const;
+    std::int16_t operator+(std::int16_t v) const;
+    std::int16_t operator-(std::int16_t v) const;
+    std::int16_t operator*(std::int16_t v) const;
+    std::int16_t operator/(std::int16_t v) const;
+    void operator+=(std::int16_t v);
+    void operator-=(std::int16_t v);
+    void operator*=(std::int16_t v);
+    void operator/=(std::int16_t v);
+    void operator++(int);
+    void operator--(int);
+};
 
 #endif // YARP_LITTLE_ENDIAN
 
-    }
-}
-
-#else // YARP_INT16
-
-#error "NetInt16 not defined"
-
-#endif // YARP_INT16
+} // namespace os
+} // namespace yarp
 
 #endif // YARP_OS_NETINT16_H

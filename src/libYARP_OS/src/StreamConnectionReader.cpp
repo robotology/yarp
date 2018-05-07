@@ -203,7 +203,7 @@ int StreamConnectionReader::expectInt()
     return x;
 }
 
-YARP_INT64 StreamConnectionReader::expectInt64()
+std::int64_t StreamConnectionReader::expectInt64()
 {
     if (!isGood()) {
         return 0;

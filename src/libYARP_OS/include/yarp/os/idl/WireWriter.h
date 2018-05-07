@@ -52,15 +52,15 @@ public:
 
     bool writeNested(yarp::os::PortWriter& obj);
 
-    bool writeI16(const YARP_INT16& x);
+    bool writeI16(const std::int16_t& x);
 
-    bool writeI32(const YARP_INT32& x);
+    bool writeI32(const std::int32_t& x);
 
-    bool writeI64(const YARP_INT64& x);
+    bool writeI64(const std::int64_t& x);
 
     bool writeBool(bool x);
 
-    bool writeByte(const YARP_INT8& x);
+    bool writeByte(const std::int8_t& x);
 
     bool writeDouble(double x);
 
@@ -78,11 +78,11 @@ public:
 
     bool writeListHeader(int len);
 
-    bool writeListBegin(int tag, unsigned YARP_INT32 len);
+    bool writeListBegin(int tag, std::uint32_t len);
 
-    bool writeSetBegin(int tag, unsigned YARP_INT32 len);
+    bool writeSetBegin(int tag, std::uint32_t len);
 
-    bool writeMapBegin(int tag, int tag2, unsigned YARP_INT32 len);
+    bool writeMapBegin(int tag, int tag2, std::uint32_t len);
 
     bool writeListEnd();
 

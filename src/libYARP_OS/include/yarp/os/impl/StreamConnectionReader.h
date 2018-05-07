@@ -60,7 +60,7 @@ public:
     virtual size_t getSize() override;
     virtual bool pushInt(int x) override;
     virtual int expectInt() override;
-    virtual YARP_INT64 expectInt64() override;
+    virtual std::int64_t expectInt64() override;
     virtual double expectDouble() override;
     virtual bool expectBlock(const char *data, size_t len) override;
     virtual std::string expectText(int terminatingChar) override;

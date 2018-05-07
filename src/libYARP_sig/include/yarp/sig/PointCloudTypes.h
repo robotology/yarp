@@ -30,7 +30,7 @@ namespace sig {
 /**
  * @brief The PointCloudBasicTypes enum
  */
-enum PointCloudBasicType : YARP_INT32 {
+enum PointCloudBasicType : std::int32_t {
     PC_XY_DATA                  =      (1 << 0) ,
     PC_XYZ_DATA                 =      (1 << 1) ,
     PC_RGBA_DATA                =      (1 << 2) ,
@@ -61,7 +61,7 @@ enum PointCloudBasicType : YARP_INT32 {
 /**
  * @brief The PointCloudCompositeType enum
  */
-enum PointCloudCompositeType : YARP_INT32 {
+enum PointCloudCompositeType : std::int32_t {
 // Shortcuts names for matching PCL predefined types
     PCL_POINT2D_XY             =   (PC_XY_DATA),
     PCL_POINT_XYZ              =   (PC_XYZ_DATA),
@@ -90,7 +90,7 @@ enum PointCloudCompositeType : YARP_INT32 {
 };
 
 // Defined as in PCL pointTypes.h file for better compatibility
-enum PointCloudBorderTrait : YARP_INT32
+enum PointCloudBorderTrait : std::int32_t
 {
     BORDER_TRAIT__OBSTACLE_BORDER,
     BORDER_TRAIT__SHADOW_BORDER,

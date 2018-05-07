@@ -177,7 +177,7 @@ int Value::asInt() const
     return proxy->asInt();
 }
 
-YARP_INT64 Value::asInt64() const
+std::int64_t Value::asInt64() const
 {
     ok();
     return proxy->asInt64();

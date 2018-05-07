@@ -27,7 +27,7 @@ class YARP_OS_API yarp::os::NullConnectionWriter : public ConnectionWriter {
 public:
     virtual void appendBlock(const char *data, size_t len) override;
     virtual void appendInt(int data) override;
-    virtual void appendInt64(const YARP_INT64& data) override;
+    virtual void appendInt64(const std::int64_t& data) override;
     virtual void appendDouble(double data) override;
     virtual void appendString(const char *str, int terminate = '\n') override;
     virtual void appendExternalBlock(const char *data, size_t len) override;

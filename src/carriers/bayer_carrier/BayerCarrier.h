@@ -117,7 +117,7 @@ public:
         return local->expectInt();
     }
 
-    virtual YARP_INT64 expectInt64() override {
+    virtual std::int64_t expectInt64() override {
         return local->expectInt64();
     }
 
