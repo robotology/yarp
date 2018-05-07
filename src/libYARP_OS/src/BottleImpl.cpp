@@ -26,6 +26,7 @@
 #include <cstring>
 #include <cstdlib>
 #include <cfloat>
+#include <cinttypes>
 
 using yarp::os::impl::StoreInt;
 using yarp::os::impl::StoreVocab;
@@ -677,7 +678,7 @@ void BottleImpl::setNested(bool nested)
 std::string StoreInt::toString() const
 {
     char buf[256];
-    sprintf(buf, "%d", x);
+    sprintf(buf, "%" PRId32, x);
     return std::string(buf);
 }
 
@@ -706,7 +707,7 @@ bool StoreInt::writeRaw(ConnectionWriter& writer)
 std::string StoreInt64::toString() const
 {
     char buf[256];
-    sprintf(buf, "%" YARP_INT64_FMT, x);
+    sprintf(buf, "%" PRId64, x);
     return std::string(buf);
 }
 
