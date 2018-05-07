@@ -2110,7 +2110,11 @@ PREDEFINED             = __cplusplus:=201103L \
                          YARP_run_API= \
                          YARP_rtf_API= \
                          Q_SLOTS=slots \
-                         Q_SIGNALS=signals
+                         Q_SIGNALS=signals \
+                         YARP_DEPRECATED= \
+                         YARP_DEPRECATED_MSG(MSG)= \
+                         YARP_DEPRECATED_INTERNAL= \
+                         YARP_DEPRECATED_INTERNAL_MSG(MSG)=
 
 # If the MACRO_EXPANSION and EXPAND_ONLY_PREDEF tags are set to YES then this
 # tag can be used to specify a list of macro names that should be expanded. The
