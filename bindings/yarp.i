@@ -416,6 +416,7 @@ MAKE_COMMS(Bottle)
 %include <yarp/dev/IControlMode.h>
 %include <yarp/dev/IControlMode2.h>
 %include <yarp/dev/IEncoders.h>
+%include <yarp/dev/IMotorEncoders.h>
 %include <yarp/dev/ITorqueControl.h>
 %include <yarp/dev/IImpedanceControl.h>
 %include <yarp/dev/IVelocityControl.h>
@@ -726,6 +727,12 @@ typedef yarp::os::BufferedPort<ImageRgbFloat> BufferedPortImageRgbFloat;
         return result;
     }
 
+    yarp::dev::IMotorEncoders *viewIMotorEncoders() {
+        yarp::dev::IMotorEncoders *result;
+        self->view(result);
+        return result;
+    }
+
     yarp::dev::IPidControl *viewIPidControl() {
         yarp::dev::IPidControl *result;
         self->view(result);
@@ -982,6 +989,45 @@ typedef yarp::os::BufferedPort<ImageRgbFloat> BufferedPortImageRgbFloat;
 
     bool getEncoderAccelerations(std::vector<double>& data) {
         return self->getEncoderAccelerations(&data[0]);
+    }
+}
+
+%extend yarp::dev::IMotorEncoders {
+    int getNumberOfMotorEncoders() {
+        int nbEncs;
+        bool ok = self->getNumberOfMotorEncoders(&nbEncs);
+        if (!ok) return 0;
+        return nbEncs;
+    }
+
+    double getMotorEncoder(int j) {
+        double enc;
+        bool ok = self->getMotorEncoder(j, &enc);
+        if (!ok) return 0;
+        return enc;
+    }
+
+    bool getMotorEncoders(std::vector<double>& encs) {
+        return self->getMotorEncoders(&encs[0]);
+    }
+
+    bool getMotorEncoderTimed(int j, std::vector<double>& enc, std::vector<double>& time) {
+        return self->getMotorEncoderTimed(j, &enc[0], &time[0]);
+    }
+
+    bool getMotorEncodersTimed(std::vector<double>& encs, std::vector<double>& times) {
+        return self->getMotorEncodersTimed(&encs[0], &times[0]);
+    }
+
+    double getMotorEncoderSpeed(int j) {
+        double speed;
+        bool ok = self->getMotorEncoderSpeed(j, &speed);
+        if (!ok) return 0;
+        return speed;
+    }
+
+    bool getMotorEncoderSpeeds(std::vector<double>& speeds) {
+        return self->getMotorEncoderSpeeds(&speeds[0]);
     }
 }
 
