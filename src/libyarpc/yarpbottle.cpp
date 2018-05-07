@@ -40,8 +40,8 @@ YARP_DEFINE(int) yarpBottleFini(yarpBottlePtr bottle) {
     return 0;
 }
 
-YARP_DEFINE(void) yarpBottleAddInt(yarpBottlePtr bottle, int x) {
-    YARP_BOTTLE(bottle).addInt(x);
+YARP_DEFINE(void) yarpBottleAddInt32(yarpBottlePtr bottle, int x) {
+    YARP_BOTTLE(bottle).addInt32(x);
 }
 
 YARP_DEFINE(void) yarpBottleAddDouble(yarpBottlePtr bottle, double x) {

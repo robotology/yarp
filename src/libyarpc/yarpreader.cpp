@@ -17,9 +17,9 @@
      * Read an integer from a connection.
      *
      */
-YARP_DEFINE(int) yarpReaderExpectInt(yarpReaderPtr reader, int *data) {
+YARP_DEFINE(int) yarpReaderExpectInt32(yarpReaderPtr reader, int *data) {
     YARP_OK(reader);
-    int x = YARP_READER(reader).expectInt();
+    int x = YARP_READER(reader).expectInt32();
     if (data!=NULL) {
         *data = x;
     }

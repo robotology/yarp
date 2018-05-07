@@ -15,12 +15,12 @@ int testResult = 0;
 
 int testWrite(yarpWriterPtr connection, void *ptr) {
     printf("Writing an integer\n");
-    return yarpWriterAppendInt(connection,15);
+    return yarpWriterAppendInt32(connection,15);
 }
 
 int testRead(yarpReaderPtr connection, void *ptr) {
     printf("Reading an integer\n");
-    return yarpReaderExpectInt(connection,&testResult);
+    return yarpReaderExpectInt32(connection,&testResult);
 }
 
 int main(int argc, char *argv[]) {
