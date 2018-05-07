@@ -23,7 +23,7 @@ class Example1 {
 	Network.connect("/foo","/bar");
 	while(true) {
 	    Bottle bot = new Bottle();
-	    bot.addDouble(10.4);
+	    bot.addFloat64(10.4);
 	    bot.addString("bozo");
 	    System.out.println("sending bottle: " + bot);
 	    p.write(bot);

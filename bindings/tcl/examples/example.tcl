@@ -23,9 +23,9 @@ for {set i 1} {$i<=$top} {incr i} {
     set bottle [p prepare]
     $bottle clear
     $bottle addString "count"
-    $bottle addInt $i
+    $bottle addInt32 $i
     $bottle addString "of"
-    $bottle addInt $top
+    $bottle addInt32 $top
     puts [concat "Sending " [$bottle toString]]
     p write
     Time_delay 0.5
