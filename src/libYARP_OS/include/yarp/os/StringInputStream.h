@@ -51,10 +51,10 @@ public:
         }
     }
 
-    virtual YARP_SSIZE_T read(const Bytes& b) override {
+    virtual yarp::conf::ssize_t read(const Bytes& b) override {
         char *base = b.get();
         size_t space = b.length();
-        YARP_SSIZE_T ct = 0;
+        yarp::conf::ssize_t ct = 0;
         for (size_t i=0; i<space; i++) {
             if (at<data.length()) {
                 base[i] = data[at];

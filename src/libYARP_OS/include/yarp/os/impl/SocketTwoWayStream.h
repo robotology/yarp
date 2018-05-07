@@ -96,10 +96,10 @@ public:
     }
 
     using yarp::os::InputStream::read;
-    virtual YARP_SSIZE_T read(const Bytes& b) override
+    virtual yarp::conf::ssize_t read(const Bytes& b) override
     {
         if (!isOk()) { return -1; }
-        YARP_SSIZE_T result;
+        yarp::conf::ssize_t result;
         if (haveReadTimeout) {
             result = stream.recv_n(b.get(), b.length(), &readTimeout);
         } else {
@@ -113,10 +113,10 @@ public:
         return result;
     }
 
-    virtual YARP_SSIZE_T partialRead(const Bytes& b) override
+    virtual yarp::conf::ssize_t partialRead(const Bytes& b) override
     {
         if (!isOk()) { return -1; }
-        YARP_SSIZE_T result;
+        yarp::conf::ssize_t result;
         if (haveReadTimeout) {
             result = stream.recv(b.get(), b.length(), &readTimeout);
         } else {
@@ -134,7 +134,7 @@ public:
     virtual void write(const Bytes& b) override
     {
         if (!isOk()) { return; }
-        YARP_SSIZE_T result;
+        yarp::conf::ssize_t result;
         if (haveWriteTimeout) {
             result = stream.send_n(b.get(), b.length(), &writeTimeout);
         } else {

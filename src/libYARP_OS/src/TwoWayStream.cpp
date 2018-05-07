@@ -49,7 +49,7 @@ void NullStream::beginPacket() {
 void NullStream::endPacket()   {
 }
 
-YARP_SSIZE_T NullStream::read(const Bytes& b) {
+yarp::conf::ssize_t NullStream::read(const Bytes& b) {
     YARP_UNUSED(b);
     return -1;
 }

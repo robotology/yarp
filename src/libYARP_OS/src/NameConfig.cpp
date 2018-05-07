@@ -58,7 +58,7 @@ bool NameConfig::fromString(const std::string& txt) {
                 std::exit(1);
             }
             address = Contact(b.find("host").asString().c_str(),
-                              b.find("port").asInt());
+                              b.find("port").asInt32());
             mode = b.check("mode", Value("yarp")).asString().c_str();
             return (address.getPort()!=0);
         }

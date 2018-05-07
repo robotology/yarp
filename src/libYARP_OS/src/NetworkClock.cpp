@@ -159,8 +159,8 @@ bool NetworkClock::read(ConnectionReader& reader) {
     }
 
     timeMutex.lock();
-    sec = bot.get(0).asInt();
-    nsec = bot.get(1).asInt();
+    sec = bot.get(0).asInt32();
+    nsec = bot.get(1).asInt32();
     _time = sec + (nsec*1e-9);
     initted = true;
     timeMutex.unlock();

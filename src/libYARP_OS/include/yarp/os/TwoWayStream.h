@@ -128,7 +128,7 @@ public:
     virtual void endPacket() override;
 
     using yarp::os::InputStream::read;
-    virtual YARP_SSIZE_T read(const Bytes& b) override;
+    virtual yarp::conf::ssize_t read(const Bytes& b) override;
 
     using yarp::os::OutputStream::write;
     virtual void write(const Bytes& b) override;

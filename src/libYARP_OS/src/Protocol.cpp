@@ -359,7 +359,7 @@ bool Protocol::expectProtocolSpecifier() {
     // be generalized.
     char buf[8];
     yarp::os::Bytes header((char*)&buf[0], sizeof(buf));
-    YARP_SSIZE_T len = is().readFull(header);
+    yarp::conf::ssize_t len = is().readFull(header);
     if (len==-1) {
         YARP_DEBUG(log, "no connection");
         return false;

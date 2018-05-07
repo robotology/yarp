@@ -96,7 +96,7 @@ bool ManagedBytes::allocateOnNeed(size_t neededLen, size_t allocateLen) {
 
 void ManagedBytes::copy() {
     if (!owned) {
-        YARP_SSIZE_T len = length();
+        yarp::conf::ssize_t len = length();
         char *buf = new char[len];
         yarp::os::NetworkBase::assertion(buf!=nullptr);
         memcpy(buf, get(), len);
@@ -152,12 +152,12 @@ size_t ManagedBytes::resetUsed() {
 
 bool ManagedBytes::read(ConnectionReader& reader) {
     reader.convertTextMode();
-    int listTag;
-    int listLen;
-    int blobLen;
-    listTag = reader.expectInt();
-    listLen = reader.expectInt();
-    blobLen = reader.expectInt();
+    std::int32_t listTag;
+    std::int32_t listLen;
+    std::int32_t blobLen;
+    listTag = reader.expectInt32();
+    listLen = reader.expectInt32();
+    blobLen = reader.expectInt32();
     if (listTag!=BOTTLE_TAG_LIST+BOTTLE_TAG_BLOB) {
         return false;
     }
@@ -172,9 +172,9 @@ bool ManagedBytes::read(ConnectionReader& reader) {
 }
 
 bool ManagedBytes::write(ConnectionWriter& writer) {
-    writer.appendInt(BOTTLE_TAG_LIST+BOTTLE_TAG_BLOB);
-    writer.appendInt(1);
-    writer.appendInt((int)length());
+    writer.appendInt32(BOTTLE_TAG_LIST+BOTTLE_TAG_BLOB);
+    writer.appendInt32(1);
+    writer.appendInt32(static_cast<std::int32_t>(length()));
     writer.appendExternalBlock(get(), length());
     writer.convertTextMode();
     return !writer.isError();

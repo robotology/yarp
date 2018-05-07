@@ -101,7 +101,7 @@ public:
      * @param key The keyword to look for
      * @return A value corresponding to a given keyword.  If there is no
      * such value, then the isNull() method called on the result will be
-     * true.  Otherwise, the value can be read by calling result.asInt(),
+     * true.  Otherwise, the value can be read by calling result.asInt32(),
      * result.asString(), etc. as appropriate.
      */
     virtual Value& find(const std::string& key) const = 0;
@@ -146,7 +146,7 @@ public:
      * p.check("foo")   // this is false
      * Value *v;
      * p.check("help", v)  // this is false, there is no value associated
-     * p.check("width", v) // this is true, and v->asInt() is 10
+     * p.check("width", v) // this is true, and v->asInt32() is 10
      * \endcode
      *
      * @param key The keyword to look for

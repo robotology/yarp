@@ -1535,7 +1535,7 @@ bool PortCore::getEnvelope(PortReader& envelope)
 
 // Shorthand to create a nested (tag, val) pair to add to a message.
 #define STANZA(name, tag, val) Bottle name; name.addString(tag); name.addString(val.c_str());
-#define STANZA_INT(name, tag, val) Bottle name; name.addString(tag); name.addInt(val);
+#define STANZA_INT(name, tag, val) Bottle name; name.addString(tag); name.addInt32(val);
 
 // Make an RPC connection to talk to a ROS API, send a message, get reply.
 // NOTE: ROS support can now be moved out of here, once all documentation
@@ -1648,9 +1648,9 @@ bool PortCore::adminBlock(ConnectionReader& reader,
         // Gives a version number for the administrative commands.
         // It is distinct from YARP library versioning.
         result.addVocab(Vocab::encode("ver"));
-        result.addInt(1);
-        result.addInt(2);
-        result.addInt(3);
+        result.addInt32(1);
+        result.addInt32(2);
+        result.addInt32(3);
         break;
     case VOCAB3('a', 'd', 'd'):
         {
@@ -1663,7 +1663,7 @@ bool PortCore::adminBlock(ConnectionReader& reader,
             addOutput(output, id, &cache, false);
             std::string r = cache.toString();
             int v = (r[0]=='A')?0:-1;
-            result.addInt(v);
+            result.addInt32(v);
             result.addString(r.c_str());
         }
         break;
@@ -1740,7 +1740,7 @@ bool PortCore::adminBlock(ConnectionReader& reader,
             removeInput(std::string(cmd.get(1).asString().c_str()), id, &cache);
             std::string r2 = cache.toString();
             int v = (r1[0]=='R'||r2[0]=='R')?0:-1;
-            result.addInt(v);
+            result.addInt32(v);
             if (r1[0]=='R' && r2[0]!='R') {
                 result.addString(r1.c_str());
             } else if (r1[0]!='R' && r2[0]=='R') {
@@ -1840,7 +1840,7 @@ bool PortCore::adminBlock(ConnectionReader& reader,
                 std::string target = cmd.get(2).asString();
                 stateMutex.wait();
                 if (target=="") {
-                    result.addInt(-1);
+                    result.addInt32(-1);
                     result.addString("target port is not specified.\r\n");
                 }
                 else {
@@ -1867,7 +1867,7 @@ bool PortCore::adminBlock(ConnectionReader& reader,
                                     yarp::os::Property property;
                                     property.fromString(cmd.toString());
                                     unit->setCarrierParams(property);
-                                    result.addInt(0);
+                                    result.addInt32(0);
                                     std::string msg = "Configured connection from ";
                                     msg += route.getFromName().c_str();
                                     msg += "\r\n";
@@ -1879,7 +1879,7 @@ bool PortCore::adminBlock(ConnectionReader& reader,
                     }
                     if (!result.size())
                     {
-                        result.addInt(-1);
+                        result.addInt32(-1);
                         std::string msg = "Could not find an incoming connection from ";
                         msg += target.c_str();
                         msg += "\r\n";
@@ -1896,7 +1896,7 @@ bool PortCore::adminBlock(ConnectionReader& reader,
                 std::string target = cmd.get(2).asString();
                 stateMutex.wait();
                 if (target=="") {
-                    result.addInt(-1);
+                    result.addInt32(-1);
                     result.addString("target port is not specified.\r\n");
                 }
                 else {
@@ -1923,7 +1923,7 @@ bool PortCore::adminBlock(ConnectionReader& reader,
                                     yarp::os::Property property;
                                     property.fromString(cmd.toString());
                                     unit->setCarrierParams(property);
-                                    result.addInt(0);
+                                    result.addInt32(0);
                                     std::string msg = "Configured connection to ";
                                     msg += route.getToName().c_str();
                                     msg += "\r\n";
@@ -1935,7 +1935,7 @@ bool PortCore::adminBlock(ConnectionReader& reader,
                     }
                     if (!result.size())
                     {
-                        result.addInt(-1);
+                        result.addInt32(-1);
                         std::string msg = "Could not find an incoming connection to ";
                         msg += target.c_str();
                         msg += "\r\n";
@@ -1956,7 +1956,7 @@ bool PortCore::adminBlock(ConnectionReader& reader,
                 std::string target = cmd.get(2).asString();
                 stateMutex.wait();
                 if (target=="") {
-                    result.addInt(-1);
+                    result.addInt32(-1);
                     result.addString("target port is not specified.\r\n");
                 }
                 else {
@@ -1988,7 +1988,7 @@ bool PortCore::adminBlock(ConnectionReader& reader,
                         }
                         if (!result.size())
                         {
-                            result.addInt(-1);
+                            result.addInt32(-1);
                             std::string msg = "Could not find an incoming connection from ";
                             msg += target.c_str();
                             msg += "\r\n";
@@ -2006,7 +2006,7 @@ bool PortCore::adminBlock(ConnectionReader& reader,
                 std::string target = cmd.get(2).asString();
                 stateMutex.wait();
                 if (target=="") {
-                    result.addInt(-1);
+                    result.addInt32(-1);
                     result.addString("target port is not specified.\r\n");
                 }
                 else {
@@ -2039,7 +2039,7 @@ bool PortCore::adminBlock(ConnectionReader& reader,
                         }
                         if (!result.size())
                         {
-                            result.addInt(-1);
+                            result.addInt32(-1);
                             std::string msg = "Could not find an incoming connection to ";
                             msg += target.c_str();
                             msg += "\r\n";
@@ -2115,7 +2115,7 @@ bool PortCore::adminBlock(ConnectionReader& reader,
                             std::string hostname = "";
                             std::string carrier = "";
                             int portnum = 0;
-                            if (reply.get(0).asInt()!=1) {
+                            if (reply.get(0).asInt32()!=1) {
                                 fprintf(stderr, "Failure looking up topic %s: %s\n", topic.c_str(), reply.toString().c_str());
                             } else if (pref==nullptr) {
                                 fprintf(stderr, "Failure looking up topic %s: expected list of protocols\n", topic.c_str());
@@ -2126,7 +2126,7 @@ bool PortCore::adminBlock(ConnectionReader& reader,
                                 Value hostname2 = pref->get(1);
                                 Value portnum2 = pref->get(2);
                                 hostname = hostname2.asString().c_str();
-                                portnum = portnum2.asInt();
+                                portnum = portnum2.asInt32();
                                 carrier = "tcpros+role.pub+topic.";
                                 carrier += topic;
                                 YARP_SPRINTF3(log, debug,
@@ -2167,7 +2167,7 @@ bool PortCore::adminBlock(ConnectionReader& reader,
                     }
                 }
             }
-            result.addInt(1);
+            result.addInt32(1);
             result.addString("ok");
             reader.requestDrop(); // ROS needs us to close down.
         }
@@ -2177,23 +2177,23 @@ bool PortCore::adminBlock(ConnectionReader& reader,
             // ROS-style query for topics.
             YARP_SPRINTF1(log, debug, "requestTopic! --> %s",
                           cmd.toString().c_str());
-            result.addInt(1);
+            result.addInt32(1);
             NestedContact nc(getName());
             result.addString(nc.getNodeName().c_str());
             Bottle& lst = result.addList();
             Contact addr = getAddress();
             lst.addString("TCPROS");
             lst.addString(addr.getHost().c_str());
-            lst.addInt(addr.getPort());
+            lst.addInt32(addr.getPort());
             reader.requestDrop(); // ROS likes to close down.
         }
         break;
     case VOCAB3('p', 'i', 'd'):
         {
             // ROS-style query for PID.
-            result.addInt(1);
+            result.addInt32(1);
             result.addString("");
-            result.addInt(yarp::os::impl::getpid());
+            result.addInt32(yarp::os::impl::getpid());
             reader.requestDrop(); // ROS likes to close down.
         }
         break;
@@ -2201,7 +2201,7 @@ bool PortCore::adminBlock(ConnectionReader& reader,
         {
             // ROS-style query for bus information - we support this
             // in yarp::os::Node but not otherwise.
-            result.addInt(1);
+            result.addInt32(1);
             result.addString("");
             result.addList().addList();
             reader.requestDrop(); // ROS likes to close down.
@@ -2326,10 +2326,10 @@ bool PortCore::adminBlock(ConnectionReader& reader,
                                         int prio = -1;
                                         int policy = -1;
                                         if (process_prop->check("priority")) {
-                                            prio = process_prop->find("priority").asInt();
+                                            prio = process_prop->find("priority").asInt32();
                                         }
                                         if (process_prop->check("policy")) {
-                                            policy = process_prop->find("policy").asInt();
+                                            policy = process_prop->find("policy").asInt32();
                                         }
                                         bOk = setProcessSchedulingParam(prio, policy);
                                     }
@@ -2359,10 +2359,10 @@ bool PortCore::adminBlock(ConnectionReader& reader,
                                                 int prio = -1;
                                                 int policy = -1;
                                                 if (sched_prop->check("priority")) {
-                                                    prio = sched_prop->find("priority").asInt();
+                                                    prio = sched_prop->find("priority").asInt32();
                                                 }
                                                 if (sched_prop->check("policy")) {
-                                                    policy = sched_prop->find("policy").asInt();
+                                                    policy = sched_prop->find("policy").asInt32();
                                                 }
                                                 bOk = (unit->setPriority(prio, policy) != -1);
                                             } else {
@@ -2412,7 +2412,7 @@ bool PortCore::adminBlock(ConnectionReader& reader,
                                                     QosStyle::PacketPriorityDSCP dscp_class = QosStyle::getDSCPByVocab(qos_prop->find("dscp").asVocab());
                                                     int dscp = -1;
                                                     if (dscp_class == QosStyle::DSCP_Invalid) {
-                                                        dscp = qos_prop->find("dscp").asInt();
+                                                        dscp = qos_prop->find("dscp").asInt32();
                                                     } else {
                                                         dscp = (int)dscp_class;
                                                     }
@@ -2421,7 +2421,7 @@ bool PortCore::adminBlock(ConnectionReader& reader,
                                                     }
                                                 }
                                                 else if (qos_prop->check("tos")) {
-                                                    int tos = qos_prop->find("tos").asInt();
+                                                    int tos = qos_prop->find("tos").asInt32();
                                                     // set the TOS value (backward compatibility)
                                                     bOk = setTypeOfService(unit, tos);
                                                 }

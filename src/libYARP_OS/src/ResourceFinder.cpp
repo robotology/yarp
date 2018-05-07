@@ -165,7 +165,7 @@ public:
         bool user_specified_from = p.check("from");
 
         if (p.check("verbose")) {
-            setVerbose(p.check("verbose", Value(1)).asInt());
+            setVerbose(p.check("verbose", Value(1)).asInt32());
         }
 
         if (isVerbose()) {
@@ -290,8 +290,8 @@ public:
         // check cache first
         Bottle *prev = cache.find(s).asList();
         if (prev!=nullptr) {
-            double t = prev->get(0).asDouble();
-            int flag = prev->get(1).asInt();
+            double t = prev->get(0).asFloat64();
+            int flag = prev->get(1).asInt32();
             if (SystemClock::nowSystem()-t<RESOURCE_FINDER_CACHE_TIME) {
                 if (flag) return s;
                 return "";
@@ -308,8 +308,8 @@ public:
         bool ok = exists(s.c_str(), isDir);
         Value status;
         yAssert(status.asList());
-        status.asList()->addDouble(SystemClock::nowSystem());
-        status.asList()->addInt(ok?1:0);
+        status.asList()->addFloat64(SystemClock::nowSystem());
+        status.asList()->addInt32(ok?1:0);
         cache.put(s, status);
         if (ok) {
             if (verbose) {

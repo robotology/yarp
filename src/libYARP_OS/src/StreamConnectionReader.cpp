@@ -93,7 +93,7 @@ bool StreamConnectionReader::expectBlock(const Bytes &b)
     }
     //if (len<0) len = messageLen;
     if (len>0) {
-        YARP_SSIZE_T rlen = in->readFull(b);
+        yarp::conf::ssize_t rlen = in->readFull(b);
         if (rlen>=0) {
             messageLen -= len;
             return true;
@@ -111,7 +111,7 @@ std::string StreamConnectionReader::expectString(int len)
     char *buf = new char[len];
     yarp::os::Bytes b(buf, len);
     yAssert(in!=nullptr);
-    YARP_SSIZE_T r = in->read(b);
+    yarp::conf::ssize_t r = in->read(b);
     if (r<0 || (size_t)r<b.length()) {
         err = true;
         delete[] buf;
@@ -189,7 +189,7 @@ inline T StreamConnectionReader::expectType()
 
     NetT x = 0;
     yarp::os::Bytes b((char*)(&x), sizeof(T));
-    YARP_SSIZE_T r = in->read(b);
+    yarp::conf::ssize_t r = in->read(b);
     if (r < 0 || (size_t)r < b.length()) {
         err = true;
         return 0;

@@ -54,7 +54,7 @@ Contact RosNameSpace::queryName(const std::string& name) {
                            cmd, reply);
     }
     Contact contact;
-    if (reply.get(0).asInt()!=1) {
+    if (reply.get(0).asInt32()!=1) {
         cmd.clear();
         reply.clear();
         cmd.addString("lookupService");
@@ -443,7 +443,7 @@ bool RosNameSpace::connectTopic(Bottle& cmd,
     bool ok = NetworkBase::write(base,
                                     cmd,
                                     reply);
-    bool fail = (reply.check("faultCode", Value(0)).asInt()!=0)||!ok;
+    bool fail = (reply.check("faultCode", Value(0)).asInt32()!=0)||!ok;
     if (fail) {
         if (!style.quiet) {
             fprintf(stderr, "Failure: name server did not accept connection to topic.\n");

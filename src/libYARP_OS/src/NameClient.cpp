@@ -204,7 +204,7 @@ Contact NameClient::registerName(const std::string& name, const Contact& suggest
             cmd.addString((prefix != "") ? prefix : "...");
         }
         if (suggest.getPort() != 0) {
-            cmd.addInt(suggest.getPort());
+            cmd.addInt32(suggest.getPort());
         } else {
             cmd.addString("...");
         }
@@ -250,7 +250,7 @@ Contact NameClient::registerName(const std::string& name, const Contact& suggest
         cmd.addString("set");
         cmd.addString(reg.c_str());
         cmd.addString("process");
-        cmd.addInt(yarp::os::getpid());
+        cmd.addInt32(yarp::os::getpid());
         send(cmd, reply);
     }
     return address;
@@ -293,7 +293,7 @@ Contact NameClient::extractAddress(const Bottle& bot)
             return Contact(bot.get(2).asString().c_str(), // regname
                            bot.get(8).asString().c_str(), // carrier
                            bot.get(4).asString().c_str(), // ip
-                           bot.get(6).asInt()); // port number
+                           bot.get(6).asInt32()); // port number
         }
     }
     return Contact();

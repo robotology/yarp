@@ -162,7 +162,7 @@ public:
 
     void fromExternal(const Bottle& alt)
     {
-        code = alt.get(0).asInt();
+        code = alt.get(0).asInt32();
         msg = alt.get(1).asString();
         reply = alt.get(2);
     }
@@ -263,7 +263,7 @@ public:
 
         for (std::multimap<std::string, std::string>::const_iterator it = report.outgoingURIs.begin(); it != report.outgoingURIs.end(); ++it) {
             Bottle& lst = connections->addList();
-            lst.addInt(opaque_id); // connectionId
+            lst.addInt32(opaque_id); // connectionId
             lst.addString(it->second);
             lst.addString("o");
             lst.addString("TCPROS");
@@ -274,7 +274,7 @@ public:
 
         for (std::multimap<std::string, std::string>::const_iterator it = report.incomingURIs.begin(); it != report.incomingURIs.end(); ++it) {
             Bottle& lst = connections->addList();
-            lst.addInt(opaque_id); // connectionId
+            lst.addInt32(opaque_id); // connectionId
             lst.addString(it->second);
             lst.addString("i");
             lst.addString("TCPROS");
@@ -399,7 +399,7 @@ public:
             Bottle* lst = v.asList();
             lst->addString("TCPROS");
             lst->addString(c.getHost());
-            lst->addInt(c.getPort());
+            lst->addInt32(c.getPort());
             na.reply = v;
             na.success();
             return;
@@ -527,7 +527,7 @@ bool yarp::os::Node::Helper::read(ConnectionReader& reader)
     }
     if (reader.getWriter()) {
         Bottle full;
-        full.addInt(na.code);
+        full.addInt32(na.code);
         full.addString(na.msg);
         full.add(na.reply);
         //printf("NODE %s <<< %s\n",

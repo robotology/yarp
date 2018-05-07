@@ -28,12 +28,12 @@ SystemInfoSerializer::~SystemInfoSerializer()
 bool SystemInfoSerializer::read(yarp::os::ConnectionReader& connection)
 {
     // reading memory
-    memory.totalSpace = connection.expectInt();
-    memory.freeSpace = connection.expectInt();
+    memory.totalSpace = connection.expectInt32();
+    memory.freeSpace = connection.expectInt32();
 
     // reading storage
-    storage.totalSpace = connection.expectInt();
-    storage.freeSpace = connection.expectInt();
+    storage.totalSpace = connection.expectInt32();
+    storage.freeSpace = connection.expectInt32();
 
     // reading network
     //network.mac = connection.expectText();
@@ -44,17 +44,17 @@ bool SystemInfoSerializer::read(yarp::os::ConnectionReader& connection)
     processor.architecture = connection.expectText();
     processor.model = connection.expectText();
     processor.vendor = connection.expectText();
-    processor.family = connection.expectInt();
-    processor.modelNumber = connection.expectInt();
-    processor.cores = connection.expectInt();
-    processor.siblings = connection.expectInt();
-    processor.frequency = connection.expectDouble();
+    processor.family = connection.expectInt32();
+    processor.modelNumber = connection.expectInt32();
+    processor.cores = connection.expectInt32();
+    processor.siblings = connection.expectInt32();
+    processor.frequency = connection.expectFloat64();
 
     // reading load
-    load.cpuLoad1 = connection.expectDouble();
-    load.cpuLoad5 = connection.expectDouble();
-    load.cpuLoad15 = connection.expectDouble();
-    load.cpuLoadInstant = connection.expectInt();
+    load.cpuLoad1 = connection.expectFloat64();
+    load.cpuLoad5 = connection.expectFloat64();
+    load.cpuLoad15 = connection.expectFloat64();
+    load.cpuLoadInstant = connection.expectInt32();
 
     // reading platform
     platform.name = connection.expectText();
@@ -68,7 +68,7 @@ bool SystemInfoSerializer::read(yarp::os::ConnectionReader& connection)
     user.userName = connection.expectText();
     user.realName = connection.expectText();
     user.homeDir = connection.expectText();
-    user.userID = connection.expectInt();
+    user.userID = connection.expectInt32();
     return true;
 }
 
@@ -85,12 +85,12 @@ bool SystemInfoSerializer::write(yarp::os::ConnectionWriter& connection)
     user = SystemInfo::getUserInfo();
 
     // serializing memory
-    connection.appendInt(memory.totalSpace);
-    connection.appendInt(memory.freeSpace);
+    connection.appendInt32(memory.totalSpace);
+    connection.appendInt32(memory.freeSpace);
 
     // serializing storage
-    connection.appendInt(storage.totalSpace);
-    connection.appendInt(storage.freeSpace);
+    connection.appendInt32(storage.totalSpace);
+    connection.appendInt32(storage.freeSpace);
 
     // serializing network
     //connection.appendString(network.mac.c_str());
@@ -101,17 +101,17 @@ bool SystemInfoSerializer::write(yarp::os::ConnectionWriter& connection)
     connection.appendString(processor.architecture.c_str());
     connection.appendString(processor.model.c_str());
     connection.appendString(processor.vendor.c_str());
-    connection.appendInt(processor.family);
-    connection.appendInt(processor.modelNumber);
-    connection.appendInt(processor.cores);
-    connection.appendInt(processor.siblings);
-    connection.appendDouble(processor.frequency);
+    connection.appendInt32(processor.family);
+    connection.appendInt32(processor.modelNumber);
+    connection.appendInt32(processor.cores);
+    connection.appendInt32(processor.siblings);
+    connection.appendFloat64(processor.frequency);
 
     // serializing load
-    connection.appendDouble(load.cpuLoad1);
-    connection.appendDouble(load.cpuLoad5);
-    connection.appendDouble(load.cpuLoad15);
-    connection.appendInt(load.cpuLoadInstant);
+    connection.appendFloat64(load.cpuLoad1);
+    connection.appendFloat64(load.cpuLoad5);
+    connection.appendFloat64(load.cpuLoad15);
+    connection.appendInt32(load.cpuLoadInstant);
 
     // serializing platform
     connection.appendString(platform.name.c_str());
@@ -125,7 +125,7 @@ bool SystemInfoSerializer::write(yarp::os::ConnectionWriter& connection)
     connection.appendString(user.userName.c_str());
     connection.appendString(user.realName.c_str());
     connection.appendString(user.homeDir.c_str());
-    connection.appendInt(user.userID);
+    connection.appendInt32(user.userID);
 
     return !connection.isError();
 }

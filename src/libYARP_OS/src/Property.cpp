@@ -936,12 +936,12 @@ void Property::put(const std::string& key, Value *value) {
 
 void Property::put(const std::string& key, int value) {
     summon();
-    put(key, Value::makeInt(value));
+    put(key, Value::makeInt32(value));
 }
 
 void Property::put(const std::string& key, double value) {
     summon();
-    put(key, Value::makeDouble(value));
+    put(key, Value::makeFloat64(value));
 }
 
 bool Property::check(const std::string& key) const {

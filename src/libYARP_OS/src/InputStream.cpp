@@ -54,11 +54,11 @@ std::string InputStream::readLine(int terminal, bool *success) {
     return buf;
 }
 
-YARP_SSIZE_T InputStream::readFull(const Bytes& b) {
-    YARP_SSIZE_T off = 0;
-    YARP_SSIZE_T fullLen = b.length();
-    YARP_SSIZE_T remLen = fullLen;
-    YARP_SSIZE_T result = 1;
+yarp::conf::ssize_t InputStream::readFull(const Bytes& b) {
+    yarp::conf::ssize_t off = 0;
+    yarp::conf::ssize_t fullLen = b.length();
+    yarp::conf::ssize_t remLen = fullLen;
+    yarp::conf::ssize_t result = 1;
     while (result>0&&remLen>0) {
         result = read(b, off, remLen);
         if (result>0) {
@@ -69,7 +69,7 @@ YARP_SSIZE_T InputStream::readFull(const Bytes& b) {
     return (result<=0)?-1:fullLen;
 }
 
-YARP_SSIZE_T InputStream::readDiscard(size_t len) {
+yarp::conf::ssize_t InputStream::readDiscard(size_t len) {
     if (len<100) {
         char buf[100];
         Bytes b(buf, len);
