@@ -43,13 +43,13 @@ bool MultipleAnalogSensorsServer::open(os::Searchable& config)
     }
 
 
-    if (!config.find("period").isInt())
+    if (!config.find("period").isInt32())
     {
         yError("MultipleAnalogSensorsClient: period parameter is present but it is not an integer, exiting.");
         return false;
     }
 
-    m_periodInMs = config.find("period").asInt();
+    m_periodInMs = config.find("period").asInt32();
 
     if (m_periodInMs <= 0)
     {

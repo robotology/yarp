@@ -390,13 +390,13 @@ bool FfmpegGrabber::openV4L(yarp::os::Searchable & config,
                         "sample_rate",
                         config.check("audio_rate",
                                      Value(44100),
-                                     "audio sample rate").asInt(),
+                                     "audio sample rate").asInt32(),
                         0);
         av_dict_set_int(&formatParams,
                         "channels",
                         config.check("channels",
                                      Value(1),
-                                     "number of channels").asInt(),
+                                     "number of channels").asInt32(),
                         0);
     } else {
         if (config.check("time_base_num") && config.check("time_base_den")) {
@@ -404,10 +404,10 @@ bool FfmpegGrabber::openV4L(yarp::os::Searchable & config,
             sprintf(buf, "%d/%d",
                     config.check("time_base_num",
                                  Value(1),
-                                 "numerator of basic time unit").asInt(),
+                                 "numerator of basic time unit").asInt32(),
                     config.check("time_base_den",
                                  Value(29),
-                                 "denominator of basic time unit").asInt());
+                                 "denominator of basic time unit").asInt32());
             av_dict_set(&formatParams, "framerate", buf, 0);
         }
 
@@ -416,7 +416,7 @@ bool FfmpegGrabber::openV4L(yarp::os::Searchable & config,
                             "channel",
                             config.check("channel",
                                          Value(0),
-                                         "channel identifier").asInt(),
+                                         "channel identifier").asInt32(),
                             0);
         }
         if (config.check("standard")) {
@@ -431,13 +431,13 @@ bool FfmpegGrabber::openV4L(yarp::os::Searchable & config,
                         "width",
                         config.check("width",
                                      Value(640),
-                                     "width of image").asInt(),
+                                     "width of image").asInt32(),
                         0);
         av_dict_set_int(&formatParams,
                         "height",
                         config.check("height",
                                      Value(480),
-                                     "height of image").asInt(),
+                                     "height of image").asInt32(),
                         0);
     }
 
@@ -518,7 +518,7 @@ bool FfmpegGrabber::open(yarp::os::Searchable & config) {
     }
 
     pace = config.check("pace",Value(1.0),
-                        "simulated realtime multiplier factor (must be <1 right now)").asDouble();
+                        "simulated realtime multiplier factor (must be <1 right now)").asFloat64();
 
     // Register all formats and codecs
     av_register_all();

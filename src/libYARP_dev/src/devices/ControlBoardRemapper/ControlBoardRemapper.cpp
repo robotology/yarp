@@ -137,7 +137,7 @@ bool ControlBoardRemapper::parseNetworks(const Property& prop)
         return false;
     }
 
-    this->setNrOfControlledAxes((size_t)prop.find("joints").asInt());
+    this->setNrOfControlledAxes((size_t)prop.find("joints").asInt32());
 
     int nsubdevices=nets->size();
     remappedControlBoards.lut.resize(controlledJoints);
@@ -178,18 +178,18 @@ bool ControlBoardRemapper::parseNetworks(const Property& prop)
             }
 
             // If I came here, bot is correct
-            wBase=bot->get(0).asInt();
-            wTop=bot->get(1).asInt();
-            base=bot->get(2).asInt();
-            top=bot->get(3).asInt();
+            wBase=bot->get(0).asInt32();
+            wTop=bot->get(1).asInt32();
+            base=bot->get(2).asInt32();
+            top=bot->get(3).asInt32();
         }
         else if (parameters.size()==5)
         {
             // yError<<"Parameter networks use deprecated syntax\n";
-            wBase=parameters.get(1).asInt();
-            wTop=parameters.get(2).asInt();
-            base=parameters.get(3).asInt();
-            top=parameters.get(4).asInt();
+            wBase=parameters.get(1).asInt32();
+            wTop=parameters.get(2).asInt32();
+            base=parameters.get(3).asInt32();
+            top=parameters.get(4).asInt32();
         }
         else
         {

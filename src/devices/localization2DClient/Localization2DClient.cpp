@@ -85,9 +85,9 @@ bool  yarp::dev::Localization2DClient::setInitialPose(Map2DLocation& loc)
     b.addVocab(VOCAB_INAVIGATION);
     b.addVocab(VOCAB_NAV_SET_INITIAL_POS);
     b.addString(loc.map_id);
-    b.addDouble(loc.x);
-    b.addDouble(loc.y);
-    b.addDouble(loc.theta);
+    b.addFloat64(loc.x);
+    b.addFloat64(loc.y);
+    b.addFloat64(loc.theta);
 
     bool ret = m_rpc_port_localization_server.write(b, resp);
     if (ret)
@@ -125,9 +125,9 @@ bool  yarp::dev::Localization2DClient::getCurrentPosition(Map2DLocation& loc)
         else
         {
             loc.map_id = resp.get(1).asString();
-            loc.x = resp.get(2).asDouble();
-            loc.y = resp.get(3).asDouble();
-            loc.theta = resp.get(4).asDouble();
+            loc.x = resp.get(2).asFloat64();
+            loc.y = resp.get(3).asFloat64();
+            loc.theta = resp.get(4).asFloat64();
             return true;
         }
     }

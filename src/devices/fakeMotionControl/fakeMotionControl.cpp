@@ -522,14 +522,14 @@ bool FakeMotionControl::open(yarp::os::Searchable &config)
 {
     std::string str;
 
-//     if (!config.findGroup("GENERAL").find("MotioncontrolVersion").isInt())
+//     if (!config.findGroup("GENERAL").find("MotioncontrolVersion").isInt32())
 //     {
 //         yError() << "Missing MotioncontrolVersion parameter. yarprobotinterface cannot start. Please contact icub-support@iit.it";
 //         return false;
 //     }
 //     else
 //     {
-//         int mcv = config.findGroup("GENERAL").find("MotioncontrolVersion").asInt();
+//         int mcv = config.findGroup("GENERAL").find("MotioncontrolVersion").asInt32();
 //         if (mcv != 2)
 //         {
 //             yError() << "Wrong MotioncontrolVersion parameter. yarprobotinterface cannot start. Please contact icub-support@iit.it";
@@ -555,7 +555,7 @@ bool FakeMotionControl::open(yarp::os::Searchable &config)
     //
     //  Read Configuration params from file
     //
-    _njoints = config.findGroup("GENERAL").check("Joints",Value(1),   "Number of degrees of freedom").asInt();
+    _njoints = config.findGroup("GENERAL").check("Joints",Value(1),   "Number of degrees of freedom").asInt32();
 
     if(!alloc(_njoints))
     {
@@ -632,14 +632,14 @@ bool FakeMotionControl::parseImpedanceGroup_NewFormat(Bottle& pidsGroup, Impedan
         return false;
     }
     for (j=0; j<_njoints; j++) {
-        vals[j].stiffness = xtmp.get(j+1).asDouble();
+        vals[j].stiffness = xtmp.get(j+1).asFloat64();
     }
 
     if (!extractGroup(pidsGroup, xtmp, "damping", "damping parameter", _njoints)) {
         return false;
     }
     for (j=0; j<_njoints; j++) {
-        vals[j].damping = xtmp.get(j+1).asDouble();
+        vals[j].damping = xtmp.get(j+1).asFloat64();
     }
 
     return true;
@@ -654,70 +654,70 @@ bool FakeMotionControl::parsePositionPidsGroup(Bottle& pidsGroup, Pid myPid[])
         return false;
     }
     for (j=0; j<_njoints; j++) {
-        myPid[j].kp = xtmp.get(j+1).asDouble();
+        myPid[j].kp = xtmp.get(j+1).asFloat64();
     }
 
     if (!extractGroup(pidsGroup, xtmp, "kd", "Pid kd parameter", _njoints)) {
         return false;
     }
     for (j=0; j<_njoints; j++) {
-        myPid[j].kd = xtmp.get(j+1).asDouble();
+        myPid[j].kd = xtmp.get(j+1).asFloat64();
     }
 
     if (!extractGroup(pidsGroup, xtmp, "ki", "Pid kp parameter", _njoints)) {
         return false;
     }
     for (j=0; j<_njoints; j++) {
-        myPid[j].ki = xtmp.get(j+1).asDouble();
+        myPid[j].ki = xtmp.get(j+1).asFloat64();
     }
 
     if (!extractGroup(pidsGroup, xtmp, "maxInt", "Pid maxInt parameter", _njoints)) {
         return false;
     }
     for (j=0; j<_njoints; j++) {
-        myPid[j].max_int = xtmp.get(j+1).asDouble();
+        myPid[j].max_int = xtmp.get(j+1).asFloat64();
     }
 
     if (!extractGroup(pidsGroup, xtmp, "maxPwm", "Pid maxPwm parameter", _njoints)) {
         return false;
     }
     for (j=0; j<_njoints; j++) {
-        myPid[j].max_output = xtmp.get(j+1).asDouble();
+        myPid[j].max_output = xtmp.get(j+1).asFloat64();
     }
 
     if (!extractGroup(pidsGroup, xtmp, "shift", "Pid shift parameter", _njoints)) {
         return false;
     }
     for (j=0; j<_njoints; j++) {
-        myPid[j].scale = xtmp.get(j+1).asDouble();
+        myPid[j].scale = xtmp.get(j+1).asFloat64();
     }
 
     if (!extractGroup(pidsGroup, xtmp, "ko", "Pid ko parameter", _njoints)) {
         return false;
     }
     for (j=0; j<_njoints; j++) {
-        myPid[j].offset = xtmp.get(j+1).asDouble();
+        myPid[j].offset = xtmp.get(j+1).asFloat64();
     }
 
     if (!extractGroup(pidsGroup, xtmp, "stictionUp", "Pid stictionUp", _njoints)) {
         return false;
     }
     for (j=0; j<_njoints; j++) {
-        myPid[j].stiction_up_val = xtmp.get(j+1).asDouble();
+        myPid[j].stiction_up_val = xtmp.get(j+1).asFloat64();
     }
 
     if (!extractGroup(pidsGroup, xtmp, "stictionDwn", "Pid stictionDwn", _njoints)) {
         return false;
     }
     for (j=0; j<_njoints; j++) {
-        myPid[j].stiction_down_val = xtmp.get(j+1).asDouble();
+        myPid[j].stiction_down_val = xtmp.get(j+1).asFloat64();
     }
 
     if (!extractGroup(pidsGroup, xtmp, "kff", "Pid kff parameter", _njoints)) {
         return false;
     }
     for (j=0; j<_njoints; j++) {
-        myPid[j].kff = xtmp.get(j+1).asDouble();
+        myPid[j].kff = xtmp.get(j+1).asFloat64();
     }
 
     //conversion from metric to machine units (if applicable)
@@ -746,7 +746,7 @@ bool FakeMotionControl::parsePositionPidsGroup(Bottle& pidsGroup, Pid myPid[])
 
         yInfo() << "FakeMotionControl using LIMITED PWM!!";
         for (j=0; j<_njoints; j++)
-            myPid[j].max_output = xtmp.get(j+1).asDouble();
+            myPid[j].max_output = xtmp.get(j+1).asFloat64();
     }
 
     return true;
@@ -760,91 +760,91 @@ bool FakeMotionControl::parseTorquePidsGroup(Bottle& pidsGroup, Pid myPid[], dou
         return false;
     }
     for (j=0; j<_njoints; j++) {
-        myPid[j].kp = xtmp.get(j+1).asDouble();
+        myPid[j].kp = xtmp.get(j+1).asFloat64();
     }
 
     if (!extractGroup(pidsGroup, xtmp, "kd", "Pid kd parameter", _njoints)) {
         return false;
     }
     for (j=0; j<_njoints; j++) {
-        myPid[j].kd = xtmp.get(j+1).asDouble();
+        myPid[j].kd = xtmp.get(j+1).asFloat64();
     }
 
     if (!extractGroup(pidsGroup, xtmp, "ki", "Pid kp parameter", _njoints)) {
         return false;
     }
     for (j=0; j<_njoints; j++) {
-        myPid[j].ki = xtmp.get(j+1).asDouble();
+        myPid[j].ki = xtmp.get(j+1).asFloat64();
     }
 
     if (!extractGroup(pidsGroup, xtmp, "maxInt", "Pid maxInt parameter", _njoints)) {
         return false;
     }
     for (j=0; j<_njoints; j++) {
-        myPid[j].max_int = xtmp.get(j+1).asDouble();
+        myPid[j].max_int = xtmp.get(j+1).asFloat64();
     }
 
     if (!extractGroup(pidsGroup, xtmp, "maxPwm", "Pid maxPwm parameter", _njoints)) {
         return false;
     }
     for (j=0; j<_njoints; j++) {
-        myPid[j].max_output = xtmp.get(j+1).asDouble();
+        myPid[j].max_output = xtmp.get(j+1).asFloat64();
     }
 
     if (!extractGroup(pidsGroup, xtmp, "shift", "Pid shift parameter", _njoints)) {
         return false;
     }
     for (j=0; j<_njoints; j++) {
-        myPid[j].scale = xtmp.get(j+1).asDouble();
+        myPid[j].scale = xtmp.get(j+1).asFloat64();
     }
 
     if (!extractGroup(pidsGroup, xtmp, "ko", "Pid ko parameter", _njoints)) {
         return false;
     }
     for (j=0; j<_njoints; j++) {
-        myPid[j].offset = xtmp.get(j+1).asDouble();
+        myPid[j].offset = xtmp.get(j+1).asFloat64();
     }
 
     if (!extractGroup(pidsGroup, xtmp, "stictionUp", "Pid stictionUp", _njoints)) {
         return false;
     }
     for (j=0; j<_njoints; j++) {
-        myPid[j].stiction_up_val = xtmp.get(j+1).asDouble();
+        myPid[j].stiction_up_val = xtmp.get(j+1).asFloat64();
     }
 
     if (!extractGroup(pidsGroup, xtmp, "stictionDwn", "Pid stictionDwn", _njoints)) {
         return false;
     }
     for (j=0; j<_njoints; j++) {
-        myPid[j].stiction_down_val = xtmp.get(j+1).asDouble();
+        myPid[j].stiction_down_val = xtmp.get(j+1).asFloat64();
     }
 
     if (!extractGroup(pidsGroup, xtmp, "kff",   "Pid kff parameter", _njoints)) {
         return false;
     }
     for (j=0; j<_njoints; j++) {
-        myPid[j].kff = xtmp.get(j+1).asDouble();
+        myPid[j].kff = xtmp.get(j+1).asFloat64();
     }
 
     if (!extractGroup(pidsGroup, xtmp, "kbemf", "kbemf parameter", _njoints)) {
         return false;
     }
     for (j=0; j<_njoints; j++) {
-        kbemf[j] = xtmp.get(j+1).asDouble();
+        kbemf[j] = xtmp.get(j+1).asFloat64();
     }
 
     if (!extractGroup(pidsGroup, xtmp, "ktau", "ktau parameter", _njoints)) {
         return false;
     }
     for (j=0; j<_njoints; j++) {
-        ktau[j] = xtmp.get(j+1).asDouble();
+        ktau[j] = xtmp.get(j+1).asFloat64();
     }
 
     if (!extractGroup(pidsGroup, xtmp, "filterType", "filterType param", _njoints)) {
         return false;
     }
     for (j=0; j<_njoints; j++) {
-        filterType[j] = xtmp.get(j+1).asInt();
+        filterType[j] = xtmp.get(j+1).asInt32();
     }
 
     //conversion from metric to machine units (if applicable)
@@ -867,7 +867,7 @@ bool FakeMotionControl::parseTorquePidsGroup(Bottle& pidsGroup, Pid myPid[], dou
         }
 
         yInfo() << "FakeMotionControl using LIMITED PWM!!";
-        for (j=0; j<_njoints; j++) myPid[j].max_output = xtmp.get(j+1).asDouble();
+        for (j=0; j<_njoints; j++) myPid[j].max_output = xtmp.get(j+1).asFloat64();
     }
 
     return true;
@@ -885,7 +885,7 @@ bool FakeMotionControl::fromConfig(yarp::os::Searchable &config)
         if(extractGroup(general, xtmp, "AxisMap", "a list of reordered indices for the axes", _njoints))
         {
             for (i = 1; i < xtmp.size(); i++)
-                _axisMap[i - 1] = xtmp.get(i).asInt();
+                _axisMap[i - 1] = xtmp.get(i).asInt32();
         }
         else
             return false;
@@ -955,9 +955,9 @@ bool FakeMotionControl::fromConfig(yarp::os::Searchable &config)
         {
             for (i = 1; i < xtmp.size(); i++)
             {
-                if (xtmp.get(i).isDouble())
+                if (xtmp.get(i).isFloat64())
                 {
-                    _ampsToSensor[i - 1] = xtmp.get(i).asDouble();
+                    _ampsToSensor[i - 1] = xtmp.get(i).asFloat64();
                 }
             }
         }
@@ -980,9 +980,9 @@ bool FakeMotionControl::fromConfig(yarp::os::Searchable &config)
         {
             for (i = 1; i < xtmp.size(); i++)
             {
-                if (xtmp.get(i).isDouble() || xtmp.get(i).isInt())
+                if (xtmp.get(i).isFloat64() || xtmp.get(i).isInt32())
                 {
-                    _dutycycleToPWM[i - 1] = xtmp.get(i).asDouble() / 100.0;
+                    _dutycycleToPWM[i - 1] = xtmp.get(i).asFloat64() / 100.0;
                 }
             }
         }
@@ -1004,7 +1004,7 @@ bool FakeMotionControl::fromConfig(yarp::os::Searchable &config)
         {
             for (i = 1; i < xtmp.size(); i++)
             {
-                _angleToEncoder[i-1] = xtmp.get(i).asDouble();
+                _angleToEncoder[i-1] = xtmp.get(i).asFloat64();
             }
         }
         else
@@ -1026,7 +1026,7 @@ bool FakeMotionControl::fromConfig(yarp::os::Searchable &config)
     {
         int test = xtmp.size();
         for (i = 1; i < xtmp.size(); i++)
-            _jointEncoderRes[i - 1] = xtmp.get(i).asInt();
+            _jointEncoderRes[i - 1] = xtmp.get(i).asInt32();
     }
 
     // Joint encoder type
@@ -1060,7 +1060,7 @@ bool FakeMotionControl::fromConfig(yarp::os::Searchable &config)
     {
         int test = xtmp.size();
         for (i = 1; i < xtmp.size(); i++)
-            _hasHallSensor[i - 1] = xtmp.get(i).asInt();
+            _hasHallSensor[i - 1] = xtmp.get(i).asInt32();
     }
     if (!extractGroup(general, xtmp, "HasTempSensor", "HasTempSensor 0/1 ", _njoints))
     {
@@ -1070,7 +1070,7 @@ bool FakeMotionControl::fromConfig(yarp::os::Searchable &config)
     {
         int test = xtmp.size();
         for (i = 1; i < xtmp.size(); i++)
-            _hasTempSensor[i - 1] = xtmp.get(i).asInt();
+            _hasTempSensor[i - 1] = xtmp.get(i).asInt32();
     }
     if (!extractGroup(general, xtmp, "HasRotorEncoder", "HasRotorEncoder 0/1 ", _njoints))
     {
@@ -1080,7 +1080,7 @@ bool FakeMotionControl::fromConfig(yarp::os::Searchable &config)
     {
         int test = xtmp.size();
         for (i = 1; i < xtmp.size(); i++)
-            _hasRotorEncoder[i - 1] = xtmp.get(i).asInt();
+            _hasRotorEncoder[i - 1] = xtmp.get(i).asInt32();
     }
     if (!extractGroup(general, xtmp, "HasRotorEncoderIndex", "HasRotorEncoderIndex 0/1 ", _njoints))
     {
@@ -1090,7 +1090,7 @@ bool FakeMotionControl::fromConfig(yarp::os::Searchable &config)
     {
         int test = xtmp.size();
         for (i = 1; i < xtmp.size(); i++)
-            _hasRotorEncoderIndex[i - 1] = xtmp.get(i).asInt();
+            _hasRotorEncoderIndex[i - 1] = xtmp.get(i).asInt32();
     }
 
     // Rotor encoder res
@@ -1102,7 +1102,7 @@ bool FakeMotionControl::fromConfig(yarp::os::Searchable &config)
     {
         int test = xtmp.size();
         for (i = 1; i < xtmp.size(); i++)
-            _rotorEncoderRes[i - 1] = xtmp.get(i).asInt();
+            _rotorEncoderRes[i - 1] = xtmp.get(i).asInt32();
     }
 
     // joint encoder res
@@ -1114,7 +1114,7 @@ bool FakeMotionControl::fromConfig(yarp::os::Searchable &config)
     {
         int test = xtmp.size();
         for (i = 1; i < xtmp.size(); i++)
-            _jointEncoderRes[i - 1] = xtmp.get(i).asInt();
+            _jointEncoderRes[i - 1] = xtmp.get(i).asInt32();
     }
 */
     // Number of motor poles
@@ -1126,7 +1126,7 @@ bool FakeMotionControl::fromConfig(yarp::os::Searchable &config)
     {
         int test = xtmp.size();
         for (i = 1; i < xtmp.size(); i++)
-            _motorPoles[i - 1] = xtmp.get(i).asInt();
+            _motorPoles[i - 1] = xtmp.get(i).asInt32();
     }
 
     // Rotor encoder index
@@ -1138,7 +1138,7 @@ bool FakeMotionControl::fromConfig(yarp::os::Searchable &config)
     {
         int test = xtmp.size();
         for (i = 1; i < xtmp.size(); i++)
-            _rotorIndexOffset[i - 1] = xtmp.get(i).asInt();
+            _rotorIndexOffset[i - 1] = xtmp.get(i).asInt32();
     }
 */
 
@@ -1175,7 +1175,7 @@ bool FakeMotionControl::fromConfig(yarp::os::Searchable &config)
         int test = xtmp.size();
         for (i = 1; i < xtmp.size(); i++)
         {
-            _gearbox[i-1] = xtmp.get(i).asDouble();
+            _gearbox[i-1] = xtmp.get(i).asFloat64();
             if (_gearbox[i-1]==0) {yError() << "Using a gearbox value = 0 may cause problems! Check your configuration files"; return false;}
         }
     }
@@ -1189,7 +1189,7 @@ bool FakeMotionControl::fromConfig(yarp::os::Searchable &config)
     }
     else
     {
-        for (i = 1; i < xtmp.size(); i++) _torqueSensorId[i-1] = xtmp.get(i).asInt();
+        for (i = 1; i < xtmp.size(); i++) _torqueSensorId[i-1] = xtmp.get(i).asInt32();
     }
 
 
@@ -1201,7 +1201,7 @@ bool FakeMotionControl::fromConfig(yarp::os::Searchable &config)
     }
     else
     {
-        for (i = 1; i < xtmp.size(); i++) _torqueSensorChan[i-1] = xtmp.get(i).asInt();
+        for (i = 1; i < xtmp.size(); i++) _torqueSensorChan[i-1] = xtmp.get(i).asInt32();
     }
 
 
@@ -1213,7 +1213,7 @@ bool FakeMotionControl::fromConfig(yarp::os::Searchable &config)
     {
         for (i = 1; i < xtmp.size(); i++)
         {
-            _maxTorque[i-1] = xtmp.get(i).asInt();
+            _maxTorque[i-1] = xtmp.get(i).asInt32();
             _newtonsToSensor[i-1] = 1000.0f; // conversion from Nm into milliNm
         }
     }
@@ -1365,7 +1365,7 @@ bool FakeMotionControl::fromConfig(yarp::os::Searchable &config)
             for(i=1; i<xtmp.size(); i++) _kinematic_mj[i-1]=0.0;
         }
         else
-            for(i=1; i<xtmp.size(); i++) _kinematic_mj[i-1]=xtmp.get(i).asDouble();
+            for(i=1; i<xtmp.size(); i++) _kinematic_mj[i-1]=xtmp.get(i).asFloat64();
     }
     else
     {
@@ -1385,49 +1385,49 @@ bool FakeMotionControl::fromConfig(yarp::os::Searchable &config)
     if (!extractGroup(limits, xtmp, "OverloadCurrents","a list of current limits", _njoints))
         return false;
     else
-        for(i=1; i<xtmp.size(); i++) _currentLimits[i-1].overloadCurrent=xtmp.get(i).asDouble();
+        for(i=1; i<xtmp.size(); i++) _currentLimits[i-1].overloadCurrent=xtmp.get(i).asFloat64();
 
     // nominal current
     if (!extractGroup(limits, xtmp, "MotorNominalCurrents","a list of nominal current limits", _njoints))
         return false;
     else
-        for(i=1; i<xtmp.size(); i++) _currentLimits[i-1].nominalCurrent =xtmp.get(i).asDouble();
+        for(i=1; i<xtmp.size(); i++) _currentLimits[i-1].nominalCurrent =xtmp.get(i).asFloat64();
 
     // nominal current
     if (!extractGroup(limits, xtmp, "MotorPeakCurrents","a list of peak current limits", _njoints))
         return false;
     else
-        for(i=1; i<xtmp.size(); i++) _currentLimits[i-1].peakCurrent=xtmp.get(i).asDouble();
+        for(i=1; i<xtmp.size(); i++) _currentLimits[i-1].peakCurrent=xtmp.get(i).asFloat64();
 
     // max limit
     if (!extractGroup(limits, xtmp, "Max","a list of maximum angles (in degrees)", _njoints))
         return false;
     else
-        for(i=1; i<xtmp.size(); i++) _limitsMax[i-1]=xtmp.get(i).asDouble();
+        for(i=1; i<xtmp.size(); i++) _limitsMax[i-1]=xtmp.get(i).asFloat64();
 
     // min limit
     if (!extractGroup(limits, xtmp, "Min","a list of minimum angles (in degrees)", _njoints))
         return false;
     else
-        for(i=1; i<xtmp.size(); i++) _limitsMin[i-1]=xtmp.get(i).asDouble();
+        for(i=1; i<xtmp.size(); i++) _limitsMin[i-1]=xtmp.get(i).asFloat64();
 
     // Rotor max limit
     if (!extractGroup(limits, xtmp, "RotorMax","a list of maximum rotor angles (in degrees)", _njoints))
         return false;
     else
-        for(i=1; i<xtmp.size(); i++) _rotorlimits_max[i-1]=xtmp.get(i).asDouble();
+        for(i=1; i<xtmp.size(); i++) _rotorlimits_max[i-1]=xtmp.get(i).asFloat64();
 
     // joint Velocity command max limit
     if (!extractGroup(limits, xtmp, "JntVelocityMax", "a list of maximum velocities for the joints (in degrees/s)", _njoints))
         return false;
     else
-        for (i = 1; i<xtmp.size(); i++) _maxJntCmdVelocity[i - 1] = xtmp.get(i).asDouble();
+        for (i = 1; i<xtmp.size(); i++) _maxJntCmdVelocity[i - 1] = xtmp.get(i).asFloat64();
 
     // Rotor min limit
     if (!extractGroup(limits, xtmp, "RotorMin","a list of minimum roto angles (in degrees)", _njoints))
         return false;
     else
-        for(i=1; i<xtmp.size(); i++) _rotorlimits_min[i-1]=xtmp.get(i).asDouble();
+        for(i=1; i<xtmp.size(); i++) _rotorlimits_min[i-1]=xtmp.get(i).asFloat64();
 
     // Motor pwm limit
     if (!extractGroup(limits, xtmp, "MotorPwmLimit","a list of motor PWM limits", _njoints))
@@ -1436,7 +1436,7 @@ bool FakeMotionControl::fromConfig(yarp::os::Searchable &config)
     {
         for(i=1; i<xtmp.size(); i++)
         {
-            _motorPwmLimits[i-1]=xtmp.get(i).asDouble();
+            _motorPwmLimits[i-1]=xtmp.get(i).asFloat64();
             if(_motorPwmLimits[i-1]<0)
             {
                 yError() << "MotorPwmLimit should be a positive value";

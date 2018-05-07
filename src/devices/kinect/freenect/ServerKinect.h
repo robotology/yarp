@@ -145,12 +145,12 @@ public:
           {
             case VOCAB_WIDTH:
               ok = true;
-              response.addInt(kinect->width());
+              response.addInt32(kinect->width());
               rec = true;
               break;
             case VOCAB_HEIGHT:
               ok = true;
-              response.addInt(kinect->height());
+              response.addInt32(kinect->height());
               rec = true;
               break;
           }

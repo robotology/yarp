@@ -36,7 +36,7 @@ bool DimaxU2C::open(yarp::os::Searchable& config) {
 
     numJoints = config.check("axes",
                              yarp::os::Value(DEFAULT_NUM_MOTORS),
-                             "number of motors").asInt();
+                             "number of motors").asInt32();
 
     speeds = new double[numJoints];
     accels = new double[numJoints];

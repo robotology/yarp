@@ -119,7 +119,7 @@ bool VirtualAnalogWrapper::open(Searchable& config)
     if (mIsVerbose) yDebug() << "running with verbose output\n";
 
     //thus thread period is useful for output port... this input port has callback so maybe can skip it (?)
-    //thread_period = prop.check("threadrate", 20, "thread rate in ms. for streaming encoder data").asInt();
+    //thread_period = prop.check("threadrate", 20, "thread rate in ms. for streaming encoder data").asInt32();
 
     yDebug() << "Using VirtualAnalogServer\n";
 
@@ -154,10 +154,10 @@ bool VirtualAnalogWrapper::open(Searchable& config)
             return false;
         }
 
-        int map0=parameters.get(1).asInt();
-        int map1=parameters.get(2).asInt();
-        int map2=parameters.get(3).asInt();
-        int map3=parameters.get(4).asInt();
+        int map0=parameters.get(1).asInt32();
+        int map1=parameters.get(2).asInt32();
+        int map2=parameters.get(3).asInt32();
+        int map3=parameters.get(4).asInt32();
         if (map0 >= MAX_ENTRIES || map1 >= MAX_ENTRIES || map2>= MAX_ENTRIES || map3>= MAX_ENTRIES ||
             map0 <0             || map1 <0             || map2<0             || map3<0)
         {
@@ -304,32 +304,32 @@ void VirtualAnalogWrapper::run()
             mMutex.wait();
 
             lastRecv=Time::now();
-            switch (pTorques->get(0).asInt())
+            switch (pTorques->get(0).asInt32())
             {
                 case 1: //arm torque message
                     if (perform_first_check(6)==false) break;
-                    mSubdevices[mChan2Board[0]].setTorque(mChan2BAddr[0],pTorques->get(1).asDouble()); //shoulder 1 pitch      (0)
-                    mSubdevices[mChan2Board[1]].setTorque(mChan2BAddr[1],pTorques->get(2).asDouble()); //shoulder 2 roll       (1)
-                    mSubdevices[mChan2Board[2]].setTorque(mChan2BAddr[2],pTorques->get(3).asDouble()); //shoulder 3 yaw        (2)
-                    mSubdevices[mChan2Board[3]].setTorque(mChan2BAddr[3],pTorques->get(4).asDouble()); //elbow                 (3)
-                    mSubdevices[mChan2Board[4]].setTorque(mChan2BAddr[4],pTorques->get(5).asDouble()); //wrist pronosupination (4)
+                    mSubdevices[mChan2Board[0]].setTorque(mChan2BAddr[0],pTorques->get(1).asFloat64()); //shoulder 1 pitch      (0)
+                    mSubdevices[mChan2Board[1]].setTorque(mChan2BAddr[1],pTorques->get(2).asFloat64()); //shoulder 2 roll       (1)
+                    mSubdevices[mChan2Board[2]].setTorque(mChan2BAddr[2],pTorques->get(3).asFloat64()); //shoulder 3 yaw        (2)
+                    mSubdevices[mChan2Board[3]].setTorque(mChan2BAddr[3],pTorques->get(4).asFloat64()); //elbow                 (3)
+                    mSubdevices[mChan2Board[4]].setTorque(mChan2BAddr[4],pTorques->get(5).asFloat64()); //wrist pronosupination (4)
                     mSubdevices[mChan2Board[5]].setTorque(mChan2BAddr[5],0.0);
                 break;
 
                 case 2: //legs torque message
                     if (perform_first_check(6)==false) break;
-                    mSubdevices[mChan2Board[0]].setTorque(mChan2BAddr[0],pTorques->get(1).asDouble()); //hip pitch
-                    mSubdevices[mChan2Board[1]].setTorque(mChan2BAddr[1],pTorques->get(2).asDouble()); //hip roll
-                    mSubdevices[mChan2Board[2]].setTorque(mChan2BAddr[2],pTorques->get(3).asDouble()); //hip yaw
-                    mSubdevices[mChan2Board[3]].setTorque(mChan2BAddr[3],pTorques->get(4).asDouble()); //knee
-                    mSubdevices[mChan2Board[4]].setTorque(mChan2BAddr[4],pTorques->get(5).asDouble()); //ankle pitch
-                    mSubdevices[mChan2Board[5]].setTorque(mChan2BAddr[5],pTorques->get(6).asDouble()); //ankle roll
+                    mSubdevices[mChan2Board[0]].setTorque(mChan2BAddr[0],pTorques->get(1).asFloat64()); //hip pitch
+                    mSubdevices[mChan2Board[1]].setTorque(mChan2BAddr[1],pTorques->get(2).asFloat64()); //hip roll
+                    mSubdevices[mChan2Board[2]].setTorque(mChan2BAddr[2],pTorques->get(3).asFloat64()); //hip yaw
+                    mSubdevices[mChan2Board[3]].setTorque(mChan2BAddr[3],pTorques->get(4).asFloat64()); //knee
+                    mSubdevices[mChan2Board[4]].setTorque(mChan2BAddr[4],pTorques->get(5).asFloat64()); //ankle pitch
+                    mSubdevices[mChan2Board[5]].setTorque(mChan2BAddr[5],pTorques->get(6).asFloat64()); //ankle roll
                 break;
 
                 case 3: //wrist torque message
                     if (perform_first_check(6)==false) break;
-                    mSubdevices[mChan2Board[0]].setTorque(mChan2BAddr[0],pTorques->get(6).asDouble()); //wrist yaw   (6)
-                    mSubdevices[mChan2Board[1]].setTorque(mChan2BAddr[1],pTorques->get(7).asDouble()); //wrist pitch (7)
+                    mSubdevices[mChan2Board[0]].setTorque(mChan2BAddr[0],pTorques->get(6).asFloat64()); //wrist yaw   (6)
+                    mSubdevices[mChan2Board[1]].setTorque(mChan2BAddr[1],pTorques->get(7).asFloat64()); //wrist pitch (7)
                     mSubdevices[mChan2Board[2]].setTorque(mChan2BAddr[2],0.0);
                     mSubdevices[mChan2Board[3]].setTorque(mChan2BAddr[3],0.0);
                     mSubdevices[mChan2Board[4]].setTorque(mChan2BAddr[4],0.0);
@@ -338,16 +338,16 @@ void VirtualAnalogWrapper::run()
 
                 case 4: // torso
                     if (perform_first_check(3)==false) break;
-                    mSubdevices[mChan2Board[0]].setTorque(mChan2BAddr[0],pTorques->get(1).asDouble()); //torso yaw (respect gravity)
-                    mSubdevices[mChan2Board[1]].setTorque(mChan2BAddr[1],pTorques->get(2).asDouble()); //torso roll (lateral movement)
-                    mSubdevices[mChan2Board[2]].setTorque(mChan2BAddr[2],pTorques->get(3).asDouble()); //torso pitch (front-back movement)
+                    mSubdevices[mChan2Board[0]].setTorque(mChan2BAddr[0],pTorques->get(1).asFloat64()); //torso yaw (respect gravity)
+                    mSubdevices[mChan2Board[1]].setTorque(mChan2BAddr[1],pTorques->get(2).asFloat64()); //torso roll (lateral movement)
+                    mSubdevices[mChan2Board[2]].setTorque(mChan2BAddr[2],pTorques->get(3).asFloat64()); //torso pitch (front-back movement)
 //                    mSubdevices[mChan2Board[3]].setTorque(mChan2BAddr[3],0.0);
 //                    mSubdevices[mChan2Board[4]].setTorque(mChan2BAddr[4],0.0);
 //                    mSubdevices[mChan2Board[5]].setTorque(mChan2BAddr[5],0.0);
                 break;
 
                 default:
-                    yError() << "VirtualAnalogWrapper: got unexpected " << pTorques->get(0).asInt() << " message on virtualAnalogServer.";
+                    yError() << "VirtualAnalogWrapper: got unexpected " << pTorques->get(0).asInt32() << " message on virtualAnalogServer.";
             }
 
             for (int d=0; d<mNSubdevs; ++d)

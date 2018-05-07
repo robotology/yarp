@@ -124,8 +124,8 @@ bool RGBDSensorParser::respond(const Bottle& cmd, Bottle& response)
                             response.addVocab(VOCAB_RGBD_SENSOR);
                             response.addVocab(VOCAB_RGBD_PROTOCOL_VERSION);
                             response.addVocab(VOCAB_IS);
-                            response.addInt(RGBD_INTERFACE_PROTOCOL_VERSION_MAJOR);
-                            response.addInt(RGBD_INTERFACE_PROTOCOL_VERSION_MINOR);
+                            response.addInt32(RGBD_INTERFACE_PROTOCOL_VERSION_MAJOR);
+                            response.addInt32(RGBD_INTERFACE_PROTOCOL_VERSION_MINOR);
                         }
                         break;
 
@@ -134,7 +134,7 @@ bool RGBDSensorParser::respond(const Bottle& cmd, Bottle& response)
                             response.addVocab(VOCAB_RGBD_SENSOR);
                             response.addVocab(VOCAB_STATUS);
                             response.addVocab(VOCAB_IS);
-                            response.addInt(iRGBDSensor->getSensorStatus());
+                            response.addInt32(iRGBDSensor->getSensorStatus());
                         }
                         break;
 
@@ -251,7 +251,7 @@ bool RGBDSensorWrapper::fromConfig(yarp::os::Searchable &config)
             yInfo() << "RGBDSensorWrapper: using default 'period' parameter of " << DEFAULT_THREAD_PERIOD << "ms";
     }
     else
-        period = config.find("period").asInt();
+        period = config.find("period").asInt32();
 
     Bottle &rosGroup = config.findGroup("ROS");
     if(rosGroup.isNull())
@@ -783,7 +783,7 @@ bool RGBDSensorWrapper::setCamInfo(yarp::rosmsg::sensor_msgs::CameraInfo& camera
             yWarning() << "RGBSensorWrapper: driver has not the param:" << par->parname;
             return false;
         }
-        *par->var = camData.find(par->parname).asDouble();
+        *par->var = camData.find(par->parname).asFloat64();
     }
 
     cameraInfo.header.frame_id    = frame_id;

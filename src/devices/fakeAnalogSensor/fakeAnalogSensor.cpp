@@ -57,7 +57,7 @@ bool FakeAnalogSensor::open(yarp::os::Searchable& config)
         return false;
     }
 
-    int period=config.find("period").asInt();
+    int period=config.find("period").asInt32();
     setRate(period);
 
     //create the data vector:

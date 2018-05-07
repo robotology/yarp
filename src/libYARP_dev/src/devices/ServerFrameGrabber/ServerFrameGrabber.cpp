@@ -140,7 +140,7 @@ bool ServerFrameGrabber::open(yarp::os::Searchable& config) {
     double framerate=0;
     if (config.check("framerate", name,
                      "maximum rate in Hz to read from subdevice")) {
-        framerate=name->asDouble();
+        framerate=name->asFloat64();
     }
     */
 
@@ -179,7 +179,7 @@ bool ServerFrameGrabber::open(yarp::os::Searchable& config) {
         config.check("single_threaded",
                      "if present, operate in single threaded mode")!=0;
     thread.open(config.check("framerate",Value("0"),
-                             "maximum rate in Hz to read from subdevice").asDouble(),
+                             "maximum rate in Hz to read from subdevice").asFloat64(),
                 singleThreaded);
     active = true;
 
@@ -249,47 +249,47 @@ bool ServerFrameGrabber::respond(const yarp::os::Bottle& cmd,
         switch(cmd.get(1).asVocab())
         {
         case VOCAB_BRIGHTNESS:
-            response.addInt(int(setBrightness(cmd.get(2).asDouble())));
+            response.addInt32(int(setBrightness(cmd.get(2).asFloat64())));
             return true;
         case VOCAB_EXPOSURE:
-            response.addInt(int(setExposure(cmd.get(2).asDouble())));
+            response.addInt32(int(setExposure(cmd.get(2).asFloat64())));
             return true;
         case VOCAB_SHARPNESS:
-            response.addInt(int(setSharpness(cmd.get(2).asDouble())));
+            response.addInt32(int(setSharpness(cmd.get(2).asFloat64())));
             return true;
         case VOCAB_WHITE:
-            response.addInt(int(setWhiteBalance(cmd.get(2).asDouble(),cmd.get(3).asDouble())));
+            response.addInt32(int(setWhiteBalance(cmd.get(2).asFloat64(),cmd.get(3).asFloat64())));
             return true;
         case VOCAB_HUE:
-            response.addInt(int(setHue(cmd.get(2).asDouble())));
+            response.addInt32(int(setHue(cmd.get(2).asFloat64())));
             return true;
         case VOCAB_SATURATION:
-            response.addInt(int(setSaturation(cmd.get(2).asDouble())));
+            response.addInt32(int(setSaturation(cmd.get(2).asFloat64())));
             return true;
         case VOCAB_GAMMA:
-            response.addInt(int(setGamma(cmd.get(2).asDouble())));
+            response.addInt32(int(setGamma(cmd.get(2).asFloat64())));
             return true;
         case VOCAB_SHUTTER:
-            response.addInt(int(setShutter(cmd.get(2).asDouble())));
+            response.addInt32(int(setShutter(cmd.get(2).asFloat64())));
             return true;
         case VOCAB_GAIN:
-            response.addInt(int(setGain(cmd.get(2).asDouble())));
+            response.addInt32(int(setGain(cmd.get(2).asFloat64())));
             return true;
         case VOCAB_IRIS:
-            response.addInt(int(setIris(cmd.get(2).asDouble())));
+            response.addInt32(int(setIris(cmd.get(2).asFloat64())));
             return true;
         /*
         case VOCAB_TEMPERATURE:
-            response.addInt(int(setTemperature(cmd.get(2).asDouble())));
+            response.addInt32(int(setTemperature(cmd.get(2).asFloat64())));
             return true;
         case VOCAB_WHITE_SHADING:
-            response.addInt(int(setWhiteShading(cmd.get(2).asDouble(),cmd.get(3).asDouble(),cmd.get(4).asDouble())));
+            response.addInt32(int(setWhiteShading(cmd.get(2).asFloat64(),cmd.get(3).asFloat64(),cmd.get(4).asFloat64())));
             return true;
         case VOCAB_OPTICAL_FILTER:
-            response.addInt(int(setOpticalFilter(cmd.get(2).asDouble())));
+            response.addInt32(int(setOpticalFilter(cmd.get(2).asFloat64())));
             return true;
         case VOCAB_CAPTURE_QUALITY:
-            response.addInt(int(setCaptureQuality(cmd.get(2).asDouble())));
+            response.addInt32(int(setCaptureQuality(cmd.get(2).asFloat64())));
             return true;
         */
         }
@@ -305,13 +305,13 @@ bool ServerFrameGrabber::respond(const yarp::os::Bottle& cmd,
         switch(cmd.get(1).asVocab())
         {
         case VOCAB_BRIGHTNESS:
-            response.addDouble(getBrightness());
+            response.addFloat64(getBrightness());
             return true;
         case VOCAB_EXPOSURE:
-            response.addDouble(getExposure());
+            response.addFloat64(getExposure());
             return true;
         case VOCAB_SHARPNESS:
-            response.addDouble(getSharpness());
+            response.addFloat64(getSharpness());
             return true;
         case VOCAB_WHITE:
             {
@@ -319,43 +319,43 @@ bool ServerFrameGrabber::respond(const yarp::os::Bottle& cmd,
                 double r=0.0;
 
                 getWhiteBalance(b,r);
-                response.addDouble(b);
-                response.addDouble(r);
+                response.addFloat64(b);
+                response.addFloat64(r);
             }
             return true;
         case VOCAB_HUE:
-            response.addDouble(getHue());
+            response.addFloat64(getHue());
             return true;
         case VOCAB_SATURATION:
-            response.addDouble(getSaturation());
+            response.addFloat64(getSaturation());
             return true;
         case VOCAB_GAMMA:
-            response.addDouble(getGamma());
+            response.addFloat64(getGamma());
             return true;
         case VOCAB_SHUTTER:
-            response.addDouble(getShutter());
+            response.addFloat64(getShutter());
             return true;
         case VOCAB_GAIN:
-            response.addDouble(getGain());
+            response.addFloat64(getGain());
             return true;
         case VOCAB_IRIS:
-            response.addDouble(getIris());
+            response.addFloat64(getIris());
             return true;
         /*
         case VOCAB_CAPTURE_QUALITY:
-            response.addDouble(getCaptureQuality());
+            response.addFloat64(getCaptureQuality());
             return true;
         case VOCAB_OPTICAL_FILTER:
-            response.addDouble(getOpticalFilter());
+            response.addFloat64(getOpticalFilter());
             return true;
         */
         case VOCAB_WIDTH:
             // normally, this would come from stream information
-            response.addInt(width());
+            response.addInt32(width());
             return true;
         case VOCAB_HEIGHT:
             // normally, this would come from stream information
-            response.addInt(height());
+            response.addInt32(height());
             return true;
         }
 
@@ -368,88 +368,88 @@ bool ServerFrameGrabber::respond(const yarp::os::Bottle& cmd,
         if (fgCtrlDC1394) switch(code)
         {
             case VOCAB_DRHASFEA: // VOCAB_DRHASFEA 00
-                response.addInt(int(fgCtrlDC1394->hasFeatureDC1394(cmd.get(1).asInt())));
+                response.addInt32(int(fgCtrlDC1394->hasFeatureDC1394(cmd.get(1).asInt32())));
                 return true;
             case VOCAB_DRSETVAL: // VOCAB_DRSETVAL 01
-                response.addInt(int(fgCtrlDC1394->setFeatureDC1394(cmd.get(1).asInt(),cmd.get(2).asDouble())));
+                response.addInt32(int(fgCtrlDC1394->setFeatureDC1394(cmd.get(1).asInt32(),cmd.get(2).asFloat64())));
                 return true;
             case VOCAB_DRGETVAL: // VOCAB_DRGETVAL 02
-                response.addDouble(fgCtrlDC1394->getFeatureDC1394(cmd.get(1).asInt()));
+                response.addFloat64(fgCtrlDC1394->getFeatureDC1394(cmd.get(1).asInt32()));
                 return true;
 
             case VOCAB_DRHASACT: // VOCAB_DRHASACT 03
-                response.addInt(int(fgCtrlDC1394->hasOnOffDC1394(cmd.get(1).asInt())));
+                response.addInt32(int(fgCtrlDC1394->hasOnOffDC1394(cmd.get(1).asInt32())));
                 return true;
             case VOCAB_DRSETACT: // VOCAB_DRSETACT 04
-                response.addInt(int(fgCtrlDC1394->setActiveDC1394(cmd.get(1).asInt(),(cmd.get(2).asInt()!=0))));
+                response.addInt32(int(fgCtrlDC1394->setActiveDC1394(cmd.get(1).asInt32(),(cmd.get(2).asInt32()!=0))));
                 return true;
             case VOCAB_DRGETACT: // VOCAB_DRGETACT 05
-                response.addInt(int(fgCtrlDC1394->getActiveDC1394(cmd.get(1).asInt())));
+                response.addInt32(int(fgCtrlDC1394->getActiveDC1394(cmd.get(1).asInt32())));
                 return true;
 
             case VOCAB_DRHASMAN: // VOCAB_DRHASMAN 06
-                response.addInt(int(fgCtrlDC1394->hasManualDC1394(cmd.get(1).asInt())));
+                response.addInt32(int(fgCtrlDC1394->hasManualDC1394(cmd.get(1).asInt32())));
                 return true;
             case VOCAB_DRHASAUT: // VOCAB_DRHASAUT 07
-                response.addInt(int(fgCtrlDC1394->hasAutoDC1394(cmd.get(1).asInt())));
+                response.addInt32(int(fgCtrlDC1394->hasAutoDC1394(cmd.get(1).asInt32())));
                 return true;
             case VOCAB_DRHASONP: // VOCAB_DRHASONP 08
-                response.addInt(int(fgCtrlDC1394->hasOnePushDC1394(cmd.get(1).asInt())));
+                response.addInt32(int(fgCtrlDC1394->hasOnePushDC1394(cmd.get(1).asInt32())));
                 return true;
             case VOCAB_DRSETMOD: // VOCAB_DRSETMOD 09
-                response.addInt(int(fgCtrlDC1394->setModeDC1394(cmd.get(1).asInt(),(cmd.get(2).asInt()!=0))));
+                response.addInt32(int(fgCtrlDC1394->setModeDC1394(cmd.get(1).asInt32(),(cmd.get(2).asInt32()!=0))));
                 return true;
             case VOCAB_DRGETMOD: // VOCAB_DRGETMOD 10
-                response.addInt(int(fgCtrlDC1394->getModeDC1394(cmd.get(1).asInt())));
+                response.addInt32(int(fgCtrlDC1394->getModeDC1394(cmd.get(1).asInt32())));
                 return true;
             case VOCAB_DRSETONP: // VOCAB_DRSETONP 11
-                response.addInt(int(fgCtrlDC1394->setOnePushDC1394(cmd.get(1).asInt())));
+                response.addInt32(int(fgCtrlDC1394->setOnePushDC1394(cmd.get(1).asInt32())));
                 return true;
             case VOCAB_DRGETMSK: // VOCAB_DRGETMSK 12
-                response.addInt(int(fgCtrlDC1394->getVideoModeMaskDC1394()));
+                response.addInt32(int(fgCtrlDC1394->getVideoModeMaskDC1394()));
                 return true;
             case VOCAB_DRGETVMD: // VOCAB_DRGETVMD 13
-                response.addInt(int(fgCtrlDC1394->getVideoModeDC1394()));
+                response.addInt32(int(fgCtrlDC1394->getVideoModeDC1394()));
                 return true;
             case VOCAB_DRSETVMD: // VOCAB_DRSETVMD 14
-                response.addInt(int(fgCtrlDC1394->setVideoModeDC1394(cmd.get(1).asInt())));
+                response.addInt32(int(fgCtrlDC1394->setVideoModeDC1394(cmd.get(1).asInt32())));
                 return true;
             case VOCAB_DRGETFPM: // VOCAB_DRGETFPM 15
-                response.addInt(int(fgCtrlDC1394->getFPSMaskDC1394()));
+                response.addInt32(int(fgCtrlDC1394->getFPSMaskDC1394()));
                 return true;
             case VOCAB_DRGETFPS: // VOCAB_DRGETFPS 16
-                response.addInt(int(fgCtrlDC1394->getFPSDC1394()));
+                response.addInt32(int(fgCtrlDC1394->getFPSDC1394()));
                 return true;
             case VOCAB_DRSETFPS: // VOCAB_DRSETFPS 17
-                response.addInt(int(fgCtrlDC1394->setFPSDC1394(cmd.get(1).asInt())));
+                response.addInt32(int(fgCtrlDC1394->setFPSDC1394(cmd.get(1).asInt32())));
                 return true;
 
             case VOCAB_DRGETISO: // VOCAB_DRGETISO 18
-                response.addInt(int(fgCtrlDC1394->getISOSpeedDC1394()));
+                response.addInt32(int(fgCtrlDC1394->getISOSpeedDC1394()));
                 return true;
             case VOCAB_DRSETISO: // VOCAB_DRSETISO 19
-                response.addInt(int(fgCtrlDC1394->setISOSpeedDC1394(cmd.get(1).asInt())));
+                response.addInt32(int(fgCtrlDC1394->setISOSpeedDC1394(cmd.get(1).asInt32())));
                 return true;
 
             case VOCAB_DRGETCCM: // VOCAB_DRGETCCM 20
-                response.addInt(int(fgCtrlDC1394->getColorCodingMaskDC1394(cmd.get(1).asInt())));
+                response.addInt32(int(fgCtrlDC1394->getColorCodingMaskDC1394(cmd.get(1).asInt32())));
                 return true;
             case VOCAB_DRGETCOD: // VOCAB_DRGETCOD 21
-                response.addInt(int(fgCtrlDC1394->getColorCodingDC1394()));
+                response.addInt32(int(fgCtrlDC1394->getColorCodingDC1394()));
                 return true;
             case VOCAB_DRSETCOD: // VOCAB_DRSETCOD 22
-                response.addInt(int(fgCtrlDC1394->setColorCodingDC1394(cmd.get(1).asInt())));
+                response.addInt32(int(fgCtrlDC1394->setColorCodingDC1394(cmd.get(1).asInt32())));
                 return true;
 
             case VOCAB_DRSETWHB: // VOCAB_DRSETWHB 23
-                response.addInt(int(fgCtrlDC1394->setWhiteBalanceDC1394(cmd.get(1).asDouble(),cmd.get(2).asDouble())));
+                response.addInt32(int(fgCtrlDC1394->setWhiteBalanceDC1394(cmd.get(1).asFloat64(),cmd.get(2).asFloat64())));
                 return true;
             case VOCAB_DRGETWHB: // VOCAB_DRGETWHB 24
                 {
                     double b,r;
                     fgCtrlDC1394->getWhiteBalanceDC1394(b,r);
-                    response.addDouble(b);
-                    response.addDouble(r);
+                    response.addFloat64(b);
+                    response.addFloat64(r);
                 }
                 return true;
 
@@ -457,12 +457,12 @@ bool ServerFrameGrabber::respond(const yarp::os::Bottle& cmd,
                 {
                     unsigned int xstep,ystep,xdim,ydim,xoffstep,yoffstep;
                     fgCtrlDC1394->getFormat7MaxWindowDC1394(xdim,ydim,xstep,ystep,xoffstep,yoffstep);
-                    response.addInt(xdim);
-                    response.addInt(ydim);
-                    response.addInt(xstep);
-                    response.addInt(ystep);
-                    response.addInt(xoffstep);
-                    response.addInt(yoffstep);
+                    response.addInt32(xdim);
+                    response.addInt32(ydim);
+                    response.addInt32(xstep);
+                    response.addInt32(ystep);
+                    response.addInt32(xoffstep);
+                    response.addInt32(yoffstep);
                 }
                 return true;
             case VOCAB_DRGETWF7: // VOCAB_DRGETWF7 26
@@ -470,56 +470,56 @@ bool ServerFrameGrabber::respond(const yarp::os::Bottle& cmd,
                     unsigned int xdim,ydim;
                     int x0,y0;
                     fgCtrlDC1394->getFormat7WindowDC1394(xdim,ydim,x0,y0);
-                    response.addInt(xdim);
-                    response.addInt(ydim);
-                    response.addInt(x0);
-                    response.addInt(y0);
+                    response.addInt32(xdim);
+                    response.addInt32(ydim);
+                    response.addInt32(x0);
+                    response.addInt32(y0);
                 }
                 return true;
             case VOCAB_DRSETWF7: // VOCAB_DRSETWF7 27
-                response.addInt(int(fgCtrlDC1394->setFormat7WindowDC1394(cmd.get(1).asInt(),cmd.get(2).asInt(),cmd.get(3).asInt(),cmd.get(4).asInt())));
+                response.addInt32(int(fgCtrlDC1394->setFormat7WindowDC1394(cmd.get(1).asInt32(),cmd.get(2).asInt32(),cmd.get(3).asInt32(),cmd.get(4).asInt32())));
                 return true;
             case VOCAB_DRSETOPM: // VOCAB_DRSETOPM 28
-                response.addInt(int(fgCtrlDC1394->setOperationModeDC1394(cmd.get(1).asInt()!=0)));
+                response.addInt32(int(fgCtrlDC1394->setOperationModeDC1394(cmd.get(1).asInt32()!=0)));
                 return true;
             case VOCAB_DRGETOPM: // VOCAB_DRGETOPM 29
-                response.addInt(fgCtrlDC1394->getOperationModeDC1394());
+                response.addInt32(fgCtrlDC1394->getOperationModeDC1394());
                 return true;
 
             case VOCAB_DRSETTXM: // VOCAB_DRSETTXM 30
-                response.addInt(int(fgCtrlDC1394->setTransmissionDC1394(cmd.get(1).asInt()!=0)));
+                response.addInt32(int(fgCtrlDC1394->setTransmissionDC1394(cmd.get(1).asInt32()!=0)));
                 return true;
             case VOCAB_DRGETTXM: // VOCAB_DRGETTXM 31
-                response.addInt(fgCtrlDC1394->getTransmissionDC1394());
+                response.addInt32(fgCtrlDC1394->getTransmissionDC1394());
                 return true;
             /*
             case VOCAB_DRSETBAY: // VOCAB_DRSETBAY 32
-                response.addInt(int(fgCtrlDC1394->setBayerDC1394(bool(cmd.get(1).asInt()))));
+                response.addInt32(int(fgCtrlDC1394->setBayerDC1394(bool(cmd.get(1).asInt32()))));
                 return true;
             case VOCAB_DRGETBAY: // VOCAB_DRGETBAY 33
-                response.addInt(fgCtrlDC1394->getBayerDC1394());
+                response.addInt32(fgCtrlDC1394->getBayerDC1394());
                 return true;
             */
             case VOCAB_DRSETBCS: // VOCAB_DRSETBCS 34
-                response.addInt(int(fgCtrlDC1394->setBroadcastDC1394(cmd.get(1).asInt()!=0)));
+                response.addInt32(int(fgCtrlDC1394->setBroadcastDC1394(cmd.get(1).asInt32()!=0)));
                 return true;
             case VOCAB_DRSETDEF: // VOCAB_DRSETDEF 35
-                response.addInt(int(fgCtrlDC1394->setDefaultsDC1394()));
+                response.addInt32(int(fgCtrlDC1394->setDefaultsDC1394()));
                 return true;
             case VOCAB_DRSETRST: // VOCAB_DRSETRST 36
-                response.addInt(int(fgCtrlDC1394->setResetDC1394()));
+                response.addInt32(int(fgCtrlDC1394->setResetDC1394()));
                 return true;
             case VOCAB_DRSETPWR: // VOCAB_DRSETPWR 37
-                response.addInt(int(fgCtrlDC1394->setPowerDC1394(cmd.get(1).asInt()!=0)));
+                response.addInt32(int(fgCtrlDC1394->setPowerDC1394(cmd.get(1).asInt32()!=0)));
                 return true;
             case VOCAB_DRSETCAP: // VOCAB_DRSETCAP 38
-                response.addInt(int(fgCtrlDC1394->setCaptureDC1394(cmd.get(1).asInt()!=0)));
+                response.addInt32(int(fgCtrlDC1394->setCaptureDC1394(cmd.get(1).asInt32()!=0)));
                 return true;
             case VOCAB_DRSETBPP: // VOCAB_DRSETCAP 39
-                response.addInt(int(fgCtrlDC1394->setBytesPerPacketDC1394(cmd.get(1).asInt())));
+                response.addInt32(int(fgCtrlDC1394->setBytesPerPacketDC1394(cmd.get(1).asInt32())));
                 return true;
             case VOCAB_DRGETBPP: // VOCAB_DRGETTXM 40
-                response.addInt(fgCtrlDC1394->getBytesPerPacketDC1394());
+                response.addInt32(fgCtrlDC1394->getBytesPerPacketDC1394());
                 return true;
         }
     }
@@ -540,17 +540,17 @@ bool ServerFrameGrabber::read(ConnectionReader& connection) {
             bool ok = false;
             switch(cmd.get(1).asVocab()) {
             case VOCAB_BRIGHTNESS:
-                ok = setBrightness(cmd.get(2).asDouble());
+                ok = setBrightness(cmd.get(2).asFloat64());
                 break;
             case VOCAB_SHUTTER:
-                ok = setShutter(cmd.get(2).asDouble());
+                ok = setShutter(cmd.get(2).asFloat64());
                 break;
             case VOCAB_GAIN:
-                ok = setGain(cmd.get(2).asDouble());
+                ok = setGain(cmd.get(2).asFloat64());
                 break;
             case VOCAB_WHITE:
-                ok = setWhiteBalance(cmd.get(2).asDouble(),
-                                     cmd.get(3).asDouble());
+                ok = setWhiteBalance(cmd.get(2).asFloat64(),
+                                     cmd.get(3).asFloat64());
                 break;
             }
         }
@@ -564,25 +564,25 @@ bool ServerFrameGrabber::read(ConnectionReader& connection) {
             switch(cmd.get(1).asVocab()) {
             case VOCAB_BRIGHTNESS:
                 ok = true;
-                response.addDouble(getBrightness());
+                response.addFloat64(getBrightness());
                 break;
             case VOCAB_SHUTTER:
                 ok = true;
-                response.addDouble(getShutter());
+                response.addFloat64(getShutter());
                 break;
             case VOCAB_GAIN:
                 ok = true;
-                response.addDouble(getGain());
+                response.addFloat64(getGain());
                 break;
             case VOCAB_WIDTH:
                 // normally, this would come from stream information
                 ok = true;
-                response.addInt(width());
+                response.addInt32(width());
                 break;
             case VOCAB_HEIGHT:
                 // normally, this would come from stream information
                 ok = true;
-                response.addInt(height());
+                response.addInt32(height());
                 break;
 
             case VOCAB_WHITE:
@@ -593,9 +593,9 @@ bool ServerFrameGrabber::read(ConnectionReader& connection) {
 
                 ok=getWhiteBalance(r, g);
 
-                response.addDouble(r);
+                response.addFloat64(r);
 
-                response.addDouble(g);
+                response.addFloat64(g);
             }
             if (!ok) {
                 // leave answer blank

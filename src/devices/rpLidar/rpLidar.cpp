@@ -62,15 +62,15 @@ bool RpLidar::open(yarp::os::Searchable& config)
         yarp::os::Searchable& general_config = config.findGroup("GENERAL");
         clip_max_enable = general_config.check("clip_max");
         clip_min_enable = general_config.check("clip_min");
-        if (clip_max_enable) { max_distance = general_config.find("clip_max").asDouble(); }
-        if (clip_min_enable) { min_distance = general_config.find("clip_min").asDouble(); }
+        if (clip_max_enable) { max_distance = general_config.find("clip_max").asFloat64(); }
+        if (clip_min_enable) { min_distance = general_config.find("clip_min").asFloat64(); }
         if (general_config.check("max_angle") == false) { yError() << "Missing max_angle param"; return false; }
         if (general_config.check("min_angle") == false) { yError() << "Missing min_angle param"; return false; }
         if (general_config.check("resolution") == false) { yError() << "Missing resolution param"; return false; }
-        max_angle = general_config.find("max_angle").asDouble();
-        min_angle = general_config.find("min_angle").asDouble();
-        resolution = general_config.find("resolution").asDouble();
-        do_not_clip_infinity_enable = (general_config.find("allow_infinity").asInt()!=0);
+        max_angle = general_config.find("max_angle").asFloat64();
+        min_angle = general_config.find("min_angle").asFloat64();
+        resolution = general_config.find("resolution").asFloat64();
+        do_not_clip_infinity_enable = (general_config.find("allow_infinity").asInt32()!=0);
     }
     else
     {
@@ -91,8 +91,8 @@ bool RpLidar::open(yarp::os::Searchable& config)
             for (size_t s = 1; s < s_maxs; s++)
             {
                 Range_t range;
-                range.max = maxs.get(s).asDouble();
-                range.min = mins.get(s).asDouble();
+                range.max = maxs.get(s).asFloat64();
+                range.min = mins.get(s).asFloat64();
                 if (range.max >= 0 && range.max <= 360 &&
                     range.min >= 0 && range.min <= 360 &&
                     range.max > range.min)

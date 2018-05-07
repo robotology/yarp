@@ -79,30 +79,30 @@ void yarp::dev::KinectDeviceDriverServer::sendKinectData(){
 				//user number
 				Bottle &userBot = botSkeleton.addList();
 				userBot.addVocab(USER_VOCAB);
-				userBot.addInt(i);
+				userBot.addInt32(i);
 				for(int jointIndex = 0; jointIndex < TOTAL_JOINTS; jointIndex++){
 					//position
 					botSkeleton.addVocab(POSITION_VOCAB);
 					joint = userSkeleton[i].skeletonPointsPos[jointIndex].data();
 					Bottle &botList = botSkeleton.addList();
-					botList.addDouble(joint[0]);
-					botList.addDouble(joint[1]);
-					botList.addDouble(joint[2]);
-					botSkeleton.addDouble(userSkeleton[i].skeletonPosConfidence[jointIndex]);
+					botList.addFloat64(joint[0]);
+					botList.addFloat64(joint[1]);
+					botList.addFloat64(joint[2]);
+					botSkeleton.addFloat64(userSkeleton[i].skeletonPosConfidence[jointIndex]);
 					//orientation
 					joint = userSkeleton[i].skeletonPointsOri[jointIndex].data();
 					botSkeleton.addVocab(ORIENTATION_VOCAB);
 					Bottle &botList2 = botSkeleton.addList();
-					botList2.addDouble(joint[0]);
-					botList2.addDouble(joint[1]);
-					botList2.addDouble(joint[2]);
-					botList2.addDouble(joint[3]);
-					botList2.addDouble(joint[4]);
-					botList2.addDouble(joint[5]);
-					botList2.addDouble(joint[6]);
-					botList2.addDouble(joint[7]);
-					botList2.addDouble(joint[8]);
-					botSkeleton.addDouble(userSkeleton[i].skeletonOriConfidence[jointIndex]);
+					botList2.addFloat64(joint[0]);
+					botList2.addFloat64(joint[1]);
+					botList2.addFloat64(joint[2]);
+					botList2.addFloat64(joint[3]);
+					botList2.addFloat64(joint[4]);
+					botList2.addFloat64(joint[5]);
+					botList2.addFloat64(joint[6]);
+					botList2.addFloat64(joint[7]);
+					botList2.addFloat64(joint[8]);
+					botSkeleton.addFloat64(userSkeleton[i].skeletonOriConfidence[jointIndex]);
 				}
 				_skeletonPort->write();
 			}else if(userSkeleton[i].skeletonState == USER_DETECTED){
@@ -110,14 +110,14 @@ void yarp::dev::KinectDeviceDriverServer::sendKinectData(){
 				botDetected.clear();
 				_skeletonPort->setEnvelope(timestamp);
 				botDetected.addString(USER_DETECTED_MSG);
-				botDetected.addInt(i);
+				botDetected.addInt32(i);
 				_skeletonPort->write();
 			}else if(userSkeleton[i].skeletonState == CALIBRATING){
 				Bottle &botCalib = _skeletonPort->prepare();
 				botCalib.clear();
 				_skeletonPort->setEnvelope(timestamp);
 				botCalib.addString(USER_CALIBRATING_MSG);
-				botCalib.addInt(i);
+				botCalib.addInt32(i);
 				_skeletonPort->write();
 			}else if(userSkeleton[i].skeletonState == USER_LOST){
 				userSkeleton[i].skeletonState = NO_USER;
@@ -125,7 +125,7 @@ void yarp::dev::KinectDeviceDriverServer::sendKinectData(){
 				botCalib.clear();
 				_skeletonPort->setEnvelope(timestamp);
 				botCalib.addString(USER_LOST_MSG);
-				botCalib.addInt(i);
+				botCalib.addInt32(i);
 				_skeletonPort->write();
 			}
 		}

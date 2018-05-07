@@ -85,7 +85,7 @@ bool OpenCVGrabber::open(Searchable & config) {
         int camera_idx =
             config.check("camera",
                          Value(CV_CAP_ANY),
-                         "if present, read from camera identified by this index").asInt();
+                         "if present, read from camera identified by this index").asInt32();
 
         // Try to open a capture object for the first camera
         m_cap.open(camera_idx);
@@ -99,7 +99,7 @@ bool OpenCVGrabber::open(Searchable & config) {
         }
 
         if ( config.check("framerate","if present, specifies desired camera device framerate") ) {
-            double m_fps = config.check("framerate", Value(-1)).asDouble();
+            double m_fps = config.check("framerate", Value(-1)).asFloat64();
             m_cap.set(CV_CAP_PROP_FPS, m_fps);
         }
 
@@ -112,7 +112,7 @@ bool OpenCVGrabber::open(Searchable & config) {
     // Extract the desired image size from the configuration if
     // present, otherwise query the capture device
     if (config.check("width","if present, specifies desired image width")) {
-        m_w = config.check("width", Value(-1)).asInt();
+        m_w = config.check("width", Value(-1)).asInt32();
         if (!fromFile && m_w>0) {
             m_cap.set(CV_CAP_PROP_FRAME_WIDTH, m_w);
         }
@@ -121,7 +121,7 @@ bool OpenCVGrabber::open(Searchable & config) {
     }
 
     if (config.check("height","if present, specifies desired image height")) {
-        m_h = config.check("height", Value(-1)).asInt();
+        m_h = config.check("height", Value(-1)).asInt32();
         if (!fromFile && m_h>0) {
             m_cap.set(CV_CAP_PROP_FRAME_HEIGHT, m_h);
         }

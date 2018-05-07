@@ -71,13 +71,13 @@ bool AnalogServerHandler::_handleIAnalog(yarp::os::Bottle &cmd, yarp::os::Bottle
     case VOCAB_CALIBRATE_CHANNEL:
       if (msgsize==3)
       {
-        int ch=cmd.get(2).asInt();
+        int ch=cmd.get(2).asInt32();
         is->calibrateChannel(ch);
       }
       if (msgsize==4)
       {
-        int ch=cmd.get(2).asInt();
-        double v=cmd.get(3).asDouble();
+        int ch=cmd.get(2).asInt32();
+        double v=cmd.get(3).asFloat64();
         is->calibrateChannel(ch, v);
       }
 
@@ -635,7 +635,7 @@ bool AnalogWrapper::open(yarp::os::Searchable &config)
     }
     else
     {
-        _rate = config.find("period").asInt();
+        _rate = config.find("period").asInt32();
     }
 
     if (config.check("deviceId"))
@@ -758,10 +758,10 @@ bool AnalogWrapper::initialize_YARP(yarp::os::Searchable &params)
                         yError() << "AnalogWrapper: unable to open the analog server, address conflict";
                         return false;
                     }
-                    int wBase=parameters.get(1).asInt();
-                    int wTop=parameters.get(2).asInt();
-                    int base=parameters.get(3).asInt();
-                    int top=parameters.get(4).asInt();
+                    int wBase=parameters.get(1).asInt32();
+                    int wTop=parameters.get(2).asInt32();
+                    int base=parameters.get(3).asInt32();
+                    int top=parameters.get(4).asInt32();
 
                     yDebug()<<"--> "<<wBase<<" "<<wTop<<" "<<base<<" "<<top;
 
@@ -782,7 +782,7 @@ bool AnalogWrapper::initialize_YARP(yarp::os::Searchable &params)
                 }
                 createPorts(tmpPorts, _rate);
 
-                if (sumOfChannels!=deviceChannels.asInt())
+                if (sumOfChannels!=deviceChannels.asInt32())
                 {
                     yError() << "AnalogWrapper: Total number of mapped taxels does not correspond to total taxels";
                     return false;

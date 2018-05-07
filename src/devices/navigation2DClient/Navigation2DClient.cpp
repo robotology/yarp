@@ -57,7 +57,7 @@ bool yarp::dev::Navigation2DClient::open(yarp::os::Searchable &config)
 
     if (config.check("period"))
     {
-        m_period = config.find("period").asInt();
+        m_period = config.find("period").asInt32();
     }
     else
     {
@@ -162,7 +162,7 @@ bool yarp::dev::Navigation2DClient::getNavigationStatus(NavigationStatusEnum& st
         }
         else
         {
-            status = (NavigationStatusEnum) resp.get(1).asInt();
+            status = (NavigationStatusEnum) resp.get(1).asInt32();
             return true;
         }
     }
@@ -183,9 +183,9 @@ bool yarp::dev::Navigation2DClient::gotoTargetByAbsoluteLocation(Map2DLocation l
     b.addVocab(VOCAB_INAVIGATION);
     b.addVocab(VOCAB_NAV_GOTOABS);
     b.addString(loc.map_id);
-    b.addDouble(loc.x);
-    b.addDouble(loc.y);
-    b.addDouble(loc.theta);
+    b.addFloat64(loc.x);
+    b.addFloat64(loc.y);
+    b.addFloat64(loc.theta);
     bool ret = m_rpc_port_navigation_server.write(b, resp);
     if (ret)
     {
@@ -232,16 +232,16 @@ bool yarp::dev::Navigation2DClient::gotoTargetByLocationName(std::string locatio
 
     Map2DLocation loc;
     loc.map_id = resp_loc.get(1).asString();
-    loc.x = resp_loc.get(2).asDouble();
-    loc.y = resp_loc.get(3).asDouble();
-    loc.theta = resp_loc.get(4).asDouble();
+    loc.x = resp_loc.get(2).asFloat64();
+    loc.y = resp_loc.get(3).asFloat64();
+    loc.theta = resp_loc.get(4).asFloat64();
 
     b_nav.addVocab(VOCAB_INAVIGATION);
     b_nav.addVocab(VOCAB_NAV_GOTOABS);
     b_nav.addString(loc.map_id);
-    b_nav.addDouble(loc.x);
-    b_nav.addDouble(loc.y);
-    b_nav.addDouble(loc.theta);
+    b_nav.addFloat64(loc.x);
+    b_nav.addFloat64(loc.y);
+    b_nav.addFloat64(loc.theta);
 
     ret = m_rpc_port_navigation_server.write(b_nav, resp_nav);
     if (ret)
@@ -267,9 +267,9 @@ bool yarp::dev::Navigation2DClient::gotoTargetByRelativeLocation(double x, doubl
 
     b.addVocab(VOCAB_INAVIGATION);
     b.addVocab(VOCAB_NAV_GOTOREL);
-    b.addDouble(x);
-    b.addDouble(y);
-    b.addDouble(theta);
+    b.addFloat64(x);
+    b.addFloat64(y);
+    b.addFloat64(theta);
 
     bool ret = m_rpc_port_navigation_server.write(b, resp);
     if (ret)
@@ -296,9 +296,9 @@ bool  yarp::dev::Navigation2DClient::setInitialPose(Map2DLocation& loc)
     b.addVocab(VOCAB_INAVIGATION);
     b.addVocab(VOCAB_NAV_SET_INITIAL_POS);
     b.addString(loc.map_id);
-    b.addDouble(loc.x);
-    b.addDouble(loc.y);
-    b.addDouble(loc.theta);
+    b.addFloat64(loc.x);
+    b.addFloat64(loc.y);
+    b.addFloat64(loc.theta);
 
     bool ret = m_rpc_port_localization_server.write(b, resp);
     if (ret)
@@ -336,9 +336,9 @@ bool  yarp::dev::Navigation2DClient::getCurrentPosition(Map2DLocation& loc)
         else
         {
             loc.map_id = resp.get(1).asString();
-            loc.x = resp.get(2).asDouble();
-            loc.y = resp.get(3).asDouble();
-            loc.theta = resp.get(4).asDouble();
+            loc.x = resp.get(2).asFloat64();
+            loc.y = resp.get(3).asFloat64();
+            loc.theta = resp.get(4).asFloat64();
             return true;
         }
     }
@@ -394,9 +394,9 @@ bool yarp::dev::Navigation2DClient::getAbsoluteLocationOfCurrentTarget(Map2DLoca
         else
         {
             loc.map_id = resp.get(1).asString();
-            loc.x = resp.get(2).asDouble();
-            loc.y = resp.get(3).asDouble();
-            loc.theta = resp.get(4).asDouble();
+            loc.x = resp.get(2).asFloat64();
+            loc.y = resp.get(3).asFloat64();
+            loc.theta = resp.get(4).asFloat64();
             return true;
         }
     }
@@ -456,9 +456,9 @@ bool yarp::dev::Navigation2DClient::getRelativeLocationOfCurrentTarget(double& x
         }
         else
         {
-            x = resp.get(1).asDouble();
-            y = resp.get(2).asDouble();
-            theta = resp.get(3).asDouble();
+            x = resp.get(1).asFloat64();
+            y = resp.get(2).asFloat64();
+            theta = resp.get(3).asFloat64();
             return true;
         }
     }
@@ -491,9 +491,9 @@ bool yarp::dev::Navigation2DClient::storeCurrentPosition(std::string location_na
         else
         {
             loc.map_id = resp_nav.get(1).asString();
-            loc.x = resp_nav.get(2).asDouble();
-            loc.y = resp_nav.get(3).asDouble();
-            loc.theta = resp_nav.get(4).asDouble();
+            loc.x = resp_nav.get(2).asFloat64();
+            loc.y = resp_nav.get(3).asFloat64();
+            loc.theta = resp_nav.get(4).asFloat64();
         }
     }
     else
@@ -506,9 +506,9 @@ bool yarp::dev::Navigation2DClient::storeCurrentPosition(std::string location_na
     b_loc.addVocab(VOCAB_NAV_STORE_ABS);
     b_loc.addString(location_name);
     b_loc.addString(loc.map_id);
-    b_loc.addDouble(loc.x);
-    b_loc.addDouble(loc.y);
-    b_loc.addDouble(loc.theta);
+    b_loc.addFloat64(loc.x);
+    b_loc.addFloat64(loc.y);
+    b_loc.addFloat64(loc.theta);
 
     bool ret_loc = m_rpc_port_map_locations_server.write(b_loc, resp_loc);
     if (ret_loc)
@@ -536,9 +536,9 @@ bool yarp::dev::Navigation2DClient::storeLocation(std::string location_name, Map
     b.addVocab(VOCAB_NAV_STORE_ABS);
     b.addString(location_name);
     b.addString(loc.map_id);
-    b.addDouble(loc.x);
-    b.addDouble(loc.y);
-    b.addDouble(loc.theta);
+    b.addFloat64(loc.x);
+    b.addFloat64(loc.y);
+    b.addFloat64(loc.theta);
 
     bool ret = m_rpc_port_map_locations_server.write(b, resp);
     if (ret)
@@ -620,9 +620,9 @@ bool yarp::dev::Navigation2DClient::getLocation(std::string location_name, Map2D
         else
         {
             loc.map_id = resp.get(1).asString();
-            loc.x = resp.get(2).asDouble();
-            loc.y = resp.get(3).asDouble();
-            loc.theta = resp.get(4).asDouble();
+            loc.x = resp.get(2).asFloat64();
+            loc.y = resp.get(3).asFloat64();
+            loc.theta = resp.get(4).asFloat64();
         }
     }
     else

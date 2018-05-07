@@ -35,12 +35,12 @@ struct JoyData : public yarp::os::Portable
 
     bool read(yarp::os::ConnectionReader& connection) override
     {
-        Buttons.resize(connection.expectInt());
-        Sticks.resize(connection.expectInt());
-        Axes.resize(connection.expectInt());
-        Balls.resize(connection.expectInt());
-        Touch.resize(connection.expectInt());
-        Hats.resize(connection.expectInt());
+        Buttons.resize(connection.expectInt32());
+        Sticks.resize(connection.expectInt32());
+        Axes.resize(connection.expectInt32());
+        Balls.resize(connection.expectInt32());
+        Touch.resize(connection.expectInt32());
+        Hats.resize(connection.expectInt32());
         connection.expectBlock((char*)Buttons.data(), Buttons.length() * sizeof(double));
         connection.expectBlock((char*)Sticks.data(),  Sticks.length()  * sizeof(double));
         connection.expectBlock((char*)Axes.data(),    Axes.length()    * sizeof(double));
@@ -52,12 +52,12 @@ struct JoyData : public yarp::os::Portable
 
     bool write(yarp::os::ConnectionWriter& connection) override
     {
-        connection.appendInt(Buttons.length());
-        connection.appendInt(Sticks.length());
-        connection.appendInt(Axes.length()  );
-        connection.appendInt(Balls.length() );
-        connection.appendInt(Touch.length() );
-        connection.appendInt(Hats.size()  );
+        connection.appendInt32(Buttons.length());
+        connection.appendInt32(Sticks.length());
+        connection.appendInt32(Axes.length()  );
+        connection.appendInt32(Balls.length() );
+        connection.appendInt32(Touch.length() );
+        connection.appendInt32(Hats.size()  );
         connection.appendBlock((char*)Buttons.data(), Buttons.length() * sizeof(double));
         connection.appendBlock((char*)Sticks.data(),  Sticks.length()  * sizeof(double));
         connection.appendBlock((char*)Axes.data(),    Axes.length()    * sizeof(double));

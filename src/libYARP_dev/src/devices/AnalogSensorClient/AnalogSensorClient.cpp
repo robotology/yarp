@@ -268,7 +268,7 @@ int yarp::dev::AnalogSensorClient::calibrateSensor(const yarp::sig::Vector& valu
     cmd.addVocab(VOCAB_CALIBRATE);
     Bottle& l = cmd.addList();
     for (int i = 0; i < this->getChannels(); i++)
-         l.addDouble(value[i]);
+         l.addFloat64(value[i]);
     bool ok = rpcPort.write(cmd, response);
     return CHECK_FAIL(ok, response);
 }
@@ -278,7 +278,7 @@ int yarp::dev::AnalogSensorClient::calibrateChannel(int ch)
     Bottle cmd, response;
     cmd.addVocab(VOCAB_IANALOG);
     cmd.addVocab(VOCAB_CALIBRATE_CHANNEL);
-    cmd.addInt(ch);
+    cmd.addInt32(ch);
     bool ok = rpcPort.write(cmd, response);
     return CHECK_FAIL(ok, response);
 }
@@ -288,8 +288,8 @@ int yarp::dev::AnalogSensorClient::calibrateChannel(int ch, double value)
     Bottle cmd, response;
     cmd.addVocab(VOCAB_IANALOG);
     cmd.addVocab(VOCAB_CALIBRATE_CHANNEL);
-    cmd.addInt(ch);
-    cmd.addDouble(value);
+    cmd.addInt32(ch);
+    cmd.addFloat64(value);
     bool ok = rpcPort.write(cmd, response);
     return CHECK_FAIL(ok, response);
 }

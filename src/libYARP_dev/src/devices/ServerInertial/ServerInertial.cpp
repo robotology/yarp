@@ -282,7 +282,7 @@ bool yarp::dev::ServerInertial::open(yarp::os::Searchable& config)
 
     p.setReader(*this);
 
-    period = config.check("period",yarp::os::Value(0.005),"maximum period").asDouble();
+    period = config.check("period",yarp::os::Value(0.005),"maximum period").asFloat64();
     strict = config.check("strict",yarp::os::Value(false),"strict write").asBool();
 
     //Look for the device name (serial Port). Usually /dev/ttyUSB0
@@ -384,7 +384,7 @@ bool yarp::dev::ServerInertial::getInertial(yarp::os::Bottle &bot)
 
             // Euler+accel+gyro+magn orientation values
             for (int i = 0; i < nchannels; i++)
-                bot.addDouble (indata[i]);
+                bot.addFloat64 (indata[i]);
         }
         else
         {
@@ -447,9 +447,9 @@ void yarp::dev::ServerInertial::run()
             {
                 double euler_xyz[3], quaternion[4];
 
-                euler_xyz[0] = imuData.get(0).asDouble();
-                euler_xyz[1] = imuData.get(1).asDouble();
-                euler_xyz[2] = imuData.get(2).asDouble();
+                euler_xyz[0] = imuData.get(0).asFloat64();
+                euler_xyz[1] = imuData.get(1).asFloat64();
+                euler_xyz[2] = imuData.get(2).asFloat64();
 
                 convertEulerAngleYXZdegrees_to_quaternion(euler_xyz, quaternion);
 
@@ -465,14 +465,14 @@ void yarp::dev::ServerInertial::run()
                 rosData.orientation.w = quaternion[3];
                 rosData.orientation_covariance = covariance;
 
-                rosData.linear_acceleration.x = imuData.get(3).asDouble();   // [m/s^2]
-                rosData.linear_acceleration.y = imuData.get(4).asDouble();   // [m/s^2]
-                rosData.linear_acceleration.z = imuData.get(5).asDouble();   // [m/s^2]
+                rosData.linear_acceleration.x = imuData.get(3).asFloat64();   // [m/s^2]
+                rosData.linear_acceleration.y = imuData.get(4).asFloat64();   // [m/s^2]
+                rosData.linear_acceleration.z = imuData.get(5).asFloat64();   // [m/s^2]
                 rosData.linear_acceleration_covariance = covariance;
 
-                rosData.angular_velocity.x = imuData.get(6).asDouble();   // to be converted into rad/s (?) - verify with users
-                rosData.angular_velocity.y = imuData.get(7).asDouble();   // to be converted into rad/s (?) - verify with users
-                rosData.angular_velocity.z = imuData.get(8).asDouble();   // to be converted into rad/s (?) - verify with users
+                rosData.angular_velocity.x = imuData.get(6).asFloat64();   // to be converted into rad/s (?) - verify with users
+                rosData.angular_velocity.y = imuData.get(7).asFloat64();   // to be converted into rad/s (?) - verify with users
+                rosData.angular_velocity.z = imuData.get(8).asFloat64();   // to be converted into rad/s (?) - verify with users
                 rosData.angular_velocity_covariance = covariance;
 
                 rosPublisherPort.write();

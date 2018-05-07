@@ -131,9 +131,9 @@ void InputCallback::onRead(ImageType &img)
         yarp::os::Bottle b;
         yarp::os::BufferedPort<ImageType>::getEnvelope(b);
         if (b.size() == 3) {
-            roll += OVR::DegreeToRad(static_cast<float>(b.get(0).asDouble()));
-            pitch += OVR::DegreeToRad(static_cast<float>(b.get(1).asDouble()));
-            yaw += OVR::DegreeToRad(static_cast<float>(b.get(2).asDouble()));
+            roll += OVR::DegreeToRad(static_cast<float>(b.get(0).asFloat64()));
+            pitch += OVR::DegreeToRad(static_cast<float>(b.get(1).asFloat64()));
+            yaw += OVR::DegreeToRad(static_cast<float>(b.get(2).asFloat64()));
         }
         //yDebug() << b.toString() << roll << pitch << yaw;
 

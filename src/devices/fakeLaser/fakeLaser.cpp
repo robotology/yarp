@@ -54,7 +54,7 @@ bool FakeLaser::open(yarp::os::Searchable& config)
     if (br != false)
     {
         yarp::os::Searchable& general_config = config.findGroup("GENERAL");
-        period = general_config.check("Period", Value(50), "Period of the sampling thread").asInt();
+        period = general_config.check("Period", Value(50), "Period of the sampling thread").asInt32();
     }
 
     string string_test_mode = config.check("test", Value(string("use_pattern")), "string to select test mode").asString();
@@ -330,9 +330,9 @@ void FakeLaser::run()
             Bottle* b = m_loc_port->read(false);
             if (b)
             {
-                m_loc_x = b->get(0).asDouble();
-                m_loc_y = b->get(1).asDouble();
-                m_loc_t = b->get(2).asDouble();
+                m_loc_x = b->get(0).asFloat64();
+                m_loc_y = b->get(1).asFloat64();
+                m_loc_t = b->get(2).asFloat64();
             }
         }
         else if (m_loc_mode == LOC_FROM_CLIENT)

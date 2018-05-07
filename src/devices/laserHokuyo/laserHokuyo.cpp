@@ -49,17 +49,17 @@ bool laserHokuyo::open(yarp::os::Searchable& config)
 
     //list of mandatory options
     //TODO change comments
-    period = general_config.check("Period", Value(50), "Period of the sampling thread").asInt();
+    period = general_config.check("Period", Value(50), "Period of the sampling thread").asInt32();
 
     if (general_config.check("max_angle") == false) { yError() << "Missing max_angle param"; return false; }
     if (general_config.check("min_angle") == false) { yError() << "Missing min_angle param"; return false; }
-    max_angle = general_config.find("max_angle").asDouble();
-    min_angle = general_config.find("min_angle").asDouble();
+    max_angle = general_config.find("max_angle").asFloat64();
+    min_angle = general_config.find("min_angle").asFloat64();
 
-    start_position = general_config.check("Start_Position", Value(0), "Start position").asInt();
-    end_position = general_config.check("End_Position", Value(1080), "End Position").asInt();
+    start_position = general_config.check("Start_Position", Value(0), "Start position").asInt32();
+    end_position = general_config.check("End_Position", Value(1080), "End Position").asInt32();
 
-    error_codes = general_config.check("Convert_Error_Codes", Value(0), "Substitute error codes with legal measurments").asInt();
+    error_codes = general_config.check("Convert_Error_Codes", Value(0), "Substitute error codes with legal measurments").asInt32();
     std::string s = general_config.check("Laser_Mode", Value("GD"), "Laser Mode (GD/MD").asString();
 
     if (general_config.check("Measurement_Units"))

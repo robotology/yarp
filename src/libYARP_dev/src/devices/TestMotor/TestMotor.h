@@ -71,7 +71,7 @@ public:
     }
 
     virtual bool open(yarp::os::Searchable& config) override {
-        njoints = config.check("axes",yarp::os::Value(4),"number of axes to pretend to have").asInt();
+        njoints = config.check("axes",yarp::os::Value(4),"number of axes to pretend to have").asInt32();
         pos.resize(njoints);
         speed.resize(njoints);
         acc.resize(njoints);
@@ -83,7 +83,7 @@ public:
             vel[i] = 0;
         }
 
-        delay=config.check("delay",yarp::os::Value(0), "delay in each call for debugging purpose, in ms").asInt();
+        delay=config.check("delay",yarp::os::Value(0), "delay in each call for debugging purpose, in ms").asInt32();
         return true;
     }
 

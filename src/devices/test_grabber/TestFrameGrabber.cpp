@@ -53,26 +53,26 @@ bool TestFrameGrabber::open(yarp::os::Searchable& config) {
     Value* retM;
     retM=Value::makeList("1.0 0.0 0.0 0.0 1.0 0.0 0.0 0.0 1.0");
     w = config.check("width",yarp::os::Value(320),
-                     "desired width of test image").asInt();
+                     "desired width of test image").asInt32();
     h = config.check("height",yarp::os::Value(240),
-                     "desired height of test image").asInt();
+                     "desired height of test image").asInt32();
     horizontalFov=config.check("horizontalFov",Value(1.0),
-                               "desired horizontal fov of test image").asDouble();
+                               "desired horizontal fov of test image").asFloat64();
     verticalFov=config.check("verticalFov",Value(2.0),
-                               "desired vertical fov of test image").asDouble();
+                               "desired vertical fov of test image").asFloat64();
     mirror=config.check("mirror",Value(false),
                         "mirroring disabled by default").asBool();
-    intrinsic.put("focalLengthX",config.check("focalLengthX",Value(4.0),"Horizontal component of the focal lenght of the test_grabber").asDouble());
-    intrinsic.put("focalLengthY",config.check("focalLengthY",Value(5.0),"Vertical component of the focal lenght of the test_grabber").asDouble());
-    intrinsic.put("principalPointX",config.check("principalPointX",Value(6.0),"X coordinate of the principal point of the test_grabber").asDouble());
-    intrinsic.put("principalPointY",config.check("principalPointY",Value(7.0),"Y coordinate of the principal point of the test_grabber").asDouble());
+    intrinsic.put("focalLengthX",config.check("focalLengthX",Value(4.0),"Horizontal component of the focal lenght of the test_grabber").asFloat64());
+    intrinsic.put("focalLengthY",config.check("focalLengthY",Value(5.0),"Vertical component of the focal lenght of the test_grabber").asFloat64());
+    intrinsic.put("principalPointX",config.check("principalPointX",Value(6.0),"X coordinate of the principal point of the test_grabber").asFloat64());
+    intrinsic.put("principalPointY",config.check("principalPointY",Value(7.0),"Y coordinate of the principal point of the test_grabber").asFloat64());
     intrinsic.put("retificationMatrix",config.check("retificationMatrix",*retM,"Matrix that describes the lens' distortion(fake)"));
     intrinsic.put("distortionModel",config.check("distortionModel",Value("FishEye"),"Reference to group of parameters describing the distortion model of the camera").asString());
-    intrinsic.put("k1",config.check("k1",Value(8.0),"Radial distortion coefficient of the lens(fake)").asDouble());
-    intrinsic.put("k2",config.check("k2",Value(9.0),"Radial distortion coefficient of the lens(fake)").asDouble());
-    intrinsic.put("k3",config.check("k3",Value(10.0),"Radial distortion coefficient of the lens(fake)").asDouble());
-    intrinsic.put("t1",config.check("t1",Value(11.0),"Tangential distortion of the lens(fake)").asDouble());
-    intrinsic.put("t2",config.check("t2",Value(12.0),"Tangential distortion of the lens(fake)").asDouble());
+    intrinsic.put("k1",config.check("k1",Value(8.0),"Radial distortion coefficient of the lens(fake)").asFloat64());
+    intrinsic.put("k2",config.check("k2",Value(9.0),"Radial distortion coefficient of the lens(fake)").asFloat64());
+    intrinsic.put("k3",config.check("k3",Value(10.0),"Radial distortion coefficient of the lens(fake)").asFloat64());
+    intrinsic.put("t1",config.check("t1",Value(11.0),"Tangential distortion of the lens(fake)").asFloat64());
+    intrinsic.put("t2",config.check("t2",Value(12.0),"Tangential distortion of the lens(fake)").asFloat64());
     //Only for debug
     CameraConfig conf1, conf2, conf3;
     conf1.height=128; conf1.width=128; conf1.framerate=60.0; conf1.pixelCoding=VOCAB_PIXEL_RGB;
@@ -84,11 +84,11 @@ bool TestFrameGrabber::open(yarp::os::Searchable& config) {
     delete retM;
 
     if (config.check("freq",val,"rate of test images in Hz")) {
-        freq = val->asDouble();
+        freq = val->asFloat64();
         period = 1/freq;
     } else if (config.check("period",val,
                             "period of test images in seconds")) {
-        period = val->asDouble();
+        period = val->asFloat64();
         if(period<=0) {
             period =0;
             freq = -1;

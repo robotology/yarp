@@ -41,7 +41,7 @@ bool PumaCalibrator::open(yarp::os::Searchable& config)
         return false;
     }
 
-    int nj = p.findGroup("GENERAL").find("Joints").asInt();
+    int nj = p.findGroup("GENERAL").find("Joints").asInt32();
     type = new unsigned char[nj];
     yAssert(type != NULL);
     speed1 = new double[nj];
@@ -59,17 +59,17 @@ bool PumaCalibrator::open(yarp::os::Searchable& config)
     Bottle& xtmp = p.findGroup("CALIBRATION").findGroup("PositionZero");
     yAssert(xtmp.size() == nj+1);
     for (int i = 1; i < xtmp.size(); i++)
-        PositionZero[i-1] = xtmp.get(i).asDouble();
+        PositionZero[i-1] = xtmp.get(i).asFloat64();
 
     xtmp = p.findGroup("CALIBRATION").findGroup("Speed1");
     yAssert(xtmp.size() == nj+1);
     for (int i = 1; i < xtmp.size(); i++)
-        speed1[i-1] = xtmp.get(i).asDouble();
+        speed1[i-1] = xtmp.get(i).asFloat64();
 
     xtmp = p.findGroup("CALIBRATION").findGroup("accs");
     yAssert(xtmp.size() == nj+1);
     for (int i = 1; i < xtmp.size(); i++)
-        accs[i-1] = (unsigned char) xtmp.get(i).asDouble();
+        accs[i-1] = (unsigned char) xtmp.get(i).asFloat64();
 
     return true;
 }

@@ -115,7 +115,7 @@ public:
 
         strcpy(comport, config.check("comport", yarp::os::Value("/dev/ttyS0")).asString().c_str());
 
-        int baudrate = config.check("baudrate", yarp::os::Value(38400)).asInt();
+        int baudrate = config.check("baudrate", yarp::os::Value(38400)).asInt32();
 
         Property conf;
         // no arguments, use a default

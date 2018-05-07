@@ -50,7 +50,7 @@ void BatteryInputPortProcessor::onRead(yarp::os::Bottle &b)
         //compare network time
         if (tmpDT*1000<BATTERY_TIMEOUT)
         {
-            state = b.get(5).asInt();
+            state = b.get(5).asInt32();
         }
         else
         {
@@ -74,7 +74,7 @@ void BatteryInputPortProcessor::onRead(yarp::os::Bottle &b)
     //now compare timestamps
     if ((1000*(newStamp.getTime()-lastStamp.getTime()))<BATTERY_TIMEOUT)
     {
-        state = b.get(5).asInt();
+        state = b.get(5).asInt32();
     }
     else
     {
@@ -102,7 +102,7 @@ inline int BatteryInputPortProcessor::getLast(yarp::os::Bottle &data, Stamp &stm
 double BatteryInputPortProcessor::getVoltage()
 {
     mutex.wait();
-    double voltage = lastBottle.get(0).asInt();
+    double voltage = lastBottle.get(0).asInt32();
     mutex.post();
     return voltage;
 }
@@ -110,7 +110,7 @@ double BatteryInputPortProcessor::getVoltage()
 double BatteryInputPortProcessor::getCurrent()
 {
     mutex.wait();
-    double current = lastBottle.get(1).asInt();
+    double current = lastBottle.get(1).asInt32();
     mutex.post();
     return current;
 }
@@ -118,7 +118,7 @@ double BatteryInputPortProcessor::getCurrent()
 double BatteryInputPortProcessor::getCharge()
 {
     mutex.wait();
-    double charge = lastBottle.get(2).asInt();
+    double charge = lastBottle.get(2).asInt32();
     mutex.post();
     return charge;
 }
@@ -126,7 +126,7 @@ double BatteryInputPortProcessor::getCharge()
 int    BatteryInputPortProcessor::getStatus()
 {
     mutex.wait();
-    int status = lastBottle.get(3).asInt();
+    int status = lastBottle.get(3).asInt32();
     mutex.post();
     return status;
 }
@@ -134,7 +134,7 @@ int    BatteryInputPortProcessor::getStatus()
 double BatteryInputPortProcessor::getTemperature()
 {
     mutex.wait();
-    double temperature = lastBottle.get(4).asInt();
+    double temperature = lastBottle.get(4).asInt32();
     mutex.post();
     return temperature;
 }
@@ -187,7 +187,7 @@ bool yarp::dev::BatteryClient::open(yarp::os::Searchable &config)
 
     if (config.check("period"))
     {
-        _rate = config.find("period").asInt();
+        _rate = config.find("period").asInt32();
     }
     else
     {

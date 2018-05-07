@@ -566,7 +566,7 @@ bool MEIMotionControl::open(yarp::os::Searchable& config) {
 		}
 
 
-    int nj = robot.findGroup("GENERAL").check("Joints", Value(1), "Number of degrees of freedom").asInt();
+    int nj = robot.findGroup("GENERAL").check("Joints", Value(1), "Number of degrees of freedom").asInt32();
     MEIMotionControlParameters params(nj);
     params._njoints = nj;
 
@@ -588,14 +588,14 @@ bool MEIMotionControl::open(yarp::os::Searchable& config) {
         printf("AxisMap does not have the right number of entries\n");
         return false;
     }
-    for (i = 1; i < params._njoints+1; i++) params._axis_map[i-1] = xtmp.get(i).asInt();
+    for (i = 1; i < params._njoints+1; i++) params._axis_map[i-1] = xtmp.get(i).asInt32();
 
 	xtmp = robot.findGroup("GENERAL").findGroup("Signs","a list of Signs for the axes");
 	if (params._njoints != 6) {
         printf("Signs does not have the right number of entries\n");
         return false;
     }
-    for (i = 1; i < params._njoints+1; i++) params._signs[i-1] = xtmp.get(i).asInt();
+    for (i = 1; i < params._njoints+1; i++) params._signs[i-1] = xtmp.get(i).asInt32();
 
 	xtmp = robot.findGroup("GENERAL").findGroup("Stiff","a list of Stiff for the axes");
 	if (params._njoints != 6) {
@@ -603,14 +603,14 @@ bool MEIMotionControl::open(yarp::os::Searchable& config) {
         return false;
     }
 
-	for (i = 1; i < params._njoints+1; i++) params._stiffPID[i-1] = xtmp.get(i).asInt();
+	for (i = 1; i < params._njoints+1; i++) params._stiffPID[i-1] = xtmp.get(i).asInt32();
 
 	xtmp = robot.findGroup("GENERAL").findGroup("MaxDAC","a list of MaxDAC values");
 	if (params._njoints != 6) {
         printf("MaxDAC does not have the right number of entries\n");
         return false;
     }
-    for (i = 1; i < params._njoints+1; i++) params._maxDAC[i-1] = xtmp.get(i).asDouble();
+    for (i = 1; i < params._njoints+1; i++) params._maxDAC[i-1] = xtmp.get(i).asFloat64();
 
 
     xtmp = robot.findGroup("GENERAL").findGroup("Encoder","a list of scales for the encoders");
@@ -618,14 +618,14 @@ bool MEIMotionControl::open(yarp::os::Searchable& config) {
         printf("Encoder does not have the right number of entries\n");
         return false;
     }
-	for (i = 1; i < params._njoints+1; i++) params._encoderToAngles[i-1] = xtmp.get(i).asDouble();
+	for (i = 1; i < params._njoints+1; i++) params._encoderToAngles[i-1] = xtmp.get(i).asFloat64();
 
     xtmp = robot.findGroup("GENERAL").findGroup("Zeros","a list of offsets for the zero point");
 	if (params._njoints != 6) {
         printf("Zeros does not have the right number of entries\n");
         return false;
     }
-    for (i = 1; i < params._njoints+1; i++) params._zeros[i-1] = xtmp.get(i).asDouble();
+    for (i = 1; i < params._njoints+1; i++) params._zeros[i-1] = xtmp.get(i).asFloat64();
 
 
     ////// PIDS
@@ -636,16 +636,16 @@ bool MEIMotionControl::open(yarp::os::Searchable& config) {
             sprintf(tmp, "Pid%d", j);
             xtmp = robot.findGroup("PIDS").findGroup(tmp);
 
-			_filter_coeffs[j][r.DF_P]			= params._pids[j].kp = xtmp.get(1).asInt();
-			_filter_coeffs[j][r.DF_I]			= params._pids[j].ki = xtmp.get(2).asInt();
-			_filter_coeffs[j][r.DF_D]			= params._pids[j].kd = xtmp.get(3).asInt();
-			_filter_coeffs[j][r.DF_ACCEL_FF]	= xtmp.get(4).asInt();
-			_filter_coeffs[j][r.DF_VEL_FF]		= xtmp.get(5).asInt();
-			_filter_coeffs[j][r.DF_I_LIMIT]		= params._pids[j].max_int = xtmp.get(6).asInt();
-			_filter_coeffs[j][r.DF_OFFSET]		= params._pids[j].offset = xtmp.get(7).asInt();
-			_filter_coeffs[j][r.DF_DAC_LIMIT]	= params._pids[j].max_output =xtmp.get(8).asInt();
-			_filter_coeffs[j][r.DF_SHIFT]		= xtmp.get(9).asInt();
-			_filter_coeffs[j][r.DF_FRICT_FF]	= xtmp.get(10).asInt();
+			_filter_coeffs[j][r.DF_P]			= params._pids[j].kp = xtmp.get(1).asInt32();
+			_filter_coeffs[j][r.DF_I]			= params._pids[j].ki = xtmp.get(2).asInt32();
+			_filter_coeffs[j][r.DF_D]			= params._pids[j].kd = xtmp.get(3).asInt32();
+			_filter_coeffs[j][r.DF_ACCEL_FF]	= xtmp.get(4).asInt32();
+			_filter_coeffs[j][r.DF_VEL_FF]		= xtmp.get(5).asInt32();
+			_filter_coeffs[j][r.DF_I_LIMIT]		= params._pids[j].max_int = xtmp.get(6).asInt32();
+			_filter_coeffs[j][r.DF_OFFSET]		= params._pids[j].offset = xtmp.get(7).asInt32();
+			_filter_coeffs[j][r.DF_DAC_LIMIT]	= params._pids[j].max_output =xtmp.get(8).asInt32();
+			_filter_coeffs[j][r.DF_SHIFT]		= xtmp.get(9).asInt32();
+			_filter_coeffs[j][r.DF_FRICT_FF]	= xtmp.get(10).asInt32();
 
 			params._pids[j].kp = (double)_filter_coeffs[j][r.DF_P];
             params._pids[j].kd = (double)_filter_coeffs[j][r.DF_D];
@@ -666,14 +666,14 @@ bool MEIMotionControl::open(yarp::os::Searchable& config) {
         printf("Max does not have the right number of entries\n");
         return false;
     }
-    for(i=1;i<params._njoints+1; i++) params._limitsMax[i-1]=xtmp.get(i).asDouble();
+    for(i=1;i<params._njoints+1; i++) params._limitsMax[i-1]=xtmp.get(i).asFloat64();
 
     xtmp = robot.findGroup("LIMITS").findGroup("Min","a list of minimum angles (in degrees)");
 	if (params._njoints != 6) {
         printf("Min does not have the right number of entries\n");
         return false;
     }
-    for(i=1;i<params._njoints+1; i++) params._limitsMin[i-1]=xtmp.get(i).asDouble();
+    for(i=1;i<params._njoints+1; i++) params._limitsMin[i-1]=xtmp.get(i).asFloat64();
 
 	fromfileflag=false;
 
@@ -686,7 +686,7 @@ else
 	int i;
 
 	int nj = p.findGroup("GENERAL").check("Joints",Value(1),
-                                          "Number of degrees of freedom").asInt();
+                                          "Number of degrees of freedom").asInt32();
 	MEIMotionControlParameters params(nj);
     params._njoints = nj;
 
@@ -696,7 +696,7 @@ else
 
     for (i = 1; i < xtmp.size(); i++)
 	{
-		params._maxDAC[i-1] = xtmp.get(i).asDouble();
+		params._maxDAC[i-1] = xtmp.get(i).asFloat64();
 	}
 
 
@@ -705,7 +705,7 @@ else
 	printf("_axis_map = ");
     for (i = 1; i < xtmp.size(); i++)
 	{
-		params._axis_map[i-1] = xtmp.get(i).asInt();
+		params._axis_map[i-1] = xtmp.get(i).asInt32();
 		printf("%d ",params._axis_map[i-1]);
 	}
 	printf("\n");
@@ -714,7 +714,7 @@ else
 	yAssert(xtmp.size() == nj+1);
     for (i = 1; i < xtmp.size(); i++)
 	{
-		params._fwdCouple[i-1] = xtmp.get(i).asDouble();
+		params._fwdCouple[i-1] = xtmp.get(i).asFloat64();
 	}
 	printf("\n");
 
@@ -723,21 +723,21 @@ else
 	yAssert(xtmp.size() == nj+1);
     for (i = 1; i < xtmp.size(); i++)
 	{
-		params._zeros[i-1] = xtmp.get(i).asDouble();
+		params._zeros[i-1] = xtmp.get(i).asFloat64();
 	}
 
 	xtmp = p.findGroup("Signs");
 	yAssert(xtmp.size() == nj+1);
 	for (i = 1; i < xtmp.size(); i++)
 	{
-		params._signs[i-1] = xtmp.get(i).asDouble();
+		params._signs[i-1] = xtmp.get(i).asFloat64();
 	}
 
 	xtmp = p.findGroup("Stiff");
 	yAssert(xtmp.size() == nj+1);
     for (i = 1; i < xtmp.size(); i++)
 	{
-		params._stiffPID[i-1] = xtmp.get(i).asInt();
+		params._stiffPID[i-1] = xtmp.get(i).asInt32();
 	}
 
     /////// LIMITS
@@ -745,14 +745,14 @@ else
  	yAssert(xtmp.size() == nj+1);
     for(i=1;i<xtmp.size(); i++)
 	{
-		params._limitsMax[i-1]=xtmp.get(i).asDouble();
+		params._limitsMax[i-1]=xtmp.get(i).asFloat64();
 	}
 
 	xtmp = p.findGroup("Min");
 	yAssert(xtmp.size() == nj+1);
     for(i=1;i<xtmp.size(); i++)
 	{
-		params._limitsMin[i-1]=xtmp.get(i).asDouble();
+		params._limitsMin[i-1]=xtmp.get(i).asFloat64();
 	}
 
 
@@ -765,16 +765,16 @@ else
             sprintf(tmp, "LPid%d", j);
             xtmp = p.findGroup(tmp);
 
-			_filter_coeffs[j][r.DF_P]			= params._pids[j].kp = xtmp.get(1).asInt();
-			_filter_coeffs[j][r.DF_I]			= params._pids[j].ki = xtmp.get(2).asInt();
-			_filter_coeffs[j][r.DF_D]			= params._pids[j].kd = xtmp.get(3).asInt();
-			_filter_coeffs[j][r.DF_ACCEL_FF]	= xtmp.get(4).asInt();
-			_filter_coeffs[j][r.DF_VEL_FF]		= xtmp.get(5).asInt();
-			_filter_coeffs[j][r.DF_I_LIMIT]		= params._pids[j].max_int = xtmp.get(6).asInt();
-			_filter_coeffs[j][r.DF_OFFSET]		= params._pids[j].offset = xtmp.get(7).asInt();
-			_filter_coeffs[j][r.DF_DAC_LIMIT]	= params._pids[j].max_output =xtmp.get(8).asInt();
-			_filter_coeffs[j][r.DF_SHIFT]		= xtmp.get(9).asInt();
-			_filter_coeffs[j][r.DF_FRICT_FF]	= xtmp.get(10).asInt();
+			_filter_coeffs[j][r.DF_P]			= params._pids[j].kp = xtmp.get(1).asInt32();
+			_filter_coeffs[j][r.DF_I]			= params._pids[j].ki = xtmp.get(2).asInt32();
+			_filter_coeffs[j][r.DF_D]			= params._pids[j].kd = xtmp.get(3).asInt32();
+			_filter_coeffs[j][r.DF_ACCEL_FF]	= xtmp.get(4).asInt32();
+			_filter_coeffs[j][r.DF_VEL_FF]		= xtmp.get(5).asInt32();
+			_filter_coeffs[j][r.DF_I_LIMIT]		= params._pids[j].max_int = xtmp.get(6).asInt32();
+			_filter_coeffs[j][r.DF_OFFSET]		= params._pids[j].offset = xtmp.get(7).asInt32();
+			_filter_coeffs[j][r.DF_DAC_LIMIT]	= params._pids[j].max_output =xtmp.get(8).asInt32();
+			_filter_coeffs[j][r.DF_SHIFT]		= xtmp.get(9).asInt32();
+			_filter_coeffs[j][r.DF_FRICT_FF]	= xtmp.get(10).asInt32();
 
 			params._pids[j].kp = (double)_filter_coeffs[j][r.DF_P];
             params._pids[j].ki = (double)_filter_coeffs[j][r.DF_I];
@@ -796,7 +796,7 @@ else
 	yAssert(xtmp.size() == nj+1);
     for (i = 1; i < xtmp.size(); i++)
 	{
-		encWheels[i-1] = xtmp.get(i).asDouble();
+		encWheels[i-1] = xtmp.get(i).asFloat64();
 	}
 
     xtmp = p.findGroup("Encoder");
@@ -804,7 +804,7 @@ else
 
     for (i = 1; i < xtmp.size(); i++)
 	{
-		encoders[i-1] = xtmp.get(i).asDouble();
+		encoders[i-1] = xtmp.get(i).asFloat64();
 		params._encoderToAngles[i-1] = encoders[i-1]*encWheels[i-1];
 	}
 
