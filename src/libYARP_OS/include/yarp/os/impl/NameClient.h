@@ -11,22 +11,17 @@
 #define YARP_OS_IMPL_NAMECLIENT_H
 
 #include <yarp/os/Contact.h>
-#include <yarp/os/Bottle.h>
-#include <yarp/os/Contact.h>
-#include <yarp/os/NameStore.h>
-#include <yarp/os/ResourceFinder.h>
-#include <yarp/os/Property.h>
 #include <yarp/os/Nodes.h>
-#include <yarp/os/Network.h>
 
 namespace yarp {
-    namespace os {
-        namespace impl {
-            class NameClient;
-            class NameServer;
-        }
-    }
-}
+namespace os {
+
+class Bottle;
+class NameStore;
+
+namespace impl {
+
+class NameServer;
 
 /**
  * Client for YARP name server.  There is one global client available
@@ -35,9 +30,17 @@ namespace yarp {
  * name server these days - it is now a regular port, that can read
  * and respond to messages in the bottle format.
  */
-class YARP_OS_impl_API yarp::os::impl::NameClient
+class YARP_OS_impl_API NameClient
 {
+private:
+    NameClient();
+    NameClient(const NameClient& nic);
+
 public:
+    /**
+     * Destructor
+     */
+    virtual ~NameClient();
 
     /**
      * Get an instance of the name client.
@@ -46,35 +49,15 @@ public:
      *
      * @return the name client
      */
-    static NameClient& getNameClient()
-    {
-        static NameClient instance;
-        return instance;
-    }
+    static NameClient& getNameClient();
 
-    static NameClient *create()
-    {
-        return new NameClient();
-    }
+    static NameClient* create();
 
     /**
      * The address of the name server.
      * @return the address of the name server
      */
-    Contact getAddress()
-    {
-        setup();
-        return address;
-    }
-
-    /**
-     * Deprecated, this is the identity function.
-     *
-     */
-    ConstString getNamePart(const ConstString& name)
-    {
-        return name;
-    }
+    Contact getAddress();
 
     /**
      * Look up the address of a named port.
@@ -114,11 +97,7 @@ public:
      * @return the address extracted from the reply, all errors result
      * in a non-valid address.
      */
-    Contact probe(const ConstString& cmd)
-    {
-        ConstString result = send(cmd);
-        return extractAddress(result);
-    }
+    Contact probe(const ConstString& cmd);
 
     /**
      * Extract an address from its text representation.
@@ -145,12 +124,12 @@ public:
      * Send a message to the nameserver in Bottle format, and return the
      * result.
      *
-     * @param cmd the message to send.
+     * @param[in] cmd the message to send.
+     * @param[out] the reply from the name server.
      *
-     * @return the reply from the name server.
+     * @return true on success.
      */
-    bool send(yarp::os::Bottle& cmd,
-              yarp::os::Bottle& reply);
+    bool send(yarp::os::Bottle& cmd, yarp::os::Bottle& reply);
 
     /**
      * For testing, the nameclient can be set to use a "fake" name server
@@ -158,21 +137,14 @@ public:
      *
      * @param fake whether to use a fake name server
      */
-    void setFakeMode(bool fake = true)
-    {
-        this->fake = fake;
-    }
+    void setFakeMode(bool fake = true);
 
     /**
      * Check whether a fake name server is being used.
      *
-     *
      * @return true iff a fake name server is being used.
      */
-    bool isFakeMode()
-    {
-        return fake;
-    }
+    bool isFakeMode() const;
 
     /**
      * Control whether the name client should scan for the name server
@@ -180,10 +152,7 @@ public:
      *
      * @param allow true if the name client may scan for the name server.
      */
-    void setScan(bool allow = true)
-    {
-        allowScan = allow;
-    }
+    void setScan(bool allow = true);
 
     /**
      * Control whether the name client can save the address of the name
@@ -191,10 +160,7 @@ public:
      *
      * @param allow true if the name client may save the name server address.
      */
-    void setSave(bool allow = true)
-    {
-        allowSaveScan = allow;
-    }
+    void setSave(bool allow = true);
 
     /**
      * Check whether the name client scanned for the address of the name
@@ -202,10 +168,7 @@ public:
      *
      * @return true iff the name client scanned for the name server.
      */
-    bool didScan()
-    {
-        return reportScan;
-    }
+    bool didScan();
 
     /**
      * Check whether the name client saved the address of the name
@@ -213,10 +176,7 @@ public:
      *
      * @return true iff the name client saved the address of the name server.
      */
-    bool didSave()
-    {
-        return reportSaveScan;
-    }
+    bool didSave();
 
     /**
      * Force the name client to reread the cached location of the
@@ -228,59 +188,34 @@ public:
 
     bool setContact(const yarp::os::Contact& contact);
 
-    virtual ~NameClient();
+    void queryBypass(NameStore* store);
 
-    void queryBypass(NameStore *store)
-    {
-        altStore = store;
-    }
+    NameStore* getQueryBypass();
 
-    NameStore *getQueryBypass()
-    {
-        return altStore;
-    }
+    yarp::os::ConstString getMode();
 
-    yarp::os::ConstString getMode()
-    {
-        return mode.c_str();
-    }
-
-    /**
-     * Make a singleton resource finder available to YARP,
-     * for finding configuration files.
-     */
-    ResourceFinder& getResourceFinder()
-    {
-        return resourceFinder;
-    }
-
-    yarp::os::Nodes& getNodes()
-    {
-        return nodes;
-    }
+    yarp::os::Nodes& getNodes();
 
 private:
-    NameClient();
-    NameClient(const NameClient& nic);
-
-    NameServer& getServer();
-
-
     Contact address;
     ConstString host;
     ConstString mode;
     bool fake;
-    NameServer *fakeServer;
+    NameServer* fakeServer;
     bool allowScan;
     bool allowSaveScan;
     bool reportScan;
     bool reportSaveScan;
     bool isSetup;
-    NameStore *altStore;
-    yarp::os::ResourceFinder resourceFinder;
+    NameStore* altStore;
     yarp::os::Nodes nodes;
 
+    NameServer& getServer();
     void setup();
 };
+
+} // namespace impl
+} // namespace os
+} // namespace yarp
 
 #endif // YARP_OS_IMPL_NAMECLIENT_H

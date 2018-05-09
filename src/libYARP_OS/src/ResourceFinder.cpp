@@ -18,7 +18,6 @@
 #include <yarp/os/Time.h>
 
 #include <yarp/os/impl/Logger.h>
-#include <yarp/os/impl/NameClient.h>
 #include <yarp/os/impl/NameConfig.h>
 #include <yarp/os/impl/PlatformSysStat.h>
 
@@ -943,7 +942,8 @@ ResourceFinder ResourceFinder::findNestedResourceFinder(const char *key)
 
 ResourceFinder& ResourceFinder::getResourceFinderSingleton()
 {
-    return NameClient::getNameClient().getResourceFinder();
+    static ResourceFinder instance;
+    return instance;
 }
 
 ConstString ResourceFinder::getDataHomeWithPossibleCreation(bool mayCreate)

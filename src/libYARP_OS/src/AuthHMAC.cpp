@@ -17,6 +17,7 @@
 #include <yarp/os/ConstString.h>
 #include <yarp/os/Property.h>
 #include <yarp/os/Network.h>
+#include <yarp/os/ResourceFinder.h>
 #include <yarp/os/Log.h>
 #include <yarp/os/impl/NameClient.h>
 
@@ -48,7 +49,7 @@ AuthHMAC::AuthHMAC() :
     }
     memset(&context, 0, sizeof(HMAC_CONTEXT));
     ConstString key;
-    ResourceFinder& rf = NameClient::getNameClient().getResourceFinder();
+    ResourceFinder& rf = ResourceFinder::getResourceFinderSingleton();
     ConstString fname;
     Network::lock();
     ResourceFinderOptions opt;
