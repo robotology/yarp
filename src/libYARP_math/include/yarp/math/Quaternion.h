@@ -85,7 +85,7 @@ public:
     *
     * The returned quaternion is ordered in the following way:
     * - s = q_0 \in \mathbb{R} the real part of the quaternion
-    * - r = \begin{bmatrix} q_1 \\ q_2 \\ q_3 \end{bmatrix} \in \mathbb{R}^3 the imaginary part of the quaternion
+    * - r = \f$ \begin{bmatrix} q_1 \\ q_2 \\ q_3 \end{bmatrix} \in \mathbb{R}^3 \f$ the imaginary part of the quaternion
     *
     * The input rotation matrix and the output quaternion are related by the following formula:
     * \f[

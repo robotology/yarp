@@ -261,8 +261,8 @@ public:
     *      \sin(\theta)      & \cos(\theta)  & 0              \\
     *      0                 & 0             & 1              \\
     *  \end{bmatrix}
-    * ,
     * \f]
+    * ,
     * \f[
     * RotY(\theta)
     * =
@@ -271,7 +271,6 @@ public:
     *      0                 & 1             & 0              \\
     *      -\sin(\theta)     & 0             & \cos(\theta)   \\
     *  \end{bmatrix}
-    *
     * \f]
     * and
     * \f[
@@ -283,7 +282,7 @@ public:
     *      0 & \sin(\theta)  & \cos(\theta)   \\
     *  \end{bmatrix}
     * \f]
-    * where \f$\hspace{1em} {}^f R_s \in \mathbb{R}^{3 \times 3} \f$ is the rotation that left-multiplied by a 3d column vector
+    * where \f$ {}^f R_s \in \mathbb{R}^{3 \times 3} \f$ is the rotation that left-multiplied by a 3d column vector
     * expressed in \f$ s \f$ it returns it expressed in \f$ f \f$ .
     *
     * @param[in] sens_index The index of the specified sensor (should be between 0 and getNrOfOrientationSensors()-1).
