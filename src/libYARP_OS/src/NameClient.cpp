@@ -26,15 +26,6 @@
 using namespace yarp::os::impl;
 using namespace yarp::os;
 
-/**
- * The NameClient singleton
- */
-
-
-NameClient *NameClient::instance = nullptr;
-bool NameClient::instanceClosed = false;
-yarp::os::Mutex NameClient::mutex;
-
 
 /*
   Old class for splitting string based on spaces
@@ -440,6 +431,7 @@ NameClient::NameClient() :
 }
 
 void NameClient::setup() {
+    static yarp::os::Mutex mutex;
     mutex.lock();
     if ((!fake)&&(!isSetup)) {
         if (!updateAddress()) {

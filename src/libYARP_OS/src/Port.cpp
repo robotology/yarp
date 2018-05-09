@@ -369,11 +369,12 @@ bool Port::addOutput(const ConstString& name, const ConstString& carrier)
 
 void Port::close()
 {
-    if (!owned) return;
-    if (!NameClient::isClosed()) {
-        Nodes& nodes = NameClient::getNameClient().getNodes();
-        nodes.remove(*this);
+    if (!owned) {
+        return;
     }
+
+    Nodes& nodes = NameClient::getNameClient().getNodes();
+    nodes.remove(*this);
 
     PortCoreAdapter& core = IMPL();
     core.finishReading();

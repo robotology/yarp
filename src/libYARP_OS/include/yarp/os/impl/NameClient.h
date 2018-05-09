@@ -16,7 +16,6 @@
 #include <yarp/os/NameStore.h>
 #include <yarp/os/ResourceFinder.h>
 #include <yarp/os/Property.h>
-#include <yarp/os/Mutex.h>
 #include <yarp/os/Nodes.h>
 #include <yarp/os/Network.h>
 
@@ -41,38 +40,16 @@ class YARP_OS_impl_API yarp::os::impl::NameClient
 public:
 
     /**
-     * Get an instance of the name client.  This is a global singleton,
-     * created on demand.
-     * return the name client
+     * Get an instance of the name client.
+     *
+     * This is a global singleton, created on demand.
+     *
+     * @return the name client
      */
     static NameClient& getNameClient()
     {
-        mutex.lock();
-        if (instance == nullptr) {
-            instance = new NameClient();
-        }
-        mutex.unlock();
-        return *instance;
-    }
-
-    /**
-     * Remove and delete the current global name client.
-     *
-     */
-    static void removeNameClient()
-    {
-        mutex.lock();
-        if (instance != nullptr) {
-            delete instance;
-            instance = nullptr;
-            instanceClosed = true;
-        }
-        mutex.unlock();
-    }
-
-    static bool isClosed()
-    {
-        return instanceClosed;
+        static NameClient instance;
+        return instance;
     }
 
     static NameClient *create()
@@ -271,7 +248,6 @@ public:
     /**
      * Make a singleton resource finder available to YARP,
      * for finding configuration files.
-     *
      */
     ResourceFinder& getResourceFinder()
     {
@@ -303,10 +279,6 @@ private:
     NameStore *altStore;
     yarp::os::ResourceFinder resourceFinder;
     yarp::os::Nodes nodes;
-
-    static yarp::os::Mutex mutex;
-    static NameClient *instance;
-    static bool instanceClosed;
 
     void setup();
 };

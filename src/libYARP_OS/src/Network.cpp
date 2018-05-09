@@ -802,7 +802,6 @@ void NetworkBase::finiMinimum() {
     if (__yarp_is_initialized==1) {
         Time::useSystemClock();
         Carriers::removeInstance();
-        NameClient::removeNameClient();
         removeNameSpace();
         Bottle::fini();
         BottleImpl::fini();
