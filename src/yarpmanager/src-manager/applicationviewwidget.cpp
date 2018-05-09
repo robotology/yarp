@@ -2001,7 +2001,14 @@ bool ApplicationViewWidget::isEditingMode()
 
 void ApplicationViewWidget::onSelfConnect(int which)
 {
-    QTreeWidgetItem *it = ui->connectionList->topLevelItem(which);
+    int row;
+    if (!getConRowByID(which, &row))
+    {
+        yError()<<"ApplicationViewWidget: unable to find row with id:"<<which;
+        return;
+    }
+
+    QTreeWidgetItem *it = ui->connectionList->topLevelItem(row);
     if (it) {
         it->setText(2,"connected");
         it->setIcon(0,QIcon(":/connect22.svg"));
@@ -2023,7 +2030,14 @@ void ApplicationViewWidget::onSelfConnect(int which)
 
 void ApplicationViewWidget::onSelfDisconnect(int which)
 {
-    QTreeWidgetItem *it = ui->connectionList->topLevelItem(which);
+    int row;
+    if (!getConRowByID(which, &row))
+    {
+        yError()<<"ApplicationViewWidget: unable to find row with id:"<<which;
+        return;
+    }
+
+    QTreeWidgetItem *it = ui->connectionList->topLevelItem(row);
     if (it) {
         it->setText(2,"disconnected");
         it->setIcon(0,QIcon(":/disconnect22.svg"));
@@ -2039,7 +2053,14 @@ void ApplicationViewWidget::onSelfDisconnect(int which)
 
 void ApplicationViewWidget::onSelfResAvailable(int which)
 {
-    QTreeWidgetItem *it = ui->resourcesList->topLevelItem(which);
+    int row;
+    if (!getResRowByID(which, &row))
+    {
+        yError()<<"ApplicationViewWidget: unable to find row with id:"<<which;
+        return;
+    }
+
+    QTreeWidgetItem *it = ui->resourcesList->topLevelItem(row);
     if (it) {
         it->setText(3,"available");
         if (it->text(2) == "computer") {
@@ -2061,7 +2082,14 @@ void ApplicationViewWidget::onSelfResAvailable(int which)
 
 void ApplicationViewWidget::onSelfResUnavailable(int which)
 {
-    QTreeWidgetItem *it = ui->resourcesList->topLevelItem(which);
+    int row;
+    if (!getResRowByID(which, &row))
+    {
+        yError()<<"ApplicationViewWidget: unable to find row with id:"<<which;
+        return;
+    }
+
+    QTreeWidgetItem *it = ui->resourcesList->topLevelItem(row);
     if (it) {
         it->setText(3,"unavailable");
         if (it->text(2) == "computer") {
@@ -2161,7 +2189,7 @@ void ApplicationViewWidget::modStdOutNestedApplication(QTreeWidgetItem *it, int 
 */
 void ApplicationViewWidget::onConConnect(int which)
 {
-   emit selfConnect(which);
+    emit selfConnect(which);
 }
 
 /*! \brief Called when a disconnection has been performed
@@ -2264,6 +2292,23 @@ bool ApplicationViewWidget::getConRowByID(int id, int *row)
 {
     for(int i=0;i< ui->connectionList->topLevelItemCount();i++) {
         QTreeWidgetItem *it = ui->connectionList->topLevelItem(i);
+
+        if (it->text(1).toInt() == id) {
+            *row = i;
+            return true;
+        }
+    }
+    return false;
+}
+
+/*! \brief Get the resource row by id
+    \param id the requested id
+    \param the output row
+*/
+bool ApplicationViewWidget::getResRowByID(int id, int *row)
+{
+    for(int i=0;i< ui->resourcesList->topLevelItemCount();i++) {
+        QTreeWidgetItem *it = ui->resourcesList->topLevelItem(i);
 
         if (it->text(1).toInt() == id) {
             *row = i;

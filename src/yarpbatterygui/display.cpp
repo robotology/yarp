@@ -188,14 +188,14 @@ void MainWindow::updateMain()
 }
 
 MainWindow::MainWindow(yarp::os::ResourceFinder rf, yarp::dev::IBattery* p_ibat, QWidget *parent) : QMainWindow(parent),
-    ui(new Ui::MainWindow),
     ibat(p_ibat),
     drv(nullptr),
+    ui(new Ui::MainWindow),
     connected(false),
     enable_ask_info(false),
     voltage(0),
-    charge(0),
-    current(0)
+    current(0),
+    charge(0)
 {
     ui->setupUi(this);
     mainTimer = new QTimer(this);
