@@ -119,6 +119,7 @@ int TcpConnector::connect(TcpStream &new_stream, const Contact& address, YARP_ti
             }
             else if (res > 0)
             {
+                res = 0;
                 // Socket selected for write
                 lon = sizeof(int);
                 if (getsockopt(handle, SOL_SOCKET, SO_ERROR, (void*)(&valopt), &lon) < 0)
@@ -132,7 +133,6 @@ int TcpConnector::connect(TcpStream &new_stream, const Contact& address, YARP_ti
                     yError("TcpConnector::connect fail: Error in delayed connection() %d - %s\n", valopt, strerror(valopt));
                     res = -1;
                 }
-                res = 0;
             }
             else
             {
