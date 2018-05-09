@@ -18,6 +18,53 @@ using namespace yarp::os;
 namespace yarp {
 namespace dev {
 
+
+
+const size_t MAS_NrOfSensorTypes{9};
+static_assert(MAS_SensorType::SkinPatches+1 == MAS_NrOfSensorTypes, "Consistency error between MAS_NrOfSensorTypes and MAS_SensorType");
+
+/**
+ * Internal identifier of the type of sensors.
+ */
+inline std::string MAS_getTagFromEnum(const MAS_SensorType type)
+{
+    switch(type)
+    {
+        case ThreeAxisGyroscopes:
+            return "ThreeAxisGyroscopes";
+            break;
+        case ThreeAxisLinearAccelerometers:
+            return "ThreeAxisLinearAccelerometers";
+            break;
+        case ThreeAxisMagnetometers:
+            return "ThreeAxisMagnetometers";
+            break;
+        case OrientationSensors:
+            return "OrientationSensors";
+            break;
+        case TemperatureSensors:
+            return "TemperatureSensors";
+            break;
+        case SixAxisForceTorqueSensors:
+            return "SixAxisForceTorqueSensors";
+            break;
+        case ContactLoadCellArrays:
+            return "ContactLoadCellArrays";
+            break;
+        case EncoderArrays:
+            return "EncoderArrays";
+            break;
+        case SkinPatches:
+            return "SkinPatches";
+            break;
+        default:
+            assert(false);
+            return "MAS_getTagFromEnum_notExpectedEnum";
+            break;
+    }
+}
+
+
 DriverCreator *createMultipleAnalogSensorsRemapper()
 {
     return new DriverCreatorOf<yarp::dev::MultipleAnalogSensorsRemapper>

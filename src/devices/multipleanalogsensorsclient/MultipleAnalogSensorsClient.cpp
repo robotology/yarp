@@ -166,7 +166,7 @@ bool MultipleAnalogSensorsClient::genericGetName(const  std::vector<SensorMetada
         return false;
     }
 
-    metadataVector[sens_index].name;
+    name = metadataVector[sens_index].name;
     return true;
 }
 
@@ -180,7 +180,7 @@ bool MultipleAnalogSensorsClient::genericGetFrameName(const  std::vector<SensorM
         return false;
     }
 
-    metadataVector[sens_index].frameName;
+    frameName = metadataVector[sens_index].frameName;
     return true;
 }
 
