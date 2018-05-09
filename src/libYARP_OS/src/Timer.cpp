@@ -270,12 +270,14 @@ bool yarp::os::Timer::PrivateImpl::runTimer(unsigned int iteration, YarpTimerEve
         m_mutex->lock();
     }
 
-    if (!m_callback(event)) {
-        return false;
-    }
+    bool ret = m_callback(event);
 
     if (m_mutex) {
         m_mutex->unlock();
+    }
+
+    if (!ret) {
+        return false;
     }
 
     m_lastReal = event.currentReal;
