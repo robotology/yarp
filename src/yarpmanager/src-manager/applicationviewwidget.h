@@ -87,6 +87,7 @@ public:
 
 private:
     bool getConRowByID(int id, int *row);
+    bool getResRowByID(int id, int *row);
     QTreeWidgetItem *getModRowByID(int id, QTreeWidgetItem *parent = NULL);
     void reportErrors();
     void prepareManagerFrom(yarp::manager::Manager* lazy);
