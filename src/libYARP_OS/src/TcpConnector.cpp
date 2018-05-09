@@ -130,7 +130,7 @@ int TcpConnector::connect(TcpStream &new_stream, const Contact& address, YARP_ti
                 // Check the value returned...
                 if (valopt)
                 {
-                    yError("TcpConnector::connect fail: Error in delayed connection() %d - %s\n", valopt, strerror(valopt));
+                    // connect fail: Error in delayed connection() -> the port doesn't exist
                     res = -1;
                 }
             }
