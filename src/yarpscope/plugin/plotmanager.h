@@ -51,7 +51,6 @@ public:
 
 private:
     QList <QObject*> plotterList;
-    static PlotManager *self;
     QTimer timer;
 
 signals:
