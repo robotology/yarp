@@ -78,7 +78,6 @@ public:
 private:
     ErrorLogger(){};
     ErrorLogger(ErrorLogger const&){};
-    static ErrorLogger* pInstance;
     std::vector<std::string> errors;
     std::vector<std::string> warnings;
 };

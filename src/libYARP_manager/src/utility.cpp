@@ -99,14 +99,10 @@ std::ostream& operator << (std::ostream &os , StrStream& sstr)
  * Singleton class ErrorLogger
  */
 
-// Global static pointer used to ensure a single instance of the class.
-ErrorLogger* ErrorLogger::pInstance = nullptr;
-
 ErrorLogger* ErrorLogger::Instance()
 {
-    if (!pInstance)
-      pInstance = new ErrorLogger;
-    return pInstance;
+    static ErrorLogger instance;
+    return &instance;
 }
 
 void ErrorLogger::addWarning(const char* szWarning) {
