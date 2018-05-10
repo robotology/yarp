@@ -24,7 +24,6 @@ class YARP_OS_API LogForwarder
 {
     public:
         static LogForwarder* getInstance();
-        static void clearInstance();
         void forward (const std::string& message);
     protected:
         LogForwarder();
@@ -36,7 +35,6 @@ class YARP_OS_API LogForwarder
     private:
         LogForwarder(LogForwarder const&){};
         LogForwarder& operator=(LogForwarder const&){return *this;}; //@@@checkme
-        static LogForwarder* instance;
 };
 
 } // namespace os
