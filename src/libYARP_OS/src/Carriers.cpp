@@ -35,7 +35,6 @@ using namespace yarp::os;
 class Carriers::Private : public YarpPluginSelector
 {
 public:
-    static Carriers* yarp_carriers_instance;
     static yarp::os::Mutex mutex;
 
     std::vector<Carrier*> delegates;
@@ -52,7 +51,6 @@ public:
     virtual bool select(Searchable& options) override;
 };
 
-Carriers* Carriers::Private::yarp_carriers_instance = nullptr;
 yarp::os::Mutex Carriers::Private::mutex {};
 
 
@@ -326,22 +324,8 @@ bool Carrier::reply(ConnectionState& proto, SizedWriter& writer)
 
 Carriers& Carriers::getInstance()
 {
-    yarp::os::LockGuard guard(Private::mutex);
-    if (Private::yarp_carriers_instance == nullptr) {
-        Private::yarp_carriers_instance = new Carriers();
-        yAssert(Private::yarp_carriers_instance != nullptr);
-    }
-    return *Private::yarp_carriers_instance;
-}
-
-
-void Carriers::removeInstance()
-{
-    yarp::os::LockGuard guard(Private::mutex);
-    if (Private::yarp_carriers_instance != nullptr) {
-        delete Private::yarp_carriers_instance;
-        Private::yarp_carriers_instance = nullptr;
-    }
+    static Carriers instance;
+    return instance;
 }
 
 

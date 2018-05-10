@@ -801,7 +801,6 @@ void NetworkBase::initMinimum(yarp::os::yarpClockType clockType, yarp::os::Clock
 void NetworkBase::finiMinimum() {
     if (__yarp_is_initialized==1) {
         Time::useSystemClock();
-        Carriers::removeInstance();
         removeNameSpace();
         Bottle::fini();
         BottleImpl::fini();
