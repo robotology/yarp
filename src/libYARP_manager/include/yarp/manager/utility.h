@@ -76,8 +76,8 @@ public:
     int warningCount(void);
 
 private:
-    ErrorLogger(){};
-    ErrorLogger(ErrorLogger const&){};
+    ErrorLogger(){}
+    ErrorLogger(ErrorLogger const&){}
     std::vector<std::string> errors;
     std::vector<std::string> warnings;
 };
