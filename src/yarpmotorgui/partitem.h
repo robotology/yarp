@@ -46,9 +46,7 @@ using namespace yarp::dev;
 using namespace yarp::sig;
 using namespace yarp::os;
 
-#define     MAX_WIDTH_JOINT 240
-
-
+#define     MAX_WIDTH_JOINT 320
 
 class PartItem : public QWidget
 {
@@ -130,10 +128,12 @@ private:
     double* m_torques;
     double* m_positions;
     double* m_speeds;
+    double* m_currents;
     double* m_motorPositions;
     bool*   m_done;
     bool    m_part_speedVisible;
     bool    m_part_motorPositionVisible;
+    bool    m_part_currentVisible;
     yarp::dev::InteractionModeEnum* m_interactionModes;
 
     ResourceFinder* m_finder;
@@ -178,6 +178,7 @@ public slots:
     bool updatePart();
     void onViewSpeedValues(bool);
     void onViewMotorPositions(bool);
+    void onViewCurrentValues(bool);
     void onSetPosSliderOptionPI(int mode, double step);
     void onSetVelSliderOptionPI(int mode, double step);
     void onSetTrqSliderOptionPI(int mode, double step);

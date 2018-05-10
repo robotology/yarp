@@ -77,6 +77,7 @@ JointItem::JointItem(int index,QWidget *parent) :
     enableCalib = true;
     joint_speedVisible = false;
     joint_motorPositionVisible = false;
+    joint_currentVisible = false;
     lastVelocity = 0;
     velocityModeEnabled = false;
     motionDone = true;
@@ -174,31 +175,6 @@ JointItem::JointItem(int index,QWidget *parent) :
 
 
 
-    movingSliderStyle = "QSlider::groove:horizontal:enabled {"
-            "border: 1px solid #999999;"
-            "height: 8px;"
-            "background: qlineargradient(x1:0, y1:0, x2:0, y2:1, stop:0 #FF2E2E, stop:1 #FDA6A6);"
-            "margin: 2px 0;}"
-       "QSlider::groove:horizontal:disabled {"
-            "border: 1px solid #c8c8c8;"
-            "height: 8px;"
-            "background: qlineargradient(x1:0, y1:0, x2:0, y2:1, stop:0 #f0f0f0, stop:1 #dcdcdc);"
-            "margin: 2px 0;}"
-        "QSlider::handle:horizontal:enabled {"
-            "background: qlineargradient(x1:0, y1:0, x2:1, y2:1, stop:0 #b4b4b4, stop:1 #8f8f8f);"
-            "border: 1px solid #5c5c5c;"
-            "width: 30px;"
-            "margin: -2px 0;"
-            "border-radius: 3px;}"
-        "QSlider::handle:horizontal:disabled {"
-            "background: qlineargradient(x1:0, y1:0, x2:1, y2:1, stop:0 #e6e6e6, stop:1 #c8c8c8);"
-            "border: 1px solid #c8c8c8;"
-            "width: 30px;"
-            "margin: -2px 0;"
-            "border-radius: 3px;}";
-
-
-
     comboStyle1 = "QComboBox {"
             "border: 1px solid gray;"
             "border-radius: 3px;"
@@ -249,16 +225,16 @@ JointItem::JointItem(int index,QWidget *parent) :
     ui->comboMode->setItemData( PWM,            Pwm, Qt::UserRole);
     ui->comboMode->setItemData( CURRENT,        Current, Qt::UserRole);
 
-    QString styleSheet = QString("%1 QComboBox:!editable, QComboBox::drop-down:editable {background-color: rgb(149,221,186);} %2").arg(comboStyle1).arg(comboStyle2);
-    ui->comboMode->setStyleSheet(styleSheet);
+  //  QString styleSheet = QString("%1 QComboBox:!editable, QComboBox::drop-down:editable {background-color: rgb(149,221,186);} %2").arg(comboStyle1).arg(comboStyle2);
+ //   ui->comboMode->setStyleSheet(styleSheet);
 
     setJointInternalState(IDLE);
 
     QVariant variant = ui->comboInteraction->itemData(0,Qt::BackgroundRole);
     QColor c = variant.value<QColor>();
 
-    styleSheet = QString("%1 QComboBox:!editable, QComboBox::drop-down:editable {background-color: rgb(%2,%3,%4);} %5").arg(comboStyle1).arg(c.red()).arg(c.green()).arg(c.blue()).arg(comboStyle2);
-    ui->comboInteraction->setStyleSheet(styleSheet);
+  //  styleSheet = QString("%1 QComboBox:!editable, QComboBox::drop-down:editable {background-color: rgb(%2,%3,%4);} %5").arg(comboStyle1).arg(c.red()).arg(c.green()).arg(c.blue()).arg(comboStyle2);
+//    ui->comboInteraction->setStyleSheet(styleSheet);
 
 
     ui->stackedWidget->widget(VELOCITY)->setEnabled(false);
@@ -520,6 +496,92 @@ void JointItem::setMotorPositionVisible(bool visible)
     ui->labelPositionMotorPositionUnits->setVisible(visible);
 }
 
+void JointItem::setCurrentsVisible(bool visible)
+{
+    joint_currentVisible = visible;
+    ui->editIdleCurrent->setVisible(visible);
+    ui->editPositionCurrent->setVisible(visible);
+    ui->editPositionDirCurrent->setVisible(visible);
+    ui->editMixedCurrent->setVisible(visible);
+    ui->editTorqueCurrent->setVisible(visible);
+    ui->editPWMCurrent->setVisible(visible);
+    //ui->editCurrentCurrent->setVisible(visible);
+    ui->editVelocityCurrent->setVisible(visible);
+
+    ui->labelIdleCurrent->setVisible(visible);
+    ui->labelIdleCurrentUnits->setVisible(visible);
+    ui->labelPositionCurrent->setVisible(visible);
+    ui->labelPositionCurrentUnits->setVisible(visible);
+    ui->labelPositionDirCurrent->setVisible(visible);
+    ui->labelPositionDirCurrentUnits->setVisible(visible);
+    ui->labelMixedCurrent->setVisible(visible);
+    ui->labelMixedCurrentUnits->setVisible(visible);
+    ui->labelTorqueCurrent->setVisible(visible);
+    ui->labelTorqueCurrentUnits->setVisible(visible);
+    ui->labelPWMCurrent->setVisible(visible);
+    //ui->labelCurrentCurrent->setVisible(visible);
+    ui->labelPWMCurrentUnits->setVisible(visible);
+    //ui->labelCurrentCurrentUnits->setVisible(visible);
+    ui->labelVelocityCurrent->setVisible(visible);
+    ui->labelVelocityCurrentUnits->setVisible(visible);
+
+
+    if (!visible) {
+        ui->editIdleCurrent->setMinimumHeight(0);
+        ui->editPositionCurrent->setMinimumHeight(0);
+        ui->editPositionDirCurrent->setMinimumHeight(0);
+        ui->editMixedCurrent->setMinimumHeight(0);
+        ui->editTorqueCurrent->setMinimumHeight(0);
+        ui->editPWMCurrent->setMinimumHeight(0);
+        //ui->editCurrentCurrent->setMinimumHeight(0);
+        ui->editVelocityCurrent->setMinimumHeight(0);
+
+        ui->labelPositionCurrent->setMinimumHeight(0);
+        ui->labelPositionCurrentUnits->setMinimumHeight(0);
+        ui->labelPositionDirCurrent->setMinimumHeight(0);
+        ui->labelPositionDirCurrentUnits->setMinimumHeight(0);
+        ui->labelMixedCurrent->setMinimumHeight(0);
+        ui->labelMixedCurrentUnits->setMinimumHeight(0);
+        ui->labelTorqueCurrent->setMinimumHeight(0);
+        ui->labelTorqueCurrentUnits->setMinimumHeight(0);
+        ui->labelPWMCurrent->setMinimumHeight(0);
+        ui->labelPWMCurrentUnits->setMinimumHeight(0);
+        //ui->labelCurrentCurrent->setMinimumHeight(0);
+        //ui->labelCurrentCurrentUnits->setMinimumHeight(0);
+        ui->labelVelocityCurrent->setMinimumHeight(0);
+        ui->labelVelocityCurrentUnits->setMinimumHeight(0);
+        ui->labelIdleCurrent->setMinimumHeight(0);
+        ui->labelIdleCurrentUnits->setMinimumHeight(0);
+    }
+    else {
+        ui->editIdleCurrent->setMinimumHeight(20);
+        ui->editPositionCurrent->setMinimumHeight(20);
+        ui->editPositionDirCurrent->setMinimumHeight(20);
+        ui->editMixedCurrent->setMinimumHeight(20);
+        ui->editTorqueCurrent->setMinimumHeight(20);
+        ui->editPWMCurrent->setMinimumHeight(20);
+        //ui->editCurrentCurrent->setMinimumHeight(20);
+        ui->editVelocityCurrent->setMinimumHeight(20);
+
+        ui->labelPositionCurrent->setMinimumHeight(20);
+        ui->labelPositionCurrentUnits->setMinimumHeight(20);
+        ui->labelPositionDirCurrent->setMinimumHeight(20);
+        ui->labelPositionDirCurrentUnits->setMinimumHeight(20);
+        ui->labelMixedCurrent->setMinimumHeight(20);
+        ui->labelMixedCurrentUnits->setMinimumHeight(20);
+        ui->labelTorqueCurrent->setMinimumHeight(20);
+        ui->labelTorqueCurrentUnits->setMinimumHeight(20);
+        ui->labelPWMCurrent->setMinimumHeight(20);
+        ui->labelPWMCurrentUnits->setMinimumHeight(20);
+        //ui->labelCurrentCurrent->setMinimumHeight(20);
+        //ui->labelCurrentCurrentUnits->setMinimumHeight(20);
+        ui->labelVelocityCurrent->setMinimumHeight(20);
+        ui->labelVelocityCurrentUnits->setMinimumHeight(20);
+        ui->labelIdleCurrent->setMinimumHeight(20);
+        ui->labelIdleCurrentUnits->setMinimumHeight(20);
+    }
+}
+
 void JointItem::setSpeedVisible(bool visible)
 {
     joint_speedVisible = visible;
@@ -772,7 +834,7 @@ void JointItem::enableCurrentSliderDoubleAuto()
     int v = ui->sliderCurrentOutput->value();
     if (v > sliderMax) {}
     if (v < sliderMin) {}
-    setCurrent(ref_current);
+    setRefCurrent(ref_current);
 }
 
 void JointItem::enableCurrentSliderDoubleValue(double value)
@@ -786,7 +848,7 @@ void JointItem::enableCurrentSliderDoubleValue(double value)
     int v = ui->sliderCurrentOutput->value();
     if (v > sliderMax) {}
     if (v < sliderMin) {}
-    setCurrent(ref_current);
+    setRefCurrent(ref_current);
 }
 
 void JointItem::disableCurrentSliderDouble()
@@ -805,7 +867,7 @@ void JointItem::disableCurrentSliderDouble()
     int v = ui->sliderCurrentOutput->value();
     if (v > sliderMax) {}
     if (v < sliderMin) {}
-    setCurrent(ref_current);
+    setRefCurrent(ref_current);
 }
 
 void JointItem::enableTrajectoryVelocitySliderDoubleAuto()
@@ -1134,21 +1196,21 @@ void JointItem::updateMotionDone(bool done)
     int index = ui->stackedWidget->currentIndex();
     if (index == POSITION) {
         if(!done){
-            ui->editPositionCurrentPos->setStyleSheet("background-color: rgb(255, 38, 41);");
+            ui->editPositionJointPos->setStyleSheet("background-color: rgb(255, 38, 41);");
         }else{
-            ui->editPositionCurrentPos->setStyleSheet("background-color: rgb(255, 255, 255);");
+            ui->editPositionJointPos->setStyleSheet("background-color: rgb(255, 255, 255);");
         }
     } else if (index == POSITION_DIR) {
         if(!done){
-            ui->editPositionDirCurrentPos->setStyleSheet("background-color: rgb(255, 38, 41);");
+            ui->editPositionDirJointPos->setStyleSheet("background-color: rgb(255, 38, 41);");
         }else{
-            ui->editPositionDirCurrentPos->setStyleSheet("background-color: rgb(255, 255, 255);");
+            ui->editPositionDirJointPos->setStyleSheet("background-color: rgb(255, 255, 255);");
         }
     } else if (index == MIXED) {
         if(!done){
-            ui->editMixedCurrentPos->setStyleSheet("background-color: rgb(255, 38, 41);");
+            ui->editMixedJointPos->setStyleSheet("background-color: rgb(255, 38, 41);");
         }else{
-            ui->editMixedCurrentPos->setStyleSheet("background-color: rgb(255, 255, 255);");
+            ui->editMixedJointPos->setStyleSheet("background-color: rgb(255, 255, 255);");
         }
     }
 }
@@ -1212,7 +1274,7 @@ void JointItem::updateSliderTrajectoryVelocity(double val)
     ui->sliderTrajectoryVelocity->setValue(val);
 }
 
-void JointItem::setPWM(double pwmValue)
+void JointItem::setRefPWM(double pwmValue)
 {
     if(sliderPWMPressed){
         return;
@@ -1225,7 +1287,7 @@ void JointItem::setPWM(double pwmValue)
     }
 }
 
-void JointItem::setCurrent(double currentValue)
+void JointItem::setRefCurrent(double currentValue)
 {
     if (sliderCurrentPressed){
         return;
@@ -1234,7 +1296,7 @@ void JointItem::setCurrent(double currentValue)
         updateSliderCurrent(currentValue);
         QString sVal;
         sVal = QString("%L1").arg(currentValue, 0, 'f', 3);
-        ui->editCurrentOutput->setText(sVal);
+        ui->editCurrentCurrent->setText(sVal);
     }
 }
 
@@ -1253,36 +1315,36 @@ void JointItem::setPosition(double val)
     }
 
     if(ui->stackedWidget->currentIndex() == IDLE){
-        ui->editIdleCurrentPos->setText(sVal);
+        ui->editIdleJointPos->setText(sVal);
     }
 
     if(ui->stackedWidget->currentIndex() == POSITION){
-        ui->editPositionCurrentPos->setText(sVal);
+        ui->editPositionJointPos->setText(sVal);
         updateSliderPosition(ui->sliderTrajectoryPosition, val);
     }
 
     if(ui->stackedWidget->currentIndex() == POSITION_DIR){
-        ui->editPositionDirCurrentPos->setText(sVal);
+        ui->editPositionDirJointPos->setText(sVal);
         updateSliderPosition(ui->sliderDirectPosition, val);
     }
 
     if(ui->stackedWidget->currentIndex() == MIXED){
-        ui->editMixedCurrentPos->setText(sVal);
+        ui->editMixedJointPos->setText(sVal);
         updateSliderPosition(ui->sliderMixedPosition, val);
     }
 
     if(ui->stackedWidget->currentIndex() == VELOCITY){
-        ui->editVelocityCurrentPos->setText(sVal);
+        ui->editVelocityJointPos->setText(sVal);
 
     }
     if(ui->stackedWidget->currentIndex() == TORQUE){
-        ui->editTorqueCurrentPos->setText(sVal);
+        ui->editTorqueJointPos->setText(sVal);
     }
     if(ui->stackedWidget->currentIndex() == PWM){
-        ui->editPWMCurrentPos->setText(sVal);
+        ui->editPWMJointPos->setText(sVal);
     }
     if (ui->stackedWidget->currentIndex() == CURRENT){
-        ui->editCurrentCurrentPos->setText(sVal);
+        ui->editCurrentJointPos->setText(sVal);
     }
 
 }
@@ -1381,14 +1443,14 @@ void JointItem::setMotorPosition(double val)
     }
 }
 
-void JointItem::setSpeed(double val)
+void JointItem::setSpeed(double meas)
 {
     if (!joint_speedVisible){
         return;
     }
     //TODO
 
-    double speed = val;
+    double speed = meas;
     QString sVal = QString("%1").arg(speed,0,'f',1);
 
     if(ui->stackedWidget->currentIndex() == IDLE){
@@ -1426,6 +1488,46 @@ void JointItem::setSpeed(double val)
 
 }
 
+void JointItem::setCurrent(double meas)
+{
+    if (!joint_currentVisible) {
+        return;
+    }
+    //TODO
+
+    double current = meas;
+    QString sVal = QString("%1").arg(current, 0, 'f', 3);
+
+    if (ui->stackedWidget->currentIndex() == IDLE) {
+        ui->editIdleCurrent->setText(sVal);
+    }
+
+    if (ui->stackedWidget->currentIndex() == POSITION) {
+        ui->editPositionCurrent->setText(sVal);
+    }
+
+    if (ui->stackedWidget->currentIndex() == POSITION_DIR) {
+        ui->editPositionDirCurrent->setText(sVal);
+    }
+
+    if (ui->stackedWidget->currentIndex() == MIXED) {
+        ui->editMixedCurrent->setText(sVal);
+    }
+
+    if (ui->stackedWidget->currentIndex() == VELOCITY) {
+        ui->editVelocityCurrent->setText(sVal);
+    }
+    if (ui->stackedWidget->currentIndex() == TORQUE) {
+        ui->editTorqueCurrent->setText(sVal);
+    }
+    if (ui->stackedWidget->currentIndex() == PWM) {
+        ui->editPWMCurrent->setText(sVal);
+    }
+    if (ui->stackedWidget->currentIndex() == CURRENT) {
+        ui->editCurrentCurrent->setText(sVal);
+    }
+
+}
 
 
 
@@ -1440,8 +1542,8 @@ void JointItem::setJointInternalInteraction(int interaction)
         QVariant variant = ui->comboInteraction->itemData(interaction,Qt::BackgroundRole);
         QColor c = variant.value<QColor>();
 
-        QString styleSheet = QString("%1 QComboBox:!editable, QComboBox::drop-down:editable {background-color: rgb(%2,%3,%4);} %5").arg(comboStyle1).arg(c.red()).arg(c.green()).arg(c.blue()).arg(comboStyle2);
-        ui->comboInteraction->setStyleSheet(styleSheet);
+  //      QString styleSheet = QString("%1 QComboBox:!editable, QComboBox::drop-down:editable {background-color: rgb(%2,%3,%4);} %5").arg(comboStyle1).arg(c.red()).arg(c.green()).arg(c.blue()).arg(comboStyle2);
+  //      ui->comboInteraction->setStyleSheet(styleSheet);
     }
 }
 
@@ -1490,7 +1592,7 @@ void JointItem::setJointInternalState(int mode)
         setStyleSheet(QString("font: 8pt; background-color: rgb(%1,%2,%3);").arg(c.red()).arg(c.green()).arg(c.blue()));
 
         QString styleSheet = QString("%1 QComboBox:!editable, QComboBox::drop-down:editable {background-color: rgb(%2,%3,%4);} %5").arg(comboStyle1).arg(c.red()).arg(c.green()).arg(c.blue()).arg(comboStyle2);
-        ui->comboMode->setStyleSheet(styleSheet);
+  //      ui->comboMode->setStyleSheet(styleSheet);
     }
 }
 

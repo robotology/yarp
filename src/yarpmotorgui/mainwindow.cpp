@@ -255,6 +255,7 @@ MainWindow::MainWindow(QWidget *parent) :
     QAction *viewGlobalToolbar = windows->addAction("Global Commands Toolbar");
     QAction *viewPartToolbar = windows->addAction("Part Commands Toolbar");
     QAction *viewSpeedValues = windows->addAction("View Speed Values");
+    QAction *viewCurrentValues = windows->addAction("View Current Values");
     QAction *viewMotorPosition = windows->addAction("View Motor Position");
     QAction *viewPositionTarget = windows->addAction("View Position Target");
     QAction *enableControlVelocity = windows->addAction("Enable Velocity Control");
@@ -267,6 +268,7 @@ MainWindow::MainWindow(QWidget *parent) :
     viewGlobalToolbar->setCheckable(true);
     viewPartToolbar->setCheckable(true);
     viewSpeedValues->setCheckable(true);
+    viewCurrentValues->setCheckable(true);
     viewMotorPosition->setCheckable(true);
     enableControlVelocity->setCheckable(true);
     enableControlMixed->setCheckable(true);
@@ -281,10 +283,12 @@ MainWindow::MainWindow(QWidget *parent) :
     bool bSpeedValues = settings.value("SpeedValuesVisible",false).toBool();
     bool bViewPositionTarget = settings.value("ViewPositionTarget", true).toBool();
     bool bviewMotorPosition = settings.value("MotorPositionVisible", false).toBool();
+    bool bCurrentValues = settings.value("CurrentsVisible", false).toBool();
 
     viewGlobalToolbar->setChecked(bViewGlobalToolbar);
     viewPartToolbar->setChecked(bViewPartToolbar);
     viewSpeedValues->setChecked(bSpeedValues);
+    viewCurrentValues->setChecked(bCurrentValues);
     viewMotorPosition->setChecked(bviewMotorPosition);
     viewPositionTarget->setChecked(bViewPositionTarget);
     enableControlVelocity->setChecked(false);
@@ -299,6 +303,7 @@ MainWindow::MainWindow(QWidget *parent) :
     connect(viewGlobalToolbar,SIGNAL(triggered(bool)),this,SLOT(onViewGlobalToolbar(bool)));
     connect(viewPartToolbar,SIGNAL(triggered(bool)),this,SLOT(onViewPartToolbar(bool)));
     connect(viewSpeedValues,SIGNAL(triggered(bool)),this,SLOT(onViewSpeeds(bool)));
+    connect(viewCurrentValues, SIGNAL(triggered(bool)), this, SLOT(onViewCurrents(bool)));
     connect(viewMotorPosition, SIGNAL(triggered(bool)), this, SLOT(onViewMotorPositions(bool)));
     connect(viewPositionTarget, SIGNAL(triggered(bool)), this, SLOT(onViewPositionTarget(bool)));
     connect(enableControlVelocity, SIGNAL(triggered(bool)), this, SLOT(onEnableControlVelocity(bool)));
@@ -449,6 +454,14 @@ void MainWindow::onViewSpeeds(bool val)
     settings.setValue("SpeedValuesVisible",val);
 
     emit sig_viewSpeedValues(val);
+}
+
+void MainWindow::onViewCurrents(bool val)
+{
+    QSettings settings("YARP", "yarpmotorgui");
+    settings.setValue("CurrentValuesVisible", val);
+
+    emit sig_viewCurrentValues(val);
 }
 
 void MainWindow::onViewMotorPositions(bool val)
@@ -605,6 +618,7 @@ bool MainWindow::init(QStringList enabledParts,
             connect(part,SIGNAL(sequenceActivated()),this,SLOT(onSequenceActivated()));
             connect(part,SIGNAL(sequenceStopped()),this,SLOT(onSequenceStopped()));
             connect(this,SIGNAL(sig_viewSpeedValues(bool)),part,SLOT(onViewSpeedValues(bool)));
+            connect(this, SIGNAL(sig_viewCurrentValues(bool)), part, SLOT(onViewCurrentValues(bool)));
             connect(this, SIGNAL(sig_viewMotorPositions(bool)), part, SLOT(onViewMotorPositions(bool)));
             connect(this, SIGNAL(sig_setPosSliderOptionMW(int, double)), part, SLOT(onSetPosSliderOptionPI(int, double)));
             connect(this, SIGNAL(sig_setVelSliderOptionMW(int, double)), part, SLOT(onSetVelSliderOptionPI(int, double)));
@@ -664,8 +678,10 @@ bool MainWindow::init(QStringList enabledParts,
     QSettings settings("YARP","yarpmotorgui");
     bool speedVisible = settings.value("SpeedValuesVisible",false).toBool();
     bool motorPosVisible = settings.value("MotorPositionVisible", false).toBool();
+    bool currentVisible = settings.value("CurrentsVisible", false).toBool();
 
     onViewSpeeds(speedVisible);
+    onViewCurrents(currentVisible);
     onViewMotorPositions(motorPosVisible);
     return true;
 }

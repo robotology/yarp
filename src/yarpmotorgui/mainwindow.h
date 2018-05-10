@@ -126,6 +126,7 @@ private slots:
     void onViewGlobalToolbar(bool);
     void onViewPartToolbar(bool);
     void onViewSpeeds(bool);
+    void onViewCurrents(bool);
     void onViewMotorPositions(bool);
     void onViewPositionTarget(bool);
     void onEnableControlVelocity(bool val);
@@ -145,6 +146,7 @@ signals:
     void sig_enableControlPWM(bool);
     void sig_enableControlCurrent(bool);
     void sig_viewSpeedValues(bool);
+    void sig_viewCurrentValues(bool);
     void sig_viewMotorPositions(bool);
     void sig_setPosSliderOptionMW(int, double);
     void sig_setVelSliderOptionMW(int, double);

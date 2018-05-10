@@ -56,10 +56,12 @@ PartItem::PartItem(QString robotName, int id, QString partName, ResourceFinder& 
     m_torques(nullptr),
     m_positions(nullptr),
     m_speeds(nullptr),
+    m_currents(nullptr),
     m_motorPositions(nullptr),
     m_done(nullptr),
     m_part_speedVisible(false),
     m_part_motorPositionVisible(false),
+    m_part_currentVisible(false),
     m_interactionModes(nullptr),
     m_finder(&_finder),
     m_iMot(nullptr),
@@ -138,19 +140,21 @@ PartItem::PartItem(QString robotName, int id, QString partName, ResourceFinder& 
 
     if (m_interfaceError == false)
     {
+        int i = 0; 
         std::string jointname;
         int number_of_joints;
         m_iPos->getAxes(&number_of_joints);
 
-        m_controlModes = new int[number_of_joints];
-        m_refTrajectorySpeeds = new double[number_of_joints];
-        m_refTrajectoryPositions = new double[number_of_joints];
-        m_refTorques = new double[number_of_joints];
-        m_refVelocitySpeeds = new double[number_of_joints];
-        m_torques = new double[number_of_joints];
-        m_positions = new double[number_of_joints];
-        m_speeds = new double[number_of_joints];
-        m_motorPositions = new double[number_of_joints];
+        m_controlModes = new int[number_of_joints]; //for (i = 0; i < number_of_joints; i++) m_controlModes = 0;
+        m_refTrajectorySpeeds = new double[number_of_joints]; for (i = 0; i < number_of_joints; i++) m_refTrajectorySpeeds[i] = std::nan("");
+        m_refTrajectoryPositions = new double[number_of_joints]; for (i = 0; i < number_of_joints; i++) m_refTrajectoryPositions[i] = std::nan("");
+        m_refTorques = new double[number_of_joints]; for (i = 0; i < number_of_joints; i++) m_refTorques[i] = std::nan("");
+        m_refVelocitySpeeds = new double[number_of_joints]; for (i = 0; i < number_of_joints; i++) m_refVelocitySpeeds[i] = std::nan("");
+        m_torques = new double[number_of_joints]; for (i = 0; i < number_of_joints; i++) m_torques[i] = std::nan("");
+        m_positions = new double[number_of_joints]; for (i = 0; i < number_of_joints; i++) m_positions[i] = std::nan("");
+        m_speeds = new double[number_of_joints]; for (i = 0; i < number_of_joints; i++) m_speeds[i] = std::nan("");
+        m_currents = new double[number_of_joints]; for (i = 0; i < number_of_joints; i++) m_currents[i] = std::nan("");
+        m_motorPositions = new double[number_of_joints]; for (i = 0; i < number_of_joints; i++) m_motorPositions[i] = std::nan("");
         m_done = new bool[number_of_joints];
         m_interactionModes = new yarp::dev::InteractionModeEnum[number_of_joints];
 
@@ -196,6 +200,7 @@ PartItem::PartItem(QString robotName, int id, QString partName, ResourceFinder& 
 
             m_iinfo->getAxisName(k, jointname);
             yarp::dev::JointTypeEnum jtype = yarp::dev::VOCAB_JOINTTYPE_REVOLUTE;
+            m_iinfo->getJointType(k, jtype);
 
             Pid myPid(0,0,0,0,0,0);
             yarp::os::SystemClock::delaySystem(0.005);
@@ -316,6 +321,7 @@ PartItem::~PartItem()
     if (m_torques) { delete[] m_torques; m_torques = nullptr; }
     if (m_positions) { delete[] m_positions; m_positions = nullptr; }
     if (m_speeds) { delete[] m_speeds; m_speeds = nullptr; }
+    if (m_currents) { delete[] m_currents; m_currents = nullptr; }
     if (m_motorPositions) { delete[] m_motorPositions; m_motorPositions = nullptr; }
     if (m_done) { delete[] m_done; m_done = nullptr; }
 }
@@ -622,9 +628,9 @@ void PartItem::onSendPWM(int jointIndex, double pwmVal)
     m_iPWM->setRefDutyCycle(jointIndex, pwmVal);
 
     yarp::os::SystemClock::delaySystem(0.010);
-    m_iPWM->getRefDutyCycle(jointIndex, &pwm_reference);  //This is the reference reference
+    m_iPWM->getRefDutyCycle(jointIndex, &pwm_reference);  //This is the reference
     yarp::os::SystemClock::delaySystem(0.010);
-    m_iPWM->getDutyCycle(jointIndex, &current_pwm);  //This is the reak PWM output
+    m_iPWM->getDutyCycle(jointIndex, &current_pwm);  //This is the real PWM output
 
     if (m_currentPidDlg){
         m_currentPidDlg->initPWM(pwm_reference, current_pwm);
@@ -1334,7 +1340,7 @@ void PartItem::onOpenSequence()
 
     if(desiredExtension != extension){
         QMessageBox::critical(this,"Error Loading The Sequence",
-            QString("Wrong format (check estensions) of the file associated with: ").arg(m_partName));
+            QString("Wrong format (check extensions) of the file associated with: ").arg(m_partName));
         return;
     }
 
@@ -1904,6 +1910,16 @@ void PartItem::onViewMotorPositions(bool view)
     }
 }
 
+void PartItem::onViewCurrentValues(bool view)
+{
+    m_part_currentVisible = view;
+    for (int i = 0; i<m_layout->count(); i++)
+    {
+        JointItem *joint = (JointItem*)m_layout->itemAt(i)->widget();
+        joint->setCurrentsVisible(view);
+    }
+}
+
 void PartItem::onViewPositionTarget(bool ena)
 {
     for (int i = 0; i<m_layout->count(); i++)
@@ -2108,13 +2124,35 @@ bool PartItem::updatePart()
     }
 
     // *** update measured encoders, velocity, torques ***
-    if (!m_iencs->getEncoders(m_positions))   { yWarning("Unable to update encoders"); return false; }
-    if (!m_iTrq->getTorques(m_torques))       { yWarning("Unable to update torques"); }
-    if (this->m_part_speedVisible && !m_iencs->getEncoderSpeeds(m_speeds)) { yWarning("Unable to update speeds"); }
-    if (this->m_part_motorPositionVisible && !m_iMot->getMotorEncoders(m_motorPositions)) { yWarning("Unable to update motorPositions"); }
+    bool b = true;
+    if (1)
+    {
+        b = m_iencs->getEncoders(m_positions);
+        if (!b) { yWarning("Unable to update encoders"); return false; }
+    }
+    if (1)
+    {
+        b = m_iTrq->getTorques(m_torques);
+        if (!b) { yWarning("Unable to update torques"); }
+    }
+    if (this->m_part_currentVisible)
+    {
+        b = m_iCur->getCurrents(m_currents);
+        if (!b) { yWarning("Unable to update currents"); }
+    } 
+    if (this->m_part_speedVisible)
+    {
+        b = m_iencs->getEncoderSpeeds(m_speeds);
+        if (!b) { yWarning("Unable to update speeds"); }
+    } 
+    if (this->m_part_motorPositionVisible)
+    {
+        b = m_iMot->getMotorEncoders(m_motorPositions);
+        if (!b) { yWarning("Unable to update motorPositions"); }
+    }
     
     // *** update checkMotionDone, refTorque, refTrajectorySpeed, refSpeed ***
-    // (only one at a time in order to save badwidth)
+    // (only one at a time in order to save bandwidth)
     bool b_motdone = m_iPos->checkMotionDone(m_slow_k, &m_done[m_slow_k]); //using k to save bandwidth
     bool b_refTrq = m_iTrq->getRefTorque(m_slow_k, &m_refTorques[m_slow_k]); //using k to save bandwidth
     bool b_refPosSpeed = m_iPos->getRefSpeed(m_slow_k, &m_refTrajectorySpeeds[m_slow_k]); //using k to save bandwidth
@@ -2151,6 +2189,8 @@ bool PartItem::updatePart()
         if (1) { joint->setTorque(m_torques[jk]); }
         else {}
         if (1) { joint->setSpeed(m_speeds[jk]); }
+        else {}
+        if (1) { joint->setCurrent(m_currents[jk]); }
         else {}
         if (1) { joint->setMotorPosition(m_motorPositions[jk]); }
         else {}
@@ -2209,17 +2249,17 @@ bool PartItem::updatePart()
             case VOCAB_CM_CURRENT:
             {
                 joint->setJointState(JointItem::Current);
-                double tmp = 0;
-                m_iCur->getRefCurrent(k, &tmp); //?
-                joint->setCurrent(tmp);
+                double ref_current = 0;
+                m_iCur->getRefCurrent(k, &ref_current);
+                joint->setRefCurrent(ref_current);
                 break;
             }
             case VOCAB_CM_PWM:
             {
                 joint->setJointState(JointItem::Pwm);
-                double tmp = 0;
-                m_iPWM->getRefDutyCycle(k, &tmp);
-                joint->setPWM(tmp);
+                double ref_duty = 0;
+                m_iPWM->getRefDutyCycle(k, &ref_duty);
+                joint->setRefPWM(ref_duty);
                 break;
             }
             case VOCAB_CM_HW_FAULT:
