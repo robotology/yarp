@@ -145,7 +145,7 @@ private:
     RFModule& owner;
 
 public:
-    RFModuleThreadedHandler(RFModule& owner) : owner(owner) {};
+    RFModuleThreadedHandler(RFModule& owner) : owner(owner) {}
 
     void run() override { owner.runModule(); }
 };
