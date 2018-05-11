@@ -22,8 +22,7 @@ class YARP_dev_API yarp::dev::ImplementEncodersTimed: public IEncodersTimed
 protected:
     IEncodersTimedRaw *iEncoders;
     void *helper;
-    double *temp;
-    double *temp2;
+    int nj;
 
 
     /**

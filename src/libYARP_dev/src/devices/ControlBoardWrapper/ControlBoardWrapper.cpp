@@ -579,7 +579,7 @@ bool ControlBoardWrapper::openDeferredAttach(Property& prop)
         tmpDevice->setVerbose(_verb);
 
         int axes=top-base+1;
-        if (!tmpDevice->configure(base, top, axes, nets->get(k).asString().c_str(), this))
+        if (!tmpDevice->configure(wBase, wTop, base, top, axes, nets->get(k).asString().c_str(), this))
         {
             yError() <<"configure of subdevice ret false";
             return false;
@@ -607,10 +607,11 @@ bool ControlBoardWrapper::openDeferredAttach(Property& prop)
             return false;
         }
 
-        for(int j=wBase;j<=wTop;j++)
+        for(int j=wBase, jInDev=base;j<=wTop;j++, jInDev++)
         {
             device.lut[j].deviceEntry=k;
             device.lut[j].offset=j-wBase;
+            device.lut[j].jointIndexInDev=jInDev;
         }
 
         totalJ+=axes;
@@ -674,11 +675,13 @@ bool ControlBoardWrapper::openAndAttachSubDevice(Property& prop)
     base = 0;
     top  = controlledJoints-1;
 
+    int wbase = base;
+    int wtop = top;
     SubDevice *tmpDevice=device.getSubdevice(0);
     tmpDevice->setVerbose(_verb);
 
     std::string subDevName ((partName + "_" + subdevice.c_str()));
-    if (!tmpDevice->configure(base, top, controlledJoints, subDevName, this) )
+    if (!tmpDevice->configure(wbase, wtop, base, top, controlledJoints, subDevName, this) )
     {
         yError() <<"configure of subdevice ret false";
         return false;
@@ -697,7 +700,20 @@ bool ControlBoardWrapper::openAndAttachSubDevice(Property& prop)
     // initialization.
     RPC_parser.initialize();
     updateAxisName();
+    calculateMaxNumOfJointsInDevices();
     return true;
+}
+
+void ControlBoardWrapper::calculateMaxNumOfJointsInDevices()
+{
+    device.maxNumOfJointsInDevices = 0;
+    
+    for(unsigned int d=0; d<device.subdevices.size(); d++)
+    {
+        yarp::dev::impl::SubDevice *p = device.getSubdevice(d);
+        if(p->totalAxis > device.maxNumOfJointsInDevices)
+            device.maxNumOfJointsInDevices = p->totalAxis;
+    }
 }
 
 bool ControlBoardWrapper::updateAxisName()
@@ -825,6 +841,7 @@ bool ControlBoardWrapper::attachAll(const PolyDriverList &polylist)
     RPC_parser.initialize();
 
     updateAxisName();
+    calculateMaxNumOfJointsInDevices();
     RateThread::setRate(period);
     RateThread::start();
 
@@ -1102,24 +1119,33 @@ bool ControlBoardWrapper::getPidError(const PidControlTypeEnum& pidtype, int j, 
 
 bool ControlBoardWrapper::getPidErrors(const PidControlTypeEnum& pidtype, double *errs)
 {
-    bool ret=true;
-
-    for(int l=0;l<controlledJoints;l++)
+    double * errors = new double [device.maxNumOfJointsInDevices];
+    
+    bool ret = true;
+    for(unsigned int d=0; d<device.subdevices.size(); d++)
     {
-        int off=device.lut[l].offset;
-        int subIndex=device.lut[l].deviceEntry;
-
-        yarp::dev::impl::SubDevice *p=device.getSubdevice(subIndex);
-        if (!p)
-            return false;
-
-        if (p->pid)
+        yarp::dev::impl::SubDevice *p=device.getSubdevice(d);
+        if(!p)
         {
-            ret=ret&&p->pid->getPidError(pidtype, off+p->base, errs+l);
+            ret = false;
+            break;
+        }
+        if( (p->pid) &&(ret = p->pid->getPidErrors(pidtype, errors)) )
+        {
+            for(int juser= p->wbase, jdevice=p->base; juser<=p->wtop; juser++, jdevice++)
+            {
+                errs[juser] = errors[jdevice];
+            }
         }
         else
-            ret=false;
+        {
+            printError("getPidErrors", p->id, ret);
+            ret =  false;
+            break;
+        }
     }
+    
+    delete[] errors;
     return ret;
 }
 
@@ -1142,24 +1168,33 @@ bool ControlBoardWrapper::getPidOutput(const PidControlTypeEnum& pidtype, int j,
 
 bool ControlBoardWrapper::getPidOutputs(const PidControlTypeEnum& pidtype, double *outs)
 {
-    bool ret=true;
-
-    for(int l=0;l<controlledJoints;l++)
+    double *outputs = new double[device.maxNumOfJointsInDevices];
+    bool ret = true;
+    for(unsigned int d=0; d<device.subdevices.size(); d++)
     {
-        int off=device.lut[l].offset;
-        int subIndex=device.lut[l].deviceEntry;
-
-        yarp::dev::impl::SubDevice *p=device.getSubdevice(subIndex);
-        if (!p)
-            return false;
-
-        if (p->pid)
+        yarp::dev::impl::SubDevice *p=device.getSubdevice(d);
+        if(!p)
         {
-            ret=ret&&p->pid->getPidOutput(pidtype, off+p->base, outs+l);
+            ret = false;
+            break;
+        }
+        
+        if( (p->pid) &&(ret = p->pid->getPidOutputs(pidtype, outputs)))
+        {
+            for(int juser= p->wbase, jdevice=p->base; juser<=p->wtop; juser++, jdevice++)
+            {
+                outs[juser] = outputs[jdevice];
+            }
         }
         else
-            ret=false;
+        {
+            printError("getPidOutouts", p->id, ret);
+            ret = false;
+            break;
+        }
     }
+    
+    delete [] outputs;
     return ret;
 }
 
@@ -1198,24 +1233,33 @@ bool ControlBoardWrapper::getPid(const PidControlTypeEnum& pidtype, int j, Pid *
 
 bool ControlBoardWrapper::getPids(const PidControlTypeEnum& pidtype, Pid *pids)
 {
-    bool ret=true;
-
-    for(int l=0;l<controlledJoints;l++)
+    Pid *pids_device = new Pid[device.maxNumOfJointsInDevices];
+    bool ret = true;
+    for(unsigned int d=0; d<device.subdevices.size(); d++)
     {
-        int off=device.lut[l].offset;
-        int subIndex=device.lut[l].deviceEntry;
-
-        yarp::dev::impl::SubDevice *p=device.getSubdevice(subIndex);
-        if (!p)
-            return false;
-
-        if (p->pid)
+        yarp::dev::impl::SubDevice *p=device.getSubdevice(d);
+        if(!p)
         {
-            ret=ret&&p->pid->getPid(pidtype, off+p->base, pids+l);
+            ret = false;
+            break;
+        }
+        
+        if( (p->pid) &&(ret = p->pid->getPids(pidtype, pids_device)))
+        {
+            for(int juser= p->wbase, jdevice=p->base; juser<=p->wtop; juser++, jdevice++)
+            {
+                pids[juser] = pids_device[jdevice];
+            }
         }
         else
-            ret=false;
+        {
+            printError("getPids", p->id, ret);
+            ret = false;
+            break;
+        }
     }
+    
+    delete[] pids_device;
     return ret;
 }
 
@@ -1233,25 +1277,35 @@ bool ControlBoardWrapper::getPidReference(const PidControlTypeEnum& pidtype, int
     return false;
 }
 
-bool ControlBoardWrapper::getPidReferences(const PidControlTypeEnum& pidtype, double *refs) {
-    bool ret=true;
-
-    for(int l=0;l<controlledJoints;l++)
+bool ControlBoardWrapper::getPidReferences(const PidControlTypeEnum& pidtype, double *refs) 
+{
+    double *references = new double[device.maxNumOfJointsInDevices];
+    bool ret = true;
+    for(unsigned int d=0; d<device.subdevices.size(); d++)
     {
-        int off=device.lut[l].offset;
-        int subIndex=device.lut[l].deviceEntry;
-
-        yarp::dev::impl::SubDevice *p=device.getSubdevice(subIndex);
-        if (!p)
-            return false;
-
-        if (p->pid)
+        yarp::dev::impl::SubDevice *p=device.getSubdevice(d);
+        if(!p)
         {
-            ret=ret&&p->pid->getPidReference(pidtype, off+p->base, refs+l);
+            ret = false;
+            break;
+        }
+        
+        if( (p->pid) &&(ret = p->pid->getPidReferences(pidtype, references)))
+        {
+            for(int juser= p->wbase, jdevice=p->base; juser<=p->wtop; juser++, jdevice++)
+            {
+                refs[juser] = references[jdevice];
+            }
         }
         else
-            ret=false;
+        {
+            printError("getPidReferences", p->id, ret);
+            ret = false;
+            break;
+        }
     }
+    
+    delete [] references;
     return ret;
 }
 
@@ -1270,25 +1324,35 @@ bool ControlBoardWrapper::getPidErrorLimit(const PidControlTypeEnum& pidtype, in
     return false;
 }
 
-bool ControlBoardWrapper::getPidErrorLimits(const PidControlTypeEnum& pidtype, double *limits) {
-    bool ret=true;
-
-    for(int l=0;l<controlledJoints;l++)
+bool ControlBoardWrapper::getPidErrorLimits(const PidControlTypeEnum& pidtype, double *limits) 
+{
+    double *lims = new double[device.maxNumOfJointsInDevices];
+    bool ret = true;
+    for(unsigned int d=0; d<device.subdevices.size(); d++)
     {
-        int off=device.lut[l].offset;
-        int subIndex=device.lut[l].deviceEntry;
-
-        yarp::dev::impl::SubDevice *p=device.getSubdevice(subIndex);
-        if (!p)
-            return false;
-
-        if (p->pid)
+        yarp::dev::impl::SubDevice *p=device.getSubdevice(d);
+        if(!p)
         {
-            ret=ret&&p->pid->getPidErrorLimit(pidtype, off+p->base, limits+l);
+            ret = false;
+            break;
+        }
+        
+        if( (p->pid) &&(ret = p->pid->getPidErrorLimits(pidtype, lims)))
+        {
+            for(int juser= p->wbase, jdevice=p->base; juser<=p->wtop; juser++, jdevice++)
+            {
+                limits[juser] = lims[jdevice];
+            }
         }
         else
-            ret=false;
+        {
+            printError("getPidErrorLimits", p->id, ret);
+            ret = false;
+            break;
+        }
     }
+    
+    delete [] lims;
     return ret;
 }
 
@@ -1525,26 +1589,35 @@ bool ControlBoardWrapper::getTargetPosition(const int j, double* ref)
 * @param spds pointer to the array that will store the speed values.
 * @return true/false on success/failure.
 */
-bool ControlBoardWrapper::getTargetPositions(double *spds) {
-    bool ret=true;
-
-    for(int l=0;l<controlledJoints;l++)
+bool ControlBoardWrapper::getTargetPositions(double *spds) 
+{
+    double *targets = new double[device.maxNumOfJointsInDevices];
+    bool ret = true;
+    for(unsigned int d=0; d<device.subdevices.size(); d++)
     {
-        int off=device.lut[l].offset;
-        int subIndex=device.lut[l].deviceEntry;
-
-        yarp::dev::impl::SubDevice *p=device.getSubdevice(subIndex);
-
-        if (!p)
-            return false;
-
-        if (p->pos2)
+        yarp::dev::impl::SubDevice *p=device.getSubdevice(d);
+        if(!p)
         {
-            ret=ret&&p->pos2->getTargetPosition(off+p->base, spds+l);
+            ret = false;
+            break;
+        }
+        
+        if( (p->pos2) &&(ret = p->pos2->getTargetPositions(targets)))
+        {
+            for(int juser= p->wbase, jdevice=p->base; juser<=p->wtop; juser++, jdevice++)
+            {
+                spds[juser] = targets[jdevice];
+            }
         }
         else
-            ret=false;
+        {
+            printError("getTargetPositions", p->id, ret);
+            ret = false;
+            break;
+        }
     }
+    
+    delete [] targets;
     return ret;
 }
 
@@ -1728,29 +1801,37 @@ bool ControlBoardWrapper::checkMotionDone(int j, bool *flag) {
 * @param flag true if the trajectory is terminated, false otherwise
 * @return false on failure
 */
-bool ControlBoardWrapper::checkMotionDone(bool *flag) {
-    bool ret=true;
-    *flag=true;
-    for(int l=0;l<controlledJoints;l++)
+bool ControlBoardWrapper::checkMotionDone(bool *flag) 
+{
+    bool *done = new bool[device.maxNumOfJointsInDevices];
+    bool ret = true;
+    for(unsigned int d=0; d<device.subdevices.size(); d++)
     {
-        int off=device.lut[l].offset;
-        int subIndex=device.lut[l].deviceEntry;
-
-        yarp::dev::impl::SubDevice *p=device.getSubdevice(subIndex);
-
-        if (!p)
-            return false;
-
-        if (p->pos)
+        yarp::dev::impl::SubDevice *p=device.getSubdevice(d);
+        if(!p)
         {
-            bool tmpF=false;
-            ret=ret&&p->pos->checkMotionDone(off+p->base, &tmpF);
-            *flag=*flag&&tmpF;
+            ret = false;
+            break;
+        }
+        
+        if( (p->pos2) &&(ret = p->pos2->checkMotionDone(done)))
+        {
+            for(int juser= p->wbase, jdevice=p->base; juser<=p->wtop; juser++, jdevice++)
+            {
+                flag[juser] = done[jdevice];
+            }
         }
         else
-            ret=false;
+        {
+            printError("checkMotionDone", p->id, ret);
+            ret = false;
+            break;
+        }
     }
+    
+    delete [] done;
     return ret;
+    
 }
 
 
@@ -2104,26 +2185,35 @@ bool ControlBoardWrapper::getRefSpeed(int j, double *ref) {
 * @param spds pointer to the array that will store the speed values.
 * @return true/false on success/failure.
 */
-bool ControlBoardWrapper::getRefSpeeds(double *spds) {
-    bool ret=true;
-
-    for(int l=0;l<controlledJoints;l++)
+bool ControlBoardWrapper::getRefSpeeds(double *spds) 
+{
+    double *references = new double[device.maxNumOfJointsInDevices];
+    bool ret = true;
+    for(unsigned int d=0; d<device.subdevices.size(); d++)
     {
-        int off=device.lut[l].offset;
-        int subIndex=device.lut[l].deviceEntry;
-
-        yarp::dev::impl::SubDevice *p=device.getSubdevice(subIndex);
-
-        if (!p)
-            return false;
-
-        if (p->pos)
+        yarp::dev::impl::SubDevice *p=device.getSubdevice(d);
+        if(!p)
         {
-            ret=ret&&p->pos->getRefSpeed(off+p->base, spds+l);
+            ret = false;
+            break;
+        }
+        
+        if( (p->pos2) &&(ret = p->pos2->getRefSpeeds(references)))
+        {
+            for(int juser= p->wbase, jdevice=p->base; juser<=p->wtop; juser++, jdevice++)
+            {
+                spds[juser] = references[jdevice];
+            }
         }
         else
-            ret=false;
+        {
+            printError("getRefSpeeds", p->id, ret);
+            ret = false;
+            break;
+        }
     }
+    
+    delete [] references;
     return ret;
 }
 
@@ -2230,26 +2320,35 @@ bool ControlBoardWrapper::getRefAcceleration(int j, double *acc) {
 * @param accs pointer to the array that will store the acceleration values.
 * @return true/false on success or failure
 */
-bool ControlBoardWrapper::getRefAccelerations(double *accs) {
-    bool ret=true;
-
-    for(int l=0;l<controlledJoints;l++)
+bool ControlBoardWrapper::getRefAccelerations(double *accs) 
+{
+    double *references = new double[device.maxNumOfJointsInDevices];
+    bool ret = true;
+    for(unsigned int d=0; d<device.subdevices.size(); d++)
     {
-        int off=device.lut[l].offset;
-        int subIndex=device.lut[l].deviceEntry;
-
-        yarp::dev::impl::SubDevice *p=device.getSubdevice(subIndex);
-
-        if (!p)
-            return false;
-
-        if (p->pos)
+        yarp::dev::impl::SubDevice *p=device.getSubdevice(d);
+        if(!p)
         {
-            ret=ret&&p->pos->getRefAcceleration(off+p->base, accs+l);
+            ret = false;
+            break;
+        }
+        
+        if( (p->pos2) &&(ret = p->pos2->getRefAccelerations(references)))
+        {
+            for(int juser= p->wbase, jdevice=p->base; juser<=p->wtop; juser++, jdevice++)
+            {
+                accs[juser] = references[jdevice];
+            }
         }
         else
-            ret=false;
+        {
+            printError("getRefAccelerations", p->id, ret);
+            ret = false;
+            break;
+        }
     }
+    
+    delete [] references;
     return ret;
 }
 
@@ -2584,47 +2683,71 @@ bool ControlBoardWrapper::getEncoder(int j, double *v) {
     return false;
 }
 
-bool ControlBoardWrapper::getEncoders(double *encs) {
-    bool ret=true;
-
-    for(int l=0;l<controlledJoints;l++)
+bool ControlBoardWrapper::getEncoders(double *encs) 
+{
+    double *encValues = new double[device.maxNumOfJointsInDevices];
+    bool ret = true;
+    for(unsigned int d=0; d<device.subdevices.size(); d++)
     {
-        int off=device.lut[l].offset;
-        int subIndex=device.lut[l].deviceEntry;
-
-        yarp::dev::impl::SubDevice *p=device.getSubdevice(subIndex);
-        if (!p)
-            return false;
-
-        if (p->iJntEnc)
+        yarp::dev::impl::SubDevice *p=device.getSubdevice(d);
+        if(!p)
         {
-            ret=ret&&p->iJntEnc->getEncoder(off+p->base, encs+l);
+            ret = false;
+            break;
+        }
+        
+        if( (p->iJntEnc) &&(ret = p->iJntEnc->getEncoders(encValues)))
+        {
+            for(int juser= p->wbase, jdevice=p->base; juser<=p->wtop; juser++, jdevice++)
+            {
+                encs[juser] = encValues[jdevice];
+            }
         }
         else
-            ret=false;
+        {
+            printError("getEncoders", p->id, ret);
+            ret = false;
+            break;
+        }
     }
+    
+    delete [] encValues;
     return ret;
+    
 }
 
-bool ControlBoardWrapper::getEncodersTimed(double *encs, double *t) {
-    bool ret=true;
-
-    for(int l=0;l<controlledJoints;l++)
+bool ControlBoardWrapper::getEncodersTimed(double *encs, double *t)
+{
+    double *encValues = new double[device.maxNumOfJointsInDevices];
+    double *tValues = new double[device.maxNumOfJointsInDevices];
+    bool ret = true;
+    for(unsigned int d=0; d<device.subdevices.size(); d++)
     {
-        int off=device.lut[l].offset;
-        int subIndex=device.lut[l].deviceEntry;
-
-        yarp::dev::impl::SubDevice *p=device.getSubdevice(subIndex);
-        if (!p)
-            return false;
-
-        if (p->iJntEnc)
+        yarp::dev::impl::SubDevice *p=device.getSubdevice(d);
+        if(!p)
         {
-            ret=ret&&p->iJntEnc->getEncoderTimed(off+p->base, encs+l, t+l);
+            ret = false;
+            break;
+        }
+        
+        if( (p->iJntEnc) &&(ret = p->iJntEnc->getEncodersTimed(encValues, tValues)))
+        {
+            for(int juser= p->wbase, jdevice=p->base; juser<=p->wtop; juser++, jdevice++)
+            {
+                encs[juser] = encValues[jdevice];
+                t[juser] = tValues[jdevice];
+            }
         }
         else
-            ret=false;
+        {
+            printError("getEncodersTimed", p->id, ret);
+            ret = false;
+            break;
+        }
     }
+    
+    delete [] encValues;
+    delete [] tValues;
     return ret;
 }
 
@@ -2660,25 +2783,35 @@ bool ControlBoardWrapper::getEncoderSpeed(int j, double *sp) {
     return false;
 }
 
-bool ControlBoardWrapper::getEncoderSpeeds(double *spds) {
-    bool ret=true;
-
-    for(int l=0;l<controlledJoints;l++)
+bool ControlBoardWrapper::getEncoderSpeeds(double *spds)
+{
+    double *sValues = new double[device.maxNumOfJointsInDevices];
+    bool ret = true;
+    for(unsigned int d=0; d<device.subdevices.size(); d++)
     {
-        int off=device.lut[l].offset;
-        int subIndex=device.lut[l].deviceEntry;
-
-        yarp::dev::impl::SubDevice *p=device.getSubdevice(subIndex);
-        if (!p)
-            return false;
-
-        if (p->iJntEnc)
+        yarp::dev::impl::SubDevice *p=device.getSubdevice(d);
+        if(!p)
         {
-            ret=ret&&p->iJntEnc->getEncoderSpeed(off+p->base, spds+l);
+            ret = false;
+            break;
+        }
+        
+        if( (p->iJntEnc) &&(ret = p->iJntEnc->getEncoderSpeeds(sValues)))
+        {
+            for(int juser= p->wbase, jdevice=p->base; juser<=p->wtop; juser++, jdevice++)
+            {
+                spds[juser] = sValues[jdevice];
+            }
         }
         else
-            ret=false;
+        {
+            printError("getEncoderSpeeds", p->id, ret);
+            ret = false;
+            break;
+        }
     }
+    
+    delete [] sValues;
     return ret;
 }
 
@@ -2700,24 +2833,33 @@ bool ControlBoardWrapper::getEncoderAcceleration(int j, double *acc) {
 
 bool ControlBoardWrapper::getEncoderAccelerations(double *accs)
 {
-    bool ret=true;
-
-    for(int l=0;l<controlledJoints;l++)
+    double *aValues = new double[device.maxNumOfJointsInDevices];
+    bool ret = true;
+    for(unsigned int d=0; d<device.subdevices.size(); d++)
     {
-        int off=device.lut[l].offset;
-        int subIndex=device.lut[l].deviceEntry;
-
-        yarp::dev::impl::SubDevice *p=device.getSubdevice(subIndex);
-        if (!p)
-            return false;
-
-        if (p->iJntEnc)
+        yarp::dev::impl::SubDevice *p=device.getSubdevice(d);
+        if(!p)
         {
-            ret=ret&&p->iJntEnc->getEncoderAcceleration(off+p->base, accs+l);
+            ret = false;
+            break;
+        }
+        
+        if( (p->iJntEnc) &&(ret = p->iJntEnc->getEncoderAccelerations(aValues)))
+        {
+            for(int juser= p->wbase, jdevice=p->base; juser<=p->wtop; juser++, jdevice++)
+            {
+                accs[juser] = aValues[jdevice];
+            }
         }
         else
-            ret=false;
+        {
+            printError("getEncoderAccelerations", p->id, ret);
+            ret = false;
+            break;
+        }
     }
+    
+    delete [] aValues;
     return ret;
 }
 
@@ -2743,25 +2885,35 @@ bool ControlBoardWrapper::getTemperature      (int m, double* val) {
     return false;
 }
 
-bool ControlBoardWrapper::getTemperatures     (double *vals) {
-    bool ret=true;
-
-    for(int l=0;l<controlledJoints;l++)
+bool ControlBoardWrapper::getTemperatures     (double *vals) 
+{
+    double *temps = new double[device.maxNumOfJointsInDevices];
+    bool ret = true;
+    for(unsigned int d=0; d<device.subdevices.size(); d++)
     {
-        int off=device.lut[l].offset;
-        int subIndex=device.lut[l].deviceEntry;
-
-        yarp::dev::impl::SubDevice *p=device.getSubdevice(subIndex);
-        if (!p)
-            return false;
-
-        if (p->imotor)
+        yarp::dev::impl::SubDevice *p=device.getSubdevice(d);
+        if(!p)
         {
-            ret=ret&&p->imotor->getTemperature(off+p->base, vals+l);
+            ret = false;
+            break;
+        }
+        
+        if( (p->imotor) &&(ret = p->imotor->getTemperatures(temps)))
+        {
+            for(int juser= p->wbase, jdevice=p->base; juser<=p->wtop; juser++, jdevice++)
+            {
+                vals[juser] = temps[jdevice];
+            }
         }
         else
-            ret=false;
+        {
+            printError("getTemperatures", p->id, ret);
+            ret = false;
+            break;
+        }
     }
+    
+    delete [] temps;
     return ret;
 }
 
@@ -3015,47 +3167,71 @@ bool ControlBoardWrapper::getMotorEncoder(int m, double *v) {
     return false;
 }
 
-bool ControlBoardWrapper::getMotorEncoders(double *encs) {
-    bool ret=true;
-
-    for(int l=0;l<controlledJoints;l++)
+bool ControlBoardWrapper::getMotorEncoders(double *encs) 
+{
+    
+    double *encValues = new double[device.maxNumOfJointsInDevices];
+    bool ret = true;
+    for(unsigned int d=0; d<device.subdevices.size(); d++)
     {
-        int off=device.lut[l].offset;
-        int subIndex=device.lut[l].deviceEntry;
-
-        yarp::dev::impl::SubDevice *p=device.getSubdevice(subIndex);
-        if (!p)
-            return false;
-
-        if (p->iMotEnc)
+        yarp::dev::impl::SubDevice *p=device.getSubdevice(d);
+        if(!p)
         {
-            ret=ret&&p->iMotEnc->getMotorEncoder(off+p->base, encs+l);
+            ret = false;
+            break;
+        }
+        
+        if( (p->iMotEnc) &&(ret = p->iMotEnc->getMotorEncoders(encValues)))
+        {
+            for(int juser= p->wbase, jdevice=p->base; juser<=p->wtop; juser++, jdevice++)
+            {
+                encs[juser] = encValues[jdevice];
+            }
         }
         else
-            ret=false;
+        {
+            printError("getMotorEncoders", p->id, ret);
+            ret = false;
+            break;
+        }
     }
+    
+    delete [] encValues;
     return ret;
 }
 
-bool ControlBoardWrapper::getMotorEncodersTimed(double *encs, double *t) {
-    bool ret=true;
-
-    for(int l=0;l<controlledJoints;l++)
+bool ControlBoardWrapper::getMotorEncodersTimed(double *encs, double *t)
+{
+    double *encValues = new double[device.maxNumOfJointsInDevices];
+    double *tValues = new double[device.maxNumOfJointsInDevices];
+    bool ret = true;
+    for(unsigned int d=0; d<device.subdevices.size(); d++)
     {
-        int off=device.lut[l].offset;
-        int subIndex=device.lut[l].deviceEntry;
-
-        yarp::dev::impl::SubDevice *p=device.getSubdevice(subIndex);
-        if (!p)
-            return false;
-
-        if (p->iMotEnc)
+        yarp::dev::impl::SubDevice *p=device.getSubdevice(d);
+        if(!p)
         {
-            ret=ret&&p->iMotEnc->getMotorEncoderTimed(off+p->base, encs, t);
+            ret = false;
+            break;
+        }
+        
+        if( (p->iMotEnc) &&(ret = p->iMotEnc->getMotorEncodersTimed(encValues, tValues)))
+        {
+            for(int juser= p->wbase, jdevice=p->base; juser<=p->wtop; juser++, jdevice++)
+            {
+                encs[juser] = encValues[jdevice];
+                t[juser] = tValues[jdevice];
+            }
         }
         else
-            ret=false;
+        {
+            printError("getMotorEncodersTimed", p->id, ret);
+            ret = false;
+            break;
+        }
     }
+    
+    delete [] encValues;
+    delete [] tValues;
     return ret;
 }
 
@@ -3091,25 +3267,35 @@ bool ControlBoardWrapper::getMotorEncoderSpeed(int m, double *sp) {
     return false;
 }
 
-bool ControlBoardWrapper::getMotorEncoderSpeeds(double *spds) {
-    bool ret=true;
-
-    for(int l=0;l<controlledJoints;l++)
+bool ControlBoardWrapper::getMotorEncoderSpeeds(double *spds)
+{
+    double *sValues = new double[device.maxNumOfJointsInDevices];
+    bool ret = true;
+    for(unsigned int d=0; d<device.subdevices.size(); d++)
     {
-        int off=device.lut[l].offset;
-        int subIndex=device.lut[l].deviceEntry;
-
-        yarp::dev::impl::SubDevice *p=device.getSubdevice(subIndex);
-        if (!p)
-            return false;
-
-        if (p->iMotEnc)
+        yarp::dev::impl::SubDevice *p=device.getSubdevice(d);
+        if(!p)
         {
-            ret=ret&&p->iMotEnc->getMotorEncoderSpeed(off+p->base, spds+l);
+            ret = false;
+            break;
+        }
+        
+        if( (p->iMotEnc) &&(ret = p->iMotEnc->getMotorEncoderSpeeds(sValues)))
+        {
+            for(int juser= p->wbase, jdevice=p->base; juser<=p->wtop; juser++, jdevice++)
+            {
+                spds[juser] = sValues[jdevice];
+            }
         }
         else
-            ret=false;
+        {
+            printError("getMotorEncoderSpeeds", p->id, ret);
+            ret = false;
+            break;
+        }
     }
+    
+    delete [] sValues;
     return ret;
 }
 
@@ -3131,25 +3317,35 @@ bool ControlBoardWrapper::getMotorEncoderAcceleration(int m, double *acc) {
 
 bool ControlBoardWrapper::getMotorEncoderAccelerations(double *accs)
 {
-    bool ret=true;
-
-    for(int l=0;l<controlledJoints;l++)
+    double *aValues = new double[device.maxNumOfJointsInDevices];
+    bool ret = true;
+    for(unsigned int d=0; d<device.subdevices.size(); d++)
     {
-        int off=device.lut[l].offset;
-        int subIndex=device.lut[l].deviceEntry;
-
-        yarp::dev::impl::SubDevice *p=device.getSubdevice(subIndex);
-        if (!p)
-            return false;
-
-        if (p->iMotEnc)
+        yarp::dev::impl::SubDevice *p=device.getSubdevice(d);
+        if(!p)
         {
-            ret=ret&&p->iMotEnc->getMotorEncoderAcceleration(off+p->base, accs+l);
+            ret = false;
+            break;
+        }
+        
+        if( (p->iMotEnc) &&(ret = p->iMotEnc->getMotorEncoderAccelerations(aValues)))
+        {
+            for(int juser= p->wbase, jdevice=p->base; juser<=p->wtop; juser++, jdevice++)
+            {
+                accs[juser] = aValues[jdevice];
+            }
         }
         else
-            ret=false;
+        {
+            printError("getMotorEncoderAccelerations", p->id, ret);
+            ret = false;
+            break;
+        }
     }
+    
+    delete [] aValues;
     return ret;
+    
 }
 
 
@@ -3203,25 +3399,33 @@ bool ControlBoardWrapper::disableAmp(int j)
 
 bool ControlBoardWrapper::getAmpStatus(int *st)
 {
-    bool ret=true;
-
-    for(int l=0;l<controlledJoints;l++)
+    int *status = new int[device.maxNumOfJointsInDevices];
+    bool ret = true;
+    for(unsigned int d=0; d<device.subdevices.size(); d++)
     {
-        int subIndex=device.lut[l].deviceEntry;
-
-        yarp::dev::impl::SubDevice *p=device.getSubdevice(subIndex);
-        if (p && p->amp)
+        yarp::dev::impl::SubDevice *p=device.getSubdevice(d);
+        if(!p)
+        {
+            ret = false;
+            break;
+        }
+        
+        if( (p->amp) &&(ret = p->amp->getAmpStatus(status)))
+        {
+            for(int juser= p->wbase, jdevice=p->base; juser<=p->wtop; juser++, jdevice++)
             {
-
-                st[l]=0;
-                //getAmpStatus for single joint does not exist!!
-                // AMP_STATUS TODO
-                //ret=ret&&p->amp->getAmpStatus(off+p->base, st+l);
+                st[juser] = status[jdevice];
             }
+        }
         else
-            ret=false;
+        {
+            printError("getAmpStatus", p->id, ret);
+            ret = false;
+            break;
+        }
     }
-
+    
+    delete [] status;
     return ret;
 }
 
@@ -3241,24 +3445,33 @@ bool ControlBoardWrapper::getAmpStatus(int j, int *v)
 
 bool ControlBoardWrapper::getCurrents(double *vals)
 {
-    bool ret=true;
-
-    for(int l=0;l<controlledJoints;l++)
+    double *currs = new double[device.maxNumOfJointsInDevices];
+    bool ret = true;
+    for(unsigned int d=0; d<device.subdevices.size(); d++)
     {
-        int off=device.lut[l].offset;
-        int subIndex=device.lut[l].deviceEntry;
-
-        yarp::dev::impl::SubDevice *p=device.getSubdevice(subIndex);
-        if (!p)
-            return false;
-
-        if (p->amp)
+        yarp::dev::impl::SubDevice *p=device.getSubdevice(d);
+        if(!p)
         {
-            ret=ret&&p->amp->getCurrent(off+p->base, vals+l);
+            ret = false;
+            break;
+        }
+        
+        if( (p->amp) &&(ret = p->amp->getCurrents(currs)))
+        {
+            for(int juser= p->wbase, jdevice=p->base; juser<=p->wtop; juser++, jdevice++)
+            {
+                vals[juser] = currs[jdevice];
+            }
         }
         else
-            ret=false;
+        {
+            printError("getCurrents", p->id, ret);
+            ret = false;
+            break;
+        }
     }
+    
+    delete [] currs;
     return ret;
 }
 
@@ -3735,24 +3948,33 @@ bool ControlBoardWrapper::getJointType(int j, yarp::dev::JointTypeEnum& type)
 
 bool ControlBoardWrapper::getRefTorques(double *refs)
 {
-    bool ret=true;
-
-    for(int l=0;l<controlledJoints;l++)
+    double *references = new double[device.maxNumOfJointsInDevices];
+    bool ret = true;
+    for(unsigned int d=0; d<device.subdevices.size(); d++)
     {
-        int off=device.lut[l].offset;
-        int subIndex=device.lut[l].deviceEntry;
-
-        yarp::dev::impl::SubDevice *p=device.getSubdevice(subIndex);
-        if (!p)
-            return false;
-
-        if (p->iTorque)
+        yarp::dev::impl::SubDevice *p=device.getSubdevice(d);
+        if(!p)
         {
-            ret=ret&&p->iTorque->getRefTorque(off+p->base, refs+l);
+            ret = false;
+            break;
+        }
+        
+        if( (p->iTorque) &&(ret = p->iTorque->getRefTorques(references)))
+        {
+            for(int juser= p->wbase, jdevice=p->base; juser<=p->wtop; juser++, jdevice++)
+            {
+                refs[juser] = references[jdevice];
+            }
         }
         else
-            ret=false;
+        {
+            printError("getRefTorques", p->id, ret);
+            ret = false;
+            break;
+        }
     }
+    
+    delete [] references;
     return ret;
 }
 
@@ -3932,25 +4154,35 @@ bool ControlBoardWrapper::getTorque(int j, double *t)
 
 bool ControlBoardWrapper::getTorques(double *t)
 {
-    bool ret=true;
-
-    for(int l=0;l<controlledJoints;l++)
+    double *trqs = new double[device.maxNumOfJointsInDevices];
+    bool ret = true;
+    for(unsigned int d=0; d<device.subdevices.size(); d++)
     {
-        int off=device.lut[l].offset;
-        int subIndex=device.lut[l].deviceEntry;
-
-        yarp::dev::impl::SubDevice *p=device.getSubdevice(subIndex);
-        if (!p)
-            return false;
-
-        if (p->iTorque)
+        yarp::dev::impl::SubDevice *p=device.getSubdevice(d);
+        if(!p)
         {
-            ret=ret&&p->iTorque->getTorque(off+p->base, t+l);
+            ret = false;
+            break;
+        }
+        
+        if( (p->iTorque) &&(ret = p->iTorque->getTorques(trqs)))
+        {
+            for(int juser= p->wbase, jdevice=p->base; juser<=p->wtop; juser++, jdevice++)
+            {
+                t[juser] = trqs[jdevice];
+            }
         }
         else
-            ret=false;
+        {
+            printError("getTorques", p->id, ret);
+            ret = false;
+            break;
+        }
     }
+    
+    delete [] trqs;
     return ret;
+    
  }
 
 bool ControlBoardWrapper::getTorqueRange(int j, double *min, double *max)
@@ -3972,25 +4204,39 @@ bool ControlBoardWrapper::getTorqueRange(int j, double *min, double *max)
 
 bool ControlBoardWrapper::getTorqueRanges(double *min, double *max)
 {
-    bool ret=true;
-
-    for(int l=0;l<controlledJoints;l++)
+    double *t_min = new double[device.maxNumOfJointsInDevices];
+    double *t_max = new double[device.maxNumOfJointsInDevices];
+    bool ret = true;
+    for(unsigned int d=0; d<device.subdevices.size(); d++)
     {
-        int off=device.lut[l].offset;
-        int subIndex=device.lut[l].deviceEntry;
-        yarp::dev::impl::SubDevice *p=device.getSubdevice(subIndex);
-        if (!p)
-            return false;
-
-        if (p->iTorque)
+        yarp::dev::impl::SubDevice *p=device.getSubdevice(d);
+        if(!p)
         {
-            ret=ret&&p->iTorque->getTorqueRange(off+p->base, min+l, max+l);
+            ret = false;
+            break;
+        }
+        
+        if( (p->iTorque) &&(ret = p->iTorque->getTorqueRanges(t_min, t_max)))
+        {
+            for(int juser= p->wbase, jdevice=p->base; juser<=p->wtop; juser++, jdevice++)
+            {
+                min[juser] = t_min[jdevice];
+                max[juser] = t_max[jdevice];
+            }
         }
         else
-            ret=false;
+        {
+            printError("getTorqueRanges", p->id, ret);
+            ret = false;
+            break;
+        }
     }
-    return ret;
- }
+    
+    delete [] t_min;
+    delete [] t_max;
+    return ret; 
+    
+}
 
 bool ControlBoardWrapper::getImpedance(int j, double* stiff, double* damp)
 {
@@ -4061,25 +4307,35 @@ bool ControlBoardWrapper::getControlMode(int j, int *mode)
 
 bool ControlBoardWrapper::getControlModes(int *modes)
 {
-   bool ret=true;
-
-    for(int l=0;l<controlledJoints;l++)
+    int *all_mode = new int[device.maxNumOfJointsInDevices];
+    bool ret = true;
+    for(unsigned int d=0; d<device.subdevices.size(); d++)
     {
-        int off=device.lut[l].offset;
-        int subIndex=device.lut[l].deviceEntry;
-
-        yarp::dev::impl::SubDevice *p=device.getSubdevice(subIndex);
-        if (!p)
-            return false;
-
-        if (p->iMode)
+        yarp::dev::impl::SubDevice *p=device.getSubdevice(d);
+        if(!p)
         {
-            ret=ret&&p->iMode->getControlMode(off+p->base, modes+l);
+            ret = false;
+            break;
+        }
+        
+        if( (p->iMode) &&(ret = p->iMode->getControlModes(all_mode)))
+        {
+            for(int juser= p->wbase, jdevice=p->base; juser<=p->wtop; juser++, jdevice++)
+            {
+                modes[juser] = all_mode[jdevice];
+            }
         }
         else
-            ret=false;
+        {
+            printError("getControlModes", p->id, ret);
+            ret = false;
+            break;
+        }
     }
-    return ret;
+    
+    delete [] all_mode;
+    return ret; 
+    
 }
 
 // iControlMode2
@@ -4300,27 +4556,37 @@ bool ControlBoardWrapper::getRefPosition(const int j, double* ref)
     return false;
 }
 
-bool ControlBoardWrapper::getRefPositions(double *spds) {
-    bool ret=true;
-
-    for(int l=0;l<controlledJoints;l++)
+bool ControlBoardWrapper::getRefPositions(double *spds) 
+{
+    double *references = new double[device.maxNumOfJointsInDevices];
+    bool ret = true;
+    for(unsigned int d=0; d<device.subdevices.size(); d++)
     {
-        int off=device.lut[l].offset;
-        int subIndex=device.lut[l].deviceEntry;
-
-        yarp::dev::impl::SubDevice *p=device.getSubdevice(subIndex);
-
-        if (!p)
-            return false;
-
-        if (p->posDir)
+        yarp::dev::impl::SubDevice *p=device.getSubdevice(d);
+        if(!p)
         {
-            ret=ret&&p->posDir->getRefPosition(off+p->base, spds+l);
+            ret = false;
+            break;
+        }
+        
+        if( (p->posDir) &&(ret = p->posDir->getRefPositions(references)))
+        {
+            for(int juser= p->wbase, jdevice=p->base; juser<=p->wtop; juser++, jdevice++)
+            {
+                spds[juser] = references[jdevice];
+            }
         }
         else
-            ret=false;
+        {
+            printError("getRefPositions", p->id, ret);
+            ret = false;
+            break;
+        }
     }
-    return ret;
+    
+    delete [] references;
+    return ret; 
+    
 }
 
 
@@ -4451,29 +4717,35 @@ bool ControlBoardWrapper::getRefVelocity(const int j, double* vel)
 
 bool ControlBoardWrapper::getRefVelocities(double* vels)
 {
-    if(verbose())
-        yTrace();
-
-    bool ret=true;
-
-    for(int l=0;l<controlledJoints;l++)
+    double *references = new double[device.maxNumOfJointsInDevices];
+    bool ret = true;
+    for(unsigned int d=0; d<device.subdevices.size(); d++)
     {
-        int off=device.lut[l].offset;
-        int subIndex=device.lut[l].deviceEntry;
-
-        yarp::dev::impl::SubDevice *p=device.getSubdevice(subIndex);
-
-        if (!p)
-            return false;
-
-        if (p->vel2)
+        yarp::dev::impl::SubDevice *p=device.getSubdevice(d);
+        if(!p)
         {
-            ret=ret&&p->vel2->getRefVelocity(off+p->base, vels+l);
+            ret = false;
+            break;
+        }
+        
+        if( (p->vel2) &&(ret = p->vel2->getRefVelocities(references)))
+        {
+            for(int juser= p->wbase, jdevice=p->base; juser<=p->wtop; juser++, jdevice++)
+            {
+                vels[juser] = references[jdevice];
+            }
         }
         else
-            ret=false;
+        {
+            printError("getRefVelocities", p->id, ret);
+            ret = false;
+            break;
+        }
     }
-    return ret;
+    
+    delete [] references;
+    return ret; 
+    
 }
 
 bool ControlBoardWrapper::getRefVelocities(const int n_joints, const int* joints, double* vels)
@@ -4605,25 +4877,35 @@ bool ControlBoardWrapper::getInteractionModes(int n_joints, int *joints, yarp::d
 
 bool ControlBoardWrapper::getInteractionModes(yarp::dev::InteractionModeEnum* modes)
 {
+    
+    yarp::dev::InteractionModeEnum *imodes = new yarp::dev::InteractionModeEnum[device.maxNumOfJointsInDevices];
     bool ret = true;
-
-    for(int j=0; j<controlledJoints; j++)
+    for(unsigned int d=0; d<device.subdevices.size(); d++)
     {
-        int off; try{off = device.lut.at(j).offset;} catch(...){yError() << "joint number " << j <<  " out of bound [0-"<< controlledJoints << "] for part " << partName; return false; }
-        int subIndex=device.lut[j].deviceEntry;
-
-        yarp::dev::impl::SubDevice *p=device.getSubdevice(subIndex);
-        if (!p)
-            return false;
-
-        if (p->iInteract)
+        yarp::dev::impl::SubDevice *p=device.getSubdevice(d);
+        if(!p)
         {
-            ret=ret && p->iInteract->getInteractionMode(off+p->base, &modes[j]);
+            ret = false;
+            break;
+        }
+        
+        if( (p->iInteract) &&(ret = p->iInteract->getInteractionModes(imodes)))
+        {
+            for(int juser= p->wbase, jdevice=p->base; juser<=p->wtop; juser++, jdevice++)
+            {
+                modes[juser] = imodes[jdevice];
+            }
         }
         else
-            ret=false;
+        {
+            printError("getInteractionModes", p->id, ret);
+            ret = false;
+            break;
+        }
     }
-    return ret;
+    
+    delete [] imodes;
+    return ret; 
 }
 
 bool ControlBoardWrapper::setInteractionMode(int j, yarp::dev::InteractionModeEnum mode)
@@ -4759,25 +5041,35 @@ bool ControlBoardWrapper::getRefDutyCycle(int j, double *v)
 
 bool ControlBoardWrapper::getRefDutyCycles(double *v)
 {
+    double *references = new double[device.maxNumOfJointsInDevices];
     bool ret = true;
-
-    for (int l = 0; l<controlledJoints; l++)
+    for(unsigned int d=0; d<device.subdevices.size(); d++)
     {
-        int off = device.lut[l].offset;
-        int subIndex = device.lut[l].deviceEntry;
-
-        yarp::dev::impl::SubDevice *p = device.getSubdevice(subIndex);
-        if (!p)
-            return false;
-
-        if (p->iPWM)
+        yarp::dev::impl::SubDevice *p=device.getSubdevice(d);
+        if(!p)
         {
-            ret = ret&&p->iPWM->getRefDutyCycle(off + p->base, v + l);
+            ret = false;
+            break;
+        }
+        
+        if( (p->iPWM) &&(ret = p->iPWM->getRefDutyCycles(references)))
+        {
+            for(int juser= p->wbase, jdevice=p->base; juser<=p->wtop; juser++, jdevice++)
+            {
+                v[juser] = references[jdevice];
+            }
         }
         else
+        {
+            printError("getRefDutyCycles", p->id, ret);
             ret = false;
+            break;
+        }
     }
-    return ret;
+    
+    delete [] references;
+    return ret; 
+    
 }
 
 bool ControlBoardWrapper::getDutyCycle(int j, double *v)
@@ -4799,25 +5091,35 @@ bool ControlBoardWrapper::getDutyCycle(int j, double *v)
 
 bool ControlBoardWrapper::getDutyCycles(double *v)
 {
+    double *dutyCicles = new double[device.maxNumOfJointsInDevices];
     bool ret = true;
-
-    for (int l = 0; l<controlledJoints; l++)
+    for(unsigned int d=0; d<device.subdevices.size(); d++)
     {
-        int off = device.lut[l].offset;
-        int subIndex = device.lut[l].deviceEntry;
-
-        yarp::dev::impl::SubDevice *p = device.getSubdevice(subIndex);
-        if (!p)
-            return false;
-
-        if (p->iPWM)
+        yarp::dev::impl::SubDevice *p=device.getSubdevice(d);
+        if(!p)
         {
-            ret = ret&&p->iPWM->getDutyCycle(off + p->base, v + l);
+            ret = false;
+            break;
+        }
+        
+        if( (p->iPWM) &&(ret = p->iPWM->getDutyCycles(dutyCicles)))
+        {
+            for(int juser= p->wbase, jdevice=p->base; juser<=p->wtop; juser++, jdevice++)
+            {
+                v[juser] = dutyCicles[jdevice];
+            }
         }
         else
+        {
+            printError("getDutyCycles", p->id, ret);
             ret = false;
+            break;
+        }
     }
-    return ret;
+    
+    delete [] dutyCicles;
+    return ret; 
+    
 }
 
 
@@ -4848,25 +5150,38 @@ bool ControlBoardWrapper::getCurrentRange(int j, double *min, double *max)
 
 bool ControlBoardWrapper::getCurrentRanges(double *min, double *max)
 {
+    double *c_min = new double[device.maxNumOfJointsInDevices];
+    double *c_max = new double[device.maxNumOfJointsInDevices];
     bool ret = true;
-
-    for (int l = 0; l<controlledJoints; l++)
+    for(unsigned int d=0; d<device.subdevices.size(); d++)
     {
-        int off = device.lut[l].offset;
-        int subIndex = device.lut[l].deviceEntry;
-
-        yarp::dev::impl::SubDevice *p = device.getSubdevice(subIndex);
-        if (!p)
-            return false;
-
-        if (p->iCurr)
+        yarp::dev::impl::SubDevice *p=device.getSubdevice(d);
+        if(!p)
         {
-            ret = ret&&p->iCurr->getCurrentRange(off + p->base, min+l, max+l);
+            ret = false;
+            break;
+        }
+        
+        if( (p->iCurr) &&(ret = p->iCurr->getCurrentRanges(c_min, c_max)))
+        {
+            for(int juser= p->wbase, jdevice=p->base; juser<=p->wtop; juser++, jdevice++)
+            {
+                min[juser] = c_min[jdevice];
+                max[juser] = c_max[jdevice];
+            }
         }
         else
+        {
+            printError("getCurrentRanges", p->id, ret);
             ret = false;
+            break;
+        }
     }
-    return ret;
+    
+    delete [] c_min;
+    delete [] c_max;
+    return ret; 
+    
 }
 
 bool ControlBoardWrapper::setRefCurrents(const double *t)
@@ -4946,25 +5261,35 @@ bool ControlBoardWrapper::setRefCurrents(const int n_joint, const int *joints, c
 
 bool ControlBoardWrapper::getRefCurrents(double *t)
 {
+    double *references = new double[device.maxNumOfJointsInDevices];
     bool ret = true;
-
-    for (int l = 0; l<controlledJoints; l++)
+    for(unsigned int d=0; d<device.subdevices.size(); d++)
     {
-        int off = device.lut[l].offset;
-        int subIndex = device.lut[l].deviceEntry;
-
-        yarp::dev::impl::SubDevice *p = device.getSubdevice(subIndex);
-        if (!p)
-            return false;
-
-        if (p->iCurr)
+        yarp::dev::impl::SubDevice *p=device.getSubdevice(d);
+        if(!p)
         {
-            ret = ret&&p->iCurr->getRefCurrent(off + p->base, t+l);
+            ret = false;
+            break;
+        }
+        
+        if( (p->iCurr) &&(ret = p->iCurr->getRefCurrents(references)))
+        {
+            for(int juser= p->wbase, jdevice=p->base; juser<=p->wtop; juser++, jdevice++)
+            {
+                t[juser] = references[jdevice];
+            }
         }
         else
+        {
+            printError("getRefCurrents", p->id, ret);
             ret = false;
+            break;
+        }
     }
-    return ret;
+    
+    delete [] references;
+    return ret; 
+    
 }
 
 bool ControlBoardWrapper::getRefCurrent(int j, double *t)

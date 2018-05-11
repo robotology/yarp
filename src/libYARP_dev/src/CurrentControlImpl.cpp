@@ -13,17 +13,13 @@
 using namespace yarp::dev;
 #define JOINTIDCHECK if (j >= castToMapper(helper)->axes()){yError("joint id out of bound"); return false;}
 #define MJOINTIDCHECK(i) if (joints[i] >= castToMapper(helper)->axes()){yError("joint id out of bound"); return false;}
+#define MJOINTIDCHECK_DEL(i) if (joints[i] >= castToMapper(helper)->axes()){yError("joint id out of bound"); delete [] tmp_joints; delete [] tmp;return false;}
 #define PJOINTIDCHECK(j) if (j >= castToMapper(helper)->axes()){yError("joint id out of bound"); return false;}
 
-ImplementCurrentControl::ImplementCurrentControl(ICurrentControlRaw *tq)
+ImplementCurrentControl::ImplementCurrentControl(ICurrentControlRaw *tq):nj(0)
 {
     iCurrentRaw = tq;
     helper=nullptr;
-    temp=nullptr;
-//     fake =0;
-    temp2=nullptr;
-    temp_int=nullptr;
-    tmpPids=nullptr;
 }
 
 ImplementCurrentControl::~ImplementCurrentControl()
@@ -35,17 +31,10 @@ bool ImplementCurrentControl::initialize(int size, const int *amap, const double
 {
     if (helper!=nullptr)
         return false;
+    nj=size;
 
     helper = (void *)(new ControlBoardHelper(size, amap, nullptr, nullptr, nullptr, ampsToSens, nullptr, nullptr));
     yAssert (helper != nullptr);
-    temp=new double [size];
-    yAssert (temp != nullptr);
-    temp2=new double [size];
-    yAssert (temp2 != nullptr);
-    temp_int=new int [size];
-    yAssert (temp_int != nullptr);
-    tmpPids=new Pid[size];
-    yAssert (tmpPids!=nullptr);
 
     return true;
 }
@@ -57,11 +46,6 @@ bool ImplementCurrentControl::uninitialize()
         delete castToMapper(helper);
         helper=nullptr;
     }
-    checkAndDestroy(temp);
-    checkAndDestroy(temp2);
-    checkAndDestroy(temp_int);
-    checkAndDestroy(tmpPids);
-
     return true;
 }
 
@@ -85,15 +69,20 @@ bool ImplementCurrentControl::getRefCurrent(int j, double *r)
 bool ImplementCurrentControl::getRefCurrents(double *t)
 {
     bool ret;
-    ret = iCurrentRaw->getRefCurrentsRaw(temp);
-    castToMapper(helper)->ampereS2A(temp,t);
+    double *tmp = new double[nj];
+    ret = iCurrentRaw->getRefCurrentsRaw(tmp);
+    castToMapper(helper)->ampereS2A(tmp,t);
+    delete [] tmp;
     return ret;
 }
 
 bool ImplementCurrentControl::setRefCurrents(const double *t)
 {
-    castToMapper(helper)->ampereA2S(t, temp);
-    return iCurrentRaw->setRefCurrentsRaw(temp);
+    double *tmp = new double[nj];
+    castToMapper(helper)->ampereA2S(t, tmp);
+    bool ret = iCurrentRaw->setRefCurrentsRaw(tmp);
+    delete [] tmp;
+    return ret;
 }
 
 bool ImplementCurrentControl::setRefCurrent(int j, double t)
@@ -107,19 +96,26 @@ bool ImplementCurrentControl::setRefCurrent(int j, double t)
 
 bool ImplementCurrentControl::getCurrents(double *t)
 {
-    bool ret = iCurrentRaw->getCurrentsRaw(temp);
-    castToMapper(helper)->ampereS2A(temp, t);
+    double *tmp = new double[nj];
+    bool ret = iCurrentRaw->getCurrentsRaw(tmp);
+    castToMapper(helper)->ampereS2A(tmp, t);
+    delete [] tmp;
     return ret;
 }
 
 bool ImplementCurrentControl::setRefCurrents(const int n_joint, const int *joints, const double *t)
 {
+    double *tmp = new double[nj];
+    int *tmp_joints = new int[nj];
     for(int idx=0; idx<n_joint; idx++)
     {
-        MJOINTIDCHECK(idx)
-        castToMapper(helper)->ampereA2S(t[idx], joints[idx], temp[idx], temp_int[idx]);
+        MJOINTIDCHECK_DEL(idx)
+        castToMapper(helper)->ampereA2S(t[idx], joints[idx], tmp[idx], tmp_joints[idx]);
     }
-    return iCurrentRaw->setRefCurrentsRaw(n_joint, temp_int, temp);
+    bool ret = iCurrentRaw->setRefCurrentsRaw(n_joint, tmp_joints, tmp);
+    delete [] tmp;
+    delete [] tmp_joints;
+    return ret;
 }
 
 bool ImplementCurrentControl::getCurrent(int j, double *t)
@@ -136,9 +132,13 @@ bool ImplementCurrentControl::getCurrent(int j, double *t)
 
 bool ImplementCurrentControl::getCurrentRanges(double *min, double *max)
 {
-    bool ret = iCurrentRaw->getCurrentRangesRaw(temp, temp2);
-    castToMapper(helper)->toUser(temp, min);
-    castToMapper(helper)->toUser(temp2, max);
+    double *tmp_min = new double[nj];
+    double *tmp_max = new double[nj];
+    bool ret = iCurrentRaw->getCurrentRangesRaw(tmp_min, tmp_max);
+    castToMapper(helper)->toUser(tmp_min, min);
+    castToMapper(helper)->toUser(tmp_max, max);
+    delete [] tmp_min;
+    delete [] tmp_max;
     return ret;
 }
 

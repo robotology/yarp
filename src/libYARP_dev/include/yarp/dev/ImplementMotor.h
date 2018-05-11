@@ -22,8 +22,7 @@ class YARP_dev_API yarp::dev::ImplementMotor: public IMotor
 protected:
     IMotorRaw *imotor;
     void *helper;
-    double *temp1;
-    double *temp2;
+    int nj;
 
 
     /**

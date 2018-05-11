@@ -2988,12 +2988,21 @@ bool FakeMotionControl::getRefPositionsRaw(int nj, const int * jnts, double *ref
 // InteractionMode
 bool FakeMotionControl::getInteractionModeRaw(int j, yarp::dev::InteractionModeEnum* _mode)
 {
-    return false;
-}
+    if(verbose > VERY_VERY_VERBOSE)
+        yTrace() << "j: " << j;
+    
+    *_mode = (yarp::dev::InteractionModeEnum)_interactMode[j];
+    return true;}
 
 bool FakeMotionControl::getInteractionModesRaw(int n_joints, int *joints, yarp::dev::InteractionModeEnum* modes)
 {
-    return false;
+    bool ret = true;
+    for(int j=0; j< n_joints; j++)
+    {
+        ret = ret && getInteractionModeRaw(joints[j], &modes[j]);
+    }
+    return ret;
+    
 }
 
 bool FakeMotionControl::getInteractionModesRaw(yarp::dev::InteractionModeEnum* modes)
@@ -3009,18 +3018,34 @@ bool FakeMotionControl::getInteractionModesRaw(yarp::dev::InteractionModeEnum* m
 // con il interaction mode il can ora non lo fa. mentre lo fa per il control mode. perche' diverso?
 bool FakeMotionControl::setInteractionModeRaw(int j, yarp::dev::InteractionModeEnum _mode)
 {
-     return false;
+    if(verbose >= VERY_VERBOSE)
+        yTrace() << "j: " << j << " intercation mode: " << yarp::os::Vocab::decode(_mode);
+    
+    _interactMode[j] = _mode;
+   
+    return true;
 }
 
 
 bool FakeMotionControl::setInteractionModesRaw(int n_joints, int *joints, yarp::dev::InteractionModeEnum* modes)
 {
-    return false;
+    bool ret = true;
+    for(int i=0; i<n_joints; i++)
+    {
+        ret &= setInteractionModeRaw(joints[i], modes[i]);
+    }
+    return ret;
 }
 
 bool FakeMotionControl::setInteractionModesRaw(yarp::dev::InteractionModeEnum* modes)
 {
-    return false;
+    bool ret = true;
+    for(int i=0; i<_njoints; i++)
+    {
+        ret &= setInteractionModeRaw(i, modes[i]);
+    }
+    return ret;
+    
 }
 
 bool FakeMotionControl::getNumberOfMotorsRaw(int* num)

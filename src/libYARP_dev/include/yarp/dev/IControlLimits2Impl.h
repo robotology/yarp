@@ -31,10 +31,7 @@ class YARP_dev_API yarp::dev::ImplementControlLimits2: public IControlLimits2
 protected:
     IControlLimits2Raw *iLimits2;
     void    *helper;
-    // those data are used as a support, DO NOT RELY on them!
-    int     *temp_int;
-    double  *temp_max;
-    double  *temp_min;
+    int nj;
 
     /**
      * Initialize the internal data and alloc memory.

@@ -74,7 +74,10 @@ public:
     std::string id;
     int base;
     int top;
-    int axes;
+    int wbase; //wrapper base
+    int wtop; //wrapper top
+    int axes; //number of used axis of this subdevice
+    int totalAxis; //Numeber of total axis taht the subdevice can control
 
     bool configuredF;
 
@@ -116,7 +119,7 @@ public:
     void detach();
     inline void setVerbose(bool _verbose) {_subDevVerbose = _verbose; }
 
-    bool configure(int base, int top, int axes, const std::string &id, yarp::dev::ControlBoardWrapper *_parent);
+    bool configure(int wbase, int wtop, int base, int top, int axes, const std::string &id, yarp::dev::ControlBoardWrapper *_parent);
 
     inline void refreshJointEncoders()
     {
@@ -152,6 +155,7 @@ struct DevicesLutEntry
 {
     int offset; //an offset, the device is mapped starting from this joint
     int deviceEntry; //index to the joint corresponding subdevice in the list
+    int jointIndexInDev; //the index of joint in the numeration inside the device
 };
 
 
@@ -160,6 +164,7 @@ class yarp::dev::impl::WrappedDevice
 public:
     SubDeviceVector subdevices;
     std::vector<DevicesLutEntry> lut;
+    int maxNumOfJointsInDevices;
 
     inline yarp::dev::impl::SubDevice *getSubdevice(unsigned int i)
     {

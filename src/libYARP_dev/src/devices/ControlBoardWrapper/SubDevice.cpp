@@ -56,11 +56,13 @@ SubDevice::SubDevice() :
     attachedF(false)
 {}
 
-bool SubDevice::configure(int b, int t, int n, const std::string &key, yarp::dev::ControlBoardWrapper *_parent)
+bool SubDevice::configure(int wb, int wt, int b, int t, int n, const std::string &key, yarp::dev::ControlBoardWrapper *_parent)
 {
     parent = _parent;
     configuredF=false;
-
+    
+    wbase = wb;
+    wtop = wt;
     base=b;
     top=t;
     axes=n;
@@ -283,6 +285,7 @@ bool SubDevice::attach(yarp::dev::PolyDriver *d, const std::string &k)
                  return false;
     }
 
+    totalAxis = deviceJoints;
     attachedF=true;
     return true;
 }

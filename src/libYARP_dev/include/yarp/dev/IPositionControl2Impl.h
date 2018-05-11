@@ -30,8 +30,8 @@ class YARP_dev_API yarp::dev::ImplementPositionControl2 : public IPositionContro
 protected:
     IPositionControl2Raw *iPosition2;
     void    *helper;
-    int     *temp_int;
-    double  *temp_double;
+    int nj;
+
     /**
      * Initialize the internal data and alloc memory.
      * @param size is the number of controlled axes the driver deals with.

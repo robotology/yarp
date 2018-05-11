@@ -343,6 +343,12 @@ private:
     bool openAndAttachSubDevice(yarp::os::Property& prop);
 
     bool ownDevices;
+    inline void printError(std::string func_name, std::string info, bool result)
+    {
+        yError() << "CBW(" << partName << "): " << func_name.c_str() << " on device" << info.c_str() << "returns " << result << "or interface not availables";
+    }
+    
+    void calculateMaxNumOfJointsInDevices();
 #endif  //DOXYGEN_SHOULD_SKIP_THIS
 
 public:

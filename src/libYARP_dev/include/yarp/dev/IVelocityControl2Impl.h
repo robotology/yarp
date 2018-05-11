@@ -26,10 +26,8 @@ class YARP_dev_API yarp::dev::ImplementVelocityControl2 : public IVelocityContro
 protected:
     IVelocityControl2Raw *iVelocity2;
     void    *helper;
-    int     *temp_int;
-    double  *temp_double;
-    Pid     *tempPids;
-
+    int nj;
+    
     /**
      * Initialize the internal data and alloc memory.
      * @param size is the number of controlled axes the driver deals with.

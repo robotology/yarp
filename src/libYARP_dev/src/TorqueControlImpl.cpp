@@ -13,15 +13,13 @@
 using namespace yarp::dev;
 #define JOINTIDCHECK if (j >= castToMapper(helper)->axes()){yError("joint id out of bound"); return false;}
 #define MJOINTIDCHECK(i) if (joints[i] >= castToMapper(helper)->axes()){yError("joint id out of bound"); return false;}
+#define MJOINTIDCHECK_DEL(i) if (joints[i] >= castToMapper(helper)->axes()){yError("joint id out of bound"); delete[] temp_int; delete [] temp; return false;}
 #define PJOINTIDCHECK(j) if (j >= castToMapper(helper)->axes()){yError("joint id out of bound"); return false;}
 
-ImplementTorqueControl::ImplementTorqueControl(ITorqueControlRaw *tq)
+ImplementTorqueControl::ImplementTorqueControl(ITorqueControlRaw *tq):nj(0)
 {
     iTorqueRaw = tq;
     helper=nullptr;
-    temp=nullptr;
-    temp2=nullptr;
-    temp_int=nullptr;
 }
 
 ImplementTorqueControl::~ImplementTorqueControl()
@@ -36,13 +34,8 @@ bool ImplementTorqueControl::initialize(int size, const int *amap, const double 
 
     helper=(void *)(new ControlBoardHelper(size, amap, enc, zos, nw, amps, nullptr, dutys,bemfs,ktaus));
     yAssert (helper != nullptr);
-    temp=new double [size];
-    yAssert (temp != nullptr);
-    temp2=new double [size];
-    yAssert (temp2 != nullptr);
-    temp_int=new int [size];
-    yAssert (temp_int != nullptr);
 
+    nj=size;
     return true;
 }
 
@@ -53,10 +46,6 @@ bool ImplementTorqueControl::uninitialize ()
         delete castToMapper(helper);
         helper=nullptr;
     }
-    checkAndDestroy(temp);
-    checkAndDestroy(temp2);
-    checkAndDestroy(temp_int);
-
     return true;
 }
 
@@ -114,15 +103,20 @@ bool ImplementTorqueControl::getMotorTorqueParams(int j,  yarp::dev::MotorTorque
 bool ImplementTorqueControl::getRefTorques(double *t)
 {
     bool ret;
-    ret = iTorqueRaw->getRefTorquesRaw(temp);
-    castToMapper(helper)->trqS2N(temp,t);
+    double *refTorques = new double[nj];
+    ret = iTorqueRaw->getRefTorquesRaw(refTorques);
+    castToMapper(helper)->trqS2N(refTorques,t);
+    delete [] refTorques;
     return ret;
 }
 
 bool ImplementTorqueControl::setRefTorques(const double *t)
 {
-    castToMapper(helper)->trqN2S(t, temp);
-    return iTorqueRaw->setRefTorquesRaw(temp);
+    double *refTorques = new double[nj];
+    castToMapper(helper)->trqN2S(t, refTorques);
+    bool ret = iTorqueRaw->setRefTorquesRaw(refTorques);
+    delete [] refTorques;
+    return ret;
 }
 
 bool ImplementTorqueControl::setRefTorque(int j, double t)
@@ -136,19 +130,26 @@ bool ImplementTorqueControl::setRefTorque(int j, double t)
 
 bool ImplementTorqueControl::getTorques(double *t)
 {
-    bool ret = iTorqueRaw->getTorquesRaw(temp);
-    castToMapper(helper)->toUser(temp, t);
+    double *torques = new double[nj];
+    bool ret = iTorqueRaw->getTorquesRaw(torques);
+    castToMapper(helper)->toUser(torques, t);
+    delete [] torques;
     return ret;
 }
 
 bool ImplementTorqueControl::setRefTorques(const int n_joint, const int *joints, const double *t)
 {
+    int *temp_int = new int[nj];
+    double *temp = new double[nj];
     for(int idx=0; idx<n_joint; idx++)
     {
-        MJOINTIDCHECK(idx)
+        MJOINTIDCHECK_DEL(idx)
         castToMapper(helper)->trqN2S(t[idx], joints[idx], temp[idx], temp_int[idx]);
     }
-    return iTorqueRaw->setRefTorquesRaw(n_joint, temp_int, temp);
+    bool ret = iTorqueRaw->setRefTorquesRaw(n_joint, temp_int, temp);
+    delete [] temp;
+    delete [] temp_int;
+    return ret;
 }
 
 bool ImplementTorqueControl::getTorque(int j, double *t)
@@ -161,9 +162,13 @@ bool ImplementTorqueControl::getTorque(int j, double *t)
 
 bool ImplementTorqueControl::getTorqueRanges(double *min, double *max)
 {
-    bool ret = iTorqueRaw->getTorqueRangesRaw(temp,temp2);
-    castToMapper(helper)->toUser(temp, min);
-    castToMapper(helper)->toUser(temp2, max);
+    double *t_min = new double[nj];
+    double *t_max = new double[nj];
+    bool ret = iTorqueRaw->getTorqueRangesRaw(t_min,t_max);
+    castToMapper(helper)->toUser(t_min, min);
+    castToMapper(helper)->toUser(t_max, max);
+    delete [] t_min;
+    delete [] t_max;
     return ret;
 }
 

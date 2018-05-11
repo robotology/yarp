@@ -24,9 +24,7 @@ class YARP_dev_API yarp::dev::ImplementTorqueControl: public ITorqueControl
 protected:
     yarp::dev::ITorqueControlRaw *iTorqueRaw;
     void *helper;
-    double *temp;
-    double *temp2;
-    int    *temp_int;
+    int nj;
 
     /**
      * Initialize the internal data and alloc memory.
