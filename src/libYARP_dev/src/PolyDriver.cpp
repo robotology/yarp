@@ -242,7 +242,7 @@ bool PolyDriver::coreOpen(yarp::os::Searchable& prop) {
                 p.fromString(config->toString());
                 p.unput("wrapped");
                 config = &p;
-                if (wrapCreator!=creator) {
+                if (wrapCreator!=creator && !p.check("help")) {
                     p.put("subdevice",str.c_str());
                     p.put("device",wrapper.c_str());
                     p.setMonitor(prop.getMonitor(),
