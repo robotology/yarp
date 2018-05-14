@@ -110,8 +110,9 @@ function(YARP_IDL_TO_DIR yarpidl_file_base output_dir)
     # Generate code at configuration time, so we know filenames.
     find_program(YARPIDL_${family}_LOCATION
                  NAMES yarpidl_${family}
-                 HINTS ${YARP_IDL_BINARY_HINT}
-                       "${CMAKE_BINARY_DIR}/${CMAKE_INSTALL_BINDIR}")
+                 HINTS "${YARP_IDL_BINARY_HINT}"
+                       "${CMAKE_BINARY_DIR}/${CMAKE_INSTALL_BINDIR}"
+                 NO_DEFAULT_PATH)
     # Make sure intermediate output directory exists.
     make_directory(${dir})
     # Generate a script controlling final layout of files.
