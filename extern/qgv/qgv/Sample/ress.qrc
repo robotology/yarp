@@ -1,0 +1,8 @@
+<RCC>
+    <qresource prefix="/icons">
+        <file>Gnome-Network-Server-64.png</file>
+        <file>Gnome-Network-Transmit-64.png</file>
+        <file>Gnome-Stock-Person-64.png</file>
+        <file>Gnome-System-Run-64.png</file>
+    </qresource>
+</RCC>

@@ -15,63 +15,67 @@ Lesser General Public License for more details.
 You should have received a copy of the GNU Lesser General Public
 License along with this library.
 ***************************************************************/
-#ifndef QGVNODE_H
-#define QGVNODE_H
+#ifndef QGVEDGE_H
+#define QGVEDGE_H
 
-#include <qgv.h>
+#include "qgv.h"
 #include <QGraphicsItem>
 #include <QPen>
 
-class QGVEdge;
+class QGVNode;
 class QGVScene;
-class QGVNodePrivate;
+class QGVEdgePrivate;
 
 /**
- * @brief Node item
+ * @brief Edge item
  *
  */
-class QGVCORE_EXPORT QGVNode : public QGraphicsItem
+class QGVCORE_EXPORT QGVEdge : public QGraphicsItem
 {
 public:
-    ~QGVNode();
+    ~QGVEdge();
 
     QString label() const;
+    QRectF boundingRect() const;
+    QPainterPath shape() const;
+
     void setLabel(const QString &label);
 
-    QRectF boundingRect() const;
     void paint(QPainter * painter, const QStyleOptionGraphicsItem * option, QWidget * widget = 0);
-    void setAttribute(const QString &label, const QString &value);
+
+    void setAttribute(const QString &name, const QString &value);
     QString getAttribute(const QString &name) const;
 
-    void setIcon(const QImage &icon);
-    void setVertex(void* v);
-    void* getVertex();
+    void updateLayout();
 
-    enum { Type = UserType + 2 };
+    void setEdge(const void *e);
+    const void *getEdge(void);
+
+    enum { Type = UserType + 3 };
     int type() const
     {
         return Type;
     }
 
 private:
-    friend class QGVScene;
-    friend class QGVSubGraph;
-    void updateLayout();
-    QGVNode(QGVNodePrivate* node, QGVScene *scene);
+    QGVEdge(QGVEdgePrivate *edge, QGVScene *scene);
 
-		// Not implemented in QGVNode.cpp
-//		QPainterPath makeShape(Agnode_t* node) const;
-//		QPolygonF makeShapeHelper(Agnode_t* node) const;
+    QPolygonF toArrow(const QLineF &normal) const;
+
+    friend class QGVScene;
+    //friend class QGVSubGraph;
+
+    QGVScene *_scene;
+    QGVEdgePrivate* _edge;
 
     QPainterPath _path;
     QPen _pen;
-    QBrush _brush;
-    QImage _icon;
+    QPolygonF _head_arrow;
+    QPolygonF _tail_arrow;
 
-    QGVScene *_scene;
-    QGVNodePrivate* _node;
-    void* vertex;
+    QString _label;
+    QRectF _label_rect;
+    const void* edge;
 };
 
-
-#endif // QGVNODE_H
+#endif // QGVEDGE_H

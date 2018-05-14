@@ -24,7 +24,7 @@ License along with this library.
 #include <QDebug>
 #include <QPainter>
 
-QGVSubGraph::QGVSubGraph(QGVGraphPrivate *subGraph, QGVScene *scene): _sgraph(subGraph), _scene(scene), vertex(NULL)
+QGVSubGraph::QGVSubGraph(QGVGraphPrivate *subGraph, QGVScene *scene):  _scene(scene), _sgraph(subGraph), vertex(NULL)
 {
     setFlag(QGraphicsItem::ItemIsSelectable, true);
 }
@@ -50,7 +50,7 @@ QGVNode *QGVSubGraph::addNode(const QString &label)
     }
     agsubnode(_sgraph->graph(), node, TRUE);
 
-    QGVNode *item = new QGVNode(new QGVNodePrivate(node), _scene);
+    QGVNode *item = new QGVNode(new QGVNodePrivate(node, _sgraph->graph()), _scene);
     item->setLabel(label);
     _scene->addItem(item);
     _scene->_nodes.append(item);
@@ -83,7 +83,7 @@ QRectF QGVSubGraph::boundingRect() const
     return QRectF(0,0, _width, _height);
 }
 
-void QGVSubGraph::paint(QPainter * painter, const QStyleOptionGraphicsItem * option, QWidget * widget)
+void QGVSubGraph::paint(QPainter * painter, const QStyleOptionGraphicsItem *, QWidget *)
 {
     painter->save();
 
@@ -122,7 +122,8 @@ void QGVSubGraph::paint(QPainter * painter, const QStyleOptionGraphicsItem * opt
 
 void QGVSubGraph::setAttribute(const QString &name, const QString &value)
 {
-    agsafeset(_sgraph->graph(), name.toLocal8Bit().data(), value.toLocal8Bit().data(), (char*) "");
+    char empty[] = "";
+    agsafeset(_sgraph->graph(), name.toLocal8Bit().data(), value.toLocal8Bit().data(), empty);
 }
 
 QString QGVSubGraph::getAttribute(const QString &name) const
@@ -156,7 +157,7 @@ void QGVSubGraph::updateLayout()
     if(xlabel)
     {
         _label = xlabel->text;
-        _label_rect.setSize(QSize(xlabel->dimen.x+30, xlabel->dimen.y+10));
+        _label_rect.setSize(QSize(xlabel->dimen.x, xlabel->dimen.y));
         _label_rect.moveCenter(QGVCore::toPoint(xlabel->pos, QGVCore::graphHeight(_scene->_graph->graph())) - pos());
     }
 }
