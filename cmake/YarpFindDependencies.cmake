@@ -25,6 +25,7 @@
 
 include(YarpRenamedOption)
 include(CMakeDependentOption)
+include(YarpPrintFeature)
 
 # USEFUL MACROS:
 
@@ -217,9 +218,9 @@ macro(print_dependency package)
     set(_version " ${${package}_VERSION}")
   endif()
   if(NOT DEFINED YARP_HAS_${PKG})
-    message(STATUS " --- ${package}${_required_version}: disabled")
+    set(_reason "disabled")
   elseif(NOT YARP_HAS_${PKG})
-    message(STATUS " --- ${package}${_required_version}: not found")
+    set(_reason "not found")
   elseif(YARP_HAS_SYSTEM_${PKG} AND YARP_USE_SYSTEM_${PKG})
     unset(_where)
     if(${package}_DIR)
@@ -242,17 +243,20 @@ macro(print_dependency package)
     elseif(${PKG}_INCLUDE_DIR)
       set(_where " (${${PKG}_INCLUDE_DIR})")
     endif()
-    message(STATUS " +++ ${package}${_required_version}: found${_version}${_where}")
+    set(_reason "found${_version}${_where}")
   elseif(YARP_HAS_SYSTEM_${PKG})
-    message(STATUS " +++ ${package}${_required_version}: compiling (system package disabled)")
+    set(_reason "compiling (system package disabled)")
   else()
-    message(STATUS " +++ ${package}${_required_version}: compiling (not found)")
+    set(_reason "compiling (not found)")
   endif()
+
+  yarp_print_with_checkbox(YARP_HAS_${PKG} "${package}${_required_version}: ${_reason}")
+
   unset(_lib)
   unset(_where)
   unset(_version)
   unset(_required_version)
-
+  unset(_reason)
 endmacro()
 
 
@@ -549,11 +553,32 @@ check_optional_dependency(YARP_COMPILE_BINDINGS SWIG)
 check_optional_dependency(YARP_COMPILE_RTF_ADDONS RTF)
 
 
+
+
 #########################################################################
 # Print information for user (CDash)
-if (CREATE_LIB_MATH)
-  message(STATUS "YARP_math selected for compilation")
-endif()
-if (CREATE_GUIS)
-  message(STATUS "GUIs selected for compilation")
-endif()
+
+
+
+message(STATUS "Enabled features:")
+
+yarp_print_feature(CREATE_LIB_MATH 0 "YARP_math")
+
+yarp_print_feature(YARP_COMPILE_EXECUTABLES 0 "Executables")
+yarp_print_feature(CREATE_YARPROBOTINTERFACE 1 "yarprobotinterface")
+yarp_print_feature(CREATE_YARPMANAGER_CONSOLE 1 "YARP Module Manager (console)")
+yarp_print_feature(CREATE_YARPDATADUMPER 1 "yarpdatadumper")
+yarp_print_feature(CREATE_GUIS 1 "GUIs")
+yarp_print_feature(CREATE_YARPVIEW 2 "yarpview")
+yarp_print_feature(CREATE_YARPMANAGER 2 "yarpmanager")
+yarp_print_feature(CREATE_YARPLOGGER 2 "yarplogger")
+yarp_print_feature(CREATE_YARPSCOPE 2 "yarpscope")
+yarp_print_feature(CREATE_YARPDATAPLAYER 2 "yarpdataplayer")
+yarp_print_feature(CREATE_YARPMOTORGUI 2 "yarpmotorgui")
+yarp_print_feature(CREATE_YARPLASERSCANNERGUI 2 "yarplaserscannergui")
+yarp_print_feature(CREATE_YARPBATTERYGUI 2 "yarpbatterygui")
+yarp_print_feature(CREATE_YARPVIZ 2 "yarpviz")
+
+yarp_print_feature(YARP_COMPILE_RTF_ADDONS 0 "Robot Testing Framework addons")
+yarp_print_feature(YARP_COMPILE_UNMAINTAINED 0 "Unmaintained components")
+yarp_print_feature(YARP_COMPILE_TESTS 0 "YARP tests")

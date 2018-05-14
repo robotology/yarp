@@ -41,6 +41,9 @@ else()
   set(_nested_build 1)
 endif()
 
+# Must be included after setting CMAKE_MODULE_PATH for nested builds
+include(YarpPrintFeature)
+
 set(YARP_COMPILE_BINDINGS_DEFAULT TRUE)
 set(YARP_BASE_DIR ${CMAKE_CURRENT_BINARY_DIR})
 if(_nested_build)
@@ -49,6 +52,7 @@ if(_nested_build)
   set(YARP_BASE_DIR ${CMAKE_BINARY_DIR})
 endif()
 option(YARP_COMPILE_BINDINGS "Compile optional language bindings" ${YARP_COMPILE_BINDINGS_DEFAULT})
+yarp_print_feature(YARP_COMPILE_BINDINGS 0 "Bindings")
 
 #############################################################################
 ## Options for compiling supported languages.  There's nothing magical
@@ -71,13 +75,7 @@ foreach(Lang ${SUPPORTED_LANGUAGES})
   string(REGEX REPLACE " .+" "" LANG "${LANG}")
   cmake_dependent_option(CREATE_${LANG} "Do you want to create the ${Lang} interface" OFF
                          YARP_COMPILE_BINDINGS OFF)
-  if(YARP_COMPILE_BINDINGS)
-    if(CREATE_${LANG})
-      message(STATUS " +++ bindings ${Lang} is enabled")
-    else()
-      message(STATUS " --- bindings ${Lang} is not enabled")
-    endif()
-  endif()
+  yarp_print_feature(CREATE_${LANG} 1 "${Lang} bindings")
 endforeach()
 
 #############################################################################

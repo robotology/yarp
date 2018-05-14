@@ -5,10 +5,13 @@
 # This software may be modified and distributed under the terms of the
 # BSD-3-Clause license. See the accompanying LICENSE file for details.
 
-option(CREATE_OPTIONAL_CARRIERS "Compile some optional carriers" FALSE)
-
 include(YarpPlugin)
-yarp_begin_plugin_library(yarpcar)
+include(YarpPrintFeature)
+
+option(CREATE_OPTIONAL_CARRIERS "Compile optional carriers" OFF)
+yarp_print_feature(CREATE_OPTIONAL_CARRIERS 0 "Compile optional carriers")
+
+yarp_begin_plugin_library(yarpcar QUIET)
   add_subdirectory(shmem_carrier)
   add_subdirectory(human_carrier)
   add_subdirectory(mpi_carrier)
@@ -21,7 +24,7 @@ yarp_begin_plugin_library(yarpcar)
   add_subdirectory(depth_image_portmonitor)
   add_subdirectory(zfp_portmonitor)
   add_subdirectory(h264_carrier)
-yarp_end_plugin_library(yarpcar)
+yarp_end_plugin_library(yarpcar QUIET)
 add_library(YARP::yarpcar ALIAS yarpcar)
 
 install(TARGETS yarpcar
