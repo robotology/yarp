@@ -788,6 +788,16 @@ bool ResourceFinder::setDefault(const char *key, const std::string& val)
     return HELPER(implementation).setDefault(config, key, val2);
 }
 
+bool ResourceFinder::setDefault(const char *key, std::int32_t val)
+{
+    return HELPER(implementation).setDefault(config, key, Value(val));
+}
+
+bool ResourceFinder::setDefault(const char *key, yarp::conf::float64_t val)
+{
+    return HELPER(implementation).setDefault(config, key, Value(val));
+}
+
 bool ResourceFinder::setDefault(const char *key, const yarp::os::Value& val)
 {
     return HELPER(implementation).setDefault(config, key, val);

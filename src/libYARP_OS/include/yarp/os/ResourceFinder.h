@@ -124,12 +124,28 @@ public:
 #endif // YARP_NO_DEPRECATED
 
     /**
+     * Provide a default value for a given key.
      *
-     * Provide a default value for a given key; the provided key will be converted to a
-     * yarp::os::Value, so also string representations for lists and numerical values are accepted
-     *
+     * The provided \c val will be converted to a yarp::os::Value, so also
+     * string representations for lists and numerical values are accepted.
      */
     bool setDefault(const char *key, const std::string& val);
+
+    /**
+     * Provide a default value for a given key.
+     *
+     * The provided \c val will be converted to a 32-bit integer
+     * yarp::os::Value.
+     */
+    bool setDefault(const char *key, std::int32_t val);
+
+    /**
+     * Provide a default value for a given key.
+     *
+     * The provided \c val will be converted to a 64-bit floating point
+     * yarp::os::Value.
+     */
+    bool setDefault(const char *key, yarp::conf::float64_t val);
 
     /**
      *
