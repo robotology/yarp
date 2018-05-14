@@ -15,17 +15,11 @@
 #include <yarp/os/Portable.h>
 #include <type_traits>
 
-namespace yarp
-{
-    namespace math
-    {
-        template <typename T>
-        class Vec2D;
-    }
-}
+namespace yarp {
+namespace math {
 
 template <typename T>
-class YARP_math_API yarp::math::Vec2D : public yarp::os::Portable
+class YARP_math_API Vec2D : public yarp::os::Portable
 {
     static_assert (std::is_same<int, T>::value ||
                    std::is_same<double, T>::value, "Vec2D can be specialized only as int, double");
@@ -82,6 +76,9 @@ public:
     bool operator == (const yarp::math::Vec2D<T>& rhs);
     bool operator != (const yarp::math::Vec2D<T>& rhs);
 };
+
+} // namespace math
+} // namespace yarp
 
 //operators
 template <typename T>
