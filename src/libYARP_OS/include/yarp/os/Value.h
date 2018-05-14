@@ -52,7 +52,7 @@ public:
     /**
      * Construct a list Value
      */
-    Value();
+    explicit Value();
 
     /**
      * Construct an integer Value
@@ -60,13 +60,13 @@ public:
      * @param isVocab set this to true if the integer should be interpreted
      * as a vocabulary identifier
      */
-    Value(std::int32_t x, bool isVocab = false);
+    explicit Value(std::int32_t x, bool isVocab = false);
 
     /**
      * Construct a floating point Value
      * @param x the number
      */
-    Value(yarp::conf::float64_t x);
+    explicit Value(yarp::conf::float64_t x);
 
     /**
      * Construct a string Value

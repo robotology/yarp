@@ -596,7 +596,7 @@ public:
         report(0,"test bottle modification...");
         Bottle b;
         b.addInt32(3);
-        b.get(0) = 5;
+        b.get(0) = Value(5);
         b.hasChanged();
         checkEqual(b.get(0).asInt32(),5,"assignment works");
     }

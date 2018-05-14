@@ -235,7 +235,7 @@ public:
             checkTrue(v2.isList(),"(\"(10.0)\") type ok");
             checkTrue((v1!=v2), "(\"(10.0)\") operator!= ok");
             checkTrue((v1!=v2.asList()->get(0)), "(\"(10.0)\") value ok");  // FIXME why not?
-            checkTrue((v1==v2.asList()->get(0).asInt32()), "(\"(10.0)\") value ok");
+            checkTrue((v1.asInt32()==v2.asList()->get(0).asInt32()), "(\"(10.0)\") value ok");
 
             v2.fromString("\"10\"");
             checkTrue(v2.isString(),"(\"\\\"10\\\"\") type ok");
@@ -272,7 +272,7 @@ public:
             Value v2(&i, sizeof(int));
             checkTrue(v2.isBlob(),"(blob) type ok");
             checkTrue((v1!=v2), "(blob) operator!= ok");
-            checkTrue((v1==*(reinterpret_cast<const int*>(v2.asBlob()))), "(blob) value ok");
+            checkTrue((v1.asInt32() == *(reinterpret_cast<const int*>(v2.asBlob()))), "(blob) value ok");
         }
 
         {
@@ -281,7 +281,7 @@ public:
             Value v2(&i, sizeof(int));
             checkTrue(v2.isBlob(),"(blob) type ok");
             checkTrue((v1!=v2), "(blob) operator!= ok");
-            checkTrue((v1!=*(reinterpret_cast<const int*>(v2.asBlob()))), "(blob) value ok");
+            checkTrue((v1.asInt32() != *(reinterpret_cast<const int*>(v2.asBlob()))), "(blob) value ok");
         }
     }
 

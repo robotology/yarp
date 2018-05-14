@@ -583,7 +583,7 @@ bool test_wrapping() {
     int x = 0;
     client.yarp().attachAsClient(client_port);
     server.yarp().attachAsServer(server_port);
-    x = client.check(99);
+    x = client.check(Value(99));
     printf("Result %d\n", x);
     if (x!=100) return false;
     x = client.check(Value("6*7"));
