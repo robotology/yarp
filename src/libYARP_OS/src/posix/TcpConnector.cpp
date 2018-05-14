@@ -79,13 +79,13 @@ int TcpConnector::connect(TcpStream &new_stream, const Contact& address, YARP_ti
     // Set non-blocking
     if( (arg = fcntl(handle, F_GETFL, NULL)) < 0)
     {
-       yError("TcpConnector::connect fail: Error fcntl(..., F_GETFL) (%s)\n", strerror(errno));
+       std::cerr << "TcpConnector::connect fail: Error fcntl(..., F_GETFL) " << strerror(errno) << std::endl;
        return -1;
     }
     arg |= O_NONBLOCK;
     if( fcntl(handle, F_SETFL, arg) < 0)
     {
-       yError("TcpConnector::connect fail: Error fcntl(..., F_SETFL) (%s)\n", strerror(errno));
+       std::cerr << "TcpConnector::connect fail: Error fcntl(..., F_SETFL) " << strerror(errno) << std::endl;
        return -1;
     }
     // Trying to connect with timeout
@@ -100,7 +100,7 @@ int TcpConnector::connect(TcpStream &new_stream, const Contact& address, YARP_ti
             res = select(handle+1, nullptr, &myset, nullptr, timeout);
             if (res < 0 && errno != EINTR)
             {
-                yError("TcpConnector::connect fail: Error connecting %d - %s\n", errno, strerror(errno));
+                std::cerr << "TcpConnector::connect fail: Error connecting " << errno << " " << strerror(errno) << std::endl;
                 res = -1;
             }
             else if (res > 0)
@@ -110,7 +110,7 @@ int TcpConnector::connect(TcpStream &new_stream, const Contact& address, YARP_ti
                 lon = sizeof(int);
                 if (getsockopt(handle, SOL_SOCKET, SO_ERROR, (void*)(&valopt), &lon) < 0)
                 {
-                    yError("TcpConnector::connect fail: Error in getsockopt() %d - %s\n", errno, strerror(errno));
+                    std::cerr << "TcpConnector::connect fail: Error in getsockopt() " << errno << " " << strerror(errno) << std::endl;
                     res = -1;
                 }
                 // Check the value returned...
@@ -122,13 +122,13 @@ int TcpConnector::connect(TcpStream &new_stream, const Contact& address, YARP_ti
             }
             else
             {
-                yError("TcpConnector::connect fail: Timeout in select() - Cancelling!\n");
+                std::cerr << "TcpConnector::connect fail: Timeout in select() - Cancelling!" << std::endl;
                 res = -1;
             }
         }
         else
         {
-            yError("TcpConnector::connect fail: Error connecting %d - %s\n", errno, strerror(errno));
+            std::cerr << "TcpConnector::connect fail: Error connecting " << errno << " " << strerror(errno) << std::endl;
             res = -1;
         }
     }
@@ -143,13 +143,13 @@ int TcpConnector::connect(TcpStream &new_stream, const Contact& address, YARP_ti
     // Set to blocking mode again...
     if( (arg = fcntl(handle, F_GETFL, nullptr)) < 0)
     {
-       yError("TcpConnector::connect fail: Error fcntl(..., F_GETFL) (%s)\n", strerror(errno));
+       std::cerr << "TcpConnector::connect fail: Error fcntl(..., F_GETFL) " << strerror(errno) << std::endl;
        return -1;
     }
     arg &= (~O_NONBLOCK);
     if( fcntl(handle, F_SETFL, arg) < 0)
     {
-       yError("TcpConnector::connect fail: Error fcntl(..., F_SETFL) (%s)\n", strerror(errno));
+       std::cerr << "TcpConnector::connect fail: Error fcntl(..., F_SETFL) " << strerror(errno) << std::endl;
        return -1;
     }
 

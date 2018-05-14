@@ -840,8 +840,8 @@ IPLAPIIMPL(IplImage*, iplCreateImageHeader,
     r->imageData = nullptr;
     r->tileInfo = nullptr;
 
-    memset (r->BorderMode, 0, 4);
-    memset (r->BorderConst, 0, 4);
+    memset (r->BorderMode, 0, 4 * sizeof(int));
+    memset (r->BorderConst, 0, 4 * sizeof(int));
 
     r->imageDataOrigin = nullptr;
     return r;

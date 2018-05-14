@@ -22,6 +22,7 @@
 #include <yarp/os/all.h>
 #include <yarp/os/Os.h>
 #include <yarp/os/RosNameSpace.h>
+#include <yarp/os/Carriers.h>
 
 #include <yarp/name/NameServerManager.h>
 #include <yarp/name/BootstrapServer.h>
@@ -168,6 +169,17 @@ public:
         }
 
         if (options.check("ros") || NetworkBase::getEnvironment("YARP_USE_ROS")!="") {
+            yarp::os::Bottle lst = yarp::os::Carriers::listCarriers();
+            std::string lstStr(lst.toString().c_str());
+            if (lstStr.find("rossrv") == std::string::npos ||
+                lstStr.find("tcpros") == std::string::npos ||
+                lstStr.find("xmlrpc") == std::string::npos) {
+                fprintf(stderr,"Missing one or more required carriers ");
+                fprintf(stderr,"for yarpserver --ros (rossrv, tcpros, xmlrpc).\n");
+                fprintf(stderr,"Run 'yarp connect --list-carriers' to see carriers on your machine\n");
+                fprintf(stderr,"Aborting.\n");
+                return false;
+            }
             ConstString addr = NetworkBase::getEnvironment("ROS_MASTER_URI");
             Contact c = Contact::fromString(addr.c_str());
             if (c.isValid()) {
