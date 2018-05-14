@@ -10,7 +10,7 @@
 #ifndef YARP_OS_CONNECTIONREADER_H
 #define YARP_OS_CONNECTIONREADER_H
 
-#include <yarp/os/ConstString.h>
+#include <string>
 #include <yarp/os/Contact.h>
 #include <yarp/os/Bytes.h>
 #include <yarp/os/Searchable.h>
@@ -52,7 +52,7 @@ public:
      * @param terminatingChar The marker for the end of the text
      * @return the text read from the connection
      */
-    virtual ConstString expectText(int terminatingChar = '\n') = 0;
+    virtual std::string expectText(int terminatingChar = '\n') = 0;
 
     /**
      * Read an integer from the network connection.

@@ -21,8 +21,8 @@ int main(int argc, char *argv[]) {
     Property options;
     options.fromCommand(argc,argv);
 
-    ConstString inName = options.check("in",Value("/mjpeg/in")).asString();
-    ConstString outName = options.check("out",Value("/mjpeg/out")).asString();
+    std::string inName = options.check("in",Value("/mjpeg/in")).asString();
+    std::string outName = options.check("out",Value("/mjpeg/out")).asString();
 
     BufferedPort<ManagedBytes> in; 
     // BufferedPort<Bottle> would also work fine, but less efficient

@@ -191,7 +191,7 @@ public:
 class VectorOfTest : public UnitTest {
 
 public:
-    virtual ConstString getName() override { return "VectorOfTest"; }
+    virtual std::string getName() override { return "VectorOfTest"; }
     void checkSendReceiveInt()
     {
         report(0, "check VectorO<int> send receive");

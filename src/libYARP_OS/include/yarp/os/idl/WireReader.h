@@ -82,27 +82,9 @@ public:
         return x;
     }
 
-    bool readString(yarp::os::ConstString& str, bool *is_vocab = nullptr);
+    bool readString(std::string& str, bool *is_vocab = nullptr);
 
-    bool readBinary(yarp::os::ConstString& str);
-
-#ifndef YARP_CONSTSTRING_IS_STD_STRING
-    // we need to do the WIN32 dance to read an std::string without
-    // running into DLL linkage trouble
-    inline bool readString(std::string& str, bool *is_vocab = nullptr) {
-        yarp::os::ConstString tmp;
-        bool ok = readString(tmp, is_vocab);
-        str = tmp;
-        return ok;
-    }
-
-    inline bool readBinary(std::string& str) {
-        yarp::os::ConstString tmp;
-        bool ok = readBinary(tmp);
-        str = tmp;
-        return ok;
-    }
-#endif
+    bool readBinary(std::string& str);
 
     bool readEnum(YARP_INT32& x, WireVocab& converter);
 
@@ -122,7 +104,7 @@ public:
 
     bool isError();
 
-    yarp::os::ConstString readTag();
+    std::string readTag();
 
     void readListBegin(WireState& nstate, unsigned YARP_INT32& len);
 
@@ -142,7 +124,7 @@ public:
 
     bool getIsVocab() const;
 
-    const yarp::os::ConstString& getString() const;
+    const std::string& getString() const;
 
 private:
     NullConnectionWriter null_writer;
@@ -153,11 +135,11 @@ private:
     bool support_get_mode;
     bool expecting;
     bool get_is_vocab;
-    yarp::os::ConstString get_string;
+    std::string get_string;
     bool get_mode;
 
 
-    void scanString(yarp::os::ConstString& str, bool is_vocab);
+    void scanString(std::string& str, bool is_vocab);
 };
 
 

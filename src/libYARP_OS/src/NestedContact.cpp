@@ -13,34 +13,34 @@ using namespace yarp::os;
 class NestedContact::Private
 {
 public:
-    bool fromString(const ConstString& nFullName);
+    bool fromString(const std::string& nFullName);
 
-    ConstString fullName;
-    ConstString nodeName;
-    ConstString nestedName;
-    ConstString category;
-    ConstString wireType;
+    std::string fullName;
+    std::string nodeName;
+    std::string nestedName;
+    std::string category;
+    std::string wireType;
 };
 
-bool NestedContact::Private::fromString(const ConstString& nFullName)
+bool NestedContact::Private::fromString(const std::string& nFullName)
 {
     fullName = nFullName;
-    ConstString::size_type idx2 = fullName.find(":/");
-    if (idx2 != ConstString::npos) {
+    std::string::size_type idx2 = fullName.find(":/");
+    if (idx2 != std::string::npos) {
         fullName = fullName.substr(idx2 + 2, fullName.length());
     }
     nodeName = fullName;
     nestedName = "";
     category = "";
-    ConstString::size_type idx = fullName.find('~');
-    if (idx != ConstString::npos) {
+    std::string::size_type idx = fullName.find('~');
+    if (idx != std::string::npos) {
         // We have a type name squeezed in here, into what promises
         // to be a very full port name.
         wireType = fullName.substr(idx + 1, fullName.length());
         fullName = fullName.substr(0, idx);
     }
     idx = fullName.find('@');
-    if (idx != ConstString::npos) {
+    if (idx != std::string::npos) {
         // Great!  Looks like we are using a new syntax suggested
         // by Lorenzo Natale, /topic@/node
         nestedName = fullName.substr(0, idx);
@@ -68,11 +68,11 @@ bool NestedContact::Private::fromString(const ConstString& nFullName)
         return true;
     }
     idx = fullName.find('=');
-    if (idx != ConstString::npos) {
+    if (idx != std::string::npos) {
         nodeName = fullName.substr(0, idx);
         nestedName = fullName.substr(idx + 1, fullName.length());
         idx = nestedName.find('/');
-        if (idx != ConstString::npos) {
+        if (idx != std::string::npos) {
             if (idx == 0)
                 return true;
             category = nestedName.substr(0, idx);
@@ -81,7 +81,7 @@ bool NestedContact::Private::fromString(const ConstString& nFullName)
         }
     }
     idx = fullName.find('#');
-    if (idx != ConstString::npos) {
+    if (idx != std::string::npos) {
         nodeName = fullName.substr(0, idx);
         nestedName = fullName.substr(idx + 1, fullName.length());
         char ch = nodeName[nodeName.length() - 1];
@@ -100,7 +100,7 @@ NestedContact::NestedContact() :
 {
 }
 
-NestedContact::NestedContact(const ConstString& fullName) :
+NestedContact::NestedContact(const std::string& fullName) :
         mPriv(new Private())
 {
     fromString(fullName);
@@ -138,12 +138,12 @@ NestedContact& NestedContact::operator=(NestedContact&& rhs)
     return *this;
 }
 
-bool NestedContact::fromString(const ConstString& fullName)
+bool NestedContact::fromString(const std::string& fullName)
 {
     return mPriv->fromString(fullName);
 }
 
-void NestedContact::setTypeName(const ConstString& nWireType)
+void NestedContact::setTypeName(const std::string& nWireType)
 {
     mPriv->wireType = nWireType;
 }
@@ -158,32 +158,32 @@ void NestedContact::setCategoryRead()
     mPriv->category = "-";
 }
 
-ConstString NestedContact::getFullName() const
+std::string NestedContact::getFullName() const
 {
     return mPriv->fullName;
 }
 
-ConstString NestedContact::getNodeName() const
+std::string NestedContact::getNodeName() const
 {
     return mPriv->nodeName;
 }
 
-ConstString NestedContact::getNestedName() const
+std::string NestedContact::getNestedName() const
 {
     return mPriv->nestedName;
 }
 
-ConstString NestedContact::getCategory() const
+std::string NestedContact::getCategory() const
 {
     return mPriv->category;
 }
 
-ConstString NestedContact::getTypeName() const
+std::string NestedContact::getTypeName() const
 {
     return mPriv->wireType;
 }
 
-ConstString NestedContact::getTypeNameStar() const
+std::string NestedContact::getTypeNameStar() const
 {
     return (mPriv->wireType != "") ? mPriv->wireType : "*";
 }
@@ -193,7 +193,7 @@ bool NestedContact::isNested() const
     return mPriv->nestedName != "";
 }
 
-ConstString NestedContact::toString() const
+std::string NestedContact::toString() const
 {
     return mPriv->nestedName + mPriv->category + "@" + mPriv->nodeName;
 }

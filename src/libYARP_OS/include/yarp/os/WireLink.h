@@ -187,7 +187,7 @@ public:
      * @return true on success
      *
      */
-    bool callback(PortWriter& writer, PortReader& reader, const ConstString& tag = "") {
+    bool callback(PortWriter& writer, PortReader& reader, const std::string& tag = "") {
         stack.attach(reader);
         stack.stack(writer, tag);
         return true;

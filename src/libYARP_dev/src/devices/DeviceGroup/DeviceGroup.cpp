@@ -38,7 +38,7 @@ yarp::dev::DriverCreator *createDeviceGroup() {
 class DeviceGroupHelper {
 private:
     std::vector<PolyDriver *> drivers;
-    std::vector<ConstString> names;
+    std::vector<std::string> names;
     std::vector<bool> needDrive;
     Semaphore mutex;
 public:
@@ -89,7 +89,7 @@ public:
         clear();
     }
 
-    bool add(const ConstString& name, yarp::os::Searchable& config) {
+    bool add(const std::string& name, yarp::os::Searchable& config) {
         //printf("ADDING %s\n", config.toString().c_str());
         PolyDriver *pd = new PolyDriver();
         yAssert(pd!=nullptr);
@@ -136,7 +136,7 @@ bool DeviceGroup::open(yarp::os::Searchable& config) {
         Bottle bot = config.findGroup("part").tail();
         printf("Assembly of: %s\n", bot.toString().c_str());
         for (int i=0; i<bot.size(); i++) {
-            ConstString name = bot.get(i).asString();
+            std::string name = bot.get(i).asString();
             printf("  %s -> %s\n", name.c_str(),
                    config.findGroup(name).toString().c_str());
             bool result = HELPER(implementation).add(name,

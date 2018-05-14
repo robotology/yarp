@@ -173,9 +173,9 @@ public:
     typedef yarp::os::idl::BottleStyle<yarp::rosmsg::geometry_msgs::TransformStamped> bottleStyle;
 
     // Give source text for class, ROS will need this
-    static yarp::os::ConstString typeText()
+    static std::string typeText()
     {
-        return yarp::os::ConstString("\
+        return std::string("\
 # This expresses a transform from coordinate frame header.frame_id\n\
 # to the coordinate frame child_frame_id\n\
 #\n\
@@ -186,16 +186,16 @@ public:
 Header header\n\
 string child_frame_id # the frame id of the child frame\n\
 Transform transform\n\
-") + yarp::os::ConstString("\n\
+") + std::string("\n\
 ================================================================================\n\
 MSG: std_msgs/Header\n\
-") + yarp::rosmsg::std_msgs::Header::typeText() + yarp::os::ConstString("\n\
+") + yarp::rosmsg::std_msgs::Header::typeText() + std::string("\n\
 ================================================================================\n\
 MSG: geometry_msgs/Transform\n\
 ") + yarp::rosmsg::geometry_msgs::Transform::typeText();
     }
 
-    yarp::os::ConstString getTypeText() const
+    std::string getTypeText() const
     {
         return yarp::rosmsg::geometry_msgs::TransformStamped::typeText();
     }

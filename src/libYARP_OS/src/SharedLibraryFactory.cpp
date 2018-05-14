@@ -7,7 +7,7 @@
  */
 
 #include <yarp/os/SharedLibraryFactory.h>
-#include <yarp/os/ConstString.h>
+#include <string>
 #include <yarp/os/Os.h>
 
 yarp::os::SharedLibraryFactory::SharedLibraryFactory() :
@@ -98,7 +98,7 @@ int yarp::os::SharedLibraryFactory::getStatus() const
     return status;
 }
 
-yarp::os::ConstString yarp::os::SharedLibraryFactory::getError() const
+std::string yarp::os::SharedLibraryFactory::getError() const
 {
     return error;
 }
@@ -126,17 +126,17 @@ int yarp::os::SharedLibraryFactory::removeRef()
     return rct;
 }
 
-yarp::os::ConstString yarp::os::SharedLibraryFactory::getName() const
+std::string yarp::os::SharedLibraryFactory::getName() const
 {
     return name;
 }
 
-yarp::os::ConstString yarp::os::SharedLibraryFactory::getClassName() const
+std::string yarp::os::SharedLibraryFactory::getClassName() const
 {
     return className;
 }
 
-yarp::os::ConstString yarp::os::SharedLibraryFactory::getBaseClassName() const
+std::string yarp::os::SharedLibraryFactory::getBaseClassName() const
 {
     return baseClassName;
 }

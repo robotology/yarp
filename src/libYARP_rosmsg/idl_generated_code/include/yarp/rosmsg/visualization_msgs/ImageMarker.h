@@ -464,9 +464,9 @@ public:
     typedef yarp::os::idl::BottleStyle<yarp::rosmsg::visualization_msgs::ImageMarker> bottleStyle;
 
     // Give source text for class, ROS will need this
-    static yarp::os::ConstString typeText()
+    static std::string typeText()
     {
-        return yarp::os::ConstString("\
+        return std::string("\
 uint8 CIRCLE=0\n\
 uint8 LINE_STRIP=1\n\
 uint8 LINE_LIST=2\n\
@@ -490,19 +490,19 @@ duration lifetime       # How long the object should last before being automatic
 \n\
 \n\
 geometry_msgs/Point[] points # used for LINE_STRIP/LINE_LIST/POINTS/etc., 2D in pixel coords\n\
-std_msgs/ColorRGBA[] outline_colors # a color for each line, point, etc.") + yarp::os::ConstString("\n\
+std_msgs/ColorRGBA[] outline_colors # a color for each line, point, etc.") + std::string("\n\
 ================================================================================\n\
 MSG: std_msgs/Header\n\
-") + yarp::rosmsg::std_msgs::Header::typeText() + yarp::os::ConstString("\n\
+") + yarp::rosmsg::std_msgs::Header::typeText() + std::string("\n\
 ================================================================================\n\
 MSG: geometry_msgs/Point\n\
-") + yarp::rosmsg::geometry_msgs::Point::typeText() + yarp::os::ConstString("\n\
+") + yarp::rosmsg::geometry_msgs::Point::typeText() + std::string("\n\
 ================================================================================\n\
 MSG: std_msgs/ColorRGBA\n\
 ") + yarp::rosmsg::std_msgs::ColorRGBA::typeText();
     }
 
-    yarp::os::ConstString getTypeText() const
+    std::string getTypeText() const
     {
         return yarp::rosmsg::visualization_msgs::ImageMarker::typeText();
     }

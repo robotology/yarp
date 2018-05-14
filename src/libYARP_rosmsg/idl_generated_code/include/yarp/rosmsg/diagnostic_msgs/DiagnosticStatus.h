@@ -254,9 +254,9 @@ public:
     typedef yarp::os::idl::BottleStyle<yarp::rosmsg::diagnostic_msgs::DiagnosticStatus> bottleStyle;
 
     // Give source text for class, ROS will need this
-    static yarp::os::ConstString typeText()
+    static std::string typeText()
     {
-        return yarp::os::ConstString("\
+        return std::string("\
 # This message holds the status of an individual component of the robot.\n\
 # \n\
 \n\
@@ -272,13 +272,13 @@ string message # a description of the status\n\
 string hardware_id # a hardware unique string\n\
 KeyValue[] values # an array of values associated with the status\n\
 \n\
-") + yarp::os::ConstString("\n\
+") + std::string("\n\
 ================================================================================\n\
 MSG: diagnostic_msgs/KeyValue\n\
 ") + yarp::rosmsg::diagnostic_msgs::KeyValue::typeText();
     }
 
-    yarp::os::ConstString getTypeText() const
+    std::string getTypeText() const
     {
         return yarp::rosmsg::diagnostic_msgs::DiagnosticStatus::typeText();
     }

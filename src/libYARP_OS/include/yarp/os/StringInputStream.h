@@ -11,7 +11,7 @@
 #define YARP_OS_STRINGINPUTSTREAM_H
 
 #include <yarp/os/InputStream.h>
-#include <yarp/os/ConstString.h>
+#include <string>
 
 namespace yarp {
     namespace os {
@@ -36,12 +36,12 @@ public:
         data = "";
     }
 
-    void reset(const ConstString& str) {
+    void reset(const std::string& str) {
         at = 0;
         data = str;
     }
 
-    void add(const ConstString& txt) {
+    void add(const std::string& txt) {
         data += txt;
     }
 
@@ -68,7 +68,7 @@ public:
     virtual void close() override {
     }
 
-    virtual ConstString toString() {
+    virtual std::string toString() {
         return data;
     }
 
@@ -77,7 +77,7 @@ public:
     }
 
 private:
-    ConstString data;
+    std::string data;
     unsigned int at;
 };
 

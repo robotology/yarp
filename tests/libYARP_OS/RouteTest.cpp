@@ -16,7 +16,7 @@ using namespace yarp::os;
 class RouteTest : public UnitTest
 {
 public:
-    virtual ConstString getName() override
+    virtual std::string getName() override
     {
         return "RouteTest";
     }

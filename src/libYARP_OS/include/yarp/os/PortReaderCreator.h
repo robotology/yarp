@@ -10,7 +10,7 @@
 #ifndef YARP_OS_PORTREADERCREATOR_H
 #define YARP_OS_PORTREADERCREATOR_H
 
-#include <yarp/os/ConstString.h>
+#include <string>
 #include <yarp/os/ConnectionReader.h>
 #include <yarp/os/PortReader.h>
 

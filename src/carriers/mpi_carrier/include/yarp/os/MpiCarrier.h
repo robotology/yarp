@@ -34,15 +34,15 @@ class yarp::os::MpiCarrier : public AbstractCarrier {
 protected:
     MpiStream* stream;
     MpiComm* comm;
-    ConstString port;
-    ConstString name, other, route;
-    ConstString target;
+    std::string port;
+    std::string name, other, route;
+    std::string target;
 public:
     MpiCarrier() ;
     virtual ~MpiCarrier();
     virtual void close() override = 0;
     virtual Carrier *create() override = 0;
-    virtual ConstString getName() override = 0;
+    virtual std::string getName() override = 0;
 
     virtual void createStream(bool sender) = 0;
 

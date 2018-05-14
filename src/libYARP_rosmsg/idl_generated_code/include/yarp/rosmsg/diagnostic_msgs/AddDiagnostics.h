@@ -138,9 +138,9 @@ public:
     typedef yarp::os::idl::BottleStyle<yarp::rosmsg::diagnostic_msgs::AddDiagnostics> bottleStyle;
 
     // Give source text for class, ROS will need this
-    static yarp::os::ConstString typeText()
+    static std::string typeText()
     {
-        return yarp::os::ConstString("\
+        return std::string("\
 # This service is used as part of the process for loading analyzers at runtime,\n\
 # and should be used by a loader script or program, not as a standalone service.\n\
 # Information about dynamic addition of analyzers can be found at\n\
@@ -171,7 +171,7 @@ string message\n\
 ");
     }
 
-    yarp::os::ConstString getTypeText() const
+    std::string getTypeText() const
     {
         return yarp::rosmsg::diagnostic_msgs::AddDiagnostics::typeText();
     }

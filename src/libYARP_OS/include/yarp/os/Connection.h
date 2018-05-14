@@ -67,7 +67,7 @@ public:
      *
      * @param envelope the envelope to transmit bundled with data.
      */
-    virtual void handleEnvelope(const yarp::os::ConstString& envelope) = 0;
+    virtual void handleEnvelope(const std::string& envelope) = 0;
 
 
     /**
@@ -261,7 +261,7 @@ public:
      *
      * @return the name of this connection type
      */
-    virtual yarp::os::ConstString getName() = 0;
+    virtual std::string getName() = 0;
 };
 
 
@@ -271,7 +271,7 @@ public:
     virtual bool isValid() override { return false; }
     virtual bool isTextMode() override { return true; }
     virtual bool canEscape() override { return true; }
-    virtual void handleEnvelope(const yarp::os::ConstString& envelope) override { YARP_UNUSED(envelope); }
+    virtual void handleEnvelope(const std::string& envelope) override { YARP_UNUSED(envelope); }
     virtual bool requireAck() override { return false; }
     virtual bool supportReply() override { return false; }
     virtual bool isLocal() override { return false; }
@@ -338,7 +338,7 @@ public:
 
     virtual void prepareDisconnect() override {}
 
-    virtual yarp::os::ConstString getName() override
+    virtual std::string getName() override
     {
         return "null";
     }

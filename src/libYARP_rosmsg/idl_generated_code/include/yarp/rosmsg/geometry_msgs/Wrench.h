@@ -140,20 +140,20 @@ public:
     typedef yarp::os::idl::BottleStyle<yarp::rosmsg::geometry_msgs::Wrench> bottleStyle;
 
     // Give source text for class, ROS will need this
-    static yarp::os::ConstString typeText()
+    static std::string typeText()
     {
-        return yarp::os::ConstString("\
+        return std::string("\
 # This represents force in free space, separated into\n\
 # its linear and angular parts.\n\
 Vector3  force\n\
 Vector3  torque\n\
-") + yarp::os::ConstString("\n\
+") + std::string("\n\
 ================================================================================\n\
 MSG: geometry_msgs/Vector3\n\
 ") + yarp::rosmsg::geometry_msgs::Vector3::typeText();
     }
 
-    yarp::os::ConstString getTypeText() const
+    std::string getTypeText() const
     {
         return yarp::rosmsg::geometry_msgs::Wrench::typeText();
     }

@@ -17,8 +17,8 @@
 using namespace yarp::os;
 using namespace yarp::os::impl;
 
-static yarp::os::ConstString quoteFree(const yarp::os::ConstString &src) {
-    yarp::os::ConstString result = "";
+static std::string quoteFree(const std::string &src) {
+    std::string result = "";
     for (unsigned int i=0; i<src.length(); i++) {
         char ch = src[i];
         if (ch=='"') {
@@ -30,18 +30,18 @@ static yarp::os::ConstString quoteFree(const yarp::os::ConstString &src) {
     return result;
 }
 
-static bool asJson(yarp::os::ConstString  &accum,
+static bool asJson(std::string  &accum,
                    yarp::os::Bottle *bot,
-                   yarp::os::ConstString *hint = nullptr);
+                   std::string *hint = nullptr);
 
-static bool asJson(yarp::os::ConstString &accum,
+static bool asJson(std::string &accum,
                    yarp::os::Value &v) {
     if (v.isInt()||v.isDouble()) {
         accum += v.toString();
         return true;
     }
     if (v.isString()||v.isVocab()) {
-        yarp::os::ConstString x = v.toString();
+        std::string x = v.toString();
         accum += "\"";
         for (int j=0; j<(int)x.length(); j++) {
             char ch = x[j];
@@ -70,15 +70,15 @@ static bool asJson(yarp::os::ConstString &accum,
     return false;
 }
 
-static bool asJson(yarp::os::ConstString& accum,
+static bool asJson(std::string& accum,
                    yarp::os::Bottle *bot,
-                   yarp::os::ConstString *hint) {
+                   std::string *hint) {
     if (bot == nullptr) return false;
     bool struc = false;
     bool struc_set = false;
     int offset = 0;
     int offset2 = 0;
-    yarp::os::ConstString tag = bot->get(0).asString();
+    std::string tag = bot->get(0).asString();
     if (hint) {
         if ((*hint)=="list") {
             struc = false;
@@ -172,8 +172,8 @@ yarp::os::impl::HttpTwoWayStream::HttpTwoWayStream(TwoWayStream *delegate, const
         sis.add("\n");
         return;
     }
-    ConstString s(txt);
-    ConstString sData = "";
+    std::string s(txt);
+    std::string sData = "";
     Property& p = prop;
     //p.fromQuery(txt);
     format = p.check("format", Value("html")).asString().c_str();
@@ -193,8 +193,8 @@ yarp::os::impl::HttpTwoWayStream::HttpTwoWayStream(TwoWayStream *delegate, const
             s = p.check("data", Value("")).asString();
         }
         s += " ";
-        ConstString sFixed = "";
-        ConstString var = "";
+        std::string sFixed = "";
+        std::string var = "";
         bool arg = false;
         for (unsigned int i=0; i<s.length(); i++) {
             char ch = s[i];
@@ -225,14 +225,14 @@ yarp::os::impl::HttpTwoWayStream::HttpTwoWayStream(TwoWayStream *delegate, const
 
         sData = sFixed;
         if (admin) {
-            s = ConstString("a\n") + sFixed;
+            s = std::string("a\n") + sFixed;
         } else {
-            s = ConstString("d\n") + sFixed;
+            s = std::string("d\n") + sFixed;
         }
     }
 
 
-    ConstString from = prefix;
+    std::string from = prefix;
     from += "<input type=text name=data value=\"";
     from += quoteFree(sData.c_str());
 
@@ -265,7 +265,7 @@ yarp::os::impl::HttpTwoWayStream::HttpTwoWayStream(TwoWayStream *delegate, const
     if (req) classic = false;
 
     if (classic) {
-        ConstString header = "HTTP/1.1 200 OK\r\nContent-Type: text/html\r\n";
+        std::string header = "HTTP/1.1 200 OK\r\nContent-Type: text/html\r\n";
         chunked = false;
         if (s[0]=='r') {
             header += "Transfer-Encoding: chunked\r\n";
@@ -273,7 +273,7 @@ yarp::os::impl::HttpTwoWayStream::HttpTwoWayStream(TwoWayStream *delegate, const
         }
         header += "\r\n";
         int N = 2*1024;
-        ConstString body = from;
+        std::string body = from;
         if (chunked) {
             body += "Reading data from port...\n";
             header += NetType::toHexString(body.length()+N);
@@ -390,7 +390,7 @@ void yarp::os::impl::HttpTwoWayStream::apply(char ch) {
         Contact addr = yarp::os::impl::NameClient::extractAddress(part);
         if (addr.isValid()) {
             if (addr.getCarrier()=="tcp"&&
-                (addr.getRegName().find("/quit")==ConstString::npos)) {
+                (addr.getRegName().find("/quit")==std::string::npos)) {
                 proc += "<a href=\"http://";
                 proc += addr.getHost();
                 proc += ":";
@@ -418,7 +418,7 @@ void yarp::os::impl::HttpTwoWayStream::apply(char ch) {
             if ((part[0]=='\"'&&part[1]=='[')||(part[0]=='+')) {
                 // translate this to a form
                 if (part[0]=='+') { part[0] = ' '; }
-                ConstString org = part;
+                std::string org = part;
                 part = "<p><form method=post action='/form'>";
                 size_t i=0;
                 for (i=0; i<org.length(); i++) {
@@ -432,7 +432,7 @@ void yarp::os::impl::HttpTwoWayStream::apply(char ch) {
                 part += org;
                 org += " ";
                 bool arg = false;
-                ConstString var = "";
+                std::string var = "";
                 for (i=0; i<org.length(); i++) {
                     char ch = org[i];
                     if (arg) {
@@ -503,7 +503,7 @@ bool yarp::os::impl::HttpTwoWayStream::useJson() {
     return format=="json";
 }
 
-yarp::os::ConstString *yarp::os::impl::HttpTwoWayStream::typeHint() {
+std::string *yarp::os::impl::HttpTwoWayStream::typeHint() {
     return &outer;
 }
 
@@ -529,13 +529,13 @@ yarp::os::Carrier *yarp::os::impl::HttpCarrier::create() {
     return new HttpCarrier();
 }
 
-yarp::os::ConstString yarp::os::impl::HttpCarrier::getName() {
+std::string yarp::os::impl::HttpCarrier::getName() {
     return "http";
 }
 
 bool yarp::os::impl::HttpCarrier::checkHeader(const Bytes& header, const char *prefix) {
     if (header.length()==8) {
-        ConstString target = prefix;
+        std::string target = prefix;
         for (unsigned int i=0; i<target.length(); i++) {
             if (!(target[i]==header.get()[i])) {
                 return false;
@@ -581,7 +581,7 @@ void yarp::os::impl::HttpCarrier::setParameters(const Bytes& header) {
 
 void yarp::os::impl::HttpCarrier::getHeader(const Bytes& header) {
     if (header.length()==8) {
-        ConstString target = "GET / HT";
+        std::string target = "GET / HT";
         for (int i=0; i<8; i++) {
             header.get()[i] = target[i];
         }
@@ -602,8 +602,8 @@ bool yarp::os::impl::HttpCarrier::supportReply() {
 }
 
 bool yarp::os::impl::HttpCarrier::sendHeader(ConnectionState& proto) {
-    ConstString target = "GET / HTTP/1.0\r\n";
-    ConstString path = proto.getRoute().getToName();
+    std::string target = "GET / HTTP/1.0\r\n";
+    std::string path = proto.getRoute().getToName();
     if (path.size()>=2) {
         target = "GET " + path + " HTTP/1.0\r\n";
     }
@@ -624,7 +624,7 @@ bool yarp::os::impl::HttpCarrier::expectSenderSpecifier(ConnectionState& proto) 
     Route route = proto.getRoute();
     route.setFromName("web");
     proto.setRoute(route);
-    ConstString remainder = proto.is().readLine();
+    std::string remainder = proto.is().readLine();
     if (!urlDone) {
         for (unsigned int i=0; i<remainder.length(); i++) {
             if (remainder[i]!=' ') {
@@ -639,7 +639,7 @@ bool yarp::os::impl::HttpCarrier::expectSenderSpecifier(ConnectionState& proto) 
     expectPost = false;
     contentLength = 0;
     while (!done) {
-        ConstString result = proto.is().readLine();
+        std::string result = proto.is().readLine();
         if (result == "") {
             done = true;
         } else {
@@ -678,7 +678,7 @@ bool yarp::os::impl::HttpCarrier::expectSenderSpecifier(ConnectionState& proto) 
     Contact home = NetworkBase::getNameServerContact();
     Contact me = proto.getStreams().getLocalAddress();
 
-    ConstString from = "<html><head><link href=\"http://";
+    std::string from = "<html><head><link href=\"http://";
     from += home.getHost();
     from += ":";
     from += NetType::toString(home.getPort());
@@ -738,7 +738,7 @@ bool yarp::os::impl::HttpCarrier::expectReplyToHeader(ConnectionState& proto) {
         len = proto.is().read(b);
         if (len>0) {
             buf[len] = '\0';
-            input += ConstString(buf, len);
+            input += std::string(buf, len);
         }
     }
     stream = new HttpTwoWayStream(proto.giveStreams(),
@@ -795,9 +795,9 @@ bool yarp::os::impl::HttpCarrier::write(ConnectionState& proto, SizedWriter& wri
     Bottle b;
     b.read(con.getReader());
 
-    ConstString body = b.find("web").toString();
+    std::string body = b.find("web").toString();
     if (body.length()!=0) {
-        ConstString header;
+        std::string header;
         header += NetType::toHexString(body.length()).c_str();
         header += "\r\n";
 
@@ -811,8 +811,8 @@ bool yarp::os::impl::HttpCarrier::write(ConnectionState& proto, SizedWriter& wri
         proto.os().write('\n');
 
     } else {
-        ConstString txt = b.toString() + "\r\n";
-        ConstString header;
+        std::string txt = b.toString() + "\r\n";
+        std::string header;
         header += NetType::toHexString(txt.length()).c_str();
         header += "\r\n";
         Bytes b2((char*)header.c_str(), header.length());
@@ -835,9 +835,9 @@ bool yarp::os::impl::HttpCarrier::reply(ConnectionState& proto, SizedWriter& wri
     Bottle b;
     b.read(con.getReader());
 
-    ConstString mime = b.check("mime", Value("text/html")).asString();
+    std::string mime = b.check("mime", Value("text/html")).asString();
 
-    ConstString body;
+    std::string body;
 
     bool using_json = false;
     if (stream != nullptr) {
@@ -853,7 +853,7 @@ bool yarp::os::impl::HttpCarrier::reply(ConnectionState& proto, SizedWriter& wri
     }
 
     if (b.check("stream")&&!using_json) {
-        ConstString header("HTTP/1.1 200 OK\r\nContent-Type: ");
+        std::string header("HTTP/1.1 200 OK\r\nContent-Type: ");
         header += mime;
         header += "\r\n";
         header += "Transfer-Encoding: chunked\r\n";
@@ -890,8 +890,8 @@ bool yarp::os::impl::HttpCarrier::reply(ConnectionState& proto, SizedWriter& wri
     // Could check response codes, mime types here.
 
     if (body.length()!=0 || using_json) {
-        ConstString mime = b.check("mime", Value(using_json?"application/json":"text/html")).asString();
-        ConstString header("HTTP/1.1 200 OK\nContent-Type: ");
+        std::string mime = b.check("mime", Value(using_json?"application/json":"text/html")).asString();
+        std::string header("HTTP/1.1 200 OK\nContent-Type: ");
         header += mime;
         header += "\n";
         header += "Access-Control-Allow-Origin: *\n";

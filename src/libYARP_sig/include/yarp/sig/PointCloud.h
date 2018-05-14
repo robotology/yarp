@@ -319,9 +319,9 @@ public:
         return data.write(writer);
     }
 
-    virtual yarp::os::ConstString toString(int precision = -1, int width = -1)
+    virtual std::string toString(int precision = -1, int width = -1)
     {
-        yarp::os::ConstString ret;
+        std::string ret;
         if (isOrganized()) {
             for (size_t r = 0; r < this->width(); r++) {
                 for (size_t c = 0; c < this->height(); c++) {

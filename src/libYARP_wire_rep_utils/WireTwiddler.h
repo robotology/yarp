@@ -37,8 +37,8 @@ public:
     bool save_external;
     bool load_external;
     bool computing;
-    yarp::os::ConstString origin;
-    yarp::os::ConstString var_name;
+    std::string origin;
+    std::string var_name;
     int flavor;
     WireTwiddlerGap() {
         buffer_start = 0;
@@ -60,7 +60,7 @@ public:
     int getUnitLength() const { return unit_length; }
     int getExternalLength() const { return unit_length; }
     bool shouldIgnoreExternal() const { return ignore_external; }
-    const yarp::os::ConstString& getOrigin() const { return origin; }
+    const std::string& getOrigin() const { return origin; }
 };
 
 
@@ -93,12 +93,12 @@ private:
     std::vector<yarp::os::NetInt32> buffer;
     std::vector<WireTwiddlerGap> gaps;
     yarp::os::ConnectionWriter *writer;
-    yarp::os::ConstString prompt;
+    std::string prompt;
 
 public:
     void show();
     int configure(yarp::os::Bottle& desc, int offset, bool& ignored,
-                  const yarp::os::ConstString& vtag);
+                  const std::string& vtag);
 
     int getGapCount() {
         return (int)gaps.size();
@@ -114,9 +114,9 @@ public:
         return gaps[index];
     }
 
-    yarp::os::ConstString toString() const;
+    std::string toString() const;
 
-    const yarp::os::ConstString& getPrompt() const {
+    const std::string& getPrompt() const {
         return prompt;
     }
 

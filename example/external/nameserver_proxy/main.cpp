@@ -33,7 +33,7 @@ public:
                         yarp::os::Bottle& reply,
                         yarp::os::Contact& remote) {
     reply.addString("old");
-    ConstString name = cmd.get(1).asString();
+    std::string name = cmd.get(1).asString();
     Contact c = Network::queryName(name);
     if (c.isValid()) {
       appendEntry(reply,c);
@@ -65,7 +65,7 @@ public:
                      yarp::os::Contact& remote) {
     bool ok = false;
     printf(" + %s\n", cmd.toString().c_str());
-    ConstString tag = cmd.get(0).asString();
+    std::string tag = cmd.get(0).asString();
     if (tag=="register") {
       ok = cmdRegister(cmd,reply,remote);
     } else if (tag=="unregister") {

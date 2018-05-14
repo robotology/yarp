@@ -175,16 +175,16 @@ public:
     typedef yarp::os::idl::BottleStyle<yarp::rosmsg::diagnostic_msgs::SelfTestReply> bottleStyle;
 
     // Give source text for class, ROS will need this
-    static yarp::os::ConstString typeText()
+    static std::string typeText()
     {
-        return yarp::os::ConstString("\
-") + yarp::os::ConstString("\n\
+        return std::string("\
+") + std::string("\n\
 ================================================================================\n\
 MSG: diagnostic_msgs/DiagnosticStatus\n\
 ") + yarp::rosmsg::diagnostic_msgs::DiagnosticStatus::typeText();
     }
 
-    yarp::os::ConstString getTypeText() const
+    std::string getTypeText() const
     {
         return yarp::rosmsg::diagnostic_msgs::SelfTestReply::typeText();
     }

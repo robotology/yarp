@@ -10,7 +10,7 @@
 #ifndef YARP_OS_ELECTION_H
 #define YARP_OS_ELECTION_H
 
-#include <yarp/os/ConstString.h>
+#include <string>
 #include <yarp/os/Semaphore.h>
 #include <yarp/os/Log.h>
 
@@ -69,11 +69,11 @@ private:
 
     yarp::os::Semaphore mutex;
 
-    typedef typename std::map<yarp::os::ConstString, PR> map_type;
+    typedef typename std::map<std::string, PR> map_type;
     map_type nameMap;
     long ct;
 
-    PR *getRecordRaw(const yarp::os::ConstString& key, bool create = false) {
+    PR *getRecordRaw(const std::string& key, bool create = false) {
         typename map_type::iterator entry = nameMap.find(key);
         if (entry == nameMap.end() && create) {
             nameMap[key] = PR();
@@ -90,7 +90,7 @@ private:
     }
     virtual ~ElectionOf() {}
 
-    PR *add(const yarp::os::ConstString& key, typename PR::peer_type *entity) {
+    PR *add(const std::string& key, typename PR::peer_type *entity) {
         mutex.wait();
         ct++;
         PR *rec = getRecordRaw(key, true);
@@ -99,7 +99,7 @@ private:
         mutex.post();
         return rec;
     }
-    void remove(const yarp::os::ConstString& key, typename PR::peer_type *entity) {
+    void remove(const std::string& key, typename PR::peer_type *entity) {
         mutex.wait();
         ct++;
         PR *rec = getRecordRaw(key, false);
@@ -108,7 +108,7 @@ private:
         mutex.post();
     }
 
-    typename PR::peer_type *getElect(const yarp::os::ConstString& key) {
+    typename PR::peer_type *getElect(const std::string& key) {
         mutex.wait();
         PR *rec = getRecordRaw(key, false);
         mutex.post();
@@ -118,7 +118,7 @@ private:
         return nullptr;
     }
 
-    PR *getRecord(const yarp::os::ConstString& key) {
+    PR *getRecord(const std::string& key) {
         mutex.wait();
         PR *rec = getRecordRaw(key, false);
         mutex.post();
@@ -141,19 +141,19 @@ private:
 template <class T, class PR>
 class yarp::os::ElectionOf : protected Election<PR> {
 public:
-    PR *add(const yarp::os::ConstString& key, T *entity) {
+    PR *add(const std::string& key, T *entity) {
         return Election<PR>::add(key, entity);
     }
 
-    void remove(const yarp::os::ConstString& key, T *entity) {
+    void remove(const std::string& key, T *entity) {
         Election<PR>::remove(key, entity);
     }
 
-    T *getElect(const yarp::os::ConstString& key) {
+    T *getElect(const std::string& key) {
         return (T *)Election<PR>::getElect(key);
     }
 
-    PR *getRecord(const yarp::os::ConstString& key) {
+    PR *getRecord(const std::string& key) {
         return Election<PR>::getRecord(key);
     }
 

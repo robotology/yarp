@@ -10,7 +10,7 @@
 #ifndef YARP_OS_RESOURCEFINDER_H
 #define YARP_OS_RESOURCEFINDER_H
 
-#include <yarp/os/ConstString.h>
+#include <string>
 #include <yarp/os/Searchable.h>
 #include <yarp/os/Value.h>
 #include <yarp/os/Bottle.h>
@@ -107,7 +107,7 @@ public:
      *
      * @see setDefaultContext(const char *contextName)
      */
-    bool setDefaultContext(const yarp::os::ConstString& contextName) {
+    bool setDefaultContext(const std::string& contextName) {
         return setDefaultContext(contextName.c_str());
     }
 
@@ -129,7 +129,7 @@ public:
      * yarp::os::Value, so also string representations for lists and numerical values are accepted
      *
      */
-    bool setDefault(const char *key, const yarp::os::ConstString& val);
+    bool setDefault(const char *key, const std::string& val);
 
     /**
      *
@@ -164,7 +164,7 @@ public:
      * \ref yarp_resource_finder_tutorials.
      *
      */
-    yarp::os::ConstString findFile(const ConstString& name);
+    std::string findFile(const std::string& name);
 
     /**
      *
@@ -173,7 +173,7 @@ public:
      * The file is searched in a hierarchy of paths as defined in
      * \ref yarp_resource_finder_tutorials.
      */
-    yarp::os::ConstString findFileByName(const ConstString& name);
+    std::string findFileByName(const std::string& name);
 
     /**
      *
@@ -190,7 +190,7 @@ public:
      * The path is searched in a hierarchy of paths as defined in
      * \ref yarp_resource_finder_tutorials.
      */
-    yarp::os::ConstString findPath(const ConstString& name);
+    std::string findPath(const std::string& name);
 
     /**
      *
@@ -206,14 +206,14 @@ public:
      * The path is searched in a hierarchy of paths as defined in
      * \ref yarp_resource_finder_tutorials.
      */
-    yarp::os::Bottle findPaths(const ConstString& name);
+    yarp::os::Bottle findPaths(const std::string& name);
 
     /**
      *
      * Find the first existing directory in the search path.
      *
      */
-    yarp::os::ConstString findPath();
+    std::string findPath();
 
 
     /**
@@ -223,7 +223,7 @@ public:
      * into a search path in a policy-specific way.
      *
      */
-    yarp::os::ConstString getContext();
+    std::string getContext();
 
     /**
      *
@@ -234,11 +234,11 @@ public:
     yarp::os::Bottle getContexts();
 
     // Searchable interface
-    virtual bool check(const ConstString& key) const override;
-    virtual Value& find(const ConstString& key) const override;
-    virtual Bottle& findGroup(const ConstString& key) const override;
+    virtual bool check(const std::string& key) const override;
+    virtual Value& find(const std::string& key) const override;
+    virtual Bottle& findGroup(const std::string& key) const override;
     virtual bool isNull() const override;
-    virtual ConstString toString() const override;
+    virtual std::string toString() const override;
 
 
     /**
@@ -290,7 +290,7 @@ public:
      *     (an OSX-specific case remains to be defined)
      *
      */
-    static ConstString getDataHome() {
+    static std::string getDataHome() {
         return getDataHomeWithPossibleCreation(true);
     }
 
@@ -301,7 +301,7 @@ public:
      * returned.
      *
      */
-    static ConstString getDataHomeNoCreate() {
+    static std::string getDataHomeNoCreate() {
         return getDataHomeWithPossibleCreation(false);
     }
 
@@ -320,7 +320,7 @@ public:
      *     (an OSX-specific case remains to be defined)
      *
      */
-    static ConstString getConfigHome() {
+    static std::string getConfigHome() {
         return getConfigHomeWithPossibleCreation(true);
     }
 
@@ -330,7 +330,7 @@ public:
      * returned.
      *
      */
-    static ConstString getConfigHomeNoCreate() {
+    static std::string getConfigHomeNoCreate() {
         return getConfigHomeWithPossibleCreation(false);
     }
 
@@ -339,14 +339,14 @@ public:
      * Return the path to the "user" context directory for the current context
      *
      */
-    yarp::os::ConstString getHomeContextPath();
+    std::string getHomeContextPath();
 
      /**
      *
      * Return the path to the "user" robot directory
      *
      */
-    yarp::os::ConstString getHomeRobotPath();
+    std::string getHomeRobotPath();
 
     /**
      *
@@ -382,20 +382,20 @@ public:
      */
     static Bottle getConfigDirs();
 
-    yarp::os::Bottle findPaths(const ConstString& name,
+    yarp::os::Bottle findPaths(const std::string& name,
                                const ResourceFinderOptions& options);
 
-    yarp::os::ConstString findPath(const ConstString& name,
+    std::string findPath(const std::string& name,
                                    const ResourceFinderOptions& options);
 
-    yarp::os::ConstString findFile(const ConstString& name,
+    std::string findFile(const std::string& name,
                                    const ResourceFinderOptions& options);
 
-    yarp::os::ConstString findFileByName(const ConstString& name,
+    std::string findFileByName(const std::string& name,
                                    const ResourceFinderOptions& options);
 
     bool readConfig(Property& config,
-                    const ConstString& key,
+                    const std::string& key,
                     const ResourceFinderOptions& options);
 
     /* YARP 2.4 changes end */
@@ -416,9 +416,9 @@ private:
 
     ResourceFinder(Searchable& data, void *implementation);
 
-    static ConstString getDataHomeWithPossibleCreation(bool mayCreate);
-    static ConstString getConfigHomeWithPossibleCreation(bool mayCreate);
-    static ConstString createIfAbsent(bool mayCreate, const ConstString& path);
+    static std::string getDataHomeWithPossibleCreation(bool mayCreate);
+    static std::string getConfigHomeWithPossibleCreation(bool mayCreate);
+    static std::string createIfAbsent(bool mayCreate, const std::string& path);
 };
 
 

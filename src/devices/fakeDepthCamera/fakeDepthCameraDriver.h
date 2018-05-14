@@ -80,7 +80,7 @@ public:
     virtual bool   getImages(FlexImage& colorFrame, depthImage& depthFrame, Stamp* colorStamp=NULL, Stamp* depthStamp=NULL) override;
 
     virtual RGBDSensor_status     getSensorStatus() override;
-    virtual yarp::os::ConstString getLastErrorMsg(Stamp* timeStamp = NULL) override;
+    virtual std::string getLastErrorMsg(Stamp* timeStamp = NULL) override;
 
 private:
     double rgb_h{480};

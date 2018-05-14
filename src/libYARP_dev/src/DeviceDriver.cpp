@@ -26,7 +26,7 @@ void DeviceResponder::addUsage(const char *txt, const char *explain) {
     examples.addString(txt); //Value::makeList(txt));
     explains.addString((explain!=nullptr)?explain:"");
     details.add(Value::makeList(txt));
-    ConstString more = ConstString("   ") + ((explain != nullptr) ? explain : "");
+    std::string more = std::string("   ") + ((explain != nullptr) ? explain : "");
     details.addString(more.c_str());
 }
 

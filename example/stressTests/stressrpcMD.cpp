@@ -41,7 +41,7 @@ int main(int argc, char **argv)
     Property parameters;
     parameters.fromCommand(argc, argv);
 
-    ConstString part=parameters.find("part").asString();
+    std::string part=parameters.find("part").asString();
     int id=parameters.find("id").asInt();
     double time=0;
     if (parameters.check("time"))
@@ -51,7 +51,7 @@ int main(int argc, char **argv)
     else
         time=-1;
 
-    ConstString protocol;
+    std::string protocol;
     if (parameters.check("prot"))
     {
         protocol=parameters.find("prot").asString();
@@ -59,7 +59,7 @@ int main(int argc, char **argv)
     else
         protocol="tcp";
 
-    ConstString rname;
+    std::string rname;
     if (parameters.check("robot"))
     {
         rname=parameters.find("robot").asString();

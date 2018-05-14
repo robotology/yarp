@@ -292,9 +292,9 @@ public:
     typedef yarp::os::idl::BottleStyle<yarp::rosmsg::stereo_msgs::DisparityImage> bottleStyle;
 
     // Give source text for class, ROS will need this
-    static yarp::os::ConstString typeText()
+    static std::string typeText()
     {
-        return yarp::os::ConstString("\
+        return std::string("\
 # Separate header for compatibility with current TimeSynchronizer.\n\
 # Likely to be removed in a later release, use image.header instead.\n\
 Header header\n\
@@ -324,19 +324,19 @@ float32 max_disparity\n\
 # Smallest allowed disparity increment. The smallest achievable depth range\n\
 # resolution is delta_Z = (Z^2/fT)*delta_d.\n\
 float32 delta_d\n\
-") + yarp::os::ConstString("\n\
+") + std::string("\n\
 ================================================================================\n\
 MSG: std_msgs/Header\n\
-") + yarp::rosmsg::std_msgs::Header::typeText() + yarp::os::ConstString("\n\
+") + yarp::rosmsg::std_msgs::Header::typeText() + std::string("\n\
 ================================================================================\n\
 MSG: sensor_msgs/Image\n\
-") + yarp::rosmsg::sensor_msgs::Image::typeText() + yarp::os::ConstString("\n\
+") + yarp::rosmsg::sensor_msgs::Image::typeText() + std::string("\n\
 ================================================================================\n\
 MSG: sensor_msgs/RegionOfInterest\n\
 ") + yarp::rosmsg::sensor_msgs::RegionOfInterest::typeText();
     }
 
-    yarp::os::ConstString getTypeText() const
+    std::string getTypeText() const
     {
         return yarp::rosmsg::stereo_msgs::DisparityImage::typeText();
     }

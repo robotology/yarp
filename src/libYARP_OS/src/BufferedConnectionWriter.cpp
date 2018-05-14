@@ -26,9 +26,9 @@ bool BufferedConnectionWriter::applyConvertTextMode() {
             yarp::os::ManagedBytes& m = *(lst[i]);
             sos.write(m.usedBytes());
         }
-        const ConstString& str = sos.str();
+        const std::string& str = sos.str();
         b.fromBinary(str.c_str(), str.length());
-        ConstString replacement = b.toString() + "\n";
+        std::string replacement = b.toString() + "\n";
         for (size_t i=0; i<lst.size(); i++) {
             delete lst[i];
         }
@@ -49,10 +49,10 @@ bool BufferedConnectionWriter::convertTextMode() {
     return true;
 }
 
-ConstString BufferedConnectionWriter::toString() {
+std::string BufferedConnectionWriter::toString() {
     stopWrite();
     size_t total_size = dataSize();
-    ConstString output(total_size, 0);
+    std::string output(total_size, 0);
     char *dest = (char *)output.c_str();
     for (size_t i=0; i<header_used; i++) {
         const char *data = header[i]->get();

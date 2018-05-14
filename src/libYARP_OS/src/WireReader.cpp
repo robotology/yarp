@@ -244,7 +244,7 @@ bool WireReader::readDouble(double& x)
     return !reader.isError();
 }
 
-bool WireReader::readString(ConstString& str, bool *is_vocab)
+bool WireReader::readString(std::string& str, bool *is_vocab)
 {
     if (state->len<=0) {
         return false;
@@ -298,7 +298,7 @@ bool WireReader::readString(ConstString& str, bool *is_vocab)
     return !reader.isError();
 }
 
-bool WireReader::readBinary(ConstString& str)
+bool WireReader::readBinary(std::string& str)
 {
     if (state->len<=0) {
         return false;
@@ -321,7 +321,7 @@ bool WireReader::readBinary(ConstString& str)
         return false;
     }
     if (len == 0) {
-        str = ConstString();
+        str = std::string();
         return true;
     }
     if (len<0) {
@@ -434,7 +434,7 @@ bool WireReader::readListReturn()
     if (v!=VOCAB2('i', 's')) {
         return false;
     }
-    ConstString dummy;
+    std::string dummy;
     if (!readString(dummy)) {
         return false; // string OR vocab
     }
@@ -463,10 +463,10 @@ bool WireReader::isError()
     return reader.isError();
 }
 
-yarp::os::ConstString WireReader::readTag()
+std::string WireReader::readTag()
 {
     flush_if_needed = true;
-    ConstString str;
+    std::string str;
     bool is_vocab;
     if (!readString(str, &is_vocab)) {
         fail();
@@ -484,7 +484,7 @@ yarp::os::ConstString WireReader::readTag()
             is_vocab = (x==BOTTLE_TAG_VOCAB);
         }
         if (is_vocab) {
-            ConstString str2;
+            std::string str2;
             if (!readString(str2, &is_vocab)) return "";
             scanString(str2, is_vocab);
             str += "_";
@@ -540,7 +540,7 @@ bool WireReader::noMore()
     return pending==0;
 }
 
-void WireReader::scanString(ConstString& str, bool is_vocab)
+void WireReader::scanString(std::string& str, bool is_vocab)
 {
     if (!support_get_mode) return;
     if (get_string=="") {
@@ -566,7 +566,7 @@ bool WireReader::getIsVocab() const
     return get_is_vocab;
 }
 
-const ConstString& WireReader::getString() const
+const std::string& WireReader::getString() const
 {
     return get_string;
 }

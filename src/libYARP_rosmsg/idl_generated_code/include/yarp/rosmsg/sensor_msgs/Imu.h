@@ -320,9 +320,9 @@ public:
     typedef yarp::os::idl::BottleStyle<yarp::rosmsg::sensor_msgs::Imu> bottleStyle;
 
     // Give source text for class, ROS will need this
-    static yarp::os::ConstString typeText()
+    static std::string typeText()
     {
-        return yarp::os::ConstString("\
+        return std::string("\
 # This is a message to hold data from an IMU (Inertial Measurement Unit)\n\
 #\n\
 # Accelerations should be in m/s^2 (not in g's), and rotational velocity should be in rad/sec\n\
@@ -347,19 +347,19 @@ float64[9] angular_velocity_covariance # Row major about x, y, z axes\n\
 \n\
 geometry_msgs/Vector3 linear_acceleration\n\
 float64[9] linear_acceleration_covariance # Row major x, y z \n\
-") + yarp::os::ConstString("\n\
+") + std::string("\n\
 ================================================================================\n\
 MSG: std_msgs/Header\n\
-") + yarp::rosmsg::std_msgs::Header::typeText() + yarp::os::ConstString("\n\
+") + yarp::rosmsg::std_msgs::Header::typeText() + std::string("\n\
 ================================================================================\n\
 MSG: geometry_msgs/Quaternion\n\
-") + yarp::rosmsg::geometry_msgs::Quaternion::typeText() + yarp::os::ConstString("\n\
+") + yarp::rosmsg::geometry_msgs::Quaternion::typeText() + std::string("\n\
 ================================================================================\n\
 MSG: geometry_msgs/Vector3\n\
 ") + yarp::rosmsg::geometry_msgs::Vector3::typeText();
     }
 
-    yarp::os::ConstString getTypeText() const
+    std::string getTypeText() const
     {
         return yarp::rosmsg::sensor_msgs::Imu::typeText();
     }

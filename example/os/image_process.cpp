@@ -46,7 +46,7 @@ int main(int argc, char *argv[]) {
     options.fromCommand(argc,argv);
 
     // Set the name of the port (use "/worker" if there is no --name option)
-    ConstString portName = options.check("name",Value("/worker")).asString();
+    std::string portName = options.check("name",Value("/worker")).asString();
     port.open(portName);
   
     int ct = 0;

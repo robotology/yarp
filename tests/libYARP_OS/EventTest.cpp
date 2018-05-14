@@ -60,7 +60,7 @@ public:
 
 class EventTest : public UnitTest {
 public:
-    virtual ConstString getName() override { return "EventTest"; }
+    virtual std::string getName() override { return "EventTest"; }
 
     void checkBasic() {
         report(0, "basic event sanity check...");

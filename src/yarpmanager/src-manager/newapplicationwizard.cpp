@@ -103,7 +103,7 @@ NewApplicationWizard::NewApplicationWizard(yarp::os::Property *config, bool _sav
 
 
 
-    const yarp::os::ConstString directorySeparator = yarp::os::NetworkBase::getDirectorySeparator();
+    const std::string directorySeparator = yarp::os::NetworkBase::getDirectorySeparator();
     if(m_config->check("apppath")){
         string basepath=m_config->check("ymanagerini_dir", yarp::os::Value("")).asString().c_str();
         string appPaths(m_config->find("apppath").asString().c_str());

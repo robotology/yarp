@@ -280,7 +280,7 @@ IRGBDSensor::RGBDSensor_status fakeDepthCameraDriver::getSensorStatus()
     return RGBD_SENSOR_OK_IN_USE;
 }
 
-ConstString fakeDepthCameraDriver::getLastErrorMsg(Stamp* timeStamp)
+std::string fakeDepthCameraDriver::getLastErrorMsg(Stamp* timeStamp)
 {
     return "no error";
 }

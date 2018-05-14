@@ -22,7 +22,7 @@ using namespace yarp::os::impl;
 
 class RosMsgTest : public UnitTest {
 public:
-    virtual ConstString getName() override {
+    virtual std::string getName() override {
         return "RosMsg";
     }
 };

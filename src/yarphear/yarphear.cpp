@@ -209,7 +209,7 @@ int main(int argc, char *argv[]) {
     bool muted = false;
     bool saving = false;
     bool help = false;
-    ConstString fname = "audio_%06d.wav";
+    std::string fname = "audio_%06d.wav";
     int ct = 0;
     bool done = false;
     while (!done) {
@@ -226,9 +226,9 @@ int main(int argc, char *argv[]) {
             yInfo("Type \"help\" for usage\n");
         }
 
-        ConstString keys = Network::readString();
+        std::string keys = Network::readString();
         Bottle b(keys);
-        ConstString cmd = b.get(0).asString();
+        std::string cmd = b.get(0).asString();
         if (b.size()==0) {
             muted = !muted;
             echo.mute(muted);

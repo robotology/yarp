@@ -24,7 +24,7 @@ using namespace yarp::os;
 
 class StampTest : public UnitTest {
 public:
-    virtual ConstString getName() override { return "StampTest"; }
+    virtual std::string getName() override { return "StampTest"; }
 
     void checkFormat() {
         report(0, "checking Stamp can serialize ok...");
@@ -139,7 +139,7 @@ public:
             Stamp env(42,3.0);
             BufferedConnectionWriter buf(true);
             env.write(buf);
-            ConstString str = buf.toString();
+            std::string str = buf.toString();
             Bottle bot(str.c_str());
             checkEqual(bot.get(0).asInt(),42,"sequence ok");
             checkEqualish(bot.get(1).asDouble(),3,"time ok");

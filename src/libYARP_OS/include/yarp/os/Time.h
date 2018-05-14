@@ -10,7 +10,7 @@
 #ifndef YARP_OS_TIME_H
 #define YARP_OS_TIME_H
 
-#include <yarp/os/ConstString.h>
+#include <string>
 #include <yarp/os/Clock.h>
 #include <yarp/os/SystemClock.h>
 #include <yarp/os/NetworkClock.h>
@@ -86,7 +86,7 @@ public:
      *
      * Throws assert in case of failure
      */
-    static void useNetworkClock(const ConstString& clock, ConstString localPortName="");
+    static void useNetworkClock(const std::string& clock, std::string localPortName="");
 
     /**
      *
@@ -134,7 +134,7 @@ public:
      *
      * clockTypeToString
      */
-     static yarp::os::ConstString clockTypeToString(yarpClockType type);
+     static std::string clockTypeToString(yarpClockType type);
 
     /**
      *

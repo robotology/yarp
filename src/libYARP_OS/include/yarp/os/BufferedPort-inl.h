@@ -37,7 +37,7 @@ yarp::os::BufferedPort<T>::~BufferedPort()
 }
 
 template <typename T>
-bool yarp::os::BufferedPort<T>::open(const ConstString& name)
+bool yarp::os::BufferedPort<T>::open(const std::string& name)
 {
     attachIfNeeded();
     return port.open(name);
@@ -51,13 +51,13 @@ bool yarp::os::BufferedPort<T>::open(const Contact& contact, bool registerName)
 }
 
 template <typename T>
-bool yarp::os::BufferedPort<T>::addOutput(const ConstString& name)
+bool yarp::os::BufferedPort<T>::addOutput(const std::string& name)
 {
     return port.addOutput(name);
 }
 
 template <typename T>
-bool yarp::os::BufferedPort<T>::addOutput(const ConstString& name, const ConstString& carrier)
+bool yarp::os::BufferedPort<T>::addOutput(const std::string& name, const std::string& carrier)
 {
     return port.addOutput(name, carrier);
 }
@@ -104,7 +104,7 @@ yarp::os::Contact yarp::os::BufferedPort<T>::where() const
 }
 
 template <typename T>
-yarp::os::ConstString yarp::os::BufferedPort<T>::getName() const
+std::string yarp::os::BufferedPort<T>::getName() const
 {
     return where().getName();
 }

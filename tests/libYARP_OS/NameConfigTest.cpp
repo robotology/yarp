@@ -17,15 +17,15 @@ using namespace yarp::os::impl;
 
 class NameConfigTest : public UnitTest {
 public:
-    virtual ConstString getName() override { return "NameConfigTest"; }
+    virtual std::string getName() override { return "NameConfigTest"; }
 
     void testRead() {
         report(0,"no tests yet");
         //report(0,"checking writing the config file");
         NameConfig nc;
         //bool result = nc.createPath("/tmp/work/bozo/foo/namer.conf");
-        ConstString fname = nc.getConfigFileName();
-        //ConstString txt = nc.readConfig(fname);
+        std::string fname = nc.getConfigFileName();
+        //std::string txt = nc.readConfig(fname);
         report(0,fname);
         //report(0,txt);
     }

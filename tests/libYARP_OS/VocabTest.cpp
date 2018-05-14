@@ -7,7 +7,7 @@
  * BSD-3-Clause license. See the accompanying LICENSE file for details.
  */
 
-#include <yarp/os/ConstString.h>
+#include <string>
 #include <yarp/os/Vocab.h>
 
 #include <yarp/os/impl/UnitTest.h>
@@ -18,7 +18,7 @@ using namespace yarp::os::impl;
 
 class VocabTest : public UnitTest {
 public:
-    virtual ConstString getName() override { return "VocabTest"; }
+    virtual std::string getName() override { return "VocabTest"; }
 
     void checkConvert() {
         report(0,"checking vocabulary conversions");

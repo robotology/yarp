@@ -162,9 +162,9 @@ public:
     typedef yarp::os::idl::BottleStyle<yarp::rosmsg::tf2_msgs::TF2Error> bottleStyle;
 
     // Give source text for class, ROS will need this
-    static yarp::os::ConstString typeText()
+    static std::string typeText()
     {
-        return yarp::os::ConstString("\
+        return std::string("\
 uint8 NO_ERROR = 0\n\
 uint8 LOOKUP_ERROR = 1\n\
 uint8 CONNECTIVITY_ERROR = 2\n\
@@ -178,7 +178,7 @@ string error_string\n\
 ");
     }
 
-    yarp::os::ConstString getTypeText() const
+    std::string getTypeText() const
     {
         return yarp::rosmsg::tf2_msgs::TF2Error::typeText();
     }

@@ -681,7 +681,7 @@ public:
                               "port name of real grabber").asString();
         local = config.check("local",yarp::os::Value("..."),
                              "port name to use locally").asString();
-        yarp::os::ConstString carrier =
+        std::string carrier =
             config.check("stream",yarp::os::Value("tcp"),
                          "carrier to use for streaming").asString();
         port.open(local);
@@ -804,8 +804,8 @@ public:
 private:
     yarp::os::PortReaderBuffer<yarp::sig::ImageOf<yarp::sig::PixelRgb> > reader;
     yarp::os::Port port;
-    yarp::os::ConstString remote;
-    yarp::os::ConstString local;
+    std::string remote;
+    std::string local;
     yarp::os::Semaphore mutex;
     int lastHeight;
     int lastWidth;

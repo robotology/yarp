@@ -20,7 +20,7 @@
 
 #include <yarp/os/Bottle.h>
 #include <yarp/os/Vocab.h>
-#include <yarp/os/ConstString.h>
+#include <string>
 #include <yarp/os/Time.h>
 
 #include <yarp/sig/impl/DeBayer.h>
@@ -558,7 +558,7 @@ const void *Image::getIplImage() const {
 void Image::wrapIplImage(void *iplImage) {
     yAssert(iplImage!=nullptr);
     IplImage *p = (IplImage *)iplImage;
-    ConstString str = p->colorModel;
+    std::string str = p->colorModel;
     int code = -1;
     int color_code = -1;
     if (str=="rgb"||str=="RGB"||

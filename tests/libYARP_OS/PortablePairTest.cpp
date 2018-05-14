@@ -21,7 +21,7 @@ using namespace yarp::os;
 
 class PortablePairTest : public UnitTest {
 public:
-    virtual ConstString getName() override { return "PortablePairTest"; }
+    virtual std::string getName() override { return "PortablePairTest"; }
     
     void checkStandard() {
         PortablePair<Bottle,Bottle> pp;
@@ -29,7 +29,7 @@ public:
         pp.body.fromString("yes no");
         BufferedConnectionWriter writer;
         pp.write(writer);
-        ConstString s = writer.toString();
+        std::string s = writer.toString();
         Bottle bot;
         bot.fromBinary(s.c_str(),s.length());
         checkEqual(bot.size(),2,"it is a pair");  

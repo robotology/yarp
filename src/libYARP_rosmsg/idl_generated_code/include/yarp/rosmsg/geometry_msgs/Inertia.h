@@ -253,9 +253,9 @@ public:
     typedef yarp::os::idl::BottleStyle<yarp::rosmsg::geometry_msgs::Inertia> bottleStyle;
 
     // Give source text for class, ROS will need this
-    static yarp::os::ConstString typeText()
+    static std::string typeText()
     {
-        return yarp::os::ConstString("\
+        return std::string("\
 # Mass [kg]\n\
 float64 m\n\
 \n\
@@ -272,13 +272,13 @@ float64 ixz\n\
 float64 iyy\n\
 float64 iyz\n\
 float64 izz\n\
-") + yarp::os::ConstString("\n\
+") + std::string("\n\
 ================================================================================\n\
 MSG: geometry_msgs/Vector3\n\
 ") + yarp::rosmsg::geometry_msgs::Vector3::typeText();
     }
 
-    yarp::os::ConstString getTypeText() const
+    std::string getTypeText() const
     {
         return yarp::rosmsg::geometry_msgs::Inertia::typeText();
     }

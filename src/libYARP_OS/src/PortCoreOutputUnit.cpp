@@ -101,7 +101,7 @@ void PortCoreOutputUnit::runSingleThreaded() {
         setMode();
         getOwner().reportUnit(this, true);
 
-        ConstString msg = ConstString("Sending output from ") +
+        std::string msg = std::string("Sending output from ") +
             route.getFromName() + " to " + route.getToName() + " using " +
             route.getCarrierName();
         if (Name(route.getToName()).isRooted()) {
@@ -146,7 +146,7 @@ void PortCoreOutputUnit::closeBasic() {
             if (op->getConnection().canEscape()) {
                 BufferedConnectionWriter buf(op->getConnection().isTextMode(),
                                              op->getConnection().isBareMode());
-                PortCommand pc('\0', ConstString("q"));
+                PortCommand pc('\0', std::string("q"));
                 pc.write(buf);
                 //printf("Asked for %s to close...\n",
                 //     op->getRoute().toString().c_str());
@@ -154,7 +154,7 @@ void PortCoreOutputUnit::closeBasic() {
             }
         }
 
-        ConstString msg = ConstString("Removing output from ") +
+        std::string msg = std::string("Removing output from ") +
             route.getFromName() + " to " + route.getToName();
 
         if (Name(route.getToName()).isRooted()) {
@@ -278,7 +278,7 @@ bool PortCoreOutputUnit::sendHelper() {
                             PortCommand pc('a', "");
                             pc.write(buf);
                         } else {
-                            PortCommand pc('\0', ConstString(suppressReply ? "D " : "d ") + cachedEnvelope);
+                            PortCommand pc('\0', std::string(suppressReply ? "D " : "d ") + cachedEnvelope);
                             pc.write(buf);
                         }
                     } else {
@@ -320,7 +320,7 @@ void *PortCoreOutputUnit::send(yarp::os::PortWriter& writer,
                                yarp::os::PortReader *reader,
                                yarp::os::PortWriter *callback,
                                void *tracker,
-                               const ConstString& envelopeString,
+                               const std::string& envelopeString,
                                bool waitAfter,
                                bool waitBefore,
                                bool *gotReply) {

@@ -13,7 +13,7 @@
 #include <yarp/os/Vocab.h>
 #include <yarp/os/SharedLibrary.h>
 #include <yarp/os/SharedLibraryClassApi.h>
-#include <yarp/os/ConstString.h>
+#include <string>
 
 
 namespace yarp {
@@ -95,7 +95,7 @@ public:
      *
      * @return the latest error.
      */
-    ConstString getError() const;
+    std::string getError() const;
 
     /**
      * Get the factory API, which has creation/deletion methods.
@@ -130,21 +130,21 @@ public:
      *
      * @return the name associated with this factory.
      */
-    ConstString getName() const;
+    std::string getName() const;
 
     /**
      * Get the type associated with this factory.
      *
      * @return the type associated with this factory.
      */
-    ConstString getClassName() const;
+    std::string getClassName() const;
 
     /**
      * Get the base type associated with this factory.
      *
      * @return the base type associated with this factory.
      */
-    ConstString getBaseClassName() const;
+    std::string getBaseClassName() const;
 
     /**
      *
@@ -162,10 +162,10 @@ private:
     SharedLibraryClassApi api;
     int returnValue;
     int rct;
-    ConstString name;
-    ConstString className;
-    ConstString baseClassName;
-    ConstString error;
+    std::string name;
+    std::string className;
+    std::string baseClassName;
+    std::string error;
 };
 
 

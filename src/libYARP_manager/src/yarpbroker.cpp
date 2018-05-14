@@ -642,13 +642,13 @@ bool YarpBroker::getAllPorts(vector<string> &ports)
     if((reply.size()!=1) || (!reply.get(0).isString()))
         return false;
 
-    ConstString str = reply.get(0).asString();
+    std::string str = reply.get(0).asString();
     const char* delm = "registration name ";
     size_t pos1, pos2;
-    while((pos1 = str.find(delm)) != ConstString::npos)
+    while((pos1 = str.find(delm)) != std::string::npos)
     {
         str = str.substr(pos1+strlen(delm));
-        if((pos2 = str.find(" ")) != ConstString::npos)
+        if((pos2 = str.find(" ")) != std::string::npos)
             ports.push_back(str.substr(0, pos2).c_str());
     }
 
@@ -675,14 +675,14 @@ bool YarpBroker::getAllProcesses(const char* server,
         for(int i=0; i<response.size(); i++)
         {
             Process proc;
-            ConstString sprc;
+            std::string sprc;
             if(response.get(i).check("pid"))
                 proc.pid = response.get(i).find("pid").asInt();
             if(response.get(i).check("cmd"))
                sprc = response.get(i).find("cmd").asString();
             if(response.get(i).check("env") &&
                response.get(i).find("env").asString().length())
-               sprc = sprc + ConstString("; ") + response.get(i).find("env").asString();
+               sprc = sprc + std::string("; ") + response.get(i).find("env").asString();
             proc.command = sprc.c_str();
             processes.push_back(proc);
         }
@@ -828,7 +828,7 @@ void YarpBroker::threadRelease()
 }
 
 
-int YarpBroker::SendMsg(Bottle& msg, ConstString target, Bottle& response, float fTimeout)
+int YarpBroker::SendMsg(Bottle& msg, std::string target, Bottle& response, float fTimeout)
 {
     if(!exists(target.c_str()))
         return YARPRUN_NOCONNECTION;

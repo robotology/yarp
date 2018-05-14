@@ -83,7 +83,7 @@ public:
     * @param a string containing the battery infos
     * @return true/false.
     */
-    virtual bool getBatteryInfo(yarp::os::ConstString &battery_info) = 0;
+    virtual bool getBatteryInfo(std::string &battery_info) = 0;
 };
 
 #endif // YARP_DEV_IBATTERY_H

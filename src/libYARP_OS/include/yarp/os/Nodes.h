@@ -25,14 +25,14 @@ public:
     virtual void add(Contactable& contactable) override;
     virtual void remove(Contactable& contactable) override;
 
-    virtual Contact query(const ConstString& name,
-                          const ConstString& category = "") override;
+    virtual Contact query(const std::string& name,
+                          const std::string& category = "") override;
 
-    virtual Contact getParent(const ConstString& name);
+    virtual Contact getParent(const std::string& name);
 
-    virtual Contact getURI(const ConstString& name);
+    virtual Contact getURI(const std::string& name);
 
-    virtual void prepare(const ConstString& name);
+    virtual void prepare(const std::string& name);
 
     virtual void update(Contactable& contactable);
 
@@ -40,10 +40,10 @@ public:
 
     bool enable(bool flag);
     void clear();
-    void setActiveName(const ConstString& name);
-    void addExternalNode(const ConstString& name, Node& node);
-    void removeExternalNode(const ConstString& name);
-    ConstString getActiveName();
+    void setActiveName(const std::string& name);
+    void addExternalNode(const std::string& name, Node& node);
+    void removeExternalNode(const std::string& name);
+    std::string getActiveName();
     bool requireActiveName();
 
 #ifndef DOXYGEN_SHOULD_SKIP_THIS

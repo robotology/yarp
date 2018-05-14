@@ -18,7 +18,7 @@
 #include <yarp/os/Time.h>
 #include <yarp/os/Port.h>
 #include <yarp/os/Mutex.h>
-#include <yarp/os/ConstString.h>
+#include <string>
 #include <yarp/dev/PolyDriver.h>
 #include <yarp/dev/Map2DLocation.h>
 #include <yarp/dev/ILocalization2D.h>
@@ -49,8 +49,8 @@ class yarp::dev::Localization2DClient : public DeviceDriver,
 protected:
     yarp::os::Mutex               m_mutex;
     yarp::os::Port                m_rpc_port_localization_server;
-    yarp::os::ConstString         m_local_name;
-    yarp::os::ConstString         m_remote_name;
+    std::string         m_local_name;
+    std::string         m_remote_name;
 
 #endif /*DOXYGEN_SHOULD_SKIP_THIS*/
 

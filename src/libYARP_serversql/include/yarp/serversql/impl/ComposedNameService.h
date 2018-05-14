@@ -56,14 +56,14 @@ public:
         ns2->goPublic();
     }
 
-    virtual yarp::os::Contact query(const yarp::os::ConstString& name) override {
+    virtual yarp::os::Contact query(const std::string& name) override {
         yarp::os::Contact result;
         result = ns1->query(name);
         if (!result.isValid()) result = ns2->query(name);
         return result;
     }
 
-    virtual bool announce(const yarp::os::ConstString& name, int activity) override {
+    virtual bool announce(const std::string& name, int activity) override {
         if (ns2->announce(name,activity)) return true;
         return ns1->announce(name,activity);
     }

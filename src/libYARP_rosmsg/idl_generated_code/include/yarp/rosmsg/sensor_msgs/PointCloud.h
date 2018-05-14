@@ -213,9 +213,9 @@ public:
     typedef yarp::os::idl::BottleStyle<yarp::rosmsg::sensor_msgs::PointCloud> bottleStyle;
 
     // Give source text for class, ROS will need this
-    static yarp::os::ConstString typeText()
+    static std::string typeText()
     {
-        return yarp::os::ConstString("\
+        return std::string("\
 # This message holds a collection of 3d points, plus optional additional\n\
 # information about each point.\n\
 \n\
@@ -230,19 +230,19 @@ geometry_msgs/Point32[] points\n\
 # and the data in each channel should correspond 1:1 with each point.\n\
 # Channel names in common practice are listed in ChannelFloat32.msg.\n\
 ChannelFloat32[] channels\n\
-") + yarp::os::ConstString("\n\
+") + std::string("\n\
 ================================================================================\n\
 MSG: std_msgs/Header\n\
-") + yarp::rosmsg::std_msgs::Header::typeText() + yarp::os::ConstString("\n\
+") + yarp::rosmsg::std_msgs::Header::typeText() + std::string("\n\
 ================================================================================\n\
 MSG: geometry_msgs/Point32\n\
-") + yarp::rosmsg::geometry_msgs::Point32::typeText() + yarp::os::ConstString("\n\
+") + yarp::rosmsg::geometry_msgs::Point32::typeText() + std::string("\n\
 ================================================================================\n\
 MSG: sensor_msgs/ChannelFloat32\n\
 ") + yarp::rosmsg::sensor_msgs::ChannelFloat32::typeText();
     }
 
-    yarp::os::ConstString getTypeText() const
+    std::string getTypeText() const
     {
         return yarp::rosmsg::sensor_msgs::PointCloud::typeText();
     }

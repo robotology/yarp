@@ -9,7 +9,7 @@
 #ifndef YARP_DEV_FRAMEGRABBERCONTROL2IMPL_H
 #define YARP_DEV_FRAMEGRABBERCONTROL2IMPL_H
 
-#include <yarp/os/ConstString.h>
+#include <string>
 #include <yarp/dev/FrameGrabberInterfaces.h>        // to include VOCAB definitions
 
 /*! \file FrameGrabberControl2.h define common interfaces to discover

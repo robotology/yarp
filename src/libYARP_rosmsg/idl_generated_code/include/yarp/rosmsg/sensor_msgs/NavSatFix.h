@@ -305,9 +305,9 @@ public:
     typedef yarp::os::idl::BottleStyle<yarp::rosmsg::sensor_msgs::NavSatFix> bottleStyle;
 
     // Give source text for class, ROS will need this
-    static yarp::os::ConstString typeText()
+    static std::string typeText()
     {
-        return yarp::os::ConstString("\
+        return std::string("\
 # Navigation Satellite fix for any Global Navigation Satellite System\n\
 #\n\
 # Specified using the WGS 84 reference ellipsoid\n\
@@ -354,16 +354,16 @@ uint8 COVARIANCE_TYPE_DIAGONAL_KNOWN = 2\n\
 uint8 COVARIANCE_TYPE_KNOWN = 3\n\
 \n\
 uint8 position_covariance_type\n\
-") + yarp::os::ConstString("\n\
+") + std::string("\n\
 ================================================================================\n\
 MSG: std_msgs/Header\n\
-") + yarp::rosmsg::std_msgs::Header::typeText() + yarp::os::ConstString("\n\
+") + yarp::rosmsg::std_msgs::Header::typeText() + std::string("\n\
 ================================================================================\n\
 MSG: sensor_msgs/NavSatStatus\n\
 ") + yarp::rosmsg::sensor_msgs::NavSatStatus::typeText();
     }
 
-    yarp::os::ConstString getTypeText() const
+    std::string getTypeText() const
     {
         return yarp::rosmsg::sensor_msgs::NavSatFix::typeText();
     }

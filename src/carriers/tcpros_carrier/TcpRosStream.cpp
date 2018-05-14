@@ -175,7 +175,7 @@ std::map<std::string, std::string> TcpRosStream::rosToKind() {
 }
 
 std::string TcpRosStream::rosToKind(const char *rosname) {
-    if (ConstString(rosname)=="") return "";
+    if (std::string(rosname)=="") return "";
     std::map<std::string, std::string> kinds = rosToKind();
 
     if (kinds.find(rosname)!=kinds.end()) {
@@ -185,15 +185,15 @@ std::string TcpRosStream::rosToKind(const char *rosname) {
     port.openFake("yarpidl_rosmsg");
     if (port.addOutput("/typ")) {
         Bottle cmd, resp;
-        cmd.addString(ConstString("twiddle ") + rosname);
+        cmd.addString(std::string("twiddle ") + rosname);
         dbg_printf("QUERY yarpidl_rosmsg %s\n", cmd.toString().c_str());
         port.write(cmd,resp);
         dbg_printf("GOT yarpidl_rosmsg %s\n", resp.toString().c_str());
-        ConstString txt = resp.get(0).asString();
+        std::string txt = resp.get(0).asString();
         if (txt!="?") return txt;
     }
     port.close();
-    if (ConstString(rosname)!="") {
+    if (std::string(rosname)!="") {
         fprintf(stderr, "Do not know anything about type '%s'\n", rosname);
         fprintf(stderr, "Could not connect to a type server to look up type '%s'\n", rosname);
         ::exit(1);
@@ -206,16 +206,16 @@ bool TcpRosStream::configureTwiddler(WireTwiddler& twiddler, const char *txt, co
     dbg_printf("CONFIGURE AS %s [%s/%s]\n", txt,
                sender?"sender":"receiver",
                reply?"reply":"main");
-    ConstString str(txt);
+    std::string str(txt);
     if (reply) {
         size_t idx = str.find("---");
-        if (idx!=ConstString::npos) {
+        if (idx!=std::string::npos) {
             str = str.substr(idx+3,str.length());
         }
     }
-    str = ConstString("skip int32 * ") + str;
+    str = std::string("skip int32 * ") + str;
     if (reply) {
-        str = ConstString("skip int8 * ") + str;
+        str = std::string("skip int8 * ") + str;
     }
     return twiddler.configure(str.c_str(),prompt);
 }

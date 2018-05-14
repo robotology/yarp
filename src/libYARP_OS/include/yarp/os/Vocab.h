@@ -11,7 +11,7 @@
 #define YARP_OS_VOCAB_H
 
 #include <yarp/os/NetInt32.h>
-#include <yarp/os/ConstString.h>
+#include <string>
 
 namespace yarp {
     namespace os {
@@ -62,14 +62,14 @@ public:
      * @param str the string to convert
      * @result the integer equivalent of the string form of the identifier
      */
-    static NetInt32 encode(const ConstString& str);
+    static NetInt32 encode(const std::string& str);
 
     /**
      * Convert a vocabulary identifier into a string.
      * @param code the vocabulary identifier to convert
      * @result the string equivalent of the integer form of the identifier
      */
-    static ConstString decode(NetInt32 code);
+    static std::string decode(NetInt32 code);
 };
 
 #endif // YARP_OS_VOCAB_H

@@ -31,9 +31,9 @@ public:
      */
     virtual ~IRemoteVariablesRaw() {}
 
-    virtual bool getRemoteVariableRaw(yarp::os::ConstString key, yarp::os::Bottle& val) = 0;
+    virtual bool getRemoteVariableRaw(std::string key, yarp::os::Bottle& val) = 0;
 
-    virtual bool setRemoteVariableRaw(yarp::os::ConstString key, const yarp::os::Bottle& val) = 0;
+    virtual bool setRemoteVariableRaw(std::string key, const yarp::os::Bottle& val) = 0;
 
     virtual bool getRemoteVariablesListRaw(yarp::os::Bottle* listOfKeys) = 0;
 };
@@ -51,9 +51,9 @@ public:
      */
     virtual ~IRemoteVariables() {}
 
-    virtual bool getRemoteVariable(yarp::os::ConstString key, yarp::os::Bottle& val) = 0;
+    virtual bool getRemoteVariable(std::string key, yarp::os::Bottle& val) = 0;
 
-    virtual bool setRemoteVariable(yarp::os::ConstString key, const yarp::os::Bottle& val) = 0;
+    virtual bool setRemoteVariable(std::string key, const yarp::os::Bottle& val) = 0;
 
     virtual bool getRemoteVariablesList(yarp::os::Bottle* listOfKeys) = 0;
 };

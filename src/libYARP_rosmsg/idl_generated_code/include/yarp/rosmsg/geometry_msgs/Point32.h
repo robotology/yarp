@@ -155,9 +155,9 @@ public:
     typedef yarp::os::idl::BottleStyle<yarp::rosmsg::geometry_msgs::Point32> bottleStyle;
 
     // Give source text for class, ROS will need this
-    static yarp::os::ConstString typeText()
+    static std::string typeText()
     {
-        return yarp::os::ConstString("\
+        return std::string("\
 # This contains the position of a point in free space(with 32 bits of precision).\n\
 # It is recommeded to use Point wherever possible instead of Point32.  \n\
 # \n\
@@ -171,7 +171,7 @@ float32 y\n\
 float32 z");
     }
 
-    yarp::os::ConstString getTypeText() const
+    std::string getTypeText() const
     {
         return yarp::rosmsg::geometry_msgs::Point32::typeText();
     }

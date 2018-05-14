@@ -10,7 +10,7 @@
 #ifndef YARP_OS_IMPL_UNITTEST_H
 #define YARP_OS_IMPL_UNITTEST_H
 
-#include <yarp/os/ConstString.h>
+#include <string>
 #include <yarp/os/Bottle.h>
 
 #include <vector>
@@ -42,9 +42,9 @@ public:
         clear();
     }
 
-    void report(int severity, const ConstString& problem);
+    void report(int severity, const std::string& problem);
 
-    virtual ConstString getName() { return "isolated test"; }
+    virtual std::string getName() { return "isolated test"; }
 
     static void startTestSystem();
     static UnitTest& getRoot();
@@ -78,14 +78,14 @@ public:
                            const char *fname,
                            int fline);
 
-    bool checkEqualImpl(const ConstString& x, const ConstString& y,
+    bool checkEqualImpl(const std::string& x, const std::string& y,
                         const char *desc,
                         const char *txt1,
                         const char *txt2,
                         const char *fname,
                         int fline);
 
-    ConstString humanize(const ConstString& txt);
+    std::string humanize(const std::string& txt);
 
     void saveEnvironment(const char *key);
     void restoreEnvironment();

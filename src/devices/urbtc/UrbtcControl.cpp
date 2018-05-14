@@ -58,7 +58,7 @@ yarp::dev::UrbtcControl::~UrbtcControl()
 
 bool yarp::dev::UrbtcControl::open(yarp::os::Searchable& config)
 {
-//    ConstString fname =
+//    std::string fname =
 //             config.check("source",
 //                         Value("default.avi"),    // a default value
 //                         "movie file to read from").asString();

@@ -16,7 +16,7 @@ bool yarp::os::NullConnectionReader::expectBlock(const char *data, size_t len)
     return false;
 }
 
-yarp::os::ConstString yarp::os::NullConnectionReader::expectText(int terminatingChar)
+std::string yarp::os::NullConnectionReader::expectText(int terminatingChar)
 {
     YARP_UNUSED(terminatingChar);
     return "";

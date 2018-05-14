@@ -10,7 +10,7 @@
 #define YARP_OS_RESOURCEFINDEROPTIONS_H
 
 #include <yarp/os/api.h>
-#include <yarp/os/ConstString.h>
+#include <string>
 
 namespace yarp {
     namespace os {
@@ -68,13 +68,13 @@ public:
     SearchLocations searchLocations;
     DuplicateFilesPolicy duplicateFilesPolicy;
     SearchFlavor searchFlavor;
-    ConstString resourceType;
+    std::string resourceType;
     MessageFilter messageFilter;
 
     ResourceFinderOptions(SearchLocations searchLocations = ModuleDefault,
                           DuplicateFilesPolicy duplicateFilesPolicy = First,
                           SearchFlavor searchFlavor = ConfigAndDataLike,
-                          const ConstString& resourceType = "",
+                          const std::string& resourceType = "",
                           MessageFilter messageFilter = ShowFromFlags);
 
     static ResourceFinderOptions findFirstMatch() {

@@ -268,7 +268,7 @@ public:
      * @param subName get nested name with this at the end
      * @return the name of the module
      */
-    ConstString getName(const ConstString& subName = "");
+    std::string getName(const std::string& subName = "");
 
     /**
      * Set the name of the module.
@@ -288,7 +288,7 @@ private:
     ResourceFinder resourceFinder;
     void *implementation;
     bool stopFlag;
-    ConstString name;
+    std::string name;
 
     virtual bool basicRespond(const Bottle& command, Bottle& reply);
 };

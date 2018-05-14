@@ -97,8 +97,8 @@ protected:
 
     yarp::os::Port                m_rpc_InterfaceToServer;
     yarp::os::Port                m_rpc_InterfaceToUser;
-    yarp::os::ConstString         m_local_name;
-    yarp::os::ConstString         m_remote_name;
+    std::string         m_local_name;
+    std::string         m_remote_name;
     Transforms_client_storage*    m_transform_storage;
     int                           m_period;
     yarp::os::Mutex               m_rpc_mutex;

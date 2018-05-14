@@ -82,7 +82,7 @@ int main(int argc, char *argv[]) {
     // Get commandline options
     Property options;
     options.fromCommand(argc,argv);
-    ConstString portName = 
+    std::string portName = 
         options.check("name",Value("/playback"),"port name").asString();
 
     // Create a port

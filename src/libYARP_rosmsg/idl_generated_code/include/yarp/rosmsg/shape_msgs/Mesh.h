@@ -180,9 +180,9 @@ public:
     typedef yarp::os::idl::BottleStyle<yarp::rosmsg::shape_msgs::Mesh> bottleStyle;
 
     // Give source text for class, ROS will need this
-    static yarp::os::ConstString typeText()
+    static std::string typeText()
     {
-        return yarp::os::ConstString("\
+        return std::string("\
 # Definition of a mesh\n\
 \n\
 # list of triangles; the index values refer to positions in vertices[]\n\
@@ -190,16 +190,16 @@ MeshTriangle[] triangles\n\
 \n\
 # the actual vertices that make up the mesh\n\
 geometry_msgs/Point[] vertices\n\
-") + yarp::os::ConstString("\n\
+") + std::string("\n\
 ================================================================================\n\
 MSG: shape_msgs/MeshTriangle\n\
-") + yarp::rosmsg::shape_msgs::MeshTriangle::typeText() + yarp::os::ConstString("\n\
+") + yarp::rosmsg::shape_msgs::MeshTriangle::typeText() + std::string("\n\
 ================================================================================\n\
 MSG: geometry_msgs/Point\n\
 ") + yarp::rosmsg::geometry_msgs::Point::typeText();
     }
 
-    yarp::os::ConstString getTypeText() const
+    std::string getTypeText() const
     {
         return yarp::rosmsg::shape_msgs::Mesh::typeText();
     }

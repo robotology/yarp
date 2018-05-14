@@ -206,9 +206,9 @@ public:
     typedef yarp::os::idl::BottleStyle<yarp::rosmsg::sensor_msgs::PointField> bottleStyle;
 
     // Give source text for class, ROS will need this
-    static yarp::os::ConstString typeText()
+    static std::string typeText()
     {
-        return yarp::os::ConstString("\
+        return std::string("\
 # This message holds the description of one point entry in the\n\
 # PointCloud2 message format.\n\
 uint8 INT8    = 1\n\
@@ -227,7 +227,7 @@ uint32 count     # How many elements in the field\n\
 ");
     }
 
-    yarp::os::ConstString getTypeText() const
+    std::string getTypeText() const
     {
         return yarp::rosmsg::sensor_msgs::PointField::typeText();
     }

@@ -24,7 +24,7 @@
 #include <yarp/os/BufferedPort.h>
 #include <yarp/os/ConnectionReader.h>
 #include <yarp/os/ConnectionWriter.h>
-#include <yarp/os/ConstString.h>
+#include <string>
 #include <yarp/os/Contactable.h>
 #include <yarp/os/UnbufferedContactable.h>
 #include <yarp/os/AbstractContactable.h>

@@ -28,7 +28,7 @@ using namespace yarp::math;
 
 class RandTest : public UnitTest {
 public:
-    virtual ConstString getName() override { return "RandTest"; }
+    virtual std::string getName() override { return "RandTest"; }
 
     void normalRnd()
     {

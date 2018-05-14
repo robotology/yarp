@@ -13,7 +13,7 @@
 #include <vector>
 
 #include <yarp/os/Bottle.h>
-#include <yarp/os/ConstString.h>
+#include <string>
 #include <yarp/sig/Vector.h>
 
 namespace yarp{
@@ -137,7 +137,7 @@ public:
      *       unique label. Such labels can are stored in the bottle returned by
      *       the getInfo() method.
      */
-    virtual bool setControlPoint(const yarp::os::ConstString& point) = 0;
+    virtual bool setControlPoint(const std::string& point) = 0;
 
     /*!
      * Return useful information for visual servoing.

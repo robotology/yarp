@@ -38,7 +38,7 @@ WireTwiddlerWriter::~WireTwiddlerWriter() {
 
 
 int WireTwiddler::configure(Bottle& desc, int offset, bool& ignored,
-                            const yarp::os::ConstString& vtag) {
+                            const std::string& vtag) {
     int start = offset;
     // example: list 4 int32 * float64 * vector int32 * vector int32 3 *
     bool is_vector = false;
@@ -47,8 +47,8 @@ int WireTwiddler::configure(Bottle& desc, int offset, bool& ignored,
     bool saving = false;
     bool loading = false;
     bool computing = false;
-    ConstString kind = desc.get(offset).asString();
-    ConstString var = "";
+    std::string kind = desc.get(offset).asString();
+    std::string var = "";
     offset++;
     if (kind=="---") {
         offset = desc.size();
@@ -216,7 +216,7 @@ int WireTwiddler::configure(Bottle& desc, int offset, bool& ignored,
 bool WireTwiddler::configure(const char *txt, const char *prompt) {
     this->prompt = prompt;
     clear();
-    ConstString str(txt);
+    std::string str(txt);
     char *cstr = (char *)str.c_str();
     for (size_t i=0; i<str.length(); i++) {
         if (cstr[i]==',') {
@@ -224,8 +224,8 @@ bool WireTwiddler::configure(const char *txt, const char *prompt) {
         }
     }
 
-    if (str.find("list") == ConstString::npos &&
-        str.find("vector") == ConstString::npos) {
+    if (str.find("list") == std::string::npos &&
+        str.find("vector") == std::string::npos) {
         str += " list 0";
     }
 
@@ -348,10 +348,10 @@ void WireTwiddler::show() {
     }
 }
 
-yarp::os::ConstString WireTwiddler::toString() const {
-    ConstString result = "";
+std::string WireTwiddler::toString() const {
+    std::string result = "";
     for (int i=0; i<(int)gaps.size(); i++) {
-        ConstString item = "";
+        std::string item = "";
         const WireTwiddlerGap& gap = gaps[i];
         item += gap.origin;
         //if (gap.buffer_length!=0) {
@@ -405,7 +405,7 @@ bool WireTwiddler::write(yarp::os::Bottle& bot,
     bot.write(*writer);
     WireTwiddlerWriter twiddled_output(*buf,*this);
     twiddled_output.write(sos);
-    ConstString result = sos.toString();
+    std::string result = sos.toString();
     data = ManagedBytes(Bytes((char*)result.c_str(),result.length()),false);
     data.copy();
     return true;
@@ -422,7 +422,7 @@ void WireTwiddlerReader::compute(const WireTwiddlerGap& gap) {
             fprintf(stderr,"Sorry, cannot handle bigendian images yet.\n");
             std::exit(1);
         }
-        ConstString encoding = prop.find("encoding").asString();
+        std::string encoding = prop.find("encoding").asString();
         int bpp = 1;
         int translated_encoding = 0;
         switch (Vocab::encode(encoding)) {
@@ -656,7 +656,7 @@ YARP_SSIZE_T WireTwiddlerReader::read(const Bytes& b) {
                 if (gap.save_external) {
                     if (override_length>=0) {
                         prop.put(gap.var_name,
-                                 ConstString((char *)(dump.get()),
+                                 std::string((char *)(dump.get()),
                                              len2));
                         dbg_printf("Saved %s: %s\n",
                                gap.var_name.c_str(),
@@ -715,7 +715,7 @@ bool WireTwiddlerWriter::update() {
 
     for (int i=0; i<twiddler->getGapCount(); i++) {
         if (errorState) return false;
-        ConstString item = "";
+        std::string item = "";
         const WireTwiddlerGap& gap = twiddler->getGap(i);
         if (gap.buffer_length!=0) {
             dbg_printf("Skip %d bytes\n", gap.byte_length);

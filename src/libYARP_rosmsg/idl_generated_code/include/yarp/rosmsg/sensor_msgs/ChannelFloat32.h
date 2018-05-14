@@ -170,9 +170,9 @@ public:
     typedef yarp::os::idl::BottleStyle<yarp::rosmsg::sensor_msgs::ChannelFloat32> bottleStyle;
 
     // Give source text for class, ROS will need this
-    static yarp::os::ConstString typeText()
+    static std::string typeText()
     {
-        return yarp::os::ConstString("\
+        return std::string("\
 # This message is used by the PointCloud message to hold optional data\n\
 # associated with each point in the cloud. The length of the values\n\
 # array should be the same as the length of the points array in the\n\
@@ -200,7 +200,7 @@ float32[] values\n\
 ");
     }
 
-    yarp::os::ConstString getTypeText() const
+    std::string getTypeText() const
     {
         return yarp::rosmsg::sensor_msgs::ChannelFloat32::typeText();
     }

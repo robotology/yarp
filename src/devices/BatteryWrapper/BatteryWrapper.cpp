@@ -104,7 +104,7 @@ bool BatteryWrapper::read(yarp::os::ConnectionReader& connection)
         {
             if (battery_p)
             {
-                yarp::os::ConstString info;
+                std::string info;
                 battery_p->getBatteryInfo(info);
                 out.addVocab(VOCAB_IS);
                 out.addVocab(cmd);

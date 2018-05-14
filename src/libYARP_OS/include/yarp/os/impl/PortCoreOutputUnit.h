@@ -107,7 +107,7 @@ public:
                        yarp::os::PortReader *reader,
                        yarp::os::PortWriter *callback,
                        void *tracker,
-                       const ConstString& envelopeString,
+                       const std::string& envelopeString,
                        bool waitAfter,
                        bool waitBefore,
                        bool *gotReply) override;
@@ -153,7 +153,7 @@ private:
     yarp::os::PortWriter *cachedCallback; ///< where to sent commencement and
                                           ///< completion events
     void *cachedTracker;        ///< memory tracker for current message
-    ConstString cachedEnvelope;      ///< some text to pass along with the message
+    std::string cachedEnvelope;      ///< some text to pass along with the message
 
     /**
      * The core logic for sending a message.

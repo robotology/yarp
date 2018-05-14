@@ -273,9 +273,9 @@ public:
     typedef yarp::os::idl::BottleStyle<yarp::rosmsg::sensor_msgs::Image> bottleStyle;
 
     // Give source text for class, ROS will need this
-    static yarp::os::ConstString typeText()
+    static std::string typeText()
     {
-        return yarp::os::ConstString("\
+        return std::string("\
 # This message contains an uncompressed image\n\
 # (0, 0) is at top-left corner of image\n\
 #\n\
@@ -303,13 +303,13 @@ string encoding       # Encoding of pixels -- channel meaning, ordering, size\n\
 uint8 is_bigendian    # is this data bigendian?\n\
 uint32 step           # Full row length in bytes\n\
 uint8[] data          # actual matrix data, size is (step * rows)\n\
-") + yarp::os::ConstString("\n\
+") + std::string("\n\
 ================================================================================\n\
 MSG: std_msgs/Header\n\
 ") + yarp::rosmsg::std_msgs::Header::typeText();
     }
 
-    yarp::os::ConstString getTypeText() const
+    std::string getTypeText() const
     {
         return yarp::rosmsg::sensor_msgs::Image::typeText();
     }

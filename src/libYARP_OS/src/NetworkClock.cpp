@@ -64,7 +64,7 @@ NetworkClock::~NetworkClock() {
 }
 
 
-bool NetworkClock::open(const ConstString& clockSourcePortName, ConstString localPortName)
+bool NetworkClock::open(const std::string& clockSourcePortName, std::string localPortName)
 {
     port.setReadOnly();
     port.setReader(*this);
@@ -84,7 +84,7 @@ bool NetworkClock::open(const ConstString& clockSourcePortName, ConstString loca
 
         localPortName = "/";
         // Ports may be anonymous to not pollute the yarp name list
-        localPortName += ConstString(hostName) + "/" + processInfo.name + "/" + ConstString(std::to_string(processInfo.pid)) + "/clock:i";
+        localPortName += std::string(hostName) + "/" + processInfo.name + "/" + std::string(std::to_string(processInfo.pid)) + "/clock:i";
     }
 
     // if receiving port cannot be opened, return false.

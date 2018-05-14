@@ -55,7 +55,7 @@ private:
     double                           voltage;
     double                           current;
     double                           charge;
-    yarp::os::ConstString            info;
+    std::string            info;
 };
 
 #endif

@@ -702,7 +702,7 @@ bool jointData::Editor::read(yarp::os::ConnectionReader& connection) {
     writer.writeString("send: 'help' or 'patch (param1 val1) (param2 val2)'");
     return true;
   }
-  yarp::os::ConstString tag;
+  std::string tag;
   if (!reader.readString(tag)) return false;
   if (tag=="help") {
     yarp::os::idl::WireWriter writer(reader);
@@ -710,7 +710,7 @@ bool jointData::Editor::read(yarp::os::ConnectionReader& connection) {
     if (!writer.writeListHeader(2)) return false;
     if (!writer.writeTag("many",1, 0)) return false;
     if (reader.getLength()>0) {
-      yarp::os::ConstString field;
+      std::string field;
       if (!reader.readString(field)) return false;
       if (field=="jointPosition") {
         if (!writer.writeListHeader(1)) return false;
@@ -837,8 +837,8 @@ bool jointData::Editor::read(yarp::os::ConnectionReader& connection) {
   }
   for (int i=1; i<len; i++) {
     if (nested && !reader.readListHeader(3)) return false;
-    yarp::os::ConstString act;
-    yarp::os::ConstString key;
+    std::string act;
+    std::string key;
     if (have_act) {
       act = tag;
     } else {
@@ -946,7 +946,7 @@ bool jointData::Editor::read(yarp::os::ConnectionReader& connection) {
   return true;
 }
 
-yarp::os::ConstString jointData::toString() {
+std::string jointData::toString() {
   yarp::os::Bottle b;
   b.read(*this);
   return b.toString();

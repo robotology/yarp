@@ -16,7 +16,7 @@ using namespace yarp::os;
 class ContactTest : public UnitTest
 {
 public:
-    virtual ConstString getName() override
+    virtual std::string getName() override
     {
         return "ContactTest";
     }
@@ -25,7 +25,7 @@ public:
     {
         report(0, "checking string representation");
         Contact address("tcp", "127.0.0.1", 10000);
-        ConstString txt = address.toURI();
+        std::string txt = address.toURI();
         checkEqual(txt, "tcp://127.0.0.1:10000/", "string rep example");
     }
 
@@ -35,7 +35,7 @@ public:
         Contact address("tcp", "127.0.0.1", 10000);
         Contact address2;
         address2 = address;
-        ConstString txt = address2.toURI();
+        std::string txt = address2.toURI();
         checkEqual(txt, "tcp://127.0.0.1:10000/", "string rep example");
 
         Contact inv1;

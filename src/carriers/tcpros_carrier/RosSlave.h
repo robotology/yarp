@@ -14,7 +14,7 @@
 class RosSlave : public yarp::os::PortReader {
 private:
     yarp::os::Port slave;
-    yarp::os::ConstString hostname;
+    std::string hostname;
     int portnum;
     yarp::os::Semaphore done;
     bool verbose;

@@ -128,7 +128,7 @@ PartItem::PartItem(QString robotName, int id, QString partName, ResourceFinder& 
 
     if (m_interfaceError == false)
     {
-        yarp::os::ConstString jointname;
+        std::string jointname;
         int number_of_joints;
         m_iPos->getAxes(&number_of_joints);
 

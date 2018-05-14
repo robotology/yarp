@@ -56,7 +56,7 @@ public:
      * @param tag an optional string to prefix the message with
      *
      */
-    void stack(PortWriter& msg, const ConstString& tag = "");
+    void stack(PortWriter& msg, const std::string& tag = "");
 private:
     int max_threads;
     void *implementation;

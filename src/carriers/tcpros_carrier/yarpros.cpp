@@ -204,7 +204,7 @@ bool register_port(const char *name,
                    const char *hostname,
                    int portnum,
                    PortReader& reply) {
-    ConstString ip = Contact::convertHostToIp(hostname);
+    std::string ip = Contact::convertHostToIp(hostname);
     Bottle req;
     req.addString("register");
     req.addString(name);
@@ -227,8 +227,8 @@ int main(int argc, char *argv[]) {
         show_usage();
         return 0;
     }
-    if (ConstString(argv[1])=="help" ||
-        ConstString(argv[1])=="--help") {
+    if (std::string(argv[1])=="help" ||
+        std::string(argv[1])=="--help") {
         show_usage();
         return 0;
     }
@@ -254,7 +254,7 @@ int main(int argc, char *argv[]) {
     }
 
     // Get the command tag
-    ConstString tag = cmd.get(0).asString();
+    std::string tag = cmd.get(0).asString();
 
     // Process the command
     if (tag=="roscore") {
@@ -313,9 +313,9 @@ int main(int argc, char *argv[]) {
         if (cmd.size()==3) {
             offset = -1;
         }
-        ConstString yarp_port = cmd.get(1+offset).asString();
-        ConstString ros_port = cmd.get(2+offset).asString();
-        ConstString topic = cmd.get(3+offset).asString();
+        std::string yarp_port = cmd.get(1+offset).asString();
+        std::string ros_port = cmd.get(2+offset).asString();
+        std::string topic = cmd.get(3+offset).asString();
         if (cmd.size()==3) {
             yarp_port = ros_port + topic;
         }
@@ -349,9 +349,9 @@ int main(int argc, char *argv[]) {
         if (cmd.size()==3) {
             offset = -1;
         }
-        ConstString yarp_port = cmd.get(1+offset).asString();
-        ConstString ros_port = cmd.get(2+offset).asString();
-        ConstString topic = cmd.get(3+offset).asString();
+        std::string yarp_port = cmd.get(1+offset).asString();
+        std::string ros_port = cmd.get(2+offset).asString();
+        std::string topic = cmd.get(3+offset).asString();
         if (cmd.size()==3) {
             yarp_port = ros_port + topic;
         }
@@ -375,7 +375,7 @@ int main(int argc, char *argv[]) {
             fprintf(stderr,"Show the format of a YARP bottle-compatible message in ROS syntax.\n");
             return 1;
         }
-        ConstString dir = cmd.get(1).asString();
+        std::string dir = cmd.get(1).asString();
         bool in = false;
         if (dir=="in") in = true;
         else if (dir=="out") in = false;
@@ -383,7 +383,7 @@ int main(int argc, char *argv[]) {
             fprintf(stderr,"Please specify one of 'in' or 'out'.\n");
             return 1;
         }
-        ConstString pname = cmd.get(2).asString();
+        std::string pname = cmd.get(2).asString();
         Port p;
         if (!p.open("...")) return 1;
         if (in) {

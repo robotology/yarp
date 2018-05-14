@@ -75,7 +75,7 @@ struct yarp::dev::ProtocolVersion
 class DiagnosticThread: public RateThread
 {
     StateExtendedInputPort *owner;
-    ConstString ownerName;
+    std::string ownerName;
 
 public:
     DiagnosticThread(int r): RateThread(r)
@@ -184,8 +184,8 @@ protected:
 //    yarp::os::Port extendedIntputStatePort;         // Port /stateExt:i reading the state of the joints
     jointData last_wholePart;         // tmp to store last received data for whole part
 
-    ConstString remote;
-    ConstString local;
+    std::string remote;
+    std::string local;
     mutable Stamp lastStamp;  //this is shared among all calls that read encoders
     // Semaphore mutex;
     int nj;
@@ -701,7 +701,7 @@ protected:
         return false;
     }
 
-    bool get2V1I1IA1DA(int v1, int v2, const int n_joints, const int *joints, double *retVals, yarp::os::ConstString functionName = "")
+    bool get2V1I1IA1DA(int v1, int v2, const int n_joints, const int *joints, double *retVals, std::string functionName = "")
     {
         Bottle cmd, response;
         if (!isLive()) return false;
@@ -913,7 +913,7 @@ protected:
         return false;
     }
 
-    bool get1V1I1S(int code, int j, yarp::os::ConstString &name)
+    bool get1V1I1S(int code, int j, std::string &name)
     {
         Bottle cmd, response;
         cmd.addVocab(VOCAB_GET);
@@ -1052,14 +1052,14 @@ public:
             return false;
         }
 
-        ConstString carrier =
+        std::string carrier =
             config.check("carrier",
             Value("udp"),
             "default carrier for streaming robot state").asString().c_str();
 
         bool portProblem = false;
         if (local != "") {
-            ConstString s1 = local;
+            std::string s1 = local;
             s1 += "/rpc:o";
             if (!rpc_p.open(s1.c_str())) { portProblem = true; }
             s1 = local;
@@ -1077,9 +1077,9 @@ public:
         bool connectionProblem = false;
         if (remote != "" && !portProblem)
         {
-            ConstString s1 = remote;
+            std::string s1 = remote;
             s1 += "/rpc:i";
-            ConstString s2 = local;
+            std::string s2 = local;
             s2 += "/rpc:o";
             bool ok = false;
             // RPC port needs to be tcp, therefore no carrier option is added here
@@ -1615,7 +1615,7 @@ public:
     }
 
     /* IRemoteVariable */
-    virtual bool getRemoteVariable(yarp::os::ConstString key, yarp::os::Bottle& val) override {
+    virtual bool getRemoteVariable(std::string key, yarp::os::Bottle& val) override {
         Bottle cmd, response;
         cmd.addVocab(VOCAB_GET);
         cmd.addVocab(VOCAB_REMOTE_VARIABILE_INTERFACE);
@@ -1630,7 +1630,7 @@ public:
         return false;
     }
 
-    virtual bool setRemoteVariable(yarp::os::ConstString key, const yarp::os::Bottle& val) override {
+    virtual bool setRemoteVariable(std::string key, const yarp::os::Bottle& val) override {
         Bottle cmd, response;
         cmd.addVocab(VOCAB_SET);
         cmd.addVocab(VOCAB_REMOTE_VARIABILE_INTERFACE);
@@ -2470,7 +2470,7 @@ public:
     }
 
     /* IAxisInfo */
-    virtual bool getAxisName(int j, yarp::os::ConstString& name) override {
+    virtual bool getAxisName(int j, std::string& name) override {
         return get1V1I1S(VOCAB_INFO_NAME, j, name);
     }
 

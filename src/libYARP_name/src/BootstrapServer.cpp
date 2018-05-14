@@ -48,13 +48,13 @@ public:
         fallback = nullptr;
     }
 
-    virtual ConstString apply(const ConstString& txt, const Contact& remote) override {
+    virtual std::string apply(const std::string& txt, const Contact& remote) override {
         DummyConnector con, con2;
         con.setTextMode(true);
         ConnectionWriter& writer = con.getWriter();
         writer.appendString(txt.c_str());
         bool ok = handler.apply(con.getReader(),&(con2.getWriter()));
-        ConstString result = "";
+        std::string result = "";
         if (ok) {
             result = con2.getReader().expectText().c_str();
         }
@@ -153,7 +153,7 @@ bool BootstrapServer::configFileBootstrap(yarp::os::Contact& contact,
             suggest.setHost(conf.getHostName());
         } else {
             // Let's just check we're not a loopback
-            ConstString betterHost = conf.getHostName(false,suggest.getHost());
+            std::string betterHost = conf.getHostName(false,suggest.getHost());
             if (betterHost!=suggest.getHost()) {
                 fprintf(stderr,"Overriding loopback address for name server\n");
                 suggest.setHost(betterHost);

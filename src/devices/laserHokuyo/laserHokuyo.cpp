@@ -60,7 +60,7 @@ bool laserHokuyo::open(yarp::os::Searchable& config)
     end_position = general_config.check("End_Position", Value(1080), "End Position").asInt();
 
     error_codes = general_config.check("Convert_Error_Codes", Value(0), "Substitute error codes with legal measurments").asInt();
-    yarp::os::ConstString s = general_config.check("Laser_Mode", Value("GD"), "Laser Mode (GD/MD").asString();
+    std::string s = general_config.check("Laser_Mode", Value("GD"), "Laser Mode (GD/MD").asString();
 
     if (general_config.check("Measurement_Units"))
     {
@@ -584,7 +584,7 @@ void laserHokuyo::threadRelease()
 #endif
 }
 
-bool laserHokuyo::getDeviceInfo(yarp::os::ConstString &device_info)
+bool laserHokuyo::getDeviceInfo(std::string &device_info)
 {
     this->mutex.lock();
     device_info = info;

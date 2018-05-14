@@ -35,32 +35,32 @@ bool NetType::netInt(int data, const yarp::os::Bytes& code) {
     return true;
 }
 
-ConstString NetType::toHexString(int x) {
+std::string NetType::toHexString(int x) {
     char buf[256];
     sprintf(buf, "%x", x);
     return buf;
 }
 
-ConstString NetType::toString(int x) {
+std::string NetType::toString(int x) {
     char buf[256];
     sprintf(buf, "%d", x);
     return buf;
 }
 
-ConstString NetType::toString(long x) {
+std::string NetType::toString(long x) {
     char buf[256];
     sprintf(buf, "%ld", x);
     return buf;
 }
 
-ConstString NetType::toString(unsigned int x) {
+std::string NetType::toString(unsigned int x) {
     char buf[256];
     sprintf(buf, "%u", x);
     return buf;
 }
 
 
-int NetType::toInt(const ConstString& x) {
+int NetType::toInt(const std::string& x) {
     return atoi(x.c_str());
 }
 

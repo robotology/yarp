@@ -16,7 +16,7 @@
 #include <yarp/os/BufferedPort.h>
 #include <yarp/os/Network.h>
 #include <yarp/os/Property.h>
-#include <yarp/os/ConstString.h>
+#include <string>
 #include <yarp/os/Semaphore.h>
 #include <yarp/os/RateThread.h>
 
@@ -99,7 +99,7 @@ private:
     bool timeout(double base, double timeout);
     yarp::os::Property& runProperty(void);
     int requestServer(yarp::os::Property& config);
-    int SendMsg(yarp::os::Bottle& msg, yarp::os::ConstString target,
+    int SendMsg(yarp::os::Bottle& msg, std::string target,
                 yarp::os::Bottle& resp, float fTimeout=5.0);
     bool getQosFromString(const char* qos, yarp::os::QosStyle& style);
 

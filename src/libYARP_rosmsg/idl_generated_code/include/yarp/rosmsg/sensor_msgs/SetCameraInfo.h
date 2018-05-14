@@ -123,9 +123,9 @@ public:
     typedef yarp::os::idl::BottleStyle<yarp::rosmsg::sensor_msgs::SetCameraInfo> bottleStyle;
 
     // Give source text for class, ROS will need this
-    static yarp::os::ConstString typeText()
+    static std::string typeText()
     {
-        return yarp::os::ConstString("\
+        return std::string("\
 # This service requests that a camera stores the given CameraInfo \n\
 # as that camera's calibration information.\n\
 #\n\
@@ -138,13 +138,13 @@ sensor_msgs/CameraInfo camera_info # The camera_info to store\n\
 ---\n\
 bool success          # True if the call succeeded\n\
 string status_message # Used to give details about success\n\
-") + yarp::os::ConstString("\n\
+") + std::string("\n\
 ================================================================================\n\
 MSG: sensor_msgs/CameraInfo\n\
 ") + yarp::rosmsg::sensor_msgs::CameraInfo::typeText();
     }
 
-    yarp::os::ConstString getTypeText() const
+    std::string getTypeText() const
     {
         return yarp::rosmsg::sensor_msgs::SetCameraInfo::typeText();
     }

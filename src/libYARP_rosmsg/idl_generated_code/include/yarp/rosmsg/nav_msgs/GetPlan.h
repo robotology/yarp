@@ -169,9 +169,9 @@ public:
     typedef yarp::os::idl::BottleStyle<yarp::rosmsg::nav_msgs::GetPlan> bottleStyle;
 
     // Give source text for class, ROS will need this
-    static yarp::os::ConstString typeText()
+    static std::string typeText()
     {
-        return yarp::os::ConstString("\
+        return std::string("\
 # Get a plan from the current position to the goal Pose \n\
 \n\
 # The start pose for the plan\n\
@@ -185,13 +185,13 @@ geometry_msgs/PoseStamped goal\n\
 float32 tolerance\n\
 ---\n\
 nav_msgs/Path plan\n\
-") + yarp::os::ConstString("\n\
+") + std::string("\n\
 ================================================================================\n\
 MSG: geometry_msgs/PoseStamped\n\
 ") + yarp::rosmsg::geometry_msgs::PoseStamped::typeText();
     }
 
-    yarp::os::ConstString getTypeText() const
+    std::string getTypeText() const
     {
         return yarp::rosmsg::nav_msgs::GetPlan::typeText();
     }

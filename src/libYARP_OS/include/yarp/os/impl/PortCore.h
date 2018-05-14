@@ -340,7 +340,7 @@ public:
         return address;
     }
 
-    void resetPortName(const ConstString& str)
+    void resetPortName(const std::string& str)
     {
         address.setName(str);
     }
@@ -366,9 +366,9 @@ public:
     /**
      * Set some extra meta data to pass along with the message
      */
-    void setEnvelope(const ConstString& envelope) override;
+    void setEnvelope(const std::string& envelope) override;
 
-    ConstString getEnvelope();
+    std::string getEnvelope();
 
     /**
      * Get any meta data associated with the last message received
@@ -452,14 +452,14 @@ public:
 public:
 
     // documented in PortManager
-    virtual bool addOutput(const ConstString& dest, void *id, OutputStream *os,
+    virtual bool addOutput(const std::string& dest, void *id, OutputStream *os,
                            bool onlyIfNeeded) override;
 
     // documented in PortManager
-    virtual void removeOutput(const ConstString& dest, void *id, OutputStream *os) override;
+    virtual void removeOutput(const std::string& dest, void *id, OutputStream *os) override;
 
     // documented in PortManager
-    virtual void removeInput(const ConstString& dest, void *id, OutputStream *os) override;
+    virtual void removeInput(const std::string& dest, void *id, OutputStream *os) override;
 
     // documented in PortManager
     virtual void describe(void *id, OutputStream *os) override;
@@ -592,7 +592,7 @@ private:
     SemaphoreImpl connectionChange; ///< signal changes in connections
     Logger log;  ///< message logger
     Face *face;  ///< network server
-    ConstString name; ///< name of port
+    std::string name; ///< name of port
     yarp::os::Contact address;    ///< network address of port
     yarp::os::PortReader *reader; ///< where to send read events
     yarp::os::PortReader *adminReader; ///< where to send admin read events
@@ -619,7 +619,7 @@ private:
     int verbosity;  ///< threshold on what warnings or debug messages are shown
     bool logNeeded; ///< port needs to monitor message content
     PortCorePackets packets; ///< a pool for tracking messages currently being sent
-    ConstString envelope;///< user-defined wrapping data
+    std::string envelope;///< user-defined wrapping data
     float timeout;  ///< a timeout to apply to all network operations
     int counter;    ///< port-unique ids for connections
     yarp::os::Property *prop;  ///< optional unstructured properties associated with port
@@ -646,16 +646,16 @@ private:
     bool setProcessSchedulingParam(int priority=-1, int policy=-1);
 
     // attach a portmonitor plugin to the port or to a specific connection
-    bool attachPortMonitor(yarp::os::Property& prop, bool isOutput, ConstString &errMsg);
+    bool attachPortMonitor(yarp::os::Property& prop, bool isOutput, std::string &errMsg);
 
     // detach the portmonitor from the port or specific connection
     bool dettachPortMonitor(bool isOutput);
 
     // set the parameter for the portmonitor of the port (if any)
-    bool setParamPortMonitor(yarp::os::Property& param, bool isOutput, yarp::os::ConstString &errMsg);
+    bool setParamPortMonitor(yarp::os::Property& param, bool isOutput, std::string &errMsg);
 
     // get the parameters from the portmonitor of the port (if any)
-    bool getParamPortMonitor(yarp::os::Property& param, bool isOutput, yarp::os::ConstString &errMsg);
+    bool getParamPortMonitor(yarp::os::Property& param, bool isOutput, std::string &errMsg);
 
     void closeMain();
 

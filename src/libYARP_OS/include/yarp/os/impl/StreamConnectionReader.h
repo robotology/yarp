@@ -50,8 +50,8 @@ public:
     bool dropRequested();
 
     virtual bool expectBlock(const yarp::os::Bytes& b);
-    virtual ConstString expectString(int len);
-    virtual ConstString expectLine();
+    virtual std::string expectString(int len);
+    virtual std::string expectLine();
     virtual void flushWriter();
     virtual void setReference(yarp::os::Portable *obj);
 
@@ -63,7 +63,7 @@ public:
     virtual YARP_INT64 expectInt64() override;
     virtual double expectDouble() override;
     virtual bool expectBlock(const char *data, size_t len) override;
-    virtual ::yarp::os::ConstString expectText(int terminatingChar) override;
+    virtual std::string expectText(int terminatingChar) override;
     virtual bool isTextMode() override;
     virtual bool isBareMode() override;
     virtual bool convertTextMode() override;

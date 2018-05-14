@@ -49,7 +49,7 @@ public:
 
     virtual ~ImplementAxisInfo();
 
-    virtual bool getAxisName(int axis, yarp::os::ConstString& name) override;
+    virtual bool getAxisName(int axis, std::string& name) override;
     virtual bool getJointType(int axis, yarp::dev::JointTypeEnum& type) override;
 };
 

@@ -316,7 +316,7 @@ void LaserFromDepth::threadRelease()
     return;
 }
 
-bool LaserFromDepth::getDeviceInfo(yarp::os::ConstString &device_info)
+bool LaserFromDepth::getDeviceInfo(std::string &device_info)
 {
     LockGuard guard(mutex);
     device_info = m_info;

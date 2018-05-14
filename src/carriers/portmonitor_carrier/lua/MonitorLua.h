@@ -10,7 +10,7 @@
 #define MONITORLUA_INC
 
 #include <string>
-#include <yarp/os/ConstString.h>
+#include <string>
 #include <yarp/os/RateThread.h>
 #include <yarp/os/RecursiveMutex.h>
 #include "MonitorBinding.h"

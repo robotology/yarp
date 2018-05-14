@@ -355,7 +355,7 @@ IRGBDSensor::RGBDSensor_status RGBDSensorClient::getSensorStatus()
 }
 
 
-yarp::os::ConstString RGBDSensorClient::getLastErrorMsg(yarp::os::Stamp *timeStamp)
+std::string RGBDSensorClient::getLastErrorMsg(yarp::os::Stamp *timeStamp)
 {
     yarp::os::Bottle cmd, response;
     cmd.addVocab(VOCAB_RGBD_SENSOR);

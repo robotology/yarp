@@ -24,7 +24,7 @@ static void warn(const char *message)
 }
 
 
-bool file::write(const ImageOf<PixelFloat>& src, const ConstString& dest)
+bool file::write(const ImageOf<PixelFloat>& src, const std::string& dest)
 {
     FILE *fp = fopen(dest.c_str(),"wb");
     if (fp==nullptr) {
@@ -46,7 +46,7 @@ bool file::write(const ImageOf<PixelFloat>& src, const ConstString& dest)
 }
 
 
-bool file::read(ImageOf<PixelFloat>& dest, const ConstString& src)
+bool file::read(ImageOf<PixelFloat>& dest, const std::string& src)
 {
     FILE *fp = fopen(src.c_str(),"rb");
     if (fp==nullptr) {
@@ -340,19 +340,19 @@ static bool ImageWriteMono(ImageOf<PixelMono>& img, const char *filename)
 }
 
 
-bool file::read(ImageOf<PixelRgb> & dest, const ConstString& src)
+bool file::read(ImageOf<PixelRgb> & dest, const std::string& src)
 {
     return ImageReadRGB(dest,src.c_str());
 }
 
 
-bool file::read(ImageOf<PixelBgr> & dest, const ConstString& src)
+bool file::read(ImageOf<PixelBgr> & dest, const std::string& src)
 {
     return ImageReadBGR(dest,src.c_str());
 }
 
 
-bool file::read(ImageOf<PixelRgba> & dest, const ConstString& src)
+bool file::read(ImageOf<PixelRgba> & dest, const std::string& src)
 {
     ImageOf<PixelRgb> img2;
     bool ok = ImageReadRGB(img2,src.c_str());
@@ -363,19 +363,19 @@ bool file::read(ImageOf<PixelRgba> & dest, const ConstString& src)
 }
 
 
-bool file::write(const ImageOf<PixelRgb> & src, const ConstString& dest)
+bool file::write(const ImageOf<PixelRgb> & src, const std::string& dest)
 {
     return ImageWriteRGB(const_cast<ImageOf<PixelRgb> &>(src), dest.c_str());
 }
 
 
-bool file::write(const ImageOf<PixelBgr> & src, const ConstString& dest)
+bool file::write(const ImageOf<PixelBgr> & src, const std::string& dest)
 {
     return ImageWriteBGR(const_cast<ImageOf<PixelBgr> &>(src), dest.c_str());
 }
 
 
-bool file::write(const ImageOf<PixelRgba> & src, const ConstString& dest)
+bool file::write(const ImageOf<PixelRgba> & src, const std::string& dest)
 {
     ImageOf<PixelRgb> img2;
     img2.copy(src);
@@ -383,19 +383,19 @@ bool file::write(const ImageOf<PixelRgba> & src, const ConstString& dest)
 }
 
 
-bool file::read(ImageOf<PixelMono> & dest, const ConstString& src)
+bool file::read(ImageOf<PixelMono> & dest, const std::string& src)
 {
     return ImageReadMono(dest,src.c_str());
 }
 
 
-bool file::write(const ImageOf<PixelMono> & src, const ConstString& dest)
+bool file::write(const ImageOf<PixelMono> & src, const std::string& dest)
 {
     return ImageWriteMono(const_cast<ImageOf<PixelMono> &>(src), dest.c_str());
 }
 
 
-bool file::write(const Image& src, const ConstString& dest)
+bool file::write(const Image& src, const std::string& dest)
 {
     int code=src.getPixelCode();
     if (code==VOCAB_PIXEL_MONO)

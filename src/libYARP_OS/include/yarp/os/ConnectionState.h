@@ -78,7 +78,7 @@ public:
      * Extract a name for the sender, if the connection
      * type supports that.
      */
-    virtual ConstString getSenderSpecifier() = 0;
+    virtual std::string getSenderSpecifier() = 0;
 
     /**
      * Access the streams associated with the connection.
@@ -136,7 +136,7 @@ public:
     /**
      * Read the envelope associated with the current message.
      */
-    virtual const ConstString& getEnvelope() = 0;
+    virtual const std::string& getEnvelope() = 0;
 };
 
 #endif // YARP_OS_CONNECTIONSTATE_H

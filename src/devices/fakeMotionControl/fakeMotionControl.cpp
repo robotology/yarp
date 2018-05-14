@@ -470,7 +470,7 @@ FakeMotionControl::FakeMotionControl() :
     useRawEncoderData = false;
     _pwmIsLimited     = false;
 
-    ConstString tmp = NetworkBase::getEnvironment("VERBOSE_STICA");
+    std::string tmp = NetworkBase::getEnvironment("VERBOSE_STICA");
     if (tmp != "")
     {
         verbosewhenok = (bool)NetType::toInt(tmp);
@@ -2707,7 +2707,7 @@ bool FakeMotionControl::getRotorIndexOffsetRaw(int j, double& rotorOffset)
     return true;
 }
 
-bool FakeMotionControl::getAxisNameRaw(int axis, yarp::os::ConstString& name)
+bool FakeMotionControl::getAxisNameRaw(int axis, std::string& name)
 {
     if (axis >= 0 && axis < _njoints)
     {

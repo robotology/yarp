@@ -49,9 +49,9 @@ bool TcpRosCarrier::checkHeader(const Bytes& header) {
 }
 
 
-ConstString TcpRosCarrier::getRosType(ConnectionState& proto) {
-    ConstString typ = "";
-    ConstString rtyp = "";
+std::string TcpRosCarrier::getRosType(ConnectionState& proto) {
+    std::string typ = "";
+    std::string rtyp = "";
     if (proto.getContactable()) {
         Type t = proto.getContactable()->getType(); 
         typ = t.getName();
@@ -71,14 +71,14 @@ ConstString TcpRosCarrier::getRosType(ConnectionState& proto) {
         }
     }
     Name n(proto.getRoute().getCarrierName() + "://test");
-    ConstString mode = "topic";
-    ConstString modeValue = n.getCarrierModifier("topic");
+    std::string mode = "topic";
+    std::string modeValue = n.getCarrierModifier("topic");
     if (modeValue=="") {
         mode = "service";
         modeValue = n.getCarrierModifier("service");
     }
     if (modeValue!="") {
-        ConstString package = n.getCarrierModifier("package");
+        std::string package = n.getCarrierModifier("package");
         if (package!="") {
             rtyp = package + "/" + modeValue;
         }
@@ -93,8 +93,8 @@ ConstString TcpRosCarrier::getRosType(ConnectionState& proto) {
 bool TcpRosCarrier::sendHeader(ConnectionState& proto) {
     dbg_printf("Route is %s\n", proto.getRoute().toString().c_str());
     Name n(proto.getRoute().getCarrierName() + "://test");
-    ConstString mode = "topic";
-    ConstString modeValue = n.getCarrierModifier("topic");
+    std::string mode = "topic";
+    std::string modeValue = n.getCarrierModifier("topic");
     if (modeValue=="") {
         mode = "service";
         modeValue = n.getCarrierModifier("service");
@@ -106,7 +106,7 @@ bool TcpRosCarrier::sendHeader(ConnectionState& proto) {
         modeValue = "notopic";
         isService = false;
     }
-    ConstString rawValue = n.getCarrierModifier("raw");
+    std::string rawValue = n.getCarrierModifier("raw");
     if (rawValue=="2") {
         raw = 2;
         dbg_printf("ROS-native mode requested\n");
@@ -122,7 +122,7 @@ bool TcpRosCarrier::sendHeader(ConnectionState& proto) {
     dbg_printf("Writing to %s\n", proto.getStreams().getRemoteAddress().toString().c_str()); 
     dbg_printf("Writing from %s\n", proto.getStreams().getLocalAddress().toString().c_str());
 
-    ConstString rtyp = getRosType(proto);
+    std::string rtyp = getRosType(proto);
     if (rtyp!="") {
         header.data["type"] = rtyp.c_str();
     }
@@ -179,7 +179,7 @@ bool TcpRosCarrier::expectReplyToHeader(ConnectionState& proto) {
     }
     header.readHeader(string(m.get(),m.length()));
     dbg_printf("Message header: %s\n", header.toString().c_str());
-    ConstString rosname = "";
+    std::string rosname = "";
     if (header.data.find("type")!=header.data.end()) {
         rosname = header.data["type"].c_str();
     }
@@ -249,11 +249,11 @@ bool TcpRosCarrier::expectSenderSpecifier(ConnectionState& proto) {
     header.readHeader(string(m.get(),m.length()));
     dbg_printf("Got header %s\n", header.toString().c_str());
 
-    ConstString rosname = "";
+    std::string rosname = "";
     if (header.data.find("type")!=header.data.end()) {
         rosname = header.data["type"].c_str();
     }
-    ConstString rtyp = getRosType(proto);
+    std::string rtyp = getRosType(proto);
     if (rtyp!="") {
         rosname = rtyp;
         header.data["type"] = rosname;
@@ -344,7 +344,7 @@ bool TcpRosCarrier::write(ConnectionState& proto, SizedWriter& writer) {
             }
             if (img) {
                 translate = TCPROS_TRANSLATE_IMAGE;
-                ConstString frame = "/frame";
+                std::string frame = "/frame";
                 ri.init(*img,frame);
             } else { 
                 if (WireBottle::extractBlobFromBottle(writer,wt)) {
@@ -472,7 +472,7 @@ int TcpRosCarrier::connect(const yarp::os::Contact& src,
     }
 
     Name n((style.carrier + "://test").c_str());
-    ConstString topic = n.getCarrierModifier("topic").c_str();
+    std::string topic = n.getCarrierModifier("topic").c_str();
     if (topic=="") {
         printf("Warning, no topic!\n");
         topic = "notopic";

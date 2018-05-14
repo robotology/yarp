@@ -24,8 +24,8 @@ public:
     virtual void add(Contactable& contactable) = 0;
     virtual void remove(Contactable& contactable) = 0;
 
-    virtual Contact query(const ConstString& name,
-                          const ConstString& category = "") = 0;
+    virtual Contact query(const std::string& name,
+                          const std::string& category = "") = 0;
 };
 
 #endif // YARP_OS_CONTACTABLES_H

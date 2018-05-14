@@ -103,7 +103,7 @@ bool StreamConnectionReader::expectBlock(const Bytes &b)
     return false;
 }
 
-ConstString StreamConnectionReader::expectString(int len)
+std::string StreamConnectionReader::expectString(int len)
 {
     if (!isGood()) {
         return "";
@@ -118,19 +118,19 @@ ConstString StreamConnectionReader::expectString(int len)
         return "";
     }
     messageLen -= b.length();
-    ConstString s = buf;
+    std::string s = buf;
     delete[] buf;
     return s;
 }
 
-ConstString StreamConnectionReader::expectLine()
+std::string StreamConnectionReader::expectLine()
 {
     if (!isGood()) {
         return "";
     }
     yAssert(in!=nullptr);
     bool success = false;
-    ConstString result = in->readLine('\n', &success);
+    std::string result = in->readLine('\n', &success);
     if (!success) {
         err = true;
         return "";
@@ -242,18 +242,18 @@ bool StreamConnectionReader::expectBlock(const char *data, size_t len)
     return expectBlock(yarp::os::Bytes((char*)data, len));
 }
 
-yarp::os::ConstString StreamConnectionReader::expectText(int terminatingChar)
+std::string StreamConnectionReader::expectText(int terminatingChar)
 {
     if (!isGood()) {
         return "";
     }
     yAssert(in!=nullptr);
     bool lsuccess = false;
-    ConstString result = in->readLine(terminatingChar, &lsuccess);
+    std::string result = in->readLine(terminatingChar, &lsuccess);
     if (lsuccess) {
         messageLen -= result.length()+1;
     }
-    return ::yarp::os::ConstString(result.c_str());
+    return std::string(result.c_str());
 }
 
 bool StreamConnectionReader::isTextMode()
@@ -274,7 +274,7 @@ bool StreamConnectionReader::convertTextMode()
             bot.read(*this);
             BufferedConnectionWriter writer;
             bot.write(writer);
-            ConstString s = writer.toString();
+            std::string s = writer.toString();
             altStream.reset(s);
             in = &altStream;
             convertedTextMode = true;
@@ -359,7 +359,7 @@ yarp::os::Portable* StreamConnectionReader::getReference()
 Bytes StreamConnectionReader::readEnvelope()
 {
     if (protocol != nullptr) {
-        const ConstString& env = protocol->getEnvelope();
+        const std::string& env = protocol->getEnvelope();
         return Bytes((char*)env.c_str(), env.length());
     }
     if (parentConnectionReader != nullptr) {

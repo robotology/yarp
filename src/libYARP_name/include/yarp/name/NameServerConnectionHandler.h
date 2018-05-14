@@ -16,7 +16,7 @@
 #include <yarp/os/ConnectionWriter.h>
 #include <yarp/os/Bottle.h>
 #include <yarp/os/Contact.h>
-#include <yarp/os/ConstString.h>
+#include <string>
 #include <yarp/os/Time.h>
 #include <yarp/os/Value.h>
 
@@ -75,7 +75,7 @@ public:
                 for (int i=1; i<reply.size(); i++) {
                     yarp::os::Value& v = reply.get(i);
                     if (v.isList()) {
-                        yarp::os::ConstString si = v.asList()->toString();
+                        std::string si = v.asList()->toString();
                         char *buf = (char*)si.c_str();
                         size_t idx = 0;
                         // old name server messages don't have quotes,
@@ -88,7 +88,7 @@ public:
                                 idx++;
                             }
                         }
-                        yarp::os::ConstString so(si.c_str(),idx);
+                        std::string so(si.c_str(),idx);
                         if (so.length()>0) {
                             writer->appendString(so.c_str());
                         }

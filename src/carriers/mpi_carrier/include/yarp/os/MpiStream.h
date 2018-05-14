@@ -13,7 +13,7 @@
 #include <yarp/os/all.h>
 
 #include <yarp/os/TwoWayStream.h>
-#include <yarp/os/ConstString.h>
+#include <string>
 #include <yarp/os/Bytes.h>
 #include <yarp/os/ManagedBytes.h>
 #include <yarp/os/NetType.h>
@@ -38,12 +38,12 @@ protected:
     int readAvail, readAt;
     char* readBuffer;
     bool terminate;
-    ConstString name;
+    std::string name;
     yarp::os::MpiComm* comm;
 
     yarp::os::Contact local, remote;
 public:
-    MpiStream(ConstString name, MpiComm* comm);
+    MpiStream(std::string name, MpiComm* comm);
     virtual ~MpiStream();
 
     using yarp::os::OutputStream::write;

@@ -13,7 +13,7 @@ using namespace yarp::os;
 ResourceFinderOptions::ResourceFinderOptions(SearchLocations searchLocations,
                                              DuplicateFilesPolicy duplicateFilesPolicy,
                                              SearchFlavor searchFlavor,
-                                             const ConstString& resourceType,
+                                             const std::string& resourceType,
                                              MessageFilter messageFilter) {
     this->searchLocations = searchLocations;
     this->duplicateFilesPolicy = duplicateFilesPolicy;

@@ -29,7 +29,7 @@ namespace yarp {
 class yarp::os::MpiBcastStream : public MpiStream {
 
 public:
-    MpiBcastStream(ConstString name, MpiComm* comm) : MpiStream(name, comm) {};
+    MpiBcastStream(std::string name, MpiComm* comm) : MpiStream(name, comm) {};
     ~MpiBcastStream() {
         #ifdef MPI_DEBUG
         printf("[MpiBcastStream @ %s] Destructor\n", name.c_str());

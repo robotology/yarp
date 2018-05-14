@@ -63,7 +63,7 @@ public:
     ConnectionReader& getReader()
     {
         writer.stopWrite();
-        ConstString s = writer.toString();
+        std::string s = writer.toString();
         sis.reset();
         sis.add(s);
         Route r;

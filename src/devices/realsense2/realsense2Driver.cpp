@@ -1051,7 +1051,7 @@ IRGBDSensor::RGBDSensor_status realsense2Driver::getSensorStatus()
     return RGBD_SENSOR_OK_IN_USE;
 }
 
-ConstString realsense2Driver::getLastErrorMsg(Stamp* timeStamp)
+std::string realsense2Driver::getLastErrorMsg(Stamp* timeStamp)
 {
     return m_lastError;
 }

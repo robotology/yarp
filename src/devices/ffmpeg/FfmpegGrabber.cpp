@@ -441,7 +441,7 @@ bool FfmpegGrabber::openV4L(yarp::os::Searchable & config,
                         0);
     }
 
-    ConstString videoDevice = (config.check("v4l1") ? "video4linux" : "video4linux2");
+    std::string videoDevice = (config.check("v4l1") ? "video4linux" : "video4linux2");
     iformat = av_find_input_format(audio ? "audio_device" : videoDevice.c_str());
 
     int result = avformat_open_input(audio ? ppFormatCtx2 : ppFormatCtx,
@@ -471,7 +471,7 @@ bool FfmpegGrabber::openV4L(yarp::os::Searchable & config,
 bool FfmpegGrabber::openFirewire(yarp::os::Searchable & config,
                                  AVFormatContext **ppFormatCtx) {
     AVInputFormat *iformat;
-    ConstString devname = config.check("devname",
+    std::string devname = config.check("devname",
                                        Value("/dev/dv1394"),
                                        "firewire device name").asString();
     iformat = av_find_input_format("dv1394");
@@ -491,7 +491,7 @@ bool FfmpegGrabber::openFile(AVFormatContext **ppFormatCtx,
 
 
 bool FfmpegGrabber::open(yarp::os::Searchable & config) {
-    ConstString fname =
+    std::string fname =
         config.check("source",
                      Value("default.avi"),
                      "media file to read from").asString();
@@ -505,7 +505,7 @@ bool FfmpegGrabber::open(yarp::os::Searchable & config) {
     }
 
     imageSync = false;
-    ConstString sync =
+    std::string sync =
         config.check("sync",
                      Value("image"),
                      "sync on image or audio (if have to choose)?").asString();

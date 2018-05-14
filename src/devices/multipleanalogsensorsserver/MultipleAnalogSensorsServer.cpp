@@ -85,8 +85,8 @@ template<typename Interface>
 bool MultipleAnalogSensorsServer::populateSensorsMetadata(Interface * wrappedDeviceInterface,
                                   std::vector<SensorMetadata>& metadataVector, const std::string& tag,
                                   size_t (Interface::*getNrOfSensorsMethodPtr)() const,
-                                  bool (Interface::*getNameMethodPtr)(size_t, yarp::os::ConstString&) const,
-                                  bool (Interface::*getFrameNameMethodPtr)(size_t, yarp::os::ConstString&) const)
+                                  bool (Interface::*getNameMethodPtr)(size_t, std::string&) const,
+                                  bool (Interface::*getFrameNameMethodPtr)(size_t, std::string&) const)
 {
     if (wrappedDeviceInterface)
     {
@@ -94,7 +94,7 @@ bool MultipleAnalogSensorsServer::populateSensorsMetadata(Interface * wrappedDev
         metadataVector.resize(nrOfSensors);
         for (size_t i=0; i < nrOfSensors; i++)
         {
-            yarp::os::ConstString sensorName;
+            std::string sensorName;
             bool ok = MAS_CALL_MEMBER_FN(wrappedDeviceInterface, getNameMethodPtr)(i, sensorName);
             if (!ok)
             {
@@ -102,7 +102,7 @@ bool MultipleAnalogSensorsServer::populateSensorsMetadata(Interface * wrappedDev
                          << tag.c_str() << " at index " << i << " .";
                 return false;
             }
-            yarp::os::ConstString frameName;
+            std::string frameName;
             ok = MAS_CALL_MEMBER_FN(wrappedDeviceInterface, getFrameNameMethodPtr)(i, frameName);
             if (!ok)
             {
@@ -128,7 +128,7 @@ template<typename Interface>
 bool MultipleAnalogSensorsServer::populateSensorsMetadataNoFrameName(Interface * wrappedDeviceInterface,
                                                                      std::vector<SensorMetadata>& metadataVector, const std::string& tag,
                                                                      size_t (Interface::*getNrOfSensorsMethodPtr)() const,
-                                                                     bool (Interface::*getNameMethodPtr)(size_t, yarp::os::ConstString&) const)
+                                                                     bool (Interface::*getNameMethodPtr)(size_t, std::string&) const)
 {
     if (wrappedDeviceInterface)
     {
@@ -136,7 +136,7 @@ bool MultipleAnalogSensorsServer::populateSensorsMetadataNoFrameName(Interface *
         metadataVector.resize(nrOfSensors);
         for (size_t i=0; i < nrOfSensors; i++)
         {
-            yarp::os::ConstString sensorName;
+            std::string sensorName;
             bool ok = MAS_CALL_MEMBER_FN(wrappedDeviceInterface, getNameMethodPtr)(i, sensorName);
             if (!ok)
             {

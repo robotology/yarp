@@ -13,7 +13,7 @@
 #include <yarp/os/OutputStream.h>
 #include <yarp/os/TwoWayStream.h>
 #include <yarp/os/ManagedBytes.h>
-#include <yarp/os/ConstString.h>
+#include <string>
 #include "BlobNetworkHeader.h"
 #include "WireTwiddler.h"
 
@@ -43,7 +43,7 @@ private:
     int phase;
     bool expectTwiddle;
     WireTwiddler twiddler;
-    yarp::os::ConstString kind;
+    std::string kind;
     WireTwiddlerReader twiddlerReader;
     bool initiative;
     bool setInitiative;

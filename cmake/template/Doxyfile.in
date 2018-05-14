@@ -2109,7 +2109,6 @@ PREDEFINED             = __cplusplus:=201103L \
                          YARP_rosmsg_API= \
                          YARP_run_API= \
                          YARP_rtf_API= \
-                         YARP_WRAP_STL_STRING \
                          Q_SLOTS=slots \
                          Q_SIGNALS=signals
 

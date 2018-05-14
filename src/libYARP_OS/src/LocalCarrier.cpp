@@ -163,7 +163,7 @@ void yarp::os::impl::LocalCarrier::shutdown() {
     }
 }
 
-yarp::os::ConstString yarp::os::impl::LocalCarrier::getName() {
+std::string yarp::os::impl::LocalCarrier::getName() {
     return "local";
 }
 
@@ -183,13 +183,13 @@ bool yarp::os::impl::LocalCarrier::isLocal() {
     return true;
 }
 
-yarp::os::ConstString yarp::os::impl::LocalCarrier::getSpecifierName() {
+std::string yarp::os::impl::LocalCarrier::getSpecifierName() {
     return "LOCALITY";
 }
 
 bool yarp::os::impl::LocalCarrier::checkHeader(const Bytes& header) {
     if (header.length()==8) {
-        ConstString target = getSpecifierName();
+        std::string target = getSpecifierName();
         for (int i=0; i<8; i++) {
             if (!(target[i]==header.get()[i])) {
                 return false;
@@ -202,7 +202,7 @@ bool yarp::os::impl::LocalCarrier::checkHeader(const Bytes& header) {
 
 void yarp::os::impl::LocalCarrier::getHeader(const Bytes& header) {
     if (header.length()==8) {
-        ConstString target = getSpecifierName();
+        std::string target = getSpecifierName();
         for (int i=0; i<8; i++) {
             header.get()[i] = target[i];
         }

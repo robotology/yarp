@@ -173,7 +173,7 @@ bool yarp::os::PortReaderBuffer<T>::isClosed()
 }
 
 template <typename T>
-yarp::os::ConstString yarp::os::PortReaderBuffer<T>::getName() const
+std::string yarp::os::PortReaderBuffer<T>::getName() const
 {
     return implementation.getName();
 }

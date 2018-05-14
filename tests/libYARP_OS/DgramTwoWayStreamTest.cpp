@@ -9,7 +9,7 @@
 
 #include <yarp/conf/system.h>
 #include <yarp/os/impl/DgramTwoWayStream.h>
-#include <yarp/os/ConstString.h>
+#include <string>
 #include <yarp/os/impl/UnitTest.h>
 #include <yarp/os/NetType.h>
 #include <cstdio>
@@ -116,7 +116,7 @@ public:
 
 class DgramTwoWayStreamTest : public UnitTest {
 public:
-    virtual ConstString getName() override { return "DgramTwoWayStreamTest"; }
+    virtual std::string getName() override { return "DgramTwoWayStreamTest"; }
 
     void checkNormal() {
         report(0, "checking that dgrams are output sensibly");

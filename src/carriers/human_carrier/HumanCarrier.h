@@ -18,7 +18,7 @@ public:
         return new HumanCarrier();
     }
 
-    virtual ConstString getName() override {
+    virtual std::string getName() override {
         return "human";
     }
 
@@ -55,7 +55,7 @@ public:
         return false;
     }
 
-    virtual ConstString toString() override {
+    virtual std::string toString() override {
         return "humans are handy";
     }
 
@@ -137,15 +137,15 @@ public:
     }
 
     virtual bool sendIndex(ConnectionState& proto,SizedWriter& writer) {
-        ConstString prefix = "human says ";
+        std::string prefix = "human says ";
         Bytes b2((char*)prefix.c_str(),prefix.length());
         proto.os().write(b2);
         return true;
     }
 
     virtual bool expectIndex(ConnectionState& proto) override {
-        ConstString prefix = "human says ";
-        ConstString compare = prefix;
+        std::string prefix = "human says ";
+        std::string compare = prefix;
         Bytes b2((char*)prefix.c_str(),prefix.length());
         proto.is().read(b2);
         bool ok = proto.is().isOk() && (prefix==compare);
@@ -156,15 +156,15 @@ public:
     // Acknowledgements, we don't do them
 
     virtual bool sendAck(ConnectionState& proto) override {
-        ConstString prefix = "computers rule!\r\n";
+        std::string prefix = "computers rule!\r\n";
         Bytes b2((char*)prefix.c_str(),prefix.length());
         proto.os().write(b2);
         return true;
     }
 
     virtual bool expectAck(ConnectionState& proto) override {
-        ConstString prefix = "computers rule!\r\n";
-        ConstString compare = prefix;
+        std::string prefix = "computers rule!\r\n";
+        std::string compare = prefix;
         Bytes b2((char*)prefix.c_str(),prefix.length());
         proto.is().read(b2);
         bool ok = proto.is().isOk() && (prefix==compare);

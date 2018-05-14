@@ -217,7 +217,6 @@ set(YARP_OS_SRCS src/AbstractCarrier.cpp
                  src/Companion.cpp
                  src/ConnectionReader.cpp
                  src/ConnectionWriter.cpp
-                 src/ConstString.cpp
                  src/Contactable.cpp
                  src/Contact.cpp
                  src/ContactStyle.cpp

@@ -13,7 +13,7 @@
 //#include <cstdlib> //defines size_t
 #include <cstddef> //defines size_t
 #include <yarp/os/Portable.h>
-#include <yarp/os/ConstString.h>
+#include <string>
 #include <yarp/os/ManagedBytes.h>
 
 #include <yarp/sig/api.h>
@@ -355,7 +355,7 @@ public:
     * Warning: the string format might change in the future. This method
     * is here to ease debugging.
     */
-    yarp::os::ConstString toString(int precision=-1, int width=-1) const;
+    std::string toString(int precision=-1, int width=-1) const;
 
 
     /**

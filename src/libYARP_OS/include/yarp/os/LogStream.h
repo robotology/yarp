@@ -14,7 +14,7 @@
 #include <vector>
 
 #include <yarp/os/api.h>
-#include <yarp/os/ConstString.h>
+#include <string>
 #include <yarp/os/Log.h>
 #include <yarp/os/Os.h>
 
@@ -141,15 +141,7 @@ public:
         return *this;
     }
 
-#ifndef YARP_CONSTSTRING_IS_STD_STRING
     inline LogStream& operator<<(const std::string &t) {
-        stream->oss << t;
-        stream->oss << ' ';
-        return *this;
-    }
-#endif
-
-    inline LogStream& operator<<(const yarp::os::ConstString &t) {
         stream->oss << t.c_str();
         stream->oss << ' ';
         return *this;

@@ -295,7 +295,7 @@ public:
       * is here to ease debugging.
       * @return a const string which contain the matrix in text form.
       */
-      yarp::os::ConstString toString(int precision=-1, int width=-1, const char* endRowStr="\n") const;
+      std::string toString(int precision=-1, int width=-1, const char* endRowStr="\n") const;
 
       /**
       * Return a pointer to the first element

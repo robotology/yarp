@@ -73,7 +73,7 @@ public:
 
 class RunTest : public UnitTest {
 public:
-    virtual ConstString getName() override { return "RunTest"; }
+    virtual std::string getName() override { return "RunTest"; }
 
     virtual void testRun() {
         //this could be local or using an external nameserver, to be decided
@@ -96,7 +96,7 @@ public:
         par.put("name", "testModule");
 
 
-        ConstString moduleTag="test_module";
+        std::string moduleTag="test_module";
         yarp::run::Run::start("/run", par, moduleTag);
 
         Time::delay(1);

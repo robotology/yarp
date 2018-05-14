@@ -43,7 +43,7 @@ bool yarp::os::Stamp::isValid()
 bool yarp::os::Stamp::read(ConnectionReader& connection)
 {
     if (connection.isTextMode()) {
-        ConstString stampStr = connection.expectText();
+        std::string stampStr = connection.expectText();
         int seqNum;
         double ts;
         int ret = std::sscanf(stampStr.c_str(), "%d %lg\n", &seqNum, &ts);

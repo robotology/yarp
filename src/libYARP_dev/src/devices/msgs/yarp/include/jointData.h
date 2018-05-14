@@ -196,7 +196,7 @@ private:
 
 public:
 
-  yarp::os::ConstString toString();
+  std::string toString();
 
   // if you want to serialize this class without nesting, use this helper
   typedef yarp::os::idl::Unwrapped<jointData > unwrapped;

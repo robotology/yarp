@@ -17,7 +17,7 @@ bool Carrier::isBroadcast()
     return false;
 }
 
-void Carrier::handleEnvelope(const yarp::os::ConstString& envelope)
+void Carrier::handleEnvelope(const std::string& envelope)
 {
     YARP_UNUSED(envelope);
 }
@@ -27,7 +27,7 @@ bool Carrier::isPush()
     return true;
 }
 
-ConstString Carrier::getBootstrapCarrierName()
+std::string Carrier::getBootstrapCarrierName()
 {
     return "tcp";
 }

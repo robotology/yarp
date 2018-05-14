@@ -110,7 +110,7 @@ bool WireWriter::writeTag(const char *tag, int split, int len) {
     if (!split) {
         return writeString(tag);
     }
-    ConstString bit = "";
+    std::string bit = "";
     char ch = 'x';
     while (ch!='\0') {
         ch = *tag;
@@ -130,14 +130,14 @@ bool WireWriter::writeTag(const char *tag, int split, int len) {
     return true;
 }
 
-bool WireWriter::writeString(const yarp::os::ConstString& tag) {
+bool WireWriter::writeString(const std::string& tag) {
     writer.appendInt(BOTTLE_TAG_STRING);
     writer.appendInt((int)tag.length());
     writer.appendBlock(tag.c_str(), tag.length());
     return !writer.isError();
 }
 
-bool WireWriter::writeBinary(const yarp::os::ConstString& tag) {
+bool WireWriter::writeBinary(const std::string& tag) {
     writer.appendInt(BOTTLE_TAG_BLOB);
     writer.appendInt((int)tag.length());
     writer.appendBlock(tag.c_str(), tag.length());

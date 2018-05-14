@@ -17,7 +17,7 @@
 
 
 using yarp::os::Bottle;
-using yarp::os::ConstString;
+using std::string;
 using yarp::os::ConnectionReader;
 using yarp::os::ConnectionWriter;
 using yarp::os::Property;
@@ -43,7 +43,7 @@ Bottle::Bottle()
     implementation->ro = false;
 }
 
-Bottle::Bottle(const ConstString& text)
+Bottle::Bottle(const std::string& text)
         : Portable(), Searchable(), implementation(new BottleImpl(this))
 {
     yAssert(implementation != nullptr);
@@ -112,7 +112,7 @@ void Bottle::addString(const char* str)
     implementation->addString(str);
 }
 
-void Bottle::addString(const ConstString& str)
+void Bottle::addString(const std::string& str)
 {
     implementation->edit();
     implementation->addString(str);
@@ -140,16 +140,16 @@ Value Bottle::pop()
     return val;
 }
 
-void Bottle::fromString(const ConstString& text)
+void Bottle::fromString(const std::string& text)
 {
     implementation->edit();
     implementation->invalid = false;
     implementation->fromString(text.c_str());
 }
 
-ConstString Bottle::toString() const
+std::string Bottle::toString() const
 {
-    return ConstString(implementation->toString().c_str());
+    return std::string(implementation->toString().c_str());
 }
 
 void Bottle::fromBinary(const char* buf, int len)
@@ -213,7 +213,7 @@ void Bottle::copy(const Bottle& alt, int first, int len)
     implementation->copyRange(alt.implementation, first, len);
 }
 
-bool Bottle::check(const ConstString& key) const
+bool Bottle::check(const std::string& key) const
 {
     Bottle& val = findGroup(key);
     if (!val.isNull()) {
@@ -223,7 +223,7 @@ bool Bottle::check(const ConstString& key) const
     return !val2.isNull();
 }
 
-Value& Bottle::find(const ConstString& key) const
+Value& Bottle::find(const std::string& key) const
 {
     Value& val = implementation->findBit(key);
 
@@ -238,7 +238,7 @@ Value& Bottle::find(const ConstString& key) const
     return val;
 }
 
-Bottle& Bottle::findGroup(const ConstString& key) const
+Bottle& Bottle::findGroup(const std::string& key) const
 {
     Value& bb = implementation->findGroupBit(key);
 
@@ -252,7 +252,7 @@ Bottle& Bottle::findGroup(const ConstString& key) const
         }
         reportToMonitor(report);
         if (bb.isList()) {
-            ConstString context = getMonitorContext().c_str();
+            std::string context = getMonitorContext().c_str();
             context += ".";
             context += key;
             bb.asList()->setMonitor(getMonitor(),
@@ -296,7 +296,7 @@ void Bottle::fini()
 
 bool Bottle::operator==(const Bottle& alt) const
 {
-    return ConstString(toString().c_str()) == alt.toString().c_str();
+    return std::string(toString().c_str()) == alt.toString().c_str();
 }
 
 bool Bottle::write(PortReader& reader, bool textMode)
@@ -344,15 +344,15 @@ Bottle Bottle::tail() const
     return b;
 }
 
-ConstString Bottle::toString(int x)
+std::string Bottle::toString(int x)
 {
     return NetType::toString(x);
 }
 
-ConstString Bottle::describeBottleCode(int code)
+std::string Bottle::describeBottleCode(int code)
 {
     int unit = code & ~(BOTTLE_TAG_LIST | BOTTLE_TAG_DICT);
-    ConstString unitName = "mixed";
+    std::string unitName = "mixed";
     switch (unit) {
     case 0:
         unitName = "mixed";
@@ -376,7 +376,7 @@ ConstString Bottle::describeBottleCode(int code)
         unitName = "unknown";
         break;
     }
-    ConstString result = unitName;
+    std::string result = unitName;
     if (code & BOTTLE_TAG_LIST) {
         result = "list of " + unitName;
     } else if (code & BOTTLE_TAG_DICT) {

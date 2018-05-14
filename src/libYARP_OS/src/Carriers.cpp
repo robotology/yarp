@@ -39,7 +39,7 @@ public:
 
     std::vector<Carrier*> delegates;
 
-    Carrier* chooseCarrier(const ConstString* name,
+    Carrier* chooseCarrier(const std::string* name,
                            const Bytes* header,
                            bool load_if_needed = true,
                            bool return_template = false);
@@ -54,16 +54,16 @@ public:
 yarp::os::Mutex Carriers::Private::mutex {};
 
 
-Carrier* Carriers::Private::chooseCarrier(const ConstString *name,
+Carrier* Carriers::Private::chooseCarrier(const std::string *name,
                                           const Bytes *header,
                                           bool load_if_needed,
                                           bool return_template)
 {
-    ConstString s;
+    std::string s;
     if (name != nullptr) {
         s = *name;
         size_t i = s.find('+');
-        if (i!=ConstString::npos) {
+        if (i!=std::string::npos) {
             s[i] = '\0';
             s = s.c_str();
             name = &s;
@@ -105,7 +105,7 @@ Carrier* Carriers::Private::chooseCarrier(const ConstString *name,
         }
     }
     if (name == nullptr) {
-        ConstString txt;
+        std::string txt;
         for (int i=0; i<(int)header->length(); i++) {
             txt += NetType::toString(header->get()[i]);
             txt += " ";
@@ -144,7 +144,7 @@ bool Carriers::Private::matchCarrier(const Bytes *header, Bottle& code)
     for (int i=0; i<code.size() && !done; i++) {
         Value& v = code.get(i);
         if (v.isString()) {
-            ConstString str = v.asString();
+            std::string str = v.asString();
             for (int j=0; j<(int)str.length(); j++) {
                 if ((int)header->length()<=at) {
                     success = false;
@@ -170,7 +170,7 @@ bool Carriers::Private::checkForCarrier(const Bytes *header, Searchable& group)
     Bottle code = group.findGroup("code").tail();
     if (code.size()==0) return false;
     if (matchCarrier(header, code)) {
-        ConstString name = group.find("name").asString();
+        std::string name = group.find("name").asString();
         if (NetworkBase::registerCarrier(name.c_str(), nullptr)) {
             return true;
         }
@@ -229,12 +229,12 @@ void Carriers::clear()
     lst.clear();
 }
 
-Carrier *Carriers::chooseCarrier(const ConstString& name)
+Carrier *Carriers::chooseCarrier(const std::string& name)
 {
     return getInstance().mPriv->chooseCarrier(&name, nullptr);
 }
 
-Carrier *Carriers::getCarrierTemplate(const ConstString& name)
+Carrier *Carriers::getCarrierTemplate(const std::string& name)
 {
     return getInstance().mPriv->chooseCarrier(&name, nullptr, true, true);
 }
@@ -348,7 +348,7 @@ Bottle Carriers::listCarriers()
     Bottle plugins = instance.mPriv->getSelectedPlugins();
     for (int i = 0; i < plugins.size(); i++) {
         Value& options = plugins.get(i);
-        ConstString name = options.check("name", Value("untitled")).asString();
+        std::string name = options.check("name", Value("untitled")).asString();
         if (done.check(name)) {
             continue;
         }
@@ -358,7 +358,7 @@ Bottle Carriers::listCarriers()
         settings.setSelector(*instance.mPriv);
         settings.readFromSearchable(options, name);
         settings.open(lib);
-        ConstString location = lib.getName().c_str();
+        std::string location = lib.getName().c_str();
         if (location=="") {
             continue;
         }

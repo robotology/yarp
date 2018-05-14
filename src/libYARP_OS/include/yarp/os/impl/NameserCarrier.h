@@ -32,8 +32,8 @@ class yarp::os::impl::NameserTwoWayStream : public TwoWayStream, InputStream
 {
 private:
     TwoWayStream *delegate;
-    ConstString pendingRead;
-    ConstString swallowRead;
+    std::string pendingRead;
+    std::string swallowRead;
 public:
     NameserTwoWayStream(TwoWayStream *delegate);
 
@@ -67,8 +67,8 @@ private:
 public:
     NameserCarrier();
 
-    virtual ConstString getName() override;
-    virtual ConstString getSpecifierName();
+    virtual std::string getName() override;
+    virtual std::string getSpecifierName();
 
     virtual Carrier *create() override;
 

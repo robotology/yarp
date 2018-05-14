@@ -63,7 +63,7 @@ using namespace yarp::os;
 
 class ValueTest : public UnitTest {
 public:
-    virtual ConstString getName() override { return "ValueTest"; }
+    virtual std::string getName() override { return "ValueTest"; }
 
     void checkCopy() {
         report(0,"check value copying");

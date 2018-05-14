@@ -67,7 +67,7 @@ void StreamingMessagesParser::onRead(CommandMessage& v)
     // some consistency checks
     if ((int)cmdVector.size() > stream_nJoints)
     {
-        yarp::os::ConstString str = yarp::os::Vocab::decode(b.get(0).asVocab());
+        std::string str = yarp::os::Vocab::decode(b.get(0).asVocab());
         yError("Received command vector with number of elements bigger than axis controlled by this wrapper (cmd: %s requested jnts: %d received jnts: %d)\n",str.c_str(),stream_nJoints,(int)cmdVector.size());
         return;
     }
@@ -168,7 +168,7 @@ void StreamingMessagesParser::onRead(CommandMessage& v)
                 break;
                 default:
                 {
-                    yarp::os::ConstString str = yarp::os::Vocab::decode(b.get(0).asVocab());
+                    std::string str = yarp::os::Vocab::decode(b.get(0).asVocab());
                     yError("Unrecognized message while receiving on command port (%s)\n", str.c_str());
                 }
                 break;
@@ -334,7 +334,7 @@ void StreamingMessagesParser::onRead(CommandMessage& v)
 
         default:
             {
-                yarp::os::ConstString str = yarp::os::Vocab::decode(b.get(0).asVocab());
+                std::string str = yarp::os::Vocab::decode(b.get(0).asVocab());
                 yError("Unrecognized message while receiving on command port (%s)\n",str.c_str());
             }
             break;

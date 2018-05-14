@@ -12,8 +12,6 @@
 
 #include <yarp/conf/numeric.h>
 
-#cmakedefine YARP_WRAP_STL_STRING
-#cmakedefine YARP_WRAP_STL_STRING_INLINE
 #cmakedefine YARP_HAS_ACE
 
 // ACE information

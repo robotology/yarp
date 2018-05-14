@@ -124,9 +124,9 @@ public:
     typedef yarp::os::idl::BottleStyle<yarp::rosmsg::sensor_msgs::LaserEcho> bottleStyle;
 
     // Give source text for class, ROS will need this
-    static yarp::os::ConstString typeText()
+    static std::string typeText()
     {
-        return yarp::os::ConstString("\
+        return std::string("\
 # This message is a submessage of MultiEchoLaserScan and is not intended\n\
 # to be used separately.\n\
 \n\
@@ -134,7 +134,7 @@ float32[] echoes  # Multiple values of ranges or intensities.\n\
                   # Each array represents data from the same angle increment.");
     }
 
-    yarp::os::ConstString getTypeText() const
+    std::string getTypeText() const
     {
         return yarp::rosmsg::sensor_msgs::LaserEcho::typeText();
     }

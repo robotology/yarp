@@ -22,14 +22,14 @@ using namespace yarp::os;
 using namespace yarp::os::impl;
 
 bool YarpPluginSettings::open(SharedLibraryFactory& factory,
-                              const ConstString& dll_name,
-                              const ConstString& fn_name) {
+                              const std::string& dll_name,
+                              const std::string& fn_name) {
     return subopen(factory, dll_name, fn_name);
 }
 
 bool YarpPluginSettings::subopen(SharedLibraryFactory& factory,
-                                 const ConstString& dll_name,
-                                 const ConstString& fn_name) {
+                                 const std::string& dll_name,
+                                 const std::string& fn_name) {
     YARP_SPRINTF2(impl::Logger::get(), debug, "Trying plugin [dll: %s] [fn: %s]",
                   dll_name.c_str(), fn_name.c_str());
     bool ok = factory.open(dll_name.c_str(), fn_name.c_str());
@@ -57,12 +57,12 @@ bool YarpPluginSettings::open(SharedLibraryFactory& factory) {
         Bottle paths = selector->getSearchPath();
         for (int i=0; i<paths.size(); i++) {
             Searchable& options = paths.get(i);
-            ConstString path = options.find("path").asString();
-            ConstString ext = options.find("extension").asString();
-            ConstString basename = (dll_name.find('.')!=ConstString::npos) ? name : dll_name;
-            ConstString fn = (fn_name=="")?name:fn_name;
+            std::string path = options.find("path").asString();
+            std::string ext = options.find("extension").asString();
+            std::string basename = (dll_name.find('.')!=std::string::npos) ? name : dll_name;
+            std::string fn = (fn_name=="")?name:fn_name;
 
-            ConstString fullpath;
+            std::string fullpath;
 
 #if defined(_MSC_VER) && !defined(NDEBUG)
             // MSVC DEBUG build: try debug name before basic name
@@ -114,7 +114,7 @@ bool YarpPluginSettings::open(SharedLibraryFactory& factory) {
     if (dll_name!=""||fn_name!="") {
         return open(factory, dll_name, fn_name);
     }
-    return factory.open((ConstString("yarp_") + name).c_str(),
+    return factory.open((std::string("yarp_") + name).c_str(),
                         (fn_name=="")?name.c_str():fn_name.c_str());
 }
 
@@ -190,7 +190,7 @@ void YarpPluginSelector::scan() {
     config.clear();
     if (plugin_paths.size()>0) {
         for (int i=0; i<plugin_paths.size(); i++) {
-            ConstString target = plugin_paths.get(i).asString();
+            std::string target = plugin_paths.get(i).asString();
             YARP_SPRINTF1(Logger::get(),
                           debug,
                           "Loading configuration files related to plugins from %s.", target.c_str());
@@ -207,20 +207,20 @@ void YarpPluginSelector::scan() {
     search_path.clear();
     Bottle inilst = config.findGroup("inifile").tail();
     for (int i=0; i<inilst.size(); i++) {
-        ConstString inifile = inilst.get(i).asString();
+        std::string inifile = inilst.get(i).asString();
         Bottle inigroup = config.findGroup(inifile);
         Bottle lst = inigroup.findGroup("plugin").tail();
         for (int i=0; i<lst.size(); i++) {
-            ConstString plugin_name = lst.get(i).asString();
+            std::string plugin_name = lst.get(i).asString();
             Bottle group = inigroup.findGroup(plugin_name);
-            group.add(Value::makeValue(ConstString("(inifile \"") + inifile + "\")"));
+            group.add(Value::makeValue(std::string("(inifile \"") + inifile + "\")"));
             if (select(group)) {
                 plugins.addList() = group;
             }
         }
         lst = inigroup.findGroup("search").tail();
         for (int i=0; i<lst.size(); i++) {
-            ConstString search_name = lst.get(i).asString();
+            std::string search_name = lst.get(i).asString();
             Bottle group = inigroup.findGroup(search_name);
             search_path.addList() = group;
         }

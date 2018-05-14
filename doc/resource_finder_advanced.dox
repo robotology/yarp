@@ -45,13 +45,13 @@ This creates an instance of the ResourceFinder, and configures it from data from
 This code shows how to query the value of the parameters:
 
 \code
-ConstString robotName=rf.find("robot").asString();
+std::string robotName=rf.find("robot").asString();
 \endcode
 
 Now we can read the file specified in the parameter 'model' by calling:
 
 \code
-ConstString model=rf.findFile("model");
+std::string model=rf.findFile("model");
 \endcode
 
 RF searches the file 'bottle.ppm' in the current initialization context. If successful "model" is a string

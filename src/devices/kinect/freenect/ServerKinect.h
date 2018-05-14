@@ -87,7 +87,7 @@ public:
     }
 
     addStamp = prop.check("stamp","if present, add timestamps to data");
-    ConstString robotName = prop.check("name",Value("/MDS"), "prefix for port names").asString().c_str();
+    std::string robotName = prop.check("name",Value("/MDS"), "prefix for port names").asString().c_str();
 
     writer.attach(p);
 

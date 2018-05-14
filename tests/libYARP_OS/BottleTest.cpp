@@ -53,11 +53,11 @@ public:
 
     void testString() {
         report(0,"testing string representation...");
-        ConstString target = "hello \"my\" \\friend";
+        std::string target = "hello \"my\" \\friend";
         BottleImpl bot;
         bot.addInt(5);
         bot.addString("hello \"my\" \\friend");
-        ConstString txt = bot.toString();
+        std::string txt = bot.toString();
         const char *expect = "5 \"hello \\\"my\\\" \\\\friend\"";
         checkEqual(txt,expect,"string rep");
         BottleImpl bot2;
@@ -123,7 +123,7 @@ public:
         BufferedConnectionWriter bbw(true);
         bot.write(bbw);
 
-        ConstString s;
+        std::string s;
         StringInputStream sis;
         StreamConnectionReader sbr;
 
@@ -154,7 +154,7 @@ public:
 
         for (int i=0; i<3; i++) {
             BottleImpl& b = bot[i];
-            report(0,ConstString("check for bottle number ") +
+            report(0,std::string("check for bottle number ") +
                    NetType::toString(i));
             checkTrue(b.isInt(0)&&b.isInt(3),"ints");
             checkTrue(b.isDouble(1)&&b.isDouble(4),"doubles");
@@ -192,7 +192,7 @@ public:
         bot.toBytes(store.bytes());
         bot3.fromBytes(store.bytes());
         checkEqual((int)bot3.size(),2,"list test 3");
-        report(0,ConstString("bot3 is ") + bot3.toString());
+        report(0,std::string("bot3 is ") + bot3.toString());
 
         Bottle bot10;
         {
@@ -311,7 +311,7 @@ public:
         //bot.specialize(bot.get(0).getCode());
         BufferedConnectionWriter writer;
         bot.write(writer);
-        ConstString s = writer.toString();
+        std::string s = writer.toString();
         checkEqual((int)s.length(),sizeof(NetInt32)*(1+1+(int)bot.size()),
                    "exact number of integers, plus type/count");
 
@@ -378,7 +378,7 @@ public:
         checkEqual(bot.get(1).asInt(),10,"post-tab ok");
 
         report(0, "checking pasa problem with lists missing last element...");
-        ConstString s2 = "[set] [poss] (10.0 20.0 30.0 40.0 5.1)\n";
+        std::string s2 = "[set] [poss] (10.0 20.0 30.0 40.0 5.1)\n";
         Bottle p;
         p.fromString(s2.c_str());
         checkEqual(p.get(2).asList()->size(),5,"newline test checks out");
@@ -396,7 +396,7 @@ public:
         Bottle bot("file ../foo.txt");
         checkTrue(bot.get(1).isString(),"paths starting with a decimal");
         Bottle bot2;
-        ConstString test = "\"\n\r\"";
+        std::string test = "\"\n\r\"";
         bot2.addString(test);
         Bottle bot3;
         bot3.fromString(bot2.toString());
@@ -556,11 +556,11 @@ public:
         char buf2[] = "hello world";
         buf2[5] = '\0';
         size_t len = 11;
-        ConstString str1(buf1,len);
-        ConstString str2(buf2,len);
+        std::string str1(buf1,len);
+        std::string str2(buf2,len);
         checkEqual(str1.length(),len,"unmodified string length ok");
         checkEqual(str2.length(),len,"modified string length ok");
-        ConstString str3(str2);
+        std::string str3(str2);
         checkEqual(str3.length(),len,"copied string length ok");
         Bottle bot;
         bot.addString(str2);
@@ -679,7 +679,7 @@ public:
         testCopyPortable();
     }
 
-    virtual ConstString getName() override {
+    virtual std::string getName() override {
         return "BottleTest";
     }
 };

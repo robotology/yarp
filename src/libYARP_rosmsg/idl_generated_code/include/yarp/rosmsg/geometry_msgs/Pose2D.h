@@ -143,9 +143,9 @@ public:
     typedef yarp::os::idl::BottleStyle<yarp::rosmsg::geometry_msgs::Pose2D> bottleStyle;
 
     // Give source text for class, ROS will need this
-    static yarp::os::ConstString typeText()
+    static std::string typeText()
     {
-        return yarp::os::ConstString("\
+        return std::string("\
 # This expresses a position and orientation on a 2D manifold.\n\
 \n\
 float64 x\n\
@@ -153,7 +153,7 @@ float64 y\n\
 float64 theta");
     }
 
-    yarp::os::ConstString getTypeText() const
+    std::string getTypeText() const
     {
         return yarp::rosmsg::geometry_msgs::Pose2D::typeText();
     }

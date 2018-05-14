@@ -31,22 +31,22 @@ public:
 
     virtual Contact getNameServerContact() const override;
 
-    virtual Contact queryName(const ConstString& name) override;
-    virtual Contact registerName(const ConstString& name) override;
+    virtual Contact queryName(const std::string& name) override;
+    virtual Contact registerName(const std::string& name) override;
     virtual Contact registerContact(const Contact& contact) override;
-    virtual Contact unregisterName(const ConstString& name) override;
+    virtual Contact unregisterName(const std::string& name) override;
     virtual Contact unregisterContact(const Contact& contact) override;
     virtual Contact registerAdvanced(const Contact& contact,
                                      NameStore *store) override;
-    virtual Contact unregisterAdvanced(const ConstString& name,
+    virtual Contact unregisterAdvanced(const std::string& name,
                                        NameStore *store) override;
 
-    virtual bool setProperty(const ConstString& name,
-                             const ConstString& key,
+    virtual bool setProperty(const std::string& name,
+                             const std::string& key,
                              const Value& value) override;
 
-    virtual Value *getProperty(const ConstString& name,
-                               const ConstString& key) override;
+    virtual Value *getProperty(const std::string& name,
+                               const std::string& key) override;
 
     virtual bool connectPortToTopic(const Contact& src,
                                     const Contact& dest,
@@ -92,10 +92,10 @@ public:
      * ":" is definitely ruled out.  Since plenty of valid
      * YARP ports have a ":" in them, we need to quote this.
      */
-    static ConstString toRosName(const ConstString& name);
-    static ConstString fromRosName(const ConstString& name);
-    static ConstString toRosNodeName(const ConstString& name);
-    static ConstString fromRosNodeName(const ConstString& name);
+    static std::string toRosName(const std::string& name);
+    static std::string fromRosName(const std::string& name);
+    static std::string toRosNodeName(const std::string& name);
+    static std::string fromRosNodeName(const std::string& name);
     static Contact rosify(const Contact& contact);
 
     virtual void run() override;

@@ -95,8 +95,8 @@ public:
 private:
 #ifndef DOXYGEN_SHOULD_SKIP_THIS
     yarp::os::Mutex              m_mutex;
-    yarp::os::ConstString        m_streamingPortName;
-    yarp::os::ConstString        m_rpcPortName;
+    std::string        m_streamingPortName;
+    std::string        m_rpcPortName;
     yarp::os::Stamp              m_lastStateStamp;
     int                          m_period;
     yarp::os::Node*              m_rosNode;

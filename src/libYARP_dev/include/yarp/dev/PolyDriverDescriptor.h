@@ -12,7 +12,7 @@
 
 
 #include <yarp/dev/PolyDriver.h>
-#include <yarp/os/ConstString.h>
+#include <string>
 
 namespace yarp {
     namespace dev {
@@ -26,7 +26,7 @@ public:
     /* pointer to the polydriver */
     PolyDriver *poly;
     /* descriptor */
-    yarp::os::ConstString key;
+    std::string key;
 
     PolyDriverDescriptor()
     {
@@ -37,7 +37,7 @@ public:
     PolyDriverDescriptor(PolyDriver *np, const char *k)
     {
            poly=np;
-           key=yarp::os::ConstString(k);
+           key=std::string(k);
     }
 };
 

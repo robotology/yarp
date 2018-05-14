@@ -123,15 +123,15 @@ public:
     typedef yarp::os::idl::BottleStyle<yarp::rosmsg::shape_msgs::MeshTriangle> bottleStyle;
 
     // Give source text for class, ROS will need this
-    static yarp::os::ConstString typeText()
+    static std::string typeText()
     {
-        return yarp::os::ConstString("\
+        return std::string("\
 # Definition of a triangle's vertices\n\
 uint32[3] vertex_indices\n\
 ");
     }
 
-    yarp::os::ConstString getTypeText() const
+    std::string getTypeText() const
     {
         return yarp::rosmsg::shape_msgs::MeshTriangle::typeText();
     }

@@ -21,7 +21,7 @@ using namespace yarp::sig;
 
 
 
-ConstString H264Carrier::getName()
+std::string H264Carrier::getName()
 {
     return "h264";
 }
@@ -51,7 +51,7 @@ bool H264Carrier::canEscape()
     return false;
 }
 
-void H264Carrier::handleEnvelope(const yarp::os::ConstString& envelope)
+void H264Carrier::handleEnvelope(const std::string& envelope)
 {
     this->envelope = envelope;
 }
@@ -77,7 +77,7 @@ bool H264Carrier::isPush()
     return false;
 }
 
-ConstString H264Carrier::toString()
+std::string H264Carrier::toString()
 {
     return "h264_carrier";
 }
@@ -101,7 +101,7 @@ void H264Carrier::setParameters(const Bytes& header)
 static int getIntParam(Name &n, const char *param)
 {
     bool hasField;
-    ConstString strValue = n.getCarrierModifier(param, &hasField);
+    std::string strValue = n.getCarrierModifier(param, &hasField);
     Value *v = Value::makeValue(strValue.c_str());
     int intvalue = 0;
     if((hasField) && v->isInt())
@@ -213,7 +213,7 @@ bool H264Carrier::expectAck(ConnectionState& proto)
     return true;
 }
 
-ConstString H264Carrier::getBootstrapCarrierName()
+std::string H264Carrier::getBootstrapCarrierName()
 {
     return "";
 }

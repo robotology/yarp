@@ -196,9 +196,9 @@ public:
     typedef yarp::os::idl::BottleStyle<yarp::rosmsg::nav_msgs::Odometry> bottleStyle;
 
     // Give source text for class, ROS will need this
-    static yarp::os::ConstString typeText()
+    static std::string typeText()
     {
-        return yarp::os::ConstString("\
+        return std::string("\
 # This represents an estimate of a position and velocity in free space.  \n\
 # The pose in this message should be specified in the coordinate frame given by header.frame_id.\n\
 # The twist in this message should be specified in the coordinate frame given by the child_frame_id\n\
@@ -206,19 +206,19 @@ Header header\n\
 string child_frame_id\n\
 geometry_msgs/PoseWithCovariance pose\n\
 geometry_msgs/TwistWithCovariance twist\n\
-") + yarp::os::ConstString("\n\
+") + std::string("\n\
 ================================================================================\n\
 MSG: std_msgs/Header\n\
-") + yarp::rosmsg::std_msgs::Header::typeText() + yarp::os::ConstString("\n\
+") + yarp::rosmsg::std_msgs::Header::typeText() + std::string("\n\
 ================================================================================\n\
 MSG: geometry_msgs/PoseWithCovariance\n\
-") + yarp::rosmsg::geometry_msgs::PoseWithCovariance::typeText() + yarp::os::ConstString("\n\
+") + yarp::rosmsg::geometry_msgs::PoseWithCovariance::typeText() + std::string("\n\
 ================================================================================\n\
 MSG: geometry_msgs/TwistWithCovariance\n\
 ") + yarp::rosmsg::geometry_msgs::TwistWithCovariance::typeText();
     }
 
-    yarp::os::ConstString getTypeText() const
+    std::string getTypeText() const
     {
         return yarp::rosmsg::nav_msgs::Odometry::typeText();
     }

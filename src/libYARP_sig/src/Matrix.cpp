@@ -169,9 +169,9 @@ bool Matrix::write(yarp::os::ConnectionWriter& connection) {
 /**
 * Quick implementation, space for improvement.
 */
-ConstString Matrix::toString(int precision, int width, const char* endRowStr) const
+std::string Matrix::toString(int precision, int width, const char* endRowStr) const
 {
-    ConstString ret;
+    std::string ret;
     char tmp[350];
     int c, r;
     if(width>0) // if width is specified use a space as separator

@@ -314,9 +314,9 @@ public:
     typedef yarp::os::idl::BottleStyle<yarp::rosmsg::sensor_msgs::MultiDOFJointState> bottleStyle;
 
     // Give source text for class, ROS will need this
-    static yarp::os::ConstString typeText()
+    static std::string typeText()
     {
-        return yarp::os::ConstString("\
+        return std::string("\
 # Representation of state for joints with multiple degrees of freedom, \n\
 # following the structure of JointState.\n\
 #\n\
@@ -343,22 +343,22 @@ string[] joint_names\n\
 geometry_msgs/Transform[] transforms\n\
 geometry_msgs/Twist[] twist\n\
 geometry_msgs/Wrench[] wrench\n\
-") + yarp::os::ConstString("\n\
+") + std::string("\n\
 ================================================================================\n\
 MSG: std_msgs/Header\n\
-") + yarp::rosmsg::std_msgs::Header::typeText() + yarp::os::ConstString("\n\
+") + yarp::rosmsg::std_msgs::Header::typeText() + std::string("\n\
 ================================================================================\n\
 MSG: geometry_msgs/Transform\n\
-") + yarp::rosmsg::geometry_msgs::Transform::typeText() + yarp::os::ConstString("\n\
+") + yarp::rosmsg::geometry_msgs::Transform::typeText() + std::string("\n\
 ================================================================================\n\
 MSG: geometry_msgs/Twist\n\
-") + yarp::rosmsg::geometry_msgs::Twist::typeText() + yarp::os::ConstString("\n\
+") + yarp::rosmsg::geometry_msgs::Twist::typeText() + std::string("\n\
 ================================================================================\n\
 MSG: geometry_msgs/Wrench\n\
 ") + yarp::rosmsg::geometry_msgs::Wrench::typeText();
     }
 
-    yarp::os::ConstString getTypeText() const
+    std::string getTypeText() const
     {
         return yarp::rosmsg::sensor_msgs::MultiDOFJointState::typeText();
     }

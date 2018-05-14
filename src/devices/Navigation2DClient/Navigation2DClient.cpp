@@ -65,7 +65,7 @@ bool yarp::dev::Navigation2DClient::open(yarp::os::Searchable &config)
         yWarning("Navigation2DClient: using default period of %d ms" , m_period);
     }
 
-    ConstString
+    std::string
             local_rpc_1,
             local_rpc_2,
             local_rpc_3,
@@ -203,7 +203,7 @@ bool yarp::dev::Navigation2DClient::gotoTargetByAbsoluteLocation(Map2DLocation l
     return true;
 }
 
-bool yarp::dev::Navigation2DClient::gotoTargetByLocationName(yarp::os::ConstString location_name)
+bool yarp::dev::Navigation2DClient::gotoTargetByLocationName(std::string location_name)
 {
     yarp::os::Bottle b_loc;
     yarp::os::Bottle resp_loc;
@@ -408,7 +408,7 @@ bool yarp::dev::Navigation2DClient::getAbsoluteLocationOfCurrentTarget(Map2DLoca
     return true;
 }
 
-bool yarp::dev::Navigation2DClient::getNameOfCurrentTarget(yarp::os::ConstString& location_name)
+bool yarp::dev::Navigation2DClient::getNameOfCurrentTarget(std::string& location_name)
 {
     yarp::os::Bottle b;
     yarp::os::Bottle resp;
@@ -470,7 +470,7 @@ bool yarp::dev::Navigation2DClient::getRelativeLocationOfCurrentTarget(double& x
     return true;
 }
 
-bool yarp::dev::Navigation2DClient::storeCurrentPosition(yarp::os::ConstString location_name)
+bool yarp::dev::Navigation2DClient::storeCurrentPosition(std::string location_name)
 {
     yarp::os::Bottle b_nav;
     yarp::os::Bottle resp_nav;
@@ -527,7 +527,7 @@ bool yarp::dev::Navigation2DClient::storeCurrentPosition(yarp::os::ConstString l
     return true;
 }
 
-bool yarp::dev::Navigation2DClient::storeLocation(yarp::os::ConstString location_name, Map2DLocation loc)
+bool yarp::dev::Navigation2DClient::storeLocation(std::string location_name, Map2DLocation loc)
 {
     yarp::os::Bottle b;
     yarp::os::Bottle resp;
@@ -557,7 +557,7 @@ bool yarp::dev::Navigation2DClient::storeLocation(yarp::os::ConstString location
     return true;
 }
 
-bool yarp::dev::Navigation2DClient::getLocationsList(std::vector<yarp::os::ConstString>& locations)
+bool yarp::dev::Navigation2DClient::getLocationsList(std::vector<std::string>& locations)
 {
     yarp::os::Bottle b;
     yarp::os::Bottle resp;
@@ -600,7 +600,7 @@ bool yarp::dev::Navigation2DClient::getLocationsList(std::vector<yarp::os::Const
     return true;
 }
 
-bool yarp::dev::Navigation2DClient::getLocation(yarp::os::ConstString location_name, Map2DLocation& loc)
+bool yarp::dev::Navigation2DClient::getLocation(std::string location_name, Map2DLocation& loc)
 {
     yarp::os::Bottle b;
     yarp::os::Bottle resp;
@@ -633,7 +633,7 @@ bool yarp::dev::Navigation2DClient::getLocation(yarp::os::ConstString location_n
     return true;
 }
 
-bool yarp::dev::Navigation2DClient::deleteLocation(yarp::os::ConstString location_name)
+bool yarp::dev::Navigation2DClient::deleteLocation(std::string location_name)
 {
     yarp::os::Bottle b;
     yarp::os::Bottle resp;

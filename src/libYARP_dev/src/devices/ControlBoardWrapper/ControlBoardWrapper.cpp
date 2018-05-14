@@ -186,7 +186,7 @@ bool ControlBoardWrapper::checkROSParams(Searchable &config)
         useROS = ROS_config_error;
         return false;
     }
-    yarp::os::ConstString ros_use_type = rosGroup.find("useROS").asString();
+    std::string ros_use_type = rosGroup.find("useROS").asString();
     if(ros_use_type == "false")
     {
         yInfo() << partName << "useROS topic if set to 'false'";
@@ -531,7 +531,7 @@ bool ControlBoardWrapper::openDeferredAttach(Property& prop)
             if(bot==nullptr)
             {
                 // probably data are not passed in the correct way, try to read them as a string.
-                ConstString bString(parameters.get(1).asString());
+                std::string bString(parameters.get(1).asString());
                 tmpBot.fromString(bString);
 
                 if(tmpBot.size() != 4)
@@ -730,7 +730,7 @@ bool ControlBoardWrapper::updateAxisName()
     if(useROS == ROS_disabled )
         return true;
 
-    yarp::os::ConstString tmp;
+    std::string tmp;
     // I need a temporary vector because if I'm wrapping more than one subdevice, and one of them
     // does not have the axesName, then I'd stick with the old names from wrpper config file, if any.
     vector<string> tmpVect;
@@ -2980,7 +2980,7 @@ bool ControlBoardWrapper::setGearboxRatio(int m, const double val) {
 }
 
 /* IRemoteVariables */
-bool ControlBoardWrapper::getRemoteVariable(yarp::os::ConstString key, yarp::os::Bottle& val) {
+bool ControlBoardWrapper::getRemoteVariable(std::string key, yarp::os::Bottle& val) {
     bool b = true;
 
     for (unsigned int i = 0; i < device.subdevices.size(); i++)
@@ -2997,7 +2997,7 @@ bool ControlBoardWrapper::getRemoteVariable(yarp::os::ConstString key, yarp::os:
     return b;
 }
 
-bool ControlBoardWrapper::setRemoteVariable(yarp::os::ConstString key, const yarp::os::Bottle& val)
+bool ControlBoardWrapper::setRemoteVariable(std::string key, const yarp::os::Bottle& val)
 {
     size_t bottle_size = val.size();
     size_t device_size = device.subdevices.size();
@@ -3914,7 +3914,7 @@ bool ControlBoardWrapper::abortCalibration()
 
 /* IAxisInfo */
 
-bool ControlBoardWrapper::getAxisName(int j, yarp::os::ConstString& name)
+bool ControlBoardWrapper::getAxisName(int j, std::string& name)
 {
     int off; try{off = device.lut.at(j).offset;} catch(...){yError() << "joint number " << j <<  " out of bound [0-"<< controlledJoints << "] for part " << partName; return false; }
     int subIndex=device.lut[j].deviceEntry;

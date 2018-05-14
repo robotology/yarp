@@ -69,7 +69,7 @@ public:
     virtual ~Port();
 
     // Documented in Contactable
-    bool open(const ConstString& name) override;
+    bool open(const std::string& name) override;
 
     // Documented in Contactable
     bool open(const Contact& contact, bool registerName = true) override;
@@ -88,13 +88,13 @@ public:
      *             port will claim to be from.
      * @return true on success
      */
-    bool openFake(const ConstString& name);
+    bool openFake(const std::string& name);
 
     // Documented in Contactable
-    bool addOutput(const ConstString& name) override;
+    bool addOutput(const std::string& name) override;
 
     // Documented in Contactable
-    bool addOutput(const ConstString& name, const ConstString& carrier) override;
+    bool addOutput(const std::string& name, const std::string& carrier) override;
 
     // Documented in Contactable
     bool addOutput(const Contact& contact) override;

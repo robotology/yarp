@@ -42,7 +42,7 @@ public:
      * @param name optional topic name to publish to.
      *
      */
-    Publisher(const ConstString& name = "") {
+    Publisher(const std::string& name = "") {
         buffered_port = nullptr;
         T example;
         port.promiseType(example.getType());
@@ -72,13 +72,13 @@ public:
      * @return true on success
      *
      */
-    bool topic(const ConstString& name) {
+    bool topic(const std::string& name) {
         port.includeNodeInName(true);
         return open(name);
     }
 
     // documentation provided in Contactable
-    virtual bool open(const ConstString& name) override {
+    virtual bool open(const std::string& name) override {
         clear();
         return port.open(name);
     }

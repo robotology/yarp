@@ -656,7 +656,7 @@ int LocalBroker::ExecuteCmd(void)
     }
 
     // adding new env variables
-    yarp::os::ConstString cstrEnvName;
+    std::string cstrEnvName;
     if(strEnv.size())
     {
         yarp::os::impl::SplitString ss(strEnv.c_str(), ';');

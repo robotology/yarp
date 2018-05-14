@@ -195,9 +195,9 @@ bool yarp::dev::BatteryClient::open(yarp::os::Searchable &config)
         return false;
     }
 
-    ConstString local_rpc = local;
+    std::string local_rpc = local;
     local_rpc += "/rpc:o";
-    ConstString remote_rpc = remote;
+    std::string remote_rpc = remote;
     remote_rpc += "/rpc:i";
 
     if (!inputPort.open(local.c_str()))
@@ -267,7 +267,7 @@ bool yarp::dev::BatteryClient::getBatteryTemperature(double &temperature)
     return true;
 }
 
-bool yarp::dev::BatteryClient::getBatteryInfo(yarp::os::ConstString &battery_info)
+bool yarp::dev::BatteryClient::getBatteryInfo(std::string &battery_info)
 {
     Bottle cmd, response;
     cmd.addVocab(VOCAB_IBATTERY);

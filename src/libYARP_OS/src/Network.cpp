@@ -11,7 +11,7 @@
 
 #include <yarp/os/Bottle.h>
 #include <yarp/os/Carriers.h>
-#include <yarp/os/ConstString.h>
+#include <string>
 #include <yarp/os/DummyConnector.h>
 #include <yarp/os/InputStream.h>
 #include <yarp/os/MultiNameSpace.h>
@@ -183,7 +183,7 @@ static int enactConnection(const Contact& src,
         return 1;
     }
     if (reply.check("carrier")) {
-        ConstString carrier = reply.find("carrier").asString();
+        std::string carrier = reply.find("carrier").asString();
         if (!style.quiet) {
             printf("Connection found between %s and %s using carrier %s\n",
                     src.getName().c_str(), dest.getName().c_str(), carrier.c_str());
@@ -242,7 +242,7 @@ static int enactConnection(const Contact& src,
         noteDud(src);
         return 1;
     }
-    ConstString msg = "";
+    std::string msg = "";
     if (reply.get(0).isInt()) {
         ok = (reply.get(0).asInt()==0);
         msg = reply.get(1).asString();
@@ -269,22 +269,22 @@ static int enactConnection(const Contact& src,
 
 
 
-static char* findCarrierParamsPointer(ConstString &carrier_name)
+static char* findCarrierParamsPointer(std::string &carrier_name)
 {
     size_t i = carrier_name.find('+');
-    if (i!=ConstString::npos) {
+    if (i!=std::string::npos) {
         return &(carrier_name[i]);
     }
     else
         return nullptr;
 }
 
-static ConstString collectParams(Contact &c)
+static std::string collectParams(Contact &c)
 {
 
-    ConstString carrier_name = c.getCarrier();
+    std::string carrier_name = c.getCarrier();
     char *params_ptr = findCarrierParamsPointer(carrier_name);
-    ConstString params;
+    std::string params;
     params.clear();
 
     if(nullptr != params_ptr)
@@ -297,10 +297,10 @@ static ConstString collectParams(Contact &c)
 
 }
 
-static ConstString extractCarrierNameOnly(ConstString &carrier_name_with_params)
+static std::string extractCarrierNameOnly(std::string &carrier_name_with_params)
 {
 
-    ConstString carrier_name = carrier_name_with_params;
+    std::string carrier_name = carrier_name_with_params;
     char *c = findCarrierParamsPointer(carrier_name);
     if(nullptr != c){
         *c = '\0';
@@ -326,8 +326,8 @@ static ConstString extractCarrierNameOnly(ConstString &carrier_name_with_params)
 
 */
 
-static int metaConnect(const ConstString& src,
-                       const ConstString& dest,
+static int metaConnect(const std::string& src,
+                       const std::string& dest,
                        ContactStyle style,
                        int mode) {
     YARP_SPRINTF3(Logger::get(), debug,
@@ -428,7 +428,7 @@ static int metaConnect(const ConstString& src,
         staticDest.setCarrier("tcp");
     }
 
-    ConstString carrierConstraint = "";
+    std::string carrierConstraint = "";
 
     // see if we can do business with the source port
     bool srcIsCompetent = false;
@@ -442,7 +442,7 @@ static int metaConnect(const ConstString& src,
             }
             if (srcCarrier!=nullptr) {
                 CARRIER_DEBUG("srcCarrier is NOT null; its name is %s;  ", srcCarrier->getName().c_str());
-                ConstString srcBootstrap = srcCarrier->getBootstrapCarrierName();
+                std::string srcBootstrap = srcCarrier->getBootstrapCarrierName();
                 if (srcBootstrap!="") {
 
                     CARRIER_DEBUG(" it is competent(bootstrapname is %s), while its name is %s )\n\n", srcBootstrap.c_str(), srcCarrier->getName().c_str());
@@ -473,7 +473,7 @@ static int metaConnect(const ConstString& src,
             }
             if (destCarrier!=nullptr) {
                 CARRIER_DEBUG("destCarrier is NOT null; its name is %s;  ", destCarrier->getName().c_str());
-                ConstString destBootstrap = destCarrier->getBootstrapCarrierName();
+                std::string destBootstrap = destCarrier->getBootstrapCarrierName();
                 if (destBootstrap!="") {
                     CARRIER_DEBUG(" it is competent(bootstrapname is %s), while its name is %s )\n\n\n\n", destBootstrap.c_str(), destCarrier->getName().c_str() );
                     destIsCompetent = true;
@@ -553,10 +553,10 @@ static int metaConnect(const ConstString& src,
     //note that in both string may contain params of carrier, so we need to comapare only the name of carrier.
     if(style.carrier!="" && carrierConstraint!="") {
         //get only carrier name of style.
-        ConstString style_carrier_name = extractCarrierNameOnly(style.carrier);
+        std::string style_carrier_name = extractCarrierNameOnly(style.carrier);
 
         //get only carrier name of carrierConstraint.
-        ConstString carrier_constraint_name = extractCarrierNameOnly(carrierConstraint);
+        std::string carrier_constraint_name = extractCarrierNameOnly(carrierConstraint);
 
        if (style_carrier_name!=carrier_constraint_name) {
             fprintf(stderr, "Failure: conflict between %s and %s\n",
@@ -574,7 +574,7 @@ static int metaConnect(const ConstString& src,
         //if I'm here means that sorce or dest is not competent.
         //so we need to get parameters of carrier given in connect command.
         CARRIER_DEBUG("if I'm here means that sorce or dest is not competent\n");
-        ConstString c = dynamicSrc.getCarrier();
+        std::string c = dynamicSrc.getCarrier();
         if(extractCarrierNameOnly(c) == extractCarrierNameOnly(style.carrier))
             style.carrier+=collectParams(dynamicSrc);
         c = dynamicDest.getCarrier();
@@ -585,7 +585,7 @@ static int metaConnect(const ConstString& src,
         style.carrier = staticDest.getCarrier();
         //if I'm here means that both src and dest are copentent and the user didn't specified a carrier in the connect command
         CARRIER_DEBUG("if I'm here means that both src and dest are copentent and the user didn't specified a carrier in the connect command\n");
-        ConstString c = dynamicSrc.getCarrier();
+        std::string c = dynamicSrc.getCarrier();
         if(extractCarrierNameOnly(c) == extractCarrierNameOnly(style.carrier))
             style.carrier+=collectParams(staticSrc);
     }
@@ -656,8 +656,8 @@ static int metaConnect(const ConstString& src,
     return 1;
 }
 
-bool NetworkBase::connect(const ConstString& src, const ConstString& dest,
-                          const ConstString& carrier,
+bool NetworkBase::connect(const std::string& src, const std::string& dest,
+                          const std::string& carrier,
                           bool quiet) {
     ContactStyle style;
     style.quiet = quiet;
@@ -667,43 +667,43 @@ bool NetworkBase::connect(const ConstString& src, const ConstString& dest,
     return connect(src, dest, style);
 }
 
-bool NetworkBase::connect(const ConstString& src,
-                          const ConstString& dest,
+bool NetworkBase::connect(const std::string& src,
+                          const std::string& dest,
                           const ContactStyle& style) {
     int result = metaConnect(src, dest, style, YARP_ENACT_CONNECT);
     return result == 0;
 }
 
-bool NetworkBase::disconnect(const ConstString& src,
-                             const ConstString& dest,
+bool NetworkBase::disconnect(const std::string& src,
+                             const std::string& dest,
                              bool quiet) {
     ContactStyle style;
     style.quiet = quiet;
     return disconnect(src, dest, style);
 }
 
-bool NetworkBase::disconnect(const ConstString& src,
-                             const ConstString& dest,
+bool NetworkBase::disconnect(const std::string& src,
+                             const std::string& dest,
                              const ContactStyle& style) {
     int result = metaConnect(src, dest, style, YARP_ENACT_DISCONNECT);
     return result == 0;
 }
 
-bool NetworkBase::isConnected(const ConstString& src,
-                              const ConstString& dest,
+bool NetworkBase::isConnected(const std::string& src,
+                              const std::string& dest,
                               bool quiet) {
     ContactStyle style;
     style.quiet = quiet;
     return isConnected(src, dest, style);
 }
 
-bool NetworkBase::exists(const ConstString& port, bool quiet) {
+bool NetworkBase::exists(const std::string& port, bool quiet) {
     ContactStyle style;
     style.quiet = quiet;
     return exists(port, style);
 }
 
-bool NetworkBase::exists(const ConstString& port, const ContactStyle& style) {
+bool NetworkBase::exists(const std::string& port, const ContactStyle& style) {
     int result = Companion::exists(port.c_str(), style);
     if (result==0) {
         //Companion::poll(port, true);
@@ -723,7 +723,7 @@ bool NetworkBase::exists(const ConstString& port, const ContactStyle& style) {
 }
 
 
-bool NetworkBase::sync(const ConstString& port, bool quiet) {
+bool NetworkBase::sync(const std::string& port, bool quiet) {
     int result = Companion::wait(port.c_str(), quiet);
     if (result==0) {
         Companion::poll(port.c_str(), true);
@@ -764,12 +764,12 @@ void NetworkBase::initMinimum(yarp::os::yarpClockType clockType, yarp::os::Clock
         ThreadImpl::init();
         BottleImpl::getNull();
         Bottle::getNullBottle();
-        ConstString quiet = getEnvironment("YARP_QUIET");
+        std::string quiet = getEnvironment("YARP_QUIET");
         Bottle b2(quiet.c_str());
         if (b2.get(0).asInt()>0) {
             Logger::get().setVerbosity(-b2.get(0).asInt());
         } else {
-            ConstString verbose = getEnvironment("YARP_VERBOSE");
+            std::string verbose = getEnvironment("YARP_VERBOSE");
             Bottle b(verbose.c_str());
             if (b.get(0).asInt()>0) {
                 YARP_INFO(Logger::get(),
@@ -777,7 +777,7 @@ void NetworkBase::initMinimum(yarp::os::yarpClockType clockType, yarp::os::Clock
                 Logger::get().setVerbosity(b.get(0).asInt());
             }
         }
-        ConstString stack = getEnvironment("YARP_STACK_SIZE");
+        std::string stack = getEnvironment("YARP_STACK_SIZE");
         if (stack!="") {
             int sz = atoi(stack.c_str());
             Thread::setDefaultStackSize(sz);
@@ -815,7 +815,7 @@ void NetworkBase::finiMinimum() {
 
 void yarp::os::Network::yarpClockInit(yarp::os::yarpClockType clockType, Clock *custom)
 {
-    yarp::os::ConstString clock="";
+    std::string clock="";
     if(clockType == YARP_CLOCK_DEFAULT)
     {
         clock = yarp::os::Network::getEnvironment("YARP_CLOCK");
@@ -853,7 +853,7 @@ void yarp::os::Network::yarpClockInit(yarp::os::yarpClockType clockType, Clock *
     return;
 }
 
-Contact NetworkBase::queryName(const ConstString& name) {
+Contact NetworkBase::queryName(const std::string& name) {
     YARP_SPRINTF1(Logger::get(), debug, "query name %s", name.c_str());
     if (getNameServerName()==name) {
         YARP_SPRINTF1(Logger::get(), debug, "query recognized as name server: %s", name.c_str());
@@ -867,7 +867,7 @@ Contact NetworkBase::queryName(const ConstString& name) {
 }
 
 
-Contact NetworkBase::registerName(const ConstString& name) {
+Contact NetworkBase::registerName(const std::string& name) {
     YARP_SPRINTF1(Logger::get(), debug, "register name %s", name.c_str());
     return getNameSpace().registerName(name);
 }
@@ -879,7 +879,7 @@ Contact NetworkBase::registerContact(const Contact& contact) {
     return getNameSpace().registerContact(contact);
 }
 
-Contact NetworkBase::unregisterName(const ConstString& name) {
+Contact NetworkBase::unregisterName(const std::string& name) {
     return getNameSpace().unregisterName(name);
 }
 
@@ -917,16 +917,16 @@ void NetworkBase::assertion(bool shouldBeTrue) {
 }
 
 
-ConstString NetworkBase::readString(bool *eof) {
-    return ConstString(Companion::readString(eof).c_str());
+std::string NetworkBase::readString(bool *eof) {
+    return std::string(Companion::readString(eof).c_str());
 }
 
-bool NetworkBase::setConnectionQos(const ConstString& src, const ConstString& dest,
+bool NetworkBase::setConnectionQos(const std::string& src, const std::string& dest,
                                    const QosStyle& style, bool quiet) {
     return setConnectionQos(src, dest, style, style, quiet);
 }
 
-bool NetworkBase::setConnectionQos(const ConstString& src, const ConstString& dest,
+bool NetworkBase::setConnectionQos(const std::string& src, const std::string& dest,
                                    const QosStyle& srcStyle, const QosStyle &destStyle,
                                    bool quiet) {
 
@@ -997,7 +997,7 @@ bool NetworkBase::setConnectionQos(const ConstString& src, const ConstString& de
     return true;
 }
 
-static bool getPortQos(const ConstString& port, const ConstString& unit,
+static bool getPortQos(const std::string& port, const std::string& unit,
                              QosStyle& style, bool quiet) {
     // request: "prop get /portname"
     // reply  : "(sched ((priority 30) (policy 1))) (qos ((priority HIGH)))"
@@ -1032,7 +1032,7 @@ static bool getPortQos(const ConstString& port, const ConstString& unit,
     return true;
 }
 
-bool NetworkBase::getConnectionQos(const ConstString& src, const ConstString& dest,
+bool NetworkBase::getConnectionQos(const std::string& src, const std::string& dest,
                                    QosStyle& srcStyle, QosStyle& destStyle, bool quiet) {
     if (!getPortQos(src, dest, srcStyle, quiet))
         return false;
@@ -1041,7 +1041,7 @@ bool NetworkBase::getConnectionQos(const ConstString& src, const ConstString& de
     return true;
 }
 
-bool NetworkBase::isValidPortName(const ConstString& portName)
+bool NetworkBase::isValidPortName(const std::string& portName)
 {
     if (portName.empty())
     {
@@ -1113,7 +1113,7 @@ bool NetworkBase::write(const Contact& contact,
     }
 
     const char *connectionName = "admin";
-    ConstString name = contact.getName();
+    std::string name = contact.getName();
     const char *targetName = name.c_str();  // use carefully!
     Contact address = contact;
     if (!address.isValid()) {
@@ -1181,13 +1181,13 @@ bool NetworkBase::write(const Contact& contact,
     return true;
 }
 
-bool NetworkBase::write(const ConstString& port_name,
+bool NetworkBase::write(const std::string& port_name,
                               PortWriter& cmd,
                               PortReader& reply) {
     return write(Contact(port_name), cmd, reply);
 }
 
-bool NetworkBase::isConnected(const ConstString& src, const ConstString& dest,
+bool NetworkBase::isConnected(const std::string& src, const std::string& dest,
                               const ContactStyle& style) {
     int result = metaConnect(src, dest, style, YARP_ENACT_EXISTS);
     if (result!=0) {
@@ -1200,9 +1200,9 @@ bool NetworkBase::isConnected(const ConstString& src, const ConstString& dest,
 }
 
 
-ConstString NetworkBase::getNameServerName() {
+std::string NetworkBase::getNameServerName() {
     NameConfig nc;
-    ConstString name = nc.getNamespace(false);
+    std::string name = nc.getNamespace(false);
     return name.c_str();
 }
 
@@ -1213,9 +1213,9 @@ Contact NetworkBase::getNameServerContact() {
 
 
 
-bool NetworkBase::setNameServerName(const ConstString& name) {
+bool NetworkBase::setNameServerName(const std::string& name) {
     NameConfig nc;
-    ConstString fname = nc.getConfigFileName(YARP_CONFIG_NAMESPACE_FILENAME);
+    std::string fname = nc.getConfigFileName(YARP_CONFIG_NAMESPACE_FILENAME);
     nc.writeConfig(fname, name + "\n");
     nc.getNamespace(true);
     getNameSpace().activate(true);
@@ -1252,7 +1252,7 @@ NameStore *NetworkBase::getQueryBypass() {
 
 
 
-ConstString NetworkBase::getEnvironment(const char *key,
+std::string NetworkBase::getEnvironment(const char *key,
                                         bool *found) {
     const char *result = yarp::os::impl::getenv(key);
     if (found != nullptr) {
@@ -1264,15 +1264,15 @@ ConstString NetworkBase::getEnvironment(const char *key,
     return result;
 }
 
-void NetworkBase::setEnvironment(const ConstString& key, const ConstString& val) {
+void NetworkBase::setEnvironment(const std::string& key, const std::string& val) {
     yarp::os::impl::setenv(key.c_str(), val.c_str(), 1);
 }
 
-void NetworkBase::unsetEnvironment(const ConstString& key) {
+void NetworkBase::unsetEnvironment(const std::string& key) {
     yarp::os::impl::unsetenv(key.c_str());
 }
 
-ConstString NetworkBase::getDirectorySeparator() {
+std::string NetworkBase::getDirectorySeparator() {
 #if defined(_WIN32)
     // note this may be wrong under cygwin
     // should be ok for mingw
@@ -1282,7 +1282,7 @@ ConstString NetworkBase::getDirectorySeparator() {
 #endif
 }
 
-ConstString NetworkBase::getPathSeparator() {
+std::string NetworkBase::getPathSeparator() {
 #if defined(_WIN32)
     // note this may be wrong under cygwin
     // should be ok for mingw
@@ -1361,7 +1361,7 @@ public:
         return getContent().canEscape();
     }
 
-    virtual void handleEnvelope(const yarp::os::ConstString& envelope) override {
+    virtual void handleEnvelope(const std::string& envelope) override {
         getContent().handleEnvelope(envelope);
     }
 
@@ -1441,7 +1441,7 @@ public:
         getContent().prepareDisconnect();
     }
 
-    virtual ConstString getName() override {
+    virtual std::string getName() override {
         return getContent().getName();
     }
 
@@ -1508,7 +1508,7 @@ public:
         return getContent().expectAck(proto);
     }
 
-    virtual ConstString toString() override {
+    virtual std::string toString() override {
         return getContent().toString();
     }
 
@@ -1516,7 +1516,7 @@ public:
         getContent().close();
     }
 
-    virtual ConstString getBootstrapCarrierName() override {
+    virtual std::string getBootstrapCarrierName() override {
         return getContent().getBootstrapCarrierName();
     }
 
@@ -1584,11 +1584,11 @@ public:
         return ncar;
     }
 
-    ConstString getDllName() const {
+    std::string getDllName() const {
        return settings.getLibraryName();
     }
 
-    ConstString getFnName() const {
+    std::string getFnName() const {
         return settings.getMethodName();
     }
 };
@@ -1660,13 +1660,13 @@ bool NetworkBase::writeToNameServer(PortWriter& cmd,
 }
 
 
-ConstString NetworkBase::getConfigFile(const char *fname) {
+std::string NetworkBase::getConfigFile(const char *fname) {
     return NameConfig::expandFilename(fname).c_str();
 }
 
 
 int NetworkBase::getDefaultPortRange() {
-    ConstString range = NetworkBase::getEnvironment("YARP_PORT_RANGE");
+    std::string range = NetworkBase::getEnvironment("YARP_PORT_RANGE");
     if (range!="") {
         int irange = NetType::toInt(range.c_str());
         if (irange != 0) return irange;

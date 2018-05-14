@@ -154,14 +154,14 @@ private:
         std::string     parname;
     };
 
-    yarp::os::ConstString colorFrame_StreamingPort_Name;
-    yarp::os::ConstString depthFrame_StreamingPort_Name;
+    std::string colorFrame_StreamingPort_Name;
+    std::string depthFrame_StreamingPort_Name;
     ImagePortType         colorFrame_StreamingPort;
     DepthPortType         depthFrame_StreamingPort;
 
     // One RPC port should be enough for the wrapper in all cases
     yarp::os::Port        rpcPort;
-    yarp::os::ConstString rpcPort_Name;
+    std::string rpcPort_Name;
     ImageTopicType        rosPublisherPort_color, rosPublisherPort_depth;
     DepthTopicType        rosPublisherPort_colorCaminfo, rosPublisherPort_depthCaminfo;
     yarp::os::Node*       rosNode;

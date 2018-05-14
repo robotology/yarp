@@ -31,9 +31,9 @@ public:
 
     virtual Carrier *create() override;
 
-    virtual ConstString getName() override;
+    virtual std::string getName() override;
 
-    virtual ConstString getSpecifierName();
+    virtual std::string getSpecifierName();
 
     virtual bool checkHeader(const Bytes& header) override;
     virtual void getHeader(const Bytes& header) override;

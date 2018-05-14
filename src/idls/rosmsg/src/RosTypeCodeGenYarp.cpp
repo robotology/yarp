@@ -745,7 +745,7 @@ static void output_type(FILE *out,
                         const RosField& field,
                         std::map<std::string, int>& processed)
 {
-    fprintf(out, "yarp::os::ConstString(\"\\\n");
+    fprintf(out, "std::string(\"\\\n");
     const std::string& name = getDoubleName(field.rosType);
     processed[name] = 1;
     const std::string& source = field.source;
@@ -783,7 +783,7 @@ static void output_type(FILE *out,
         }
         processed[sub_name] = 1;
         string fullClassName = "yarp::rosmsg::" + getDoubleName(sub_field.rosType, "::");
-        fprintf(out, " + yarp::os::ConstString(\"\\n\\\n");
+        fprintf(out, " + std::string(\"\\n\\\n");
         fprintf(out, "================================================================================\\n\\\n");
         fprintf(out, "MSG: %s\\n\\\n", (sub_name == "Header" ? "std_msgs/Header" : sub_name.c_str()));
         fprintf(out, "\")");
@@ -805,7 +805,7 @@ bool RosTypeCodeGenYarp::endType(const std::string& tname,
 
     // See http://wiki.ros.org/roslib/gentools for details about the format
     fprintf(out, "    // Give source text for class, ROS will need this\n");
-    fprintf(out, "    static yarp::os::ConstString typeText()\n");
+    fprintf(out, "    static std::string typeText()\n");
     fprintf(out, "    {\n");
     fprintf(out, "        return ");
     std::map<std::string, int> processed;
@@ -814,7 +814,7 @@ bool RosTypeCodeGenYarp::endType(const std::string& tname,
     fprintf(out, "    }\n");
     fprintf(out, "\n");
 
-    fprintf(out, "    yarp::os::ConstString getTypeText() const\n");
+    fprintf(out, "    std::string getTypeText() const\n");
     fprintf(out, "    {\n");
     fprintf(out, "        return %s::typeText();\n", fullClassName.c_str());
     fprintf(out, "    }\n");

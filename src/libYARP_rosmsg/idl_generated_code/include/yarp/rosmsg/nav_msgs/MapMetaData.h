@@ -205,9 +205,9 @@ public:
     typedef yarp::os::idl::BottleStyle<yarp::rosmsg::nav_msgs::MapMetaData> bottleStyle;
 
     // Give source text for class, ROS will need this
-    static yarp::os::ConstString typeText()
+    static std::string typeText()
     {
-        return yarp::os::ConstString("\
+        return std::string("\
 # This hold basic information about the characterists of the OccupancyGrid\n\
 \n\
 # The time at which the map was loaded\n\
@@ -220,13 +220,13 @@ uint32 width\n\
 uint32 height\n\
 # The origin of the map [m, m, rad].  This is the real-world pose of the\n\
 # cell (0,0) in the map.\n\
-geometry_msgs/Pose origin") + yarp::os::ConstString("\n\
+geometry_msgs/Pose origin") + std::string("\n\
 ================================================================================\n\
 MSG: geometry_msgs/Pose\n\
 ") + yarp::rosmsg::geometry_msgs::Pose::typeText();
     }
 
-    yarp::os::ConstString getTypeText() const
+    std::string getTypeText() const
     {
         return yarp::rosmsg::nav_msgs::MapMetaData::typeText();
     }

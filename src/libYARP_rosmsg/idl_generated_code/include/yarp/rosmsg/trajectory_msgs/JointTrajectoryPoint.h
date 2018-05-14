@@ -260,9 +260,9 @@ public:
     typedef yarp::os::idl::BottleStyle<yarp::rosmsg::trajectory_msgs::JointTrajectoryPoint> bottleStyle;
 
     // Give source text for class, ROS will need this
-    static yarp::os::ConstString typeText()
+    static std::string typeText()
     {
-        return yarp::os::ConstString("\
+        return std::string("\
 # Each trajectory point specifies either positions[, velocities[, accelerations]]\n\
 # or positions[, effort] for the trajectory to be executed.\n\
 # All specified values are in the same order as the joint names in JointTrajectory.msg\n\
@@ -275,7 +275,7 @@ duration time_from_start\n\
 ");
     }
 
-    yarp::os::ConstString getTypeText() const
+    std::string getTypeText() const
     {
         return yarp::rosmsg::trajectory_msgs::JointTrajectoryPoint::typeText();
     }

@@ -366,7 +366,7 @@ public:
     bool verbose() const { return _verb; }
 
     /* Return id of this device */
-    yarp::os::ConstString getId() { return partName; };
+    std::string getId() { return partName; };
 
     /**
     * Default open() method.
@@ -1019,9 +1019,9 @@ public:
 
     /* IRemoteVariables */
 
-    virtual bool getRemoteVariable(yarp::os::ConstString key, yarp::os::Bottle& val) override;
+    virtual bool getRemoteVariable(std::string key, yarp::os::Bottle& val) override;
 
-    virtual bool setRemoteVariable(yarp::os::ConstString key, const yarp::os::Bottle& val) override;
+    virtual bool setRemoteVariable(std::string key, const yarp::os::Bottle& val) override;
 
     virtual bool getRemoteVariablesList(yarp::os::Bottle* listOfKeys) override;
 
@@ -1130,7 +1130,7 @@ public:
     virtual bool setGearboxRatio(int m, const double val) override;
 
     /* IAxisInfo */
-    virtual bool getAxisName(int j, yarp::os::ConstString& name) override;
+    virtual bool getAxisName(int j, std::string& name) override;
 
     virtual bool getJointType(int j, yarp::dev::JointTypeEnum& type) override;
 

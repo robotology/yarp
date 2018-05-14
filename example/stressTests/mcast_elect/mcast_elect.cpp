@@ -16,7 +16,7 @@ using namespace yarp::os;
 
 class Porter : public Thread {
 public:
-  ConstString name;
+  std::string name;
   BufferedPort<Bottle> port;
 
   virtual void run() {
@@ -42,8 +42,8 @@ public:
     if (!b.read(con)) {
       return false;
     }
-    ConstString src = con.getRemoteContact().getName();
-    ConstString txt = b.get(0).asString();
+    std::string src = con.getRemoteContact().getName();
+    std::string txt = b.get(0).asString();
     printf("Reading [%s] from [%s]\n", txt.c_str(), src.c_str());
     if (src!=txt) {
       printf("YIKES!!!\n");
@@ -70,7 +70,7 @@ int main() {
       p.open("/reader");
       Porter writer[N];
       for (int i=0; i<N; i++) {
-	ConstString name = ConstString("/writer/") + ConstString::toString(i);
+	std::string name = std::string("/writer/") + std::string::toString(i);
 	writer[i].name = name;
 	writer[i].port.open(name);
       }

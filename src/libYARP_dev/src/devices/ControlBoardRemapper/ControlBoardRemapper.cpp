@@ -161,7 +161,7 @@ bool ControlBoardRemapper::parseNetworks(const Property& prop)
             if(bot==nullptr)
             {
                 // probably data are not passed in the correct way, try to read them as a string.
-                ConstString bString(parameters.get(1).asString());
+                std::string bString(parameters.get(1).asString());
                 tmpBot.fromString(bString);
 
                 if(tmpBot.size() != 4)
@@ -236,7 +236,7 @@ bool ControlBoardRemapper::updateAxesName()
 
     for(int l=0; l < controlledJoints; l++)
     {
-        yarp::os::ConstString axNameYARP;
+        std::string axNameYARP;
         bool ok = this->getAxisName(l,axNameYARP);
         if( ok )
         {
@@ -293,7 +293,7 @@ bool ControlBoardRemapper::attachAll(const PolyDriverList &polylist)
 // in the passed PolyDriverList and the device in which they belong and their index
 struct axisLocation
 {
-    ConstString subDeviceKey;
+    std::string subDeviceKey;
     size_t indexOfSubDeviceInPolyDriverList;
     int indexInSubDevice;
 };
@@ -343,7 +343,7 @@ bool ControlBoardRemapper::attachAllUsingAxesNames(const PolyDriverList& polylis
 
         for(int axInSubDevice =0; axInSubDevice < nrOfSubdeviceAxes; axInSubDevice++)
         {
-            yarp::os::ConstString axNameYARP;
+            std::string axNameYARP;
             ok = iaxinfos->getAxisName(axInSubDevice,axNameYARP);
 
             std::string axName = axNameYARP.c_str();
@@ -2111,7 +2111,7 @@ bool ControlBoardRemapper::setGearboxRatio(int m, const double val)
 }
 
 /* IRemoteVariables */
-bool ControlBoardRemapper::getRemoteVariable(yarp::os::ConstString key, yarp::os::Bottle& val)
+bool ControlBoardRemapper::getRemoteVariable(std::string key, yarp::os::Bottle& val)
 {
     yWarning("ControlBoardRemapper: getRemoteVariable is not properly implemented, use at your own risk.");
 
@@ -2145,7 +2145,7 @@ bool ControlBoardRemapper::getRemoteVariable(yarp::os::ConstString key, yarp::os
     return b;
 }
 
-bool ControlBoardRemapper::setRemoteVariable(yarp::os::ConstString key, const yarp::os::Bottle& val)
+bool ControlBoardRemapper::setRemoteVariable(std::string key, const yarp::os::Bottle& val)
 {
     yWarning("ControlBoardRemapper: setRemoteVariable is not properly implemented, use at your own risk.");
 
@@ -3187,7 +3187,7 @@ bool ControlBoardRemapper::abortCalibration()
 
 /* IAxisInfo */
 
-bool ControlBoardRemapper::getAxisName(int j, yarp::os::ConstString& name)
+bool ControlBoardRemapper::getAxisName(int j, std::string& name)
 {
     int off=(int)remappedControlBoards.lut[j].axisIndexInSubControlBoard;
     size_t subIndex=remappedControlBoards.lut[j].subControlBoardIndex;

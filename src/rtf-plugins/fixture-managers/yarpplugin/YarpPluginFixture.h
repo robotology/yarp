@@ -34,7 +34,7 @@ private:
     yarp::os::Bottle plugins;
     yarp::os::Bottle portmonitors;
     yarp::os::Bottle carriers;
-    bool scanPlugins(yarp::os::ConstString name, yarp::os::ConstString type="");
+    bool scanPlugins(std::string name, std::string type="");
 };
 
 #endif // YARP_RTF_PLUGINS_YARPPLUGIN_YARPPLUGINFIXTURE_H

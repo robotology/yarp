@@ -40,7 +40,7 @@ public:
      * Construct and configure a device by its common name.
      * @param txt common name of the device
      */
-    PolyDriver(const yarp::os::ConstString& txt) {
+    PolyDriver(const std::string& txt) {
         system_resource = 0 /*NULL*/;
         dd = 0 /*NULL*/;
         open(txt);
@@ -65,7 +65,7 @@ public:
      * @param txt common name of the device
      * @return true iff the device was created and configured successfully
      */
-    bool open(const yarp::os::ConstString& txt);
+    bool open(const std::string& txt);
 
     /**
      * Create and configure a device, by name.  The config
@@ -135,7 +135,7 @@ public:
      * @param option the name of the option to check
      * @return the human-readable description of the option, if found
      */
-    yarp::os::ConstString getComment(const char *option);
+    std::string getComment(const char *option);
 
     /**
      * After a call to PolyDriver::open, you can

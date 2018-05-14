@@ -645,7 +645,7 @@ public:
     * @param name the axis name
     * @return true if everything goes fine, false otherwise.
     */
-    virtual bool getAxisName(int axis, yarp::os::ConstString& name) = 0;
+    virtual bool getAxisName(int axis, std::string& name) = 0;
 
     /* Get the joint type (e.g. revolute/prismatic) for a particular axis.
     * @param axis joint number
@@ -671,7 +671,7 @@ public:
     * @param name the axis name
     * @return true if everything goes fine, false otherwise.
     */
-    virtual bool getAxisNameRaw(int axis, yarp::os::ConstString& name) = 0;
+    virtual bool getAxisNameRaw(int axis, std::string& name) = 0;
 
     /* Get the joint type (e.g. revolute/prismatic) for a particular axis.
     * @param axis joint number

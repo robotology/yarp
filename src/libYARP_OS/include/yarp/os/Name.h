@@ -29,7 +29,7 @@ public:
      *
      * @param txt the port name.
      */
-    Name(const ConstString& txt);
+    Name(const std::string& txt);
 
     /**
      * Check if port name begins with "/"
@@ -48,10 +48,10 @@ public:
      */
     Contact toAddress() const;
 
-    ConstString getCarrierModifier(const char *mod, bool *hasModifier = nullptr);
+    std::string getCarrierModifier(const char *mod, bool *hasModifier = nullptr);
 
 private:
-    ConstString txt;
+    std::string txt;
 };
 
 #endif // YARP_OS_NAME_H

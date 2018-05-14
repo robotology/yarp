@@ -41,7 +41,7 @@ bool yarp::dev::RobotDescriptionClient::open(yarp::os::Searchable &config)
         return false;
     }
 
-    ConstString local_rpc,  remote_rpc;
+    std::string local_rpc,  remote_rpc;
 
     local_rpc  = m_local_name + "/rpc";
     remote_rpc = m_remote_name + "/rpc";

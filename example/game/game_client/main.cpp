@@ -119,7 +119,7 @@ public:
                 Bottle& location = player->findGroup("location");
                 Value& life = player->find("life");
                 char buf[256];
-                ConstString playerName = player->get(0).asString();
+                std::string playerName = player->get(0).asString();
                 if (strlen(playerName.c_str())<40) {
                     sprintf(buf,"PLAYER %s is at (%d,%d) with lifeforce %d",
                                     playerName.c_str(),

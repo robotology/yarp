@@ -256,9 +256,9 @@ public:
     typedef yarp::os::idl::BottleStyle<yarp::rosmsg::sensor_msgs::Range> bottleStyle;
 
     // Give source text for class, ROS will need this
-    static yarp::os::ConstString typeText()
+    static std::string typeText()
     {
-        return yarp::os::ConstString("\
+        return std::string("\
 # Single range reading from an active ranger that emits energy and reports\n\
 # one range reading that is valid along an arc at the distance measured. \n\
 # This message is  not appropriate for laser scanners. See the LaserScan\n\
@@ -298,13 +298,13 @@ float32 range           # range data [m]\n\
                         # -Inf represents a detection within fixed distance.\n\
                         # (Detection too close to the sensor to quantify)\n\
                         # +Inf represents no detection within the fixed distance.\n\
-                        # (Object out of range)") + yarp::os::ConstString("\n\
+                        # (Object out of range)") + std::string("\n\
 ================================================================================\n\
 MSG: std_msgs/Header\n\
 ") + yarp::rosmsg::std_msgs::Header::typeText();
     }
 
-    yarp::os::ConstString getTypeText() const
+    std::string getTypeText() const
     {
         return yarp::rosmsg::sensor_msgs::Range::typeText();
     }

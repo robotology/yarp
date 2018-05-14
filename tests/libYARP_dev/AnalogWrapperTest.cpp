@@ -6,7 +6,7 @@
  * BSD-3-Clause license. See the accompanying LICENSE file for details.
  */
 
-#include <yarp/os/ConstString.h>
+#include <string>
 #include <yarp/os/Network.h>
 #include <yarp/os/LogStream.h>
 #include <yarp/dev/PolyDriver.h>
@@ -22,7 +22,7 @@ using namespace yarp::dev;
 class AnalogWrapperTest : public UnitTest
 {
 public:
-    virtual ConstString getName() override { return "AnalogWrapperTest"; }
+    virtual std::string getName() override { return "AnalogWrapperTest"; }
 
     void testAnalogWrapper() {
         report(0,"\ntest the Analogwrapper ");

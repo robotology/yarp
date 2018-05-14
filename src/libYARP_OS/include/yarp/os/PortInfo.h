@@ -10,7 +10,7 @@
 #ifndef YARP_OS_PORTINFO_H
 #define YARP_OS_PORTINFO_H
 
-#include <yarp/os/ConstString.h>
+#include <string>
 #include <yarp/os/Vocab.h>
 
 
@@ -56,19 +56,19 @@ public:
     bool created;
 
     /// Name of port.
-    ConstString portName;
+    std::string portName;
 
     /// Name of connection source, if any.
-    ConstString sourceName;
+    std::string sourceName;
 
     /// Name of connection target, if any.
-    ConstString targetName;
+    std::string targetName;
 
     /// Name of protocol type, if releveant.
-    ConstString carrierName;
+    std::string carrierName;
 
     /// A human-readable description of contents.
-    ConstString message;
+    std::string message;
 };
 
 

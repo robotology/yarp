@@ -14,9 +14,9 @@
 class YARP_tcpros_carrier_API RosLookup {
 public:
     bool valid;
-    yarp::os::ConstString hostname;
+    std::string hostname;
     int portnum;
-    yarp::os::ConstString protocol;
+    std::string protocol;
     bool verbose;
 
     RosLookup(bool verbose) :
@@ -25,11 +25,11 @@ public:
         verbose(verbose)
     {}
 
-    bool lookupCore(const yarp::os::ConstString& name);
+    bool lookupCore(const std::string& name);
 
-    bool lookupTopic(const yarp::os::ConstString& name);
+    bool lookupTopic(const std::string& name);
 
-    yarp::os::ConstString toString() {
+    std::string toString() {
         char buf[1000];
         sprintf(buf,"/%s:%d/", hostname.c_str(), portnum);
         return buf;

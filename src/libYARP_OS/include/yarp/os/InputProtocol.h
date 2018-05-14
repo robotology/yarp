@@ -14,7 +14,7 @@
 #include <yarp/os/ConnectionReader.h>
 #include <yarp/os/InputStream.h>
 #include <yarp/os/OutputStream.h>
-#include <yarp/os/ConstString.h>
+#include <string>
 #include <yarp/os/Property.h>
 #include <yarp/os/Connection.h>
 #include <yarp/os/SizedWriter.h>
@@ -46,7 +46,7 @@ public:
      * the associated port).
      *
      */
-    virtual bool open(const ConstString& name) = 0;
+    virtual bool open(const std::string& name) = 0;
 
     /**
      *
@@ -154,7 +154,7 @@ public:
      * Set the envelope that will be attached to the next message.
      *
      */
-    virtual void setEnvelope(const ConstString& str) = 0;
+    virtual void setEnvelope(const std::string& str) = 0;
 
     /**
      *

@@ -24,7 +24,7 @@ namespace yarp {
  */
 class yarp::os::MpiP2PStream : public MpiStream {
 public:
-    MpiP2PStream(ConstString name, MpiComm* comm) : MpiStream(name,comm) {};
+    MpiP2PStream(std::string name, MpiComm* comm) : MpiStream(name,comm) {};
 
     using MpiStream::write;
     using MpiStream::read;

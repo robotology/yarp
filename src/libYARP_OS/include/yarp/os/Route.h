@@ -11,19 +11,13 @@
 #define YARP_OS_ROUTE_H
 
 #include <yarp/conf/compiler.h>
-#include <yarp/conf/system.h>
 #include <yarp/os/api.h>
+#include <string>
 
 // Defined in this file:
 namespace yarp { namespace os { class Route; }}
 
 // Other forward declarations:
-#ifndef YARP_WRAP_STL_STRING
-# include <string>
-namespace yarp { namespace os { typedef std::string ConstString; }}
-#else
-namespace yarp { namespace os { class ConstString; }}
-#endif
 namespace yarp { namespace os { class Contact; }}
 
 
@@ -54,9 +48,9 @@ public:
      * @param toName Destination of route.
      * @param carrier Type of carrier.
      */
-    Route(const ConstString& fromName,
-          const ConstString& toName,
-          const ConstString& carrierName);
+    Route(const std::string& fromName,
+          const std::string& toName,
+          const std::string& carrierName);
 
     /**
      * @brief Copy constructor
@@ -101,14 +95,14 @@ public:
      *
      * @return the source of the route (a port name)
      */
-    const ConstString& getFromName() const;
+    const std::string& getFromName() const;
 
     /**
      * @brief Set the source of the route.
      *
      * @param fromName the source of the route (a port name)
      */
-    void setFromName(const ConstString& fromName);
+    void setFromName(const std::string& fromName);
 
 /** @} */
 /** @{ */
@@ -118,14 +112,14 @@ public:
      *
      * @return the destination of the route (a port name)
      */
-    const ConstString& getToName() const;
+    const std::string& getToName() const;
 
     /**
      * @brief Set the destination of the route.
      *
      * @param toName the destination of the route (a port name)
      */
-    void setToName(const ConstString& toName);
+    void setToName(const std::string& toName);
 
 /** @} */
 /** @{ */
@@ -152,14 +146,14 @@ public:
      *
      * @return the carrier type of the route.
      */
-    const ConstString& getCarrierName() const;
+    const std::string& getCarrierName() const;
 
     /**
      * @brief Set the carrier type of the route.
      *
      * @param carrierName the carrier type of the route.
      */
-    void setCarrierName(const ConstString& carrierName);
+    void setCarrierName(const std::string& carrierName);
 
 /** @} */
 /** @{ */
@@ -177,7 +171,7 @@ public:
      *
      * @return the route in text form.
      */
-    ConstString toString() const;
+    std::string toString() const;
 
 /** @} */
 
@@ -194,7 +188,7 @@ public:
      * @deprecated since YARP 2.3.70
      */
     YARP_DEPRECATED_MSG("Use setFromName instead")
-    Route addFromName(const ConstString& fromName) const;
+    Route addFromName(const std::string& fromName) const;
 
     /**
      * @brief Copy this route with a different destination.
@@ -205,7 +199,7 @@ public:
      * @deprecated since YARP 2.3.70
      */
     YARP_DEPRECATED_MSG("Use setToName instead")
-    Route addToName(const ConstString& toName) const;
+    Route addToName(const std::string& toName) const;
 
     /**
      * @brief Copy this route with a different contact.
@@ -227,7 +221,7 @@ public:
      * @deprecated since YARP 2.3.70
      */
     YARP_DEPRECATED_MSG("Use setCarrierName instead")
-    Route addCarrierName(const ConstString& carrierName) const;
+    Route addCarrierName(const std::string& carrierName) const;
 #endif // YARP_NO_DEPRECATED
 
 #ifndef DOXYGEN_SHOULD_SKIP_THIS

@@ -13,7 +13,7 @@
 
 class LogTest : public yarp::os::impl::UnitTest {
 public:
-    virtual yarp::os::ConstString getName() override { return "LogTest"; }
+    virtual std::string getName() override { return "LogTest"; }
 
     void checkLog() {
         int i = 13;

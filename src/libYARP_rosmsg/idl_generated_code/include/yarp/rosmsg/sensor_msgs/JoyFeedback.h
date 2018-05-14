@@ -169,9 +169,9 @@ public:
     typedef yarp::os::idl::BottleStyle<yarp::rosmsg::sensor_msgs::JoyFeedback> bottleStyle;
 
     // Give source text for class, ROS will need this
-    static yarp::os::ConstString typeText()
+    static std::string typeText()
     {
-        return yarp::os::ConstString("\
+        return std::string("\
 # Declare of the type of feedback\n\
 uint8 TYPE_LED    = 0\n\
 uint8 TYPE_RUMBLE = 1\n\
@@ -190,7 +190,7 @@ float32 intensity\n\
 ");
     }
 
-    yarp::os::ConstString getTypeText() const
+    std::string getTypeText() const
     {
         return yarp::rosmsg::sensor_msgs::JoyFeedback::typeText();
     }

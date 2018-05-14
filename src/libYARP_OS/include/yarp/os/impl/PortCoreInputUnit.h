@@ -72,7 +72,7 @@ public:
 
     virtual bool isFinished() override;
 
-    const ConstString& getName();
+    const std::string& getName();
 
     virtual Route getRoute() override;
 
@@ -91,7 +91,7 @@ private:
     InputProtocol *ip;
     SemaphoreImpl phase, access;
     bool closing, finished, running;
-    ConstString name;
+    std::string name;
     yarp::os::PortReader *localReader;
     Route officialRoute;
     bool reversed;

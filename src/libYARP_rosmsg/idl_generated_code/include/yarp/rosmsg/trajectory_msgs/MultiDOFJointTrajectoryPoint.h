@@ -252,9 +252,9 @@ public:
     typedef yarp::os::idl::BottleStyle<yarp::rosmsg::trajectory_msgs::MultiDOFJointTrajectoryPoint> bottleStyle;
 
     // Give source text for class, ROS will need this
-    static yarp::os::ConstString typeText()
+    static std::string typeText()
     {
-        return yarp::os::ConstString("\
+        return std::string("\
 # Each multi-dof joint can specify a transform (up to 6 DOF)\n\
 geometry_msgs/Transform[] transforms\n\
 \n\
@@ -265,16 +265,16 @@ geometry_msgs/Twist[] velocities\n\
 geometry_msgs/Twist[] accelerations\n\
 \n\
 duration time_from_start\n\
-") + yarp::os::ConstString("\n\
+") + std::string("\n\
 ================================================================================\n\
 MSG: geometry_msgs/Transform\n\
-") + yarp::rosmsg::geometry_msgs::Transform::typeText() + yarp::os::ConstString("\n\
+") + yarp::rosmsg::geometry_msgs::Transform::typeText() + std::string("\n\
 ================================================================================\n\
 MSG: geometry_msgs/Twist\n\
 ") + yarp::rosmsg::geometry_msgs::Twist::typeText();
     }
 
-    yarp::os::ConstString getTypeText() const
+    std::string getTypeText() const
     {
         return yarp::rosmsg::trajectory_msgs::MultiDOFJointTrajectoryPoint::typeText();
     }

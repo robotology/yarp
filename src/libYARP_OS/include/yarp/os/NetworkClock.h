@@ -28,7 +28,7 @@ public:
     NetworkClock();
     virtual ~NetworkClock();
 
-    bool open(const ConstString& clockSourcePortName, ConstString localPortName="");
+    bool open(const std::string& clockSourcePortName, std::string localPortName="");
 
     virtual double now() override;
     virtual void delay(double seconds) override;
@@ -37,7 +37,7 @@ public:
     virtual bool read(ConnectionReader& reader) override;
 private:
 
-    ConstString clockName;
+    std::string clockName;
     void *pwaiters;
     Port port;
 

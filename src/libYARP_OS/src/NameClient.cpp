@@ -143,11 +143,11 @@ Contact NameClient::getAddress()
     return address;
 }
 
-Contact NameClient::queryName(const ConstString& name)
+Contact NameClient::queryName(const std::string& name)
 {
-    ConstString np = name;
+    std::string np = name;
     size_t i1 = np.find(':');
-    if (i1 != ConstString::npos) {
+    if (i1 != std::string::npos) {
         Contact c = c.fromString(np.c_str());
         if (c.isValid() && c.getPort() > 0) {
             return c;
@@ -159,19 +159,19 @@ Contact NameClient::queryName(const ConstString& name)
         return c;
     }
 
-    ConstString q("NAME_SERVER query ");
+    std::string q("NAME_SERVER query ");
     q += np;
     return probe(q);
 }
 
-Contact NameClient::registerName(const ConstString& name)
+Contact NameClient::registerName(const std::string& name)
 {
     return registerName(name, Contact());
 }
 
-Contact NameClient::registerName(const ConstString& name, const Contact& suggest)
+Contact NameClient::registerName(const std::string& name, const Contact& suggest)
 {
-    ConstString np = name;
+    std::string np = name;
     Bottle cmd;
     cmd.addString("register");
     if (np != "") {
@@ -179,9 +179,9 @@ Contact NameClient::registerName(const ConstString& name, const Contact& suggest
     } else {
         cmd.addString("...");
     }
-    ConstString prefix = NetworkBase::getEnvironment("YARP_IP");
+    std::string prefix = NetworkBase::getEnvironment("YARP_IP");
     const NestedContact& nc = suggest.getNested();
-    ConstString typ = nc.getTypeNameStar();
+    std::string typ = nc.getTypeNameStar();
     if (suggest.isValid() || prefix != "" || typ != "*") {
         if (suggest.getCarrier() != "") {
             cmd.addString(suggest.getCarrier().c_str());
@@ -194,7 +194,7 @@ Contact NameClient::registerName(const ConstString& name, const Contact& suggest
             if (prefix != "") {
                 Bottle ips = NameConfig::getIpsAsBottle();
                 for (int i = 0; i < ips.size(); i++) {
-                    ConstString ip = ips.get(i).asString().c_str();
+                    std::string ip = ips.get(i).asString().c_str();
                     if (ip.find(prefix) == 0) {
                         prefix = ip.c_str();
                         break;
@@ -221,7 +221,7 @@ Contact NameClient::registerName(const ConstString& name, const Contact& suggest
 
     Contact address = extractAddress(reply);
     if (address.isValid()) {
-        ConstString reg = address.getRegName();
+        std::string reg = address.getRegName();
 
 
         std::string cmdOffers = "set /port offers ";
@@ -256,26 +256,26 @@ Contact NameClient::registerName(const ConstString& name, const Contact& suggest
     return address;
 }
 
-Contact NameClient::unregisterName(const ConstString& name)
+Contact NameClient::unregisterName(const std::string& name)
 {
-    ConstString np = name;
-    ConstString q("NAME_SERVER unregister ");
+    std::string np = name;
+    std::string q("NAME_SERVER unregister ");
     q += np;
     return probe(q);
 }
 
-Contact NameClient::probe(const ConstString& cmd)
+Contact NameClient::probe(const std::string& cmd)
 {
-    ConstString result = send(cmd);
+    std::string result = send(cmd);
     return extractAddress(result);
 }
 
-Contact NameClient::extractAddress(const ConstString& txt)
+Contact NameClient::extractAddress(const std::string& txt)
 {
     Params p(txt.c_str());
     if (p.size() >= 9) {
         // registration name /bozo ip 5.255.112.225 port 10002 type tcp
-        if (ConstString(p.get(0)) == "registration") {
+        if (std::string(p.get(0)) == "registration") {
             const char* regName = p.get(2);
             const char* ip = p.get(4);
             int port = atoi(p.get(6));
@@ -299,7 +299,7 @@ Contact NameClient::extractAddress(const Bottle& bot)
     return Contact();
 }
 
-ConstString NameClient::send(const ConstString& cmd, bool multi)
+std::string NameClient::send(const std::string& cmd, bool multi)
 {
     //printf("*** OLD YARP command %s\n", cmd.c_str());
     setup();
@@ -308,7 +308,7 @@ ConstString NameClient::send(const ConstString& cmd, bool multi)
         ContactStyle style;
         Bottle bcmd(cmd.c_str()), reply;
         NetworkBase::writeToNameServer(bcmd, reply, style);
-        ConstString si = reply.toString(), so;
+        std::string si = reply.toString(), so;
         for (int i = 0; i < (int)si.length(); i++) {
             if (si[i] != '\"') {
                 so += si[i];
@@ -318,14 +318,14 @@ ConstString NameClient::send(const ConstString& cmd, bool multi)
     }
     bool retried = false;
     bool retry = false;
-    ConstString result;
+    std::string result;
     Contact server = getAddress();
     float timeout = 10;
     server.setTimeout(timeout);
 
     do {
 
-        YARP_DEBUG(Logger::get(), ConstString("sending to nameserver: ") + cmd);
+        YARP_DEBUG(Logger::get(), std::string("sending to nameserver: ") + cmd);
 
         if (isFakeMode()) {
             //YARP_DEBUG(Logger::get(), "fake mode nameserver");
@@ -333,7 +333,7 @@ ConstString NameClient::send(const ConstString& cmd, bool multi)
         }
 
         TcpFace face;
-        YARP_DEBUG(Logger::get(), ConstString("connecting to ") + getAddress().toURI());
+        YARP_DEBUG(Logger::get(), std::string("connecting to ") + getAddress().toURI());
         OutputProtocol* ip = nullptr;
         if (!retry) {
             ip = face.write(server);
@@ -377,12 +377,12 @@ ConstString NameClient::send(const ConstString& cmd, bool multi)
                 return "";
             }
         }
-        ConstString cmdn = cmd + "\n";
+        std::string cmdn = cmd + "\n";
         Bytes b((char*)cmdn.c_str(), cmdn.length());
         ip->getOutputStream().write(b);
         bool more = multi;
         while (more) {
-            ConstString line = "";
+            std::string line = "";
             line = ip->getInputStream().readLine();
             if (!(ip->isOk())) {
                 //YARP_DEBUG(Logger::get(), e.toString() + " <<< exception from name server");
@@ -490,7 +490,7 @@ NameStore* NameClient::getQueryBypass()
     return altStore;
 }
 
-yarp::os::ConstString NameClient::getMode()
+std::string NameClient::getMode()
 {
     return mode.c_str();
 }
@@ -518,7 +518,7 @@ void NameClient::setup()
             YARP_ERROR(Logger::get(), "Cannot find name server");
         }
 
-        YARP_DEBUG(Logger::get(), ConstString("name server address is ") + address.toURI());
+        YARP_DEBUG(Logger::get(), std::string("name server address is ") + address.toURI());
         isSetup = true;
     }
     mutex.unlock();

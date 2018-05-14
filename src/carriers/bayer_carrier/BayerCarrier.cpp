@@ -105,7 +105,7 @@ yarp::os::ConnectionReader& BayerCarrier::modifyIncomingData(yarp::os::Connectio
             }
         }
         if (config.check("method")) {
-            ConstString method = config.find("method").asString();
+            std::string method = config.find("method").asString();
             bayer_method_set = true;
             if (method=="ahd") {
                 m = DC1394_BAYER_METHOD_AHD;
@@ -363,7 +363,7 @@ YARP_SSIZE_T BayerCarrier::read(const yarp::os::Bytes& b) {
 
 bool BayerCarrier::setFormat(const char *fmt) {
     dcformat = DC1394_COLOR_FILTER_GRBG;
-    ConstString f(fmt);
+    std::string f(fmt);
     if (f.length()<2) return false;
     goff = (f[0]=='g'||f[0]=='G')?0:1;
     roff = (f[0]=='r'||f[0]=='R'||f[1]=='r'||f[1]=='R')?0:1;

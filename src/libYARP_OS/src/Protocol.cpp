@@ -40,7 +40,7 @@ Protocol::Protocol(TwoWayStream* stream) :
     reader.setProtocol(this);
 }
 
-bool Protocol::open(const ConstString& name) {
+bool Protocol::open(const std::string& name) {
     if (name=="") {
         return false;
     }
@@ -73,9 +73,9 @@ void Protocol::setRoute(const Route& route) {
     // We reorganize the route to reduce variation in naming.
     // If there are qualifiers in the source port name, propagate
     // those qualifiers to the carrier.
-    ConstString from = r.getFromName();
-    ConstString carrier = r.getCarrierName();
-    if (from.find(' ')!=ConstString::npos) {
+    std::string from = r.getFromName();
+    std::string carrier = r.getCarrierName();
+    if (from.find(' ')!=std::string::npos) {
         Bottle b(from.c_str());
         if (b.size()>1) {
             r.setFromName(b.get(0).toString().c_str());
@@ -114,17 +114,17 @@ void Protocol::setRoute(const Route& route) {
 }
 
 
-ConstString Protocol::getSenderSpecifier() {
+std::string Protocol::getSenderSpecifier() {
     Route r = getRoute();
     // We pull the sender name from the route.
-    ConstString from = r.getFromName();
+    std::string from = r.getFromName();
     // But we need to add any qualifiers looking in the carrier
     // name.  Ideally, we wouldn't need to bundle that in with
     // the sender name, but we do it for now in the name of
     // backwards compatibility.
-    ConstString carrier = r.getCarrierName();
+    std::string carrier = r.getCarrierName();
     size_t start = carrier.find('+');
-    if (start!=ConstString::npos) {
+    if (start!=std::string::npos) {
         from += " (";
         for (size_t i=start+1; i<(size_t)carrier.length(); i++) {
             char ch = carrier[i];
@@ -149,8 +149,8 @@ bool Protocol::getRecvDelegate() {
     if (recv_delegate_fail) return false;
     Bottle b(getSenderSpecifier().c_str());
     // Check for a "recv" qualifier.
-    ConstString tag = b.find("recv").asString();
-    recv_delegate = Carriers::chooseCarrier(ConstString(tag.c_str()));
+    std::string tag = b.find("recv").asString();
+    recv_delegate = Carriers::chooseCarrier(std::string(tag.c_str()));
     if (!recv_delegate) {
         fprintf(stderr, "Need carrier \"%s\", but cannot find it.\n",
                 tag.c_str());
@@ -183,8 +183,8 @@ bool Protocol::getSendDelegate() {
     if (send_delegate_fail) return false;
     Bottle b(getSenderSpecifier().c_str());
     // Check for a "send" qualifier.
-    ConstString tag = b.find("send").asString();
-    send_delegate = Carriers::chooseCarrier(ConstString(tag.c_str()));
+    std::string tag = b.find("send").asString();
+    send_delegate = Carriers::chooseCarrier(std::string(tag.c_str()));
     if (!send_delegate) {
         fprintf(stderr, "Need carrier \"%s\", but cannot find it.\n",
                 tag.c_str());
@@ -304,10 +304,10 @@ bool Protocol::expectIndex() {
     return ok;
 }
 
-void Protocol::setCarrier(const ConstString& carrierNameBase) {
+void Protocol::setCarrier(const std::string& carrierNameBase) {
     // Set up the carrier for this connection.  The carrier
     // has all the protocol-specific behavior.
-    ConstString carrierName = carrierNameBase;
+    std::string carrierName = carrierNameBase;
     if (carrierNameBase=="") carrierName = "tcp";
     Route route = getRoute();
     route.setCarrierName(carrierName);
@@ -377,7 +377,7 @@ bool Protocol::expectProtocolSpecifier() {
         delegate = Carriers::chooseCarrier(header);
         if (delegate==nullptr) {
             // Carrier not found; send a human-readable message.
-            ConstString msg = "* Error. Protocol not found.\r\n* Hello. You appear to be trying to communicate with a YARP Port.\r\n* The first 8 bytes sent to a YARP Port are critical for identifying the\r\n* protocol you wish to speak.\r\n* The first 8 bytes you sent were not associated with any particular protocol.\r\n* If you are a human, try typing \"CONNECT foo\" followed by a <RETURN>.\r\n* The 8 bytes \"CONNECT \" correspond to a simple text-mode protocol.\r\n* Goodbye.\r\n";
+            std::string msg = "* Error. Protocol not found.\r\n* Hello. You appear to be trying to communicate with a YARP Port.\r\n* The first 8 bytes sent to a YARP Port are critical for identifying the\r\n* protocol you wish to speak.\r\n* The first 8 bytes you sent were not associated with any particular protocol.\r\n* If you are a human, try typing \"CONNECT foo\" followed by a <RETURN>.\r\n* The 8 bytes \"CONNECT \" correspond to a simple text-mode protocol.\r\n* Goodbye.\r\n";
             yarp::os::Bytes b((char*)msg.c_str(), msg.length());
             os().write(b);
             os().flush();
@@ -432,7 +432,7 @@ bool Protocol::write(SizedWriter& writer) {
     if (reply!=nullptr) {
         if (!delegate->supportReply()) {
             // We are expected to get a reply, but cannot.
-            YARP_INFO(log, ConstString("connection ") + getRoute().toString() + " does not support replies (try \"tcp\" or \"text_ack\")");
+            YARP_INFO(log, std::string("connection ") + getRoute().toString() + " does not support replies (try \"tcp\" or \"text_ack\")");
         }
         if (ok) {
             // Read reply.

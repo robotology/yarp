@@ -36,7 +36,7 @@ public:
 
 class NodeTest : public UnitTest {
 public:
-    virtual ConstString getName() override { return "NodeTest"; }
+    virtual std::string getName() override { return "NodeTest"; }
 
     void parseNameTest();
     void basicNodeTest();
@@ -61,14 +61,14 @@ private:
         checkFalse(p.open("nameWithoutSlash+"), "open port with wrong name should fail");
     }
 
-    void parseName(const ConstString& arg,
-                   const ConstString& node,
-                   const ConstString& nested,
-                   const ConstString& cat) {
+    void parseName(const std::string& arg,
+                   const std::string& node,
+                   const std::string& nested,
+                   const std::string& cat) {
         NestedContact nc(arg);
-        checkEqual(nc.getNodeName(),node,(ConstString("node name matches for ") + arg).c_str());
-        checkEqual(nc.getNestedName(),nested,(ConstString("nested name matches for ") + arg).c_str());
-        checkEqual(nc.getCategory(),cat,(ConstString("category matches for ") + arg).c_str());
+        checkEqual(nc.getNodeName(),node,(std::string("node name matches for ") + arg).c_str());
+        checkEqual(nc.getNestedName(),nested,(std::string("nested name matches for ") + arg).c_str());
+        checkEqual(nc.getCategory(),cat,(std::string("category matches for ") + arg).c_str());
     }
 };
 
@@ -178,8 +178,8 @@ void NodeTest::basicApiTest() {
     NameClient::getNameClient().getNodes().clear();
 }
 
-static bool waitConnect(const ConstString& n1,
-                        const ConstString& n2,
+static bool waitConnect(const std::string& n1,
+                        const std::string& n2,
                         double timeout) {
     double start = Time::now();
     while (Time::now()-start<timeout) {

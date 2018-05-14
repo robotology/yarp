@@ -251,7 +251,7 @@ bool JoypadControlServer::open(yarp::os::Searchable& params)
                    "profile            - print the joypad data for debugging purpose";
         return false;
     }
-    yarp::os::ConstString rootName;
+    std::string rootName;
     if (!params.check("period", "refresh period of the broadcasted values in ms"))
     {
         yInfo() << "JoypadControlServer: using default 'period' parameter of " << DEFAULT_THREAD_PERIOD << "ms";

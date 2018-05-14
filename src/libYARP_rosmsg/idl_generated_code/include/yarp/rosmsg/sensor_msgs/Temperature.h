@@ -154,9 +154,9 @@ public:
     typedef yarp::os::idl::BottleStyle<yarp::rosmsg::sensor_msgs::Temperature> bottleStyle;
 
     // Give source text for class, ROS will need this
-    static yarp::os::ConstString typeText()
+    static std::string typeText()
     {
-        return yarp::os::ConstString("\
+        return std::string("\
  # Single temperature reading.\n\
 \n\
  Header header           # timestamp is the time the temperature was measured\n\
@@ -164,13 +164,13 @@ public:
 \n\
  float64 temperature     # Measurement of the Temperature in Degrees Celsius\n\
 \n\
- float64 variance        # 0 is interpreted as variance unknown") + yarp::os::ConstString("\n\
+ float64 variance        # 0 is interpreted as variance unknown") + std::string("\n\
 ================================================================================\n\
 MSG: std_msgs/Header\n\
 ") + yarp::rosmsg::std_msgs::Header::typeText();
     }
 
-    yarp::os::ConstString getTypeText() const
+    std::string getTypeText() const
     {
         return yarp::rosmsg::sensor_msgs::Temperature::typeText();
     }

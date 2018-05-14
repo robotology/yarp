@@ -134,9 +134,9 @@ public:
      * @return the name of the objects constructed by this plugin
      *
      */
-    ConstString getName() {
+    std::string getName() {
         if (!factory) {
-            return ConstString();
+            return std::string();
         }
         return factory->getName();
     }
@@ -146,9 +146,9 @@ public:
      * @return the type of the objects constructed by this plugin
      *
      */
-    ConstString getClassName() {
+    std::string getClassName() {
         if (!factory) {
-            return ConstString();
+            return std::string();
         }
         return factory->getClassName();
     }
@@ -158,9 +158,9 @@ public:
      * @return the base class the objects constructed by this plugin
      *
      */
-    ConstString getBaseClassName() {
+    std::string getBaseClassName() {
         if (!factory) {
-            return ConstString();
+            return std::string();
         }
         return factory->getBaseClassName();
     }

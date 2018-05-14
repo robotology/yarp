@@ -14,7 +14,7 @@
 #include <yarp/os/Portable.h>
 #include <yarp/os/Searchable.h>
 
-#include <yarp/os/ConstString.h>
+#include <string>
 #include <yarp/os/Property.h>
 #include <yarp/os/Value.h>
 
@@ -79,7 +79,7 @@ public:
      *
      * @param text the textual form of the bottle to be interpreted.
      */
-    explicit Bottle(const ConstString& text);
+    explicit Bottle(const std::string& text);
 
     /**
      * Copy constructor.
@@ -147,7 +147,7 @@ public:
      *
      * @param str the string to add.
      */
-    void addString(const ConstString& str);
+    void addString(const std::string& str);
 
     /**
      * Add a Value to the bottle, at the end of the list.
@@ -224,7 +224,7 @@ public:
      *
      * @param text the textual form of the bottle to be interpreted.
      */
-    void fromString(const ConstString& text);
+    void fromString(const std::string& text);
 
     /**
      * Initializes bottle from a binary representation.
@@ -254,7 +254,7 @@ public:
      *
      * @return a textual representation of the bottle.
      */
-    ConstString toString() const override;
+    std::string toString() const override;
 
     /**
      * Output a representation of the bottle to a network connection.
@@ -297,11 +297,11 @@ public:
 
     void onCommencement() override;
 
-    virtual bool check(const ConstString& key) const override;
+    virtual bool check(const std::string& key) const override;
 
-    virtual Value& find(const ConstString& key) const override;
+    virtual Value& find(const std::string& key) const override;
 
-    Bottle& findGroup(const ConstString& key) const override;
+    Bottle& findGroup(const std::string& key) const override;
 
     virtual bool isNull() const override;
 
@@ -362,7 +362,7 @@ public:
      */
     void hasChanged();
 
-    static ConstString toString(int x);
+    static std::string toString(int x);
 
     /**
      * Get numeric bottle code for this bottle.
@@ -378,7 +378,7 @@ public:
      * @return a string representation of the code's meaning
      *
      */
-    static ConstString describeBottleCode(int code);
+    static std::string describeBottleCode(int code);
 
 
 protected:

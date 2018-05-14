@@ -11,7 +11,7 @@
 #define YARP_OS_NESTEDCONTACT_H
 
 #include <yarp/os/api.h>
-#include <yarp/os/ConstString.h>
+#include <string>
 
 namespace yarp {
 namespace os {
@@ -37,7 +37,7 @@ public:
      *
      * @param fullName the full name.
      */
-    NestedContact(const ConstString& fullName);
+    NestedContact(const std::string& fullName);
 
     /**
      * @brief Copy constructor.
@@ -77,29 +77,29 @@ public:
     /** @} */
     /** @{ */
 
-    bool fromString(const ConstString& nFullName);
+    bool fromString(const std::string& nFullName);
 
-    void setTypeName(const ConstString& nWireType);
+    void setTypeName(const std::string& nWireType);
 
     void setCategoryWrite();
 
     void setCategoryRead();
 
-    ConstString getFullName() const;
+    std::string getFullName() const;
 
-    ConstString getNodeName() const;
+    std::string getNodeName() const;
 
-    ConstString getNestedName() const;
+    std::string getNestedName() const;
 
-    ConstString getCategory() const;
+    std::string getCategory() const;
 
-    ConstString getTypeName() const;
+    std::string getTypeName() const;
 
-    ConstString getTypeNameStar() const;
+    std::string getTypeNameStar() const;
 
     bool isNested() const;
 
-    ConstString toString() const;
+    std::string toString() const;
 
     /** @} */
 

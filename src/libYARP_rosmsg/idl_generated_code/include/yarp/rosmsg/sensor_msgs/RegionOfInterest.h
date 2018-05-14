@@ -196,9 +196,9 @@ public:
     typedef yarp::os::idl::BottleStyle<yarp::rosmsg::sensor_msgs::RegionOfInterest> bottleStyle;
 
     // Give source text for class, ROS will need this
-    static yarp::os::ConstString typeText()
+    static std::string typeText()
     {
-        return yarp::os::ConstString("\
+        return std::string("\
 # This message is used to specify a region of interest within an image.\n\
 #\n\
 # When used to specify the ROI setting of the camera when the image was\n\
@@ -221,7 +221,7 @@ bool do_rectify\n\
 ");
     }
 
-    yarp::os::ConstString getTypeText() const
+    std::string getTypeText() const
     {
         return yarp::rosmsg::sensor_msgs::RegionOfInterest::typeText();
     }

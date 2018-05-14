@@ -8,7 +8,7 @@
  */
 
 #include <yarp/os/impl/UdpCarrier.h>
-#include <yarp/os/ConstString.h>
+#include <string>
 
 using namespace yarp::os;
 using namespace yarp::os::impl;
@@ -20,7 +20,7 @@ yarp::os::Carrier *yarp::os::impl::UdpCarrier::create() {
     return new UdpCarrier();
 }
 
-yarp::os::ConstString yarp::os::impl::UdpCarrier::getName() {
+std::string yarp::os::impl::UdpCarrier::getName() {
     return "udp";
 }
 
@@ -73,8 +73,8 @@ bool yarp::os::impl::UdpCarrier::respondToHeader(ConnectionState& proto) {
 bool yarp::os::impl::UdpCarrier::expectReplyToHeader(ConnectionState& proto) {
     // I am the sender
     int myPort = proto.getStreams().getLocalAddress().getPort();
-    ConstString myName = proto.getStreams().getLocalAddress().getHost();
-    ConstString altName = proto.getStreams().getRemoteAddress().getHost();
+    std::string myName = proto.getStreams().getLocalAddress().getHost();
+    std::string altName = proto.getStreams().getRemoteAddress().getHost();
 
     int altPort = readYarpInt(proto);
 

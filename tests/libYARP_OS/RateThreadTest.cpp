@@ -265,7 +265,7 @@ private:
     };
 
 public:
-    virtual ConstString getName() override { return "RateThreadTest"; }
+    virtual std::string getName() override { return "RateThreadTest"; }
 
     double test(int rate, double delay)
     {

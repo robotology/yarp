@@ -91,7 +91,7 @@ SystemInfo::capacity_t getMemEntry(const char *tag, const char *bufptr)
 }
 
 
-bool getCpuEntry(const char* tag, const char *buff, yarp::os::ConstString& value)
+bool getCpuEntry(const char* tag, const char *buff, std::string& value)
 {
     if (strlen(buff) <= strlen(tag))
         return false;
@@ -108,7 +108,7 @@ bool getCpuEntry(const char* tag, const char *buff, yarp::os::ConstString& value
     while((*pos2 != ':') && ((*pos2 == ' ')||(*pos2 == '\n'))) pos2--;
     if (pos2 < pos1)
         return false;
-    value = yarp::os::ConstString(pos1, pos2-pos1+1);
+    value = std::string(pos1, pos2-pos1+1);
     return true;
 }
 #endif
@@ -312,7 +312,7 @@ SystemInfo::StorageInfo SystemInfo::getStorageInfo()
 
         DWORD dwSectorsPerCluster=0, dwBytesPerSector=0;
         DWORD dwFreeClusters=0, dwTotalClusters=0;
-        yarp::os::ConstString strHome = getUserInfo().homeDir;
+        std::string strHome = getUserInfo().homeDir;
         if (!strHome.length())
             strHome = "C:\\";
         if (GetDiskFreeSpaceA(strHome.c_str(), &dwSectorsPerCluster,
@@ -324,7 +324,7 @@ SystemInfo::StorageInfo SystemInfo::getStorageInfo()
 #endif
 
 #if defined(__linux__)
-    yarp::os::ConstString strHome = getUserInfo().homeDir;
+    std::string strHome = getUserInfo().homeDir;
     if (!strHome.length())
         strHome = "/home";
 
@@ -338,7 +338,7 @@ SystemInfo::StorageInfo SystemInfo::getStorageInfo()
 #endif
 
 #if defined(__APPLE__)
-    yarp::os::ConstString strHome = getUserInfo().homeDir;
+    std::string strHome = getUserInfo().homeDir;
     if (!strHome.length())
         strHome = "/";
 
@@ -490,7 +490,7 @@ SystemInfo::ProcessorInfo SystemInfo::getProcessorInfo()
     {
         while(fgets(buffer, 128, proccpu))
         {
-            yarp::os::ConstString value;
+            std::string value;
             if (getCpuEntry("model", buffer, value) &&
                !getCpuEntry("model name", buffer, value))
                 processor.modelNumber = atoi(value.c_str());
@@ -516,7 +516,7 @@ SystemInfo::ProcessorInfo SystemInfo::getProcessorInfo()
       processor.architecture = uts.machine;
     }
 #elif defined(__APPLE__)
-//    yarp::os::ConstString architecture;
+//    std::string architecture;
 
     int mib [] = { CTL_HW, HW_CPU_FREQ };
     int64_t value = 0;
@@ -636,7 +636,7 @@ SystemInfo::PlatformInfo SystemInfo::getPlatformInfo()
     {
         while(fgets(buffer, 128, release))
         {
-            yarp::os::ConstString value;
+            std::string value;
             if (getCpuEntry("Distributor ID", buffer, value))
                 platform.distribution = value;
             if (getCpuEntry("Release", buffer, value))
@@ -803,7 +803,7 @@ SystemInfo::ProcessInfo SystemInfo::getProcessInfo(int pid)
             // split the cmdline to find the arguments
             info.name = cmdline;
             size_t index = info.name.find(' ');
-            if (index != ConstString::npos) {
+            if (index != std::string::npos) {
                 info.name = info.name.substr(0, index);
                 info.arguments = cmdline;
                 info.arguments = info.arguments.substr(index+1);

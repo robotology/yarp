@@ -10,7 +10,7 @@
 #ifndef YARP_OS_IMPL_NAMESERVER_H
 #define YARP_OS_IMPL_NAMESERVER_H
 
-#include <yarp/os/ConstString.h>
+#include <string>
 #include <yarp/os/Contact.h>
 #include <yarp/os/impl/Logger.h>
 #include <yarp/os/impl/Dispatcher.h>
@@ -46,7 +46,7 @@ class YARP_OS_impl_API yarp::os::impl::NameServerStub
 {
 public:
     virtual ~NameServerStub() {}
-    virtual ConstString apply(const ConstString& txt, const Contact& remote) = 0;
+    virtual std::string apply(const std::string& txt, const Contact& remote) = 0;
 };
 
 /**
@@ -66,31 +66,31 @@ public:
 
     // address may be partial - partial information gets filled in
     // (not YARP2 compliant yet, won't do fill-in)
-    Contact registerName(const ConstString& name,
+    Contact registerName(const std::string& name,
                          const Contact& address)
     {
         return registerName(name, address, "...");
     }
 
-    Contact registerName(const ConstString& name,
+    Contact registerName(const std::string& name,
                          const Contact& address,
-                         const ConstString& remote);
+                         const std::string& remote);
 
-    Contact registerName(const ConstString& name)
+    Contact registerName(const std::string& name)
     {
         return registerName(name, Contact());
     }
 
-    Contact queryName(const ConstString& name);
+    Contact queryName(const std::string& name);
 
-    Contact unregisterName(const ConstString& name);
+    Contact unregisterName(const std::string& name);
 
-    virtual ConstString apply(const ConstString& txt, const Contact& remote) override;
+    virtual std::string apply(const std::string& txt, const Contact& remote) override;
 
     bool apply(const yarp::os::Bottle& cmd, yarp::os::Bottle& result,
                const Contact& remote);
 
-    ConstString apply(const ConstString& txt)
+    std::string apply(const std::string& txt)
     {
         return apply(txt, Contact());
     }
@@ -100,7 +100,7 @@ public:
         YARP_UNUSED(event);
     }
 
-    static ConstString textify(const Contact& address);
+    static std::string textify(const Contact& address);
     static yarp::os::Bottle botify(const Contact& address);
 
     void setBasePort(int basePort)
@@ -145,7 +145,7 @@ private:
     {
     private:
         int base;
-        ConstString prefix;
+        std::string prefix;
     public:
         DisposableNameRecord()
         {
@@ -153,7 +153,7 @@ private:
             prefix = "/tmp/port/";
         }
 
-        ConstString get()
+        std::string get()
         {
             return prefix + NetType::toString(getFree());
         }
@@ -165,10 +165,10 @@ private:
             return result;
         }
 
-        bool release(const ConstString& name)
+        bool release(const std::string& name)
         {
             if (name.find(prefix)==0) {
-                ConstString num = name.substr(prefix.length());
+                std::string num = name.substr(prefix.length());
                 int x = NetType::toInt(num.c_str());
                 ReusableRecord<int>::release(x);
                 return true;
@@ -198,7 +198,7 @@ private:
         int get()
         {
             int result = ReusableRecord<int>::getFree();
-            //YARP_DEBUG(Logger::get(), ConstString("host record says ") +
+            //YARP_DEBUG(Logger::get(), std::string("host record says ") +
             //NetType::toString(result) + " is free");
             return result;
         }
@@ -239,14 +239,14 @@ private:
             return result;
         }
 
-        ConstString get()
+        std::string get()
         {
             int x = getFree();
             last = x;
             int v1 = x%255;
             int v2 = x/255;
             yAssert(v2<255);
-            return ConstString("224.1.") + NetType::toString(v2+1) + "." +
+            return std::string("224.1.") + NetType::toString(v2+1) + "." +
                 NetType::toString(v1+1);
         }
 
@@ -275,7 +275,7 @@ private:
     class PropertyRecord
     {
     private:
-        std::vector<ConstString> prop;
+        std::vector<std::string> prop;
     public:
         PropertyRecord()
         {
@@ -286,12 +286,12 @@ private:
             prop.clear();
         }
 
-        void add(const ConstString& p)
+        void add(const std::string& p)
         {
             prop.push_back(p);
         }
 
-        bool check(const ConstString& p)
+        bool check(const std::string& p)
         {
             for (unsigned int i=0; i<prop.size(); i++) {
                 if (prop[i]==p) {
@@ -301,9 +301,9 @@ private:
             return false;
         }
 
-        ConstString match(const ConstString& str)
+        std::string match(const std::string& str)
         {
-            ConstString base = "";
+            std::string base = "";
             bool needSpace = false;
             for (unsigned int i=0; i<prop.size(); i++) {
                 if (prop[i].find(str)==0) {
@@ -315,9 +315,9 @@ private:
             return base;
         }
 
-        ConstString toString()
+        std::string toString()
         {
-            ConstString base = "";
+            std::string base = "";
             for (unsigned int i=0; i<prop.size(); i++) {
                 if (i>0) {
                     base += " ";
@@ -333,7 +333,7 @@ private:
     private:
         bool reusablePort;
         bool reusableIp;
-        std::map<ConstString, PropertyRecord> propMap;
+        std::map<std::string, PropertyRecord> propMap;
         Contact address;
     public:
         NameRecord() :
@@ -384,9 +384,9 @@ private:
         }
 
 
-        PropertyRecord *getPR(const ConstString& key, bool create = true)
+        PropertyRecord *getPR(const std::string& key, bool create = true)
         {
-            std::map<ConstString, PropertyRecord>::iterator entry = propMap.find(key);
+            std::map<std::string, PropertyRecord>::iterator entry = propMap.find(key);
             if (entry == propMap.end()) {
                 if (!create) {
                     return nullptr;
@@ -398,17 +398,17 @@ private:
             return &(entry->second);
         }
 
-        void clearProp(const ConstString& key)
+        void clearProp(const std::string& key)
         {
             getPR(key)->clear();
         }
 
-        void addProp(const ConstString& key, const ConstString& val)
+        void addProp(const std::string& key, const std::string& val)
         {
             getPR(key)->add(val);
         }
 
-        ConstString getProp(const ConstString& key)
+        std::string getProp(const std::string& key)
         {
             PropertyRecord *rec = getPR(key, false);
             if (rec!=nullptr) {
@@ -417,7 +417,7 @@ private:
             return "";
         }
 
-        bool checkProp(const ConstString& key, const ConstString& val)
+        bool checkProp(const std::string& key, const std::string& val)
         {
             PropertyRecord *rec = getPR(key, false);
             if (rec!=nullptr) {
@@ -426,7 +426,7 @@ private:
             return false;
         }
 
-        ConstString matchProp(const ConstString& key, const ConstString& val)
+        std::string matchProp(const std::string& key, const std::string& val)
         {
             PropertyRecord *rec = getPR(key, false);
             if (rec!=nullptr) {
@@ -438,19 +438,19 @@ private:
     };
 
 
-    ConstString cmdRegister(int argc, char *argv[]);
-    ConstString cmdQuery(int argc, char *argv[]);
-    ConstString cmdUnregister(int argc, char *argv[]);
-    ConstString cmdAnnounce(int argc, char *argv[]);
-    ConstString cmdHelp(int argc, char *argv[]);
-    ConstString cmdSet(int argc, char *argv[]);
-    ConstString cmdGet(int argc, char *argv[]);
-    ConstString cmdCheck(int argc, char *argv[]);
-    ConstString cmdMatch(int argc, char *argv[]);
-    ConstString cmdList(int argc, char *argv[]);
-    ConstString cmdRoute(int argc, char *argv[]);
-    ConstString cmdGarbageCollect(int argc, char *argv[]);
-    ConstString cmdBot(int argc, char *argv[]);
+    std::string cmdRegister(int argc, char *argv[]);
+    std::string cmdQuery(int argc, char *argv[]);
+    std::string cmdUnregister(int argc, char *argv[]);
+    std::string cmdAnnounce(int argc, char *argv[]);
+    std::string cmdHelp(int argc, char *argv[]);
+    std::string cmdSet(int argc, char *argv[]);
+    std::string cmdGet(int argc, char *argv[]);
+    std::string cmdCheck(int argc, char *argv[]);
+    std::string cmdMatch(int argc, char *argv[]);
+    std::string cmdList(int argc, char *argv[]);
+    std::string cmdRoute(int argc, char *argv[]);
+    std::string cmdGarbageCollect(int argc, char *argv[]);
+    std::string cmdBot(int argc, char *argv[]);
 
     // making a more easy to parse interface
     yarp::os::Bottle ncmdList(int argc, char *argv[]);
@@ -459,36 +459,36 @@ private:
     yarp::os::Bottle ncmdSet(int argc, char *argv[]);
     yarp::os::Bottle ncmdGet(int argc, char *argv[]);
 
-    std::map<ConstString, NameRecord> nameMap;
-    std::map<ConstString, HostRecord> hostMap;
+    std::map<std::string, NameRecord> nameMap;
+    std::map<std::string, HostRecord> hostMap;
 
     McastRecord mcastRecord;
     DisposableNameRecord tmpNames;
 
-    NameRecord *getNameRecord(const ConstString& name, bool create);
+    NameRecord *getNameRecord(const std::string& name, bool create);
 
-    NameRecord &getNameRecord(const ConstString& name)
+    NameRecord &getNameRecord(const std::string& name)
     {
         NameRecord *result = getNameRecord(name, true);
         yAssert(result!=nullptr);
         return *result;
     }
 
-    HostRecord *getHostRecord(const ConstString& name, bool create);
+    HostRecord *getHostRecord(const std::string& name, bool create);
 
-    HostRecord &getHostRecord(const ConstString& name)
+    HostRecord &getHostRecord(const std::string& name)
     {
         HostRecord *result = getHostRecord(name, true);
         yAssert(result!=nullptr);
         return *result;
     }
 
-    Dispatcher<NameServer, ConstString> dispatcher;
+    Dispatcher<NameServer, std::string> dispatcher;
     Dispatcher<NameServer, yarp::os::Bottle> ndispatcher;
 
 protected:
 
-    ConstString terminate(const ConstString& str);
+    std::string terminate(const std::string& str);
 
     int basePort;
 

@@ -67,7 +67,7 @@ const char *wrapperC_file_content   = "device controlboardwrapper2\n"
 class ControlBoardRemapperTest : public UnitTest
 {
 public:
-    virtual ConstString getName() override { return "ControlBoardRemapperTest"; }
+    virtual std::string getName() override { return "ControlBoardRemapperTest"; }
 
     void checkRemapper(yarp::dev::PolyDriver & ddRemapper, int rand, size_t nrOfRemappedAxes)
     {

@@ -36,7 +36,7 @@ void toXmlRpcValue(Value& vin, XmlRpcValue& vout)
         Bottle *bot = vin.asList();
         bool struc = true;
         int offset = 0;
-        ConstString tag = bot->get(0).asString();
+        std::string tag = bot->get(0).asString();
         if (tag=="list") {
             struc = false;
             offset = 1;
@@ -88,11 +88,11 @@ bool XmlRpcCarrier::write(ConnectionState& proto, SizedWriter& writer)
     StringInputStream sis;
     writer.write(sos);
     sis.reset(sos.toString());
-    ConstString header;
+    std::string header;
     if (sender) {
         header = sis.readLine();
     }
-    ConstString body = sis.readLine();
+    std::string body = sis.readLine();
     Value v;
     if (header.length()>0 && header[0]=='q') {
         body = "yarp.quit";
@@ -101,7 +101,7 @@ bool XmlRpcCarrier::write(ConnectionState& proto, SizedWriter& writer)
     }
     Bottle *bot = v.asList();
     bot->fromString(body.c_str());
-    ConstString methodName;
+    std::string methodName;
     if (sender) {
         methodName = bot->get(0).toString();
         *bot = bot->tail();
@@ -179,7 +179,7 @@ bool XmlRpcCarrier::shouldInterpretRosMessages(ConnectionState& proto)
     }
 
     Name n(proto.getRoute().getCarrierName() + "://test");
-    ConstString rospass = n.getCarrierModifier("ros");
+    std::string rospass = n.getCarrierModifier("ros");
     interpretRos = !nodelike;
     if (rospass=="1"||rospass=="on") {
         interpretRos = true;
@@ -193,9 +193,9 @@ bool XmlRpcCarrier::shouldInterpretRosMessages(ConnectionState& proto)
 bool XmlRpcCarrier::sendHeader(ConnectionState& proto)
 {
     shouldInterpretRosMessages(proto);
-    ConstString target = "POST /RPC2";
+    std::string target = "POST /RPC2";
     Name n(proto.getRoute().getCarrierName() + "://test");
-    ConstString pathValue = n.getCarrierModifier("path");
+    std::string pathValue = n.getCarrierModifier("path");
     if (pathValue!="") {
         target = "POST /";
         target += pathValue;

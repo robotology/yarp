@@ -31,7 +31,7 @@ const double TOL = 1e-8;
 
 class SVDTest : public UnitTest {
 public:
-    virtual ConstString getName() override { return "SVDTest"; }
+    virtual std::string getName() override { return "SVDTest"; }
 
     // Assert that 2 matrices are equal
     void assertEqual(const Matrix &A, const Matrix &B, string testName, bool verbose=false)

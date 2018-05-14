@@ -23,7 +23,7 @@ using namespace yarp::dev;
 
 PREPARE_FIXTURE_PLUGIN(YarpPluginFixture)
 
-bool YarpPluginFixture::scanPlugins(yarp::os::ConstString name, yarp::os::ConstString type)
+bool YarpPluginFixture::scanPlugins(std::string name, std::string type)
 {
     YarpPluginSelector selector;
     selector.scan();

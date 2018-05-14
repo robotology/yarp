@@ -83,7 +83,7 @@
     }
 #endif // LINUX
 
-YarpRunProcInfo::YarpRunProcInfo(yarp::os::ConstString& alias, yarp::os::ConstString& on, PID pidCmd, HANDLE handleCmd, bool hold)
+YarpRunProcInfo::YarpRunProcInfo(std::string& alias, std::string& on, PID pidCmd, HANDLE handleCmd, bool hold)
 {
     mAlias=alias;
     mOn=on;
@@ -221,7 +221,7 @@ bool YarpRunInfoVector::Add(YarpRunProcInfo *process)
     return true;
 }
 
-int YarpRunInfoVector::Signal(yarp::os::ConstString& alias, int signum)
+int YarpRunInfoVector::Signal(std::string& alias, int signum)
 {
     WAIT()
 
@@ -388,7 +388,7 @@ yarp::os::Bottle YarpRunInfoVector::PS()
     return ps;
 }
 
-bool YarpRunInfoVector::IsRunning(yarp::os::ConstString &alias)
+bool YarpRunInfoVector::IsRunning(std::string &alias)
 {
     WAIT()
 
@@ -434,9 +434,9 @@ void YarpRunInfoVector::Pack()
     m_nProcesses=tot;
 }
 
-YarpRunCmdWithStdioInfo::YarpRunCmdWithStdioInfo(yarp::os::ConstString& alias,
-                                                 yarp::os::ConstString& on,
-                                                 yarp::os::ConstString& stdio,
+YarpRunCmdWithStdioInfo::YarpRunCmdWithStdioInfo(std::string& alias,
+                                                 std::string& on,
+                                                 std::string& stdio,
                                                  PID pidCmd,
                                                  PID pidStdout,
                                                  FDESC readFromPipeCmdToStdout,
@@ -466,11 +466,11 @@ YarpRunProcInfo(alias, on, pidCmd, handleCmd, hold)
     mCleanStdout=false;
 }
 
-YarpRunCmdWithStdioInfo::YarpRunCmdWithStdioInfo(yarp::os::ConstString& alias,
-                                                 yarp::os::ConstString& on,
-                                                 yarp::os::ConstString& stdio,
+YarpRunCmdWithStdioInfo::YarpRunCmdWithStdioInfo(std::string& alias,
+                                                 std::string& on,
+                                                 std::string& stdio,
                                                  PID pidCmd,
-                                                 yarp::os::ConstString& stdioUUID,
+                                                 std::string& stdioUUID,
                                                  YarpRunInfoVector* stdioVector,
                                                  PID pidStdin,
                                                  PID pidStdout,
@@ -608,7 +608,7 @@ void YarpRunCmdWithStdioInfo::TerminateStdio()
     else
     {
         yarp::os::Bottle msg;
-        msg.fromString((yarp::os::ConstString("(killstdio ")+mAlias+")").c_str());
+        msg.fromString((std::string("(killstdio ")+mAlias+")").c_str());
         yarp::run::Run::sendMsg(msg, mStdio);
     }
 }

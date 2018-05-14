@@ -374,7 +374,7 @@ public:
     ///////////////////////// END MotorEncoder Interface
 
     //////////////////////// BEGIN IAxisInfo Interface
-    virtual bool getAxisNameRaw(int axis, yarp::os::ConstString& name) override;
+    virtual bool getAxisNameRaw(int axis, std::string& name) override;
     virtual bool getJointTypeRaw(int axis, yarp::dev::JointTypeEnum& type) override;
     ///////////////////////// END IAxisInfo Interface
 

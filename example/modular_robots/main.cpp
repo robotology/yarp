@@ -106,7 +106,7 @@ public:
   virtual bool cmdUnregister(yarp::os::Bottle& cmd,
                              yarp::os::Bottle& reply,
                              yarp::os::Contact& remote) {
-    ConstString name = cmd.get(1).asString();
+    std::string name = cmd.get(1).asString();
     map<string,Entry>::iterator it = names.find(name.c_str());
     if (it!=names.end()) {
       Entry& entry = it->second;
@@ -125,9 +125,9 @@ public:
   virtual bool cmdRegister(yarp::os::Bottle& cmd,
                            yarp::os::Bottle& reply,
                            yarp::os::Contact& remote) {
-    ConstString name = cmd.get(1).asString();
-    ConstString carrier = cmd.get(2).asString();
-    ConstString machine = cmd.get(3).asString();
+    std::string name = cmd.get(1).asString();
+    std::string carrier = cmd.get(2).asString();
+    std::string machine = cmd.get(3).asString();
     int number = cmd.get(4).asInt();
     if (name=="...") {
       name = "/tmp/";
@@ -175,7 +175,7 @@ public:
     mutex.wait();
     printf(" + %s\n", cmd.toString().c_str());
     reply.clear();
-    ConstString tag = cmd.get(0).asString();
+    std::string tag = cmd.get(0).asString();
     if (tag=="register") {
       ok = cmdRegister(cmd,reply,remote);
     } else if (tag=="unregister") {

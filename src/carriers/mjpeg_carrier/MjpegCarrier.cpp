@@ -201,8 +201,8 @@ bool MjpegCarrier::reply(ConnectionState& proto, SizedWriter& writer) {
 
 bool MjpegCarrier::sendHeader(ConnectionState& proto) {
     Name n(proto.getRoute().getCarrierName() + "://test");
-    ConstString pathValue = n.getCarrierModifier("path");
-    ConstString target = "GET /?action=stream\n\n";
+    std::string pathValue = n.getCarrierModifier("path");
+    std::string target = "GET /?action=stream\n\n";
     if (pathValue!="") {
         target = "GET /";
         target += pathValue;

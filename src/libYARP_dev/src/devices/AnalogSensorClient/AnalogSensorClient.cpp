@@ -175,7 +175,7 @@ void  yarp::dev::AnalogSensorClient::removeLeadingTrailingSlashesOnly(std::strin
 
 bool yarp::dev::AnalogSensorClient::open(yarp::os::Searchable &config)
 {
-    ConstString carrier = config.check("carrier", Value("udp"), "default carrier for streaming robot state").asString().c_str();
+    std::string carrier = config.check("carrier", Value("udp"), "default carrier for streaming robot state").asString().c_str();
 
     local.clear();
     remote.clear();
@@ -194,9 +194,9 @@ bool yarp::dev::AnalogSensorClient::open(yarp::os::Searchable &config)
         return false;
     }
 
-    ConstString local_rpc = local;
+    std::string local_rpc = local;
     local_rpc += "/rpc:o";
-    ConstString remote_rpc = remote;
+    std::string remote_rpc = remote;
     remote_rpc += "/rpc:i";
 
     if (!inputPort.open(local.c_str()))

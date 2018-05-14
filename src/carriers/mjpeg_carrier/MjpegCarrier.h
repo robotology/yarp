@@ -44,7 +44,7 @@ class yarp::os::MjpegCarrier : public Carrier {
 private:
     bool firstRound;
     bool sender;
-    yarp::os::ConstString envelope;
+    std::string envelope;
 public:
     MjpegCarrier() {
         firstRound = true;
@@ -55,7 +55,7 @@ public:
         return new MjpegCarrier();
     }
 
-    virtual ConstString getName() override {
+    virtual std::string getName() override {
         return "mjpeg";
     }
 
@@ -79,7 +79,7 @@ public:
         return false;
     }
 
-    virtual void handleEnvelope(const yarp::os::ConstString& envelope) override {
+    virtual void handleEnvelope(const std::string& envelope) override {
         this->envelope = envelope;
     }
 
@@ -100,7 +100,7 @@ public:
         return false;
     }
 
-    virtual ConstString toString() override {
+    virtual std::string toString() override {
         return "mjpeg_carrier";
     }
 
@@ -145,7 +145,7 @@ public:
     }
 
     virtual bool expectExtraHeader(ConnectionState& proto) override {
-        ConstString txt;
+        std::string txt;
         do {
             txt = proto.is().readLine();
         } while (txt!="");
@@ -153,7 +153,7 @@ public:
     }
 
     bool respondToHeader(ConnectionState& proto) override {
-        ConstString target = "HTTP/1.0 200 OK\r\n\
+        std::string target = "HTTP/1.0 200 OK\r\n\
 Connection: close\r\n\
 Server: yarp/mjpeg_carrier/0.1\r\n\
 Cache-Control: no-store, no-cache, must-revalidate, pre-check=0, post-check=0, max-age=0\r\n\
@@ -172,7 +172,7 @@ Content-Type: multipart/x-mixed-replace;boundary=boundarydonotcross\r\n\
     }
 
     virtual bool expectReplyToHeader(ConnectionState& proto) override {
-        ConstString txt;
+        std::string txt;
         do {
             txt = proto.is().readLine();
         } while (txt!="");
@@ -212,7 +212,7 @@ Content-Type: multipart/x-mixed-replace;boundary=boundarydonotcross\r\n\
         return true;
     }
 
-    virtual ConstString getBootstrapCarrierName() override { return ""; }
+    virtual std::string getBootstrapCarrierName() override { return ""; }
 
     virtual bool autoCompression() const;
 };

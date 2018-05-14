@@ -12,7 +12,7 @@
 
 #include <yarp/conf/numeric.h>
 #include <yarp/os/Bytes.h>
-#include <yarp/os/ConstString.h>
+#include <string>
 
 namespace yarp {
     namespace os {
@@ -143,7 +143,7 @@ public:
      * Read a block of text terminated with a specific marker (or EOF).
      *
      */
-    ConstString readLine(int terminal = '\n', bool *success = nullptr);
+    std::string readLine(int terminal = '\n', bool *success = nullptr);
 
     /**
      *

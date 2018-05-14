@@ -79,9 +79,9 @@ public:
 private:
 #ifndef DOXYGEN_SHOULD_SKIP_THIS
     yarp::dev::PolyDriver driver;
-    yarp::os::ConstString partName;
-    yarp::os::ConstString streamingPortName;
-    yarp::os::ConstString rpcPortName;
+    std::string partName;
+    std::string streamingPortName;
+    std::string rpcPortName;
     yarp::os::Port rpcPort;
     yarp::os::BufferedPort<yarp::os::Bottle> streamingPort;
     yarp::dev::IRangefinder2D *sens_p;

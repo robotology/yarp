@@ -11,7 +11,7 @@
 #define YARP_OS_CARRIERS_H
 
 #include <yarp/os/Bytes.h>
-#include <yarp/os/ConstString.h>
+#include <string>
 #include <yarp/os/Contact.h>
 #include <yarp/os/Face.h>
 #include <yarp/os/OutputProtocol.h>
@@ -41,12 +41,12 @@ public:
      * @param name the name of the desired carrier.
      * @return the desired carrier, or nullptr if not found.
      */
-    static Carrier *chooseCarrier(const ConstString& name);
+    static Carrier *chooseCarrier(const std::string& name);
 
     /**
      * Get template for carrier.
      */
-    static Carrier *getCarrierTemplate(const ConstString& name);
+    static Carrier *getCarrierTemplate(const std::string& name);
 
     /**
      * Select a carrier by 8-byte header.

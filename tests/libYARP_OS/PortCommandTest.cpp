@@ -19,7 +19,7 @@ using namespace yarp::os::impl;
 
 class PortCommandTest : public UnitTest {
 public:
-    virtual ConstString getName() override { return "PortCommandTest"; }
+    virtual std::string getName() override { return "PortCommandTest"; }
 
     void testTextWriting() {
         report(0,"testing text-mode writing...");

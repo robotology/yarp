@@ -36,7 +36,7 @@ ServerSerial::~ServerSerial()
 bool ServerSerial::send(const Bottle& msg)
 {
     if(verb)
-        yDebug("ConstString to send : %s\n", msg.toString().c_str());
+        yDebug("std::string to send : %s\n", msg.toString().c_str());
     if(serial != nullptr) {
         serial->send(msg);
         return true;
@@ -48,7 +48,7 @@ bool ServerSerial::send(const Bottle& msg)
 bool ServerSerial::send(char *msg, size_t size)
 {
     if(verb)
-        yDebug("ConstString to send : %s\n", msg);
+        yDebug("std::string to send : %s\n", msg);
     if(serial != nullptr) {
         serial->send(msg, size);
         return true;
@@ -153,7 +153,7 @@ bool ServerSerial::open(Searchable& prop)
         return false;
     }
 
-    ConstString rootName =
+    std::string rootName =
         prop.check("name",Value("/serial"),
                     "prefix for port names").asString().c_str();
 
