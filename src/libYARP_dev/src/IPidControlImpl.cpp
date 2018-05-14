@@ -73,7 +73,6 @@ bool ImplementPidControl::setPid(const PidControlTypeEnum& pidtype, int j, const
 
 bool ImplementPidControl::setPids(const PidControlTypeEnum& pidtype,  const Pid *pids)
 {
-    int tmp=0;
     ControlBoardHelper* cb_helper = castToMapper(helper);
     int nj= cb_helper->axes();
 
