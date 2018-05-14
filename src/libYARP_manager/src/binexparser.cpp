@@ -351,7 +351,7 @@ std::string BinaryExpParser::popNextOperand(std::string &strexp) {
 void BinaryExpParser::createTruthTable(const int n)
 {
     yAssert((n-1) > 0);
-    yAssert((n-1) < PRECISION(INT_MAX));
+    yAssert((unsigned)(n-1) < PRECISION(INT_MAX));
     yAssert(1 <= (INT_MAX >> (n-1)));
 
     truthTable.clear();
@@ -374,7 +374,7 @@ void BinaryExpParser::printTruthTable(std::string lopr)
     int n = truthTable.size();
 
     yAssert((n-1) > 0);
-    yAssert((n-1) < PRECISION(INT_MAX));
+    yAssert((unsigned)(n-1) < PRECISION(INT_MAX));
     yAssert(1 <= (INT_MAX >> (n-1)));
 
     map<string, bool>::iterator itr;
