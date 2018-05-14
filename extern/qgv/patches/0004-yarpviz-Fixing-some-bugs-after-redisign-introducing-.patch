@@ -1,0 +1,33 @@
+From e34a11bf9208b886f0e1bf4239ffcd3b5b2d6f14 Mon Sep 17 00:00:00 2001
+From: Nicolò Genesio <nicolo.genesio@iit.it>
+Date: Wed, 19 Apr 2017 14:28:14 +0200
+Subject: [PATCH 4/4] yarpviz: Fixing some bugs after redisign, introducing
+ MachineVertex
+
+---
+ extern/qgv/qgv/QGVCore/QGVScene.cpp | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/extern/qgv/qgv/QGVCore/QGVScene.cpp b/extern/qgv/qgv/QGVCore/QGVScene.cpp
+index 2e2ea76bc..451994948 100644
+--- a/extern/qgv/qgv/QGVCore/QGVScene.cpp
++++ b/extern/qgv/qgv/QGVCore/QGVScene.cpp
+@@ -29,6 +29,7 @@ License along with this library.
+ #include <QGVGvcPrivate.h>
+ #include <QGVEdgePrivate.h>
+ #include <QGVNodePrivate.h>
++#include <QGraphicsSceneContextMenuEvent>
+ #include <iostream>
+ 
+ QGVScene::QGVScene(const QString &name, QObject *parent) : QGraphicsScene(parent)
+@@ -240,7 +241,6 @@ void QGVScene::clear()
+     QGraphicsScene::clear();
+ }
+ 
+-#include <QGraphicsSceneContextMenuEvent>
+ void QGVScene::contextMenuEvent(QGraphicsSceneContextMenuEvent *contextMenuEvent)
+ {
+     QGraphicsItem *item = itemAt(contextMenuEvent->scenePos(), QTransform());
+-- 
+2.17.0
+

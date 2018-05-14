@@ -23,7 +23,7 @@ License along with this library.
 #include <QDebug>
 #include <QPainter>
 
-QGVNode::QGVNode(QGVNodePrivate *node, QGVScene *scene): _node(node), _scene(scene), vertex(NULL)
+QGVNode::QGVNode(QGVNodePrivate *node, QGVScene *scene): _scene(scene), _node(node), vertex(NULL)
 {
     setFlag(QGraphicsItem::ItemIsSelectable, true);
 }
@@ -49,7 +49,7 @@ QRectF QGVNode::boundingRect() const
     return _path.boundingRect();
 }
 
-void QGVNode::paint(QPainter * painter, const QStyleOptionGraphicsItem * option, QWidget * widget)
+void QGVNode::paint(QPainter * painter, const QStyleOptionGraphicsItem *, QWidget *)
 {
     painter->save();
 
@@ -58,7 +58,7 @@ void QGVNode::paint(QPainter * painter, const QStyleOptionGraphicsItem * option,
     if(isSelected())
     {
         QBrush tbrush(_brush);
-        tbrush.setColor(tbrush.color().darker(170));
+        tbrush.setColor(tbrush.color().darker(120));
         painter->setBrush(tbrush);
     }
     else
@@ -86,7 +86,8 @@ void QGVNode::paint(QPainter * painter, const QStyleOptionGraphicsItem * option,
 
 void QGVNode::setAttribute(const QString &name, const QString &value)
 {
-    agsafeset(_node->node(), name.toLocal8Bit().data(), value.toLocal8Bit().data(), (char*) "");
+    char empty[] = "";
+    agsafeset(_node->node(), name.toLocal8Bit().data(), value.toLocal8Bit().data(), empty);
 }
 
 QString QGVNode::getAttribute(const QString &name) const
@@ -124,9 +125,7 @@ void QGVNode::updateLayout()
     setZValue(1);
 
     //Node path
-    _path = QGVCore::toPath(ND_shape(_node->node())->name,
-                            (polygon_t*)ND_shape_info(_node->node()),
-                            width, height);
+    _path = QGVCore::toPath(ND_shape(_node->node())->name, (polygon_t*)ND_shape_info(_node->node()), width, height);
     _pen.setWidth(1);
 
     _brush.setStyle(QGVCore::toBrushStyle(getAttribute("style")));

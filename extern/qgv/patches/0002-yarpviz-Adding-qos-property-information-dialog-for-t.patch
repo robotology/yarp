@@ -1,0 +1,61 @@
+From 3f8a77371667b6efc601d373f2fb8eb5bc123c97 Mon Sep 17 00:00:00 2001
+From: Ali Paikan <ali.paikan@iit.it>
+Date: Tue, 20 Sep 2016 14:02:05 +0200
+Subject: [PATCH 2/4] yarpviz: Adding qos property information dialog for the
+ connections
+
+---
+ extern/qgv/qgv/QGVCore/QGVEdge.cpp | 10 +++++++++-
+ extern/qgv/qgv/QGVCore/QGVEdge.h   |  4 ++++
+ 2 files changed, 13 insertions(+), 1 deletion(-)
+
+diff --git a/extern/qgv/qgv/QGVCore/QGVEdge.cpp b/extern/qgv/qgv/QGVCore/QGVEdge.cpp
+index 293559cbe..f8639258d 100644
+--- a/extern/qgv/qgv/QGVCore/QGVEdge.cpp
++++ b/extern/qgv/qgv/QGVCore/QGVEdge.cpp
+@@ -23,7 +23,7 @@ License along with this library.
+ #include <QDebug>
+ #include <QPainter>
+ 
+-QGVEdge::QGVEdge(QGVEdgePrivate *edge, QGVScene *scene) :  _scene(scene), _edge(edge)
++QGVEdge::QGVEdge(QGVEdgePrivate *edge, QGVScene *scene) :  _scene(scene), _edge(edge), edge(NULL)
+ {
+     setFlag(QGraphicsItem::ItemIsSelectable, true);
+ }
+@@ -163,3 +163,11 @@ QPolygonF QGVEdge::toArrow(const QLineF &line) const
+ 
+     return polygon;
+ }
++
++void QGVEdge::setEdge(const void* e) {
++    edge = e;
++}
++
++const void* QGVEdge::getEdge(void) {
++    return edge;
++}
+diff --git a/extern/qgv/qgv/QGVCore/QGVEdge.h b/extern/qgv/qgv/QGVCore/QGVEdge.h
+index 49ced8d5d..2ee1ab704 100644
+--- a/extern/qgv/qgv/QGVCore/QGVEdge.h
++++ b/extern/qgv/qgv/QGVCore/QGVEdge.h
+@@ -48,6 +48,9 @@ public:
+ 
+     void updateLayout();
+ 
++    void setEdge(const void *e);
++    const void *getEdge(void);
++
+     enum { Type = UserType + 3 };
+     int type() const
+     {
+@@ -72,6 +75,7 @@ private:
+ 
+     QString _label;
+     QRectF _label_rect;
++    const void* edge;
+ };
+ 
+ #endif // QGVEDGE_H
+-- 
+2.17.0
+

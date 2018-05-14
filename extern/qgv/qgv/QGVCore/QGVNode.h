@@ -15,65 +15,63 @@ Lesser General Public License for more details.
 You should have received a copy of the GNU Lesser General Public
 License along with this library.
 ***************************************************************/
-#ifndef QGVSUBGRAPH_H
-#define QGVSUBGRAPH_H
+#ifndef QGVNODE_H
+#define QGVNODE_H
 
-#include <qgv.h>
+#include "qgv.h"
 #include <QGraphicsItem>
 #include <QPen>
 
-class QGVNode;
 class QGVEdge;
 class QGVScene;
-class QGVGraphPrivate;
+class QGVNodePrivate;
 
 /**
- * @brief SubGraph item
+ * @brief Node item
  *
  */
-class QGVCORE_EXPORT QGVSubGraph : public QGraphicsItem
+class QGVCORE_EXPORT QGVNode : public QGraphicsItem
 {
 public:
-    ~QGVSubGraph();
+    ~QGVNode();
 
-    QString name() const;
-
-    QGVNode* addNode(const QString& label);
-    QGVSubGraph* addSubGraph(const QString& name, bool cluster=true);
+    QString label() const;
+    void setLabel(const QString &label);
 
     QRectF boundingRect() const;
     void paint(QPainter * painter, const QStyleOptionGraphicsItem * option, QWidget * widget = 0);
-    void setAttribute(const QString &name, const QString &value);
+    void setAttribute(const QString &label, const QString &value);
     QString getAttribute(const QString &name) const;
-    void updateLayout();
+
     void setIcon(const QImage &icon);
     void setVertex(void* v);
     void* getVertex();
-    QString label() const;
 
-    enum { Type = UserType + 4 };
+    enum { Type = UserType + 2 };
     int type() const
     {
         return Type;
     }
 
-
 private:
     friend class QGVScene;
-    QGVSubGraph(QGVGraphPrivate* subGraph, QGVScene *scene);
+    friend class QGVSubGraph;
+    void updateLayout();
+    QGVNode(QGVNodePrivate* node, QGVScene *scene);
 
-    double _height, _width;
+		// Not implemented in QGVNode.cpp
+//		QPainterPath makeShape(Agnode_t* node) const;
+//		QPolygonF makeShapeHelper(Agnode_t* node) const;
+
+    QPainterPath _path;
     QPen _pen;
     QBrush _brush;
-
-    QString _label;
-    QRectF _label_rect;
     QImage _icon;
 
     QGVScene *_scene;
-    QGVGraphPrivate *_sgraph;
+    QGVNodePrivate* _node;
     void* vertex;
-    QList<QGVNode*> _nodes;
 };
 
-#endif // QGVSUBGRAPH_H
+
+#endif // QGVNODE_H

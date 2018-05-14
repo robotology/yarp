@@ -1,0 +1,119 @@
+From 2eeaaf74b53ecc43886d7cb1ccec148c173d3fb8 Mon Sep 17 00:00:00 2001
+From: Nicolò Genesio <nicolo.genesio@iit.it>
+Date: Fri, 14 Apr 2017 17:41:30 +0200
+Subject: [PATCH 3/4] yarpviz: Re-design of yarpviz graph visualization, now
+ the ports are grouped by modules and the modules by hostname
+
+---
+ extern/qgv/qgv/QGVCore/QGVSubGraph.cpp | 49 ++++++++++++++++++++++----
+ extern/qgv/qgv/QGVCore/QGVSubGraph.h   |  6 ++++
+ 2 files changed, 49 insertions(+), 6 deletions(-)
+
+diff --git a/extern/qgv/qgv/QGVCore/QGVSubGraph.cpp b/extern/qgv/qgv/QGVCore/QGVSubGraph.cpp
+index 5a63d5e0a..44d7a81f8 100644
+--- a/extern/qgv/qgv/QGVCore/QGVSubGraph.cpp
++++ b/extern/qgv/qgv/QGVCore/QGVSubGraph.cpp
+@@ -24,9 +24,9 @@ License along with this library.
+ #include <QDebug>
+ #include <QPainter>
+ 
+-QGVSubGraph::QGVSubGraph(QGVGraphPrivate *subGraph, QGVScene *scene):  _scene(scene), _sgraph(subGraph)
++QGVSubGraph::QGVSubGraph(QGVGraphPrivate *subGraph, QGVScene *scene):  _scene(scene), _sgraph(subGraph), vertex(NULL)
+ {
+-    //setFlag(QGraphicsItem::ItemIsSelectable, true);
++    setFlag(QGraphicsItem::ItemIsSelectable, true);
+ }
+ 
+ QGVSubGraph::~QGVSubGraph()
+@@ -88,10 +88,35 @@ void QGVSubGraph::paint(QPainter * painter, const QStyleOptionGraphicsItem *, QW
+     painter->save();
+ 
+     painter->setPen(_pen);
+-    painter->setBrush(_brush);
+ 
+-    painter->drawRect(boundingRect());
+-    painter->drawText(_label_rect, Qt::AlignCenter, _label);
++    if(isSelected()) {
++        QBrush tbrush(_brush);
++        tbrush.setColor(tbrush.color().darker(170));
++        painter->setBrush(tbrush);
++    }
++    else
++        painter->setBrush(_brush);
++
++    QPainterPath path;
++    path.addRoundedRect(boundingRect(), 10, 10);
++    painter->drawPath(path);
++    QFont font;
++    font.setPixelSize(12);
++    font.setBold(true);
++    painter->setFont(font);
++
++    if(_icon.isNull())
++    {
++        painter->drawText(_label_rect, Qt::AlignCenter , _label);
++    }
++    else
++    {
++        painter->drawText(_label_rect.adjusted(0,0,0, -_label_rect.height()*1/3),Qt::AlignTop | Qt::AlignCenter , _label);
++
++        const QRectF img_rect = _label_rect.adjusted(-_label_rect.width()-10, 0, 0, 0);
++        QImage img = _icon.scaled(img_rect.size().toSize(), Qt::KeepAspectRatio, Qt::SmoothTransformation);
++        painter->drawImage(img_rect.topLeft() + QPointF((img_rect.width() - img.rect().width())/2, 0), img);
++    }
+     painter->restore();
+ }
+ 
+@@ -122,7 +147,6 @@ void QGVSubGraph::updateLayout()
+ 
+     qreal gheight = QGVCore::graphHeight(_scene->_graph->graph());
+     setPos(p2.x, gheight - p1.y);
+-
+     _pen.setWidth(1);
+     _brush.setStyle(QGVCore::toBrushStyle(getAttribute("style")));
+     _brush.setColor(QGVCore::toColor(getAttribute("fillcolor")));
+@@ -137,3 +161,16 @@ void QGVSubGraph::updateLayout()
+         _label_rect.moveCenter(QGVCore::toPoint(xlabel->pos, QGVCore::graphHeight(_scene->_graph->graph())) - pos());
+     }
+ }
++void QGVSubGraph::setIcon(const QImage &icon)
++{
++    _icon = icon;
++}
++
++
++void QGVSubGraph::setVertex(void* v) {
++    vertex = v;
++}
++
++void* QGVSubGraph::getVertex() {
++    return vertex;
++}
+diff --git a/extern/qgv/qgv/QGVCore/QGVSubGraph.h b/extern/qgv/qgv/QGVCore/QGVSubGraph.h
+index dcc38eb31..5bebd6a13 100644
+--- a/extern/qgv/qgv/QGVCore/QGVSubGraph.h
++++ b/extern/qgv/qgv/QGVCore/QGVSubGraph.h
+@@ -46,6 +46,10 @@ public:
+     void setAttribute(const QString &name, const QString &value);
+     QString getAttribute(const QString &name) const;
+     void updateLayout();
++    void setIcon(const QImage &icon);
++    void setVertex(void* v);
++    void* getVertex();
++    QString label() const;
+ 
+     enum { Type = UserType + 4 };
+     int type() const
+@@ -66,7 +70,9 @@ private:
+ 
+     QString _label;
+     QRectF _label_rect;
++    QImage _icon;
+ 
++    void* vertex;
+     QList<QGVNode*> _nodes;
+ };
+ 
+-- 
+2.17.0
+

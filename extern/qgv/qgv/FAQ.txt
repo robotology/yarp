@@ -1,0 +1,27 @@
+
+For Windows user :
+- Download GraphViz librairie : http://www.graphviz.org/Download.php
+- Configure GRAPHVIZ_PATH in GraphViz.pro
+- Open with Qt Creator & compile
+- copy GraphViz dll to /bin : 
+    cdt.dll
+    cgraph.dll
+    gvc.dll
+    gvplugin_core.dll
+    gvplugin_dot_layout.dll (Sample use dot layout)
+    libexpat.dll
+    ltdl.dll
+    Pathplan.dll
+    vmalloc.dll
+    zlib1.dll
+    config6 (dont forget !)
+
+- copy Qt dll to /bin :
+    QtCore4.dll
+    QtGui4.dll
+    mingwm10.dll and libgcc_s_dw2-1.dll (if using mingw32 compiler)
+
+    
+COMPILATION BUG :
+- Graphviz2.36 Windows bundle forget to add "textspan.h"
+    * Download missing file at : https://github.com/ellson/graphviz/blob/master/lib/common/textspan.h?source=cc
