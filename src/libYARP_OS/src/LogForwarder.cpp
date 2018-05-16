@@ -13,25 +13,13 @@
 #include <yarp/os/Log.h>
 #include <yarp/os/SystemInfo.h>
 
-yarp::os::LogForwarder* yarp::os::LogForwarder::instance = nullptr;
 yarp::os::Semaphore *yarp::os::LogForwarder::sem = nullptr;
 
 yarp::os::LogForwarder* yarp::os::LogForwarder::getInstance()
 {
-    if (!instance)
-    {
-        instance = new LogForwarder;
-    }
-    return instance;
-};
-
-void yarp::os::LogForwarder::clearInstance()
-{
-    if (instance)
-    {
-        delete instance;
-    };
-};
+    static LogForwarder instance;
+    return &instance;
+}
 
 void yarp::os::LogForwarder::forward (const std::string& message)
 {
@@ -74,8 +62,7 @@ yarp::os::LogForwarder::LogForwarder()
     {
         printf("LogForwarder error while connecting port %s\n", logPortName);
     }
-    //yarp::os::Network::connect(logPortName, "/test");
-};
+}
 
 yarp::os::LogForwarder::~LogForwarder()
 {
@@ -89,7 +76,6 @@ yarp::os::LogForwarder::~LogForwarder()
         b.addString("[INFO] Execution terminated\n");
         outputPort->write(true);
         outputPort->waitForWrite();
-        //outputPort->interrupt();
         outputPort->close();
         delete outputPort;
         outputPort=nullptr;
@@ -97,5 +83,4 @@ yarp::os::LogForwarder::~LogForwarder()
     sem->post();
     delete sem;
     sem = nullptr;
-//     yarp::os::NetworkBase::finiMinimum();
-};
+}

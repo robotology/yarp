@@ -38,9 +38,7 @@ extern "C" int __yarp_is_initialized;
 
 extern "C" void yarpCustomFini()
 {
-    yarp::os::LogForwarder::clearInstance();
 }
-
 
 yarp::os::Network::Network() {
     Network::init();

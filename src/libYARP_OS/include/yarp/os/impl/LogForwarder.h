@@ -24,7 +24,6 @@ class YARP_OS_API LogForwarder
 {
     public:
         static LogForwarder* getInstance();
-        static void clearInstance();
         void forward (const std::string& message);
     protected:
         LogForwarder();
@@ -34,9 +33,8 @@ class YARP_OS_API LogForwarder
         char logPortName[MAX_STRING_SIZE];
         yarp::os::BufferedPort<yarp::os::Bottle>* outputPort;
     private:
-        LogForwarder(LogForwarder const&){};
-        LogForwarder& operator=(LogForwarder const&){return *this;}; //@@@checkme
-        static LogForwarder* instance;
+        LogForwarder(LogForwarder const&){}
+        LogForwarder& operator=(LogForwarder const&){return *this;}
 };
 
 } // namespace os

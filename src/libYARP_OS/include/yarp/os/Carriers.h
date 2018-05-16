@@ -104,8 +104,6 @@ public:
 
     static Carriers& getInstance();
 
-    static void removeInstance();
-
     static Bottle listCarriers();
 
 private:
