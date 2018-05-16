@@ -241,26 +241,117 @@
  * \see YARP_WARNING_PUSH, YARP_WARNING_POP
  */
 
+/**
+ * \def YARP_DISABLE_DLL_INTERFACE_WARNING
+ *
+ * Disable MSVC C4251 warnings in the following code.
+ *
+ * It should be used in this way:
+ * \code
+ *  YARP_WARNING_PUSH
+ *  YARP_DISABLE_DLL_INTERFACE_WARNING
+ *   std::string foo;
+ *   std::string bar;
+ *  YARP_WARNING_POP
+ * \endcode
+ *
+ * \see YARP_WARNING_PUSH, YARP_WARNING_POP,
+ *      YARP_SUPPRESS_DLL_INTERFACE_WARNING,
+ *      YARP_SUPPRESS_DLL_INTERFACE_WARNING_ARG,
+ *      YARP_SUPPRESS_DLL_INTERFACE_WARNING_ARGS
+ */
+
+/**
+ * \def YARP_SUPPRESS_DLL_INTERFACE_WARNING
+ *
+ * Suppress MSVC C4251 warning for the next line.
+ * It should be used in this way:
+ * \code
+ *  YARP_SUPPRESS_DLL_INTERFACE_WARNING
+ *  static const std::string foo;
+ * \endcode
+ *
+ * \see YARP_DISABLE_DLL_INTERFACE_WARNING,
+ *      YARP_SUPPRESS_DLL_INTERFACE_WARNING_ARG,
+ *      YARP_SUPPRESS_DLL_INTERFACE_WARNING_ARGS
+ */
+
+/**
+ * \def YARP_SUPPRESS_DLL_INTERFACE_WARNING_ARG
+ *
+ * Suppress MSVC C4251 warning for the declaration.
+ * It should be used in this way:
+ * \code
+ *  YARP_SUPPRESS_DLL_INTERFACE_WARNING_ARG(std::string) foo;
+ * \endcode
+ *
+ * \warning As a side effect this macro suppresses the warning also for the
+ *          following line.
+ *
+ * \see YARP_DISABLE_DLL_INTERFACE_WARNING,
+ *      YARP_SUPPRESS_DLL_INTERFACE_WARNING,
+ *      YARP_SUPPRESS_DLL_INTERFACE_WARNING_ARGS
+ */
+
+/**
+ * \def YARP_SUPPRESS_DLL_INTERFACE_WARNING_ARGS
+ *
+ * Suppress MSVC C4251 warning for the declaration.
+ * It should be used in this way:
+ * \code
+ *  YARP_SUPPRESS_DLL_INTERFACE_WARNING_ARGS(std::map<int, int>) foo;
+ * \endcode
+ *
+ * \warning As a side effect this macro suppresses the warning also for the
+ *          following line.
+ * \warning This macro does not check the arguments, and it is therefore
+ *          possible to write confusing declarations, it is recommended to use
+ *          it only as suggested.
+ *
+ * \see YARP_DISABLE_DLL_INTERFACE_WARNING,
+ *      YARP_SUPPRESS_DLL_INTERFACE_WARNING,
+ *      YARP_SUPPRESS_DLL_INTERFACE_WARNING_ARG
+ */
+
 ///@}
 
 
 #if defined(_MSC_VER)
-# define YARP_WARNING_PUSH               __pragma(warning(push))
-# define YARP_WARNING_POP                __pragma(warning(pop))
-# define YARP_DISABLE_DEPRECATED_WARNING __pragma(warning(disable:4996))
+# define YARP_WARNING_PUSH                             __pragma(warning(push))
+# define YARP_WARNING_POP                              __pragma(warning(pop))
+# define YARP_DISABLE_DEPRECATED_WARNING               __pragma(warning(disable:4996))
+# define YARP_DISABLE_DLL_INTERFACE_WARNING            __pragma(warning(disable:4251))
+# define YARP_SUPPRESS_DLL_INTERFACE_WARNING           __pragma(warning(suppress:4251))
+# define YARP_SUPPRESS_DLL_INTERFACE_WARNING_ARG(x)    __pragma(warning(suppress:4251)) \
+                                                       x
+# define YARP_SUPPRESS_DLL_INTERFACE_WARNING_ARGS(...) __pragma(warning(suppress:4251)) \
+                                                       __VA_ARGS__
 #elif defined(__clang__)
-# define YARP_WARNING_PUSH               _Pragma("clang diagnostic push")
-# define YARP_WARNING_POP                _Pragma("clang diagnostic pop")
-# define YARP_DISABLE_DEPRECATED_WARNING _Pragma("clang diagnostic ignored \"-Wdeprecated-declarations\"")
+# define YARP_WARNING_PUSH                             _Pragma("clang diagnostic push")
+# define YARP_WARNING_POP                              _Pragma("clang diagnostic pop")
+# define YARP_DISABLE_DEPRECATED_WARNING               _Pragma("clang diagnostic ignored \"-Wdeprecated-declarations\"")
+# define YARP_DISABLE_DLL_INTERFACE_WARNING
+# define YARP_SUPPRESS_DLL_INTERFACE_WARNING
+# define YARP_SUPPRESS_DLL_INTERFACE_WARNING_ARG(x)    x
+# define YARP_SUPPRESS_DLL_INTERFACE_WARNING_ARGS(...) __VA_ARGS__
 #elif (__GNUC__ > 4 || (__GNUC__ == 4 && __GNUC_MINOR__ >= 6))
-# define YARP_WARNING_PUSH               _Pragma("GCC diagnostic push")
-# define YARP_WARNING_POP                _Pragma("GCC diagnostic pop")
-# define YARP_DISABLE_DEPRECATED_WARNING _Pragma("GCC diagnostic ignored \"-Wdeprecated-declarations\"")
+# define YARP_WARNING_PUSH                             _Pragma("GCC diagnostic push")
+# define YARP_WARNING_POP                              _Pragma("GCC diagnostic pop")
+# define YARP_DISABLE_DEPRECATED_WARNING               _Pragma("GCC diagnostic ignored \"-Wdeprecated-declarations\"")
+# define YARP_DISABLE_DLL_INTERFACE_WARNING
+# define YARP_SUPPRESS_DLL_INTERFACE_WARNING
+# define YARP_SUPPRESS_DLL_INTERFACE_WARNING_ARG(x)    x
+# define YARP_SUPPRESS_DLL_INTERFACE_WARNING_ARGS(...) __VA_ARGS__
 #else
 # define YARP_WARNING_PUSH
 # define YARP_WARNING_POP
 # define YARP_DISABLE_DEPRECATED_WARNING
+# define YARP_DISABLE_DLL_INTERFACE_WARNING
+# define YARP_SUPPRESS_DLL_INTERFACE_WARNING
+# define YARP_SUPPRESS_DLL_INTERFACE_WARNING_ARG(x)    x
+# define YARP_SUPPRESS_DLL_INTERFACE_WARNING_ARGS(...) __VA_ARGS__
 #endif
+
 
 // Bug in GCC < 6
 // See https://gcc.gnu.org/bugzilla/show_bug.cgi?id=43407

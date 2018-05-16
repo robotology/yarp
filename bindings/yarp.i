@@ -271,6 +271,16 @@ void setExternal2(yarp::sig::Image *img, PyObject* mem, int w, int h) {
 %enddef
 %define YARP_OS_DEPRECATED_API
 %enddef
+%define YARP_DISABLE_DEPRECATED_WARNING
+%enddef
+%define YARP_DISABLE_DLL_INTERFACE_WARNING
+%enddef
+%define YARP_SUPPRESS_DLL_INTERFACE_WARNING
+%enddef
+%define YARP_SUPPRESS_DLL_INTERFACE_WARNING_ARG(x) x
+%enddef
+%define YARP_SUPPRESS_DLL_INTERFACE_WARNING_ARGS(...) __VA_ARGS__
+%enddef
 
 %define _YARP2_NETINT32_
 %enddef
