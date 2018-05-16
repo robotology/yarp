@@ -276,7 +276,7 @@ yarp::os::impl::HttpTwoWayStream::HttpTwoWayStream(TwoWayStream *delegate, const
         std::string body = from;
         if (chunked) {
             body += "Reading data from port...\n";
-            header += NetType::toHexString(body.length()+N);
+            header += NetType::toHexString((int)(body.length()+N));
             header += "\r\n";
         }
 
@@ -798,7 +798,7 @@ bool yarp::os::impl::HttpCarrier::write(ConnectionState& proto, SizedWriter& wri
     std::string body = b.find("web").toString();
     if (body.length()!=0) {
         std::string header;
-        header += NetType::toHexString(body.length()).c_str();
+        header += NetType::toHexString((int)body.length()).c_str();
         header += "\r\n";
 
         Bytes b2((char*)header.c_str(), header.length());
@@ -813,7 +813,7 @@ bool yarp::os::impl::HttpCarrier::write(ConnectionState& proto, SizedWriter& wri
     } else {
         std::string txt = b.toString() + "\r\n";
         std::string header;
-        header += NetType::toHexString(txt.length()).c_str();
+        header += NetType::toHexString((int)txt.length()).c_str();
         header += "\r\n";
         Bytes b2((char*)header.c_str(), header.length());
         proto.os().write(b2);
@@ -859,7 +859,7 @@ bool yarp::os::impl::HttpCarrier::reply(ConnectionState& proto, SizedWriter& wri
         header += "Transfer-Encoding: chunked\r\n";
         header += "\r\n";
         int N = 2*1024;
-        header += NetType::toHexString(body.length()+N);
+        header += NetType::toHexString((int)body.length()+N);
         header += "\r\n";
 
         Bytes b2((char*)header.c_str(), header.length());

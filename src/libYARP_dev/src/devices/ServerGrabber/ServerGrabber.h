@@ -40,7 +40,7 @@ namespace yarp {
     }
 }
 
-class yarp::dev::DC1394::DC1394Parser:    public DeviceResponder
+class YARP_dev_API yarp::dev::DC1394::DC1394Parser:    public DeviceResponder
 {
 private:
     yarp::dev::IFrameGrabberControlsDC1394  *fgCtrl_DC1394;

@@ -62,7 +62,7 @@ public:
     ~MonoThreadTimer();
     bool         m_active{ false };
     unsigned int m_runTimes{1};
-    int          m_id{-1};
+    size_t       m_id{(size_t)-1};
 
     virtual yarp::os::YarpTimerEvent getEventNow()
     {
@@ -104,7 +104,7 @@ public:
 class TimerSingleton : public yarp::os::RateThread
 {
     std::mutex mu;
-    std::map<int, MonoThreadTimer*> timers;
+    std::map<size_t, MonoThreadTimer*> timers;
     TimerSingleton() :
             RateThread(0)
     {
@@ -125,7 +125,7 @@ public:
         return instance;
     }
 
-    int addTimer(MonoThreadTimer* t)
+    size_t addTimer(MonoThreadTimer* t)
     {
         mu.lock();
         timers[timers.size()] = t;
@@ -133,14 +133,14 @@ public:
         return timers.size() - 1;
     }
 
-    void removeTimer(int id)
+    void removeTimer(size_t id)
     {
         mu.lock();
         timers.erase(id);
         mu.unlock();
     }
 
-    unsigned int getTimerCount()
+    size_t getTimerCount()
     {
         return timers.size();
     }
@@ -189,7 +189,7 @@ class ThreadedTimer : public yarp::os::Timer::PrivateImpl,
 
 public:
     ThreadedTimer(TimerSettings sett, TimerCallback call, yarp::os::Mutex* mutex = nullptr) :
-            PrivateImpl(sett, call, mutex), RateThread(sett.rate * 1000)
+            PrivateImpl(sett, call, mutex), RateThread((int)(sett.rate * 1000))
     {
     }
 

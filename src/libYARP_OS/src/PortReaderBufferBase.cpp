@@ -276,7 +276,7 @@ public:
 
     int checkContent()
     {
-        return pool.getCount();
+        return (int)pool.getCount();
     }
 
     PortReaderPacket *getContent()

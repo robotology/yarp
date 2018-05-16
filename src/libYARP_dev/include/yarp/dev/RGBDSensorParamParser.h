@@ -21,9 +21,9 @@ namespace dev {
 class YARP_dev_API RGBDSensorParamParser
 {
 public:
-    struct IntrinsicParams
+    struct YARP_dev_API IntrinsicParams
     {
-        struct plum_bob
+        struct YARP_dev_API plum_bob
         {
             double k1;
             double k2;
@@ -44,7 +44,7 @@ public:
                            focalLengthX(0.0), focalLengthY(0.0),
                            distortionModel(), isOptional(false) {}
     };
-    struct RGBDParam
+    struct YARP_dev_API RGBDParam
     {
         RGBDParam() : name("unknown"), isSetting(false), isDescription(false), size(1)
         {

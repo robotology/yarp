@@ -144,8 +144,8 @@ Vector yarp::math::operator*(const Vector &a, double k)
 
 Vector& yarp::math::operator*=(Vector &a, double k)
 {
-    int size=a.size();
-    for(int i=0;i<size;i++)
+    size_t size=a.size();
+    for (size_t i = 0; i < size; i++)
         a[i]*=k;
     return a;
 }
@@ -267,9 +267,9 @@ Vector yarp::math::operator/(const Vector &b, double k)
 
 Vector& yarp::math::operator/=(Vector &b, double k)
 {
-    int n=b.length();
+    size_t n=b.length();
     yAssert(k!=0.0);
-    for (int i=0;i<n;i++)
+    for (size_t i = 0; i < n; i++)
         b[i]/=k;
     return b;
 }
@@ -385,8 +385,8 @@ Matrix yarp::math::cat(const Vector &v, const Matrix &m)
 
 Vector yarp::math::cat(const Vector &v1, const Vector &v2)
 {
-    int n1 = v1.size();
-    int n2 = v2.size();
+    size_t n1 = v1.size();
+    size_t n2 = v2.size();
     Vector res(n1+n2);
 
     toEigen(res).segment(0,n1) = toEigen(v1);
@@ -397,7 +397,7 @@ Vector yarp::math::cat(const Vector &v1, const Vector &v2)
 
 Vector yarp::math::cat(const Vector &v, double s)
 {
-    int n = v.size();
+    size_t n = v.size();
     Vector res(n+1);
 
     toEigen(res).segment(0,n) = toEigen(v);
@@ -408,7 +408,7 @@ Vector yarp::math::cat(const Vector &v, double s)
 
 Vector yarp::math::cat(double s, const Vector &v)
 {
-    int n = v.size();
+    size_t n = v.size();
     Vector res(n+1);
 
     res(0) = s;

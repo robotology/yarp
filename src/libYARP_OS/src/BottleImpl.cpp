@@ -1364,7 +1364,7 @@ void BottleImpl::edit()
 Value& BottleImpl::findGroupBit(const std::string& key) const
 {
     for (size_t i = 0; i < size(); i++) {
-        Value* org = &(get(i));
+        Value* org = &(get((int)i));
         Value* cursor = org;
         if (cursor->isList()) {
             cursor = &(cursor->asList()->get(0));
@@ -1380,7 +1380,7 @@ Value& BottleImpl::findGroupBit(const std::string& key) const
 Value& BottleImpl::findBit(const std::string& key) const
 {
     for (size_t i = 0; i < size(); i++) {
-        Value* org = &(get(i));
+        Value* org = &(get((int)i));
         Value* cursor = org;
         bool nested = false;
         if (cursor->isList()) {
@@ -1397,13 +1397,13 @@ Value& BottleImpl::findBit(const std::string& key) const
                 report.key = key;
                 report.isFound = true;
                 if (size() == 2) {
-                    report.value = get(i + 1).toString();
+                    report.value = get((int)(i + 1)).toString();
                 }
                 if (parent) {
                     parent->reportToMonitor(report);
                 }
             }
-            return get(i + 1);
+            return get((int)(i + 1));
         }
     }
     // return invalid object

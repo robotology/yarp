@@ -184,7 +184,7 @@ public:
 
 
     virtual void appendRawString(const std::string& str) {
-        appendInt(str.length());
+        appendInt(static_cast<std::int32_t>(str.length()));
         appendBlock((char*)str.c_str(), str.length());
     }
 

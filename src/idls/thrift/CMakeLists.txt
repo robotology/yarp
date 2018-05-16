@@ -72,7 +72,7 @@ if(MSVC)
   set_property(SOURCE ${yarpidl_thrift_SRCS}
                       ${yarpidl_thrift_GEN_SRCS}
                APPEND_STRING
-               PROPERTY COMPILE_FLAGS " /wd4003 /wd4065 /wd4068 /wd4102 /wd4244")
+               PROPERTY COMPILE_FLAGS " /wd4003 /wd4005 /wd4065 /wd4068 /wd4102 /wd4244 ")
 else()
   if(CXX_HAS_WREDUNDANT_DECLS)
     set_property(SOURCE ${yarpidl_thrift_SRCS}
