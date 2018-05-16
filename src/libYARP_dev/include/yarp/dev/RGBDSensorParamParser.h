@@ -58,12 +58,12 @@ public:
         }
 
 
-        std::string  name;
+        YARP_SUPPRESS_DLL_INTERFACE_WARNING_ARG(std::string) name;
         bool         isSetting;
         bool         isDescription;
         int          size;
 
-        std::vector<yarp::os::Value> val;
+        YARP_SUPPRESS_DLL_INTERFACE_WARNING_ARG(std::vector<yarp::os::Value>) val;
     };
 
     IntrinsicParams         depthIntrinsic;

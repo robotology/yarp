@@ -230,11 +230,11 @@ private:
         {}
     };
 
-    std::map<std::string, Entry> action;
-    std::vector<std::string> names;
-    std::vector<std::string> tips;
+    YARP_SUPPRESS_DLL_INTERFACE_WARNING_ARGS(std::map<std::string, Entry>) action;
+    YARP_SUPPRESS_DLL_INTERFACE_WARNING_ARG(std::vector<std::string>) names;
+    YARP_SUPPRESS_DLL_INTERFACE_WARNING_ARG(std::vector<std::string>) tips;
     bool adminMode;
-    std::string argType;
+    YARP_SUPPRESS_DLL_INTERFACE_WARNING_ARG(std::string) argType;
     bool waitConnect;
 
     void add(const char* name,

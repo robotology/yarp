@@ -135,7 +135,7 @@ private:
     bool support_get_mode;
     bool expecting;
     bool get_is_vocab;
-    std::string get_string;
+    YARP_SUPPRESS_DLL_INTERFACE_WARNING_ARG(std::string) get_string;
     bool get_mode;
 
 

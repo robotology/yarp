@@ -56,19 +56,19 @@ public:
     bool created;
 
     /// Name of port.
-    std::string portName;
+    YARP_SUPPRESS_DLL_INTERFACE_WARNING_ARG(std::string) portName;
 
     /// Name of connection source, if any.
-    std::string sourceName;
+    YARP_SUPPRESS_DLL_INTERFACE_WARNING_ARG(std::string) sourceName;
 
     /// Name of connection target, if any.
-    std::string targetName;
+    YARP_SUPPRESS_DLL_INTERFACE_WARNING_ARG(std::string) targetName;
 
     /// Name of protocol type, if releveant.
-    std::string carrierName;
+    YARP_SUPPRESS_DLL_INTERFACE_WARNING_ARG(std::string) carrierName;
 
     /// A human-readable description of contents.
-    std::string message;
+    YARP_SUPPRESS_DLL_INTERFACE_WARNING_ARG(std::string) message;
 };
 
 

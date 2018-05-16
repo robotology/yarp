@@ -192,12 +192,12 @@ private:
     yarp::dev::Implement_RgbVisualParams_Parser  rgbParser2;
     yarp::dev::IRgbVisualParams* rgbVis_p;
     yarp::dev::IRgbVisualParams* rgbVis_p2;
-    std::string rpcPort_Name;
-    std::string rpcPort2_Name;
+    YARP_SUPPRESS_DLL_INTERFACE_WARNING_ARG(std::string) rpcPort_Name;
+    YARP_SUPPRESS_DLL_INTERFACE_WARNING_ARG(std::string) rpcPort2_Name;
     yarp::os::Port rpcPort;
     yarp::os::Port rpcPort2;
-    std::string pImg_Name;
-    std::string pImg2_Name;
+    YARP_SUPPRESS_DLL_INTERFACE_WARNING_ARG(std::string) pImg_Name;
+    YARP_SUPPRESS_DLL_INTERFACE_WARNING_ARG(std::string) pImg2_Name;
     yarp::os::BufferedPort<yarp::sig::FlexImage> pImg;
     yarp::os::BufferedPort<yarp::sig::FlexImage> pImg2;
     yarp::os::Port *p2;//audio

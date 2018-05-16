@@ -37,7 +37,8 @@ public:
     virtual bool read(ConnectionReader& reader) override;
 private:
 
-    std::string clockName;
+    YARP_SUPPRESS_DLL_INTERFACE_WARNING_ARG(std::string) clockName;
+
     void *pwaiters;
     Port port;
 

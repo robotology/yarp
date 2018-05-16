@@ -28,8 +28,8 @@ namespace yarp {
 
 class YARP_OS_API yarp::os::SearchReport {
 public:
-    std::string key;
-    std::string value;
+    YARP_SUPPRESS_DLL_INTERFACE_WARNING_ARG(std::string) key;
+    YARP_SUPPRESS_DLL_INTERFACE_WARNING_ARG(std::string) value;
     bool isFound;
     bool isGroup;
     bool isComment;
@@ -60,7 +60,7 @@ public:
 class YARP_OS_API yarp::os::Searchable {
 private:
     SearchMonitor *monitor;
-    std::string monitorContext;
+    YARP_SUPPRESS_DLL_INTERFACE_WARNING_ARG(std::string) monitorContext;
 public:
     /**
      * Default constructor.

@@ -65,7 +65,7 @@ public:
      * carrier.
      *
      */
-    std::string carrier;
+    YARP_SUPPRESS_DLL_INTERFACE_WARNING_ARG(std::string) carrier;
 
     /**
      *

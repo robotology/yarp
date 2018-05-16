@@ -84,8 +84,8 @@ public:
     Type& addProperty(const char *key, const Value& val);
 
 private:
-    std::string name;
-    std::string name_on_wire;
+    YARP_SUPPRESS_DLL_INTERFACE_WARNING_ARG(std::string) name;
+    YARP_SUPPRESS_DLL_INTERFACE_WARNING_ARG(std::string) name_on_wire;
     Property *prop;
 };
 

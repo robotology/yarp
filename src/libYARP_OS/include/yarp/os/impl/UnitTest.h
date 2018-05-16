@@ -23,8 +23,6 @@ namespace yarp {
     }
 }
 
-// Explicit instantiation
-template class YARP_OS_impl_API std::vector<yarp::os::impl::UnitTest *>;
 
 /**
  * Simple unit testing framework.  There are libraries out there for
@@ -142,7 +140,7 @@ public:
 
 private:
     UnitTest *parent;
-    std::vector<UnitTest *> subTests;
+    YARP_SUPPRESS_DLL_INTERFACE_WARNING_ARG(std::vector<UnitTest*>) subTests;
     bool hasProblem;
     yarp::os::Bottle env;
     static UnitTest *theRoot;

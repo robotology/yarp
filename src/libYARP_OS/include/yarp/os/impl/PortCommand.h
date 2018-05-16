@@ -59,7 +59,7 @@ public:
 
 public:
     char ch;
-    std::string str;
+    YARP_SUPPRESS_DLL_INTERFACE_WARNING_ARG(std::string) str;
     yarp::os::ManagedBytes header;
 };
 

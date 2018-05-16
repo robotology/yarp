@@ -162,10 +162,10 @@ private:
     SharedLibraryClassApi api;
     int returnValue;
     int rct;
-    std::string name;
-    std::string className;
-    std::string baseClassName;
-    std::string error;
+    YARP_SUPPRESS_DLL_INTERFACE_WARNING_ARG(std::string) name;
+    YARP_SUPPRESS_DLL_INTERFACE_WARNING_ARG(std::string) className;
+    YARP_SUPPRESS_DLL_INTERFACE_WARNING_ARG(std::string) baseClassName;
+    YARP_SUPPRESS_DLL_INTERFACE_WARNING_ARG(std::string) error;
 };
 
 

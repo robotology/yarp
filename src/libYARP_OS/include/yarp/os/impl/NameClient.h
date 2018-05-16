@@ -198,8 +198,8 @@ public:
 
 private:
     Contact address;
-    std::string host;
-    std::string mode;
+    YARP_SUPPRESS_DLL_INTERFACE_WARNING_ARG(std::string) host;
+    YARP_SUPPRESS_DLL_INTERFACE_WARNING_ARG(std::string) mode;
     bool fake;
     NameServer* fakeServer;
     bool allowScan;

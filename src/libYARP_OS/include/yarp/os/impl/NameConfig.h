@@ -80,9 +80,9 @@ public:
 
 private:
     Contact address;
-    std::string space;
+    YARP_SUPPRESS_DLL_INTERFACE_WARNING_ARG(std::string) space;
     yarp::os::Bottle spaces;
-    std::string mode;
+    YARP_SUPPRESS_DLL_INTERFACE_WARNING_ARG(std::string) mode;
 
     bool fromString(const std::string& txt);
 };

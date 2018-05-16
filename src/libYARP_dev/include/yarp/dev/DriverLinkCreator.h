@@ -25,7 +25,7 @@ namespace yarp {
  */
 class YARP_dev_API yarp::dev::DriverLinkCreator : public DriverCreator {
 private:
-    std::string name;
+    YARP_SUPPRESS_DLL_INTERFACE_WARNING_ARG(std::string) name;
     PolyDriver holding;
 public:
     DriverLinkCreator(const std::string& name, PolyDriver& source) {

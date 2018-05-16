@@ -92,7 +92,7 @@ public:
 
 private:
     bool get_mode;
-    std::string get_string;
+    YARP_SUPPRESS_DLL_INTERFACE_WARNING_ARG(std::string) get_string;
     bool get_is_vocab;
     bool need_ok;
     ConnectionWriter& writer;

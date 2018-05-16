@@ -68,7 +68,7 @@ public:
     SearchLocations searchLocations;
     DuplicateFilesPolicy duplicateFilesPolicy;
     SearchFlavor searchFlavor;
-    std::string resourceType;
+    YARP_SUPPRESS_DLL_INTERFACE_WARNING_ARG(std::string) resourceType;
     MessageFilter messageFilter;
 
     ResourceFinderOptions(SearchLocations searchLocations = ModuleDefault,

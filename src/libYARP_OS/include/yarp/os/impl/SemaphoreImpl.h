@@ -84,8 +84,8 @@ public:
     }
 
 private:
-    std::mutex mutex;
-    std::condition_variable cond;
+    YARP_SUPPRESS_DLL_INTERFACE_WARNING_ARG(std::mutex) mutex;
+    YARP_SUPPRESS_DLL_INTERFACE_WARNING_ARG(std::condition_variable) cond;
     int count;
     int wakeups;
 };

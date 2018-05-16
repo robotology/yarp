@@ -164,6 +164,8 @@ public:
     static bool mStresstest;
 
     static bool mLogged;
+YARP_WARNING_PUSH
+YARP_DISABLE_DLL_INTERFACE_WARNING
     static std::string mLoggerPort;
 
 #if defined(_WIN32)
@@ -175,7 +177,7 @@ public:
     static ZombieHunterThread *mBraveZombieHunter;
     static void CleanZombie(int pid);
 #endif
-
+YARP_WARNING_POP
     static yarp::os::Bottle sendMsg(yarp::os::Bottle& msg, std::string target, int RETRY=20, double DELAY=0.5);
 
 protected:
@@ -190,6 +192,7 @@ protected:
     static inline bool IS_NEW_PROCESS(int pid){ return !pid; }
     static inline bool IS_INVALID(int pid){ return pid<0; }
 
+YARP_SUPPRESS_DLL_INTERFACE_WARNING
     static std::string mPortName;
     static int mProcCNT;
 

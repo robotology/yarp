@@ -232,12 +232,12 @@ public:
     void reportFailure() const;
 
 private:
-    std::string name;
-    std::string dll_name;
-    std::string fn_name;
-    std::string wrapper_name;
-    std::string class_name;
-    std::string baseclass_name;
+    YARP_SUPPRESS_DLL_INTERFACE_WARNING_ARG(std::string) name;
+    YARP_SUPPRESS_DLL_INTERFACE_WARNING_ARG(std::string) dll_name;
+    YARP_SUPPRESS_DLL_INTERFACE_WARNING_ARG(std::string) fn_name;
+    YARP_SUPPRESS_DLL_INTERFACE_WARNING_ARG(std::string) wrapper_name;
+    YARP_SUPPRESS_DLL_INTERFACE_WARNING_ARG(std::string) class_name;
+    YARP_SUPPRESS_DLL_INTERFACE_WARNING_ARG(std::string) baseclass_name;
     YarpPluginSelector *selector;
     bool verbose;
 

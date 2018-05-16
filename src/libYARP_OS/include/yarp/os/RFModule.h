@@ -288,7 +288,7 @@ private:
     ResourceFinder resourceFinder;
     void *implementation;
     bool stopFlag;
-    std::string name;
+    YARP_SUPPRESS_DLL_INTERFACE_WARNING_ARG(std::string) name;
 
     virtual bool basicRespond(const Bottle& command, Bottle& reply);
 };

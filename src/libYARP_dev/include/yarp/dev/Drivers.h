@@ -132,7 +132,7 @@ public:
  */
 class YARP_dev_API yarp::dev::StubDriverCreator : public DriverCreator {
 private:
-    std::string desc, wrap, code, libname, fnname;
+    YARP_SUPPRESS_DLL_INTERFACE_WARNING_ARG(std::string) desc, wrap, code, libname, fnname;
 public:
     StubDriverCreator(const char *name, const char *wrap, const char *code,
                       const char *libname, const char *fnname) :

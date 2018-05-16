@@ -51,7 +51,7 @@ public:
     std::string getCarrierModifier(const char *mod, bool *hasModifier = nullptr);
 
 private:
-    std::string txt;
+    YARP_SUPPRESS_DLL_INTERFACE_WARNING_ARG(std::string) txt;
 };
 
 #endif // YARP_OS_NAME_H

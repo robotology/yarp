@@ -26,7 +26,7 @@ public:
     /* pointer to the polydriver */
     PolyDriver *poly;
     /* descriptor */
-    std::string key;
+    YARP_SUPPRESS_DLL_INTERFACE_WARNING_ARG(std::string) key;
 
     PolyDriverDescriptor()
     {

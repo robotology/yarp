@@ -455,9 +455,9 @@ private:
     bool applyConvertTextMode();
 
 
-    std::vector<yarp::os::ManagedBytes *> lst;    ///< buffers in payload
-    std::vector<yarp::os::ManagedBytes *> header; ///< buffers in header
-    std::vector<yarp::os::ManagedBytes *> *target;///< points to header or payload
+    YARP_SUPPRESS_DLL_INTERFACE_WARNING_ARG(std::vector<yarp::os::ManagedBytes*>) lst;    ///< buffers in payload
+    YARP_SUPPRESS_DLL_INTERFACE_WARNING_ARG(std::vector<yarp::os::ManagedBytes*>) header; ///< buffers in header
+    YARP_SUPPRESS_DLL_INTERFACE_WARNING_ARG(std::vector<yarp::os::ManagedBytes*>) *target;///< points to header or payload
     yarp::os::ManagedBytes *pool; ///< the pool buffer (in lst or header)
     size_t poolIndex;  ///< current offset into pool buffer
     size_t poolCount;  ///< number of pool buffers allocated
