@@ -56,17 +56,6 @@ include_directories(SYSTEM ${THRIFT_ROOT}/compiler/cpp/src)
 include_directories(SYSTEM ${CMAKE_CURRENT_BINARY_DIR})
 
 add_definitions(-DYYENABLE_NLS=0)
-if(MSVC)
-  # TODO Check if these definitions are still required
-#   add_definitions(-DYY_NO_UNISTD_H)
-#   add_definitions(-Dstrtoll=_strtoi64)
-#   add_definitions(-DPRIi64="I64i")
-#   add_definitions(-DMINGW) # activate windows code in thrift
-#   add_definitions(-DPATH_MAX=1000)
-#   add_definitions(-DS_ISDIR=1+0*)
-#   add_definitions(-D__STDC_VERSION__=199901L)
-endif()
-
 
 if(MSVC)
   set_property(SOURCE ${yarpidl_thrift_SRCS}

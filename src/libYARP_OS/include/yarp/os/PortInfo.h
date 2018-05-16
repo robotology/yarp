@@ -10,8 +10,9 @@
 #ifndef YARP_OS_PORTINFO_H
 #define YARP_OS_PORTINFO_H
 
-#include <string>
+#include <yarp/os/api.h>
 #include <yarp/os/Vocab.h>
+#include <string>
 
 
 namespace yarp {

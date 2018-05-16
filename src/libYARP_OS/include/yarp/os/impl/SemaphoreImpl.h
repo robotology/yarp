@@ -10,6 +10,7 @@
 #ifndef YARP_OS_IMPL_SEMAPHOREIMPL_H
 #define YARP_OS_IMPL_SEMAPHOREIMPL_H
 
+#include <yarp/os/api.h>
 #include <condition_variable>
 #include <mutex>
 

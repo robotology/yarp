@@ -17,6 +17,8 @@
 #include <yarp/os/Vocab.h>
 #include <yarp/os/Bottle.h>
 
+#include <string>
+
 namespace yarp {
     namespace os {
         namespace idl {

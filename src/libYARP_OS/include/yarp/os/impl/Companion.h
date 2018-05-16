@@ -10,12 +10,12 @@
 #ifndef YARP_OS_IMPL_COMPANION_H
 #define YARP_OS_IMPL_COMPANION_H
 
-#include <string>
 #include <yarp/os/PortWriter.h>
 #include <yarp/os/ContactStyle.h>
 #include <yarp/os/Contactable.h>
 
 #include <map>
+#include <string>
 #include <vector>
 #include <cstdio>
 

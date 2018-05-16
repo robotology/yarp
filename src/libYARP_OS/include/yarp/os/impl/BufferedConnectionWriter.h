@@ -20,6 +20,7 @@
 #include <yarp/os/Bottle.h>
 #include <yarp/os/NetInt64.h>
 
+#include <string>
 #include <vector>
 #include <cstdlib>
 

@@ -23,7 +23,8 @@ namespace yarp {
 }
 
 
-class YARP_OS_API yarp::os::NetworkClock : public Clock, PortReader {
+class YARP_OS_API yarp::os::NetworkClock : public Clock, PortReader
+{
 public:
     NetworkClock();
     virtual ~NetworkClock();

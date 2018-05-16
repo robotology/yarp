@@ -9,6 +9,7 @@
 #ifndef YARP_OS_YARPPLUGINSETTINGS_H
 #define YARP_OS_YARPPLUGINSETTINGS_H
 
+#include <yarp/os/api.h>
 #include <yarp/os/YarpPluginSelector.h>
 #include <yarp/os/SharedLibraryClass.h>
 #include <yarp/os/Log.h>
