@@ -571,34 +571,39 @@ SystemInfo::PlatformInfo SystemInfo::getPlatformInfo()
         sprintf(buff, "%d.%d", osver.dwMajorVersion, osver.dwMinorVersion);
         platform.release = buff;
         platform.codename = buff;
-        if ((osver.dwMajorVersion == 6) && (osver.dwMinorVersion == 1) &&
-            (osver.wProductType == VER_NT_WORKSTATION))
+        if ((osver.dwMajorVersion == 10) && (osver.dwMinorVersion == 0) && (osver.wProductType == VER_NT_WORKSTATION)) {
+            platform.distribution = "10";
+        } else if ((osver.dwMajorVersion == 10) && (osver.dwMinorVersion == 0) && (osver.wProductType != VER_NT_WORKSTATION)) {
+            platform.distribution = "Server 2016";
+        } else if ((osver.dwMajorVersion == 6) && (osver.dwMinorVersion == 2) && (osver.wProductType == VER_NT_WORKSTATION)) {
+            platform.distribution = "8.1";
+        } else if ((osver.dwMajorVersion == 6) && (osver.dwMinorVersion == 3) && (osver.wProductType != VER_NT_WORKSTATION)) {
+            platform.distribution = "Server 2012 R2";
+        } else if ((osver.dwMajorVersion == 6) && (osver.dwMinorVersion == 2) && (osver.wProductType == VER_NT_WORKSTATION)) {
+            platform.distribution = "8";
+        } else if ((osver.dwMajorVersion == 6) && (osver.dwMinorVersion == 2) && (osver.wProductType != VER_NT_WORKSTATION)) {
+            platform.distribution = "Server 2012";
+        } else if ((osver.dwMajorVersion == 6) && (osver.dwMinorVersion == 1) && (osver.wProductType == VER_NT_WORKSTATION)) {
            platform.distribution = "7";
-        else if ((osver.dwMajorVersion == 6) && (osver.dwMinorVersion == 1) &&
-            (osver.wProductType != VER_NT_WORKSTATION))
+        } else if ((osver.dwMajorVersion == 6) && (osver.dwMinorVersion == 1) && (osver.wProductType != VER_NT_WORKSTATION)) {
            platform.distribution = "Server 2008 R2";
-        else if ((osver.dwMajorVersion == 6) && (osver.dwMinorVersion == 0) &&
-            (osver.wProductType == VER_NT_WORKSTATION))
+        } else if ((osver.dwMajorVersion == 6) && (osver.dwMinorVersion == 0) && (osver.wProductType == VER_NT_WORKSTATION)) {
            platform.distribution = "Vista";
-        else if ((osver.dwMajorVersion == 6) && (osver.dwMinorVersion == 0) &&
-            (osver.wProductType != VER_NT_WORKSTATION))
+        } else if ((osver.dwMajorVersion == 6) && (osver.dwMinorVersion == 0) && (osver.wProductType != VER_NT_WORKSTATION)) {
            platform.distribution = "Server 2008";
-        else if ((osver.dwMajorVersion == 5) && (osver.dwMinorVersion == 2))
+        } else if ((osver.dwMajorVersion == 5) && (osver.dwMinorVersion == 2)) {
            platform.distribution = "Server 2003";
-    //    else if ((osver.dwMajorVersion == 5) && (osver.dwMinorVersion == 2) &&
-    //        (osver.wSuiteMask & VER_SUITE_WH_SERVER))
+    //    } else if ((osver.dwMajorVersion == 5) && (osver.dwMinorVersion == 2) && (osver.wSuiteMask & VER_SUITE_WH_SERVER)) {
     //       platform.distribution = "Home Server";
-    //    else if ((osver.dwMajorVersion == 5) && (osver.dwMinorVersion == 2) &&
-    //            (GetSystemMetrics(SM_SERVERR2) != 0))
+    //    } else if ((osver.dwMajorVersion == 5) && (osver.dwMinorVersion == 2) && (GetSystemMetrics(SM_SERVERR2) != 0)) {
     //       platform.distribution = "Server 2003 R2";
-        else if ((osver.dwMajorVersion == 5) && (osver.dwMinorVersion == 2) &&
-                (osver.wProductType == VER_NT_WORKSTATION))
-                /* &&(osver.wProcessorArchitecture == PROCESSOR_ARCHITECTURE_AMD64)*/
+        } else if ((osver.dwMajorVersion == 5) && (osver.dwMinorVersion == 2) && (osver.wProductType == VER_NT_WORKSTATION)) /* &&(osver.wProcessorArchitecture == PROCESSOR_ARCHITECTURE_AMD64)*/ {
            platform.distribution = "XP Professional x64 Edition";
-        else if ((osver.dwMajorVersion == 5) && (osver.dwMinorVersion == 1))
+        } else if ((osver.dwMajorVersion == 5) && (osver.dwMinorVersion == 1)) {
            platform.distribution = "XP";
-        else if ((osver.dwMajorVersion == 5) && (osver.dwMinorVersion == 0))
+        } else if ((osver.dwMajorVersion == 5) && (osver.dwMinorVersion == 0)) {
             platform.distribution = "2000";
+        }
     }
 
     const char* a = GetEnvironmentStrings();
