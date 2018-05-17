@@ -7,6 +7,7 @@
  * BSD-3-Clause license. See the accompanying LICENSE file for details.
  */
 
+#include <yarp/conf/version.h>
 #include <yarp/os/InputProtocol.h>
 #include <yarp/os/RosNameSpace.h>
 #include <yarp/os/impl/Logger.h>
@@ -1687,13 +1688,15 @@ bool PortCore::adminBlock(ConnectionReader& reader,
         //result.addString("[dtch] $portname        # detach any portmonitor plug-in from the connection to/from $portname");
         break;
     case VOCAB3('v', 'e', 'r'):
+    {
         // Gives a version number for the administrative commands.
         // It is distinct from YARP library versioning.
         result.addVocab(Vocab::encode("ver"));
-        result.addInt32(1);
-        result.addInt32(2);
-        result.addInt32(3);
-        break;
+        result.addInt32(YARP_PROTOCOL_VERSION_MAJOR);
+        result.addInt32(YARP_PROTOCOL_VERSION_MINOR);
+        result.addInt32(YARP_PROTOCOL_VERSION_PATCH);
+    }
+    break;
     case VOCAB3('a', 'd', 'd'):
         {
             // Add an output to the port.
