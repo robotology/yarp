@@ -12,7 +12,7 @@ using namespace yarp::sig;
 
 // Map that contains the offset of the basic types respect the origin of the struct
 // representing the composite types.
-const std::map<std::pair<int, int>, int> offsetMap = {
+const std::map<std::pair<int, int>, size_t> offsetMap = {
     // PCL_NORMAL
     { std::make_pair(PCL_NORMAL, PC_CURVATURE_DATA), sizeof(yarp::sig::DataNormalNoCurvature) },
 

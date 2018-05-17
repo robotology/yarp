@@ -87,7 +87,7 @@ public:
     static void fini();
 
     long tid;
-    std::thread::id id;
+    YARP_SUPPRESS_DLL_INTERFACE_WARNING_ARG(std::thread::id) id;
 
     static void yield();
 
@@ -95,8 +95,8 @@ private:
     int defaultPriority;
     int defaultPolicy;
     int stackSize;
-    std::thread hid;
-    std::atomic<bool> active;
+    YARP_SUPPRESS_DLL_INTERFACE_WARNING_ARG(std::thread) hid;
+    YARP_SUPPRESS_DLL_INTERFACE_WARNING_ARG(std::atomic<bool>) active;
     bool opened;
     bool closing;
     bool needJoin;

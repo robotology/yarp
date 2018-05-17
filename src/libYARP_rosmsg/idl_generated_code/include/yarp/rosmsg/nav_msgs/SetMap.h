@@ -143,25 +143,25 @@ public:
     typedef yarp::os::idl::BottleStyle<yarp::rosmsg::nav_msgs::SetMap> bottleStyle;
 
     // Give source text for class, ROS will need this
-    static yarp::os::ConstString typeText()
+    static std::string typeText()
     {
-        return yarp::os::ConstString("\
+        return std::string("\
 # Set a new map together with an initial pose\n\
 nav_msgs/OccupancyGrid map\n\
 geometry_msgs/PoseWithCovarianceStamped initial_pose\n\
 ---\n\
 bool success\n\
 \n\
-") + yarp::os::ConstString("\n\
+") + std::string("\n\
 ================================================================================\n\
 MSG: nav_msgs/OccupancyGrid\n\
-") + yarp::rosmsg::nav_msgs::OccupancyGrid::typeText() + yarp::os::ConstString("\n\
+") + yarp::rosmsg::nav_msgs::OccupancyGrid::typeText() + std::string("\n\
 ================================================================================\n\
 MSG: geometry_msgs/PoseWithCovarianceStamped\n\
 ") + yarp::rosmsg::geometry_msgs::PoseWithCovarianceStamped::typeText();
     }
 
-    yarp::os::ConstString getTypeText() const
+    std::string getTypeText() const
     {
         return yarp::rosmsg::nav_msgs::SetMap::typeText();
     }

@@ -122,9 +122,9 @@ struct DataXY
             float y;
         };
     };
-    yarp::os::ConstString toString(int precision, int width)
+    std::string toString(int precision, int width)
     {
-        yarp::os::ConstString ret = "";
+        std::string ret = "";
         char tmp[128];
         if (width < 0) {
             snprintf(tmp, 128, "% .*lf % .*lf\t", precision, x,
@@ -169,9 +169,9 @@ struct DataXYZ
             float z;
         };
     };
-    yarp::os::ConstString toString(int precision, int width)
+    std::string toString(int precision, int width)
     {
-        yarp::os::ConstString ret = "";
+        std::string ret = "";
         char tmp[128];
         if (width < 0) {
             snprintf(tmp, 128, "% .*lf % .*lf % .*lf\t", precision, x,
@@ -227,11 +227,11 @@ struct DataRGBA
         yarp::os::NetInt32 rgba;
 //        float data_c[4];
     };
-    yarp::os::ConstString toString(int precision, int width)
+    std::string toString(int precision, int width)
     {
         YARP_UNUSED(precision);
         YARP_UNUSED(width);
-        yarp::os::ConstString ret = "";
+        std::string ret = "";
         char tmp[10];
         snprintf(tmp, 128, "%c %c %c %c\t", r, g, b, a);
         ret += tmp;
@@ -281,9 +281,9 @@ struct DataNormal
         };
         float data_c[4];
     };
-    yarp::os::ConstString toString(int precision, int width)
+    std::string toString(int precision, int width)
     {
-        yarp::os::ConstString ret = "";
+        std::string ret = "";
         char tmp[128];
         if (width < 0) {
             snprintf(tmp, 128, "% .*lf % .*lf % .*lf % .*lf\t", precision, normal_x,
@@ -341,9 +341,9 @@ struct DataNormalNoCurvature
             float normal_z;
         };
     };
-    yarp::os::ConstString toString(int precision, int width)
+    std::string toString(int precision, int width)
     {
-        yarp::os::ConstString ret = "";
+        std::string ret = "";
         char tmp[128];
         if (width < 0) {
             snprintf(tmp, 128, "% .*lf % .*lf % .*lf\t", precision, normal_x,
@@ -413,9 +413,9 @@ struct DataViewpoint
             float vp_z;
         };
     };
-    yarp::os::ConstString toString(int precision, int width)
+    std::string toString(int precision, int width)
     {
-        yarp::os::ConstString ret = "";
+        std::string ret = "";
         char tmp[128];
         if (width < 0) {
             snprintf(tmp, 128, "% .*lf % .*lf % .*lf\t", precision, vp_x,
@@ -490,9 +490,9 @@ struct DataXYZRGBA
         yarp::os::NetInt32 rgba;
         float rgba_padding[4];
     };
-    yarp::os::ConstString toString(int precision, int width)
+    std::string toString(int precision, int width)
     {
-        yarp::os::ConstString ret = "";
+        std::string ret = "";
         char tmp[128];
         if (width < 0) {
             snprintf(tmp, 128, "% .*lf % .*lf % .*lf ", precision, x,
@@ -565,9 +565,9 @@ struct DataXYZI
         };
         float intensity_padding[4];
     };
-    yarp::os::ConstString toString(int precision, int width)
+    std::string toString(int precision, int width)
     {
-        yarp::os::ConstString ret = "";
+        std::string ret = "";
         char tmp[128];
         if (width < 0) {
             snprintf(tmp, 128, "% .*lf % .*lf % .*lf % .*lf\t", precision, x,
@@ -634,9 +634,9 @@ struct DataInterestPointXYZ
         };
         float strength_padding[4];
     };
-    yarp::os::ConstString toString(int precision, int width)
+    std::string toString(int precision, int width)
     {
-        yarp::os::ConstString ret = "";
+        std::string ret = "";
         char tmp[128];
         if (width < 0) {
             snprintf(tmp, 128, "% .*lf % .*lf % .*lf % .*lf\t", precision, x,
@@ -714,9 +714,9 @@ struct DataXYZNormal
         };
         float filler_c[4];
     };
-    yarp::os::ConstString toString(int precision, int width)
+    std::string toString(int precision, int width)
     {
-        yarp::os::ConstString ret = "";
+        std::string ret = "";
         char tmp[128];
         if (width < 0) {
             snprintf(tmp, 128, "% .*lf % .*lf % .*lf ", precision, x,
@@ -820,9 +820,9 @@ struct DataXYZNormalRGBA
         };
         float filler_others[4];
     };
-    yarp::os::ConstString toString(int precision, int width)
+    std::string toString(int precision, int width)
     {
-        yarp::os::ConstString ret = "";
+        std::string ret = "";
         char tmp[128];
         if (width < 0) {
             snprintf(tmp, 128, "% .*lf % .*lf % .*lf ", precision, x,

@@ -97,16 +97,16 @@ class yarp::dev::RGBDSensorClient:  public DeviceDriver,
     yarp::dev::Implement_RgbVisualParams_Sender*   RgbMsgSender;
     yarp::dev::Implement_DepthVisualParams_Sender* DepthMsgSender;
 protected:
-    yarp::os::ConstString local_colorFrame_StreamingPort_name;
-    yarp::os::ConstString local_depthFrame_StreamingPort_name;
-    yarp::os::ConstString remote_colorFrame_StreamingPort_name;
-    yarp::os::ConstString remote_depthFrame_StreamingPort_name;
+    std::string local_colorFrame_StreamingPort_name;
+    std::string local_depthFrame_StreamingPort_name;
+    std::string remote_colorFrame_StreamingPort_name;
+    std::string remote_depthFrame_StreamingPort_name;
     yarp::os::BufferedPort<yarp::sig::FlexImage> colorFrame_StreamingPort;
     yarp::os::BufferedPort<yarp::sig::ImageOf< yarp::sig::PixelFloat> > depthFrame_StreamingPort;
 
     // Use a single RPC port for now
-    yarp::os::ConstString local_rpcPort_name;
-    yarp::os::ConstString remote_rpcPort_name;
+    std::string local_rpcPort_name;
+    std::string remote_rpcPort_name;
     yarp::os::Port        rpcPort;
 
 
@@ -119,10 +119,10 @@ protected:
      * another one, it will result in concurrent thread most probably) and buffering issues.
      *
 
-        yarp::os::ConstString local_colorFrame_rpcPort_Name;
-        yarp::os::ConstString local_depthFrame_rpcPort_Name;
-        yarp::os::ConstString remote_colorFrame_rpcPort_Name;
-        yarp::os::ConstString remote_depthFrame_rpcPort_Name;
+        std::string local_colorFrame_rpcPort_Name;
+        std::string local_depthFrame_rpcPort_Name;
+        std::string remote_colorFrame_rpcPort_Name;
+        std::string remote_depthFrame_rpcPort_Name;
 
         yarp::os::Port colorFrame_rpcPort;
         yarp::os::Port depthFrame_rpcPort;
@@ -232,7 +232,7 @@ public:
      * Error message will be reset after any succesful command
      * @return A string explaining the last error occurred.
      */
-    yarp::os::ConstString getLastErrorMsg(yarp::os::Stamp *timeStamp = NULL) override;
+    std::string getLastErrorMsg(yarp::os::Stamp *timeStamp = NULL) override;
 
     /**
      * Get the rgb frame from the device.

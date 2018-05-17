@@ -24,7 +24,7 @@ using namespace yarp::os::impl;
 
 class ThriftTest : public UnitTest {
 public:
-    virtual ConstString getName() override {
+    virtual std::string getName() override {
         return "ThriftTest";
     }
 };
@@ -853,8 +853,8 @@ bool test_help() {
         server.read(con.getReader());
         bot.read(con.getReader());
         printf("Service general help is %s\n", bot.toString().c_str());
-        ConstString help = bot.toString();
-        if (help.find("get_answer")==ConstString::npos) {
+        std::string help = bot.toString();
+        if (help.find("get_answer")==std::string::npos) {
             fprintf(stderr,"no list given\n");
             return false;
         }
@@ -868,8 +868,8 @@ bool test_help() {
         server.read(con.getReader());
         bot.read(con.getReader());
         printf("Service specific help is %s\n", bot.toString().c_str());
-        ConstString help = bot.toString();
-        if (help.find("gets the answer")==ConstString::npos) {
+        std::string help = bot.toString();
+        if (help.find("gets the answer")==std::string::npos) {
             fprintf(stderr,"no help given\n");
             return false;
         }
@@ -886,8 +886,8 @@ bool test_help() {
         e.read(con.getReader());
         bot.read(con.getReader());
         printf("Structure general help is %s\n", bot.toString().c_str());
-        ConstString help = bot.toString();
-        if (help.find("x")==ConstString::npos) {
+        std::string help = bot.toString();
+        if (help.find("x")==std::string::npos) {
             fprintf(stderr,"no field list\n");
             return false;
         }
@@ -904,8 +904,8 @@ bool test_help() {
         e.read(con.getReader());
         bot.read(con.getReader());
         printf("Structure specific help is %s\n", bot.toString().c_str());
-        ConstString help = bot.toString();
-        if (help.find("this is the x part")==ConstString::npos) {
+        std::string help = bot.toString();
+        if (help.find("this is the x part")==std::string::npos) {
             fprintf(stderr,"no help given\n");
             return false;
         }

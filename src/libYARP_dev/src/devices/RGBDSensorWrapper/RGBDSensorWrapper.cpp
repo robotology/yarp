@@ -328,7 +328,7 @@ bool RGBDSensorWrapper::fromConfig(yarp::os::Searchable &config)
 
     if(use_YARP)
     {
-        yarp::os::ConstString rootName;
+        std::string rootName;
         rootName = config.check("name",Value("/"), "starting '/' if needed.").asString().c_str();
 
         if (!config.check("name", "Prefix name of the ports opened by the RGBD wrapper."))

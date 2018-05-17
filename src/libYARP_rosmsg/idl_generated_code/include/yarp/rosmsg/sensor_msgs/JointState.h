@@ -287,9 +287,9 @@ public:
     typedef yarp::os::idl::BottleStyle<yarp::rosmsg::sensor_msgs::JointState> bottleStyle;
 
     // Give source text for class, ROS will need this
-    static yarp::os::ConstString typeText()
+    static std::string typeText()
     {
-        return yarp::os::ConstString("\
+        return std::string("\
 # This is a message that holds data to describe the state of a set of torque controlled joints. \n\
 #\n\
 # The state of each joint (revolute or prismatic) is defined by:\n\
@@ -316,13 +316,13 @@ string[] name\n\
 float64[] position\n\
 float64[] velocity\n\
 float64[] effort\n\
-") + yarp::os::ConstString("\n\
+") + std::string("\n\
 ================================================================================\n\
 MSG: std_msgs/Header\n\
 ") + yarp::rosmsg::std_msgs::Header::typeText();
     }
 
-    yarp::os::ConstString getTypeText() const
+    std::string getTypeText() const
     {
         return yarp::rosmsg::sensor_msgs::JointState::typeText();
     }

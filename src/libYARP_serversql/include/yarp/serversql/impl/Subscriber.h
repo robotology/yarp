@@ -13,7 +13,7 @@
 #include <yarp/name/NameService.h>
 #include <yarp/serversql/impl/ConnectThread.h>
 
-#include <yarp/os/ConstString.h>
+#include <string>
 #include <yarp/os/Vocab.h>
 #include <yarp/os/NameStore.h>
 #include <yarp/os/NameSpace.h>
@@ -52,55 +52,55 @@ public:
         manager.clear();
     }
 
-    void connect(const yarp::os::ConstString& src,
-                 const yarp::os::ConstString& dest) {
+    void connect(const std::string& src,
+                 const std::string& dest) {
         manager.connect(src,dest);
     }
 
-    void disconnect(const yarp::os::ConstString& src,
-                    const yarp::os::ConstString& dest,
+    void disconnect(const std::string& src,
+                    const std::string& dest,
                     bool srcDrop) {
         manager.disconnect(src,dest,srcDrop);
     }
 
-    virtual bool addSubscription(const yarp::os::ConstString& src,
-                                 const yarp::os::ConstString& dest,
-                                 const yarp::os::ConstString& mode) = 0;
+    virtual bool addSubscription(const std::string& src,
+                                 const std::string& dest,
+                                 const std::string& mode) = 0;
 
-    virtual bool removeSubscription(const yarp::os::ConstString& src,
-                                    const yarp::os::ConstString& dest) = 0;
+    virtual bool removeSubscription(const std::string& src,
+                                    const std::string& dest) = 0;
 
-    virtual bool listSubscriptions(const yarp::os::ConstString& src,
+    virtual bool listSubscriptions(const std::string& src,
                                    yarp::os::Bottle& reply) = 0;
 
-    virtual bool welcome(const yarp::os::ConstString& port, int activity) = 0;
+    virtual bool welcome(const std::string& port, int activity) = 0;
 
-    virtual bool setTopic(const yarp::os::ConstString& port,
-                          const yarp::os::ConstString& structure, bool active) = 0;
+    virtual bool setTopic(const std::string& port,
+                          const std::string& structure, bool active) = 0;
 
     virtual bool listTopics(yarp::os::Bottle& topics) = 0;
 
-    virtual bool setType(const yarp::os::ConstString& family,
-                         const yarp::os::ConstString& structure,
-                         const yarp::os::ConstString& value) = 0;
+    virtual bool setType(const std::string& family,
+                         const std::string& structure,
+                         const std::string& value) = 0;
 
-    virtual yarp::os::ConstString getType(const yarp::os::ConstString& family,
-                                          const yarp::os::ConstString& structure) = 0;
+    virtual std::string getType(const std::string& family,
+                                          const std::string& structure) = 0;
 
     virtual bool apply(yarp::os::Bottle& cmd,
                        yarp::os::Bottle& reply,
                        yarp::os::Bottle& event,
                        const yarp::os::Contact& remote) override {
-        yarp::os::ConstString tag = cmd.get(0).asString();
+        std::string tag = cmd.get(0).asString();
         bool ok = false;
         if (tag=="subscribe"||tag=="unsubscribe"||tag=="announce"||
             tag=="topic"||tag=="untopic"||tag=="type") {
             if (!silent) printf("-> %s\n", cmd.toString().c_str());
         }
         if (tag=="subscribe") {
-            yarp::os::ConstString src = cmd.get(1).asString();
-            yarp::os::ConstString dest = cmd.get(2).asString();
-            yarp::os::ConstString mode = cmd.get(3).asString();
+            std::string src = cmd.get(1).asString();
+            std::string dest = cmd.get(2).asString();
+            std::string mode = cmd.get(3).asString();
             if (dest!="") {
                 ok = addSubscription(src,
                                      dest,
@@ -153,7 +153,7 @@ public:
                 reply.addVocab(replyCode(result));
                 return true;
             } else if (cmd.size()==3) {
-                yarp::os::ConstString result =
+                std::string result =
                     getType(cmd.get(1).asString().c_str(),
                             cmd.get(2).asString().c_str());
                 reply.clear();

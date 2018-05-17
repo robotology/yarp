@@ -53,7 +53,7 @@ int main(int argc, char *argv[]) {
             Bottle& location = player->findGroup("location");
             Value& life = player->find("life");
 
-            ConstString playerName = player->get(0).asString();
+            std::string playerName = player->get(0).asString();
             printf("PLAYER %s is at (%d,%d) with lifeforce %d\n", 
                    playerName.c_str(), 
                    location.get(1).asInt(),

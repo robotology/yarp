@@ -35,7 +35,7 @@ public:
     // if non-null, contains a buffer that the packet owns
     PortReader *reader;
 
-    ConstString envelope;
+    std::string envelope;
 
     // if nun-null, refers to an external buffer
     // by convention, overrides reader
@@ -93,7 +93,7 @@ public:
 
     void setEnvelope(const Bytes& bytes)
     {
-        envelope = ConstString(bytes.get(), bytes.length());
+        envelope = std::string(bytes.get(), bytes.length());
         //envelope.set(bytes.get(), bytes.length(), 1);
     }
 
@@ -246,7 +246,7 @@ public:
     }
 
 
-    ConstString getName()
+    std::string getName()
     {
         if (port!=nullptr) {
             return port->getName();
@@ -276,7 +276,7 @@ public:
 
     int checkContent()
     {
-        return pool.getCount();
+        return (int)pool.getCount();
     }
 
     PortReaderPacket *getContent()
@@ -530,7 +530,7 @@ void PortReaderBufferBase::setTargetPeriod(double period)
     mPriv->period = period;
 }
 
-ConstString PortReaderBufferBase::getName() const
+std::string PortReaderBufferBase::getName() const
 {
     return mPriv->getName();
 }

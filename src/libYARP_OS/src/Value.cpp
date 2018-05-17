@@ -42,7 +42,7 @@ Value::Value(double x) :
     setProxy(static_cast<Storable*>(makeDouble(x)));
 }
 
-Value::Value(const ConstString& str, bool isVocab) :
+Value::Value(const std::string& str, bool isVocab) :
         Portable(),
         Searchable(),
         proxy(nullptr)
@@ -195,7 +195,7 @@ double Value::asDouble() const
     return proxy->asDouble();
 }
 
-ConstString Value::asString() const
+std::string Value::asString() const
 {
     ok();
     return proxy->asString();
@@ -268,19 +268,19 @@ bool Value::write(ConnectionWriter& connection)
     return proxy->write(connection);
 }
 
-bool Value::check(const ConstString& key) const
+bool Value::check(const std::string& key) const
 {
     ok();
     return proxy->check(key);
 }
 
-Value& Value::find(const ConstString& key) const
+Value& Value::find(const std::string& key) const
 {
     ok();
     return proxy->find(key);
 }
 
-Bottle& Value::findGroup(const ConstString& key) const
+Bottle& Value::findGroup(const std::string& key) const
 {
     ok();
     return proxy->findGroup(key);
@@ -302,7 +302,7 @@ void Value::fromString(const char *str) {
     setProxy(static_cast<Storable*>(makeValue(str)));
 }
 
-ConstString Value::toString() const
+std::string Value::toString() const
 {
     ok();
     return proxy->toString();
@@ -349,7 +349,7 @@ Value *Value::makeDouble(double x)
 }
 
 
-Value *Value::makeString(const ConstString& str)
+Value *Value::makeString(const std::string& str)
 {
     return new StoreString(str);
 }
@@ -361,7 +361,7 @@ Value *Value::makeVocab(int v)
 }
 
 
-Value *Value::makeVocab(const ConstString& str)
+Value *Value::makeVocab(const std::string& str)
 {
     return new StoreVocab(Vocab::encode(str));
 }
@@ -369,7 +369,7 @@ Value *Value::makeVocab(const ConstString& str)
 
 Value *Value::makeBlob(void *data, int length)
 {
-    ConstString s((char*)data, length);
+    std::string s((char*)data, length);
     return new StoreBlob(s);
 }
 
@@ -390,7 +390,7 @@ Value *Value::makeList(const char *txt)
 }
 
 
-Value *Value::makeValue(const ConstString& txt)
+Value *Value::makeValue(const std::string& txt)
 {
     Bottle bot(txt);
     if (bot.size()>1) {

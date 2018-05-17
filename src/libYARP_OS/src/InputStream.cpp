@@ -13,8 +13,8 @@ using namespace yarp::os;
 
 // slow implementation - only relevant for textmode operation
 
-ConstString InputStream::readLine(int terminal, bool *success) {
-    ConstString buf("");
+std::string InputStream::readLine(int terminal, bool *success) {
+    std::string buf("");
     bool done = false;
     int esc = 0;
     if (success != nullptr) {

@@ -76,8 +76,8 @@ public:
 
 private:
 #ifndef DOXYGEN_SHOULD_SKIP_THIS
-    yarp::os::ConstString streamingPortName;
-    yarp::os::ConstString rpcPortName;
+    std::string streamingPortName;
+    std::string rpcPortName;
     yarp::os::Port rpcPort;
     yarp::os::BufferedPort<yarp::os::Bottle> streamingPort;
     yarp::dev::IBattery *battery_p;             // the battery read from

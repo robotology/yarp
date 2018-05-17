@@ -37,7 +37,7 @@ public:
 
     void setTargetPeriod(double period);
 
-    yarp::os::ConstString getName() const;
+    std::string getName() const;
 
     unsigned int getMaxBuffer();
 

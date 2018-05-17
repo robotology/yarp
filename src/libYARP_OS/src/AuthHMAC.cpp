@@ -14,7 +14,7 @@
 #include <cstdio>
 #include <ctime>
 #include <random>
-#include <yarp/os/ConstString.h>
+#include <string>
 #include <yarp/os/Property.h>
 #include <yarp/os/Network.h>
 #include <yarp/os/ResourceFinder.h>
@@ -48,9 +48,9 @@ AuthHMAC::AuthHMAC() :
         return;
     }
     memset(&context, 0, sizeof(HMAC_CONTEXT));
-    ConstString key;
+    std::string key;
     ResourceFinder& rf = ResourceFinder::getResourceFinderSingleton();
-    ConstString fname;
+    std::string fname;
     Network::lock();
     ResourceFinderOptions opt;
     opt.messageFilter = ResourceFinderOptions::ShowNone;

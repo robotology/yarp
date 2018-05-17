@@ -46,7 +46,7 @@ private:
     bool firstRound;
     bool sender;
     Contact host;
-    ConstString http;
+    std::string http;
     bool interpretRos;
 public:
     XmlRpcCarrier() :
@@ -61,7 +61,7 @@ public:
         return new XmlRpcCarrier();
     }
 
-    virtual ConstString getName() override
+    virtual std::string getName() override
     {
         return "xmlrpc";
     }
@@ -106,7 +106,7 @@ public:
         return false;
     }
 
-    virtual ConstString toString() override
+    virtual std::string toString() override
     {
         return "xmlrpc_carrier";
     }
@@ -203,7 +203,7 @@ public:
         return true;
     }
 
-    virtual ConstString getBootstrapCarrierName() override
+    virtual std::string getBootstrapCarrierName() override
     {
         return "";
     }

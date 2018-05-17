@@ -32,7 +32,7 @@ bool yarp::dev::RobotDescriptionServer::open(yarp::os::Searchable &config)
         return false;
     }
 
-    ConstString local_rpc = m_local_name;
+    std::string local_rpc = m_local_name;
     local_rpc += "/rpc";
 
     if (!m_rpc_port.open(local_rpc.c_str()))

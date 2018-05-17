@@ -185,9 +185,9 @@ public:
     typedef yarp::os::idl::BottleStyle<yarp::rosmsg::sensor_msgs::CompressedImage> bottleStyle;
 
     // Give source text for class, ROS will need this
-    static yarp::os::ConstString typeText()
+    static std::string typeText()
     {
-        return yarp::os::ConstString("\
+        return std::string("\
 # This message contains a compressed image\n\
 \n\
 Header header        # Header timestamp should be acquisition time of image\n\
@@ -201,13 +201,13 @@ string format        # Specifies the format of the data\n\
                      #   Acceptable values:\n\
                      #     jpeg, png\n\
 uint8[] data         # Compressed image buffer\n\
-") + yarp::os::ConstString("\n\
+") + std::string("\n\
 ================================================================================\n\
 MSG: std_msgs/Header\n\
 ") + yarp::rosmsg::std_msgs::Header::typeText();
     }
 
-    yarp::os::ConstString getTypeText() const
+    std::string getTypeText() const
     {
         return yarp::rosmsg::sensor_msgs::CompressedImage::typeText();
     }

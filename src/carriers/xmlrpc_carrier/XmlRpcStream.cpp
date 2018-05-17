@@ -47,7 +47,7 @@ Value toValue(XmlRpcValue& v, bool outer)
                 if (v2.getType()!=XmlRpcValue::TypeInvalid) {
                     Value v = toValue(v2,false);
                     if (i==0) {
-                        ConstString tag = v.asString();
+                        std::string tag = v.asString();
                         if (tag=="list"||tag=="dict") {
                             if (!outer) {
                                 bot->addString("list");

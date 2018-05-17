@@ -105,14 +105,14 @@ public:
         this->silent = flag;
     }
 
-    yarp::os::Contact query(const yarp::os::ConstString& portName,
+    yarp::os::Contact query(const std::string& portName,
                             NameTripleState& act,
-                            const yarp::os::ConstString& prefix,
+                            const std::string& prefix,
                             bool nested = false);
 
-    virtual bool announce(const yarp::os::ConstString& name, int activity) override;
+    virtual bool announce(const std::string& name, int activity) override;
 
-    virtual yarp::os::Contact query(const yarp::os::ConstString& portName) override;
+    virtual yarp::os::Contact query(const std::string& portName) override;
 
     bool cmdQuery(NameTripleState& act, bool nested = false);
 

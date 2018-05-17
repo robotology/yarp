@@ -43,7 +43,7 @@ bool yarp::os::Stamp::isValid()
 bool yarp::os::Stamp::read(ConnectionReader& connection)
 {
     if (connection.isTextMode()) {
-        ConstString stampStr = connection.expectText();
+        std::string stampStr = connection.expectText();
         int seqNum;
         double ts;
         int ret = std::sscanf(stampStr.c_str(), "%d %lg\n", &seqNum, &ts);
@@ -128,5 +128,7 @@ void yarp::os::Stamp::update(double time)
     timeStamp = time;
 }
 
-
+YARP_WARNING_PUSH
+YARP_DISABLE_DEPRECATED_WARNING
 yarp::os::Stamped::~Stamped() = default;
+YARP_WARNING_POP

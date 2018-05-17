@@ -54,7 +54,7 @@ void show_usage()
     printf("\n");
 }
 
-static void generateTypeMap1(RosType& t, ConstString& txt)
+static void generateTypeMap1(RosType& t, std::string& txt)
 {
     if (!t.isValid) return;
     std::vector<RosType>& lst = t.subRosType;
@@ -96,7 +96,7 @@ static void generateTypeMap1(RosType& t, ConstString& txt)
     txt += " *";
 }
 
-static void generateTypeMap(RosType& t, ConstString& txt)
+static void generateTypeMap(RosType& t, std::string& txt)
 {
     txt = "";
     generateTypeMap1(t,txt);
@@ -247,7 +247,7 @@ int main(int argc, char *argv[])
             printf("Request: %s\n", req.toString().c_str());
         }
         Bottle resp;
-        ConstString tag = req.get(0).asString();
+        std::string tag = req.get(0).asString();
         string fname0 = req.get(1).asString().c_str();
         string fname = env.findFile(fname0.c_str());
         string txt = "";
@@ -258,7 +258,7 @@ int main(int argc, char *argv[])
             RosTypeCodeGenYarp gen;
             RosType t;
             if (t.read(fname0.c_str(),env,gen)) {
-                ConstString txt;
+                std::string txt;
                 generateTypeMap(t,txt);
                 resp.addString(txt);
             } else {

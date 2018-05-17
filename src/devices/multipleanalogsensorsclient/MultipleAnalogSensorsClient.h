@@ -81,9 +81,9 @@ class yarp::dev::MultipleAnalogSensorsClient: public DeviceDriver,
     size_t genericGetNrOfSensors(const std::vector<SensorMetadata>& metadataVector) const;
     MAS_status genericGetStatus() const;
     bool genericGetName(const std::vector<SensorMetadata>& metadataVector, const std::string& tag,
-                          size_t sens_index, yarp::os::ConstString &name) const;
+                          size_t sens_index, std::string &name) const;
     bool genericGetFrameName(const std::vector<SensorMetadata>& metadataVector, const std::string& tag,
-                            size_t sens_index, yarp::os::ConstString &frameName) const;
+                            size_t sens_index, std::string &frameName) const;
     bool genericGetMeasure(const std::vector<SensorMetadata>& metadataVector, const std::string& tag,
                              const SensorMeasurements& measurementsVector,
                              size_t sens_index, yarp::sig::Vector& out, double& timestamp) const;
@@ -99,64 +99,64 @@ public:
     /* IThreeAxisGyroscopes methods */
     virtual size_t getNrOfThreeAxisGyroscopes() const override;
     virtual yarp::dev::MAS_status getThreeAxisGyroscopeStatus(size_t sens_index) const override;
-    virtual bool getThreeAxisGyroscopeName(size_t sens_index, yarp::os::ConstString &name) const override;
-    virtual bool getThreeAxisGyroscopeFrameName(size_t sens_index, yarp::os::ConstString &frameName) const override;
+    virtual bool getThreeAxisGyroscopeName(size_t sens_index, std::string &name) const override;
+    virtual bool getThreeAxisGyroscopeFrameName(size_t sens_index, std::string &frameName) const override;
     virtual bool getThreeAxisGyroscopeMeasure(size_t sens_index, yarp::sig::Vector& out, double& timestamp) const override;
 
     /* IThreeAxisLinearAccelerometers methods */
     virtual size_t getNrOfThreeAxisLinearAccelerometers() const override;
     virtual yarp::dev::MAS_status getThreeAxisLinearAccelerometerStatus(size_t sens_index) const override;
-    virtual bool getThreeAxisLinearAccelerometerName(size_t sens_index, yarp::os::ConstString &name) const override;
-    virtual bool getThreeAxisLinearAccelerometerFrameName(size_t sens_index, yarp::os::ConstString &frameName) const override;
+    virtual bool getThreeAxisLinearAccelerometerName(size_t sens_index, std::string &name) const override;
+    virtual bool getThreeAxisLinearAccelerometerFrameName(size_t sens_index, std::string &frameName) const override;
     virtual bool getThreeAxisLinearAccelerometerMeasure(size_t sens_index, yarp::sig::Vector& out, double& timestamp) const override;
 
     /* IThreeAxisMagnetometers methods */
     virtual size_t getNrOfThreeAxisMagnetometers() const override;
     virtual yarp::dev::MAS_status getThreeAxisMagnetometerStatus(size_t sens_index) const override;
-    virtual bool getThreeAxisMagnetometerName(size_t sens_index, yarp::os::ConstString &name) const override;
-    virtual bool getThreeAxisMagnetometerFrameName(size_t sens_index, yarp::os::ConstString &frameName) const override;
+    virtual bool getThreeAxisMagnetometerName(size_t sens_index, std::string &name) const override;
+    virtual bool getThreeAxisMagnetometerFrameName(size_t sens_index, std::string &frameName) const override;
     virtual bool getThreeAxisMagnetometerMeasure(size_t sens_index, yarp::sig::Vector& out, double& timestamp) const override;
 
     /* IOrientationSensors methods */
     virtual size_t getNrOfOrientationSensors() const override;
     virtual yarp::dev::MAS_status getOrientationSensorStatus(size_t sens_index) const override;
-    virtual bool getOrientationSensorName(size_t sens_index, yarp::os::ConstString &name) const override;
-    virtual bool getOrientationSensorFrameName(size_t sens_index, yarp::os::ConstString &frameName) const override;
+    virtual bool getOrientationSensorName(size_t sens_index, std::string &name) const override;
+    virtual bool getOrientationSensorFrameName(size_t sens_index, std::string &frameName) const override;
     virtual bool getOrientationSensorMeasureAsRollPitchYaw(size_t sens_index, yarp::sig::Vector& rpy, double& timestamp) const override;
 
     /* ITemperatureSensors methods */
     virtual size_t getNrOfTemperatureSensors() const override;
     virtual yarp::dev::MAS_status getTemperatureSensorStatus(size_t sens_index) const override;
-    virtual bool getTemperatureSensorName(size_t sens_index, yarp::os::ConstString &name) const override;
-    virtual bool getTemperatureSensorFrameName(size_t sens_index, yarp::os::ConstString &frameName) const override;
+    virtual bool getTemperatureSensorName(size_t sens_index, std::string &name) const override;
+    virtual bool getTemperatureSensorFrameName(size_t sens_index, std::string &frameName) const override;
     virtual bool getTemperatureSensorMeasure(size_t sens_index, double& out, double& timestamp) const override;
     virtual bool getTemperatureSensorMeasure(size_t sens_index, yarp::sig::Vector& out, double& timestamp) const override;
 
     /* ISixAxisForceTorqueSensors */
     virtual size_t getNrOfSixAxisForceTorqueSensors() const override;
     virtual yarp::dev::MAS_status getSixAxisForceTorqueSensorStatus(size_t sens_index) const override;
-    virtual bool getSixAxisForceTorqueSensorName(size_t sens_index, yarp::os::ConstString &name) const override;
-    virtual bool getSixAxisForceTorqueSensorFrameName(size_t sens_index, yarp::os::ConstString &frame) const override;
+    virtual bool getSixAxisForceTorqueSensorName(size_t sens_index, std::string &name) const override;
+    virtual bool getSixAxisForceTorqueSensorFrameName(size_t sens_index, std::string &frame) const override;
     virtual bool getSixAxisForceTorqueSensorMeasure(size_t sens_index, yarp::sig::Vector& out, double& timestamp) const override;
 
     /* IContactLoadCellArrays */
     virtual size_t getNrOfContactLoadCellArrays() const override;
     virtual yarp::dev::MAS_status getContactLoadCellArrayStatus(size_t sens_index) const override;
-    virtual bool getContactLoadCellArrayName(size_t sens_index, yarp::os::ConstString &name) const override;
+    virtual bool getContactLoadCellArrayName(size_t sens_index, std::string &name) const override;
     virtual bool getContactLoadCellArrayMeasure(size_t sens_index, yarp::sig::Vector& out, double& timestamp) const override;
     virtual size_t getContactLoadCellArraySize(size_t sens_index) const override;
 
     /* IEncoderArrays */
     virtual size_t getNrOfEncoderArrays() const override;
     virtual yarp::dev::MAS_status getEncoderArrayStatus(size_t sens_index) const override;
-    virtual bool getEncoderArrayName(size_t sens_index, yarp::os::ConstString &name) const override;
+    virtual bool getEncoderArrayName(size_t sens_index, std::string &name) const override;
     virtual bool getEncoderArrayMeasure(size_t sens_index, yarp::sig::Vector& out, double& timestamp) const override;
     virtual size_t getEncoderArraySize(size_t sens_index) const override;
 
     /* ISkinPatches */
     virtual size_t getNrOfSkinPatches() const override;
     virtual yarp::dev::MAS_status getSkinPatchStatus(size_t sens_index) const override;
-    virtual bool getSkinPatchName(size_t sens_index, yarp::os::ConstString &name) const override;
+    virtual bool getSkinPatchName(size_t sens_index, std::string &name) const override;
     virtual bool getSkinPatchMeasure(size_t sens_index, yarp::sig::Vector& out, double& timestamp) const override;
     virtual size_t getSkinPatchSize(size_t sens_index) const override;
 };

@@ -19,7 +19,7 @@ int main(int argc, char *argv[]) {
 
     // intercept "yarp server" if needed
     if (argc>=2) {
-        if (ConstString(argv[1])=="server") {
+        if (std::string(argv[1])=="server") {
             return yarpserver_main(argc,argv);
         }
     }
@@ -28,7 +28,7 @@ int main(int argc, char *argv[]) {
 
     // intercept "yarp run" if needed
     if (argc>=2) {
-        if (ConstString(argv[1])=="run") {
+        if (std::string(argv[1])=="run") {
             return yarp::run::Run::main(argc,argv);
         }
     }

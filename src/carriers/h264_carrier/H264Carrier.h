@@ -42,7 +42,7 @@ class yarp::os::H264Carrier : public Carrier
 {
 private:
     bool decoderIsRunning;
-    yarp::os::ConstString envelope;
+    std::string envelope;
     h264Decoder_cfgParamters cfgParams;
 public:
     H264Carrier()
@@ -53,7 +53,7 @@ public:
         return new H264Carrier();
     }
 
-    virtual ConstString getName() override;
+    virtual std::string getName() override;
 
     virtual bool isConnectionless() override;
 
@@ -65,7 +65,7 @@ public:
 
     virtual bool canEscape() override;
 
-    virtual void handleEnvelope(const yarp::os::ConstString& envelope) override;
+    virtual void handleEnvelope(const std::string& envelope) override;
 
     virtual bool requireAck() override;
 
@@ -76,7 +76,7 @@ public:
     // this is important - flips expected flow of messages
     virtual bool isPush() override;
 
-    virtual ConstString toString() override;
+    virtual std::string toString() override;
 
     virtual void getHeader(const Bytes& header) override;
 
@@ -116,7 +116,7 @@ public:
 
     virtual bool expectAck(ConnectionState& proto) override;
 
-    virtual ConstString getBootstrapCarrierName() override;
+    virtual std::string getBootstrapCarrierName() override;
 
     virtual yarp::os::Face* createFace(void) override;
 

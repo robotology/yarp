@@ -17,7 +17,7 @@ using namespace yarp::os;
 int main(int argc, char *argv[]) {
     if (argc<2) return 1;
     bool wait = (argc==3);
-    ConstString name = argv[1];
+    std::string name = argv[1];
     Node node(name + "/node");
     Publisher<yarp::rosmsg::std_msgs::String> topic_string;
     Publisher<yarp::rosmsg::sensor_msgs::Image> topic_image;
@@ -48,7 +48,7 @@ int main(int argc, char *argv[]) {
         Time::delay(1);
     }
     for (int i=0; i<5; i++) {
-        ConstString txt = "hello world " + Bottle::toString(i);
+        std::string txt = "hello world " + Bottle::toString(i);
         topic_string.prepare().data = txt;
         topic_image.prepare();
         topic_disp.prepare();

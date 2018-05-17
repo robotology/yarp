@@ -509,9 +509,9 @@ public:
     typedef yarp::os::idl::BottleStyle<yarp::rosmsg::sensor_msgs::CameraInfo> bottleStyle;
 
     // Give source text for class, ROS will need this
-    static yarp::os::ConstString typeText()
+    static std::string typeText()
     {
-        return yarp::os::ConstString("\
+        return std::string("\
 # This message defines meta information for a camera. It should be in a\n\
 # camera namespace on topic \"camera_info\" and accompanied by up to five\n\
 # image topics named:\n\
@@ -643,16 +643,16 @@ uint32 binning_y\n\
 # The default setting of roi (all values 0) is considered the same as\n\
 #  full resolution (roi.width = width, roi.height = height).\n\
 RegionOfInterest roi\n\
-") + yarp::os::ConstString("\n\
+") + std::string("\n\
 ================================================================================\n\
 MSG: std_msgs/Header\n\
-") + yarp::rosmsg::std_msgs::Header::typeText() + yarp::os::ConstString("\n\
+") + yarp::rosmsg::std_msgs::Header::typeText() + std::string("\n\
 ================================================================================\n\
 MSG: sensor_msgs/RegionOfInterest\n\
 ") + yarp::rosmsg::sensor_msgs::RegionOfInterest::typeText();
     }
 
-    yarp::os::ConstString getTypeText() const
+    std::string getTypeText() const
     {
         return yarp::rosmsg::sensor_msgs::CameraInfo::typeText();
     }

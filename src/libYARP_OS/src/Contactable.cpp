@@ -22,7 +22,7 @@ bool yarp::os::Contactable::open()
 }
 #endif // YARP_NO_DEPRECATED
 
-yarp::os::ConstString yarp::os::Contactable::getName() const
+std::string yarp::os::Contactable::getName() const
 {
     return where().getName();
 }

@@ -47,7 +47,7 @@ namespace yarp
                 double m_free_thresh;
                 size_t m_width;
                 size_t m_height;
-                std::string m_map_name;
+                YARP_SUPPRESS_DLL_INTERFACE_WARNING_ARG(std::string) m_map_name;
 
                 struct
                 {

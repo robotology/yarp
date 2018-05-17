@@ -41,7 +41,7 @@ namespace yarp
 /**
  * Callback implementation after buffered input.
  */
-class yarp::dev::ImplementCallbackHelper2 : public TypedReaderCallback<Bottle> {
+class YARP_dev_API yarp::dev::ImplementCallbackHelper2 : public TypedReaderCallback<Bottle> {
 protected:
     ISerialDevice *ser;
 

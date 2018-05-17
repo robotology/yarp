@@ -29,7 +29,7 @@ private:
     Value blank;
 public:
     virtual bool expectBlock(const char *data, size_t len) override;
-    virtual ConstString expectText(int terminatingChar = '\n') override;
+    virtual std::string expectText(int terminatingChar = '\n') override;
     virtual int expectInt() override;
     virtual bool pushInt(int x) override;
     virtual double expectDouble() override;

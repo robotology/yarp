@@ -32,8 +32,8 @@ public:
     yarp::os::Semaphore& mutex;
 
     //yarp::os::Contact src;
-    yarp::os::ConstString src;
-    yarp::os::ConstString dest;
+    std::string src;
+    std::string dest;
 
     ConnectThread(yarp::os::Semaphore& mutex) : mutex(mutex) {
         needed = true;
@@ -99,14 +99,14 @@ public:
         con.clear();
     }
 
-    void disconnect(const yarp::os::ConstString& src,
-                    const yarp::os::ConstString& dest,
+    void disconnect(const std::string& src,
+                    const std::string& dest,
                     bool srcDrop) {
         connect(src,dest,false);
     }
 
-    void connect(const yarp::os::ConstString& src,
-                 const yarp::os::ConstString& dest,
+    void connect(const std::string& src,
+                 const std::string& dest,
                  bool positive = true) {
         //printf("  ??? %s %s\n", src, dest);
         ConnectThread *t = nullptr;

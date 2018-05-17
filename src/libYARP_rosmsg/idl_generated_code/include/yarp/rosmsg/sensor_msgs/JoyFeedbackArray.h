@@ -130,17 +130,17 @@ public:
     typedef yarp::os::idl::BottleStyle<yarp::rosmsg::sensor_msgs::JoyFeedbackArray> bottleStyle;
 
     // Give source text for class, ROS will need this
-    static yarp::os::ConstString typeText()
+    static std::string typeText()
     {
-        return yarp::os::ConstString("\
+        return std::string("\
 # This message publishes values for multiple feedback at once. \n\
-JoyFeedback[] array") + yarp::os::ConstString("\n\
+JoyFeedback[] array") + std::string("\n\
 ================================================================================\n\
 MSG: sensor_msgs/JoyFeedback\n\
 ") + yarp::rosmsg::sensor_msgs::JoyFeedback::typeText();
     }
 
-    yarp::os::ConstString getTypeText() const
+    std::string getTypeText() const
     {
         return yarp::rosmsg::sensor_msgs::JoyFeedbackArray::typeText();
     }

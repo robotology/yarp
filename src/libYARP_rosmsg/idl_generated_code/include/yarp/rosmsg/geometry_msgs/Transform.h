@@ -141,23 +141,23 @@ public:
     typedef yarp::os::idl::BottleStyle<yarp::rosmsg::geometry_msgs::Transform> bottleStyle;
 
     // Give source text for class, ROS will need this
-    static yarp::os::ConstString typeText()
+    static std::string typeText()
     {
-        return yarp::os::ConstString("\
+        return std::string("\
 # This represents the transform between two coordinate frames in free space.\n\
 \n\
 Vector3 translation\n\
 Quaternion rotation\n\
-") + yarp::os::ConstString("\n\
+") + std::string("\n\
 ================================================================================\n\
 MSG: geometry_msgs/Vector3\n\
-") + yarp::rosmsg::geometry_msgs::Vector3::typeText() + yarp::os::ConstString("\n\
+") + yarp::rosmsg::geometry_msgs::Vector3::typeText() + std::string("\n\
 ================================================================================\n\
 MSG: geometry_msgs/Quaternion\n\
 ") + yarp::rosmsg::geometry_msgs::Quaternion::typeText();
     }
 
-    yarp::os::ConstString getTypeText() const
+    std::string getTypeText() const
     {
         return yarp::rosmsg::geometry_msgs::Transform::typeText();
     }

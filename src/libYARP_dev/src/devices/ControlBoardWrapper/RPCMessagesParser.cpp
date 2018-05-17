@@ -2729,7 +2729,7 @@ bool RPCMessagesParser::respond(const yarp::os::Bottle& cmd, yarp::os::Bottle& r
 
                             case VOCAB_INFO_NAME:
                             {
-                                ConstString name = "undocumented";
+                                std::string name = "undocumented";
                                 ok = rpc_AxisInfo->getAxisName(cmd.get(2).asInt(),name);
                                 response.addString(name.c_str());
                             }

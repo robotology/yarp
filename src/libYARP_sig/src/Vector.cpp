@@ -89,9 +89,9 @@ bool VectorBase::write(yarp::os::ConnectionWriter& connection) {
 /**
 * Quick implementation, space for improvement.
 */
-ConstString Vector::toString(int precision, int width) const
+std::string Vector::toString(int precision, int width) const
 {
-    ConstString ret = "";
+    std::string ret = "";
     size_t c;
     char tmp[350];
     if(width<0){

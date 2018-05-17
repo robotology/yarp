@@ -37,10 +37,10 @@ bool yarp::dev::Map2DClient::open(yarp::os::Searchable &config)
         return false;
     }
 
-    ConstString local_rpc1 = m_local_name;
+    std::string local_rpc1 = m_local_name;
     local_rpc1 += "/mapClient_rpc";
 
-    ConstString remote_rpc1 = m_map_server;
+    std::string remote_rpc1 = m_map_server;
     remote_rpc1 += "/rpc";
 
     if (!m_rpcPort_to_Map2DServer.open(local_rpc1.c_str()))
@@ -215,7 +215,7 @@ bool yarp::dev::Map2DClient::remove_map(std::string map_name)
     return true;
 }
 
-bool yarp::dev::Map2DClient::storeLocation(yarp::os::ConstString location_name, Map2DLocation loc)
+bool yarp::dev::Map2DClient::storeLocation(std::string location_name, Map2DLocation loc)
 {
     yarp::os::Bottle b;
     yarp::os::Bottle resp;
@@ -245,7 +245,7 @@ bool yarp::dev::Map2DClient::storeLocation(yarp::os::ConstString location_name, 
     return true;
 }
 
-bool   yarp::dev::Map2DClient::getLocationsList(std::vector<yarp::os::ConstString>& locations)
+bool   yarp::dev::Map2DClient::getLocationsList(std::vector<std::string>& locations)
 {
     yarp::os::Bottle b;
     yarp::os::Bottle resp;
@@ -288,7 +288,7 @@ bool   yarp::dev::Map2DClient::getLocationsList(std::vector<yarp::os::ConstStrin
     return true;
 }
 
-bool   yarp::dev::Map2DClient::getLocation(yarp::os::ConstString location_name, Map2DLocation& loc)
+bool   yarp::dev::Map2DClient::getLocation(std::string location_name, Map2DLocation& loc)
 {
     yarp::os::Bottle b;
     yarp::os::Bottle resp;
@@ -321,7 +321,7 @@ bool   yarp::dev::Map2DClient::getLocation(yarp::os::ConstString location_name, 
     return true;
 }
 
-bool   yarp::dev::Map2DClient::deleteLocation(yarp::os::ConstString location_name)
+bool   yarp::dev::Map2DClient::deleteLocation(std::string location_name)
 {
     yarp::os::Bottle b;
     yarp::os::Bottle resp;

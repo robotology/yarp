@@ -121,7 +121,7 @@ protected:
     bool imageSync;
 
     /** Uri of the images a grabber produces. */
-    yarp::os::ConstString m_uri;
+    std::string m_uri;
 
     /** Width of the images a grabber produces. */
     int m_w;

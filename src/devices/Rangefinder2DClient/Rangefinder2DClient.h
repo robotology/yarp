@@ -80,8 +80,8 @@ class yarp::dev::Rangefinder2DClient: public DeviceDriver,
 protected:
     Rangefinder2DInputPortProcessor inputPort;
     yarp::os::Port rpcPort;
-    yarp::os::ConstString local;
-    yarp::os::ConstString remote;
+    std::string local;
+    std::string remote;
     yarp::os::Stamp lastTs; //used by IPreciselyTimed
     std::string deviceId;
     int _rate;
@@ -196,7 +196,7 @@ public:
     * @param device_info string containing the device infos
     * @return true/false.
     */
-    bool getDeviceInfo(yarp::os::ConstString &device_info) override;
+    bool getDeviceInfo(std::string &device_info) override;
 
 };
 

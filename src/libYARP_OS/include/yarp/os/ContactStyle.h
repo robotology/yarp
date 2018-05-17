@@ -10,7 +10,8 @@
 #ifndef YARP_OS_CONTACTSTYLE_H
 #define YARP_OS_CONTACTSTYLE_H
 
-#include <yarp/os/ConstString.h>
+#include <yarp/os/api.h>
+#include <string>
 
 namespace yarp {
     namespace os {
@@ -64,7 +65,7 @@ public:
      * carrier.
      *
      */
-    ConstString carrier;
+    YARP_SUPPRESS_DLL_INTERFACE_WARNING_ARG(std::string) carrier;
 
     /**
      *

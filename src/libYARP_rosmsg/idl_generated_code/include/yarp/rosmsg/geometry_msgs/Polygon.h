@@ -131,18 +131,18 @@ public:
     typedef yarp::os::idl::BottleStyle<yarp::rosmsg::geometry_msgs::Polygon> bottleStyle;
 
     // Give source text for class, ROS will need this
-    static yarp::os::ConstString typeText()
+    static std::string typeText()
     {
-        return yarp::os::ConstString("\
+        return std::string("\
 #A specification of a polygon where the first and last points are assumed to be connected\n\
 Point32[] points\n\
-") + yarp::os::ConstString("\n\
+") + std::string("\n\
 ================================================================================\n\
 MSG: geometry_msgs/Point32\n\
 ") + yarp::rosmsg::geometry_msgs::Point32::typeText();
     }
 
-    yarp::os::ConstString getTypeText() const
+    std::string getTypeText() const
     {
         return yarp::rosmsg::geometry_msgs::Polygon::typeText();
     }

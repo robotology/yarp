@@ -43,7 +43,7 @@ public:
     Count *counter;
 
     virtual bool threadInit() {
-        p.open(ConstString("/test/pub/") + ConstString::toString(n));
+        p.open(std::string("/test/pub/") + std::string::toString(n));
         Network::connect(p.getName().c_str(),"topic://stressor");
         return true;
     }
@@ -67,7 +67,7 @@ public:
     Count *counter;
 
     virtual bool threadInit() {
-        p.open(ConstString("/test/sub/") + ConstString::toString(n));
+        p.open(std::string("/test/sub/") + std::string::toString(n));
         Network::connect("topic://stressor",p.getName().c_str());
         return true;
     }

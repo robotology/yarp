@@ -7,7 +7,7 @@
  */
 
 #include <yarp/os/QosStyle.h>
-#include <yarp/os/ConstString.h>
+#include <string>
 #include <yarp/os/Vocab.h>
 
 #include <cstdlib>
@@ -36,14 +36,14 @@ void yarp::os::QosStyle::setPacketPriorityByLevel(PacketPriorityLevel level) {
     }
 }
 
-bool yarp::os::QosStyle::setPacketPriority(const ConstString& priority) {
+bool yarp::os::QosStyle::setPacketPriority(const std::string& priority) {
     size_t p = priority.find(':');
-    if (p == ConstString::npos) {
+    if (p == std::string::npos) {
         return false;
     }
 
-    ConstString key = priority.substr(0, p);
-    ConstString value = priority.substr(p+1);
+    std::string key = priority.substr(0, p);
+    std::string value = priority.substr(p+1);
     if (key.length() <= 0 || value.length() <= 0) {
         return false;
     }

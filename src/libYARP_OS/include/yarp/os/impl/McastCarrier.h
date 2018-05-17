@@ -34,8 +34,8 @@ namespace yarp {
 class yarp::os::impl::McastCarrier : public UdpCarrier {
 protected:
     Contact mcastAddress;
-    ConstString mcastName;
-    ConstString key;
+    std::string mcastName;
+    std::string key;
     DgramTwoWayStream *stream;
     Contact local;
 
@@ -50,7 +50,7 @@ public:
     virtual ~McastCarrier();
 
     virtual Carrier *create() override;
-    virtual ConstString getName() override;
+    virtual std::string getName() override;
 
     virtual int getSpecifierCode() override;
     virtual bool sendHeader(ConnectionState& proto) override;
@@ -59,8 +59,8 @@ public:
     virtual bool respondToHeader(ConnectionState& proto) override;
     virtual bool expectReplyToHeader(ConnectionState& proto) override;
 
-    void addSender(const ConstString& key);
-    void removeSender(const ConstString& key);
+    void addSender(const std::string& key);
+    void removeSender(const std::string& key);
     bool isElect();
     /**
      * @brief takeElection, this function is called when the elect mcast

@@ -368,9 +368,9 @@ public:
     typedef yarp::os::idl::BottleStyle<yarp::rosmsg::sensor_msgs::MultiEchoLaserScan> bottleStyle;
 
     // Give source text for class, ROS will need this
-    static yarp::os::ConstString typeText()
+    static std::string typeText()
     {
-        return yarp::os::ConstString("\
+        return std::string("\
 # Single scan from a multi-echo planar laser range-finder\n\
 #\n\
 # If you have another ranging device with different behavior (e.g. a sonar\n\
@@ -401,16 +401,16 @@ LaserEcho[] ranges       # range data [m] (Note: NaNs, values < range_min or > r
                          # -Inf measurements are too close to determine exact distance.\n\
 LaserEcho[] intensities  # intensity data [device-specific units].  If your\n\
                          # device does not provide intensities, please leave\n\
-                         # the array empty.") + yarp::os::ConstString("\n\
+                         # the array empty.") + std::string("\n\
 ================================================================================\n\
 MSG: std_msgs/Header\n\
-") + yarp::rosmsg::std_msgs::Header::typeText() + yarp::os::ConstString("\n\
+") + yarp::rosmsg::std_msgs::Header::typeText() + std::string("\n\
 ================================================================================\n\
 MSG: sensor_msgs/LaserEcho\n\
 ") + yarp::rosmsg::sensor_msgs::LaserEcho::typeText();
     }
 
-    yarp::os::ConstString getTypeText() const
+    std::string getTypeText() const
     {
         return yarp::rosmsg::sensor_msgs::MultiEchoLaserScan::typeText();
     }

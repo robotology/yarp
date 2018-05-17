@@ -12,7 +12,7 @@
 
 #include <yarp/os/all.h>
 
-#include <yarp/os/ConstString.h>
+#include <string>
 #include <yarp/os/Semaphore.h>
 #include <yarp/os/Thread.h>
 
@@ -55,7 +55,7 @@ extern yarp::os::MpiControlThread *MpiControl;
  * @note Needs an MPI implementation with THREAD_MULTIPLE support.
  */
 class yarp::os::MpiComm {
-    ConstString name;
+    std::string name;
 
 public:
     char port_name[MPI_MAX_PORT_NAME];
@@ -64,17 +64,17 @@ public:
     yarp::os::Semaphore sema;
 
 
-    MpiComm(ConstString name);
+    MpiComm(std::string name);
     ~MpiComm() {
         #ifdef MPI_DEBUG
         printf("[MpiComm @ %s] Destructor\n", name.c_str() );
         #endif
         MPI_Comm_disconnect(&comm);
     }
-    bool connect(ConstString port);
+    bool connect(std::string port);
     bool accept();
     void disconnect(bool disconn);
-    bool notLocal(ConstString other);
+    bool notLocal(std::string other);
 
     void openPort() {
         MPI_Open_port(MPI_INFO_NULL, port_name);

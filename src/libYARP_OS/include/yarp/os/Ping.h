@@ -11,7 +11,7 @@
 #define YARP_OS_PING_H
 
 #include <cmath>
-#include <yarp/os/ConstString.h>
+#include <string>
 
 namespace yarp {
     namespace os {
@@ -152,10 +152,10 @@ public:
 
     void report();
 
-    static ConstString renderTime(double t, int space, int decimal);
+    static std::string renderTime(double t, int space, int decimal);
 
 private:
-    ConstString target;
+    std::string target;
     ConnectResult lastConnect, accumConnect;
 };
 

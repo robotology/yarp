@@ -80,7 +80,7 @@ bool MpiControlThread::threadInit() {
 /* --------------------------------------- */
 /* MpiComm */
 
-MpiComm::MpiComm(ConstString name) : name(name) {
+MpiComm::MpiComm(std::string name) : name(name) {
     if (MpiControl == NULL) {
         MpiControl = new yarp::os::MpiControlThread;
     }
@@ -105,15 +105,15 @@ MpiComm::MpiComm(ConstString name) : name(name) {
 }
 
 //TODO: replace by static variable check??!?
-bool MpiComm::notLocal(ConstString other) {
-    if (other == ConstString(unique_id)) {
+bool MpiComm::notLocal(std::string other) {
+    if (other == std::string(unique_id)) {
         yError("MPI does not support process local communication\n");
         return false;
     }
     return true;
 }
 
-bool MpiComm::connect(ConstString port) {
+bool MpiComm::connect(std::string port) {
 
     char* port_name = new char[port.length()+1];
     memcpy(port_name, port.c_str(), port.length());

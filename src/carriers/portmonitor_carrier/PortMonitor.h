@@ -78,11 +78,11 @@ public:
         return new PortMonitor();
     }
 
-    virtual ConstString getName() override {
+    virtual std::string getName() override {
         return "portmonitor";
     }
 
-    virtual ConstString toString() override {
+    virtual std::string toString() override {
         return "portmonitor_carrier";
     }
 
@@ -115,8 +115,8 @@ public:
     }
 
 public:
-    ConstString portName;
-    ConstString sourceName;
+    std::string portName;
+    std::string sourceName;
 
 private:
     static ElectionOf<PortMonitorGroup> *peers;

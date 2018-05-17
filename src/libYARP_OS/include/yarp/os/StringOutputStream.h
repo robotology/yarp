@@ -11,7 +11,7 @@
 #define YARP_OS_STRINGOUTPUTSTREAM_H
 
 #include <yarp/os/OutputStream.h>
-#include <yarp/os/ConstString.h>
+#include <string>
 
 namespace yarp {
     namespace os {
@@ -28,7 +28,7 @@ public:
 
     StringOutputStream() { }
 
-    ConstString toString() {
+    std::string toString() {
         return data;
     }
 
@@ -37,7 +37,7 @@ public:
     }
 
     virtual void write(const Bytes& b) override {
-        ConstString tmp((char*)b.get(), b.length());
+        std::string tmp((char*)b.get(), b.length());
         data += tmp;
     }
 
@@ -48,10 +48,10 @@ public:
         return true;
     }
 
-    const ConstString& str() { return data; }
+    const std::string& str() { return data; }
 
 private:
-    ConstString data;
+    std::string data;
 };
 
 #endif // YARP_OS_STRINGOUTPUTSTREAM_H

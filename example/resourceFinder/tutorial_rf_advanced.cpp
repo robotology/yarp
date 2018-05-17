@@ -26,8 +26,8 @@ int main(int argc, char *argv[])
     rf.setDefaultContext("orBottle");
     rf.configure(argc, argv);
         
-    ConstString robotName=rf.find("robot").asString();
-    ConstString model=rf.findFile("model");
+    std::string robotName=rf.find("robot").asString();
+    std::string model=rf.findFile("model");
     
     cout<<"Running with:"<<endl;
     cout<<"robot: "<<robotName.c_str()<<endl;

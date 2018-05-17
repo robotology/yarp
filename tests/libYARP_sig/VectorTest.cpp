@@ -145,7 +145,7 @@ class VectorTest : public UnitTest {
     }
 
 public:
-    virtual ConstString getName() override { return "VectorTest"; }
+    virtual std::string getName() override { return "VectorTest"; }
 
     void checkGsl()
     {
@@ -177,7 +177,7 @@ public:
         }
         BufferedConnectionWriter writer;
         v.write(writer);
-        ConstString s = writer.toString();
+        std::string s = writer.toString();
         Bottle bot;
         bot.fromBinary(s.c_str(),(int)s.length());
         checkEqual((int)bot.size(),(int)v.size(),"size matches");

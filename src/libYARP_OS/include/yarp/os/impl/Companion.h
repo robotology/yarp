@@ -10,12 +10,12 @@
 #ifndef YARP_OS_IMPL_COMPANION_H
 #define YARP_OS_IMPL_COMPANION_H
 
-#include <yarp/os/ConstString.h>
 #include <yarp/os/PortWriter.h>
 #include <yarp/os/ContactStyle.h>
 #include <yarp/os/Contactable.h>
 
 #include <map>
+#include <string>
 #include <vector>
 #include <cstdio>
 
@@ -38,7 +38,7 @@ namespace yarp {
 class YARP_OS_impl_API yarp::os::impl::Companion {
 public:
 
-    static ConstString version();
+    static std::string version();
 
     /**
      * The standard main method for the YARP companion utility.
@@ -105,29 +105,29 @@ public:
 
     static int forward(const char *localName, const char *targetName);
 
-    static ConstString slashify(const ConstString& src) {
+    static std::string slashify(const std::string& src) {
         if (src.length()>0) {
             if (src[0] == '/') {
                 return src;
             }
         }
-        return ConstString("/") + src;
+        return std::string("/") + src;
     }
 
     /**
      * Read a line of arbitrary length from standard input.
      */
-    static ConstString readString(bool *eof=nullptr);
+    static std::string readString(bool *eof=nullptr);
 
 
-    static int sendMessage(const ConstString& port, yarp::os::PortWriter& writable,
+    static int sendMessage(const std::string& port, yarp::os::PortWriter& writable,
                            bool silent = false) {
-        ConstString output;
+        std::string output;
         return sendMessage(port, writable, output, silent);
     }
 
-    static int sendMessage(const ConstString& port, yarp::os::PortWriter& writable,
-                           ConstString& output,
+    static int sendMessage(const std::string& port, yarp::os::PortWriter& writable,
+                           std::string& output,
                            bool quiet);
 
 
@@ -217,7 +217,7 @@ private:
 
     class Entry {
     public:
-        ConstString name;
+        std::string name;
         int (Companion::*fn)(int argc, char *argv[]);
 
         Entry(const char *name, int (Companion::*fn)(int argc, char *argv[])) :
@@ -230,11 +230,11 @@ private:
         {}
     };
 
-    std::map<ConstString, Entry> action;
-    std::vector<ConstString> names;
-    std::vector<ConstString> tips;
+    YARP_SUPPRESS_DLL_INTERFACE_WARNING_ARGS(std::map<std::string, Entry>) action;
+    YARP_SUPPRESS_DLL_INTERFACE_WARNING_ARG(std::vector<std::string>) names;
+    YARP_SUPPRESS_DLL_INTERFACE_WARNING_ARG(std::vector<std::string>) tips;
     bool adminMode;
-    yarp::os::ConstString argType;
+    YARP_SUPPRESS_DLL_INTERFACE_WARNING_ARG(std::string) argType;
     bool waitConnect;
 
     void add(const char* name,

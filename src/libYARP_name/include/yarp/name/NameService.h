@@ -52,11 +52,11 @@ public:
 
     virtual void goPublic() {}
 
-    virtual yarp::os::Contact query(const yarp::os::ConstString& name) override {
+    virtual yarp::os::Contact query(const std::string& name) override {
         return yarp::os::Contact();
     }
 
-    virtual bool announce(const yarp::os::ConstString& name, int activity) override {
+    virtual bool announce(const std::string& name, int activity) override {
         return false;
     }
 

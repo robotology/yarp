@@ -23,21 +23,21 @@ class YARP_OS_API yarp::os::Node : public Contactables
 {
 public:
     Node();
-    Node(const ConstString& name);
+    Node(const std::string& name);
     virtual ~Node();
 
     virtual void add(Contactable& contactable) override;
     virtual void update(Contactable& contactable);
     virtual void remove(Contactable& contactable) override;
 
-    virtual Contact query(const ConstString& name,
-                          const ConstString& category = "") override;
+    virtual Contact query(const std::string& name,
+                          const std::string& category = "") override;
 
     virtual Contact where();
 
     void interrupt();
 
-    virtual void prepare(const ConstString& name);
+    virtual void prepare(const std::string& name);
 private:
     class Helper;
     Helper * const mPriv;

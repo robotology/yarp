@@ -187,9 +187,9 @@ bool yarp::dev::Rangefinder2DClient::open(yarp::os::Searchable &config)
         return false;
     }
 
-    ConstString local_rpc = local;
+    std::string local_rpc = local;
     local_rpc += "/rpc:o";
-    ConstString remote_rpc = remote;
+    std::string remote_rpc = remote;
     remote_rpc += "/rpc:i";
 
     if (!inputPort.open(local.c_str()))
@@ -443,7 +443,7 @@ bool yarp::dev::Rangefinder2DClient::getDeviceStatus(Device_status &status)
     return true;
 }
 
-bool yarp::dev::Rangefinder2DClient::getDeviceInfo(yarp::os::ConstString &device_info)
+bool yarp::dev::Rangefinder2DClient::getDeviceInfo(std::string &device_info)
 {
     Bottle cmd, response;
     cmd.addVocab(VOCAB_GET);

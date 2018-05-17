@@ -310,27 +310,6 @@ endif()
 
 
 #########################################################################
-# Control whether yarp::os::ConstString should be std::string or opaque
-# Not an important option for end users yet.  In principle
-# yarp::os::ConstString could now be set to std::string, if YARP
-# ever decides to accept STL as a dependency.
-
-set(YARP_WRAP_STL_STRING_DEFAULT OFF)
-if(MSVC)
-  set(YARP_WRAP_STL_STRING_DEFAULT ON)
-endif()
-option(YARP_WRAP_STL_STRING "Do you want the yarp string classes to wrap std::string? (as opposed to being exactly std::string)" ${YARP_WRAP_STL_STRING_DEFAULT})
-mark_as_advanced(YARP_WRAP_STL_STRING)
-set(YARP_WRAP_STL_STRING_INLINE_DEFAULT ON)
-if(MSVC)
-  set(YARP_WRAP_STL_STRING_INLINE_DEFAULT OFF)
-endif()
-cmake_dependent_option(YARP_WRAP_STL_STRING_INLINE "If wrapping std::string, should we use an inline implementation? (as opposed to opaque)" ${YARP_WRAP_STL_STRING_INLINE_DEFAULT}
-                       YARP_WRAP_STL_STRING OFF)
-mark_as_advanced(YARP_WRAP_STL_STRING_INLINE)
-
-
-#########################################################################
 # Control compilation of device tests.
 # Not really for end-user, but instead for the library developers
 yarp_deprecated_option(CREATE_BUILTIN_DEVICE_TESTS) # Since YARP 2.3.68
@@ -402,3 +381,5 @@ endif()
 
 
 yarp_deprecated_option(YARP_EXPERIMENTAL_CXX11) # Since YARP 3.0.0
+yarp_deprecated_option(YARP_WRAP_STL_STRING) # Since YARP 3.0.0
+yarp_deprecated_option(YARP_WRAP_STL_STRING_INLINE) # Since YARP 3.0.0

@@ -37,13 +37,13 @@ public:
 
     virtual bool open(yarp::os::Searchable& config)
     {
-        yarp::os::ConstString remote = config.check("remote",yarp::os::Value(""),
+        std::string remote = config.check("remote",yarp::os::Value(""),
                                                     "port name of real grabber").asString();
 
-        yarp::os::ConstString local = config.check("local",yarp::os::Value("..."),
+        std::string local = config.check("local",yarp::os::Value("..."),
                                                     "port name to use locally").asString();
 
-        yarp::os::ConstString carrier = config.check("stream",yarp::os::Value("tcp"),
+        std::string carrier = config.check("stream",yarp::os::Value("tcp"),
                                                      "carrier to use for streaming").asString();
 
         port.open(local);
@@ -551,8 +551,8 @@ public:
 
 protected:
     yarp::os::Port port;
-    yarp::os::ConstString remote;
-    yarp::os::ConstString local;
+    std::string remote;
+    std::string local;
 
     bool setCommand(int code, double v)
     {

@@ -71,7 +71,7 @@ public:
 public:
     int count;
     PriorityCarrier* pcarrier;
-    ConstString debugPortName;
+    std::string debugPortName;
     BufferedPort<yarp::sig::Vector> debugPort;
 };
 #endif //WITH_PRIORITY_DEBUG
@@ -118,11 +118,11 @@ public:
         return new PriorityCarrier();
     }
 
-    virtual ConstString getName() override {
+    virtual std::string getName() override {
         return "priority";
     }
 
-    virtual ConstString toString() override {
+    virtual std::string toString() override {
         return "priority_carrier";
     }
 
@@ -190,12 +190,12 @@ public:
     bool isActive;                  // true if port is in active state X(t)
     double baias;                   // baias value for excitation
     Bottle excitation;              // a list of exitatory signals as (name, value)
-    ConstString sourceName;
+    std::string sourceName;
 
     double yi;                      // this is set in the recalculate() for the debug purpose
 
 private:
-    ConstString portName;
+    std::string portName;
     PriorityGroup *group;
 
     static ElectionOf<PriorityGroup> *peers;

@@ -1390,7 +1390,7 @@ void t_yarp_generator::generate_struct(t_struct* tstruct) {
   indent_up();
 
   f_stt_ << endl;
-  indent(f_stt_) << "yarp::os::ConstString toString();"
+  indent(f_stt_) << "std::string toString();"
                  << endl;
 
   f_stt_ << endl;
@@ -1750,7 +1750,7 @@ void t_yarp_generator::generate_struct(t_struct* tstruct) {
     indent(out) << "writer.writeString(\"send: 'help' or 'patch (param1 val1) (param2 val2)'\");" << endl;
     indent(out) << "return true;" << endl;
     scope_down(out);
-    indent(out) << "yarp::os::ConstString tag;" << endl;
+    indent(out) << "std::string tag;" << endl;
     indent(out) << "if (!reader.readString(tag)) return false;" << endl;
     indent(out) << "if (tag==\"help\") {" << endl;
     indent_up();
@@ -1760,7 +1760,7 @@ void t_yarp_generator::generate_struct(t_struct* tstruct) {
     indent(out) << "if (!writer.writeTag(\"many\",1, 0)) return false;" << endl;
     indent(out) << "if (reader.getLength()>0) {" << endl;
     indent_up();
-    indent(out) << "yarp::os::ConstString field;" << endl;
+    indent(out) << "std::string field;" << endl;
     indent(out) << "if (!reader.readString(field)) return false;" << endl;
     for (mem_iter = members.begin() ; mem_iter != members.end(); mem_iter++) {
       string mname = (*mem_iter)->get_name();
@@ -1799,8 +1799,8 @@ void t_yarp_generator::generate_struct(t_struct* tstruct) {
     indent(out) << "for (int i=1; i<len; i++) {" << endl;
     indent_up();
     indent(out) << "if (nested && !reader.readListHeader(3)) return false;" << endl;
-    indent(out) << "yarp::os::ConstString act;" << endl;
-    indent(out) << "yarp::os::ConstString key;" << endl;
+    indent(out) << "std::string act;" << endl;
+    indent(out) << "std::string key;" << endl;
     indent(out) << "if (have_act) {" << endl;
     indent_up();
     indent(out) << "act = tag;" << endl;
@@ -1846,7 +1846,7 @@ void t_yarp_generator::generate_struct(t_struct* tstruct) {
     out << endl;
   }
 
-  indent(f_cpp_) << "yarp::os::ConstString " << name
+  indent(f_cpp_) << "std::string " << name
                  << "::toString() {"
                  << endl;
   indent_up();
@@ -2193,7 +2193,7 @@ void t_yarp_generator::generate_service(t_service* tservice) {
     indent(f_cpp_) << "reader.expectAccept();" << endl;
     indent(f_cpp_) << "if (!reader.readListHeader()) { reader.fail(); return false; }"
                    << endl;
-    indent(f_cpp_) << "yarp::os::ConstString tag = reader.readTag();" << endl;
+    indent(f_cpp_) << "std::string tag = reader.readTag();" << endl;
     indent(f_cpp_) << "bool direct = (tag==\"__direct__\");" << endl;
     indent(f_cpp_) << "if (direct) tag = reader.readTag();" << endl;
     indent(f_cpp_) << "while (!reader.isError()) {" << endl;
@@ -2323,7 +2323,7 @@ void t_yarp_generator::generate_service(t_service* tservice) {
 
     indent(f_cpp_) << "if (reader.noMore()) { reader.fail(); return false; }"
                    << endl;
-    indent(f_cpp_) << "yarp::os::ConstString next_tag = reader.readTag();" << endl;
+    indent(f_cpp_) << "std::string next_tag = reader.readTag();" << endl;
     indent(f_cpp_) << "if (next_tag==\"\") break;" << endl;
     indent(f_cpp_) << "tag = tag + \"_\" + next_tag;" << endl;
     indent_down();

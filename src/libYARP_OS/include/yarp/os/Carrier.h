@@ -159,7 +159,7 @@ public:
      *
      * @param envelope the envelope to transmit bundled with data.
      */
-    virtual void handleEnvelope(const yarp::os::ConstString& envelope) override;
+    virtual void handleEnvelope(const std::string& envelope) override;
 
     /**
      * Check if carrier has flow control, requiring sent messages
@@ -307,7 +307,7 @@ public:
      *
      * @return name of carrier.
      */
-    virtual ConstString toString() = 0;
+    virtual std::string toString() = 0;
 
     /**
      * Close the carrier.
@@ -333,7 +333,7 @@ public:
      *
      * @return the name of the bootstrap carrier.
      */
-    virtual ConstString getBootstrapCarrierName();
+    virtual std::string getBootstrapCarrierName();
 
     /**
      * Some carrier types may require special connection logic.

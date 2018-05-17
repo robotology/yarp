@@ -887,7 +887,7 @@ IRGBDSensor::RGBDSensor_status depthCameraDriver::getSensorStatus()
     return RGBD_SENSOR_GENERIC_ERROR;
 }
 
-ConstString depthCameraDriver::getLastErrorMsg(Stamp* timeStamp)
+std::string depthCameraDriver::getLastErrorMsg(Stamp* timeStamp)
 {
     return OpenNI::getExtendedError();
 }

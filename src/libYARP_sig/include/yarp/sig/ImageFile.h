@@ -10,7 +10,7 @@
 #ifndef YARP_SIG_IMAGEFILE_H
 #define YARP_SIG_IMAGEFILE_H
 
-#include <yarp/os/ConstString.h>
+#include <string>
 #include <yarp/sig/Image.h>
 
 namespace yarp {
@@ -32,32 +32,32 @@ namespace yarp {
 
             // PPM/PGM format
             bool YARP_sig_API read(ImageOf<PixelRgb>& dest,
-                                   const yarp::os::ConstString& src);
+                                   const std::string& src);
             bool YARP_sig_API read(ImageOf<PixelBgr>& dest,
-                                   const yarp::os::ConstString& src);
+                                   const std::string& src);
             bool YARP_sig_API read(ImageOf<PixelRgba>& dest,
-                                   const yarp::os::ConstString& src);
+                                   const std::string& src);
             bool YARP_sig_API read(ImageOf<PixelMono>& dest,
-                                   const yarp::os::ConstString& src);
+                                   const std::string& src);
 
             bool YARP_sig_API read(ImageOf<PixelFloat>& dest,
-                                   const yarp::os::ConstString& src);
+                                   const std::string& src);
 
             // PPM/PGM format
             bool YARP_sig_API write(const ImageOf<PixelRgb>& src,
-                                    const yarp::os::ConstString& dest);
+                                    const std::string& dest);
             bool YARP_sig_API write(const ImageOf<PixelBgr>& src,
-                                    const yarp::os::ConstString& dest);
+                                    const std::string& dest);
             bool YARP_sig_API write(const ImageOf<PixelRgba>& src,
-                                    const yarp::os::ConstString& dest);
+                                    const std::string& dest);
             bool YARP_sig_API write(const ImageOf<PixelMono>& src,
-                                    const yarp::os::ConstString& dest);
+                                    const std::string& dest);
 
             bool YARP_sig_API write(const ImageOf<PixelFloat>& src,
-                                    const yarp::os::ConstString& dest);
+                                    const std::string& dest);
 
             bool YARP_sig_API write(const Image& src,
-                                    const yarp::os::ConstString& dest);
+                                    const std::string& dest);
         }
     }
 }

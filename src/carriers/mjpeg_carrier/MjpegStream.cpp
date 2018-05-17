@@ -37,7 +37,7 @@ YARP_SSIZE_T MjpegStream::read(const Bytes& b) {
         }
     }
     while (phase==0 && delegate->getInputStream().isOk()) {
-        ConstString s = "";
+        std::string s = "";
         do {
             s = delegate->getInputStream().readLine();
             if (debug) {

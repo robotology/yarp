@@ -170,9 +170,9 @@ public:
     typedef yarp::os::idl::BottleStyle<yarp::rosmsg::sensor_msgs::TimeReference> bottleStyle;
 
     // Give source text for class, ROS will need this
-    static yarp::os::ConstString typeText()
+    static std::string typeText()
     {
-        return yarp::os::ConstString("\
+        return std::string("\
 # Measurement from an external time source not actively synchronized with the system clock.\n\
 \n\
 Header header    # stamp is system time for which measurement was valid\n\
@@ -180,13 +180,13 @@ Header header    # stamp is system time for which measurement was valid\n\
 \n\
 time   time_ref  # corresponding time from this external source\n\
 string source    # (optional) name of time source\n\
-") + yarp::os::ConstString("\n\
+") + std::string("\n\
 ================================================================================\n\
 MSG: std_msgs/Header\n\
 ") + yarp::rosmsg::std_msgs::Header::typeText();
     }
 
-    yarp::os::ConstString getTypeText() const
+    std::string getTypeText() const
     {
         return yarp::rosmsg::sensor_msgs::TimeReference::typeText();
     }

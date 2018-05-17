@@ -158,9 +158,9 @@ public:
     typedef yarp::os::idl::BottleStyle<yarp::rosmsg::sensor_msgs::FluidPressure> bottleStyle;
 
     // Give source text for class, ROS will need this
-    static yarp::os::ConstString typeText()
+    static std::string typeText()
     {
-        return yarp::os::ConstString("\
+        return std::string("\
  # Single pressure reading.  This message is appropriate for measuring the\n\
  # pressure inside of a fluid (air, water, etc).  This also includes\n\
  # atmospheric or barometric pressure.\n\
@@ -172,13 +172,13 @@ public:
 \n\
  float64 fluid_pressure  # Absolute pressure reading in Pascals.\n\
 \n\
- float64 variance        # 0 is interpreted as variance unknown") + yarp::os::ConstString("\n\
+ float64 variance        # 0 is interpreted as variance unknown") + std::string("\n\
 ================================================================================\n\
 MSG: std_msgs/Header\n\
 ") + yarp::rosmsg::std_msgs::Header::typeText();
     }
 
-    yarp::os::ConstString getTypeText() const
+    std::string getTypeText() const
     {
         return yarp::rosmsg::sensor_msgs::FluidPressure::typeText();
     }

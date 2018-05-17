@@ -9,7 +9,7 @@
 #ifndef MONITOREVENT_INC
 #define MONITOREVENT_INC
 
-#include <yarp/os/ConstString.h>
+#include <string>
 #include <yarp/os/Semaphore.h>
 #include <yarp/os/Time.h>
 #include <vector>
@@ -27,7 +27,7 @@ public:
     }
     
     MonitorBinding* owner;          // event's owner
-    yarp::os::ConstString name;     // event's symbolic name
+    std::string name;     // event's symbolic name
     double lifetime;                // event's life time in second. negative value means infinit life time. 
     double create_time;             // event's creation or updating time
 };

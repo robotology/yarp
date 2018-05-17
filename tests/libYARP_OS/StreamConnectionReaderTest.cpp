@@ -18,7 +18,7 @@ using namespace yarp::os::impl;
 
 class StreamConnectionReaderTest : public UnitTest {
 public:
-    virtual ConstString getName() override { return "StreamConnectionReaderTest"; }
+    virtual std::string getName() override { return "StreamConnectionReaderTest"; }
 
     void testRead() {
         report(0,"testing reading...");
@@ -28,7 +28,7 @@ public:
         StreamConnectionReader sbr;
         Route route;
         sbr.reset(sis,nullptr,route,10,true);
-        ConstString line = sbr.expectLine();
+        std::string line = sbr.expectLine();
         checkEqual(line,"Hello","one line");
     }
 

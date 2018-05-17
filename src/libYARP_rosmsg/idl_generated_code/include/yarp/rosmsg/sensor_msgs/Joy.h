@@ -185,20 +185,20 @@ public:
     typedef yarp::os::idl::BottleStyle<yarp::rosmsg::sensor_msgs::Joy> bottleStyle;
 
     // Give source text for class, ROS will need this
-    static yarp::os::ConstString typeText()
+    static std::string typeText()
     {
-        return yarp::os::ConstString("\
+        return std::string("\
 # Reports the state of a joysticks axes and buttons.\n\
 Header header           # timestamp in the header is the time the data is received from the joystick\n\
 float32[] axes          # the axes measurements from a joystick\n\
 int32[] buttons         # the buttons measurements from a joystick \n\
-") + yarp::os::ConstString("\n\
+") + std::string("\n\
 ================================================================================\n\
 MSG: std_msgs/Header\n\
 ") + yarp::rosmsg::std_msgs::Header::typeText();
     }
 
-    yarp::os::ConstString getTypeText() const
+    std::string getTypeText() const
     {
         return yarp::rosmsg::sensor_msgs::Joy::typeText();
     }

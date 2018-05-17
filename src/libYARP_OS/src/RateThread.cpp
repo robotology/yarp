@@ -60,7 +60,7 @@ private:
 public:
 
     Private(RateThread& owner, int p) :
-            period_ms(p),
+            period_ms((float)p),
             adaptedPeriod(period_ms/1000.0),
             owner(owner),
             useSystemClock(false),
@@ -279,7 +279,7 @@ public:
 
     bool setRate(int p)
     {
-        period_ms=p;
+        period_ms=(float)p;
         adaptedPeriod = period_ms/1000.0;   //  divide by 1000 because user's period is [ms] while all the rest is [secs]
         return true;
     }

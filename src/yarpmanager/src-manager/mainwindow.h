@@ -15,7 +15,7 @@
 #include <QFileSystemWatcher>
 #include <yarp/os/Network.h>
 #include <yarp/os/Property.h>
-#include <yarp/os/ConstString.h>
+#include <string>
 #include <yarp/manager/manager.h>
 #include "entitiestreewidget.h"
 #include "genericviewwidget.h"

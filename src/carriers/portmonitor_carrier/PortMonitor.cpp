@@ -7,7 +7,7 @@
  */
 
 #include <yarp/os/Log.h>
-#include <yarp/os/ConstString.h>
+#include <string>
 #include <yarp/os/ResourceFinder.h>
 
 #include "PortMonitor.h"
@@ -45,11 +45,11 @@ bool PortMonitor::configureFromProperty(yarp::os::Property& options) {
     if(binder) delete binder;
     binder = nullptr;
 
-    ConstString script = options.check("type", Value("lua")).asString();
-    ConstString filename = options.check("file", Value("modifier")).asString();
-    ConstString constraint = options.check("constraint", Value("")).asString();
+    std::string script = options.check("type", Value("lua")).asString();
+    std::string filename = options.check("file", Value("modifier")).asString();
+    std::string constraint = options.check("constraint", Value("")).asString();
     // context is used to find the script files
-    ConstString context = options.check("context", Value("")).asString();
+    std::string context = options.check("context", Value("")).asString();
 
     // check which monitor should be used
     if((binder = MonitorBinding::create(script.c_str())) == nullptr)
@@ -61,7 +61,7 @@ bool PortMonitor::configureFromProperty(yarp::os::Property& options) {
     // set the acceptance constraint
     binder->setAcceptConstraint(constraint.c_str());
 
-    ConstString strFile = filename;
+    std::string strFile = filename;
 
     if(script != "dll")
     {

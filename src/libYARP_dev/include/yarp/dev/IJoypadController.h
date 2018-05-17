@@ -34,7 +34,7 @@ public:
     enum JoypadCtrl_coordinateMode {JypCtrlcoord_POLAR  =  0, JypCtrlcoord_CARTESIAN = 1};
 
 protected:
-    std::map<int, std::string> m_actions;
+    YARP_SUPPRESS_DLL_INTERFACE_WARNING_ARGS(std::map<int, std::string>) m_actions;
 
     virtual bool parseActions(const yarp::os::Searchable& cfg, int *count = nullptr);
     virtual bool executeAction(int action_id);
@@ -207,12 +207,12 @@ class YARP_dev_API yarp::dev::IJoypadEventDriven : yarp::os::RateThread,
 private:
     yarp::dev::IJoypadEvent*       m_event;
     bool                           EventDrivenEnabled;
-    std::vector<float>             old_buttons;
-    std::vector<double>            old_axes;
-    std::vector<unsigned char>     old_hats;
-    std::vector<yarp::sig::Vector> old_trackballs;
-    std::vector<yarp::sig::Vector> old_sticks;
-    std::vector<yarp::sig::Vector> old_touches;
+    YARP_SUPPRESS_DLL_INTERFACE_WARNING_ARG(std::vector<float>)             old_buttons;
+    YARP_SUPPRESS_DLL_INTERFACE_WARNING_ARG(std::vector<double>)            old_axes;
+    YARP_SUPPRESS_DLL_INTERFACE_WARNING_ARG(std::vector<unsigned char>)     old_hats;
+    YARP_SUPPRESS_DLL_INTERFACE_WARNING_ARG(std::vector<yarp::sig::Vector>) old_trackballs;
+    YARP_SUPPRESS_DLL_INTERFACE_WARNING_ARG(std::vector<yarp::sig::Vector>) old_sticks;
+    YARP_SUPPRESS_DLL_INTERFACE_WARNING_ARG(std::vector<yarp::sig::Vector>) old_touches;
 protected:
     virtual bool getRawAxisCount(unsigned int& axis_count) = 0;
     virtual bool getRawButtonCount(unsigned int& button_count) = 0;

@@ -15,7 +15,7 @@
 #include <yarp/os/Thread.h>
 #include <yarp/os/Semaphore.h>
 #include <yarp/os/PortReader.h>
-#include <yarp/os/ConstString.h>
+#include <string>
 #include <yarp/os/Network.h>
 #include <yarp/run/impl/PlatformUnistd.h>
 #include <yarp/run/impl/RunCheckpoints.h>
@@ -141,7 +141,7 @@ protected:
 class RunWrite : public RunStdio
 {
 public:
-    RunWrite(yarp::os::ConstString& portName, yarp::os::ConstString& loggerName)
+    RunWrite(std::string& portName, std::string& loggerName)
     {
         mVerbose=true;
 
@@ -160,7 +160,7 @@ public:
         mRunning=true;
     }
 
-    RunWrite(yarp::os::ConstString& portName)
+    RunWrite(std::string& portName)
     {
         mVerbose=false;
 
@@ -200,8 +200,8 @@ protected:
     bool mRunning;
     bool mVerbose;
 
-    yarp::os::ConstString wPortName;
-    yarp::os::ConstString wLoggerName;
+    std::string wPortName;
+    std::string wLoggerName;
     yarp::os::Port wPort;
 };
 
@@ -210,7 +210,7 @@ protected:
 class RunRead : public RunStdio
 {
 public:
-    RunRead(yarp::os::ConstString &portName)
+    RunRead(std::string &portName)
     {
         rPortName=portName+"/stdin";
 
@@ -234,7 +234,7 @@ public:
 protected:
     bool mRunning;
 
-    yarp::os::ConstString rPortName;
+    std::string rPortName;
     yarp::os::Port rPort;
 };
 
@@ -243,7 +243,7 @@ protected:
 class RunReadWrite : public RunStdio, public yarp::os::Thread
 {
 public:
-    RunReadWrite(yarp::os::ConstString &portsName, yarp::os::ConstString &fpName, yarp::os::ConstString &lpName)
+    RunReadWrite(std::string &portsName, std::string &fpName, std::string &lpName)
     {
         UUID=portsName;
         wPortName=portsName+"/stdio:o";
@@ -290,10 +290,10 @@ protected:
     bool mRunning;
     bool mForwarded;
 
-    yarp::os::ConstString UUID;
-    yarp::os::ConstString wPortName;
-    yarp::os::ConstString rPortName;
-    yarp::os::ConstString fPortName;
+    std::string UUID;
+    std::string wPortName;
+    std::string rPortName;
+    std::string fPortName;
     yarp::os::Port wPort;
     yarp::os::Port rPort;
     yarp::os::Port fPort;

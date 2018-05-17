@@ -87,15 +87,15 @@ public:
      * @param quiet suppress messages displayed upon success/failure
      * @return true on success, false on failure
      */
-    static bool connect(const ConstString& src, const ConstString& dest,
-                        const ConstString& carrier = "",
+    static bool connect(const std::string& src, const std::string& dest,
+                        const std::string& carrier = "",
                         bool quiet = true);
 
     // Catch old uses of nullptr for carrier
     static bool connect(const char *src, const char *dest,
                         const char *carrier,
                         bool quiet = true) {
-        return connect(ConstString(src), ConstString(dest), ConstString((carrier==nullptr)?"":carrier), quiet);
+        return connect(std::string(src), std::string(dest), std::string((carrier==nullptr)?"":carrier), quiet);
     }
 
     /**
@@ -105,7 +105,7 @@ public:
      * @param style options for connection
      * @return true on success, false on failure
      */
-    static bool connect(const ConstString& src, const ConstString& dest,
+    static bool connect(const std::string& src, const std::string& dest,
                         const ContactStyle& style);
 
     /**
@@ -115,7 +115,7 @@ public:
      * @param quiet suppress messages displayed upon success/failure
      * @return true on success, false on failure
      */
-    static bool disconnect(const ConstString& src, const ConstString& dest,
+    static bool disconnect(const std::string& src, const std::string& dest,
                            bool quiet = true);
 
     /**
@@ -125,7 +125,7 @@ public:
      * @param style options for network communication related to disconnection
      * @return true on success, false on failure
      */
-    static bool disconnect(const ConstString& src, const ConstString& dest,
+    static bool disconnect(const std::string& src, const std::string& dest,
                            const ContactStyle& style);
 
     /**
@@ -135,7 +135,7 @@ public:
      * @param quiet suppress messages displayed upon success/failure
      * @return true if there is a connection
      */
-    static bool isConnected(const ConstString& src, const ConstString& dest,
+    static bool isConnected(const std::string& src, const std::string& dest,
                             bool quiet = true);
 
     /**
@@ -145,7 +145,7 @@ public:
      * @param style options for network communication
      * @return true if there is a connection
      */
-    static bool isConnected(const ConstString& src, const ConstString& dest,
+    static bool isConnected(const std::string& src, const std::string& dest,
                             const ContactStyle& style);
 
     /**
@@ -154,7 +154,7 @@ public:
      * @param quiet suppress messages displayed during check
      * @return true on success, false on failure
      */
-    static bool exists(const ConstString& port, bool quiet = true);
+    static bool exists(const std::string& port, bool quiet = true);
 
     /**
      * Check for a port to be ready and responsive.
@@ -162,7 +162,7 @@ public:
      * @param style options for network communication
      * @return true on success, false on failure
      */
-    static bool exists(const ConstString& port, const ContactStyle& style);
+    static bool exists(const std::string& port, const ContactStyle& style);
 
     /**
      * Wait for a port to be ready and responsive.
@@ -170,7 +170,7 @@ public:
      * @param quiet suppress messages displayed during wait
      * @return true on success, false on failure
      */
-    static bool sync(const ConstString& port, bool quiet = true);
+    static bool sync(const std::string& port, bool quiet = true);
 
     /**
      * The standard main method for the YARP companion utility.
@@ -202,7 +202,7 @@ public:
      * known about the name, the returned contact is invalid
      * (Contact::isValid returns false)
      */
-    static Contact queryName(const ConstString& name);
+    static Contact queryName(const std::string& name);
 
     /**
      * Register a name with the name server.
@@ -212,7 +212,7 @@ public:
      * @return the contact information now associated with that name
      * (in other words, what Contact::queryName would now return)
      */
-    static Contact registerName(const ConstString& name);
+    static Contact registerName(const std::string& name);
 
     /**
      * Register contact information with the name server.
@@ -231,7 +231,7 @@ public:
      * (in other words, what Contact::queryName would now return).
      * This will be the invalid contact (Contact::isValid is false).
      */
-    static Contact unregisterName(const ConstString& name);
+    static Contact unregisterName(const std::string& name);
 
     /**
      * Removes the registration for a contact from the name server.
@@ -275,7 +275,7 @@ public:
      * command).
      * @return name of the port associated with the nameserver
      */
-    static ConstString getNameServerName();
+    static std::string getNameServerName();
 
     /**
      * Get the contact information for the port associated with the nameserver
@@ -294,7 +294,7 @@ public:
      * being made/broken in another thread.
      * @return true on success
      */
-    static bool setNameServerName(const ConstString& name);
+    static bool setNameServerName(const std::string& name);
 
 
     /**
@@ -324,7 +324,7 @@ public:
      * @return A string from standard input, without newline or
      * linefeed characters.
      */
-    static ConstString readString(bool *eof = nullptr);
+    static std::string readString(bool *eof = nullptr);
 
 
     /**
@@ -390,7 +390,7 @@ public:
      *
      * @return true on success
      */
-    static bool write(const ConstString& port_name,
+    static bool write(const std::string& port_name,
                       PortWriter& cmd,
                       PortReader& reply);
 
@@ -455,7 +455,7 @@ public:
      * @return the value of the environment variable, or "" if not found
      *
      */
-    static ConstString getEnvironment(const char *key,
+    static std::string getEnvironment(const char *key,
                                       bool *found = nullptr);
 
     /**
@@ -466,7 +466,7 @@ public:
      * @param val the target value
      *
      */
-    static void setEnvironment(const ConstString& key, const ConstString& val);
+    static void setEnvironment(const std::string& key, const std::string& val);
 
     /**
      *
@@ -475,7 +475,7 @@ public:
      * @param key the variable to remove
      *
      */
-    static void unsetEnvironment(const ConstString& key);
+    static void unsetEnvironment(const std::string& key);
 
 
     /**
@@ -483,14 +483,14 @@ public:
      * Get an OS-appropriate directory separator (e.g. "/" on linux)
      *
      */
-    static ConstString getDirectorySeparator();
+    static std::string getDirectorySeparator();
 
     /**
      *
      * Get an OS-appropriate path separator (e.g. ":" on linux)
      *
      */
-    static ConstString getPathSeparator();
+    static std::string getPathSeparator();
 
     /**
      *
@@ -554,7 +554,7 @@ public:
      * @return full name of file including path
      *
      */
-    static ConstString getConfigFile(const char *fname);
+    static std::string getConfigFile(const char *fname);
 
     /**
      *
@@ -576,7 +576,7 @@ public:
      * @param destStyle the Qos preference of the input port
      * @return true if the Qos preferences are set correctly
      */
-    static bool setConnectionQos(const ConstString& src, const ConstString& dest,
+    static bool setConnectionQos(const std::string& src, const std::string& dest,
                                  const QosStyle& srcStyle, const QosStyle& destStyle,
                                  bool quiet=true);
 
@@ -587,7 +587,7 @@ public:
      * @param style the Qos preference of both input and output ports
      * @return true if the Qos preferences are set correctly
      */
-    static bool setConnectionQos(const ConstString& src, const ConstString& dest,
+    static bool setConnectionQos(const std::string& src, const std::string& dest,
                                  const QosStyle& style, bool quiet=true);
 
     /**
@@ -598,14 +598,14 @@ public:
      * @param destStyle the Qos preference of the input port
      * @return true if the Qos preferences are gotten correctly
      */
-    static bool getConnectionQos(const ConstString& src, const ConstString& dest,
+    static bool getConnectionQos(const std::string& src, const std::string& dest,
                                  QosStyle& srcStyle, QosStyle& destStyle, bool quiet=true);
     /**
      * Checks that the port has a valid name.
      * @param portName the name of port
      * @return true if portName is valid
      */
-    static bool isValidPortName(const ConstString& portName);
+    static bool isValidPortName(const std::string& portName);
 };
 
 /**

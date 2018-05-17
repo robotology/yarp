@@ -9,7 +9,7 @@
 #ifndef YARP_OS_TYPE_H
 #define YARP_OS_TYPE_H
 
-#include <yarp/os/ConstString.h>
+#include <string>
 #include <yarp/os/Searchable.h>
 
 namespace yarp {
@@ -53,11 +53,11 @@ public:
         return Type();
     }
 
-    ConstString getName() const {
+    std::string getName() const {
         return name;
     }
 
-    ConstString getNameOnWire() const {
+    std::string getNameOnWire() const {
         return name_on_wire;
     }
 
@@ -69,7 +69,7 @@ public:
         return hasName();
     }
 
-    ConstString toString() const {
+    std::string toString() const {
         if (name_on_wire!="") {
             return name + ":" + name_on_wire;
         }
@@ -84,8 +84,8 @@ public:
     Type& addProperty(const char *key, const Value& val);
 
 private:
-    ConstString name;
-    ConstString name_on_wire;
+    YARP_SUPPRESS_DLL_INTERFACE_WARNING_ARG(std::string) name;
+    YARP_SUPPRESS_DLL_INTERFACE_WARNING_ARG(std::string) name_on_wire;
     Property *prop;
 };
 

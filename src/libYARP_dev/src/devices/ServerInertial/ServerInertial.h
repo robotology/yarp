@@ -125,7 +125,7 @@ class yarp::dev::ServerInertial : public DeviceDriver,
 #ifndef DOXYGEN_SHOULD_SKIP_THIS
 private:
     bool spoke;
-    yarp::os::ConstString partName;
+    std::string partName;
     yarp::dev::PolyDriver *IMU_polydriver;
     IGenericSensor *IMU; //The inertial device
     IPreciselyTimed *iTimed;

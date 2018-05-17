@@ -48,37 +48,37 @@ Logger& Logger::get()
     return instance;
 }
 
-void Logger::println(const ConstString& txt)
+void Logger::println(const std::string& txt)
 {
     internal_debug(txt);
 }
 
 
-void Logger::internal_debug(const ConstString& txt)
+void Logger::internal_debug(const std::string& txt)
 {
     show(YARP_LM_DEBUG, txt);
 }
 
 
-void Logger::internal_info(const ConstString& txt)
+void Logger::internal_info(const std::string& txt)
 {
     show(YARP_LM_INFO, txt);
 }
 
 
-void Logger::internal_warning(const ConstString& txt)
+void Logger::internal_warning(const std::string& txt)
 {
     show(YARP_LM_WARNING, txt);
 }
 
 
-void Logger::internal_error(const ConstString& txt)
+void Logger::internal_error(const std::string& txt)
 {
     show(YARP_LM_ERROR, txt);
 }
 
 
-void Logger::internal_fail(const ConstString& txt)
+void Logger::internal_fail(const std::string& txt)
 {
     show(YARP_LM_ERROR, txt);
     std::exit(1);
@@ -87,35 +87,35 @@ void Logger::internal_fail(const ConstString& txt)
 
 void Logger::internal_debug(const char *txt)
 {
-    ConstString stxt(txt);
+    std::string stxt(txt);
     show(YARP_LM_DEBUG, stxt);
 }
 
 
 void Logger::internal_info(const char *txt)
 {
-    ConstString stxt(txt);
+    std::string stxt(txt);
     show(YARP_LM_INFO, stxt);
 }
 
 
 void Logger::internal_warning(const char *txt)
 {
-    ConstString stxt(txt);
+    std::string stxt(txt);
     show(YARP_LM_WARNING, stxt);
 }
 
 
 void Logger::internal_error(const char *txt)
 {
-    ConstString stxt(txt);
+    std::string stxt(txt);
     show(YARP_LM_ERROR, stxt);
 }
 
 
 void Logger::internal_fail(const char *txt)
 {
-    ConstString stxt(txt);
+    std::string stxt(txt);
     show(YARP_LM_ERROR, stxt);
     std::exit(1);
 }
@@ -171,7 +171,7 @@ bool Logger::shouldShowDebug()
 }
 
 
-void Logger::show(unsigned YARP_INT32 level, const ConstString& txt)
+void Logger::show(unsigned YARP_INT32 level, const std::string& txt)
 {
     unsigned YARP_INT32 inLevel = level;
     //fprintf(stderr, "level %d txt %s\n", level, txt.c_str());
@@ -200,7 +200,7 @@ void Logger::show(unsigned YARP_INT32 level, const ConstString& txt)
             fflush(stream);
         }
     } else {
-        ConstString more(prefix);
+        std::string more(prefix);
         more += ": ";
         more += txt;
         parent->show(inLevel, more);

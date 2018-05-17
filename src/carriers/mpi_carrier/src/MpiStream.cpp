@@ -16,7 +16,7 @@ using namespace yarp::os;
 /* --------------------------------------- */
 /* MpiStream */
 
-MpiStream::MpiStream(ConstString n, MpiComm* c)
+MpiStream::MpiStream(std::string n, MpiComm* c)
     : terminate(false), name(n), comm(c) {
     readBuffer = NULL;
     resetBuffer();

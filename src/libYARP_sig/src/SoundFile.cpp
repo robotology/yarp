@@ -263,16 +263,16 @@ bool yarp::sig::file::soundStreamReader::close()
 
 size_t yarp::sig::file::soundStreamReader::readBlock(Sound& dest, size_t block_size)
 {
-    int expected_bytes = block_size*(soundInfo.bits/8)*soundInfo.channels;
+    int expected_bytes = (int)(block_size*(soundInfo.bits/8)*soundInfo.channels);
 
     //this probably works only if soundInfo.bits=16
     int expected_words=expected_bytes/(soundInfo.bits/8);
     NetInt16     *data = new NetInt16 [expected_words];
 
-    int bytes_read = fread(data,1,expected_bytes,fp);
-    int samples_read = bytes_read/(soundInfo.bits/8)/soundInfo.channels;
+    size_t bytes_read = fread(data,1,expected_bytes,fp);
+    size_t samples_read = bytes_read/(soundInfo.bits/8)/soundInfo.channels;
 
-    dest.resize(samples_read,soundInfo.channels);
+    dest.resize((int)samples_read,soundInfo.channels);
     dest.setFrequency(soundInfo.freq);
 
     int ct = 0;
@@ -302,7 +302,7 @@ bool  yarp::sig::file::soundStreamReader::rewind(size_t sample_offset)
         return false;
     }
 
-    fseek(fp,this->soundInfo.data_start_offset+(sample_offset*this->soundInfo.channels*this->soundInfo.bits/2),SEEK_SET);
+    fseek(fp,(long int)(this->soundInfo.data_start_offset+(sample_offset*this->soundInfo.channels*this->soundInfo.bits/2)),SEEK_SET);
     index=sample_offset;
 
     return true;

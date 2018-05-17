@@ -59,7 +59,7 @@ bool ImplementAxisInfo::uninitialize()
     return true;
 }
 
-bool ImplementAxisInfo::getAxisName(int axis, yarp::os::ConstString& name)
+bool ImplementAxisInfo::getAxisName(int axis, std::string& name)
 {
     bool ret;
     int k = castToMapper(helper)->toHw(axis);

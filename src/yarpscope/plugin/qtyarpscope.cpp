@@ -144,7 +144,7 @@ bool QtYARPScope::parseParameters(QStringList params)
     bool ok;
     if (rf.check("xml")) {
 // XML Mode Options
-        const yarp::os::ConstString &filename = rf.findFile("xml");
+        const std::string &filename = rf.findFile("xml");
         QString f = QString("%1").arg(filename.data());
         loader = new XmlLoader(f,plotManager,this);
         qDebug("Loading file %s",filename.c_str());

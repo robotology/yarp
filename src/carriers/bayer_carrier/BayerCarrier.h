@@ -91,11 +91,11 @@ public:
         return new BayerCarrier();
     }
 
-    virtual ConstString getName() override {
+    virtual std::string getName() override {
         return "bayer";
     }
 
-    virtual ConstString toString() override {
+    virtual std::string toString() override {
         return "bayer_carrier";
     }
 
@@ -109,7 +109,7 @@ public:
         return local->expectBlock(data,len);
     }
 
-    virtual ConstString expectText(int terminatingChar = '\n') override {
+    virtual std::string expectText(int terminatingChar = '\n') override {
         return local->expectText(terminatingChar);
     }
 

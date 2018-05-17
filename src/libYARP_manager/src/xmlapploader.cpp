@@ -42,7 +42,7 @@ XmlAppLoader::XmlAppLoader(const char* szPath, const char* szAppName)
 
     if(strlen(szPath))
     {
-        const yarp::os::ConstString directorySeparator = yarp::os::NetworkBase::getDirectorySeparator();
+        const std::string directorySeparator = yarp::os::NetworkBase::getDirectorySeparator();
         strPath = szPath;
         if((strPath.rfind(directorySeparator)==string::npos) ||
             (strPath.rfind(directorySeparator)!=strPath.size()-1))

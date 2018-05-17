@@ -18,7 +18,7 @@
 #include <yarp/sig/Vector.h>
 #include <yarp/os/Semaphore.h>
 #include <yarp/os/Time.h>
-#include <yarp/os/ConstString.h>
+#include <string>
 #include <yarp/dev/PolyDriver.h>
 #include <yarp/dev/Wrapper.h>
 #include <yarp/dev/IRobotDescription.h>
@@ -50,7 +50,7 @@ protected:
     yarp::os::Mutex                m_external_mutex;
     yarp::os::Mutex                m_internal_mutex;
     yarp::os::Port                 m_rpc_port;
-    yarp::os::ConstString          m_local_name;
+    std::string          m_local_name;
     std::vector<DeviceDescription> m_robot_devices;
 
 #endif /*DOXYGEN_SHOULD_SKIP_THIS*/

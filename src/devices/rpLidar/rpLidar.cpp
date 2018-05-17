@@ -129,12 +129,12 @@ bool RpLidar::open(yarp::os::Searchable& config)
         yError("Cannot find configuration file for serial port communication!");
         return false;
     }
-    yarp::os::ConstString serial_filename = general_config.find("Serial_Configuration").asString();
+    std::string serial_filename = general_config.find("Serial_Configuration").asString();
 
     Property prop;
     ResourceFinder rf;
     rf.setVerbose();
-    yarp::os::ConstString serial_completefilename= rf.findFileByName(serial_filename.c_str());
+    std::string serial_completefilename= rf.findFileByName(serial_filename.c_str());
 
     prop.put("device", "serialport");
     ok = prop.fromConfigFile(serial_completefilename.c_str(), config, false);
@@ -720,7 +720,7 @@ void RpLidar::threadRelease()
     return;
 }
 
-bool RpLidar::getDeviceInfo(yarp::os::ConstString &device_info)
+bool RpLidar::getDeviceInfo(std::string &device_info)
 {
     LockGuard guard(mutex);
     device_info = info;

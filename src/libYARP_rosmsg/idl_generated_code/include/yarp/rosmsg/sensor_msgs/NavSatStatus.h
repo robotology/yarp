@@ -171,9 +171,9 @@ public:
     typedef yarp::os::idl::BottleStyle<yarp::rosmsg::sensor_msgs::NavSatStatus> bottleStyle;
 
     // Give source text for class, ROS will need this
-    static yarp::os::ConstString typeText()
+    static std::string typeText()
     {
-        return yarp::os::ConstString("\
+        return std::string("\
 # Navigation Satellite fix status for any Global Navigation Satellite System\n\
 \n\
 # Whether to output an augmented fix is determined by both the fix\n\
@@ -199,7 +199,7 @@ uint16 service\n\
 ");
     }
 
-    yarp::os::ConstString getTypeText() const
+    std::string getTypeText() const
     {
         return yarp::rosmsg::sensor_msgs::NavSatStatus::typeText();
     }

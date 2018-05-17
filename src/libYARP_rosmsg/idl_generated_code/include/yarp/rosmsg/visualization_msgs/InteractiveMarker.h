@@ -323,9 +323,9 @@ public:
     typedef yarp::os::idl::BottleStyle<yarp::rosmsg::visualization_msgs::InteractiveMarker> bottleStyle;
 
     // Give source text for class, ROS will need this
-    static yarp::os::ConstString typeText()
+    static std::string typeText()
     {
-        return yarp::os::ConstString("\
+        return std::string("\
 # Time/frame info.\n\
 # If header.time is set to 0, the marker will be retransformed into\n\
 # its frame on each timestep. You will receive the pose feedback\n\
@@ -352,22 +352,22 @@ MenuEntry[] menu_entries\n\
 \n\
 # List of controls displayed for this marker.\n\
 InteractiveMarkerControl[] controls\n\
-") + yarp::os::ConstString("\n\
+") + std::string("\n\
 ================================================================================\n\
 MSG: std_msgs/Header\n\
-") + yarp::rosmsg::std_msgs::Header::typeText() + yarp::os::ConstString("\n\
+") + yarp::rosmsg::std_msgs::Header::typeText() + std::string("\n\
 ================================================================================\n\
 MSG: geometry_msgs/Pose\n\
-") + yarp::rosmsg::geometry_msgs::Pose::typeText() + yarp::os::ConstString("\n\
+") + yarp::rosmsg::geometry_msgs::Pose::typeText() + std::string("\n\
 ================================================================================\n\
 MSG: visualization_msgs/MenuEntry\n\
-") + yarp::rosmsg::visualization_msgs::MenuEntry::typeText() + yarp::os::ConstString("\n\
+") + yarp::rosmsg::visualization_msgs::MenuEntry::typeText() + std::string("\n\
 ================================================================================\n\
 MSG: visualization_msgs/InteractiveMarkerControl\n\
 ") + yarp::rosmsg::visualization_msgs::InteractiveMarkerControl::typeText();
     }
 
-    yarp::os::ConstString getTypeText() const
+    std::string getTypeText() const
     {
         return yarp::rosmsg::visualization_msgs::InteractiveMarker::typeText();
     }

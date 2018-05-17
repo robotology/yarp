@@ -22,7 +22,7 @@ int main(int argc, char *argv[]) {
         printf("Please call with: --file config.txt\n");
         exit(1);
     }
-    ConstString fname = cmdLine.find("file").asString();
+    std::string fname = cmdLine.find("file").asString();
     printf("Working with config file %s\n", fname.c_str());
 
     Property robot;

@@ -67,8 +67,8 @@ class yarp::dev::JoypadControlServer: public yarp::dev::DeviceDriver,
     bool                            m_isSubdeviceOwned;
     bool                            m_separatePorts;
     bool                            m_profile;
-    yarp::os::ConstString           m_rpcPortName;
-    yarp::os::ConstString           m_name;
+    std::string           m_rpcPortName;
+    std::string           m_name;
     JoyPort<Vector>                 m_portAxis;
     JoyPort<Vector>                 m_portStick;
     JoyPort<Vector>                 m_portTouch;

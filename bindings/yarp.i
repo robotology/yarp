@@ -42,11 +42,8 @@
   %include "std_vector.i"
 #endif
 
-// Try to make yarp::os::ConstString act like std::string
 // Try to translate std::string to native equivalents
 %include "std_string.i"
-%typemaps_std_string(yarp::os::ConstString, char, SWIG_AsCharPtrAndSize,
-             SWIG_FromCharPtrAndSize, %checkcode(STDSTRING));
 
 #if defined(SWIGCSHARP)
     // Get .NET pointers instead of swig generated types (useful when dealing with images)
@@ -103,8 +100,8 @@
 // Deal with overridden method clashes, simply by ignoring them.
 // At some point, these methods should get renamed so they are still
 // available.
-%ignore *::check(const ConstString& key, Value *& result) const;
-%ignore *::check(const ConstString& key, Value *& result, const ConstString& comment) const;
+%ignore *::check(const std::string& key, Value *& result) const;
+%ignore *::check(const std::string& key, Value *& result, const std::string& comment) const;
 %rename(where_c) *::where();
 %rename(seed_c) *::seed(int seed);  // perl clash
 %ignore *::setKp(double);
@@ -114,7 +111,7 @@
 %ignore *::setScale(double);
 %ignore *::setOffset(double);
 %rename(attach_rpc_server) *::attach(yarp::os::RpcServer&);
-%rename(open_str) yarp::dev::PolyDriver::open(const yarp::os::ConstString& txt);
+%rename(open_str) yarp::dev::PolyDriver::open(const std::string& txt);
 
 #if defined(SWIGCSHARP)
     // there's a big CSHARP virtual/override muddle
@@ -185,7 +182,7 @@
 %ignore yarp::sig::Vector::getType();
 %ignore yarp::os::Property::put(const char *,Value *);
 %ignore yarp::os::Bottle::add(Value *);
-%rename(toString) yarp::os::ConstString::operator const char *() const;
+%rename(toString) std::string::operator const char *() const;
 %rename(isEqual) *::operator==;
 %rename(notEqual) *::operator!=;
 %rename(access) *::operator();
@@ -274,6 +271,16 @@ void setExternal2(yarp::sig::Image *img, PyObject* mem, int w, int h) {
 %enddef
 %define YARP_OS_DEPRECATED_API
 %enddef
+%define YARP_DISABLE_DEPRECATED_WARNING
+%enddef
+%define YARP_DISABLE_DLL_INTERFACE_WARNING
+%enddef
+%define YARP_SUPPRESS_DLL_INTERFACE_WARNING
+%enddef
+%define YARP_SUPPRESS_DLL_INTERFACE_WARNING_ARG(x) x
+%enddef
+%define YARP_SUPPRESS_DLL_INTERFACE_WARNING_ARGS(...) __VA_ARGS__
+%enddef
 
 %define _YARP2_NETINT32_
 %enddef
@@ -326,7 +333,6 @@ namespace yarp {
 };
 #endif
 
-%include <yarp/os/ConstString.h>
 %include <yarp/os/PortReport.h>
 %include <yarp/os/Contact.h>
 %include <yarp/os/ConnectionReader.h>
@@ -1090,7 +1096,7 @@ typedef yarp::os::BufferedPort<ImageRgbFloat> BufferedPortImageRgbFloat;
 
 %extend yarp::dev::IAxisInfo {
     std::string getAxisName(int axis) {
-        yarp::os::ConstString name;
+        std::string name;
         bool ok = self->getAxisName(axis, name);
         if (!ok) return "unknown";
         return name;

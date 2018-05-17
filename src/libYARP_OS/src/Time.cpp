@@ -163,7 +163,7 @@ void Time::useSystemClock()
  * As soon as the clock starts being published, the networkClock has to acknowledge it and 'attach' to it. Clock will
  * then be valid.
  */
-void Time::useNetworkClock(const ConstString& clock, ConstString localPortName)
+void Time::useNetworkClock(const std::string& clock, std::string localPortName)
 {
     // re-create the clock also in case we already use a network clock, because
     // the input clock port may be different or the clock producer may be changed (different
@@ -267,9 +267,9 @@ yarpClockType Time::getClockType()
     return yarp_clock_type;
 }
 
-yarp::os::ConstString Time::clockTypeToString(yarpClockType type)
+std::string Time::clockTypeToString(yarpClockType type)
 {
-    yarp::os::ConstString clockTypeString("");
+    std::string clockTypeString("");
     if(type == -1)
         type = yarp_clock_type;
 

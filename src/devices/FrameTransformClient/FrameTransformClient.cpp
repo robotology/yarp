@@ -380,15 +380,15 @@ bool yarp::dev::FrameTransformClient::open(yarp::os::Searchable &config)
         yWarning("FrameTransformClient: using default period of %d ms" , m_period);
     }
 
-    ConstString local_rpcServer = m_local_name;
+    std::string local_rpcServer = m_local_name;
     local_rpcServer += "/rpc:o";
-    ConstString local_rpcUser = m_local_name;
+    std::string local_rpcUser = m_local_name;
     local_rpcUser += "/rpc:i";
-    ConstString remote_rpc = m_remote_name;
+    std::string remote_rpc = m_remote_name;
     remote_rpc += "/rpc";
-    ConstString remote_streaming_name = m_remote_name;
+    std::string remote_streaming_name = m_remote_name;
     remote_streaming_name += "/transforms:o";
-    ConstString local_streaming_name = m_local_name;
+    std::string local_streaming_name = m_local_name;
     local_streaming_name += "/transforms:i";
 
     if (!m_rpc_InterfaceToUser.open(local_rpcUser.c_str()))

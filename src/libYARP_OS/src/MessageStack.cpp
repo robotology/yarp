@@ -63,7 +63,7 @@ public:
         active = true;
     }
 
-    void stack(PortWriter& msg, const ConstString& tag) {
+    void stack(PortWriter& msg, const std::string& tag) {
         mutex.wait();
         msgs.push_back(Bottle());
         if (tag!="") {
@@ -139,7 +139,7 @@ void MessageStack::attach(PortReader& owner) {
     yAssert(implementation);
 }
 
-void MessageStack::stack(PortWriter& msg, const ConstString& tag) {
+void MessageStack::stack(PortWriter& msg, const std::string& tag) {
     if (!implementation) return;
     HELPER(implementation).stack(msg, tag);
 }

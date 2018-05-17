@@ -12,7 +12,7 @@
 
 #include <yarp/conf/api.h>
 #include <yarp/conf/system.h>
-#include <yarp/os/ConstString.h>
+#include <string>
 #include <yarp/os/Log.h>
 #include <yarp/os/impl/PlatformStdio.h>
 
@@ -42,12 +42,12 @@ public:
 
     static Logger& get();
 
-    void println(const ConstString& txt);
-    void internal_debug(const ConstString& txt);
-    void internal_info(const ConstString& txt);
-    void internal_warning(const ConstString& txt);
-    void internal_error(const ConstString& txt);
-    void internal_fail(const ConstString& txt);
+    void println(const std::string& txt);
+    void internal_debug(const std::string& txt);
+    void internal_info(const std::string& txt);
+    void internal_warning(const std::string& txt);
+    void internal_error(const std::string& txt);
+    void internal_fail(const std::string& txt);
     void internal_debug(const char *txt);
     void internal_info(const char *txt);
     void internal_warning(const char *txt);
@@ -63,9 +63,9 @@ public:
     bool shouldShowDebug();
 
 private:
-    void show(unsigned YARP_INT32 level, const ConstString& txt);
+    void show(unsigned YARP_INT32 level, const std::string& txt);
 
-    ConstString prefix;
+    std::string prefix;
     Logger *parent;
     int verbose;
     unsigned YARP_INT32 low;

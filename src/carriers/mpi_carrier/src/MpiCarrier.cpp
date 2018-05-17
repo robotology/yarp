@@ -123,7 +123,7 @@ bool MpiCarrier::expectSenderSpecifier(ConnectionState& proto) {
     if (! MpiControl->isRunning())
         return false;
 
-    ConstString other_id = proto.is().readLine();
+    std::string other_id = proto.is().readLine();
     bool notLocal = comm->notLocal(other_id);
 
     port = proto.is().readLine();

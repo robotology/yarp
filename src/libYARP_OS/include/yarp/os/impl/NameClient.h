@@ -64,14 +64,14 @@ public:
      * @param name the name of the port
      * @return the address associated with the port
      */
-    Contact queryName(const ConstString& name);
+    Contact queryName(const std::string& name);
 
     /**
      * Register a port with a given name.
      * @param name the name of the port
      * @return the address associated with the port
      */
-    Contact registerName(const ConstString& name);
+    Contact registerName(const std::string& name);
 
     /**
      * Register a port with a given name and a partial address.
@@ -79,14 +79,14 @@ public:
      * @param suggest a partially completed address
      * @return the address associated with the port
      */
-    Contact registerName(const ConstString& name, const Contact& suggest);
+    Contact registerName(const std::string& name, const Contact& suggest);
 
     /**
      * Register disassociation of name from port.
      * @param name the name to remove
      * @return the new result of queries for that name (should be empty)
      */
-    Contact unregisterName(const ConstString& name);
+    Contact unregisterName(const std::string& name);
 
     /**
      * Send a message to the name server, and interpret the result as
@@ -97,7 +97,7 @@ public:
      * @return the address extracted from the reply, all errors result
      * in a non-valid address.
      */
-    Contact probe(const ConstString& cmd);
+    Contact probe(const std::string& cmd);
 
     /**
      * Extract an address from its text representation.
@@ -106,7 +106,7 @@ public:
      *
      * @return the address corresponding to the text representation
      */
-    static Contact extractAddress(const ConstString& txt);
+    static Contact extractAddress(const std::string& txt);
 
     static Contact extractAddress(const Bottle& bot);
 
@@ -118,7 +118,7 @@ public:
      *
      * @return the reply from the name server.
      */
-    ConstString send(const ConstString& cmd, bool multi = true);
+    std::string send(const std::string& cmd, bool multi = true);
 
     /**
      * Send a message to the nameserver in Bottle format, and return the
@@ -192,14 +192,14 @@ public:
 
     NameStore* getQueryBypass();
 
-    yarp::os::ConstString getMode();
+    std::string getMode();
 
     yarp::os::Nodes& getNodes();
 
 private:
     Contact address;
-    ConstString host;
-    ConstString mode;
+    YARP_SUPPRESS_DLL_INTERFACE_WARNING_ARG(std::string) host;
+    YARP_SUPPRESS_DLL_INTERFACE_WARNING_ARG(std::string) mode;
     bool fake;
     NameServer* fakeServer;
     bool allowScan;

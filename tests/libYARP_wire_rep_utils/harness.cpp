@@ -45,7 +45,7 @@ int main(int argc, char *argv[]) {
 
     if (argc>1) {
         int verbosity = 0;
-        while (ConstString(argv[1])==ConstString("verbose")) {
+        while (std::string(argv[1])==std::string("verbose")) {
             verbosity++;
             argc--;
             argv++;
@@ -54,7 +54,7 @@ int main(int argc, char *argv[]) {
             Logger::get().setVerbosity(verbosity);
         }
 
-        if (ConstString(argv[1])==ConstString("regression")) {
+        if (std::string(argv[1])==std::string("regression")) {
             done = true;
             UnitTest::startTestSystem();
             TestList::collectTests();  // just in case automation doesn't work

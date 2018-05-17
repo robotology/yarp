@@ -16,7 +16,7 @@
 #include <yarp/os/Os.h>
 #include <yarp/os/Log.h>
 #include <yarp/os/ResourceFinder.h>
-#include <yarp/os/ConstString.h>
+#include <string>
 #include <yarp/os/ResourceFinderOptions.h>
 
 

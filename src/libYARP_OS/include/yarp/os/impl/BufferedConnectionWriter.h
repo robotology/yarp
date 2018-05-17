@@ -20,6 +20,7 @@
 #include <yarp/os/Bottle.h>
 #include <yarp/os/NetInt64.h>
 
+#include <string>
 #include <vector>
 #include <cstdlib>
 
@@ -213,7 +214,7 @@ public:
         push(b, true);
     }
 
-    virtual void appendStringBase(const ConstString& data) {
+    virtual void appendStringBase(const std::string& data) {
         yarp::os::Bytes b((char*)(data.c_str()), data.length()+1);
         push(b, true);
     }
@@ -225,7 +226,7 @@ public:
      *
      * @param data string to write, not including carriage-return-line-feed.
      */
-    virtual void appendLine(const ConstString& data) {
+    virtual void appendLine(const std::string& data) {
         yarp::os::Bytes b((char*)(data.c_str()), data.length());
         push(b, true);
         const char *eol = "\r\n"; // for windows compatibility
@@ -319,7 +320,7 @@ public:
     /**
      * @return the message serialized as a string
      */
-    ConstString toString();
+    std::string toString();
 
     // defined by yarp::os::ConnectionWriter
     virtual void appendBlock(const char *data, size_t len) override {
@@ -333,7 +334,7 @@ public:
         } else if (terminate==0) {
             appendStringBase(str);
         } else {
-            ConstString s = str;
+            std::string s = str;
             s += terminate;
             appendBlockCopy(yarp::os::Bytes((char*)(s.c_str()), s.length()));
         }
@@ -455,9 +456,9 @@ private:
     bool applyConvertTextMode();
 
 
-    std::vector<yarp::os::ManagedBytes *> lst;    ///< buffers in payload
-    std::vector<yarp::os::ManagedBytes *> header; ///< buffers in header
-    std::vector<yarp::os::ManagedBytes *> *target;///< points to header or payload
+    YARP_SUPPRESS_DLL_INTERFACE_WARNING_ARG(std::vector<yarp::os::ManagedBytes*>) lst;    ///< buffers in payload
+    YARP_SUPPRESS_DLL_INTERFACE_WARNING_ARG(std::vector<yarp::os::ManagedBytes*>) header; ///< buffers in header
+    YARP_SUPPRESS_DLL_INTERFACE_WARNING_ARG(std::vector<yarp::os::ManagedBytes*>) *target;///< points to header or payload
     yarp::os::ManagedBytes *pool; ///< the pool buffer (in lst or header)
     size_t poolIndex;  ///< current offset into pool buffer
     size_t poolCount;  ///< number of pool buffers allocated
@@ -529,8 +530,8 @@ public:
         return ok;
     }
 
-    virtual ConstString expectText(int terminatingChar) override {
-        ConstString str = reader->expectText(terminatingChar);
+    virtual std::string expectText(int terminatingChar) override {
+        std::string str = reader->expectText(terminatingChar);
         readerStore.appendString(str.c_str(), terminatingChar);
         return str;
     }

@@ -152,22 +152,22 @@ public:
     typedef yarp::os::idl::BottleStyle<yarp::rosmsg::std_msgs::UInt8MultiArray> bottleStyle;
 
     // Give source text for class, ROS will need this
-    static yarp::os::ConstString typeText()
+    static std::string typeText()
     {
-        return yarp::os::ConstString("\
+        return std::string("\
 # Please look at the MultiArrayLayout message definition for\n\
 # documentation on all multiarrays.\n\
 \n\
 MultiArrayLayout  layout        # specification of data layout\n\
 uint8[]           data          # array of data\n\
 \n\
-") + yarp::os::ConstString("\n\
+") + std::string("\n\
 ================================================================================\n\
 MSG: std_msgs/MultiArrayLayout\n\
 ") + yarp::rosmsg::std_msgs::MultiArrayLayout::typeText();
     }
 
-    yarp::os::ConstString getTypeText() const
+    std::string getTypeText() const
     {
         return yarp::rosmsg::std_msgs::UInt8MultiArray::typeText();
     }

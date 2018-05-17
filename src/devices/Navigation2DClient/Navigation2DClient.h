@@ -12,7 +12,7 @@
 #include <yarp/dev/ControlBoardHelpers.h>
 #include <yarp/sig/Vector.h>
 #include <yarp/os/Time.h>
-#include <yarp/os/ConstString.h>
+#include <string>
 #include <yarp/dev/PolyDriver.h>
 #include <yarp/dev/INavigation2D.h>
 
@@ -66,21 +66,21 @@ public:
 
     /* The following methods belong to INavigation2D interface */
     bool   gotoTargetByAbsoluteLocation(Map2DLocation loc) override;
-    bool   gotoTargetByLocationName(yarp::os::ConstString location_name) override;
+    bool   gotoTargetByLocationName(std::string location_name) override;
     bool   gotoTargetByRelativeLocation(double x, double y, double theta) override;
 
     bool   getAbsoluteLocationOfCurrentTarget(Map2DLocation& loc) override;
-    bool   getNameOfCurrentTarget(yarp::os::ConstString& location_name);
+    bool   getNameOfCurrentTarget(std::string& location_name);
     bool   getRelativeLocationOfCurrentTarget(double& x, double& y, double& theta) override;
 
     bool   getCurrentPosition(Map2DLocation &loc) override;
     bool   setInitialPose(yarp::dev::Map2DLocation& loc) override;
 
-    bool   storeCurrentPosition(yarp::os::ConstString location_name) override;
-    bool   storeLocation(yarp::os::ConstString location_name, Map2DLocation loc) override;
-    bool   getLocation(yarp::os::ConstString location_name, Map2DLocation& loc) override;
-    bool   deleteLocation(yarp::os::ConstString location_name) override;
-    bool   getLocationsList(std::vector<yarp::os::ConstString>& locations) override;
+    bool   storeCurrentPosition(std::string location_name) override;
+    bool   storeLocation(std::string location_name, Map2DLocation loc) override;
+    bool   getLocation(std::string location_name, Map2DLocation& loc) override;
+    bool   deleteLocation(std::string location_name) override;
+    bool   getLocationsList(std::vector<std::string>& locations) override;
 
     bool   getNavigationStatus(NavigationStatusEnum& status) override;
     bool   clearAllLocations() override;

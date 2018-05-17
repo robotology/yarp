@@ -12,7 +12,7 @@ using namespace yarp::os;
 
 class Responder : public PortReader {
 public:
-    ConstString getCss() {
+    std::string getCss() {
         return "\n\
 body { background: black; color: white; } \n\
 h1 { font-size: 300%; color: yellow; } \n\
@@ -28,7 +28,7 @@ div { padding-bottom: 10px; } \n\
         if (out==NULL) return true;
         response.addString("web");
 
-        ConstString code = request.get(0).asString();
+        std::string code = request.get(0).asString();
         if (code=="css") {
             response.addString(getCss());
             response.addString("mime");
@@ -36,7 +36,7 @@ div { padding-bottom: 10px; } \n\
             return response.write(*out);
         }
 
-        ConstString prefix = "<html>\n<head>\n<title>YARP web test</title>\n";
+        std::string prefix = "<html>\n<head>\n<title>YARP web test</title>\n";
         prefix += "<link href=\"/css\" media=\"screen\" rel=\"stylesheet\" type=\"text/css\" />\n";
         prefix += "</head>\n<body>\n";
 
@@ -50,15 +50,15 @@ div { padding-bottom: 10px; } \n\
             return response.write(*out);
         }
 
-        ConstString postfix = "</body>\n</html>";
+        std::string postfix = "</body>\n</html>";
 
-        ConstString txt = prefix;
-        txt += ConstString("<h1>") + code + "</h1>\n";
+        std::string txt = prefix;
+        txt += std::string("<h1>") + code + "</h1>\n";
         txt += "<div>Is this working for you? <a href='/yes'>yes</a> <a href='/no'>no</a></div>\n";
         if (!request.check("day")) {
             txt += "<div>By the way, what day is it?</div>\n<form><input type='text' id='day' name='day' value='Sunday' /><input type='submit' value='tell me' /></form>\n";
         } else {
-            txt += ConstString("<div>So today is ") + request.find("day").asString() + ", is it? Hmm. I don't think I'm going to bother remembering that.</div>\n";
+            txt += std::string("<div>So today is ") + request.find("day").asString() + ", is it? Hmm. I don't think I'm going to bother remembering that.</div>\n";
         }
         txt += "<div><a href='/push'>How many potatoes?</a> (streaming example)</div>\n";
         txt += postfix;
@@ -72,7 +72,7 @@ int main(int argc, char *argv[]) {
     Property options;
     options.fromCommand(argc,argv);
 
-    ConstString name = options.check("name",Value("/web")).asString();
+    std::string name = options.check("name",Value("/web")).asString();
     int port_number = options.check("p",Value(0)).asInt();
 
     Network yarp;
@@ -99,7 +99,7 @@ int main(int argc, char *argv[]) {
         push.addString("web");
         std::stringstream ss;
         ss << at;
-        ConstString div = ConstString("<div>")+ss.str()+
+        std::string div = std::string("<div>")+ss.str()+
             " potatoes</div>";
         push.addString(div);
         server.write(push);

@@ -26,8 +26,8 @@ namespace yarp {
 class YARP_OS_API yarp::os::NameStore {
 public:
     virtual ~NameStore();
-    virtual Contact query(const yarp::os::ConstString& name) = 0;
-    virtual bool announce(const yarp::os::ConstString& name, int activity) = 0;
+    virtual Contact query(const std::string& name) = 0;
+    virtual bool announce(const std::string& name, int activity) = 0;
     virtual bool process(PortWriter& in,
                          PortReader& out,
                          const Contact& source) = 0;

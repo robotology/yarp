@@ -67,7 +67,7 @@ public:
     {}
 
     void init(const yarp::sig::FlexImage& img,
-              const yarp::os::ConstString& frame) {
+              const std::string& frame) {
         image = &img;
         yarp::os::ConnectionWriter *pbuf =
             yarp::os::ConnectionWriter::createBufferedConnectionWriter();
@@ -76,7 +76,7 @@ public:
         yarp::os::StringOutputStream ss;
         // probably need to translate encoding format better, but at
         // a guess "rgb" and "bgr" will work ok.
-        yarp::os::ConstString encoding =
+        std::string encoding =
             yarp::os::Vocab::decode(image->getPixelCode()).c_str();
         switch (image->getPixelCode()) {
         case VOCAB_PIXEL_BGR:
@@ -104,7 +104,7 @@ public:
         buf.appendInt((image->width()*image->getPixelSize())+image->getPadding());
         buf.appendInt(image->getRawImageSize());
         buf.getBuffer()->write(ss);
-        yarp::os::ConstString hdr = ss.toString();
+        std::string hdr = ss.toString();
         yarp::os::Bytes hdr_wrap((char*)hdr.c_str(),hdr.length());
         ros_const_header = yarp::os::ManagedBytes(hdr_wrap);
         ros_const_header.copy();

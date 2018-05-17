@@ -14,7 +14,7 @@
 #include <yarp/os/ConnectionReader.h>
 #include <yarp/os/ConnectionWriter.h>
 #include <yarp/os/ManagedBytes.h>
-#include <yarp/os/ConstString.h>
+#include <string>
 
 namespace yarp {
     namespace os {
@@ -37,7 +37,7 @@ public:
         str = "";
     }
 
-    PortCommand(char ch, const ConstString& str) :
+    PortCommand(char ch, const std::string& str) :
             header(8)
     {
         this->ch = ch;
@@ -52,14 +52,14 @@ public:
         return ch;
     }
 
-    ConstString getText()
+    std::string getText()
     {
         return str;
     }
 
 public:
     char ch;
-    ConstString str;
+    YARP_SUPPRESS_DLL_INTERFACE_WARNING_ARG(std::string) str;
     yarp::os::ManagedBytes header;
 };
 

@@ -25,9 +25,9 @@ bool Terminator::terminateByName(const char *name) {
     if (name == nullptr)
         return false;
 
-    ConstString s(name);
+    std::string s(name);
 
-    if (s.find("/quit")==ConstString::npos) {
+    if (s.find("/quit")==std::string::npos) {
         // name doesn't include /quit
         // old mechanism won't work, let's try new
         PortCommand pc('\0', "i");
@@ -68,7 +68,7 @@ Terminee::Terminee(const char *name) {
         return;
     }
 
-    ConstString s(name);
+    std::string s(name);
     if (name[0] != '/') {
         s.clear();
         s += "/";

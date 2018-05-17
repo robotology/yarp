@@ -49,7 +49,7 @@ bool NetworkProfiler::yarpNameList(ports_name_set &ports, bool complete) {
         Bottle *entry = reply.get(i).asList();
         if(entry != nullptr) {
             bool shouldTake = false;
-            ConstString portname = entry->check("name", Value("")).asString();
+            std::string portname = entry->check("name", Value("")).asString();
             if(complete)
             {
                 shouldTake = portname != "";

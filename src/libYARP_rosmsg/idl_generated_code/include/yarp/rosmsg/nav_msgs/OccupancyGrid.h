@@ -183,9 +183,9 @@ public:
     typedef yarp::os::idl::BottleStyle<yarp::rosmsg::nav_msgs::OccupancyGrid> bottleStyle;
 
     // Give source text for class, ROS will need this
-    static yarp::os::ConstString typeText()
+    static std::string typeText()
     {
-        return yarp::os::ConstString("\
+        return std::string("\
 # This represents a 2-D grid map, in which each cell represents the probability of\n\
 # occupancy.\n\
 \n\
@@ -197,16 +197,16 @@ MapMetaData info\n\
 # The map data, in row-major order, starting with (0,0).  Occupancy\n\
 # probabilities are in the range [0,100].  Unknown is -1.\n\
 int8[] data\n\
-") + yarp::os::ConstString("\n\
+") + std::string("\n\
 ================================================================================\n\
 MSG: std_msgs/Header\n\
-") + yarp::rosmsg::std_msgs::Header::typeText() + yarp::os::ConstString("\n\
+") + yarp::rosmsg::std_msgs::Header::typeText() + std::string("\n\
 ================================================================================\n\
 MSG: nav_msgs/MapMetaData\n\
 ") + yarp::rosmsg::nav_msgs::MapMetaData::typeText();
     }
 
-    yarp::os::ConstString getTypeText() const
+    std::string getTypeText() const
     {
         return yarp::rosmsg::nav_msgs::OccupancyGrid::typeText();
     }

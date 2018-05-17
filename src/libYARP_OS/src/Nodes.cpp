@@ -24,35 +24,35 @@ public:
 
     void clear();
 
-    Node* getNode(const ConstString& name, bool create);
+    Node* getNode(const std::string& name, bool create);
 
     void add(Contactable& contactable);
     void update(Contactable& contactable);
-    void prepare(const ConstString& name);
+    void prepare(const std::string& name);
     void remove(Contactable& contactable);
-    Contact query(const ConstString& name, const ConstString& category);
+    Contact query(const std::string& name, const std::string& category);
     void interrupt();
 
     bool enable(bool flag);
 
-    Contact getParent(const ConstString& name);
-    Contact getURI(const ConstString& name);
+    Contact getParent(const std::string& name);
+    Contact getURI(const std::string& name);
 
-    void setActiveName(const ConstString& name);
-    ConstString getActiveName();
+    void setActiveName(const std::string& name);
+    std::string getActiveName();
     bool requireActiveName();
 
-    void addExternalNode(const ConstString& name, Node& node);
-    void removeExternalNode(const ConstString& name);
+    void addExternalNode(const std::string& name, Node& node);
+    void removeExternalNode(const std::string& name);
 
     // Port name
     // Pointer to Node
     // true = is external
-    std::map<ConstString, std::pair<Node*, bool>> nodes_map;
+    std::map<std::string, std::pair<Node*, bool>> nodes_map;
 
     Mutex mutex;
     bool active;
-    ConstString active_name;
+    std::string active_name;
     Node* dummy;
 };
 
@@ -90,7 +90,7 @@ void yarp::os::Nodes::Private::clear()
     }
 }
 
-Node* yarp::os::Nodes::Private::getNode(const ConstString& name, bool create)
+Node* yarp::os::Nodes::Private::getNode(const std::string& name, bool create)
 {
     NestedContact nc(name);
     if (!nc.isNested()) {
@@ -148,7 +148,7 @@ void yarp::os::Nodes::Private::update(Contactable& contactable)
     }
 }
 
-void yarp::os::Nodes::Private::prepare(const ConstString& name)
+void yarp::os::Nodes::Private::prepare(const std::string& name)
 {
     NestedContact nc(name);
     if (!nc.isNested()) {
@@ -171,7 +171,7 @@ void yarp::os::Nodes::Private::remove(Contactable& contactable)
     }
 }
 
-Contact yarp::os::Nodes::Private::query(const ConstString& name, const ConstString& category)
+Contact yarp::os::Nodes::Private::query(const std::string& name, const std::string& category)
 {
     if (!active) {
         return Contact();
@@ -207,7 +207,7 @@ bool yarp::os::Nodes::Private::enable(bool flag)
     return active;
 }
 
-Contact yarp::os::Nodes::Private::getParent(const ConstString& name)
+Contact yarp::os::Nodes::Private::getParent(const std::string& name)
 {
     Contact result;
     NestedContact nc(name);
@@ -219,7 +219,7 @@ Contact yarp::os::Nodes::Private::getParent(const ConstString& name)
     mutex.unlock();
     return result;
 }
-Contact yarp::os::Nodes::Private::getURI(const ConstString& name)
+Contact yarp::os::Nodes::Private::getURI(const std::string& name)
 {
     Contact result;
     NestedContact nc(name);
@@ -232,13 +232,13 @@ Contact yarp::os::Nodes::Private::getURI(const ConstString& name)
     return result;
 }
 
-void yarp::os::Nodes::Private::setActiveName(const ConstString& name)
+void yarp::os::Nodes::Private::setActiveName(const std::string& name)
 {
     nodes_map[name].second = true;
     active_name = name;
 }
 
-ConstString yarp::os::Nodes::Private::getActiveName()
+std::string yarp::os::Nodes::Private::getActiveName()
 {
     return active_name;
 }
@@ -251,7 +251,7 @@ bool yarp::os::Nodes::Private::requireActiveName()
     return true;
 }
 
-void yarp::os::Nodes::Private::addExternalNode(const ConstString& name, Node& node)
+void yarp::os::Nodes::Private::addExternalNode(const std::string& name, Node& node)
 {
     mutex.lock();
     yAssert(nodes_map.find(name) == nodes_map.end());
@@ -259,7 +259,7 @@ void yarp::os::Nodes::Private::addExternalNode(const ConstString& name, Node& no
     mutex.unlock();
 }
 
-void yarp::os::Nodes::Private::removeExternalNode(const ConstString& name)
+void yarp::os::Nodes::Private::removeExternalNode(const std::string& name)
 {
     mutex.lock();
     nodes_map.erase(name);
@@ -287,7 +287,7 @@ void Nodes::remove(Contactable& contactable)
     mPriv->remove(contactable);
 }
 
-Contact Nodes::query(const ConstString& name, const ConstString& category)
+Contact Nodes::query(const std::string& name, const std::string& category)
 {
     return mPriv->query(name, category);
 }
@@ -307,17 +307,17 @@ void Nodes::clear()
     mPriv->clear();
 }
 
-Contact Nodes::getParent(const ConstString& name)
+Contact Nodes::getParent(const std::string& name)
 {
     return mPriv->getParent(name);
 }
 
-Contact Nodes::getURI(const ConstString& name)
+Contact Nodes::getURI(const std::string& name)
 {
     return mPriv->getURI(name);
 }
 
-void Nodes::prepare(const ConstString& name)
+void Nodes::prepare(const std::string& name)
 {
     mPriv->prepare(name);
 }
@@ -327,12 +327,12 @@ void Nodes::update(Contactable& contactable)
     mPriv->update(contactable);
 }
 
-void Nodes::setActiveName(const ConstString& name)
+void Nodes::setActiveName(const std::string& name)
 {
     mPriv->setActiveName(name);
 }
 
-ConstString Nodes::getActiveName()
+std::string Nodes::getActiveName()
 {
     return mPriv->getActiveName();
 }
@@ -342,12 +342,12 @@ bool Nodes::requireActiveName()
     return mPriv->requireActiveName();
 }
 
-void Nodes::addExternalNode(const ConstString& name, Node& node)
+void Nodes::addExternalNode(const std::string& name, Node& node)
 {
     mPriv->addExternalNode(name, node);
 }
 
-void Nodes::removeExternalNode(const ConstString& name)
+void Nodes::removeExternalNode(const std::string& name)
 {
     mPriv->removeExternalNode(name);
 }

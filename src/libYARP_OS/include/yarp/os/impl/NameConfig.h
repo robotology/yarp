@@ -32,18 +32,18 @@ class YARP_OS_impl_API yarp::os::impl::NameConfig
 {
 public:
 
-    static ConstString expandFilename(const char *fname);
+    static std::string expandFilename(const char *fname);
 
-    ConstString getSafeString(const ConstString& txt);
+    std::string getSafeString(const std::string& txt);
 
-    ConstString getConfigFileName(const char *stem = nullptr,
+    std::string getConfigFileName(const char *stem = nullptr,
                                   const char *ns = nullptr);
 
-    static bool createPath(const ConstString& fileName, int ignoreLevel = 1);
+    static bool createPath(const std::string& fileName, int ignoreLevel = 1);
 
-    ConstString readConfig(const ConstString& fileName);
+    std::string readConfig(const std::string& fileName);
 
-    bool writeConfig(const ConstString& fileName, const ConstString& text);
+    bool writeConfig(const std::string& fileName, const std::string& text);
 
     bool fromFile(const char *ns = nullptr);
 
@@ -51,40 +51,40 @@ public:
 
     void setAddress(const Contact& address);
 
-    static ConstString getHostName(bool prefer_loopback = false,
-                                   const ConstString& seed = "");
+    static std::string getHostName(bool prefer_loopback = false,
+                                   const std::string& seed = "");
 
-    static ConstString getIps();
+    static std::string getIps();
 
     static yarp::os::Bottle getIpsAsBottle();
 
-    static bool isLocalName(const ConstString& name);
+    static bool isLocalName(const std::string& name);
 
     Contact getAddress();
 
-    ConstString getMode()
+    std::string getMode()
     {
         return mode;
     }
 
-    void setMode(const ConstString& mode)
+    void setMode(const std::string& mode)
     {
         this->mode = mode;
     }
 
-    ConstString getNamespace(bool refresh = false);
+    std::string getNamespace(bool refresh = false);
 
     yarp::os::Bottle getNamespaces(bool refresh = false);
 
-    void setNamespace(const ConstString& ns);
+    void setNamespace(const std::string& ns);
 
 private:
     Contact address;
-    ConstString space;
+    YARP_SUPPRESS_DLL_INTERFACE_WARNING_ARG(std::string) space;
     yarp::os::Bottle spaces;
-    ConstString mode;
+    YARP_SUPPRESS_DLL_INTERFACE_WARNING_ARG(std::string) mode;
 
-    bool fromString(const ConstString& txt);
+    bool fromString(const std::string& txt);
 };
 
 #endif // YARP_OS_IMPL_NAMECONFIG_H

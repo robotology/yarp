@@ -67,8 +67,8 @@ private:
     JOYPORT<Vector>       m_stickPort;
     std::vector<size_t>   m_stickDof;
     bool                  m_rpc_only;
-    yarp::os::ConstString m_local;
-    yarp::os::ConstString m_remote;
+    std::string m_local;
+    std::string m_remote;
 
     yarp::dev::JoypadControlWatchdog          watchdog;
     std::vector<JoypadControl::LoopablePort*> m_ports;

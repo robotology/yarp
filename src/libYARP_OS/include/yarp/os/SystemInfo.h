@@ -10,7 +10,7 @@
 #ifndef YARP_OS_SYSTEMINFO_H
 #define YARP_OS_SYSTEMINFO_H
 
-#include <yarp/os/ConstString.h>
+#include <string>
 #include <yarp/os/Property.h>
 
 
@@ -54,9 +54,9 @@ public:
      * @brief The ProcessorInfo struct holds the processor information
      */
     typedef struct ProcessorInfo {
-        yarp::os::ConstString architecture;
-        yarp::os::ConstString model;
-        yarp::os::ConstString vendor;
+        std::string architecture;
+        std::string model;
+        std::string vendor;
         int family;
         int modelNumber;
         int cores;
@@ -80,11 +80,11 @@ public:
      * @brief The PlatformInfo struct holds the operating system information
      */
     typedef struct PlatformInfo {
-        yarp::os::ConstString name;
-        yarp::os::ConstString distribution;
-        yarp::os::ConstString release;
-        yarp::os::ConstString codename;
-        yarp::os::ConstString kernel;
+        std::string name;
+        std::string distribution;
+        std::string release;
+        std::string codename;
+        std::string kernel;
         yarp::os::Property environmentVars;
     } PlatformInfo;
 
@@ -92,17 +92,17 @@ public:
      * @brief The UserInfo struct holds the current user information
      */
     typedef struct UserInfo {
-        yarp::os::ConstString userName;
-        yarp::os::ConstString realName;
-        yarp::os::ConstString homeDir;
+        std::string userName;
+        std::string realName;
+        std::string homeDir;
         int userID;
     } UserInfo;
 
     /*
     typedef struct NetworkInfo {
-        yarp::os::ConstString mac;
-        yarp::os::ConstString ip4;
-        yarp::os::ConstString ip6;
+        std::string mac;
+        std::string ip4;
+        std::string ip6;
     } NetworkInfo;
     */
 
@@ -110,8 +110,8 @@ public:
      * @brief The ProcessInfo struct provides the operating system process information.
      */
     typedef struct ProcessInfo {
-        yarp::os::ConstString name;
-        yarp::os::ConstString arguments;
+        std::string name;
+        std::string arguments;
         int schedPolicy;
         int schedPriority;
         int pid;

@@ -18,7 +18,7 @@
 #include <yarp/dev/FrameGrabberInterfaces.h>
 #include <yarp/dev/PolyDriver.h>
 
-#include <yarp/os/ConstString.h>
+#include <string>
 #include <yarp/os/Property.h>
 #include <yarp/os/Searchable.h>
 #include <yarp/os/Value.h>
@@ -41,7 +41,7 @@ using yarp::dev::Drivers;
 using yarp::dev::IFrameGrabberImage;
 using yarp::dev::PolyDriver;
 
-using yarp::os::ConstString;
+using std::string;
 using yarp::os::Property;
 using yarp::os::Searchable;
 using yarp::os::Value;
@@ -64,7 +64,7 @@ bool OpenCVGrabber::open(Searchable & config) {
     m_flip_y = false;
 
     // Are we capturing from a file or a camera ?
-    ConstString file = config.check("movie", Value(""),
+    std::string file = config.check("movie", Value(""),
                                     "if present, read from specified file rather than camera").asString();
     fromFile = (file!="");
     if (fromFile) {

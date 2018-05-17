@@ -189,9 +189,9 @@ public:
     typedef yarp::os::idl::BottleStyle<yarp::rosmsg::visualization_msgs::InteractiveMarkerInit> bottleStyle;
 
     // Give source text for class, ROS will need this
-    static yarp::os::ConstString typeText()
+    static std::string typeText()
     {
-        return yarp::os::ConstString("\
+        return std::string("\
 # Identifying string. Must be unique in the topic namespace\n\
 # that this server works on.\n\
 string server_id\n\
@@ -206,13 +206,13 @@ uint64 seq_num\n\
 \n\
 # All markers.\n\
 InteractiveMarker[] markers\n\
-") + yarp::os::ConstString("\n\
+") + std::string("\n\
 ================================================================================\n\
 MSG: visualization_msgs/InteractiveMarker\n\
 ") + yarp::rosmsg::visualization_msgs::InteractiveMarker::typeText();
     }
 
-    yarp::os::ConstString getTypeText() const
+    std::string getTypeText() const
     {
         return yarp::rosmsg::visualization_msgs::InteractiveMarkerInit::typeText();
     }

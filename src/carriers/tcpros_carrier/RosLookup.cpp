@@ -29,7 +29,7 @@ static bool rpc(const Contact& c,
     return ok;
 }
 
-bool RosLookup::lookupCore(const ConstString& name) {
+bool RosLookup::lookupCore(const std::string& name) {
     Bottle req, reply;
     req.addString("lookupNode");
     req.addString("dummy_id");
@@ -39,19 +39,19 @@ bool RosLookup::lookupCore(const ConstString& name) {
         fprintf(stderr, "Failure: %s\n", reply.toString().c_str());
         return false;
     }
-    ConstString url = reply.get(2).asString();
-    ConstString::size_type break1 = url.find("://",0);
-    if (break1==ConstString::npos) {
+    std::string url = reply.get(2).asString();
+    std::string::size_type break1 = url.find("://",0);
+    if (break1==std::string::npos) {
         fprintf(stderr, "url not understood: %s\n", url.c_str());
         return false;
     }
-    ConstString::size_type break2 = url.find(":",break1+3);
-    if (break2==ConstString::npos) {
+    std::string::size_type break2 = url.find(":",break1+3);
+    if (break2==std::string::npos) {
         fprintf(stderr, "url not understood: %s\n", url.c_str());
         return false;
     }
-    ConstString::size_type break3 = url.find("/",break2+1);
-    if (break3==ConstString::npos) {
+    std::string::size_type break3 = url.find("/",break2+1);
+    if (break3==std::string::npos) {
         fprintf(stderr, "url not understood: %s\n", url.c_str());
         return false;
     }
@@ -66,7 +66,7 @@ bool RosLookup::lookupCore(const ConstString& name) {
 }
 
 
-bool RosLookup::lookupTopic(const ConstString& name) {
+bool RosLookup::lookupTopic(const std::string& name) {
     if (!valid) {
         fprintf(stderr, "Need a node\n");
         return false;
@@ -108,7 +108,7 @@ bool RosLookup::lookupTopic(const ConstString& name) {
 }
 
 yarp::os::Contact RosLookup::getRosCoreAddressFromEnv() {
-    ConstString addr = NetworkBase::getEnvironment("ROS_MASTER_URI");
+    std::string addr = NetworkBase::getEnvironment("ROS_MASTER_URI");
     Contact c = Contact::fromString(addr.c_str());
     if (c.isValid()) {
         c.setCarrier("xmlrpc");

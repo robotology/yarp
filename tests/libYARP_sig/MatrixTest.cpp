@@ -145,7 +145,7 @@ class MatrixTest : public UnitTest {
     }
 
 public:
-    virtual ConstString getName() override { return "MatrixTest"; }
+    virtual std::string getName() override { return "MatrixTest"; }
 
     void checkOperators()
     {
@@ -413,7 +413,7 @@ public:
 
         BufferedConnectionWriter writer;
         m.write(writer);
-        ConstString s = writer.toString();
+        std::string s = writer.toString();
         Bottle bot;
         bot.fromBinary(s.c_str(),(int)s.length());
         checkEqual(bot.get(0).asInt(),rr,"row count matches");

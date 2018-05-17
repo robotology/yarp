@@ -403,9 +403,9 @@ public:
     typedef yarp::os::idl::BottleStyle<yarp::rosmsg::visualization_msgs::InteractiveMarkerControl> bottleStyle;
 
     // Give source text for class, ROS will need this
-    static yarp::os::ConstString typeText()
+    static std::string typeText()
     {
-        return yarp::os::ConstString("\
+        return std::string("\
 # Represents a control that is to be displayed together with an interactive marker\n\
 \n\
 # Identifying string for this control.\n\
@@ -483,16 +483,16 @@ bool independent_marker_orientation\n\
 # e.g. \"Move the robot\". \n\
 # Default: A generic description based on the interaction mode\n\
 string description\n\
-") + yarp::os::ConstString("\n\
+") + std::string("\n\
 ================================================================================\n\
 MSG: geometry_msgs/Quaternion\n\
-") + yarp::rosmsg::geometry_msgs::Quaternion::typeText() + yarp::os::ConstString("\n\
+") + yarp::rosmsg::geometry_msgs::Quaternion::typeText() + std::string("\n\
 ================================================================================\n\
 MSG: visualization_msgs/Marker\n\
 ") + yarp::rosmsg::visualization_msgs::Marker::typeText();
     }
 
-    yarp::os::ConstString getTypeText() const
+    std::string getTypeText() const
     {
         return yarp::rosmsg::visualization_msgs::InteractiveMarkerControl::typeText();
     }

@@ -51,16 +51,16 @@ namespace yarp {
 class yarp::os::impl::HttpTwoWayStream : public TwoWayStream, public OutputStream
 {
 private:
-    ConstString proc;
-    ConstString part;
+    std::string proc;
+    std::string part;
     bool data;
     bool filterData;
     bool chunked;
     TwoWayStream *delegate;
     StringInputStream sis;
     StringOutputStream sos;
-    ConstString format;
-    ConstString outer;
+    std::string format;
+    std::string outer;
     bool isWriter;
 public:
     HttpTwoWayStream(TwoWayStream *delegate,
@@ -88,7 +88,7 @@ public:
     void flip();
     void finish();
     bool useJson();
-    ConstString *typeHint();
+    std::string *typeHint();
 };
 
 
@@ -99,7 +99,7 @@ public:
 class yarp::os::impl::HttpCarrier : public TcpCarrier
 {
 private:
-    ConstString url, input, prefix;
+    std::string url, input, prefix;
     bool urlDone;
     bool expectPost;
     int contentLength;
@@ -110,7 +110,7 @@ public:
 
     virtual Carrier *create() override;
 
-    virtual ConstString getName() override;
+    virtual std::string getName() override;
 
     bool checkHeader(const Bytes& header, const char *prefix);
 

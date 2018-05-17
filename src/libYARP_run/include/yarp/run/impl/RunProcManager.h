@@ -27,7 +27,7 @@
 #include <cstdio>
 #include <yarp/run/Run.h>
 #include <yarp/os/Bottle.h>
-#include <yarp/os/ConstString.h>
+#include <string>
 #include <yarp/os/impl/PlatformSignal.h>
 
 
@@ -114,12 +114,12 @@ protected:
 class YarpRunProcInfo
 {
 public:
-    YarpRunProcInfo(yarp::os::ConstString& alias, yarp::os::ConstString& on, PID pidCmd, HANDLE handleCmd, bool hold);
+    YarpRunProcInfo(std::string& alias, std::string& on, PID pidCmd, HANDLE handleCmd, bool hold);
     virtual ~YarpRunProcInfo()
     {
 
     }
-    bool Match(yarp::os::ConstString& alias){ return mAlias==alias; }
+    bool Match(std::string& alias){ return mAlias==alias; }
 #if !defined(_WIN32)
     virtual bool Clean(PID pid, YarpRunProcInfo* &pRef)
     {
@@ -142,12 +142,12 @@ public:
 
     virtual void finalize(){}
 
-    void setCmd(const yarp::os::ConstString& cmd) { mCmd = cmd; }
-    void setEnv(const yarp::os::ConstString& env) { mEnv = env; }
+    void setCmd(const std::string& cmd) { mCmd = cmd; }
+    void setEnv(const std::string& env) { mEnv = env; }
 
 protected:
-    yarp::os::ConstString mAlias;
-    yarp::os::ConstString mOn;
+    std::string mAlias;
+    std::string mOn;
 
     PID mPidCmd;
     bool mCleanCmd;
@@ -155,8 +155,8 @@ protected:
     HANDLE mHandleCmd; // only windows
     bool mHold;        // only linux
 
-    yarp::os::ConstString mCmd;
-    yarp::os::ConstString mEnv;
+    std::string mCmd;
+    std::string mEnv;
 
     friend class YarpRunInfoVector;
 };
@@ -169,7 +169,7 @@ public:
 
     int Size(){ return m_nProcesses; }
     bool Add(YarpRunProcInfo *process);
-    int Signal(yarp::os::ConstString& alias, int signum);
+    int Signal(std::string& alias, int signum);
     int Killall(int signum);
 
 #if defined(_WIN32)
@@ -180,7 +180,7 @@ public:
 #endif
 
     yarp::os::Bottle PS();
-    bool IsRunning(yarp::os::ConstString &alias);
+    bool IsRunning(std::string &alias);
 
     yarp::os::Semaphore mutex;
 
@@ -196,9 +196,9 @@ protected:
 class YarpRunCmdWithStdioInfo : public YarpRunProcInfo
 {
 public:
-    YarpRunCmdWithStdioInfo(yarp::os::ConstString& alias,
-        yarp::os::ConstString& on,
-        yarp::os::ConstString& stdio,
+    YarpRunCmdWithStdioInfo(std::string& alias,
+        std::string& on,
+        std::string& stdio,
         PID pidCmd,
         PID pidStdout,
         FDESC readFromPipeCmdToStdout,
@@ -206,11 +206,11 @@ public:
         HANDLE handleCmd,
         bool hold);
 
-    YarpRunCmdWithStdioInfo(yarp::os::ConstString& alias,
-        yarp::os::ConstString& on,
-        yarp::os::ConstString& stdio,
+    YarpRunCmdWithStdioInfo(std::string& alias,
+        std::string& on,
+        std::string& stdio,
         PID pidCmd,
-        yarp::os::ConstString& stdioUUID,
+        std::string& stdioUUID,
         YarpRunInfoVector* stdioVector,
         PID pidStdin,
         PID pidStdout,
@@ -297,8 +297,8 @@ protected:
     bool mKillingStdin;
     bool mKillingStdout;
 
-    yarp::os::ConstString mStdio;
-    yarp::os::ConstString mStdioUUID;
+    std::string mStdio;
+    std::string mStdioUUID;
 
     FDESC mWriteToPipeStdinToCmd;
     FDESC mReadFromPipeStdinToCmd;
@@ -308,11 +308,11 @@ protected:
     YarpRunInfoVector *mStdioVector;
 };
 
-inline yarp::os::ConstString int2String(int x)
+inline std::string int2String(int x)
 {
     char buff[16];
     sprintf(buff, "%d", x);
-    return yarp::os::ConstString(buff);
+    return std::string(buff);
 }
 
 #endif // YARP_OS_IMPL_RUNPROCMANAGER_H

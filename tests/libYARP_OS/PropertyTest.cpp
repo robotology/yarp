@@ -25,7 +25,7 @@ using namespace yarp::os;
 
 class PropertyTest : public UnitTest {
 public:
-    virtual ConstString getName() override { return "PropertyTest"; }
+    virtual std::string getName() override { return "PropertyTest"; }
 
     void checkPutGet() {
         report(0,"checking puts and gets");
@@ -301,9 +301,9 @@ check $x $y\n\
         report(0,"checking nested forms");
         Property p;
         p.fromConfig("[sect a]\nhello there\n[sect b]\nx 10\n");
-        ConstString sects = p.findGroup("sect").tail().toString();
+        std::string sects = p.findGroup("sect").tail().toString();
         checkEqual(sects.c_str(),"a b","section list present");
-        ConstString hello = p.findGroup("a").find("hello").asString();
+        std::string hello = p.findGroup("a").find("hello").asString();
         checkEqual(hello.c_str(),"there","individual sections present");
     }
 
@@ -363,7 +363,7 @@ check $x $y\n\
         // if passed on command-line, don't be shocked
         report(0,"checking backslash path behavior");
         Property p;
-        ConstString target = "conf\\brains-brains.ini";
+        std::string target = "conf\\brains-brains.ini";
         const char *argv[] = {
             "PROGRAM NAME",
             "--file",
@@ -573,9 +573,9 @@ check $x $y\n\
         int argc = 5;
         Property p;
         p.fromCommand(argc,argv);
-        ConstString target1 = "(cmd \"ls foo\") (on \"/server\")";
-        ConstString target2 = "(on \"/server\") (cmd \"ls foo\")";
-        ConstString actual = p.toString();
+        std::string target1 = "(cmd \"ls foo\") (on \"/server\")";
+        std::string target2 = "(on \"/server\") (cmd \"ls foo\")";
+        std::string actual = p.toString();
         if (actual==target1) {
             checkEqual(actual.c_str(),target1.c_str(),"command ok");
         } else {
@@ -586,7 +586,7 @@ check $x $y\n\
     virtual void checkDirectory() {
         report(0,"checking directory scanning");
         // change directory name if test files removed
-        ConstString dirname = "__test_dir_1";
+        std::string dirname = "__test_dir_1";
         if (yarp::os::stat(dirname.c_str())<0) {
             yarp::os::mkdir(dirname.c_str());
         }

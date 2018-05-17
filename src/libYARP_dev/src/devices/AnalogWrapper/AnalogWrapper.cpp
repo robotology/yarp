@@ -433,7 +433,7 @@ bool AnalogWrapper::checkROSParams(Searchable &config)
         useROS = ROS_config_error;
         return false;
     }
-    yarp::os::ConstString ros_use_type = rosGroup.find("useROS").asString();
+    std::string ros_use_type = rosGroup.find("useROS").asString();
     if(ros_use_type == "false")
     {
         yInfo() << sensorId << "useROS topic if set to 'false'";

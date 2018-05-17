@@ -235,7 +235,7 @@ public:
     virtual bool   getImages(FlexImage& colorFrame, depthImage& depthFrame, Stamp* colorStamp=NULL, Stamp* depthStamp=NULL) override;
 
     virtual RGBDSensor_status     getSensorStatus() override;
-    virtual yarp::os::ConstString getLastErrorMsg(Stamp* timeStamp = NULL) override;
+    virtual std::string getLastErrorMsg(Stamp* timeStamp = NULL) override;
 
     //IFrameGrabberControls2
     virtual bool   getCameraDescription(CameraDescriptor *camera) override;
@@ -272,7 +272,7 @@ private:
     openni::Device                  m_device;
     impl::streamFrameListener*      m_depthFrame;
     impl::streamFrameListener*      m_imageFrame;
-    yarp::os::ConstString           m_lastError;
+    std::string           m_lastError;
     yarp::dev::RGBDSensorParamParser* m_paramParser;
     bool                            m_depthRegistration;
     std::vector<cameraFeature_id_t> m_supportedFeatures;

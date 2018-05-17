@@ -342,7 +342,7 @@ class PortTest : public UnitTest {
 public:
     int safePort() { return Network::getDefaultPortRange()+100; }
 
-    virtual ConstString getName() override { return "PortTest"; }
+    virtual std::string getName() override { return "PortTest"; }
 
     void testOpen() {
         report(0,"checking opening and closing ports");
@@ -427,7 +427,7 @@ public:
             checkTrue(result!=nullptr,"got something check");
             if (result!=nullptr) {
                 checkEqual(bot1.size(),result->size(),"size check");
-                YARP_INFO(Logger::get(),ConstString("size is in fact ") +
+                YARP_INFO(Logger::get(),std::string("size is in fact ") +
                           NetType::toString(result->size()));
             }
         }
@@ -467,7 +467,7 @@ public:
             checkTrue(result!=nullptr,"got something check");
             if (result!=nullptr) {
                 checkEqual(bot1.size(),result->size(),"size check");
-                YARP_INFO(Logger::get(),ConstString("size is in fact ") +
+                YARP_INFO(Logger::get(),std::string("size is in fact ") +
                           NetType::toString(result->size()));
             }
         }
@@ -515,7 +515,7 @@ public:
             checkTrue(result!=nullptr,"got something check");
             if (result!=nullptr) {
                 checkEqual(bot1.size(),result->size(),"size check");
-                YARP_INFO(Logger::get(),ConstString("size is in fact ") +
+                YARP_INFO(Logger::get(),std::string("size is in fact ") +
                           NetType::toString(result->size()));
             }
         }

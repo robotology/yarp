@@ -148,7 +148,7 @@ public:
         return new HumanCarrier();
     }
 
-    virtual yarp::os::ConstString getName() {
+    virtual std::string getName() {
         return "human";
     }
 
@@ -185,7 +185,7 @@ public:
         return false;
     }
 
-    virtual yarp::os::ConstString toString() {
+    virtual std::string toString() {
         return "humans are handy";
     }
 
@@ -234,7 +234,7 @@ public:
 
         // let's just send the port name in plain text terminated with a
         // carriage-return / line-feed
-        yarp::os::ConstString from = proto.getRoute().getFromName();
+        std::string from = proto.getRoute().getFromName();
         yarp::os::Bytes b2((char*)from.c_str(),from.length());
         proto.os().write(b2);
         proto.os().write('\r');
@@ -286,15 +286,15 @@ public:
     }
 
     virtual bool sendIndex(yarp::os::ConnectionState& proto) {
-        yarp::os::ConstString prefix = "human says ";
+        std::string prefix = "human says ";
         yarp::os::Bytes b2((char*)prefix.c_str(),prefix.length());
         proto.os().write(b2);
         return true;
     }
 
     virtual bool expectIndex(yarp::os::ConnectionState& proto) {
-        yarp::os::ConstString prefix = "human says ";
-        yarp::os::ConstString compare = prefix;
+        std::string prefix = "human says ";
+        std::string compare = prefix;
         yarp::os::Bytes b2((char*)prefix.c_str(),prefix.length());
         proto.is().read(b2);
         bool ok = proto.is().isOk() && (prefix==compare);
@@ -306,15 +306,15 @@ public:
     // Acknowledgements, we don't do them
 
     virtual bool sendAck(yarp::os::ConnectionState& proto) {
-        yarp::os::ConstString prefix = "computers rule!\r\n";
+        std::string prefix = "computers rule!\r\n";
         yarp::os::Bytes b2((char*)prefix.c_str(),prefix.length());
         proto.os().write(b2);
         return true;
     }
 
     virtual bool expectAck(yarp::os::ConnectionState& proto) {
-        yarp::os::ConstString prefix = "computers rule!\r\n";
-        yarp::os::ConstString compare = prefix;
+        std::string prefix = "computers rule!\r\n";
+        std::string compare = prefix;
         yarp::os::Bytes b2((char*)prefix.c_str(),prefix.length());
         proto.is().read(b2);
         bool ok = proto.is().isOk() && (prefix==compare);

@@ -23,12 +23,13 @@ namespace yarp {
 }
 
 
-class YARP_OS_API yarp::os::NetworkClock : public Clock, PortReader {
+class YARP_OS_API yarp::os::NetworkClock : public Clock, PortReader
+{
 public:
     NetworkClock();
     virtual ~NetworkClock();
 
-    bool open(const ConstString& clockSourcePortName, ConstString localPortName="");
+    bool open(const std::string& clockSourcePortName, std::string localPortName="");
 
     virtual double now() override;
     virtual void delay(double seconds) override;
@@ -37,7 +38,8 @@ public:
     virtual bool read(ConnectionReader& reader) override;
 private:
 
-    ConstString clockName;
+    YARP_SUPPRESS_DLL_INTERFACE_WARNING_ARG(std::string) clockName;
+
     void *pwaiters;
     Port port;
 

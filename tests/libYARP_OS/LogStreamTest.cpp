@@ -14,7 +14,7 @@
 
 class LogStreamTest : public yarp::os::impl::UnitTest {
 public:
-    virtual yarp::os::ConstString getName() override { return "LogStreamTest"; }
+    virtual std::string getName() override { return "LogStreamTest"; }
 
     void checkLogStream() {
         int i = 13;

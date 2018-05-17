@@ -24,11 +24,11 @@
 class TestCarrier : public yarp::os::impl::TextCarrier {
     
 public:
-    virtual yarp::os::ConstString getName() {
+    virtual std::string getName() {
         return "test";
     }
 
-    virtual yarp::os::ConstString getSpecifierName() {
+    virtual std::string getSpecifierName() {
         return "TESTTEST";
     }
 

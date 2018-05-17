@@ -173,9 +173,9 @@ public:
     typedef yarp::os::idl::BottleStyle<yarp::rosmsg::std_msgs::MultiArrayLayout> bottleStyle;
 
     // Give source text for class, ROS will need this
-    static yarp::os::ConstString typeText()
+    static std::string typeText()
     {
-        return yarp::os::ConstString("\
+        return std::string("\
 # The multiarray declares a generic multi-dimensional array of a\n\
 # particular data type.  Dimensions are ordered from outer most\n\
 # to inner most.\n\
@@ -202,13 +202,13 @@ uint32 data_offset        # padding elements at front of data\n\
 # dim[2].stride = 3\n\
 #\n\
 # multiarray(i,j,k) refers to the ith row, jth column, and kth channel.\n\
-") + yarp::os::ConstString("\n\
+") + std::string("\n\
 ================================================================================\n\
 MSG: std_msgs/MultiArrayDimension\n\
 ") + yarp::rosmsg::std_msgs::MultiArrayDimension::typeText();
     }
 
-    yarp::os::ConstString getTypeText() const
+    std::string getTypeText() const
     {
         return yarp::rosmsg::std_msgs::MultiArrayLayout::typeText();
     }

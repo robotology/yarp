@@ -84,7 +84,7 @@ bool Rangefinder2DWrapper::checkROSParams(yarp::os::Searchable &config)
         useROS = ROS_config_error;
         return false;
     }
-    yarp::os::ConstString ros_use_type = rosGroup.find("useROS").asString();
+    std::string ros_use_type = rosGroup.find("useROS").asString();
     if (ros_use_type == "false")
     {
         yInfo() << partName << "useROS topic if set to 'false'";
@@ -282,7 +282,7 @@ bool Rangefinder2DWrapper::read(yarp::os::ConnectionReader& connection)
             {
                 if (sens_p)
                 {
-                    yarp::os::ConstString info;
+                    std::string info;
                     if (sens_p->getDeviceInfo(info))
                     {
                         out.addVocab(VOCAB_IS);

@@ -17,7 +17,7 @@ using namespace yarp::os::impl;
 
 class StringInputStreamTest : public UnitTest {
 public:
-    virtual ConstString getName() override { return "StringInputStreamTest"; }
+    virtual std::string getName() override { return "StringInputStreamTest"; }
 
     void testRead() {
         report(0,"test reading...");

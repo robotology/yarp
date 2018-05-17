@@ -13,7 +13,7 @@
 #include <yarp/os/PortReader.h>
 #include <yarp/os/Port.h>
 #include <yarp/os/Thread.h>
-#include <yarp/os/ConstString.h>
+#include <string>
 #include <yarp/os/LocalReader.h>
 #include <yarp/os/Bottle.h>
 #include <yarp/os/TypedReader.h>
@@ -127,7 +127,7 @@ public:
     virtual bool isClosed() override;
 
     // documented in TypedReader
-    virtual ConstString getName() const override;
+    virtual std::string getName() const override;
 
     // documented in LocalReader
     virtual bool acceptObject(T* obj, PortWriter *wrapper) override;

@@ -8,7 +8,7 @@
  */
 
 #include <yarp/os/Bottle.h>
-#include <yarp/os/ConstString.h>
+#include <string>
 #include <yarp/os/LogStream.h>
 #include <yarp/os/Network.h>
 #include <yarp/os/Os.h>
@@ -49,7 +49,7 @@ public:
         yInfo("Listening to terminal (type \"quit\" to stop module).");
         bool isEof = false;
         while (!(isEof || isStopping() || owner.isStopping())) {
-            ConstString str = NetworkBase::readString(&isEof);
+            std::string str = NetworkBase::readString(&isEof);
             if (!isEof) {
                 Bottle cmd(str.c_str());
                 Bottle reply;
@@ -484,12 +484,12 @@ bool RFModule::joinModule(double seconds) {
 }
 
 
-ConstString RFModule::getName(const ConstString& subName) {
+std::string RFModule::getName(const std::string& subName) {
     if (subName == "") {
         return name;
     }
 
-    ConstString base = name.c_str();
+    std::string base = name.c_str();
 
     // Support legacy behavior, check if a "/" needs to be
     // appended before subName.

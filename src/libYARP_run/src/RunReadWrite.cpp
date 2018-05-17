@@ -36,7 +36,7 @@ int RunWrite::loop()
 
     char txt[2048];
 
-    yarp::os::ConstString tag=yarp::os::ConstString("[")+wPortName+yarp::os::ConstString("]");
+    std::string tag=std::string("[")+wPortName+std::string("]");
 
     while (mRunning)
     {
@@ -117,11 +117,11 @@ int RunReadWrite::loop()
     yarp::os::Network::connect((UUID+"/stdout").c_str(), rPortName.c_str(), style);
 
     // forwarded section
-    yarp::os::ConstString tag;
+    std::string tag;
 
     if (mForwarded)
     {
-        tag=yarp::os::ConstString("[")+fPortName+yarp::os::ConstString("]");
+        tag=std::string("[")+fPortName+std::string("]");
         if (!fPort.open(fPortName.c_str()))
         {
             RUNLOG("RunReadWrite: could not open forward port")

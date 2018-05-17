@@ -163,7 +163,7 @@ yarp::dev::MAS_status fakeIMU::genericGetStatus(size_t sens_index) const
     return yarp::dev::MAS_status::MAS_OK;
 }
 
-bool fakeIMU::genericGetSensorName(size_t sens_index, yarp::os::ConstString &name) const
+bool fakeIMU::genericGetSensorName(size_t sens_index, std::string &name) const
 {
     if (sens_index!=0) {
         return false;
@@ -173,7 +173,7 @@ bool fakeIMU::genericGetSensorName(size_t sens_index, yarp::os::ConstString &nam
     return true;
 }
 
-bool fakeIMU::genericGetFrameName(size_t sens_index, yarp::os::ConstString &frameName) const
+bool fakeIMU::genericGetFrameName(size_t sens_index, std::string &frameName) const
 {
     if (sens_index!=0) {
         return false;
@@ -193,12 +193,12 @@ yarp::dev::MAS_status fakeIMU::getThreeAxisGyroscopeStatus(size_t sens_index) co
     return genericGetStatus(sens_index);
 }
 
-bool fakeIMU::getThreeAxisGyroscopeName(size_t sens_index, yarp::os::ConstString &name) const
+bool fakeIMU::getThreeAxisGyroscopeName(size_t sens_index, std::string &name) const
 {
     return genericGetSensorName(sens_index, name);
 }
 
-bool fakeIMU::getThreeAxisGyroscopeFrameName(size_t sens_index, yarp::os::ConstString &frameName) const
+bool fakeIMU::getThreeAxisGyroscopeFrameName(size_t sens_index, std::string &frameName) const
 {
     return genericGetFrameName(sens_index, frameName);
 }
@@ -231,12 +231,12 @@ yarp::dev::MAS_status fakeIMU::getThreeAxisLinearAccelerometerStatus(size_t sens
     return genericGetStatus(sens_index);
 }
 
-bool fakeIMU::getThreeAxisLinearAccelerometerName(size_t sens_index, yarp::os::ConstString &name) const
+bool fakeIMU::getThreeAxisLinearAccelerometerName(size_t sens_index, std::string &name) const
 {
     return genericGetSensorName(sens_index, name);
 }
 
-bool fakeIMU::getThreeAxisLinearAccelerometerFrameName(size_t sens_index, yarp::os::ConstString &frameName) const
+bool fakeIMU::getThreeAxisLinearAccelerometerFrameName(size_t sens_index, std::string &frameName) const
 {
     return genericGetFrameName(sens_index, frameName);
 }
@@ -269,12 +269,12 @@ yarp::dev::MAS_status fakeIMU::getThreeAxisMagnetometerStatus(size_t sens_index)
     return genericGetStatus(sens_index);
 }
 
-bool fakeIMU::getThreeAxisMagnetometerName(size_t sens_index, yarp::os::ConstString &name) const
+bool fakeIMU::getThreeAxisMagnetometerName(size_t sens_index, std::string &name) const
 {
     return genericGetSensorName(sens_index, name);
 }
 
-bool fakeIMU::getThreeAxisMagnetometerFrameName(size_t sens_index, yarp::os::ConstString &frameName) const
+bool fakeIMU::getThreeAxisMagnetometerFrameName(size_t sens_index, std::string &frameName) const
 {
     return genericGetFrameName(sens_index, frameName);
 }
@@ -307,12 +307,12 @@ yarp::dev::MAS_status fakeIMU::getOrientationSensorStatus(size_t sens_index) con
     return genericGetStatus(sens_index);
 }
 
-bool fakeIMU::getOrientationSensorName(size_t sens_index, yarp::os::ConstString &name) const
+bool fakeIMU::getOrientationSensorName(size_t sens_index, std::string &name) const
 {
     return genericGetSensorName(sens_index, name);
 }
 
-bool fakeIMU::getOrientationSensorFrameName(size_t sens_index, yarp::os::ConstString &frameName) const
+bool fakeIMU::getOrientationSensorFrameName(size_t sens_index, std::string &frameName) const
 {
     return genericGetFrameName(sens_index, frameName);
 }

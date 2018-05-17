@@ -20,7 +20,7 @@ bool yarp::os::ModifyingCarrier::checkHeader(const yarp::os::Bytes &header)
 void yarp::os::ModifyingCarrier::getHeader(const yarp::os::Bytes &header)
 {
     if (header.length()==8) {
-        ConstString target = "ohbehave";
+        std::string target = "ohbehave";
         for (int i=0; i<8; i++) {
             header.get()[i] = target[i];
         }

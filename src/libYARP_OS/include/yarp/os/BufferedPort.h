@@ -96,16 +96,16 @@ public:
     virtual ~BufferedPort();
 
     // Documented in Contactable
-    virtual bool open(const ConstString& name) override;
+    virtual bool open(const std::string& name) override;
 
     // Documented in Contactable
     virtual bool open(const Contact& contact, bool registerName = true) override;
 
     // Documented in Contactable
-    virtual bool addOutput(const ConstString& name) override;
+    virtual bool addOutput(const std::string& name) override;
 
     // Documented in Contactable
-    virtual bool addOutput(const ConstString& name, const ConstString& carrier) override;
+    virtual bool addOutput(const std::string& name, const std::string& carrier) override;
 
     // Documented in Contactable
     virtual bool addOutput(const Contact& contact) override;
@@ -127,7 +127,7 @@ public:
     virtual Contact where() const override;
 
     // Documented in Contactable
-    virtual ConstString getName() const override;
+    virtual std::string getName() const override;
 
 
     /**

@@ -80,7 +80,7 @@ public:
         writer = connection.getWriter();
         if (writer!=NULL) {
             // just send the same thing back
-            ConstString str = receive.get(0).asString();
+            std::string str = receive.get(0).asString();
             String ask = str.c_str();
             for (int i=1; i<receive.size(); i++) {
                 ask += " ";

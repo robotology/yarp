@@ -91,7 +91,7 @@ Vector Rand::vector(int s)
 
 Vector Rand::vector(const Vector &min, const Vector &max)
 {
-    int s=min.size();
+    size_t s = min.size();
     yarp::sig::Vector ret(s);
     for(int k=0;k<s;k++)
     {

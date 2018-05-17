@@ -8,7 +8,7 @@
 
 #include <yarp/os/AbstractContactable.h>
 
-bool yarp::os::AbstractContactable::open(const ConstString& name)
+bool yarp::os::AbstractContactable::open(const std::string& name)
 {
     return asPort().open(name);
 }
@@ -19,13 +19,13 @@ bool yarp::os::AbstractContactable::open(const Contact& contact,
     return asPort().open(contact, registerName);
 }
 
-bool yarp::os::AbstractContactable::addOutput(const ConstString& name)
+bool yarp::os::AbstractContactable::addOutput(const std::string& name)
 {
     return asPort().addOutput(name);
 }
 
-bool yarp::os::AbstractContactable::addOutput(const ConstString& name,
-                                              const ConstString& carrier)
+bool yarp::os::AbstractContactable::addOutput(const std::string& name,
+                                              const std::string& carrier)
 {
     return asPort().addOutput(name, carrier);
 }
@@ -55,7 +55,7 @@ yarp::os::Contact yarp::os::AbstractContactable::where() const
     return asPort().where();
 }
 
-yarp::os::ConstString yarp::os::AbstractContactable::getName() const
+std::string yarp::os::AbstractContactable::getName() const
 {
     return asPort().getName();
 }

@@ -54,7 +54,7 @@ struct yarp::dev::GazeEventParameters
      *    communication timeout.
      *  - "*": a tag for all-events.
      */
-    yarp::os::ConstString type;
+    std::string type;
 
     /*!
      * The user specifies the motion check-point that raises a
@@ -76,7 +76,7 @@ struct yarp::dev::GazeEventVariables
      * The signature of the received event as filled by the event
      * handler.
      */
-    yarp::os::ConstString type;
+    std::string type;
 
     /*!
      * Contain the time instant of the source when the event took

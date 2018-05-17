@@ -52,6 +52,6 @@ bool NameSpace::checkNetwork(double timeout) {
     return true;
 }
 
-ConstString NameSpace::getNameServerName() const {
+std::string NameSpace::getNameServerName() const {
     return getNameServerContact().getName();
 }

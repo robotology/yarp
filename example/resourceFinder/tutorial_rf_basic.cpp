@@ -26,8 +26,8 @@ int main(int argc, char *argv[])
     rf.setDefaultContext("randomMotion");
     rf.configure(argc, argv);
         
-    ConstString robotName=rf.find("robot").asString();
-    ConstString partName=rf.find("part").asString();
+    std::string robotName=rf.find("robot").asString();
+    std::string partName=rf.find("part").asString();
     int joint=rf.find("joint").asInt();
 
     cout<<"Running with:"<<endl;

@@ -72,13 +72,13 @@ class yarp::dev::MultipleAnalogSensorsServer : public yarp::os::RateThread,
     bool populateSensorsMetadata(Interface * wrappedDeviceInterface,
                                  std::vector<SensorMetadata>& metadataVector, const std::string& tag,
                                  size_t (Interface::*getNrOfSensorsMethodPtr)() const,
-                                 bool (Interface::*getNameMethodPtr)(size_t, yarp::os::ConstString&) const,
-                                 bool (Interface::*getFrameNameMethodPtr)(size_t, yarp::os::ConstString&) const);
+                                 bool (Interface::*getNameMethodPtr)(size_t, std::string&) const,
+                                 bool (Interface::*getFrameNameMethodPtr)(size_t, std::string&) const);
     template<typename Interface>
     bool populateSensorsMetadataNoFrameName(Interface * wrappedDeviceInterface,
                                             std::vector<SensorMetadata>& metadataVector, const std::string& tag,
                                             size_t (Interface::*getNrOfSensorsMethodPtr)() const,
-                                            bool (Interface::*getNameMethodPtr)(size_t, yarp::os::ConstString&) const);
+                                            bool (Interface::*getNameMethodPtr)(size_t, std::string&) const);
 
     template<typename Interface>
     bool genericStreamData(Interface* wrappedDeviceInterface,

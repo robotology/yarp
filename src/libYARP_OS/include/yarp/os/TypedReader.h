@@ -98,7 +98,7 @@ public:
      * Get name of port being read from
      * @return name of port
      */
-    virtual ConstString getName() const = 0;
+    virtual std::string getName() const = 0;
 
 
    /**

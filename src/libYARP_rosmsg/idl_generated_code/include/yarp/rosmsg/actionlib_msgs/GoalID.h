@@ -147,9 +147,9 @@ public:
     typedef yarp::os::idl::BottleStyle<yarp::rosmsg::actionlib_msgs::GoalID> bottleStyle;
 
     // Give source text for class, ROS will need this
-    static yarp::os::ConstString typeText()
+    static std::string typeText()
     {
-        return yarp::os::ConstString("\
+        return std::string("\
 # The stamp should store the time at which this goal was requested.\n\
 # It is used by an action server when it tries to preempt all\n\
 # goals that were requested before a certain time\n\
@@ -163,7 +163,7 @@ string id\n\
 ");
     }
 
-    yarp::os::ConstString getTypeText() const
+    std::string getTypeText() const
     {
         return yarp::rosmsg::actionlib_msgs::GoalID::typeText();
     }

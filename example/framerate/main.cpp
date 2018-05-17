@@ -67,7 +67,7 @@ int main(int argc, char *argv[]) {
     // name port
     Value *val;
     Value *prot;
-    ConstString local = "/get_image";
+    std::string local = "/get_image";
     if (opt.check("local",val)) {
         local = val->asString().c_str();
     }

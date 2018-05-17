@@ -9,7 +9,7 @@
 #include <yarp/os/SharedLibrary.h>
 
 #include <yarp/conf/system.h>
-#include <yarp/os/ConstString.h>
+#include <string>
 #include <yarp/os/Log.h>
 
 #ifdef YARP_HAS_ACE
@@ -21,14 +21,14 @@
 
 
 using yarp::os::SharedLibrary;
-using yarp::os::ConstString;
+using std::string;
 using yarp::os::impl::SharedLibraryImpl;
 
 
 class yarp::os::impl::SharedLibraryImpl
 {
 public:
-    SharedLibraryImpl() : dll(nullptr), error(ConstString()) {}
+    SharedLibraryImpl() : dll(nullptr), error(std::string()) {}
 
     inline char* getError()
     {
@@ -47,7 +47,7 @@ public:
 #else
     void* dll;
 #endif
-    ConstString error;
+    std::string error;
 };
 
 
@@ -80,7 +80,7 @@ bool SharedLibrary::open(const char *filename)
     int result = implementation->dll->open(filename);
     if (result != 0) {
         // Save error since close might overwrite it
-        ConstString error(implementation->getError());
+        std::string error(implementation->getError());
         close();
         implementation->error = error;
         return false;
@@ -116,7 +116,7 @@ bool SharedLibrary::close()
     return (result == 0);
 }
 
-ConstString SharedLibrary::error()
+std::string SharedLibrary::error()
 {
     return SharedLibrary::implementation->error;
 }

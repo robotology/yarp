@@ -52,7 +52,7 @@ int main(int argc, char *argv[]) {
 
         Bottle tmp;
         tmp.add(cmd.get(1));
-        ConstString key = tmp.toString();
+        std::string key = tmp.toString();
 
         switch (Vocab::encode(cmd.get(0).toString())) {
         case VOCAB_SET:

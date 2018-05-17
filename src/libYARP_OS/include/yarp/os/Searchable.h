@@ -10,8 +10,9 @@
 #ifndef YARP_OS_SEARCHABLE_H
 #define YARP_OS_SEARCHABLE_H
 
+#include <yarp/os/api.h>
+#include <string>
 #include <cstddef>
-#include <yarp/os/ConstString.h>
 
 namespace yarp {
     namespace os {
@@ -27,8 +28,8 @@ namespace yarp {
 
 class YARP_OS_API yarp::os::SearchReport {
 public:
-    ConstString key;
-    ConstString value;
+    YARP_SUPPRESS_DLL_INTERFACE_WARNING_ARG(std::string) key;
+    YARP_SUPPRESS_DLL_INTERFACE_WARNING_ARG(std::string) value;
     bool isFound;
     bool isGroup;
     bool isComment;
@@ -59,7 +60,7 @@ public:
 class YARP_OS_API yarp::os::Searchable {
 private:
     SearchMonitor *monitor;
-    ConstString monitorContext;
+    YARP_SUPPRESS_DLL_INTERFACE_WARNING_ARG(std::string) monitorContext;
 public:
     /**
      * Default constructor.
@@ -77,7 +78,7 @@ public:
      * @return true iff a property of the given name exists, even if
      * it doesn't have a value associated with it
      */
-    virtual bool check(const ConstString& key) const = 0;
+    virtual bool check(const std::string& key) const = 0;
 
 
     /**
@@ -87,8 +88,8 @@ public:
      * @return true iff a property of the given name exists, even if
      * it doesn't have a value associated with it
      */
-    virtual bool check(const ConstString& key,
-                       const ConstString& comment) const;
+    virtual bool check(const std::string& key,
+                       const std::string& comment) const;
 
     /**
      * Gets a value corresponding to a given keyword
@@ -98,7 +99,7 @@ public:
      * true.  Otherwise, the value can be read by calling result.asInt(),
      * result.asString(), etc. as appropriate.
      */
-    virtual Value& find(const ConstString& key) const = 0;
+    virtual Value& find(const std::string& key) const = 0;
 
     /**
      * Gets a list corresponding to a given keyword
@@ -110,7 +111,7 @@ public:
      * result.get(i) for i>=1 are the "real" elements of the list.
      *
      */
-    virtual Bottle& findGroup(const ConstString& key) const = 0;
+    virtual Bottle& findGroup(const std::string& key) const = 0;
 
     /**
      * Gets a list corresponding to a given keyword
@@ -123,7 +124,7 @@ public:
      * result.get(i) for i>=1 are the "real" elements of the list.
      *
      */
-    Bottle& findGroup(const ConstString& key, const ConstString& comment) const;
+    Bottle& findGroup(const std::string& key, const std::string& comment) const;
 
     /**
      * Gets a value corresponding to a given keyword.  If a property
@@ -150,8 +151,8 @@ public:
      * false otherwise.  See the find() method for interpreting the
      * value found.
      */
-    virtual bool check(const ConstString& key, Value *& result,
-                       const ConstString& comment = "") const;
+    virtual bool check(const std::string& key, Value *& result,
+                       const std::string& comment = "") const;
 
 
     /**
@@ -163,8 +164,8 @@ public:
      * or the default if nothing is found.  See the find() method for
      * interpreting the value found.
      */
-    virtual Value check(const ConstString& key, const Value& fallback,
-                        const ConstString& comment = "") const;
+    virtual Value check(const std::string& key, const Value& fallback,
+                        const std::string& comment = "") const;
 
     /**
      * Checks if the object is invalid.
@@ -179,12 +180,12 @@ public:
      * @return A standard text representation of the content of the
      * object.
      */
-    virtual ConstString toString() const = 0;
+    virtual std::string toString() const = 0;
 
 #ifndef DOXYGEN_SHOULD_SKIP_THIS
     virtual void setMonitor(SearchMonitor *monitor, const char *context="");
     virtual SearchMonitor *getMonitor() const;
-    virtual ConstString getMonitorContext() const;
+    virtual std::string getMonitorContext() const;
     virtual void reportToMonitor(const SearchReport& report) const;
 #endif /* DOXYGEN_SHOULD_SKIP_THIS */
 };

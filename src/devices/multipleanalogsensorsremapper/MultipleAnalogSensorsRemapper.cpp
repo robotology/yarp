@@ -155,7 +155,7 @@ template<typename Interface>
 bool MultipleAnalogSensorsRemapper::genericAttachAll(const MAS_SensorType sensorType,
                                                      std::vector<Interface *>& subDeviceVec,
                                                      const PolyDriverList &polylist,
-                                                     bool (Interface::*getNameMethodPtr)(size_t, yarp::os::ConstString&) const,
+                                                     bool (Interface::*getNameMethodPtr)(size_t, std::string&) const,
                                                      size_t (Interface::*getNrOfSensorsMethodPtr)() const)
 {
     std::map<std::string, SensorInSubDevice> sensorLocationMap;
@@ -172,7 +172,7 @@ bool MultipleAnalogSensorsRemapper::genericAttachAll(const MAS_SensorType sensor
             size_t nrOfSensorsInSubDevice = MAS_CALL_MEMBER_FN(subDeviceVec[p], getNrOfSensorsMethodPtr)();
             for (size_t s=0; s < nrOfSensorsInSubDevice; s++)
             {
-                yarp::os::ConstString name;
+                std::string name;
                 bool ok = genericGetName(sensorType, s, name, subDeviceVec, getNameMethodPtr);
                 if (!ok)
                 {
@@ -278,9 +278,9 @@ MAS_status MultipleAnalogSensorsRemapper::genericGetStatus(const MAS_SensorType 
 
 template<typename Interface>
 bool MultipleAnalogSensorsRemapper::genericGetName(const MAS_SensorType sensorType,
-                                                           size_t& sens_index, yarp::os::ConstString &name,
+                                                           size_t& sens_index, std::string &name,
                                                            const std::vector<Interface *>& subDeviceVec,
-                                                           bool (Interface::*methodPtr)(size_t, yarp::os::ConstString &) const) const
+                                                           bool (Interface::*methodPtr)(size_t, std::string &) const) const
 {
     size_t nrOfAvailableSensors = m_indicesMap[sensorType].size();
     if (sens_index >= nrOfAvailableSensors)
@@ -298,9 +298,9 @@ bool MultipleAnalogSensorsRemapper::genericGetName(const MAS_SensorType sensorTy
 
 template<typename Interface>
 bool MultipleAnalogSensorsRemapper::genericGetFrameName(const MAS_SensorType sensorType,
-                                                           size_t& sens_index, yarp::os::ConstString &name,
+                                                           size_t& sens_index, std::string &name,
                                                            const std::vector<Interface *>& subDeviceVec,
-                                                           bool (Interface::*methodPtr)(size_t, yarp::os::ConstString &) const) const
+                                                           bool (Interface::*methodPtr)(size_t, std::string &) const) const
 {
     size_t nrOfAvailableSensors = m_indicesMap[sensorType].size();
     if (sens_index >= nrOfAvailableSensors)
@@ -370,7 +370,7 @@ MAS_status MultipleAnalogSensorsRemapper::get{{SensorTag}}Status(size_t sens_ind
     return genericGetStatus({{SensorTag}}s, sens_index, m_i{{SensorTag}}s, &I{{SensorTag}}s::get{{SensorTag}}Status);
 }
 
-bool MultipleAnalogSensorsRemapper::get{{SensorTag}}Name(size_t sens_index, ConstString& name) const
+bool MultipleAnalogSensorsRemapper::get{{SensorTag}}Name(size_t sens_index, std::string& name) const
 {
     return genericGetName({{SensorTag}}s, sens_index, name, m_i{{SensorTag}}s, &I{{SensorTag}}s::get{{SensorTag}}Name);
 }
@@ -398,12 +398,12 @@ MAS_status MultipleAnalogSensorsRemapper::getThreeAxisGyroscopeStatus(size_t sen
     return genericGetStatus(ThreeAxisGyroscopes, sens_index, m_iThreeAxisGyroscopes, &IThreeAxisGyroscopes::getThreeAxisGyroscopeStatus);
 }
 
-bool MultipleAnalogSensorsRemapper::getThreeAxisGyroscopeName(size_t sens_index, ConstString& name) const
+bool MultipleAnalogSensorsRemapper::getThreeAxisGyroscopeName(size_t sens_index, std::string& name) const
 {
      return genericGetName(ThreeAxisGyroscopes, sens_index, name, m_iThreeAxisGyroscopes, &IThreeAxisGyroscopes::getThreeAxisGyroscopeName);
 }
 
-bool MultipleAnalogSensorsRemapper::getThreeAxisGyroscopeFrameName(size_t sens_index, ConstString& frameName) const
+bool MultipleAnalogSensorsRemapper::getThreeAxisGyroscopeFrameName(size_t sens_index, std::string& frameName) const
 {
      return genericGetFrameName(ThreeAxisGyroscopes, sens_index, frameName, m_iThreeAxisGyroscopes, &IThreeAxisGyroscopes::getThreeAxisGyroscopeFrameName);
 }
@@ -423,12 +423,12 @@ MAS_status MultipleAnalogSensorsRemapper::getThreeAxisLinearAccelerometerStatus(
     return genericGetStatus(ThreeAxisLinearAccelerometers, sens_index, m_iThreeAxisLinearAccelerometers, &IThreeAxisLinearAccelerometers::getThreeAxisLinearAccelerometerStatus);
 }
 
-bool MultipleAnalogSensorsRemapper::getThreeAxisLinearAccelerometerName(size_t sens_index, ConstString& name) const
+bool MultipleAnalogSensorsRemapper::getThreeAxisLinearAccelerometerName(size_t sens_index, std::string& name) const
 {
      return genericGetName(ThreeAxisLinearAccelerometers, sens_index, name, m_iThreeAxisLinearAccelerometers, &IThreeAxisLinearAccelerometers::getThreeAxisLinearAccelerometerName);
 }
 
-bool MultipleAnalogSensorsRemapper::getThreeAxisLinearAccelerometerFrameName(size_t sens_index, ConstString& frameName) const
+bool MultipleAnalogSensorsRemapper::getThreeAxisLinearAccelerometerFrameName(size_t sens_index, std::string& frameName) const
 {
      return genericGetFrameName(ThreeAxisLinearAccelerometers, sens_index, frameName, m_iThreeAxisLinearAccelerometers, &IThreeAxisLinearAccelerometers::getThreeAxisLinearAccelerometerFrameName);
 }
@@ -448,12 +448,12 @@ MAS_status MultipleAnalogSensorsRemapper::getThreeAxisMagnetometerStatus(size_t 
     return genericGetStatus(ThreeAxisMagnetometers, sens_index, m_iThreeAxisMagnetometers, &IThreeAxisMagnetometers::getThreeAxisMagnetometerStatus);
 }
 
-bool MultipleAnalogSensorsRemapper::getThreeAxisMagnetometerName(size_t sens_index, ConstString& name) const
+bool MultipleAnalogSensorsRemapper::getThreeAxisMagnetometerName(size_t sens_index, std::string& name) const
 {
      return genericGetName(ThreeAxisMagnetometers, sens_index, name, m_iThreeAxisMagnetometers, &IThreeAxisMagnetometers::getThreeAxisMagnetometerName);
 }
 
-bool MultipleAnalogSensorsRemapper::getThreeAxisMagnetometerFrameName(size_t sens_index, ConstString& frameName) const
+bool MultipleAnalogSensorsRemapper::getThreeAxisMagnetometerFrameName(size_t sens_index, std::string& frameName) const
 {
      return genericGetFrameName(ThreeAxisMagnetometers, sens_index, frameName, m_iThreeAxisMagnetometers, &IThreeAxisMagnetometers::getThreeAxisMagnetometerFrameName);
 }
@@ -473,12 +473,12 @@ MAS_status MultipleAnalogSensorsRemapper::getOrientationSensorStatus(size_t sens
     return genericGetStatus(OrientationSensors, sens_index, m_iOrientationSensors, &IOrientationSensors::getOrientationSensorStatus);
 }
 
-bool MultipleAnalogSensorsRemapper::getOrientationSensorName(size_t sens_index, ConstString& name) const
+bool MultipleAnalogSensorsRemapper::getOrientationSensorName(size_t sens_index, std::string& name) const
 {
      return genericGetName(OrientationSensors, sens_index, name, m_iOrientationSensors, &IOrientationSensors::getOrientationSensorName);
 }
 
-bool MultipleAnalogSensorsRemapper::getOrientationSensorFrameName(size_t sens_index, ConstString& frameName) const
+bool MultipleAnalogSensorsRemapper::getOrientationSensorFrameName(size_t sens_index, std::string& frameName) const
 {
      return genericGetFrameName(OrientationSensors, sens_index, frameName, m_iOrientationSensors, &IOrientationSensors::getOrientationSensorFrameName);
 }
@@ -498,12 +498,12 @@ MAS_status MultipleAnalogSensorsRemapper::getTemperatureSensorStatus(size_t sens
     return genericGetStatus(TemperatureSensors, sens_index, m_iTemperatureSensors, &ITemperatureSensors::getTemperatureSensorStatus);
 }
 
-bool MultipleAnalogSensorsRemapper::getTemperatureSensorName(size_t sens_index, ConstString& name) const
+bool MultipleAnalogSensorsRemapper::getTemperatureSensorName(size_t sens_index, std::string& name) const
 {
      return genericGetName(TemperatureSensors, sens_index, name, m_iTemperatureSensors, &ITemperatureSensors::getTemperatureSensorName);
 }
 
-bool MultipleAnalogSensorsRemapper::getTemperatureSensorFrameName(size_t sens_index, ConstString& frameName) const
+bool MultipleAnalogSensorsRemapper::getTemperatureSensorFrameName(size_t sens_index, std::string& frameName) const
 {
      return genericGetFrameName(TemperatureSensors, sens_index, frameName, m_iTemperatureSensors, &ITemperatureSensors::getTemperatureSensorFrameName);
 }
@@ -531,12 +531,12 @@ MAS_status MultipleAnalogSensorsRemapper::getSixAxisForceTorqueSensorStatus(size
     return genericGetStatus(SixAxisForceTorqueSensors, sens_index, m_iSixAxisForceTorqueSensors, &ISixAxisForceTorqueSensors::getSixAxisForceTorqueSensorStatus);
 }
 
-bool MultipleAnalogSensorsRemapper::getSixAxisForceTorqueSensorName(size_t sens_index, ConstString& name) const
+bool MultipleAnalogSensorsRemapper::getSixAxisForceTorqueSensorName(size_t sens_index, std::string& name) const
 {
      return genericGetName(SixAxisForceTorqueSensors, sens_index, name, m_iSixAxisForceTorqueSensors, &ISixAxisForceTorqueSensors::getSixAxisForceTorqueSensorName);
 }
 
-bool MultipleAnalogSensorsRemapper::getSixAxisForceTorqueSensorFrameName(size_t sens_index, ConstString& frameName) const
+bool MultipleAnalogSensorsRemapper::getSixAxisForceTorqueSensorFrameName(size_t sens_index, std::string& frameName) const
 {
      return genericGetFrameName(SixAxisForceTorqueSensors, sens_index, frameName, m_iSixAxisForceTorqueSensors, &ISixAxisForceTorqueSensors::getSixAxisForceTorqueSensorFrameName);
 }
@@ -556,7 +556,7 @@ MAS_status MultipleAnalogSensorsRemapper::getContactLoadCellArrayStatus(size_t s
     return genericGetStatus(ContactLoadCellArrays, sens_index, m_iContactLoadCellArrays, &IContactLoadCellArrays::getContactLoadCellArrayStatus);
 }
 
-bool MultipleAnalogSensorsRemapper::getContactLoadCellArrayName(size_t sens_index, ConstString& name) const
+bool MultipleAnalogSensorsRemapper::getContactLoadCellArrayName(size_t sens_index, std::string& name) const
 {
      return genericGetName(ContactLoadCellArrays, sens_index, name, m_iContactLoadCellArrays, &IContactLoadCellArrays::getContactLoadCellArrayName);
 }
@@ -581,7 +581,7 @@ MAS_status MultipleAnalogSensorsRemapper::getEncoderArrayStatus(size_t sens_inde
     return genericGetStatus(EncoderArrays, sens_index, m_iEncoderArrays, &IEncoderArrays::getEncoderArrayStatus);
 }
 
-bool MultipleAnalogSensorsRemapper::getEncoderArrayName(size_t sens_index, ConstString& name) const
+bool MultipleAnalogSensorsRemapper::getEncoderArrayName(size_t sens_index, std::string& name) const
 {
      return genericGetName(EncoderArrays, sens_index, name, m_iEncoderArrays, &IEncoderArrays::getEncoderArrayName);
 }
@@ -606,7 +606,7 @@ MAS_status MultipleAnalogSensorsRemapper::getSkinPatchStatus(size_t sens_index) 
     return genericGetStatus(SkinPatches, sens_index, m_iSkinPatches, &ISkinPatches::getSkinPatchStatus);
 }
 
-bool MultipleAnalogSensorsRemapper::getSkinPatchName(size_t sens_index, ConstString& name) const
+bool MultipleAnalogSensorsRemapper::getSkinPatchName(size_t sens_index, std::string& name) const
 {
      return genericGetName(SkinPatches, sens_index, name, m_iSkinPatches, &ISkinPatches::getSkinPatchName);
 }

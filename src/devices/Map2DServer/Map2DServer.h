@@ -86,7 +86,7 @@ private:
 #ifndef DOXYGEN_SHOULD_SKIP_THIS
     yarp::os::ResourceFinder     m_rf_mapCollection;
     yarp::os::Mutex              m_mutex;
-    yarp::os::ConstString        m_rpcPortName;
+    std::string        m_rpcPortName;
     yarp::os::Node*              m_rosNode;
     bool                         m_enable_publish_ros_map;
     bool                         m_enable_subscribe_ros_map;

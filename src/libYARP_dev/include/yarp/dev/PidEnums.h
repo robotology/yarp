@@ -10,6 +10,7 @@
 #define YARP_DEV_PIDENUMS_H
 
 #include <yarp/os/Vocab.h>
+#include <yarp/conf/system.h>
 
 namespace yarp
 {

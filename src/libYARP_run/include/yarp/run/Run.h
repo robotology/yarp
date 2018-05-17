@@ -102,20 +102,20 @@ public:
      * @param keyv is the tag that will identify the running application. It must be unique in the network.
      * @return 0=success -1=failed.
      */
-    static int start(const yarp::os::ConstString &node, yarp::os::Property &command, yarp::os::ConstString &keyv);
+    static int start(const std::string &node, yarp::os::Property &command, std::string &keyv);
     /**
      * Terminate an application running on a yarprun server.
      * @param node is the yarprun server port name. It must be unique in the network.
      * @param keyv is the tag that identifies the running application. It must be unique in the network.
      * @return 0=success -1=failed.
      */
-    static int sigterm(const yarp::os::ConstString &node, const yarp::os::ConstString &keyv);
+    static int sigterm(const std::string &node, const std::string &keyv);
     /**
      * Terminate all applications running on a yarprun server.
      * @param node is the yarprun server port name. It must be unique in the network.
      * @return 0=success -1=failed.
      */
-    static int sigterm(const yarp::os::ConstString &node);
+    static int sigterm(const std::string &node);
     /**
      * Send a SIGNAL to an application running on a yarprun server (Linux only).
      * @param node is the yarprun server port name. It must be unique in the network.
@@ -123,7 +123,7 @@ public:
      * @param s is the SIGNAL number.
      * @return 0=success -1=failed.
      */
-    static int kill(const yarp::os::ConstString &node, const yarp::os::ConstString &keyv, int s);
+    static int kill(const std::string &node, const std::string &keyv, int s);
     /**
      * Get a report of all applications running on a yarprun server.
      * @param node is the yarprun server port name. It must be unique in the network.
@@ -132,14 +132,14 @@ public:
      * @param num_processes return the number of running processes.
      * @return 0=success -1=failed.
      */
-    // static int ps(const yarp::os::ConstString &node, yarp::os::ConstString** &processes, int &num_processes);
+    // static int ps(const std::string &node, std::string** &processes, int &num_processes);
     /**
      * Report if an application is still running on a yarprun server.
      * @param node is the yarprun server port name. It must be unique in the network.
      * @param keyv is the tag that identifies the application. It must be unique in the network.
      * @return true=running false=terminated.
      */
-    static bool isRunning(const yarp::os::ConstString &node, yarp::os::ConstString &keyv);
+    static bool isRunning(const std::string &node, std::string &keyv);
 
     // end API
 
@@ -164,7 +164,9 @@ public:
     static bool mStresstest;
 
     static bool mLogged;
-    static yarp::os::ConstString mLoggerPort;
+YARP_WARNING_PUSH
+YARP_DISABLE_DLL_INTERFACE_WARNING
+    static std::string mLoggerPort;
 
 #if defined(_WIN32)
     static YarpRunInfoVector mProcessVector;
@@ -175,14 +177,14 @@ public:
     static ZombieHunterThread *mBraveZombieHunter;
     static void CleanZombie(int pid);
 #endif
-
-    static yarp::os::Bottle sendMsg(yarp::os::Bottle& msg, yarp::os::ConstString target, int RETRY=20, double DELAY=0.5);
+YARP_WARNING_POP
+    static yarp::os::Bottle sendMsg(yarp::os::Bottle& msg, std::string target, int RETRY=20, double DELAY=0.5);
 
 protected:
     static void Help(const char* msg="");
     static int server();
     static int executeCmdAndStdio(yarp::os::Bottle& msg, yarp::os::Bottle& result);
-    static int executeCmdStdout(yarp::os::Bottle& msg, yarp::os::Bottle& result, yarp::os::ConstString& loggerName);
+    static int executeCmdStdout(yarp::os::Bottle& msg, yarp::os::Bottle& result, std::string& loggerName);
     static int executeCmd(yarp::os::Bottle& msg, yarp::os::Bottle& result);
     static int userStdio(yarp::os::Bottle& msg, yarp::os::Bottle& result);
 
@@ -190,12 +192,13 @@ protected:
     static inline bool IS_NEW_PROCESS(int pid){ return !pid; }
     static inline bool IS_INVALID(int pid){ return pid<0; }
 
-    static yarp::os::ConstString mPortName;
+YARP_SUPPRESS_DLL_INTERFACE_WARNING
+    static std::string mPortName;
     static int mProcCNT;
 
 #if !defined(_WIN32)
     static void cleanBeforeExec();
-    static void writeToPipe(int fd, yarp::os::ConstString str);
+    static void writeToPipe(int fd, std::string str);
     static int readFromPipe(int fd, char* &data, int& buffsize);
 #endif
 

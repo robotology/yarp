@@ -28,23 +28,23 @@ void FallbackNameClient::run() {
     send.join(call, true);
     listen.join(call, false);
     if (!listen.isOk()) {
-        YARP_ERROR(Logger::get(), ConstString("Multicast not available"));
+        YARP_ERROR(Logger::get(), std::string("Multicast not available"));
         return;
     }
-    ConstString msg = ConstString("NAME_SERVER query ") + nc.getNamespace();
+    std::string msg = std::string("NAME_SERVER query ") + nc.getNamespace();
     send.beginPacket();
     send.writeLine(msg.c_str(), (int)msg.length());
     send.flush();
     send.endPacket();
     for (int i=0; i<5; i++) {
         listen.beginPacket();
-        ConstString txt = listen.readLine();
+        std::string txt = listen.readLine();
         listen.endPacket();
         if (closed) return;
-        YARP_DEBUG(Logger::get(), ConstString("Fallback name client got ") + txt);
+        YARP_DEBUG(Logger::get(), std::string("Fallback name client got ") + txt);
         if (txt.find("registration ")==0) {
             address = NameClient::extractAddress(txt);
-            YARP_INFO(Logger::get(), ConstString("Received address ") +
+            YARP_INFO(Logger::get(), std::string("Received address ") +
                       address.toURI());
             return;
         }
@@ -74,9 +74,9 @@ Contact FallbackNameClient::seek() {
         FallbackNameClient seeker;
 
         YARP_INFO(Logger::get(),
-                  ConstString("Polling for name server (using multicast), try ") +
+                  std::string("Polling for name server (using multicast), try ") +
                   NetType::toString(k+1) +
-                  ConstString(" of max ") +
+                  std::string(" of max ") +
                   NetType::toString(tries));
 
         seeker.start();

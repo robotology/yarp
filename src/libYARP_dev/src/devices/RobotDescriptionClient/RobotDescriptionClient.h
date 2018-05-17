@@ -18,7 +18,7 @@
 #include <yarp/sig/Vector.h>
 #include <yarp/os/Semaphore.h>
 #include <yarp/os/Time.h>
-#include <yarp/os/ConstString.h>
+#include <string>
 #include <yarp/dev/PolyDriver.h>
 #include <yarp/dev/IRobotDescription.h>
 
@@ -46,8 +46,8 @@ class yarp::dev::RobotDescriptionClient : public DeviceDriver,
 protected:
     yarp::os::Mutex               m_mutex;
     yarp::os::Port                m_rpc_port;
-    yarp::os::ConstString         m_local_name;
-    yarp::os::ConstString         m_remote_name;
+    std::string         m_local_name;
+    std::string         m_remote_name;
 
 #endif /*DOXYGEN_SHOULD_SKIP_THIS*/
 

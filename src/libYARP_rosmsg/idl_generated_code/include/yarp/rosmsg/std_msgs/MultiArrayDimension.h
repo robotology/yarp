@@ -149,15 +149,15 @@ public:
     typedef yarp::os::idl::BottleStyle<yarp::rosmsg::std_msgs::MultiArrayDimension> bottleStyle;
 
     // Give source text for class, ROS will need this
-    static yarp::os::ConstString typeText()
+    static std::string typeText()
     {
-        return yarp::os::ConstString("\
+        return std::string("\
 string label   # label of given dimension\n\
 uint32 size    # size of given dimension (in type units)\n\
 uint32 stride  # stride of given dimension");
     }
 
-    yarp::os::ConstString getTypeText() const
+    std::string getTypeText() const
     {
         return yarp::rosmsg::std_msgs::MultiArrayDimension::typeText();
     }

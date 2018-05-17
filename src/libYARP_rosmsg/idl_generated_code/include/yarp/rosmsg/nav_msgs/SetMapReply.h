@@ -105,13 +105,13 @@ public:
     typedef yarp::os::idl::BottleStyle<yarp::rosmsg::nav_msgs::SetMapReply> bottleStyle;
 
     // Give source text for class, ROS will need this
-    static yarp::os::ConstString typeText()
+    static std::string typeText()
     {
-        return yarp::os::ConstString("\
+        return std::string("\
 ");
     }
 
-    yarp::os::ConstString getTypeText() const
+    std::string getTypeText() const
     {
         return yarp::rosmsg::nav_msgs::SetMapReply::typeText();
     }

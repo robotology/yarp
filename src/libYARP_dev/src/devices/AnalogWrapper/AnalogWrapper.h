@@ -220,8 +220,8 @@ public:
 
 private:
 #ifndef DOXYGEN_SHOULD_SKIP_THIS
-    yarp::os::ConstString streamingPortName;
-    yarp::os::ConstString rpcPortName;
+    std::string streamingPortName;
+    std::string rpcPortName;
     yarp::dev::IAnalogSensor *analogSensor_p;   // the analog sensor to read from
     std::vector<yarp::dev::impl::AnalogPortEntry> analogPorts;   // the list of output ports
     std::vector<yarp::dev::impl::AnalogServerHandler*> handlers; // the list of rpc port handlers

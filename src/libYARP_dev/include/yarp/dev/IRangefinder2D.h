@@ -131,7 +131,7 @@ public:
     * @param device_info string containing the device infos
     * @return true/false.
     */
-    virtual bool getDeviceInfo(yarp::os::ConstString &device_info) = 0;
+    virtual bool getDeviceInfo(std::string &device_info) = 0;
 };
 
 #endif // YARP_DEV_IRANGEFINDER2D_H

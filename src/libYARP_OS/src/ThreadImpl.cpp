@@ -104,7 +104,7 @@ void theExecutiveBranch(void *args)
     }
 
 
-    //YARP_ERROR(Logger::get(), ConstString("uncaught exception in thread: ") +
+    //YARP_ERROR(Logger::get(), std::string("uncaught exception in thread: ") +
     //             e.toString());
 
     ThreadImpl::changeCount(-1);
@@ -192,7 +192,7 @@ int ThreadImpl::join(double seconds)
         if (seconds>0) {
             if (!initWasSuccessful) {
                 // join called before start completed
-                YARP_ERROR(Logger::get(), ConstString("Tried to join a thread before starting it"));
+                YARP_ERROR(Logger::get(), std::string("Tried to join a thread before starting it"));
                 return -1;
             }
             synchro.waitWithTimeout(seconds);
@@ -283,7 +283,7 @@ bool ThreadImpl::start()
         needJoin = true;
 
         // the thread started correctly, wait for the initialization
-        YARP_DEBUG(Logger::get(), ConstString("Child thread initializing"));
+        YARP_DEBUG(Logger::get(), std::string("Child thread initializing"));
         synchroWait();
         initWasSuccessful = true;
         if (opened) {
@@ -300,7 +300,7 @@ bool ThreadImpl::start()
     //the thread did not start, call afterStart() to warn the user
     char tmp[80];
     sprintf(tmp, "%d", result);
-    YARP_ERROR(Logger::get(), ConstString("A thread failed to start with error code: ")+ConstString(tmp));
+    YARP_ERROR(Logger::get(), std::string("A thread failed to start with error code: ")+std::string(tmp));
     afterStart(false);
     return false;
 }

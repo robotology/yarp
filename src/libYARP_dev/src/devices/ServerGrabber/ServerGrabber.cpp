@@ -435,7 +435,7 @@ bool ServerGrabber::fromConfig(yarp::os::Searchable &config)
         config.check("single_threaded",
                      "if present, operate in single threaded mode")!=0;
     //TODO audio part
-    yarp::os::ConstString rootName;
+    std::string rootName;
     rootName = config.check("name",Value("/grabber"),
                             "name of port to send data on").asString();
     if(!param.twoCameras && param.split)

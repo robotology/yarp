@@ -26,8 +26,8 @@ using namespace yarp::sig;
 int main() {
     Network yarp;
 
-    ConstString local = "/client";
-    ConstString remote = "/fakey";
+    std::string local = "/client";
+    std::string remote = "/fakey";
 
     BufferedPort<ImageOf<PixelRgb> > port;
     port.open(local);

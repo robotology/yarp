@@ -7,7 +7,7 @@
  */
 
 #include <yarp/os/Log.h>
-#include <yarp/os/ConstString.h>
+#include <string>
 
 #ifdef WITH_YARPMATH
 #include <yarp/math/Math.h>
@@ -82,7 +82,7 @@ bool PriorityCarrier::configure(yarp::os::ConnectionState& proto) {
 #ifdef WITH_PRIORITY_DEBUG
     if(options.check("debug"))
     {
-        yarp::os::ConstString msg;
+        std::string msg;
         char dummy[1024];
         safe_printf(dummy, 1024, "\n%s:\n", sourceName.c_str());
         msg+= dummy;
@@ -398,7 +398,7 @@ void PriorityDebugThread::run()
 
 bool PriorityDebugThread::threadInit()
 {
-    debugPortName = pcarrier->portName + pcarrier->sourceName + ConstString(":debug");
+    debugPortName = pcarrier->portName + pcarrier->sourceName + std::string(":debug");
     return debugPort.open(debugPortName.c_str());
 }
 

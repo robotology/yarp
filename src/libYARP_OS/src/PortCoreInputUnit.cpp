@@ -64,13 +64,13 @@ PortCoreInputUnit::~PortCoreInputUnit()
 bool PortCoreInputUnit::start() {
 
 
-    YARP_DEBUG(Logger::get(), ConstString("new input connection to ")+
+    YARP_DEBUG(Logger::get(), std::string("new input connection to ")+
                getOwner().getName()+ " starting");
 
     /*
     if (ip!=nullptr) {
         Route route = ip->getRoute();
-        YARP_DEBUG(Logger::get(), ConstString("starting output for ") +
+        YARP_DEBUG(Logger::get(), std::string("starting output for ") +
                    route.toString());
     }
     */
@@ -79,12 +79,12 @@ bool PortCoreInputUnit::start() {
 
     bool result = PortCoreUnit::start();
     if (result) {
-        YARP_DEBUG(Logger::get(), ConstString("new input connection to ")+
+        YARP_DEBUG(Logger::get(), std::string("new input connection to ")+
                    getOwner().getName()+ " started ok");
         phase.wait();
         phase.post();
     } else {
-        YARP_DEBUG(Logger::get(), ConstString("new input connection to ")+
+        YARP_DEBUG(Logger::get(), std::string("new input connection to ")+
                    getOwner().getName()+ " failed to start");
 
         phase.post();
@@ -113,7 +113,7 @@ void PortCoreInputUnit::run() {
         ip->open(getName().c_str());
     }
     if (!ok) {
-            YARP_DEBUG(Logger::get(), ConstString("new input connection to ")+
+            YARP_DEBUG(Logger::get(), std::string("new input connection to ")+
                     getOwner().getName()+ " is broken");
         done = true;
     } else {
@@ -135,7 +135,7 @@ void PortCoreInputUnit::run() {
         setMode();
         getOwner().reportUnit(this, true);
 
-        ConstString msg = ConstString("Receiving input from ") +
+        std::string msg = std::string("Receiving input from ") +
             route.getFromName() + " to " + route.getToName() +
             " using " +
             route.getCarrierName();
@@ -255,7 +255,7 @@ void PortCoreInputUnit::run() {
                           route.toString().c_str(),
                           getOwner().getName().c_str(),
                           cmd.getText().c_str());
-            man.removeOutput(cmd.getText().substr(1, ConstString::npos), id, os);
+            man.removeOutput(cmd.getText().substr(1, std::string::npos), id, os);
             break;
         case '~':
             YARP_SPRINTF3(Logger::get(),
@@ -264,7 +264,7 @@ void PortCoreInputUnit::run() {
                           route.toString().c_str(),
                           getOwner().getName().c_str(),
                           cmd.getText().c_str());
-            man.removeInput(cmd.getText().substr(1, ConstString::npos), id, os);
+            man.removeInput(cmd.getText().substr(1, std::string::npos), id, os);
             break;
         case '*':
             man.describe(id, os);
@@ -276,7 +276,7 @@ void PortCoreInputUnit::run() {
                     ip->suppressReply();
                 }
 
-                ConstString env = cmd.getText();
+                std::string env = cmd.getText();
 #ifndef YARP_NO_DEPRECATED // since YARP 2.3.68
                 bool suppressed = false;
                 if (env.length()>1) {
@@ -292,7 +292,7 @@ void PortCoreInputUnit::run() {
                     if (env.length()>2) {
                         //YARP_ERROR(Logger::get(),
                         //"***** received an envelope! [%s]", env.c_str());
-                        ConstString env2 = env.substr(2, env.length());
+                        std::string env2 = env.substr(2, env.length());
                         man.setEnvelope(env2);
                         ip->setEnvelope(env2);
                     }
@@ -301,7 +301,7 @@ void PortCoreInputUnit::run() {
                 if (env.length()>2) {
                     //YARP_ERROR(Logger::get(),
                     //"***** received an envelope! [%s]", env.c_str());
-                    ConstString env2 = env.substr(2, env.length());
+                    std::string env2 = env.substr(2, env.length());
                     man.setEnvelope(env2);
                     ip->setEnvelope(env2);
                 }
@@ -425,7 +425,7 @@ void PortCoreInputUnit::run() {
     access.post();
     YARP_DEBUG(Logger::get(), "PortCoreInputUnit closed ip");
 
-    ConstString msg = ConstString("Removing input from ") +
+    std::string msg = std::string("Removing input from ") +
         route.getFromName() + " to " + route.getToName();
 
     if (Name(route.getFromName()).isRooted()) {
@@ -483,7 +483,7 @@ bool PortCoreInputUnit::isFinished()
     return finished;
 }
 
-const ConstString& PortCoreInputUnit::getName()
+const std::string& PortCoreInputUnit::getName()
 {
     return name;
 }

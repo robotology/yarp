@@ -170,9 +170,9 @@ public:
     typedef yarp::os::idl::BottleStyle<yarp::rosmsg::std_msgs::Header> bottleStyle;
 
     // Give source text for class, ROS will need this
-    static yarp::os::ConstString typeText()
+    static std::string typeText()
     {
-        return yarp::os::ConstString("\
+        return std::string("\
 # Standard metadata for higher-level stamped data types.\n\
 # This is generally used to communicate timestamped data \n\
 # in a particular coordinate frame.\n\
@@ -191,7 +191,7 @@ string frame_id\n\
 ");
     }
 
-    yarp::os::ConstString getTypeText() const
+    std::string getTypeText() const
     {
         return yarp::rosmsg::std_msgs::Header::typeText();
     }

@@ -156,9 +156,9 @@ public:
     typedef yarp::os::idl::BottleStyle<yarp::rosmsg::geometry_msgs::AccelWithCovariance> bottleStyle;
 
     // Give source text for class, ROS will need this
-    static yarp::os::ConstString typeText()
+    static std::string typeText()
     {
-        return yarp::os::ConstString("\
+        return std::string("\
 # This expresses acceleration in free space with uncertainty.\n\
 \n\
 Accel accel\n\
@@ -168,13 +168,13 @@ Accel accel\n\
 # In order, the parameters are:\n\
 # (x, y, z, rotation about X axis, rotation about Y axis, rotation about Z axis)\n\
 float64[36] covariance\n\
-") + yarp::os::ConstString("\n\
+") + std::string("\n\
 ================================================================================\n\
 MSG: geometry_msgs/Accel\n\
 ") + yarp::rosmsg::geometry_msgs::Accel::typeText();
     }
 
-    yarp::os::ConstString getTypeText() const
+    std::string getTypeText() const
     {
         return yarp::rosmsg::geometry_msgs::AccelWithCovariance::typeText();
     }

@@ -32,13 +32,13 @@ YarpNameSpace::~YarpNameSpace() {
     }
 }
 
-Contact YarpNameSpace::queryName(const ConstString& name) {
+Contact YarpNameSpace::queryName(const std::string& name) {
     NameClient& nic = HELPER(this);
     return nic.queryName(name);
 }
 
 
-Contact YarpNameSpace::registerName(const ConstString& name) {
+Contact YarpNameSpace::registerName(const std::string& name) {
     return registerContact(Contact(name));
 }
 
@@ -49,14 +49,14 @@ Contact YarpNameSpace::registerContact(const Contact& contact) {
     if (address.isValid()) {
         NestedContact nc;
         nc.fromString(address.getRegName().c_str());
-        ConstString cat = nc.getCategory();
+        std::string cat = nc.getCategory();
         if (nc.getNestedName()!="") {
-            //bool service = (cat.find("1") != ConstString::npos);
-            bool publish = (cat.find('+') != ConstString::npos);
-            bool subscribe = (cat.find('-') != ConstString::npos);
+            //bool service = (cat.find("1") != std::string::npos);
+            bool publish = (cat.find('+') != std::string::npos);
+            bool subscribe = (cat.find('-') != std::string::npos);
             ContactStyle style;
             Contact c1(nc.getFullName());
-            Contact c2(ConstString("topic:/") + nc.getNestedName());
+            Contact c2(std::string("topic:/") + nc.getNestedName());
             if (subscribe) {
                 style.persistenceType = ContactStyle::END_WITH_TO_PORT;
                 connectPortToTopic(c2, c1, style);
@@ -70,17 +70,17 @@ Contact YarpNameSpace::registerContact(const Contact& contact) {
     return address;
 }
 
-Contact YarpNameSpace::unregisterName(const ConstString& name) {
+Contact YarpNameSpace::unregisterName(const std::string& name) {
     NestedContact nc;
     nc.fromString(name);
-    ConstString cat = nc.getCategory();
+    std::string cat = nc.getCategory();
     if (nc.getNestedName()!="") {
-        //bool service = (cat.find("1") != ConstString::npos);
-        bool publish = (cat.find('+') != ConstString::npos);
-        bool subscribe = (cat.find('-') != ConstString::npos);
+        //bool service = (cat.find("1") != std::string::npos);
+        bool publish = (cat.find('+') != std::string::npos);
+        bool subscribe = (cat.find('-') != std::string::npos);
         ContactStyle style;
         Contact c1(nc.getFullName());
-        Contact c2(ConstString("topic:/") + nc.getNestedName());
+        Contact c2(std::string("topic:/") + nc.getNestedName());
         if (subscribe) {
             disconnectPortFromTopic(c2, c1, style);
         }
@@ -98,7 +98,7 @@ Contact YarpNameSpace::unregisterContact(const Contact& contact) {
 }
 
 
-bool YarpNameSpace::setProperty(const ConstString& name, const ConstString& key,
+bool YarpNameSpace::setProperty(const std::string& name, const std::string& key,
                                 const Value& value) {
     Bottle command;
     command.addString("bot");
@@ -112,7 +112,7 @@ bool YarpNameSpace::setProperty(const ConstString& name, const ConstString& key,
     return reply.size()>0;
 }
 
-Value *YarpNameSpace::getProperty(const ConstString& name, const ConstString& key) {
+Value *YarpNameSpace::getProperty(const std::string& name, const std::string& key) {
     Bottle command;
     command.addString("bot");
     command.addString("get");
@@ -156,7 +156,7 @@ bool YarpNameSpace::writeToNameServer(PortWriter& cmd,
                                       const ContactStyle& style) {
     YARP_UNUSED(style);
     Contact srv = getNameServerContact();
-    ConstString cmd0 = "NAME_SERVER";
+    std::string cmd0 = "NAME_SERVER";
 
     DummyConnector con0;
     cmd.write(con0.getWriter());
@@ -167,7 +167,7 @@ bool YarpNameSpace::writeToNameServer(PortWriter& cmd,
         cmd0 += in.get(i).toString().c_str();
     }
     NameClient& nic = HELPER(this);
-    ConstString result = nic.send(cmd0);
+    std::string result = nic.send(cmd0);
     Bottle reply2;
     reply2.addString(result.c_str());
     DummyConnector con;

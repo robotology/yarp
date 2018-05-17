@@ -12,7 +12,7 @@
 #include <yarp/os/BufferedPort.h>
 #include <yarp/os/Thread.h>
 #include <yarp/os/Semaphore.h>
-#include <yarp/os/ConstString.h>
+#include <string>
 #include <yarp/os/Time.h>
 #include <yarp/os/Bottle.h>
 #include <yarp/os/QosStyle.h>
@@ -27,7 +27,7 @@ using namespace yarp::os;
 class NetworkTestWorker1 : public Thread {
 public:
     Semaphore fini;
-    ConstString name;
+    std::string name;
     Port p;
 
     NetworkTestWorker1() : fini(0) {
@@ -89,7 +89,7 @@ public:
 
 class NetworkTest : public UnitTest {
 public:
-    virtual ConstString getName() override { return "NetworkTest"; }
+    virtual std::string getName() override { return "NetworkTest"; }
 
     void checkConnect() {
         report(0,"checking return value of connect method");
@@ -198,8 +198,8 @@ public:
         face.close();
     }
 
-    static bool waitConnect(const ConstString& n1,
-                            const ConstString& n2,
+    static bool waitConnect(const std::string& n1,
+                            const std::string& n2,
                             double timeout) {
         double start = Time::now();
         while (Time::now()-start<timeout) {

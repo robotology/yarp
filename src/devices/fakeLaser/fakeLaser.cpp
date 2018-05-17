@@ -423,7 +423,7 @@ void FakeLaser::threadRelease()
 #endif
 }
 
-bool FakeLaser::getDeviceInfo(yarp::os::ConstString &device_info)
+bool FakeLaser::getDeviceInfo(std::string &device_info)
 {
     this->mutex.wait();
     device_info = info;

@@ -17,6 +17,8 @@
 #include <yarp/os/Vocab.h>
 #include <yarp/os/Bottle.h>
 
+#include <string>
+
 namespace yarp {
     namespace os {
         namespace idl {
@@ -70,9 +72,9 @@ public:
 
     bool writeTag(const char *tag, int split, int len);
 
-    bool writeString(const yarp::os::ConstString& tag);
+    bool writeString(const std::string& tag);
 
-    bool writeBinary(const yarp::os::ConstString& tag);
+    bool writeBinary(const std::string& tag);
 
     bool writeListHeader(int len);
 
@@ -92,7 +94,7 @@ public:
 
 private:
     bool get_mode;
-    yarp::os::ConstString get_string;
+    YARP_SUPPRESS_DLL_INTERFACE_WARNING_ARG(std::string) get_string;
     bool get_is_vocab;
     bool need_ok;
     ConnectionWriter& writer;

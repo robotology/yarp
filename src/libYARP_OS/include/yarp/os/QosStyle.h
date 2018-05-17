@@ -10,20 +10,13 @@
 #define YARP_OS_QOSSTYLE_H
 
 #include <yarp/os/api.h>
-#include <yarp/conf/system.h>
+#include <string>
 
 namespace yarp {
     namespace os {
         class QosStyle;
     }
 }
-
-#ifndef YARP_WRAP_STL_STRING
-# include <string>
-namespace yarp { namespace os { typedef std::string ConstString; }}
-#else
-namespace yarp { namespace os { class ConstString; }}
-#endif
 
 /**
  * \ingroup comm_class
@@ -127,7 +120,7 @@ public:
      * @param priority the string to be interpreted as priority
      * @return true if correctly set, false otherwise
      */
-    bool setPacketPriority(const ConstString& priority);
+    bool setPacketPriority(const std::string& priority);
 
 
     /**

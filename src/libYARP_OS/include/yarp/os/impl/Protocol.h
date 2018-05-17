@@ -12,7 +12,7 @@
 
 #include <yarp/os/Carrier.h>
 #include <yarp/os/impl/Logger.h>
-#include <yarp/os/ConstString.h>
+#include <string>
 #include <yarp/os/TwoWayStream.h>
 #include <yarp/os/Carriers.h>
 #include <yarp/os/impl/StreamConnectionReader.h>
@@ -119,7 +119,7 @@ public:
     }
 
     // Documented in yarp::os::InputProtocol.
-    virtual bool open(const ConstString& name) override;
+    virtual bool open(const std::string& name) override;
 
     // Documented in yarp::os::OutputProtocol.
     virtual bool isOk() override
@@ -188,7 +188,7 @@ public:
     }
 
     // Documented in yarp::os::ConnectionState.
-    yarp::os::ConstString getSenderSpecifier() override;
+    std::string getSenderSpecifier() override;
 
     // Documented in yarp::os::InputProtocol.
     virtual bool setTimeout(double timeout) override
@@ -199,13 +199,13 @@ public:
     }
 
     // Documented in yarp::os::InputProtocol.
-    virtual void setEnvelope(const yarp::os::ConstString& str) override
+    virtual void setEnvelope(const std::string& str) override
     {
         envelope = str;
     }
 
     // Documented in yarp::os::ConnectionState.
-    virtual const ConstString& getEnvelope() override
+    virtual const std::string& getEnvelope() override
     {
         return envelope;
     }
@@ -332,7 +332,7 @@ private:
      * kind of network.
      *
      */
-    void setCarrier(const ConstString& carrierNameBase);
+    void setCarrier(const std::string& carrierNameBase);
 
     /**
      *
@@ -428,7 +428,7 @@ private:
     StreamConnectionReader reader;  ///< reader for incoming messages
     yarp::os::Portable *ref; ///< source for current message, so we can
                              ///< bypass serialization on local connections
-    ConstString envelope;         ///< envelope for current message
+    std::string envelope;         ///< envelope for current message
     NullConnection nullConnection; ///< dummy connection
     yarp::os::Contactable *port;   ///< port associated with this connection
     bool pendingReply;  ///< will we be making a reply

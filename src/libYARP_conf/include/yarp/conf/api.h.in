@@ -11,6 +11,7 @@
 #define YARP_CONF_API_H
 
 #include <yarp/conf/compiler.h>
+#include <yarp/conf/system.h>
 
 /*
 

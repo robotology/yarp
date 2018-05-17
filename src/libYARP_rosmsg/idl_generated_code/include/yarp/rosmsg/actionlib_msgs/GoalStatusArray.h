@@ -160,24 +160,24 @@ public:
     typedef yarp::os::idl::BottleStyle<yarp::rosmsg::actionlib_msgs::GoalStatusArray> bottleStyle;
 
     // Give source text for class, ROS will need this
-    static yarp::os::ConstString typeText()
+    static std::string typeText()
     {
-        return yarp::os::ConstString("\
+        return std::string("\
 # Stores the statuses for goals that are currently being tracked\n\
 # by an action server\n\
 Header header\n\
 GoalStatus[] status_list\n\
 \n\
-") + yarp::os::ConstString("\n\
+") + std::string("\n\
 ================================================================================\n\
 MSG: std_msgs/Header\n\
-") + yarp::rosmsg::std_msgs::Header::typeText() + yarp::os::ConstString("\n\
+") + yarp::rosmsg::std_msgs::Header::typeText() + std::string("\n\
 ================================================================================\n\
 MSG: actionlib_msgs/GoalStatus\n\
 ") + yarp::rosmsg::actionlib_msgs::GoalStatus::typeText();
     }
 
-    yarp::os::ConstString getTypeText() const
+    std::string getTypeText() const
     {
         return yarp::rosmsg::actionlib_msgs::GoalStatusArray::typeText();
     }

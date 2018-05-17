@@ -11,7 +11,7 @@
 #include <yarp/os/impl/BottleImpl.h>
 #include <yarp/conf/numeric.h>
 
-#include <yarp/os/ConstString.h>
+#include <string>
 #include <yarp/os/NetFloat64.h>
 #include <yarp/os/StringInputStream.h>
 #include <yarp/os/StringOutputStream.h>
@@ -41,7 +41,7 @@ using yarp::os::Bytes;
 using yarp::os::ConnectionReader;
 using yarp::os::ConnectionWriter;
 using yarp::os::Bottle;
-using yarp::os::ConstString;
+using std::string;
 using yarp::os::Searchable;
 using yarp::os::Value;
 
@@ -127,7 +127,7 @@ void BottleImpl::clear()
     dirty = true;
 }
 
-void BottleImpl::smartAdd(const ConstString& str)
+void BottleImpl::smartAdd(const std::string& str)
 {
     if (str.length() > 0) {
         char ch = str[0];
@@ -207,7 +207,7 @@ void BottleImpl::smartAdd(const ConstString& str)
             s->fromStringNested(str);
             if (ss != nullptr) {
                 if (str.length() == 0 || str[0] != '\"') {
-                    ConstString val = ss->asString();
+                    std::string val = ss->asString();
                     if (val == "true") {
                         delete s;
                         s = new StoreVocab(static_cast<int>('1'));
@@ -223,17 +223,17 @@ void BottleImpl::smartAdd(const ConstString& str)
     }
 }
 
-void BottleImpl::fromString(const ConstString& line)
+void BottleImpl::fromString(const std::string& line)
 {
     clear();
     dirty = true;
-    ConstString arg = "";
+    std::string arg = "";
     bool quoted = false;
     bool back = false;
     bool begun = false;
     int nested = 0;
     int nestedAlt = 0;
-    ConstString nline = line + " ";
+    std::string nline = line + " ";
 
     for (unsigned int i = 0; i < nline.length(); i++) {
         char ch = nline[i];
@@ -296,7 +296,7 @@ bool BottleImpl::isComplete(const char* txt)
     bool begun = false;
     int nested = 0;
     int nestedAlt = 0;
-    ConstString nline = txt;
+    std::string nline = txt;
     nline += " ";
 
     for (unsigned int i = 0; i < nline.length(); i++) {
@@ -347,9 +347,9 @@ bool BottleImpl::isComplete(const char* txt)
 }
 
 
-ConstString BottleImpl::toString()
+std::string BottleImpl::toString()
 {
-    ConstString result = "";
+    std::string result = "";
     for (unsigned int i = 0; i < content.size(); i++) {
         if (i > 0) {
             result += " ";
@@ -445,7 +445,7 @@ bool BottleImpl::fromBytes(ConnectionReader& reader)
 
 void BottleImpl::fromBinary(const char* text, int len)
 {
-    ConstString wrapper(text, len);
+    std::string wrapper(text, len);
     StringInputStream sis;
     sis.add(wrapper);
     StreamConnectionReader reader;
@@ -457,7 +457,7 @@ void BottleImpl::fromBinary(const char* text, int len)
 
 bool BottleImpl::fromBytes(const Bytes& data)
 {
-    ConstString wrapper(data.get(), data.length());
+    std::string wrapper(data.get(), data.length());
     StringInputStream sis;
     sis.add(wrapper);
     StreamConnectionReader reader;
@@ -551,7 +551,7 @@ bool BottleImpl::read(ConnectionReader& reader)
     bool result = false;
 
     if (reader.isTextMode()) {
-        ConstString str = reader.expectText().c_str();
+        std::string str = reader.expectText().c_str();
         if (reader.isError()) {
             return false;
         }
@@ -675,14 +675,14 @@ void BottleImpl::setNested(bool nested)
 ////////////////////////////////////////////////////////////////////////////
 // StoreInt
 
-ConstString StoreInt::toString() const
+std::string StoreInt::toString() const
 {
     char buf[256];
     sprintf(buf, "%d", x);
-    return ConstString(buf);
+    return std::string(buf);
 }
 
-void StoreInt::fromString(const ConstString& src)
+void StoreInt::fromString(const std::string& src)
 {
     // x = atoi(src.c_str());
     x = strtol(src.c_str(), static_cast<char**>(nullptr), 0);
@@ -704,14 +704,14 @@ bool StoreInt::writeRaw(ConnectionWriter& writer)
 ////////////////////////////////////////////////////////////////////////////
 // StoreInt64
 
-ConstString StoreInt64::toString() const
+std::string StoreInt64::toString() const
 {
     char buf[256];
     sprintf(buf, "%" YARP_INT64_FMT, x);
-    return ConstString(buf);
+    return std::string(buf);
 }
 
-void StoreInt64::fromString(const ConstString& src)
+void StoreInt64::fromString(const std::string& src)
 {
     x = strtoll(src.c_str(), static_cast<char**>(nullptr), 0);
 }
@@ -732,7 +732,7 @@ bool StoreInt64::writeRaw(ConnectionWriter& writer)
 ////////////////////////////////////////////////////////////////////////////
 // StoreVocab
 
-ConstString StoreVocab::toString() const
+std::string StoreVocab::toString() const
 {
     if (x == 0) {
         return "false";
@@ -740,15 +740,15 @@ ConstString StoreVocab::toString() const
     if (x == '1') {
         return "true";
     }
-    return ConstString(Vocab::decode(x).c_str());
+    return std::string(Vocab::decode(x).c_str());
 }
 
-void StoreVocab::fromString(const ConstString& src)
+void StoreVocab::fromString(const std::string& src)
 {
     x = Vocab::encode(src.c_str());
 }
 
-ConstString StoreVocab::toStringNested() const
+std::string StoreVocab::toStringNested() const
 {
     if (x == 0) {
         return "false";
@@ -756,16 +756,16 @@ ConstString StoreVocab::toStringNested() const
     if (x == '1') {
         return "true";
     }
-    return ConstString("[") + toString() + "]";
+    return std::string("[") + toString() + "]";
 }
 
-void StoreVocab::fromStringNested(const ConstString& src)
+void StoreVocab::fromStringNested(const std::string& src)
 {
     x = 0;
     if (src.length() > 0) {
         if (src[0] == '[') {
             // ignore first [ and last ]
-            ConstString buf = src.substr(1, src.length() - 2);
+            std::string buf = src.substr(1, src.length() - 2);
             fromString(buf.c_str());
         } else if (src == "true") {
             x = static_cast<int>('1');
@@ -791,11 +791,11 @@ bool StoreVocab::writeRaw(ConnectionWriter& writer)
 ////////////////////////////////////////////////////////////////////////////
 // StoreDouble
 
-ConstString StoreDouble::toString() const
+std::string StoreDouble::toString() const
 {
     char buf[YARP_DOUBLE_TO_STRING_MAX_LENGTH];    // -> see comment at the top of the file
     std::snprintf(buf, YARP_DOUBLE_TO_STRING_MAX_LENGTH, "%.*g", DBL_DIG, x);
-    ConstString str(buf);
+    std::string str(buf);
 
     // If locale is set, the locale version of the decimal point is used.
     // In this case we change it to the standard "."
@@ -804,23 +804,23 @@ ConstString StoreDouble::toString() const
     // 1e5) we add ".0" to ensure that it will be interpreted as a double.
     struct lconv* lc = localeconv();
     size_t offset = str.find(lc->decimal_point);
-    if (offset != ConstString::npos) {
+    if (offset != std::string::npos) {
         str[offset] = '.';
     } else {
-        if (str.find('e') == ConstString::npos) {
+        if (str.find('e') == std::string::npos) {
             str += ".0";
         }
     }
     return str;
 }
 
-void StoreDouble::fromString(const ConstString& src)
+void StoreDouble::fromString(const std::string& src)
 {
     // YARP Bug 2526259: Locale settings influence YARP behavior
     // Need to deal with alternate versions of the decimal point.
-    ConstString tmp = src;
+    std::string tmp = src;
     size_t offset = tmp.find('.');
-    if (offset != ConstString::npos) {
+    if (offset != std::string::npos) {
         struct lconv* lc = localeconv();
         tmp[offset] = lc->decimal_point[0];
     }
@@ -847,15 +847,15 @@ bool StoreDouble::writeRaw(ConnectionWriter& writer)
 ////////////////////////////////////////////////////////////////////////////
 // StoreString
 
-ConstString StoreString::toString() const
+std::string StoreString::toString() const
 {
     return x;
 }
 
-ConstString StoreString::toStringNested() const
+std::string StoreString::toStringNested() const
 {
     // quoting code: very inefficient, but portable
-    ConstString result;
+    std::string result;
 
     bool needQuote = false;
     for (unsigned int i = 0; i < x.length(); i++) {
@@ -907,12 +907,12 @@ ConstString StoreString::toStringNested() const
     return result;
 }
 
-void StoreString::fromString(const ConstString& src)
+void StoreString::fromString(const std::string& src)
 {
     x = src;
 }
 
-void StoreString::fromStringNested(const ConstString& src)
+void StoreString::fromStringNested(const std::string& src)
 {
     // unquoting code: very inefficient, but portable
     x = "";
@@ -960,7 +960,7 @@ void StoreString::fromStringNested(const ConstString& src)
 bool StoreString::readRaw(ConnectionReader& reader)
 {
     int len = reader.expectInt();
-    ConstString buf(YARP_STRINIT(len));
+    std::string buf(YARP_STRINIT(len));
     reader.expectBlock(buf.c_str(), len);
     // This is needed for compatibility with versions of yarp before March 2015
     if (len > 0) {
@@ -983,9 +983,9 @@ bool StoreString::writeRaw(ConnectionWriter& writer)
 ////////////////////////////////////////////////////////////////////////////
 // StoreBlob
 
-ConstString StoreBlob::toString() const
+std::string StoreBlob::toString() const
 {
-    ConstString result = "";
+    std::string result = "";
     for (unsigned int i = 0; i < x.length(); i++) {
         if (i > 0) {
             result += " ";
@@ -997,15 +997,15 @@ ConstString StoreBlob::toString() const
     return result;
 }
 
-ConstString StoreBlob::toStringNested() const
+std::string StoreBlob::toStringNested() const
 {
-    return ConstString("{") + toString() + "}";
+    return std::string("{") + toString() + "}";
 }
 
-void StoreBlob::fromString(const ConstString& src)
+void StoreBlob::fromString(const std::string& src)
 {
     Bottle bot(src.c_str());
-    ConstString buf(YARP_STRINIT(bot.size()));
+    std::string buf(YARP_STRINIT(bot.size()));
     for (int i = 0; i < bot.size(); i++) {
         buf[i] =
             static_cast<char>(static_cast<unsigned char>(bot.get(i).asInt()));
@@ -1013,12 +1013,12 @@ void StoreBlob::fromString(const ConstString& src)
     x = buf;
 }
 
-void StoreBlob::fromStringNested(const ConstString& src)
+void StoreBlob::fromStringNested(const std::string& src)
 {
     if (src.length() > 0) {
         if (src[0] == '{') {
             // ignore first { and last }
-            ConstString buf = src.substr(1, src.length() - 2);
+            std::string buf = src.substr(1, src.length() - 2);
             fromString(buf.c_str());
         }
     }
@@ -1027,7 +1027,7 @@ void StoreBlob::fromStringNested(const ConstString& src)
 bool StoreBlob::readRaw(ConnectionReader& reader)
 {
     int len = reader.expectInt();
-    ConstString buf(YARP_STRINIT(len));
+    std::string buf(YARP_STRINIT(len));
     reader.expectBlock(static_cast<const char*>(buf.c_str()), len);
     x = buf;
     return true;
@@ -1044,27 +1044,27 @@ bool StoreBlob::writeRaw(ConnectionWriter& writer)
 ////////////////////////////////////////////////////////////////////////////
 // StoreList
 
-ConstString StoreList::toString() const
+std::string StoreList::toString() const
 {
-    return ConstString(content.toString().c_str());
+    return std::string(content.toString().c_str());
 }
 
-ConstString StoreList::toStringNested() const
+std::string StoreList::toStringNested() const
 {
-    return ConstString("(") + content.toString().c_str() + ")";
+    return std::string("(") + content.toString().c_str() + ")";
 }
 
-void StoreList::fromString(const ConstString& src)
+void StoreList::fromString(const std::string& src)
 {
     content.fromString(src.c_str());
 }
 
-void StoreList::fromStringNested(const ConstString& src)
+void StoreList::fromStringNested(const std::string& src)
 {
     if (src.length() > 0) {
         if (src[0] == '(') {
             // ignore first ( and last )
-            ConstString buf = src.substr(1, src.length() - 2);
+            std::string buf = src.substr(1, src.length() - 2);
             content.fromString(buf.c_str());
         }
     }
@@ -1117,27 +1117,27 @@ int StoreList::subCode() const
 ////////////////////////////////////////////////////////////////////////////
 // StoreDict
 
-ConstString StoreDict::toString() const
+std::string StoreDict::toString() const
 {
-    return ConstString(content.toString().c_str());
+    return std::string(content.toString().c_str());
 }
 
-ConstString StoreDict::toStringNested() const
+std::string StoreDict::toStringNested() const
 {
-    return ConstString("(") + content.toString().c_str() + ")";
+    return std::string("(") + content.toString().c_str() + ")";
 }
 
-void StoreDict::fromString(const ConstString& src)
+void StoreDict::fromString(const std::string& src)
 {
     content.fromString(src.c_str());
 }
 
-void StoreDict::fromStringNested(const ConstString& src)
+void StoreDict::fromStringNested(const std::string& src)
 {
     if (src.length() > 0) {
         if (src[0] == '(') {
             // ignore first ( and last )
-            ConstString buf = src.substr(1, src.length() - 2);
+            std::string buf = src.substr(1, src.length() - 2);
             content.fromString(buf.c_str());
         }
     }
@@ -1230,7 +1230,7 @@ int BottleImpl::getInt(int index)
     return content[index]->asInt();
 }
 
-yarp::os::ConstString BottleImpl::getString(int index)
+std::string BottleImpl::getString(int index)
 {
     if (!isString(index)) {
         return "";
@@ -1308,19 +1308,19 @@ void BottleImpl::copyRange(const BottleImpl* alt, int first, int len)
     }
 }
 
-Value& Storable::find(const ConstString& key) const
+Value& Storable::find(const std::string& key) const
 {
     YARP_UNUSED(key);
     return BottleImpl::getNull();
 }
 
-Bottle& Storable::findGroup(const ConstString& key) const
+Bottle& Storable::findGroup(const std::string& key) const
 {
     YARP_UNUSED(key);
     return Bottle::getNullBottle();
 }
 
-bool Storable::check(const ConstString& key) const
+bool Storable::check(const std::string& key) const
 {
     Bottle& val = findGroup(key);
     if (!val.isNull()) {
@@ -1332,7 +1332,7 @@ bool Storable::check(const ConstString& key) const
 
 bool Storable::operator==(const Value& alt) const
 {
-    return ConstString(toString().c_str()) == alt.toString().c_str();
+    return std::string(toString().c_str()) == alt.toString().c_str();
 }
 
 
@@ -1361,10 +1361,10 @@ void BottleImpl::edit()
     }
 }
 
-Value& BottleImpl::findGroupBit(const ConstString& key) const
+Value& BottleImpl::findGroupBit(const std::string& key) const
 {
     for (size_t i = 0; i < size(); i++) {
-        Value* org = &(get(i));
+        Value* org = &(get((int)i));
         Value* cursor = org;
         if (cursor->isList()) {
             cursor = &(cursor->asList()->get(0));
@@ -1377,10 +1377,10 @@ Value& BottleImpl::findGroupBit(const ConstString& key) const
     return get(-1);
 }
 
-Value& BottleImpl::findBit(const ConstString& key) const
+Value& BottleImpl::findBit(const std::string& key) const
 {
     for (size_t i = 0; i < size(); i++) {
-        Value* org = &(get(i));
+        Value* org = &(get((int)i));
         Value* cursor = org;
         bool nested = false;
         if (cursor->isList()) {
@@ -1397,13 +1397,13 @@ Value& BottleImpl::findBit(const ConstString& key) const
                 report.key = key;
                 report.isFound = true;
                 if (size() == 2) {
-                    report.value = get(i + 1).toString();
+                    report.value = get((int)(i + 1)).toString();
                 }
                 if (parent) {
                     parent->reportToMonitor(report);
                 }
             }
-            return get(i + 1);
+            return get((int)(i + 1));
         }
     }
     // return invalid object

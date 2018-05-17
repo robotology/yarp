@@ -194,9 +194,9 @@ public:
     typedef yarp::os::idl::BottleStyle<yarp::rosmsg::sensor_msgs::MagneticField> bottleStyle;
 
     // Give source text for class, ROS will need this
-    static yarp::os::ConstString typeText()
+    static std::string typeText()
     {
-        return yarp::os::ConstString("\
+        return std::string("\
  # Measurement of the Magnetic Field vector at a specific location.\n\
 \n\
  # If the covariance of the measurement is known, it should be filled in\n\
@@ -218,16 +218,16 @@ public:
                                       # put NaNs in the components not reported.\n\
 \n\
  float64[9] magnetic_field_covariance # Row major about x, y, z axes\n\
-                                      # 0 is interpreted as variance unknown") + yarp::os::ConstString("\n\
+                                      # 0 is interpreted as variance unknown") + std::string("\n\
 ================================================================================\n\
 MSG: std_msgs/Header\n\
-") + yarp::rosmsg::std_msgs::Header::typeText() + yarp::os::ConstString("\n\
+") + yarp::rosmsg::std_msgs::Header::typeText() + std::string("\n\
 ================================================================================\n\
 MSG: geometry_msgs/Vector3\n\
 ") + yarp::rosmsg::geometry_msgs::Vector3::typeText();
     }
 
-    yarp::os::ConstString getTypeText() const
+    std::string getTypeText() const
     {
         return yarp::rosmsg::sensor_msgs::MagneticField::typeText();
     }

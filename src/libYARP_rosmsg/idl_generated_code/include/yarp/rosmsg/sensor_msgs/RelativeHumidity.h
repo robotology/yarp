@@ -158,9 +158,9 @@ public:
     typedef yarp::os::idl::BottleStyle<yarp::rosmsg::sensor_msgs::RelativeHumidity> bottleStyle;
 
     // Give source text for class, ROS will need this
-    static yarp::os::ConstString typeText()
+    static std::string typeText()
     {
-        return yarp::os::ConstString("\
+        return std::string("\
  # Single reading from a relative humidity sensor.  Defines the ratio of partial\n\
  # pressure of water vapor to the saturated vapor pressure at a temperature.\n\
 \n\
@@ -172,13 +172,13 @@ public:
                            # 0.0 is no partial pressure of water vapor\n\
                            # 1.0 represents partial pressure of saturation\n\
 \n\
- float64 variance          # 0 is interpreted as variance unknown") + yarp::os::ConstString("\n\
+ float64 variance          # 0 is interpreted as variance unknown") + std::string("\n\
 ================================================================================\n\
 MSG: std_msgs/Header\n\
 ") + yarp::rosmsg::std_msgs::Header::typeText();
     }
 
-    yarp::os::ConstString getTypeText() const
+    std::string getTypeText() const
     {
         return yarp::rosmsg::sensor_msgs::RelativeHumidity::typeText();
     }

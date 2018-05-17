@@ -44,14 +44,14 @@ private:
     int seq;
     WireTwiddler twiddler;
     WireTwiddlerWriter twiddler_output;
-    yarp::os::ConstString kind;
+    std::string kind;
     bool persistent;
-    ConstString wire_type;
-    ConstString user_type;
-    ConstString md5sum;
-    ConstString message_definition;
+    std::string wire_type;
+    std::string user_type;
+    std::string md5sum;
+    std::string message_definition;
 
-    ConstString getRosType(ConnectionState& proto);
+    std::string getRosType(ConnectionState& proto);
 
 protected:
     bool isService;
@@ -72,7 +72,7 @@ public:
         return new TcpRosCarrier();
     }
 
-    virtual ConstString getName() override {
+    virtual std::string getName() override {
         return isService?"rossrv":"tcpros";
     }
 
@@ -117,7 +117,7 @@ public:
         return false;
     }
 
-    virtual ConstString toString() override {
+    virtual std::string toString() override {
         return isService?"rossrv_carrier":"tcpros_carrier";
     }
 
@@ -181,7 +181,7 @@ public:
         return true;
     }
 
-    virtual ConstString getBootstrapCarrierName() override { return ""; }
+    virtual std::string getBootstrapCarrierName() override { return ""; }
 
     virtual int connect(const yarp::os::Contact& src,
                         const yarp::os::Contact& dest,

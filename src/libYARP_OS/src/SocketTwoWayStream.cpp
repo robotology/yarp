@@ -28,7 +28,7 @@ int SocketTwoWayStream::open(const Contact& address) {
     if (address.getPort()==-1) {
         return -1;
     }
-    ConstString host = address.getHost();
+    std::string host = address.getHost();
     yarp::os::impl::TcpConnector connector;
 #ifdef YARP_HAS_ACE
     if (address.getHost() == "localhost") {

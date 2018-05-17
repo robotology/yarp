@@ -7,7 +7,7 @@
  * BSD-3-Clause license. See the accompanying LICENSE file for details.
  */
 
-#include <yarp/os/ConstString.h>
+#include <string>
 #include <yarp/os/impl/Logger.h>
 #include <yarp/os/impl/UnitTest.h>
 #include <yarp/os/impl/Companion.h>
@@ -53,7 +53,7 @@ int harness_main(int argc, char *argv[]) {
 
     if (argc>1) {
         int verbosity = 0;
-        while (ConstString(argv[1])==ConstString("verbose")) {
+        while (std::string(argv[1])==std::string("verbose")) {
             verbosity++;
             argc--;
             argv++;
@@ -62,7 +62,7 @@ int harness_main(int argc, char *argv[]) {
             Logger::get().setVerbosity(verbosity);
         }
 
-        if (ConstString(argv[1])==ConstString("regression")) {
+        if (std::string(argv[1])==std::string("regression")) {
             done = true;
 
             // Start the testing system
@@ -85,11 +85,11 @@ int harness_main(int argc, char *argv[]) {
 
 
 
-static ConstString getFile(const char *fname) {
+static std::string getFile(const char *fname) {
     char buf[25600];
     FILE *fin = fopen(fname,"r");
     if (fin==nullptr) return "";
-    ConstString result = "";
+    std::string result = "";
     while(fgets(buf, sizeof(buf)-1, fin) != nullptr) {
         result += buf;
     }
@@ -99,7 +99,7 @@ static ConstString getFile(const char *fname) {
 
     /*
     ifstream fin(fname);
-    ConstString txt;
+    std::string txt;
     if (fin.fail()) {
         return "";
     }
@@ -121,13 +121,13 @@ static void toDox(PolyDriver& dd, FILE *os) {
     fprintf(os, "<tr><td>PROPERTY</td><td>DESCRIPTION</td><td>DEFAULT</td></tr>\n");
     Bottle order = dd.getOptions();
     for (int i=0; i<order.size(); i++) {
-        ConstString name = order.get(i).toString().c_str();
+        std::string name = order.get(i).toString().c_str();
         if (name=="wrapped"||name.substr(0,10)=="subdevice.") {
             continue;
         }
-        ConstString desc = dd.getComment(name.c_str());
-        ConstString def = dd.getDefaultValue(name.c_str()).toString();
-        ConstString out = "";
+        std::string desc = dd.getComment(name.c_str());
+        std::string def = dd.getDefaultValue(name.c_str()).toString();
+        std::string out = "";
         out += "<tr><td>";
         out += name.c_str();
         out += "</td><td>";
@@ -148,7 +148,7 @@ int main(int argc, char *argv[]) {
     // compile by YARP, also the one compiled as dynamic plugins
     // we add the build directory to the YARP_DATA_DIRS enviromental variable
     // CMAKE_CURRENT_DIR is the define by the CMakeLists.txt tests file
-    ConstString dirs = CMAKE_BINARY_DIR +
+    std::string dirs = CMAKE_BINARY_DIR +
                        yarp::os::Network::getDirectorySeparator() +
                        "share" +
                        yarp::os::Network::getDirectorySeparator() +
@@ -171,16 +171,16 @@ int main(int argc, char *argv[]) {
     printf("YARP_DATA_DIRS=\"%s\"\n", Network::getEnvironment("YARP_DATA_DIRS").c_str());
 
     // check where to put description of device
-    ConstString dest = "";
+    std::string dest = "";
     dest = p.check("doc",Value("")).toString();
 
-    ConstString fileName = p.check("file",Value("default.ini")).asString();
+    std::string fileName = p.check("file",Value("default.ini")).asString();
 
     if (p.check("file")) {
         p.fromConfigFile(fileName);
     }
 
-    ConstString deviceName = p.check("device",Value("")).asString();
+    std::string deviceName = p.check("device",Value("")).asString();
 
     // if no device given, we should be operating a completely
     // standard test harness like for libYARP_OS and libYARP_sig
@@ -199,8 +199,8 @@ int main(int argc, char *argv[]) {
     Network::init();
     Network::setLocalMode(true);
 
-    ConstString seek = fileName.c_str();
-    ConstString exampleName = "";
+    std::string seek = fileName.c_str();
+    std::string exampleName = "";
     int pos = seek.rfind('/');
     if (pos==-1) {
         pos = seek.rfind('\\');
@@ -217,7 +217,7 @@ int main(int argc, char *argv[]) {
         len -= pos;
     }
     exampleName = seek.substr(pos,len).c_str();
-    ConstString shortFileName = seek.substr(pos,seek.length()).c_str();
+    std::string shortFileName = seek.substr(pos,seek.length()).c_str();
 
     PolyDriver dd;
 	YARP_DEBUG(Logger::get(), "harness opening...");
@@ -226,8 +226,8 @@ int main(int argc, char *argv[]) {
     YARP_DEBUG(Logger::get(), "harness opened.");
     result = ok?0:1;
 
-    ConstString wrapperName = "";
-    ConstString codeName = "";
+    std::string wrapperName = "";
+    std::string codeName = "";
 
     DriverCreator *creator =
         Drivers::factory().find(deviceName.c_str());
@@ -238,7 +238,7 @@ int main(int argc, char *argv[]) {
 
 
     if (dest!="") {
-        ConstString dest2 = dest.c_str();
+        std::string dest2 = dest.c_str();
         if (result!=0) {
             dest2 += ".fail";
         }

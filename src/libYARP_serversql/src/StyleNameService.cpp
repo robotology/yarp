@@ -56,14 +56,14 @@ a:hover{\n\
     Bottle& bot = reply;
     bot.addString("web");
 
-    ConstString code = cmd.get(1).asString();
-    ConstString uri = cmd.check("REQUEST_URI",Value("")).toString();
+    std::string code = cmd.get(1).asString();
+    std::string uri = cmd.check("REQUEST_URI",Value("")).toString();
     if (uri.length()>=4) { uri = uri.substr(4); } else { uri = ""; }
-    ConstString fileName = uri;
+    std::string fileName = uri;
 
     if ((!content.check(uri))||options.check("no-web-cache")) {
         if (options.check("web")) {
-            ConstString accum = "";
+            std::string accum = "";
             bool first = true;
             for (size_t i=0; i<fileName.length(); i++) {
                 char ch = fileName[i];
@@ -87,20 +87,20 @@ a:hover{\n\
                 do {
                     len = fread(buf,1,sizeof(buf),fin);
                     if (len>=1) {
-                        accum += ConstString(buf,len);
+                        accum += std::string(buf,len);
                     }
                 } while (len>=1);
                 fclose(fin);
                 fin = nullptr;
             }
             content.put(uri,accum);
-            if (uri.find(".css")!=ConstString::npos) {
+            if (uri.find(".css")!=std::string::npos) {
                 mime.put(uri,"text/css");
-            } else if (uri.find(".png")!=ConstString::npos) {
+            } else if (uri.find(".png")!=std::string::npos) {
                 mime.put(uri,"image/png");
-            } else if (uri.find(".jpg")!=ConstString::npos) {
+            } else if (uri.find(".jpg")!=std::string::npos) {
                 mime.put(uri,"image/jpeg");
-            } else if (uri.find(".js")!=ConstString::npos) {
+            } else if (uri.find(".js")!=std::string::npos) {
                 mime.put(uri,"text/javascript");
             } else {
                 mime.put(uri,"text/html");
@@ -109,8 +109,8 @@ a:hover{\n\
     }
 
     if (content.check(uri)) {
-        ConstString txt = content.find(uri).asString();
-        ConstString txtMime = mime.find(uri).asString();
+        std::string txt = content.find(uri).asString();
+        std::string txtMime = mime.find(uri).asString();
         printf(" * %s %s %d bytes, %s\n",
                cmd.toString().c_str(),
                (fileName!=uri)?fileName.c_str():"",

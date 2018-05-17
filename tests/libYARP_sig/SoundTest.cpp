@@ -19,7 +19,7 @@ using namespace yarp::os;
 
 class SoundTest : public UnitTest {
 public:
-    virtual ConstString getName() override { return "SoundTest"; }
+    virtual std::string getName() override { return "SoundTest"; }
 
     void checkSetGet() {
         report(0,"check set/get sample...");

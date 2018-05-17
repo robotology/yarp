@@ -14,7 +14,7 @@
 #include <yarp/os/Bottle.h>
 #include <yarp/os/BufferedPort.h>
 #include <yarp/os/Carriers.h>
-#include <yarp/os/ConstString.h>
+#include <string>
 #include <yarp/os/Name.h>
 #include <yarp/os/Network.h>
 #include <yarp/os/Os.h>
@@ -50,7 +50,7 @@
 #ifdef WITH_LIBEDIT
     #include <editline/readline.h>
     #include <vector>
-    static std::vector<yarp::os::ConstString> commands;
+    static std::vector<std::string> commands;
     static yarp::os::Port* rpcHelpPort = nullptr;
     static bool commandListInitialized = false;
 
@@ -145,7 +145,7 @@ using namespace yarp;
 
 Companion Companion::instance;
 
-static ConstString companion_unregister_name;
+static std::string companion_unregister_name;
 static Port *companion_active_port = nullptr;
 
 static void companion_sigint_handler(int sig) {
@@ -223,8 +223,8 @@ static bool EOFreached()
     return feof(stdin);
 }
 
-static ConstString getStdin() {
-    ConstString txt = "";
+static std::string getStdin() {
+    std::string txt = "";
 
 #ifdef WITH_LIBEDIT
     if (yarp::os::impl::isatty(yarp::os::impl::fileno(stdin))) {
@@ -346,13 +346,13 @@ void Companion::add(const char* name,
                     const char* tip = nullptr)
 {
     Entry e(name, fn);
-    action[ConstString(name)] = e;
+    action[std::string(name)] = e;
     // maintain a record of order of keys
-    names.push_back(ConstString(name));
+    names.push_back(std::string(name));
     if (tip != nullptr) {
-        tips.push_back(ConstString(tip));
+        tips.push_back(std::string(tip));
     } else {
-        tips.push_back(ConstString(""));
+        tips.push_back(std::string(""));
     }
 }
 
@@ -375,7 +375,7 @@ int Companion::dispatch(const char* name, int argc, char* argv[])
             skip--;
             continue;
         }
-        ConstString arg = argv[i];
+        std::string arg = argv[i];
         if (arg.find("--") == 0) {
             if (i + 1 < argc) {
                 if (arg == "--type") {
@@ -396,7 +396,7 @@ int Companion::dispatch(const char* name, int argc, char* argv[])
     argc_copy = at;
 
     int v = -1;
-    auto it = action.find(ConstString(name));
+    auto it = action.find(std::string(name));
     if (it != action.end()) {
         v = (this->*(it->second.fn))(argc_copy, argv_copy);
     } else {
@@ -432,20 +432,20 @@ int Companion::main(int argc, char *argv[]) {
     bool more = true;
     while (more && argc>0) {
         more = false;
-        ConstString s = ConstString(argv[0]);
-        if (s == ConstString("verbose")) {
+        std::string s = std::string(argv[0]);
+        if (s == std::string("verbose")) {
             verbose++;
             argc--;
             argv++;
             more = true;
         }
-        if (s == ConstString("quiet")) {
+        if (s == std::string("quiet")) {
             verbose--;
             argc--;
             argv++;
             more = true;
         }
-        if (s == ConstString("admin")) {
+        if (s == std::string("admin")) {
             adminMode = true;
             argc--;
             argv++;
@@ -487,9 +487,9 @@ int Companion::cmdPing(int argc, char *argv[]) {
     bool rate = false;
     if (argc>=1) {
         while (argv[0][0]=='-') {
-            if (ConstString(argv[0])=="--time") {
+            if (std::string(argv[0])=="--time") {
                 time = true;
-            } else if (ConstString(argv[0])=="--rate") {
+            } else if (std::string(argv[0])=="--rate") {
                 rate = true;
             } else {
                 yError("Unrecognized option");
@@ -566,7 +566,7 @@ int Companion::ping(const char *port, bool quiet) {
         bool done = false;
         while (!done) {
             resp.read(reader);
-            ConstString str = resp.toString().c_str();
+            std::string str = resp.toString().c_str();
             if (resp.get(0).asString()!="<ACK>") {
                 printf("%s\n", str.c_str());
             } else {
@@ -687,21 +687,21 @@ int Companion::cmdName(int argc, char *argv[]) {
         cmd.add(v);
     }
 
-    ConstString key = cmd.get(0).asString();
+    std::string key = cmd.get(0).asString();
     if (key=="query") {
         Contact result = NetworkBase::queryName(cmd.get(1).asString());
         if (!result.isValid()) {
             fprintf(stderr, "%s not known.\n", cmd.get(1).asString().c_str());
             return 1;
         }
-        ConstString txt = NameServer::textify(result);
+        std::string txt = NameServer::textify(result);
         printf("%s", txt.c_str());
         return 0;
     }
     if (key=="register") {
-        ConstString portName = cmd.get(1).asString();
-        ConstString machine = "...";
-        ConstString carrier = "...";
+        std::string portName = cmd.get(1).asString();
+        std::string machine = "...";
+        std::string carrier = "...";
         int port = 0;
         bool spec = false;
         if (cmd.size()>2) {
@@ -724,12 +724,12 @@ int Companion::cmdName(int argc, char *argv[]) {
         } else {
             result = NetworkBase::registerName(portName);
         }
-        ConstString txt = NameServer::textify(result);
+        std::string txt = NameServer::textify(result);
         printf("%s", txt.c_str());
         return 0;
     }
     if (key=="unregister") {
-        ConstString portName = cmd.get(1).asString();
+        std::string portName = cmd.get(1).asString();
         Contact result;
         result = NetworkBase::unregisterName(portName);
         printf("Unregistered name.\n");
@@ -770,7 +770,7 @@ int Companion::cmdConf(int argc, char *argv[]) {
     if (argc>=2) {
         nc.fromFile();
         Contact prev = nc.getAddress();
-        ConstString prevMode = nc.getMode();
+        std::string prevMode = nc.getMode();
         Contact next(argv[0], atoi(argv[1]));
         nc.setAddress(next);
         if (argc>=3) {
@@ -781,7 +781,7 @@ int Companion::cmdConf(int argc, char *argv[]) {
         nc.toFile();
         nc.fromFile();
         Contact current = nc.getAddress();
-        ConstString currentMode = nc.getMode();
+        std::string currentMode = nc.getMode();
         printf("Configuration file:\n");
         printf("  %s\n", nc.getConfigFileName().c_str());
         if (prev.isValid()) {
@@ -809,7 +809,7 @@ int Companion::cmdConf(int argc, char *argv[]) {
         return 0;
     }
     if (argc==1) {
-        if (ConstString(argv[0])=="--clean") {
+        if (std::string(argv[0])=="--clean") {
             nc.toFile(true);
             printf("Cleared configuration file:\n");
             printf("  %s\n", nc.getConfigFileName().c_str());
@@ -918,8 +918,8 @@ int Companion::cmdHelp(int argc, char *argv[]) {
     printf("  <yarp> [verbose] [admin] command arg1 arg2 ...\n");
     printf("Here are commands you can use:\n");
     for (unsigned i=0; i<names.size(); i++) {
-        ConstString name = names[i];
-        const ConstString& tip = tips[i];
+        std::string name = names[i];
+        const std::string& tip = tips[i];
         while (name.length()<12) {
             name += " ";
         }
@@ -939,8 +939,8 @@ int Companion::cmdVersion(int argc, char *argv[]) {
 }
 
 
-int Companion::sendMessage(const ConstString& port, PortWriter& writable,
-                           ConstString& output, bool quiet) {
+int Companion::sendMessage(const std::string& port, PortWriter& writable,
+                           std::string& output, bool quiet) {
     output = "";
     Contact srcAddress = NetworkBase::queryName(port.c_str());
     if (!srcAddress.isValid()) {
@@ -1008,7 +1008,7 @@ int Companion::cmdConnect(int argc, char *argv[]) {
     bool persist = false;
     const char *mode = nullptr;
     if (argc>0) {
-        ConstString arg = argv[0];
+        std::string arg = argv[0];
         if (arg=="--persist") {
             persist = true;
         } else if (arg=="--persist-from") {
@@ -1078,10 +1078,10 @@ int Companion::cmdConnect(int argc, char *argv[]) {
     }
 
     const char *src = argv[0];
-    ConstString dest = argv[1];
+    std::string dest = argv[1];
     if (argc>=3) {
         const char *proto = argv[2];
-        dest = ConstString(proto) + ":/" + slashify(dest);
+        dest = std::string(proto) + ":/" + slashify(dest);
     }
 
     if (persist) {
@@ -1095,7 +1095,7 @@ int Companion::cmdConnect(int argc, char *argv[]) {
 int Companion::cmdDisconnect(int argc, char *argv[]) {
     bool persist = false;
     if (argc>0) {
-        if (ConstString(argv[0])=="--persist") {
+        if (std::string(argv[0])=="--persist") {
             persist = true;
             argv++;
             argc--;
@@ -1153,8 +1153,8 @@ int Companion::cmdRpcServer(int argc, char *argv[]) {
     bool drop = false;
     bool stop = false;
     bool echo = false;
-    while (argc>=1 && ConstString(argv[0]).find("--")==0) {
-        ConstString cmd = argv[0];
+    while (argc>=1 && std::string(argv[0]).find("--")==0) {
+        std::string cmd = argv[0];
         if (cmd=="--single") {
             drop = true;
         } else if (cmd=="--stop") {
@@ -1199,7 +1199,7 @@ int Companion::cmdRpcServer(int argc, char *argv[]) {
         if (echo) {
             response = cmd;
         } else {
-            ConstString txt = getStdin();
+            std::string txt = getStdin();
             response.fromString(txt.c_str());
         }
         if (drop) {
@@ -1223,7 +1223,7 @@ int Companion::cmdRpc(int argc, char *argv[]) {
 
     const char *dest = argv[0];
     const char *src;
-    if (ConstString(dest)=="--client") {
+    if (std::string(dest)=="--client") {
         return cmdRpc2(argc, argv);
     }
     Contact address = Name(dest).toAddress();
@@ -1258,13 +1258,13 @@ int Companion::cmdRpc2(int argc, char *argv[]) {
         ok = p.open("...");
     }
     if (ok) {
-        if (ConstString(dest)!="--client") {
+        if (std::string(dest)!="--client") {
             //NetworkBase::connect(p.getName().c_str(), dest);
             ok = p.addOutput(dest);
         }
     }
     while(ok) {
-        ConstString txt = getStdin();
+        std::string txt = getStdin();
         if (EOFreached()) {
             break;
         }
@@ -1306,7 +1306,7 @@ public:
 
 class TextReader : public PortReader {
 public:
-    ConstString str;
+    std::string str;
     virtual bool read(yarp::os::ConnectionReader& reader) override {
         str = reader.expectText();
         return reader.isValid();
@@ -1465,7 +1465,7 @@ int Companion::cmdMake(int argc, char *argv[]) {
 int Companion::cmdNamespace(int argc, char *argv[]) {
     NameConfig nc;
     if (argc!=0) {
-        ConstString fname = nc.getConfigFileName(YARP_CONFIG_NAMESPACE_FILENAME);
+        std::string fname = nc.getConfigFileName(YARP_CONFIG_NAMESPACE_FILENAME);
         printf("Setting namespace in: %s\n", fname.c_str());
         printf("Remove this file to revert to the default namespace (/root)\n");
         Bottle cmd;
@@ -1478,7 +1478,7 @@ int Companion::cmdNamespace(int argc, char *argv[]) {
     Bottle ns = nc.getNamespaces();
 
     //Bottle bot(nc.readConfig(fname).c_str());
-    //ConstString space = bot.get(0).asString().c_str();
+    //std::string space = bot.get(0).asString().c_str();
     if (ns.size()==0) {
         printf("No namespace specified\n");
     }
@@ -1502,7 +1502,7 @@ int Companion::cmdClean(int argc, char *argv[]) {
     }
 
     NameConfig nc;
-    ConstString name = nc.getNamespace();
+    std::string name = nc.getNamespace();
     Bottle msg, reply;
     msg.addString("bot");
     msg.addString("list");
@@ -1525,7 +1525,7 @@ int Companion::cmdClean(int argc, char *argv[]) {
     for (int i=1; i<reply.size(); i++) {
         Bottle *entry = reply.get(i).asList();
         if (entry != nullptr) {
-            ConstString port = entry->check("name", Value("")).asString();
+            std::string port = entry->check("name", Value("")).asString();
             if (port!="" && port!="fallback" && port!=name.c_str()) {
                 Contact c = Contact::fromConfig(*entry);
                 if (c.getCarrier()=="mcast") {
@@ -1556,7 +1556,7 @@ int Companion::cmdClean(int argc, char *argv[]) {
         }
     }
     printf("Giving name server a chance to do garbage collection.\n");
-    ConstString serverName = NetworkBase::getNameServerName();
+    std::string serverName = NetworkBase::getNameServerName();
     Bottle cmd2("gc"), reply2;
     NetworkBase::write(serverName, cmd2, reply2);
     printf("Name server says: %s\n", reply2.toString().c_str());
@@ -1617,7 +1617,7 @@ int Companion::cmdDetectRos(bool write) {
         return 1;
     }
 
-    ConstString uri = NetworkBase::getEnvironment("ROS_MASTER_URI");
+    std::string uri = NetworkBase::getEnvironment("ROS_MASTER_URI");
     if (uri=="") {
         fprintf(stderr, "ROS_MASTER_URI environment variable not set.\n");
         uri = "http://127.0.0.1:11311/";
@@ -1652,10 +1652,10 @@ int Companion::cmdDetect(int argc, char *argv[]) {
     bool shouldUseServer = false;
     bool ros = false;
     if (argc>0) {
-        if (ConstString(argv[0])=="--write") {
+        if (std::string(argv[0])=="--write") {
             //nic.setSave();
             shouldUseServer = true;
-        } else if (ConstString(argv[0])=="--ros") {
+        } else if (std::string(argv[0])=="--ros") {
             ros = true;
         } else {
             YARP_ERROR(Logger::get(), "Argument not understood");
@@ -1775,11 +1775,11 @@ int Companion::subscribe(const char *src, const char *dest, const char *mode) {
                        srcTopic,
                        b->check("dest", Value("?")).asString().c_str(),
                        destTopic);
-                ConstString mode = b->check("mode", Value("")).asString();
+                std::string mode = b->check("mode", Value("")).asString();
                 if (mode!="") {
                     printf(" [%s]", mode.c_str());
                 }
-                ConstString carrier = b->check("carrier", Value("")).asString();
+                std::string carrier = b->check("carrier", Value("")).asString();
                 if (carrier!="") {
                     printf(" (%s)", carrier.c_str());
                 }
@@ -1817,15 +1817,15 @@ int Companion::connect(const char *src, const char *dest, bool silent) {
     return ok?0:1;
     /*
     int err = 0;
-    ConstString result = "";
+    std::string result = "";
     Address srcAddr = Name(src).toAddress();
     Address destAddr = Name(dest).toAddress();
     if (destAddr.getCarrierName()=="" &&
         srcAddr.getCarrierName()!="") {
         // old behavior unhelpful; move modifier from src to dest in
         // this case
-        ConstString newDest = srcAddr.getCarrierName() + ":/" + slashify(dest);
-        ConstString newSrc = slashify(srcAddr.getRegName());
+        std::string newDest = srcAddr.getCarrierName() + ":/" + slashify(dest);
+        std::string newSrc = slashify(srcAddr.getRegName());
         PortCommand pc('\0', slashify(newDest));
         err = sendMessage(newSrc.c_str(), pc, result, silent);
     } else {
@@ -1854,7 +1854,7 @@ int Companion::poll(const char *target, bool silent) {
 }
 
 int Companion::disconnect(const char *src, const char *dest, bool silent) {
-    //PortCommand pc('\0', ConstString("!")+dest);
+    //PortCommand pc('\0', std::string("!")+dest);
     //return sendMessage(src, pc, silent);
     bool ok = NetworkBase::disconnect(src, dest, silent);
     return ok?0:1;
@@ -1862,7 +1862,7 @@ int Companion::disconnect(const char *src, const char *dest, bool silent) {
 
 int Companion::disconnectInput(const char *src, const char *dest,
                                bool silent) {
-    PortCommand pc('\0', ConstString("~")+dest);
+    PortCommand pc('\0', std::string("~")+dest);
     return sendMessage(src, pc, silent);
 }
 
@@ -1945,7 +1945,7 @@ public:
         core.close();
     }
 
-    ConstString getName() {
+    std::string getName() {
         return address.getRegName();
     }
 };
@@ -1981,12 +1981,12 @@ int Companion::cmdReadWrite(int argc, char *argv[])
 int Companion::cmdTopic(int argc, char *argv[]) {
     int mode = 1;
     if (argc>=1) {
-        if (ConstString(argv[0]) == "--remove") {
+        if (std::string(argv[0]) == "--remove") {
             mode = -1;
             argc--;
             argv++;
         }
-        if (ConstString(argv[0]) == "--list") {
+        if (std::string(argv[0]) == "--list") {
             Bottle cmd, reply;
             cmd.addString("topic");
             bool ok = NetworkBase::write(NetworkBase::getNameServerContact(),
@@ -2015,9 +2015,9 @@ int Companion::cmdTopic(int argc, char *argv[]) {
     }
 
     Bottle cmd, reply;
-    ConstString act = (mode==1)?"create":"delete";
+    std::string act = (mode==1)?"create":"delete";
     cmd.addString((mode==1)?"topic":"untopic");
-    if (ConstString(argv[0])!="--list") {
+    if (std::string(argv[0])!="--list") {
         for (int i=0; i<argc; i++) {
             cmd.addString(argv[i]);
         }
@@ -2071,7 +2071,7 @@ int Companion::write(const char *name, int ntargets, char *targets[]) {
     if (yarp::os::impl::isatty(yarp::os::impl::fileno(stdin))) //if interactive mode
     {
         hist_file=yarp::os::ResourceFinder::getDataHome();
-        ConstString slash=NetworkBase::getDirectorySeparator();
+        std::string slash=NetworkBase::getDirectorySeparator();
         hist_file += slash;
         hist_file += "yarp_write";
         yarp::os::mkdir(hist_file.c_str());
@@ -2105,7 +2105,7 @@ int Companion::write(const char *name, int ntargets, char *targets[]) {
 
     bool raw = true;
     for (int i=0; i<ntargets; i++) {
-        if (ConstString(targets[i])=="verbatim") {
+        if (std::string(targets[i])=="verbatim") {
             raw = false;
         } else {
             if (connect(port.getName().c_str(), targets[i], true)!=0) {
@@ -2118,7 +2118,7 @@ int Companion::write(const char *name, int ntargets, char *targets[]) {
 
 
     while (!EOFreached()) {
-        ConstString txt = getStdin();
+        std::string txt = getStdin();
         if (!EOFreached()) {
             if (txt.length()>0) {
                 if (txt[0]<32 && txt[0]!='\n' &&
@@ -2231,7 +2231,7 @@ int Companion::rpc(const char *connectionName, const char *targetName) {
     rpcHelpPort = &port;
 #endif
         while (port.getOutputCount()==1&&!EOFreached()) {
-            ConstString txt;
+            std::string txt;
             if (!resendFlag) {
                 txt = getStdin();
             }
@@ -2288,10 +2288,10 @@ int Companion::rpc(const char *connectionName, const char *targetName) {
 
 
 
-ConstString Companion::readString(bool *eof) {
+std::string Companion::readString(bool *eof) {
     bool end = false;
 
-    ConstString txt;
+    std::string txt;
 
     if (!EOFreached()) {
         txt = getStdin();
@@ -2312,7 +2312,7 @@ ConstString Companion::readString(bool *eof) {
     return txt;
 }
 
-ConstString Companion::version() {
+std::string Companion::version() {
     return YARP_VERSION;
 }
 
@@ -2395,7 +2395,7 @@ int Companion::cmdPlugin(int argc, char *argv[]) {
         return 1;
     }
 
-    ConstString arg = argv[0];
+    std::string arg = argv[0];
     if (arg=="--help") {
         plugin_usage();
         return 0;
@@ -2421,9 +2421,9 @@ int Companion::cmdPlugin(int argc, char *argv[]) {
         printf("Search path:\n");
         for (int i=0; i<lst.size(); i++) {
             Value& options = lst.get(i);
-            ConstString name = options.asList()->get(0).toString();
-            ConstString path = options.check("path", Value("unknown path")).asString();
-            ConstString type = options.check("type", Value("unknown type")).asString();
+            std::string name = options.asList()->get(0).toString();
+            std::string path = options.check("path", Value("unknown path")).asString();
+            std::string type = options.check("type", Value("unknown type")).asString();
             if (type == "shared") {
                 printf("  %15s:\t%s\n", name.c_str(), path.c_str());
             }
@@ -2435,7 +2435,7 @@ int Companion::cmdPlugin(int argc, char *argv[]) {
         Bottle lst = selector.getSelectedPlugins();
         for (int i=0; i<lst.size(); i++) {
             Value& options = lst.get(i);
-            ConstString name = options.check("name", Value("untitled")).asString();
+            std::string name = options.check("name", Value("untitled")).asString();
             printf("%s\n", name.c_str());
         }
         return 0;
@@ -2450,8 +2450,8 @@ int Companion::cmdPlugin(int argc, char *argv[]) {
         bool ok = true;
         for (int i=0; i<lst.size(); i++) {
             Value& options = lst.get(i);
-            ConstString name = options.check("name", Value("untitled")).asString();
-            ConstString type = options.check("type", Value("unknown type")).asString();
+            std::string name = options.check("name", Value("untitled")).asString();
+            std::string type = options.check("type", Value("unknown type")).asString();
             printf("\n");
             printf("%s %s\n", type.c_str(), name.c_str());
             printf("  * ini file:       %s\n", options.find("inifile").toString().c_str());
@@ -2602,7 +2602,7 @@ int Companion::cmdMerge(int argc, char *argv[]) {
 
     //open the ports
     char buff[255];
-    ConstString s = options.check("worker", Value("/portsMerge/i")).asString();
+    std::string s = options.check("worker", Value("/portsMerge/i")).asString();
     for (int i = 0; i< nPorts; i++) {
         sprintf(buff, "%s%d", s.c_str(), i);
         inPort[i].open(buff);
@@ -2612,7 +2612,7 @@ int Companion::cmdMerge(int argc, char *argv[]) {
 
     //makes the connection
     for (int i=0; i<nPorts; i++) {
-        ConstString tmp;
+        std::string tmp;
         if (!inputs.isNull()) {
             tmp = inputs.get(i+1).asString();
         } else {
@@ -2681,8 +2681,8 @@ int Companion::cmdSample(int argc, char *argv[]) {
         port.setTargetPeriod(1.0/options.find("rate").asDouble());
     }
     if (options.check("input")) {
-        ConstString input = options.find("input").asString();
-        ConstString carrier = options.find("carrier").asString();
+        std::string input = options.find("input").asString();
+        std::string carrier = options.find("carrier").asString();
         if (carrier!="") {
             NetworkBase::connect(input.c_str(), port.getName().c_str(),
                                  carrier.c_str());
@@ -2719,7 +2719,7 @@ int Companion::cmdTime(int argc, char *argv[]) {
     SystemClock clk;
     bool ros = false;
     if (argc>0) {
-        if (ConstString(argv[0])=="--ros") {
+        if (std::string(argv[0])=="--ros") {
             ros = true;
         }
     }
@@ -2743,7 +2743,7 @@ int Companion::cmdClock(int argc, char *argv[])
     double init, offset;
     Property config;
     SystemClock clock;
-    ConstString portName;
+    std::string portName;
     yarp::os::BufferedPort<yarp::os::Bottle> streamPort;
 
     config.fromCommand(argc, argv, false, true);

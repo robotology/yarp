@@ -22,8 +22,8 @@ namespace yarp
         class YARP_math_API FrameTransform
         {
             public:
-            std::string src_frame_id;
-            std::string dst_frame_id;
+            YARP_SUPPRESS_DLL_INTERFACE_WARNING_ARG(std::string) src_frame_id;
+            YARP_SUPPRESS_DLL_INTERFACE_WARNING_ARG(std::string) dst_frame_id;
             double      timestamp;
 
             struct Translation_t

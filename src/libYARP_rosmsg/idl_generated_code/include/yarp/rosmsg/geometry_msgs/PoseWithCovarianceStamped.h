@@ -141,23 +141,23 @@ public:
     typedef yarp::os::idl::BottleStyle<yarp::rosmsg::geometry_msgs::PoseWithCovarianceStamped> bottleStyle;
 
     // Give source text for class, ROS will need this
-    static yarp::os::ConstString typeText()
+    static std::string typeText()
     {
-        return yarp::os::ConstString("\
+        return std::string("\
 # This expresses an estimated pose with a reference coordinate frame and timestamp\n\
 \n\
 Header header\n\
 PoseWithCovariance pose\n\
-") + yarp::os::ConstString("\n\
+") + std::string("\n\
 ================================================================================\n\
 MSG: std_msgs/Header\n\
-") + yarp::rosmsg::std_msgs::Header::typeText() + yarp::os::ConstString("\n\
+") + yarp::rosmsg::std_msgs::Header::typeText() + std::string("\n\
 ================================================================================\n\
 MSG: geometry_msgs/PoseWithCovariance\n\
 ") + yarp::rosmsg::geometry_msgs::PoseWithCovariance::typeText();
     }
 
-    yarp::os::ConstString getTypeText() const
+    std::string getTypeText() const
     {
         return yarp::rosmsg::geometry_msgs::PoseWithCovarianceStamped::typeText();
     }

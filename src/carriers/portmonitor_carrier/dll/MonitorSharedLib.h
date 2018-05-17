@@ -10,7 +10,7 @@
 #define MONITOR_SHAREDLIB_INC
 
 #include <string>
-#include <yarp/os/ConstString.h>
+#include <string>
 #include <yarp/os/SharedLibraryClass.h>
 #include <yarp/os/SharedLibrary.h>
 #include <yarp/os/YarpPlugin.h>

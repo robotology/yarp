@@ -83,8 +83,8 @@ class yarp::dev::BatteryClient: public DeviceDriver,
 protected:
     BatteryInputPortProcessor inputPort;
     yarp::os::Port rpcPort;
-    yarp::os::ConstString local;
-    yarp::os::ConstString remote;
+    std::string local;
+    std::string remote;
     yarp::os::Stamp lastTs; //used by IPreciselyTimed
     std::string deviceId;
     int _rate;
@@ -137,7 +137,7 @@ public:
     * @param a string containing the battery infos
     * @return true/false.
     */
-    bool getBatteryInfo(yarp::os::ConstString &battery_info) override;
+    bool getBatteryInfo(std::string &battery_info) override;
 
     /**
     * get the battery temperature

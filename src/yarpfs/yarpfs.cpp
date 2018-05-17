@@ -89,7 +89,7 @@ int yarp_readdir(const char *path, void *buf, fuse_fill_dir_t filler,
 
     NameConfig nc;
 
-    ConstString name = nc.getNamespace();
+    std::string name = nc.getNamespace();
     Bottle msg, reply;
     msg.addString("bot");
     msg.addString("list");
@@ -99,7 +99,7 @@ int yarp_readdir(const char *path, void *buf, fuse_fill_dir_t filler,
 
     printf("Got %s\n", reply.toString().c_str());
 
-    std::set<ConstString> lines;
+    std::set<std::string> lines;
 
 
     for (int i=1; i<reply.size(); i++) {
@@ -109,13 +109,13 @@ int yarp_readdir(const char *path, void *buf, fuse_fill_dir_t filler,
             rpath = rpath + "/";
         }
         if (entry!=NULL) {
-            ConstString name = entry->check("name",Value("")).asString();
+            std::string name = entry->check("name",Value("")).asString();
             if (name!="") {
                 if (strstr(name.c_str(),rpath.c_str())==
                            name.c_str()) {
                     printf(">>> %s is in path %s\n", name.c_str(),
                            rpath.c_str());
-                    ConstString part(name.c_str()+rpath.length());
+                    std::string part(name.c_str()+rpath.length());
                     if (part[0]=='/') {
                         part = part.substr(1,part.length()-1);
                     }
@@ -125,7 +125,7 @@ int yarp_readdir(const char *path, void *buf, fuse_fill_dir_t filler,
                     if (brk!=NULL) {
                         *brk = '\0';
                     }
-                    ConstString item(part.c_str());
+                    std::string item(part.c_str());
                     printf("    %s is the item\n", item.c_str());
                     if (item!="") {
                         lines.insert(item);

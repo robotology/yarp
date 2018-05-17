@@ -359,9 +359,9 @@ public:
     typedef yarp::os::idl::BottleStyle<yarp::rosmsg::visualization_msgs::InteractiveMarkerFeedback> bottleStyle;
 
     // Give source text for class, ROS will need this
-    static yarp::os::ConstString typeText()
+    static std::string typeText()
     {
-        return yarp::os::ConstString("\
+        return std::string("\
 # Time/frame info.\n\
 Header header\n\
 \n\
@@ -404,19 +404,19 @@ uint32 menu_entry_id\n\
 # will be relative to the frame listed in the header.\n\
 geometry_msgs/Point mouse_point\n\
 bool mouse_point_valid\n\
-") + yarp::os::ConstString("\n\
+") + std::string("\n\
 ================================================================================\n\
 MSG: std_msgs/Header\n\
-") + yarp::rosmsg::std_msgs::Header::typeText() + yarp::os::ConstString("\n\
+") + yarp::rosmsg::std_msgs::Header::typeText() + std::string("\n\
 ================================================================================\n\
 MSG: geometry_msgs/Pose\n\
-") + yarp::rosmsg::geometry_msgs::Pose::typeText() + yarp::os::ConstString("\n\
+") + yarp::rosmsg::geometry_msgs::Pose::typeText() + std::string("\n\
 ================================================================================\n\
 MSG: geometry_msgs/Point\n\
 ") + yarp::rosmsg::geometry_msgs::Point::typeText();
     }
 
-    yarp::os::ConstString getTypeText() const
+    std::string getTypeText() const
     {
         return yarp::rosmsg::visualization_msgs::InteractiveMarkerFeedback::typeText();
     }

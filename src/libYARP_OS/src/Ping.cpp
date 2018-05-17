@@ -70,8 +70,8 @@ void Ping::report() {
 }
 
 
-ConstString Ping::renderTime(double t, int space, int decimal) {
-    ConstString unit = "";
+std::string Ping::renderTime(double t, int space, int decimal) {
+    std::string unit = "";
     double times = 1;
     if (space<0) {
         yError("Negative space");

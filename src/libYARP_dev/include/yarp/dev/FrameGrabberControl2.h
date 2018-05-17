@@ -9,7 +9,7 @@
 #ifndef YARP_DEV_FRAMEGRABBERCONTROL2_H
 #define YARP_DEV_FRAMEGRABBERCONTROL2_H
 
-#include <yarp/os/ConstString.h>
+#include <string>
 #include <yarp/dev/FrameGrabberInterfaces.h>        // to include VOCAB definitions
 
 /*! \file FrameGrabberControl2.h define common interfaces to discover
@@ -35,7 +35,7 @@ typedef enum {
 
 typedef struct {
     BusType busType;
-    yarp::os::ConstString deviceDescription;
+    std::string deviceDescription;
 } CameraDescriptor;
 
 
@@ -62,7 +62,7 @@ public:
 
     virtual ~IFrameGrabberControls2(){};
 
-    yarp::os::ConstString busType2String(BusType type)
+    std::string busType2String(BusType type)
     {
         switch (type) {
             case BUS_FIREWIRE:

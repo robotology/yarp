@@ -167,9 +167,9 @@ public:
     typedef yarp::os::idl::BottleStyle<yarp::rosmsg::sensor_msgs::Illuminance> bottleStyle;
 
     // Give source text for class, ROS will need this
-    static yarp::os::ConstString typeText()
+    static std::string typeText()
     {
-        return yarp::os::ConstString("\
+        return std::string("\
  # Single photometric illuminance measurement.  Light should be assumed to be\n\
  # measured along the sensor's x-axis (the area of detection is the y-z plane).\n\
  # The illuminance should have a 0 or positive value and be received with\n\
@@ -190,13 +190,13 @@ public:
 \n\
  float64 illuminance     # Measurement of the Photometric Illuminance in Lux.\n\
 \n\
- float64 variance        # 0 is interpreted as variance unknown") + yarp::os::ConstString("\n\
+ float64 variance        # 0 is interpreted as variance unknown") + std::string("\n\
 ================================================================================\n\
 MSG: std_msgs/Header\n\
 ") + yarp::rosmsg::std_msgs::Header::typeText();
     }
 
-    yarp::os::ConstString getTypeText() const
+    std::string getTypeText() const
     {
         return yarp::rosmsg::sensor_msgs::Illuminance::typeText();
     }

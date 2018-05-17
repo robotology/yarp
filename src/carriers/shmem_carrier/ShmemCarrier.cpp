@@ -10,7 +10,7 @@
 #include "ShmemCarrier.h"
 #include "ShmemHybridStream.h"
 
-#include <yarp/os/ConstString.h>
+#include <string>
 #include <cstdlib>
 
 
@@ -23,7 +23,7 @@ yarp::os::Carrier* ShmemCarrier::create()
     return new ShmemCarrier();
 }
 
-yarp::os::ConstString ShmemCarrier::getName()
+std::string ShmemCarrier::getName()
 {
     return "shmem";
 }
@@ -81,7 +81,7 @@ bool ShmemCarrier::becomeShmemVersionHybridStream(yarp::os::ConnectionState& pro
         }
     } else {
         int altPort = readYarpInt(proto);
-        yarp::os::ConstString myName = proto.getStreams().getLocalAddress().getHost();
+        std::string myName = proto.getStreams().getLocalAddress().getHost();
         proto.takeStreams(nullptr);
         base = yarp::os::Contact(myName, altPort);
         ok = stream->open(base, sender) == 0;

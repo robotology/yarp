@@ -10,8 +10,9 @@
 #ifndef YARP_OS_PORTINFO_H
 #define YARP_OS_PORTINFO_H
 
-#include <yarp/os/ConstString.h>
+#include <yarp/os/api.h>
 #include <yarp/os/Vocab.h>
+#include <string>
 
 
 namespace yarp {
@@ -56,19 +57,19 @@ public:
     bool created;
 
     /// Name of port.
-    ConstString portName;
+    YARP_SUPPRESS_DLL_INTERFACE_WARNING_ARG(std::string) portName;
 
     /// Name of connection source, if any.
-    ConstString sourceName;
+    YARP_SUPPRESS_DLL_INTERFACE_WARNING_ARG(std::string) sourceName;
 
     /// Name of connection target, if any.
-    ConstString targetName;
+    YARP_SUPPRESS_DLL_INTERFACE_WARNING_ARG(std::string) targetName;
 
     /// Name of protocol type, if releveant.
-    ConstString carrierName;
+    YARP_SUPPRESS_DLL_INTERFACE_WARNING_ARG(std::string) carrierName;
 
     /// A human-readable description of contents.
-    ConstString message;
+    YARP_SUPPRESS_DLL_INTERFACE_WARNING_ARG(std::string) message;
 };
 
 

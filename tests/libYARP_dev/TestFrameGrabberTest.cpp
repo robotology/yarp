@@ -6,7 +6,7 @@
  * BSD-3-Clause license. See the accompanying LICENSE file for details.
  */
 
-#include <yarp/os/ConstString.h>
+#include <string>
 #include <yarp/os/Network.h>
 #include <yarp/os/LogStream.h>
 #include <yarp/sig/Image.h>
@@ -28,7 +28,7 @@ using namespace yarp::sig;
 class TestFrameGrabberTest : public UnitTest
 {
 public:
-    virtual ConstString getName() override { return "TestFrameGrabberTest"; }
+    virtual std::string getName() override { return "TestFrameGrabberTest"; }
 
     void testTestFrameGrabber() {
         report(0,"\ntest the TestFrameGrabber ");

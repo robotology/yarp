@@ -5,7 +5,7 @@
  * This software may be modified and distributed under the terms of the
  * BSD-3-Clause license. See the accompanying LICENSE file for details.
  */
-#include <yarp/os/ConstString.h>
+#include <string>
 #include <yarp/os/Network.h>
 #include <yarp/os/impl/UnitTest.h>
 #include <yarp/os/Timer.h>
@@ -27,7 +27,7 @@ class TimerTest : public UnitTest {
     unsigned int runCount{ 1 };
 
 public:
-    virtual ConstString getName() override { return "TimerTest"; }
+    virtual std::string getName() override { return "TimerTest"; }
 
     //please note that the return values of the callbacks does not rappresent the result of the tests but simply keeps the timer alive..
     bool timingCallback(const YarpTimerEvent& timings)

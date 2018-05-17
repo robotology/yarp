@@ -24,9 +24,9 @@ class PortCoreTest : public UnitTest, public PortReader {
 public:
     int safePort() { return Network::getDefaultPortRange()+100; }
 
-    virtual ConstString getName() override { return "PortCoreTest"; }
+    virtual std::string getName() override { return "PortCoreTest"; }
 
-    ConstString expectation;
+    std::string expectation;
     int receives;
 
     bool read(ConnectionReader& reader) override {
@@ -36,7 +36,7 @@ public:
         receives++;
         BottleImpl bot;
         bot.read(reader);
-        if (expectation==ConstString("")) {
+        if (expectation==std::string("")) {
             report(1,"got unexpected input");
             return false;
         }

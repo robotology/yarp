@@ -178,7 +178,7 @@ void Map2DServer::parse_vocab_command(yarp::os::Bottle& in, yarp::os::Bottle& ou
         int cmd = in.get(1).asVocab();
         if (cmd == VOCAB_NAV_GET_LOCATION_LIST)
         {
-            yarp::os::ConstString info;
+            std::string info;
 
             out.addVocab(VOCAB_OK);
             Bottle& l = out.addList();
@@ -245,7 +245,7 @@ void Map2DServer::parse_vocab_command(yarp::os::Bottle& in, yarp::os::Bottle& ou
         else if (cmd == VOCAB_NAV_STORE_ABS)
         {
             Map2DLocation         location;
-            yarp::os::ConstString name = in.get(2).asString();
+            std::string name = in.get(2).asString();
 
             location.map_id = in.get(3).asString();
             location.x      = in.get(4).asDouble();

@@ -103,8 +103,8 @@ class yarp::dev::AnalogSensorClient:    public DeviceDriver,
 protected:
     InputPortProcessor inputPort;
     yarp::os::Port rpcPort;
-    yarp::os::ConstString local;
-    yarp::os::ConstString remote;
+    std::string local;
+    std::string remote;
     yarp::os::Stamp lastTs; //used by IPreciselyTimed
     std::string robotName;
     std::string deviceId;

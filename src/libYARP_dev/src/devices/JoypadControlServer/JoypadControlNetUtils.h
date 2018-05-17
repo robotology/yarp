@@ -73,7 +73,7 @@ struct yarp::dev::JoypadControl::LoopablePort
 {
     bool                  valid;
     unsigned int          count;
-    yarp::os::ConstString name;
+    std::string name;
     yarp::os::Contactable* contactable;
 
     virtual ~LoopablePort(){}

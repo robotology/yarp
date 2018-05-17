@@ -210,9 +210,9 @@ public:
     typedef yarp::os::idl::BottleStyle<yarp::rosmsg::actionlib_msgs::GoalStatus> bottleStyle;
 
     // Give source text for class, ROS will need this
-    static yarp::os::ConstString typeText()
+    static std::string typeText()
     {
-        return yarp::os::ConstString("\
+        return std::string("\
 GoalID goal_id\n\
 uint8 status\n\
 uint8 PENDING         = 0   # The goal has yet to be processed by the action server\n\
@@ -236,13 +236,13 @@ uint8 LOST            = 9   # An action client can determine that a goal is LOST
 #Allow for the user to associate a string with GoalStatus for debugging\n\
 string text\n\
 \n\
-") + yarp::os::ConstString("\n\
+") + std::string("\n\
 ================================================================================\n\
 MSG: actionlib_msgs/GoalID\n\
 ") + yarp::rosmsg::actionlib_msgs::GoalID::typeText();
     }
 
-    yarp::os::ConstString getTypeText() const
+    std::string getTypeText() const
     {
         return yarp::rosmsg::actionlib_msgs::GoalStatus::typeText();
     }

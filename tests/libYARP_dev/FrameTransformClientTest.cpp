@@ -83,7 +83,7 @@ public:
         return true;
     }
 
-    virtual ConstString getName() override
+    virtual std::string getName() override
     {
         return "FrameTransformClientTest";
     }

@@ -20,7 +20,7 @@
 
 #include <yarp/os/Bottle.h>
 #include <yarp/os/Vocab.h>
-#include <yarp/os/ConstString.h>
+#include <string>
 #include <yarp/os/Time.h>
 
 #include <yarp/sig/impl/DeBayer.h>
@@ -146,7 +146,7 @@ void ImageStorage::resize(int x, int y, int pixel_type,
 
     if (need_recreation) {
         _free_complete();
-        DBGPF1 printf("HIT recreation for %ld %ld: %d %d %d\n", (long int) this, (long int) pImage, x, y, pixel_type);
+        DBGPF1 printf("HIT recreation for %p %p: %d %d %d\n", this, pImage, x, y, pixel_type);
         _alloc_complete (x, y, pixel_type, quantum, topIsLow);
     }
     extern_type_id = pixel_type;
@@ -386,7 +386,7 @@ int ImageStorage::_pad_bytes (int linesize, int align) const
     return yarp::sig::PAD_BYTES (linesize, align);
 }
 
-const std::map<YarpVocabPixelTypesEnum, unsigned int> Image::pixelCode2Size = {
+const std::map<YarpVocabPixelTypesEnum, size_t> Image::pixelCode2Size = {
     {VOCAB_PIXEL_INVALID,               0 },
     {VOCAB_PIXEL_MONO,                  sizeof(yarp::sig::PixelMono)},
     {VOCAB_PIXEL_MONO16,                sizeof(yarp::sig::PixelMono16)},
@@ -558,7 +558,7 @@ const void *Image::getIplImage() const {
 void Image::wrapIplImage(void *iplImage) {
     yAssert(iplImage!=nullptr);
     IplImage *p = (IplImage *)iplImage;
-    ConstString str = p->colorModel;
+    std::string str = p->colorModel;
     int code = -1;
     int color_code = -1;
     if (str=="rgb"||str=="RGB"||

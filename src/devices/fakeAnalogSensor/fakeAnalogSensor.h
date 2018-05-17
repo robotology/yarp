@@ -40,7 +40,7 @@ private:
 
     yarp::os::Semaphore     mutex;
 
-    yarp::os::ConstString   name;    // device name
+    std::string   name;    // device name
     unsigned int            channelsNum;
     short                   status;
     double                  timeStamp;

@@ -66,7 +66,7 @@ public:
     virtual YARP_INT64 asInt64() const override { return 0; }
     virtual int asVocab() const override { return 0; }
     virtual double asDouble() const override { return 0; }
-    virtual yarp::os::ConstString asString() const override { return ""; }
+    virtual std::string asString() const override { return ""; }
     virtual Searchable* asSearchable() const override
     {
         if (isDict()) {
@@ -88,10 +88,10 @@ public:
     virtual bool writeRaw(ConnectionWriter& connection) = 0;
 
     using yarp::os::Searchable::check;
-    virtual bool check(const yarp::os::ConstString& key) const override;
+    virtual bool check(const std::string& key) const override;
 
-    virtual yarp::os::Value& find(const yarp::os::ConstString& key) const override;
-    virtual yarp::os::Bottle& findGroup(const yarp::os::ConstString& key) const override;
+    virtual yarp::os::Value& find(const std::string& key) const override;
+    virtual yarp::os::Bottle& findGroup(const std::string& key) const override;
 
     bool operator==(const yarp::os::Value& alt) const;
 
@@ -107,20 +107,20 @@ public:
      * syntax around this representation such as braces or
      * parentheses has already been consumed.
      */
-    virtual void fromString(const ConstString& src) = 0;
+    virtual void fromString(const std::string& src) = 0;
 
     /**
      * Initialize from a string representation.  This should consume
      * any syntax around that representation such as braces or
      * parentheses.
      */
-    virtual void fromStringNested(const ConstString& src) { fromString(src); }
-    virtual yarp::os::ConstString toString() const override = 0;
+    virtual void fromStringNested(const std::string& src) { fromString(src); }
+    virtual std::string toString() const override = 0;
     /**
      * Create string representation, including any syntax that should
      * wrap it such as braces or parentheses.
      */
-    virtual ConstString toStringNested() const { return toString(); }
+    virtual std::string toStringNested() const { return toString(); }
     /**
      * Factory method.
      */
@@ -158,8 +158,8 @@ class YARP_OS_impl_API yarp::os::impl::StoreNull : public Storable
 {
 public:
     StoreNull() {}
-    virtual ConstString toString() const override { return ""; }
-    virtual void fromString(const ConstString& src) override { YARP_UNUSED(src); }
+    virtual std::string toString() const override { return ""; }
+    virtual void fromString(const std::string& src) override { YARP_UNUSED(src); }
     virtual int getCode() const override { return -1; }
     virtual bool readRaw(ConnectionReader& connection) override { YARP_UNUSED(connection); return false; }
     virtual bool writeRaw(ConnectionWriter& connection) override { YARP_UNUSED(connection); return false; }
@@ -180,8 +180,8 @@ private:
 public:
     StoreInt() { x = 0; }
     StoreInt(int x) { this->x = x; }
-    virtual ConstString toString() const override;
-    virtual void fromString(const ConstString& src) override;
+    virtual std::string toString() const override;
+    virtual void fromString(const std::string& src) override;
     virtual int getCode() const override { return code; }
     virtual bool readRaw(ConnectionReader& reader) override;
     virtual bool writeRaw(ConnectionWriter& writer) override;
@@ -208,8 +208,8 @@ private:
 public:
     StoreInt64() { x = 0; }
     StoreInt64(const YARP_INT64& x) { this->x = x; }
-    virtual ConstString toString() const override;
-    virtual void fromString(const ConstString& src) override;
+    virtual std::string toString() const override;
+    virtual void fromString(const std::string& src) override;
     virtual int getCode() const override { return code; }
     virtual bool readRaw(ConnectionReader& reader) override;
     virtual bool writeRaw(ConnectionWriter& writer) override;
@@ -235,10 +235,10 @@ private:
 public:
     StoreVocab() { x = 0; }
     StoreVocab(int x) { this->x = x; }
-    virtual ConstString toString() const override;
-    virtual void fromString(const ConstString& src) override;
-    virtual ConstString toStringNested() const override;
-    virtual void fromStringNested(const ConstString& src) override;
+    virtual std::string toString() const override;
+    virtual void fromString(const std::string& src) override;
+    virtual std::string toStringNested() const override;
+    virtual void fromStringNested(const std::string& src) override;
     virtual int getCode() const override { return code; }
     virtual bool readRaw(ConnectionReader& reader) override;
     virtual bool writeRaw(ConnectionWriter& writer) override;
@@ -252,7 +252,7 @@ public:
     virtual bool isBool() const override { return (x == 0 || x == '1'); }
     static const int code;
     virtual void copy(const Storable& alt) override { x = alt.asVocab(); }
-    virtual ConstString asString() const override { return toString(); }
+    virtual std::string asString() const override { return toString(); }
 };
 
 /**
@@ -261,31 +261,31 @@ public:
 class YARP_OS_impl_API yarp::os::impl::StoreString : public Storable
 {
 private:
-    ConstString x;
+    std::string x;
 
 public:
     StoreString() { x = ""; }
-    StoreString(const ConstString& x) { this->x = x; }
-    virtual ConstString toString() const override;
-    virtual void fromString(const ConstString& src) override;
-    virtual ConstString toStringNested() const override;
-    virtual void fromStringNested(const ConstString& src) override;
+    StoreString(const std::string& x) { this->x = x; }
+    virtual std::string toString() const override;
+    virtual void fromString(const std::string& src) override;
+    virtual std::string toStringNested() const override;
+    virtual void fromStringNested(const std::string& src) override;
     virtual int getCode() const override { return code; }
     virtual bool readRaw(ConnectionReader& reader) override;
     virtual bool writeRaw(ConnectionWriter& writer) override;
     virtual Storable* createStorable() const override
     {
-        return new StoreString(ConstString(""));
+        return new StoreString(std::string(""));
     }
-    virtual ConstString asString() const override { return x; }
+    virtual std::string asString() const override { return x; }
     virtual int asVocab() const override { return yarp::os::Vocab::encode(x.c_str()); }
     virtual bool isString() const override { return true; }
     static const int code;
     virtual void copy(const Storable& alt) override
     {
-        // yarp::os::ConstString y =
+        // std::string y =
         x = alt.asString();
-        // ConstString tmp(y.c_str(), y.length());
+        // std::string tmp(y.c_str(), y.length());
         // x = tmp;
     }
 };
@@ -296,21 +296,21 @@ public:
 class YARP_OS_impl_API yarp::os::impl::StoreBlob : public Storable
 {
 private:
-    ConstString x;
+    std::string x;
 
 public:
     StoreBlob() { x = ""; }
-    StoreBlob(const ConstString& x) { this->x = x; }
-    virtual ConstString toString() const override;
-    virtual void fromString(const ConstString& src) override;
-    virtual ConstString toStringNested() const override;
-    virtual void fromStringNested(const ConstString& src) override;
+    StoreBlob(const std::string& x) { this->x = x; }
+    virtual std::string toString() const override;
+    virtual void fromString(const std::string& src) override;
+    virtual std::string toStringNested() const override;
+    virtual void fromStringNested(const std::string& src) override;
     virtual int getCode() const override { return code; }
     virtual bool readRaw(ConnectionReader& reader) override;
     virtual bool writeRaw(ConnectionWriter& writer) override;
     virtual Storable* createStorable() const override
     {
-        return new StoreBlob(ConstString(""));
+        return new StoreBlob(std::string(""));
     }
     virtual bool isBlob() const override { return true; }
     virtual const char* asBlob() const override { return x.c_str(); }
@@ -319,10 +319,10 @@ public:
     virtual void copy(const Storable& alt) override
     {
         if (alt.isBlob()) {
-            ConstString tmp((char*)alt.asBlob(), alt.asBlobLength());
+            std::string tmp((char*)alt.asBlob(), alt.asBlobLength());
             x = tmp;
         } else {
-            x = ConstString();
+            x = std::string();
         }
     }
 };
@@ -338,8 +338,8 @@ private:
 public:
     StoreDouble() { x = 0; }
     StoreDouble(double x) { this->x = x; }
-    virtual ConstString toString() const override;
-    virtual void fromString(const ConstString& src) override;
+    virtual std::string toString() const override;
+    virtual void fromString(const std::string& src) override;
     virtual int getCode() const override { return code; }
     virtual bool readRaw(ConnectionReader& reader) override;
     virtual bool writeRaw(ConnectionWriter& writer) override;
@@ -364,10 +364,10 @@ private:
 public:
     StoreList() {}
     yarp::os::Bottle& internal() { return content; }
-    virtual ConstString toString() const override;
-    virtual void fromString(const ConstString& src) override;
-    virtual ConstString toStringNested() const override;
-    virtual void fromStringNested(const ConstString& src) override;
+    virtual std::string toString() const override;
+    virtual void fromString(const std::string& src) override;
+    virtual std::string toStringNested() const override;
+    virtual void fromStringNested(const std::string& src) override;
     virtual int getCode() const override { return code + subCode(); }
     virtual bool readRaw(ConnectionReader& reader) override;
     virtual bool writeRaw(ConnectionWriter& writer) override;
@@ -380,12 +380,12 @@ public:
     static const int code;
     virtual int subCode() const override;
 
-    virtual yarp::os::Value& find(const yarp::os::ConstString& key) const override
+    virtual yarp::os::Value& find(const std::string& key) const override
     {
         return content.find(key);
     }
 
-    virtual yarp::os::Bottle& findGroup(const yarp::os::ConstString& key) const override
+    virtual yarp::os::Bottle& findGroup(const std::string& key) const override
     {
         return content.findGroup(key);
     }
@@ -404,10 +404,10 @@ private:
 public:
     StoreDict() {}
     yarp::os::Property& internal() { return content; }
-    virtual ConstString toString() const override;
-    virtual void fromString(const ConstString& src) override;
-    virtual ConstString toStringNested() const override;
-    virtual void fromStringNested(const ConstString& src) override;
+    virtual std::string toString() const override;
+    virtual void fromString(const std::string& src) override;
+    virtual std::string toStringNested() const override;
+    virtual void fromStringNested(const std::string& src) override;
     virtual int getCode() const override { return code; }
     virtual bool readRaw(ConnectionReader& reader) override;
     virtual bool writeRaw(ConnectionWriter& writer) override;
@@ -419,12 +419,12 @@ public:
     }
     static const int code;
 
-    virtual yarp::os::Value& find(const yarp::os::ConstString& key) const override
+    virtual yarp::os::Value& find(const std::string& key) const override
     {
         return content.find(key);
     }
 
-    virtual yarp::os::Bottle& findGroup(const yarp::os::ConstString& key) const override
+    virtual yarp::os::Bottle& findGroup(const std::string& key) const override
     {
         return content.findGroup(key);
     }
@@ -454,7 +454,7 @@ public:
     Storable* pop();
 
     int getInt(int index);
-    yarp::os::ConstString getString(int index);
+    std::string getString(int index);
     double getDouble(int index);
 
     Storable& get(int index) const;
@@ -465,7 +465,7 @@ public:
     void addInt64(const YARP_INT64& x) { add(new StoreInt64(x)); }
     void addVocab(int x) { add(new StoreVocab(x)); }
     void addDouble(double x) { add(new StoreDouble(x)); }
-    void addString(const yarp::os::ConstString& text)
+    void addString(const std::string& text)
     {
         add(new StoreString(text));
     }
@@ -476,8 +476,8 @@ public:
 
     void clear();
 
-    void fromString(const ConstString& line);
-    ConstString toString();
+    void fromString(const std::string& line);
+    std::string toString();
     size_t size() const;
 
     bool read(ConnectionReader& reader);
@@ -520,7 +520,7 @@ public:
     yarp::os::Value& addBit(const char* str)
     {
         size_t len = size();
-        ConstString x(str);
+        std::string x(str);
         smartAdd(x);
         if (size() > len) {
             return get((int)size() - 1);
@@ -553,8 +553,8 @@ public:
 
     void edit();
 
-    Value& findGroupBit(const ConstString& key) const;
-    Value& findBit(const ConstString& key) const;
+    Value& findGroupBit(const std::string& key) const;
+    Value& findBit(const std::string& key) const;
 
 private:
     static StoreNull* storeNull;
@@ -566,7 +566,7 @@ private:
     bool dirty;
 
     void add(Storable* s);
-    void smartAdd(const ConstString& str);
+    void smartAdd(const std::string& str);
 
     void synch();
 };

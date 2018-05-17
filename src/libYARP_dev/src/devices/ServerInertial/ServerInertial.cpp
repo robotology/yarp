@@ -116,7 +116,7 @@ bool ServerInertial::checkROSParams(yarp::os::Searchable &config)
         useROS = ROS_config_error;
         return false;
     }
-    yarp::os::ConstString ros_use_type = rosGroup.find("useROS").asString();
+    std::string ros_use_type = rosGroup.find("useROS").asString();
     if(ros_use_type == "false")
     {
         yInfo() << partName << "useROS topic if set to 'false'";
@@ -310,7 +310,7 @@ bool yarp::dev::ServerInertial::open(yarp::os::Searchable& config)
 
 
     //Look for the portname to register (--name option), defaulting to /inertial if missing
-    yarp::os::ConstString portName;
+    std::string portName;
     if(useROS != ROS_only)
     {
         if (config.check("name"))

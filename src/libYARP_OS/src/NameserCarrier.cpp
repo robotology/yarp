@@ -8,7 +8,7 @@
  */
 
 #include <yarp/os/impl/NameserCarrier.h>
-#include <yarp/os/ConstString.h>
+#include <string>
 
 using namespace yarp::os;
 using namespace yarp::os::impl;
@@ -98,11 +98,11 @@ yarp::os::impl::NameserCarrier::NameserCarrier() {
     firstSend = true;
 }
 
-yarp::os::ConstString yarp::os::impl::NameserCarrier::getName() {
+std::string yarp::os::impl::NameserCarrier::getName() {
     return "name_ser";
 }
 
-yarp::os::ConstString yarp::os::impl::NameserCarrier::getSpecifierName() {
+std::string yarp::os::impl::NameserCarrier::getSpecifierName() {
     return "NAME_SER";
 }
 
@@ -112,7 +112,7 @@ yarp::os::Carrier *yarp::os::impl::NameserCarrier::create() {
 
 bool yarp::os::impl::NameserCarrier::checkHeader(const yarp::os::Bytes& header) {
     if (header.length()==8) {
-        ConstString target = getSpecifierName();
+        std::string target = getSpecifierName();
         for (int i=0; i<8; i++) {
             if (!(target[i]==header.get()[i])) {
                 return false;
@@ -125,7 +125,7 @@ bool yarp::os::impl::NameserCarrier::checkHeader(const yarp::os::Bytes& header) 
 
 void yarp::os::impl::NameserCarrier::getHeader(const Bytes& header) {
     if (header.length()==8) {
-        ConstString target = getSpecifierName();
+        std::string target = getSpecifierName();
         for (int i=0; i<8; i++) {
             header.get()[i] = target[i];
         }
@@ -150,7 +150,7 @@ bool yarp::os::impl::NameserCarrier::canEscape() {
 }
 
 bool yarp::os::impl::NameserCarrier::sendHeader(ConnectionState& proto) {
-    yarp::os::ConstString target = getSpecifierName();
+    std::string target = getSpecifierName();
     yarp::os::Bytes b((char*)target.c_str(), 8);
     proto.os().write(b);
     proto.os().flush();
@@ -194,10 +194,10 @@ bool yarp::os::impl::NameserCarrier::expectReplyToHeader(ConnectionState& proto)
 }
 
 bool yarp::os::impl::NameserCarrier::write(ConnectionState& proto, SizedWriter& writer) {
-    ConstString target = firstSend?"VER ":"NAME_SERVER ";
+    std::string target = firstSend?"VER ":"NAME_SERVER ";
     Bytes b((char*)target.c_str(), target.length());
     proto.os().write(b);
-    ConstString txt;
+    std::string txt;
     // ancient nameserver can't deal with quotes
     for (size_t i=0; i<writer.length(); i++) {
         for (size_t j=0; j<writer.length(i); j++) {

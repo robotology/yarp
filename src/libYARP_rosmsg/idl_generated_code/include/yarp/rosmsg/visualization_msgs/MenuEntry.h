@@ -256,9 +256,9 @@ public:
     typedef yarp::os::idl::BottleStyle<yarp::rosmsg::visualization_msgs::MenuEntry> bottleStyle;
 
     // Give source text for class, ROS will need this
-    static yarp::os::ConstString typeText()
+    static std::string typeText()
     {
-        return yarp::os::ConstString("\
+        return std::string("\
 # MenuEntry message.\n\
 \n\
 # Each InteractiveMarker message has an array of MenuEntry messages.\n\
@@ -316,7 +316,7 @@ uint8 command_type\n\
 ");
     }
 
-    yarp::os::ConstString getTypeText() const
+    std::string getTypeText() const
     {
         return yarp::rosmsg::visualization_msgs::MenuEntry::typeText();
     }

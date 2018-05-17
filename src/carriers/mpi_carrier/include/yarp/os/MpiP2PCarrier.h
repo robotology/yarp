@@ -53,7 +53,7 @@ public:
         stream = new MpiP2PStream(route, comm);
     }
 
-    virtual ConstString getName() override {
+    virtual std::string getName() override {
         return "mpi";
     }
 

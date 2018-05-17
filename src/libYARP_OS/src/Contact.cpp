@@ -31,7 +31,7 @@
 
 
 using yarp::os::Contact;
-using yarp::os::ConstString;
+using std::string;
 using yarp::os::NetType;
 using yarp::os::NestedContact;
 using yarp::os::Searchable;
@@ -44,9 +44,9 @@ using yarp::os::impl::NameConfig;
 class Contact::Private
 {
 public:
-    Private(const ConstString& regName,
-            const ConstString& carrier,
-            const ConstString& hostname,
+    Private(const std::string& regName,
+            const std::string& carrier,
+            const std::string& hostname,
             int port) :
         regName(regName),
         carrier(carrier),
@@ -56,9 +56,9 @@ public:
     {
     }
 
-    ConstString regName;
-    ConstString carrier;
-    ConstString hostname;
+    std::string regName;
+    std::string carrier;
+    std::string hostname;
     NestedContact nestedContact;
 
     int port;
@@ -68,22 +68,22 @@ public:
 #endif // DOXYGEN_SHOULD_SKIP_THIS
 
 
-Contact::Contact(const ConstString& hostname,
+Contact::Contact(const std::string& hostname,
                  int port) :
-        mPriv(new Private(ConstString(), ConstString(), hostname, port))
+        mPriv(new Private(std::string(), std::string(), hostname, port))
 {
 }
 
-Contact::Contact(const ConstString& carrier,
-                 const ConstString& hostname,
+Contact::Contact(const std::string& carrier,
+                 const std::string& hostname,
                  int port) :
-        mPriv(new Private(ConstString(), carrier, hostname, port))
+        mPriv(new Private(std::string(), carrier, hostname, port))
 {
 }
 
-Contact::Contact(const ConstString& name,
-                 const ConstString& carrier,
-                 const ConstString& hostname,
+Contact::Contact(const std::string& name,
+                 const std::string& carrier,
+                 const std::string& hostname,
                  int port) :
         mPriv(new Private(name, carrier, hostname, port))
 {
@@ -131,31 +131,31 @@ Contact Contact::fromConfig(const Searchable& config)
     return result;
 }
 
-Contact Contact::fromString(const ConstString& txt)
+Contact Contact::fromString(const std::string& txt)
 {
-    ConstString str(txt);
+    std::string str(txt);
     Contact c;
-    ConstString::size_type start = 0;
-    ConstString::size_type base = str.find("://");
-    ConstString::size_type offset = 2;
-    if (base==ConstString::npos) {
+    std::string::size_type start = 0;
+    std::string::size_type base = str.find("://");
+    std::string::size_type offset = 2;
+    if (base==std::string::npos) {
         base = str.find(":/");
         offset = 1;
     }
-    if (base==ConstString::npos) {
+    if (base==std::string::npos) {
         if (str.length()>0 && str[0] == '/') {
             base = 0;
             offset = 0;
         }
     }
-    if (base!=ConstString::npos) {
+    if (base!=std::string::npos) {
         c.mPriv->carrier = str.substr(0, base);
         start = base+offset;
         // check if we have a direct machine:NNN syntax
-        ConstString::size_type colon = ConstString::npos;
+        std::string::size_type colon = std::string::npos;
         int mode = 0;
         int nums = 0;
-        ConstString::size_type i;
+        std::string::size_type i;
         for (i=start+1; i<str.length(); i++) {
             char ch = str[i];
             if (ch==':') {
@@ -191,7 +191,7 @@ Contact Contact::fromString(const ConstString& txt)
             start = i;
         }
     }
-    ConstString rname = str.substr(start);
+    std::string rname = str.substr(start);
     if (rname!="/") {
         c.mPriv->regName = rname.c_str();
     }
@@ -200,37 +200,37 @@ Contact Contact::fromString(const ConstString& txt)
 
 
 
-ConstString Contact::getName() const
+std::string Contact::getName() const
 {
     if (!mPriv->regName.empty()) {
         return mPriv->regName;
     }
     if (mPriv->hostname!="" && mPriv->port>=0) {
-        ConstString name = ConstString("/") + mPriv->hostname + ":" +
+        std::string name = std::string("/") + mPriv->hostname + ":" +
             NetType::toString(mPriv->port);
         return name;
     }
-    return ConstString();
+    return std::string();
 }
 
-ConstString Contact::getRegName() const
+std::string Contact::getRegName() const
 {
     return mPriv->regName;
 }
 
-void Contact::setName(const ConstString& name)
+void Contact::setName(const std::string& name)
 {
     mPriv->regName = name;
 }
 
 
 
-ConstString Contact::getHost() const
+std::string Contact::getHost() const
 {
     return mPriv->hostname;
 }
 
-void Contact::setHost(const ConstString& hostname)
+void Contact::setHost(const std::string& hostname)
 {
     this->mPriv->hostname = hostname;
 }
@@ -249,12 +249,12 @@ void Contact::setPort(int port)
 
 
 
-ConstString Contact::getCarrier() const
+std::string Contact::getCarrier() const
 {
     return mPriv->carrier;
 }
 
-void Contact::setCarrier(const ConstString& carrier)
+void Contact::setCarrier(const std::string& carrier)
 {
     mPriv->carrier = carrier;
 }
@@ -290,8 +290,8 @@ void Contact::setTimeout(float timeout)
 
 
 
-void Contact::setSocket(const ConstString& carrier,
-                        const ConstString& hostname,
+void Contact::setSocket(const std::string& carrier,
+                        const std::string& hostname,
                         int port)
 {
     mPriv->carrier = carrier;
@@ -306,9 +306,9 @@ bool Contact::isValid() const
     return mPriv->port>=0;
 }
 
-ConstString Contact::toString() const
+std::string Contact::toString() const
 {
-    ConstString name = getName();
+    std::string name = getName();
     if (mPriv->carrier!="") {
         return mPriv->carrier + ":/" + name;
     }
@@ -316,9 +316,9 @@ ConstString Contact::toString() const
 }
 
 
-ConstString Contact::toURI(bool includeCarrier) const
+std::string Contact::toURI(bool includeCarrier) const
 {
-    ConstString result = "";
+    std::string result = "";
     if (includeCarrier && mPriv->carrier!="") {
         result += mPriv->carrier;
         result += ":/";
@@ -334,7 +334,7 @@ ConstString Contact::toURI(bool includeCarrier) const
 }
 
 
-ConstString Contact::convertHostToIp(const char *name)
+std::string Contact::convertHostToIp(const char *name)
 {
 #if defined(YARP_HAS_ACE)
     ACE_INET_Addr addr((u_short)0, name);
@@ -390,22 +390,22 @@ Contact Contact::invalid() {
     return Contact("", "", -1);
 }
 
-Contact Contact::byName(const ConstString& name)
+Contact Contact::byName(const std::string& name)
 {
     Contact result;
     result.mPriv->regName = name;
     return result;
 }
 
-Contact Contact::byCarrier(const ConstString& carrier)
+Contact Contact::byCarrier(const std::string& carrier)
 {
     Contact result;
     result.mPriv->carrier = carrier;
     return result;
 }
 
-Contact Contact::bySocket(const ConstString& carrier,
-                          const ConstString& hostname,
+Contact Contact::bySocket(const std::string& carrier,
+                          const std::string& hostname,
                           int port)
 {
     Contact result;
@@ -419,7 +419,7 @@ Contact Contact::byConfig(Searchable& config) {
     return fromConfig(config);
 }
 
-Contact Contact::addCarrier(const ConstString& carrier) const
+Contact Contact::addCarrier(const std::string& carrier) const
 {
     Contact result(*this);
     result.mPriv->carrier = carrier;
@@ -427,7 +427,7 @@ Contact Contact::addCarrier(const ConstString& carrier) const
 }
 
 
-Contact Contact::addHost(const ConstString& hostname) const
+Contact Contact::addHost(const std::string& hostname) const
 {
     Contact result(*this);
     result.mPriv->hostname = hostname;
@@ -442,8 +442,8 @@ Contact Contact::addPort(int port) const
     return result;
 }
 
-Contact Contact::addSocket(const ConstString& carrier,
-                           const ConstString& hostname,
+Contact Contact::addSocket(const std::string& carrier,
+                           const std::string& hostname,
                            int port) const
 {
     Contact result(*this);
@@ -453,7 +453,7 @@ Contact Contact::addSocket(const ConstString& carrier,
     return result;
 }
 
-Contact Contact::addName(const ConstString& name) const
+Contact Contact::addName(const std::string& name) const
 {
     Contact result(*this);
     result.mPriv->regName = name;

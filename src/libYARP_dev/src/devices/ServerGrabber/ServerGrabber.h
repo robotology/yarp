@@ -40,7 +40,7 @@ namespace yarp {
     }
 }
 
-class yarp::dev::DC1394::DC1394Parser:    public DeviceResponder
+class YARP_dev_API yarp::dev::DC1394::DC1394Parser:    public DeviceResponder
 {
 private:
     yarp::dev::IFrameGrabberControlsDC1394  *fgCtrl_DC1394;
@@ -192,12 +192,12 @@ private:
     yarp::dev::Implement_RgbVisualParams_Parser  rgbParser2;
     yarp::dev::IRgbVisualParams* rgbVis_p;
     yarp::dev::IRgbVisualParams* rgbVis_p2;
-    yarp::os::ConstString rpcPort_Name;
-    yarp::os::ConstString rpcPort2_Name;
+    YARP_SUPPRESS_DLL_INTERFACE_WARNING_ARG(std::string) rpcPort_Name;
+    YARP_SUPPRESS_DLL_INTERFACE_WARNING_ARG(std::string) rpcPort2_Name;
     yarp::os::Port rpcPort;
     yarp::os::Port rpcPort2;
-    yarp::os::ConstString pImg_Name;
-    yarp::os::ConstString pImg2_Name;
+    YARP_SUPPRESS_DLL_INTERFACE_WARNING_ARG(std::string) pImg_Name;
+    YARP_SUPPRESS_DLL_INTERFACE_WARNING_ARG(std::string) pImg2_Name;
     yarp::os::BufferedPort<yarp::sig::FlexImage> pImg;
     yarp::os::BufferedPort<yarp::sig::FlexImage> pImg2;
     yarp::os::Port *p2;//audio

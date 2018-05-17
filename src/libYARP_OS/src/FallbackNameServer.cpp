@@ -34,16 +34,16 @@ void FallbackNameServer::run() {
     YARP_DEBUG(Logger::get(), "Fallback server running");
     while (listen.isOk()&&send.isOk()&&!closed) {
         YARP_DEBUG(Logger::get(), "Fallback server waiting");
-        ConstString msg;
+        std::string msg;
         listen.beginPacket();
         msg = listen.readLine();
         listen.endPacket();
         YARP_DEBUG(Logger::get(), "Fallback server got something");
         if (listen.isOk()&&!closed) {
-            YARP_DEBUG(Logger::get(), ConstString("Fallback server got ") + msg);
+            YARP_DEBUG(Logger::get(), std::string("Fallback server got ") + msg);
             if (msg.find("NAME_SERVER ") == 0) {
                 Contact addr;
-                ConstString result = owner.apply(msg, addr);
+                std::string result = owner.apply(msg, addr);
                 send.beginPacket();
                 send.writeLine(result.c_str(), (int)result.length());
                 send.flush();

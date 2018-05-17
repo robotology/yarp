@@ -39,7 +39,7 @@ bool yarp::dev::Localization2DClient::open(yarp::os::Searchable &config)
         return false;
     }
 
-    ConstString
+    std::string
             local_rpc,
             remote_rpc,
             remote_streaming_name,

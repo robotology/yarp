@@ -107,7 +107,7 @@ public:
             {
                 Bottle &location = player->findGroup("location");
                 Value &life = player->find("life");
-                ConstString playerName = player->get(0).asString();
+                std::string playerName = player->get(0).asString();
        
                 myX=location.get(1).asInt(),
                     myY=location.get(2).asInt(),

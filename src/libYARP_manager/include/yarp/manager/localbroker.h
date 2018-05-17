@@ -18,7 +18,7 @@
 #include <yarp/os/BufferedPort.h>
 #include <yarp/os/Network.h>
 #include <yarp/os/Property.h>
-#include <yarp/os/ConstString.h>
+#include <string>
 #include <yarp/os/Semaphore.h>
 #include <yarp/os/RateThread.h>
 #include <yarp/os/Thread.h>

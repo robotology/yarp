@@ -28,9 +28,9 @@ public:
     }
 
     virtual void report(const SearchReport& report, const char *context) override {
-        ConstString ctx = context;
-        ConstString key = report.key.c_str();
-        ConstString prefix = "";
+        std::string ctx = context;
+        std::string key = report.key.c_str();
+        std::string prefix = "";
 
         prefix = ctx;
         prefix += ".";
@@ -65,8 +65,8 @@ public:
         return order;
     }
 
-    ConstString getComment(const char *option) {
-        ConstString desc = comment.find(option).toString();
+    std::string getComment(const char *option) {
+        std::string desc = comment.find(option).toString();
         return desc;
     }
 
@@ -96,7 +96,7 @@ public:
 #define HELPER(x) (*((YarpDevMonitor*)(x)))
 
 
-bool PolyDriver::open(const ConstString& txt) {
+bool PolyDriver::open(const std::string& txt) {
     Property p;
     p.put("device",txt);
     return open(p);
@@ -186,7 +186,7 @@ Bottle PolyDriver::getOptions() {
     return HELPER(system_resource).getOptions();
 }
 
-ConstString PolyDriver::getComment(const char *option) {
+std::string PolyDriver::getComment(const char *option) {
     if (system_resource==nullptr) {
         return "";
     }
@@ -212,7 +212,7 @@ Value PolyDriver::getValue(const char *option) {
 bool PolyDriver::coreOpen(yarp::os::Searchable& prop) {
     yarp::os::Searchable *config = &prop;
     Property p;
-    ConstString str = prop.toString();
+    std::string str = prop.toString();
     Value *part;
     if (prop.check("device",part)) {
         str = part->toString().c_str();
@@ -235,7 +235,7 @@ bool PolyDriver::coreOpen(yarp::os::Searchable& prop) {
     if (creator!=nullptr) {
         Value *val;
         if (config->check("wrapped",val)&&(creator->getWrapper()!="")) {
-            ConstString wrapper = creator->getWrapper();
+            std::string wrapper = creator->getWrapper();
             DriverCreator *wrapCreator =
                 Drivers::factory().find(wrapper.c_str());
             if (wrapCreator!=nullptr) {
@@ -291,9 +291,9 @@ bool PolyDriver::coreOpen(yarp::os::Searchable& prop) {
                     return false;
                 }
             }
-            ConstString name = creator->getName();
-            ConstString wrapper = creator->getWrapper();
-            ConstString code = creator->getCode();
+            std::string name = creator->getName();
+            std::string wrapper = creator->getWrapper();
+            std::string code = creator->getCode();
             yInfo("created %s <%s>. See C++ class %s for documentation.",
                   ((name==wrapper)?"wrapper":"device"),
                   name.c_str(),

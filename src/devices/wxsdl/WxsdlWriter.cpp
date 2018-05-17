@@ -68,8 +68,8 @@ static int __width = 200;
 static int __height = 200;
 static int __x = wxDefaultPosition.x;
 static int __y = wxDefaultPosition.y;
-static ConstString __title = "yarpview!";
-static ConstString __clicker = "";
+static std::string __title = "yarpview!";
+static std::string __clicker = "";
 static bool wxsdl_running = false;
 
 static Semaphore mutex(1), finished(0);

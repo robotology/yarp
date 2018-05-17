@@ -25,10 +25,10 @@ namespace yarp {
  */
 class YARP_dev_API yarp::dev::DriverLinkCreator : public DriverCreator {
 private:
-    yarp::os::ConstString name;
+    YARP_SUPPRESS_DLL_INTERFACE_WARNING_ARG(std::string) name;
     PolyDriver holding;
 public:
-    DriverLinkCreator(const yarp::os::ConstString& name, PolyDriver& source) {
+    DriverLinkCreator(const std::string& name, PolyDriver& source) {
         this->name = name;
         holding.link(source);
     }
@@ -37,7 +37,7 @@ public:
         holding.close();
     }
 
-    virtual yarp::os::ConstString toString() override {
+    virtual std::string toString() override {
         return name;
     }
 
@@ -47,15 +47,15 @@ public:
         return internal;
     }
 
-    virtual yarp::os::ConstString getName() override {
+    virtual std::string getName() override {
         return name;
     }
 
-    virtual yarp::os::ConstString getWrapper() override {
+    virtual std::string getWrapper() override {
         return "(link)";
     }
 
-    virtual yarp::os::ConstString getCode() override {
+    virtual std::string getCode() override {
         return "DriverLinkCreator";
     }
 

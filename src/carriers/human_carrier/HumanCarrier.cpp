@@ -22,7 +22,7 @@ bool HumanCarrier::sendHeader(ConnectionState& proto) {
 
     // let's just send the port name in plain text terminated with a
     // carriage-return / line-feed
-    ConstString from = proto.getRoute().getFromName();
+    std::string from = proto.getRoute().getFromName();
     Bytes b2((char*)from.c_str(),from.length());
     proto.os().write(b2);
     proto.os().write('\r');

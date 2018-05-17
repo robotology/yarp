@@ -42,7 +42,7 @@ int runServer(Searchable& config) {
 int runClient(Searchable& config) {
     Port p;
     p.open(config.check("name",Value("/rpc/client")).asString().c_str());
-    ConstString sname = 
+    std::string sname = 
         config.check("remote",Value("/rpc/server")).asString().c_str();
     Network::connect(p.getName().c_str(),sname);
     Network::sync(sname);

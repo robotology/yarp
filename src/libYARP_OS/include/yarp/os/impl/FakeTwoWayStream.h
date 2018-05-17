@@ -79,17 +79,17 @@ public:
         }
     }
 
-    void addInputText(const ConstString& str)
+    void addInputText(const std::string& str)
     {
         in.add(str);
     }
 
-    ConstString getOutputText()
+    std::string getOutputText()
     {
         return out.toString();
     }
 
-    ConstString getInputText()
+    std::string getInputText()
     {
         return in.toString();
     }

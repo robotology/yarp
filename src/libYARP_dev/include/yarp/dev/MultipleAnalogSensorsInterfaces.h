@@ -85,7 +85,7 @@ public:
     * @param[in] sens_index The index of the specified sensor (should be between 0 and getNrOfThreeAxisGyroscopes()-1).
     * @return false if an error occured, true otherwise.
     */
-   virtual bool getThreeAxisGyroscopeName(size_t sens_index, yarp::os::ConstString &name) const = 0;
+   virtual bool getThreeAxisGyroscopeName(size_t sens_index, std::string &name) const = 0;
    
    /**
     * Get the name of the frame of the specified sensor.
@@ -93,7 +93,7 @@ public:
     * @param[in] sens_index The index of the specified sensor (should be between 0 and getNrOfThreeAxisGyroscopes()-1).
     * @return false if an error occured, true otherwise.
     */
-   virtual bool getThreeAxisGyroscopeFrameName(size_t sens_index, yarp::os::ConstString &frameName) const = 0;
+   virtual bool getThreeAxisGyroscopeFrameName(size_t sens_index, std::string &frameName) const = 0;
 
    /**
     * \brief Get the last reading of the gyroscope.
@@ -135,13 +135,13 @@ public:
     * Get the name of the specified sensor. 
     * @return false if an error occured, true otherwise.
     */
-   virtual bool getThreeAxisLinearAccelerometerName(size_t sens_index, yarp::os::ConstString &name) const = 0;
+   virtual bool getThreeAxisLinearAccelerometerName(size_t sens_index, std::string &name) const = 0;
 
    /**
     * Get the name of the frame of the specified sensor.
     * @return false if an error occured, true otherwise.
     */
-   virtual bool getThreeAxisLinearAccelerometerFrameName(size_t sens_index, yarp::os::ConstString &frameName) const = 0;
+   virtual bool getThreeAxisLinearAccelerometerFrameName(size_t sens_index, std::string &frameName) const = 0;
    
    /**
     * Get the last reading of the specified sensor. 
@@ -182,13 +182,13 @@ public:
     * Get the name of the specified sensor.
     * @return false if an error occured, true otherwise.
     */
-   virtual bool getThreeAxisMagnetometerName(size_t sens_index, yarp::os::ConstString &name) const = 0;
+   virtual bool getThreeAxisMagnetometerName(size_t sens_index, std::string &name) const = 0;
 
    /**
     * Get the name of the frame of the specified sensor.
     * @return false if an error occured, true otherwise.
     */
-   virtual bool getThreeAxisMagnetometerFrameName(size_t sens_index, yarp::os::ConstString &frameName) const = 0;
+   virtual bool getThreeAxisMagnetometerFrameName(size_t sens_index, std::string &frameName) const = 0;
    
    /**
     * Get the last reading of the specified sensor. 
@@ -234,7 +234,7 @@ public:
     * Get the name of the specified sensor. 
     * @return false if an error occured, true otherwise.
     */
-   virtual bool getOrientationSensorName(size_t sens_index, yarp::os::ConstString &name) const = 0;
+   virtual bool getOrientationSensorName(size_t sens_index, std::string &name) const = 0;
 
    /**
     * Get the name of the frame of the specified sensor.
@@ -244,7 +244,7 @@ public:
     *
     * @return false if an error occured, true otherwise.
     */
-   virtual bool getOrientationSensorFrameName(size_t sens_index, yarp::os::ConstString &frameName) const = 0;
+   virtual bool getOrientationSensorFrameName(size_t sens_index, std::string &frameName) const = 0;
    
    /**
     * Get the last reading of the orientation sensor as roll pitch yaw.
@@ -324,12 +324,12 @@ public:
    /**
     * Get the name of the specified sensor. 
     */
-   virtual bool getTemperatureSensorName(size_t sens_index, yarp::os::ConstString &name) const = 0;
+   virtual bool getTemperatureSensorName(size_t sens_index, std::string &name) const = 0;
 
    /**
     * Get the name of the frame of the specified sensor.
     */
-   virtual bool getTemperatureSensorFrameName(size_t sens_index, yarp::os::ConstString &frameName) const = 0;
+   virtual bool getTemperatureSensorFrameName(size_t sens_index, std::string &frameName) const = 0;
    
    /**
     * Get the last reading of the specified sensor. 
@@ -378,12 +378,12 @@ public:
    /**
     * Get the name of the specified sensor. 
     */
-   virtual bool getSixAxisForceTorqueSensorName(size_t sens_index, yarp::os::ConstString &name) const = 0;
+   virtual bool getSixAxisForceTorqueSensorName(size_t sens_index, std::string &name) const = 0;
 
    /**
     * Get the name of the frame of the specified sensor.
     */
-   virtual bool getSixAxisForceTorqueSensorFrameName(size_t sens_index, yarp::os::ConstString &frameName) const = 0;
+   virtual bool getSixAxisForceTorqueSensorFrameName(size_t sens_index, std::string &frameName) const = 0;
 
    /**
     * Get the last reading of the specified sensor. 
@@ -428,7 +428,7 @@ public:
     * Get the name of the specified sensor.
     * @return false if an error occured, true otherwise.
     */
-   virtual bool getContactLoadCellArrayName(size_t sens_index, yarp::os::ConstString &name) const = 0;
+   virtual bool getContactLoadCellArrayName(size_t sens_index, std::string &name) const = 0;
 
    /**
     * Get the last reading of the specified sensor. 
@@ -480,7 +480,7 @@ public:
    /**
     * Get the name of the specified sensor. 
     */
-   virtual bool getEncoderArrayName(size_t sens_index, yarp::os::ConstString &name) const = 0;
+   virtual bool getEncoderArrayName(size_t sens_index, std::string &name) const = 0;
 
    /**
     * Get the last reading of the specified sensor.
@@ -529,7 +529,7 @@ public:
    /**
     * Get the name of the specified sensor. 
     */
-   virtual bool getSkinPatchName(size_t sens_index, yarp::os::ConstString &name) const = 0;
+   virtual bool getSkinPatchName(size_t sens_index, std::string &name) const = 0;
 
    /**
     * Get the last reading of the specified sensor. 

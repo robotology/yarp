@@ -54,7 +54,7 @@ public:
 
     virtual void createStream(bool sender) override;
 
-    virtual ConstString getName() override {
+    virtual std::string getName() override {
         return "bcast";
     }
 

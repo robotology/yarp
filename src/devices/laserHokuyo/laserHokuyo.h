@@ -107,7 +107,7 @@ public:
     virtual bool getRawData(yarp::sig::Vector &data) override;
     virtual bool getLaserMeasurement(std::vector<LaserMeasurementData> &data) override;
     virtual bool getDeviceStatus     (Device_status &status) override;
-    virtual bool getDeviceInfo       (yarp::os::ConstString &device_info) override;
+    virtual bool getDeviceInfo       (std::string &device_info) override;
     virtual bool getDistanceRange    (double& min, double& max) override;
     virtual bool setDistanceRange    (double min, double max) override;
     virtual bool getScanLimits        (double& min, double& max) override;

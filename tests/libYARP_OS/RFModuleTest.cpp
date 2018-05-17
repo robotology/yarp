@@ -7,7 +7,7 @@
  * BSD-3-Clause license. See the accompanying LICENSE file for details.
  */
 
-#include <yarp/os/ConstString.h>
+#include <string>
 #include <yarp/os/all.h>
 #include <yarp/os/ResourceFinder.h>
 #include <yarp/os/RFModule.h>
@@ -51,7 +51,7 @@ public:
 class RFModuleTest : public UnitTest
 {
 public:
-    virtual ConstString getName() override { return "RFModuleTest"; }
+    virtual std::string getName() override { return "RFModuleTest"; }
 
 
     void testPort()

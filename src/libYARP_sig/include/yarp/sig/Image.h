@@ -356,7 +356,8 @@ protected:
 
 
 private:
-    static const std::map<YarpVocabPixelTypesEnum, unsigned int> pixelCode2Size;
+    YARP_SUPPRESS_DLL_INTERFACE_WARNING
+    static const std::map<YarpVocabPixelTypesEnum, size_t> pixelCode2Size;
     int imgWidth, imgHeight, imgPixelSize, imgRowSize, imgPixelCode, imgQuantum;
     bool topIsLow;
 

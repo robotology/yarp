@@ -329,9 +329,9 @@ public:
     typedef yarp::os::idl::BottleStyle<yarp::rosmsg::sensor_msgs::PointCloud2> bottleStyle;
 
     // Give source text for class, ROS will need this
-    static yarp::os::ConstString typeText()
+    static std::string typeText()
     {
-        return yarp::os::ConstString("\
+        return std::string("\
 # This message holds a collection of N-dimensional points, which may\n\
 # contain additional information such as normals, intensity, etc. The\n\
 # point data is stored as a binary blob, its layout described by the\n\
@@ -359,16 +359,16 @@ uint32  row_step     # Length of a row in bytes\n\
 uint8[] data         # Actual point data, size is (row_step*height)\n\
 \n\
 bool is_dense        # True if there are no invalid points\n\
-") + yarp::os::ConstString("\n\
+") + std::string("\n\
 ================================================================================\n\
 MSG: std_msgs/Header\n\
-") + yarp::rosmsg::std_msgs::Header::typeText() + yarp::os::ConstString("\n\
+") + yarp::rosmsg::std_msgs::Header::typeText() + std::string("\n\
 ================================================================================\n\
 MSG: sensor_msgs/PointField\n\
 ") + yarp::rosmsg::sensor_msgs::PointField::typeText();
     }
 
-    yarp::os::ConstString getTypeText() const
+    std::string getTypeText() const
     {
         return yarp::rosmsg::sensor_msgs::PointCloud2::typeText();
     }

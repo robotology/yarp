@@ -120,7 +120,7 @@ yarp::os::Property p;
 int argc = 5;
 char *argv[] = { "fake_program", "--size", "10", "20", "--name", "mr frog" };
 p.fromCommand(argc, argv[]);
-ConstString result = p.toString();
+std::string result = p.toString();
 // result will be a permutation of (size 10 20) (name "mr frog")
 \endcode
 

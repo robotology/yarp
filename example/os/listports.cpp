@@ -18,7 +18,7 @@ using namespace std;
 int main(int argc, char *argv[]) {
     Network yarp;
 
-    ConstString name = yarp.getNameServerName();
+    std::string name = yarp.getNameServerName();
     Bottle msg, reply;
     msg.addString("bot");
     msg.addString("list");

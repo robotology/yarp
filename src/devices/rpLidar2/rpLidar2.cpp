@@ -464,7 +464,7 @@ void RpLidar2::handleError(u_result error)
     }
 }
 
-ConstString RpLidar2::deviceinfo()
+std::string RpLidar2::deviceinfo()
 {
     if (m_drv)
     {
@@ -492,7 +492,7 @@ ConstString RpLidar2::deviceinfo()
     return "";
 }
 
-bool RpLidar2::getDeviceInfo(yarp::os::ConstString &device_info)
+bool RpLidar2::getDeviceInfo(std::string &device_info)
 {
     LockGuard guard(m_mutex);
     device_info = m_info;

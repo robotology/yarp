@@ -61,7 +61,7 @@ bool AbstractCarrier::isLocal()
     return false;
 }
 
-ConstString AbstractCarrier::toString()
+std::string AbstractCarrier::toString()
 {
     return getName();
 }
@@ -123,7 +123,7 @@ bool AbstractCarrier::expectSenderSpecifier(ConnectionState& proto)
         YARP_DEBUG(Logger::get(), "did not get sender name");
         return false;
     }
-    ConstString s = b.get();
+    std::string s = b.get();
     Route route = proto.getRoute();
     route.setFromName(s);
     proto.setRoute(route);
@@ -204,8 +204,8 @@ bool AbstractCarrier::sendSenderSpecifier(ConnectionState& proto)
 {
     NetInt32 numberSrc;
     Bytes number((char*)&numberSrc, sizeof(NetInt32));
-    const ConstString senderName = proto.getSenderSpecifier();
-    //const ConstString& senderName = getRoute().getFromName();
+    const std::string senderName = proto.getSenderSpecifier();
+    //const std::string& senderName = getRoute().getFromName();
     NetType::netInt((int)senderName.length()+1, number);
     OutputStream& os = proto.os();
     os.write(number);

@@ -67,7 +67,7 @@ public:
 
 class ImageTest : public UnitTest {
 public:
-    virtual ConstString getName() override { return "ImageTest"; }
+    virtual std::string getName() override { return "ImageTest"; }
 
     void passImage(ImageOf<PixelRgb> img) {
         report(0, "passed a blank image ok");
@@ -342,7 +342,7 @@ public:
         img.zero();
         BufferedConnectionWriter writer;
         img.write(writer);
-        ConstString s = writer.toString();
+        std::string s = writer.toString();
         Bottle bot;
         bot.fromBinary(s.c_str(),s.length());
         checkEqual(bot.size(),4,"plausible bottle out");

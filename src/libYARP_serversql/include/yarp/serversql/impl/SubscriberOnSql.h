@@ -37,56 +37,56 @@ public:
         }
     }
 
-    bool open(const yarp::os::ConstString& filename, bool fresh = false);
+    bool open(const std::string& filename, bool fresh = false);
 
     bool close();
 
-    virtual bool addSubscription(const yarp::os::ConstString& src,
-                                 const yarp::os::ConstString& dest,
-                                 const yarp::os::ConstString& mode) override;
+    virtual bool addSubscription(const std::string& src,
+                                 const std::string& dest,
+                                 const std::string& mode) override;
 
-    virtual bool removeSubscription(const yarp::os::ConstString& src,
-                                    const yarp::os::ConstString& dest) override;
+    virtual bool removeSubscription(const std::string& src,
+                                    const std::string& dest) override;
 
-    virtual bool listSubscriptions(const yarp::os::ConstString& port,
+    virtual bool listSubscriptions(const std::string& port,
                                    yarp::os::Bottle& reply) override;
 
-    virtual bool welcome(const yarp::os::ConstString& port, int activity) override;
+    virtual bool welcome(const std::string& port, int activity) override;
 
-    bool hookup(const yarp::os::ConstString& port);
+    bool hookup(const std::string& port);
 
-    bool breakdown(const yarp::os::ConstString& port);
+    bool breakdown(const std::string& port);
 
-    virtual bool setTopic(const yarp::os::ConstString& port,
-                          const yarp::os::ConstString& structure, bool active) override;
+    virtual bool setTopic(const std::string& port,
+                          const std::string& structure, bool active) override;
 
     virtual bool listTopics(yarp::os::Bottle& topics) override;
 
-    bool transitiveWelcome(const yarp::os::ConstString& topic,
-                           const yarp::os::ConstString& src,
-                           const yarp::os::ConstString& dest,
-                           const yarp::os::ConstString& srcFull,
-                           const yarp::os::ConstString& destFull);
+    bool transitiveWelcome(const std::string& topic,
+                           const std::string& src,
+                           const std::string& dest,
+                           const std::string& srcFull,
+                           const std::string& destFull);
 
-    bool checkSubscription(const yarp::os::ConstString& src,
-                           const yarp::os::ConstString& dest,
-                           const yarp::os::ConstString& srcFull,
-                           const yarp::os::ConstString& destFull,
-                           const yarp::os::ConstString& mode);
+    bool checkSubscription(const std::string& src,
+                           const std::string& dest,
+                           const std::string& srcFull,
+                           const std::string& destFull,
+                           const std::string& mode);
 
-    bool breakSubscription(const yarp::os::ConstString& dropper,
-                           const yarp::os::ConstString& src,
-                           const yarp::os::ConstString& dest,
-                           const yarp::os::ConstString& srcFull,
-                           const yarp::os::ConstString& destFull,
-                           const yarp::os::ConstString& mode);
+    bool breakSubscription(const std::string& dropper,
+                           const std::string& src,
+                           const std::string& dest,
+                           const std::string& srcFull,
+                           const std::string& destFull,
+                           const std::string& mode);
 
-    virtual bool setType(const yarp::os::ConstString& family,
-                         const yarp::os::ConstString& structure,
-                         const yarp::os::ConstString& value) override;
+    virtual bool setType(const std::string& family,
+                         const std::string& structure,
+                         const std::string& value) override;
 
-    virtual yarp::os::ConstString getType(const yarp::os::ConstString& family,
-                                          const yarp::os::ConstString& structure) override;
+    virtual std::string getType(const std::string& family,
+                                          const std::string& structure) override;
 
 
     void setVerbose(bool verbose) {

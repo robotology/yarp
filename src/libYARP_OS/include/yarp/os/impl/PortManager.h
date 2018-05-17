@@ -10,7 +10,7 @@
 #ifndef YARP_OS_IMPL_PORTMANAGER_H
 #define YARP_OS_IMPL_PORTMANAGER_H
 
-#include <yarp/os/ConstString.h>
+#include <string>
 #include <yarp/os/OutputStream.h>
 #include <yarp/os/ConnectionReader.h>
 #include <yarp/os/PortReport.h>
@@ -56,7 +56,7 @@ public:
      * Set the name of this port.
      * @param name the name of this port
      */
-    void setName(const ConstString& name)
+    void setName(const std::string& name)
     {
         this->name = name;
     }
@@ -70,7 +70,7 @@ public:
      * is already a connection to the named target
      * @return true on success
      */
-    virtual bool addOutput(const ConstString& dest,
+    virtual bool addOutput(const std::string& dest,
                            void *id,
                            yarp::os::OutputStream *os,
                            bool onlyIfNeeded = false)
@@ -93,7 +93,7 @@ public:
      * @param id an opaque tracker for the connection
      * @param os the output stream for messages about this operation
      */
-    virtual void removeInput(const ConstString& src,
+    virtual void removeInput(const std::string& src,
                              void *id,
                              yarp::os::OutputStream *os)
     {
@@ -112,7 +112,7 @@ public:
      * @param id an opaque tracker for the connection
      * @param os the output stream for messages about this operation
      */
-    virtual void removeOutput(const ConstString& dest,
+    virtual void removeOutput(const std::string& dest,
                               void *id,
                               yarp::os::OutputStream *os)
     {
@@ -196,9 +196,9 @@ public:
     /**
      * @return the name of this port
      */
-    virtual ConstString getName()
+    virtual std::string getName()
     {
-        return ConstString(name);
+        return std::string(name);
     }
 
     /**
@@ -206,7 +206,7 @@ public:
      * without actually being part of the message.
      * @param envelope the extra message to send
      */
-    virtual void setEnvelope(const ConstString& envelope) = 0;
+    virtual void setEnvelope(const std::string& envelope) = 0;
 
     /**
      * Handle a port event (connection, disconnection, etc)
@@ -237,7 +237,7 @@ protected:
 
 private:
     yarp::os::OutputStream *os;
-    ConstString name;
+    std::string name;
 };
 
 #endif // YARP_OS_IMPL_PORTMANAGER_H

@@ -10,7 +10,7 @@
 #ifndef YARP_OS_VALUE_H
 #define YARP_OS_VALUE_H
 
-#include <yarp/os/ConstString.h>
+#include <string>
 #include <yarp/os/Searchable.h>
 #include <yarp/os/Portable.h>
 #include <yarp/os/Bottle.h>
@@ -73,7 +73,7 @@ public:
      * @param isVocab set this to true if the string should be interpreted
      * as a vocabulary identifier
      */
-    explicit Value(const ConstString& str, bool isVocab = false);
+    explicit Value(const std::string& str, bool isVocab = false);
 
     /**
      * Construct a binary data Value
@@ -203,7 +203,7 @@ public:
      * @return string value if value is indeed a string.
      * Otherwise returns empty string.
      */
-    virtual ConstString asString() const;
+    virtual std::string asString() const;
 
     /**
      * Get list value.
@@ -247,13 +247,13 @@ public:
     virtual bool write(ConnectionWriter& connection) override;
 
     // documented in Searchable
-    virtual bool check(const ConstString& key) const override;
+    virtual bool check(const std::string& key) const override;
 
     // documented in Searchable
-    virtual Value& find(const ConstString& key) const override;
+    virtual Value& find(const std::string& key) const override;
 
     // documented in Searchable
-    virtual Bottle& findGroup(const ConstString& key) const override;
+    virtual Bottle& findGroup(const std::string& key) const override;
 
     /**
      * Equality test.
@@ -291,7 +291,7 @@ public:
      */
     void fromString(const char *str);
 
-    ConstString toString() const override;
+    std::string toString() const override;
 
     /**
      * Create a new value of the same type.
@@ -334,7 +334,7 @@ public:
      * @param str the value to take on
      * @return a string Value
      */
-    static Value *makeString(const ConstString& str);
+    static Value *makeString(const std::string& str);
 
     /**
      * Create a vocabulary identifier Value
@@ -348,7 +348,7 @@ public:
      * @param str the value to take on
      * @return a vocabulary identifier Value
      */
-    static Value *makeVocab(const ConstString& str);
+    static Value *makeVocab(const std::string& str);
 
 
     /**
@@ -378,7 +378,7 @@ public:
      * "(5 6 7)" will create a list.
      * @return the Value to which the text description corresponds
      */
-    static Value *makeValue(const ConstString& txt);
+    static Value *makeValue(const std::string& txt);
 
 
     /**

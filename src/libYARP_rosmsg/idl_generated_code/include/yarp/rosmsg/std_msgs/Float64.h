@@ -103,13 +103,13 @@ public:
     typedef yarp::os::idl::BottleStyle<yarp::rosmsg::std_msgs::Float64> bottleStyle;
 
     // Give source text for class, ROS will need this
-    static yarp::os::ConstString typeText()
+    static std::string typeText()
     {
-        return yarp::os::ConstString("\
+        return std::string("\
 float64 data");
     }
 
-    yarp::os::ConstString getTypeText() const
+    std::string getTypeText() const
     {
         return yarp::rosmsg::std_msgs::Float64::typeText();
     }
