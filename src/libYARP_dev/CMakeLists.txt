@@ -85,7 +85,6 @@ set(YARP_dev_HDRS include/yarp/dev/all.h
                   include/yarp/dev/PolyDriver.h
                   include/yarp/dev/PolyDriverList.h
                   include/yarp/dev/PreciselyTimed.h
-                  include/yarp/dev/RemoteFrameGrabberDC1394.h
                   include/yarp/dev/RGBDSensorParamParser.h
                   include/yarp/dev/SerialInterfaces.h
                   include/yarp/dev/ServiceInterfaces.h
