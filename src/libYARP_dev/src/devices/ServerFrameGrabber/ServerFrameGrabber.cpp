@@ -232,7 +232,7 @@ bool ServerFrameGrabber::respond(const yarp::os::Bottle& cmd,
     switch (code)
     {
     // first check if requests are coming from new iFrameGrabberControl2 interface and process them
-    case VOCAB_FRAMEGRABBER_CONTROL2:
+    case VOCAB_FRAMEGRABBER_CONTROL:
     {
         return ifgCtrl_Parser.respond(cmd, response);    // I don't like all those returns everywhere!!! :-(
     } break;

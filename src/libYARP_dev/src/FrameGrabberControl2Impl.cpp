@@ -23,7 +23,7 @@ FrameGrabberControls_Sender::FrameGrabberControls_Sender(Port& port) : _port(por
 bool FrameGrabberControls_Sender::getCameraDescription(CameraDescriptor* camera)
 {
     yarp::os::Bottle cmd, response;
-    cmd.addVocab(VOCAB_FRAMEGRABBER_CONTROL2);
+    cmd.addVocab(VOCAB_FRAMEGRABBER_CONTROL);
     cmd.addVocab(VOCAB_GET);
     cmd.addVocab(VOCAB_CAMERA_DESCRIPTION);
     yInfo() << _port.isOpen();
@@ -38,7 +38,7 @@ bool FrameGrabberControls_Sender::getCameraDescription(CameraDescriptor* camera)
 bool FrameGrabberControls_Sender::hasFeature(int feature, bool* hasFeature)
 {
     yarp::os::Bottle cmd, response;
-    cmd.addVocab(VOCAB_FRAMEGRABBER_CONTROL2);
+    cmd.addVocab(VOCAB_FRAMEGRABBER_CONTROL);
     cmd.addVocab(VOCAB_HAS);
     cmd.addVocab(VOCAB_FEATURE);
     cmd.addInt32(feature);
@@ -51,7 +51,7 @@ bool FrameGrabberControls_Sender::hasFeature(int feature, bool* hasFeature)
 bool FrameGrabberControls_Sender::setFeature(int feature, double value)
 {
     yarp::os::Bottle cmd, response;
-    cmd.addVocab(VOCAB_FRAMEGRABBER_CONTROL2);
+    cmd.addVocab(VOCAB_FRAMEGRABBER_CONTROL);
     cmd.addVocab(VOCAB_SET);
     cmd.addVocab(VOCAB_FEATURE);
     cmd.addInt32(feature);
@@ -62,7 +62,7 @@ bool FrameGrabberControls_Sender::setFeature(int feature, double value)
 bool FrameGrabberControls_Sender::setFeature(int feature, double  value1, double  value2)
 {
     yarp::os::Bottle cmd, response;
-    cmd.addVocab(VOCAB_FRAMEGRABBER_CONTROL2);
+    cmd.addVocab(VOCAB_FRAMEGRABBER_CONTROL);
     cmd.addVocab(VOCAB_SET);
     cmd.addVocab(VOCAB_FEATURE2);
     cmd.addInt32(feature);
@@ -74,7 +74,7 @@ bool FrameGrabberControls_Sender::setFeature(int feature, double  value1, double
 bool FrameGrabberControls_Sender::getFeature(int feature, double* value)
 {
     yarp::os::Bottle cmd, response;
-    cmd.addVocab(VOCAB_FRAMEGRABBER_CONTROL2);
+    cmd.addVocab(VOCAB_FRAMEGRABBER_CONTROL);
     cmd.addVocab(VOCAB_GET);
     cmd.addVocab(VOCAB_FEATURE);
     cmd.addInt32(feature);
@@ -87,7 +87,7 @@ bool FrameGrabberControls_Sender::getFeature(int feature, double* value)
 bool FrameGrabberControls_Sender::getFeature(int feature, double *value1, double *value2)
 {
     yarp::os::Bottle cmd, response;
-    cmd.addVocab(VOCAB_FRAMEGRABBER_CONTROL2);
+    cmd.addVocab(VOCAB_FRAMEGRABBER_CONTROL);
     cmd.addVocab(VOCAB_GET);
     cmd.addVocab(VOCAB_FEATURE2);
     cmd.addInt32(feature);
@@ -101,7 +101,7 @@ bool FrameGrabberControls_Sender::getFeature(int feature, double *value1, double
 bool FrameGrabberControls_Sender::hasOnOff(int feature, bool* _hasOnOff)
 {
     yarp::os::Bottle cmd, response;
-    cmd.addVocab(VOCAB_FRAMEGRABBER_CONTROL2);
+    cmd.addVocab(VOCAB_FRAMEGRABBER_CONTROL);
     cmd.addVocab(VOCAB_HAS);
     cmd.addVocab(VOCAB_ONOFF);
     cmd.addInt32(feature);
@@ -114,7 +114,7 @@ bool FrameGrabberControls_Sender::hasOnOff(int feature, bool* _hasOnOff)
 bool FrameGrabberControls_Sender::setActive(int feature, bool onoff)
 {
     yarp::os::Bottle cmd, response;
-    cmd.addVocab(VOCAB_FRAMEGRABBER_CONTROL2);
+    cmd.addVocab(VOCAB_FRAMEGRABBER_CONTROL);
     cmd.addVocab(VOCAB_SET);
     cmd.addVocab(VOCAB_ACTIVE);
     cmd.addInt32(feature);
@@ -125,7 +125,7 @@ bool FrameGrabberControls_Sender::setActive(int feature, bool onoff)
 bool FrameGrabberControls_Sender::getActive(int feature, bool* _isActive)
 {
     yarp::os::Bottle cmd, response;
-    cmd.addVocab(VOCAB_FRAMEGRABBER_CONTROL2);
+    cmd.addVocab(VOCAB_FRAMEGRABBER_CONTROL);
     cmd.addVocab(VOCAB_GET);
     cmd.addVocab(VOCAB_ACTIVE);
     cmd.addInt32(feature);
@@ -138,7 +138,7 @@ bool FrameGrabberControls_Sender::getActive(int feature, bool* _isActive)
 bool FrameGrabberControls_Sender::hasAuto(int feature, bool* _hasAuto)
 {
     yarp::os::Bottle cmd, response;
-    cmd.addVocab(VOCAB_FRAMEGRABBER_CONTROL2);
+    cmd.addVocab(VOCAB_FRAMEGRABBER_CONTROL);
     cmd.addVocab(VOCAB_HAS);
     cmd.addVocab(VOCAB_AUTO);
     cmd.addInt32(feature);
@@ -151,7 +151,7 @@ bool FrameGrabberControls_Sender::hasAuto(int feature, bool* _hasAuto)
 bool FrameGrabberControls_Sender::hasManual(int feature, bool* _hasManual)
 {
     yarp::os::Bottle cmd, response;
-    cmd.addVocab(VOCAB_FRAMEGRABBER_CONTROL2);
+    cmd.addVocab(VOCAB_FRAMEGRABBER_CONTROL);
     cmd.addVocab(VOCAB_HAS);
     cmd.addVocab(VOCAB_MANUAL);
     cmd.addInt32(feature);
@@ -164,7 +164,7 @@ bool FrameGrabberControls_Sender::hasManual(int feature, bool* _hasManual)
 bool FrameGrabberControls_Sender::hasOnePush(int feature, bool* _hasOnePush)
 {
     yarp::os::Bottle cmd, response;
-    cmd.addVocab(VOCAB_FRAMEGRABBER_CONTROL2);
+    cmd.addVocab(VOCAB_FRAMEGRABBER_CONTROL);
     cmd.addVocab(VOCAB_HAS);
     cmd.addVocab(VOCAB_ONEPUSH);
     cmd.addInt32(feature);
@@ -177,7 +177,7 @@ bool FrameGrabberControls_Sender::hasOnePush(int feature, bool* _hasOnePush)
 bool FrameGrabberControls_Sender::setMode(int feature, FeatureMode mode)
 {
     yarp::os::Bottle cmd, response;
-    cmd.addVocab(VOCAB_FRAMEGRABBER_CONTROL2);
+    cmd.addVocab(VOCAB_FRAMEGRABBER_CONTROL);
     cmd.addVocab(VOCAB_SET);
     cmd.addVocab(VOCAB_MODE);
     cmd.addInt32(feature);
@@ -188,7 +188,7 @@ bool FrameGrabberControls_Sender::setMode(int feature, FeatureMode mode)
 bool FrameGrabberControls_Sender::getMode(int feature, FeatureMode* mode)
 {
     yarp::os::Bottle cmd, response;
-    cmd.addVocab(VOCAB_FRAMEGRABBER_CONTROL2);
+    cmd.addVocab(VOCAB_FRAMEGRABBER_CONTROL);
     cmd.addVocab(VOCAB_GET);
     cmd.addVocab(VOCAB_MODE);
     cmd.addInt32(feature);
@@ -201,7 +201,7 @@ bool FrameGrabberControls_Sender::getMode(int feature, FeatureMode* mode)
 bool FrameGrabberControls_Sender::setOnePush(int feature)
 {
     yarp::os::Bottle cmd, response;
-    cmd.addVocab(VOCAB_FRAMEGRABBER_CONTROL2);
+    cmd.addVocab(VOCAB_FRAMEGRABBER_CONTROL);
     cmd.addVocab(VOCAB_SET);
     cmd.addVocab(VOCAB_ONEPUSH);
     cmd.addInt32(feature);
@@ -252,7 +252,7 @@ bool FrameGrabberControls_Parser::respond(const yarp::os::Bottle& cmd, yarp::os:
     {
         case VOCAB_HAS:
         {
-            response.addVocab(VOCAB_FRAMEGRABBER_CONTROL2);
+            response.addVocab(VOCAB_FRAMEGRABBER_CONTROL);
             response.addVocab(VOCAB_HAS);
             response.addVocab(VOCAB_FEATURE);
             response.addInt32(param);
@@ -346,7 +346,7 @@ bool FrameGrabberControls_Parser::respond(const yarp::os::Bottle& cmd, yarp::os:
 
         case VOCAB_GET:
         {
-            response.addVocab(VOCAB_FRAMEGRABBER_CONTROL2);
+            response.addVocab(VOCAB_FRAMEGRABBER_CONTROL);
             response.addVocab(param);
             response.addVocab(VOCAB_IS);
             switch (param)

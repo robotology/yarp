@@ -16,6 +16,7 @@
  * remote camera capabilities */
 
 #ifndef YARP_NO_DEPRECATED // Since YARP 3.0.0
+
 namespace yarp{
 namespace dev {
 /**
@@ -24,9 +25,8 @@ namespace dev {
  * with former IFrameGrabberControls2 or as standalone.
  * @deprecated Since YARP 3.0.0
  */
-class YARP_dev_DEPRECATED_API_MSG("Use yarp::dev::IFrameGrabberControl instead") IFrameGrabberControls2 : public yarp::dev::IFrameGrabberControls
-{
-};
+YARP_DEPRECATED_TYPEDEF_MSG("Use yarp::dev::IFrameGrabberControl instead") IFrameGrabberControls IFrameGrabberControls2;
+
 } // namespace dev
 } // namespace yarp
 #endif

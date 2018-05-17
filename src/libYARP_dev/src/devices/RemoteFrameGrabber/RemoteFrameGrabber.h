@@ -566,7 +566,7 @@ protected:
 
     bool setCommand(int code, double v) {
         yarp::os::Bottle cmd, response;
-        cmd.addVocab(VOCAB_FRAMEGRABBER_CONTROL2);
+        cmd.addVocab(VOCAB_FRAMEGRABBER_CONTROL);
         cmd.addVocab(VOCAB_SET);
         cmd.addVocab(code);
         cmd.addFloat64(v);
@@ -576,7 +576,7 @@ protected:
 
     bool setCommand(int code, double b, double r) {
         yarp::os::Bottle cmd, response;
-        cmd.addVocab(VOCAB_FRAMEGRABBER_CONTROL2);
+        cmd.addVocab(VOCAB_FRAMEGRABBER_CONTROL);
         cmd.addVocab(VOCAB_SET);
         cmd.addVocab(code);
         cmd.addFloat64(b);
@@ -587,7 +587,7 @@ protected:
 
     double getCommand(int code) const {
         yarp::os::Bottle cmd, response;
-        cmd.addVocab(VOCAB_FRAMEGRABBER_CONTROL2);
+        cmd.addVocab(VOCAB_FRAMEGRABBER_CONTROL);
         cmd.addVocab(VOCAB_GET);
         cmd.addVocab(code);
         port.write(cmd,response);
@@ -598,7 +598,7 @@ protected:
     bool getCommand(int code, double &b, double &r) const
     {
         yarp::os::Bottle cmd, response;
-        cmd.addVocab(VOCAB_FRAMEGRABBER_CONTROL2);
+        cmd.addVocab(VOCAB_FRAMEGRABBER_CONTROL);
         cmd.addVocab(VOCAB_GET);
         cmd.addVocab(code);
         port.write(cmd,response);

@@ -649,7 +649,7 @@ bool ServerGrabber::respond(const yarp::os::Bottle& cmd,
     } break;
 
     // first check if requests are coming from new iFrameGrabberControl2 interface and process them
-    case VOCAB_FRAMEGRABBER_CONTROL2:
+    case VOCAB_FRAMEGRABBER_CONTROL:
     {
         if(param.twoCameras)
         {

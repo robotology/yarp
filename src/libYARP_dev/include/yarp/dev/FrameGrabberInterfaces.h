@@ -14,12 +14,8 @@
 #include <yarp/sig/Image.h>
 #include <yarp/sig/Vector.h>
 
-
 /*! \file FrameGrabberInterfaces.h define common interfaces for frame
   grabber devices */
-
-namespace yarp{
-namespace dev {
 
 typedef enum {
     BUS_UNKNOWN = 0,
@@ -69,7 +65,10 @@ typedef struct {
 #define VOCAB_CROP                      VOCAB4('c','r','o','p')
 
 
+#define VOCAB_FRAMEGRABBER_CONTROL      VOCAB3('f','g','c')
+#ifndef YARP_NO_DEPRECATED // Since YARP 3.0.0
 #define VOCAB_FRAMEGRABBER_CONTROL2     VOCAB4('f','g','c','2')
+#endif
 #define VOCAB_CAMERA_DESCRIPTION        VOCAB4('c','a','m','d')
 #define VOCAB_HAS                       VOCAB3('h','a','s')
 #define VOCAB_FEATURE                   VOCAB4('f','e','a','t')
@@ -174,6 +173,9 @@ typedef enum {
 #define VOCAB_DRSETCAP VOCAB4('D','R','2','M') // 38
 #define VOCAB_DRSETBPP VOCAB4('D','R','2','N') // 39
 #define VOCAB_DRGETBPP VOCAB4('D','R','2','O') // 40
+
+namespace yarp{
+namespace dev {
 
 /**
  * @ingroup dev_iface_media
@@ -794,7 +796,11 @@ public:
     // 40
     virtual bool setBytesPerPacketDC1394(unsigned int bpp)=0;//{ return true; }
 };
+
 } // namespace dev
 } // namespace yarp
+#ifndef YARP_NO_DEPRECATED // Since YARP 3.0.0
+#include <yarp/dev/FrameGrabberControl2.h>
+#endif
 
 #endif // YARP_FRAMEGRABBERINTERFACES_H
