@@ -21,7 +21,7 @@ namespace yarp{
 }
 
 /**
- * @ingroup dev_impl_wrapper
+ * @ingroup dev_impl_other
  *
  * Lets you make a bunch of devices as a group.
  *

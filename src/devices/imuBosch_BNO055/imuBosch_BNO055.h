@@ -112,7 +112,7 @@ namespace yarp {
 
 
 /**
-*  @ingroup dev_impl_wrapper
+*  @ingroup dev_impl_analog_sensors
 *
 * \section BoschIMU Description of input parameters
 *

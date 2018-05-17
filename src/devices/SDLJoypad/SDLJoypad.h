@@ -23,8 +23,17 @@ namespace yarp {
     }
 }
 
+
+struct yarp::dev::SDLJoypadImpl::stick
+{
+    std::vector<unsigned int>  axes_ids;
+    float                      deadZone;
+    std::vector<int>           direction;
+};
+
+
 /**
-* @ingroup dev_impl_wrapper
+* @ingroup dev_impl_other
 *
 * \section SDLJoypad Description of input parameters
 * \brief Device that reads inputs of Joypads compatible with the SDL library.
@@ -41,14 +50,6 @@ namespace yarp {
 * | invert_axis_[ID]      | bool   |       | false         | no                                          | invert the current axis                   | set it for each stick in the proper stick group                                                                                         |
 * | deadZone              | double |       | 0.0           | yes                                         | set the deadzone for this stick           | set it for each stick in the proper stick group                                                                                         |
 **/
-
-struct yarp::dev::SDLJoypadImpl::stick
-{
-    std::vector<unsigned int>  axes_ids;
-    float                      deadZone;
-    std::vector<int>           direction;
-};
-
 class yarp::dev::SDLJoypad : public yarp::dev::IJoypadEventDriven,//public yarp::dev::IJoypadController,
                              public yarp::dev::DeviceDriver
 {

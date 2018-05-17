@@ -36,6 +36,8 @@ enum MAS_SensorType
 };
 
 /**
+* @ingroup dev_impl_remappers
+*
 * \brief `multipleanalogsensorsremapper` : device that takes a list of sensor from multiple analog sensors device and expose them as a single device exposing MultipleAnalogSensors interface.
 * 
 * | YARP device name |

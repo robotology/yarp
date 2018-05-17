@@ -27,7 +27,7 @@ namespace yarp {
 }
 
 /**
- *  @ingroup dev_impl_wrapper
+ * @ingroup dev_impl_network_clients
  *
  * \section Map2DClient
  * A device which allows a client application to store/retrieve user maps device in a map server.

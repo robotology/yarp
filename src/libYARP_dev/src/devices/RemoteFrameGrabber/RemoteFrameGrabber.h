@@ -567,7 +567,7 @@ return response.get(0).asInt()!=0? true:false;
 };
 
 /**
- * @ingroup dev_impl_wrapper
+ * @ingroup dev_impl_network_clients
  *
  * \section remoteFrameGrabber
  * Connect to a ServerFrameGrabber.  See ServerFrameGrabber for

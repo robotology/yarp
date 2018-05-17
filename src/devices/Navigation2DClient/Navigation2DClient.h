@@ -26,7 +26,7 @@ namespace yarp {
 
 
 /**
- *  @ingroup dev_impl_wrapper
+ *  @ingroup dev_impl_network_clients
  *
  * \section Navigation2DClient
  * A device which allows a client application to perform navigation tasks, such as commanding the robot to reach a specific location in a map.

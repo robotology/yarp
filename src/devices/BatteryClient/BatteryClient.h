@@ -70,7 +70,7 @@ public:
 #endif /*DOXYGEN_SHOULD_SKIP_THIS*/
 
 /**
-* @ingroup dev_impl_wrapper
+* @ingroup dev_impl_network_clients
 *
 * The client side of any IBattery capable device.
 * Still single thread! concurrent access is unsafe.

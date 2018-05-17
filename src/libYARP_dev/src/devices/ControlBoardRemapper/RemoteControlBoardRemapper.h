@@ -19,7 +19,7 @@ namespace dev {
 
 
 /**
- *  @ingroup dev_impl_wrapper
+ *  @ingroup dev_impl_network_clients
  *
  * \section RemoteControlBoardRemapper
  * A device that takes a list of axes from multiple controlboards, a list

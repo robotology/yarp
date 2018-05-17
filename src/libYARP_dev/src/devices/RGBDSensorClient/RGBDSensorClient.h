@@ -40,7 +40,7 @@ namespace yarp {
 
 
 /**
- *  @ingroup dev_impl_client
+ *  @ingroup dev_impl_network_clients
  *
  * \section RGBDSensorClient Description of input parameters
  * A Network client to receive data from kinect-like devices.
