@@ -9,15 +9,13 @@
 #ifndef YARP_OS_CONSTSTRING_H
 #define YARP_OS_CONSTSTRING_H
 
+#include <yarp/os/api.h>
 #include <string>
 
 namespace yarp {
 namespace os {
 
-YARP_DEPRECATED_MSG("Use std::string instead")
-class ConstString : public std::string
-{
-};
+typedef YARP_DEPRECATED_MSG("Use std::string instead") std::string ConstString;
 
 } // namespace os
 } // namespace yarp
