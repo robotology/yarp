@@ -31,7 +31,6 @@
 
 
 using yarp::os::Contact;
-using std::string;
 using yarp::os::NetType;
 using yarp::os::NestedContact;
 using yarp::os::Searchable;

@@ -41,7 +41,6 @@ using yarp::dev::Drivers;
 using yarp::dev::IFrameGrabberImage;
 using yarp::dev::PolyDriver;
 
-using std::string;
 using yarp::os::Property;
 using yarp::os::Searchable;
 using yarp::os::Value;

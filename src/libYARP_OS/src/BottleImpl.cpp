@@ -41,7 +41,6 @@ using yarp::os::Bytes;
 using yarp::os::ConnectionReader;
 using yarp::os::ConnectionWriter;
 using yarp::os::Bottle;
-using std::string;
 using yarp::os::Searchable;
 using yarp::os::Value;
 

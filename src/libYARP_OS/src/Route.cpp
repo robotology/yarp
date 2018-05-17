@@ -13,7 +13,6 @@
 
 
 using yarp::os::Route;
-using std::string;
 using yarp::os::Contact;
 
 #ifndef DOXYGEN_SHOULD_SKIP_THIS

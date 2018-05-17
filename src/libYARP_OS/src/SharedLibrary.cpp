@@ -21,7 +21,6 @@
 
 
 using yarp::os::SharedLibrary;
-using std::string;
 using yarp::os::impl::SharedLibraryImpl;
 
 
