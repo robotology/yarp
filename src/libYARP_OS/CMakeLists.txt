@@ -329,6 +329,8 @@ set(YARP_OS_SRCS src/AbstractCarrier.cpp
                  src/QosStyle.cpp)
 
 if(NOT YARP_NO_DEPRECATED) # Since YARP 3.0.0
+  list(APPEND YARP_OS_HDRS include/yarp/os/ConstString.h)
+
   list(APPEND YARP_OS_SRCS src/Mutex.cpp
                            src/RecursiveMutex.cpp)
 endif()
