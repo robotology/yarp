@@ -576,11 +576,11 @@ bool ImplementControlCalibration<DERIVED, IMPLEMENT>::done(int j)
 }
 
 template <class DERIVED, class IMPLEMENT>
-bool ImplementControlCalibration2<DERIVED, IMPLEMENT>::calibrate2(int axis, unsigned int type, double p1, double p2, double p3)
+bool ImplementControlCalibration<DERIVED, IMPLEMENT>::calibrate(int axis, unsigned int type, double p1, double p2, double p3)
 {
     int k=castToMapper(helper)->toHw(axis);
 
-    return iCalibrate->calibrate2Raw(k, type, p1, p2, p3);
+    return iCalibrate->calibrateRaw(k, type, p1, p2, p3);
 }
 
 template <class DERIVED, class IMPLEMENT>

@@ -1882,9 +1882,9 @@ bool FakeMotionControl::setCalibrationParametersRaw(int j, const CalibrationPara
     return true;
 }
 
-bool FakeMotionControl::calibrate2Raw(int j, unsigned int type, double p1, double p2, double p3)
+bool FakeMotionControl::calibrateRaw(int j, unsigned int type, double p1, double p2, double p3)
 {
-    yTrace() << "calibrate2Raw for joint" << j;
+    yTrace() << "calibrateRaw for joint" << j;
     return true;
 }
 

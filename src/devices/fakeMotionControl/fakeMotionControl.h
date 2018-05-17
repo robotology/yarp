@@ -89,7 +89,7 @@ class yarp::dev::FakeMotionControl :    public DeviceDriver,
 //                                         public DeviceResponder,
                                         public yarp::os::RateThread,
                                         public IPidControlRaw,
-                                        public IControlCalibration2Raw,
+                                        public IControlCalibrationRaw,
                                         public IAmplifierControlRaw,
                                         public IEncodersTimedRaw,
                                         public IMotorEncodersRaw,
@@ -323,7 +323,7 @@ public:
 
     // calibration2raw
     virtual bool setCalibrationParametersRaw(int axis, const CalibrationParameters& params) override;
-    virtual bool calibrate2Raw(int axis, unsigned int type, double p1, double p2, double p3) override;
+    virtual bool calibrateRaw(int axis, unsigned int type, double p1, double p2, double p3) override;
     virtual bool doneRaw(int j) override;
 
 

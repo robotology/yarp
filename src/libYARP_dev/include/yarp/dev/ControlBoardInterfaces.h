@@ -50,7 +50,9 @@ namespace yarp {
         class IControlLimitsRaw;
         class IControlLimits;
         class IControlCalibrationRaw;
-        class IControlCalibration2Raw;
+#ifndef YARP_NO_DEPRECATED // Since YARP 3.0.0
+YARP_DEPRECATED_TYPEDEF_MSG("Use yarp::dev::IControlCalibrationRaw instead") IControlCalibrationRaw IControlCalibration2Raw;
+#endif
         class IControlCalibration;
 #ifndef YARP_NO_DEPRECATED // Since YARP 3.0.0
 YARP_DEPRECATED_TYPEDEF_MSG("Use yarp::dev::IControlCalibration instead") IControlCalibration IControlCalibration2;
@@ -380,56 +382,50 @@ public:
 class YARP_dev_API yarp::dev::IControlCalibrationRaw
 {
 public:
-    IControlCalibrationRaw(){};
+    IControlCalibrationRaw(){}
     /**
      * Destructor.
      */
     virtual ~IControlCalibrationRaw() {}
 
-    /* Start calibration, this method is very often platform
-     * specific.
-     * @return true/false on success failure
-     */
-    virtual bool calibrateRaw(int j, double p)=0;
-
-    /* Check if the calibration is terminated, on a particular joint.
-     * Non blocking.
-     * @return true/false
-     */
-    virtual bool doneRaw(int j)=0;
-
-};
-
-/**
- *
- * New interface for control devices, calibration commands.
- */
-class YARP_dev_API yarp::dev::IControlCalibration2Raw
-{
-public:
-    IControlCalibration2Raw(){};
+#ifndef YARP_NO_DEPRECATED // Since YARP 3.0.0
     /**
-     * Destructor.
-     */
-    virtual ~IControlCalibration2Raw() {}
-
-    /* Start calibration, this method is very often platform
+     *  Start calibration, this method is very often platform
      * specific.
+     * @deprecated Since YARP 3.0.0
      * @return true/false on success failure
      */
-    virtual bool calibrate2Raw(int axis, unsigned int type, double p1, double p2, double p3)=0;
+    virtual bool calibrateRaw(int j, double p) { return false; }
 
-    /* Start calibration, this method is very often platform
-    * specific.
-    * @return true/false on success failure
-    */
-    virtual bool setCalibrationParametersRaw(int axis, const CalibrationParameters& params) {return false;}
+    /**
+     * Start calibration, this method is very often platform
+     * specific.
+     * @deprecated Since YARP 3.0.0
+     * @return true/false on success failure
+     */
+    virtual bool calibrate2Raw(int axis, unsigned int type, double p1, double p2, double p3) { return false;}
+#endif
 
-    /* Check if the calibration is terminated, on a particular joint.
+    /**
+     * Check if the calibration is terminated, on a particular joint.
      * Non blocking.
      * @return true/false
      */
     virtual bool doneRaw(int j)=0;
+
+    /**
+     *  Start calibration, this method is very often platform
+     * specific.
+     * @return true/false on success failure
+     */
+    virtual bool calibrateRaw(int axis, unsigned int type, double p1, double p2, double p3)=0;
+
+    /**
+     *  Start calibration, this method is very often platform
+     * specific.
+     * @return true/false on success failure
+    */
+    virtual bool setCalibrationParametersRaw(int axis, const CalibrationParameters& params) { return false; }
 
 };
 
