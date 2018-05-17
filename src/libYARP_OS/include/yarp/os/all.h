@@ -24,7 +24,6 @@
 #include <yarp/os/BufferedPort.h>
 #include <yarp/os/ConnectionReader.h>
 #include <yarp/os/ConnectionWriter.h>
-#include <string>
 #include <yarp/os/Contactable.h>
 #include <yarp/os/UnbufferedContactable.h>
 #include <yarp/os/AbstractContactable.h>
@@ -70,6 +69,10 @@
 #include <yarp/os/Log.h>
 #include <yarp/os/LogStream.h>
 #include <yarp/os/MessageStack.h>
+
+#ifndef YARP_NO_DEPRECATED // since YARP 3.0.0
+# include <yarp/os/ConstString.h>
+#endif
 
 /**
  * @namespace yarp
