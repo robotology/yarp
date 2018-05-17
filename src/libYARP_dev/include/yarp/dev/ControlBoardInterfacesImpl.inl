@@ -557,6 +557,7 @@ bool ImplementControlCalibration<DERIVED, IMPLEMENT>::uninitialize ()
     return true;
 }
 
+#ifndef YARP_NO_DEPRECATED // Since YARP 3.0.0
 template <class DERIVED, class IMPLEMENT>
 bool ImplementControlCalibration<DERIVED, IMPLEMENT>::calibrate(int j, double p)
 {
@@ -564,6 +565,7 @@ bool ImplementControlCalibration<DERIVED, IMPLEMENT>::calibrate(int j, double p)
 
     return iCalibrate->calibrateRaw(k, p);
 }
+#endif
 
 template <class DERIVED, class IMPLEMENT>
 bool ImplementControlCalibration<DERIVED, IMPLEMENT>::done(int j)
@@ -571,55 +573,6 @@ bool ImplementControlCalibration<DERIVED, IMPLEMENT>::done(int j)
     int k=castToMapper(helper)->toHw(j);
 
     return iCalibrate->doneRaw(k);
-}
-
-////////////////////////
-
-////////////////////////
-// ControlCalibration2 Interface Implementation
-template <class DERIVED, class IMPLEMENT>
-ImplementControlCalibration2<DERIVED, IMPLEMENT>::ImplementControlCalibration2(DERIVED *y)
-{
-    iCalibrate= dynamic_cast<IControlCalibration2Raw *> (y);
-    helper = 0;
-    temp=0;
-}
-
-template <class DERIVED, class IMPLEMENT>
-ImplementControlCalibration2<DERIVED, IMPLEMENT>::~ImplementControlCalibration2()
-{
-    uninitialize();
-}
-
-template <class DERIVED, class IMPLEMENT>
-bool ImplementControlCalibration2<DERIVED, IMPLEMENT>:: initialize (int size, const int *amap, const double *enc, const double *zos)
-{
-    if (helper!=0)
-        return false;
-
-    helper=(void *)(new ControlBoardHelper(size, amap, enc, zos));
-    yAssert (helper != 0);
-    temp=new double [size];
-    yAssert (temp != 0);
-    return true;
-}
-
-/**
-* Clean up internal data and memory.
-* @return true if uninitialization is executed, false otherwise.
-*/
-template <class DERIVED, class IMPLEMENT>
-bool ImplementControlCalibration2<DERIVED, IMPLEMENT>::uninitialize ()
-{
-    if (helper!=0)
-    {
-        delete castToMapper(helper);
-        helper=0;
-    }
-
-    checkAndDestroy(temp);
-
-    return true;
 }
 
 template <class DERIVED, class IMPLEMENT>
@@ -631,21 +584,12 @@ bool ImplementControlCalibration2<DERIVED, IMPLEMENT>::calibrate2(int axis, unsi
 }
 
 template <class DERIVED, class IMPLEMENT>
-bool ImplementControlCalibration2<DERIVED, IMPLEMENT>::setCalibrationParameters(int axis, const CalibrationParameters& params)
+bool ImplementControlCalibration<DERIVED, IMPLEMENT>::setCalibrationParameters(int axis, const CalibrationParameters& params)
 {
     int k = castToMapper(helper)->toHw(axis);
 
     return iCalibrate->setCalibrationParametersRaw(k, params);
 }
-
-template <class DERIVED, class IMPLEMENT>
-bool ImplementControlCalibration2<DERIVED, IMPLEMENT>::done(int j)
-{
-    int k=castToMapper(helper)->toHw(j);
-
-    return iCalibrate->doneRaw(k);
-}
-
 
 ///////////////// ImplementControlLimits
 template <class DERIVED, class IMPLEMENT>

@@ -61,7 +61,6 @@ public:
     yarp::dev::IAmplifierControl     *amp;
     yarp::dev::IControlLimits2       *lim2;
     yarp::dev::IControlCalibration   *calib;
-    yarp::dev::IControlCalibration2  *calib2;
     yarp::dev::IRemoteCalibrator     *remcalib;
     yarp::dev::IPreciselyTimed       *iTimed;
     yarp::dev::ITorqueControl        *iTorque;

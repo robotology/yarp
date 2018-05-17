@@ -85,7 +85,6 @@ class ControlBoardRemapper : public yarp::dev::DeviceDriver,
                              public yarp::dev::IControlLimits2,
                              public yarp::dev::IRemoteCalibrator,
                              public yarp::dev::IControlCalibration,
-                             public yarp::dev::IControlCalibration2,
                              public yarp::dev::ITorqueControl,
                              public yarp::dev::IImpedanceControl,
                              public yarp::dev::IControlMode2,
@@ -444,11 +443,11 @@ public:
 
     /* IControlCalibration */
 
-    using yarp::dev::IControlCalibration2::calibrate;
-
+#ifndef YARP_NO_DEPRECATED // Since YARP 3.0.0
     virtual bool calibrate(int j, double p) override;
+#endif
 
-    virtual bool calibrate2(int j, unsigned int ui, double v1, double v2, double v3) override;
+    virtual bool calibrate(int j, unsigned int ui, double v1, double v2, double v3) override;
 
     virtual bool setCalibrationParameters(int j, const CalibrationParameters &params) override;
 

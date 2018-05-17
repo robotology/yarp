@@ -149,7 +149,7 @@ class yarp::dev::RemoteControlBoard :
     public IControlLimits2,
     public IAxisInfo,
     public IPreciselyTimed,
-    public IControlCalibration2,
+    public IControlCalibration,
     public ITorqueControl,
     public IImpedanceControl,
 //    public IControlMode,
@@ -2491,7 +2491,7 @@ public:
     bool virtual park(bool wait=true) override
     { return send1V(VOCAB_PARK); }
 
-    bool virtual calibrate2(int j, unsigned int ui, double v1, double v2, double v3) override
+    bool virtual calibrate(int j, unsigned int ui, double v1, double v2, double v3) override
     {
         Bottle cmd, response;
 

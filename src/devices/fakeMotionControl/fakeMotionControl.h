@@ -106,7 +106,7 @@ class yarp::dev::FakeMotionControl :    public DeviceDriver,
                                         public IInteractionModeRaw,
                                         public IAxisInfoRaw,
                                         public IVirtualAnalogSensorRaw, //*
-                                        public ImplementControlCalibration2<FakeMotionControl, IControlCalibration2>,
+                                        public ImplementControlCalibration<FakeMotionControl, IControlCalibration>,
                                         public ImplementAmplifierControl<FakeMotionControl, IAmplifierControl>,
                                         public ImplementPidControl,
                                         public ImplementEncodersTimed,

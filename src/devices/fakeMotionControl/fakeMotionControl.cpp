@@ -355,7 +355,7 @@ bool FakeMotionControl::dealloc()
 
 FakeMotionControl::FakeMotionControl() :
     RateThread(10.0),
-    ImplementControlCalibration2<FakeMotionControl, IControlCalibration2>(this),
+    ImplementControlCalibration<FakeMotionControl, IControlCalibration>(this),
     ImplementAmplifierControl<FakeMotionControl, IAmplifierControl>(this),
     ImplementPidControl(this),
     ImplementEncodersTimed(this),
@@ -583,7 +583,7 @@ bool FakeMotionControl::open(yarp::os::Searchable &config)
 
     ControlBoardHelper cb(_njoints, _axisMap, _angleToEncoder, nullptr, _newtonsToSensor, _ampsToSensor, _dutycycleToPWM);
     ControlBoardHelper cb_copy_test(cb);
-    ImplementControlCalibration2<FakeMotionControl, IControlCalibration2>::initialize(_njoints, _axisMap, _angleToEncoder, nullptr);
+    ImplementControlCalibration<FakeMotionControl, IControlCalibration>::initialize(_njoints, _axisMap, _angleToEncoder, nullptr);
     ImplementAmplifierControl<FakeMotionControl, IAmplifierControl>::initialize(_njoints, _axisMap, _angleToEncoder, nullptr);
     ImplementEncodersTimed::initialize(_njoints, _axisMap, _angleToEncoder, nullptr);
     ImplementMotorEncoders::initialize(_njoints, _axisMap, _angleToEncoder, nullptr);
@@ -1459,7 +1459,7 @@ bool FakeMotionControl::close()
     ImplementPositionControl2::uninitialize();
     ImplementVelocityControl2::uninitialize();
     ImplementPidControl::uninitialize();
-    ImplementControlCalibration2<FakeMotionControl, IControlCalibration2>::uninitialize();
+    ImplementControlCalibration<FakeMotionControl, IControlCalibration>::uninitialize();
     ImplementAmplifierControl<FakeMotionControl, IAmplifierControl>::uninitialize();
     ImplementImpedanceControl::uninitialize();
     ImplementControlLimits2::uninitialize();

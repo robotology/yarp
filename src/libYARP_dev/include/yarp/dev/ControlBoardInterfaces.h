@@ -52,7 +52,9 @@ namespace yarp {
         class IControlCalibrationRaw;
         class IControlCalibration2Raw;
         class IControlCalibration;
-        class IControlCalibration2;
+#ifndef YARP_NO_DEPRECATED // Since YARP 3.0.0
+YARP_DEPRECATED_TYPEDEF_MSG("Use yarp::dev::IControlCalibration instead") IControlCalibration IControlCalibration2;
+#endif
         class IAxisInfo;
         class IAxisInfoRaw;
         struct CalibrationParameters;
@@ -448,77 +450,56 @@ public:
      */
     virtual ~IControlCalibration() {}
 
-    /* Start calibration, this method is very often platform
-     * specific.
-     * @return true/false on success failure
-     */
-    virtual bool calibrate(int j, double p)=0;
-
-    /* Check if the calibration is terminated, on a particular joint.
-     * Non blocking.
-     * @return true/false
-     */
-    virtual bool done(int j)=0;
-
-    /* Set the calibrator object to be used to calibrate the robot.
-     * @param c pointer to the calibrator object
-     * @return true/false on success failure
-     */
-    virtual bool setCalibrator(ICalibrator *c);
-
-    /* Calibrate robot by using an external calibrator. The external
-     * calibrator must be previously set by calling the setCalibration()
-     * method.
-     * @return true/false on success failure
-     */
-    virtual bool calibrate();
-
-    virtual bool park(bool wait=true);
-
-};
-
-/**
- * @ingroup dev_iface_motor
- *
- * Interface for control devices, calibration commands.
- */
-class YARP_dev_API yarp::dev::IControlCalibration2
-{
-private:
-    ICalibrator *calibrator;
-
-public:
-    IControlCalibration2();
+#ifndef YARP_NO_DEPRECATED // Since YARP 3.0.0
     /**
-     * Destructor.
+     *  Start calibration, this method is very often platform
+     * specific.
+     * @return true/false on success failure
+     * @deprecated Since YARP 3.0.0
      */
-    virtual ~IControlCalibration2() {}
+    YARP_DEPRECATED
+    virtual bool calibrate(int j, double p) { return false; }
 
-    /* Start calibration, this method is very often platform
+    /**
+     *  Start calibration, this method is very often platform
+     * specific.
+     * @return true/false on success failure
+     * @deprecated Since YARP 3.0.0
+     */
+    YARP_DEPRECATED_MSG("Use calibrate instead")
+    virtual bool calibrate2(int axis, unsigned int type, double p1, double p2, double p3) { return calibrate(axis, type, p1, p2, p3); }
+#endif
+
+    /**
+     *  Start calibration, this method is very often platform
      * specific.
      * @return true/false on success failure
      */
-    virtual bool calibrate2(int axis, unsigned int type, double p1, double p2, double p3)=0;
+    virtual bool calibrate(int axis, unsigned int type, double p1, double p2, double p3)=0;
 
-    /* Start calibration, this method is very often platform
-    * specific.
-    * @return true/false on success failure
-    */
+    /**
+     *  Start calibration, this method is very often platform
+     * specific.
+     * @return true/false on success failure
+     */
     virtual bool setCalibrationParameters(int axis, const CalibrationParameters& params) { return false; }
 
-    /* Check if the calibration is terminated, on a particular joint.
+    /**
+     *  Check if the calibration is terminated, on a particular joint.
      * Non blocking.
      * @return true/false
      */
     virtual bool done(int j)=0;
 
-    /* Set the calibrator object to be used to calibrate the robot.
+    /**
+     * Set the calibrator object to be used to calibrate the robot.
      * @param c pointer to the calibrator object
      * @return true/false on success failure
      */
     virtual bool setCalibrator(ICalibrator *c);
 
-    /* Calibrate robot by using an external calibrator. The external
+    /**
+     * Calibrate robot by using an external calibrator. The external
      * calibrator must be previously set by calling the setCalibration()
      * method.
      * @return true/false on success failure
@@ -532,6 +513,9 @@ public:
 
     /* Abort parking, force the function park() to return.*/
     virtual bool abortPark();
+
+
+
 };
 
 /**

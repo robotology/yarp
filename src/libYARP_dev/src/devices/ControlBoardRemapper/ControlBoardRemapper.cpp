@@ -3104,7 +3104,7 @@ bool ControlBoardRemapper::quitPark()
 
 
 /* IControlCalibration */
-
+#ifndef YARP_NO_DEPRECATED // Since YARP 3.0.0
 bool ControlBoardRemapper::calibrate(int j, double p)
 {
     int off = (int) remappedControlBoards.lut[j].axisIndexInSubControlBoard;
@@ -3123,17 +3123,18 @@ bool ControlBoardRemapper::calibrate(int j, double p)
 
     return false;
 }
+#endif
 
-bool ControlBoardRemapper::calibrate2(int j, unsigned int ui, double v1, double v2, double v3)
+bool ControlBoardRemapper::calibrate(int j, unsigned int ui, double v1, double v2, double v3)
 {
     int off=(int)remappedControlBoards.lut[j].axisIndexInSubControlBoard;
     size_t subIndex=remappedControlBoards.lut[j].subControlBoardIndex;
 
     yarp::dev::RemappedSubControlBoard *p = remappedControlBoards.getSubControlBoard(subIndex);
 
-    if (p && p->calib2)
+    if (p && p->calib)
     {
-        return p->calib2->calibrate2(off, ui,v1,v2,v3);
+        return p->calib->calibrate(off, ui,v1,v2,v3);
     }
     return false;
 }
@@ -3145,9 +3146,9 @@ bool ControlBoardRemapper::setCalibrationParameters(int j, const CalibrationPara
 
     yarp::dev::RemappedSubControlBoard *p = remappedControlBoards.getSubControlBoard(subIndex);
 
-    if (p && p->calib2)
+    if (p && p->calib)
     {
-        return p->calib2->setCalibrationParameters(off, params);
+        return p->calib->setCalibrationParameters(off, params);
     }
 
     return false;
@@ -3165,9 +3166,9 @@ bool ControlBoardRemapper::done(int j)
         return false;
     }
 
-    if (p->calib2)
+    if (p->calib)
     {
-        return p->calib2->done(off);
+        return p->calib->done(off);
     }
 
     return false;

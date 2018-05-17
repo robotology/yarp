@@ -27,7 +27,7 @@ class yarp::dev::FakeBot : public DeviceDriver,
             public IAmplifierControl,
             public IEncodersTimed,
             public IFrameGrabberImage,
-            public IControlCalibration2,
+            public IControlCalibration,
             public IControlLimits,
             public DeviceResponder,
             public yarp::os::Thread
@@ -372,7 +372,7 @@ public:
         return true;
     }
 
-    virtual bool calibrate2(int j, unsigned int iv, double v1, double v2, double v3) override
+    virtual bool calibrate(int j, unsigned int iv, double v1, double v2, double v3) override
     {
         fprintf(stderr, "FakeBot: calibrating joint %d with parameters %u %lf %lf %lf\n", j, iv, v1, v2, v3);
         return true;

@@ -1685,10 +1685,10 @@ bool RPCMessagesParser::respond(const yarp::os::Bottle& cmd, yarp::os::Bottle& r
                         double v1=cmd.get(3).asFloat64();
                         double v2=cmd.get(4).asFloat64();
                         double v3=cmd.get(5).asFloat64();
-                        if (rpc_Icalib2==nullptr)
+                        if (rpc_Icalib==nullptr)
                             yError("Sorry I don't have a IControlCalibration2 interface\n");
                         else
-                            ok=rpc_Icalib2->calibrate2(j,ui,v1,v2,v3);
+                            ok=rpc_Icalib->calibrate(j,ui,v1,v2,v3);
                     }
                     break;
 
@@ -1705,10 +1705,10 @@ bool RPCMessagesParser::respond(const yarp::os::Bottle& cmd, yarp::os::Bottle& r
                         params.param2 = cmd.get(4).asFloat64();
                         params.param3 = cmd.get(5).asFloat64();
                         params.param4 = cmd.get(6).asFloat64();
-                        if (rpc_Icalib2 == nullptr)
+                        if (rpc_Icalib == nullptr)
                             yError("Sorry I don't have a IControlCalibration2 interface\n");
                         else
-                            ok = rpc_Icalib2->setCalibrationParameters(j, params);
+                            ok = rpc_Icalib->setCalibrationParameters(j, params);
                     }
                     break;
 
@@ -1717,7 +1717,7 @@ bool RPCMessagesParser::respond(const yarp::os::Bottle& cmd, yarp::os::Bottle& r
                         rec=true;
                         if (ControlBoardWrapper_p->verbose())
                             yDebug("Calling calibrate\n");
-                        ok=rpc_Icalib2->calibrate();
+                        ok=rpc_Icalib->calibrate();
                     }
                     break;
 
@@ -1727,7 +1727,7 @@ bool RPCMessagesParser::respond(const yarp::os::Bottle& cmd, yarp::os::Bottle& r
                         if (ControlBoardWrapper_p->verbose())
                             yDebug("Calling calibrate done\n");
                         int j=cmd.get(1).asInt32();
-                        ok=rpc_Icalib2->done(j);
+                        ok=rpc_Icalib->done(j);
                     }
                     break;
 
@@ -1738,9 +1738,9 @@ bool RPCMessagesParser::respond(const yarp::os::Bottle& cmd, yarp::os::Bottle& r
                         yDebug("Calling park function\n");
                         int flag=cmd.get(1).asInt32();
                         if (flag)
-                            ok=rpc_Icalib2->park(true);
+                            ok=rpc_Icalib->park(true);
                         else
-                            ok=rpc_Icalib2->park(false);
+                            ok=rpc_Icalib->park(false);
                         ok=true; //client would get stuck if returning false
                     }
                     break;
@@ -2834,7 +2834,7 @@ RPCMessagesParser::RPCMessagesParser() :
         rpc_iCtrlMode2(nullptr),
         rpc_AxisInfo(nullptr),
         rpc_IRemoteCalibrator(nullptr),
-        rpc_Icalib2(nullptr),
+        rpc_Icalib(nullptr),
         rpc_IImpedance(nullptr),
         rpc_IInteract(nullptr),
         rpc_IMotor(nullptr),
@@ -2862,7 +2862,7 @@ void RPCMessagesParser::init(ControlBoardWrapper *x)
     rcp_Ilim2             = dynamic_cast<yarp::dev::IControlLimits2 *>      (ControlBoardWrapper_p);
     rpc_AxisInfo          = dynamic_cast<yarp::dev::IAxisInfo *>            (ControlBoardWrapper_p);
     rpc_IRemoteCalibrator = dynamic_cast<yarp::dev::IRemoteCalibrator *>    (ControlBoardWrapper_p);
-    rpc_Icalib2           = dynamic_cast<yarp::dev::IControlCalibration2 *> (ControlBoardWrapper_p);
+    rpc_Icalib            = dynamic_cast<yarp::dev::IControlCalibration *>  (ControlBoardWrapper_p);
     rpc_IImpedance        = dynamic_cast<yarp::dev::IImpedanceControl *>    (ControlBoardWrapper_p);
     rpc_ITorque           = dynamic_cast<yarp::dev::ITorqueControl *>       (ControlBoardWrapper_p);
     rpc_iCtrlMode         = dynamic_cast<yarp::dev::IControlMode *>         (ControlBoardWrapper_p);

@@ -90,7 +90,7 @@ protected:
     yarp::dev::IControlMode2            *rpc_iCtrlMode2;
     yarp::dev::IAxisInfo                *rpc_AxisInfo;
     yarp::dev::IRemoteCalibrator        *rpc_IRemoteCalibrator;
-    yarp::dev::IControlCalibration2     *rpc_Icalib2;
+    yarp::dev::IControlCalibration      *rpc_Icalib;
     yarp::dev::IImpedanceControl        *rpc_IImpedance;
     yarp::dev::IInteractionMode         *rpc_IInteract;
     yarp::dev::IMotor                   *rpc_IMotor;

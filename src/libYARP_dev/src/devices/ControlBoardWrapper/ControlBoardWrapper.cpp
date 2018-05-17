@@ -3841,7 +3841,7 @@ bool ControlBoardWrapper::quitPark()
 
 
 /* IControlCalibration */
-
+#ifndef YARP_NO_DEPRECATED // Since YARP 3.0.0
 bool ControlBoardWrapper::calibrate(int j, double p)
 {
     int off; try{off = device.lut.at(j).offset;} catch(...){yError() << "joint number " << j <<  " out of bound [0-"<< controlledJoints << "] for part " << partName; return false; }
@@ -3857,16 +3857,17 @@ bool ControlBoardWrapper::calibrate(int j, double p)
     }
     return false;
 }
+#endif
 
-bool ControlBoardWrapper::calibrate2(int j, unsigned int ui, double v1, double v2, double v3)
+bool ControlBoardWrapper::calibrate(int j, unsigned int ui, double v1, double v2, double v3)
 {
     int off; try{off = device.lut.at(j).offset;} catch(...){yError() << "joint number " << j <<  " out of bound [0-"<< controlledJoints << "] for part " << partName; return false; }
     int subIndex=device.lut[j].deviceEntry;
 
     yarp::dev::impl::SubDevice *p = device.getSubdevice(subIndex);
-    if (p && p->calib2)
+    if (p && p->calib)
     {
-        return p->calib2->calibrate2(off+p->base, ui,v1,v2,v3);
+        return p->calib->calibrate(off+p->base, ui,v1,v2,v3);
     }
     return false;
 }
@@ -3877,9 +3878,9 @@ bool ControlBoardWrapper::setCalibrationParameters(int j, const CalibrationParam
     int subIndex = device.lut[j].deviceEntry;
 
     yarp::dev::impl::SubDevice *p = device.getSubdevice(subIndex);
-    if (p && p->calib2)
+    if (p && p->calib)
     {
-        return p->calib2->setCalibrationParameters(off + p->base, params);
+        return p->calib->setCalibrationParameters(off + p->base, params);
     }
     return false;
 }
@@ -3893,9 +3894,9 @@ bool ControlBoardWrapper::done(int j)
     if (!p)
         return false;
 
-    if (p->calib2)
+    if (p->calib)
     {
-        return p->calib2->done(off+p->base);
+        return p->calib->done(off+p->base);
     }
     return false;
 }
