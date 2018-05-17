@@ -43,7 +43,7 @@ list(APPEND CMAKE_MODULE_PATH ${YARP_MODULE_PATH})
 
 # Main project
 project(YARP
-        VERSION 2.3.73.1
+        VERSION 2.3.73.2
         LANGUAGES C CXX)
 set(PROJECT_DESCRIPTION "YARP: A thin middleware for humanoid robots and more")
 
