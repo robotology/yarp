@@ -6,8 +6,8 @@
  * BSD-3-Clause license. See the accompanying LICENSE file for details.
  */
 
-#ifndef YARP_DEV_FRAMEGRABBERCONTROL2IMPL_H
-#define YARP_DEV_FRAMEGRABBERCONTROL2IMPL_H
+#ifndef YARP_DEV_FRAMEGRABBERCONTROLIMPL_H
+#define YARP_DEV_FRAMEGRABBERCONTROLIMPL_H
 
 #include <string>
 #include <yarp/dev/FrameGrabberInterfaces.h>        // to include VOCAB definitions
@@ -67,4 +67,4 @@ public:
 };
 
 
-#endif  // YARP_DEV_FRAMEGRABBERCONTROL2IMPL_H
+#endif  // YARP_DEV_FRAMEGRABBERCONTROLIMPL_H

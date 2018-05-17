@@ -15,7 +15,7 @@
 #include <yarp/os/Network.h>
 #include <yarp/os/Semaphore.h>
 #include <yarp/os/LogStream.h>
-#include <yarp/dev/FrameGrabberControl2Impl.h>
+#include <yarp/dev/FrameGrabberControlImpl.h>
 #include <yarp/dev/IVisualParamsImpl.h>
 
 namespace yarp{

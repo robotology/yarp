@@ -25,7 +25,7 @@ set(YARP_dev_HDRS include/yarp/dev/all.h
                   include/yarp/dev/DriverLinkCreator.h
                   include/yarp/dev/Drivers.h
                   include/yarp/dev/FrameGrabberControl2.h
-                  include/yarp/dev/FrameGrabberControl2Impl.h
+                  include/yarp/dev/FrameGrabberControlImpl.h
                   include/yarp/dev/FrameGrabberInterfaces.h
                   include/yarp/dev/GazeControl.h
                   include/yarp/dev/GenericSensorInterfaces.h
@@ -111,7 +111,7 @@ set(YARP_dev_SRCS src/ControlBoardInterfacesImpl.cpp
                   src/CurrentControlImpl.cpp
                   src/DeviceDriver.cpp
                   src/Drivers.cpp
-                  src/FrameGrabberControl2Impl.cpp
+                  src/FrameGrabberControlImpl.cpp
                   src/IAxisInfoImpl.cpp
                   src/IBattery.cpp
                   src/IControlLimit2sImpl.cpp

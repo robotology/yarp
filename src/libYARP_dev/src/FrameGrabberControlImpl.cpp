@@ -7,7 +7,7 @@
  */
 
 #include <yarp/os/LogStream.h>
-#include <yarp/dev/FrameGrabberControl2Impl.h>
+#include <yarp/dev/FrameGrabberControlImpl.h>
 
 using namespace yarp::os;
 using namespace yarp::dev;
