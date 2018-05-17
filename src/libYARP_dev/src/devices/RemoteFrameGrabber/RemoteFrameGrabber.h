@@ -33,8 +33,8 @@ private:
     yarp::os::Port *_port;
 
 public:
-    ImplementDC1394()  { _port = NULL;};
-    ~ImplementDC1394() { _port = NULL;};
+    ImplementDC1394():_port(nullptr) {}
+    virtual ~ImplementDC1394() { _port = nullptr; }
 
     void init(yarp::os::Port *__port) { _port = __port;}
 
@@ -80,120 +80,6 @@ private:
     }
 
 public:
-    // 00
-    virtual bool hasFeatureDC1394(int feature) override
-    {
-        yarp::os::Bottle cmd, response;
-        cmd.addVocab(VOCAB_DRHASFEA);
-        cmd.addInt32(feature);
-        _port->write(cmd,response);
-        return response.get(0).asInt32()!=0? true:false;
-    }
-    // 01
-    virtual bool setFeatureDC1394(int feature,double value) override
-    {
-        yarp::os::Bottle cmd, response;
-        cmd.addVocab(VOCAB_DRSETVAL);
-        cmd.addInt32(feature);
-        cmd.addFloat64(value);
-        _port->write(cmd,response);
-        return response.get(0).asInt32()!=0? true:false;
-    }
-    // 02
-    virtual double getFeatureDC1394(int feature) override
-    {
-        yarp::os::Bottle cmd, response;
-        cmd.addVocab(VOCAB_DRGETVAL);
-        cmd.addInt32(feature);
-        _port->write(cmd,response);
-        return response.get(0).asFloat64();
-    }
-
-    // 03
-    virtual bool hasOnOffDC1394(int feature) override
-    {
-        yarp::os::Bottle cmd, response;
-        cmd.addVocab(VOCAB_DRHASACT);
-        cmd.addInt32(feature);
-        _port->write(cmd,response);
-        return response.get(0).asInt32()!=0? true:false;
-    }
-    // 04
-    virtual bool setActiveDC1394(int feature, bool onoff) override
-    {
-        yarp::os::Bottle cmd ,response;
-        cmd.addVocab(VOCAB_DRSETACT);
-        cmd.addInt32(feature);
-        cmd.addInt32(int(onoff));
-        _port->write(cmd, response);
-        return response.get(0).asInt32()!=0? true:false;
-    }
-    // 05
-    virtual bool getActiveDC1394(int feature) override
-    {
-        yarp::os::Bottle cmd, response;
-        cmd.addVocab(VOCAB_DRGETACT);
-        cmd.addInt32(feature);
-        _port->write(cmd,response);
-        return response.get(0).asInt32()!=0? true:false;
-    }
-
-    // 06
-    virtual bool hasManualDC1394(int feature) override
-    {
-        yarp::os::Bottle cmd, response;
-        cmd.addVocab(VOCAB_DRHASMAN);
-        cmd.addInt32(feature);
-        _port->write(cmd,response);
-        return response.get(0).asInt32()!=0? true:false;
-    }
-    // 07
-    virtual bool hasAutoDC1394(int feature) override
-    {
-        yTrace();
-        yarp::os::Bottle cmd, response;
-        cmd.addVocab(VOCAB_DRHASAUT);
-        cmd.addInt32(feature);
-        _port->write(cmd,response);
-        return response.get(0).asInt32()!=0? true:false;
-    }
-    // 08
-    virtual bool hasOnePushDC1394(int feature) override
-    {
-        yarp::os::Bottle cmd, response;
-        cmd.addVocab(VOCAB_DRHASONP);
-        cmd.addInt32(feature);
-        _port->write(cmd,response);
-        return response.get(0).asInt32()!=0? true:false;
-    }
-    // 09
-    virtual bool setModeDC1394(int feature, bool auto_onoff) override
-    {
-        yarp::os::Bottle cmd, response;
-        cmd.addVocab(VOCAB_DRSETMOD);
-        cmd.addInt32(feature);
-        cmd.addInt32(int(auto_onoff));
-        _port->write(cmd,response);
-        return response.get(0).asInt32()!=0? true:false;
-    }
-    // 10
-    virtual bool getModeDC1394(int feature) override
-    {
-        yarp::os::Bottle cmd, response;
-        cmd.addVocab(VOCAB_DRGETMOD);
-        cmd.addInt32(feature);
-        _port->write(cmd,response);
-        return response.get(0).asInt32()!=0? true:false;
-    }
-    // 11
-    virtual bool setOnePushDC1394(int feature) override
-    {
-        yarp::os::Bottle cmd, response;
-        cmd.addVocab(VOCAB_DRSETONP);
-        cmd.addInt32(feature);
-        _port->write(cmd,response);
-        return response.get(0).asInt32()!=0? true:false;
-    }
 
     // 12
     virtual unsigned int getVideoModeMaskDC1394() override
@@ -313,26 +199,6 @@ public:
         return response.get(0).asInt32()!=0? true:false;
     }
 
-    // 23
-    virtual bool setWhiteBalanceDC1394(double b, double r) override {
-        yarp::os::Bottle cmd, response;
-        cmd.addVocab(VOCAB_DRSETWHB);
-        cmd.addFloat64(b);
-        cmd.addFloat64(r);
-        _port->write(cmd,response);
-        return response.get(0).asInt32()!=0? true:false;
-    }
-    // 24
-    virtual bool getWhiteBalanceDC1394(double &b, double &r) override
-    {
-        yarp::os::Bottle cmd, response;
-        cmd.addVocab(VOCAB_DRGETWHB);
-        _port->write(cmd,response);
-        b=response.get(0).asFloat64();
-        r=response.get(1).asFloat64();
-        return response.get(0).asInt32()!=0? true:false;
-    }
-
     virtual bool getFormat7MaxWindowDC1394(unsigned int &xdim,unsigned int &ydim,unsigned int &xstep,unsigned int &ystep,unsigned int &xoffstep,unsigned int &yoffstep) override
     {
         yarp::os::Bottle cmd, response;
@@ -407,25 +273,7 @@ public:
         _port->write(cmd,response);
         return response.get(0).asInt32()!=0? true:false;
     }
-    /*
-     *    // 32
-     *    virtual bool setBayerDC1394(bool bON) override
-     *    {
-     *        yarp::os::Bottle cmd, response;
-     *        cmd.addVocab(VOCAB_DRSETBAY);
-     *        cmd.addInt32(int(bON));
-     *        _port->write(cmd,response);
-     *        return response.get(0).asInt32()!=0? true:false;
-}
-// 33
-virtual bool getBayerDC1394() override
-{
-yarp::os::Bottle cmd, response;
-cmd.addVocab(VOCAB_DRGETBAY);
-_port->write(cmd,response);
-return response.get(0).asInt32()!=0? true:false;
-}
-*/
+
     // 34
     virtual bool setBroadcastDC1394(bool onoff) override
     {
@@ -489,81 +337,6 @@ return response.get(0).asInt32()!=0? true:false;
         _port->write(cmd,response);
         return (unsigned)response.get(0).asInt32();
     }
-
-
-    /////////////////////////////////////////////////
-
-
-    bool setBrightness(double v) override {
-        return setCommand(VOCAB_BRIGHTNESS,v);
-    }
-    double getBrightness() override {
-        return getCommand(VOCAB_BRIGHTNESS);
-    }
-    bool setExposure(double v) override {
-        return setCommand(VOCAB_EXPOSURE,v);
-    }
-    double getExposure() override {
-        return getCommand(VOCAB_EXPOSURE);
-    }
-
-    bool setSharpness(double v) override {
-        return setCommand(VOCAB_SHARPNESS,v);
-    }
-    double getSharpness() override {
-        return getCommand(VOCAB_SHARPNESS);
-    }
-
-    bool setWhiteBalance(double blue, double red) override
-    {
-        return setCommand(VOCAB_WHITE, blue, red);
-    }
-    bool getWhiteBalance(double &blue, double &red) override
-    {
-        return getCommand(VOCAB_WHITE, blue, red);
-    }
-
-    bool setHue(double v) override {
-        return setCommand(VOCAB_HUE,v);
-    }
-    double getHue() override {
-        return getCommand(VOCAB_HUE);
-    }
-
-    bool setSaturation(double v) override {
-        return setCommand(VOCAB_SATURATION,v);
-    }
-    double getSaturation() override {
-        return getCommand(VOCAB_SATURATION);
-    }
-
-    bool setGamma(double v) override {
-        return setCommand(VOCAB_GAMMA,v);
-    }
-    double getGamma() override {
-        return getCommand(VOCAB_GAMMA);
-    }
-
-    bool setShutter(double v) override {
-        return setCommand(VOCAB_SHUTTER,v);
-    }
-    double getShutter() override {
-        return getCommand(VOCAB_SHUTTER);
-    }
-
-    bool setGain(double v) override {
-        return setCommand(VOCAB_GAIN,v);
-    }
-    double getGain() override {
-        return getCommand(VOCAB_GAIN);
-    }
-
-    bool setIris(double v) override {
-        return setCommand(VOCAB_IRIS,v);
-    }
-    double getIris() override {
-        return getCommand(VOCAB_IRIS);
-    }
 };
 
 /**
@@ -575,16 +348,17 @@ return response.get(0).asInt32()!=0? true:false;
  *
  */
 class YARP_dev_API yarp::dev::RemoteFrameGrabber :  public IFrameGrabberImage,
-                                                    public FrameGrabberControls2_Sender,
+                                                    public FrameGrabberControls_Sender,
                                                     public ImplementDC1394,
                                                     public Implement_RgbVisualParams_Sender,
                                                     public DeviceDriver
 {
 public:
+    virtual ~RemoteFrameGrabber() {}
     /**
      * Constructor.
      */
-    RemoteFrameGrabber() : FrameGrabberControls2_Sender(port), Implement_RgbVisualParams_Sender(port),
+    RemoteFrameGrabber() : FrameGrabberControls_Sender(port), Implement_RgbVisualParams_Sender(port),
         mutex(1),
         lastHeight(0),
         lastWidth(0),
@@ -703,6 +477,7 @@ public:
         return true;
     }
 
+#ifndef YARP_NO_DEPRECATED // Since YARP 3.0.0
     virtual bool setBrightness(double v) override {
         return setCommand(VOCAB_BRIGHTNESS, v);
     }
@@ -773,23 +548,7 @@ public:
     virtual double getIris() override {
         return getCommand(VOCAB_IRIS);
     }
-
-    /* Implementation of IFrameGrabberControls2 interface
-    virtual bool getCameraDescription(CameraDescriptor *camera);
-    virtual bool hasFeature(int feature, bool *hasFeature);
-    virtual bool setFeature(int feature, double value);
-    virtual bool getFeature(int feature, double *value);
-    virtual bool setFeature(int feature, double  value1, double  value2);
-    virtual bool getFeature(int feature, double *value1, double *value2);
-    virtual bool hasOnOff(int feature, bool *HasOnOff);
-    virtual bool setActive(int feature, bool onoff);
-    virtual bool getActive(int feature, bool *isActive);
-    virtual bool hasAuto(int feature, bool *hasAuto);
-    virtual bool hasManual(int feature, bool *hasManual);
-    virtual bool hasOnePush(int feature, bool *hasOnePush);
-    virtual bool setMode(int feature, FeatureMode mode);
-    virtual bool getMode(int feature, FeatureMode *mode);
-    virtual bool setOnePush(int feature);*/
+#endif
 
 private:
     yarp::os::PortReaderBuffer<yarp::sig::ImageOf<yarp::sig::PixelRgb> > reader;
@@ -807,6 +566,7 @@ protected:
 
     bool setCommand(int code, double v) {
         yarp::os::Bottle cmd, response;
+        cmd.addVocab(VOCAB_FRAMEGRABBER_CONTROL2);
         cmd.addVocab(VOCAB_SET);
         cmd.addVocab(code);
         cmd.addFloat64(v);
@@ -816,6 +576,7 @@ protected:
 
     bool setCommand(int code, double b, double r) {
         yarp::os::Bottle cmd, response;
+        cmd.addVocab(VOCAB_FRAMEGRABBER_CONTROL2);
         cmd.addVocab(VOCAB_SET);
         cmd.addVocab(code);
         cmd.addFloat64(b);
@@ -826,6 +587,7 @@ protected:
 
     double getCommand(int code) const {
         yarp::os::Bottle cmd, response;
+        cmd.addVocab(VOCAB_FRAMEGRABBER_CONTROL2);
         cmd.addVocab(VOCAB_GET);
         cmd.addVocab(code);
         port.write(cmd,response);
@@ -836,6 +598,7 @@ protected:
     bool getCommand(int code, double &b, double &r) const
     {
         yarp::os::Bottle cmd, response;
+        cmd.addVocab(VOCAB_FRAMEGRABBER_CONTROL2);
         cmd.addVocab(VOCAB_GET);
         cmd.addVocab(code);
         port.write(cmd,response);
@@ -846,9 +609,10 @@ protected:
     }
 };
 
-class yarp::dev::RemoteFrameGrabberDC1394 : public yarp::dev::RemoteFrameGrabber
+class YARP_dev_API yarp::dev::RemoteFrameGrabberDC1394 : public yarp::dev::RemoteFrameGrabber
 {
-
+    virtual ~RemoteFrameGrabberDC1394() {}
+    RemoteFrameGrabberDC1394() {}
 };
 
 #ifdef _MSC_VER

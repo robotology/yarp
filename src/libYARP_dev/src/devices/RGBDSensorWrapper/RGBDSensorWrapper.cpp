@@ -49,7 +49,7 @@ bool RGBDSensorParser::configure(IRgbVisualParams *rgbInterface, IDepthVisualPar
     return ret;
 }
 
-bool RGBDSensorParser::configure(IFrameGrabberControls2* _fgCtrl)
+bool RGBDSensorParser::configure(IFrameGrabberControls *_fgCtrl)
 {
     return fgCtrlParsers.configure(_fgCtrl);
 }

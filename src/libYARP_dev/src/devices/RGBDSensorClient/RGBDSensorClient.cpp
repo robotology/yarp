@@ -27,7 +27,7 @@ yarp::dev::DriverCreator *createRGBDSensorClient()
         "yarp::dev::RGBDSensorClient");
 }
 
-RGBDSensorClient::RGBDSensorClient() : FrameGrabberControls2_Sender(rpcPort)
+RGBDSensorClient::RGBDSensorClient() : FrameGrabberControls_Sender(rpcPort)
 {
     sensor_p       = nullptr;
     use_ROS        = false;

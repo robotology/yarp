@@ -223,70 +223,6 @@ bool TestFrameGrabber::getImage(yarp::sig::ImageOf<yarp::sig::PixelMono>& image)
     return true;
 }
 
-bool TestFrameGrabber::setBrightness(double v) {
-    return false;
-}
-bool TestFrameGrabber::setExposure(double v) {
-    return false;
-}
-bool TestFrameGrabber::setSharpness(double v) {
-    return false;
-}
-bool TestFrameGrabber::setWhiteBalance(double blue, double red){
-    return false;
-}
-bool TestFrameGrabber::setHue(double v) {
-    return false;
-}
-bool TestFrameGrabber::setSaturation(double v) {
-    return false;
-}
-bool TestFrameGrabber::setGamma(double v) {
-    return false;
-}
-bool TestFrameGrabber::setShutter(double v) {
-    return false;
-}
-bool TestFrameGrabber::setGain(double v) {
-    return false;
-}
-bool TestFrameGrabber::setIris(double v) {
-    return false;
-}
-
-double TestFrameGrabber::getBrightness(){
-    return 0.0;
-}
-double TestFrameGrabber::getExposure(){
-    return 0.0;
-}
-double TestFrameGrabber::getSharpness(){
-    return 0.0;
-}
-bool TestFrameGrabber::getWhiteBalance(double &blue, double &red)
-{
-    red=0.0;
-    blue=0.0;
-    return true;
-}
-double TestFrameGrabber::getHue(){
-    return 0.0;
-}
-double TestFrameGrabber::getSaturation(){
-    return 0.0;
-}
-double TestFrameGrabber::getGamma(){
-    return 0.0;
-}
-double TestFrameGrabber::getShutter(){
-    return 0.0;
-}
-double TestFrameGrabber::getGain(){
-    return 0.0;
-}
-double TestFrameGrabber::getIris(){
-    return 0.0;
-}
 
 yarp::os::Stamp TestFrameGrabber::getLastInputStamp() {
     return stamp;
@@ -299,6 +235,23 @@ bool TestFrameGrabber::hasVideo() { return !use_mono; }
 bool TestFrameGrabber::hasRawVideo() {
     return use_mono;
 }
+
+bool TestFrameGrabber::getCameraDescription(CameraDescriptor *camera) { return false; }
+bool TestFrameGrabber::hasFeature(int feature, bool *hasFeature) { return false; }
+bool TestFrameGrabber::setFeature(int feature, double value) { return false; }
+bool TestFrameGrabber::getFeature(int feature, double *value) { return false; }
+bool TestFrameGrabber::setFeature(int feature, double  value1, double  value2) { return false; }
+bool TestFrameGrabber::getFeature(int feature, double *value1, double *value2) { return false; }
+bool TestFrameGrabber::hasOnOff(int feature, bool *HasOnOff) { return false; }
+bool TestFrameGrabber::setActive(int feature, bool onoff) { return false; }
+bool TestFrameGrabber::getActive(int feature, bool *isActive) { return false; }
+bool TestFrameGrabber::hasAuto(int feature, bool *hasAuto) { return false; }
+bool TestFrameGrabber::hasManual(int feature, bool *hasManual) { return false; }
+bool TestFrameGrabber::hasOnePush(int feature, bool *hasOnePush) { return false; }
+bool TestFrameGrabber::setMode(int feature, FeatureMode mode) { return false; }
+bool TestFrameGrabber::getMode(int feature, FeatureMode *mode) { return false; }
+bool TestFrameGrabber::setOnePush(int feature) { return false; }
+
 
 void TestFrameGrabber::createTestImage(yarp::sig::ImageOf<yarp::sig::PixelRgb>&
                                        image) {

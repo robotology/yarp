@@ -48,7 +48,7 @@ namespace yarp
  *  @ingroup dev_impl_media
  *
  *
- * This device is a YARP plugin for OpenNI2 compatible devices, and exposes the IRGBDSensor and IFrameGrabberControls2
+ * This device is a YARP plugin for OpenNI2 compatible devices, and exposes the IRGBDSensor and IFrameGrabberControls
  * interfaces to read the images and operate on the available settings.
  *
  * See the documentation for more details about each interface.
@@ -184,7 +184,7 @@ transformation          (1.0 0.0 0.0 0.0   0.0 1.0 0.0 0.0   0.0 0.0 1.0 0.0  0.
 
 class yarp::dev::depthCameraDriver : public yarp::dev::DeviceDriver,
                                      public yarp::dev::IRGBDSensor,
-                                     public yarp::dev::IFrameGrabberControls2
+                                     public yarp::dev::IFrameGrabberControls
 {
 private:
     typedef yarp::sig::ImageOf<yarp::sig::PixelFloat> depthImage;
@@ -237,7 +237,7 @@ public:
     virtual RGBDSensor_status     getSensorStatus() override;
     virtual std::string getLastErrorMsg(Stamp* timeStamp = NULL) override;
 
-    //IFrameGrabberControls2
+    //IFrameGrabberControls
     virtual bool   getCameraDescription(CameraDescriptor *camera) override;
     virtual bool   hasFeature(int feature, bool*   hasFeature) override;
     virtual bool   setFeature(int feature, double  value) override;
