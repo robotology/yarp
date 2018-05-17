@@ -34,22 +34,6 @@ enum MAS_status
 };
 
 /**
- * @ingroup dev_iface 
- * @defgroup dev_iface_multiple_analog Multiple Analog Sensor Interfaces 
- * 
- * The interfaces present in this group are meant to be implemented by 
- * devices that expose sensor that can be efficiently expressed as vector of
- * real numbers, so-called "analog" sensors. 
- * 
- * For more information see the documentation of server, client and remapper devices that operate on these interfaces: 
- * 
- * * yarp::dev::MultipleAnalogSensorsServer
- * * yarp::dev::MultipleAnalogSensorsClient
- * * yarp::dev::MultipleAnalogSensorsRemapper
- * 
- */
-
-/**
  * @ingroup dev_iface_multiple_analog
  *
  * \brief Device interface to one or multiple three axis gyroscopes. 

@@ -30,7 +30,7 @@ namespace yarp {
 }
 
 /**
- *  @ingroup dev_impl_wrapper
+ *  @ingroup dev_impl_network_clients
  *
  * \section Localization2DClient
  * A device which allows a user application retrieve the current position of the robot in the world.

@@ -21,7 +21,7 @@ namespace yarp{
 }
 
 /**
- * @ingroup dev_impl_wrapper
+ * @ingroup dev_impl_other
  *
  * Tries to connect the output of one device to the input of another.
  *

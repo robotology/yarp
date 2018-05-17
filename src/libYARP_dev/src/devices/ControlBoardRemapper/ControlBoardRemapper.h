@@ -32,7 +32,7 @@ namespace dev {
 
 
 /**
- *  @ingroup dev_impl_wrapper
+ *  @ingroup dev_impl_remappers
  *
  * \section ControlBoardRemapper
  * A device that takes a list of axes from multiple controlboards and

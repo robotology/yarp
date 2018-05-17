@@ -40,7 +40,7 @@ public:
 };
 
 /**
-* @ingroup dev_impl_wrapper
+* @ingroup dev_impl_network_clients
 *
 * \brief `multipleanalogsensorsclient`: The client side of a device exposing MultipleAnalogSensors interfaces.
 * 
@@ -51,9 +51,10 @@ public:
 * The parameters accepted by this device are:
 * | Parameter name | SubParameter   | Type    | Units          | Default Value | Required                    | Description                                                       | Notes |
 * |:--------------:|:--------------:|:-------:|:--------------:|:-------------:|:--------------------------: |:-----------------------------------------------------------------:|:-----:|
-* | remote         |       -        | string  | -              |   -           | Yes          | Prefix of the ports to which to connect, opened by MultipleAnalogSensorsServer device.  |       |
-* | local          |       -        | string  | -              |   -           | Yes          | Port prefix of the ports openened by this device.  |
-* | timeout        |       -        | double  | seconds        | 0.01          | No           | Timeout after which the device reports an error if no measurement was received. |
+* | remote         |       -        | string  | -              |   -           | Yes          | Prefix of the ports to which to connect, opened by MultipleAnalogSensorsServer device. | |
+* | local          |       -        | string  | -              |   -           | Yes          | Port prefix of the ports openened by this device.  |                                     |
+* | timeout        |       -        | double  | seconds        | 0.01          | No           | Timeout after which the device reports an error if no measurement was received. |        |
+*
 */
 class yarp::dev::MultipleAnalogSensorsClient: public DeviceDriver,
                                               public IThreeAxisGyroscopes,

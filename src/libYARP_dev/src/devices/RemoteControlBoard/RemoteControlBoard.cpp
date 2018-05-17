@@ -122,7 +122,7 @@ YARP_DISABLE_DEPRECATED_WARNING
 #endif
 
 /**
-* @ingroup dev_impl_wrapper
+* @ingroup dev_impl_network_clients
 *
 * The client side of the control board, connects to a remote controlboard using the YARP network.
 *

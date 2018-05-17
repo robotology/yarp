@@ -14,7 +14,7 @@
 #include <yarp/os/RateThread.h>
 
 /**
-* @ingroup dev_impl_wrapper
+* @ingroup dev_impl_network_clients
 *
 * \section JoypadControlClient Description of input parameters
 * \brief joypad input network wrapper on client side

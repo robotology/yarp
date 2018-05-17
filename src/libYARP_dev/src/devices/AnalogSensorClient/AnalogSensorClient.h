@@ -76,7 +76,7 @@ public:
 #endif /*DOXYGEN_SHOULD_SKIP_THIS*/
 
 /**
-* @ingroup dev_impl_wrapper
+* @ingroup dev_impl_network_clients
 *
 * \section AnalogSensorClient Description of input parameters
 * \brief Device that reads an AnalogSensor (using the IAnalogSensor interface) from the YARP network.

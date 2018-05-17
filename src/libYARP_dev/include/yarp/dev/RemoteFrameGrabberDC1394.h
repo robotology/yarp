@@ -21,7 +21,7 @@ namespace yarp{
 }
 
 /**
- * @ingroup dev_impl_wrapper
+ * @ingroup dev_impl_network_clients
  *
  * Connect to a ServerFrameGrabber.  See ServerFrameGrabber for
  * the network protocol used.
