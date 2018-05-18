@@ -75,7 +75,6 @@ typedef yarp::os::PortablePair<yarp::os::Bottle, yarp::sig::Vector> CommandMessa
 class  yarp::dev::impl::StreamingMessagesParser : public yarp::os::TypedReaderCallback<CommandMessage> {
 protected:
     yarp::dev::IPositionControl     *stream_IPosCtrl;
-    yarp::dev::IPositionControl2    *stream_IPosCtrl2;
     yarp::dev::IPositionDirect      *stream_IPosDirect;
     yarp::dev::IVelocityControl     *stream_IVel;
     yarp::dev::IVelocityControl2    *stream_IVel2;

@@ -36,7 +36,7 @@ public:
     size_t n_joints;
 
     yarp::dev::PolyDriver        *dd;
-    yarp::dev::IPositionControl2 *ipos;
+    yarp::dev::IPositionControl *ipos;
     yarp::dev::IControlMode     *icmd;
     yarp::dev::IInteractionMode  *iimd;
     yarp::dev::IEncoders         *ienc;

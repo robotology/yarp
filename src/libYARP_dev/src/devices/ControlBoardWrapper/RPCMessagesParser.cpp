@@ -1784,7 +1784,7 @@ bool RPCMessagesParser::respond(const yarp::os::Bottle& cmd, yarp::os::Bottle& r
                                 Bottle *jlut = cmd.get(3).asList();
                                 Bottle *pos_val= cmd.get(4).asList();
 
-                                if (rpc_IPosCtrl2 == nullptr)
+                                if (rpc_IPosCtrl == nullptr)
                                     break;
 
                                 if (jlut==nullptr || pos_val==nullptr)
@@ -1801,7 +1801,7 @@ bool RPCMessagesParser::respond(const yarp::os::Bottle& cmd, yarp::os::Bottle& r
                                 for (int i = 0; i < len; i++)
                                     pos_tmp[i] = pos_val->get(i).asFloat64();
 
-                                ok = rpc_IPosCtrl2->positionMove(len, j_tmp, pos_tmp);
+                                ok = rpc_IPosCtrl->positionMove(len, j_tmp, pos_tmp);
 
                                 delete [] j_tmp;
                                 delete [] pos_tmp;
@@ -1839,7 +1839,7 @@ bool RPCMessagesParser::respond(const yarp::os::Bottle& cmd, yarp::os::Bottle& r
                                 Bottle *jBottle_p = cmd.get(3).asList();
                                 Bottle *posBottle_p= cmd.get(4).asList();
 
-                                if (rpc_IPosCtrl2 == nullptr)
+                                if (rpc_IPosCtrl == nullptr)
                                     break;
 
                                 if (jBottle_p==nullptr || posBottle_p==nullptr)
@@ -1856,7 +1856,7 @@ bool RPCMessagesParser::respond(const yarp::os::Bottle& cmd, yarp::os::Bottle& r
                                 for (int i = 0; i < len; i++)
                                     pos_tmp[i] = posBottle_p->get(i).asFloat64();
 
-                                ok = rpc_IPosCtrl2->relativeMove(len, j_tmp, pos_tmp);
+                                ok = rpc_IPosCtrl->relativeMove(len, j_tmp, pos_tmp);
 
                                 delete [] j_tmp;
                                 delete [] pos_tmp;
@@ -1894,7 +1894,7 @@ bool RPCMessagesParser::respond(const yarp::os::Bottle& cmd, yarp::os::Bottle& r
                                 Bottle *jBottle_p = cmd.get(3).asList();
                                 Bottle *velBottle_p= cmd.get(4).asList();
 
-                                if (rpc_IPosCtrl2 == nullptr)
+                                if (rpc_IPosCtrl == nullptr)
                                     break;
 
                                 if (jBottle_p==nullptr || velBottle_p==nullptr)
@@ -1911,7 +1911,7 @@ bool RPCMessagesParser::respond(const yarp::os::Bottle& cmd, yarp::os::Bottle& r
                                 for (int i = 0; i < len; i++)
                                     spds_tmp[i] = velBottle_p->get(i).asFloat64();
 
-                                ok = rpc_IPosCtrl2->setRefSpeeds(len, j_tmp, spds_tmp);
+                                ok = rpc_IPosCtrl->setRefSpeeds(len, j_tmp, spds_tmp);
                                 delete[] j_tmp;
                                 delete[] spds_tmp;
                             }
@@ -1948,7 +1948,7 @@ bool RPCMessagesParser::respond(const yarp::os::Bottle& cmd, yarp::os::Bottle& r
                                 Bottle *jBottle_p = cmd.get(3).asList();
                                 Bottle *accBottle_p = cmd.get(4).asList();
 
-                                if (rpc_IPosCtrl2 == nullptr)
+                                if (rpc_IPosCtrl == nullptr)
                                     break;
 
                                 if (jBottle_p==nullptr || accBottle_p==nullptr)
@@ -1965,7 +1965,7 @@ bool RPCMessagesParser::respond(const yarp::os::Bottle& cmd, yarp::os::Bottle& r
                                 for (int i = 0; i < len; i++)
                                     accs_tmp[i] = accBottle_p->get(i).asFloat64();
 
-                                ok = rpc_IPosCtrl2->setRefAccelerations(len, j_tmp, accs_tmp);
+                                ok = rpc_IPosCtrl->setRefAccelerations(len, j_tmp, accs_tmp);
                                 delete[] j_tmp;
                                 delete[] accs_tmp;
                             }
@@ -2001,7 +2001,7 @@ bool RPCMessagesParser::respond(const yarp::os::Bottle& cmd, yarp::os::Bottle& r
                                 int len = cmd.get(2).asInt32();
                                 Bottle *jBottle_p = cmd.get(3).asList();
 
-                                if (rpc_IPosCtrl2 == nullptr)
+                                if (rpc_IPosCtrl == nullptr)
                                     break;
 
                                 if (jBottle_p==nullptr)
@@ -2014,7 +2014,7 @@ bool RPCMessagesParser::respond(const yarp::os::Bottle& cmd, yarp::os::Bottle& r
                                 for (int i = 0; i < len; i++)
                                     j_tmp[i] = jBottle_p->get(i).asInt32();
 
-                                ok = rpc_IPosCtrl2->stop(len, j_tmp);
+                                ok = rpc_IPosCtrl->stop(len, j_tmp);
                                 delete[] j_tmp;
                             }
                             break;
@@ -2228,7 +2228,7 @@ bool RPCMessagesParser::respond(const yarp::os::Bottle& cmd, yarp::os::Bottle& r
                                 if (ControlBoardWrapper_p->verbose())
                                     yDebug("getTargetPosition\n");
 
-                                ok = rpc_IPosCtrl2->getTargetPosition(cmd.get(2).asInt32(), &dtmp);
+                                ok = rpc_IPosCtrl->getTargetPosition(cmd.get(2).asInt32(), &dtmp);
 
                                 response.addFloat64(dtmp);
                                 rec=true;
@@ -2246,7 +2246,7 @@ bool RPCMessagesParser::respond(const yarp::os::Bottle& cmd, yarp::os::Bottle& r
                                 {
                                     jointList[j] = in.get(j).asInt32();
                                 }
-                                ok = rpc_IPosCtrl2->getTargetPositions(len, jointList, refs);
+                                ok = rpc_IPosCtrl->getTargetPositions(len, jointList, refs);
 
                                 Bottle& b = response.addList();
                                 for (int i = 0; i < len; i++)
@@ -2260,7 +2260,7 @@ bool RPCMessagesParser::respond(const yarp::os::Bottle& cmd, yarp::os::Bottle& r
                             case VOCAB_POSITION_MOVES:
                             {
                                 double *refs = new double[controlledJoints];
-                                ok = rpc_IPosCtrl2->getTargetPositions(refs);
+                                ok = rpc_IPosCtrl->getTargetPositions(refs);
                                 Bottle& b = response.addList();
                                 int i;
                                 for (i = 0; i < controlledJoints; i++)
@@ -2401,8 +2401,8 @@ bool RPCMessagesParser::respond(const yarp::os::Bottle& cmd, yarp::os::Bottle& r
                                 {
                                     jointList[j] = in.get(j).asInt32();
                                 }
-                                if(rpc_IPosCtrl2!=nullptr)
-                                    ok = rpc_IPosCtrl2->checkMotionDone(len, jointList, &x);
+                                if(rpc_IPosCtrl!=nullptr)
+                                    ok = rpc_IPosCtrl->checkMotionDone(len, jointList, &x);
                                 response.addInt32(x);
 
                                 delete[] jointList;
@@ -2435,7 +2435,7 @@ bool RPCMessagesParser::respond(const yarp::os::Bottle& cmd, yarp::os::Bottle& r
                                 {
                                     jointList[j] = in.get(j).asInt32();
                                 }
-                                ok = rpc_IPosCtrl2->getRefSpeeds(len, jointList, speeds);
+                                ok = rpc_IPosCtrl->getRefSpeeds(len, jointList, speeds);
 
                                 Bottle& b = response.addList();
                                 for (int i = 0; i < len; i++)
@@ -2476,7 +2476,7 @@ bool RPCMessagesParser::respond(const yarp::os::Bottle& cmd, yarp::os::Bottle& r
                                 {
                                     jointList[j] = in.get(j).asInt32();
                                 }
-                                ok = rpc_IPosCtrl2->getRefAccelerations(len, jointList, accs);
+                                ok = rpc_IPosCtrl->getRefAccelerations(len, jointList, accs);
 
                                 Bottle& b = response.addList();
                                 for (int i = 0; i < len; i++)
@@ -2821,7 +2821,6 @@ RPCMessagesParser::RPCMessagesParser() :
         ControlBoardWrapper_p(nullptr),
         rpc_IPid(nullptr),
         rpc_IPosCtrl(nullptr),
-        rpc_IPosCtrl2(nullptr),
         rpc_IPosDirect(nullptr),
         rpc_IVelCtrl(nullptr),
         rpc_IVelCtrl2(nullptr),
@@ -2849,7 +2848,6 @@ void RPCMessagesParser::init(ControlBoardWrapper *x)
     ControlBoardWrapper_p = x;
     rpc_IPid              = dynamic_cast<yarp::dev::IPidControl *>          (ControlBoardWrapper_p);
     rpc_IPosCtrl          = dynamic_cast<yarp::dev::IPositionControl *>     (ControlBoardWrapper_p);
-    rpc_IPosCtrl2         = dynamic_cast<yarp::dev::IPositionControl2 *>    (ControlBoardWrapper_p);
     rpc_IPosDirect        = dynamic_cast<yarp::dev::IPositionDirect *>      (ControlBoardWrapper_p);
     rpc_IVelCtrl          = dynamic_cast<yarp::dev::IVelocityControl *>     (ControlBoardWrapper_p);
     rpc_IVelCtrl2         = dynamic_cast<yarp::dev::IVelocityControl2 *>    (ControlBoardWrapper_p);

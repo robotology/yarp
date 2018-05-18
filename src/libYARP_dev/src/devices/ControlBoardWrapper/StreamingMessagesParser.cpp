@@ -22,7 +22,6 @@ using namespace std;
 
 StreamingMessagesParser::StreamingMessagesParser() :
         stream_IPosCtrl(nullptr),
-        stream_IPosCtrl2(nullptr),
         stream_IPosDirect(nullptr),
         stream_IVel(nullptr),
         stream_IVel2(nullptr),
@@ -36,7 +35,6 @@ StreamingMessagesParser::StreamingMessagesParser() :
 void StreamingMessagesParser::init(ControlBoardWrapper *x) {
     stream_nJoints = 0;
     stream_IPosCtrl  = dynamic_cast<yarp::dev::IPositionControl *> (x);
-    stream_IPosCtrl2 = dynamic_cast<yarp::dev::IPositionControl2 *> (x);
     stream_IPosDirect = dynamic_cast<yarp::dev::IPositionDirect *> (x);
     stream_IVel = dynamic_cast<yarp::dev::IVelocityControl *> (x);
     stream_IVel2 = dynamic_cast<yarp::dev::IVelocityControl2 *> (x);

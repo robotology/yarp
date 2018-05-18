@@ -73,7 +73,7 @@ namespace dev {
 
 class ControlBoardRemapper : public yarp::dev::DeviceDriver,
                              public yarp::dev::IPidControl,
-                             public yarp::dev::IPositionControl2,
+                             public yarp::dev::IPositionControl,
                              public yarp::dev::IPositionDirect,
                              public yarp::dev::IVelocityControl2,
                              public yarp::dev::IPWMControl,

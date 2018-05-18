@@ -133,7 +133,7 @@ private:
     Port            m_sequence_port;
     bool            m_interfaceError;
 
-    IPositionControl2  *m_iPos;
+    IPositionControl   *m_iPos;
     IPositionDirect    *m_iDir;
     IVelocityControl2  *m_iVel;
     IRemoteVariables   *m_iVar;

@@ -86,7 +86,6 @@ public:
     yarp::dev::PolyDriver            *subdevice;
     yarp::dev::IPidControl           *pid;
     yarp::dev::IPositionControl      *pos;
-    yarp::dev::IPositionControl2     *pos2;
     yarp::dev::IVelocityControl      *vel;
     yarp::dev::IVelocityControl2     *vel2;
     yarp::dev::IEncodersTimed        *iJntEnc;

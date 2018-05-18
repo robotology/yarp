@@ -62,9 +62,10 @@ set(YARP_dev_HDRS include/yarp/dev/all.h
                   include/yarp/dev/IPidControl.h
                   include/yarp/dev/PidEnums.h
                   include/yarp/dev/IPidControlImpl.h
+                  include/yarp/dev/IPositionControl.h
+                  include/yarp/dev/IPositionControlImpl.h
                   include/yarp/dev/IPositionControl2.h
                   include/yarp/dev/IPositionControl2Impl.h
-                  include/yarp/dev/IPositionControl.h
                   include/yarp/dev/IPositionDirect.h
                   include/yarp/dev/IPositionDirectImpl.h
                   include/yarp/dev/IPWMControl.h
@@ -122,7 +123,7 @@ set(YARP_dev_SRCS src/ControlBoardInterfacesImpl.cpp
                   src/IMotorImpl.cpp
                   src/ImpedanceControlImpl.cpp
                   src/IPidControlImpl.cpp
-                  src/IPositionControl2Impl.cpp
+                  src/IPositionControlImpl.cpp
                   src/IPositionDirectImpl.cpp
                   src/IRangefinder2D.cpp
                   src/IRemoteVariablesImpl.cpp

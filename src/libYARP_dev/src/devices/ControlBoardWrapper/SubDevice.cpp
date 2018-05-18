@@ -31,7 +31,6 @@ SubDevice::SubDevice() :
     subdevice(nullptr),
     pid(nullptr),
     pos(nullptr),
-    pos2(nullptr),
     vel(nullptr),
     vel2(nullptr),
     iJntEnc(nullptr),
@@ -99,7 +98,6 @@ void SubDevice::detach()
 
     pid=nullptr;
     pos=nullptr;
-    pos2=nullptr;
     posDir=nullptr;
     vel=nullptr;
     vel2=nullptr;
@@ -154,7 +152,6 @@ bool SubDevice::attach(yarp::dev::PolyDriver *d, const std::string &k)
         {
             subdevice->view(pid);
             subdevice->view(pos);
-            subdevice->view(pos2);
             subdevice->view(posDir);
             subdevice->view(vel);
             subdevice->view(vel2);
@@ -213,7 +210,7 @@ bool SubDevice::attach(yarp::dev::PolyDriver *d, const std::string &k)
     int deviceJoints=0;
 
     // checking minimum set of intefaces required
-    if( ! (pos || pos2) ) // One of the 2 is enough, therefore if both are missing I raise an error
+    if( ! (pos) )
     {
         yError("ControlBoarWrapper: neither IPositionControl nor IPositionControl2 interface was not found in subdevice. Quitting");
         return false;
@@ -252,7 +249,7 @@ bool SubDevice::attach(yarp::dev::PolyDriver *d, const std::string &k)
     }
     else
     {
-        if (!pos2->getAxes(&deviceJoints))
+        if (!pos->getAxes(&deviceJoints))
         {
             yError("ControlBoardWrapper for part <%s>: failed to get axes number for subdevice %s.", parentName.c_str(), k.c_str());
             return false;

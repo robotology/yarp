@@ -77,7 +77,6 @@ protected:
     yarp::dev::ControlBoardWrapper      *ControlBoardWrapper_p;
     yarp::dev::IPidControl              *rpc_IPid;
     yarp::dev::IPositionControl         *rpc_IPosCtrl;
-    yarp::dev::IPositionControl2        *rpc_IPosCtrl2;
     yarp::dev::IPositionDirect          *rpc_IPosDirect;
     yarp::dev::IVelocityControl         *rpc_IVelCtrl;
     yarp::dev::IVelocityControl2        *rpc_IVelCtrl2;
