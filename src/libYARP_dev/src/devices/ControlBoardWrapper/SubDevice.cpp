@@ -43,7 +43,6 @@ SubDevice::SubDevice() :
     iTorque(nullptr),
     iImpedance(nullptr),
     iMode(nullptr),
-    iMode2(nullptr),
     info(nullptr),
     posDir(nullptr),
     iInteract(nullptr),
@@ -113,7 +112,6 @@ void SubDevice::detach()
     iTorque=nullptr;
     iImpedance=nullptr;
     iMode=nullptr;
-    iMode2=nullptr;
     iTimed=nullptr;
     iInteract=nullptr;
     iVar = nullptr;
@@ -168,7 +166,6 @@ bool SubDevice::attach(yarp::dev::PolyDriver *d, const std::string &k)
             subdevice->view(iTorque);
             subdevice->view(iImpedance);
             subdevice->view(iMode);
-            subdevice->view(iMode2);
             subdevice->view(iJntEnc);
             subdevice->view(iMotEnc);
             subdevice->view(iInteract);
@@ -183,7 +180,7 @@ bool SubDevice::attach(yarp::dev::PolyDriver *d, const std::string &k)
             return false;
         }
 
-    if ( ((iMode==nullptr) || (iMode2==nullptr)) && (_subDevVerbose ))
+    if ( ((iMode==nullptr)) && (_subDevVerbose ))
         yWarning("ControlBoardWrapper for part <%s>:  Warning iMode not valid interface.", parentName.c_str());
 
     if ((iTorque==nullptr) && (_subDevVerbose))

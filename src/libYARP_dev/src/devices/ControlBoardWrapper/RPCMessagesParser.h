@@ -87,7 +87,6 @@ protected:
     yarp::dev::IControlLimits           *rcp_Ilim;
     yarp::dev::ITorqueControl           *rpc_ITorque;
     yarp::dev::IControlMode             *rpc_iCtrlMode;
-    yarp::dev::IControlMode2            *rpc_iCtrlMode2;
     yarp::dev::IAxisInfo                *rpc_AxisInfo;
     yarp::dev::IRemoteCalibrator        *rpc_IRemoteCalibrator;
     yarp::dev::IControlCalibration      *rpc_Icalib;

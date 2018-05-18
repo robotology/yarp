@@ -98,7 +98,6 @@ public:
     yarp::dev::ITorqueControl        *iTorque;
     yarp::dev::IImpedanceControl     *iImpedance;
     yarp::dev::IControlMode          *iMode;
-    yarp::dev::IControlMode2         *iMode2;
     yarp::dev::IAxisInfo             *info;
     yarp::dev::IPositionDirect       *posDir;
     yarp::dev::IInteractionMode      *iInteract;

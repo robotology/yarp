@@ -37,7 +37,7 @@ public:
 
     yarp::dev::PolyDriver        *dd;
     yarp::dev::IPositionControl2 *ipos;
-    yarp::dev::IControlMode2     *icmd;
+    yarp::dev::IControlMode     *icmd;
     yarp::dev::IInteractionMode  *iimd;
     yarp::dev::IEncoders         *ienc;
     yarp::dev::IControlLimits    *ilim;

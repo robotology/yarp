@@ -107,7 +107,6 @@ set(YARP_dev_SRCS src/ControlBoardInterfacesImpl.cpp
                   src/ControlBoardHelper.cpp
                   src/ControlBoardPid.cpp
                   src/ControlCalibrationImpl.cpp
-                  src/ControlMode2Impl.cpp
                   src/ControlModeImpl.cpp
                   src/CurrentControlImpl.cpp
                   src/DeviceDriver.cpp

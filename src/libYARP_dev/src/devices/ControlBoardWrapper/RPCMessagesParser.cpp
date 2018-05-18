@@ -159,7 +159,7 @@ void RPCMessagesParser::handleControlModeMsg(const yarp::os::Bottle& cmd,
 {
     if (ControlBoardWrapper_p->verbose())
         yDebug("Handling IControlMode message\n");
-    if (! (rpc_iCtrlMode || rpc_iCtrlMode2) )
+    if (! (rpc_iCtrlMode))
     {
         yError("ControlBoardWrapper: I do not have a valid iControlMode interface");
         *ok=false;
@@ -186,8 +186,8 @@ void RPCMessagesParser::handleControlModeMsg(const yarp::os::Bottle& cmd,
                 {
                     int axis = cmd.get(3).asInt32();
 //                  yDebug() << "got VOCAB_CM_CONTROL_MODE " << std::endl;
-                    if(rpc_iCtrlMode2)
-                        *ok = rpc_iCtrlMode2->setControlMode(axis, cmd.get(4).asVocab());
+                    if(rpc_iCtrlMode)
+                        *ok = rpc_iCtrlMode->setControlMode(axis, cmd.get(4).asVocab());
                     else
                     {
                         yError() << "ControlBoardWrapper: Unable to handle setControlMode request! This should not happen!";
@@ -214,8 +214,8 @@ void RPCMessagesParser::handleControlModeMsg(const yarp::os::Bottle& cmd,
                     {
                         modes[i] = modeList.get(i).asVocab();
                     }
-                    if(rpc_iCtrlMode2)
-                        *ok = rpc_iCtrlMode2->setControlModes(n_joints, js, modes);
+                    if(rpc_iCtrlMode)
+                        *ok = rpc_iCtrlMode->setControlModes(n_joints, js, modes);
                     else
                     {
                         *rec = false;
@@ -242,8 +242,8 @@ void RPCMessagesParser::handleControlModeMsg(const yarp::os::Bottle& cmd,
                     {
                         modes[i] = modeList->get(i).asVocab();
                     }
-                    if(rpc_iCtrlMode2)
-                        *ok = rpc_iCtrlMode2->setControlModes(modes);
+                    if(rpc_iCtrlMode)
+                        *ok = rpc_iCtrlMode->setControlModes(modes);
                     else
                     {
                         *rec = false;
@@ -267,13 +267,13 @@ void RPCMessagesParser::handleControlModeMsg(const yarp::os::Bottle& cmd,
                     switch (cmd.get(4).asVocab())
                     {
                         case VOCAB_CM_POSITION:
-                            if(rpc_iCtrlMode2)
-                                *ok = rpc_iCtrlMode2->setControlMode(axis, VOCAB_CM_POSITION);
+                            if(rpc_iCtrlMode)
+                                *ok = rpc_iCtrlMode->setControlMode(axis, VOCAB_CM_POSITION);
                         break;
 
                         case VOCAB_CM_POSITION_DIRECT:
-                            if(rpc_iCtrlMode2)
-                                *ok = rpc_iCtrlMode2->setControlMode(axis, VOCAB_CM_POSITION_DIRECT);
+                            if(rpc_iCtrlMode)
+                                *ok = rpc_iCtrlMode->setControlMode(axis, VOCAB_CM_POSITION_DIRECT);
                             else
                             {
                                 *rec = false;
@@ -283,13 +283,13 @@ void RPCMessagesParser::handleControlModeMsg(const yarp::os::Bottle& cmd,
 
 
                         case VOCAB_CM_VELOCITY:
-                            if(rpc_iCtrlMode2)
-                                *ok = rpc_iCtrlMode2->setControlMode(axis, VOCAB_CM_VELOCITY);
+                            if(rpc_iCtrlMode)
+                                *ok = rpc_iCtrlMode->setControlMode(axis, VOCAB_CM_VELOCITY);
                         break;
 
                         case VOCAB_CM_TORQUE:
-                            if(rpc_iCtrlMode2)
-                                *ok = rpc_iCtrlMode2->setControlMode(axis, VOCAB_CM_TORQUE);
+                            if(rpc_iCtrlMode)
+                                *ok = rpc_iCtrlMode->setControlMode(axis, VOCAB_CM_TORQUE);
                         break;
 
                         case VOCAB_CM_IMPEDANCE_POS:
@@ -301,8 +301,8 @@ void RPCMessagesParser::handleControlModeMsg(const yarp::os::Bottle& cmd,
                         break;
 
                         case VOCAB_CM_PWM:
-                            if (rpc_iCtrlMode2)
-                                *ok = rpc_iCtrlMode2->setControlMode(axis, VOCAB_CM_PWM);
+                            if (rpc_iCtrlMode)
+                                *ok = rpc_iCtrlMode->setControlMode(axis, VOCAB_CM_PWM);
                             else
                             {
                                 *rec = false;
@@ -311,8 +311,8 @@ void RPCMessagesParser::handleControlModeMsg(const yarp::os::Bottle& cmd,
                             break;
 
                         case VOCAB_CM_CURRENT:
-                            if (rpc_iCtrlMode2)
-                                *ok = rpc_iCtrlMode2->setControlMode(axis, VOCAB_CM_CURRENT);
+                            if (rpc_iCtrlMode)
+                                *ok = rpc_iCtrlMode->setControlMode(axis, VOCAB_CM_CURRENT);
                             else
                             {
                                 *rec = false;
@@ -321,8 +321,8 @@ void RPCMessagesParser::handleControlModeMsg(const yarp::os::Bottle& cmd,
                             break;
 
                         case VOCAB_CM_MIXED:
-                            if(rpc_iCtrlMode2)
-                                *ok = rpc_iCtrlMode2->setControlMode(axis, VOCAB_CM_MIXED);
+                            if(rpc_iCtrlMode)
+                                *ok = rpc_iCtrlMode->setControlMode(axis, VOCAB_CM_MIXED);
                             else
                             {
                                 *rec = false;
@@ -331,8 +331,8 @@ void RPCMessagesParser::handleControlModeMsg(const yarp::os::Bottle& cmd,
                         break;
 
                         case VOCAB_CM_FORCE_IDLE:
-                            if(rpc_iCtrlMode2)
-                                *ok = rpc_iCtrlMode2->setControlMode(axis, VOCAB_CM_FORCE_IDLE);
+                            if(rpc_iCtrlMode)
+                                *ok = rpc_iCtrlMode->setControlMode(axis, VOCAB_CM_FORCE_IDLE);
                             else
                             {
                                 *rec = false;
@@ -420,8 +420,8 @@ void RPCMessagesParser::handleControlModeMsg(const yarp::os::Bottle& cmd,
                         js[i] = lIn.get(i).asInt32();
                         modes[i] = -1;
                     }
-                    if(rpc_iCtrlMode2)
-                        *ok = rpc_iCtrlMode2->getControlModes(n_joints, js, modes);
+                    if(rpc_iCtrlMode)
+                        *ok = rpc_iCtrlMode->getControlModes(n_joints, js, modes);
                     else
                     {
                         *rec = false;
@@ -538,12 +538,12 @@ void RPCMessagesParser::handleTorqueMsg(const yarp::os::Bottle& cmd,
 
                 case VOCAB_TORQUE_MODE:
                 {
-                    if(rpc_iCtrlMode2)
+                    if(rpc_iCtrlMode)
                     {
                         int *modes = new int[controlledJoints];
                         for(int i=0; i<controlledJoints; i++)
                             modes[i] = VOCAB_CM_TORQUE;
-                        *ok = rpc_iCtrlMode2->setControlModes(modes);
+                        *ok = rpc_iCtrlMode->setControlModes(modes);
                         delete [] modes;
                     }
                     else
@@ -2831,7 +2831,6 @@ RPCMessagesParser::RPCMessagesParser() :
         rcp_Ilim(nullptr),
         rpc_ITorque(nullptr),
         rpc_iCtrlMode(nullptr),
-        rpc_iCtrlMode2(nullptr),
         rpc_AxisInfo(nullptr),
         rpc_IRemoteCalibrator(nullptr),
         rpc_Icalib(nullptr),
@@ -2866,7 +2865,6 @@ void RPCMessagesParser::init(ControlBoardWrapper *x)
     rpc_IImpedance        = dynamic_cast<yarp::dev::IImpedanceControl *>    (ControlBoardWrapper_p);
     rpc_ITorque           = dynamic_cast<yarp::dev::ITorqueControl *>       (ControlBoardWrapper_p);
     rpc_iCtrlMode         = dynamic_cast<yarp::dev::IControlMode *>         (ControlBoardWrapper_p);
-    rpc_iCtrlMode2        = dynamic_cast<yarp::dev::IControlMode2 *>        (ControlBoardWrapper_p);
     rpc_IInteract         = dynamic_cast<yarp::dev::IInteractionMode *>     (ControlBoardWrapper_p);
     rpc_ICurrent          = dynamic_cast<yarp::dev::ICurrentControl *>      (ControlBoardWrapper_p);
     rpc_IPWM              = dynamic_cast<yarp::dev::IPWMControl *>          (ControlBoardWrapper_p);

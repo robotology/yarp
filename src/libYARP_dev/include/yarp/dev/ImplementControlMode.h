@@ -27,6 +27,7 @@ YARP_DISABLE_DEPRECATED_WARNING
 class YARP_dev_API yarp::dev::ImplementControlMode: public IControlMode
 {
     void *helper;
+    int nj;
     yarp::dev::IControlModeRaw *raw;
 public:
     bool initialize(int k, const int *amap);
@@ -35,6 +36,10 @@ public:
     ~ImplementControlMode();
     bool getControlMode(int j, int *f) override;
     bool getControlModes(int *modes) override;
+    bool getControlModes(const int n_joint, const int *joints, int *modes) override;
+    bool setControlMode(const int j, const int mode) override;
+    bool setControlModes(const int n_joint, const int *joints, int *modes) override;
+    bool setControlModes(int *modes) override;
 };
 
 #if defined(_MSC_VER) && !defined(YARP_NO_DEPRECATED) // since YARP 2.3.70

@@ -36,7 +36,7 @@ RemappedSubControlBoard::RemappedSubControlBoard()
     info = nullptr;
     iTorque=nullptr;
     iImpedance=nullptr;
-    iMode2=nullptr;
+    iMode=nullptr;
     iInteract=nullptr;
     imotor=nullptr;
     iVar = nullptr;
@@ -67,7 +67,7 @@ void RemappedSubControlBoard::detach()
     info=nullptr;
     iTorque=nullptr;
     iImpedance=nullptr;
-    iMode2=nullptr;
+    iMode=nullptr;
     iTimed=nullptr;
     iInteract=nullptr;
     imotor=nullptr;
@@ -108,7 +108,7 @@ bool RemappedSubControlBoard::attach(yarp::dev::PolyDriver *d, const std::string
         subdevice->view(iTimed);
         subdevice->view(iTorque);
         subdevice->view(iImpedance);
-        subdevice->view(iMode2);
+        subdevice->view(iMode);
         subdevice->view(iJntEnc);
         subdevice->view(iMotEnc);
         subdevice->view(iInteract);
@@ -188,7 +188,7 @@ bool RemappedSubControlBoard::attach(yarp::dev::PolyDriver *d, const std::string
         return false;
     }
 
-    if(!iMode2)
+    if(!iMode)
     {
         yError("ControlBoardRemapper: IControlMode2 interface was not found in subdevice, exiting.");
         return false;

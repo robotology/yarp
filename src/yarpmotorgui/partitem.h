@@ -148,7 +148,7 @@ private:
     IAxisInfo         *m_iinfo;
     IControlLimits          *m_iLim;
     IControlCalibration    *m_ical;
-    IControlMode2           *m_ictrlmode2;
+    IControlMode           *m_ictrlmode;
     IInteractionMode        *m_iinteract;
     IRemoteCalibrator   *m_iremCalib;
     int m_slow_k;

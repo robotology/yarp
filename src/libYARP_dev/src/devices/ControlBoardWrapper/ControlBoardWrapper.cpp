@@ -3383,9 +3383,9 @@ bool ControlBoardWrapper::disableAmp(int j)
         return false;
 
     // Use the newer interface if available, otherwise fallback on the old one.
-    if(p->iMode2)
+    if(p->iMode)
     {
-        ret = p->iMode2->setControlMode(off+p->base, VOCAB_CM_IDLE);
+        ret = p->iMode->setControlMode(off+p->base, VOCAB_CM_IDLE);
     }
     else
     {
@@ -4353,9 +4353,9 @@ bool ControlBoardWrapper::getControlModes(const int n_joint, const int *joints, 
          if (!p)
              return false;
 
-         if (p->iMode2)
+         if (p->iMode)
          {
-             ret=ret&&p->iMode2->getControlMode(off+p->base, &modes[l]);
+             ret=ret&&p->iMode->getControlMode(off+p->base, &modes[l]);
          }
          else
              ret=false;
@@ -4373,9 +4373,9 @@ bool ControlBoardWrapper::setControlMode(const int j, const int mode)
     if (!p)
         return false;
 
-    if (p->iMode2)
+    if (p->iMode)
     {
-        ret = p->iMode2->setControlMode(off+p->base, mode);
+        ret = p->iMode->setControlMode(off+p->base, mode);
     }
     return ret;
 }
@@ -4400,9 +4400,9 @@ bool ControlBoardWrapper::setControlModes(const int n_joints, const int *joints,
 
     for(subIndex=0; subIndex<rpcData.deviceNum; subIndex++)
     {
-        if(rpcData.subdevices_p[subIndex]->iMode2)
+        if(rpcData.subdevices_p[subIndex]->iMode)
         {
-            ret= ret && rpcData.subdevices_p[subIndex]->iMode2->setControlModes(rpcData.subdev_jointsVectorLen[subIndex],
+            ret= ret && rpcData.subdevices_p[subIndex]->iMode->setControlModes(rpcData.subdev_jointsVectorLen[subIndex],
                                                                                 rpcData.jointNumbers[subIndex],
                                                                                 rpcData.modes[subIndex]);
         }
@@ -4432,7 +4432,7 @@ bool ControlBoardWrapper::setControlModes(int *modes)
         int wrapped_joints=(p->top - p->base) + 1;
         int *joints = new int[wrapped_joints];
 
-        if(p->iMode2)   // Control Mode interface 2
+        if(p->iMode)   // Control Mode interface 2
         {
             // versione comandi su subset di giunti
             for(int j_dev = 0; j_dev < wrapped_joints; j_dev++)
@@ -4440,7 +4440,7 @@ bool ControlBoardWrapper::setControlModes(int *modes)
                 joints[j_dev] = p->base + j_dev;  // for all joints is equivalent to add offset term
             }
 
-            ret = ret && p->iMode2->setControlModes(wrapped_joints, joints, &modes[j_wrap]);
+            ret = ret && p->iMode->setControlModes(wrapped_joints, joints, &modes[j_wrap]);
             j_wrap+=wrapped_joints;
         }
 

@@ -3592,7 +3592,7 @@ bool ControlBoardRemapper::getControlMode(int j, int *mode)
     if (!p)
         return false;
 
-    return p->iMode2->getControlMode(off, mode);
+    return p->iMode->getControlMode(off, mode);
 
 }
 
@@ -3607,9 +3607,9 @@ bool ControlBoardRemapper::getControlModes(int *modes)
 
         bool ok;
 
-        if( p->iMode2 )
+        if( p->iMode )
         {
-            ok = p->iMode2->getControlModes(allJointsBuffers.m_nJointsInSubControlBoard[ctrlBrd],
+            ok = p->iMode->getControlModes(allJointsBuffers.m_nJointsInSubControlBoard[ctrlBrd],
                                             allJointsBuffers.m_jointsInSubControlBoard[ctrlBrd].data(),
                                             allJointsBuffers.m_bufferForSubControlBoardControlModes[ctrlBrd].data());
         }
@@ -3641,9 +3641,9 @@ bool ControlBoardRemapper::getControlModes(const int n_joints, const int *joints
 
         bool ok;
 
-        if( p->iMode2 )
+        if( p->iMode )
         {
-            ok = p->iMode2->getControlModes(selectedJointsBuffers.m_nJointsInSubControlBoard[ctrlBrd],
+            ok = p->iMode->getControlModes(selectedJointsBuffers.m_nJointsInSubControlBoard[ctrlBrd],
                                             selectedJointsBuffers.m_jointsInSubControlBoard[ctrlBrd].data(),
                                             selectedJointsBuffers.m_bufferForSubControlBoardControlModes[ctrlBrd].data());
         }
@@ -3674,7 +3674,7 @@ bool ControlBoardRemapper::setControlMode(const int j, const int mode)
         return false;
     }
 
-    ret = p->iMode2->setControlMode(off, mode);
+    ret = p->iMode->setControlMode(off, mode);
 
     return ret;
 }
@@ -3690,7 +3690,7 @@ bool ControlBoardRemapper::setControlModes(const int n_joints, const int *joints
     {
         yarp::dev::RemappedSubControlBoard *p=remappedControlBoards.getSubControlBoard(ctrlBrd);
 
-        bool ok = p->iMode2->setControlModes(selectedJointsBuffers.m_nJointsInSubControlBoard[ctrlBrd],
+        bool ok = p->iMode->setControlModes(selectedJointsBuffers.m_nJointsInSubControlBoard[ctrlBrd],
                                              selectedJointsBuffers.m_jointsInSubControlBoard[ctrlBrd].data(),
                                              selectedJointsBuffers.m_bufferForSubControlBoardControlModes[ctrlBrd].data());
         ret = ret && ok;
@@ -3710,7 +3710,7 @@ bool ControlBoardRemapper::setControlModes(int *modes)
     {
         yarp::dev::RemappedSubControlBoard *p=remappedControlBoards.getSubControlBoard(ctrlBrd);
 
-        bool ok = p->iMode2->setControlModes(allJointsBuffers.m_nJointsInSubControlBoard[ctrlBrd],
+        bool ok = p->iMode->setControlModes(allJointsBuffers.m_nJointsInSubControlBoard[ctrlBrd],
                                              allJointsBuffers.m_jointsInSubControlBoard[ctrlBrd].data(),
                                              allJointsBuffers.m_bufferForSubControlBoardControlModes[ctrlBrd].data());
         ret = ret && ok;
@@ -4045,7 +4045,7 @@ bool ControlBoardRemapper::getInteractionModes(int n_joints, int *joints, yarp::
 
         bool ok = true;
 
-        if( p->iMode2 )
+        if( p->iMode )
         {
             ok = p->iInteract->getInteractionModes(selectedJointsBuffers.m_nJointsInSubControlBoard[ctrlBrd],
                                                    selectedJointsBuffers.m_jointsInSubControlBoard[ctrlBrd].data(),
@@ -4075,7 +4075,7 @@ bool ControlBoardRemapper::getInteractionModes(yarp::dev::InteractionModeEnum* m
 
         bool ok = true;
 
-        if( p->iMode2 )
+        if( p->iMode )
         {
             ok = p->iInteract->getInteractionModes(allJointsBuffers.m_nJointsInSubControlBoard[ctrlBrd],
                                                    allJointsBuffers.m_jointsInSubControlBoard[ctrlBrd].data(),
