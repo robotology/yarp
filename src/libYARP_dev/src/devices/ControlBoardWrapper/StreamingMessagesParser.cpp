@@ -24,7 +24,6 @@ StreamingMessagesParser::StreamingMessagesParser() :
         stream_IPosCtrl(nullptr),
         stream_IPosDirect(nullptr),
         stream_IVel(nullptr),
-        stream_IVel2(nullptr),
         stream_ITorque(nullptr),
         stream_IPWM(nullptr),
         stream_ICurrent(nullptr),
@@ -37,7 +36,6 @@ void StreamingMessagesParser::init(ControlBoardWrapper *x) {
     stream_IPosCtrl  = dynamic_cast<yarp::dev::IPositionControl *> (x);
     stream_IPosDirect = dynamic_cast<yarp::dev::IPositionDirect *> (x);
     stream_IVel = dynamic_cast<yarp::dev::IVelocityControl *> (x);
-    stream_IVel2 = dynamic_cast<yarp::dev::IVelocityControl2 *> (x);
     stream_ITorque=dynamic_cast<yarp::dev::ITorqueControl *> (x);
     stream_IPWM = dynamic_cast<yarp::dev::IPWMControl *> (x);
     stream_ICurrent = dynamic_cast<yarp::dev::ICurrentControl *> (x);
@@ -310,7 +308,7 @@ void StreamingMessagesParser::onRead(CommandMessage& v)
         break;
         case VOCAB_VELOCITY_MOVE_GROUP:
         {
-            if(stream_IVel2)
+            if(stream_IVel)
             {
                 int n_joints = b.get(1).asInt32();
                 Bottle *jlut = b.get(2).asList();
@@ -321,7 +319,7 @@ void StreamingMessagesParser::onRead(CommandMessage& v)
                 for (int i = 0; i < n_joints; i++)
                     joint_list[i] = jlut->get(i).asInt32();
 
-                bool ok = stream_IVel2->velocityMove(n_joints, joint_list, cmdVector.data());
+                bool ok = stream_IVel->velocityMove(n_joints, joint_list, cmdVector.data());
                 if (!ok)
                 {   yError("Error while trying to command a velocity move on joint group\n" ); }
 

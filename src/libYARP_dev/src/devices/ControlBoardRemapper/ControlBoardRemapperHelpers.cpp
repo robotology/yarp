@@ -25,7 +25,7 @@ RemappedSubControlBoard::RemappedSubControlBoard()
     pid = nullptr;
     pos = nullptr;
     posDir = nullptr;
-    vel2 = nullptr;
+    vel = nullptr;
     iJntEnc = nullptr;
     iMotEnc = nullptr;
     amp = nullptr;
@@ -58,7 +58,7 @@ void RemappedSubControlBoard::detach()
     pid=nullptr;
     pos=nullptr;
     posDir=nullptr;
-    vel2=nullptr;
+    vel=nullptr;
     amp = nullptr;
     iJntEnc=nullptr;
     iMotEnc=nullptr;
@@ -99,7 +99,7 @@ bool RemappedSubControlBoard::attach(yarp::dev::PolyDriver *d, const std::string
         subdevice->view(pid);
         subdevice->view(pos);
         subdevice->view(posDir);
-        subdevice->view(vel2);
+        subdevice->view(vel);
         subdevice->view(amp);
         subdevice->view(lim);
         subdevice->view(calib);
@@ -176,7 +176,7 @@ bool RemappedSubControlBoard::attach(yarp::dev::PolyDriver *d, const std::string
         return false;
     }
 
-    if( ! (vel2) )
+    if( ! (vel) )
     {
         yError("ControlBoardRemapper: IVelocityControl2 interface was not found in subdevice. Quitting");
         return false;

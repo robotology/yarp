@@ -79,7 +79,6 @@ protected:
     yarp::dev::IPositionControl         *rpc_IPosCtrl;
     yarp::dev::IPositionDirect          *rpc_IPosDirect;
     yarp::dev::IVelocityControl         *rpc_IVelCtrl;
-    yarp::dev::IVelocityControl2        *rpc_IVelCtrl2;
     yarp::dev::IEncodersTimed           *rpc_IEncTimed;
     yarp::dev::IMotorEncoders           *rpc_IMotEnc;
     yarp::dev::IAmplifierControl        *rcp_IAmp;

@@ -87,7 +87,6 @@ public:
     yarp::dev::IPidControl           *pid;
     yarp::dev::IPositionControl      *pos;
     yarp::dev::IVelocityControl      *vel;
-    yarp::dev::IVelocityControl2     *vel2;
     yarp::dev::IEncodersTimed        *iJntEnc;
     yarp::dev::IMotorEncoders        *iMotEnc;
     yarp::dev::IAmplifierControl     *amp;

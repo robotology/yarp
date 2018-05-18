@@ -2320,7 +2320,7 @@ bool RPCMessagesParser::respond(const yarp::os::Bottle& cmd, yarp::os::Bottle& r
                                 if (ControlBoardWrapper_p->verbose())
                                     yDebug("getVelocityMove - cmd: %s\n", cmd.toString().c_str());
 
-                                ok = rpc_IVelCtrl2->getRefVelocity(cmd.get(2).asInt32(), &dtmp);
+                                ok = rpc_IVelCtrl->getRefVelocity(cmd.get(2).asInt32(), &dtmp);
 
                                 response.addFloat64(dtmp);
                                 rec=true;
@@ -2341,7 +2341,7 @@ bool RPCMessagesParser::respond(const yarp::os::Bottle& cmd, yarp::os::Bottle& r
                                 {
                                     jointList[j] = in.get(j).asInt32();
                                 }
-                                ok = rpc_IVelCtrl2->getRefVelocities(len, jointList, refs);
+                                ok = rpc_IVelCtrl->getRefVelocities(len, jointList, refs);
 
                                 Bottle& b = response.addList();
                                 for (int i = 0; i < len; i++)
@@ -2358,7 +2358,7 @@ bool RPCMessagesParser::respond(const yarp::os::Bottle& cmd, yarp::os::Bottle& r
                                     yDebug("getVelocityMoves - cmd: %s\n", cmd.toString().c_str());
 
                                 double *refs = new double[controlledJoints];
-                                ok = rpc_IVelCtrl2->getRefVelocities(refs);
+                                ok = rpc_IVelCtrl->getRefVelocities(refs);
                                 Bottle& b = response.addList();
                                 int i;
                                 for (i = 0; i < controlledJoints; i++)
@@ -2823,7 +2823,6 @@ RPCMessagesParser::RPCMessagesParser() :
         rpc_IPosCtrl(nullptr),
         rpc_IPosDirect(nullptr),
         rpc_IVelCtrl(nullptr),
-        rpc_IVelCtrl2(nullptr),
         rpc_IEncTimed(nullptr),
         rpc_IMotEnc(nullptr),
         rcp_IAmp(nullptr),
@@ -2850,7 +2849,6 @@ void RPCMessagesParser::init(ControlBoardWrapper *x)
     rpc_IPosCtrl          = dynamic_cast<yarp::dev::IPositionControl *>     (ControlBoardWrapper_p);
     rpc_IPosDirect        = dynamic_cast<yarp::dev::IPositionDirect *>      (ControlBoardWrapper_p);
     rpc_IVelCtrl          = dynamic_cast<yarp::dev::IVelocityControl *>     (ControlBoardWrapper_p);
-    rpc_IVelCtrl2         = dynamic_cast<yarp::dev::IVelocityControl2 *>    (ControlBoardWrapper_p);
     rpc_IEncTimed         = dynamic_cast<yarp::dev::IEncodersTimed *>       (ControlBoardWrapper_p);
     rpc_IMotEnc           = dynamic_cast<yarp::dev::IMotorEncoders *>       (ControlBoardWrapper_p);
     rpc_IMotor            = dynamic_cast<yarp::dev::IMotor *>               (ControlBoardWrapper_p);

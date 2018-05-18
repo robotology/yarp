@@ -74,9 +74,10 @@ set(YARP_dev_HDRS include/yarp/dev/all.h
                   include/yarp/dev/IRGBDSensor.h
                   include/yarp/dev/IRobotDescription.h
                   include/yarp/dev/ITorqueControl.h
-                  include/yarp/dev/IVelocityControl2.h
-                  include/yarp/dev/IVelocityControl2Impl.h
                   include/yarp/dev/IVelocityControl.h
+                  include/yarp/dev/IVelocityControl2.h
+                  include/yarp/dev/IVelocityControlImpl.h
+                  include/yarp/dev/IVelocityControl2Impl.h
                   include/yarp/dev/IVirtualAnalogSensor.h
                   include/yarp/dev/IVisualParams.h
                   include/yarp/dev/IVisualParamsImpl.h
@@ -127,7 +128,7 @@ set(YARP_dev_SRCS src/ControlBoardInterfacesImpl.cpp
                   src/IPositionDirectImpl.cpp
                   src/IRangefinder2D.cpp
                   src/IRemoteVariablesImpl.cpp
-                  src/IVelocityControl2Impl.cpp
+                  src/IVelocityControlImpl.cpp
                   src/IVisualParamsImpl.cpp
                   src/LaserMeasurementData.cpp
                   src/MultipleAnalogSensorsInterfaces.cpp

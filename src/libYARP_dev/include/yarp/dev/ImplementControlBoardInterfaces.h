@@ -13,7 +13,6 @@
 #include <yarp/dev/api.h>
 namespace yarp{
     namespace dev {
-        template <class DERIVED, class IMPLEMENT> class ImplementVelocityControl;
         template <class DERIVED, class IMPLEMENT> class ImplementEncoders;
         template <class DERIVED, class IMPLEMENT> class ImplementAmplifierControl;
         template <class DERIVED, class IMPLEMENT> class ImplementControlCalibration;
@@ -21,64 +20,6 @@ namespace yarp{
         class StubImplEncodersRaw;
     }
 }
-
-
-/**
- * Default implementation of the IVelocityControl interface. This template class can
- * be used to easily provide an implementation of IVelocityControl. It takes two
- * arguments, the class it is derived from and the class it is implementing, typically
- * IVelocityControl (which should probably be removed from the template arguments).
- * "<IMPLEMENT>" makes only explicit that the class is implementing IVelocityControl and
- * appears in the inheritance list of the derived class.
- */
-template <class DERIVED, class IMPLEMENT>
-class yarp::dev::ImplementVelocityControl : public IMPLEMENT
-{
-protected:
-    IVelocityControlRaw *iVelocity;
-    void *helper;
-    double *temp;
-
-    /**
-     * Initialize the internal data and alloc memory.
-     * @param size is the number of controlled axes the driver deals with.
-     * @param amap is a lookup table mapping axes onto physical drivers.
-     * @param enc is an array containing the encoder to angles conversion factors.
-     * @param zos is an array containing the zeros of the encoders.
-     * @return true if initialized succeeded, false if it wasn't executed, or assert.
-     */
-    bool initialize (int size, const int *amap, const double *enc, const double *zos);
-
-    /**
-     * Clean up internal data and memory.
-     * @return true if uninitialization is executed, false otherwise.
-     */
-    bool uninitialize ();
-
-public:
-    /**
-     * Constructor.
-     * @param y is the pointer to the class instance inheriting from this
-     *  implementation.
-     */
-    ImplementVelocityControl(DERIVED *y);
-
-    /**
-     * Destructor. Perform uninitialize if needed.
-     */
-    virtual ~ImplementVelocityControl();
-
-    virtual bool getAxes(int *axes) override;
-
-    virtual bool velocityMove(int j, double v) override;
-    virtual bool velocityMove(const double *v) override;
-    virtual bool setRefAcceleration(int j, double acc) override;
-    virtual bool setRefAccelerations(const double *accs) override;
-    virtual bool getRefAcceleration(int j, double *acc) override;
-    virtual bool getRefAccelerations(double *accs) override;
-    virtual bool stop(int j) override;
-    virtual bool stop() override;
-};
 
 template <class DERIVED, class IMPLEMENT>
 class yarp::dev::ImplementEncoders : public IMPLEMENT

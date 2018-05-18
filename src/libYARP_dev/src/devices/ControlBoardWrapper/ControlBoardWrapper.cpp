@@ -2556,7 +2556,7 @@ bool ControlBoardWrapper::velocityMove(const double *v)
         int wrapped_joints=(p->top - p->base) + 1;
         int *joints = new int[wrapped_joints];
 
-        if(p->vel2)   // Velocity Control 2
+        if(p->vel)   // Velocity Control 2
         {
             // verione comandi su subset di giunti
             for(int j_dev = 0; j_dev < wrapped_joints; j_dev++)
@@ -2564,7 +2564,7 @@ bool ControlBoardWrapper::velocityMove(const double *v)
                 joints[j_dev] = p->base + j_dev;
             }
 
-            ret = ret && p->vel2->velocityMove(wrapped_joints, joints, &v[j_wrap]);
+            ret = ret && p->vel->velocityMove(wrapped_joints, joints, &v[j_wrap]);
             j_wrap += wrapped_joints;
         }
         else   // Classic Position Control
@@ -4667,9 +4667,9 @@ bool ControlBoardWrapper::velocityMove(const int n_joints, const int *joints, co
 
     for(subIndex=0; subIndex<rpcData.deviceNum; subIndex++)
     {
-        if(rpcData.subdevices_p[subIndex]->vel2)   // Position Control 2
+        if(rpcData.subdevices_p[subIndex]->vel)   // Position Control 2
         {
-            ret= ret && rpcData.subdevices_p[subIndex]->vel2->velocityMove(rpcData.subdev_jointsVectorLen[subIndex],
+            ret= ret && rpcData.subdevices_p[subIndex]->vel->velocityMove(rpcData.subdev_jointsVectorLen[subIndex],
                                                                            rpcData.jointNumbers[subIndex],
                                                                            rpcData.values[subIndex]);
         }
@@ -4706,9 +4706,9 @@ bool ControlBoardWrapper::getRefVelocity(const int j, double* vel)
     if (!p)
         return false;
 
-    if (p->vel2)
+    if (p->vel)
     {
-        bool ret = p->vel2->getRefVelocity(off+p->base, vel);
+        bool ret = p->vel->getRefVelocity(off+p->base, vel);
         return ret;
     }
     *vel=0;
@@ -4729,7 +4729,7 @@ bool ControlBoardWrapper::getRefVelocities(double* vels)
             break;
         }
         
-        if( (p->vel2) &&(ret = p->vel2->getRefVelocities(references)))
+        if( (p->vel) &&(ret = p->vel->getRefVelocities(references)))
         {
             for(int juser= p->wbase, jdevice=p->base; juser<=p->wtop; juser++, jdevice++)
             {
@@ -4773,7 +4773,7 @@ bool ControlBoardWrapper::getRefVelocities(const int n_joints, const int* joints
     {
         if(rpcData.subdevices_p[subIndex]->posDir)
         {
-            ret= ret && rpcData.subdevices_p[subIndex]->vel2->getRefVelocities( rpcData.subdev_jointsVectorLen[subIndex],
+            ret= ret && rpcData.subdevices_p[subIndex]->vel->getRefVelocities( rpcData.subdev_jointsVectorLen[subIndex],
                                                                                 rpcData.jointNumbers[subIndex],
                                                                                 rpcData.values[subIndex]);
         }
@@ -4945,7 +4945,7 @@ bool ControlBoardWrapper::setInteractionModes(int n_joints, int *joints, yarp::d
 
     for(subIndex=0; subIndex<rpcData.deviceNum; subIndex++)
     {
-        if(rpcData.subdevices_p[subIndex]->vel2)   // Position Control 2
+        if(rpcData.subdevices_p[subIndex]->vel)   // Position Control 2
         {
             ret= ret && rpcData.subdevices_p[subIndex]->iInteract->setInteractionModes( rpcData.subdev_jointsVectorLen[subIndex],
                                                                                         rpcData.jointNumbers[subIndex],

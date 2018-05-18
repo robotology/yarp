@@ -141,7 +141,7 @@ YARP_DISABLE_DEPRECATED_WARNING
 class yarp::dev::RemoteControlBoard :
     public IPidControl,
     public IPositionControl,
-    public IVelocityControl2,
+    public IVelocityControl,
     public IEncodersTimed,
     public IMotorEncoders,
     public IMotor,

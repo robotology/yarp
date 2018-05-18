@@ -32,7 +32,6 @@ SubDevice::SubDevice() :
     pid(nullptr),
     pos(nullptr),
     vel(nullptr),
-    vel2(nullptr),
     iJntEnc(nullptr),
     iMotEnc(nullptr),
     amp(nullptr),
@@ -100,7 +99,6 @@ void SubDevice::detach()
     pos=nullptr;
     posDir=nullptr;
     vel=nullptr;
-    vel2=nullptr;
     amp = nullptr;
     iJntEnc=nullptr;
     iMotEnc=nullptr;
@@ -154,7 +152,6 @@ bool SubDevice::attach(yarp::dev::PolyDriver *d, const std::string &k)
             subdevice->view(pos);
             subdevice->view(posDir);
             subdevice->view(vel);
-            subdevice->view(vel2);
             subdevice->view(amp);
             subdevice->view(lim);
             subdevice->view(calib);
@@ -216,16 +213,10 @@ bool SubDevice::attach(yarp::dev::PolyDriver *d, const std::string &k)
         return false;
     }
 
-    if( ! (vel || vel2) ) // One of the 2 is enough, therefore if both are missing I raise an error
+    if( ! (vel) )
     {
         yError("ControlBoarWrapper: neither IVelocityControl nor IVelocityControl2 interface was not found in subdevice. Quitting");
         return false;
-    }
-    else
-    {
-        // both have to be correct (and they should 'cause the vel2 is derived from 1. Use a workaround here, then investigate more!!
-        if(vel2 && !vel)
-            vel = vel2;
     }
 
     if(!iJntEnc)

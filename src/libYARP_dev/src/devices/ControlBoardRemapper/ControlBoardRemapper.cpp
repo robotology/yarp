@@ -1656,9 +1656,9 @@ bool ControlBoardRemapper::velocityMove(int j, double v)
         return false;
     }
 
-    if (p->vel2)
+    if (p->vel)
     {
-        return p->vel2->velocityMove(off, v);
+        return p->vel->velocityMove(off, v);
     }
 
     return false;
@@ -1675,7 +1675,7 @@ bool ControlBoardRemapper::velocityMove(const double *v)
     {
         yarp::dev::RemappedSubControlBoard *p=remappedControlBoards.getSubControlBoard(ctrlBrd);
 
-        bool ok = p->vel2->velocityMove(allJointsBuffers.m_nJointsInSubControlBoard[ctrlBrd],
+        bool ok = p->vel->velocityMove(allJointsBuffers.m_nJointsInSubControlBoard[ctrlBrd],
                                         allJointsBuffers.m_jointsInSubControlBoard[ctrlBrd].data(),
                                         allJointsBuffers.m_bufferForSubControlBoard[ctrlBrd].data());
         ret = ret && ok;
@@ -3917,7 +3917,7 @@ bool ControlBoardRemapper::velocityMove(const int n_joints, const int *joints, c
     {
         yarp::dev::RemappedSubControlBoard *p=remappedControlBoards.getSubControlBoard(ctrlBrd);
 
-        bool ok = p->vel2->velocityMove(selectedJointsBuffers.m_nJointsInSubControlBoard[ctrlBrd],
+        bool ok = p->vel->velocityMove(selectedJointsBuffers.m_nJointsInSubControlBoard[ctrlBrd],
                                         selectedJointsBuffers.m_jointsInSubControlBoard[ctrlBrd].data(),
                                         selectedJointsBuffers.m_bufferForSubControlBoard[ctrlBrd].data());
         ret = ret && ok;
@@ -3938,9 +3938,9 @@ bool ControlBoardRemapper::getRefVelocity(const int j, double* vel)
         return false;
     }
 
-    if (p->vel2)
+    if (p->vel)
     {
-        bool ret = p->vel2->getRefVelocity(off, vel);
+        bool ret = p->vel->getRefVelocity(off, vel);
         return ret;
     }
 
@@ -3959,9 +3959,9 @@ bool ControlBoardRemapper::getRefVelocities(double* vels)
 
         bool ok = true;
 
-        if( p->vel2 )
+        if( p->vel )
         {
-            ok = p->vel2->getRefVelocities(allJointsBuffers.m_nJointsInSubControlBoard[ctrlBrd],
+            ok = p->vel->getRefVelocities(allJointsBuffers.m_nJointsInSubControlBoard[ctrlBrd],
                                            allJointsBuffers.m_jointsInSubControlBoard[ctrlBrd].data(),
                                            allJointsBuffers.m_bufferForSubControlBoard[ctrlBrd].data());
         }
@@ -3992,9 +3992,9 @@ bool ControlBoardRemapper::getRefVelocities(const int n_joints, const int* joint
 
         bool ok = true;
 
-        if( p->vel2 )
+        if( p->vel )
         {
-            ok = p->vel2->getRefVelocities(selectedJointsBuffers.m_nJointsInSubControlBoard[ctrlBrd],
+            ok = p->vel->getRefVelocities(selectedJointsBuffers.m_nJointsInSubControlBoard[ctrlBrd],
                                            selectedJointsBuffers.m_jointsInSubControlBoard[ctrlBrd].data(),
                                            selectedJointsBuffers.m_bufferForSubControlBoard[ctrlBrd].data());
         }

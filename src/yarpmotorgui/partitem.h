@@ -135,7 +135,7 @@ private:
 
     IPositionControl   *m_iPos;
     IPositionDirect    *m_iDir;
-    IVelocityControl2  *m_iVel;
+    IVelocityControl  *m_iVel;
     IRemoteVariables   *m_iVar;
     IEncoders          *m_iencs;
     IMotorEncoders     *m_iMot;
