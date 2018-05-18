@@ -94,6 +94,18 @@ recommended usage of this header within YARP is:
 #  define YARP_DEPRECATED_MSG(X)
 #endif
 
+
+// Position for the attribute [[deprecated]] for typedef is different compared
+// to compiler-specific attributes
+#if defined(YARP_COMPILER_CXX_ATTRIBUTE_DEPRECATED) && YARP_COMPILER_CXX_ATTRIBUTE_DEPRECATED
+# define YARP_DEPRECATED_TYPEDEF YARP_DEPRECATED typedef
+# define YARP_DEPRECATED_TYPEDEF_MSG(x) YARP_DEPRECATED_MSG(x) typedef
+#else
+# define YARP_DEPRECATED_TYPEDEF typedef YARP_DEPRECATED
+# define YARP_DEPRECATED_TYPEDEF_MSG(x) typedef YARP_DEPRECATED_MSG(x)
+#endif
+
+
 // Due to a GCC bug, it is not a good idea to mix C++14 and compiler-specific attributes
 // For this reason, only for usage with visibility macro, we define the compiler-specific attributes
 // See https://github.com/robotology/yarp/issues/1531
