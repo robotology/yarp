@@ -78,11 +78,3 @@ foreach(X ${_inis})
              WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR})
   endif()
 endforeach()
-
-# BEGIN FIXME
-  if(YARP_ENABLE_BROKEN_TESTS)
-    yarp_disable_test(device::grabber_basic 0)
-  else()
-    yarp_disable_test(device::grabber_basic 1)
-  endif()
-# END FIXME

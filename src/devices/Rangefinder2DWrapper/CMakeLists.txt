@@ -15,8 +15,7 @@ if(NOT SKIP_Rangefinder2DWrapper)
   set(CMAKE_INCLUDE_CURRENT_DIR ON)
 
   yarp_add_plugin(yarp_Rangefinder2DWrapper Rangefinder2DWrapper.cpp
-                                            Rangefinder2DWrapper.h
-                                            ${yarp_Rangefinder2DWrapper_ROS_FILES})
+                                            Rangefinder2DWrapper.h)
   target_link_libraries(yarp_Rangefinder2DWrapper YARP::YARP_OS
                                                   YARP::YARP_sig
                                                   YARP::YARP_dev
