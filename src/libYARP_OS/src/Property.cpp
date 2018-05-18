@@ -278,9 +278,9 @@ public:
             std::string key = term->get(0).asString();
             std::string base = key;
             while (key.length()>0) {
-                size_t at = key.find("::");
                 base = key;
-                if (at>=0) {
+                size_t at = key.find("::");
+                if (at != std::string::npos) {
                     base = key.substr(0, at);
                     key = key.substr(at+2);
                 } else {
