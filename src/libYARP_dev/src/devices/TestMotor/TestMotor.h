@@ -263,6 +263,11 @@ public:
         return false;
     }
 
+    virtual bool velocityMove(const int n_joint, const int *joints, const double *spds) override
+    {
+        return false;
+    }
+
     virtual bool close() override {
         return true;
     }
