@@ -550,7 +550,7 @@ public:
 /**
  * @ingroup dev_iface_motor
  *
- * Interface for control devices, limits commands.
+ * Interface for control devices, commands to get/set position and veloity limits.
  */
 class YARP_dev_API yarp::dev::IControlLimits
 {
@@ -560,7 +560,8 @@ public:
      */
     virtual ~IControlLimits() {}
 
-    /* Set the software limits for a particular axis, the behavior of the
+    /**
+     * Set the software limits for a particular axis, the behavior of the
      * control card when these limits are exceeded, depends on the implementation.
      * @param axis joint number (why am I telling you this)
      * @param min the value of the lower limit
@@ -569,13 +570,33 @@ public:
      */
     virtual bool setLimits(int axis, double min, double max)=0;
 
-    /* Get the software limits for a particular axis.
+    /**
+     * Get the software limits for a particular axis.
      * @param axis joint number
      * @param pointer to store the value of the lower limit
      * @param pointer to store the value of the upper limit
      * @return true if everything goes fine, false otherwise.
      */
     virtual bool getLimits(int axis, double *min, double *max)=0;
+
+    /**
+     * Set the software speed limits for a particular axis, the behavior of the
+     * control card when these limits are exceeded, depends on the implementation.
+     * @param axis joint number
+     * @param min the value of the lower limit
+     * @param max the value of the upper limit
+     * @return true or false on success or failure
+     */
+    virtual bool setVelLimits(int axis, double min, double max)=0;
+
+    /**
+     * Get the software speed limits for a particular axis.
+     * @param axis joint number
+     * @param min pointer to store the value of the lower limit
+     * @param max pointer to store the value of the upper limit
+     * @return true if everything goes fine, false otherwise.
+     */
+    virtual bool getVelLimits(int axis, double *min, double *max)=0;
 };
 
 /**

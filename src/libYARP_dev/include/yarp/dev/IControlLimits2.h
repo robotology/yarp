@@ -13,46 +13,10 @@
 
 namespace yarp {
     namespace dev {
-        class IControlLimits2;
         class IControlLimits2Raw;
+YARP_DEPRECATED_TYPEDEF_MSG("Use yarp::dev::IControlLimits instead") IControlLimits IControlLimits2;
     }
 }
-
-/**
- * @ingroup dev_iface_motor
- *
- * Interface for control devices, commands to get/set position and veloity limits
- */
-class YARP_dev_API yarp::dev::IControlLimits2: public yarp::dev::IControlLimits
-{
-public:
-    /**
-     * Destructor.
-     */
-    virtual ~IControlLimits2() {}
-
-    using IControlLimits::setLimits;
-    using IControlLimits::getLimits;
-
-    /**
-     * Set the software speed limits for a particular axis, the behavior of the
-     * control card when these limits are exceeded, depends on the implementation.
-     * @param axis joint number
-     * @param min the value of the lower limit
-     * @param max the value of the upper limit
-     * @return true or false on success or failure
-     */
-    virtual bool setVelLimits(int axis, double min, double max)=0;
-
-    /**
-     * Get the software speed limits for a particular axis.
-     * @param axis joint number
-     * @param min pointer to store the value of the lower limit
-     * @param max pointer to store the value of the upper limit
-     * @return true if everything goes fine, false otherwise.
-     */
-    virtual bool getVelLimits(int axis, double *min, double *max)=0;
-};
 
 
 /**
