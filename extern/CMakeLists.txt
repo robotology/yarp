@@ -9,7 +9,7 @@ if(YARP_EXPERIMENTAL_WARNINGS)
   string(REPLACE "${EXPERIMENTAL_WARNING_FLAGS} " CMAKE_CXX_FLAGS ${CMAKE_CXX_FLAGS})
 endif()
 
-# Do not build with -Wno-suggest-override
+# Do not build with -Wsuggest-override
 string(REPLACE "-Wsuggest-override" "" CMAKE_CXX_FLAGS ${CMAKE_CXX_FLAGS})
 
 # TinyXML
