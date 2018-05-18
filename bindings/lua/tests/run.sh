@@ -14,4 +14,5 @@ fi
 
 DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
 
-lua $DIR/test_string.lua
+# Any test that requires yarpserver would go here:
+# lua $DIR/test_that_requires_yarpserver.lua
