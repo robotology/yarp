@@ -59,7 +59,7 @@ public:
     yarp::dev::IEncodersTimed        *iJntEnc;
     yarp::dev::IMotorEncoders        *iMotEnc;
     yarp::dev::IAmplifierControl     *amp;
-    yarp::dev::IControlLimits2       *lim2;
+    yarp::dev::IControlLimits        *lim;
     yarp::dev::IControlCalibration   *calib;
     yarp::dev::IRemoteCalibrator     *remcalib;
     yarp::dev::IPreciselyTimed       *iTimed;

@@ -365,7 +365,7 @@ FakeMotionControl::FakeMotionControl() :
     ImplementImpedanceControl(this),
     ImplementMotorEncoders(this),
     ImplementTorqueControl(this),
-    ImplementControlLimits2(this),
+    ImplementControlLimits(this),
     ImplementPositionDirect(this),
     ImplementInteractionMode(this),
     ImplementCurrentControl(this),
@@ -593,7 +593,7 @@ bool FakeMotionControl::open(yarp::os::Searchable &config)
     ImplementPidControl::setConversionUnits(PidControlTypeEnum::VOCAB_PIDTYPE_TORQUE, PidFeedbackUnitsEnum::METRIC, PidOutputUnitsEnum::DUTYCYCLE_PWM_PERCENT);
     ImplementControlMode2::initialize(_njoints, _axisMap);
     ImplementVelocityControl2::initialize(_njoints, _axisMap, _angleToEncoder, nullptr);
-    ImplementControlLimits2::initialize(_njoints, _axisMap, _angleToEncoder, nullptr);
+    ImplementControlLimits::initialize(_njoints, _axisMap, _angleToEncoder, nullptr);
     ImplementImpedanceControl::initialize(_njoints, _axisMap, _angleToEncoder, nullptr, _newtonsToSensor);
     ImplementTorqueControl::initialize(_njoints, _axisMap, _angleToEncoder, nullptr, _newtonsToSensor, _ampsToSensor, _dutycycleToPWM, bemfToRaw.data(), ktauToRaw.data());
     ImplementPositionDirect::initialize(_njoints, _axisMap, _angleToEncoder, nullptr);
@@ -1462,7 +1462,7 @@ bool FakeMotionControl::close()
     ImplementControlCalibration<FakeMotionControl, IControlCalibration>::uninitialize();
     ImplementAmplifierControl<FakeMotionControl, IAmplifierControl>::uninitialize();
     ImplementImpedanceControl::uninitialize();
-    ImplementControlLimits2::uninitialize();
+    ImplementControlLimits::uninitialize();
     ImplementTorqueControl::uninitialize();
     ImplementPositionDirect::uninitialize();
     ImplementInteractionMode::uninitialize();

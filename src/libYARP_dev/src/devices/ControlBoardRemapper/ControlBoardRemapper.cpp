@@ -2827,9 +2827,9 @@ bool ControlBoardRemapper::setLimits(int j, double min, double max)
         return false;
     }
 
-    if (p->lim2)
+    if (p->lim)
     {
-        return p->lim2->setLimits(off,min, max);
+        return p->lim->setLimits(off,min, max);
     }
 
     return false;
@@ -2847,9 +2847,9 @@ bool ControlBoardRemapper::getLimits(int j, double *min, double *max)
         return false;
     }
 
-    if (p->lim2)
+    if (p->lim)
     {
-        return p->lim2->getLimits(off,min, max);
+        return p->lim->getLimits(off,min, max);
     }
 
     return false;
@@ -2867,12 +2867,12 @@ bool ControlBoardRemapper::setVelLimits(int j, double min, double max)
         return false;
     }
 
-    if (!p->lim2)
+    if (!p->lim)
     {
         return false;
     }
 
-    return p->lim2->setVelLimits(off,min, max);
+    return p->lim->setVelLimits(off,min, max);
 }
 
 bool ControlBoardRemapper::getVelLimits(int j, double *min, double *max)
@@ -2887,12 +2887,12 @@ bool ControlBoardRemapper::getVelLimits(int j, double *min, double *max)
         return false;
     }
 
-    if(!p->lim2)
+    if(!p->lim)
     {
         return false;
     }
 
-    return p->lim2->getVelLimits(off,min, max);
+    return p->lim->getVelLimits(off,min, max);
 }
 
 /* IRemoteCalibrator */

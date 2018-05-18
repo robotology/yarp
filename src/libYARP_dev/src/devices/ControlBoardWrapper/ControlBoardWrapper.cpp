@@ -3689,9 +3689,9 @@ bool ControlBoardWrapper::setLimits(int j, double min, double max)
     if (!p)
         return false;
 
-    if (p->lim2)
+    if (p->lim)
     {
-        return p->lim2->setLimits(off+p->base,min, max);
+        return p->lim->setLimits(off+p->base,min, max);
     }
     return false;
 }
@@ -3709,9 +3709,9 @@ bool ControlBoardWrapper::getLimits(int j, double *min, double *max)
         return false;
     }
 
-    if (p->lim2)
+    if (p->lim)
     {
-        return p->lim2->getLimits(off+p->base,min, max);
+        return p->lim->getLimits(off+p->base,min, max);
     }
     *min=0.0;
     *max=0.0;
@@ -3727,11 +3727,11 @@ bool ControlBoardWrapper::setVelLimits(int j, double min, double max)
     if (!p)
         return false;
 
-    if (!p->lim2)
+    if (!p->lim)
     {
         return false;
     }
-    return p->lim2->setVelLimits(off+p->base,min, max);
+    return p->lim->setVelLimits(off+p->base,min, max);
 }
 
 bool ControlBoardWrapper::getVelLimits(int j, double *min, double *max)
@@ -3748,11 +3748,11 @@ bool ControlBoardWrapper::getVelLimits(int j, double *min, double *max)
         return false;
     }
 
-    if(!p->lim2)
+    if(!p->lim)
     {
         return false;
     }
-    return p->lim2->getVelLimits(off+p->base,min, max);
+    return p->lim->getVelLimits(off+p->base,min, max);
 }
 
 /* IRemoteCalibrator */

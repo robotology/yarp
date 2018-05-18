@@ -2143,7 +2143,7 @@ bool RPCMessagesParser::respond(const yarp::os::Bottle& cmd, yarp::os::Bottle& r
 
                             case VOCAB_LIMITS:
                             {
-                                ok = rcp_Ilim2->setLimits(cmd.get(2).asInt32(), cmd.get(3).asFloat64(), cmd.get(4).asFloat64());
+                                ok = rcp_Ilim->setLimits(cmd.get(2).asInt32(), cmd.get(3).asFloat64(), cmd.get(4).asFloat64());
                             }
                             break;
 
@@ -2156,7 +2156,7 @@ bool RPCMessagesParser::respond(const yarp::os::Bottle& cmd, yarp::os::Bottle& r
 
                             case VOCAB_VEL_LIMITS:
                             {
-                                ok = rcp_Ilim2->setVelLimits(cmd.get(2).asInt32(), cmd.get(3).asFloat64(), cmd.get(4).asFloat64());
+                                ok = rcp_Ilim->setVelLimits(cmd.get(2).asInt32(), cmd.get(3).asFloat64(), cmd.get(4).asFloat64());
                             }
                             break;
 
@@ -2712,7 +2712,7 @@ bool RPCMessagesParser::respond(const yarp::os::Bottle& cmd, yarp::os::Bottle& r
                             case VOCAB_LIMITS:
                             {
                                 double min = 0.0, max = 0.0;
-                                ok = rcp_Ilim2->getLimits(cmd.get(2).asInt32(), &min, &max);
+                                ok = rcp_Ilim->getLimits(cmd.get(2).asInt32(), &min, &max);
                                 response.addFloat64(min);
                                 response.addFloat64(max);
                             }
@@ -2721,7 +2721,7 @@ bool RPCMessagesParser::respond(const yarp::os::Bottle& cmd, yarp::os::Bottle& r
                             case VOCAB_VEL_LIMITS:
                             {
                                 double min = 0.0, max = 0.0;
-                                ok = rcp_Ilim2->getVelLimits(cmd.get(2).asInt32(), &min, &max);
+                                ok = rcp_Ilim->getVelLimits(cmd.get(2).asInt32(), &min, &max);
                                 response.addFloat64(min);
                                 response.addFloat64(max);
                             }
@@ -2828,7 +2828,7 @@ RPCMessagesParser::RPCMessagesParser() :
         rpc_IEncTimed(nullptr),
         rpc_IMotEnc(nullptr),
         rcp_IAmp(nullptr),
-        rcp_Ilim2(nullptr),
+        rcp_Ilim(nullptr),
         rpc_ITorque(nullptr),
         rpc_iCtrlMode(nullptr),
         rpc_iCtrlMode2(nullptr),
@@ -2859,7 +2859,7 @@ void RPCMessagesParser::init(ControlBoardWrapper *x)
     rpc_IMotor            = dynamic_cast<yarp::dev::IMotor *>               (ControlBoardWrapper_p);
     rpc_IVar              = dynamic_cast<yarp::dev::IRemoteVariables *>     (ControlBoardWrapper_p);
     rcp_IAmp              = dynamic_cast<yarp::dev::IAmplifierControl *>    (ControlBoardWrapper_p);
-    rcp_Ilim2             = dynamic_cast<yarp::dev::IControlLimits2 *>      (ControlBoardWrapper_p);
+    rcp_Ilim              = dynamic_cast<yarp::dev::IControlLimits *>       (ControlBoardWrapper_p);
     rpc_AxisInfo          = dynamic_cast<yarp::dev::IAxisInfo *>            (ControlBoardWrapper_p);
     rpc_IRemoteCalibrator = dynamic_cast<yarp::dev::IRemoteCalibrator *>    (ControlBoardWrapper_p);
     rpc_Icalib            = dynamic_cast<yarp::dev::IControlCalibration *>  (ControlBoardWrapper_p);

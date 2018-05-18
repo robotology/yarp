@@ -84,7 +84,7 @@ protected:
     yarp::dev::IEncodersTimed           *rpc_IEncTimed;
     yarp::dev::IMotorEncoders           *rpc_IMotEnc;
     yarp::dev::IAmplifierControl        *rcp_IAmp;
-    yarp::dev::IControlLimits2          *rcp_Ilim2;
+    yarp::dev::IControlLimits           *rcp_Ilim;
     yarp::dev::ITorqueControl           *rpc_ITorque;
     yarp::dev::IControlMode             *rpc_iCtrlMode;
     yarp::dev::IControlMode2            *rpc_iCtrlMode2;

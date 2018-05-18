@@ -29,7 +29,7 @@ RemappedSubControlBoard::RemappedSubControlBoard()
     iJntEnc = nullptr;
     iMotEnc = nullptr;
     amp = nullptr;
-    lim2 = nullptr;
+    lim = nullptr;
     calib = nullptr;
     remcalib = nullptr;
     iTimed= nullptr;
@@ -62,7 +62,7 @@ void RemappedSubControlBoard::detach()
     amp = nullptr;
     iJntEnc=nullptr;
     iMotEnc=nullptr;
-    lim2=nullptr;
+    lim=nullptr;
     calib=nullptr;
     info=nullptr;
     iTorque=nullptr;
@@ -101,7 +101,7 @@ bool RemappedSubControlBoard::attach(yarp::dev::PolyDriver *d, const std::string
         subdevice->view(posDir);
         subdevice->view(vel2);
         subdevice->view(amp);
-        subdevice->view(lim2);
+        subdevice->view(lim);
         subdevice->view(calib);
         subdevice->view(remcalib);
         subdevice->view(info);

@@ -146,7 +146,7 @@ private:
     ITorqueControl     *m_iTrq;
     IImpedanceControl  *m_iImp;
     IAxisInfo         *m_iinfo;
-    IControlLimits2          *m_iLim;
+    IControlLimits          *m_iLim;
     IControlCalibration    *m_ical;
     IControlMode2           *m_ictrlmode2;
     IInteractionMode        *m_iinteract;

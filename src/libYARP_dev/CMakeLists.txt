@@ -32,6 +32,7 @@ set(YARP_dev_HDRS include/yarp/dev/all.h
                   include/yarp/dev/GPUInterface.h
                   include/yarp/dev/IAnalogSensor.h
                   include/yarp/dev/IBattery.h
+                  include/yarp/dev/IControlLimitsImpl.h
                   include/yarp/dev/IControlLimits2.h
                   include/yarp/dev/IControlLimits2Impl.h
                   include/yarp/dev/IControlMode2.h
@@ -114,7 +115,7 @@ set(YARP_dev_SRCS src/ControlBoardInterfacesImpl.cpp
                   src/FrameGrabberControlImpl.cpp
                   src/IAxisInfoImpl.cpp
                   src/IBattery.cpp
-                  src/IControlLimit2sImpl.cpp
+                  src/IControlLimitsImpl.cpp
                   src/IEncodersTimedImpl.cpp
                   src/IInteractionModeImpl.cpp
                   src/IJoypadController.cpp

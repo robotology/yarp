@@ -37,7 +37,7 @@ SubDevice::SubDevice() :
     iJntEnc(nullptr),
     iMotEnc(nullptr),
     amp(nullptr),
-    lim2(nullptr),
+    lim(nullptr),
     calib(nullptr),
     iTimed(nullptr),
     iTorque(nullptr),
@@ -107,7 +107,7 @@ void SubDevice::detach()
     amp = nullptr;
     iJntEnc=nullptr;
     iMotEnc=nullptr;
-    lim2=nullptr;
+    lim=nullptr;
     calib=nullptr;
     info=nullptr;
     iTorque=nullptr;
@@ -161,7 +161,7 @@ bool SubDevice::attach(yarp::dev::PolyDriver *d, const std::string &k)
             subdevice->view(vel);
             subdevice->view(vel2);
             subdevice->view(amp);
-            subdevice->view(lim2);
+            subdevice->view(lim);
             subdevice->view(calib);
             subdevice->view(info);
             subdevice->view(iTimed);

@@ -18,7 +18,6 @@ namespace yarp{
         template <class DERIVED, class IMPLEMENT> class ImplementEncoders;
         template <class DERIVED, class IMPLEMENT> class ImplementAmplifierControl;
         template <class DERIVED, class IMPLEMENT> class ImplementControlCalibration;
-        template <class DERIVED, class IMPLEMENT> class ImplementControlLimits;
         class StubImplPositionControlRaw;
         class StubImplEncodersRaw;
     }
@@ -318,60 +317,6 @@ public:
     virtual bool setCalibrationParameters(int axis, const CalibrationParameters& params) override;
 
     virtual bool done(int j) override;
-};
-
-template <class DERIVED, class IMPLEMENT>
-class yarp::dev::ImplementControlLimits: public IMPLEMENT
-{
-protected:
-    IControlLimitsRaw *iLimits;
-    void *helper;
-    double *temp;
-
-    /**
-     * Initialize the internal data and alloc memory.
-     * @param size is the number of controlled axes the driver deals with.
-     * @param amap is a lookup table mapping axes onto physical drivers.
-     * @param enc is an array containing the encoder to angles conversion factors.
-     * @param zos is an array containing the zeros of the encoders.
-     * @return true if initialized succeeded, false if it wasn't executed, or assert.
-     */
-    bool initialize (int size, const int *amap, const double *enc, const double *zos);
-
-    /**
-     * Clean up internal data and memory.
-     * @return true if uninitialization is executed, false otherwise.
-     */
-    bool uninitialize ();
-
-public:
-    /* Constructor.
-     * @param y is the pointer to the class instance inheriting from this
-     *  implementation.
-     */
-    ImplementControlLimits(DERIVED *y);
-
-    /**
-     * Destructor. Perform uninitialize if needed.
-     */
-    virtual ~ImplementControlLimits();
-
-    /* Set the software limits for a particular axis, the behavior of the
-     * control card when these limits are exceeded, depends on the implementation.
-     * @param axis joint number
-     * @param min the value of the lower limit
-     * @param max the value of the upper limit
-     * @return true or false on success or failure
-     */
-    virtual bool setLimits(int axis, double min, double max) override;
-
-    /* Get the software limits for a particular axis.
-     * @param axis joint number
-     * @param pointer to store the value of the lower limit
-     * @param pointer to store the value of the upper limit
-     * @return true if everything goes fine, false if something bad happens (yes, sometimes life is tough)
-     */
-    virtual bool getLimits(int axis, double *min, double *max) override;
 };
 
 

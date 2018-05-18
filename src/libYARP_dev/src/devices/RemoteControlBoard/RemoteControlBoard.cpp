@@ -146,7 +146,7 @@ class yarp::dev::RemoteControlBoard :
     public IMotorEncoders,
     public IMotor,
     public IAmplifierControl,
-    public IControlLimits2,
+    public IControlLimits,
     public IAxisInfo,
     public IPreciselyTimed,
     public IControlCalibration,
