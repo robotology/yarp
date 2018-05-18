@@ -106,6 +106,10 @@ public:
     virtual ~IControlModeRaw(){}
     virtual bool getControlModeRaw(int j, int *mode)=0;
     virtual bool getControlModesRaw(int* modes)=0;
+    virtual bool getControlModesRaw(const int n_joint, const int *joints, int *modes)=0;
+    virtual bool setControlModeRaw(const int j, const int mode)=0;
+    virtual bool setControlModesRaw(const int n_joint, const int *joints, int *modes)=0;
+    virtual bool setControlModesRaw(int *modes)=0;
 };
 
 
