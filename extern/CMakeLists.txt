@@ -11,6 +11,9 @@ endif()
 
 # Do not build with -Wsuggest-override
 string(REPLACE "-Wsuggest-override" "" CMAKE_CXX_FLAGS ${CMAKE_CXX_FLAGS})
+if(CXX_HAS_WSUGGEST_OVERRIDE)
+  string(APPEND CMAKE_CXX_FLAGS " -Wno-suggest-override")
+endif()
 
 # TinyXML
 if(YARP_BUILD_TINYXML)
