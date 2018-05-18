@@ -13,10 +13,10 @@
 
 #include <yarp/os/Portable.h>
 #include <yarp/os/Searchable.h>
-
-#include <string>
 #include <yarp/os/Property.h>
 #include <yarp/os/Value.h>
+
+#include <string>
 
 #define BOTTLE_TAG_INT 1          // 0000 0000 0001
 #define BOTTLE_TAG_VOCAB (1 + 8)  // 0000 0000 1001

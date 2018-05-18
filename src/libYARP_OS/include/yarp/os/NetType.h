@@ -11,10 +11,8 @@
 #define YARP_OS_NETTYPE_H
 
 #include <yarp/conf/numeric.h>
-#include <string>
 #include <yarp/os/Bytes.h>
 #include <yarp/os/InputStream.h>
-
 #include <yarp/os/NetInt32.h>
 #include <yarp/os/NetFloat64.h>
 #include <string>

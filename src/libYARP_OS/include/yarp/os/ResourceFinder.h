@@ -10,12 +10,12 @@
 #ifndef YARP_OS_RESOURCEFINDER_H
 #define YARP_OS_RESOURCEFINDER_H
 
-#include <string>
 #include <yarp/os/Searchable.h>
 #include <yarp/os/Value.h>
 #include <yarp/os/Bottle.h>
 #include <yarp/os/Property.h>
 #include <yarp/os/ResourceFinderOptions.h>
+#include <string>
 
 namespace yarp {
     namespace os {

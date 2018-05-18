@@ -10,8 +10,8 @@
 #ifndef YARP_OS_PROPERTY_H
 #define YARP_OS_PROPERTY_H
 
-#include <string>
 #include <yarp/os/Bottle.h>
+#include <string>
 
 namespace yarp {
     namespace os {

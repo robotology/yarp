@@ -10,10 +10,10 @@
 #ifndef YARP_OS_VALUE_H
 #define YARP_OS_VALUE_H
 
-#include <string>
 #include <yarp/os/Searchable.h>
 #include <yarp/os/Portable.h>
 #include <yarp/os/Bottle.h>
+#include <string>
 #include <cstddef> // defines size_t
 
 namespace yarp {

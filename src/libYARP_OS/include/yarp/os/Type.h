@@ -9,8 +9,8 @@
 #ifndef YARP_OS_TYPE_H
 #define YARP_OS_TYPE_H
 
-#include <string>
 #include <yarp/os/Searchable.h>
+#include <string>
 
 namespace yarp {
     namespace os {
