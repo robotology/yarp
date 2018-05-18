@@ -380,6 +380,7 @@ std::string NameClient::send(const std::string& cmd, bool multi)
         std::string cmdn = cmd + "\n";
         Bytes b((char*)cmdn.c_str(), cmdn.length());
         ip->getOutputStream().write(b);
+        ip->getOutputStream().flush();
         bool more = multi;
         while (more) {
             std::string line = "";

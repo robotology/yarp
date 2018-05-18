@@ -197,6 +197,7 @@ bool yarp::os::impl::NameserCarrier::write(ConnectionState& proto, SizedWriter& 
     std::string target = firstSend?"VER ":"NAME_SERVER ";
     Bytes b((char*)target.c_str(), target.length());
     proto.os().write(b);
+    proto.os().flush();
     std::string txt;
     // ancient nameserver can't deal with quotes
     for (size_t i=0; i<writer.length(); i++) {

@@ -266,6 +266,7 @@ bool Protocol::sendAck() {
     if (delegate==nullptr) return false;
     if (delegate->requireAck()) {
         ok = delegate->sendAck(*this);
+        os().flush();
     }
     getStreams().endPacket();
     return ok;

@@ -17,6 +17,12 @@
 #include <yarp/os/impl/TcpStream.h>
 #include <yarp/os/impl/TcpAcceptor.h>
 
+#ifdef YARP_HAS_ACE // For TCP_CORK definition
+#include <ace/os_include/netinet/os_tcp.h>
+#else
+#include <netinet/tcp.h>
+#endif
+
 namespace yarp {
     namespace os {
         namespace impl {
@@ -142,7 +148,20 @@ public:
 
     virtual void flush() override
     {
-        //stream.flush();
+#ifdef TCP_CORK
+        int status = 0;
+        int sizeInt = sizeof(int);
+        stream.get_option(IPPROTO_TCP, TCP_CORK, &status, &sizeInt);
+        if (status == 1)
+        {
+            // Remove CORK
+            int zero = 0;
+            stream.set_option(IPPROTO_TCP, TCP_CORK, &zero, sizeof(int));
+            // Set CORK
+            int one = 1;
+            stream.set_option(IPPROTO_TCP, TCP_CORK, &one, sizeof(int));
+        }
+#endif
     }
 
     virtual bool isOk() override
@@ -156,10 +175,20 @@ public:
 
     virtual void beginPacket() override
     {
+#ifdef TCP_CORK
+        // Set CORK
+        int one = 1;
+        stream.set_option(IPPROTO_TCP, TCP_CORK, &one, sizeof(int));
+#endif
     }
 
     virtual void endPacket() override
     {
+#ifdef TCP_CORK
+        // Remove CORK
+        int zero = 0;
+        stream.set_option(IPPROTO_TCP, TCP_CORK, &zero, sizeof(int));
+#endif
     }
 
     virtual bool setWriteTimeout(double timeout) override

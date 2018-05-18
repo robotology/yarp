@@ -170,6 +170,7 @@ void BufferedConnectionWriter::write(OutputStream& os) {
         yarp::os::ManagedBytes& b = *(lst[i]);
         os.write(b.usedBytes());
     }
+    os.flush();
 }
 
 
