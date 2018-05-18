@@ -15,7 +15,7 @@
 namespace yarp {
 namespace os {
 
-typedef YARP_DEPRECATED_MSG("Use std::string instead") std::string ConstString;
+typedef YARP_DEPRECATED_COMPILER_SPECIFIC_MSG("Use std::string instead") std::string ConstString;
 
 } // namespace os
 } // namespace yarp
