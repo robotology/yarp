@@ -71,7 +71,7 @@ public:
 
     void checkRemapper(yarp::dev::PolyDriver & ddRemapper, int rand, size_t nrOfRemappedAxes)
     {
-        IPositionControl2 *pos = nullptr;
+        IPositionControl *pos = nullptr;
         bool ok = ddRemapper.view(pos);
         checkTrue(ok, "interface position correctly opened");
         int axes = 0;
@@ -87,7 +87,7 @@ public:
         ok = ddRemapper.view(encs);
         checkTrue(ok, "encoders interface correctly opened");
 
-        IControlMode2 *ctrlmode = nullptr;
+        IControlMode *ctrlmode = nullptr;
         ok = ddRemapper.view(ctrlmode);
         checkTrue(ok, "control mode interface correctly opened");
 
