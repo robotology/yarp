@@ -14,6 +14,11 @@
 #include <string>
 #include <cstddef>
 
+#ifndef YARP_NO_DEPRECATED // Since YARP 3.0.0
+# include <yarp/os/ConstString.h>
+#endif // YARP_NO_DEPRECATED
+
+
 namespace yarp {
     namespace os {
         class Value;
