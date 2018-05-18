@@ -6,9 +6,14 @@
 -- This software may be modified and distributed under the terms of the
 -- BSD-3-Clause license. See the accompanying LICENSE file for details.
 
--- set LUA_CPATH to include yarp.so/yarp.dll
 require("yarp")
-yarp.Network()
-port = yarp.BufferedPortBottle()
-port:open("/lua/test")
-port:close()
+
+function test_port()
+  yarp.Network()
+  yarp.Network.setLocalMode(true)
+  port = yarp.BufferedPortBottle()
+  port:open("/lua/test")
+  port:close()
+end
+
+test_port()
